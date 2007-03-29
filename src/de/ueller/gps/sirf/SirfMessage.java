@@ -162,12 +162,13 @@ public class SirfMessage {
 		cal.set(Calendar.HOUR_OF_DAY, hour);
 		cal.set(Calendar.MINUTE, min);
 		cal.set(Calendar.SECOND, (int) second);
-		cal.add(Calendar.HOUR, 2);
+//		cal.add(Calendar.HOUR, 2);
 		Position p = new Position((float) lat, (float) lon, (float) altMSL, (float) sog, (float) course, valid, cal.getTime());
 //		pcs.firePropertyChange("GpsPosition", pold, p);
 		receiver.receivePosItion(p);
 		pold = p;
-		return message("" + day + "." + month + "." + year + " " + hour + ":" + min + ":" + second + " Lat=" + lat + " lon=" + lon + " h=" + altMSL + " sog=" + sog);
+		return null;
+//		return message("" + day + "." + month + "." + year + " " + hour + ":" + min + ":" + second + " Lat=" + lat + " lon=" + lon + " h=" + altMSL + " sog=" + sog);
 	}
 
 	private double getMeter(int i) {
