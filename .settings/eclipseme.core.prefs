@@ -1,0 +1,5 @@
+#Mon Feb 05 09:00:22 CET 2007
+eclipse.preferences.version=1
+pkg_autoversion=true
+pkg_use_project=true
+preverify_config_value=CLDC-1.0
