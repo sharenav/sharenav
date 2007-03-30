@@ -14,33 +14,47 @@ import java.io.IOException;
 import java.io.InputStream;
 
 
+
 public class SirfInput implements Runnable{
 
 	
 	private int	start;
-	private StringBuffer	ausgabe;
 	private int	checksum;
 	private int	length;
 	private SirfMessage smsg;
 	private InputStream ins;
 	private Thread					processorThread;
+	private final SirfMsgReceiver	receiver;
 	private boolean closed=false;
+	private byte connectQuality=100;
+	private int[] connectError=new int[SirfMsgReceiver.SIRF_FAIL_COUNT];
 	
 	public SirfInput(InputStream ins,SirfMsgReceiver receiver) {
 		super();
 		this.ins = ins;
+		this.receiver = receiver;
 		processorThread = new Thread(this,"Sirf Decoder");
+		processorThread.setPriority(Thread.MAX_PRIORITY);
 		processorThread.start();
 		smsg=new SirfMessage(receiver);
 
 	}
 
 	public void run(){
+		receiver.receiveMessage("start Tread");
+		byte timeCounter=21;
 		while (!closed){
+			timeCounter++;
+			if (timeCounter > 4){
+				timeCounter = 0;
+				if(connectQuality > 100) connectQuality=100;
+				if(connectQuality < 0) connectQuality=0;
+				receiver.receiveStatistics(connectError,connectQuality);
+			}
 			process();
 			try {
 				synchronized (this) {
-					wait(100);
+					wait(250);
 				}
 				
 			} catch (InterruptedException e) {
@@ -67,13 +81,13 @@ public class SirfInput implements Runnable{
 						if (ins.read() == 0xA2) {
 							start = 2;
 						} else {
-							if (ausgabe != null)
-							ausgabe.append("not the 2th start sign\n");
+							connectError[SirfMsgReceiver.SIRF_FAIL_NO_START_SIGN2]++;
+							connectQuality--;
 							break;
 						}
 					} else {
-						if (ausgabe != null)
-						ausgabe.append("not the start sign\n");
+						connectError[SirfMsgReceiver.SIRF_FAIL_NO_START_SIGN1]++;
+						connectQuality--;
 						break;
 					}
 				case 2:
@@ -82,9 +96,8 @@ public class SirfInput implements Runnable{
 					length = ins.read() * 256;
 					length += ins.read();
 					if (length >= 1023) {
-						if (ausgabe != null)
-						ausgabe.append("message is to long: " + length
-								+ "\n");
+						connectError[SirfMsgReceiver.SIRF_FAIL_MSG_TO_LONG]++;
+						connectQuality--;
 						start = 0;
 						break;
 					}
@@ -94,8 +107,8 @@ public class SirfInput implements Runnable{
 					if (ins.available() <= length)
 						break;
 					if (ins.read(readBuffer, 0, length) != length) {
-						if (ausgabe != null)
-						ausgabe.append("message interupted\n");
+						connectError[SirfMsgReceiver.SIRF_FAIL_MSG_INTERUPTED]++;
+						connectQuality-=2;
 						start = 0;
 						break;
 					}
@@ -107,9 +120,8 @@ public class SirfInput implements Runnable{
 					checksum = checksum * 256 + ins.read();
 					mesChecksum = calcChecksum(smsg);
 					if (mesChecksum != checksum) {
-						if (ausgabe != null)
-						ausgabe.append("checksum error " + checksum + "!="
-								+ mesChecksum + "\n");
+						connectQuality-=10;
+						connectError[SirfMsgReceiver.SIRF_FAIL_MSG_CHECKSUM_ERROR]++;
 						start = 0;
 					}
 					start = 5;
@@ -118,25 +130,25 @@ public class SirfInput implements Runnable{
 						break;
 					if (ins.read() == 0xB0) {
 						if (ins.read() == 0xB3) {
-							String nachricht = smsg.decodeMsg(smsg);
-							if (nachricht != null)
-								ausgabe.append(nachricht + "\n");
+							connectQuality++;
+							smsg.decodeMsg(smsg);
 							start = 0;
 						} else {
 							start = 0;
-							if (ausgabe != null)
-							ausgabe.append("missing 2th endsign\n");
+							connectQuality--;
+							connectError[SirfMsgReceiver.SIRF_FAIL_NO_END_SIGN2]++;
 						}
 					} else {
 						start = 0;
-						if (ausgabe != null)
-						ausgabe.append("missing 1th endsign\n");
+						connectQuality--;
+						connectError[SirfMsgReceiver.SIRF_FAIL_NO_END_SIGN1]++;
 					}
 					break;
 				} // switch
 			} // while
 		} catch (IOException e) {
-			System.out.println("Fehler: " + e);
+			receiver.receiveMessage("Fehler: " + e.getMessage());
+			closed=true;
 		}
 
 	}
@@ -150,16 +162,4 @@ public class SirfInput implements Runnable{
 		mesChecksum &= 32767l;
 		return mesChecksum;
 	}
-
-	
-	public StringBuffer getAusgabe() {
-		return ausgabe;
-	}
-
-	
-	public void setAusgabe(StringBuffer ausgabe) {
-		this.ausgabe = ausgabe;
-	}
-
-
 }

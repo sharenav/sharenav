@@ -10,7 +10,8 @@
  */
 package de.ueller.gps.sirf;
 
-import java.util.Calendar;
+import java.util.Date;
+
 
 import de.ueller.gps.data.Position;
 import de.ueller.gps.data.Satelit;
@@ -23,6 +24,7 @@ public class SirfMessage {
 	Position				pold;
 
 	public int				length		= 0;
+	Date date=new Date();
 
 	private final SirfMsgReceiver	receiver;
 
@@ -65,24 +67,23 @@ public class SirfMessage {
 				return decodeMeasureNavigation();
 			case 4:
 				return decodeMeasuredTrackerDataOut();
-			case 6:
-				return decodeSoftwareVersion();
-			case 9:
-				return decodeThroughput();
-			case 11:
-				return decodeCommandAck();
-			case 12:
-				return decodeCommandNack();
+//			case 6:
+//				return decodeSoftwareVersion();
+//			case 9:
+//				return decodeThroughput();
+//			case 11:
+//				return decodeCommandAck();
+//			case 12:
+//				return decodeCommandNack();
 			case 41:
 				return decodeGeodeticNavigationData();
 		}
-		return message("msg " + type + " not implemented");
-		// return null;
+//		return message("msg " + type + " not implemented");
+		 return null;
 	}
 
 	private String decodeMeasuredTrackerDataOut() {
 		int anz=getByte(7);
-		int i=8;
 		Satelit s[]=new Satelit[anz];
 		for (int l = 0; l < anz; l++){
 			s[l]=decode1sMeasuredTrackerDataOut(8+l*15);			
@@ -103,18 +104,18 @@ public class SirfMessage {
 		for (int l=0;l<10;l++){
 			s.signal[l]=getByte(i++);
 		}
-		if (s.id != 0)
-		message("Satelit " + s.id + " Aq s:"+s.isAcquisitionSucessfully()
-                + " PH:"+s.isCharrierPhaseValid()
-                + " BS:"+s.isBitSync()
-                + " SS:"+s.isSubframeSync()
-                + " CP:"+s.isCarrierPullin()
-                + " LK:"+s.isLocked()
-                + " Aq f:"+s.isAcquisitionFaild()
-                + " EP:"+s.isEphemeris()
-                + " SI:"+s.signal[0]
-				+ " "+s.azimut + " " + s.elev
-				                    );
+//		if (s.id != 0)
+//		message("Satelit " + s.id + " Aq s:"+s.isAcquisitionSucessfully()
+//                + " PH:"+s.isCharrierPhaseValid()
+//                + " BS:"+s.isBitSync()
+//                + " SS:"+s.isSubframeSync()
+//                + " CP:"+s.isCarrierPullin()
+//                + " LK:"+s.isLocked()
+//                + " Aq f:"+s.isAcquisitionFaild()
+//                + " EP:"+s.isEphemeris()
+//                + " SI:"+s.signal[0]
+//				+ " "+s.azimut + " " + s.elev
+//				                    );
 		return s;
 	}
 
@@ -155,15 +156,15 @@ public class SirfMessage {
 		// short mapDatum = getByte(39);
 		double sog = 0.01d * get2ByteUnsigned(40);
 		double course = 0.01d * get2ByteUnsigned(42);
-		Calendar cal = Calendar.getInstance();
-		cal.set(Calendar.YEAR, year);
-		cal.set(Calendar.MONTH, month - 1);
-		cal.set(Calendar.DAY_OF_MONTH, day);
-		cal.set(Calendar.HOUR_OF_DAY, hour);
-		cal.set(Calendar.MINUTE, min);
-		cal.set(Calendar.SECOND, (int) second);
-//		cal.add(Calendar.HOUR, 2);
-		Position p = new Position((float) lat, (float) lon, (float) altMSL, (float) sog, (float) course, valid, cal.getTime());
+//		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+//		cal.set(Calendar.YEAR, year);
+//		cal.set(Calendar.MONTH, month - 1);
+//		cal.set(Calendar.DAY_OF_MONTH, day);
+//		cal.set(Calendar.HOUR_OF_DAY, hour);
+//		cal.set(Calendar.MINUTE, min);
+//		cal.set(Calendar.SECOND, (int) second);
+
+		Position p = new Position((float) lat, (float) lon, (float) altMSL, (float) sog, (float) course, valid, date/*cal.getTime()*/);
 //		pcs.firePropertyChange("GpsPosition", pold, p);
 		receiver.receivePosItion(p);
 		pold = p;
@@ -180,7 +181,7 @@ public class SirfMessage {
 	}
 
 	private String decodeMeasureNavigation() {
-		short byte1 = getByte(14);
+		short byte1 = getByte(15);
 		boolean dgps=false;
 		String msg="UK";
 		if ((byte1 & 0x80) > 0){
