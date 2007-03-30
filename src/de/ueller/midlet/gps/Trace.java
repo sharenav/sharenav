@@ -74,7 +74,7 @@ public class Trace extends Canvas implements CommandListener, SirfMsgReceiver, R
 	private short[] namesIdx=null;
 	private Hashtable stringCache=new Hashtable(100);
 	private Names namesThread;
-	
+	private VisibleCollector vc;
 	
     public Trace(GpsMid parent,String url,String root) throws Exception{
     	logger.info("init Trace Class");
@@ -96,6 +96,7 @@ public class Trace extends Canvas implements CommandListener, SirfMsgReceiver, R
 			}
 			logger.info("init Projection");
 			projection=new Mercator(center,pc.scale,getWidth(),getHeight());
+			vc=new VisibleCollector(t);
 		} catch (Exception e) {
 			e.printStackTrace();
 			Alert alert = new Alert("Error:" + e.getMessage());
@@ -180,14 +181,27 @@ public class Trace extends Canvas implements CommandListener, SirfMsgReceiver, R
 
 	}
 
-
 	protected void paint(Graphics g) {
+		pc.xSize=this.getWidth();
+		pc.ySize=this.getHeight();
+		pc.p=projection;
+		pc.p.inverse(pc.xSize, 0,pc.screenRU);
+		pc.p.inverse(0,pc.ySize,pc.screenLD);
+		pc.g=g;
+		pc.scale=scale;
+		// cleans the screen
+		g.setColor(155, 255, 155);
+		g.fillRect(0, 0, pc.xSize, pc.ySize);
+		vc.paint(pc);
+		
+	}
+
+	protected void paintOld(Graphics g) {
 //		Transform t=new Transform(null);
 //		logger.info("repaint");
 		try {
 			pc.xSize=this.getWidth();
 			pc.ySize=this.getHeight();
-			int xc=5;
 			int yc=1;
 			int la=18;
 			pc.p=projection;
@@ -198,28 +212,7 @@ public class Trace extends Canvas implements CommandListener, SirfMsgReceiver, R
 			// cleans the screen
 			g.setColor(155, 255, 155);
 			g.fillRect(0, 0, pc.xSize, pc.ySize);
-//		g.setColor(120, 220,120);
-//		g.drawString("Lat: "+pos.latitude, 0, yc, Graphics.TOP|Graphics.LEFT);
-//		yc+=la;
-//		g.drawString("Lon: "+pos.longitude, 0, yc, Graphics.TOP|Graphics.LEFT);
-//		yc+=la;
-//		g.drawString("Alt: "+pos.altitude, 0, yc, Graphics.TOP|Graphics.LEFT);
-//		yc+=la;
-//		g.drawString("Cou: "+pos.course, 0, yc, Graphics.TOP|Graphics.LEFT);
-//		yc+=la;
-//		g.drawString("Spe: "+pos.speed, 0, yc, Graphics.TOP|Graphics.LEFT);
-//		yc+=la;
-//		g.drawString("MSG: "+lastMsg, 0, yc, Graphics.TOP|Graphics.LEFT);
-//		yc+=la;
-//		g.drawString("num: "+collected, 0, yc, Graphics.TOP|Graphics.LEFT);
-//		g.setColor(255, 100, 100);
-//		int drawWays=0;
-//		g.setColor(120, 220,120);
-//		yc+=la;
-//		g.drawString("ways: "+drawWays, 0, yc, Graphics.TOP|Graphics.LEFT);
-//			for (int i=3; i<4;i++){
-//				t[i].paint(pc);
-//			}
+
 			if (scale < 90000 && t[3] != null){
 //				logger.debug("start Paint");
 				t[3].paint(pc);

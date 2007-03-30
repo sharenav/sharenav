@@ -1,6 +1,8 @@
 package de.ueller.midlet.gps.tile;
 
+import de.ueller.midlet.gps.ScreenContext;
 import de.ueller.midlet.gps.Trace;
+import de.ueller.midlet.gps.VisibleElements;
 import de.ueller.midlet.gps.data.IntPoint;
 
 
@@ -14,9 +16,12 @@ public abstract class Tile {
 	public static Trace				trace				= null;
 
 	public abstract void paint(PaintContext pc);
+	public abstract void collect(ScreenContext sc,VisibleElements ve);
 	public abstract void cleanup();
 	
-	boolean contain(PaintContext pc){
+	boolean contain(ScreenContext pc){
+//		System.out.println(this);
+//		System.out.println(pc.screenLD + "   " + pc.screenRU);
 		if(maxLat < pc.screenLD.radlat) return false;
 		if(maxLon < pc.screenLD.radlon) return false;
 		if(minLat > pc.screenRU.radlat) return false;

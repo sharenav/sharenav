@@ -92,6 +92,7 @@ public class GpsMid extends MIDlet implements CommandListener{
             	try {
 					new Trace(this,btUrl,root);
 				} catch (Exception e) {
+					e.printStackTrace();
 					Alert alert = new Alert("Error:" + e.getMessage());
 					Display.getDisplay(this).setCurrent(alert, menu);
             		return;
@@ -127,7 +128,7 @@ public class GpsMid extends MIDlet implements CommandListener{
 //		log.print(msg+"\n");
 //        Display.getDisplay(this).getCurrent().setTicker(new Ticker(msg));
 //		Display.getDisplay(this).getCurrent().setTitle(msg);
-//        System.out.println(msg);
+        System.out.println(msg);
 		}
 	}
 

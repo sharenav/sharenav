@@ -214,4 +214,18 @@ public class Node {
     		}
     	}
     }
+    
+    public Node clone(){
+    	Node n=new Node();
+    	if (nameIdx != null)
+    		n.nameIdx=new Short(nameIdx.shortValue());
+    	n.type=type;
+    	n.radlat=radlat;
+    	n.radlon=radlon;
+    	return n;
+    }
+    
+    public String toString(){
+    	return ("node: " + radlat + "/" + radlon);
+    }
 }

@@ -4,7 +4,9 @@ import java.io.DataInputStream;
 import java.io.IOException;
 
 import de.ueller.midlet.gps.Logger;
+import de.ueller.midlet.gps.ScreenContext;
 import de.ueller.midlet.gps.Trace;
+import de.ueller.midlet.gps.VisibleElements;
 
 
 public class ContainerTile extends Tile {
@@ -50,6 +52,16 @@ public class ContainerTile extends Tile {
 				t1.paint(pc);
 			if (t2 != null)
 				t2.paint(pc);	
+		} else {			
+			cleanup();
+		}
+	}
+	public void collect(ScreenContext sc,VisibleElements ve) {
+		if (contain(sc)){
+			if (t1 != null)
+				t1.collect(sc,ve);
+			if (t2 != null)
+				t2.collect(sc,ve);	
 		} else {			
 			cleanup();
 		}

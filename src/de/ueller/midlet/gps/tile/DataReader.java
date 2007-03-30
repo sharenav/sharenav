@@ -24,7 +24,7 @@ public class DataReader implements Runnable {
 	private final String	url;
 	private Thread	processorThread;
 	private final String	root;
-	private final static Logger logger=Logger.getInstance(DataReader.class,Logger.DEBUG);
+//	private final static Logger logger=Logger.getInstance(DataReader.class,Logger.TRACE);
 
 	public DataReader(int fileId,String root,byte zl,SingleTile st){
 		super();
@@ -34,7 +34,7 @@ public class DataReader implements Runnable {
 		processorThread = new Thread(this,url);
 		processorThread.setPriority(Thread.MIN_PRIORITY+1);
 		processorThread.start();
-		logger.info("DataReader Thread started " + url);
+//		logger.info("DataReader Thread started " + url);
 
 	}
 	public void run() {
@@ -101,7 +101,7 @@ public class DataReader implements Runnable {
 		ds.close();
 		
 		st.dataReady();
-		logger.info("DataReader ready "+ url + st.nodes.length + " Nodes " + st.ways.length + " Ways" );
+//		logger.info("DataReader ready "+ url + st.nodes.length + " Nodes " + st.ways.length + " Ways" );
 
 //    	}
 		

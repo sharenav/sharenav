@@ -9,7 +9,9 @@ import javax.microedition.lcdui.Image;
 import net.sourceforge.jmicropolygon.PolygonGraphics;
 
 import de.ueller.midlet.gps.Logger;
+import de.ueller.midlet.gps.ScreenContext;
 import de.ueller.midlet.gps.Trace;
+import de.ueller.midlet.gps.VisibleElements;
 import de.ueller.midlet.gps.data.IntPoint;
 import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.Projection;
@@ -47,7 +49,7 @@ public class SingleTile extends Tile {
 //		logger.debug("" + deep + ":ST Nr=" + fileId);
 	}
 	
-	private boolean isDataReady(PaintContext pc){
+	private boolean isDataReady(ScreenContext pc){
 		if (state == STATE_NOTLOAD) {
 //			logger.debug("singleTile start load");
 			state = STATE_LOADSTARED;
@@ -65,41 +67,74 @@ public class SingleTile extends Tile {
 	}
 
 	public void paint(PaintContext pc) {
-			if (contain(pc)) {
-				if (! isDataReady(pc)){
-					return;
-				}
-				lastUse = 0;
-				if (ways != null) {
-					for (int i = 0; i < ways.length; i++) {
-						Way w = (Way) ways[i];
-						// logger.debug("test Bounds of way");
-						if (w.maxLat < pc.screenLD.radlat) continue;
-						if (w.maxLon < pc.screenLD.radlon) continue;
-						if (w.minLat > pc.screenRU.radlat) continue;
-						if (w.minLon > pc.screenRU.radlon) continue;
-//						logger.debug("draw " + w.name);
-						w.setColor(pc);
-						if (w.type < 50){
-							w.paintAsPath(pc, nodes);
-						} else {
-							w.paintAsArea(pc, nodes);
-						}
+		if (contain(pc)) {
+			if (! isDataReady(pc)){
+				return;
+			}
+			lastUse = 0;
+			if (ways != null) {
+				for (int i = 0; i < ways.length; i++) {
+					Way w = (Way) ways[i];
+					// logger.debug("test Bounds of way");
+					if (w.maxLat < pc.screenLD.radlat) continue;
+					if (w.maxLon < pc.screenLD.radlon) continue;
+					if (w.minLat > pc.screenRU.radlat) continue;
+					if (w.minLon > pc.screenRU.radlon) continue;
+//					logger.debug("draw " + w.name);
+					w.setColor(pc);
+					if (w.type < 50){
+						w.paintAsPath(pc, nodes);
+					} else {
+						w.paintAsArea(pc, nodes);
 					}
 				}
-				for (short i = 0; i < nodes.length; i++) {
-					Node node = nodes[i];
-					if (node.type == 0) break;
-					if (node.radlat < pc.screenLD.radlat) continue;
-					if (node.radlon < pc.screenLD.radlon) continue;
-					if (node.radlat > pc.screenRU.radlat) continue;
-					if (node.radlon > pc.screenRU.radlon) continue;
-					node.paint(pc);
-				}
-			} else {
-				cleanup();
 			}
-	}
+			for (short i = 0; i < nodes.length; i++) {
+				Node node = nodes[i];
+				if (node.type == 0) break;
+				if (node.radlat < pc.screenLD.radlat) continue;
+				if (node.radlon < pc.screenLD.radlon) continue;
+				if (node.radlat > pc.screenRU.radlat) continue;
+				if (node.radlon > pc.screenRU.radlon) continue;
+				node.paint(pc);
+			}
+		} else {
+			cleanup();
+		}
+}
+	public void collect(ScreenContext sc,VisibleElements ve) {
+		if (contain(sc)) {
+			if (! isDataReady(sc)){
+				return;
+			}
+			lastUse = 0;
+			if (ways != null) {
+				for (int i = 0; i < ways.length; i++) {
+					Way w = (Way) ways[i];
+					if (w.maxLat < sc.screenLD.radlat) continue;
+					if (w.maxLon < sc.screenLD.radlon) continue;
+					if (w.minLat > sc.screenRU.radlat) continue;
+					if (w.minLon > sc.screenRU.radlon) continue;
+					if (w.type < 50){
+						ve.addPath(w, nodes);
+					} else {
+						ve.addArea(w, nodes);
+					}
+				}
+			}
+			for (short i = 0; i < nodes.length; i++) {
+				Node node = nodes[i];
+				if (node.type == 0) break;
+				if (node.radlat < sc.screenLD.radlat) continue;
+				if (node.radlon < sc.screenLD.radlon) continue;
+				if (node.radlat > sc.screenRU.radlat) continue;
+				if (node.radlon > sc.screenRU.radlon) continue;
+				ve.addPoi(node);
+			}
+		} else {
+			cleanup();
+		}
+}
 
 	public void cleanup() {
 		if (state == STATE_LOADREADY) {
