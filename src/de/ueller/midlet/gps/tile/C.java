@@ -1,4 +1,8 @@
 package de.ueller.midlet.gps.tile;
+/*
+ * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net 
+ * See Copying
+ */
 
 public class C {
 	public final static byte NODE_PLACE_CITY=1;

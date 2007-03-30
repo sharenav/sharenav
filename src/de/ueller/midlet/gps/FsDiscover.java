@@ -1,4 +1,8 @@
 package de.ueller.midlet.gps;
+/*
+ * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net 
+ * See Copying
+ */
 
 import java.io.IOException;
 import java.util.Enumeration;

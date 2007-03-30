@@ -1,7 +1,8 @@
-/**
- * @author hmueller
- * 
+/*
+ * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net 
+ * See Copying
  */
+
 package de.ueller.midlet.gps.tile;
 
 import javax.microedition.lcdui.Graphics;

@@ -1,5 +1,8 @@
 package de.ueller.gps.sirf;
-
+/*
+ * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net 
+ * See Copying
+ */
 import de.ueller.gps.data.Position;
 import de.ueller.gps.data.Satelit;
 
