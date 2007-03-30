@@ -32,7 +32,7 @@ import de.ueller.midlet.gps.tile.Tile;
 
 
 
-public class Trace extends Canvas implements CommandListener, SirfMsgReceiver{
+public class Trace extends Canvas implements CommandListener, SirfMsgReceiver, Runnable{
     /** Soft button for exiting the demo. */
     private final Command EXIT_CMD = new Command("Back", Command.BACK, 2);
     private final Command REFRESH_CMD = new Command("refresh", Command.OK, 1);
@@ -77,7 +77,7 @@ public class Trace extends Canvas implements CommandListener, SirfMsgReceiver{
 	
 	
     public Trace(GpsMid parent,String url,String root) throws Exception{
-//    	logger.info("init Trace Class");
+    	logger.info("init Trace Class");
     	this.parent = parent;
 		this.url = url;
 		pc.trace=this;
@@ -86,15 +86,18 @@ public class Trace extends Canvas implements CommandListener, SirfMsgReceiver{
 		setCommandListener(this);
 		Display.getDisplay(parent).setCurrent(this);
 		try {
-//			logger.info("reading Data ...");
+			logger.info("reading Data ...");
 			namesThread=new Names();
 			new DictReader(this);
 			if (url != null){
-				startReceiver(url);
+				Thread t=new Thread(this);
+				t.start();
+//				startReceiver(url);
 			}
-//			logger.info("init Projection");
+			logger.info("init Projection");
 			projection=new Mercator(center,pc.scale,getWidth(),getHeight());
 		} catch (Exception e) {
+			e.printStackTrace();
 			Alert alert = new Alert("Error:" + e.getMessage());
 			Display.getDisplay(parent).setCurrent(alert, this);
 			parent.show();
@@ -108,9 +111,27 @@ public class Trace extends Canvas implements CommandListener, SirfMsgReceiver{
 		}
     }
 
+	public void run() {
+		try {
+			
+			logger.debug("connect " + url);
+			conn = (StreamConnection)Connector.open(url);
+			inputStream = conn.openInputStream();
+			logger.debug("connectetd");
+			si=new SirfInput(inputStream,this);
+			logger.debug("messagereader Started");
+		} catch (Exception e) {
+			e.printStackTrace();
+			Alert alert = new Alert("Error:" + e.getMessage());
+			Display.getDisplay(parent).setCurrent(alert, this);
+//			parent.show();
+
+		}
+	}
 
 	private void startReceiver(String url) {
 		try {
+			
 //			logger.debug("connect " + url);
 			conn = (StreamConnection)Connector.open(url);
 			inputStream = conn.openInputStream();
@@ -288,8 +309,7 @@ public class Trace extends Canvas implements CommandListener, SirfMsgReceiver{
 		projection=new Mercator(center,scale,getWidth(),getHeight());
 		speed=(int)(pos.speed*3.6f);
 		course=(int)pos.course;
-		repaint(0,0,getWidth(),getHeight());
-		
+		repaint(0,0,getWidth(),getHeight());		
 	}
 
 	public synchronized void receiveMessage(String s) {
@@ -345,7 +365,7 @@ public class Trace extends Canvas implements CommandListener, SirfMsgReceiver{
 
 	public void setDict(Tile dict,byte zl) {
 		t[zl]=dict;
-		dict.trace=this;
+		Tile.trace=this;
 		addCommand(REFRESH_CMD);
 		if (zl == 3){
 			setTitle(null);
@@ -398,6 +418,8 @@ public class Trace extends Canvas implements CommandListener, SirfMsgReceiver{
 //		return null;
 		return namesThread.getName(idx);
 	}
+
+
 	
 //	private void cleanupStringCache(){
 //		logger.info("cleanup namesCache " + stringCache.size());
