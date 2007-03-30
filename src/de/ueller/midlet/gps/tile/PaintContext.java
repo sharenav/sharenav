@@ -29,6 +29,9 @@ public class PaintContext {
 	public float scale=15000f;
 	byte viewId=1;
 	public final Image IMG_PARKING=Image.createImage("/images/parking.png");
+	public final Image IMG_FUEL=Image.createImage("/images/fuel.png");
+	public final Image IMG_SCHOOL=Image.createImage("/images/school.png");
+	public final Image IMG_TELEPHONE=Image.createImage("/images/telephone.png");
 
 	public byte drawAreas=DRAW_AREAS_NO;
 	public boolean showTileOutline=false;

@@ -102,7 +102,7 @@ public class SingleTile extends Tile {
 								g.setColor(255,255,150);
 								break;
 							case C.AREA_NATURAL_WATER:
-								g.setColor(255,255,150);
+								g.setColor(50,50,255);
 								break;
 							default:
 //								logger.error("unknown Type "+ w.type);
@@ -180,6 +180,15 @@ public class SingleTile extends Tile {
 							break;
 						case C.NODE_AMENITY_PARKING:
 							img=pc.IMG_PARKING;
+							break;
+						case C.NODE_AMENITY_TELEPHONE:
+							img=pc.IMG_TELEPHONE;
+							break;
+						case C.NODE_AMENITY_SCHOOL:
+							img=pc.IMG_SCHOOL;
+							break;
+						case C.NODE_AMENITY_FUEL:
+							img=pc.IMG_FUEL;
 							break;
 
 					}
