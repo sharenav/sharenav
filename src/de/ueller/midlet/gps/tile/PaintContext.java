@@ -23,9 +23,24 @@ public class PaintContext {
 	public int ySize;
 	public Node screenRU=new Node();
 	public Node screenLD=new Node();
-	IntPoint swapLineP=new IntPoint(0,0);
-	IntPoint lineP1=null;
-	IntPoint lineP2=new IntPoint(0,0);
+	/** 
+	 * used to avoid frequent memory allocations this point have to have
+	 * a valid object after method exit 
+	 */
+	public IntPoint swapLineP=new IntPoint(0,0);
+	/** 
+	 * used to avoid frequent memory allocations this point have to have
+	 * null after method exit. Point will used as startpoint of a line to
+	 * indicate the fact that there is no startpoint at the begin of painting,
+	 * this points to null 
+	 */
+	public IntPoint lineP1=null;
+	/** 
+	 * used to avoid frequent memory allocations this point have to have
+	 * a valid Object after method exit. Point will used as endpoint of a line.
+	 * the calculation go directly to the literals insid the object.
+	 */
+	public IntPoint lineP2=new IntPoint(0,0);
 	public float scale=15000f;
 	byte viewId=1;
 	public final Image IMG_PARKING=Image.createImage("/images/parking.png");

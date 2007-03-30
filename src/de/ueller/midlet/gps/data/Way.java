@@ -4,8 +4,12 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.Hashtable;
 
+import net.sourceforge.jmicropolygon.PolygonGraphics;
+
 import de.ueller.midlet.gps.Logger;
+import de.ueller.midlet.gps.tile.C;
 import de.ueller.midlet.gps.tile.DataReader;
+import de.ueller.midlet.gps.tile.PaintContext;
 
 
 public class Way {
@@ -68,5 +72,84 @@ public class Way {
 //				logger.error("wrong magic code after path");
 //			}
 		}
+	}
+	
+	public void paintAsPath(PaintContext pc, Node[] nodes) {
+		IntPoint lineP1 = pc.lineP1;
+		IntPoint lineP2 = pc.lineP2;
+		IntPoint swapLineP = pc.swapLineP;
+
+		for (int p1 = 0; p1 < paths.length; p1++) {
+			short[] path = paths[p1];
+			for (int i1 = 0; i1 < path.length; i1++) {
+				Node node = nodes[path[i1]];
+				if (node != null) {
+					pc.p.forward(node.radlat, node.radlon, lineP2, true);
+					if (lineP1 == null) {
+						lineP1 = lineP2;
+						lineP2 = swapLineP;
+					} else {
+						pc.g.drawLine(lineP1.x, lineP1.y, lineP2.x, lineP2.y);
+						swapLineP = lineP1;
+						lineP1 = lineP2;
+						lineP2 = swapLineP;
+					}
+				}
+			}
+			swapLineP = lineP1;
+			lineP1 = null;
+		}
+	}
+
+	public void paintAsArea(PaintContext pc, Node[] nodes){
+		IntPoint lineP2 = pc.lineP2;
+		for (int p1 = 0; p1 < paths.length; p1++) {
+			short[] path = paths[p1];
+			int[] x=new int[path.length];
+			int[] y=new int[path.length];
+			for (int i1 = 0; i1 < path.length; i1++) {
+				Node node = nodes[path[i1]];
+				if (node != null) {
+					pc.p.forward(node.radlat, node.radlon, lineP2, true);
+					x[i1]=lineP2.x;
+					y[i1]=lineP2.y;
+				}
+			}
+//			PolygonGraphics.drawPolygon(g, x, y);
+			PolygonGraphics.fillPolygon(pc.g, x, y);
+		}
+
+	}
+	
+	public void setColor(PaintContext pc){
+		switch (type) {
+		case C.WAY_HIGHWAY_MOTORWAY:
+			pc.g.setColor(100, 100, 255);
+			break;
+		case C.WAY_HIGHWAY_TRUNK:
+			pc.g.setColor(255,150,150);
+		case C.WAY_HIGHWAY_PRIMARY:
+			pc.g.setColor(255, 100, 100);
+			break;
+		case C.WAY_HIGHWAY_SECONDARY:
+			pc.g.setColor(255, 200, 60);
+			break;
+		case C.WAY_HIGHWAY_MINOR:
+			pc.g.setColor(255, 255, 150);
+			break;
+		case C.WAY_HIGHWAY_RESIDENTIAL:
+			pc.g.setColor(180, 180, 180);
+			break;
+		case C.AREA_AMENITY_PARKING:
+			pc.g.setColor(255,255,150);
+			break;
+		case C.AREA_NATURAL_WATER:
+			pc.g.setColor(50,50,255);
+			break;
+		default:
+//			logger.error("unknown Type "+ w.type);
+			pc.g.setColor(0, 0, 0);
+	}
+
 	}
 }

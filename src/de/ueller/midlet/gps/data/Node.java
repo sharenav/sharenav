@@ -4,7 +4,12 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.microedition.lcdui.Graphics;
+import javax.microedition.lcdui.Image;
+
 import de.ueller.midlet.gps.Logger;
+import de.ueller.midlet.gps.tile.C;
+import de.ueller.midlet.gps.tile.PaintContext;
 
 
 
@@ -156,5 +161,57 @@ public class Node {
         return lon;
     }
 
+    public void paint(PaintContext pc){
+    	Image img=null;
+    	//if (node.name == null) continue;
+    	switch (type) {
+    	case 1:
+    		pc.g.setColor(255, 50, 50);
+    		break;
+    	case 2:
+    		pc.g.setColor(200, 100, 100);
+    		break;
+    	case 3:
+    		pc.g.setColor(180, 180, 50);
+    		break;
+    	case 4:
+    		pc.g.setColor(160, 160, 90);
+    		break;
+    	case 5:
+    		pc.g.setColor(0, 0, 0);
+    		break;
+    	case 6:
+    		pc.g.setColor(0, 0, 0);
+    		break;
+    	case C.NODE_AMENITY_PARKING:
+    		img=pc.IMG_PARKING;
+    		break;
+    	case C.NODE_AMENITY_TELEPHONE:
+    		img=pc.IMG_TELEPHONE;
+    		break;
+    	case C.NODE_AMENITY_SCHOOL:
+    		img=pc.IMG_SCHOOL;
+    		break;
+    	case C.NODE_AMENITY_FUEL:
+    		img=pc.IMG_FUEL;
+    		break;
 
+    	}
+    	pc.p.forward(radlat, radlon, pc.swapLineP, true);
+    	if  (img != null){
+    		if (nameIdx == null)
+    			pc.g.drawImage(img, pc.swapLineP.x, pc.swapLineP.y, Graphics.VCENTER | Graphics.HCENTER);
+    		else 
+    			pc.g.drawImage(img, pc.swapLineP.x, pc.swapLineP.y, Graphics.BOTTOM | Graphics.HCENTER);
+    	}
+    	if (nameIdx != null){
+    		String name=pc.trace.getName(nameIdx);
+    		if (name != null){
+    			if  (img == null)
+    				pc.g.drawString(name, pc.swapLineP.x, pc.swapLineP.y, Graphics.BASELINE | Graphics.HCENTER);
+    			else
+    				pc.g.drawString(name, pc.swapLineP.x, pc.swapLineP.y, Graphics.TOP | Graphics.HCENTER);
+    		}
+    	}
+    }
 }
