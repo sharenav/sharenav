@@ -78,7 +78,8 @@ public class Trace extends Canvas implements CommandListener, SirfMsgReceiver, R
 	private short[] namesIdx=null;
 	private Hashtable stringCache=new Hashtable(100);
 	private Names namesThread;
-	private VisibleCollector vc;
+//	private VisibleCollector vc;
+	private ImageCollector vc;
 	
     public Trace(GpsMid parent,String url,String root) throws Exception{
     	logger.info("init Trace Class");
@@ -100,7 +101,9 @@ public class Trace extends Canvas implements CommandListener, SirfMsgReceiver, R
 			}
 			logger.info("init Projection");
 			projection=new Mercator(center,pc.scale,getWidth(),getHeight());
-			vc=new VisibleCollector(t);
+			pc.center=center;
+			pc.trace=this;
+			vc=new ImageCollector(t,this.getWidth(),this.getHeight());
 		} catch (Exception e) {
 			e.printStackTrace();
 			Alert alert = new Alert("Error:" + e.getMessage());
@@ -186,17 +189,31 @@ public class Trace extends Canvas implements CommandListener, SirfMsgReceiver, R
 	}
 
 	protected void paint(Graphics g) {
+		int yc=1;
+		int la=18;
+
 		pc.xSize=this.getWidth();
 		pc.ySize=this.getHeight();
 		pc.p=projection;
 		pc.p.inverse(pc.xSize, 0,pc.screenRU);
 		pc.p.inverse(0,pc.ySize,pc.screenLD);
 		pc.g=g;
-		pc.scale=scale;
 		// cleans the screen
-		g.setColor(155, 255, 155);
+		g.setColor(255, 0, 0);
 		g.fillRect(0, 0, pc.xSize, pc.ySize);
 		vc.paint(pc);
+		switch (showAddons){
+		case 1:showConnectStatistics(g, yc, la);
+		break;
+		case 2:showSatelite(g);
+		break;
+		case 3: showAddons=0;
+		
+	}
+		showMovement(g);
+	    g.setColor(0, 0, 0);
+		g.drawString(solution, getWidth()-1, 1, Graphics.TOP|Graphics.RIGHT);
+		namesThread.cleanup();
 		
 	}
 
@@ -304,6 +321,9 @@ public class Trace extends Canvas implements CommandListener, SirfMsgReceiver, R
 		collected++;
 		center.setLatLon(pos.latitude, pos.longitude);
 		projection=new Mercator(center,scale,getWidth(),getHeight());
+		pc.p=projection;
+		pc.center=center.clone();
+		pc.scale=scale;
 		speed=(int)(pos.speed*3.6f);
 		course=(int)pos.course;
 		repaint(0,0,getWidth(),getHeight());		
@@ -356,6 +376,9 @@ public class Trace extends Canvas implements CommandListener, SirfMsgReceiver, R
     		keyStatus = keyCode;
     	}
 		projection=new Mercator(center,scale,getWidth(),getHeight());
+		pc.p=projection;
+		pc.center=center.clone();
+		pc.scale=scale;
     	repaint(0,0,getWidth(),getHeight());
     }
 

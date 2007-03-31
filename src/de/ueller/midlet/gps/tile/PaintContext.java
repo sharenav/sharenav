@@ -9,9 +9,7 @@ import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
 import de.ueller.midlet.gps.ScreenContext;
-import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.data.IntPoint;
-import de.ueller.midlet.gps.data.Projection;
 
 
 public class PaintContext extends ScreenContext {
@@ -19,7 +17,6 @@ public class PaintContext extends ScreenContext {
 	public final static byte DRAW_AREAS_OUTLINE=1;
 	public final static byte DRAW_AREAS_FILL=2;
 	public Graphics g;
-	public Projection p;
 	/** 
 	 * used to avoid frequent memory allocations this point have to have
 	 * a valid object after method exit 
@@ -45,11 +42,12 @@ public class PaintContext extends ScreenContext {
 
 	public byte drawAreas=DRAW_AREAS_NO;
 	public boolean showTileOutline=false;
-	public Trace trace;
 	public PaintContext() throws Exception{
 		super();
 		// TODO Auto-generated constructor stub
 	}
 	
-
+	public String toString(){
+		return "PC c:" + center + " s:" + scale + " w:" + xSize + " h:" + ySize;
+	}
 }

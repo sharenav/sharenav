@@ -6,7 +6,7 @@ package de.ueller.midlet.gps.tile;
 
 import de.ueller.midlet.gps.ScreenContext;
 import de.ueller.midlet.gps.Trace;
-import de.ueller.midlet.gps.VisibleElements;
+
 import de.ueller.midlet.gps.data.IntPoint;
 
 
@@ -20,7 +20,6 @@ public abstract class Tile {
 	public static Trace				trace				= null;
 
 	public abstract void paint(PaintContext pc);
-	public abstract void collect(ScreenContext sc,VisibleElements ve);
 	public abstract void cleanup();
 	
 	boolean contain(ScreenContext pc){

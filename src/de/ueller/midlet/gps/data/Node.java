@@ -31,7 +31,7 @@ public class Node {
     public final static float LON_RANGE = 360.0f;
 
     public final static float EQUIVALENT_TOLERANCE = 0.00001f;
-//	private final static Logger logger=Logger.getInstance(Node.class,Logger.DEBUG);
+	private final static Logger logger=Logger.getInstance(Node.class,Logger.DEBUG);
 
 	/** construct a node from the stream. Assumes
 	 * that the id is readed befor.
@@ -167,6 +167,7 @@ public class Node {
 
     public void paint(PaintContext pc){
     	Image img=null;
+//    	logger.debug("set color "+pc);
     	//if (node.name == null) continue;
     	switch (type) {
     	case 1:
@@ -201,14 +202,17 @@ public class Node {
     		break;
 
     	}
+//    	logger.debug("calc pos "+pc);
     	pc.p.forward(radlat, radlon, pc.swapLineP, true);
     	if  (img != null){
+//        	logger.debug("draw img " + img);
     		if (nameIdx == null)
     			pc.g.drawImage(img, pc.swapLineP.x, pc.swapLineP.y, Graphics.VCENTER | Graphics.HCENTER);
     		else 
     			pc.g.drawImage(img, pc.swapLineP.x, pc.swapLineP.y, Graphics.BOTTOM | Graphics.HCENTER);
     	}
     	if (nameIdx != null){
+//        	logger.debug("draw txt " + );
     		String name=pc.trace.getName(nameIdx);
     		if (name != null){
     			if  (img == null)
