@@ -215,6 +215,7 @@ public class Node {
 //        	logger.debug("draw txt " + );
     		String name=pc.trace.getName(nameIdx);
     		if (name != null){
+    			pc.g.setColor(0, 0, 0);
     			if  (img == null)
     				pc.g.drawString(name, pc.swapLineP.x, pc.swapLineP.y, Graphics.BASELINE | Graphics.HCENTER);
     			else
