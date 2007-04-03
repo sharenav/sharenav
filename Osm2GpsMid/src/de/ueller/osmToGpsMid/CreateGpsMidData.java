@@ -71,7 +71,7 @@ public class CreateGpsMidData {
 			ds = new DataOutputStream(fo);
 			int curPos=0;
 			short idx=0;
-			short fnr=0;
+			short fnr=1;
 			short fcount=0;
 			for (String string : names) {
 				int eq=getEqualCount(string,lastStr);
@@ -96,6 +96,7 @@ public class CreateGpsMidData {
 				fcount++;
 //				ds.writeUTF(string);
 			}
+			dsi.writeShort(idx);
 			ds.close();
 			dsi.close();
 		} catch (FileNotFoundException e) {

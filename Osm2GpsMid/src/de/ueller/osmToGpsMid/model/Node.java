@@ -39,9 +39,9 @@ public class Node extends Entity{
 		return null;
 	}
 	public String getAmenity(){
-		String place = ((String)tags.get("amenity"));
+		String amenity = ((String)tags.get("amenity"));
 //		System.out.println("Read place for id="+id+" as=" + place);
-		if (place != null) return place.trim();
+		if (amenity != null) return amenity.trim();
 		return null;
 	}
 	
@@ -64,6 +64,9 @@ public class Node extends Entity{
 		p=getAmenity();
 		if (p != null){
 			if ("parking".equals(p)) return Constants.NODE_AMENITY_PARKING;
+			if ("school".equals(p)) return Constants.NODE_AMENITY_SCHOOL;
+			if ("telephone".equals(p)) return Constants.NODE_AMENITY_TELEPHONE;
+			if ("fuel".equals(p)) return Constants.NODE_AMENITY_FUEL;
 		}
 		
 		return 0;

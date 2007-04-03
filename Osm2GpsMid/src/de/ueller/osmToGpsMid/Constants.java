@@ -20,6 +20,9 @@ public class Constants {
 	public final static byte NODE_PLACE_SUBURB=5;
 	
 	public final static byte NODE_AMENITY_PARKING=50;
+	public static final byte NODE_AMENITY_SCHOOL = 51;
+	public static final byte NODE_AMENITY_TELEPHONE = 52;
+	public static final byte NODE_AMENITY_FUEL = 53;
 	
 	public final static byte WAY_HIGHWAY_MOTORWAY=2;
 	public final static byte WAY_HIGHWAY_MOTORWAY_LINK=2;
