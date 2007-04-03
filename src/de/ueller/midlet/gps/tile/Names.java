@@ -19,7 +19,7 @@ import de.ueller.midlet.gps.Logger;
 //import de.ueller.midlet.gps.Logger;
 
 public class Names implements Runnable {
-	private final static Logger logger=Logger.getInstance(Names.class,Logger.DEBUG);
+	private final static Logger logger=Logger.getInstance(Names.class,Logger.TRACE);
 	private Vector queue=new Vector();
 	private Vector addQueue=new Vector();
 	private short[] startIndexes=null;
@@ -40,7 +40,7 @@ public class Names implements Runnable {
 		try {
 			readIndex();
 			while (! shutdown){
-//				logger.trace("addQueue has " + addQueue.size() + " requests " + addQueue);
+				logger.trace("addQueue has " + addQueue.size() + " requests " + addQueue);
 				while (! addQueue.isEmpty()){
 					Short ne=(Short) addQueue.firstElement();
 					addQueue.removeElementAt(0);
@@ -101,11 +101,12 @@ public class Names implements Runnable {
 	
 	private void readIndex() throws IOException {
 		InputStream is = getClass().getResourceAsStream("/map/names-idx.dat");
-//		logger.info("read names-idx");
+		logger.info("read names-idx");
 		DataInputStream ds = new DataInputStream(is);
 
 		short[] nameIdxs = new short[255];
-		short count = 0;
+		short count=0;
+		nameIdxs[count++]=0;
 		while (ds.available() > 0) {
 			nameIdxs[count++] = ds.readShort();
 		}
@@ -113,50 +114,58 @@ public class Names implements Runnable {
 		for (int l = 0; l < count; l++) {
 			startIndexes[l] = nameIdxs[l];
 		}
+		logger.info("read names-idx ready");
 	}
 	
 	private void readData(Enumeration e) throws IOException{
 		Short idx=(Short) e.nextElement();
-//		logger.info("search String for idx " + idx);
+		logger.info("search String for idx " + idx);
 		// find file
 		int fid=0;
 		InputStream is=null;
 		int count=0;
 		int actIdx=0;
 		while (idx != null){
-		for (int i=fid;i < startIndexes.length;i++){
-			if (startIndexes[i] > idx.shortValue()){
-				is = getClass().getResourceAsStream("/map/names-" + fid + ".dat");
-//				logger.trace("open names-"+fid + " startIdx=" + startIndexes[fid] + "-" + startIndexes[fid+1]);
-				count=startIndexes[i]-startIndexes[fid];
-				actIdx=startIndexes[fid];
+			is=null;
+			for (int i=fid;i < startIndexes.length;i++){
+				logger.info("loop index["+ i +"]=" + startIndexes[i]);
+				if (startIndexes[i] > idx.shortValue()){
+					is = getClass().getResourceAsStream("/map/names-" + fid + ".dat");
+					logger.trace("open names-"+fid + " startIdx=" + startIndexes[fid] + "-" + startIndexes[fid+1]);
+					count=startIndexes[i]-startIndexes[fid];
+					actIdx=startIndexes[fid];
+					break;
+				}
+				fid=i;
+			}
+			if (is==null){
+				logger.error("no inputstream found");
 				break;
 			}
-			fid=i;
-		}
-		DataInputStream ds=new DataInputStream(is);
+			DataInputStream ds=new DataInputStream(is);
 
-		int pos=0;
-		StringBuffer name=new StringBuffer();
-		files:for (int l=0;l<count;l++){
-			int delta=ds.readByte();
-			name.setLength(pos+delta);
-			name.append(ds.readUTF());
-			pos+=delta;
-			if (actIdx == idx.shortValue()){
-				StringEntry se=(StringEntry) stringCache.get(idx);
-				se.name=name.toString();
-//				logger.info("found Name '" + se.name + "' for idx:" + idx);
-				if (e.hasMoreElements()){
-					idx=(Short) e.nextElement();
-				} else {
-					idx=null;
-					break files;
+			int pos=0;
+			StringBuffer name=new StringBuffer();
+			files:for (int l=0;l<count;l++){
+				int delta=ds.readByte();
+				name.setLength(pos+delta);
+				name.append(ds.readUTF());
+				logger.info("test Name '" + name + "' at idx:" + actIdx);
+				pos+=delta;
+				if (actIdx == idx.shortValue()){
+					StringEntry se=(StringEntry) stringCache.get(idx);
+					se.name=name.toString();
+					logger.info("found Name '" + se.name + "' for idx:" + idx);
+					if (e.hasMoreElements()){
+						idx=(Short) e.nextElement();
+					} else {
+						idx=null;
+						break files;
+					}
 				}
+				actIdx++;
 			}
-			actIdx++;
-		}
-		ds.close();
+			ds.close();
 		}
 	}
 
@@ -168,13 +177,13 @@ public class Names implements Runnable {
 		StringEntry ret=(StringEntry) stringCache.get(idx);
 		if (ret != null) {
 			ret.count=4;
-//			logger.info("found Name '" + ret.name + "' for idx:" + idx);
+			logger.info("found Name '" + ret.name + "' for idx:" + idx);
 			return ret.name;
 		}
 		StringEntry newEntry = new StringEntry(null);
 		stringCache.put(idx, newEntry);
 		newEntry.count=4;
-//		logger.info("add request for idx:" + idx);
+		logger.info("add request for idx:" + idx);
 		addQueue.addElement(idx);
 		return null;
 	}
