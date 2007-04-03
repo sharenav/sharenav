@@ -63,7 +63,7 @@ public final class ProjMath {
     /**
      * Longitude range in radians.
      */
-    public final static transient float LON_RANGE_F = (float) MoreMath.TWO_PI;
+    public final static transient float LON_RANGE_F = MoreMath.TWO_PI;
 
     /**
      * Longitude range in radians.
@@ -134,7 +134,7 @@ public final class ProjMath {
      * @return double decimal degrees
      */
     public final static double SC_TO_DEG(int sc) {
-        return ((double) (sc) / (60.0 * 60.0 * 1000.0));
+        return ((sc) / (60.0 * 60.0 * 1000.0));
     }
 
     /**
@@ -186,10 +186,12 @@ public final class ProjMath {
      *  
      */
     public final static int hashLatLon(float lat, float lon) {
-        if (lat == -0f)
-            lat = 0f;//handle negative zero (anything else?)
-        if (lon == -0f)
-            lon = 0f;
+        if (lat == -0f) {
+			lat = 0f;//handle negative zero (anything else?)
+		}
+        if (lon == -0f) {
+			lon = 0f;
+		}
         int tmp = Float.floatToIntBits(lat);
         int hash = (tmp << 5) | (tmp >> 27);//rotate the lat bits
         return hash ^ Float.floatToIntBits(lon);//XOR with lon
@@ -369,7 +371,7 @@ public final class ProjMath {
      */
     public final static float geocentric_latitude(float lat, float flat) {
         float f = 1.0f - flat;
-        return (float) MoreMath.atan((f * f) * (float) Math.tan(lat));
+        return MoreMath.atan((f * f) * (float) Math.tan(lat));
     }
 
     /**
@@ -384,7 +386,7 @@ public final class ProjMath {
      */
     public final static float geographic_latitude(float lat, float flat) {
         float f = 1.0f - flat;
-        return (float) MoreMath.atan((float) Math.tan(lat) / (f * f));
+        return MoreMath.atan((float) Math.tan(lat) / (f * f));
     }
 
     /**

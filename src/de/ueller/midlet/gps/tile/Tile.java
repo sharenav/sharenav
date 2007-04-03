@@ -25,10 +25,18 @@ public abstract class Tile {
 	boolean contain(ScreenContext pc){
 //		System.out.println(this);
 //		System.out.println(pc.screenLD + "   " + pc.screenRU);
-		if(maxLat < pc.screenLD.radlat) return false;
-		if(maxLon < pc.screenLD.radlon) return false;
-		if(minLat > pc.screenRU.radlat) return false;
-		if(minLon > pc.screenRU.radlon) return false;
+		if(maxLat < pc.screenLD.radlat) {
+			return false;
+		}
+		if(maxLon < pc.screenLD.radlon) {
+			return false;
+		}
+		if(minLat > pc.screenRU.radlat) {
+			return false;
+		}
+		if(minLon > pc.screenRU.radlon) {
+			return false;
+		}
 		return true;
 	}
 	protected void drawBounds(PaintContext pc, int r, int g, int b) {

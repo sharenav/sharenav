@@ -40,7 +40,9 @@ public class SirfMessage {
 
 	public short getByte(int i) {
 		short buf = readBuffer[i];
-		if (buf < 0) buf = (short) (buf + 256);
+		if (buf < 0) {
+			buf = (short) (buf + 256);
+		}
 		return buf;
 	}
 

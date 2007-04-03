@@ -176,8 +176,9 @@ public class DiscoverGps implements Runnable, DiscoveryListener {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		if (waitUntilNotify()) 
+		if (waitUntilNotify()) {
 			return;
+		}
 		switch (discType) {
 			case INQUIRY_ERROR:
 				parent.showState("Device discovering error...");
@@ -212,7 +213,9 @@ public class DiscoverGps implements Runnable, DiscoveryListener {
 	}
 
 	private boolean waitUntilNotify() {
-		if (isClosed) return false;
+		if (isClosed) {
+			return false;
+		}
 //		parent.addDevice("wait for notify");
 		synchronized (this) {
 			try {
@@ -224,7 +227,9 @@ public class DiscoverGps implements Runnable, DiscoveryListener {
 			}
 		}
 //		parent.addDevice("got notify");
-		if (isClosed) return true;
+		if (isClosed) {
+			return true;
+		}
 		return false;
 	}
 

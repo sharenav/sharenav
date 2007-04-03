@@ -4,9 +4,8 @@
  */
 package de.ueller.midlet.gps;
 
-import java.io.PrintStream;
-
 import javax.microedition.lcdui.Alert;
+import javax.microedition.lcdui.Choice;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Display;
@@ -28,14 +27,14 @@ public class GpsMid extends MIDlet implements CommandListener{
     private final Command OK_CMD = new Command("Ok", Command.SCREEN, 1);
 
     /** A menu list instance */
-    private final List menu = new List("GPSMid", List.IMPLICIT, elements, null);
+    private final List menu = new List("GPSMid", Choice.IMPLICIT, elements, null);
 
 	private boolean	isInit=false;
 
 	private String	btUrl="btspp://000DB5315C50:1;authenticate=false;encrypt=false;master=false";
 
 	private String	root;
-	PrintStream log;
+//	PrintStream log;
 	Logger l;
 
 

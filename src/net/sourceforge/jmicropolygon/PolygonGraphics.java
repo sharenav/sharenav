@@ -27,8 +27,9 @@ public class PolygonGraphics
     public static void drawPolygon(Graphics g, int xPoints[], int yPoints[])
     {
         int max = xPoints.length - 1;
-        for(int i = 0; i < max; i++)
-            g.drawLine(xPoints[i], yPoints[i], xPoints[i + 1], yPoints[i + 1]);
+        for(int i = 0; i < max; i++) {
+			g.drawLine(xPoints[i], yPoints[i], xPoints[i + 1], yPoints[i + 1]);
+		}
 
         g.drawLine(xPoints[max], yPoints[max], xPoints[0], yPoints[0]);
     }
@@ -37,7 +38,9 @@ public class PolygonGraphics
     {
         Stack stack = new Stack();
         fillPolygon(g, xPoints, yPoints, stack);
-        for(; !stack.isEmpty(); fillPolygon(g, (int[])stack.pop(), (int[])stack.pop(), stack));
+        for(; !stack.isEmpty(); fillPolygon(g, (int[])stack.pop(), (int[])stack.pop(), stack)) {
+			;
+		}
     }
 
     private static void fillPolygon(Graphics g, int xPoints[], int yPoints[], Stack stack)
@@ -51,12 +54,13 @@ public class PolygonGraphics
             boolean leastInternalSet = false;
             if(xPoints.length > 3)
             {
-                for(int i = 0; i < xPoints.length; i++)
-                    if(i != a && i != b && i != c && GeomUtils.withinBounds(xPoints[i], yPoints[i], xPoints[a], yPoints[a], xPoints[b], yPoints[b], xPoints[c], yPoints[c]) && (!leastInternalSet || xPoints[i] < xPoints[leastInternalIndex]))
+                for(int i = 0; i < xPoints.length; i++) {
+					if((i != a) && (i != b) && (i != c) && GeomUtils.withinBounds(xPoints[i], yPoints[i], xPoints[a], yPoints[a], xPoints[b], yPoints[b], xPoints[c], yPoints[c]) && (!leastInternalSet || (xPoints[i] < xPoints[leastInternalIndex])))
                     {
                         leastInternalIndex = i;
                         leastInternalSet = true;
                     }
+				}
 
             }
             if(!leastInternalSet)

@@ -1,5 +1,5 @@
-#Mon Feb 05 09:00:22 CET 2007
+#Tue Apr 03 11:11:39 CEST 2007
 eclipse.preferences.version=1
-pkg_autoversion=true
-pkg_use_project=true
-preverify_config_value=CLDC-1.0
+preverify_config_location=jad
+preverify_config_value=CLDC-1.1
+preverify_use_built_in=true

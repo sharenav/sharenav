@@ -7,17 +7,6 @@ package de.ueller.midlet.gps.tile;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Vector;
-
-import javax.microedition.io.Connector;
-import javax.microedition.io.file.FileConnection;
-import javax.microedition.io.file.FileSystemRegistry;
-import javax.microedition.lcdui.Alert;
-import javax.microedition.lcdui.Display;
-
-import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.Way;
 
@@ -27,13 +16,13 @@ public class DataReader implements Runnable {
 	private final SingleTile st;
 	private final String	url;
 	private Thread	processorThread;
-	private final String	root;
+//	private final String	root;
 //	private final static Logger logger=Logger.getInstance(DataReader.class,Logger.TRACE);
 
 	public DataReader(int fileId,String root,byte zl,SingleTile st){
 		super();
 		this.url = "/map/t"+zl+fileId+".d";
-		this.root = root;
+//		this.root = root;
 		this.st = st;
 		processorThread = new Thread(this,url);
 		processorThread.setPriority(Thread.MIN_PRIORITY+1);
@@ -86,7 +75,9 @@ public class DataReader implements Runnable {
 		}
 		int wayCount=ds.readByte();
 //		logger.info("reading " + wayCount + " ways");
-		if (wayCount < 0) wayCount+=256;
+		if (wayCount < 0) {
+			wayCount+=256;
+		}
 //		logger.info("reading " + wayCount + " ways");
 		st.ways = new Way[wayCount];
 		for (int i=0; i< wayCount;i++){

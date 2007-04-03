@@ -7,18 +7,10 @@ package de.ueller.midlet.gps.tile;
 import java.io.DataInputStream;
 import java.io.IOException;
 
-import javax.microedition.lcdui.Graphics;
-import javax.microedition.lcdui.Image;
-
-import net.sourceforge.jmicropolygon.PolygonGraphics;
-
-import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.ScreenContext;
 import de.ueller.midlet.gps.Trace;
 
-import de.ueller.midlet.gps.data.IntPoint;
 import de.ueller.midlet.gps.data.Node;
-import de.ueller.midlet.gps.data.Projection;
 import de.ueller.midlet.gps.data.Way;
 
 public class SingleTile extends Tile {
@@ -78,12 +70,20 @@ public class SingleTile extends Tile {
 			lastUse = 0;
 			if (ways != null) {
 				for (int i = 0; i < ways.length; i++) {
-					Way w = (Way) ways[i];
+					Way w = ways[i];
 					// logger.debug("test Bounds of way");
-					if (w.maxLat < pc.screenLD.radlat) continue;
-					if (w.maxLon < pc.screenLD.radlon) continue;
-					if (w.minLat > pc.screenRU.radlat) continue;
-					if (w.minLon > pc.screenRU.radlon) continue;
+					if (w.maxLat < pc.screenLD.radlat) {
+						continue;
+					}
+					if (w.maxLon < pc.screenLD.radlon) {
+						continue;
+					}
+					if (w.minLat > pc.screenRU.radlat) {
+						continue;
+					}
+					if (w.minLon > pc.screenRU.radlon) {
+						continue;
+					}
 //					logger.debug("draw " + w.name);
 					w.setColor(pc);
 					if (w.type < 50){
@@ -95,11 +95,21 @@ public class SingleTile extends Tile {
 			}
 			for (short i = 0; i < nodes.length; i++) {
 				Node node = nodes[i];
-				if (node.type == 0) break;
-				if (node.radlat < pc.screenLD.radlat) continue;
-				if (node.radlon < pc.screenLD.radlon) continue;
-				if (node.radlat > pc.screenRU.radlat) continue;
-				if (node.radlon > pc.screenRU.radlon) continue;
+				if (node.type == 0) {
+					break;
+				}
+				if (node.radlat < pc.screenLD.radlat) {
+					continue;
+				}
+				if (node.radlon < pc.screenLD.radlon) {
+					continue;
+				}
+				if (node.radlat > pc.screenRU.radlat) {
+					continue;
+				}
+				if (node.radlon > pc.screenRU.radlon) {
+					continue;
+				}
 				node.paint(pc);
 			}
 		} else {
@@ -129,7 +139,7 @@ public class SingleTile extends Tile {
 	}
 
 	public static void setTrace(Trace trace) {
-		SingleTile.trace = trace;
+		Tile.trace = trace;
 	}
 
 }

@@ -40,24 +40,29 @@ public class Logger {
 		return new Logger(c,level);
 	}
 	public void fatal(String msg){
-		if (level >= FATAL)
-		app.log("F["+getClassName()+"] " + msg);
+		if (level >= FATAL) {
+			app.log("F["+getClassName()+"] " + msg);
+		}
 	}
 	public void error(String msg){
-		if (level >= ERROR)
-		app.log("E["+getClassName()+"] " + msg);
+		if (level >= ERROR) {
+			app.log("E["+getClassName()+"] " + msg);
+		}
 	}
 	public void info(String msg){
-		if (level >= INFO)
-		app.log("I["+getClassName()+"] " + msg);
+		if (level >= INFO) {
+			app.log("I["+getClassName()+"] " + msg);
+		}
 	}
 	public void debug(String msg){
-		if (level >= DEBUG)
-		app.log("D["+getClassName()+"] " + msg);
+		if (level >= DEBUG) {
+			app.log("D["+getClassName()+"] " + msg);
+		}
 	}
 	public void trace(String msg){
-		if (level >= TRACE)
-		app.log("T["+getClassName()+"] " + msg);
+		if (level >= TRACE) {
+			app.log("T["+getClassName()+"] " + msg);
+		}
 	}
 	
 	private String getClassName() {

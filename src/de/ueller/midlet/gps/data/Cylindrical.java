@@ -90,11 +90,13 @@ public abstract class Cylindrical extends Proj {
         // can occur)
 //    	logger.info("calc minscale");
         minscale = (float) Math.ceil(planetPixelCircumference
-                / (int) Integer.MAX_VALUE);
-        if (minscale < 1)
-            minscale = 1;
-        if (scale < minscale)
-            scale = minscale;
+                / Integer.MAX_VALUE);
+        if (minscale < 1) {
+			minscale = 1;
+		}
+        if (scale < minscale) {
+			scale = minscale;
+		}
 
 //         maxscale = scale at which world circumference fits in
         // window
@@ -112,8 +114,9 @@ public abstract class Cylindrical extends Proj {
         scaled_radius = planetPixelRadius / scale;
 
 //        logger.info("create world");
-        if (world == null)
-            world = new IntPoint(0, 0);
+        if (world == null) {
+			world = new IntPoint(0, 0);
+		}
 
         // width of the world in pixels at current scale
 //    	logger.info("calc scale");

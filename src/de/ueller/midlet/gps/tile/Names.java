@@ -14,10 +14,12 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import de.ueller.midlet.gps.Logger;
+
 //import de.ueller.midlet.gps.Logger;
 
 public class Names implements Runnable {
-//	private final static Logger logger=Logger.getInstance(Names.class,Logger.TRACE);
+	private final static Logger logger=Logger.getInstance(Names.class,Logger.DEBUG);
 	private Vector queue=new Vector();
 	private Vector addQueue=new Vector();
 	private short[] startIndexes=null;
@@ -160,7 +162,9 @@ public class Names implements Runnable {
 
 	
 	public String getName(Short idx){
-		if (idx.shortValue() <0) return null;
+		if (idx.shortValue() <0) {
+			return null;
+		}
 		StringEntry ret=(StringEntry) stringCache.get(idx);
 		if (ret != null) {
 			ret.count=4;
@@ -186,9 +190,12 @@ public class Names implements Runnable {
 				ce.count--;
 			}
 		}
-//		logger.info("ready cleanup namesCache " + stringCache.size());
+		logger.info("ready cleanup namesCache " + stringCache.size());
 		cleanup=false;
 	}
 
+	public int getNameCount(){
+		return stringCache.size();
+	}
 
 }

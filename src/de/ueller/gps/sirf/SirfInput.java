@@ -47,8 +47,12 @@ public class SirfInput implements Runnable{
 			timeCounter++;
 			if (timeCounter > 4){
 				timeCounter = 0;
-				if(connectQuality > 100) connectQuality=100;
-				if(connectQuality < 0) connectQuality=0;
+				if(connectQuality > 100) {
+					connectQuality=100;
+				}
+				if(connectQuality < 0) {
+					connectQuality=0;
+				}
 				receiver.receiveStatistics(connectError,connectQuality);
 			}
 			process();
@@ -75,8 +79,9 @@ public class SirfInput implements Runnable{
 				long mesChecksum;
 				switch (start) {
 				case 0:
-					if (ins.available() < 2)
+					if (ins.available() < 2) {
 						break;
+					}
 					if (ins.read() == 0xA0) {
 						if (ins.read() == 0xA2) {
 							start = 2;
@@ -91,8 +96,9 @@ public class SirfInput implements Runnable{
 						break;
 					}
 				case 2:
-					if (ins.available() < 2)
+					if (ins.available() < 2) {
 						break;
+					}
 					length = ins.read() * 256;
 					length += ins.read();
 					if (length >= 1023) {
@@ -104,8 +110,9 @@ public class SirfInput implements Runnable{
 					start = 3;
 					smsg.length = length;
 				case 3:
-					if (ins.available() <= length)
+					if (ins.available() <= length) {
 						break;
+					}
 					if (ins.read(readBuffer, 0, length) != length) {
 						connectError[SirfMsgReceiver.SIRF_FAIL_MSG_INTERUPTED]++;
 						connectQuality-=2;
@@ -114,8 +121,9 @@ public class SirfInput implements Runnable{
 					}
 					start = 4;
 				case 4:
-					if (ins.available() < 2)
+					if (ins.available() < 2) {
 						break;
+					}
 					checksum = ins.read();
 					checksum = checksum * 256 + ins.read();
 					mesChecksum = calcChecksum(smsg);
@@ -126,8 +134,9 @@ public class SirfInput implements Runnable{
 					}
 					start = 5;
 				case 5:
-					if (ins.available() < 2)
+					if (ins.available() < 2) {
 						break;
+					}
 					if (ins.read() == 0xB0) {
 						if (ins.read() == 0xB3) {
 							connectQuality++;

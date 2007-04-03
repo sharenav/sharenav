@@ -5,8 +5,6 @@ import javax.microedition.lcdui.Image;
 
 import de.ueller.midlet.gps.data.IntPoint;
 import de.ueller.midlet.gps.data.Mercator;
-import de.ueller.midlet.gps.data.Node;
-import de.ueller.midlet.gps.data.Projection;
 import de.ueller.midlet.gps.tile.PaintContext;
 import de.ueller.midlet.gps.tile.Tile;
 /*
@@ -57,8 +55,8 @@ public class ImageCollector implements Runnable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		xSize=x*2;
-		ySize=y*2;
+		xSize=x+80;
+		ySize=y+80;
 		imgCollect=Image.createImage(xSize,ySize);
 		imgPaint=Image.createImage(xSize,ySize);
 		imgReady=Image.createImage(xSize,ySize);
@@ -101,15 +99,15 @@ public class ImageCollector implements Runnable {
 					pcCollect.g.fillRect(0, 0, pcCollect.xSize, pcCollect.ySize);
 //				System.out.println("create " + pcCollect);
 				
-				if (pcCollect.scale < 90000 && t[3] != null){
+				if ((pcCollect.scale < 90000) && (t[3] != null)){
 					t[3].paint(pcCollect);
 					Thread.yield();
 				} 
-				if (pcCollect.scale < 360000 && t[2] != null){
+				if ((pcCollect.scale < 360000) && (t[2] != null)){
 					t[2].paint(pcCollect);
 					Thread.yield();
 				} 
-				if (pcCollect.scale < 1800000f && t[1] != null){
+				if ((pcCollect.scale < 1800000f) && (t[1] != null)){
 					t[1].paint(pcCollect);
 					Thread.yield();
 				} 
@@ -119,6 +117,7 @@ public class ImageCollector implements Runnable {
 				newCollected();
 				Thread.yield();
 //				System.out.println("create ready");
+				System.gc();
 				synchronized (this) {
 					wait(5000);
 				}			

@@ -22,7 +22,6 @@
 
 package de.ueller.midlet.gps.data;
 
-import com.sun.perseus.platform.MathSupport;
 
 //import de.ueller.m.midlet.gps.Logger;
 
@@ -268,7 +267,7 @@ public class MoreMath {
 	 * @return int (0 &lt;= b &lt;= 255)
 	 */
 	public static final int signedToInt(byte b) {
-		return ((int) b & 0xff);
+		return (b & 0xff);
 	}
 
 	/**
@@ -279,7 +278,7 @@ public class MoreMath {
 	 * @return int (0 &lt;= b &lt;= 65535)
 	 */
 	public static final int signedToInt(short w) {
-		return ((int) w & 0xffff);
+		return (w & 0xffff);
 	}
 
 	/**
@@ -290,7 +289,7 @@ public class MoreMath {
 	 * @return long (0 &lt;= x &lt;= 4294967295)
 	 */
 	public static final long signedToLong(int x) {
-		return ((long) x & 0xFFFFFFFFL);
+		return (x & 0xFFFFFFFFL);
 	}
 
 
@@ -314,25 +313,49 @@ public class MoreMath {
 	 */
 
 	public static final float asin(float x) {
-		if (x < -1f || x > 1f) return Float.NaN;
-		if (x == -1f) return -HALF_PI;
-		if (x == 1f) return HALF_PI;
-		return (float) MathSupport.atan(x / MathSupport.sqrt(1 - x * x));
+		if ((x < -1f) || (x > 1f)) {
+			return Float.NaN;
+		}
+		if (x == -1f) {
+			return -HALF_PI;
+		}
+		if (x == 1f) {
+			return HALF_PI;
+		}
+		
+		return atan((float) (x / Math.sqrt(1 - x * x)));
 
 	}
 
-	public static final float atan2(float x, float y) {
-		return MathSupport.atan2(x, y);
-	}
-
-//	public static final float atan(float x) {
-//		return MathSupport.atan(x);
-//	}
 	  /** Square root from 3 */
 	public final static float SQRT3 = 1.732050807568877294f;
 	public final static float PiDiv12=0.26179938779914943653855361527329f;
 	public final static float PiDiv6=0.52359877559829887307710723054658f;
 	public final static float PiDiv2=1.5707963267948966192313216916398f;
+
+	  static public float atan2(float y, float x)
+	  {
+	    // if x=y=0
+	    if(y==0. && x==0.)
+	      return 0f;
+	    // if x>0 atan(y/x)
+	    if(x>0f)
+	      return atan(y/x);
+	    // if x<0 sign(y)*(pi - atan(|y/x|))
+	    if(x<0f)
+	    {
+	      if(y<0f)
+	        return (float) -(Math.PI-atan(y/x));
+	      else
+	        return (float) (Math.PI-atan(-y/x));
+	    }
+	    // if x=0 y!=0 sign(y)*pi/2
+	    if(y<0.)
+	      return (float) (-Math.PI/2.);
+	    else
+	      return (float) (Math.PI/2.);
+	  }
+
 	  static public float atan(float x)
 	  {
 	      boolean signChange=false;
@@ -375,9 +398,13 @@ public class MoreMath {
 	          sp--;
 	      }
 	      // invertation took place
-	      if(Invert) a=PiDiv2-a;
+	      if(Invert) {
+			a=PiDiv2-a;
+		}
 	      // sign change took place
-	      if(signChange) a=-a;
+	      if(signChange) {
+			a=-a;
+		}
 	      //
 	      return a;
 	  }
@@ -385,9 +412,13 @@ public class MoreMath {
 
 	public static final float log(float x) {
 //		logger.info("enter log " + x);
-		if (!(x > 0f)) return Float.NaN;
+		if (!(x > 0f)) {
+			return Float.NaN;
+		}
 		//
-		if (x == 1f) return 0f;
+		if (x == 1f) {
+			return 0f;
+		}
 		// Argument of _log must be (0; 1]
 		if (x > 1f) {
 			x = 1 / x;
@@ -399,10 +430,18 @@ public class MoreMath {
 	}
 
 	public static final float pow(float x, float y) {
-		if (x == 0f) return 0f;
-		if (x == 1f) return 1f;
-		if (y == 0f) return 1f;
-		if (y == 1f) return x;
+		if (x == 0f) {
+			return 0f;
+		}
+		if (x == 1f) {
+			return 1f;
+		}
+		if (y == 0f) {
+			return 1f;
+		}
+		if (y == 1f) {
+			return x;
+		}
 		//
 		int l;
 		boolean neg;
@@ -413,34 +452,39 @@ public class MoreMath {
 			neg = false;
 			l = (int) (y);
 		}
-		boolean integerValue = (y == (float) l);
+		boolean integerValue = (y == l);
 		//
 		if (integerValue) {
 			//
 			float result = x;
-			for (long i = 1; i < (neg ? -l : l); i++)
+			for (long i = 1; i < (neg ? -l : l); i++) {
 				result = result * x;
+			}
 			//
-			if (neg)
+			if (neg) {
 				return 1f / result;
-			else
+			} else {
 				return result;
+			}
 		} else {
-			if (x > 0f)
+			if (x > 0f) {
 				return exp(y * log(x));
-			else
+			} else {
 				return Float.NaN;
+			}
 		}
 	}
 
 	static private float _log(float x) {
 //		logger.info("enter _log " + x);
-		if (!(x > 0f)) return Float.NaN;
+		if (!(x > 0f)) {
+			return Float.NaN;
+		}
 		//
 		float f = 0f;
 		//
 		int appendix = 0;
-		while (x > 0f && x <= 1f) {
+		while ((x > 0f) && (x <= 1f)) {
 			x *= 2f;
 			appendix++;
 		}
@@ -461,21 +505,26 @@ public class MoreMath {
 		}
 		//
 		f *= 2f;
-		for (int i = 0; i < appendix; i++)
+		for (int i = 0; i < appendix; i++) {
 			f += FLOAT_LOGFDIV2;
+		}
 		//
 //		logger.info("exit _log" + f);
 		return f;
 	}
 
 	static public float exp(float x) {
-		if (x == 0f) return 1f;
+		if (x == 0f) {
+			return 1f;
+		}
 		//
 		float f = 1f;
 		long d = 1;
 		float k;
 		boolean isless = (x < 0f);
-		if (isless) x = -x;
+		if (isless) {
+			x = -x;
+		}
 		k = x / d;
 		//
 		for (long i = 2; i < 50; i++) {
@@ -483,10 +532,11 @@ public class MoreMath {
 			k = k * x / i;
 		}
 		//
-		if (isless)
+		if (isless) {
 			return 1 / f;
-		else
+		} else {
 			return f;
+		}
 	}
 
 }

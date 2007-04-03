@@ -6,12 +6,10 @@ package de.ueller.midlet.gps.data;
 
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
-import de.ueller.midlet.gps.Logger;
+//import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.tile.C;
 import de.ueller.midlet.gps.tile.PaintContext;
 
@@ -31,7 +29,7 @@ public class Node {
     public final static float LON_RANGE = 360.0f;
 
     public final static float EQUIVALENT_TOLERANCE = 0.00001f;
-	private final static Logger logger=Logger.getInstance(Node.class,Logger.DEBUG);
+//	private final static Logger logger=Logger.getInstance(Node.class,Logger.DEBUG);
 
 	/** construct a node from the stream. Assumes
 	 * that the id is readed befor.
@@ -206,28 +204,31 @@ public class Node {
     	pc.p.forward(radlat, radlon, pc.swapLineP, true);
     	if  (img != null){
 //        	logger.debug("draw img " + img);
-    		if (nameIdx == null)
-    			pc.g.drawImage(img, pc.swapLineP.x, pc.swapLineP.y, Graphics.VCENTER | Graphics.HCENTER);
-    		else 
-    			pc.g.drawImage(img, pc.swapLineP.x, pc.swapLineP.y, Graphics.BOTTOM | Graphics.HCENTER);
+    		if (nameIdx == null) {
+				pc.g.drawImage(img, pc.swapLineP.x, pc.swapLineP.y, Graphics.VCENTER | Graphics.HCENTER);
+			} else {
+				pc.g.drawImage(img, pc.swapLineP.x, pc.swapLineP.y, Graphics.BOTTOM | Graphics.HCENTER);
+			}
     	}
     	if (nameIdx != null){
 //        	logger.debug("draw txt " + );
     		String name=pc.trace.getName(nameIdx);
     		if (name != null){
     			pc.g.setColor(0, 0, 0);
-    			if  (img == null)
-    				pc.g.drawString(name, pc.swapLineP.x, pc.swapLineP.y, Graphics.BASELINE | Graphics.HCENTER);
-    			else
-    				pc.g.drawString(name, pc.swapLineP.x, pc.swapLineP.y, Graphics.TOP | Graphics.HCENTER);
+    			if  (img == null) {
+					pc.g.drawString(name, pc.swapLineP.x, pc.swapLineP.y, Graphics.BASELINE | Graphics.HCENTER);
+				} else {
+					pc.g.drawString(name, pc.swapLineP.x, pc.swapLineP.y, Graphics.TOP | Graphics.HCENTER);
+				}
     		}
     	}
     }
     
     public Node clone(){
     	Node n=new Node();
-    	if (nameIdx != null)
-    		n.nameIdx=new Short(nameIdx.shortValue());
+    	if (nameIdx != null) {
+			n.nameIdx=new Short(nameIdx.shortValue());
+		}
     	n.type=type;
     	n.radlat=radlat;
     	n.radlon=radlon;

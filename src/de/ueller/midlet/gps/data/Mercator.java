@@ -22,9 +22,6 @@
 
 package de.ueller.midlet.gps.data;
 
-import de.ueller.midlet.gps.Logger;
-import de.ueller.midlet.gps.Trace;
-
 
 
 
@@ -112,7 +109,7 @@ public class Mercator extends Cylindrical {
 
         // do some precomputation of stuff
         tanCtrLat = (float) Math.tan(ctrLat);
-        asinh_of_tanCtrLat = (float) MoreMath.asinh(tanCtrLat);
+        asinh_of_tanCtrLat = MoreMath.asinh(tanCtrLat);
 
         // compute the offsets
         hy = height / 2;
@@ -224,9 +221,9 @@ public class Mercator extends Cylindrical {
         // inverse project
         // See if you can take advantage of the precalculated array.
         float wc = asinh_of_tanCtrLat * scaled_radius;
-        llp.setLatitude(ProjMath.radToDeg((float) MoreMath.atan(MoreMath.sinh((y + wc)
+        llp.setLatitude(ProjMath.radToDeg(MoreMath.atan(MoreMath.sinh((y + wc)
                 / scaled_radius))));
-        llp.setLongitude(ProjMath.radToDeg((float) x / scaled_radius + ctrLon));
+        llp.setLongitude(ProjMath.radToDeg(x / scaled_radius + ctrLon));
 
         return llp;
     }
@@ -243,10 +240,10 @@ public class Mercator extends Cylindrical {
     public Node inverse(int x, int y, Node llp) {
         // convert from screen to world coordinates
         x -= wx;
-        float y_=(((float)(hy-y))/scaled_radius)+asinh_of_tanCtrLat ;
+        float y_=(((hy-y))/scaled_radius)+asinh_of_tanCtrLat ;
 
-        llp.setLatLon((float)MoreMath.atan(MoreMath.sinh(y_)),
-                ((float)x / scaled_radius) + ctrLon,
+        llp.setLatLon(MoreMath.atan(MoreMath.sinh(y_)),
+                (x / scaled_radius) + ctrLon,
                 true);
         return llp;
     }

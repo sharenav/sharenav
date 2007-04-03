@@ -21,8 +21,9 @@ public abstract class GeomUtils
 
     static boolean withinBounds(int px, int py, int ax, int ay, int bx, int by, int cx, int cy)
     {
-        if(px < min(ax, bx, cx) || px > max(ax, bx, cx) || py < min(ay, by, cy) || py > max(ay, by, cy))
-            return false;
+        if((px < min(ax, bx, cx)) || (px > max(ax, bx, cx)) || (py < min(ay, by, cy)) || (py > max(ay, by, cy))) {
+			return false;
+		}
         boolean sameabc = sameSide(px, py, ax, ay, bx, by, cx, cy);
         boolean samebac = sameSide(px, py, bx, by, ax, ay, cx, cy);
         boolean samecab = sameSide(px, py, cx, cy, ax, ay, bx, by);
@@ -32,10 +33,11 @@ public abstract class GeomUtils
     static int[][][] split(int xPoints[], int yPoints[], int aIndex, int bIndex)
     {
         int firstLen;
-        if(bIndex < aIndex)
-            firstLen = (xPoints.length - aIndex) + bIndex + 1;
-        else
-            firstLen = (bIndex - aIndex) + 1;
+        if(bIndex < aIndex) {
+			firstLen = (xPoints.length - aIndex) + bIndex + 1;
+		} else {
+			firstLen = (bIndex - aIndex) + 1;
+		}
         int secondLen = (xPoints.length - firstLen) + 2;
         int first[][] = new int[2][firstLen];
         int second[][] = new int[2][secondLen];
@@ -67,13 +69,14 @@ public abstract class GeomUtils
         newPoly[0] = newXPoints;
         newPoly[1] = newYPoints;
         int p = 0;
-        for(int i = 0; i < xPoints.length; i++)
-            if(i != earIndex)
+        for(int i = 0; i < xPoints.length; i++) {
+			if(i != earIndex)
             {
                 newXPoints[p] = xPoints[i];
                 newYPoints[p] = yPoints[i];
                 p++;
             }
+		}
 
         return newPoly;
     }
@@ -82,12 +85,13 @@ public abstract class GeomUtils
     {
         int index = 0;
         int least = elements[0];
-        for(int i = 1; i < elements.length; i++)
-            if(elements[i] < least)
+        for(int i = 1; i < elements.length; i++) {
+			if(elements[i] < least)
             {
                 index = i;
                 least = elements[i];
             }
+		}
 
         return index;
     }

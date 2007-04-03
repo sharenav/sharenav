@@ -6,13 +6,10 @@ package de.ueller.midlet.gps.data;
 
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.util.Hashtable;
-
 import net.sourceforge.jmicropolygon.PolygonGraphics;
 
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.tile.C;
-import de.ueller.midlet.gps.tile.DataReader;
 import de.ueller.midlet.gps.tile.PaintContext;
 
 

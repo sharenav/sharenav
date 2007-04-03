@@ -80,6 +80,7 @@ public class Trace extends Canvas implements CommandListener, SirfMsgReceiver, R
 	private Names namesThread;
 //	private VisibleCollector vc;
 	private ImageCollector vc;
+	private Runtime runtime = Runtime.getRuntime();
 	
     public Trace(GpsMid parent,String url,String root) throws Exception{
     	logger.info("init Trace Class");
@@ -156,23 +157,27 @@ public class Trace extends Canvas implements CommandListener, SirfMsgReceiver, R
 		try {
 			if (c == EXIT_CMD) {
 				try {
-					if (si != null)
+					if (si != null) {
 						si.close();
-					if (inputStream != null)
+					}
+					if (inputStream != null) {
 						inputStream.close();
+					}
 					if (namesThread != null){
 						namesThread.stop();
 					}
 				} catch (IOException e) {
 				}
 				try {
-					if (si != null)
-					si.close();
+					if (si != null) {
+						si.close();
+					}
 				} catch (RuntimeException e1) {
 				}
 				try {
-					if (conn != null)
-					conn.close();
+					if (conn != null) {
+						conn.close();
+					}
 				} catch (IOException e) {
 				}
 			    parent.show();
@@ -207,7 +212,9 @@ public class Trace extends Canvas implements CommandListener, SirfMsgReceiver, R
 		break;
 		case 2:showSatelite(g);
 		break;
-		case 3: showAddons=0;
+		case 3:showMemory(g, yc, la);
+		break;
+		case 4: showAddons=0;
 		
 	}
 		showMovement(g);
@@ -234,15 +241,15 @@ public class Trace extends Canvas implements CommandListener, SirfMsgReceiver, R
 			g.setColor(155, 255, 155);
 			g.fillRect(0, 0, pc.xSize, pc.ySize);
 
-			if (scale < 90000 && t[3] != null){
+			if ((scale < 90000) && (t[3] != null)){
 //				logger.debug("start Paint");
 				t[3].paint(pc);
 			} 
-			if (scale < 360000 && t[2] != null){
+			if ((scale < 360000) && (t[2] != null)){
 //				logger.debug("start Paint");
 				t[2].paint(pc);
 			} 
-			if (scale < 1800000f && t[1] != null){
+			if ((scale < 1800000f) && (t[1] != null)){
 //				logger.debug("start Paint");
 				t[1].paint(pc);
 			} 
@@ -299,6 +306,10 @@ public class Trace extends Canvas implements CommandListener, SirfMsgReceiver, R
 			int py=centerY-(int) (Math.cos(az)*sr);
 //			g.drawString(""+s.id, px, py, Graphics.BASELINE|Graphics.HCENTER);
 			g.drawImage(satelit, px, py, Graphics.HCENTER|Graphics.VCENTER);
+			py+=9;
+			// draw a bar under image tha indicates green/red status and
+			// signal strength
+			
 		}
 		}
 //		g.drawImage(satelit, 5, 5, 0);
@@ -314,6 +325,19 @@ public class Trace extends Canvas implements CommandListener, SirfMsgReceiver, R
 		g.drawRect(centerX-2, centerY-2, 4, 4);
 		g.drawLine(centerX, centerY, px, py);
 
+	}
+	
+	public void showMemory(Graphics g, int yc, int la){
+		g.setColor(0,0,0);
+		g.drawString("freemem : "+runtime.freeMemory(), 0, yc, Graphics.TOP|Graphics.LEFT);
+		yc+=la;					
+		g.drawString("totmem  : "+runtime.totalMemory(), 0, yc, Graphics.TOP|Graphics.LEFT);
+		yc+=la;					
+		g.drawString("Percent : "+(100f*runtime.freeMemory()/runtime.totalMemory()), 0, yc, Graphics.TOP|Graphics.LEFT);
+		yc+=la;					
+		g.drawString("Names   : "+namesThread.getNameCount(), 0, yc, Graphics.TOP|Graphics.LEFT);
+		yc+=la;					
+		
 	}
 
 	public synchronized void receivePosItion(Position pos) {
@@ -414,44 +438,8 @@ public class Trace extends Canvas implements CommandListener, SirfMsgReceiver, R
 		solution=s;
 		
 	}
-
-
-//	public short[] getNamesIdx() {
-//		return namesIdx;
-//	}
-//
-//
-//	public void setNamesIdx(short[] namesIdx) {
-//		this.namesIdx = namesIdx;
-//	}
 	
 	public String getName(Short idx){
-//		StringEntry ret=(StringEntry) stringCache.get(idx);
-//		if (ret != null) {
-//			ret.count++;
-//			return ret.name;
-//		}
-//		StringEntry newEntry = new StringEntry(null);
-//		stringCache.put(idx, newEntry);
-//		newEntry.count++;
-//		new TileNamesReader(newEntry,idx,namesIdx);
-//		return null;
 		return namesThread.getName(idx);
 	}
-
-
-	
-//	private void cleanupStringCache(){
-//		logger.info("cleanup namesCache " + stringCache.size());
-//		for (Enumeration e=stringCache.keys();e.hasMoreElements();){
-//			Short key=(Short) e.nextElement();
-//			StringEntry ce=(StringEntry) stringCache.get(key);
-//			if (ce.count == 0){
-//				stringCache.remove(key);
-//			} else {
-//				ce.count=0;
-//			}
-//		}
-//		logger.info("ready cleanup namesCache " + stringCache.size());
-//	}
 }

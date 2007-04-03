@@ -24,8 +24,6 @@ package de.ueller.midlet.gps.data;
 
 import java.lang.Float;
 
-import de.ueller.midlet.gps.Logger;
-
 
 
 
@@ -126,7 +124,7 @@ public abstract class Proj implements Projection {
 
     protected int width = 640, height = 480;
     protected float minscale = 1.0f; // 1:minscale
-    protected float maxscale = (float) planetPixelCircumference / (float) width;// good
+    protected float maxscale = planetPixelCircumference / width;// good
     // for
     // cylindrical
     protected float scale = maxscale;
@@ -256,8 +254,9 @@ public abstract class Proj implements Projection {
      * @param s float minscale
      */
     public void setMinScale(float s) {
-        if (s > maxscale)
-            return;
+        if (s > maxscale) {
+			return;
+		}
 
         minscale = s;
         if (scale < minscale) {
@@ -275,8 +274,9 @@ public abstract class Proj implements Projection {
      * @param s float minscale
      */
     public void setMaxScale(float s) {
-        if (s < minscale)
-            return;
+        if (s < minscale) {
+			return;
+		}
 
         maxscale = s;
         if (scale > maxscale) {
@@ -451,8 +451,9 @@ public abstract class Proj implements Projection {
      * @return the projection ID, as an intern()ed String
      */
     public String getProjectionID() {
-        if (projID == null)
-            setProjectionID();
+        if (projID == null) {
+			setProjectionID();
+		}
         return projID;
     }
 
@@ -510,10 +511,12 @@ public abstract class Proj implements Projection {
      * @return boolean comparison
      */
     public boolean equals(Object o) {
-        if (o == null)
-            return false;
-        if (o instanceof Projection)
-            return getProjectionID() == ((Projection) o).getProjectionID();
+        if (o == null) {
+			return false;
+		}
+        if (o instanceof Projection) {
+			return getProjectionID() == ((Projection) o).getProjectionID();
+		}
         return false;
     }
 
@@ -813,11 +816,11 @@ public abstract class Proj implements Projection {
         float sinc = (float) Math.sin(c);
         float cosc = (float) Math.cos(c);
 
-        return new Node(ProjMath.radToDeg((float) MoreMath.asin(sinphi1
-                * cosc + cosphi1 * sinc * cosAz)), ProjMath.radToDeg((float) MoreMath.atan2(sinc
-                * sinAz,
-                cosphi1 * cosc - sinphi1 * sinc * cosAz)
-                + lambda0));
+        return new Node(ProjMath.radToDeg(
+        		MoreMath.asin(sinphi1 * cosc + cosphi1 * sinc * cosAz)),
+                (float) ProjMath.radToDeg(MoreMath.atan2(sinc * sinAz,
+                                  cosphi1 * cosc - sinphi1 * sinc * cosAz)
+                                  + lambda0));
     }
 
 }

@@ -4,12 +4,12 @@ package de.ueller.midlet.gps;
  * See Copying
  */
 
+import javax.microedition.lcdui.Choice;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.List;
-import javax.microedition.midlet.MIDletStateChangeException;
 
 public class GuiDiscover implements CommandListener {
 
@@ -38,15 +38,15 @@ public class GuiDiscover implements CommandListener {
 
 	/** A menu list instance */
 	private final List				menu			= new List("Devices",
-															List.IMPLICIT, elements,
+															Choice.IMPLICIT, elements,
 															null);
 
 	private final List				menuBT			= new List("Devices",
-															List.IMPLICIT, empty,
+															Choice.IMPLICIT, empty,
 															null);
 
 	private final List				menuFS			= new List("Devices",
-															List.IMPLICIT, empty,
+															Choice.IMPLICIT, empty,
 															null);
 
 	private final GpsMid			parent;
@@ -85,8 +85,8 @@ public class GuiDiscover implements CommandListener {
 			return;
 		}
 		if (c == STORE_BT_URL) {
-			if (gps.getState() == DiscoverGps.SERVICE_SEARCH
-					|| gps.getState() == DiscoverGps.SERVICE_SELECT) {
+			if ((gps.getState() == DiscoverGps.SERVICE_SEARCH)
+					|| (gps.getState() == DiscoverGps.SERVICE_SELECT)) {
 				gps.cancelServiceSearch();
 				parent.setBTUrl(menu.getString(menu.getSelectedIndex()));
 			}

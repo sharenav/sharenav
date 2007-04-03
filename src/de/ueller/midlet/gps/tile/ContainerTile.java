@@ -8,8 +8,6 @@ import java.io.DataInputStream;
 import java.io.IOException;
 
 import de.ueller.midlet.gps.Logger;
-import de.ueller.midlet.gps.ScreenContext;
-import de.ueller.midlet.gps.Trace;
 
 
 
@@ -52,10 +50,12 @@ public class ContainerTile extends Tile {
 //		logger.debug("paint container");
 		if (contain(pc)){
 //			drawBounds(pc, 255, 255, 255);
-			if (t1 != null)
+			if (t1 != null) {
 				t1.paint(pc);
-			if (t2 != null)
-				t2.paint(pc);	
+			}
+			if (t2 != null) {
+				t2.paint(pc);
+			}	
 		} else {			
 			cleanup();
 		}
@@ -63,10 +63,12 @@ public class ContainerTile extends Tile {
 
 	public void cleanup() {
 		lastUse++;
-		if (t1 != null)
+		if (t1 != null) {
 			t1.cleanup();
-		if (t2 != null)
+		}
+		if (t2 != null) {
 			t2.cleanup();
+		}
 		
 	}
 }

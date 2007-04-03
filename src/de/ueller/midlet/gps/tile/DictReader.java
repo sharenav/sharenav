@@ -31,8 +31,9 @@ public class DictReader  implements Runnable {
 
 	public void run() {
 		try {
-			for (byte i=0;i<=3;i++)
+			for (byte i=0;i<=3;i++) {
 				readData(i);
+			}
 		} catch (IOException e) {
 			logger.error("Error:" + e.getMessage());
 			e.printStackTrace();
