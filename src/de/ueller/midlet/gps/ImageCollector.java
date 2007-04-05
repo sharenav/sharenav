@@ -97,6 +97,7 @@ public class ImageCollector implements Runnable {
 				// cleans the screen
 					pcCollect.g.setColor(155, 255, 155);
 					pcCollect.g.fillRect(0, 0, pcCollect.xSize, pcCollect.ySize);
+					pcCollect.squareDstToWay=Float.MAX_VALUE;
 //				System.out.println("create " + pcCollect);
 				
 				if ((pcCollect.scale < 90000) && (t[3] != null)){
@@ -175,6 +176,16 @@ public class ImageCollector implements Runnable {
 				oldCenter.x,
 				oldCenter.y,
 				Graphics.VCENTER|Graphics.HCENTER); 
+		if (pcPaint.steet != null){
+			String name=pc.trace.getName(pcPaint.steet);
+			if (name != null){
+				pc.g.setColor(255,255,255);
+				pc.g.fillRect(0,pc.ySize-15, pc.xSize, 15);
+				pc.g.setColor(0,0,0);
+				pc.g.drawString(pc.trace.getName(pcPaint.steet),
+					pc.xSize/2, pc.ySize, Graphics.BOTTOM|Graphics.HCENTER);
+			}
+		}
 	}
 	private synchronized void newCollected(){
 		lockc=true;

@@ -213,6 +213,7 @@ public class Trace extends Canvas implements CommandListener, SirfMsgReceiver, R
 		case 2:showSatelite(g);
 		break;
 		case 3:showMemory(g, yc, la);
+		showSpeed(g, yc, la);
 		break;
 		case 4: showAddons=0;
 		
@@ -339,6 +340,14 @@ public class Trace extends Canvas implements CommandListener, SirfMsgReceiver, R
 		yc+=la;					
 		
 	}
+	public void showSpeed(Graphics g, int yc, int la){
+		g.setColor(0,0,0);
+		g.drawString("speed : "+speed, 0, yc, Graphics.TOP|Graphics.LEFT);
+		yc+=la;					
+		g.drawString("course  : "+course, 0, yc, Graphics.TOP|Graphics.LEFT);
+		yc+=la;					
+		
+	}
 
 	public synchronized void receivePosItion(Position pos) {
 		this.pos = pos;
@@ -440,6 +449,7 @@ public class Trace extends Canvas implements CommandListener, SirfMsgReceiver, R
 	}
 	
 	public String getName(Short idx){
+		if (idx == null ) return null;
 		return namesThread.getName(idx);
 	}
 }

@@ -1,8 +1,8 @@
-MIDlet-1: GpsMid,,de.ueller.midlet.gps.GpsMid
-MIDlet-Jar-URL: GpsMid.jar
-MIDlet-Name: GpsMid
-MIDlet-Permissions: javax.microedition.io.Connector.file.read,javax.microedition.io.Connector.file.write,javax.microedition.io.Connector.bluetooth.server
+MIDlet-Version: 0.2.33
 MIDlet-Vendor: Harald Mueller
-MIDlet-Version: 0.2.30
-MicroEdition-Configuration: CLDC-1.1
+MIDlet-Jar-URL: GpsMid.jar
+MicroEdition-Configuration: CLDC-1.0
+MIDlet-1: GpsMid,,de.ueller.midlet.gps.GpsMid
+MIDlet-Permissions: javax.microedition.io.Connector.file.read,javax.microedition.io.Connector.file.write,javax.microedition.io.Connector.bluetooth.server
 MicroEdition-Profile: MIDP-2.0
+MIDlet-Name: GpsMid

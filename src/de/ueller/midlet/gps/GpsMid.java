@@ -10,6 +10,7 @@ import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
+import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.List;
 import javax.microedition.midlet.MIDlet;
 import javax.microedition.midlet.MIDletStateChangeException;
@@ -29,7 +30,7 @@ public class GpsMid extends MIDlet implements CommandListener{
     /** A menu list instance */
     private final List menu = new List("GPSMid", Choice.IMPLICIT, elements, null);
 
-	private boolean	isInit=false;
+//	private boolean	isInit=false;
 
 	private String	btUrl="btspp://000DB5315C50:1;authenticate=false;encrypt=false;master=false";
 
@@ -39,6 +40,7 @@ public class GpsMid extends MIDlet implements CommandListener{
 
 
 	public GpsMid() {
+//		menu.setFont(Font.FACE_MONOSPACE, null);
 		menu.addCommand(EXIT_CMD);
 		menu.addCommand(OK_CMD);
 		menu.setCommandListener(this);
@@ -106,7 +108,7 @@ public class GpsMid extends MIDlet implements CommandListener{
                 break;
             }
 
-            isInit = true;
+//            isInit = true;
 
 
 		

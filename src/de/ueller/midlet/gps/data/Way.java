@@ -81,6 +81,7 @@ public class Way {
 		IntPoint swapLineP = pc.swapLineP;
 
 		for (int p1 = 0; p1 < paths.length; p1++) {
+			pc.trace.getName(nameIdx);
 			short[] path = paths[p1];
 			for (int i1 = 0; i1 < path.length; i1++) {
 				Node node = nodes[path[i1]];
@@ -90,6 +91,12 @@ public class Way {
 						lineP1 = lineP2;
 						lineP2 = swapLineP;
 					} else {
+						float dst=MoreMath.ptSegDistSq(lineP1.x, lineP1.y, lineP2.x, lineP2.y,pc.xSize/2,pc.ySize/2);
+						if (dst < pc.squareDstToWay){
+							pc.squareDstToWay=dst;
+							pc.steet=nameIdx;
+							
+						}
 						pc.g.drawLine(lineP1.x, lineP1.y, lineP2.x, lineP2.y);
 						swapLineP = lineP1;
 						lineP1 = lineP2;

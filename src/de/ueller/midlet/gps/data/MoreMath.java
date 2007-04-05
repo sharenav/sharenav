@@ -292,6 +292,59 @@ public class MoreMath {
 		return (x & 0xFFFFFFFFL);
 	}
 
+	public static float  ptSegDistSq  (  int X1, int Y1,  
+			int X2, int Y2,  
+			int PX, int PY  
+	)   
+	{  
+		float distSquare ;  
+		int L12Square ;  
+		int X12, Y12, X1P, Y1P, X2P, Y2P ;  
+
+
+//		Find vector from  ( X1,Y1 )  to  ( X2,Y2 )   
+//		and the Square of its length.   
+		X12 = X2 - X1 ;  
+		Y12 = Y2 - Y1 ;  
+		L12Square = X12 * X12 + Y12 * Y12 ;   
+//		Find vector from  ( X1,Y1 )  to  ( PX,PY )  .   
+		X1P = PX - X1 ;  
+		Y1P = PY - Y1 ;  
+//		Do scalar product and check sign.   
+		if  (  X12 * X1P + Y12 * Y1P     <= 0  )   
+		{  
+//			Closest point on segment is  ( X1,Y1 ) ;  
+//			find its distance  ( squared )  from  ( PX,PY )  .   
+			distSquare = X1P * X1P + Y1P * Y1P ;  
+		}  
+		else 
+		{  
+//			Find vector from  ( X2,Y2 )  to  ( PX,PY )  .   
+			X2P = PX - X2 ;  
+			Y2P = PY - Y2 ;  
+//			Do scalar product and check sign.   
+			if  (  X12 * X2P + Y12 * Y2P     >= 0  )   
+			{  
+				// Closest point on segment is  ( X2,Y2 ) ;  
+				// find its distance  ( squared )  from  ( PX,PY )  .   
+				distSquare = X2P * X2P + Y2P * Y2P ;  
+			}  
+			else 
+			{  
+				// Closest point on segment is between  ( X1,Y1 )  and  
+				//   ( X2,Y2 )  . Use perpendicular distance formula.   
+				distSquare = X12 * Y1P - Y12 * X1P ;  
+				distSquare = distSquare * distSquare / L12Square ;  
+				// Note that if L12Square be zero, the first  
+				// of the three branches will be selected,  
+				// so division by zero can not occur here.  
+			}  
+		}  
+
+
+		return distSquare ;  
+	}   
+
 
 	
 	/**
@@ -475,7 +528,7 @@ public class MoreMath {
 		}
 	}
 
-	static private float _log(float x) {
+	static private float exact_log(float x) {
 //		logger.info("enter _log " + x);
 		if (!(x > 0f)) {
 			return Float.NaN;
@@ -500,6 +553,43 @@ public class MoreMath {
 		y2 = k * y;
 		//
 		for (long i = 1; i < 50; i += 2) {
+			f += k / i;
+			k *= y2;
+		}
+		//
+		f *= 2f;
+		for (int i = 0; i < appendix; i++) {
+			f += FLOAT_LOGFDIV2;
+		}
+		//
+//		logger.info("exit _log" + f);
+		return f;
+	}
+	static private float _log(float x) {
+//		logger.info("enter _log " + x);
+		if (!(x > 0f)) {
+			return Float.NaN;
+		}
+		//
+		float f = 0f;
+		//
+		int appendix = 0;
+		while ((x > 0f) && (x <= 1f)) {
+			x *= 2f;
+			appendix++;
+		}
+		//
+		x /= 2f;
+		appendix--;
+		//
+		float y1 = x - 1f;
+		float y2 = x + 1f;
+		float y = y1 / y2;
+		//
+		float k = y;
+		y2 = k * y;
+		//
+		for (long i = 1; i < 10; i += 2) {
 			f += k / i;
 			k *= y2;
 		}
@@ -538,5 +628,7 @@ public class MoreMath {
 			return f;
 		}
 	}
+	
+	
 
 }

@@ -42,6 +42,11 @@ public class PaintContext extends ScreenContext {
 
 	public byte drawAreas=DRAW_AREAS_NO;
 	public boolean showTileOutline=false;
+	/**
+	 * there the paintprocess will store the nameIdx to the Street name; 
+	 */
+	public Short steet;
+	public float squareDstToWay;
 	public PaintContext() throws Exception{
 		super();
 		// TODO Auto-generated constructor stub
