@@ -208,12 +208,12 @@ public class Trace extends Canvas implements CommandListener, SirfMsgReceiver, R
 		g.fillRect(0, 0, pc.xSize, pc.ySize);
 		vc.paint(pc);
 		switch (showAddons){
-		case 1:showConnectStatistics(g, yc, la);
+		case 1:yc=showConnectStatistics(g, yc, la);
 		break;
 		case 2:showSatelite(g);
 		break;
-		case 3:showMemory(g, yc, la);
-		showSpeed(g, yc, la);
+		case 3:yc=showMemory(g, yc, la);
+		yc=showSpeed(g, yc, la);
 		break;
 		case 4: showAddons=0;
 		
@@ -259,7 +259,7 @@ public class Trace extends Canvas implements CommandListener, SirfMsgReceiver, R
 				t[0].paint(pc);
 			} 
 			switch (showAddons){
-				case 1:showConnectStatistics(g, yc, la);
+				case 1:yc=showConnectStatistics(g, yc, la);
 				break;
 				case 2:showSatelite(g);
 				break;
@@ -277,7 +277,7 @@ public class Trace extends Canvas implements CommandListener, SirfMsgReceiver, R
 	}
 
 
-	private void showConnectStatistics(Graphics g, int yc, int la) {
+	private int showConnectStatistics(Graphics g, int yc, int la) {
 		g.setColor(255,255,255);
 		for (byte i=0;i<SirfMsgReceiver.SIRF_FAIL_COUNT;i++){
 			g.drawString(statMsg[i]+statRecord[i], 0, yc, Graphics.TOP|Graphics.LEFT);
@@ -287,6 +287,7 @@ public class Trace extends Canvas implements CommandListener, SirfMsgReceiver, R
 		yc+=la;					
 		g.drawString("count : "+collected, 0, yc, Graphics.TOP|Graphics.LEFT);
 		yc+=la;
+		return yc;
 	}
 	
 	private void showSatelite(Graphics g){
@@ -328,7 +329,7 @@ public class Trace extends Canvas implements CommandListener, SirfMsgReceiver, R
 
 	}
 	
-	public void showMemory(Graphics g, int yc, int la){
+	public int showMemory(Graphics g, int yc, int la){
 		g.setColor(0,0,0);
 		g.drawString("freemem : "+runtime.freeMemory(), 0, yc, Graphics.TOP|Graphics.LEFT);
 		yc+=la;					
@@ -337,15 +338,17 @@ public class Trace extends Canvas implements CommandListener, SirfMsgReceiver, R
 		g.drawString("Percent : "+(100f*runtime.freeMemory()/runtime.totalMemory()), 0, yc, Graphics.TOP|Graphics.LEFT);
 		yc+=la;					
 		g.drawString("Names   : "+namesThread.getNameCount(), 0, yc, Graphics.TOP|Graphics.LEFT);
-		yc+=la;					
+		yc+=la;	
+		return(yc);
 		
 	}
-	public void showSpeed(Graphics g, int yc, int la){
+	public int showSpeed(Graphics g, int yc, int la){
 		g.setColor(0,0,0);
 		g.drawString("speed : "+speed, 0, yc, Graphics.TOP|Graphics.LEFT);
 		yc+=la;					
 		g.drawString("course  : "+course, 0, yc, Graphics.TOP|Graphics.LEFT);
-		yc+=la;					
+		yc+=la;
+		return yc;
 		
 	}
 
