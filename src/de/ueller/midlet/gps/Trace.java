@@ -322,8 +322,8 @@ public class Trace extends Canvas implements CommandListener, SirfMsgReceiver, R
 		int centerX=getWidth()/2;
 		int centerY=getHeight()/2;
 		float radc=(float) (course*Math.PI/180d);
-		int px=centerX+(int) (Math.sin(course)*20);
-		int py=centerY-(int) (Math.cos(course)*20);
+		int px=centerX+(int) (Math.sin(radc)*20);
+		int py=centerY-(int) (Math.cos(radc)*20);
 		g.drawRect(centerX-2, centerY-2, 4, 4);
 		g.drawLine(centerX, centerY, px, py);
 
@@ -408,6 +408,9 @@ public class Trace extends Canvas implements CommandListener, SirfMsgReceiver, R
     	else if (keyCode == KEY_NUM7) {
     		showAddons++;
     	}
+    	else if (keyCode == KEY_NUM9) {
+    		course+=5;;
+    	}
     	else {
     		keyStatus = keyCode;
     	}
@@ -454,5 +457,9 @@ public class Trace extends Canvas implements CommandListener, SirfMsgReceiver, R
 	public String getName(Short idx){
 		if (idx == null ) return null;
 		return namesThread.getName(idx);
+	}
+
+	public void requestRedraw() {
+		repaint(0,0,getWidth(),getHeight());		
 	}
 }

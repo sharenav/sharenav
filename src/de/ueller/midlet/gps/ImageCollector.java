@@ -45,6 +45,7 @@ public class ImageCollector implements Runnable {
 	int ySize;
 	IntPoint newCenter=new IntPoint(0,0);
 	IntPoint oldCenter=new IntPoint(0,0);
+	private boolean needRedraw=false;
 	
 	public ImageCollector(Tile[] t,int x,int y) {
 		super();
@@ -116,6 +117,10 @@ public class ImageCollector implements Runnable {
 					t[0].paint(pcCollect);
 				}
 				newCollected();
+				if (needRedraw){
+					pcCollect.trace.requestRedraw();
+					needRedraw=false;
+				}
 				Thread.yield();
 //				System.out.println("create ready");
 				System.gc();
@@ -176,15 +181,27 @@ public class ImageCollector implements Runnable {
 				oldCenter.x,
 				oldCenter.y,
 				Graphics.VCENTER|Graphics.HCENTER); 
-		if (pcPaint.steet != null){
-			String name=pc.trace.getName(pcPaint.steet);
+		if (pcPaint.actualWay != null && pcPaint.actualWay.nameIdx != null){
+			String name=pc.trace.getName(pcPaint.actualWay.nameIdx);
+			String maxspeed=null;
+			if (pcPaint.actualWay.maxspeed != 0){
+				maxspeed=" TL:" + pcPaint.actualWay.maxspeed;
+				if (name == null){
+					name = maxspeed;
+				} else {
+					name = name + maxspeed;
+				}
+			}
 			if (name != null){
 				pc.g.setColor(255,255,255);
 				pc.g.fillRect(0,pc.ySize-15, pc.xSize, 15);
 				pc.g.setColor(0,0,0);
-				pc.g.drawString(pc.trace.getName(pcPaint.steet),
+				pc.g.drawString(name,
 					pc.xSize/2, pc.ySize, Graphics.BOTTOM|Graphics.HCENTER);
 			}
+		}
+		if (pcPaint.scale != pc.scale){
+			needRedraw=true;
 		}
 	}
 	private synchronized void newCollected(){
