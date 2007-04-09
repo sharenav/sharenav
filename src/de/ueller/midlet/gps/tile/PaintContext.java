@@ -10,6 +10,7 @@ import javax.microedition.lcdui.Image;
 
 import de.ueller.midlet.gps.ScreenContext;
 import de.ueller.midlet.gps.data.IntPoint;
+import de.ueller.midlet.gps.data.Way;
 
 
 public class PaintContext extends ScreenContext {
@@ -45,7 +46,8 @@ public class PaintContext extends ScreenContext {
 	/**
 	 * there the paintprocess will store the nameIdx to the Street name; 
 	 */
-	public Short steet;
+//	public Short steet;
+	public Way actualWay=null;
 	public float squareDstToWay;
 	public PaintContext() throws Exception{
 		super();

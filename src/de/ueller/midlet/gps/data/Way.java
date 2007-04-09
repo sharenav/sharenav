@@ -94,7 +94,7 @@ public class Way {
 						float dst=MoreMath.ptSegDistSq(lineP1.x, lineP1.y, lineP2.x, lineP2.y,pc.xSize/2,pc.ySize/2);
 						if (dst < pc.squareDstToWay){
 							pc.squareDstToWay=dst;
-							pc.steet=nameIdx;
+							pc.actualWay=this;
 							
 						}
 						pc.g.drawLine(lineP1.x, lineP1.y, lineP2.x, lineP2.y);
