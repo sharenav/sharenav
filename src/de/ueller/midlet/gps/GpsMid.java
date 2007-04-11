@@ -35,7 +35,6 @@ public class GpsMid extends MIDlet implements CommandListener{
 
     /** A menu list instance */
     private final List menu = new List("GPSMid", Choice.IMPLICIT, elements, null);
-    private final Form about = new Form("GPSMid");
 //	private boolean	isInit=false;
 
 	private String	btUrl="btspp://000DB5315C50:1;authenticate=false;encrypt=false;master=false";
@@ -47,7 +46,6 @@ public class GpsMid extends MIDlet implements CommandListener{
 
 	public GpsMid() {
 
-//		menu.setFont(Font.FACE_MONOSPACE, null);
 		menu.addCommand(EXIT_CMD);
 		menu.addCommand(OK_CMD);
 		menu.setCommandListener(this);
@@ -58,12 +56,6 @@ public class GpsMid extends MIDlet implements CommandListener{
 //			
 //		}
 		l=new Logger(this);
-//		System.out.println("sinh 0.8    " + MoreMath.asinh(MoreMath.sinh(0.8f)));
-//		System.out.println("tanh 0.8    " + MoreMath.atan((float) Math.tan(0.8f)));
-//		System.out.println("sinh 0.7    " + MoreMath.asinh(MoreMath.sinh(0.7f)));
-//		System.out.println("tanh 0.7    " + MoreMath.atan((float) Math.tan(0.7f)));
-//		System.out.println("sinh 0.9    " + MoreMath.asinh(MoreMath.sinh(0.9f)));
-//		System.out.println("tanh 0.9    " + MoreMath.atan((float) Math.tan(0.9f)));
 	}
 	
 	protected void destroyApp(boolean arg0) throws MIDletStateChangeException {
