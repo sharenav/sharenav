@@ -4,6 +4,8 @@
  */
 package de.ueller.midlet.gps;
 
+import java.io.IOException;
+
 import javax.microedition.lcdui.Alert;
 import javax.microedition.lcdui.Choice;
 import javax.microedition.lcdui.Command;
@@ -11,6 +13,8 @@ import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Font;
+import javax.microedition.lcdui.Form;
+import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.List;
 import javax.microedition.midlet.MIDlet;
 import javax.microedition.midlet.MIDletStateChangeException;
@@ -19,17 +23,19 @@ import javax.microedition.midlet.MIDletStateChangeException;
 
 public class GpsMid extends MIDlet implements CommandListener{
     /** A menu list instance */
-    private static final String[] elements = { "Trace","Setup"};
+    private static final String[] elements = { "Trace","Setup","About"};
 
-    /** Soft button for exiting GpsMis. */
+    /** Soft button for exiting GpsMid. */
     private final Command EXIT_CMD = new Command("Exit", Command.EXIT, 2);
 
     /** Soft button for launching a client or sever. */
     private final Command OK_CMD = new Command("Ok", Command.SCREEN, 1);
+    /** Soft button to go back from about screen. */
+    private final Command BACK_CMD = new Command("Back", Command.BACK, 1);
 
     /** A menu list instance */
     private final List menu = new List("GPSMid", Choice.IMPLICIT, elements, null);
-
+    private final Form about = new Form("GPSMid");
 //	private boolean	isInit=false;
 
 	private String	btUrl="btspp://000DB5315C50:1;authenticate=false;encrypt=false;master=false";
@@ -40,6 +46,7 @@ public class GpsMid extends MIDlet implements CommandListener{
 
 
 	public GpsMid() {
+
 //		menu.setFont(Font.FACE_MONOSPACE, null);
 		menu.addCommand(EXIT_CMD);
 		menu.addCommand(OK_CMD);
@@ -68,20 +75,18 @@ public class GpsMid extends MIDlet implements CommandListener{
 	}
 
 	protected void startApp() throws MIDletStateChangeException {
-		Display.getDisplay(this).setCurrent(menu);
+		new Splash(this);
 		}
 
 	public void commandAction(Command c, Displayable d) {
         if (c == EXIT_CMD) {
-            try {
-				destroyApp(true);
-			} catch (MIDletStateChangeException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-            notifyDestroyed();
+            exit();
 
             return;
+        }
+        if (c == BACK_CMD) {
+        	show();
+        	return;
         }
         switch (menu.getSelectedIndex()) {
             case 0:
@@ -102,6 +107,9 @@ public class GpsMid extends MIDlet implements CommandListener{
             case 1:
             	new GuiDiscover(this);
             	break;
+            case 2:
+				new Splash(this);
+            	break;
             default:
                 System.err.println("Unexpected choice...");
 
@@ -112,6 +120,16 @@ public class GpsMid extends MIDlet implements CommandListener{
 
 
 		
+	}
+
+	public void exit() {
+		try {
+			destroyApp(true);
+		} catch (MIDletStateChangeException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		notifyDestroyed();
 	}
     /** Shows main menu of MIDlet on the screen. */
     void show() {

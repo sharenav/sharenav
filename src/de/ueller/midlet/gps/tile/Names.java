@@ -16,10 +16,10 @@ import java.util.Vector;
 
 import de.ueller.midlet.gps.Logger;
 
-//import de.ueller.midlet.gps.Logger;
+import de.ueller.midlet.gps.Logger;
 
 public class Names implements Runnable {
-//	private final static Logger logger=Logger.getInstance(Names.class,Logger.TRACE);
+	private final static Logger logger=Logger.getInstance(Names.class,Logger.TRACE);
 	private Vector queue=new Vector();
 	private Vector addQueue=new Vector();
 	private short[] startIndexes=null;
@@ -77,7 +77,7 @@ public class Names implements Runnable {
 				}
 				synchronized (this) {
 					try {
-						wait(5000l);
+						wait(2000l);
 					} catch (InterruptedException e1) {
 //						logger.error("interrupted");
 					}
@@ -189,7 +189,7 @@ public class Names implements Runnable {
 	}
 	
 	private void cleanupStringCache(){
-//		logger.info("cleanup namesCache " + stringCache.size());
+		logger.info("cleanup namesCache " + stringCache.size());
 		for (Enumeration e=stringCache.keys();e.hasMoreElements();){
 			Short key=(Short) e.nextElement();
 			StringEntry ce=(StringEntry) stringCache.get(key);
@@ -199,7 +199,7 @@ public class Names implements Runnable {
 				ce.count--;
 			}
 		}
-//		logger.info("ready cleanup namesCache " + stringCache.size());
+		logger.info("ready cleanup namesCache " + stringCache.size());
 		cleanup=false;
 	}
 
