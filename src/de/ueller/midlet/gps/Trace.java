@@ -431,6 +431,10 @@ public class Trace extends Canvas implements CommandListener, SirfMsgReceiver, R
 		} else {
 			setTitle("dict "+zl+ "ready");
 		}
+		if (zl==0){
+			dict.getCenter(center);
+			projection=new Mercator(center,scale,getWidth(),getHeight());
+		}
 		repaint(0,0,getWidth(),getHeight());
 	}
 

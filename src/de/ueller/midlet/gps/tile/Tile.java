@@ -8,6 +8,7 @@ import de.ueller.midlet.gps.ScreenContext;
 import de.ueller.midlet.gps.Trace;
 
 import de.ueller.midlet.gps.data.IntPoint;
+import de.ueller.midlet.gps.data.Node;
 
 
 public abstract class Tile {
@@ -38,6 +39,10 @@ public abstract class Tile {
 			return false;
 		}
 		return true;
+	}
+	public void getCenter(Node center){
+		center.radlat=(maxLat+minLat)/2;
+		center.radlon=(maxLon+minLon)/2;
 	}
 	protected void drawBounds(PaintContext pc, int r, int g, int b) {
 			pc.g.setColor(r,g,b);
