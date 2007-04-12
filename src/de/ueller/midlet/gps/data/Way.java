@@ -81,7 +81,8 @@ public class Way {
 		IntPoint swapLineP = pc.swapLineP;
 
 		for (int p1 = 0; p1 < paths.length; p1++) {
-			pc.trace.getName(nameIdx);
+//		read the name only if is used more memory efficicent
+//			pc.trace.getName(nameIdx);
 			short[] path = paths[p1];
 			for (int i1 = 0; i1 < path.length; i1++) {
 				Node node = nodes[path[i1]];
