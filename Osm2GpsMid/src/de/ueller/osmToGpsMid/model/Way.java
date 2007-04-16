@@ -3,6 +3,8 @@ package de.ueller.osmToGpsMid.model;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.ueller.osmToGpsMid.Constants;
+
 public class Way extends Entity implements Comparable<Way>{
 	public List<Line> lines = new LinkedList<Line>();
 	Bounds bound=null;
@@ -51,6 +53,66 @@ public class Way extends Entity implements Comparable<Way>{
 		if ("water".equals(t)){
 			type=60;
 		}
+		if (type!= 0)
+			return type;
+		// types > 50 represent Areas
+		t = (String) tags.get("landuse");
+		if ("farm".equals(t)){
+			type=Constants.AREA_LANDUSE_FARM;
+		}
+		if ("quarry".equals(t)){
+			type=Constants.AREA_LANDUSE_QUARRY;
+		}
+		if ("landfill".equals(t)){
+			type=Constants.AREA_LANDUSE_LANDFILL;
+		}
+		if ("basin".equals(t)){
+			type=Constants.AREA_LANDUSE_BASIN;
+		}
+		if ("reservoir".equals(t)){
+			type=Constants.AREA_LANDUSE_RESERVOIR;
+		}
+		if ("forest".equals(t)){
+			type=Constants.AREA_LANDUSE_FOREST;
+		}
+		if ("allotments".equals(t)){
+			type=Constants.AREA_LANDUSE_ALLOTMENTS;
+		}
+		if ("residential".equals(t)){
+			type=Constants.AREA_LANDUSE_RESIDENTIAL;
+		}
+		if ("retail".equals(t)){
+			type=Constants.AREA_LANDUSE_RETAIL;
+		}
+		if ("commercial".equals(t)){
+			type=Constants.AREA_LANDUSE_COMMERCIAL;
+		}
+		if ("industrial".equals(t)){
+			type=Constants.AREA_LANDUSE_INDUSTRIAL;
+		}
+		if ("brownfield".equals(t)){
+			type=Constants.AREA_LANDUSE_BROWNFIELD;
+		}
+		if ("greenfield".equals(t)){
+			type=Constants.AREA_LANDUSE_GREENFIELD;
+		}
+		if ("cementry".equals(t)){
+			type=Constants.AREA_LANDUSE_CEMETERY;
+		}
+		if ("village_green".equals(t)){
+			type=Constants.AREA_LANDUSE_VILLAGE_GREEN;
+		}
+		if ("recreation_ground".equals(t)){
+			type=Constants.AREA_LANDUSE_RECREATION_GROUND;
+		}
+		if (type!= 0)
+			return type;
+		// types > 50 represent Areas
+		t = (String) tags.get("leisure");
+		if ("park".equals(t)){
+			type=Constants.AREA_LEISURE_PARK;
+		}
+
 		return type;
 	}
 	
