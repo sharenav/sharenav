@@ -1,6 +1,7 @@
 package de.ueller.osmToGpsMid;
 
 import java.io.BufferedInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -14,6 +15,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 import uk.co.wilson.xml.MinML2;
+import de.ueller.osmToGpsMid.model.Bounds;
 import de.ueller.osmToGpsMid.model.Entity;
 import de.ueller.osmToGpsMid.model.Line;
 import de.ueller.osmToGpsMid.model.Node;
@@ -35,9 +37,15 @@ public class OxParser extends MinML2 {
 	 */
 	public Map<Long,Line> lines = new HashMap<Long,Line>();
 	public Collection<Way> ways = new LinkedList<Way>();
+	private int nodeTot,nodeIns,segTot,segIns,wayTot,wayIns,ele;
+	private Bounds[] bounds=null;
 
 	public OxParser(InputStream i) {
 		System.out.println("OSM XML parser started...");
+		init(i);
+	}
+
+	private void init(InputStream i) {
 		try {
 			parse(new InputStreamReader(new BufferedInputStream(i, 1024), "UTF-8"));
 		} catch (IOException e) {
@@ -52,6 +60,16 @@ public class OxParser extends MinML2 {
 		}
 	}
 
+	/**
+	 * @param i
+	 * @param bounds
+	 */
+	public OxParser(FileInputStream i, Bounds[] bounds) {
+		this.bounds = bounds;
+		System.out.println("OSM XML parser with bounds started...");
+		init(i);
+	}
+
 	public void startDocument() {
 		System.out.println("Start of Document");
 	}
@@ -64,8 +82,10 @@ public class OxParser extends MinML2 {
 		if (qName.equals("node")) {
 			float node_lat = Float.parseFloat(atts.getValue("lat"));
 			float node_lon = Float.parseFloat(atts.getValue("lon"));
+			
 			long id = Long.parseLong(atts.getValue("id"));
 			current = new Node(node_lat, node_lon, id);
+			
 		}
 
 		if (qName.equals("segment")) {
@@ -86,10 +106,11 @@ public class OxParser extends MinML2 {
 			long id = Long.parseLong(atts.getValue("id"));
 			Line line = (Line)lines.get(new Long(id));
 			if (line == null) {
-				line = new Line(id);
-				lines.put(new Long(id), line);
+//				line = new Line(id);
+//				lines.put(new Long(id), line);
+			} else {
+				((Way)current).lines.add(line);
 			}
-			((Way)current).lines.add(line);
 		}
 
 		if(qName.equals("tag")) {
@@ -101,14 +122,61 @@ public class OxParser extends MinML2 {
 	} // startElement
 
 	public void endElement(String namespaceURI, String localName, String qName) {
+		ele++;
+		if (ele > 100000){
+			ele=0;
+			System.out.println("node "+ nodeTot+"/"+nodeIns + "  seg "+ segTot+"/"+segIns + "  way "+ wayTot+"/"+wayIns);
+		}
 		if (qName.equals("node")) {
-			nodes.put(new Long(current.id), (Node) current);
+			Node n=(Node) current;
+			boolean inBound=false;
+			nodeTot++;
+			if (bounds != null){
+				for (int i=0;i<bounds.length;i++){
+					if (bounds[i].isIn(n.lat, n.lon)){
+						inBound=true;
+						break;
+					}
+				}
+			} else {
+				inBound=true;
+			}
+// London all city
+//			if (n.lat > 50.9 && n.lat < 52.05 
+//			&& n.lon > -1.1 && n.lon < 0.9){
+//			 London smaller. 
+//			if (n.lat > 51.37 && n.lat < 51.64 
+//			&& n.lon > -0.37 && n.lon < 0.122){
+//			 Paris 
+//			if (n.lat > 48.77 && n.lat < 48.94
+//			&& n.lon > 2.2 && n.lon < 2.5){
+//				Australien
+//				if (n.lat > -42.0 && n.lat < -7.0 
+//				&& n.lon > 112.0 && n.lon < 155.0){
+			if (inBound){
+				nodes.put(new Long(current.id), (Node) current);
+				nodeIns++;
+			}
 			current = null;
 		} else if (qName.equals("segment")) {
-			lines.put(new Long(current.id), (Line) current);
+			Line l=(Line) current;
+			segTot++;
+			try {
+				if (l.from != null && l.to != null){
+					segIns++;
+					lines.put(new Long(current.id), (Line) current);;
+				}
+			} catch (RuntimeException e) {
+				System.out.println("should never hapen");
+			}
 			current = null;
 		} else if (qName.equals("way")) {
-			ways.add((Way) current);
+			wayTot++;
+			Way w= (Way) current;
+			if (w.lines.size() > 0){
+				ways.add((Way) current);
+				wayIns++;
+			}
 			current = null;
 		}
 

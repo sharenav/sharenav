@@ -8,6 +8,7 @@
  */
 package de.ueller.osmToGpsMid;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -15,6 +16,8 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
+
+import de.ueller.osmToGpsMid.model.Bounds;
 
 /**
  * @author hmueller
@@ -49,5 +52,54 @@ public class Configuration {
 				return '!' + key + '!';
 			}
 		}
+		public float getFloat(String key){
+//			try {
+				return Float.parseFloat(getString(key));
+//			} catch (Exception e) {
+//				System.err.println(getString(key) + " not a number");
+//				return Float.NaN;
+//			}
+		}
+		public String getName(){
+			return getString("bundle.name");
+		}
+		public File getJarFile(){
+			return new File(getString("application")
+			+"-"+getString("application.version")
+			+".jar");
+		}
+		public String getTempDir(){
+			return getString("tmp.dir");
+		}
+		public File getPlanet(){
+			return new File(getString("planet.osm"));
+		}
+		public Bounds[] getBounds(){
+			int i;
+			i=0;
+			try {
+				while (i<10000){
+					getFloat("region."+(i+1)+".lat.min");
+					i++;
+				}
+			} catch (RuntimeException e) {
+				System.out.println("found " + i + " bounds");
+			}
+			Bounds[] ret=new Bounds[i];
+			for (int l=0;l < i;l++){
+				ret[l]=new Bounds();
+				ret[l].extend(getFloat("region."+(l+1)+".lat.min"),
+						getFloat("region."+(l+1)+".lon.min"));
+				ret[l].extend(getFloat("region."+(l+1)+".lat.max"),
+						getFloat("region."+(l+1)+".lon.max"));
+			}
+			return ret;
+		}
 
+		/**
+		 * @return
+		 */
+		public String getVersion() {
+			return getString("application.version");
+		}
 }

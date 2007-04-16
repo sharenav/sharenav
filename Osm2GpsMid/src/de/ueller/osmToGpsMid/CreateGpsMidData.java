@@ -30,6 +30,7 @@ public class CreateGpsMidData {
 	Tile tile[]= new Tile[4];
 	private final String	path;
 	TreeSet<String> names;
+//	private Bounds[] bounds=null;
 	
 	public CreateGpsMidData(OxParser parser,String path) {
 		super();
@@ -37,6 +38,18 @@ public class CreateGpsMidData {
 		this.path = path;
 	}
 	
+//	/**
+//	 * @param parser2
+//	 * @param string
+//	 * @param bounds
+//	 */
+//	public CreateGpsMidData(OxParser parser, String path, Bounds[] bounds) {
+//		super();
+//		this.parser = parser;
+//		this.path = path;
+//		this.bounds = bounds;
+//	}
+
 	private int getEqualCount(String s1, String s2){
 		if (s1== null || s2 == null)
 			return 0;
@@ -75,7 +88,7 @@ public class CreateGpsMidData {
 			short fcount=0;
 			for (String string : names) {
 				int eq=getEqualCount(string,lastStr);
-				if ((eq==0 && fcount>60) || (fcount > 100 && eq < 2)){
+				if ((eq==0 && fcount>100) || (fcount > 150 && eq < 2)){
 					dsi.writeShort(idx);
 					if (ds != null) ds.close();
 					fo = new FileOutputStream(path+"/names-"+fnr+".dat");
