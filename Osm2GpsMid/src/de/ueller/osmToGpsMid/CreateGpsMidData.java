@@ -216,7 +216,10 @@ public class CreateGpsMidData {
 			ways=getWaysInBound(parentWays, zl,tileBound,realBound);
 		}
 		Collection<Node> nodes=getNodesInBound(parentNodes,zl,realBound);
-		byte [] out=createMidContent(ways,nodes);
+		byte [] out=new byte[1];
+		if (ways.size() <= 255){
+			out=createMidContent(ways,nodes);
+		}
 		if (ways.size() > 255 || (out.length > 10000 && ways.size() > 2)){
 			System.out.println("create Subtiles size="+out.length+" ways=" + ways.size());
 			t.bounds=realBound.clone();

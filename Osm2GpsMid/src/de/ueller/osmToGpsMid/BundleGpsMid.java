@@ -1,12 +1,16 @@
 package de.ueller.osmToGpsMid;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
@@ -71,6 +75,10 @@ public class BundleGpsMid {
 				+ c.getName() 
 				+ "-" + c.getVersion()
 				+ ".jar");
+		File jad=new File("GpsMid-" 
+				+ c.getName() 
+				+ "-" + c.getVersion()
+				+ ".jad");
 		FileOutputStream fo=new FileOutputStream(n);
 		ZipOutputStream zf=new ZipOutputStream(fo);
 		zf.setLevel(9);
@@ -80,6 +88,16 @@ public class BundleGpsMid {
 		}
 		packDir(zf, src,"");
 		zf.close();
+	    FileWriter fw=new FileWriter(jad);
+		fw.write("MIDlet-1: GpsMid,,de.ueller.midlet.gps.GpsMid\n");
+		fw.write("MIDlet-Jar-URL: GpsMid-"+c.getName()+"-"+c.getVersion()+".jar\n");
+		fw.write("MIDlet-Name: GpsMid\n");
+		fw.write("MIDlet-Jar-Size: "+n.length()+"\n");
+		fw.write("MIDlet-Vendor: Harald Mueller\n");
+		fw.write("MIDlet-Version: "+c.getVersion()+"\n");
+		fw.write("MicroEdition-Configuration: CLDC-1.1\n");
+		fw.write("MicroEdition-Profile: MIDP-2.0\n");
+		fw.close();
 	}
 	
 	private static void packDir(ZipOutputStream os, File d,String path) throws IOException{
