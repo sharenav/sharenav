@@ -65,8 +65,7 @@ public class QueueDataReader implements Runnable {
 					livingQueue.addElement(tt);
 				}
 			} catch (Exception e) {
-//				logger.error("Error:" + e.getMessage());
-				e.printStackTrace();
+
 			}
 			if (requestQueue.size() == 0){
 				synchronized (this) {
@@ -82,22 +81,22 @@ public class QueueDataReader implements Runnable {
 	}
 
 	private void readData(SingleTile tt) throws IOException{
-		
-//    	logger.info("open " + tt.fileId);
+
+//		logger.info("open " + tt.fileId);
 		InputStream is = getClass().getResourceAsStream("/map/t"+tt.zl+tt.fileId+".d");
 		if (is == null){
 //			logger.error("file inputStream"+url+" not found" );
 			tt.state=0;
 			return;
 		}
-//    	logger.info("open DataInputStream");
+//		logger.info("open DataInputStream");
 		DataInputStream ds=new DataInputStream(is);
 		if (ds == null){
 //			logger.error("file DataImputStream "+url+" not found" );
 			tt.state=0;
 			return;
 		}
-// end open data from JAR
+//		end open data from JAR
 //		logger.info("read Magic code");
 		if (ds.readByte()!=0x54){
 //			logger.error("not a MapMid-file");
@@ -110,19 +109,17 @@ public class QueueDataReader implements Runnable {
 		Short[] nameIdx=new Short[iNodeCount];
 		byte[] type = new byte[iNodeCount];
 		for (int i=0; i< nodeCount;i++){
-        radlat[i] = ds.readFloat();
-        radlon[i] = ds.readFloat();
-		byte f=ds.readByte();
-		if ((f & 1) == 1){
-//			name=is.readUTF();
-			short name=ds.readShort();
-			if ( name != 0){
-				nameIdx[i]=new Short(ds.readShort());
-			} else {
-				nameIdx[i]=null;
+			radlat[i] = ds.readFloat();
+			radlon[i] = ds.readFloat();
+			if (i < iNodeCount){
+				short name=ds.readShort();
+				if ( name != 0){
+					nameIdx[i]=new Short(name);
+				} else {
+					nameIdx[i]=null;
+				}
+				type[i]=ds.readByte();
 			}
-			type[i]=ds.readByte();
-		}
 		}
 		tt.nameIdx=nameIdx;
 		tt.nodeLat=radlat;
@@ -131,8 +128,8 @@ public class QueueDataReader implements Runnable {
 //		tt.nodes = new Node[nodeCount];
 ////		logger.info("reading " + nodeCount + " nodes");
 //		for (int i=0; i< nodeCount;i++){
-//			Node n=new Node(ds);
-//			tt.nodes[i]=n;
+//		Node n=new Node(ds);
+//		tt.nodes[i]=n;
 //		}
 		if (ds.readByte()!=0x55){
 //			logger.error("Start of Ways not found");
@@ -149,8 +146,8 @@ public class QueueDataReader implements Runnable {
 			byte flags=ds.readByte();
 			if (flags != 128){
 //				showAlert("create Way " + i);
-			Way w=new Way(ds,flags);
-			tt.ways[i]=w;
+				Way w=new Way(ds,flags);
+				tt.ways[i]=w;
 			}
 		}
 		if (ds.readByte() != 0x56){
@@ -159,13 +156,13 @@ public class QueueDataReader implements Runnable {
 //			logger.info("ready");
 		}
 		ds.close();
-		
+
 		tt.dataReady();
 //		logger.info("DataReader ready "+ tt.fileId + tt.nodes.length + " Nodes " + tt.ways.length + " Ways" );
 
-//    	}
-		
-    }
+//		}
+
+	}
 	public int getLivingTilesCount()  {
 		return livingQueue.size();
 	}
