@@ -9,6 +9,7 @@ import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
 import de.ueller.midlet.gps.ScreenContext;
+import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.data.IntPoint;
 import de.ueller.midlet.gps.data.Way;
 
@@ -49,8 +50,10 @@ public class PaintContext extends ScreenContext {
 //	public Short steet;
 	public Way actualWay=null;
 	public float squareDstToWay;
-	public PaintContext() throws Exception{
+	public PaintContext(Trace tr, QueueDataReader tir) throws Exception{
 		super();
+		dataReader=tir;
+		trace=tr;
 		// TODO Auto-generated constructor stub
 	}
 	

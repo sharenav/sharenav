@@ -7,6 +7,8 @@ package de.ueller.midlet.gps.tile;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
+import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.Way;
 
@@ -17,7 +19,7 @@ public class DataReader implements Runnable {
 	private final String	url;
 	private Thread	processorThread;
 //	private final String	root;
-//	private final static Logger logger=Logger.getInstance(DataReader.class,Logger.TRACE);
+	private final static Logger logger=Logger.getInstance(DataReader.class,Logger.TRACE);
 
 	public DataReader(int fileId,String root,byte zl,SingleTile st){
 		super();
@@ -27,17 +29,17 @@ public class DataReader implements Runnable {
 		processorThread = new Thread(this,url);
 		processorThread.setPriority(Thread.MIN_PRIORITY+1);
 		processorThread.start();
-//		logger.info("DataReader Thread started " + url);
 
 	}
 	public void run() {
+		logger.info("DataReader Thread start " + url);
 		try {
 			readData(url);
 		} catch (Exception e) {
-//			logger.error("Error:" + e.getMessage());
-//			e.printStackTrace();
+			logger.error("Error:" + e.getMessage());
+			e.printStackTrace();
 		}
-
+		logger.info("DataReader Thread end " + url);		
 	}
 
 	private void readData(String fileName) throws IOException{

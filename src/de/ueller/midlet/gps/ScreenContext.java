@@ -6,6 +6,7 @@ package de.ueller.midlet.gps;
 
 import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.Projection;
+import de.ueller.midlet.gps.tile.QueueDataReader;
 
 public class ScreenContext {
 
@@ -18,6 +19,7 @@ public class ScreenContext {
 	byte viewId = 1;
 	public Projection p;
 	public Trace trace;
+	public QueueDataReader dataReader;
 	
 	public ScreenContext cloneToScreenContext() {
 		ScreenContext sc=new ScreenContext();
@@ -28,6 +30,7 @@ public class ScreenContext {
 		sc.ySize=ySize;
 		sc.center=center.clone();
 		sc.trace=trace;
+		sc.dataReader=dataReader;
 		return sc;
 	}
 

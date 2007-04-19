@@ -6,6 +6,7 @@ import javax.microedition.lcdui.Image;
 import de.ueller.midlet.gps.data.IntPoint;
 import de.ueller.midlet.gps.data.Mercator;
 import de.ueller.midlet.gps.tile.PaintContext;
+import de.ueller.midlet.gps.tile.QueueDataReader;
 import de.ueller.midlet.gps.tile.Tile;
 /*
  * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net 
@@ -19,7 +20,7 @@ import de.ueller.midlet.gps.tile.Tile;
 //import de.ueller.midlet.gps.Logger;
 
 public class ImageCollector implements Runnable {
-//	private final static Logger logger=Logger.getInstance(Names.class,Logger.TRACE);
+//	private final static Logger logger=Logger.getInstance(ImageCollector.class,Logger.TRACE);
 
 	private final static byte STATE_WAIT_FOR_SC = 0;
 	private final static byte STATE_SC_READY = 1;
@@ -47,11 +48,11 @@ public class ImageCollector implements Runnable {
 	IntPoint oldCenter=new IntPoint(0,0);
 	private boolean needRedraw=false;
 	
-	public ImageCollector(Tile[] t,int x,int y) {
+	public ImageCollector(Tile[] t,int x,int y,Trace tr,QueueDataReader tir) {
 		super();
 		this.t=t;
 		try {
-			pc=new PaintContext();
+			pc=new PaintContext(tr,tir);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -62,9 +63,9 @@ public class ImageCollector implements Runnable {
 		imgPaint=Image.createImage(xSize,ySize);
 		imgReady=Image.createImage(xSize,ySize);
 		try {
-			pcCollect=new PaintContext();
-			pcPaint=new PaintContext();
-			pcReady=new PaintContext();
+			pcCollect=new PaintContext(tr,tir);
+			pcPaint=new PaintContext(tr,tir);
+			pcReady=new PaintContext(tr,tir);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -75,6 +76,7 @@ public class ImageCollector implements Runnable {
 	}
 
 	public void run() {
+//		logger.info("wait for sc");
 			while (stat == STATE_WAIT_FOR_SC){
 				synchronized (this) {
 					try {
@@ -84,6 +86,7 @@ public class ImageCollector implements Runnable {
 				}				
 			}
 			while (! shutdown){
+//				logger.info("loop");
 				try {
 //				create PaintContext
 					pcCollect.xSize=xSize;
@@ -94,7 +97,8 @@ public class ImageCollector implements Runnable {
 					pcCollect.p.inverse(pcCollect.xSize, 0,pcCollect.screenRU);
 					pcCollect.p.inverse(0,pcCollect.ySize,pcCollect.screenLD);
 					pcCollect.g=imgCollect.getGraphics();
-					pcCollect.trace=nextSc.trace;
+//					pcCollect.trace=nextSc.trace;
+//					pcCollect.dataReader=nextSc.dataReader;
 				// cleans the screen
 					pcCollect.g.setColor(155, 255, 155);
 					pcCollect.g.fillRect(0, 0, pcCollect.xSize, pcCollect.ySize);

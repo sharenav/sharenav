@@ -61,14 +61,15 @@ public class ContainerTile extends Tile {
 		}
 	}
 
-	public void cleanup() {
-		lastUse++;
-		if (t1 != null) {
-			t1.cleanup();
-		}
-		if (t2 != null) {
-			t2.cleanup();
-		}
+	public boolean cleanup() {
+		return true;
+//		lastUse++;
+//		if (t1 != null) {
+//			t1.cleanup();
+//		}
+//		if (t2 != null) {
+//			t2.cleanup();
+//		}
 		
 	}
 }

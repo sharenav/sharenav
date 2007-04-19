@@ -7,6 +7,7 @@ package de.ueller.midlet.gps.tile;
 import java.io.DataInputStream;
 import java.io.IOException;
 
+import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.ScreenContext;
 import de.ueller.midlet.gps.Trace;
 
@@ -15,11 +16,11 @@ import de.ueller.midlet.gps.data.Way;
 
 public class SingleTile extends Tile {
 
-	private static final byte	STATE_NOTLOAD		= 0;
+	public static final byte	STATE_NOTLOAD		= 0;
 
-	private static final byte	STATE_LOADSTARED	= 1;
+	public static final byte	STATE_LOADSTARED	= 1;
 
-	private static final byte	STATE_LOADREADY		= 2;
+	public static final byte	STATE_LOADREADY		= 2;
 	private static final byte	STATE_NAMESREADY		= 4;
 
 	Node[]						nodes;
@@ -31,9 +32,9 @@ public class SingleTile extends Tile {
 	short							fileId				= 0;
 
 
-//	private final static Logger	logger				= Logger.getInstance(SingleTile.class, Logger.TRACE);
+//	private final static Logger	logger= Logger.getInstance(SingleTile.class, Logger.TRACE);
 
-	private final byte			zl;
+	public final byte			zl;
 
 	SingleTile(DataInputStream dis, int deep, byte zl) throws IOException {
 		this.zl = zl;
@@ -47,14 +48,14 @@ public class SingleTile extends Tile {
 	
 	private boolean isDataReady(ScreenContext pc){
 		if (state == STATE_NOTLOAD) {
-//			logger.debug("singleTile start load");
+//			logger.debug("singleTile start load " + fileId );
 			state = STATE_LOADSTARED;
 //			drawBounds(pc, 255, 55, 55);
-			new DataReader(fileId, "", zl, this);
+			pc.dataReader.add(this);
 			return false;
 		}
 		if (state == STATE_LOADSTARED) {
-			// logger.debug("singleTile wait for load");
+//			 logger.debug("singleTile wait for load " + fileId);
 //			drawBounds(pc, 255, 255, 55);
 			return false;
 		}
@@ -113,24 +114,27 @@ public class SingleTile extends Tile {
 				node.paint(pc);
 			}
 		} else {
-			cleanup();
+		
 		}
 }
 
-	public void cleanup() {
+	public boolean cleanup() {
 		if (state == STATE_LOADREADY) {
-			// logger.info("tile unused " + fileId);
-			lastUse++;
+//			 logger.info("test tile unused fid:" + fileId + "c:"+lastUse);
+//			lastUse++;
 			if (lastUse > 4) {
 				nodes = null;
 				ways = null;
 				state = STATE_NOTLOAD;
 //				logger.info("discard content for tile " + fileId);
+				return true;
 			}
 		}
+		return false;
 	}
 
 	public void dataReady() {
+		lastUse=-1;
 		state = STATE_LOADREADY;
 	}
 

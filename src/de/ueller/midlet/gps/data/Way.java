@@ -155,6 +155,53 @@ public class Way {
 		case C.AREA_NATURAL_WATER:
 			pc.g.setColor(50,50,255);
 			break;
+		case C.AREA_LANDUSE_FARM:
+			pc.g.setColor(136,107,29);
+			break;
+		case C.AREA_LANDUSE_QUARRY:
+			pc.g.setColor(205,199,182);
+			break;
+		case C.AREA_LANDUSE_LANDFILL:
+			pc.g.setColor(75,75,75);
+			break;
+		case C.AREA_LANDUSE_BASIN:
+			pc.g.setColor(10,10,205);
+			break;
+		case C.AREA_LANDUSE_RESERVOIR:
+			pc.g.setColor(30,30,235);
+			break;
+		case C.AREA_LANDUSE_FOREST:
+			pc.g.setColor(5,82,4);
+			break;
+		case C.AREA_LANDUSE_ALLOTMENTS:
+			pc.g.setColor(25,102,24);
+			break;
+		case C.AREA_LANDUSE_RESIDENTIAL:
+			pc.g.setColor(210,210,210);
+			break;
+		case C.AREA_LANDUSE_RETAIL:
+			pc.g.setColor(57,227,231);
+			break;
+		case C.AREA_LANDUSE_COMMERCIAL:
+			pc.g.setColor(129,229,231);
+			break;
+		case C.AREA_LANDUSE_INDUSTRIAL:
+			pc.g.setColor(225,223,33);
+			break;
+		case C.AREA_LANDUSE_BROWNFIELD:
+			pc.g.setColor(75,75,11);
+			break;
+		case C.AREA_LANDUSE_GREENFIELD:
+			pc.g.setColor(167,167,132);
+			break;
+		case C.AREA_LANDUSE_CEMETERY:
+			pc.g.setColor(20,20,20);
+			break;
+		case C.AREA_LANDUSE_VILLAGE_GREEN:
+		case C.AREA_LANDUSE_RECREATION_GROUND:
+		case C.AREA_LEISURE_PARK:
+			pc.g.setColor(90,186,57);
+			break;
 		default:
 //			logger.error("unknown Type "+ w.type);
 			pc.g.setColor(0, 0, 0);

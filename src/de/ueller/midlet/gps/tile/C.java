@@ -25,5 +25,24 @@ public class C {
 	public final static byte WAY_HIGHWAY_RESIDENTIAL=7;
 	
 	public final static byte AREA_AMENITY_PARKING=50;
+	public final static byte AREA_AMENITY_PUBLIC_BUILDING=50;
 	public final static byte AREA_NATURAL_WATER=60;
+	public final static byte AREA_LEISURE_PARK=70;
+	
+	public final static byte AREA_LANDUSE_FARM=80;
+	public final static byte AREA_LANDUSE_QUARRY=81;
+	public final static byte AREA_LANDUSE_LANDFILL=82;
+	public final static byte AREA_LANDUSE_BASIN=83;
+	public final static byte AREA_LANDUSE_RESERVOIR=84;
+	public final static byte AREA_LANDUSE_FOREST=85;
+	public final static byte AREA_LANDUSE_ALLOTMENTS=86;
+	public final static byte AREA_LANDUSE_RESIDENTIAL=87;
+	public final static byte AREA_LANDUSE_RETAIL=88;
+	public final static byte AREA_LANDUSE_COMMERCIAL=89;
+	public final static byte AREA_LANDUSE_INDUSTRIAL=90;
+	public final static byte AREA_LANDUSE_BROWNFIELD=91;
+	public final static byte AREA_LANDUSE_GREENFIELD=92;
+	public final static byte AREA_LANDUSE_CEMETERY=93;
+	public final static byte AREA_LANDUSE_VILLAGE_GREEN=94;
+	public final static byte AREA_LANDUSE_RECREATION_GROUND=95;
 }

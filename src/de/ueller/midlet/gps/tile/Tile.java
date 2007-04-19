@@ -21,7 +21,7 @@ public abstract class Tile {
 	public static Trace				trace				= null;
 
 	public abstract void paint(PaintContext pc);
-	public abstract void cleanup();
+	public abstract boolean cleanup();
 	
 	boolean contain(ScreenContext pc){
 //		System.out.println(this);
