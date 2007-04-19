@@ -11,6 +11,7 @@ import net.sourceforge.jmicropolygon.PolygonGraphics;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.tile.C;
 import de.ueller.midlet.gps.tile.PaintContext;
+import de.ueller.midlet.gps.tile.SingleTile;
 
 
 public class Way {
@@ -75,34 +76,66 @@ public class Way {
 		}
 	}
 	
-	public void paintAsPath(PaintContext pc, Node[] nodes) {
+//	public void paintAsPath(PaintContext pc, Node[] nodes) {
+//		IntPoint lineP1 = pc.lineP1;
+//		IntPoint lineP2 = pc.lineP2;
+//		IntPoint swapLineP = pc.swapLineP;
+//
+//		for (int p1 = 0; p1 < paths.length; p1++) {
+////		read the name only if is used more memory efficicent
+////			pc.trace.getName(nameIdx);
+//			short[] path = paths[p1];
+//			for (int i1 = 0; i1 < path.length; i1++) {
+//				Node node = nodes[path[i1]];
+//				if (node != null) {
+//					pc.p.forward(node.radlat, node.radlon, lineP2, true);
+//					if (lineP1 == null) {
+//						lineP1 = lineP2;
+//						lineP2 = swapLineP;
+//					} else {
+//						float dst=MoreMath.ptSegDistSq(lineP1.x, lineP1.y, lineP2.x, lineP2.y,pc.xSize/2,pc.ySize/2);
+//						if (dst < pc.squareDstToWay){
+//							pc.squareDstToWay=dst;
+//							pc.actualWay=this;
+//							
+//						}
+//						pc.g.drawLine(lineP1.x, lineP1.y, lineP2.x, lineP2.y);
+//						swapLineP = lineP1;
+//						lineP1 = lineP2;
+//						lineP2 = swapLineP;
+//					}
+//				}
+//			}
+//			swapLineP = lineP1;
+//			lineP1 = null;
+//		}
+//	}
+	public void paintAsPath(PaintContext pc, SingleTile t) {
 		IntPoint lineP1 = pc.lineP1;
 		IntPoint lineP2 = pc.lineP2;
 		IntPoint swapLineP = pc.swapLineP;
 
 		for (int p1 = 0; p1 < paths.length; p1++) {
-//		read the name only if is used more memory efficicent
+//			read the name only if is used more memory efficicent
 //			pc.trace.getName(nameIdx);
 			short[] path = paths[p1];
 			for (int i1 = 0; i1 < path.length; i1++) {
-				Node node = nodes[path[i1]];
-				if (node != null) {
-					pc.p.forward(node.radlat, node.radlon, lineP2, true);
-					if (lineP1 == null) {
-						lineP1 = lineP2;
-						lineP2 = swapLineP;
-					} else {
-						float dst=MoreMath.ptSegDistSq(lineP1.x, lineP1.y, lineP2.x, lineP2.y,pc.xSize/2,pc.ySize/2);
-						if (dst < pc.squareDstToWay){
-							pc.squareDstToWay=dst;
-							pc.actualWay=this;
-							
-						}
-						pc.g.drawLine(lineP1.x, lineP1.y, lineP2.x, lineP2.y);
-						swapLineP = lineP1;
-						lineP1 = lineP2;
-						lineP2 = swapLineP;
+				int idx=path[i1];
+				pc.p.forward(t.nodeLat[idx], t.nodeLon[idx], lineP2, true);
+				if (lineP1 == null) {
+					lineP1 = lineP2;
+					lineP2 = swapLineP;
+				} else {
+					float dst=MoreMath.ptSegDistSq(lineP1.x, lineP1.y, lineP2.x, lineP2.y,pc.xSize/2,pc.ySize/2);
+					if (dst < pc.squareDstToWay){
+						pc.squareDstToWay=dst;
+						pc.actualWay=this;
+
 					}
+					pc.g.drawLine(lineP1.x, lineP1.y, lineP2.x, lineP2.y);
+					swapLineP = lineP1;
+					lineP1 = lineP2;
+					lineP2 = swapLineP;
 				}
 			}
 			swapLineP = lineP1;
@@ -110,19 +143,36 @@ public class Way {
 		}
 	}
 
-	public void paintAsArea(PaintContext pc, Node[] nodes){
+//	public void paintAsArea(PaintContext pc, Node[] nodes){
+//		IntPoint lineP2 = pc.lineP2;
+//		for (int p1 = 0; p1 < paths.length; p1++) {
+//			short[] path = paths[p1];
+//			int[] x=new int[path.length];
+//			int[] y=new int[path.length];
+//			for (int i1 = 0; i1 < path.length; i1++) {
+//				Node node = nodes[path[i1]];
+//				if (node != null) {
+//					pc.p.forward(node.radlat, node.radlon, lineP2, true);
+//					x[i1]=lineP2.x;
+//					y[i1]=lineP2.y;
+//				}
+//			}
+////			PolygonGraphics.drawPolygon(g, x, y);
+//			PolygonGraphics.fillPolygon(pc.g, x, y);
+//		}
+//
+//	}
+	public void paintAsArea(PaintContext pc, SingleTile t){
 		IntPoint lineP2 = pc.lineP2;
 		for (int p1 = 0; p1 < paths.length; p1++) {
 			short[] path = paths[p1];
 			int[] x=new int[path.length];
 			int[] y=new int[path.length];
 			for (int i1 = 0; i1 < path.length; i1++) {
-				Node node = nodes[path[i1]];
-				if (node != null) {
-					pc.p.forward(node.radlat, node.radlon, lineP2, true);
+				int idx=path[i1];
+					pc.p.forward(t.nodeLat[idx], t.nodeLon[idx], lineP2, true);
 					x[i1]=lineP2.x;
 					y[i1]=lineP2.y;
-				}
 			}
 //			PolygonGraphics.drawPolygon(g, x, y);
 			PolygonGraphics.fillPolygon(pc.g, x, y);

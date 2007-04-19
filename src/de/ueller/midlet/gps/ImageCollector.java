@@ -105,15 +105,15 @@ public class ImageCollector implements Runnable {
 					pcCollect.squareDstToWay=Float.MAX_VALUE;
 //				System.out.println("create " + pcCollect);
 				
-				if ((pcCollect.scale < 90000) && (t[3] != null)){
+				if ((pcCollect.scale < 45000) && (t[3] != null)){
 					t[3].paint(pcCollect);
 					Thread.yield();
 				} 
-				if ((pcCollect.scale < 360000) && (t[2] != null)){
+				if ((pcCollect.scale < 180000) && (t[2] != null)){
 					t[2].paint(pcCollect);
 					Thread.yield();
 				} 
-				if ((pcCollect.scale < 1800000f) && (t[1] != null)){
+				if ((pcCollect.scale < 900000f) && (t[1] != null)){
 					t[1].paint(pcCollect);
 					Thread.yield();
 				} 

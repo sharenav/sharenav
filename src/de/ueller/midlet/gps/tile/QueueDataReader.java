@@ -10,7 +10,6 @@ import java.io.InputStream;
 import java.util.Vector;
 
 import de.ueller.midlet.gps.Logger;
-import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.Way;
 
 
@@ -105,12 +104,36 @@ public class QueueDataReader implements Runnable {
 			throw new IOException("not a MapMid-file");
 		}
 		int nodeCount=ds.readShort();
-		tt.nodes = new Node[nodeCount];
-//		logger.info("reading " + nodeCount + " nodes");
+		float[] radlat = new float[nodeCount];
+		float[] radlon = new float[nodeCount];
+		int iNodeCount=ds.readShort();
+		Short[] nameIdx=new Short[iNodeCount];
+		byte[] type = new byte[iNodeCount];
 		for (int i=0; i< nodeCount;i++){
-			Node n=new Node(ds);
-			tt.nodes[i]=n;
+        radlat[i] = ds.readFloat();
+        radlon[i] = ds.readFloat();
+		byte f=ds.readByte();
+		if ((f & 1) == 1){
+//			name=is.readUTF();
+			short name=ds.readShort();
+			if ( name != 0){
+				nameIdx[i]=new Short(ds.readShort());
+			} else {
+				nameIdx[i]=null;
+			}
+			type[i]=ds.readByte();
 		}
+		}
+		tt.nameIdx=nameIdx;
+		tt.nodeLat=radlat;
+		tt.nodeLon=radlon;
+		tt.type=type;
+//		tt.nodes = new Node[nodeCount];
+////		logger.info("reading " + nodeCount + " nodes");
+//		for (int i=0; i< nodeCount;i++){
+//			Node n=new Node(ds);
+//			tt.nodes[i]=n;
+//		}
 		if (ds.readByte()!=0x55){
 //			logger.error("Start of Ways not found");
 			throw new IOException("MapMid-file corrupt: Nodes not OK");
