@@ -130,10 +130,10 @@ public class Trace extends Canvas implements CommandListener, SirfMsgReceiver, R
 		try {
 			
 //			logger.debug("connect " + url);
-//			conn = (StreamConnection)Connector.open(url);
-//			inputStream = conn.openInputStream();
+			conn = (StreamConnection)Connector.open(url);
+			inputStream = conn.openInputStream();
 //			logger.debug("connectetd");
-//			si=new SirfInput(inputStream,this);
+			si=new SirfInput(inputStream,this);
 //			logger.debug("messagereader Started");
 		} catch (Exception e) {
 			si=null;

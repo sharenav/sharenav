@@ -1,4 +1,4 @@
-#Tue Apr 03 11:43:21 CEST 2007
+#Thu Apr 19 18:10:07 CEST 2007
 eclipse.preferences.version=1
 encoding//.processed/src/de/ueller/gps/data/Position.java=UTF-8
 encoding//.processed/src/de/ueller/gps/data/Satelit.java=UTF-8
@@ -12,6 +12,7 @@ encoding//.processed/src/de/ueller/midlet/gps/GuiDiscover.java=UTF-8
 encoding//.processed/src/de/ueller/midlet/gps/ImageCollector.java=UTF-8
 encoding//.processed/src/de/ueller/midlet/gps/Logger.java=UTF-8
 encoding//.processed/src/de/ueller/midlet/gps/ScreenContext.java=UTF-8
+encoding//.processed/src/de/ueller/midlet/gps/Splash.java=UTF-8
 encoding//.processed/src/de/ueller/midlet/gps/Trace.java=UTF-8
 encoding//.processed/src/de/ueller/midlet/gps/data/Cylindrical.java=UTF-8
 encoding//.processed/src/de/ueller/midlet/gps/data/IntPoint.java=UTF-8
@@ -25,10 +26,10 @@ encoding//.processed/src/de/ueller/midlet/gps/data/Projection.java=UTF-8
 encoding//.processed/src/de/ueller/midlet/gps/data/Way.java=UTF-8
 encoding//.processed/src/de/ueller/midlet/gps/tile/C.java=UTF-8
 encoding//.processed/src/de/ueller/midlet/gps/tile/ContainerTile.java=UTF-8
-encoding//.processed/src/de/ueller/midlet/gps/tile/DataReader.java=UTF-8
 encoding//.processed/src/de/ueller/midlet/gps/tile/DictReader.java=UTF-8
 encoding//.processed/src/de/ueller/midlet/gps/tile/Names.java=UTF-8
 encoding//.processed/src/de/ueller/midlet/gps/tile/PaintContext.java=UTF-8
+encoding//.processed/src/de/ueller/midlet/gps/tile/QueueDataReader.java=UTF-8
 encoding//.processed/src/de/ueller/midlet/gps/tile/SingleTile.java=UTF-8
 encoding//.processed/src/de/ueller/midlet/gps/tile/StringEntry.java=UTF-8
 encoding//.processed/src/de/ueller/midlet/gps/tile/Tile.java=UTF-8

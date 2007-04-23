@@ -18,7 +18,7 @@ public class QueueDataReader implements Runnable {
 	private final Vector livingQueue=new Vector();
 	private Thread	processorThread;
 	private boolean shut=false;
-//	private final static Logger logger=Logger.getInstance(QueueDataReader.class,Logger.TRACE);
+//	private final static Logger logger=Logger.getInstance(QueueDataReader.class,Logger.INFO);
 
 	public QueueDataReader(){
 		super();
@@ -49,32 +49,43 @@ public class QueueDataReader implements Runnable {
 		int loop;
 //		logger.info("DataReader Thread start ");
 		while (! shut){
-//			logger.info("loop: " + livingQueue.size() + " / " + requestQueue.size());
-			for (loop=0; loop < livingQueue.size(); loop++){
-				tt=(SingleTile) livingQueue.elementAt(loop);
-				if (tt.cleanup()){
-//					logger.info("cleanup " + tt.fileId);
-					livingQueue.removeElementAt(loop--);
-				}
-			}
 			try {
-				if (requestQueue.size() > 0){
-					tt=(SingleTile) requestQueue.firstElement();
-					readData(tt);
-					requestQueue.removeElementAt(0);
-					livingQueue.addElement(tt);
-				}
-			} catch (Exception e) {
-
-			}
-			if (requestQueue.size() == 0){
-				synchronized (this) {
-					try {
-						wait(2000);
-					} catch (InterruptedException e) {
-
+//				logger.info("loop: " + livingQueue.size() + " / " + requestQueue.size());
+				for (loop=0; loop < livingQueue.size(); loop++){
+					tt=(SingleTile) livingQueue.elementAt(loop);
+					if (tt.cleanup()){
+//						logger.info("cleanup " + tt.fileId);
+						livingQueue.removeElementAt(loop--);
 					}
 				}
+				try {
+					if (requestQueue.size() > 0){
+//						logger.trace("try to read first queue element");
+						tt=(SingleTile) requestQueue.firstElement();
+//						logger.trace("remove fom request queue " + tt);
+						requestQueue.removeElementAt(0);
+//						logger.trace("read content " + tt);
+						readData(tt);
+//						logger.trace("add to living queue " + tt);
+						livingQueue.addElement(tt);
+					}
+				} catch (IOException e) {
+					tt=(SingleTile) requestQueue.firstElement();
+//					logger.info(e.getMessage()+ "in read tile " + tt.fileId);
+					e.printStackTrace();
+				}
+				if (requestQueue.size() == 0){
+					synchronized (this) {
+						try {
+							wait(2000);
+						} catch (InterruptedException e) {
+
+						}
+					}
+				}
+			} catch (RuntimeException e) {
+//				logger.error(e.getMessage()+" continue thread");
+				e.printStackTrace();
 			}
 		}
 //		logger.info("DataReader Thread end ");		
@@ -106,18 +117,22 @@ public class QueueDataReader implements Runnable {
 		float[] radlat = new float[nodeCount];
 		float[] radlon = new float[nodeCount];
 		int iNodeCount=ds.readShort();
+//		logger.trace("nodes total :"+nodeCount + "  interestNode :" + iNodeCount);
 		Short[] nameIdx=new Short[iNodeCount];
 		byte[] type = new byte[iNodeCount];
 		for (int i=0; i< nodeCount;i++){
+//			logger.trace("read coord :"+nodeCount);
 			radlat[i] = ds.readFloat();
 			radlon[i] = ds.readFloat();
 			if (i < iNodeCount){
+//				logger.trace("read ext :"+i+"/"+nodeCount );
 				short name=ds.readShort();
 				if ( name != 0){
 					nameIdx[i]=new Short(name);
 				} else {
 					nameIdx[i]=null;
 				}
+//				logger.trace("read type :"+i+"/"+nodeCount);
 				type[i]=ds.readByte();
 			}
 		}
@@ -125,22 +140,16 @@ public class QueueDataReader implements Runnable {
 		tt.nodeLat=radlat;
 		tt.nodeLon=radlon;
 		tt.type=type;
-//		tt.nodes = new Node[nodeCount];
-////		logger.info("reading " + nodeCount + " nodes");
-//		for (int i=0; i< nodeCount;i++){
-//		Node n=new Node(ds);
-//		tt.nodes[i]=n;
-//		}
 		if (ds.readByte()!=0x55){
 //			logger.error("Start of Ways not found");
 			throw new IOException("MapMid-file corrupt: Nodes not OK");
 		}
 		int wayCount=ds.readByte();
-//		logger.info("reading " + wayCount + " ways");
+//		logger.trace("reading " + wayCount + " ways");
 		if (wayCount < 0) {
 			wayCount+=256;
 		}
-//		logger.info("reading " + wayCount + " ways");
+//		logger.trace("reading " + wayCount + " ways");
 		tt.ways = new Way[wayCount];
 		for (int i=0; i< wayCount;i++){
 			byte flags=ds.readByte();

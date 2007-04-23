@@ -27,7 +27,7 @@ import javax.microedition.lcdui.Image;
 public class Splash extends Canvas implements CommandListener,Runnable{
 	private Image splash;
     /** Soft button to go back from about screen. */
-    private final Command BACK_CMD = new Command("Accept", Command.BACK, 2);
+    private final Command BACK_CMD = new Command("Accept", Command.OK, 2);
     private final Command EXIT_CMD = new Command("Decline", Command.EXIT, 1);
 	private final GpsMid main;
 	String[] txt={"Copyright:",
