@@ -12,9 +12,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.PropertyResourceBundle;
+import java.util.Random;
 import java.util.ResourceBundle;
 
 import de.ueller.osmToGpsMid.model.Bounds;
@@ -26,18 +28,29 @@ import de.ueller.osmToGpsMid.model.Bounds;
 public class Configuration {
 		private final String file;
 		private ResourceBundle rb;
+		private ResourceBundle vb;
+		private String tmp=null;
+		private final String planet;
 
 //		private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
 //				.getBundle(BUNDLE_NAME);
 
-		public Configuration(String file) {
+		public Configuration(String planet,String file) {
+			this.planet = planet;
 			this.file = file;
 			try {
-				FileInputStream cf=new FileInputStream(file+".properties");
+				InputStream cf;
+				try {
+					cf = new FileInputStream(file+".properties");
+				} catch (FileNotFoundException e) {
+					System.out.println(file + ".properties not found, try bundled version");
+					cf=getClass().getResourceAsStream("/"+file+".properties");
+					if (cf == null){
+						throw new IOException(file + " is not a valid region");
+					}
+				}
 				rb= new PropertyResourceBundle(cf);
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				vb=new PropertyResourceBundle(getClass().getResourceAsStream("/version.properties"));
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -63,16 +76,29 @@ public class Configuration {
 		public String getName(){
 			return getString("bundle.name");
 		}
-		public File getJarFile(){
-			return new File(getString("application")
+		
+		public InputStream getJarFile(){
+			return getClass().getResourceAsStream("/"+vb.getString("app")
 			+"-"+getString("application.version")
 			+".jar");
 		}
+		public String getJarFileName(){
+			return vb.getString("app")
+			+"-"+getString("application.version")
+			+".jar";
+		}
 		public String getTempDir(){
-			return getString("tmp.dir");
+			return getTempBaseDir()+"/"+"map";
+		}
+		public String getTempBaseDir(){
+			if (tmp==null){
+				tmp="temp"+ new Random(System.currentTimeMillis()).nextLong();
+			}
+			return tmp;
+//			return getString("tmp.dir");
 		}
 		public File getPlanet(){
-			return new File(getString("planet.osm"));
+			return new File(planet);
 		}
 		public Bounds[] getBounds(){
 			int i;

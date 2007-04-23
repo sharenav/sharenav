@@ -1,0 +1,146 @@
+<project name="Osm2GpsMid"
+         default="deploy"
+         basedir=".">
+
+	<property name="planet" value="/Massenspeicher/planet-070418.osm"/>
+	<property name="planet" value="/Massenspeicher/myStreetMap_harald.osm"/>
+	<property name="src.dir" value="${basedir}/src"/>
+	<property name="properties.dir" value="${basedir}/mapdef"/>
+	<property name="resources.dir" value="${basedir}/resources"/>
+	<property name="app" value="GpsMid"/>
+
+	<property name="lib.dir" value="${basedir}/lib"/>
+
+   	<property name="dist.dir" value="${basedir}/dist"/>
+	<property name="version" value="0.2.24"/>
+	<property name="buildlib"
+	             value="buildlib/explode.jar"/>
+
+   <available property="clover.available" classname="org.apache.tools.ant.taskdefs.CloverCompilerAdapter"/>
+
+	<path id="main.classpath">
+		<pathelement location="${classes.dir}" />
+		<fileset dir="${lib.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+   <target name="clover-yes" depends="prepare" if="clover.available">
+      <property name="compiler" value="org.apache.tools.ant.taskdefs.CloverCompilerAdapter"/>
+   </target>
+
+   <target name="clover-no" depends="prepare" unless="clover.available">
+      <property name="compiler" value="modern"/>
+   </target>
+
+   <target name="prepare">
+   	  <mkdir dir="bin"/>
+      <mkdir dir="${dist.dir}"/>
+   	  <echoproperties destfile="${resources.dir}/version.properties"/>
+   	  <mkdir dir="exploded"/>
+	<tstamp>
+		<format property="TODAY_DE" pattern="yyyy-MM-dd HH:mm z" locale="de,DE"/>
+	</tstamp>
+   	
+   </target>
+
+   <target name="clean">
+    <delete dir="${build.dir}"/>
+   	<delete dir="bin"/>
+    <delete dir="deploy"/>
+   	<delete dir="exploded"/>
+   	<delete dir="${dist.dir}"/>
+   	<delete file="${resources.dir}/version.properties"/>
+   </target>
+
+   <target name="compile" depends="clover-yes, clover-no">
+    <javac srcdir="${src.dir}"
+            destdir="bin"
+            debug="on"
+            optimize="on"
+            deprecation="on"
+            compiler="${compiler}">
+     	<classpath>
+     		<path refid="main.classpath" />
+     	</classpath>
+     </javac>
+	</target>
+	
+   	<target name="deploy" depends="explode,compile">
+      <jar jarfile="${dist.dir}/${ant.project.name}-${version}.jar">
+		<manifest>
+    		<attribute name="Built-By" value="${user.name}"/>
+			<attribute name="Main-Class" value="de.ueller.osmToGpsMid.BundleGpsMid"/>
+			<section name="${ant.project.name}">
+				<attribute name="Implementation-Title" value="Change Management Portlet"/>
+				<attribute name="Implementation-Version" value="${version} ${TODAY_DE}"/>
+		   		<attribute name="Implementation-Vendor" value="Harald Mueller"/>
+			</section>
+		</manifest>
+        <fileset dir="bin">
+     		<include name="**/*.class" />
+		</fileset>
+        <fileset dir="exploded">
+     		<include name="**/*.class" />
+		</fileset>
+        <fileset dir="${resources.dir}">
+     		<include name="*.jar" />
+     		<include name="version.properties" />
+		</fileset>
+     	 <fileset dir="${properties.dir}">
+     		<include name="**/*.properties" />
+     	 </fileset>
+      </jar>
+   </target>
+
+   <target name="explode" depends="prepare">
+      <taskdef  classname="org.jboss.portal.common.ant.Explode"
+               name="explode"
+               classpath="${buildlib}"/>
+      <explode
+            file="lib/MinML2.jar"
+            todir="${basedir}"
+            name="exploded"/>
+   </target>
+	
+	<target name="app-germany" depends="deploy">
+		<java jar="${deploy.dir}/${project}-${version}.jar" fork="true">
+			<arg value="${planet}"/>
+		  <arg value="germany"/>
+		</java>
+	</target>	
+	<target name="app-south-germany" depends="deploy">
+		<java jar="${deploy.dir}/${project}-${version}.jar" fork="true">
+			<arg value="${planet}"/>
+		  <arg value="south-germany"/>
+		</java>
+	</target>	
+	<target name="nuernberg" depends="deploy">
+		<java jar="${dist.dir}/${ant.project.name}-${version}.jar" fork="true">
+			<arg value="${planet}"/>
+			<arg value="nuernberg"/>
+		</java>
+	</target>	
+	<target name="london" depends="deploy">
+		<java jar="${deploy.dir}/${project}-${version}.jar" fork="true">
+			<arg value="${planet}"/>
+		  <arg value="london"/>
+		</java>
+	</target>	
+	<target name="hamburg" depends="deploy">
+		<java jar="${deploy.dir}/${project}-${version}.jar" fork="true">
+			<arg value="${planet}"/>
+		  <arg value="hamburg"/>
+		</java>
+	</target>	
+
+	<target name="all-maps" depends="app-germany,
+	app-south-germany,
+	nuernberg,
+	london,
+	hamburg"/>
+
+	
+	<target name="all" depends="deploy"/>
+</project>
+

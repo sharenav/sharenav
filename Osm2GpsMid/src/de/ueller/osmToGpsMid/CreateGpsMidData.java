@@ -30,6 +30,9 @@ public class CreateGpsMidData {
 	Tile tile[]= new Tile[4];
 	private final String	path;
 	TreeSet<String> names;
+	
+	private final static int INODE=1;
+	private final static int SEGNODE=2;
 //	private Bounds[] bounds=null;
 	
 	public CreateGpsMidData(OxParser parser,String path) {
@@ -220,7 +223,7 @@ public class CreateGpsMidData {
 		if (ways.size() <= 255){
 			out=createMidContent(ways,nodes);
 		}
-		if (ways.size() > 255 || (out.length > 10000 && ways.size() > 2)){
+		if (ways.size() > 255 || (out.length > 8000 && ways.size() > 2)){
 			System.out.println("create Subtiles size="+out.length+" ways=" + ways.size());
 			t.bounds=realBound.clone();
 			t.type=2;
@@ -330,7 +333,7 @@ public class CreateGpsMidData {
 		return nodes;
 	}
 
-	public byte[] createMidContent(Collection<Way> ways,Collection<Node> nodes) throws IOException{
+	public byte[] createMidContent(Collection<Way> ways,Collection<Node> interestNodes) throws IOException{
 		Map<Long,Node> wayNodes = new HashMap<Long,Node>();
 		int ren=0;
 		for (Way way : ways) {
@@ -341,7 +344,7 @@ public class CreateGpsMidData {
 					l.to.used=false;
 			}
 		}
-		for (Node n1 : nodes){
+		for (Node n1 : interestNodes){
 			n1.used=true;
 		}
 		// find all point that are part of a way but not in interestNodes
@@ -365,18 +368,19 @@ public class CreateGpsMidData {
 			}
 		}
 		System.out.println("test ways : " + ways.size() + "  Nodes : " + wayNodes.size());
-		System.out.println("interrest Nodes : " + nodes.size());
+		System.out.println("interrest Nodes : " + interestNodes.size());
 		ByteArrayOutputStream fo = new ByteArrayOutputStream();
 		DataOutputStream ds = new DataOutputStream(fo);
 		ds.writeByte(0x54); // magig number
-		ds.writeShort(nodes.size()+wayNodes.size());
-		for (Node n : nodes) {
+		ds.writeShort(interestNodes.size()+wayNodes.size());
+		ds.writeShort(interestNodes.size());		
+		for (Node n : interestNodes) {
 			n.renumberdId=(short) ren++;
-			writeNode(n,ds);
+			writeNode(n,ds,INODE);
 		}
 		for (Node n : wayNodes.values()) {
 			n.renumberdId=(short) ren++;
-			writeNode(n,ds);			
+			writeNode(n,ds,SEGNODE);			
 		}
 		ds.writeByte(0x55); // magig number
 		ds.writeByte(ways.size());
@@ -389,22 +393,17 @@ public class CreateGpsMidData {
 		return fo.toByteArray();
 	}
 
-	private void writeNode(Node n,DataOutputStream ds) throws IOException{
+	private void writeNode(Node n,DataOutputStream ds,int type) throws IOException{
 		int flags=0;
-//		System.out.println("wirte node id="+n.renumberdId );
+//		System.out.println("write node id="+n.renumberdId );
 		ds.writeFloat(degToRad(n.lat));
 		ds.writeFloat(degToRad(n.lon));
-		if (n.getType() != 0){
-			flags=1;
-		}
-		ds.writeByte(flags);
-		if ((flags & 1) == 1){
+		if (type == INODE){
 			String name = n.getName();
 			if (name != null)
 				ds.writeShort(getWayNameIndex(name));
-//				ds.writeUTF(name.trim());
 			else 
-				ds.writeUTF("");
+				ds.writeShort(0);
 			ds.writeByte(n.getType());
 		}
 	}

@@ -12,6 +12,7 @@ import java.io.OutputStream;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Enumeration;
+import java.util.zip.CRC32;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
@@ -20,15 +21,15 @@ import java.util.zip.ZipOutputStream;
 
 
 public class BundleGpsMid {
-
+	static boolean  compressed=true;
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		if (args.length > 0){
+		if (args.length > 1){
 			FileInputStream fr;
 			try {
-				Configuration c=new Configuration(args[0]);
+				Configuration c=new Configuration(args[0],args[1]);
 				System.out.println("create Bundle for " + c.getName());
 				String tmpDir = c.getTempDir();
 				System.out.println("unpack Application to " + tmpDir);
@@ -51,12 +52,18 @@ public class BundleGpsMid {
 			}
 
 		} else {
-			System.err.println("please give the Configfile as argument");
+			System.err.println("please give arguments");
+			System.err.println("  arg1: planet file");
+			System.err.println("  arg2: location configfile");		
 		}
 	}
 
 	private static void expand(Configuration c, String tmpDir) throws ZipException, IOException {
-		File file=c.getJarFile();
+		System.out.println("prepare " + c.getJarFileName());
+		InputStream appStream=c.getJarFile();
+		File file=new File(c.getTempBaseDir()+"/"+c.getJarFileName());
+		writeFile(appStream, file.getAbsolutePath());
+		
 		ZipFile zf=new ZipFile(file.getCanonicalFile());
 		for (Enumeration<? extends ZipEntry> e=zf.entries();e.hasMoreElements();) {
 			ZipEntry ze=e.nextElement();
@@ -82,6 +89,9 @@ public class BundleGpsMid {
 		FileOutputStream fo=new FileOutputStream(n);
 		ZipOutputStream zf=new ZipOutputStream(fo);
 		zf.setLevel(9);
+		if (!compressed){
+			zf.setMethod(ZipOutputStream.STORED);
+		}
 		File src=new File(c.getTempDir());
 		if (! src.isDirectory() ){
 			throw new Error("TempDir is not a directory");
@@ -89,7 +99,7 @@ public class BundleGpsMid {
 		packDir(zf, src,"");
 		zf.close();
 	    FileWriter fw=new FileWriter(jad);
-		fw.write("MIDlet-1: GpsMid,,de.ueller.midlet.gps.GpsMid\n");
+		fw.write("MIDlet-1: GpsMid, images/GpsMid.png, de.ueller.midlet.gps.GpsMid\n");
 		fw.write("MIDlet-Jar-URL: GpsMid-"+c.getName()+"-"+c.getVersion()+".jar\n");
 		fw.write("MIDlet-Name: GpsMid\n");
 		fw.write("MIDlet-Jar-Size: "+n.length()+"\n");
@@ -110,17 +120,30 @@ public class BundleGpsMid {
 					packDir(os, files[i],files[i].getName());					
 				}
 			} else {
+				System.out.println();
 				ZipEntry ze = new ZipEntry(path+"/"+files[i].getName());
-				os.putNextEntry(ze);
-				FileInputStream stream=new FileInputStream(files[i]);
 				int ch;
 				int count=0;
+				FileInputStream stream=new FileInputStream(files[i]);
+				if (!compressed){
+					CRC32 crc=new CRC32();
+					count=0;
+					while ((ch=stream.read()) != -1){
+						crc.update(ch);
+					}
+					ze.setCrc(crc.getValue());
+					ze.setSize(files[i].length());
+				}
+//				ze.
+				os.putNextEntry(ze);
+				count=0;
+				stream=new FileInputStream(files[i]);
 				while ((ch=stream.read()) != -1){
 					os.write(ch);
 					count++;
 				}
 				System.out.println("wrote " + path + "/" + files[i].getName() + " byte:" + count);
-				
+
 			}
 		}
 		
@@ -145,7 +168,7 @@ public class BundleGpsMid {
 			System.out.println("wrote " + name + " byte:" + count);
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new Error("fail to write " + e.getMessage());
+			throw new Error("fail to write " + name + " err:" + e.getMessage());
 		}
 	}
 
