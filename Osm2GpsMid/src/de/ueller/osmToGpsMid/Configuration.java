@@ -79,12 +79,12 @@ public class Configuration {
 		
 		public InputStream getJarFile(){
 			return getClass().getResourceAsStream("/"+vb.getString("app")
-			+"-"+getString("application.version")
+			+"-"+getVersion()
 			+".jar");
 		}
 		public String getJarFileName(){
 			return vb.getString("app")
-			+"-"+getString("application.version")
+			+"-"+getVersion()
 			+".jar";
 		}
 		public String getTempDir(){
@@ -126,6 +126,6 @@ public class Configuration {
 		 * @return
 		 */
 		public String getVersion() {
-			return getString("application.version");
+			return vb.getString("version");
 		}
 }
