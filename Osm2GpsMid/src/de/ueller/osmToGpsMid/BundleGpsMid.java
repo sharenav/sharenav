@@ -142,7 +142,7 @@ public class BundleGpsMid {
 					os.write(ch);
 					count++;
 				}
-				System.out.println("wrote " + path + "/" + files[i].getName() + " byte:" + count);
+//				System.out.println("wrote " + path + "/" + files[i].getName() + " byte:" + count);
 
 			}
 		}
@@ -165,7 +165,7 @@ public class BundleGpsMid {
 				fo.write(ch);
 				count++;
 			}
-			System.out.println("wrote " + name + " byte:" + count);
+//			System.out.println("wrote " + name + " byte:" + count);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new Error("fail to write " + name + " err:" + e.getMessage());
@@ -178,7 +178,7 @@ public class BundleGpsMid {
 	private static void createPath(File f) {
 		if (! f.canWrite())
 			createPath(f.getParentFile());
-		System.out.println("create dir " + f);
+//		System.out.println("create dir " + f);
 		f.mkdir();
 	}
 

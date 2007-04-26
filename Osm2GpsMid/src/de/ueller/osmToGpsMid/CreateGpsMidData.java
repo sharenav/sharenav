@@ -20,12 +20,14 @@ import java.util.TreeSet;
 import de.ueller.osmToGpsMid.model.Bounds;
 import de.ueller.osmToGpsMid.model.Line;
 import de.ueller.osmToGpsMid.model.Node;
+import de.ueller.osmToGpsMid.model.Sequence;
 import de.ueller.osmToGpsMid.model.Tile;
 import de.ueller.osmToGpsMid.model.Way;
 
 
 
 public class CreateGpsMidData {
+	private final static int MAX_TILE_FILESIZE=6000;
 	OxParser parser;
 	Tile tile[]= new Tile[4];
 	private final String	path;
@@ -193,7 +195,8 @@ public class CreateGpsMidData {
 			tile[zl]=new Tile((byte) zl);
 			exportTile(tile[zl],1, parser.ways,parser.nodes.values(), (byte) 1,zl,allBound);
 			tile[zl].recalcBounds();
-			tile[zl].write(ds);
+			Sequence s=new Sequence();
+			tile[zl].write(ds,1,s,path);
 			ds.writeUTF("END"); // magig number
 			fo.close();
 		} catch (FileNotFoundException e) {
@@ -223,7 +226,7 @@ public class CreateGpsMidData {
 		if (ways.size() <= 255){
 			out=createMidContent(ways,nodes);
 		}
-		if (ways.size() > 255 || (out.length > 8000 && ways.size() > 2)){
+		if (ways.size() > 255 || (out.length > MAX_TILE_FILESIZE && ways.size() > 2)){
 			System.out.println("create Subtiles size="+out.length+" ways=" + ways.size());
 			t.bounds=realBound.clone();
 			t.type=2;
