@@ -22,7 +22,7 @@ public class Way extends Entity implements Comparable<Way>{
 		byte type=0;
 		String t = (String) tags.get("highway");
 		if ("unclassified".equals(t)){
-			type=10;
+			type=9;
 		} else if ("motorway".equals(t)){
 			type=2;
 		} else if ("motorway_link".equals(t)){
@@ -111,6 +111,16 @@ public class Way extends Entity implements Comparable<Way>{
 		t = (String) tags.get("leisure");
 		if ("park".equals(t)){
 			type=Constants.AREA_LEISURE_PARK;
+		}
+		if (type!= 0)
+			return type;
+		// types > 50 represent Areas
+		t = (String) tags.get("waterway");
+		if ("riverbank".equals(t)){
+			type=Constants.AREA_NATURAL_WATER;
+		}
+		if ("river".equals(t)){
+			type=Constants.WAY_WATERWAY_RIVER;
 		}
 
 		return type;

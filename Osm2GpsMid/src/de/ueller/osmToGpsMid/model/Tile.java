@@ -34,7 +34,7 @@ public class Tile {
 		DataOutputStream lds;
 		boolean openStream;
 		System.out.println("Write Tile type=" + type + " deep=" + deep + " fid=" + fid);
-		if (type == 2 && deep >= 6){
+		if (type == 2 && deep >= 7){
 			System.out.println("Type 4");
 			ds.writeByte(4);
 			ds.writeFloat(degToRad(bounds.minLat));
