@@ -16,12 +16,12 @@ public abstract class Tile {
 	float maxLat;
 	float minLon;
 	float maxLon;
-//	int fileId=0;//
+	short fileId=0;
 	public byte	lastUse	= 0;
-	public static Trace				trace				= null;
+//	public static Trace				trace				= null;
 
 	public abstract void paint(PaintContext pc);
-	public abstract boolean cleanup();
+	public abstract boolean cleanup(int level);
 	
 	boolean contain(ScreenContext pc){
 //		System.out.println(this);

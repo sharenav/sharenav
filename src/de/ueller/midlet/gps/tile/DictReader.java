@@ -53,11 +53,22 @@ public class DictReader  implements Runnable {
 				logger.trace("read TileType");
 				byte type=ds.readByte();
 				logger.trace("TileType="+type);
-		    	if (type==1){
-		    		dict=new SingleTile(ds,1,zl);
-		    	} else {
+				switch (type) {
+				case 1:
+					dict=new SingleTile(ds,1,zl);
+					break;
+				case 2:
 		    		dict=new ContainerTile(ds,1,zl);
-		    	}
+		    		break;
+				case 3:
+					// empty tile;
+					break;
+				case 4:
+					dict=new FileTile(ds,1,zl);
+					break;
+				default:
+					break;
+				}
 		    	
 		    	t.setDict(dict,zl);
 		} catch (Exception e){

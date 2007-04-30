@@ -33,6 +33,8 @@ import de.ueller.midlet.gps.tile.DictReader;
 import de.ueller.midlet.gps.tile.Names;
 import de.ueller.midlet.gps.tile.PaintContext;
 import de.ueller.midlet.gps.tile.QueueDataReader;
+import de.ueller.midlet.gps.tile.QueueDictReader;
+import de.ueller.midlet.gps.tile.QueueReader;
 import de.ueller.midlet.gps.tile.Tile;
 
 
@@ -82,6 +84,7 @@ public class Trace extends Canvas implements CommandListener, SirfMsgReceiver, R
 //	private VisibleCollector vc;
 	private ImageCollector vc;
 	private QueueDataReader tileReader;
+	private QueueReader dictReader;
 	private Runtime runtime = Runtime.getRuntime();
 	
     public Trace(GpsMid parent,String url,String root) throws Exception{
@@ -104,9 +107,10 @@ public class Trace extends Canvas implements CommandListener, SirfMsgReceiver, R
 			logger.info("Create queueDataReader");
 			tileReader=new QueueDataReader();
 			logger.info("create imageCollector");
-			vc=new ImageCollector(t,this.getWidth(),this.getHeight(),this,tileReader);
+			dictReader=new QueueDictReader();
+			vc=new ImageCollector(t,this.getWidth(),this.getHeight(),this,tileReader,dictReader);
 			logger.info("create PaintContext");
-			pc = new PaintContext(this,tileReader);
+			pc = new PaintContext(this,tileReader,dictReader);
 			logger.info("init Projection");
 			projection=new Mercator(center,pc.scale,getWidth(),getHeight());
 			logger.info("set Center");
@@ -163,30 +167,7 @@ public class Trace extends Canvas implements CommandListener, SirfMsgReceiver, R
 	public void commandAction(Command c, Displayable d) {
 		try {
 			if (c == EXIT_CMD) {
-				try {
-					if (si != null) {
-						si.close();
-					}
-					if (inputStream != null) {
-						inputStream.close();
-					}
-					if (namesThread != null){
-						namesThread.stop();
-					}
-				} catch (IOException e) {
-				}
-				try {
-					if (si != null) {
-						si.close();
-					}
-				} catch (RuntimeException e1) {
-				}
-				try {
-					if (conn != null) {
-						conn.close();
-					}
-				} catch (IOException e) {
-				}
+				shutdown();
 			    parent.show();
 			    return;
 			}
@@ -198,6 +179,44 @@ public class Trace extends Canvas implements CommandListener, SirfMsgReceiver, R
 			e.printStackTrace();
 		}
 
+	}
+
+	private void shutdown() {
+		try {
+			if (inputStream != null) {
+				inputStream.close();
+				inputStream=null;
+			}
+			if (namesThread != null){
+				namesThread.stop();
+				namesThread=null;
+			}
+			if (dictReader != null){
+				dictReader.shutdown();
+				dictReader=null;
+			}
+			if (tileReader != null){
+				tileReader.shutdown();
+				tileReader=null;
+			}
+			
+		} catch (IOException e) {
+		}
+		stopSirf();
+	}
+
+	private void stopSirf() {
+		if (si != null) {
+			si.close();
+			si=null;
+		}
+		try {
+			if (conn != null) {
+				conn.close();
+				conn=null;
+			}
+		} catch (IOException e) {
+		}
 	}
 
 	protected void paint(Graphics g) {
@@ -230,62 +249,16 @@ public class Trace extends Canvas implements CommandListener, SirfMsgReceiver, R
 		g.drawString(solution, getWidth()-1, 1, Graphics.TOP|Graphics.RIGHT);
 		namesThread.cleanup();
 		tileReader.incUnusedCounter();
+		dictReader.incUnusedCounter();
 		
 	}
 
-	protected void paintOld(Graphics g) {
-//		Transform t=new Transform(null);
-//		logger.info("repaint");
-		try {
-			pc.xSize=this.getWidth();
-			pc.ySize=this.getHeight();
-			int yc=1;
-			int la=18;
-			pc.p=projection;
-			pc.p.inverse(pc.xSize, 0,pc.screenRU);
-			pc.p.inverse(0,pc.ySize,pc.screenLD);
-			pc.g=g;
-			pc.scale=scale;
-			// cleans the screen
-			g.setColor(155, 255, 155);
-			g.fillRect(0, 0, pc.xSize, pc.ySize);
-
-			if ((scale < 90000) && (t[3] != null)){
-//				logger.debug("start Paint");
-				t[3].paint(pc);
-			} 
-			if ((scale < 360000) && (t[2] != null)){
-//				logger.debug("start Paint");
-				t[2].paint(pc);
-			} 
-			if ((scale < 1800000f) && (t[1] != null)){
-//				logger.debug("start Paint");
-				t[1].paint(pc);
-			} 
-			if ( t[0] != null){
-//				logger.debug("start Paint");
-				t[0].paint(pc);
-			} 
-			switch (showAddons){
-				case 1:yc=showConnectStatistics(g, yc, la);
-				break;
-				case 2:showSatelite(g);
-				break;
-				case 3: showAddons=0;
-				
-			}
-			showMovement(g);
-		    g.setColor(0, 0, 0);
-			g.drawString(solution, getWidth()-1, 1, Graphics.TOP|Graphics.RIGHT);
-			namesThread.cleanup();
-		} catch (RuntimeException e) {
-//			logger.error(e.getMessage());
-			e.printStackTrace();
-		}
-	}
 
 
 	private int showConnectStatistics(Graphics g, int yc, int la) {
+		if (statRecord == null){
+			return yc;
+		}
 		g.setColor(255,255,255);
 		for (byte i=0;i<SirfMsgReceiver.SIRF_FAIL_COUNT;i++){
 			g.drawString(statMsg[i]+statRecord[i], 0, yc, Graphics.TOP|Graphics.LEFT);
@@ -347,9 +320,9 @@ public class Trace extends Canvas implements CommandListener, SirfMsgReceiver, R
 		yc+=la;					
 		g.drawString("Names   : "+namesThread.getNameCount(), 0, yc, Graphics.TOP|Graphics.LEFT);
 		yc+=la;	
-		g.drawString("Live T  : "+tileReader.getLivingTilesCount(), 0, yc, Graphics.TOP|Graphics.LEFT);
+		g.drawString("Single T: "+tileReader.getLivingTilesCount()+"/"+tileReader.getRequestQueueSize(), 0, yc, Graphics.TOP|Graphics.LEFT);
 		yc+=la;	
-		g.drawString("req  T  : "+tileReader.getRequestQueueSize(), 0, yc, Graphics.TOP|Graphics.LEFT);
+		g.drawString("File T  : "+dictReader.getLivingTilesCount()+"/"+dictReader.getRequestQueueSize(), 0, yc, Graphics.TOP|Graphics.LEFT);
 		yc+=la;	
 		return(yc);
 		
@@ -436,7 +409,7 @@ public class Trace extends Canvas implements CommandListener, SirfMsgReceiver, R
 
 	public void setDict(Tile dict,byte zl) {
 		t[zl]=dict;
-		Tile.trace=this;
+//		Tile.trace=this;
 		addCommand(REFRESH_CMD);
 		if (zl == 3){
 			setTitle(null);

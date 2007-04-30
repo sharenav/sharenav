@@ -11,13 +11,10 @@ import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
 import de.ueller.midlet.gps.Logger;
-import de.ueller.midlet.gps.ScreenContext;
-import de.ueller.midlet.gps.Trace;
 
-import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.Way;
 
-public class SingleTile extends Tile {
+public class SingleTile extends Tile implements QueueableTile {
 
 	public static final byte STATE_NOTLOAD = 0;
 
@@ -38,21 +35,22 @@ public class SingleTile extends Tile {
 
 	byte state = 0;
 
-	short fileId = 0;
 
-	// private final static Logger logger= Logger.getInstance(SingleTile.class,
-	// Logger.TRACE);
+//	 private final static Logger logger= Logger.getInstance(SingleTile.class,
+//	 Logger.ERROR);
 
 	public final byte zl;
 
 	SingleTile(DataInputStream dis, int deep, byte zl) throws IOException {
+//		 logger.debug("load " + deep + ":ST Nr=" + fileId);
 		this.zl = zl;
 		minLat = dis.readFloat();
 		minLon = dis.readFloat();
 		maxLat = dis.readFloat();
 		maxLon = dis.readFloat();
 		fileId = (short) dis.readInt();
-		// logger.debug("" + deep + ":ST Nr=" + fileId);
+	
+//		 logger.debug("ready " + deep + ":ST Nr=" + fileId);
 	}
 
 	private boolean isDataReady(PaintContext pc) {
@@ -74,6 +72,7 @@ public class SingleTile extends Tile {
 	}
 
 	public void paint(PaintContext pc) {
+//		logger.info("paint Single");
 		if (contain(pc)) {
 			if (!isDataReady(pc)) {
 				return;
@@ -148,11 +147,10 @@ public class SingleTile extends Tile {
 		}
 	}
 
-	public boolean cleanup() {
-		if (state == STATE_LOADREADY) {
+	public boolean cleanup(int level) {
+		if (state != STATE_NOTLOAD ) {
 			// logger.info("test tile unused fid:" + fileId + "c:"+lastUse);
-			// lastUse++;
-			if (lastUse > 4) {
+			if (lastUse > level) {
 				// nodes = null;
 				nameIdx = null;
 				nodeLat = null;
@@ -172,13 +170,13 @@ public class SingleTile extends Tile {
 		state = STATE_LOADREADY;
 	}
 
-	public static Trace getTrace() {
-		return trace;
-	}
-
-	public static void setTrace(Trace trace) {
-		Tile.trace = trace;
-	}
+//	public static Trace getTrace() {
+//		return trace;
+//	}
+//
+//	public static void setTrace(Trace trace) {
+//		Tile.trace = trace;
+//	}
 
 	public void paintNode(PaintContext pc, int i) {
 		Image img = null;
@@ -246,7 +244,6 @@ public class SingleTile extends Tile {
 	}
 
 	public String toString() {
-		return "SingleTile " + zl + "/" + fileId + " (" + minLat + "," + minLon
-				+ ") (" + maxLat + "," + maxLon + ")";
+		return "ST" + zl + "-" + fileId+ ":" + lastUse;
 	}
 }

@@ -4,6 +4,8 @@ package de.ueller.midlet.gps;
  * See Copying
  */
 
+import java.util.Vector;
+
 import javax.microedition.lcdui.Choice;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
@@ -60,6 +62,8 @@ public class GuiDiscover implements CommandListener {
 	private final static int		STATE_FS		= 1;
 
 	private final static int		STATE_BT		= 2;
+	private Vector urlList; 
+	private Vector friendlyName;
 
 	public GuiDiscover(GpsMid parent) {
 		this.parent = parent;
@@ -85,11 +89,7 @@ public class GuiDiscover implements CommandListener {
 			return;
 		}
 		if (c == STORE_BT_URL) {
-			if ((gps.getState() == DiscoverGps.SERVICE_SEARCH)
-					|| (gps.getState() == DiscoverGps.SERVICE_SELECT)) {
-				gps.cancelServiceSearch();
-				parent.setBTUrl(menu.getString(menu.getSelectedIndex()));
-			}
+			parent.setBTUrl(menu.getString(menu.getSelectedIndex()));
 			return;
 		}
 		switch (state) {
@@ -112,7 +112,7 @@ public class GuiDiscover implements CommandListener {
 				}
 				break;
 			case STATE_BT:
-				parent.setBTUrl(menuBT.getString(menuBT.getSelectedIndex()));
+				parent.setBTUrl((String) urlList.elementAt(menuBT.getSelectedIndex()));
 				parent.show();
 				break;
 			case STATE_FS:
@@ -144,7 +144,11 @@ public class GuiDiscover implements CommandListener {
 	}
 
 	public void addDevice(String s) {
-		menuBT.append(s, null);
+		
+	}
+	public void addDevice(String url,String name) {
+		urlList.addElement(url);
+		friendlyName.addElement(name);
 	}
 
 	public void showState(String a) {
@@ -158,5 +162,12 @@ public class GuiDiscover implements CommandListener {
 
 	public void addRootFs(String root) {
 		menuFS.append(root, null);
+	}
+
+	public void btDiscoverReady() {
+		for (int i=0; i < friendlyName.size(); i++){
+			menuBT.append(""+i + " "+(String) friendlyName.elementAt(i), null);
+		}
+		
 	}
 }

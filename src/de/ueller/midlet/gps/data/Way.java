@@ -203,6 +203,7 @@ public class Way {
 			pc.g.setColor(255,255,150);
 			break;
 		case C.AREA_NATURAL_WATER:
+		case C.WAY_WATERWAY_RIVER:
 			pc.g.setColor(50,50,255);
 			break;
 		case C.AREA_LANDUSE_FARM:

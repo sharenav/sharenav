@@ -19,13 +19,16 @@ public class ContainerTile extends Tile {
 //    ContainerTile parent=null;
     
     ContainerTile(DataInputStream dis,int deep,byte zl) throws IOException{
+       	logger.debug("start "+deep);
     	minLat=dis.readFloat();
     	minLon=dis.readFloat();
     	maxLat=dis.readFloat();
     	maxLon=dis.readFloat();
+    	logger.debug("start left "+deep);
     	t1=readTile(dis,deep+1,zl);
-    	t2=readTile(dis,deep+1,zl);
-//    	logger.debug(""+deep+":readed ContainerTile");
+       	logger.debug("start right "+deep);
+       	t2=readTile(dis,deep+1,zl);
+    	logger.debug("ready "+deep+":readed ContainerTile");
     }
     
     public Tile readTile(DataInputStream dis,int deep,byte zl) throws IOException{
@@ -40,6 +43,9 @@ public class ContainerTile extends Tile {
     		case 3:
     			logger.debug("r ET " + zl + " " + deep);
     			return null;
+    		case 4:
+    			logger.debug("r FT " + zl + " " + deep);
+    			return new FileTile(dis,deep,zl);
     		default:
     			logger.debug("wrongTileType");
     			throw new IOException("wrong TileType");
@@ -47,21 +53,23 @@ public class ContainerTile extends Tile {
     }
 
 	public void paint(PaintContext pc) {
-//		logger.debug("paint container");
+		logger.debug("paint container");
 		if (contain(pc)){
 //			drawBounds(pc, 255, 255, 255);
 			if (t1 != null) {
+				logger.debug("paint container left");
 				t1.paint(pc);
 			}
 			if (t2 != null) {
+				logger.debug("paint container right");
 				t2.paint(pc);
 			}	
 		} else {			
-			cleanup();
+			cleanup(4);
 		}
 	}
 
-	public boolean cleanup() {
+	public boolean cleanup(int level) {
 		return true;
 //		lastUse++;
 //		if (t1 != null) {

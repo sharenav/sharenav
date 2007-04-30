@@ -24,8 +24,10 @@ public class C {
 	public final static byte WAY_HIGHWAY_MINOR=6;
 	public final static byte WAY_HIGHWAY_RESIDENTIAL=7;
 	
+	public final static byte WAY_WATERWAY_RIVER=10;
+	
 	public final static byte AREA_AMENITY_PARKING=50;
-	public final static byte AREA_AMENITY_PUBLIC_BUILDING=50;
+	public final static byte AREA_AMENITY_PUBLIC_BUILDING=51;
 	public final static byte AREA_NATURAL_WATER=60;
 	public final static byte AREA_LEISURE_PARK=70;
 	

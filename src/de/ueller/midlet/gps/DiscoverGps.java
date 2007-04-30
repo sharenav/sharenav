@@ -18,6 +18,24 @@ import javax.bluetooth.UUID;
 
 public class DiscoverGps implements Runnable, DiscoveryListener {
 
+	/** Shows the engine is ready to work. */
+	private static final int		READY						= 0;
+
+	/** Shows the engine is searching bluetooth devices. */
+	public static final int		DEVICE_SEARCH				= 1;
+
+	/** Shows the engine is ready with searching bluetooth devices. */
+	public static final int		DEVICE_READY				= 2;
+
+	/** Shows the engine is searching bluetooth services. */
+	public static final int		SERVICE_SEARCH				= 3;
+
+	/** the engine is wating for a serviceselection */
+	public static final int		SERVICE_SELECT				= 4;
+
+	private static final String[]	stateText					= { "ready",
+			"device search", "device select", "service search","select service"};
+
 	private final GuiDiscover		parent;
 
 	/** Process the search/download requests. */
@@ -34,29 +52,11 @@ public class DiscoverGps implements Runnable, DiscoveryListener {
 
 	/** Keeps the services search IDs (just to be able to cancel them). */
 	private int[]					searchIDs;
-
 	/** Optimization: keeps service search pattern. */
 	private UUID[]					uuidSet;
 
 	/** Optimization: keeps attributes list to be retrieved. */
 	private int[]					attrSet;
-
-	/** Shows the engine is ready to work. */
-	private static final int		READY						= 0;
-
-	/** Shows the engine is searching bluetooth devices. */
-	public static final int		DEVICE_SEARCH				= 1;
-
-	/** Shows the engine is ready with searching bluetooth devices. */
-	public static final int		DEVICE_READY				= 2;
-
-	/** Shows the engine is searching bluetooth services. */
-	public static final int		SERVICE_SEARCH				= 3;
-	/** the engine is wating for a serviceselection */
-	public static final int		SERVICE_SELECT				= 4;
-
-	private static final String[]	stateText					= { "ready",
-			"device search", "device select", "service search","select service"};
 
 	/** Keeps the current state of engine. */
 	private int						state						= READY;
@@ -76,6 +76,84 @@ public class DiscoverGps implements Runnable, DiscoveryListener {
 		processorThread.start();
 
 	}
+
+	private synchronized void cancelDeviceSearch(){
+		if (state == DEVICE_SEARCH) {
+			discoveryAgent.cancelInquiry(this);
+		}
+	}
+
+	/** Cancel's the devices/services search. */
+	public void cancelSearch() {
+		cancelDeviceSearch();
+		cancelServiceSearch();
+	}
+
+	private synchronized void cancelServiceSearch(){
+		if (state == SERVICE_SEARCH) {
+			for (int i = 0; i < searchIDs.length; i++) {
+				discoveryAgent.cancelServiceSearch(searchIDs[i]);
+			}
+		}
+	}
+
+	/**
+	 * Destroy a work with bluetooth - exits the accepting thread and close notifier.
+	 */
+	void destroy() {
+		synchronized (this) {
+			parent.showState("shutdown discover");
+			cancelSearch();
+			isClosed = true;
+
+			notify();
+
+			// FIXME: implement me
+		}
+
+		// wait for acceptor thread is done
+		try {
+			processorThread.join();
+		} catch (InterruptedException e) {} // ignore
+		parent.showState("distroyed");
+		parent.show();
+	}
+
+	/**
+	 * Invoked by system when a new remote device is found - remember the found device.
+	 */
+	public void deviceDiscovered(RemoteDevice btDevice, DeviceClass cod) {
+		// same device may found several times during single search
+		if (devices.indexOf(btDevice) == -1) {
+			devices.addElement(btDevice);
+		}
+	}
+
+	public int getState() {
+		return state;
+	}
+
+	/**
+	 * Invoked by system when device discovery is done.
+	 * <p>
+	 * Use a trick here - just remember the discType and process its evaluation in another thread.
+	 */
+	public void inquiryCompleted(int discType) {
+		this.discType = discType;
+		// parent.showState("search complete");
+		synchronized (this) {
+			notify();
+		}
+	}
+
+	/** Sets the request to search the devices/services. */
+	void requestSearch() {
+		synchronized (this) {
+			notify();
+		}
+	}
+	
+	
 
 	public void run() {
 		try {
@@ -115,57 +193,6 @@ public class DiscoverGps implements Runnable, DiscoveryListener {
 		parent.showState("Thread end");
 //		parent.show();
 
-	}
-
-	private void selectService() {
-//		while (!isClosed) {
-			searchDevice();
-			if (devices.size() == 0){
-				parent.addDevice("no Device found");
-			    return;
-			}
-			for (int i=0; i<devices.size();i++){
-				RemoteDevice rd = (RemoteDevice) devices.elementAt(i);
-				try {
-					parent.addDevice(rd.getFriendlyName(true));
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					parent.addDevice(rd.getBluetoothAddress());
-				}
-			}
-			searchService();
-			waitUntilNotify();
-//			parent.clear();
-			if (devices.size() == 0){
-				parent.showState("no Device found");
-			    return;
-			}
-			for (int i=0; i<records.size();i++){
-				ServiceRecord service=(ServiceRecord) records.elementAt(i);
-				parent.addDevice(service.getConnectionURL(ServiceRecord.NOAUTHENTICATE_NOENCRYPT, false));
-			}
-			
-			
-//		}
-
-	}
-
-	private void searchService() {
-		synchronized (this) {
-//			parent.addDevice("Start service discovery");
-			searchIDs = new int[devices.size()];
-
-			for (int i = 0; i < searchIDs.length; i++) {
-			try {
-				RemoteDevice rd = (RemoteDevice) devices.elementAt(i);
-				searchIDs[i] = discoveryAgent.searchServices(attrSet, uuidSet,
-						rd, this);
-			} catch (BluetoothStateException e) {
-				searchIDs[i] = -1;
-			}
-			}
-//			parent.addDevice("wait for Discovery end");
-		}
 	}
 
 	private void searchDevice() {
@@ -212,66 +239,76 @@ public class DiscoverGps implements Runnable, DiscoveryListener {
 //				return;
 	}
 
-	private boolean waitUntilNotify() {
-		if (isClosed) {
-			return false;
-		}
-//		parent.addDevice("wait for notify");
+	private void searchService() {
 		synchronized (this) {
+//			parent.addDevice("Start service discovery");
+			searchIDs = new int[devices.size()];
+
+			for (int i = 0; i < searchIDs.length; i++) {
 			try {
-				wait(); // until devices are found
-			} catch (InterruptedException e) {
-				System.err.println("Unexpected interruption: " + e);
-				parent.showState("interrupted");
-				return true;
+				RemoteDevice rd = (RemoteDevice) devices.elementAt(i);
+				searchIDs[i] = discoveryAgent.searchServices(attrSet, uuidSet,
+						rd, this);
+			} catch (BluetoothStateException e) {
+				searchIDs[i] = -1;
 			}
-		}
-//		parent.addDevice("got notify");
-		if (isClosed) {
-			return true;
-		}
-		return false;
-	}
-
-	private void setState(int state) {
-		this.state = state;
-		parent.showState(stateText[state]);
-	}
-
-	/**
-	 * Invoked by system when a new remote device is found - remember the found device.
-	 */
-	public void deviceDiscovered(RemoteDevice btDevice, DeviceClass cod) {
-		// same device may found several times during single search
-		if (devices.indexOf(btDevice) == -1) {
-			devices.addElement(btDevice);
+			}
+//			parent.addDevice("wait for Discovery end");
 		}
 	}
 
-	/**
-	 * Invoked by system when device discovery is done.
-	 * <p>
-	 * Use a trick here - just remember the discType and process its evaluation in another thread.
-	 */
-	public void inquiryCompleted(int discType) {
-		this.discType = discType;
-		// parent.showState("search complete");
-		synchronized (this) {
-			notify();
-		}
+	public synchronized void selectDevice(int idx){
+		selectedDevice=idx;
+		state=SERVICE_SEARCH;
+		notify();
 	}
-	
-	
 
+	private void selectService() {
+//		while (!isClosed) {
+		// suche die devices
+		    parent.showState("search devices");
+			searchDevice();
+			if (devices.size() == 0){
+				parent.showState("no Device found");
+			    return;
+			}
+			// durchsuche alle devices nach services
+			parent.showState("search services");
+			searchService();
+			waitUntilNotify();
+//			parent.clear();
+			if (devices.size() == 0){
+				parent.showState("no Service found");
+			    return;
+			}
+			for (int i=0; i<records.size();i++){
+				ServiceRecord service=(ServiceRecord) records.elementAt(i);
+				parent.addDevice(service.getConnectionURL(ServiceRecord.NOAUTHENTICATE_NOENCRYPT, false));
+			}
+			parent.showState("select service");
+			parent.btDiscoverReady();			
+			
+//		}
+
+	}
 	public void servicesDiscovered(int transID, ServiceRecord[] servRecord) {
+		String name;
 		for (int i = 0; i < servRecord.length; i++) {
 //			String connectionURL = servRecord[i].getConnectionURL(ServiceRecord.NOAUTHENTICATE_NOENCRYPT, false);
 //			parent.addDevice(connectionURL);
 			records.addElement(servRecord[i]);
+			try {
+				name=servRecord[i].getHostDevice().getFriendlyName(true);
+			} catch (IOException e) {
+				name=servRecord[i].getHostDevice().getBluetoothAddress();
+			}
+			parent.addDevice(
+					servRecord[i].getConnectionURL(ServiceRecord.NOAUTHENTICATE_NOENCRYPT, false),
+					name);
+			
 //			parent.addDevice("service discovered");
 		}
 	}
-
 	public void serviceSearchCompleted(int transID, int respCode) {
 		// first, find the service search transaction index
 		int index = -1;
@@ -311,63 +348,32 @@ public class DiscoverGps implements Runnable, DiscoveryListener {
 		}
 		
 	}
+	
+	private void setState(int state) {
+		this.state = state;
+		parent.showState(stateText[state]);
+	}
 
-	/** Sets the request to search the devices/services. */
-	void requestSearch() {
-		synchronized (this) {
-			notify();
+	
+	private boolean waitUntilNotify() {
+		if (isClosed) {
+			return false;
 		}
-	}
-
-	/** Cancel's the devices/services search. */
-	void cancelSearch() {
-		cancelDeviceSearch();
-		cancelServiceSearch();
-	}
-
-	public synchronized void cancelServiceSearch(){
-		if (state == SERVICE_SEARCH) {
-			for (int i = 0; i < searchIDs.length; i++) {
-				discoveryAgent.cancelServiceSearch(searchIDs[i]);
+//		parent.addDevice("wait for notify");
+		synchronized (this) {
+			try {
+				wait(); // until devices are found
+			} catch (InterruptedException e) {
+				System.err.println("Unexpected interruption: " + e);
+				parent.showState("interrupted");
+				return true;
 			}
 		}
-	}
-	public synchronized void cancelDeviceSearch(){
-		if (state == DEVICE_SEARCH) {
-			discoveryAgent.cancelInquiry(this);
+//		parent.addDevice("got notify");
+		if (isClosed) {
+			return true;
 		}
-	}
-	/**
-	 * Destroy a work with bluetooth - exits the accepting thread and close notifier.
-	 */
-	void destroy() {
-		synchronized (this) {
-			parent.showState("shutdown discover");
-			cancelSearch();
-			isClosed = true;
-
-			notify();
-
-			// FIXME: implement me
-		}
-
-		// wait for acceptor thread is done
-		try {
-			processorThread.join();
-		} catch (InterruptedException e) {} // ignore
-		parent.showState("distroyed");
-		parent.show();
-	}
-	
-	public synchronized void selectDevice(int idx){
-		selectedDevice=idx;
-		state=SERVICE_SEARCH;
-		notify();
-	}
-
-	
-	public int getState() {
-		return state;
+		return false;
 	}
 
 }

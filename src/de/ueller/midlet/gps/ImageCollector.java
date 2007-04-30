@@ -7,6 +7,7 @@ import de.ueller.midlet.gps.data.IntPoint;
 import de.ueller.midlet.gps.data.Mercator;
 import de.ueller.midlet.gps.tile.PaintContext;
 import de.ueller.midlet.gps.tile.QueueDataReader;
+import de.ueller.midlet.gps.tile.QueueReader;
 import de.ueller.midlet.gps.tile.Tile;
 /*
  * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net 
@@ -48,11 +49,11 @@ public class ImageCollector implements Runnable {
 	IntPoint oldCenter=new IntPoint(0,0);
 	private boolean needRedraw=false;
 	
-	public ImageCollector(Tile[] t,int x,int y,Trace tr,QueueDataReader tir) {
+	public ImageCollector(Tile[] t,int x,int y,Trace tr,QueueDataReader tir,QueueReader dir) {
 		super();
 		this.t=t;
 		try {
-			pc=new PaintContext(tr,tir);
+			pc=new PaintContext(tr,tir,dir);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -63,9 +64,9 @@ public class ImageCollector implements Runnable {
 		imgPaint=Image.createImage(xSize,ySize);
 		imgReady=Image.createImage(xSize,ySize);
 		try {
-			pcCollect=new PaintContext(tr,tir);
-			pcPaint=new PaintContext(tr,tir);
-			pcReady=new PaintContext(tr,tir);
+			pcCollect=new PaintContext(tr,tir,dir);
+			pcPaint=new PaintContext(tr,tir,dir);
+			pcReady=new PaintContext(tr,tir,dir);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

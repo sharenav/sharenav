@@ -7,92 +7,19 @@ package de.ueller.midlet.gps.tile;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Vector;
 
-import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.data.Way;
 
 
-public class QueueDataReader implements Runnable {
-	private final Vector requestQueue=new Vector();
-	private final Vector livingQueue=new Vector();
-	private Thread	processorThread;
-	private boolean shut=false;
-//	private final static Logger logger=Logger.getInstance(QueueDataReader.class,Logger.INFO);
-
-	public QueueDataReader(){
-		super();
-		processorThread = new Thread(this);
-		processorThread.setPriority(Thread.MIN_PRIORITY+1);
-		processorThread.start();
-
-	}
-	public synchronized void add(SingleTile st){ 
+public class QueueDataReader extends QueueReader implements Runnable {
+	public synchronized void add(SingleTile st){
+		st.lastUse=0;
 		requestQueue.addElement(st);
 //		logger.info("add " + st.fileId + " to queue size=" + requestQueue.size());
 		notify();
 	}
-	public synchronized void shutdown() {
-		shut=true;
-	}
-	
-	public synchronized void incUnusedCounter(){
-		SingleTile tt;
-		int loop;
-		for (loop=0; loop < livingQueue.size(); loop++){
-			tt=(SingleTile) livingQueue.elementAt(loop);
-			tt.lastUse++;
-		}
-	}
-	public void run() {
-		SingleTile tt;
-		int loop;
-//		logger.info("DataReader Thread start ");
-		while (! shut){
-			try {
-//				logger.info("loop: " + livingQueue.size() + " / " + requestQueue.size());
-				for (loop=0; loop < livingQueue.size(); loop++){
-					tt=(SingleTile) livingQueue.elementAt(loop);
-					if (tt.cleanup()){
-//						logger.info("cleanup " + tt.fileId);
-						livingQueue.removeElementAt(loop--);
-					}
-				}
-				try {
-					if (requestQueue.size() > 0){
-//						logger.trace("try to read first queue element");
-						tt=(SingleTile) requestQueue.firstElement();
-//						logger.trace("remove fom request queue " + tt);
-						requestQueue.removeElementAt(0);
-//						logger.trace("read content " + tt);
-						readData(tt);
-//						logger.trace("add to living queue " + tt);
-						livingQueue.addElement(tt);
-					}
-				} catch (IOException e) {
-					tt=(SingleTile) requestQueue.firstElement();
-//					logger.info(e.getMessage()+ "in read tile " + tt.fileId);
-					e.printStackTrace();
-				}
-				if (requestQueue.size() == 0){
-					synchronized (this) {
-						try {
-							wait(2000);
-						} catch (InterruptedException e) {
-
-						}
-					}
-				}
-			} catch (RuntimeException e) {
-//				logger.error(e.getMessage()+" continue thread");
-				e.printStackTrace();
-			}
-		}
-//		logger.info("DataReader Thread end ");		
-	}
-
-	private void readData(SingleTile tt) throws IOException{
-
+	protected void readData(Tile t) throws IOException{
+		SingleTile tt=(SingleTile) t;
 //		logger.info("open " + tt.fileId);
 		InputStream is = getClass().getResourceAsStream("/map/t"+tt.zl+tt.fileId+".d");
 		if (is == null){
@@ -172,10 +99,23 @@ public class QueueDataReader implements Runnable {
 //		}
 
 	}
-	public int getLivingTilesCount()  {
-		return livingQueue.size();
+	public String toString(){
+		int loop;
+		StringBuffer ret=new StringBuffer();
+		SingleTile tt;
+		ret.append("\nliving ");
+		for (loop=0; loop < livingQueue.size(); loop++){
+			tt=(SingleTile) livingQueue.elementAt(loop);
+			ret.append(tt.toString());
+			ret.append(" ");
+		}
+		ret.append("\nrequest ");
+		for (loop=0; loop < requestQueue.size(); loop++){
+			tt=(SingleTile) requestQueue.elementAt(loop);
+			ret.append(tt.toString());
+			ret.append(" ");
+		}
+		return ret.toString();
 	}
-	public int getRequestQueueSize() {
-		return requestQueue.size();
-	}
+
 }

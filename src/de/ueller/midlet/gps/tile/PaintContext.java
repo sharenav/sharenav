@@ -50,9 +50,10 @@ public class PaintContext extends ScreenContext {
 //	public Short steet;
 	public Way actualWay=null;
 	public float squareDstToWay;
-	public PaintContext(Trace tr, QueueDataReader tir) throws Exception{
+	public PaintContext(Trace tr, QueueDataReader tir,QueueReader dir) throws Exception{
 		super();
 		dataReader=tir;
+		dictReader=dir;
 		trace=tr;
 		// TODO Auto-generated constructor stub
 	}
