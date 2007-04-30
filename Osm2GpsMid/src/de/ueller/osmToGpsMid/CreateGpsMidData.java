@@ -27,7 +27,8 @@ import de.ueller.osmToGpsMid.model.Way;
 
 
 public class CreateGpsMidData {
-	private final static int MAX_TILE_FILESIZE=6000;
+	private final static int MAX_TILE_FILESIZE=5000;
+	private final static int MAX_DICT_DEEP=4;
 	OxParser parser;
 	Tile tile[]= new Tile[4];
 	private final String	path;
@@ -444,14 +445,19 @@ public class CreateGpsMidData {
 					b.extend(l.from.lat, l.from.lon);
 				} else {
 					if (l.from.renumberdId != p1.intValue()){
-						// non continues path so open a new Path
-						multipath=true;
-						path = new ArrayList<Integer>();
-						paths.add(path);
-						p1=new Integer(l.from.renumberdId);
-//						System.out.println("\tStart Way-Segment at " + l.from);
-						path.add(p1);
-						b.extend(l.from.lat, l.from.lon);
+						if (w.getType() >= 50){
+							// insert segment, because this is a area
+							path.add(new Integer(l.from.renumberdId));
+						} else {
+							// non continues path so open a new Path
+							multipath=true;
+							path = new ArrayList<Integer>();
+							paths.add(path);
+							p1=new Integer(l.from.renumberdId);
+//							System.out.println("\tStart Way-Segment at " + l.from);
+							path.add(p1);
+							b.extend(l.from.lat, l.from.lon);
+						}
 					} else if (path.size() > 254){
 						// path to long
 						multipath=true;
