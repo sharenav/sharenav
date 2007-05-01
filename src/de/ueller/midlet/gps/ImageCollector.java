@@ -122,16 +122,18 @@ public class ImageCollector implements Runnable {
 					t[0].paint(pcCollect);
 				}
 				newCollected();
+				pcCollect.trace.requestRedraw();
 				if (needRedraw){
-					pcCollect.trace.requestRedraw();
+//					pcCollect.trace.requestRedraw();
 					needRedraw=false;
 				}
 				Thread.yield();
 //				System.out.println("create ready");
 				System.gc();
 				synchronized (this) {
-					wait(5000);
-				}			
+					wait(10000);
+				}
+				
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

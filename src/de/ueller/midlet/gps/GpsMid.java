@@ -54,6 +54,8 @@ public class GpsMid extends MIDlet implements CommandListener{
 //	PrintStream log;
 	Logger l;
 
+private Trace trace;
+
 
 	public GpsMid() {
 
@@ -109,7 +111,11 @@ public class GpsMid extends MIDlet implements CommandListener{
 //            		return;
 //            	}
             	try {
-					new Trace(this,btUrl,root);
+            		if (trace == null){
+            			trace = new Trace(this,btUrl,root);
+            		} else {
+            			Display.getDisplay(this).setCurrent(trace);
+            		}
 				} catch (Exception e) {
 					e.printStackTrace();
 					Alert alert = new Alert("Error:" + e.getMessage());
@@ -160,15 +166,9 @@ public class GpsMid extends MIDlet implements CommandListener{
 				database.setRecord(1, data,0,data.length);
 			}
 			database.closeRecordStore();
-		} catch (RecordStoreFullException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (RecordStoreNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (RecordStoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			l.error("Store BTDevice "+e.getMessage());
 		}
 		this.btUrl = btUrl;
 	}
@@ -179,7 +179,7 @@ public class GpsMid extends MIDlet implements CommandListener{
 		if (l != null){
 //		log.print(msg+"\n");
 //        Display.getDisplay(this).getCurrent().setTicker(new Ticker(msg));
-//		Display.getDisplay(this).getCurrent().setTitle(msg);
+		Display.getDisplay(this).getCurrent().setTitle(msg);
         System.out.println(msg);
 		}
 	}

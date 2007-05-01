@@ -65,7 +65,9 @@ public class SirfInput implements Runnable{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
 		}
+		receiver.sirfDecoderEnd();
 	}
 	
 	public synchronized void close() {
@@ -157,7 +159,7 @@ public class SirfInput implements Runnable{
 			} // while
 		} catch (IOException e) {
 			receiver.receiveMessage("Fehler: " + e.getMessage());
-			closed=true;
+			close();
 		}
 
 	}
