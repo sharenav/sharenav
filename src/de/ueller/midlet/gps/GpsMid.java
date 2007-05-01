@@ -23,6 +23,12 @@ import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.List;
 import javax.microedition.midlet.MIDlet;
 import javax.microedition.midlet.MIDletStateChangeException;
+import javax.microedition.rms.InvalidRecordIDException;
+import javax.microedition.rms.RecordStore;
+import javax.microedition.rms.RecordStoreException;
+import javax.microedition.rms.RecordStoreFullException;
+import javax.microedition.rms.RecordStoreNotFoundException;
+import javax.microedition.rms.RecordStoreNotOpenException;
 
 
 
@@ -73,6 +79,16 @@ public class GpsMid extends MIDlet implements CommandListener{
 
 	protected void startApp() throws MIDletStateChangeException {
 		new Splash(this);
+		RecordStore	database;
+		try {
+			database = RecordStore.openRecordStore("Receiver", false);
+			byte[] data=database.getRecord(1);
+			btUrl=new String(data);
+			database.closeRecordStore();
+		} catch (Exception e) {
+			btUrl=null;
+		}
+
 		}
 
 	public void commandAction(Command c, Displayable d) {
@@ -134,6 +150,26 @@ public class GpsMid extends MIDlet implements CommandListener{
     }
 
 	public void setBTUrl(String btUrl) {
+		RecordStore	database;
+		try {
+			database = RecordStore.openRecordStore("Receiver", true);
+			byte[] data=btUrl.getBytes();
+			if (database.getNumRecords() == 0){
+				database.addRecord(data, 0, data.length);
+			} else {
+				database.setRecord(1, data,0,data.length);
+			}
+			database.closeRecordStore();
+		} catch (RecordStoreFullException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (RecordStoreNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (RecordStoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		this.btUrl = btUrl;
 	}
 	public void setRootFs(String root){

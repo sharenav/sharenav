@@ -102,7 +102,7 @@ public class DiscoverGps implements Runnable, DiscoveryListener {
 	 */
 	void destroy() {
 		synchronized (this) {
-			parent.showState("shutdown discover");
+			parent.addDevice("shutdown discover");
 			cancelSearch();
 			isClosed = true;
 
@@ -115,7 +115,7 @@ public class DiscoverGps implements Runnable, DiscoveryListener {
 		try {
 			processorThread.join();
 		} catch (InterruptedException e) {} // ignore
-		parent.showState("distroyed");
+		parent.addDevice("distroyed");
 		parent.show();
 	}
 
@@ -124,6 +124,7 @@ public class DiscoverGps implements Runnable, DiscoveryListener {
 	 */
 	public void deviceDiscovered(RemoteDevice btDevice, DeviceClass cod) {
 		// same device may found several times during single search
+		parent.addDevice("found "+btDevice.getBluetoothAddress());
 		if (devices.indexOf(btDevice) == -1) {
 			devices.addElement(btDevice);
 		}
@@ -141,6 +142,7 @@ public class DiscoverGps implements Runnable, DiscoveryListener {
 	public void inquiryCompleted(int discType) {
 		this.discType = discType;
 		// parent.showState("search complete");
+		parent.addDevice("inquiry Complete");
 		synchronized (this) {
 			notify();
 		}
@@ -159,6 +161,7 @@ public class DiscoverGps implements Runnable, DiscoveryListener {
 		try {
 //			System.out.println("Start Thread Discover Gps");
 			// initialize bluetooth first
+			parent.addDevice("init BT");
 			boolean isBTReady = false;
 
 			try {
@@ -170,13 +173,14 @@ public class DiscoverGps implements Runnable, DiscoveryListener {
 				isBTReady = true;
 			} catch (Exception e) {
 				System.err.println("Can't initialize bluetooth: " + e);
+				parent.addDevice("Can't init bluetooth");
 			}
 
 			parent.completeInitialization(isBTReady);
 
 			// nothing to do if no bluetooth available
 			if (!isBTReady) {
-				parent.showState("no Blutooth");
+				parent.addDevice("no Blutooth");
 				return;
 			}
 
@@ -190,8 +194,8 @@ public class DiscoverGps implements Runnable, DiscoveryListener {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		parent.showState("Thread end");
-//		parent.show();
+		parent.addDevice("Thread end");
+		parent.btDiscoverReady();			
 
 	}
 
@@ -208,11 +212,11 @@ public class DiscoverGps implements Runnable, DiscoveryListener {
 		}
 		switch (discType) {
 			case INQUIRY_ERROR:
-				parent.showState("Device discovering error...");
+				parent.addDevice("Device discovering error...");
 				return;
 			case INQUIRY_TERMINATED:
 				// make sure no garbage in found devices list
-				parent.showState("Device search canceled");
+				parent.addDevice("Device search canceled");
 
 				// nothing to report - go to next request
 				break;
@@ -220,7 +224,7 @@ public class DiscoverGps implements Runnable, DiscoveryListener {
 			case INQUIRY_COMPLETED:
 
 				if (devices.size() == 0) {
-					parent.showState("No devices in range");
+					parent.addDevice("No devices in range");
 				} else {
 				   setState(DEVICE_READY);
 				   break;
@@ -228,7 +232,7 @@ public class DiscoverGps implements Runnable, DiscoveryListener {
 
 			default:
 				// what kind of system you are?... :(
-				parent.showState("unknown Return from Discover");
+				parent.addDevice("unknown Return from Discover");
 				System.err.println("system error:"
 						+ " unexpected device discovery code: " + discType);
 //					destroy();
@@ -241,7 +245,7 @@ public class DiscoverGps implements Runnable, DiscoveryListener {
 
 	private void searchService() {
 		synchronized (this) {
-//			parent.addDevice("Start service discovery");
+			parent.addDevice("Start service discovery");
 			searchIDs = new int[devices.size()];
 
 			for (int i = 0; i < searchIDs.length; i++) {
@@ -266,27 +270,25 @@ public class DiscoverGps implements Runnable, DiscoveryListener {
 	private void selectService() {
 //		while (!isClosed) {
 		// suche die devices
-		    parent.showState("search devices");
+		    parent.addDevice("search devices");
 			searchDevice();
 			if (devices.size() == 0){
-				parent.showState("no Device found");
+				parent.addDevice("no Device found");
 			    return;
 			}
 			// durchsuche alle devices nach services
-			parent.showState("search services");
+			parent.addDevice("search services");
 			searchService();
 			waitUntilNotify();
 //			parent.clear();
 			if (devices.size() == 0){
-				parent.showState("no Service found");
+				parent.addDevice("no Service found");
 			    return;
 			}
 			for (int i=0; i<records.size();i++){
 				ServiceRecord service=(ServiceRecord) records.elementAt(i);
 				parent.addDevice(service.getConnectionURL(ServiceRecord.NOAUTHENTICATE_NOENCRYPT, false));
 			}
-			parent.showState("select service");
-			parent.btDiscoverReady();			
 			
 //		}
 
@@ -306,7 +308,7 @@ public class DiscoverGps implements Runnable, DiscoveryListener {
 					servRecord[i].getConnectionURL(ServiceRecord.NOAUTHENTICATE_NOENCRYPT, false),
 					name);
 			
-//			parent.addDevice("service discovered");
+			parent.addDevice("found " + name);
 		}
 	}
 	public void serviceSearchCompleted(int transID, int respCode) {
@@ -362,10 +364,10 @@ public class DiscoverGps implements Runnable, DiscoveryListener {
 //		parent.addDevice("wait for notify");
 		synchronized (this) {
 			try {
-				wait(); // until devices are found
+				wait(); // until devices or service are found
 			} catch (InterruptedException e) {
 				System.err.println("Unexpected interruption: " + e);
-				parent.showState("interrupted");
+				parent.addDevice("interrupted");
 				return true;
 			}
 		}

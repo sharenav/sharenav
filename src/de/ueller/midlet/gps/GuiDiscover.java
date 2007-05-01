@@ -43,7 +43,7 @@ public class GuiDiscover implements CommandListener {
 															Choice.IMPLICIT, elements,
 															null);
 
-	private final List				menuBT			= new List("Devices",
+	private  List				menuBT			= new List("Devices",
 															Choice.IMPLICIT, empty,
 															null);
 
@@ -71,8 +71,6 @@ public class GuiDiscover implements CommandListener {
 		menu.addCommand(EXIT_CMD);
 		menu.addCommand(OK_CMD);
 		menu.setCommandListener(this);
-		menuBT.addCommand(BACK_CMD);
-		menuBT.setCommandListener(this);
 		menuFS.addCommand(BACK_CMD);
 		menuFS.setCommandListener(this);
 		show();
@@ -89,7 +87,7 @@ public class GuiDiscover implements CommandListener {
 			return;
 		}
 		if (c == STORE_BT_URL) {
-			parent.setBTUrl(menu.getString(menu.getSelectedIndex()));
+			parent.setBTUrl((String) urlList.elementAt(menu.getSelectedIndex()));
 			return;
 		}
 		switch (state) {
@@ -97,10 +95,17 @@ public class GuiDiscover implements CommandListener {
 				switch (menu.getSelectedIndex()) {
 					case 0:
 //						gps.cancelDeviceSearch();
+						menuBT	= new List("Devices",
+								Choice.IMPLICIT, empty,
+								null);
+						menuBT.addCommand(BACK_CMD);
+						menuBT.setCommandListener(this);
 						menuBT.setTitle("Search Service");
-						menuBT.deleteAll();
+						urlList=new Vector();
+						friendlyName=new Vector();
 						Display.getDisplay(parent).setCurrent(menuBT);
 						state = STATE_BT;
+						
 						gps = new DiscoverGps(this);
 						break;
 					case 1:
@@ -133,8 +138,8 @@ public class GuiDiscover implements CommandListener {
 	}
 
 	public void completeInitialization(boolean isBTReady) {
-		menuBT.addCommand(STORE_BT_URL);
-		menuBT.setTitle("Select Device");
+		//menuBT.addCommand(STORE_BT_URL);
+		menuBT.setTitle("Search Device");
 	}
 
 	/** Shows main menu of MIDlet on the screen. */
@@ -144,9 +149,11 @@ public class GuiDiscover implements CommandListener {
 	}
 
 	public void addDevice(String s) {
+//		menuBT.append(s, null);
 		
 	}
 	public void addDevice(String url,String name) {
+//		menuBT.append("add " + name,null);
 		urlList.addElement(url);
 		friendlyName.addElement(name);
 	}
@@ -165,8 +172,15 @@ public class GuiDiscover implements CommandListener {
 	}
 
 	public void btDiscoverReady() {
+//		menuBT.deleteAll();
+		menuBT.addCommand(STORE_BT_URL);
 		for (int i=0; i < friendlyName.size(); i++){
-			menuBT.append(""+i + " "+(String) friendlyName.elementAt(i), null);
+			try {
+				menuBT.append(""+i + " "+(String) friendlyName.elementAt(i), null);
+			} catch (RuntimeException e) {
+				// TODO Auto-generated catch block
+				menuBT.append(e.getMessage(), null);
+			}
 		}
 		
 	}
