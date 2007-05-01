@@ -25,7 +25,7 @@ public class DictReader  implements Runnable {
 		processorThread = new Thread(this);
 		processorThread.setPriority(Thread.MIN_PRIORITY+2);
 		processorThread.start();
-		logger.info("DictReader Thread started");
+//		logger.info("DictReader Thread started");
 
 	}
 
@@ -42,17 +42,17 @@ public class DictReader  implements Runnable {
 	}
 	private void readData(byte zl) throws IOException{
 		try{
-		    	logger.info("open dict-"+zl+".dat");
+//		    	logger.info("open dict-"+zl+".dat");
 				InputStream is = getClass().getResourceAsStream("/map/dict-"+zl+".dat");
-		    	logger.info("open DataInputStream");
+//		    	logger.info("open DataInputStream");
 				DataInputStream ds=new DataInputStream(is);
-				logger.info("read Magic code");
+//				logger.info("read Magic code");
 				if (! "DictMid".equals(ds.readUTF())){
 					throw new IOException("not a DictMid-file");
 				}
-				logger.trace("read TileType");
+//				logger.trace("read TileType");
 				byte type=ds.readByte();
-				logger.trace("TileType="+type);
+//				logger.trace("TileType="+type);
 				switch (type) {
 				case 1:
 					dict=new SingleTile(ds,1,zl);
