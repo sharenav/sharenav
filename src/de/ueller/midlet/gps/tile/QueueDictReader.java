@@ -16,7 +16,7 @@ public class QueueDictReader extends QueueReader implements Runnable {
 	protected void readData(Tile t) throws IOException{
 		FileTile tt=(FileTile) t;
 //		logger.info("open /map/d"+tt.zl+tt.fid+".d");
-		InputStream is = getClass().getResourceAsStream("/map/d"+tt.zl+tt.fileId+".d");
+		InputStream is = openFile("/map/d"+tt.zl+tt.fileId+".d");
 		if (is == null){
 //			logger.error("file inputStream /map/d"+tt.zl+tt.fileId+".d not found" );
 			throw new IOException("File not found /map/d"+tt.zl+tt.fileId+".d" );

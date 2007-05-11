@@ -26,11 +26,12 @@ import javax.microedition.midlet.MIDlet;
 import de.ueller.gps.data.Position;
 import de.ueller.gps.data.Satelit;
 import de.ueller.gps.sirf.SirfInput;
-import de.ueller.gps.sirf.SirfMsgReceiver;
+import de.ueller.gps.sirf.LocationMsgReceiver;
 import de.ueller.midlet.gps.data.Mercator;
 import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.Projection;
 import de.ueller.midlet.gps.tile.DictReader;
+import de.ueller.midlet.gps.tile.Images;
 import de.ueller.midlet.gps.tile.Names;
 import de.ueller.midlet.gps.tile.PaintContext;
 import de.ueller.midlet.gps.tile.QueueDataReader;
@@ -38,7 +39,7 @@ import de.ueller.midlet.gps.tile.QueueDictReader;
 import de.ueller.midlet.gps.tile.QueueReader;
 import de.ueller.midlet.gps.tile.Tile;
 
-public class Trace extends Canvas implements CommandListener, SirfMsgReceiver,
+public class Trace extends Canvas implements CommandListener, LocationMsgReceiver,
 		Runnable {
 	/** Soft button for exiting the demo. */
 	private final Command EXIT_CMD = new Command("Back", Command.BACK, 2);
@@ -86,7 +87,7 @@ public class Trace extends Canvas implements CommandListener, SirfMsgReceiver,
 	private final static Logger logger = Logger.getInstance(Trace.class,
 			Logger.INFO);
 
-	private final String url;
+	private String url;
 
 	public static final String statMsg[] = { "no Start1:", "no Start2:",
 			"to long  :", "interrupt:", "checksum :", "no End1  :",
@@ -123,6 +124,8 @@ public class Trace extends Canvas implements CommandListener, SirfMsgReceiver,
 
 	private boolean threadsRunning = false;
 
+	private JSR179Input input;
+
 	public Trace(GpsMid parent, String url, String root) throws Exception {
 		logger.info("init Trace Class");
 		this.parent = parent;
@@ -150,14 +153,48 @@ public class Trace extends Canvas implements CommandListener, SirfMsgReceiver,
 		}
 	}
 
+	// start the LocationProvider in background
 	public void run() {
-		try {
-			startReceiver(url);
-		} catch (Exception e) {
+		switch (parent.getLocationProvider()){
+		case 0:
+			url=parent.getBTUrl();
+			if (url != null){
+				try {
+					startGpsSirf(url);
+				} catch (Exception e) {
+				}
+			}
+			break;
+		case 1:
+			break;
+		case 2:
+			try {
+				input = new JSR179Input(this);
+			} catch (Exception e) {
+				setTitle("nl" + e.getMessage());
+			}
+			break;
 		}
 	}
+	
+	public void pause(){
+		switch (parent.getLocationProvider()){
+		case 0:sirfDecoderEnd();
+		break;
+		case 1:
+			break;
+		case 2:
+			if (input != null){
+				
+			}
+		}
+	}
+	public void resume(){
+		Thread thread = new Thread(this);
+		thread.start();
+	}
 
-	private void startReceiver(String url) {
+	public void startGpsSirf(String url) {
 		if (si != null){
 			return;
 		}
@@ -208,19 +245,20 @@ public class Trace extends Canvas implements CommandListener, SirfMsgReceiver,
 		logger.info("reading Data ...");
 		namesThread = new Names();
 		new DictReader(this);
-		if (url != null) {
-			Thread t = new Thread(this);
-			t.start();
+//		if (url != null) {
+			Thread thread = new Thread(this);
+			thread.start();
 			// startReceiver(url);
-		}
+//		}
 		logger.info("Create queueDataReader");
-		tileReader = new QueueDataReader();
+		tileReader = new QueueDataReader(this);
 		logger.info("create imageCollector");
 		dictReader = new QueueDictReader();
+		Images i = new Images();
 		vc = new ImageCollector(t, this.getWidth(), this.getHeight(), this,
-				tileReader, dictReader);
+				tileReader, dictReader,i);
 		logger.info("create PaintContext");
-		pc = new PaintContext(this, tileReader, dictReader);
+		pc = new PaintContext(this, tileReader, dictReader,i);
 		logger.info("init Projection");
 		projection = new Mercator(center, pc.scale, getWidth(), getHeight());
 		logger.info("set Center");
@@ -302,11 +340,12 @@ public class Trace extends Canvas implements CommandListener, SirfMsgReceiver,
 					| Graphics.RIGHT);
 			
 		}
-		
+	}
+
+	public void cleanup() {
 		namesThread.cleanup();
 		tileReader.incUnusedCounter();
 		dictReader.incUnusedCounter();
-
 	}
 
 	private int showConnectStatistics(Graphics g, int yc, int la) {
@@ -314,7 +353,7 @@ public class Trace extends Canvas implements CommandListener, SirfMsgReceiver,
 			return yc;
 		}
 		g.setColor(255, 255, 255);
-		for (byte i = 0; i < SirfMsgReceiver.SIRF_FAIL_COUNT; i++) {
+		for (byte i = 0; i < LocationMsgReceiver.SIRF_FAIL_COUNT; i++) {
 			g.drawString(statMsg[i] + statRecord[i], 0, yc, Graphics.TOP
 					| Graphics.LEFT);
 			yc += la;
@@ -399,8 +438,7 @@ public class Trace extends Canvas implements CommandListener, SirfMsgReceiver,
 		g.setColor(0, 0, 0);
 		g.drawString("speed : " + speed, 0, yc, Graphics.TOP | Graphics.LEFT);
 		yc += la;
-		g
-				.drawString("course  : " + course, 0, yc, Graphics.TOP
+		g.drawString("course  : " + course, 0, yc, Graphics.TOP
 						| Graphics.LEFT);
 		yc += la;
 		return yc;
@@ -492,7 +530,7 @@ public class Trace extends Canvas implements CommandListener, SirfMsgReceiver,
 	}
 
 	public void sirfDecoderEnd() {
-		removeCommand(DISCONNECT_GPS_CMD);
+//		removeCommand(DISCONNECT_GPS_CMD);
 //		addCommand(CONNECT_GPS_CMD);
 		si = null;
 		try {
@@ -504,7 +542,7 @@ public class Trace extends Canvas implements CommandListener, SirfMsgReceiver,
 		conn=null;
 		inputStream=null;
 //		addCommand(CONNECT_GPS_CMD);
-		repaint(0, 0, getWidth(), getHeight());
+//		repaint(0, 0, getWidth(), getHeight());
 	}
 
 	public void receiveSolution(String s) {
@@ -520,5 +558,9 @@ public class Trace extends Canvas implements CommandListener, SirfMsgReceiver,
 
 	public void requestRedraw() {
 		repaint(0, 0, getWidth(), getHeight());
+	}
+
+	public void newDataReady() {
+		vc.newDataReady();
 	}
 }

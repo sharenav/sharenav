@@ -8,10 +8,20 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.microedition.io.Connector;
+import javax.microedition.io.file.FileConnection;
+
+import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.data.Way;
 
 
 public class QueueDataReader extends QueueReader implements Runnable {
+	private final Trace trace;
+	public QueueDataReader(Trace trace){
+		super();
+		this.trace = trace;
+		
+	}
 	public synchronized void add(SingleTile st){
 		st.lastUse=0;
 		requestQueue.addElement(st);
@@ -20,8 +30,7 @@ public class QueueDataReader extends QueueReader implements Runnable {
 	}
 	protected void readData(Tile t) throws IOException{
 		SingleTile tt=(SingleTile) t;
-//		logger.info("open " + tt.fileId);
-		InputStream is = getClass().getResourceAsStream("/map/t"+tt.zl+tt.fileId+".d");
+		InputStream is=openFile("/map/t"+tt.zl+tt.fileId+".d");
 		if (is == null){
 //			logger.error("file inputStream"+url+" not found" );
 			tt.state=0;
@@ -94,6 +103,7 @@ public class QueueDataReader extends QueueReader implements Runnable {
 		ds.close();
 
 		tt.dataReady();
+		trace.newDataReady();
 //		logger.info("DataReader ready "+ tt.fileId + tt.nodes.length + " Nodes " + tt.ways.length + " Ways" );
 
 //		}

@@ -1,7 +1,11 @@
 package de.ueller.midlet.gps.tile;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Vector;
+
+import javax.microedition.io.Connector;
+import javax.microedition.io.file.FileConnection;
 
 import de.ueller.midlet.gps.Logger;
 
@@ -11,6 +15,7 @@ public abstract class QueueReader implements Runnable{
 	protected final Vector livingQueue = new Vector();
 	private boolean shut = false;
 	private Thread	processorThread;
+	private static boolean fromJar=true;
 	
 	public QueueReader(){
 		super();
@@ -27,6 +32,19 @@ public abstract class QueueReader implements Runnable{
 		shut=true;
 	}
 
+	public static InputStream openFile(String name){
+		if (fromJar){
+			InputStream is = QueueReader.class.getResourceAsStream(name);
+			return is;
+		} else {
+			try {
+				FileConnection fc = (FileConnection)Connector.open("file:///e:" + name);
+				return(fc.openInputStream());
+			} catch (IOException e) {
+				return null;
+			}
+		}
+	}
 	public synchronized void incUnusedCounter() {
 		Tile tt;
 		int loop;
@@ -44,7 +62,6 @@ public abstract class QueueReader implements Runnable{
 	public synchronized void add(Tile st){
 		st.lastUse=0;
 		requestQueue.addElement(st);
-//		logger.info("add " + st.fileId + " to queue size=" + requestQueue.size());
 		notify();
 	}
 
@@ -59,27 +76,23 @@ public abstract class QueueReader implements Runnable{
 //					logger.info(toString());
 					for (loop=0; loop < livingQueue.size(); loop++){
 						tt=(Tile) livingQueue.elementAt(loop);
-						if (tt.cleanup(4)){
+						if (tt.cleanup(3)){
 //							logger.info("cleanup living " + tt.fileId);
 							livingQueue.removeElementAt(loop--);
 						}
 					}
 					for (loop=0; loop < requestQueue.size(); loop++){
 						tt=(Tile) requestQueue.elementAt(loop);
-						if (tt.cleanup(4)){
+						if (tt.cleanup(2)){
 //							logger.info("cleanup live " + tt.fileId);
 							requestQueue.removeElementAt(loop--);
 						}
 					}
 					try {
 						if (requestQueue.size() > 0){
-	//						logger.trace("try to read first queue element");
 							tt=(Tile) requestQueue.firstElement();
-	//						logger.trace("remove fom request queue " + tt);
 							requestQueue.removeElementAt(0);
-	//						logger.trace("read content " + tt);
 							readData(tt);
-	//						logger.trace("add to living queue " + tt);
 							livingQueue.addElement(tt);
 						}
 					} catch (IOException e) {

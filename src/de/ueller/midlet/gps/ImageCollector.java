@@ -5,6 +5,7 @@ import javax.microedition.lcdui.Image;
 
 import de.ueller.midlet.gps.data.IntPoint;
 import de.ueller.midlet.gps.data.Mercator;
+import de.ueller.midlet.gps.tile.Images;
 import de.ueller.midlet.gps.tile.PaintContext;
 import de.ueller.midlet.gps.tile.QueueDataReader;
 import de.ueller.midlet.gps.tile.QueueReader;
@@ -41,32 +42,28 @@ public class ImageCollector implements Runnable {
 	private PaintContext pcPaint;
 	private Image imgReady;
 	private PaintContext pcReady;
-	private PaintContext pc;
 	byte stat=0;
 	int xSize;
 	int ySize;
 	IntPoint newCenter=new IntPoint(0,0);
 	IntPoint oldCenter=new IntPoint(0,0);
 	private boolean needRedraw=false;
+	int createImageCount=0;
+	private final Trace tr;
 	
-	public ImageCollector(Tile[] t,int x,int y,Trace tr,QueueDataReader tir,QueueReader dir) {
+	public ImageCollector(Tile[] t,int x,int y,Trace tr,QueueDataReader tir,QueueReader dir,Images i) {
 		super();
 		this.t=t;
-		try {
-			pc=new PaintContext(tr,tir,dir);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		this.tr = tr;
 		xSize=x+80;
 		ySize=y+80;
 		imgCollect=Image.createImage(xSize,ySize);
 		imgPaint=Image.createImage(xSize,ySize);
 		imgReady=Image.createImage(xSize,ySize);
 		try {
-			pcCollect=new PaintContext(tr,tir,dir);
-			pcPaint=new PaintContext(tr,tir,dir);
-			pcReady=new PaintContext(tr,tir,dir);
+			pcCollect=new PaintContext(tr,tir,dir,i);
+			pcPaint=new PaintContext(tr,tir,dir,i);
+			pcReady=new PaintContext(tr,tir,dir,i);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -122,12 +119,13 @@ public class ImageCollector implements Runnable {
 					t[0].paint(pcCollect);
 				}
 				newCollected();
-				pcCollect.trace.requestRedraw();
+				createImageCount++;
 				if (needRedraw){
-//					pcCollect.trace.requestRedraw();
+					tr.requestRedraw();
 					needRedraw=false;
 				}
 				Thread.yield();
+				tr.cleanup();
 //				System.out.println("create ready");
 				System.gc();
 				synchronized (this) {
@@ -230,6 +228,11 @@ public class ImageCollector implements Runnable {
 		pcCollect=p;
 		newPaintAvail=true;
 		lockc=false;
+	}
+
+	public synchronized void newDataReady() {
+		needRedraw=true;
+		notify();
 	}
 	
 }

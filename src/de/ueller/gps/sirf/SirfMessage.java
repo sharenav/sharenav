@@ -26,13 +26,13 @@ public class SirfMessage {
 	public int				length		= 0;
 	Date date=new Date();
 
-	private final SirfMsgReceiver	receiver;
+	private final LocationMsgReceiver	receiver;
 
-	public SirfMessage(SirfMsgReceiver receiver) {
+	public SirfMessage(LocationMsgReceiver receiver) {
 		this.receiver = receiver;}
 
 
-	public SirfMessage(byte[] readBuffer,SirfMsgReceiver receiver) {
+	public SirfMessage(byte[] readBuffer,LocationMsgReceiver receiver) {
 		this.receiver=receiver;
 		this.readBuffer = readBuffer;
 		length = readBuffer.length;

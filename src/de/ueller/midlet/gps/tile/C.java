@@ -5,16 +5,21 @@ package de.ueller.midlet.gps.tile;
  */
 
 public class C {
+	// node with name
 	public final static byte NODE_PLACE_CITY=1;
 	public final static byte NODE_PLACE_TOWN=2;
 	public final static byte NODE_PLACE_VILLAGE=3;
 	public final static byte NODE_PLACE_HAMLET=4;
 	public final static byte NODE_PLACE_SUBURB=5;
 	
+	// node with image and name
 	public final static byte NODE_AMENITY_PARKING=50;
 	public static final byte NODE_AMENITY_SCHOOL = 51;
 	public static final byte NODE_AMENITY_TELEPHONE = 52;
 	public static final byte NODE_AMENITY_FUEL = 53;
+	
+	// node with image on node
+	public static final byte NODE_RAILWAY_STATION = 100;
 	
 	public final static byte WAY_HIGHWAY_MOTORWAY=2;
 	public final static byte WAY_HIGHWAY_MOTORWAY_LINK=2;
@@ -23,11 +28,16 @@ public class C {
 	public final static byte WAY_HIGHWAY_SECONDARY=5;
 	public final static byte WAY_HIGHWAY_MINOR=6;
 	public final static byte WAY_HIGHWAY_RESIDENTIAL=7;
+	public final static byte WAY_HIGHWAY_UNCLASSIFIED=8;
+	public final static byte WAY_RAILWAY_UNCLASSIFIED = 9;
+	public final static byte WAY_RAILWAY_RAIL = 10;
+	public final static byte WAY_RAILWAY_SUBWAY = 11;
 	
-	public final static byte WAY_WATERWAY_RIVER=10;
+	public final static byte WAY_WATERWAY_RIVER=12;
 	
-	public final static byte AREA_AMENITY_PARKING=50;
-	public final static byte AREA_AMENITY_PUBLIC_BUILDING=51;
+	public final static byte AREA_AMENITY_UNCLASSIFIED=50;
+	public final static byte AREA_AMENITY_PARKING=51;
+	public final static byte AREA_AMENITY_PUBLIC_BUILDING=52;
 	public final static byte AREA_NATURAL_WATER=60;
 	public final static byte AREA_LEISURE_PARK=70;
 	

@@ -21,6 +21,7 @@ import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.List;
+import javax.microedition.location.Location;
 import javax.microedition.midlet.MIDlet;
 import javax.microedition.midlet.MIDletStateChangeException;
 import javax.microedition.rms.InvalidRecordIDException;
@@ -49,6 +50,7 @@ public class GpsMid extends MIDlet implements CommandListener{
 //	private boolean	isInit=false;
 
 	private String	btUrl="btspp://000DB5315C50:1;authenticate=false;encrypt=false;master=false";
+	private int locationProvider=0;
 
 	private String	root;
 //	PrintStream log;
@@ -58,7 +60,7 @@ private Trace trace;
 
 
 	public GpsMid() {
-
+		System.out.println("Init GpsMid");
 		menu.addCommand(EXIT_CMD);
 		menu.addCommand(OK_CMD);
 		menu.setCommandListener(this);
@@ -69,17 +71,6 @@ private Trace trace;
 //			
 //		}
 		l=new Logger(this);
-	}
-	
-	protected void destroyApp(boolean arg0) throws MIDletStateChangeException {
-	}
-
-	protected void pauseApp() {
-	// TODO Auto-generated method stub
-
-	}
-
-	protected void startApp() throws MIDletStateChangeException {
 		new Splash(this);
 		RecordStore	database;
 		try {
@@ -91,6 +82,33 @@ private Trace trace;
 			btUrl=null;
 		}
 
+	}
+	
+	protected void destroyApp(boolean arg0) throws MIDletStateChangeException {
+		System.out.println("destroy GpsMid");
+	}
+
+	protected void pauseApp() {
+		System.out.println("Pause GpsMid");
+		if (trace != null){
+			trace.pause();
+		}
+	// TODO Auto-generated method stub
+
+	}
+
+	protected void startApp() throws MIDletStateChangeException {
+		System.out.println("Start GpsMid");
+		if (trace == null){
+			try {
+				trace = new Trace(this,btUrl,root);
+			} catch (Exception e) {
+				trace=null;
+				e.printStackTrace();
+			}
+			} else {
+				trace.resume();
+		}
 		}
 
 	public void commandAction(Command c, Displayable d) {
@@ -172,6 +190,9 @@ private Trace trace;
 		}
 		this.btUrl = btUrl;
 	}
+	public String getBTUrl(){
+		return this.btUrl;
+	}
 	public void setRootFs(String root){
 		this.root = root;
 	}
@@ -182,6 +203,13 @@ private Trace trace;
 		Display.getDisplay(this).getCurrent().setTitle(msg);
         System.out.println(msg);
 		}
+	}
+
+	public void setLocationProvider(int selectedIndex) {
+		locationProvider=selectedIndex;
+	}
+	public int getLocationProvider(){
+		return locationProvider;
 	}
 
 }

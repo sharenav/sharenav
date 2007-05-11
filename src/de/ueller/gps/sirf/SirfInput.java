@@ -24,12 +24,12 @@ public class SirfInput implements Runnable{
 	private SirfMessage smsg;
 	private InputStream ins;
 	private Thread					processorThread;
-	private final SirfMsgReceiver	receiver;
+	private final LocationMsgReceiver	receiver;
 	private boolean closed=false;
 	private byte connectQuality=100;
-	private int[] connectError=new int[SirfMsgReceiver.SIRF_FAIL_COUNT];
+	private int[] connectError=new int[LocationMsgReceiver.SIRF_FAIL_COUNT];
 	
-	public SirfInput(InputStream ins,SirfMsgReceiver receiver) {
+	public SirfInput(InputStream ins,LocationMsgReceiver receiver) {
 		super();
 		this.ins = ins;
 		this.receiver = receiver;
@@ -88,12 +88,12 @@ public class SirfInput implements Runnable{
 						if (ins.read() == 0xA2) {
 							start = 2;
 						} else {
-							connectError[SirfMsgReceiver.SIRF_FAIL_NO_START_SIGN2]++;
+							connectError[LocationMsgReceiver.SIRF_FAIL_NO_START_SIGN2]++;
 							connectQuality--;
 							break;
 						}
 					} else {
-						connectError[SirfMsgReceiver.SIRF_FAIL_NO_START_SIGN1]++;
+						connectError[LocationMsgReceiver.SIRF_FAIL_NO_START_SIGN1]++;
 						connectQuality--;
 						break;
 					}
@@ -104,7 +104,7 @@ public class SirfInput implements Runnable{
 					length = ins.read() * 256;
 					length += ins.read();
 					if (length >= 1023) {
-						connectError[SirfMsgReceiver.SIRF_FAIL_MSG_TO_LONG]++;
+						connectError[LocationMsgReceiver.SIRF_FAIL_MSG_TO_LONG]++;
 						connectQuality--;
 						start = 0;
 						break;
@@ -116,7 +116,7 @@ public class SirfInput implements Runnable{
 						break;
 					}
 					if (ins.read(readBuffer, 0, length) != length) {
-						connectError[SirfMsgReceiver.SIRF_FAIL_MSG_INTERUPTED]++;
+						connectError[LocationMsgReceiver.SIRF_FAIL_MSG_INTERUPTED]++;
 						connectQuality-=2;
 						start = 0;
 						break;
@@ -131,7 +131,7 @@ public class SirfInput implements Runnable{
 					mesChecksum = calcChecksum(smsg);
 					if (mesChecksum != checksum) {
 						connectQuality-=10;
-						connectError[SirfMsgReceiver.SIRF_FAIL_MSG_CHECKSUM_ERROR]++;
+						connectError[LocationMsgReceiver.SIRF_FAIL_MSG_CHECKSUM_ERROR]++;
 						start = 0;
 					}
 					start = 5;
@@ -147,12 +147,12 @@ public class SirfInput implements Runnable{
 						} else {
 							start = 0;
 							connectQuality--;
-							connectError[SirfMsgReceiver.SIRF_FAIL_NO_END_SIGN2]++;
+							connectError[LocationMsgReceiver.SIRF_FAIL_NO_END_SIGN2]++;
 						}
 					} else {
 						start = 0;
 						connectQuality--;
-						connectError[SirfMsgReceiver.SIRF_FAIL_NO_END_SIGN1]++;
+						connectError[LocationMsgReceiver.SIRF_FAIL_NO_END_SIGN1]++;
 					}
 					break;
 				} // switch

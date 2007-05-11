@@ -37,11 +37,7 @@ public class PaintContext extends ScreenContext {
 	 * the calculation go directly to the literals insid the object.
 	 */
 	public IntPoint lineP2=new IntPoint(0,0);
-	public final Image IMG_PARKING=Image.createImage("/images/parking.png");
-	public final Image IMG_FUEL=Image.createImage("/images/fuel.png");
-	public final Image IMG_SCHOOL=Image.createImage("/images/school.png");
-	public final Image IMG_TELEPHONE=Image.createImage("/images/telephone.png");
-
+	public Images images;
 	public byte drawAreas=DRAW_AREAS_NO;
 	public boolean showTileOutline=false;
 	/**
@@ -50,10 +46,11 @@ public class PaintContext extends ScreenContext {
 //	public Short steet;
 	public Way actualWay=null;
 	public float squareDstToWay;
-	public PaintContext(Trace tr, QueueDataReader tir,QueueReader dir) throws Exception{
+	public PaintContext(Trace tr, QueueDataReader tir,QueueReader dir,Images i) throws Exception{
 		super();
 		dataReader=tir;
 		dictReader=dir;
+		images=i;
 		trace=tr;
 		// TODO Auto-generated constructor stub
 	}

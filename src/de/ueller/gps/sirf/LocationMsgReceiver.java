@@ -7,7 +7,7 @@ import de.ueller.gps.data.Position;
 import de.ueller.gps.data.Satelit;
 
 
-public interface SirfMsgReceiver {
+public interface LocationMsgReceiver {
 	public static final byte SIRF_FAIL_NO_START_SIGN1=0;
 	public static final byte SIRF_FAIL_NO_START_SIGN2=1;
 	public static final byte SIRF_FAIL_MSG_TO_LONG=2;

@@ -66,7 +66,13 @@ public class SingleTile extends Tile implements QueueableTile {
 			// drawBounds(pc, 255, 255, 55);
 			return false;
 		}
-		// drawBounds(pc, 255, 255, 255);
+//		switch (zl){
+//		case 0: drawBounds(pc, 255, 0, 0); break;
+//		case 1: drawBounds(pc, 0, 255, 0); break;
+//		case 2: drawBounds(pc, 0, 0, 255); break;
+//		case 3: drawBounds(pc, 255, 255, 0); break;
+//		case 4: drawBounds(pc, 0, 255, 255); break;
+//		}
 		return true;
 
 	}
@@ -82,18 +88,18 @@ public class SingleTile extends Tile implements QueueableTile {
 				for (int i = 0; i < ways.length; i++) {
 					Way w = ways[i];
 					// logger.debug("test Bounds of way");
-					if (w.maxLat < pc.screenLD.radlat) {
-						continue;
-					}
-					if (w.maxLon < pc.screenLD.radlon) {
-						continue;
-					}
-					if (w.minLat > pc.screenRU.radlat) {
-						continue;
-					}
-					if (w.minLon > pc.screenRU.radlon) {
-						continue;
-					}
+//					if (w.maxLat < pc.screenLD.radlat) {
+//						continue;
+//					}
+//					if (w.maxLon < pc.screenLD.radlon) {
+//						continue;
+//					}
+//					if (w.minLat > pc.screenRU.radlat) {
+//						continue;
+//					}
+//					if (w.minLon > pc.screenRU.radlon) {
+//						continue;
+//					}
 					// logger.debug("draw " + w.name);
 					w.setColor(pc);
 					if (w.type < 50) {
@@ -105,25 +111,6 @@ public class SingleTile extends Tile implements QueueableTile {
 					}
 				}
 			}
-			// for (short i = 0; i < nodes.length; i++) {
-			// Node node = nodes[i];
-			// if (node.type == 0) {
-			// break;
-			// }
-			// if (node.radlat < pc.screenLD.radlat) {
-			// continue;
-			// }
-			// if (node.radlon < pc.screenLD.radlon) {
-			// continue;
-			// }
-			// if (node.radlat > pc.screenRU.radlat) {
-			// continue;
-			// }
-			// if (node.radlon > pc.screenRU.radlon) {
-			// continue;
-			// }
-			// node.paint(pc);
-			// }
 			for (short i = 0; i < type.length; i++) {
 				if (type[i] == 0) {
 					break;
@@ -182,7 +169,8 @@ public class SingleTile extends Tile implements QueueableTile {
 		Image img = null;
 		// logger.debug("set color "+pc);
 		// if (node.name == null) continue;
-		switch (type[i]) {
+		byte t=type[i];
+		switch (t) {
 		case 1:
 			pc.g.setColor(255, 50, 50);
 			break;
@@ -202,16 +190,19 @@ public class SingleTile extends Tile implements QueueableTile {
 			pc.g.setColor(0, 0, 0);
 			break;
 		case C.NODE_AMENITY_PARKING:
-			img = pc.IMG_PARKING;
+			img = pc.images.IMG_PARKING;
 			break;
 		case C.NODE_AMENITY_TELEPHONE:
-			img = pc.IMG_TELEPHONE;
+			img = pc.images.IMG_TELEPHONE;
 			break;
 		case C.NODE_AMENITY_SCHOOL:
-			img = pc.IMG_SCHOOL;
+			img = pc.images.IMG_SCHOOL;
 			break;
 		case C.NODE_AMENITY_FUEL:
-			img = pc.IMG_FUEL;
+			img = pc.images.IMG_FUEL;
+			break;
+		case C.NODE_RAILWAY_STATION:
+			img = pc.images.IMG_RAILSTATION;
 			break;
 
 		}
@@ -219,7 +210,7 @@ public class SingleTile extends Tile implements QueueableTile {
 		pc.p.forward(nodeLat[i], nodeLon[i], pc.swapLineP, true);
 		if (img != null) {
 			// logger.debug("draw img " + img);
-			if (nameIdx == null) {
+			if (nameIdx[i] == null || t > 99) {
 				pc.g.drawImage(img, pc.swapLineP.x, pc.swapLineP.y,
 						Graphics.VCENTER | Graphics.HCENTER);
 			} else {
@@ -236,8 +227,13 @@ public class SingleTile extends Tile implements QueueableTile {
 					pc.g.drawString(name, pc.swapLineP.x, pc.swapLineP.y,
 							Graphics.BASELINE | Graphics.HCENTER);
 				} else {
-					pc.g.drawString(name, pc.swapLineP.x, pc.swapLineP.y,
+					if (t > 99){
+						pc.g.drawString(name, pc.swapLineP.x, pc.swapLineP.y+8,
+								Graphics.TOP | Graphics.HCENTER);						
+					} else {
+						pc.g.drawString(name, pc.swapLineP.x, pc.swapLineP.y,
 							Graphics.TOP | Graphics.HCENTER);
+					}
 				}
 			}
 		}

@@ -100,7 +100,7 @@ public class Names implements Runnable {
 
 	
 	private void readIndex() throws IOException {
-		InputStream is = getClass().getResourceAsStream("/map/names-idx.dat");
+		InputStream is = QueueReader.openFile("/map/names-idx.dat");
 //		logger.info("read names-idx");
 		DataInputStream ds = new DataInputStream(is);
 
@@ -130,7 +130,7 @@ public class Names implements Runnable {
 			for (int i=fid;i < startIndexes.length;i++){
 //				logger.info("loop index["+ i +"]=" + startIndexes[i]);
 				if (startIndexes[i] > idx.shortValue()){
-					is = getClass().getResourceAsStream("/map/names-" + fid + ".dat");
+					is = QueueReader.openFile("/map/names-" + fid + ".dat");
 //					logger.trace("open names-"+fid + " startIdx=" + startIndexes[fid] + "-" + startIndexes[fid+1]);
 					count=startIndexes[i]-startIndexes[fid];
 					actIdx=startIndexes[fid];

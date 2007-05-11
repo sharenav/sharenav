@@ -7,16 +7,19 @@ package de.ueller.midlet.gps;
 import java.util.Vector;
 
 import javax.microedition.lcdui.Choice;
+import javax.microedition.lcdui.ChoiceGroup;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
+import javax.microedition.lcdui.Form;
+import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.List;
 
 public class GuiDiscover implements CommandListener {
 
 	/** A menu list instance */
-	private static final String[]	elements		= { "Discover GPS",
+	private static final String[]	elements		= { "Input from","Discover GPS",
 			"Setup Database"						};
 
 	private static final String[]	empty			= {};
@@ -50,6 +53,7 @@ public class GuiDiscover implements CommandListener {
 	private final List				menuFS			= new List("Devices",
 															Choice.IMPLICIT, empty,
 															null);
+	private final Form				menuSelectLocProv = new Form("Select Location Provider");
 
 	private final GpsMid			parent;
 
@@ -62,8 +66,10 @@ public class GuiDiscover implements CommandListener {
 	private final static int		STATE_FS		= 1;
 
 	private final static int		STATE_BT		= 2;
+	private final static int		STATE_LP		= 3;
 	private Vector urlList; 
 	private Vector friendlyName;
+	ChoiceGroup locProv;
 
 	public GuiDiscover(GpsMid parent) {
 		this.parent = parent;
@@ -73,6 +79,13 @@ public class GuiDiscover implements CommandListener {
 		menu.setCommandListener(this);
 		menuFS.addCommand(BACK_CMD);
 		menuFS.setCommandListener(this);
+		menuSelectLocProv.addCommand(BACK_CMD);
+		menuSelectLocProv.addCommand(OK_CMD);
+		String[] devices={"SIRF GPS","NEMA GPS","JSR179"};
+		locProv=new ChoiceGroup("input from:",Choice.EXCLUSIVE,devices,new Image[3]);
+		locProv.setSelectedIndex(parent.getLocationProvider(), true);
+		menuSelectLocProv.append(locProv);
+		menuSelectLocProv.setCommandListener(this);
 		show();
 	}
 
@@ -90,10 +103,21 @@ public class GuiDiscover implements CommandListener {
 			parent.setBTUrl((String) urlList.elementAt(menu.getSelectedIndex()));
 			return;
 		}
+		if (c == OK_CMD){
+			switch (state){
+			case STATE_LP:
+				parent.setLocationProvider(locProv.getSelectedIndex());
+			}
+			show();
+		}
 		switch (state) {
 			case STATE_ROOT:
 				switch (menu.getSelectedIndex()) {
 					case 0:
+						Display.getDisplay(parent).setCurrent(menuSelectLocProv);
+						state = STATE_LP;
+						break;
+					case 1:
 //						gps.cancelDeviceSearch();
 						menuBT	= new List("Devices",
 								Choice.IMPLICIT, empty,
@@ -108,7 +132,7 @@ public class GuiDiscover implements CommandListener {
 						
 						gps = new DiscoverGps(this);
 						break;
-					case 1:
+					case 2:
 						menuFS.setTitle("Search Root FSs");
 						state = STATE_FS;
 						Display.getDisplay(parent).setCurrent(menuFS);
@@ -122,6 +146,8 @@ public class GuiDiscover implements CommandListener {
 				break;
 			case STATE_FS:
 				parent.setRootFs(menuFS.getString(menuFS.getSelectedIndex()));
+				break;
+			case STATE_LP:
 				break;
 		}
 	}

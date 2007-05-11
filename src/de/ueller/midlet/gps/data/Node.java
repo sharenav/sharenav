@@ -187,16 +187,16 @@ public class Node {
     		pc.g.setColor(0, 0, 0);
     		break;
     	case C.NODE_AMENITY_PARKING:
-    		img=pc.IMG_PARKING;
+    		img=pc.images.IMG_PARKING;
     		break;
     	case C.NODE_AMENITY_TELEPHONE:
-    		img=pc.IMG_TELEPHONE;
+    		img=pc.images.IMG_TELEPHONE;
     		break;
     	case C.NODE_AMENITY_SCHOOL:
-    		img=pc.IMG_SCHOOL;
+    		img=pc.images.IMG_SCHOOL;
     		break;
     	case C.NODE_AMENITY_FUEL:
-    		img=pc.IMG_FUEL;
+    		img=pc.images.IMG_FUEL;
     		break;
 
     	}
