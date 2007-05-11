@@ -23,10 +23,10 @@ public class Way {
 	public int maxspeed;
 	public short[][] paths;
 //	public short[] path;
-//	public float minLat;
-//	public float minLon;
-//	public float maxLat;
-//	public float maxLon;
+	public float minLat;
+	public float minLon;
+	public float maxLat;
+	public float maxLon;
 	private final static Logger logger=Logger.getInstance(Way.class,Logger.ERROR);
 
 	/**
@@ -39,10 +39,10 @@ public class Way {
 	 */
 	public Way(DataInputStream	is,byte f) throws IOException{
 		// temporary removed for test
-//		minLat=is.readFloat();
-//		minLon=is.readFloat();
-//		maxLat=is.readFloat();
-//		maxLon=is.readFloat();
+		minLat=is.readFloat();
+		minLon=is.readFloat();
+		maxLat=is.readFloat();
+		maxLon=is.readFloat();
 		// end temporary removed for test
 //		if (is.readByte() != 0x58){
 //			logger.error("worng magic after way bounds");

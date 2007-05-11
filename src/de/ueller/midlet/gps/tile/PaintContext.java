@@ -18,6 +18,11 @@ public class PaintContext extends ScreenContext {
 	public final static byte DRAW_AREAS_NO=0;
 	public final static byte DRAW_AREAS_OUTLINE=1;
 	public final static byte DRAW_AREAS_FILL=2;
+	public final static byte STATE_IN_CREATE=1;
+	public final static byte STATE_READY=0;
+	public final static byte STATE_IN_COPY=3;
+	
+	public byte state=0;
 	public Graphics g;
 	/** 
 	 * used to avoid frequent memory allocations this point have to have
@@ -52,6 +57,7 @@ public class PaintContext extends ScreenContext {
 		dictReader=dir;
 		images=i;
 		trace=tr;
+		state=STATE_READY;
 		// TODO Auto-generated constructor stub
 	}
 	

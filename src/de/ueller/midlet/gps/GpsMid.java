@@ -133,6 +133,7 @@ private Trace trace;
             			trace = new Trace(this,btUrl,root);
             		} else {
             			Display.getDisplay(this).setCurrent(trace);
+            			trace.resume();
             		}
 				} catch (Exception e) {
 					e.printStackTrace();

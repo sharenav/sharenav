@@ -220,6 +220,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			if (c == EXIT_CMD) {
 				// shutdown();
 				parent.show();
+				pause();
 				return;
 			}
 			if (c == REFRESH_CMD) {
@@ -314,7 +315,8 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		// cleans the screen
 		g.setColor(255, 0, 0);
 		g.fillRect(0, 0, pc.xSize, pc.ySize);
-		vc.paint(pc);
+		if (vc != null)
+			vc.paint(pc);
 		switch (showAddons) {
 		case 1:
 			yc = showConnectStatistics(g, yc, la);

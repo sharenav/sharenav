@@ -88,18 +88,18 @@ public class SingleTile extends Tile implements QueueableTile {
 				for (int i = 0; i < ways.length; i++) {
 					Way w = ways[i];
 					// logger.debug("test Bounds of way");
-//					if (w.maxLat < pc.screenLD.radlat) {
-//						continue;
-//					}
-//					if (w.maxLon < pc.screenLD.radlon) {
-//						continue;
-//					}
-//					if (w.minLat > pc.screenRU.radlat) {
-//						continue;
-//					}
-//					if (w.minLon > pc.screenRU.radlon) {
-//						continue;
-//					}
+					if (w.maxLat < pc.screenLD.radlat) {
+						continue;
+					}
+					if (w.maxLon < pc.screenLD.radlon) {
+						continue;
+					}
+					if (w.minLat > pc.screenRU.radlat) {
+						continue;
+					}
+					if (w.minLon > pc.screenRU.radlon) {
+						continue;
+					}
 					// logger.debug("draw " + w.name);
 					w.setColor(pc);
 					if (w.type < 50) {
