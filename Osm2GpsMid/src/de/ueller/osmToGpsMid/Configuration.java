@@ -61,9 +61,6 @@ public class Configuration {
 				}
 				rb= new PropertyResourceBundle(cf);
 				vb=new PropertyResourceBundle(getClass().getResourceAsStream("/version.properties"));
-				if ("true".equals(rb.getString("highway.only"))){
-					highway_only=true;
-				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

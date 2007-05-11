@@ -484,10 +484,10 @@ public class CreateGpsMidData {
 				flags+=4;
 			}
 			ds.writeByte(flags);
-//			ds.writeFloat(degToRad(b.minLat));
-//			ds.writeFloat(degToRad(b.minLon));
-//			ds.writeFloat(degToRad(b.maxLat));
-//			ds.writeFloat(degToRad(b.maxLon));
+			ds.writeFloat(degToRad(b.minLat));
+			ds.writeFloat(degToRad(b.minLon));
+			ds.writeFloat(degToRad(b.maxLat));
+			ds.writeFloat(degToRad(b.maxLon));
 //			ds.writeByte(0x58);
 			ds.writeByte(type);
 			if ((flags & 1) == 1){
