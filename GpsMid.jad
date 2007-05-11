@@ -1,8 +1,11 @@
+Created-By: 1.5.0_10 (Sun Microsystems Inc.)
 MIDlet-1: GpsMid,,de.ueller.midlet.gps.GpsMid
+MIDlet-Data-Size: 50000
+MIDlet-Jar-Size: 131068
 MIDlet-Jar-URL: GpsMid.jar
 MIDlet-Name: GpsMid
-MIDlet-Permissions: javax.microedition.io.Connector.file.read,javax.microedition.io.Connector.file.write,javax.microedition.io.Connector.bluetooth.server
 MIDlet-Vendor: Harald Mueller
-MIDlet-Version: 0.2.34
-MicroEdition-Configuration: CLDC-1.0
+MIDlet-Version: 0.2.26
+Manifest-Version: 1.0
+MicroEdition-Configuration: CLDC-1.1
 MicroEdition-Profile: MIDP-2.0
