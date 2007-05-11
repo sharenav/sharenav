@@ -14,8 +14,9 @@ public class Main {
 		if (args.length > 1){
 			FileInputStream fr;
 			try {
+				Configuration c=new Configuration(args[0],args[1]);
 				fr = new FileInputStream(args[0]);
-				OxParser parser = new OxParser(fr);
+				OxParser parser = new OxParser(fr,c);
 				System.out.println("read Nodes " + parser.nodes.size());
 				System.out.println("read Lines " + parser.lines.size());
 				System.out.println("read Ways  " + parser.ways.size());

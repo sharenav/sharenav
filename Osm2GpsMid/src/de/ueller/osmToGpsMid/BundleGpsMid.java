@@ -35,13 +35,14 @@ public class BundleGpsMid {
 				System.out.println("unpack Application to " + tmpDir);
 				expand(c, tmpDir);
 				fr = new FileInputStream(c.getPlanet());
-				OxParser parser = new OxParser(fr,c.getBounds());
+				OxParser parser = new OxParser(fr,c);
 				System.out.println("read Nodes " + parser.nodes.size());
 				System.out.println("read Lines " + parser.lines.size());
 				System.out.println("read Ways  " + parser.ways.size());
 				File target=new File(tmpDir+"/map");
 				createPath(target);
 				CreateGpsMidData cd=new CreateGpsMidData(parser,target.getCanonicalPath());
+				cd.setConfiguration(c);
 				new SplitLongWays(parser);
 				cd.exportMapToMid();
 				pack(c);

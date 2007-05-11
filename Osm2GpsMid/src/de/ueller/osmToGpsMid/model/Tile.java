@@ -5,6 +5,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.LinkedList;
 
+import de.ueller.osmToGpsMid.CreateGpsMidData;
+
 
 public class Tile {
 	
@@ -34,7 +36,7 @@ public class Tile {
 		DataOutputStream lds;
 		boolean openStream;
 		System.out.println("Write Tile type=" + type + " deep=" + deep + " fid=" + fid);
-		if (type == 2 && deep >= 7){
+		if (type == 2 && deep >= CreateGpsMidData.MAX_DICT_DEEP){
 			System.out.println("Type 4");
 			ds.writeByte(4);
 			ds.writeFloat(degToRad(bounds.minLat));

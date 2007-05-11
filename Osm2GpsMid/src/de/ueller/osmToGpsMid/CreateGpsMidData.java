@@ -27,8 +27,8 @@ import de.ueller.osmToGpsMid.model.Way;
 
 
 public class CreateGpsMidData {
-	private final static int MAX_TILE_FILESIZE=5000;
-	private final static int MAX_DICT_DEEP=4;
+	private final static int MAX_TILE_FILESIZE=8000;
+	public  final static int MAX_DICT_DEEP=5;
 	OxParser parser;
 	Tile tile[]= new Tile[4];
 	private final String	path;
@@ -37,6 +37,7 @@ public class CreateGpsMidData {
 	private final static int INODE=1;
 	private final static int SEGNODE=2;
 //	private Bounds[] bounds=null;
+	private Configuration configuration;
 	
 	public CreateGpsMidData(OxParser parser,String path) {
 		super();
@@ -108,7 +109,7 @@ public class CreateGpsMidData {
 				}
 				ds.writeByte(eq-curPos);
 				ds.writeUTF(string.substring(eq));
-				System.out.println("" + (eq-curPos) + "'" +string.substring(eq)+"' '"+string);
+//				System.out.println("" + (eq-curPos) + "'" +string.substring(eq)+"' '"+string);
 				curPos=eq;
 				lastStr=string;
 				idx++;
@@ -126,7 +127,7 @@ public class CreateGpsMidData {
 			e.printStackTrace();
 		}
 		for (int i=0;i<=3;i++)
-		exportMapToMid(i);
+			exportMapToMid(i);
 	}
 	
 	private TreeSet<String> getNames(){
@@ -279,6 +280,7 @@ public class CreateGpsMidData {
 				for (Iterator wi = ways.iterator(); wi.hasNext();) {
 					Way w1=(Way)wi.next();
 					w1.used=true;
+					w1.fid=fid;
 				}
 			} else {
 				//emty box
@@ -354,7 +356,9 @@ public class CreateGpsMidData {
 		// find all point that are part of a way but not in interestNodes
 		for (Iterator wi = ways.iterator(); wi.hasNext();) {
 			Way w1=(Way)wi.next();
-
+//			if (configuration.isHighway_only() && !w1.tags.containsKey("highway")){
+//				continue;
+//			}
 			for (Iterator li = w1.lines.iterator(); li.hasNext();){
 				Line l1=(Line) li.next();
 				if (l1.from != null){
@@ -480,10 +484,10 @@ public class CreateGpsMidData {
 				flags+=4;
 			}
 			ds.writeByte(flags);
-			ds.writeFloat(degToRad(b.minLat));
-			ds.writeFloat(degToRad(b.minLon));
-			ds.writeFloat(degToRad(b.maxLat));
-			ds.writeFloat(degToRad(b.maxLon));
+//			ds.writeFloat(degToRad(b.minLat));
+//			ds.writeFloat(degToRad(b.minLon));
+//			ds.writeFloat(degToRad(b.maxLat));
+//			ds.writeFloat(degToRad(b.maxLon));
 //			ds.writeByte(0x58);
 			ds.writeByte(type);
 			if ((flags & 1) == 1){
@@ -516,5 +520,14 @@ public class CreateGpsMidData {
     public float degToRad(double deg) {
         return (float) (deg * (Math.PI / 180.0d));
     }
+
+	/**
+	 * @param c
+	 */
+	public void setConfiguration(Configuration c) {
+		this.configuration = c;
+		// TODO Auto-generated method stub
+		
+	}
 
 }

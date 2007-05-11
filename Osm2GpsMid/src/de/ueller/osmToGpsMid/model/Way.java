@@ -3,6 +3,7 @@ package de.ueller.osmToGpsMid.model;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.ueller.osmToGpsMid.Configuration;
 import de.ueller.osmToGpsMid.Constants;
 
 public class Way extends Entity implements Comparable<Way>{
@@ -12,118 +13,196 @@ public class Way extends Entity implements Comparable<Way>{
  * indicate that this Way is already written to output;
  */
 	public boolean used=false;
+	public int fid;
+	private byte type;
 
 
 	public Way(long id) {
 		this.id=id;
 	}
 	
-	public byte getType(){
-		byte type=0;
+	public Way(Way other) {
+		this.id=other.id;
+		this.tags=other.tags;
+		this.type=other.type;
+	}
+	
+	private byte getHighwayType(){
 		String t = (String) tags.get("highway");
 		if ("unclassified".equals(t)){
-			type=9;
-		} else if ("motorway".equals(t)){
-			type=2;
-		} else if ("motorway_link".equals(t)){
-			type=2;
-		} else if ("trunk".equals(t)){
-			type=3;
-		} else if ("primary".equals(t)){
-			type=4;
-		} else if ("secondary".equals(t)){
-			type=5;
-		} else if ("minor".equals(t)){
-			type=6;
-		} else if ("residential".equals(t)){
-			type=7;
+			return Constants.WAY_HIGHWAY_UNCLASSIFIED;
 		}
-		if (type!= 0)
-			return type;
-		// types > 50 represent Areas
-		t = (String) tags.get("amenity");
-		if ("parking".equals(t)){
-			type=50;
-//			System.out.println("found parkin Area");
+		if ("motorway".equals(t)){
+			return Constants.WAY_HIGHWAY_MOTORWAY;
 		}
-		if (type!= 0)
-			return type;
-		// types > 50 represent Areas
-		t = (String) tags.get("natural");
-		if ("water".equals(t)){
-			type=60;
+		if ("motorway_link".equals(t)){
+			return Constants.WAY_HIGHWAY_MOTORWAY_LINK;
 		}
-		if (type!= 0)
-			return type;
-		// types > 50 represent Areas
-		t = (String) tags.get("landuse");
-		if ("farm".equals(t)){
-			type=Constants.AREA_LANDUSE_FARM;
+		if ("trunk".equals(t)){
+			return Constants.WAY_HIGHWAY_TRUNK;
 		}
-		if ("quarry".equals(t)){
-			type=Constants.AREA_LANDUSE_QUARRY;
+		if ("primary".equals(t)){
+			return Constants.WAY_HIGHWAY_PRIMARY;
 		}
-		if ("landfill".equals(t)){
-			type=Constants.AREA_LANDUSE_LANDFILL;
+		if ("secondary".equals(t)){
+			return Constants.WAY_HIGHWAY_SECONDARY;
 		}
-		if ("basin".equals(t)){
-			type=Constants.AREA_LANDUSE_BASIN;
-		}
-		if ("reservoir".equals(t)){
-			type=Constants.AREA_LANDUSE_RESERVOIR;
-		}
-		if ("forest".equals(t)){
-			type=Constants.AREA_LANDUSE_FOREST;
-		}
-		if ("allotments".equals(t)){
-			type=Constants.AREA_LANDUSE_ALLOTMENTS;
+		if ("minor".equals(t)){
+			return Constants.WAY_HIGHWAY_MINOR;
 		}
 		if ("residential".equals(t)){
-			type=Constants.AREA_LANDUSE_RESIDENTIAL;
+			return Constants.WAY_HIGHWAY_RESIDENTIAL;
+		}
+		return Constants.WAY_HIGHWAY_UNCLASSIFIED;
+		
+	}
+	private byte getRailwayType(){
+		String t = (String) tags.get("railway");
+		if ("rail".equals(t)){
+			return Constants.WAY_RAILWAY_RAIL;
+		}
+		if ("subway".equals(t)){
+			return Constants.WAY_RAILWAY_SUBWAY;
+		}
+		return Constants.WAY_RAILWAY_UNCLASSIFIED;
+		
+	}
+
+	private byte getAmenityType(){
+		String t = (String) tags.get("amenity");
+		if ("parking".equals(t)){
+			return Constants.AREA_AMENITY_PARKING;
+		}
+		if ("public_building".equals(t)){
+			return Constants.AREA_AMENITY_PUBLIC_BUILDING;
+		}
+		return Constants.AREA_AMENITY_UNCLASSIFIED;
+		
+	}
+	private byte getNaturalType(){
+		String t = (String) tags.get("natural");
+		if ("water".equals(t)){
+			return Constants.AREA_NATURAL_WATER;
+		}
+		return 0;
+	}
+	private byte getLanduseType(){
+		String t = (String) tags.get("landuse");
+		if ("farm".equals(t)){
+			return Constants.AREA_LANDUSE_FARM;
+		}
+		if ("quarry".equals(t)){
+			return Constants.AREA_LANDUSE_QUARRY;
+		}
+		if ("landfill".equals(t)){
+			return Constants.AREA_LANDUSE_LANDFILL;
+		}
+		if ("basin".equals(t)){
+			return Constants.AREA_LANDUSE_BASIN;
+		}
+		if ("reservoir".equals(t)){
+			return Constants.AREA_LANDUSE_RESERVOIR;
+		}
+		if ("forest".equals(t)){
+			return Constants.AREA_LANDUSE_FOREST;
+		}
+		if ("allotments".equals(t)){
+			return Constants.AREA_LANDUSE_ALLOTMENTS;
+		}
+		if ("residential".equals(t)){
+			return Constants.AREA_LANDUSE_RESIDENTIAL;
 		}
 		if ("retail".equals(t)){
-			type=Constants.AREA_LANDUSE_RETAIL;
+			return Constants.AREA_LANDUSE_RETAIL;
 		}
 		if ("commercial".equals(t)){
-			type=Constants.AREA_LANDUSE_COMMERCIAL;
+			return Constants.AREA_LANDUSE_COMMERCIAL;
 		}
 		if ("industrial".equals(t)){
-			type=Constants.AREA_LANDUSE_INDUSTRIAL;
+			return Constants.AREA_LANDUSE_INDUSTRIAL;
 		}
 		if ("brownfield".equals(t)){
-			type=Constants.AREA_LANDUSE_BROWNFIELD;
+			return Constants.AREA_LANDUSE_BROWNFIELD;
 		}
 		if ("greenfield".equals(t)){
-			type=Constants.AREA_LANDUSE_GREENFIELD;
+			return Constants.AREA_LANDUSE_GREENFIELD;
 		}
 		if ("cementry".equals(t)){
-			type=Constants.AREA_LANDUSE_CEMETERY;
+			return Constants.AREA_LANDUSE_CEMETERY;
 		}
 		if ("village_green".equals(t)){
-			type=Constants.AREA_LANDUSE_VILLAGE_GREEN;
+			return Constants.AREA_LANDUSE_VILLAGE_GREEN;
 		}
 		if ("recreation_ground".equals(t)){
-			type=Constants.AREA_LANDUSE_RECREATION_GROUND;
+			return Constants.AREA_LANDUSE_RECREATION_GROUND;
 		}
-		if (type!= 0)
-			return type;
-		// types > 50 represent Areas
-		t = (String) tags.get("leisure");
-		if ("park".equals(t)){
-			type=Constants.AREA_LEISURE_PARK;
-		}
-		if (type!= 0)
-			return type;
-		// types > 50 represent Areas
-		t = (String) tags.get("waterway");
-		if ("riverbank".equals(t)){
-			type=Constants.AREA_NATURAL_WATER;
-		}
-		if ("river".equals(t)){
-			type=Constants.WAY_WATERWAY_RIVER;
-		}
+		return 0;
+	}
 
-		return type;
+	private byte getLeisureType(){
+		String t = (String) tags.get("leisure");
+		if ("park".equals(t)){
+			return Constants.AREA_LEISURE_PARK;
+		}
+		return 0;
+	}
+	private byte getWaterwayType(){
+		String t = (String) tags.get("waterway");
+		if ("river".equals(t)){
+			return Constants.AREA_NATURAL_WATER;
+		}
+		if ("riverbank".equals(t)){
+			return Constants.WAY_WATERWAY_RIVER;
+		}
+		return 0;
+	}
+
+	
+	private byte get_Type(Configuration c){
+		if (c.useHighway){
+			if (tags.containsKey("highway")){
+				return getHighwayType();
+			}
+		}
+		if (c.useRailway){
+			if (tags.containsKey("railway")){
+				return getRailwayType();
+			}
+		}
+		if (c.useAmenity){
+			if (tags.containsKey("amenity")){
+				return getAmenityType();
+			}
+		}
+		if (c.useNatural){
+			if (tags.containsKey("natural")){
+				return getNaturalType();
+			}
+		}
+		if (c.useLanduse){
+			if (tags.containsKey("landuse")){
+				return getLanduseType();
+			}
+		}
+		if (c.useLeisure){
+			if (tags.containsKey("leisure")){
+				return getLeisureType();
+			}
+		}
+		if (c.useWaterway){
+			if (tags.containsKey("waterway")){
+				return getWaterwayType();
+			}
+		}
+		return 0;
+		
+	}
+    public byte getType(Configuration c){
+    	type=get_Type(c);
+    	return type;
+	}
+    public byte getType(){
+    	return type;
 	}
 	
 	public byte getZoomlevel(){

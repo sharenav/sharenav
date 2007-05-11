@@ -31,6 +31,16 @@ public class Configuration {
 		private ResourceBundle vb;
 		private String tmp=null;
 		private final String planet;
+		private boolean highway_only=false;
+		public boolean useHighway=true;
+		public boolean useRailway=true;
+		public boolean useRiver=true;
+		public boolean useCycleway=true;
+		public boolean useAmenity=true;
+		public boolean useLanduse=true;
+		public boolean useNatural=true;
+		public boolean useLeisure=true;
+		public boolean useWaterway=true;
 
 //		private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
 //				.getBundle(BUNDLE_NAME);
@@ -51,6 +61,9 @@ public class Configuration {
 				}
 				rb= new PropertyResourceBundle(cf);
 				vb=new PropertyResourceBundle(getClass().getResourceAsStream("/version.properties"));
+				if ("true".equals(rb.getString("highway.only"))){
+					highway_only=true;
+				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -127,5 +140,9 @@ public class Configuration {
 		 */
 		public String getVersion() {
 			return vb.getString("version");
+		}
+
+		public boolean isHighway_only() {
+			return highway_only;
 		}
 }

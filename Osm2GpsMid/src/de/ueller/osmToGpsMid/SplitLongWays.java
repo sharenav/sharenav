@@ -100,8 +100,7 @@ public class SplitLongWays {
 	}
 
 	private Way splitBeforeLine(Way w, Line splitLine) {
-		Way wSplit=new Way(w.id);
-		wSplit.tags=w.tags;
+		Way wSplit=new Way(w);
 		List<Line> oldLines=w.lines;
 		wSplit.lines=new LinkedList<Line>();
 		w.lines=new LinkedList<Line>();

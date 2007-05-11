@@ -39,6 +39,7 @@ public class OxParser extends MinML2 {
 	public Collection<Way> ways = new LinkedList<Way>();
 	private int nodeTot,nodeIns,segTot,segIns,wayTot,wayIns,ele;
 	private Bounds[] bounds=null;
+	private Configuration configuration;
 
 	public OxParser(InputStream i) {
 		System.out.println("OSM XML parser started...");
@@ -64,8 +65,9 @@ public class OxParser extends MinML2 {
 	 * @param i
 	 * @param bounds
 	 */
-	public OxParser(FileInputStream i, Bounds[] bounds) {
-		this.bounds = bounds;
+	public OxParser(FileInputStream i, Configuration c) {
+		this.configuration = c;
+		this.bounds = c.getBounds();
 		System.out.println("OSM XML parser with bounds started...");
 		init(i);
 	}
@@ -123,7 +125,7 @@ public class OxParser extends MinML2 {
 
 	public void endElement(String namespaceURI, String localName, String qName) {
 		ele++;
-		if (ele > 100000){
+		if (ele > 1000000){
 			ele=0;
 			System.out.println("node "+ nodeTot+"/"+nodeIns + "  seg "+ segTot+"/"+segIns + "  way "+ wayTot+"/"+wayIns);
 		}
@@ -141,18 +143,7 @@ public class OxParser extends MinML2 {
 			} else {
 				inBound=true;
 			}
-// London all city
-//			if (n.lat > 50.9 && n.lat < 52.05 
-//			&& n.lon > -1.1 && n.lon < 0.9){
-//			 London smaller. 
-//			if (n.lat > 51.37 && n.lat < 51.64 
-//			&& n.lon > -0.37 && n.lon < 0.122){
-//			 Paris 
-//			if (n.lat > 48.77 && n.lat < 48.94
-//			&& n.lon > 2.2 && n.lon < 2.5){
-//				Australien
-//				if (n.lat > -42.0 && n.lat < -7.0 
-//				&& n.lon > 112.0 && n.lon < 155.0){
+
 			if (inBound){
 				nodes.put(new Long(current.id), (Node) current);
 				nodeIns++;
@@ -173,7 +164,8 @@ public class OxParser extends MinML2 {
 		} else if (qName.equals("way")) {
 			wayTot++;
 			Way w= (Way) current;
-			if (w.lines.size() > 0){
+			byte t=w.getType(configuration);
+			if (w.lines.size() > 0 && t > 0){
 				ways.add((Way) current);
 				wayIns++;
 			}
