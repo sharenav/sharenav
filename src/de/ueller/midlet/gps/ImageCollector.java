@@ -34,7 +34,6 @@ public class ImageCollector implements Runnable {
 	boolean shutdown=false;
 	private final Tile t[];
 	private Thread processorThread;
-	private ScreenContext sc;
 	private ScreenContext nextSc;
 
 	private Image[] img=new Image[2];
@@ -55,8 +54,8 @@ public class ImageCollector implements Runnable {
 		super();
 		this.t=t;
 		this.tr = tr;
-		xSize=x+80;
-		ySize=y+80;
+		xSize=x+10;
+		ySize=y+10;
 		img[0]=Image.createImage(xSize,ySize);
 		img[1]=Image.createImage(xSize,ySize);
 		try {

@@ -17,6 +17,9 @@ import java.util.Date;
 
 
 public class Position {
+	/**
+	 * position in degrees
+	 */
 	public float latitude;
 	public float longitude;
 	public float altitude;

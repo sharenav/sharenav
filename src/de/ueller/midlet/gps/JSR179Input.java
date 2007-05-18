@@ -10,7 +10,6 @@ import javax.microedition.location.LocationListener;
 import javax.microedition.location.LocationProvider;
 
 import de.ueller.gps.data.Position;
-import de.ueller.gps.sirf.LocationMsgReceiver;
 
 public class JSR179Input implements LocationListener {
 

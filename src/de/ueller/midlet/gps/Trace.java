@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
-import java.util.Hashtable;
+
 
 import javax.microedition.io.Connector;
 import javax.microedition.io.StreamConnection;
@@ -25,8 +25,8 @@ import javax.microedition.midlet.MIDlet;
 
 import de.ueller.gps.data.Position;
 import de.ueller.gps.data.Satelit;
+import de.ueller.gps.nmea.NmeaInput;
 import de.ueller.gps.sirf.SirfInput;
-import de.ueller.gps.sirf.LocationMsgReceiver;
 import de.ueller.midlet.gps.data.Mercator;
 import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.Projection;
@@ -52,9 +52,10 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			Command.SCREEN, 1);
 
 	private InputStream inputStream;
-	private OutputStream outputStream;
+
 	
 	private SirfInput si;
+	private NmeaInput ni;
 
 	private String solution = "No";
 
@@ -107,9 +108,6 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 	private int course;
 
-	private short[] namesIdx = null;
-
-	private Hashtable stringCache = new Hashtable(100);
 
 	private Names namesThread;
 
@@ -122,7 +120,6 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 	private Runtime runtime = Runtime.getRuntime();
 
-	private boolean threadsRunning = false;
 
 	private JSR179Input input;
 
@@ -166,6 +163,13 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			}
 			break;
 		case 1:
+			url=parent.getBTUrl();
+			if (url != null){
+				try {
+					startGpsNmea(url);
+				} catch (Exception e) {
+				}
+			}
 			break;
 		case 2:
 			try {
@@ -182,6 +186,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		case 0:sirfDecoderEnd();
 		break;
 		case 1:
+			nemaDecoderEnd();
 			break;
 		case 2:
 			if (input != null){
@@ -199,13 +204,27 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			return;
 		}
 		try {
-
-			// logger.debug("connect " + url);
 			conn = (StreamConnection) Connector.open(url);
 			inputStream = conn.openInputStream();
-			outputStream = conn.openOutputStream();
-			// logger.debug("connectetd");
+			
 			si = new SirfInput(inputStream, this);
+			addCommand(DISCONNECT_GPS_CMD);
+			// logger.debug("messagereader Started");
+		} catch (Exception e) {
+//			addCommand(CONNECT_GPS_CMD);
+		}
+		repaint(0, 0, getWidth(), getHeight());
+
+	}
+	public void startGpsNmea(String url) {
+		if (ni != null){
+			return;
+		}
+		try {
+			conn = (StreamConnection) Connector.open(url);
+			inputStream = conn.openInputStream();
+			
+			ni = new NmeaInput(inputStream, this);
 			addCommand(DISCONNECT_GPS_CMD);
 			// logger.debug("messagereader Started");
 		} catch (Exception e) {
@@ -264,7 +283,6 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		projection = new Mercator(center, pc.scale, getWidth(), getHeight());
 		logger.info("set Center");
 		pc.center = center;
-		threadsRunning = true;
 	}
 
 	public void shutdown() {
@@ -291,7 +309,6 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		if (si != null){
 			si.close();
 		}
-		threadsRunning = false;
 	}
 
 
@@ -299,13 +316,13 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		
 		int yc = 1;
 		int la = 18;
-		if (si != null ){
-			try {
-				outputStream.flush();
-			} catch (IOException e) {
-				si.close();
-			}
-		}
+//		if (si != null ){
+//			try {
+//				outputStream.flush();
+//			} catch (IOException e) {
+//				si.close();
+//			}
+//		}
 		pc.xSize = this.getWidth();
 		pc.ySize = this.getHeight();
 		pc.p = projection;
@@ -313,7 +330,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		pc.p.inverse(0, pc.ySize, pc.screenLD);
 		pc.g = g;
 		// cleans the screen
-		g.setColor(255, 0, 0);
+		g.setColor(155, 255, 155);
 		g.fillRect(0, 0, pc.xSize, pc.ySize);
 		if (vc != null)
 			vc.paint(pc);
@@ -536,7 +553,6 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 //		addCommand(CONNECT_GPS_CMD);
 		si = null;
 		try {
-			outputStream.close();
 			inputStream.close();
 			conn.close();
 		} catch (IOException e) {
@@ -545,6 +561,16 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		inputStream=null;
 //		addCommand(CONNECT_GPS_CMD);
 //		repaint(0, 0, getWidth(), getHeight());
+	}
+	public void nemaDecoderEnd() {
+		ni = null;
+		try {
+			inputStream.close();
+			conn.close();
+		} catch (IOException e) {
+		}
+		conn=null;
+		inputStream=null;
 	}
 
 	public void receiveSolution(String s) {

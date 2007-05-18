@@ -10,5 +10,6 @@ public class StringEntry {
 	public StringEntry(String name) {
 		this.name = name;
 	}
+	public Short isIn;
 	
 }

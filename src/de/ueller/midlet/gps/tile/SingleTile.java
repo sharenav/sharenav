@@ -204,6 +204,9 @@ public class SingleTile extends Tile implements QueueableTile {
 		case C.NODE_RAILWAY_STATION:
 			img = pc.images.IMG_RAILSTATION;
 			break;
+		case C.NODE_AEROWAY_AERODROME:
+			img = pc.images.IMG_AERODROME;
+			break;
 
 		}
 		// logger.debug("calc pos "+pc);
