@@ -15,6 +15,7 @@ import java.util.Date;
 
 import de.ueller.gps.data.Position;
 import de.ueller.gps.data.Satelit;
+import de.ueller.midlet.gps.LocationMsgReceiver;
 
 public class SirfMessage {
 

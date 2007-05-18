@@ -13,6 +13,8 @@ package de.ueller.gps.sirf;
 import java.io.IOException;
 import java.io.InputStream;
 
+import de.ueller.midlet.gps.LocationMsgReceiver;
+
 
 
 public class SirfInput implements Runnable{
