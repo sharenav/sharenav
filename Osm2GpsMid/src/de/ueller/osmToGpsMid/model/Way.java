@@ -149,10 +149,10 @@ public class Way extends Entity implements Comparable<Way>{
 	private byte getWaterwayType(){
 		String t = (String) tags.get("waterway");
 		if ("river".equals(t)){
-			return Constants.AREA_NATURAL_WATER;
+			return Constants.WAY_WATERWAY_RIVER;
 		}
 		if ("riverbank".equals(t)){
-			return Constants.WAY_WATERWAY_RIVER;
+			return Constants.AREA_NATURAL_WATER;
 		}
 		return 0;
 	}

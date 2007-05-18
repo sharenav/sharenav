@@ -69,9 +69,9 @@ public class BundleGpsMid {
 		for (Enumeration<? extends ZipEntry> e=zf.entries();e.hasMoreElements();) {
 			ZipEntry ze=e.nextElement();
 			if (ze.isDirectory()){
-				System.out.println("dir  "+ze.getName());
+//				System.out.println("dir  "+ze.getName());
 			} else {
-				System.out.println("file "+ze.getName());
+//				System.out.println("file "+ze.getName());
 				InputStream stream = zf.getInputStream(ze);
 				writeFile(stream,tmpDir+"/"+ze.getName());
 			}
@@ -121,7 +121,7 @@ public class BundleGpsMid {
 					packDir(os, files[i],files[i].getName());					
 				}
 			} else {
-				System.out.println();
+//				System.out.println();
 				ZipEntry ze = new ZipEntry(path+"/"+files[i].getName());
 				int ch;
 				int count=0;

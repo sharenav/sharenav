@@ -19,6 +19,7 @@ import java.util.TreeSet;
 
 import de.ueller.osmToGpsMid.model.Bounds;
 import de.ueller.osmToGpsMid.model.Line;
+import de.ueller.osmToGpsMid.model.MapName;
 import de.ueller.osmToGpsMid.model.Node;
 import de.ueller.osmToGpsMid.model.Sequence;
 import de.ueller.osmToGpsMid.model.Tile;
@@ -27,17 +28,21 @@ import de.ueller.osmToGpsMid.model.Way;
 
 
 public class CreateGpsMidData {
-	private final static int MAX_TILE_FILESIZE=8000;
+	private final static int MAX_TILE_FILESIZE=10000;
 	public  final static int MAX_DICT_DEEP=5;
 	OxParser parser;
 	Tile tile[]= new Tile[4];
 	private final String	path;
-	TreeSet<String> names;
+	TreeSet<MapName> names;
 	
 	private final static int INODE=1;
 	private final static int SEGNODE=2;
 //	private Bounds[] bounds=null;
 	private Configuration configuration;
+	private int totalWaysWritten=0;
+	private int totalSegsWritten=0;
+	private int totalNodesWritten=0;
+	private int totalPOIsWritten=0;
 	
 	public CreateGpsMidData(OxParser parser,String path) {
 		super();
@@ -93,14 +98,15 @@ public class CreateGpsMidData {
 			short idx=0;
 			short fnr=1;
 			short fcount=0;
-			for (String string : names) {
+			for (MapName mapName : names) {
+				String string=mapName.getName();
 				int eq=getEqualCount(string,lastStr);
 				if ((eq==0 && fcount>100) || (fcount > 150 && eq < 2)){
 					dsi.writeShort(idx);
 					if (ds != null) ds.close();
 					fo = new FileOutputStream(path+"/names-"+fnr+".dat");
 					ds = new DataOutputStream(fo);
-					System.out.println("wrote names " + fnr + " with "+ fcount + " names");
+//					System.out.println("wrote names " + fnr + " with "+ fcount + " names");
 					fnr++;
 					curPos=0;
 					eq=0;
@@ -109,6 +115,7 @@ public class CreateGpsMidData {
 				}
 				ds.writeByte(eq-curPos);
 				ds.writeUTF(string.substring(eq));
+				ds.writeShort(getWayNameIndex(mapName.getIs_in(), null));
 //				System.out.println("" + (eq-curPos) + "'" +string.substring(eq)+"' '"+string);
 				curPos=eq;
 				lastStr=string;
@@ -128,40 +135,49 @@ public class CreateGpsMidData {
 		}
 		for (int i=0;i<=3;i++)
 			exportMapToMid(i);
+		System.out.println("Total Ways:"+totalWaysWritten 
+				         + " Seg:"+totalSegsWritten
+				         + " Pkt:"+totalNodesWritten
+				         + " POI:"+totalPOIsWritten);
 	}
 	
-	private TreeSet<String> getNames(){
-		TreeSet<String> wayNames = new TreeSet<String>();
+	private TreeSet<MapName> getNames(){
+		TreeSet<MapName> wayNames = new TreeSet<MapName>();
 		for (Way w : parser.ways) {
-			addName(wayNames,w.getName());
-			addName(wayNames, w.tags.get("nat_ref"));
-			addName(wayNames, w.tags.get("is_in"));
-			addName(wayNames, w.tags.get("ref"));
+			String isIn=w.tags.get("is_in");
+			addName(wayNames,w.getName(),isIn);
+			addName(wayNames, w.tags.get("nat_ref"),isIn);
+			addName(wayNames, w.tags.get("is_in"),null);
+			addName(wayNames, w.tags.get("ref"),isIn);
 			
 		}
 		for (Node n : parser.nodes.values()) {
-			addName(wayNames,n.getName());
-			addName(wayNames, n.tags.get("nat_ref"));
-			addName(wayNames, n.tags.get("ref"));
-			addName(wayNames, n.tags.get("is_in"));
+			String isIn=n.tags.get("is_in");
+			addName(wayNames,n.getName(),isIn);
+			addName(wayNames, n.tags.get("nat_ref"),isIn);
+			addName(wayNames, n.tags.get("ref"),isIn);
+			addName(wayNames, n.tags.get("is_in"),null);
 		}
-		System.out.println("found " + wayNames.size() + " names");
+//		System.out.println("found " + wayNames.size() + " names");
 		return (wayNames);
 	}
 
-	private void addName(TreeSet<String> wayNames, String v) {
+	private void addName(TreeSet<MapName> wayNames, String v,String in) {
 		if (v != null){
 			String tv=v.trim();
 			if (tv.length() > 0)
-				wayNames.add(v);
+				wayNames.add(new MapName(v,in));
 		}
 	}
-	private int getWayNameIndex(String name){
+	private int getWayNameIndex(String name,String isIn){
 		int index=0;
-		for (String s : names) {
-			if (s.equals(name)) {
-//				System.out.println("found String " + name + " at " + index);
-				return index;
+		for (MapName mapName : names) {
+			String s=mapName.getName();
+			if (s.equalsIgnoreCase(name)) {
+				if (mapName.getIsInNN().equalsIgnoreCase(isIn)){
+//					System.out.println("found String " + name + " at " + index);
+					return index;					
+				}
 			}
 			index++;
 		}
@@ -229,7 +245,7 @@ public class CreateGpsMidData {
 			out=createMidContent(ways,nodes);
 		}
 		if (ways.size() > 255 || (out.length > MAX_TILE_FILESIZE && ways.size() > 2)){
-			System.out.println("create Subtiles size="+out.length+" ways=" + ways.size());
+//			System.out.println("create Subtiles size="+out.length+" ways=" + ways.size());
 			t.bounds=realBound.clone();
 			t.type=2;
 			t.t1=new Tile((byte) zl);
@@ -262,10 +278,18 @@ public class CreateGpsMidData {
 //			System.gc();
 		} else {
 			if (ways.size() > 0){
+				System.out.println("Write tile "+zl+":"+fid + " ways:"+ways.size() + " nodes:"+nodes.size());
+				totalNodesWritten+=nodes.size();
+				totalWaysWritten+=ways.size();
 				Collections.sort(ways);
 				Bounds bBox=new Bounds();
+				for (Way w: ways){
+					totalSegsWritten+=w.lines.size();
+				}
 				for (Node n : nodes) {
 					bBox.extend(n.lat, n.lon);
+					if (n.type > 0 )
+						totalPOIsWritten++;
 				}
 				t.bounds=realBound.clone();
 				t.fid=fid;
@@ -293,7 +317,7 @@ public class CreateGpsMidData {
 	
 	public LinkedList<Way> getWaysInBound(Collection<Way> parentWays,int zl,Bounds targetTile,Bounds realBound){
 		LinkedList<Way> ways = new LinkedList<Way>();
-		System.out.println("search for ways mostly in " + targetTile + " from " + parentWays.size() + " ways");
+//		System.out.println("search for ways mostly in " + targetTile + " from " + parentWays.size() + " ways");
 		// collect all way that are in this rectangle
 		for (Way w1 : parentWays) {
 			byte type=w1.getType();
@@ -306,12 +330,12 @@ public class CreateGpsMidData {
 				ways.add(w1);
 			}
 		}
-		System.out.println("getWaysInBound found " + ways.size() + " ways");
+//		System.out.println("getWaysInBound found " + ways.size() + " ways");
 		return ways;
 	}
 	public LinkedList<Way> addWaysCompleteInBound(LinkedList<Way> ways,Collection<Way> parentWays,int zl,Bounds targetTile){
 		// collect all way that are in this rectangle
-		System.out.println("search for ways total in " + targetTile + " from " + parentWays.size() + " ways");
+//		System.out.println("search for ways total in " + targetTile + " from " + parentWays.size() + " ways");
 		for (Way w1 : parentWays) {
 			byte type=w1.getType();
 			if (type == 0) continue;
@@ -323,7 +347,7 @@ public class CreateGpsMidData {
 				ways.add(w1);
 			}
 		}
-		System.out.println("addWaysCompleteInBound found " + ways.size() + " ways");
+//		System.out.println("addWaysCompleteInBound found " + ways.size() + " ways");
 		return ways;
 	}
 	
@@ -335,7 +359,7 @@ public class CreateGpsMidData {
 			if (! targetBound.isIn(node.lat,node.lon)) continue;
 			nodes.add(node);
 		}
-		System.out.println("getNodesInBound found " + nodes.size() + " nodes");
+//		System.out.println("getNodesInBound found " + nodes.size() + " nodes");
 		return nodes;
 	}
 
@@ -375,8 +399,8 @@ public class CreateGpsMidData {
 				}
 			}
 		}
-		System.out.println("test ways : " + ways.size() + "  Nodes : " + wayNodes.size());
-		System.out.println("interrest Nodes : " + interestNodes.size());
+//		System.out.println("test ways : " + ways.size() + "  Nodes : " + wayNodes.size());
+//		System.out.println("interrest Nodes : " + interestNodes.size());
 		ByteArrayOutputStream fo = new ByteArrayOutputStream();
 		DataOutputStream ds = new DataOutputStream(fo);
 		ds.writeByte(0x54); // magig number
@@ -409,7 +433,7 @@ public class CreateGpsMidData {
 		if (type == INODE){
 			String name = n.getName();
 			if (name != null)
-				ds.writeShort(getWayNameIndex(name));
+				ds.writeShort(getWayNameIndex(name,n.tags.get("is_in")));
 			else 
 				ds.writeShort(0);
 			ds.writeByte(n.getType());
@@ -491,7 +515,7 @@ public class CreateGpsMidData {
 //			ds.writeByte(0x58);
 			ds.writeByte(type);
 			if ((flags & 1) == 1){
-				ds.writeShort(getWayNameIndex(w.getName()));
+				ds.writeShort(getWayNameIndex(w.getName(),w.tags.get("is_in")));
 //				ds.writeUTF(w.getName().trim());
 			}
 			if ((flags & 2) == 2){

@@ -35,9 +35,9 @@ public class Tile {
 	public void write(DataOutputStream ds,Integer deep,Sequence fid,String path) throws IOException{
 		DataOutputStream lds;
 		boolean openStream;
-		System.out.println("Write Tile type=" + type + " deep=" + deep + " fid=" + fid);
+//		System.out.println("Write Tile type=" + type + " deep=" + deep + " fid=" + fid);
 		if (type == 2 && deep >= CreateGpsMidData.MAX_DICT_DEEP){
-			System.out.println("Type 4");
+//			System.out.println("Type 4");
 			ds.writeByte(4);
 			ds.writeFloat(degToRad(bounds.minLat));
 			ds.writeFloat(degToRad(bounds.minLon));
@@ -57,7 +57,7 @@ public class Tile {
 		}
 		switch (type){
 			case 1:
-				System.out.println("Type 1");
+//				System.out.println("Type 1");
 				lds.writeByte(1);
 				lds.writeFloat(degToRad(bounds.minLat));
 				lds.writeFloat(degToRad(bounds.minLon));
@@ -67,7 +67,7 @@ public class Tile {
 //				ds.writeInt(ds.size());
 				break;
 			case 2:
-				System.out.println("Type 2");
+//				System.out.println("Type 2");
 				lds.writeByte(2);
 				lds.writeFloat(degToRad(bounds.minLat));
 				lds.writeFloat(degToRad(bounds.minLon));
@@ -78,7 +78,7 @@ public class Tile {
 				t2.write(lds,deep,fid,path);
 				break;
 			case 3:
-				System.out.println("Type 3");
+//				System.out.println("Type 3");
 				lds.writeByte(3);
 //			case 4:
 //				System.out.println("Type 4");

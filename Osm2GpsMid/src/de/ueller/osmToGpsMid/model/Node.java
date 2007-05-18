@@ -40,8 +40,17 @@ public class Node extends Entity{
 	}
 	public String getAmenity(){
 		String amenity = ((String)tags.get("amenity"));
-//		System.out.println("Read place for id="+id+" as=" + place);
 		if (amenity != null) return amenity.trim();
+		return null;
+	}
+	public String getRailway(){
+		String railway = ((String)tags.get("railway"));
+		if (railway != null) return railway.trim();
+		return null;
+	}
+	public String getAeroway(){
+		String aeroway = ((String)tags.get("aeroway"));
+		if (aeroway != null) return aeroway.trim();
 		return null;
 	}
 	
@@ -68,6 +77,15 @@ public class Node extends Entity{
 			if ("telephone".equals(p)) return Constants.NODE_AMENITY_TELEPHONE;
 			if ("fuel".equals(p)) return Constants.NODE_AMENITY_FUEL;
 		}
+		p=getRailway();
+		if (p != null){
+			if ("station".equals(p)) return Constants.NODE_RAILWAY_STATION;
+			if ("halt".equals(p)) return Constants.NODE_RAILWAY_STATION;
+		}
+		p=getAeroway();
+		if (p != null){
+			if ("aerodrome".equals(p)) return Constants.NODE_AEROWAY_AERODROME;
+		}
 		
 		return 0;
 		
@@ -75,11 +93,19 @@ public class Node extends Entity{
 	
 	public byte getZoomlevel(){
 		switch (getType()) {
-			case 1: return 0;
-			case 2: return 1;
-			case 3: return 2;
-			case 4: return 3;
-			case 5: return 3;
+			case Constants.NODE_PLACE_CITY:
+			case Constants.NODE_AEROWAY_AERODROME:				
+				return 0;
+			case Constants.NODE_RAILWAY_STATION: 
+			case Constants.NODE_AMENITY_PARKING: 
+			case Constants.NODE_PLACE_TOWN: 
+				return 1;
+			case Constants.NODE_PLACE_VILLAGE: 
+				return 2;
+			case Constants.NODE_PLACE_HAMLET: 
+				return 3;
+			case Constants.NODE_PLACE_SUBURB: 
+				return 3;
 		}
 		return 3;
 	}
