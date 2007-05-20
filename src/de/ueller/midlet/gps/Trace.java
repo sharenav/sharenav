@@ -212,6 +212,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			// logger.debug("messagereader Started");
 		} catch (Exception e) {
 //			addCommand(CONNECT_GPS_CMD);
+			si=null;
+			conn=null;
+			inputStream=null;
 		}
 		repaint(0, 0, getWidth(), getHeight());
 
@@ -229,6 +232,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			// logger.debug("messagereader Started");
 		} catch (Exception e) {
 //			addCommand(CONNECT_GPS_CMD);
+			ni=null;
+			conn=null;
+			inputStream=null;
 		}
 		repaint(0, 0, getWidth(), getHeight());
 
@@ -371,7 +377,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		if (statRecord == null) {
 			return yc;
 		}
-		g.setColor(255, 255, 255);
+		g.setColor(0, 0, 0);
 		for (byte i = 0; i < LocationMsgReceiver.SIRF_FAIL_COUNT; i++) {
 			g.drawString(statMsg[i] + statRecord[i], 0, yc, Graphics.TOP
 					| Graphics.LEFT);
@@ -449,6 +455,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				+ dictReader.getRequestQueueSize(), 0, yc, Graphics.TOP
 				| Graphics.LEFT);
 		yc += la;
+		g.drawString("d:" + lastMsg, 0, yc, Graphics.TOP
+				| Graphics.LEFT);
+		yc += la;
 		return (yc);
 
 	}
@@ -473,7 +482,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		pc.center = center.clone();
 		pc.scale = scale;
 		speed = (int) (pos.speed * 3.6f);
-		course = (int) pos.course;
+		if (speed > 1){
+			course = (int) pos.course;
+		}
 		repaint(0, 0, getWidth(), getHeight());
 	}
 
@@ -551,6 +562,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	public void sirfDecoderEnd() {
 //		removeCommand(DISCONNECT_GPS_CMD);
 //		addCommand(CONNECT_GPS_CMD);
+		si.close();
 		si = null;
 		try {
 			inputStream.close();
@@ -563,6 +575,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 //		repaint(0, 0, getWidth(), getHeight());
 	}
 	public void nemaDecoderEnd() {
+		ni.close();
 		ni = null;
 		try {
 			inputStream.close();
