@@ -171,19 +171,19 @@ public class SingleTile extends Tile implements QueueableTile {
 		// if (node.name == null) continue;
 		byte t=type[i];
 		switch (t) {
-		case 1:
+		case C.NODE_PLACE_CITY:
 			pc.g.setColor(255, 50, 50);
 			break;
-		case 2:
+		case C.NODE_PLACE_TOWN:
 			pc.g.setColor(200, 100, 100);
 			break;
-		case 3:
+		case C.NODE_PLACE_VILLAGE:
 			pc.g.setColor(180, 180, 50);
 			break;
-		case 4:
+		case C.NODE_PLACE_HAMLET:
 			pc.g.setColor(160, 160, 90);
 			break;
-		case 5:
+		case C.NODE_PLACE_SUBURB:
 			pc.g.setColor(0, 0, 0);
 			break;
 		case 6:
