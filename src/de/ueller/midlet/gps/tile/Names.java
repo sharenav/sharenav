@@ -32,13 +32,13 @@ public class Names implements Runnable {
 	private Thread processorThread;
 	boolean isReady=false;
 	private char letters[][] = {{'1','-','.',','},
-							    {'2','A','a','B','b','C','c','ä','Ä'},
+							    {'2','A','a','B','b','C','c'},
 							    {'3','D','d','E','e','F','f'},
 							    {'4','G','g','H','h','I','i'},
 							    {'5','J','j','K','k','L','l'},
-							    {'6','M','m','N','n','O','o','Ö','ö'},
-							    {'7','P','p','Q','q','R','r','S','s','s'},
-							    {'8','T','t','u','u','V','v','Ü','ü'},
+							    {'6','M','m','N','n','O','o'},
+							    {'7','P','p','Q','q','R','r','S','s'},
+							    {'8','T','t','u','u','V','v'},
 							    {'9','W','w','X','x','Y','y','Z','z'},
 							    {'*',' ','-'},
 							    {'0','+'},
@@ -224,8 +224,8 @@ public class Names implements Runnable {
 			if (pos < 0) return pos;
 			name.setLength(pos);
 			name.append(ds.readUTF());
-			System.out.println(name);
 			short idx=ds.readShort();
+//			System.out.println("nextName " + name + " idx=" + idx);
 			se.isIn=new Short(idx);
 			return pos;
 		}
@@ -235,6 +235,8 @@ public class Names implements Runnable {
 
 	
 	public String getName(Short idx){
+		if (idx==null)
+			return null;
 		if (idx.shortValue() <0) {
 			return null;
 		}
@@ -242,7 +244,8 @@ public class Names implements Runnable {
 		if (ret != null) {
 			ret.count=4;
 //			logger.info("found Name '" + ret.name + "' for idx:" + idx);
-			return ret.name;
+			String nameIn=getName(ret.isIn);
+			return (nameIn != null)? ret.name + ", " + nameIn : ret.name;
 		}
 		StringEntry newEntry = new StringEntry(null);
 		stringCache.put(idx, newEntry);
@@ -294,7 +297,7 @@ public class Names implements Runnable {
 //					System.out.println(name.toString());	
 //				}
 				if (isMatch(s, name)){
-					System.out.println(name.toString());	
+//					System.out.println(name.toString());	
 					Short idxS = new Short(idx);
 					se.name=name.toString();
 					addToCache(se, idxS);
