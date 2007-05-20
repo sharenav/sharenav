@@ -21,6 +21,7 @@ public class C {
 	// node with image on node place the Image on the point
 	public static final byte NODE_RAILWAY_STATION = 100;
 	public static final byte NODE_AEROWAY_AERODROME = 101;
+	public static final byte NODE_HIGHWAY_ROUNDABOUT = 102;
 	
 	public final static byte WAY_HIGHWAY_MOTORWAY=2;
 	public final static byte WAY_HIGHWAY_MOTORWAY_LINK=2;
@@ -33,8 +34,8 @@ public class C {
 	public final static byte WAY_RAILWAY_UNCLASSIFIED = 9;
 	public final static byte WAY_RAILWAY_RAIL = 10;
 	public final static byte WAY_RAILWAY_SUBWAY = 11;
-	
-	public final static byte WAY_WATERWAY_RIVER=12;
+	public final static byte WAY_JUNCTION_ROUNDABOUT = 12;
+	public final static byte WAY_WATERWAY_RIVER=13;
 	
 	public final static byte AREA_AMENITY_UNCLASSIFIED=50;
 	public final static byte AREA_AMENITY_PARKING=51;
