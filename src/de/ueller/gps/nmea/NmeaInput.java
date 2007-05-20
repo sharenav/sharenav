@@ -35,9 +35,16 @@ public class NmeaInput implements Runnable{
 		super();
 		this.ins = ins;
 		this.receiver = receiver;
-		processorThread = new Thread(this,"Sirf Decoder");
+		processorThread = new Thread(this,"NMEA Decoder");
 		processorThread.setPriority(Thread.MAX_PRIORITY);
 		processorThread.start();
+		smsg=new NmeaMessage(receiver);
+
+	}
+	public NmeaInput(boolean test,InputStream ins,LocationMsgReceiver receiver) {
+		super();
+		this.ins = ins;
+		this.receiver = receiver;
 		smsg=new NmeaMessage(receiver);
 
 	}
@@ -82,7 +89,9 @@ public class NmeaInput implements Runnable{
 			err: while (ins.available() > 0) {
 				switch (start) {
 				case 0:
-					if (ins.read() == '$') {
+					char c = (char)ins.read();
+//					System.out.println("got char:" + c);
+					if (c == '$') {
 							start = 1;
 						} else {
 							connectError[LocationMsgReceiver.SIRF_FAIL_NO_START_SIGN1]++;
@@ -104,17 +113,36 @@ public class NmeaInput implements Runnable{
 						connectQuality--;
 						break;
 					}
+					readBuffer.setLength(0);
 				case 2:
-					while (ins.available() > 0){
+					whileMSG:while (ins.available() > 0){
 						int b=ins.read();
-						if (b != '\n'){
-							readBuffer.append((char) b);
-						} else if (b == '*'){ 
+						switch (b){
+						case '\r':
+							connectQuality++;
+							break;
+						case '\n':
+							connectQuality++;
+							start=0;
+							try {
+								smsg.decodeMessage();
+								connectQuality++;
+							} catch (RuntimeException e) {
+								receiver.receiveMessage(e.toString());
+							}
+							break;
+						case '*':
 							start=3;
-							break; // while
-						} else {
-							start=1;
-							smsg.decodeMessage();
+							connectQuality++;
+							break whileMSG;
+						default:
+							readBuffer.append((char) b);
+						if (readBuffer.length() > 80){
+							start=0;
+							connectQuality--;
+							connectError[LocationMsgReceiver.SIRF_FAIL_MSG_TO_LONG]++;
+							break err;
+						}
 						}
 					}
 					if (start != 3){
@@ -127,17 +155,8 @@ public class NmeaInput implements Runnable{
 					checksum = ins.read()-'A';
 					checksum = checksum * 256 + (ins.read()-'A');
 					System.out.println(checksum);
-					start=4;
-				case 4:
-					if (ins.available() == 0) {
-						break;
-					}
-					if (ins.read() != '\n'){
-						connectError[LocationMsgReceiver.SIRF_FAIL_NO_END_SIGN1]++;
-					} else {
-						smsg.decodeMessage();
-						start=1;
-					}
+					start=2;
+					break;
 				} // switch
 			} // while
 		} catch (IOException e) {

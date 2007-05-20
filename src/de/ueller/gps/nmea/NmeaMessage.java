@@ -53,6 +53,7 @@ public class NmeaMessage {
 	public StringBuffer buffer=new StringBuffer(80);
 	private int tokenPointer;
 	private int spChar=',';
+	private float head,speed;
 	private final LocationMsgReceiver receiver;
 	public NmeaMessage(LocationMsgReceiver receiver) {
 		this.receiver = receiver;
@@ -64,20 +65,61 @@ public class NmeaMessage {
 
 	public void decodeMessage() {
 		int tp=0;
+		tokenPointer=0;
 		String sentence=getStringToken();
-		receiver.receiveMessage("got "+sentence );
-		if ("GLL".equals(sentence)){
-			float lat=getLat();
-			if (getStringToken().startsWith("S")){
-				lat *= -1f;
-			}
-			float lon=getLon();
-			if (getStringToken().startsWith("W")){
-				lat *= -1f;
-			}
+		try {
+//			receiver.receiveMessage("got "+sentence );
+			if ("GLL".equals(sentence)){
+				float lat=getLat();
+				if (getStringToken().startsWith("S")){
+					lat *= -1f;
+				}
+				float lon=getLon();
+				if (getStringToken().startsWith("W")){
+					lat *= -1f;
+				}
 
-			Position p=new Position(lat,lon,0f,0f,0f,0,null);
-			receiver.receivePosItion(p);
+				Position p=new Position(lat,lon,0f,speed,head,0,null);
+				receiver.receivePosItion(p);
+			} else if ("GGA".equals(sentence)){
+				// time
+				getStringToken();
+				// lat
+				float lat=getLat();
+				String no=getStringToken();
+				if ("S".equals(no)){
+					lat= -lat;
+				}
+				// lon
+				float lon=getLon();
+				String ew=getStringToken();
+				if ("W".equals(ew)){
+					lon=-lon;
+				}
+				// quality
+				getStringToken();
+				// no of Sat;
+				getIntegerToken();
+				// Relative accuracy of horizontal position
+				getFloatToken();
+				// meters above mean sea level
+				float alt=getFloatToken();
+				// Height of geoid above WGS84 ellipsoid
+				Position p=new Position(lat,lon,alt,speed,head,0,null);
+				receiver.receivePosItion(p);
+			} else if ("VTG".equals(sentence)){
+				head=getFloatToken();
+				getStringToken();
+				getStringToken();
+				getStringToken();
+				getStringToken();
+				getStringToken();
+				speed=getFloatToken();
+			}
+		} catch (RuntimeException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.out.println("Error while decoding "+sentence + " " + e.getMessage());
 		}
 		
 	}
@@ -87,8 +129,8 @@ public class NmeaMessage {
 	}
 	private String getStringToken(){
 		int end=nextSubstring();
-		String ret=buffer.toString().substring(tokenPointer, end-1);
-		tokenPointer=end;
+		String ret=buffer.toString().substring(tokenPointer, end);
+		tokenPointer=end+1;
 		return ret;
 	}
 	private int getIntegerToken(){
@@ -99,13 +141,13 @@ public class NmeaMessage {
 	}
 	private float getLat(){
 		String s=getStringToken();
-		int lat=Integer.parseInt(s.substring(0,1));
+		int lat=Integer.parseInt(s.substring(0,2));
 		float latf=Float.parseFloat(s.substring(2));
 		return lat+latf/60;
 	}
 	private float getLon(){
 		String s=getStringToken();
-		int lon=Integer.parseInt(s.substring(0,2));
+		int lon=Integer.parseInt(s.substring(0,3));
 		float lonf=Float.parseFloat(s.substring(3));
 		return lon+lonf/60;
 	}
