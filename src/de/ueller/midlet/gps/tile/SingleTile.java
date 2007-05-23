@@ -104,7 +104,7 @@ public class SingleTile extends Tile implements QueueableTile {
 					w.setColor(pc);
 					if (w.type < 50) {
 						// w.paintAsPath(pc, nodes);
-						w.paintAsPath(pc, this);
+						w.paintAsPath(pc,4, this);
 					} else {
 						// w.paintAsArea(pc, nodes);
 						w.paintAsArea(pc, this);

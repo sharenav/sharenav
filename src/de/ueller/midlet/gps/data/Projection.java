@@ -270,4 +270,5 @@ public interface Projection {
     public float getScale(Node ll1, Node ll2, IntPoint IntPoint1,
                           IntPoint IntPoint2);
 
+    public int getPPM();
 }

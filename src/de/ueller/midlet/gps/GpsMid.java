@@ -77,6 +77,8 @@ private Trace trace;
 			database = RecordStore.openRecordStore("Receiver", false);
 			byte[] data=database.getRecord(1);
 			btUrl=new String(data);
+			data=database.getRecord(2);
+			locationProvider=Integer.parseInt(new String(data));
 			database.closeRecordStore();
 		} catch (Exception e) {
 			btUrl=null;
@@ -183,6 +185,12 @@ private Trace trace;
 				database.addRecord(data, 0, data.length);
 			} else {
 				database.setRecord(1, data,0,data.length);
+			}
+			data=new String(""+locationProvider).getBytes();
+			if (database.getNumRecords() == 1){
+				database.addRecord(data, 0, data.length);
+			} else {
+				database.setRecord(2, data,0,data.length);
 			}
 			database.closeRecordStore();
 		} catch (Exception e) {

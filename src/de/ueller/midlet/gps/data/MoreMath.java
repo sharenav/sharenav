@@ -349,7 +349,7 @@ public class MoreMath {
 	
 	/**
 	 * The rest of this file is based on work of Nikolay Klimchuk but modifyed
-	 * to use flot insead of double.
+	 * to use float insead of double.
 	 * 
 	 * <p>Title: Class for float-point calculations in J2ME applications CLDC 1.1</p>
 	 * <p>Description: Useful methods for float-point calculations which absent in native Math class</p>

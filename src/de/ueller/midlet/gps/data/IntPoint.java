@@ -14,6 +14,11 @@ public class IntPoint {
 		this.x = x;
 		this.y = y;
 	}
+	
+	public void set(IntPoint other){
+		x=other.x;
+		y=other.y;
+	}
 
 	public int getX() {
 		return x;

@@ -34,6 +34,7 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 				  " Harald Müller",
 				  "Thanks for source parts to:",
 				  " Nikolay Klimchuk",
+				  " Simon Turner",
 	              "Artwork:",
 	              " Tobias Müller",
 	              "Applicaton:",
