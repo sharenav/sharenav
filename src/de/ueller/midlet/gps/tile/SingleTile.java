@@ -10,6 +10,7 @@ import java.io.IOException;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
+import de.ueller.gps.data.Configuration;
 import de.ueller.midlet.gps.Logger;
 
 import de.ueller.midlet.gps.data.Way;
@@ -103,8 +104,11 @@ public class SingleTile extends Tile implements QueueableTile {
 					// logger.debug("draw " + w.name);
 					w.setColor(pc);
 					if (w.type < 50) {
-						// w.paintAsPath(pc, nodes);
-						w.paintAsPath(pc,4, this);
+						if (pc.config.getRender() == Configuration.RENDER_LINE){
+						    w.paintAsPath(pc, this);
+						} else {
+							w.paintAsPath(pc,4, this);
+						}
 					} else {
 						// w.paintAsArea(pc, nodes);
 						w.paintAsArea(pc, this);
@@ -210,7 +214,7 @@ public class SingleTile extends Tile implements QueueableTile {
 
 		}
 		// logger.debug("calc pos "+pc);
-		pc.p.forward(nodeLat[i], nodeLon[i], pc.swapLineP, true);
+		pc.getP().forward(nodeLat[i], nodeLon[i], pc.swapLineP, true);
 		if (img != null) {
 			// logger.debug("draw img " + img);
 			if (nameIdx[i] == null || t > 99) {

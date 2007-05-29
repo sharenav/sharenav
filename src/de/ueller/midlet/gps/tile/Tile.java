@@ -9,6 +9,7 @@ import de.ueller.midlet.gps.Trace;
 
 import de.ueller.midlet.gps.data.IntPoint;
 import de.ueller.midlet.gps.data.Node;
+import de.ueller.midlet.gps.data.Projection;
 
 
 public abstract class Tile {
@@ -50,10 +51,11 @@ public abstract class Tile {
 			IntPoint p2=new IntPoint(0,0);
 			IntPoint p3=new IntPoint(0,0);
 			IntPoint p4=new IntPoint(0,0);
-			pc.p.forward(minLat,minLon,p1,true);
-			pc.p.forward(minLat,maxLon,p2,true);
-			pc.p.forward(maxLat,maxLon,p3,true);
-			pc.p.forward(maxLat,minLon,p4,true);
+			Projection p = pc.getP();
+			p.forward(minLat,minLon,p1,true);
+			p.forward(minLat,maxLon,p2,true);
+			p.forward(maxLat,maxLon,p3,true);
+			p.forward(maxLat,minLon,p4,true);
 			pc.g.drawLine(p1.x, p1.y, p2.x, p2.y);
 			pc.g.drawLine(p2.x, p2.y, p3.x, p3.y);
 			pc.g.drawLine(p3.x, p3.y, p4.x, p4.y);

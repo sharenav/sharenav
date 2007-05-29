@@ -16,10 +16,13 @@ import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.List;
 
-public class GuiDiscover implements CommandListener {
+import de.ueller.gps.data.Configuration;
+import de.ueller.midlet.gps.options.OptionsRender;
+
+public class GuiDiscover implements CommandListener, de.ueller.midlet.gps.Displayable {
 
 	/** A menu list instance */
-	private static final String[]	elements		= { "Input from","Discover GPS",
+	private static final String[]	elements		= { "Input options","Discover GPS","Render options",
 			"Setup Database"						};
 
 	private static final String[]	empty			= {};
@@ -83,7 +86,7 @@ public class GuiDiscover implements CommandListener {
 		menuSelectLocProv.addCommand(OK_CMD);
 		String[] devices={"SIRF GPS","NEMA GPS","JSR179"};
 		locProv=new ChoiceGroup("input from:",Choice.EXCLUSIVE,devices,new Image[3]);
-		locProv.setSelectedIndex(parent.getLocationProvider(), true);
+		locProv.setSelectedIndex(parent.getConfig().getLocationProvider(), true);
 		menuSelectLocProv.append(locProv);
 		menuSelectLocProv.setCommandListener(this);
 		show();
@@ -100,13 +103,13 @@ public class GuiDiscover implements CommandListener {
 			return;
 		}
 		if (c == STORE_BT_URL) {
-			parent.setBTUrl((String) urlList.elementAt(menu.getSelectedIndex()));
+			parent.getConfig().setBtUrl((String) urlList.elementAt(menu.getSelectedIndex()));
 			return;
 		}
 		if (c == OK_CMD){
 			switch (state){
 			case STATE_LP:
-				parent.setLocationProvider(locProv.getSelectedIndex());
+				parent.getConfig().setLocationProvider(locProv.getSelectedIndex());
 			}
 			show();
 		}
@@ -133,6 +136,10 @@ public class GuiDiscover implements CommandListener {
 						gps = new DiscoverGps(this);
 						break;
 					case 2:
+						OptionsRender render = new OptionsRender(this,parent.getConfig());
+						Display.getDisplay(parent).setCurrent(render);
+						break;
+					case 3:
 						menuFS.setTitle("Search Root FSs");
 						state = STATE_FS;
 						Display.getDisplay(parent).setCurrent(menuFS);
@@ -141,12 +148,12 @@ public class GuiDiscover implements CommandListener {
 				}
 				break;
 			case STATE_BT:
-				parent.setBTUrl((String) urlList.elementAt(menuBT.getSelectedIndex()));
+				parent.getConfig().setBtUrl((String) urlList.elementAt(menuBT.getSelectedIndex()));
 				parent.show();
 				break;
-			case STATE_FS:
-				parent.setRootFs(menuFS.getString(menuFS.getSelectedIndex()));
-				break;
+//			case STATE_FS:
+//				parent.setRootFs(menuFS.getString(menuFS.getSelectedIndex()));
+//				break;
 			case STATE_LP:
 				break;
 		}
@@ -169,7 +176,7 @@ public class GuiDiscover implements CommandListener {
 	}
 
 	/** Shows main menu of MIDlet on the screen. */
-	void show() {
+	public void show() {
 		state = STATE_ROOT;
 		Display.getDisplay(parent).setCurrent(menu);
 	}

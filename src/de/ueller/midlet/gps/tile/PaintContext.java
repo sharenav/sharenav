@@ -8,6 +8,7 @@ package de.ueller.midlet.gps.tile;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
+import de.ueller.gps.data.Configuration;
 import de.ueller.midlet.gps.ScreenContext;
 import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.data.IntPoint;
@@ -51,6 +52,7 @@ public class PaintContext extends ScreenContext {
 //	public Short steet;
 	public Way actualWay=null;
 	public float squareDstToWay;
+	public Configuration config;
 	public PaintContext(Trace tr, QueueDataReader tir,QueueReader dir,Images i) throws Exception{
 		super();
 		dataReader=tir;

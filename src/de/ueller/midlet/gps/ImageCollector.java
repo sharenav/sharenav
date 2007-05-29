@@ -98,9 +98,10 @@ public class ImageCollector implements Runnable {
 					pc[nextCreate].ySize=ySize;
 					pc[nextCreate].center=nextSc.center.clone();
 					pc[nextCreate].scale=nextSc.scale;
-					pc[nextCreate].p=new Mercator(pc[nextCreate].center,nextSc.scale,xSize,ySize);
-					pc[nextCreate].p.inverse(xSize, 0,pc[nextCreate].screenRU);
-					pc[nextCreate].p.inverse(0,ySize,pc[nextCreate].screenLD);
+					Mercator p = new Mercator(pc[nextCreate].center,nextSc.scale,xSize,ySize);
+					pc[nextCreate].setP(p);
+					p.inverse(xSize, 0,pc[nextCreate].screenRU);
+					p.inverse(0,ySize,pc[nextCreate].screenLD);
 //					pcCollect.trace=nextSc.trace;
 //					pcCollect.dataReader=nextSc.dataReader;
 				// cleans the screen
@@ -108,6 +109,7 @@ public class ImageCollector implements Runnable {
 					pc[nextCreate].g.setColor(155, 255, 155);
 					pc[nextCreate].g.fillRect(0, 0, xSize, ySize);
 					pc[nextCreate].squareDstToWay=Float.MAX_VALUE;
+					pc[nextCreate].config=tr.getConfig();
 //				System.out.println("create " + pcCollect);
 				
 				if ((pc[nextCreate].scale < 45000) && (t[3] != null)){
@@ -179,7 +181,7 @@ public class ImageCollector implements Runnable {
 			newPaintAvail=false;
 			lockg=false;
 		}
-		screenPc.p.forward(pc[nextPaint].center, oldCenter);
+		screenPc.getP().forward(pc[nextPaint].center, oldCenter);
 //		System.out.println("old Center = " + oldCenter.x + "/" + oldCenter.y);
 //		System.out.println("paint: " +pc);
 		screenPc.g.drawImage(img[nextPaint], 

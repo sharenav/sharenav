@@ -201,7 +201,7 @@ public class Node {
 
     	}
 //    	logger.debug("calc pos "+pc);
-    	pc.p.forward(radlat, radlon, pc.swapLineP, true);
+    	pc.getP().forward(radlat, radlon, pc.swapLineP, true);
     	if  (img != null){
 //        	logger.debug("draw img " + img);
     		if (nameIdx == null) {

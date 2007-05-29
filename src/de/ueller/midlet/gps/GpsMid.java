@@ -31,6 +31,8 @@ import javax.microedition.rms.RecordStoreFullException;
 import javax.microedition.rms.RecordStoreNotFoundException;
 import javax.microedition.rms.RecordStoreNotOpenException;
 
+import de.ueller.gps.data.Configuration;
+
 
 
 public class GpsMid extends MIDlet implements CommandListener{
@@ -49,10 +51,9 @@ public class GpsMid extends MIDlet implements CommandListener{
     private final List menu = new List("GPSMid", Choice.IMPLICIT, elements, null);
 //	private boolean	isInit=false;
 
-	private String	btUrl="btspp://000DB5315C50:1;authenticate=false;encrypt=false;master=false";
-	private int locationProvider=0;
 
 	private String	root;
+	Configuration config=new Configuration();
 //	PrintStream log;
 	Logger l;
 
@@ -72,17 +73,6 @@ private Trace trace;
 //		}
 		l=new Logger(this);
 		new Splash(this);
-		RecordStore	database;
-		try {
-			database = RecordStore.openRecordStore("Receiver", false);
-			byte[] data=database.getRecord(1);
-			btUrl=new String(data);
-			data=database.getRecord(2);
-			locationProvider=Integer.parseInt(new String(data));
-			database.closeRecordStore();
-		} catch (Exception e) {
-			btUrl=null;
-		}
 
 	}
 	
@@ -103,7 +93,7 @@ private Trace trace;
 		System.out.println("Start GpsMid");
 		if (trace == null){
 			try {
-				trace = new Trace(this,btUrl,root);
+				trace = new Trace(this,config);
 			} catch (Exception e) {
 				trace=null;
 				e.printStackTrace();
@@ -132,7 +122,7 @@ private Trace trace;
 //            	}
             	try {
             		if (trace == null){
-            			trace = new Trace(this,btUrl,root);
+            			trace = new Trace(this,config);
             		} else {
             			Display.getDisplay(this).setCurrent(trace);
             			trace.resume();
@@ -176,35 +166,7 @@ private Trace trace;
         Display.getDisplay(this).setCurrent(menu);
     }
 
-	public void setBTUrl(String btUrl) {
-		RecordStore	database;
-		try {
-			database = RecordStore.openRecordStore("Receiver", true);
-			byte[] data=btUrl.getBytes();
-			if (database.getNumRecords() == 0){
-				database.addRecord(data, 0, data.length);
-			} else {
-				database.setRecord(1, data,0,data.length);
-			}
-			data=new String(""+locationProvider).getBytes();
-			if (database.getNumRecords() == 1){
-				database.addRecord(data, 0, data.length);
-			} else {
-				database.setRecord(2, data,0,data.length);
-			}
-			database.closeRecordStore();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			l.error("Store BTDevice "+e.getMessage());
-		}
-		this.btUrl = btUrl;
-	}
-	public String getBTUrl(){
-		return this.btUrl;
-	}
-	public void setRootFs(String root){
-		this.root = root;
-	}
+
 	public void log(String msg){
 		if (l != null){
 //		log.print(msg+"\n");
@@ -214,11 +176,9 @@ private Trace trace;
 		}
 	}
 
-	public void setLocationProvider(int selectedIndex) {
-		locationProvider=selectedIndex;
+	public Configuration getConfig() {
+		return config;
 	}
-	public int getLocationProvider(){
-		return locationProvider;
-	}
+
 
 }

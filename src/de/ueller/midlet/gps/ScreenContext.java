@@ -18,10 +18,11 @@ public class ScreenContext {
 	public Node center = new Node();
 	public float scale = 15000f;
 	byte viewId = 1;
-	public Projection p;
+	private Projection p;
 	public Trace trace;
 	public QueueDataReader dataReader;
 	public QueueReader dictReader;
+	public float ppm=1f;
 	
 	public ScreenContext cloneToScreenContext() {
 		ScreenContext sc=new ScreenContext();
@@ -33,7 +34,18 @@ public class ScreenContext {
 		sc.center=center.clone();
 		sc.trace=trace;
 		sc.dataReader=dataReader;
+		sc.ppm=ppm;
 		return sc;
+	}
+
+	public Projection getP() {
+		return p;
+	}
+
+	public void setP(Projection p) {
+		this.p = p;
+		float scale = p.getScale();
+		ppm=(40075016.6855784861531768177614f/scale/p.getPPM());
 	}
 
 
