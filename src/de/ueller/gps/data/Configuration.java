@@ -3,6 +3,8 @@ package de.ueller.gps.data;
 import javax.microedition.rms.InvalidRecordIDException;
 import javax.microedition.rms.RecordStore;
 import javax.microedition.rms.RecordStoreException;
+import javax.microedition.rms.RecordStoreFullException;
+import javax.microedition.rms.RecordStoreNotFoundException;
 import javax.microedition.rms.RecordStoreNotOpenException;
 
 public class Configuration {
@@ -29,15 +31,17 @@ public class Configuration {
 
 	private void read(){
 	RecordStore	database;
-	try {
-		database = RecordStore.openRecordStore("Receiver", false);
-		btUrl=readString(database, 1);
-		locationProvider=readInt(database, 2);
-		render=readInt(database, 3);
-		database.closeRecordStore();
-	} catch (Exception e) {
-		btUrl=null;
-	}
+		try {
+			database = RecordStore.openRecordStore("Receiver", false);
+			btUrl=readString(database, 1);
+			locationProvider=readInt(database, 2);
+			render=readInt(database, 3);
+			database.closeRecordStore();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 	
 	private void write(String s, int idx) {
@@ -48,9 +52,11 @@ public class Configuration {
 			while (database.getNumRecords() < idx){
 				database.addRecord(empty, 0, empty.length);
 			}
-			database.setRecord(1, data,0,data.length);
+			database.setRecord(idx, data,0,data.length);
 			database.closeRecordStore();
+			System.out.println("wrote " + s + " to " + idx);
 		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 	private void write(int i,int idx){
@@ -60,9 +66,10 @@ public class Configuration {
 
 	public String readString(RecordStore database,int idx){
 		try {
-			byte[] data=database.getRecord(2);
+			byte[] data=database.getRecord(idx);
 			return(new String(data));
 		} catch (Exception e) {
+			e.printStackTrace();
 			return null;
 		} 
 	}
@@ -70,6 +77,7 @@ public class Configuration {
 		try {
 			return Integer.parseInt(readString(database, idx));
 		} catch (Exception e){
+			e.printStackTrace();
 			return 0;
 		}
 	}
