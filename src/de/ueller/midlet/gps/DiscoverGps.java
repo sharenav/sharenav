@@ -32,9 +32,11 @@ public class DiscoverGps implements Runnable, DiscoveryListener {
 
 	/** the engine is wating for a serviceselection */
 	public static final int		SERVICE_SELECT				= 4;
+	/** the engine is wating for a serviceselection */
+	public static final int		NODEVICE				= 5;
 
 	private static final String[]	stateText					= { "ready",
-			"device search", "device select", "service search","select service"};
+			"device search", "device select", "service search","select service","No Device in range"};
 
 	private final GuiDiscover		parent;
 
@@ -222,14 +224,15 @@ public class DiscoverGps implements Runnable, DiscoveryListener {
 				break;
 
 			case INQUIRY_COMPLETED:
-
 				if (devices.size() == 0) {
-					parent.addDevice("No devices in range");
+//					parent.addDevice("No devices in range");
+//					parent.addDevice("btspp://000DB5315C50:1;authenticate=false;encrypt=false;master=false","Dummy for emulator");
+					setState(NODEVICE);
 				} else {
 				   setState(DEVICE_READY);
 				   break;
 				}
-
+				break;
 			default:
 				// what kind of system you are?... :(
 				parent.addDevice("unknown Return from Discover");

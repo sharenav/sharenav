@@ -171,7 +171,7 @@ private Trace trace;
 		if (l != null){
 //		log.print(msg+"\n");
 //        Display.getDisplay(this).getCurrent().setTicker(new Ticker(msg));
-		Display.getDisplay(this).getCurrent().setTitle(msg);
+//		Display.getDisplay(this).getCurrent().setTitle(msg);
         System.out.println(msg);
 		}
 	}

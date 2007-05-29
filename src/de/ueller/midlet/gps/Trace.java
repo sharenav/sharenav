@@ -132,7 +132,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		addCommand(EXIT_CMD);
 		addCommand(CONNECT_GPS_CMD);
 
-		setTitle("Trace");
+//		setTitle("Trace");
 		setCommandListener(this);
 		show();
 		try {
@@ -154,6 +154,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 	// start the LocationProvider in background
 	public void run() {
+		System.out.println(config.getLocationProvider());
+		System.out.println(config.getBtUrl());
+		System.out.println(config.getRender());
 		switch (config.getLocationProvider()){
 		case Configuration.LOCATIONPROVIDER_SIRF:
 			if (config.getBtUrl() != null){
@@ -180,7 +183,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			}
 			break;
 		}
-		setTitle("lp="+config.getLocationProvider() + " " + config.getBtUrl());
+//		setTitle("lp="+config.getLocationProvider() + " " + config.getBtUrl());
 	}
 	
 	public void pause(){
@@ -322,8 +325,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 	protected void paint(Graphics g) {
 		
-		int yc = 1;
-		int la = 18;
+		try {
+			int yc = 1;
+			int la = 18;
 //		if (si != null ){
 //			try {
 //				outputStream.flush();
@@ -331,41 +335,46 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 //				si.close();
 //			}
 //		}
-		pc.xSize = this.getWidth();
-		pc.ySize = this.getHeight();
-		pc.setP( projection);
-		projection.inverse(pc.xSize, 0, pc.screenRU);
-		projection.inverse(0, pc.ySize, pc.screenLD);
-		pc.g = g;
-		// cleans the screen
-		g.setColor(155, 255, 155);
-		g.fillRect(0, 0, pc.xSize, pc.ySize);
-		if (vc != null)
-			vc.paint(pc);
-		switch (showAddons) {
-		case 1:
-			yc = showConnectStatistics(g, yc, la);
-			break;
-		case 2:
-			showSatelite(g);
-			break;
-		case 3:
-			yc = showMemory(g, yc, la);
-			yc = showSpeed(g, yc, la);
-			break;
-		case 4:
-			showAddons = 0;
+			pc.xSize = this.getWidth();
+			pc.ySize = this.getHeight();
+			pc.setP( projection);
+			projection.inverse(pc.xSize, 0, pc.screenRU);
+			projection.inverse(0, pc.ySize, pc.screenLD);
+			pc.g = g;
+			// cleans the screen
+			g.setColor(155, 255, 155);
+			g.fillRect(0, 0, pc.xSize, pc.ySize);
+			if (vc != null)
+				vc.paint(pc);
+			switch (showAddons) {
+			case 1:
+				yc = showConnectStatistics(g, yc, la);
+				break;
+			case 2:
+				showSatelite(g);
+				break;
+			case 3:
+				yc = showMemory(g, yc, la);
+				yc = showSpeed(g, yc, la);
+				break;
+			case 4:
+				showAddons = 0;
 
-		}
-		showMovement(g);
-		g.setColor(0, 0, 0);
-		if (si != null){
-			g.drawString(solution, getWidth() - 1, 1, Graphics.TOP
+			}
+			showMovement(g);
+			g.setColor(0, 0, 0);
+			if (si != null){
+				g.drawString(solution, getWidth() - 1, 1, Graphics.TOP
+							| Graphics.RIGHT);
+			} else {
+				g.drawString("off", getWidth() - 1, 1, Graphics.TOP
 						| Graphics.RIGHT);
-		} else {
-			g.drawString("off", getWidth() - 1, 1, Graphics.TOP
-					| Graphics.RIGHT);
-			
+				
+			}
+		} catch (RuntimeException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.out.println("continue ..");
 		}
 	}
 
@@ -543,11 +552,11 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		t[zl] = dict;
 		// Tile.trace=this;
 		addCommand(REFRESH_CMD);
-		if (zl == 3) {
-			setTitle(null);
-		} else {
-			setTitle("dict " + zl + "ready");
-		}
+//		if (zl == 3) {
+//			setTitle(null);
+//		} else {
+//			setTitle("dict " + zl + "ready");
+//		}
 		if (zl == 0) {
 			dict.getCenter(center);
 			projection = new Mercator(center, scale, getWidth(), getHeight());

@@ -102,10 +102,10 @@ public class GuiDiscover implements CommandListener, de.ueller.midlet.gps.Displa
 			show();
 			return;
 		}
-		if (c == STORE_BT_URL) {
-			parent.getConfig().setBtUrl((String) urlList.elementAt(menu.getSelectedIndex()));
-			return;
-		}
+//		if (c == STORE_BT_URL) {
+//			parent.getConfig().setBtUrl((String) urlList.elementAt(menu.getSelectedIndex()));
+//			return;
+//		}
 		if (c == OK_CMD){
 			switch (state){
 			case STATE_LP:
