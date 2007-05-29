@@ -44,6 +44,13 @@ public class SirfInput implements Runnable{
 
 	public void run(){
 		receiver.receiveMessage("start Tread");
+		try {
+			while (ins.available() > 0)
+				ins.read();
+		} catch (IOException e1) {
+			receiver.receiveMessage("closing " + e1.getMessage());
+			closed=true;
+		}
 		byte timeCounter=21;
 		while (!closed){
 			timeCounter++;

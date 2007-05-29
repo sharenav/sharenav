@@ -56,6 +56,14 @@ public class NmeaInput implements Runnable{
 
 	public void run(){
 		receiver.receiveMessage("start Tread");
+		// eat the buffe content
+		try {
+			while (ins.available() > 0)
+				ins.read();
+		} catch (IOException e1) {
+			receiver.receiveMessage("closing " + e1.getMessage());
+			closed=true;
+		}
 		byte timeCounter=21;
 		while (!closed){
 			timeCounter++;
@@ -107,12 +115,17 @@ public class NmeaInput implements Runnable{
 					ins.read();
 					ins.read();
 					break;
+				case '*':
+					ins.read();
+					ins.read();
+					break;
 				default:
 					readBuffer.append(c);
 				}
 			} 
-		} catch (Exception e) {
-			// TODO: handle exception
+		} catch (IOException e) {
+			receiver.receiveMessage("closing " + e.getMessage());
+			closed=true;
 		}
 	}
 	
