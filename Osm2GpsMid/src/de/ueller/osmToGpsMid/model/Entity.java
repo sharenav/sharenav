@@ -14,7 +14,7 @@ public class Entity {
 	 * The tags for this object  
 	 * Key: String  Value: String
 	 */
-	public Map<String,String> tags = new Hashtable<String,String>();
+	public Map<String,String> tags = new Hashtable<String,String>(2,0.8f);
 	public String getName() {
 		return tags.get("name");
 	}

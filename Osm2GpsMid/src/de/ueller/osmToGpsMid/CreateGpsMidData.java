@@ -28,7 +28,7 @@ import de.ueller.osmToGpsMid.model.Way;
 
 
 public class CreateGpsMidData {
-	private final static int MAX_TILE_FILESIZE=10000;
+	private final static int MAX_TILE_FILESIZE=20000;
 	public  final static int MAX_DICT_DEEP=5;
 	OxParser parser;
 	Tile tile[]= new Tile[4];
@@ -85,6 +85,13 @@ public class CreateGpsMidData {
 		}
 		names = getNames();
 		System.out.println("Names="+names.size());
+		short cnt=0;
+		for (MapName mapName : names) {
+			System.out.println("" + cnt + ": " + mapName.getName() 
+					+ " in:" + getWayNameIndex(mapName.getIs_in(), null ) 
+					+ "=" + mapName.getIsInNN());
+			cnt++;
+		}
 
 		try {
 			FileOutputStream fo = null;
@@ -147,7 +154,6 @@ public class CreateGpsMidData {
 			String isIn=w.tags.get("is_in");
 			addName(wayNames,w.getName(),isIn);
 			addName(wayNames, w.tags.get("nat_ref"),isIn);
-			addName(wayNames, w.tags.get("is_in"),null);
 			addName(wayNames, w.tags.get("ref"),isIn);
 			
 		}
@@ -156,7 +162,6 @@ public class CreateGpsMidData {
 			addName(wayNames,n.getName(),isIn);
 			addName(wayNames, n.tags.get("nat_ref"),isIn);
 			addName(wayNames, n.tags.get("ref"),isIn);
-			addName(wayNames, n.tags.get("is_in"),null);
 		}
 //		System.out.println("found " + wayNames.size() + " names");
 		return (wayNames);
@@ -174,9 +179,13 @@ public class CreateGpsMidData {
 		for (MapName mapName : names) {
 			String s=mapName.getName();
 			if (s.equalsIgnoreCase(name)) {
-				if (mapName.getIsInNN().equalsIgnoreCase(isIn)){
-//					System.out.println("found String " + name + " at " + index);
-					return index;					
+				if (isIn != null){
+					if (mapName.getIsInNN().equalsIgnoreCase(isIn)){
+//						System.out.println("found String " + name + " at " + index);
+						return index;	
+					}				
+				} else {
+					return index;
 				}
 			}
 			index++;

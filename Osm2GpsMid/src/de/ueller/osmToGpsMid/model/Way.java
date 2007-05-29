@@ -26,7 +26,17 @@ public class Way extends Entity implements Comparable<Way>{
 		this.tags=other.tags;
 		this.type=other.type;
 	}
-	
+
+	private byte getJunctionType(){
+		String t = (String) tags.get("junction");
+		if ("roundabout".equals(t)){
+			return Constants.WAY_JUNCTION_ROUNDABOUT;
+		}
+		return 0;
+	}
+		
+
+
 	private byte getHighwayType(){
 		String t = (String) tags.get("highway");
 		if ("unclassified".equals(t)){
@@ -163,6 +173,9 @@ public class Way extends Entity implements Comparable<Way>{
 			if (tags.containsKey("highway")){
 				return getHighwayType();
 			}
+			if (tags.containsKey("junction")){
+				return getJunctionType();
+			}			
 		}
 		if (c.useRailway){
 			if (tags.containsKey("railway")){
@@ -208,13 +221,22 @@ public class Way extends Entity implements Comparable<Way>{
 	public byte getZoomlevel(){
 		byte type=getType();
 		switch (type){
-			case 2:
-			case 3: return 0;
-			case 4: return 1;
-			case 5:
-			case 6: return 2;
-			case 7: return 3;
-			case 10: return 3;
+			case Constants.WAY_HIGHWAY_MOTORWAY:
+			case Constants.WAY_HIGHWAY_TRUNK: 
+			case Constants.WAY_RAILWAY_RAIL:
+				return 0;
+			case Constants.WAY_HIGHWAY_PRIMARY:
+			case Constants.WAY_JUNCTION_ROUNDABOUT:
+			case Constants.AREA_NATURAL_WATER:
+			case Constants.WAY_WATERWAY_RIVER:
+				return 1;
+			case Constants.WAY_HIGHWAY_SECONDARY:
+			case Constants.WAY_HIGHWAY_MINOR: 
+			case Constants.WAY_RAILWAY_SUBWAY:
+				return 2;
+			case Constants.WAY_HIGHWAY_RESIDENTIAL: 
+				return 3;
+
 			default: return 3;
 		}
 	}

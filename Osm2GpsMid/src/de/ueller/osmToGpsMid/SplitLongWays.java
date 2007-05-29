@@ -46,8 +46,8 @@ public class SplitLongWays {
 		if (way.lines.size() == 1) return;
 		if (way.getType() >= 50) return;
 		Bounds b=way.getBounds();
-		if ((b.maxLat-b.minLat) > 0.04f 
-				|| (b.maxLon-b.minLon) > 0.04f ){
+		if ((b.maxLat-b.minLat) > 0.09f 
+				|| (b.maxLon-b.minLon) > 0.09f ){
 			if (nonCont){
 				Way newWay=splitOnNonContinues(way);
 				if (newWay != null){

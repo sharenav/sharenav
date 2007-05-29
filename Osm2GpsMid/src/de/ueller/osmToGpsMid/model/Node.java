@@ -96,10 +96,10 @@ public class Node extends Entity{
 			case Constants.NODE_PLACE_CITY:
 			case Constants.NODE_AEROWAY_AERODROME:				
 				return 0;
-			case Constants.NODE_RAILWAY_STATION: 
 			case Constants.NODE_AMENITY_PARKING: 
 			case Constants.NODE_PLACE_TOWN: 
 				return 1;
+			case Constants.NODE_RAILWAY_STATION: 
 			case Constants.NODE_PLACE_VILLAGE: 
 				return 2;
 			case Constants.NODE_PLACE_HAMLET: 
