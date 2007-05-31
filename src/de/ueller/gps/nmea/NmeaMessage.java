@@ -74,7 +74,7 @@ public class NmeaMessage {
         String [] param = StringTokenizer.getArray(buffer.toString(), spChar);
 		String sentence=param[0];
 		try {
-//			receiver.receiveMessage("got "+buffer.toString() );
+			receiver.receiveMessage("got " + sentence );
 			if (lastMsgGSV && ! "GSV".equals(sentence)){
 	            receiver.receiveStatelit(satelit);
 	            satelit=new Satelit[12];

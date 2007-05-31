@@ -20,7 +20,8 @@ public interface LocationMsgReceiver {
 	public void receivePosItion(Position pos);
 	public void receiveStatelit(Satelit[] sat);
 	public void receiveMessage(String s);
-	public void sirfDecoderEnd();
+	public void locationDecoderEnd();
 	public void receiveStatistics(int[] statRecord,byte qualtity);
 	public void receiveSolution(String s);
+	public void locationDecoderEnd(String msg);
 }

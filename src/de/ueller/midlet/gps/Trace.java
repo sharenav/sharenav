@@ -7,7 +7,6 @@ package de.ueller.midlet.gps;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Date;
 
 
@@ -26,6 +25,7 @@ import javax.microedition.midlet.MIDlet;
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Position;
 import de.ueller.gps.data.Satelit;
+import de.ueller.gps.jsr179.JSR179Input;
 import de.ueller.gps.nmea.NmeaInput;
 import de.ueller.gps.sirf.SirfInput;
 import de.ueller.midlet.gps.data.Mercator;
@@ -53,10 +53,11 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			Command.SCREEN, 1);
 
 	private InputStream inputStream;
+	private StreamConnection conn;
 
 	
-	private SirfInput si;
-	private NmeaInput ni;
+//	private SirfInput si;
+	private LocationMsgProducer locationProducer;
 
 	private String solution = "No";
 
@@ -70,6 +71,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	private final GpsMid parent;
 
 	private String lastMsg;
+	private long lastMsgTime=0;
 
 	private long collected = 0;
 
@@ -81,9 +83,6 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 	Tile t[] = new Tile[4];
 
-	// String[] wayNames=null;
-
-	StreamConnection conn;
 
 	// private DataReader data;
 	private final static Logger logger = Logger.getInstance(Trace.class,
@@ -97,8 +96,6 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	private byte qualtity;
 
 	private int[] statRecord;
-
-	private long sirfcount;
 
 	private Satelit[] sat;
 
@@ -119,9 +116,6 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	private QueueReader dictReader;
 
 	private Runtime runtime = Runtime.getRuntime();
-
-
-	private JSR179Input input;
 
 	private final Configuration config;
 
@@ -154,95 +148,55 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 	// start the LocationProvider in background
 	public void run() {
-		System.out.println(config.getLocationProvider());
+		receiveMessage("connect to "+config.getLocationProvider());
 		System.out.println(config.getBtUrl());
 		System.out.println(config.getRender());
 		switch (config.getLocationProvider()){
 		case Configuration.LOCATIONPROVIDER_SIRF:
-			if (config.getBtUrl() != null){
-				try {
-					startGpsSirf(config.getBtUrl());
-				} catch (Exception e) {
-				}
-			}
+		case Configuration.LOCATIONPROVIDER_NMEA:
+			if (! openBtConnection(config.getBtUrl()))
+					return;
+		}
+		removeCommand(CONNECT_GPS_CMD);
+		addCommand(DISCONNECT_GPS_CMD);
+		switch (config.getLocationProvider()){
+		case Configuration.LOCATIONPROVIDER_SIRF:
+			locationProducer = new SirfInput(inputStream, this);
 			break;
 		case Configuration.LOCATIONPROVIDER_NMEA:
-			
-			if (config.getBtUrl() != null){
-				try {
-					startGpsNmea(config.getBtUrl());
-				} catch (Exception e) {
-				}
-			}
+			locationProducer = new NmeaInput(inputStream, this);
 			break;
 		case Configuration.LOCATIONPROVIDER_JSR179:
-			try {
-				input = new JSR179Input(this);
-			} catch (Exception e) {
-//				setTitle("nl" + e.getMessage());
-			}
+			locationProducer = new JSR179Input(this);
 			break;
 		}
+		receiveMessage("connected");
 //		setTitle("lp="+config.getLocationProvider() + " " + config.getBtUrl());
 	}
 	
 	public void pause(){
-		switch (config.getLocationProvider()){
-		case 0:sirfDecoderEnd();
-		break;
-		case 1:
-			nemaDecoderEnd();
-			break;
-		case 2:
-			if (input != null){
-				
-			}
+		if (locationProducer != null){
+			locationProducer.close();
 		}
 	}
+
 	public void resume(){
 		Thread thread = new Thread(this);
 		thread.start();
 	}
 
-	public void startGpsSirf(String url) {
-		if (si != null){
-			return;
-		}
+
+	private boolean openBtConnection(String url){
+		if (url == null)
+			return false;
 		try {
 			conn = (StreamConnection) Connector.open(url);
 			inputStream = conn.openInputStream();
-			
-			si = new SirfInput(inputStream, this);
-			addCommand(DISCONNECT_GPS_CMD);
-			// logger.debug("messagereader Started");
-		} catch (Exception e) {
-//			addCommand(CONNECT_GPS_CMD);
-			si=null;
-			conn=null;
-			inputStream=null;
+		} catch (IOException e) {
+			receiveMessage("err BT:"+e.getMessage());
+			return false;
 		}
-		repaint(0, 0, getWidth(), getHeight());
-
-	}
-	public void startGpsNmea(String url) {
-		if (ni != null){
-			return;
-		}
-		try {
-			conn = (StreamConnection) Connector.open(url);
-			inputStream = conn.openInputStream();
-			
-			ni = new NmeaInput(inputStream, this);
-			addCommand(DISCONNECT_GPS_CMD);
-			// logger.debug("messagereader Started");
-		} catch (Exception e) {
-//			addCommand(CONNECT_GPS_CMD);
-			ni=null;
-			conn=null;
-			inputStream=null;
-		}
-		repaint(0, 0, getWidth(), getHeight());
-
+		return true;
 	}
 
 	public void commandAction(Command c, Displayable d) {
@@ -257,13 +211,13 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				repaint(0, 0, getWidth(), getHeight());
 			}
 			if (c == CONNECT_GPS_CMD){
-				if (si == null){
-//					removeCommand(CONNECT_GPS_CMD);
-					
+				if (locationProducer == null){
+					Thread thread = new Thread(this);
+					thread.start();
 				}
 			}
 			if (c == DISCONNECT_GPS_CMD){
-				si.close();
+				locationProducer.close();
 			}
 		} catch (RuntimeException e) {
 			// TODO Auto-generated catch block
@@ -314,17 +268,20 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 		} catch (IOException e) {
 		}
-		if (si != null){
-			si.close();
+		if (locationProducer != null){
+			locationProducer.close();
 		}
-		if (ni != null){
-			ni.close();
-		}
+
 	}
 
 
 	protected void paint(Graphics g) {
-		
+		if (lastMsg != null){
+			if (System.currentTimeMillis() > lastMsgTime){
+				lastMsg=null;
+				setTitle(null);
+			}
+		}
 		try {
 			int yc = 1;
 			int la = 18;
@@ -363,7 +320,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			}
 			showMovement(g);
 			g.setColor(0, 0, 0);
-			if (si != null){
+			if (locationProducer != null){
 				g.drawString(solution, getWidth() - 1, 1, Graphics.TOP
 							| Graphics.RIGHT);
 			} else {
@@ -500,9 +457,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	}
 
 	public synchronized void receiveMessage(String s) {
-		lastMsg = new String(s);
-		repaint(0, 0, getWidth(), getHeight());
-
+		lastMsg = s;
+		setTitle(lastMsg);
+		lastMsgTime=System.currentTimeMillis()+5000;
 	}
 
 	public void receiveStatelit(Satelit[] sat) {
@@ -570,37 +527,31 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		repaint(0, 0, getWidth(), getHeight());
 	}
 
-	public void sirfDecoderEnd() {
-//		removeCommand(DISCONNECT_GPS_CMD);
-//		addCommand(CONNECT_GPS_CMD);
-		if (si == null){
+	
+	public void locationDecoderEnd() {
+		receiveMessage("start locationDecoderEnd");
+		addCommand(CONNECT_GPS_CMD);
+		removeCommand(DISCONNECT_GPS_CMD);
+		if (locationProducer == null){
+			receiveMessage("end no producer locationDecoderEnd");
 			return;
 		}
-		si.close();
-		si = null;
-		try {
-			inputStream.close();
-			conn.close();
-		} catch (IOException e) {
+		locationProducer = null;
+		if (inputStream != null){
+			try {
+				inputStream.close();
+			} catch (IOException e) {
+			}
+			inputStream=null;
 		}
-		conn=null;
-		inputStream=null;
-//		addCommand(CONNECT_GPS_CMD);
-//		repaint(0, 0, getWidth(), getHeight());
-	}
-	public void nemaDecoderEnd() {
-		if (ni == null){
-			return;
+		if (conn != null){
+			try {
+				conn.close();
+			} catch (IOException e) {
+			}
+			conn=null;
 		}
-		ni.close();
-		ni = null;
-		try {
-			inputStream.close();
-			conn.close();
-		} catch (IOException e) {
-		}
-		conn=null;
-		inputStream=null;
+		receiveMessage("end locationDecoderEnd");
 	}
 
 	public void receiveSolution(String s) {
@@ -628,5 +579,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 	public Configuration getConfig() {
 		return config;
+	}
+
+	public void locationDecoderEnd(String msg) {
+		receiveMessage(msg);
 	}
 }

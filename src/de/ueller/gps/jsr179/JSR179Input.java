@@ -1,4 +1,4 @@
-package de.ueller.midlet.gps;
+package de.ueller.gps.jsr179;
 
 import java.util.Date;
 
@@ -10,8 +10,10 @@ import javax.microedition.location.LocationListener;
 import javax.microedition.location.LocationProvider;
 
 import de.ueller.gps.data.Position;
+import de.ueller.midlet.gps.LocationMsgProducer;
+import de.ueller.midlet.gps.LocationMsgReceiver;
 
-public class JSR179Input implements LocationListener {
+public class JSR179Input implements LocationListener ,LocationMsgProducer{
 
     /** location provider */
     private LocationProvider locationProvider = null;
@@ -20,7 +22,7 @@ public class JSR179Input implements LocationListener {
 	Position pos=new Position(0f,0f,0f,0f,0f,0,date);
 	
 
-	public JSR179Input(LocationMsgReceiver receiver) throws Exception{
+	public JSR179Input(LocationMsgReceiver receiver){
 		this.receiver = receiver;
 		createLocationProvider();
 	}
@@ -30,7 +32,7 @@ public class JSR179Input implements LocationListener {
      * uses default criteria
      * @throws Exception 
      */
-    void createLocationProvider() throws Exception {
+    void createLocationProvider() {
         if (locationProvider == null) {
             Criteria criteria = new Criteria();
 
@@ -38,7 +40,7 @@ public class JSR179Input implements LocationListener {
                 locationProvider = LocationProvider.getInstance(criteria);
             } catch (LocationException le) {
                 System.out.println("Cannot create LocationProvider for this criteria.");
-                throw new Exception("no LocationProvider");
+        		receiver.locationDecoderEnd("no JSR179 Provider");
             }
             locationProvider.setLocationListener(this, 1, -1, -1);
             
@@ -54,20 +56,24 @@ public class JSR179Input implements LocationListener {
         pos.speed=location.getSpeed();
         pos.date.setTime(location.getTimestamp());
         receiver.receivePosItion(pos);
-        System.out.println("got pos " + pos.latitude + " " + pos.longitude);
+//        System.out.println("got pos " + pos.latitude + " " + pos.longitude);
 
 	}
 
 	public void providerStateChanged(LocationProvider arg0, int arg1) {
-		// TODO Auto-generated method stub
-
+		if (LocationProvider.AVAILABLE != arg1){
+			receiver.receiveMessage("provider stopped");
+			close();
+		}
 	}
 	
-	public void destroy(){
+	public void close() {
 		if (locationProvider != null){
 			locationProvider.reset();
+			
 		}
 		locationProvider=null;
+		receiver.locationDecoderEnd();
 	}
 
 }

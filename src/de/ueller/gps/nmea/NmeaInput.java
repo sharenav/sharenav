@@ -12,13 +12,13 @@ package de.ueller.gps.nmea;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 
+import de.ueller.midlet.gps.LocationMsgProducer;
 import de.ueller.midlet.gps.LocationMsgReceiver;
 
 
 
-public class NmeaInput implements Runnable{
+public class NmeaInput implements Runnable, LocationMsgProducer{
 
 	
 	private int	start;
@@ -30,7 +30,9 @@ public class NmeaInput implements Runnable{
 	private final LocationMsgReceiver	receiver;
 	private boolean closed=false;
 	private byte connectQuality=100;
+	int bytesReceived=0;
 	private int[] connectError=new int[LocationMsgReceiver.SIRF_FAIL_COUNT];
+	private String message;
 	private static final int STATE_EXPECT_START_1=0;
 	private static final int STATE_EXPECT_PREFIX=1;
 	private static final int STATE_EXPECT_BODY=2;
@@ -55,19 +57,23 @@ public class NmeaInput implements Runnable{
 	}
 
 	public void run(){
-		receiver.receiveMessage("start Tread");
+		receiver.receiveMessage("start NMEA");
 		// eat the buffe content
 		try {
-			while (ins.available() > 0)
+			while (ins.available() > 0){
 				ins.read();
+				bytesReceived++;
+			}
+			receiver.receiveMessage("erase " + bytesReceived +" bytes");
+			bytesReceived=100;
 		} catch (IOException e1) {
 			receiver.receiveMessage("closing " + e1.getMessage());
-			closed=true;
+			close("closing " + e1.getMessage());
 		}
 		byte timeCounter=21;
 		while (!closed){
 			timeCounter++;
-			if (timeCounter > 4){
+			if (timeCounter > 20){
 				timeCounter = 0;
 				if(connectQuality > 100) {
 					connectQuality=100;
@@ -76,9 +82,16 @@ public class NmeaInput implements Runnable{
 					connectQuality=0;
 				}
 				receiver.receiveStatistics(connectError,connectQuality);
+//				watchdog if no bytes received in 5 sec then exit thread
+				if (bytesReceived == 0){
+					close("no Data form NMEA");
+				} else {
+					bytesReceived=0;
+				}
 			}
 			
 			process();
+			if (! closed)
 			try {
 				synchronized (this) {
 					connectError[LocationMsgReceiver.SIRF_FAIL_MSG_INTERUPTED]++;
@@ -91,19 +104,31 @@ public class NmeaInput implements Runnable{
 			}
 			
 		}
-		receiver.sirfDecoderEnd();
+		if (message == null){
+			receiver.locationDecoderEnd();
+		} else {
+			receiver.locationDecoderEnd(message);
+		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.ueller.gps.nmea.LocationMsgProducer#close()
+	 */
 	public synchronized void close() {
 		closed=true;
+	}
+	public synchronized void close(String message) {
+		closed=true;
+		this.message=message;
 	}
 	
 	public void process(){
 		StringBuffer readBuffer = smsg.getBuffer();
 		char c;
 		try {
-			while (ins.available() > 0) {
+			while (ins.available() > 0 && ! closed) {
 				c=(char)ins.read();
+				bytesReceived++;
 				switch (c){
 				case '\r':
 					break;
@@ -125,7 +150,7 @@ public class NmeaInput implements Runnable{
 			} 
 		} catch (IOException e) {
 			receiver.receiveMessage("closing " + e.getMessage());
-			closed=true;
+			close("closed " + e.getMessage());
 		}
 	}
 	
