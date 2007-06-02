@@ -57,7 +57,7 @@ public class GpsMid extends MIDlet implements CommandListener{
 //	PrintStream log;
 	Logger l;
 
-private Trace trace;
+private Trace trace=null;
 
 
 	public GpsMid() {
@@ -123,6 +123,7 @@ private Trace trace;
             	try {
             		if (trace == null){
             			trace = new Trace(this,config);
+            			Display.getDisplay(this).setCurrent(trace);
             		} else {
             			Display.getDisplay(this).setCurrent(trace);
             			trace.resume();

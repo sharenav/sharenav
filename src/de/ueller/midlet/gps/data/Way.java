@@ -126,7 +126,13 @@ public class Way {
 			lineP1 = null;
 		}
 	}
-
+	/**
+	 * draw ways with 2 lines left and right a black border and
+	 * between them filled with te color of the way.
+	 * @param pc
+	 * @param w
+	 * @param t
+	 */
 	public void paintAsPath(PaintContext pc, int w, SingleTile t) {
 		IntPoint lineP1 = pc.lineP1;
 		IntPoint lineP2 = pc.lineP2;
@@ -137,36 +143,56 @@ public class Way {
 			// read the name only if is used more memory efficicent
 			// pc.trace.getName(nameIdx);
 			short[] path = paths[p1];
+			int pi=0;
 			int[] x = new int[path.length];
 			int[] y = new int[path.length];
-			for (int i1 = 0; i1 < path.length; i1++) {
+			int i1=0;
+			for (; i1 < path.length; i1++) {
 				int idx = path[i1];
 				p.forward(t.nodeLat[idx], t.nodeLon[idx], lineP2, true);
 				if (lineP1 == null) {
+//					System.out.println(" startpoint " + lineP2.x + "/" + lineP2.y + " " +pc.trace.getName(nameIdx));
 					lineP1 = lineP2;
 					lineP2 = swapLineP;
-					x[i1] = lineP1.x;
-					y[i1] = lineP1.y;
+					x[pi] = lineP1.x;
+					y[pi++] = lineP1.y;
 				} else {
-					float dst = MoreMath.ptSegDistSq(lineP1.x, lineP1.y,
-							lineP2.x, lineP2.y, pc.xSize / 2, pc.ySize / 2);
-					if (dst < pc.squareDstToWay) {
-						pc.squareDstToWay = dst;
-						pc.actualWay = this;
+					if (! lineP1.approximatelyEquals(lineP2)){
+//						System.out.println(" midpoint " + lineP2.x + "/" + lineP2.y+ " " +pc.trace.getName(nameIdx));
+						float dst = MoreMath.ptSegDistSq(lineP1.x, lineP1.y,
+								lineP2.x, lineP2.y, pc.xSize / 2, pc.ySize / 2);
+						if (dst < pc.squareDstToWay) {
+							pc.squareDstToWay = dst;
+							pc.actualWay = this;
 
+						}
+						x[pi] = lineP2.x;
+						y[pi++] = lineP2.y;
+						swapLineP = lineP1;
+						lineP1 = lineP2;
+						lineP2 = swapLineP;
+					} else if ((i1+1) == path.length){
+//						System.out.println(" endpoint " + lineP2.x + "/" + lineP2.y+ " " +pc.trace.getName(nameIdx));
+						if (! lineP1.equals(lineP2)){
+							x[pi] = lineP2.x;
+							y[pi++] = lineP2.y;
+						} 
+					}else { 
+//						System.out.println(" discard " + lineP2.x + "/" + lineP2.y+ " " +pc.trace.getName(nameIdx));
 					}
-					x[i1] = lineP2.x;
-					y[i1] = lineP2.y;
-					swapLineP = lineP1;
-					lineP1 = lineP2;
-					lineP2 = swapLineP;
 				}
 			}
 			swapLineP = lineP1;
 			lineP1 = null;
 			// int ppm = pc.p.getPPM();
 			// System.out.println("PPM=" + ppm);
-			draw(pc, 6, x, y);
+
+				if (w == 0){
+					setColor(pc);
+					PolygonGraphics.drawOpenPolygon(pc.g, x, y,pi-1);
+				} else {
+					draw(pc, w, x, y,pi-1);
+				}
 		}
 	}
 
@@ -206,7 +232,7 @@ public class Way {
 		}
 	}
 
-	public void draw(PaintContext pc, int w, int xPoints[], int yPoints[]) {
+	public void draw(PaintContext pc, int w, int xPoints[], int yPoints[],int count) {
 		IntPoint l1b = new IntPoint(0, 0);
 		IntPoint l1e = new IntPoint(0, 0);
 		IntPoint l2b = new IntPoint(0, 0);
@@ -220,14 +246,14 @@ public class Way {
 		float roh1;
 		float roh2;
 
-		int max = xPoints.length - 1;
+		int max = count ;
 		int beforeMax = max - 1;
-		int w2 = (int)(pc.ppm*getWidth()/2+0.5f);
-		if (w2 <1) w2=1;
-		roh1 = getParLines(xPoints, yPoints, 0, w2, l1b, l2b, l1e, l2e);
+//		int w2 = (int)(pc.ppm*getWidth()/2+0.5f);
+		if (w <1) w=1;
+		roh1 = getParLines(xPoints, yPoints, 0, w, l1b, l2b, l1e, l2e);
 		for (int i = 0; i < max; i++) {
 			if (i < beforeMax) {
-				roh2 = getParLines(xPoints, yPoints, i + 1, w2, l3b, l4b, l3e,
+				roh2 = getParLines(xPoints, yPoints, i + 1, w, l3b, l4b, l3e,
 						l4e);
 				if (!MoreMath.approximately_equal(roh1, roh2, 0.5f)) {
 					intersectionPoint(l1b, l1e, l3b, l3e, s1);

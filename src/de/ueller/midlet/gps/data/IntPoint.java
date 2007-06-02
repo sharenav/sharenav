@@ -41,5 +41,24 @@ public class IntPoint {
 	public void setY(float y) {
 		this.y = (int)y;
 	}
+
+	public boolean approximatelyEquals(IntPoint other) {
+		if (Math.abs(x - other.x) > 3 ){
+			return false;
+		}
+		if (Math.abs(y - other.y) > 3 ){
+			return false;
+		}
+		return true;
+	}
+	public boolean equals(IntPoint other) {
+		if (x != other.x ){
+			return false;
+		}
+		if (y != other.y){
+			return false;
+		}
+		return true;
+	}
 	
 }

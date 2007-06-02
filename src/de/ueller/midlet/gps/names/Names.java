@@ -1,4 +1,4 @@
-package de.ueller.midlet.gps.tile;
+package de.ueller.midlet.gps.names;
 /*
  * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net 
  * See Copying
@@ -18,6 +18,8 @@ import de.ueller.midlet.gps.Logger;
 
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.data.MapName;
+import de.ueller.midlet.gps.tile.QueueReader;
+import de.ueller.midlet.gps.tile.StringEntry;
 
 public class Names implements Runnable {
 //	private final static Logger logger=Logger.getInstance(Names.class,Logger.TRACE);

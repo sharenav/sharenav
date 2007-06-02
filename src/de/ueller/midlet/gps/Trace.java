@@ -31,9 +31,9 @@ import de.ueller.gps.sirf.SirfInput;
 import de.ueller.midlet.gps.data.Mercator;
 import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.Projection;
+import de.ueller.midlet.gps.names.Names;
 import de.ueller.midlet.gps.tile.DictReader;
 import de.ueller.midlet.gps.tile.Images;
-import de.ueller.midlet.gps.tile.Names;
 import de.ueller.midlet.gps.tile.PaintContext;
 import de.ueller.midlet.gps.tile.QueueDataReader;
 import de.ueller.midlet.gps.tile.QueueDictReader;
@@ -128,7 +128,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 //		setTitle("Trace");
 		setCommandListener(this);
-		show();
+//		show();
 		try {
 			startup();
 		} catch (Exception e) {

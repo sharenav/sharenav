@@ -93,7 +93,7 @@ public class SirfMessage {
 		}
 //		pcs.firePropertyChange("SatelitData",null,s);
 		receiver.receiveStatelit(s);
-		return message("MeasuredTrackerDataOut " + anz);
+		return null;
 
 	}
 
@@ -184,13 +184,13 @@ public class SirfMessage {
 	}
 
 	private String decodeMeasureNavigation() {
-		short byte1 = getByte(15);
+		short byte1 = getByte(20);
 		boolean dgps=false;
 		String msg="UK";
 		if ((byte1 & 0x80) > 0){
 			dgps=true;
 		}
-		byte1=(short) (byte1 & 0x0f);
+		byte1=(short) (byte1 & 0x7);
 		switch (byte1){
 			case 0: msg="No"; break;
 			case 1: msg="1S"; break;
@@ -203,8 +203,8 @@ public class SirfMessage {
 
 		}
 		String ret= ((dgps)?"DGPS " : "" )+ msg;
-		receiver.receiveMessage("got MeasureNavigation " + ret);
 		receiver.receiveSolution(ret);
+//		receiver.receiveSatInUse(getByte(28));
 		return null;
 	}
 

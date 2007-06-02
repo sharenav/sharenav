@@ -107,7 +107,10 @@ public class SingleTile extends Tile implements QueueableTile {
 						if (pc.config.getRender() == Configuration.RENDER_LINE){
 						    w.paintAsPath(pc, this);
 						} else {
-							w.paintAsPath(pc,4, this);
+							float witdh = (pc.ppm*w.getWidth()/2);
+
+								w.paintAsPath(pc,(int)(witdh+0.5), this);
+
 						}
 					} else {
 						// w.paintAsArea(pc, nodes);

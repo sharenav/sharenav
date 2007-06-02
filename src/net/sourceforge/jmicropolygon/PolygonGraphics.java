@@ -33,6 +33,12 @@ public class PolygonGraphics
 
         g.drawLine(xPoints[max], yPoints[max], xPoints[0], yPoints[0]);
     }
+    public static void drawOpenPolygon(Graphics g, int xPoints[], int yPoints[],int count)
+    {
+        for(int i = 0; i < count; i++) {
+			g.drawLine(xPoints[i], yPoints[i], xPoints[i + 1], yPoints[i + 1]);
+		}
+    }
 
     public static void fillPolygon(Graphics g, int xPoints[], int yPoints[])
     {
