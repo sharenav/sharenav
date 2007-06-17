@@ -59,4 +59,9 @@ public class C {
 	public final static byte AREA_LANDUSE_CEMETERY=93;
 	public final static byte AREA_LANDUSE_VILLAGE_GREEN=94;
 	public final static byte AREA_LANDUSE_RECREATION_GROUND=95;
+	
+	public final static byte NAME_CITY=1;
+	public final static byte NAME_SUBURB=2;
+	public final static byte NAME_STREET=3;
+	public final static byte NAME_AMENITY=4;
 }
