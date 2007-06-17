@@ -44,7 +44,7 @@ public class SirfInput implements Runnable, LocationMsgProducer{
 	}
 
 	public void run(){
-		receiver.receiveMessage("start Tread");
+		receiver.receiveMessage("start SIRF receiver");
 		try {
 			while (ins.available() > 0)
 				ins.read();
