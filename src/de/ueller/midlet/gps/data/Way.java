@@ -19,11 +19,7 @@ import de.ueller.midlet.gps.tile.PaintContext;
 import de.ueller.midlet.gps.tile.SingleTile;
 import de.ueller.midlet.graphics.Street;
 
-public class Way {
-	public byte type;
-
-	public Short nameIdx = null;
-
+public class Way  extends Entity{
 	public int maxspeed;
 
 	public short[][] paths;
@@ -38,7 +34,7 @@ public class Way {
 	public float maxLon;
 
 	private final static Logger logger = Logger.getInstance(Way.class,
-			Logger.ERROR);
+			Logger.TRACE);
 
 	/**
 	 * the flag should be readed by caller. if Flag == 128 this is a dummy Way
@@ -56,9 +52,9 @@ public class Way {
 		maxLat = is.readFloat();
 		maxLon = is.readFloat();
 		// end temporary removed for test
-		// if (is.readByte() != 0x58){
-		// logger.error("worng magic after way bounds");
-		// }
+		 if (is.readByte() != 0x58){
+		 logger.error("worng magic after way bounds");
+		 }
 		type = is.readByte();
 		if ((f & 1) == 1) {
 			// logger.debug("read name");
@@ -77,7 +73,7 @@ public class Way {
 			pathCount = 1;
 		}
 		paths = new short[pathCount][];
-		// logger.debug("read paths count="+pathCount);
+		logger.debug("read paths count="+pathCount);
 		for (byte pc = 0; pc < pathCount; pc++) {
 			short count = is.readByte();
 			short[] path = new short[count];
@@ -87,9 +83,9 @@ public class Way {
 				path[i] = is.readShort();
 				// logger.debug("read node id=" + path[i]);
 			}
-			// if (is.readByte() != 0x59 ){
-			// logger.error("wrong magic code after path");
-			// }
+			 if (is.readByte() != 0x59 ){
+			 logger.error("wrong magic code after path");
+			 }
 		}
 	}
 

@@ -16,14 +16,10 @@ import de.ueller.midlet.gps.tile.PaintContext;
 
 
 
-public class Node {
-//	public float lat=0.0f;
-//	public float lon=0.0f;
-	public Short nameIdx;
+public class Node extends Entity {
 	public float	radlat;
 	public float	radlon;
-	public byte type;
-    public final static float NORTH_POLE = 90.0f;
+	public final static float NORTH_POLE = 90.0f;
     public final static float SOUTH_POLE = -NORTH_POLE;
     public final static float DATELINE = 180.0f;
     public final static float LON_RANGE = 360.0f;
