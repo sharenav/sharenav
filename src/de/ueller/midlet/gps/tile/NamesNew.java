@@ -12,7 +12,7 @@ public class NamesNew extends QueueReader {
 
 	}
 	private void readIndex() throws IOException {
-		InputStream is = getClass().getResourceAsStream("/map/names-idx.dat");
+		InputStream is = getClass().getResourceAsStream("/names-idx.dat");
 //		logger.info("read names-idx");
 		DataInputStream ds = new DataInputStream(is);
 
