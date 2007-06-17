@@ -1,11 +1,6 @@
 package de.ueller.gps.data;
 
-import javax.microedition.rms.InvalidRecordIDException;
 import javax.microedition.rms.RecordStore;
-import javax.microedition.rms.RecordStoreException;
-import javax.microedition.rms.RecordStoreFullException;
-import javax.microedition.rms.RecordStoreNotFoundException;
-import javax.microedition.rms.RecordStoreNotOpenException;
 
 public class Configuration {
 	
@@ -16,6 +11,8 @@ public class Configuration {
 	public final static int LOCATIONPROVIDER_SIRF=0; 
 	public final static int LOCATIONPROVIDER_NMEA=1; 
 	public final static int LOCATIONPROVIDER_JSR179=2;
+	public final static int LOCATIONPROVIDER_NONE=3;
+
 	
 	private final static byte[] empty="".getBytes();
 
