@@ -33,20 +33,6 @@ public class Names implements Runnable {
 	private Hashtable stringCache=new Hashtable(100);
 	private Thread processorThread;
 	boolean isReady=false;
-	private char letters[][] = {{'1','-','.',','},
-							    {'2','A','a','B','b','C','c'},
-							    {'3','D','d','E','e','F','f'},
-							    {'4','G','g','H','h','I','i'},
-							    {'5','J','j','K','k','L','l'},
-							    {'6','M','m','N','n','O','o'},
-							    {'7','P','p','Q','q','R','r','S','s'},
-							    {'8','T','t','u','u','V','v'},
-							    {'9','W','w','X','x','Y','y','Z','z'},
-							    {'*',' ','-'},
-							    {'0','+'},
-							    {'#'},
-							    {'@'},
-	};
 
 	
 	public Names() {
@@ -61,6 +47,7 @@ public class Names implements Runnable {
 			readIndex();
 			while (! shutdown){
 //				logger.trace("addQueue has " + addQueue.size() + " requests " + addQueue);
+//				logger.trace("cache has " + stringCache.size() + " entries ");				
 				while (! addQueue.isEmpty()){
 					Short ne=(Short) addQueue.firstElement();
 					addQueue.removeElementAt(0);
@@ -120,7 +107,7 @@ public class Names implements Runnable {
 
 	
 	private void readIndex() throws IOException {
-		InputStream is = QueueReader.openFile("/map/names-idx.dat");
+		InputStream is = QueueReader.openFile("/names-idx.dat");
 //		logger.info("read names-idx");
 		DataInputStream ds = new DataInputStream(is);
 
@@ -130,12 +117,12 @@ public class Names implements Runnable {
 		while (ds.available() > 0) {
 			nameIdxs[count++] = ds.readShort();
 		}
-		count--;
 		startIndexes = new short[count];
 		startWords = new String[count];
 		for (int l = 0; l < count; l++) {
 			startIndexes[l] = nameIdxs[l];
-			startWords[l]=getFirstWord(l);
+			if (l < count-1)
+				startWords[l]=getFirstWord(l);
 		}
 //		logger.info("read names-idx ready");
 		isReady=true;
@@ -144,7 +131,7 @@ public class Names implements Runnable {
 	public synchronized boolean isReady(){
 		while (!isReady){
 			try {
-				wait(200);
+				wait(2000);
 			} catch (InterruptedException e) {
 			}
 		}
@@ -152,8 +139,8 @@ public class Names implements Runnable {
 	}
 	public String getFirstWord(int fid){
 		try {
-//			System.out.println("readFirstWord: /map/names-" + fid + ".dat");
-			InputStream is = QueueReader.openFile("/map/names-" + fid + ".dat");
+//			System.out.println("readFirstWord: /names-" + fid + ".dat");
+			InputStream is = QueueReader.openFile("/names-" + fid + ".dat");
 			DataInputStream ds = new DataInputStream(is);
 			ds.readByte();
 			String firstWord=ds.readUTF();
@@ -174,13 +161,24 @@ public class Names implements Runnable {
 		InputStream is=null;
 		int count=0;
 		int actIdx=0;
+//		for (int i=1;i < startIndexes.length;i++){
+		for (int i=startIndexes.length-1;i>=0;i--){
+//			logger.info("floop index["+ i +"]=" + startIndexes[i] + " idx=" + idx);
+			if (startIndexes[i] < idx.shortValue()){
+				is=QueueReader.openFile("/names-" + (i) + ".dat");
+//				logger.trace("open names-"+(i) + " startIdx=" + startIndexes[i] + "-" + startIndexes[i+1]);
+				count=startIndexes[i+1]-startIndexes[i];
+				actIdx=startIndexes[i];
+				fid=i;
+				break;
+			}
+		}
 		while (idx != null){
-			is=null;
 			for (int i=fid;i < startIndexes.length;i++){
-//				logger.info("loop index["+ i +"]=" + startIndexes[i]);
+//				logger.info("loop index["+ i +"]=" + startIndexes[i] + " idx=" + idx);
 				if (startIndexes[i] > idx.shortValue()){
-//					is = QueueReader.openFile("/map/names-" + fid + ".dat");
-					is=QueueReader.openFile("/map/names-" + fid + ".dat");
+//					is = QueueReader.openFile("/names-" + fid + ".dat");
+					is=QueueReader.openFile("/names-" + fid + ".dat");
 //					logger.trace("open names-"+fid + " startIdx=" + startIndexes[fid] + "-" + startIndexes[fid+1]);
 					count=startIndexes[i]-startIndexes[fid];
 					actIdx=startIndexes[fid];
@@ -203,8 +201,8 @@ public class Names implements Runnable {
 				if (actIdx == idx.shortValue()){
 					StringEntry se=(StringEntry) stringCache.get(idx);
 					se.name=name.toString();
-					se.isIn=new Short(bufferSe.isIn.shortValue());
-					getName(se.isIn);
+//					se.isIn=new Short(bufferSe.isIn.shortValue());
+//					getName(se.isIn);
 //					logger.info("found Name '" + se.name + "' for idx:" + idx);
 					if (e.hasMoreElements()){
 						idx=(Short) e.nextElement();
@@ -226,9 +224,9 @@ public class Names implements Runnable {
 			if (pos < 0) return pos;
 			name.setLength(pos);
 			name.append(ds.readUTF());
-			short idx=ds.readShort();
+//			short idx=ds.readShort();
 //			System.out.println("nextName " + name + " idx=" + idx);
-			se.isIn=new Short(idx);
+	//		se.isIn=new Short(idx);
 			return pos;
 		}
 		name.setLength(0);
@@ -246,8 +244,9 @@ public class Names implements Runnable {
 		if (ret != null) {
 			ret.count=4;
 //			logger.info("found Name '" + ret.name + "' for idx:" + idx);
-			String nameIn=getName(ret.isIn);
-			return (nameIn != null)? ret.name + ", " + nameIn : ret.name;
+//			String nameIn=getName(ret.isIn);
+//			return (nameIn != null)? ret.name + ", " + nameIn : ret.name;
+			return ret.name;
 		}
 		StringEntry newEntry = new StringEntry(null);
 		stringCache.put(idx, newEntry);
@@ -291,14 +290,14 @@ public class Names implements Runnable {
 //				continue;
 			short idx=startIndexes[l1];
 			pos=0;
-			is = QueueReader.openFile("/map/names-" + l1 + ".dat");
+			is = QueueReader.openFile("/names-" + l1 + ".dat");
 			ds= new DataInputStream(is);
 			pos = readNextWord(ds, pos, name,se);
 			do {
 //				if (name.toString().startsWith("Ezel")){
 //					System.out.println(name.toString());	
 //				}
-				if (isMatch(s, name)){
+				if (s.startsWith(name.toString())){
 //					System.out.println(name.toString());	
 					Short idxS = new Short(idx);
 					se.name=name.toString();
@@ -315,46 +314,10 @@ public class Names implements Runnable {
 		return posibilities;
 	}
 	
-	private boolean isMatch(String search,StringBuffer found){
-		if (found.length() < search.length())
-			return false;
-		for (int x=0;x<search.length();x++){
-			char[] sChars=charList(search.charAt(x));
-			char fChar=found.charAt(x);
-			boolean isFound=false;
-			for (int y=0;y<sChars.length;y++){
-				if (fChar==sChars[y]){
-					isFound=true;
-					break;
-				}
-			}
-			if (! isFound)
-				return false;
-		}
-		return true;
-	}
-	
 	private void addToCache(StringEntry se, Short key){
 		stringCache.put(key, se);
 		se.count=4;
 	}
 	
-	private char[] charList(char s){
-		switch (s){
-		case '1':return letters[0];
-		case '2':return letters[1];
-		case '3':return letters[2];
-		case '4':return letters[3];
-		case '5':return letters[4];
-		case '6':return letters[5];
-		case '7':return letters[6];
-		case '8':return letters[7];
-		case '9':return letters[8];
-		case '*':return letters[9];
-		case '0':return letters[10];
-		case '#':return letters[11];
-		}
-		return letters[12];
-	}
 
 }
