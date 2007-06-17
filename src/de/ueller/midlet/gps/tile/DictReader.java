@@ -43,7 +43,7 @@ public class DictReader  implements Runnable {
 	private void readData(byte zl) throws IOException{
 		try{
 //		    	logger.info("open dict-"+zl+".dat");
-				InputStream is = getClass().getResourceAsStream("/map/dict-"+zl+".dat");
+				InputStream is = getClass().getResourceAsStream("/dict-"+zl+".dat");
 //		    	logger.info("open DataInputStream");
 				DataInputStream ds=new DataInputStream(is);
 //				logger.info("read Magic code");

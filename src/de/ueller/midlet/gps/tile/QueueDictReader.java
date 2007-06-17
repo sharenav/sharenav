@@ -15,17 +15,17 @@ public class QueueDictReader extends QueueReader implements Runnable {
 	
 	protected void readData(Tile t) throws IOException{
 		FileTile tt=(FileTile) t;
-//		logger.info("open /map/d"+tt.zl+tt.fid+".d");
-		InputStream is = openFile("/map/d"+tt.zl+tt.fileId+".d");
+//		logger.info("open /d"+tt.zl+tt.fid+".d");
+		InputStream is = openFile("/d"+tt.zl+tt.fileId+".d");
 		if (is == null){
-//			logger.error("file inputStream /map/d"+tt.zl+tt.fileId+".d not found" );
-			throw new IOException("File not found /map/d"+tt.zl+tt.fileId+".d" );
+//			logger.error("file inputStream /d"+tt.zl+tt.fileId+".d not found" );
+			throw new IOException("File not found /d"+tt.zl+tt.fileId+".d" );
 		}
 //		logger.info("open DataInputStream");
 		DataInputStream ds=new DataInputStream(is);
 		if (ds == null){
 //			logger.error("file DataImputStream "+url+" not found" );
-			throw new IOException("DataStream not open for /map/d"+tt.zl+tt.fileId+".d" );
+			throw new IOException("DataStream not open for /d"+tt.zl+tt.fileId+".d" );
 		}
 //		end open data from JAR
 //		logger.info("read Magic code");
