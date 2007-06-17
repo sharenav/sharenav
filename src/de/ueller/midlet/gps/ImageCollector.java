@@ -152,6 +152,7 @@ public class ImageCollector implements Runnable {
 	
 	public void stop(){
 		shutdown=true;
+		notify();
 	}
 	
 	/** copy the last created image to the real sceen

@@ -22,16 +22,22 @@ import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import javax.microedition.midlet.MIDlet;
 
+import de.enough.polish.util.DrawUtil;
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Position;
 import de.ueller.gps.data.Satelit;
+//#if polish.api.locationapi
 import de.ueller.gps.jsr179.JSR179Input;
+//#endif
+
 import de.ueller.gps.nmea.NmeaInput;
 import de.ueller.gps.sirf.SirfInput;
 import de.ueller.midlet.gps.data.Mercator;
 import de.ueller.midlet.gps.data.Node;
+import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.data.Projection;
 import de.ueller.midlet.gps.names.Names;
+import de.ueller.midlet.gps.tile.C;
 import de.ueller.midlet.gps.tile.DictReader;
 import de.ueller.midlet.gps.tile.Images;
 import de.ueller.midlet.gps.tile.PaintContext;
@@ -39,9 +45,10 @@ import de.ueller.midlet.gps.tile.QueueDataReader;
 import de.ueller.midlet.gps.tile.QueueDictReader;
 import de.ueller.midlet.gps.tile.QueueReader;
 import de.ueller.midlet.gps.tile.Tile;
+import de.ueller.midlet.gps.GpsMidDisplayable;
 
 public class Trace extends Canvas implements CommandListener, LocationMsgReceiver,
-		Runnable , de.ueller.midlet.gps.Displayable{
+		Runnable , GpsMidDisplayable{
 	/** Soft button for exiting the demo. */
 	private final Command EXIT_CMD = new Command("Back", Command.BACK, 2);
 
@@ -118,6 +125,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	private Runtime runtime = Runtime.getRuntime();
 
 	private final Configuration config;
+	private PositionMark target;
+	public Images i;
+	private static final int CENTERPOS = Graphics.HCENTER|Graphics.VCENTER;
 
 	public Trace(GpsMid parent, Configuration config) throws Exception {
 		this.config = config;
@@ -139,7 +149,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		}
 		// setTitle("initTrace ready");
 		try {
-			satelit = Image.createImage("/images/satelit.png");
+			satelit = Image.createImage("/satelit.png");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -148,11 +158,19 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 	// start the LocationProvider in background
 	public void run() {
+		if (locationProducer != null){
+			return;
+		}
+		if (config.getLocationProvider() == Configuration.LOCATIONPROVIDER_NONE){
+			receiveMessage("no Location Provider");
+			return;
+		}
 		receiveMessage("connect to "+config.getLocationProvider());
 		System.out.println(config.getBtUrl());
 		System.out.println(config.getRender());
 		switch (config.getLocationProvider()){
 		case Configuration.LOCATIONPROVIDER_SIRF:
+			
 		case Configuration.LOCATIONPROVIDER_NMEA:
 			if (! openBtConnection(config.getBtUrl()))
 					return;
@@ -166,9 +184,12 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		case Configuration.LOCATIONPROVIDER_NMEA:
 			locationProducer = new NmeaInput(inputStream, this);
 			break;
+			//#if polish.api.locationapi
 		case Configuration.LOCATIONPROVIDER_JSR179:
+//			locationProducer = new 
 			locationProducer = new JSR179Input(this);
 			break;
+			//#endif
 		}
 		receiveMessage("connected");
 //		setTitle("lp="+config.getLocationProvider() + " " + config.getBtUrl());
@@ -178,6 +199,14 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		if (locationProducer != null){
 			locationProducer.close();
 		}
+		synchronized (this) {
+			try {
+				wait(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}		
 	}
 
 	public void resume(){
@@ -187,6 +216,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 
 	private boolean openBtConnection(String url){
+		if (inputStream != null){
+			return true;
+		}
 		if (url == null)
 			return false;
 		try {
@@ -203,8 +235,8 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		try {
 			if (c == EXIT_CMD) {
 				// shutdown();
-				parent.show();
 				pause();
+				parent.show();
 				return;
 			}
 			if (c == REFRESH_CMD) {
@@ -217,7 +249,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				}
 			}
 			if (c == DISCONNECT_GPS_CMD){
-				locationProducer.close();
+				pause();
 			}
 		} catch (RuntimeException e) {
 			// TODO Auto-generated catch block
@@ -230,13 +262,14 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 //		logger.info("reading Data ...");
 		namesThread = new Names();
 		new DictReader(this);
-		Thread thread = new Thread(this);
-		thread.start();
+//		Thread thread = new Thread(this);
+//		thread.start();
 //		logger.info("Create queueDataReader");
 		tileReader = new QueueDataReader(this);
 //		logger.info("create imageCollector");
 		dictReader = new QueueDictReader();
-		Images i = new Images();
+		Images i;
+		i = new Images();
 		vc = new ImageCollector(t, this.getWidth(), this.getHeight(), this,
 				tileReader, dictReader,i);
 //		logger.info("create PaintContext");
@@ -297,6 +330,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			pc.setP( projection);
 			projection.inverse(pc.xSize, 0, pc.screenRU);
 			projection.inverse(0, pc.ySize, pc.screenLD);
+			pc.target=target;
 			pc.g = g;
 			// cleans the screen
 			g.setColor(155, 255, 155);
@@ -328,6 +362,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 						| Graphics.RIGHT);
 				
 			}
+			showTarget(pc);
 		} catch (RuntimeException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -388,6 +423,14 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		// g.drawImage(satelit, 5, 5, 0);
 	}
 
+	public void showTarget(PaintContext pc){
+		if (target == null){
+			return;
+		}
+		pc.getP().forward(target.lat, target.lon, pc.lineP2);
+		pc.g.drawImage(i.IMG_TARGET,pc.lineP2.x,pc.lineP2.y,CENTERPOS);
+		
+	}
 	public void showMovement(Graphics g) {
 		g.setColor(0, 0, 0);
 		int centerX = getWidth() / 2;
@@ -439,6 +482,15 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		yc += la;
 		return yc;
 
+	}
+
+	public synchronized void receivePosItion(float lat, float lon) {
+		center.setLatLon(lat, lon,true);
+		projection = new Mercator(center, scale, getWidth(), getHeight());
+		pc.setP( projection);
+		pc.center = center.clone();
+		pc.scale = scale;
+		repaint(0, 0, getWidth(), getHeight());
 	}
 
 	public synchronized void receivePosItion(Position pos) {
@@ -530,27 +582,28 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	
 	public void locationDecoderEnd() {
 		receiveMessage("start locationDecoderEnd");
-		addCommand(CONNECT_GPS_CMD);
 		removeCommand(DISCONNECT_GPS_CMD);
 		if (locationProducer == null){
 			receiveMessage("end no producer locationDecoderEnd");
-			return;
 		}
 		locationProducer = null;
-		if (inputStream != null){
-			try {
-				inputStream.close();
-			} catch (IOException e) {
-			}
-			inputStream=null;
-		}
+//		if (inputStream != null){
+//			try {
+//				inputStream.close();
+//			} catch (IOException e) {
+//			}
+//			inputStream=null;
+//		}
 		if (conn != null){
 			try {
 				conn.close();
 			} catch (IOException e) {
 			}
 			conn=null;
+			inputStream=null;
 		}
+		notify();
+		addCommand(CONNECT_GPS_CMD);
 		receiveMessage("end locationDecoderEnd");
 	}
 
@@ -583,5 +636,14 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 	public void locationDecoderEnd(String msg) {
 		receiveMessage(msg);
+		locationDecoderEnd();
+	}
+
+	public PositionMark getTarget() {
+		return target;
+	}
+
+	public void setTarget(PositionMark target) {
+		this.target = target;
 	}
 }

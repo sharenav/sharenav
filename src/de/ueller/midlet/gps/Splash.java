@@ -31,19 +31,19 @@ public class Splash extends Canvas implements CommandListener,Runnable{
     private final Command EXIT_CMD = new Command("Decline", Command.EXIT, 1);
 	private final GpsMid main;
 	String[] txt={"Copyright:",
-				  " Harald Müller",
-				  "Thanks for source parts to:",
-				  " Nikolay Klimchuk",
-				  " Simon Turner",
-	              "Artwork:",
-	              " Tobias Müller",
+				  " Harald MÃ¼ller",
 	              "Applicaton:",
 	              " licensd by GPL2",
 	              " http://www.gnu.org/",
 	              "Map data:",
 	              " from OpenStreetMap",
 	              " licensed by CC 2.0",
-	              " http://creativecommons.org/"};
+	              " http://creativecommons.org/",
+	  "Thanks for source parts to:",
+	  " Nikolay Klimchuk",
+	  " Simon Turner",
+      "Artwork:",
+      " Tobias MÃ¼ller"};
 	private Font f;
 	int top=0;
 	private Thread processorThread;
@@ -57,7 +57,7 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 	public Splash(GpsMid main){
 	this.main = main;
 	try {
-		splash=Image.createImage("/images/Gps-splash.png");
+		splash=Image.createImage("/Gps-splash.png");
 
 	} catch (IOException e) {
 		// TODO Auto-generated catch block

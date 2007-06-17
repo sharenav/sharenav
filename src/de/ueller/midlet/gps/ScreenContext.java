@@ -5,6 +5,7 @@ package de.ueller.midlet.gps;
  */
 
 import de.ueller.midlet.gps.data.Node;
+import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.data.Projection;
 import de.ueller.midlet.gps.tile.QueueDataReader;
 import de.ueller.midlet.gps.tile.QueueReader;
@@ -23,6 +24,12 @@ public class ScreenContext {
 	public QueueDataReader dataReader;
 	public QueueReader dictReader;
 	public float ppm=1f;
+	/**
+	 * hold, if there is any, the actual target position and element to the
+	 * navigation target.
+	 */
+	public PositionMark target;
+
 	
 	public ScreenContext cloneToScreenContext() {
 		ScreenContext sc=new ScreenContext();
@@ -35,6 +42,7 @@ public class ScreenContext {
 		sc.trace=trace;
 		sc.dataReader=dataReader;
 		sc.ppm=ppm;
+		sc.target=target;
 		return sc;
 	}
 

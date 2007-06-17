@@ -19,7 +19,7 @@ import javax.microedition.lcdui.List;
 import de.ueller.gps.data.Configuration;
 import de.ueller.midlet.gps.options.OptionsRender;
 
-public class GuiDiscover implements CommandListener, de.ueller.midlet.gps.Displayable {
+public class GuiDiscover implements CommandListener, GpsMidDisplayable {
 
 	/** A menu list instance */
 	private static final String[]	elements		= { "Input options","Discover GPS","Render options",
@@ -73,6 +73,17 @@ public class GuiDiscover implements CommandListener, de.ueller.midlet.gps.Displa
 	private Vector urlList; 
 	private Vector friendlyName;
 	ChoiceGroup locProv;
+	String[] devices={"None","SIRF GPS","NEMA GPS"
+			//#if polish.api.locationapi
+			,"JSR179"
+			//#endif
+			};
+	int[] devicesSaveid={3,0,1
+			//#if polish.api.locationapi
+			,2
+			//#endif
+			};
+	
 
 	public GuiDiscover(GpsMid parent) {
 		this.parent = parent;
@@ -84,9 +95,14 @@ public class GuiDiscover implements CommandListener, de.ueller.midlet.gps.Displa
 		menuFS.setCommandListener(this);
 		menuSelectLocProv.addCommand(BACK_CMD);
 		menuSelectLocProv.addCommand(OK_CMD);
-		String[] devices={"SIRF GPS","NEMA GPS","JSR179"};
-		locProv=new ChoiceGroup("input from:",Choice.EXCLUSIVE,devices,new Image[3]);
-		locProv.setSelectedIndex(parent.getConfig().getLocationProvider(), true);
+		locProv=new ChoiceGroup("input from:",Choice.EXCLUSIVE,devices,new Image[devices.length]);
+		int selIdx=Configuration.LOCATIONPROVIDER_NONE;
+		for (int i=0;i<devices.length;i++){
+			if (devicesSaveid[i]==parent.getConfig().getLocationProvider()){
+				selIdx=i;
+			}
+		}
+		locProv.setSelectedIndex(selIdx, true);
 		menuSelectLocProv.append(locProv);
 		menuSelectLocProv.setCommandListener(this);
 		show();
@@ -109,7 +125,7 @@ public class GuiDiscover implements CommandListener, de.ueller.midlet.gps.Displa
 		if (c == OK_CMD){
 			switch (state){
 			case STATE_LP:
-				parent.getConfig().setLocationProvider(locProv.getSelectedIndex());
+				parent.getConfig().setLocationProvider(devicesSaveid[locProv.getSelectedIndex()]);
 			}
 			show();
 		}
