@@ -39,7 +39,7 @@ public class BundleGpsMid {
 				System.out.println("read Nodes " + parser.nodes.size());
 				System.out.println("read Lines " + parser.lines.size());
 				System.out.println("read Ways  " + parser.ways.size());
-				File target=new File(tmpDir+"/map");
+				File target=new File(tmpDir);
 				createPath(target);
 				CreateGpsMidData cd=new CreateGpsMidData(parser,target.getCanonicalPath());
 				cd.setConfiguration(c);
@@ -100,7 +100,7 @@ public class BundleGpsMid {
 		packDir(zf, src,"");
 		zf.close();
 	    FileWriter fw=new FileWriter(jad);
-		fw.write("MIDlet-1: GpsMid, images/GpsMid.png, de.ueller.midlet.gps.GpsMid\n");
+		fw.write("MIDlet-1: GpsMid, GpsMid.png, GpsMid\n");
 		fw.write("MIDlet-Jar-URL: GpsMid-"+c.getName()+"-"+c.getVersion()+".jar\n");
 		fw.write("MIDlet-Name: GpsMid\n");
 		fw.write("MIDlet-Jar-Size: "+n.length()+"\n");
@@ -122,7 +122,12 @@ public class BundleGpsMid {
 				}
 			} else {
 //				System.out.println();
-				ZipEntry ze = new ZipEntry(path+"/"+files[i].getName());
+				ZipEntry ze=null;
+				if (path.length() > 0){
+				   ze = new ZipEntry(path+"/"+files[i].getName());
+				} else {
+				   ze = new ZipEntry(files[i].getName());				
+				}
 				int ch;
 				int count=0;
 				FileInputStream stream=new FileInputStream(files[i]);
@@ -166,6 +171,7 @@ public class BundleGpsMid {
 				fo.write(ch);
 				count++;
 			}
+			fo.close();
 //			System.out.println("wrote " + name + " byte:" + count);
 		} catch (Exception e) {
 			e.printStackTrace();

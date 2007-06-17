@@ -15,6 +15,7 @@ public class Entity {
 	 * Key: String  Value: String
 	 */
 	public Map<String,String> tags = new Hashtable<String,String>(2,0.8f);
+	public int fid;
 	public String getName() {
 		return tags.get("name");
 	}

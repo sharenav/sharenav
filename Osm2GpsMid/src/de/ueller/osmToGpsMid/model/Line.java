@@ -22,5 +22,8 @@ public class Line extends Entity {
 		if (to==null) return false;
 		return true;
 	}
+	public String toString(){
+		return "Line("+id+") from " + from + " to " + to;  
+	}
 
 }

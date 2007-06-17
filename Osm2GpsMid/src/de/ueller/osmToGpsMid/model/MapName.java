@@ -16,6 +16,7 @@ public class MapName implements Comparable<MapName>{
 	private String name;
 	private String is_in;
 	private short is_in_idx;
+	private byte type;
 	
 	public MapName(String name, String is_in) {
 		super();
@@ -54,6 +55,12 @@ public class MapName implements Comparable<MapName>{
 			return (getIsInNN().compareToIgnoreCase(o.getIsInNN()));
 		} else 
 			return i;
+	}
+	public byte getType() {
+		return type;
+	}
+	public void setType(byte type) {
+		this.type = type;
 	}
 	
 	

@@ -13,7 +13,6 @@ public class Way extends Entity implements Comparable<Way>{
  * indicate that this Way is already written to output;
  */
 	public boolean used=false;
-	public int fid;
 	private byte type;
 
 
@@ -269,5 +268,25 @@ public class Way extends Entity implements Comparable<Way>{
 	}
 	public String toString(){
 		return "Way "+ getName() + " with "+ lines.size() + " segments";
+	}
+
+	/**
+	 * @return
+	 */
+	public byte getNameType() {
+		String t = (String) tags.get("highway");
+		if (t != null){
+			return (Constants.NAME_STREET);
+		}
+		return Constants.NAME_AMENITY;
+	}
+
+	/**
+	 * @return
+	 */
+	public Node getMidPoint() {
+		int splitp=lines.size()/2;
+		Line splitLine=lines.get(splitp);
+		return (splitLine.to);
 	}
 }

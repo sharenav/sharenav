@@ -1,5 +1,6 @@
 package de.ueller.osmToGpsMid.model;
 
+import de.ueller.osmToGpsMid.Configuration;
 import de.ueller.osmToGpsMid.Constants;
 
 
@@ -54,14 +55,14 @@ public class Node extends Entity{
 		return null;
 	}
 	
-	public byte getType(){
+	public byte getType(Configuration c){
 		if (type == -1) {
-			type = calcType();
+			type = calcType(c);
 		}
 //		System.out.println("Read type for id="+id+" as=" + type);		
 		return type;
 	}
-	public byte calcType(){
+	public byte calcType(Configuration c){
 		String p=getPlace();
 		if (p != null){
 			if ("city".equals(p)) return Constants.NODE_PLACE_CITY;
@@ -70,6 +71,7 @@ public class Node extends Entity{
 			if ("hamlet".equals(p)) return Constants.NODE_PLACE_HAMLET;
 			if ("suburb".equals(p)) return Constants.NODE_PLACE_SUBURB;
 		}
+		if (c.useAmenity){
 		p=getAmenity();
 		if (p != null){
 			if ("parking".equals(p)) return Constants.NODE_AMENITY_PARKING;
@@ -77,6 +79,8 @@ public class Node extends Entity{
 			if ("telephone".equals(p)) return Constants.NODE_AMENITY_TELEPHONE;
 			if ("fuel".equals(p)) return Constants.NODE_AMENITY_FUEL;
 		}
+		}
+		if (c.useRailway){
 		p=getRailway();
 		if (p != null){
 			if ("station".equals(p)) return Constants.NODE_RAILWAY_STATION;
@@ -86,22 +90,22 @@ public class Node extends Entity{
 		if (p != null){
 			if ("aerodrome".equals(p)) return Constants.NODE_AEROWAY_AERODROME;
 		}
-		
+		}
 		return 0;
 		
 	}
 	
 	public byte getZoomlevel(){
-		switch (getType()) {
+		switch (type) {
 			case Constants.NODE_PLACE_CITY:
 			case Constants.NODE_AEROWAY_AERODROME:				
 				return 0;
-			case Constants.NODE_AMENITY_PARKING: 
 			case Constants.NODE_PLACE_TOWN: 
 				return 1;
-			case Constants.NODE_RAILWAY_STATION: 
+			case Constants.NODE_AMENITY_PARKING: 
 			case Constants.NODE_PLACE_VILLAGE: 
 				return 2;
+			case Constants.NODE_RAILWAY_STATION: 
 			case Constants.NODE_PLACE_HAMLET: 
 				return 3;
 			case Constants.NODE_PLACE_SUBURB: 
@@ -112,5 +116,20 @@ public class Node extends Entity{
 	public String toString(){
 		return "node id=" + id + " name="+getName();
 	}
+	/**
+	 * @return
+	 */
+	public byte getNameType() {
+		String t = getPlace();
+		if (t != null){
+			if ("suburb".equals(t)){
+				return (Constants.NAME_SUBURB);
+			} else {
+			    return (Constants.NAME_CITY);
+			}
+		}
+		return Constants.NAME_AMENITY;
+	}
+
 
 }

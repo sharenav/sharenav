@@ -61,18 +61,31 @@ public class Configuration {
 				}
 				rb= new PropertyResourceBundle(cf);
 				vb=new PropertyResourceBundle(getClass().getResourceAsStream("/version.properties"));
+				useHighway=use("useHighway");
+				useRailway=use("useRailway");
+				useRiver=use("useRiver");
+				useCycleway=use("useCycleway");
+				useAmenity=use("useAmenity");
+				useLanduse=use("useLanduse");
+				useNatural=use("useNatural");
+				useLeisure=use("useLeisure");
+				useWaterway=use("useWaterway");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-
+		
+		public boolean use(String key){
+			if ("true".equalsIgnoreCase(getString(key))){
+				return true;
+			} else return false;
+		}
 		public  String getString(String key) {
 			try {
-				
 				return rb.getString(key);
 			} catch (MissingResourceException e) {
-				return '!' + key + '!';
+				return vb.getString(key);
 			}
 		}
 		public float getFloat(String key){
@@ -93,7 +106,7 @@ public class Configuration {
 			+".jar");
 		}
 		public String getJarFileName(){
-			return vb.getString("app")
+			return getString("app")
 			+"-"+getVersion()
 			+".jar";
 		}
@@ -102,7 +115,7 @@ public class Configuration {
 		}
 		public String getTempBaseDir(){
 			if (tmp==null){
-				tmp="temp"+ new Random(System.currentTimeMillis()).nextLong();
+				tmp="temp"+ Math.abs(new Random(System.currentTimeMillis()).nextLong());
 			}
 			return tmp;
 //			return getString("tmp.dir");

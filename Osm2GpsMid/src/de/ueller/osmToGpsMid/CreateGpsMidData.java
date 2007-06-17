@@ -1,5 +1,6 @@
 package de.ueller.osmToGpsMid;
 
+
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -18,12 +19,17 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import de.ueller.osmToGpsMid.model.Bounds;
+import de.ueller.osmToGpsMid.model.Entity;
 import de.ueller.osmToGpsMid.model.Line;
 import de.ueller.osmToGpsMid.model.MapName;
+import de.ueller.osmToGpsMid.model.NameSearchEntry;
 import de.ueller.osmToGpsMid.model.Node;
 import de.ueller.osmToGpsMid.model.Sequence;
 import de.ueller.osmToGpsMid.model.Tile;
 import de.ueller.osmToGpsMid.model.Way;
+import de.ueller.osmToGpsMid.model.name.Name;
+import de.ueller.osmToGpsMid.model.name.Names;
+import de.ueller.osmToGpsMid.model.name.NumberCanon;
 
 
 
@@ -34,6 +40,7 @@ public class CreateGpsMidData {
 	Tile tile[]= new Tile[4];
 	private final String	path;
 	TreeSet<MapName> names;
+	Names names1;
 	
 	private final static int INODE=1;
 	private final static int SEGNODE=2;
@@ -43,6 +50,20 @@ public class CreateGpsMidData {
 	private int totalSegsWritten=0;
 	private int totalNodesWritten=0;
 	private int totalPOIsWritten=0;
+	
+	private static char letters[][] = 
+	       {{'1','-','.',','},
+		    {'2','A','a','B','b','C','c','ä','Ä'},
+		    {'3','D','d','E','e','F','f'},
+		    {'4','G','g','H','h','I','i'},
+		    {'5','J','j','K','k','L','l'},
+		    {'6','M','m','N','n','O','o','Ö','ö'},
+		    {'7','P','p','Q','q','R','r','S','s','ß'},
+		    {'8','T','t','U','u','V','v','Ü','ü'},
+		    {'9','W','w','X','x','Y','y','Z','z'},
+		   };
+
+	
 	
 	public CreateGpsMidData(OxParser parser,String path) {
 		super();
@@ -74,24 +95,186 @@ public class CreateGpsMidData {
 		}
 		return l;
 	}
+	
 
 	public void exportMapToMid(){
 		File dir=new File(path);
 		if (dir.isDirectory()){
 			File[] files = dir.listFiles();
 			for (File f : files) {
-				f.delete();
+				if (f.getName().endsWith(".d") || f.getName().endsWith(".dat")){
+					if (! f.delete()){
+						System.out.println("failed to delete file " + f.getName());
+					}
+				}
 			}
 		}
-		names = getNames();
-		System.out.println("Names="+names.size());
-		short cnt=0;
-		for (MapName mapName : names) {
-			System.out.println("" + cnt + ": " + mapName.getName() 
-					+ " in:" + getWayNameIndex(mapName.getIs_in(), null ) 
-					+ "=" + mapName.getIsInNN());
-			cnt++;
+		createNameList();
+		for (int i=0;i<=3;i++)
+			exportMapToMid(i);
+		createSearchList();
+		System.out.println("Total Ways:"+totalWaysWritten 
+				         + " Seg:"+totalSegsWritten
+				         + " Pkt:"+totalNodesWritten
+				         + " POI:"+totalPOIsWritten);
+	}
+//@Deprecated
+//	private void createNameList() {
+//		names1 = getNames();
+//		Hashtable<String, NameSearchEntry> canonList=new Hashtable<String, NameSearchEntry>();
+//		System.out.println("Names="+names.size());
+//		short cnt=0;
+//		for (MapName mapName : names) {
+//			NameSearchEntry entry;
+//			String canString=NumberCanon.canonial(mapName.getName());
+//			if (canonList.containsKey(canString)){
+//				entry = canonList.get(canString);
+//				entry.idx.add(new Short(cnt));
+//			} else {
+//				entry = new NameSearchEntry();
+//				entry.name=canString;
+//				entry.idx.add(new Short(cnt));
+//				canonList.put(canString, entry);
+//			}
+//			System.out.println("" + cnt + ": " + mapName.getName() 
+//					+ " in:" + getWayNameIndex(mapName.getIs_in(), null ) 
+//					+ "=" + mapName.getIsInNN() + " can:" + entry);
+//			cnt++;
+//		}
+//		System.out.println("name=" +  names.size() + " canon=" + canonList.size());
+////		System.exit(0);
+//		try {
+//			FileOutputStream fo = null;
+//			DataOutputStream ds = null;
+//			FileOutputStream foi = new FileOutputStream(path+"/names-idx.dat");
+//			DataOutputStream dsi = new DataOutputStream(foi);
+//			String lastStr=null;
+//			fo = new FileOutputStream(path+"/names-0.dat");
+//			ds = new DataOutputStream(fo);
+//			int curPos=0;
+//			short idx=0;
+//			short fnr=1;
+//			short fcount=0;
+//			for (MapName mapName : names) {
+//				String string=mapName.getName();
+//				int eq=getEqualCount(string,lastStr);
+//				if ((eq==0 && fcount>100) || (fcount > 150 && eq < 2)){
+//					dsi.writeShort(idx);
+//					if (ds != null) ds.close();
+//					fo = new FileOutputStream(path+"/names-"+fnr+".dat");
+//					ds = new DataOutputStream(fo);
+////					System.out.println("wrote names " + fnr + " with "+ fcount + " names");
+//					fnr++;
+//					curPos=0;
+//					eq=0;
+//					fcount=0;
+//					lastStr=null;
+//				}
+//				ds.writeByte(eq-curPos);
+//				ds.writeUTF(string.substring(eq));
+//				ds.writeShort(getWayNameIndex(mapName.getIs_in(), null));
+////				System.out.println("" + (eq-curPos) + "'" +string.substring(eq)+"' '"+string);
+//				curPos=eq;
+//				lastStr=string;
+//				idx++;
+//				fcount++;
+////				ds.writeUTF(string);
+//			}
+//			dsi.writeShort(idx);
+//			ds.close();
+//			dsi.close();
+//		} catch (FileNotFoundException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//	}
+	
+	private void createSearchList(){
+		try {
+			FileOutputStream fo = null;
+			DataOutputStream ds = null;
+			String lastStr=null;
+			String lastFid="";
+			int curPos=0;
+			for (Name mapName : names1.getCanons()) {
+				String string=mapName.getCanonFileName();
+				int eq=getEqualCount(string,lastStr);
+				if (! lastFid.equals(mapName.getCanonFileId())){
+					if (ds != null) ds.close();
+					lastFid=mapName.getCanonFileId();
+					String fileName = path+"/s"+lastFid+".d";
+					System.out.println("open "+fileName);
+					fo = new FileOutputStream(fileName);
+					ds = new DataOutputStream(fo);
+					curPos=0;
+					eq=0;
+					lastStr=null;
+				}
+				String wrString=string.substring(eq);
+				int delta = eq-curPos;
+				if (delta <0){
+					delta = -delta;
+					delta += 0x80;
+				}
+				
+					long l=0;
+					if (wrString.length() > 0)
+						l = Long.parseLong(wrString);
+					if (l < Byte.MAX_VALUE){
+						System.out.println("byte   " + (delta)  + " " + (byte) delta + " '" +string.substring(eq)+"' '"+mapName);
+						ds.writeByte(delta);
+						ds.writeByte((int) l);
+					} else if (l < Short.MAX_VALUE){
+						System.out.println("short  " + (delta) + " " + (byte) delta  + " '" +string.substring(eq)+"' '"+mapName);
+						ds.writeByte(delta | 0x20);
+						ds.writeShort((int) l);
+					} else if (l < Integer.MAX_VALUE){					
+						System.out.println("int    " + (delta) + " " + (byte) delta  + " '" +string.substring(eq)+"' '"+mapName);
+						ds.writeByte(delta | 0x40);
+						ds.writeInt((int) l);
+					} else {
+						System.out.println("long   " + (delta) + " " + (byte) delta  + " '" +string.substring(eq)+"' '"+mapName);
+						ds.writeByte(delta| 0x60);
+						ds.writeLong(l);
+					}
+				ds.writeShort(mapName.getIndex());
+				for (Entity e : mapName.getEntitys()){
+					Node center=null;
+					if (e instanceof Node) {
+						Node n = (Node) e;
+						ds.writeByte(n.getNameType());
+						center=n;
+						System.out.println("entryType " + n.getNameType() + " idx=" + mapName.getIndex());
+					}
+					if (e instanceof Way) {
+						Way w = (Way) e;
+						ds.writeByte(w.getNameType());
+						System.out.println("entryType " + w.getNameType() + " idx=" + mapName.getIndex());
+						center=w.getMidPoint();
+					}
+					ds.writeFloat(degToRad(center.lat));
+					ds.writeFloat(degToRad(center.lon));
+				}
+				ds.writeByte(0);
+//				ds.writeUTF(string.substring(eq));
+				curPos=eq;
+				lastStr=string;
+			}
+			ds.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+	}
+
+	private void createNameList() {
+		names1 = getNames1();
 
 		try {
 			FileOutputStream fo = null;
@@ -105,7 +288,7 @@ public class CreateGpsMidData {
 			short idx=0;
 			short fnr=1;
 			short fcount=0;
-			for (MapName mapName : names) {
+			for (Name mapName : names1.getNames()) {
 				String string=mapName.getName();
 				int eq=getEqualCount(string,lastStr);
 				if ((eq==0 && fcount>100) || (fcount > 150 && eq < 2)){
@@ -122,7 +305,7 @@ public class CreateGpsMidData {
 				}
 				ds.writeByte(eq-curPos);
 				ds.writeUTF(string.substring(eq));
-				ds.writeShort(getWayNameIndex(mapName.getIs_in(), null));
+//				ds.writeShort(getWayNameIndex(mapName.getIs_in(), null));
 //				System.out.println("" + (eq-curPos) + "'" +string.substring(eq)+"' '"+string);
 				curPos=eq;
 				lastStr=string;
@@ -140,40 +323,66 @@ public class CreateGpsMidData {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		for (int i=0;i<=3;i++)
-			exportMapToMid(i);
-		System.out.println("Total Ways:"+totalWaysWritten 
-				         + " Seg:"+totalSegsWritten
-				         + " Pkt:"+totalNodesWritten
-				         + " POI:"+totalPOIsWritten);
 	}
 	
+	@Deprecated
 	private TreeSet<MapName> getNames(){
 		TreeSet<MapName> wayNames = new TreeSet<MapName>();
 		for (Way w : parser.ways) {
 			String isIn=w.tags.get("is_in");
-			addName(wayNames,w.getName(),isIn);
-			addName(wayNames, w.tags.get("nat_ref"),isIn);
-			addName(wayNames, w.tags.get("ref"),isIn);
+			addName(wayNames,w.getName(),isIn,w.getNameType());
+			addName(wayNames, w.tags.get("nat_ref"),isIn,w.getNameType());
+			addName(wayNames, w.tags.get("ref"),isIn,w.getNameType());
 			
 		}
 		for (Node n : parser.nodes.values()) {
 			String isIn=n.tags.get("is_in");
-			addName(wayNames,n.getName(),isIn);
-			addName(wayNames, n.tags.get("nat_ref"),isIn);
-			addName(wayNames, n.tags.get("ref"),isIn);
+			addName(wayNames,n.getName(),isIn,n.getNameType());
+			addName(wayNames, n.tags.get("nat_ref"),isIn,n.getNameType());
+			addName(wayNames, n.tags.get("ref"),isIn,n.getNameType());
 		}
 //		System.out.println("found " + wayNames.size() + " names");
 		return (wayNames);
 	}
+	private Names getNames1(){
+		Names na=new Names();
+		for (Way w : parser.ways) {
+			na.addName(w);		
+		}
+		for (Node n : parser.nodes.values()) {
+			na.addName(n);
+		}
+		System.out.println("found " + na.getNames().size() + " names " + na.getNames().size() + " canon");
+		na.calcNameIndex();
+		return (na);
+	}
 
-	private void addName(TreeSet<MapName> wayNames, String v,String in) {
+	@Deprecated
+	private void addName(TreeSet<Name> wayNames, Entity w) {
+		if (w.getName() == null )
+			return;
+		if (w.getName().trim().length() == 0){
+			return;
+		}
+		Name mn =new Name(w);
+		if (! wayNames.add(mn)){
+			System.out.println("already there:" + mn);
+			Name mnNext=new Name(w.getName()+"\0");
+			SortedSet<Name> subSet=wayNames.subSet(mn, mnNext);
+			Name mnExist=subSet.first();
+			mnExist.addEntity(w);
+		}
+	}
+
+	@Deprecated
+	private void addName(TreeSet<MapName> wayNames, String v,String in,byte type) {
 		if (v != null){
 			String tv=v.trim();
 			if (tv.length() > 0)
 				wayNames.add(new MapName(v,in));
 		}
 	}
+    @Deprecated
 	private int getWayNameIndex(String name,String isIn){
 		int index=0;
 		for (MapName mapName : names) {
@@ -291,6 +500,11 @@ public class CreateGpsMidData {
 				totalNodesWritten+=nodes.size();
 				totalWaysWritten+=ways.size();
 				Collections.sort(ways);
+				if (zl==1 && fid==5){
+					Way way = ways.get(15);
+					
+					System.out.println("error Way = " + way);
+				}
 				Bounds bBox=new Bounds();
 				for (Way w: ways){
 					totalSegsWritten+=w.lines.size();
@@ -363,7 +577,7 @@ public class CreateGpsMidData {
 	public Collection<Node> getNodesInBound(Collection<Node> parentNodes,int zl,Bounds targetBound){
 		Collection<Node> nodes = new LinkedList<Node>();
 		for (Node node : parentNodes){
-			if (node.getType() == 0) continue;
+			if (node.getType(configuration) == 0) continue;
 			if (node.getZoomlevel() != zl) continue;
 			if (! targetBound.isIn(node.lat,node.lon)) continue;
 			nodes.add(node);
@@ -442,10 +656,10 @@ public class CreateGpsMidData {
 		if (type == INODE){
 			String name = n.getName();
 			if (name != null)
-				ds.writeShort(getWayNameIndex(name,n.tags.get("is_in")));
+				ds.writeShort(names1.getNameIdx(name));
 			else 
-				ds.writeShort(0);
-			ds.writeByte(n.getType());
+				ds.writeShort(-1);
+			ds.writeByte(n.getType(configuration));
 		}
 	}
 
@@ -495,7 +709,7 @@ public class CreateGpsMidData {
 							path.add(p1);
 							b.extend(l.from.lat, l.from.lon);
 						}
-					} else if (path.size() > 254){
+					} else if (path.size() > 127){
 						// path to long
 						multipath=true;
 						path.add(p1); // close old Path with actual point
@@ -521,11 +735,10 @@ public class CreateGpsMidData {
 			ds.writeFloat(degToRad(b.minLon));
 			ds.writeFloat(degToRad(b.maxLat));
 			ds.writeFloat(degToRad(b.maxLon));
-//			ds.writeByte(0x58);
+			ds.writeByte(0x58);
 			ds.writeByte(type);
 			if ((flags & 1) == 1){
-				ds.writeShort(getWayNameIndex(w.getName(),w.tags.get("is_in")));
-//				ds.writeUTF(w.getName().trim());
+				ds.writeShort(names1.getNameIdx(w.getName()));
 			}
 			if ((flags & 2) == 2){
 				ds.writeByte(maxspeed);
@@ -543,7 +756,7 @@ public class CreateGpsMidData {
 				}
 // only for test integrity
 //				System.out.println("   write magic code 0x59");
-//				ds.writeByte(0x59);
+				ds.writeByte(0x59);
 			}
 		} else {
 			ds.write(128); // flag that mark there is no way
