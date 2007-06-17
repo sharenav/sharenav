@@ -102,6 +102,23 @@ public class SingleTile extends Tile implements QueueableTile {
 						continue;
 					}
 					// logger.debug("draw " + w.name);
+					// fill the target fields if they are empty
+					if (pc.target != null && pc.target.st != null){
+						if (w.nameIdx == pc.target.nameIdx){
+							
+							for (int p1 = 0; p1 < w.paths.length; p1++) {
+								short[] path = w.paths[p1];
+								for (int i1 = 0; i1 < path.length; i1++) {
+									short s = path[i1];
+									if (nodeLat[s] == pc.target.lat &&
+											nodeLon[s] == pc.target.lon){
+										pc.target.st=this;
+										pc.target.e=w;
+									}
+								}
+							}
+						}
+					}
 					w.setColor(pc);
 					if (w.type < 50) {
 						if (pc.config.getRender() == Configuration.RENDER_LINE){
