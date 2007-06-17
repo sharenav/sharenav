@@ -21,15 +21,8 @@ import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.List;
-import javax.microedition.location.Location;
 import javax.microedition.midlet.MIDlet;
 import javax.microedition.midlet.MIDletStateChangeException;
-import javax.microedition.rms.InvalidRecordIDException;
-import javax.microedition.rms.RecordStore;
-import javax.microedition.rms.RecordStoreException;
-import javax.microedition.rms.RecordStoreFullException;
-import javax.microedition.rms.RecordStoreNotFoundException;
-import javax.microedition.rms.RecordStoreNotOpenException;
 
 import de.ueller.gps.data.Configuration;
 
@@ -37,7 +30,7 @@ import de.ueller.gps.data.Configuration;
 
 public class GpsMid extends MIDlet implements CommandListener{
     /** A menu list instance */
-    private static final String[] elements = { "Trace","Setup","About"};
+    private static final String[] elements = { "Trace","search","Setup","About"};
 
     /** Soft button for exiting GpsMid. */
     private final Command EXIT_CMD = new Command("Exit", Command.EXIT, 2);
@@ -94,12 +87,14 @@ private Trace trace=null;
 		if (trace == null){
 			try {
 				trace = new Trace(this,config);
+//				trace.show();
 			} catch (Exception e) {
 				trace=null;
 				e.printStackTrace();
 			}
 			} else {
 				trace.resume();
+//				trace.show();
 		}
 		}
 
@@ -123,10 +118,10 @@ private Trace trace=null;
             	try {
             		if (trace == null){
             			trace = new Trace(this,config);
-            			Display.getDisplay(this).setCurrent(trace);
+            			trace.show();
             		} else {
-            			Display.getDisplay(this).setCurrent(trace);
             			trace.resume();
+            			trace.show();
             		}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -136,9 +131,22 @@ private Trace trace=null;
 				} 
                 break;
             case 1:
-            	new GuiDiscover(this);
+        		try {
+					if (trace == null){
+						trace = new Trace(this,config);
+					}
+					GuiSearch search = new GuiSearch(trace);
+					search.show();
+				} catch (Exception e) {
+					e.printStackTrace();
+					Alert alert = new Alert("Error:" + e.getMessage());
+					Display.getDisplay(this).setCurrent(alert, menu);
+				}
             	break;
             case 2:
+            	new GuiDiscover(this);
+            	break;
+            case 3:
 				new Splash(this);
             	break;
             default:
