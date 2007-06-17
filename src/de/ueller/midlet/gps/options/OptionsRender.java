@@ -2,7 +2,7 @@ package de.ueller.midlet.gps.options;
 
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.Display;
-import de.ueller.midlet.gps.Displayable;
+import de.ueller.midlet.gps.GpsMidDisplayable;
 
 import de.ueller.gps.data.Configuration;
 
@@ -13,7 +13,7 @@ public class OptionsRender extends OptionsList {
 	private static final int[] options={Configuration.RENDER_LINE,Configuration.RENDER_STREET};
 	private final Configuration config;
 
-	public OptionsRender(Displayable parent,Configuration config) {
+	public OptionsRender(GpsMidDisplayable parent,Configuration config) {
 		super("Render Map", optionStrings,parent);
 		this.config = config;
 		addCommand(OK_CMD);
