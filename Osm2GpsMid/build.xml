@@ -2,17 +2,18 @@
          default="deploy"
          basedir=".">
 
-	<property name="planet" value="/Massenspeicher/planet-070418.osm"/>
-	<property name="planet" value="/Massenspeicher/myStreetMap_harald.osm"/>
+	<property name="planet" value="/Massenspeicher/planet-070530.osm"/>
+	<property name="testplanet" value="/Massenspeicher/myStreetMap_harald.osm"/>
+	<property name="testplanet-lon" value="/Massenspeicher/myStreetMap-london-city.osm"/>
 	<property name="src.dir" value="${basedir}/src"/>
 	<property name="properties.dir" value="${basedir}/mapdef"/>
 	<property name="resources.dir" value="${basedir}/resources"/>
-	<property name="app" value="GpsMid"/>
+	<property name="app" value="GpsMid-Generic-multi"/>
 
 	<property name="lib.dir" value="${basedir}/lib"/>
 
    	<property name="dist.dir" value="${basedir}/dist"/>
-	<property name="version" value="0.2.24"/>
+	<property name="version" value="0.2.28"/>
 	<property name="buildlib"
 	             value="buildlib/explode.jar"/>
 
@@ -36,12 +37,29 @@
    <target name="prepare">
    	  <mkdir dir="bin"/>
       <mkdir dir="${dist.dir}"/>
-   	  <echoproperties destfile="${resources.dir}/version.properties"/>
    	  <mkdir dir="exploded"/>
 	<tstamp>
 		<format property="TODAY_DE" pattern="yyyy-MM-dd HH:mm z" locale="de,DE"/>
 	</tstamp>
-   	
+   	<copy todir="resources">
+   		<fileset dir="../GpsMid/dist">
+   			<include name="*.jar"/>
+   		</fileset>
+   	</copy>
+   	<propertyfile file="${resources.dir}/version.properties">
+   		<entry key="app" value="${app}"/>
+   		<entry key="version" value="${version}"/>
+   		<entry key="useHighway" value="true"/>
+   		<entry key="useRailway" value="true"/>
+   		<entry key="useRiver" value="true"/>
+   		<entry key="useCycleway" value="true"/>
+   		<entry key="useAmenity" value="true"/>
+   		<entry key="useLanduse" value="true"/>
+   		<entry key="useNatural" value="true"/>
+   		<entry key="useLeisure" value="true"/>
+   		<entry key="useWaterway" value="true"/>
+
+   	</propertyfile>
    </target>
 
    <target name="clean">
@@ -51,6 +69,14 @@
    	<delete dir="exploded"/>
    	<delete dir="${dist.dir}"/>
    	<delete file="${resources.dir}/version.properties"/>
+   	<delete>
+   		<fileset dir="${basedir}">
+   			<include name="temp*/**" />
+   			<include name="GpsMid-*.jad"/>
+			<include name="GpsMid-*.jar"/>
+   			<include name="GpsMid-*.zip"/>
+   		</fileset>
+   	</delete>	
    </target>
 
    <target name="compile" depends="clover-yes, clover-no">
@@ -59,7 +85,7 @@
             debug="on"
             optimize="on"
             deprecation="on"
-            compiler="${compiler}">
+            compiler="${compiler}" encoding="UTF8">
      	<classpath>
      		<path refid="main.classpath" />
      	</classpath>
@@ -104,43 +130,80 @@
    </target>
 	
 	<target name="app-germany" depends="deploy">
-		<java jar="${deploy.dir}/${project}-${version}.jar" fork="true">
+		<java jar="${dist.dir}/${ant.project.name}-${version}.jar" fork="true" maxmemory="1024m">
 			<arg value="${planet}"/>
 		  <arg value="germany"/>
 		</java>
 	</target>	
 	<target name="app-south-germany" depends="deploy">
-		<java jar="${deploy.dir}/${project}-${version}.jar" fork="true">
+		<java jar="${dist.dir}/${ant.project.name}-${version}.jar" fork="true" maxmemory="1024m">
 			<arg value="${planet}"/>
 		  <arg value="south-germany"/>
 		</java>
 	</target>	
+	<target name="app-north-germany" depends="deploy">
+		<java jar="${dist.dir}/${ant.project.name}-${version}.jar" fork="true" maxmemory="1024m">
+			<arg value="${planet}"/>
+		  <arg value="north-germany"/>
+		</java>
+	</target>	
 	<target name="nuernberg" depends="deploy">
-		<java jar="${dist.dir}/${ant.project.name}-${version}.jar" fork="true">
+		<java jar="${dist.dir}/${ant.project.name}-${version}.jar" fork="true" maxmemory="1024m">
 			<arg value="${planet}"/>
 			<arg value="nuernberg"/>
 		</java>
 	</target>	
 	<target name="london" depends="deploy">
-		<java jar="${deploy.dir}/${project}-${version}.jar" fork="true">
+		<java jar="${dist.dir}/${ant.project.name}-${version}.jar" fork="true" maxmemory="1024m">
 			<arg value="${planet}"/>
 		  <arg value="london"/>
 		</java>
 	</target>	
 	<target name="hamburg" depends="deploy">
-		<java jar="${deploy.dir}/${project}-${version}.jar" fork="true">
+		<java jar="${dist.dir}/${ant.project.name}-${version}.jar" fork="true" maxmemory="1024m">
 			<arg value="${planet}"/>
 		  <arg value="hamburg"/>
 		</java>
 	</target>	
 
+	<target name="london-easynet" depends="deploy">
+		<java jar="${dist.dir}/${ant.project.name}-${version}.jar" fork="true" maxmemory="1024m">
+			<arg value="${planet}"/>
+		  <arg value="london-easynet"/>
+		</java>
+	</target>	
+	<target name="bavaria" depends="deploy">
+		<java jar="${dist.dir}/${ant.project.name}-${version}.jar" fork="true" maxmemory="1024m">
+			<arg value="${planet}"/>
+		  <arg value="bavaria"/>
+		</java>
+	</target>	
+
 	<target name="all-maps" depends="app-germany,
 	app-south-germany,
+	app-north-germany,
 	nuernberg,
 	london,
-	hamburg"/>
+	hamburg,
+	bavaria"/>
 
 	
 	<target name="all" depends="deploy"/>
+	
+	<target name="test" depends="deploy">
+		<java jar="${dist.dir}/${ant.project.name}-${version}.jar" fork="true" maxmemory="1024m">
+			<arg value="${testplanet}"/>
+		  <arg value="germany"/>
+		</java>
+	</target>	
+
+	<target name="test-lon" depends="deploy">
+		<java jar="${dist.dir}/${ant.project.name}-${version}.jar" fork="true" maxmemory="1024m">
+			<arg value="${testplanet-lon}"/>
+		  <arg value="london"/>
+		</java>
+	</target>	
+
+
 </project>
 
