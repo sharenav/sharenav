@@ -8,9 +8,6 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import javax.microedition.io.Connector;
-import javax.microedition.io.file.FileConnection;
-
 import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.data.Way;
 
@@ -30,7 +27,7 @@ public class QueueDataReader extends QueueReader implements Runnable {
 	}
 	protected void readData(Tile t) throws IOException{
 		SingleTile tt=(SingleTile) t;
-		InputStream is=openFile("/map/t"+tt.zl+tt.fileId+".d");
+		InputStream is=openFile("/t"+tt.zl+tt.fileId+".d");
 		if (is == null){
 //			logger.error("file inputStream"+url+" not found" );
 			tt.state=0;
@@ -47,7 +44,7 @@ public class QueueDataReader extends QueueReader implements Runnable {
 //		logger.info("read Magic code");
 		if (ds.readByte()!=0x54){
 //			logger.error("not a MapMid-file");
-			throw new IOException("not a MapMid-file");
+			throwError( "not a MapMid-file", tt);
 		}
 		int nodeCount=ds.readShort();
 		float[] radlat = new float[nodeCount];
@@ -56,29 +53,33 @@ public class QueueDataReader extends QueueReader implements Runnable {
 //		logger.trace("nodes total :"+nodeCount + "  interestNode :" + iNodeCount);
 		Short[] nameIdx=new Short[iNodeCount];
 		byte[] type = new byte[iNodeCount];
-		for (int i=0; i< nodeCount;i++){
+		try {
+			for (int i=0; i< nodeCount;i++){
 //			logger.trace("read coord :"+nodeCount);
-			radlat[i] = ds.readFloat();
-			radlon[i] = ds.readFloat();
-			if (i < iNodeCount){
+				radlat[i] = ds.readFloat();
+				radlon[i] = ds.readFloat();
+				if (i < iNodeCount){
 //				logger.trace("read ext :"+i+"/"+nodeCount );
-				short name=ds.readShort();
-				if ( name != 0){
-					nameIdx[i]=new Short(name);
-				} else {
-					nameIdx[i]=null;
-				}
+					short name=ds.readShort();
+					if ( name != 0){
+						nameIdx[i]=new Short(name);
+					} else {
+						nameIdx[i]=null;
+					}
 //				logger.trace("read type :"+i+"/"+nodeCount);
-				type[i]=ds.readByte();
+					type[i]=ds.readByte();
+				}
 			}
+			tt.nameIdx=nameIdx;
+			tt.nodeLat=radlat;
+			tt.nodeLon=radlon;
+			tt.type=type;
+		} catch (RuntimeException e) {
+			throwError(e, "reading Nodes", tt);
 		}
-		tt.nameIdx=nameIdx;
-		tt.nodeLat=radlat;
-		tt.nodeLon=radlon;
-		tt.type=type;
 		if (ds.readByte()!=0x55){
 //			logger.error("Start of Ways not found");
-			throw new IOException("MapMid-file corrupt: Nodes not OK");
+			throwError("Nodes not OK", tt);
 		}
 		int wayCount=ds.readByte();
 //		logger.trace("reading " + wayCount + " ways");
@@ -86,17 +87,23 @@ public class QueueDataReader extends QueueReader implements Runnable {
 			wayCount+=256;
 		}
 //		logger.trace("reading " + wayCount + " ways");
-		tt.ways = new Way[wayCount];
-		for (int i=0; i< wayCount;i++){
-			byte flags=ds.readByte();
-			if (flags != 128){
+		int lastread=0;
+		try {
+			tt.ways = new Way[wayCount];
+			for (int i=0; i< wayCount;i++){
+				byte flags=ds.readByte();
+				if (flags != 128){
 //				showAlert("create Way " + i);
-				Way w=new Way(ds,flags);
-				tt.ways[i]=w;
+					Way w=new Way(ds,flags);
+					tt.ways[i]=w;
+				}
+				lastread=i;
 			}
+		} catch (RuntimeException e) {
+			throwError(e,"Ways(last ok index " + lastread,tt);
 		}
 		if (ds.readByte() != 0x56){
-			throw new IOException("MapMid-file corrupt: Ways not OK");
+			throwError("Ways not OK", tt);
 		} else {
 //			logger.info("ready");
 		}
@@ -108,6 +115,13 @@ public class QueueDataReader extends QueueReader implements Runnable {
 
 //		}
 
+	}
+	private void throwError(String string, SingleTile tt) throws IOException {
+		throw new IOException("MapMid-file corrupt: " + string + " zl=" + tt.zl + " fid=" + tt.fileId);
+		
+	}
+	private void throwError(RuntimeException e, String string, SingleTile tt) throws IOException {
+		throw new IOException("MapMid-file corrupt: " + string + " zl=" + tt.zl + " fid=" + tt.fileId + " :" + e.getMessage());
 	}
 	public String toString(){
 		int loop;
