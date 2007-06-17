@@ -12,6 +12,7 @@ import de.ueller.gps.data.Configuration;
 import de.ueller.midlet.gps.ScreenContext;
 import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.data.IntPoint;
+import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.data.Way;
 
 
@@ -47,11 +48,17 @@ public class PaintContext extends ScreenContext {
 	public byte drawAreas=DRAW_AREAS_NO;
 	public boolean showTileOutline=false;
 	/**
-	 * there the paintprocess will store the nameIdx to the Street name; 
+	 * there the paintprocess will store Street whitch is nearest to the center
+	 * of projection. 
 	 */
-//	public Short steet;
 	public Way actualWay=null;
+	/**
+	 * the square of distance from center to the nearest point of actualWay
+	 */
 	public float squareDstToWay;
+	/**
+	 * the actual configuration
+	 */
 	public Configuration config;
 	public PaintContext(Trace tr, QueueDataReader tir,QueueReader dir,Images i) throws Exception{
 		super();
