@@ -179,6 +179,12 @@
 		  <arg value="bavaria"/>
 		</java>
 	</target>	
+	<target name="hh-nue" depends="deploy">
+		<java jar="${dist.dir}/${ant.project.name}-${version}.jar" fork="true" maxmemory="1024m">
+			<arg value="${planet}"/>
+		  <arg value="hh-nue"/>
+		</java>
+	</target>	
 
 	<target name="all-maps" depends="app-germany,
 	app-south-germany,
