@@ -113,7 +113,7 @@
 		<info
 			license="GPL"
 			name="GpsMid"
-			version="0.2.28"
+			version="0.2.29"
 			description=""
 			vendorName="Harald Mueller"
 			infoUrl="http://gpsmid.sourceforge.net"
@@ -129,20 +129,21 @@
 		<!-- Generic/midp1 phone, but when the test-property is set to false, -->
 		<!-- the second deviceRequirements will be used instead. -->
 		<deviceRequirements if="test">
-			<requirement name="Identifier" value="Sony-Ericsson/K750" />
+			<requirement name="Identifier" value="Generic/loc" />
 		</deviceRequirements>
 		<deviceRequirements if="!test and device:defined">
 			<requirement name="Identifier" value="${device}" />
 		</deviceRequirements>
 		<deviceRequirements unless="test">
 			<or>
-						<requirement name="Identifier" value="Motorola/Motorazr_V3i" />
+				<requirement name="Identifier" value="Motorola/Motorazr_V3i" />
 				<requirement name="Identifier" value="Sony-Ericsson/K750" />
 				<requirement name="Identifier" value="Generic/multi" />
 				<requirement name="Identifier" value="Siemens/SL75" />
+				<requirement name="Identifier" value="Generic/loc" />
 				
 			
-						</or>
+			</or>
 		</deviceRequirements>
 		
 	    <!-- build settings -->
