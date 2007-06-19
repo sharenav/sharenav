@@ -78,7 +78,7 @@ public class QueueDataReader extends QueueReader implements Runnable {
 			throwError(e, "reading Nodes", tt);
 		}
 		if (ds.readByte()!=0x55){
-//			logger.error("Start of Ways not found");
+			logger.error("Start of Ways not found");
 			throwError("Nodes not OK", tt);
 		}
 		int wayCount=ds.readByte();

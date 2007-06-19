@@ -92,8 +92,8 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 
 	// private DataReader data;
-	private final static Logger logger = Logger.getInstance(Trace.class,
-			Logger.INFO);
+//	private final static Logger logger = Logger.getInstance(Trace.class,
+//			Logger.INFO);
 
 
 	public static final String statMsg[] = { "no Start1:", "no Start2:",
@@ -126,12 +126,11 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 	private final Configuration config;
 	private PositionMark target;
-	public Images i;
 	private static final int CENTERPOS = Graphics.HCENTER|Graphics.VCENTER;
 
 	public Trace(GpsMid parent, Configuration config) throws Exception {
 		this.config = config;
-		logger.info("init Trace Class");
+//		logger.info("init Trace Class");
 		this.parent = parent;
 		addCommand(EXIT_CMD);
 		addCommand(CONNECT_GPS_CMD);
@@ -166,8 +165,8 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			return;
 		}
 		receiveMessage("connect to "+config.getLocationProvider());
-		System.out.println(config.getBtUrl());
-		System.out.println(config.getRender());
+//		System.out.println(config.getBtUrl());
+//		System.out.println(config.getRender());
 		switch (config.getLocationProvider()){
 		case Configuration.LOCATIONPROVIDER_SIRF:
 			
@@ -366,7 +365,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		} catch (RuntimeException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			System.out.println("continue ..");
+//			System.out.println("continue ..");
 		}
 	}
 
@@ -427,9 +426,16 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		if (target == null){
 			return;
 		}
-		pc.getP().forward(target.lat, target.lon, pc.lineP2);
-		pc.g.drawImage(i.IMG_TARGET,pc.lineP2.x,pc.lineP2.y,CENTERPOS);
-		
+		pc.getP().forward(target.lat, target.lon, pc.lineP2,true);
+//		System.out.println(target.toString());
+		pc.g.drawImage(pc.images.IMG_TARGET,pc.lineP2.x,pc.lineP2.y,CENTERPOS);
+		pc.g.setColor(0,0,0);
+		pc.g.drawString(target.displayName, pc.lineP2.x, pc.lineP2.y+8,
+				Graphics.TOP | Graphics.HCENTER);
+		pc.g.setColor(255,50,50);
+		pc.g.setStrokeStyle(Graphics.DOTTED);
+		pc.g.drawLine(pc.lineP2.x,pc.lineP2.y,pc.xSize/2,pc.ySize/2);
+
 	}
 	public void showMovement(Graphics g) {
 		g.setColor(0, 0, 0);
@@ -645,5 +651,12 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 	public void setTarget(PositionMark target) {
 		this.target = target;
+		center.setLatLon(target.lat, target.lon,true);
+		projection = new Mercator(center, scale, getWidth(), getHeight());
+		pc.setP( projection);
+		pc.center = center.clone();
+		pc.scale = scale;
+		repaint(0, 0, getWidth(), getHeight());
+
 	}
 }

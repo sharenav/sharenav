@@ -85,7 +85,7 @@ public class ImageCollector implements Runnable {
 				while (pc[nextCreate].state != PaintContext.STATE_READY){
 					synchronized (this) {
 						try {
-							System.out.println("img not ready");
+//							System.out.println("img not ready");
 							wait();
 						} catch (InterruptedException e) {
 						}
@@ -110,6 +110,7 @@ public class ImageCollector implements Runnable {
 					pc[nextCreate].g.fillRect(0, 0, xSize, ySize);
 					pc[nextCreate].squareDstToWay=Float.MAX_VALUE;
 					pc[nextCreate].config=tr.getConfig();
+					pc[nextCreate].target=nextSc.target;
 //				System.out.println("create " + pcCollect);
 				
 				if ((pc[nextCreate].scale < 45000) && (t[3] != null)){

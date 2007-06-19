@@ -33,8 +33,8 @@ public class Way  extends Entity{
 
 	public float maxLon;
 
-	private final static Logger logger = Logger.getInstance(Way.class,
-			Logger.TRACE);
+//	private final static Logger logger = Logger.getInstance(Way.class,
+//			Logger.TRACE);
 
 	/**
 	 * the flag should be readed by caller. if Flag == 128 this is a dummy Way
@@ -52,40 +52,59 @@ public class Way  extends Entity{
 		maxLat = is.readFloat();
 		maxLon = is.readFloat();
 		// end temporary removed for test
-		 if (is.readByte() != 0x58){
-		 logger.error("worng magic after way bounds");
-		 }
+//		if (is.readByte() != 0x58){
+//			logger.error("worng magic after way bounds");
+//		}
 		type = is.readByte();
 		if ((f & 1) == 1) {
-			// logger.debug("read name");
+//			logger.debug("read name");
 			// name=is.readUTF();
 			nameIdx = new Short(is.readShort());
 		}
 		if ((f & 2) == 2) {
-			// logger.debug("read maxspeed");
+//			logger.debug("read maxspeed");
 			maxspeed = is.readByte();
 		}
-		byte pathCount;
+		int pathCount;
 		if ((f & 4) == 4) {
 			pathCount = is.readByte();
-			// logger.debug("Multipath "+ pathCount);
+			if (pathCount < 0) {
+				pathCount+=256;
+			}
+//			logger.debug("Multipath "+ pathCount);
 		} else {
 			pathCount = 1;
 		}
+		boolean longWays=false;
+		if ((f & 8) == 8) {
+			longWays=true;
+		}
 		paths = new short[pathCount][];
-		logger.debug("read paths count="+pathCount);
+//		logger.debug("read paths count="+pathCount);
 		for (byte pc = 0; pc < pathCount; pc++) {
-			short count = is.readByte();
+			int count;
+			if (longWays){
+				count = is.readShort();
+				if (pathCount < 0) {
+					pathCount+=65536;
+				}
+			} else {
+				count = is.readByte();
+				if (pathCount < 0) {
+					pathCount+=256;
+				}
+				
+			}
 			short[] path = new short[count];
 			paths[pc] = path;
-			logger.debug("read path count=" + count);
+//			logger.debug("read path count=" + count);
 			for (short i = 0; i < count; i++) {
 				path[i] = is.readShort();
-				// logger.debug("read node id=" + path[i]);
+//				logger.debug("read node id=" + path[i]);
 			}
-			 if (is.readByte() != 0x59 ){
-			 logger.error("wrong magic code after path");
-			 }
+//			if (is.readByte() != 0x59 ){
+//				logger.error("wrong magic code after path");
+//			}
 		}
 	}
 
@@ -182,13 +201,16 @@ public class Way  extends Entity{
 			lineP1 = null;
 			// int ppm = pc.p.getPPM();
 			// System.out.println("PPM=" + ppm);
-
+			if (pc.target != null && this.equals(pc.target.e)){
+				draw(pc,(w==0)?1:w,x,y,pi-1,true);
+			} else {
 				if (w == 0){
 					setColor(pc);
 					PolygonGraphics.drawOpenPolygon(pc.g, x, y,pi-1);
 				} else {
-					draw(pc, w, x, y,pi-1);
+					draw(pc, w, x, y,pi-1,false);
 				}
+			}
 		}
 	}
 
@@ -228,7 +250,7 @@ public class Way  extends Entity{
 		}
 	}
 
-	public void draw(PaintContext pc, int w, int xPoints[], int yPoints[],int count) {
+	public void draw(PaintContext pc, int w, int xPoints[], int yPoints[],int count,boolean highlite) {
 		IntPoint l1b = new IntPoint(0, 0);
 		IntPoint l1e = new IntPoint(0, 0);
 		IntPoint l2b = new IntPoint(0, 0);
@@ -264,7 +286,11 @@ public class Way  extends Entity{
 			pc.g.fillTriangle(l2b.x, l2b.y, l1b.x, l1b.y, l1e.x, l1e.y);
 			// pc.g.setColor(0,255,0);
 			pc.g.fillTriangle(l1e.x, l1e.y, l2e.x, l2e.y, l2b.x, l2b.y);
-			setBorderColor(pc);
+			if (highlite){
+				pc.g.setColor(255,50,50);
+			} else {
+				setBorderColor(pc);
+			}
 			pc.g.drawLine(l1b.x, l1b.y, l1e.x, l1e.y);
 			pc.g.drawLine(l2b.x, l2b.y, l2e.x, l2e.y);
 			// pc.g.drawRect(s1.x-1, s1.y-1, 3, 3);

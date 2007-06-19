@@ -67,7 +67,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 	}
 
 	public void commandAction(Command c, Displayable d) {
-		System.out.println("got Command " + c);
+//		System.out.println("got Command " + c);
 		if (c == OK_CMD) {
 			destroy();
 			parent.show();
@@ -136,7 +136,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 
 	protected void keyPressed(int keyCode) {
 		int action = getGameAction(keyCode);
-		System.out.println("got key " + keyCode + " " + action);
+//		System.out.println("got key " + keyCode + " " + action);
 		if (keyCode == KEY_NUM1) {
 			searchCanon.insert(carret++,'1');
 		} else if (keyCode == KEY_NUM2) {
@@ -163,9 +163,11 @@ public class GuiSearch extends Canvas implements CommandListener,
 			searchCanon.insert(carret++,'0');
 		} else if (action == FIRE) {
 			SearchResult sr = (SearchResult) result.elementAt(cursor);
-			System.out.println("select " + sr);
-			//parent.receivePosItion(sr.lat,sr.lon);
-			parent.setTarget(new PositionMark(sr.lat,sr.lon));
+//			System.out.println("select " + sr);
+			PositionMark positionMark = new PositionMark(sr.lat,sr.lon);
+			positionMark.nameIdx=sr.nameIdx;
+			positionMark.displayName=parent.getName(sr.nameIdx);
+			parent.setTarget(positionMark);
 			parent.show();
 			repaint(0, 0, getWidth(), getHeight());
 			return;
@@ -206,6 +208,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 	}
 
 	public void addResult(SearchResult sr){
+		parent.getName(sr.nameIdx);
 		result.addElement(sr);
 		repaint(0, 0, getWidth(), getHeight());
 	}

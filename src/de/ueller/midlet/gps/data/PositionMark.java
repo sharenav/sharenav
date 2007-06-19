@@ -10,7 +10,7 @@ import de.ueller.midlet.gps.tile.SingleTile;
 
 public class PositionMark {
 	int id=-1;
-	String displayName;
+	public String displayName;
 	public float lat;
 	public float lon;
 	public Entity e;
@@ -36,7 +36,7 @@ public class PositionMark {
 	}
 	
 	public String toString(){
-		return new String(id + ": "+displayName);
+		return new String(id + ": "+displayName+"("+lat+"/"+lon+") " + st + e);
 	}
 	public PositionMark(float lat, float lon){
 		this.lat = lat;

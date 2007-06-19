@@ -35,8 +35,7 @@ public class Configuration {
 			render=readInt(database, 3);
 			database.closeRecordStore();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
 		}
 
 	}

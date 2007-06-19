@@ -38,7 +38,7 @@ public class SingleTile extends Tile implements QueueableTile {
 
 
 //	 private final static Logger logger= Logger.getInstance(SingleTile.class,
-//	 Logger.ERROR);
+//	 Logger.DEBUG);
 
 	public final byte zl;
 
@@ -103,15 +103,18 @@ public class SingleTile extends Tile implements QueueableTile {
 					}
 					// logger.debug("draw " + w.name);
 					// fill the target fields if they are empty
-					if (pc.target != null && pc.target.st != null){
-						if (w.nameIdx == pc.target.nameIdx){
-							
+//					logger.debug("search target" + pc.target);
+					if (pc.target != null && pc.target.st == null){
+//						logger.debug("search target nameIdx" );
+						if (pc.target.nameIdx.equals(w.nameIdx)){
+//							logger.debug("search target way");
 							for (int p1 = 0; p1 < w.paths.length; p1++) {
 								short[] path = w.paths[p1];
 								for (int i1 = 0; i1 < path.length; i1++) {
 									short s = path[i1];
 									if (nodeLat[s] == pc.target.lat &&
 											nodeLon[s] == pc.target.lon){
+//										logger.debug("found Target way");
 										pc.target.st=this;
 										pc.target.e=w;
 									}

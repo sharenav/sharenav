@@ -60,5 +60,7 @@ public class IntPoint {
 		}
 		return true;
 	}
-	
+	public String toString(){
+		return "IntPoint("+x+","+y+")";
+	}
 }
