@@ -699,23 +699,22 @@ public class CreateGpsMidData {
 						if (w.getType() >= 50){
 							// insert segment, because this is a area
 							path.add(new Integer(l.from.renumberdId));
-						} else {
-							// non continues path so open a new Path
-							multipath=true;
-							path = new ArrayList<Integer>();
-							paths.add(path);
-							p1=new Integer(l.from.renumberdId);
-//							System.out.println("\tStart Way-Segment at " + l.from);
-							path.add(p1);
-							b.extend(l.from.lat, l.from.lon);
 						}
-					} else if (path.size() > 127){
-						// path to long
+						// non continues path so open a new Path
 						multipath=true;
-						path.add(p1); // close old Path with actual point
-						path = new ArrayList<Integer>(); // start new path
-						paths.add(path); // add to pathlist
-						path.add(p1); // add same point as start to new path
+						path = new ArrayList<Integer>();
+						paths.add(path);
+						p1=new Integer(l.from.renumberdId);
+//						System.out.println("\tStart Way-Segment at " + l.from);
+						path.add(p1);
+						b.extend(l.from.lat, l.from.lon);
+//					} else if (path.size() >= 127){
+//						// path to long
+//						multipath=true;
+//						path.add(p1); // close old Path with actual point
+//						path = new ArrayList<Integer>(); // start new path
+//						paths.add(path); // add to pathlist
+//						path.add(p1); // add same point as start to new path
 					}
 				}
 //				System.out.println("\t\tContinues Way " + l.to);
@@ -727,15 +726,24 @@ public class CreateGpsMidData {
 			}
 		}
 		if (isWay){
+			boolean longWays=false;
+			for (ArrayList<Integer> subPath : paths){
+				if (subPath.size() >= 255){
+					longWays=true;
+				}
+			}
 			if (multipath ){
 				flags+=4;
+			}
+			if (longWays ){
+				flags+=8;
 			}
 			ds.writeByte(flags);
 			ds.writeFloat(degToRad(b.minLat));
 			ds.writeFloat(degToRad(b.minLon));
 			ds.writeFloat(degToRad(b.maxLat));
 			ds.writeFloat(degToRad(b.maxLon));
-			ds.writeByte(0x58);
+//			ds.writeByte(0x58);
 			ds.writeByte(type);
 			if ((flags & 1) == 1){
 				ds.writeShort(names1.getNameIdx(w.getName()));
@@ -745,10 +753,14 @@ public class CreateGpsMidData {
 			}
 			if ((flags & 4) == 4){
 				ds.writeByte(paths.size());
-			} 
+			}
 //			System.out.print("Way Paths="+paths.size());
 			for (ArrayList<Integer> subPath : paths){
-				ds.writeByte(subPath.size());
+				if (longWays){
+					ds.writeShort(subPath.size());
+				} else {
+					ds.writeByte(subPath.size());
+				}
 //				System.out.print("Path="+subPath.size());
 				for (Integer l : subPath) {
 //					System.out.print(" "+l.intValue());
@@ -756,7 +768,7 @@ public class CreateGpsMidData {
 				}
 // only for test integrity
 //				System.out.println("   write magic code 0x59");
-				ds.writeByte(0x59);
+//				ds.writeByte(0x59);
 			}
 		} else {
 			ds.write(128); // flag that mark there is no way

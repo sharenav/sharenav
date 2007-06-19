@@ -2,7 +2,7 @@
          default="deploy"
          basedir=".">
 
-	<property name="planet" value="/Massenspeicher/planet-070530.osm"/>
+	<property name="planet" value="/Massenspeicher/planet-070613.osm"/>
 	<property name="testplanet" value="/Massenspeicher/myStreetMap_harald.osm"/>
 	<property name="testplanet-lon" value="/Massenspeicher/myStreetMap-london-city.osm"/>
 	<property name="src.dir" value="${basedir}/src"/>
@@ -13,7 +13,7 @@
 	<property name="lib.dir" value="${basedir}/lib"/>
 
    	<property name="dist.dir" value="${basedir}/dist"/>
-	<property name="version" value="0.2.28"/>
+	<property name="version" value="0.2.29"/>
 	<property name="buildlib"
 	             value="buildlib/explode.jar"/>
 
@@ -71,11 +71,12 @@
    	<delete file="${resources.dir}/version.properties"/>
    	<delete>
    		<fileset dir="${basedir}">
-   			<include name="temp*/**" />
+   			<include name="temp*"/>
    			<include name="GpsMid-*.jad"/>
 			<include name="GpsMid-*.jar"/>
    			<include name="GpsMid-*.zip"/>
-   		</fileset>
+		</fileset>
+   		<fileset dir="${resources.dir}"/>
    	</delete>	
    </target>
 
