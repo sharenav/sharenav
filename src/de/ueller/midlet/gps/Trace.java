@@ -50,14 +50,13 @@ import de.ueller.midlet.gps.GpsMidDisplayable;
 public class Trace extends Canvas implements CommandListener, LocationMsgReceiver,
 		Runnable , GpsMidDisplayable{
 	/** Soft button for exiting the demo. */
-	private final Command EXIT_CMD = new Command("Back", Command.BACK, 2);
+	private final Command EXIT_CMD = new Command("Back", Command.ITEM, 5);
 
-	private final Command REFRESH_CMD = new Command("Refresh", Command.OK, 1);
+	private final Command REFRESH_CMD = new Command("Refresh", Command.ITEM, 4);
+	private final Command SEARCH_CMD = new Command("Search", Command.ITEM, 1);
 
-	private final Command CONNECT_GPS_CMD = new Command("Start gps",
-			Command.SCREEN, 1);
-	private final Command DISCONNECT_GPS_CMD = new Command("Stop gps",
-			Command.SCREEN, 1);
+	private final Command CONNECT_GPS_CMD = new Command("Start gps",Command.ITEM, 2);
+	private final Command DISCONNECT_GPS_CMD = new Command("Stop gps",Command.ITEM, 2);
 
 	private InputStream inputStream;
 	private StreamConnection conn;
@@ -92,14 +91,14 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 
 	// private DataReader data;
-//	private final static Logger logger = Logger.getInstance(Trace.class,
-//			Logger.INFO);
+//#debug error
+	private final static Logger logger = Logger.getInstance(Trace.class,Logger.DEBUG);
 
-
+//#mdebug info
 	public static final String statMsg[] = { "no Start1:", "no Start2:",
 			"to long  :", "interrupt:", "checksum :", "no End1  :",
 			"no End2  :" };
-
+//#enddebug
 	private byte qualtity;
 
 	private int[] statRecord;
@@ -124,20 +123,25 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 	private Runtime runtime = Runtime.getRuntime();
 
-	private final Configuration config;
 	private PositionMark target;
+	private final Configuration config;
+
+	private boolean running=false;
 	private static final int CENTERPOS = Graphics.HCENTER|Graphics.VCENTER;
 
 	public Trace(GpsMid parent, Configuration config) throws Exception {
+		//#debug
+		System.out.println("init Trace");
 		this.config = config;
-//		logger.info("init Trace Class");
+
 		this.parent = parent;
 		addCommand(EXIT_CMD);
+		addCommand(SEARCH_CMD);
 		addCommand(CONNECT_GPS_CMD);
 
-//		setTitle("Trace");
+
 		setCommandListener(this);
-//		show();
+
 		try {
 			startup();
 		} catch (Exception e) {
@@ -157,23 +161,37 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 	// start the LocationProvider in background
 	public void run() {
+		if (running){
+			//#debug error
+			logger.error("thread already running");
+			return;
+		}
+		running=true;
+		//#debug info
+		logger.info("start thread init locationprovider");
 		if (locationProducer != null){
+			receiveMessage("locationprovider already running");
 			return;
 		}
 		if (config.getLocationProvider() == Configuration.LOCATIONPROVIDER_NONE){
 			receiveMessage("no Location Provider");
 			return;
 		}
-		receiveMessage("connect to "+config.getLocationProvider());
+		receiveMessage("connect to "+Configuration.LOCATIONPROVIDER[config.getLocationProvider()]);
 //		System.out.println(config.getBtUrl());
 //		System.out.println(config.getRender());
 		switch (config.getLocationProvider()){
 		case Configuration.LOCATIONPROVIDER_SIRF:
 			
 		case Configuration.LOCATIONPROVIDER_NMEA:
+			//#debug debug
+			logger.debug("connect to "+config.getBtUrl());
 			if (! openBtConnection(config.getBtUrl()))
 					return;
 		}
+		receiveMessage("connected");
+		//#debug debug
+		logger.debug("rm connect, add disconnect");
 		removeCommand(CONNECT_GPS_CMD);
 		addCommand(DISCONNECT_GPS_CMD);
 		switch (config.getLocationProvider()){
@@ -190,20 +208,22 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			break;
 			//#endif
 		}
-		receiveMessage("connected");
+		//#debug info
+		logger.info("end startLocationPovider thread");
 //		setTitle("lp="+config.getLocationProvider() + " " + config.getBtUrl());
+		running=false;
 	}
 	
-	public void pause(){
+	public synchronized void pause(){
 		if (locationProducer != null){
 			locationProducer.close();
+		} else {
+			return;
 		}
-		synchronized (this) {
+		while (locationProducer != null){
 			try {
-				wait(1000);
+				wait(200);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
 		}		
 	}
@@ -247,10 +267,20 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 					thread.start();
 				}
 			}
+			if (c == SEARCH_CMD){
+				if (locationProducer != null){
+					locationProducer.close();
+				}
+				GuiSearch search = new GuiSearch(this);
+				search.show();
+			}
 			if (c == DISCONNECT_GPS_CMD){
 				pause();
 			}
 		} catch (RuntimeException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -377,14 +407,18 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 	private int showConnectStatistics(Graphics g, int yc, int la) {
 		if (statRecord == null) {
-			return yc;
+			g.drawString("no stats jet", 0, yc, Graphics.TOP
+					| Graphics.LEFT);
+			return yc+la;
 		}
 		g.setColor(0, 0, 0);
+		//#mdebug info
 		for (byte i = 0; i < LocationMsgReceiver.SIRF_FAIL_COUNT; i++) {
 			g.drawString(statMsg[i] + statRecord[i], 0, yc, Graphics.TOP
 					| Graphics.LEFT);
 			yc += la;
 		}
+		//#enddebug
 		g.drawString("Qual : " + qualtity, 0, yc, Graphics.TOP | Graphics.LEFT);
 		yc += la;
 		g.drawString("count : " + collected, 0, yc, Graphics.TOP
@@ -400,6 +434,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		int r = dia / 2;
 		g.setColor(255, 50, 50);
 		g.drawArc(centerX - r, centerY - r, dia, dia, 0, 360);
+		if (sat == null) return;
 		for (byte i = 0; i < sat.length; i++) {
 			Satelit s = sat[i];
 			if (s.id != 0) {
@@ -516,6 +551,8 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 	public synchronized void receiveMessage(String s) {
 		lastMsg = s;
+		//#debug
+		parent.log(s);
 		setTitle(lastMsg);
 		lastMsgTime=System.currentTimeMillis()+5000;
 	}
@@ -586,20 +623,23 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	}
 
 	
-	public void locationDecoderEnd() {
-		receiveMessage("start locationDecoderEnd");
+	public synchronized void locationDecoderEnd() {
+//#debug info
+		logger.info("enter locationDecoderEnd");
 		removeCommand(DISCONNECT_GPS_CMD);
 		if (locationProducer == null){
-			receiveMessage("end no producer locationDecoderEnd");
+//#debug info
+			logger.info("leave locationDecoderEnd no producer");
+			return;
 		}
 		locationProducer = null;
-//		if (inputStream != null){
-//			try {
-//				inputStream.close();
-//			} catch (IOException e) {
-//			}
-//			inputStream=null;
-//		}
+		if (inputStream != null){
+			try {
+				inputStream.close();
+			} catch (IOException e) {
+			}
+			inputStream=null;
+		}
 		if (conn != null){
 			try {
 				conn.close();
@@ -608,9 +648,10 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			conn=null;
 			inputStream=null;
 		}
-		notify();
+		notify();		
 		addCommand(CONNECT_GPS_CMD);
-		receiveMessage("end locationDecoderEnd");
+//#debug info
+		logger.info("end locationDecoderEnd");
 	}
 
 	public void receiveSolution(String s) {

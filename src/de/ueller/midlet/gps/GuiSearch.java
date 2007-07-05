@@ -25,7 +25,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		GpsMidDisplayable {
 
 
-	private final Command OK_CMD = new Command("Ok", Command.OK, 1);
+//	private final Command OK_CMD = new Command("Ok", Command.OK, 1);
 	private final Command DEL_CMD = new Command("delete", Command.ITEM, 2);
 	private final Command CLEAR_CMD = new Command("clear", Command.ITEM, 3);
 	private final Command BOOKMARK_CMD = new Command("add Bookmark", Command.ITEM, 4);
@@ -57,22 +57,23 @@ public class GuiSearch extends Canvas implements CommandListener,
 		
 		searchThread = new SearchNames(this);
 		setTitle("Search for name");
-		addCommand(OK_CMD);
+//		addCommand(OK_CMD);
 		addCommand(DEL_CMD);
 		addCommand(CLEAR_CMD);
 		addCommand(BOOKMARK_CMD);
 		addCommand(BACK_CMD);
+		//#debug
 		System.out.println("GuiSearch initialisied");
 		
 	}
 
 	public void commandAction(Command c, Displayable d) {
 //		System.out.println("got Command " + c);
-		if (c == OK_CMD) {
-			destroy();
-			parent.show();
-			return;
-		}
+//		if (c == OK_CMD) {
+//			destroy();
+//			parent.show();
+//			return;
+//		}
 		if (c == DEL_CMD) {
 			if (carret > 0){
 				searchCanon.deleteCharAt(--carret);
@@ -90,10 +91,9 @@ public class GuiSearch extends Canvas implements CommandListener,
 		if (c == BOOKMARK_CMD) {
 			return;
 		}
-		if (c == OK_CMD) {
-			repaint(0, 0, getWidth(), getHeight());
-//			destroy();
-//			parent.show();
+		if (c == BACK_CMD) {
+			destroy();
+			parent.show();
 			return;
 		}
 
@@ -201,15 +201,22 @@ public class GuiSearch extends Canvas implements CommandListener,
 		setTitle(searchCanon.toString() + " " + carret);
 		if (searchCanon.length() >= 2) {
 			
-			result.removeAllElements();
+//			result.removeAllElements();
 			searchThread.search(searchCanon.toString());
 		}
-		repaint(0, 0, getWidth(), getHeight());
+//		repaint(0, 0, getWidth(), getHeight());
 	}
 
 	public void addResult(SearchResult sr){
 		parent.getName(sr.nameIdx);
 		result.addElement(sr);
 		repaint(0, 0, getWidth(), getHeight());
+	}
+	public void triggerRepaint(){
+		repaint(0, 0, getWidth(), getHeight());
+	}
+
+	public void clearList() {
+		result.removeAllElements();
 	}
 }

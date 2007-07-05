@@ -23,7 +23,6 @@ public class NmeaInput implements Runnable, LocationMsgProducer{
 	
 	private int	start;
 	private int	checksum;
-	private int	length;
 	private NmeaMessage smsg;
 	private InputStream ins;
 	private Thread					processorThread;

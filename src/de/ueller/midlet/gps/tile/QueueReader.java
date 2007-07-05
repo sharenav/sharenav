@@ -10,6 +10,7 @@ import javax.microedition.io.file.FileConnection;
 import de.ueller.midlet.gps.Logger;
 
 public abstract class QueueReader implements Runnable{
+	//#debug
 	protected static final Logger logger = Logger.getInstance(QueueReader.class,Logger.TRACE);
 	protected final Vector requestQueue = new Vector();
 	protected final Vector livingQueue = new Vector();

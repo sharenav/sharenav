@@ -6,55 +6,51 @@ import java.io.InputStream;
 
 import de.ueller.gps.data.SearchResult;
 import de.ueller.midlet.gps.GuiSearch;
+import de.ueller.midlet.gps.Logger;
 
 public class SearchNames implements Runnable{
 
 	private Thread processorThread;
-	private boolean inSearch=false;
-	private boolean startSearch=false;
+	private int foundEntries=0;
 	private boolean stopSearch=false;
-	private boolean shutdown=false;
 	private String search;
 	private final GuiSearch gui;
+	private boolean newSearch=false;
+	//#debug
+	protected static final Logger logger = Logger.getInstance(QueueReader.class,Logger.TRACE);
+
 	public SearchNames(GuiSearch gui) {
 		super();
 		this.gui = gui;
-		processorThread = new Thread(this);
-		processorThread.setPriority(Thread.MIN_PRIORITY+1);
-		processorThread.start();
 	}
 
 	public void run() {
-		while (! shutdown){
-			while (! startSearch){
-				synchronized (this) {
+			try {
+				doSearch(search);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			// refresch display to give change to fetch the names
+			for (int i=8;i!=0;i--){
 				try {
-//					System.out.println("wait");
-						wait();
+					synchronized (this) {
+						wait(300);						
+					}
+					if (stopSearch){
+						return;
+					} else {
+						gui.triggerRepaint();
+					}
 				} catch (InterruptedException e) {
 				}
-				}
-				if (shutdown)
-					return;
-				if (startSearch){
-					inSearch=true;
-					startSearch=false;
-					try {
-						doSearch(search);
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					inSearch=false;
-				}
 			}
-		}
-		
 	}
 	
 	private void doSearch(String search) throws IOException {
 		try {
-//			System.out.println("search");
+			//#debug
+			System.out.println("search");
 			String fn=search.substring(0,2);
 			String compare=search.substring(2);
 			StringBuffer current=new StringBuffer();
@@ -71,7 +67,8 @@ public class SearchNames implements Runnable{
 			while (ds.available() > 0){
 				if (stopSearch){
 					ds.close();
-					System.out.println("cancel Search");
+					//#debug
+					logger.info("cancel Search");
 					return;
 				}
 				int type=ds.readByte();
@@ -122,7 +119,8 @@ public class SearchNames implements Runnable{
 //					System.out.println("read entryType = " + type);
 					if (stopSearch){
 						ds.close();
-//						System.out.println("cancel Search");
+						//#debug
+						System.out.println("cancel Search");
 						return;
 					}
 					float lat=ds.readFloat();
@@ -133,12 +131,23 @@ public class SearchNames implements Runnable{
 						sr.type=(byte) type;
 						sr.lat=lat;
 						sr.lon=lon;
+						if (newSearch){
+							gui.clearList();
+							newSearch=false;
+						}
 						gui.addResult(sr);
-						
+						foundEntries++;
+						if (foundEntries > 50)
+							return;
 //						System.out.println("found " + current +"(" + shortIdx + ") type=" + type);
 					}
 					type=ds.readByte();
 				}
+			}
+			// clear results in case of no match found
+			if (newSearch){
+				gui.clearList();
+				newSearch=false;
 			}
 		} catch (NullPointerException e) {
 			// TODO Auto-generated catch block
@@ -148,17 +157,31 @@ public class SearchNames implements Runnable{
 	
 	public void shutdown(){
 		stopSearch=true;
-		shutdown=true;
 	}
 
-	public void search(String search){
-//		System.out.println("search for  " + search);
+	public synchronized void search(String search){
+		//#debug
+		logger.info("search for  " + search);
 		stopSearch=true;
-		this.search=search;
-		startSearch=true;
-		synchronized (this) {
-			notify();			
+		newSearch=true;
+		if (processorThread != null) {
+			//#debug
+			logger.info("wait for end of old search");			
+			while (processorThread.isAlive()) {
+				try {
+					wait(100);
+				} catch (InterruptedException e) {
+				}
+			}
+			//#debug
+			logger.info("old search ended");			
 		}
+		
+		foundEntries=0;
+		this.search=search;
+		processorThread = new Thread(this);
+		processorThread.setPriority(Thread.MIN_PRIORITY+1);
+		processorThread.start();
 	}
 
 

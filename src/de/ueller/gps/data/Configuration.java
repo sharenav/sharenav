@@ -13,7 +13,7 @@ public class Configuration {
 	public final static int LOCATIONPROVIDER_JSR179=2;
 	public final static int LOCATIONPROVIDER_NONE=3;
 
-	
+	public final static String[] LOCATIONPROVIDER={"Sirf","NMEA","JSR179","None"};
 	private final static byte[] empty="".getBytes();
 
 	private String btUrl;

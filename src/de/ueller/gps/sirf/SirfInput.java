@@ -15,6 +15,8 @@ import java.io.InputStream;
 
 import de.ueller.midlet.gps.LocationMsgProducer;
 import de.ueller.midlet.gps.LocationMsgReceiver;
+import de.ueller.midlet.gps.Logger;
+import de.ueller.midlet.gps.Trace;
 
 
 
@@ -30,14 +32,21 @@ public class SirfInput implements Runnable, LocationMsgProducer{
 	private final LocationMsgReceiver	receiver;
 	private boolean closed=false;
 	private byte connectQuality=100;
+	//#debug info
 	private int[] connectError=new int[LocationMsgReceiver.SIRF_FAIL_COUNT];
+	private int msgsReceived;
+	//#debug error
+	private final static Logger logger = Logger.getInstance(SirfInput.class,Logger.DEBUG);
+
 	
 	public SirfInput(InputStream ins,LocationMsgReceiver receiver) {
 		super();
+		//#debug
+		logger.debug("init SirfInput");
 		this.ins = ins;
 		this.receiver = receiver;
 		processorThread = new Thread(this,"Sirf Decoder");
-		processorThread.setPriority(Thread.MAX_PRIORITY);
+		processorThread.setPriority(7);
 		processorThread.start();
 		smsg=new SirfMessage(receiver);
 
@@ -45,15 +54,28 @@ public class SirfInput implements Runnable, LocationMsgProducer{
 
 	public void run(){
 		receiver.receiveMessage("start SIRF receiver");
+		//#debug debug
+		logger.debug("start SIRF receiver");
 		try {
+			//#debug debug
+			logger.debug("eat up " + ins.available() + "bytes");
+			//#debug debug
+			logger.debug("addr of ins:" + ins);
+			while (ins.available() > 1022)
+				ins.read(smsg.readBuffer,0,1023);
 			while (ins.available() > 0)
 				ins.read();
 		} catch (IOException e1) {
+			//#debug error
+			logger.error(e1.getMessage());
 			receiver.receiveMessage("closing " + e1.getMessage());
 			closed=true;
 		}
+		msgsReceived=1;
 		byte timeCounter=21;
 		while (!closed){
+			//#debug debug
+			logger.debug("addr of ins:" + ins);
 			timeCounter++;
 			if (timeCounter > 4){
 				timeCounter = 0;
@@ -63,7 +85,16 @@ public class SirfInput implements Runnable, LocationMsgProducer{
 				if(connectQuality < 0) {
 					connectQuality=0;
 				}
+				//#debug info
 				receiver.receiveStatistics(connectError,connectQuality);
+//				watchdog if no bytes received in 5 sec then exit thread
+				if (msgsReceived == 0){
+					closed=true;
+					receiver.receiveMessage("SIRF timeout no msg");
+				} else {
+					msgsReceived=0;
+				}
+
 			}
 			process();
 			try {
@@ -72,8 +103,8 @@ public class SirfInput implements Runnable, LocationMsgProducer{
 				}
 				
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//#debug
+				logger.debug(e.getMessage());
 			}
 			
 		}
@@ -83,26 +114,39 @@ public class SirfInput implements Runnable, LocationMsgProducer{
 	public synchronized void close() {
 		closed=true;
 	}
+	public synchronized void close(String msg) {
+		closed=true;
+		
+	}
 	
 	public void process() {
 		byte[] readBuffer = smsg.readBuffer;
 		try {
+			//#debug debug
+			logger.debug("loop avail :" + ins.available() );
 			while (ins.available() > 0) {
 				long mesChecksum;
 				switch (start) {
 				case 0:
+					// leave on messages begin if close is requested
+					if (closed) {
+						return;
+					}
 					if (ins.available() < 2) {
 						break;
 					}
 					if (ins.read() == 0xA0) {
 						if (ins.read() == 0xA2) {
 							start = 2;
+							msgsReceived++;
 						} else {
+							//#debug info
 							connectError[LocationMsgReceiver.SIRF_FAIL_NO_START_SIGN2]++;
 							connectQuality--;
 							break;
 						}
 					} else {
+						//#debug info
 						connectError[LocationMsgReceiver.SIRF_FAIL_NO_START_SIGN1]++;
 						connectQuality--;
 						break;
@@ -114,6 +158,7 @@ public class SirfInput implements Runnable, LocationMsgProducer{
 					length = ins.read() * 256;
 					length += ins.read();
 					if (length >= 1023) {
+						//#debug info
 						connectError[LocationMsgReceiver.SIRF_FAIL_MSG_TO_LONG]++;
 						connectQuality--;
 						start = 0;
@@ -126,6 +171,7 @@ public class SirfInput implements Runnable, LocationMsgProducer{
 						break;
 					}
 					if (ins.read(readBuffer, 0, length) != length) {
+						//#debug info
 						connectError[LocationMsgReceiver.SIRF_FAIL_MSG_INTERUPTED]++;
 						connectQuality-=2;
 						start = 0;
@@ -141,6 +187,7 @@ public class SirfInput implements Runnable, LocationMsgProducer{
 					mesChecksum = calcChecksum(smsg);
 					if (mesChecksum != checksum) {
 						connectQuality-=10;
+						//#debug info
 						connectError[LocationMsgReceiver.SIRF_FAIL_MSG_CHECKSUM_ERROR]++;
 						start = 0;
 					}
@@ -157,11 +204,13 @@ public class SirfInput implements Runnable, LocationMsgProducer{
 						} else {
 							start = 0;
 							connectQuality--;
+							//#debug info
 							connectError[LocationMsgReceiver.SIRF_FAIL_NO_END_SIGN2]++;
 						}
 					} else {
 						start = 0;
 						connectQuality--;
+						//#debug info
 						connectError[LocationMsgReceiver.SIRF_FAIL_NO_END_SIGN1]++;
 					}
 					break;

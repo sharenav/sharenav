@@ -22,12 +22,13 @@ import de.ueller.midlet.gps.tile.QueueReader;
 import de.ueller.midlet.gps.tile.StringEntry;
 
 public class Names implements Runnable {
-//	private final static Logger logger=Logger.getInstance(Names.class,Logger.TRACE);
+//	#debug
+	private final static Logger logger=Logger.getInstance(Names.class,Logger.TRACE);
 	private Vector queue=new Vector();
 	private Vector addQueue=new Vector();
 	private short[] startIndexes=null;
-	private String[] startWords=null;
-	private String search=null;
+//	private String[] startWords=null;
+//	private String search=null;
 	boolean shutdown=false;
 	boolean cleanup=false;
 	private Hashtable stringCache=new Hashtable(100);
@@ -118,11 +119,12 @@ public class Names implements Runnable {
 			nameIdxs[count++] = ds.readShort();
 		}
 		startIndexes = new short[count];
-		startWords = new String[count];
-		for (int l = 0; l < count; l++) {
+//		startWords = new String[count];
+		for (int l=count; --l != 0;){
+//		for (int l = 0; l < count; l++) {
 			startIndexes[l] = nameIdxs[l];
-			if (l < count-1)
-				startWords[l]=getFirstWord(l);
+//			if (l < count-1)
+//				startWords[l]=getFirstWord(l);
 		}
 //		logger.info("read names-idx ready");
 		isReady=true;

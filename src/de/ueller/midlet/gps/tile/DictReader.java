@@ -14,6 +14,7 @@ import de.ueller.midlet.gps.Trace;
 
 public class DictReader  implements Runnable {
 	private Thread	processorThread;
+    //#debug error
 	private final static Logger logger=Logger.getInstance(DictReader.class,Logger.TRACE);
 	private Tile dict;
 	private final Trace	t;
@@ -35,6 +36,7 @@ public class DictReader  implements Runnable {
 				readData(i);
 			}
 		} catch (IOException e) {
+			//#debug error
 			logger.error("Error:" + e.getMessage());
 			e.printStackTrace();
 		}
@@ -72,6 +74,7 @@ public class DictReader  implements Runnable {
 		    	
 		    	t.setDict(dict,zl);
 		} catch (Exception e){
+			//#debug error
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}

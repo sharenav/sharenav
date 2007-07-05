@@ -5,7 +5,6 @@
 package de.ueller.midlet.gps.tile;
 
 import de.ueller.midlet.gps.ScreenContext;
-import de.ueller.midlet.gps.Trace;
 
 import de.ueller.midlet.gps.data.IntPoint;
 import de.ueller.midlet.gps.data.Node;

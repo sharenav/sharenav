@@ -30,7 +30,7 @@ import de.ueller.gps.data.Configuration;
 
 public class GpsMid extends MIDlet implements CommandListener{
     /** A menu list instance */
-    private static final String[] elements = { "Trace","search","Setup","About"};
+    private static final String[] elements = { "Trace","Search","Setup","About","Log"};
 
     /** Soft button for exiting GpsMid. */
     private final Command EXIT_CMD = new Command("Exit", Command.EXIT, 2);
@@ -39,15 +39,19 @@ public class GpsMid extends MIDlet implements CommandListener{
     private final Command OK_CMD = new Command("Ok", Command.SCREEN, 1);
     /** Soft button to go back from about screen. */
     private final Command BACK_CMD = new Command("Back", Command.BACK, 1);
+    /** Soft button to show Debug Log. */
+ //   private final Command DEBUG_CMD = new Command("", Command.BACK, 1);
+    /** Soft button to go back from about screen. */
+    private final Command CLEAR_DEBUG_CMD = new Command("Clear", Command.BACK, 1);
 
     /** A menu list instance */
     private final List menu = new List("GPSMid", Choice.IMPLICIT, elements, null);
 //	private boolean	isInit=false;
 
-
+    private final List loghist=new List("Log Hist",Choice.IMPLICIT);
 	private String	root;
 	Configuration config=new Configuration();
-//	PrintStream log;
+//	#debug
 	Logger l;
 
 private Trace trace=null;
@@ -58,22 +62,22 @@ private Trace trace=null;
 		menu.addCommand(EXIT_CMD);
 		menu.addCommand(OK_CMD);
 		menu.setCommandListener(this);
-//    	try {
-//			FileConnection fc =(FileConnection)Connector.open("file:///midNav/nav.log" ,Connector.WRITE);
-//			log = new PrintStream(fc.openOutputStream());
-//		} catch (IOException e) {
-//			
-//		}
+		loghist.addCommand(BACK_CMD);
+		loghist.addCommand(CLEAR_DEBUG_CMD);
+		loghist.setCommandListener(this);
+//		#debug
 		l=new Logger(this);
 		new Splash(this);
 
 	}
 	
 	protected void destroyApp(boolean arg0) throws MIDletStateChangeException {
+//		#debug
 		System.out.println("destroy GpsMid");
 	}
 
 	protected void pauseApp() {
+//		#debug
 		System.out.println("Pause GpsMid");
 		if (trace != null){
 			trace.pause();
@@ -83,6 +87,7 @@ private Trace trace=null;
 	}
 
 	protected void startApp() throws MIDletStateChangeException {
+//		#debug
 		System.out.println("Start GpsMid");
 		if (trace == null){
 			try {
@@ -107,6 +112,9 @@ private Trace trace=null;
         if (c == BACK_CMD) {
         	show();
         	return;
+        }
+        if (c == CLEAR_DEBUG_CMD){
+        	loghist.deleteAll();
         }
         switch (menu.getSelectedIndex()) {
             case 0:
@@ -149,7 +157,11 @@ private Trace trace=null;
             case 3:
 				new Splash(this);
             	break;
+            case 4:
+				Display.getDisplay(this).setCurrent(loghist);
+				break;
             default:
+//            	#debug
                 System.err.println("Unexpected choice...");
 
                 break;
@@ -178,10 +190,9 @@ private Trace trace=null;
 
 	public void log(String msg){
 		if (l != null){
-//		log.print(msg+"\n");
-//        Display.getDisplay(this).getCurrent().setTicker(new Ticker(msg));
-//		Display.getDisplay(this).getCurrent().setTitle(msg);
+//			#debug
         System.out.println(msg);
+        loghist.append(msg, null);
 		}
 	}
 

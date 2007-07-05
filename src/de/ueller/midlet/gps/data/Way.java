@@ -21,7 +21,7 @@ import de.ueller.midlet.graphics.Street;
 
 public class Way  extends Entity{
 	public int maxspeed;
-
+	public Short isInIdx=null;
 	public short[][] paths;
 
 	// public short[] path;
@@ -65,6 +65,9 @@ public class Way  extends Entity{
 //			logger.debug("read maxspeed");
 			maxspeed = is.readByte();
 		}
+		if ((f & 16) == 16) {
+			isInIdx=new Short(is.readShort());
+		}
 		int pathCount;
 		if ((f & 4) == 4) {
 			pathCount = is.readByte();
@@ -85,13 +88,13 @@ public class Way  extends Entity{
 			int count;
 			if (longWays){
 				count = is.readShort();
-				if (pathCount < 0) {
-					pathCount+=65536;
+				if (count < 0) {
+					count+=65536;
 				}
 			} else {
 				count = is.readByte();
-				if (pathCount < 0) {
-					pathCount+=256;
+				if (count < 0) {
+					count+=256;
 				}
 				
 			}
