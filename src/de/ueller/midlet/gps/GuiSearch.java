@@ -124,7 +124,18 @@ public class GuiSearch extends Canvas implements CommandListener,
 			}
 			SearchResult sr=(SearchResult) result.elementAt(i);
 			gc.drawImage(ico[sr.type], 0, yc, Graphics.TOP | Graphics.LEFT);
-			String name = parent.getName(sr.nameIdx);
+			String name=parent.getName(sr.nameIdx);
+			StringBuffer nameb=new StringBuffer();
+			if (name != null){
+				nameb.append(name);
+			}
+			if (sr.nearBy != null){
+				for (int ib=sr.nearBy.length; ib-- != 0;){
+					nameb.append(" / ");
+					nameb.append(parent.getName(sr.nearBy[ib]));
+				}
+			}
+			name=nameb.toString();
 			if (name != null)
 				gc.drawString(name,17, yc, Graphics.TOP | Graphics.LEFT);
 			else 

@@ -123,6 +123,14 @@ public class SearchNames implements Runnable{
 						System.out.println("cancel Search");
 						return;
 					}
+					byte isInCount=ds.readByte();
+					Short[] isInArray=null;
+					if (isInCount > 0 ){
+						isInArray=new Short[isInCount];
+						for (int i=isInCount;i--!=0;){
+							isInArray[i]=new Short(ds.readShort());
+						}
+					}
 					float lat=ds.readFloat();
 					float lon=ds.readFloat();
 					if (idx != null){
@@ -131,6 +139,7 @@ public class SearchNames implements Runnable{
 						sr.type=(byte) type;
 						sr.lat=lat;
 						sr.lon=lon;
+						sr.nearBy=isInArray;
 						if (newSearch){
 							gui.clearList();
 							newSearch=false;
