@@ -127,7 +127,7 @@ public class Node extends Entity{
 		return 3;
 	}
 	public String toString(){
-		return "node id=" + id + " name="+getName();
+		return "node id=" + id + " name="+getName() + ((nearBy == null)?"":(" by " + nearBy));
 	}
 	/**
 	 * @return

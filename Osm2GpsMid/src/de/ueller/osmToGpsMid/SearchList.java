@@ -12,6 +12,7 @@ import java.io.DataOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import de.ueller.osmToGpsMid.model.Entity;
 import de.ueller.osmToGpsMid.model.Node;
@@ -93,6 +94,23 @@ public class SearchList {
 						ds.writeByte(w.getNameType());
 						System.out.println("entryType " + w.getNameType() + " idx=" + mapName.getIndex());
 						center=w.getMidPoint();
+					}
+					ArrayList<Entity> isIn=new ArrayList<Entity>();
+					Entity nb=e.nearBy;
+					while (nb != null && !isIn.contains(nb)){
+						if (nb.getName() != null)
+							isIn.add(nb);
+						nb=nb.nearBy;
+					}
+//					String in=e.tags.get("is_in");
+//					if (in != null){
+//						ds.writeByte(isIn.size()+1);
+//						ds.writeShort(names.getNameIdx(in));
+//					} else {
+						ds.writeByte(isIn.size());
+//					}
+					for (Entity e1 : isIn){
+						ds.writeShort(names.getNameIdx(e1.getName()));
 					}
 					ds.writeFloat(MyMath.degToRad(center.lat));
 					ds.writeFloat(MyMath.degToRad(center.lon));

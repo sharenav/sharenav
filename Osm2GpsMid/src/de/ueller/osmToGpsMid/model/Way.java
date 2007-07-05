@@ -269,7 +269,7 @@ public class Way extends Entity implements Comparable<Way>{
 		bound=null;
 	}
 	public String toString(){
-		return "Way "+ getName() + " with "+ lines.size() + " segments";
+		return "Way "+ getName()  + ((nearBy == null)?"":(" by " + nearBy));
 	}
 
 	/**

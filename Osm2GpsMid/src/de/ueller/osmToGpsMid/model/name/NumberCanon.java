@@ -16,11 +16,11 @@ public class NumberCanon {
 	
 	public static String canonial(String s){
 		StringBuffer erg=new StringBuffer();
-		System.out.print("canonial '" + s + "' ");
+//		System.out.print("canonial '" + s + "' ");
 		for (int i=0;i<s.length();i++){
 			erg.append(getNumberOf(s.charAt(i)));
 		}
-		System.out.println("'" + erg + "'");
+//		System.out.println("'" + erg + "'");
 		return erg.toString();
 	}
 

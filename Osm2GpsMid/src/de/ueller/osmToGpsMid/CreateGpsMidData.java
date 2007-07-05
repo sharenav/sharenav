@@ -97,7 +97,8 @@ public class CreateGpsMidData {
 				}
 			}
 		}
-		SearchList sl=new SearchList(getNames1());
+		names1=getNames1();
+		SearchList sl=new SearchList(names1);
 		sl.createNameList(path);
 		for (int i=0;i<=3;i++){
 			exportMapToMid(i);
@@ -418,6 +419,9 @@ public class CreateGpsMidData {
 			} catch (NumberFormatException e) {
 			}
 		}
+		if (w.getIsIn() != null){
+			flags+=16;
+		}
 		byte type=w.getType();
 		Integer p1=null;
 		ArrayList<ArrayList<Integer>> paths=new ArrayList<ArrayList<Integer>>();
@@ -490,6 +494,9 @@ public class CreateGpsMidData {
 			}
 			if ((flags & 2) == 2){
 				ds.writeByte(maxspeed);
+			}
+			if ((flags & 16) == 16){
+				ds.writeShort(names1.getNameIdx(w.getIsIn()));
 			}
 			if ((flags & 4) == 4){
 				ds.writeByte(paths.size());

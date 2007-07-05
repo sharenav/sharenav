@@ -32,7 +32,7 @@ public class CalcNearBy {
 	 */
 	private void calcWayIsIn(OxParser parser2, ArrayList<Node> nearByElements) {
 		for (Way w : parser.ways) {
-			if (w.isHighway() && w.getIsIn() == null){
+			if (w.isHighway() /*&& w.getIsIn() == null */){
 				Node thisNode=w.getMidPoint();
 				Node nearestPlace = null;
 				long nearesDist = Long.MAX_VALUE;
@@ -46,6 +46,7 @@ public class CalcNearBy {
 				if (nearestPlace != null && nearestPlace.getName() != null){
 					w.tags.put("is_in", nearestPlace.getName());
 					System.out.println("set is_in for " + w.getName() + " to " + nearestPlace.getName());
+					w.nearBy=nearestPlace;
 				}
 			}
 		}

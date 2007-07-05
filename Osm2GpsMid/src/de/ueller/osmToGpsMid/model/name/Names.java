@@ -29,7 +29,7 @@ public class Names {
 	public void calcNameIndex(){
 		int index=0;
 		for (Name mapName : names1) {
-			System.out.println(mapName+ " idx="+index);
+//			System.out.println(mapName+ " idx="+index);
 			mapName.setIndex(index++);;
 		}
 	}
@@ -45,14 +45,14 @@ public class Names {
 		}
 		Name mn =new Name(w);
 		if (! names1.add(mn)){
-			System.out.println("name already there:" + mn);
+//			System.out.println("name already there:" + mn);
 			Name mnNext=new Name(w.getName()+"\0");
 			SortedSet<Name> subSet=names1.subSet(mn, mnNext);
 			Name mnExist=subSet.first();
 			mnExist.addEntity(w);
 		}
 		if (! canons.add(mn)){
-			System.out.println("canon already there:" + mn);
+//			System.out.println("canon already there:" + mn);
 			Name mnNext=new Name(w.getName()+"\0");
 			SortedSet<Name> subSet=names1.subSet(mn, mnNext);
 			Name mnExist=subSet.first();
