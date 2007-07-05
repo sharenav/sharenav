@@ -113,7 +113,7 @@
 		<info
 			license="GPL"
 			name="GpsMid"
-			version="0.2.29"
+			version="0.2.30"
 			description=""
 			vendorName="Harald Mueller"
 			infoUrl="http://gpsmid.sourceforge.net"
@@ -140,9 +140,7 @@
 				<requirement name="Identifier" value="Sony-Ericsson/K750" />
 				<requirement name="Identifier" value="Generic/multi" />
 				<requirement name="Identifier" value="Siemens/SL75" />
-				<requirement name="Identifier" value="Generic/loc" />
-				
-			
+				<requirement name="Identifier" value="Generic/loc" />			
 			</or>
 		</deviceRequirements>
 		
@@ -182,22 +180,10 @@
 
 			</variables>
 			<!-- Here you can set the dir attribute to "resources2" for an alternative design. -->
-			<resources
-				dir="resources"
-				defaultexcludes="yes"
-				excludes="readme.txt"
-			>
-				<fileset dir="resources"
-					includes="**/*.dat"
-				     if="test"
-				/>
-				<fileset dir="resources"
-					includes="**/*.d"
-				     if="test"
-				/>
-				<fileset dir="resources"
-					includes="**/*.png"
-				/>
+			<resources dir="resources" defaultexcludes="yes" excludes="readme.txt">
+				<fileset dir="resources" includes="**/*.dat" if="test"/>
+				<fileset dir="resources" includes="**/*.d" if="test" />
+				<fileset dir="resources" includes="**/*.png"/>
 
 				<!-- you can add resources based on complex criterias: 
 				<fileset 
@@ -228,8 +214,9 @@
 			
 			<!-- debug settings: only include debug setting when the test-property is true -->
 			<debug if="test" showLogOnError="true" verbose="true" level="error">
-				<filter pattern="de.enough.polish.example.*" level="debug" />
-				<filter pattern="de.enough.polish.ui.*" level="warn" />
+				<!--filter pattern="de.ueller.gps.sirf.*" level="debug" / -->
+				<!--filter pattern="de.ueller.midlet.gps.Trace" level="debug" / -->
+				<filter pattern="de.ueller.midlet.gps.tile.SearchNames" level="debug" />
 			</debug>
 			
 			<!-- user defined JAD attributes can also be used: -->
