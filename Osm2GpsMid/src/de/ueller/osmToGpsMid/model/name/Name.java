@@ -52,6 +52,10 @@ public class Name {
 		return name;
 	}
 	
+	/**
+	 * constuct the FileIndex in with this name will stored
+	 * @return
+	 */
 	public String getCanonFileId(){
 		if (canon.length() >= 2)
 			return canon.substring(0, 2);

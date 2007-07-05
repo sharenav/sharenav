@@ -83,18 +83,6 @@ public class CreateGpsMidData {
 //		this.bounds = bounds;
 //	}
 
-	private int getEqualCount(String s1, String s2){
-		if (s1== null || s2 == null)
-			return 0;
-		int l1=s1.length();
-		int l2=s2.length();
-		int l=(l1 < l2)? l1 : l2;
-		for (int loop=0; loop < l;loop++){
-			if (s1.charAt(loop) != s2.charAt(loop))
-				return loop;
-		}
-		return l;
-	}
 	
 
 	public void exportMapToMid(){
@@ -109,241 +97,37 @@ public class CreateGpsMidData {
 				}
 			}
 		}
-		createNameList();
-		for (int i=0;i<=3;i++)
+		SearchList sl=new SearchList(getNames1());
+		sl.createNameList(path);
+		for (int i=0;i<=3;i++){
 			exportMapToMid(i);
-		createSearchList();
+		}
+		sl.createSearchList(path);
 		System.out.println("Total Ways:"+totalWaysWritten 
 				         + " Seg:"+totalSegsWritten
 				         + " Pkt:"+totalNodesWritten
 				         + " POI:"+totalPOIsWritten);
 	}
-//@Deprecated
-//	private void createNameList() {
-//		names1 = getNames();
-//		Hashtable<String, NameSearchEntry> canonList=new Hashtable<String, NameSearchEntry>();
-//		System.out.println("Names="+names.size());
-//		short cnt=0;
-//		for (MapName mapName : names) {
-//			NameSearchEntry entry;
-//			String canString=NumberCanon.canonial(mapName.getName());
-//			if (canonList.containsKey(canString)){
-//				entry = canonList.get(canString);
-//				entry.idx.add(new Short(cnt));
-//			} else {
-//				entry = new NameSearchEntry();
-//				entry.name=canString;
-//				entry.idx.add(new Short(cnt));
-//				canonList.put(canString, entry);
-//			}
-//			System.out.println("" + cnt + ": " + mapName.getName() 
-//					+ " in:" + getWayNameIndex(mapName.getIs_in(), null ) 
-//					+ "=" + mapName.getIsInNN() + " can:" + entry);
-//			cnt++;
+	
+//	@Deprecated
+//	private TreeSet<MapName> getNames(){
+//		TreeSet<MapName> wayNames = new TreeSet<MapName>();
+//		for (Way w : parser.ways) {
+//			String isIn=w.tags.get("is_in");
+//			addName(wayNames,w.getName(),isIn,w.getNameType());
+//			addName(wayNames, w.tags.get("nat_ref"),isIn,w.getNameType());
+//			addName(wayNames, w.tags.get("ref"),isIn,w.getNameType());
+//			
 //		}
-//		System.out.println("name=" +  names.size() + " canon=" + canonList.size());
-////		System.exit(0);
-//		try {
-//			FileOutputStream fo = null;
-//			DataOutputStream ds = null;
-//			FileOutputStream foi = new FileOutputStream(path+"/names-idx.dat");
-//			DataOutputStream dsi = new DataOutputStream(foi);
-//			String lastStr=null;
-//			fo = new FileOutputStream(path+"/names-0.dat");
-//			ds = new DataOutputStream(fo);
-//			int curPos=0;
-//			short idx=0;
-//			short fnr=1;
-//			short fcount=0;
-//			for (MapName mapName : names) {
-//				String string=mapName.getName();
-//				int eq=getEqualCount(string,lastStr);
-//				if ((eq==0 && fcount>100) || (fcount > 150 && eq < 2)){
-//					dsi.writeShort(idx);
-//					if (ds != null) ds.close();
-//					fo = new FileOutputStream(path+"/names-"+fnr+".dat");
-//					ds = new DataOutputStream(fo);
-////					System.out.println("wrote names " + fnr + " with "+ fcount + " names");
-//					fnr++;
-//					curPos=0;
-//					eq=0;
-//					fcount=0;
-//					lastStr=null;
-//				}
-//				ds.writeByte(eq-curPos);
-//				ds.writeUTF(string.substring(eq));
-//				ds.writeShort(getWayNameIndex(mapName.getIs_in(), null));
-////				System.out.println("" + (eq-curPos) + "'" +string.substring(eq)+"' '"+string);
-//				curPos=eq;
-//				lastStr=string;
-//				idx++;
-//				fcount++;
-////				ds.writeUTF(string);
-//			}
-//			dsi.writeShort(idx);
-//			ds.close();
-//			dsi.close();
-//		} catch (FileNotFoundException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
+//		for (Node n : parser.nodes.values()) {
+//			String isIn=n.tags.get("is_in");
+//			addName(wayNames,n.getName(),isIn,n.getNameType());
+//			addName(wayNames, n.tags.get("nat_ref"),isIn,n.getNameType());
+//			addName(wayNames, n.tags.get("ref"),isIn,n.getNameType());
 //		}
+////		System.out.println("found " + wayNames.size() + " names");
+//		return (wayNames);
 //	}
-	
-	private void createSearchList(){
-		try {
-			FileOutputStream fo = null;
-			DataOutputStream ds = null;
-			String lastStr=null;
-			String lastFid="";
-			int curPos=0;
-			for (Name mapName : names1.getCanons()) {
-				String string=mapName.getCanonFileName();
-				int eq=getEqualCount(string,lastStr);
-				if (! lastFid.equals(mapName.getCanonFileId())){
-					if (ds != null) ds.close();
-					lastFid=mapName.getCanonFileId();
-					String fileName = path+"/s"+lastFid+".d";
-					System.out.println("open "+fileName);
-					fo = new FileOutputStream(fileName);
-					ds = new DataOutputStream(fo);
-					curPos=0;
-					eq=0;
-					lastStr=null;
-				}
-				String wrString=string.substring(eq);
-				int delta = eq-curPos;
-				if (delta <0){
-					delta = -delta;
-					delta += 0x80;
-				}
-				
-					long l=0;
-					if (wrString.length() > 0)
-						l = Long.parseLong(wrString);
-					if (l < Byte.MAX_VALUE){
-						System.out.println("byte   " + (delta)  + " " + (byte) delta + " '" +string.substring(eq)+"' '"+mapName);
-						ds.writeByte(delta);
-						ds.writeByte((int) l);
-					} else if (l < Short.MAX_VALUE){
-						System.out.println("short  " + (delta) + " " + (byte) delta  + " '" +string.substring(eq)+"' '"+mapName);
-						ds.writeByte(delta | 0x20);
-						ds.writeShort((int) l);
-					} else if (l < Integer.MAX_VALUE){					
-						System.out.println("int    " + (delta) + " " + (byte) delta  + " '" +string.substring(eq)+"' '"+mapName);
-						ds.writeByte(delta | 0x40);
-						ds.writeInt((int) l);
-					} else {
-						System.out.println("long   " + (delta) + " " + (byte) delta  + " '" +string.substring(eq)+"' '"+mapName);
-						ds.writeByte(delta| 0x60);
-						ds.writeLong(l);
-					}
-				ds.writeShort(mapName.getIndex());
-				for (Entity e : mapName.getEntitys()){
-					Node center=null;
-					if (e instanceof Node) {
-						Node n = (Node) e;
-						ds.writeByte(n.getNameType());
-						center=n;
-						System.out.println("entryType " + n.getNameType() + " idx=" + mapName.getIndex());
-					}
-					if (e instanceof Way) {
-						Way w = (Way) e;
-						ds.writeByte(w.getNameType());
-						System.out.println("entryType " + w.getNameType() + " idx=" + mapName.getIndex());
-						center=w.getMidPoint();
-					}
-					ds.writeFloat(degToRad(center.lat));
-					ds.writeFloat(degToRad(center.lon));
-				}
-				ds.writeByte(0);
-//				ds.writeUTF(string.substring(eq));
-				curPos=eq;
-				lastStr=string;
-			}
-			ds.close();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	private void createNameList() {
-		names1 = getNames1();
-
-		try {
-			FileOutputStream fo = null;
-			DataOutputStream ds = null;
-			FileOutputStream foi = new FileOutputStream(path+"/names-idx.dat");
-			DataOutputStream dsi = new DataOutputStream(foi);
-			String lastStr=null;
-			fo = new FileOutputStream(path+"/names-0.dat");
-			ds = new DataOutputStream(fo);
-			int curPos=0;
-			short idx=0;
-			short fnr=1;
-			short fcount=0;
-			for (Name mapName : names1.getNames()) {
-				String string=mapName.getName();
-				int eq=getEqualCount(string,lastStr);
-				if ((eq==0 && fcount>100) || (fcount > 150 && eq < 2)){
-					dsi.writeShort(idx);
-					if (ds != null) ds.close();
-					fo = new FileOutputStream(path+"/names-"+fnr+".dat");
-					ds = new DataOutputStream(fo);
-//					System.out.println("wrote names " + fnr + " with "+ fcount + " names");
-					fnr++;
-					curPos=0;
-					eq=0;
-					fcount=0;
-					lastStr=null;
-				}
-				ds.writeByte(eq-curPos);
-				ds.writeUTF(string.substring(eq));
-//				ds.writeShort(getWayNameIndex(mapName.getIs_in(), null));
-//				System.out.println("" + (eq-curPos) + "'" +string.substring(eq)+"' '"+string);
-				curPos=eq;
-				lastStr=string;
-				idx++;
-				fcount++;
-//				ds.writeUTF(string);
-			}
-			dsi.writeShort(idx);
-			ds.close();
-			dsi.close();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	@Deprecated
-	private TreeSet<MapName> getNames(){
-		TreeSet<MapName> wayNames = new TreeSet<MapName>();
-		for (Way w : parser.ways) {
-			String isIn=w.tags.get("is_in");
-			addName(wayNames,w.getName(),isIn,w.getNameType());
-			addName(wayNames, w.tags.get("nat_ref"),isIn,w.getNameType());
-			addName(wayNames, w.tags.get("ref"),isIn,w.getNameType());
-			
-		}
-		for (Node n : parser.nodes.values()) {
-			String isIn=n.tags.get("is_in");
-			addName(wayNames,n.getName(),isIn,n.getNameType());
-			addName(wayNames, n.tags.get("nat_ref"),isIn,n.getNameType());
-			addName(wayNames, n.tags.get("ref"),isIn,n.getNameType());
-		}
-//		System.out.println("found " + wayNames.size() + " names");
-		return (wayNames);
-	}
 	private Names getNames1(){
 		Names na=new Names();
 		for (Way w : parser.ways) {
@@ -357,50 +141,6 @@ public class CreateGpsMidData {
 		return (na);
 	}
 
-	@Deprecated
-	private void addName(TreeSet<Name> wayNames, Entity w) {
-		if (w.getName() == null )
-			return;
-		if (w.getName().trim().length() == 0){
-			return;
-		}
-		Name mn =new Name(w);
-		if (! wayNames.add(mn)){
-			System.out.println("already there:" + mn);
-			Name mnNext=new Name(w.getName()+"\0");
-			SortedSet<Name> subSet=wayNames.subSet(mn, mnNext);
-			Name mnExist=subSet.first();
-			mnExist.addEntity(w);
-		}
-	}
-
-	@Deprecated
-	private void addName(TreeSet<MapName> wayNames, String v,String in,byte type) {
-		if (v != null){
-			String tv=v.trim();
-			if (tv.length() > 0)
-				wayNames.add(new MapName(v,in));
-		}
-	}
-    @Deprecated
-	private int getWayNameIndex(String name,String isIn){
-		int index=0;
-		for (MapName mapName : names) {
-			String s=mapName.getName();
-			if (s.equalsIgnoreCase(name)) {
-				if (isIn != null){
-					if (mapName.getIsInNN().equalsIgnoreCase(isIn)){
-//						System.out.println("found String " + name + " at " + index);
-						return index;	
-					}				
-				} else {
-					return index;
-				}
-			}
-			index++;
-		}
-		return -1;
-	}
 	
 	public void exportMapToMid(int zl){
 		System.out.println("Total ways : " + parser.ways.size() + "  Nodes : " + parser.nodes.size());
@@ -651,8 +391,8 @@ public class CreateGpsMidData {
 	private void writeNode(Node n,DataOutputStream ds,int type) throws IOException{
 		int flags=0;
 //		System.out.println("write node id="+n.renumberdId );
-		ds.writeFloat(degToRad(n.lat));
-		ds.writeFloat(degToRad(n.lon));
+		ds.writeFloat(MyMath.degToRad(n.lat));
+		ds.writeFloat(MyMath.degToRad(n.lon));
 		if (type == INODE){
 			String name = n.getName();
 			if (name != null)
@@ -739,10 +479,10 @@ public class CreateGpsMidData {
 				flags+=8;
 			}
 			ds.writeByte(flags);
-			ds.writeFloat(degToRad(b.minLat));
-			ds.writeFloat(degToRad(b.minLon));
-			ds.writeFloat(degToRad(b.maxLat));
-			ds.writeFloat(degToRad(b.maxLon));
+			ds.writeFloat(MyMath.degToRad(b.minLat));
+			ds.writeFloat(MyMath.degToRad(b.minLon));
+			ds.writeFloat(MyMath.degToRad(b.maxLat));
+			ds.writeFloat(MyMath.degToRad(b.maxLon));
 //			ds.writeByte(0x58);
 			ds.writeByte(type);
 			if ((flags & 1) == 1){
@@ -775,9 +515,6 @@ public class CreateGpsMidData {
 		}
 	}
 
-    public float degToRad(double deg) {
-        return (float) (deg * (Math.PI / 180.0d));
-    }
 
 	/**
 	 * @param c

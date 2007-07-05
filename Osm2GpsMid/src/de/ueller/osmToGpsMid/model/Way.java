@@ -34,7 +34,9 @@ public class Way extends Entity implements Comparable<Way>{
 		return 0;
 	}
 		
-
+	public boolean isHighway(){
+		return (tags.get("highway") != null);
+	}
 
 	private byte getHighwayType(){
 		String t = (String) tags.get("highway");
@@ -270,6 +272,12 @@ public class Way extends Entity implements Comparable<Way>{
 		return "Way "+ getName() + " with "+ lines.size() + " segments";
 	}
 
+	/**
+	 * @return
+	 */
+	public String getIsIn() {
+		return tags.get("is_in");
+	}
 	/**
 	 * @return
 	 */

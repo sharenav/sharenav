@@ -77,5 +77,17 @@ public class Names {
 		return -1;
 	}
 
-    
+	public int getEqualCount(String s1, String s2){
+		if (s1== null || s2 == null)
+			return 0;
+		int l1=s1.length();
+		int l2=s2.length();
+		int l=(l1 < l2)? l1 : l2;
+		for (int loop=0; loop < l;loop++){
+			if (s1.charAt(loop) != s2.charAt(loop))
+				return loop;
+		}
+		return l;
+	}
+
 }

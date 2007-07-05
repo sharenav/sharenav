@@ -44,6 +44,7 @@ public class BundleGpsMid {
 				CreateGpsMidData cd=new CreateGpsMidData(parser,target.getCanonicalPath());
 				cd.setConfiguration(c);
 				new SplitLongWays(parser);
+				new CalcNearBy(parser);
 				cd.exportMapToMid();
 				pack(c);
 				

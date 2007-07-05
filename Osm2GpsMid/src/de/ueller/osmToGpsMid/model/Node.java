@@ -1,5 +1,8 @@
 package de.ueller.osmToGpsMid.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import de.ueller.osmToGpsMid.Configuration;
 import de.ueller.osmToGpsMid.Constants;
 
@@ -21,7 +24,9 @@ public class Node extends Entity{
 	 * type of this Node
 	 */
 	public byte type=-1;
+	public byte noConfType=-1;
 	public boolean used=false;
+	private Set<Way> connectedWays = new HashSet<Way>();
 	
 	public Node(float node_lat, float node_lon, long id) {
 		lat = node_lat;
@@ -56,11 +61,19 @@ public class Node extends Entity{
 	}
 	
 	public byte getType(Configuration c){
-		if (type == -1) {
-			type = calcType(c);
+		if (c != null){
+			if (type == -1) {
+				type = calcType(c);
+			}
+			return type;
+		} else {
+			if (noConfType == -1) {
+				noConfType = calcType(c);
+			}
+			return noConfType;			
 		}
-//		System.out.println("Read type for id="+id+" as=" + type);		
-		return type;
+	
+
 	}
 	public byte calcType(Configuration c){
 		String p=getPlace();
@@ -71,7 +84,7 @@ public class Node extends Entity{
 			if ("hamlet".equals(p)) return Constants.NODE_PLACE_HAMLET;
 			if ("suburb".equals(p)) return Constants.NODE_PLACE_SUBURB;
 		}
-		if (c.useAmenity){
+		if (c!=null && c.useAmenity){
 		p=getAmenity();
 		if (p != null){
 			if ("parking".equals(p)) return Constants.NODE_AMENITY_PARKING;
@@ -80,7 +93,7 @@ public class Node extends Entity{
 			if ("fuel".equals(p)) return Constants.NODE_AMENITY_FUEL;
 		}
 		}
-		if (c.useRailway){
+		if (c!=null && c.useRailway){
 		p=getRailway();
 		if (p != null){
 			if ("station".equals(p)) return Constants.NODE_RAILWAY_STATION;
