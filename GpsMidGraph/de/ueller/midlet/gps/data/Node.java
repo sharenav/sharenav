@@ -75,20 +75,20 @@ public class Node extends Entity {
 
 
 	public float getLatitude() {
-		return ProjMath.radToDeg(radlat);
+		return radlat * MoreMath.FAC_RADTODEC;
 	}
 
 	
 	public float getLongitude() {
-		return ProjMath.radToDeg(radlon);
+		return radlon * MoreMath.FAC_RADTODEC;
 	}
 	public void setLatitude(float l) {
-		radlat=ProjMath.degToRad(l);
+		radlat=l*MoreMath.FAC_DECTORAD;
 	}
 
 	
 	public void setLongitude(float l) {
-		radlon=ProjMath.degToRad(l);
+		radlon=l*MoreMath.FAC_DECTORAD;
 	}
 	
     /**
@@ -98,8 +98,8 @@ public class Node extends Entity {
      * @param lon longitude in decimal degrees
      */
     public void setLatLon(float lat, float lon) {
-        radlat = ProjMath.degToRad(normalize_latitude(lat));
-        radlon = ProjMath.degToRad(wrap_longitude(lon));
+        radlat = normalize_latitude(lat)*MoreMath.FAC_DECTORAD;
+        radlon = wrap_longitude(lon)*MoreMath.FAC_DECTORAD;
     }
 
     /**

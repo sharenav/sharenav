@@ -1,11 +1,11 @@
-package de.ueller.midlet.gps.tile;
+package de.ueller.gpsMid.mapData;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Vector;
 
-import javax.microedition.io.Connector;
-import javax.microedition.io.file.FileConnection;
+//import javax.microedition.io.Connector;
+//import javax.microedition.io.file.FileConnection;
 
 import de.ueller.midlet.gps.Logger;
 
@@ -38,12 +38,12 @@ public abstract class QueueReader implements Runnable{
 			InputStream is = QueueReader.class.getResourceAsStream(name);
 			return is;
 		} else {
-			try {
-				FileConnection fc = (FileConnection)Connector.open("file:///e:" + name);
-				return(fc.openInputStream());
-			} catch (IOException e) {
+//			try {
+//				FileConnection fc = (FileConnection)Connector.open("file:///e:" + name);
+//				return(fc.openInputStream());
+//			} catch (IOException e) {
 				return null;
-			}
+//			}
 		}
 	}
 	public synchronized void incUnusedCounter() {

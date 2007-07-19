@@ -11,15 +11,11 @@ import java.io.IOException;
 import javax.microedition.lcdui.Graphics;
 
 import net.sourceforge.jmicropolygon.PolygonGraphics;
-
-import de.ueller.gps.data.Configuration;
-import de.ueller.midlet.gps.Logger;
+import de.ueller.gpsMid.mapData.SingleTile;
 import de.ueller.midlet.gps.tile.C;
 import de.ueller.midlet.gps.tile.PaintContext;
-import de.ueller.midlet.gps.tile.SingleTile;
-import de.ueller.midlet.graphics.Street;
 
-public class Way  extends Entity{
+public class Way extends Entity{
 	public int maxspeed;
 	public Short isInIdx=null;
 	public short[][] paths;

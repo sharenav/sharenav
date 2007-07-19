@@ -160,6 +160,9 @@
 			<sources>
 				<!-- always include the base folder: -->
 				<source dir="src"/>
+				<!-- this are the render and data classes without reference
+				     to any J2Me Classes ( for usage in J2Se enviroment ) -->
+				<source dir="GpsMidGraph"/>
 				<!--  include customization specific source folders: -->
 				<source dir="srcLocationApi" if="polish.api.locationapi"/>
 			</sources>

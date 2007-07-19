@@ -14,11 +14,11 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import de.ueller.gpsMid.mapData.QueueReader;
 import de.ueller.midlet.gps.Logger;
 
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.data.MapName;
-import de.ueller.midlet.gps.tile.QueueReader;
 import de.ueller.midlet.gps.tile.StringEntry;
 
 public class Names implements Runnable {

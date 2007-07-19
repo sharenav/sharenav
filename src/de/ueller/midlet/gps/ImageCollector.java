@@ -3,13 +3,13 @@ package de.ueller.midlet.gps;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
+import de.ueller.gpsMid.mapData.QueueDataReader;
+import de.ueller.gpsMid.mapData.QueueReader;
+import de.ueller.gpsMid.mapData.Tile;
 import de.ueller.midlet.gps.data.IntPoint;
 import de.ueller.midlet.gps.data.Mercator;
 import de.ueller.midlet.gps.tile.Images;
 import de.ueller.midlet.gps.tile.PaintContext;
-import de.ueller.midlet.gps.tile.QueueDataReader;
-import de.ueller.midlet.gps.tile.QueueReader;
-import de.ueller.midlet.gps.tile.Tile;
 /*
  * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net 
  * See Copying

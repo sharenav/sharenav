@@ -2,7 +2,7 @@
  * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net 
  * See Copying
  */
-package de.ueller.midlet.gps.tile;
+package de.ueller.gpsMid.mapData;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -14,6 +14,9 @@ import de.ueller.gps.data.Configuration;
 import de.ueller.midlet.gps.Logger;
 
 import de.ueller.midlet.gps.data.Way;
+import de.ueller.midlet.gps.tile.C;
+import de.ueller.midlet.gps.tile.PaintContext;
+import de.ueller.midlet.gps.tile.QueueableTile;
 
 public class SingleTile extends Tile implements QueueableTile {
 

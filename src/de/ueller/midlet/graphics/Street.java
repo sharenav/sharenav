@@ -2,7 +2,6 @@ package de.ueller.midlet.graphics;
 
 import javax.microedition.lcdui.Graphics;
 
-import de.ueller.midlet.gps.data.MoreMath;
 
 public class Street {
 	public static void draw(Graphics g,

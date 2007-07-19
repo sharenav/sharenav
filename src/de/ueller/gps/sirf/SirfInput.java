@@ -57,8 +57,7 @@ public class SirfInput implements Runnable, LocationMsgProducer{
 		//#debug debug
 		logger.debug("start SIRF receiver");
 		try {
-			//#debug debug
-			logger.debug("eat up " + ins.available() + "bytes");
+			receiver.receiveMessage("eat up " + ins.available() + "bytes");
 			//#debug debug
 			logger.debug("addr of ins:" + ins);
 			while (ins.available() > 1022)

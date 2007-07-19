@@ -1,9 +1,11 @@
-package de.ueller.midlet.gps.tile;
+package de.ueller.gpsMid.mapData;
 
 import java.io.DataInputStream;
 import java.io.IOException;
 
 import de.ueller.midlet.gps.Logger;
+import de.ueller.midlet.gps.tile.PaintContext;
+import de.ueller.midlet.gps.tile.QueueableTile;
 
 public class FileTile extends Tile implements QueueableTile {
 	byte zl;

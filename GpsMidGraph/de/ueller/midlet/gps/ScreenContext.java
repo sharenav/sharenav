@@ -4,11 +4,11 @@ package de.ueller.midlet.gps;
  * See Copying
  */
 
+import de.ueller.gpsMid.mapData.QueueDataReader;
+import de.ueller.gpsMid.mapData.QueueReader;
 import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.data.Projection;
-import de.ueller.midlet.gps.tile.QueueDataReader;
-import de.ueller.midlet.gps.tile.QueueReader;
 
 public class ScreenContext {
 

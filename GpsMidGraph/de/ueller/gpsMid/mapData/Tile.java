@@ -2,21 +2,22 @@
  * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net 
  * See Copying
  */
-package de.ueller.midlet.gps.tile;
+package de.ueller.gpsMid.mapData;
 
 import de.ueller.midlet.gps.ScreenContext;
 
 import de.ueller.midlet.gps.data.IntPoint;
 import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.Projection;
+import de.ueller.midlet.gps.tile.PaintContext;
 
 
 public abstract class Tile {
-	float minLat;
-	float maxLat;
-	float minLon;
-	float maxLon;
-	short fileId=0;
+	public float minLat;
+	public float maxLat;
+	public float minLon;
+	public float maxLon;
+	public short fileId=0;
 	public byte	lastUse	= 0;
 //	public static Trace				trace				= null;
 
@@ -38,6 +39,7 @@ public abstract class Tile {
 		if(minLon > pc.screenRU.radlon) {
 			return false;
 		}
+//		System.out.println("Paint gpsMidMap");
 		return true;
 	}
 	public void getCenter(Node center){

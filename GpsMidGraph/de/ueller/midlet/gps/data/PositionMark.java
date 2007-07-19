@@ -6,7 +6,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import de.ueller.midlet.gps.tile.SingleTile;
+import de.ueller.gpsMid.mapData.SingleTile;
 
 public class PositionMark {
 	int id=-1;

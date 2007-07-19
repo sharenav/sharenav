@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import de.ueller.gps.data.SearchResult;
+import de.ueller.gpsMid.mapData.QueueReader;
 import de.ueller.midlet.gps.GuiSearch;
 import de.ueller.midlet.gps.Logger;
 

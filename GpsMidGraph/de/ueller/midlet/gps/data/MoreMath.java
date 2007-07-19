@@ -49,7 +49,14 @@ public class MoreMath {
 //	private final static Logger				logger			= Logger
 //																	.getInstatance(MoreMath.class);
 
-
+	/**
+	 * 180/Pi
+	 */
+	final public static transient float FAC_RADTODEC =  180.0f/(float)Math.PI;
+	/**
+	 * Pi/180
+	 */
+	final public static transient float FAC_DECTORAD =  (float)Math.PI / 180f;
 	/**
 	 * 2*Math.PI
 	 */
@@ -628,7 +635,4 @@ public class MoreMath {
 			return f;
 		}
 	}
-	
-	
-
 }

@@ -12,8 +12,12 @@ import javax.microedition.location.LocationProvider;
 import de.ueller.gps.data.Position;
 import de.ueller.midlet.gps.LocationMsgProducer;
 import de.ueller.midlet.gps.LocationMsgReceiver;
+import de.ueller.midlet.gps.Logger;
+import de.ueller.midlet.gps.Trace;
 
 public class JSR179Input implements LocationListener ,LocationMsgProducer{
+	//#debug
+	private final static Logger logger = Logger.getInstance(JSR179Input.class,Logger.TRACE);
 
     /** location provider */
     private LocationProvider locationProvider = null;
@@ -23,6 +27,8 @@ public class JSR179Input implements LocationListener ,LocationMsgProducer{
 	
 
 	public JSR179Input(LocationMsgReceiver receiver){
+//#debug
+		logger.info("start JSR179 LocationProvider");
 		this.receiver = receiver;
 		createLocationProvider();
 	}
@@ -33,21 +39,29 @@ public class JSR179Input implements LocationListener ,LocationMsgProducer{
      * @throws Exception 
      */
     void createLocationProvider() {
+//#debug
+    	logger.trace("enter createLocationProvider()");
         if (locationProvider == null) {
             Criteria criteria = new Criteria();
 
             try {
                 locationProvider = LocationProvider.getInstance(criteria);
             } catch (LocationException le) {
-                System.out.println("Cannot create LocationProvider for this criteria.");
+            	//#debug
+                logger.error("Cannot create LocationProvider for this criteria.");
+                locationProvider=null;
         		receiver.locationDecoderEnd("no JSR179 Provider");
             }
             locationProvider.setLocationListener(this, 1, -1, -1);
             
         }
+        //#debug
+    	logger.trace("exit createLocationProvider()");
     }
 
 	public void locationUpdated(LocationProvider provider, Location location) {
+		//#debug
+    	logger.trace("enter locationUpdated(provider,location)");
 		Coordinates coordinates = location.getQualifiedCoordinates();
         pos.latitude = (float) coordinates.getLatitude();
         pos.longitude = (float) coordinates.getLongitude();
@@ -56,24 +70,30 @@ public class JSR179Input implements LocationListener ,LocationMsgProducer{
         pos.speed=location.getSpeed();
         pos.date.setTime(location.getTimestamp());
         receiver.receivePosItion(pos);
-//        System.out.println("got pos " + pos.latitude + " " + pos.longitude);
-
+//    	logger.trace("exit locationUpdated(provider,location)");
 	}
 
 	public void providerStateChanged(LocationProvider arg0, int arg1) {
+		//#debug
+		logger.trace("enter providerStateChanged(locationProvider,"+arg1+"");
 		if (LocationProvider.AVAILABLE != arg1){
 			receiver.receiveMessage("provider stopped");
-			close();
+			receiver.locationDecoderEnd();
 		}
+		//#debug
+    	logger.trace("exit providerStateChanged(locationProvider,"+arg1+"");
 	}
 	
 	public void close() {
-		if (locationProvider != null){
-			locationProvider.reset();
-			
-		}
+		//#debug
+    	logger.trace("enter close()");
+//		if (locationProvider != null){
+//			locationProvider.setLocationListener(null, -1, -1, -1);
+//		}
 		locationProvider=null;
 		receiver.locationDecoderEnd();
+		//#debug
+    	logger.trace("exit close()");
 	}
 
 }

@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="resources"/>
-	<classpathentry kind="con" path="J2MELIB"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="src" path="srcLocationApi"/>
+	<classpathentry kind="src" path="GpsMidGraph"/>
+	<classpathentry kind="lib" path="C:/java/J2ME-Polish/import/mmapi.jar"/>
+	<classpathentry kind="lib" path="C:/java/J2ME-Polish/import/midp-2.0.jar"/>
+	<classpathentry kind="lib" path="C:/java/J2ME-Polish/import/cldc-1.1.jar"/>
+	<classpathentry kind="lib" path="C:/java/J2ME-Polish/import/btapi.jar"/>
+	<classpathentry kind="lib" path="C:/java/J2ME-Polish/import/location.jar"/>
+	<classpathentry kind="lib" path="C:/java/J2ME-Polish/import/m3g.jar"/>
+	<classpathentry kind="lib" path="C:/java/J2ME-Polish/import/nokia-ui.jar"/>
+	<classpathentry kind="lib" path="C:/java/J2ME-Polish/import/pdaapi.jar"/>
+	<classpathentry kind="lib" path="C:/java/J2ME-Polish/import/wmapi.jar"/>
+	<classpathentry kind="lib" path="C:/java/J2ME-Polish/import/enough-j2mepolish-client.jar"/>
+	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

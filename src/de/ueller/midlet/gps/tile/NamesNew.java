@@ -4,6 +4,9 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import de.ueller.gpsMid.mapData.QueueReader;
+import de.ueller.gpsMid.mapData.Tile;
+
 public class NamesNew extends QueueReader {
 	private short[] startIndexes=null;
 

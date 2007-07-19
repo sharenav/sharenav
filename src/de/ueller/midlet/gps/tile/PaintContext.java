@@ -9,6 +9,8 @@ import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
 import de.ueller.gps.data.Configuration;
+import de.ueller.gpsMid.mapData.QueueDataReader;
+import de.ueller.gpsMid.mapData.QueueReader;
 import de.ueller.midlet.gps.ScreenContext;
 import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.data.IntPoint;

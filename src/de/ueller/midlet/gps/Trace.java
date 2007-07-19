@@ -32,19 +32,19 @@ import de.ueller.gps.jsr179.JSR179Input;
 
 import de.ueller.gps.nmea.NmeaInput;
 import de.ueller.gps.sirf.SirfInput;
+import de.ueller.gpsMid.mapData.DictReader;
+import de.ueller.gpsMid.mapData.QueueDataReader;
+import de.ueller.gpsMid.mapData.QueueDictReader;
+import de.ueller.gpsMid.mapData.QueueReader;
+import de.ueller.gpsMid.mapData.Tile;
 import de.ueller.midlet.gps.data.Mercator;
 import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.data.Projection;
 import de.ueller.midlet.gps.names.Names;
 import de.ueller.midlet.gps.tile.C;
-import de.ueller.midlet.gps.tile.DictReader;
 import de.ueller.midlet.gps.tile.Images;
 import de.ueller.midlet.gps.tile.PaintContext;
-import de.ueller.midlet.gps.tile.QueueDataReader;
-import de.ueller.midlet.gps.tile.QueueDictReader;
-import de.ueller.midlet.gps.tile.QueueReader;
-import de.ueller.midlet.gps.tile.Tile;
 import de.ueller.midlet.gps.GpsMidDisplayable;
 
 public class Trace extends Canvas implements CommandListener, LocationMsgReceiver,
@@ -162,8 +162,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	// start the LocationProvider in background
 	public void run() {
 		if (running){
-			//#debug error
-			logger.error("thread already running");
+			receiveMessage("thread already running");
 			return;
 		}
 		running=true;
