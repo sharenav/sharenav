@@ -2,7 +2,7 @@
          default="deploy"
          basedir=".">
 
-	<property name="planet" value="/Massenspeicher/planet-070613.osm"/>
+	<property name="planet" value="/Massenspeicher/planet-070711.osm"/>
 	<property name="testplanet" value="/Massenspeicher/myStreetMap_harald.osm"/>
 	<property name="testplanet-lon" value="/Massenspeicher/myStreetMap-london-city.osm"/>
 	<property name="src.dir" value="${basedir}/src"/>
@@ -13,7 +13,7 @@
 	<property name="lib.dir" value="${basedir}/lib"/>
 
    	<property name="dist.dir" value="${basedir}/dist"/>
-	<property name="version" value="0.2.29"/>
+	<property name="version" value="0.2.30"/>
 	<property name="buildlib"
 	             value="buildlib/explode.jar"/>
 
@@ -131,7 +131,7 @@
    </target>
 	
 	<target name="app-germany" depends="deploy">
-		<java jar="${dist.dir}/${ant.project.name}-${version}.jar" fork="true" maxmemory="1024m">
+		<java jar="${dist.dir}/${ant.project.name}-${version}.jar" fork="true" maxmemory="1280m">
 			<arg value="${planet}"/>
 		  <arg value="germany"/>
 		</java>

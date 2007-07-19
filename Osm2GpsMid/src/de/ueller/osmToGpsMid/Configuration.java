@@ -13,7 +13,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.PropertyResourceBundle;
 import java.util.Random;
@@ -26,7 +25,6 @@ import de.ueller.osmToGpsMid.model.Bounds;
  *
  */
 public class Configuration {
-		private final String file;
 		private ResourceBundle rb;
 		private ResourceBundle vb;
 		private String tmp=null;
@@ -47,7 +45,6 @@ public class Configuration {
 
 		public Configuration(String planet,String file) {
 			this.planet = planet;
-			this.file = file;
 			try {
 				InputStream cf;
 				try {

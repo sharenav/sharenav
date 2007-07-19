@@ -11,25 +11,19 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.SortedSet;
 import java.util.TreeSet;
 
 import de.ueller.osmToGpsMid.model.Bounds;
-import de.ueller.osmToGpsMid.model.Entity;
 import de.ueller.osmToGpsMid.model.Line;
 import de.ueller.osmToGpsMid.model.MapName;
-import de.ueller.osmToGpsMid.model.NameSearchEntry;
 import de.ueller.osmToGpsMid.model.Node;
 import de.ueller.osmToGpsMid.model.Sequence;
 import de.ueller.osmToGpsMid.model.Tile;
 import de.ueller.osmToGpsMid.model.Way;
-import de.ueller.osmToGpsMid.model.name.Name;
 import de.ueller.osmToGpsMid.model.name.Names;
-import de.ueller.osmToGpsMid.model.name.NumberCanon;
 
 
 
@@ -50,19 +44,6 @@ public class CreateGpsMidData {
 	private int totalSegsWritten=0;
 	private int totalNodesWritten=0;
 	private int totalPOIsWritten=0;
-	
-	private static char letters[][] = 
-	       {{'1','-','.',','},
-		    {'2','A','a','B','b','C','c','ä','Ä'},
-		    {'3','D','d','E','e','F','f'},
-		    {'4','G','g','H','h','I','i'},
-		    {'5','J','j','K','k','L','l'},
-		    {'6','M','m','N','n','O','o','Ö','ö'},
-		    {'7','P','p','Q','q','R','r','S','s','ß'},
-		    {'8','T','t','U','u','V','v','Ü','ü'},
-		    {'9','W','w','X','x','Y','y','Z','z'},
-		   };
-
 	
 	
 	public CreateGpsMidData(OxParser parser,String path) {
@@ -241,11 +222,11 @@ public class CreateGpsMidData {
 				totalNodesWritten+=nodes.size();
 				totalWaysWritten+=ways.size();
 				Collections.sort(ways);
-				if (zl==1 && fid==5){
-					Way way = ways.get(15);
-					
-					System.out.println("error Way = " + way);
-				}
+//				if (zl==1 && fid==5){
+//					Way way = ways.get(15);
+//					
+//					System.out.println("error Way = " + way);
+//				}
 				Bounds bBox=new Bounds();
 				for (Way w: ways){
 					totalSegsWritten+=w.lines.size();
