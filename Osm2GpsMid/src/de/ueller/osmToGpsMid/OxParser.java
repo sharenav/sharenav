@@ -43,6 +43,7 @@ public class OxParser extends MinML2 {
 
 	public OxParser(InputStream i) {
 		System.out.println("OSM XML parser started...");
+		configuration=new Configuration();
 		init(i);
 	}
 

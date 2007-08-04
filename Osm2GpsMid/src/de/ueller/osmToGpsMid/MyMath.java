@@ -15,6 +15,14 @@ import de.ueller.osmToGpsMid.model.Node;
  *
  */
 public class MyMath {
+	
+	public final static float ALT_NN=6378140f;
+	public final static double ALT_NND=6378140d;
+	final static float FEET_TO_M=0.34f;
+	public final static float CIRCUMMAX=40075004f;
+	public final static float CIRCUMMAX_PI=(float)(40075004.0/(Math.PI*2));
+
+	
     public static float degToRad(double deg) {
         return (float) (deg * (Math.PI / 180.0d));
     }
@@ -42,18 +50,60 @@ public class MyMath {
 
         return 2.0f * (float) Math.asin(rval);
     }
-	public final static float ALT_NN=6378140f;
-	final static float FEET_TO_M=0.34f;
-	public final static float CIRCUMMAX=40075004f;
-	public final static float CIRCUMMAX_PI=(float)(40075004.0/(Math.PI*2));
+    final public static double haversine_distance(double lat1, double lon1,
+    		double lat2, double lon2) {
+    	double latSin = Math.sin((lat2-lat1)/2d);
+    	double longSin = Math.sin((lon2-lon1)/2d);
+		double a = (latSin * latSin) + (Math.cos(lat1)*Math.cos(lat2)*longSin*longSin);
+    	double c=2d * Math.atan2(Math.sqrt(a),Math.sqrt(1d-a));
+    	return ALT_NND*c;
+    }
+    
+    final private static double bearing_int(double lat1, double lon1,
+    		double lat2, double lon2){
+    	double dLat=lat2-lat1;
+    	double dLon=lon2-lon1;
+    	double y=Math.sin(dLon) * Math.cos(lat2);
+    	double x=Math.cos(lat1)*Math.sin(lat2)-Math.sin(lat1)*Math.cos(lat2)*Math.cos(dLon);
+    	return Math.atan2(y,x);
+    }
+    
 	
+//	public final static long dist(Node from,Node to){
+//		float c=spherical_distance(
+//				(float)Math.toRadians(from.lat),
+//				(float)Math.toRadians(from.lon),
+//				(float)Math.toRadians(to.lat),
+//				(float)Math.toRadians(to.lon));
+//		return (long)(c*CIRCUMMAX_PI);
+//	}
 	public final static long dist(Node from,Node to){
-		float c=spherical_distance(
-				(float)Math.toRadians(from.lat),
-				(float)Math.toRadians(from.lon),
-				(float)Math.toRadians(to.lat),
-				(float)Math.toRadians(to.lon));
-		return (long)(c*CIRCUMMAX_PI);
+		return (long)( haversine_distance(
+				Math.toRadians(from.lat),
+				Math.toRadians(from.lon),
+				Math.toRadians(to.lat),
+				Math.toRadians(to.lon)) * 10f);
+	}
+	
+	/**
+	 * calculate the start bearing in 1/2 degree so result 90 indicates 180 Grad. 
+	 * @param from
+	 * @param to
+	 * @return
+	 */
+	public final static byte bearing_start(Node from,Node to){
+		double b=bearing_int(
+				Math.toRadians(from.lat),
+				Math.toRadians(from.lon),
+				Math.toRadians(to.lat),
+				Math.toRadians(to.lon));
+		return (byte) Math.round(Math.toDegrees(b)/2);
+	}
+	public final static byte inversBearing(byte bearing){
+		int invBearing=bearing+90;
+		if (invBearing > 90)
+			invBearing -=180;
+		return (byte) invBearing;
 	}
 
 }

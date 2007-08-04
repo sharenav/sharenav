@@ -44,11 +44,14 @@ public class Constants {
 	public final static byte WAY_HIGHWAY_MINOR=6;
 	public final static byte WAY_HIGHWAY_RESIDENTIAL=7;
 	public final static byte WAY_HIGHWAY_UNCLASSIFIED=8;
-	public final static byte WAY_RAILWAY_UNCLASSIFIED = 9;
-	public final static byte WAY_RAILWAY_RAIL = 10;
-	public final static byte WAY_RAILWAY_SUBWAY = 11;
-	public final static byte WAY_JUNCTION_ROUNDABOUT = 12;
-	public final static byte WAY_WATERWAY_RIVER=13;
+	// ways after unclassified are not accessible by car
+	public final static byte WAY_HIGHWAY_CYCLEWAY=9;
+	public final static byte WAY_HIGHWAY_FOOTWAY=10;
+	public final static byte WAY_RAILWAY_UNCLASSIFIED = 11;
+	public final static byte WAY_RAILWAY_RAIL = 12;
+	public final static byte WAY_RAILWAY_SUBWAY = 13;
+	public final static byte WAY_JUNCTION_ROUNDABOUT = 14;
+	public final static byte WAY_WATERWAY_RIVER=15;
 	
 	public final static byte AREA_AMENITY_UNCLASSIFIED=50;
 	public final static byte AREA_AMENITY_PARKING=51;

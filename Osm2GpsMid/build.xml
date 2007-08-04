@@ -2,7 +2,7 @@
          default="deploy"
          basedir=".">
 
-	<property name="planet" value="/Massenspeicher/planet-070711.osm"/>
+	<property name="planet" value="/Massenspeicher/planet-070718.osm"/>
 	<property name="testplanet" value="/Massenspeicher/myStreetMap_harald.osm"/>
 	<property name="testplanet-lon" value="/Massenspeicher/myStreetMap-london-city.osm"/>
 	<property name="src.dir" value="${basedir}/src"/>
@@ -13,7 +13,7 @@
 	<property name="lib.dir" value="${basedir}/lib"/>
 
    	<property name="dist.dir" value="${basedir}/dist"/>
-	<property name="version" value="0.2.30"/>
+	<property name="version" value="0.2.31"/>
 	<property name="buildlib"
 	             value="buildlib/explode.jar"/>
 
@@ -58,6 +58,7 @@
    		<entry key="useNatural" value="true"/>
    		<entry key="useLeisure" value="true"/>
    		<entry key="useWaterway" value="true"/>
+   		<entry key="midlet.name" value="GpsMid"/>
 
    	</propertyfile>
    </target>
@@ -185,7 +186,13 @@
 		  <arg value="hh-nue"/>
 		</java>
 	</target>	
-
+	<target name="web-demo" depends="deploy">
+		<java jar="${dist.dir}/${ant.project.name}-${version}.jar" fork="true" maxmemory="1024m">
+			<arg value="${planet}"/>
+		  <arg value="Munic-demo"/>
+		</java>
+	</target>	
+	
 	<target name="all-maps" depends="app-germany,
 	app-south-germany,
 	app-north-germany,

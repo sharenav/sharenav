@@ -73,6 +73,13 @@ public class Configuration {
 			}
 		}
 		
+		/**
+		 * 
+		 */
+		public Configuration() {
+			planet="TEST";
+		}
+
 		public boolean use(String key){
 			if ("true".equalsIgnoreCase(getString(key))){
 				return true;
@@ -95,6 +102,13 @@ public class Configuration {
 		}
 		public String getName(){
 			return getString("bundle.name");
+		}
+		public String getMidletName(){
+		    String mn=getString("midlet.name");
+		    if (mn != null)
+		    	return mn;
+		    else 
+		    	return "GpsMid";
 		}
 		
 		public InputStream getJarFile(){

@@ -11,7 +11,7 @@ public class Node extends Entity{
 	/**
 	 * the position in target array of nodes
 	 */
-	public short renumberdId;
+	public int renumberdId;
 	/**
 	 * Latitude of this node
 	 */
@@ -26,7 +26,8 @@ public class Node extends Entity{
 	public byte type=-1;
 	public byte noConfType=-1;
 	public boolean used=false;
-	private Set<Way> connectedWays = new HashSet<Way>();
+	public byte connectedLineCount=0;
+//	private Set<Way> connectedWays = new HashSet<Way>();
 	
 	public Node(float node_lat, float node_lon, long id) {
 		lat = node_lat;

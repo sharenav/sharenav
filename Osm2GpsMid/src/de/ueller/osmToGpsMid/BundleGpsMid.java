@@ -26,6 +26,7 @@ public class BundleGpsMid {
 			try {
 				Configuration c=new Configuration(args[0],args[1]);
 				System.out.println("create Bundle for " + c.getName());
+				System.out.println("Midlet Name: " + c.getMidletName());
 				String tmpDir = c.getTempDir();
 				System.out.println("unpack Application to " + tmpDir);
 				expand(c, tmpDir);
@@ -71,14 +72,27 @@ public class BundleGpsMid {
 				writeFile(stream,tmpDir+"/"+ze.getName());
 			}
 		}
+		File manifest=new File(tmpDir+"/META-INF/MANIFEST.MF");
+		FileWriter fw=new FileWriter(manifest);
+		fw.write("Manifest-Version: 1.0");
+		fw.write("MIDlet-Name: "+c.getMidletName());
+		fw.write("MIDlet-Version: "+c.getVersion());
+		fw.write("MIDlet-Vendor: Harald Mueller");
+		fw.write("MIDlet-Icon: /GpsMid.png");
+		fw.write("MIDlet-Info-URL: http://gpsmid.sourceforge.net");
+		fw.write("MIDlet-1: "+c.getMidletName()+",,"+c.getMidletName());
+		fw.write("MIDlet-Delete-Confirm: Do you really want to kill me?");
+		fw.write("MicroEdition-Configuration: CLDC-1.1");
+		fw.write("MicroEdition-Profile: MIDP-2.0");
+		fw.close();
 	}
 
 	private static void pack(Configuration c) throws ZipException, IOException{
-		File n=new File("GpsMid-" 
+		File n=new File(c.getMidletName()+"-" 
 				+ c.getName() 
 				+ "-" + c.getVersion()
 				+ ".jar");
-		File jad=new File("GpsMid-" 
+		File jad=new File(c.getMidletName()+"-" 
 				+ c.getName() 
 				+ "-" + c.getVersion()
 				+ ".jad");
@@ -95,9 +109,9 @@ public class BundleGpsMid {
 		packDir(zf, src,"");
 		zf.close();
 	    FileWriter fw=new FileWriter(jad);
-		fw.write("MIDlet-1: GpsMid, GpsMid.png, GpsMid\n");
-		fw.write("MIDlet-Jar-URL: GpsMid-"+c.getName()+"-"+c.getVersion()+".jar\n");
-		fw.write("MIDlet-Name: GpsMid\n");
+		fw.write("MIDlet-1: "+c.getMidletName()+", GpsMid.png, "+c.getMidletName()+"\n");
+		fw.write("MIDlet-Jar-URL: "+c.getMidletName()+"-"+c.getName()+"-"+c.getVersion()+".jar\n");
+		fw.write("MIDlet-Name: "+c.getMidletName()+"\n");
 		fw.write("MIDlet-Jar-Size: "+n.length()+"\n");
 		fw.write("MIDlet-Vendor: Harald Mueller\n");
 		fw.write("MIDlet-Version: "+c.getVersion()+"\n");

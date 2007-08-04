@@ -37,6 +37,15 @@ public class Way extends Entity implements Comparable<Way>{
 	public boolean isHighway(){
 		return (tags.get("highway") != null);
 	}
+	public boolean isAccessByCar(){
+		String way = tags.get("highway");
+		if (way == null)
+			return false;
+		if (getType() > Constants.WAY_HIGHWAY_UNCLASSIFIED){
+			return false;
+		}
+		return true;
+	}
 
 	private byte getHighwayType(){
 		String t = (String) tags.get("highway");
@@ -64,8 +73,13 @@ public class Way extends Entity implements Comparable<Way>{
 		if ("residential".equals(t)){
 			return Constants.WAY_HIGHWAY_RESIDENTIAL;
 		}
-		return Constants.WAY_HIGHWAY_UNCLASSIFIED;
-		
+		if ("cycleway".equals(t)){
+			return Constants.WAY_HIGHWAY_CYCLEWAY;
+		}
+		if ("footway".equals(t)){
+			return Constants.WAY_HIGHWAY_FOOTWAY;
+		}
+		return Constants.WAY_HIGHWAY_UNCLASSIFIED;	
 	}
 	private byte getRailwayType(){
 		String t = (String) tags.get("railway");
@@ -241,6 +255,36 @@ public class Way extends Entity implements Comparable<Way>{
 			default: return 3;
 		}
 	}
+    /**
+     * get or estimate speed in m/s
+     * @return
+     */
+	public float getSpeed(){
+		if (tags.containsKey("maxspeed")){
+			try {
+				int maxspeed=Integer.parseInt((String) tags.get("maxspeed"));
+				return (maxspeed/3.6f);
+			} catch (NumberFormatException e) {
+			}
+		}
+		switch (type){
+			case Constants.WAY_HIGHWAY_MOTORWAY:
+				return 120f/3.6f;
+			case Constants.WAY_HIGHWAY_TRUNK: 
+				return 90f/3.6f;
+			case Constants.WAY_HIGHWAY_PRIMARY:
+				return 100f/3.6f;
+			case Constants.WAY_JUNCTION_ROUNDABOUT:
+				return 30f/3.6f;
+			case Constants.WAY_HIGHWAY_SECONDARY:
+				return 80f/3.6f;
+			case Constants.WAY_HIGHWAY_RESIDENTIAL:
+				return 50f/3.6f;
+			case Constants.WAY_HIGHWAY_MINOR: 
+				return 60f/3.6f;
+			default: return 60f/3.6f;
+		}
+	}
 
 	public int compareTo(Way o) {
 		byte t1=getType();
@@ -296,5 +340,18 @@ public class Way extends Entity implements Comparable<Way>{
 		int splitp=lines.size()/2;
 		Line splitLine=lines.get(splitp);
 		return (splitLine.to);
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean isOneWay() {
+		String t = (String) tags.get("oneway");
+		if (t==null)
+			return false;
+		if ("true".equals(t)){
+			return true;
+		}
+		return false;
 	}
 }
