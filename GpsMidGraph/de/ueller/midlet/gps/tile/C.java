@@ -11,6 +11,11 @@ public class C {
 	public final static byte NODE_PLACE_VILLAGE=3;
 	public final static byte NODE_PLACE_HAMLET=4;
 	public final static byte NODE_PLACE_SUBURB=5;
+	/**
+	 * minimum distances to set the is_in name to the next city
+	 * to get the minimum distance use: <code>MAX_DIST_CITY[node.getType(null)]</code>
+	 */
+	public final static long[] MAX_DIST_CITY={0,8000,6000,3000,1000};
 	
 	// node with image and name place in the middle
 	public final static byte NODE_AMENITY_PARKING=50;
@@ -31,11 +36,14 @@ public class C {
 	public final static byte WAY_HIGHWAY_MINOR=6;
 	public final static byte WAY_HIGHWAY_RESIDENTIAL=7;
 	public final static byte WAY_HIGHWAY_UNCLASSIFIED=8;
-	public final static byte WAY_RAILWAY_UNCLASSIFIED = 9;
-	public final static byte WAY_RAILWAY_RAIL = 10;
-	public final static byte WAY_RAILWAY_SUBWAY = 11;
-	public final static byte WAY_JUNCTION_ROUNDABOUT = 12;
-	public final static byte WAY_WATERWAY_RIVER=13;
+	// ways after unclassified are not accessible by car
+	public final static byte WAY_HIGHWAY_CYCLEWAY=9;
+	public final static byte WAY_HIGHWAY_FOOTWAY=10;
+	public final static byte WAY_RAILWAY_UNCLASSIFIED = 11;
+	public final static byte WAY_RAILWAY_RAIL = 12;
+	public final static byte WAY_RAILWAY_SUBWAY = 13;
+	public final static byte WAY_JUNCTION_ROUNDABOUT = 14;
+	public final static byte WAY_WATERWAY_RIVER=15;
 	
 	public final static byte AREA_AMENITY_UNCLASSIFIED=50;
 	public final static byte AREA_AMENITY_PARKING=51;
