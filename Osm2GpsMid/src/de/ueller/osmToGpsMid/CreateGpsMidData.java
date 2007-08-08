@@ -44,6 +44,7 @@ public class CreateGpsMidData {
 	private int totalSegsWritten=0;
 	private int totalNodesWritten=0;
 	private int totalPOIsWritten=0;
+	private RouteData rd;
 	
 	
 	public CreateGpsMidData(OxParser parser,String path) {
@@ -184,6 +185,7 @@ public class CreateGpsMidData {
 		if (ways.size() <= 255){
 			out=createMidContent(ways,nodes);
 		}
+		// split tile if more then 255 Ways or content > MAX_TILE_FILESIZE but not if only one Way
 		if (ways.size() > 255 || (out.length > MAX_TILE_FILESIZE && ways.size() > 2)){
 //			System.out.println("create Subtiles size="+out.length+" ways=" + ways.size());
 			t.bounds=realBound.clone();
@@ -222,11 +224,6 @@ public class CreateGpsMidData {
 				totalNodesWritten+=nodes.size();
 				totalWaysWritten+=ways.size();
 				Collections.sort(ways);
-//				if (zl==1 && fid==5){
-//					Way way = ways.get(15);
-//					
-//					System.out.println("error Way = " + way);
-//				}
 				Bounds bBox=new Bounds();
 				for (Way w: ways){
 					totalSegsWritten+=w.lines.size();
@@ -511,6 +508,13 @@ public class CreateGpsMidData {
 		this.configuration = c;
 		// TODO Auto-generated method stub
 		
+	}
+
+	/**
+	 * @param rd
+	 */
+	public void setRouteData(RouteData rd) {
+		this.rd = rd;
 	}
 
 }

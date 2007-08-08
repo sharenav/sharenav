@@ -37,7 +37,11 @@ public class BundleGpsMid {
 				System.out.println("read Ways  " + parser.ways.size());
 				File target=new File(tmpDir);
 				createPath(target);
+				RouteData rd=new RouteData(parser,target.getCanonicalPath());
+				rd.create();
+				rd.write(target.getCanonicalPath());
 				CreateGpsMidData cd=new CreateGpsMidData(parser,target.getCanonicalPath());
+				cd.setRouteData(rd);
 				cd.setConfiguration(c);
 				new SplitLongWays(parser);
 				new CalcNearBy(parser);
@@ -74,16 +78,16 @@ public class BundleGpsMid {
 		}
 		File manifest=new File(tmpDir+"/META-INF/MANIFEST.MF");
 		FileWriter fw=new FileWriter(manifest);
-		fw.write("Manifest-Version: 1.0");
-		fw.write("MIDlet-Name: "+c.getMidletName());
-		fw.write("MIDlet-Version: "+c.getVersion());
-		fw.write("MIDlet-Vendor: Harald Mueller");
-		fw.write("MIDlet-Icon: /GpsMid.png");
-		fw.write("MIDlet-Info-URL: http://gpsmid.sourceforge.net");
-		fw.write("MIDlet-1: "+c.getMidletName()+",,"+c.getMidletName());
-		fw.write("MIDlet-Delete-Confirm: Do you really want to kill me?");
-		fw.write("MicroEdition-Configuration: CLDC-1.1");
-		fw.write("MicroEdition-Profile: MIDP-2.0");
+		fw.write("Manifest-Version: 1.0\n");
+		fw.write("MIDlet-Name: "+c.getMidletName()+"\n");
+		fw.write("MIDlet-Version: "+c.getVersion()+"\n");
+		fw.write("MIDlet-Vendor: Harald Mueller"+"\n");
+		fw.write("MIDlet-Icon: /GpsMid.png"+"\n");
+		fw.write("MIDlet-Info-URL: http://gpsmid.sourceforge.net"+"\n");
+		fw.write("MIDlet-1: "+c.getMidletName()+",,GpsMid\n");
+		fw.write("MIDlet-Delete-Confirm: Do you really want to kill me?"+"\n");
+		fw.write("MicroEdition-Configuration: CLDC-1.1"+"\n");
+		fw.write("MicroEdition-Profile: MIDP-2.0"+"\n");
 		fw.close();
 	}
 
@@ -109,7 +113,7 @@ public class BundleGpsMid {
 		packDir(zf, src,"");
 		zf.close();
 	    FileWriter fw=new FileWriter(jad);
-		fw.write("MIDlet-1: "+c.getMidletName()+", GpsMid.png, "+c.getMidletName()+"\n");
+		fw.write("MIDlet-1: "+c.getMidletName()+", GpsMid.png, GpsMid\n");
 		fw.write("MIDlet-Jar-URL: "+c.getMidletName()+"-"+c.getName()+"-"+c.getVersion()+".jar\n");
 		fw.write("MIDlet-Name: "+c.getMidletName()+"\n");
 		fw.write("MIDlet-Jar-Size: "+n.length()+"\n");
