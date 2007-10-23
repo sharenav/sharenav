@@ -41,14 +41,21 @@ public class MyMath {
      * @return float arc distance `c'
      *  
      */
-    final public static float spherical_distance(float phi1, float lambda0,
-                                                 float phi, float lambda) {
-        float pdiff = (float) Math.sin(((phi - phi1) / 2f));
-        float ldiff = (float) Math.sin((lambda - lambda0) / 2f);
-        float rval = (float) Math.sqrt((pdiff * pdiff) + (float) Math.cos(phi1)
-                * (float) Math.cos(phi) * (ldiff * ldiff));
-
-        return 2.0f * (float) Math.asin(rval);
+//    final public static float spherical_distance(float phi1, float lambda0,
+//                                                 float phi, float lambda) {
+//        float pdiff = (float) Math.sin(((phi - phi1) / 2f));
+//        float ldiff = (float) Math.sin((lambda - lambda0) / 2f);
+//        float rval = (float) Math.sqrt((pdiff * pdiff) + (float) Math.cos(phi1)
+//                * (float) Math.cos(phi) * (ldiff * ldiff));
+//
+//        return 2.0f * (float) Math.asin(rval);
+//    }
+    final public static double spherical_distance(double lat1, double lon1,
+    		double lat2, double lon2) {
+    	double c=Math.acos(Math.sin(lat1)*Math.sin(lat2) +
+    			 Math.cos(lat1)*Math.cos(lat2) *
+    			 Math.cos(lon2-lon1));
+    	return ALT_NND*c;
     }
     final public static double haversine_distance(double lat1, double lon1,
     		double lat2, double lon2) {
@@ -78,11 +85,18 @@ public class MyMath {
 //		return (long)(c*CIRCUMMAX_PI);
 //	}
 	public final static long dist(Node from,Node to){
-		return (long)( haversine_distance(
+		return (long)( spherical_distance(
 				Math.toRadians(from.lat),
 				Math.toRadians(from.lon),
 				Math.toRadians(to.lat),
-				Math.toRadians(to.lon)) * 10f);
+				Math.toRadians(to.lon)));
+	}
+	public final static long dist(Node from,Node to,double factor){
+		return (long)( factor * spherical_distance(
+				Math.toRadians(from.lat),
+				Math.toRadians(from.lon),
+				Math.toRadians(to.lat),
+				Math.toRadians(to.lon)));
 	}
 	
 	/**

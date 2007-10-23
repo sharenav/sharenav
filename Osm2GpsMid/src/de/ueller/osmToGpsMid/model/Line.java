@@ -3,8 +3,8 @@ package de.ueller.osmToGpsMid.model;
 
 public class Line extends Entity {
 
-	public final Node	from;
-	public final Node	to;
+	public Node	from;
+	public Node	to;
 
 	public Line(Node from, Node to, long id) {
 		this.from = from;

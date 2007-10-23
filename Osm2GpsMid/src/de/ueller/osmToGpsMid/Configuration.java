@@ -39,6 +39,9 @@ public class Configuration {
 		public boolean useNatural=true;
 		public boolean useLeisure=true;
 		public boolean useWaterway=true;
+		public boolean useRouting=false;
+		public int maxTileSize=20000;
+		public int maxRouteTileSize=3000;
 
 //		private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
 //				.getBundle(BUNDLE_NAME);
@@ -57,7 +60,11 @@ public class Configuration {
 					}
 				}
 				rb= new PropertyResourceBundle(cf);
+//				try {
 				vb=new PropertyResourceBundle(getClass().getResourceAsStream("/version.properties"));
+//				} catch(Exception e) {
+//					vb=new PropertyResourceBundle(getClass().getResourceAsStream("/resources/version.properties"));
+//				}
 				useHighway=use("useHighway");
 				useRailway=use("useRailway");
 				useRiver=use("useRiver");
@@ -67,6 +74,10 @@ public class Configuration {
 				useNatural=use("useNatural");
 				useLeisure=use("useLeisure");
 				useWaterway=use("useWaterway");
+				useRouting=use("useRouting");
+				maxRouteTileSize=Integer.parseInt(getString("routing.maxTileSize"));
+				maxTileSize=Integer.parseInt(getString("maxTileSize"));
+				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -80,6 +91,8 @@ public class Configuration {
 			planet="TEST";
 		}
 
+		
+		
 		public boolean use(String key){
 			if ("true".equalsIgnoreCase(getString(key))){
 				return true;
@@ -112,7 +125,11 @@ public class Configuration {
 		}
 		
 		public InputStream getJarFile(){
-			return getClass().getResourceAsStream("/"+vb.getString("app")
+			String baseName = vb.getString("app");
+			if ("false".equals(baseName)){
+				return null;
+			}
+			return getClass().getResourceAsStream("/"+baseName
 			+"-"+getVersion()
 			+".jar");
 		}
@@ -165,5 +182,13 @@ public class Configuration {
 
 		public boolean isHighway_only() {
 			return highway_only;
+		}
+
+		public int getMaxTileSize() {
+			return maxTileSize;
+		}
+
+		public int getMaxRouteTileSize() {
+			return maxRouteTileSize;
 		}
 }

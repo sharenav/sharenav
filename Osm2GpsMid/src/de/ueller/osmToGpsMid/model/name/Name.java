@@ -57,10 +57,10 @@ public class Name {
 //		
 //	}
 	private void setName(String name){
-		if ("Hauptstraße".equals(name)){
-			System.out.println("set name=Hauptstraße");
-			debug=true;
-		}
+//		if ("Hauptstraße".equals(name)){
+//			System.out.println("set name=Hauptstraße");
+//			debug=true;
+//		}
 		this.name=name;
 		String c=NumberCanon.canonial(name);
 		if (c.length() < 21)

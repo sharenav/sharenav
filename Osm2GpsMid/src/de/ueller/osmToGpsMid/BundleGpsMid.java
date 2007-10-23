@@ -1,5 +1,6 @@
 package de.ueller.osmToGpsMid;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -13,6 +14,8 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
+import org.apache.tools.bzip2.CBZip2InputStream;
+
 
 
 public class BundleGpsMid {
@@ -22,7 +25,7 @@ public class BundleGpsMid {
 	 */
 	public static void main(String[] args) {
 		if (args.length > 1){
-			FileInputStream fr;
+			InputStream fr;
 			try {
 				Configuration c=new Configuration(args[0],args[1]);
 				System.out.println("create Bundle for " + c.getName());
@@ -30,20 +33,42 @@ public class BundleGpsMid {
 				String tmpDir = c.getTempDir();
 				System.out.println("unpack Application to " + tmpDir);
 				expand(c, tmpDir);
-				fr = new FileInputStream(c.getPlanet());
-				OxParser parser = new OxParser(fr,c);
-				System.out.println("read Nodes " + parser.nodes.size());
-				System.out.println("read Lines " + parser.lines.size());
-				System.out.println("read Ways  " + parser.ways.size());
 				File target=new File(tmpDir);
 				createPath(target);
+				File planet = c.getPlanet();
+				fr= new BufferedInputStream(new FileInputStream(planet), 4096);
+				if (planet.getName().endsWith(".bz2")){
+					int availableProcessors = Runtime.getRuntime().availableProcessors();
+					if (availableProcessors > 1){
+						System.out.println("found " + availableProcessors + " CPU's: uncompress in seperate thread");
+						fr = new Bzip2Reader(fr);
+					} else {
+						fr.read();
+						fr.read();
+						System.out.println("only one CPU: uncompress in same thread");
+						fr = new CBZip2InputStream(fr);
+					}
+				} 
+				OxParser parser = new OxParser(fr,c);
+				System.out.println("read Nodes " + parser.nodes.size());
+				System.out.println("read Ways  " + parser.ways.size());
+				System.out.println("read Relations  " + parser.relations.size());
+				System.out.println("reorder Ways");
+				new CleanUpData(parser,c);
 				RouteData rd=new RouteData(parser,target.getCanonicalPath());
-				rd.create();
-				rd.write(target.getCanonicalPath());
+				if (c.useRouting){
+					System.out.println("create Route Data");
+					rd.create();
+					System.out.println("optimize Route Date");
+					rd.optimise();
+				}
 				CreateGpsMidData cd=new CreateGpsMidData(parser,target.getCanonicalPath());
+//				rd.write(target.getCanonicalPath());
 				cd.setRouteData(rd);
 				cd.setConfiguration(c);
+				System.out.println("split long ways " + parser.ways.size());
 				new SplitLongWays(parser);
+				System.out.println("splited long ways to " + parser.ways.size());
 				new CalcNearBy(parser);
 				cd.exportMapToMid();
 				pack(c);
@@ -62,6 +87,9 @@ public class BundleGpsMid {
 	private static void expand(Configuration c, String tmpDir) throws ZipException, IOException {
 		System.out.println("prepare " + c.getJarFileName());
 		InputStream appStream=c.getJarFile();
+		if (appStream == null) {
+			return;
+		}
 		File file=new File(c.getTempBaseDir()+"/"+c.getJarFileName());
 		writeFile(appStream, file.getAbsolutePath());
 		
@@ -76,6 +104,16 @@ public class BundleGpsMid {
 				writeFile(stream,tmpDir+"/"+ze.getName());
 			}
 		}
+		writeManifestFile(c, tmpDir);
+	}
+
+	/**
+	 * @param c
+	 * @param tmpDir
+	 * @throws IOException
+	 */
+	private static void writeManifestFile(Configuration c, String tmpDir)
+			throws IOException {
 		File manifest=new File(tmpDir+"/META-INF/MANIFEST.MF");
 		FileWriter fw=new FileWriter(manifest);
 		fw.write("Manifest-Version: 1.0\n");
@@ -193,12 +231,13 @@ public class BundleGpsMid {
 	}
 
 	/**
+	 * ensures that the path denoted whit <code>f</code> will exist
+	 * on the file-system. 
 	 * @param f
 	 */
 	private static void createPath(File f) {
 		if (! f.canWrite())
 			createPath(f.getParentFile());
-//		System.out.println("create dir " + f);
 		f.mkdir();
 	}
 

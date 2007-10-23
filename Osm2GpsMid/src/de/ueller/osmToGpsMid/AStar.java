@@ -164,7 +164,7 @@ public class AStar {
 	}
 	// {{{ public final Vector solve (State initialState) 
 	public final Vector<Connection> solve (RouteNode start,RouteNode target) {
-		Connection initialState=new Connection(start,0l,0l,(byte)0,(byte)0);
+		Connection initialState=new Connection(start,0l,0l,(byte)0,(byte)0,null);
 		Node solution;
 		Node firstNode;
 		long estimation;

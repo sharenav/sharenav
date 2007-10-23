@@ -45,7 +45,7 @@ public class CalcNearBy {
 				}
 				if (nearestPlace != null && nearestPlace.getName() != null){
 					w.tags.put("is_in", nearestPlace.getName());
-					System.out.println("set is_in for " + w.getName() + " to " + nearestPlace.getName());
+//					System.out.println("set is_in for " + w.getName() + " to " + nearestPlace.getName());
 					w.nearBy=nearestPlace;
 				}
 			}
@@ -75,7 +75,7 @@ public class CalcNearBy {
 				if (nearestPlace != null){
 					n.nearBy=nearestPlace;
 					n.nearByDist=nearesDist;
-					System.out.println(n + " near " + n.nearBy);
+//					System.out.println(n + " near " + n.nearBy);
 				}
 			}
 		}

@@ -17,10 +17,14 @@ import java.util.Map;
 import java.util.TreeSet;
 
 import de.ueller.osmToGpsMid.model.Bounds;
+import de.ueller.osmToGpsMid.model.Connection;
+import de.ueller.osmToGpsMid.model.HiLo;
 import de.ueller.osmToGpsMid.model.Line;
 import de.ueller.osmToGpsMid.model.MapName;
 import de.ueller.osmToGpsMid.model.Node;
+import de.ueller.osmToGpsMid.model.RouteNode;
 import de.ueller.osmToGpsMid.model.Sequence;
+import de.ueller.osmToGpsMid.model.SubPath;
 import de.ueller.osmToGpsMid.model.Tile;
 import de.ueller.osmToGpsMid.model.Way;
 import de.ueller.osmToGpsMid.model.name.Names;
@@ -28,10 +32,12 @@ import de.ueller.osmToGpsMid.model.name.Names;
 
 
 public class CreateGpsMidData {
-	private final static int MAX_TILE_FILESIZE=20000;
+//	private final static int MAX_TILE_FILESIZE=20000;
+//	private final static int MAX_ROUTETILE_FILESIZE=5000;
 	public  final static int MAX_DICT_DEEP=5;
+	public  final static int ROUTEZOOMLEVEL=4;
 	OxParser parser;
-	Tile tile[]= new Tile[4];
+	Tile tile[]= new Tile[ROUTEZOOMLEVEL+1];
 	private final String	path;
 	TreeSet<MapName> names;
 	Names names1;
@@ -51,24 +57,9 @@ public class CreateGpsMidData {
 		super();
 		this.parser = parser;
 		this.path = path;
-	}
-	
-//	/**
-//	 * @param parser2
-//	 * @param string
-//	 * @param bounds
-//	 */
-//	public CreateGpsMidData(OxParser parser, String path, Bounds[] bounds) {
-//		super();
-//		this.parser = parser;
-//		this.path = path;
-//		this.bounds = bounds;
-//	}
-
-	
-
-	public void exportMapToMid(){
 		File dir=new File(path);
+		// first of all, delete all data-files from a previous run or files that comes
+		// from the mid jar file
 		if (dir.isDirectory()){
 			File[] files = dir.listFiles();
 			for (File f : files) {
@@ -79,12 +70,24 @@ public class CreateGpsMidData {
 				}
 			}
 		}
+	}
+	
+
+	public void exportMapToMid(){
 		names1=getNames1();
 		SearchList sl=new SearchList(names1);
 		sl.createNameList(path);
 		for (int i=0;i<=3;i++){
+			System.out.println("export Tiles for zoomlevel " + i);
 			exportMapToMid(i);
 		}
+		System.out.println("export RouteTiles");
+		exportMapToMid(ROUTEZOOMLEVEL);
+//		for (int x=1;x<12;x++){
+//			System.out.print("\n" + x + " :");
+//			tile[ROUTEZOOMLEVEL].printHiLo(1, x);
+//		}
+//		System.exit(2);
 		sl.createSearchList(path);
 		System.out.println("Total Ways:"+totalWaysWritten 
 				         + " Seg:"+totalSegsWritten
@@ -92,25 +95,7 @@ public class CreateGpsMidData {
 				         + " POI:"+totalPOIsWritten);
 	}
 	
-//	@Deprecated
-//	private TreeSet<MapName> getNames(){
-//		TreeSet<MapName> wayNames = new TreeSet<MapName>();
-//		for (Way w : parser.ways) {
-//			String isIn=w.tags.get("is_in");
-//			addName(wayNames,w.getName(),isIn,w.getNameType());
-//			addName(wayNames, w.tags.get("nat_ref"),isIn,w.getNameType());
-//			addName(wayNames, w.tags.get("ref"),isIn,w.getNameType());
-//			
-//		}
-//		for (Node n : parser.nodes.values()) {
-//			String isIn=n.tags.get("is_in");
-//			addName(wayNames,n.getName(),isIn,n.getNameType());
-//			addName(wayNames, n.tags.get("nat_ref"),isIn,n.getNameType());
-//			addName(wayNames, n.tags.get("ref"),isIn,n.getNameType());
-//		}
-////		System.out.println("found " + wayNames.size() + " names");
-//		return (wayNames);
-//	}
+
 	private Names getNames1(){
 		Names na=new Names();
 		for (Way w : parser.ways) {
@@ -126,7 +111,7 @@ public class CreateGpsMidData {
 
 	
 	public void exportMapToMid(int zl){
-		System.out.println("Total ways : " + parser.ways.size() + "  Nodes : " + parser.nodes.size());
+//		System.out.println("Total ways : " + parser.ways.size() + "  Nodes : " + parser.nodes.size());
 		try {
 			FileOutputStream fo = new FileOutputStream(path+"/dict-"+zl+".dat");
 			DataOutputStream ds = new DataOutputStream(fo);
@@ -138,26 +123,41 @@ public class CreateGpsMidData {
 				Way w1=(Way)wi.next();
 				if (w1.getZoomlevel() != zl) continue;
 				w1.used=false;
-				
-				for (Iterator li = w1.lines.iterator(); li.hasNext();){
-					Line l1=(Line) li.next();
-					if (l1.isValid()) {
-						allBound.extend(l1.from.lat, l1.from.lon);
-						allBound.extend(l1.to.lat, l1.to.lon);
-					} 
+				allBound.extend(w1.getBounds());
+			}
+			if (zl == ROUTEZOOMLEVEL){
+				// for RouteNodes
+				for (Node n : parser.nodes.values()) {
+					n.used=false;
+					if (n.routeNode == null) continue;
+					allBound.extend(n.lat,n.lon);
+				}
+			} else {
+				for (Node n : parser.nodes.values()) {
+					if (n.getZoomlevel() != zl) continue;
+					allBound.extend(n.lat,n.lon);
 				}
 			}
-			for (Node n : parser.nodes.values()) {
-				if (n.getZoomlevel() != zl) continue;
-				allBound.extend(n.lat,n.lon);
-			}
 			tile[zl]=new Tile((byte) zl);
-			exportTile(tile[zl],1, parser.ways,parser.nodes.values(), (byte) 1,zl,allBound);
+			Sequence routeNodeSeq=new Sequence();
+			Sequence tileSeq=new Sequence();
+			tile[zl].ways=parser.ways;
+			tile[zl].nodes=parser.nodes.values();
+			// create the tiles and write the content 
+			exportTile(tile[zl],tileSeq,allBound,routeNodeSeq);
 			tile[zl].recalcBounds();
+			if (zl == ROUTEZOOMLEVEL){
+				Sequence rnSeq=new Sequence();
+				tile[zl].renumberRouteNode(rnSeq);
+				tile[zl].calcHiLo();
+				tile[zl].writeConnections(path);
+		        tile[zl].type=Tile.TYPE_ROUTECONTAINER;
+			} 
 			Sequence s=new Sequence();
-			tile[zl].write(ds,1,s,path);
-			ds.writeUTF("END"); // magig number
+			tile[zl].writeTileDict(ds,1,s,path);
+			ds.writeUTF("END"); // Magic number
 			fo.close();
+
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -167,93 +167,166 @@ public class CreateGpsMidData {
 		}
 	}
 	
-	public int exportTile(Tile t,int fid,Collection<Way> parentWays,Collection<Node> parentNodes,byte cut,int zl,Bounds tileBound) throws IOException{
+	public void exportTile(Tile t,Sequence tileSeq,Bounds tileBound, Sequence routeNodeSeq) throws IOException{
 		Bounds realBound=new Bounds();
-		LinkedList<Way> ways=getWaysInBound(parentWays, zl,tileBound,realBound);
-		if (ways.size() == 0){
-			t.type=3;
-			return fid;
-		}
-		int mostlyInBound=ways.size();
-		addWaysCompleteInBound(ways,parentWays,zl,realBound);
-		if (ways.size() > 2*mostlyInBound){
-			realBound=new Bounds();
-			ways=getWaysInBound(parentWays, zl,tileBound,realBound);
-		}
-		Collection<Node> nodes=getNodesInBound(parentNodes,zl,realBound);
+		LinkedList<Way> ways=new LinkedList<Way>();
+		Collection<Node> nodes=new ArrayList<Node>();
 		byte [] out=new byte[1];
-		if (ways.size() <= 255){
-			out=createMidContent(ways,nodes);
+		byte[] connOut=null;
+		int maxSize;
+		// Reduce the content of t.ways and t.nodes to all relevant elements
+		// in the given bounds and create the binary midlet representation
+		if (t.zl != ROUTEZOOMLEVEL){
+			maxSize=configuration.getMaxTileSize();
+			ways=getWaysInBound(t.ways, t.zl,tileBound,realBound);
+			if (ways.size() == 0){
+				t.type=3;
+			}
+			int mostlyInBound=ways.size();
+			addWaysCompleteInBound(ways,t.ways,t.zl,realBound);
+			if (ways.size() > 2*mostlyInBound){
+				realBound=new Bounds();
+				ways=getWaysInBound(t.ways, t.zl,tileBound,realBound);
+			}
+			nodes=getNodesInBound(t.nodes,t.zl,realBound);
+			if (ways.size() <= 255){
+				out=createMidContent(ways,nodes,t);
+			}
+			t.nodes=nodes;
+			t.ways=ways;
+		} else {
+			// Route Nodes
+			maxSize=configuration.getMaxRouteTileSize();
+			nodes=getRouteNodesInBound(t.nodes,tileBound,realBound);
+			byte[][] erg=createMidContent(nodes,t);
+			out=erg[0];
+			connOut = erg[1];
+			t.nodes=nodes;
 		}
-		// split tile if more then 255 Ways or content > MAX_TILE_FILESIZE but not if only one Way
-		if (ways.size() > 255 || (out.length > MAX_TILE_FILESIZE && ways.size() > 2)){
+		
+		// split tile if more then 255 Ways or binary content > MAX_TILE_FILESIZE but not if only one Way
+		if (ways.size() > 255 || (out.length > maxSize && ways.size() != 1)){
 //			System.out.println("create Subtiles size="+out.length+" ways=" + ways.size());
 			t.bounds=realBound.clone();
-			t.type=2;
-			t.t1=new Tile((byte) zl);
-			t.t2=new Tile((byte) zl);
-			if ((tileBound.maxLat-tileBound.minLat) > (tileBound.maxLon-tileBound.minLon)){
-				cut=2;
+			if (t.zl != ROUTEZOOMLEVEL){
+				t.type=Tile.TYPE_CONTAINER;				
 			} else {
-				cut=1;
+				t.type=Tile.TYPE_ROUTECONTAINER;
 			}
-			if (cut==1){
-				float splitLon=(tileBound.minLon+tileBound.maxLon)/2;
-				Bounds nextTileBound=tileBound.clone();
-				nextTileBound.maxLon=splitLon;
-				fid=exportTile(t.t1,fid,ways,nodes,cut,zl,nextTileBound);
-				nextTileBound=tileBound.clone();
-				nextTileBound.minLon=splitLon;
-				fid=exportTile(t.t2,fid,ways,nodes,cut,zl,nextTileBound);
-			} else {
+			t.t1=new Tile((byte) t.zl,ways,nodes);
+			t.t2=new Tile((byte) t.zl,ways,nodes);
+			t.setRouteNodes(null);
+			if ((tileBound.maxLat-tileBound.minLat) > (tileBound.maxLon-tileBound.minLon)){
+				// split to half latitude
 				float splitLat=(tileBound.minLat+tileBound.maxLat)/2;
 				Bounds nextTileBound=tileBound.clone();
 				nextTileBound.maxLat=splitLat;
-				fid=exportTile(t.t1,fid,ways,nodes,cut,zl,nextTileBound);
+				exportTile(t.t1,tileSeq,nextTileBound,routeNodeSeq);
 				nextTileBound=tileBound.clone();
 				nextTileBound.minLat=splitLat;
-				fid=exportTile(t.t2,fid,ways,nodes,cut,zl,nextTileBound);
+				exportTile(t.t2,tileSeq,nextTileBound,routeNodeSeq);
+			} else {
+				// split to half longitude
+				float splitLon=(tileBound.minLon+tileBound.maxLon)/2;
+				Bounds nextTileBound=tileBound.clone();
+				nextTileBound.maxLon=splitLon;
+				exportTile(t.t1,tileSeq,nextTileBound,routeNodeSeq);
+				nextTileBound=tileBound.clone();
+				nextTileBound.minLon=splitLon;
+				exportTile(t.t2,tileSeq,nextTileBound,routeNodeSeq);
 			}
-			ways=null;
-			nodes=null;
+			t.ways=null;
+			t.nodes=null;
 			
 //			System.gc();
 		} else {
-			if (ways.size() > 0){
-				System.out.println("Write tile "+zl+":"+fid + " ways:"+ways.size() + " nodes:"+nodes.size());
-				totalNodesWritten+=nodes.size();
-				totalWaysWritten+=ways.size();
-				Collections.sort(ways);
-				Bounds bBox=new Bounds();
-				for (Way w: ways){
-					totalSegsWritten+=w.lines.size();
+			if (ways.size() > 0 || nodes.size() > 0){
+				// Write as dataTile
+				t.fid=tileSeq.next();
+				if (t.zl != ROUTEZOOMLEVEL) {
+					t.setWays(ways);
+					writeRenderTile(t, tileBound, realBound, nodes, out);
+				} else {
+					writeRouteTile(t, tileBound, realBound, nodes, out);
 				}
-				for (Node n : nodes) {
-					bBox.extend(n.lat, n.lon);
-					if (n.type > 0 )
-						totalPOIsWritten++;
-				}
-				t.bounds=realBound.clone();
-				t.fid=fid;
-				t.type=1;
-				t.setWays(ways);
-				FileOutputStream fo = new FileOutputStream(path+"/t"+zl+fid+".d");
-				DataOutputStream tds = new DataOutputStream(fo);
-				tds.write(out);
-				fo.close();
-				fid++;
-				// mark ways as written to MidStorage
-				for (Iterator wi = ways.iterator(); wi.hasNext();) {
-					Way w1=(Way)wi.next();
-					w1.used=true;
-					w1.fid=fid;
-				}
+
 			} else {
-				//emty box
-				t.type=3;
+				//Write as emty box
+				t.type=Tile.TYPE_EMPTY;
 			}
 		}
-		return fid;
+		return;
+	}
+
+
+	/**
+	 * @param t
+	 * @param tileBound
+	 * @param realBound
+	 * @param nodes
+	 * @param out
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
+	private void writeRouteTile(Tile t, Bounds tileBound, Bounds realBound,
+			Collection<Node> nodes, byte[] out) {
+		System.out.println("Write renderTile "+t.zl+":"+t.fid + " nodes:"+nodes.size());
+		t.type=Tile.TYPE_MAP;
+		t.bounds=tileBound.clone();
+		t.type=Tile.TYPE_ROUTEDATA;
+		for (RouteNode n:t.getRouteNodes()){
+			n.node.used=true;
+		}
+	}
+	/**
+	 * @param t
+	 * @param tileBound
+	 * @param realBound
+	 * @param ways
+	 * @param nodes
+	 * @param out
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
+	private void writeRenderTile(Tile t, Bounds tileBound, Bounds realBound,
+			 Collection<Node> nodes, byte[] out)
+			throws FileNotFoundException, IOException {
+		System.out.println("Write routeTile "+t.zl+":"+t.fid+ " ways:"+t.ways.size() + " nodes:"+nodes.size());
+		totalNodesWritten+=nodes.size();
+		totalWaysWritten+=t.ways.size();
+		Collections.sort(t.ways);
+		for (Way w: t.ways){
+			totalSegsWritten+=w.getLineCount();
+		}
+		if (t.zl != ROUTEZOOMLEVEL) {
+			for (Node n : nodes) {
+				if (n.type > 0 )
+					totalPOIsWritten++;
+			}
+		}
+		
+		t.type=Tile.TYPE_MAP;
+		// RouteTiles will be written later because of renumbering
+		if (t.zl != ROUTEZOOMLEVEL) {
+			t.bounds=realBound.clone();
+			FileOutputStream fo = new FileOutputStream(path + "/t" + t.zl
+					+ t.fid + ".d");
+			DataOutputStream tds = new DataOutputStream(fo);
+			tds.write(out);
+			fo.close();
+			// mark ways as written to MidStorage
+			for (Iterator wi = t.ways.iterator(); wi.hasNext();) {
+				Way w1=(Way)wi.next();
+				w1.used=true;
+				w1.fid=t.fid;
+			}
+		} else {
+			t.bounds=tileBound.clone();
+			t.type=Tile.TYPE_ROUTEDATA;
+			for (RouteNode n:t.getRouteNodes()){
+				n.node.used=true;
+			}
+		}
 	}
 	
 	
@@ -304,48 +377,100 @@ public class CreateGpsMidData {
 //		System.out.println("getNodesInBound found " + nodes.size() + " nodes");
 		return nodes;
 	}
+	public Collection<Node> getRouteNodesInBound(Collection<Node> parentNodes,Bounds targetBound,Bounds realBound){
+		Collection<Node> nodes = new LinkedList<Node>();
+		for (Node node : parentNodes){
+			if (node.routeNode == null) continue;
+			if (! targetBound.isIn(node.lat,node.lon)) continue;
+//			System.out.println(node.used);
+			if (! node.used) {
+				realBound.extend(node.lat,node.lon);
+				nodes.add(node);
+//				node.used=true;
+			} 
+		}
+		return nodes;
+	}
 
-	public byte[] createMidContent(Collection<Way> ways,Collection<Node> interestNodes) throws IOException{
+	/**
+	 * Create the data-content for a route-tile. Containing a list of nodes and a list
+	 * of connections from each node.
+	 * @param interestNodes list of all Nodes that should included in this tile
+	 * @param t the Tile that holds the meta-data
+	 * @return in array[0][] the file-format for all nodes and in array[1][] the
+	 * file-format for all connections whithin this tile.
+	 * @throws IOException
+	 */
+	public byte[][] createMidContent(Collection<Node> interestNodes, Tile t) throws IOException{
+		ByteArrayOutputStream nfo = new ByteArrayOutputStream();
+		DataOutputStream nds = new DataOutputStream(nfo);
+		ByteArrayOutputStream cfo = new ByteArrayOutputStream();
+		DataOutputStream cds = new DataOutputStream(cfo);
+		nds.writeByte(0x54); // magic number
+		
+		nds.writeShort(interestNodes.size());		
+		for (Node n : interestNodes) {
+			writeRouteNode(n,nds,cds);
+				if (n.routeNode != null){
+					t.addRouteNode(n.routeNode);
+				}
+
+		}
+
+		nds.writeByte(0x56); // magic number
+		nfo.close();
+		cfo.close();
+		byte [][] ret = new byte[2][];
+		ret[0]=nfo.toByteArray();
+		ret[1]=cfo.toByteArray();
+		return ret;
+	}
+
+	/**
+	 * Create the Data-content for a SingleTile in memory. This will later directly 
+	 * written on Disk if the byte array is not to big otherwise this tile will
+	 * splitted in smaller tiles. 
+	 * @param ways a Collection of ways that are chosen to be in this tile.
+	 * @param interestNodes all additional Nodes like places, parking and so on 
+	 * @param t the Tile, holds the metadata for this area.
+	 * @return a byte array that represents a file content. This could be written
+	 * directly ond disk.
+	 * @throws IOException
+	 */
+	public byte[] createMidContent(Collection<Way> ways,Collection<Node> interestNodes, Tile t) throws IOException{
 		Map<Long,Node> wayNodes = new HashMap<Long,Node>();
 		int ren=0;
+		// reset all used flags of all Nodes that are part of ways in <code>ways</code>
 		for (Way way : ways) {
-			for (Line l : way.lines) {
-				if (l.from != null)
-					l.from.used=false;
-				if (l.to != null)
-					l.to.used=false;
+			for (SubPath sp:way.getSubPaths()){
+				for (Node n:sp.getNodes()){
+					n.used=false;
+				}
 			}
 		}
+		// mark all interestNodes as used
 		for (Node n1 : interestNodes){
 			n1.used=true;
 		}
-		// find all point that are part of a way but not in interestNodes
-		for (Iterator wi = ways.iterator(); wi.hasNext();) {
-			Way w1=(Way)wi.next();
-//			if (configuration.isHighway_only() && !w1.tags.containsKey("highway")){
-//				continue;
-//			}
-			for (Iterator li = w1.lines.iterator(); li.hasNext();){
-				Line l1=(Line) li.next();
-				if (l1.from != null){
-				Long id=new Long(l1.from.id);
-				if ((!wayNodes.containsKey(id)) && !l1.from.used){
-					wayNodes.put(id, l1.from);
-				}
-				}
-				if (l1.to != null){
-					Long id=new Long(l1.to.id);
-				if ((!wayNodes.containsKey(id))  && !l1.to.used){
-					wayNodes.put(id, l1.to);
-				}
+		// find all nodes that are part of a way but not in interestNodes
+		for (Way w1: ways) {
+			for (SubPath sp:w1.getSubPaths()){
+				for (Node n:sp.getNodes()){
+					Long id=new Long(n.id);
+					if ((!wayNodes.containsKey(id)) && !n.used){
+						wayNodes.put(id, n);
+					}
+
 				}
 			}
 		}
-//		System.out.println("test ways : " + ways.size() + "  Nodes : " + wayNodes.size());
-//		System.out.println("interrest Nodes : " + interestNodes.size());
+
+		// create a byte arrayStream which holds the Singeltile-Data
+		// this is created in memory and written later if file is 
+		// not to big.
 		ByteArrayOutputStream fo = new ByteArrayOutputStream();
 		DataOutputStream ds = new DataOutputStream(fo);
-		ds.writeByte(0x54); // magig number
+		ds.writeByte(0x54); // Magic number
 		ds.writeShort(interestNodes.size()+wayNodes.size());
 		ds.writeShort(interestNodes.size());		
 		for (Node n : interestNodes) {
@@ -354,151 +479,71 @@ public class CreateGpsMidData {
 		}
 		for (Node n : wayNodes.values()) {
 			n.renumberdId=(short) ren++;
-			writeNode(n,ds,SEGNODE);			
+			writeNode(n,ds,SEGNODE);
 		}
-		ds.writeByte(0x55); // magig number
+		ds.writeByte(0x55); // Magic number
 		ds.writeByte(ways.size());
-		for (Iterator iter = ways.iterator(); iter.hasNext();) {
-			Way w=(Way)iter.next();
-			writeWay(w, ds);
+		for (Way w : ways){
+			w.write(ds, names1);
 		}
-		ds.writeByte(0x56); // magig number
+		ds.writeByte(0x56); // Magic number
 		fo.close();
 		return fo.toByteArray();
 	}
+	
+	private void writeRouteNode(Node n,DataOutputStream nds,DataOutputStream cds) throws IOException{
+		nds.writeByte(4);
+		nds.writeFloat(MyMath.degToRad(n.lat));
+		nds.writeFloat(MyMath.degToRad(n.lon));
+		nds.writeInt(cds.size());
+		nds.writeByte(n.routeNode.connected.size());
+		for (Connection c : n.routeNode.connected){
+			cds.writeInt(c.to.node.renumberdId);
+			cds.writeShort((int) c.time);
+			cds.writeShort((int) c.length);
+			cds.writeByte(c.startBearing);
+			cds.writeByte(c.endBearing);
+		}
+	}
 
 	private void writeNode(Node n,DataOutputStream ds,int type) throws IOException{
+		// flags
+		// 1 : 1=routeNodelink 0=mapNode
+		// 2 : 1=has Name
+		// 4 : 1=routeNode
+		// 8 : free
 		int flags=0;
-//		System.out.println("write node id="+n.renumberdId );
-		ds.writeFloat(MyMath.degToRad(n.lat));
-		ds.writeFloat(MyMath.degToRad(n.lon));
+		if (n.routeNode != null){
+			flags += Constants.NODE_MASK_ROUTENODELINK;
+		}
 		if (type == INODE){
+			if (! "".equals(n.getName())){
+				flags += Constants.NODE_MASK_NAME;
+			}
+			if (n.getType(configuration) != 0){
+				flags += Constants.NODE_MASK_TYPE;
+			}
+		}
+		ds.writeByte(flags);
+		if ((flags & Constants.NODE_MASK_ROUTENODELINK) > 0){
+			ds.writeShort(n.routeNode.id);
+			ds.writeFloat(MyMath.degToRad(n.lat));
+			ds.writeFloat(MyMath.degToRad(n.lon));
+		} else {
+			ds.writeFloat(MyMath.degToRad(n.lat));
+			ds.writeFloat(MyMath.degToRad(n.lon));
+		}
+
+		if ((flags & Constants.NODE_MASK_NAME) > 0){
 			String name = n.getName();
-			if (name != null)
-				ds.writeShort(names1.getNameIdx(name));
-			else 
-				ds.writeShort(-1);
+			ds.writeShort(names1.getNameIdx(name));
+		}
+		if ((flags & Constants.NODE_MASK_TYPE) > 0){
 			ds.writeByte(n.getType(configuration));
 		}
+
 	}
 
-	private void writeWay(Way w,DataOutputStream ds) throws IOException{
-		Bounds b=new Bounds();
-//		System.out.println("write way "+w);
-		int flags=0;
-		int maxspeed=50;
-		if (w.getName() != null){
-			flags+=1;
-		}
-		if (w.tags.containsKey("maxspeed")){
-			try {
-				maxspeed=Integer.parseInt((String) w.tags.get("maxspeed"));
-				flags+=2;
-			} catch (NumberFormatException e) {
-			}
-		}
-		if (w.getIsIn() != null){
-			flags+=16;
-		}
-		byte type=w.getType();
-		Integer p1=null;
-		ArrayList<ArrayList<Integer>> paths=new ArrayList<ArrayList<Integer>>();
-		ArrayList<Integer> path = new ArrayList<Integer>();
-		boolean isWay=false;
-		boolean multipath=false;
-		paths.add(path);
-		isWay=false;
-		for (Iterator iterw = w.lines.iterator(); iterw.hasNext();) {
-			try {
-				Line l=(Line) iterw.next();
-				if (p1 == null){
-					p1=new Integer(l.from.renumberdId);
-//					System.out.println("Start Way at " + l.from);
-					path.add(p1);
-					b.extend(l.from.lat, l.from.lon);
-				} else {
-					if (l.from.renumberdId != p1.intValue()){
-						if (w.getType() >= 50){
-							// insert segment, because this is a area
-							path.add(new Integer(l.from.renumberdId));
-						}
-						// non continues path so open a new Path
-						multipath=true;
-						path = new ArrayList<Integer>();
-						paths.add(path);
-						p1=new Integer(l.from.renumberdId);
-//						System.out.println("\tStart Way-Segment at " + l.from);
-						path.add(p1);
-						b.extend(l.from.lat, l.from.lon);
-//					} else if (path.size() >= 127){
-//						// path to long
-//						multipath=true;
-//						path.add(p1); // close old Path with actual point
-//						path = new ArrayList<Integer>(); // start new path
-//						paths.add(path); // add to pathlist
-//						path.add(p1); // add same point as start to new path
-					}
-				}
-//				System.out.println("\t\tContinues Way " + l.to);
-				path.add(new Integer(l.to.renumberdId));
-				isWay=true;
-				p1=new Integer(l.to.renumberdId);
-				b.extend(l.to.lat,l.to.lon);
-			} catch (RuntimeException e) {
-			}
-		}
-		if (isWay){
-			boolean longWays=false;
-			for (ArrayList<Integer> subPath : paths){
-				if (subPath.size() >= 255){
-					longWays=true;
-				}
-			}
-			if (multipath ){
-				flags+=4;
-			}
-			if (longWays ){
-				flags+=8;
-			}
-			ds.writeByte(flags);
-			ds.writeFloat(MyMath.degToRad(b.minLat));
-			ds.writeFloat(MyMath.degToRad(b.minLon));
-			ds.writeFloat(MyMath.degToRad(b.maxLat));
-			ds.writeFloat(MyMath.degToRad(b.maxLon));
-//			ds.writeByte(0x58);
-			ds.writeByte(type);
-			if ((flags & 1) == 1){
-				ds.writeShort(names1.getNameIdx(w.getName()));
-			}
-			if ((flags & 2) == 2){
-				ds.writeByte(maxspeed);
-			}
-			if ((flags & 16) == 16){
-				ds.writeShort(names1.getNameIdx(w.getIsIn()));
-			}
-			if ((flags & 4) == 4){
-				ds.writeByte(paths.size());
-			}
-//			System.out.print("Way Paths="+paths.size());
-			for (ArrayList<Integer> subPath : paths){
-				if (longWays){
-					ds.writeShort(subPath.size());
-				} else {
-					ds.writeByte(subPath.size());
-				}
-//				System.out.print("Path="+subPath.size());
-				for (Integer l : subPath) {
-//					System.out.print(" "+l.intValue());
-					ds.writeShort(l.intValue());
-				}
-// only for test integrity
-//				System.out.println("   write magic code 0x59");
-//				ds.writeByte(0x59);
-			}
-		} else {
-			ds.write(128); // flag that mark there is no way
-		}
-	}
 
 
 	/**

@@ -23,4 +23,8 @@ public class Sequence {
 	public String toString(){
 		return "sequence="+seq;
 	}
+	public int next(){
+		return seq++;
+	}
+
 }

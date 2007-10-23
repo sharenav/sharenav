@@ -1,11 +1,16 @@
 package de.ueller.osmToGpsMid.model;
 
 import java.io.DataOutputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 import de.ueller.osmToGpsMid.CreateGpsMidData;
+import de.ueller.osmToGpsMid.MyMath;
 
 
 public class Tile {
@@ -18,7 +23,19 @@ public class Tile {
 	public byte type;
 	public byte zl;
 	public LinkedList<Way> ways=null;
-	
+	private ArrayList<RouteNode> routeNodes=null;
+	public Collection<Node> nodes=new ArrayList<Node>();
+	int idxMin=Integer.MAX_VALUE;
+	int idxMax=0;
+	public static final byte TYPE_MAP = 1;
+	public static final byte TYPE_CONTAINER = 2;
+	public static final byte TYPE_FILETILE = 4;
+	public static final byte TYPE_EMPTY = 3;
+	public static final byte TYPE_ROUTEDATA = 5;
+	public static final byte TYPE_ROUTECONTAINER = 6;
+	public static final byte TYPE_ROUTEFILE = 7;
+	public static final float RTEpsilon = 0.012f;
+
 	public Tile() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -26,23 +43,40 @@ public class Tile {
 	public Tile(byte zl) {
 		this.zl = zl;
 	}
+	public Tile(byte zl,LinkedList<Way> ways,Collection<Node> nodes) {
+		this.zl = zl;
+		this.ways = ways;
+		this.nodes = nodes;
+	}
 
 
 	public Tile(Bounds b) {
 		bounds=b.clone();		
 	}
 	
-	public void write(DataOutputStream ds,Integer deep,Sequence fid,String path) throws IOException{
+	public void writeTileDict(DataOutputStream ds,Integer deep,Sequence fid,String path) throws IOException{
 		DataOutputStream lds;
 		boolean openStream;
 //		System.out.println("Write Tile type=" + type + " deep=" + deep + " fid=" + fid);
-		if (type == 2 && deep >= CreateGpsMidData.MAX_DICT_DEEP){
+		if ((type == TYPE_CONTAINER || type == TYPE_ROUTECONTAINER) 
+				&& deep >= CreateGpsMidData.MAX_DICT_DEEP){
 //			System.out.println("Type 4");
-			ds.writeByte(4);
-			ds.writeFloat(degToRad(bounds.minLat));
-			ds.writeFloat(degToRad(bounds.minLon));
-			ds.writeFloat(degToRad(bounds.maxLat));
-			ds.writeFloat(degToRad(bounds.maxLon));
+			// Write containerTile 
+			if (zl != CreateGpsMidData.ROUTEZOOMLEVEL){
+				ds.writeByte(TYPE_FILETILE);
+				ds.writeFloat(degToRad(bounds.minLat));
+				ds.writeFloat(degToRad(bounds.minLon));
+				ds.writeFloat(degToRad(bounds.maxLat));
+				ds.writeFloat(degToRad(bounds.maxLon));
+			} else {
+				ds.writeByte(TYPE_ROUTEFILE);				
+				ds.writeFloat(degToRad(bounds.minLat-RTEpsilon));
+				ds.writeFloat(degToRad(bounds.minLon-RTEpsilon));
+				ds.writeFloat(degToRad(bounds.maxLat+RTEpsilon));
+				ds.writeFloat(degToRad(bounds.maxLon+RTEpsilon));
+				ds.writeInt(idxMin);
+				ds.writeInt(idxMax);
+			}
 			ds.writeShort(fid.get());
 			openStream=true;
 			FileOutputStream fo = new FileOutputStream(path+"/d"+zl+fid.get()+".d");
@@ -56,28 +90,49 @@ public class Tile {
 			deep++;
 		}
 		switch (type){
-			case 1:
+			case TYPE_MAP:
+			case TYPE_ROUTEDATA:
 //				System.out.println("Type 1");
-				lds.writeByte(1);
-				lds.writeFloat(degToRad(bounds.minLat));
-				lds.writeFloat(degToRad(bounds.minLon));
-				lds.writeFloat(degToRad(bounds.maxLat));
-				lds.writeFloat(degToRad(bounds.maxLon));
+				if (zl != CreateGpsMidData.ROUTEZOOMLEVEL){
+					lds.writeByte(TYPE_MAP);
+					lds.writeFloat(degToRad(bounds.minLat));
+					lds.writeFloat(degToRad(bounds.minLon));
+					lds.writeFloat(degToRad(bounds.maxLat));
+					lds.writeFloat(degToRad(bounds.maxLon));
+				} else {
+					lds.writeByte(TYPE_ROUTEDATA);	
+					lds.writeFloat(degToRad(bounds.minLat-RTEpsilon));
+					lds.writeFloat(degToRad(bounds.minLon-RTEpsilon));
+					lds.writeFloat(degToRad(bounds.maxLat+RTEpsilon));
+					lds.writeFloat(degToRad(bounds.maxLon+RTEpsilon));
+					lds.writeInt(idxMin);
+					lds.writeInt(idxMax);
+				}
 				lds.writeInt(this.fid);
 //				ds.writeInt(ds.size());
 				break;
-			case 2:
+			case TYPE_CONTAINER:
+			case TYPE_ROUTECONTAINER:
 //				System.out.println("Type 2");
-				lds.writeByte(2);
-				lds.writeFloat(degToRad(bounds.minLat));
-				lds.writeFloat(degToRad(bounds.minLon));
-				lds.writeFloat(degToRad(bounds.maxLat));
-				lds.writeFloat(degToRad(bounds.maxLon));
-				
-				t1.write(lds,deep,fid,path);
-				t2.write(lds,deep,fid,path);
+				if (zl != CreateGpsMidData.ROUTEZOOMLEVEL){
+					lds.writeByte(TYPE_CONTAINER);
+					lds.writeFloat(degToRad(bounds.minLat));
+					lds.writeFloat(degToRad(bounds.minLon));
+					lds.writeFloat(degToRad(bounds.maxLat));
+					lds.writeFloat(degToRad(bounds.maxLon));
+				} else {
+					lds.writeByte(TYPE_ROUTECONTAINER);					
+					lds.writeFloat(degToRad(bounds.minLat-RTEpsilon));
+					lds.writeFloat(degToRad(bounds.minLon-RTEpsilon));
+					lds.writeFloat(degToRad(bounds.maxLat+RTEpsilon));
+					lds.writeFloat(degToRad(bounds.maxLon+RTEpsilon));
+					lds.writeInt(idxMin);
+					lds.writeInt(idxMax);
+				}			
+				t1.writeTileDict(lds,deep,fid,path);
+				t2.writeTileDict(lds,deep,fid,path);
 				break;
-			case 3:
+			case TYPE_EMPTY:
 //				System.out.println("Type 3");
 				lds.writeByte(3);
 //			case 4:
@@ -90,7 +145,7 @@ public class Tile {
 //				lds.writeShort(fid);
 		}
 		if (openStream){
-			lds.writeUTF("END"); // magig number
+			lds.writeUTF("END"); // Magic number
 			lds.close();
 		}
 	}
@@ -126,4 +181,145 @@ public class Tile {
 		public void setWays(LinkedList<Way> ways) {
 			this.ways = ways;
 		}
+		public ArrayList<RouteNode> getRouteNodes() {
+			return routeNodes;
+		}
+		public void setRouteNodes(ArrayList<RouteNode> routeNodes) {
+			this.routeNodes = routeNodes;
+		}
+		/**
+		 * @param routeNode
+		 */
+		public void addRouteNode(RouteNode routeNode) {
+			if (routeNodes == null){
+				routeNodes = new ArrayList<RouteNode>();
+			}
+			routeNodes.add(routeNode);
+//			System.out.println("RouteNodes.add(" + routeNode + ")");
+		}
+		
+
+	/**
+	  * 
+	  */
+	public void renumberRouteNode(Sequence rnSeq) {
+		if (type == TYPE_ROUTECONTAINER){
+			if (t1 != null){
+				t1.renumberRouteNode(rnSeq);
+			}
+			if (t2 != null) {
+				t2.renumberRouteNode(rnSeq);
+			}
+		}
+		if (type == TYPE_ROUTEDATA){
+			if (routeNodes != null){
+				for (RouteNode rn: routeNodes){
+					rn.id=rnSeq.get();
+					rnSeq.inc();
+				}
+			}
+		}
+	}
+	
+	/**
+	 * for Debugging the correct sequence of RouteNodes
+	 * @param deep
+	 * @param maxDeep
+	 */
+	public void printHiLo(int deep,int maxDeep){
+		if (type == TYPE_ROUTECONTAINER){
+			if (deep < maxDeep){
+				System.out.print(":");
+				if (t1 == null){
+					System.out.print("(empty)");
+				} else {
+					t1.printHiLo(deep+1,maxDeep);
+				}
+				System.out.print("-");
+				if (t2 == null){
+					System.out.print("(empty)");
+				} else {
+					t2.printHiLo(deep+1,maxDeep);
+				}
+				System.out.print(":");
+			}
+			if (deep == maxDeep){
+				System.out.print("((C)"+idxMin+"/"+idxMax+")");
+			}
+		} else if (type == TYPE_ROUTEDATA){
+			if (deep == maxDeep){
+			  System.out.print("((D"+fid+")"+idxMin+"/"+idxMax+")");
+			}
+		} else {
+			System.out.print(" type(" + type + ")");
+		}
+	}
+	
+	/**
+	 * recalc the idxMin and idxMax on RouteContainerTiles and RouteDataTiles
+	 * @return
+	 */
+	public HiLo calcHiLo() {
+		if (type == TYPE_ROUTEDATA ){
+			HiLo retHiLo1=new HiLo();
+			if (routeNodes != null){
+				for (RouteNode rn: routeNodes){
+					retHiLo1.extend(rn.id);
+				}
+			}
+			idxMin=retHiLo1.lo;
+			idxMax=retHiLo1.hi;
+			return retHiLo1;
+		} else if (type == TYPE_ROUTECONTAINER){
+			HiLo retHiLo=new HiLo();
+			if (t1 != null){
+				retHiLo.extend(t1.calcHiLo());
+			}
+			if (t2 != null) {
+				retHiLo.extend(t2.calcHiLo());
+			}
+			idxMin=retHiLo.lo;
+			idxMax=retHiLo.hi;
+			return retHiLo;
+		} else if (type == TYPE_EMPTY){
+			return new HiLo();
+		} else {
+			throw new Error("Wrong type of tile in " + this);
+		}
+	}
+	/**
+	 * @param path
+	 * @throws IOException 
+	 */
+	public void writeConnections(String path) throws IOException {
+		if (t1 != null){
+			t1.writeConnections(path);
+//			System.out.println("resolve T1 with " + idxMin + " to "+ idxMax);
+		}
+		if (t2 != null) {
+			t2.writeConnections(path);
+//			System.out.println("resolve T2 with " + idxMin + " to "+ idxMax);
+		}
+		if (routeNodes != null){
+			System.out.println("Write Routenodes " + fid + " nodes " + routeNodes.size()+"  with " + idxMin + " to "+ idxMax);
+			FileOutputStream cfo = new FileOutputStream(path+"/c"+fid+".d");
+			DataOutputStream cds = new DataOutputStream(cfo);
+			FileOutputStream fo = new FileOutputStream(path+"/t"+zl+fid+".d");
+			DataOutputStream nds = new DataOutputStream(fo);
+			nds.writeShort(routeNodes.size());
+			for (RouteNode n : routeNodes){
+				nds.writeFloat(MyMath.degToRad(n.node.lat));
+				nds.writeFloat(MyMath.degToRad(n.node.lon));
+				//nds.writeInt(cds.size());
+				nds.writeByte(n.connected.size());
+				for (Connection c : n.connected){
+					cds.writeInt(c.to.id);
+					cds.writeShort((int) c.time);
+					cds.writeShort((int) c.length);
+					cds.writeByte(c.startBearing);
+					cds.writeByte(c.endBearing);
+				}
+			}
+		}
+	}
 }

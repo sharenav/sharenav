@@ -61,7 +61,9 @@ public class AStar2 {
 	private boolean newBest = false;
 	private final Vector<Node> nodes = new Vector<Node>();
 	private RouteNode target;
-
+	private boolean bestTime=true;
+	private boolean noHeuristic=false;
+	
 	private Node search(RouteNode target) {
 		this.target = target;
 		Node currentNode;
@@ -85,10 +87,13 @@ public class AStar2 {
 			expanded++;
 //			System.out.println(""+currentNode + " has " +  currentNode.state.to.connected.size() +" successors");
 			for (Connection nodeSuccessor: currentNode.state.to.connected) { 
+				nodeSuccessor.used++;
 				int dTurn=currentNode.fromBearing-nodeSuccessor.startBearing;
 				long turnCost=getTurnCost(dTurn);
-				successorCost = currentNode.costs + nodeSuccessor.time+turnCost;
-//				successorCost = currentNode.costs + nodeSuccessor.length+turnCost;
+				if (bestTime)
+					successorCost = currentNode.costs + nodeSuccessor.time+turnCost;
+				else 
+					successorCost = currentNode.costs + nodeSuccessor.length+turnCost;
 				Node openNode = null;
 				Node theNode = null;
 				Node closedNode =  closed.get(nodeSuccessor.to);
@@ -104,9 +109,9 @@ public class AStar2 {
 						if (closedNode != null) {
 							open.put(nodeSuccessor.to, theNode);
 							closed.remove(nodeSuccessor.to);
-							System.out.println("add to open;remove form closed " + theNode );
+//							System.out.println("add to open;remove form closed " + theNode );
 						} else {
-							System.out.println("add to open" + theNode + " set dist to "+ theNode.distance);
+//							System.out.println("add to open" + theNode + " set dist to "+ theNode.distance);
 							long dist = theNode.distance;
 							theNode = new Node(nodeSuccessor, currentNode, successorCost, dist, currentNode.fromBearing);
 							open.put(nodeSuccessor.to, theNode); 
@@ -115,14 +120,14 @@ public class AStar2 {
 						theNode.total = theNode.costs + theNode.distance;
 						theNode.parent = currentNode; 
 						theNode.fromBearing=currentNode.state.endBearing;
-						System.out.println("add children " + theNode);
+//						System.out.println("add children " + theNode);
 						children.addElement(theNode);
 					}
 					// not in open ore closed
 				} else { 
 					long estimation;
 					Node newNode;
-					estimation = MyMath.dist(nodeSuccessor.to.node, target.node);
+					estimation = estimate(currentNode.state,nodeSuccessor, target);
 					newNode = new Node(nodeSuccessor, currentNode, successorCost, estimation, currentNode.fromBearing);
 //					System.out.println("NewNode add to open" + newNode + " set dist to "+ estimation);
 					open.put(nodeSuccessor.to, newNode);
@@ -138,7 +143,40 @@ public class AStar2 {
 		return null;
 		// no open nodes and no solution
 
+	}
+
+	/**
+	 * @param nodeSuccessor
+	 * @param target
+	 * @return
+	 */
+	private long estimate(Connection from,Connection to, RouteNode target) {
+		if (noHeuristic){
+			return 0;
+		}
+		int dTurn=from.endBearing-to.startBearing;
+		long turnCost=getTurnCost(dTurn);
+		long dist = MyMath.dist(to.to.node, target.node,1.2);
+		long estimatedSpeed=speed(30);
+		if (bestTime){
+			if (dist > 100000) {
+				estimatedSpeed=speed(100);
+			} else if (dist > 50000) {
+				estimatedSpeed=speed(80);
+			} else if (dist > 10000) {
+				estimatedSpeed=speed(60);
+			} else if (dist > 5000) {
+				estimatedSpeed=speed(45);
+			}
+			return (long)(dist/estimatedSpeed)+turnCost;
+		}
+		else
+			return (long) (dist*1.1f + turnCost);
 	} 
+	
+	private long speed(int kmh){
+		return (long) (kmh/3.6);
+	}
 	
 	/**
 	 * @param turn
@@ -149,7 +187,7 @@ public class AStar2 {
 		String turnString;
 		int adTurn=Math.abs(turn*2);
 		if (adTurn > 150){
-			cost=20;
+			cost=150;
 			turnString="wende ";
 		} else if (adTurn > 120){
 			cost=15;
@@ -165,11 +203,11 @@ public class AStar2 {
 			turnString="gerade ";			
 		}
 		if (cost==0){
-			System.out.println("gerade aus");
+//			System.out.println("gerade aus");
 		} else {
-			System.out.println(turnString + ((turn > 0)?"rechts ":"links ") + adTurn);
+//			System.out.println(turnString + ((turn > 0)?"rechts ":"links ") + adTurn);
 		}
-		return cost*10;
+		return cost;
 //		return 0;
 	}
 
@@ -209,13 +247,16 @@ public class AStar2 {
 	}
 	// {{{ public final Vector solve (State initialState) 
 	public final Vector<Connection> solve (RouteNode start,RouteNode target) {
-		Connection initialState=new Connection(start,0l,0l,(byte)0,(byte)0);
+		long totalDist = MyMath.dist(start.node, target.node,1.2);
+		long estimateSpeed=0;
+		Connection initialState=new Connection(start,0l,0l,(byte)0,(byte)0,null);
 		Node solution;
 		Node firstNode;
 		long estimation;
 		expanded = 0;
 		evaluated = 1;
-		estimation = MyMath.dist(initialState.to.node, target.node);
+		estimation=0;
+//		estimation = estimate(initialState, target);
 		firstNode = new Node(initialState, null, 0l, estimation,(byte)0);
 		open.put(initialState.to, firstNode);
 		nodes.addElement(firstNode);

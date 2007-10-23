@@ -46,7 +46,7 @@ public class SearchList {
 					if (ds != null) ds.close();
 					lastFid=mapName.getCanonFileId();
 					String fileName = path+"/s"+lastFid+".d";
-					System.out.println("open "+fileName);
+//					System.out.println("open "+fileName);
 					fo = new FileOutputStream(fileName);
 					ds = new DataOutputStream(fo);
 					curPos=0;
@@ -64,19 +64,19 @@ public class SearchList {
 					if (wrString.length() > 0)
 						l = Long.parseLong(wrString);
 					if (l < Byte.MAX_VALUE){
-						System.out.println("byte   " + (delta)  + " " + (byte) delta + " '" +string.substring(eq)+"' '"+mapName);
+//						System.out.println("byte   " + (delta)  + " " + (byte) delta + " '" +string.substring(eq)+"' '"+mapName);
 						ds.writeByte(delta);
 						ds.writeByte((int) l);
 					} else if (l < Short.MAX_VALUE){
-						System.out.println("short  " + (delta) + " " + (byte) delta  + " '" +string.substring(eq)+"' '"+mapName);
+//						System.out.println("short  " + (delta) + " " + (byte) delta  + " '" +string.substring(eq)+"' '"+mapName);
 						ds.writeByte(delta | 0x20);
 						ds.writeShort((int) l);
 					} else if (l < Integer.MAX_VALUE){					
-						System.out.println("int    " + (delta) + " " + (byte) delta  + " '" +string.substring(eq)+"' '"+mapName);
+//						System.out.println("int    " + (delta) + " " + (byte) delta  + " '" +string.substring(eq)+"' '"+mapName);
 						ds.writeByte(delta | 0x40);
 						ds.writeInt((int) l);
 					} else {
-						System.out.println("long   " + (delta) + " " + (byte) delta  + " '" +string.substring(eq)+"' '"+mapName);
+//						System.out.println("long   " + (delta) + " " + (byte) delta  + " '" +string.substring(eq)+"' '"+mapName);
 						ds.writeByte(delta| 0x60);
 						ds.writeLong(l);
 					}
@@ -87,12 +87,12 @@ public class SearchList {
 						Node n = (Node) e;
 						ds.writeByte(n.getNameType());
 						center=n;
-						System.out.println("entryType " + n.getNameType() + " idx=" + mapName.getIndex());
+//						System.out.println("entryType " + n.getNameType() + " idx=" + mapName.getIndex());
 					}
 					if (e instanceof Way) {
 						Way w = (Way) e;
 						ds.writeByte(w.getNameType());
-						System.out.println("entryType " + w.getNameType() + " idx=" + mapName.getIndex());
+//						System.out.println("entryType " + w.getNameType() + " idx=" + mapName.getIndex());
 						center=w.getMidPoint();
 					}
 					ArrayList<Entity> isIn=new ArrayList<Entity>();

@@ -2,7 +2,8 @@
          default="deploy"
          basedir=".">
 
-	<property name="planet" value="/Massenspeicher/planet-070718.osm"/>
+	<property name="planet" value="/Massenspeicher/planet-070928.osm.bz2"/>
+	<property name="germany" value="/Massenspeicher/germany-070928.osm.bz2"/>
 	<property name="testplanet" value="/Massenspeicher/myStreetMap_harald.osm"/>
 	<property name="testplanet-lon" value="/Massenspeicher/myStreetMap-london-city.osm"/>
 	<property name="src.dir" value="${basedir}/src"/>
@@ -13,7 +14,7 @@
 	<property name="lib.dir" value="${basedir}/lib"/>
 
    	<property name="dist.dir" value="${basedir}/dist"/>
-	<property name="version" value="0.2.31"/>
+	<property name="version" value="0.2.32"/>
 	<property name="buildlib"
 	             value="buildlib/explode.jar"/>
 
@@ -59,7 +60,8 @@
    		<entry key="useLeisure" value="true"/>
    		<entry key="useWaterway" value="true"/>
    		<entry key="midlet.name" value="GpsMid"/>
-
+		<entry key="routing.maxTileSize" value="3000"/>
+		<entry key="maxTileSize" value="20000"/>
    	</propertyfile>
    </target>
 
@@ -125,10 +127,14 @@
       <taskdef  classname="org.jboss.portal.common.ant.Explode"
                name="explode"
                classpath="${buildlib}"/>
-      <explode
-            file="lib/MinML2.jar"
-            todir="${basedir}"
-            name="exploded"/>
+    <explode
+          file="lib/bzip2.jar"
+          todir="${basedir}"
+          name="exploded"/>
+    <explode
+          file="lib/MinML2.jar"
+          todir="${basedir}"
+          name="exploded"/>
    </target>
 	
 	<target name="app-germany" depends="deploy">
@@ -151,7 +157,7 @@
 	</target>	
 	<target name="nuernberg" depends="deploy">
 		<java jar="${dist.dir}/${ant.project.name}-${version}.jar" fork="true" maxmemory="1024m">
-			<arg value="${planet}"/>
+			<arg value="${germany}"/>
 			<arg value="nuernberg"/>
 		</java>
 	</target>	
@@ -163,7 +169,7 @@
 	</target>	
 	<target name="hamburg" depends="deploy">
 		<java jar="${dist.dir}/${ant.project.name}-${version}.jar" fork="true" maxmemory="1024m">
-			<arg value="${planet}"/>
+			<arg value="${germany}"/>
 		  <arg value="hamburg"/>
 		</java>
 	</target>	
@@ -180,6 +186,12 @@
 		  <arg value="bavaria"/>
 		</java>
 	</target>	
+	<target name="munic" depends="deploy">
+		<java jar="${dist.dir}/${ant.project.name}-${version}.jar" fork="true" maxmemory="1024m">
+			<arg value="${germany}"/>
+		  <arg value="Munich"/>
+		</java>
+	</target>	
 	<target name="hh-nue" depends="deploy">
 		<java jar="${dist.dir}/${ant.project.name}-${version}.jar" fork="true" maxmemory="1024m">
 			<arg value="${planet}"/>
@@ -188,7 +200,7 @@
 	</target>	
 	<target name="web-demo" depends="deploy">
 		<java jar="${dist.dir}/${ant.project.name}-${version}.jar" fork="true" maxmemory="1024m">
-			<arg value="${planet}"/>
+			<arg value="${germany}"/>
 		  <arg value="Munic-demo"/>
 		</java>
 	</target>	
@@ -206,7 +218,7 @@
 	
 	<target name="test" depends="deploy">
 		<java jar="${dist.dir}/${ant.project.name}-${version}.jar" fork="true" maxmemory="1024m">
-			<arg value="${testplanet}"/>
+			<arg value="${germany}"/>
 		  <arg value="germany"/>
 		</java>
 	</target>	
@@ -215,6 +227,12 @@
 		<java jar="${dist.dir}/${ant.project.name}-${version}.jar" fork="true" maxmemory="1024m">
 			<arg value="${testplanet-lon}"/>
 		  <arg value="london"/>
+		</java>
+	</target>	
+	<target name="test-nue" depends="deploy">
+		<java jar="${dist.dir}/${ant.project.name}-${version}.jar" fork="true" maxmemory="512m">
+			<arg value="${germany}"/>
+		  <arg value="nuernberg-ro"/>
 		</java>
 	</target>	
 

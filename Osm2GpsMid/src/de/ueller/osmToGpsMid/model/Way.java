@@ -1,13 +1,20 @@
 package de.ueller.osmToGpsMid.model;
 
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import de.ueller.osmToGpsMid.Configuration;
 import de.ueller.osmToGpsMid.Constants;
+import de.ueller.osmToGpsMid.MyMath;
+import de.ueller.osmToGpsMid.model.name.Names;
 
 public class Way extends Entity implements Comparable<Way>{
 	public List<Line> lines = new LinkedList<Line>();
+	public Path path=null;
 	Bounds bound=null;
 /**
  * indicate that this Way is already written to output;
@@ -15,11 +22,15 @@ public class Way extends Entity implements Comparable<Way>{
 	public boolean used=false;
 	private byte type;
 
-
 	public Way(long id) {
 		this.id=id;
 	}
 	
+	/**
+	 * create a new Way which shares the tags with the other way, has
+	 * the same type and id, but no Nodes
+	 * @param other
+	 */
 	public Way(Way other) {
 		this.id=other.id;
 		this.tags=other.tags;
@@ -37,11 +48,17 @@ public class Way extends Entity implements Comparable<Way>{
 	public boolean isHighway(){
 		return (tags.get("highway") != null);
 	}
+	public String getMotorcar(){
+		return (tags.get("motorcar"));
+	}
 	public boolean isAccessByCar(){
 		String way = tags.get("highway");
 		if (way == null)
 			return false;
 		if (getType() > Constants.WAY_HIGHWAY_UNCLASSIFIED){
+			return false;
+		}
+		if ("restricted".equalsIgnoreCase(getMotorcar())){
 			return false;
 		}
 		return true;
@@ -78,6 +95,12 @@ public class Way extends Entity implements Comparable<Way>{
 		}
 		if ("footway".equals(t)){
 			return Constants.WAY_HIGHWAY_FOOTWAY;
+		}
+		if ("track".equalsIgnoreCase(t)){
+			return Constants.WAY_HIGHWAY_TRACK;
+		}
+		if ("steps".equalsIgnoreCase(t)){
+			return Constants.WAY_HIGHWAY_STEPS;
 		}
 		return Constants.WAY_HIGHWAY_UNCLASSIFIED;	
 	}
@@ -268,21 +291,25 @@ public class Way extends Entity implements Comparable<Way>{
 			}
 		}
 		switch (type){
-			case Constants.WAY_HIGHWAY_MOTORWAY:
-				return 120f/3.6f;
-			case Constants.WAY_HIGHWAY_TRUNK: 
-				return 90f/3.6f;
-			case Constants.WAY_HIGHWAY_PRIMARY:
-				return 100f/3.6f;
-			case Constants.WAY_JUNCTION_ROUNDABOUT:
-				return 30f/3.6f;
-			case Constants.WAY_HIGHWAY_SECONDARY:
-				return 80f/3.6f;
-			case Constants.WAY_HIGHWAY_RESIDENTIAL:
-				return 50f/3.6f;
-			case Constants.WAY_HIGHWAY_MINOR: 
-				return 60f/3.6f;
-			default: return 60f/3.6f;
+		case Constants.WAY_HIGHWAY_MOTORWAY_LINK:
+			return 60f/3.6f;
+		case Constants.WAY_HIGHWAY_MOTORWAY:
+			return 130f/3.6f;
+		case Constants.WAY_HIGHWAY_TRUNK: 
+			return 100f/3.6f;
+		case Constants.WAY_HIGHWAY_PRIMARY:
+			return 100f/3.6f;
+		case Constants.WAY_JUNCTION_ROUNDABOUT:
+			return 30f/3.6f;
+		case Constants.WAY_HIGHWAY_SECONDARY:
+			return 80f/3.6f;
+		case Constants.WAY_HIGHWAY_RESIDENTIAL:
+			return 50f/3.6f;
+		case Constants.WAY_HIGHWAY_MINOR: 
+			return 60f/3.6f;
+		case Constants.WAY_HIGHWAY_TRACK:
+			return 25f/3.6f;
+		default: return 60f/3.6f;
 		}
 	}
 
@@ -299,12 +326,7 @@ public class Way extends Entity implements Comparable<Way>{
 	public Bounds getBounds(){
 		if (bound == null){
 			bound=new Bounds();
-			for (Line line : lines) {
-				if (line.isValid()){
-					bound.extend(line.from.lat,line.to.lon);
-					bound.extend(line.to.lat,line.to.lon);
-				}
-			}
+			path.extendBounds(bound);
 		}
 		return bound;
 	}
@@ -313,7 +335,7 @@ public class Way extends Entity implements Comparable<Way>{
 		bound=null;
 	}
 	public String toString(){
-		return "Way "+ getName()  + ((nearBy == null)?"":(" by " + nearBy));
+		return "Way(" + id + ") "+ getName()  + ((nearBy == null)?"":(" by " + nearBy)) + " type=" + getType();
 	}
 
 	/**
@@ -337,9 +359,9 @@ public class Way extends Entity implements Comparable<Way>{
 	 * @return
 	 */
 	public Node getMidPoint() {
-		int splitp=lines.size()/2;
-		Line splitLine=lines.get(splitp);
-		return (splitLine.to);
+		List<Node> nl=path.getSubPaths().getFirst().getNodes();
+		int splitp =nl.size()/2;
+		return (nl.get(splitp));
 	}
 
 	/**
@@ -349,9 +371,258 @@ public class Way extends Entity implements Comparable<Way>{
 		String t = (String) tags.get("oneway");
 		if (t==null)
 			return false;
-		if ("true".equals(t)){
+		if ("true".equalsIgnoreCase(t)){
+			return true;
+		}
+		if ("yes".equalsIgnoreCase(t)){
 			return true;
 		}
 		return false;
+	}
+	
+	@Deprecated
+	public void write_old(DataOutputStream ds,Names names1) throws IOException{
+		Bounds b=new Bounds();
+//		System.out.println("write way "+w);
+		int flags=0;
+		int maxspeed=50;
+		if (getName() != null){
+			flags+=1;
+		}
+		if (tags.containsKey("maxspeed")){
+			try {
+				maxspeed=Integer.parseInt((String) tags.get("maxspeed"));
+				flags+=2;
+			} catch (NumberFormatException e) {
+			}
+		}
+		if (getIsIn() != null){
+			flags+=16;
+		}
+		byte type=getType();
+		Integer p1=null;
+		ArrayList<ArrayList<Integer>> paths=new ArrayList<ArrayList<Integer>>();
+		ArrayList<Integer> path = new ArrayList<Integer>();
+		boolean isWay=false;
+		boolean multipath=false;
+		paths.add(path);
+		isWay=false;
+		if (lines != null){
+		for (Iterator iterw = lines.iterator(); iterw.hasNext();) {
+			try {
+				Line l=(Line) iterw.next();
+				if (p1 == null){
+					p1=new Integer(l.from.renumberdId);
+//					System.out.println("Start Way at " + l.from);
+					path.add(p1);
+					b.extend(l.from.lat, l.from.lon);
+				} else {
+					if (l.from.renumberdId != p1.intValue()){
+						if (getType() >= 50){
+							// insert segment, because this is a area
+							path.add(new Integer(l.from.renumberdId));
+						}
+						// non continues path so open a new Path
+						multipath=true;
+						path = new ArrayList<Integer>();
+						paths.add(path);
+						p1=new Integer(l.from.renumberdId);
+//						System.out.println("\tStart Way-Segment at " + l.from);
+						path.add(p1);
+						b.extend(l.from.lat, l.from.lon);
+					}
+				}
+//				System.out.println("\t\tContinues Way " + l.to);
+				path.add(new Integer(l.to.renumberdId));
+				isWay=true;
+				p1=new Integer(l.to.renumberdId);
+				b.extend(l.to.lat,l.to.lon);
+			} catch (RuntimeException e) {
+			}
+		}
+		} else {
+			
+		}
+		if (isWay){
+			boolean longWays=false;
+			for (ArrayList<Integer> subPath : paths){
+				if (subPath.size() >= 255){
+					longWays=true;
+				}
+			}
+			if (multipath ){
+				flags+=4;
+			}
+			if (longWays ){
+				flags+=8;
+			}
+			ds.writeByte(flags);
+			ds.writeFloat(MyMath.degToRad(b.minLat));
+			ds.writeFloat(MyMath.degToRad(b.minLon));
+			ds.writeFloat(MyMath.degToRad(b.maxLat));
+			ds.writeFloat(MyMath.degToRad(b.maxLon));
+//			ds.writeByte(0x58);
+			ds.writeByte(type);
+			if ((flags & 1) == 1){
+				ds.writeShort(names1.getNameIdx(getName()));
+			}
+			if ((flags & 2) == 2){
+				ds.writeByte(maxspeed);
+			}
+			if ((flags & 16) == 16){
+				ds.writeShort(names1.getNameIdx(getIsIn()));
+			}
+			if ((flags & 4) == 4){
+				ds.writeByte(paths.size());
+			}
+//			System.out.print("Way Paths="+paths.size());
+			for (ArrayList<Integer> subPath : paths){
+				if (longWays){
+					ds.writeShort(subPath.size());
+				} else {
+					ds.writeByte(subPath.size());
+				}
+//				System.out.print("Path="+subPath.size());
+				for (Integer l : subPath) {
+//					System.out.print(" "+l.intValue());
+					ds.writeShort(l.intValue());
+				}
+// only for test integrity
+//				System.out.println("   write magic code 0x59");
+//				ds.writeByte(0x59);
+			}
+		} else {
+			ds.write(128); // flag that mark there is no way
+		}
+
+	}
+	
+	public void write(DataOutputStream ds,Names names1) throws IOException{
+		Bounds b=new Bounds();
+		int flags=0;
+		int maxspeed=50;
+		if (getName() != null){
+			flags+=1;
+		}
+		if (tags.containsKey("maxspeed")){
+			try {
+				maxspeed=Integer.parseInt((String) tags.get("maxspeed"));
+				flags+=2;
+			} catch (NumberFormatException e) {
+			}
+		}
+		if (getIsIn() != null){
+			flags+=16;
+		}
+		byte type=getType();
+		boolean isWay=false;
+		boolean longWays=false;
+		for (SubPath s:path.getSubPaths()){
+			if (s.size() >= 255){
+				longWays=true;}
+
+			if (s.size() >1){
+				isWay=true;
+			}
+		}
+		if (isWay){
+			if (path.isMultiPath()){
+				flags+=4;
+			}
+			if (longWays ){
+				flags+=8;
+			}
+			ds.writeByte(flags);
+			b=getBounds();
+			ds.writeFloat(MyMath.degToRad(b.minLat));
+			ds.writeFloat(MyMath.degToRad(b.minLon));
+			ds.writeFloat(MyMath.degToRad(b.maxLat));
+			ds.writeFloat(MyMath.degToRad(b.maxLon));
+//			ds.writeByte(0x58);
+			ds.writeByte(type);
+			if ((flags & 1) == 1){
+				ds.writeShort(names1.getNameIdx(getName()));
+			}
+			if ((flags & 2) == 2){
+				ds.writeByte(maxspeed);
+			}
+			if ((flags & 16) == 16){
+				ds.writeShort(names1.getNameIdx(getIsIn()));
+			}
+			if ((flags & 4) == 4){
+				ds.writeByte(path.getPathCount());
+			}
+			for (SubPath s:path.getSubPaths()){
+				if (longWays){
+					ds.writeShort(s.size());
+				} else {
+					ds.writeByte(s.size());
+				}
+				for (Node n : s.getNodes()) {
+					ds.writeShort(n.renumberdId);
+				}
+// only for test integrity
+//				System.out.println("   write magic code 0x59");
+//				ds.writeByte(0x59);
+			}
+		} else {
+			ds.write(128); // flag that mark there is no way
+		}
+
+	}
+
+	public void add(Node n){
+		if (path == null){
+			path=new Path();
+		}
+		path.add(n);
+	}
+	
+	public void startNextSegment(){
+		if (path == null){
+			path=new Path();
+		}
+		path.addNewSegment();
+	}
+	
+
+	/**
+	 * @param no
+	 * @param n
+	 */
+	public void replace(Node no, Node n) {
+		path.replace(no,n);
+	}
+
+	public List<SubPath> getSubPaths() {
+		return path.getSubPaths();
+	}
+	
+	public int getLineCount(){
+		return path.getLineCount();
+	}
+	
+	public Way split(){
+		if (! isValid() )
+			System.out.println("Way before split is not valid");
+		Path split = path.split();
+		if (split != null){
+			Way newWay=new Way(this);
+			newWay.path=split;
+			if (! newWay.isValid() )
+				System.out.println("new Way after split is not valid");
+			if (! isValid() )
+				System.out.println("old Way after split is not valid");
+			return newWay;
+		}
+		return null;
+	}
+	public boolean isValid(){
+		if (path==null)
+			return false;
+		path.clean();
+		if (path.getPathCount() == 0)
+			return false;
+		return true;
 	}
 }

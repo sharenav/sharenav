@@ -28,6 +28,7 @@ public class Node extends Entity{
 	public boolean used=false;
 	public byte connectedLineCount=0;
 //	private Set<Way> connectedWays = new HashSet<Way>();
+	public RouteNode routeNode;
 	
 	public Node(float node_lat, float node_lon, long id) {
 		lat = node_lat;
