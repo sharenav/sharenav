@@ -10,7 +10,7 @@ import de.ueller.gpsMid.mapData.Tile;
 public class NamesNew extends QueueReader {
 	private short[] startIndexes=null;
 
-	protected void readData(Tile tt) throws IOException {
+	public void readData(Tile tt) throws IOException {
 		// TODO Auto-generated method stub
 
 	}

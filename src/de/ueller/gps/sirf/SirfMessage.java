@@ -192,7 +192,6 @@ public class SirfMessage {
 //		cal.set(Calendar.SECOND, (int) second);
 
 		Position p = new Position((float) lat, (float) lon, (float) altMSL, (float) sog, (float) course, valid, date/*cal.getTime()*/);
-//		pcs.firePropertyChange("GpsPosition", pold, p);
 		receiver.receivePosItion(p);
 		pold = p;
 		return null;

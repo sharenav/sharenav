@@ -8,11 +8,22 @@ import de.ueller.midlet.gps.ScreenContext;
 
 import de.ueller.midlet.gps.data.IntPoint;
 import de.ueller.midlet.gps.data.Node;
+import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.data.Projection;
+import de.ueller.midlet.gps.data.Way;
+import de.ueller.midlet.gps.routing.RouteNode;
 import de.ueller.midlet.gps.tile.PaintContext;
 
 
 public abstract class Tile {
+	public static final byte TYPE_MAP = 1;
+	public static final byte TYPE_CONTAINER = 2;
+	public static final byte TYPE_FILETILE = 4;
+	public static final byte TYPE_EMPTY = 3;
+	public static final byte TYPE_ROUTEDATA = 5;
+	public static final byte TYPE_ROUTECONTAINER = 6;
+	public static final byte TYPE_ROUTEFILE = 7;
+
 	public float minLat;
 	public float maxLat;
 	public float minLon;
@@ -23,6 +34,7 @@ public abstract class Tile {
 
 	public abstract void paint(PaintContext pc);
 	public abstract boolean cleanup(int level);
+	public abstract void getWay(PaintContext pc,PositionMark pm,Way w);
 	
 	boolean contain(ScreenContext pc){
 //		System.out.println(this);
@@ -40,6 +52,39 @@ public abstract class Tile {
 			return false;
 		}
 //		System.out.println("Paint gpsMidMap");
+		return true;
+	}
+	boolean contain(float lat, float lon){
+//		System.out.println(this);
+//		System.out.println(pc.screenLD + "   " + pc.screenRU);
+		if(maxLat < lat) {
+			return false;
+		}
+		if(maxLon < lon) {
+			return false;
+		}
+		if(minLat > lat) {
+			return false;
+		}
+		if(minLon > lon) {
+			return false;
+		}
+//		System.out.println("Paint gpsMidMap");
+		return true;
+	}
+	boolean contain(PositionMark pm){
+		if(maxLat < pm.lat) {
+			return false;
+		}
+		if(maxLon < pm.lon) {
+			return false;
+		}
+		if(minLat > pm.lat) {
+			return false;
+		}
+		if(minLon > pm.lon) {
+			return false;
+		}
 		return true;
 	}
 	public void getCenter(Node center){

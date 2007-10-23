@@ -46,21 +46,27 @@ package de.ueller.gps.nmea;
  *Interest, all follow data field format of BWC.
  *
  */
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Vector;
 
 import de.ueller.gps.data.Position;
 import de.ueller.gps.data.Satelit;
 import de.ueller.gps.tools.StringTokenizer;
+import de.ueller.gpsMid.mapData.QueueReader;
 import de.ueller.midlet.gps.LocationMsgReceiver;
+import de.ueller.midlet.gps.Logger;
 
 public class NmeaMessage {
+	protected static final Logger logger = Logger.getInstance(QueueReader.class,Logger.TRACE);
 	public StringBuffer buffer=new StringBuffer(80);
 	private static String spChar=",";
-	private float head,speed;
+	private float head,speed,alt;
 	private final LocationMsgReceiver receiver;
 	private int mAllSatellites;
 	private boolean lastMsgGSV=false;
 	private Satelit satelit[]=new Satelit[12];
+	private Calendar cal = Calendar.getInstance();
 	public NmeaMessage(LocationMsgReceiver receiver) {
 		this.receiver = receiver;
 	}
@@ -141,8 +147,11 @@ public class NmeaMessage {
 		
 	}
 	public void decodeMessage() {
-
-        Vector param = StringTokenizer.getVector(buffer.toString(), spChar);
+		decodeMessage(buffer.toString());
+	}
+	public void decodeMessage(String nmea_sentence) {
+		
+        Vector param = StringTokenizer.getVector(nmea_sentence, spChar);
 		String sentence=(String)param.elementAt(0);
 		try {
 //			receiver.receiveMessage("got "+buffer.toString() );
@@ -153,6 +162,11 @@ public class NmeaMessage {
 			}
 			if ("GGA".equals(sentence)){
 				// time
+				// Time of when fix was taken in UTC
+				int time_tmp = (int)getFloatToken((String)param.elementAt(1));
+				cal.set(Calendar.SECOND, time_tmp % 100);
+				cal.set(Calendar.MINUTE, (time_tmp / 100) % 100);
+				cal.set(Calendar.HOUR, (time_tmp / 10000) % 100);
 				
 				// lat
 				float lat=getLat((String)param.elementAt(2));
@@ -172,15 +186,51 @@ public class NmeaMessage {
 				
 				// meters above mean sea level
 				float alt=getFloatToken((String)param.elementAt(9));
-				// Height of geoid above WGS84 ellipsoid
-				Position p=new Position(lat,lon,alt,speed,head,0,null);
+				// Height of geoid above WGS84 ellipsoid				
+			} else if ("RMC".equals(sentence)){
+				/* RMC encodes the recomended minimum information */
+				 
+				// Time of when fix was taken in UTC
+				int time_tmp = (int)getFloatToken((String)param.elementAt(1));
+				cal.set(Calendar.SECOND, time_tmp % 100);
+				cal.set(Calendar.MINUTE, (time_tmp / 100) % 100);
+				cal.set(Calendar.HOUR, (time_tmp / 10000) % 100);
+				
+				//Status A=active or V=Void.
+				
+				//Latitude
+				float lat=getLat((String)param.elementAt(3));
+				if ("S".equals((String)param.elementAt(4))){
+					lat= -lat;
+				}
+				//Longitude
+				float lon=getLon((String)param.elementAt(5));
+				if ("W".equals((String)param.elementAt(6))){
+					lon=-lon;
+				}				
+				//Speed over the ground in knots
+				speed=getFloatToken((String)param.elementAt(7));
+			    //Track angle in degrees
+				head=getFloatToken((String)param.elementAt(8));
+				//Date
+				int date_tmp = getIntegerToken((String)param.elementAt(9));				
+				cal.set(Calendar.YEAR, 1900 + date_tmp % 100);
+				cal.set(Calendar.MONTH, (date_tmp / 100) % 100);
+				cal.set(Calendar.DAY_OF_MONTH, (date_tmp / 10000) % 100);				
+			    //Magnetic Variation
+				Position p=new Position(lat,lon,alt,speed,head,0,cal.getTime());
 				receiver.receivePosItion(p);
 			} else if ("VTG".equals(sentence)){
 				head=getFloatToken((String)param.elementAt(1));
 				speed=getFloatToken((String)param.elementAt(7));
 			} else if ("GSV".equals(sentence)) {
+				/* GSV encodes the satelites that are currently in view
+				 * A maximum of 4 satelites are reported per message,
+				 * if more are visible, then they are split over multiple messages				 * 
+				 */				
 	            int j;
-	            j=(getIntegerToken((String)param.elementAt(2))-1)*4;
+	            // Calculate which satelites are in this message (message number * 4) 
+	            j=(getIntegerToken((String)param.elementAt(2))-1)*4;	            
 	            mAllSatellites = getIntegerToken((String)param.elementAt(3));
 	            for (int i=4; i < param.size() && j < 12; i+=4, j++) {
 	            	if (satelit[j]==null){
@@ -189,6 +239,7 @@ public class NmeaMessage {
 	                satelit[j].id=getIntegerToken((String)param.elementAt(i));
 	                satelit[j].elev=getIntegerToken((String)param.elementAt(i+1));
 	                satelit[j].azimut=getIntegerToken((String)param.elementAt(i+2));
+	                //SNR (not stored at the moment)	                
 	            }
 	            lastMsgGSV=true;
 			}

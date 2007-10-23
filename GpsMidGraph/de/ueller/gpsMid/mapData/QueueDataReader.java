@@ -8,11 +8,16 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.data.Way;
+import de.ueller.midlet.gps.tile.C;
 
 
 public class QueueDataReader extends QueueReader implements Runnable {
+    //#debug error
+	private final static Logger logger=Logger.getInstance(QueueDataReader.class,Logger.DEBUG);
+
 	private final Trace trace;
 	public QueueDataReader(Trace trace){
 		super();
@@ -22,14 +27,16 @@ public class QueueDataReader extends QueueReader implements Runnable {
 	public synchronized void add(SingleTile st){
 		st.lastUse=0;
 		requestQueue.addElement(st);
-//		logger.info("add " + st.fileId + " to queue size=" + requestQueue.size());
+	    //#debug error
+			logger.info("add " + st.fileId + " to queue size=" + requestQueue.size());
 		notify();
 	}
-	protected void readData(Tile t) throws IOException{
+	public void readData(Tile t) throws IOException{
 		SingleTile tt=(SingleTile) t;
 		InputStream is=openFile("/t"+tt.zl+tt.fileId+".d");
 		if (is == null){
-//			logger.error("file inputStream"+url+" not found" );
+		    //#debug error
+				logger.error("file inputStream"+"/t"+tt.zl+tt.fileId+".d"+" not found" );
 			tt.state=0;
 			return;
 		}
@@ -50,23 +57,28 @@ public class QueueDataReader extends QueueReader implements Runnable {
 		float[] radlat = new float[nodeCount];
 		float[] radlon = new float[nodeCount];
 		int iNodeCount=ds.readShort();
-//		logger.trace("nodes total :"+nodeCount + "  interestNode :" + iNodeCount);
+		//#debug error
+		  logger.trace("nodes total :"+nodeCount + "  interestNode :" + iNodeCount);
 		Short[] nameIdx=new Short[iNodeCount];
 		byte[] type = new byte[iNodeCount];
+		byte flag=0;
 		try {
 			for (int i=0; i< nodeCount;i++){
-//			logger.trace("read coord :"+nodeCount);
-				radlat[i] = ds.readFloat();
-				radlon[i] = ds.readFloat();
-				if (i < iNodeCount){
-//				logger.trace("read ext :"+i+"/"+nodeCount );
-					short name=ds.readShort();
-					if ( name != 0){
-						nameIdx[i]=new Short(name);
-					} else {
-						nameIdx[i]=null;
-					}
-//				logger.trace("read type :"+i+"/"+nodeCount);
+				//#debug error
+					logger.trace("read coord :"+i+"("+nodeCount+")");
+				flag=ds.readByte();
+				if ((flag & C.NODE_MASK_ROUTENODELINK) > 0){
+					ds.readShort();
+					radlat[i] = ds.readFloat();
+					radlon[i] = ds.readFloat();					
+				} else {
+					radlat[i] = ds.readFloat();
+					radlon[i] = ds.readFloat();
+				}
+				if ((flag & C.NODE_MASK_NAME) > 0){
+					nameIdx[i]=new Short(ds.readShort());
+				}
+				if ((flag & C.NODE_MASK_TYPE) > 0){
 					type[i]=ds.readByte();
 				}
 			}
@@ -75,6 +87,10 @@ public class QueueDataReader extends QueueReader implements Runnable {
 			tt.nodeLon=radlon;
 			tt.type=type;
 		} catch (RuntimeException e) {
+			//#debug error
+			logger.trace("RuntimeExeption :"+e.getMessage());
+			//#debug error
+			e.printStackTrace();
 			throwError(e, "reading Nodes", tt);
 		}
 		if (ds.readByte()!=0x55){

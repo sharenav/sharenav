@@ -25,6 +25,7 @@ import javax.microedition.midlet.MIDlet;
 import javax.microedition.midlet.MIDletStateChangeException;
 
 import de.ueller.gps.data.Configuration;
+import de.ueller.midlet.gps.routing.RouteNodeTools;
 
 
 
@@ -68,7 +69,7 @@ private Trace trace=null;
 //		#debug
 		l=new Logger(this);
 		new Splash(this);
-
+//		RouteNodeTools.initRecordStore();
 	}
 	
 	protected void destroyApp(boolean arg0) throws MIDletStateChangeException {
@@ -192,7 +193,7 @@ private Trace trace=null;
 		if (l != null){
 //			#debug
         System.out.println(msg);
-        loghist.append(msg, null);
+//        loghist.append(msg, null);
 		}
 	}
 

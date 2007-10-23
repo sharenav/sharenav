@@ -56,5 +56,19 @@ public class ScreenContext {
 		ppm=(40075016.6855784861531768177614f/scale/p.getPPM());
 	}
 
-
+	public boolean isVisible(float lat, float lon){
+		if (lat < screenLD.radlat) {
+			return false;
+		}
+		if (lon < screenLD.radlon) {
+			return false;
+		}
+		if (lat > screenRU.radlat) {
+			return false;
+		}
+		if (lon > screenRU.radlon) {
+			return false;
+		}
+		return true;
+	}
 }

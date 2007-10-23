@@ -37,6 +37,9 @@ public class NmeaInput implements Runnable, LocationMsgProducer{
 	private static final int STATE_EXPECT_BODY=2;
 	private static final int STATE_EXPECT_CHECKSUM=3;
 	
+	private byte [] buf1 = new byte[512]; //Buffer used to read data from GPS-receiver
+	private byte [] buf2 = new byte[128]; //Buffer used to recombine data into NMEA sentences
+	
 	public NmeaInput(InputStream ins,LocationMsgReceiver receiver) {
 		super();
 		this.ins = ins;
@@ -58,17 +61,19 @@ public class NmeaInput implements Runnable, LocationMsgProducer{
 	public void run(){
 		receiver.receiveMessage("start NMEA");
 		// eat the buffe content
+		
 		try {
+			byte [] buf = new byte[512]; 
 			while (ins.available() > 0){
-				ins.read();
-				bytesReceived++;
+				bytesReceived += ins.read(buf);				
 			}
 			receiver.receiveMessage("erase " + bytesReceived +" bytes");
-			bytesReceived=100;
+			bytesReceived=100;			
 		} catch (IOException e1) {
 			receiver.receiveMessage("closing " + e1.getMessage());
 			close("closing " + e1.getMessage());
 		}
+		
 		byte timeCounter=21;
 		while (!closed){
 			timeCounter++;
@@ -121,31 +126,59 @@ public class NmeaInput implements Runnable, LocationMsgProducer{
 		this.message=message;
 	}
 	
-	public void process(){
-		StringBuffer readBuffer = smsg.getBuffer();
+	public void process(){		
+		//position markers in buf1 and buf2, length of useful data in buf1
+		int p1 = 0, p2 = 0, len1 = 0;
 		char c;
+		//Start marker in buf1 from where to copy
+		int start1 = 0; 
+		//Indicate if the start and or the end of a NMEA sentence has been read
+		boolean found_start = false, found_end = false; 
+		//t1 = System.currentTimeMillis();
+		
 		try {
-			while (ins.available() > 0 && ! closed) {
-				c=(char)ins.read();
-				bytesReceived++;
-				switch (c){
-				case '\r':
-					break;
-				case '\n':
-					smsg.decodeMessage();
-					break;
-				case '$':
-					readBuffer.setLength(0);
-					ins.read();
-					ins.read();
-					break;
-				case '*':
-					ins.read();
-					ins.read();
-					break;
-				default:
-					readBuffer.append(c);
+			
+			while ((ins.available() > 0 || p1 > 0) && ! closed) {				
+				if (p1 == 0) {					
+					len1 = ins.read(buf1);
+					bytesReceived += len1;					
 				}
+				//if we have already seen the start of a sentence, copy buf1 from the start
+				if (found_start) start1 = 0; 
+				
+				//Scan through buf1 to check for the beginning and end of a sentence
+				while (p1 < len1 && !found_end) {
+					c = (char)buf1[p1];
+					switch (c){					
+					case '\n':
+						if (found_start) found_end = true;							
+						break;
+					case '$':
+						start1 = p1;
+						found_start = true;						
+						break;
+					}
+					p1++;
+				}				
+				//If we haven't seen the start of the sentence, this data is useless so discard it
+				if (!found_start) continue; 
+				//Check to make sure we don't overrun the buffer
+				if (p2 + p1 - start1 > 128) {
+					System.out.println("Error: NMEA string was longer than 128 char, but max should be 82");
+					p1 = 0; p2 = 0; found_start = false; found_end = false;
+					continue;
+				}								
+				System.arraycopy(buf1, start1, buf2, p2, p1 - start1);				
+				p2 += p1 - start1;				
+				if (p1 == len1) p1 = 0; //consumed all of buf1, begin at the start again
+				if (!found_end)	continue;
+				//We have a complete NMEA sentence in buf2, so we can now decode it.
+				//Throw away the first 3 characters ($GP) and the last 7 (checksum and \r\n)
+				String nmea_sentence = new String(buf2,3,p2-7);
+				smsg.decodeMessage(nmea_sentence);
+				
+				//Reset buf2 for the next sentence
+				p2 = 0; found_start = false; found_end = false;				
 			} 
 		} catch (IOException e) {
 			receiver.receiveMessage("closing " + e.getMessage());

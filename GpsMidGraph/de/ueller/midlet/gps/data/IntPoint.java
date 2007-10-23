@@ -10,9 +10,10 @@ public class IntPoint {
 	public int y;
 	
 	public IntPoint(int x, int y) {
-		super();
 		this.x = x;
 		this.y = y;
+	}
+	public IntPoint() {
 	}
 	
 	public void set(IntPoint other){

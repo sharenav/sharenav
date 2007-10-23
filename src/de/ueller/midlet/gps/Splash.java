@@ -31,7 +31,7 @@ public class Splash extends Canvas implements CommandListener,Runnable{
     private final Command EXIT_CMD = new Command("Decline", Command.EXIT, 1);
 	private final GpsMid main;
 	String[] txt={"Copyright:",
-				  " Harald Müller",
+				  " Harald Mueller",
 	              "Applicaton:",
 	              " licensd by GPL2",
 	              " http://www.gnu.org/",
@@ -42,8 +42,9 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 	  "Thanks for source parts to:",
 	  " Nikolay Klimchuk",
 	  " Simon Turner",
+	  " A. P. Monkey",
       "Artwork:",
-      " Tobias Müller"};
+      " Tobias Mueller"};
 	private Font f;
 	int top=0;
 	private Thread processorThread;
@@ -109,6 +110,7 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 
 	public void commandAction(Command c, Displayable d) {
         if (c == BACK_CMD) {
+        	shutdown=true;
         	main.show();
         	return;
         }

@@ -13,7 +13,7 @@ import de.ueller.midlet.gps.data.Way;
 
 public class QueueDictReader extends QueueReader implements Runnable {
 	
-	protected void readData(Tile t) throws IOException{
+	public void readData(Tile t) throws IOException{
 		FileTile tt=(FileTile) t;
 //		logger.info("open /d"+tt.zl+tt.fid+".d");
 		InputStream is = openFile("/d"+tt.zl+tt.fileId+".d");

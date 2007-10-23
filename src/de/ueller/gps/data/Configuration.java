@@ -19,7 +19,7 @@ public class Configuration {
 	private String btUrl;
 	private int locationProvider=0;
 	private int render=RENDER_STREET;
-	
+	private String gpxUrl;
 	
 	
 	public Configuration() {
@@ -33,6 +33,7 @@ public class Configuration {
 			btUrl=readString(database, 1);
 			locationProvider=readInt(database, 2);
 			render=readInt(database, 3);
+			gpxUrl=readString(database, 4);
 			database.closeRecordStore();
 		} catch (Exception e) {
 
@@ -105,4 +106,13 @@ public class Configuration {
 		write(render,3);
 	}
 	
+	public void setGpxUrl(String url) {
+		this.gpxUrl = url;
+		write(url,4);
+	}
+
+	public String getGpxUrl() {
+		return gpxUrl;
+	}
+
 }

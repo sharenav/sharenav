@@ -5,6 +5,11 @@ package de.ueller.midlet.gps.tile;
  */
 
 public class C {
+	public final static byte NODE_MASK_ROUTENODELINK=0x1;
+	public final static byte NODE_MASK_TYPE=0x2;
+	public final static byte NODE_MASK_NAME=0x4;
+	public final static byte NODE_MASK_ROUTENODE=0x8;
+	
 	// node with name and no image
 	public final static byte NODE_PLACE_CITY=1;
 	public final static byte NODE_PLACE_TOWN=2;
@@ -28,22 +33,25 @@ public class C {
 	public static final byte NODE_AEROWAY_AERODROME = 101;
 	public static final byte NODE_HIGHWAY_ROUNDABOUT = 102;
 	
-	public final static byte WAY_HIGHWAY_MOTORWAY=2;
+	
+	public final static byte WAY_HIGHWAY_MOTORWAY=1;
 	public final static byte WAY_HIGHWAY_MOTORWAY_LINK=2;
 	public final static byte WAY_HIGHWAY_TRUNK=3;
 	public final static byte WAY_HIGHWAY_PRIMARY=4;
 	public final static byte WAY_HIGHWAY_SECONDARY=5;
 	public final static byte WAY_HIGHWAY_MINOR=6;
 	public final static byte WAY_HIGHWAY_RESIDENTIAL=7;
-	public final static byte WAY_HIGHWAY_UNCLASSIFIED=8;
+	public final static byte WAY_JUNCTION_ROUNDABOUT = 8;
+	public final static byte WAY_HIGHWAY_TRACK=9;
+	public final static byte WAY_HIGHWAY_UNCLASSIFIED=10;
 	// ways after unclassified are not accessible by car
-	public final static byte WAY_HIGHWAY_CYCLEWAY=9;
-	public final static byte WAY_HIGHWAY_FOOTWAY=10;
-	public final static byte WAY_RAILWAY_UNCLASSIFIED = 11;
-	public final static byte WAY_RAILWAY_RAIL = 12;
-	public final static byte WAY_RAILWAY_SUBWAY = 13;
-	public final static byte WAY_JUNCTION_ROUNDABOUT = 14;
-	public final static byte WAY_WATERWAY_RIVER=15;
+	public final static byte WAY_HIGHWAY_CYCLEWAY=11;
+	public final static byte WAY_HIGHWAY_FOOTWAY=12;
+	public final static byte WAY_RAILWAY_UNCLASSIFIED =13;
+	public final static byte WAY_RAILWAY_RAIL = 14;
+	public final static byte WAY_RAILWAY_SUBWAY = 15;
+	public final static byte WAY_WATERWAY_RIVER=16;
+	public final static byte WAY_HIGHWAY_STEPS=17;
 	
 	public final static byte AREA_AMENITY_UNCLASSIFIED=50;
 	public final static byte AREA_AMENITY_PARKING=51;
@@ -72,4 +80,5 @@ public class C {
 	public final static byte NAME_SUBURB=2;
 	public final static byte NAME_STREET=3;
 	public final static byte NAME_AMENITY=4;
+
 }

@@ -23,7 +23,7 @@ public class GuiDiscover implements CommandListener, GpsMidDisplayable {
 
 	/** A menu list instance */
 	private static final String[]	elements		= { "Input options","Discover GPS","Render options",
-			"Setup Database"						};
+			"GPX reciever"						};
 
 	private static final String[]	empty			= {};
 
@@ -70,6 +70,7 @@ public class GuiDiscover implements CommandListener, GpsMidDisplayable {
 
 	private final static int		STATE_BT		= 2;
 	private final static int		STATE_LP		= 3;
+	private final static int		STATE_RBT		= 4;
 	private Vector urlList; 
 	private Vector friendlyName;
 	ChoiceGroup locProv;
@@ -149,22 +150,34 @@ public class GuiDiscover implements CommandListener, GpsMidDisplayable {
 						Display.getDisplay(parent).setCurrent(menuBT);
 						state = STATE_BT;
 						
-						gps = new DiscoverGps(this);
+						gps = new DiscoverGps(this,DiscoverGps.UUDI_SERIAL);
 						break;
 					case 2:
 						OptionsRender render = new OptionsRender(this,parent.getConfig());
 						Display.getDisplay(parent).setCurrent(render);
 						break;
 					case 3:
-						menuFS.setTitle("Search Root FSs");
-						state = STATE_FS;
-						Display.getDisplay(parent).setCurrent(menuFS);
-						new FsDiscover(this);
+						menuBT	= new List("Devices",
+								Choice.IMPLICIT, empty,
+								null);
+						menuBT.addCommand(BACK_CMD);
+						menuBT.setCommandListener(this);
+						menuBT.setTitle("Search Service");
+						urlList=new Vector();
+						friendlyName=new Vector();
+						Display.getDisplay(parent).setCurrent(menuBT);
+						state = STATE_RBT;
+						
+						gps = new DiscoverGps(this,DiscoverGps.UUDI_FILE);
 						break;
 				}
 				break;
 			case STATE_BT:
 				parent.getConfig().setBtUrl((String) urlList.elementAt(menuBT.getSelectedIndex()));
+				parent.show();
+				break;
+			case STATE_RBT:
+				parent.getConfig().setGpxUrl((String) urlList.elementAt(menuBT.getSelectedIndex()));
 				parent.show();
 				break;
 //			case STATE_FS:

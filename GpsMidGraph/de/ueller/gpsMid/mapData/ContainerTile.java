@@ -8,6 +8,9 @@ import java.io.DataInputStream;
 import java.io.IOException;
 
 import de.ueller.midlet.gps.Logger;
+import de.ueller.midlet.gps.data.PositionMark;
+import de.ueller.midlet.gps.data.Way;
+import de.ueller.midlet.gps.routing.RouteNode;
 import de.ueller.midlet.gps.tile.PaintContext;
 
 
@@ -39,27 +42,31 @@ public class ContainerTile extends Tile {
     
     public Tile readTile(DataInputStream dis,int deep,byte zl) throws IOException{
     	byte t=dis.readByte();
-    	switch (t){
-    		case 1:
-    			//#debug
-    			logger.debug("r ST " + zl + " " + deep);
-    			return new SingleTile(dis,deep,zl);
-    		case 2:
-    			//#debug
-    			logger.debug("r CT " + zl + " " + deep);
-    			return new ContainerTile(dis,deep,zl);
-    		case 3:
-    			//#debug
-    			logger.debug("r ET " + zl + " " + deep);
-    			return null;
-    		case 4:
-    			//#debug
-    			logger.debug("r FT " + zl + " " + deep);
-    			return new FileTile(dis,deep,zl);
-    		default:
-    			//#debug error
-    			logger.error("wrongTileType");
-    			throw new IOException("wrong TileType");
+    	switch (t) {
+    	case Tile.TYPE_MAP:
+    		//#debug
+    		logger.debug("r ST " + zl + " " + deep);
+    		return new SingleTile(dis,deep,zl);
+    	case Tile.TYPE_CONTAINER:
+    		//#debug
+    		logger.debug("r CT " + zl + " " + deep);
+    		return new ContainerTile(dis,deep,zl);
+    	case Tile.TYPE_EMPTY:
+    		//#debug
+    		logger.debug("r ET " + zl + " " + deep);
+    		return null;
+    	case Tile.TYPE_FILETILE:
+    		//#debug
+    		logger.debug("r FT " + zl + " " + deep);
+    		return new FileTile(dis,deep,zl);
+    	case Tile.TYPE_ROUTEFILE:
+    		//#debug
+    		logger.debug("r RFT " + zl + " " + deep);
+    		return new RouteFileTile(dis,deep,zl);
+    	default:
+    		//#debug error
+    		logger.error("wrongTileType");
+    	throw new IOException("wrong TileType");
     	}
     }
 
@@ -92,6 +99,23 @@ public class ContainerTile extends Tile {
 //		if (t2 != null) {
 //			t2.cleanup();
 //		}
+		
+	}
+	public void getWay(PaintContext pc,PositionMark pm,Way w){
+		if (contain(pm)){
+			if (t1 != null) {
+				//#debug
+				logger.debug("search container left");
+				t1.getWay(pc,pm,w);
+			}
+			if (t2 != null) {
+				//#debug
+				logger.debug("search container right");
+				t2.getWay(pc,pm,w);
+			}	
+		} else {			
+			cleanup(4);
+		}
 		
 	}
 }

@@ -32,7 +32,7 @@ public class DictReader  implements Runnable {
 
 	public void run() {
 		try {
-			for (byte i=0;i<=3;i++) {
+			for (byte i=0;i<=4;i++) {
 				readData(i);
 			}
 		} catch (IOException e) {
@@ -44,7 +44,8 @@ public class DictReader  implements Runnable {
 	}
 	private void readData(byte zl) throws IOException{
 		try{
-//		    	logger.info("open dict-"+zl+".dat");
+		    //#debug error
+		    	logger.info("open dict-"+zl+".dat");
 				InputStream is = getClass().getResourceAsStream("/dict-"+zl+".dat");
 //		    	logger.info("open DataInputStream");
 				DataInputStream ds=new DataInputStream(is);
@@ -56,18 +57,25 @@ public class DictReader  implements Runnable {
 				byte type=ds.readByte();
 //				logger.trace("TileType="+type);
 				switch (type) {
-				case 1:
+				case Tile.TYPE_MAP:
 					dict=new SingleTile(ds,1,zl);
 					break;
-				case 2:
+				case Tile.TYPE_CONTAINER:
 		    		dict=new ContainerTile(ds,1,zl);
 		    		break;
-				case 3:
+				case Tile.TYPE_EMPTY:
 					// empty tile;
 					break;
-				case 4:
+				case Tile.TYPE_FILETILE:
 					dict=new FileTile(ds,1,zl);
 					break;
+				case Tile.TYPE_ROUTEDATA:
+					// RouteData Tile
+					dict=new RouteTile(ds,1,zl);
+					break;
+				case Tile.TYPE_ROUTECONTAINER:
+					// RouteData Tile
+					dict=new RouteContainerTile(ds,1,zl);
 				default:
 					break;
 				}

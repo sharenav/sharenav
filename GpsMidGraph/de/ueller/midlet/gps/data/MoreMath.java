@@ -351,6 +351,59 @@ public class MoreMath {
 
 		return distSquare ;  
 	}   
+	public static float  ptSegDistSq  (  float X1, float Y1,  
+			float X2, float Y2,  
+			float PX, float PY  
+	)   
+	{  
+		float distSquare ;  
+		float L12Square ;  
+		float X12, Y12, X1P, Y1P, X2P, Y2P ;  
+
+
+//		Find vector from  ( X1,Y1 )  to  ( X2,Y2 )   
+//		and the Square of its length.   
+		X12 = X2 - X1 ;  
+		Y12 = Y2 - Y1 ;  
+		L12Square = X12 * X12 + Y12 * Y12 ;   
+//		Find vector from  ( X1,Y1 )  to  ( PX,PY )  .   
+		X1P = PX - X1 ;  
+		Y1P = PY - Y1 ;  
+//		Do scalar product and check sign.   
+		if  (  X12 * X1P + Y12 * Y1P     <= 0f  )   
+		{  
+//			Closest point on segment is  ( X1,Y1 ) ;  
+//			find its distance  ( squared )  from  ( PX,PY )  .   
+			distSquare = X1P * X1P + Y1P * Y1P ;  
+		}  
+		else 
+		{  
+//			Find vector from  ( X2,Y2 )  to  ( PX,PY )  .   
+			X2P = PX - X2 ;  
+			Y2P = PY - Y2 ;  
+//			Do scalar product and check sign.   
+			if  (  X12 * X2P + Y12 * Y2P     >= 0f  )   
+			{  
+				// Closest point on segment is  ( X2,Y2 ) ;  
+				// find its distance  ( squared )  from  ( PX,PY )  .   
+				distSquare = X2P * X2P + Y2P * Y2P ;  
+			}  
+			else 
+			{  
+				// Closest point on segment is between  ( X1,Y1 )  and  
+				//   ( X2,Y2 )  . Use perpendicular distance formula.   
+				distSquare = X12 * Y1P - Y12 * X1P ;  
+				distSquare = distSquare * distSquare / L12Square ;  
+				// Note that if L12Square be zero, the first  
+				// of the three branches will be selected,  
+				// so division by zero can not occur here.  
+			}  
+		}  
+
+
+		return distSquare ;  
+	}   
+
 
 
 	
@@ -372,6 +425,13 @@ public class MoreMath {
 	 * @version 0.5
 	 */
 
+	public static  float acos(float x) {
+		float f=asin(x);
+		if(f==Float.NaN)
+			return f;
+		return PiDiv2-f;
+	}
+
 	public static final float asin(float x) {
 		if ((x < -1f) || (x > 1f)) {
 			return Float.NaN;
@@ -392,6 +452,10 @@ public class MoreMath {
 	public final static float PiDiv12=0.26179938779914943653855361527329f;
 	public final static float PiDiv6=0.52359877559829887307710723054658f;
 	public final static float PiDiv2=1.5707963267948966192313216916398f;
+	public final static double SQRT3D = 1.732050807568877294f;
+	public final static double PiDiv12D=0.26179938779914943653855361527329f;
+	public final static double PiDiv6D=0.52359877559829887307710723054658f;
+	public final static double PiDiv2D=1.5707963267948966192313216916398f;
 
 	  static public float atan2(float y, float x)
 	  {
@@ -414,6 +478,29 @@ public class MoreMath {
 	      return (float) (-Math.PI/2.);
 	    else
 	      return (float) (Math.PI/2.);
+	  }
+	  
+	  static public double atan2(double y, double x)
+	  {
+	    // if x=y=0
+	    if(y==0. && x==0.)
+	      return 0f;
+	    // if x>0 atan(y/x)
+	    if(x>0f)
+	      return atan(y/x);
+	    // if x<0 sign(y)*(pi - atan(|y/x|))
+	    if(x<0f)
+	    {
+	      if(y<0f)
+	        return  -(Math.PI-atan(y/x));
+	      else
+	        return  (Math.PI-atan(-y/x));
+	    }
+	    // if x=0 y!=0 sign(y)*pi/2
+	    if(y<0.)
+	      return  (-Math.PI/2.);
+	    else
+	      return  (Math.PI/2.);
 	  }
 
 	  static public float atan(float x)
@@ -460,6 +547,58 @@ public class MoreMath {
 	      // invertation took place
 	      if(Invert) {
 			a=PiDiv2-a;
+		}
+	      // sign change took place
+	      if(signChange) {
+			a=-a;
+		}
+	      //
+	      return a;
+	  }
+	  static public double atan(double x)
+	  {
+	      boolean signChange=false;
+	      boolean Invert=false;
+	      int sp=0;
+	      double x2, a;
+	      // check up the sign change
+	      if(x<0f)
+	      {
+	          x=-x;
+	          signChange=true;
+	      }
+	      // check up the invertation
+	      if(x>1f)
+	      {
+	          x=1/x;
+	          Invert=true;
+	      }
+	      // process shrinking the domain until x<PI/12
+	      while(x>PiDiv12D)
+	      {
+	          sp++;
+	          a=x+SQRT3D;
+	          a=1/a;
+	          x=x*SQRT3D;
+	          x=x-1;
+	          x=x*a;
+	      }
+	      // calculation core
+	      x2=x*x;
+	      a=x2+1.4087812f;
+	      a=0.55913709f/a;
+	      a=a+0.60310579f;
+	      a=a-(x2*0.05160454f);
+	      a=a*x;
+	      // process until sp=0
+	      while(sp>0)
+	      {
+	          a=a+PiDiv6D;
+	          sp--;
+	      }
+	      // invertation took place
+	      if(Invert) {
+			a=PiDiv2D-a;
 		}
 	      // sign change took place
 	      if(signChange) {
@@ -635,4 +774,19 @@ public class MoreMath {
 			return f;
 		}
 	}
+	public final static float ALT_NN=637814000f;
+	public final static double ALT_NND=6378140d;
+    final public static int dist(float lat1, float lon1,
+    		float lat2, float lon2) {
+//    	float c=acos((float) (Math.sin(lat1)*Math.sin(lat2) +
+//    			 Math.cos(lat1)*Math.cos(lat2) *
+//    			 Math.cos(lon2-lon1)));
+//    	return (int)(ALT_NN*c+0.5f);
+    double latSin = Math.sin((lat2-lat1)/2d);
+	double longSin = Math.sin((lon2-lon1)/2d);
+	double a = (latSin * latSin) + (Math.cos(lat1)*Math.cos(lat2)*longSin*longSin);
+	double c=2d * atan2(Math.sqrt(a),Math.sqrt(1d-a));
+	return (int) (ALT_NND*c+0.5d);
+    }
+
 }

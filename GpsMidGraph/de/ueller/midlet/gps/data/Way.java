@@ -142,7 +142,7 @@ public class Way extends Entity{
 	}
 	/**
 	 * draw ways with 2 lines left and right a black border and
-	 * between them filled with te color of the way.
+	 * between them filled with the color of the way.
 	 * @param pc
 	 * @param w
 	 * @param t
@@ -250,16 +250,16 @@ public class Way extends Entity{
 	}
 
 	public void draw(PaintContext pc, int w, int xPoints[], int yPoints[],int count,boolean highlite) {
-		IntPoint l1b = new IntPoint(0, 0);
-		IntPoint l1e = new IntPoint(0, 0);
-		IntPoint l2b = new IntPoint(0, 0);
-		IntPoint l2e = new IntPoint(0, 0);
-		IntPoint l3b = new IntPoint(0, 0);
-		IntPoint l3e = new IntPoint(0, 0);
-		IntPoint l4b = new IntPoint(0, 0);
-		IntPoint l4e = new IntPoint(0, 0);
-		IntPoint s1 = new IntPoint(0, 0);
-		IntPoint s2 = new IntPoint(0, 0);
+		IntPoint l1b = new IntPoint();
+		IntPoint l1e = new IntPoint();
+		IntPoint l2b = new IntPoint();
+		IntPoint l2e = new IntPoint();
+		IntPoint l3b = new IntPoint();
+		IntPoint l3e = new IntPoint();
+		IntPoint l4b = new IntPoint();
+		IntPoint l4e = new IntPoint();
+		IntPoint s1 = new IntPoint();
+		IntPoint s2 = new IntPoint();
 		float roh1;
 		float roh2;
 
@@ -375,6 +375,7 @@ public class Way extends Entity{
 		pc.g.setStrokeStyle(Graphics.SOLID);
 		switch (type) {
 		case C.WAY_HIGHWAY_MOTORWAY:
+		case C.WAY_HIGHWAY_MOTORWAY_LINK:
 			pc.g.setColor(128, 155, 192);
 			break;
 		case C.WAY_HIGHWAY_TRUNK:
@@ -390,6 +391,9 @@ public class Way extends Entity{
 			pc.g.setColor(255, 255, 255);
 			break;
 		case C.WAY_HIGHWAY_RESIDENTIAL:
+			pc.g.setColor(180, 180, 180);
+			break;
+		case C.WAY_HIGHWAY_TRACK:
 			pc.g.setColor(180, 180, 180);
 			break;
 		// case C.WAY_RAILROAD:
@@ -451,6 +455,7 @@ public class Way extends Entity{
 		case C.WAY_RAILWAY_SUBWAY:
 		case C.WAY_RAILWAY_UNCLASSIFIED:
 			pc.g.setStrokeStyle(Graphics.DOTTED);
+			pc.g.setColor(0, 0, 0);
 		default:
 			// logger.error("unknown Type "+ w.type);
 			pc.g.setColor(255, 255, 255);
@@ -460,6 +465,7 @@ public class Way extends Entity{
 	public int getWidth() {
 		switch (type) {
 		case C.WAY_HIGHWAY_MOTORWAY:
+		case C.WAY_HIGHWAY_MOTORWAY_LINK:
 			return 8;
 		case C.WAY_HIGHWAY_TRUNK:
 			return 6;
@@ -472,13 +478,15 @@ public class Way extends Entity{
 			return 4;
 		case C.WAY_HIGHWAY_RESIDENTIAL:
 			return 3;
+		case C.WAY_HIGHWAY_TRACK:
+			return 2;
 		case C.WAY_WATERWAY_RIVER:
 			return 10;
 		case C.WAY_RAILWAY_RAIL:
-			return 3;
+			return 1;
 		case C.WAY_RAILWAY_SUBWAY:
 		case C.WAY_RAILWAY_UNCLASSIFIED:
-			return 2;
+			return 1;
 
 		default:
 			// logger.error("unknown Type "+ w.type);

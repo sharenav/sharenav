@@ -13,6 +13,8 @@ import javax.microedition.lcdui.Image;
 import de.ueller.gps.data.Configuration;
 import de.ueller.midlet.gps.Logger;
 
+import de.ueller.midlet.gps.data.MoreMath;
+import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.data.Way;
 import de.ueller.midlet.gps.tile.C;
 import de.ueller.midlet.gps.tile.PaintContext;
@@ -83,6 +85,8 @@ public class SingleTile extends Tile implements QueueableTile {
 
 	public void paint(PaintContext pc) {
 //		logger.info("paint Single");
+		float testLat;
+		float testLon;
 		if (contain(pc)) {
 			if (!isDataReady(pc)) {
 				return;
@@ -109,7 +113,7 @@ public class SingleTile extends Tile implements QueueableTile {
 //					logger.debug("search target" + pc.target);
 					if (pc.target != null && pc.target.st == null){
 //						logger.debug("search target nameIdx" );
-						if (pc.target.nameIdx.equals(w.nameIdx)){
+						if (pc.target.e == null && pc.target.nameIdx.equals(w.nameIdx)){
 //							logger.debug("search target way");
 							for (int p1 = 0; p1 < w.paths.length; p1++) {
 								short[] path = w.paths[p1];
@@ -145,16 +149,18 @@ public class SingleTile extends Tile implements QueueableTile {
 				if (type[i] == 0) {
 					break;
 				}
-				if (nodeLat[i] < pc.screenLD.radlat) {
+				testLat=nodeLat[i];
+				if (testLat < pc.screenLD.radlat) {
 					continue;
 				}
-				if (nodeLon[i] < pc.screenLD.radlon) {
+				if (testLat > pc.screenRU.radlat) {
 					continue;
 				}
-				if (nodeLat[i] > pc.screenRU.radlat) {
+				testLon=nodeLon[i];
+				if (testLon < pc.screenLD.radlon) {
 					continue;
 				}
-				if (nodeLon[i] > pc.screenRU.radlon) {
+				if (testLon > pc.screenRU.radlon) {
 					continue;
 				}
 				paintNode(pc, i);
@@ -274,5 +280,59 @@ public class SingleTile extends Tile implements QueueableTile {
 
 	public String toString() {
 		return "ST" + zl + "-" + fileId+ ":" + lastUse;
+	}
+
+	public void getWay(PaintContext pc, PositionMark pm, Way bestWay) {
+		if (contain(pm)) {
+			if (state != STATE_LOADREADY){
+				try {
+					pc.dataReader.readData(this);
+					state=STATE_LOADREADY;
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					return;
+				}
+			}
+
+			lastUse = 0;
+			if (ways != null) {
+				for (int i = 0; i < ways.length; i++) {
+					Way w = ways[i];
+					// logger.debug("test Bounds of way");
+					if (w.maxLat < pc.screenLD.radlat) {
+						continue;
+					}
+					if (w.maxLon < pc.screenLD.radlon) {
+						continue;
+					}
+					if (w.minLat > pc.screenRU.radlat) {
+						continue;
+					}
+					if (w.minLon > pc.screenRU.radlon) {
+						continue;
+					}
+					for (int p1 = 0; p1 < w.paths.length; p1++) {
+						// read the name only if is used more memory efficicent
+						// pc.trace.getName(nameIdx);
+						short[] path = w.paths[p1];
+						short pidx = path[0];
+						for (int i1 = 1; i1 < path.length; i1++) {
+							int idx = path[i1];
+							float dist=MoreMath.ptSegDistSq(nodeLat[pidx] ,nodeLon[pidx], nodeLat[idx], nodeLon[idx], pm.lat, pm.lon);
+							if (dist < pc.squareDstToWay){
+								pc.squareDstToWay=dist;
+								bestWay=w;
+								pm.e=w;
+								pm.st=this;
+							}
+						}
+					}
+
+				}
+			}
+		}
+
+
 	}
 }

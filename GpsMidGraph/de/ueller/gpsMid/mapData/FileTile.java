@@ -4,6 +4,9 @@ import java.io.DataInputStream;
 import java.io.IOException;
 
 import de.ueller.midlet.gps.Logger;
+import de.ueller.midlet.gps.data.PositionMark;
+import de.ueller.midlet.gps.data.Way;
+import de.ueller.midlet.gps.routing.RouteNode;
 import de.ueller.midlet.gps.tile.PaintContext;
 import de.ueller.midlet.gps.tile.QueueableTile;
 
@@ -60,5 +63,21 @@ public class FileTile extends Tile implements QueueableTile {
 	public String toString() {
 		return "FT" + zl + "-" + fileId + ":" + lastUse;
 	}
+
+	public void getWay(PaintContext pc,PositionMark pm, Way w) {
+			if (contain(pm)) {
+				if (tile == null){
+					try {
+						pc.dictReader.readData(this);
+					} catch (IOException e) {
+						e.printStackTrace();
+						return;
+					}
+				} else {
+					lastUse=0;
+					tile.getWay(pc,pm, w);
+				}
+			}
+		}
 
 }

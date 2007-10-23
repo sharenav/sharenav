@@ -80,12 +80,18 @@
 	<property name="deploy-url" value="http://www.company.com/download/" />
 </target>
 	
-<target name="test" 
-	description="Call this target first to skip the obfuscation step, e.g. ant test j2mepolish"
-	>
-	<property name="test" value="true" />
-	<property name="dir.work" value="build/test" />
-</target>
+	<target name="test" 
+		description="Call this target first to skip the obfuscation step, e.g. ant test j2mepolish"
+		>
+		<property name="test" value="true" />
+		<property name="dir.work" value="build/test" />
+	</target>
+	<target name="debug" 
+		description="Call this target first to set debugging"
+		>
+		<property name="debug" value="true" />
+		<property name="dir.work" value="build/test" />
+	</target>
 		
 <target name="init">
   	<property name="test" value="false" />
@@ -113,7 +119,7 @@
 		<info
 			license="GPL"
 			name="GpsMid"
-			version="0.2.30"
+			version="0.3.01"
 			description=""
 			vendorName="Harald Mueller"
 			infoUrl="http://gpsmid.sourceforge.net"
@@ -234,19 +240,20 @@
 		<emulator
 			wait="true"
 			securityDomain="trusted"
-			enableProfiler="false"
-			enableMemoryMonitor="false"
+			enableProfiler="true"
+			enableMemoryMonitor="true"
 			enableNetworkMonitor="false"
 			if="test and not debug"
 			>
 		</emulator>
 	
 		<emulator
-			wait="false"
+			wait="true"
 			securityDomain="trusted"
-			enableProfiler="false"
-			enableMemoryMonitor="false"
+			enableProfiler="true"
+			enableMemoryMonitor="true"
 			enableNetworkMonitor="false"
+			
 			if="debug">
 			<debugger port="8000" />
 		</emulator>

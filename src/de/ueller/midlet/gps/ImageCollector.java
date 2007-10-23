@@ -128,6 +128,9 @@ public class ImageCollector implements Runnable {
 				if ( t[0] != null){
 					t[0].paint(pc[nextCreate]);
 				}
+//				if (t[4] != null){
+//					t[4].paint(pc[nextCreate]);
+//				}
 				newCollected();
 				createImageCount++;
 				if (needRedraw){
@@ -151,11 +154,15 @@ public class ImageCollector implements Runnable {
 
 	}
 	
-	public void stop(){
+	public synchronized void stop(){
 		shutdown=true;
 		notify();
 	}
-	
+	public void restart(){
+		processorThread = new Thread(this,"ImageCollector");
+		processorThread.setPriority(Thread.MIN_PRIORITY);
+		processorThread.start();
+	}
 	/** copy the last created image to the real sceen
 	 *  but with the last collected position in the center
 	 */

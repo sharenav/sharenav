@@ -70,9 +70,14 @@ public class DiscoverGps implements Runnable, DiscoveryListener {
 
 	/** Keeps the device index for witch a Service discover is requested */
 	private int	selectedDevice = -1;
+	public static final long UUDI_SERIAL=0x1101;
+	public static final long UUDI_FILE=0x1106;
 
-	public DiscoverGps(GuiDiscover parent) {
+	private final long searchType;
+	
+	public DiscoverGps(GuiDiscover parent,long searchType) {
 		this.parent = parent;
+		this.searchType = searchType;
 		// we have to initialize a system in different thread...
 		processorThread = new Thread(this);
 		processorThread.start();
@@ -189,8 +194,9 @@ public class DiscoverGps implements Runnable, DiscoveryListener {
 			// initialize some optimization variables
 			uuidSet = new UUID[1];
 
-			// ok, we are interesting in btspp services only
-			uuidSet[0] = new UUID(0x1101);
+			// ok, we are interesting in btspp or File services
+			uuidSet[0] = new UUID(searchType);
+			uuidSet[0] = new UUID(0x1106);
 			selectService();
 		} catch (RuntimeException e) {
 			// TODO Auto-generated catch block

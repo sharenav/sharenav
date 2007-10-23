@@ -1,6 +1,5 @@
 package de.ueller.midlet.gps.data;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -8,8 +7,7 @@ import java.io.IOException;
 
 import de.ueller.gpsMid.mapData.SingleTile;
 
-public class PositionMark {
-	int id=-1;
+public class PositionMark extends PersistEntity{
 	public String displayName;
 	public float lat;
 	public float lon;
@@ -55,12 +53,6 @@ public class PositionMark {
 			e.printStackTrace();
 		}
 		this.id=i;
-	}
-	
-	protected DataInputStream getByteInputStream(byte[] data) {
-		ByteArrayInputStream bs = new ByteArrayInputStream(data);
-		DataInputStream ds = new DataInputStream(bs);
-		return ds;
 	}
 
 }

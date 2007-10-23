@@ -10,7 +10,7 @@ import java.util.Vector;
 import de.ueller.midlet.gps.Logger;
 
 public abstract class QueueReader implements Runnable{
-	//#debug
+	//#debug error
 	protected static final Logger logger = Logger.getInstance(QueueReader.class,Logger.TRACE);
 	protected final Vector requestQueue = new Vector();
 	protected final Vector livingQueue = new Vector();
@@ -27,7 +27,7 @@ public abstract class QueueReader implements Runnable{
 	}
 
 
-	protected abstract void readData(Tile tt) throws IOException;
+	public abstract void readData(Tile tt) throws IOException;
 
 	public synchronized void shutdown() {
 		shut=true;
@@ -90,11 +90,16 @@ public abstract class QueueReader implements Runnable{
 						}
 					}
 					try {
+						Runtime runtime = Runtime.getRuntime();
+						if (runtime.freeMemory() > 25000){
 						if (requestQueue.size() > 0){
+							//#debug error
+								logger.debug("requestQueue size="+requestQueue.size());
 							tt=(Tile) requestQueue.firstElement();
 							requestQueue.removeElementAt(0);
 							readData(tt);
 							livingQueue.addElement(tt);
+						}
 						}
 					} catch (IOException e) {
 						tt=(Tile) requestQueue.firstElement();
