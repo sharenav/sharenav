@@ -64,7 +64,7 @@ public class BundleGpsMid {
 				}
 				CreateGpsMidData cd=new CreateGpsMidData(parser,target.getCanonicalPath());
 //				rd.write(target.getCanonicalPath());
-				cd.setRouteData(rd);
+//				cd.setRouteData(rd);
 				cd.setConfiguration(c);
 				System.out.println("split long ways " + parser.ways.size());
 				new SplitLongWays(parser);
@@ -194,11 +194,13 @@ public class BundleGpsMid {
 //				ze.
 				os.putNextEntry(ze);
 				count=0;
+				stream.close();
 				stream=new FileInputStream(files[i]);
 				while ((ch=stream.read()) != -1){
 					os.write(ch);
 					count++;
 				}
+				stream.close();
 //				System.out.println("wrote " + path + "/" + files[i].getName() + " byte:" + count);
 
 			}

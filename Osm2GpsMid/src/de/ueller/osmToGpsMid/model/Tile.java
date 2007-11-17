@@ -320,6 +320,8 @@ public class Tile {
 					cds.writeByte(c.endBearing);
 				}
 			}
+			nds.close();
+			cds.close();
 		}
 	}
 }
