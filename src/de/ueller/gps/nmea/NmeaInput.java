@@ -161,7 +161,10 @@ public class NmeaInput implements Runnable, LocationMsgProducer{
 					p1++;
 				}				
 				//If we haven't seen the start of the sentence, this data is useless so discard it
-				if (!found_start) continue; 
+				if (!found_start) {
+					p1 = 0; p2 = 0; found_end = false;
+					continue; 
+				}
 				//Check to make sure we don't overrun the buffer
 				if (p2 + p1 - start1 > 128) {
 					System.out.println("Error: NMEA string was longer than 128 char, but max should be 82");
