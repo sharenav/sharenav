@@ -23,6 +23,9 @@ public class Position {
 	public float latitude;
 	public float longitude;
 	public float altitude;
+	/**
+	 * Speed over ground in m/s
+	 */
 	public float speed;
 	public float course;
 	public int mode=-1;

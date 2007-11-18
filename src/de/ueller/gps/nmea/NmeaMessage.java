@@ -124,7 +124,8 @@ public class NmeaMessage {
 				receiver.receivePosItion(p);
 			} else if ("VTG".equals(sentence)){
 				head=getFloatToken(param[1]);
-				speed=getFloatToken(param[7]);
+				//NMEA is in knots, but GpsMid uses m/s
+				speed=getFloatToken(param[7])*0.5144444f; 
 			} else if ("GSV".equals(sentence)) {
 	            int j;
 	            j=(getIntegerToken(param[2])-1)*4;
@@ -209,7 +210,8 @@ public class NmeaMessage {
 					lon=-lon;
 				}				
 				//Speed over the ground in knots
-				speed=getFloatToken((String)param.elementAt(7));
+				//GpsMid uses m/s				
+				speed=getFloatToken((String)param.elementAt(7))*0.5144444f;
 			    //Track angle in degrees
 				head=getFloatToken((String)param.elementAt(8));
 				//Date
@@ -222,7 +224,8 @@ public class NmeaMessage {
 				receiver.receivePosItion(p);
 			} else if ("VTG".equals(sentence)){
 				head=getFloatToken((String)param.elementAt(1));
-				speed=getFloatToken((String)param.elementAt(7));
+				//Convert from knots to m/s
+				speed=getFloatToken((String)param.elementAt(7))*0.5144444f;
 			} else if ("GSV".equals(sentence)) {
 				/* GSV encodes the satelites that are currently in view
 				 * A maximum of 4 satelites are reported per message,
