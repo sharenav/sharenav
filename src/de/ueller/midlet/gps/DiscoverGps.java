@@ -194,9 +194,9 @@ public class DiscoverGps implements Runnable, DiscoveryListener {
 			// initialize some optimization variables
 			uuidSet = new UUID[1];
 
-			// ok, we are interesting in btspp or File services
-			uuidSet[0] = new UUID(searchType);
-			uuidSet[0] = new UUID(0x1106);
+			// ok, we are interesting in btspp or File services,
+			// which one at the moment is specified by searchType
+			uuidSet[0] = new UUID(searchType);			
 			selectService();
 		} catch (RuntimeException e) {
 			// TODO Auto-generated catch block
