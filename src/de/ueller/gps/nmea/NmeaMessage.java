@@ -64,6 +64,7 @@ public class NmeaMessage {
 	private float head,speed,alt;
 	private final LocationMsgReceiver receiver;
 	private int mAllSatellites;
+	private int qual;
 	private boolean lastMsgGSV=false;
 	private Satelit satelit[]=new Satelit[12];
 	private Calendar cal = Calendar.getInstance();
@@ -112,13 +113,15 @@ public class NmeaMessage {
 					lon=-lon;
 				}
 				// quality
+				qual = getIntegerToken((String)param[6]);
 				
 				// no of Sat;
+				mAllSatellites = getIntegerToken((String)param[7]);
 				
 				// Relative accuracy of horizontal position
 				
 				// meters above mean sea level
-				float alt=getFloatToken(param[9]);
+				alt=getFloatToken(param[9]);
 				// Height of geoid above WGS84 ellipsoid
 				Position p=new Position(lat,lon,alt,speed,head,0,null);
 				receiver.receivePosItion(p);
@@ -180,8 +183,10 @@ public class NmeaMessage {
 					lon=-lon;
 				}
 				// quality
+				qual = getIntegerToken((String)param.elementAt(6));
 				
 				// no of Sat;
+				mAllSatellites = getIntegerToken((String)param.elementAt(7));
 				
 				// Relative accuracy of horizontal position
 				
@@ -198,6 +203,13 @@ public class NmeaMessage {
 				cal.set(Calendar.HOUR, (time_tmp / 10000) % 100);
 				
 				//Status A=active or V=Void.
+				String valSolution = (String)param.elementAt(2);
+				if (valSolution.equals("V")) {
+					this.qual = 0;
+					receiver.receiveSolution("No");
+					return;
+				}
+				if (valSolution.equalsIgnoreCase("A") && this.qual == 0) this.qual = 1;
 				
 				//Latitude
 				float lat=getLat((String)param.elementAt(3));
@@ -222,6 +234,11 @@ public class NmeaMessage {
 			    //Magnetic Variation
 				Position p=new Position(lat,lon,alt,speed,head,0,cal.getTime());
 				receiver.receivePosItion(p);
+				if (this.qual > 1) {
+					receiver.receiveSolution("D" + mAllSatellites + "S");
+				} else {
+					receiver.receiveSolution(mAllSatellites + "S");
+				}
 			} else if ("VTG".equals(sentence)){
 				head=getFloatToken((String)param.elementAt(1));
 				//Convert from knots to m/s
