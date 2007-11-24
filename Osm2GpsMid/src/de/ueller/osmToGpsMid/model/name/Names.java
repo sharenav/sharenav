@@ -8,7 +8,10 @@
  */
 package de.ueller.osmToGpsMid.model.name;
 
+import java.util.Collection;
+import java.util.SortedMap;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import de.ueller.osmToGpsMid.model.Entity;
@@ -19,22 +22,22 @@ import de.ueller.osmToGpsMid.model.Entity;
  *
  */
 public class Names {
-	TreeSet<Name> names1;
-    TreeSet<Name> canons;
+	private TreeMap<String,Name> names1;
+    private TreeSet<Name> canons;
 	public Names() {
-		names1=new TreeSet<Name>(new NameComperator());
+		names1=new TreeMap<String,Name>(String.CASE_INSENSITIVE_ORDER);
 		canons=new TreeSet<Name>(new CaononComperator());
 	}
 	
 	public void calcNameIndex(){
 		int index=0;
-		for (Name mapName : names1) {
+		for (Name mapName : names1.values()) {
 //			System.out.println(mapName+ " idx="+index);
 			mapName.setIndex(index++);;
 		}
 	}
-	public TreeSet<Name> getNames(){
-		return names1;
+	public Collection<Name> getNames(){
+		return names1.values();
 	}
 
 	public void addName(Entity w) {
@@ -44,18 +47,20 @@ public class Names {
 			return;
 		}
 		Name mn =new Name(w);
-		if (! names1.add(mn)){
+		if (names1.containsKey(mn.getName())){
 //			System.out.println("name already there:" + mn);
 			Name mnNext=new Name(w.getName()+"\0");
-			SortedSet<Name> subSet=names1.subSet(mn, mnNext);
-			Name mnExist=subSet.first();
+			SortedMap<String,Name> subSet=names1.subMap(mn.getName(), mnNext.getName());
+			Name mnExist=subSet.get(subSet.firstKey());
 			mnExist.addEntity(w);
+		} else {
+			names1.put(mn.getName(),mn);
 		}
 		if (! canons.add(mn)){
 //			System.out.println("canon already there:" + mn);
 			Name mnNext=new Name(w.getName()+"\0");
-			SortedSet<Name> subSet=names1.subSet(mn, mnNext);
-			Name mnExist=subSet.first();
+			SortedMap<String,Name> subSet=names1.subMap(mn.getName(), mnNext.getName());
+			Name mnExist=subSet.get(subSet.firstKey());
 			mnExist.addEntity(w);
 		}
 	}
@@ -68,11 +73,9 @@ public class Names {
 	 * @return
 	 */
 	public int getNameIdx(String name) {
-		int index=0;
-		for (Name mapName : names1) {
-			if (mapName.getName().equals(name)){
-				return mapName.getIndex();
-			}
+		Name nm = names1.get(name);
+		if (nm != null) {
+			return nm.getIndex();
 		}
 		return -1;
 	}
