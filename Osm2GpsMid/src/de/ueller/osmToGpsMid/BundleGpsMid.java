@@ -181,12 +181,14 @@ public class BundleGpsMid {
 				}
 				int ch;
 				int count=0;
+				//byte buffer to read in larger chunks
+				byte[] bb = new byte[4096];
 				FileInputStream stream=new FileInputStream(files[i]);
 				if (!compressed){
 					CRC32 crc=new CRC32();
 					count=0;
-					while ((ch=stream.read()) != -1){
-						crc.update(ch);
+					while ((ch=stream.read(bb)) != -1){
+						crc.update(bb,0,ch);
 					}
 					ze.setCrc(crc.getValue());
 					ze.setSize(files[i].length());
@@ -196,9 +198,9 @@ public class BundleGpsMid {
 				count=0;
 				stream.close();
 				stream=new FileInputStream(files[i]);
-				while ((ch=stream.read()) != -1){
-					os.write(ch);
-					count++;
+				while ((ch=stream.read(bb)) != -1){
+					os.write(bb,0,ch);
+					count += ch;
 				}
 				stream.close();
 //				System.out.println("wrote " + path + "/" + files[i].getName() + " byte:" + count);
@@ -220,9 +222,10 @@ public class BundleGpsMid {
 			FileOutputStream fo=new FileOutputStream(name);
 			int ch;
 			int count=0;
-			while ((ch=stream.read()) != -1){
-				fo.write(ch);
-				count++;
+			byte[] bb = new byte[4096];
+			while ((ch=stream.read(bb)) != -1){
+				fo.write(bb,0,ch);
+				count+=ch;
 			}
 			fo.close();
 //			System.out.println("wrote " + name + " byte:" + count);
