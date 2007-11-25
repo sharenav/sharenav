@@ -191,7 +191,7 @@ public class NmeaMessage {
 				// Relative accuracy of horizontal position
 				
 				// meters above mean sea level
-				float alt=getFloatToken((String)param.elementAt(9));
+				alt=getFloatToken((String)param.elementAt(9));
 				// Height of geoid above WGS84 ellipsoid				
 			} else if ("RMC".equals(sentence)){
 				/* RMC encodes the recomended minimum information */
