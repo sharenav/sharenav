@@ -68,7 +68,6 @@ public class MyMath {
     
     final private static double bearing_int(double lat1, double lon1,
     		double lat2, double lon2){
-    	double dLat=lat2-lat1;
     	double dLon=lon2-lon1;
     	double y=Math.sin(dLon) * Math.cos(lat2);
     	double x=Math.cos(lat1)*Math.sin(lat2)-Math.sin(lat1)*Math.cos(lat2)*Math.cos(dLon);
