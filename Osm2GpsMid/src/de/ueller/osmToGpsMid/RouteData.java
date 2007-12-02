@@ -14,7 +14,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,11 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-
 import de.ueller.osmToGpsMid.model.Connection;
-import de.ueller.osmToGpsMid.model.Line;
 import de.ueller.osmToGpsMid.model.Node;
-import de.ueller.osmToGpsMid.model.Path;
 import de.ueller.osmToGpsMid.model.RouteNode;
 import de.ueller.osmToGpsMid.model.SubPath;
 import de.ueller.osmToGpsMid.model.Way;
@@ -281,10 +277,8 @@ public class RouteData {
 					fo = new PrintWriter("/Massenspeicher/routetestConnections.osm");
 					exportResultOSM(fo, rd, null);
 				} catch (FileNotFoundException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 	}
