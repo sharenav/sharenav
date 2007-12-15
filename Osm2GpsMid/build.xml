@@ -135,6 +135,10 @@
           file="lib/MinML2.jar"
           todir="${basedir}"
           name="exploded"/>
+    <explode
+          file="lib/kd.jar"
+          todir="${basedir}"
+          name="exploded"/>
    </target>
 	
 	<target name="app-germany" depends="deploy">
