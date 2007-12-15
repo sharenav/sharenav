@@ -14,12 +14,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Stack;
 import java.util.TreeSet;
 
 import de.ueller.osmToGpsMid.model.Bounds;
 import de.ueller.osmToGpsMid.model.Connection;
-import de.ueller.osmToGpsMid.model.HiLo;
-import de.ueller.osmToGpsMid.model.Line;
 import de.ueller.osmToGpsMid.model.MapName;
 import de.ueller.osmToGpsMid.model.Node;
 import de.ueller.osmToGpsMid.model.RouteNode;
@@ -32,6 +31,20 @@ import de.ueller.osmToGpsMid.model.name.Names;
 
 
 public class CreateGpsMidData {
+	
+	/**
+	 * This class is used in order to store a tuple on a dedicated stack.
+	 * So that it is not necessary to use the OS stack in recursion
+	 */
+	class TileTuple {
+		public Tile t;
+		public Bounds bound;
+		TileTuple(Tile t, Bounds b) {
+			this.t = t;
+			this.bound = b;
+		}
+	}
+	
 //	private final static int MAX_TILE_FILESIZE=20000;
 //	private final static int MAX_ROUTETILE_FILESIZE=5000;
 	public  final static int MAX_DICT_DEEP=5;
@@ -124,7 +137,7 @@ public class CreateGpsMidData {
 				if (w1.getZoomlevel() != zl) continue;
 				w1.used=false;
 				allBound.extend(w1.getBounds());
-			}
+			}			
 			if (zl == ROUTEZOOMLEVEL){
 				// for RouteNodes
 				for (Node n : parser.nodes.values()) {
@@ -169,90 +182,104 @@ public class CreateGpsMidData {
 	
 	public void exportTile(Tile t,Sequence tileSeq,Bounds tileBound, Sequence routeNodeSeq) throws IOException{
 		Bounds realBound=new Bounds();
-		LinkedList<Way> ways=new LinkedList<Way>();
-		Collection<Node> nodes=new ArrayList<Node>();
-		byte [] out=new byte[1];
-		byte[] connOut=null;
+		LinkedList<Way> ways;
+		Collection<Node> nodes;
 		int maxSize;
-		// Reduce the content of t.ways and t.nodes to all relevant elements
-		// in the given bounds and create the binary midlet representation
-		if (t.zl != ROUTEZOOMLEVEL){
-			maxSize=configuration.getMaxTileSize();
-			ways=getWaysInBound(t.ways, t.zl,tileBound,realBound);
-			if (ways.size() == 0){
-				t.type=3;
-			}
-			int mostlyInBound=ways.size();
-			addWaysCompleteInBound(ways,t.ways,t.zl,realBound);
-			if (ways.size() > 2*mostlyInBound){
-				realBound=new Bounds();
-				ways=getWaysInBound(t.ways, t.zl,tileBound,realBound);
-			}
-			nodes=getNodesInBound(t.nodes,t.zl,realBound);
-			if (ways.size() <= 255){
-				out=createMidContent(ways,nodes,t);
-			}
-			t.nodes=nodes;
-			t.ways=ways;
-		} else {
-			// Route Nodes
-			maxSize=configuration.getMaxRouteTileSize();
-			nodes=getRouteNodesInBound(t.nodes,tileBound,realBound);
-			byte[][] erg=createMidContent(nodes,t);
-			out=erg[0];
-			connOut = erg[1];
-			t.nodes=nodes;
-		}
-		
-		// split tile if more then 255 Ways or binary content > MAX_TILE_FILESIZE but not if only one Way
-		if (ways.size() > 255 || (out.length > maxSize && ways.size() != 1)){
-//			System.out.println("create Subtiles size="+out.length+" ways=" + ways.size());
-			t.bounds=realBound.clone();
-			if (t.zl != ROUTEZOOMLEVEL){
-				t.type=Tile.TYPE_CONTAINER;				
-			} else {
-				t.type=Tile.TYPE_ROUTECONTAINER;
-			}
-			t.t1=new Tile((byte) t.zl,ways,nodes);
-			t.t2=new Tile((byte) t.zl,ways,nodes);
-			t.setRouteNodes(null);
-			if ((tileBound.maxLat-tileBound.minLat) > (tileBound.maxLon-tileBound.minLon)){
-				// split to half latitude
-				float splitLat=(tileBound.minLat+tileBound.maxLat)/2;
-				Bounds nextTileBound=tileBound.clone();
-				nextTileBound.maxLat=splitLat;
-				exportTile(t.t1,tileSeq,nextTileBound,routeNodeSeq);
-				nextTileBound=tileBound.clone();
-				nextTileBound.minLat=splitLat;
-				exportTile(t.t2,tileSeq,nextTileBound,routeNodeSeq);
-			} else {
-				// split to half longitude
-				float splitLon=(tileBound.minLon+tileBound.maxLon)/2;
-				Bounds nextTileBound=tileBound.clone();
-				nextTileBound.maxLon=splitLon;
-				exportTile(t.t1,tileSeq,nextTileBound,routeNodeSeq);
-				nextTileBound=tileBound.clone();
-				nextTileBound.minLon=splitLon;
-				exportTile(t.t2,tileSeq,nextTileBound,routeNodeSeq);
-			}
-			t.ways=null;
-			t.nodes=null;
-			
-//			System.gc();
-		} else {
-			if (ways.size() > 0 || nodes.size() > 0){
-				// Write as dataTile
-				t.fid=tileSeq.next();
-				if (t.zl != ROUTEZOOMLEVEL) {
-					t.setWays(ways);
-					writeRenderTile(t, tileBound, realBound, nodes, out);
-				} else {
-					writeRouteTile(t, tileBound, realBound, nodes, out);
-				}
+		/*
+		 * Using recursion can cause a stack overflow on large projects,
+		 * so need an explicit stack that can grow larger;
+		 */
+		Stack<TileTuple> expTiles = new Stack<TileTuple>();
+		byte [] out=new byte[1];
+		expTiles.push(new TileTuple(t,tileBound));
+		byte [] connOut;
+		while (!expTiles.isEmpty()) {			
+			TileTuple tt = expTiles.pop();
+			t = tt.t; tileBound = tt.bound;
+			ways=new LinkedList<Way>();
+			nodes=new ArrayList<Node>();
+			realBound=new Bounds();
 
+			// Reduce the content of t.ways and t.nodes to all relevant elements
+			// in the given bounds and create the binary midlet representation
+			if (t.zl != ROUTEZOOMLEVEL){
+				maxSize=configuration.getMaxTileSize();
+				ways=getWaysInBound(t.ways, t.zl,tileBound,realBound);
+				if (ways.size() == 0){
+					t.type=3;
+				}
+				int mostlyInBound=ways.size();
+				addWaysCompleteInBound(ways,t.ways,t.zl,realBound);
+				if (ways.size() > 2*mostlyInBound){
+					realBound=new Bounds();
+					ways=getWaysInBound(t.ways, t.zl,tileBound,realBound);
+				}
+				nodes=getNodesInBound(t.nodes,t.zl,realBound);
+				if (ways.size() <= 255){
+					out=createMidContent(ways,nodes,t);
+				}
+				t.nodes=nodes;
+				t.ways=ways;
 			} else {
-				//Write as emty box
-				t.type=Tile.TYPE_EMPTY;
+				// Route Nodes
+				maxSize=configuration.getMaxRouteTileSize();
+				nodes=getRouteNodesInBound(t.nodes,tileBound,realBound);
+				byte[][] erg=createMidContent(nodes,t);
+				out=erg[0];
+				connOut = erg[1];
+				t.nodes=nodes;
+			}
+
+			// split tile if more then 255 Ways or binary content > MAX_TILE_FILESIZE but not if only one Way
+			if (ways.size() > 255 || (out.length > maxSize && ways.size() != 1)){
+				//			System.out.println("create Subtiles size="+out.length+" ways=" + ways.size());
+				t.bounds=realBound.clone();
+				if (t.zl != ROUTEZOOMLEVEL){
+					t.type=Tile.TYPE_CONTAINER;				
+				} else {
+					t.type=Tile.TYPE_ROUTECONTAINER;
+				}
+				t.t1=new Tile((byte) t.zl,ways,nodes);
+				t.t2=new Tile((byte) t.zl,ways,nodes);
+				t.setRouteNodes(null);
+				if ((tileBound.maxLat-tileBound.minLat) > (tileBound.maxLon-tileBound.minLon)){
+					// split to half latitude
+					float splitLat=(tileBound.minLat+tileBound.maxLat)/2;
+					Bounds nextTileBound=tileBound.clone();
+					nextTileBound.maxLat=splitLat;				
+					expTiles.push(new TileTuple(t.t1,nextTileBound));
+					nextTileBound=tileBound.clone();
+					nextTileBound.minLat=splitLat;				
+					expTiles.push(new TileTuple(t.t2,nextTileBound));
+				} else {
+					// split to half longitude
+					float splitLon=(tileBound.minLon+tileBound.maxLon)/2;
+					Bounds nextTileBound=tileBound.clone();
+					nextTileBound.maxLon=splitLon;				
+					expTiles.push(new TileTuple(t.t1,nextTileBound));
+					nextTileBound=tileBound.clone();
+					nextTileBound.minLon=splitLon;				
+					expTiles.push(new TileTuple(t.t2,nextTileBound));
+				}
+				t.ways=null;
+				t.nodes=null;
+
+				//			System.gc();
+			} else {
+				if (ways.size() > 0 || nodes.size() > 0){
+					// Write as dataTile
+					t.fid=tileSeq.next();
+					if (t.zl != ROUTEZOOMLEVEL) {
+						t.setWays(ways);
+						writeRenderTile(t, tileBound, realBound, nodes, out);
+					} else {
+						writeRouteTile(t, tileBound, realBound, nodes, out);
+					}
+
+				} else {
+					//Write as emty box
+					t.type=Tile.TYPE_EMPTY;
+				}
 			}
 		}
 		return;
