@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.zip.CRC32;
+import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
@@ -37,16 +38,20 @@ public class BundleGpsMid {
 				createPath(target);
 				File planet = c.getPlanet();
 				fr= new BufferedInputStream(new FileInputStream(planet), 4096);
-				if (planet.getName().endsWith(".bz2")){
+				if (planet.getName().endsWith(".bz2") || planet.getName().endsWith(".gz")){
 					int availableProcessors = Runtime.getRuntime().availableProcessors();
 					if (availableProcessors > 1){
 						System.out.println("found " + availableProcessors + " CPU's: uncompress in seperate thread");
-						fr = new Bzip2Reader(fr);
-					} else {
-						fr.read();
-						fr.read();
+						fr = new Bzip2Reader(fr);						
+					} else {						
 						System.out.println("only one CPU: uncompress in same thread");
-						fr = new CBZip2InputStream(fr);
+						if (planet.getName().endsWith(".bz2")) {
+							fr.read();
+							fr.read();
+							fr = new CBZip2InputStream(fr);
+						} else if (planet.getName().endsWith(".gz")) {
+							fr = new GZIPInputStream(fr);							
+						}
 					}
 				} 
 				OxParser parser = new OxParser(fr,c);
