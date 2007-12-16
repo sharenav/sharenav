@@ -14,7 +14,7 @@
 	<property name="lib.dir" value="${basedir}/lib"/>
 
    	<property name="dist.dir" value="${basedir}/dist"/>
-	<property name="version" value="0.2.32"/>
+	<property name="version" value="0.3.01"/>
 	<property name="buildlib"
 	             value="buildlib/explode.jar"/>
 
@@ -59,6 +59,7 @@
    		<entry key="useNatural" value="true"/>
    		<entry key="useLeisure" value="true"/>
    		<entry key="useWaterway" value="true"/>
+        <entry key="useRouting" value="true"/>
    		<entry key="midlet.name" value="GpsMid"/>
 		<entry key="routing.maxTileSize" value="3000"/>
 		<entry key="maxTileSize" value="20000"/>
