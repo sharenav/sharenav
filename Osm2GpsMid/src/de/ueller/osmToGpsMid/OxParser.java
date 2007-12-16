@@ -1,30 +1,27 @@
 package de.ueller.osmToGpsMid;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PipedOutputStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map;
+
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
+import org.xml.sax.helpers.DefaultHandler;
 
-import uk.co.wilson.xml.MinML2;
 import de.ueller.osmToGpsMid.model.Bounds;
 import de.ueller.osmToGpsMid.model.Entity;
-import de.ueller.osmToGpsMid.model.Line;
 import de.ueller.osmToGpsMid.model.Member;
 import de.ueller.osmToGpsMid.model.Node;
 import de.ueller.osmToGpsMid.model.Relation;
 import de.ueller.osmToGpsMid.model.Way;
 
-public class OxParser extends MinML2 {
+public class OxParser extends DefaultHandler{
 	/**
 	 * The current processed primitive
 	 */
@@ -48,7 +45,11 @@ public class OxParser extends MinML2 {
 
 	private void init(InputStream i) {
 		try {
-			parse(new InputStreamReader(new BufferedInputStream(i,10240), "UTF-8"));
+			SAXParserFactory factory = SAXParserFactory.newInstance();
+			// Parse the input
+            SAXParser saxParser = factory.newSAXParser();
+            saxParser.parse( i, this);
+			//parse(new InputStreamReader(new BufferedInputStream(i,10240), "UTF-8"));
 		} catch (IOException e) {
 			System.out.println("IOException: " + e);
 			e.printStackTrace();
@@ -80,7 +81,7 @@ public class OxParser extends MinML2 {
 		System.out.println("End of Document");
 	}
 
-	public void startElement(String namespaceURI, String localName, String qName, Attributes atts) {
+	public void startElement(String namespaceURI, String localName, String qName, Attributes atts) {		
 //		System.out.println("start " + localName + " " + qName);
 		if (qName.equals("node")) {
 			float node_lat = Float.parseFloat(atts.getValue("lat"));
@@ -134,7 +135,7 @@ public class OxParser extends MinML2 {
 
 	} // startElement
 
-	public void endElement(String namespaceURI, String localName, String qName) {
+	public void endElement(String namespaceURI, String localName, String qName) {		
 //		System.out.println("end  " + localName + " " + qName);
 		ele++;
 		if (ele > 1000000){
@@ -184,12 +185,12 @@ public class OxParser extends MinML2 {
 		throw e;
 	}
 
-	public Collection getNodes() {
+	public Collection<Node> getNodes() {
 		return nodes.values();
 	}
 
 
-	public Collection getWays() {
+	public Collection<Way> getWays() {
 		return ways;
 	}
 
