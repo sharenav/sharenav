@@ -123,7 +123,7 @@ public class CreateGpsMidData {
 	}
 
 	
-	public void exportMapToMid(int zl){
+	private void exportMapToMid(int zl){
 //		System.out.println("Total ways : " + parser.ways.size() + "  Nodes : " + parser.nodes.size());
 		try {
 			FileOutputStream fo = new FileOutputStream(path+"/dict-"+zl+".dat");
@@ -150,14 +150,14 @@ public class CreateGpsMidData {
 					if (n.getZoomlevel() != zl) continue;
 					allBound.extend(n.lat,n.lon);
 				}
-			}
+			}			
 			tile[zl]=new Tile((byte) zl);
 			Sequence routeNodeSeq=new Sequence();
 			Sequence tileSeq=new Sequence();
 			tile[zl].ways=parser.ways;
 			tile[zl].nodes=parser.nodes.values();
 			// create the tiles and write the content 
-			exportTile(tile[zl],tileSeq,allBound,routeNodeSeq);
+			exportTile(tile[zl],tileSeq,allBound,routeNodeSeq);			
 			tile[zl].recalcBounds();
 			if (zl == ROUTEZOOMLEVEL){
 				Sequence rnSeq=new Sequence();
@@ -167,7 +167,7 @@ public class CreateGpsMidData {
 		        tile[zl].type=Tile.TYPE_ROUTECONTAINER;
 			} 
 			Sequence s=new Sequence();
-			tile[zl].writeTileDict(ds,1,s,path);
+			tile[zl].writeTileDict(ds,1,s,path);			
 			ds.writeUTF("END"); // Magic number
 			fo.close();
 
@@ -180,7 +180,7 @@ public class CreateGpsMidData {
 		}
 	}
 	
-	public void exportTile(Tile t,Sequence tileSeq,Bounds tileBound, Sequence routeNodeSeq) throws IOException{
+	private void exportTile(Tile t,Sequence tileSeq,Bounds tileBound, Sequence routeNodeSeq) throws IOException{
 		Bounds realBound=new Bounds();
 		LinkedList<Way> ways;
 		Collection<Node> nodes;
@@ -193,7 +193,9 @@ public class CreateGpsMidData {
 		byte [] out=new byte[1];
 		expTiles.push(new TileTuple(t,tileBound));
 		byte [] connOut;
-		while (!expTiles.isEmpty()) {			
+		System.out.println("Exporting Tiles");
+		while (!expTiles.isEmpty()) {
+			
 			TileTuple tt = expTiles.pop();
 			t = tt.t; tileBound = tt.bound;
 			ways=new LinkedList<Way>();
@@ -204,20 +206,20 @@ public class CreateGpsMidData {
 			// in the given bounds and create the binary midlet representation
 			if (t.zl != ROUTEZOOMLEVEL){
 				maxSize=configuration.getMaxTileSize();
-				ways=getWaysInBound(t.ways, t.zl,tileBound,realBound);
+				ways=getWaysInBound(t.ways, t.zl,tileBound,realBound);				
 				if (ways.size() == 0){
 					t.type=3;
 				}
-				int mostlyInBound=ways.size();
+				int mostlyInBound=ways.size();				
 				addWaysCompleteInBound(ways,t.ways,t.zl,realBound);
 				if (ways.size() > 2*mostlyInBound){
 					realBound=new Bounds();
 					ways=getWaysInBound(t.ways, t.zl,tileBound,realBound);
-				}
+				}				
 				nodes=getNodesInBound(t.nodes,t.zl,realBound);
 				if (ways.size() <= 255){
 					out=createMidContent(ways,nodes,t);
-				}
+				}				
 				t.nodes=nodes;
 				t.ways=ways;
 			} else {
@@ -228,7 +230,7 @@ public class CreateGpsMidData {
 				out=erg[0];
 				connOut = erg[1];
 				t.nodes=nodes;
-			}
+			}			
 
 			// split tile if more then 255 Ways or binary content > MAX_TILE_FILESIZE but not if only one Way
 			if (ways.size() > 255 || (out.length > maxSize && ways.size() != 1)){
@@ -357,7 +359,7 @@ public class CreateGpsMidData {
 	}
 	
 	
-	public LinkedList<Way> getWaysInBound(Collection<Way> parentWays,int zl,Bounds targetTile,Bounds realBound){
+	private LinkedList<Way> getWaysInBound(Collection<Way> parentWays,int zl,Bounds targetTile,Bounds realBound){
 		LinkedList<Way> ways = new LinkedList<Way>();
 //		System.out.println("search for ways mostly in " + targetTile + " from " + parentWays.size() + " ways");
 		// collect all way that are in this rectangle
@@ -375,17 +377,22 @@ public class CreateGpsMidData {
 //		System.out.println("getWaysInBound found " + ways.size() + " ways");
 		return ways;
 	}
-	public LinkedList<Way> addWaysCompleteInBound(LinkedList<Way> ways,Collection<Way> parentWays,int zl,Bounds targetTile){
+	private LinkedList<Way> addWaysCompleteInBound(LinkedList<Way> ways,Collection<Way> parentWays,int zl,Bounds targetTile){
 		// collect all way that are in this rectangle
 //		System.out.println("search for ways total in " + targetTile + " from " + parentWays.size() + " ways");
+		//This is bit of a hack. We should probably propagate the TreeSet through out,
+		//But that needs more effort and time than I currently have. And this way we get
+		//rid of a O(n^2) bottle neck
+		TreeSet<Way> waysTS = new TreeSet<Way>(ways);
 		for (Way w1 : parentWays) {
 			byte type=w1.getType();
 			if (type == 0) continue;
 			if (w1.getZoomlevel() != zl) continue;
 			if (w1.used) continue;
-			if (ways.contains(w1)) continue;
+			if (waysTS.contains(w1)) continue;
 			Bounds wayBound=w1.getBounds();
 			if (targetTile.isCompleteIn(wayBound)){
+				waysTS.add(w1);
 				ways.add(w1);
 			}
 		}
