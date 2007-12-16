@@ -35,23 +35,26 @@ public class CalcNearBy {
 		for (Way w : parser.ways) {
 			if (w.isHighway() /*&& w.getIsIn() == null */){
 				Node thisNode=w.getMidPoint();
-				Node nearestPlace = null;								
-				try {
-					nearestPlace = (Node) nearByElements.nearest(MyMath.latlon2XYZ(thisNode));
+				Node nearestPlace = null;				
+				try {					
+					nearestPlace = (Node) nearByElements.nearest(MyMath.latlon2XYZ(thisNode));					
 
 					if (!(MyMath.dist(thisNode, nearestPlace) < Constants.MAX_DIST_CITY[nearestPlace.getType(null)])){					
 						long maxDistanceTested = MyMath.dist(thisNode, nearestPlace);
 						int retrieveN = 5;
 						if (retrieveN > kdSize) retrieveN = kdSize;
 						nearestPlace=null;
-						while (maxDistanceTested < Constants.MAX_DIST_CITY[Constants.NODE_PLACE_CITY]) {
+						while (maxDistanceTested < Constants.MAX_DIST_CITY[Constants.NODE_PLACE_CITY]) {							
 							Object [] nearPlaces = nearByElements.nearest(MyMath.latlon2XYZ(thisNode),retrieveN);
 							long dist = 0;
 							for (Object o : nearPlaces) {
-								Node other = (Node) o;
-								dist = MyMath.dist(thisNode, other);							
+								Node other = (Node) o;								
+								dist = MyMath.dist(thisNode, other);
+								//As the list returned by the kd-tree is sorted by distance,
+								//we can stop at the first found 
 								if (dist < Constants.MAX_DIST_CITY[other.getType(null)]){								
-									nearestPlace=other;
+									nearestPlace=other;									
+									break;
 								}							
 							}
 							if (nearestPlace != null) {
@@ -59,22 +62,22 @@ public class CalcNearBy {
 								break;
 							}							
 							maxDistanceTested = dist;
-							retrieveN = retrieveN * 2;
+							retrieveN = retrieveN * 5;
 							if (retrieveN > kdSize) retrieveN = kdSize;
 						}					
 					}
 				} catch (KeySizeException e) {
-					// TODO Auto-generated catch block
+					// Something must have gone horribly wrong here,
+					// This should never happen.					
 					e.printStackTrace();
+					return;
 				}
 				if (nearestPlace != null && nearestPlace.getName() != null){
-					w.tags.put("is_in", nearestPlace.getName());
-					//					System.out.println("set is_in for " + w.getName() + " to " + nearestPlace.getName());
+					w.tags.put("is_in", nearestPlace.getName());					
 					w.nearBy=nearestPlace;
-				}
+				}				
 			}
-		}
-		
+		}		
 	}
 
 	private void calcCityNearBy(OxParser parser, KDTree nearByElements) {
@@ -83,33 +86,40 @@ public class CalcNearBy {
 			String place = n.getPlace();
 			if (place != null) {
 				Node nearestPlace = null;
-				long nearesDist = Long.MAX_VALUE;
-				//latlonKey[0] = n.lat;
-				//latlonKey[1] = n.lon;
-				Object[] nearNodes = null;
 				int nneighbours = 10;
-				if (kdSize < nneighbours) nneighbours = kdSize;
-				try {
-					nearNodes = nearByElements.nearest(MyMath.latlon2XYZ(n), nneighbours);										
-				} catch (IllegalArgumentException e) {					
-					e.printStackTrace();
-					return;
-				} catch (KeySizeException e) {					
-					e.printStackTrace();
-					return;
-				} catch (ClassCastException cce) {
-					System.out.println(nearNodes);
-					return;
-				}
-				for (Object otherO : nearNodes) {
-					Node other = (Node) otherO;
-					if (n.getType(null) > other.getType(null)){
-						long dist=MyMath.dist(n, other);
-						if (dist < nearesDist){
-							nearesDist=dist;
-							nearestPlace=other;
+				long nearesDist = Long.MAX_VALUE;
+				while ((nearestPlace == null)) {
+					nearesDist = Long.MAX_VALUE;
+					Object[] nearNodes = null;
+
+					if (kdSize < nneighbours)
+						nneighbours = kdSize;
+					try {
+						nearNodes = nearByElements.nearest(
+								MyMath.latlon2XYZ(n), nneighbours);
+					} catch (IllegalArgumentException e) {
+						e.printStackTrace();
+						return;
+					} catch (KeySizeException e) {
+						e.printStackTrace();
+						return;
+					} catch (ClassCastException cce) {
+						System.out.println(nearNodes);
+						return;
+					}
+					for (Object otherO : nearNodes) {
+						Node other = (Node) otherO;
+						if (n.getType(null) > other.getType(null)) {
+							long dist = MyMath.dist(n, other);
+							if (dist < nearesDist) {
+								nearesDist = dist;
+								nearestPlace = other;
+							}
 						}
 					}
+					if (nneighbours == kdSize)
+						break;
+					nneighbours *= 5;
 				}
 				if (nearestPlace != null){
 					n.nearBy=nearestPlace;
