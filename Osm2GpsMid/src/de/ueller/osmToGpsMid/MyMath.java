@@ -119,4 +119,16 @@ public class MyMath {
 		return (byte) invBearing;
 	}
 
+	public final static double [] latlon2XYZ(Node n) {
+		double r = 6378137.0;
+		double lat = Math.toRadians(n.lat);
+		double lon = Math.toRadians(n.lon);
+		double [] res = new double[3];
+				
+		res[0] = r*Math.cos(lat)*Math.cos(lon);
+		res[1] = r*Math.cos(lat)*Math.sin(lon);
+		res[2] = r*Math.sin(lat);		    
+		
+		return res;
+	}
 }

@@ -8,6 +8,7 @@
  */
 package de.ueller.osmToGpsMid.model;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -78,6 +79,12 @@ public class Path {
 			s.replace(no,n);
 		}
 	}
+	public void replace(HashMap<Node,Node> replaceNodes) {
+		for (SubPath s:subPathList){
+			s.replace(replaceNodes);
+		}
+	}
+	
 
 	/**
 	 * @return

@@ -9,17 +9,16 @@
 package de.ueller.osmToGpsMid;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.TreeMap;
 
-import de.ueller.osmToGpsMid.model.Line;
 import de.ueller.osmToGpsMid.model.Node;
 import de.ueller.osmToGpsMid.model.SubPath;
 import de.ueller.osmToGpsMid.model.Way;
+import edu.wlu.cs.levy.CG.KDTree;
+import edu.wlu.cs.levy.CG.KeyDuplicateException;
+import edu.wlu.cs.levy.CG.KeySizeException;
 
 /**
  * @author hmueller
@@ -29,6 +28,8 @@ public class CleanUpData {
 
 	private final OxParser parser;
 	private final Configuration conf;
+	
+	private HashMap<Node,Node> replaceNodes = new HashMap<Node,Node>(); 
 
 	public CleanUpData(OxParser parser, Configuration conf) {
 		this.parser = parser;
@@ -46,48 +47,66 @@ public class CleanUpData {
 	 * 
 	 */
 	private void removeDupNodes() {
-		HashMap<Integer,ArrayList<Node>> pm=new HashMap<Integer, ArrayList<Node>>();
+		int progressCounter = 0;
+		int noNodes = parser.nodes.size()/20;
+		KDTree kd = new KDTree(3);
+		double [] latlonKey; 
+		double [] lowk = new double[3];
+		double [] uppk = new double[3];		
 		for (Node n:parser.nodes.values()){
-			int la = hashLatLonCode(n);
-			n.used=true;
-			ArrayList<Node> ln;
-			if (pm.containsKey(la)){
-				ln=pm.get(la);
-			} else {
-				ln=new ArrayList<Node>();
-				pm.put(la, ln);
+			
+			progressCounter++;
+			if (progressCounter % noNodes == 0) {
+				System.out.println("Processed " + progressCounter + " out of " + noNodes*20 + " Nodes");
 			}
-			ln.add(n);
-		}
-		System.out.println("Created " + pm.size() + " coord groups");
-		int lonOf=1<<16;
-		/**
-		 * relative index to the neighbors
-		 */
-		int[] tiles={0,1,-1,lonOf,-lonOf,(1+lonOf),(1-lonOf),(-1+lonOf),(-1-lonOf)};
-		for (Node n:parser.nodes.values()){
-			if (n.used && n.getType(conf) == 0) { // means will deleted afterwards
-				// create a list with all neighbors from 9 Tiles
-				ArrayList<Node> candidates=new ArrayList<Node>();
-				int la = hashLatLonCode(n);
-				for (int i=0;i<9;i++){
-					ArrayList<Node> tmplist = pm.get(la+tiles[i]);
-					if (tmplist != null) {
-						candidates.addAll(tmplist);
-					}
+			
+			n.used=true;			
+			latlonKey = MyMath.latlon2XYZ(n);			
+			
+			/*lowk[0] = latlonKey[0] - 10.0;
+			lowk[1] = latlonKey[1] - 10.0;
+			lowk[2] = latlonKey[2] - 10.0;			
+			
+			uppk[0] = latlonKey[0] + 10.0;
+			uppk[1] = latlonKey[1] + 10.0;
+			uppk[2] = latlonKey[2] + 10.0;
+						
+			try {
+				
+				Object[] neighbours = kd.range(lowk, uppk);
+				if (neighbours.length == 1) {
+					n.used = false;
+					if (!substitute(n, (Node)neighbours[0]))
+						kd.insert(latlonKey, n);
+				} else if (neighbours.length > 1) {
+					n.used = false;
+					if (!substitute(n,(Node)kd.nearest(latlonKey))) 
+						kd.insert(latlonKey, n);
+				} else {*/
+			try {
+					kd.insert(latlonKey, n);					
+				//}				
+			} catch (KeySizeException e) {				
+				e.printStackTrace();
+			}  catch (KeyDuplicateException e) {				
+				//System.out.println("Key Duplication");				
+				try {
+					n.used = false;
+					Node rn = (Node)kd.search(latlonKey);
+					if (n.getType(conf) != rn.getType(conf)){
+						System.err.println("Warn " + n + " / " + rn);
+						//Shouldn't substitute in this case;
+						n.used = true;						
+					} else {
+						replaceNodes.put(n, rn);
+					}					
+				} catch (KeySizeException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
 				}
-//				System.out.println(" Check against " + candidates.size() + " Nodes");
-				for (Node no:candidates){
-					if (n != no){
-						if (Math.abs(no.lat-n.lat) < 0.000001f &&
-							Math.abs(no.lon-n.lon) < 0.000001f	){
-							no.used=false;
-							substitute(no,n);
-						}
-					}
-				}
-			}
+			}			
 		}
+		
 		Iterator<Node> it=parser.nodes.values().iterator();
 		int rm=0;
 		while (it.hasNext()){
@@ -104,22 +123,11 @@ public class CleanUpData {
 	 * @param no
 	 * @param n
 	 */
-	private void substitute(Node no, Node n) {
-		if (no.getType(conf) != n.getType(conf)){
-			System.err.println("Warn " + no + " / " + n);
-		}
+	private boolean substitute() {		
 		for (Way w:parser.ways){
-			w.replace(no,n);
+			w.replace(replaceNodes);
 		}
-	}
-
-	/**
-	 * @param n
-	 * @return
-	 */
-	private int hashLatLonCode(Node n) {
-		int la=(short)(n.lat*1800)+(int)(((short)(n.lon*1800)))<<16;
-		return la;
+		return true;
 	}
 
 	/**
@@ -153,17 +161,4 @@ public class CleanUpData {
 	    }
 		
 	}
-
-	
-	private boolean isIn(Collection<Line> lines,Line l1){
-		for (Line l2 : lines){
-			if ((l1.from == l2.from && l1.to == l2.to)
-			 || (l1.from == l2.to && l1.to == l2.from)){
-				return true;
-			}
-		}			
-		return false;
-	}
-	
-
 }

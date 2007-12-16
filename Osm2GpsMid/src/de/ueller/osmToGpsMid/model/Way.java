@@ -3,6 +3,7 @@ package de.ueller.osmToGpsMid.model;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -592,6 +593,9 @@ public class Way extends Entity implements Comparable<Way>{
 	 */
 	public void replace(Node no, Node n) {
 		path.replace(no,n);
+	}
+	public void replace(HashMap<Node,Node> replaceNodes) {
+		path.replace(replaceNodes);
 	}
 
 	public List<SubPath> getSubPaths() {

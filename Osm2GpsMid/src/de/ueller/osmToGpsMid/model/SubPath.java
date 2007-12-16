@@ -9,6 +9,7 @@
 package de.ueller.osmToGpsMid.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -51,6 +52,17 @@ public class SubPath {
 			occur=nodeList.indexOf(no);
 		}
 	}
+	public void replace(HashMap<Node,Node> replaceNodes) {
+		for (int i = 0; i < nodeList.size(); i++) {
+			Node newNode = replaceNodes.get(nodeList.get(i));
+			if (newNode != null) {
+				nodeList.set(i, newNode);	
+			}
+		}		
+	}
+	
+	
+	
 	public List<Node> getNodes(){
 		return nodeList;
 	}
