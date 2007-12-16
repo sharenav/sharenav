@@ -60,8 +60,9 @@ public class BundleGpsMid {
 				System.out.println("read Relations  " + parser.relations.size());
 				System.out.println("reorder Ways");
 				new CleanUpData(parser,c);
-				RouteData rd=new RouteData(parser,target.getCanonicalPath());
+				
 				if (c.useRouting){
+					RouteData rd=new RouteData(parser,target.getCanonicalPath());
 					System.out.println("create Route Data");
 					rd.create();
 					System.out.println("optimize Route Date");

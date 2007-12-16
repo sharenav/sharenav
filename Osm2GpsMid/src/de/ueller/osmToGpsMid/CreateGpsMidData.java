@@ -95,7 +95,9 @@ public class CreateGpsMidData {
 			exportMapToMid(i);
 		}
 		System.out.println("export RouteTiles");
-		exportMapToMid(ROUTEZOOMLEVEL);
+		if (configuration.useRouting) {
+			exportMapToMid(ROUTEZOOMLEVEL);
+		}
 //		for (int x=1;x<12;x++){
 //			System.out.print("\n" + x + " :");
 //			tile[ROUTEZOOMLEVEL].printHiLo(1, x);
