@@ -73,7 +73,7 @@ public class CalcNearBy {
 					return;
 				}
 				if (nearestPlace != null && nearestPlace.getName() != null){
-					w.tags.put("is_in", nearestPlace.getName());					
+					w.setAttribute("is_in", nearestPlace.getName());					
 					w.nearBy=nearestPlace;
 				}				
 			}

@@ -26,7 +26,7 @@ public class Node extends Entity{
 	public byte type=-1;
 	public byte noConfType=-1;
 	public boolean used=false;
-	public byte connectedLineCount=0;
+//	public byte connectedLineCount=0;
 //	private Set<Way> connectedWays = new HashSet<Way>();
 	public RouteNode routeNode;
 	
@@ -36,28 +36,28 @@ public class Node extends Entity{
 		this.id = id;
 	}
 	public String getName() {
-		String name = (String)tags.get("name");
+		String name = getAttribute("name");
 		return name!=null ? name.trim() : "";
 	}
 	
 	public String getPlace(){
-		String place = ((String)tags.get("place"));
+		String place = (getAttribute("place"));
 //		System.out.println("Read place for id="+id+" as=" + place);
 		if (place != null) return place.trim();
 		return null;
 	}
 	public String getAmenity(){
-		String amenity = ((String)tags.get("amenity"));
+		String amenity = (getAttribute("amenity"));
 		if (amenity != null) return amenity.trim();
 		return null;
 	}
 	public String getRailway(){
-		String railway = ((String)tags.get("railway"));
+		String railway = (getAttribute("railway"));
 		if (railway != null) return railway.trim();
 		return null;
 	}
 	public String getAeroway(){
-		String aeroway = ((String)tags.get("aeroway"));
+		String aeroway = (getAttribute("aeroway"));
 		if (aeroway != null) return aeroway.trim();
 		return null;
 	}

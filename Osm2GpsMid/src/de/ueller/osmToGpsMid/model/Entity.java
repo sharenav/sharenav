@@ -1,7 +1,9 @@
 package de.ueller.osmToGpsMid.model;
 
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.TreeMap;
 
 
 public class Entity {
@@ -16,10 +18,40 @@ public class Entity {
 	 * The tags for this object  
 	 * Key: String  Value: String
 	 */
-	public Map<String,String> tags = new Hashtable<String,String>(4,0.8f);
+	private Map<String,String> tags;	
 	public int fid;
+	
+	public Entity() {
+		
+	}
+	public Entity(Entity other) {
+		this.id = other.id;		
+		this.tags=other.tags;
+	}
+	
 	public String getName() {
+		if (tags == null)
+			return null;
 		return tags.get("name");
+	}
+	
+	public void setAttribute(String key, String value) {
+		if (tags == null)
+			tags = new HashMap<String,String>(4,0.8f);
+		
+		tags.put(key, value);
+	}
+	
+	public String getAttribute(String key) {
+		if (tags == null)
+			return null;
+		return tags.get(key);
+	}
+	
+	public boolean containsKey(String key) {
+		if (tags == null)
+			return false;
+		return tags.containsKey(key);
 	}
 
 }

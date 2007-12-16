@@ -112,11 +112,11 @@ public class OxParser extends DefaultHandler{
 		}
 		
 		if(qName.equals("tag")) {
-			if (current != null && current.tags != null){ 
+			if (current != null) {				
 				String key = atts.getValue("k");
 				String val = atts.getValue("v");
 				if (key != null && val != null ){
-					current.tags.put(key, val);
+					current.setAttribute(key, val);
 				}
 			} else {
 				System.out.println("tag at unexepted position " + current);

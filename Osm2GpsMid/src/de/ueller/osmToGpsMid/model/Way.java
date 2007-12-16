@@ -14,7 +14,7 @@ import de.ueller.osmToGpsMid.MyMath;
 import de.ueller.osmToGpsMid.model.name.Names;
 
 public class Way extends Entity implements Comparable<Way>{
-	public List<Line> lines = new LinkedList<Line>();
+	//public List<Line> lines = new LinkedList<Line>();
 	public Path path=null;
 	Bounds bound=null;
 /**
@@ -33,13 +33,12 @@ public class Way extends Entity implements Comparable<Way>{
 	 * @param other
 	 */
 	public Way(Way other) {
-		this.id=other.id;
-		this.tags=other.tags;
+		super(other);		
 		this.type=other.type;
 	}
 
 	private byte getJunctionType(){
-		String t = (String) tags.get("junction");
+		String t = getAttribute("junction");
 		if ("roundabout".equals(t)){
 			return Constants.WAY_JUNCTION_ROUNDABOUT;
 		}
@@ -47,13 +46,13 @@ public class Way extends Entity implements Comparable<Way>{
 	}
 		
 	public boolean isHighway(){
-		return (tags.get("highway") != null);
+		return (getAttribute("highway") != null);
 	}
 	public String getMotorcar(){
-		return (tags.get("motorcar"));
+		return (getAttribute("motorcar"));
 	}
 	public boolean isAccessByCar(){
-		String way = tags.get("highway");
+		String way =getAttribute("highway");
 		if (way == null)
 			return false;
 		if (getType() > Constants.WAY_HIGHWAY_UNCLASSIFIED){
@@ -66,7 +65,7 @@ public class Way extends Entity implements Comparable<Way>{
 	}
 
 	private byte getHighwayType(){
-		String t = (String) tags.get("highway");
+		String t = getAttribute("highway");
 		if ("unclassified".equals(t)){
 			return Constants.WAY_HIGHWAY_UNCLASSIFIED;
 		}
@@ -106,7 +105,7 @@ public class Way extends Entity implements Comparable<Way>{
 		return Constants.WAY_HIGHWAY_UNCLASSIFIED;	
 	}
 	private byte getRailwayType(){
-		String t = (String) tags.get("railway");
+		String t = getAttribute("railway");
 		if ("rail".equals(t)){
 			return Constants.WAY_RAILWAY_RAIL;
 		}
@@ -118,7 +117,7 @@ public class Way extends Entity implements Comparable<Way>{
 	}
 
 	private byte getAmenityType(){
-		String t = (String) tags.get("amenity");
+		String t = getAttribute("amenity");
 		if ("parking".equals(t)){
 			return Constants.AREA_AMENITY_PARKING;
 		}
@@ -129,14 +128,14 @@ public class Way extends Entity implements Comparable<Way>{
 		
 	}
 	private byte getNaturalType(){
-		String t = (String) tags.get("natural");
+		String t = getAttribute("natural");
 		if ("water".equals(t)){
 			return Constants.AREA_NATURAL_WATER;
 		}
 		return 0;
 	}
 	private byte getLanduseType(){
-		String t = (String) tags.get("landuse");
+		String t = getAttribute("landuse");
 		if ("farm".equals(t)){
 			return Constants.AREA_LANDUSE_FARM;
 		}
@@ -189,14 +188,14 @@ public class Way extends Entity implements Comparable<Way>{
 	}
 
 	private byte getLeisureType(){
-		String t = (String) tags.get("leisure");
+		String t = getAttribute("leisure");
 		if ("park".equals(t)){
 			return Constants.AREA_LEISURE_PARK;
 		}
 		return 0;
 	}
 	private byte getWaterwayType(){
-		String t = (String) tags.get("waterway");
+		String t = getAttribute("waterway");
 		if ("river".equals(t)){
 			return Constants.WAY_WATERWAY_RIVER;
 		}
@@ -209,40 +208,40 @@ public class Way extends Entity implements Comparable<Way>{
 	
 	private byte get_Type(Configuration c){
 		if (c.useHighway){
-			if (tags.containsKey("highway")){
+			if (containsKey("highway")){
 				return getHighwayType();
 			}
-			if (tags.containsKey("junction")){
+			if (containsKey("junction")){
 				return getJunctionType();
 			}			
 		}
 		if (c.useRailway){
-			if (tags.containsKey("railway")){
+			if (containsKey("railway")){
 				return getRailwayType();
 			}
 		}
 		if (c.useAmenity){
-			if (tags.containsKey("amenity")){
+			if (containsKey("amenity")){
 				return getAmenityType();
 			}
 		}
 		if (c.useNatural){
-			if (tags.containsKey("natural")){
+			if (containsKey("natural")){
 				return getNaturalType();
 			}
 		}
 		if (c.useLanduse){
-			if (tags.containsKey("landuse")){
+			if (containsKey("landuse")){
 				return getLanduseType();
 			}
 		}
 		if (c.useLeisure){
-			if (tags.containsKey("leisure")){
+			if (containsKey("leisure")){
 				return getLeisureType();
 			}
 		}
 		if (c.useWaterway){
-			if (tags.containsKey("waterway")){
+			if (containsKey("waterway")){
 				return getWaterwayType();
 			}
 		}
@@ -284,9 +283,9 @@ public class Way extends Entity implements Comparable<Way>{
      * @return
      */
 	public float getSpeed(){
-		if (tags.containsKey("maxspeed")){
+		if (containsKey("maxspeed")){
 			try {
-				int maxspeed=Integer.parseInt((String) tags.get("maxspeed"));
+				int maxspeed=Integer.parseInt(getAttribute("maxspeed"));
 				return (maxspeed/3.6f);
 			} catch (NumberFormatException e) {
 			}
@@ -343,13 +342,13 @@ public class Way extends Entity implements Comparable<Way>{
 	 * @return
 	 */
 	public String getIsIn() {
-		return tags.get("is_in");
+		return getAttribute("is_in");
 	}
 	/**
 	 * @return
 	 */
 	public byte getNameType() {
-		String t = (String) tags.get("highway");
+		String t = getAttribute("highway");
 		if (t != null){
 			return (Constants.NAME_STREET);
 		}
@@ -369,7 +368,7 @@ public class Way extends Entity implements Comparable<Way>{
 	 * @return
 	 */
 	public boolean isOneWay() {
-		String t = (String) tags.get("oneway");
+		String t = getAttribute("oneway");
 		if (t==null)
 			return false;
 		if ("true".equalsIgnoreCase(t)){
@@ -381,7 +380,7 @@ public class Way extends Entity implements Comparable<Way>{
 		return false;
 	}
 	
-	@Deprecated
+/*	@Deprecated
 	public void write_old(DataOutputStream ds,Names names1) throws IOException{
 		Bounds b=new Bounds();
 //		System.out.println("write way "+w);
@@ -497,7 +496,7 @@ public class Way extends Entity implements Comparable<Way>{
 		}
 
 	}
-	
+*/	
 	public void write(DataOutputStream ds,Names names1) throws IOException{
 		Bounds b=new Bounds();
 		int flags=0;
@@ -505,9 +504,9 @@ public class Way extends Entity implements Comparable<Way>{
 		if (getName() != null){
 			flags+=1;
 		}
-		if (tags.containsKey("maxspeed")){
+		if (containsKey("maxspeed")){
 			try {
-				maxspeed=Integer.parseInt((String) tags.get("maxspeed"));
+				maxspeed=Integer.parseInt(getAttribute("maxspeed"));
 				flags+=2;
 			} catch (NumberFormatException e) {
 			}
