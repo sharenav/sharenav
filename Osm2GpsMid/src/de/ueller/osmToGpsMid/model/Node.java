@@ -26,7 +26,7 @@ public class Node extends Entity{
 	public byte type=-1;
 	public byte noConfType=-1;
 	public boolean used=false;
-//	public byte connectedLineCount=0;
+	public byte connectedLineCount=0;
 //	private Set<Way> connectedWays = new HashSet<Way>();
 	public RouteNode routeNode;
 	
