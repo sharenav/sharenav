@@ -4,13 +4,14 @@ package de.ueller.midlet.gps;
  * See Copying
  */
 
+//#if polish.api.pdaapi
 import java.io.IOException;
 import java.util.Enumeration;
 
 import javax.microedition.io.Connector;
 import javax.microedition.io.file.FileConnection;
 import javax.microedition.io.file.FileSystemRegistry;
-
+//#endif
 
 public class FsDiscover implements Runnable {
 
@@ -34,6 +35,7 @@ public class FsDiscover implements Runnable {
 		
 	}
     private void getRoots() {
+    	//#if polish.api.pdaapi
 //    	logger.debug("getRoot");
         Enumeration drives = FileSystemRegistry.listRoots();
 //        logger.debug("The valid roots found are: ");
@@ -42,8 +44,12 @@ public class FsDiscover implements Runnable {
 //           logger.debug("found "+root);
            parent.addRootFs(root);
         }
+        //#else
+        parent.addRootFs("API not supported by device");
+        //#endif
      }
     private void getRootContent(String root) {
+    	//#if polish.api.pdaapi
         try {
            FileConnection fc = (FileConnection)
               Connector.open("file:///"+root);
@@ -71,6 +77,7 @@ public class FsDiscover implements Runnable {
         } catch (IOException ioe) {
            System.out.println(ioe.getMessage());
         }
+        //#endif
      }
 
 }
