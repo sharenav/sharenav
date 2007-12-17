@@ -131,7 +131,7 @@ public class DiscoverGps implements Runnable, DiscoveryListener {
 	 */
 	public void deviceDiscovered(RemoteDevice btDevice, DeviceClass cod) {
 		// same device may found several times during single search
-		parent.addDevice("found "+btDevice.getBluetoothAddress());
+		parent.addDevice("found "+btDevice.getBluetoothAddress());		
 		if (devices.indexOf(btDevice) == -1) {
 			devices.addElement(btDevice);
 		}
@@ -253,20 +253,39 @@ public class DiscoverGps implements Runnable, DiscoveryListener {
 	}
 
 	private void searchService() {
-		synchronized (this) {
-			parent.addDevice("Start service discovery");
+		synchronized (this) {			
 			searchIDs = new int[devices.size()];
-
-			for (int i = 0; i < searchIDs.length; i++) {
-			try {
-				RemoteDevice rd = (RemoteDevice) devices.elementAt(i);
-				searchIDs[i] = discoveryAgent.searchServices(attrSet, uuidSet,
-						rd, this);
-			} catch (BluetoothStateException e) {
-				searchIDs[i] = -1;
-			}
-			}
-//			parent.addDevice("wait for Discovery end");
+			int i = 0; int retries = 0;
+			while (i < searchIDs.length) {				
+				if (retries > 4) {
+					//This device discovery failed.
+					//Set searchIDs[i] to -1 to indicate it has failed,
+					//as serviceSerchComplete uses this to check if all searches
+					//have completed
+					searchIDs[i] = -1;
+					i++; retries = 0;
+					continue;
+				}
+				try {
+					RemoteDevice rd = (RemoteDevice) devices.elementAt(i);
+					searchIDs[i] = discoveryAgent.searchServices(attrSet, uuidSet,
+							rd, this);
+				} catch (BluetoothStateException e) {				
+					//This exception is most likely due to the fact
+					//that the device is not able to handle concurrent
+					//searchServices() calls. So wait a while and try again					
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e1) {
+						//Nothing to do in that case						
+					}
+					retries++;
+					continue;
+				}
+				i++;
+				retries = 0;
+			}			
+			parent.addDevice("wait for Discovery end");
 		}
 	}
 
@@ -288,7 +307,8 @@ public class DiscoverGps implements Runnable, DiscoveryListener {
 			// durchsuche alle devices nach services
 			parent.addDevice("search services");
 			searchService();
-			waitUntilNotify();
+			if (getState() != SERVICE_SELECT)			
+				waitUntilNotify();			
 //			parent.clear();
 			if (devices.size() == 0){
 				parent.addDevice("no Service found");
@@ -320,7 +340,7 @@ public class DiscoverGps implements Runnable, DiscoveryListener {
 			parent.addDevice("found " + name);
 		}
 	}
-	public void serviceSearchCompleted(int transID, int respCode) {
+	public void serviceSearchCompleted(int transID, int respCode) {		
 		// first, find the service search transaction index
 		int index = -1;
 
@@ -353,7 +373,7 @@ public class DiscoverGps implements Runnable, DiscoveryListener {
 		}
 //		parent.addDevice("all discovered");
 		// ok, all of the transactions are completed
-		setState(SERVICE_SELECT);
+		setState(SERVICE_SELECT);		
 		synchronized (this) {
 			notify();
 		}
