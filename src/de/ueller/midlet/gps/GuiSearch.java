@@ -25,7 +25,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		GpsMidDisplayable {
 
 
-//	private final Command OK_CMD = new Command("Ok", Command.OK, 1);
+	private final Command OK_CMD = new Command("Ok", Command.OK, 1);
 	private final Command DEL_CMD = new Command("delete", Command.ITEM, 2);
 	private final Command CLEAR_CMD = new Command("clear", Command.ITEM, 3);
 	private final Command BOOKMARK_CMD = new Command("add Bookmark", Command.ITEM, 4);
@@ -44,6 +44,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 	private int carret=0;
 
 	private int cursor=0;
+	
+	private int scrollOffset = 0;
 
 	private StringBuffer searchCanon = new StringBuffer();
 
@@ -57,7 +59,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		
 		searchThread = new SearchNames(this);
 		setTitle("Search for name");
-//		addCommand(OK_CMD);
+		addCommand(OK_CMD);
 		addCommand(DEL_CMD);
 		addCommand(CLEAR_CMD);
 		addCommand(BOOKMARK_CMD);
@@ -69,11 +71,18 @@ public class GuiSearch extends Canvas implements CommandListener,
 
 	public void commandAction(Command c, Displayable d) {
 //		System.out.println("got Command " + c);
-//		if (c == OK_CMD) {
-//			destroy();
-//			parent.show();
-//			return;
-//		}
+		if (c == OK_CMD) {			
+			SearchResult sr = (SearchResult) result.elementAt(cursor);
+//			System.out.println("select " + sr);
+			PositionMark positionMark = new PositionMark(sr.lat,sr.lon);
+			positionMark.nameIdx=sr.nameIdx;
+			positionMark.displayName=parent.getName(sr.nameIdx);
+			parent.setTarget(positionMark);
+			parent.show();
+			repaint(0, 0, getWidth(), getHeight());
+			destroy();
+			return;
+		}
 		if (c == DEL_CMD) {
 			if (carret > 0){
 				searchCanon.deleteCharAt(--carret);
@@ -109,14 +118,28 @@ public class GuiSearch extends Canvas implements CommandListener,
 	}
 
 	protected void paint(Graphics gc) {
-		int yc=0;
+		int yc=scrollOffset;
 //		gc.setFont(Font.getFont(Font.FACE_MONOSPACE ));
 		int carPos = gc.getFont().substringWidth(searchCanon.toString(), 0, carret)+17;
 		gc.setColor(255,255, 255);
 		gc.fillRect(0, 0, getWidth(), getHeight());
 		gc.setColor(0, 0, 0);
 		gc.drawLine(carPos, 0, carPos, 15*result.size());
+	    if (yc < 0) {
+			gc.drawString("^", getWidth(), 0, Graphics.TOP | Graphics.RIGHT);
+		}
+
 		for (int i=0;i<result.size();i++){
+			if (yc < 0) {
+				yc += 15;
+				continue;
+			}
+			if (yc > getHeight()) {
+				gc.drawString("v", getWidth(), getHeight() - 7,
+						Graphics.BOTTOM | Graphics.RIGHT);
+				return;
+			}
+
 			if (i == cursor){
 				gc.setColor(255, 0, 0);
 			} else {
@@ -179,6 +202,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			positionMark.nameIdx=sr.nameIdx;
 			positionMark.displayName=parent.getName(sr.nameIdx);
 			parent.setTarget(positionMark);
+			destroy();
 			parent.show();
 			repaint(0, 0, getWidth(), getHeight());
 			return;
@@ -186,14 +210,26 @@ public class GuiSearch extends Canvas implements CommandListener,
 			if (cursor > 0)
 				cursor--;
 			if (cursor >= result.size())
-				cursor = result.size()-1;
+				cursor = result.size() - 1;
+			if (cursor * 15 + scrollOffset < 0) {
+				scrollOffset += 45;
+			}
+			if (scrollOffset > 0)
+				scrollOffset = 0;
 			repaint(0, 0, getWidth(), getHeight());
 			return;
 		} else if (action == DOWN) {
 			if (cursor < result.size())
 				cursor++;
 			if (cursor >= result.size())
-				cursor = result.size()-1;
+				cursor = result.size() - 1;
+			if (((cursor + 1) * 15 + scrollOffset) > getHeight()) {
+				scrollOffset -= 45;
+			}
+
+			if (scrollOffset > 0)
+				scrollOffset = 0;
+
 			repaint(0, 0, getWidth(), getHeight());
 			return;
 		} else if (action == LEFT) {
@@ -209,6 +245,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 	}
 
 	private void reSearch() {
+		scrollOffset = 0;
 		setTitle(searchCanon.toString() + " " + carret);
 		if (searchCanon.length() >= 2) {
 			
