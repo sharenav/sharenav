@@ -5,6 +5,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Calendar;
+import java.util.Date;
 
 import javax.microedition.io.Connector;
 import javax.microedition.rms.RecordStore;
@@ -18,6 +20,7 @@ import javax.obex.Operation;
 import javax.obex.ResponseCodes;
 
 import de.ueller.gps.data.Position;
+import de.ueller.midlet.gps.GuiGpx;
 import de.ueller.midlet.gps.Logger;
 
 public class Gpx extends PersistEntity implements Runnable {
@@ -27,41 +30,110 @@ public class Gpx extends PersistEntity implements Runnable {
 	public int recorded=0;
 	private Thread processorThread=null;
 	private String url=null;
+	
+	private ByteArrayOutputStream baos;
+	private DataOutputStream dos;
+	
+	private byte[] trackRecordByteArray;
+	
+	private String trackName;
+	
+	private GuiGpx feedbackListener;
 
 	public Gpx() throws RecordStoreFullException, RecordStoreNotFoundException, RecordStoreException {
 		database = RecordStore.openRecordStore("GPX", true);
+		initTrack();
 	}
 
-	public Gpx(String url) throws RecordStoreFullException, RecordStoreNotFoundException, RecordStoreException {
-		database = RecordStore.openRecordStore("GPX", false);
-		this.url=url;
-		processorThread = new Thread(this,"Names");
-		processorThread.setPriority(Thread.MIN_PRIORITY);
-		processorThread.start();
+	public Gpx(String url, byte [] trba, GuiGpx parent) {
+					
+			if (url == null) {
+				logger.error("GPX receiver URL is null");				
+				return;
+			}
+			
+			this.url=url;
+			feedbackListener = parent;
+			
+			trackRecordByteArray = trba;
+			
+			processorThread = new Thread(this,"Names");
+			processorThread.setPriority(Thread.MIN_PRIORITY);
+			processorThread.start();		
 	}
 	
-	public PositionMark addPosition(Position p) throws IOException, RecordStoreNotOpenException, RecordStoreFullException, RecordStoreException{
-		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		DataOutputStream ds = new DataOutputStream(os);
-		ds.writeFloat(p.latitude);
-		ds.writeFloat(p.longitude);
-		ds.writeFloat(p.altitude);
-		ds.writeLong(p.date.getTime());
-		ds.writeFloat(p.speed);
-		byte[] byteArray = os.toByteArray();
-		database.addRecord(byteArray, 0, byteArray.length);
-		ds.close();
-		recorded++;
-		if (recorded % 60 == 0){
-			return new PositionMark(p.latitude,p.longitude);
-		} else {
+	/**
+	 * This function adds a single position to the currently active tracklog.
+	 * 
+	 * @param p - Position p is the position to add 
+	 * @return returns a PositionMark every 60 recorded positions
+	 * @throws IOException
+	 * @throws RecordStoreNotOpenException
+	 * @throws RecordStoreFullException
+	 * @throws RecordStoreException
+	 */
+	public PositionMark addPosition(Position p) throws IOException, RecordStoreNotOpenException, RecordStoreFullException, RecordStoreException{		
+		try {
+			dos.writeFloat(p.latitude);
+			dos.writeFloat(p.longitude);
+			dos.writeFloat(p.altitude);
+			dos.writeLong(p.date.getTime());
+			dos.writeFloat(p.speed);		
+			recorded++;
+			if (recorded % 60 == 0){
+				return new PositionMark(p.latitude,p.longitude);
+			} else {
+				return null;
+			}
+		} catch (OutOfMemoryError oome) {
+			logger.fatal("Out of memory, can't add trackpoint");
 			return null;
 		}
+	}
+	
+	private void initTrack() {
+		Date today = new Date();		
+		trackName = today.toString();
+		baos = new ByteArrayOutputStream();
+		dos = new DataOutputStream(baos);
+		recorded = 0;
+	}
+	
+	/**
+	 * Commit the track log from an in-memory buffer to the
+	 * RecordStore
+	 */
+	private void commitTrackToDb() {
+		try {
+			dos.flush();		
+			ByteArrayOutputStream baosDb = new ByteArrayOutputStream();
+			DataOutputStream dosDb = new DataOutputStream(baosDb);
+			dosDb.writeUTF(trackName);
+			dosDb.writeInt(recorded);
+			dosDb.writeInt(baos.size());
+			dosDb.write(baos.toByteArray());
+			dosDb.flush();
+			database.addRecord(baosDb.toByteArray(), 0, baosDb.size());
+			
+		} catch (IOException e) {
+			logger.error("IOE: " + e.getMessage());
+		} catch (RecordStoreNotOpenException e) {
+			logger.error("RSNOE: " + e.getMessage());
+		} catch (RecordStoreFullException e) {
+			logger.error("RSFE: " + e.getMessage());
+		} catch (RecordStoreException e) {
+			logger.error("RSE: " + e.getMessage());
+		} catch (OutOfMemoryError oome) {
+			logger.fatal("Out of memory, can't save tracklog");			
+		}
+		//Reinitialise bufferes for the next position to be received in a new track
+		initTrack();
 	}
 
 	public void close() {
 		try {
-			database.closeRecordStore();
+			commitTrackToDb();
+			database.closeRecordStore();			
 		} catch (RecordStoreNotOpenException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -81,84 +153,66 @@ public class Gpx extends PersistEntity implements Runnable {
 
 	
 	
-	public static void transfer(String gpxUrl) {
-		try {
-			new Gpx(gpxUrl);
-		} catch (RecordStoreFullException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (RecordStoreNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (RecordStoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+	public static void transfer(String gpxUrl, byte[] trba, GuiGpx parent) {		
+		new Gpx(gpxUrl, trba, parent);		
 	}
 
 	public void run() {
-		try {
-			//Convert the data stored in the recordStore into a GPX file
-			//Cache it completely in a ByteArrayOutputStream, as we need to
-			//find out the file size of the complete file to send.
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-			write(baos,"<?xml version='1.0' encoding='UTF-8'?>\r\n");
-			write(baos,"<gpx version='1.1' creator='GPSMID' xmlns='http://www.topografix.com/GPX/1/1'>\r\n");
-			write(baos,"<trk>\r\n");
-			write(baos,"<trkseg>\r\n");
-			byte [] result;
-			for (int i = 1; i <= database.getNumRecords(); i++) {
-				try {
-					if ((result = database.getRecord(i)) != null) {
-						DataInputStream bi = getByteInputStream(result);
-						write(baos,"<trkpt lat='"+ bi.readFloat() + "' lon='" + bi.readFloat() +"' />\r\n");
-					}
-				} catch (RecordStoreException e) {
-					logger.error("RSE: " + e.getMessage());
-				}
-			}
-			write(baos,"</trkseg>\r\n</trk>\r\n</gpx>\r\n");
-			write(baos,"\r\n");
-			database.closeRecordStore();
-
-			logger.trace("Starting to send a GPX file, about to open a connection to" + url);			
+		try {			
+			DataInputStream dis1 = getByteInputStream(trackRecordByteArray);
+			trackName = dis1.readUTF();
+			recorded = dis1.readInt();
+			int trackSize = dis1.readInt();
+			byte[] trackArray = new byte[trackSize];
+			dis1.read(trackArray);
+			DataInputStream trackIS = getByteInputStream(trackArray);
+			
+			logger.trace("Starting to send a GPX file, about to open a connection to" + url);
+			logger.info(new String(baos.toByteArray()));
 			ClientSession session = (ClientSession)Connector.open(url);						
 			HeaderSet headers = session.createHeaderSet();	        
 			session.connect(headers);
 			logger.debug("Connected");
 			headers.setHeader(HeaderSet.NAME, "export.gpx");
 			headers.setHeader(HeaderSet.TYPE, "text");
-			headers.setHeader(HeaderSet.LENGTH, new Long(baos.size()));
 			Operation operation;
 			operation = session.put(headers);			
-			OutputStream outputStream = operation.openOutputStream();
-			logger.info("Writing file of length: " + baos.size());
-			outputStream.write(baos.toByteArray());			
-			outputStream.flush();
-			outputStream.close();			
+			OutputStream oS = operation.openOutputStream();
+			
+			write(oS,"<?xml version='1.0' encoding='UTF-8'?>\r\n");
+			write(oS,"<gpx version='1.1' creator='GPSMID' xmlns='http://www.topografix.com/GPX/1/1'>\r\n");
+			write(oS,"<trk>\r\n<trkseg>\r\n");						
+			
+			for (int i = 1; i <= recorded; i++) {
+				StringBuffer sb = new StringBuffer(128);
+				sb.append("<trkpt lat='").append(trackIS.readFloat()).append("' lon='").append(trackIS.readFloat()).append("' >\r\n");
+				sb.append("<ele>").append(trackIS.readFloat()).append("</ele>\r\n");
+				sb.append("<time>").append(formatUTC(new Date(trackIS.readLong()))).append("</time>\r\n");
+				sb.append("</trkpt>\r\n");				
+				// Read extra bytes in the buffer, that are currently not written to the GPX file.
+				// Will add these at a later time.
+				trackIS.readFloat(); //Speed
+				write(oS,sb.toString());
+			}
+			write(oS,"</trkseg>\r\n</trk>\r\n</gpx>\r\n\r\n");			
+			
+			oS.flush();
+			oS.close();			
 			session.close();
 			
 			int code = operation.getResponseCode();
-			if (code == ResponseCodes.OBEX_HTTP_OK) {
-				logger.info("Successfully transfered file");
-				RecordStore.deleteRecordStore("GPX");
+			if (code == ResponseCodes.OBEX_HTTP_OK) {				
+				logger.info("Successfully transfered file");				
 			} else {
-				System.out.println("problem in File Opex " + code);
+				logger.error("Unsuccessful return code in Opex push: " + code);
 			}
+			feedbackListener.completedUpload();
 		} catch (IOException e) {			
-			e.printStackTrace();
-			logger.error("IOE: " + e.getMessage());			
-		} catch (RecordStoreNotOpenException e) {
-			e.printStackTrace();			
-			logger.error("RSNOE: " + e.getMessage());
-		} catch (RecordStoreException e) {
-			e.printStackTrace();			
-			logger.error("RSE: " + e.getMessage());
-		} catch (Exception ee) {
-			ee.printStackTrace();
-			logger.error("E: " + ee.getMessage());
+			logger.expection("IOE", e);	
+		} catch (OutOfMemoryError oome) {
+			logger.fatal("Out of memory, can't transmit tracklogs");
+		} catch (Exception ee) {			
+			logger.expection("Error while sending tracklogs", ee);
 		}
 	}
 
@@ -177,5 +231,35 @@ public class Gpx extends PersistEntity implements Runnable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	/**
+	 * Formats an integer to 2 digits, as used for example in time.
+	 * I.e. a 0 gets printed as 00. 
+	 **/
+	private static final String formatInt2(int n) {
+		if (n < 10) {
+			return "0" + n;
+		} else {
+			return Integer.toString(n);
+		}
+			
+	}
+	
+	/**
+	 * Date-Time formater that corresponds to the standard UTC time as used in XML
+	 * @param time
+	 * @return
+	 */
+	private static final String formatUTC(Date time) {
+		// This function needs optimising. It has a too high object churn.
+		Calendar c = null;
+		if (c == null)
+			c = Calendar.getInstance();
+		c.setTime(time);
+		return c.get(Calendar.YEAR) + "-" + formatInt2(c.get(Calendar.MONTH)) + "-" +
+		formatInt2(c.get(Calendar.DAY_OF_MONTH)) + "T" + formatInt2(c.get(Calendar.HOUR_OF_DAY)) + ":" +
+		formatInt2(c.get(Calendar.MINUTE)) + ":" + formatInt2(c.get(Calendar.SECOND)) + "Z";		 
+		
 	}
 }
