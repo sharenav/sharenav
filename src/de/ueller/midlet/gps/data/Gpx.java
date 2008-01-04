@@ -208,11 +208,11 @@ public class Gpx extends PersistEntity implements Runnable {
 			}
 			feedbackListener.completedUpload();
 		} catch (IOException e) {			
-			logger.expection("IOE", e);	
+			logger.error("IOE:" + e);	
 		} catch (OutOfMemoryError oome) {
 			logger.fatal("Out of memory, can't transmit tracklogs");
 		} catch (Exception ee) {			
-			logger.expection("Error while sending tracklogs", ee);
+			logger.error("Error while sending tracklogs: " + ee);
 		}
 	}
 

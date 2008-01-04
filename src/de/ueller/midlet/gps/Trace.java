@@ -303,7 +303,11 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 					recordMark=null;
 			}
 			if (c == TARNSFER_RECORD_CMD){
-				Gpx.transfer(config.getGpxUrl());
+			    if (locationProducer != null) {
+				locationProducer.close();
+			    }
+			    GuiGpx gpx = new GuiGpx(this);
+			    gpx.show();
 			}
 			if (c == CLEAR_RECORD_CMD){
 				Gpx.delete();
