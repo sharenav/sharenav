@@ -70,25 +70,7 @@ public class ContainerTile extends Tile {
     	}
     }
 
-	public void paint(PaintContext pc) {
-		//#debug
-		logger.debug("paint container");
-		if (contain(pc)){
-//			drawBounds(pc, 255, 255, 255);
-			if (t1 != null) {
-				//#debug
-				logger.debug("paint container left");
-				t1.paint(pc);
-			}
-			if (t2 != null) {
-				//#debug
-				logger.debug("paint container right");
-				t2.paint(pc);
-			}	
-		} else {			
-			cleanup(4);
-		}
-	}
+	
 
 	public boolean cleanup(int level) {
 		return true;
@@ -117,5 +99,64 @@ public class ContainerTile extends Tile {
 			cleanup(4);
 		}
 		
+	}
+	
+	public void paint(PaintContext pc) {
+		//#debug
+		logger.debug("paint container");
+		if (contain(pc)){
+//			drawBounds(pc, 255, 255, 255);
+			if (t1 != null) {
+				//#debug
+				logger.debug("paint container left");
+				t1.paint(pc);
+			}
+			if (t2 != null) {
+				//#debug
+				logger.debug("paint container right");
+				t2.paint(pc);
+			}	
+		} else {			
+			cleanup(4);
+		}
+	}
+
+	public void paintAreaOnly(PaintContext pc) {
+		//#debug
+		logger.debug("paint container (Area only)");
+		if (contain(pc)){
+			if (t1 != null) {
+				//#debug
+				logger.debug("paint container left");
+				t1.paintAreaOnly(pc);
+			}
+			if (t2 != null) {
+				//#debug
+				logger.debug("paint container right");
+				t2.paintAreaOnly(pc);
+			}	
+		} else {			
+			cleanup(4);
+		}
+		
+	}
+
+	public void paintNonArea(PaintContext pc) {
+		//#debug
+		logger.debug("paint container (apart from area ways");
+		if (contain(pc)){
+			if (t1 != null) {
+				//#debug
+				logger.debug("paint container left");
+				t1.paintNonArea(pc);
+			}
+			if (t2 != null) {
+				//#debug
+				logger.debug("paint container right");
+				t2.paintNonArea(pc);
+			}	
+		} else {			
+			cleanup(4);
+		}
 	}
 }

@@ -159,4 +159,12 @@ public class RouteFileTile extends RouteBaseTile {
 		return null;
 	}
 
+	public void paintAreaOnly(PaintContext pc) {
+		// TODO Auto-generated method stub		
+	}
+
+	public void paintNonArea(PaintContext pc) {
+		paint(pc);		
+	}
+
 }

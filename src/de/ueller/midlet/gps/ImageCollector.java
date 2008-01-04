@@ -113,20 +113,42 @@ public class ImageCollector implements Runnable {
 					pc[nextCreate].target=nextSc.target;
 //				System.out.println("create " + pcCollect);
 				
+				/**
+				* Draw Area ways first, as these would cover other
+				* Ways if painted later
+				*/
 				if ((pc[nextCreate].scale < 45000) && (t[3] != null)){
-					t[3].paint(pc[nextCreate]);
+					t[3].paintAreaOnly(pc[nextCreate]);
 					Thread.yield();
 				} 
 				if ((pc[nextCreate].scale < 180000) && (t[2] != null)){
-					t[2].paint(pc[nextCreate]);
+					t[2].paintAreaOnly(pc[nextCreate]);
 					Thread.yield();
 				} 
 				if ((pc[nextCreate].scale < 900000f) && (t[1] != null)){
-					t[1].paint(pc[nextCreate]);
+					t[1].paintAreaOnly(pc[nextCreate]);
 					Thread.yield();
 				} 
 				if ( t[0] != null){
-					t[0].paint(pc[nextCreate]);
+					t[0].paintAreaOnly(pc[nextCreate]);
+				}
+				/**
+				* Draw all other elements now ontop of any area
+				*/
+				if ((pc[nextCreate].scale < 45000) && (t[3] != null)){
+					t[3].paintNonArea(pc[nextCreate]);
+					Thread.yield();
+				} 
+				if ((pc[nextCreate].scale < 180000) && (t[2] != null)){
+					t[2].paintNonArea(pc[nextCreate]);
+					Thread.yield();
+				} 
+				if ((pc[nextCreate].scale < 900000f) && (t[1] != null)){
+					t[1].paintNonArea(pc[nextCreate]);
+					Thread.yield();
+				} 
+				if ( t[0] != null){
+					t[0].paintNonArea(pc[nextCreate]);
 				}
 //				if (t[4] != null){
 //					t[4].paint(pc[nextCreate]);

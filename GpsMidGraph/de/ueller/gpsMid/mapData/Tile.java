@@ -32,7 +32,21 @@ public abstract class Tile {
 	public byte	lastUse	= 0;
 //	public static Trace				trace				= null;
 
+	/**
+	 * Paint all elements of a tile to the PaintContext
+	 * @param pc
+	 */
 	public abstract void paint(PaintContext pc);
+	/**
+	 * Paint all ways of a tile that are areas to the PaintContext
+	 * @param pc
+	 */
+	public abstract void paintAreaOnly(PaintContext pc);
+	/**
+	 * Paint all elements of a tile except for area ways to the PaintContext
+	 * @param pc
+	 */
+	public abstract void paintNonArea(PaintContext pc);
 	public abstract boolean cleanup(int level);
 	public abstract void getWay(PaintContext pc,PositionMark pm,Way w);
 	

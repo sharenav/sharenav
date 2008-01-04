@@ -40,26 +40,7 @@ public class FileTile extends Tile implements QueueableTile {
 		return false;
 	}
 
-	public void paint(PaintContext pc) {
-//		drawBounds(pc, 255, 55, 55);
-		if (contain(pc)) {
-//			logger.info("paint fid:" + fid);
-			if (tile == null){
-				if (!inLoad){
-					inLoad=true;
-//					logger.info("add to dictReader queue fid:" + fileId + " zoom:"+zl);
-					pc.dictReader.add(this);
-				} else {
-//					logger.info("load already requestet");
-				}
-			} else {
-				// delegate to tile
-//				logger.info("delegate to tile");
-				lastUse=0;
-				tile.paint(pc);
-			}
-		}
-	}
+
 	public String toString() {
 		return "FT" + zl + "-" + fileId + ":" + lastUse;
 	}
@@ -79,5 +60,36 @@ public class FileTile extends Tile implements QueueableTile {
 				}
 			}
 		}
+
+	private void paint(PaintContext pc, int method) {
+		if (contain(pc)) {
+			if (tile == null){
+				if (!inLoad){
+					inLoad=true;
+					pc.dictReader.add(this);
+				} else {
+				}
+			} else {
+				lastUse=0;
+				switch (method) {
+				case 0: {tile.paint(pc); break;}
+				case 1: {tile.paintAreaOnly(pc); break;}
+				case 2: {tile.paintNonArea(pc); break;}
+				}
+			}
+		}
+	}
+	
+	public void paint(PaintContext pc) {
+		paint(pc,0);
+	}
+	
+	public void paintAreaOnly(PaintContext pc) {
+		paint(pc,1);
+	}
+
+	public void paintNonArea(PaintContext pc) {
+		paint(pc,2);
+	}
 
 }

@@ -83,7 +83,7 @@ public class SingleTile extends Tile implements QueueableTile {
 
 	}
 
-	public void paint(PaintContext pc) {
+	public void paint(PaintContext pc, boolean area) {
 //		logger.info("paint Single");
 		float testLat;
 		float testLon;
@@ -95,6 +95,11 @@ public class SingleTile extends Tile implements QueueableTile {
 			if (ways != null) {
 				for (int i = 0; i < ways.length; i++) {
 					Way w = ways[i];
+					if (w == null) continue;
+					//Determin if the way is an area or not. 
+					if (!((w.type < 50 && area == false) || (w.type >= 50 && area ==  true)))
+						continue;
+
 					// logger.debug("test Bounds of way");
 					if (w.maxLat < pc.screenLD.radlat) {
 						continue;
@@ -130,17 +135,14 @@ public class SingleTile extends Tile implements QueueableTile {
 						}
 					}
 					w.setColor(pc);
-					if (w.type < 50) {
+					if (!area) {
 						if (pc.config.getRender() == Configuration.RENDER_LINE){
 						    w.paintAsPath(pc, this);
 						} else {
 							float witdh = (pc.ppm*w.getWidth()/2);
-
-								w.paintAsPath(pc,(int)(witdh+0.5), this);
-
+							w.paintAsPath(pc,(int)(witdh+0.5), this);
 						}
 					} else {
-						// w.paintAsArea(pc, nodes);
 						w.paintAsArea(pc, this);
 					}
 				}
@@ -334,5 +336,19 @@ public class SingleTile extends Tile implements QueueableTile {
 		}
 
 
+	}
+
+	
+	public void paint(PaintContext pc) {
+		paint(pc,true);
+		paint(pc,false);		
+	}
+	
+	public void paintNonArea(PaintContext pc) {
+		paint(pc,false);		
+	}
+
+	public void paintAreaOnly(PaintContext pc) {
+		paint(pc,true);		
 	}
 }

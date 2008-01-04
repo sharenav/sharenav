@@ -195,4 +195,15 @@ public class RouteTile extends RouteBaseTile {
 		return "RT" + "-" + fileId + ":" + lastUse;
 	}
 
+
+	public void paintAreaOnly(PaintContext pc) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	public void paintNonArea(PaintContext pc) {
+		paint(pc);		
+	}
+
 }
