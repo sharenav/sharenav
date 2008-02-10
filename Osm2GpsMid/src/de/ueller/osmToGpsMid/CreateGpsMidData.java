@@ -301,7 +301,7 @@ public class CreateGpsMidData {
 	 */
 	private void writeRouteTile(Tile t, Bounds tileBound, Bounds realBound,
 			Collection<Node> nodes, byte[] out) {
-		System.out.println("Write renderTile "+t.zl+":"+t.fid + " nodes:"+nodes.size());
+		//System.out.println("Write renderTile "+t.zl+":"+t.fid + " nodes:"+nodes.size());
 		t.type=Tile.TYPE_MAP;
 		t.bounds=tileBound.clone();
 		t.type=Tile.TYPE_ROUTEDATA;
@@ -322,7 +322,7 @@ public class CreateGpsMidData {
 	private void writeRenderTile(Tile t, Bounds tileBound, Bounds realBound,
 			 Collection<Node> nodes, byte[] out)
 			throws FileNotFoundException, IOException {
-		System.out.println("Write routeTile "+t.zl+":"+t.fid+ " ways:"+t.ways.size() + " nodes:"+nodes.size());
+		//System.out.println("Write routeTile "+t.zl+":"+t.fid+ " ways:"+t.ways.size() + " nodes:"+nodes.size());
 		totalNodesWritten+=nodes.size();
 		totalWaysWritten+=t.ways.size();
 		Collections.sort(t.ways);
@@ -543,18 +543,19 @@ public class CreateGpsMidData {
 	}
 
 	private void writeNode(Node n,DataOutputStream ds,int type) throws IOException{
-		// flags
-		// 1 : 1=routeNodelink 0=mapNode
-		// 2 : 1=has Name
-		// 4 : 1=routeNode
-		// 8 : free
+		
 		int flags=0;
+		int nameIdx = -1;
 		if (n.routeNode != null){
 			flags += Constants.NODE_MASK_ROUTENODELINK;
 		}
 		if (type == INODE){
 			if (! "".equals(n.getName())){
 				flags += Constants.NODE_MASK_NAME;
+				nameIdx = names1.getNameIdx(n.getName());
+				if (nameIdx >= Short.MAX_VALUE) {
+					flags += Constants.NODE_MASK_NAMEHIGH;
+				} 
 			}
 			if (n.getType(configuration) != 0){
 				flags += Constants.NODE_MASK_TYPE;
@@ -571,8 +572,12 @@ public class CreateGpsMidData {
 		}
 
 		if ((flags & Constants.NODE_MASK_NAME) > 0){
-			String name = n.getName();
-			ds.writeShort(names1.getNameIdx(name));
+			if ((flags & Constants.NODE_MASK_NAMEHIGH) > 0) {
+				ds.writeInt(nameIdx);
+			} else {
+				ds.writeShort(nameIdx);
+			}
+					
 		}
 		if ((flags & Constants.NODE_MASK_TYPE) > 0){
 			ds.writeByte(n.getType(configuration));

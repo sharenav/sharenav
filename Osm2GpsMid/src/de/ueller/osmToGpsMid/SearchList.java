@@ -54,6 +54,7 @@ public class SearchList {
 					lastStr=null;
 				}
 				String wrString=string.substring(eq);
+				
 				int delta = eq-curPos;
 				if (delta <0){
 					delta = -delta;
@@ -80,7 +81,12 @@ public class SearchList {
 						ds.writeByte(delta| 0x60);
 						ds.writeLong(l);
 					}
-				ds.writeShort(mapName.getIndex());
+				int nameIdx = mapName.getIndex();
+				if (nameIdx >= Short.MAX_VALUE) {
+					ds.writeInt(nameIdx | 0x80000000);
+				} else {
+					ds.writeShort(nameIdx);
+				}
 				for (Entity e : mapName.getEntitys()){
 					Node center=null;
 					if (e instanceof Node) {
@@ -102,15 +108,29 @@ public class SearchList {
 							isIn.add(nb);
 						nb=nb.nearBy;
 					}
-//					String in=e.tags.get("is_in");
+//					
+					/*
+					 * Don't know how to handle actual is_in entries.
+					 * These names won't necessarily be in our name database
+					String in=e.tags.get("is_in");
 //					if (in != null){
 //						ds.writeByte(isIn.size()+1);
 //						ds.writeShort(names.getNameIdx(in));
 //					} else {
 						ds.writeByte(isIn.size());
 //					}
+					*/
+					ds.writeByte(isIn.size());
 					for (Entity e1 : isIn){
-						ds.writeShort(names.getNameIdx(e1.getName()));
+						int isinIdx = names.getNameIdx(e1.getName());
+						if (isinIdx < 0) {
+							System.out.println("Invalid isin (" + e1 + ") for Entety " + e + " with Name \"" + e1.getName() + "\"");
+						}
+						if (isinIdx >= Short.MAX_VALUE) {
+							ds.writeInt(isinIdx | 0x80000000);
+						} else {				  
+							ds.writeShort(isinIdx);
+						}
 					}
 					ds.writeFloat(MyMath.degToRad(center.lat));
 					ds.writeFloat(MyMath.degToRad(center.lon));
@@ -142,14 +162,14 @@ public class SearchList {
 			fo = new FileOutputStream(path+"/names-0.dat");
 			ds = new DataOutputStream(fo);
 			int curPos=0;
-			short idx=0;
+			int idx=0;
 			short fnr=1;
 			short fcount=0;
 			for (Name mapName : names.getNames()) {
 				String string=mapName.getName();
 				int eq=names.getEqualCount(string,lastStr);
 				if ((eq==0 && fcount>100) || (fcount > 150 && eq < 2)){
-					dsi.writeShort(idx);
+					dsi.writeInt(idx);
 					if (ds != null) ds.close();
 					fo = new FileOutputStream(path+"/names-"+fnr+".dat");
 					ds = new DataOutputStream(fo);
@@ -170,7 +190,7 @@ public class SearchList {
 				fcount++;
 //				ds.writeUTF(string);
 			}
-			dsi.writeShort(idx);
+			dsi.writeInt(idx);
 			ds.close();
 			dsi.close();
 		} catch (FileNotFoundException e) {

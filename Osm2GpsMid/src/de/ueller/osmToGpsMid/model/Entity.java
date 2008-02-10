@@ -12,8 +12,7 @@ public class Entity {
 	 * the OSM id of this node
 	 */
 	public long	id;
-	public Node nearBy;
-	public long nearByDist=0;
+	public Node nearBy;	
 	/**
 	 * The tags for this object  
 	 * Key: String  Value: String

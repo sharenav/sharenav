@@ -8,6 +8,7 @@
  */
 package de.ueller.osmToGpsMid;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -17,6 +18,10 @@ import java.util.MissingResourceException;
 import java.util.PropertyResourceBundle;
 import java.util.Random;
 import java.util.ResourceBundle;
+import java.util.zip.GZIPInputStream;
+import java.net.URL;
+
+import org.apache.tools.bzip2.CBZip2InputStream;
 
 import de.ueller.osmToGpsMid.model.Bounds;
 
@@ -125,10 +130,10 @@ public class Configuration {
 		}
 		
 		public InputStream getJarFile(){
-			String baseName = vb.getString("app");
+			String baseName = getString("app");			
 			if ("false".equals(baseName)){
 				return null;
-			}
+			}			
 			return getClass().getResourceAsStream("/"+baseName
 			+"-"+getVersion()
 			+".jar");
@@ -150,6 +155,42 @@ public class Configuration {
 		}
 		public File getPlanet(){
 			return new File(planet);
+		}
+		public InputStream getPlanetSteam() throws IOException {			
+			InputStream fr = null;
+			if (planet.equalsIgnoreCase("osmxapi")) {
+				Bounds[] bounds = getBounds();
+				if (bounds.length > 1) {
+					System.out.println("Can't deal with multiple bounds when requesting from osmxapi yet");
+					throw new IOException("Can't handle specified bounds with osmxapi");
+				}
+				Bounds bound = bounds[0];
+				URL url = new URL("http://osmxapi.informationfreeway.org/api/0.5/*[bbox=" + 
+						bound.minLon + "," + bound.minLat + "," + bound.maxLon + "," + bound.maxLat + "]");
+				System.out.println("Connecting to Osmxapi: " + url);
+				System.out.println("This may take a while!");
+				fr = url.openStream();
+			} else {
+				System.out.println("Opening planet file: " + planet);
+				fr= new BufferedInputStream(new FileInputStream(planet), 4096);
+				if (planet.endsWith(".bz2") || planet.endsWith(".gz")){
+					int availableProcessors = Runtime.getRuntime().availableProcessors();
+					if (availableProcessors > 1){
+						System.out.println("found " + availableProcessors + " CPU's: uncompress in seperate thread");
+						fr = new Bzip2Reader(fr);						
+					} else {						
+						System.out.println("only one CPU: uncompress in same thread");
+						if (planet.endsWith(".bz2")) {
+							fr.read();
+							fr.read();
+							fr = new CBZip2InputStream(fr);
+						} else if (planet.endsWith(".gz")) {
+							fr = new GZIPInputStream(fr);							
+						}
+					}
+				}
+			}
+			return fr;
 		}
 		public Bounds[] getBounds(){
 			int i;

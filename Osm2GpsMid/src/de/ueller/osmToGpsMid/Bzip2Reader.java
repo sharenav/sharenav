@@ -48,7 +48,7 @@ public class Bzip2Reader extends PipedInputStream implements Runnable {
 			CBZip2InputStream cis = new CBZip2InputStream(new BufferedInputStream(is,10240));
 			 for(;;) {
 		            bytes_read = cis.read(buffer);
-		            if (bytes_read == -1) { return; }
+		            if (bytes_read == -1) { po.close(); return; }
 		            po.write(buffer, 0, bytes_read);
 		        }
 			 } catch (IOException e) {

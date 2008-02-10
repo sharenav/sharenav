@@ -14,6 +14,15 @@ import de.ueller.osmToGpsMid.MyMath;
 import de.ueller.osmToGpsMid.model.name.Names;
 
 public class Way extends Entity implements Comparable<Way>{
+	
+	public static final byte WAY_FLAG_NAME = 1;
+	public static final byte WAY_FLAG_MAXSPEED = 2;
+	public static final byte WAY_FLAG_ISIN = 16;
+	public static final byte WAY_FLAG_MULTIPATH = 4;
+	public static final byte WAY_FLAG_LONGWAY = 8;
+	public static final byte WAY_FLAG_NAMEHIGH = 32;
+	public static final byte WAY_FLAG_ISINHIGH = 64;
+	
 	//public List<Line> lines = new LinkedList<Line>();
 	public Path path=null;
 	Bounds bound=null;
@@ -197,6 +206,9 @@ public class Way extends Entity implements Comparable<Way>{
 	private byte getWaterwayType(){
 		String t = getAttribute("waterway");
 		if ("river".equals(t)){
+			return Constants.WAY_WATERWAY_RIVER;
+		}
+		if ("canal".equals(t)){
 			return Constants.WAY_WATERWAY_RIVER;
 		}
 		if ("riverbank".equals(t)){
@@ -497,23 +509,37 @@ public class Way extends Entity implements Comparable<Way>{
 
 	}
 */	
-	public void write(DataOutputStream ds,Names names1) throws IOException{
+	public void write(DataOutputStream ds,Names names1) throws IOException{		
 		Bounds b=new Bounds();
 		int flags=0;
 		int maxspeed=50;
-		if (getName() != null){
-			flags+=1;
+		int nameIdx = -1;
+		int isinIdx = -1;
+		if (getName() != null && getName().trim().length() > 0){			
+			flags+=WAY_FLAG_NAME;
+			nameIdx = names1.getNameIdx(getName());
+			if (nameIdx >= Short.MAX_VALUE) {
+				flags += WAY_FLAG_NAMEHIGH;
+			}
 		}
 		if (containsKey("maxspeed")){
 			try {
 				maxspeed=Integer.parseInt(getAttribute("maxspeed"));
-				flags+=2;
+				flags+=WAY_FLAG_MAXSPEED;
 			} catch (NumberFormatException e) {
 			}
 		}
+		/*
+		 * Currently not used in GpsMid, so no point in
+		 * writing this into the files
 		if (getIsIn() != null){
-			flags+=16;
+			flags+=WAY_FLAG_ISIN;
+			isinIdx = names1.getNameIdx(getIsIn());
+			if (isinIdx >= Short.MAX_VALUE) {
+				flags += WAY_FLAG_ISINHIGH;
+			}
 		}
+		*/
 		byte type=getType();
 		boolean isWay=false;
 		boolean longWays=false;
@@ -527,10 +553,10 @@ public class Way extends Entity implements Comparable<Way>{
 		}
 		if (isWay){
 			if (path.isMultiPath()){
-				flags+=4;
+				flags+=WAY_FLAG_MULTIPATH;
 			}
 			if (longWays ){
-				flags+=8;
+				flags+=WAY_FLAG_LONGWAY;
 			}
 			ds.writeByte(flags);
 			b=getBounds();
@@ -540,14 +566,22 @@ public class Way extends Entity implements Comparable<Way>{
 			ds.writeFloat(MyMath.degToRad(b.maxLon));
 //			ds.writeByte(0x58);
 			ds.writeByte(type);
-			if ((flags & 1) == 1){
-				ds.writeShort(names1.getNameIdx(getName()));
+			if ((flags & WAY_FLAG_NAME) == WAY_FLAG_NAME){
+				if ((flags & WAY_FLAG_NAMEHIGH) == WAY_FLAG_NAMEHIGH){
+					ds.writeInt(nameIdx);
+				} else {
+					ds.writeShort(nameIdx);
+				}
 			}
-			if ((flags & 2) == 2){
+			if ((flags & WAY_FLAG_MAXSPEED) == WAY_FLAG_MAXSPEED){
 				ds.writeByte(maxspeed);
 			}
-			if ((flags & 16) == 16){
-				ds.writeShort(names1.getNameIdx(getIsIn()));
+			if ((flags & WAY_FLAG_ISIN) == WAY_FLAG_ISIN){
+				if ((flags & WAY_FLAG_ISINHIGH) == WAY_FLAG_ISINHIGH){
+					ds.writeInt(isinIdx);
+				} else {
+					ds.writeShort(isinIdx);
+				}
 			}
 			if ((flags & 4) == 4){
 				ds.writeByte(path.getPathCount());
@@ -567,8 +601,7 @@ public class Way extends Entity implements Comparable<Way>{
 			}
 		} else {
 			ds.write(128); // flag that mark there is no way
-		}
-
+		}		
 	}
 
 	public void add(Node n){

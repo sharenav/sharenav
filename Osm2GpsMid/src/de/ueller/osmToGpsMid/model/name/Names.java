@@ -77,6 +77,7 @@ public class Names {
 		if (nm != null) {
 			return nm.getIndex();
 		}
+		System.out.println("ERROR: Did not find name in name idx: \"" + name + "\"");
 		return -1;
 	}
 

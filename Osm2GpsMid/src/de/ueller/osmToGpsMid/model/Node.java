@@ -80,30 +80,30 @@ public class Node extends Entity{
 	public byte calcType(Configuration c){
 		String p=getPlace();
 		if (p != null){
-			if ("city".equals(p)) return Constants.NODE_PLACE_CITY;
-			if ("town".equals(p)) return Constants.NODE_PLACE_TOWN;
-			if ("village".equals(p)) return Constants.NODE_PLACE_VILLAGE;
-			if ("hamlet".equals(p)) return Constants.NODE_PLACE_HAMLET;
-			if ("suburb".equals(p)) return Constants.NODE_PLACE_SUBURB;
+			if ("city".equalsIgnoreCase(p)) return Constants.NODE_PLACE_CITY;
+			if ("town".equalsIgnoreCase(p)) return Constants.NODE_PLACE_TOWN;
+			if ("village".equalsIgnoreCase(p)) return Constants.NODE_PLACE_VILLAGE;
+			if ("hamlet".equalsIgnoreCase(p)) return Constants.NODE_PLACE_HAMLET;
+			if ("suburb".equalsIgnoreCase(p)) return Constants.NODE_PLACE_SUBURB;
 		}
 		if (c!=null && c.useAmenity){
 		p=getAmenity();
 		if (p != null){
-			if ("parking".equals(p)) return Constants.NODE_AMENITY_PARKING;
-			if ("school".equals(p)) return Constants.NODE_AMENITY_SCHOOL;
-			if ("telephone".equals(p)) return Constants.NODE_AMENITY_TELEPHONE;
-			if ("fuel".equals(p)) return Constants.NODE_AMENITY_FUEL;
+			if ("parking".equalsIgnoreCase(p)) return Constants.NODE_AMENITY_PARKING;
+			if ("school".equalsIgnoreCase(p)) return Constants.NODE_AMENITY_SCHOOL;
+			if ("telephone".equalsIgnoreCase(p)) return Constants.NODE_AMENITY_TELEPHONE;
+			if ("fuel".equalsIgnoreCase(p)) return Constants.NODE_AMENITY_FUEL;
 		}
 		}
 		if (c!=null && c.useRailway){
 		p=getRailway();
 		if (p != null){
-			if ("station".equals(p)) return Constants.NODE_RAILWAY_STATION;
-			if ("halt".equals(p)) return Constants.NODE_RAILWAY_STATION;
+			if ("station".equalsIgnoreCase(p)) return Constants.NODE_RAILWAY_STATION;
+			if ("halt".equalsIgnoreCase(p)) return Constants.NODE_RAILWAY_STATION;
 		}
 		p=getAeroway();
 		if (p != null){
-			if ("aerodrome".equals(p)) return Constants.NODE_AEROWAY_AERODROME;
+			if ("aerodrome".equalsIgnoreCase(p)) return Constants.NODE_AEROWAY_AERODROME;
 		}
 		}
 		return 0;
@@ -129,7 +129,7 @@ public class Node extends Entity{
 		return 3;
 	}
 	public String toString(){
-		return "node id=" + id + " name="+getName() + ((nearBy == null)?"":(" by " + nearBy));
+		return "node " + ((getPlace() != null)?("(" + getPlace() + ") "):"") + " id=" + id + " name="+getName() + ((nearBy == null)?"":(" by " + nearBy));
 	}
 	/**
 	 * @return

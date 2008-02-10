@@ -35,25 +35,8 @@ public class BundleGpsMid {
 				System.out.println("unpack Application to " + tmpDir);
 				expand(c, tmpDir);
 				File target=new File(tmpDir);
-				createPath(target);
-				File planet = c.getPlanet();
-				fr= new BufferedInputStream(new FileInputStream(planet), 4096);
-				if (planet.getName().endsWith(".bz2") || planet.getName().endsWith(".gz")){
-					int availableProcessors = Runtime.getRuntime().availableProcessors();
-					if (availableProcessors > 1){
-						System.out.println("found " + availableProcessors + " CPU's: uncompress in seperate thread");
-						fr = new Bzip2Reader(fr);						
-					} else {						
-						System.out.println("only one CPU: uncompress in same thread");
-						if (planet.getName().endsWith(".bz2")) {
-							fr.read();
-							fr.read();
-							fr = new CBZip2InputStream(fr);
-						} else if (planet.getName().endsWith(".gz")) {
-							fr = new GZIPInputStream(fr);							
-						}
-					}
-				} 
+				createPath(target);				
+				fr= c.getPlanetSteam();
 				OxParser parser = new OxParser(fr,c);
 				System.out.println("read Nodes " + parser.nodes.size());
 				System.out.println("read Ways  " + parser.ways.size());
@@ -77,6 +60,8 @@ public class BundleGpsMid {
 				System.out.println("splited long ways to " + parser.ways.size());
 				new CalcNearBy(parser);
 				cd.exportMapToMid();
+				//Drop parser to conserve Memory
+				parser=null;
 				pack(c);
 				
 			} catch (Exception e) {

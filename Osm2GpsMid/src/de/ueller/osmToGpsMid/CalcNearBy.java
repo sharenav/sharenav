@@ -109,7 +109,7 @@ public class CalcNearBy {
 					}
 					for (Object otherO : nearNodes) {
 						Node other = (Node) otherO;
-						if (n.getType(null) > other.getType(null)) {
+						if ((n.getType(null) > other.getType(null)) && (other.getType(null) > 0)) {
 							long dist = MyMath.dist(n, other);
 							if (dist < nearesDist) {
 								nearesDist = dist;
@@ -123,7 +123,7 @@ public class CalcNearBy {
 				}
 				if (nearestPlace != null){
 					n.nearBy=nearestPlace;
-					n.nearByDist=nearesDist;
+					//n.nearByDist=nearesDist;					
 //					System.out.println(n + " near " + n.nearBy);
 				}
 			}
@@ -139,6 +139,10 @@ public class CalcNearBy {
 			if (n.getNameType() == Constants.NAME_CITY) {
 				//latlonKey[0] = n.lat;
 				//latlonKey[1] = n.lon;
+				if (n.getName() == null || n.getName().trim().length() == 0) {
+					System.out.println("STRANG: place with out name, skipping: " + n);
+					continue;
+				}
 				try {
 					kd.insert(MyMath.latlon2XYZ(n), n);
 					kdSize++;

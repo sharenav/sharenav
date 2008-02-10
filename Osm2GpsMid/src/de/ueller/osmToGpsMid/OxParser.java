@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.LinkedList;
 
 import javax.xml.parsers.SAXParser;
@@ -33,6 +34,7 @@ public class OxParser extends DefaultHandler{
 	public HashMap<Long,Node> nodes = new HashMap<Long,Node>(80000,0.60f);
 	public LinkedList<Way> ways = new LinkedList<Way>();
 	public LinkedList<Relation> relations = new LinkedList<Relation>();
+	private Hashtable<String, String> tagsCache = new Hashtable<String,String>();
 	private int nodeTot,nodeIns,segTot,segIns,wayTot,wayIns,ele;
 	private Bounds[] bounds=null;
 	private Configuration configuration;
@@ -115,9 +117,30 @@ public class OxParser extends DefaultHandler{
 			if (current != null) {				
 				String key = atts.getValue("k");
 				String val = atts.getValue("v");
+				/**
+				 * atts.getValue creates a new String every time
+				 * If we store key and val directly in current.setAttribute
+				 * we end up having thousands of duplicate Strings for e.g.
+				 * "name" and "highway". By filtering it through a Hashtable
+				 * we can reuse the String objects thereby saving a significant
+				 * amount of memory.
+				 */
 				if (key != null && val != null ){
-					current.setAttribute(key, val);
-				}
+					/**
+					 * Filter out common tags that are definately not used such as created_by
+					 * If this is the only tag on a Node, we end up saving creating a Hashtable
+					 * object to store the tags, saving some memory.
+					 */
+					if (!key.equalsIgnoreCase("created_by") && !key.equalsIgnoreCase("converted_by")) {
+						if (!tagsCache.containsKey(key)) {
+							tagsCache.put(key, key);
+						}
+						if (!tagsCache.containsKey(val)) {
+							tagsCache.put(val, val);
+						}
+						current.setAttribute(tagsCache.get(key), tagsCache.get(val));
+					}
+				}				
 			} else {
 				System.out.println("tag at unexepted position " + current);
 			}
