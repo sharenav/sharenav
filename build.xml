@@ -158,6 +158,7 @@
 			fullscreen="menu"
 			usePolishGui="false"
 			workDir="${dir.work}"
+binaryLibrary="lib/MinML2.jar"
 		>     
 		   <!-- postcompiler name="floater">
 			<parameter name="verbose" value="false" />

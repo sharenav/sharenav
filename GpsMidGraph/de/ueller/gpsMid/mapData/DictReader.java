@@ -35,6 +35,9 @@ public class DictReader  implements Runnable {
 			for (byte i=0;i<=4;i++) {
 				readData(i);
 			}
+		} catch (OutOfMemoryError oome) {
+			logger.fatal("DictReader thread crashed as out of memory: " + oome.getMessage());
+			oome.printStackTrace();			
 		} catch (IOException e) {
 			//#debug error
 			logger.error("Error:" + e.getMessage());
@@ -47,6 +50,17 @@ public class DictReader  implements Runnable {
 		    //#debug error
 		    	logger.info("open dict-"+zl+".dat");
 				InputStream is = getClass().getResourceAsStream("/dict-"+zl+".dat");
+				if (is == null) {
+					//Special case zoom level 4, which is the routing zoom level
+					//If routing was disabled in Osm2GpsMid, then this file shouln't
+					//exist. Give a more helpful error message
+					if (zl == 4) {
+						logger.error("Routing is not enabled in this midlet");
+						return;
+					}
+					logger.error("Could not open /dict-" + zl + ".dat");
+					throw new IOException("DictMid-file not found");
+				}
 //		    	logger.info("open DataInputStream");
 				DataInputStream ds=new DataInputStream(is);
 //				logger.info("read Magic code");

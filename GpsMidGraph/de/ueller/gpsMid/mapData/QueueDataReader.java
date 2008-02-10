@@ -59,7 +59,10 @@ public class QueueDataReader extends QueueReader implements Runnable {
 		int iNodeCount=ds.readShort();
 		//#debug error
 		  logger.trace("nodes total :"+nodeCount + "  interestNode :" + iNodeCount);
-		Short[] nameIdx=new Short[iNodeCount];
+		int[] nameIdx=new int[iNodeCount];
+		for (int i = 0; i < iNodeCount; i++) {
+			nameIdx[i] = -1;
+		}
 		byte[] type = new byte[iNodeCount];
 		byte flag=0;
 		try {
@@ -76,8 +79,12 @@ public class QueueDataReader extends QueueReader implements Runnable {
 					radlon[i] = ds.readFloat();
 				}
 				if ((flag & C.NODE_MASK_NAME) > 0){
-					nameIdx[i]=new Short(ds.readShort());
-				}
+					if ((flag & C.NODE_MASK_NAMEHIGH) > 0) {
+						nameIdx[i]=ds.readInt();
+					} else {
+						nameIdx[i]=ds.readShort();
+					}
+				} 
 				if ((flag & C.NODE_MASK_TYPE) > 0){
 					type[i]=ds.readByte();
 				}
@@ -94,6 +101,7 @@ public class QueueDataReader extends QueueReader implements Runnable {
 			throwError(e, "reading Nodes", tt);
 		}
 		if (ds.readByte()!=0x55){
+			System.out.println("Reading Nodes whent wrong");
 			//#debug
 			logger.error("Start of Ways not found");
 			throwError("Nodes not OK", tt);
@@ -107,7 +115,7 @@ public class QueueDataReader extends QueueReader implements Runnable {
 		int lastread=0;
 		try {
 			tt.ways = new Way[wayCount];
-			for (int i=0; i< wayCount;i++){
+			for (int i=0; i< wayCount;i++){				
 				byte flags=ds.readByte();
 				if (flags != 128){
 //				showAlert("create Way " + i);

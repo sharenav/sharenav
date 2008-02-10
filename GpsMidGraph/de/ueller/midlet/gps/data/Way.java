@@ -16,8 +16,18 @@ import de.ueller.midlet.gps.tile.C;
 import de.ueller.midlet.gps.tile.PaintContext;
 
 public class Way extends Entity{
-	public int maxspeed;
-	public Short isInIdx=null;
+	
+	public static final byte WAY_FLAG_NAME = 1;
+	public static final byte WAY_FLAG_MAXSPEED = 2;
+	public static final byte WAY_FLAG_ISIN = 16;
+	public static final byte WAY_FLAG_MULTIPATH = 4;
+	public static final byte WAY_FLAG_LONGWAY = 8;
+	public static final byte WAY_FLAG_NAMEHIGH = 32;
+	public static final byte WAY_FLAG_ISINHIGH = 64;
+	
+	public byte maxspeed;
+	//This is not currently used, so save the 4 bytes of memory per way
+	//public int isInIdx=-1;
 	public short[][] paths;
 
 	// public short[] path;
@@ -51,18 +61,27 @@ public class Way extends Entity{
 //		if (is.readByte() != 0x58){
 //			logger.error("worng magic after way bounds");
 //		}
+		//System.out.println("Way flags: " + f);
 		type = is.readByte();
-		if ((f & 1) == 1) {
-//			logger.debug("read name");
-			// name=is.readUTF();
-			nameIdx = new Short(is.readShort());
+		if ((f & WAY_FLAG_NAME) == WAY_FLAG_NAME) {
+			if ((f & WAY_FLAG_NAMEHIGH) == WAY_FLAG_NAMEHIGH) {
+				nameIdx = is.readInt();
+				//System.out.println("Name_High " + f );
+			} else {
+				nameIdx = is.readShort();
+			}			
 		}
-		if ((f & 2) == 2) {
+		if ((f & WAY_FLAG_MAXSPEED) == WAY_FLAG_MAXSPEED) {
 //			logger.debug("read maxspeed");
 			maxspeed = is.readByte();
 		}
-		if ((f & 16) == 16) {
-			isInIdx=new Short(is.readShort());
+		if ((f & WAY_FLAG_ISIN) == WAY_FLAG_ISIN) {
+			if ((f & WAY_FLAG_ISINHIGH) == WAY_FLAG_ISINHIGH) {
+				//isInIdx = is.readInt();
+				//System.out.println("isib_High " + f);
+			} else {
+				//isInIdx = is.readShort();
+			}
 		}
 		int pathCount;
 		if ((f & 4) == 4) {
@@ -104,7 +123,7 @@ public class Way extends Entity{
 //			if (is.readByte() != 0x59 ){
 //				logger.error("wrong magic code after path");
 //			}
-		}
+		}				
 	}
 
 	public void paintAsPath(PaintContext pc, SingleTile t) {

@@ -1,6 +1,7 @@
 package de.ueller.midlet.gps;
 /*
- * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net 
+ * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net
+ * 			Copyright (c) 2008 Kai Krueger apm at users dot sourceforge dot net 
  * See Copying
  */
 
@@ -15,6 +16,8 @@ import javax.bluetooth.LocalDevice;
 import javax.bluetooth.RemoteDevice;
 import javax.bluetooth.ServiceRecord;
 import javax.bluetooth.UUID;
+
+import de.ueller.gps.tools.StringTokenizer;
 
 public class DiscoverGps implements Runnable, DiscoveryListener {
 
@@ -166,6 +169,14 @@ public class DiscoverGps implements Runnable, DiscoveryListener {
 
 	public void run() {
 		try {
+			//Probe Commports:
+			String commports = System.getProperty("microedition.commports");			
+			String[] commport = StringTokenizer.getArray(commports, ",");
+			for (int i = 0; i < commport.length; i++) {				
+				parent.addDevice("comm:" + commport[i] + ";baudrate=19200",
+						commport[i]);
+			}			
+			
 //			System.out.println("Start Thread Discover Gps");
 			// initialize bluetooth first
 			parent.addDevice("init BT");

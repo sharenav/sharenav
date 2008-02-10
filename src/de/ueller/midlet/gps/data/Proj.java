@@ -727,6 +727,9 @@ public abstract class Proj implements Projection {
      * what the scale should be in order to make those IntPoints appear
      * at the corners of the projection.
      * 
+     * *** IntPoints are currently completely ignored, and instead scaled
+     * *** to the size of the screen
+     * 
      * @param ll1 the upper left coordinates of the bounding box.
      * @param ll2 the lower right coordinates of the bounding box.
      * @param IntPoint1 a java.awt.IntPoint reflecting a pixel spot on the
@@ -739,57 +742,31 @@ public abstract class Proj implements Projection {
     public float getScale(Node ll1, Node ll2, IntPoint IntPoint1,
                           IntPoint IntPoint2) {
 
-        try {
+		try {
 
-            float deltaDegrees;
-            float pixPerDegree;
-            int deltaPix;
-            float dx = Math.abs(IntPoint2.getX() - IntPoint1.getX());
-            float dy = Math.abs(IntPoint2.getY() - IntPoint1.getY());
-
-            if (dx < dy) {
-                float dlat = Math.abs(ll1.getLatitude() - ll2.getLatitude());
-                deltaDegrees = dlat;
-                deltaPix = getHeight();
-
-                // This might not be correct for all projection types
-                pixPerDegree = getPlanetPixelCircumference() / 360f;
-            } else {
-                float dlon;
-                float lat1, lon1, lon2;
-
-                // IntPoint1 is to the right of IntPoint2. switch the
-                // Nodes so that ll1 is west (left) of ll2.
-                if (IntPoint1.getX() > IntPoint2.getX()) {
-                    lat1 = ll1.getLatitude();
-                    lon1 = ll1.getLongitude();
-                    ll1.setLatLon(ll2);
-                    ll2.setLatLon(lat1, lon1);
-                }
-
-                lon1 = ll1.getLongitude();
-                lon2 = ll2.getLongitude();
-
-                // allow for crossing dateline
-                if (lon1 > lon2) {
-                    dlon = (180 - lon1) + (180 + lon2);
-                } else {
-                    dlon = lon2 - lon1;
-                }
-
-                deltaDegrees = dlon;
-                deltaPix = getWidth();
-
-                // This might not be correct for all projection types
-                pixPerDegree = getPlanetPixelCircumference() / 360f;
-            }
-
-            // The new scale...
-            return pixPerDegree / (deltaPix / deltaDegrees);
-        } catch (NullPointerException npe) {
-        	System.out.print("ProjMath.getScale(): caught null IntPointer exception.");
-            return Float.MAX_VALUE;
-        }
+			float deltaDegrees;
+			float pixPerDegree;
+			int deltaPix;
+			int dx = Math.abs(IntPoint2.getX() - IntPoint1.getX());
+			int dy = Math.abs(IntPoint2.getY() - IntPoint1.getY());
+			float dlat = Math.abs(ll1.getLatitude() - ll2.getLatitude());
+			float dlon = Math.abs(ll1.getLongitude() - ll2.getLongitude());
+			
+			if (dlon/dx < dlat/dy) {
+				deltaDegrees = dlat;
+				deltaPix = dy;                
+			} else {            
+				deltaDegrees = dlon;
+				deltaPix = dx;
+			}    
+			// This might not be correct for all projection types
+			pixPerDegree = getPlanetPixelCircumference() / 360f;            
+			// The new scale...
+			return pixPerDegree / (deltaPix / deltaDegrees);            
+		} catch (NullPointerException npe) {
+			//System.out.print("ProjMath.getScale(): caught null IntPointer exception.");
+			return Float.MAX_VALUE;
+		}
     }
     /**
      * Calculate IntPoint at azimuth and distance from another IntPoint.

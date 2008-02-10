@@ -7,6 +7,7 @@
  * @version $Revision$$ ($Name$)
  * @autor Harald Mueller james22 at users dot sourceforge dot net
  * Copyright (C) 2007 Harald Mueller
+ * Copyright (C) 2008 Kai Krueger
  */
 package de.ueller.gps.nmea;
 
@@ -15,12 +16,13 @@ import java.io.InputStream;
 
 import de.ueller.midlet.gps.LocationMsgProducer;
 import de.ueller.midlet.gps.LocationMsgReceiver;
+import de.ueller.midlet.gps.Logger;
 
 
 
 public class NmeaInput implements Runnable, LocationMsgProducer{
 
-	
+	protected static final Logger logger = Logger.getInstance(NmeaInput.class,Logger.TRACE);
 	private int	start;
 	private int	checksum;
 	private NmeaMessage smsg;
@@ -61,7 +63,7 @@ public class NmeaInput implements Runnable, LocationMsgProducer{
 	public void run(){
 		receiver.receiveMessage("start NMEA");
 		// eat the buffe content
-		
+		try {
 		try {
 			byte [] buf = new byte[512]; 
 			while (ins.available() > 0){
@@ -113,6 +115,13 @@ public class NmeaInput implements Runnable, LocationMsgProducer{
 		} else {
 			receiver.locationDecoderEnd(message);
 		}
+		} catch (OutOfMemoryError oome) {
+			logger.fatal("NmeaInput thread crashed as out of memory: " + oome.getMessage());
+			oome.printStackTrace();
+		} catch (Exception e) {
+			logger.fatal("NmeaInput thread crashed unexpectadly: " + e.getMessage());
+			e.printStackTrace();
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -143,6 +152,7 @@ public class NmeaInput implements Runnable, LocationMsgProducer{
 					len1 = ins.read(buf1);
 					bytesReceived += len1;					
 				}
+				
 				//if we have already seen the start of a sentence, copy buf1 from the start
 				if (found_start) start1 = 0; 
 				

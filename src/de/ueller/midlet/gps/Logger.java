@@ -49,6 +49,12 @@ public class Logger {
 			app.log("E["+getClassName()+"] " + msg);
 		}
 	}
+	public void exception(String msg, Exception e) {
+		//#mdebug error
+		error(msg + " (" + e + ": " + e.getMessage());
+		e.printStackTrace();
+		//#enddebug
+	}
 	public void info(String msg){
 		if (level >= INFO) {
 			app.log("I["+getClassName()+"] " + msg);

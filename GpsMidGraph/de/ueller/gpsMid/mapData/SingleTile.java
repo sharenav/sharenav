@@ -1,5 +1,6 @@
 /*
  * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net 
+ * 			Copyright (c) 2008 Kai Krueger apm at users dot sourceforge dot net
  * See Copying
  */
 package de.ueller.gpsMid.mapData;
@@ -33,7 +34,7 @@ public class SingleTile extends Tile implements QueueableTile {
 
 	public float[] nodeLon;
 
-	public Short[] nameIdx;
+	public int[] nameIdx;
 
 	public byte[] type;
 
@@ -118,7 +119,7 @@ public class SingleTile extends Tile implements QueueableTile {
 //					logger.debug("search target" + pc.target);
 					if (pc.target != null && pc.target.st == null){
 //						logger.debug("search target nameIdx" );
-						if (pc.target.e == null && pc.target.nameIdx.equals(w.nameIdx)){
+						if (pc.target.e == null && pc.target.nameIdx == w.nameIdx){
 //							logger.debug("search target way");
 							for (int p1 = 0; p1 < w.paths.length; p1++) {
 								short[] path = w.paths[p1];
@@ -251,7 +252,7 @@ public class SingleTile extends Tile implements QueueableTile {
 		pc.getP().forward(nodeLat[i], nodeLon[i], pc.swapLineP, true);
 		if (img != null) {
 			// logger.debug("draw img " + img);
-			if (nameIdx[i] == null || t > 99) {
+			if (nameIdx[i] == -1 || t > 99) {
 				pc.g.drawImage(img, pc.swapLineP.x, pc.swapLineP.y,
 						Graphics.VCENTER | Graphics.HCENTER);
 			} else {
@@ -284,7 +285,7 @@ public class SingleTile extends Tile implements QueueableTile {
 		return "ST" + zl + "-" + fileId+ ":" + lastUse;
 	}
 
-	public void getWay(PaintContext pc, PositionMark pm, Way bestWay) {
+/*	public void getWay(PaintContext pc, PositionMark pm, Way bestWay) {
 		if (contain(pm)) {
 			if (state != STATE_LOADREADY){
 				try {
@@ -336,7 +337,7 @@ public class SingleTile extends Tile implements QueueableTile {
 		}
 
 
-	}
+	}*/
 
 	
 	public void paint(PaintContext pc) {

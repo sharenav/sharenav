@@ -7,7 +7,8 @@ import java.io.DataOutputStream;
 
 public class PersistEntity {
 
-	protected int id = -1;
+	public int id = -1;
+	public String displayName;
 
 	protected DataInputStream getByteInputStream(byte[] data) {
 		ByteArrayInputStream bs = new ByteArrayInputStream(data);

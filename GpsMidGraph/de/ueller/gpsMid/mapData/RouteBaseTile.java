@@ -8,9 +8,9 @@ import de.ueller.midlet.gps.tile.PaintContext;
 
 public abstract class RouteBaseTile extends Tile {
 
-	public void getWay(PaintContext pc, PositionMark pm, Way w) {
+/*	public void getWay(PaintContext pc, PositionMark pm, Way w) {
 		return;
-	}
+	}*/
 	protected int minId;
 	protected int maxId;
 

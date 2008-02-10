@@ -8,14 +8,14 @@ import java.io.IOException;
 import de.ueller.gpsMid.mapData.SingleTile;
 
 public class PositionMark extends PersistEntity{
-	public String displayName;
+	
 	public float lat;
 	public float lon;
 	public Entity e;
 	public SingleTile st=null;
 	byte zl;
 	byte searcType;
-	public Short nameIdx=null;
+	public int nameIdx=-1;
 	
 	public byte[] toByte(){
 		ByteArrayOutputStream bs = new ByteArrayOutputStream();
@@ -45,8 +45,8 @@ public class PositionMark extends PersistEntity{
 		DataInputStream ds = getByteInputStream(data);
 		try {
 			displayName=ds.readUTF();
-			lat=ds.readLong();
-			lon=ds.readLong();
+			lat=ds.readFloat();
+			lon=ds.readFloat();
 			zl=ds.readByte();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

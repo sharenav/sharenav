@@ -1,6 +1,7 @@
 package de.ueller.midlet.gps.names;
 /*
- * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net 
+ * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net
+ * 			Copyright (c) 2008 Kai Krueger apm at users dot sourceforge dot net 
  * See Copying
  * 
  * this class maintains all about Names. Run in a low proirity, has a request queue and
@@ -14,6 +15,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import de.ueller.gps.tools.intTree;
 import de.ueller.gpsMid.mapData.QueueReader;
 import de.ueller.midlet.gps.Logger;
 
@@ -24,18 +26,15 @@ import de.ueller.midlet.gps.tile.StringEntry;
 public class Names implements Runnable {
 //	#debug
 	private final static Logger logger=Logger.getInstance(Names.class,Logger.TRACE);
-	private Vector queue=new Vector();
-	private Vector addQueue=new Vector();
-	private short[] startIndexes=null;
-//	private String[] startWords=null;
-//	private String search=null;
+	private intTree queue2 = new intTree();	
+	private intTree addQueue2 = new intTree();
+	private int[] startIndexes=null;
 	boolean shutdown=false;
 	boolean cleanup=false;
-	private Hashtable stringCache=new Hashtable(100);
+	private intTree   stringCache = new intTree();
 	private Thread processorThread;
 	boolean isReady=false;
 
-	
 	public Names() {
 		super();
 		processorThread = new Thread(this,"Names");
@@ -46,49 +45,28 @@ public class Names implements Runnable {
 	public void run() {
 		try {
 			readIndex();
-			while (! shutdown){
-//				logger.trace("addQueue has " + addQueue.size() + " requests " + addQueue);
-//				logger.trace("cache has " + stringCache.size() + " entries ");				
-				while (! addQueue.isEmpty()){
-					Short ne=(Short) addQueue.firstElement();
-					addQueue.removeElementAt(0);
-					if (queue.isEmpty()){
-						queue.addElement(ne);
-					} else {
-						Short le=(Short) queue.lastElement();
-						if (le.shortValue() < ne.shortValue()){
-							queue.addElement(ne);
-						} else {
-							int idx=0;
-							queueLoop:for (Enumeration e=queue.elements();e.hasMoreElements();){
-								Short te=(Short) e.nextElement();
-								if (te.shortValue() > ne.shortValue()){
-									queue.insertElementAt(ne, idx);
-									break queueLoop;
-								}
-								if (te.shortValue() == ne.shortValue()){
-									break queueLoop;
-								}
-								idx++;
-							}
-						}
-					}
-				}
-				if (! queue.isEmpty()){
-//					logger.trace("queue : " + queue);
-					Enumeration e=queue.elements();
-					readData(e);
-					queue.removeAllElements();
-				}
-				if (cleanup){
-					cleanupStringCache();
-				}
+			while (! shutdown){			
 				synchronized (this) {
 					try {
-						wait(2000l);
+						wait(20000l);
 					} catch (InterruptedException e1) {
 //						logger.error("interrupted");
+						continue;
 					}
+				}
+				//Sleep for 500ms to give time for several
+				//name requests to come in, as this increases
+				//efficiency. Should not effect perceived
+				//Speed much
+				Thread.sleep(500);
+				if (addQueue2.size() == 0) continue;
+				synchronized (addQueue2) {					
+					queue2.clone(addQueue2);
+					addQueue2.removeAll();					
+				}
+				readData(queue2);
+				if (cleanup){
+					cleanupStringCache();
 				}
 			}
 		} catch (Exception e) {
@@ -112,21 +90,19 @@ public class Names implements Runnable {
 //		logger.info("read names-idx");
 		DataInputStream ds = new DataInputStream(is);
 
-		short[] nameIdxs = new short[255];
+		int[] nameIdxs = new int[255];
 		short count=0;
 		nameIdxs[count++]=0;
 		while (ds.available() > 0) {
-			nameIdxs[count++] = ds.readShort();
+			nameIdxs[count++] = ds.readInt();
+			if (count >= nameIdxs.length) {
+				int[] tmp = new int[count + 255];
+				System.arraycopy(nameIdxs, 0, tmp, 0, nameIdxs.length);
+				nameIdxs = tmp;
+			}
 		}
-		startIndexes = new short[count];
-//		startWords = new String[count];
-		for (int l=count; --l != 0;){
-//		for (int l = 0; l < count; l++) {
-			startIndexes[l] = nameIdxs[l];
-//			if (l < count-1)
-//				startWords[l]=getFirstWord(l);
-		}
-//		logger.info("read names-idx ready");
+		startIndexes = new int[count];
+		System.arraycopy(nameIdxs,0, startIndexes, 0, count);		
 		isReady=true;
 	}
 	
@@ -154,34 +130,20 @@ public class Names implements Runnable {
 		}
 		return ("");
 	}
-	
-	private void readData(Enumeration e) throws IOException{
-		Short idx=(Short) e.nextElement();
-//		logger.info("search String for idx " + idx);
-		// find file
+
+	private void readData(intTree queue) throws IOException{
+		int idx = queue.popFirstKey();
 		int fid=0;
 		InputStream is=null;
 		int count=0;
 		int actIdx=0;
-//		for (int i=1;i < startIndexes.length;i++){
-		for (int i=startIndexes.length-1;i>=0;i--){
-//			logger.info("floop index["+ i +"]=" + startIndexes[i] + " idx=" + idx);
-			if (startIndexes[i] < idx.shortValue()){
-				is=QueueReader.openFile("/names-" + (i) + ".dat");
-//				logger.trace("open names-"+(i) + " startIdx=" + startIndexes[i] + "-" + startIndexes[i+1]);
-				count=startIndexes[i+1]-startIndexes[i];
-				actIdx=startIndexes[i];
-				fid=i;
-				break;
-			}
-		}
-		while (idx != null){
+
+		while (idx != -1){
+			logger.info("Looking up name " + idx);
+			/* Lookup in which names file the entry is contained */
 			for (int i=fid;i < startIndexes.length;i++){
-//				logger.info("loop index["+ i +"]=" + startIndexes[i] + " idx=" + idx);
-				if (startIndexes[i] > idx.shortValue()){
-//					is = QueueReader.openFile("/names-" + fid + ".dat");
+				if (startIndexes[i] > idx){
 					is=QueueReader.openFile("/names-" + fid + ".dat");
-//					logger.trace("open names-"+fid + " startIdx=" + startIndexes[fid] + "-" + startIndexes[fid+1]);
 					count=startIndexes[i]-startIndexes[fid];
 					actIdx=startIndexes[fid];
 					break;
@@ -197,19 +159,19 @@ public class Names implements Runnable {
 			int pos=0;
 			StringBuffer name=new StringBuffer();
 			StringEntry bufferSe = new StringEntry(null);
+			//Search through all names in the the given file
+			//as we can only read linearly in this file 
 			files:for (int l=0;l<count;l++){
 				pos = readNextWord(ds, pos, name,bufferSe);
-//				logger.info("test Name '" + name + "' at idx:" + actIdx);
-				if (actIdx == idx.shortValue()){
-					StringEntry se=(StringEntry) stringCache.get(idx);
+				//logger.info("test Name '" + name + "' at idx:" + actIdx);
+				if (actIdx == idx){
+					StringEntry se=(StringEntry) stringCache.get(idx);					
 					se.name=name.toString();
-//					se.isIn=new Short(bufferSe.isIn.shortValue());
-//					getName(se.isIn);
-//					logger.info("found Name '" + se.name + "' for idx:" + idx);
-					if (e.hasMoreElements()){
-						idx=(Short) e.nextElement();
+					
+					if (queue.size() != 0){
+						idx=queue.popFirstKey();
 					} else {
-						idx=null;
+						idx=-1;
 						break files;
 					}
 				}
@@ -226,9 +188,6 @@ public class Names implements Runnable {
 			if (pos < 0) return pos;
 			name.setLength(pos);
 			name.append(ds.readUTF());
-//			short idx=ds.readShort();
-//			System.out.println("nextName " + name + " idx=" + idx);
-	//		se.isIn=new Short(idx);
 			return pos;
 		}
 		name.setLength(0);
@@ -236,40 +195,35 @@ public class Names implements Runnable {
 	}
 
 	
-	public String getName(Short idx){
-		if (idx==null)
-			return null;
-		if (idx.shortValue() <0) {
-			return null;
-		}
+	public synchronized String getName(int idx){
+		if (idx < 0)
+			return null;		
 		StringEntry ret=(StringEntry) stringCache.get(idx);
 		if (ret != null) {
 			ret.count=4;
-//			logger.info("found Name '" + ret.name + "' for idx:" + idx);
-//			String nameIn=getName(ret.isIn);
-//			return (nameIn != null)? ret.name + ", " + nameIn : ret.name;
 			return ret.name;
 		}
 		StringEntry newEntry = new StringEntry(null);
 		stringCache.put(idx, newEntry);
 		newEntry.count=4;
-//		logger.info("add request for idx:" + idx);
-		addQueue.addElement(idx);
+		addQueue2.put(idx,null);
+		notify();
 		return null;
 	}
 	
 	private void cleanupStringCache(){
-//		logger.info("cleanup namesCache " + stringCache.size());
-		for (Enumeration e=stringCache.keys();e.hasMoreElements();){
-			Short key=(Short) e.nextElement();
-			StringEntry ce=(StringEntry) stringCache.get(key);
-			if (ce.count == 0){
-				stringCache.remove(key);
+		logger.info("cleanup namesCache " + stringCache.size());
+		
+		for (int i = 0; i < stringCache.capacity(); i++) {
+			StringEntry ce = (StringEntry) stringCache.getValueIdx(i);
+			if (ce == null)
+				continue;
+			if (ce.count == 0){				
+				stringCache.remove(stringCache.getKeyIdx(i));
 			} else {
 				ce.count--;
 			}
 		}
-//		logger.info("ready cleanup namesCache " + stringCache.size());
 		cleanup=false;
 	}
 
@@ -277,7 +231,30 @@ public class Names implements Runnable {
 		return stringCache.size();
 	}
 	
-	public Short[] search(String s) throws IOException{
+	public void dropCache() {
+		stringCache.removeAll();
+	}
+
+	public static final int readNameIdx(DataInputStream ds) {		
+		int idx = -1;
+		try {			
+			idx = ds.readShort();			
+			if (idx < 0) {
+				idx = idx & 0x7fff;
+				int idx2 = ds.readShort() & 0xffff;				
+				idx = (idx << 16 | idx2) & 0x7fffffff;				
+			}			
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
+		}
+		return idx;
+	}
+	
+
+/*	
+ * This function is currently unused. Might reintroduce it later
+ * 
+ * public Short[] search(String s) throws IOException{	
 		StringBuffer name=new StringBuffer();
 		InputStream is;
 		DataInputStream ds;
@@ -320,6 +297,6 @@ public class Names implements Runnable {
 		stringCache.put(key, se);
 		se.count=4;
 	}
-	
+ */	
 
 }

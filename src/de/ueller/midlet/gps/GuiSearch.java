@@ -1,5 +1,9 @@
 package de.ueller.midlet.gps;
-
+/*
+ * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net
+ * 			Copyright (c) 2008 Kai Krueger apm at users dot sourceforge dot net 
+ * See Copying
+ */
 import java.util.Vector;
 
 import javax.microedition.lcdui.Canvas;
@@ -7,31 +11,25 @@ import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
-import javax.microedition.lcdui.Font;
-import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
-import javax.microedition.lcdui.TextField;
 
-import de.ueller.gps.data.Position;
 import de.ueller.gps.data.SearchResult;
-import de.ueller.midlet.gps.data.Mercator;
 import de.ueller.midlet.gps.data.PositionMark;
-import de.ueller.midlet.gps.names.Names;
-import de.ueller.midlet.gps.tile.C;
 import de.ueller.midlet.gps.tile.SearchNames;
 
 public class GuiSearch extends Canvas implements CommandListener,
 		GpsMidDisplayable {
 
+	private final static Logger logger = Logger.getInstance(GuiSearch.class,Logger.DEBUG);
 
 	private final Command OK_CMD = new Command("Ok", Command.OK, 1);
 	private final Command DEL_CMD = new Command("delete", Command.ITEM, 2);
 	private final Command CLEAR_CMD = new Command("clear", Command.ITEM, 3);
-	private final Command BOOKMARK_CMD = new Command("add Bookmark", Command.ITEM, 4);
+	private final Command BOOKMARK_CMD = new Command("add to Waypoint", Command.ITEM, 4);
 	private final Command BACK_CMD = new Command("Back", Command.BACK, 5);
 
-	private Form form;
+	//private Form form;
 
 	private final Image[] ico = { null, Image.createImage("/city.png"),
 			Image.createImage("/city.png"), Image.createImage("/street.png"),
@@ -51,7 +49,11 @@ public class GuiSearch extends Canvas implements CommandListener,
 
 	private SearchNames searchThread;
 
+	private boolean abortPaint = false;
+	
+	private int displayReductionLevel = 0;
 
+	
 	public GuiSearch(Trace parent) throws Exception {
 		super();
 		this.parent = parent;
@@ -98,6 +100,12 @@ public class GuiSearch extends Canvas implements CommandListener,
 			return;
 		}
 		if (c == BOOKMARK_CMD) {
+			SearchResult sr = (SearchResult) result.elementAt(cursor);
+			PositionMark positionMark = new PositionMark(sr.lat,sr.lon);
+			positionMark.nameIdx=sr.nameIdx;
+			positionMark.displayName=parent.getName(sr.nameIdx);
+			parent.gpx.addWayPt(positionMark);
+			parent.show();
 			return;
 		}
 		if (c == BACK_CMD) {
@@ -129,7 +137,10 @@ public class GuiSearch extends Canvas implements CommandListener,
 			gc.drawString("^", getWidth(), 0, Graphics.TOP | Graphics.RIGHT);
 		}
 
-		for (int i=0;i<result.size();i++){
+		synchronized(this) {
+	    for (int i=0;i<result.size();i++){
+	    	if (abortPaint)
+	    		break;
 			if (yc < 0) {
 				yc += 15;
 				continue;
@@ -150,12 +161,23 @@ public class GuiSearch extends Canvas implements CommandListener,
 			String name=parent.getName(sr.nameIdx);
 			StringBuffer nameb=new StringBuffer();
 			if (name != null){
-				nameb.append(name);
+				if (displayReductionLevel < 1) {
+					nameb.append(name);
+				} else {
+					nameb.append(name.charAt(0));
+					nameb.append('.');
+				}
 			}
 			if (sr.nearBy != null){
 				for (int ib=sr.nearBy.length; ib-- != 0;){
 					nameb.append(" / ");
-					nameb.append(parent.getName(sr.nearBy[ib]));
+					String nearName = parent.getName(sr.nearBy[ib]);
+					if (displayReductionLevel < (sr.nearBy.length - ib + 1)) {
+						nameb.append(nearName);
+					} else {
+						nameb.append(nearName.charAt(0));
+						nameb.append('.');
+					}					
 				}
 			}
 			name=nameb.toString();
@@ -165,12 +187,13 @@ public class GuiSearch extends Canvas implements CommandListener,
 				gc.drawString("..." + sr.nameIdx,17, yc, Graphics.TOP | Graphics.LEFT);
 			yc+=15;
 		}
+		}
 
 	}
 
 	protected void keyPressed(int keyCode) {
 		int action = getGameAction(keyCode);
-//		System.out.println("got key " + keyCode + " " + action);
+		System.out.println("got key " + keyCode + " " + action);
 		if (keyCode == KEY_NUM1) {
 			searchCanon.insert(carret++,'1');
 		} else if (keyCode == KEY_NUM2) {
@@ -194,7 +217,11 @@ public class GuiSearch extends Canvas implements CommandListener,
 		} else if (keyCode == KEY_POUND) {
 			searchCanon.insert(carret++,'0');
 		} else if (keyCode == KEY_STAR) {
-			searchCanon.insert(carret++,'0');
+			displayReductionLevel++;
+			if (displayReductionLevel > 3)
+				displayReductionLevel = 0;
+			repaint(0, 0, getWidth(), getHeight());
+			return;
 		} else if (action == FIRE) {
 			SearchResult sr = (SearchResult) result.elementAt(cursor);
 //			System.out.println("select " + sr);
@@ -235,9 +262,20 @@ public class GuiSearch extends Canvas implements CommandListener,
 		} else if (action == LEFT) {
 			if (carret > 0)
 				carret--;
+			return;
 		} else if (action == RIGHT) {
 			if (carret < searchCanon.length())
 				carret++;
+			return;
+		} else if (keyCode == -8) { 
+			/** Non standard Key: hopefully is mapped to
+			 * the delete / clear key. According to 
+			 * www.j2meforums.com/wiki/index.php/Canvas_Keycodes
+			 * most major mobiles that have this key map to -8 */
+			
+			if (carret > 0){
+				searchCanon.deleteCharAt(--carret);				
+			}			
 		} else {
 			return;
 		}
@@ -245,6 +283,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 	}
 
 	private void reSearch() {
+		logger.info("researching");
 		scrollOffset = 0;
 		setTitle(searchCanon.toString() + " " + carret);
 		if (searchCanon.length() >= 2) {
@@ -252,12 +291,16 @@ public class GuiSearch extends Canvas implements CommandListener,
 //			result.removeAllElements();
 			searchThread.search(searchCanon.toString());
 		}
-//		repaint(0, 0, getWidth(), getHeight());
+		repaint(0, 0, getWidth(), getHeight());
 	}
 
 	public void addResult(SearchResult sr){
 		parent.getName(sr.nameIdx);
-		result.addElement(sr);
+		abortPaint = true;
+		synchronized(this) {
+			result.addElement(sr);
+		}
+		abortPaint = false;
 		repaint(0, 0, getWidth(), getHeight());
 	}
 	public void triggerRepaint(){
@@ -265,6 +308,11 @@ public class GuiSearch extends Canvas implements CommandListener,
 	}
 
 	public void clearList() {
-		result.removeAllElements();
+		abortPaint = true;
+		synchronized (this) {
+			result.removeAllElements();
+		}
+		abortPaint = false;
+		
 	}
 }

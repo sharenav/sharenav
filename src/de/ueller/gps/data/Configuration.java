@@ -8,12 +8,13 @@ public class Configuration {
 	public final static int RENDER_LINE=0;
 	public final static int RENDER_STREET=1;
 
-	public final static int LOCATIONPROVIDER_SIRF=0; 
-	public final static int LOCATIONPROVIDER_NMEA=1; 
-	public final static int LOCATIONPROVIDER_JSR179=2;
-	public final static int LOCATIONPROVIDER_NONE=3;
+	public final static int LOCATIONPROVIDER_NONE=0;
+	public final static int LOCATIONPROVIDER_SIRF=1; 
+	public final static int LOCATIONPROVIDER_NMEA=2; 
+	public final static int LOCATIONPROVIDER_JSR179=3;
+	
 
-	public final static String[] LOCATIONPROVIDER={"Sirf","NMEA","JSR179","None"};
+	public final static String[] LOCATIONPROVIDER={"None","Sirf","NMEA","JSR179"};
 	private final static byte[] empty="".getBytes();
 
 	private String btUrl;

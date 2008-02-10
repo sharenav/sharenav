@@ -1,4 +1,8 @@
 package de.ueller.gpsMid.mapData;
+/*
+ * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net 
+ * See Copying
+ */
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,7 +11,9 @@ import java.util.Vector;
 //import javax.microedition.io.Connector;
 //import javax.microedition.io.file.FileConnection;
 
+import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.Logger;
+import de.ueller.midlet.gps.Trace;
 
 public abstract class QueueReader implements Runnable{
 	//#debug error
@@ -65,6 +71,19 @@ public abstract class QueueReader implements Runnable{
 		requestQueue.addElement(st);
 		notify();
 	}
+	
+	public void dropCache() {
+		Tile tt;
+		int loop;
+		for (loop=0; loop < livingQueue.size(); loop++){
+			tt=(Tile) livingQueue.elementAt(loop);
+			tt.cleanup(0);
+		}
+		for (loop=0; loop < requestQueue.size(); loop++){
+			tt=(Tile) requestQueue.elementAt(loop);
+			tt.cleanup(0);
+		}
+	}
 
 
 	public void run() {
@@ -92,16 +111,23 @@ public abstract class QueueReader implements Runnable{
 					try {
 						Runtime runtime = Runtime.getRuntime();
 						if (runtime.freeMemory() > 25000){
-						if (requestQueue.size() > 0){
-							//#debug error
+							if (requestQueue.size() > 0){
+								//#debug error
 								logger.debug("requestQueue size="+requestQueue.size());
-							tt=(Tile) requestQueue.firstElement();
-							requestQueue.removeElementAt(0);
-							readData(tt);
-							livingQueue.addElement(tt);
+								tt=(Tile) requestQueue.firstElement();
+								requestQueue.removeElementAt(0);
+								readData(tt);
+								livingQueue.addElement(tt);
+							}
+						} else {
+							logger.info("Not much memory left, cleaning up an trying again");
+							Trace.getInstance().cleanup();
+							System.gc();
 						}
-						}
-					} catch (IOException e) {
+					} catch (OutOfMemoryError oome) {
+						logger.error("Out of memory reading tiles, trying to recover");
+						Trace.getInstance().dropCache();
+					}catch (IOException e) {
 						tt=(Tile) requestQueue.firstElement();
 //						logger.info(e.getMessage()+ "in read dict " + tt.fileId);
 						requestQueue.removeElementAt(0);
@@ -116,6 +142,8 @@ public abstract class QueueReader implements Runnable{
 							}
 						}
 					}
+				} catch (OutOfMemoryError oome) {
+					logger.error("Out of memory while trying to read tiles. Not recovering");
 				} catch (RuntimeException e) {
 	//				logger.error(e.getMessage()+" continue thread");
 					e.printStackTrace();

@@ -1,4 +1,9 @@
 package de.ueller.midlet.gps.tile;
+/*
+ * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net
+ * 			Copyright (c) 2008 Kai Krueger apm at users dot sourceforge dot net 
+ * See Copying
+ */
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -8,6 +13,7 @@ import de.ueller.gps.data.SearchResult;
 import de.ueller.gpsMid.mapData.QueueReader;
 import de.ueller.midlet.gps.GuiSearch;
 import de.ueller.midlet.gps.Logger;
+import de.ueller.midlet.gps.names.Names;
 
 public class SearchNames implements Runnable{
 
@@ -17,8 +23,7 @@ public class SearchNames implements Runnable{
 	private String search;
 	private final GuiSearch gui;
 	private boolean newSearch=false;
-	//#debug
-	protected static final Logger logger = Logger.getInstance(QueueReader.class,Logger.TRACE);
+	protected static final Logger logger = Logger.getInstance(SearchNames.class,Logger.TRACE);
 
 	public SearchNames(GuiSearch gui) {
 		super();
@@ -26,26 +31,32 @@ public class SearchNames implements Runnable{
 	}
 
 	public void run() {
+	
+	    try {
+		while (newSearch) {
+		    doSearch(search);
+		    // refresch display to give change to fetch the names
+		    for (int i=8;i!=0;i--){
 			try {
-				doSearch(search);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			    synchronized (this) {
+				wait(300);						
+			    }
+			    if (stopSearch){
+				return;
+			    } else {
+				gui.triggerRepaint();
+			    }
+			} catch (InterruptedException e) {
 			}
-			// refresch display to give change to fetch the names
-			for (int i=8;i!=0;i--){
-				try {
-					synchronized (this) {
-						wait(300);						
-					}
-					if (stopSearch){
-						return;
-					} else {
-						gui.triggerRepaint();
-					}
-				} catch (InterruptedException e) {
-				}
-			}
+		    }
+		}
+	    } catch (OutOfMemoryError oome ) {
+		logger.fatal("SearchNames thread crashed as out of memory: " + oome.getMessage());
+		oome.printStackTrace();
+	    } catch (Exception e) {
+		logger.fatal("SearchNames thread crashed unexpectadly with error " +  e.getMessage());
+		e.printStackTrace();
+	    }		
 	}
 	
 	private void doSearch(String search) throws IOException {
@@ -55,7 +66,13 @@ public class SearchNames implements Runnable{
 			String fn=search.substring(0,2);
 			String compare=search.substring(2);
 			StringBuffer current=new StringBuffer();
-			stopSearch=false;
+			synchronized(this) {
+				stopSearch=false;
+				if (newSearch){
+					gui.clearList();
+					newSearch=false;
+				}
+			}
 			String fileName = "/s"+fn+".d";
 //			System.out.println("open " +fileName);
 			InputStream stream = QueueReader.openFile(fileName);
@@ -67,11 +84,9 @@ public class SearchNames implements Runnable{
 			int pos=0;
 			while (ds.available() > 0){
 				if (stopSearch){
-					ds.close();
-					//#debug
-					logger.info("cancel Search");
+					ds.close();					
 					return;
-				}
+				}				 
 				int type=ds.readByte();
 				int sign=1;
 				if (type < 0){
@@ -109,32 +124,27 @@ public class SearchNames implements Runnable{
 				}
 				current.append(""+value);
 //				System.out.println("test " + current);
-				Short idx=null;
-				short shortIdx = ds.readShort();
-				if (current.toString().startsWith(compare)){
-					idx=new Short(shortIdx);
-//					System.out.println("match");
+				int idx = Names.readNameIdx(ds);
+				if (!current.toString().startsWith(compare)){
+					idx=-1;
 				}
 				type=ds.readByte();
-				while (type != 0){
-//					System.out.println("read entryType = " + type);
+				while (type != 0){					
 					if (stopSearch){
-						ds.close();
-						//#debug
-						System.out.println("cancel Search");
+						ds.close();						
 						return;
 					}
 					byte isInCount=ds.readByte();
-					Short[] isInArray=null;
+					int[] isInArray=null;
 					if (isInCount > 0 ){
-						isInArray=new Short[isInCount];
+						isInArray=new int[isInCount];
 						for (int i=isInCount;i--!=0;){
-							isInArray[i]=new Short(ds.readShort());
+							isInArray[i]= Names.readNameIdx(ds);							
 						}
 					}
 					float lat=ds.readFloat();
 					float lon=ds.readFloat();
-					if (idx != null){
+					if (idx != -1){
 						SearchResult sr=new SearchResult();
 						sr.nameIdx=idx;
 						sr.type=(byte) type;
@@ -148,20 +158,14 @@ public class SearchNames implements Runnable{
 						gui.addResult(sr);
 						foundEntries++;
 						if (foundEntries > 50)
-							return;
+							return;			
 //						System.out.println("found " + current +"(" + shortIdx + ") type=" + type);
 					}
 					type=ds.readByte();
 				}
-			}
-			// clear results in case of no match found
-			if (newSearch){
-				gui.clearList();
-				newSearch=false;
-			}
+			}			
 		} catch (NullPointerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.exception("Null pointer exception in SearchNames: ", e);			
 		}
 	}
 	
@@ -174,24 +178,14 @@ public class SearchNames implements Runnable{
 		logger.info("search for  " + search);
 		stopSearch=true;
 		newSearch=true;
-		if (processorThread != null) {
-			//#debug
-			logger.info("wait for end of old search");			
-			while (processorThread.isAlive()) {
-				try {
-					wait(100);
-				} catch (InterruptedException e) {
-				}
-			}
-			//#debug
-			logger.info("old search ended");			
-		}
-		
 		foundEntries=0;
 		this.search=search;
-		processorThread = new Thread(this);
-		processorThread.setPriority(Thread.MIN_PRIORITY+1);
-		processorThread.start();
+		if (processorThread == null || !processorThread.isAlive()) {
+			processorThread = new Thread(this);
+			processorThread.setPriority(Thread.MIN_PRIORITY+1);
+			processorThread.start();
+			logger.info("started search thread");
+		}		
 	}
 
 

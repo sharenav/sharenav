@@ -8,11 +8,19 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.data.Way;
 
 
 public class QueueDictReader extends QueueReader implements Runnable {
 	
+	private final Trace trace;
+	public QueueDictReader(Trace trace){
+		super();
+		this.trace = trace;
+		
+	}
+		
 	public void readData(Tile t) throws IOException{
 		FileTile tt=(FileTile) t;
 //		logger.info("open /d"+tt.zl+tt.fid+".d");
@@ -56,6 +64,7 @@ public class QueueDictReader extends QueueReader implements Runnable {
     	tt.tile=dict;
 		tt.inLoad=false;
 		tt.lastUse=0;
+		trace.newDataReady();
 //		logger.info("DictReader ready "+ tt.fid);
 
 //		}

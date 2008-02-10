@@ -41,9 +41,11 @@ import de.ueller.gpsMid.mapData.QueueDataReader;
 import de.ueller.gpsMid.mapData.QueueDictReader;
 import de.ueller.gpsMid.mapData.QueueReader;
 import de.ueller.gpsMid.mapData.Tile;
+import de.ueller.midlet.gps.data.ProjMath;
 import de.ueller.midlet.gps.data.Gpx;
 import de.ueller.midlet.gps.data.IntPoint;
 import de.ueller.midlet.gps.data.Mercator;
+import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.data.Projection;
@@ -51,7 +53,6 @@ import de.ueller.midlet.gps.names.Names;
 import de.ueller.midlet.gps.routing.Connection;
 import de.ueller.midlet.gps.routing.RouteNode;
 import de.ueller.midlet.gps.routing.Routing;
-import de.ueller.midlet.gps.tile.C;
 import de.ueller.midlet.gps.tile.Images;
 import de.ueller.midlet.gps.tile.PaintContext;
 import de.ueller.midlet.gps.GpsMidDisplayable;
@@ -59,17 +60,18 @@ import de.ueller.midlet.gps.GpsMidDisplayable;
 public class Trace extends Canvas implements CommandListener, LocationMsgReceiver,
 		Runnable , GpsMidDisplayable{
 	/** Soft button for exiting the demo. */
-	private final Command EXIT_CMD = new Command("Back", Command.ITEM, 5);
+	private final Command EXIT_CMD = new Command("Back", Command.BACK, 5);
 
 	private final Command REFRESH_CMD = new Command("Refresh", Command.ITEM, 4);
-	private final Command SEARCH_CMD = new Command("Search", Command.ITEM, 1);
+	private final Command SEARCH_CMD = new Command("Search", Command.OK, 1);
 
 	private final Command CONNECT_GPS_CMD = new Command("Start gps",Command.ITEM, 2);
 	private final Command DISCONNECT_GPS_CMD = new Command("Stop gps",Command.ITEM, 2);
 	private final Command START_RECORD_CMD = new Command("Start record",Command.ITEM, 4);
 	private final Command STOP_RECORD_CMD = new Command("Stop record",Command.ITEM, 4);
-	private final Command TARNSFER_RECORD_CMD = new Command("Send recorded",Command.ITEM, 5);
-	private final Command CLEAR_RECORD_CMD = new Command("Clear recorded",Command.ITEM, 6);
+	private final Command TRANSFER_RECORD_CMD = new Command("Manage recorded",Command.ITEM, 5);
+	private final Command SAVE_WAYP_CMD = new Command("Save waypoint ",Command.ITEM, 7);
+	private final Command MAN_WAYP_CMD = new Command("Manage waypoints",Command.ITEM, 7);
 	private final Command ROUTE_TO_CMD = new Command("Route",Command.ITEM, 3);
 
 	private InputStream inputStream;
@@ -103,7 +105,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 	int showAddons = 0;
 
-	Tile t[] = new Tile[5];
+	Tile t[] = new Tile[6];
 
 
 	// private DataReader data;
@@ -121,7 +123,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 	private Satelit[] sat;
 
-	private Image satelit, car72;
+	private Image satelit;
 
 	private int speed;
 
@@ -147,7 +149,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	private boolean running=false;
 	private static final int CENTERPOS = Graphics.HCENTER|Graphics.VCENTER;
 
-	private Gpx gpx;
+	public Gpx gpx;
+	
+	private static Trace traceInstance;
 
 	public Trace(GpsMid parent, Configuration config) throws Exception {
 		//#debug
@@ -160,11 +164,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		addCommand(CONNECT_GPS_CMD);
 		addCommand(ROUTE_TO_CMD);
 		addCommand(START_RECORD_CMD);
-//		if (Gpx.isGpxDataThere()){
-			addCommand(TARNSFER_RECORD_CMD);
-			addCommand(CLEAR_RECORD_CMD);
-
-			//		}
+		addCommand(TRANSFER_RECORD_CMD);		           
+		addCommand(SAVE_WAYP_CMD);
+		addCommand(MAN_WAYP_CMD);
 		setCommandListener(this);
 
 		try {
@@ -182,6 +184,12 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		traceInstance = this;
+	}
+	
+	public static Trace getInstance() {
+		return traceInstance;
 	}
 
 	// start the LocationProvider in background
@@ -227,12 +235,15 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		case Configuration.LOCATIONPROVIDER_NMEA:
 			locationProducer = new NmeaInput(inputStream, this);
 			break;
-			//#if polish.api.locationapi
+
 		case Configuration.LOCATIONPROVIDER_JSR179:
-//			locationProducer = new 
-			locationProducer = new JSR179Input(this);
-			break;
+			//#if polish.api.locationapi
+			locationProducer = new JSR179Input(this);			
+			
+			//#else
+			logger.error("JSR179 is not supported in this version of GpsMid");
 			//#endif
+			break;
 		}
 		//#debug info
 		logger.info("end startLocationPovider thread");
@@ -286,7 +297,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			}
 			if (c == START_RECORD_CMD){
 				try {
-					gpx = new Gpx();
+					gpx.newTrk();
 					removeCommand(START_RECORD_CMD);
 					addCommand(STOP_RECORD_CMD);
 				} catch (RuntimeException e) {
@@ -295,22 +306,17 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				
 			}
 			if (c == STOP_RECORD_CMD){
-					gpx.close();
+					gpx.saveTrk();
 					removeCommand(STOP_RECORD_CMD);
 					addCommand(START_RECORD_CMD);
-					addCommand(TARNSFER_RECORD_CMD);
-					gpx=null;
-					recordMark=null;
+					addCommand(TRANSFER_RECORD_CMD);
 			}
-			if (c == TARNSFER_RECORD_CMD){
+			if (c == TRANSFER_RECORD_CMD){
 			    if (locationProducer != null) {
 				locationProducer.close();
 			    }
 			    GuiGpx gpx = new GuiGpx(this);
 			    gpx.show();
-			}
-			if (c == CLEAR_RECORD_CMD){
-				Gpx.delete();
 			}
 			if (c == REFRESH_CMD) {
 				repaint(0, 0, getWidth(), getHeight());
@@ -337,6 +343,14 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				Routing routeEngine=new Routing(t,this);
 				routeEngine.solve(center.radlat, center.radlon, target.lat, target.lon);
 			}
+			if (c == SAVE_WAYP_CMD) {				
+				GuiWaypointSave gwps = new GuiWaypointSave(this,new PositionMark(center.radlat, center.radlon));
+				gwps.show();
+			}
+			if (c == MAN_WAYP_CMD) {				
+				GuiWaypoint gwp = new GuiWaypoint(this);
+				gwp.show();
+			}
 		} catch (RuntimeException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -353,6 +367,12 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		pc = new PaintContext(this, tileReader, dictReader,i);
 		imageCollector = new ImageCollector(t, this.getWidth(), this.getHeight(), this,
 				tileReader, dictReader,i);
+		projection = new Mercator(center, scale, getWidth(), getHeight());
+		pc.setP(projection);
+		pc.center = center.clone();
+		pc.scale = scale;
+		pc.xSize = this.getWidth();
+		pc.ySize = this.getHeight();
 	}
 	private void stopImageCollector(){
 		cleanup();
@@ -370,8 +390,10 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 //		logger.info("Create queueDataReader");
 		tileReader = new QueueDataReader(this);
 //		logger.info("create imageCollector");
-		dictReader = new QueueDictReader();
+		dictReader = new QueueDictReader(this);
 		startImageCollector();
+		this.gpx = new Gpx();
+		setDict(gpx, (byte)5);
 	}
 
 	public void shutdown() {
@@ -423,22 +445,34 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			}
 			switch (showAddons) {
 			case 1:
-				yc = showConnectStatistics(g, yc, la);
+				showScale(pc);				
 				break;
 			case 2:
-				showSatelite(g);
+				yc = showSpeed(g, yc, la);
+				yc = showDistanceToTarget(g, yc, la);
 				break;
 			case 3:
-				yc = showMemory(g, yc, la);
-				yc = showSpeed(g, yc, la);
+				showSatelite(g);
 				break;
 			case 4:
+				yc = showConnectStatistics(g, yc, la);
+				break;
+			case 5:
+				yc = showMemory(g, yc, la);
+				break;
+			case 6:
 				showAddons = 0;
 
 			}
 			showMovement(g);
 			g.setColor(0, 0, 0);
 			if (locationProducer != null){
+				if (gpx.isRecordingTrk()) {// we are recording tracklogs
+					g.setColor(255, 0, 0);
+				} else {
+					g.setColor(0);
+				}
+					
 				g.drawString(solution, getWidth() - 1, 1, Graphics.TOP
 							| Graphics.RIGHT);
 			} else {
@@ -471,7 +505,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	public void cleanup() {
 		namesThread.cleanup();
 		tileReader.incUnusedCounter();
-		dictReader.incUnusedCounter();
+		dictReader.incUnusedCounter();		
 	}
 
 	private int showConnectStatistics(Graphics g, int yc, int la) {
@@ -532,7 +566,8 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 //			System.out.println(target.toString());
 			pc.g.drawImage(pc.images.IMG_TARGET,pc.lineP2.x,pc.lineP2.y,CENTERPOS);
 			pc.g.setColor(0,0,0);
-			pc.g.drawString(target.displayName, pc.lineP2.x, pc.lineP2.y+8,
+			if (target.displayName != null)
+				pc.g.drawString(target.displayName, pc.lineP2.x, pc.lineP2.y+8,
 					Graphics.TOP | Graphics.HCENTER);
 			pc.g.setColor(255,50,50);
 			pc.g.setStrokeStyle(Graphics.DOTTED);
@@ -559,12 +594,60 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				}
 
 				pc.getP().forward(pm.lat, pm.lon, pc.lineP2,true);
-				pc.g.drawImage(pc.images.IMG_MARK,pc.lineP2.x,pc.lineP2.y,CENTERPOS);
+				pc.g.drawImage(pc.images.IMG_MARK,pc.lineP2.x,pc.lineP2.y,CENTERPOS);				
 			}
 		}
 
 	}
 
+	/**
+	 * Draws a map scale onto screen.
+	 * This calculation is currently horribly
+	 * inefficient. There must be a better way
+	 * than this.
+	 * 
+	 * @param pc
+	 */
+	public void showScale(PaintContext pc) {
+		Node n1 = new Node();
+		Node n2 = new Node();
+		
+		float scale;
+		int scalePx;
+		
+		//Calculate the lat and lon coordinates of two
+		//points that are 35 pixels apart
+		pc.getP().inverse(10, 10, n1);
+		pc.getP().inverse(45, 10, n2);
+		
+		//Calculate the distance between them in meters
+		float d = ProjMath.getDistance(n1, n2);
+		
+		//round this distance up to the nearest 5 or 10
+		int ordMag = (int)(MoreMath.log(d)/MoreMath.log(10.0f));
+		if (d < 2.5*MoreMath.pow(10,ordMag)) {
+			scale = 2.5f*MoreMath.pow(10,ordMag);
+		} else if (d < 5*MoreMath.pow(10,ordMag)) {
+			scale = 5*MoreMath.pow(10,ordMag);
+		} else {
+			scale = 10*MoreMath.pow(10,ordMag);
+		}
+		//Calculate how many pixels this distance is apart
+		scalePx = (int)(35.0f*scale/d);
+		
+		//Draw the scale bar
+		pc.g.setColor(0x00000000);
+		pc.g.drawLine(10,10, 10 + scalePx, 10);
+		pc.g.drawLine(10,11, 10 + scalePx, 11); //double line width
+		pc.g.drawLine(10, 8, 10, 13);
+		pc.g.drawLine(10 + scalePx, 8, 10 + scalePx, 13);
+		if (scale > 1000) {
+			pc.g.drawString(Integer.toString((int)(scale/1000.0f)) + "km", 10 + scalePx/2 ,12, Graphics.HCENTER | Graphics.TOP);
+		} else {
+			pc.g.drawString(Integer.toString((int)scale) + "m", 10 + scalePx/2 ,12, Graphics.HCENTER | Graphics.TOP);
+		}
+	}
+	
 	/**
 	 * @param pc
 	 */
@@ -675,6 +758,10 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				+ (100f * runtime.freeMemory() / runtime.totalMemory()), 0, yc,
 				Graphics.TOP | Graphics.LEFT);
 		yc += la;
+		g.drawString("Threads running : " 
+				+ Thread.activeCount(), 0, yc, 
+				Graphics.TOP | Graphics.LEFT); 
+		yc += la;		
 		g.drawString("Names   : " + namesThread.getNameCount(), 0, yc,
 				Graphics.TOP | Graphics.LEFT);
 		yc += la;
@@ -704,37 +791,54 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 	}
 
-	/*public synchronized void receivePosItion(float lat, float lon) {		
-		center.setLatLon(lat, lon,true);
+	public int showDistanceToTarget(Graphics g, int yc, int la) {
+		g.setColor(0, 0, 0);
+		String text;
+		if (target == null) {
+			text = "distance: N/A";
+		} else {
+			
+			float distance = ProjMath.getDistance(target.lat, target.lon, center.radlat, center.radlon); 
+			if (distance > 10000) {
+				text = "distance: " + Integer.toString((int)(distance/1000.0f)) + "km";
+			} else if (distance > 1000) {
+				text = "distance: " + Float.toString(((int)(distance/100.0f))/10.0f) + "km";
+			} else {
+				text = "distance: " + Integer.toString((int)distance) + "m";
+			}
+			
+		}
+		g.drawString(text , 0, yc, Graphics.TOP | Graphics.LEFT);
+		yc += la;
+		return yc;
+	}
+
+	private void updatePosition() {		
 		projection = new Mercator(center, scale, getWidth(), getHeight());
-		pc.setP( projection);
+		pc.setP(projection);
 		pc.center = center.clone();
 		pc.scale = scale;
 		repaint(0, 0, getWidth(), getHeight());
-	}*/
+	}
+	
+	public synchronized void receivePosItion(float lat, float lon, float scale) {
+		logger.debug("Now displaying: " + (lat*MoreMath.FAC_RADTODEC) + "|" + (lon*MoreMath.FAC_RADTODEC));
+		center.setLatLon(lat, lon,true);
+		this.scale = scale;
+		updatePosition();
+	}
 
 	public synchronized void receivePosItion(Position pos) {
+		logger.info("New position: " + pos);
 		this.pos = pos;
 		collected++;
 		if (gpsRecenter) {
 			center.setLatLon(pos.latitude, pos.longitude);
-		}
-		projection = new Mercator(center, scale, getWidth(), getHeight());
-		pc.setP( projection);
-		pc.center = center.clone();
-		pc.scale = scale;		
-		speed = (int) (pos.speed * 3.6f);
-		if (gpx != null){
+		}		
+		speed = (int) (pos.speed * 3.6f);		
+		if (gpx.isRecordingTrk()){
 			try {
-				PositionMark addPos = gpx.addPosition(pos);
-				if (addPos != null){
-					if (recordMark == null){
-						recordMark = new Vector();
-					}
-					addPos.lat=center.radlat;
-					addPos.lon=center.radlon;
-					recordMark.addElement(addPos);
-				}
+				gpx.addTrkPt(pos);				
 			} catch (Exception e) {
 				receiveMessage(e.getMessage());
 			} 
@@ -742,7 +846,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		if (speed > 1){
 			course = (int) pos.course;
 		}
-		repaint(0, 0, getWidth(), getHeight());
+		updatePosition();
 	}
 
 	public synchronized void receiveMessage(String s) {
@@ -819,8 +923,13 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		if (zl == 0) {
 			dict.getCenter(center);
 			projection = new Mercator(center, scale, getWidth(), getHeight());
+			if (pc != null) {				
+				pc.setP(projection);
+				pc.center = center.clone();
+				pc.scale = scale;
+			}
 		}
-		repaint(0, 0, getWidth(), getHeight());
+		updatePosition();
 	}
 
 	public void receiveStatistics(int[] statRecord, byte qualtity) {
@@ -866,8 +975,8 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 	}
 
-	public String getName(Short idx) {
-		if (idx == null)
+	public String getName(int idx) {
+		if (idx < 0)
 			return null;
 		return namesThread.getName(idx);
 	}
@@ -882,6 +991,8 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 	public void show() {
 		Display.getDisplay(parent).setCurrent(this);
+		imageCollector.newDataReady();
+		requestRedraw();
 	}
 
 	public Configuration getConfig() {
@@ -918,4 +1029,24 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			e.printStackTrace();
 		}
 	}
+	
+	/**
+	 * If we are running out of memory, try
+	 * dropping all the caches in order to try
+	 * and recover from out of memory errors.
+	 * Not guaranteed to work, as it needs
+	 * to allocate some memory for dropping
+	 * caches.
+	 */
+	public void dropCache() { 
+		tileReader.dropCache(); 
+		dictReader.dropCache(); 
+		System.gc(); 
+		namesThread.dropCache(); 
+		System.gc(); 
+		if (gpx != null) { 
+			gpx.dropCache(); 
+		} 
+	}
+
 }

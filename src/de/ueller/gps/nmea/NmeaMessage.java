@@ -1,4 +1,9 @@
 package de.ueller.gps.nmea;
+/*
+ * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net
+ * 			Copyright (c) 2008 Kai Krueger apm at users dot sourceforge dot net 
+ * See Copying
+ */
 /**
  * Geographic Location in Lat/Lon
  *  field #:  0   1      2  3       4
@@ -58,7 +63,7 @@ import de.ueller.midlet.gps.LocationMsgReceiver;
 import de.ueller.midlet.gps.Logger;
 
 public class NmeaMessage {
-	protected static final Logger logger = Logger.getInstance(QueueReader.class,Logger.TRACE);
+	protected static final Logger logger = Logger.getInstance(NmeaMessage.class,Logger.TRACE);
 	public StringBuffer buffer=new StringBuffer(80);
 	private static String spChar=",";
 	private float head,speed,alt;
@@ -170,7 +175,7 @@ public class NmeaMessage {
 				int time_tmp = (int)getFloatToken((String)param.elementAt(1));
 				cal.set(Calendar.SECOND, time_tmp % 100);
 				cal.set(Calendar.MINUTE, (time_tmp / 100) % 100);
-				cal.set(Calendar.HOUR, (time_tmp / 10000) % 100);
+				cal.set(Calendar.HOUR_OF_DAY, (time_tmp / 10000) % 100);
 				
 				// lat
 				float lat=getLat((String)param.elementAt(2));
@@ -200,7 +205,7 @@ public class NmeaMessage {
 				int time_tmp = (int)getFloatToken((String)param.elementAt(1));
 				cal.set(Calendar.SECOND, time_tmp % 100);
 				cal.set(Calendar.MINUTE, (time_tmp / 100) % 100);
-				cal.set(Calendar.HOUR, (time_tmp / 10000) % 100);
+				cal.set(Calendar.HOUR_OF_DAY, (time_tmp / 10000) % 100);
 				
 				//Status A=active or V=Void.
 				String valSolution = (String)param.elementAt(2);
@@ -228,8 +233,8 @@ public class NmeaMessage {
 				head=getFloatToken((String)param.elementAt(8));
 				//Date
 				int date_tmp = getIntegerToken((String)param.elementAt(9));				
-				cal.set(Calendar.YEAR, 1900 + date_tmp % 100);
-				cal.set(Calendar.MONTH, (date_tmp / 100) % 100);
+				cal.set(Calendar.YEAR, 2000 + date_tmp % 100);
+				cal.set(Calendar.MONTH, ((date_tmp / 100) % 100) - 1);
 				cal.set(Calendar.DAY_OF_MONTH, (date_tmp / 10000) % 100);				
 			    //Magnetic Variation
 				Position p=new Position(lat,lon,alt,speed,head,0,cal.getTime());
@@ -283,14 +288,17 @@ public class NmeaMessage {
 		return Float.parseFloat(s);
 	}
 	private float getLat(String s){
+		if (s.length() < 2)
+			return 0.0f;
 		int lat=Integer.parseInt(s.substring(0,2));
 		float latf=Float.parseFloat(s.substring(2));
 		return lat+latf/60;
 	}
 	private float getLon(String s){
+		if (s.length() < 3)
+			return 0.0f;
 		int lon=Integer.parseInt(s.substring(0,3));
 		float lonf=Float.parseFloat(s.substring(3));
 		return lon+lonf/60;
-	}
-	
+	}	
 }

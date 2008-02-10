@@ -30,6 +30,8 @@ import de.ueller.midlet.gps.routing.RouteNodeTools;
 
 
 public class GpsMid extends MIDlet implements CommandListener{
+	/** */
+	private static GpsMid instance;
     /** A menu list instance */
     private static final String[] elements = { "Trace","Search","Setup","About","Log"};
 
@@ -59,6 +61,7 @@ private Trace trace=null;
 
 
 	public GpsMid() {
+		instance = this;
 		System.out.println("Init GpsMid");
 		menu.addCommand(EXIT_CMD);
 		menu.addCommand(OK_CMD);
@@ -201,5 +204,7 @@ private Trace trace=null;
 		return config;
 	}
 
-
+	public static GpsMid getInstance() {
+		return instance;
+	}
 }

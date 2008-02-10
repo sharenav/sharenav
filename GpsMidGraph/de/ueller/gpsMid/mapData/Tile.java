@@ -23,6 +23,7 @@ public abstract class Tile {
 	public static final byte TYPE_ROUTEDATA = 5;
 	public static final byte TYPE_ROUTECONTAINER = 6;
 	public static final byte TYPE_ROUTEFILE = 7;
+	public static final byte TYPE_WAYPOINT = 8;
 
 	public float minLat;
 	public float maxLat;
@@ -48,7 +49,7 @@ public abstract class Tile {
 	 */
 	public abstract void paintNonArea(PaintContext pc);
 	public abstract boolean cleanup(int level);
-	public abstract void getWay(PaintContext pc,PositionMark pm,Way w);
+	//public abstract void getWay(PaintContext pc,PositionMark pm,Way w);
 	
 	boolean contain(ScreenContext pc){
 //		System.out.println(this);

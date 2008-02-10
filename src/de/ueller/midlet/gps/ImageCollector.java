@@ -11,7 +11,8 @@ import de.ueller.midlet.gps.data.Mercator;
 import de.ueller.midlet.gps.tile.Images;
 import de.ueller.midlet.gps.tile.PaintContext;
 /*
- * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net 
+ * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net
+ * 			Copyright (c) 2008 Kai Krueger apm at users dot sourceforge dot net 
  * See Copying
  * 
  * this class collects all visible obeject to a offline image for later painting .
@@ -153,6 +154,14 @@ public class ImageCollector implements Runnable {
 //				if (t[4] != null){
 //					t[4].paint(pc[nextCreate]);
 //				}
+
+				/**
+				 * Drawing waypoints
+				 */
+				if (t[5] != null){
+				    t[5].paint(pc[nextCreate]);
+				}
+
 				newCollected();
 				createImageCount++;
 				if (needRedraw){
@@ -219,7 +228,7 @@ public class ImageCollector implements Runnable {
 				oldCenter.x,
 				oldCenter.y,
 				Graphics.VCENTER|Graphics.HCENTER); 
-		if (pc[nextPaint].actualWay != null && pc[nextPaint].actualWay.nameIdx != null){
+		if (pc[nextPaint].actualWay != null && pc[nextPaint].actualWay.nameIdx != -1){
 			String name=screenPc.trace.getName(pc[nextPaint].actualWay.nameIdx);
 			String maxspeed=null;
 			if (pc[nextPaint].actualWay.maxspeed != 0){

@@ -1,6 +1,7 @@
 package de.ueller.midlet.gps;
 /*
- * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net 
+ * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net
+ * 			Copyright (c) 2008 Kai Krueger apm at users dot sourceforge dot net 
  * See Copying
  */
 
@@ -19,11 +20,11 @@ import javax.microedition.lcdui.List;
 import de.ueller.gps.data.Configuration;
 import de.ueller.midlet.gps.options.OptionsRender;
 
-public class GuiDiscover implements CommandListener, GpsMidDisplayable {
+public class GuiDiscover implements CommandListener, GpsMidDisplayable, SelectionListener {
 
 	/** A menu list instance */
 	private static final String[]	elements		= { "Input options","Discover GPS","Render options",
-			"GPX reciever"						};
+			"GPX reciever (BT)", "GPX receiver (file)"};
 
 	private static final String[]	empty			= {};
 
@@ -65,16 +66,14 @@ public class GuiDiscover implements CommandListener, GpsMidDisplayable {
 	private int						state;
 
 	private final static int		STATE_ROOT		= 0;
-
-	private final static int		STATE_FS		= 1;
-
 	private final static int		STATE_BT		= 2;
 	private final static int		STATE_LP		= 3;
 	private final static int		STATE_RBT		= 4;
+	
 	private Vector urlList; 
 	private Vector friendlyName;
 	ChoiceGroup locProv;
-	String[] devices={"None","SIRF GPS","NEMA GPS"
+	/*String[] devices={"None","SIRF GPS","NEMA GPS"
 			//#if polish.api.locationapi
 			,"JSR179"
 			//#endif
@@ -84,7 +83,7 @@ public class GuiDiscover implements CommandListener, GpsMidDisplayable {
 			,2
 			//#endif
 			};
-	
+	*/
 
 	public GuiDiscover(GpsMid parent) {
 		this.parent = parent;
@@ -96,13 +95,14 @@ public class GuiDiscover implements CommandListener, GpsMidDisplayable {
 		menuFS.setCommandListener(this);
 		menuSelectLocProv.addCommand(BACK_CMD);
 		menuSelectLocProv.addCommand(OK_CMD);
-		locProv=new ChoiceGroup("input from:",Choice.EXCLUSIVE,devices,new Image[devices.length]);
+		locProv=new ChoiceGroup("input from:",Choice.EXCLUSIVE,Configuration.LOCATIONPROVIDER,new Image[Configuration.LOCATIONPROVIDER.length]);
 		int selIdx=Configuration.LOCATIONPROVIDER_NONE;
-		for (int i=0;i<devices.length;i++){
+		selIdx = parent.getConfig().getLocationProvider();
+		/*for (int i=0;i<devices.length;i++){
 			if (devicesSaveid[i]==parent.getConfig().getLocationProvider()){
 				selIdx=i;
 			}
-		}
+		}*/
 		locProv.setSelectedIndex(selIdx, true);
 		menuSelectLocProv.append(locProv);
 		menuSelectLocProv.setCommandListener(this);
@@ -126,9 +126,9 @@ public class GuiDiscover implements CommandListener, GpsMidDisplayable {
 		if (c == OK_CMD){
 			switch (state){
 			case STATE_LP:
-				parent.getConfig().setLocationProvider(devicesSaveid[locProv.getSelectedIndex()]);
+				parent.getConfig().setLocationProvider(locProv.getSelectedIndex());
 			}
-			show();
+			parent.show();
 		}
 		switch (state) {
 			case STATE_ROOT:
@@ -170,6 +170,14 @@ public class GuiDiscover implements CommandListener, GpsMidDisplayable {
 						
 						gps = new DiscoverGps(this,DiscoverGps.UUDI_FILE);
 						break;
+					case 4:
+						//#if polish.api.pdaapi
+						FsDiscover fsd = new FsDiscover(this, this);
+						fsd.show();
+						//#else
+						//logger.error("Files system support is not compiled into this version");
+						//#endif
+						break;
 				}
 				break;
 			case STATE_BT:
@@ -179,10 +187,7 @@ public class GuiDiscover implements CommandListener, GpsMidDisplayable {
 			case STATE_RBT:
 				parent.getConfig().setGpxUrl((String) urlList.elementAt(menuBT.getSelectedIndex()));
 				parent.show();
-				break;
-//			case STATE_FS:
-//				parent.setRootFs(menuFS.getString(menuFS.getSelectedIndex()));
-//				break;
+				break;			
 			case STATE_LP:
 				break;
 		}
@@ -244,6 +249,13 @@ public class GuiDiscover implements CommandListener, GpsMidDisplayable {
 				menuBT.append(e.getMessage(), null);
 			}
 		}
+		
+	}
+
+	public void selectedFile(String url) {
+		System.out.println("selected File: " + url);
+		url = url.substring(0, url.lastIndexOf('/'));
+		parent.getConfig().setGpxUrl(url);
 		
 	}
 }

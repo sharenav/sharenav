@@ -1,4 +1,8 @@
 package de.ueller.gpsMid.mapData;
+/*
+ * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net 
+ * See Copying
+ */
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -45,7 +49,7 @@ public class FileTile extends Tile implements QueueableTile {
 		return "FT" + zl + "-" + fileId + ":" + lastUse;
 	}
 
-	public void getWay(PaintContext pc,PositionMark pm, Way w) {
+/*	public void getWay(PaintContext pc,PositionMark pm, Way w) {
 			if (contain(pm)) {
 				if (tile == null){
 					try {
@@ -59,7 +63,7 @@ public class FileTile extends Tile implements QueueableTile {
 					tile.getWay(pc,pm, w);
 				}
 			}
-		}
+		}*/
 
 	private void paint(PaintContext pc, int method) {
 		if (contain(pc)) {

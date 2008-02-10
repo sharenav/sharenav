@@ -83,7 +83,7 @@ public class ContainerTile extends Tile {
 //		}
 		
 	}
-	public void getWay(PaintContext pc,PositionMark pm,Way w){
+/*	public void getWay(PaintContext pc,PositionMark pm,Way w){
 		if (contain(pm)){
 			if (t1 != null) {
 				//#debug
@@ -99,7 +99,7 @@ public class ContainerTile extends Tile {
 			cleanup(4);
 		}
 		
-	}
+	}*/
 	
 	public void paint(PaintContext pc) {
 		//#debug

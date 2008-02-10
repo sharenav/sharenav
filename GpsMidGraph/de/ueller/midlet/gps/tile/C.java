@@ -9,6 +9,7 @@ public class C {
 	public final static byte NODE_MASK_TYPE=0x2;
 	public final static byte NODE_MASK_NAME=0x4;
 	public final static byte NODE_MASK_ROUTENODE=0x8;
+	public final static byte NODE_MASK_NAMEHIGH=0x10;
 	
 	// node with name and no image
 	public final static byte NODE_PLACE_CITY=1;

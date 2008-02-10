@@ -14,7 +14,8 @@ public class NamesNew extends QueueReader {
 		// TODO Auto-generated method stub
 
 	}
-	private void readIndex() throws IOException {
+	
+/*	private void readIndex() throws IOException {
 		InputStream is = getClass().getResourceAsStream("/names-idx.dat");
 //		logger.info("read names-idx");
 		DataInputStream ds = new DataInputStream(is);
@@ -31,5 +32,5 @@ public class NamesNew extends QueueReader {
 		}
 //		logger.info("read names-idx ready");
 	}
-
+*/
 }

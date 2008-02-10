@@ -32,6 +32,7 @@ public class Node extends Entity {
 	 * @param is
 	 * @throws IOException
 	 */
+    /*
 	public Node(DataInputStream	is) throws IOException{
 //		logger.info("read node");
         radlat = is.readFloat();
@@ -39,11 +40,12 @@ public class Node extends Entity {
 		byte f=is.readByte();
 		if ((f & 1) == 1){
 //			name=is.readUTF();
-			nameIdx=new Short(is.readShort());
+			nameIdx=is.readShort();
 			type=is.readByte();
 		}
 		
 	}
+	*/
 
 	
     /**
@@ -200,13 +202,13 @@ public class Node extends Entity {
     	pc.getP().forward(radlat, radlon, pc.swapLineP, true);
     	if  (img != null){
 //        	logger.debug("draw img " + img);
-    		if (nameIdx == null) {
+    		if (nameIdx == -1) {
 				pc.g.drawImage(img, pc.swapLineP.x, pc.swapLineP.y, Graphics.VCENTER | Graphics.HCENTER);
 			} else {
 				pc.g.drawImage(img, pc.swapLineP.x, pc.swapLineP.y, Graphics.BOTTOM | Graphics.HCENTER);
 			}
     	}
-    	if (nameIdx != null){
+    	if (nameIdx != -1){
 //        	logger.debug("draw txt " + );
     		String name=pc.trace.getName(nameIdx);
     		if (name != null){
@@ -222,8 +224,8 @@ public class Node extends Entity {
     
     public Node clone(){
     	Node n=new Node();
-    	if (nameIdx != null) {
-			n.nameIdx=new Short(nameIdx.shortValue());
+    	if (nameIdx != -1) {
+			n.nameIdx=nameIdx;
 		}
     	n.type=type;
     	n.radlat=radlat;

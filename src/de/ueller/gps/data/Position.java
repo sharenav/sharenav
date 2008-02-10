@@ -62,4 +62,13 @@ public class Position {
 //				e.printStackTrace();
 			}
 		}		
+
+		public String toString() {
+			StringBuffer sb = new StringBuffer("Position: ");
+			sb.append(latitude).append("/").append(longitude).append("  ");
+			sb.append("height: ").append(altitude).append("m   ");
+			sb.append("Speed: ").append((speed*3.6f)).append("km/h  ");
+			sb.append("Course: ").append(course);
+			return sb.toString();
+		}
 }
