@@ -23,7 +23,7 @@ import javax.microedition.lcdui.List;
 
 public class FsDiscover
 //#if polish.api.pdaapi
-	extends List implements Runnable, GpsMidDisplayable, CommandListener
+	implements Runnable, GpsMidDisplayable, CommandListener
 	//#endif
 {
 //#if polish.api.pdaapi
@@ -41,55 +41,64 @@ public class FsDiscover
 	private String url = "file:///";
 	private Vector urlList;
 	private boolean root;
+	
+	private List list;	
 
-	public FsDiscover(GpsMidDisplayable parent, SelectionListener sl) {
-			super("File chooser", Choice.IMPLICIT);
+	public FsDiscover(GpsMidDisplayable parent, SelectionListener sl) {			
 			this.parent = parent;
 			this.sl = sl;			
-			this.addCommand(BACK_CMD);
-			this.addCommand(OK_CMD);
-			this.addCommand(UP_CMD);
-			this.addCommand(DOWN_CMD);
-			this.setCommandListener(this);
 			urlList = new Vector();
-			this.setSelectCommand(DOWN_CMD);
-			
-			// we have to initialize a system in different thread...
-//			logger.debug("start Thread");
 			root = true;
 			processorThread = new Thread(this);
 			processorThread.start();
+			this.list = createEmptyList();
+	}
+	
+	private List createEmptyList() {
+		List list = new List(url, Choice.IMPLICIT);
+		list.addCommand(BACK_CMD);
+		list.addCommand(OK_CMD);		
+		list.setCommandListener(this);
+		list.setSelectCommand(DOWN_CMD);
+		return list;
 	}
 	
 
 	public void run() {
+		try {
 		if (root)
 			getRoots();
 		else
 			getRootContent(url);
+		} catch (SecurityException se) {
+			logger.exception("Security exception: You are not permitted to access this restricted API :-(", se);
+		}
 	}
-    private void getRoots() {
-    	this.deleteAll();
+    private void getRoots() {    	
+    	//Work around the problem that list.deleteAll might cause problems on a SE K750
+    	list = createEmptyList();    	
         urlList.removeAllElements();
     	//#if polish.api.pdaapi
 //    	logger.debug("getRoot");
-        Enumeration drives = FileSystemRegistry.listRoots();
+        Enumeration drives = FileSystemRegistry.listRoots();        
 //        logger.debug("The valid roots found are: ");
         while(drives.hasMoreElements()) {
            String root = (String) drives.nextElement();
-           logger.debug("found "+root);
-           this.append(root, null);
+           list.append(root, null);
            urlList.addElement(url + root);
         }
         //#else
-        this.append("API not supported by device", null);
+        list.append("API not supported by device", null);
         //#endif
+        //Display the new list. We just assume, that the old list was still displaying
+        //As an attempt to check if that was the case didn't seem to work reliably on
+        //some mobiles
+        show();
      }
     private void getRootContent(String root) {
     	//#if polish.api.pdaapi
         try {
-        	logger.debug("List of files and directories under "+root+":");
-        	
+        	logger.debug("List of files and directories under "+root+":");        	
            FileConnection fc = (FileConnection) Connector.open(root,Connector.READ);
            // Get a filtered list of all files and directories.
            // True means: include hidden files.
@@ -97,16 +106,19 @@ public class FsDiscover
            // list() with no arguments.           
            if (!fc.isDirectory())
         	   return;
-           this.deleteAll();
+           list = createEmptyList();
            urlList.removeAllElements();
+           list.append("..", null);
+           urlList.addElement(url + "Directory Up");
            Enumeration filelist = fc.list();
            while(filelist.hasMoreElements()) {
               String fileName = (String) filelist.nextElement();
               logger.debug("found file: " + fileName);
-              this.append(fileName, null);
+              list.append(fileName, null);
               urlList.addElement(url + fileName);              
            }   
            fc.close();
+           show();
         } catch (IOException ioe) {
            logger.error(ioe.getMessage());
         }
@@ -122,19 +134,26 @@ public class FsDiscover
 			parent.show();
 			return;
 		}
+    	if (list.getSelectedIndex() < 0) {
+    		logger.error("No element selected");
+    		return;    		
+    	}
     	if (c == OK_CMD) {
-    		url = (String)urlList.elementAt(this.getSelectedIndex());
-    		sl.selectedFile(url);
-			parent.show();
+    		url = (String)urlList.elementAt(list.getSelectedIndex());
+    		parent.show();
+    		sl.selectedFile(url);			
 			return;
 		}
     	if (c == DOWN_CMD) {
-    		root = false;    		
-    		url = (String)urlList.elementAt(this.getSelectedIndex());
-    		this.setTitle(url);
-    		processorThread = new Thread(this);
-    		processorThread.start();
-			return;
+    		root = false;
+    		if (list.getString(list.getSelectedIndex()).equalsIgnoreCase("..")) {
+    			c = UP_CMD;
+    		} else {
+    			url = (String)urlList.elementAt(list.getSelectedIndex());    		
+    			processorThread = new Thread(this);
+    			processorThread.start();
+    			return;
+    		}			
 		}
     	if (c == UP_CMD) {
     		root = false;
@@ -143,8 +162,7 @@ public class FsDiscover
     		if (url.length() < 9) {  //file:///
     			url = "file:///";
     			root = true;
-    		}
-    		this.setTitle(url);    		
+    		}    		    		
     		processorThread = new Thread(this);
     		processorThread.start();
 			return;
@@ -153,9 +171,8 @@ public class FsDiscover
     }
 
 
-	public void show() {
-		
-		Display.getDisplay(GpsMid.getInstance()).setCurrent(this);		
+	public void show() {		
+		Display.getDisplay(GpsMid.getInstance()).setCurrent(list);		
 	}
 	//#endif
 
