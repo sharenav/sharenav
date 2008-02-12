@@ -157,7 +157,7 @@ public class GpxTile extends Tile {
 			PositionMark [] waypts2 = t2.listWayPt();
 			PositionMark [] waypts = new PositionMark[waypts1.length + waypts2.length];
 			System.arraycopy(waypts1, 0, waypts, 0, waypts1.length);
-			System.arraycopy(waypts1, 0, waypts, waypts1.length, waypts2.length);
+			System.arraycopy(waypts2, 0, waypts, waypts1.length, waypts2.length);
 			return waypts;
 			
 		} else {
