@@ -521,7 +521,9 @@ public class Gpx extends Tile implements Runnable {
 			url += name + ".gpx";
 			logger.info("Opening file " + url);
 			session = Connector.open(url);
-			FileConnection fileCon = (FileConnection) session; 
+			FileConnection fileCon = (FileConnection) session;
+			if (fileCon == null)
+				throw new IOException("Couldn't open url " + url);
 			if (!fileCon.exists())
 				fileCon.create();
 			
@@ -641,6 +643,10 @@ public class Gpx extends Tile implements Runnable {
 				name = currentTrk.displayName;
 			} else if (sendWpt)
 				name = "Waypoints";
+			
+			if (url == null) {
+				logger.error("No GPX receiver specified. Please select a GPX receiver in the setup menue");
+			}
 			
 			OutputStream oS = null;
 			if (url.startsWith("file:")) {
