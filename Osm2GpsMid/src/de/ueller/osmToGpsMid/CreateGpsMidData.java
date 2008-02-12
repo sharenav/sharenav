@@ -187,6 +187,7 @@ public class CreateGpsMidData {
 		LinkedList<Way> ways;
 		Collection<Node> nodes;
 		int maxSize;
+		boolean unsplittableTile;
 		/*
 		 * Using recursion can cause a stack overflow on large projects,
 		 * so need an explicit stack that can grow larger;
@@ -196,9 +197,9 @@ public class CreateGpsMidData {
 		expTiles.push(new TileTuple(t,tileBound));
 		byte [] connOut;
 		System.out.println("Exporting Tiles");
-		while (!expTiles.isEmpty()) {
-			
+		while (!expTiles.isEmpty()) {			
 			TileTuple tt = expTiles.pop();
+			unsplittableTile = false;
 			t = tt.t; tileBound = tt.bound;
 			ways=new LinkedList<Way>();
 			nodes=new ArrayList<Node>();
@@ -216,12 +217,22 @@ public class CreateGpsMidData {
 				addWaysCompleteInBound(ways,t.ways,t.zl,realBound);
 				if (ways.size() > 2*mostlyInBound){
 					realBound=new Bounds();
-					ways=getWaysInBound(t.ways, t.zl,tileBound,realBound);
+					ways=getWaysInBound(t.ways, t.zl,tileBound,realBound);					
 				}				
 				nodes=getNodesInBound(t.nodes,t.zl,realBound);
 				if (ways.size() <= 255){
 					out=createMidContent(ways,nodes,t);
-				}				
+				}
+				/**
+				 * If the number of nodes and ways in the new tile is the same, and the bound
+				 * has already been shrunk to less than 0.001°, then give up and declare it a
+				 * unsplittable Tile and just live with the fact that this tile is to big.
+				 * Otherwise we can get into an endless loop of trying to split up this tile
+				 */
+				if ((t.nodes.size() == nodes.size()) && (t.ways.size() == ways.size()) && (tileBound.maxLat - tileBound.minLat < 0.001)) {
+					System.out.println("WARNING: could not reduce tile size");
+					unsplittableTile = true;										
+				}
 				t.nodes=nodes;
 				t.ways=ways;
 			} else {
@@ -235,8 +246,8 @@ public class CreateGpsMidData {
 			}			
 
 			// split tile if more then 255 Ways or binary content > MAX_TILE_FILESIZE but not if only one Way
-			if (ways.size() > 255 || (out.length > maxSize && ways.size() != 1)){
-				//			System.out.println("create Subtiles size="+out.length+" ways=" + ways.size());
+			if ((!unsplittableTile) && ((ways.size() > 255 || (out.length > maxSize && ways.size() != 1)))){
+				//System.out.println("create Subtiles size="+out.length+" ways=" + ways.size());
 				t.bounds=realBound.clone();
 				if (t.zl != ROUTEZOOMLEVEL){
 					t.type=Tile.TYPE_CONTAINER;				
