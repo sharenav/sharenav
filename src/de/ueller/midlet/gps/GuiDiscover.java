@@ -7,6 +7,7 @@ package de.ueller.midlet.gps;
 
 import java.util.Vector;
 
+import javax.microedition.lcdui.Alert;
 import javax.microedition.lcdui.Choice;
 import javax.microedition.lcdui.ChoiceGroup;
 import javax.microedition.lcdui.Command;
@@ -252,10 +253,8 @@ public class GuiDiscover implements CommandListener, GpsMidDisplayable, Selectio
 		
 	}
 
-	public void selectedFile(String url) {
-		System.out.println("selected File: " + url);
-		url = url.substring(0, url.lastIndexOf('/'));
-		parent.getConfig().setGpxUrl(url);
-		
+	public void selectedFile(String url) {		
+		url = url.substring(0, url.lastIndexOf('/') + 1);
+		parent.getConfig().setGpxUrl(url);				
 	}
 }
