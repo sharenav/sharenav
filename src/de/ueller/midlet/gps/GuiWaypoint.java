@@ -130,7 +130,10 @@ public class GuiWaypoint extends List implements CommandListener,
 					}					
 				}
 			}
-			if (idx > -1) {
+			if (idx == -1) {
+				logger.error("No waypoint selected");
+				return;
+			} else if (idx > -1) {
 				parent.setTarget(waypoints[idx]);				
 			} else {
 				IntPoint intPoint1 = new IntPoint(10,10);
