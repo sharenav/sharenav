@@ -196,7 +196,7 @@ private Trace trace=null;
 		if (l != null){
 //			#debug
         System.out.println(msg);
-//        loghist.append(msg, null);
+        loghist.append(msg, null);
 		}
 	}
 
