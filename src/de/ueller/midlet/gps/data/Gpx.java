@@ -67,8 +67,12 @@ public class Gpx extends Tile implements Runnable {
 		boolean time = false;
 		public void startElement(String namespaceURI, String localName, String qName, Attributes atts) {
 			if (qName.equalsIgnoreCase("wpt")) {
-				float node_lat = Float.parseFloat(atts.getValue("lat"));
-				float node_lon = Float.parseFloat(atts.getValue("lon"));
+				/**
+				 * Gpx files have coordinates in degrees. We store them internally as radians.
+				 * So we need to convert these.
+				 */
+				float node_lat = Float.parseFloat(atts.getValue("lat"))*MoreMath.FAC_DECTORAD;
+				float node_lon = Float.parseFloat(atts.getValue("lon"))*MoreMath.FAC_DECTORAD;
 				wayPt = new PositionMark(node_lat,node_lon);				
 			} else if (qName.equalsIgnoreCase("name")) {
 				name = true;				
@@ -77,6 +81,11 @@ public class Gpx extends Tile implements Runnable {
 			} else if (qName.equalsIgnoreCase("trkseg")) {
 				
 			} else if (qName.equalsIgnoreCase("trkpt")) {
+				/**
+				 * Positions seem to be handeled in degree rather than radians
+				 * as all the other coordinates.
+				 * Be careful with the conversions!
+				 */
 				p.latitude = Float.parseFloat(atts.getValue("lat"));
 				p.longitude = Float.parseFloat(atts.getValue("lon"));
 				p.altitude = 0;

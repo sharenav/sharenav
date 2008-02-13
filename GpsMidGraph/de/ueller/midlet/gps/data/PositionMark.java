@@ -9,6 +9,9 @@ import de.ueller.gpsMid.mapData.SingleTile;
 
 public class PositionMark extends PersistEntity{
 	
+	/**
+	 * Coordinates should be in radians
+	 */
 	public float lat;
 	public float lon;
 	public Entity e;
@@ -34,7 +37,7 @@ public class PositionMark extends PersistEntity{
 	}
 	
 	public String toString(){
-		return new String(id + ": "+displayName+"("+lat+"/"+lon+") " + st + e);
+		return new String(id + ": "+displayName+"("+(lat*MoreMath.FAC_RADTODEC)+"/"+lon*(MoreMath.FAC_RADTODEC)+") " + st + e);
 	}
 	public PositionMark(float lat, float lon){
 		this.lat = lat;
