@@ -196,7 +196,11 @@ private Trace trace=null;
 		if (l != null){
 //			#debug
         System.out.println(msg);
-        loghist.append(msg, null);
+        /**
+         * Adding the log hist seems to cause very wierd problems
+         * even in the emulator. So leave this commented out
+         */
+        //loghist.append(msg, null);
 		}
 	}
 
