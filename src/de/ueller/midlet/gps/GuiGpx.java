@@ -25,6 +25,8 @@ public class GuiGpx extends List implements CommandListener,
 	private final Command CLEAR_CMD = new Command("clear all", Command.ITEM, 3);	
 	private final Command BACK_CMD = new Command("Back", Command.BACK, 5);
 
+	private boolean uploading;
+	
 	private final Trace parent;
 	
 	private PersistEntity [] trks;
@@ -58,12 +60,14 @@ public class GuiGpx extends List implements CommandListener,
 	public void commandAction(Command c, Displayable d) {
 		logger.debug("got Command " + c);
 		if (c == SEND_CMD) {
+			uploading = true;
 			int idx = this.getSelectedIndex();
 			parent.gpx.sendTrk(parent.getConfig().getGpxUrl(), this, trks[idx]);			
 			return;
 		}
 		if (c == LOAD_CMD) {
-			GuiGpxLoad ggl = new GuiGpxLoad(this);
+			uploading = false;
+			GuiGpxLoad ggl = new GuiGpxLoad(this, this);
 			ggl.show();
 			return;
 		}
@@ -88,7 +92,12 @@ public class GuiGpx extends List implements CommandListener,
 	
 	public void completedUpload() {
 		Alert alert = new Alert("Information");
-		alert.setString("Completed GPX upload");
+		if (uploading) {
+			alert.setString("Completed GPX upload");
+		} else {
+			alert.setString("Completed GPX import");
+			initTracks();
+		}
 		Display.getDisplay(parent.getParent()).setCurrent(alert);
 	}
 

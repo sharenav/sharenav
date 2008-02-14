@@ -24,14 +24,16 @@ public class GuiWaypoint extends List implements CommandListener,
 	private final Command SEND_ALL_CMD = new Command("Send All", Command.ITEM, 1);	
 	private final Command LOAD_CMD = new Command("Load Gpx", Command.ITEM, 2);
 	private final Command SEND_CMD = new Command("Send", Command.ITEM, 4);
-	private final Command DEL_CMD = new Command("delete", Command.ITEM, 2);	
+	private final Command DEL_CMD = new Command("Delete", Command.ITEM, 2);	
 	private final Command SALL_CMD = new Command("Select All", Command.ITEM, 2);
 	private final Command DSALL_CMD = new Command("Deselect All", Command.ITEM, 2);
 	private final Command BACK_CMD = new Command("Back", Command.BACK, 5);
 	private final Command GOTO_CMD = new Command("Display", Command.OK,6);
 
 	private PositionMark[] waypoints;
-	private final Trace parent;	
+	private final Trace parent;
+	
+	private boolean uploading;
 	
 	public GuiWaypoint(Trace parent) throws Exception {
 		super("Waypoints", List.MULTIPLE);
@@ -93,12 +95,14 @@ public class GuiWaypoint extends List implements CommandListener,
 		}
 		
 		if (c == SEND_ALL_CMD) {
+			uploading = true;
 			parent.gpx.sendWayPt(parent.getConfig().getGpxUrl(), this);			
 			return;
 			
 		}
-		if (c == LOAD_CMD) {			
-			GuiGpxLoad ggl = new GuiGpxLoad(this);
+		if (c == LOAD_CMD) {
+			uploading = false;
+			GuiGpxLoad ggl = new GuiGpxLoad(this, this);
 			ggl.show();
 			return;
 			
@@ -151,7 +155,12 @@ public class GuiWaypoint extends List implements CommandListener,
 	
 	public void completedUpload() {
 		Alert alert = new Alert("Information");
-		alert.setString("Completed GPX upload");
+		if (uploading) {
+			alert.setString("Completed GPX upload");
+		} else {
+			alert.setString("Completed GPX import");
+			initWaypoints();
+		}
 		Display.getDisplay(parent.getParent()).setCurrent(alert);
 	}
 

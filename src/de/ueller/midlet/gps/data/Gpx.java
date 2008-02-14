@@ -351,8 +351,9 @@ public class Gpx extends Tile implements Runnable {
 		}		
 	}
 	
-	public void receiveGpx(InputStream in) {
+	public void receiveGpx(InputStream in, UploadListener ul) {
 		this.in = in;
+		this.feedbackListener = ul;
 		if (in == null) {
 			logger.error("Could not open input stream to gpx file");
 		}
@@ -471,7 +472,8 @@ public class Gpx extends Tile implements Runnable {
 		} else {
 			logger.error("Did not know whether to send or receive");
 		}
-		
+		if (feedbackListener != null)
+			feedbackListener.completedUpload();
 		sendTrk = false;
 		sendWpt = false;
 	}
@@ -688,7 +690,7 @@ public class Gpx extends Tile implements Runnable {
 			} else{			
 				closeBluetoothObexSession();
 			}			
-			feedbackListener.completedUpload();
+			
 		} catch (IOException e) {			
 			logger.error("IOE:" + e);	
 		} catch (OutOfMemoryError oome) {

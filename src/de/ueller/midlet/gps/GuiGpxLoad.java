@@ -30,10 +30,12 @@ public class GuiGpxLoad extends List implements CommandListener,
 	private final Command BACK_CMD = new Command("Back", Command.BACK, 5);
 	
 	private GpsMidDisplayable parent;
+	private UploadListener feedbackListener;
 	
-	public GuiGpxLoad(GpsMidDisplayable parent) {
+	public GuiGpxLoad(GpsMidDisplayable parent, UploadListener ul) {
 		super("Load GPX files", List.EXCLUSIVE);
 		this.parent = parent;
+		this.feedbackListener = ul;
 		addCommand(BACK_CMD);
 		addCommand(SELECT_CMD);
 		setCommandListener(this);
@@ -83,7 +85,7 @@ public class GuiGpxLoad extends List implements CommandListener,
 			Connection c  = Connector.open(url);			
 			if (c instanceof InputConnection) {
 				InputConnection inConn = ((InputConnection)c);				
-				Trace.getInstance().gpx.receiveGpx(inConn.openInputStream());
+				Trace.getInstance().gpx.receiveGpx(inConn.openInputStream(), feedbackListener);
 				return;
 			}
 			logger.error("Unknown url type to load from: " + url);
