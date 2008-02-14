@@ -79,7 +79,9 @@ public class BundleGpsMid {
 		System.out.println("prepare " + c.getJarFileName());
 		InputStream appStream=c.getJarFile();
 		if (appStream == null) {
-			return;
+			System.out.println("ERROR: Couldn't find the jar file for " + c.getJarFileName());
+			System.out.println("Check the app parameter in the properties file for misspellings");
+			System.exit(1);
 		}
 		File file=new File(c.getTempBaseDir()+"/"+c.getJarFileName());
 		writeFile(appStream, file.getAbsolutePath());
