@@ -156,6 +156,7 @@ public class Gpx extends Tile implements Runnable {
 	
 	private boolean sendWpt;
 	private boolean sendTrk;
+	private boolean reloadWpt;
 	
 	private boolean adaptiveRec = true;
 	
@@ -178,9 +179,12 @@ public class Gpx extends Tile implements Runnable {
 	private GpxTile tile;
 	
 	public Gpx() {
-		tile = new GpxTile();
-		loadWaypointsFromDatabase();
+		tile = new GpxTile();		
 		loadTrksFromDatabase();
+		reloadWpt = true;
+		processorThread = new Thread(this);
+		processorThread.setPriority(Thread.MIN_PRIORITY);
+		processorThread.start();		
 	}
 	
 	public void displayWaypoints(boolean displayWpt) {
@@ -280,10 +284,20 @@ public class Gpx extends Tile implements Runnable {
 	}
 	
 	public void deleteWayPt(PositionMark waypt) {
+		deleteWayPt(waypt, null);
+	}
+	public void deleteWayPt(PositionMark waypt, UploadListener ul) {
+		this.feedbackListener = ul;
 		try {
 			wayptDatabase.deleteRecord(waypt.id);
-			tile.dropWayPt();
-			loadWaypointsFromDatabase();
+			if (processorThread != null && processorThread.isAlive()) {
+				/* Already reloading, nothing to do */
+				return;
+			}
+			reloadWpt = true;
+			processorThread = new Thread(this);
+			processorThread.setPriority(Thread.MIN_PRIORITY);
+			processorThread.start();
 		} catch (RecordStoreNotOpenException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -465,7 +479,24 @@ public class Gpx extends Tile implements Runnable {
 	}
 	
 	public void run() {
-		if (sendTrk || sendWpt) {
+		if (reloadWpt) {			
+			try {
+				/**
+				 * Sleep for a while to limit the number of reloads happening
+				 */
+				Thread.sleep(300);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			loadWaypointsFromDatabase();
+			reloadWpt = false;
+			if (feedbackListener != null) {
+				feedbackListener.completedUpload();
+				feedbackListener = null;
+			}
+			return;
+		} else if (sendTrk || sendWpt) {
 			sendGpx();
 		} else if (in != null) {
 			receiveGpx();
@@ -474,6 +505,7 @@ public class Gpx extends Tile implements Runnable {
 		}
 		if (feedbackListener != null)
 			feedbackListener.completedUpload();
+		feedbackListener = null;
 		sendTrk = false;
 		sendWpt = false;
 	}
@@ -483,6 +515,7 @@ public class Gpx extends Tile implements Runnable {
 	 */
 	private void loadWaypointsFromDatabase() {		
 		try {
+			tile.dropWayPt();
 			RecordEnumeration renum;
 			
 			logger.info("Loading waypoints into tile");

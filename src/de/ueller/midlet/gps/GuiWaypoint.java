@@ -70,14 +70,14 @@ public class GuiWaypoint extends List implements CommandListener,
 			return;
 		}
 		if (c == DEL_CMD) {
+			uploading = false;
 			boolean[] sel = new boolean[waypoints.length];
 			this.getSelectedFlags(sel);			
 			for (int i = 0; i < sel.length; i++) {
 				if (sel[i]) {
-					parent.gpx.deleteWayPt(waypoints[i]);
+					parent.gpx.deleteWayPt(waypoints[i], this);
 				}
 			}			
-			initWaypoints();
 			return;
 		}
 		if ((c == SALL_CMD) || (c == DSALL_CMD)) {
@@ -104,8 +104,7 @@ public class GuiWaypoint extends List implements CommandListener,
 			uploading = false;
 			GuiGpxLoad ggl = new GuiGpxLoad(this, this);
 			ggl.show();
-			return;
-			
+			return;			
 		}
 		
 		if (c == GOTO_CMD) {
