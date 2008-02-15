@@ -98,7 +98,7 @@ public class SingleTile extends Tile implements QueueableTile {
 			if (ways != null) {
 				for (int i = 0; i < ways.length; i++) {
 					if (abortPainting)
-						return
+						return;
 					Way w = ways[i];
 					if (w == null) continue;
 					//Determin if the way is an area or not. 
