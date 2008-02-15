@@ -45,9 +45,11 @@ public class Logger {
 		}
 	}
 	public void error(String msg){
+		//#mdebug error
 		if (level >= ERROR) {
 			app.log("E["+getClassName()+"] " + msg);
 		}
+		//#enddebug
 	}
 	public void exception(String msg, Exception e) {
 		//#mdebug error
@@ -56,19 +58,25 @@ public class Logger {
 		//#enddebug
 	}
 	public void info(String msg){
+		//#mdebug info
 		if (level >= INFO) {
 			app.log("I["+getClassName()+"] " + msg);
 		}
+		//#enddebug
 	}
 	public void debug(String msg){
+		//#mdebug debug
 		if (level >= DEBUG) {
 			app.log("D["+getClassName()+"] " + msg);
 		}
+		//#enddebug
 	}
 	public void trace(String msg){
+		//#mdebug debug
 		if (level >= TRACE) {
 			app.log("T["+getClassName()+"] " + msg);
 		}
+		//#enddebug
 	}
 	
 	private String getClassName() {
