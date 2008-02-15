@@ -301,7 +301,7 @@ public class Tile {
 //			System.out.println("resolve T2 with " + idxMin + " to "+ idxMax);
 		}
 		if (routeNodes != null){
-			System.out.println("Write Routenodes " + fid + " nodes " + routeNodes.size()+"  with " + idxMin + " to "+ idxMax);
+			//System.out.println("Write Routenodes " + fid + " nodes " + routeNodes.size()+"  with " + idxMin + " to "+ idxMax);
 			FileOutputStream cfo = new FileOutputStream(path+"/c"+fid+".d");
 			DataOutputStream cds = new DataOutputStream(cfo);
 			FileOutputStream fo = new FileOutputStream(path+"/t"+zl+fid+".d");

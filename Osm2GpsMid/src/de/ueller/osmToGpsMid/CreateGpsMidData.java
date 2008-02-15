@@ -119,7 +119,7 @@ public class CreateGpsMidData {
 		for (Node n : parser.nodes.values()) {
 			na.addName(n);
 		}
-		System.out.println("found " + na.getNames().size() + " names " + na.getNames().size() + " canon");
+		System.out.println("found " + na.getNames().size() + " names " + na.getCanons().size() + " canon");
 		na.calcNameIndex();
 		return (na);
 	}

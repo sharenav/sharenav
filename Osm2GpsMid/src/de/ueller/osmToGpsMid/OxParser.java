@@ -197,7 +197,7 @@ public class OxParser extends DefaultHandler{
 			current = null;
 		} else if (qName.equals("relation")) {
 			Relation r=(Relation) current;
-			System.out.println("got " + r);
+			//System.out.println("got " + r);
 			relations.add(r);
 			current=null;
 		}
