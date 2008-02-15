@@ -322,6 +322,10 @@ public class Gpx extends Tile implements Runnable {
 	public void saveTrk() {
 		try {
 			logger.debug("Finishing track with " + recorded + " points");
+			if (dos == null) {
+				logger.debug("Not currently recording, so can't save the track");
+				return;
+			}
 			dos.flush();			
 			ByteArrayOutputStream baosDb = new ByteArrayOutputStream();
 			DataOutputStream dosDb = new DataOutputStream(baosDb);
@@ -452,7 +456,8 @@ public class Gpx extends Tile implements Runnable {
 		tile.dropTrk();
 		tile.dropWayPt();
 		System.gc();
-		saveTrk();		
+		if (isRecordingTrk())
+			saveTrk();		
 	}
 	
 	public boolean cleanup(int level) {

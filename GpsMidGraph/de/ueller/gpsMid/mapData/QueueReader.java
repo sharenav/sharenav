@@ -72,7 +72,7 @@ public abstract class QueueReader implements Runnable{
 		notify();
 	}
 	
-	public void dropCache() {
+	public synchronized void dropCache() {
 		Tile tt;
 		int loop;
 		for (loop=0; loop < livingQueue.size(); loop++){
@@ -98,26 +98,32 @@ public abstract class QueueReader implements Runnable{
 						tt=(Tile) livingQueue.elementAt(loop);
 						if (tt.cleanup(3)){
 //							logger.info("cleanup living " + tt.fileId);
-							livingQueue.removeElementAt(loop--);
+							synchronized (this) {
+								livingQueue.removeElementAt(loop--);
+							}
 						}
 					}
 					for (loop=0; loop < requestQueue.size(); loop++){
 						tt=(Tile) requestQueue.elementAt(loop);
 						if (tt.cleanup(2)){
 //							logger.info("cleanup live " + tt.fileId);
-							requestQueue.removeElementAt(loop--);
+							synchronized (this) {
+								requestQueue.removeElementAt(loop--);
+							}
 						}
 					}
 					try {
 						Runtime runtime = Runtime.getRuntime();
 						if (runtime.freeMemory() > 25000){
-							if (requestQueue.size() > 0){
-								//#debug error
-								logger.debug("requestQueue size="+requestQueue.size());
-								tt=(Tile) requestQueue.firstElement();
-								requestQueue.removeElementAt(0);
-								readData(tt);
-								livingQueue.addElement(tt);
+							synchronized (this) {
+								if (requestQueue.size() > 0){
+									//#debug error
+									logger.debug("requestQueue size="+requestQueue.size());
+									tt=(Tile) requestQueue.firstElement();
+									requestQueue.removeElementAt(0);
+									readData(tt);
+									livingQueue.addElement(tt);
+								}
 							}
 						} else {
 							logger.info("Not much memory left, cleaning up an trying again");

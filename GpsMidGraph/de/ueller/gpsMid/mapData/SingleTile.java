@@ -41,6 +41,8 @@ public class SingleTile extends Tile implements QueueableTile {
 	Way[] ways;
 
 	byte state = 0;
+	
+	boolean abortPainting = false;
 
 
 //	 private final static Logger logger= Logger.getInstance(SingleTile.class,
@@ -84,7 +86,7 @@ public class SingleTile extends Tile implements QueueableTile {
 
 	}
 
-	public void paint(PaintContext pc, boolean area) {
+	public synchronized void paint(PaintContext pc, boolean area) {
 //		logger.info("paint Single");
 		float testLat;
 		float testLon;
@@ -95,6 +97,8 @@ public class SingleTile extends Tile implements QueueableTile {
 			lastUse = 0;
 			if (ways != null) {
 				for (int i = 0; i < ways.length; i++) {
+					if (abortPainting)
+						return
 					Way w = ways[i];
 					if (w == null) continue;
 					//Determin if the way is an area or not. 
@@ -149,6 +153,8 @@ public class SingleTile extends Tile implements QueueableTile {
 				}
 			}
 			for (short i = 0; i < type.length; i++) {
+				if (abortPainting)
+					return;
 				if (type[i] == 0) {
 					break;
 				}
@@ -177,13 +183,17 @@ public class SingleTile extends Tile implements QueueableTile {
 		if (state != STATE_NOTLOAD ) {
 			// logger.info("test tile unused fid:" + fileId + "c:"+lastUse);
 			if (lastUse > level) {
-				// nodes = null;
-				nameIdx = null;
-				nodeLat = null;
-				nodeLon = null;
-				type = null;
-				ways = null;
-				state = STATE_NOTLOAD;
+				abortPainting = true;
+				synchronized(this) {
+					// nodes = null;
+					nameIdx = null;
+					nodeLat = null;
+					nodeLon = null;
+					type = null;
+					ways = null;
+					state = STATE_NOTLOAD;
+				}
+				abortPainting = false;
 				// logger.info("discard content for tile " + fileId);
 				return true;
 			}

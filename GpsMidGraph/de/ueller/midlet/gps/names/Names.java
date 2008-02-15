@@ -165,7 +165,16 @@ public class Names implements Runnable {
 				pos = readNextWord(ds, pos, name,bufferSe);
 				//logger.info("test Name '" + name + "' at idx:" + actIdx);
 				if (actIdx == idx){
-					StringEntry se=(StringEntry) stringCache.get(idx);					
+					StringEntry se=(StringEntry) stringCache.get(idx);
+					if (se == null) {
+						/*
+						 * We might have dropped the cache in between for low memory,
+						 * in this case just readd the entry now
+						 */
+						se = new StringEntry(null);
+						stringCache.put(idx, se);
+						se.count=4;
+					}
 					se.name=name.toString();
 					
 					if (queue.size() != 0){
