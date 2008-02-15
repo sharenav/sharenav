@@ -27,10 +27,12 @@ import javax.microedition.rms.RecordStoreException;
 import javax.microedition.rms.RecordStoreFullException;
 import javax.microedition.rms.RecordStoreNotFoundException;
 import javax.microedition.rms.RecordStoreNotOpenException;
+//#if polish.api.btapi
 import javax.obex.ClientSession;
 import javax.obex.HeaderSet;
 import javax.obex.Operation;
 import javax.obex.ResponseCodes;
+//#endif
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 //#if polish.api.webservice
@@ -174,7 +176,10 @@ public class Gpx extends Tile implements Runnable {
 	private ByteArrayOutputStream baos;
 	private DataOutputStream dos;
 	private Connection session = null;
+	
+	//#if polish.api.btapi
 	private Operation operation = null;
+	//#endif
 	
 	private GpxTile tile;
 	
@@ -600,7 +605,8 @@ public class Gpx extends Tile implements Runnable {
 	
 	private OutputStream obtainBluetoothObexSession(String url, String name) {		
 		OutputStream oS = null;
-		try {
+		//#if polish.api.btapi 
+		try {			
 			session = Connector.open(url);
 			ClientSession csession = (ClientSession) session; 
 			HeaderSet headers = csession.createHeaderSet();	        
@@ -615,10 +621,12 @@ public class Gpx extends Tile implements Runnable {
 			logger.error("Could not obtain connection with " + url + " (" + e.getMessage() + ")");
 			e.printStackTrace();
 		}
+		//#endif
 		return oS;		
 	}
 	
 	private void closeBluetoothObexSession() {
+		//#if polish.api.polish
 		try {
 			session.close();
 			int code = operation.getResponseCode();
@@ -631,6 +639,7 @@ public class Gpx extends Tile implements Runnable {
 			logger.error("Failed to close connection after transmitting GPX");
 			e.printStackTrace();
 		}
+		//#endif
 	}
 	
 	private void closeFileSession() {

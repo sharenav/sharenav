@@ -8,6 +8,7 @@ package de.ueller.midlet.gps;
 import java.io.IOException;
 import java.util.Vector;
 
+//#if polish.api.btapi
 import javax.bluetooth.BluetoothStateException;
 import javax.bluetooth.DeviceClass;
 import javax.bluetooth.DiscoveryAgent;
@@ -16,11 +17,15 @@ import javax.bluetooth.LocalDevice;
 import javax.bluetooth.RemoteDevice;
 import javax.bluetooth.ServiceRecord;
 import javax.bluetooth.UUID;
-
+//#endif
 import de.ueller.gps.tools.StringTokenizer;
 
-public class DiscoverGps implements Runnable, DiscoveryListener {
-
+public class DiscoverGps
+	//#if polish.api.btapi
+	implements Runnable, DiscoveryListener
+	//#endif
+	{
+	//#if polish.api.btapi
 	/** Shows the engine is ready to work. */
 	private static final int		READY						= 0;
 
@@ -417,5 +422,5 @@ public class DiscoverGps implements Runnable, DiscoveryListener {
 		}
 		return false;
 	}
-
+	//#endif
 }

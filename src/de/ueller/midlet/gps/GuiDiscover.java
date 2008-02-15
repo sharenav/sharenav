@@ -139,6 +139,7 @@ public class GuiDiscover implements CommandListener, GpsMidDisplayable, Selectio
 						state = STATE_LP;
 						break;
 					case 1:
+						//#if polish.api.bt
 //						gps.cancelDeviceSearch();
 						menuBT	= new List("Devices",
 								Choice.IMPLICIT, empty,
@@ -152,12 +153,17 @@ public class GuiDiscover implements CommandListener, GpsMidDisplayable, Selectio
 						state = STATE_BT;
 						
 						gps = new DiscoverGps(this,DiscoverGps.UUDI_SERIAL);
+						//#else
+						//logger.error("Bluetooth is not compiled into this version");
+						//#endif
+						
 						break;
 					case 2:
 						OptionsRender render = new OptionsRender(this,parent.getConfig());
 						Display.getDisplay(parent).setCurrent(render);
 						break;
 					case 3:
+						//#if polish.api.polish
 						menuBT	= new List("Devices",
 								Choice.IMPLICIT, empty,
 								null);
@@ -170,6 +176,7 @@ public class GuiDiscover implements CommandListener, GpsMidDisplayable, Selectio
 						state = STATE_RBT;
 						
 						gps = new DiscoverGps(this,DiscoverGps.UUDI_FILE);
+						//#endif
 						break;
 					case 4:
 						//#if polish.api.pdaapi
@@ -195,10 +202,11 @@ public class GuiDiscover implements CommandListener, GpsMidDisplayable, Selectio
 	}
 
 	private void destroy() {
+		//#if polish.api.bt
 		if (gps != null) {
 			gps.destroy();
 		}
-
+		//#endif
 	}
 
 	public void clear() {
