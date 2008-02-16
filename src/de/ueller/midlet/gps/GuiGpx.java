@@ -104,4 +104,28 @@ public class GuiGpx extends List implements CommandListener,
 	public void show() {
 		Display.getDisplay(parent.getParent()).setCurrent(this);
 	}
+
+	public void completedUpload(boolean success, String message) {		
+		Alert alert = new Alert("Information");
+		if (uploading) {
+			if (success)
+				alert.setString("Completed GPX upload");
+			else {
+				alert.setString("GPX upload failed: " + message);
+			}
+		} else {
+			if (success) {
+				alert.setString("Completed GPX import");
+				initTracks();
+			} else {
+				alert.setString("GPX import failed: " + message);
+			}
+		}
+		Display.getDisplay(parent.getParent()).setCurrent(alert);
+	}
+
+	public void uploadAborted() {
+		initTracks();
+		
+	}
 }

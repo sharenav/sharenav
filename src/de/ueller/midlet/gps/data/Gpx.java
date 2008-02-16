@@ -493,6 +493,7 @@ public class Gpx extends Tile implements Runnable {
 	}
 	
 	public void run() {
+		boolean success = false;
 		if (reloadWpt) {			
 			try {
 				/**
@@ -506,19 +507,19 @@ public class Gpx extends Tile implements Runnable {
 			loadWaypointsFromDatabase();
 			reloadWpt = false;
 			if (feedbackListener != null) {
-				feedbackListener.completedUpload();
+				feedbackListener.uploadAborted();
 				feedbackListener = null;
 			}
 			return;
 		} else if (sendTrk || sendWpt) {
-			sendGpx();
+			success = sendGpx();
 		} else if (in != null) {
-			receiveGpx();
+			success = receiveGpx();
 		} else {
 			logger.error("Did not know whether to send or receive");
 		}
 		if (feedbackListener != null)
-			feedbackListener.completedUpload();
+			feedbackListener.completedUpload(success, "");
 		feedbackListener = null;
 		sendTrk = false;
 		sendWpt = false;
@@ -701,7 +702,7 @@ public class Gpx extends Tile implements Runnable {
 		}
 	}
 	
-	private void sendGpx() {
+	private boolean sendGpx() {
 		try {
 			String name = null;
 			
@@ -714,6 +715,7 @@ public class Gpx extends Tile implements Runnable {
 			
 			if (url == null) {
 				logger.error("No GPX receiver specified. Please select a GPX receiver in the setup menue");
+				return false;
 			}
 			
 			OutputStream oS = null;
@@ -726,7 +728,7 @@ public class Gpx extends Tile implements Runnable {
 			}
 			if (oS == null) {
 				logger.error("Could not obtain a valid connection to " + url);
-				return;
+				return false;
 			}
 			oS.write("<?xml version='1.0' encoding='UTF-8'?>\r\n".getBytes());
 			oS.write("<gpx version='1.1' creator='GPSMID' xmlns='http://www.topografix.com/GPX/1/1'>\r\n".getBytes());
@@ -747,7 +749,7 @@ public class Gpx extends Tile implements Runnable {
 			} else{			
 				closeBluetoothObexSession();
 			}			
-			
+			return true;
 		} catch (IOException e) {			
 			logger.error("IOE:" + e);	
 		} catch (OutOfMemoryError oome) {
@@ -755,9 +757,10 @@ public class Gpx extends Tile implements Runnable {
 		} catch (Exception ee) {			
 			logger.error("Error while sending tracklogs: " + ee);
 		}
+		return false;
 	}
 	
-	private void receiveGpx() {
+	private boolean receiveGpx() {
 		//#if polish.api.webservice
 		SAXParserFactory factory = SAXParserFactory.newInstance();
 		// Parse the input
@@ -775,6 +778,7 @@ public class Gpx extends Tile implements Runnable {
 			//#endif
 			adaptiveRec = true;
 			in.close();
+			return true;
 		}
 		//#if polish.api.webservice
 		catch (ParserConfigurationException e) {
@@ -788,7 +792,8 @@ public class Gpx extends Tile implements Runnable {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}		
+		}
+		return false;
 	}
 	
 	/**
