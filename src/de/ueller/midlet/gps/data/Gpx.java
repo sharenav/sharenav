@@ -635,7 +635,7 @@ public class Gpx extends Tile implements Runnable {
 	}
 	
 	private void closeBluetoothObexSession() {
-		//#if polish.api.polish
+		//#if polish.api.btapi
 		//#if polish.api.obex
 		try {
 			session.close();

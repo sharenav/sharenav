@@ -19,6 +19,7 @@ import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.List;
 
 import de.ueller.gps.data.Configuration;
+import de.ueller.midlet.gps.data.Gpx;
 import de.ueller.midlet.gps.options.OptionsRender;
 
 public class GuiDiscover implements CommandListener, GpsMidDisplayable, SelectionListener {
@@ -86,6 +87,8 @@ public class GuiDiscover implements CommandListener, GpsMidDisplayable, Selectio
 			};
 	*/
 
+	private final static Logger logger=Logger.getInstance(GuiDiscover.class,Logger.DEBUG);
+	
 	public GuiDiscover(GpsMid parent) {
 		this.parent = parent;
 		
@@ -139,7 +142,7 @@ public class GuiDiscover implements CommandListener, GpsMidDisplayable, Selectio
 						state = STATE_LP;
 						break;
 					case 1:
-						//#if polish.api.bt
+						//#if polish.api.btapi
 //						gps.cancelDeviceSearch();
 						menuBT	= new List("Devices",
 								Choice.IMPLICIT, empty,
@@ -154,7 +157,7 @@ public class GuiDiscover implements CommandListener, GpsMidDisplayable, Selectio
 						
 						gps = new DiscoverGps(this,DiscoverGps.UUDI_SERIAL);
 						//#else
-						//logger.error("Bluetooth is not compiled into this version");
+						logger.error("Bluetooth is not compiled into this version");
 						//#endif
 						
 						break;
@@ -163,7 +166,7 @@ public class GuiDiscover implements CommandListener, GpsMidDisplayable, Selectio
 						Display.getDisplay(parent).setCurrent(render);
 						break;
 					case 3:
-						//#if polish.api.polish
+						//#if polish.api.btapi
 						menuBT	= new List("Devices",
 								Choice.IMPLICIT, empty,
 								null);
@@ -202,7 +205,7 @@ public class GuiDiscover implements CommandListener, GpsMidDisplayable, Selectio
 	}
 
 	private void destroy() {
-		//#if polish.api.bt
+		//#if polish.api.btapi
 		if (gps != null) {
 			gps.destroy();
 		}
