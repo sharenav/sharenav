@@ -290,6 +290,13 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	public void commandAction(Command c, Displayable d) {
 		try {
 			if (c == EXIT_CMD) {
+				if (locationProducer != null){
+					locationProducer.close();
+				}
+				if (imageCollector != null) {
+					imageCollector.suspend();
+				}
+				
 				// shutdown();
 				pause();
 				parent.show();
@@ -901,7 +908,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		} else if (keyCode == KEY_NUM9) {
 			course += 5;
 			;
-		} else {
+		} else {		
 			keyStatus = keyCode;
 		}
 		projection = new Mercator(center, scale, getWidth(), getHeight());
