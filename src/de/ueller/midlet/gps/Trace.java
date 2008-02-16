@@ -252,6 +252,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	}
 	
 	public synchronized void pause(){
+		if (imageCollector != null) {
+			imageCollector.suspend();
+		}
 		if (locationProducer != null){
 			locationProducer.close();
 		} else {
@@ -266,6 +269,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	}
 
 	public void resume(){
+		if (imageCollector != null) {
+			imageCollector.resume();
+		}
 		Thread thread = new Thread(this);
 		thread.start();
 	}
@@ -322,6 +328,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			    if (locationProducer != null) {
 				locationProducer.close();
 			    }
+				if (imageCollector != null) { 
+                    imageCollector.suspend(); 
+                } 
 			    GuiGpx gpx = new GuiGpx(this);
 			    gpx.show();
 			}
@@ -334,9 +343,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 					thread.start();
 				}
 			}
-			if (c == SEARCH_CMD){
-				if (locationProducer != null){
-					locationProducer.close();
+			if (c == SEARCH_CMD){				
+				if (imageCollector != null) {
+					imageCollector.suspend();
 				}
 				GuiSearch search = new GuiSearch(this);
 				search.show();
@@ -993,12 +1002,16 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	}
 
 	public void newDataReady() {
-		imageCollector.newDataReady();
+		if (imageCollector != null)
+			imageCollector.newDataReady();
 	}
 
 	public void show() {
 		Display.getDisplay(parent).setCurrent(this);
-		imageCollector.newDataReady();
+		if (imageCollector != null) {
+			imageCollector.resume();
+			imageCollector.newDataReady();			
+		}
 		requestRedraw();
 	}
 

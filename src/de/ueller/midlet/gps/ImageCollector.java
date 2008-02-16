@@ -29,10 +29,11 @@ public class ImageCollector implements Runnable {
 	private final static byte STATE_SC_READY = 1;
 	
 
-	boolean lockg=false;
-	boolean lockc=false;
-	boolean newPaintAvail=false;
-	boolean shutdown=false;
+	private boolean lockg=false;
+	private boolean lockc=false;
+	private boolean newPaintAvail=false;
+	private boolean shutdown=false;
+	private boolean suspended=true;
 	private final Tile t[];
 	private Thread processorThread;
 	private ScreenContext nextSc;
@@ -92,6 +93,7 @@ public class ImageCollector implements Runnable {
 						}
 					}				
 				}
+				if (suspended) continue;
 				pc[nextCreate].state=PaintContext.STATE_IN_CREATE;
 				try {
 //				create PaintContext
@@ -132,6 +134,11 @@ public class ImageCollector implements Runnable {
 				} 
 				if ( t[0] != null){
 					t[0].paintAreaOnly(pc[nextCreate]);
+				}
+				if (suspended) {
+					//Don't continue rendering if suspended
+					pc[nextCreate].state = PaintContext.STATE_READY;
+					continue;
 				}
 				/**
 				* Draw all other elements now ontop of any area
@@ -185,6 +192,13 @@ public class ImageCollector implements Runnable {
 
 	}
 	
+	public void suspend() {
+		suspended = true;
+	}
+	public void resume() {
+		suspended = false;
+	}
+	
 	public synchronized void stop(){
 		shutdown=true;
 		notify();
@@ -198,6 +212,9 @@ public class ImageCollector implements Runnable {
 	 *  but with the last collected position in the center
 	 */
 	public void paint(PaintContext screenPc){
+		
+		if (suspended) return;
+		
 		nextSc=screenPc.cloneToScreenContext();
 		
 		stat=STATE_SC_READY;
