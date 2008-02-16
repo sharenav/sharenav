@@ -104,8 +104,16 @@ public class FsDiscover
            // True means: include hidden files.
            // To list just visible files and directories, use
            // list() with no arguments.           
-           if (!fc.isDirectory())
+           if (!fc.isDirectory()) {
+        	   //If it is not a directory,
+        	   //Then we assume it bust be an
+        	   //Ok selection        	  
+        	   url = (String)urlList.elementAt(list.getSelectedIndex());
+        	   parent.show();
+        	   sl.selectedFile(url);
         	   return;
+           }
+        	   
            list = createEmptyList();
            urlList.removeAllElements();
            list.append("..", null);
