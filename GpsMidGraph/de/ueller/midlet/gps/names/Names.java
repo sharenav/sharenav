@@ -48,7 +48,9 @@ public class Names implements Runnable {
 			while (! shutdown){			
 				synchronized (this) {
 					try {
-						wait(20000l);
+						if (addQueue2.size() == 0) {
+							wait(20000l);
+						}
 					} catch (InterruptedException e1) {
 //						logger.error("interrupted");
 						continue;
