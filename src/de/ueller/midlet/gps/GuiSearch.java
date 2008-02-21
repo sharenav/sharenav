@@ -4,6 +4,8 @@ package de.ueller.midlet.gps;
  * 			Copyright (c) 2008 Kai Krueger apm at users dot sourceforge dot net 
  * See Copying
  */
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.Vector;
 
 import javax.microedition.lcdui.Canvas;
@@ -50,8 +52,13 @@ public class GuiSearch extends Canvas implements CommandListener,
 	private SearchNames searchThread;
 
 	private boolean abortPaint = false;
+	private boolean needsPainting;
 	
 	private int displayReductionLevel = 0;
+	
+	private TimerTask timerT;
+	private Timer timer;
+	
 
 	
 	public GuiSearch(Trace parent) throws Exception {
@@ -66,6 +73,14 @@ public class GuiSearch extends Canvas implements CommandListener,
 		addCommand(CLEAR_CMD);
 		addCommand(BOOKMARK_CMD);
 		addCommand(BACK_CMD);
+		
+		timerT = new TimerTask() {
+			public void run() {
+				repaint();				
+			}			
+		};
+		timer = new Timer();
+		
 		//#debug
 		System.out.println("GuiSearch initialisied");
 		
@@ -126,6 +141,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 	}
 
 	protected void paint(Graphics gc) {
+		logger.info("Painting search screen");
 		int yc=scrollOffset;
 //		gc.setFont(Font.getFont(Font.FACE_MONOSPACE ));
 		int carPos = gc.getFont().substringWidth(searchCanon.toString(), 0, carret)+17;
@@ -138,16 +154,19 @@ public class GuiSearch extends Canvas implements CommandListener,
 		}
 
 		synchronized(this) {
+			needsPainting = false;
 	    for (int i=0;i<result.size();i++){
-	    	if (abortPaint)
+	    	if (abortPaint) {
+	    		logger.info("aborting out of syncronized loop");
 	    		break;
+	    	}
 			if (yc < 0) {
 				yc += 15;
 				continue;
 			}
 			if (yc > getHeight()) {
 				gc.drawString("v", getWidth(), getHeight() - 7,
-						Graphics.BOTTOM | Graphics.RIGHT);
+						Graphics.BOTTOM | Graphics.RIGHT);				
 				return;
 			}
 
@@ -188,7 +207,6 @@ public class GuiSearch extends Canvas implements CommandListener,
 			yc+=15;
 		}
 		}
-
 	}
 
 	protected void keyPressed(int keyCode) {
@@ -299,9 +317,17 @@ public class GuiSearch extends Canvas implements CommandListener,
 		abortPaint = true;
 		synchronized(this) {
 			result.addElement(sr);
-		}
-		abortPaint = false;
-		repaint(0, 0, getWidth(), getHeight());
+			if (!needsPainting) {
+				needsPainting = true;
+				try {
+					timer.schedule(timerT, 500);
+				} catch (IllegalStateException ise) {
+					//timer was already scheduled.
+					//this doesn't matter
+				}
+			}
+			abortPaint = false;
+		}				
 	}
 	public void triggerRepaint(){
 		repaint(0, 0, getWidth(), getHeight());
