@@ -22,47 +22,9 @@
 	default="j2mepolish">
 	
 	
-<property file="${user.name}.properties" />
+<property file="build.properties" />
 <property file="midlet.properties" />
-	
-<!-- The polish.home property should point to the directory   -->
-<!-- containing the J2ME Polish installation.                 -->
-
-<property name="polish.home" value="C:\java\J2ME-Polish" />
 <property file="${polish.home}/global.properties" />
-
-<!-- The wtk.home property should point to the directory      -->
-<!-- containing the Wireless Toolkit.                         -->
-
-
-<property name="wtk.home" value="C:\WTK25" />
-
-
-<!-- The siemens.home, nokia.home and motorola.home-          -->
-<!-- properties can be necessary when their emulators         -->
-<!-- should be started.                                       -->
-<!-- The directory which contains the Siemens-SMTK
-	<property name="siemens.home" value="C:\siemens" />
--->
-<!-- The directory which contains the Nokia-emulators
-	<property name="nokia.home" value="C:\Nokia" />
--->
-<!-- The path to the Sony-Ericsson SDK -->
-	<property name="sony-ericsson.home" value="C:\SonyEricsson\JavaME_SDK_CLDC" />
-<!-- -->
-<!-- The directory which contains the Motorola-emulators
-	<property name="motorola.home" value="C:\Program Files\Motorola\SDK v4.3 for J2ME" />
--->
-
-<property name="nokia.home" value="C:\" />
-
-<property name="sony-ericsson.home" value="C:\" />
-	
-<property name="motorola.home" value="C:\" />
-	
-	
-<property name="siemens.home" value="C:\" />
-	
 	
 <!-- Definition of the J2ME Polish task:                      -->
 
@@ -74,11 +36,6 @@
 <!-- build targets, each target can be called via "ant [name]", 
 	 e.g. "ant clean", "ant test j2mepolish" or just "ant" for calling the default target -->
 
-<target name="setdeploy" 
-	description="Call this target first to set the OTA download-URL, e.g. ant setdeploy j2mepolish"
-	>
-	<property name="deploy-url" value="http://www.company.com/download/" />
-</target>
 	
 	<target name="test" 
 		description="Call this target first to skip the obfuscation step, e.g. ant test j2mepolish"
@@ -135,7 +92,7 @@
 		<!-- Generic/midp1 phone, but when the test-property is set to false, -->
 		<!-- the second deviceRequirements will be used instead. -->
 		<deviceRequirements if="test">
-			<requirement name="Identifier" value="Generic/loc" />
+			<requirement name="Identifier" value="Generic/multi" />
 		</deviceRequirements>
 		<deviceRequirements if="!test and device:defined">
 			<requirement name="Identifier" value="${device}" />
