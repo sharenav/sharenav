@@ -16,7 +16,7 @@ import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
 
 public abstract class QueueReader implements Runnable{
-	//#debug error
+
 	protected static final Logger logger = Logger.getInstance(QueueReader.class,Logger.TRACE);
 	protected final Vector requestQueue = new Vector();
 	protected final Vector livingQueue = new Vector();

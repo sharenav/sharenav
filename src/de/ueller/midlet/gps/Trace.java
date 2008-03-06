@@ -109,7 +109,6 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 
 	// private DataReader data;
-//#debug error
 	private final static Logger logger = Logger.getInstance(Trace.class,Logger.DEBUG);
 
 //#mdebug info
