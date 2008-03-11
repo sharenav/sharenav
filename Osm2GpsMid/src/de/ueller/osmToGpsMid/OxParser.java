@@ -169,7 +169,7 @@ public class OxParser extends DefaultHandler{
 			Node n=(Node) current;
 			boolean inBound=false;
 			nodeTot++;
-			if (bounds != null){
+			if (bounds != null && bounds.length != 0){
 				for (int i=0;i<bounds.length;i++){
 					if (bounds[i].isIn(n.lat, n.lon)){
 						inBound=true;
