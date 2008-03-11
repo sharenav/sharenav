@@ -19,15 +19,22 @@ public class Way extends Entity{
 	
 	public static final byte WAY_FLAG_NAME = 1;
 	public static final byte WAY_FLAG_MAXSPEED = 2;
-	public static final byte WAY_FLAG_ISIN = 16;
+	public static final byte WAY_FLAG_ONEWAY = 16;
 	public static final byte WAY_FLAG_MULTIPATH = 4;
 	public static final byte WAY_FLAG_LONGWAY = 8;
 	public static final byte WAY_FLAG_NAMEHIGH = 32;
-	public static final byte WAY_FLAG_ISINHIGH = 64;
+//	public static final byte WAY_FLAG_ISINHIGH = 64;
+	
+	public static final byte DRAW_BORDER=1;
+	public static final byte DRAW_AREA=2;
+	public static final byte DRAW_FULL=3;
+	
+	public static final byte WAY_ONEWAY=1;
 	
 	public byte maxspeed;
 	//This is not currently used, so save the 4 bytes of memory per way
 	//public int isInIdx=-1;
+	public byte mod=0;
 	public short[][] paths;
 
 	// public short[] path;
@@ -75,14 +82,9 @@ public class Way extends Entity{
 //			logger.debug("read maxspeed");
 			maxspeed = is.readByte();
 		}
-		if ((f & WAY_FLAG_ISIN) == WAY_FLAG_ISIN) {
-			if ((f & WAY_FLAG_ISINHIGH) == WAY_FLAG_ISINHIGH) {
-				//isInIdx = is.readInt();
-				//System.out.println("isib_High " + f);
-			} else {
-				//isInIdx = is.readShort();
-			}
-		}
+		if ((f & WAY_FLAG_ONEWAY) == WAY_FLAG_ONEWAY) {
+			mod += WAY_ONEWAY;
+		} 
 		int pathCount;
 		if ((f & 4) == 4) {
 			pathCount = is.readByte();
@@ -145,9 +147,13 @@ public class Way extends Entity{
 					float dst = MoreMath.ptSegDistSq(lineP1.x, lineP1.y,
 							lineP2.x, lineP2.y, pc.xSize / 2, pc.ySize / 2);
 					if (dst < pc.squareDstToWay) {
+						System.out.println("set new current Way1 "+ pc.trace.getName(this.nameIdx) + "new dist "+ dst + " old " + pc.squareDstToWay);
 						pc.squareDstToWay = dst;
 						pc.actualWay = this;
-
+						pc.actualNodeLat = t.nodeLat[idx]; 
+						pc.actualNodeLon = t.nodeLon[idx];
+						pc.currentPos=new PositionMark(pc.center.radlat,pc.center.radlon);
+						pc.currentPos.setEntity(this, t.nodeLat, t.nodeLon);
 					}
 					pc.g.drawLine(lineP1.x, lineP1.y, lineP2.x, lineP2.y);
 					swapLineP = lineP1;
@@ -195,8 +201,13 @@ public class Way extends Entity{
 						float dst = MoreMath.ptSegDistSq(lineP1.x, lineP1.y,
 								lineP2.x, lineP2.y, pc.xSize / 2, pc.ySize / 2);
 						if (dst < pc.squareDstToWay) {
+							System.out.println("set new current Way "+ pc.trace.getName(this.nameIdx) + "new dist "+ dst + " old " + pc.squareDstToWay);
 							pc.squareDstToWay = dst;
 							pc.actualWay = this;
+							pc.actualNodeLat = t.nodeLat[idx]; 
+							pc.actualNodeLon = t.nodeLon[idx]; 
+							pc.currentPos=new PositionMark(pc.center.radlat,pc.center.radlon);
+							pc.currentPos.setEntity(this, t.nodeLat, t.nodeLon);
 
 						}
 						x[pi] = lineP2.x;
@@ -234,8 +245,9 @@ public class Way extends Entity{
 
 	public float getParLines(int xPoints[], int yPoints[], int i, int w,
 			IntPoint p1, IntPoint p2, IntPoint p3, IntPoint p4) {
-		int dx = xPoints[i + 1] - xPoints[i];
-		int dy = yPoints[i + 1] - yPoints[i];
+		int i1 = i + 1;
+		int dx = xPoints[i1] - xPoints[i];
+		int dy = yPoints[i1] - yPoints[i];
 		int l2 = dx * dx + dy * dy;
 		float l2f = (float) Math.sqrt(l2);
 		float lf = w / l2f;
@@ -249,14 +261,16 @@ public class Way extends Entity{
 		if (dx > 0) {
 			rfy = -1;
 		}
-		p1.x = xPoints[i] + (rfx * xb);
-		p1.y = yPoints[i] + (rfy * yb);
-		p2.x = xPoints[i] - (rfx * xb);
-		p2.y = yPoints[i] - (rfy * yb);
-		p3.x = xPoints[i + 1] + (rfx * xb);
-		p3.y = yPoints[i + 1] + (rfy * yb);
-		p4.x = xPoints[i + 1] - (rfx * xb);
-		p4.y = yPoints[i + 1] - (rfy * yb);
+		int xd = rfx * xb;
+		int yd = rfy * yb;
+		p1.x = xPoints[i] + xd;	
+		p1.y = yPoints[i] + yd;
+		p2.x = xPoints[i] - xd;
+		p2.y = yPoints[i] - yd;
+		p3.x = xPoints[i1] + xd;
+		p3.y = yPoints[i1] + yd;
+		p4.x = xPoints[i1] - xd;
+		p4.y = yPoints[i1] - yd;
 		if (dx != 0) {
 			return (MoreMath.atan(1f * dy / dx));
 		} else {
@@ -268,7 +282,7 @@ public class Way extends Entity{
 		}
 	}
 
-	public void draw(PaintContext pc, int w, int xPoints[], int yPoints[],int count,boolean highlite) {
+	public void draw(PaintContext pc, int w, int xPoints[], int yPoints[],int count,boolean highlite/*,byte mode*/) {
 		IntPoint l1b = new IntPoint();
 		IntPoint l1e = new IntPoint();
 		IntPoint l2b = new IntPoint();
@@ -284,7 +298,6 @@ public class Way extends Entity{
 
 		int max = count ;
 		int beforeMax = max - 1;
-//		int w2 = (int)(pc.ppm*getWidth()/2+0.5f);
 		if (w <1) w=1;
 		roh1 = getParLines(xPoints, yPoints, 0, w, l1b, l2b, l1e, l2e);
 		for (int i = 0; i < max; i++) {
@@ -300,20 +313,20 @@ public class Way extends Entity{
 					l4b.set(s2);
 				}
 			}
-			setColor(pc);
-			pc.g.fillTriangle(l2b.x, l2b.y, l1b.x, l1b.y, l1e.x, l1e.y);
-			// pc.g.setColor(0,255,0);
-			pc.g.fillTriangle(l1e.x, l1e.y, l2e.x, l2e.y, l2b.x, l2b.y);
-			if (highlite){
-				pc.g.setColor(255,50,50);
-			} else {
-				setBorderColor(pc);
-			}
-			pc.g.drawLine(l1b.x, l1b.y, l1e.x, l1e.y);
-			pc.g.drawLine(l2b.x, l2b.y, l2e.x, l2e.y);
-			// pc.g.drawRect(s1.x-1, s1.y-1, 3, 3);
-			// pc.g.drawRect(s2.x-1, s2.y-1, 3, 3);
-
+//			if (mode == DRAW_AREA){
+				setColor(pc);
+				pc.g.fillTriangle(l2b.x, l2b.y, l1b.x, l1b.y, l1e.x, l1e.y);
+				pc.g.fillTriangle(l1e.x, l1e.y, l2e.x, l2e.y, l2b.x, l2b.y);
+//			}
+//			if (mode == DRAW_BORDER){
+				if (highlite){
+					pc.g.setColor(255,50,50);
+				} else {
+					setBorderColor(pc);
+				}
+				pc.g.drawLine(l1b.x, l1b.y, l1e.x, l1e.y);
+				pc.g.drawLine(l2b.x, l2b.y, l2e.x, l2e.y);
+//			}
 			l1b.set(l3b);
 			l2b.set(l4b);
 			l1e.set(l3e);
@@ -595,5 +608,9 @@ public class Way extends Entity{
 			pc.g.setColor(0, 0, 0);
 		}
 		pc.g.setColor(0, 0, 0);
+	}
+	
+	public boolean isOneway(){
+		return ((mod & WAY_ONEWAY) > 1);
 	}
 }
