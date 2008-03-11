@@ -17,11 +17,11 @@ public class Way extends Entity implements Comparable<Way>{
 	
 	public static final byte WAY_FLAG_NAME = 1;
 	public static final byte WAY_FLAG_MAXSPEED = 2;
-	public static final byte WAY_FLAG_ISIN = 16;
+	public static final byte WAY_FLAG_ONEWAY = 16;
 	public static final byte WAY_FLAG_MULTIPATH = 4;
 	public static final byte WAY_FLAG_LONGWAY = 8;
 	public static final byte WAY_FLAG_NAMEHIGH = 32;
-	public static final byte WAY_FLAG_ISINHIGH = 64;
+//	public static final byte WAY_FLAG_ISINHIGH = 64;
 	
 	//public List<Line> lines = new LinkedList<Line>();
 	public Path path=null;
@@ -268,6 +268,7 @@ public class Way extends Entity implements Comparable<Way>{
     	return type;
 	}
 	
+
 	public byte getZoomlevel(){
 		byte type=getType();
 		switch (type){
@@ -529,17 +530,7 @@ public class Way extends Entity implements Comparable<Way>{
 			} catch (NumberFormatException e) {
 			}
 		}
-		/*
-		 * Currently not used in GpsMid, so no point in
-		 * writing this into the files
-		if (getIsIn() != null){
-			flags+=WAY_FLAG_ISIN;
-			isinIdx = names1.getNameIdx(getIsIn());
-			if (isinIdx >= Short.MAX_VALUE) {
-				flags += WAY_FLAG_ISINHIGH;
-			}
-		}
-		*/
+
 		byte type=getType();
 		boolean isWay=false;
 		boolean longWays=false;
@@ -558,6 +549,9 @@ public class Way extends Entity implements Comparable<Way>{
 			if (longWays ){
 				flags+=WAY_FLAG_LONGWAY;
 			}
+			if (isOneWay()){
+				flags+=WAY_FLAG_ONEWAY;
+			}
 			ds.writeByte(flags);
 			b=getBounds();
 			ds.writeFloat(MyMath.degToRad(b.minLat));
@@ -575,13 +569,6 @@ public class Way extends Entity implements Comparable<Way>{
 			}
 			if ((flags & WAY_FLAG_MAXSPEED) == WAY_FLAG_MAXSPEED){
 				ds.writeByte(maxspeed);
-			}
-			if ((flags & WAY_FLAG_ISIN) == WAY_FLAG_ISIN){
-				if ((flags & WAY_FLAG_ISINHIGH) == WAY_FLAG_ISINHIGH){
-					ds.writeInt(isinIdx);
-				} else {
-					ds.writeShort(isinIdx);
-				}
 			}
 			if ((flags & 4) == 4){
 				ds.writeByte(path.getPathCount());
