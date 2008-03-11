@@ -1,5 +1,5 @@
 package de.ueller.midlet.gps.routing;
-
+//test
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.Hashtable;
@@ -7,11 +7,15 @@ import java.util.Vector;
 
 import de.ueller.gpsMid.mapData.QueueReader;
 import de.ueller.gpsMid.mapData.RouteBaseTile;
+import de.ueller.gpsMid.mapData.RouteFileTile;
 import de.ueller.gpsMid.mapData.RouteTile;
 import de.ueller.gpsMid.mapData.Tile;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.data.MoreMath;
+import de.ueller.midlet.gps.data.PositionMark;
+import de.ueller.midlet.gps.data.Way;
+import de.ueller.midlet.gps.tile.C;
 
 
 
@@ -33,9 +37,10 @@ public class Routing implements Runnable {
 	private final Trace parent;
 	private int bestTotal;
 	private long nextUpdate;
-	private float estimateFac=1.00f;
-	private int oomCounter=0;;
-
+	private float estimateFac=1.30f;
+	private int oomCounter=0;
+	private Tile destinationTile=new RouteTile();
+	private int expanded;
 	
 	public Routing(Tile[] tile,Trace parent) throws IOException {
 		this.parent = parent;
@@ -55,7 +60,7 @@ public class Routing implements Runnable {
 		GraphNode currentNode;
 		int successorCost;
 		Vector children = new Vector();
-		int expanded=0;
+		expanded=0;
 		while (!(nodes.isEmpty())) {
 			currentNode = (GraphNode) nodes.firstElement();
 			if(closed.get(currentNode.state.toId) != null) { // to avoid having to remove
@@ -190,9 +195,15 @@ public class Routing implements Runnable {
 		long now=System.currentTimeMillis();
 		if (now > nextUpdate){
 		if (bestTime){
-			parent.receiveMessage("" + (bestTotal/60) + "min " + (100*actual/total)+ "% m:" + runtime.freeMemory()/1000 + "k s:" + oomCounter+"/"+open.size());
+			parent.receiveMessage("" + (bestTotal/60) 
+					+ "min " + (100*actual/total)
+					+ "% m:" + runtime.freeMemory()/1000 
+					+ "k s:" + oomCounter+"/"+expanded);
 		} else {
-			parent.receiveMessage("" + (bestTotal/1000f) + "km " + (100*actual/total)+ "% m:" + runtime.freeMemory()/1000 + "k s:" + oomCounter+"/"+open.size());
+			parent.receiveMessage("" + (bestTotal/1000f) 
+					+ "km " + (100*actual/total)
+					+ "% m:" + runtime.freeMemory()/1000 
+					+ "k s:" + oomCounter+"/"+expanded);
 		}
 		nextUpdate=now + 1000;
 		}
@@ -326,13 +337,97 @@ public class Routing implements Runnable {
 			parent.setRoute(null);
 		}
 	}
+	public void solve (PositionMark fromMark,PositionMark toMark) {
+		//#debug error
+		logger.debug("Route search from "+fromMark+" to "+toMark);
+
+		try {
+			RouteNode startNode=new RouteNode();
+			startNode.lat=fromMark.lat;
+			startNode.lon=fromMark.lon;
+			// search all nodes along the from-way. For any which have an
+			// associated RouteNode, add a connection from the Start-point
+			// (Start Node) to this Route-Node on the way.
+			System.out.println("search nodes for start point");
+			int startAt=0;
+			if (fromMark.e instanceof Way){
+				Way w=(Way) fromMark.e;
+				if (w.isOneway()){
+					System.out.println("start point is on oneway");
+					// point before last
+					int max=fromMark.nodeLat.length -1;
+					for (int u=0;u<max;u++){
+						  MoreMath.ptSegDistSq(
+								  fromMark.nodeLat[u],
+								  fromMark.nodeLon[u],
+								  fromMark.nodeLat[u+1],
+								  fromMark.nodeLon[u+1],
+								  startNode.lat,
+								  startNode.lon);
+					}
+				}
+			}
+			
+//			for (int u=0;u<fromMark.nodeLat.length;u++){
+//				System.out.println("search segment");
+				float[] lat=fromMark.nodeLat;
+				float[] lon=fromMark.nodeLon;
+				for (int v=0;v < lat.length; v++){
+					System.out.println("search point "+ lat[v] +"," + lon[v]);
+					RouteNode rn=tile.getRouteNode(lat[v], lon[v]);
+					if (rn != null){
+						System.out.println("add start connection to " + rn);
+						Connection initialState=new Connection(rn,0,(byte)0,(byte)0);
+						GraphNode firstNode=new GraphNode(initialState,null,0,0,(byte)0);
+						open.put(initialState.to, firstNode);
+						nodes.addElement(firstNode);						
+					} else {
+						System.out.println("no rn for " + lat[v] +"," + lon[v]);
+					}
+				} 
+//			}
+
+			// search all nodes along the destination way. For any point with an
+			// associated RouteNode, add a connection from this point to the 
+			// target point. For that, we have to load the Route-tile, add the
+			// connections and mark this tile as permanent, to make sure that 
+			// this node will not removed from memory during cleanup.
+			routeTo=new RouteNode();
+			routeTo.id=-1;
+			routeTo.conSize=0;
+			routeTo.lat=toMark.lat;
+			routeTo.lon=toMark.lon;
+//			for (int u=0;u<toMark.nodeLat.length;u++){
+				lat=toMark.nodeLat;
+				lon=toMark.nodeLon;
+				RouteTileRet nodeTile=new RouteTileRet();
+				for (int v=0;v < lat.length; v++){
+					RouteNode rn=tile.getRouteNode(lat[v], lon[v],nodeTile);
+					if (rn != null){
+						System.out.println("add end connection to tile " + nodeTile.tile.toString());
+						// TODO: fill in bearings and cost
+						Connection newCon=new Connection(routeTo,0,(byte)0,(byte)0);
+						nodeTile.tile.addConnection(rn,newCon,bestTime);
+					}
+				} 
+//			}
+			if (routeTo != null){
+				processorThread = new Thread(this);
+				processorThread.setPriority(Thread.NORM_PRIORITY);
+				processorThread.start();
+			} else {
+				parent.setRoute(null);
+			}
+		} catch (Exception e) {
+			parent.receiveMessage("Routing Ex " + e.getMessage());
+			//#debug error
+			e.printStackTrace();
+			parent.setRoute(null);
+		}
+	}
 		
 	private final Vector solve () {
 		try {
-			Connection initialState=new Connection(routeFrom,0,(byte)0,(byte)0);
-			GraphNode firstNode=new GraphNode(initialState,null,0,0,(byte)0);
-			open.put(initialState.to, firstNode);
-			nodes.addElement(firstNode);
 
 			GraphNode solution=search(routeTo);
 			nodes.removeAllElements();
@@ -363,6 +458,7 @@ public class Routing implements Runnable {
 
 	public void run() {
 		try {
+			System.out.println("Start Routing thread");
 			Vector solve = solve();
 			parent.setRoute(solve);
 		} catch (Exception e) {

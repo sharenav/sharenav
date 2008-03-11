@@ -20,7 +20,7 @@ public class Way extends Entity{
 	public static final byte WAY_FLAG_NAME = 1;
 	public static final byte WAY_FLAG_MAXSPEED = 2;
 	public static final byte WAY_FLAG_ONEWAY = 16;
-	public static final byte WAY_FLAG_MULTIPATH = 4;
+//	public static final byte WAY_FLAG_MULTIPATH = 4;
 	public static final byte WAY_FLAG_LONGWAY = 8;
 	public static final byte WAY_FLAG_NAMEHIGH = 32;
 //	public static final byte WAY_FLAG_ISINHIGH = 64;
@@ -35,9 +35,9 @@ public class Way extends Entity{
 	//This is not currently used, so save the 4 bytes of memory per way
 	//public int isInIdx=-1;
 	public byte mod=0;
-	public short[][] paths;
+//	public short[][] paths;
 
-	// public short[] path;
+	public short[] path;
 	public float minLat;
 
 	public float minLon;
@@ -85,23 +85,12 @@ public class Way extends Entity{
 		if ((f & WAY_FLAG_ONEWAY) == WAY_FLAG_ONEWAY) {
 			mod += WAY_ONEWAY;
 		} 
-		int pathCount;
-		if ((f & 4) == 4) {
-			pathCount = is.readByte();
-			if (pathCount < 0) {
-				pathCount+=256;
-			}
-//			logger.debug("Multipath "+ pathCount);
-		} else {
-			pathCount = 1;
-		}
+
 		boolean longWays=false;
 		if ((f & 8) == 8) {
 			longWays=true;
 		}
-		paths = new short[pathCount][];
-//		logger.debug("read paths count="+pathCount);
-		for (byte pc = 0; pc < pathCount; pc++) {
+
 			int count;
 			if (longWays){
 				count = is.readShort();
@@ -115,28 +104,22 @@ public class Way extends Entity{
 				}
 				
 			}
-			short[] path = new short[count];
-			paths[pc] = path;
-//			logger.debug("read path count=" + count);
+			path = new short[count];
 			for (short i = 0; i < count; i++) {
 				path[i] = is.readShort();
 //				logger.debug("read node id=" + path[i]);
 			}
 //			if (is.readByte() != 0x59 ){
 //				logger.error("wrong magic code after path");
-//			}
-		}				
+//			}			
 	}
 
 	public void paintAsPath(PaintContext pc, SingleTile t) {
+
 		IntPoint lineP1 = pc.lineP1;
 		IntPoint lineP2 = pc.lineP2;
 		IntPoint swapLineP = pc.swapLineP;
 		Projection p = pc.getP();
-		for (int p1 = 0; p1 < paths.length; p1++) {
-			// read the name only if is used more memory efficicent
-			// pc.trace.getName(nameIdx);
-			short[] path = paths[p1];
 			for (int i1 = 0; i1 < path.length; i1++) {
 				int idx = path[i1];
 				p.forward(t.nodeLat[idx], t.nodeLon[idx], lineP2, true);
@@ -163,7 +146,6 @@ public class Way extends Entity{
 			}
 			swapLineP = lineP1;
 			lineP1 = null;
-		}
 	}
 	/**
 	 * draw ways with 2 lines left and right a black border and
@@ -178,10 +160,7 @@ public class Way extends Entity{
 		IntPoint swapLineP = pc.swapLineP;
 		Projection p = pc.getP();
 
-		for (int p1 = 0; p1 < paths.length; p1++) {
-			// read the name only if is used more memory efficicent
-			// pc.trace.getName(nameIdx);
-			short[] path = paths[p1];
+
 			int pi=0;
 			int[] x = new int[path.length];
 			int[] y = new int[path.length];
@@ -240,7 +219,7 @@ public class Way extends Entity{
 					draw(pc, w, x, y,pi-1,false);
 				}
 			}
-		}
+
 	}
 
 	public float getParLines(int xPoints[], int yPoints[], int i, int w,
@@ -387,8 +366,8 @@ public class Way extends Entity{
 	public void paintAsArea(PaintContext pc, SingleTile t) {
 		IntPoint lineP2 = pc.lineP2;
 		Projection p = pc.getP();
-		for (int p1 = 0; p1 < paths.length; p1++) {
-			short[] path = paths[p1];
+//		for (int p1 = 0; p1 < paths.length; p1++) {
+//			short[] path = paths[p1];
 			int[] x = new int[path.length];
 			int[] y = new int[path.length];
 			for (int i1 = 0; i1 < path.length; i1++) {
@@ -399,7 +378,7 @@ public class Way extends Entity{
 			}
 			// PolygonGraphics.drawPolygon(g, x, y);
 			PolygonGraphics.fillPolygon(pc.g, x, y);
-		}
+//		}
 
 	}
 
