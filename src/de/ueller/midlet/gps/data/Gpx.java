@@ -321,8 +321,16 @@ public class Gpx extends Tile implements Runnable {
 	
 	public void newTrk() {
 		logger.debug("Starting a new track recording");
-		Date today = new Date();		
-		trackName = today.toString();
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(new Date());
+		
+		//Construct a track name from the current time
+		StringBuffer trkName = new StringBuffer();
+		trkName.append(cal.get(Calendar.YEAR)).append("-").append(formatInt2(cal.get(Calendar.MONTH) + 1));
+		trkName.append("-").append(formatInt2(cal.get(Calendar.DAY_OF_MONTH))).append("_");
+		trkName.append(formatInt2(cal.get(Calendar.HOUR_OF_DAY))).append("-").append(formatInt2(cal.get(Calendar.MINUTE)));
+		trackName = trkName	.toString();
+		
 		baos = new ByteArrayOutputStream();
 		dos = new DataOutputStream(baos);
 		recorded = 0;		
@@ -618,7 +626,7 @@ public class Gpx extends Tile implements Runnable {
 			HeaderSet headers = csession.createHeaderSet();	        
 			csession.connect(headers);
 			logger.debug("Connected");
-			headers.setHeader(HeaderSet.NAME, "export.gpx");
+			headers.setHeader(HeaderSet.NAME, name + ".gpx");
 			headers.setHeader(HeaderSet.TYPE, "text");
 			
 			operation = csession.put(headers);			
@@ -714,7 +722,7 @@ public class Gpx extends Tile implements Runnable {
 				name = "Waypoints";
 			
 			if (url == null) {
-				logger.error("No GPX receiver specified. Please select a GPX receiver in the setup menue");
+				logger.error("No GPX receiver specified. Please select a GPX receiver in the setup menu");
 				return false;
 			}
 			
