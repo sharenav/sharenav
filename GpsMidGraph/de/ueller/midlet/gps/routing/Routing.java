@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import de.ueller.gps.tools.intTree;
 import de.ueller.gpsMid.mapData.QueueReader;
 import de.ueller.gpsMid.mapData.RouteBaseTile;
 import de.ueller.gpsMid.mapData.RouteFileTile;
@@ -24,8 +25,10 @@ public class Routing implements Runnable {
 	private Thread processorThread;
 	public boolean bestTime=true;
 	private final Vector nodes = new Vector();
-	private final Hashtable open = new Hashtable(50);
-	private final Hashtable closed = new Hashtable(150);
+//	private final Hashtable open = new Hashtable(50);
+//	private final Hashtable closed = new Hashtable(150);
+	private final intTree open = new intTree();
+	private final intTree closed = new intTree();
 	private Runtime runtime = Runtime.getRuntime();
 //	private RouteNodeTools rnt;
 	//#debug error
@@ -37,9 +40,9 @@ public class Routing implements Runnable {
 	private final Trace parent;
 	private int bestTotal;
 	private long nextUpdate;
-	private float estimateFac=1.30f;
+	private float estimateFac=1.50f;
 	private int oomCounter=0;
-	private Tile destinationTile=new RouteTile();
+//	private Tile destinationTile=new RouteTile();
 	private int expanded;
 	
 	public Routing(Tile[] tile,Trace parent) throws IOException {
@@ -70,7 +73,7 @@ public class Routing implements Runnable {
 			if (!(currentNode.total == bestTotal)) {
 				setBest(currentNode.total,currentNode.costs);
 			} 
-			if (currentNode.state.toId.shortValue() == target.id) 
+			if (currentNode.state.toId == target.id) 
 				return currentNode;
 			children.removeAllElements();
 
@@ -105,7 +108,7 @@ public class Routing implements Runnable {
 			System.out.println("Begin load connections MEM " +  runtime.freeMemory() + " exp=" + expanded +  " open " + open.size() + "  closed " + closed.size());
 			try {
 				tile.cleanup(50);
-				successor=tile.getConnections(currentNode.state.toId.shortValue(),tile,bestTime);
+				successor=tile.getConnections(currentNode.state.toId,tile,bestTime);
 			} catch (OutOfMemoryError e) {
 				oomCounter++;
 				//#debug error
@@ -117,18 +120,20 @@ public class Routing implements Runnable {
 				System.out.println("after cleanUp : " + runtime.freeMemory());
 //				successor=currentNode.state.to.getConnections(tile);
 				estimateFac += 0.02f;
-				successor=tile.getConnections(currentNode.state.toId.shortValue(),tile,bestTime);
+				successor=tile.getConnections(currentNode.state.toId,tile,bestTime);
 				//#debug error
 				System.out.println("after load single Conection : " + runtime.freeMemory());
 			}
+			if (successor == null){
+				successor=new Connection[0];
+			}
+
 			//#debug error
 			System.out.println("found "+successor.length + " connections");				
 
 			//#debug error
 			System.out.println("END load connections MEM " +  runtime.freeMemory() + " exp=" + expanded +  " open " + open.size() + "  closed " + closed.size());
-			if (successor == null){
-				successor=new Connection[0];
-			}
+
 			for (int cl=0;cl < successor.length;cl++){
 //				//#debug error
 //				System.out.println("exp=" + expanded +  " open " + open.size() + "  closed " + closed.size());
@@ -263,7 +268,7 @@ public class Routing implements Runnable {
 //			from.to=tile.getRouteNode(from.toId.shortValue());
 //		}
 		if (to.to == null){
-			to.to=tile.getRouteNode(to.toId.shortValue());
+			to.to=tile.getRouteNode(to.toId);
 			if (to.to == null){
 				System.out.println("RouteNode ("+to.toId+") = null" );
 				return (10000000);
@@ -353,17 +358,22 @@ public class Routing implements Runnable {
 			if (fromMark.e instanceof Way){
 				Way w=(Way) fromMark.e;
 				if (w.isOneway()){
+					float minDistSq=Float.MAX_VALUE;
 					System.out.println("start point is on oneway");
 					// point before last
 					int max=fromMark.nodeLat.length -1;
 					for (int u=0;u<max;u++){
-						  MoreMath.ptSegDistSq(
+						  float distSq = MoreMath.ptSegDistSq(
 								  fromMark.nodeLat[u],
 								  fromMark.nodeLon[u],
 								  fromMark.nodeLat[u+1],
 								  fromMark.nodeLon[u+1],
 								  startNode.lat,
 								  startNode.lon);
+						  if (distSq < minDistSq){
+							  minDistSq=distSq;
+							  startAt=u+1;
+						  }
 					}
 				}
 			}
@@ -372,14 +382,14 @@ public class Routing implements Runnable {
 //				System.out.println("search segment");
 				float[] lat=fromMark.nodeLat;
 				float[] lon=fromMark.nodeLon;
-				for (int v=0;v < lat.length; v++){
+				for (int v=startAt;v < lat.length; v++){
 					System.out.println("search point "+ lat[v] +"," + lon[v]);
 					RouteNode rn=tile.getRouteNode(lat[v], lon[v]);
 					if (rn != null){
 						System.out.println("add start connection to " + rn);
 						Connection initialState=new Connection(rn,0,(byte)0,(byte)0);
 						GraphNode firstNode=new GraphNode(initialState,null,0,0,(byte)0);
-						open.put(initialState.to, firstNode);
+						open.put(initialState.toId, firstNode);
 						nodes.addElement(firstNode);						
 					} else {
 						System.out.println("no rn for " + lat[v] +"," + lon[v]);
@@ -431,8 +441,8 @@ public class Routing implements Runnable {
 
 			GraphNode solution=search(routeTo);
 			nodes.removeAllElements();
-			open.clear();
-			closed.clear();
+			open.removeAll();
+			closed.removeAll();
 			tile.cleanup(-1);
 			return getSequence(solution);
 		} catch (Exception e) {
@@ -449,7 +459,7 @@ public class Routing implements Runnable {
 		} else { 
 			result = getSequence (n.parent);
 			if (n.state.to == null){
-				n.state.to=tile.getRouteNode(n.state.toId.intValue());
+				n.state.to=tile.getRouteNode(n.state.toId);
 			}
 			result.addElement(n.state);
 		} 
