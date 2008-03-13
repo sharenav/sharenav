@@ -42,15 +42,16 @@ public class PaintContext extends ScreenContext {
 	public IntPoint lineP1=null;
 	/** 
 	 * used to avoid frequent memory allocations this point have to have
-	 * a valid Object after method exit. Point will used as endpoint of a line.
-	 * the calculation go directly to the literals insid the object.
+	 * a valid Object after method exit. Point will used as end point of a line.
+	 * the calculation go directly to the literals inside the object.
 	 */
 	public IntPoint lineP2=new IntPoint(0,0);
 	public Images images;
 	public byte drawAreas=DRAW_AREAS_NO;
 	public boolean showTileOutline=false;
 	/**
-	 * there the paintprocess will store Street whitch is nearest to the center
+	 * @deprecated
+	 * the the paint-process will store Street which is nearest to the center
 	 * of projection. 
 	 */
 	public Way actualWay=null;
@@ -62,6 +63,10 @@ public class PaintContext extends ScreenContext {
 	 * the actual configuration
 	 */
 	public Configuration config;
+	
+	public float actualNodeLat;
+	public float actualNodeLon;
+	
 	public PaintContext(Trace tr, QueueDataReader tir,QueueReader dir,Images i) throws Exception{
 		super();
 		dataReader=tir;
