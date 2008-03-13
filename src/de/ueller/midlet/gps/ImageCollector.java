@@ -256,6 +256,7 @@ public class ImageCollector implements Runnable {
 					name = name + maxspeed;
 				}
 			}
+			tr.source=pc[nextPaint].currentPos;
 			if (name != null){
 				screenPc.g.setColor(255,255,255);
 				screenPc.g.fillRect(0,screenPc.ySize-15, screenPc.xSize, 15);
