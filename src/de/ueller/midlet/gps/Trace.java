@@ -26,7 +26,6 @@ import javax.microedition.rms.RecordStoreException;
 import javax.microedition.rms.RecordStoreFullException;
 import javax.microedition.rms.RecordStoreNotOpenException;
 
-import de.enough.polish.util.DrawUtil;
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Position;
 import de.ueller.gps.data.Satelit;
@@ -106,9 +105,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	int showAddons = 0;
 
 	Tile t[] = new Tile[6];
+	PositionMark source;
 
 
-	// private DataReader data;
 	private final static Logger logger = Logger.getInstance(Trace.class,Logger.DEBUG);
 
 //#mdebug info
@@ -356,7 +355,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				pause();
 				stopImageCollector();
 				Routing routeEngine=new Routing(t,this);
-				routeEngine.solve(center.radlat, center.radlon, target.lat, target.lon);
+				routeEngine.solve(source, pc.target);
 			}
 			if (c == SAVE_WAYP_CMD) {				
 				GuiWaypointSave gwps = new GuiWaypointSave(this,new PositionMark(center.radlat, center.radlon));
@@ -828,12 +827,14 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		return yc;
 	}
 
-	private void updatePosition() {		
-		projection = new Mercator(center, scale, getWidth(), getHeight());
-		pc.setP(projection);
-		pc.center = center.clone();
-		pc.scale = scale;
-		repaint(0, 0, getWidth(), getHeight());
+	private void updatePosition() {
+		if (pc != null){
+			projection = new Mercator(center, scale, getWidth(), getHeight());
+			pc.setP(projection);
+			pc.center = center.clone();
+			pc.scale = scale;
+			repaint(0, 0, getWidth(), getHeight());
+		}
 	}
 	
 	public synchronized void receivePosItion(float lat, float lon, float scale) {
