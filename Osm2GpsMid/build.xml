@@ -2,10 +2,17 @@
          default="deploy"
          basedir=".">
 
-	<property name="planet" value="/Massenspeicher/planet-070928.osm.bz2"/>
-	<property name="germany" value="/Massenspeicher/germany-070928.osm.bz2"/>
+
+<!-- this schold adapted to your local requirements -->
+	<property name="planet" value="/Massenspeicher/myStreetMap-0.5.osm"/>
+	<property name="france" value="/Massenspeicher/france.osm.bz2"/>
+	<property name="germany" value="/Massenspeicher/germany.osm.bz2"/>
+	<property name="london" value="/Massenspeicher/london.osm"/>
+	<property name="bavaria" value="/Massenspeicher/bayern.osm.bz2"/>
 	<property name="testplanet" value="/Massenspeicher/myStreetMap_harald.osm"/>
 	<property name="testplanet-lon" value="/Massenspeicher/myStreetMap-london-city.osm"/>
+
+
 	<property name="src.dir" value="${basedir}/src"/>
 	<property name="properties.dir" value="${basedir}/mapdef"/>
 	<property name="resources.dir" value="${basedir}/resources"/>
@@ -14,7 +21,7 @@
 	<property name="lib.dir" value="${basedir}/lib"/>
 
    	<property name="dist.dir" value="${basedir}/dist"/>
-	<property name="version" value="0.3.01"/>
+	<property name="version" value="0.3.02"/>
 	<property name="buildlib"
 	             value="buildlib/explode.jar"/>
 
@@ -39,6 +46,7 @@
    	  <mkdir dir="bin"/>
       <mkdir dir="${dist.dir}"/>
    	  <mkdir dir="exploded"/>
+      <mkdir dir="resources"/>
 	<tstamp>
 		<format property="TODAY_DE" pattern="yyyy-MM-dd HH:mm z" locale="de,DE"/>
 	</tstamp>
@@ -62,6 +70,7 @@
         <entry key="useRouting" value="true"/>
    		<entry key="midlet.name" value="GpsMid"/>
 		<entry key="routing.maxTileSize" value="3000"/>
+		<entry key="useRouting" value="true"/>
 		<entry key="maxTileSize" value="20000"/>
    	</propertyfile>
    </target>
@@ -72,13 +81,13 @@
     <delete dir="deploy"/>
    	<delete dir="exploded"/>
    	<delete dir="${dist.dir}"/>
-   	<delete file="${resources.dir}/version.properties"/>
-   	<delete>
+   	<delete file="${resources.dir}/version.properties" failonerror="false"/>
+   	<delete failonerror="false">
    		<fileset dir="${basedir}">
    			<include name="temp*"/>
-   			<include name="GpsMid-*.jad"/>
-			<include name="GpsMid-*.jar"/>
-   			<include name="GpsMid-*.zip"/>
+   			<include name="GpsMid*.jad"/>
+			<include name="GpsMid*.jar"/>
+   			<include name="GpsMid*.zip"/>
 		</fileset>
    		<fileset dir="${resources.dir}"/>
    	</delete>	
@@ -162,13 +171,13 @@
 	</target>	
 	<target name="nuernberg" depends="deploy">
 		<java jar="${dist.dir}/${ant.project.name}-${version}.jar" fork="true" maxmemory="1024m">
-			<arg value="${germany}"/>
+			<arg value="${planet}"/>
 			<arg value="nuernberg"/>
 		</java>
 	</target>	
 	<target name="london" depends="deploy">
 		<java jar="${dist.dir}/${ant.project.name}-${version}.jar" fork="true" maxmemory="1024m">
-			<arg value="${planet}"/>
+			<arg value="${london}"/>
 		  <arg value="london"/>
 		</java>
 	</target>	
@@ -187,7 +196,7 @@
 	</target>	
 	<target name="bavaria" depends="deploy">
 		<java jar="${dist.dir}/${ant.project.name}-${version}.jar" fork="true" maxmemory="1024m">
-			<arg value="${planet}"/>
+			<arg value="${bavaria}"/>
 		  <arg value="bavaria"/>
 		</java>
 	</target>	
@@ -197,9 +206,21 @@
 		  <arg value="Munich"/>
 		</java>
 	</target>	
+	<target name="france" depends="deploy">
+		<java jar="${dist.dir}/${ant.project.name}-${version}.jar" fork="true" maxmemory="1024m">
+			<arg value="${france}"/>
+		  <arg value="france"/>
+		</java>
+	</target>	
+	<target name="paris" depends="deploy">
+		<java jar="${dist.dir}/${ant.project.name}-${version}.jar" fork="true" maxmemory="1024m">
+			<arg value="${france}"/>
+		  <arg value="paris"/>
+		</java>
+	</target>	
 	<target name="hh-nue" depends="deploy">
 		<java jar="${dist.dir}/${ant.project.name}-${version}.jar" fork="true" maxmemory="1024m">
-			<arg value="${planet}"/>
+			<arg value="${germany}"/>
 		  <arg value="hh-nue"/>
 		</java>
 	</target>	
@@ -236,8 +257,8 @@
 	</target>	
 	<target name="test-nue" depends="deploy">
 		<java jar="${dist.dir}/${ant.project.name}-${version}.jar" fork="true" maxmemory="512m">
-			<arg value="${germany}"/>
-		  <arg value="nuernberg-ro"/>
+			<arg value="${bavaria}"/>
+		  <arg value="nuernberg"/>
 		</java>
 	</target>	
 
