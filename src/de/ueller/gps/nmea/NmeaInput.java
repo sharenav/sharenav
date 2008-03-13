@@ -76,10 +76,10 @@ public class NmeaInput implements Runnable, LocationMsgProducer{
 			close("closing " + e1.getMessage());
 		}
 		
-		byte timeCounter=21;
+		byte timeCounter=41;
 		while (!closed){
 			timeCounter++;
-			if (timeCounter > 20){
+			if (timeCounter > 40){
 				timeCounter = 0;
 				if(connectQuality > 100) {
 					connectQuality=100;
