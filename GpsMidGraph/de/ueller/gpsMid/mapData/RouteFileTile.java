@@ -1,8 +1,4 @@
 package de.ueller.gpsMid.mapData;
-/*
- * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net 
- * See Copying
- */
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -11,6 +7,7 @@ import java.io.InputStream;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.routing.Connection;
 import de.ueller.midlet.gps.routing.RouteNode;
+import de.ueller.midlet.gps.routing.RouteTileRet;
 import de.ueller.midlet.gps.tile.PaintContext;
 import de.ueller.midlet.gps.tile.QueueableTile;
 
@@ -37,6 +34,9 @@ public class RouteFileTile extends RouteBaseTile {
 
 	public boolean cleanup(int level) {
 		if (tile != null) {
+			if (level > 0 && !permanent){
+				return false;
+			}
 			// logger.info("test tile unused fid:" + fileId + "c:"+lastUse);
 			if (lastUse > level) {
 				tile=null;
@@ -71,7 +71,7 @@ public class RouteFileTile extends RouteBaseTile {
 	}
 
 	public RouteNode getRouteNode(RouteNode best, float lat, float lon) {
-		if (contain(lat,lon)){
+		if (contain(lat,lon,0.03f)){
 			if (tile == null){
 				try {
 					loadTile();
@@ -163,6 +163,41 @@ public class RouteFileTile extends RouteBaseTile {
 		return null;
 	}
 
+	public RouteNode getRouteNode(float lat, float lon) {
+		if (contain(lat,lon)){
+			if (tile == null){
+				try {
+					loadTile();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					return null;
+				}
+			}
+			return tile.getRouteNode(lat, lon);
+		}
+		return null;
+	}
+
+	public RouteNode getRouteNode(float lat,float lon,RouteTileRet retTile){
+		RouteNode ret=null;
+		if (contain(lat,lon)){
+			if (tile == null){
+				try {
+					loadTile();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					return null;
+				}
+			}
+			ret= tile.getRouteNode(lat, lon,retTile);
+			if (ret != null){
+				this.permanent=true;
+			}
+		}
+		return ret;
+	}
 	public void paintAreaOnly(PaintContext pc) {
 		// TODO Auto-generated method stub		
 	}

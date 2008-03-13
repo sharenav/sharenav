@@ -204,4 +204,9 @@ public class WaypointsTile extends Tile {
 		paint(pc);
 	}
 
+	public void walk(PaintContext pc, int opt) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

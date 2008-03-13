@@ -1,8 +1,4 @@
 package de.ueller.gpsMid.mapData;
-/*
- * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net 
- * See Copying
- */
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -12,6 +8,7 @@ import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.routing.Connection;
 import de.ueller.midlet.gps.routing.RouteNode;
+import de.ueller.midlet.gps.routing.RouteTileRet;
 import de.ueller.midlet.gps.tile.PaintContext;
 
 public class RouteTile extends RouteBaseTile {
@@ -34,8 +31,16 @@ public class RouteTile extends RouteBaseTile {
 	}
 
 	
+	public RouteTile() {
+		// TODO Auto-generated constructor stub
+	}
+
+
 	public boolean cleanup(int level) {
 		if (nodes != null){
+			if (level > 0 && !permanent){
+				return false;
+			}
 			if (lastUse >= level){
 				nodes=null;
 				connections=null;
@@ -119,9 +124,8 @@ public class RouteTile extends RouteBaseTile {
 	}
 	
 
-
 	public RouteNode getRouteNode(RouteNode best, float lat, float lon) {
-		if (contain(lat,lon)){
+		if (contain(lat,lon,0.03f)){
 			if (nodes == null){
 				try {
 					loadNodes();
@@ -147,6 +151,48 @@ public class RouteTile extends RouteBaseTile {
 		return best;
 	}
 
+	public RouteNode getRouteNode(float lat, float lon) {
+		if (contain(lat,lon)){
+			if (nodes == null){
+				try {
+					loadNodes();
+				} catch (IOException e) {
+					e.printStackTrace();
+					return null;
+				}
+			}
+			for (int i=0; i<nodes.length;i++){
+				RouteNode n = nodes[i];
+				if (n.lat == lat && n.lon == lon){
+					return n;
+				}
+//				if (MoreMath.approximately_equal(n.lat,lat,0.000001f) &&
+//					MoreMath.approximately_equal(n.lon,lon,0.000001f)){
+//					System.out.println("aprox equal matches");
+//					return n;
+//				}
+			}
+			lastUse=0;
+		}
+		return null;
+	}
+
+
+	/* (non-Javadoc)
+	 * @see de.ueller.gpsMid.mapData.RouteBaseTile#getRouteNode(float, float, de.ueller.midlet.gps.routing.RouteTileRet)
+	 */
+	public RouteNode getRouteNode(float lat,float lon,RouteTileRet retTile){
+		RouteNode ret=getRouteNode(lat,lon);
+		if (ret != null){
+			this.permanent=true;
+			if (this instanceof RouteTile){
+				retTile.tile=(RouteTile) this;
+			}
+		}
+		return ret;
+	}
+
+
 	public Connection[] getConnections(int id,RouteBaseTile tile,boolean bestTime){
 		if (minId <= id && maxId >= id){
 			lastUse=0;
@@ -155,34 +201,7 @@ public class RouteTile extends RouteBaseTile {
 					loadNodes();
 				}
 				if (connections == null){
-					connections = new Connection[nodes.length][];
-					//#debug error
-					logger.debug("getConnections("+id+") in file " + "/c" + fileId + ".d");
-					DataInputStream cs=new DataInputStream(QueueReader.openFile("/c" + fileId + ".d"));
-					for (int in=0; in<nodes.length;in++){
-						RouteNode n=nodes[in];
-						Connection[] cons=new Connection[n.conSize];
-						for (int i = 0; i<n.conSize;i++){
-							Connection c=new Connection();
-							int nodeId = cs.readInt();
-							if (nodeId <= maxId && nodeId >= minId){
-								c.to=nodes[nodeId - minId];
-							}
-							// This is used as Key for HashMap later
-							c.toId=new Integer(nodeId);
-							if (bestTime){
-								c.cost=cs.readShort();
-								cs.readShort();
-							} else {
-								cs.readShort();
-								c.cost=cs.readShort();								
-							}
-							c.startBearing=cs.readByte();
-							c.endBearing=cs.readByte();
-							cons[i]=c;
-						}
-						connections[in]=cons;
-					}
+					loadConnections(bestTime);
 				}
 				//#debug error
 				logger.debug("catch connections at  "+(id-minId) + "(" + minId + "/" + maxId + ")");
@@ -193,12 +212,78 @@ public class RouteTile extends RouteBaseTile {
 				return null;
 			}
 		}
+		//#debug error
+		logger.error("catch connections at  "+(id-minId) + "(" + minId + "/" + maxId + ")");
 		return null;
 	}
+
+
+	/**
+	 * @param bestTime
+	 * @throws IOException
+	 */
+	private void loadConnections(boolean bestTime) throws IOException {
+		connections = new Connection[nodes.length][];
+		//#debug error
+		logger.debug("getConnections in file " + "/c" + fileId + ".d");
+		DataInputStream cs=new DataInputStream(QueueReader.openFile("/c" + fileId + ".d"));
+		for (int in=0; in<nodes.length;in++){
+			RouteNode n=nodes[in];
+			Connection[] cons=new Connection[n.conSize];
+			for (int i = 0; i<n.conSize;i++){
+				Connection c=new Connection();
+				int nodeId = cs.readInt();
+				// fill in TargetNode but only if in the same Tile
+				if (nodeId <= maxId && nodeId >= minId){
+					c.to=nodes[nodeId - minId];
+				}
+				// This is used as Key for HashMap later so use
+				// an object.
+				c.toId=nodeId;
+				if (bestTime){
+					c.cost=cs.readShort();
+					cs.readShort();
+				} else {
+					cs.readShort();
+					c.cost=cs.readShort();								
+				}
+				c.startBearing=cs.readByte();
+				c.endBearing=cs.readByte();
+				cons[i]=c;
+			}
+			connections[in]=cons;
+		}
+	}
 	public String toString() {
-		return "RT" + "-" + fileId + ":" + lastUse;
+		return "RT" + "-" + fileId + ":" + lastUse + ((permanent)?" perm":"");
 	}
 
+
+	public void addConnection(RouteNode rn, Connection newCon, boolean bestTime) {
+		int addIdx=-1;
+		for (int i=0; i<nodes.length;i++){
+			RouteNode n = nodes[i];
+			if (rn==n){
+				addIdx=i;
+				break;
+			}
+		}
+		if (connections == null){
+			try {
+				loadConnections(bestTime);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		if (addIdx > 0 ){
+			Connection[] cons=connections[addIdx];
+			Connection[] newCons=new Connection[cons.length + 1];
+			System.arraycopy(cons, 0, newCons, 0, cons.length);
+			newCons[cons.length]=newCon;
+			connections[addIdx]=newCons;
+		}
+	}
 
 	public void paintAreaOnly(PaintContext pc) {
 		// TODO Auto-generated method stub
@@ -209,5 +294,6 @@ public class RouteTile extends RouteBaseTile {
 	public void paintNonArea(PaintContext pc) {
 		paint(pc);		
 	}
+
 
 }

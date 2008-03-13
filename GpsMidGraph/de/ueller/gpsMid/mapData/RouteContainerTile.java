@@ -10,6 +10,7 @@ import java.io.IOException;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.routing.Connection;
 import de.ueller.midlet.gps.routing.RouteNode;
+import de.ueller.midlet.gps.routing.RouteTileRet;
 import de.ueller.midlet.gps.tile.PaintContext;
 
 
@@ -84,6 +85,9 @@ public class RouteContainerTile extends RouteBaseTile {
 	
 
 	public boolean cleanup(int level) {
+		if (level > 0 && !permanent){
+			return false;
+		}
 		lastUse++;
 		if (t1 != null) {
 			t1.cleanup(level);
@@ -116,7 +120,7 @@ public class RouteContainerTile extends RouteBaseTile {
 	}
 
 	public RouteNode getRouteNode(RouteNode best, float lat, float lon) {
-		if (contain(lat, lon)){
+		if (contain(lat, lon,0.03f)){
 			if (t1 != null){
 				best=t1.getRouteNode(best, lat, lon);
 			}
@@ -141,6 +145,36 @@ public class RouteContainerTile extends RouteBaseTile {
 		} else 
 		  return null;
 	}
+
+	public RouteNode getRouteNode(float lat, float lon) {
+		RouteNode ret=null;
+		if (contain(lat, lon,0.03f)){
+			if (t1 != null){
+				ret=t1.getRouteNode(lat, lon);
+			}
+			if (ret == null && t2 != null){
+				ret=t2.getRouteNode(lat, lon);
+			}
+		}
+		return ret;
+	}
+	public RouteNode getRouteNode(float lat,float lon,RouteTileRet retTile){
+		RouteNode ret=null;
+		if (contain(lat, lon,0.03f)){
+			if (t1 != null){
+				ret=t1.getRouteNode(lat, lon,retTile);
+			}
+			if (ret == null && t2 != null){
+				ret=t2.getRouteNode(lat, lon,retTile);
+			}
+		}
+		if (ret != null){
+			this.permanent=true;
+		}
+		return ret;
+	}
+
+
 
 	public void paintAreaOnly(PaintContext pc) {
 		// TODO Auto-generated method stub		

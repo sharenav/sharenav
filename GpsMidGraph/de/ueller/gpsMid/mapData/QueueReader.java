@@ -8,16 +8,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Vector;
 
-//import javax.microedition.io.Connector;
-//import javax.microedition.io.file.FileConnection;
 
-import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
 
 public abstract class QueueReader implements Runnable{
 
-	protected static final Logger logger = Logger.getInstance(QueueReader.class,Logger.TRACE);
+	protected static final Logger logger = Logger.getInstance(QueueReader.class,Logger.ERROR);
 	protected final Vector requestQueue = new Vector();
 	protected final Vector livingQueue = new Vector();
 	private boolean shut = false;

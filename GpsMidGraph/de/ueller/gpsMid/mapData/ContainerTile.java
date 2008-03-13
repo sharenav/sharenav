@@ -120,6 +120,26 @@ public class ContainerTile extends Tile {
 			cleanup(4);
 		}
 	}
+	public void walk(PaintContext pc,int opt) {
+		//#debug
+		logger.debug("paint container");
+		if (contain(pc)){
+//			drawBounds(pc, 255, 255, 255);
+			if (t1 != null) {
+				//#debug
+				logger.debug("paint container left");
+				t1.walk(pc,opt);
+			}
+			if (t2 != null) {
+				//#debug
+				logger.debug("paint container right");
+				t2.walk(pc,opt);
+			}	
+		} else {			
+			cleanup(4);
+		}
+	}
+	
 
 	public void paintAreaOnly(PaintContext pc) {
 		//#debug
@@ -140,7 +160,7 @@ public class ContainerTile extends Tile {
 		}
 		
 	}
-
+	
 	public void paintNonArea(PaintContext pc) {
 		//#debug
 		logger.debug("paint container (apart from area ways");
@@ -158,5 +178,22 @@ public class ContainerTile extends Tile {
 		} else {			
 			cleanup(4);
 		}
+	}
+	public void getWay(PaintContext pc,PositionMark pm,Way w){
+		if (contain(pm)){
+			if (t1 != null) {
+				//#debug
+				logger.debug("search container left");
+				t1.getWay(pc,pm,w);
+			}
+			if (t2 != null) {
+				//#debug
+				logger.debug("search container right");
+				t2.getWay(pc,pm,w);
+			}	
+		} else {			
+			cleanup(4);
+		}
+		
 	}
 }

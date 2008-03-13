@@ -44,27 +44,6 @@ public class FileTile extends Tile implements QueueableTile {
 		return false;
 	}
 
-
-	public String toString() {
-		return "FT" + zl + "-" + fileId + ":" + lastUse;
-	}
-
-/*	public void getWay(PaintContext pc,PositionMark pm, Way w) {
-			if (contain(pm)) {
-				if (tile == null){
-					try {
-						pc.dictReader.readData(this);
-					} catch (IOException e) {
-						e.printStackTrace();
-						return;
-					}
-				} else {
-					lastUse=0;
-					tile.getWay(pc,pm, w);
-				}
-			}
-		}*/
-
 	private void paint(PaintContext pc, int method) {
 		if (contain(pc)) {
 			if (tile == null){
@@ -95,5 +74,40 @@ public class FileTile extends Tile implements QueueableTile {
 	public void paintNonArea(PaintContext pc) {
 		paint(pc,2);
 	}
+	public void walk(PaintContext pc,int opt) {
+		if (contain(pc)) {
+			if (tile == null){
+				if (!inLoad){
+					inLoad=true;
+					pc.dictReader.add(this);
+				} else {
+//					logger.info("load already requestet");
+				}
+			} else {
+				// delegate to tile
+				lastUse=0;
+				tile.walk(pc,opt);
+			}
+		}
+	}
+	public String toString() {
+		return "FT" + zl + "-" + fileId + ":" + lastUse;
+	}
+
+	public void getWay(PaintContext pc,PositionMark pm, Way w) {
+			if (contain(pm)) {
+				if (tile == null){
+					try {
+						pc.dictReader.readData(this);
+					} catch (IOException e) {
+						e.printStackTrace();
+						return;
+					}
+				} else {
+					lastUse=0;
+					tile.getWay(pc,pm, w);
+				}
+			}
+		}
 
 }

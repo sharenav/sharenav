@@ -25,6 +25,13 @@ public abstract class Tile {
 	public static final byte TYPE_ROUTEFILE = 7;
 	public static final byte TYPE_WAYPOINT = 8;
 
+	public static final int OPT_WAIT_FOR_LOAD = 0;
+	public static final int OPT_PAINT = 1;
+	public static final int OPT_FIND_TARGET = 2;
+	public static final int OPT_FIND_CURRENT= 3;
+	
+	
+
 	public float minLat;
 	public float maxLat;
 	public float minLon;
@@ -38,7 +45,10 @@ public abstract class Tile {
 	 * @param pc
 	 */
 	public abstract void paint(PaintContext pc);
-	/**
+	public abstract void walk(PaintContext pc,int opt);
+	public abstract boolean cleanup(int level);
+	public abstract void getWay(PaintContext pc,PositionMark pm,Way w);
+		/**
 	 * Paint all ways of a tile that are areas to the PaintContext
 	 * @param pc
 	 */
@@ -48,8 +58,6 @@ public abstract class Tile {
 	 * @param pc
 	 */
 	public abstract void paintNonArea(PaintContext pc);
-	public abstract boolean cleanup(int level);
-	//public abstract void getWay(PaintContext pc,PositionMark pm,Way w);
 	
 	boolean contain(ScreenContext pc){
 //		System.out.println(this);
@@ -82,6 +90,24 @@ public abstract class Tile {
 			return false;
 		}
 		if(minLon > lon) {
+			return false;
+		}
+//		System.out.println("Paint gpsMidMap");
+		return true;
+	}
+	boolean contain(float lat, float lon,float epsilon){
+//		System.out.println(this);
+//		System.out.println(pc.screenLD + "   " + pc.screenRU);
+		if((maxLat+epsilon) < lat) {
+			return false;
+		}
+		if((maxLon+epsilon) < lon) {
+			return false;
+		}
+		if((minLat-epsilon) > lat) {
+			return false;
+		}
+		if((minLon-epsilon) > lon) {
 			return false;
 		}
 //		System.out.println("Paint gpsMidMap");

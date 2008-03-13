@@ -9,9 +9,9 @@ import java.util.Random;
 import javax.microedition.lcdui.Graphics;
 
 import de.ueller.midlet.gps.Logger;
-import de.ueller.midlet.gps.data.Gpx;
 import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.PositionMark;
+import de.ueller.midlet.gps.data.Way;
 import de.ueller.midlet.gps.tile.PaintContext;
 
 public class GpxTile extends Tile {	
@@ -301,5 +301,15 @@ public class GpxTile extends Tile {
 		waypts = null;
 		trkPtLat = null;
 		trkPtLon = null;
+	}
+
+	public void getWay(PaintContext pc, PositionMark pm, Way w) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void walk(PaintContext pc, int opt) {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -14,8 +14,7 @@ import de.ueller.midlet.gps.Trace;
 
 public class DictReader  implements Runnable {
 	private Thread	processorThread;
-
-	private final static Logger logger=Logger.getInstance(DictReader.class,Logger.TRACE);
+	private final static Logger logger=Logger.getInstance(DictReader.class,Logger.INFO);
 	private Tile dict;
 	private final Trace	t;
 
@@ -26,7 +25,7 @@ public class DictReader  implements Runnable {
 		processorThread = new Thread(this);
 		processorThread.setPriority(Thread.MIN_PRIORITY+2);
 		processorThread.start();
-//		logger.info("DictReader Thread started");
+		logger.trace("DictReader Thread started");
 
 	}
 

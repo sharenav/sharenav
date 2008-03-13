@@ -832,4 +832,15 @@ public class Gpx extends Tile implements Runnable {
 		formatInt2(c.get(Calendar.MINUTE)) + ":" + formatInt2(c.get(Calendar.SECOND)) + "Z";		 
 		
 	}
+
+
+	public void getWay(PaintContext pc, PositionMark pm, Way w) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void walk(PaintContext pc, int opt) {
+		// TODO Auto-generated method stub
+		
+	}
 }
