@@ -30,6 +30,11 @@ public class ScreenContext {
 	 * navigation target.
 	 */
 	public PositionMark target;
+    /**
+     * store the actual position and the actual way;
+     */
+	public PositionMark currentPos=new PositionMark(0f,0f);
+
 
 	
 	public ScreenContext cloneToScreenContext() {
