@@ -108,7 +108,15 @@ public class OxParser extends DefaultHandler{
 				if (node != null){
 					way.add(node);
 				} else {
-					way.startNextSegment();
+					// Node for this Way is missing, problem in OS or simply out of Bounding Box
+					// tree different cases are possible
+					// missing at the start, in the middle or at the end
+					// we simply add the current way and start a new one with shared attributes.
+					// degenerate ways are not added, so don't care about this here.
+					if (way.path != null){
+						addNewWay(way);
+						current = new Way(way);
+					}
 				}
 			}
 		}
@@ -188,11 +196,7 @@ public class OxParser extends DefaultHandler{
 		} else if (qName.equals("way")) {
 			wayTot++;
 			Way w= (Way) current;
-			byte t=w.getType(configuration);
-			if (w.isValid() && t != 0){
-				ways.add(w);
-				wayIns++;
-			}
+			addNewWay(w);
 
 			current = null;
 		} else if (qName.equals("relation")) {
@@ -202,6 +206,17 @@ public class OxParser extends DefaultHandler{
 			current=null;
 		}
 	} // endElement
+
+	/**
+	 * @param w
+	 */
+	private void addNewWay(Way w) {
+		byte t=w.getType(configuration);
+		if (w.isValid() && t != 0){
+			ways.add(w);
+			wayIns++;
+		}
+	}
 
 	public void fatalError(SAXParseException e) throws SAXException {
 		System.out.println("Error: " + e);

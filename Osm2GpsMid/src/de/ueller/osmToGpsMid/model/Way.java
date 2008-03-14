@@ -544,7 +544,7 @@ public class Way extends Entity implements Comparable<Way>{
 		}
 		if (isWay){
 			if (path.isMultiPath()){
-				flags+=WAY_FLAG_MULTIPATH;
+//				flags+=WAY_FLAG_MULTIPATH;
 				System.err.println("MULTIPATH");
 			}
 			if (longWays ){
