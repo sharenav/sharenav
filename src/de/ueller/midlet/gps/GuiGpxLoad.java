@@ -43,9 +43,9 @@ public class GuiGpxLoad extends List implements CommandListener,
 		this.append("Load from file",null);
 		//#endif
 		//#if polish.api.btapi
-		this.append("Load via bluetooth",null);
+		//this.append("Load via bluetooth",null); //Not yet implemented
 		//#endif
-		this.append("Load from commport",null);		
+		//this.append("Load from commport",null); //Not tested properly, so leave it out		
 		if (this.size() == 0) {
 			this.append("No method for loading available",null);
 		}
