@@ -25,6 +25,9 @@ public class DiscoverGps
 	implements Runnable, DiscoveryListener
 	//#endif
 	{
+	
+	private final static Logger logger=Logger.getInstance(DiscoverGps.class,Logger.DEBUG);
+	
 	//#if polish.api.btapi
 	/** Shows the engine is ready to work. */
 	private static final int		READY						= 0;
@@ -175,12 +178,18 @@ public class DiscoverGps
 	public void run() {
 		try {
 			//Probe Commports:
-			String commports = System.getProperty("microedition.commports");			
-			String[] commport = StringTokenizer.getArray(commports, ",");
-			for (int i = 0; i < commport.length; i++) {				
-				parent.addDevice("comm:" + commport[i] + ";baudrate=19200",
+			try {
+				String commports = System.getProperty("microedition.commports");			
+				String[] commport = StringTokenizer.getArray(commports, ",");
+				for (int i = 0; i < commport.length; i++) {				
+					parent.addDevice("comm:" + commport[i] + ";baudrate=19200",
 						commport[i]);
-			}			
+				}
+			} catch (RuntimeException re) {
+				logger.error("Comm ports are not supported on this device: " + re.getMessage());
+			} catch (Exception e) {
+				logger.error("Comm ports are not supported on this device: " + e.getMessage());
+			}
 			
 //			System.out.println("Start Thread Discover Gps");
 			// initialize bluetooth first
