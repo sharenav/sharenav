@@ -1,0 +1,76 @@
+<!--
+This is just an example how you can extend the device database without
+interfering with the core files "devices.xml", "groups.xml", "apis.xml" and "vendors.xml".
+By using "custom-devices.xml", "custom-groups.xml", "custom-apis.xml" and "custom-vendors.xml"
+you can extend the database without needing to merge the file every time you update J2ME Polish.
+
+You can use this file either in the installation folder of J2ME Polish or in your project folder.
+
+Please have a look at the PDF documentation for a in-depth description of the device database.
+
+You must not define any device here that has already been defined in the ${polish.home}/devices.xml.
+
+Please consider to publish your device-definitions when they could be of use for the community
+at large.
+-->
+<devices>
+
+	<device supportsPolishGui="true">
+		<identifier>Generic/full</identifier>
+		<description>This device combines the full capabilities of GpsMid.
+		</description>
+		<features>isVirtual</features>
+		<capability name="JavaPlatform" value="MIDP/2.0"/>
+		<capability name="JavaConfiguration" value="CLDC/1.1"/>
+		<capability name="JavaPackage" value="location-api, webservices,  btapi, obex, pdaapi, fileconnection, mmapi, wmapi, 3dapi, svg, nokia-ui"/>
+	</device>
+	
+	<device supportsPolishGui="true">
+		<identifier>Generic/full-nolocation</identifier>
+		<description>This device combines the full capabilities of GpsMid, except for jsr-179 (location-api)
+		</description>
+		<features>isVirtual</features>
+		<capability name="JavaPlatform" value="MIDP/2.0"/>
+		<capability name="JavaConfiguration" value="CLDC/1.1"/>
+		<capability name="JavaPackage" value="location, webservices,  btapi, obex, pdaapi, fileconnection, mmapi, wmapi, 3dapi, svg, nokia-ui"/>
+	</device>
+	<device supportsPolishGui="true">
+		<identifier>Generic/minimal</identifier>
+		<description>This device is the minimal requirements for GpsMid
+		</description>
+		<features>isVirtual</features>
+		<capability name="JavaPlatform" value="MIDP/2.0"/>
+		<capability name="JavaConfiguration" value="CLDC/1.1"/>
+		<capability name="JavaPackage" value=""/>
+	</device>
+	
+	<device supportsPolishGui="true">
+		<identifier>Generic/minimal-bt</identifier>
+		<description>This device is includes bluetoot, but otherwise is minimal, 
+		</description>
+		<features>isVirtual</features>
+		<capability name="JavaPlatform" value="MIDP/2.0"/>
+		<capability name="JavaConfiguration" value="CLDC/1.1"/>
+		<capability name="JavaPackage" value="btapi"/>
+	</device>
+	<device supportsPolishGui="true">
+		<identifier>Generic/no-obex</identifier>
+		<description>This device contins bluetooth and fileaccess, but no obex capabilities, such as many Nokia devices. 
+		</description>
+		<features>isVirtual</features>
+		<capability name="JavaPlatform" value="MIDP/2.0"/>
+		<capability name="JavaConfiguration" value="CLDC/1.1"/>
+		<capability name="JavaPackage" value="btapi, pdaapi, fileconnection"/>
+	</device>
+	
+	<device supportsPolishGui="true">
+		<identifier>Generic/no-xml</identifier>
+		<description>For those devices that don't have jsr-172 (webservices). And therefore no build in XML parser  
+		</description>
+		<features>isVirtual</features>
+		<capability name="JavaPlatform" value="MIDP/2.0"/>
+		<capability name="JavaConfiguration" value="CLDC/1.1"/>
+		<capability name="JavaPackage" value="btapi, obex, pdaapi, fileconnection"/>
+	</device>
+	
+</devices>

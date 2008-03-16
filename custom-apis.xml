@@ -1,0 +1,28 @@
+<apis>
+	<api>
+		<name>Bluetooth Obex API</name>
+		<description>The Bluetooth Obex API provides
+			functionalities for data exchange with other bluetooth devices. This
+			is a workaround for the lack of OBEX in some JSR-82 implementations
+		</description>
+		<names>obex</names>
+		<symbol>obex</symbol>
+		<files>btapi.jar, j2me-btapi.jar, bluetooth.zip</files>
+		<path>import/btapi.jar</path>
+	</api>
+<!--
+	You can use this block to define a new API
+	( remove these XML-comments ):
+
+	<api>
+		<name></name>
+		<description>
+		</description>
+		<names>JSR,JSR-</names>
+		<symbol></symbol>
+		<files>-1.0.jar</files>
+		<path>import/-1.0.jar</path>
+	</api>
+-->
+</apis>
+
