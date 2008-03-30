@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.logging.Logger;
 
 import de.ueller.osmToGpsMid.model.Connection;
 import de.ueller.osmToGpsMid.model.Node;
@@ -49,12 +50,6 @@ public class RouteData {
 		for (Node n:parser.nodes.values()){
 			n.connectedLineCount=0;
 		}
-		// count for all Nodes the connected lines.
-// old version
-//		for (Line l:parser.lines.values()){
-//			l.from.connectedLineCount++;
-//			l.to.connectedLineCount++;
-//		}
 		// count all connections for all nodes
 		for (Way w:parser.ways){
 			if (! w.isAccessByCar()){
@@ -157,8 +152,9 @@ public class RouteData {
 			cr.from=to;
 			to.connected.add(cr);
 			from.connectedFrom.add(cr);
+			connections.add(cr);
 		}
-		// need only for debugging not f ,or live
+		// need only for debugging not for live
 		c.from=from;
 		connections.add(c);
 		
@@ -190,56 +186,82 @@ public class RouteData {
 	}
 	
 	public void optimise(){
-		System.out.println("RoutNodes for optimise " + nodes.size());
-		ArrayList<RouteNode> removeNodes=new ArrayList<RouteNode>();
-		for (RouteNode n:nodes.values()){
-			// for normal ways the second connection will removed 
-			if (n.connected.size() == 2 && n.connectedFrom.size()==2){
-				Connection c1=n.connected.get(0);
-				RouteNode n1=c1.to;
-				Connection c2=null;
-				// search connection that not points back from n1
-				int countNotPointBackFromN1=0;
-				for (Connection ct:n.connectedFrom){
-					if (ct.from != n1 ){
-						countNotPointBackFromN1++;
-						c2=ct;
-					}
-				}
-				if (c2 != null && countNotPointBackFromN1==1){
-					c2.endBearing=c1.endBearing;
-					c2.time += c1.time;
-					c2.length += c1.length;
-					c2.to=c1.to;
-					n1.connectedFrom.remove(c1);
-					n1.connectedFrom.add(c2);
-					n.connected.remove(c1);
-					n.connectedFrom.remove(c2);
-				}
-
-			}
-			// for one ways
-			if (n.connected.size() == 1 && n.connectedFrom.size()==1){
-				Connection c1=n.connected.get(0);
-				RouteNode n1=c1.to;
-				Connection c2=n.connectedFrom.get(0);
-				RouteNode n2=c2.from;
-				if (n2 != n1){
-					c2.endBearing=c1.endBearing;
-					c2.time += c1.time;
-					c2.length += c1.length;
-					c2.to=c1.to;
-					n1.connectedFrom.remove(c1);
-					n1.connectedFrom.add(c2);
-					removeNodes.add(n);
-				}
-			}
-		}
-		System.out.println("remove " + removeNodes.size() + " RouteNode due optimation");
-		for (RouteNode n:removeNodes){
-			n.node.routeNode=null;
-			nodes.remove(n.node.id);
-		}
+//		System.out.println("RoutNodes for optimise " + nodes.size());
+//		ArrayList<RouteNode> removeNodes=new ArrayList<RouteNode>();
+//		for (RouteNode n:nodes.values()){
+//			// for normal ways the second connection will removed 
+//			if (n.connected.size() == 2 && n.connectedFrom.size()==2){
+//				Connection c1=n.connected.get(0);
+//				RouteNode n1=c1.to;
+//				Connection c2=null;
+//				Connection c3=n.connected.get(1);
+//				RouteNode n2=c3.to;
+//				Connection c4=null;
+//				for (Connection ct:n.connectedFrom){
+//					if (ct.from == n2 ){
+//						c2=ct;
+//					} 
+//					if (ct.from == n1){
+//						c4=ct;
+//					}
+//				}
+//				if (c2 != null && c4 != null){
+//					if (c2.to != n){
+//						System.out.println("c2.to != n");
+//					}
+//					if (c4.to != n){
+//						System.out.println("c4.to != n");
+//					}
+//					if (c1.to != c4.from){
+//						System.out.println("c1.to != c4.from");
+//					}
+//					if (c2.from != c3.to){
+//						System.out.println("c2.from != c3.to");
+//					}
+//					c2.endBearing=c1.endBearing;
+//					c2.time += c1.time;
+//					c2.length += c1.length;
+//					c2.to=c1.to;
+//					c3.from=c1.to;
+//					c3.startBearing=MyMath.inversBearing(c1.endBearing);
+//					c3.time += c1.time;
+//					c3.length += c1.length;
+//					n1.connectedFrom.remove(c1);
+//					n1.connected.remove(c4);
+//					n1.connectedFrom.add(c2);
+//					n1.connected.add(c3);
+//					connections.remove(c1);
+//					connections.remove(c4);
+//					removeNodes.add(n);
+//				}
+//
+//			}
+//			// for one ways
+////			if (n.connected.size() == 1 && n.connectedFrom.size()==1){
+////				Connection c1=n.connected.get(0);
+////				RouteNode n1=c1.to;
+////				Connection c2=n.connectedFrom.get(0);
+////				RouteNode n2=c2.from;
+////				if (n2 != n1){
+////					c2.endBearing=c1.endBearing;
+////					c2.time += c1.time;
+////					c2.length += c1.length;
+////					c2.to=c1.to;
+////					n1.connectedFrom.remove(c1);
+////					n1.connectedFrom.add(c2);
+////					n.connected.remove(c1);
+////					n.connectedFrom.remove(c2);
+//////					connections.remove(c1);
+////					removeNodes.add(n);
+////				
+////				}
+////			}
+//		}
+//		System.out.println("remove " + removeNodes.size() + " RouteNode due optimation");
+//		for (RouteNode n:removeNodes){
+//			n.node.routeNode=null;
+//			nodes.remove(n.node.id);
+//		}
 	}
 	
 	
@@ -258,8 +280,19 @@ public class RouteData {
 					System.out.println("read Ways  " + parser.ways.size());
 					new CleanUpData(parser,conf);
 					RouteData rd=new RouteData(parser,"");
+
 					rd.create();
+					
+					int rid=10000;
+//					for (RouteNode r:rd.nodes.values()){
+//						r.node.renumberdId=rid++;
+//					}
+					rid=1;
 					rd.optimise();
+					for (RouteNode r:rd.nodes.values()){
+						r.node.renumberdId=rid++;
+					}
+
 //					rd.write("/Temp");
 					System.out.println("relNodes contain " + rd.nodes.size());
 					System.out.println("Connections contain " + rd.connections.size());
@@ -291,10 +324,9 @@ public class RouteData {
 	private static void exportResultOSM(PrintWriter fo, RouteData rd,
 			Vector<Connection> solve) {
 		fo.write("<?xml version='1.0' encoding='UTF-8'?>\n");
-		fo.write("<osm version='0.4' generator='JOSM'>\n");
+		fo.write("<osm version='0.5' generator='JOSM'>\n");
 		int rid=1;
 		for (RouteNode r:rd.nodes.values()){
-			r.node.renumberdId=rid++;
 			fo.write("<node id='" + r.node.renumberdId);
 			fo.write("' timestamp='2007-02-15 10:32:17' visible='true' lat='" +  r.node.lat);
 			fo.write("' lon='" +r.node.lon + "'>\n");
@@ -312,54 +344,47 @@ public class RouteData {
 			fo.write("</node>\n");
 
 		}
+		int id=1;
+		for (RouteNode r:rd.nodes.values()){
+			for (Connection c:r.connected){
+		fo.write("<way id='"+ id++ + "' timestamp='2007-02-14 23:41:43' visible='true' >\n");
+		fo.write("  <nd ref='"+c.from.node.renumberdId+"'/>\n");
+		fo.write("  <nd ref='"+c.to.node.renumberdId+"'/>\n");
+		fo.write("  <tag k='name' v='laenge="+c.length+"' />\n");
+		fo.write("  <tag k='time' v='"+c.time+"' />\n");
+		fo.write("  <tag k='bs' v='"+c.startBearing*2+"' />\n");
+		fo.write("  <tag k='be' v='"+c.endBearing*2+"' />\n");
+		fo.write("</way>\n");
+		}
+	}
+		
+		
 		RouteNode last=null;
 		Connection lastCon=null;
-		long id=1;
 		int lb=0;
-		if (solve != null) {
-		for (Connection c:solve){
-			if (last==null){
-				last=c.to;
-				lastCon=c;
-				lb=c.endBearing;
-			} else {
-				System.out.println(c.printTurn(lastCon));
-				fo.write("<segment id='"+ id++ + "' timestamp='2007-02-14 23:41:43' visible='true' from='" +
-						last.node.renumberdId
-						+ "' to='"
-						+ c.to.node.renumberdId
-						+ "'>\n");
-				fo.write("  <tag k='length' v='"+c.length+"' />\n");
-				fo.write("  <tag k='time' v='"+c.time+"' />\n");
-				fo.write("  <tag k='bs' v='"+c.startBearing*2+"' />\n");
-				fo.write("  <tag k='be' v='"+c.endBearing*2+"' />\n");
-				fo.write("</segment>\n");
-				last=c.to;
-				lastCon=c;
-			}
-		} 
-		}
-		long lastWayline=id;
-
-			for (Connection c: rd.connections){
-				if (c.used == 0 && solve != null) continue;
-				fo.write("<segment id='"+ id++ + "' timestamp='2007-02-14 23:41:43' visible='true' from='" +
-						c.from.node.renumberdId
-						+ "' to='"
-						+ c.to.node.renumberdId
-						+ "'>\n");
-				fo.write("  <tag k='length' v='"+c.length+"' />\n");
-				fo.write("  <tag k='time' v='"+c.time+"' />\n");
-				fo.write("  <tag k='bs' v='"+c.startBearing*2+"' />\n");
-				fo.write("  <tag k='be' v='"+c.endBearing*2+"' />\n");
-				fo.write("</segment>\n");
-			
-		}
-		fo.write("<way id='1' timestamp='2007-07-30 20:34:18' user='ulfl' visible='true'>\n");
-		for (int l=1;l<lastWayline;l++){
-		   fo.write("<seg id='"+l+"' />\n");	
-		}
-		fo.write("</way>\n");
+//		if (solve != null) {
+//		for (Connection c:solve){
+//			if (last==null){
+//				last=c.to;
+//				lastCon=c;
+//				lb=c.endBearing;
+//			} else {
+//				System.out.println(c.printTurn(lastCon));
+//				fo.write("<segment id='"+ id++ + "' timestamp='2007-02-14 23:41:43' visible='true' from='" +
+//						last.node.renumberdId
+//						+ "' to='"
+//						+ c.to.node.renumberdId
+//						+ "'>\n");
+//				fo.write("  <tag k='length' v='"+c.length+"' />\n");
+//				fo.write("  <tag k='time' v='"+c.time+"' />\n");
+//				fo.write("  <tag k='bs' v='"+c.startBearing*2+"' />\n");
+//				fo.write("  <tag k='be' v='"+c.endBearing*2+"' />\n");
+//				fo.write("</segment>\n");
+//				last=c.to;
+//				lastCon=c;
+//			}
+//		} 
+//		}
 		fo.write("</osm>");
 		fo.close();
 	}
