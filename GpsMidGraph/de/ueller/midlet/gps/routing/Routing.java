@@ -40,7 +40,7 @@ public class Routing implements Runnable {
 	private final Trace parent;
 	private int bestTotal;
 	private long nextUpdate;
-	private float estimateFac=1.50f;
+	private float estimateFac=1.30f;
 	private int oomCounter=0;
 //	private Tile destinationTile=new RouteTile();
 	private int expanded;
@@ -203,7 +203,7 @@ public class Routing implements Runnable {
 			parent.receiveMessage("" + (bestTotal/60) 
 					+ "min " + (100*actual/total)
 					+ "% m:" + runtime.freeMemory()/1000 
-					+ "k s:" + oomCounter+"/"+expanded);
+					+ "k s:" + oomCounter+"/"+expanded+"/"+open.size());
 		} else {
 			parent.receiveMessage("" + (bestTotal/1000f) 
 					+ "km " + (100*actual/total)
@@ -355,6 +355,14 @@ public class Routing implements Runnable {
 			// (Start Node) to this Route-Node on the way.
 			System.out.println("search nodes for start point");
 			int startAt=0;
+			if (fromMark.e == null){
+				parent.receiveMessage("search for start element");
+				parent.searchElement(fromMark);
+			}
+			if (toMark.e == null){
+				parent.receiveMessage("search for target element");
+				parent.searchElement(toMark);
+			}
 			if (fromMark.e instanceof Way){
 				Way w=(Way) fromMark.e;
 				if (w.isOneway()){
