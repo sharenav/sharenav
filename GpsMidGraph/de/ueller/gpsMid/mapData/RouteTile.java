@@ -16,7 +16,7 @@ public class RouteTile extends RouteBaseTile {
 	RouteNode[] nodes=null;
 	Connection[][] connections=null;
 	//#debug error
-	private final static Logger logger=Logger.getInstance(RouteTile.class,Logger.TRACE);
+	private final static Logger logger=Logger.getInstance(RouteTile.class,Logger.INFO);
 
 	RouteTile(DataInputStream dis, int deep, byte zl) throws IOException {
 		minLat = dis.readFloat();
