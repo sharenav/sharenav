@@ -99,7 +99,7 @@ public class MyMath {
 	}
 	
 	/**
-	 * calculate the start bearing in 1/2 degree so result 90 indicates 180 Grad. 
+	 * calculate the start bearing in 1/2 degree so result 90 indicates 180 degree. 
 	 * @param from
 	 * @param to
 	 * @return
