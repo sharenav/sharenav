@@ -7,7 +7,7 @@
 	<property name="planet" value="/Massenspeicher/myStreetMap-0.5.osm"/>
 	<property name="france" value="/Massenspeicher/france.osm.bz2"/>
 	<property name="germany" value="/Massenspeicher/germany.osm.bz2"/>
-	<property name="london" value="/Massenspeicher/london.osm"/>
+	<property name="london" value="/Massenspeicher/uk.osm.bz2"/>
 	<property name="bavaria" value="/Massenspeicher/bayern.osm.bz2"/>
 	<property name="testplanet" value="/Massenspeicher/myStreetMap_harald.osm"/>
 	<property name="testplanet-lon" value="/Massenspeicher/myStreetMap-london-city.osm"/>
@@ -21,7 +21,7 @@
 	<property name="lib.dir" value="${basedir}/lib"/>
 
    	<property name="dist.dir" value="${basedir}/dist"/>
-	<property name="version" value="0.3.02"/>
+	<property name="version" value="0.3.50"/>
 	<property name="buildlib"
 	             value="buildlib/explode.jar"/>
 
