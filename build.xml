@@ -76,14 +76,14 @@
 		<info
 			license="GPL"
 			name="GpsMid"
-			version="0.3.02"
+			version="0.3.50"
 			description=""
 			vendorName="Harald Mueller"
 			infoUrl="http://gpsmid.sourceforge.net"
 			icon="GpsMid.png"
 			jarName="GpsMid-${polish.vendor}-${polish.name}-${polish.version}.jar" 
 			jarUrl="${deploy-url}${polish.jarName}"
-			copyright="Copyright 2007 Harald Mueller."
+			copyright="Copyright 2007, 2008 Harald Mueller."
 			deleteConfirm="Do you really want to kill me?" 
 		/>
 		
@@ -106,11 +106,10 @@
 				<requirement name="Identifier" value="Generic/minimal-bt" />
 				<requirement name="Identifier" value="Generic/no-obex" />
 				<requirement name="Identifier" value="Generic/no-xml" />
-				<!--
 				<requirement name="Identifier" value="Motorola/Motorazr_V3i" />
 				<requirement name="Identifier" value="Sony-Ericsson/K750" />
-				<requirement name="Identifier" value="Generic/multi" />
 				<requirement name="Identifier" value="Siemens/SL75" />
+				<!--
 				<requirement name="Identifier" value="Generic/loc" />
 				-->
 			</or>
