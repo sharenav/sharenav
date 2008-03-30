@@ -42,7 +42,7 @@ public class Path {
 		currentSeg.add(n);
 	}
 	
-	public void addNewSegment(){
+	protected void addNewSegment(){
 		if (subPathList == null){
 			subPathList = new LinkedList<SubPath>();
 		}
