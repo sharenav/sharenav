@@ -521,6 +521,18 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		tileReader.incUnusedCounter();
 		dictReader.incUnusedCounter();		
 	}
+	
+	public void searchElement(PositionMark pm) throws Exception{
+		PaintContext pc = new PaintContext(this, tileReader, dictReader,null);
+		Node nld=new Node(pm.lat - 0.005f,pm.lon - 0.009f);
+		Node nru=new Node(pm.lat + 0.005f,pm.lon + 0.009f);		
+		pc.screenLD=nld;
+		pc.screenRU=nru;
+		pc.target=pm;
+		for (int i=0; i<4; i++){
+			t[i].walk(pc, Tile.OPT_WAIT_FOR_LOAD);
+		}
+	}
 
 	private int showConnectStatistics(Graphics g, int yc, int la) {
 		if (statRecord == null) {
