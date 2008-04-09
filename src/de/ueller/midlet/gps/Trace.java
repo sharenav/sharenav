@@ -593,7 +593,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	}
 	
 	public void searchElement(PositionMark pm) throws Exception{
-		PaintContext pc = new PaintContext(this, tileReader, dictReader,null);
+		PaintContext pc = new PaintContext(this, null);
 		Node nld=new Node(pm.lat - 0.005f,pm.lon - 0.009f);
 		Node nru=new Node(pm.lat + 0.005f,pm.lon + 0.009f);		
 		pc.screenLD=nld;
