@@ -187,7 +187,7 @@ public class Configuration {
 	}
 	
 	public void setDebugRawLoggerUrl(String url) {
-		rawGpsLogUrl = url;
+		rawDebugLogUrl = url;
 		write(rawDebugLogUrl, 10);
 	}
 	

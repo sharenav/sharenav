@@ -28,7 +28,7 @@ public class GuiDiscover implements CommandListener, GpsMidDisplayable, Selectio
 
 	/** A menu list instance */
 	private static final String[]	elements		= { "Location Receiver","Discover GPS","Display options",
-			"GPX Receiver", "Map source"};
+			"GPX Receiver", "Map source", "Debug options"};
 
 	private static final String[]	empty			= {};
 
@@ -73,6 +73,8 @@ public class GuiDiscover implements CommandListener, GpsMidDisplayable, Selectio
 	private final Form				menuDisplayOptions = new Form("Display Options");
 	
 	private final Form				menuGpx = new Form("Gpx Receiver");
+	
+	private final Form				menuDebug = new Form("Debug options");
 
 	private final GpsMid			parent;
 
@@ -87,6 +89,7 @@ public class GuiDiscover implements CommandListener, GpsMidDisplayable, Selectio
 	private final static int		STATE_GPX		= 5;
 	private final static int		STATE_MAP		= 6;
 	private final static int		STATE_DISPOPT	= 7;
+	private final static int		STATE_DEBUG		= 8;
 	
 	private Vector urlList; 
 	private Vector friendlyName;
@@ -95,6 +98,7 @@ public class GuiDiscover implements CommandListener, GpsMidDisplayable, Selectio
 	private ChoiceGroup mapSrc;
 	private ChoiceGroup renderOpts;
 	private ChoiceGroup backlightOpts;
+	private ChoiceGroup debugLog;
 	private StringItem  gpxUrl;
 
 	
@@ -212,6 +216,22 @@ public class GuiDiscover implements CommandListener, GpsMidDisplayable, Selectio
 		menuBT.setCommandListener(this);
 		menuBT.setTitle("Search Service");
 		
+		//Prepare Debug selection menu
+		menuDebug.addCommand(BACK_CMD);
+		menuDebug.addCommand(OK_CMD);
+		menuDebug.addCommand(FILE_MAP);
+		menuDebug.setCommandListener(this);
+		boolean [] selDebug = new boolean[1];
+		selDebug[0] = GpsMid.getInstance().getConfig().getDebugRawLoggerEnable();
+		loggings = new String[1];
+		loggings[0] = GpsMid.getInstance().getConfig().getDebugRawLoggerUrl();
+		if (loggings[0] == null) {
+			loggings[0] = "Please select directory";
+		}
+		debugLog = new ChoiceGroup("Debug event logging to:", ChoiceGroup.MULTIPLE,loggings,null);
+		debugLog.setSelectedFlags(selDebug);
+		menuDebug.append(debugLog);
+		
 		show();
 	}
 
@@ -246,6 +266,10 @@ public class GuiDiscover implements CommandListener, GpsMidDisplayable, Selectio
 				case STATE_GPX:
 					title="Gpx Directory";
 					initialDir=GpsMid.getInstance().getConfig().getGpxUrl();
+					break;
+				case STATE_DEBUG:
+					title="Log Directory";
+					initialDir=GpsMid.getInstance().getConfig().getDebugRawLoggerUrl();
 					break;
 			}
 			FsDiscover fsd = new FsDiscover(this,this,initialDir,true,"",title);
@@ -340,7 +364,11 @@ public class GuiDiscover implements CommandListener, GpsMidDisplayable, Selectio
 					mapSrc.setSelectedIndex(GpsMid.getInstance().getConfig().usingBuiltinMap()?0:1, true);
 					Display.getDisplay(parent).setCurrent(menuSelectMapSource);
 					state = STATE_MAP;
-					break;						
+					break;			
+				case 5:					
+					Display.getDisplay(parent).setCurrent(menuDebug);
+					state = STATE_DEBUG;
+					break;
 				}
 				break;
 			case STATE_BT:
@@ -402,7 +430,16 @@ public class GuiDiscover implements CommandListener, GpsMidDisplayable, Selectio
 				parent.stopBackLightTimer();				
 				parent.startBackLightTimer();			
 				break;
+			case STATE_DEBUG:
+				boolean [] selDebug = new boolean[1];
+				debugLog.getSelectedFlags(selDebug);				
+				GpsMid.getInstance().getConfig().setDebugRawLoggerEnable((selDebug[0]));
+				GpsMid.getInstance().getConfig().setDebugRawLoggerUrl(debugLog.getString(0));
+				state = STATE_ROOT;
+				this.show();			
+				break;
 			}
+		
 		}
 	}
 
@@ -436,6 +473,8 @@ public class GuiDiscover implements CommandListener, GpsMidDisplayable, Selectio
 				Display.getDisplay(parent).setCurrent(menuSelectMapSource);
 			case STATE_GPX:
 				Display.getDisplay(parent).setCurrent(menuGpx);
+			case STATE_DEBUG:
+				Display.getDisplay(parent).setCurrent(menuDebug);
 				
 		}		
 	}
@@ -497,6 +536,10 @@ public class GuiDiscover implements CommandListener, GpsMidDisplayable, Selectio
 		case STATE_GPX:
 			url = url.substring(0, url.lastIndexOf('/') + 1);
 			parent.getConfig().setGpxUrl(url);			
+			break;
+		case STATE_DEBUG:
+			url = url.substring(0, url.lastIndexOf('/') + 1);
+			debugLog.set(0, url, null);						
 			break;
 		}		
 	}

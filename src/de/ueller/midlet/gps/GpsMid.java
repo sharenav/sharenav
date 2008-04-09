@@ -39,6 +39,7 @@ import com.nokia.mid.ui.DeviceControl;
 //#endif
 
 import de.ueller.gps.data.Configuration;
+import de.ueller.gps.tools.HelperRoutines;
 
 
 
@@ -254,9 +255,11 @@ private Trace trace=null;
 	
 	public void enableDebugFileLogging() {
 		//#if polish.api.fileconnection
-		if (config.getDebugRawLoggerEnable() && config.getDebugRawLoggerUrl() != null) {
+		String url = config.getDebugRawLoggerUrl();
+		if (config.getDebugRawLoggerEnable() && url != null) {
 			try {
-				Connection debugLogConn = Connector.open(config.getDebugRawLoggerUrl());
+				url = url + "GpsMid_log_" + HelperRoutines.formatSimpleDateNow() + ".txt";
+				Connection debugLogConn = Connector.open(url);
 				if (debugLogConn instanceof FileConnection) {
 					if (!((FileConnection)debugLogConn).exists()) {
 						((FileConnection)debugLogConn).create();
