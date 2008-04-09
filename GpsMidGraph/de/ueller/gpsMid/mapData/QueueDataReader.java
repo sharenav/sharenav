@@ -8,6 +8,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.data.Way;
@@ -24,16 +25,11 @@ public class QueueDataReader extends QueueReader implements Runnable {
 		this.trace = trace;
 		
 	}
-	public synchronized void add(SingleTile st){
-		st.lastUse=0;
-		requestQueue.addElement(st);
-	    //#debug error
-			logger.info("add " + st.fileId + " to queue size=" + requestQueue.size());
-		notify();
-	}
-	public void readData(Tile t) throws IOException{
+		
+	public void readData(Tile t, Object notifyReady) throws IOException{
+		logger.info("Reading tile: " + t);
 		SingleTile tt=(SingleTile) t;
-		InputStream is=openFile("/t"+tt.zl+tt.fileId+".d");
+		InputStream is=GpsMid.getInstance().getConfig().getMapResource("/t"+tt.zl+tt.fileId+".d");
 		if (is == null){
 		    //#debug error
 				logger.error("file inputStream"+"/t"+tt.zl+tt.fileId+".d"+" not found" );
@@ -53,9 +49,12 @@ public class QueueDataReader extends QueueReader implements Runnable {
 //			logger.error("not a MapMid-file");
 			throwError( "not a MapMid-file", tt);
 		}
+		tt.centerLat = ds.readFloat();
+		tt.centerLon = ds.readFloat();
+		logger.info("Center coordinates of tile: " + tt.centerLat + "/" + tt.centerLon);
 		int nodeCount=ds.readShort();
-		float[] radlat = new float[nodeCount];
-		float[] radlon = new float[nodeCount];
+		short[] radlat = new short[nodeCount];
+		short[] radlon = new short[nodeCount];
 		int iNodeCount=ds.readShort();
 		//#debug error
 		  logger.trace("nodes total :"+nodeCount + "  interestNode :" + iNodeCount);
@@ -65,19 +64,19 @@ public class QueueDataReader extends QueueReader implements Runnable {
 		}
 		byte[] type = new byte[iNodeCount];
 		byte flag=0;
+		logger.info("About to read nodes");
 		try {
 			for (int i=0; i< nodeCount;i++){
 				//#debug error
-					logger.trace("read coord :"+i+"("+nodeCount+")");
+				//	logger.info("read coord :"+i+"("+nodeCount+")");
 				flag=ds.readByte();
 				if ((flag & C.NODE_MASK_ROUTENODELINK) > 0){
 					ds.readShort();
-					radlat[i] = ds.readFloat();
-					radlon[i] = ds.readFloat();					
-				} else {
-					radlat[i] = ds.readFloat();
-					radlon[i] = ds.readFloat();
 				}
+								
+				radlat[i] = ds.readShort();
+				radlon[i] = ds.readShort();
+				
 				if ((flag & C.NODE_MASK_NAME) > 0){
 					if ((flag & C.NODE_MASK_NAMEHIGH) > 0) {
 						nameIdx[i]=ds.readInt();
@@ -100,10 +99,10 @@ public class QueueDataReader extends QueueReader implements Runnable {
 			e.printStackTrace();
 			throwError(e, "reading Nodes", tt);
 		}
+		logger.info("read nodes");
 		if (ds.readByte()!=0x55){
-			System.out.println("Reading Nodes whent wrong");
 			//#debug
-			logger.error("Start of Ways not found");
+			logger.error("Reading Nodes whent wrong / Start of Ways not found");
 			throwError("Nodes not OK", tt);
 		}
 		int wayCount=ds.readByte();
@@ -119,7 +118,7 @@ public class QueueDataReader extends QueueReader implements Runnable {
 				byte flags=ds.readByte();
 				if (flags != 128){
 //				showAlert("create Way " + i);
-					Way w=new Way(ds,flags);
+					Way w=new Way(ds,flags,tt);
 					tt.ways[i]=w;
 				}
 				lastread=i;
@@ -136,7 +135,12 @@ public class QueueDataReader extends QueueReader implements Runnable {
 
 		tt.dataReady();
 		trace.newDataReady();
-//		logger.info("DataReader ready "+ tt.fileId + tt.nodes.length + " Nodes " + tt.ways.length + " Ways" );
+		if (notifyReady != null) {			
+			synchronized(notifyReady) {
+				notifyReady.notifyAll();
+			}
+		}
+		logger.info("DataReader ready "+ tt.fileId + " " + tt.nodeLat.length + " Nodes " + tt.ways.length + " Ways" );
 
 //		}
 

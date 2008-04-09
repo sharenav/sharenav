@@ -6,8 +6,10 @@ package de.ueller.gpsMid.mapData;
 
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.util.Vector;
 
 import de.ueller.midlet.gps.Logger;
+import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.data.Way;
 import de.ueller.midlet.gps.routing.RouteNode;
@@ -49,7 +51,7 @@ public class FileTile extends Tile implements QueueableTile {
 			if (tile == null){
 				if (!inLoad){
 					inLoad=true;
-					pc.dictReader.add(this);
+					Trace.getInstance().getDictReader().add(this,null);
 				} else {
 				}
 			} else {
@@ -79,7 +81,7 @@ public class FileTile extends Tile implements QueueableTile {
 			if (tile == null){
 				if (!inLoad){
 					inLoad=true;
-					pc.dictReader.add(this);
+					Trace.getInstance().getDictReader().add(this,null);
 				} else {
 //					logger.info("load already requestet");
 				}
@@ -90,11 +92,56 @@ public class FileTile extends Tile implements QueueableTile {
 			}
 		}
 	}
+	
+	public Vector getNearestPoi(byte searchType, float lat, float lon, float maxDist) {		
+		if (tile == null){
+			/**
+			 * This hole case is not correctly handled. The POI data
+			 * isn't loaded into memory, but we need it to search for
+			 * points. However due to the asynchronous nature of implementation
+			 * of dictReaded, we don't get the data in time
+			 * 
+			 * TODO: Need to think about this more of how to do this correctly
+			 */
+			if (!inLoad){				
+				inLoad=true;
+				Trace.getInstance().getDictReader().add(this,this);
+			}
+			synchronized(this) {
+				try {
+					/**
+					 * Wait for the tile to be loaded in order to process it
+					 * We should be notified once the data is loaded, but
+					 * have a timeout of 500ms
+					 */
+					wait(500);
+				} catch (InterruptedException e) {
+					/**
+					 * Nothing to do in this case, as we need to deal
+					 * with the case that nothing has been returned anyway
+					 */
+				}					
+			}							
+		}
+		/**
+		 * Hopefully by now the tile is loaded, so try again
+		 */
+		if (tile != null){
+			lastUse=0;
+			return tile.getNearestPoi(searchType, lat, lon, maxDist);
+		}
+		/** 
+		 * The tile was not loaded in time. In order not to slow down
+		 * the processing too much, just return no result and continue
+		 */
+		return new Vector();
+	}
+	
 	public String toString() {
 		return "FT" + zl + "-" + fileId + ":" + lastUse;
 	}
 
-	public void getWay(PaintContext pc,PositionMark pm, Way w) {
+/*	public void getWay(PaintContext pc,PositionMark pm, Way w) {
 			if (contain(pm)) {
 				if (tile == null){
 					try {
@@ -108,6 +155,6 @@ public class FileTile extends Tile implements QueueableTile {
 					tile.getWay(pc,pm, w);
 				}
 			}
-		}
+			}*/
 
 }

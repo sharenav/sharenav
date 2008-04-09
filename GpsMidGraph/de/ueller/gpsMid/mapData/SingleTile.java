@@ -7,16 +7,20 @@ package de.ueller.gpsMid.mapData;
 
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.util.Vector;
 
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
 import de.ueller.gps.data.Configuration;
+import de.ueller.gps.data.SearchResult;
 import de.ueller.midlet.gps.Logger;
+import de.ueller.midlet.gps.Trace;
 
 import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.PositionMark;
+import de.ueller.midlet.gps.data.ProjMath;
 import de.ueller.midlet.gps.data.Way;
 import de.ueller.midlet.gps.tile.C;
 import de.ueller.midlet.gps.tile.PaintContext;
@@ -32,10 +36,24 @@ public class SingleTile extends Tile implements QueueableTile {
 
 	private static final byte STATE_CLEANUP = 3;
 
-	// Node[] nodes;
-	public float[] nodeLat;
+	/**
+	 * fpm is the fixed point multiplier used to convert
+	 * latitude / logitude from radians to fixpoint representation
+	 * 
+	 * With this multiplier, one should get a resolution
+	 * of 1m at the equator.
+	 * 
+	 * 6378159.81 = circumference of the earth in meters / 2 pi. 
+	 * 
+	 * This constant has to be in synchrony with the value in Osm2GpsMid
+	 */	
+	public static final float fpm = 6378159.81f;
+    public static final float fpminv = 1/fpm; //Saves a floatingpoint devision
 
-	public float[] nodeLon;
+	// Node[] nodes;
+	public short[] nodeLat;
+
+	public short[] nodeLon;
 
 	public int[] nameIdx;
 
@@ -65,12 +83,12 @@ public class SingleTile extends Tile implements QueueableTile {
 //		 logger.debug("ready " + deep + ":ST Nr=" + fileId);
 	}
 
-	private boolean isDataReady(PaintContext pc) {
+	private boolean isDataReady() {
 		if (state == STATE_NOTLOAD) {
 			// logger.debug("singleTile start load " + fileId );
 			state = STATE_LOADSTARTED;
-			// drawBounds(pc, 255, 55, 55);
-			pc.dataReader.add(this);
+			// drawBounds(pc, 255, 55, 55);			
+			Trace.getInstance().getDataReader().add(this,this);
 			return false;
 		}
 		if (state == STATE_LOADSTARTED) {
@@ -99,7 +117,7 @@ public class SingleTile extends Tile implements QueueableTile {
 		float testLat;
 		float testLon;
 		if (contain(pc)) {
-			if (!isDataReady(pc)) {
+			if (!isDataReady()) {
 				return;
 			}
 			lastUse = 0;
@@ -114,18 +132,7 @@ public class SingleTile extends Tile implements QueueableTile {
 						continue;
 
 					// logger.debug("test Bounds of way");
-					if (w.maxLat < pc.screenLD.radlat) {
-						continue;
-					}
-					if (w.maxLon < pc.screenLD.radlon) {
-						continue;
-					}
-					if (w.minLat > pc.screenRU.radlat) {
-						continue;
-					}
-					if (w.minLon > pc.screenRU.radlon) {
-						continue;
-					}
+					if (!w.isOnScreen(pc, centerLat, centerLon)) continue; 
 					// logger.debug("draw " + w.name);
 					// fill the target fields if they are empty
 //					logger.debug("search target" + pc.target);
@@ -137,10 +144,10 @@ public class SingleTile extends Tile implements QueueableTile {
 //							short[] path = w.paths[p1];
 								for (int i1 = 0; i1 < w.path.length; i1++) {
 									short s = w.path[i1];
-									if (nodeLat[s] == pc.target.lat &&
-											nodeLon[s] == pc.target.lon){
+									if ((nodeLat[s] + centerLat)*fpminv == pc.target.lat && 
+										(nodeLon[s]  + centerLon)*fpminv == pc.target.lon){
 //										logger.debug("found Target way");
-										pc.target.setEntity(w, nodeLat, nodeLon);
+										pc.target.setEntity(w, getFloatNodes(nodeLat,centerLat), getFloatNodes(nodeLon,centerLon));
 									}
 								}
 //							}
@@ -168,14 +175,14 @@ public class SingleTile extends Tile implements QueueableTile {
 				if (type[i] == 0) {
 					break;
 				}
-				testLat=nodeLat[i];
+				testLat=(float)(nodeLat[i]*fpminv + centerLat); 
 				if (testLat < pc.screenLD.radlat) {
 					continue;
 				}
 				if (testLat > pc.screenRU.radlat) {
 					continue;
 				}
-				testLon=nodeLon[i];
+				testLon=(float)(nodeLon[i]*fpminv + centerLon); 
 				if (testLon < pc.screenLD.radlon) {
 					continue;
 				}
@@ -193,7 +200,7 @@ public class SingleTile extends Tile implements QueueableTile {
 		float testLat;
 		float testLon;
 		if (contain(pc)) {
-			while (!isDataReady(pc)) {
+			while (!isDataReady()) {
 				if ((opt & Tile.OPT_WAIT_FOR_LOAD) == 0){
 					return;
 				} else {
@@ -236,7 +243,8 @@ public class SingleTile extends Tile implements QueueableTile {
 									if (nodeLat[s] == pc.target.lat &&
 											nodeLon[s] == pc.target.lon){
 //										logger.debug("found Target way");
-										pc.target.setEntity(w, nodeLat, nodeLon);
+										
+										pc.target.setEntity(w, getFloatNodes(nodeLat,centerLat), getFloatNodes(nodeLon,centerLon));
 									}
 								}
 //							}
@@ -326,8 +334,11 @@ public class SingleTile extends Tile implements QueueableTile {
 		// logger.debug("set color "+pc);
 		// if (node.name == null) continue;
 		byte t=type[i];
-		switch (t) {
-		case C.NODE_PLACE_CITY:
+		//System.out.println("Considering drawing node "+ i + " of type " + pc.c.getNodeTypeDesc(t));
+		pc.g.setColor(pc.c.getNodeTextColor(t));
+		img = pc.c.getNodeImage(t);
+		/*switch (t) {
+		case C.NODE_PLACE_CITY:			
 			pc.g.setColor(255, 50, 50);
 			break;
 		case C.NODE_PLACE_TOWN:
@@ -362,14 +373,19 @@ public class SingleTile extends Tile implements QueueableTile {
 			break;
 		case C.NODE_AEROWAY_AERODROME:
 			img = pc.images.IMG_AERODROME;
-			break;
+			break;			
 
 		}
+		*/
 		// logger.debug("calc pos "+pc);
-		pc.getP().forward(nodeLat[i], nodeLon[i], pc.swapLineP, true);
+		pc.getP().forward((float)((nodeLat[i]*fpminv + centerLat)), (float)((nodeLon[i]*fpminv + centerLon)), pc.swapLineP, true);
+		if (pc.scale > pc.c.getNodeMaxScale(t)) {
+			//System.out.println("Not drawing, scale to large for node of type " + t);
+			return;
+		}
 		if (img != null) {
 			// logger.debug("draw img " + img);
-			if (nameIdx[i] == -1 || t > 99) {
+			if (nameIdx[i] == -1 || pc.c.isNodeImageCentered(t)) {
 				pc.g.drawImage(img, pc.swapLineP.x, pc.swapLineP.y,
 						Graphics.VCENTER | Graphics.HCENTER);
 			} else {
@@ -377,32 +393,34 @@ public class SingleTile extends Tile implements QueueableTile {
 						Graphics.BOTTOM | Graphics.HCENTER);
 			}
 		}
-		if (nameIdx != null) {
-			// logger.debug("draw txt " + );
-			String name = pc.trace.getName(nameIdx[i]);
-			if (name != null) {
-				pc.g.setColor(0, 0, 0);
-				if (img == null) {
-					pc.g.drawString(name, pc.swapLineP.x, pc.swapLineP.y,
-							Graphics.BASELINE | Graphics.HCENTER);
+		if (pc.scale > pc.c.getNodeMaxTextScale(t)) {
+			//System.out.println("Not drawing text, scale to large for node of type " + t);
+			return;
+		}
+		// logger.debug("draw txt " + );
+		String name = pc.trace.getName(nameIdx[i]);
+		if (name != null) {			
+			if (img == null) {
+				pc.g.drawString(name, pc.swapLineP.x, pc.swapLineP.y,
+						Graphics.BASELINE | Graphics.HCENTER);
+			} else {
+				if (pc.c.isNodeImageCentered(t)){
+					pc.g.drawString(name, pc.swapLineP.x, pc.swapLineP.y+8,
+							Graphics.TOP | Graphics.HCENTER);						
 				} else {
-					if (t > 99){
-						pc.g.drawString(name, pc.swapLineP.x, pc.swapLineP.y+8,
-								Graphics.TOP | Graphics.HCENTER);						
-					} else {
-						pc.g.drawString(name, pc.swapLineP.x, pc.swapLineP.y,
+					pc.g.drawString(name, pc.swapLineP.x, pc.swapLineP.y,
 							Graphics.TOP | Graphics.HCENTER);
-					}
 				}
 			}
 		}
+		
 	}
 
 	public String toString() {
 		return "ST" + zl + "-" + fileId+ ":" + lastUse;
 	}
 
-	public void getWay(PaintContext pc, PositionMark pm, Way bestWay) {
+	/*public void getWay(PaintContext pc, PositionMark pm, Way bestWay) {
 		if (contain(pm)) {
 			if (state != STATE_LOADREADY){
 				try {
@@ -444,7 +462,7 @@ public class SingleTile extends Tile implements QueueableTile {
 		}
 
 
-	}
+	}*/
 		public void paint(PaintContext pc) {
 		paint(pc,true);
 		paint(pc,false);		
@@ -457,5 +475,82 @@ public class SingleTile extends Tile implements QueueableTile {
 	public void paintAreaOnly(PaintContext pc) {
 		paint(pc,true);		
 	}
+	
+   private float[] getFloatNodes(short[] nodes, float offset) {
+	    float [] res = new float[nodes.length];
+	    for (int i = 0; i < nodes.length; i++) {
+		res[i] = nodes[i]*fpminv + offset;
+	    }
+	    return res;
+	}
+   
+   /**
+    * Returns a Vector of SearchResult containing POIs of
+    * type searchType close to lat/lon. The list is ordered
+    * by distance with the closest one first.  
+    */
+   public Vector getNearestPoi(byte searchType, float lat, float lon, float maxDist) {	   
+	   Vector resList = new Vector();
+	   
+	   if (!isDataReady()) {		   
+		   synchronized(this) {
+			   try {
+				   /**
+				    * Wait for the tile to be loaded in order to process it
+				    * We should be notified once the data is loaded, but
+				    * have a timeout of 500ms
+				    */
+				   wait(500);
+			   } catch (InterruptedException e) {
+				   /**
+				    * Nothing to do in this case, as we need to deal
+				    * with the case that nothing has been returned anyway
+				    */
+			   }			   
+		   }
+	   }
+	   /**
+	    * Try again and see if it has been loaded by now
+	    * If not, then give up and skip this tile in order
+	    * not to slow down surch too much
+	    */
+	   if (!isDataReady()) {		   
+		   return new Vector();
+	   }
+	   
+	   for (int i = 0; i < type.length; i++) {
+		   if (type[i] == searchType) {
+			   SearchResult sr = new SearchResult();
+			   sr.lat = nodeLat[i]*fpminv + centerLat;
+			   sr.lon = nodeLon[i]*fpminv + centerLon;
+			   sr.nameIdx = nameIdx[i];
+			   sr.type = (byte)(-1 * searchType); //It is a node. They have the top bit set to distinguish them from ways in search results
+			   sr.dist = ProjMath.getDistance(sr.lat, sr.lon, lat, lon);
+			   if (sr.dist < maxDist) {
+				   resList.addElement(sr);				   
+			   }
+		   }
+	   }
+	   /**
+	    * Perform a bubble sort on the distances of the search
+	    * This is stupidly inefficient, but easy to code.
+	    * Also we expect there only to be very few entries in
+	    * the list, so shouldn't harm too much. 
+	    */
+	   boolean isSorted = false;
+	   while(!isSorted) {
+		   isSorted = true;
+		   for (int i = 0; i < resList.size() - 1; i++) {
+			   SearchResult a = (SearchResult) resList.elementAt(i);
+			   SearchResult b = (SearchResult) resList.elementAt(i + 1);
+			   if (a.dist > b.dist) {
+				   resList.setElementAt(a, i + 1);
+				   resList.setElementAt(b, i);
+				   isSorted = false;
+			   }
+		   }
+	   }
+	   return resList;
+   }
 	
 }

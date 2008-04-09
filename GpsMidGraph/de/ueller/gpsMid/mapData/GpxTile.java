@@ -302,6 +302,35 @@ public class GpxTile extends Tile {
 		trkPtLat = null;
 		trkPtLon = null;
 	}
+	
+	public boolean existsWayPt(PositionMark newWayPt) {		
+		if ( waypts == null) {
+			if (splitDimension) {
+				if (newWayPt.lat < splitCoord) {
+					return t1.existsWayPt(newWayPt);
+				} else {
+					return t2.existsWayPt(newWayPt);
+				}
+			} else {
+				if (newWayPt.lon < splitCoord) {
+					return t1.existsWayPt(newWayPt);
+				} else {
+					return t2.existsWayPt(newWayPt);
+				}			
+			}			
+		} else {			
+			for (int i = 0; i < noWayPts; i++) {
+				PositionMark wayPt = waypts[i];
+				if (newWayPt.lat==wayPt.lat &&
+					newWayPt.lon==wayPt.lon &&
+					newWayPt.displayName.equals(wayPt.displayName))
+				{
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
 	public void getWay(PaintContext pc, PositionMark pm, Way w) {
 		// TODO Auto-generated method stub

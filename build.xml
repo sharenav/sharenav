@@ -18,7 +18,7 @@
 <!-- Have fun!                                                -->
 
 <project 
-	name="enough-j2mepolish-example" 
+	name="GpsMid" 
 	default="j2mepolish">
 	
 	
@@ -123,7 +123,7 @@
 			fullscreen="menu"
 			usePolishGui="false"
 			workDir="${dir.work}"
-binaryLibrary="lib/MinML2.jar"
+			binaryLibrary="lib/MinML2.jar"
 		>     
 		   <!-- postcompiler name="floater">
 			<parameter name="verbose" value="false" />
@@ -188,10 +188,10 @@ binaryLibrary="lib/MinML2.jar"
 			</obfuscator>
 			
 			<!-- debug settings: only include debug setting when the test-property is true -->
-			<debug if="test" showLogOnError="true" verbose="true" level="error">
+			<debug if="test" showLogOnError="true" verbose="true" level="debug">
 				<!--filter pattern="de.ueller.gps.sirf.*" level="debug" / -->
 				<!--filter pattern="de.ueller.midlet.gps.Trace" level="debug" / -->
-				<filter pattern="de.ueller.midlet.gps.tile.SearchNames" level="debug" />
+				<!--<filter pattern="de.ueller.midlet.gps.tile.SearchNames" level="debug" />-->
 			</debug>
 			
 			<!-- user defined JAD attributes can also be used: -->

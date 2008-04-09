@@ -6,9 +6,12 @@ package de.ueller.gpsMid.mapData;
 
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.util.Vector;
 
+import de.ueller.gps.data.SearchResult;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.data.PositionMark;
+import de.ueller.midlet.gps.data.ProjMath;
 import de.ueller.midlet.gps.data.Way;
 import de.ueller.midlet.gps.routing.RouteNode;
 import de.ueller.midlet.gps.tile.PaintContext;
@@ -179,7 +182,156 @@ public class ContainerTile extends Tile {
 			cleanup(4);
 		}
 	}
-	public void getWay(PaintContext pc,PositionMark pm,Way w){
+	
+	/**
+	    * Returns a Vector of SearchResult containing POIs of
+	    * type searchType close to lat/lon. The list is ordered
+	    * by distance with the closest one first.
+	    * 
+	    * It checks which of the two sub tiles are closest to the
+	    * coordinate and traverses that one first to check for
+	    * close by POI.
+	    */
+	public Vector getNearestPoi(byte searchType, float lat, float lon, float maxDist) {
+		boolean t1closer;
+		Vector res;
+		Vector res2;
+		float t1dist = 0.0f;
+		float t2dist = 0.0f;
+		float distClose;
+		float distFar;
+				
+		/**
+		 * Determine which of the tile bounding boxes is closer to the point
+		 * to which we are trying to find close by POIs 
+		 */
+		if (t1.maxLat < lat && t1.minLat < lat && t1.maxLon > lon && t1.minLon < lon) {
+			/**
+			 * If the bounding box contains the point, then the distance is 0
+			 */
+			t1dist = 0.0f;
+		}
+		if (t2.maxLat < lat && t2.minLat < lat && t2.maxLon > lon && t2.minLon < lon) {
+			t2dist = 0.0f;
+		}
+		/**
+		 * Distance to t1
+		 */
+		if (t1.maxLat < lat && t1.maxLon < lon) {
+			t1dist = ProjMath.getDistance(t1.maxLat, t1.maxLon, lat, lon);
+		} else if (t1.maxLat < lat && t1.minLon > lon) {
+			t1dist = ProjMath.getDistance(t1.maxLat, t1.minLon, lat, lon);
+		} else if (t1.minLat > lat && t1.minLon > lon) {
+			t1dist = ProjMath.getDistance(t1.minLat, t1.minLon, lat, lon);
+		}  else if (t1.minLat > lat && t1.maxLon < lon) {
+			t1dist = ProjMath.getDistance(t1.minLat, t1.maxLon, lat, lon);
+		} else if (t1.maxLat < lat) {
+			t1dist = ProjMath.getDistance(t1.maxLat, lon, lat, lon);
+		} else if (t1.minLat > lat) {
+			t1dist = ProjMath.getDistance(t1.minLat, lon, lat, lon);
+		} else if (t1.maxLon < lon) {
+			t1dist = ProjMath.getDistance(lat, t1.maxLon, lat, lon);
+		} if (t1.minLon > lon) {
+			t1dist = ProjMath.getDistance(lat, t1.minLon, lat, lon);
+		}
+		/**
+		 * Distance to t2
+		 */
+		if (t2.maxLat < lat && t2.maxLon < lon) {
+			t2dist = ProjMath.getDistance(t2.maxLat, t2.maxLon, lat, lon);
+		} else if (t2.maxLat < lat && t2.minLon > lon) {
+			t2dist = ProjMath.getDistance(t2.maxLat, t2.minLon, lat, lon);
+		} else if (t2.minLat > lat && t2.minLon > lon) {
+			t2dist = ProjMath.getDistance(t2.minLat, t2.minLon, lat, lon);
+		}  else if (t2.minLat > lat && t2.maxLon < lon) {
+			t2dist = ProjMath.getDistance(t2.minLat, t2.maxLon, lat, lon);
+		} else if (t2.maxLat < lat) {
+			t2dist = ProjMath.getDistance(t2.maxLat, lon, lat, lon);
+		} else if (t2.minLat > lat) {
+			t2dist = ProjMath.getDistance(t2.minLat, lon, lat, lon);
+		} else if (t2.maxLon < lon) {
+			t2dist = ProjMath.getDistance(lat, t2.maxLon, lat, lon);
+		} if (t2.minLon > lon) {
+			t2dist = ProjMath.getDistance(lat, t2.minLon, lat, lon);
+		}
+					
+		if (t1dist < t2dist) {
+			t1closer = true;
+			distClose = t1dist;
+			distFar = t2dist;
+		} else {
+			t1closer = false;
+			distClose = t2dist;
+			distFar = t1dist;
+		}
+		
+		if (distClose < maxDist) {			
+			if (t1closer) 			
+				res = t1.getNearestPoi(searchType, lat, lon, maxDist);			
+			else
+				res = t2.getNearestPoi(searchType, lat, lon, maxDist);			
+		} else {			
+			res = new Vector();
+		}
+		
+		float maxDistFound;
+		if (res.size() > 20) {
+			maxDistFound = ((SearchResult)res.elementAt(19)).dist;
+		} else {
+			maxDistFound = maxDist;
+		}
+		/**
+		 * TODO: This whole algorithm is still broken!
+		 * It hopefully works in many cases, but it doesn't correctly handle
+		 * the cases of POIs close to tile boundaries and the extent of Tiles
+		 * I.e. Although the tile it self might be closer, the POIs in the other
+		 * tile might end up being closer than some of the POIs in the closer tile
+		 */
+		if ((distFar < maxDistFound)) { // This might be inexact at tile boundries. We want to check if tile dist < largest res dist
+			//logger.info("traversing tile 2 of dist: " + distFar);
+			if (t1closer) 
+				res2 = t2.getNearestPoi(searchType, lat, lon, maxDistFound);				
+			else
+				res2 = t1.getNearestPoi(searchType, lat, lon, maxDistFound);
+				
+			/**
+			 * Perform a merge sort of the two result lists.
+			 * As they are both sorted them selves, this is easy
+			 * and efficient
+			 */
+			Vector resMerge = new Vector();
+			int it1 = 0;
+			int it2 = 0;
+			for (int i = 0; i < res2.size() + res.size(); i++) {
+				SearchResult a;
+				SearchResult b;
+				if (it1 < res.size())
+					a = (SearchResult) res.elementAt(it1);
+				else {
+					resMerge.addElement(res2.elementAt(it2));
+					it2++;
+					continue;
+				}
+				if (it2 < res2.size())
+					b = (SearchResult) res2.elementAt(it2);
+				else {
+					resMerge.addElement(a);
+					it1++;
+					continue;
+				}				
+				if (a.dist < b.dist) {
+					resMerge.addElement(a);
+					it1++;
+				} else {
+					resMerge.addElement(b);
+					it2++;
+				}
+			}
+			return resMerge;
+		}		
+		return res;
+	}
+	/*public void getWay(PaintContext pc,PositionMark pm,Way w){
 		if (contain(pm)){
 			if (t1 != null) {
 				//#debug
@@ -195,5 +347,5 @@ public class ContainerTile extends Tile {
 			cleanup(4);
 		}
 		
-	}
+		}*/
 }

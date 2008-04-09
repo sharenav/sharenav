@@ -4,6 +4,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.routing.Connection;
 import de.ueller.midlet.gps.routing.RouteNode;
@@ -89,7 +90,7 @@ public class RouteFileTile extends RouteBaseTile {
 	private void loadTile() throws IOException {
             //#debug error
 			logger.info("load Tile /d"+zl+fileId+".d");
-			InputStream is = QueueReader.openFile("/d"+zl+fileId+".d");
+			InputStream is = GpsMid.getInstance().getConfig().getMapResource("/d"+zl+fileId+".d");
 			if (is == null){
 //				logger.error("file inputStream /d"+tt.zl+tt.fileId+".d not found" );
 				throw new IOException("File not found /d"+zl+fileId+".d" );

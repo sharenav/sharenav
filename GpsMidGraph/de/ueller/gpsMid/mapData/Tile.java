@@ -4,6 +4,8 @@
  */
 package de.ueller.gpsMid.mapData;
 
+import java.util.Vector;
+
 import de.ueller.midlet.gps.ScreenContext;
 
 import de.ueller.midlet.gps.data.IntPoint;
@@ -36,6 +38,9 @@ public abstract class Tile {
 	public float maxLat;
 	public float minLon;
 	public float maxLon;
+	public float centerLat;
+	public float centerLon;
+	
 	public short fileId=0;
 	public byte	lastUse	= 0;
 //	public static Trace				trace				= null;
@@ -47,7 +52,7 @@ public abstract class Tile {
 	public abstract void paint(PaintContext pc);
 	public abstract void walk(PaintContext pc,int opt);
 	public abstract boolean cleanup(int level);
-	public abstract void getWay(PaintContext pc,PositionMark pm,Way w);
+	//public abstract void getWay(PaintContext pc,PositionMark pm,Way w);
 		/**
 	 * Paint all ways of a tile that are areas to the PaintContext
 	 * @param pc
@@ -152,6 +157,20 @@ public abstract class Tile {
 //			System.out.println(p1.x + "," + p1.y + "/" + p2.x + "," + p2.y);
 //			pc.g.fillTriangle(p1.x, p1.y, p2.x, p2.y, p1.x, p2.y);
 		}
+	
+	/**
+	    * Returns a Vector of SearchResult containing POIs of
+	    * type searchType close to lat/lon. The list is ordered
+	    * by distance with the closest one first.  
+	    */
+	public Vector getNearestPoi(byte searchType, float lat, float lon, float maxDist) {
+		/**
+		 * All of the Tile types for which we expect to perform a nearest 
+		 * POI search should have this method overwritten
+		 */
+		System.out.println("getNearestPoi: We shouldn't be in this base function " + this);
+		return new Vector();
+	}
 	public String toString(){
 		return "Tile " + this.getClass().getName() + " " + minLat+","+minLon+"/"+ maxLat+","+maxLon;
 	}

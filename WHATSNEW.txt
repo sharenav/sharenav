@@ -1,0 +1,34 @@
+GpsMid 0.X.xx
+	   BugFix: NMEA input mode could get stuck in an infinite loop
+	   BugFix: Could not detect GPS bluetooth devices
+	   BugFix: Correct speed calculation for NMEA input
+	   BugFix: Bluetooth discovery did not work correctly on some devices (Concurrent search)
+	   BugFix: Correct elevation calculation in NMEA input
+
+	   Added displaypossibility of a scalebar
+	   Added support for scrolling in long lists in the search dialog
+	   Better error reporting in cases of failure
+	   Support the clear key on some devices in the search dialog
+	   Add the possibility to collapse names in the search dialog to see long names
+	   Slightly reduced memory usage
+	   Better recovery from out of memory errors	   
+	   Display quality of GPS signal (number of sattelits) on main screen
+	   Display distance to target
+	   Implement tracklogs
+				 store tracklogs to internal registry (RMS)
+				 adaptive recording
+						  reduce sampling frequency when stationary				 
+				 export as GPX through:
+						filesystem support
+						bluetooth / OBEX
+						serial / usb
+				 import GPX tracklogs from filesystem
+				 Display tracklogs on the map
+		Implement waypoints
+				  export as GPX
+				  import from GPX
+				
+
+
+Gpsmid 0.3.01
+	   There are currently no change information for midlets prior to this version

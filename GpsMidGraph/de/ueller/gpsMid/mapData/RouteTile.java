@@ -4,6 +4,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.routing.Connection;
@@ -104,7 +105,7 @@ public class RouteTile extends RouteBaseTile {
 
 
 	private void loadNodes() throws IOException {
-		DataInputStream ts=new DataInputStream(QueueReader.openFile("/t4" + fileId + ".d"));
+		DataInputStream ts=new DataInputStream(GpsMid.getInstance().getConfig().getMapResource("/t4" + fileId + ".d"));
 		short count = ts.readShort();
 		//#debug error
 		logger.debug("load nodes "+count+" ("+minId+"/"+maxId+") in Tile t4" + fileId + ".d");
@@ -226,7 +227,7 @@ public class RouteTile extends RouteBaseTile {
 		connections = new Connection[nodes.length][];
 		//#debug error
 		logger.debug("getConnections in file " + "/c" + fileId + ".d");
-		DataInputStream cs=new DataInputStream(QueueReader.openFile("/c" + fileId + ".d"));
+		DataInputStream cs=new DataInputStream(GpsMid.getInstance().getConfig().getMapResource("/c" + fileId + ".d"));
 		for (int in=0; in<nodes.length;in++){
 			RouteNode n=nodes[in];
 			Connection[] cons=new Connection[n.conSize];
