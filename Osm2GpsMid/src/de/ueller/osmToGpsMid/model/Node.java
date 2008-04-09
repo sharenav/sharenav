@@ -1,7 +1,8 @@
 package de.ueller.osmToGpsMid.model;
 
-import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Set;
+
 
 import de.ueller.osmToGpsMid.Configuration;
 import de.ueller.osmToGpsMid.Constants;
@@ -23,8 +24,8 @@ public class Node extends Entity{
 	/**
 	 * type of this Node
 	 */
-	public byte type=-1;
-	public byte noConfType=-1;
+	private byte type=-1;
+	//public byte noConfType=-1;
 	public boolean used=false;
 	public byte connectedLineCount=0;
 //	private Set<Way> connectedWays = new HashSet<Way>();
@@ -36,8 +37,23 @@ public class Node extends Entity{
 		this.id = id;
 	}
 	public String getName() {
-		String name = getAttribute("name");
-		return name!=null ? name.trim() : "";
+		if (type != -1) {
+			POIdescription desc = Configuration.getConfiguration().getpoiDesc(type);
+			if (desc != null) {
+				String name = getAttribute(desc.nameKey);
+				String nameFallback = getAttribute(desc.nameFallbackKey); 
+				if (name != null && nameFallback != null) {
+					name += " (" + nameFallback + ")";
+				} else if ((name == null) && (nameFallback != null)) {
+					name = nameFallback;
+				}
+				//System.out.println("New style name: " + name);
+				return name!=null ? name.trim() : "";
+			}
+		}
+		return null;
+		//String name = getAttribute("name");
+		//return name!=null ? name.trim() : "";
 	}
 	
 	public String getPlace(){
@@ -46,7 +62,15 @@ public class Node extends Entity{
 		if (place != null) return place.trim();
 		return null;
 	}
-	public String getAmenity(){
+	public boolean isPlace() {
+		if (type != -1) {
+			POIdescription desc = Configuration.getConfiguration().getpoiDesc(type);			
+			if (desc.key.equalsIgnoreCase("place"))
+				return true;
+		}
+		return false;
+	}
+	/*public String getAmenity(){
 		String amenity = (getAttribute("amenity"));
 		if (amenity != null) return amenity.trim();
 		return null;
@@ -61,7 +85,7 @@ public class Node extends Entity{
 		if (aeroway != null) return aeroway.trim();
 		return null;
 	}
-	
+	*/
 	public byte getType(Configuration c){
 		if (c != null){
 			if (type == -1) {
@@ -69,16 +93,35 @@ public class Node extends Entity{
 			}
 			return type;
 		} else {
-			if (noConfType == -1) {
-				noConfType = calcType(c);
+			if (type == -1) {
+				type = calcType(c);
 			}
-			return noConfType;			
+			return type;			
 		}
 	
 
 	}
-	public byte calcType(Configuration c){
-		String p=getPlace();
+	private byte calcType(Configuration c){		
+		if (c != null) {
+			Hashtable<String, Hashtable<String,POIdescription>> legend = c.getPOIlegend();
+			if (legend != null) {				
+				Set<String> tags = getTags();
+				if (tags != null) {
+					for (String s: tags) {						
+						Hashtable<String,POIdescription> keyValues = legend.get(s);
+						if (keyValues != null) {							
+							POIdescription poi = keyValues.get(getAttribute(s));
+							if (poi != null) {
+								type = poi.typeNum;
+								//System.out.println(toString() + " is a " + poi.description);
+								return poi.typeNum;
+							}
+						}
+					}
+				}			
+			}
+		}
+		/*String p=getPlace();
 		if (p != null){
 			if ("city".equalsIgnoreCase(p)) return Constants.NODE_PLACE_CITY;
 			if ("town".equalsIgnoreCase(p)) return Constants.NODE_PLACE_TOWN;
@@ -106,12 +149,24 @@ public class Node extends Entity{
 			if ("aerodrome".equalsIgnoreCase(p)) return Constants.NODE_AEROWAY_AERODROME;
 		}
 		}
-		return 0;
+		*/
+		return -1;
 		
 	}
 	
-	public byte getZoomlevel(){
-		switch (type) {
+	public byte getZoomlevel(Configuration c){
+		if (type == -1) {
+			//System.out.println("unknown type for node " + toString());
+			return 3;
+		}
+		int maxScale = c.getpoiDesc(type).minImageScale;		
+		if (maxScale < 45000)
+			return 3;
+		if (maxScale < 180000)
+			return 2;
+		if (maxScale < 900000)
+			return 1;
+		/*switch (type) {
 			case Constants.NODE_PLACE_CITY:
 			case Constants.NODE_AEROWAY_AERODROME:				
 				return 0;
@@ -126,7 +181,8 @@ public class Node extends Entity{
 			case Constants.NODE_PLACE_SUBURB: 
 				return 3;
 		}
-		return 3;
+		*/
+		return 0;
 	}
 	public String toString(){
 		return "node " + ((getPlace() != null)?("(" + getPlace() + ") "):"") + " id=" + id + " name="+getName() + ((nearBy == null)?"":(" by " + nearBy));

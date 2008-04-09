@@ -3,6 +3,7 @@ package de.ueller.osmToGpsMid.model;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 
@@ -53,4 +54,9 @@ public class Entity {
 		return tags.containsKey(key);
 	}
 
+	public Set<String> getTags() {
+		if (tags == null)
+			return null;
+		return tags.keySet();
+	}
 }

@@ -1,0 +1,19 @@
+<!ELEMENT legend (pois,ways)>
+<!ELEMENT pois (key*)>
+<!ELEMENT ways EMPTY>
+<!ELEMENT key (value+)>
+<!ELEMENT value (description, image?, namekey, namefallback?, scale, textscale?)>
+<!ELEMENT description EMPTY>
+<!ELEMENT image EMPTY>
+<!ELEMENT namekey EMPTY>
+<!ELEMENT namefallback EMPTY>
+<!ELEMENT scale EMPTY>
+<!ELEMENT textscale EMPTY>
+<!ATTLIST key tag CDATA #REQUIRED>
+<!ATTLIST value name CDATA #REQUIRED>
+<!ATTLIST description desc CDATA #REQUIRED>
+<!ATTLIST namekey tag CDATA #REQUIRED>
+<!ATTLIST namefallback tag CDATA #REQUIRED>
+<!ATTLIST scale scale CDATA #REQUIRED>
+<!ATTLIST textscale scale CDATA #REQUIRED>
+<!ATTLIST image src CDATA #REQUIRED>

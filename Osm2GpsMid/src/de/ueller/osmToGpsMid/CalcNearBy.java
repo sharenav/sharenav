@@ -72,7 +72,7 @@ public class CalcNearBy {
 					e.printStackTrace();
 					return;
 				}
-				if (nearestPlace != null && nearestPlace.getName() != null){
+				if (nearestPlace != null){
 					w.setAttribute("is_in", nearestPlace.getName());					
 					w.nearBy=nearestPlace;
 				}				
@@ -136,7 +136,7 @@ public class CalcNearBy {
 		KDTree kd = new KDTree(3);
 		//double [] latlonKey = new double[2]; 
 		for (Node n : parser.nodes.values()) {
-			if (n.getNameType() == Constants.NAME_CITY) {
+			if (n.isPlace()) {
 				//latlonKey[0] = n.lat;
 				//latlonKey[1] = n.lon;
 				if (n.getName() == null || n.getName().trim().length() == 0) {

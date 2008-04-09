@@ -17,6 +17,13 @@ public class Tile {
 	
 //	float minLat,maxLat,minLon,maxLon;
 	public Bounds bounds=new Bounds();
+	/**
+	 * Center coordinates of the tile in deg
+	 * This is used as a reference point
+	 * for the relative coordinates stored
+	 * in the file
+	 */
+	public float centerLat, centerLon;
 	public Tile t1=null;
 	public Tile t2=null;
 	public int fid;
@@ -35,6 +42,19 @@ public class Tile {
 	public static final byte TYPE_ROUTECONTAINER = 6;
 	public static final byte TYPE_ROUTEFILE = 7;
 	public static final float RTEpsilon = 0.012f;
+	/**
+	 * fpm is the fixed point multiplier used to convert
+	 * latitude / logitude from radians to fixpoint representation
+	 * 
+	 * With this multiplier, one should get a resolution
+	 * of 1m at the equator.
+	 * 
+	 * 6378159.81 = circumference of the earth in meters / 2 pi. 
+	 * 
+	 * This constant has to be in synchrony with the value in GpsMid
+	 */	
+	public static final double fpm = 6378159.81;
+	
 
 	public Tile() {
 		super();

@@ -21,6 +21,7 @@ import de.ueller.osmToGpsMid.model.Bounds;
 import de.ueller.osmToGpsMid.model.Connection;
 import de.ueller.osmToGpsMid.model.MapName;
 import de.ueller.osmToGpsMid.model.Node;
+import de.ueller.osmToGpsMid.model.POIdescription;
 import de.ueller.osmToGpsMid.model.RouteNode;
 import de.ueller.osmToGpsMid.model.Sequence;
 import de.ueller.osmToGpsMid.model.SubPath;
@@ -88,6 +89,7 @@ public class CreateGpsMidData {
 
 	public void exportMapToMid(){
 		names1=getNames1();
+		exportLegend(path);
 		SearchList sl=new SearchList(names1);
 		sl.createNameList(path);
 		for (int i=0;i<=3;i++){
@@ -123,15 +125,62 @@ public class CreateGpsMidData {
 		na.calcNameIndex();
 		return (na);
 	}
+	
+	private void exportLegend(String path) {
+		FileOutputStream foi;
+		try {
+			foi = new FileOutputStream(path + "/legend.dat");
+			DataOutputStream dsi = new DataOutputStream(foi);
+			dsi.writeShort(Configuration.MAP_FORMAT_VERSION);
+			dsi.writeByte(Configuration.getConfiguration().getPOIDescs().size());
+			for (POIdescription poi : Configuration.getConfiguration().getPOIDescs()) {
+				byte flags = 0;
+				if (poi.image != null && !poi.image.equals(""))
+					flags |= 0x01;
+				if (poi.minImageScale != poi.minTextScale)
+					flags |= 0x02;
+				if (poi.textColor != 0)
+					flags |= 0x04;
+				dsi.writeByte(poi.typeNum);
+				dsi.writeByte(flags);
+				dsi.writeUTF(poi.description);
+				dsi.writeBoolean(poi.imageCenteredOnNode);
+				dsi.writeInt(poi.minImageScale);
+				if ((flags & 0x01) > 0) {
+					dsi.writeUTF(poi.image);
+					if (!(new File(path + poi.image).exists())) {
+						System.out.println("Couldn't find image " + poi.image
+								+ " for " + poi.description);
+					}
+				}
+				if ((flags & 0x02) > 0)
+					dsi.writeInt(poi.minTextScale);
+				if ((flags & 0x04) > 0)
+					dsi.writeInt(poi.textColor);
+			}
+			dsi.close();
+			foi.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	} 
+
+
 
 	
 	private void exportMapToMid(int zl){
-//		System.out.println("Total ways : " + parser.ways.size() + "  Nodes : " + parser.nodes.size());
+// System.out.println("Total ways : " + parser.ways.size() + " Nodes : " +
+// parser.nodes.size());
 		try {
 			FileOutputStream fo = new FileOutputStream(path+"/dict-"+zl+".dat");
 			DataOutputStream ds = new DataOutputStream(fo);
-//			Node min=new Node(90f,180f,0);
-//			Node max=new Node(-90f,-180f,0);		
+// Node min=new Node(90f,180f,0);
+// Node max=new Node(-90f,-180f,0);
 			ds.writeUTF("DictMid"); // magig number
 			Bounds allBound=new Bounds();
 			for (Iterator wi = parser.ways.iterator(); wi.hasNext();) {
@@ -149,7 +198,7 @@ public class CreateGpsMidData {
 				}
 			} else {
 				for (Node n : parser.nodes.values()) {
-					if (n.getZoomlevel() != zl) continue;
+					if (n.getZoomlevel(configuration) != zl) continue;
 					allBound.extend(n.lat,n.lon);
 				}
 			}			
@@ -188,6 +237,7 @@ public class CreateGpsMidData {
 		Collection<Node> nodes;
 		int maxSize;
 		boolean unsplittableTile;
+		boolean tooLarge;
 		/*
 		 * Using recursion can cause a stack overflow on large projects,
 		 * so need an explicit stack that can grow larger;
@@ -200,6 +250,7 @@ public class CreateGpsMidData {
 		while (!expTiles.isEmpty()) {			
 			TileTuple tt = expTiles.pop();
 			unsplittableTile = false;
+			tooLarge = false;
 			t = tt.t; tileBound = tt.bound;
 			ways=new LinkedList<Way>();
 			nodes=new ArrayList<Node>();
@@ -221,7 +272,17 @@ public class CreateGpsMidData {
 				}				
 				nodes=getNodesInBound(t.nodes,t.zl,realBound);
 				if (ways.size() <= 255){
-					out=createMidContent(ways,nodes,t);
+					t.bounds=realBound.clone();
+					if ((MyMath.degToRad(t.bounds.maxLat - t.bounds.minLat) > (Short.MAX_VALUE - Short.MIN_VALUE - 2000)/Tile.fpm) ||
+						(MyMath.degToRad(t.bounds.maxLon - t.bounds.minLon) > (Short.MAX_VALUE - Short.MIN_VALUE - 2000)/Tile.fpm)) {
+							//System.out.println("Tile spacially to large (" + ((Short.MAX_VALUE - Short.MIN_VALUE - 2000)/Tile.fpm) + ": " + t.bounds);
+							tooLarge = true;
+							
+					} else {
+						t.centerLat = (t.bounds.maxLat - t.bounds.minLat) / 2 + t.bounds.minLat;
+						t.centerLon = (t.bounds.maxLon - t.bounds.minLon) / 2 + t.bounds.minLon;
+						out=createMidContent(ways,nodes,t);
+					}
 				}
 				/**
 				 * If the number of nodes and ways in the new tile is the same, and the bound
@@ -230,7 +291,12 @@ public class CreateGpsMidData {
 				 * Otherwise we can get into an endless loop of trying to split up this tile
 				 */
 				if ((t.nodes.size() == nodes.size()) && (t.ways.size() == ways.size()) && (tileBound.maxLat - tileBound.minLat < 0.001)) {
-					System.out.println("WARNING: could not reduce tile size");
+					System.out.println("WARNING: could not reduce tile size for tile " + t);
+					System.out.println("t.ways " + t.ways.size() + " t.nodes " + t.nodes.size());
+					for (Way w : t.ways) {
+						System.out.println("Way: " + w);
+					}
+					
 					unsplittableTile = true;										
 				}
 				t.nodes=nodes;
@@ -243,10 +309,14 @@ public class CreateGpsMidData {
 				out=erg[0];
 				connOut = erg[1];
 				t.nodes=nodes;
-			}			
+			}
+			
+			if (unsplittableTile && tooLarge) {
+				System.out.println("Error: Tile is unsplittable, but too large. Can't deal with this!");
+			}
 
 			// split tile if more then 255 Ways or binary content > MAX_TILE_FILESIZE but not if only one Way
-			if ((!unsplittableTile) && ((ways.size() > 255 || (out.length > maxSize && ways.size() != 1)))){
+			if ((!unsplittableTile) && ((ways.size() > 255 || (out.length > maxSize && ways.size() != 1) || tooLarge))){
 				//System.out.println("create Subtiles size="+out.length+" ways=" + ways.size());
 				t.bounds=realBound.clone();
 				if (t.zl != ROUTEZOOMLEVEL){
@@ -281,7 +351,7 @@ public class CreateGpsMidData {
 
 				//			System.gc();
 			} else {
-				if (ways.size() > 0 || nodes.size() > 0){
+				if (ways.size() > 0 || nodes.size() > 0){					
 					// Write as dataTile
 					t.fid=tileSeq.next();
 					if (t.zl != ROUTEZOOMLEVEL) {
@@ -342,7 +412,7 @@ public class CreateGpsMidData {
 		}
 		if (t.zl != ROUTEZOOMLEVEL) {
 			for (Node n : nodes) {
-				if (n.type > 0 )
+				if (n.getType(null) > -1 )
 					totalPOIsWritten++;
 			}
 		}
@@ -356,6 +426,10 @@ public class CreateGpsMidData {
 			DataOutputStream tds = new DataOutputStream(fo);
 			tds.write(out);
 			fo.close();
+			// mark nodes as written to MidStorage 
+			for (Node n : nodes) { 
+				n.fid = t.fid; 
+			}
 			// mark ways as written to MidStorage
 			for (Iterator wi = t.ways.iterator(); wi.hasNext();) {
 				Way w1=(Way)wi.next();
@@ -416,8 +490,12 @@ public class CreateGpsMidData {
 	public Collection<Node> getNodesInBound(Collection<Node> parentNodes,int zl,Bounds targetBound){
 		Collection<Node> nodes = new LinkedList<Node>();
 		for (Node node : parentNodes){
-			if (node.getType(configuration) == 0) continue;
-			if (node.getZoomlevel() != zl) continue;
+			//Check to see if the node has already been written to MidStorage
+			//If yes, then ignore the node here, to prevent duplicate nodes
+			//due to overlapping tiles
+			if (node.fid != 0) continue;
+			if (node.getType(configuration) < 0) continue;
+			if (node.getZoomlevel(configuration) != zl) continue;
 			if (! targetBound.isIn(node.lat,node.lon)) continue;
 			nodes.add(node);
 		}
@@ -518,20 +596,33 @@ public class CreateGpsMidData {
 		ByteArrayOutputStream fo = new ByteArrayOutputStream();
 		DataOutputStream ds = new DataOutputStream(fo);
 		ds.writeByte(0x54); // Magic number
+		ds.writeFloat(MyMath.degToRad(t.centerLat));
+		ds.writeFloat(MyMath.degToRad(t.centerLon));
 		ds.writeShort(interestNodes.size()+wayNodes.size());
 		ds.writeShort(interestNodes.size());		
 		for (Node n : interestNodes) {
 			n.renumberdId=(short) ren++;
-			writeNode(n,ds,INODE);
+			//The exclusion of nodes is not perfect, as there
+			//is a time between adding nodes to the write buffer
+			//and before marking them as written, so we might
+			//still hit the case when a node is written twice.
+			//Warn about this fact to fix this correctly at a
+			//later stage
+			if (n.fid != 0) 
+				System.out.println("Writing interest node twice? " + n); 
+			writeNode(n,ds,INODE,t);
 		}
 		for (Node n : wayNodes.values()) {
 			n.renumberdId=(short) ren++;
-			writeNode(n,ds,SEGNODE);
+			//Same problem as above. See description there.
+			if (n.fid != 0) 
+				System.out.println("Writing way node twice? " + n);
+			writeNode(n,ds,SEGNODE,t);
 		}
 		ds.writeByte(0x55); // Magic number
 		ds.writeByte(ways.size());
 		for (Way w : ways){
-			w.write(ds, names1);
+			w.write(ds, names1,t);
 		}
 		ds.writeByte(0x56); // Magic number
 		fo.close();
@@ -553,7 +644,7 @@ public class CreateGpsMidData {
 		}
 	}
 
-	private void writeNode(Node n,DataOutputStream ds,int type) throws IOException{
+	private void writeNode(Node n,DataOutputStream ds,int type, Tile t) throws IOException{
 		
 		int flags=0;
 		int nameIdx = -1;
@@ -568,20 +659,33 @@ public class CreateGpsMidData {
 					flags += Constants.NODE_MASK_NAMEHIGH;
 				} 
 			}
-			if (n.getType(configuration) != 0){
+			if (n.getType(configuration) != -1){
 				flags += Constants.NODE_MASK_TYPE;
 			}
 		}
 		ds.writeByte(flags);
 		if ((flags & Constants.NODE_MASK_ROUTENODELINK) > 0){
-			ds.writeShort(n.routeNode.id);
-			ds.writeFloat(MyMath.degToRad(n.lat));
-			ds.writeFloat(MyMath.degToRad(n.lon));
-		} else {
-			ds.writeFloat(MyMath.degToRad(n.lat));
-			ds.writeFloat(MyMath.degToRad(n.lon));
+			ds.writeShort(n.routeNode.id);			
 		}
-
+		
+		/**
+		 * Convert coordinates to relative fixpoint (integer) coordinates
+		 * The reference point is the center of the tile.
+		 * With 16bit shorts, this should allow for tile sizes of
+		 * about 65km in width and with 1m accuracy at the equator.  
+		 */
+		double tmpLat = (MyMath.degToRad(n.lat - t.centerLat)) * Tile.fpm;
+		double tmpLon = (MyMath.degToRad(n.lon - t.centerLon)) * Tile.fpm;
+		if ((tmpLat > Short.MAX_VALUE) || (tmpLat < Short.MIN_VALUE)) {
+			System.out.println("Numeric Over flow of Latitude for node: " + n.id);
+		}
+		if ((tmpLon > Short.MAX_VALUE) || (tmpLon < Short.MIN_VALUE)) {
+			System.out.println("Numeric Over flow of Longitude for node: " + n.id);
+		}
+		ds.writeShort((short)tmpLat);
+		ds.writeShort((short)tmpLon);
+		
+		
 		if ((flags & Constants.NODE_MASK_NAME) > 0){
 			if ((flags & Constants.NODE_MASK_NAMEHIGH) > 0) {
 				ds.writeInt(nameIdx);

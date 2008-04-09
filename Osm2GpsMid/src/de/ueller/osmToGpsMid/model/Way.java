@@ -510,7 +510,7 @@ public class Way extends Entity implements Comparable<Way>{
 
 	}
 */	
-	public void write(DataOutputStream ds,Names names1) throws IOException{		
+	public void write(DataOutputStream ds,Names names1,Tile t) throws IOException{		
 		Bounds b=new Bounds();
 		int flags=0;
 		int maxspeed=50;
@@ -554,11 +554,13 @@ public class Way extends Entity implements Comparable<Way>{
 				flags+=WAY_FLAG_ONEWAY;
 			}
 			ds.writeByte(flags);
+			
 			b=getBounds();
-			ds.writeFloat(MyMath.degToRad(b.minLat));
-			ds.writeFloat(MyMath.degToRad(b.minLon));
-			ds.writeFloat(MyMath.degToRad(b.maxLat));
-			ds.writeFloat(MyMath.degToRad(b.maxLon));
+			ds.writeShort((short)(MyMath.degToRad(b.minLat - t.centerLat) * Tile.fpm));
+			ds.writeShort((short)(MyMath.degToRad(b.minLon - t.centerLon) * Tile.fpm));
+			ds.writeShort((short)(MyMath.degToRad(b.maxLat - t.centerLat) * Tile.fpm));
+			ds.writeShort((short)(MyMath.degToRad(b.maxLon - t.centerLon) * Tile.fpm));
+			
 //			ds.writeByte(0x58);
 			ds.writeByte(type);
 			if ((flags & WAY_FLAG_NAME) == WAY_FLAG_NAME){

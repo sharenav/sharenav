@@ -1,5 +1,7 @@
 package de.ueller.osmToGpsMid.model;
 
+import de.ueller.osmToGpsMid.MyMath;
+
 
 public class Bounds   implements Cloneable{
 		public float minLat=90f;
@@ -60,6 +62,6 @@ public class Bounds   implements Cloneable{
 		}
 
 		public String toString(){
-			return "[Bound ("+minLat+","+minLon+") ("+ maxLat+","+maxLon+") lat="+(int)((maxLat-minLat)*1000)+" lon="+(int)((maxLon-minLon)*1000)+"]";
+			return "[Bound ("+minLat+","+minLon+") ("+ maxLat+","+maxLon+") lat="+(int)((maxLat-minLat)*Tile.fpm)+" lon="+(int)(MyMath.degToRad(maxLon-minLon)*Tile.fpm)+"]";
 		}
 }

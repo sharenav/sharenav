@@ -73,6 +73,9 @@ public class Names {
 	 * @return
 	 */
 	public int getNameIdx(String name) {
+		if (name == null) {
+			return -1;
+		}
 		Name nm = names1.get(name);
 		if (nm != null) {
 			return nm.getIndex();

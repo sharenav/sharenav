@@ -91,7 +91,7 @@ public class SearchList {
 					Node center=null;
 					if (e instanceof Node) {
 						Node n = (Node) e;
-						ds.writeByte(n.getNameType());
+						ds.writeByte(-1*n.getType(Configuration.getConfiguration()));
 						center=n;
 //						System.out.println("entryType " + n.getNameType() + " idx=" + mapName.getIndex());
 					}
@@ -140,7 +140,7 @@ public class SearchList {
 				curPos=eq;
 				lastStr=string;
 			}
-			ds.close();
+			if (ds != null) ds.close();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

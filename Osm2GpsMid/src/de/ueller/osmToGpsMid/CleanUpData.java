@@ -135,7 +135,7 @@ public class CleanUpData {
 	 */
 	private void removeUnusedNodes() {
 		for (Node n:parser.nodes.values()){
-			if (n.getType(conf) == 0 ){
+			if (n.getType(conf) < 0 ){
 				n.used=false;
 			} else {
 				n.used=true;

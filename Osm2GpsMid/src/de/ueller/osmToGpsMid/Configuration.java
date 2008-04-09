@@ -14,6 +14,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
+import java.util.Hashtable;
 import java.util.MissingResourceException;
 import java.util.PropertyResourceBundle;
 import java.util.Random;
@@ -24,12 +26,20 @@ import java.net.URL;
 import org.apache.tools.bzip2.CBZip2InputStream;
 
 import de.ueller.osmToGpsMid.model.Bounds;
+import de.ueller.osmToGpsMid.model.POIdescription;
 
 /**
  * @author hmueller
  *
  */
 public class Configuration {
+	
+	/**
+	 * Specifies the format of the map on disk we are about to write
+	 * This constant must be in sync with GpsMid
+	 */
+	public final static short MAP_FORMAT_VERSION = 6;
+	
 		private ResourceBundle rb;
 		private ResourceBundle vb;
 		private String tmp=null;
@@ -47,12 +57,17 @@ public class Configuration {
 		public boolean useRouting=false;
 		public int maxTileSize=20000;
 		public int maxRouteTileSize=3000;
+		
+		private LegendParser legend;
+		
+		private static Configuration conf;
 
 //		private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
 //				.getBundle(BUNDLE_NAME);
 
 		public Configuration(String planet,String file) {
 			this.planet = planet;
+			conf = this;
 			try {
 				InputStream cf;
 				try {
@@ -82,6 +97,8 @@ public class Configuration {
 				useRouting=use("useRouting");
 				maxRouteTileSize=Integer.parseInt(getString("routing.maxTileSize"));
 				maxTileSize=Integer.parseInt(getString("maxTileSize"));
+				//TODO: Hardcoded!!!
+				legend = new LegendParser(new FileInputStream("style-file.xml"));
 				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -174,19 +191,19 @@ public class Configuration {
 				System.out.println("Opening planet file: " + planet);
 				fr= new BufferedInputStream(new FileInputStream(planet), 4096);
 				if (planet.endsWith(".bz2") || planet.endsWith(".gz")){
+					if (planet.endsWith(".bz2")) {
+						fr.read();
+						fr.read();
+						fr = new CBZip2InputStream(fr);
+					} else if (planet.endsWith(".gz")) {
+						fr = new GZIPInputStream(fr);							
+					}
 					int availableProcessors = Runtime.getRuntime().availableProcessors();
 					if (availableProcessors > 1){
 						System.out.println("found " + availableProcessors + " CPU's: uncompress in seperate thread");
-						fr = new Bzip2Reader(fr);						
+						fr = new ThreadBufferedInputStream(fr);						
 					} else {						
-						System.out.println("only one CPU: uncompress in same thread");
-						if (planet.endsWith(".bz2")) {
-							fr.read();
-							fr.read();
-							fr = new CBZip2InputStream(fr);
-						} else if (planet.endsWith(".gz")) {
-							fr = new GZIPInputStream(fr);							
-						}
+						System.out.println("only one CPU: uncompress in same thread");						
 					}
 				}
 			}
@@ -231,5 +248,21 @@ public class Configuration {
 
 		public int getMaxRouteTileSize() {
 			return maxRouteTileSize;
+		}
+
+		public Hashtable<String, Hashtable<String,POIdescription>> getPOIlegend() {
+			return legend.getPOIlegend();
+		}
+		
+		public static Configuration getConfiguration() {
+			return conf;
+		}
+		
+		public POIdescription getpoiDesc(byte t) {
+			return legend.getPOIDesc(t);
+		}
+		
+		public Collection<POIdescription> getPOIDescs() {
+			return legend.getPOIDescs();
 		}
 }

@@ -22,27 +22,29 @@ public class Constants {
 	
 	// node with name and no image
 	public final static byte NODE_PLACE_CITY=1;
-	public final static byte NODE_PLACE_TOWN=2;
+	/*public final static byte NODE_PLACE_TOWN=2;
 	public final static byte NODE_PLACE_VILLAGE=3;
 	public final static byte NODE_PLACE_HAMLET=4;
 	public final static byte NODE_PLACE_SUBURB=5;
+	*/
 	/**
 	 * minimum distances to set the is_in name to the next city
 	 * to get the minimum distance use: <code>MAX_DIST_CITY[node.getType(null)]</code>
 	 */
-	public final static long[] MAX_DIST_CITY={0,8000,6000,3000,1000};
+	public final static long[] MAX_DIST_CITY={8000,6000,3000,1000,1000};
 	
 	// node with image and name place in the middle
-	public final static byte NODE_AMENITY_PARKING=50;
+	/*public final static byte NODE_AMENITY_PARKING=50;
 	public static final byte NODE_AMENITY_SCHOOL = 51;
 	public static final byte NODE_AMENITY_TELEPHONE = 52;
 	public static final byte NODE_AMENITY_FUEL = 53;
-	
+	*/
 	// node with image on node place the Image on the point
+	/*
 	public static final byte NODE_RAILWAY_STATION = 100;
 	public static final byte NODE_AEROWAY_AERODROME = 101;
 	public static final byte NODE_HIGHWAY_ROUNDABOUT = 102;
-	
+	*/
 	
 	public final static byte WAY_HIGHWAY_MOTORWAY=1;
 	public final static byte WAY_HIGHWAY_MOTORWAY_LINK=2;
