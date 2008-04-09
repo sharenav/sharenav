@@ -50,8 +50,10 @@ public class Configuration {
 
 	private String btUrl;
 	/** This URL is used to store logs of raw data received from the GPS receiver*/
-	private String rawLogUrl; 
-	private boolean rawLogEnable;
+	private String rawGpsLogUrl; 
+	private boolean rawGpsLogEnable;
+	private String rawDebugLogUrl; 
+	private boolean rawDebugLogEnable;
 	private int locationProvider=0;
 	private int render=RENDER_STREET;
 	private int backlight;
@@ -83,8 +85,10 @@ public class Configuration {
 			mapFileUrl=readString(database,6);
 			backlightDefault=readInt(database,7);
 			backlight=backlightDefault;
-			rawLogUrl=readString(database,8);
-			rawLogEnable = readInt(database,9) !=0;
+			rawGpsLogUrl=readString(database,8);
+			rawGpsLogEnable = readInt(database,9) !=0;
+			rawDebugLogUrl=readString(database,10);
+			rawDebugLogEnable = readInt(database,11) !=0;
 			database.closeRecordStore();
 		} catch (Exception e) {
 			logger.exception("Problems with reading our configuration: ", e);
@@ -158,24 +162,45 @@ public class Configuration {
 	}
 	
 	public String getGpsRawLoggerUrl() {		
-		return rawLogUrl;
+		return rawGpsLogUrl;
 	}
 	
 	public void setGpsRawLoggerUrl(String url) {
-		rawLogUrl = url;
-		write(rawLogUrl, 8);
+		rawGpsLogUrl = url;
+		write(rawGpsLogUrl, 8);
 	}
 	
 	public void setGpsRawLoggerEnable(boolean enabled) {
-		rawLogEnable = enabled;
-		if (rawLogEnable) 
+		rawGpsLogEnable = enabled;
+		if (rawGpsLogEnable) 
 			write(1, 9);
 		else
 			write(0, 9);
 	}
 	
+	public boolean getDebugRawLoggerEnable() {		
+		return rawDebugLogEnable;		
+	}
+	
+	public String getDebugRawLoggerUrl() {		
+		return rawDebugLogUrl;		
+	}
+	
+	public void setDebugRawLoggerUrl(String url) {
+		rawGpsLogUrl = url;
+		write(rawDebugLogUrl, 10);
+	}
+	
+	public void setDebugRawLoggerEnable(boolean enabled) {
+		rawDebugLogEnable = enabled;
+		if (rawDebugLogEnable) 
+			write(1, 11);
+		else
+			write(0, 11);
+	}
+	
 	public boolean getGpsRawLoggerEnable() {		
-		return rawLogEnable;
+		return rawGpsLogEnable;
 	}
 
 	public String getBtUrl() {

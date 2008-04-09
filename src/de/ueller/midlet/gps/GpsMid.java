@@ -14,6 +14,10 @@
 package de.ueller.midlet.gps;
 
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+
 import javax.microedition.lcdui.Alert;
 import javax.microedition.lcdui.Choice;
 import javax.microedition.lcdui.Command;
@@ -23,6 +27,12 @@ import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.List;
 import javax.microedition.midlet.MIDlet;
 import javax.microedition.midlet.MIDletStateChangeException;
+
+//#if polish.api.fileconnection
+import javax.microedition.io.Connection;
+import javax.microedition.io.Connector;
+import javax.microedition.io.file.FileConnection;
+//#endif
 
 //#if polish.api.nokia-ui
 import com.nokia.mid.ui.DeviceControl;
@@ -61,6 +71,8 @@ public class GpsMid extends MIDlet implements CommandListener{
 //	#debug
 	private Logger l;
 	
+	private OutputStreamWriter logFile;
+	
 	/**
 	 * This Thread is used to periodically prod the display
 	 * to keep the backlight illuminator if this is wanted
@@ -76,6 +88,9 @@ private Trace trace=null;
 		System.out.println("Init GpsMid");		
 		l=new Logger(this);
 		config = new Configuration();
+		
+		enableDebugFileLogging();
+		
 		menu.addCommand(EXIT_CMD);
 		menu.addCommand(OK_CMD);
 		menu.setCommandListener(this);
@@ -208,13 +223,24 @@ private Trace trace=null;
 
 	public void log(String msg){
 		if (l != null){
-//			#debug
-        System.out.println(msg);
-        /**
-         * Adding the log hist seems to cause very wierd problems
-         * even in the emulator. So leave this commented out
-         */
-        //loghist.append(msg, null);
+			//#debug
+			System.out.println(msg);
+			/**
+			 * Adding the log hist seems to cause very wierd problems
+			 * even in the emulator. So leave this commented out
+			 */
+			//loghist.append(msg, null);
+			
+			if (logFile != null) {
+				try {
+					logFile.write(System.currentTimeMillis() + " " + msg + "\n");					
+				} catch (IOException e) {
+					//Nothing much we can do here, we are
+					//already in the debugging routines.
+					System.out.println("Failed to write to the log file: " + msg + " with error: " + e.getMessage());
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 
@@ -224,6 +250,27 @@ private Trace trace=null;
 
 	public static GpsMid getInstance() {
 		return instance;
+	}
+	
+	public void enableDebugFileLogging() {
+		//#if polish.api.fileconnection
+		if (config.getDebugRawLoggerEnable() && config.getDebugRawLoggerUrl() != null) {
+			try {
+				Connection debugLogConn = Connector.open(config.getDebugRawLoggerUrl());
+				if (debugLogConn instanceof FileConnection) {
+					if (!((FileConnection)debugLogConn).exists()) {
+						((FileConnection)debugLogConn).create();
+					}
+					logFile = new OutputStreamWriter(((FileConnection)debugLogConn).openOutputStream());
+				}				
+			} catch (IOException e) {
+				l.exception("Couldn't connect to the debug log file", e);
+				e.printStackTrace();
+			}
+		} else {
+			logFile = null;
+		}
+		//#endif
 	}
 	
 	public void startBackLightTimer() {		

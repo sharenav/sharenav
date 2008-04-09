@@ -89,8 +89,12 @@ public class Logger {
 	}
 	
 	private String getClassName() {
-		String n=source.getName();
-		return n.substring(n.lastIndexOf('.')+1, n.length());
+		if (source != null) {
+			String n=source.getName();
+			return n.substring(n.lastIndexOf('.')+1, n.length());
+		} else {
+			return "";
+		}
 	}
 
 	public int getLevel() {
