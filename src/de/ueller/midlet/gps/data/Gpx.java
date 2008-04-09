@@ -48,12 +48,17 @@ import uk.co.wilson.xml.MinML2;
 import de.ueller.gps.data.Position;
 import de.ueller.gpsMid.mapData.GpxTile;
 import de.ueller.gpsMid.mapData.Tile;
+import de.ueller.midlet.gps.ImageCollector;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.UploadListener;
 import de.ueller.midlet.gps.tile.PaintContext;
 
 public class Gpx extends Tile implements Runnable {
+	private float maxDistance;
+	private int importedWpts;
+	private int tooFarWpts;
+	private int duplicateWpts;
 	
 	//#if polish.api.webservice
 	class GpxParserW extends DefaultHandler {
@@ -77,7 +82,21 @@ public class Gpx extends Tile implements Runnable {
 				 */
 				float node_lat = Float.parseFloat(atts.getValue("lat"))*MoreMath.FAC_DECTORAD;
 				float node_lon = Float.parseFloat(atts.getValue("lon"))*MoreMath.FAC_DECTORAD;
-				wayPt = new PositionMark(node_lat,node_lon);				
+				float distance=0;
+				
+				boolean inRadius=true;
+				if (maxDistance!=0) {
+					distance = ProjMath.getDistance(node_lat, node_lon, ImageCollector.mapCenter.radlat, ImageCollector.mapCenter.radlon); 
+					distance=(int)(distance/100.0f)/10.0f;
+					if (distance>maxDistance) {
+						inRadius=false;
+						tooFarWpts++;
+					}
+				}
+				//System.out.println("MaxDist: " + maxDistance + " Distance: " + distance + " inRadius: " + inRadius);
+				if (inRadius) {
+					wayPt = new PositionMark(node_lat,node_lon);
+				}
 			} else if (qName.equalsIgnoreCase("name")) {
 				name = true;				
 			} else if (qName.equalsIgnoreCase("trk")) {
@@ -105,7 +124,13 @@ public class Gpx extends Tile implements Runnable {
 			if (qName.equalsIgnoreCase("wpt")) {
 				if (wayPt != null) {
 					logger.info("Received waypoint: " + wayPt);
-					addWayPt(wayPt);
+					if (!existsWayPt(wayPt)) {
+						addWayPt(wayPt);
+						importedWpts++;
+					}
+					else {
+						duplicateWpts++;
+					}
 					wayPt = null;
 				}
 								
@@ -250,6 +275,14 @@ public class Gpx extends Tile implements Runnable {
 		tile.addWayPt(waypt);		
 	}
 	
+	private boolean existsWayPt(PositionMark newWayPt) {
+		if (tile != null) {
+			return tile.existsWayPt(newWayPt);
+		}
+		return false;		
+	}
+		
+	
 	public void addTrkPt(Position trkpt) {
 		logger.info("Adding trackpoint: " + trkpt);
 		try {
@@ -299,14 +332,6 @@ public class Gpx extends Tile implements Runnable {
 		this.feedbackListener = ul;
 		try {
 			wayptDatabase.deleteRecord(waypt.id);
-			if (processorThread != null && processorThread.isAlive()) {
-				/* Already reloading, nothing to do */
-				return;
-			}
-			reloadWpt = true;
-			processorThread = new Thread(this);
-			processorThread.setPriority(Thread.MIN_PRIORITY);
-			processorThread.start();
 		} catch (RecordStoreNotOpenException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -317,6 +342,17 @@ public class Gpx extends Tile implements Runnable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	public void reloadWayPts() {
+		if (processorThread != null && processorThread.isAlive()) {
+			/* Already reloading, nothing to do */
+			return;
+		}
+		reloadWpt = true;
+		processorThread = new Thread(this);
+		processorThread.setPriority(Thread.MIN_PRIORITY);
+		processorThread.start();
 	}
 	
 	public void newTrk() {
@@ -386,9 +422,13 @@ public class Gpx extends Tile implements Runnable {
 		}		
 	}
 	
-	public void receiveGpx(InputStream in, UploadListener ul) {
+	public void receiveGpx(InputStream in, UploadListener ul, float maxDistance) {
+		this.maxDistance=maxDistance;
 		this.in = in;
 		this.feedbackListener = ul;
+		importedWpts=0;
+		tooFarWpts=0;
+		duplicateWpts=0;
 		if (in == null) {
 			logger.error("Could not open input stream to gpx file");
 		}
@@ -526,8 +566,26 @@ public class Gpx extends Tile implements Runnable {
 		} else {
 			logger.error("Did not know whether to send or receive");
 		}
-		if (feedbackListener != null)
-			feedbackListener.completedUpload(success, "");
+		if (feedbackListener != null) {
+			StringBuffer sb = new StringBuffer();
+			// create statistics only for import 
+			if (in != null) {
+				if(maxDistance!=0) {
+					sb.append("\n(max. distance: " + maxDistance + " km)");
+				}
+				sb.append("\n\n" + importedWpts + " waypoints imported");
+				if(tooFarWpts!=0 || duplicateWpts!=0) {
+					sb.append("\n\nSkipped waypoints:");
+					if(maxDistance!=0) {
+						sb.append("\n" + tooFarWpts + " too far away");
+					}
+					if(duplicateWpts!=0) {
+						sb.append("\n" + duplicateWpts + " already existing");				
+					}
+				}
+			}
+			feedbackListener.completedUpload(success, sb.toString());
+		}
 		feedbackListener = null;
 		sendTrk = false;
 		sendWpt = false;
@@ -790,15 +848,15 @@ public class Gpx extends Tile implements Runnable {
 		}
 		//#if polish.api.webservice
 		catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
+			logger.error("XML Parser configuration error: " + e.getMessage());
 			e.printStackTrace();
 		}
 		//#endif
 		catch (SAXException e) {
-			// TODO Auto-generated catch block
+			logger.error("Invalid XML, parsing error: " + e.getMessage());
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			logger.error("IO error, could not read the data: " + e.getMessage());
 			e.printStackTrace();
 		}
 		return false;

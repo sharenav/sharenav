@@ -9,6 +9,7 @@ package de.ueller.midlet.gps.names;
  */
 
 import java.io.DataInputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
@@ -17,7 +18,9 @@ import java.util.Vector;
 
 import de.ueller.gps.tools.intTree;
 import de.ueller.gpsMid.mapData.QueueReader;
+import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.Logger;
+import de.ueller.midlet.gps.Trace;
 
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.data.MapName;
@@ -72,6 +75,7 @@ public class Names implements Runnable {
 				}
 			}
 		} catch (Exception e) {
+			logger.fatal("Names thread crashed unexpectadly with error " +  e.getMessage() + " at " +e.toString());
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -88,15 +92,20 @@ public class Names implements Runnable {
 
 	
 	private void readIndex() throws IOException {
-		InputStream is = QueueReader.openFile("/names-idx.dat");
+		InputStream is = GpsMid.getInstance().getConfig().getMapResource("/names-idx.dat");
 //		logger.info("read names-idx");
 		DataInputStream ds = new DataInputStream(is);
 
 		int[] nameIdxs = new int[255];
 		short count=0;
 		nameIdxs[count++]=0;
-		while (ds.available() > 0) {
-			nameIdxs[count++] = ds.readInt();
+		while (true) {
+			try {
+				nameIdxs[count++] = ds.readInt();
+			} catch (EOFException eofe) {
+				ds.close();
+				break;
+			}
 			if (count >= nameIdxs.length) {
 				int[] tmp = new int[count + 255];
 				System.arraycopy(nameIdxs, 0, tmp, 0, nameIdxs.length);
@@ -120,7 +129,7 @@ public class Names implements Runnable {
 	public String getFirstWord(int fid){
 		try {
 //			System.out.println("readFirstWord: /names-" + fid + ".dat");
-			InputStream is = QueueReader.openFile("/names-" + fid + ".dat");
+			InputStream is = GpsMid.getInstance().getConfig().getMapResource("/names-" + fid + ".dat");
 			DataInputStream ds = new DataInputStream(is);
 			ds.readByte();
 			String firstWord=ds.readUTF();
@@ -145,7 +154,7 @@ public class Names implements Runnable {
 			/* Lookup in which names file the entry is contained */
 			for (int i=fid;i < startIndexes.length;i++){
 				if (startIndexes[i] > idx){
-					is=QueueReader.openFile("/names-" + fid + ".dat");
+					is=GpsMid.getInstance().getConfig().getMapResource("/names-" + fid + ".dat");
 					count=startIndexes[i]-startIndexes[fid];
 					actIdx=startIndexes[fid];
 					break;
@@ -193,16 +202,18 @@ public class Names implements Runnable {
 	}
 
 	private int readNextWord(DataInputStream ds, int pos, StringBuffer name,StringEntry se) throws IOException {
-		if (ds.available() > 0){
-			int delta=ds.readByte();
-			pos+=delta;
-			if (pos < 0) return pos;
-			name.setLength(pos);
-			name.append(ds.readUTF());
-			return pos;
+		int delta;
+		try { 
+			delta=ds.readByte();
+		} catch (EOFException eofe) {
+			name.setLength(0);
+			return -1;
 		}
-		name.setLength(0);
-		return -1;
+		pos+=delta;
+		if (pos < 0) return pos;
+		name.setLength(pos);
+		name.append(ds.readUTF());
+		return pos;		
 	}
 
 	

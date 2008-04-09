@@ -8,6 +8,9 @@ import de.ueller.gpsMid.mapData.QueueReader;
 import de.ueller.gpsMid.mapData.Tile;
 import de.ueller.midlet.gps.data.IntPoint;
 import de.ueller.midlet.gps.data.Mercator;
+import de.ueller.midlet.gps.data.MoreMath;
+import de.ueller.midlet.gps.data.Node;
+import de.ueller.midlet.gps.tile.C;
 import de.ueller.midlet.gps.tile.Images;
 import de.ueller.midlet.gps.tile.PaintContext;
 /*
@@ -23,14 +26,14 @@ import de.ueller.midlet.gps.tile.PaintContext;
 //import de.ueller.midlet.gps.Logger;
 
 public class ImageCollector implements Runnable {
-//	private final static Logger logger=Logger.getInstance(ImageCollector.class,Logger.TRACE);
+	private final static Logger logger=Logger.getInstance(ImageCollector.class,Logger.TRACE);
 
 	private final static byte STATE_WAIT_FOR_SC = 0;
 	private final static byte STATE_SC_READY = 1;
 	
 
-	private boolean lockg=false;
-	private boolean lockc=false;
+	//private boolean lockg=false;
+	//private boolean lockc=false;
 	private boolean newPaintAvail=false;
 	private boolean shutdown=false;
 	private boolean suspended=true;
@@ -40,6 +43,7 @@ public class ImageCollector implements Runnable {
 
 	private Image[] img=new Image[2];
 	private PaintContext[] pc=new PaintContext[2];
+	public static Node mapCenter = new Node();
 	byte nextCreate=0;
 	byte nextPaint=0;
 
@@ -52,7 +56,7 @@ public class ImageCollector implements Runnable {
 	int createImageCount=0;
 	private final Trace tr;
 	
-	public ImageCollector(Tile[] t,int x,int y,Trace tr,QueueDataReader tir,QueueReader dir,Images i) {
+	public ImageCollector(Tile[] t,int x,int y,Trace tr, Images i, C c) {
 		super();
 		this.t=t;
 		this.tr = tr;
@@ -61,8 +65,10 @@ public class ImageCollector implements Runnable {
 		img[0]=Image.createImage(xSize,ySize);
 		img[1]=Image.createImage(xSize,ySize);
 		try {
-			pc[0]=new PaintContext(tr,tir,dir,i);
-			pc[1]=new PaintContext(tr,tir,dir,i);
+			pc[0]=new PaintContext(tr, i);
+			pc[0].c = c;
+			pc[1]=new PaintContext(tr, i);
+			pc[1].c = c;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -73,123 +79,126 @@ public class ImageCollector implements Runnable {
 	}
 
 	public void run() {
-//		logger.info("wait for sc");
-			while (stat == STATE_WAIT_FOR_SC){
+		try {
+			// logger.info("wait for sc");
+			while (stat == STATE_WAIT_FOR_SC) {
 				synchronized (this) {
 					try {
 						wait();
 					} catch (InterruptedException e) {
 					}
-				}				
+				}
 			}
-			while (! shutdown){
-//				logger.info("loop");
-				while (pc[nextCreate].state != PaintContext.STATE_READY){
+			while (!shutdown) {
+				synchronized (this) {
+					try {
+						wait(10000);
+					} catch (InterruptedException e) {
+						continue; // Recheck condition of the loop
+					}
+				}
+				// logger.info("loop");
+				while (pc[nextCreate].state != PaintContext.STATE_READY) {
 					synchronized (this) {
 						try {
-//							System.out.println("img not ready");
+							// System.out.println("img not ready");
 							wait();
 						} catch (InterruptedException e) {
 						}
-					}				
+					}
 				}
-				if (suspended) continue;
-				pc[nextCreate].state=PaintContext.STATE_IN_CREATE;
-				try {
-//				create PaintContext
-					pc[nextCreate].xSize=xSize;
-					pc[nextCreate].ySize=ySize;
-					pc[nextCreate].center=nextSc.center.clone();
-					pc[nextCreate].scale=nextSc.scale;
-					Mercator p = new Mercator(pc[nextCreate].center,nextSc.scale,xSize,ySize);
-					pc[nextCreate].setP(p);
-					p.inverse(xSize, 0,pc[nextCreate].screenRU);
-					p.inverse(0,ySize,pc[nextCreate].screenLD);
-//					pcCollect.trace=nextSc.trace;
-//					pcCollect.dataReader=nextSc.dataReader;
+				if (suspended)
+					continue;
+				pc[nextCreate].state = PaintContext.STATE_IN_CREATE;
+
+				// create PaintContext
+				pc[nextCreate].xSize = xSize;
+				pc[nextCreate].ySize = ySize;
+				pc[nextCreate].center = nextSc.center.clone();
+				mapCenter=nextSc.center.clone();
+				pc[nextCreate].scale = nextSc.scale;
+				Mercator p = new Mercator(pc[nextCreate].center, nextSc.scale, xSize, ySize);
+				pc[nextCreate].setP(p);
+				p.inverse(xSize, 0, pc[nextCreate].screenRU);
+				p.inverse(0, ySize, pc[nextCreate].screenLD);
+				// pcCollect.trace=nextSc.trace;
+				// pcCollect.dataReader=nextSc.dataReader;
 				// cleans the screen
-					pc[nextCreate].g=img[nextCreate].getGraphics();
-					pc[nextCreate].g.setColor(155, 255, 155);
-					pc[nextCreate].g.fillRect(0, 0, xSize, ySize);
-					pc[nextCreate].squareDstToWay=Float.MAX_VALUE;
-					pc[nextCreate].config=tr.getConfig();
-					pc[nextCreate].target=nextSc.target;
-//				System.out.println("create " + pcCollect);
-				
+				pc[nextCreate].g = img[nextCreate].getGraphics();
+				pc[nextCreate].g.setColor(155, 255, 155);
+				pc[nextCreate].g.fillRect(0, 0, xSize, ySize);
+				pc[nextCreate].squareDstToWay = Float.MAX_VALUE;
+				pc[nextCreate].config = tr.getConfig();
+				pc[nextCreate].target = nextSc.target;
+				// System.out.println("create " + pcCollect);
+
 				/**
-				* Draw Area ways first, as these would cover other
-				* Ways if painted later
-				*/
-				if ((pc[nextCreate].scale < 45000) && (t[3] != null)){
+				 * Draw Area ways first, as these would cover other Ways if
+				 * painted later
+				 */
+				if ((pc[nextCreate].scale < 45000) && (t[3] != null)) {
 					t[3].paintAreaOnly(pc[nextCreate]);
 					Thread.yield();
-				} 
-				if ((pc[nextCreate].scale < 180000) && (t[2] != null)){
+				}
+				if ((pc[nextCreate].scale < 180000) && (t[2] != null)) {
 					t[2].paintAreaOnly(pc[nextCreate]);
 					Thread.yield();
-				} 
-				if ((pc[nextCreate].scale < 900000f) && (t[1] != null)){
+				}
+				if ((pc[nextCreate].scale < 900000f) && (t[1] != null)) {
 					t[1].paintAreaOnly(pc[nextCreate]);
 					Thread.yield();
-				} 
-				if ( t[0] != null){
+				}
+				if (t[0] != null) {
 					t[0].paintAreaOnly(pc[nextCreate]);
 				}
 				if (suspended) {
-					//Don't continue rendering if suspended
+					// Don't continue rendering if suspended
 					pc[nextCreate].state = PaintContext.STATE_READY;
 					continue;
 				}
 				/**
-				* Draw all other elements now ontop of any area
-				*/
-				if ((pc[nextCreate].scale < 45000) && (t[3] != null)){
+				 * Draw all other elements now ontop of any area
+				 */
+				if ((pc[nextCreate].scale < 45000) && (t[3] != null)) {
 					t[3].paintNonArea(pc[nextCreate]);
 					Thread.yield();
-				} 
-				if ((pc[nextCreate].scale < 180000) && (t[2] != null)){
+				}
+				if ((pc[nextCreate].scale < 180000) && (t[2] != null)) {
 					t[2].paintNonArea(pc[nextCreate]);
 					Thread.yield();
-				} 
-				if ((pc[nextCreate].scale < 900000f) && (t[1] != null)){
+				}
+				if ((pc[nextCreate].scale < 900000f) && (t[1] != null)) {
 					t[1].paintNonArea(pc[nextCreate]);
 					Thread.yield();
-				} 
-				if ( t[0] != null){
+				}
+				if (t[0] != null) {
 					t[0].paintNonArea(pc[nextCreate]);
 				}
-//				if (t[4] != null){
-//					t[4].paint(pc[nextCreate]);
-//				}
+				// if (t[4] != null){
+				// t[4].paint(pc[nextCreate]);
+				// }
 
 				/**
 				 * Drawing waypoints
 				 */
-				if (t[5] != null){
-				    t[5].paint(pc[nextCreate]);
+				if (t[5] != null) {
+					t[5].paint(pc[nextCreate]);
 				}
 
 				newCollected();
 				createImageCount++;
-				if (needRedraw){
-					tr.requestRedraw();
-					needRedraw=false;
-				}
-				Thread.yield();
+				tr.requestRedraw();
+				needRedraw = false;
 				tr.cleanup();
-//				System.out.println("create ready");
+				// System.out.println("create ready");
 				System.gc();
-				synchronized (this) {
-					wait(10000);
-				}
-				
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 
 			}
-
+		} catch (OutOfMemoryError oome) {
+			logger.fatal("ImageCollector thread crashed with out of memory: " + oome.getMessage());
+		} catch (Exception e) {
+			logger.fatal("ImageCollector thread crashed unexpectadly with error " + e.getMessage());
+		}
 	}
 	
 	public void suspend() {
@@ -208,7 +217,7 @@ public class ImageCollector implements Runnable {
 		processorThread.setPriority(Thread.MIN_PRIORITY);
 		processorThread.start();
 	}
-	/** copy the last created image to the real sceen
+	/** copy the last created image to the real screen
 	 *  but with the last collected position in the center
 	 */
 	public void paint(PaintContext screenPc){
@@ -221,23 +230,7 @@ public class ImageCollector implements Runnable {
 		synchronized (this) {
 			notify();
 		}		
-		if (newPaintAvail){
-			lockg=true;
-			synchronized (this) {
-				while (lockc) {
-					System.err.println("locked from Collect");
-					try {
-						wait();
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			}		
-
-			newPaintAvail=false;
-			lockg=false;
-		}
+		newPaintAvail=false;
 		screenPc.getP().forward(pc[nextPaint].center, oldCenter);
 //		System.out.println("old Center = " + oldCenter.x + "/" + oldCenter.y);
 //		System.out.println("paint: " +pc);
@@ -245,8 +238,18 @@ public class ImageCollector implements Runnable {
 				oldCenter.x,
 				oldCenter.y,
 				Graphics.VCENTER|Graphics.HCENTER); 
+		//Test if the new center is in the midle of the screen, in which 
+		//case we don't need to redraw, as nothing has changed. 
+		if (oldCenter.x != nextSc.xSize/2 || oldCenter.y != nextSc.ySize/2) { 
+			//The center of the screen has moved, so need 
+			//to redraw the map image  
+			needRedraw = true; 
+			//System.out.println("Moved, needs redrawing"); 
+		} 
+
+		String name = null;
 		if (pc[nextPaint].actualWay != null && pc[nextPaint].actualWay.nameIdx != -1){
-			String name=screenPc.trace.getName(pc[nextPaint].actualWay.nameIdx);
+			name=screenPc.trace.getName(pc[nextPaint].actualWay.nameIdx);
 			String maxspeed=null;
 			if (pc[nextPaint].actualWay.maxspeed != 0){
 				maxspeed=" SL:" + pc[nextPaint].actualWay.maxspeed;
@@ -257,34 +260,38 @@ public class ImageCollector implements Runnable {
 				}
 			}
 			tr.source=pc[nextPaint].currentPos;
+		}
+		if (Trace.showLatLon == 1 || name!=null) {
+			screenPc.g.setColor(255,255,255);
+			screenPc.g.fillRect(0,screenPc.ySize-15, screenPc.xSize, 15);
+			screenPc.g.setColor(0,0,0);
+		}
+		if (Trace.showLatLon == 1) {
+			screenPc.g.drawString("lat: " + Float.toString(pc[nextPaint].center.radlat*MoreMath.FAC_RADTODEC),5,screenPc.ySize, Graphics.LEFT | Graphics.BOTTOM);
+			screenPc.g.drawString("lon: " + Float.toString(pc[nextPaint].center.radlon*MoreMath.FAC_RADTODEC),screenPc.xSize/2 + 5,screenPc.ySize, Graphics.LEFT | Graphics.BOTTOM);
+		} else {
 			if (name != null){
-				screenPc.g.setColor(255,255,255);
-				screenPc.g.fillRect(0,screenPc.ySize-15, screenPc.xSize, 15);
-				screenPc.g.setColor(0,0,0);
 				screenPc.g.drawString(name,
 					screenPc.xSize/2, screenPc.ySize, Graphics.BOTTOM|Graphics.HCENTER);
 			}
 		}
+			
 		if (pc[nextPaint].scale != screenPc.scale){
 			needRedraw=true;
 		}
+		if (needRedraw) {
+			synchronized (this) {
+				notifyAll();
+			}
+		} else {
+			//System.out.println("No need to redraw after painting");
+		}
 	}
 	private synchronized void newCollected(){
-		pc[nextCreate].state=PaintContext.STATE_READY;
-		lockc=true;
-		while (lockg){
-			try {
-				System.err.println("locked from Paint");
-				wait();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+		pc[nextCreate].state=PaintContext.STATE_READY;		
 		nextPaint=nextCreate;
 		nextCreate=(byte) ((nextCreate + 1) % 2);
-		newPaintAvail=true;
-		lockc=false;
+		newPaintAvail=true;		
 		tr.requestRedraw();
 	}
 

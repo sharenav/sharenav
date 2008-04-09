@@ -6,13 +6,16 @@ package de.ueller.midlet.gps.tile;
  */
 
 import java.io.DataInputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 
 import de.ueller.gps.data.SearchResult;
 import de.ueller.gpsMid.mapData.QueueReader;
+import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.GuiSearch;
 import de.ueller.midlet.gps.Logger;
+import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.names.Names;
 
 public class SearchNames implements Runnable{
@@ -42,9 +45,9 @@ public class SearchNames implements Runnable{
 				wait(300);						
 			    }
 			    if (stopSearch){
-				return;
+					break;
 			    } else {
-				gui.triggerRepaint();
+					gui.triggerRepaint();
 			    }
 			} catch (InterruptedException e) {
 			}
@@ -75,19 +78,32 @@ public class SearchNames implements Runnable{
 			}
 			String fileName = "/s"+fn+".d";
 //			System.out.println("open " +fileName);
-			InputStream stream = QueueReader.openFile(fileName);
+			InputStream stream = GpsMid.getInstance().getConfig().getMapResource(fileName);
 			if (stream == null){
 				System.out.println("file not Found");
 				return;
 			}
 			DataInputStream ds=new DataInputStream(stream);
 			int pos=0;
-			while (ds.available() > 0){
+			int type = 0;
+			/**
+			 * InputStream.available doesn't seem to reliably give a correct value
+			 * depending on what type of InputStream we actually get.
+			 * Instead we will continue reading until we receive a EOFexpetion.
+			 */
+			while (true){
+				
 				if (stopSearch){
 					ds.close();					
 					return;
-				}				 
-				int type=ds.readByte();
+				}
+				try {
+					type = ds.readByte();
+				} catch (EOFException eof) {
+					//Normal way of detecting the end of a file
+					ds.close();
+					return;
+				}
 				int sign=1;
 				if (type < 0){
 					type += 128;

@@ -74,10 +74,12 @@ public class GuiWaypoint extends List implements CommandListener,
 			boolean[] sel = new boolean[waypoints.length];
 			this.getSelectedFlags(sel);			
 			for (int i = 0; i < sel.length; i++) {
+				//System.out.println("i: " + i + " sel.length:" + sel.length + " wpts.length: " + waypoints.length + " wpt.id: " +waypoints[i].id);
 				if (sel[i]) {
 					parent.gpx.deleteWayPt(waypoints[i], this);
 				}
-			}			
+			}
+			parent.gpx.reloadWayPts();
 			return;
 		}
 		if ((c == SALL_CMD) || (c == DSALL_CMD)) {
@@ -102,7 +104,7 @@ public class GuiWaypoint extends List implements CommandListener,
 		}
 		if (c == LOAD_CMD) {
 			uploading = false;
-			GuiGpxLoad ggl = new GuiGpxLoad(this, this);
+			GuiGpxLoad ggl = new GuiGpxLoad(this, this, true);
 			ggl.show();
 			return;			
 		}
@@ -156,18 +158,19 @@ public class GuiWaypoint extends List implements CommandListener,
 		Alert alert = new Alert("Information");
 		if (uploading) {
 			if (success)
-				alert.setString("Completed GPX upload");
+				alert.setString("Completed GPX export" + message);
 			else {
-				alert.setString("GPX upload failed: " + message);
+				alert.setString("GPX export failed: " + message);
 			}
 		} else {
 			if (success) {
-				alert.setString("Completed GPX import");
+				alert.setString("Completed GPX import" + message);
 				initWaypoints();
 			} else {
 				alert.setString("GPX import failed: " + message);
 			}
 		}
+		alert.setTimeout(alert.FOREVER);
 		Display.getDisplay(parent.getParent()).setCurrent(alert);
 	}
 

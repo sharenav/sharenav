@@ -161,6 +161,8 @@ public class Node extends Entity {
         return lon;
     }
 
+    /*
+     * Deprecated
     public void paint(PaintContext pc){
     	Image img=null;
 //    	logger.debug("set color "+pc);
@@ -221,7 +223,7 @@ public class Node extends Entity {
     		}
     	}
     }
-    
+    */
     public Node clone(){
     	Node n=new Node();
     	if (nameIdx != -1) {

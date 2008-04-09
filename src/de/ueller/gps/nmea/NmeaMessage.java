@@ -149,9 +149,7 @@ public class NmeaMessage {
 	            lastMsgGSV=true;
 			}
 		} catch (RuntimeException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			System.out.println("Error while decoding "+sentence + " " + e.getMessage());
+			logger.error("Error while decoding "+sentence + " " + e.getMessage());
 		}
 		
 	}
@@ -269,9 +267,7 @@ public class NmeaMessage {
 	            lastMsgGSV=true;
 			}
 		} catch (RuntimeException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			System.out.println("Error while decoding "+sentence + " " + e.getMessage());
+			logger.error("Error while decoding "+sentence + " " + e.getMessage());
 		}
 		
 	}

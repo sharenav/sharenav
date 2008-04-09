@@ -24,8 +24,12 @@ import javax.microedition.lcdui.List;
 import javax.microedition.midlet.MIDlet;
 import javax.microedition.midlet.MIDletStateChangeException;
 
+//#if polish.api.nokia-ui
+import com.nokia.mid.ui.DeviceControl;
+//#endif
+
 import de.ueller.gps.data.Configuration;
-import de.ueller.midlet.gps.routing.RouteNodeTools;
+
 
 
 
@@ -53,26 +57,36 @@ public class GpsMid extends MIDlet implements CommandListener{
 
     private final List loghist=new List("Log Hist",Choice.IMPLICIT);
 	private String	root;
-	Configuration config=new Configuration();
+	private Configuration config;
 //	#debug
-	Logger l;
+	private Logger l;
+	
+	/**
+	 * This Thread is used to periodically prod the display
+	 * to keep the backlight illuminator if this is wanted
+	 * by the user
+	 */
+	private Thread lightTimer;
 
 private Trace trace=null;
 
 
-	public GpsMid() {
+	public GpsMid() {		
 		instance = this;
-		System.out.println("Init GpsMid");
+		System.out.println("Init GpsMid");		
+		l=new Logger(this);
+		config = new Configuration();
 		menu.addCommand(EXIT_CMD);
 		menu.addCommand(OK_CMD);
 		menu.setCommandListener(this);
 		loghist.addCommand(BACK_CMD);
 		loghist.addCommand(CLEAR_DEBUG_CMD);
 		loghist.setCommandListener(this);
-//		#debug
-		l=new Logger(this);
+		
+//		
 		new Splash(this);
 //		RouteNodeTools.initRecordStore();
+		startBackLightTimer();
 	}
 	
 	protected void destroyApp(boolean arg0) throws MIDletStateChangeException {
@@ -211,4 +225,89 @@ private Trace trace=null;
 	public static GpsMid getInstance() {
 		return instance;
 	}
+	
+	public void startBackLightTimer() {		
+		int backlight=config.getBacklight();
+		if ((backlight & (1<<Configuration.BACKLIGHT_ON) )!=0 ) {
+			// Warn the user if none of the methods
+			// to keep backlight on was selected
+			if( (backlight & 
+					(
+					 (1<<Configuration.BACKLIGHT_MIDP2)
+					+(1<<Configuration.BACKLIGHT_NOKIA)
+					+(1<<Configuration.BACKLIGHT_NOKIAFLASH)
+					)
+				 ) == 0
+			) {
+				Alert alert = new Alert("GpsMid");
+				alert.setString("Backlight cannot be kept on when no 'with'-method is specified in Setup");
+				alert.setTimeout(5000);
+				Display d=Display.getDisplay(GpsMid.getInstance());
+				d.setCurrent(d.getCurrent());
+				Display.getDisplay(GpsMid.getInstance()).setCurrent(alert);
+			}
+			if (lightTimer == null) {
+				lightTimer = new Thread(new Runnable() {
+					private final Logger logger=Logger.getInstance(GpsMid.class,Logger.DEBUG);
+					public void run() {
+						try {
+							boolean notInterupted = true;
+							while(notInterupted) {							
+								int backlight=config.getBacklight();
+								// only when map is displayed or
+								// option "only when map is displayed" is off 
+								if ( (Trace.getInstance()!=null && Trace.getInstance().isShown())
+								|| (backlight & (1<<Configuration.BACKLIGHT_MAPONLY)) ==0
+								) {
+									//Method to keep the backlight on
+									//some MIDP2 phones
+									if ((backlight & (1<<Configuration.BACKLIGHT_MIDP2) ) !=0) {
+										Display.getDisplay(GpsMid.getInstance()).flashBacklight(6000);						
+									//#if polish.api.nokia-ui
+									//Method to keep the backlight on
+									//on SE K750i and some other models
+									} else if ((backlight & (1<<Configuration.BACKLIGHT_NOKIAFLASH) ) !=0) {  
+										DeviceControl.flashLights(1);								
+									//Method to keep the backlight on
+									//on those phones that support the nokia-ui 
+									} else if ((backlight & (1<<Configuration.BACKLIGHT_NOKIA) ) !=0) {
+										DeviceControl.setLights(0, 100);
+									//#endif		
+									}
+								}
+								try {
+									synchronized(this) {
+										wait(5000);
+									}
+								} catch (InterruptedException e) {
+									notInterupted = false;
+								}
+							}
+						} catch (RuntimeException rte) {
+							// Backlight prodding sometimes fails when minimizing the
+							// application. Don't display an alert because of this
+							logger.info("Blacklight prodding failed: " + rte.getMessage());
+						} catch (NoClassDefFoundError ncdfe) {
+							logger.error("Blacklight prodding failed, API not supported: " + ncdfe.getMessage());
+						}
+					}
+				});
+				lightTimer.setPriority(Thread.MIN_PRIORITY);
+				lightTimer.start();
+			}
+		}
+	}
+	
+	public void stopBackLightTimer() {
+		if (lightTimer != null) {
+			lightTimer.interrupt();
+			try {
+				lightTimer.join();
+			} catch (Exception e) {
+			
+			}
+			lightTimer = null;
+		}
+	}	
 }
+

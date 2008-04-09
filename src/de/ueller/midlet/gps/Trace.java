@@ -13,6 +13,9 @@ import java.util.Vector;
 
 import javax.microedition.io.Connector;
 import javax.microedition.io.StreamConnection;
+//#if polish.api.fileconnection
+import javax.microedition.io.file.FileConnection;
+//#endif
 import javax.microedition.lcdui.Alert;
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Command;
@@ -35,6 +38,7 @@ import de.ueller.gps.jsr179.JSR179Input;
 
 import de.ueller.gps.nmea.NmeaInput;
 import de.ueller.gps.sirf.SirfInput;
+import de.ueller.gps.tools.HelperRoutines;
 import de.ueller.gpsMid.mapData.DictReader;
 import de.ueller.gpsMid.mapData.QueueDataReader;
 import de.ueller.gpsMid.mapData.QueueDictReader;
@@ -52,9 +56,11 @@ import de.ueller.midlet.gps.names.Names;
 import de.ueller.midlet.gps.routing.Connection;
 import de.ueller.midlet.gps.routing.RouteNode;
 import de.ueller.midlet.gps.routing.Routing;
+import de.ueller.midlet.gps.tile.C;
 import de.ueller.midlet.gps.tile.Images;
 import de.ueller.midlet.gps.tile.PaintContext;
 import de.ueller.midlet.gps.GpsMidDisplayable;
+
 
 public class Trace extends Canvas implements CommandListener, LocationMsgReceiver,
 		Runnable , GpsMidDisplayable{
@@ -72,6 +78,8 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	private final Command SAVE_WAYP_CMD = new Command("Save waypoint ",Command.ITEM, 7);
 	private final Command MAN_WAYP_CMD = new Command("Manage waypoints",Command.ITEM, 7);
 	private final Command ROUTE_TO_CMD = new Command("Route",Command.ITEM, 3);
+	private final Command CAMERA_CMD = new Command("Camera",Command.ITEM, 9);
+
 
 	private InputStream inputStream;
 	private StreamConnection conn;
@@ -98,10 +106,11 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 	private long collected = 0;
 
-	PaintContext pc;
+	protected PaintContext pc;
 
 	public float scale = 15000f;
 
+	public static int showLatLon = 0;
 	int showAddons = 0;
 
 	Tile t[] = new Tile[6];
@@ -149,7 +158,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 	public Gpx gpx;
 	
-	private static Trace traceInstance;
+	private static Trace traceInstance=null;
 
 	public Trace(GpsMid parent, Configuration config) throws Exception {
 		//#debug
@@ -165,15 +174,17 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		addCommand(TRANSFER_RECORD_CMD);		           
 		addCommand(SAVE_WAYP_CMD);
 		addCommand(MAN_WAYP_CMD);
+		//#if polish.api.mmapi && polish.api.advancedmultimedia
+		addCommand(CAMERA_CMD);
+		//#endif
 		setCommandListener(this);
 
 		try {
 			startup();
 		} catch (Exception e) {
+			logger.fatal("Got an exception during startup: " + e.getMessage());
 			e.printStackTrace();
-			Alert alert = new Alert("Error:" + e.getMessage());
-			Display.getDisplay(parent).setCurrent(alert, this);
-			parent.show();
+			return;
 		}
 		// setTitle("initTrace ready");
 		try {
@@ -192,6 +203,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 	// start the LocationProvider in background
 	public void run() {
+		try {
 		if (running){
 			receiveMessage("thread already running");
 			return;
@@ -231,7 +243,33 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			locationProducer = new SirfInput(inputStream, this);
 			break;
 		case Configuration.LOCATIONPROVIDER_NMEA:
-			locationProducer = new NmeaInput(inputStream, this);
+			locationProducer = new NmeaInput(inputStream, this);			
+			//#if polish.api.fileconnection	
+			/**
+			 * Allow for logging the raw NMEA data coming from the gps mouse
+			 */
+			
+			String url = config.getGpsRawLoggerUrl();
+			//logger.error("Raw logging url: " + url);
+			if (config.getGpsRawLoggerEnable() && (url != null)) {
+				try {
+					logger.info("Raw NMEA logging to: " + url);
+					url += "rawGpsNMEA" + HelperRoutines.formatSimpleDateNow() + ".txt";
+					
+					javax.microedition.io.Connection logCon = Connector.open(url);				
+					if (logCon instanceof FileConnection) {
+						FileConnection fileCon = (FileConnection)logCon;
+						if (!fileCon.exists())
+							fileCon.create();
+						((NmeaInput)locationProducer).enableRawLogging(((FileConnection)logCon).openOutputStream());
+					} else {
+						logger.info("Trying to perform raw logging of NMEA on anything else than filesystem is currently not supported");
+					}
+				} catch (IOException ioe) {
+					logger.exception("Couldn't open file for raw logging of Gps data",ioe);
+				}
+			}
+			//#endif
 			break;
 
 		case Configuration.LOCATIONPROVIDER_JSR179:
@@ -247,9 +285,23 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		logger.info("end startLocationPovider thread");
 //		setTitle("lp="+config.getLocationProvider() + " " + config.getBtUrl());
 		running=false;
+		} catch (SecurityException se) {
+			/**
+			 * The application was not permitted to connect to the required resources
+			 * Not much we can do here other than gracefully shutdown the thread			 *  
+			 */
+			running = false;
+		} catch (OutOfMemoryError oome) { 
+			logger.fatal("Trace thread crashed as out of memory: " + oome.getMessage()); 
+			oome.printStackTrace(); 
+		} catch (Exception e) {
+			logger.fatal("Trace thread crashed unexpectadly with error " +  e.getMessage());
+			e.printStackTrace();
+		}
 	}
 	
 	public synchronized void pause(){
+		logger.debug("Pausing application");
 		if (imageCollector != null) {
 			imageCollector.suspend();
 		}
@@ -267,6 +319,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	}
 
 	public void resume(){
+		logger.debug("resuming application");
 		if (imageCollector != null) {
 			imageCollector.resume();
 		}
@@ -284,6 +337,13 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		try {
 			conn = (StreamConnection) Connector.open(url);
 			inputStream = conn.openInputStream();
+		} catch (SecurityException se) {
+			/**
+			 * The application was not permitted to connect to bluetooth  
+			 */
+			receiveMessage("Connectiong to BT not permitted");
+			return false;
+			
 		} catch (IOException e) {
 			receiveMessage("err BT:"+e.getMessage());
 			return false;
@@ -365,6 +425,15 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				GuiWaypoint gwp = new GuiWaypoint(this);
 				gwp.show();
 			}
+			//#if polish.api.mmapi && polish.api.advancedmultimedia
+			if (c == CAMERA_CMD){				
+				if (imageCollector != null) {
+					imageCollector.suspend();
+				}
+				GuiCamera cam = new GuiCamera(this,config);
+				cam.show();
+			}
+			//#endif
 		} catch (RuntimeException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -378,9 +447,10 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	private void startImageCollector() throws Exception {
 		Images i;
 		i = new Images();
-		pc = new PaintContext(this, tileReader, dictReader,i);
+		pc = new PaintContext(this, i);
+		pc.c = new C();
 		imageCollector = new ImageCollector(t, this.getWidth(), this.getHeight(), this,
-				tileReader, dictReader,i);
+				i, pc.c);
 		projection = new Mercator(center, scale, getWidth(), getHeight());
 		pc.setP(projection);
 		pc.center = center.clone();
@@ -474,7 +544,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			case 5:
 				yc = showMemory(g, yc, la);
 				break;
-			case 6:
+			default:
 				showAddons = 0;
 
 			}
@@ -813,6 +883,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		g.drawString("course  : " + course, 0, yc, Graphics.TOP
 						| Graphics.LEFT);
 		yc += la;
+		g.drawString("height  : " + pos.altitude, 0, yc, Graphics.TOP
+				| Graphics.LEFT);
+		yc += la;
 		return yc;
 
 	}
@@ -894,6 +967,22 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		return parent;
 	}
 
+	protected void keyRepeated(int keyCode) {
+		//Scrolling should work with repeated keys the same
+		//as pressing the key multiple times
+		int gameActionCode = this.getGameAction(keyCode);
+		if ((gameActionCode == UP) || (gameActionCode == DOWN) ||
+				(gameActionCode == RIGHT) || (gameActionCode == LEFT)) {
+			keyPressed(keyCode);
+			return;
+		}
+		if ((keyCode == KEY_NUM2) || (keyCode == KEY_NUM8)
+				|| (keyCode == KEY_NUM4) || (keyCode == KEY_NUM6)) {
+			keyPressed(keyCode);
+
+		}		
+	}
+	
 	protected void keyPressed(int keyCode) {
 		float f = 0.00003f / 15000f;
 		int keyStatus;		
@@ -928,7 +1017,32 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			showAddons++;
 		} else if (keyCode == KEY_NUM9) {
 			course += 5;
+		} else if (keyCode == KEY_STAR) {
+			showLatLon++;
+			if(showLatLon == 2) showLatLon=0; 
 			;
+		} else if (keyCode == KEY_POUND) {
+			int backlight=config.getBacklight();
+			// toggle Backlight
+			config.setBacklight(backlight^(1<<config.BACKLIGHT_ON));
+			Alert alert = new Alert("GpsMid");
+			alert.setTimeout(500);
+			if ( (config.getBacklight() & (1<<config.BACKLIGHT_ON) )!=0 ) {
+				alert.setString("Backlight ON");
+			} else {
+				alert.setString("Backlight off");
+			}
+			Display.getDisplay(parent).setCurrent(alert);
+			parent.stopBackLightTimer();
+			parent.startBackLightTimer();
+		//#if polish.api.mmapi && polish.api.advancedmultimedia
+		} else if (keyCode == Configuration.KEYCODE_CAMERA_COVER_OPEN) {
+			if (imageCollector != null) {
+				imageCollector.suspend();
+			}
+			GuiCamera cam = new GuiCamera(this,config);
+			cam.show();
+		//#endif
 		} else {		
 			keyStatus = keyCode;
 		}
@@ -1079,6 +1193,14 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		if (gpx != null) { 
 			gpx.dropCache(); 
 		} 
+	}
+	
+	public QueueDataReader getDataReader() {
+		return tileReader;
+	}
+	
+	public QueueReader getDictReader() {
+		return dictReader;
 	}
 
 }

@@ -482,7 +482,9 @@ public class Routing implements Runnable {
 		} catch (Exception e) {
 			parent.setRoute(null);
 			parent.receiveMessage(e.getMessage());
-			//#debug
+			//#debug error
+			logger.fatal("Routing thread crashed unexpectadly with error " +  e.getMessage());
+			//#debug			
 			e.printStackTrace();
 		} catch (Error e1){
 			parent.setRoute(null);

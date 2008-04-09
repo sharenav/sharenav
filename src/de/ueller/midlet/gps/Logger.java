@@ -1,4 +1,8 @@
 package de.ueller.midlet.gps;
+
+import javax.microedition.lcdui.Alert;
+import javax.microedition.lcdui.Display;
+
 /*
  * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net 
  * See Copying
@@ -15,7 +19,7 @@ public class Logger {
 	private static GpsMid app;
 	private Class source;
 	private int level=ERROR;
-	public Logger(GpsMid app){
+	public Logger(GpsMid app){		
 		Logger.app=app;
 	}
 	public Logger(Class c){
@@ -42,20 +46,25 @@ public class Logger {
 	public void fatal(String msg){
 		if (level >= FATAL) {
 			app.log("F["+getClassName()+"] " + msg);
+			Alert alert = new Alert("Fatal");
+			alert.setString(msg);
+			alert.setTimeout(Alert.FOREVER);
+			Display.getDisplay(app).setCurrent(alert);
+
 		}
 	}
-	public void error(String msg){
-		//#mdebug error
+	public void error(String msg){		
 		if (level >= ERROR) {
 			app.log("E["+getClassName()+"] " + msg);
-		}
-		//#enddebug
+			Alert alert = new Alert("Error");
+			alert.setTimeout(5000);
+			alert.setString(msg);
+			Display.getDisplay(app).setCurrent(alert);
+		}		
 	}
-	public void exception(String msg, Exception e) {
-		//#mdebug error
+	public void exception(String msg, Exception e) {		
 		error(msg + " (" + e + ": " + e.getMessage());
-		e.printStackTrace();
-		//#enddebug
+		e.printStackTrace();		
 	}
 	public void info(String msg){
 		//#mdebug info

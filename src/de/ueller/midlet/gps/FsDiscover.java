@@ -29,33 +29,71 @@ public class FsDiscover
 //#if polish.api.pdaapi
 	private GpsMidDisplayable parent;
 	private SelectionListener  sl;
+	private boolean chooseDir;
+	
 	private Thread processorThread;
 	private final static Logger logger=Logger.getInstance(FsDiscover.class,Logger.TRACE);
 	
 	private final Command			BACK_CMD		= new Command("Back", Command.BACK, 2);
+	private final Command			OK_CMD			= new Command("Select", Command.ITEM, 1);
 
-	private final Command			OK_CMD			= new Command("Ok", Command.ITEM, 1);
 	private final Command			UP_CMD			= new Command("Directory up", Command.ITEM, 1);
 	private final Command			DOWN_CMD		= new Command("Directory down", Command.ITEM, 1);
 	
-	private String url = "file:///";
+	private String url;
 	private Vector urlList;
-	private boolean root;
+	//private boolean root;
 	
 	private List list;	
 
-	public FsDiscover(GpsMidDisplayable parent, SelectionListener sl) {			
+	private String orgTitle;
+	private String suffix;
+	
+	public FsDiscover(GpsMidDisplayable parent, SelectionListener sl, String initUrl, boolean chooseDir, String suffix, String title) {			
+			//orgTitle=Display.getDisplay(GpsMid.getInstance()).getCurrent().getTitle();
 			this.parent = parent;
-			this.sl = sl;			
+			this.sl = sl;
+			this.chooseDir=chooseDir;
+			this.suffix=suffix;
+			this.orgTitle=title;
 			urlList = new Vector();
-			root = true;
+			//#if polish.api.pdaapi
+			// avoid NullPointer exception
+			if (initUrl==null) {
+				initUrl="";
+			}
+			if (initUrl.length() >= 9) {  //file:///
+            	// if url is file get dir only
+				if (!initUrl.endsWith("/")) {
+            		initUrl = initUrl.substring(0, initUrl.substring(0, initUrl.length() - 1).lastIndexOf('/') + 1);
+            	}
+    		}
+			// start browsing at initial url
+        	url=initUrl;
+			// if no initial dir usable use root
+			if (url.length() < 9) {  //file:///
+				url = "file:///";
+			}
+            //#endif
+
+			
 			processorThread = new Thread(this);
 			processorThread.start();
 			this.list = createEmptyList();
 	}
 	
 	private List createEmptyList() {
-		List list = new List(url, Choice.IMPLICIT);
+		String title=orgTitle;
+		// don't show "file:///"
+		if (url.toLowerCase().startsWith("file:///")) {
+			// if in root dir show original list title
+			if(url.length()==8) {
+				title=orgTitle;
+			} else {
+				title=url.substring(8);				
+			}
+		}
+		List list = new List(title, Choice.IMPLICIT);
 		list.addCommand(BACK_CMD);
 		list.addCommand(OK_CMD);		
 		list.setCommandListener(this);
@@ -66,10 +104,15 @@ public class FsDiscover
 
 	public void run() {
 		try {
-		if (root)
+		if (url.equalsIgnoreCase("file:///")) {
 			getRoots();
-		else
-			getRootContent(url);
+		} else {
+			// try to get url content, if nok get roots instead
+			if(!getRootContent(url)) {
+				url="file:///";
+				getRoots();			
+			}
+		}
 		} catch (SecurityException se) {
 			logger.exception("Security exception: You are not permitted to access this restricted API :-(", se);
 		}
@@ -95,23 +138,26 @@ public class FsDiscover
         //some mobiles
         show();
      }
-    private void getRootContent(String root) {
+    private boolean getRootContent(String rootDir) {
     	//#if polish.api.pdaapi
         try {
-        	logger.debug("List of files and directories under "+root+":");        	
-           FileConnection fc = (FileConnection) Connector.open(root,Connector.READ);
+        	logger.debug("List of files and directories under "+rootDir+":");        	
+        	FileConnection fc = (FileConnection) Connector.open(rootDir,Connector.READ);
            // Get a filtered list of all files and directories.
            // True means: include hidden files.
            // To list just visible files and directories, use
-           // list() with no arguments.           
+           // list() with no arguments.
+            if (!fc.exists()) {
+				return false;
+			}
            if (!fc.isDirectory()) {
         	   //If it is not a directory,
-        	   //Then we assume it bust be an
+        	   //Then we assume it must be an
         	   //Ok selection        	  
         	   url = (String)urlList.elementAt(list.getSelectedIndex());
         	   parent.show();
         	   sl.selectedFile(url);
-        	   return;
+        	   return true;
            }
         	   
            list = createEmptyList();
@@ -122,8 +168,15 @@ public class FsDiscover
            while(filelist.hasMoreElements()) {
               String fileName = (String) filelist.nextElement();
               logger.debug("found file: " + fileName);
-              list.append(fileName, null);
-              urlList.addElement(url + fileName);              
+              // add files too if not choosedir
+    		  if(!chooseDir || fileName.endsWith("/")) {
+    			  // for files check also if suffix matches
+    			  if (chooseDir || fileName.endsWith("/") || ( suffix.length()>0 && fileName.toLowerCase().endsWith(suffix.toLowerCase()) ) ) {
+      				  //System.out.println("Adding " + fileName);
+	    			  list.append(fileName, null);
+		              urlList.addElement(url + fileName);              
+    			  }
+			  }
            }   
            fc.close();
            show();
@@ -131,6 +184,7 @@ public class FsDiscover
            logger.error(ioe.getMessage());
         }
         //#endif
+        return true;
      }
     
     public void commandAction(Command c, Displayable d) {
@@ -153,7 +207,6 @@ public class FsDiscover
 			return;
 		}
     	if (c == DOWN_CMD) {
-    		root = false;
     		if (list.getString(list.getSelectedIndex()).equalsIgnoreCase("..")) {
     			c = UP_CMD;
     		} else {
@@ -164,12 +217,10 @@ public class FsDiscover
     		}			
 		}
     	if (c == UP_CMD) {
-    		root = false;
     		url = url.substring(0, url.substring(0, url.length() - 1).lastIndexOf('/') + 1);
     		logger.debug("Moving up directory to :" + url);
     		if (url.length() < 9) {  //file:///
     			url = "file:///";
-    			root = true;
     		}    		    		
     		processorThread = new Thread(this);
     		processorThread.start();
@@ -177,7 +228,6 @@ public class FsDiscover
     	}
     	
     }
-
 
 	public void show() {		
 		Display.getDisplay(GpsMid.getInstance()).setCurrent(list);		

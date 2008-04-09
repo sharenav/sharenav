@@ -29,7 +29,7 @@ package de.ueller.midlet.gps.data;
 /**
  * Implements the Mercator projection.
  */
-public class Mercator extends Cylindrical {
+public final class Mercator extends Cylindrical {
 
     /**
      * The Mercator name.
@@ -57,6 +57,10 @@ public class Mercator extends Cylindrical {
     // almost constant projection parameters
     protected float tanCtrLat;
     protected float asinh_of_tanCtrLat;
+    
+    private boolean approxMercator = true;
+    private float scaled_lat;
+    
 //	private final static Logger logger=Logger.getInstatance(Mercator.class);
 
 
@@ -72,12 +76,14 @@ public class Mercator extends Cylindrical {
 
         super(center, scale, width, height, MercatorType);
  //       logger.info("created Mercator");
+        computeParameters();
     }
 
     public Mercator(Node center, float scale, int width, int height,
             int type) {
 
         super(center, scale, width, height, type);
+        computeParameters();
     }
 
     //    protected void finalize() {
@@ -114,6 +120,14 @@ public class Mercator extends Cylindrical {
         // compute the offsets
         hy = height / 2;
         wx = width / 2;
+        
+        if (approxMercator) {
+        	Node n1 = new Node();
+        	Node n2 = new Node();        	
+        	n1 = inverse_full(width/2, 0, n1);
+        	n2 = inverse_full(width/2, height, n2);
+        	scaled_lat = height/(n1.radlat - n2.radlat);        	
+        }
 //    	logger.info("exit computeParameters()");
     }
 
@@ -199,10 +213,26 @@ public class Mercator extends Cylindrical {
      * @return IntPoint p
      */
     public IntPoint forward(float lat, float lon, IntPoint p, boolean isRadian) {
+        if (approxMercator)
+        	return forward_approx(lat, lon, p, isRadian);
+        return forward_full(lat, lon, p, isRadian);
+    }
+    
+    public IntPoint forward_full(float lat, float lon, IntPoint p, boolean isRadian) {
         // same as forward_x and forward_y, and convert to screen
         // coords
         p.setX((int) (scaled_radius * wrap_longitude(lon - ctrLon) + wx));
         p.setY((int) (hy - scaled_radius * (MoreMath.asinh((float) Math.tan(lat)) - asinh_of_tanCtrLat)));
+        return p;
+    }
+    
+    public IntPoint forward_approx(float lat, float lon, IntPoint p, boolean isRadian) {
+        // same as forward_x and forward_y, and convert to screen
+        // coords
+        p.setX((int) (scaled_radius * wrap_longitude(lon - ctrLon) + wx));
+        //p.setY((int) (hy - scaled_radius * (MoreMath.asinh((float) Math.tan(lat)) - asinh_of_tanCtrLat)));
+        p.setY((int) hy - scaled_lat * (lat - ctrLat));
+        //System.out.println("forward_approx");
         return p;
     }
 
@@ -214,7 +244,7 @@ public class Mercator extends Cylindrical {
      * @return Node llp
      */
     public Node inverse(IntPoint pt, Node llp) {
-        // convert from screen to world coordinates
+        /*// convert from screen to world coordinates
         float x = pt.getX() - wx;
         float y = hy - pt.getY();
 
@@ -223,9 +253,9 @@ public class Mercator extends Cylindrical {
         float wc = asinh_of_tanCtrLat * scaled_radius;
         llp.setLatitude(ProjMath.radToDeg(MoreMath.atan(MoreMath.sinh((y + wc)
                 / scaled_radius))));
-        llp.setLongitude(ProjMath.radToDeg(x / scaled_radius + ctrLon));
+        llp.setLongitude(ProjMath.radToDeg(x / scaled_radius + ctrLon));*/
 
-        return llp;
+        return inverse(pt.getX(),pt.getY(),llp);
     }
 
     /**
@@ -238,6 +268,12 @@ public class Mercator extends Cylindrical {
      * @see Proj#inverse(IntPoint)
      */
     public Node inverse(int x, int y, Node llp) {
+        if (approxMercator)
+        	return inverse_approx(x, y, llp);
+        return inverse_full(x, y, llp);
+    }
+    
+    public Node inverse_full(int x, int y, Node llp) {
         // convert from screen to world coordinates
         x -= wx;
         float y_=(((hy-y))/scaled_radius)+asinh_of_tanCtrLat ;
@@ -245,6 +281,14 @@ public class Mercator extends Cylindrical {
         llp.setLatLon(MoreMath.atan(MoreMath.sinh(y_)),
                 (x / scaled_radius) + ctrLon,
                 true);
+        return llp;
+    }
+    public Node inverse_approx(int x, int y, Node llp) {
+    	Node n1 = new Node();    	    	
+        llp.setLatLon((-1*(y - hy)/scaled_lat + ctrLat),
+                ((x - wx) / scaled_radius) + ctrLon,
+                true);        
+        
         return llp;
     }
 

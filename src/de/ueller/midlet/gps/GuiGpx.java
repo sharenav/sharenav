@@ -67,7 +67,7 @@ public class GuiGpx extends List implements CommandListener,
 		}
 		if (c == LOAD_CMD) {
 			uploading = false;
-			GuiGpxLoad ggl = new GuiGpxLoad(this, this);
+			GuiGpxLoad ggl = new GuiGpxLoad(this, this, false);
 			ggl.show();
 			return;
 		}

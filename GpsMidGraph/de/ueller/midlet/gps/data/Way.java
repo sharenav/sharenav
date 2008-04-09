@@ -12,6 +12,7 @@ import javax.microedition.lcdui.Graphics;
 
 import net.sourceforge.jmicropolygon.PolygonGraphics;
 import de.ueller.gpsMid.mapData.SingleTile;
+import de.ueller.gpsMid.mapData.Tile;
 import de.ueller.midlet.gps.tile.C;
 import de.ueller.midlet.gps.tile.PaintContext;
 
@@ -38,13 +39,10 @@ public class Way extends Entity{
 //	public short[][] paths;
 
 	public short[] path;
-	public float minLat;
-
-	public float minLon;
-
-	public float maxLat;
-
-	public float maxLon;
+	public short minLat;
+	public short minLon;
+	public short maxLat;
+	public short maxLon;
 
 //	private final static Logger logger = Logger.getInstance(Way.class,
 //			Logger.TRACE);
@@ -58,13 +56,11 @@ public class Way extends Entity{
 	 * @param nodes
 	 * @throws IOException
 	 */
-	public Way(DataInputStream is, byte f) throws IOException {
-		// temporary removed for test
-		minLat = is.readFloat();
-		minLon = is.readFloat();
-		maxLat = is.readFloat();
-		maxLon = is.readFloat();
-		// end temporary removed for test
+	public Way(DataInputStream is, byte f, Tile t) throws IOException {
+		minLat = is.readShort();
+		minLon = is.readShort();
+		maxLat = is.readShort();
+		maxLon = is.readShort();
 //		if (is.readByte() != 0x58){
 //			logger.error("worng magic after way bounds");
 //		}
@@ -114,6 +110,17 @@ public class Way extends Entity{
 //			}			
 	}
 
+	public boolean isOnScreen(PaintContext pc, float refLat, float refLon) { 
+		if ((((float)(maxLat*SingleTile.fpminv) + refLat) < pc.screenLD.radlat) || (((float)(minLat*SingleTile.fpminv) + refLat) > pc.screenRU.radlat)) { 
+			return false; 
+		} 
+		if ((((float)(maxLon*SingleTile.fpminv) + refLon) < pc.screenLD.radlon) || (((float)(minLon*SingleTile.fpminv) + refLon) > pc.screenRU.radlon)) { 
+			return false; 
+		}        
+		return true; 
+	} 
+
+
 	public void paintAsPath(PaintContext pc, SingleTile t) {
 
 		IntPoint lineP1 = pc.lineP1;
@@ -122,7 +129,7 @@ public class Way extends Entity{
 		Projection p = pc.getP();
 			for (int i1 = 0; i1 < path.length; i1++) {
 				int idx = path[i1];
-				p.forward(t.nodeLat[idx], t.nodeLon[idx], lineP2, true);
+				p.forward((float)(t.nodeLat[idx]*SingleTile.fpminv + t.centerLat), (float)(t.nodeLon[idx] *SingleTile.fpminv + t.centerLon), lineP2, true);				
 				if (lineP1 == null) {
 					lineP1 = lineP2;
 					lineP2 = swapLineP;
@@ -136,7 +143,7 @@ public class Way extends Entity{
 						pc.actualNodeLat = t.nodeLat[idx]; 
 						pc.actualNodeLon = t.nodeLon[idx];
 						pc.currentPos=new PositionMark(pc.center.radlat,pc.center.radlon);
-						pc.currentPos.setEntity(this, t.nodeLat, t.nodeLon);
+						pc.currentPos.setEntity(this, getFloatNodes(t,t.nodeLat,t.centerLat), getFloatNodes(t,t.nodeLon,t.centerLon));						
 					}
 					pc.g.drawLine(lineP1.x, lineP1.y, lineP2.x, lineP2.y);
 					swapLineP = lineP1;
@@ -155,6 +162,7 @@ public class Way extends Entity{
 	 * @param t
 	 */
 	public void paintAsPath(PaintContext pc, int w, SingleTile t) {
+		
 		IntPoint lineP1 = pc.lineP1;
 		IntPoint lineP2 = pc.lineP2;
 		IntPoint swapLineP = pc.swapLineP;
@@ -167,7 +175,7 @@ public class Way extends Entity{
 			int i1=0;
 			for (; i1 < path.length; i1++) {
 				int idx = path[i1];
-				p.forward(t.nodeLat[idx], t.nodeLon[idx], lineP2, true);
+				p.forward((float)(t.nodeLat[idx]*SingleTile.fpminv + t.centerLat), (float)(t.nodeLon[idx] *SingleTile.fpminv + t.centerLon), lineP2, true);
 				if (lineP1 == null) {
 //					System.out.println(" startpoint " + lineP2.x + "/" + lineP2.y + " " +pc.trace.getName(nameIdx));
 					lineP1 = lineP2;
@@ -186,7 +194,7 @@ public class Way extends Entity{
 							pc.actualNodeLat = t.nodeLat[idx]; 
 							pc.actualNodeLon = t.nodeLon[idx]; 
 							pc.currentPos=new PositionMark(pc.center.radlat,pc.center.radlon);
-							pc.currentPos.setEntity(this, t.nodeLat, t.nodeLon);
+							pc.currentPos.setEntity(this, getFloatNodes(t,t.nodeLat,t.centerLat), getFloatNodes(t,t.nodeLon,t.centerLon));
 
 						}
 						x[pi] = lineP2.x;
@@ -372,7 +380,7 @@ public class Way extends Entity{
 			int[] y = new int[path.length];
 			for (int i1 = 0; i1 < path.length; i1++) {
 				int idx = path[i1];
-				p.forward(t.nodeLat[idx], t.nodeLon[idx], lineP2, true);
+				p.forward((float)(t.nodeLat[idx]*SingleTile.fpminv + t.centerLat), (float)(t.nodeLon[idx] *SingleTile.fpminv + t.centerLon), lineP2, true);
 				x[i1] = lineP2.x;
 				y[i1] = lineP2.y;
 			}
@@ -591,5 +599,13 @@ public class Way extends Entity{
 	
 	public boolean isOneway(){
 		return ((mod & WAY_ONEWAY) == WAY_ONEWAY);
+	}
+
+	private float[] getFloatNodes(SingleTile t, short[] nodes, float offset) {
+	    float [] res = new float[nodes.length];
+	    for (int i = 0; i < nodes.length; i++) {
+		res[i] = nodes[i]*t.fpminv + offset;
+	    }
+	    return res;
 	}
 }

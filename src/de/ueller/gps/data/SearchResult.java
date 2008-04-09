@@ -6,4 +6,5 @@ public class SearchResult {
 	public int[] nearBy;
 	public float lat;
 	public float lon;
+	public float dist = -1.0f;
 }

@@ -4,7 +4,6 @@
  * takes an InputStream and interpret layer 3 and layer 4. Than make
  * callbacks to the receiver witch ahas to implement SirfMsgReceiver 
  *
- * @version $Revision$$ ($Name$)
  * @autor Harald Mueller james22 at users dot sourceforge dot net
  * Copyright (C) 2007 Harald Mueller
  * Copyright (C) 2008 Kai Krueger
@@ -13,6 +12,7 @@ package de.ueller.gps.nmea;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 import de.ueller.midlet.gps.LocationMsgProducer;
 import de.ueller.midlet.gps.LocationMsgReceiver;
@@ -27,6 +27,7 @@ public class NmeaInput implements Runnable, LocationMsgProducer{
 	private int	checksum;
 	private NmeaMessage smsg;
 	private InputStream ins;
+	private OutputStream rawDataLogger;
 	private Thread					processorThread;
 	private final LocationMsgReceiver	receiver;
 	private boolean closed=false;
@@ -50,6 +51,7 @@ public class NmeaInput implements Runnable, LocationMsgProducer{
 		processorThread.setPriority(Thread.MAX_PRIORITY);
 		processorThread.start();
 		smsg=new NmeaMessage(receiver);
+		//logger.error("Starting NMEA");
 
 	}
 	public NmeaInput(boolean test,InputStream ins,LocationMsgReceiver receiver) {
@@ -67,7 +69,12 @@ public class NmeaInput implements Runnable, LocationMsgProducer{
 		try {
 			byte [] buf = new byte[512]; 
 			while (ins.available() > 0){
-				bytesReceived += ins.read(buf);				
+				int recieved = ins.read(buf);
+				bytesReceived += recieved;
+				if (rawDataLogger != null) {
+					rawDataLogger.write(buf, 0, recieved);					
+					rawDataLogger.flush();					
+				}
 			}
 			receiver.receiveMessage("erase " + bytesReceived +" bytes");
 			bytesReceived=100;			
@@ -88,7 +95,7 @@ public class NmeaInput implements Runnable, LocationMsgProducer{
 					connectQuality=0;
 				}
 				receiver.receiveStatistics(connectError,connectQuality);
-//				watchdog if no bytes received in 5 sec then exit thread
+//				watchdog if no bytes received in 10 sec then exit thread
 				if (bytesReceived == 0){
 					close("no Data form NMEA");
 				} else {
@@ -102,11 +109,9 @@ public class NmeaInput implements Runnable, LocationMsgProducer{
 				synchronized (this) {
 					connectError[LocationMsgReceiver.SIRF_FAIL_MSG_INTERUPTED]++;
 					wait(250);
-				}
-				
+				}				
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//Nothing to do in this case
 			}
 			
 		}
@@ -128,9 +133,11 @@ public class NmeaInput implements Runnable, LocationMsgProducer{
 	 * @see de.ueller.gps.nmea.LocationMsgProducer#close()
 	 */
 	public synchronized void close() {
+		disableRawLogging();
 		closed=true;
 	}
 	public synchronized void close(String message) {
+		disableRawLogging();
 		closed=true;
 		this.message=message;
 	}
@@ -150,7 +157,12 @@ public class NmeaInput implements Runnable, LocationMsgProducer{
 			while ((ins.available() > 0 || p1 > 0) && ! closed) {				
 				if (p1 == 0) {					
 					len1 = ins.read(buf1);
-					bytesReceived += len1;					
+					bytesReceived += len1;
+					if (rawDataLogger != null) {
+						rawDataLogger.write(buf1, 0, len1);						
+						rawDataLogger.flush();
+						logger.info("Recieved from Gps: " + new String(buf1,0,len1));
+					}
 				}
 				
 				//if we have already seen the start of a sentence, copy buf1 from the start
@@ -186,9 +198,12 @@ public class NmeaInput implements Runnable, LocationMsgProducer{
 				if (p1 == len1) p1 = 0; //consumed all of buf1, begin at the start again
 				if (!found_end)	continue;
 				//We have a complete NMEA sentence in buf2, so we can now decode it.
-				//Throw away the first 3 characters ($GP) and the last 7 (checksum and \r\n)
-				String nmea_sentence = new String(buf2,3,p2-7);
-				smsg.decodeMessage(nmea_sentence);
+				//First check the checksum and ignore incorrect data
+				if (isChecksumCorrect(buf2, p2)) {
+					//Throw away the first 3 characters ($GP) and the last 5 (checksum and \r\n)
+					String nmea_sentence = new String(buf2,3,p2-7);					
+					smsg.decodeMessage(nmea_sentence);
+				}
 				
 				//Reset buf2 for the next sentence
 				p2 = 0; found_start = false; found_end = false;				
@@ -199,6 +214,9 @@ public class NmeaInput implements Runnable, LocationMsgProducer{
 		}
 	}
 	
+	/**
+	 * @deprecated	 
+	 */
 	public void processOld() {
 		StringBuffer readBuffer = smsg.getBuffer();
 		try {
@@ -308,13 +326,40 @@ public class NmeaInput implements Runnable, LocationMsgProducer{
 
 	}
 	
-	public long calcChecksum(NmeaMessage s) {
-		long mesChecksum;
-		mesChecksum = '$'+'G'+'P';
-		for (int i = 0; i < s.buffer.length(); i++) {
-			mesChecksum += s.buffer.charAt(i);
+	/**
+	 * Calculate the NMEA checksum. This is a byte wise XOR of the NMEA string between (excluding)
+	 * the $ and the * 
+	 * @param buf the entire NMEA sentence including $ and \r\n
+	 * @param len
+	 * @return if the checksum is correctly computed
+	 */
+	private boolean isChecksumCorrect(byte[] buf, int len) {
+		if (len < 7)
+			return false;
+		byte checksum = buf[1]; //ignore the first character, that is the $ sign
+		for (int i = 2; i < len - 5; i++) { // ignore the * checksum and \r\n			
+			checksum = (byte)(checksum ^ buf[i]);
 		}
-		mesChecksum &= 255;
-		return mesChecksum;
+		byte targetChecksum;
+		try {
+			targetChecksum = (Integer.valueOf(new String(buf,len-4,2), 16).byteValue());
+		} catch (NumberFormatException nfe) {
+			return false;
+		}
+		return (targetChecksum == checksum);
+	}
+	
+	public void enableRawLogging(OutputStream os) {
+		rawDataLogger = os;		
+	}
+	public void disableRawLogging() {
+		if (rawDataLogger != null) {
+			try {
+				rawDataLogger.close();
+			} catch (IOException e) {
+				logger.exception("Couldn't close raw gps logger", e);
+			}
+			rawDataLogger = null;
+		}
 	}
 }

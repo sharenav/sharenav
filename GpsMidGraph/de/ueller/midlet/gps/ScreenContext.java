@@ -22,8 +22,7 @@ public class ScreenContext {
 	byte viewId = 1;
 	private Projection p;
 	public Trace trace;
-	public QueueDataReader dataReader;
-	public QueueReader dictReader;
+	
 	public float ppm=1f;
 	/**
 	 * hold, if there is any, the actual target position and element to the
@@ -45,8 +44,7 @@ public class ScreenContext {
 		sc.xSize=xSize;
 		sc.ySize=ySize;
 		sc.center=center.clone();
-		sc.trace=trace;
-		sc.dataReader=dataReader;
+		sc.trace=trace;		
 		sc.ppm=ppm;
 		sc.target=target;
 		return sc;

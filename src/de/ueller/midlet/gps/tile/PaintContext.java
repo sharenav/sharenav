@@ -49,6 +49,8 @@ public class PaintContext extends ScreenContext {
 	public Images images;
 	public byte drawAreas=DRAW_AREAS_NO;
 	public boolean showTileOutline=false;
+	public C c;
+
 	/**
 	 * @deprecated
 	 * the the paint-process will store Street which is nearest to the center
@@ -67,10 +69,8 @@ public class PaintContext extends ScreenContext {
 	public float actualNodeLat;
 	public float actualNodeLon;
 	
-	public PaintContext(Trace tr, QueueDataReader tir,QueueReader dir,Images i) throws Exception{
+	public PaintContext(Trace tr,Images i) throws Exception{
 		super();
-		dataReader=tir;
-		dictReader=dir;
 		images=i;
 		trace=tr;
 		state=STATE_READY;

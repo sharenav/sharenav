@@ -6,7 +6,10 @@ import de.ueller.midlet.gps.GpsMidDisplayable;
 
 import de.ueller.gps.data.Configuration;
 
-
+/**
+ * @deprecated
+ * 
+ */
 public class OptionsRender extends OptionsList {
 
 	private static final String[] optionStrings={"as lines","as street"};
@@ -17,6 +20,7 @@ public class OptionsRender extends OptionsList {
 		super("Render Map", optionStrings,parent);
 		this.config = config;
 		addCommand(OK_CMD);
+		addCommand(BACK_CMD);
 		setCommandListener(this);
 		setSelectedIndex(config.getRender(), true);
 	}
