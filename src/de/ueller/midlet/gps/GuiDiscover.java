@@ -343,13 +343,16 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 			friendlyName=new Vector();			
 			menuBT.deleteAll(); 
 			GpsMid.getInstance().show(menuBT); 
-			if (state==STATE_LP) { 
-				state = STATE_BT_GPS; 
+			if (state==STATE_LP) {
+				logger.info("Discovering a bluetooth serial device");
+				state = STATE_BT_GPS;
+				gps = new DiscoverGps(this,DiscoverGps.UUDI_SERIAL);
+			} else { 
+				logger.info("Discovering a bluetooth obex file device");
+				state = STATE_BT_GPX;
+				gps = new DiscoverGps(this,DiscoverGps.UUDI_FILE);
 			} 
-			else { 
-				state = STATE_BT_GPX;                
-			} 
-			gps = new DiscoverGps(this,DiscoverGps.UUDI_SERIAL); 
+			 
 			//#else
 				logger.error("Bluetooth is not compiled into this version");
 			//#endif

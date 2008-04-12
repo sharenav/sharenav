@@ -82,7 +82,7 @@ public class DiscoverGps
 	/** Keeps the device index for witch a Service discover is requested */
 	private int	selectedDevice = -1;
 	public static final long UUDI_SERIAL=0x1101;
-	public static final long UUDI_FILE=0x1106;
+	public static final long UUDI_FILE=0x1105;
 
 	private final long searchType;
 	
