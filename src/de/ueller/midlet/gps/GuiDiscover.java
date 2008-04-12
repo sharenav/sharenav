@@ -32,7 +32,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 
 	/** A menu list instance */
 	private static final String[]	elements		= { "Location Receiver",
-		"Recording Rules", "Discover GPS", "Display options",
+		"Recording Rules", "Display options",
 		"GPX Receiver", "Map source", "Debug options"};
 	
 	/**
@@ -41,12 +41,11 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	 * main menu
 	 */
 	private static final int MENU_ITEM_LOCATION = 0;
-	private static final int MENU_ITEM_GPX_FILTER = 1;
-	private static final int MENU_ITEM_GPS_DEVICE = 2;
-	private static final int MENU_ITEM_DISP_OPT = 3 ;
-	private static final int MENU_ITEM_GPX_DEVICE = 4 ;
-	private static final int MENU_ITEM_MAP_SRC = 5;
-	private static final int MENU_ITEM_DEBUG_OPT = 6;
+	private static final int MENU_ITEM_GPX_FILTER = 1;	
+	private static final int MENU_ITEM_DISP_OPT = 2;
+	private static final int MENU_ITEM_GPX_DEVICE = 3;
+	private static final int MENU_ITEM_MAP_SRC = 4;
+	private static final int MENU_ITEM_DEBUG_OPT = 5;
 
 	private static final String[]	empty			= {};
 
