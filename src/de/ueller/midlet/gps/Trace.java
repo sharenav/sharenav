@@ -1138,7 +1138,8 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	}
 
 	public void show() {
-		Display.getDisplay(parent).setCurrent(this);
+		//Display.getDisplay(parent).setCurrent(this);
+		GpsMid.getInstance().show(this);
 		if (imageCollector != null) {
 			imageCollector.resume();
 			imageCollector.newDataReady();			

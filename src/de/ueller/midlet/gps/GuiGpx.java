@@ -102,7 +102,8 @@ public class GuiGpx extends List implements CommandListener,
 	}
 
 	public void show() {
-		Display.getDisplay(parent.getParent()).setCurrent(this);
+		GpsMid.getInstance().show(this);
+		//Display.getDisplay(parent.getParent()).setCurrent(this);
 	}
 
 	public void completedUpload(boolean success, String message) {		

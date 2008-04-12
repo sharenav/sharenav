@@ -80,6 +80,8 @@ public class GpsMid extends MIDlet implements CommandListener{
 	 * by the user
 	 */
 	private Thread lightTimer;
+	
+	private Displayable shouldBeDisplaying;
 
 private Trace trace=null;
 
@@ -183,7 +185,7 @@ private Trace trace=null;
 				new Splash(this);
             	break;
             case 4:
-				Display.getDisplay(this).setCurrent(loghist);
+				show(loghist);
 				break;
             default:
 //            	#debug
@@ -209,7 +211,29 @@ private Trace trace=null;
 	}
     /** Shows main menu of MIDlet on the screen. */
     void show() {
-        Display.getDisplay(this).setCurrent(menu);
+        show(menu);
+    }
+    
+    public void show(Displayable d) {
+		 Display.getDisplay(this).setCurrent(d);
+		 /**
+		  * Keep track of what the Midlet should be displaying.
+		  * This is necessary, as a call to getDisplay following
+		  * a setDisplay does not necessarily return the display just
+		  * set, as the display actually gets set asynchronously.
+		  * There also doesn't seem to be a way to find out what will
+		  * be displayed next, or "serialise" on the setDisplay call.
+		  * 
+		  * This can cause problems, if an Alert is set just after
+		  * a call to setDisplay. The call uses getDisplay to determine what
+		  * to show after the Alert is dismissed, but the setDisplay might
+		  * not have had an effect yet. Hence, keep manually track.
+		  */
+		 shouldBeDisplaying = d;		 
+	}
+    
+    public Displayable shouldBeShown() {
+    	return shouldBeDisplaying;
     }
 
 

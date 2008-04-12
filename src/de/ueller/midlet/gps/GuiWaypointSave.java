@@ -58,6 +58,7 @@ public class GuiWaypointSave extends Form implements CommandListener {
 	}
 	
 	public void show() {
-		Display.getDisplay(parent.getParent()).setCurrent(this);
+		GpsMid.getInstance().show(this);
+		//Display.getDisplay(parent.getParent()).setCurrent(this);
 	}
 }

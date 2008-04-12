@@ -118,7 +118,8 @@ public class GuiGpxLoad extends Form implements CommandListener,
 	}
 	
 	public void show() {
-		Display.getDisplay(GpsMid.getInstance()).setCurrent(menuLoadGpx);
+		GpsMid.getInstance().show(menuLoadGpx);
+		//Display.getDisplay(GpsMid.getInstance()).setCurrent(menuLoadGpx);
 	}
 
 	public void selectedFile(String url) {

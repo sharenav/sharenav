@@ -229,8 +229,9 @@ public class FsDiscover
     	
     }
 
-	public void show() {		
-		Display.getDisplay(GpsMid.getInstance()).setCurrent(list);		
+	public void show() {
+		GpsMid.getInstance().show(list);
+		//Display.getDisplay(GpsMid.getInstance()).setCurrent(list);		
 	}
 	//#endif
 

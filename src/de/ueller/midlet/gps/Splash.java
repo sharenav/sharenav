@@ -121,7 +121,8 @@ public class Splash extends Canvas implements CommandListener,Runnable{
         }
 	}
 	public void show(){
-	Display.getDisplay(main).setCurrent(this);
+		GpsMid.getInstance().show(this);
+		//Display.getDisplay(main).setCurrent(this);
 	}
 
 	public void run() {

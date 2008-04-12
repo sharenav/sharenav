@@ -59,7 +59,7 @@ public class Logger {
 			Alert alert = new Alert("Error");
 			alert.setTimeout(5000);
 			alert.setString(msg);
-			Display.getDisplay(app).setCurrent(alert);
+			Display.getDisplay(app).setCurrent(alert, GpsMid.getInstance().shouldBeShown());
 		}		
 	}
 	public void exception(String msg, Exception e) {		

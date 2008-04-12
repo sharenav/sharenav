@@ -343,7 +343,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 			urlList=new Vector();
 			friendlyName=new Vector();			
 			menuBT.deleteAll(); 
-			Display.getDisplay(parent).setCurrent(menuBT); 
+			GpsMid.getInstance().show(menuBT); 
 			if (state==STATE_LP) { 
 				state = STATE_BT_GPS; 
 			} 
@@ -402,7 +402,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 						getCleanFloatString( (float)(config.getGpxRecordAlwaysDistanceCentimeters())/100,3 )
 					);				
 
-					Display.getDisplay(parent).setCurrent(menuRecordingOptions);
+					GpsMid.getInstance().show(menuRecordingOptions);
 					state = STATE_RECORDING_OPTIONS;
 					break;
 				case MENU_ITEM_DISP_OPT: // Display Options
@@ -418,22 +418,22 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	                }
 					backlightOpts.setSelectedFlags(sellight);
 					
-					Display.getDisplay(parent).setCurrent(menuDisplayOptions);
+					GpsMid.getInstance().show(menuDisplayOptions);
 					state = STATE_DISPOPT;
 					break;
 				case MENU_ITEM_GPX_DEVICE: // GPX Receiver
 					gpxUrl.setText(config.getGpxUrl()==null?"<Please select in menu>":config.getGpxUrl());				
-					Display.getDisplay(parent).setCurrent(menuGpx);
+					GpsMid.getInstance().show(menuGpx);
 					state = STATE_GPX;
 					break;
 				case MENU_ITEM_MAP_SRC: // Map Source 
 					mapSrc.setSelectedIndex(config.usingBuiltinMap()?0:1, true); 
 					mapSrc.set(1, "Filesystem: " + ( (config.getMapUrl()==null)?"<Please select map directory first>":config.getMapUrl() ), null);
-					Display.getDisplay(parent).setCurrent(menuSelectMapSource);
+					GpsMid.getInstance().show(menuSelectMapSource);
 					state = STATE_MAP;
 					break;			
 				case MENU_ITEM_DEBUG_OPT:					
-					Display.getDisplay(parent).setCurrent(menuDebug);
+					GpsMid.getInstance().show(menuDebug);
 					state = STATE_DEBUG;
 					break;
 				}
@@ -598,19 +598,19 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	public void show() {
 		switch (state) {
 			case STATE_ROOT:
-				Display.getDisplay(parent).setCurrent(menu);
+				GpsMid.getInstance().show(menu);
 				break;
 			case STATE_LP:
-				Display.getDisplay(parent).setCurrent(menuSelectLocProv);
+				GpsMid.getInstance().show(menuSelectLocProv);
 				break;
 			case STATE_MAP:
-				Display.getDisplay(parent).setCurrent(menuSelectMapSource);
+				GpsMid.getInstance().show(menuSelectMapSource);
 				break;
 			case STATE_GPX:
-				Display.getDisplay(parent).setCurrent(menuGpx);
+				GpsMid.getInstance().show(menuGpx);
 				break;
 			case STATE_DEBUG:
-				Display.getDisplay(parent).setCurrent(menuDebug);
+				GpsMid.getInstance().show(menuDebug);
 				
 		}		
 	}

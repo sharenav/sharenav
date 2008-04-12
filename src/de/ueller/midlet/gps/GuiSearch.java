@@ -132,7 +132,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			}
 		} else if (state == STATE_POI) {
 			if (c == OK_CMD) {
-				Display.getDisplay(parent.getParent()).setCurrent(new Form("Searching..."));
+				GpsMid.getInstance().show(new Form("Searching..."));
 				clearList();				
 				Thread t = new Thread(new Runnable() {
 					public void run() {
@@ -200,8 +200,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 			poiSelectionForm.addCommand(BACK_CMD);
 			poiSelectionForm.addCommand(OK_CMD);
 			poiSelectionForm.setCommandListener(this);
-									
-			Display.getDisplay(parent.getParent()).setCurrent(poiSelectionForm);			
+			
+			GpsMid.getInstance().show(poiSelectionForm);			
 		}
 
 	}
@@ -212,7 +212,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 	}
 
 	public void show() {
-		Display.getDisplay(parent.getParent()).setCurrent(this);
+		GpsMid.getInstance().show(this);
+		//Display.getDisplay(parent.getParent()).setCurrent(this);
 		repaint();
 	}
 
