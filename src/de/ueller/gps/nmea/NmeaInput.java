@@ -160,8 +160,7 @@ public class NmeaInput implements Runnable, LocationMsgProducer{
 					bytesReceived += len1;
 					if (rawDataLogger != null) {
 						rawDataLogger.write(buf1, 0, len1);						
-						rawDataLogger.flush();
-						logger.info("Recieved from Gps: " + new String(buf1,0,len1));
+						rawDataLogger.flush();						
 					}
 				}
 				
