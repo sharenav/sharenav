@@ -48,7 +48,7 @@ public class GpsMid extends MIDlet implements CommandListener{
 	/** */
 	private static GpsMid instance;
     /** A menu list instance */
-    private static final String[] elements = { "Trace","Search","Setup","About","Log"};
+    private static final String[] elements = { "Map","Search","Setup","About","Log"};
 
     /** Soft button for exiting GpsMid. */
     private final Command EXIT_CMD = new Command("Exit", Command.EXIT, 2);
