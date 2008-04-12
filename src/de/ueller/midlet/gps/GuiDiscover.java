@@ -134,19 +134,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	  
 	private String gpsUrlStr;
 
-	
-	/*String[] devices={"None","SIRF GPS","NEMA GPS"
-			//#if polish.api.locationapi
-			,"JSR179"
-			//#endif
-			};
-	int[] devicesSaveid={3,0,1
-			//#if polish.api.locationapi
-			,2
-			//#endif
-			};
-	*/
-
 	private final static Logger logger=Logger.getInstance(GuiDiscover.class,Logger.DEBUG);
 	
 	public GuiDiscover(GpsMid parent) {
@@ -315,10 +302,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 			show();
 			return;
 		}
-//		if (c == STORE_BT_URL) {
-//			parent.getConfig().setBtUrl((String) urlList.elementAt(menu.getSelectedIndex()));
-//			return;
-//		}
 		if (c == FILE_MAP) {
 			//#if polish.api.fileconnection
 			String initialDir="";
@@ -381,11 +364,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 					gpsUrlStr=config.getBtUrl();
 					gpsUrl.setText(gpsUrlStr==null?"<Discover>":"<Discovered>");
 					int selIdx = config.getLocationProvider();
-					/*for (int i=0;i<devices.length;i++){
-						if (devicesSaveid[i]==parent.getConfig().getLocationProvider()){
-							selIdx=i;
-						}
-					}*/
 					locProv.setSelectedIndex(selIdx, true);
 					
 					String logUrl=config.getGpsRawLoggerUrl();		
@@ -401,20 +379,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 					//Display.getDisplay(parent).setCurrent(menuSelectLocProv);
 					state = STATE_LP;
 					break;
-//				case 1:
-//					//#if polish.api.btapi
-//					//						gps.cancelDeviceSearch();
-//					
-//					urlList=new Vector();
-//					friendlyName=new Vector();
-//					Display.getDisplay(parent).setCurrent(menuBT);
-//					state = STATE_BT;
-//					gps = new DiscoverGps(this,DiscoverGps.UUDI_SERIAL);
-//					//#else
-//					logger.error("Bluetooth is not compiled into this version");
-//					//#endif
-//
-//					break;
 				case MENU_ITEM_GPX_FILTER: // Recording Rules
 					choiceGpxRecordRuleMode.setSelectedIndex(config.getGpxRecordRuleMode(), true);
 					/*
@@ -462,32 +426,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 					Display.getDisplay(parent).setCurrent(menuGpx);
 					state = STATE_GPX;
 					break;
-					/*
-					//#if polish.api.btapi
-					menuBT	= new List("Devices",
-							Choice.IMPLICIT, empty,
-							null);
-					menuBT.addCommand(BACK_CMD);
-					menuBT.addCommand(OK_CMD);
-					menuBT.setSelectCommand(OK_CMD);
-					menuBT.setCommandListener(this);
-					menuBT.setTitle("Search Service");
-					urlList=new Vector();
-					friendlyName=new Vector();
-					Display.getDisplay(parent).setCurrent(menuBT);
-					state = STATE_RBT;
-
-					gps = new DiscoverGps(this,DiscoverGps.UUDI_FILE);
-					//#endif
-					break;
-				case 4:
-					//#if polish.api.fileconnection
-					FsDiscover fsd = new FsDiscover(this,this);
-					fsd.show();						
-					//#else
-					//logger.error("Files system support is not compiled into this version");
-					//#endif
-					break;*/
 				case MENU_ITEM_MAP_SRC: // Map Source 
 					mapSrc.setSelectedIndex(config.usingBuiltinMap()?0:1, true); 
 					mapSrc.set(1, "Filesystem: " + ( (config.getMapUrl()==null)?"<Please select map directory first>":config.getMapUrl() ), null);
