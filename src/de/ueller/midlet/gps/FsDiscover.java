@@ -77,9 +77,9 @@ public class FsDiscover
             //#endif
 
 			
-			processorThread = new Thread(this);
-			processorThread.start();
 			this.list = createEmptyList();
+			processorThread = new Thread(this);
+			processorThread.start();			
 	}
 	
 	private List createEmptyList() {
