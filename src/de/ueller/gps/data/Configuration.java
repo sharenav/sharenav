@@ -361,7 +361,7 @@ public class Configuration {
 			//#if polish.api.fileconnection
 			String url = mapFileUrl + name;
 			logger.info("Opening file: " + url);
-			Connection session = Connector.open(url);
+			Connection session = Connector.open(url,Connector.READ);
 			FileConnection fileCon = (FileConnection) session;
 			if (fileCon == null)
 				throw new IOException("Couldn't open url " + url);
