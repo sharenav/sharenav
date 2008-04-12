@@ -112,7 +112,8 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 	public static int showLatLon = 0;
 	int showAddons = 0;
-
+	private int fontHeight = 0;
+	
 	Tile t[] = new Tile[6];
 	PositionMark source;
 
@@ -552,8 +553,12 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			g.setColor(0, 0, 0);
 			if (locationProducer != null){
 				if (gpx.isRecordingTrk()) {// we are recording tracklogs
+					if(fontHeight==0) {
+						fontHeight=g.getFont().getHeight();
+					}
 					g.setColor(255, 0, 0);
-				} else {
+					g.drawString(gpx.recorded+"r", getWidth() - 1, 1+fontHeight, Graphics.TOP
+							| Graphics.RIGHT);
 					g.setColor(0);
 				}
 					
@@ -1053,7 +1058,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		repaint(0, 0, getWidth(), getHeight());
 	}
 
-	public void setDict(Tile dict, byte zl) {
+	public void setDict(Tile dict, byte zl) {		
 		t[zl] = dict;
 		// Tile.trace=this;
 		addCommand(REFRESH_CMD);

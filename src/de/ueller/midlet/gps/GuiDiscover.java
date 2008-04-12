@@ -18,17 +18,35 @@ import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.List;
 import javax.microedition.lcdui.StringItem;
+import javax.microedition.lcdui.Gauge;
+import javax.microedition.lcdui.Item;
+import javax.microedition.lcdui.ItemCommandListener;
+import javax.microedition.lcdui.TextField;
 
 
 import de.ueller.gps.data.Configuration;
 import de.ueller.midlet.gps.data.Gpx;
 import de.ueller.midlet.gps.options.OptionsRender;
 
-public class GuiDiscover implements CommandListener, GpsMidDisplayable, SelectionListener {
+public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMidDisplayable, SelectionListener {
 
 	/** A menu list instance */
-	private static final String[]	elements		= { "Location Receiver","Discover GPS","Display options",
-			"GPX Receiver", "Map source", "Debug options"};
+	private static final String[]	elements		= { "Location Receiver",
+		"Recording Rules", "Discover GPS", "Display options",
+		"GPX Receiver", "Map source", "Debug options"};
+	
+	/**
+	 * The following MENU_ITEM constatants have to be in
+	 * sync with the position in the elements array of the
+	 * main menu
+	 */
+	private static final int MENU_ITEM_LOCATION = 0;
+	private static final int MENU_ITEM_GPX_FILTER = 1;
+	private static final int MENU_ITEM_GPS_DEVICE = 2;
+	private static final int MENU_ITEM_DISP_OPT = 3 ;
+	private static final int MENU_ITEM_GPX_DEVICE = 4 ;
+	private static final int MENU_ITEM_MAP_SRC = 5;
+	private static final int MENU_ITEM_DEBUG_OPT = 6;
 
 	private static final String[]	empty			= {};
 
@@ -53,7 +71,10 @@ public class GuiDiscover implements CommandListener, GpsMidDisplayable, Selectio
 			Command.ITEM, 2);
 	private final Command			BT_MAP	= new Command("Select bluetooth device",
 			Command.ITEM, 2);
-
+	private final Command			GPS_DISCOVER	= new Command("Discover GPS",
+			Command.ITEM, 1);
+	
+	
 	/** A menu list instance */
 	private final List				menu			= new List("Setup",
 															Choice.IMPLICIT, elements,
@@ -76,6 +97,8 @@ public class GuiDiscover implements CommandListener, GpsMidDisplayable, Selectio
 	
 	private final Form				menuDebug = new Form("Debug options");
 
+	private final Form				menuRecordingOptions = new Form("Recording Rules");
+	
 	private final GpsMid			parent;
 
 	private DiscoverGps				gps;
@@ -83,23 +106,33 @@ public class GuiDiscover implements CommandListener, GpsMidDisplayable, Selectio
 	private int						state;
 
 	private final static int		STATE_ROOT		= 0;
-	private final static int		STATE_BT		= 2;
+	private final static int		STATE_BT_GPS	= 2;
 	private final static int		STATE_LP		= 3;
 	private final static int		STATE_RBT		= 4;
 	private final static int		STATE_GPX		= 5;
 	private final static int		STATE_MAP		= 6;
 	private final static int		STATE_DISPOPT	= 7;
-	private final static int		STATE_DEBUG		= 8;
+	private final static int		STATE_RECORDING_OPTIONS	= 8;
+	private final static int 		STATE_BT_GPX	= 9;
+	private final static int		STATE_DEBUG		= 10;
 	
 	private Vector urlList; 
 	private Vector friendlyName;
 	private ChoiceGroup locProv;
+	private ChoiceGroup choiceGpxRecordRuleMode; 
+	private TextField  tfGpxRecordMinimumSecs; 
+	private TextField  tfGpxRecordMinimumDistanceMeters; 
+	private TextField  tfGpxRecordAlwaysDistanceMeters; 
 	private ChoiceGroup rawLog;
 	private ChoiceGroup mapSrc;
+	private Gauge gaugeDetailBoost; 
 	private ChoiceGroup renderOpts;
 	private ChoiceGroup backlightOpts;
 	private ChoiceGroup debugLog;
 	private StringItem  gpxUrl;
+	private StringItem  gpsUrl; 
+	  
+	private String gpsUrlStr;
 
 	
 	/*String[] devices={"None","SIRF GPS","NEMA GPS"
@@ -117,6 +150,7 @@ public class GuiDiscover implements CommandListener, GpsMidDisplayable, Selectio
 	private final static Logger logger=Logger.getInstance(GuiDiscover.class,Logger.DEBUG);
 	
 	public GuiDiscover(GpsMid parent) {
+		Configuration config=GpsMid.getInstance().getConfig();
 		this.parent = parent;
 		
 		state = STATE_ROOT;
@@ -134,26 +168,24 @@ public class GuiDiscover implements CommandListener, GpsMidDisplayable, Selectio
 		//Prepare Location Provider setup menu
 		menuSelectLocProv.addCommand(BACK_CMD);
 		menuSelectLocProv.addCommand(OK_CMD);
+		menuSelectLocProv.addCommand(GPS_DISCOVER);
 		menuSelectLocProv.addCommand(FILE_MAP);
 		
+		gpsUrl=new StringItem("GPS: ", null);
+		gpsUrl.setDefaultCommand(GPS_DISCOVER);
+		gpsUrl.setItemCommandListener(this);
 		locProv=new ChoiceGroup("input from:",Choice.EXCLUSIVE,Configuration.LOCATIONPROVIDER,new Image[Configuration.LOCATIONPROVIDER.length]);
-		int selIdx=Configuration.LOCATIONPROVIDER_NONE;
-		selIdx = parent.getConfig().getLocationProvider();
-		/*for (int i=0;i<devices.length;i++){
-			if (devicesSaveid[i]==parent.getConfig().getLocationProvider()){
-				selIdx=i;
-			}
-		}*/
-		locProv.setSelectedIndex(selIdx, true);
-		String [] loggings = new String[1];		
-		loggings[0] = GpsMid.getInstance().getConfig().getGpsRawLoggerUrl();
-		if (loggings[0] == null) {
-			loggings[0] = "Please select to destination first";
-		}
-		boolean [] selraw = new boolean[1];
-		selraw[0] = GpsMid.getInstance().getConfig().getGpsRawLoggerEnable();
-		rawLog = new ChoiceGroup("Raw gps logging to:", ChoiceGroup.MULTIPLE,loggings,null);
-		rawLog.setSelectedFlags(selraw);
+		String [] loggings = new String[1];      
+        loggings[0] = GpsMid.getInstance().getConfig().getGpsRawLoggerUrl(); 
+        if (loggings[0] == null) { 
+            loggings[0] = "Please select to destination first"; 
+        } 
+        boolean [] selraw = new boolean[1]; 
+        selraw[0] = GpsMid.getInstance().getConfig().getGpsRawLoggerEnable(); 
+
+		rawLog = new ChoiceGroup("Raw gps logging to:", ChoiceGroup.MULTIPLE);
+
+		menuSelectLocProv.append(gpsUrl);
 		menuSelectLocProv.append(locProv);
 		menuSelectLocProv.append(rawLog);
 		menuSelectLocProv.setCommandListener(this);
@@ -164,20 +196,27 @@ public class GuiDiscover implements CommandListener, GpsMidDisplayable, Selectio
 		menuSelectMapSource.addCommand(FILE_MAP);
 		String [] sources = new String[2];
 		sources[0] = "Built-in map";
-		sources[1] = "Filesystem: " + GpsMid.getInstance().getConfig().getMapUrl();		
+		sources[1] = "Filesystem: ";		
 		mapSrc = new ChoiceGroup("Map source:", Choice.EXCLUSIVE, sources, null);
-		mapSrc.setSelectedIndex(GpsMid.getInstance().getConfig().usingBuiltinMap()?0:1, true);
+		
 		menuSelectMapSource.append(mapSrc);
 		menuSelectMapSource.setCommandListener(this);
 		
 		//Prepare Display options menu
 		menuDisplayOptions.addCommand(BACK_CMD);
 		menuDisplayOptions.addCommand(OK_CMD);
+
 		String [] renders = new String[2];
 		renders[0] = "as lines";
 		renders[1] = "as streets";
 		renderOpts = new ChoiceGroup("Rendering Options:", Choice.EXCLUSIVE, renders ,null);
 		menuDisplayOptions.append(renderOpts);
+
+		// gaugeDetailBoost = new Gauge("Zoom Detail Boost", true, 3, 0);
+		// gaugeDetailBoost = new Gauge("Scale Detail Level", true, 3, 0);
+		gaugeDetailBoost = new Gauge("Increase Detail of lower Zoom Levels", true, 3, 0);
+		menuDisplayOptions.append(gaugeDetailBoost);
+
 		//#if polish.api.nokia-ui
 		String [] backlights = new String[5];
 		//#else
@@ -192,9 +231,6 @@ public class GuiDiscover implements CommandListener, GpsMidDisplayable, Selectio
 		//#endif
 		backlightOpts = new ChoiceGroup("Backlight Options:", Choice.MULTIPLE, backlights ,null);
 		menuDisplayOptions.append(backlightOpts);
-
-		
-		
 		menuDisplayOptions.setCommandListener(this);
 		
 		//Prepare Gpx receiver selection menu
@@ -202,9 +238,29 @@ public class GuiDiscover implements CommandListener, GpsMidDisplayable, Selectio
 		menuGpx.addCommand(OK_CMD);
 		menuGpx.addCommand(FILE_MAP);
 		menuGpx.addCommand(BT_MAP);
-		menuGpx.setCommandListener(this);
-		gpxUrl = new StringItem("GpxUrl: ", GpsMid.getInstance().getConfig().getGpxUrl());
+
+		gpxUrl = new StringItem("Gpx Receiver Url: ","<Please select in menu>");
 		menuGpx.append(gpxUrl);
+		menuGpx.setCommandListener(this);
+
+		//Prepare Recording Options selection menu
+		menuRecordingOptions.addCommand(BACK_CMD);
+		menuRecordingOptions.addCommand(OK_CMD);
+		menuRecordingOptions.setCommandListener(this);
+		String [] recModes = new String[2];
+		recModes[0] = "adaptive to speed";
+		recModes[1] = "manual rules:";
+		choiceGpxRecordRuleMode = new ChoiceGroup("Record Trackpoints", Choice.EXCLUSIVE, recModes ,null);
+		
+		tfGpxRecordMinimumSecs =new TextField("Minimum seconds between trackpoints (0=disabled)","0",3,TextField.DECIMAL);
+		tfGpxRecordMinimumDistanceMeters = new TextField("Minimum meters between trackpoints (0=disabled)","0",3,TextField.DECIMAL);				
+		tfGpxRecordAlwaysDistanceMeters = new TextField("Always record when exceeding these meters between trackpoints (0=disabled)","0",3,TextField.DECIMAL);				
+
+		menuRecordingOptions.append(choiceGpxRecordRuleMode);
+		menuRecordingOptions.append(tfGpxRecordMinimumSecs);
+		menuRecordingOptions.append(tfGpxRecordMinimumDistanceMeters);
+		menuRecordingOptions.append(tfGpxRecordAlwaysDistanceMeters);
+
 		
 		//Prepare Bluetooth selection menu
 		menuBT	= new List("Devices",
@@ -235,14 +291,27 @@ public class GuiDiscover implements CommandListener, GpsMidDisplayable, Selectio
 		show();
 	}
 
+	public void commandAction(Command c, Item i) {
+		// forward item command action to form
+		commandAction(c, (Displayable) null);
+	}
+	
 	public void commandAction(Command c, Displayable d) {
+		Configuration config=GpsMid.getInstance().getConfig();
+
 		if (c == EXIT_CMD) {
 			destroy();
 			parent.show();
 			return;
 		}
 		if (c == BACK_CMD) {
-			state = STATE_ROOT;
+			if (state==STATE_BT_GPX) {
+				state=STATE_GPX;
+			} else if (state==STATE_BT_GPS) {
+				state=STATE_LP;
+			} else {
+				state = STATE_ROOT;
+			}
 			show();
 			return;
 		}
@@ -257,35 +326,50 @@ public class GuiDiscover implements CommandListener, GpsMidDisplayable, Selectio
 			switch (state) {
 				case STATE_LP:
 					title="Raw Log Directory";
-					initialDir=parent.getConfig().getGpsRawLoggerUrl();
+					initialDir=rawLog.getString(0);
 					break;			
 				case STATE_MAP:
-					title="Map Directory";
-					initialDir=GpsMid.getInstance().getConfig().getMapUrl();
+					title="Map Directory";					 
+					// get initialDir from form 
+					String url=mapSrc.getString(1); 
+					// skip "Filesystem: " 
+					url=url.substring(url.indexOf(":")+2); 
+					initialDir=url;
 					break;
 				case STATE_GPX:
 					title="Gpx Directory";
-					initialDir=GpsMid.getInstance().getConfig().getGpxUrl();
+					initialDir=gpxUrl.getText();
 					break;
 				case STATE_DEBUG:
 					title="Log Directory";
 					initialDir=GpsMid.getInstance().getConfig().getDebugRawLoggerUrl();
 					break;
 			}
+			// no valid url, i.e. "Please select to destination first" ? 
+			if(initialDir!=null && initialDir.indexOf(":")==-1) { 
+				initialDir=null; 
+			} 
 			FsDiscover fsd = new FsDiscover(this,this,initialDir,true,"",title);
 			fsd.show();						
 			//#else
 			//logger.error("Files system support is not compiled into this version");
 			//#endif	
 		}
-		if (c == BT_MAP) {
+		if (c == GPS_DISCOVER || c == BT_MAP) {
 			//#if polish.api.btapi			
 			urlList=new Vector();
-			friendlyName=new Vector();
-			Display.getDisplay(parent).setCurrent(menuBT);			
-			gps = new DiscoverGps(this,DiscoverGps.UUDI_FILE);
+			friendlyName=new Vector();			
+			menuBT.deleteAll(); 
+			Display.getDisplay(parent).setCurrent(menuBT); 
+			if (state==STATE_LP) { 
+				state = STATE_BT_GPS; 
+			} 
+			else { 
+				state = STATE_BT_GPX;                
+			} 
+			gps = new DiscoverGps(this,DiscoverGps.UUDI_SERIAL); 
 			//#else
-			logger.error("Bluetooth is not compiled into this version");
+				logger.error("Bluetooth is not compiled into this version");
 			//#endif
 		}
 		
@@ -293,32 +377,76 @@ public class GuiDiscover implements CommandListener, GpsMidDisplayable, Selectio
 			switch (state) {
 			case STATE_ROOT:
 				switch (menu.getSelectedIndex()) {
-				case 0:
-					Display.getDisplay(parent).setCurrent(menuSelectLocProv);
+				case MENU_ITEM_LOCATION: // Location Receiver
+					gpsUrlStr=config.getBtUrl();
+					gpsUrl.setText(gpsUrlStr==null?"<Discover>":"<Discovered>");
+					int selIdx = config.getLocationProvider();
+					/*for (int i=0;i<devices.length;i++){
+						if (devicesSaveid[i]==parent.getConfig().getLocationProvider()){
+							selIdx=i;
+						}
+					}*/
+					locProv.setSelectedIndex(selIdx, true);
+					
+					String logUrl=config.getGpsRawLoggerUrl();		
+					if ( logUrl == null) {
+						logUrl= "Please select to destination first";
+					}
+					boolean [] selraw = new boolean[1];
+					selraw[0] = config.getGpsRawLoggerEnable();
+					rawLog.deleteAll();
+					rawLog.append(logUrl, null);
+					rawLog.setSelectedFlags(selraw);					
+					Display.getDisplay(parent).setCurrentItem(gpsUrl);
+					//Display.getDisplay(parent).setCurrent(menuSelectLocProv);
 					state = STATE_LP;
 					break;
-				case 1:
-					//#if polish.api.btapi
-					//						gps.cancelDeviceSearch();
-					
-					urlList=new Vector();
-					friendlyName=new Vector();
-					Display.getDisplay(parent).setCurrent(menuBT);
-					state = STATE_BT;
-					gps = new DiscoverGps(this,DiscoverGps.UUDI_SERIAL);
-					//#else
-					logger.error("Bluetooth is not compiled into this version");
-					//#endif
+//				case 1:
+//					//#if polish.api.btapi
+//					//						gps.cancelDeviceSearch();
+//					
+//					urlList=new Vector();
+//					friendlyName=new Vector();
+//					Display.getDisplay(parent).setCurrent(menuBT);
+//					state = STATE_BT;
+//					gps = new DiscoverGps(this,DiscoverGps.UUDI_SERIAL);
+//					//#else
+//					logger.error("Bluetooth is not compiled into this version");
+//					//#endif
+//
+//					break;
+				case MENU_ITEM_GPX_FILTER: // Recording Rules
+					choiceGpxRecordRuleMode.setSelectedIndex(config.getGpxRecordRuleMode(), true);
+					/*
+					 * minimum seconds between trackpoints
+					 */
+					tfGpxRecordMinimumSecs.setString(
+						getCleanFloatString( (float)(config.getGpxRecordMinMilliseconds())/1000,3 )
+					);				
 
+					/*
+					 * minimum meters between trackpoints
+					 */
+					tfGpxRecordMinimumDistanceMeters.setString(				
+						getCleanFloatString( (float)(config.getGpxRecordMinDistanceCentimeters())/100,3 )
+					);				
+
+					/*
+					 * meters between trackpoints that will always create a new trackpoint
+					 */
+					tfGpxRecordAlwaysDistanceMeters.setString( 
+						getCleanFloatString( (float)(config.getGpxRecordAlwaysDistanceCentimeters())/100,3 )
+					);				
+
+					Display.getDisplay(parent).setCurrent(menuRecordingOptions);
+					state = STATE_RECORDING_OPTIONS;
 					break;
-				case 2:
-					/*OptionsRender render = new OptionsRender(this,parent.getConfig());
-					Display.getDisplay(parent).setCurrent(render);
-					break;*/
-					renderOpts.setSelectedIndex(GpsMid.getInstance().getConfig().getRender(), true);
+				case MENU_ITEM_DISP_OPT: // Display Options
+					renderOpts.setSelectedIndex(config.getRender(), true);
+					gaugeDetailBoost.setValue(config.getDetailBoost());
 					// convert bits from backlight flag into selection states
 					boolean[] sellight = new boolean[ Configuration.BACKLIGHT_OPTIONS_COUNT ];
-	                int backlight=GpsMid.getInstance().getConfig().getBacklight();	                
+	                int backlight=config.getBacklight();	                
 	                for (int i=0;i<Configuration.BACKLIGHT_OPTIONS_COUNT;i++) {
 	                	if ((backlight & (1<<i)) !=0) {
 	                		sellight[i]=true;
@@ -329,8 +457,8 @@ public class GuiDiscover implements CommandListener, GpsMidDisplayable, Selectio
 					Display.getDisplay(parent).setCurrent(menuDisplayOptions);
 					state = STATE_DISPOPT;
 					break;
-				case 3:
-					gpxUrl.setText(GpsMid.getInstance().getConfig().getGpxUrl());
+				case MENU_ITEM_GPX_DEVICE: // GPX Receiver
+					gpxUrl.setText(config.getGpxUrl()==null?"<Please select in menu>":config.getGpxUrl());				
 					Display.getDisplay(parent).setCurrent(menuGpx);
 					state = STATE_GPX;
 					break;
@@ -360,49 +488,102 @@ public class GuiDiscover implements CommandListener, GpsMidDisplayable, Selectio
 					//logger.error("Files system support is not compiled into this version");
 					//#endif
 					break;*/
-				case 4:
-					mapSrc.setSelectedIndex(GpsMid.getInstance().getConfig().usingBuiltinMap()?0:1, true);
+				case MENU_ITEM_MAP_SRC: // Map Source 
+					mapSrc.setSelectedIndex(config.usingBuiltinMap()?0:1, true); 
+					mapSrc.set(1, "Filesystem: " + ( (config.getMapUrl()==null)?"<Please select map directory first>":config.getMapUrl() ), null);
 					Display.getDisplay(parent).setCurrent(menuSelectMapSource);
 					state = STATE_MAP;
 					break;			
-				case 5:					
+				case MENU_ITEM_DEBUG_OPT:					
 					Display.getDisplay(parent).setCurrent(menuDebug);
 					state = STATE_DEBUG;
 					break;
 				}
 				break;
-			case STATE_BT:
-				parent.getConfig().setBtUrl((String) urlList.elementAt(menuBT.getSelectedIndex()));
-				state = STATE_ROOT;
+			case STATE_BT_GPS: 
+				// remember discovered BT URL and put status in form 
+				if(urlList.size()!=0) { 
+					gpsUrlStr=(String) urlList.elementAt(menuBT.getSelectedIndex()); 
+					gpsUrl.setText(gpsUrlStr==null?"<Discover>":"<Discovered>"); 
+				} 
+				state = STATE_LP; 
+				show(); 
+				break; 
+			case STATE_BT_GPX: 
+				// put discovered BT Url in form 
+				if(urlList.size()!=0) { 
+					String gpxUrlStr=(String) urlList.elementAt(menuBT.getSelectedIndex()); 
+					gpxUrl.setText(gpxUrlStr==null?"<Please select in menu>":gpxUrlStr); 
+				} 
+				state = STATE_GPX; 
+
 				show();
 				break;
 			case STATE_GPX:
-				parent.getConfig().setGpxUrl((String) urlList.elementAt(menuBT.getSelectedIndex()));
-				gpxUrl.setText((String) urlList.elementAt(menuBT.getSelectedIndex()));
+				// Save GpxUrl from form to config 
+				String str=gpxUrl.getText(); 
+				// don't save "Please select..." 
+				if (str.indexOf(":")==-1) { 
+					str=null; 
+				} 
+				config.setGpxUrl(str); 
+				state = STATE_ROOT; 
+				show(); 
+				break;           
+			case STATE_RECORDING_OPTIONS: 
+				String rule; 
+				// Save Record Rules to Config 
+				config.setGpxRecordRuleMode(choiceGpxRecordRuleMode.getSelectedIndex()); 
+				rule=tfGpxRecordMinimumSecs.getString(); 
+				config.setGpxRecordMinMilliseconds( 
+						rule.length()==0 ? 0 :(int) (1000 * Float.parseFloat(rule)) 
+				); 
+				rule=tfGpxRecordMinimumDistanceMeters.getString(); 
+				config.setGpxRecordMinDistanceCentimeters( 
+						rule.length()==0 ? 0 :(int) (100 * Float.parseFloat(rule)) 
+				); 
+				rule=tfGpxRecordAlwaysDistanceMeters.getString(); 
+				config.setGpxRecordAlwaysDistanceCentimeters( 
+						rule.length()==0 ? 0 :(int) (100 * Float.parseFloat(rule)) 
+				); 
+
 				state = STATE_ROOT;
 				show();
 				break;			
-			case STATE_LP:
-				parent.getConfig().setLocationProvider(locProv.getSelectedIndex());
+			case STATE_LP:				
+				config.setBtUrl(gpsUrlStr); 
+				config.setLocationProvider(locProv.getSelectedIndex()); 
 				boolean [] selraw = new boolean[1];
 				rawLog.getSelectedFlags(selraw);
-				if (selraw[0] && !(rawLog.getString(0).equalsIgnoreCase("Please select to destination first"))) {
-					parent.getConfig().setGpsRawLoggerUrl(rawLog.getString(0));
-					parent.getConfig().setGpsRawLoggerEnable(true);
+				// check if url is valid, i.e. not "Please select..."  
+				if (rawLog.getString(0).indexOf(":")!=-1) { 
+					config.setGpsRawLoggerUrl(rawLog.getString(0)); 
+					config.setGpsRawLoggerEnable(selraw[0]);
 				} else {
-					parent.getConfig().setGpsRawLoggerEnable(false);					
+					config.setGpsRawLoggerUrl(null); 
+					config.setGpsRawLoggerEnable(false);					
 				}				
 				state = STATE_ROOT;
 				show();
 				break;
 			case STATE_MAP:
-				GpsMid.getInstance().getConfig().setBuiltinMap((mapSrc.getSelectedIndex() == 0));
+				config.setBuiltinMap((mapSrc.getSelectedIndex() == 0)); 
+				// extract map url from form and save it to config               
+				String url=mapSrc.getString(1); 
+				// skip "Filesystem: " 
+				url=url.substring(url.indexOf(":")+2); 
+				// no valid url, i.e. "Please select..." 
+				if (url.indexOf(":")==-1) { 
+					url=null; 
+				} 
+				config.setMapUrl(url); 
 				state = STATE_ROOT;
 				this.show();
 				logger.fatal("Need to restart GpsMid, otherwise map is in an inconsistant state");
 				break;			
 			case STATE_DISPOPT:
-				parent.getConfig().setRender(renderOpts.getSelectedIndex());
+				config.setRender(renderOpts.getSelectedIndex()); 
+				config.setDetailBoost(gaugeDetailBoost.getValue()); 
 
 				// convert boolean array with selection states for backlight
 				// to one flag with corresponding bits set
@@ -418,11 +599,11 @@ public class GuiDiscover implements CommandListener, GpsMidDisplayable, Selectio
 				logger.info("Backlight Options:" + backlight);
 
                 // value saved into recordstore as startup default
-                parent.getConfig().setBacklightDefault(backlight);
+                config.setBacklightDefault(backlight);
 
 				// value used by Backlight timer -
 				// this value is toggleable using key on map screen
-				parent.getConfig().setBacklight(backlight);
+				config.setBacklight(backlight);
 								
 				state = STATE_ROOT;
 				show();
@@ -443,6 +624,21 @@ public class GuiDiscover implements CommandListener, GpsMidDisplayable, Selectio
 		}
 	}
 
+	// converts float f to string and
+	// cuts off unnecessary trailing chars and digits 
+	private String getCleanFloatString(float f, int maxlen) {
+		StringBuffer sb = new StringBuffer();
+		// convert float to string
+		sb.append(Float.toString(f));
+		// limit to maximum length of TextField
+		sb.setLength(maxlen);
+		// cut unnecessary trailing chars and digits
+		while(sb.length()>1 && (sb.toString().endsWith(".")||sb.toString().endsWith("0"))) {
+			sb.setLength(sb.length()-1);
+		}
+		return sb.toString();				
+	}
+	
 	private void destroy() {
 		//#if polish.api.btapi
 		if (gps != null) {
@@ -460,7 +656,7 @@ public class GuiDiscover implements CommandListener, GpsMidDisplayable, Selectio
 		menuBT.setTitle("Search Device");
 	}
 
-	/** Shows main menu of MIDlet on the screen. */
+	/** Shows Setup menu of MIDlet on the screen. */
 	public void show() {
 		switch (state) {
 			case STATE_ROOT:
@@ -471,8 +667,10 @@ public class GuiDiscover implements CommandListener, GpsMidDisplayable, Selectio
 				break;
 			case STATE_MAP:
 				Display.getDisplay(parent).setCurrent(menuSelectMapSource);
+				break;
 			case STATE_GPX:
 				Display.getDisplay(parent).setCurrent(menuGpx);
+				break;
 			case STATE_DEBUG:
 				Display.getDisplay(parent).setCurrent(menuDebug);
 				
@@ -518,24 +716,22 @@ public class GuiDiscover implements CommandListener, GpsMidDisplayable, Selectio
 
 	public void selectedFile(String url) {
 		logger.info("Url selected: " + url);
+		url = url.substring(0, url.lastIndexOf('/') + 1);
 		switch (state) {
 		case STATE_LP:
-			url = url.substring(0, url.lastIndexOf('/') + 1);
 			rawLog.set(0, url, null);
-			break;			
+			break;
 		case STATE_MAP:
-			url = url.substring(0, url.lastIndexOf('/') + 1);
-			GpsMid.getInstance().getConfig().setMapUrl(url);
+			mapSrc.set(1, "Filesystem: " + url, null);
+			mapSrc.setSelectedIndex(1, true);
 			//As the Filesystem chooser has called the show()
 			//method of this class, it currently shows the root
 			//menu, but we want't to continue to edit the MapSource
 			//menue
 			Display.getDisplay(parent).setCurrent(menuSelectMapSource);
-			mapSrc.set(1, "Filesystem: " + GpsMid.getInstance().getConfig().getMapUrl(), null);
 			break;
 		case STATE_GPX:
-			url = url.substring(0, url.lastIndexOf('/') + 1);
-			parent.getConfig().setGpxUrl(url);			
+			gpxUrl.setText(url);				
 			break;
 		case STATE_DEBUG:
 			url = url.substring(0, url.lastIndexOf('/') + 1);

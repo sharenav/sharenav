@@ -41,6 +41,32 @@ public class Configuration {
 	// MUST contain maximum number of backlight flags
 	public final static int BACKLIGHT_OPTIONS_COUNT=5;
 	
+	/**
+	 * These are the database record ids for each configuration option	 * 
+	 */
+	private static final int  RECORD_ID_BT_URL = 1;
+	private static final int RECORD_ID_LOCATION_PROVIDER  = 2;
+	private static final int RECORD_ID_RENDER_OPT  = 3;
+	private static final int RECORD_ID_GPX_URL = 4;
+	private static final int RECORD_ID_MAP_FROM_JAR = 5;
+	private static final int RECORD_ID_MAP_FILE_URL = 6;
+	private static final int RECORD_ID_BACKLIGHT_DEFAULT = 7;
+	private static final int RECORD_ID_LOG_RAW_GPS_URL = 8;
+	private static final int RECORD_ID_LOG_RAW_GPS_ENABLE = 9;
+	private static final int RECORD_ID_LOG_DEBUG_URL = 10;
+	private static final int RECORD_ID_LOG_DEBUG_ENABLE = 11;
+	private static final int RECORD_ID_DETAIL_BOOST = 12;
+	private static final int RECORD_ID_GPX_FILTER_MODE = 13;
+	private static final int RECORD_ID_GPX_FILTER_TIME = 14;
+	private static final int RECORD_ID_GPX_FILTER_DIST = 15;
+	private static final int RECORD_ID_GPX_FILTER_ALWAYS_DIST = 16;
+
+	// Gpx Recording modes
+	// GpsMid determines adaptive if a trackpoint is written
+	public final static int GPX_RECORD_ADAPTIVE=0;	
+	// User specified options define if a trackpoint is written
+	public final static int GPX_RECORD_MINIMUM_SECS_DIST=1;	
+	
 	public static int KEYCODE_CAMERA_COVER_OPEN = -34;
 	public static int KEYCODE_CAMERA_COVER_CLOSE = -35;
 	public static int KEYCODE_CAMERA_CAPTURE = -26;
@@ -55,7 +81,12 @@ public class Configuration {
 	private String rawDebugLogUrl; 
 	private boolean rawDebugLogEnable;
 	private int locationProvider=0;
+	private int gpxRecordRuleMode;
+	private int gpxRecordMinMilliseconds;
+	private int gpxRecordMinDistanceCentimeters;
+	private int gpxRecordAlwaysDistanceCentimeters;
 	private int render=RENDER_STREET;
+	private int detailBoost=0;
 	private int backlight;
 	private int backlightDefault;
 	private String gpxUrl;
@@ -77,18 +108,23 @@ public class Configuration {
 				logger.info("No database loaded at the moment");
 				return;
 			}
-			btUrl=readString(database, 1);
-			locationProvider=readInt(database, 2);
-			render=readInt(database, 3);
-			gpxUrl=readString(database, 4);
-			mapFromJar=readInt(database, 5) == 0;
-			mapFileUrl=readString(database,6);
-			backlightDefault=readInt(database,7);
+			btUrl=readString(database, RECORD_ID_BT_URL);
+			locationProvider=readInt(database, RECORD_ID_LOCATION_PROVIDER);
+			render=readInt(database, RECORD_ID_RENDER_OPT);
+			gpxUrl=readString(database, RECORD_ID_GPX_URL);
+			mapFromJar=readInt(database, RECORD_ID_MAP_FROM_JAR) == 0;
+			mapFileUrl=readString(database, RECORD_ID_MAP_FILE_URL);
+			backlightDefault=readInt(database, RECORD_ID_BACKLIGHT_DEFAULT);
 			backlight=backlightDefault;
-			rawGpsLogUrl=readString(database,8);
-			rawGpsLogEnable = readInt(database,9) !=0;
-			rawDebugLogUrl=readString(database,10);
-			rawDebugLogEnable = readInt(database,11) !=0;
+			rawGpsLogUrl=readString(database, RECORD_ID_LOG_RAW_GPS_URL);
+			rawGpsLogEnable = readInt(database, RECORD_ID_LOG_RAW_GPS_ENABLE) !=0;
+			detailBoost=readInt(database,RECORD_ID_DETAIL_BOOST); 
+			gpxRecordRuleMode=readInt(database, RECORD_ID_GPX_FILTER_MODE); 
+			gpxRecordMinMilliseconds=readInt(database, RECORD_ID_GPX_FILTER_TIME); 
+			gpxRecordMinDistanceCentimeters=readInt(database, RECORD_ID_GPX_FILTER_DIST); 
+			gpxRecordAlwaysDistanceCentimeters=readInt(database, RECORD_ID_GPX_FILTER_ALWAYS_DIST); 
+			rawDebugLogUrl=readString(database, RECORD_ID_LOG_DEBUG_URL);
+			rawDebugLogEnable = readInt(database,  RECORD_ID_LOG_DEBUG_ENABLE) !=0;
 			database.closeRecordStore();
 		} catch (Exception e) {
 			logger.exception("Problems with reading our configuration: ", e);
@@ -167,15 +203,15 @@ public class Configuration {
 	
 	public void setGpsRawLoggerUrl(String url) {
 		rawGpsLogUrl = url;
-		write(rawGpsLogUrl, 8);
+		write(rawGpsLogUrl, RECORD_ID_LOG_RAW_GPS_URL);
 	}
 	
 	public void setGpsRawLoggerEnable(boolean enabled) {
 		rawGpsLogEnable = enabled;
 		if (rawGpsLogEnable) 
-			write(1, 9);
+			write(1, RECORD_ID_LOG_RAW_GPS_ENABLE);
 		else
-			write(0, 9);
+			write(0, RECORD_ID_LOG_RAW_GPS_ENABLE);
 	}
 	
 	public boolean getDebugRawLoggerEnable() {		
@@ -188,15 +224,15 @@ public class Configuration {
 	
 	public void setDebugRawLoggerUrl(String url) {
 		rawDebugLogUrl = url;
-		write(rawDebugLogUrl, 10);
+		write(rawDebugLogUrl, RECORD_ID_LOG_DEBUG_URL);
 	}
 	
 	public void setDebugRawLoggerEnable(boolean enabled) {
 		rawDebugLogEnable = enabled;
 		if (rawDebugLogEnable) 
-			write(1, 11);
+			write(1, RECORD_ID_LOG_DEBUG_ENABLE);
 		else
-			write(0, 11);
+			write(0, RECORD_ID_LOG_DEBUG_ENABLE);
 	}
 	
 	public boolean getGpsRawLoggerEnable() {		
@@ -209,7 +245,7 @@ public class Configuration {
 
 	public void setBtUrl(String btUrl) {
 		this.btUrl = btUrl;
-		write(btUrl, 1);
+		write(btUrl, RECORD_ID_BT_URL);
 	}
 
 	public int getLocationProvider() {
@@ -218,22 +254,54 @@ public class Configuration {
 
 	public void setLocationProvider(int locationProvider) {
 		this.locationProvider = locationProvider;
-		write(locationProvider,2);
+		write(locationProvider, RECORD_ID_LOCATION_PROVIDER);
 	}
+
+	public int getGpxRecordRuleMode() {
+		return gpxRecordRuleMode;
+	}
+	public void setGpxRecordRuleMode(int gpxRecordRuleMode) {
+		this.gpxRecordRuleMode = gpxRecordRuleMode;
+			write(gpxRecordRuleMode, RECORD_ID_GPX_FILTER_MODE);
+	}
+
+	public int getGpxRecordMinMilliseconds() {
+		return gpxRecordMinMilliseconds;
+	}
+	public void setGpxRecordMinMilliseconds(int gpxRecordMinMilliseconds) {
+		this.gpxRecordMinMilliseconds = gpxRecordMinMilliseconds;
+			write(gpxRecordMinMilliseconds, RECORD_ID_GPX_FILTER_TIME);
+	}	
+
+	public int getGpxRecordMinDistanceCentimeters() {
+		return gpxRecordMinDistanceCentimeters;
+	}
+	public void setGpxRecordMinDistanceCentimeters(int gpxRecordMinDistanceCentimeters) {
+		this.gpxRecordMinDistanceCentimeters = gpxRecordMinDistanceCentimeters;
+			write(gpxRecordMinDistanceCentimeters, RECORD_ID_GPX_FILTER_DIST);
+	}	
+
+	public int getGpxRecordAlwaysDistanceCentimeters() {
+		return gpxRecordAlwaysDistanceCentimeters;
+	}
+	public void setGpxRecordAlwaysDistanceCentimeters(int gpxRecordAlwaysDistanceCentimeters) {
+		this.gpxRecordAlwaysDistanceCentimeters = gpxRecordAlwaysDistanceCentimeters;
+			write(gpxRecordAlwaysDistanceCentimeters, RECORD_ID_GPX_FILTER_ALWAYS_DIST);
+	}	
 
 	public int getRender() {
 		return render;
 	}
-
+	
 	public void setRender(int render) {
 		this.render = render;
-		write(render,3);
+		write(render, RECORD_ID_RENDER_OPT);
 	}
 	
 	public int getBacklight() {
 		return backlight;
 	}
-
+	
 	public void setBacklight(int backlight) {
 		this.backlight = backlight;
 	}
@@ -244,12 +312,23 @@ public class Configuration {
 
 	public void setBacklightDefault(int backlightDefault) {
 		this.backlightDefault = backlightDefault;
-			write(backlightDefault,7);
+			write(backlightDefault, RECORD_ID_BACKLIGHT_DEFAULT);
 	}
+
+	public int getDetailBoost() {
+		return detailBoost;
+	}
+
+	public void setDetailBoost(int detailBoost) {
+		this.detailBoost = detailBoost;
+			write(detailBoost,10);
+	}
+
+	
 	
 	public void setGpxUrl(String url) {
 		this.gpxUrl = url;
-		write(url,4);
+		write(url, RECORD_ID_GPX_URL);
 	}
 
 	public String getGpxUrl() {
@@ -261,7 +340,7 @@ public class Configuration {
 	}
 	
 	public void setBuiltinMap(boolean mapFromJar) {
-		write(mapFromJar?0:1,5);
+		write(mapFromJar?0:1, RECORD_ID_MAP_FROM_JAR);
 		this.mapFromJar = mapFromJar;
 	}
 	
@@ -270,7 +349,7 @@ public class Configuration {
 	}
 	
 	public void setMapUrl(String url) {
-		write(url,6);
+		write(url, RECORD_ID_MAP_FILE_URL);
 		mapFileUrl = url;
 	}
 	

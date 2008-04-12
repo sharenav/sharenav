@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.lang.Math;
 import java.util.Calendar;
 import java.util.Date;
 import javax.microedition.io.CommConnection;
@@ -45,9 +46,11 @@ import org.xml.sax.helpers.DefaultHandler;
 //#else
 import uk.co.wilson.xml.MinML2;
 //#endif
+import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Position;
 import de.ueller.gpsMid.mapData.GpxTile;
 import de.ueller.gpsMid.mapData.Tile;
+import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.ImageCollector;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
@@ -59,6 +62,11 @@ public class Gpx extends Tile implements Runnable {
 	private int importedWpts;
 	private int tooFarWpts;
 	private int duplicateWpts;
+	
+	// statics for user-defined rules for record trackpoint
+	private static long oldMsTime;
+	private static float oldlat;
+	private static float oldlon;
 	
 	//#if polish.api.webservice
 	class GpxParserW extends DefaultHandler {
@@ -187,7 +195,7 @@ public class Gpx extends Tile implements Runnable {
 	private boolean sendTrk;
 	private boolean reloadWpt;
 	
-	private boolean adaptiveRec = true;
+	private boolean applyRecordingRules = true;
 	
 	private String trackName;
 	private PersistEntity currentTrk;
@@ -284,35 +292,85 @@ public class Gpx extends Tile implements Runnable {
 		
 	
 	public void addTrkPt(Position trkpt) {
+		Configuration config=GpsMid.getInstance().getConfig();
 		logger.info("Adding trackpoint: " + trkpt);
+		boolean doRecord=false;
 		try {
-			/**
-			 * When saving tracklogs and adaptive recording is enabled,
-			 * we reduce the frequency of saved samples if the speed drops
-			 * to less than a certain amount. This should increase storage
-			 * efficiency if one doesn't need if one doesn't need to repeatedly
-			 * store positions if the device is not moving
-			 * 
-			 * Chose the following arbitrary sampling frequency:
-			 * Greater 8km/h (2.22 m/s): every sample
-			 * Greater 4km/h (1.11 m/s): every second sample
-			 * Greater 2km/h (0.55 m/s): every fourth sample
-			 * Below 2km/h (0.55 m/s): every tenth sample
-			 */
-			//
-			if (!adaptiveRec || (trkpt.speed > 2.222f) || ((trkpt.speed > 1.111f) && (delay > 0 )) || 
-					((trkpt.speed > 0.556) && delay > 3 ) || (delay > 10)) {
+			// always record when i.e. receiving or loading tracklogs
+			// or when starting to record
+			if (!applyRecordingRules || recorded==0) {
+				doRecord=true;
+			}
+			// check which record rules to apply
+			else if (config.getGpxRecordRuleMode()==Configuration.GPX_RECORD_ADAPTIVE) {
+				/** adaptive recording
+				 * 
+				 * When saving tracklogs and adaptive recording is enabled,
+				 * we reduce the frequency of saved samples if the speed drops
+				 * to less than a certain amount. This should increase storage
+				 * efficiency if one doesn't need if one doesn't need to repeatedly
+				 * store positions if the device is not moving
+				 * 
+				 * Chose the following arbitrary sampling frequency:
+				 * Greater 8km/h (2.22 m/s): every sample
+				 * Greater 4km/h (1.11 m/s): every second sample
+				 * Greater 2km/h (0.55 m/s): every fourth sample
+				 * Below 2km/h (0.55 m/s): every tenth sample
+				 */
+				if ( (trkpt.speed > 2.222f) || ((trkpt.speed > 1.111f) && (delay > 0 )) || 
+						((trkpt.speed > 0.556) && delay > 3 ) || (delay > 10)) {
+					doRecord=true;
+					delay = 0;
+				} else {
+					delay++;
+				}			
+			} else {
+				/*
+				 user-specified recording rules
+				*/
+				long msTime=System.currentTimeMillis();
+				float lat=trkpt.latitude*MoreMath.FAC_DECTORAD;
+				float lon=trkpt.longitude*MoreMath.FAC_DECTORAD;
+				float distance = 100*ProjMath.getDistance(lat, lon, oldlat, oldlon); 
+				if ( 
+						// is not always record distance not set
+						// or always record distance reached
+						(
+							config.getGpxRecordAlwaysDistanceCentimeters()!=0 &&
+							distance >= config.getGpxRecordAlwaysDistanceCentimeters()
+						)
+						||
+						(  
+							(
+								// is minimum time interval not set
+								// or interval at least minimum interval?
+								config.getGpxRecordMinMilliseconds() == 0 ||
+								Math.abs(msTime-oldMsTime) >= config.getGpxRecordMinMilliseconds()
+							)
+							&&
+							(
+							// is minimum distance not set
+							// or distance at least minimum distance?
+							config.getGpxRecordMinDistanceCentimeters()==0 ||
+							distance >= config.getGpxRecordMinDistanceCentimeters()
+							)
+						)
+				) {
+					doRecord=true;
+					oldMsTime=msTime;
+					oldlat=lat;
+					oldlon=lon;
+				}
+			}
+			if(doRecord) {
 				dos.writeFloat(trkpt.latitude);
 				dos.writeFloat(trkpt.longitude);
 				dos.writeShort((short)trkpt.altitude);
 				dos.writeLong(trkpt.date.getTime());
 				dos.writeByte((byte)(trkpt.speed*3.6f)); //Convert to km/h				
 				recorded++;
-				delay = 0;
 				tile.addTrkPt(trkpt.latitude, trkpt.longitude, false);
-			} else {
-				delay++;
-			}			
+			}
 		} catch (OutOfMemoryError oome) {
 			try {				
 				Trace.getInstance().dropCache();
@@ -833,7 +891,7 @@ public class Gpx extends Tile implements Runnable {
         SAXParser saxParser;
         //#endif
 		try {
-			adaptiveRec = false;
+			applyRecordingRules = false;
 			//#if polish.api.webservice
 			GpxParserW parserw = new GpxParserW();			
 			saxParser = factory.newSAXParser();						
@@ -842,7 +900,7 @@ public class Gpx extends Tile implements Runnable {
 			GpxParser parser = new GpxParser();
 			parser.parse(new InputStreamReader(in));
 			//#endif
-			adaptiveRec = true;
+			applyRecordingRules = true;
 			in.close();
 			return true;
 		}

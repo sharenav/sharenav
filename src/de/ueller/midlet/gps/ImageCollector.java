@@ -133,18 +133,28 @@ public class ImageCollector implements Runnable {
 				// System.out.println("create " + pcCollect);
 
 				/**
+					There's no pow()-function in J2ME so manually
+					calculate 1.5^ScaleDetailBoost to get factor
+					to multiply with Zoom Level limits
+				**/
+				int detailBoost=tr.getConfig().getDetailBoost();
+				float boost=1;
+				for(int i=1;i<=detailBoost;i++) {
+					boost*=1.5;
+				}
+				/**
 				 * Draw Area ways first, as these would cover other Ways if
 				 * painted later
 				 */
-				if ((pc[nextCreate].scale < 45000) && (t[3] != null)) {
+				if ((pc[nextCreate].scale < 45000 * boost) && (t[3] != null)) {
 					t[3].paintAreaOnly(pc[nextCreate]);
 					Thread.yield();
 				}
-				if ((pc[nextCreate].scale < 180000) && (t[2] != null)) {
+				if ((pc[nextCreate].scale < 180000 * boost) && (t[2] != null)) {
 					t[2].paintAreaOnly(pc[nextCreate]);
 					Thread.yield();
 				}
-				if ((pc[nextCreate].scale < 900000f) && (t[1] != null)) {
+				if ((pc[nextCreate].scale < 900000f * boost) && (t[1] != null)) {
 					t[1].paintAreaOnly(pc[nextCreate]);
 					Thread.yield();
 				}
@@ -159,15 +169,15 @@ public class ImageCollector implements Runnable {
 				/**
 				 * Draw all other elements now ontop of any area
 				 */
-				if ((pc[nextCreate].scale < 45000) && (t[3] != null)) {
+				if ((pc[nextCreate].scale < 45000 * boost) && (t[3] != null)) {
 					t[3].paintNonArea(pc[nextCreate]);
 					Thread.yield();
 				}
-				if ((pc[nextCreate].scale < 180000) && (t[2] != null)) {
+				if ((pc[nextCreate].scale < 180000 * boost) && (t[2] != null)) {
 					t[2].paintNonArea(pc[nextCreate]);
 					Thread.yield();
 				}
-				if ((pc[nextCreate].scale < 900000f) && (t[1] != null)) {
+				if ((pc[nextCreate].scale < 900000f * boost) && (t[1] != null)) {
 					t[1].paintNonArea(pc[nextCreate]);
 					Thread.yield();
 				}
