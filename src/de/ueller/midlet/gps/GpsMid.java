@@ -152,11 +152,6 @@ private Trace trace=null;
         }
         switch (menu.getSelectedIndex()) {
             case 0:
-//            	if (btUrl == null){
-//            		Alert alert = new Alert("Please select Bluetooth device first");
-//            		Display.getDisplay(this).setCurrent(alert, menu);
-//            		return;
-//            	}
             	try {
             		if (trace == null){
             			trace = new Trace(this,config);
@@ -166,9 +161,7 @@ private Trace trace=null;
             			trace.show();
             		}
 				} catch (Exception e) {
-					e.printStackTrace();
-					Alert alert = new Alert("Error:" + e.getMessage());
-					Display.getDisplay(this).setCurrent(alert, menu);
+					l.exception("Failed to display map " , e);
             		return;
 				} 
                 break;
@@ -180,9 +173,7 @@ private Trace trace=null;
 					GuiSearch search = new GuiSearch(trace);
 					search.show();
 				} catch (Exception e) {
-					e.printStackTrace();
-					Alert alert = new Alert("Error:" + e.getMessage());
-					Display.getDisplay(this).setCurrent(alert, menu);
+					l.exception("Failed to display search screen " , e);
 				}
             	break;
             case 2:
@@ -288,13 +279,8 @@ private Trace trace=null;
 					+(1<<Configuration.BACKLIGHT_NOKIAFLASH)
 					)
 				 ) == 0
-			) {
-				Alert alert = new Alert("GpsMid");
-				alert.setString("Backlight cannot be kept on when no 'with'-method is specified in Setup");
-				alert.setTimeout(5000);
-				Display d=Display.getDisplay(GpsMid.getInstance());
-				d.setCurrent(d.getCurrent());
-				Display.getDisplay(GpsMid.getInstance()).setCurrent(alert);
+			) {				
+				l.error("Backlight cannot be kept on when no 'with'-method is specified in Setup");
 			}
 			if (lightTimer == null) {
 				lightTimer = new Thread(new Runnable() {
