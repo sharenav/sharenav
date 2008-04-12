@@ -125,7 +125,7 @@ public class GuiGpxLoad extends Form implements CommandListener,
 	public void selectedFile(String url) {
 		try {
 			logger.info("Receiving gpx: " + url);
-			Connection c  = Connector.open(url);			
+			Connection c  = Connector.open(url,Connector.READ);			
 			if (c instanceof InputConnection) {
 				InputConnection inConn = ((InputConnection)c);				
 				Trace.getInstance().gpx.receiveGpx(inConn.openInputStream(), feedbackListener, maxDistance);
