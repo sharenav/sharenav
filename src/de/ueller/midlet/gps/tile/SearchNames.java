@@ -102,26 +102,33 @@ public class SearchNames implements Runnable{
 					ds.close();					
 					return;
 				}
-				try {
+				try {					
 					type = ds.readByte();
 				} catch (EOFException eof) {
 					//Normal way of detecting the end of a file
 					ds.close();
 					return;
 				}
+				/**
+				 * Encoding of delta plus flags in bits:
+				 * 10000000 Sign bit
+				 * 01100000 long 
+				 * 01000000 int
+				 * 00100000 short
+				 * 00000000 byte
+				 * 000xxxxx delta 
+				 */				
+				//System.out.println("type = " + type);
 				int sign=1;
-				if (type < 0){
-					type += 128;
-					sign=-1;
+				if ((type & 0x80) != 0) {
+					sign = -1;
 				}
-//				System.out.println("type = " + type);
+				int delta = (type & 0x1f) * sign;				
+				//System.out.println("type = " + type);
 				int entryType=(type & 0x60);
-				int delta=type & 0x9f;
-				delta *=sign;
-//				System.out.println("pos=" + pos + "  delta="+delta);
 				if (delta > Byte.MAX_VALUE)
 					delta -= Byte.MAX_VALUE;
-				pos+=delta;
+				pos+=delta;				
 				current.setLength(pos);
 //				System.out.println("pos=" + pos + "  delta="+delta);
 				long value=0;
@@ -149,18 +156,20 @@ public class SearchNames implements Runnable{
 				if (!current.toString().startsWith(compare)){
 					idx=-1;
 				}
-				type=ds.readByte();
-				while (type != 0){					
+				int noEnteties = ds.readByte();
+				
+				for (int ii = 0; ii < noEnteties; ii++){					
 					if (stopSearch){
 						ds.close();						
 						return;
 					}
+					type=ds.readByte();
 					byte isInCount=ds.readByte();
 					int[] isInArray=null;
 					if (isInCount > 0 ){
 						isInArray=new int[isInCount];
-						for (int i=isInCount;i--!=0;){
-							isInArray[i]= Names.readNameIdx(ds);							
+						for (int jj=isInCount;jj--!=0;){
+							isInArray[jj]= Names.readNameIdx(ds);							
 						}
 					}
 					float lat=ds.readFloat();
@@ -178,11 +187,13 @@ public class SearchNames implements Runnable{
 						}
 						gui.addResult(sr);
 						foundEntries++;
-						if (foundEntries > 50)
-							return;			
-//						System.out.println("found " + current +"(" + shortIdx + ") type=" + type);
-					}
-					type=ds.readByte();
+						if (foundEntries > 50) {
+							logger.info("Found 50 entries. Thats enough, stoping further search");
+							ds.close();
+							return;
+						}
+						//System.out.println("found " + current +"(" + idx + ") type=" + type);
+					}					
 				}
 			}			
 		} catch (NullPointerException e) {
