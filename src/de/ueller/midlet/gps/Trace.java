@@ -268,7 +268,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 					}
 				} catch (IOException ioe) {
 					logger.exception("Couldn't open file for raw logging of Gps data",ioe);
-				}
+				} catch (SecurityException se) {
+					logger.error("Permission to write data for NMEA raw logging was denied");
+				}				
 			}
 			//#endif
 			break;
