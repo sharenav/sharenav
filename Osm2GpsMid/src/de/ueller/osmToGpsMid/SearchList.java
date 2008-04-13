@@ -53,9 +53,22 @@ public class SearchList {
 					eq=0;
 					lastStr=null;
 				}
-				String wrString=string.substring(eq);
+				String wrString=string.substring(eq);				
+				
+				/**
+				 * Encoding of delta plus flags in bits:
+				 * 10000000 Sign bit
+				 * 01100000 long 
+				 * 01000000 int
+				 * 00100000 short
+				 * 00000000 byte
+				 * 000xxxxx delta 
+				 */
 				
 				int delta = eq-curPos;
+				if (Math.abs(delta) > 30) {
+					System.out.println("Error: Overflow in Search cannon: " + mapName.getName());
+				}
 				if (delta <0){
 					delta = -delta;
 					delta += 0x80;
@@ -87,10 +100,14 @@ public class SearchList {
 				} else {
 					ds.writeShort(nameIdx);
 				}
+				if (mapName.getEntitys().size() > Byte.MAX_VALUE) {
+					System.out.println("ERROR: to many enteties for mapName " + mapName.getName());
+				}
+				ds.writeByte(mapName.getEntitys().size());
 				for (Entity e : mapName.getEntitys()){
 					Node center=null;
 					if (e instanceof Node) {
-						Node n = (Node) e;
+						Node n = (Node) e;						
 						ds.writeByte(-1*n.getType(Configuration.getConfiguration()));
 						center=n;
 //						System.out.println("entryType " + n.getNameType() + " idx=" + mapName.getIndex());
@@ -108,18 +125,7 @@ public class SearchList {
 							isIn.add(nb);
 						nb=nb.nearBy;
 					}
-//					
-					/*
-					 * Don't know how to handle actual is_in entries.
-					 * These names won't necessarily be in our name database
-					String in=e.tags.get("is_in");
-//					if (in != null){
-//						ds.writeByte(isIn.size()+1);
-//						ds.writeShort(names.getNameIdx(in));
-//					} else {
-						ds.writeByte(isIn.size());
-//					}
-					*/
+
 					ds.writeByte(isIn.size());
 					for (Entity e1 : isIn){
 						int isinIdx = names.getNameIdx(e1.getName());
@@ -134,8 +140,7 @@ public class SearchList {
 					}
 					ds.writeFloat(MyMath.degToRad(center.lat));
 					ds.writeFloat(MyMath.degToRad(center.lon));
-				}
-				ds.writeByte(0);
+				}				
 //				ds.writeUTF(string.substring(eq));
 				curPos=eq;
 				lastStr=string;
