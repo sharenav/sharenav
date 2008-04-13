@@ -234,5 +234,71 @@
 	<delete dir="build" />
 	<delete dir="dist" />
 </target>
+	
+	<target name="NMEAsim" 
+				depends="init"
+				description="This is a NMEA over bluetooth simulator" 
+				>
+			<j2mepolish>		    
+				<info
+					license="GPL"
+					name="NMEAsim"
+					version="0.0.01"
+					description=""
+					vendorName="Harald Mueller"
+					infoUrl="http://gpsmid.sourceforge.net"
+					icon="GpsMid.png"
+					jarName="NMEAsim-${polish.version}.jar" 
+					jarUrl="${deploy-url}${polish.jarName}"					
+					deleteConfirm="Do you really want to kill me?" 
+				/>
+				
+				<deviceRequirements>
+					<requirement name="Identifier" value="Generic/multi" />
+				</deviceRequirements>
+				
+			    <!-- build settings -->
+				<!-- 
+				 -->
+				<build
+					fullscreen="menu"
+					usePolishGui="false"
+					workDir="${dir.work}"
+				>     
+					<midlet class="de.ueller.tests.NMEAsimMidlet" name="NMEAsim"/>
+					<sources>					
+						<source dir="test/NMEAsim"/>					
+					</sources>
+				    
+					
+					<resources dir="test" defaultexcludes="yes" excludes="readme.txt">
+						<fileset dir="test" includes="**/*.dat"/>
+						<fileset dir="test" includes="*.txt"/>
+					</resources>
+					
+					<!-- obfuscator settings: do not obfuscate then the test-property is true -->
+					<obfuscator name="ProGuard" useDefaultPackage="true" unless="test || polish.blackberry" >					
+						<keep class="de.ueller.tests.NMEAsimMidlet" />
+					</obfuscator>
+					
+					<!-- debug settings: only include debug setting when the test-property is true -->
+					<debug if="test" showLogOnError="true" verbose="true" level="error">
+					</debug>
+					
+				</build>
+				
+				<!-- execution of emulator(s) -->
+				<emulator
+					wait="true"
+					securityDomain="maximum"
+					enableProfiler="false"
+					enableMemoryMonitor="false"
+					enableNetworkMonitor="false"					
+					>
+					<!--if="test and not debug"-->
+				</emulator>		
+			</j2mepolish>
+	</target>
+
 
 </project>
