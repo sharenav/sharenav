@@ -628,12 +628,14 @@ public class Way extends Entity implements Comparable<Way>{
 		return path.getLineCount();
 	}
 	
-	public Way split(){
+	public Way split(){		
 		if (! isValid() )
 			System.out.println("Way before split is not valid");
 		Path split = path.split();
 		if (split != null){
-			Way newWay=new Way(this);
+			//If we split the way, the bounds are no longer valid
+			this.clearBounds();
+			Way newWay=new Way(this);			
 			newWay.path=split;
 			if (! newWay.isValid() )
 				System.out.println("new Way after split is not valid");
