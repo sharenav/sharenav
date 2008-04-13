@@ -294,7 +294,7 @@ public class CreateGpsMidData {
 					System.out.println("WARNING: could not reduce tile size for tile " + t);
 					System.out.println("t.ways " + t.ways.size() + " t.nodes " + t.nodes.size());
 					for (Way w : t.ways) {
-						System.out.println("Way: " + w);
+						System.out.println("Way: " + w);						
 					}
 					
 					unsplittableTile = true;										
@@ -428,6 +428,9 @@ public class CreateGpsMidData {
 			fo.close();
 			// mark nodes as written to MidStorage 
 			for (Node n : nodes) { 
+				if (n.fid != 0) {
+					System.out.println("DATA DUPPLICATION: This node has been written already! " + n);
+				}
 				n.fid = t.fid; 
 			}
 			// mark ways as written to MidStorage
@@ -614,9 +617,6 @@ public class CreateGpsMidData {
 		}
 		for (Node n : wayNodes.values()) {
 			n.renumberdId=(short) ren++;
-			//Same problem as above. See description there.
-			if (n.fid != 0) 
-				System.out.println("Writing way node twice? " + n);
 			writeNode(n,ds,SEGNODE,t);
 		}
 		ds.writeByte(0x55); // Magic number
