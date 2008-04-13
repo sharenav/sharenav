@@ -185,7 +185,7 @@ public class Node extends Entity{
 		return 0;
 	}
 	public String toString(){
-		return "node " + ((getPlace() != null)?("(" + getPlace() + ") "):"") + " id=" + id + " name="+getName() + ((nearBy == null)?"":(" by " + nearBy));
+		return "node (" + lat + "|" + lon + ") " + ((getPlace() != null)?("(" + getPlace() + ") "):"") + " id=" + id + " name="+getName() + ((nearBy == null)?"":(" by " + nearBy.getName()));
 	}
 	/**
 	 * @return
