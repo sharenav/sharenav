@@ -160,20 +160,8 @@ public class SingleTile extends Tile implements QueueableTile {
 				if (type[i] == 0) {
 					break;
 				}
-				testLat=(float)(nodeLat[i]*fpminv + centerLat); 
-				if (testLat < pc.screenLD.radlat) {
-					continue;
-				}
-				if (testLat > pc.screenRU.radlat) {
-					continue;
-				}
-				testLon=(float)(nodeLon[i]*fpminv + centerLon); 
-				if (testLon < pc.screenLD.radlon) {
-					continue;
-				}
-				if (testLon > pc.screenRU.radlon) {
-					continue;
-				}
+				if (isNodeOnScreen(pc, i))
+					continue;				
 				paintNode(pc, i);
 			}
 		} else {
@@ -181,9 +169,8 @@ public class SingleTile extends Tile implements QueueableTile {
 		}
 	}
 
-	public void walk(PaintContext pc,int opt) {
-		float testLat;
-		float testLon;
+	
+	public void walk(PaintContext pc,int opt) {		
 		if (contain(pc)) {
 			while (!isDataReady()) {
 				if ((opt & Tile.OPT_WAIT_FOR_LOAD) == 0){
@@ -199,21 +186,13 @@ public class SingleTile extends Tile implements QueueableTile {
 			}
 			lastUse = 0;
 			if (ways != null) {
+				short targetLat = (short)((pc.target.lat - centerLat)*fpm);
+				short targetLon = (short)((pc.target.lon - centerLon)*fpm);
 				for (int i = 0; i < ways.length; i++) {
 					Way w = ways[i];
-					// logger.debug("test Bounds of way");
-					if (w.maxLat < pc.screenLD.radlat) {
+					if (!w.isOnScreen(pc, centerLat, centerLon))
 						continue;
-					}
-					if (w.maxLon < pc.screenLD.radlon) {
-						continue;
-					}
-					if (w.minLat > pc.screenRU.radlat) {
-						continue;
-					}
-					if (w.minLon > pc.screenRU.radlon) {
-						continue;
-					}
+					
 					// logger.debug("draw " + w.name);
 					// fill the target fields if they are empty
 //					logger.debug("search target" + pc.target);
@@ -223,8 +202,8 @@ public class SingleTile extends Tile implements QueueableTile {
 //							logger.debug("search target way");
 							for (int i1 = 0; i1 < w.path.length; i1++) {
 								short s = w.path[i1];
-								if (nodeLat[s] == pc.target.lat &&
-										nodeLon[s] == pc.target.lon){
+								if (nodeLat[s] == targetLat &&
+										nodeLon[s] == targetLon){
 //									logger.debug("found Target way");										
 									pc.target.setEntity(w, getFloatNodes(nodeLat,centerLat), getFloatNodes(nodeLon,centerLon));
 								}
@@ -251,20 +230,8 @@ public class SingleTile extends Tile implements QueueableTile {
 					if (type[i] == 0) {
 						break;
 					}
-					testLat=nodeLat[i];
-					if (testLat < pc.screenLD.radlat) {
-						continue;
-					}
-					if (testLat > pc.screenRU.radlat) {
-						continue;
-					}
-					testLon=nodeLon[i];
-					if (testLon < pc.screenLD.radlon) {
-						continue;
-					}
-					if (testLon > pc.screenRU.radlon) {
-						continue;
-					}
+					if (!isNodeOnScreen(pc, i))
+						continue;					
 					paintNode(pc, i);
 				}
 			}
@@ -435,5 +402,23 @@ public class SingleTile extends Tile implements QueueableTile {
 	   }
 	   return resList;
    }
-	
+   
+   private boolean isNodeOnScreen(PaintContext pc, int nodeId) {
+	   float testLat=(float)(nodeLat[nodeId]*fpminv + centerLat); 
+	   if (testLat < pc.screenLD.radlat) {
+		   return false;
+	   }
+	   if (testLat > pc.screenRU.radlat) {
+		   return false;
+	   }
+	   float testLon=(float)(nodeLon[nodeId]*fpminv + centerLon); 
+	   if (testLon < pc.screenLD.radlon) {
+		   return false;
+	   }
+	   if (testLon > pc.screenRU.radlon) {
+		   return false;
+	   }
+	   return true;
+   }
+
 }
