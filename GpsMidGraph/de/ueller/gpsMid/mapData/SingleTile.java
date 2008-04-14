@@ -312,7 +312,7 @@ public class SingleTile extends Tile implements QueueableTile {
 		}
 		if (img != null) {
 			// logger.debug("draw img " + img);
-			if (nameIdx[i] == -1 || pc.c.isNodeImageCentered(t)) {
+			if (nameIdx[i] == -1 || pc.c.isNodeImageCentered(t) || pc.scale > pc.c.getNodeMaxTextScale(t)) {
 				pc.g.drawImage(img, pc.swapLineP.x, pc.swapLineP.y,
 						Graphics.VCENTER | Graphics.HCENTER);
 			} else {
