@@ -277,7 +277,12 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 		case Configuration.LOCATIONPROVIDER_JSR179:
 			//#if polish.api.locationapi
-			locationProducer = new JSR179Input(this);			
+			try {				
+				locationProducer = new JSR179Input(this);				
+			} catch (NoClassDefFoundError cnfe) {
+				locationDecoderEnd();
+				logger.fatal("Your phone does not support JSR179, please use a different location provider");				
+			}
 			
 			//#else
 			logger.error("JSR179 is not supported in this version of GpsMid");
