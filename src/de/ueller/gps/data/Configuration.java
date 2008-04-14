@@ -321,7 +321,7 @@ public class Configuration {
 
 	public void setDetailBoost(int detailBoost) {
 		this.detailBoost = detailBoost;
-			write(detailBoost,10);
+			write(detailBoost, RECORD_ID_DETAIL_BOOST);
 	}
 
 	
