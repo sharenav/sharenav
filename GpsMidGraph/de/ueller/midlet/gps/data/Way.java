@@ -600,6 +600,10 @@ public class Way extends Entity{
 	public boolean isOneway(){
 		return ((mod & WAY_ONEWAY) == WAY_ONEWAY);
 	}
+	
+	public boolean isArea() {
+		return type >= 50;
+	}
 
 	private float[] getFloatNodes(SingleTile t, short[] nodes, float offset) {
 	    float [] res = new float[nodes.length];
