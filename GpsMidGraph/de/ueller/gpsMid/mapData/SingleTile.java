@@ -86,8 +86,7 @@ public class SingleTile extends Tile implements QueueableTile {
 	private boolean isDataReady() {
 		if (state == STATE_NOTLOAD) {
 			// logger.debug("singleTile start load " + fileId );
-			state = STATE_LOADSTARTED;
-			// drawBounds(pc, 255, 55, 55);			
+			state = STATE_LOADSTARTED;						
 			Trace.getInstance().getDataReader().add(this,this);
 			return false;
 		}
@@ -97,17 +96,9 @@ public class SingleTile extends Tile implements QueueableTile {
 			return false;
 		}
 		if (state == STATE_CLEANUP) {
-			// logger.debug("singleTile wait for Cleanup " + fileId);
-			// drawBounds(pc, 255, 255, 55);
+			// logger.debug("singleTile wait for Cleanup " + fileId);			
 			return false;
 		}
-//		switch (zl){
-//		case 0: drawBounds(pc, 255, 0, 0); break;
-//		case 1: drawBounds(pc, 0, 255, 0); break;
-//		case 2: drawBounds(pc, 0, 0, 255); break;
-//		case 3: drawBounds(pc, 255, 255, 0); break;
-//		case 4: drawBounds(pc, 0, 255, 255); break;
-//		}
 		return true;
 
 	}
@@ -140,17 +131,14 @@ public class SingleTile extends Tile implements QueueableTile {
 //						logger.debug("search target nameIdx" );
 						if (pc.target.e == null && pc.target.nameIdx == w.nameIdx){
 //							logger.debug("search target way");
-//							for (int p1 = 0; p1 < w.paths.length; p1++) {
-//							short[] path = w.paths[p1];
-								for (int i1 = 0; i1 < w.path.length; i1++) {
-									short s = w.path[i1];
-									if ((nodeLat[s] + centerLat)*fpminv == pc.target.lat && 
+							for (int i1 = 0; i1 < w.path.length; i1++) {
+								short s = w.path[i1];
+								if ((nodeLat[s] + centerLat)*fpminv == pc.target.lat && 
 										(nodeLon[s]  + centerLon)*fpminv == pc.target.lon){
-//										logger.debug("found Target way");
-										pc.target.setEntity(w, getFloatNodes(nodeLat,centerLat), getFloatNodes(nodeLon,centerLon));
-									}
+//									logger.debug("found Target way");
+									pc.target.setEntity(w, getFloatNodes(nodeLat,centerLat), getFloatNodes(nodeLon,centerLon));
 								}
-//							}
+							}
 						}
 					}
 					w.setColor(pc);
@@ -159,12 +147,9 @@ public class SingleTile extends Tile implements QueueableTile {
 						    w.paintAsPath(pc, this);
 						} else {
 							float witdh = (pc.ppm*w.getWidth()/2);
-
-								w.paintAsPath(pc,(int)(witdh+0.5), this);
-
+							w.paintAsPath(pc,(int)(witdh+0.5), this);
 						}
-					} else {
-						// w.paintAsArea(pc, nodes);
+					} else {						
 						w.paintAsArea(pc, this);
 					}
 				}
@@ -236,18 +221,14 @@ public class SingleTile extends Tile implements QueueableTile {
 //						logger.debug("search target nameIdx" );
 						if (pc.target.e == null && pc.target.nameIdx == w.nameIdx){
 //							logger.debug("search target way");
-//							for (int p1 = 0; p1 < w.paths.length; p1++) {
-//								short[] path = w.paths[p1];
-								for (int i1 = 0; i1 < w.path.length; i1++) {
-									short s = w.path[i1];
-									if (nodeLat[s] == pc.target.lat &&
-											nodeLon[s] == pc.target.lon){
-//										logger.debug("found Target way");
-										
-										pc.target.setEntity(w, getFloatNodes(nodeLat,centerLat), getFloatNodes(nodeLon,centerLon));
-									}
+							for (int i1 = 0; i1 < w.path.length; i1++) {
+								short s = w.path[i1];
+								if (nodeLat[s] == pc.target.lat &&
+										nodeLon[s] == pc.target.lon){
+//									logger.debug("found Target way");										
+									pc.target.setEntity(w, getFloatNodes(nodeLat,centerLat), getFloatNodes(nodeLon,centerLon));
 								}
-//							}
+							}
 						}
 					}
 					if ((opt & Tile.OPT_PAINT) != 0){
@@ -257,12 +238,9 @@ public class SingleTile extends Tile implements QueueableTile {
 								w.paintAsPath(pc, this);
 							} else {
 								float witdh = (pc.ppm*w.getWidth()/2);
-
 								w.paintAsPath(pc,(int)(witdh+0.5), this);
-
 							}
-						} else {
-							// w.paintAsArea(pc, nodes);
+						} else {							
 							w.paintAsArea(pc, this);
 						}
 					}
@@ -321,66 +299,15 @@ public class SingleTile extends Tile implements QueueableTile {
 		state = STATE_LOADREADY;
 	}
 
-//	public static Trace getTrace() {
-//		return trace;
-//	}
-//
-//	public static void setTrace(Trace trace) {
-//		Tile.trace = trace;
-//	}
-
 	public void paintNode(PaintContext pc, int i) {
 		Image img = null;
-		// logger.debug("set color "+pc);
-		// if (node.name == null) continue;
 		byte t=type[i];
-		//System.out.println("Considering drawing node "+ i + " of type " + pc.c.getNodeTypeDesc(t));
+
 		pc.g.setColor(pc.c.getNodeTextColor(t));
 		img = pc.c.getNodeImage(t);
-		/*switch (t) {
-		case C.NODE_PLACE_CITY:			
-			pc.g.setColor(255, 50, 50);
-			break;
-		case C.NODE_PLACE_TOWN:
-			pc.g.setColor(200, 100, 100);
-			break;
-		case C.NODE_PLACE_VILLAGE:
-			pc.g.setColor(180, 180, 50);
-			break;
-		case C.NODE_PLACE_HAMLET:
-			pc.g.setColor(160, 160, 90);
-			break;
-		case C.NODE_PLACE_SUBURB:
-			pc.g.setColor(0, 0, 0);
-			break;
-		case 6:
-			pc.g.setColor(0, 0, 0);
-			break;
-		case C.NODE_AMENITY_PARKING:
-			img = pc.images.IMG_PARKING;
-			break;
-		case C.NODE_AMENITY_TELEPHONE:
-			img = pc.images.IMG_TELEPHONE;
-			break;
-		case C.NODE_AMENITY_SCHOOL:
-			img = pc.images.IMG_SCHOOL;
-			break;
-		case C.NODE_AMENITY_FUEL:
-			img = pc.images.IMG_FUEL;
-			break;
-		case C.NODE_RAILWAY_STATION:
-			img = pc.images.IMG_RAILSTATION;
-			break;
-		case C.NODE_AEROWAY_AERODROME:
-			img = pc.images.IMG_AERODROME;
-			break;			
-
-		}
-		*/
 		// logger.debug("calc pos "+pc);
 		pc.getP().forward((float)((nodeLat[i]*fpminv + centerLat)), (float)((nodeLon[i]*fpminv + centerLon)), pc.swapLineP, true);
 		if (pc.scale > pc.c.getNodeMaxScale(t)) {
-			//System.out.println("Not drawing, scale to large for node of type " + t);
 			return;
 		}
 		if (img != null) {
@@ -394,7 +321,6 @@ public class SingleTile extends Tile implements QueueableTile {
 			}
 		}
 		if (pc.scale > pc.c.getNodeMaxTextScale(t)) {
-			//System.out.println("Not drawing text, scale to large for node of type " + t);
 			return;
 		}
 		// logger.debug("draw txt " + );
@@ -420,50 +346,7 @@ public class SingleTile extends Tile implements QueueableTile {
 		return "ST" + zl + "-" + fileId+ ":" + lastUse;
 	}
 
-	/*public void getWay(PaintContext pc, PositionMark pm, Way bestWay) {
-		if (contain(pm)) {
-			if (state != STATE_LOADREADY){
-				try {
-					pc.dataReader.readData(this);
-					state=STATE_LOADREADY;
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					return;
-				}
-			}
-			lastUse = 0;
-			if (ways != null) {
-				for (int i = 0; i < ways.length; i++) {
-					Way w = ways[i];
-//					for (int p1 = 0; p1 < w.paths.length; p1++) {
-//						short[] path = w.paths[p1];
-						short pidx = w.path[0];
-						float lat1 = nodeLat[pidx];
-						float lon1 = nodeLon[pidx];
-						for (int i1 = 1; i1 < w.path.length; i1++) {
-							int idx = w.path[i1];
-							float lat2 = nodeLat[idx];
-							float lon2 = nodeLon[idx];
-							float dist=MoreMath.ptSegDistSq(lat1 ,lon1, lat2, lon2, pm.lat, pm.lon);
-							lat1=lat2;
-							lon1=lon2;
-							if (dist < pc.squareDstToWay){
-								pc.squareDstToWay=dist;
-								bestWay=w;
-								pm.setEntity(w, nodeLat, nodeLon);
-//								pm.nodeLat=nodeLat;
-							}
-						}
-//					}
-
-				}
-			}
-		}
-
-
-	}*/
-		public void paint(PaintContext pc) {
+	public void paint(PaintContext pc) {
 		paint(pc,true);
 		paint(pc,false);		
 	}
