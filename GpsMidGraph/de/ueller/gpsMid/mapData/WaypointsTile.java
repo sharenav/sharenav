@@ -161,8 +161,8 @@ public class WaypointsTile extends Tile {
 		
 	}
 
-	public void paint(PaintContext pc) {		
-		if (contain(pc)) {
+	public void paint(PaintContext pc, byte layer) {		
+		if (contain(pc) && layer == Tile.LAYER_NODE) {
 			for (int i = 0; i < waypts.size(); i++) {
 				PositionMark waypt = (PositionMark)waypts.elementAt(i);
 				
@@ -190,18 +190,6 @@ public class WaypointsTile extends Tile {
 			}
 		}
 		
-	}
-
-	public void paintAreaOnly(PaintContext pc) {
-		//This tile type contains no areas
-		//Nothing to do
-		
-	}
-
-	public void paintNonArea(PaintContext pc) {
-		//This tile type contains no areas
-		//just call normal paint()
-		paint(pc);
 	}
 
 	public void walk(PaintContext pc, int opt) {

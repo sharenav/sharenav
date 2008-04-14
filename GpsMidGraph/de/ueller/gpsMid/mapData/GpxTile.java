@@ -172,27 +172,18 @@ public class GpxTile extends Tile {
 		return false;
 	}
 
-	public void paint(PaintContext pc) {		
-		if (contain(pc)) {			
-			if (waypts == null) {
-				t1.paint(pc);
-				t2.paint(pc);
-			} else
-				paintLocal(pc);
+	public void paint(PaintContext pc, byte layer) {
+		if (layer == Tile.LAYER_NODE) {
+			if (contain(pc)) {			
+				if (waypts == null) {
+					t1.paint(pc, layer);
+					t2.paint(pc, layer);
+				} else
+					paintLocal(pc);
+			}
 		}
-
 	}
-
-	public void paintAreaOnly(PaintContext pc) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void paintNonArea(PaintContext pc) {
-		// TODO Auto-generated method stub
-
-	}
-
+	
 	public void dropTrk() {
 		noTrkPts = 0;
 		trkPtLat = null;

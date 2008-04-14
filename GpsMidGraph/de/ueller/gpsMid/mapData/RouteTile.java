@@ -56,8 +56,8 @@ public class RouteTile extends RouteBaseTile {
 		return false;
 	}
 
-	public void paint(PaintContext pc) {
-		if (pc == null){
+	public void paint(PaintContext pc, byte layer) {
+		if (pc == null && layer != Tile.LAYER_NODE){ //Which layer should this be at?
 			return;
 		}
 		if (contain(pc)){
@@ -285,16 +285,4 @@ public class RouteTile extends RouteBaseTile {
 			connections[addIdx]=newCons;
 		}
 	}
-
-	public void paintAreaOnly(PaintContext pc) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	public void paintNonArea(PaintContext pc) {
-		paint(pc);		
-	}
-
-
 }

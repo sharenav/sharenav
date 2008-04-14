@@ -104,7 +104,7 @@ public class ContainerTile extends Tile {
 		
 	}*/
 	
-	public void paint(PaintContext pc) {
+	public void paint(PaintContext pc, byte layer) {
 		//#debug
 		logger.debug("paint container");
 		if (contain(pc)){
@@ -112,12 +112,12 @@ public class ContainerTile extends Tile {
 			if (t1 != null) {
 				//#debug
 				logger.debug("paint container left");
-				t1.paint(pc);
+				t1.paint(pc, layer);
 			}
 			if (t2 != null) {
 				//#debug
 				logger.debug("paint container right");
-				t2.paint(pc);
+				t2.paint(pc, layer);
 			}	
 		} else {			
 			cleanup(4);
@@ -143,45 +143,6 @@ public class ContainerTile extends Tile {
 		}
 	}
 	
-
-	public void paintAreaOnly(PaintContext pc) {
-		//#debug
-		logger.debug("paint container (Area only)");
-		if (contain(pc)){
-			if (t1 != null) {
-				//#debug
-				logger.debug("paint container left");
-				t1.paintAreaOnly(pc);
-			}
-			if (t2 != null) {
-				//#debug
-				logger.debug("paint container right");
-				t2.paintAreaOnly(pc);
-			}	
-		} else {			
-			cleanup(4);
-		}
-		
-	}
-	
-	public void paintNonArea(PaintContext pc) {
-		//#debug
-		logger.debug("paint container (apart from area ways");
-		if (contain(pc)){
-			if (t1 != null) {
-				//#debug
-				logger.debug("paint container left");
-				t1.paintNonArea(pc);
-			}
-			if (t2 != null) {
-				//#debug
-				logger.debug("paint container right");
-				t2.paintNonArea(pc);
-			}	
-		} else {			
-			cleanup(4);
-		}
-	}
 	
 	/**
 	    * Returns a Vector of SearchResult containing POIs of

@@ -580,18 +580,9 @@ public class Gpx extends Tile implements Runnable {
 		return false;
 	}
 
-	public void paint(PaintContext pc) {
-		tile.paint(pc);
+	public void paint(PaintContext pc, byte layer) {
+		tile.paint(pc, layer);
 		
-	}
-
-	public void paintAreaOnly(PaintContext pc) {
-		tile.paintAreaOnly(pc);
-		
-	}
-
-	public void paintNonArea(PaintContext pc) {
-		tile.paintNonArea(pc);		
 	}
 	
 	public boolean isRecordingTrk() {

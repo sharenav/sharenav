@@ -45,8 +45,8 @@ public class FileTile extends Tile implements QueueableTile {
 		}
 		return false;
 	}
-
-	private void paint(PaintContext pc, int method) {
+	
+	public void paint(PaintContext pc, byte layer) {	
 		if (contain(pc)) {
 			if (tile == null){
 				if (!inLoad){
@@ -56,26 +56,11 @@ public class FileTile extends Tile implements QueueableTile {
 				}
 			} else {
 				lastUse=0;
-				switch (method) {
-				case 0: {tile.paint(pc); break;}
-				case 1: {tile.paintAreaOnly(pc); break;}
-				case 2: {tile.paintNonArea(pc); break;}
-				}
+				tile.paint(pc,layer);
 			}
 		}
 	}
 	
-	public void paint(PaintContext pc) {
-		paint(pc,0);
-	}
-	
-	public void paintAreaOnly(PaintContext pc) {
-		paint(pc,1);
-	}
-
-	public void paintNonArea(PaintContext pc) {
-		paint(pc,2);
-	}
 	public void walk(PaintContext pc,int opt) {
 		if (contain(pc)) {
 			if (tile == null){

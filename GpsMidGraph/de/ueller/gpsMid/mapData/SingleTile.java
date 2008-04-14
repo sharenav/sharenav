@@ -103,8 +103,9 @@ public class SingleTile extends Tile implements QueueableTile {
 
 	}
 
-	public synchronized void paint(PaintContext pc, boolean area) {
+	public synchronized void paint(PaintContext pc, byte layer) {
 //		logger.info("paint Single");
+		//System.out.println("Painting single tile " + this +  " at layer " + layer);
 		float testLat;
 		float testLon;
 		if (contain(pc)) {
@@ -112,57 +113,63 @@ public class SingleTile extends Tile implements QueueableTile {
 				return;
 			}
 			lastUse = 0;
-			if (ways != null) {
-				for (int i = 0; i < ways.length; i++) {
-					if (abortPainting)
-						return;
-					Way w = ways[i];
-					if (w == null) continue;
-					//Determin if the way is an area or not. 
-					if (!((w.type < 50 && area == false) || (w.type >= 50 && area ==  true)))
-						continue;
+			if (layer != Tile.LAYER_NODE) {
+				if (ways != null) {					
+					for (int i = 0; i < ways.length; i++) {
+						if (abortPainting)
+							return;
+						Way w = ways[i];
+						if (w == null) continue;
+						//Determin if the way is an area or not. 
+						if (!((!w.isArea() && layer == Tile.LAYER_AREA) || (w.isArea() && layer == Tile.LAYER_AREA)))
+							continue;
 
-					// logger.debug("test Bounds of way");
-					if (!w.isOnScreen(pc, centerLat, centerLon)) continue; 
-					// logger.debug("draw " + w.name);
-					// fill the target fields if they are empty
-//					logger.debug("search target" + pc.target);
-					if (pc.target != null ){
-//						logger.debug("search target nameIdx" );
-						if (pc.target.e == null && pc.target.nameIdx == w.nameIdx){
-//							logger.debug("search target way");
-							for (int i1 = 0; i1 < w.path.length; i1++) {
-								short s = w.path[i1];
-								if ((nodeLat[s] + centerLat)*fpminv == pc.target.lat && 
-										(nodeLon[s]  + centerLon)*fpminv == pc.target.lon){
-//									logger.debug("found Target way");
-									pc.target.setEntity(w, getFloatNodes(nodeLat,centerLat), getFloatNodes(nodeLon,centerLon));
+						// logger.debug("test Bounds of way");
+						if (!w.isOnScreen(pc, centerLat, centerLon)) continue; 
+						// logger.debug("draw " + w.name);
+						// fill the target fields if they are empty
+//						logger.debug("search target" + pc.target);
+						if (pc.target != null ){
+//							logger.debug("search target nameIdx" );
+							if (pc.target.e == null && pc.target.nameIdx == w.nameIdx){
+//								logger.debug("search target way");
+								for (int i1 = 0; i1 < w.path.length; i1++) {
+									short s = w.path[i1];
+									if ((nodeLat[s] + centerLat)*fpminv == pc.target.lat && 
+											(nodeLon[s]  + centerLon)*fpminv == pc.target.lon){
+//										logger.debug("found Target way");
+										pc.target.setEntity(w, getFloatNodes(nodeLat,centerLat), getFloatNodes(nodeLon,centerLon));
+									}
 								}
 							}
 						}
-					}
-					w.setColor(pc);
-					if (!area) {
-						if (pc.config.getRender() == Configuration.RENDER_LINE){
-						    w.paintAsPath(pc, this);
-						} else {
-							float witdh = (pc.ppm*w.getWidth()/2);
-							w.paintAsPath(pc,(int)(witdh+0.5), this);
+						w.setColor(pc);
+						if (!w.isArea()) {
+							if (pc.config.getRender() == Configuration.RENDER_LINE){
+								w.paintAsPath(pc, this);
+							} else {
+								float witdh = (pc.ppm*w.getWidth()/2);
+								w.paintAsPath(pc,(int)(witdh+0.5), this);
+							}
+						} else {						
+							w.paintAsArea(pc, this);
 						}
-					} else {						
-						w.paintAsArea(pc, this);
 					}
 				}
-			}
-			for (short i = 0; i < type.length; i++) {
-				if (abortPainting)
-					return;
-				if (type[i] == 0) {
-					break;
+			} else {				
+				/**
+				 * Drawing nodes
+				 */
+				for (short i = 0; i < type.length; i++) {
+					if (abortPainting)
+						return;
+					if (type[i] == 0) {
+						break;
+					}
+					if (!isNodeOnScreen(pc, i))
+						continue;				
+					paintNode(pc, i);
 				}
-				if (isNodeOnScreen(pc, i))
-					continue;				
-				paintNode(pc, i);
 			}
 		} else {
 
@@ -313,19 +320,6 @@ public class SingleTile extends Tile implements QueueableTile {
 		return "ST" + zl + "-" + fileId+ ":" + lastUse;
 	}
 
-	public void paint(PaintContext pc) {
-		paint(pc,true);
-		paint(pc,false);		
-	}
-	
-	public void paintNonArea(PaintContext pc) {
-		paint(pc,false);		
-	}
-
-	public void paintAreaOnly(PaintContext pc) {
-		paint(pc,true);		
-	}
-	
    private float[] getFloatNodes(short[] nodes, float offset) {
 	    float [] res = new float[nodes.length];
 	    for (int i = 0; i < nodes.length; i++) {

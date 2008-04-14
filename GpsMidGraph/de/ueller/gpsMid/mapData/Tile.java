@@ -32,6 +32,9 @@ public abstract class Tile {
 	public static final int OPT_FIND_TARGET = 2;
 	public static final int OPT_FIND_CURRENT= 3;
 	
+	public static final byte LAYER_AREA = Byte.MIN_VALUE;
+	public static final byte LAYER_NODE = Byte.MAX_VALUE;
+	
 	
 
 	public float minLat;
@@ -46,24 +49,15 @@ public abstract class Tile {
 //	public static Trace				trace				= null;
 
 	/**
-	 * Paint all elements of a tile to the PaintContext
+	 * Paint all elements of a tile to the PaintContext that are in layer
+	 * There are two special layers LAYER_AREA and LAYER_NODE
 	 * @param pc
 	 */
-	public abstract void paint(PaintContext pc);
+	public abstract void paint(PaintContext pc, byte layer);
 	public abstract void walk(PaintContext pc,int opt);
 	public abstract boolean cleanup(int level);
 	//public abstract void getWay(PaintContext pc,PositionMark pm,Way w);
-		/**
-	 * Paint all ways of a tile that are areas to the PaintContext
-	 * @param pc
-	 */
-	public abstract void paintAreaOnly(PaintContext pc);
-	/**
-	 * Paint all elements of a tile except for area ways to the PaintContext
-	 * @param pc
-	 */
-	public abstract void paintNonArea(PaintContext pc);
-	
+		
 	boolean contain(ScreenContext pc){
 //		System.out.println(this);
 //		System.out.println(pc.screenLD + "   " + pc.screenRU);

@@ -143,57 +143,47 @@ public class ImageCollector implements Runnable {
 					boost*=1.5;
 				}
 				/**
-				 * Draw Area ways first, as these would cover other Ways if
-				 * painted later
+				 * At the moment we don't really have proper layer support
+				 * in the data yet, so only split it into Area, Way and Node
+				 * layers
 				 */
-				if ((pc[nextCreate].scale < 45000 * boost) && (t[3] != null)) {
-					t[3].paintAreaOnly(pc[nextCreate]);
-					Thread.yield();
-				}
-				if ((pc[nextCreate].scale < 180000 * boost) && (t[2] != null)) {
-					t[2].paintAreaOnly(pc[nextCreate]);
-					Thread.yield();
-				}
-				if ((pc[nextCreate].scale < 900000f * boost) && (t[1] != null)) {
-					t[1].paintAreaOnly(pc[nextCreate]);
-					Thread.yield();
-				}
-				if (t[0] != null) {
-					t[0].paintAreaOnly(pc[nextCreate]);
-				}
-				if (suspended) {
-					// Don't continue rendering if suspended
-					pc[nextCreate].state = PaintContext.STATE_READY;
-					continue;
-				}
+				byte layersToRender[] = {Tile.LAYER_AREA, 0, Tile.LAYER_NODE};
+				
 				/**
-				 * Draw all other elements now ontop of any area
+				 * Draw each layer seperately to enforce paint ordering.
+				 *   
 				 */
-				if ((pc[nextCreate].scale < 45000 * boost) && (t[3] != null)) {
-					t[3].paintNonArea(pc[nextCreate]);
-					Thread.yield();
+				logger.info("Drawing image collector");
+				for (byte layer = 0; layer < layersToRender.length; layer++) {
+					logger.info("Drawing image collector layer " + layer);
+					if ((pc[nextCreate].scale < 45000 * boost) && (t[3] != null)) {
+						t[3].paint(pc[nextCreate],layersToRender[layer]);
+						Thread.yield();
+					}
+					if ((pc[nextCreate].scale < 180000 * boost) && (t[2] != null)) {
+						t[2].paint(pc[nextCreate], layersToRender[layer]);
+						Thread.yield();
+					}
+					if ((pc[nextCreate].scale < 900000f * boost) && (t[1] != null)) {
+						t[1].paint(pc[nextCreate], layersToRender[layer]);
+						Thread.yield();
+					}
+					if (t[0] != null) {
+						t[0].paint(pc[nextCreate], layersToRender[layer]);
+					}
+					/**
+					 * Drawing waypoints
+					 */
+					if (t[5] != null) {
+						t[5].paint(pc[nextCreate], layersToRender[layer]);
+					}
+					if (suspended) {
+						// Don't continue rendering if suspended
+						pc[nextCreate].state = PaintContext.STATE_READY;
+						break;
+					}
 				}
-				if ((pc[nextCreate].scale < 180000 * boost) && (t[2] != null)) {
-					t[2].paintNonArea(pc[nextCreate]);
-					Thread.yield();
-				}
-				if ((pc[nextCreate].scale < 900000f * boost) && (t[1] != null)) {
-					t[1].paintNonArea(pc[nextCreate]);
-					Thread.yield();
-				}
-				if (t[0] != null) {
-					t[0].paintNonArea(pc[nextCreate]);
-				}
-				// if (t[4] != null){
-				// t[4].paint(pc[nextCreate]);
-				// }
-
-				/**
-				 * Drawing waypoints
-				 */
-				if (t[5] != null) {
-					t[5].paint(pc[nextCreate]);
-				}
+				logger.info("finished Drawing image collector");
 
 				newCollected();
 				createImageCount++;

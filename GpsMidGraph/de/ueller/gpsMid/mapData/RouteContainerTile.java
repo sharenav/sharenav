@@ -70,15 +70,15 @@ public class RouteContainerTile extends RouteBaseTile {
 
     }
 
-	public void paint(PaintContext pc) {
+	public void paint(PaintContext pc, byte layer) {
 		if (pc == null)
 			return;
 		if (contain(pc)){
 			if (t1 != null){
-				t1.paint(pc);
+				t1.paint(pc, layer);
 			}
 			if (t2 != null){
-				t2.paint(pc);
+				t2.paint(pc, layer);
 			}
 		}
 	}
@@ -172,15 +172,5 @@ public class RouteContainerTile extends RouteBaseTile {
 			this.permanent=true;
 		}
 		return ret;
-	}
-
-
-
-	public void paintAreaOnly(PaintContext pc) {
-		// TODO Auto-generated method stub		
-	}
-
-	public void paintNonArea(PaintContext pc) {
-		paint(pc);		
 	}
 }

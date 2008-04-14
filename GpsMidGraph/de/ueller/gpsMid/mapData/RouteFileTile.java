@@ -136,7 +136,7 @@ public class RouteFileTile extends RouteBaseTile {
 
 	}
 
-	public void paint(PaintContext pc) {
+	public void paint(PaintContext pc, byte layer) {
 		if (tile == null){
 			try {
 				loadTile();
@@ -145,7 +145,7 @@ public class RouteFileTile extends RouteBaseTile {
 				e.printStackTrace();
 			}
 		}
-		tile.paint(pc);
+		tile.paint(pc, layer);
 	}
 
 	public Connection[] getConnections(int id, RouteBaseTile rootTile,boolean bestTime) {
@@ -198,13 +198,5 @@ public class RouteFileTile extends RouteBaseTile {
 			}
 		}
 		return ret;
-	}
-	public void paintAreaOnly(PaintContext pc) {
-		// TODO Auto-generated method stub		
-	}
-
-	public void paintNonArea(PaintContext pc) {
-		paint(pc);		
-	}
-
+	}	
 }
