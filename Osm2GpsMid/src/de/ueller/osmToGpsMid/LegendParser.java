@@ -68,7 +68,7 @@ public class LegendParser extends DefaultHandler{
 	public void endDocument() {
 		System.out.println("End of Document");
 	}
-
+	
 	public void startElement(String namespaceURI, String localName, String qName, Attributes atts) {		
 //		System.out.println("start " + localName + " " + qName);
 		if (qName.equals("pois")) {
@@ -109,6 +109,9 @@ public class LegendParser extends DefaultHandler{
 		}
 		if (qName.equals("image")) {
 			current.image = atts.getValue("src");
+		}
+		if (qName.equals("searchIcon")) {			
+			current.searchIcon = atts.getValue("src");
 		}
 		if (qName.equals("imageCentered")) {
 			current.imageCenteredOnNode = atts.getValue("value").equalsIgnoreCase("true");

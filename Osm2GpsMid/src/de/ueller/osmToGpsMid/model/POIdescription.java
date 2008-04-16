@@ -20,6 +20,7 @@ public class POIdescription {
 	public String	nameKey;
 	public String	nameFallbackKey;
 	public String	image;
+	public String   searchIcon;
 	public int		minTextScale;
 	public int		minImageScale;
 	public int 		textColor;

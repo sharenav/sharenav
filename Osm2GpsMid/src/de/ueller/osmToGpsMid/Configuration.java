@@ -38,7 +38,7 @@ public class Configuration {
 	 * Specifies the format of the map on disk we are about to write
 	 * This constant must be in sync with GpsMid
 	 */
-	public final static short MAP_FORMAT_VERSION = 7;
+	public final static short MAP_FORMAT_VERSION = 8;
 	
 		private ResourceBundle rb;
 		private ResourceBundle vb;
@@ -98,8 +98,7 @@ public class Configuration {
 				maxRouteTileSize=Integer.parseInt(getString("routing.maxTileSize"));
 				maxTileSize=Integer.parseInt(getString("maxTileSize"));
 				//TODO: Hardcoded!!!
-				legend = new LegendParser(new FileInputStream("style-file.xml"));
-				
+				legend = new LegendParser(new FileInputStream("style-file.xml"));				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

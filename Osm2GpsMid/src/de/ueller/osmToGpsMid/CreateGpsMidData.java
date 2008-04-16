@@ -46,6 +46,12 @@ public class CreateGpsMidData {
 		}
 	}
 	
+	public final static byte LEGEND_FLAG_IMAGE = 0x01;
+	public final static byte LEGEND_FLAG_SEARCH_IMAGE = 0x02;
+	public final static byte LEGEND_FLAG_MIN_IMAGE_SCALE = 0x04;
+	public final static byte LEGEND_FLAG_TEXT_COLOR = 0x08;
+	
+		
 //	private final static int MAX_TILE_FILESIZE=20000;
 //	private final static int MAX_ROUTETILE_FILESIZE=5000;
 	public  final static int MAX_DICT_DEEP=5;
@@ -136,27 +142,38 @@ public class CreateGpsMidData {
 			for (POIdescription poi : Configuration.getConfiguration().getPOIDescs()) {
 				byte flags = 0;
 				if (poi.image != null && !poi.image.equals(""))
-					flags |= 0x01;
+					flags |= LEGEND_FLAG_IMAGE;
+				if (poi.searchIcon != null)
+					flags |= LEGEND_FLAG_SEARCH_IMAGE;
 				if (poi.minImageScale != poi.minTextScale)
-					flags |= 0x02;
+					flags |= LEGEND_FLAG_MIN_IMAGE_SCALE;
 				if (poi.textColor != 0)
-					flags |= 0x04;
+					flags |= LEGEND_FLAG_TEXT_COLOR;				
 				dsi.writeByte(poi.typeNum);
 				dsi.writeByte(flags);
 				dsi.writeUTF(poi.description);
 				dsi.writeBoolean(poi.imageCenteredOnNode);
 				dsi.writeInt(poi.minImageScale);
-				if ((flags & 0x01) > 0) {
+				if ((flags & LEGEND_FLAG_IMAGE) > 0) {
 					dsi.writeUTF(poi.image);
 					if (!(new File(path + poi.image).exists())) {
 						System.out.println("Couldn't find image " + poi.image
 								+ " for " + poi.description);
 					}
 				}
-				if ((flags & 0x02) > 0)
+				if ((flags & LEGEND_FLAG_SEARCH_IMAGE) > 0) {
+					System.out.println("Search Image!!!!");
+					dsi.writeUTF(poi.searchIcon);
+					if (!(new File(path + poi.searchIcon).exists())) {
+						System.out.println("Couldn't find search icon " + poi.searchIcon
+								+ " for " + poi.description);
+					}
+				}
+				if ((flags & LEGEND_FLAG_MIN_IMAGE_SCALE) > 0)
 					dsi.writeInt(poi.minTextScale);
-				if ((flags & 0x04) > 0)
+				if ((flags & LEGEND_FLAG_TEXT_COLOR) > 0)
 					dsi.writeInt(poi.textColor);
+				
 			}
 			dsi.close();
 			foi.close();
