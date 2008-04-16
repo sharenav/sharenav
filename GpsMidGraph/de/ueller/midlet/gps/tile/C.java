@@ -20,13 +20,18 @@ public class C {
 	 * Specifies the format of the map on disk we expect to see
 	 * This constant must be in sync with Osm2GpsMid
 	 */
-	public final static short MAP_FORMAT_VERSION = 7;
+	public final static short MAP_FORMAT_VERSION = 8;
 	
 	public final static byte NODE_MASK_ROUTENODELINK=0x1;
 	public final static byte NODE_MASK_TYPE=0x2;
 	public final static byte NODE_MASK_NAME=0x4;
 	public final static byte NODE_MASK_ROUTENODE=0x8;
 	public final static byte NODE_MASK_NAMEHIGH=0x10;
+	
+	public final static byte LEGEND_FLAG_IMAGE = 0x01;
+	public final static byte LEGEND_FLAG_SEARCH_IMAGE = 0x02;
+	public final static byte LEGEND_FLAG_MIN_IMAGE_SCALE = 0x04;
+	public final static byte LEGEND_FLAG_TEXT_COLOR = 0x08;
 	
 	/**
 	 * minimum distances to set the is_in name to the next city
@@ -116,7 +121,7 @@ public class C {
 			//System.out.println("POI: " +  pois[i].description);
 			pois[i].imageCenteredOnNode = ds.readBoolean();
 			pois[i].maxImageScale = ds.readInt();
-			if ((flags & 0x01) > 0) {
+			if ((flags & LEGEND_FLAG_IMAGE) > 0) {
 				String imageName = ds.readUTF();
 				//System.out.println("trying to open image " + imageName);
 				try {
@@ -126,11 +131,23 @@ public class C {
 					pois[i].image = generic;
 				}				
 			}
-			if ((flags & 0x02) > 0)
+			if ((flags & LEGEND_FLAG_SEARCH_IMAGE) > 0) {
+				String imageName = ds.readUTF();
+				System.out.println("trying to open search image " + imageName);
+				try {
+					pois[i].searchIcon = Image.createImage(imageName);
+				} catch (IOException e) {
+					logger.info("could not open POI image " + imageName + " for " + pois[i].description);
+					pois[i].searchIcon = generic;
+				}				
+			} else if (pois[i].image != null) {
+				pois[i].searchIcon = pois[i].image;
+			}
+			if ((flags & LEGEND_FLAG_MIN_IMAGE_SCALE) > 0)
 				pois[i].maxTextScale = ds.readInt();
 			else
 				pois[i].maxTextScale = pois[i].maxImageScale; 
-			if ((flags & 0x04) > 0)			
+			if ((flags & LEGEND_FLAG_TEXT_COLOR) > 0)			
 				pois[i].textColor = ds.readInt();
 		}
 		ds.close();				
@@ -142,6 +159,9 @@ public class C {
 	
 	public Image getNodeImage(byte type)  {
 		return pois[typeTotype(type)].image;
+	}
+	public Image getNodeSearchImage(byte type)  {
+		return pois[typeTotype(type)].searchIcon;
 	}
 	
 	public int getNodeMaxScale(byte type) {

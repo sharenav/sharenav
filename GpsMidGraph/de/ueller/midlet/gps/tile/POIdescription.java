@@ -6,6 +6,7 @@ public class POIdescription {
 	public String	description;
 	public boolean	imageCenteredOnNode;
 	public Image	image;
+	public Image	searchIcon;
 	public int		textColor;
 	public int		maxTextScale;
 	public int		maxImageScale;
