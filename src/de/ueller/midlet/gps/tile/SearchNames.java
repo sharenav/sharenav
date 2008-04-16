@@ -156,14 +156,13 @@ public class SearchNames implements Runnable{
 				if (!current.toString().startsWith(compare)){
 					idx=-1;
 				}
-				int noEnteties = ds.readByte();
-				
-				for (int ii = 0; ii < noEnteties; ii++){					
+				type = ds.readByte();
+								
+				while (type != 0){					
 					if (stopSearch){
 						ds.close();						
 						return;
-					}
-					type=ds.readByte();
+					}					
 					byte isInCount=ds.readByte();
 					int[] isInArray=null;
 					if (isInCount > 0 ){
@@ -193,7 +192,8 @@ public class SearchNames implements Runnable{
 							return;
 						}
 						//System.out.println("found " + current +"(" + idx + ") type=" + type);
-					}					
+					}
+					type = ds.readByte();
 				}
 			}			
 		} catch (NullPointerException e) {

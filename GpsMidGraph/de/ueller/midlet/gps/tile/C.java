@@ -20,7 +20,7 @@ public class C {
 	 * Specifies the format of the map on disk we expect to see
 	 * This constant must be in sync with Osm2GpsMid
 	 */
-	public final static short MAP_FORMAT_VERSION = 8;
+	public final static short MAP_FORMAT_VERSION = 9;
 	
 	public final static byte NODE_MASK_ROUTENODELINK=0x1;
 	public final static byte NODE_MASK_TYPE=0x2;
