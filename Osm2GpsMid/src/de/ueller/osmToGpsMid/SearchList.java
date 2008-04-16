@@ -99,11 +99,7 @@ public class SearchList {
 					ds.writeInt(nameIdx | 0x80000000);
 				} else {
 					ds.writeShort(nameIdx);
-				}
-				if (mapName.getEntitys().size() > Byte.MAX_VALUE) {
-					System.out.println("ERROR: to many enteties for mapName " + mapName.getName());
-				}
-				ds.writeByte(mapName.getEntitys().size());
+				}				
 				for (Entity e : mapName.getEntitys()){
 					Node center=null;
 					if (e instanceof Node) {
@@ -140,7 +136,8 @@ public class SearchList {
 					}
 					ds.writeFloat(MyMath.degToRad(center.lat));
 					ds.writeFloat(MyMath.degToRad(center.lon));
-				}				
+				}
+				ds.writeByte(0);
 //				ds.writeUTF(string.substring(eq));
 				curPos=eq;
 				lastStr=string;

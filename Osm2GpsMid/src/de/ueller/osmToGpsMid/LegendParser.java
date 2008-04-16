@@ -30,7 +30,7 @@ public class LegendParser extends DefaultHandler{
 	private String currentKey;
 	private Hashtable<String,POIdescription> keyValues;
 	private boolean readingPOIs = false;
-	private byte poiIdx;
+	private byte poiIdx = 0;
 	
 	
 	public LegendParser(InputStream i) {
@@ -42,6 +42,15 @@ public class LegendParser extends DefaultHandler{
 		try {			
 			poiMap = new Hashtable<String, Hashtable<String,POIdescription>>();
 			pois = new LongTri<POIdescription>();
+			current = new POIdescription();
+			/**
+			 * Add a bogous POI description, to reserve type 0 as a special marker
+			 */
+			current.typeNum = poiIdx++;
+			current.key = "A key that should never be hot";
+			current.value = "A value that should never be triggered";
+			current.description = "No description";
+			pois.put(current.typeNum, current);
 			SAXParserFactory factory = SAXParserFactory.newInstance();
 			factory.setValidating(true);
 			// Parse the input

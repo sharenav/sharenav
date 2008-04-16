@@ -31,7 +31,7 @@ public class Constants {
 	 * minimum distances to set the is_in name to the next city
 	 * to get the minimum distance use: <code>MAX_DIST_CITY[node.getType(null)]</code>
 	 */
-	public final static long[] MAX_DIST_CITY={8000,6000,3000,1000,1000};
+	public final static long[] MAX_DIST_CITY={0, 8000,6000,3000,1000,1000};
 	
 	// node with image and name place in the middle
 	/*public final static byte NODE_AMENITY_PARKING=50;
