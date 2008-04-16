@@ -161,8 +161,7 @@ public class CreateGpsMidData {
 								+ " for " + poi.description);
 					}
 				}
-				if ((flags & LEGEND_FLAG_SEARCH_IMAGE) > 0) {
-					System.out.println("Search Image!!!!");
+				if ((flags & LEGEND_FLAG_SEARCH_IMAGE) > 0) {					
 					dsi.writeUTF(poi.searchIcon);
 					if (!(new File(path + poi.searchIcon).exists())) {
 						System.out.println("Couldn't find search icon " + poi.searchIcon
