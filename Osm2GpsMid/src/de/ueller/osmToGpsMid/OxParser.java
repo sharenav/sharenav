@@ -49,6 +49,7 @@ public class OxParser extends DefaultHandler{
 		try {
 			SAXParserFactory factory = SAXParserFactory.newInstance();
 			// Parse the input
+			factory.setValidating(false);
             SAXParser saxParser = factory.newSAXParser();
             saxParser.parse( i, this);
 			//parse(new InputStreamReader(new BufferedInputStream(i,10240), "UTF-8"));

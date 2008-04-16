@@ -139,4 +139,12 @@ public class LegendParser extends DefaultHandler{
 	public Collection<POIdescription> getPOIDescs() {
 		return pois.values();
 	}
+	
+	public void warning(SAXParseException e) throws SAXException {
+        System.out.println("Warning: " + e.getMessage()); 
+        
+     }
+     public void error(SAXParseException e) throws SAXException {
+        System.out.println("Error on line " + e.getLineNumber()+ " (remember ordering matters): " + e.getMessage());        
+     }
 }
