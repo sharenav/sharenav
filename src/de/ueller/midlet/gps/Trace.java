@@ -61,7 +61,11 @@ import de.ueller.midlet.gps.tile.Images;
 import de.ueller.midlet.gps.tile.PaintContext;
 import de.ueller.midlet.gps.GpsMidDisplayable;
 
-
+/** 
+ * Implements the main "Map" screen which displays the map, offers track recording etc. 
+ * @author Harald Mueller 
+ * 
+ */
 public class Trace extends Canvas implements CommandListener, LocationMsgReceiver,
 		Runnable , GpsMidDisplayable{
 	/** Soft button for exiting the demo. */
@@ -125,6 +129,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			"to long  :", "interrupt:", "checksum :", "no End1  :",
 			"no End2  :" };
 //#enddebug
+	/** 
+	 * Quality of Bluetooth reception, 0..100. 
+	 */	
 	private byte qualtity;
 
 	private int[] statRecord;
@@ -133,6 +140,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 	private Image satelit;
 
+	/** 
+	 * Current speed from GPS in km/h. 
+	 */
 	private int speed;
 
 	private int course;
