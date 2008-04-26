@@ -236,6 +236,6 @@ public class Node extends Entity {
     }
     
     public String toString(){
-    	return ("node: " + radlat + "/" + radlon);
+    	return ("node: " + radlat*MoreMath.FAC_RADTODEC + "/" + radlon*MoreMath.FAC_RADTODEC);
     }
 }
