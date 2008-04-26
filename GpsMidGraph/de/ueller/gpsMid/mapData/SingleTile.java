@@ -121,7 +121,7 @@ public class SingleTile extends Tile implements QueueableTile {
 						Way w = ways[i];
 						if (w == null) continue;
 						//Determin if the way is an area or not. 
-						if (!((!w.isArea() && layer == Tile.LAYER_AREA) || (w.isArea() && layer == Tile.LAYER_AREA)))
+						if (((!w.isArea() && layer == Tile.LAYER_AREA) || (w.isArea() && layer != Tile.LAYER_AREA)))
 							continue;
 
 						// logger.debug("test Bounds of way");
@@ -146,7 +146,7 @@ public class SingleTile extends Tile implements QueueableTile {
 						w.setColor(pc);
 						if (!w.isArea()) {
 							w.paintAsPath(pc, this);							
-						} else {						
+						} else {
 							w.paintAsArea(pc, this);
 						}
 					}
