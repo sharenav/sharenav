@@ -254,7 +254,6 @@ public class NmeaMessage {
 	            int j;
 	            // Calculate which satelites are in this message (message number * 4) 
 	            j=(getIntegerToken((String)param.elementAt(2))-1)*4;	            
-	            mAllSatellites = getIntegerToken((String)param.elementAt(3));
 	            for (int i=4; i < param.size() && j < 12; i+=4, j++) {
 	            	if (satelit[j]==null){
 	            		satelit[j]=new Satelit();
