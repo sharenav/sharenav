@@ -11,10 +11,14 @@ import java.io.IOException;
 import javax.microedition.lcdui.Graphics;
 
 import net.sourceforge.jmicropolygon.PolygonGraphics;
+import de.ueller.gps.data.Configuration;
 import de.ueller.gpsMid.mapData.SingleTile;
 import de.ueller.gpsMid.mapData.Tile;
+import de.ueller.midlet.gps.GpsMid;
+import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.tile.C;
 import de.ueller.midlet.gps.tile.PaintContext;
+import de.ueller.midlet.gps.tile.WayDescription;
 
 public class Way extends Entity{
 	
@@ -120,8 +124,16 @@ public class Way extends Entity{
 		return true; 
 	} 
 
-
 	public void paintAsPath(PaintContext pc, SingleTile t) {
+		if (pc.config.getRender() == Configuration.RENDER_LINE){
+			paintAsLinePath(pc, t);
+		} else {
+			float witdh = (pc.ppm*getWidth(pc)/2);
+			paintAsWidePath(pc,(int)(witdh+0.5), t);
+		}
+	}
+
+	private void paintAsLinePath(PaintContext pc, SingleTile t) {
 
 		IntPoint lineP1 = pc.lineP1;
 		IntPoint lineP2 = pc.lineP2;
@@ -161,7 +173,7 @@ public class Way extends Entity{
 	 * @param w
 	 * @param t
 	 */
-	public void paintAsPath(PaintContext pc, int w, SingleTile t) {
+	private void paintAsWidePath(PaintContext pc, int w, SingleTile t) {
 		
 		IntPoint lineP1 = pc.lineP1;
 		IntPoint lineP2 = pc.lineP2;
@@ -230,7 +242,7 @@ public class Way extends Entity{
 
 	}
 
-	public float getParLines(int xPoints[], int yPoints[], int i, int w,
+	private float getParLines(int xPoints[], int yPoints[], int i, int w,
 			IntPoint p1, IntPoint p2, IntPoint p3, IntPoint p4) {
 		int i1 = i + 1;
 		int dx = xPoints[i1] - xPoints[i];
@@ -269,7 +281,7 @@ public class Way extends Entity{
 		}
 	}
 
-	public void draw(PaintContext pc, int w, int xPoints[], int yPoints[],int count,boolean highlite/*,byte mode*/) {
+	private void draw(PaintContext pc, int w, int xPoints[], int yPoints[],int count,boolean highlite/*,byte mode*/) {
 		IntPoint l1b = new IntPoint();
 		IntPoint l1e = new IntPoint();
 		IntPoint l2b = new IntPoint();
@@ -322,7 +334,7 @@ public class Way extends Entity{
 
 	}
 
-	public IntPoint intersectionPoint(IntPoint p1, IntPoint p2, IntPoint p3,
+	private IntPoint intersectionPoint(IntPoint p1, IntPoint p2, IntPoint p3,
 			IntPoint p4, IntPoint ret) {
 		int dx1 = p2.x - p1.x;
 		int dx2 = p4.x - p3.x;
@@ -390,9 +402,11 @@ public class Way extends Entity{
 
 	}
 
-	public void setColor(PaintContext pc) {
-		pc.g.setStrokeStyle(Graphics.SOLID);
-		switch (type) {
+	public void setColor(PaintContext pc) {		
+		WayDescription wayDesc = pc.c.getWayDescription(type);
+		pc.g.setStrokeStyle(wayDesc.lineStyle);
+		pc.g.setColor(wayDesc.lineColor);
+		/*switch (type) {
 		case C.WAY_HIGHWAY_MOTORWAY:
 		case C.WAY_HIGHWAY_MOTORWAY_LINK:
 			pc.g.setColor(128, 155, 192);
@@ -479,10 +493,13 @@ public class Way extends Entity{
 			// logger.error("unknown Type "+ w.type);
 			pc.g.setColor(255, 255, 255);
 		}
+		*/
 	}
 
-	public int getWidth() {
-		switch (type) {
+	public int getWidth(PaintContext pc) {
+		WayDescription wayDesc = pc.c.getWayDescription(type);
+		return wayDesc.wayWidth;
+		/*switch (type) {
 		case C.WAY_HIGHWAY_MOTORWAY:
 		case C.WAY_HIGHWAY_MOTORWAY_LINK:
 			return 8;
@@ -510,11 +527,14 @@ public class Way extends Entity{
 		default:
 			// logger.error("unknown Type "+ w.type);
 			return 1;
-		}
+		}*/
 	}
 
 	public void setBorderColor(PaintContext pc) {
 		pc.g.setStrokeStyle(Graphics.SOLID);
+		WayDescription wayDesc = pc.c.getWayDescription(type);
+		pc.g.setColor(wayDesc.boardedColor);
+		/*
 		switch (type) {
 		case C.WAY_HIGHWAY_MOTORWAY:
 			pc.g.setColor(128, 155, 192);
@@ -595,6 +615,7 @@ public class Way extends Entity{
 			pc.g.setColor(0, 0, 0);
 		}
 		pc.g.setColor(0, 0, 0);
+		*/
 	}
 	
 	public boolean isOneway(){
@@ -602,7 +623,8 @@ public class Way extends Entity{
 	}
 	
 	public boolean isArea() {
-		return type >= 50;
+		WayDescription wayDesc = Trace.getInstance().pc.c.getWayDescription(type);
+		return wayDesc.isArea;
 	}
 
 	private float[] getFloatNodes(SingleTile t, short[] nodes, float offset) {

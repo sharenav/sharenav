@@ -106,7 +106,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 	private long collected = 0;
 
-	protected PaintContext pc;
+	public PaintContext pc;
 
 	public float scale = 15000f;
 

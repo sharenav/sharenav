@@ -145,12 +145,7 @@ public class SingleTile extends Tile implements QueueableTile {
 						}
 						w.setColor(pc);
 						if (!w.isArea()) {
-							if (pc.config.getRender() == Configuration.RENDER_LINE){
-								w.paintAsPath(pc, this);
-							} else {
-								float witdh = (pc.ppm*w.getWidth()/2);
-								w.paintAsPath(pc,(int)(witdh+0.5), this);
-							}
+							w.paintAsPath(pc, this);							
 						} else {						
 							w.paintAsArea(pc, this);
 						}
@@ -219,13 +214,8 @@ public class SingleTile extends Tile implements QueueableTile {
 					}
 					if ((opt & Tile.OPT_PAINT) != 0){
 						w.setColor(pc);
-						if (w.type < 50) {
-							if (pc.config.getRender() == Configuration.RENDER_LINE){
-								w.paintAsPath(pc, this);
-							} else {
-								float witdh = (pc.ppm*w.getWidth()/2);
-								w.paintAsPath(pc,(int)(witdh+0.5), this);
-							}
+						if (!w.isArea()) {
+							w.paintAsPath(pc, this);
 						} else {							
 							w.paintAsArea(pc, this);
 						}
