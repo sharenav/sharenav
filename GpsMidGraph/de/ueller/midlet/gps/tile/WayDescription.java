@@ -7,6 +7,6 @@ public class WayDescription {
 	public int lineStyle;
 	public int boardedColor;
 	public boolean isArea;
-	public int wayWidth;
+	public byte wayWidth;
 
 }
