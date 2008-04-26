@@ -20,6 +20,8 @@ public class Way extends Entity implements Comparable<Way>{
 	public static final byte WAY_FLAG_NAME = 1;
 	public static final byte WAY_FLAG_MAXSPEED = 2;
 	public static final byte WAY_FLAG_ONEWAY = 16;
+	public static final byte WAY_FLAG_LAYER = 32;
+	
 	public static final byte WAY_FLAG_MULTIPATH = 4;
 	public static final byte WAY_FLAG_LONGWAY = 8;
 	public static final byte WAY_FLAG_NAMEHIGH = 32;
@@ -607,6 +609,8 @@ public class Way extends Entity implements Comparable<Way>{
 		int maxspeed=50;
 		int nameIdx = -1;
 		int isinIdx = -1;
+		byte layer = 0;
+		
 		if (getName() != null && getName().trim().length() > 0){			
 			flags+=WAY_FLAG_NAME;
 			nameIdx = names1.getNameIdx(getName());
@@ -618,6 +622,14 @@ public class Way extends Entity implements Comparable<Way>{
 			try {
 				maxspeed=Integer.parseInt(getAttribute("maxspeed"));
 				flags+=WAY_FLAG_MAXSPEED;
+			} catch (NumberFormatException e) {
+			}
+		}
+		
+		if (containsKey("layer")) {
+			try {
+				layer=(byte)Integer.parseInt(getAttribute("layer"));
+				flags+=WAY_FLAG_LAYER;
 			} catch (NumberFormatException e) {
 			}
 		}
@@ -663,6 +675,9 @@ public class Way extends Entity implements Comparable<Way>{
 			}
 			if ((flags & WAY_FLAG_MAXSPEED) == WAY_FLAG_MAXSPEED){
 				ds.writeByte(maxspeed);
+			}
+			if ((flags & WAY_FLAG_LAYER) == WAY_FLAG_LAYER){
+				ds.writeByte(layer);
 			}
 			if ((flags & 4) == 4){
 				ds.writeByte(path.getPathCount());
