@@ -266,14 +266,14 @@ public class SingleTile extends Tile implements QueueableTile {
 	public void paintNode(PaintContext pc, int i) {
 		Image img = null;
 		byte t=type[i];
-
+		if (pc.scale > pc.c.getNodeMaxScale(t)) {
+			return;
+		}
 		pc.g.setColor(pc.c.getNodeTextColor(t));
 		img = pc.c.getNodeImage(t);
 		// logger.debug("calc pos "+pc);
 		pc.getP().forward((float)((nodeLat[i]*fpminv + centerLat)), (float)((nodeLon[i]*fpminv + centerLon)), pc.swapLineP, true);
-		if (pc.scale > pc.c.getNodeMaxScale(t)) {
-			return;
-		}
+		
 		if (img != null) {
 			// logger.debug("draw img " + img);
 			if (nameIdx[i] == -1 || pc.c.isNodeImageCentered(t) || pc.scale > pc.c.getNodeMaxTextScale(t)) {
