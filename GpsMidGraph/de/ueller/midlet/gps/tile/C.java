@@ -21,7 +21,7 @@ public class C {
 	 * Specifies the format of the map on disk we expect to see
 	 * This constant must be in sync with Osm2GpsMid
 	 */
-	public final static short MAP_FORMAT_VERSION = 9;
+	public final static short MAP_FORMAT_VERSION = 10;
 	
 	public final static byte NODE_MASK_ROUTENODELINK=0x1;
 	public final static byte NODE_MASK_TYPE=0x2;
@@ -114,6 +114,7 @@ public class C {
 		
 		readPOIdescriptions(ds);
 		readWayDescriptions(ds);
+		//readWayDescriptionsOld(ds);
 		
 		ds.close();				
 	}
@@ -160,6 +161,30 @@ public class C {
 				pois[i].textColor = ds.readInt();
 		}
 	}
+	
+	private void readWayDescriptions(DataInputStream ds) throws IOException {		
+		Image generic = Image.createImage("/unknown.png");
+		ways = new WayDescription[ds.readByte()];		
+		for (int i = 0; i < ways.length; i++) {
+			ways[i] = new WayDescription();
+			if (ds.readByte() != i)
+				logger.error("Read legend had troubles");
+			byte flags = ds.readByte();
+			ways[i].description = ds.readUTF();
+			System.out.println("WayDesc: " +  ways[i].description);
+			ways[i].maxScale = ds.readInt();
+			ways[i].isArea = ds.readBoolean();
+			ways[i].lineColor = ds.readInt();
+			ways[i].boardedColor = ds.readInt();
+			ways[i].wayWidth = ds.readByte();
+			System.out.println("   WayWidth: " +  ways[i].wayWidth);
+			boolean lineStyle = ds.readBoolean();
+			if (lineStyle)
+				ways[i].lineStyle = Graphics.DOTTED;
+			else
+				ways[i].lineStyle = Graphics.SOLID;			
+		}
+	}
 
 	/**
 	 * Currently we don't have the support in the legend file format to actually
@@ -168,7 +193,10 @@ public class C {
 	 * 
 	 * @param ds
 	 */
-	private void readWayDescriptions(DataInputStream ds) {
+	/**
+	 * @deprecated
+	 */
+	private void readWayDescriptionsOld(DataInputStream ds) {
 		
 		ways = new WayDescription[39];
 		
@@ -523,8 +551,12 @@ public class C {
 		return pois[type].description;
 	}
 	
-	public WayDescription getWayDescription(byte type) {		
-		return ways[typetoWayTpye(type)];
+	public WayDescription getWayDescription(byte type) {			
+		if (type >= ways.length) {
+			logger.error("Invalid type request: " + type);
+			return null;
+ 		}
+		return ways[type];
 	}
 	
 	public byte getMaxType() {
@@ -545,7 +577,7 @@ public class C {
 	 * @return
 	 */
 	private byte typetoWayTpye (byte type) {
-		switch (type) {
+		/*switch (type) {
 		case WAY_HIGHWAY_MOTORWAY: {
 			return 1;
 		}
@@ -665,5 +697,7 @@ public class C {
 		}
 		}
 		return 0;
+		*/
+		return type;
 	}
 }
