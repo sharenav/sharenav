@@ -216,21 +216,21 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	public void run() {
 		try {
 		if (running){
-			receiveMessage("thread already running");
+			receiveMessage("Thread already running");
 			return;
 		}
 		running=true;
 		//#debug info
 		logger.info("start thread init locationprovider");
 		if (locationProducer != null){
-			receiveMessage("locationprovider already running");
+			receiveMessage("Location provider already running");
 			return;
 		}
 		if (config.getLocationProvider() == Configuration.LOCATIONPROVIDER_NONE){
-			receiveMessage("no Location Provider");
+			receiveMessage("No location provider");
 			return;
 		}
-		receiveMessage("connect to "+Configuration.LOCATIONPROVIDER[config.getLocationProvider()]);
+		receiveMessage("Connect to "+Configuration.LOCATIONPROVIDER[config.getLocationProvider()]);
 //		System.out.println(config.getBtUrl());
 //		System.out.println(config.getRender());
 		switch (config.getLocationProvider()){
@@ -238,13 +238,13 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			
 		case Configuration.LOCATIONPROVIDER_NMEA:
 			//#debug debug
-			logger.debug("connect to "+config.getBtUrl());
+			logger.debug("Connect to "+config.getBtUrl());
 			if (! openBtConnection(config.getBtUrl())){
 				running=false;
 				return;
 			}
 		}
-		receiveMessage("connected");
+		receiveMessage("Connected");
 		//#debug debug
 		logger.debug("rm connect, add disconnect");
 		removeCommand(CONNECT_GPS_CMD);
@@ -582,7 +582,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				g.drawString(solution, getWidth() - 1, 1, Graphics.TOP
 							| Graphics.RIGHT);
 			} else {
-				g.drawString("off", getWidth() - 1, 1, Graphics.TOP
+				g.drawString("Off", getWidth() - 1, 1, Graphics.TOP
 						| Graphics.RIGHT);
 				
 			}
@@ -628,7 +628,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 	private int showConnectStatistics(Graphics g, int yc, int la) {
 		if (statRecord == null) {
-			g.drawString("no stats jet", 0, yc, Graphics.TOP
+			g.drawString("No stats yet", 0, yc, Graphics.TOP
 					| Graphics.LEFT);
 			return yc+la;
 		}
@@ -640,9 +640,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			yc += la;
 		}
 		//#enddebug
-		g.drawString("Qual : " + qualtity, 0, yc, Graphics.TOP | Graphics.LEFT);
+		g.drawString("BtQual : " + qualtity, 0, yc, Graphics.TOP | Graphics.LEFT);
 		yc += la;
-		g.drawString("count : " + collected, 0, yc, Graphics.TOP
+		g.drawString("Count : " + collected, 0, yc, Graphics.TOP
 				| Graphics.LEFT);
 		yc += la;
 		return yc;
@@ -868,32 +868,32 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 	public int showMemory(Graphics g, int yc, int la) {
 		g.setColor(0, 0, 0);
-		g.drawString("freemem : " + runtime.freeMemory(), 0, yc, Graphics.TOP
+		g.drawString("Freemem: " + runtime.freeMemory(), 0, yc, Graphics.TOP
 				| Graphics.LEFT);
 		yc += la;
-		g.drawString("totmem  : " + runtime.totalMemory(), 0, yc, Graphics.TOP
+		g.drawString("Totmem: " + runtime.totalMemory(), 0, yc, Graphics.TOP
 				| Graphics.LEFT);
 		yc += la;
-		g.drawString("Percent : "
+		g.drawString("Percent: "
 				+ (100f * runtime.freeMemory() / runtime.totalMemory()), 0, yc,
 				Graphics.TOP | Graphics.LEFT);
 		yc += la;
-		g.drawString("Threads running : " 
+		g.drawString("Threads running: " 
 				+ Thread.activeCount(), 0, yc, 
 				Graphics.TOP | Graphics.LEFT); 
 		yc += la;		
-		g.drawString("Names   : " + namesThread.getNameCount(), 0, yc,
+		g.drawString("Names: " + namesThread.getNameCount(), 0, yc,
 				Graphics.TOP | Graphics.LEFT);
 		yc += la;
 		g.drawString("Single T: " + tileReader.getLivingTilesCount() + "/"
 				+ tileReader.getRequestQueueSize(), 0, yc, Graphics.TOP
 				| Graphics.LEFT);
 		yc += la;
-		g.drawString("File T  : " + dictReader.getLivingTilesCount() + "/"
+		g.drawString("File T: " + dictReader.getLivingTilesCount() + "/"
 				+ dictReader.getRequestQueueSize(), 0, yc, Graphics.TOP
 				| Graphics.LEFT);
 		yc += la;
-		g.drawString("d:" + lastMsg, 0, yc, Graphics.TOP
+		g.drawString("LastMsg:" + lastMsg, 0, yc, Graphics.TOP
 				| Graphics.LEFT);
 		yc += la;
 		return (yc);
@@ -911,23 +911,22 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				| Graphics.LEFT);
 		yc += la;
 		return yc;
-
 	}
 
 	public int showDistanceToTarget(Graphics g, int yc, int la) {
 		g.setColor(0, 0, 0);
 		String text;
 		if (target == null) {
-			text = "distance: N/A";
+			text = "Distance: N/A";
 		} else {
 			
 			float distance = ProjMath.getDistance(target.lat, target.lon, center.radlat, center.radlon); 
 			if (distance > 10000) {
-				text = "distance: " + Integer.toString((int)(distance/1000.0f)) + "km";
+				text = "Distance: " + Integer.toString((int)(distance/1000.0f)) + "km";
 			} else if (distance > 1000) {
-				text = "distance: " + Float.toString(((int)(distance/100.0f))/10.0f) + "km";
+				text = "Distance: " + Float.toString(((int)(distance/100.0f))/10.0f) + "km";
 			} else {
-				text = "distance: " + Integer.toString((int)distance) + "m";
+				text = "Distance: " + Integer.toString((int)distance) + "m";
 			}
 			
 		}
