@@ -125,10 +125,14 @@ public class Way extends Entity{
 	} 
 
 	public void paintAsPath(PaintContext pc, SingleTile t) {
-		if (pc.config.getRender() == Configuration.RENDER_LINE){
+		WayDescription wayDesc = pc.c.getWayDescription(type);
+		if (pc.scale > wayDesc.maxScale) {			
+			return;
+		}
+		if ((pc.config.getRender() == Configuration.RENDER_LINE) || (wayDesc.wayWidth == 1)){
 			paintAsLinePath(pc, t);
 		} else {
-			float witdh = (pc.ppm*getWidth(pc)/2);
+			float witdh = (pc.ppm*wayDesc.wayWidth/2);
 			paintAsWidePath(pc,(int)(witdh+0.5), t);
 		}
 	}
@@ -384,6 +388,10 @@ public class Way extends Entity{
 	}
 
 	public void paintAsArea(PaintContext pc, SingleTile t) {
+		WayDescription wayDesc = pc.c.getWayDescription(type);
+		if (pc.scale > wayDesc.maxScale) {			
+			return;
+		}		
 		IntPoint lineP2 = pc.lineP2;
 		Projection p = pc.getP();
 //		for (int p1 = 0; p1 < paths.length; p1++) {
