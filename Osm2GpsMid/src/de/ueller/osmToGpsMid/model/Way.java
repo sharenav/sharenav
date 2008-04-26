@@ -349,10 +349,10 @@ public class Way extends Entity implements Comparable<Way>{
 			return 3;
 		if (maxScale < 180000)
 			return 2;
-		if (maxScale >= 180000)
+		if (maxScale < 900000)
 			return 1;
 		
-		return 3;
+		return 0;
 		
 		/*switch (type){
 			case Constants.WAY_HIGHWAY_MOTORWAY:
