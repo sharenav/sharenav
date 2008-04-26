@@ -209,7 +209,7 @@ public class NmeaMessage {
 				String valSolution = (String)param.elementAt(2);
 				if (valSolution.equals("V")) {
 					this.qual = 0;
-					receiver.receiveSolution("No");
+					receiver.receiveSolution("NoFix");
 					return;
 				}
 				if (valSolution.equalsIgnoreCase("A") && this.qual == 0) this.qual = 1;
@@ -247,12 +247,12 @@ public class NmeaMessage {
 				//Convert from knots to m/s
 				speed=getFloatToken((String)param.elementAt(7))*0.5144444f;
 			} else if ("GSV".equals(sentence)) {
-				/* GSV encodes the satelites that are currently in view
-				 * A maximum of 4 satelites are reported per message,
+				/* GSV encodes the satellites that are currently in view
+				 * A maximum of 4 satellites are reported per message,
 				 * if more are visible, then they are split over multiple messages				 * 
 				 */				
 	            int j;
-	            // Calculate which satelites are in this message (message number * 4) 
+	            // Calculate which satellites are in this message (message number * 4) 
 	            j=(getIntegerToken((String)param.elementAt(2))-1)*4;	            
 	            for (int i=4; i < param.size() && j < 12; i+=4, j++) {
 	            	if (satelit[j]==null){
@@ -270,18 +270,19 @@ public class NmeaMessage {
 		}
 		
 	}
-	
 
 	private int getIntegerToken(String s){
 		if (s==null || s.length()==0)
 			return 0;
 		return Integer.parseInt(s);
 	}
+
 	private float getFloatToken(String s){
 		if (s==null || s.length()==0)
 			return 0;
 		return Float.parseFloat(s);
 	}
+
 	private float getLat(String s){
 		if (s.length() < 2)
 			return 0.0f;
@@ -289,6 +290,7 @@ public class NmeaMessage {
 		float latf=Float.parseFloat(s.substring(2));
 		return lat+latf/60;
 	}
+
 	private float getLon(String s){
 		if (s.length() < 3)
 			return 0.0f;

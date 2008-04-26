@@ -63,8 +63,8 @@ public class NmeaInput implements Runnable, LocationMsgProducer{
 	}
 
 	public void run(){
-		receiver.receiveMessage("start NMEA");
-		// eat the buffe content
+		receiver.receiveMessage("Start NMEA");
+		// eat the buffer content
 		try {
 		try {
 			byte [] buf = new byte[512]; 
@@ -76,11 +76,11 @@ public class NmeaInput implements Runnable, LocationMsgProducer{
 					rawDataLogger.flush();					
 				}
 			}
-			receiver.receiveMessage("erase " + bytesReceived +" bytes");
+			receiver.receiveMessage("Erasing " + bytesReceived +" bytes");
 			bytesReceived=100;			
 		} catch (IOException e1) {
-			receiver.receiveMessage("closing " + e1.getMessage());
-			close("closing " + e1.getMessage());
+			receiver.receiveMessage("Closing: " + e1.getMessage());
+			close("Closing: " + e1.getMessage());
 		}
 		
 		byte timeCounter=41;
@@ -97,7 +97,7 @@ public class NmeaInput implements Runnable, LocationMsgProducer{
 				receiver.receiveStatistics(connectError,connectQuality);
 //				watchdog if no bytes received in 10 sec then exit thread
 				if (bytesReceived == 0){
-					close("no Data form NMEA");
+					close("No Data from NMEA");
 				} else {
 					bytesReceived=0;
 				}
@@ -124,7 +124,7 @@ public class NmeaInput implements Runnable, LocationMsgProducer{
 			logger.fatal("NmeaInput thread crashed as out of memory: " + oome.getMessage());
 			oome.printStackTrace();
 		} catch (Exception e) {
-			logger.fatal("NmeaInput thread crashed unexpectadly: " + e.getMessage());
+			logger.fatal("NmeaInput thread crashed unexpectedly: " + e.getMessage());
 			e.printStackTrace();
 		}
 	}
@@ -208,8 +208,8 @@ public class NmeaInput implements Runnable, LocationMsgProducer{
 				p2 = 0; found_start = false; found_end = false;				
 			} 
 		} catch (IOException e) {
-			receiver.receiveMessage("closing " + e.getMessage());
-			close("closed " + e.getMessage());
+			receiver.receiveMessage("Closing: " + e.getMessage());
+			close("Closed: " + e.getMessage());
 		}
 	}
 	
@@ -274,7 +274,7 @@ public class NmeaInput implements Runnable, LocationMsgProducer{
 				} // switch
 			} // while
 		} catch (IOException e) {
-			receiver.receiveMessage("Fehler: " + e.getMessage());
+			receiver.receiveMessage("Error: " + e.getMessage());
 			close();
 		}
 
@@ -293,7 +293,7 @@ public class NmeaInput implements Runnable, LocationMsgProducer{
 			case '$':
 				start=STATE_EXPECT_PREFIX;
 				connectQuality--;
-				System.out.println("Error got $ in Messagebody");
+				System.out.println("Error: Got $ in message body");
 			case '\r':
 				connectQuality++;
 				break;
