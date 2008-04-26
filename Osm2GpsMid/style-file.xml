@@ -6,31 +6,66 @@ to specify which map features get converted from the osm
 data to GpsMid. This can be changed at will, as long as it
 conforms to style-file.dtd
 -->
+<!-- approximate Scale levels: 
+260 zoomed in 10x 
+390 zoomed in 9x 
+585 zoomed in 8x 
+878 zoomed in 7x 
+1317    zoomed in 6x 
+1975    zoomed in 5x 
+2963    zoomed in 4x 
+4444    zoomed in 3x 
+6667    zoomed in 2x 
+10000   zoomed in 1x 
+15000   startup scale 
+22500   zoomed out 1x 
+33750   zoomed out 2x 
+50625   zoomed out 3x 
+75938   zoomed out 4x 
+113906  zoomed out 5x 
+170859  zoomed out 6x 
+256289  zoomed out 7x 
+384434  zoomed out 8x 
+576650  zoomed out 9x 
+864976  zoomed out 10x 
+1297463 zoomed out 11x 
+1946195 zoomed out 12x 
+2919293 zoomed out 13x 
+4378939 zoomed out 14x 
+6568408 zoomed out 15x 
+9852613 zoomed out 16x 
+-->
+
 <legend>
   <pois>
 	<key tag="place">
 	   <value name="city">
 		<description desc = "City"/>
-		<namekey tag="name"/>
+		<searchIcon src = "/city.png"/>
+		<namekey tag="name"/>		
 		<scale scale="300000"/>
 	  </value>
 	  <value name="town">
 		<description desc = "Town"/>
+		<searchIcon src = "/city.png"/>
 		<namekey tag="name"/>
 		<scale scale = "100000"/>
 	  </value>
 	  <value name="village">
 		<description desc = "Village"/>
+		<searchIcon src = "/city.png"/>
 		<namekey tag="name"/>
 		<scale scale = "30000"/>
 	  </value>
 	  <value name="hamlet">
 		<description desc = "Hamlet"/>
+		<searchIcon src = "/city.png"/>
 		<namekey tag="name"/>
 		<scale scale = "30000"/>
 	  </value>
 	  <value name="suburb">
 		<description desc = "Suburb"/>
+		<searchIcon src = "/city.png"/>
 		<namekey tag="name"/>
 		<scale scale = "20000"/>
 	  </value>
@@ -55,7 +90,7 @@ conforms to style-file.dtd
 		<image src="/school.png"/>
 		<namekey tag="name"/>
 		<scale scale="10000"/>
-		<scale scale="4000"/>
+		<textscale scale="4000"/>
 	  </value>
 	  <value name ="telephone">
 		<description desc = "Public telephone"/>
@@ -161,30 +196,31 @@ conforms to style-file.dtd
 	<key tag="highway">
 	   <value name="bus_stop">
 		<description desc = "Bus stop"/>
-		<image src="/bus.png"/>
-		<imageCentered value="true"/>
+		<image src="/bus.png"/>		
 		<namekey tag="name"/>
 		<scale scale="10000"/>
 		<textscale scale="4000"/>
+		<imageCentered value="true"/>
 	  </value>
 	</key>
 	<key tag="railway">
 	   <value name="station">
 		<description desc = "Railway station"/>
-		<image src="/railstation.png"/>
-		<imageCentered value="true"/>
+		<image src="/railstation.png"/>		
 		<namekey tag="name"/>
 		<scale scale="35000"/>
 		<textscale scale="10000"/>
+		<imageCentered value="true"/>
 	  </value>
 	  <value name="tram_stop">
 		<description desc = "Tram station"/>
-		<image src="/railstation.png"/>
-		<imageCentered value="true"/>
+		<image src="/railstation.png"/>		
 		<namekey tag="name"/>
 		<scale scale="20000"/>
 		<textscale scale="4000"/>
+		<imageCentered value="true"/>
 	  </value>
+	  </key>
 	  <key tag="tourism">
 	   <value name="hotel">
 		<description desc = "Hotel"/>
@@ -199,8 +235,7 @@ conforms to style-file.dtd
 		<namekey tag="name"/>
 		<scale scale="10000"/>
 		<textscale scale="4000"/>
-	  </value>
-	</key>
+	  </value>	
 	</key>
   </pois>
   <ways>
@@ -424,8 +459,8 @@ conforms to style-file.dtd
   			</Wvalue>
   		</keyW>
   		<keyW tag = "landuse">
-  			<Wvalue name = "forrest">
-  				<description desc = "Forrest"/>
+  			<Wvalue name = "forest">
+  				<description desc = "Forest"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "85000"/>
