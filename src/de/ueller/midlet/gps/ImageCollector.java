@@ -195,9 +195,9 @@ public class ImageCollector implements Runnable {
 
 			}
 		} catch (OutOfMemoryError oome) {
-			logger.fatal("ImageCollector thread crashed with out of memory: " + oome.getMessage());
+			logger.fatal("ImageCollector thread crashed with out of memory: " + oome.getMessage());			
 		} catch (Exception e) {
-			logger.fatal("ImageCollector thread crashed unexpectadly with error " + e.getMessage());
+			logger.exception("ImageCollector thread crashed unexpectadly with error ", e);
 		}
 	}
 	
