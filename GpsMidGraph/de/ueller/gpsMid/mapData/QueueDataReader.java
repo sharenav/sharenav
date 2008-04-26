@@ -17,7 +17,7 @@ import de.ueller.midlet.gps.tile.C;
 
 public class QueueDataReader extends QueueReader implements Runnable {
     //#debug error
-	private final static Logger logger=Logger.getInstance(QueueDataReader.class,Logger.DEBUG);
+	private final static Logger logger=Logger.getInstance(QueueDataReader.class,Logger.ERROR);
 
 	private final Trace trace;
 	public QueueDataReader(Trace trace){

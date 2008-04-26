@@ -152,10 +152,8 @@ public class ImageCollector implements Runnable {
 				/**
 				 * Draw each layer seperately to enforce paint ordering.
 				 *   
-				 */
-				logger.info("Drawing image collector");
-				for (byte layer = 0; layer < layersToRender.length; layer++) {
-					logger.info("Drawing image collector layer " + layer);
+				 */				
+				for (byte layer = 0; layer < layersToRender.length; layer++) {					
 					if ((pc[nextCreate].scale < 45000 * boost) && (t[3] != null)) {
 						t[3].paint(pc[nextCreate],layersToRender[layer]);
 						Thread.yield();
@@ -182,8 +180,7 @@ public class ImageCollector implements Runnable {
 						pc[nextCreate].state = PaintContext.STATE_READY;
 						break;
 					}
-				}
-				logger.info("finished Drawing image collector");
+				}				
 
 				newCollected();
 				createImageCount++;
@@ -230,7 +227,7 @@ public class ImageCollector implements Runnable {
 		newPaintAvail=false;
 		screenPc.getP().forward(pc[nextPaint].center, oldCenter);
 //		System.out.println("old Center = " + oldCenter.x + "/" + oldCenter.y);
-//		System.out.println("paint: " +pc);
+//		System.out.println("paint: " +pc[nextPaint]);
 		screenPc.g.drawImage(img[nextPaint], 
 				oldCenter.x,
 				oldCenter.y,
