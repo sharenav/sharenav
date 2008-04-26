@@ -226,10 +226,7 @@ public class ImageCollector implements Runnable {
 		
 		nextSc=screenPc.cloneToScreenContext();
 		
-		stat=STATE_SC_READY;
-		synchronized (this) {
-			notify();
-		}		
+		stat=STATE_SC_READY;		
 		newPaintAvail=false;
 		screenPc.getP().forward(pc[nextPaint].center, oldCenter);
 //		System.out.println("old Center = " + oldCenter.x + "/" + oldCenter.y);
