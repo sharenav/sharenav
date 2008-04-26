@@ -22,6 +22,7 @@ import de.ueller.osmToGpsMid.model.Connection;
 import de.ueller.osmToGpsMid.model.MapName;
 import de.ueller.osmToGpsMid.model.Node;
 import de.ueller.osmToGpsMid.model.POIdescription;
+import de.ueller.osmToGpsMid.model.WayDescription;
 import de.ueller.osmToGpsMid.model.RouteNode;
 import de.ueller.osmToGpsMid.model.Sequence;
 import de.ueller.osmToGpsMid.model.SubPath;
@@ -138,6 +139,9 @@ public class CreateGpsMidData {
 			foi = new FileOutputStream(path + "/legend.dat");
 			DataOutputStream dsi = new DataOutputStream(foi);
 			dsi.writeShort(Configuration.MAP_FORMAT_VERSION);
+			/**
+			 * Writing POI legend data			 * 
+			 */
 			dsi.writeByte(Configuration.getConfiguration().getPOIDescs().size());
 			for (POIdescription poi : Configuration.getConfiguration().getPOIDescs()) {
 				byte flags = 0;
@@ -174,6 +178,22 @@ public class CreateGpsMidData {
 					dsi.writeInt(poi.textColor);
 				
 			}
+			/**
+			 * Writing Way legend data 
+			 */
+			dsi.writeByte(Configuration.getConfiguration().getWayDescs().size());
+			for (WayDescription way : Configuration.getConfiguration().getWayDescs()) {
+				byte flags = 0;
+				dsi.writeByte(way.typeNum);
+				dsi.writeByte(flags);
+				dsi.writeUTF(way.description);								
+				dsi.writeInt(way.minScale);
+				dsi.writeBoolean(way.isArea);
+				dsi.writeInt(way.lineColor);
+				dsi.writeInt(way.boardedColor);
+				dsi.writeByte(way.wayWidth);
+				dsi.writeBoolean(way.lineStyleDashed);				
+			}
 			dsi.close();
 			foi.close();
 		} catch (FileNotFoundException e) {
@@ -201,7 +221,7 @@ public class CreateGpsMidData {
 			Bounds allBound=new Bounds();
 			for (Iterator wi = parser.ways.iterator(); wi.hasNext();) {
 				Way w1=(Way)wi.next();
-				if (w1.getZoomlevel() != zl) continue;
+				if (w1.getZoomlevel(configuration) != zl) continue;
 				w1.used=false;
 				allBound.extend(w1.getBounds());
 			}			
@@ -471,8 +491,8 @@ public class CreateGpsMidData {
 		// collect all way that are in this rectangle
 		for (Way w1 : parentWays) {
 			byte type=w1.getType();
-			if (type == 0) continue;
-			if (w1.getZoomlevel() != zl) continue;
+			if (type < 1) continue;
+			if (w1.getZoomlevel(configuration) != zl) continue;
 			if (w1.used) continue;
 			Bounds wayBound=w1.getBounds();
 			if (targetTile.isMostlyIn(wayBound)){
@@ -493,7 +513,7 @@ public class CreateGpsMidData {
 		for (Way w1 : parentWays) {
 			byte type=w1.getType();
 			if (type == 0) continue;
-			if (w1.getZoomlevel() != zl) continue;
+			if (w1.getZoomlevel(configuration) != zl) continue;
 			if (w1.used) continue;
 			if (waysTS.contains(w1)) continue;
 			Bounds wayBound=w1.getBounds();

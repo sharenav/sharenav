@@ -27,6 +27,7 @@ import org.apache.tools.bzip2.CBZip2InputStream;
 
 import de.ueller.osmToGpsMid.model.Bounds;
 import de.ueller.osmToGpsMid.model.POIdescription;
+import de.ueller.osmToGpsMid.model.WayDescription;
 
 /**
  * @author hmueller
@@ -38,7 +39,7 @@ public class Configuration {
 	 * Specifies the format of the map on disk we are about to write
 	 * This constant must be in sync with GpsMid
 	 */
-	public final static short MAP_FORMAT_VERSION = 9;
+	public final static short MAP_FORMAT_VERSION = 10;
 	
 		private ResourceBundle rb;
 		private ResourceBundle vb;
@@ -253,6 +254,10 @@ public class Configuration {
 			return legend.getPOIlegend();
 		}
 		
+		public Hashtable<String, Hashtable<String,WayDescription>> getWayLegend() {
+			return legend.getWayLegend();
+		}
+		
 		public static Configuration getConfiguration() {
 			return conf;
 		}
@@ -261,7 +266,14 @@ public class Configuration {
 			return legend.getPOIDesc(t);
 		}
 		
+		public WayDescription getWayDesc(byte t) {
+			return legend.getWayDesc(t);
+		}
+		
 		public Collection<POIdescription> getPOIDescs() {
 			return legend.getPOIDescs();
+		}
+		public Collection<WayDescription> getWayDescs() {
+			return legend.getWayDescs();
 		}
 }

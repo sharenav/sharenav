@@ -4,9 +4,11 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import de.ueller.osmToGpsMid.Configuration;
 import de.ueller.osmToGpsMid.Constants;
@@ -26,11 +28,13 @@ public class Way extends Entity implements Comparable<Way>{
 	//public List<Line> lines = new LinkedList<Line>();
 	public Path path=null;
 	Bounds bound=null;
+	
+	public static Configuration config;
 /**
  * indicate that this Way is already written to output;
  */
 	public boolean used=false;
-	private byte type;
+	private byte type = -1;
 
 	public Way(long id) {
 		this.id=id;
@@ -46,6 +50,7 @@ public class Way extends Entity implements Comparable<Way>{
 		this.type=other.type;
 	}
 
+	/*
 	private byte getJunctionType(){
 		String t = getAttribute("junction");
 		if ("roundabout".equals(t)){
@@ -53,6 +58,7 @@ public class Way extends Entity implements Comparable<Way>{
 		}
 		return 0;
 	}
+	*/
 		
 	public boolean isHighway(){
 		return (getAttribute("highway") != null);
@@ -61,7 +67,9 @@ public class Way extends Entity implements Comparable<Way>{
 		return (getAttribute("motorcar"));
 	}
 	public boolean isAccessByCar(){
-		String way =getAttribute("highway");
+		if (config == null)
+			config = Configuration.getConfiguration();
+		/*String way =getAttribute("highway");
 		if (way == null)
 			return false;
 		if (getType() > Constants.WAY_HIGHWAY_UNCLASSIFIED){
@@ -71,8 +79,14 @@ public class Way extends Entity implements Comparable<Way>{
 			return false;
 		}
 		return true;
+		*/
+		WayDescription wayDesc = config.getWayDesc(getType());
+		if (wayDesc == null)
+			return false;
+		
+		return wayDesc.routable;		
 	}
-
+/*
 	private byte getHighwayType(){
 		String t = getAttribute("highway");
 		if ("unclassified".equals(t)){
@@ -259,19 +273,86 @@ public class Way extends Entity implements Comparable<Way>{
 		}
 		return 0;
 		
-	}
+	}	
+	*/
+	
     public byte getType(Configuration c){
-    	type=get_Type(c);
-    	return type;
+    	if (type == -1) {
+			type = calcType(c);
+		}
+		return type;
 	}
     public byte getType(){
     	return type;
+	}   
+    
+	private byte calcType(Configuration c){
+		//System.out.println("Calculating type for " + toString());
+		if (c != null) {			
+			Hashtable<String, Hashtable<String,WayDescription>> legend = c.getWayLegend();
+			if (legend != null) {				
+				Set<String> tags = getTags();
+				if (tags != null) {
+					for (String s: tags) {						
+						Hashtable<String,WayDescription> keyValues = legend.get(s);
+						//System.out.println("Calculating type for " + toString() + " " + s + " " + keyValues);
+						if (keyValues != null) {
+							//System.out.println("found key index for " + s);
+							WayDescription way = keyValues.get(getAttribute(s));
+							if (way != null) {
+								type = way.typeNum;
+								//System.out.println(toString() + " is a " + way.description);
+								way.noWaysOfType++;
+								return way.typeNum;								
+							}
+						}
+					}
+				}			
+			}
+		}
+		return -1;		
 	}
 	
+	public String getName() {
+		if (type != -1) {
+			WayDescription desc = Configuration.getConfiguration().getWayDesc(type);
+			if (desc != null) {
+				String name = getAttribute(desc.nameKey);
+				String nameFallback = getAttribute(desc.nameFallbackKey); 
+				if (name != null && nameFallback != null) {
+					name += " (" + nameFallback + ")";
+				} else if ((name == null) && (nameFallback != null)) {
+					name = nameFallback;
+				}
+				//System.out.println("New style name: " + name);
+				return name!=null ? name.trim() : "";
+			}
+		}
+		return null;
+		//String name = getAttribute("name");
+		//return name!=null ? name.trim() : "";
+	}
+	
+	
 
-	public byte getZoomlevel(){
+	public byte getZoomlevel(Configuration c){
 		byte type=getType();
-		switch (type){
+		
+		if (type == -1) {
+			//System.out.println("unknown type for node " + toString());
+			return 3;
+		}
+		int maxScale = c.getWayDesc(type).minScale;		
+		if (maxScale < 45000)
+			return 3;
+		if (maxScale < 180000)
+			return 2;
+		if (maxScale >= 180000)
+			return 1;
+		
+		return 3;
+		
+		/*switch (type){
 			case Constants.WAY_HIGHWAY_MOTORWAY:
 			case Constants.WAY_HIGHWAY_TRUNK: 
 			case Constants.WAY_RAILWAY_RAIL:
@@ -289,21 +370,31 @@ public class Way extends Entity implements Comparable<Way>{
 				return 3;
 
 			default: return 3;
-		}
+		}*/
 	}
     /**
-     * get or estimate speed in m/s
+     * get or estimate speed in m/s for routing purposes
      * @return
      */
 	public float getSpeed(){
+		if (config == null)
+			config = Configuration.getConfiguration();
+		float maxSpeed = Float.MAX_VALUE;
 		if (containsKey("maxspeed")){
 			try {
-				int maxspeed=Integer.parseInt(getAttribute("maxspeed"));
-				return (maxspeed/3.6f);
+				maxSpeed=(Integer.parseInt(getAttribute("maxspeed")) / 3.6f);				
 			} catch (NumberFormatException e) {
 			}
 		}
-		switch (type){
+		float typicalSpeed = config.getWayDesc(type).typicalSpeed;
+		if (typicalSpeed != 0)
+			if (typicalSpeed < maxSpeed)
+				maxSpeed = typicalSpeed;
+		if (maxSpeed == Float.MAX_VALUE)
+			maxSpeed = 60.0f; //Default case;
+		return maxSpeed / 3.6f;
+		
+		/*switch (type){
 		case Constants.WAY_HIGHWAY_MOTORWAY_LINK:
 			return 60f/3.6f;
 		case Constants.WAY_HIGHWAY_MOTORWAY:
@@ -323,7 +414,7 @@ public class Way extends Entity implements Comparable<Way>{
 		case Constants.WAY_HIGHWAY_TRACK:
 			return 25f/3.6f;
 		default: return 60f/3.6f;
-		}
+		}*/		
 	}
 
 	public int compareTo(Way o) {

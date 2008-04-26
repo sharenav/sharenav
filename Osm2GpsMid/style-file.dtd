@@ -1,19 +1,39 @@
 <!ELEMENT legend (pois,ways)>
 <!ELEMENT pois (key*)>
-<!ELEMENT ways EMPTY>
+<!ELEMENT ways (keyW*)>
 <!ELEMENT key (value+)>
-<!ELEMENT value (description, image?, namekey, namefallback?, scale, textscale?)>
+<!ELEMENT keyW (Wvalue+)>
+<!ELEMENT value (description , image? , searchIcon? , namekey , namefallback? , scale , textscale? , imageCentered?)>
+<!ELEMENT Wvalue (description, namekey, namefallback?, isArea, scale, lineColor, boarderColor?, lineStyle?, wayWidth?, searchIcon?, routing?)>
 <!ELEMENT description EMPTY>
 <!ELEMENT image EMPTY>
+<!ELEMENT searchIcon EMPTY>
 <!ELEMENT namekey EMPTY>
 <!ELEMENT namefallback EMPTY>
 <!ELEMENT scale EMPTY>
 <!ELEMENT textscale EMPTY>
+<!ELEMENT imageCentered EMPTY>
+<!ELEMENT isArea EMPTY>
+<!ELEMENT lineColor EMPTY>
+<!ELEMENT lineStyle EMPTY>
+<!ELEMENT wayWidth EMPTY>
+<!ELEMENT routing EMPTY>
 <!ATTLIST key tag CDATA #REQUIRED>
+<!ATTLIST keyW tag CDATA #REQUIRED>
 <!ATTLIST value name CDATA #REQUIRED>
+<!ATTLIST Wvalue name CDATA #REQUIRED>
 <!ATTLIST description desc CDATA #REQUIRED>
 <!ATTLIST namekey tag CDATA #REQUIRED>
 <!ATTLIST namefallback tag CDATA #REQUIRED>
 <!ATTLIST scale scale CDATA #REQUIRED>
 <!ATTLIST textscale scale CDATA #REQUIRED>
 <!ATTLIST image src CDATA #REQUIRED>
+<!ATTLIST searchIcon src CDATA #REQUIRED>
+<!ATTLIST imageCentered value CDATA #REQUIRED>
+<!ATTLIST isArea area CDATA #REQUIRED>
+<!ATTLIST lineColor color CDATA #REQUIRED>
+<!ATTLIST boarderColor color CDATA #REQUIRED>
+<!ATTLIST lineStyle dashed CDATA #REQUIRED>
+<!ATTLIST wayWidth width CDATA #REQUIRED>
+<!ATTLIST routing accessible CDATA #REQUIRED>
+<!ATTLIST routing speed CDATA #REQUIRED>

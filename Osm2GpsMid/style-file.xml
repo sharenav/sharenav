@@ -203,5 +203,243 @@ conforms to style-file.dtd
 	</key>
 	</key>
   </pois>
-  <ways/>
+  <ways>
+  		<keyW tag = "highway">
+  			<Wvalue name = "motorway">
+  				<description desc = "Motorway"/>
+  				<namekey tag = "name"/>
+  				<namefallback tag = "ref"/>
+  				<isArea area = "false"/>
+  				<scale scale = "4880000"/>
+  				<lineColor color = "009988FF" />
+  				<wayWidth width="12" />
+  				<routing accessible="true" speed="120" />  				  				
+  			</Wvalue>
+  			<Wvalue name = "motorway_link">
+  				<description desc = "Motorway"/>
+  				<namekey tag = "name"/>
+  				<namefallback tag = "ref"/>
+  				<isArea area = "false"/>
+  				<scale scale = "40000"/>
+  				<lineColor color = "009988FF" />
+  				<wayWidth width="5" />
+  				<routing accessible="true" speed="120" />  				  				
+  			</Wvalue>
+  			<Wvalue name = "trunk">
+  				<description desc = "Trunk"/>
+  				<namekey tag = "name"/>
+  				<namefallback tag = "ref"/>
+  				<isArea area = "false"/>
+  				<scale scale = "880000"/>
+  				<lineColor color = "0088BF77" />
+  				<wayWidth width="9" />
+  				<routing accessible="true" speed="100" />  				  				
+  			</Wvalue>
+  			<Wvalue name = "trunk_link">
+  				<description desc = "Trunk"/>
+  				<namekey tag = "name"/>
+  				<namefallback tag = "ref"/>
+  				<isArea area = "false"/>
+  				<scale scale = "40000"/>
+  				<lineColor color = "0088BF77" />
+  				<wayWidth width="3" />
+  				<routing accessible="true" speed="100" />  				  				
+  			</Wvalue>
+  			<Wvalue name = "primary">
+  				<description desc = "Primary"/>
+  				<namekey tag = "name"/>
+  				<namefallback tag = "ref"/>
+  				<isArea area = "false"/>
+  				<scale scale = "460000"/>
+  				<lineColor color = "00FF9988" />
+  				<wayWidth width="7" />
+  				<routing accessible="true" speed="80" />  				  				
+  			</Wvalue>
+  			<Wvalue name = "primary_link">
+  				<description desc = "Primary"/>
+  				<namekey tag = "name"/>
+  				<namefallback tag = "ref"/>
+  				<isArea area = "false"/>
+  				<scale scale = "40000"/>
+  				<lineColor color = "00FF9988" />
+  				<wayWidth width="3" />
+  				<routing accessible="true" speed="80" />  				  				
+  			</Wvalue>
+  			<Wvalue name = "secondary">
+  				<description desc = "Secondary"/>
+  				<namekey tag = "name"/>  				
+  				<isArea area = "false"/>
+  				<scale scale = "75000"/>
+  				<lineColor color = "00AADDBB" />
+  				<wayWidth width="3" />
+  				<routing accessible="true" speed="80" />  				  				
+  			</Wvalue>
+  			<Wvalue name = "tertiary">
+  				<description desc = "Tertiary"/>
+  				<namekey tag = "name"/>  				
+  				<isArea area = "false"/>
+  				<scale scale = "75000"/>
+  				<lineColor color = "00AADDBB" />
+  				<wayWidth width="3" />
+  				<routing accessible="true" speed="80" />  				  				
+  			</Wvalue>
+  			<Wvalue name = "unclassified">  					        
+  				<description desc = "Small road"/>
+  				<namekey tag = "name"/>  				
+  				<isArea area = "false"/>
+  				<scale scale = "60000"/>
+  				<lineColor color = "00FFDDBB" />
+  				<wayWidth width="3" />
+  				<routing accessible="true" speed="80" />  				  				
+  			</Wvalue>  			
+  			<Wvalue name = "residential">
+  				<description desc = "Residential"/>
+  				<namekey tag = "name"/>  				
+  				<isArea area = "false"/>
+  				<scale scale = "60000"/>
+  				<lineColor color = "00FFFFFF" />
+  				<wayWidth width="2" />
+  				<routing accessible="true" speed="30" />  				  				
+  			</Wvalue>
+  			<Wvalue name = "service">
+  				<description desc = "Service"/>
+  				<namekey tag = "name"/>  				
+  				<isArea area = "false"/>
+  				<scale scale = "60000"/>
+  				<lineColor color = "00FFFFFF" />
+  				<wayWidth width="1" />
+  				<routing accessible="true" speed="30" />  				  				
+  			</Wvalue>
+  			<Wvalue name = "cycleway">
+  				<description desc = "Cycle way"/>
+  				<namekey tag = "name"/>  				
+  				<isArea area = "false"/>
+  				<scale scale = "35000"/>
+  				<lineColor color = "000000FF" />
+  				<lineStyle dashed = "true" />
+  				<wayWidth width="1" />
+  				<routing accessible="true" speed="30" />  				  				
+  			</Wvalue>
+  			<Wvalue name = "footway">
+  				<description desc = "Foot way"/>
+  				<namekey tag = "name"/>  				
+  				<isArea area = "false"/>
+  				<scale scale = "35000"/>
+  				<lineColor color = "00FF0000" />
+  				<lineStyle dashed = "true" />
+  				<wayWidth width="1" />
+  				<routing accessible="false" speed="30" />  				  				
+  			</Wvalue>
+  		</keyW>
+  		<keyW tag = "railway">
+  			<Wvalue name = "rail">
+  				<description desc = "Mainline rail"/>
+  				<namekey tag = "name"/>  				
+  				<isArea area = "false"/>
+  				<scale scale = "160000"/>
+  				<lineColor color = "00FFFFFF" />
+  				<wayWidth width="1" />  				  				  				
+  			</Wvalue>
+  			<Wvalue name = "tram">
+  				<description desc = "Tram"/>
+  				<namekey tag = "name"/>  				
+  				<isArea area = "false"/>
+  				<scale scale = "90000"/>
+  				<lineColor color = "00CCCCCC" />
+  				<wayWidth width="1" />  				  				  				
+  			</Wvalue>
+  			<Wvalue name = "subway">
+  				<description desc = "Tube"/>
+  				<namekey tag = "name"/>  				
+  				<isArea area = "false"/>
+  				<scale scale = "90000"/>
+  				<lineColor color = "00CCCCCC" />
+  				<wayWidth width="1" />  				  				  				
+  			</Wvalue>
+  			<Wvalue name = "light_rail">
+  				<description desc = "Light rail"/>
+  				<namekey tag = "name"/>  				
+  				<isArea area = "false"/>
+  				<scale scale = "90000"/>
+  				<lineColor color = "00CCCCCC" />
+  				<wayWidth width="1" />  				  				  				
+  			</Wvalue>
+  		</keyW>
+  		<keyW tag = "leisure">
+  			<Wvalue name = "park">
+  				<description desc = "Park"/>
+  				<namekey tag = "name"/>  				
+  				<isArea area = "true"/>
+  				<scale scale = "45000"/>
+  				<lineColor color = "0000FF00" />  				  				  				
+  			</Wvalue>
+  			<Wvalue name = "common">
+  				<description desc = "Common"/>
+  				<namekey tag = "name"/>  				
+  				<isArea area = "true"/>
+  				<scale scale = "45000"/>
+  				<lineColor color = "0000CC00" />  				  				  				
+  			</Wvalue>
+  			<Wvalue name = "playground">
+  				<description desc = "Playground"/>
+  				<namekey tag = "name"/>  				
+  				<isArea area = "true"/>
+  				<scale scale = "40000"/>
+  				<lineColor color = "0066AA00" />  				  				  				
+  			</Wvalue>
+  		</keyW>
+  		<keyW tag = "amenity">
+  			<Wvalue name = "grave_yard">
+  				<description desc = "Grave Yardk"/>
+  				<namekey tag = "name"/>  				
+  				<isArea area = "true"/>
+  				<scale scale = "45000"/>
+  				<lineColor color = "0000AA00" />  				  				  				
+  			</Wvalue>  			
+  		</keyW>
+  		<keyW tag = "waterway">
+  			<Wvalue name = "river">
+  				<description desc = "River"/>
+  				<namekey tag = "name"/>  				
+  				<isArea area = "false"/>
+  				<scale scale = "260000"/>
+  				<lineColor color = "000000F0" />
+  				<wayWidth width="10" />  				  				  				
+  			</Wvalue>
+  			<Wvalue name = "canal">
+  				<description desc = "Canal"/>
+  				<namekey tag = "name"/>  				
+  				<isArea area = "false"/>
+  				<scale scale = "160000"/>
+  				<lineColor color = "000000E0" />
+  				<wayWidth width="6" />  				  				  				
+  			</Wvalue>
+  			<Wvalue name = "stream">
+  				<description desc = "Stream"/>
+  				<namekey tag = "name"/>  				
+  				<isArea area = "false"/>
+  				<scale scale = "60000"/>
+  				<lineColor color = "000000D0" />
+  				<wayWidth width="3" />  				  				  				
+  			</Wvalue>
+  		</keyW>
+  		<keyW tag = "landuse">
+  			<Wvalue name = "forrest">
+  				<description desc = "Forrest"/>
+  				<namekey tag = "name"/>  				
+  				<isArea area = "true"/>
+  				<scale scale = "85000"/>
+  				<lineColor color = "0000CC00" />  				  				  				
+  			</Wvalue>  			
+  		</keyW>
+  		<keyW tag = "natural">
+  			<Wvalue name = "water">
+  				<description desc = "Lake"/>
+  				<namekey tag = "name"/>  				
+  				<isArea area = "true"/>
+  				<scale scale = "85000"/>
+  				<lineColor color = "000000CC" />  				  				  				
+  			</Wvalue>  			
+  		</keyW>  		
+	</ways>
 </legend> 

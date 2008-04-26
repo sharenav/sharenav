@@ -46,7 +46,7 @@ public class Constants {
 	public static final byte NODE_HIGHWAY_ROUNDABOUT = 102;
 	*/
 	
-	public final static byte WAY_HIGHWAY_MOTORWAY=1;
+	/*public final static byte WAY_HIGHWAY_MOTORWAY=1;
 	public final static byte WAY_HIGHWAY_MOTORWAY_LINK=2;
 	public final static byte WAY_HIGHWAY_TRUNK=3;
 	public final static byte WAY_HIGHWAY_PRIMARY=4;
@@ -87,6 +87,7 @@ public class Constants {
 	public final static byte AREA_LANDUSE_CEMETERY=93;
 	public final static byte AREA_LANDUSE_VILLAGE_GREEN=94;
 	public final static byte AREA_LANDUSE_RECREATION_GROUND=95;
+	*/
 	
 	public final static byte NAME_CITY=1;
 	public final static byte NAME_SUBURB=2;

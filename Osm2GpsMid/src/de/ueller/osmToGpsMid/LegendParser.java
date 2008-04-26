@@ -22,15 +22,21 @@ import de.ueller.osmToGpsMid.model.Node;
 import de.ueller.osmToGpsMid.model.POIdescription;
 import de.ueller.osmToGpsMid.model.Relation;
 import de.ueller.osmToGpsMid.model.Way;
+import de.ueller.osmToGpsMid.model.WayDescription;
 
 public class LegendParser extends DefaultHandler{
 	private Hashtable<String, Hashtable<String,POIdescription>> poiMap;
+	private Hashtable<String, Hashtable<String,WayDescription>> wayMap;
 	private LongTri<POIdescription> pois;
-	private POIdescription current;
+	private LongTri<WayDescription> ways;
+	private POIdescription currentPoi;
+	private WayDescription currentWay;
 	private String currentKey;
-	private Hashtable<String,POIdescription> keyValues;
+	private Hashtable<String,POIdescription> keyValuesPoi;
+	private Hashtable<String,WayDescription> keyValuesWay;
 	private boolean readingPOIs = false;
 	private byte poiIdx = 0;
+	private byte wayIdx = 0;
 	
 	
 	public LegendParser(InputStream i) {
@@ -42,15 +48,28 @@ public class LegendParser extends DefaultHandler{
 		try {			
 			poiMap = new Hashtable<String, Hashtable<String,POIdescription>>();
 			pois = new LongTri<POIdescription>();
-			current = new POIdescription();
+			currentPoi = new POIdescription();
 			/**
 			 * Add a bogous POI description, to reserve type 0 as a special marker
 			 */
-			current.typeNum = poiIdx++;
-			current.key = "A key that should never be hot";
-			current.value = "A value that should never be triggered";
-			current.description = "No description";
-			pois.put(current.typeNum, current);
+			currentPoi.typeNum = poiIdx++;
+			currentPoi.key = "A key that should never be hot";
+			currentPoi.value = "A value that should never be triggered";
+			currentPoi.description = "No description";
+			pois.put(currentPoi.typeNum, currentPoi);
+			
+			wayMap = new Hashtable<String, Hashtable<String,WayDescription>>();
+			ways = new LongTri<WayDescription>();
+			currentWay = new WayDescription();
+			/**
+			 * Add a bogous Way description, to reserve type 0 as a special marker
+			 */
+			currentWay.typeNum = wayIdx++;
+			currentWay.key = "A key that should never be hot";
+			currentWay.value = "A value that should never be triggered";
+			currentWay.description = "No description";
+			ways.put(currentWay.typeNum, currentWay);
+			
 			SAXParserFactory factory = SAXParserFactory.newInstance();
 			factory.setValidating(true);
 			// Parse the input
@@ -83,47 +102,114 @@ public class LegendParser extends DefaultHandler{
 		if (qName.equals("pois")) {
 			readingPOIs = true;			
 		}
-		if (qName.equals("key")) {
-			currentKey = atts.getValue("tag");
-			keyValues = poiMap.get(currentKey);
-			if (keyValues == null) {
-				keyValues = new Hashtable<String,POIdescription>();
-				poiMap.put(currentKey, keyValues);
+		if (readingPOIs) {
+			if (qName.equals("key")) {
+				currentKey = atts.getValue("tag");
+				keyValuesPoi = poiMap.get(currentKey);
+				if (keyValuesPoi == null) {
+					keyValuesPoi = new Hashtable<String,POIdescription>();
+					poiMap.put(currentKey, keyValuesPoi);
+				}
 			}
-		}
-		if (qName.equals("value")) {
-			current = new POIdescription();
-			current.typeNum = poiIdx++;
-			current.key = currentKey;
-			current.value = atts.getValue("name"); 
-			keyValues.put(current.value, current);
-			pois.put(current.typeNum, current);
-		}
-		if (qName.equals("description")) {
-			current.description = atts.getValue("desc");
-		}
-		if (qName.equals("namekey")) {
-			current.nameKey = atts.getValue("tag");
-		}
-		if (qName.equals("namefallback")) {
-			current.nameFallbackKey = atts.getValue("tag");
-		}
-		if (qName.equals("scale")) {
-			current.minImageScale = Integer.parseInt(atts.getValue("scale"));
-			if (current.minTextScale == 0)
-				current.minTextScale = current.minImageScale;
-		}
-		if (qName.equals("textscale")) {
-			current.minTextScale = Integer.parseInt(atts.getValue("scale"));
-		}
-		if (qName.equals("image")) {
-			current.image = atts.getValue("src");
-		}
-		if (qName.equals("searchIcon")) {			
-			current.searchIcon = atts.getValue("src");
-		}
-		if (qName.equals("imageCentered")) {
-			current.imageCenteredOnNode = atts.getValue("value").equalsIgnoreCase("true");
+			if (qName.equals("value")) {
+				currentPoi = new POIdescription();
+				currentPoi.typeNum = poiIdx++;
+				currentPoi.key = currentKey;
+				currentPoi.value = atts.getValue("name"); 
+				keyValuesPoi.put(currentPoi.value, currentPoi);
+				pois.put(currentPoi.typeNum, currentPoi);
+			}
+			if (qName.equals("description")) {
+				currentPoi.description = atts.getValue("desc");
+			}
+			if (qName.equals("namekey")) {
+				currentPoi.nameKey = atts.getValue("tag");
+			}
+			if (qName.equals("namefallback")) {
+				currentPoi.nameFallbackKey = atts.getValue("tag");
+			}
+			if (qName.equals("scale")) {
+				currentPoi.minImageScale = Integer.parseInt(atts.getValue("scale"));
+				if (currentPoi.minTextScale == 0)
+					currentPoi.minTextScale = currentPoi.minImageScale;
+			}
+			if (qName.equals("textscale")) {
+				currentPoi.minTextScale = Integer.parseInt(atts.getValue("scale"));
+			}
+			if (qName.equals("image")) {
+				currentPoi.image = atts.getValue("src");
+			}
+			if (qName.equals("searchIcon")) {			
+				currentPoi.searchIcon = atts.getValue("src");
+			}
+			if (qName.equals("imageCentered")) {
+				currentPoi.imageCenteredOnNode = atts.getValue("value").equalsIgnoreCase("true");
+			}
+		} else {
+			if (qName.equals("keyW")) {
+				currentKey = atts.getValue("tag");
+				keyValuesWay = wayMap.get(currentKey);
+				if (keyValuesWay == null) {
+					keyValuesWay = new Hashtable<String,WayDescription>();
+					wayMap.put(currentKey, keyValuesWay);
+				}
+			}
+			if (qName.equals("Wvalue")) {
+				currentWay = new WayDescription();
+				currentWay.typeNum = wayIdx++;
+				currentWay.key = currentKey;
+				currentWay.value = atts.getValue("name"); 
+				keyValuesWay.put(currentWay.value, currentWay);
+				ways.put(currentWay.typeNum, currentWay);
+			}
+			if (qName.equals("description")) {
+				currentWay.description = atts.getValue("desc");
+			}
+			if (qName.equals("namekey")) {
+				currentWay.nameKey = atts.getValue("tag");
+			}
+			if (qName.equals("namefallback")) {
+				currentWay.nameFallbackKey = atts.getValue("tag");
+			}
+			if (qName.equals("scale")) {
+				currentWay.minScale = Integer.parseInt(atts.getValue("scale"));				
+			}
+			if (qName.equals("isArea")) {
+				currentWay.isArea = atts.getValue("area").equalsIgnoreCase("true");
+			}
+			if (qName.equals("lineColor")) {
+				try {
+				currentWay.lineColor = Integer.parseInt(atts.getValue("color"),16);
+				} catch (NumberFormatException nfe){
+					System.out.println("Error: lineColor for " + currentWay.description + " is incorrect. Must be a hex coded ARGB value");
+				}
+			}
+			if (qName.equals("borderColor")) {
+				currentWay.boardedColor = Integer.parseInt(atts.getValue("color"));				
+			}
+			if (qName.equals("wayWidth")) {
+				try {
+					currentWay.wayWidth = Integer.parseInt(atts.getValue("width"));
+				} catch (NumberFormatException nfe) {
+					System.out.println("Error: wayWidth for " +currentWay.description + " is incorrect");
+				}
+			}
+			if (qName.equals("lineStyle")) {				
+				currentWay.lineStyleDashed = atts.getValue("dashed").equalsIgnoreCase("true");				
+			}
+			if (qName.equals("routing")) {
+				currentWay.routable = atts.getValue("accessible").equalsIgnoreCase("true");
+				String typicalSpeed = atts.getValue("speed");
+				if (typicalSpeed != null) {
+					try {
+						currentWay.typicalSpeed = Integer.parseInt(typicalSpeed);
+					} catch (NumberFormatException nfe) {
+						System.out.println("Invalid speed for " + currentWay.description);
+					}
+				} else
+					currentWay.typicalSpeed = 50;								
+			}
+			
 		}
 	} // startElement
 
@@ -147,6 +233,18 @@ public class LegendParser extends DefaultHandler{
 	
 	public Collection<POIdescription> getPOIDescs() {
 		return pois.values();
+	}
+	
+	public Hashtable<String, Hashtable<String,WayDescription>> getWayLegend() {
+		return wayMap;
+	}
+	
+	public WayDescription getWayDesc(byte type) {
+		return ways.get(type);
+	}
+	
+	public Collection<WayDescription> getWayDescs() {
+		return ways.values();
 	}
 	
 	public void warning(SAXParseException e) throws SAXException {
