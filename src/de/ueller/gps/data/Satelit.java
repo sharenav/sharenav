@@ -29,6 +29,10 @@ public class Satelit {
 	public float elev;
 	public int state;
 	public int signal[];
+	/**
+	 * Signal to noise ratio in arbitrary units
+	 */
+	public int snr;
 	public Date lastUpdate;
 	public Satelit() {
 		signal=new int[10];

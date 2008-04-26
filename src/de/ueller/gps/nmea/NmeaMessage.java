@@ -189,7 +189,7 @@ public class NmeaMessage {
 	                satelit[j].id=getIntegerToken((String)param.elementAt(i));
 	                satelit[j].elev=getIntegerToken((String)param.elementAt(i+1));
 	                satelit[j].azimut=getIntegerToken((String)param.elementAt(i+2));
-	                //SNR (not stored at the moment)	                
+	                satelit[j].snr=getIntegerToken((String)param.elementAt(i+3));	                
 	            }
 	            lastMsgGSV=true;
 			}

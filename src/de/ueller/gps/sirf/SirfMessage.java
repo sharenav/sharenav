@@ -128,9 +128,16 @@ public class SirfMessage {
 		s.elev=getByte(i++)/2f;
 		s.state=get2ByteUnsigned(i);
 		i+=2;
+		s.snr = 0;
+		/**
+		 * We get the signal to noise ratio for each 100ms of a second
+		 * s.snr is the average snr for the whole second 
+		 */
 		for (int l=0;l<10;l++){
 			s.signal[l]=getByte(i++);
+			s.snr += s.signal[l];
 		}
+		s.snr /= 10;
 //		if (s.id != 0)
 //		message("Satelit " + s.id + " Aq s:"+s.isAcquisitionSucessfully()
 //                + " PH:"+s.isCharrierPhaseValid()
