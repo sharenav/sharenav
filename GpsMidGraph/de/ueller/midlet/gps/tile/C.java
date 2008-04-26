@@ -98,8 +98,6 @@ public class C {
 
 		DataInputStream ds = new DataInputStream(is);
 		
-		Image generic = Image.createImage("/unknown.png");
-		
 		/**
 		 * Check to see if we have the right version of the Map format
 		 */
@@ -111,6 +109,13 @@ public class C {
 			throw new IOException("Wrong map file format");
 		}
 		
+		readPOIdescriptions(ds);
+		
+		ds.close();				
+	}
+	
+	private void readPOIdescriptions(DataInputStream ds) throws IOException {		
+		Image generic = Image.createImage("/unknown.png");
 		pois = new POIdescription[ds.readByte()];
 		for (int i = 0; i < pois.length; i++) {
 			pois[i] = new POIdescription();
@@ -150,7 +155,6 @@ public class C {
 			if ((flags & LEGEND_FLAG_TEXT_COLOR) > 0)			
 				pois[i].textColor = ds.readInt();
 		}
-		ds.close();				
 	}
 
 	public int getNodeTextColor(byte type) {
