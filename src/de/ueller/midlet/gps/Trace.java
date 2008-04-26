@@ -132,7 +132,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	/** 
 	 * Quality of Bluetooth reception, 0..100. 
 	 */	
-	private byte qualtity;
+	private byte btquality;
 
 	private int[] statRecord;
 
@@ -641,7 +641,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			yc += la;
 		}
 		//#enddebug
-		g.drawString("BtQual : " + qualtity, 0, yc, Graphics.TOP | Graphics.LEFT);
+		g.drawString("BtQual : " + btquality, 0, yc, Graphics.TOP | Graphics.LEFT);
 		yc += la;
 		g.drawString("Count : " + collected, 0, yc, Graphics.TOP
 				| Graphics.LEFT);
@@ -1104,8 +1104,8 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		updatePosition();
 	}
 
-	public void receiveStatistics(int[] statRecord, byte qualtity) {
-		this.qualtity = qualtity;
+	public void receiveStatistics(int[] statRecord, byte quality) {
+		this.btquality = quality;
 		this.statRecord = statRecord;
 		repaint(0, 0, getWidth(), getHeight());
 	}
