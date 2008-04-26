@@ -665,7 +665,11 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				double el = s.elev / 180d * Math.PI;
 				double az = s.azimut / 180 * Math.PI;
 				double sr = r * Math.cos(el);
-				g.setColor(s.signal[0] * 5, 0, 0);
+				if (s.isLocked())
+					g.setColor(0, 255, 0);
+				else
+					g.setColor(255, 0, 0);
+				
 				int px = centerX + (int) (Math.sin(az) * sr);
 				int py = centerY - (int) (Math.cos(az) * sr);
 				// g.drawString(""+s.id, px, py,
@@ -673,9 +677,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				g.drawImage(satelit, px, py, Graphics.HCENTER
 						| Graphics.VCENTER);
 				py += 9;
-				// draw a bar under image tha indicates green/red status and
+				// draw a bar under image that indicates green/red status and
 				// signal strength
-
+				g.fillRect(px - 9, py, (int)(s.snr*18.0/100.0), 2);				
 			}
 		}
 		// g.drawImage(satelit, 5, 5, 0);

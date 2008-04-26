@@ -92,7 +92,7 @@ public class NmeaMessage {
 //			receiver.receiveMessage("got "+buffer.toString() );
 			if (lastMsgGSV && ! "GSV".equals(sentence)){
 	            receiver.receiveStatelit(satelit);
-	            satelit=new Satelit[12];
+	            //satelit=new Satelit[12];
 	            lastMsgGSV=false;
 			}
 			if ("GGA".equals(sentence)){
@@ -174,6 +174,43 @@ public class NmeaMessage {
 				head=getFloatToken((String)param.elementAt(1));
 				//Convert from knots to m/s
 				speed=getFloatToken((String)param.elementAt(7))*0.5144444f;
+			} else if ("GSA".equals(sentence)){
+				logger.info("Decoding GSA");
+				/**
+				 * Encodes Satellite status
+				 * 
+				 * Auto selection of 2D or 3D fix (M = manual)
+				 * 3D fix - values include: 1 = no fix
+			     *                          2 = 2D fix
+			     *                          3 = 3D fix
+				 */
+				/**
+				 * A list of up to 12 PRNs which are used for the fix 
+				 */
+				for (int j = 0; j < 12; j++) {
+					/**
+					 * Resetting all the satelits to non locked
+					 */
+					if ((satelit[j] != null)) {
+						satelit[j].isLocked(false);						
+					}
+				}
+				for (int i = 0; i < 12; i++) {
+					int prn = getIntegerToken((String)param.elementAt(i + 3));
+					if (prn != 0) {
+						logger.info("Satelit " + prn + " is part of fix");
+						for (int j = 0; j < 12; j++) {
+							if ((satelit[j] != null) && (satelit[j].id == prn)) {
+								satelit[j].isLocked(true);				
+							}
+						}
+					}
+				}
+				/**
+				 *	PDOP (dilution of precision) 
+			     *  Horizontal dilution of precision (HDOP) 
+			     *  Vertical dilution of precision (VDOP) 
+				 */
 			} else if ("GSV".equals(sentence)) {
 				/* GSV encodes the satellites that are currently in view
 				 * A maximum of 4 satellites are reported per message,
@@ -181,7 +218,8 @@ public class NmeaMessage {
 				 */				
 	            int j;
 	            // Calculate which satellites are in this message (message number * 4) 
-	            j=(getIntegerToken((String)param.elementAt(2))-1)*4;	            
+	            j=(getIntegerToken((String)param.elementAt(2))-1)*4;
+	            int noSatInView =(getIntegerToken((String)param.elementAt(3)));	            
 	            for (int i=4; i < param.size() && j < 12; i+=4, j++) {
 	            	if (satelit[j]==null){
 	            		satelit[j]=new Satelit();
@@ -192,6 +230,9 @@ public class NmeaMessage {
 	                satelit[j].snr=getIntegerToken((String)param.elementAt(i+3));	                
 	            }
 	            lastMsgGSV=true;
+	            for (int i = noSatInView; i < 12; i++) {
+	            	satelit[i] = null;
+	            }
 			}
 		} catch (RuntimeException e) {
 			logger.error("Error while decoding "+sentence + " " + e.getMessage());

@@ -60,6 +60,13 @@ public class Satelit {
 	public boolean isLocked(){
 		return isState(STATUS_CODE_LOCKED);
 	}
+	
+	public void isLocked(boolean locked){
+		if (locked == true)
+			state |= STATUS_CODE_LOCKED;
+		else
+			state &= ~STATUS_CODE_LOCKED;
+	}
 	public boolean isAcquisitionFaild(){
 		return isState(STATUS_ACQUISITION_FAILD);
 	}
