@@ -328,7 +328,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 					break;
 			}
 			// no valid url, i.e. "Please select to destination first" ? 
-			if(initialDir!=null && initialDir.indexOf(":")==-1) { 
+			if(initialDir!=null && !initialDir.toLowerCase().startsWith("file:///")) { 
 				initialDir=null; 
 			} 
 			FsDiscover fsd = new FsDiscover(this,this,initialDir,true,"",title);
