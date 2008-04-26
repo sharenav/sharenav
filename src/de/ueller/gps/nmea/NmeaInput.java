@@ -200,7 +200,7 @@ public class NmeaInput implements Runnable, LocationMsgProducer{
 				//First check the checksum and ignore incorrect data
 				if (isChecksumCorrect(buf2, p2)) {
 					//Throw away the first 3 characters ($GP) and the last 5 (checksum and \r\n)
-					String nmea_sentence = new String(buf2,3,p2-7);					
+					String nmea_sentence = new String(buf2,3,p2-8);					
 					smsg.decodeMessage(nmea_sentence);
 				}
 				
