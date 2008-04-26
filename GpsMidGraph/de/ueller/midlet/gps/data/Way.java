@@ -25,6 +25,7 @@ public class Way extends Entity{
 	public static final byte WAY_FLAG_NAME = 1;
 	public static final byte WAY_FLAG_MAXSPEED = 2;
 	public static final byte WAY_FLAG_ONEWAY = 16;
+	public static final byte WAY_FLAG_LAYER = 32;
 //	public static final byte WAY_FLAG_MULTIPATH = 4;
 	public static final byte WAY_FLAG_LONGWAY = 8;
 	public static final byte WAY_FLAG_NAMEHIGH = 32;
@@ -81,6 +82,13 @@ public class Way extends Entity{
 		if ((f & WAY_FLAG_MAXSPEED) == WAY_FLAG_MAXSPEED) {
 //			logger.debug("read maxspeed");
 			maxspeed = is.readByte();
+		}
+		if ((f & WAY_FLAG_LAYER) == WAY_FLAG_LAYER) {
+			/**
+			 * TODO: We are currently ignoring the layer info
+			 * Please implement proper support for this when rendering
+			 */
+			byte tmp = is.readByte();
 		}
 		if ((f & WAY_FLAG_ONEWAY) == WAY_FLAG_ONEWAY) {
 			mod += WAY_ONEWAY;
