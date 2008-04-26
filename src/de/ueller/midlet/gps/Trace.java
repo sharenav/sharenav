@@ -646,8 +646,10 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		g.setColor(255, 50, 50);
 		g.drawArc(centerX - r, centerY - r, dia, dia, 0, 360);
 		if (sat == null) return;
-		for (byte i = 0; i < sat.length; i++) {
+		for (byte i = 0; i < sat.length; i++) {			
 			Satelit s = sat[i];
+			if (s == null)
+				continue; //This array may be sparsely filled.
 			if (s.id != 0) {
 				double el = s.elev / 180d * Math.PI;
 				double az = s.azimut / 180 * Math.PI;
