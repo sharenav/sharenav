@@ -79,80 +79,8 @@ public class NmeaMessage {
 
 	public StringBuffer getBuffer() {
 		return buffer;
-	}
-
-	public void decodeMessageOld() {
-
-        String [] param = StringTokenizer.getArray(buffer.toString(), spChar);
-		String sentence=param[0];
-		try {
-			receiver.receiveMessage("got " + sentence );
-			if (lastMsgGSV && ! "GSV".equals(sentence)){
-	            receiver.receiveStatelit(satelit);
-	            satelit=new Satelit[12];
-	            lastMsgGSV=false;
-			}
-			if ("GLL".equals(sentence)){
-				float lat=getLat(param[1]);
-				if (param[2].startsWith("S")){
-					lat *= -1f;
-				}
-				float lon=getLon(param[3]);
-				if (param[4].startsWith("W")){
-					lat *= -1f;
-				}
-
-				Position p=new Position(lat,lon,0f,speed,head,0,null);
-				receiver.receivePosItion(p);
-			} else if ("GGA".equals(sentence)){
-				// time
-				
-				// lat
-				float lat=getLat(param[2]);
-				if ("S".equals(param[3])){
-					lat= -lat;
-				}
-				// lon
-				float lon=getLon(param[4]);
-				if ("W".equals(param[5])){
-					lon=-lon;
-				}
-				// quality
-				qual = getIntegerToken((String)param[6]);
-				
-				// no of Sat;
-				mAllSatellites = getIntegerToken((String)param[7]);
-				
-				// Relative accuracy of horizontal position
-				
-				// meters above mean sea level
-				alt=getFloatToken(param[9]);
-				// Height of geoid above WGS84 ellipsoid
-				Position p=new Position(lat,lon,alt,speed,head,0,null);
-				receiver.receivePosItion(p);
-			} else if ("VTG".equals(sentence)){
-				head=getFloatToken(param[1]);
-				//NMEA is in knots, but GpsMid uses m/s
-				speed=getFloatToken(param[7])*0.5144444f; 
-			} else if ("GSV".equals(sentence)) {
-	            int j;
-	            j=(getIntegerToken(param[2])-1)*4;
-	            mAllSatellites = getIntegerToken(param[3]);
-	            for (int i=4; i < param.length && j < 12; i+=4, j++) {
-	            	if (satelit[j]==null){
-	            		satelit[j]=new Satelit();
-	            	}
-	                satelit[j].id=getIntegerToken(param[i]);
-	                satelit[j].elev=getIntegerToken(param[i+1]);
-	                satelit[j].azimut=getIntegerToken(param[i+2]);
-	            }
-	            lastMsgGSV=true;
-			}
-		} catch (RuntimeException e) {
-			logger.error("Error while decoding "+sentence + " " + e.getMessage());
-		}
-		
-	}
+	}	
+	
 	public void decodeMessage() {
 		decodeMessage(buffer.toString());
 	}
