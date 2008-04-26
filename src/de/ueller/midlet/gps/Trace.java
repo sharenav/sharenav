@@ -219,7 +219,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			receiveMessage("Thread already running");
 			return;
 		}
-		running=true;
+		
 		//#debug info
 		logger.info("start thread init locationprovider");
 		if (locationProducer != null){
@@ -230,6 +230,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			receiveMessage("No location provider");
 			return;
 		}
+		running=true;
 		receiveMessage("Connect to "+Configuration.LOCATIONPROVIDER[config.getLocationProvider()]);
 //		System.out.println(config.getBtUrl());
 //		System.out.println(config.getRender());
