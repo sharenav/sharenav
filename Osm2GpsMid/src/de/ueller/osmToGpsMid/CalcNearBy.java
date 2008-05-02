@@ -23,8 +23,10 @@ public class CalcNearBy {
 		super();
 		this.parser = parser;
 		KDTree nearByElements = getNearByElements();
-		calcCityNearBy(parser, nearByElements);
-		calcWayIsIn(parser, nearByElements);
+		if (kdSize > 0) {
+			calcCityNearBy(parser, nearByElements);
+			calcWayIsIn(parser, nearByElements);
+		}
 	}
 
 	/**
