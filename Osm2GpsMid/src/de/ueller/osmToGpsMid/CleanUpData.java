@@ -56,7 +56,7 @@ public class CleanUpData {
 		for (Node n:parser.nodes.values()){
 			
 			progressCounter++;
-			if (progressCounter % noNodes == 0) {
+			if (noNodes > 0 && progressCounter % noNodes == 0) {
 				System.out.println("Processed " + progressCounter + " out of " + noNodes*20 + " Nodes");
 			}
 			
