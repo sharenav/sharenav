@@ -118,6 +118,10 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	int showAddons = 0;
 	private int fontHeight = 0;
 	
+	private static long pressedKeyTime = 0;
+	private static int pressedKeyCode = 0;
+	private static int ignoreKeyCode = 0;
+	
 	Tile t[] = new Tile[6];
 	PositionMark source;
 
@@ -1013,11 +1017,85 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		if ((keyCode == KEY_NUM2) || (keyCode == KEY_NUM8)
 				|| (keyCode == KEY_NUM4) || (keyCode == KEY_NUM6)) {
 			keyPressed(keyCode);
+			return;
+		}
 
-		}		
+		long keyTime=System.currentTimeMillis();
+		// other key is held down
+		if ( (keyTime-pressedKeyTime)>=1000 &&
+			 pressedKeyCode==keyCode)
+		{
+			if(keyCode == KEY_NUM5) {
+				ignoreKeyCode=keyCode;
+				commandAction(SAVE_WAYP_CMD,(Displayable) null);
+				return;
+			}		
+			if(keyCode == KEY_STAR) {
+				ignoreKeyCode=keyCode;
+				commandAction(MAN_WAYP_CMD,(Displayable) null);
+				return;
+			}		
+			if(keyCode == KEY_POUND) {
+				ignoreKeyCode=keyCode;
+				commandAction(TRANSFER_RECORD_CMD,(Displayable) null);
+				return;
+			}
+			if(keyCode == KEY_NUM0) {
+				ignoreKeyCode=keyCode;
+				Alert alert = new Alert("GpsMid");
+				alert.setTimeout(500);
+				if ( gpx.isRecordingTrk() ) {
+					alert.setString("Stopping to record");
+					Display.getDisplay(parent).setCurrent(alert);
+					commandAction(STOP_RECORD_CMD,(Displayable) null);
+				} else {
+					alert.setString("Starting to record");
+					Display.getDisplay(parent).setCurrent(alert);
+					commandAction(START_RECORD_CMD,(Displayable) null);
+				}
+				return;
+			}		
+		}	
+	}
+
+	
+	// manage keys that would have different meanings when
+	// held down in keyReleased
+	protected void keyReleased(int keyCode) {
+		// if key was not handled as held down key
+		if (keyCode == ignoreKeyCode) {
+			ignoreKeyCode=0;
+			return;
+		}
+		// handle this key normally (shortly pressed)
+		if (keyCode == KEY_NUM5) {
+			gpsRecenter = true;
+		} else if (keyCode == KEY_STAR) {
+			showLatLon++;
+			if(showLatLon == 2) showLatLon=0; 
+			;
+		} else if (keyCode == KEY_POUND) {
+			int backlight=config.getBacklight();
+			// toggle Backlight
+			config.setBacklight(backlight^(1<<config.BACKLIGHT_ON));
+			Alert alert = new Alert("GpsMid");
+			alert.setTimeout(500);
+			if ( (config.getBacklight() & (1<<config.BACKLIGHT_ON) )!=0 ) {
+				alert.setString("Backlight ON");
+			} else {
+				alert.setString("Backlight off");
+			}
+			Display.getDisplay(parent).setCurrent(alert);
+			parent.stopBackLightTimer();
+			parent.startBackLightTimer();
+		}
+		repaint(0, 0, getWidth(), getHeight());	
 	}
 	
 	protected void keyPressed(int keyCode) {
+		ignoreKeyCode=0;
+		pressedKeyCode=keyCode;
+		pressedKeyTime=System.currentTimeMillis();	
 		float f = 0.00003f / 15000f;
 		int keyStatus;		
 		if (this.getGameAction(keyCode) == UP) {			
@@ -1045,30 +1123,10 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			scale = scale * 1.5f;
 		} else if (keyCode == KEY_NUM3) {
 			scale = scale / 1.5f;
-		} else if (keyCode == KEY_NUM5) {
-			gpsRecenter = true;
 		} else if (keyCode == KEY_NUM7) {
 			showAddons++;
 		} else if (keyCode == KEY_NUM9) {
 			course += 5;
-		} else if (keyCode == KEY_STAR) {
-			showLatLon++;
-			if(showLatLon == 2) showLatLon=0; 
-			;
-		} else if (keyCode == KEY_POUND) {
-			int backlight=config.getBacklight();
-			// toggle Backlight
-			config.setBacklight(backlight^(1<<config.BACKLIGHT_ON));
-			Alert alert = new Alert("GpsMid");
-			alert.setTimeout(500);
-			if ( (config.getBacklight() & (1<<config.BACKLIGHT_ON) )!=0 ) {
-				alert.setString("Backlight ON");
-			} else {
-				alert.setString("Backlight off");
-			}
-			Display.getDisplay(parent).setCurrent(alert);
-			parent.stopBackLightTimer();
-			parent.startBackLightTimer();
 		//#if polish.api.mmapi && polish.api.advancedmultimedia
 		} else if (keyCode == Configuration.KEYCODE_CAMERA_COVER_OPEN) {
 			if (imageCollector != null) {
