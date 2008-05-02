@@ -29,6 +29,11 @@ public class Entity {
 		this.tags=other.tags;
 	}
 	
+	public void cloneTags(Entity other) {
+		this.id = other.id;		
+		this.tags=other.tags;		
+	}
+	
 	public String getName() {
 		if (tags == null)
 			return null;

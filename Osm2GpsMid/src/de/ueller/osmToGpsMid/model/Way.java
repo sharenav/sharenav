@@ -51,6 +51,11 @@ public class Way extends Entity implements Comparable<Way>{
 		super(other);		
 		this.type=other.type;
 	}
+	
+	public void cloneTags(Way other) {
+		super.cloneTags(other);		
+		this.type=other.type;
+	}
 
 	/*
 	private byte getJunctionType(){
@@ -302,8 +307,7 @@ public class Way extends Entity implements Comparable<Way>{
 							//System.out.println("found key index for " + s);
 							WayDescription way = keyValues.get(getAttribute(s));
 							if (way != null) {
-								type = way.typeNum;
-								//System.out.println(toString() + " is a " + way.description);
+								type = way.typeNum;								
 								way.noWaysOfType++;
 								return way.typeNum;								
 							}
@@ -637,6 +641,11 @@ public class Way extends Entity implements Comparable<Way>{
 		byte type=getType();
 		boolean isWay=false;
 		boolean longWays=false;
+		
+		if (type < 1) {
+			System.out.println("ERROR! Invalid way type for way " + toString());
+		}
+		
 		for (SubPath s:path.getSubPaths()){
 			if (s.size() >= 255){
 				longWays=true;}

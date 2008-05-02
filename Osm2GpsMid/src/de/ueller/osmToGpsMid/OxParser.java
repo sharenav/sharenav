@@ -38,6 +38,11 @@ public class OxParser extends DefaultHandler{
 	private int nodeTot,nodeIns,segTot,segIns,wayTot,wayIns,ele;
 	private Bounds[] bounds=null;
 	private Configuration configuration;
+	/**
+	 * Keep track of ways that get split, as at the time of splitting
+	 * not all tags have been added. So need to add them to all duplicates
+	 */
+	private LinkedList<Way> dupplicateWays;
 
 	public OxParser(InputStream i) {
 		System.out.println("OSM XML parser started...");
@@ -115,7 +120,14 @@ public class OxParser extends DefaultHandler{
 					// we simply add the current way and start a new one with shared attributes.
 					// degenerate ways are not added, so don't care about this here.
 					if (way.path != null){
-						addNewWay(way);
+						/**
+						 * Attributes might not be fully known yet, so keep
+						 * track of which ways are duplicates and clone
+						 * the tags once the XML for this way is fully parsed
+						 */
+						if (dupplicateWays == null)
+							dupplicateWays = new LinkedList<Way>();
+						dupplicateWays.add(way);
 						current = new Way(way);
 					}
 				}
@@ -197,7 +209,15 @@ public class OxParser extends DefaultHandler{
 		} else if (qName.equals("way")) {
 			wayTot++;
 			Way w= (Way) current;
+			if (dupplicateWays != null) {
+				for (Way ww : dupplicateWays) {
+					ww.cloneTags(w);
+					addNewWay(ww);
+				}
+				dupplicateWays = null;
+			}
 			addNewWay(w);
+			
 
 			current = null;
 		} else if (qName.equals("relation")) {
@@ -212,7 +232,7 @@ public class OxParser extends DefaultHandler{
 	 * @param w
 	 */
 	private void addNewWay(Way w) {
-		byte t=w.getType(configuration);
+		byte t=w.getType(configuration);		
 		if (w.isValid() && t != 0){
 			ways.add(w);
 			wayIns++;
