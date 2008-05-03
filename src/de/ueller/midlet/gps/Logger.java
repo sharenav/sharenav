@@ -17,16 +17,16 @@ public class Logger {
 	public final static int DEBUG = 4;
 	public final static int TRACE = 5;
 	private static GpsMid app;
-	private Class source;
+	private String source;
 	private int level=ERROR;
 	public Logger(GpsMid app){		
 		Logger.app=app;
 	}
 	public Logger(Class c){
-		this.source=c;
+		this.source=getClassName(c);
 	}
 	public Logger(Class c,int level){
-		this.source=c;
+		this.source=getClassName(c);
 		this.level=level;
 	}
 	public static Logger getInstance(Class c){
@@ -45,7 +45,7 @@ public class Logger {
 	}
 	public void fatal(String msg){
 		if (level >= FATAL) {
-			app.log("F["+getClassName()+"] " + msg);
+			app.log("F["+source + msg);
 			Alert alert = new Alert("Fatal");
 			alert.setString(msg);
 			alert.setTimeout(Alert.FOREVER);
@@ -55,7 +55,7 @@ public class Logger {
 	}
 	public void error(String msg){		
 		if (level >= ERROR) {
-			app.log("E["+getClassName()+"] " + msg);
+			app.log("E["+source + msg);
 			Alert alert = new Alert("Error");
 			alert.setTimeout(5000);
 			alert.setString(msg);
@@ -69,29 +69,29 @@ public class Logger {
 	public void info(String msg){
 		//#mdebug info
 		if (level >= INFO) {
-			app.log("I["+getClassName()+"] " + msg);
+			app.log("I["+source + msg);
 		}
 		//#enddebug
 	}
 	public void debug(String msg){
 		//#mdebug debug
 		if (level >= DEBUG) {
-			app.log("D["+getClassName()+"] " + msg);
+			app.log("D["+source + msg);
 		}
 		//#enddebug
 	}
 	public void trace(String msg){
 		//#mdebug debug
 		if (level >= TRACE) {
-			app.log("T["+getClassName()+"] " + msg);
+			app.log("T["+source + msg);
 		}
 		//#enddebug
 	}
 	
-	private String getClassName() {
-		if (source != null) {
-			String n=source.getName();
-			return n.substring(n.lastIndexOf('.')+1, n.length());
+	private static String getClassName(Class c) {
+		if (c != null) {
+			String n=c.getName();
+			return n.substring(n.lastIndexOf('.')+1, n.length()) + "] ";
 		} else {
 			return "";
 		}
