@@ -21,7 +21,7 @@ public class QueueDataReader extends QueueReader implements Runnable {
 
 	private final Trace trace;
 	public QueueDataReader(Trace trace){
-		super();
+		super("DataReader");
 		this.trace = trace;
 		
 	}

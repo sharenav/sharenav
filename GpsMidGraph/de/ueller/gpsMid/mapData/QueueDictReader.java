@@ -17,7 +17,7 @@ public class QueueDictReader extends QueueReader implements Runnable {
 	
 	private final Trace trace;
 	public QueueDictReader(Trace trace){
-		super();
+		super("DictReader");
 		this.trace = trace;
 		
 	}

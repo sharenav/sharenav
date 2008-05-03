@@ -23,7 +23,7 @@ public class DictReader  implements Runnable {
 	public DictReader(Trace t){
 		super();
 		this.t = t;
-		processorThread = new Thread(this);
+		processorThread = new Thread(this,"DictReader");
 		processorThread.setPriority(Thread.MIN_PRIORITY+2);
 		processorThread.start();
 		logger.trace("DictReader Thread started");
