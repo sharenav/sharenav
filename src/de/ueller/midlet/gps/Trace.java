@@ -159,7 +159,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 	private QueueDataReader tileReader;
 
-	private QueueReader dictReader;
+	private QueueDictReader dictReader;
 
 	private Runtime runtime = Runtime.getRuntime();
 
@@ -436,7 +436,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			}
 			if (c == ROUTE_TO_CMD){
 				pause();
-				stopImageCollector();
+//				stopImageCollector();
 				Routing routeEngine=new Routing(t,this);
 				routeEngine.solve(source, pc.target);
 			}
@@ -621,8 +621,8 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	
 	public void searchElement(PositionMark pm) throws Exception{
 		PaintContext pc = new PaintContext(this, null);
-		Node nld=new Node(pm.lat - 0.005f,pm.lon - 0.009f);
-		Node nru=new Node(pm.lat + 0.005f,pm.lon + 0.009f);		
+		Node nld=new Node(pm.lat - 0.005f,pm.lon - 0.009f,true);
+		Node nru=new Node(pm.lat + 0.005f,pm.lon + 0.009f,true);		
 		pc.screenLD=nld;
 		pc.screenRU=nru;
 		pc.target=pm;
@@ -1006,6 +1006,8 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	}
 
 	protected void keyRepeated(int keyCode) {
+	// strange seem to be working in emulator only with this debug line
+		logger.debug("keyRepeated " + keyCode);
 		//Scrolling should work with repeated keys the same
 		//as pressing the key multiple times
 		int gameActionCode = this.getGameAction(keyCode);
@@ -1059,10 +1061,12 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	}
 
 	
-	// manage keys that would have different meanings when
-	// held down in keyReleased
+//	// manage keys that would have different meanings when
+//	// held down in keyReleased
 	protected void keyReleased(int keyCode) {
 		// if key was not handled as held down key
+	// strange seem to be working in emulator only with this debug line
+		logger.debug("keyReleased " + keyCode);
 		if (keyCode == ignoreKeyCode) {
 			ignoreKeyCode=0;
 			return;
@@ -1093,6 +1097,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	}
 	
 	protected void keyPressed(int keyCode) {
+//		logger.debug("keyPressed " + keyCode);
 		ignoreKeyCode=0;
 		pressedKeyCode=keyCode;
 		pressedKeyTime=System.currentTimeMillis();	
@@ -1292,7 +1297,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		return tileReader;
 	}
 	
-	public QueueReader getDictReader() {
+	public QueueDictReader getDictReader() {
 		return dictReader;
 	}
 
