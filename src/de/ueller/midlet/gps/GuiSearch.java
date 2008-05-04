@@ -193,7 +193,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			poiSelectionCG = new ChoiceGroup("search for type: ", ChoiceGroup.EXCLUSIVE);
 			poiSelectionMaxDistance = new TextField("Maximum search distance", "10.0", 5, TextField.DECIMAL);
 			for (byte i = 0; i < parent.pc.c.getMaxType(); i++) {				
-				poiSelectionCG.append(parent.pc.c.getNodeTypeDesc(i), parent.pc.c.getNodeImage(i));
+				poiSelectionCG.append(parent.pc.c.getNodeTypeDesc(i), parent.pc.c.getNodeSearchImage(i));
 			}
 			poiSelectionForm.append(poiSelectionMaxDistance);
 			poiSelectionForm.append(poiSelectionCG);
