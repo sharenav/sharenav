@@ -12,6 +12,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
@@ -186,7 +187,7 @@ public class Configuration {
 						bound.minLon + "," + bound.minLat + "," + bound.maxLon + "," + bound.maxLat + "]");
 				System.out.println("Connecting to Osmxapi: " + url);
 				System.out.println("This may take a while!");
-				fr = url.openStream();
+				fr = new TeeInputStream(url.openStream(),new FileOutputStream(new File(getTempDir() + "osmXapi.osm")));				
 			} else {
 				System.out.println("Opening planet file: " + planet);
 				fr= new BufferedInputStream(new FileInputStream(planet), 4096);
