@@ -287,7 +287,14 @@ private Trace trace=null;
 			}
 		} else {
 			if (logFile != null) {
-				logFile.close();
+				try {
+					logFile.close();
+				} catch (IOException ioe) {
+					/*
+					 * We were closing anyway, so there is not much to do
+					 * in case of error
+					 */
+				}
 				logFile = null;
 			}			
 		}
