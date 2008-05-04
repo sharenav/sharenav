@@ -11,9 +11,6 @@ public abstract class RouteBaseTile extends Tile {
 	
 	protected boolean permanent=false;
 
-	public void getWay(PaintContext pc, PositionMark pm, Way w) {
-		return;
-	}
 	protected int minId;
 	protected int maxId;
 

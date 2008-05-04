@@ -323,11 +323,6 @@ public class GpxTile extends Tile {
 		return false;
 	}
 
-	public void getWay(PaintContext pc, PositionMark pm, Way w) {
-		// TODO Auto-generated method stub
-		
-	}
-
 	public void walk(PaintContext pc, int opt) {
 		// TODO Auto-generated method stub
 		
