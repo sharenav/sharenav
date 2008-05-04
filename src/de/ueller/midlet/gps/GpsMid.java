@@ -286,7 +286,10 @@ private Trace trace=null;
 				e.printStackTrace();
 			}
 		} else {
-			logFile = null;
+			if (logFile != null) {
+				logFile.close();
+				logFile = null;
+			}			
 		}
 		//#endif
 	}

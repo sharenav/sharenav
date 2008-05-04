@@ -556,6 +556,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				debugLog.getSelectedFlags(selDebug);				
 				GpsMid.getInstance().getConfig().setDebugRawLoggerEnable((selDebug[0]));
 				GpsMid.getInstance().getConfig().setDebugRawLoggerUrl(debugLog.getString(0));
+				GpsMid.getInstance().enableDebugFileLogging();
 				state = STATE_ROOT;
 				this.show();			
 				break;
