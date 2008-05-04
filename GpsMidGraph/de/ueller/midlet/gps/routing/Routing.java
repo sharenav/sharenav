@@ -358,10 +358,16 @@ public class Routing implements Runnable {
 			if (fromMark.e == null){
 				parent.receiveMessage("search for start element");
 				parent.searchElement(fromMark);
+				if (fromMark.e == null){
+					parent.receiveMessage("No Way found for start point");
+				}
 			}
 			if (toMark.e == null){
 				parent.receiveMessage("search for target element");
 				parent.searchElement(toMark);
+				if (toMark.e == null){
+					parent.receiveMessage("No Way found for target point");
+				}
 			}
 			if (fromMark.e instanceof Way){
 				Way w=(Way) fromMark.e;
@@ -444,6 +450,7 @@ public class Routing implements Runnable {
 		}
 	}
 		
+
 	private final Vector solve () {
 		try {
 
