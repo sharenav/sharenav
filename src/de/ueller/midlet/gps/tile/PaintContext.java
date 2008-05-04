@@ -77,6 +77,9 @@ public class PaintContext extends ScreenContext {
 		// TODO Auto-generated constructor stub
 	}
 	
+	public String boundToString(){
+		return (screenRU + " / " + screenLD);
+	}
 	public String toString(){
 		return "PC c:" + center + " s:" + scale + " w:" + xSize + " h:" + ySize;
 	}
