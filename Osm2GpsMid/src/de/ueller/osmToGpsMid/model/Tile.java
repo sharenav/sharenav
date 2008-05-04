@@ -205,8 +205,7 @@ public class Tile {
 					ret.extend(b2);
 				}
 			}
-			bounds = ret; //Update current bounds
-			System.out.println("calculated bounds: " + bounds);
+			bounds = ret; //Update current bounds			
 			return ret;
 	    }
 		
