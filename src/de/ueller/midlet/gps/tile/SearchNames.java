@@ -81,6 +81,13 @@ public class SearchNames implements Runnable{
 			InputStream stream;
 			try {
 				 stream = GpsMid.getInstance().getConfig().getMapResource(fileName);
+				 if (stream == null) {
+					 /**
+					  * This presumably means, that the combination of two letters simply
+					  * doesn't exist in the map. So just return and do nothing.
+					  */
+					 return;
+				 }
 			} catch (IOException e) {
 				/**
 				 * This presumably means, that the combination of two letters simply
@@ -89,6 +96,7 @@ public class SearchNames implements Runnable{
 				return;				
 			}			
 			DataInputStream ds=new DataInputStream(stream);
+			
 			int pos=0;
 			int type = 0;
 			/**
