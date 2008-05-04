@@ -244,8 +244,25 @@ public class CreateGpsMidData {
 			tile[zl].ways=parser.ways;
 			tile[zl].nodes=parser.nodes.values();
 			// create the tiles and write the content 
-			exportTile(tile[zl],tileSeq,allBound,routeNodeSeq);			
-			tile[zl].recalcBounds();
+			exportTile(tile[zl],tileSeq,allBound,routeNodeSeq);
+			
+			if (tile[zl].type != Tile.TYPE_ROUTECONTAINER && tile[zl].type != Tile.TYPE_CONTAINER) {
+				/*
+				 * We must have so little data, that it completely fits within one tile.
+				 * Never the less, the top tile should be a container tile
+				 */								
+				Tile ct = new Tile((byte)zl);
+				ct.t1 = tile[zl];
+				ct.t2 = new Tile((byte)zl);
+				ct.t2.type = Tile.TYPE_EMPTY;
+				if (zl == ROUTEZOOMLEVEL) {
+					ct.type = Tile.TYPE_ROUTECONTAINER;
+				} else {
+					ct.type = Tile.TYPE_CONTAINER;
+				}
+				tile[zl] = ct;
+			}
+			tile[zl].recalcBounds();			
 			if (zl == ROUTEZOOMLEVEL){
 				Sequence rnSeq=new Sequence();
 				tile[zl].renumberRouteNode(rnSeq);
