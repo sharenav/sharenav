@@ -12,18 +12,11 @@ import java.util.Vector;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
-import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.SearchResult;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
-
-import de.ueller.midlet.gps.data.MoreMath;
-import de.ueller.midlet.gps.data.Node;
-import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.data.ProjMath;
 import de.ueller.midlet.gps.data.Way;
-import de.ueller.midlet.gps.routing.Best;
-import de.ueller.midlet.gps.tile.C;
 import de.ueller.midlet.gps.tile.PaintContext;
 import de.ueller.midlet.gps.tile.QueueableTile;
 
