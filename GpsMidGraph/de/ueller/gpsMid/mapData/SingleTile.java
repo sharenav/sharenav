@@ -22,6 +22,7 @@ import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.data.ProjMath;
 import de.ueller.midlet.gps.data.Way;
+import de.ueller.midlet.gps.routing.Best;
 import de.ueller.midlet.gps.tile.C;
 import de.ueller.midlet.gps.tile.PaintContext;
 import de.ueller.midlet.gps.tile.QueueableTile;
@@ -66,8 +67,7 @@ public class SingleTile extends Tile implements QueueableTile {
 	boolean abortPainting = false;
 
 
-//	 private final static Logger logger= Logger.getInstance(SingleTile.class,
-//	 Logger.DEBUG);
+	 private final static Logger logger= Logger.getInstance(SingleTile.class,Logger.DEBUG);
 
 	public final byte zl;
 
@@ -172,15 +172,18 @@ public class SingleTile extends Tile implements QueueableTile {
 	}
 
 	
-	public void walk(PaintContext pc,int opt) {		
+	public void walk(PaintContext pc,int opt) {	
+
 		if (contain(pc)) {
 			while (!isDataReady()) {
-				if ((opt & Tile.OPT_WAIT_FOR_LOAD) == 0){
+				if ((opt & Tile.OPT_WAIT_FOR_LOAD) == Tile.OPT_WAIT_FOR_LOAD){
+					logger.info("Walk don't wait for TileData");
 					return;
 				} else {
 					synchronized (this) {
 						try {
 							wait(100);
+							logger.info("Walk Wait for TileData");
 						} catch (InterruptedException e) {
 						}						
 					}
@@ -404,5 +407,6 @@ public class SingleTile extends Tile implements QueueableTile {
 	   }
 	   return true;
    }
+
 
 }

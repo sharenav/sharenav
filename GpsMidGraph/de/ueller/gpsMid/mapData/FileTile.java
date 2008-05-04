@@ -20,7 +20,7 @@ public class FileTile extends Tile implements QueueableTile {
 	byte zl;
 	Tile tile=null;
 	boolean inLoad=false;
-//	private final static Logger logger=Logger.getInstance(FileTile.class,Logger.INFO);
+	private final static Logger logger=Logger.getInstance(FileTile.class,Logger.INFO);
 
 	public FileTile(DataInputStream dis, int deep, byte zl) throws IOException {
 //       	logger.info("create deep:"+deep + " zoom:"+zl);
@@ -63,21 +63,42 @@ public class FileTile extends Tile implements QueueableTile {
 	
 	public void walk(PaintContext pc,int opt) {
 		if (contain(pc)) {
-			if (tile == null){
-				if (!inLoad){
-					inLoad=true;
-					Trace.getInstance().getDictReader().add(this,null);
+			while (!isDataReady()) {
+				if ((opt & Tile.OPT_WAIT_FOR_LOAD) == Tile.OPT_WAIT_FOR_LOAD){
+					logger.info("Walk don't wait for Data");
+					return;
 				} else {
-//					logger.info("load already requestet");
+					synchronized (this) {
+						try {
+							wait(100);
+							logger.info("Walk Wait for Data");
+						} catch (InterruptedException e) {
+						}						
+					}
 				}
-			} else {
-				// delegate to tile
+			}
+
 				lastUse=0;
 				tile.walk(pc,opt);
-			}
 		}
 	}
 	
+	private boolean isDataReady() {
+		if (! inLoad && tile==null) {					
+			Trace.getInstance().getDataReader().add(this,this);
+			return false;
+		}
+		if (inLoad){
+			return false;
+		}
+		if (tile != null) {
+			return true;
+		}
+		return true;
+
+	}
+
+
 	public Vector getNearestPoi(byte searchType, float lat, float lon, float maxDist) {		
 		if (tile == null){
 			/**
@@ -126,20 +147,5 @@ public class FileTile extends Tile implements QueueableTile {
 		return "FT" + zl + "-" + fileId + ":" + lastUse;
 	}
 
-/*	public void getWay(PaintContext pc,PositionMark pm, Way w) {
-			if (contain(pm)) {
-				if (tile == null){
-					try {
-						pc.dictReader.readData(this);
-					} catch (IOException e) {
-						e.printStackTrace();
-						return;
-					}
-				} else {
-					lastUse=0;
-					tile.getWay(pc,pm, w);
-				}
-			}
-			}*/
 
 }
