@@ -20,7 +20,7 @@ import de.ueller.midlet.gps.tile.PaintContext;
 
 public class ContainerTile extends Tile {
 	//#debug error
-	private final static Logger logger=Logger.getInstance(ContainerTile.class,Logger.ERROR);
+	private final static Logger logger=Logger.getInstance(ContainerTile.class,Logger.DEBUG);
 
 	Tile t1;
 	Tile t2;
@@ -86,37 +86,13 @@ public class ContainerTile extends Tile {
 //		}
 		
 	}
-/*	public void getWay(PaintContext pc,PositionMark pm,Way w){
-		if (contain(pm)){
-			if (t1 != null) {
-				//#debug
-				logger.debug("search container left");
-				t1.getWay(pc,pm,w);
-			}
-			if (t2 != null) {
-				//#debug
-				logger.debug("search container right");
-				t2.getWay(pc,pm,w);
-			}	
-		} else {			
-			cleanup(4);
-		}
-		
-	}*/
 	
 	public void paint(PaintContext pc, byte layer) {
-		//#debug
-		logger.debug("paint container");
 		if (contain(pc)){
-//			drawBounds(pc, 255, 255, 255);
 			if (t1 != null) {
-				//#debug
-				logger.debug("paint container left");
 				t1.paint(pc, layer);
 			}
 			if (t2 != null) {
-				//#debug
-				logger.debug("paint container right");
 				t2.paint(pc, layer);
 			}	
 		} else {			
@@ -124,21 +100,15 @@ public class ContainerTile extends Tile {
 		}
 	}
 	public void walk(PaintContext pc,int opt) {
-		//#debug
-		logger.debug("paint container");
+
 		if (contain(pc)){
-//			drawBounds(pc, 255, 255, 255);
 			if (t1 != null) {
-				//#debug
-				logger.debug("paint container left");
 				t1.walk(pc,opt);
 			}
 			if (t2 != null) {
-				//#debug
-				logger.debug("paint container right");
 				t2.walk(pc,opt);
 			}	
-		} else {			
+		} else {	
 			cleanup(4);
 		}
 	}
@@ -292,21 +262,5 @@ public class ContainerTile extends Tile {
 		}		
 		return res;
 	}
-	/*public void getWay(PaintContext pc,PositionMark pm,Way w){
-		if (contain(pm)){
-			if (t1 != null) {
-				//#debug
-				logger.debug("search container left");
-				t1.getWay(pc,pm,w);
-			}
-			if (t2 != null) {
-				//#debug
-				logger.debug("search container right");
-				t2.getWay(pc,pm,w);
-			}	
-		} else {			
-			cleanup(4);
-		}
-		
-		}*/
+
 }
