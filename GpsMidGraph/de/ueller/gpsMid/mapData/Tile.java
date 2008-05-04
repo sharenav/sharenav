@@ -27,10 +27,10 @@ public abstract class Tile {
 	public static final byte TYPE_ROUTEFILE = 7;
 	public static final byte TYPE_WAYPOINT = 8;
 
-	public static final int OPT_WAIT_FOR_LOAD = 0;
-	public static final int OPT_PAINT = 1;
-	public static final int OPT_FIND_TARGET = 2;
-	public static final int OPT_FIND_CURRENT= 3;
+	public static final int OPT_WAIT_FOR_LOAD = 1;
+	public static final int OPT_PAINT = 2;
+	public static final int OPT_FIND_TARGET = 4;
+	public static final int OPT_FIND_CURRENT= 8;
 	
 	public static final byte LAYER_AREA = Byte.MIN_VALUE;
 	public static final byte LAYER_NODE = Byte.MAX_VALUE;
@@ -56,7 +56,6 @@ public abstract class Tile {
 	public abstract void paint(PaintContext pc, byte layer);
 	public abstract void walk(PaintContext pc,int opt);
 	public abstract boolean cleanup(int level);
-	//public abstract void getWay(PaintContext pc,PositionMark pm,Way w);
 		
 	boolean contain(ScreenContext pc){
 //		System.out.println(this);
