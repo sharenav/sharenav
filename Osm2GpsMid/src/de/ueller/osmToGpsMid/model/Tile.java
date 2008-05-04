@@ -148,7 +148,7 @@ public class Tile {
 					lds.writeFloat(degToRad(bounds.maxLon+RTEpsilon));
 					lds.writeInt(idxMin);
 					lds.writeInt(idxMax);
-				}			
+				}				
 				t1.writeTileDict(lds,deep,fid,path);
 				t2.writeTileDict(lds,deep,fid,path);
 				break;
@@ -173,24 +173,40 @@ public class Tile {
 	    public float degToRad(double deg) {
 	        return (float) (deg * (Math.PI / 180.0d));
 	    }
-
+	    
+	    /**
+	     * Recalculate the bounds of this tile tree starting from
+	     * the current tile in case new tiles have been added to the
+	     * tree. Leaf tiles are assumed to have the right bound.
+	     * 
+	     * This function updates the bounds along the way 
+	     * 
+	     * @return the bounds for the current tile tree.
+	     */
 	    public Bounds recalcBounds(){
 	    	Bounds b1=null;
 	    	Bounds b2=null;
-	    	Bounds ret=bounds.clone();
-	    	if (type == 1){
-	    		return bounds.clone();
-	    	}
-			if (t1 != null && t1.type==2){
-				b1=t1.recalcBounds();
-				ret=b1.clone();
+	    	Bounds ret=bounds.clone();	    	
+	    	if (type == TYPE_MAP || type == TYPE_ROUTEDATA){
+	    		/**
+	    		 * This is a leaf of the tile tree and should have correct bounds
+	    		 * anyway, so don't update and return the current bounds
+	    		 */
+	    		return ret;
+	    	}	    	
+			if (t1 != null && (t1.type != TYPE_EMPTY)) {								
+				b1=t1.recalcBounds();				
+				ret=b1.clone();				
 			}
-			if (t2 != null && t1.type==2){
-				b2=t1.recalcBounds();
+			
+			if (t2 != null && (t2.type != TYPE_EMPTY)){				
+				b2=t2.recalcBounds();				
 				if (ret != null){
 					ret.extend(b2);
 				}
 			}
+			bounds = ret; //Update current bounds
+			System.out.println("calculated bounds: " + bounds);
 			return ret;
 	    }
 		
@@ -343,5 +359,5 @@ public class Tile {
 			nds.close();
 			cds.close();
 		}
-	}
+	}	
 }
