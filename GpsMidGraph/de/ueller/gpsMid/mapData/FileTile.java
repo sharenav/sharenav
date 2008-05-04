@@ -64,7 +64,7 @@ public class FileTile extends Tile implements QueueableTile {
 	public void walk(PaintContext pc,int opt) {
 		if (contain(pc)) {
 			while (!isDataReady()) {
-				if ((opt & Tile.OPT_WAIT_FOR_LOAD) == Tile.OPT_WAIT_FOR_LOAD){
+				if ((opt & Tile.OPT_WAIT_FOR_LOAD) == 0){
 					logger.info("Walk don't wait for Data");
 					return;
 				} else {
@@ -85,7 +85,7 @@ public class FileTile extends Tile implements QueueableTile {
 	
 	private boolean isDataReady() {
 		if (! inLoad && tile==null) {					
-			Trace.getInstance().getDataReader().add(this,this);
+			Trace.getInstance().getDictReader().add(this,this);
 			return false;
 		}
 		if (inLoad){

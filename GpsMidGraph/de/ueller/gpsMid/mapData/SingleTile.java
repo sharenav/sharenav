@@ -176,7 +176,7 @@ public class SingleTile extends Tile implements QueueableTile {
 
 		if (contain(pc)) {
 			while (!isDataReady()) {
-				if ((opt & Tile.OPT_WAIT_FOR_LOAD) == Tile.OPT_WAIT_FOR_LOAD){
+				if ((opt & Tile.OPT_WAIT_FOR_LOAD) == 0){
 					logger.info("Walk don't wait for TileData");
 					return;
 				} else {

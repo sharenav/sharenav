@@ -20,7 +20,7 @@ import de.ueller.midlet.gps.tile.PaintContext;
 
 public class ContainerTile extends Tile {
 	//#debug error
-	private final static Logger logger=Logger.getInstance(ContainerTile.class,Logger.DEBUG);
+	private final static Logger logger=Logger.getInstance(ContainerTile.class,Logger.INFO);
 
 	Tile t1;
 	Tile t2;
