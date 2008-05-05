@@ -7,6 +7,7 @@ package de.ueller.midlet.gps;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Vector;
 
@@ -93,7 +94,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 //	private SirfInput si;
 	private LocationMsgProducer locationProducer;
 
-	private String solution = "No";
+	private String solution = "NoFix";
 	
 	private boolean gpsRecenter = true;
 	
@@ -107,7 +108,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	private final GpsMid parent;
 
 	private String lastMsg;
-	private long lastMsgTime=0;
+	private Calendar lastMsgTime = Calendar.getInstance();
 
 	private long collected = 0;
 
@@ -154,6 +155,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	 */
 	private int speed;
 
+	/**
+	 * Current course from GPS in compass degrees, 0..359.  
+	 */
 	private int course;
 
 
@@ -555,9 +559,10 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 
 	protected void paint(Graphics g) {
-		if (lastMsg != null){
-			if (System.currentTimeMillis() > lastMsgTime){
-				lastMsg=null;
+		if (lastMsg != null) {
+			if (System.currentTimeMillis() 
+					> (lastMsgTime.getTime().getTime() + 5000))
+			{
 				setTitle(null);
 			}
 		}
@@ -882,6 +887,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			}
 		}
 	}
+
 	public void showMovement(Graphics g) {
 		g.setColor(0, 0, 0);
 		int centerX = getWidth() / 2;
@@ -932,9 +938,13 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				+ dictReader.getRequestQueueSize(), 0, yc, Graphics.TOP
 				| Graphics.LEFT);
 		yc += la;
-		g.drawString("LastMsg:" + lastMsg, 0, yc, Graphics.TOP
+		g.drawString("LastMsg: " + lastMsg, 0, yc, Graphics.TOP
 				| Graphics.LEFT);
 		yc += la;
+		g.drawString( "at " + lastMsgTime.get(Calendar.HOUR_OF_DAY) + ":"  
+				+ HelperRoutines.formatInt2(lastMsgTime.get(Calendar.MINUTE)) + ":"  
+				+ HelperRoutines.formatInt2(lastMsgTime.get(Calendar.SECOND)), 0, yc,  
+				Graphics.TOP | Graphics.LEFT );
 		return (yc);
 
 	}
@@ -1023,7 +1033,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		//#debug
 		parent.log(s);
 		setTitle(lastMsg);
-		lastMsgTime=System.currentTimeMillis()+5000;
+		lastMsgTime.setTime( new Date( System.currentTimeMillis() ) );
 	}
 
 	public void receiveStatelit(Satelit[] sat) {
