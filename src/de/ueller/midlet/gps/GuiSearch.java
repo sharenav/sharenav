@@ -160,7 +160,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 							logger.error("Nearest POI search thread ran out of memory ");
 						}
 					}
-				});
+				}, "nearestPOI");
 				t.start();				
 			}
 			if (c == BACK_CMD) {
