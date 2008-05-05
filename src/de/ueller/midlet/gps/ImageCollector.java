@@ -81,7 +81,7 @@ public class ImageCollector implements Runnable {
 	public void run() {
 		try {
 			// logger.info("wait for sc");
-			while (stat == STATE_WAIT_FOR_SC) {
+			while (stat == STATE_WAIT_FOR_SC && !shutdown) {
 				synchronized (this) {
 					try {
 						wait();
@@ -98,7 +98,7 @@ public class ImageCollector implements Runnable {
 					}
 				}
 				// logger.info("loop");
-				while (pc[nextCreate].state != PaintContext.STATE_READY) {
+				while (pc[nextCreate].state != PaintContext.STATE_READY && !shutdown) {
 					synchronized (this) {
 						try {
 							// System.out.println("img not ready");
@@ -107,7 +107,7 @@ public class ImageCollector implements Runnable {
 						}
 					}
 				}
-				if (suspended)
+				if (suspended || shutdown)
 					continue;
 				pc[nextCreate].state = PaintContext.STATE_IN_CREATE;
 
