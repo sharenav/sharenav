@@ -136,24 +136,30 @@ public class GuiSearch extends Canvas implements CommandListener,
 				clearList();				
 				Thread t = new Thread(new Runnable() {
 					public void run() {
-						//TODO: we need to determin the correct ZoomLevel rather than assuming 3 is correct
-						Vector res = parent.t[3].getNearestPoi((byte)poiSelectionCG.getSelectedIndex(), parent.center.radlat, parent.center.radlon, Float.parseFloat(poiSelectionMaxDistance.getString())*1000.0f);						
-						for (int i = 0; i < res.size(); i++) {
-							addResult((SearchResult)res.elementAt(i));
+						try {
+							//TODO: we need to determin the correct ZoomLevel rather than assuming 3 is correct
+							Vector res = parent.t[3].getNearestPoi((byte)poiSelectionCG.getSelectedIndex(), parent.center.radlat, parent.center.radlon, Float.parseFloat(poiSelectionMaxDistance.getString())*1000.0f);						
+							for (int i = 0; i < res.size(); i++) {
+								addResult((SearchResult)res.elementAt(i));
+							}
+							show();
+							synchronized(this) {
+								try {
+									//Wait for the Names to be resolved
+									//This is an arbitrary value, but hopefully
+									//a reasonable compromise.
+									wait(500);
+									repaint();
+								} catch (InterruptedException e) {
+									//Nothing to do
+								}							
+							}
+						} catch (Exception e) {
+							logger.exception("Nearest POI search thread crashed ", e);
+						} catch (OutOfMemoryError oome) {
+							logger.error("Nearest POI search thread ran out of memory ");
 						}
-						show();
-						synchronized(this) {
-							try {
-								//Wait for the Names to be resolved
-								//This is an arbitrary value, but hopefully
-								//a reasonable compromise.
-								wait(500);
-								repaint();
-							} catch (InterruptedException e) {
-								//Nothing to do
-							}							
-						}						
-					}					
+					}
 				});
 				t.start();				
 			}
