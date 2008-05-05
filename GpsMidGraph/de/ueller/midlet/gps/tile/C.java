@@ -188,5 +188,18 @@ public class C {
 	
 	private byte typeTotype(byte type) {
 		return type;		
-	}	
+	}
+	
+	public byte scaleToTile(int scale) {
+		if (scale < 45000) {
+			return 3;
+		}
+		if (scale < 180000) {
+			return 2;
+		}
+		if (scale < 900000) {
+			return 2;
+		}		
+		return 0;
+	}
 }

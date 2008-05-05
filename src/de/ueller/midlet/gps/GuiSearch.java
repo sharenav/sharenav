@@ -137,8 +137,12 @@ public class GuiSearch extends Canvas implements CommandListener,
 				Thread t = new Thread(new Runnable() {
 					public void run() {
 						try {
-							//TODO: we need to determin the correct ZoomLevel rather than assuming 3 is correct
-							Vector res = parent.t[3].getNearestPoi((byte)poiSelectionCG.getSelectedIndex(), parent.center.radlat, parent.center.radlon, Float.parseFloat(poiSelectionMaxDistance.getString())*1000.0f);						
+							byte poiType = (byte)poiSelectionCG.getSelectedIndex();
+							int maxScale = Trace.getInstance().pc.c.getNodeMaxScale(poiType);
+							
+							Vector res = parent.t[Trace.getInstance().pc.c.scaleToTile(maxScale)].getNearestPoi(poiType, 
+									parent.center.radlat, parent.center.radlon, 
+									Float.parseFloat(poiSelectionMaxDistance.getString())*1000.0f);						
 							for (int i = 0; i < res.size(); i++) {
 								addResult((SearchResult)res.elementAt(i));
 							}

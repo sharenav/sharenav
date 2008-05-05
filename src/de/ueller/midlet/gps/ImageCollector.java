@@ -153,16 +153,17 @@ public class ImageCollector implements Runnable {
 				 * Draw each layer seperately to enforce paint ordering.
 				 *   
 				 */				
-				for (byte layer = 0; layer < layersToRender.length; layer++) {					
-					if ((pc[nextCreate].scale < 45000 * boost) && (t[3] != null)) {
+				for (byte layer = 0; layer < layersToRender.length; layer++) {
+					byte minTile = pc[nextCreate].c.scaleToTile((int)(pc[nextCreate].scale / boost));
+					if ((minTile >= 3) && (t[3] != null)) {
 						t[3].paint(pc[nextCreate],layersToRender[layer]);
 						Thread.yield();
 					}
-					if ((pc[nextCreate].scale < 180000 * boost) && (t[2] != null)) {
+					if ((minTile >= 2) && (t[2] != null)) {
 						t[2].paint(pc[nextCreate], layersToRender[layer]);
 						Thread.yield();
 					}
-					if ((pc[nextCreate].scale < 900000f * boost) && (t[1] != null)) {
+					if ((minTile >= 1) && (t[1] != null)) {
 						t[1].paint(pc[nextCreate], layersToRender[layer]);
 						Thread.yield();
 					}
