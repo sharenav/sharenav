@@ -31,8 +31,8 @@ public class Routing implements Runnable {
 	private final intTree closed = new intTree();
 	private Runtime runtime = Runtime.getRuntime();
 //	private RouteNodeTools rnt;
-	//#debug error
-	private final static Logger logger = Logger.getInstance(Routing.class,Logger.DEBUG);
+
+	private final static Logger logger = Logger.getInstance(Routing.class,Logger.ERROR);
 	private final RouteBaseTile tile;
 	private final Tile[] tiles;
 	private RouteNode routeFrom;
