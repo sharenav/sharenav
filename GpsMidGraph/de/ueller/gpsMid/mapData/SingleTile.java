@@ -175,7 +175,7 @@ public class SingleTile extends Tile implements QueueableTile {
 				} else {
 					synchronized (this) {
 						try {
-							wait(100);
+							wait(1000);
 							logger.info("Walk Wait for TileData");
 						} catch (InterruptedException e) {
 						}						

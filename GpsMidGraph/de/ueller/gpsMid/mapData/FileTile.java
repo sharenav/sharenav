@@ -70,7 +70,7 @@ public class FileTile extends Tile implements QueueableTile {
 				} else {
 					synchronized (this) {
 						try {
-							wait(100);
+							wait(1000);
 							logger.info("Walk Wait for Data");
 						} catch (InterruptedException e) {
 						}						
