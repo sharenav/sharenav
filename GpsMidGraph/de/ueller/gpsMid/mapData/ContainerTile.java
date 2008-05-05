@@ -127,65 +127,72 @@ public class ContainerTile extends Tile {
 		boolean t1closer;
 		Vector res;
 		Vector res2;
-		float t1dist = 0.0f;
-		float t2dist = 0.0f;
+		float t1dist = Float.MAX_VALUE;
+		float t2dist = Float.MAX_VALUE;
 		float distClose;
 		float distFar;
-				
+		
 		/**
 		 * Determine which of the tile bounding boxes is closer to the point
 		 * to which we are trying to find close by POIs 
 		 */
-		if (t1.maxLat < lat && t1.minLat < lat && t1.maxLon > lon && t1.minLon < lon) {
-			/**
-			 * If the bounding box contains the point, then the distance is 0
-			 */
-			t1dist = 0.0f;
+		if (t1 != null) {
+			
+			if (t1.maxLat > lat && t1.minLat < lat && t1.maxLon > lon && t1.minLon < lon) {
+				/**
+				 * If the bounding box contains the point, then the distance is 0
+				 */
+				t1dist = 0.0f;
+			} else {
+				/**
+				 * Distance to t1
+				 */
+				if (t1.maxLat < lat && t1.maxLon < lon) {
+					t1dist = ProjMath.getDistance(t1.maxLat, t1.maxLon, lat, lon);
+				} else if (t1.maxLat < lat && t1.minLon > lon) {
+					t1dist = ProjMath.getDistance(t1.maxLat, t1.minLon, lat, lon);
+				} else if (t1.minLat > lat && t1.minLon > lon) {
+					t1dist = ProjMath.getDistance(t1.minLat, t1.minLon, lat, lon);
+				}  else if (t1.minLat > lat && t1.maxLon < lon) {
+					t1dist = ProjMath.getDistance(t1.minLat, t1.maxLon, lat, lon);
+				} else if (t1.maxLat < lat) {
+					t1dist = ProjMath.getDistance(t1.maxLat, lon, lat, lon);
+				} else if (t1.minLat > lat) {
+					t1dist = ProjMath.getDistance(t1.minLat, lon, lat, lon);
+				} else if (t1.maxLon < lon) {
+					t1dist = ProjMath.getDistance(lat, t1.maxLon, lat, lon);
+				} if (t1.minLon > lon) {
+					t1dist = ProjMath.getDistance(lat, t1.minLon, lat, lon);
+				}			
+			}
 		}
-		if (t2.maxLat < lat && t2.minLat < lat && t2.maxLon > lon && t2.minLon < lon) {
-			t2dist = 0.0f;
+		if (t2 != null) {
+			if ((t2.maxLat > lat) && (t2.minLat < lat) && (t2.maxLon > lon) && (t2.minLon < lon)) {
+				t2dist = 0.0f;
+			} else {		
+				/**
+				 * Distance to t2
+				 */
+				if (t2.maxLat < lat && t2.maxLon < lon) {
+					t2dist = ProjMath.getDistance(t2.maxLat, t2.maxLon, lat, lon);
+				} else if (t2.maxLat < lat && t2.minLon > lon) {
+					t2dist = ProjMath.getDistance(t2.maxLat, t2.minLon, lat, lon);
+				} else if (t2.minLat > lat && t2.minLon > lon) {
+					t2dist = ProjMath.getDistance(t2.minLat, t2.minLon, lat, lon);
+				}  else if (t2.minLat > lat && t2.maxLon < lon) {
+					t2dist = ProjMath.getDistance(t2.minLat, t2.maxLon, lat, lon);
+				} else if (t2.maxLat < lat) {
+					t2dist = ProjMath.getDistance(t2.maxLat, lon, lat, lon);
+				} else if (t2.minLat > lat) {
+					t2dist = ProjMath.getDistance(t2.minLat, lon, lat, lon);
+				} else if (t2.maxLon < lon) {
+					t2dist = ProjMath.getDistance(lat, t2.maxLon, lat, lon);
+				} if (t2.minLon > lon) {
+					t2dist = ProjMath.getDistance(lat, t2.minLon, lat, lon);
+				}
+			}
 		}
-		/**
-		 * Distance to t1
-		 */
-		if (t1.maxLat < lat && t1.maxLon < lon) {
-			t1dist = ProjMath.getDistance(t1.maxLat, t1.maxLon, lat, lon);
-		} else if (t1.maxLat < lat && t1.minLon > lon) {
-			t1dist = ProjMath.getDistance(t1.maxLat, t1.minLon, lat, lon);
-		} else if (t1.minLat > lat && t1.minLon > lon) {
-			t1dist = ProjMath.getDistance(t1.minLat, t1.minLon, lat, lon);
-		}  else if (t1.minLat > lat && t1.maxLon < lon) {
-			t1dist = ProjMath.getDistance(t1.minLat, t1.maxLon, lat, lon);
-		} else if (t1.maxLat < lat) {
-			t1dist = ProjMath.getDistance(t1.maxLat, lon, lat, lon);
-		} else if (t1.minLat > lat) {
-			t1dist = ProjMath.getDistance(t1.minLat, lon, lat, lon);
-		} else if (t1.maxLon < lon) {
-			t1dist = ProjMath.getDistance(lat, t1.maxLon, lat, lon);
-		} if (t1.minLon > lon) {
-			t1dist = ProjMath.getDistance(lat, t1.minLon, lat, lon);
-		}
-		/**
-		 * Distance to t2
-		 */
-		if (t2.maxLat < lat && t2.maxLon < lon) {
-			t2dist = ProjMath.getDistance(t2.maxLat, t2.maxLon, lat, lon);
-		} else if (t2.maxLat < lat && t2.minLon > lon) {
-			t2dist = ProjMath.getDistance(t2.maxLat, t2.minLon, lat, lon);
-		} else if (t2.minLat > lat && t2.minLon > lon) {
-			t2dist = ProjMath.getDistance(t2.minLat, t2.minLon, lat, lon);
-		}  else if (t2.minLat > lat && t2.maxLon < lon) {
-			t2dist = ProjMath.getDistance(t2.minLat, t2.maxLon, lat, lon);
-		} else if (t2.maxLat < lat) {
-			t2dist = ProjMath.getDistance(t2.maxLat, lon, lat, lon);
-		} else if (t2.minLat > lat) {
-			t2dist = ProjMath.getDistance(t2.minLat, lon, lat, lon);
-		} else if (t2.maxLon < lon) {
-			t2dist = ProjMath.getDistance(lat, t2.maxLon, lat, lon);
-		} if (t2.minLon > lon) {
-			t2dist = ProjMath.getDistance(lat, t2.minLon, lat, lon);
-		}
-					
+
 		if (t1dist < t2dist) {
 			t1closer = true;
 			distClose = t1dist;
@@ -196,12 +203,12 @@ public class ContainerTile extends Tile {
 			distFar = t1dist;
 		}
 		
-		if (distClose < maxDist) {			
-			if (t1closer) 			
-				res = t1.getNearestPoi(searchType, lat, lon, maxDist);			
+		if (distClose < maxDist) {
+			if (t1closer)
+				res = t1.getNearestPoi(searchType, lat, lon, maxDist);
 			else
-				res = t2.getNearestPoi(searchType, lat, lon, maxDist);			
-		} else {			
+				res = t2.getNearestPoi(searchType, lat, lon, maxDist);
+		} else {
 			res = new Vector();
 		}
 		
