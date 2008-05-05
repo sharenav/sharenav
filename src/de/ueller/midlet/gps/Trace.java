@@ -114,6 +114,8 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	public PaintContext pc;
 
 	public float scale = 15000f;
+	
+	private boolean fullSreen;
 
 	public static int showLatLon = 0;
 	int showAddons = 0;
@@ -534,6 +536,21 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			locationProducer.close();
 		}
 
+	}
+	
+	protected void sizeChanged(int w, int h) {
+		logger.info("Size of Canvas changed to " + w + "|" + h);
+		if (w > imageCollector.xSize || h > imageCollector.ySize) {
+			System.out.println(pc.xSize + " | " + pc.ySize);
+			stopImageCollector();
+			try {
+				startImageCollector();
+				imageCollector.resume();
+				imageCollector.newDataReady();
+			} catch (Exception e) {
+				logger.exception("Could not reinitialise Image Collector after size change", e);
+			}
+		}
 	}
 
 
@@ -1105,6 +1122,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			Display.getDisplay(parent).setCurrent(alert);
 			parent.stopBackLightTimer();
 			parent.startBackLightTimer();
+		} else if (keyCode == KEY_NUM0) {
+			fullSreen = !fullSreen;
+			setFullScreenMode(fullSreen);			
 		}
 		repaint(0, 0, getWidth(), getHeight());	
 	}
