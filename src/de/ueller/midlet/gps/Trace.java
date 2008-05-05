@@ -54,6 +54,7 @@ import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.data.Projection;
 import de.ueller.midlet.gps.names.Names;
 import de.ueller.midlet.gps.routing.Connection;
+import de.ueller.midlet.gps.routing.RouteHelper;
 import de.ueller.midlet.gps.routing.RouteNode;
 import de.ueller.midlet.gps.routing.Routing;
 import de.ueller.midlet.gps.tile.C;
@@ -125,6 +126,8 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	Tile t[] = new Tile[6];
 	PositionMark source;
 
+	// this is only for visual debugging of the routing engine
+	Vector routeNodes=new Vector(); 
 
 	private final static Logger logger = Logger.getInstance(Trace.class,Logger.DEBUG);
 
@@ -437,8 +440,10 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			if (c == ROUTE_TO_CMD){
 				pause();
 //				stopImageCollector();
+				routeNodes=new Vector();
 				Routing routeEngine=new Routing(t,this);
 				routeEngine.solve(source, pc.target);
+				resume();
 			}
 			if (c == SAVE_WAYP_CMD) {				
 				GuiWaypointSave gwps = new GuiWaypointSave(this,new PositionMark(center.radlat, center.radlon));
@@ -621,8 +626,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	
 	public void searchElement(PositionMark pm) throws Exception{
 		PaintContext pc = new PaintContext(this, null);
-		Node nld=new Node(pm.lat - 0.005f,pm.lon - 0.009f,true);
-		Node nru=new Node(pm.lat + 0.005f,pm.lon + 0.009f,true);		
+		// take a bigger angle for lon because of positions near to the pols.
+		Node nld=new Node(pm.lat - 0.001f,pm.lon - 0.005f,true);
+		Node nru=new Node(pm.lat + 0.001f,pm.lon + 0.005f,true);		
 		pc.screenLD=nld;
 		pc.screenRU=nru;
 		pc.target=pm;
@@ -782,6 +788,13 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	 */
 	private void showRoute(PaintContext pc) {
 		Connection c;
+		// Show helper nodes for Routing
+		for (int x=0; x<routeNodes.size();x++){
+			RouteHelper n=(RouteHelper) routeNodes.elementAt(x);
+			pc.getP().forward(n.node.radlat, n.node.radlon, pc.lineP2,true);
+			pc.g.drawRect(pc.lineP2.x-5, pc.lineP2.y-5, 10, 10);
+			pc.g.drawString(n.name, pc.lineP2.x+7, pc.lineP2.y+5, Graphics.BOTTOM | Graphics.LEFT);
+		}
 		if (route != null && route.size() > 0){
 			c = (Connection) route.elementAt(0);
 			byte lastEndBearing=c.endBearing;
@@ -1266,7 +1279,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	public void setRoute(Vector route) {
 		this.route = route;
 		try {
-			startImageCollector();
+			resume();
 			repaint(0, 0, getWidth(), getHeight());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -1299,6 +1312,14 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	
 	public QueueDictReader getDictReader() {
 		return dictReader;
+	}
+
+	public Vector getRouteNodes() {
+		return routeNodes;
+	}
+
+	public void setRouteNodes(Vector routeNodes) {
+		this.routeNodes = routeNodes;
 	}
 
 }

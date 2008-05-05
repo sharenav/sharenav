@@ -19,7 +19,7 @@ import de.ueller.midlet.gps.tile.PaintContext;
 
 public class RouteContainerTile extends RouteBaseTile {
 	//#debug error
-	private final static Logger logger=Logger.getInstance(RouteContainerTile.class,Logger.DEBUG);
+	private final static Logger logger=Logger.getInstance(RouteContainerTile.class,Logger.INFO);
 
 	RouteBaseTile t1;
 	RouteBaseTile t2;

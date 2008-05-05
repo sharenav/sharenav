@@ -167,11 +167,12 @@ public class RouteTile extends RouteBaseTile {
 				if (n.lat == lat && n.lon == lon){
 					return n;
 				}
-//				if (MoreMath.approximately_equal(n.lat,lat,0.000001f) &&
-//					MoreMath.approximately_equal(n.lon,lon,0.000001f)){
-//					System.out.println("aprox equal matches");
-//					return n;
-//				}
+				// due the shorts in map data we don't match exactly
+				if (MoreMath.approximately_equal(n.lat,lat,0.0000005f) &&
+					MoreMath.approximately_equal(n.lon,lon,0.0000005f)){
+					System.out.println("aprox equal matches");
+					return n;
+				}
 			}
 			lastUse=0;
 		}
@@ -204,8 +205,6 @@ public class RouteTile extends RouteBaseTile {
 				if (connections == null){
 					loadConnections(bestTime);
 				}
-				//#debug error
-				logger.debug("catch connections at  "+(id-minId) + "(" + minId + "/" + maxId + ")");
 				return connections[id-minId];
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -213,8 +212,6 @@ public class RouteTile extends RouteBaseTile {
 				return null;
 			}
 		}
-		//#debug error
-		logger.error("catch connections at  "+(id-minId) + "(" + minId + "/" + maxId + ")");
 		return null;
 	}
 

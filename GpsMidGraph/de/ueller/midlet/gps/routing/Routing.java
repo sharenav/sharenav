@@ -104,17 +104,14 @@ public class Routing implements Runnable {
 //				// this avoid the usages of skip(int) because its CPU-expensive.
 //				successor=tile.getConnections(currentNode.state.toId.shortValue(),tile);
 //			}
-			//#debug error
-			System.out.println("Begin load connections MEM " +  runtime.freeMemory() + " exp=" + expanded +  " open " + open.size() + "  closed " + closed.size());
+//			//#debug error
+//			System.out.println("Begin load connections MEM " +  runtime.freeMemory() + " exp=" + expanded +  " open " + open.size() + "  closed " + closed.size());
 			try {
 				tile.cleanup(50);
 				successor=tile.getConnections(currentNode.state.toId,tile,bestTime);
 			} catch (OutOfMemoryError e) {
 				oomCounter++;
-				//#debug error
-				System.out.println("OutOfMemory : " + runtime.freeMemory());
 				tile.cleanup(0);
-				//#debug error
 				System.gc();
 				//#debug error
 				System.out.println("after cleanUp : " + runtime.freeMemory());
@@ -128,21 +125,8 @@ public class Routing implements Runnable {
 				successor=new Connection[0];
 			}
 
-			//#debug error
-			System.out.println("found "+successor.length + " connections");				
-
-			//#debug error
-			System.out.println("END load connections MEM " +  runtime.freeMemory() + " exp=" + expanded +  " open " + open.size() + "  closed " + closed.size());
-
 			for (int cl=0;cl < successor.length;cl++){
-//				//#debug error
-//				System.out.println("exp=" + expanded +  " open " + open.size() + "  closed " + closed.size());
 				Connection nodeSuccessor=successor[cl];
-//				if (nodeSuccessor.to == null){
-//					//#debug error
-//					logger.error("Connection without target Node");
-//					continue;
-//				}
 				int dTurn=currentNode.fromBearing-nodeSuccessor.startBearing;
 				int turnCost=getTurnCost(dTurn);
 //				if (bestTime)
@@ -353,14 +337,14 @@ public class Routing implements Runnable {
 			// search all nodes along the from-way. For any which have an
 			// associated RouteNode, add a connection from the Start-point
 			// (Start Node) to this Route-Node on the way.
-			System.out.println("search nodes for start point");
+			logger.debug("search nodes for start point");
 			int startAt=0;
 			if (fromMark.e == null){
 				parent.receiveMessage("search for start element");
 				parent.searchElement(fromMark);
 				if (fromMark.e == null){
 					parent.receiveMessage("No Way found for start point");
-				}
+				} 
 			}
 			if (toMark.e == null){
 				parent.receiveMessage("search for target element");
@@ -369,72 +353,75 @@ public class Routing implements Runnable {
 					parent.receiveMessage("No Way found for target point");
 				}
 			}
-			if (fromMark.e instanceof Way){
-				Way w=(Way) fromMark.e;
-				if (w.isOneway()){
-					float minDistSq=Float.MAX_VALUE;
-					System.out.println("start point is on oneway");
-					// point before last
-					int max=fromMark.nodeLat.length -1;
-					for (int u=0;u<max;u++){
-						  float distSq = MoreMath.ptSegDistSq(
-								  fromMark.nodeLat[u],
-								  fromMark.nodeLon[u],
-								  fromMark.nodeLat[u+1],
-								  fromMark.nodeLon[u+1],
-								  startNode.lat,
-								  startNode.lon);
-						  if (distSq < minDistSq){
-							  minDistSq=distSq;
-							  startAt=u+1;
-						  }
-					}
-				}
+			// Mark all nodes on the From Way
+			for (int v=0;v < fromMark.nodeLat.length; v++){
+				parent.getRouteNodes().addElement(new RouteHelper(fromMark.nodeLat[v],fromMark.nodeLon[v],"f"+v));
 			}
-			
-//			for (int u=0;u<fromMark.nodeLat.length;u++){
-//				System.out.println("search segment");
-				float[] lat=fromMark.nodeLat;
-				float[] lon=fromMark.nodeLon;
-				for (int v=startAt;v < lat.length; v++){
-					System.out.println("search point "+ lat[v] +"," + lon[v]);
-					RouteNode rn=tile.getRouteNode(lat[v], lon[v]);
+			// Mark all nodes on the To Way
+			for (int v=0;v < toMark.nodeLat.length; v++){
+				parent.getRouteNodes().addElement(new RouteHelper(toMark.nodeLat[v],toMark.nodeLon[v],"t"+v));
+			}
+			if (fromMark.e instanceof Way){
+				parent.receiveMessage("create from Connections");
+				Way w=(Way) fromMark.e;
+				int nearestSegment=getNearestSeg(w, startNode.lat, startNode.lon, fromMark.nodeLat,fromMark.nodeLon);
+				logger.debug("index endpoint of nearest segment " + nearestSegment);
+				if (! w.isOneway()){
+					
+//					parent.getRouteNodes().addElement(new RouteHelper(fromMark.nodeLat[nearestSegment],fromMark.nodeLon[nearestSegment],"oneWay sec"));
+					RouteNode rn=findPrevRouteNode(nearestSegment-1, startNode.lat, startNode.lon, fromMark.nodeLat,fromMark.nodeLon);
 					if (rn != null){
-						System.out.println("add start connection to " + rn);
+						logger.debug("add start connection to " + rn);
+						parent.getRouteNodes().addElement(new RouteHelper(rn.lat,rn.lon,"next back"));
+						// TODO: fill in bearings and cost
 						Connection initialState=new Connection(rn,0,(byte)0,(byte)0);
 						GraphNode firstNode=new GraphNode(initialState,null,0,0,(byte)0);
 						open.put(initialState.toId, firstNode);
 						nodes.addElement(firstNode);						
-					} else {
-						System.out.println("no rn for " + lat[v] +"," + lon[v]);
 					}
-				} 
-//			}
+				} else {
+					logger.debug("start point is on oneway");
+				}
+				RouteNode rn=findNextRouteNode(nearestSegment, startNode.lat, startNode.lon, fromMark.nodeLat,fromMark.nodeLon);
+				if (rn != null){
+					logger.debug("add start connection to " + rn);
+					parent.getRouteNodes().addElement(new RouteHelper(rn.lat,rn.lon,"next forward"));
+					// TODO: fill in bearings and cost
+					Connection initialState=new Connection(rn,0,(byte)0,(byte)0);
+					GraphNode firstNode=new GraphNode(initialState,null,0,0,(byte)0);
+					open.put(initialState.toId, firstNode);
+					nodes.addElement(firstNode);						
+				}				
+			}
+
 
 			// search all nodes along the destination way. For any point with an
 			// associated RouteNode, add a connection from this point to the 
 			// target point. For that, we have to load the Route-tile, add the
 			// connections and mark this tile as permanent, to make sure that 
 			// this node will not removed from memory during cleanup.
+			
 			routeTo=new RouteNode();
 			routeTo.id=-1;
 			routeTo.conSize=0;
 			routeTo.lat=toMark.lat;
 			routeTo.lon=toMark.lon;
-//			for (int u=0;u<toMark.nodeLat.length;u++){
-				lat=toMark.nodeLat;
-				lon=toMark.nodeLon;
-				RouteTileRet nodeTile=new RouteTileRet();
-				for (int v=0;v < lat.length; v++){
-					RouteNode rn=tile.getRouteNode(lat[v], lon[v],nodeTile);
-					if (rn != null){
-						System.out.println("add end connection to tile " + nodeTile.tile.toString());
-						// TODO: fill in bearings and cost
-						Connection newCon=new Connection(routeTo,0,(byte)0,(byte)0);
-						nodeTile.tile.addConnection(rn,newCon,bestTime);
-					}
-				} 
-//			}
+			Way w=(Way) fromMark.e;
+			int nearestSeg = getNearestSeg(w,toMark.lat, toMark.lon, toMark.nodeLat, toMark.nodeLon);
+			RouteTileRet nodeTile=new RouteTileRet();
+			if (! w.isOneway()){
+				RouteNode prefNode = findPrevRouteNode(nearestSeg, toMark.lat, toMark.lon, toMark.nodeLat, toMark.nodeLon);
+				// TODO: fill in bearings and cost
+				Connection newCon=new Connection(routeTo,0,(byte)0,(byte)0);
+				tile.getRouteNode(prefNode.lat, prefNode.lon, nodeTile);
+				nodeTile.tile.addConnection(prefNode,newCon,bestTime);
+			}
+			RouteNode nextNode = findNextRouteNode(nearestSeg, toMark.lat, toMark.lon, toMark.nodeLat, toMark.nodeLon);
+			// TODO: fill in bearings and cost
+			Connection newCon=new Connection(routeTo,0,(byte)0,(byte)0);
+			tile.getRouteNode(nextNode.lat, nextNode.lon, nodeTile);
+			nodeTile.tile.addConnection(nextNode,newCon,bestTime);
+			logger.debug("start routing Thread from :" + fromMark + " to " + toMark);
 			if (routeTo != null){
 				processorThread = new Thread(this);
 				processorThread.setPriority(Thread.NORM_PRIORITY);
@@ -451,6 +438,47 @@ public class Routing implements Runnable {
 	}
 		
 
+	private int getNearestSeg(Way w,float lat, float lon,float[] lats,float[] lons){
+			float minDistSq=Float.MAX_VALUE;
+			int startAt=0;
+			int max=lats.length -1;
+			for (int u=0;u<max;u++){
+				  float distSq = MoreMath.ptSegDistSq(
+						  lats[u],
+						  lons[u],
+						  lats[u+1],
+						  lons[u+1],
+						  lat,
+						  lon);
+				  logger.debug("dist:" + distSq + "  minDist:" + minDistSq);
+				  if (distSq < minDistSq){
+					  logger.debug("index " + (u+1) + " is actual min");
+					  minDistSq=distSq;
+					  startAt=u+1;
+				  }
+			}
+		return startAt;
+	}
+	
+	private RouteNode findNextRouteNode(int begin,float lat, float lon,float[] lats,float[] lons){
+		RouteNode rn=null;
+		for (int v=begin;v < lats.length; v++){
+			System.out.println("search point "+ lats[v] +"," + lons[v]);
+			rn=tile.getRouteNode(lats[v], lons[v]);
+			if (rn !=null){return rn;}
+		} 
+		return null;
+	}
+	private RouteNode findPrevRouteNode(int end,float lat, float lon,float[] lats,float[] lons){
+		RouteNode rn=null;
+		for (int v=end;v >= 0; v--){
+			System.out.println("search point "+ lats[v] +"," + lons[v]);
+			rn=tile.getRouteNode(lats[v], lons[v]);
+			if (rn !=null){return rn;}
+		} 
+		return null;
+	}
+	
 	private final Vector solve () {
 		try {
 
