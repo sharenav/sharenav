@@ -32,7 +32,7 @@ public abstract class Tile {
 	public static final int OPT_FIND_TARGET = 4;
 	public static final int OPT_FIND_CURRENT= 8;
 	
-	public static final byte LAYER_AREA = Byte.MIN_VALUE;
+	public static final byte LAYER_AREA = (byte)0x80; //01000000 binary
 	public static final byte LAYER_NODE = Byte.MAX_VALUE;
 	
 	

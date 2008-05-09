@@ -53,7 +53,7 @@ public class SingleTile extends Tile implements QueueableTile {
 
 	public byte[] type;
 
-	Way[] ways;
+	Way[][] ways;
 
 	byte state = 0;
 	
@@ -101,20 +101,30 @@ public class SingleTile extends Tile implements QueueableTile {
 		//System.out.println("Painting single tile " + this +  " at layer " + layer);
 		float testLat;
 		float testLon;
+		
+		boolean renderArea = ((layer & Tile.LAYER_AREA) != 0);
+		byte relLayer = (byte)(((int)layer) & ~Tile.LAYER_AREA);		
+		
 		if (contain(pc)) {
 			if (!isDataReady()) {
 				return;
 			}
 			lastUse = 0;
 			if (layer != Tile.LAYER_NODE) {
-				if (ways != null) {					
-					for (int i = 0; i < ways.length; i++) {
+				if (ways != null) {
+					if (relLayer < 0 || relLayer >= ways.length) {
+						logger.error("Trying to paint an invalid layer " + relLayer);
+						return;
+					}
+					if (ways[relLayer] == null)
+						return;
+					for (int i = 0; i < ways[relLayer].length; i++) {
 						if (abortPainting)
-							return;
-						Way w = ways[i];
+							return;						
+						Way w = ways[relLayer][i];
 						if (w == null) continue;
 						//Determin if the way is an area or not. 
-						if (((!w.isArea() && layer == Tile.LAYER_AREA) || (w.isArea() && layer != Tile.LAYER_AREA)))
+						if (w.isArea() != renderArea)
 							continue;
 
 						// logger.debug("test Bounds of way");
@@ -186,34 +196,44 @@ public class SingleTile extends Tile implements QueueableTile {
 			if (ways != null) {
 				short targetLat = (short)((pc.target.lat - centerLat)*fpm);
 				short targetLon = (short)((pc.target.lon - centerLon)*fpm);
-				for (int i = 0; i < ways.length; i++) {
-					Way w = ways[i];
-					if (!w.isOnScreen(pc, centerLat, centerLon))
+				for (int j = 0; j < ways.length; j++) {
+					if (ways[j] == null)
 						continue;
-					
-					// logger.debug("draw " + w.name);
-					// fill the target fields if they are empty
-//					logger.debug("search target" + pc.target);
-					if (pc.target != null ){
-//						logger.debug("search target nameIdx" );
-						if (pc.target.e == null && pc.target.nameIdx == w.nameIdx){
-//							logger.debug("search target way");
-							for (int i1 = 0; i1 < w.path.length; i1++) {
-								short s = w.path[i1];
-								if (nodeLat[s] == targetLat &&
-										nodeLon[s] == targetLon){
-//									logger.debug("found Target way");										
-									pc.target.setEntity(w, getFloatNodes(nodeLat,centerLat), getFloatNodes(nodeLon,centerLon));
+					for (int i = 0; i < ways[j].length; i++) {
+						Way w = ways[j][i];
+						if (!w.isOnScreen(pc, centerLat, centerLon))
+							continue;
+
+						// logger.debug("draw " + w.name);
+						// fill the target fields if they are empty
+						//					logger.debug("search target" + pc.target);
+						if (pc.target != null ){
+							//						logger.debug("search target nameIdx" );
+							if (pc.target.e == null && pc.target.nameIdx == w.nameIdx){
+								//							logger.debug("search target way");
+								for (int i1 = 0; i1 < w.path.length; i1++) {
+									short s = w.path[i1];
+									if (nodeLat[s] == targetLat &&
+											nodeLon[s] == targetLon){
+										//									logger.debug("found Target way");										
+										pc.target.setEntity(w, getFloatNodes(nodeLat,centerLat), getFloatNodes(nodeLon,centerLon));
+									}
 								}
 							}
 						}
-					}
-					if ((opt & Tile.OPT_PAINT) != 0){
-						w.setColor(pc);
-						if (!w.isArea()) {
-							w.paintAsPath(pc, this);
-						} else {							
-							w.paintAsArea(pc, this);
+						/**
+						 * Do we need this? 
+						 * When would we want to use this rather than paint()?
+						 * This doesn't handle layers correctly and doesn't seem to be called
+						 * at the moment.
+						 */
+						if ((opt & Tile.OPT_PAINT) != 0){
+							w.setColor(pc);
+							if (!w.isArea()) {
+								w.paintAsPath(pc, this);
+							} else {							
+								w.paintAsArea(pc, this);
+							}
 						}
 					}
 				}

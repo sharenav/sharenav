@@ -113,17 +113,44 @@ public class QueueDataReader extends QueueReader implements Runnable {
 //		logger.trace("reading " + wayCount + " ways");
 		int lastread=0;
 		try {
-			tt.ways = new Way[wayCount];
+			Way[] tmpWays = new Way[wayCount];
+			byte[] layers = new byte[wayCount];
+			short[] layerCount = new short[5];			
 			for (int i=0; i< wayCount;i++){				
 				byte flags=ds.readByte();
 				if (flags != 128){
-//				showAlert("create Way " + i);
-					Way w=new Way(ds,flags,tt);
-					tt.ways[i]=w;
+					Way w=new Way(ds,flags,tt, layers, i);			
+					tmpWays[i]=w;
+					/**
+					 * To save resources, only allow layers -2 .. +2
+					 */
+					if (layers[i] < -2) {
+						layers[i] = -2;
+					} else if (layers[i] > 2) {
+						layers[i] = 2;
+					}
+					layers[i] += 2;
+					layerCount[layers[i]]++;
 				}
 				lastread=i;
-			}
-		} catch (RuntimeException e) {
+			}			
+			
+			/**
+			 * Split way list into different layers
+			 */
+			tt.ways = new Way[5][];
+			for (int i = 0; i < 5; i++) {
+				if (layerCount[i] > 0) {
+					tt.ways[i] = new Way[layerCount[i]];
+					int k = 0;
+					for (int j = 0; j < wayCount; j++) {
+						if (layers[j] == i) {
+							tt.ways[i][k++] = tmpWays[j];
+						}
+					}
+				}
+			}			
+		} catch (RuntimeException e) {			
 			throwError(e,"Ways(last ok index " + lastread,tt);
 		}
 		if (ds.readByte() != 0x56){

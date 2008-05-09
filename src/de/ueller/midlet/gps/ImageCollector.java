@@ -147,7 +147,8 @@ public class ImageCollector implements Runnable {
 				 * in the data yet, so only split it into Area, Way and Node
 				 * layers
 				 */
-				byte layersToRender[] = {Tile.LAYER_AREA, 0, Tile.LAYER_NODE};
+				byte layersToRender[] = {Tile.LAYER_AREA, 1 | Tile.LAYER_AREA , 2 | Tile.LAYER_AREA,
+						3 | Tile.LAYER_AREA, 4 | Tile.LAYER_AREA,  0, 1, 2, 3, 4, Tile.LAYER_NODE};
 				
 				/**
 				 * Draw each layer seperately to enforce paint ordering.

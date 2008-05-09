@@ -56,12 +56,16 @@ public class Way extends Entity{
 	 * the flag should be readed by caller. if Flag == 128 this is a dummy Way
 	 * and can ignored.
 	 * 
-	 * @param is
-	 * @param f
+	 * @param is Tile inputstream
+	 * @param f flags
+	 * @param t Tile
+	 * @param layers: this is somewhat awkward. We need to get the layer information back out to 
+	 * 			the caller, so use a kind of call by reference
+	 * @paran idx index into the layers array where to store the layer info.
 	 * @param nodes
 	 * @throws IOException
 	 */
-	public Way(DataInputStream is, byte f, Tile t) throws IOException {
+	public Way(DataInputStream is, byte f, Tile t, byte[] layers, int idx) throws IOException {
 		minLat = is.readShort();
 		minLon = is.readShort();
 		maxLat = is.readShort();
@@ -83,12 +87,13 @@ public class Way extends Entity{
 //			logger.debug("read maxspeed");
 			maxspeed = is.readByte();
 		}
+		layers[idx] = 0;
 		if ((f & WAY_FLAG_LAYER) == WAY_FLAG_LAYER) {
 			/**
 			 * TODO: We are currently ignoring the layer info
 			 * Please implement proper support for this when rendering
 			 */
-			byte tmp = is.readByte();
+			layers[idx] = is.readByte();
 		}
 		if ((f & WAY_FLAG_ONEWAY) == WAY_FLAG_ONEWAY) {
 			mod += WAY_ONEWAY;
