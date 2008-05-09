@@ -60,6 +60,7 @@ public class Configuration {
 	private static final int RECORD_ID_GPX_FILTER_TIME = 14;
 	private static final int RECORD_ID_GPX_FILTER_DIST = 15;
 	private static final int RECORD_ID_GPX_FILTER_ALWAYS_DIST = 16;
+	private static final int RECORD_ID_LOG_DEBUG_SEVERITY = 17;
 
 	// Gpx Recording modes
 	// GpsMid determines adaptive if a trackpoint is written
@@ -90,6 +91,7 @@ public class Configuration {
 	private int backlight;
 	private int backlightDefault;
 	private String gpxUrl;
+	private int debugSeverity;
 		
 	private boolean mapFromJar;
 	private String mapFileUrl;
@@ -125,6 +127,7 @@ public class Configuration {
 			gpxRecordAlwaysDistanceCentimeters=readInt(database, RECORD_ID_GPX_FILTER_ALWAYS_DIST); 
 			rawDebugLogUrl=readString(database, RECORD_ID_LOG_DEBUG_URL);
 			rawDebugLogEnable = readInt(database,  RECORD_ID_LOG_DEBUG_ENABLE) !=0;
+			debugSeverity=readInt(database, RECORD_ID_LOG_DEBUG_SEVERITY);
 			database.closeRecordStore();
 		} catch (Exception e) {
 			logger.exception("Problems with reading our configuration: ", e);
@@ -225,6 +228,45 @@ public class Configuration {
 	public void setDebugRawLoggerUrl(String url) {
 		rawDebugLogUrl = url;
 		write(rawDebugLogUrl, RECORD_ID_LOG_DEBUG_URL);
+	}
+	
+	public void setDebugSeverityInfo(boolean enabled) {
+		if (enabled) {
+			debugSeverity |= 0x01;
+		} else {
+			debugSeverity &= ~0x01;
+		}
+		write(debugSeverity, RECORD_ID_LOG_DEBUG_SEVERITY);
+	}
+	
+	public boolean getDebugSeverityInfo() {
+		return ((debugSeverity & 0x01) > 0);
+	}
+	
+	public void setDebugSeverityDebug(boolean enabled) {
+		if (enabled) {
+			debugSeverity |= 0x02;
+		} else {
+			debugSeverity &= ~0x02;
+		}
+		write(debugSeverity, RECORD_ID_LOG_DEBUG_SEVERITY);
+	}
+	
+	public boolean getDebugSeverityDebug() {
+		return ((debugSeverity & 0x02) > 0);
+	}
+	
+	public void setDebugSeverityTrace(boolean enabled) {
+		if (enabled) {
+			debugSeverity |= 0x04;
+		} else {
+			debugSeverity &= ~0x04;
+		}
+		write(debugSeverity, RECORD_ID_LOG_DEBUG_SEVERITY);
+	}
+	
+	public boolean getDebugSeverityTrace() {
+		return ((debugSeverity & 0x04) > 0);
 	}
 	
 	public void setDebugRawLoggerEnable(boolean enabled) {

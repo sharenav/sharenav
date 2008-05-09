@@ -19,15 +19,18 @@ public class Logger {
 	private static GpsMid app;
 	private String source;
 	private int level=ERROR;
+	private static boolean infoEnabled;
+	private static boolean debugEnabled;
+	private static boolean traceEnabled;
 	public Logger(GpsMid app){		
 		Logger.app=app;
 	}
 	public Logger(Class c){
-		this.source=getClassName(c);
+		this.source=getClassName(c);		
 	}
 	public Logger(Class c,int level){
 		this.source=getClassName(c);
-		this.level=level;
+		this.level=level;		
 	}
 	public static Logger getInstance(Class c){
 		if (app == null){
@@ -68,21 +71,21 @@ public class Logger {
 	}
 	public void info(String msg){
 		//#mdebug info
-		if (level >= INFO) {
+		if (level >= INFO && infoEnabled) {
 			app.log("I["+source + msg);
 		}
 		//#enddebug
 	}
 	public void debug(String msg){
 		//#mdebug debug
-		if (level >= DEBUG) {
+		if (level >= DEBUG && debugEnabled) {
 			app.log("D["+source + msg);
 		}
 		//#enddebug
 	}
 	public void trace(String msg){
 		//#mdebug debug
-		if (level >= TRACE) {
+		if (level >= TRACE && traceEnabled) {
 			app.log("T["+source + msg);
 		}
 		//#enddebug
@@ -103,5 +106,11 @@ public class Logger {
 	
 	public void setLevel(int level) {
 		this.level = level;
+	}
+	
+	public static void setGlobalLevel() {
+		infoEnabled = GpsMid.getInstance().getConfig().getDebugSeverityInfo();
+		debugEnabled = GpsMid.getInstance().getConfig().getDebugSeverityDebug();
+		traceEnabled = GpsMid.getInstance().getConfig().getDebugSeverityTrace();
 	}
 }

@@ -93,6 +93,7 @@ private Trace trace=null;
 		config = new Configuration();
 		
 		enableDebugFileLogging();
+		Logger.setGlobalLevel();
 		
 		menu.addCommand(EXIT_CMD);
 		menu.addCommand(OK_CMD);

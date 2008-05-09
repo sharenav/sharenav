@@ -128,6 +128,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private ChoiceGroup renderOpts;
 	private ChoiceGroup backlightOpts;
 	private ChoiceGroup debugLog;
+	private ChoiceGroup debugSeverity;
 	private StringItem  gpxUrl;
 	private StringItem  gpsUrl; 
 	  
@@ -273,6 +274,16 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		debugLog = new ChoiceGroup("Debug event logging to:", ChoiceGroup.MULTIPLE,loggings,null);
 		debugLog.setSelectedFlags(selDebug);
 		menuDebug.append(debugLog);
+		
+		loggings = new String[3];
+		selDebug = new boolean[3];
+		selDebug[0] = GpsMid.getInstance().getConfig().getDebugSeverityInfo();
+		selDebug[1] = GpsMid.getInstance().getConfig().getDebugSeverityDebug();
+		selDebug[2] = GpsMid.getInstance().getConfig().getDebugSeverityTrace();
+		loggings[0] = "Info"; loggings[1] = "Debug"; loggings[2] = "Trace"; 
+		debugSeverity = new ChoiceGroup("Log severity:", ChoiceGroup.MULTIPLE,loggings,null);
+		debugSeverity.setSelectedFlags(selDebug);
+		menuDebug.append(debugSeverity);
 		
 		show();
 	}
@@ -557,6 +568,12 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				GpsMid.getInstance().getConfig().setDebugRawLoggerEnable((selDebug[0]));
 				GpsMid.getInstance().getConfig().setDebugRawLoggerUrl(debugLog.getString(0));
 				GpsMid.getInstance().enableDebugFileLogging();
+				selDebug = new boolean[3];
+				debugSeverity.getSelectedFlags(selDebug);
+				GpsMid.getInstance().getConfig().setDebugSeverityInfo(selDebug[0]);
+				GpsMid.getInstance().getConfig().setDebugSeverityDebug(selDebug[1]);
+				GpsMid.getInstance().getConfig().setDebugSeverityTrace(selDebug[2]);
+				Logger.setGlobalLevel();
 				state = STATE_ROOT;
 				this.show();			
 				break;
