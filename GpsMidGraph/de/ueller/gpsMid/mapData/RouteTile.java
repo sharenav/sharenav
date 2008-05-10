@@ -46,7 +46,7 @@ public class RouteTile extends RouteBaseTile {
 				nodes=null;
 				connections=null;
 				//#debug error
-				logger.info("discard content for " + this);
+				logger.info("discard content for " + this +" with level " + level);
 				return true;
 			} else {
 				lastUse++;
