@@ -32,7 +32,7 @@ public class Routing implements Runnable {
 	private Runtime runtime = Runtime.getRuntime();
 //	private RouteNodeTools rnt;
 
-	private final static Logger logger = Logger.getInstance(Routing.class,Logger.ERROR);
+	private final static Logger logger = Logger.getInstance(Routing.class,Logger.INFO);
 	private final RouteBaseTile tile;
 	private final Tile[] tiles;
 	private RouteNode routeFrom;
@@ -40,7 +40,7 @@ public class Routing implements Runnable {
 	private final Trace parent;
 	private int bestTotal;
 	private long nextUpdate;
-	private float estimateFac=1.30f;
+	private float estimateFac=1.00f;
 	private int oomCounter=0;
 //	private Tile destinationTile=new RouteTile();
 	private int expanded;
@@ -129,10 +129,6 @@ public class Routing implements Runnable {
 				Connection nodeSuccessor=successor[cl];
 				int dTurn=currentNode.fromBearing-nodeSuccessor.startBearing;
 				int turnCost=getTurnCost(dTurn);
-//				if (bestTime)
-//					successorCost = currentNode.costs + nodeSuccessor.time+turnCost;
-//				else 
-//					successorCost = currentNode.costs + nodeSuccessor.length+turnCost;
 				successorCost = currentNode.costs + nodeSuccessor.cost+turnCost;
 				GraphNode openNode = null;
 				GraphNode theNode = null;
@@ -160,11 +156,19 @@ public class Routing implements Runnable {
 					}
 				// not in open or closed
 				} else { 
+					if (nodeSuccessor.to == null){
+						nodeSuccessor.to=tile.getRouteNode(nodeSuccessor.toId);
+					}
+					if (nodeSuccessor.to == null){
+						logger.error("Successor without target");
+						continue;
+					}
 					int estimation;
 					GraphNode newNode;
 					estimation = estimate(currentNode.state,nodeSuccessor, target);
 					newNode = new GraphNode(nodeSuccessor, currentNode, successorCost, estimation, currentNode.fromBearing);
 					open.put(nodeSuccessor.toId, newNode);
+					parent.getRouteNodes().addElement(new RouteHelper(newNode.state.to.lat,newNode.state.to.lon,"t"+expanded));
 //					evaluated++;
 					children.addElement(newNode);
 				}
@@ -259,7 +263,7 @@ public class Routing implements Runnable {
 			}
 		}
 		if (target == null){
-			throw new Error("Targer is NULL");
+			throw new Error("Target is NULL");
 		}
 		int dist = MoreMath.dist(to.to.lat,to.to.lon,target.lat,target.lon);
 		if (bestTime) {
@@ -282,7 +286,7 @@ public class Routing implements Runnable {
 			// estimate 30 Km/h (8 m/s) as average speed 
 			return (int) (((dist/18f)+turnCost)*estimateFac);
 		} else {
-			return (int) ((dist*1.3f + turnCost)*estimateFac);
+			return (int) ((dist*1.1f + turnCost)*estimateFac);
 		}
 	} 
 
@@ -313,7 +317,7 @@ public class Routing implements Runnable {
 				logger.debug("Route to " + routeTo);
 			}
 			if (routeFrom != null && routeTo != null){
-				processorThread = new Thread(this);
+				processorThread = new Thread(this,"Routing");
 				processorThread.setPriority(Thread.NORM_PRIORITY);
 				processorThread.start();
 			} else {
@@ -334,12 +338,10 @@ public class Routing implements Runnable {
 			RouteNode startNode=new RouteNode();
 			startNode.lat=fromMark.lat;
 			startNode.lon=fromMark.lon;
-			// search all nodes along the from-way. For any which have an
-			// associated RouteNode, add a connection from the Start-point
-			// (Start Node) to this Route-Node on the way.
 			logger.debug("search nodes for start point");
-			int startAt=0;
 			if (fromMark.e == null){
+				// if there is no element at the from Mark, then search it from 
+				// the data.
 				parent.receiveMessage("search for start element");
 				parent.searchElement(fromMark);
 				if (fromMark.e == null){
@@ -347,21 +349,16 @@ public class Routing implements Runnable {
 				} 
 			}
 			if (toMark.e == null){
+				// if there is no element in the to Mark, fill it from tile-data
 				parent.receiveMessage("search for target element");
 				parent.searchElement(toMark);
 				if (toMark.e == null){
 					parent.receiveMessage("No Way found for target point");
 				}
 			}
-			// Mark all nodes on the From Way
-			for (int v=0;v < fromMark.nodeLat.length; v++){
-				parent.getRouteNodes().addElement(new RouteHelper(fromMark.nodeLat[v],fromMark.nodeLon[v],"f"+v));
-			}
-			// Mark all nodes on the To Way
-			for (int v=0;v < toMark.nodeLat.length; v++){
-				parent.getRouteNodes().addElement(new RouteHelper(toMark.nodeLat[v],toMark.nodeLon[v],"t"+v));
-			}
 			if (fromMark.e instanceof Way){
+				// search the next route node in all accessible directions. Then create 
+				// connections that lead form the start point to the next route nodes.
 				parent.receiveMessage("create from Connections");
 				Way w=(Way) fromMark.e;
 				int nearestSegment=getNearestSeg(w, startNode.lat, startNode.lon, fromMark.nodeLat,fromMark.nodeLon);
@@ -372,7 +369,7 @@ public class Routing implements Runnable {
 					RouteNode rn=findPrevRouteNode(nearestSegment-1, startNode.lat, startNode.lon, fromMark.nodeLat,fromMark.nodeLon);
 					if (rn != null){
 						logger.debug("add start connection to " + rn);
-						parent.getRouteNodes().addElement(new RouteHelper(rn.lat,rn.lon,"next back"));
+//						parent.getRouteNodes().addElement(new RouteHelper(rn.lat,rn.lon,"next back"));
 						// TODO: fill in bearings and cost
 						Connection initialState=new Connection(rn,0,(byte)0,(byte)0);
 						GraphNode firstNode=new GraphNode(initialState,null,0,0,(byte)0);
@@ -385,7 +382,7 @@ public class Routing implements Runnable {
 				RouteNode rn=findNextRouteNode(nearestSegment, startNode.lat, startNode.lon, fromMark.nodeLat,fromMark.nodeLon);
 				if (rn != null){
 					logger.debug("add start connection to " + rn);
-					parent.getRouteNodes().addElement(new RouteHelper(rn.lat,rn.lon,"next forward"));
+//					parent.getRouteNodes().addElement(new RouteHelper(rn.lat,rn.lon,"next forward"));
 					// TODO: fill in bearings and cost
 					Connection initialState=new Connection(rn,0,(byte)0,(byte)0);
 					GraphNode firstNode=new GraphNode(initialState,null,0,0,(byte)0);
@@ -395,11 +392,7 @@ public class Routing implements Runnable {
 			}
 
 
-			// search all nodes along the destination way. For any point with an
-			// associated RouteNode, add a connection from this point to the 
-			// target point. For that, we have to load the Route-tile, add the
-			// connections and mark this tile as permanent, to make sure that 
-			// this node will not removed from memory during cleanup.
+			// same for the endpoint
 			
 			routeTo=new RouteNode();
 			routeTo.id=-1;
@@ -481,7 +474,6 @@ public class Routing implements Runnable {
 	
 	private final Vector solve () {
 		try {
-
 			GraphNode solution=search(routeTo);
 			nodes.removeAllElements();
 			open.removeAll();
