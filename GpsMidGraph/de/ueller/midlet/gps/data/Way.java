@@ -15,6 +15,7 @@ import de.ueller.gps.data.Configuration;
 import de.ueller.gpsMid.mapData.SingleTile;
 import de.ueller.gpsMid.mapData.Tile;
 import de.ueller.midlet.gps.GpsMid;
+import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.tile.C;
 import de.ueller.midlet.gps.tile.PaintContext;
@@ -426,7 +427,12 @@ public class Way extends Entity{
 	public void setColor(PaintContext pc) {		
 		WayDescription wayDesc = pc.c.getWayDescription(type);
 		pc.g.setStrokeStyle(wayDesc.lineStyle);
-		pc.g.setColor(wayDesc.lineColor);
+		if ((pc.target != null) && (pc.target.e == this)) {
+			/*Color the target way red */			
+			pc.g.setColor(0x00ff0000);
+		} else {
+			pc.g.setColor(wayDesc.lineColor);
+		}
 		/*switch (type) {
 		case C.WAY_HIGHWAY_MOTORWAY:
 		case C.WAY_HIGHWAY_MOTORWAY_LINK:

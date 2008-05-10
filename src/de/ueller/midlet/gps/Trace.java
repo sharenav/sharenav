@@ -1297,6 +1297,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 	public void setTarget(PositionMark target) {
 		this.target = target;
+		pc.target = target;
 		center.setLatLon(target.lat, target.lon,true);
 		projection = new Mercator(center, scale, getWidth(), getHeight());
 		pc.setP( projection);
