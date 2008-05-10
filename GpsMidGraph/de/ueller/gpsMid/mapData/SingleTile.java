@@ -135,11 +135,13 @@ public class SingleTile extends Tile implements QueueableTile {
 						if (pc.target != null ){
 //							logger.debug("search target nameIdx" );
 							if (pc.target.e == null && pc.target.nameIdx == w.nameIdx){
-//								logger.debug("search target way");
+// 								logger.debug("search target way");
+								short targetLat = (short)((pc.target.lat - centerLat)*fpm);
+								short targetLon = (short)((pc.target.lon - centerLon)*fpm);
 								for (int i1 = 0; i1 < w.path.length; i1++) {
-									short s = w.path[i1];
-									if ((nodeLat[s] + centerLat)*fpminv == pc.target.lat && 
-											(nodeLon[s]  + centerLon)*fpminv == pc.target.lon){
+									short s = w.path[i1];									
+									if ((Math.abs(nodeLat[s] - targetLat) < 2) && 
+											(Math.abs(nodeLon[s] - targetLon) < 2)){
 //										logger.debug("found Target way");
 										pc.target.setEntity(w, getFloatNodes(nodeLat,centerLat), getFloatNodes(nodeLon,centerLon));
 									}
