@@ -649,8 +649,8 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	public void searchElement(PositionMark pm) throws Exception{
 		PaintContext pc = new PaintContext(this, null);
 		// take a bigger angle for lon because of positions near to the pols.
-		Node nld=new Node(pm.lat - 0.001f,pm.lon - 0.005f,true);
-		Node nru=new Node(pm.lat + 0.001f,pm.lon + 0.005f,true);		
+		Node nld=new Node(pm.lat - 0.0001f,pm.lon - 0.0005f,true);
+		Node nru=new Node(pm.lat + 0.0001f,pm.lon + 0.0005f,true);		
 		pc.screenLD=nld;
 		pc.screenRU=nru;
 		pc.target=pm;
