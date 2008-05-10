@@ -555,6 +555,10 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				logger.exception("Could not reinitialise Image Collector after size change", e);
 			}
 		}
+		/**
+		 * Recalculate the projection, as it may depends on the size of the screen
+		 */
+		updatePosition();
 	}
 
 
