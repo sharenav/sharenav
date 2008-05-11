@@ -198,7 +198,7 @@ public class C {
 			return 2;
 		}
 		if (scale < 900000) {
-			return 2;
+			return 1;
 		}		
 		return 0;
 	}
