@@ -82,6 +82,11 @@ public class GpsMid extends MIDlet implements CommandListener{
 	private Thread lightTimer;
 	
 	private Displayable shouldBeDisplaying;
+	
+	/**
+	 * Runtime detected properties of the phone
+	 */
+	private long phoneMaxMemory;
 
 private Trace trace=null;
 
@@ -90,10 +95,13 @@ private Trace trace=null;
 		instance = this;
 		System.out.println("Init GpsMid");		
 		l=new Logger(this);
+		l.setLevel(Logger.INFO);
 		config = new Configuration();
 		
 		enableDebugFileLogging();
 		Logger.setGlobalLevel();
+		
+		phoneMaxMemory = determinPhoneMaxMemory();
 		
 		menu.addCommand(EXIT_CMD);
 		menu.addCommand(OK_CMD);
@@ -379,6 +387,38 @@ private Trace trace=null;
 			}
 			lightTimer = null;
 		}
-	}	
+	}
+	
+	/**
+	 * Try and determine the maximum available memory.
+	 * As some phones have dynamic growing heaps, we need
+	 * to try and cause a out of memory error, as that
+	 * indicates the maximum size to which the heap can
+	 * grow 
+	 * @return maximum heap size
+	 */
+	private long determinPhoneMaxMemory() {
+		long maxMem = Runtime.getRuntime().totalMemory();
+		int [][] buf = new int[2048][];
+		try {			
+			for (int i = 0; i < 2048; i++) {
+				buf[i] = new int[16000]; 
+			}
+		} catch (OutOfMemoryError oome) {
+			//l.info("Hit out of memory while determining maximum heap size");
+			maxMem = Runtime.getRuntime().totalMemory();
+		} finally {
+			for (int i = 0; i < 2048; i++) {
+				buf[i] = null; 
+			}
+		}
+		System.gc();
+		l.info("Maximum phone memory: " + maxMem);
+		return maxMem;
+	}
+	
+	public long getPhoneMaxMemory () {
+		return phoneMaxMemory;
+	}
 }
 

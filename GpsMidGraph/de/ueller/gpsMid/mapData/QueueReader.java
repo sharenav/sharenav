@@ -7,6 +7,7 @@ package de.ueller.gpsMid.mapData;
 import java.io.IOException;
 import java.util.Vector;
 
+import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
 
@@ -97,7 +98,7 @@ public abstract class QueueReader implements Runnable {
 					}
 					try {
 						final Runtime runtime = Runtime.getRuntime();
-						if (runtime.freeMemory() > 25000) {
+						if ((runtime.freeMemory() > 25000) || (runtime.totalMemory() < GpsMid.getInstance().getPhoneMaxMemory())) {
 							if (requestQueue.size() > 0) {
 								Object notifyReady;
 								synchronized (this) {
@@ -113,7 +114,7 @@ public abstract class QueueReader implements Runnable {
 							}
 
 						} else {
-							logger.info("Not much memory left, cleaning up an trying again");
+							logger.info("Not much memory left, cleaning up and trying again");
 							Trace.getInstance().cleanup();
 							System.gc();
 						}
