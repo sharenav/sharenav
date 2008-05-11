@@ -252,6 +252,8 @@ public class Gpx extends Tile implements Runnable {
 				trackIS.readLong();	//Time			
 				trackIS.readByte(); //Speed				
 			}
+			dis1.close();
+			dis1 = null;
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (RecordStoreNotOpenException e) {
@@ -415,6 +417,7 @@ public class Gpx extends Tile implements Runnable {
 	
 	public void newTrk() {
 		logger.debug("Starting a new track recording");
+		tile.dropTrk();
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(new Date());
 		
