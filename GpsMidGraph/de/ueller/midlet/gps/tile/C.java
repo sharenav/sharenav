@@ -128,14 +128,12 @@ public class C {
 			if (ds.readByte() != i)
 				logger.error("Read legend had troubles");
 			byte flags = ds.readByte();
-			ways[i].description = ds.readUTF();
-			System.out.println("WayDesc: " +  ways[i].description);
+			ways[i].description = ds.readUTF();			
 			ways[i].maxScale = ds.readInt();
 			ways[i].isArea = ds.readBoolean();
 			ways[i].lineColor = ds.readInt();
 			ways[i].boardedColor = ds.readInt();
-			ways[i].wayWidth = ds.readByte();
-			System.out.println("   WayWidth: " +  ways[i].wayWidth);
+			ways[i].wayWidth = ds.readByte();			
 			boolean lineStyle = ds.readBoolean();
 			if (lineStyle)
 				ways[i].lineStyle = Graphics.DOTTED;
