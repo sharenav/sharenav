@@ -168,7 +168,7 @@ public class Routing implements Runnable {
 					estimation = estimate(currentNode.state,nodeSuccessor, target);
 					newNode = new GraphNode(nodeSuccessor, currentNode, successorCost, estimation, currentNode.fromBearing);
 					open.put(nodeSuccessor.toId, newNode);
-					parent.getRouteNodes().addElement(new RouteHelper(newNode.state.to.lat,newNode.state.to.lon,"t"+expanded));
+//					parent.getRouteNodes().addElement(new RouteHelper(newNode.state.to.lat,newNode.state.to.lon,"t"+expanded));
 //					evaluated++;
 					children.addElement(newNode);
 				}
