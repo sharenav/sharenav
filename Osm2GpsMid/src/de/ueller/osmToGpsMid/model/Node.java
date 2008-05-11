@@ -52,8 +52,6 @@ public class Node extends Entity{
 			}
 		}
 		return null;
-		//String name = getAttribute("name");
-		//return name!=null ? name.trim() : "";
 	}
 	
 	public String getPlace(){
@@ -70,22 +68,7 @@ public class Node extends Entity{
 		}
 		return false;
 	}
-	/*public String getAmenity(){
-		String amenity = (getAttribute("amenity"));
-		if (amenity != null) return amenity.trim();
-		return null;
-	}
-	public String getRailway(){
-		String railway = (getAttribute("railway"));
-		if (railway != null) return railway.trim();
-		return null;
-	}
-	public String getAeroway(){
-		String aeroway = (getAttribute("aeroway"));
-		if (aeroway != null) return aeroway.trim();
-		return null;
-	}
-	*/
+
 	public byte getType(Configuration c){
 		if (c != null){
 			if (type == -1) {
@@ -121,37 +104,7 @@ public class Node extends Entity{
 				}			
 			}
 		}
-		/*String p=getPlace();
-		if (p != null){
-			if ("city".equalsIgnoreCase(p)) return Constants.NODE_PLACE_CITY;
-			if ("town".equalsIgnoreCase(p)) return Constants.NODE_PLACE_TOWN;
-			if ("village".equalsIgnoreCase(p)) return Constants.NODE_PLACE_VILLAGE;
-			if ("hamlet".equalsIgnoreCase(p)) return Constants.NODE_PLACE_HAMLET;
-			if ("suburb".equalsIgnoreCase(p)) return Constants.NODE_PLACE_SUBURB;
-		}
-		if (c!=null && c.useAmenity){
-		p=getAmenity();
-		if (p != null){
-			if ("parking".equalsIgnoreCase(p)) return Constants.NODE_AMENITY_PARKING;
-			if ("school".equalsIgnoreCase(p)) return Constants.NODE_AMENITY_SCHOOL;
-			if ("telephone".equalsIgnoreCase(p)) return Constants.NODE_AMENITY_TELEPHONE;
-			if ("fuel".equalsIgnoreCase(p)) return Constants.NODE_AMENITY_FUEL;
-		}
-		}
-		if (c!=null && c.useRailway){
-		p=getRailway();
-		if (p != null){
-			if ("station".equalsIgnoreCase(p)) return Constants.NODE_RAILWAY_STATION;
-			if ("halt".equalsIgnoreCase(p)) return Constants.NODE_RAILWAY_STATION;
-		}
-		p=getAeroway();
-		if (p != null){
-			if ("aerodrome".equalsIgnoreCase(p)) return Constants.NODE_AEROWAY_AERODROME;
-		}
-		}
-		*/
-		return -1;
-		
+		return -1;		
 	}
 	
 	public byte getZoomlevel(Configuration c){
@@ -166,22 +119,6 @@ public class Node extends Entity{
 			return 2;
 		if (maxScale < 900000)
 			return 1;
-		/*switch (type) {
-			case Constants.NODE_PLACE_CITY:
-			case Constants.NODE_AEROWAY_AERODROME:				
-				return 0;
-			case Constants.NODE_PLACE_TOWN: 
-				return 1;
-			case Constants.NODE_AMENITY_PARKING: 
-			case Constants.NODE_PLACE_VILLAGE: 
-				return 2;
-			case Constants.NODE_RAILWAY_STATION: 
-			case Constants.NODE_PLACE_HAMLET: 
-				return 3;
-			case Constants.NODE_PLACE_SUBURB: 
-				return 3;
-		}
-		*/
 		return 0;
 	}
 	public String toString(){
