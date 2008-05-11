@@ -42,8 +42,7 @@ public class NumberCanon {
 		case 'Ą':
 		case 'ą':
 		case 'Č':
-		case 'č':
-		case 'ď':
+		case 'č':		
 		case 'À':
 		case 'à':
 		case 'Â':
@@ -70,7 +69,7 @@ public class NumberCanon {
 		case 'ę':
 		case 'Ě':
 		case 'ě':
-					
+		case 'ď':
 			return ('3');
 		case 'g':
 		case 'G':
