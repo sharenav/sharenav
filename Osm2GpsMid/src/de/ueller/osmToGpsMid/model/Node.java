@@ -94,6 +94,9 @@ public class Node extends Entity{
 						Hashtable<String,POIdescription> keyValues = legend.get(s);
 						if (keyValues != null) {							
 							POIdescription poi = keyValues.get(getAttribute(s));
+							if (poi == null) {
+								poi = keyValues.get("*");
+							}
 							if (poi != null) {
 								type = poi.typeNum;
 								//System.out.println(toString() + " is a " + poi.description);

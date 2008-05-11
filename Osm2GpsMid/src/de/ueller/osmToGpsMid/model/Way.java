@@ -93,6 +93,9 @@ public class Way extends Entity implements Comparable<Way>{
 						if (keyValues != null) {
 							//System.out.println("found key index for " + s);
 							WayDescription way = keyValues.get(getAttribute(s));
+							if (way == null) {
+								way = keyValues.get("*");
+							}
 							if (way != null) {
 								type = way.typeNum;								
 								way.noWaysOfType++;
