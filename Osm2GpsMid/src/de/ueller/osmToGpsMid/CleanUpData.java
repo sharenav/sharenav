@@ -39,7 +39,7 @@ public class CleanUpData {
 		parser.resize();
 		System.out.println("after cleanup Nodes " + parser.nodes.size());
 		System.out.println("after cleanup Ways  " + parser.ways.size());
-
+		System.out.println("after cleanup Relations  " + parser.relations.size());
 //		System.exit(1);
 	}
 	
