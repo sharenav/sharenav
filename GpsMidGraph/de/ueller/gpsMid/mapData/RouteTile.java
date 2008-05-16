@@ -39,14 +39,14 @@ public class RouteTile extends RouteBaseTile {
 
 	public boolean cleanup(int level) {
 		if (nodes != null){
-			if (level > 0 && !permanent){
+			if (level > 0 && permanent){
+//				logger.debug("Protected content for " + this +" with level " + level);
 				return false;
 			}
 			if (lastUse >= level){
 				nodes=null;
 				connections=null;
-				//#debug error
-				logger.info("discard content for " + this +" with level " + level);
+//				logger.debug("discard content for " + this +" with level " + level);
 				return true;
 			} else {
 				lastUse++;

@@ -35,7 +35,7 @@ public class RouteFileTile extends RouteBaseTile {
 
 	public boolean cleanup(int level) {
 		if (tile != null) {
-			if (level > 0 && !permanent){
+			if (level > 0 && permanent){
 				return false;
 			}
 			// logger.info("test tile unused fid:" + fileId + "c:"+lastUse);

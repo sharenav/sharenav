@@ -87,7 +87,7 @@ public class RouteContainerTile extends RouteBaseTile {
 	
 
 	public boolean cleanup(int level) {
-		if (level > 0 && !permanent){
+		if (level > 0 && permanent){
 			return false;
 		}
 		lastUse++;
