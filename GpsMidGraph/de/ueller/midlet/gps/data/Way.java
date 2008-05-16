@@ -653,6 +653,12 @@ public class Way extends Entity{
 		WayDescription wayDesc = Trace.getInstance().pc.c.getWayDescription(type);
 		return wayDesc.isArea;
 	}
+	
+	// Test this way to get the paint context if its faster 
+	public boolean isArea(PaintContext pc) {
+		WayDescription wayDesc = pc.c.getWayDescription(type);
+		return wayDesc.isArea;
+	}
 
 	private float[] getFloatNodes(SingleTile t, short[] nodes, float offset) {
 	    float [] res = new float[nodes.length];
