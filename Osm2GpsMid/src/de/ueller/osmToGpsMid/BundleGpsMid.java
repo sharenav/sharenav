@@ -10,6 +10,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.CRC32;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
@@ -100,6 +102,49 @@ public class BundleGpsMid {
 			}
 		}
 	}
+	
+	/**
+	 * Rewrite the Manifet file to change the bundle name to reflect the one
+	 * specified in the properties file.
+	 * 
+	 * @param c
+	 */
+	private static void rewriteManifestFile(Configuration c) {
+		String tmpDir = c.getTempDir();
+		try {
+			File manifest=new File(tmpDir+"/META-INF/MANIFEST.MF");
+			File manifest2=new File(tmpDir+"/META-INF/MANIFEST.tmp");
+
+			BufferedReader fr=new BufferedReader(new FileReader(manifest));
+			FileWriter fw=new FileWriter(manifest2);
+			String line;
+			Pattern p1 = Pattern.compile("MIDlet-(\\d):\\s(.*),(.*),(.*)");			
+			while (true) {
+				line = fr.readLine();
+				if (line == null) {				
+					break;				
+				}
+
+				Matcher m1 = p1.matcher(line);				
+				if (m1.matches()) {					
+					fw.write("MIDlet-" + m1.group(1) + ": " + c.getName() + "," + m1.group(3) + "," + m1.group(4) + "\n");
+				} else if (line.startsWith("MIDlet-Name: ")) {
+					fw.write("MIDlet-Name: " + c.getName() + "\n");				
+				} else {
+					fw.write(line + "\n");
+				}
+			}
+			fw.close();
+			fr.close();
+			manifest.delete();
+			manifest2.renameTo(manifest);
+
+		} catch (IOException ioe) {
+			System.out.println("Something went wrong rewriting the manifest file");
+			return;
+		}
+
+	}
 
 	private static void writeJADfile(Configuration c,  long jarLength) throws IOException{
 		String tmpDir = c.getTempDir();
@@ -138,6 +183,7 @@ public class BundleGpsMid {
 	}
 
 	private static void pack(Configuration c) throws ZipException, IOException{
+		rewriteManifestFile(c);
 		File n=new File(c.getMidletName()+"-" 
 				+ c.getName() 
 				+ "-" + c.getVersion()
