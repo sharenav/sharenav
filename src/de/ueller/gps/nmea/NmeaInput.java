@@ -29,7 +29,7 @@ public class NmeaInput implements Runnable, LocationMsgProducer{
 	private InputStream ins;
 	private OutputStream rawDataLogger;
 	private Thread					processorThread;
-	private final LocationMsgReceiver	receiver;
+	private LocationMsgReceiver	receiver;
 	private boolean closed=false;
 	private byte connectQuality=100;
 	int bytesReceived=0;
@@ -43,15 +43,9 @@ public class NmeaInput implements Runnable, LocationMsgProducer{
 	private byte [] buf1 = new byte[512]; //Buffer used to read data from GPS-receiver
 	private byte [] buf2 = new byte[128]; //Buffer used to recombine data into NMEA sentences
 	
-	public NmeaInput(InputStream ins,LocationMsgReceiver receiver) {
+	/*public NmeaInput(InputStream ins,LocationMsgReceiver receiver) {
 		super();
-		this.ins = ins;
-		this.receiver = receiver;
-		processorThread = new Thread(this,"NMEA Decoder");
-		processorThread.setPriority(Thread.MAX_PRIORITY);
-		processorThread.start();
-		smsg=new NmeaMessage(receiver);
-		//logger.error("Starting NMEA");
+		
 
 	}
 	public NmeaInput(boolean test,InputStream ins,LocationMsgReceiver receiver) {
@@ -60,6 +54,16 @@ public class NmeaInput implements Runnable, LocationMsgProducer{
 		this.receiver = receiver;
 		smsg=new NmeaMessage(receiver);
 
+	}*/
+	
+	public void init(InputStream ins,LocationMsgReceiver receiver) {
+		this.ins = ins;
+		this.receiver = receiver;
+		processorThread = new Thread(this,"NMEA Decoder");
+		processorThread.setPriority(Thread.MAX_PRIORITY);
+		processorThread.start();
+		smsg=new NmeaMessage(receiver);
+		//logger.error("Starting NMEA");		
 	}
 
 	public void run(){
@@ -360,5 +364,9 @@ public class NmeaInput implements Runnable, LocationMsgProducer{
 			}
 			rawDataLogger = null;
 		}
+	}
+	public void addLocationMsgReceiver(LocationMsgReceiver receiver) {
+		// TODO Auto-generated method stub
+		
 	}
 }

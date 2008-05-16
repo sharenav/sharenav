@@ -33,9 +33,6 @@ import javax.microedition.rms.RecordStoreNotOpenException;
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Position;
 import de.ueller.gps.data.Satelit;
-//#if polish.api.locationapi
-import de.ueller.gps.jsr179.JSR179Input;
-//#endif
 
 import de.ueller.gps.nmea.NmeaInput;
 import de.ueller.gps.sirf.SirfInput;
@@ -265,10 +262,11 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		addCommand(DISCONNECT_GPS_CMD);
 		switch (config.getLocationProvider()){
 		case Configuration.LOCATIONPROVIDER_SIRF:
-			locationProducer = new SirfInput(inputStream, this);
+			locationProducer = new SirfInput();
+			
 			break;
 		case Configuration.LOCATIONPROVIDER_NMEA:
-			locationProducer = new NmeaInput(inputStream, this);			
+			locationProducer = new NmeaInput();			
 			//#if polish.api.fileconnection	
 			/**
 			 * Allow for logging the raw NMEA data coming from the gps mouse
@@ -301,18 +299,23 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 		case Configuration.LOCATIONPROVIDER_JSR179:
 			//#if polish.api.locationapi
-			try {				
-				locationProducer = new JSR179Input(this);				
-			} catch (NoClassDefFoundError cnfe) {
+			try {
+				Class jsr179Class = Class.forName("JSR179Input");
+				locationProducer = (LocationMsgProducer) jsr179Class.newInstance();								
+			} catch (NoClassDefFoundError ncdfe) {
 				locationDecoderEnd();
 				logger.fatal("Your phone does not support JSR179, please use a different location provider");				
+			} catch (ClassNotFoundException cnfe) {
+				locationDecoderEnd();
+				logger.fatal("Your phone does not support JSR179, please use a different location provider");
 			}
 			
 			//#else
-			logger.error("JSR179 is not supported in this version of GpsMid");
+			logger.error("JSR179 is not compiled in this version of GpsMid");
 			//#endif
 			break;
 		}
+		locationProducer.init(inputStream, this);
 		//#debug info
 		logger.info("end startLocationPovider thread");
 //		setTitle("lp="+config.getLocationProvider() + " " + config.getBtUrl());

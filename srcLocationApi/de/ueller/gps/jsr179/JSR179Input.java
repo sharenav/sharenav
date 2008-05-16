@@ -1,5 +1,6 @@
 package de.ueller.gps.jsr179;
 
+import java.io.InputStream;
 import java.util.Date;
 
 import javax.microedition.location.Coordinates;
@@ -20,17 +21,20 @@ public class JSR179Input implements LocationListener ,LocationMsgProducer{
 
     /** location provider */
     private LocationProvider locationProvider = null;
-	private final LocationMsgReceiver receiver;
+	private LocationMsgReceiver receiver;
 	Date date=new Date();
 	Position pos=new Position(0f,0f,0f,0f,0f,0,date);
 	
 
-	public JSR179Input(LocationMsgReceiver receiver){
+	/*public JSR179Input(){			
+		
+	}*/
+	
+	public void init(InputStream ins, LocationMsgReceiver receiver) {
 		logger.info("start JSR179 LocationProvider");
 		this.receiver = receiver;
 		createLocationProvider();
 	}
-	
     /**
      * Initializes LocationProvider
      * uses default criteria
@@ -90,16 +94,20 @@ public class JSR179Input implements LocationListener ,LocationMsgProducer{
 	private void updateSolution(int state) {
 		if (state == LocationProvider.AVAILABLE) {
 			locationProvider.setLocationListener(this, 1, -1, -1);
-			receiver.receiveSolution("On");
+			if (receiver != null)
+				receiver.receiveSolution("On");
 		}
-		if (state == LocationProvider.OUT_OF_SERVICE) {
-			receiver.receiveSolution("Off");
+		if (state == LocationProvider.OUT_OF_SERVICE) {			
 			locationProvider.setLocationListener(this, 0, -1, -1);
-			receiver.receiveMessage("provider stopped");						
+			if (receiver != null) {
+				receiver.receiveSolution("Off");
+				receiver.receiveMessage("provider stopped");
+			}
 		}
 		if (state == LocationProvider.TEMPORARILY_UNAVAILABLE) {
 			locationProvider.setLocationListener(this, 0, -1, -1);
-			receiver.receiveSolution("0");
+			if (receiver != null)
+				receiver.receiveSolution("0");
 		}
 	}
 

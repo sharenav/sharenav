@@ -29,7 +29,7 @@ public class SirfInput implements Runnable, LocationMsgProducer{
 	private SirfMessage smsg;
 	private InputStream ins;
 	private Thread					processorThread;
-	private final LocationMsgReceiver	receiver;
+	private LocationMsgReceiver	receiver;
 	private boolean closed=false;
 	private byte connectQuality=100;
 	//#debug info
@@ -39,8 +39,13 @@ public class SirfInput implements Runnable, LocationMsgProducer{
 	private final static Logger logger = Logger.getInstance(SirfInput.class,Logger.DEBUG);
 
 	
-	public SirfInput(InputStream ins,LocationMsgReceiver receiver) {
+	/*public SirfInput(InputStream ins,LocationMsgReceiver receiver) {
 		super();
+		
+
+	}*/
+	
+	public void init (InputStream ins, LocationMsgReceiver receiver) {
 		//#debug
 		logger.debug("init SirfInput");
 		this.ins = ins;
@@ -48,8 +53,7 @@ public class SirfInput implements Runnable, LocationMsgProducer{
 		processorThread = new Thread(this,"Sirf Decoder");
 		processorThread.setPriority(7);
 		processorThread.start();
-		smsg=new SirfMessage(receiver);
-
+		smsg=new SirfMessage(receiver);				
 	}
 
 	public void run(){
@@ -230,5 +234,10 @@ public class SirfInput implements Runnable, LocationMsgProducer{
 		}
 		mesChecksum &= 32767l;
 		return mesChecksum;
+	}
+
+	public void addLocationMsgReceiver(LocationMsgReceiver receiver) {
+		// TODO Auto-generated method stub
+		
 	}
 }
