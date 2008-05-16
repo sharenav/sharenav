@@ -479,7 +479,9 @@ public class Routing implements Runnable {
 			open.removeAll();
 			closed.removeAll();
 			tile.cleanup(-1);
-			return getSequence(solution);
+			Vector sequence = getSequence(solution);
+			logger.info("Ready with route discovery");
+			return sequence;
 		} catch (Exception e) {
 			parent.receiveMessage("Routing Ex " + e.getMessage());
 			//#debug error
@@ -506,6 +508,12 @@ public class Routing implements Runnable {
 			System.out.println("Start Routing thread");
 			Vector solve = solve();
 			parent.setRoute(solve);
+		} catch (NullPointerException npe) {
+			parent.setRoute(null);
+			parent.receiveMessage(npe.getMessage());
+			logger.fatal("Routing thread crashed unexpectadly with error " +  npe.getMessage());			
+			npe.printStackTrace();
+			
 		} catch (Exception e) {
 			parent.setRoute(null);
 			parent.receiveMessage(e.getMessage());
