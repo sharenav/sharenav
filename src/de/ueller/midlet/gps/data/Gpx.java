@@ -15,12 +15,6 @@ import java.io.OutputStream;
 import java.lang.Math;
 import java.util.Calendar;
 import java.util.Date;
-import javax.microedition.io.CommConnection;
-import javax.microedition.io.Connection;
-import javax.microedition.io.Connector;
-//#if polish.api.pdaapi
-import javax.microedition.io.file.FileConnection;
-//#endif
 import javax.microedition.rms.InvalidRecordIDException;
 import javax.microedition.rms.RecordEnumeration;
 import javax.microedition.rms.RecordStore;
@@ -28,157 +22,28 @@ import javax.microedition.rms.RecordStoreException;
 import javax.microedition.rms.RecordStoreFullException;
 import javax.microedition.rms.RecordStoreNotFoundException;
 import javax.microedition.rms.RecordStoreNotOpenException;
-//#if polish.api.btapi
-//#if polish.api.obex
-import javax.obex.ClientSession;
-import javax.obex.HeaderSet;
-import javax.obex.Operation;
-import javax.obex.ResponseCodes;
-//#endif
-//#endif
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-//#if polish.api.webservice
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import org.xml.sax.helpers.DefaultHandler;
-//#else
-import uk.co.wilson.xml.MinML2;
-//#endif
+
+
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Position;
 import de.ueller.gpsMid.mapData.GpxTile;
 import de.ueller.gpsMid.mapData.Tile;
 import de.ueller.midlet.gps.GpsMid;
-import de.ueller.midlet.gps.ImageCollector;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.UploadListener;
+import de.ueller.midlet.gps.importexport.ExportSession;
+import de.ueller.midlet.gps.importexport.GpxParser;
 import de.ueller.midlet.gps.tile.PaintContext;
 
 public class Gpx extends Tile implements Runnable {
 	private float maxDistance;
-	private int importedWpts;
-	private int tooFarWpts;
-	private int duplicateWpts;
+	
 	
 	// statics for user-defined rules for record trackpoint
 	private static long oldMsTime;
 	private static float oldlat;
-	private static float oldlon;
-	
-	//#if polish.api.webservice
-	class GpxParserW extends DefaultHandler {
-	//#if polish.api.thisjustisnttrue 
-	//this is just to keep an editor happy that doesn't know the preprocessor	
-	}
-	//#endif
-	//#else
-	class GpxParser extends MinML2 {
-	//#endif	
-		PositionMark wayPt;
-		Position p = new Position(0,0,0,0,0,0,new Date());
-		boolean name = false;
-		boolean ele = false;
-		boolean time = false;
-		public void startElement(String namespaceURI, String localName, String qName, Attributes atts) {
-			if (qName.equalsIgnoreCase("wpt")) {
-				/**
-				 * Gpx files have coordinates in degrees. We store them internally as radians.
-				 * So we need to convert these.
-				 */
-				float node_lat = Float.parseFloat(atts.getValue("lat"))*MoreMath.FAC_DECTORAD;
-				float node_lon = Float.parseFloat(atts.getValue("lon"))*MoreMath.FAC_DECTORAD;
-				float distance=0;
-				
-				boolean inRadius=true;
-				if (maxDistance!=0) {
-					distance = ProjMath.getDistance(node_lat, node_lon, ImageCollector.mapCenter.radlat, ImageCollector.mapCenter.radlon); 
-					distance=(int)(distance/100.0f)/10.0f;
-					if (distance>maxDistance) {
-						inRadius=false;
-						tooFarWpts++;
-					}
-				}
-				//System.out.println("MaxDist: " + maxDistance + " Distance: " + distance + " inRadius: " + inRadius);
-				if (inRadius) {
-					wayPt = new PositionMark(node_lat,node_lon);
-				}
-			} else if (qName.equalsIgnoreCase("name")) {
-				name = true;				
-			} else if (qName.equalsIgnoreCase("trk")) {
-				newTrk();
-			} else if (qName.equalsIgnoreCase("trkseg")) {
-				
-			} else if (qName.equalsIgnoreCase("trkpt")) {
-				/**
-				 * Positions seem to be handeled in degree rather than radians
-				 * as all the other coordinates.
-				 * Be careful with the conversions!
-				 */
-				p.latitude = Float.parseFloat(atts.getValue("lat"));
-				p.longitude = Float.parseFloat(atts.getValue("lon"));
-				p.altitude = 0;
-				p.course = 0;
-				p.speed = 0;				
-			} else if (qName.equalsIgnoreCase("ele")) {
-				ele = true;
-			} else if (qName.equalsIgnoreCase("time")) {
-				time = true;
-			}
-		}
-		public void endElement(String namespaceURI, String localName, String qName) {
-			if (qName.equalsIgnoreCase("wpt")) {
-				if (wayPt != null) {
-					logger.info("Received waypoint: " + wayPt);
-					if (!existsWayPt(wayPt)) {
-						addWayPt(wayPt);
-						importedWpts++;
-					}
-					else {
-						duplicateWpts++;
-					}
-					wayPt = null;
-				}
-								
-			} else if (qName.equalsIgnoreCase("name")) {
-				name = false;
-			} else if (qName.equalsIgnoreCase("trk")) {
-				saveTrk();				
-			} else if (qName.equalsIgnoreCase("trkseg")) {
-				
-			} else if (qName.equalsIgnoreCase("trkpt")) {
-				addTrkPt(p);
-			} else if (qName.equalsIgnoreCase("ele")) {
-				ele = false;
-			} else if (qName.equalsIgnoreCase("time")) {
-				time = false;
-			}
-		}
-		public void startDocument() {
-			logger.debug("Started parsing XML document");
-		}
-		public void endDocument() {
-			logger.debug("Finished parsing XML document");
-		}
-		public void characters(char[] ch, int start, int length) {
-			if (wayPt != null) {
-				if (name) {
-					if (wayPt.displayName == null) {
-						wayPt.displayName = new String(ch,start,length);
-					} else {
-						wayPt.displayName += new String(ch,start,length);
-					}
-				}
-			} else if (p != null) {
-				if (ele) {
-					p.altitude = Float.parseFloat(new String(ch,start,length));
-				} else if (time) {					
-				}				
-			}
-		}
-	}	
+	private static float oldlon;		
 	
 	private final static Logger logger=Logger.getInstance(Gpx.class,Logger.DEBUG);
 	
@@ -202,6 +67,8 @@ public class Gpx extends Tile implements Runnable {
 	
 	private UploadListener feedbackListener;
 	
+	private String importExportMessage;
+	
 	/**
 	 * Variables used for transmitting GPX data:
 	 */
@@ -210,14 +77,7 @@ public class Gpx extends Tile implements Runnable {
 	
 	private ByteArrayOutputStream baos;
 	private DataOutputStream dos;
-	private Connection session = null;
-	
-	//#if polish.api.btapi
-	//#if polish.api.obex
-	private Operation operation = null;
-	//#endif
-	//#endif
-	
+		
 	private GpxTile tile;
 	
 	public Gpx() {
@@ -285,7 +145,7 @@ public class Gpx extends Tile implements Runnable {
 		tile.addWayPt(waypt);		
 	}
 	
-	private boolean existsWayPt(PositionMark newWayPt) {
+	public boolean existsWayPt(PositionMark newWayPt) {
 		if (tile != null) {
 			return tile.existsWayPt(newWayPt);
 		}
@@ -487,9 +347,7 @@ public class Gpx extends Tile implements Runnable {
 		this.maxDistance=maxDistance;
 		this.in = in;
 		this.feedbackListener = ul;
-		importedWpts=0;
-		tooFarWpts=0;
-		duplicateWpts=0;
+		
 		if (in == null) {
 			logger.error("Could not open input stream to gpx file");
 		}
@@ -593,6 +451,7 @@ public class Gpx extends Tile implements Runnable {
 	}
 	
 	public void run() {
+		logger.info("GPX processing thread started");
 		boolean success = false;
 		if (reloadWpt) {			
 			try {
@@ -618,25 +477,8 @@ public class Gpx extends Tile implements Runnable {
 		} else {
 			logger.error("Did not know whether to send or receive");
 		}
-		if (feedbackListener != null) {
-			StringBuffer sb = new StringBuffer();
-			// create statistics only for import 
-			if (in != null) {
-				if(maxDistance!=0) {
-					sb.append("\n(max. distance: " + maxDistance + " km)");
-				}
-				sb.append("\n\n" + importedWpts + " waypoints imported");
-				if(tooFarWpts!=0 || duplicateWpts!=0) {
-					sb.append("\n\nSkipped waypoints:");
-					if(maxDistance!=0) {
-						sb.append("\n" + tooFarWpts + " too far away");
-					}
-					if(duplicateWpts!=0) {
-						sb.append("\n" + duplicateWpts + " already existing");				
-					}
-				}
-			}
-			feedbackListener.completedUpload(success, sb.toString());
+		if (feedbackListener != null) {			
+			feedbackListener.completedUpload(success, importExportMessage);
 		}
 		feedbackListener = null;
 		sendTrk = false;
@@ -686,99 +528,6 @@ public class Gpx extends Tile implements Runnable {
 		}
 	}
 	
-	
-	/**
-	 * The following routines are used to output a gpx file
-	 */
-	
-	private OutputStream obtainFileSession(String url, String name) {		
-		OutputStream oS = null;
-		//#if polish.api.pdaapi
-		try {
-			url += name + ".gpx";
-			logger.info("Opening file " + url);
-			session = Connector.open(url);
-			FileConnection fileCon = (FileConnection) session;
-			if (fileCon == null)
-				throw new IOException("Couldn't open url " + url);
-			if (!fileCon.exists())
-				fileCon.create();
-			
-			oS = fileCon.openOutputStream();
-		} catch (IOException e) {
-			logger.error("Could not obtain connection with " + url + " (" + e.getMessage() + ")");
-			e.printStackTrace();
-		}
-		//#endif
-		return oS;		
-	}
-	
-	private OutputStream obtainCommSession(String url) {		
-		OutputStream oS = null;		
-		try {			
-			session = Connector.open(url);			
-			CommConnection commCon = (CommConnection) session;			
-			oS = commCon.openOutputStream();			
-		} catch (IOException e) {
-			logger.error("Could not obtain connection with " + url + " (" + e.getMessage() + ")");
-			e.printStackTrace();
-		}		
-		return oS;		
-	}
-	
-	private OutputStream obtainBluetoothObexSession(String url, String name) {		
-		OutputStream oS = null;
-		//#if polish.api.btapi
-		//#if polish.api.obex
-		try {			
-			session = Connector.open(url);
-			ClientSession csession = (ClientSession) session; 
-			HeaderSet headers = csession.createHeaderSet();	        
-			csession.connect(headers);
-			logger.debug("Connected");
-			headers.setHeader(HeaderSet.NAME, name + ".gpx");
-			headers.setHeader(HeaderSet.TYPE, "text");
-			
-			operation = csession.put(headers);			
-			oS = operation.openOutputStream();
-		} catch (IOException e) {
-			logger.error("Could not obtain connection with " + url + " (" + e.getMessage() + ")");
-			e.printStackTrace();
-		}
-		//#else
-		logger.fatal("This version does not support OBEX over bluetooth, so we can't send files");
-		//#endif
-		//#endif
-		return oS;		
-	}
-	
-	private void closeBluetoothObexSession() {
-		//#if polish.api.btapi
-		//#if polish.api.obex
-		try {
-			session.close();
-			int code = operation.getResponseCode();
-			if (code == ResponseCodes.OBEX_HTTP_OK) {				
-				logger.info("Successfully transfered file");				
-			} else {
-				logger.error("Unsuccessful return code in Opex push: " + code);
-			}
-		} catch (IOException e) {
-			logger.error("Failed to close connection after transmitting GPX");
-			e.printStackTrace();
-		}
-		//#endif
-		//#endif
-	}
-	
-	private void closeFileSession() {
-		try {
-			session.close();			
-		} catch (IOException e) {
-			logger.error("Failed to close connection after storing to file");
-			e.printStackTrace();
-		}
-	}
 	
 	private void streamTracks (OutputStream oS) throws IOException, RecordStoreNotOpenException, InvalidRecordIDException, RecordStoreException{		
 		DataInputStream dis1 = new DataInputStream(new ByteArrayInputStream(trackDatabase.getRecord(currentTrk.id)));
@@ -837,13 +586,51 @@ public class Gpx extends Tile implements Runnable {
 			}
 			
 			OutputStream oS = null;
-			if (url.startsWith("file:")) {
-				oS = obtainFileSession(url, name);
-			} else if (url.startsWith("comm:")) {
-				oS = obtainCommSession(url);
-			} else {
-				oS = obtainBluetoothObexSession(url, name);
+			ExportSession session = null;
+			try {
+				/**
+				 * We jump through hoops here (Class.forName) in order to decouple
+				 * the implementation of JSRs. The problem is, that not all phones have all
+				 * of the JSRs, and if we simply called the Class directly, it would
+				 * cause the whole app to crash. With this method, we can hopefully catch
+				 * the missing JSRs and gracefully report an error to the user that the operation
+				 * is not available on this phone. 
+				 */
+				/**
+				 * The Class.forName and the instantition of the class must be separate
+				 * statements, as otherwise this confuses the proguard obfuscator when
+				 * rewriting the flattened renamed classes.
+				 */
+				Class tmp = null;
+				if (url.startsWith("file:")) {
+					tmp = Class.forName("de.ueller.midlet.gps.importexport.FileExportSession");
+					
+				} else if (url.startsWith("comm:")) {
+					tmp = Class.forName("de.ueller.midlet.gps.importexport.CommExportSession");					
+				} else if (url.startsWith("btgoep:")){
+					tmp = Class.forName("de.ueller.midlet.gps.importexport.ObexExportSession");					
+				}
+				if (tmp != null)
+					logger.info("Got class: " + tmp);
+					Object objTmp = tmp.newInstance();
+					if (objTmp instanceof ExportSession) {
+						session = (ExportSession)(objTmp);
+					} else {
+						logger.info("objTmp: " + objTmp + "is not part of " + ExportSession.class.getName());
+					}
+					
+			} catch (ClassNotFoundException cnfe) {
+				logger.exception("Your phone does not support this form of exporting, pleas choose a different one", cnfe);
+				session = null;
+				return false;
+			} catch (ClassCastException cce) {
+				logger.exception("Could not cast the class", cce);				
 			}
+			if (session == null) {
+				logger.error("Your phone does not support this form of exporting, pleas choose a different one");
+				return false;
+			}
+			oS = session.openSession(url, name);
 			if (oS == null) {
 				logger.error("Could not obtain a valid connection to " + url);
 				return false;
@@ -860,13 +647,7 @@ public class Gpx extends Tile implements Runnable {
 						
 			oS.flush();
 			oS.close();
-			if (url.startsWith("file:")) {
-				closeFileSession();
-			} else if (url.startsWith("comm:")) {
-				closeFileSession();			
-			} else{			
-				closeBluetoothObexSession();
-			}			
+			session.closeSession();
 			return true;
 		} catch (IOException e) {			
 			logger.error("IOE:" + e);	
@@ -878,38 +659,46 @@ public class Gpx extends Tile implements Runnable {
 		return false;
 	}
 	
-	private boolean receiveGpx() {
-		//#if polish.api.webservice
-		SAXParserFactory factory = SAXParserFactory.newInstance();
-		// Parse the input
-        SAXParser saxParser;
-        //#endif
+	private boolean receiveGpx() {		
 		try {
+			boolean success;
+			String jsr172Version = null;
+			Class parserClass;
+			Object parserObject;
+			GpxParser parser;
+			try {
+				jsr172Version = System.getProperty("xml.jaxp.subset.version");
+			} catch (RuntimeException re) {
+				/**
+				 * Some phones throw exceptions if trying to access properties that don't
+				 * exist, so we have to catch these and just ignore them.
+				 */
+			} catch (Exception e) {
+				/**
+				 * See above 
+				 */				
+			}
+			if ((jsr172Version != null) &&  (jsr172Version.length() > 0)) {
+				logger.info("Using builtin jsr 172 XML parser");
+				parserClass = Class.forName("de.ueller.midlet.gps.importexport.Jsr172GpxParser");				
+			} else {
+				logger.info("Using MinML2 XML parser");
+				parserClass = Class.forName("de.ueller.midlet.gps.importexport.MinML2GpxParser");
+			}
+			parserObject = parserClass.newInstance();
+			parser = (GpxParser) parserObject;
+			
 			applyRecordingRules = false;
-			//#if polish.api.webservice
-			GpxParserW parserw = new GpxParserW();			
-			saxParser = factory.newSAXParser();						
-			saxParser.parse( in, parserw);
-			//#else
-			GpxParser parser = new GpxParser();
-			parser.parse(new InputStreamReader(in));
-			//#endif
+			success = parser.parse(in, maxDistance, this);
 			applyRecordingRules = true;
 			in.close();
-			return true;
-		}
-		//#if polish.api.webservice
-		catch (ParserConfigurationException e) {
-			logger.error("XML Parser configuration error: " + e.getMessage());
-			e.printStackTrace();
-		}
-		//#endif
-		catch (SAXException e) {
-			logger.error("Invalid XML, parsing error: " + e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
-			logger.error("IO error, could not read the data: " + e.getMessage());
-			e.printStackTrace();
+			importExportMessage = parser.getMessage();
+			
+			return success;
+		} catch (ClassNotFoundException cnfe) {
+			logger.exception("Your phone does not support XML parsing", cnfe);
+		} catch (Exception e) {
+			logger.exception("Something went wrong while importing GPX", e);
 		}
 		return false;
 	}

@@ -4,30 +4,17 @@ package de.ueller.midlet.gps;
  * See Copying
  */
 
-import java.io.IOException;
-
-import javax.microedition.io.CommConnection;
-import javax.microedition.io.Connection;
-import javax.microedition.io.Connector;
-import javax.microedition.io.InputConnection;
-//#if polish.api.pdaapi
-import javax.microedition.io.file.FileConnection;
-//#endif
-import javax.microedition.lcdui.Alert;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Choice;
 import javax.microedition.lcdui.ChoiceGroup;
-import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Form;
-import javax.microedition.lcdui.List;
 import javax.microedition.lcdui.TextField;
-
-import de.ueller.gps.tools.StringTokenizer;
+import de.ueller.midlet.gps.importexport.GpxImportSession;
 
 public class GuiGpxLoad extends Form implements CommandListener,
-		GpsMidDisplayable, SelectionListener{
+		GpsMidDisplayable {
 
 	private final static Logger logger=Logger.getInstance(GuiGpxLoad.class,Logger.DEBUG);
 	
@@ -96,23 +83,40 @@ public class GuiGpxLoad extends Form implements CommandListener,
 			}
 			String choice = choiceFrom.getString(choiceFrom.getSelectedIndex());
 			logger.info(choice);
-			if (choice.equalsIgnoreCase(LOADFROMBT)) {
-				//#if polish.api.obex
-				Alert alert = new Alert("Information");
-				alert.setTimeout(3000);
-				alert.setString("Obex server started, please send your GPX file now");
-				BtObexServer obexServer = new BtObexServer(feedbackListener, maxDistance);
-				Display.getDisplay(Trace.getInstance().getParent()).setCurrent(alert);
-				//#endif
-			} else if (choice.equalsIgnoreCase(LOADFROMCOMM)) {
-				String commports = System.getProperty("microedition.commports");			
-				String[] commport = StringTokenizer.getArray(commports, ",");
-				selectedFile("comm:" + commport[0] + ";baudrate=19200");				
-			} else if(choice.equalsIgnoreCase(LOADFROMFILE)) {
-				//#if polish.api.fileconnectionapi
-				FsDiscover fsd = new FsDiscover(this,this,GpsMid.getInstance().getConfig().getGpxUrl(),false,".gpx","Load *.gpx file");
-				fsd.show();				
-				//#endif				
+			GpxImportSession importSession = null;
+			try {
+				/**
+				 * We jump through hoops here (Class.forName) in order to decouple
+				 * the implementation of JSRs. The problem is, that not all phones have all
+				 * of the JSRs, and if we simply called the Class directly, it would
+				 * cause the whole app to crash. With this method, we can hopefully catch
+				 * the missing JSRs and gracefully report an error to the user that the operation
+				 * is not available on this phone. 
+				 */
+				/**
+				 * The Class.forName and the instantition of the class must be separate
+				 * statements, as otherwise this confuses the proguard obfuscator when
+				 * rewriting the flattened renamed classes.
+				 */
+				Class tmp = null;
+				if (choice.equalsIgnoreCase(LOADFROMBT)) {
+					tmp = Class.forName("de.ueller.midlet.gps.importexport.BtObexServer");
+				} else if (choice.equalsIgnoreCase(LOADFROMCOMM)) {
+					tmp = Class.forName("de.ueller.midlet.gps.importexport.CommGpxImportSession");									
+				} else if(choice.equalsIgnoreCase(LOADFROMFILE)) {
+					tmp = Class.forName("de.ueller.midlet.gps.importexport.FileGpxImportSession");					
+				}
+				if (tmp != null)
+					importSession = (GpxImportSession)(tmp.newInstance());
+			} catch (ClassNotFoundException cnfe) {
+				logger.error("The type of Gpx import you have selected is not supported by your phone");
+			} catch (Exception e) {
+				logger.exception("Could not start the import server", e);
+			} 
+			if (importSession != null) {
+				importSession.initImportServer(feedbackListener, maxDistance, menuLoadGpx);
+			} else {
+				logger.error("The type of Gpx import you have selected is not supported by your phone");
 			}
 		}
 	}
@@ -122,20 +126,5 @@ public class GuiGpxLoad extends Form implements CommandListener,
 		//Display.getDisplay(GpsMid.getInstance()).setCurrent(menuLoadGpx);
 	}
 
-	public void selectedFile(String url) {
-		try {
-			logger.info("Receiving gpx: " + url);
-			Connection c  = Connector.open(url,Connector.READ);			
-			if (c instanceof InputConnection) {
-				InputConnection inConn = ((InputConnection)c);				
-				Trace.getInstance().gpx.receiveGpx(inConn.openInputStream(), feedbackListener, maxDistance);
-				return;
-			}
-			logger.error("Unknown url type to load from: " + url);
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+	
 }

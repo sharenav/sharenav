@@ -36,7 +36,7 @@ import de.ueller.gps.tools.HelperRoutines;
  * for example when survaying for OSM.
  *
  */
-public class GuiCamera extends Canvas implements CommandListener {
+public class GuiCamera extends Canvas implements CommandListener, GuiCameraInterface {
 
 	private final Command BACK_CMD = new Command("Back", Command.BACK, 5);
 	private final Command CAPTURE_CMD = new Command("Capture", Command.OK, 5);
@@ -50,7 +50,7 @@ public class GuiCamera extends Canvas implements CommandListener {
 	//#endif
 	private Trace parent;
 
-	public GuiCamera(Trace parent, Configuration config) {
+	public void init(Trace parent, Configuration config) {
 		this.parent = parent;
 		addCommand(BACK_CMD);
 		addCommand(CAPTURE_CMD);

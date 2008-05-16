@@ -225,101 +225,121 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	// start the LocationProvider in background
 	public void run() {
 		try {
-		if (running){
-			receiveMessage("Thread already running");
-			return;
-		}
-		
-		//#debug info
-		logger.info("start thread init locationprovider");
-		if (locationProducer != null){
-			receiveMessage("Location provider already running");
-			return;
-		}
-		if (config.getLocationProvider() == Configuration.LOCATIONPROVIDER_NONE){
-			receiveMessage("No location provider");
-			return;
-		}
-		running=true;
-		receiveMessage("Connect to "+Configuration.LOCATIONPROVIDER[config.getLocationProvider()]);
-//		System.out.println(config.getBtUrl());
-//		System.out.println(config.getRender());
-		switch (config.getLocationProvider()){
-		case Configuration.LOCATIONPROVIDER_SIRF:
-			
-		case Configuration.LOCATIONPROVIDER_NMEA:
-			//#debug debug
-			logger.debug("Connect to "+config.getBtUrl());
-			if (! openBtConnection(config.getBtUrl())){
-				running=false;
+			if (running){
+				receiveMessage("Thread already running");
 				return;
 			}
-		}
-		receiveMessage("Connected");
-		//#debug debug
-		logger.debug("rm connect, add disconnect");
-		removeCommand(CONNECT_GPS_CMD);
-		addCommand(DISCONNECT_GPS_CMD);
-		switch (config.getLocationProvider()){
-		case Configuration.LOCATIONPROVIDER_SIRF:
-			locationProducer = new SirfInput();
-			
-			break;
-		case Configuration.LOCATIONPROVIDER_NMEA:
-			locationProducer = new NmeaInput();			
-			//#if polish.api.fileconnection	
-			/**
-			 * Allow for logging the raw NMEA data coming from the gps mouse
-			 */
-			
-			String url = config.getGpsRawLoggerUrl();
-			//logger.error("Raw logging url: " + url);
-			if (config.getGpsRawLoggerEnable() && (url != null)) {
-				try {
-					logger.info("Raw NMEA logging to: " + url);
-					url += "rawGpsNMEA" + HelperRoutines.formatSimpleDateNow() + ".txt";
-					
-					javax.microedition.io.Connection logCon = Connector.open(url);				
-					if (logCon instanceof FileConnection) {
-						FileConnection fileCon = (FileConnection)logCon;
-						if (!fileCon.exists())
-							fileCon.create();
-						((NmeaInput)locationProducer).enableRawLogging(((FileConnection)logCon).openOutputStream());
-					} else {
-						logger.info("Trying to perform raw logging of NMEA on anything else than filesystem is currently not supported");
-					}
-				} catch (IOException ioe) {
-					logger.exception("Couldn't open file for raw logging of Gps data",ioe);
-				} catch (SecurityException se) {
-					logger.error("Permission to write data for NMEA raw logging was denied");
-				}				
-			}
-			//#endif
-			break;
 
-		case Configuration.LOCATIONPROVIDER_JSR179:
-			//#if polish.api.locationapi
-			try {
-				Class jsr179Class = Class.forName("JSR179Input");
-				locationProducer = (LocationMsgProducer) jsr179Class.newInstance();								
-			} catch (NoClassDefFoundError ncdfe) {
-				locationDecoderEnd();
-				logger.fatal("Your phone does not support JSR179, please use a different location provider");				
-			} catch (ClassNotFoundException cnfe) {
-				locationDecoderEnd();
-				logger.fatal("Your phone does not support JSR179, please use a different location provider");
+			//#debug info
+			logger.info("start thread init locationprovider");
+			if (locationProducer != null){
+				receiveMessage("Location provider already running");
+				return;
 			}
-			
-			//#else
-			logger.error("JSR179 is not compiled in this version of GpsMid");
-			//#endif
-			break;
-		}
-		locationProducer.init(inputStream, this);
-		//#debug info
-		logger.info("end startLocationPovider thread");
-//		setTitle("lp="+config.getLocationProvider() + " " + config.getBtUrl());
-		running=false;
+			if (config.getLocationProvider() == Configuration.LOCATIONPROVIDER_NONE){
+				receiveMessage("No location provider");
+				return;
+			}
+			running=true;
+			receiveMessage("Connect to "+Configuration.LOCATIONPROVIDER[config.getLocationProvider()]);
+			//		System.out.println(config.getBtUrl());
+			//		System.out.println(config.getRender());
+			switch (config.getLocationProvider()){
+			case Configuration.LOCATIONPROVIDER_SIRF:
+
+			case Configuration.LOCATIONPROVIDER_NMEA:
+				//#debug debug
+				logger.debug("Connect to "+config.getBtUrl());
+				if (! openBtConnection(config.getBtUrl())){
+					running=false;
+					return;
+				}
+			}
+			receiveMessage("Connected");
+			//#debug debug
+			logger.debug("rm connect, add disconnect");
+			removeCommand(CONNECT_GPS_CMD);
+			addCommand(DISCONNECT_GPS_CMD);
+			switch (config.getLocationProvider()){
+			case Configuration.LOCATIONPROVIDER_SIRF:
+				locationProducer = new SirfInput();
+
+				break;
+			case Configuration.LOCATIONPROVIDER_NMEA:
+				locationProducer = new NmeaInput();			
+				//#if polish.api.fileconnection	
+				/**
+				 * Allow for logging the raw NMEA data coming from the gps mouse
+				 */
+
+				String url = config.getGpsRawLoggerUrl();
+				//logger.error("Raw logging url: " + url);
+				if (config.getGpsRawLoggerEnable() && (url != null)) {
+					try {
+						logger.info("Raw NMEA logging to: " + url);
+						url += "rawGpsNMEA" + HelperRoutines.formatSimpleDateNow() + ".txt";
+
+						javax.microedition.io.Connection logCon = Connector.open(url);				
+						if (logCon instanceof FileConnection) {
+							FileConnection fileCon = (FileConnection)logCon;
+							if (!fileCon.exists())
+								fileCon.create();
+							((NmeaInput)locationProducer).enableRawLogging(((FileConnection)logCon).openOutputStream());
+						} else {
+							logger.info("Trying to perform raw logging of NMEA on anything else than filesystem is currently not supported");
+						}
+					} catch (IOException ioe) {
+						logger.exception("Couldn't open file for raw logging of Gps data",ioe);
+					} catch (SecurityException se) {
+						logger.error("Permission to write data for NMEA raw logging was denied");
+					}				
+				}
+				//#endif
+				break;
+
+			case Configuration.LOCATIONPROVIDER_JSR179:
+				//#if polish.api.locationapi
+				try {
+					String jsr179Version = null;
+					try {
+						jsr179Version = System.getProperty("microedition.location.version");
+					} catch (RuntimeException re) {
+						/**
+						 * Some phones throw exceptions if trying to access properties that don't
+						 * exist, so we have to catch these and just ignore them.
+						 */
+					} catch (Exception e) {
+						/**
+						 * See above 
+						 */				
+					}
+					if (jsr179Version != null && jsr179Version.length() > 0) {
+						Class jsr179Class = Class.forName("de.ueller.gps.jsr179.JSR179Input");
+						locationProducer = (LocationMsgProducer) jsr179Class.newInstance();
+					}
+				} catch (ClassNotFoundException cnfe) {
+					locationDecoderEnd();
+					logger.exception("Your phone does not support JSR179, please use a different location provider", cnfe);
+					running = false;
+					return;
+				}
+				break;
+				//#else				
+				logger.error("JSR179 is not compiled in this version of GpsMid");
+				running = false;
+				return;
+				//#endif
+				
+			}
+			if (locationProducer == null) {
+				logger.error("Your phone does not seem to support this method of location input, please choose a different one");
+				running  = false;
+				return;
+			}
+			locationProducer.init(inputStream, this);
+			//#debug info
+			logger.info("end startLocationPovider thread");
+			//		setTitle("lp="+config.getLocationProvider() + " " + config.getBtUrl());			
 		} catch (SecurityException se) {
 			/**
 			 * The application was not permitted to connect to the required resources
@@ -467,8 +487,16 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				if (imageCollector != null) {
 					imageCollector.suspend();
 				}
-				GuiCamera cam = new GuiCamera(this,config);
-				cam.show();
+				try {
+					Class GuiCameraClass = Class.forName("de.ueller.midlet.gps.GuiCamera");
+					Object GuiCameraObject = GuiCameraClass.newInstance();					
+					GuiCameraInterface cam = (GuiCameraInterface)GuiCameraObject;
+					cam.init(this, getConfig());
+					cam.show();
+				} catch (ClassNotFoundException cnfe) {
+					logger.exception("Your phone does not support the necessary JSRs to use the camera", cnfe);
+				}
+				
 			}
 			//#endif
 		} catch (RuntimeException e) {
@@ -1187,9 +1215,21 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			if (imageCollector != null) {
 				imageCollector.suspend();
 			}
-			GuiCamera cam = new GuiCamera(this,config);
-			cam.show();
+			try {
+				Class GuiCameraClass = Class.forName("de.ueller.midlet.gps.GuiCamera");
+				Object GuiCameraObject = GuiCameraClass.newInstance();					
+				GuiCameraInterface cam = (GuiCameraInterface)GuiCameraObject;
+				cam.init(this, getConfig());
+				cam.show();
+			} catch (ClassNotFoundException cnfe) {
+				logger.exception("Your phone does not support the necessary JSRs to use the camera", cnfe);
+			} catch (InstantiationException e) {
+				logger.exception("Your phone does not support the necessary JSRs to use the camera", e);
+			} catch (IllegalAccessException e) {
+				logger.exception("Your phone does not support the necessary JSRs to use the camera", e);
+			}
 		//#endif
+ 
 		} else {		
 			keyStatus = keyCode;
 		}

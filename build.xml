@@ -184,7 +184,20 @@
 				You can set additional parameters here, e.g.:
 				<parameter name="optimize" value="false" />
 				-->
-				<keep class="de.ueller.midlet.gps.GpsMid" />
+				<keep class="de.ueller.midlet.gps.GpsMid" />				
+				<keep class="de.ueller.midlet.gps.importexport.ExportSession" />
+				<keep class="de.ueller.gps.jsr179.JSR179Input" />
+				<keep class="de.ueller.midlet.gps.importexport.FileExportSession" />
+				<keep class="de.ueller.midlet.gps.importexport.CommExportSession" />
+				<keep class="de.ueller.midlet.gps.importexport.ObexExportSession" />
+				<keep class="de.ueller.midlet.gps.importexport.BtObexServer" />
+				<keep class="de.ueller.midlet.gps.importexport.CommGpxImportSession" />
+				<keep class="de.ueller.midlet.gps.importexport.FileGpxImportSession" />
+				<keep class="de.ueller.midlet.gps.importexport.Jsr172GpxParser" />
+				<keep class="de.ueller.midlet.gps.importexport.MinML2GpxParser" />
+				<keep class="de.ueller.midlet.gps.importexport.GpxParser" />
+				<keep class="de.ueller.midlet.gps.GuiCameraInterface" />
+				<keep class="de.ueller.midlet.gps.GuiCamera" />
 			</obfuscator>
 			
 			<!-- debug settings: only include debug setting when the test-property is true -->
