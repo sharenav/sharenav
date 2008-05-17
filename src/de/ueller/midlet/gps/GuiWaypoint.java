@@ -155,23 +155,23 @@ public class GuiWaypoint extends List implements CommandListener,
 	}
 	
 	public void completedUpload(boolean success, String message) {
-		Alert alert = new Alert("Information");
+		String alertMsg;		
 		if (uploading) {
 			if (success)
-				alert.setString("Completed GPX export" + message);
+				alertMsg = "Completed GPX export" + message;
 			else {
-				alert.setString("GPX export failed: " + message);
+				alertMsg = "GPX export failed: " + message;
 			}
 		} else {
 			if (success) {
-				alert.setString("Completed GPX import" + message);
+				alertMsg = "Completed GPX import" + message;
 				initWaypoints();
 			} else {
-				alert.setString("GPX import failed: " + message);
+				alertMsg = "GPX import failed: " + message;
 			}
-		}
-		alert.setTimeout(alert.FOREVER);
-		Display.getDisplay(parent.getParent()).setCurrent(alert);
+		}	
+		
+		GpsMid.getInstance().alert("Information", alertMsg, 5000);
 	}
 
 	public void show() {

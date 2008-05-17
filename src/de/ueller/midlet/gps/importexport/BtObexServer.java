@@ -7,8 +7,6 @@ package de.ueller.midlet.gps.importexport;
 //#if polish.api.obex
 import javax.bluetooth.UUID;
 import javax.microedition.io.Connector;
-import javax.microedition.lcdui.Alert;
-import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
 import javax.obex.HeaderSet;
 import javax.obex.Operation;
@@ -17,6 +15,7 @@ import javax.obex.ServerRequestHandler;
 import javax.obex.SessionNotifier;
 //#endif
 
+import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.UploadListener;
@@ -42,10 +41,7 @@ public class BtObexServer
 		processorThread = new Thread(this);
 		processorThread.start();
 		
-		Alert alert = new Alert("Information");
-		alert.setTimeout(3000);
-		alert.setString("Obex server started, please send your GPX file now");		
-		Display.getDisplay(Trace.getInstance().getParent()).setCurrent(alert);
+		GpsMid.getInstance().alert("Information", "Obex server started, please send your GPX file now", 3000);		
 	}
 	
 	public int onConnect(HeaderSet request, HeaderSet reply) {

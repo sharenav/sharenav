@@ -223,8 +223,32 @@ private Trace trace=null;
         show(menu);
     }
     
+    public void alert(String title, String message, int timeout) {
+    	Alert alert = new Alert(title);
+		alert.setTimeout(timeout);
+		alert.setString(message);
+		try {
+			Display.getDisplay(this).setCurrent(alert, shouldBeDisplaying);
+		} catch (IllegalArgumentException iae) {
+			/**
+    		 * Nokia S40 phones seem to throw an exception
+    		 * if one tries to set an Alert displayable when
+    		 * the current displayable is an alert too.
+    		 * 
+    		 * Not much we can do about this, other than just
+    		 * ignore the exception and not display the new
+    		 * alert. 
+    		 */
+    		l.info("Could not display this alert (" + message + "), " + iae.getMessage());			
+		}
+    }
+    
     public void show(Displayable d) {
-		 Display.getDisplay(this).setCurrent(d);
+    	try{
+    		Display.getDisplay(this).setCurrent(d);
+    	} catch (IllegalArgumentException iae) {    		
+    		l.info("Could not display the new displayable " + d + ", " + iae.getMessage());
+    	}
 		 /**
 		  * Keep track of what the Midlet should be displaying.
 		  * This is necessary, as a call to getDisplay following

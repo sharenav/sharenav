@@ -91,14 +91,15 @@ public class GuiGpx extends List implements CommandListener,
 	}
 	
 	public void completedUpload() {
-		Alert alert = new Alert("Information");
+		String msg;		
 		if (uploading) {
-			alert.setString("Completed GPX upload");
+			msg = "Completed GPX upload";
 		} else {
-			alert.setString("Completed GPX import");
+			msg = "Completed GPX import";
 			initTracks();
-		}
-		Display.getDisplay(parent.getParent()).setCurrent(alert);
+		}		
+		GpsMid.getInstance().alert("Information", msg, 5000);
+		
 	}
 
 	public void show() {
@@ -106,23 +107,23 @@ public class GuiGpx extends List implements CommandListener,
 		//Display.getDisplay(parent.getParent()).setCurrent(this);
 	}
 
-	public void completedUpload(boolean success, String message) {		
-		Alert alert = new Alert("Information");
+	public void completedUpload(boolean success, String message) {
+		String alertMsg;		
 		if (uploading) {
 			if (success)
-				alert.setString("Completed GPX upload");
+				alertMsg = "Completed GPX upload";
 			else {
-				alert.setString("GPX upload failed: " + message);
+				alertMsg = "GPX upload failed: " + message;
 			}
 		} else {
 			if (success) {
-				alert.setString("Completed GPX import");
+				alertMsg = "Completed GPX import";
 				initTracks();
 			} else {
-				alert.setString("GPX import failed: " + message);
+				alertMsg = "GPX import failed: " + message;
 			}
-		}
-		Display.getDisplay(parent.getParent()).setCurrent(alert);
+		}		
+		GpsMid.getInstance().alert("Information", alertMsg, 5000);
 	}
 
 	public void uploadAborted() {

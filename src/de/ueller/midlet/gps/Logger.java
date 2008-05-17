@@ -48,21 +48,14 @@ public class Logger {
 	}
 	public void fatal(String msg){
 		if (level >= FATAL) {
-			app.log("F["+source + msg);
-			Alert alert = new Alert("Fatal");
-			alert.setString(msg);
-			alert.setTimeout(Alert.FOREVER);
-			Display.getDisplay(app).setCurrent(alert);
-
+			app.log("F["+source + msg);			
+			GpsMid.getInstance().alert("Fatal", msg, Alert.FOREVER);
 		}
 	}
 	public void error(String msg){		
 		if (level >= ERROR) {
 			app.log("E["+source + msg);
-			Alert alert = new Alert("Error");
-			alert.setTimeout(5000);
-			alert.setString(msg);
-			Display.getDisplay(app).setCurrent(alert, GpsMid.getInstance().shouldBeShown());
+			GpsMid.getInstance().alert("Error", msg, 5000);			
 		}		
 	}
 	public void exception(String msg, Exception e) {		

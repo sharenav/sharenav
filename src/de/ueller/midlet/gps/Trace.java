@@ -17,7 +17,6 @@ import javax.microedition.io.StreamConnection;
 //#if polish.api.fileconnection
 import javax.microedition.io.file.FileConnection;
 //#endif
-import javax.microedition.lcdui.Alert;
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
@@ -1060,7 +1059,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			 */
 			course = (int) pos.course;
 			updatePosition();
-		}		
+		}
 	}
 
 	public synchronized void receiveMessage(String s) {
@@ -1118,16 +1117,12 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				return;
 			}
 			if(keyCode == KEY_NUM0) {
-				ignoreKeyCode=keyCode;
-				Alert alert = new Alert("GpsMid");
-				alert.setTimeout(500);
+				ignoreKeyCode=keyCode;				
 				if ( gpx.isRecordingTrk() ) {
-					alert.setString("Stopping to record");
-					Display.getDisplay(parent).setCurrent(alert);
+					GpsMid.getInstance().alert("Gps track recording", "Stopping to record" , 750);					
 					commandAction(STOP_RECORD_CMD,(Displayable) null);
 				} else {
-					alert.setString("Starting to record");
-					Display.getDisplay(parent).setCurrent(alert);
+					GpsMid.getInstance().alert("Gps track recording", "Starting to record" , 750);
 					commandAction(START_RECORD_CMD,(Displayable) null);
 				}
 				return;
@@ -1156,15 +1151,13 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		} else if (keyCode == KEY_POUND) {
 			int backlight=config.getBacklight();
 			// toggle Backlight
-			config.setBacklight(backlight^(1<<config.BACKLIGHT_ON));
-			Alert alert = new Alert("GpsMid");
-			alert.setTimeout(500);
+			config.setBacklight(backlight^(1<<config.BACKLIGHT_ON));			
 			if ( (config.getBacklight() & (1<<config.BACKLIGHT_ON) )!=0 ) {
-				alert.setString("Backlight ON");
+				GpsMid.getInstance().alert("Backlight", "Backlight ON" , 750);
+				
 			} else {
-				alert.setString("Backlight off");
-			}
-			Display.getDisplay(parent).setCurrent(alert);
+				GpsMid.getInstance().alert("Backlight", "Backlight off" , 750);				
+			}			
 			parent.stopBackLightTimer();
 			parent.startBackLightTimer();
 		} else if (keyCode == KEY_NUM0) {
