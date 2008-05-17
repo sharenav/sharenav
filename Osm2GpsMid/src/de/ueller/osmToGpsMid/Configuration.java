@@ -59,6 +59,7 @@ public class Configuration {
 		public boolean useRouting=false;
 		public int maxTileSize=20000;
 		public int maxRouteTileSize=3000;
+		public String styleFile;
 		
 		private LegendParser legend;
 		
@@ -99,11 +100,12 @@ public class Configuration {
 				useRouting=use("useRouting");
 				maxRouteTileSize=Integer.parseInt(getString("routing.maxTileSize"));
 				maxTileSize=Integer.parseInt(getString("maxTileSize"));
-				//TODO: Hardcoded!!!
-				legend = new LegendParser(new FileInputStream("style-file.xml"));				
+				styleFile = getString("style-file");				
+				legend = new LegendParser(new FileInputStream(styleFile));				
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				System.out.println("Could not load the configuration properly for conversion");
 				e.printStackTrace();
+				System.exit(1);
 			}
 		}
 		

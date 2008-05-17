@@ -72,6 +72,7 @@
 		<entry key="routing.maxTileSize" value="3000"/>
 		<entry key="useRouting" value="true"/>
 		<entry key="maxTileSize" value="20000"/>
+   		<entry key="style-file" value="style-file.xml"/>
    	</propertyfile>
    </target>
 
