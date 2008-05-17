@@ -169,8 +169,8 @@ public class SearchList {
 			short fcount=0;
 			for (Name mapName : names.getNames()) {
 				String string=mapName.getName();
-				int eq=names.getEqualCount(string,lastStr);
-				if ((eq==0 && fcount>100) || (fcount > 150 && eq < 2)){
+				int eq=names.getEqualCount(string,lastStr);				
+				if (ds.size() > Configuration.getConfiguration().maxTileSize){
 					dsi.writeInt(idx);
 					if (ds != null) ds.close();
 					fo = new FileOutputStream(path+"/names-"+fnr+".dat");
