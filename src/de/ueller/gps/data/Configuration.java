@@ -392,7 +392,7 @@ public class Configuration {
 	
 	public void setMapUrl(String url) {
 		write(url, RECORD_ID_MAP_FILE_URL);
-		mapFileUrl = url;
+		mapFileUrl = url;		
 	}
 	
 	public InputStream getMapResource(String name) throws IOException{
@@ -401,12 +401,17 @@ public class Configuration {
 			is = QueueReader.class.getResourceAsStream(name);			
 		} else {			
 			//#if polish.api.fileconnection
+			if (mapFileUrl.endsWith("/"))
+				mapFileUrl = mapFileUrl.substring(0, mapFileUrl.length() - 1);
 			String url = mapFileUrl + name;
 			logger.info("Opening file: " + url);
 			Connection session = Connector.open(url,Connector.READ);
-			FileConnection fileCon = (FileConnection) session;
-			if (fileCon == null)
-				throw new IOException("Couldn't open url " + url);
+			FileConnection fileCon = (FileConnection) session;			
+			if (fileCon == null) {
+				logger.info("Couldn't open url: " + url);
+				throw new IOException("Couldn't open url " + url);				
+			}
+				
 						
 			is = fileCon.openInputStream();				
 			//#else
