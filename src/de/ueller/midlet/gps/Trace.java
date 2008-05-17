@@ -1050,16 +1050,8 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				receiveMessage(e.getMessage());
 			} 
 		}
-		if (speed > 1){
-			/**
-			 * Gps can be quite unreliable when the speed is very low.
-			 * This basically ignores all updates for speeds less than 1.
-			 * 
-			 * Hopefully this doesn't cause any problems
-			 */
-			course = (int) pos.course;
-			updatePosition();
-		}
+		course = (int) pos.course;
+		updatePosition();		
 	}
 
 	public synchronized void receiveMessage(String s) {
