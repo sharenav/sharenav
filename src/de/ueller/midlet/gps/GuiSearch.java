@@ -165,7 +165,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 						}
 					}
 				}, "nearestPOI");
-				t.start();				
+				t.start();
+				state = STATE_MAIN;
 			}
 			if (c == BACK_CMD) {
 				state = STATE_MAIN;
