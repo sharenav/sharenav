@@ -36,13 +36,18 @@
 <!-- build targets, each target can be called via "ant [name]", 
 	 e.g. "ant clean", "ant test j2mepolish" or just "ant" for calling the default target -->
 
+	<target name="set_test_device" unless="gpsmid.test_device">
+		<property name="gpsmid.test_device" value="Generic/full"/>
+	</target>
 	
 	<target name="test" 
 		description="Call this target first to skip the obfuscation step, e.g. ant test j2mepolish"
+		depends="set_test_device"
 		>
 		<property name="test" value="true" />
-		<property name="dir.work" value="build/test" />
+		<property name="dir.work" value="build/test" />		
 	</target>
+	
 	<target name="debug" 
 		description="Call this target first to set debugging"
 		>
@@ -92,7 +97,7 @@
 		<!-- Generic/midp1 phone, but when the test-property is set to false, -->
 		<!-- the second deviceRequirements will be used instead. -->
 		<deviceRequirements if="test">
-			<requirement name="Identifier" value="Generic/multi" />
+			<requirement name="Identifier" value="${gpsmid.test_device}" />
 		</deviceRequirements>
 		<deviceRequirements if="!test and device:defined">
 			<requirement name="Identifier" value="${device}" />
