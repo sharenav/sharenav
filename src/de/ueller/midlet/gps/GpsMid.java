@@ -444,5 +444,18 @@ private Trace trace=null;
 	public long getPhoneMaxMemory () {
 		return phoneMaxMemory;
 	}
+	
+	public boolean needsFreeingMemory() {
+		Runtime runt = Runtime.getRuntime();
+		long freeMem = runt.freeMemory();
+		long totalMem = runt.totalMemory();
+		if ((freeMem < 30000) || ((totalMem >= phoneMaxMemory) && ((float)freeMem/(float)totalMem < 0.10f))) {
+			l.trace("Memory is low, need freeing " + freeMem);
+			return true;
+		} else {
+			l.trace("Enough memory, no need to cleanup");
+			return false;
+		}
+	}
 }
 

@@ -67,6 +67,35 @@ public abstract class QueueReader implements Runnable {
 			tt.cleanup(0);
 		}
 	}
+	
+	private void cleanupUnused() {
+		int loop;
+		Tile tt;
+		
+		if (GpsMid.getInstance().needsFreeingMemory()) {
+			for (loop = 0; loop < livingQueue.size(); loop++) {
+				tt = (Tile) livingQueue.elementAt(loop);
+				if (tt.cleanup(3)) {
+					// logger.info("cleanup living " + tt.fileId);
+					synchronized (this) {
+						livingQueue.removeElementAt(loop--);
+					}
+				}
+			}
+			for (loop = 0; loop < requestQueue.size(); loop++) {
+				tt = (Tile) requestQueue.elementAt(loop);
+				if (tt.cleanup(2)) {
+					// logger.info("cleanup live " + tt.fileId);
+					synchronized (this) {
+						notificationQueue.removeElementAt(loop);
+						requestQueue.removeElementAt(loop--);
+					}
+				}
+			}
+		} else {
+			logger.debug("Not cleaning up caches, still enough memory left");
+		}		
+	}
 
 	public void run() {
 		Tile tt;
@@ -77,25 +106,9 @@ public abstract class QueueReader implements Runnable {
 				try {
 					// logger.info("loop: " + livingQueue.size() + " / " + requestQueue.size());
 					// logger.info(toString());
-					for (loop = 0; loop < livingQueue.size(); loop++) {
-						tt = (Tile) livingQueue.elementAt(loop);
-						if (tt.cleanup(3)) {
-							// logger.info("cleanup living " + tt.fileId);
-							synchronized (this) {
-								livingQueue.removeElementAt(loop--);
-							}
-						}
-					}
-					for (loop = 0; loop < requestQueue.size(); loop++) {
-						tt = (Tile) requestQueue.elementAt(loop);
-						if (tt.cleanup(2)) {
-							// logger.info("cleanup live " + tt.fileId);
-							synchronized (this) {
-								notificationQueue.removeElementAt(loop);
-								requestQueue.removeElementAt(loop--);
-							}
-						}
-					}
+					
+					cleanupUnused();
+					
 					try {
 						final Runtime runtime = Runtime.getRuntime();
 						if ((runtime.freeMemory() > 25000) || (runtime.totalMemory() < GpsMid.getInstance().getPhoneMaxMemory())) {

@@ -235,12 +235,13 @@ public class Names implements Runnable {
 	
 	private void cleanupStringCache(){
 		logger.info("cleanup namesCache " + stringCache.size());
+		boolean needsFreeing = GpsMid.getInstance().needsFreeingMemory();
 		
 		for (int i = 0; i < stringCache.capacity(); i++) {
 			StringEntry ce = (StringEntry) stringCache.getValueIdx(i);
 			if (ce == null)
 				continue;
-			if (ce.count == 0){				
+			if ((ce.count <= 0) && (needsFreeing)){				
 				stringCache.remove(stringCache.getKeyIdx(i));
 			} else {
 				ce.count--;
