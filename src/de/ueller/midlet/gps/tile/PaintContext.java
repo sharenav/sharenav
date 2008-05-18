@@ -66,8 +66,8 @@ public class PaintContext extends ScreenContext {
 	 */
 	public Configuration config;
 	
-	public float actualNodeLat;
-	public float actualNodeLon;
+	/**public float actualNodeLat;
+	public float actualNodeLon;**/
 	
 	public PaintContext(Trace tr,Images i) throws Exception{
 		super();

@@ -177,11 +177,11 @@ public class Way extends Entity{
 					float dst = MoreMath.ptSegDistSq(lineP1.x, lineP1.y,
 							lineP2.x, lineP2.y, pc.xSize / 2, pc.ySize / 2);
 					if (dst < pc.squareDstToWay) {
-						//						System.out.println("set new current Way1 "+ pc.trace.getName(this.nameIdx) + "new dist "+ dst + " old " + pc.squareDstToWay);
+						//System.out.println("set new current Way1 "+ pc.trace.getName(this.nameIdx) + " new dist "+ dst + " old " + pc.squareDstToWay);						
 						pc.squareDstToWay = dst;
 						pc.actualWay = this;
-						pc.actualNodeLat = t.nodeLat[idx]; 
-						pc.actualNodeLon = t.nodeLon[idx];
+						/**pc.actualNodeLat = t.nodeLat[idx]; 
+						pc.actualNodeLon = t.nodeLon[idx];**/
 						pc.currentPos=new PositionMark(pc.center.radlat,pc.center.radlon);
 						pc.currentPos.setEntity(this, getFloatNodes(t,t.nodeLat,t.centerLat), getFloatNodes(t,t.nodeLon,t.centerLon));						
 					}
