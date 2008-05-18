@@ -377,7 +377,7 @@ public class Way extends Entity{
 		return ret;
 	}
 
-	private boolean getLineLineIntersection(IntPoint p1, IntPoint p2,
+/*	private boolean getLineLineIntersection(IntPoint p1, IntPoint p2,
 			IntPoint p3, IntPoint p4, IntPoint ret) {
 
 		float x1 = p1.x;
@@ -396,10 +396,10 @@ public class Way extends Entity{
 
 		return true;
 	}
-
-	static float det(float a, float b, float c, float d) {
+*/
+/*	private static float det(float a, float b, float c, float d) {
 		return a * d - b * c;
-	}
+	} */
 
 	public void paintAsArea(PaintContext pc, SingleTile t) {
 		WayDescription wayDesc = pc.c.getWayDescription(type);
@@ -433,216 +433,17 @@ public class Way extends Entity{
 		} else {
 			pc.g.setColor(wayDesc.lineColor);
 		}
-		/*switch (type) {
-		case C.WAY_HIGHWAY_MOTORWAY:
-		case C.WAY_HIGHWAY_MOTORWAY_LINK:
-			pc.g.setColor(128, 155, 192);
-			break;
-		case C.WAY_HIGHWAY_TRUNK:
-			pc.g.setColor(228, 109, 113);
-		case C.WAY_HIGHWAY_PRIMARY:
-			pc.g.setColor(127, 201, 127);
-			break;
-		case C.WAY_HIGHWAY_SECONDARY:
-			pc.g.setColor(253, 191, 111);
-			break;
-		case C.WAY_HIGHWAY_MINOR:
-		case C.WAY_HIGHWAY_UNCLASSIFIED:
-			pc.g.setColor(255, 255, 255);
-			break;
-		case C.WAY_HIGHWAY_RESIDENTIAL:
-			pc.g.setColor(180, 180, 180);
-			break;
-		case C.WAY_HIGHWAY_TRACK:
-			pc.g.setColor(180, 180, 180);
-			break;
-		// case C.WAY_RAILROAD:
-		case C.AREA_AMENITY_PARKING:
-			pc.g.setColor(255, 255, 150);
-			break;
-		case C.AREA_NATURAL_WATER:
-		case C.WAY_WATERWAY_RIVER:
-			pc.g.setColor(50, 50, 255);
-			break;
-		case C.AREA_LANDUSE_FARM:
-			pc.g.setColor(136, 107, 29);
-			break;
-		case C.AREA_LANDUSE_QUARRY:
-			pc.g.setColor(205, 199, 182);
-			break;
-		case C.AREA_LANDUSE_LANDFILL:
-			pc.g.setColor(75, 75, 75);
-			break;
-		case C.AREA_LANDUSE_BASIN:
-			pc.g.setColor(10, 10, 205);
-			break;
-		case C.AREA_LANDUSE_RESERVOIR:
-			pc.g.setColor(30, 30, 235);
-			break;
-		case C.AREA_LANDUSE_FOREST:
-			pc.g.setColor(5, 82, 4);
-			break;
-		case C.AREA_LANDUSE_ALLOTMENTS:
-			pc.g.setColor(25, 102, 24);
-			break;
-		case C.AREA_LANDUSE_RESIDENTIAL:
-			pc.g.setColor(210, 210, 210);
-			break;
-		case C.AREA_LANDUSE_RETAIL:
-			pc.g.setColor(57, 227, 231);
-			break;
-		case C.AREA_LANDUSE_COMMERCIAL:
-			pc.g.setColor(129, 229, 231);
-			break;
-		case C.AREA_LANDUSE_INDUSTRIAL:
-			pc.g.setColor(225, 223, 33);
-			break;
-		case C.AREA_LANDUSE_BROWNFIELD:
-			pc.g.setColor(75, 75, 11);
-			break;
-		case C.AREA_LANDUSE_GREENFIELD:
-			pc.g.setColor(167, 167, 132);
-			break;
-		case C.AREA_LANDUSE_CEMETERY:
-			pc.g.setColor(20, 20, 20);
-			break;
-		case C.AREA_LANDUSE_VILLAGE_GREEN:
-		case C.AREA_LANDUSE_RECREATION_GROUND:
-		case C.AREA_LEISURE_PARK:
-			pc.g.setColor(90, 186, 57);
-			break;
-		case C.WAY_RAILWAY_RAIL:
-		case C.WAY_RAILWAY_SUBWAY:
-		case C.WAY_RAILWAY_UNCLASSIFIED:
-			pc.g.setStrokeStyle(Graphics.DOTTED);
-			pc.g.setColor(0, 0, 0);
-		default:
-			// logger.error("unknown Type "+ w.type);
-			pc.g.setColor(255, 255, 255);
-		}
-		*/
 	}
 
 	public int getWidth(PaintContext pc) {
 		WayDescription wayDesc = pc.c.getWayDescription(type);
 		return wayDesc.wayWidth;
-		/*switch (type) {
-		case C.WAY_HIGHWAY_MOTORWAY:
-		case C.WAY_HIGHWAY_MOTORWAY_LINK:
-			return 8;
-		case C.WAY_HIGHWAY_TRUNK:
-			return 6;
-		case C.WAY_HIGHWAY_PRIMARY:
-			return 6;
-		case C.WAY_HIGHWAY_SECONDARY:
-			return 5;
-		case C.WAY_HIGHWAY_MINOR:
-		case C.WAY_HIGHWAY_UNCLASSIFIED:
-			return 4;
-		case C.WAY_HIGHWAY_RESIDENTIAL:
-			return 3;
-		case C.WAY_HIGHWAY_TRACK:
-			return 2;
-		case C.WAY_WATERWAY_RIVER:
-			return 10;
-		case C.WAY_RAILWAY_RAIL:
-			return 1;
-		case C.WAY_RAILWAY_SUBWAY:
-		case C.WAY_RAILWAY_UNCLASSIFIED:
-			return 1;
-
-		default:
-			// logger.error("unknown Type "+ w.type);
-			return 1;
-		}*/
 	}
 
 	public void setBorderColor(PaintContext pc) {
 		pc.g.setStrokeStyle(Graphics.SOLID);
 		WayDescription wayDesc = pc.c.getWayDescription(type);
 		pc.g.setColor(wayDesc.boardedColor);
-		/*
-		switch (type) {
-		case C.WAY_HIGHWAY_MOTORWAY:
-			pc.g.setColor(128, 155, 192);
-			break;
-		case C.WAY_HIGHWAY_TRUNK:
-			pc.g.setColor(228, 109, 113);
-		case C.WAY_HIGHWAY_PRIMARY:
-			pc.g.setColor(127, 201, 127);
-			break;
-		case C.WAY_HIGHWAY_SECONDARY:
-			pc.g.setColor(253, 191, 111);
-			break;
-		case C.WAY_HIGHWAY_MINOR:
-		case C.WAY_HIGHWAY_UNCLASSIFIED:
-			pc.g.setColor(255, 255, 255);
-			break;
-		case C.WAY_HIGHWAY_RESIDENTIAL:
-			pc.g.setColor(180, 180, 180);
-			break;
-		// case C.WAY_RAILROAD:
-		case C.AREA_AMENITY_PARKING:
-			pc.g.setColor(255, 255, 150);
-			break;
-		case C.AREA_NATURAL_WATER:
-		case C.WAY_WATERWAY_RIVER:
-			pc.g.setColor(50, 50, 255);
-			break;
-		case C.AREA_LANDUSE_FARM:
-			pc.g.setColor(136, 107, 29);
-			break;
-		case C.AREA_LANDUSE_QUARRY:
-			pc.g.setColor(205, 199, 182);
-			break;
-		case C.AREA_LANDUSE_LANDFILL:
-			pc.g.setColor(75, 75, 75);
-			break;
-		case C.AREA_LANDUSE_BASIN:
-			pc.g.setColor(10, 10, 205);
-			break;
-		case C.AREA_LANDUSE_RESERVOIR:
-			pc.g.setColor(30, 30, 235);
-			break;
-		case C.AREA_LANDUSE_FOREST:
-			pc.g.setColor(5, 82, 4);
-			break;
-		case C.AREA_LANDUSE_ALLOTMENTS:
-			pc.g.setColor(25, 102, 24);
-			break;
-		case C.AREA_LANDUSE_RESIDENTIAL:
-			pc.g.setColor(210, 210, 210);
-			break;
-		case C.AREA_LANDUSE_RETAIL:
-			pc.g.setColor(57, 227, 231);
-			break;
-		case C.AREA_LANDUSE_COMMERCIAL:
-			pc.g.setColor(129, 229, 231);
-			break;
-		case C.AREA_LANDUSE_INDUSTRIAL:
-			pc.g.setColor(225, 223, 33);
-			break;
-		case C.AREA_LANDUSE_BROWNFIELD:
-			pc.g.setColor(75, 75, 11);
-			break;
-		case C.AREA_LANDUSE_GREENFIELD:
-			pc.g.setColor(167, 167, 132);
-			break;
-		case C.AREA_LANDUSE_CEMETERY:
-			pc.g.setColor(20, 20, 20);
-			break;
-		case C.AREA_LANDUSE_VILLAGE_GREEN:
-		case C.AREA_LANDUSE_RECREATION_GROUND:
-		case C.AREA_LEISURE_PARK:
-			pc.g.setColor(90, 186, 57);
-			break;
-
-		default:
-			// logger.error("unknown Type "+ w.type);
-			pc.g.setColor(0, 0, 0);
-		}
-		pc.g.setColor(0, 0, 0);
-		*/
 	}
 	
 	public boolean isOneway(){
@@ -663,7 +464,7 @@ public class Way extends Entity{
 	private float[] getFloatNodes(SingleTile t, short[] nodes, float offset) {
 	    float [] res = new float[nodes.length];
 	    for (int i = 0; i < nodes.length; i++) {
-		res[i] = nodes[i]*t.fpminv + offset;
+		res[i] = nodes[i]*SingleTile.fpminv + offset;
 	    }
 	    return res;
 	}
