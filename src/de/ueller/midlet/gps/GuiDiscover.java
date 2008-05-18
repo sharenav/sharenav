@@ -53,12 +53,12 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private final Command			EXIT_CMD		= new Command("Back",
 															Command.BACK, 2);
 
-	private final Command			BACK_CMD		= new Command("Back",
+	private final Command			BACK_CMD		= new Command("Cancel",
 															Command.BACK, 2);
 
 	/** Soft button for discovering BT. */
 	private final Command			OK_CMD			= new Command("Ok",
-															Command.ITEM, 1);
+															Command.OK, 1);
 
 	private final Command			STORE_BT_URL	= new Command("Select",
 															Command.OK, 2);
