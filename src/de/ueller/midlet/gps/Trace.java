@@ -593,10 +593,16 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 
 	protected void paint(Graphics g) {
-		if (lastMsg != null) {
+		if (lastMsg != null && getTitle() != null) {
 			if (System.currentTimeMillis() 
 					> (lastMsgTime.getTime().getTime() + 5000))
 			{
+				/**
+				 * Be careful with calling setTitle in paint.
+				 * setTitle may cause a repaint, which would
+				 * cause the painter thread to spinn slowing
+				 * everything else down 
+				 */
 				setTitle(null);
 			}
 		}
