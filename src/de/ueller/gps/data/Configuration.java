@@ -88,6 +88,7 @@ public class Configuration {
 	private int gpxRecordAlwaysDistanceCentimeters;
 	private int render=RENDER_STREET;
 	private int detailBoost=0;
+	private float detailBoostMultiplier;
 	private int backlight;
 	private int backlightDefault;
 	private String gpxUrl;
@@ -121,6 +122,7 @@ public class Configuration {
 			rawGpsLogUrl=readString(database, RECORD_ID_LOG_RAW_GPS_URL);
 			rawGpsLogEnable = readInt(database, RECORD_ID_LOG_RAW_GPS_ENABLE) !=0;
 			detailBoost=readInt(database,RECORD_ID_DETAIL_BOOST); 
+			calculateDetailBoostMultiplier();
 			gpxRecordRuleMode=readInt(database, RECORD_ID_GPX_FILTER_MODE); 
 			gpxRecordMinMilliseconds=readInt(database, RECORD_ID_GPX_FILTER_TIME); 
 			gpxRecordMinDistanceCentimeters=readInt(database, RECORD_ID_GPX_FILTER_DIST); 
@@ -358,15 +360,30 @@ public class Configuration {
 	}
 
 	public int getDetailBoost() {
-		return detailBoost;
+		return this.detailBoost;
+	}
+
+	public float getDetailBoostMultiplier() {
+		return this.detailBoostMultiplier;
 	}
 
 	public void setDetailBoost(int detailBoost) {
 		this.detailBoost = detailBoost;
-			write(detailBoost, RECORD_ID_DETAIL_BOOST);
+		write(detailBoost, RECORD_ID_DETAIL_BOOST);
+		calculateDetailBoostMultiplier();
 	}
 
-	
+/**
+	There's no pow()-function in J2ME so manually
+	calculate 1.5^detailBoost to get factor
+	to multiply with Zoom Level limits
+**/
+	private void calculateDetailBoostMultiplier() {
+		this.detailBoostMultiplier=1;
+		for(int i=1;i<=this.detailBoost;i++) {
+			this.detailBoostMultiplier*=1.5;
+		}
+	}
 	
 	public void setGpxUrl(String url) {
 		this.gpxUrl = url;

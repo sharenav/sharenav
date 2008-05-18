@@ -141,7 +141,7 @@ public class Way extends Entity{
 	public void paintAsPath(PaintContext pc, SingleTile t) {
 		WayDescription wayDesc = pc.c.getWayDescription(type);
 		int w = 1;
-		if (pc.scale > wayDesc.maxScale) {			
+		if (pc.scale > wayDesc.maxScale * pc.config.getDetailBoostMultiplier()) {			
 			return;
 		}
 		if ((pc.config.getRender() == Configuration.RENDER_STREET) && (wayDesc.wayWidth > 1)){
@@ -370,7 +370,7 @@ public class Way extends Entity{
 
 	public void paintAsArea(PaintContext pc, SingleTile t) {
 		WayDescription wayDesc = pc.c.getWayDescription(type);
-		if (pc.scale > wayDesc.maxScale) {			
+		if (pc.scale > wayDesc.maxScale * pc.config.getDetailBoostMultiplier() ) {			
 			return;
 		}		
 		IntPoint lineP2 = pc.lineP2;

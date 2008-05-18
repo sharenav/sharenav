@@ -135,16 +135,9 @@ public class ImageCollector implements Runnable {
 				pc[nextCreate].target = nextSc.target;
 				// System.out.println("create " + pcCollect);
 
-				/**
-					There's no pow()-function in J2ME so manually
-					calculate 1.5^ScaleDetailBoost to get factor
-					to multiply with Zoom Level limits
-				**/
-				int detailBoost=tr.getConfig().getDetailBoost();
-				float boost=1;
-				for(int i=1;i<=detailBoost;i++) {
-					boost*=1.5;
-				}
+
+				float boost=tr.getConfig().getDetailBoostMultiplier();
+				
 				/**
 				 * At the moment we don't really have proper layer support
 				 * in the data yet, so only split it into Area, Way and Node
