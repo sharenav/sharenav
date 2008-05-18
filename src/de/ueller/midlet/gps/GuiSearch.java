@@ -20,6 +20,7 @@ import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.List;
 import javax.microedition.lcdui.TextField;
 
+
 import de.ueller.gps.data.SearchResult;
 import de.ueller.gps.tools.HelperRoutines;
 import de.ueller.midlet.gps.data.PositionMark;
@@ -80,6 +81,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 	
 	private final static byte STATE_MAIN = 0;
 	private final static byte STATE_POI = 1;
+	
+	private int fontSize;
 	
 	
 
@@ -230,6 +233,9 @@ public class GuiSearch extends Canvas implements CommandListener,
 
 	protected void paint(Graphics gc) {
 		logger.info("Painting search screen with offset: " + scrollOffset);
+		if (fontSize == 0)
+			fontSize = gc.getFont().getHeight();
+		logger.info("Fontsize: " + fontSize);
 		int yc=scrollOffset;
 		int reducedName=0;
 		gc.setColor(255,255, 255);
@@ -256,7 +262,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		StringBuffer nearNameb=new StringBuffer();
 	    for (int i=0;i<result.size();i++){	    	
 			if (yc < 0) {
-				yc += 15;
+				yc += fontSize;
 				continue;
 			}
 			if (yc > getHeight()) {
@@ -357,12 +363,12 @@ public class GuiSearch extends Canvas implements CommandListener,
 				if(carret<=imatch && displayReductionLevel<1) { 
 					int cx=17 + gc.getFont().stringWidth(name.substring(0,carret)); 
 					gc.setColor(255, 0, 0); 
-					gc.drawLine(cx-1,yc+15,cx+1,yc+15); 
+					gc.drawLine(cx-1,yc+fontSize,cx+1,yc+fontSize); 
 				}
 			}
 			else 
 				gc.drawString("..." + sr.nameIdx,17, yc, Graphics.TOP | Graphics.LEFT);
-			yc+=15;
+			yc+=fontSize;
 		}
 	}
 	
@@ -424,8 +430,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 		} else if (action == UP) {
 			if (cursor > 0)
 				cursor--;			
-			if (cursor * 15 + scrollOffset < 0) {
-				scrollOffset += 45;
+			if (cursor * fontSize + scrollOffset < 0) {
+				scrollOffset += 3*fontSize;
 			}
 			if (scrollOffset > 0)
 				scrollOffset = 0;
@@ -434,8 +440,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 		} else if (action == DOWN) {
 			if (cursor < result.size() - 1)
 				cursor++;			
-			if (((cursor + 1) * 15 + scrollOffset) > getHeight()) {
-				scrollOffset -= 45;
+			if (((cursor + 1) * fontSize + scrollOffset) > getHeight()) {
+				scrollOffset -= 3*fontSize;
 			}
 
 			if (scrollOffset > 0)
