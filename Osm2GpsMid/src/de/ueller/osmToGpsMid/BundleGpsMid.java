@@ -127,9 +127,9 @@ public class BundleGpsMid {
 
 				Matcher m1 = p1.matcher(line);				
 				if (m1.matches()) {					
-					fw.write("MIDlet-" + m1.group(1) + ": " + c.getName() + "," + m1.group(3) + "," + m1.group(4) + "\n");
+					fw.write("MIDlet-" + m1.group(1) + ": " + c.getMidletName() + "," + m1.group(3) + "," + m1.group(4) + "\n");
 				} else if (line.startsWith("MIDlet-Name: ")) {
-					fw.write("MIDlet-Name: " + c.getName() + "\n");				
+					fw.write("MIDlet-Name: " + c.getMidletName() + "\n");
 				} else {
 					fw.write(line + "\n");
 				}
