@@ -140,34 +140,44 @@ public class Way extends Entity{
 
 	public void paintAsPath(PaintContext pc, SingleTile t) {
 		WayDescription wayDesc = pc.c.getWayDescription(type);
+		int w = 1;
 		if (pc.scale > wayDesc.maxScale) {			
 			return;
 		}
-		if ((pc.config.getRender() == Configuration.RENDER_LINE) || (wayDesc.wayWidth == 1)){
-			paintAsLinePath(pc, t);
-		} else {
-			float witdh = (pc.ppm*wayDesc.wayWidth/2);
-			paintAsWidePath(pc,(int)(witdh+0.5), t);
+		if ((pc.config.getRender() == Configuration.RENDER_STREET) && (wayDesc.wayWidth > 1)){
+			w = (int)(pc.ppm*wayDesc.wayWidth/2);
 		}
-	}
-
-	private void paintAsLinePath(PaintContext pc, SingleTile t) {
-
+		
 		IntPoint lineP1 = pc.lineP1;
 		IntPoint lineP2 = pc.lineP2;
 		IntPoint swapLineP = pc.swapLineP;
 		Projection p = pc.getP();
-			for (int i1 = 0; i1 < path.length; i1++) {
-				int idx = path[i1];
-				p.forward((float)(t.nodeLat[idx]*SingleTile.fpminv + t.centerLat), (float)(t.nodeLon[idx] *SingleTile.fpminv + t.centerLon), lineP2, true);				
-				if (lineP1 == null) {
-					lineP1 = lineP2;
-					lineP2 = swapLineP;
-				} else {
+		
+		int pi=0;
+		int[] x = null;
+		int[] y = null;
+		if (w > 1) {
+			x = new int[path.length];
+			y = new int[path.length];
+		}
+		
+		for (int i1 = 0; i1 < path.length; i1++) {
+			int idx = path[i1];
+			p.forward((float)(t.nodeLat[idx]*SingleTile.fpminv + t.centerLat), (float)(t.nodeLon[idx] *SingleTile.fpminv + t.centerLon), lineP2, true);				
+			if (lineP1 == null) {
+				lineP1 = lineP2;
+				lineP2 = swapLineP;	
+				if (w > 1) {
+					x[pi] = lineP1.x;
+					y[pi++] = lineP1.y;
+				}
+				
+			} else {
+				if (! lineP1.approximatelyEquals(lineP2)){
 					float dst = MoreMath.ptSegDistSq(lineP1.x, lineP1.y,
 							lineP2.x, lineP2.y, pc.xSize / 2, pc.ySize / 2);
 					if (dst < pc.squareDstToWay) {
-//						System.out.println("set new current Way1 "+ pc.trace.getName(this.nameIdx) + "new dist "+ dst + " old " + pc.squareDstToWay);
+						//						System.out.println("set new current Way1 "+ pc.trace.getName(this.nameIdx) + "new dist "+ dst + " old " + pc.squareDstToWay);
 						pc.squareDstToWay = dst;
 						pc.actualWay = this;
 						pc.actualNodeLat = t.nodeLat[idx]; 
@@ -175,78 +185,35 @@ public class Way extends Entity{
 						pc.currentPos=new PositionMark(pc.center.radlat,pc.center.radlon);
 						pc.currentPos.setEntity(this, getFloatNodes(t,t.nodeLat,t.centerLat), getFloatNodes(t,t.nodeLon,t.centerLon));						
 					}
-					pc.g.drawLine(lineP1.x, lineP1.y, lineP2.x, lineP2.y);
+					if (w > 1) {
+						x[pi] = lineP2.x;
+						y[pi++] = lineP2.y;
+					} else {
+						pc.g.drawLine(lineP1.x, lineP1.y, lineP2.x, lineP2.y);
+					}
 					swapLineP = lineP1;
 					lineP1 = lineP2;
 					lineP2 = swapLineP;
-				}
-			}
-			swapLineP = lineP1;
-			lineP1 = null;
-	}
-	/**
-	 * draw ways with 2 lines left and right a black border and
-	 * between them filled with the color of the way.
-	 * @param pc
-	 * @param w
-	 * @param t
-	 */
-	private void paintAsWidePath(PaintContext pc, int w, SingleTile t) {
-		
-		IntPoint lineP1 = pc.lineP1;
-		IntPoint lineP2 = pc.lineP2;
-		IntPoint swapLineP = pc.swapLineP;
-		Projection p = pc.getP();
-
-
-			int pi=0;
-			int[] x = new int[path.length];
-			int[] y = new int[path.length];
-			int i1=0;
-			for (; i1 < path.length; i1++) {
-				int idx = path[i1];
-				p.forward((float)(t.nodeLat[idx]*SingleTile.fpminv + t.centerLat), (float)(t.nodeLon[idx] *SingleTile.fpminv + t.centerLon), lineP2, true);
-				if (lineP1 == null) {
-//					System.out.println(" startpoint " + lineP2.x + "/" + lineP2.y + " " +pc.trace.getName(nameIdx));
-					lineP1 = lineP2;
-					lineP2 = swapLineP;
-					x[pi] = lineP1.x;
-					y[pi++] = lineP1.y;
-				} else {
-					if (! lineP1.approximatelyEquals(lineP2)){
-//						System.out.println(" midpoint " + lineP2.x + "/" + lineP2.y+ " " +pc.trace.getName(nameIdx));
-						float dst = MoreMath.ptSegDistSq(lineP1.x, lineP1.y,
-								lineP2.x, lineP2.y, pc.xSize / 2, pc.ySize / 2);
-						if (dst < pc.squareDstToWay) {
-//							System.out.println("set new current Way "+ pc.trace.getName(this.nameIdx) + "new dist "+ dst + " old " + pc.squareDstToWay);
-							pc.squareDstToWay = dst;
-							pc.actualWay = this;
-							pc.actualNodeLat = t.nodeLat[idx]; 
-							pc.actualNodeLon = t.nodeLon[idx]; 
-							pc.currentPos=new PositionMark(pc.center.radlat,pc.center.radlon);
-							pc.currentPos.setEntity(this, getFloatNodes(t,t.nodeLat,t.centerLat), getFloatNodes(t,t.nodeLon,t.centerLon));
-
-						}
-						x[pi] = lineP2.x;
-						y[pi++] = lineP2.y;
-						swapLineP = lineP1;
-						lineP1 = lineP2;
-						lineP2 = swapLineP;
-					} else if ((i1+1) == path.length){
-//						System.out.println(" endpoint " + lineP2.x + "/" + lineP2.y+ " " +pc.trace.getName(nameIdx));
-						if (! lineP1.equals(lineP2)){
+				} else if ((i1+1) == path.length){					
+					//System.out.println(" endpoint " + lineP2.x + "/" + lineP2.y+ " " +pc.trace.getName(nameIdx));					
+					if (!lineP1.equals(lineP2)){
+						if (w > 1) {
 							x[pi] = lineP2.x;
 							y[pi++] = lineP2.y;
-						} 
-					}else { 
-//						System.out.println(" discard " + lineP2.x + "/" + lineP2.y+ " " +pc.trace.getName(nameIdx));
+						} else {
+							pc.g.drawLine(lineP1.x, lineP1.y, lineP2.x, lineP2.y);
+						}						
+					} else {
+						//System.out.println("   discarding never the less");
 					}
+				}else { 
+					//System.out.println(" discard " + lineP2.x + "/" + lineP2.y+ " " +pc.trace.getName(nameIdx));
 				}
 			}
-			swapLineP = lineP1;
-			lineP1 = null;
-			// int ppm = pc.p.getPPM();
-			// System.out.println("PPM=" + ppm);
+		}
+		swapLineP = lineP1;
+		lineP1 = null;
+		if (w > 1) {
 			if (pc.target != null && this.equals(pc.target.e)){
 				draw(pc,(w==0)?1:w,x,y,pi-1,true);
 			} else {
@@ -257,7 +224,7 @@ public class Way extends Entity{
 					draw(pc, w, x, y,pi-1,false);
 				}
 			}
-
+		}
 	}
 
 	private float getParLines(int xPoints[], int yPoints[], int i, int w,
