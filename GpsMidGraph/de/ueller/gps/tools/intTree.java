@@ -19,7 +19,7 @@ package de.ueller.gps.tools;
  */
 public class intTree  {
 	/**
-	 * keys are stored in ascending order. Empty entries are filled with -1
+	 * keys are stored in ascending order. Empty entries are filled with Integer.MinValue
 	 * therefore the array grows from the end downwards
 	 */
 	private int [] keys;
@@ -45,7 +45,7 @@ public class intTree  {
 	}
 	
 	private void clearCache() {
-		keyCache = -1;
+		keyCache = Integer.MIN_VALUE;
 		valueCache = null;
 	}
 	
@@ -59,9 +59,7 @@ public class intTree  {
 	private int bisect(int key) {		
 		int rangeLow = 0;
 		int rangeHigh = keys.length - 1;
-		int pivot = 1;
-		if (size() == 0)
-			return 0;
+		int pivot = 1;		
 		while (rangeLow <= rangeHigh) {
 			pivot = rangeLow + ((rangeHigh - rangeLow)/2);			
 			if (keys[pivot] == key) {				
@@ -120,7 +118,7 @@ public class intTree  {
 				//Create a new array of 20 more elements
 				int [] keys2 = new int[keys.length + 20];
 				Object[] values2 = new Object[keys.length + 20];
-				for (int i = 0; i < 20; i++) keys2[i] = -1;				
+				for (int i = 0; i < 20; i++) keys2[i] = Integer.MIN_VALUE;				
 				System.arraycopy(keys, treeSize + 1, keys2, treeSize + 20, idx - treeSize);
 				System.arraycopy(values, treeSize + 1, values2, treeSize  + 20, idx - treeSize);				
 				System.arraycopy(keys, idx + 1, keys2, idx + 21, keys.length - idx - 1);				
@@ -139,7 +137,7 @@ public class intTree  {
 		if (treeSize == keys.length - 1)
 			return -1;
 		int key = keys[++treeSize];
-		keys[treeSize] = -1;
+		keys[treeSize] = Integer.MIN_VALUE;
 		values[treeSize] = null;
 		return key;
 	}
@@ -153,7 +151,7 @@ public class intTree  {
 			System.arraycopy(keys, treeSize, keys, treeSize+1, idx - treeSize);
 			System.arraycopy(values, treeSize, values, treeSize+1, idx - treeSize);			
 			values[treeSize] = null;
-			keys[treeSize] = -1;
+			keys[treeSize] = Integer.MIN_VALUE;
 			treeSize++;
 		}
 	}
@@ -163,7 +161,7 @@ public class intTree  {
 		keys = new int[size];
 		values = new Object[size];
 		for (int i = 0; i < size; i++) {
-			keys[i] = -1;
+			keys[i] = Integer.MIN_VALUE;
 		}
 		treeSize = (short)(keys.length - 1);
 		clearCache();		
