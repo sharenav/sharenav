@@ -60,6 +60,8 @@ public class intTree  {
 		int rangeLow = 0;
 		int rangeHigh = keys.length - 1;
 		int pivot = 1;
+		if (size() == 0)
+			return 0;
 		while (rangeLow <= rangeHigh) {
 			pivot = rangeLow + ((rangeHigh - rangeLow)/2);			
 			if (keys[pivot] == key) {				
@@ -76,6 +78,8 @@ public class intTree  {
 	}
 	
 	public synchronized Object get(int key) {
+		if (size() == 0)
+			return null;
 		if (key == keyCache)
 			return valueCache;		
 		int idx = bisect(key);
@@ -140,8 +144,10 @@ public class intTree  {
 		return key;
 	}
 	
-	public synchronized void remove(int key) {		
+	public synchronized void remove(int key) {
 		clearCache();
+		if (size() == 0)
+			return;
 		int idx = bisect(key);
 		if (idx >= 0) {
 			System.arraycopy(keys, treeSize, keys, treeSize+1, idx - treeSize);
@@ -149,7 +155,7 @@ public class intTree  {
 			values[treeSize] = null;
 			keys[treeSize] = -1;
 			treeSize++;
-		}				
+		}
 	}
 	
 	public synchronized void removeAll() {
