@@ -110,6 +110,9 @@ public class ImageCollector implements Runnable {
 				if (suspended || shutdown)
 					continue;
 				pc[nextCreate].state = PaintContext.STATE_IN_CREATE;
+				
+				//#debug
+				long startTime = System.currentTimeMillis();
 
 				// create PaintContext
 				pc[nextCreate].xSize = xSize;
@@ -182,15 +185,18 @@ public class ImageCollector implements Runnable {
 						pc[nextCreate].state = PaintContext.STATE_READY;
 						break;
 					}
-				}				
+				}
+				//#mdebug
+				long endTime = System.currentTimeMillis();
+				logger.info("Painting map took " + (endTime - startTime) + "ms");
+				//#enddebug
 
 				newCollected();
-				createImageCount++;
-				tr.requestRedraw();
+				createImageCount++;				
 				needRedraw = false;
 				tr.cleanup();
 				// System.out.println("create ready");
-				System.gc();
+				//System.gc();
 
 			}
 		} catch (OutOfMemoryError oome) {
