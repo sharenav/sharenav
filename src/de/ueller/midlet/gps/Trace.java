@@ -1082,6 +1082,10 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		logger.debug("keyRepeated " + keyCode);
 		//Scrolling should work with repeated keys the same
 		//as pressing the key multiple times
+		if (keyCode==ignoreKeyCode) {
+			logger.debug("key ignored " + keyCode);
+			return;
+		}
 		int gameActionCode = this.getGameAction(keyCode);
 		if ((gameActionCode == UP) || (gameActionCode == DOWN) ||
 				(gameActionCode == RIGHT) || (gameActionCode == LEFT)) {
@@ -1396,6 +1400,14 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 	public void setRouteNodes(Vector routeNodes) {
 		this.routeNodes = routeNodes;
+	}
+	
+	protected void hideNotify() {
+		logger.info("Hide notify has been called, screen will nolonger be updated");		
+	}
+	
+	protected void showNotify() {
+		logger.info("Show notify has been called, screen will be updated again");
 	}
 
 }
