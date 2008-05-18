@@ -96,11 +96,19 @@ public class SingleTile extends Tile implements QueueableTile {
 
 	}
 
-	public synchronized void paint(PaintContext pc, byte layer) {
+	public synchronized void paint(PaintContext pc, byte layer) {		
 //		logger.info("paint Single");
-		//System.out.println("Painting single tile " + this +  " at layer " + layer);
-		float testLat;
-		float testLon;
+//		logger.info("Potentially Painting single tile " + this +  " at layer " + layer);
+		
+		
+		/**
+		 * Calculate pc coordinates in terms of relative single tile coordinates
+		 */
+		short pcLDlat = (short)((pc.screenLD.radlat - this.centerLat) * SingleTile.fpm);
+		short pcLDlon = (short)((pc.screenLD.radlon - this.centerLon) * SingleTile.fpm);
+		short pcRUlat = (short)((pc.screenRU.radlat - this.centerLat) * SingleTile.fpm);
+		short pcRUlon = (short)((pc.screenRU.radlon - this.centerLon) * SingleTile.fpm);
+		
 		
 		boolean renderArea = ((layer & Tile.LAYER_AREA) != 0);
 		byte relLayer = (byte)(((int)layer) & ~Tile.LAYER_AREA);		
@@ -128,7 +136,7 @@ public class SingleTile extends Tile implements QueueableTile {
 							continue;
 
 						// logger.debug("test Bounds of way");
-						if (!w.isOnScreen(pc, centerLat, centerLon)) continue; 
+						if (!w.isOnScreen(pcLDlat, pcLDlon, pcRUlat, pcRUlon)) continue; 
 						// logger.debug("draw " + w.name);
 						// fill the target fields if they are empty
 //						logger.debug("search target" + pc.target);
@@ -166,7 +174,7 @@ public class SingleTile extends Tile implements QueueableTile {
 					if (type[i] == 0) {
 						break;
 					}
-					if (!isNodeOnScreen(pc, i))
+					if (!isNodeOnScreen(i, pcLDlat, pcLDlon, pcRUlat, pcRUlon))
 						continue;				
 					paintNode(pc, i);
 				}
@@ -195,6 +203,15 @@ public class SingleTile extends Tile implements QueueableTile {
 				}
 			}
 			lastUse = 0;
+			
+			/**
+			 * Calculate pc coordinates in terms of relative single tile coordinates
+			 */
+			short pcLDlat = (short)((pc.screenLD.radlat - this.centerLat) * SingleTile.fpm);
+			short pcLDlon = (short)((pc.screenLD.radlon - this.centerLon) * SingleTile.fpm);
+			short pcRUlat = (short)((pc.screenRU.radlat - this.centerLat) * SingleTile.fpm);
+			short pcRUlon = (short)((pc.screenRU.radlon - this.centerLon) * SingleTile.fpm);
+			
 			if (ways != null) {
 				short targetLat = (short)((pc.target.lat - centerLat)*fpm);
 				short targetLon = (short)((pc.target.lon - centerLon)*fpm);
@@ -203,7 +220,7 @@ public class SingleTile extends Tile implements QueueableTile {
 						continue;
 					for (int i = 0; i < ways[j].length; i++) {
 						Way w = ways[j][i];
-						if (!w.isOnScreen(pc, centerLat, centerLon))
+						if (!w.isOnScreen(pcLDlat, pcLDlon, pcRUlat, pcRUlon))
 							continue;
 
 						// logger.debug("draw " + w.name);
@@ -245,7 +262,7 @@ public class SingleTile extends Tile implements QueueableTile {
 					if (type[i] == 0) {
 						break;
 					}
-					if (!isNodeOnScreen(pc, i))
+					if (!isNodeOnScreen(i,pcLDlat, pcLDlon, pcRUlat, pcRUlon))
 						continue;					
 					paintNode(pc, i);
 				}
@@ -405,19 +422,19 @@ public class SingleTile extends Tile implements QueueableTile {
 	   return resList;
    }
    
-   private boolean isNodeOnScreen(PaintContext pc, int nodeId) {
-	   float testLat=(float)(nodeLat[nodeId]*fpminv + centerLat); 
-	   if (testLat < pc.screenLD.radlat) {
+   private boolean isNodeOnScreen(int nodeId, short pcLDlat, short pcLDlon, short pcRUlat, short pcRUlon) {
+	   short testLat=nodeLat[nodeId]; 
+	   if (testLat < pcLDlat) {
 		   return false;
 	   }
-	   if (testLat > pc.screenRU.radlat) {
+	   if (testLat > pcRUlat) {
 		   return false;
 	   }
-	   float testLon=(float)(nodeLon[nodeId]*fpminv + centerLon); 
-	   if (testLon < pc.screenLD.radlon) {
+	   short testLon=nodeLon[nodeId]; 
+	   if (testLon < pcLDlon) {
 		   return false;
 	   }
-	   if (testLon > pc.screenRU.radlon) {
+	   if (testLon > pcRUlon) {
 		   return false;
 	   }
 	   return true;

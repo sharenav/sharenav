@@ -128,13 +128,13 @@ public class Way extends Entity{
 //			}			
 	}
 
-	public boolean isOnScreen(PaintContext pc, float refLat, float refLon) { 
-		if ((((float)(maxLat*SingleTile.fpminv) + refLat) < pc.screenLD.radlat) || (((float)(minLat*SingleTile.fpminv) + refLat) > pc.screenRU.radlat)) { 
-			return false; 
-		} 
-		if ((((float)(maxLon*SingleTile.fpminv) + refLon) < pc.screenLD.radlon) || (((float)(minLon*SingleTile.fpminv) + refLon) > pc.screenRU.radlon)) { 
-			return false; 
-		}        
+	public boolean isOnScreen( short pcLDlat, short pcLDlon, short pcRUlat, short pcRUlon) { 
+		if ((maxLat < pcLDlat) || (minLat > pcRUlat)) {
+			return false;
+		}
+		if ((maxLon < pcLDlon) || (minLon > pcRUlon)) {
+			return false;
+		}
 		return true; 
 	} 
 
