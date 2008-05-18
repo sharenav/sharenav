@@ -317,6 +317,11 @@ private Trace trace=null;
 			} catch (IOException e) {
 				l.exception("Couldn't connect to the debug log file", e);
 				e.printStackTrace();
+			} catch (SecurityException se) {
+				/**
+				 * we were denied access to the log file, nothing we can do about this.
+				 */
+				logFile = null;
 			}
 		} else {
 			if (logFile != null) {
