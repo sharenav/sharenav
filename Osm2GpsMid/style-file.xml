@@ -3,37 +3,48 @@
 <!--
 This is a sample style file for use with GpsMid. It allows
 to specify which map features get converted from the osm
-data to GpsMid. This can be changed at will, as long as it
-conforms to style-file.dtd
+data to GpsMid. This can and should be changed at will to suit
+your personal preferences, as long as it conforms to style-file.dtd.
+
+WARNING: There is currently one extra restriction. The "key tag=place"
+currently must be the first in the stylefile and must contain 5 different
+places in decending order or importance. This is due to some hardcoded
+assumptions in the code for calculating is_in relations for the search
+dialog.
 -->
-<!-- approximate Scale levels: 
-260 zoomed in 10x (2m)
-390 zoomed in 9x (5m)
-585 zoomed in 8x (5m)
-878 zoomed in 7x (10m)
-1317    zoomed in 6x (10m)
-1975    zoomed in 5x (25m)
-2963    zoomed in 4x (25m)
-4444    zoomed in 3x (50m)
-6667    zoomed in 2x (50m)
-10000   zoomed in 1x (100m)
-15000   startup scale  (250m)
-22500   zoomed out 1x (250m)
-33750   zoomed out 2x (250m)
-50625   zoomed out 3x (500m)
-75938   zoomed out 4x (1000m)
-113906  zoomed out 5x (1000m)
-170859  zoomed out 6x (2km)
-256289  zoomed out 7x (2km)
-384434  zoomed out 8x (5km)
-576650  zoomed out 9x (5km)
-864976  zoomed out 10x (10km)
-1297463 zoomed out 11x (10km)
-1946195 zoomed out 12x (25km)
-2919293 zoomed out 13x (25km)
-4378939 zoomed out 14x (50km)
-6568408 zoomed out 15x (50km)
-9852613 zoomed out 16x (100km)
+
+<!-- approximate Scale levels (m and km are values shown on 176x220 mobile display): 
+zoomed in 10x (pseudo zoom 31: 5m)
+zoomed in 9x (pseudo zoom 30: 5m)
+zoomed in 7x (pseudo zoom 29: 10m)
+zoomed in 6x (pseudo zoom 28: 10m)
+zoomed in 5x (pseudo zoom 27: 25m)
+zoomed in 4x (pseudo zoom 26: 25m)
+zoomed in 3x (pseudo zoom 25: 50m)
+zoomed in 2x (pseudo zoom 24: 50m)
+zoomed in 1x (pseudo zoom 23: 100m)
+startup scale  (pseudo zoom 22: 250m)
+zoomed out 1x (pseudo zoom 21: 250m)
+zoomed out 2x (pseudo zoom 20: 250m)
+zoomed out 3x (pseudo zoom 19: 500m)
+zoomed out 4x (pseudo zoom 18: 1000m)
+zoomed out 5x (pseudo zoom 17: 1000m)
+zoomed out 6x (pseudo zoom 16: 2km)
+zoomed out 7x (pseudo zoom 15: 2km)
+zoomed out 8x (pseudo zoom 14: 5km)
+zoomed out 9x (pseudo zoom 13: 5km)
+zoomed out 10x (pseudo zoom 12: 10km)
+zoomed out 11x (pseudo zoom 11: 10km)
+zoomed out 12x (pseudo zoom 10: 25km)
+zoomed out 13x (pseudo zoom 9: 25km)
+zoomed out 14x (pseudo zoom 8: 50km)
+zoomed out 15x (pseudo zoom 7: 50km)
+zoomed out 16x (pseudo zoom 6: 100km)
+zoomed out 17x (pseudo zoom 5: 250km)
+zoomed out 18x (pseudo zoom 4: 250km)
+zoomed out 19x (pseudo zoom 3: 250km)
+zoomed out 20x (pseudo zoom 2: 500km)
+zoomed out 21x (pseudo zoom 1:  500km)
 -->
 
 <legend>
@@ -43,31 +54,31 @@ conforms to style-file.dtd
 		<description desc = "City"/>
 		<searchIcon src = "/city.png"/>
 		<namekey tag="name"/>		
-		<scale scale="500000000"/>
+		<scale scale="12"/>
 	  </value>
 	  <value name="town">
 		<description desc = "Town"/>
 		<searchIcon src = "/city.png"/>
 		<namekey tag="name"/>
-		<scale scale = "1000000"/>
+		<scale scale = "16"/>
 	  </value>
 	  <value name="village">
 		<description desc = "Village"/>
 		<searchIcon src = "/city.png"/>
 		<namekey tag="name"/>
-		<scale scale = "60000"/>
+		<scale scale = "22"/>
 	  </value>
 	  <value name="hamlet">
 		<description desc = "Hamlet"/>
 		<searchIcon src = "/city.png"/>
 		<namekey tag="name"/>
-		<scale scale = "30000"/>
+		<scale scale = "23"/>
 	  </value>
 	  <value name="suburb">
 		<description desc = "Suburb"/>
 		<searchIcon src = "/city.png"/>
 		<namekey tag="name"/>
-		<scale scale = "20000"/>
+		<scale scale = "23"/>
 	  </value>
 	</key>
 	<key tag="amenity">
@@ -75,155 +86,155 @@ conforms to style-file.dtd
 		<description desc = "Post box"/>
 		<image src="/post_box.png"/>
 		<namekey tag="name"/>
-		<scale scale="7500"/>
-		<textscale scale="1000"/>
+		<scale scale="25"/>
+		<textscale scale="18"/>
 	  </value>	
 	  <value name ="post_office">
 		<description desc = "Post box"/>
 		<image src="/post_office.png"/>
 		<namekey tag="name"/>
-		<scale scale="10000"/>
-		<textscale scale="1000"/>
+		<scale scale="23"/>
+		<textscale scale="18"/>
 	  </value>	
 	  <value name ="school">
 		<description desc = "School"/>
 		<image src="/school.png"/>
 		<namekey tag="name"/>
-		<scale scale="10000"/>
-		<textscale scale="4000"/>
+		<scale scale="24"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name ="telephone">
 		<description desc = "Public telephone"/>
 		<image src="/telephone.png"/>
 		<namekey tag="name"/>
-		<scale scale="7500"/>
-		<textscale scale = "4000"/>
+		<scale scale="25"/>
+		<textscale scale = "26"/>
 	  </value>
 	  <value name ="restaurant">
 		<description desc = "Restaurant"/>
 		<image src="/restaurant.png"/>
 		<namekey tag="name"/>
-		<scale scale="10000"/>
-		<textscale scale="4000"/>
+		<scale scale="24"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name ="hospital">
 		<description desc = "Hospital"/>
 		<image src="/hospital.png"/>
 		<namekey tag="name"/>
-		<scale scale="30000"/>
-		<textscale scale="5000"/>
+		<scale scale="20"/>
+		<textscale scale="24"/>
 	  </value>
 	  <value name ="pub">
 		<description desc = "Pub"/>
 		<image src="/pub.png"/>
 		<namekey tag="name"/>
-		<scale scale="7500"/>
-		<textscale scale="4000"/>
+		<scale scale="25"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name ="atm">
 		<description desc = "Cash machine"/>
 		<image src="/atm.png"/>
 		<namekey tag="name"/>
-		<scale scale="7500"/>
-		<textscale scale="4000"/>
+		<scale scale="25"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name ="cinema">
 		<description desc = "Cinema"/>
 		<image src="/cinema.png"/>
 		<namekey tag="name"/>
-		<scale scale="10000"/>
-		<textscale scale="4000"/>
+		<scale scale="24"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name ="pharmacy">
 		<description desc = "Pharmacy"/>
 		<image src="/pharmacy.png"/>
 		<namekey tag="name"/>
-		<scale scale="10000"/>
-		<textscale scale="4000"/>
+		<scale scale="24"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name ="place_of_worship">
 		<description desc = "Church"/>
 		<image src="/church.png"/>
 		<namekey tag="name"/>
-		<scale scale="10000"/>
-		<textscale scale="4000"/>
+		<scale scale="24"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name ="fuel">
 		<description desc = "Refueling station"/>
 		<image src="/fuel.png"/>
 		<namekey tag="name"/>
-		<scale scale="7500"/>
-		<textscale scale="3000"/>		
+		<scale scale="23"/>
+		<textscale scale="26"/>		
 	  </value>
 	  <value name ="bicycle_parking">
 		<description desc = "Bicycle parking"/>
 		<image src="/bicycling.png"/>
 		<namekey tag="name"/>
-		<scale scale="7500"/>
-		<textscale scale="3000"/>		
+		<scale scale="23"/>
+		<textscale scale="26"/>		
 	  </value>
 	  <value name ="toilets">
 		<description desc = "Public toilet"/>
 		<image src="/toilets.png"/>
 		<namekey tag="name"/>
-		<scale scale="7500"/>
-		<textscale scale="3000"/>		
+		<scale scale="25"/>
+		<textscale scale="26"/>		
 	  </value>
 	  <value name ="recycling">
 		<description desc = "Recycling"/>
 		<image src="/recycling.png"/>
 		<namekey tag="name"/>
-		<scale scale="7500"/>
-		<textscale scale="3000"/>		
+		<scale scale="25"/>
+		<textscale scale="26"/>		
 	  </value>
 	  <value name ="library">
 		<description desc = "Library"/>
 		<image src="/library.png"/>
 		<namekey tag="name"/>
-		<scale scale="7500"/>
-		<textscale scale="3000"/>		
+		<scale scale="22"/>
+		<textscale scale="26"/>		
 	  </value>
 	  <value name ="biergarten">
 		<description desc = "Biergarten"/>
 		<image src="/biergarten.png"/>
 		<namekey tag="name"/>
-		<scale scale="7500"/>
-		<textscale scale="4000"/>
+		<scale scale="25"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name ="fire_station">
 		<description desc = "Fire station"/>
 		<image src="/firebrigade.png"/>
 		<namekey tag="name"/>
-		<scale scale="7500"/>
-		<textscale scale="4000"/>
+		<scale scale="25"/>
+		<textscale scale="26"/>
 	  </value>	
 	  <value name ="nightclub">
 		<description desc = "Nightclub"/>
 		<image src="/nightclub.png"/>
 		<namekey tag="name"/>
-		<scale scale="7500"/>
-		<textscale scale="4000"/>
+		<scale scale="25"/>
+		<textscale scale="26"/>
 	  </value>	
 	  <value name ="police">
 		<description desc = "Police station"/>
 		<image src="/police.png"/>
 		<namekey tag="name"/>
-		<scale scale="10000"/>
-		<textscale scale="4000"/>
+		<scale scale="24"/>
+		<textscale scale="26"/>
 	  </value>	
 	  <value name ="parking">
 		<description desc = "Car parking"/>
 		<image src="/parking.png"/>
 		<namekey tag="name"/>
-		<scale scale="10000"/>
-		<textscale scale="3000"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name ="taxi">
 		<description desc = "Taxi"/>
 		<image src="/taxi.png"/>
 		<namekey tag="name"/>
-		<scale scale="7500"/>
-		<textscale scale="3000"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	</key>
 	<key tag="shop">
@@ -231,15 +242,22 @@ conforms to style-file.dtd
 		<description desc = "Supermarket"/>
 		<image src="/supermarket.png"/>
 		<namekey tag="name"/>
-		<scale scale="20000"/>
-		<textscale scale="4000"/>
+		<scale scale="22"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name="kiosk">
 		<description desc = "Kiosk"/>
 		<image src="/kiosk.png"/>
 		<namekey tag="name"/>
-		<scale scale="7500"/>
-		<textscale scale="3000"/>
+		<scale scale="25"/>
+		<textscale scale="26"/>
+	  </value>
+	  <value name="*">
+		<description desc = "Other Shop"/>
+		<image src="/othershop.png"/>
+		<namekey tag="name"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	</key>
 	<key tag="highway">
@@ -247,8 +265,8 @@ conforms to style-file.dtd
 		<description desc = "Bus stop"/>
 		<image src="/bus.png"/>		
 		<namekey tag="name"/>
-		<scale scale="10000"/>
-		<textscale scale="4000"/>
+		<scale scale="22"/>
+		<textscale scale="26"/>
 		<imageCentered value="true"/>
 	  </value>
 	</key>
@@ -257,16 +275,16 @@ conforms to style-file.dtd
 		<description desc = "Railway station"/>
 		<image src="/railstation.png"/>		
 		<namekey tag="name"/>
-		<scale scale="35000"/>
-		<textscale scale="10000"/>
+		<scale scale="19"/>
+		<textscale scale="24"/>
 		<imageCentered value="true"/>
 	  </value>
 	  <value name="tram_stop">
 		<description desc = "Tram station"/>
 		<image src="/railstation.png"/>		
 		<namekey tag="name"/>
-		<scale scale="20000"/>
-		<textscale scale="4000"/>
+		<scale scale="22"/>
+		<textscale scale="26"/>
 		<imageCentered value="true"/>
 	  </value>
 	  </key>
@@ -275,15 +293,15 @@ conforms to style-file.dtd
 		<description desc = "Hotel"/>
 		<image src="/hotel.png"/>
 		<namekey tag="name"/>
-		<scale scale="10000"/>
-		<textscale scale="4000"/>		
+		<scale scale="24"/>
+		<textscale scale="26"/>		
 	  </value>
 	  <value name="museum">
 		<description desc = "Museum"/>
 		<image src="/museum.png"/>
 		<namekey tag="name"/>
-		<scale scale="10000"/>
-		<textscale scale="4000"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>	
 	</key>
   </pois>
@@ -294,7 +312,7 @@ conforms to style-file.dtd
   				<namekey tag = "name"/>
   				<namefallback tag = "ref"/>
   				<isArea area = "false"/>
-  				<scale scale = "500000000"/>
+  				<scale scale = "5"/>
   				<lineColor color = "00809BC0" />
   				<wayWidth width="8" />
   				<routing accessible="true" speed="120" />  				  				
@@ -304,7 +322,7 @@ conforms to style-file.dtd
   				<namekey tag = "name"/>
   				<namefallback tag = "ref"/>
   				<isArea area = "false"/>
-  				<scale scale = "45000"/>
+  				<scale scale = "20"/>
   				<lineColor color = "00809BC0" />
   				<wayWidth width="8" />
   				<routing accessible="true" speed="120" />  				  				
@@ -314,7 +332,7 @@ conforms to style-file.dtd
   				<namekey tag = "name"/>
   				<namefallback tag = "ref"/>
   				<isArea area = "false"/>
-  				<scale scale = "500000000"/>
+  				<scale scale = "7"/>
   				<lineColor color = "007FC97F" />
   				<wayWidth width="6" />
   				<routing accessible="true" speed="100" />  				  				
@@ -324,7 +342,7 @@ conforms to style-file.dtd
   				<namekey tag = "name"/>
   				<namefallback tag = "ref"/>
   				<isArea area = "false"/>
-  				<scale scale = "45000"/>
+  				<scale scale = "20"/>
   				<lineColor color = "007FC97F" />
   				<wayWidth width="6" />
   				<routing accessible="true" speed="100" />  				  				
@@ -334,7 +352,7 @@ conforms to style-file.dtd
   				<namekey tag = "name"/>
   				<namefallback tag = "ref"/>
   				<isArea area = "false"/>
-  				<scale scale = "900000"/>
+  				<scale scale = "10"/>
   				<lineColor color = "007FC97F" />
   				<wayWidth width="6" />
   				<routing accessible="true" speed="80" />  				  				
@@ -344,7 +362,7 @@ conforms to style-file.dtd
   				<namekey tag = "name"/>
   				<namefallback tag = "ref"/>
   				<isArea area = "false"/>
-  				<scale scale = "45000"/>
+  				<scale scale = "20"/>
   				<lineColor color = "007FC97F" />
   				<wayWidth width="6" />
   				<routing accessible="true" speed="80" />  				  				
@@ -353,7 +371,7 @@ conforms to style-file.dtd
   				<description desc = "Secondary"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
-  				<scale scale = "180000"/>
+  				<scale scale = "15"/>
   				<lineColor color = "00FDBF6F" />
   				<wayWidth width="5" />
   				<routing accessible="true" speed="80" />  				  				
@@ -362,7 +380,7 @@ conforms to style-file.dtd
   				<description desc = "Tertiary"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
-  				<scale scale = "180000"/>
+  				<scale scale = "17"/>
   				<lineColor color = "00FFFFFF" />
   				<wayWidth width="4" />
   				<routing accessible="true" speed="80" />  				  				
@@ -371,16 +389,16 @@ conforms to style-file.dtd
   				<description desc = "Small road"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
-  				<scale scale = "60000"/>
+  				<scale scale = "19"/>
   				<lineColor color = "00FFFFFF" />
   				<wayWidth width="4" />
-  				<routing accessible="true" speed="80" />  				  				
+  				<routing accessible="true" speed="50" />  				  				
   			</Wvalue>  			
   			<Wvalue name = "residential">
   				<description desc = "Residential"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
-  				<scale scale = "60000"/>
+  				<scale scale = "21"/>
   				<lineColor color = "00B4B4B4" />
   				<wayWidth width="3" />
   				<routing accessible="true" speed="30" />  				  				
@@ -389,7 +407,7 @@ conforms to style-file.dtd
   				<description desc = "Spiel strasse"/>
   				<namekey tag = "name"/>
   				<isArea area = "false"/>
-  				<scale scale = "60000"/>
+  				<scale scale = "22"/>
   				<lineColor color = "00B4B4FF" />
   				<wayWidth width="2" />
   				<routing accessible="true" speed="5" />  				  				
@@ -398,7 +416,7 @@ conforms to style-file.dtd
   				<description desc = "track"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
-  				<scale scale = "60000"/>
+  				<scale scale = "23"/>
   				<lineColor color = "00EFEAA0" />
   				<lineStyle dashed = "true" />
   				<wayWidth width="3" />
@@ -408,7 +426,7 @@ conforms to style-file.dtd
   				<description desc = "Service"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
-  				<scale scale = "60000"/>
+  				<scale scale = "23"/>
   				<lineColor color = "00FFFFFF" />
   				<wayWidth width="2" />
   				<routing accessible="true" speed="30" />  				  				
@@ -417,7 +435,7 @@ conforms to style-file.dtd
   				<description desc = "roundabout"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
-  				<scale scale = "60000"/>
+  				<scale scale = "17"/>
   				<lineColor color = "00FFFFFF" />
   				<wayWidth width="2" />
   				<routing accessible="true" speed="30" />  				  				
@@ -426,17 +444,17 @@ conforms to style-file.dtd
   				<description desc = "Bridleway"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
-  				<scale scale = "45000"/>
+  				<scale scale = "23"/>
   				<lineColor color = "00FF00FF" />
   				<lineStyle dashed = "true" />
   				<wayWidth width="2" />
-  				<routing accessible="true" speed="30" />  				  				
+  				<routing accessible="false" speed="30" />  				  				
   			</Wvalue>
   			<Wvalue name = "cycleway">
   				<description desc = "Cycle way"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
-  				<scale scale = "45000"/>
+  				<scale scale = "21"/>
   				<lineColor color = "007777FF" />
   				<lineStyle dashed = "true" />
   				<wayWidth width="2" />
@@ -446,7 +464,7 @@ conforms to style-file.dtd
   				<description desc = "Foot way"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
-  				<scale scale = "45000"/>
+  				<scale scale = "21"/>
   				<lineColor color = "00FFFFFF" />
   				<lineStyle dashed = "false" />
   				<wayWidth width="2" />
@@ -456,29 +474,19 @@ conforms to style-file.dtd
   				<description desc = "Pedestrian zone"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
-  				<scale scale = "45000"/>
+  				<scale scale = "21"/>
   				<lineColor color = "00CCCCCC" />
   				<lineStyle dashed = "false" />
   				<wayWidth width="3" />
   				<routing accessible="false" speed="3" />  				  				
-  			</Wvalue>
-  			<Wvalue name = "track">
-  				<description desc = "track"/>
-  				<namekey tag = "name"/>  				
-  				<isArea area = "false"/>
-  				<scale scale = "45000"/>
-  				<lineColor color = "00EFEAA0" />
-  				<lineStyle dashed = "true" />
-  				<wayWidth width="2" />
-  				<routing accessible="false" speed="30" />  				  				
-  			</Wvalue>
+  			</Wvalue>  			
   		</keyW>
   		<keyW tag = "railway">
   			<Wvalue name = "rail">
   				<description desc = "Mainline rail"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
-  				<scale scale = "500000000"/>
+  				<scale scale = "10"/>
   				<lineColor color = "00FFFFFF" />
   				<lineStyle dashed = "true" />
   				<wayWidth width="1" />  				  				  				
@@ -487,7 +495,7 @@ conforms to style-file.dtd
   				<description desc = "Tram"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
-  				<scale scale = "90000"/>
+  				<scale scale = "15"/>
   				<lineColor color = "00CCCCCC" />
   				<lineStyle dashed = "true" />
   				<wayWidth width="1" />  				  				  				
@@ -496,7 +504,7 @@ conforms to style-file.dtd
   				<description desc = "Tube"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
-  				<scale scale = "180000"/>
+  				<scale scale = "17"/>
   				<lineColor color = "00CCCCCC" />
   				<lineStyle dashed = "true" />
   				<wayWidth width="1" />  				  				  				
@@ -505,7 +513,7 @@ conforms to style-file.dtd
   				<description desc = "Light rail"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
-  				<scale scale = "90000"/>
+  				<scale scale = "17"/>
   				<lineColor color = "00CCCCCC" />
   				<lineStyle dashed = "true" />
   				<wayWidth width="1" />  				  				  				
@@ -516,21 +524,21 @@ conforms to style-file.dtd
   				<description desc = "Park"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
-  				<scale scale = "45000"/>
+  				<scale scale = "21"/>
   				<lineColor color = "0000FF00" />  				  				  				
   			</Wvalue>
   			<Wvalue name = "common">
   				<description desc = "Common"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
-  				<scale scale = "45000"/>
+  				<scale scale = "21"/>
   				<lineColor color = "0000CC00" />  				  				  				
   			</Wvalue>
   			<Wvalue name = "playground">
   				<description desc = "Playground"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
-  				<scale scale = "40000"/>
+  				<scale scale = "22"/>
   				<lineColor color = "0066AA00" />  				  				  				
   			</Wvalue>
   		</keyW>
@@ -539,14 +547,14 @@ conforms to style-file.dtd
   				<description desc = "Grave Yardk"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
-  				<scale scale = "45000"/>
+  				<scale scale = "21"/>
   				<lineColor color = "0000AA00" />  				  				  				
   			</Wvalue>  			
   			<Wvalue name = "parking">
   				<description desc = "parking"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
-  				<scale scale = "45000"/>
+  				<scale scale = "21"/>
   				<lineColor color = "000FFFF64" />  				  				  				
   			</Wvalue>  			
   		</keyW>
@@ -555,7 +563,7 @@ conforms to style-file.dtd
   				<description desc = "River"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
-  				<scale scale = "900000"/>
+  				<scale scale = "10"/>
   				<lineColor color = "000000F0" />
   				<wayWidth width="10" />  				  				  				
   			</Wvalue>
@@ -563,7 +571,7 @@ conforms to style-file.dtd
   				<description desc = "Canal"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
-  				<scale scale = "160000"/>
+  				<scale scale = "15"/>
   				<lineColor color = "000000E0" />
   				<wayWidth width="6" />  				  				  				
   			</Wvalue>
@@ -571,7 +579,7 @@ conforms to style-file.dtd
   				<description desc = "Stream"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
-  				<scale scale = "60000"/>
+  				<scale scale = "21"/>
   				<lineColor color = "000000D0" />
   				<wayWidth width="3" />  				  				  				
   			</Wvalue>
@@ -581,119 +589,119 @@ conforms to style-file.dtd
   				<description desc = "Forest"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
-  				<scale scale = "45000"/>
+  				<scale scale = "21"/>
   				<lineColor color = "0000CC00" />  				  				  				
   			</Wvalue>
   			<Wvalue name = "farm">
   				<description desc = "farm"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
-  				<scale scale = "45000"/>
+  				<scale scale = "21"/>
   				<lineColor color = "00886B1D" />  				  				  				
   			</Wvalue>  		
   			<Wvalue name = "quarry">
   				<description desc = "quarry"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
-  				<scale scale = "45000"/>
+  				<scale scale = "21"/>
   				<lineColor color = "00CDC7B6" />  				  				  				
   			</Wvalue>
   			<Wvalue name = "landfill">
   				<description desc = "landfill"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
-  				<scale scale = "45000"/>
+  				<scale scale = "21"/>
   				<lineColor color = "004B4B4B" />  				  				  				
   			</Wvalue>
   			<Wvalue name = "basin">
   				<description desc = "basin"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
-  				<scale scale = "45000"/>
+  				<scale scale = "21"/>
   				<lineColor color = "000A0ACD" />  				  				  				
   			</Wvalue>
   			<Wvalue name = "reservoir">
   				<description desc = "reservoir"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
-  				<scale scale = "45000"/>
+  				<scale scale = "21"/>
   				<lineColor color = "001E1EEB" />  				  				  				
   			</Wvalue>
   			<Wvalue name = "allotments">
   				<description desc = "allotments"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
-  				<scale scale = "45000"/>
+  				<scale scale = "21"/>
   				<lineColor color = "00196618" />  				  				  				
   			</Wvalue>
   			<Wvalue name = "residential">
   				<description desc = "residential"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
-  				<scale scale = "45000"/>
+  				<scale scale = "21"/>
   				<lineColor color = "00D2D2D2" />  				  				  				
   			</Wvalue>
   			<Wvalue name = "retail">
   				<description desc = "retail"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
-  				<scale scale = "45000"/>
+  				<scale scale = "21"/>
   				<lineColor color = "0039E3E7" />  				  				  				
   			</Wvalue>
   			<Wvalue name = "commercial">
   				<description desc = "commercial"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
-  				<scale scale = "45000"/>
+  				<scale scale = "21"/>
   				<lineColor color = "0081E5E7" />  				  				  				
   			</Wvalue>
   			<Wvalue name = "industrial">
   				<description desc = "industrial"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
-  				<scale scale = "45000"/>
+  				<scale scale = "21"/>
   				<lineColor color = "00E1DF21" />  				  				  				
   			</Wvalue>
   			<Wvalue name = "brownfield">
   				<description desc = "brownfield"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
-  				<scale scale = "45000"/>
+  				<scale scale = "21"/>
   				<lineColor color = "004B4B0B" />  				  				  				
   			</Wvalue>
   			<Wvalue name = "greenfield">
   				<description desc = "greenfield"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
-  				<scale scale = "45000"/>
+  				<scale scale = "21"/>
   				<lineColor color = "00A7A784" />  				  				  				
   			</Wvalue>
   			<Wvalue name = "cemetery">
   				<description desc = "cemetery"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
-  				<scale scale = "45000"/>
+  				<scale scale = "21"/>
   				<lineColor color = "00141414" />  				  				  				
   			</Wvalue>
   			<Wvalue name = "village_green">
   				<description desc = "village_green"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
-  				<scale scale = "45000"/>
+  				<scale scale = "21"/>
   				<lineColor color = "005ABA39" />  				  				  				
   			</Wvalue>
   			<Wvalue name = "recreation_ground">
   				<description desc = "recreation_ground"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
-  				<scale scale = "45000"/>
+  				<scale scale = "21"/>
   				<lineColor color = "005ABA39" />  				  				  				
   			</Wvalue>
   			<Wvalue name = "forest">
   				<description desc = "Forest"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
-  				<scale scale = "45000"/>
+  				<scale scale = "21"/>
   				<lineColor color = "00055204" />  				  				  				
   			</Wvalue>		
   		</keyW>
@@ -702,9 +710,18 @@ conforms to style-file.dtd
   				<description desc = "Lake"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
-  				<scale scale = "900000"/>
+  				<scale scale = "15"/>
   				<lineColor color = "000000CC" />  				  				  				
   			</Wvalue>  			
-  		</keyW>  		
+  		</keyW>
+	<keyW tag = "building">
+	  <Wvalue name = "*">
+		<description desc = "Other Building"/>
+		<namekey tag = "name"/> <isArea area = "true"/>
+		<scale scale = "22"/>
+		<lineColor color = "00CC0000" />
+	  </Wvalue>
+	</keyW>
+
 	</ways>
 </legend> 
