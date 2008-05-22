@@ -60,8 +60,11 @@ public class Configuration {
 		public int maxTileSize=20000;
 		public int maxRouteTileSize=3000;
 		public String styleFile;
-		
+				
 		private LegendParser legend;
+		
+		// array containing real scale for pseudo zoom 0..32
+		private static float realScale [] = new float[33]; 
 		
 		private static Configuration conf;
 
@@ -69,6 +72,25 @@ public class Configuration {
 //				.getBundle(BUNDLE_NAME);
 
 		public Configuration(String planet,String file) {
+			// precalculate real scale levels for pseudo zoom levels
+			// pseudo zoom level 0 equals to scale 0
+			realScale[0]=0;
+			// startup pseudo zoom level 23
+			realScale[23]=15000;
+			// pseudo zoom level 0..21
+			for(int i=22;i>0;i--) {
+				realScale[i]=realScale[i+1]*1.5f;
+			}
+			// pseudo zoom level 23..32
+			for(int i=24;i<realScale.length;i++) {
+				realScale[i]=realScale[i-1]/1.5f;
+			}
+			// subtract 100 to avoid wrong bounds due to rounding errors
+			for(int i=1;i<realScale.length;i++) {
+				realScale[i]-=100;
+				//System.out.println("Pseudo Zoom Level: " + i + " Real Scale: " + realScale[i]);
+			}
+				
 			this.planet = planet;
 			conf = this;
 			try {
@@ -279,4 +301,22 @@ public class Configuration {
 		public Collection<WayDescription> getWayDescs() {
 			return legend.getWayDescs();
 		}
+		
+		/*
+		 * returns the real scale level
+		 * 
+		 * for scale 0..32 a pseudo zoom level is assumed
+		 * and it is converted to a real scale level
+		 */  
+
+		public int getRealScale(int scale) {
+			if (scale<realScale.length) {
+				return (int) realScale[scale];
+			}
+			else {
+				return scale;
+			}
+		}
+		
+		
 }

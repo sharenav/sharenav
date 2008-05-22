@@ -15,6 +15,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import de.ueller.osmToGpsMid.Configuration;
 import de.ueller.osmToGpsMid.model.Bounds;
 import de.ueller.osmToGpsMid.model.Entity;
 import de.ueller.osmToGpsMid.model.Member;
@@ -25,6 +26,8 @@ import de.ueller.osmToGpsMid.model.Way;
 import de.ueller.osmToGpsMid.model.WayDescription;
 
 public class LegendParser extends DefaultHandler{
+	public static Configuration config;
+	
 	private Hashtable<String, Hashtable<String,POIdescription>> poiMap;
 	private Hashtable<String, Hashtable<String,WayDescription>> wayMap;
 	private LongTri<POIdescription> pois;
@@ -40,7 +43,10 @@ public class LegendParser extends DefaultHandler{
 	
 	
 	public LegendParser(InputStream i) {
-		System.out.println("Style file parser started...");		
+		System.out.println("Style file parser started...");
+		if (config == null) {
+			config = Configuration.getConfiguration();
+		}
 		init(i);
 	}
 
@@ -111,7 +117,7 @@ public class LegendParser extends DefaultHandler{
 					poiMap.put(currentKey, keyValuesPoi);
 				}
 			}
-			if (qName.equals("value")) {
+			if (qName.equals("value")) {				
 				currentPoi = new POIdescription();
 				currentPoi.typeNum = poiIdx++;
 				currentPoi.key = currentKey;
@@ -129,12 +135,12 @@ public class LegendParser extends DefaultHandler{
 				currentPoi.nameFallbackKey = atts.getValue("tag");
 			}
 			if (qName.equals("scale")) {
-				currentPoi.minImageScale = Integer.parseInt(atts.getValue("scale"));
+				currentPoi.minImageScale = config.getRealScale( Integer.parseInt(atts.getValue("scale")) );
 				if (currentPoi.minTextScale == 0)
 					currentPoi.minTextScale = currentPoi.minImageScale;
 			}
 			if (qName.equals("textscale")) {
-				currentPoi.minTextScale = Integer.parseInt(atts.getValue("scale"));
+				currentPoi.minTextScale = config.getRealScale( Integer.parseInt(atts.getValue("scale")) );
 			}
 			if (qName.equals("image")) {
 				currentPoi.image = atts.getValue("src");
@@ -172,7 +178,7 @@ public class LegendParser extends DefaultHandler{
 				currentWay.nameFallbackKey = atts.getValue("tag");
 			}
 			if (qName.equals("scale")) {
-				currentWay.minScale = Integer.parseInt(atts.getValue("scale"));				
+				currentWay.minScale = config.getRealScale( Integer.parseInt(atts.getValue("scale")) );				
 			}
 			if (qName.equals("isArea")) {
 				currentWay.isArea = atts.getValue("area").equalsIgnoreCase("true");
