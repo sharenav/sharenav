@@ -79,9 +79,7 @@ public class LegendParser extends DefaultHandler{
 			SAXParserFactory factory = SAXParserFactory.newInstance();
 			factory.setValidating(true);
 			// Parse the input
-            SAXParser saxParser = factory.newSAXParser();
-            System.out.println("Validating: " + saxParser.isValidating());
-            System.out.println("Schema: " + saxParser.getSchema());
+            SAXParser saxParser = factory.newSAXParser();            
             saxParser.parse(i, this);            
 		} catch (IOException e) {
 			System.out.println("IOException: " + e);
@@ -95,12 +93,10 @@ public class LegendParser extends DefaultHandler{
 		}
 	}
 
-	public void startDocument() {
-		System.out.println("Start of Document");
+	public void startDocument() {		
 	}
 
-	public void endDocument() {
-		System.out.println("End of Document");
+	public void endDocument() {		
 	}
 	
 	public void startElement(String namespaceURI, String localName, String qName, Attributes atts) {		

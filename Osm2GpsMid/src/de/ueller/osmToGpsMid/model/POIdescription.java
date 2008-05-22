@@ -25,4 +25,8 @@ public class POIdescription {
 	public int		minImageScale;
 	public int 		textColor;
 	public boolean	imageCenteredOnNode;
+	
+	public String toString() {
+		return "Desc: " + description + "; " + key + "=" + value + " nametag: " + nameKey + " or " + nameFallbackKey + " Scale: " + minImageScale;
+	}
 }

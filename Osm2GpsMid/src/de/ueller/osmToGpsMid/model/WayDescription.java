@@ -36,4 +36,8 @@ public class WayDescription {
 		routable = false;
 		typicalSpeed = 60;
 	}
+	
+	public String toString() {
+		return "Desc: " + description + "; " + key + "=" + value + " nametag: " + nameKey + " or " + nameFallbackKey + " Scale: " + minScale;
+	}
 }
