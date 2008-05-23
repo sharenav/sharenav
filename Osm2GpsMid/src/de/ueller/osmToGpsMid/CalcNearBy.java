@@ -62,11 +62,18 @@ public class CalcNearBy {
 							if (nearestPlace != null) {
 								//found a suitable Place, leaving loop
 								break;
-							}							
+							}
+							if (retrieveN == kdSize) {
+								/**
+								 * We have checked all available places and nothing was
+								 * suitable, so abort with nearestPlace == null;
+								 */
+								break;
+							}
 							maxDistanceTested = dist;
 							retrieveN = retrieveN * 5;
 							if (retrieveN > kdSize) retrieveN = kdSize;
-						}					
+						}
 					}
 				} catch (KeySizeException e) {
 					// Something must have gone horribly wrong here,
