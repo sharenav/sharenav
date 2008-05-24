@@ -226,17 +226,8 @@ public class Way extends Entity implements Comparable<Way>{
 	/**
 	 * @return
 	 */
-	public boolean isOneWay() {
-		String t = getAttribute("oneway");
-		if (t==null)
-			return false;
-		if ("true".equalsIgnoreCase(t)){
-			return true;
-		}
-		if ("yes".equalsIgnoreCase(t)){
-			return true;
-		}
-		return false;
+	public boolean isOneWay() {		
+		return Configuration.attrToBoolean(getAttribute("oneway"));
 	}
 
 	public void write(DataOutputStream ds,Names names1,Tile t) throws IOException{		

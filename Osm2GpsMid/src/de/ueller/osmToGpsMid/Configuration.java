@@ -320,5 +320,19 @@ public class Configuration {
 			}
 		}
 		
-		
+		public static boolean attrToBoolean(String attr) {
+			if (attr.equalsIgnoreCase("yes"))
+				return true;
+			if (attr.equalsIgnoreCase("true"))
+				return true;
+			if (attr.equalsIgnoreCase("1"))
+				return true;
+			if (attr.equalsIgnoreCase("no"))
+				return false;
+			if (attr.equalsIgnoreCase("false"))
+				return false;
+			if (attr.equalsIgnoreCase("0"))
+				return false;
+			return false;
+		}
 }
