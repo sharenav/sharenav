@@ -244,6 +244,8 @@ public class Way extends Entity implements Comparable<Way>{
 		int isinIdx = -1;
 		byte layer = 0;
 		
+		byte type=getType();
+		
 		if (getName() != null && getName().trim().length() > 0){			
 			flags+=WAY_FLAG_NAME;
 			nameIdx = names1.getNameIdx(getName());
@@ -266,8 +268,12 @@ public class Way extends Entity implements Comparable<Way>{
 			} catch (NumberFormatException e) {
 			}
 		}
+		if ((config.getWayDesc(type).forceToLayer != 0)) {
+			layer = config.getWayDesc(type).forceToLayer;
+			flags |= WAY_FLAG_LAYER;
+		}
 
-		byte type=getType();
+		
 		boolean isWay=false;
 		boolean longWays=false;
 		

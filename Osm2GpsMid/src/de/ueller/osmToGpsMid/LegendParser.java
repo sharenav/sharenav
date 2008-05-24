@@ -211,6 +211,13 @@ public class LegendParser extends DefaultHandler{
 				} else
 					currentWay.typicalSpeed = 50;								
 			}
+			if (qName.equals("force_to")) {
+				try {
+					currentWay.forceToLayer = Byte.parseByte(atts.getValue("layer"));
+				} catch (NumberFormatException nfe) {
+					// Just ignore this entry if it is not correct
+				}
+			}
 			
 		}
 	} // startElement

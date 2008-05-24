@@ -27,6 +27,7 @@ public class WayDescription {
 	public int		typicalSpeed;
 	public String   searchIcon;
 	public int      noWaysOfType;
+	public byte		forceToLayer;
 	
 	public WayDescription() {
 		lineStyleDashed = false; //TODO: This needs to be corrected to Graphics.SOLID
