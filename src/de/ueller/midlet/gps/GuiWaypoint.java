@@ -158,13 +158,13 @@ public class GuiWaypoint extends List implements CommandListener,
 		String alertMsg;		
 		if (uploading) {
 			if (success)
-				alertMsg = "Completed GPX export" + message;
+				alertMsg = "Completed GPX export: " + message;
 			else {
 				alertMsg = "GPX export failed: " + message;
 			}
 		} else {
 			if (success) {
-				alertMsg = "Completed GPX import" + message;
+				alertMsg = "Completed GPX import: " + message;
 				initWaypoints();
 			} else {
 				alertMsg = "GPX import failed: " + message;

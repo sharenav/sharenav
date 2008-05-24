@@ -111,13 +111,13 @@ public class GuiGpx extends List implements CommandListener,
 		String alertMsg;		
 		if (uploading) {
 			if (success)
-				alertMsg = "Completed GPX upload";
+				alertMsg = "Completed GPX upload: " + message;
 			else {
 				alertMsg = "GPX upload failed: " + message;
 			}
 		} else {
 			if (success) {
-				alertMsg = "Completed GPX import";
+				alertMsg = "Completed GPX import: " + message;
 				initTracks();
 			} else {
 				alertMsg = "GPX import failed: " + message;

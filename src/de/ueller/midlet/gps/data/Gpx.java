@@ -581,7 +581,7 @@ public class Gpx extends Tile implements Runnable {
 				name = "Waypoints";
 			
 			if (url == null) {
-				logger.error("No GPX receiver specified. Please select a GPX receiver in the setup menu");
+				importExportMessage = "No GPX receiver specified. Please select a GPX receiver in the setup menu";
 				return false;
 			}
 			
@@ -620,19 +620,19 @@ public class Gpx extends Tile implements Runnable {
 					}
 					
 			} catch (ClassNotFoundException cnfe) {
-				logger.exception("Your phone does not support this form of exporting, pleas choose a different one", cnfe);
+				importExportMessage = "Your phone does not support this form of exporting, pleas choose a different one";
 				session = null;
 				return false;
 			} catch (ClassCastException cce) {
 				logger.exception("Could not cast the class", cce);				
 			}
 			if (session == null) {
-				logger.error("Your phone does not support this form of exporting, pleas choose a different one");
+				importExportMessage = "Your phone does not support this form of exporting, pleas choose a different one";
 				return false;
 			}
 			oS = session.openSession(url, name);
 			if (oS == null) {
-				logger.error("Could not obtain a valid connection to " + url);
+				importExportMessage = "Could not obtain a valid connection to " + url;
 				return false;
 			}
 			oS.write("<?xml version='1.0' encoding='UTF-8'?>\r\n".getBytes());
@@ -648,6 +648,7 @@ public class Gpx extends Tile implements Runnable {
 			oS.flush();
 			oS.close();
 			session.closeSession();
+			importExportMessage = "success";
 			return true;
 		} catch (IOException e) {			
 			logger.error("IOE:" + e);	
@@ -696,9 +697,9 @@ public class Gpx extends Tile implements Runnable {
 			
 			return success;
 		} catch (ClassNotFoundException cnfe) {
-			logger.exception("Your phone does not support XML parsing", cnfe);
+			importExportMessage = "Your phone does not support XML parsing";
 		} catch (Exception e) {
-			logger.exception("Something went wrong while importing GPX", e);
+			importExportMessage = "Something went wrong while importing GPX, " + e;
 		}
 		return false;
 	}
