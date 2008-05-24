@@ -227,6 +227,8 @@ private Trace trace=null;
     	Alert alert = new Alert(title);
 		alert.setTimeout(timeout);
 		alert.setString(message);
+		//#debug info
+		l.info("Showing Alert: " + message);
 		try {
 			Display.getDisplay(this).setCurrent(alert, shouldBeDisplaying);
 		} catch (IllegalArgumentException iae) {
