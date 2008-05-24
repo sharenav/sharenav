@@ -44,6 +44,8 @@ public class C {
 	public final static byte NAME_STREET=3;
 	public final static byte NAME_AMENITY=4;
 	
+	public static int BACKGROUND_COLOR = 0x009BFF9B;
+	
 	private static POIdescription[] pois;
 	private static WayDescription[] ways;
 	

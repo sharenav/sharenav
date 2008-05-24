@@ -128,7 +128,7 @@ public class ImageCollector implements Runnable {
 				// pcCollect.dataReader=nextSc.dataReader;
 				// cleans the screen
 				pc[nextCreate].g = img[nextCreate].getGraphics();
-				pc[nextCreate].g.setColor(155, 255, 155);
+				pc[nextCreate].g.setColor(C.BACKGROUND_COLOR);
 				pc[nextCreate].g.fillRect(0, 0, xSize, ySize);
 				pc[nextCreate].squareDstToWay = Float.MAX_VALUE;
 				pc[nextCreate].config = tr.getConfig();
