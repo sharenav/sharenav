@@ -44,8 +44,8 @@ public class C {
 	public final static byte NAME_STREET=3;
 	public final static byte NAME_AMENITY=4;
 	
-	private POIdescription[] pois;
-	private WayDescription[] ways;
+	private static POIdescription[] pois;
+	private static WayDescription[] ways;
 	
 	private final static Logger logger=Logger.getInstance(C.class,Logger.TRACE);
 	
@@ -142,29 +142,29 @@ public class C {
 		}
 	}	
 	
-	public int getNodeTextColor(byte type) {
-		return pois[typeTotype(type)].textColor;
+	public static final int getNodeTextColor(byte type) {
+		return pois[type].textColor;
 	}
 	
-	public Image getNodeImage(byte type)  {
-		return pois[typeTotype(type)].image;
+	public static final Image getNodeImage(byte type)  {
+		return pois[type].image;
 	}
-	public Image getNodeSearchImage(byte type)  {
-		return pois[typeTotype(type)].searchIcon;
-	}
-	
-	public int getNodeMaxScale(byte type) {
-		return pois[typeTotype(type)].maxImageScale;
-	}
-	public int getNodeMaxTextScale(byte type) {
-		return pois[typeTotype(type)].maxTextScale;
+	public static final Image getNodeSearchImage(byte type)  {
+		return pois[type].searchIcon;
 	}
 	
-	public boolean isNodeImageCentered(byte type) {
-		return pois[typeTotype(type)].imageCenteredOnNode;
+	public static final int getNodeMaxScale(byte type) {
+		return pois[type].maxImageScale;
+	}
+	public static final int getNodeMaxTextScale(byte type) {
+		return pois[type].maxTextScale;
 	}
 	
-	public String getNodeTypeDesc(byte type) {
+	public static final boolean isNodeImageCentered(byte type) {
+		return pois[type].imageCenteredOnNode;
+	}
+	
+	public static final  String getNodeTypeDesc(byte type) {
 		if (type < 0 || type > pois.length) {
 			System.out.println("ERROR: wrong type " + type);
 			return null;
@@ -172,7 +172,7 @@ public class C {
 		return pois[type].description;
 	}
 	
-	public WayDescription getWayDescription(byte type) {			
+	public static final WayDescription getWayDescription(byte type) {			
 		if (type >= ways.length) {
 			logger.error("Invalid type request: " + type);
 			return null;
@@ -180,15 +180,11 @@ public class C {
 		return ways[type];
 	}
 	
-	public byte getMaxType() {
+	public static final byte getMaxType() {
 		return (byte)pois.length;
 	}
 	
-	private byte typeTotype(byte type) {
-		return type;		
-	}
-	
-	public byte scaleToTile(int scale) {
+	public static final byte scaleToTile(int scale) {
 		if (scale < 45000) {
 			return 3;
 		}
