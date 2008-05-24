@@ -1,4 +1,7 @@
 package de.ueller.midlet.gps.data;
+
+import de.ueller.gpsMid.mapData.SingleTile;
+
 /*
  * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net 
  * See Copying
@@ -180,6 +183,22 @@ public interface Projection {
      * @return IntPoint pt
      */
     public IntPoint forward(float lat, float lon, IntPoint pt, boolean isRadian);
+    
+    /**
+     * Forward projects lat,lon coordinates into XY space and returns
+     * a IntPoint. The lat, lon coordinates are in  16bit
+     * coordinates relative to the single tile t
+     * 
+     * @param lat short relative coordinate
+     * @param lon short relative coordinate
+     * @param pt Resulting XY IntPoint
+     * @param isRadian placeholder argument indicating that lat,lon
+     *        arguments are in radians (can be true or false)
+     * @param t SingleTile to which the coordinates are relative
+     * @see #forward(float,float,IntPoint)
+     * @return IntPoint pt
+     */
+    public IntPoint forward(short lat, short lon, IntPoint pt, boolean isRadian, SingleTile t);
 
     /**
      * Inverse project a IntPoint.

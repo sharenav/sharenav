@@ -22,8 +22,7 @@
 
 package de.ueller.midlet.gps.data;
 
-
-
+import de.ueller.gpsMid.mapData.SingleTile;
 
 
 /**
@@ -60,6 +59,12 @@ public final class Mercator extends Cylindrical {
     
     private boolean approxMercator = true;
     private float scaled_lat;
+    
+    private SingleTile tileCache;
+    private short ctrLonRel;
+    private short ctrLatRel;
+    private float scaled_radius_rel;    
+    private float scaled_lat_rel;
     
 //	private final static Logger logger=Logger.getInstatance(Mercator.class);
 
@@ -218,7 +223,13 @@ public final class Mercator extends Cylindrical {
         return forward_full(lat, lon, p, isRadian);
     }
     
-    public IntPoint forward_full(float lat, float lon, IntPoint p, boolean isRadian) {
+    public IntPoint forward(short lat, short lon, IntPoint p, boolean isRadian, SingleTile t) {
+        if (approxMercator)
+        	return forward_approx(lat, lon, p, isRadian, t);
+        return forward_full(lat*SingleTile.fpminv + t.centerLat, lon*SingleTile.fpminv + t.centerLon, p, isRadian);
+    }
+    
+    private IntPoint forward_full(float lat, float lon, IntPoint p, boolean isRadian) {
         // same as forward_x and forward_y, and convert to screen
         // coords
         p.setX((int) (scaled_radius * wrap_longitude(lon - ctrLon) + wx));
@@ -226,13 +237,30 @@ public final class Mercator extends Cylindrical {
         return p;
     }
     
-    public IntPoint forward_approx(float lat, float lon, IntPoint p, boolean isRadian) {
+    private IntPoint forward_approx(float lat, float lon, IntPoint p, boolean isRadian) {
+    	
         // same as forward_x and forward_y, and convert to screen
         // coords
         p.setX((int) (scaled_radius * wrap_longitude(lon - ctrLon) + wx));
         //p.setY((int) (hy - scaled_radius * (MoreMath.asinh((float) Math.tan(lat)) - asinh_of_tanCtrLat)));
         p.setY((int) hy - scaled_lat * (lat - ctrLat));
         //System.out.println("forward_approx");
+        return p;
+    }
+    
+    
+    
+    private IntPoint forward_approx(short lat, short lon, IntPoint p, boolean isRadian, SingleTile t) {
+    	if (t != tileCache) {
+    		ctrLonRel = (short)((ctrLon - t.centerLon)*SingleTile.fpm);
+    		ctrLatRel = (short)((ctrLat - t.centerLat)*SingleTile.fpm);
+    		scaled_radius_rel = (scaled_radius*SingleTile.fpminv);
+    		scaled_lat_rel = (scaled_lat*SingleTile.fpminv);    		
+    		tileCache = t;
+    	} 
+        
+        p.setX(((int)((scaled_radius_rel * (lon - ctrLonRel))) + wx));        
+        p.setY( hy - (int)(scaled_lat_rel * (lat - ctrLatRel)));        
         return p;
     }
 
@@ -273,7 +301,7 @@ public final class Mercator extends Cylindrical {
         return inverse_full(x, y, llp);
     }
     
-    public Node inverse_full(int x, int y, Node llp) {
+    private Node inverse_full(int x, int y, Node llp) {
         // convert from screen to world coordinates
         x -= wx;
         float y_=(((hy-y))/scaled_radius)+asinh_of_tanCtrLat ;
@@ -283,7 +311,7 @@ public final class Mercator extends Cylindrical {
                 true);
         return llp;
     }
-    public Node inverse_approx(int x, int y, Node llp) {
+    private Node inverse_approx(int x, int y, Node llp) {
     	Node n1 = new Node();    	    	
         llp.setLatLon((-1*(y - hy)/scaled_lat + ctrLat),
                 ((x - wx) / scaled_radius) + ctrLon,
