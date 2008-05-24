@@ -141,7 +141,7 @@ public class MinML2GpxParser extends MinML2 implements GpxParser{
 		}
 	}
 	
-	public boolean parse(InputStream in, float maxDistance, Gpx gps) {
+	public boolean parse(InputStream in, float maxDistance, Gpx gpx) {
 		this.maxDistance = maxDistance;
 		this.gpx = gpx;
 		importedWpts=0;
