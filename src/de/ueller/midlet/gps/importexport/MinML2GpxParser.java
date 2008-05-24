@@ -39,6 +39,7 @@ public class MinML2GpxParser extends MinML2 implements GpxParser{
 	private boolean time = false;
 	private float maxDistance;
 	private int importedWpts;
+	private int importedTpts;
 	private int tooFarWpts;
 	private int duplicateWpts;
 	
@@ -112,6 +113,7 @@ public class MinML2GpxParser extends MinML2 implements GpxParser{
 			
 		} else if (qName.equalsIgnoreCase("trkpt")) {
 			gpx.addTrkPt(p);
+			importedTpts++;
 		} else if (qName.equalsIgnoreCase("ele")) {
 			ele = false;
 		} else if (qName.equalsIgnoreCase("time")) {
@@ -119,9 +121,11 @@ public class MinML2GpxParser extends MinML2 implements GpxParser{
 		}
 	}
 	public void startDocument() {
+		//#debug debug
 		logger.debug("Started parsing XML document");
 	}
 	public void endDocument() {
+		//#debug debug
 		logger.debug("Finished parsing XML document");
 	}
 	public void characters(char[] ch, int start, int length) {
@@ -145,6 +149,7 @@ public class MinML2GpxParser extends MinML2 implements GpxParser{
 		this.maxDistance = maxDistance;
 		this.gpx = gpx;
 		importedWpts=0;
+		importedTpts=0;
 		tooFarWpts=0;
 		duplicateWpts=0;
 		
@@ -174,7 +179,7 @@ public class MinML2GpxParser extends MinML2 implements GpxParser{
 				sb.append("\n" + duplicateWpts + " already existing");				
 			}
 		}
-		
+		sb.append("\n\n" + importedTpts + " trackpoints imported");
 		return sb.toString();
 	
 	}

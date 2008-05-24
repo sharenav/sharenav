@@ -44,6 +44,7 @@ public class Jsr172GpxParser extends DefaultHandler implements GpxParser {
 	private boolean time = false;
 	private float maxDistance;
 	private int importedWpts;
+	private int importedTpts;
 	private int tooFarWpts;
 	private int duplicateWpts;
 	
@@ -118,6 +119,7 @@ public class Jsr172GpxParser extends DefaultHandler implements GpxParser {
 			
 		} else if (qName.equalsIgnoreCase("trkpt")) {
 			gpx.addTrkPt(p);
+			importedTpts++;
 		} else if (qName.equalsIgnoreCase("ele")) {
 			ele = false;
 		} else if (qName.equalsIgnoreCase("time")) {
@@ -152,6 +154,10 @@ public class Jsr172GpxParser extends DefaultHandler implements GpxParser {
 	public boolean parse(InputStream in, float maxDistance, Gpx gpx) {
 		this.maxDistance = maxDistance;
 		this.gpx = gpx;
+		importedTpts = 0;
+		importedWpts = 0;
+		duplicateWpts = 0;
+		tooFarWpts = 0;
 				
         try {
         	SAXParserFactory factory = SAXParserFactory.newInstance();
@@ -188,7 +194,7 @@ public class Jsr172GpxParser extends DefaultHandler implements GpxParser {
 				sb.append("\n" + duplicateWpts + " already existing");				
 			}
 		}
-		
+		sb.append("\n\n" + importedTpts + " trackpoints imported");
 		return sb.toString();
 	
 	}
