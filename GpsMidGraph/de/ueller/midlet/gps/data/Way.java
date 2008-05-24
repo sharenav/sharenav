@@ -25,10 +25,10 @@ public class Way extends Entity{
 	
 	public static final byte WAY_FLAG_NAME = 1;
 	public static final byte WAY_FLAG_MAXSPEED = 2;
-	public static final byte WAY_FLAG_ONEWAY = 16;
-	public static final byte WAY_FLAG_LAYER = 32;
-//	public static final byte WAY_FLAG_MULTIPATH = 4;
+	public static final byte WAY_FLAG_LAYER = 4;
 	public static final byte WAY_FLAG_LONGWAY = 8;
+	public static final byte WAY_FLAG_ONEWAY = 16;	
+//	public static final byte WAY_FLAG_MULTIPATH = 4;	
 	public static final byte WAY_FLAG_NAMEHIGH = 32;
 //	public static final byte WAY_FLAG_ISINHIGH = 64;
 	
