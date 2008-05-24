@@ -17,6 +17,7 @@ import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.data.ProjMath;
 import de.ueller.midlet.gps.data.Way;
+import de.ueller.midlet.gps.tile.C;
 import de.ueller.midlet.gps.tile.PaintContext;
 import de.ueller.midlet.gps.tile.QueueableTile;
 
@@ -321,17 +322,17 @@ public class SingleTile extends Tile implements QueueableTile {
 	public void paintNode(PaintContext pc, int i) {
 		Image img = null;
 		byte t=type[i];
-		if (pc.scale > pc.c.getNodeMaxScale(t)) {
+		if (pc.scale > C.getNodeMaxScale(t)) {
 			return;
 		}
-		pc.g.setColor(pc.c.getNodeTextColor(t));
-		img = pc.c.getNodeImage(t);
+		pc.g.setColor(C.getNodeTextColor(t));
+		img = C.getNodeImage(t);
 		// logger.debug("calc pos "+pc);
 		pc.getP().forward((float)((nodeLat[i]*fpminv + centerLat)), (float)((nodeLon[i]*fpminv + centerLon)), pc.swapLineP, true);
 		
 		if (img != null) {
 			// logger.debug("draw img " + img);
-			if (nameIdx[i] == -1 || pc.c.isNodeImageCentered(t) || pc.scale > pc.c.getNodeMaxTextScale(t)) {
+			if (nameIdx[i] == -1 || C.isNodeImageCentered(t) || pc.scale > C.getNodeMaxTextScale(t)) {
 				pc.g.drawImage(img, pc.swapLineP.x, pc.swapLineP.y,
 						Graphics.VCENTER | Graphics.HCENTER);
 			} else {
@@ -339,7 +340,7 @@ public class SingleTile extends Tile implements QueueableTile {
 						Graphics.BOTTOM | Graphics.HCENTER);
 			}
 		}
-		if (pc.scale > pc.c.getNodeMaxTextScale(t)) {
+		if (pc.scale > C.getNodeMaxTextScale(t)) {
 			return;
 		}
 		// logger.debug("draw txt " + );
@@ -349,7 +350,7 @@ public class SingleTile extends Tile implements QueueableTile {
 				pc.g.drawString(name, pc.swapLineP.x, pc.swapLineP.y,
 						Graphics.BASELINE | Graphics.HCENTER);
 			} else {
-				if (pc.c.isNodeImageCentered(t)){
+				if (C.isNodeImageCentered(t)){
 					pc.g.drawString(name, pc.swapLineP.x, pc.swapLineP.y+8,
 							Graphics.TOP | Graphics.HCENTER);						
 				} else {
