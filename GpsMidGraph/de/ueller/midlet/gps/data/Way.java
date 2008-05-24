@@ -30,6 +30,7 @@ public class Way extends Entity{
 	public static final byte WAY_FLAG_ONEWAY = 16;	
 //	public static final byte WAY_FLAG_MULTIPATH = 4;	
 	public static final byte WAY_FLAG_NAMEHIGH = 32;
+	public static final byte WAY_FLAG_AREA = 64;
 //	public static final byte WAY_FLAG_ISINHIGH = 64;
 	
 	public static final byte DRAW_BORDER=1;
@@ -37,6 +38,7 @@ public class Way extends Entity{
 	public static final byte DRAW_FULL=3;
 	
 	public static final byte WAY_ONEWAY=1;
+	public static final byte WAY_AREA=2;
 	
 	public byte maxspeed;
 	//This is not currently used, so save the 4 bytes of memory per way
@@ -122,7 +124,14 @@ public class Way extends Entity{
 		}
 		if ((f & WAY_FLAG_ONEWAY) == WAY_FLAG_ONEWAY) {
 			mod += WAY_ONEWAY;
-		} 
+		}
+		if (((f & WAY_FLAG_AREA) == WAY_FLAG_AREA) || C.getWayDescription(type).isArea) {
+			if ((f & WAY_FLAG_AREA) == WAY_FLAG_AREA){
+				System.out.println("Loading explicit Area: " + this);
+				System.out.println("f: " + f);
+			}
+			mod += WAY_AREA;
+		}
 
 		boolean longWays=false;
 		if ((f & 8) == 8) {
@@ -413,6 +422,10 @@ public class Way extends Entity{
 			x[i1] = lineP2.x;
 			y[i1] = lineP2.y;
 		}
+		/*if ((x[0] != x[path.length - 1]) || (y[0] != y[path.length - 1])){
+			System.out.println("WARNING: start and end coordinates of area don't match " + this);			
+			return;
+		}*/
 		//PolygonGraphics.drawPolygon(g, x, y);
 
 		PolygonGraphics.fillPolygon(pc.g, x, y);
@@ -445,21 +458,18 @@ public class Way extends Entity{
 	}
 	
 	public boolean isArea() {
-		WayDescription wayDesc = C.getWayDescription(type);
-		return wayDesc.isArea;
+		return ((mod & WAY_AREA) > 0);
 	}
 	
-	// Test this way to get the paint context if its faster 
-	public boolean isArea(PaintContext pc) {
-		WayDescription wayDesc = C.getWayDescription(type);
-		return wayDesc.isArea;
-	}
-
 	private float[] getFloatNodes(SingleTile t, short[] nodes, float offset) {
 	    float [] res = new float[nodes.length];
 	    for (int i = 0; i < nodes.length; i++) {
 		res[i] = nodes[i]*SingleTile.fpminv + offset;
 	    }
 	    return res;
+	}
+	
+	public String toString() {
+		return "Way " + Trace.getInstance().getName(nameIdx) + " type: " +  C.getWayDescription(type).description;
 	}
 }
