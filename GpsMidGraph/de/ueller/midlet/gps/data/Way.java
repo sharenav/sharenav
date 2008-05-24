@@ -140,7 +140,7 @@ public class Way extends Entity{
 
 	public void paintAsPath(PaintContext pc, SingleTile t) {
 		WayDescription wayDesc = pc.c.getWayDescription(type);
-		int w = 1;
+		int w = 0;
 		if (pc.scale > wayDesc.maxScale * pc.config.getDetailBoostMultiplier()) {			
 			return;
 		}
@@ -149,7 +149,7 @@ public class Way extends Entity{
 		 * it being draw as a thin line rather than as a street 
 		 */
 		if ((pc.config.getRender() == Configuration.RENDER_STREET) && (wayDesc.wayWidth > 1)){
-			w = (int)(pc.ppm*wayDesc.wayWidth/2);
+			w = (int)(pc.ppm*wayDesc.wayWidth/2 + 0.5);
 		}
 		
 		IntPoint lineP1 = pc.lineP1;
@@ -160,10 +160,9 @@ public class Way extends Entity{
 		int pi=0;
 		int[] x = null;
 		int[] y = null;
-		if (w > 1) {
-			x = new int[path.length];
-			y = new int[path.length];
-		}
+		x = new int[path.length];
+		y = new int[path.length];
+		
 		
 		for (int i1 = 0; i1 < path.length; i1++) {
 			int idx = path[i1];
@@ -171,11 +170,8 @@ public class Way extends Entity{
 			if (lineP1 == null) {
 				lineP1 = lineP2;
 				lineP2 = swapLineP;	
-				if (w > 1) {
-					x[pi] = lineP1.x;
-					y[pi++] = lineP1.y;
-				}
-				
+				x[pi] = lineP1.x;
+				y[pi++] = lineP1.y;				
 			} else {
 				/**
 				 * We save some rendering time, by doing a line simplifation on the fly.
@@ -190,12 +186,8 @@ public class Way extends Entity{
 						pc.squareDstToWay = dst;
 						pc.actualWay = this;												
 					}
-					if (w > 1) {
-						x[pi] = lineP2.x;
-						y[pi++] = lineP2.y;
-					} else {
-						pc.g.drawLine(lineP1.x, lineP1.y, lineP2.x, lineP2.y);
-					}
+					x[pi] = lineP2.x;
+					y[pi++] = lineP2.y;					
 					swapLineP = lineP1;
 					lineP1 = lineP2;
 					lineP2 = swapLineP;
@@ -205,12 +197,8 @@ public class Way extends Entity{
 					 */
 					//System.out.println(" endpoint " + lineP2.x + "/" + lineP2.y+ " " +pc.trace.getName(nameIdx));					
 					if (!lineP1.equals(lineP2)){
-						if (w > 1) {
-							x[pi] = lineP2.x;
-							y[pi++] = lineP2.y;
-						} else {
-							pc.g.drawLine(lineP1.x, lineP1.y, lineP2.x, lineP2.y);
-						}						
+						x[pi] = lineP2.x;
+						y[pi++] = lineP2.y;												
 					} else {
 						//System.out.println("   discarding never the less");
 					}
@@ -224,18 +212,18 @@ public class Way extends Entity{
 		}
 		swapLineP = lineP1;
 		lineP1 = null;
-		if (w > 1) {
-			if (pc.target != null && this.equals(pc.target.e)){
-				draw(pc,(w==0)?1:w,x,y,pi-1,true);
+
+		if (pc.target != null && this.equals(pc.target.e)){
+			draw(pc,(w==0)?1:w,x,y,pi-1,true);
+		} else {
+			if (w == 0){
+				setColor(pc);
+				PolygonGraphics.drawOpenPolygon(pc.g, x, y,pi-1);
 			} else {
-				if (w == 0){
-					setColor(pc);
-					PolygonGraphics.drawOpenPolygon(pc.g, x, y,pi-1);
-				} else {
-					draw(pc, w, x, y,pi-1,false);
-				}
-			}		
-		}
+				draw(pc, w, x, y,pi-1,false);
+			}
+		}		
+		
 		if ((pc.actualWay == this) && ((pc.currentPos == null) || (pc.currentPos.e != this))) {
 			pc.currentPos=new PositionMark(pc.center.radlat,pc.center.radlon);
 			pc.currentPos.setEntity(this, getFloatNodes(t,t.nodeLat,t.centerLat), getFloatNodes(t,t.nodeLon,t.centerLon));
