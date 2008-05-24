@@ -326,9 +326,7 @@ public class Way extends Entity implements Comparable<Way>{
 			if ((flags & WAY_FLAG_LAYER) == WAY_FLAG_LAYER){
 				ds.writeByte(layer);
 			}
-			if ((flags & 4) == 4){
-				ds.writeByte(path.getPathCount());
-			}
+			
 			for (SubPath s:path.getSubPaths()){
 				if (longWays){
 					ds.writeShort(s.size());
