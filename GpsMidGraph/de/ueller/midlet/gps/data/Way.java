@@ -49,6 +49,30 @@ public class Way extends Entity{
 	public short minLon;
 	public short maxLat;
 	public short maxLon;
+	
+	/**
+	 * This is a buffer for the drawing routines
+	 * so that we don't have to allocate new
+	 * memory at each time we draw a way. This
+	 * saves some time on memory managment
+	 * too.
+	 * 
+	 * This makes this function thread unsafe,
+	 * so make sure we only have a single thread
+	 * drawing a way at a time
+	 */
+	private static int [] x = new int[100];
+	private static int [] y = new int[100];
+	static final IntPoint l1b = new IntPoint();
+	static final IntPoint l1e = new IntPoint();
+	static final IntPoint l2b = new IntPoint();
+	static final IntPoint l2e = new IntPoint();
+	static final IntPoint l3b = new IntPoint();
+	static final IntPoint l3e = new IntPoint();
+	static final IntPoint l4b = new IntPoint();
+	static final IntPoint l4e = new IntPoint();
+	static final IntPoint s1 = new IntPoint();
+	static final IntPoint s2 = new IntPoint();
 
 //	private final static Logger logger = Logger.getInstance(Way.class,
 //			Logger.TRACE);
@@ -139,7 +163,7 @@ public class Way extends Entity{
 	} 
 
 	public void paintAsPath(PaintContext pc, SingleTile t) {
-		WayDescription wayDesc = pc.c.getWayDescription(type);
+		WayDescription wayDesc = C.getWayDescription(type);
 		int w = 0;
 		if (pc.scale > wayDesc.maxScale * pc.config.getDetailBoostMultiplier()) {			
 			return;
@@ -158,10 +182,14 @@ public class Way extends Entity{
 		Projection p = pc.getP();
 		
 		int pi=0;
-		int[] x = null;
-		int[] y = null;
-		x = new int[path.length];
-		y = new int[path.length];
+		
+		/**
+		 * If the static array is not large enough, increase it
+		 */
+		if (x.length < path.length) {		
+			x = new int[path.length];
+			y = new int[path.length];
+		}
 		
 		
 		for (int i1 = 0; i1 < path.length; i1++) {
@@ -268,18 +296,11 @@ public class Way extends Entity{
 			}
 		}
 	}
+	
+	
 
 	private void draw(PaintContext pc, int w, int xPoints[], int yPoints[],int count,boolean highlite/*,byte mode*/) {
-		IntPoint l1b = new IntPoint();
-		IntPoint l1e = new IntPoint();
-		IntPoint l2b = new IntPoint();
-		IntPoint l2e = new IntPoint();
-		IntPoint l3b = new IntPoint();
-		IntPoint l3e = new IntPoint();
-		IntPoint l4b = new IntPoint();
-		IntPoint l4e = new IntPoint();
-		IntPoint s1 = new IntPoint();
-		IntPoint s2 = new IntPoint();
+		
 		float roh1;
 		float roh2;
 
@@ -372,30 +393,33 @@ public class Way extends Entity{
 	} */
 
 	public void paintAsArea(PaintContext pc, SingleTile t) {
-		WayDescription wayDesc = pc.c.getWayDescription(type);
+		WayDescription wayDesc = C.getWayDescription(type);
 		if (pc.scale > wayDesc.maxScale * pc.config.getDetailBoostMultiplier() ) {			
 			return;
 		}		
 		IntPoint lineP2 = pc.lineP2;
 		Projection p = pc.getP();
-//		for (int p1 = 0; p1 < paths.length; p1++) {
-//			short[] path = paths[p1];
-			int[] x = new int[path.length];
-			int[] y = new int[path.length];
-			for (int i1 = 0; i1 < path.length; i1++) {
-				int idx = path[i1];
-				p.forward((float)(t.nodeLat[idx]*SingleTile.fpminv + t.centerLat), (float)(t.nodeLon[idx] *SingleTile.fpminv + t.centerLon), lineP2, true);
-				x[i1] = lineP2.x;
-				y[i1] = lineP2.y;
-			}
-			// PolygonGraphics.drawPolygon(g, x, y);
-			PolygonGraphics.fillPolygon(pc.g, x, y);
-//		}
+		/**
+		 * we should probably use the static x and y variables
+		 * but that would require to rewrite the fillPolygon
+		 * function
+		 */
+		int[] x = new int[path.length];
+		int[] y = new int[path.length];
+		
+		for (int i1 = 0; i1 < path.length; i1++) {
+			int idx = path[i1];
+			p.forward((float)(t.nodeLat[idx]*SingleTile.fpminv + t.centerLat), (float)(t.nodeLon[idx] *SingleTile.fpminv + t.centerLon), lineP2, true);
+			x[i1] = lineP2.x;
+			y[i1] = lineP2.y;
+		}
+		//PolygonGraphics.drawPolygon(g, x, y);
 
+		PolygonGraphics.fillPolygon(pc.g, x, y);
 	}
 
 	public void setColor(PaintContext pc) {		
-		WayDescription wayDesc = pc.c.getWayDescription(type);
+		WayDescription wayDesc = C.getWayDescription(type);
 		pc.g.setStrokeStyle(wayDesc.lineStyle);
 		if ((pc.target != null) && (pc.target.e == this)) {
 			/*Color the target way red */			
@@ -406,13 +430,13 @@ public class Way extends Entity{
 	}
 
 	public int getWidth(PaintContext pc) {
-		WayDescription wayDesc = pc.c.getWayDescription(type);
+		WayDescription wayDesc = C.getWayDescription(type);
 		return wayDesc.wayWidth;
 	}
 
 	public void setBorderColor(PaintContext pc) {
 		pc.g.setStrokeStyle(Graphics.SOLID);
-		WayDescription wayDesc = pc.c.getWayDescription(type);
+		WayDescription wayDesc = C.getWayDescription(type);
 		pc.g.setColor(wayDesc.boardedColor);
 	}
 	
@@ -421,13 +445,13 @@ public class Way extends Entity{
 	}
 	
 	public boolean isArea() {
-		WayDescription wayDesc = Trace.getInstance().pc.c.getWayDescription(type);
+		WayDescription wayDesc = C.getWayDescription(type);
 		return wayDesc.isArea;
 	}
 	
 	// Test this way to get the paint context if its faster 
 	public boolean isArea(PaintContext pc) {
-		WayDescription wayDesc = pc.c.getWayDescription(type);
+		WayDescription wayDesc = C.getWayDescription(type);
 		return wayDesc.isArea;
 	}
 
