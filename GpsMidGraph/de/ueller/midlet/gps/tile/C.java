@@ -95,6 +95,7 @@ public class C {
 				try {
 					pois[i].image = Image.createImage(imageName);
 				} catch (IOException e) {
+					//#debug info
 					logger.info("could not open POI image " + imageName + " for " + pois[i].description);
 					pois[i].image = generic;
 				}				
@@ -105,6 +106,7 @@ public class C {
 				try {
 					pois[i].searchIcon = Image.createImage(imageName);
 				} catch (IOException e) {
+					//#debug info
 					logger.info("could not open POI image " + imageName + " for " + pois[i].description);
 					pois[i].searchIcon = generic;
 				}				

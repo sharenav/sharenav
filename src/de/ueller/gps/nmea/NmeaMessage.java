@@ -175,6 +175,7 @@ public class NmeaMessage {
 				//Convert from knots to m/s
 				speed=getFloatToken((String)param.elementAt(7))*0.5144444f;
 			} else if ("GSA".equals(sentence)){
+				//#debug info
 				logger.info("Decoding GSA");
 				/**
 				 * Encodes Satellite status
@@ -198,6 +199,7 @@ public class NmeaMessage {
 				for (int i = 0; i < 12; i++) {
 					int prn = getIntegerToken((String)param.elementAt(i + 3));
 					if (prn != 0) {
+						//#debug info
 						logger.info("Satelit " + prn + " is part of fix");
 						for (int j = 0; j < 12; j++) {
 							if ((satelit[j] != null) && (satelit[j].id == prn)) {

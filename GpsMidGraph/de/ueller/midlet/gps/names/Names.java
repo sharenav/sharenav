@@ -150,6 +150,7 @@ public class Names implements Runnable {
 		int actIdx=0;
 
 		while (idx != -1){
+			//#debug info
 			logger.info("Looking up name " + idx);
 			/* Lookup in which names file the entry is contained */
 			for (int i=fid;i < startIndexes.length;i++){
@@ -234,6 +235,7 @@ public class Names implements Runnable {
 	}
 	
 	private void cleanupStringCache(){
+		//#debug info
 		logger.info("cleanup namesCache " + stringCache.size());
 		boolean needsFreeing = GpsMid.getInstance().needsFreeingMemory();
 		

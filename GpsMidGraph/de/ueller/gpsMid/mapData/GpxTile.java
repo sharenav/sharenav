@@ -46,7 +46,8 @@ public class GpxTile extends Tile {
 			lon = lon*MoreMath.FAC_DECTORAD;
 			rad = true;
 		}
-		logger.info("Adding trackpoint Nr: " + noTrkPts + " "  + lat + " " + lon);		
+		//#debug info
+		logger.debug("Adding trackpoint Nr: " + noTrkPts + " "  + lat + " " + lon);		
 		if (lat < minLat)
 			minLat = lat;
 		if (lat > maxLat)
@@ -101,7 +102,8 @@ public class GpxTile extends Tile {
 	}
 	
 	public void addWayPt (PositionMark waypt) {
-		logger.info("Adding waypoint: " + waypt);
+		//#debug debug
+		logger.debug("Adding waypoint: " + waypt);
 		if (trkPtLat == null) {
 			if (splitDimension) {
 				if (waypt.lat < splitCoord) {
@@ -260,7 +262,8 @@ public class GpxTile extends Tile {
 	}
 	
 	private void splitTile() {
-		logger.info("Splitting GpxTile (" + splitDimension + ") "  + splitCoord);
+		//#debug debug
+		logger.debug("Splitting GpxTile (" + splitDimension + ") "  + splitCoord);
 		t1 = new GpxTile();
 		t2 = new GpxTile();
 		for (int i = 0; i < noTrkPts; i++) {

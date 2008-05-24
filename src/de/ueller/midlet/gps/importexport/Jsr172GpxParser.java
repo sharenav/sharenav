@@ -98,6 +98,7 @@ public class Jsr172GpxParser extends DefaultHandler implements GpxParser {
 	public void endElement(String namespaceURI, String localName, String qName) {
 		if (qName.equalsIgnoreCase("wpt")) {
 			if (wayPt != null) {
+				//#debug info
 				logger.info("Received waypoint: " + wayPt);
 				if (!gpx.existsWayPt(wayPt)) {
 					gpx.addWayPt(wayPt);
@@ -124,9 +125,11 @@ public class Jsr172GpxParser extends DefaultHandler implements GpxParser {
 		}
 	}
 	public void startDocument() {
+		//#debug debug
 		logger.debug("Started parsing XML document");
 	}
 	public void endDocument() {
+		//#debug debug
 		logger.debug("Finished parsing XML document");
 	}
 	public void characters(char[] ch, int start, int length) {

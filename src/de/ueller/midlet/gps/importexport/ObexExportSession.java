@@ -49,6 +49,7 @@ public class ObexExportSession implements ExportSession {
 			ClientSession csession = (ClientSession) session; 
 			HeaderSet headers = csession.createHeaderSet();	        
 			csession.connect(headers);
+			//#debug debug
 			logger.debug("Connected");
 			headers.setHeader(HeaderSet.NAME, name + ".gpx");
 			headers.setHeader(HeaderSet.TYPE, "text");

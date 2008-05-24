@@ -33,6 +33,7 @@ public class FileExportSession implements ExportSession {
 		//#if polish.api.fileconnection
 		try {
 			url += name + ".gpx";
+			//#debug info
 			logger.info("Opening file " + url);
 			session = Connector.open(url);
 			FileConnection fileCon = (FileConnection) session;

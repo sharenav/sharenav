@@ -58,6 +58,7 @@ public class GuiGpx extends List implements CommandListener,
 	}
 
 	public void commandAction(Command c, Displayable d) {
+		//#debug debug
 		logger.debug("got Command " + c);
 		if (c == SEND_CMD) {
 			uploading = true;

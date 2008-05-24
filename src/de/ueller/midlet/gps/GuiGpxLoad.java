@@ -64,6 +64,7 @@ public class GuiGpxLoad extends Form implements CommandListener,
 	}
 	
 	public void commandAction(Command c, Displayable d) {
+		//#debug debug
 		logger.debug("got Command " + c);
 		if (c == BACK_CMD) {
 			parent.show();
@@ -74,6 +75,7 @@ public class GuiGpxLoad extends Form implements CommandListener,
 				try {
 					maxDistance=Float.parseFloat(tfMaxDist.getString());
 				} catch (NumberFormatException nfe) {
+					//#debug info
 					logger.info("Couldn't convert the distance into a float");
 					maxDistance = 0.0f;
 				}
@@ -82,6 +84,7 @@ public class GuiGpxLoad extends Form implements CommandListener,
 				}
 			}
 			String choice = choiceFrom.getString(choiceFrom.getSelectedIndex());
+			//#debug info
 			logger.info(choice);
 			GpxImportSession importSession = null;
 			try {

@@ -212,12 +212,14 @@ public class SingleTile extends Tile implements QueueableTile {
 		if (contain(pc)) {
 			while (!isDataReady()) {
 				if ((opt & Tile.OPT_WAIT_FOR_LOAD) == 0){
+					//#debug info
 					logger.info("Walk don't wait for TileData");
 					return;
 				} else {
 					synchronized (this) {
 						try {
 							wait(1000);
+							//#debug info
 							logger.info("Walk Wait for TileData");
 						} catch (InterruptedException e) {
 						}						

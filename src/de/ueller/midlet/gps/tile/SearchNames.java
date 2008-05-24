@@ -195,6 +195,7 @@ public class SearchNames implements Runnable{
 						gui.addResult(sr);
 						foundEntries++;
 						if (foundEntries > 50) {
+							//#debug info
 							logger.info("Found 50 entries. Thats enough, stoping further search");
 							ds.close();
 							return;
@@ -224,6 +225,7 @@ public class SearchNames implements Runnable{
 			processorThread = new Thread(this);
 			processorThread.setPriority(Thread.MIN_PRIORITY+1);
 			processorThread.start();
+			//#debug info
 			logger.info("started search thread");
 		}		
 	}

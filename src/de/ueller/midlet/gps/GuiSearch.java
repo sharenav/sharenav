@@ -232,10 +232,10 @@ public class GuiSearch extends Canvas implements CommandListener,
 	}
 
 	protected void paint(Graphics gc) {
+		//#debug info
 		logger.info("Painting search screen with offset: " + scrollOffset);
 		if (fontSize == 0)
-			fontSize = gc.getFont().getHeight();
-		logger.info("Fontsize: " + fontSize);
+			fontSize = gc.getFont().getHeight();		
 		int yc=scrollOffset;
 		int reducedName=0;
 		gc.setColor(255,255, 255);
@@ -475,6 +475,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 	}
 
 	private void reSearch() {
+		//#debug info
 		logger.info("researching");
 		scrollOffset = 0;
 		setTitle(searchCanon.toString() + " " + carret);
@@ -490,6 +491,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 
 	public synchronized void addResult(SearchResult sr){		
 		parent.getName(sr.nameIdx);
+		//#debug info
 		logger.info("Found matching name: " + sr);
 
 		result2.addElement(sr);

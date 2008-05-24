@@ -36,6 +36,7 @@ public class FileGpxImportSession implements GpxImportSession, SelectionListener
 
 	public void selectedFile(String url) {
 		try {
+			//#debug info
 			logger.info("Receiving gpx: " + url);
 			Connection c  = Connector.open(url,Connector.READ);			
 			if (c instanceof InputConnection) {

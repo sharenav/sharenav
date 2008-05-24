@@ -141,6 +141,7 @@ public class FsDiscover
     private boolean getRootContent(String rootDir) {
     	//#if polish.api.pdaapi
         try {
+        	//#debug debug
         	logger.debug("List of files and directories under "+rootDir+":");        	
         	FileConnection fc = (FileConnection) Connector.open(rootDir,Connector.READ);
            // Get a filtered list of all files and directories.
@@ -167,6 +168,7 @@ public class FsDiscover
            Enumeration filelist = fc.list();
            while(filelist.hasMoreElements()) {
               String fileName = (String) filelist.nextElement();
+            //#debug debug
               logger.debug("found file: " + fileName);
               // add files too if not choosedir
     		  if(!chooseDir || fileName.endsWith("/")) {
@@ -218,6 +220,7 @@ public class FsDiscover
 		}
     	if (c == UP_CMD) {
     		url = url.substring(0, url.substring(0, url.length() - 1).lastIndexOf('/') + 1);
+    		//#debug debug
     		logger.debug("Moving up directory to :" + url);
     		if (url.length() < 9) {  //file:///
     			url = "file:///";

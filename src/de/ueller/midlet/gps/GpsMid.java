@@ -394,6 +394,7 @@ private Trace trace=null;
 						} catch (RuntimeException rte) {
 							// Backlight prodding sometimes fails when minimizing the
 							// application. Don't display an alert because of this
+							//#debug info
 							logger.info("Blacklight prodding failed: " + rte.getMessage());
 						} catch (NoClassDefFoundError ncdfe) {
 							logger.error("Blacklight prodding failed, API not supported: " + ncdfe.getMessage());

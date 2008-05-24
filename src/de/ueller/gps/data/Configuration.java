@@ -108,6 +108,7 @@ public class Configuration {
 		try {			
 			database = RecordStore.openRecordStore("Receiver", true);
 			if (database == null) {
+				//#debug info
 				logger.info("No database loaded at the moment");
 				return;
 			}
@@ -151,7 +152,7 @@ public class Configuration {
 			}
 			database.setRecord(idx, data,0,data.length);
 			database.closeRecordStore();
-			
+			//#debug info
 			logger.info("wrote " + s + " to " + idx);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -179,7 +180,8 @@ public class Configuration {
 				ret = new String(data);
 				if (ret.equalsIgnoreCase("!null!"))
 					ret = null;
-			}			
+			}
+			//#debug info
 			logger.info("Read from config database " + idx + ": " + ret);
 			return ret;
 		} catch (Exception e) {
@@ -190,6 +192,7 @@ public class Configuration {
 	public int readInt(RecordStore database,int idx){
 		try {
 			String tmp = readString(database, idx);
+			//#debug info
 			logger.info("Read from config database " + idx + ": " + tmp);
 			if (tmp == null) {
 				return 0;
@@ -421,10 +424,12 @@ public class Configuration {
 			if (mapFileUrl.endsWith("/"))
 				mapFileUrl = mapFileUrl.substring(0, mapFileUrl.length() - 1);
 			String url = mapFileUrl + name;
+			//#debug info
 			logger.info("Opening file: " + url);
 			Connection session = Connector.open(url,Connector.READ);
 			FileConnection fileCon = (FileConnection) session;			
 			if (fileCon == null) {
+				//#debug info
 				logger.info("Couldn't open url: " + url);
 				throw new IOException("Couldn't open url " + url);				
 			}

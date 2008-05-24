@@ -93,6 +93,7 @@ public abstract class QueueReader implements Runnable {
 				}
 			}
 		} else {
+			//#debug debug
 			logger.debug("Not cleaning up caches, still enough memory left");
 		}		
 	}
@@ -127,6 +128,7 @@ public abstract class QueueReader implements Runnable {
 							}
 
 						} else {
+							//#debug info
 							logger.info("Not much memory left, cleaning up and trying again");
 							Trace.getInstance().cleanup();
 							System.gc();
