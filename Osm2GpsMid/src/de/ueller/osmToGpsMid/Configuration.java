@@ -40,7 +40,7 @@ public class Configuration {
 	 * Specifies the format of the map on disk we are about to write
 	 * This constant must be in sync with GpsMid
 	 */
-	public final static short MAP_FORMAT_VERSION = 13;
+	public final static short MAP_FORMAT_VERSION = 14;
 	
 		private ResourceBundle rb;
 		private ResourceBundle vb;
@@ -321,6 +321,8 @@ public class Configuration {
 		}
 		
 		public static boolean attrToBoolean(String attr) {
+			if (attr == null)
+				return false;
 			if (attr.equalsIgnoreCase("yes"))
 				return true;
 			if (attr.equalsIgnoreCase("true"))

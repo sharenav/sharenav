@@ -23,6 +23,7 @@ public class Way extends Entity implements Comparable<Way>{
 	public static final byte WAY_FLAG_LONGWAY = 8;
 	public static final byte WAY_FLAG_ONEWAY = 16;	
 	public static final byte WAY_FLAG_NAMEHIGH = 32;
+	public static final byte WAY_FLAG_AREA = 64;
 	
 	//Deprecated
 	//public static final byte WAY_FLAG_MULTIPATH = 4;
@@ -229,6 +230,10 @@ public class Way extends Entity implements Comparable<Way>{
 	public boolean isOneWay() {		
 		return Configuration.attrToBoolean(getAttribute("oneway"));
 	}
+	
+	public boolean isExplicitArea() {
+		return Configuration.attrToBoolean(getAttribute("area"));
+	}
 
 	public void write(DataOutputStream ds,Names names1,Tile t) throws IOException{		
 		Bounds b=new Bounds();
@@ -266,6 +271,8 @@ public class Way extends Entity implements Comparable<Way>{
 			layer = config.getWayDesc(type).forceToLayer;
 			flags |= WAY_FLAG_LAYER;
 		}
+		
+		
 
 		
 		boolean isWay=false;
@@ -293,6 +300,9 @@ public class Way extends Entity implements Comparable<Way>{
 			}
 			if (isOneWay()){
 				flags+=WAY_FLAG_ONEWAY;
+			}
+			if (isExplicitArea()) {				
+				flags+=WAY_FLAG_AREA;				
 			}
 			ds.writeByte(flags);
 			
