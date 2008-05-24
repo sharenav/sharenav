@@ -611,7 +611,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			int la = 18;
 			getPC();
 			// cleans the screen
-			g.setColor(155, 255, 155);
+			g.setColor(C.BACKGROUND_COLOR);
 			g.fillRect(0, 0, this.getWidth(), this.getHeight());
 			if (imageCollector != null){
 				pc.g = g;
