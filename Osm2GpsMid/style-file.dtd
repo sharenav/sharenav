@@ -1,4 +1,5 @@
-<!ELEMENT legend (pois,ways)>
+<!ELEMENT legend (background, pois,ways)>
+<!ELEMENT background EMPTY>
 <!ELEMENT pois (key*)>
 <!ELEMENT ways (keyW*)>
 <!ELEMENT key (value+)>
@@ -19,6 +20,7 @@
 <!ELEMENT wayWidth EMPTY>
 <!ELEMENT routing EMPTY>
 <!ELEMENT force_to EMPTY>
+<!ATTLIST background color CDATA #REQUIRED>
 <!ATTLIST key tag CDATA #REQUIRED>
 <!ATTLIST keyW tag CDATA #REQUIRED>
 <!ATTLIST value name CDATA #REQUIRED>

@@ -41,7 +41,6 @@ public class LegendParser extends DefaultHandler{
 	private byte poiIdx = 0;
 	private byte wayIdx = 0;
 	
-	
 	public LegendParser(InputStream i) {
 		System.out.println("Style file parser started...");
 		if (config == null) {
@@ -103,6 +102,14 @@ public class LegendParser extends DefaultHandler{
 //		System.out.println("start " + localName + " " + qName);
 		if (qName.equals("pois")) {
 			readingPOIs = true;			
+		}
+		if (qName.equals("background")) {
+			try {
+				Configuration.getConfiguration().background_color = Integer.parseInt(atts.getValue("color"),16);
+			} catch (NumberFormatException nfe){
+				System.out.println("ERROR: Couldn't read the background color correctly, using default");
+				Configuration.getConfiguration().background_color = 0x009bFF9b;				
+			}
 		}
 		if (readingPOIs) {
 			if (qName.equals("key")) {

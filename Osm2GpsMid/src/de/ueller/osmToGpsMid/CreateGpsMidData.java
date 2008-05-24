@@ -140,6 +140,10 @@ public class CreateGpsMidData {
 			DataOutputStream dsi = new DataOutputStream(foi);
 			dsi.writeShort(Configuration.MAP_FORMAT_VERSION);
 			/**
+			 * Writing gloabal info 
+			 */
+			dsi.writeInt(Configuration.getConfiguration().background_color);
+			/**
 			 * Writing POI legend data			 * 
 			 */
 			dsi.writeByte(Configuration.getConfiguration().getPOIDescs().size());

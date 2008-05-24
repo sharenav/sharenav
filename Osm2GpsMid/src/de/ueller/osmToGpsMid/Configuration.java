@@ -40,7 +40,7 @@ public class Configuration {
 	 * Specifies the format of the map on disk we are about to write
 	 * This constant must be in sync with GpsMid
 	 */
-	public final static short MAP_FORMAT_VERSION = 12;
+	public final static short MAP_FORMAT_VERSION = 13;
 	
 		private ResourceBundle rb;
 		private ResourceBundle vb;
@@ -60,6 +60,8 @@ public class Configuration {
 		public int maxTileSize=20000;
 		public int maxRouteTileSize=3000;
 		public String styleFile;
+		
+		public int background_color;
 				
 		private LegendParser legend;
 		

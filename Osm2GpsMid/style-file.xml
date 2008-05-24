@@ -48,6 +48,7 @@ zoomed out 21x (pseudo zoom 1:  500km)
 -->
 
 <legend>
+  <background color="009BFF9B" />
   <pois>
 	<key tag="place">
 	   <value name="city">
