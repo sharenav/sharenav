@@ -115,6 +115,11 @@ public class SingleTile extends Tile implements QueueableTile {
 		
 		if (contain(pc)) {
 			if (!isDataReady()) {
+				/**
+				 * We don't have the data yet. No need to wait, we 
+				 * will just render it the next time if the data is
+				 * available then.
+				 */
 				return;
 			}
 			lastUse = 0;
@@ -126,6 +131,9 @@ public class SingleTile extends Tile implements QueueableTile {
 					}
 					if (ways[relLayer] == null)
 						return;
+					/**
+					 * Render all ways in the appropriate layer
+					 */
 					for (int i = 0; i < ways[relLayer].length; i++) {
 						if (abortPainting)
 							return;						
@@ -137,13 +145,25 @@ public class SingleTile extends Tile implements QueueableTile {
 
 						// logger.debug("test Bounds of way");
 						if (!w.isOnScreen(pcLDlat, pcLDlon, pcRUlat, pcRUlon)) continue; 
-						// logger.debug("draw " + w.name);
-						// fill the target fields if they are empty
-//						logger.debug("search target" + pc.target);
+
+						/**
+						 * In addition to rendering we also check for which way
+						 * corresponds to the target set in the paintcontext identified
+						 * by the name of the way and the coordiantes of a node on the way
+						 */
 						if (pc.target != null ){
 //							logger.debug("search target nameIdx" );
 							if (pc.target.e == null && pc.target.nameIdx == w.nameIdx){
 // 								logger.debug("search target way");
+								/**
+								 * The name of the way and the target matches, now we
+								 * check if the coordinates match.
+								 * 
+								 * We have to be careful here, to not get into trouble
+								 * with the 32bit float to 16bit short conversion.
+								 * To prevent rounding issues, test for approximate
+								 * equallity
+								 */
 								short targetLat = (short)((pc.target.lat - centerLat)*fpm);
 								short targetLon = (short)((pc.target.lon - centerLon)*fpm);
 								for (int i1 = 0; i1 < w.path.length; i1++) {

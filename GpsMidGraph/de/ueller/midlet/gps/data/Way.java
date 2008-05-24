@@ -144,6 +144,10 @@ public class Way extends Entity{
 		if (pc.scale > wayDesc.maxScale * pc.config.getDetailBoostMultiplier()) {			
 			return;
 		}
+		/**
+		 * Calculate the width of the path to be drawn. A width of 1 corresponds to
+		 * it being draw as a thin line rather than as a street 
+		 */
 		if ((pc.config.getRender() == Configuration.RENDER_STREET) && (wayDesc.wayWidth > 1)){
 			w = (int)(pc.ppm*wayDesc.wayWidth/2);
 		}
@@ -173,6 +177,11 @@ public class Way extends Entity{
 				}
 				
 			} else {
+				/**
+				 * We save some rendering time, by doing a line simplifation on the fly.
+				 * If two nodes are very close by, then we can simply drop one of the nodes
+				 * and draw the line between the other points. 
+				 */
 				if (! lineP1.approximatelyEquals(lineP2)){
 					float dst = MoreMath.ptSegDistSq(lineP1.x, lineP1.y,
 							lineP2.x, lineP2.y, pc.xSize / 2, pc.ySize / 2);
@@ -190,7 +199,10 @@ public class Way extends Entity{
 					swapLineP = lineP1;
 					lineP1 = lineP2;
 					lineP2 = swapLineP;
-				} else if ((i1+1) == path.length){					
+				} else if ((i1+1) == path.length){
+					/**
+					 * This is an endpoint, so we can't simply drop it, as the lines would potentially look disconnected
+					 */
 					//System.out.println(" endpoint " + lineP2.x + "/" + lineP2.y+ " " +pc.trace.getName(nameIdx));					
 					if (!lineP1.equals(lineP2)){
 						if (w > 1) {
@@ -202,7 +214,10 @@ public class Way extends Entity{
 					} else {
 						//System.out.println("   discarding never the less");
 					}
-				}else { 
+				}else {
+					/**
+					 * Drop this point, it is redundant
+					 */					
 					//System.out.println(" discard " + lineP2.x + "/" + lineP2.y+ " " +pc.trace.getName(nameIdx));
 				}
 			}
