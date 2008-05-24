@@ -15,6 +15,7 @@ import javax.microedition.lcdui.Image;
 import de.ueller.gps.data.SearchResult;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
+import de.ueller.midlet.gps.data.Mercator;
 import de.ueller.midlet.gps.data.ProjMath;
 import de.ueller.midlet.gps.data.Way;
 import de.ueller.midlet.gps.tile.C;
@@ -328,7 +329,8 @@ public class SingleTile extends Tile implements QueueableTile {
 		pc.g.setColor(C.getNodeTextColor(t));
 		img = C.getNodeImage(t);
 		// logger.debug("calc pos "+pc);
-		pc.getP().forward((float)((nodeLat[i]*fpminv + centerLat)), (float)((nodeLon[i]*fpminv + centerLon)), pc.swapLineP, true);
+		
+		pc.getP().forward(nodeLat[i], nodeLon[i], pc.swapLineP, true, this);
 		
 		if (img != null) {
 			// logger.debug("draw img " + img);
