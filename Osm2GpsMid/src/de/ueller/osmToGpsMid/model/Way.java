@@ -243,6 +243,9 @@ public class Way extends Entity implements Comparable<Way>{
 		int isinIdx = -1;
 		byte layer = 0;
 		
+		if (config == null)
+			config = Configuration.getConfiguration();
+		
 		byte type=getType();
 		
 		if (getName() != null && getName().trim().length() > 0){			
