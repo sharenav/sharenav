@@ -122,6 +122,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	private static int pressedKeyCode = 0;
 	private static int ignoreKeyCode = 0;
 	
+	private boolean rootCalc=false;
 	Tile t[] = new Tile[6];
 	PositionMark source;
 
@@ -180,6 +181,8 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	
 	private static Trace traceInstance=null;
 
+	private Routing	routeEngine;
+
 	public Trace(GpsMid parent, Configuration config) throws Exception {
 		//#debug
 		System.out.println("init Trace");
@@ -225,7 +228,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	public void run() {
 		try {
 			if (running){
-				receiveMessage("Thread already running");
+				receiveMessage("GPS starter already running");
 				return;
 			}
 
@@ -244,91 +247,93 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			//		System.out.println(config.getBtUrl());
 			//		System.out.println(config.getRender());
 			switch (config.getLocationProvider()){
-			case Configuration.LOCATIONPROVIDER_SIRF:
-
-			case Configuration.LOCATIONPROVIDER_NMEA:
-				//#debug debug
-				logger.debug("Connect to "+config.getBtUrl());
-				if (! openBtConnection(config.getBtUrl())){
-					running=false;
-					return;
-				}
+				case Configuration.LOCATIONPROVIDER_SIRF:
+				case Configuration.LOCATIONPROVIDER_NMEA:
+					//#debug debug
+					logger.debug("Connect to "+config.getBtUrl());
+					if (! openBtConnection(config.getBtUrl())){
+						running=false;
+						return;
+					}
 			}
-			receiveMessage("Connected");
+			receiveMessage("BT Connected");
 			//#debug debug
 			logger.debug("rm connect, add disconnect");
 			removeCommand(CONNECT_GPS_CMD);
 			addCommand(DISCONNECT_GPS_CMD);
 			switch (config.getLocationProvider()){
-			case Configuration.LOCATIONPROVIDER_SIRF:
-				locationProducer = new SirfInput();
+				case Configuration.LOCATIONPROVIDER_SIRF:
+					locationProducer = new SirfInput();
 
-				break;
-			case Configuration.LOCATIONPROVIDER_NMEA:
-				locationProducer = new NmeaInput();			
-				//#if polish.api.fileconnection	
-				/**
-				 * Allow for logging the raw NMEA data coming from the gps mouse
-				 */
+					break;
+				case Configuration.LOCATIONPROVIDER_NMEA:
+					locationProducer = new NmeaInput();			
+					//#if polish.api.fileconnection	
+					/**
+					 * Allow for logging the raw NMEA data coming from the gps mouse
+					 */
 
-				String url = config.getGpsRawLoggerUrl();
-				//logger.error("Raw logging url: " + url);
-				if (config.getGpsRawLoggerEnable() && (url != null)) {
+					String url = config.getGpsRawLoggerUrl();
+					//logger.error("Raw logging url: " + url);
+					if (config.getGpsRawLoggerEnable() && (url != null)) {
+						try {
+							logger.info("Raw NMEA logging to: " + url);
+							url += "rawGpsNMEA" + HelperRoutines.formatSimpleDateNow() + ".txt";
+
+							javax.microedition.io.Connection logCon = Connector.open(url);				
+							if (logCon instanceof FileConnection) {
+								FileConnection fileCon = (FileConnection)logCon;
+								if (!fileCon.exists())
+									fileCon.create();
+								((NmeaInput)locationProducer).enableRawLogging(((FileConnection)logCon).openOutputStream());
+							} else {
+								logger.info("Trying to perform raw logging of NMEA on anything else than filesystem is currently not supported");
+							}
+						} catch (IOException ioe) {
+							logger.exception("Couldn't open file for raw logging of Gps data",ioe);
+						} catch (SecurityException se) {
+							logger.error("Permission to write data for NMEA raw logging was denied");
+						}				
+					}
+					//#endif
+					break;
+
+				case Configuration.LOCATIONPROVIDER_JSR179:
+					//#if polish.api.locationapi
 					try {
-						logger.info("Raw NMEA logging to: " + url);
-						url += "rawGpsNMEA" + HelperRoutines.formatSimpleDateNow() + ".txt";
-
-						javax.microedition.io.Connection logCon = Connector.open(url);				
-						if (logCon instanceof FileConnection) {
-							FileConnection fileCon = (FileConnection)logCon;
-							if (!fileCon.exists())
-								fileCon.create();
-							((NmeaInput)locationProducer).enableRawLogging(((FileConnection)logCon).openOutputStream());
-						} else {
-							logger.info("Trying to perform raw logging of NMEA on anything else than filesystem is currently not supported");
+						String jsr179Version = null;
+						try {
+							jsr179Version = System.getProperty("microedition.location.version");
+						} catch (RuntimeException re) {
+							/**
+							 * Some phones throw exceptions if trying to access properties that don't
+							 * exist, so we have to catch these and just ignore them.
+							 */
+						} catch (Exception e) {
+							/**
+							 * See above 
+							 */				
 						}
-					} catch (IOException ioe) {
-						logger.exception("Couldn't open file for raw logging of Gps data",ioe);
-					} catch (SecurityException se) {
-						logger.error("Permission to write data for NMEA raw logging was denied");
-					}				
-				}
-				//#endif
-				break;
+						if (jsr179Version != null && jsr179Version.length() > 0) {
+							Class jsr179Class = Class.forName("de.ueller.gps.jsr179.JSR179Input");
+							locationProducer = (LocationMsgProducer) jsr179Class.newInstance();
+						}
+					} catch (ClassNotFoundException cnfe) {
+						locationDecoderEnd();
+						logger.exception("Your phone does not support JSR179, please use a different location provider", cnfe);
+						running = false;
+						return;
+					}
+					//#else
+					// keep eclipse happy 
+					if (true){
+						logger.error("JSR179 is not compiled in this version of GpsMid");
+						running = false;
+						return;
+					}
+					//#endif
+					break;
 
-			case Configuration.LOCATIONPROVIDER_JSR179:
-				//#if polish.api.locationapi
-				try {
-					String jsr179Version = null;
-					try {
-						jsr179Version = System.getProperty("microedition.location.version");
-					} catch (RuntimeException re) {
-						/**
-						 * Some phones throw exceptions if trying to access properties that don't
-						 * exist, so we have to catch these and just ignore them.
-						 */
-					} catch (Exception e) {
-						/**
-						 * See above 
-						 */				
-					}
-					if (jsr179Version != null && jsr179Version.length() > 0) {
-						Class jsr179Class = Class.forName("de.ueller.gps.jsr179.JSR179Input");
-						locationProducer = (LocationMsgProducer) jsr179Class.newInstance();
-					}
-				} catch (ClassNotFoundException cnfe) {
-					locationDecoderEnd();
-					logger.exception("Your phone does not support JSR179, please use a different location provider", cnfe);
-					running = false;
-					return;
-				}
-				break;
-				//#else				
-				logger.error("JSR179 is not compiled in this version of GpsMid");
-				running = false;
-				return;
-				//#endif
-				
 			}
 			if (locationProducer == null) {
 				logger.error("Your phone does not seem to support this method of location input, please choose a different one");
@@ -344,14 +349,16 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			 * The application was not permitted to connect to the required resources
 			 * Not much we can do here other than gracefully shutdown the thread			 *  
 			 */
-			running = false;
 		} catch (OutOfMemoryError oome) { 
 			logger.fatal("Trace thread crashed as out of memory: " + oome.getMessage()); 
 			oome.printStackTrace(); 
 		} catch (Exception e) {
 			logger.fatal("Trace thread crashed unexpectadly with error " +  e.getMessage());
 			e.printStackTrace();
+		} finally {
+			running = false;
 		}
+		running = false;
 	}
 	
 	public synchronized void pause(){
@@ -420,6 +427,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				parent.show();
 				return;
 			}
+			if (! rootCalc){
 			if (c == START_RECORD_CMD){
 				try {
 					gpx.newTrk();
@@ -466,12 +474,13 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				pause();
 			}
 			if (c == ROUTE_TO_CMD){
-				pause();
-//				stopImageCollector();
+				if (config.isStopAllWhileRouteing()){
+  				   stopImageCollector();
+				}
 				routeNodes=new Vector();
-				Routing routeEngine=new Routing(t,this);
+				routeEngine = new Routing(t,this);
 				routeEngine.solve(source, pc.target);
-				resume();
+//				resume();
 			}
 			if (c == SAVE_WAYP_CMD) {				
 				GuiWaypointSave gwps = new GuiWaypointSave(this,new PositionMark(center.radlat, center.radlon));
@@ -498,6 +507,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				
 			}
 			//#endif
+			} else {
+				logger.error(" currently in route Caclulation");
+			}
 		} catch (RuntimeException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -573,22 +585,24 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	}
 	
 	protected void sizeChanged(int w, int h) {
-		logger.info("Size of Canvas changed to " + w + "|" + h);
-		if (w > imageCollector.xSize || h > imageCollector.ySize) {
-			System.out.println(pc.xSize + " | " + pc.ySize);
-			stopImageCollector();
-			try {
-				startImageCollector();
-				imageCollector.resume();
-				imageCollector.newDataReady();
-			} catch (Exception e) {
-				logger.exception("Could not reinitialise Image Collector after size change", e);
+		if (imageCollector != null){
+			logger.info("Size of Canvas changed to " + w + "|" + h);
+			if (w > imageCollector.xSize || h > imageCollector.ySize) {
+				System.out.println(pc.xSize + " | " + pc.ySize);
+				stopImageCollector();
+				try {
+					startImageCollector();
+					imageCollector.resume();
+					imageCollector.newDataReady();
+				} catch (Exception e) {
+					logger.exception("Could not reinitialise Image Collector after size change", e);
+				}
 			}
+			/**
+			 * Recalculate the projection, as it may depends on the size of the screen
+			 */
+			updatePosition();
 		}
-		/**
-		 * Recalculate the projection, as it may depends on the size of the screen
-		 */
-		updatePosition();
 	}
 
 
@@ -1356,10 +1370,20 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 	}
 
+	/**
+	 * This is the callback routine if RouteCalculation is ready
+	 * @param route
+	 */
 	public void setRoute(Vector route) {
 		this.route = route;
+		rootCalc=false;
+		routeEngine=null;
 		try {
-			resume();
+			if (config.isStopAllWhileRouteing()){
+				startImageCollector();
+			} else {
+//				resume();
+			}
 			repaint(0, 0, getWidth(), getHeight());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
