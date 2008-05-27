@@ -32,7 +32,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 
 	/** A menu list instance */
 	private static final String[]	elements		= { "Location Receiver",
-		"Recording Rules", "Display options",
+		"Recording Rules", "Display options", "Routing options",
 		"GPX Receiver", "Map source", "Debug options"};
 	
 	/**
@@ -43,9 +43,10 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private static final int MENU_ITEM_LOCATION = 0;
 	private static final int MENU_ITEM_GPX_FILTER = 1;	
 	private static final int MENU_ITEM_DISP_OPT = 2;
-	private static final int MENU_ITEM_GPX_DEVICE = 3;
-	private static final int MENU_ITEM_MAP_SRC = 4;
-	private static final int MENU_ITEM_DEBUG_OPT = 5;
+	private static final int MENU_ITEM_ROUTING_OPT = 3;
+	private static final int MENU_ITEM_GPX_DEVICE = 4;
+	private static final int MENU_ITEM_MAP_SRC = 5;
+	private static final int MENU_ITEM_DEBUG_OPT = 6;
 
 	private static final String[]	empty			= {};
 
@@ -98,6 +99,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 
 	private final Form				menuRecordingOptions = new Form("Recording Rules");
 	
+	private final Form				menuRoutingOptions = new Form("Rounting Options");
+	
 	private final GpsMid			parent;
 
 	private DiscoverGps				gps;
@@ -114,6 +117,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private final static int		STATE_RECORDING_OPTIONS	= 8;
 	private final static int 		STATE_BT_GPX	= 9;
 	private final static int		STATE_DEBUG		= 10;
+	private final static int		STATE_ROUTING_OPT = 11;
 	
 	private Vector urlList; 
 	private Vector friendlyName;
@@ -133,6 +137,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private StringItem  gpsUrl; 
 	  
 	private String gpsUrlStr;
+	
+	private Gauge gaugeRoutingEsatimationFac; 
+	private ChoiceGroup stopAllWhileRouting;
 
 	private final static Logger logger=Logger.getInstance(GuiDiscover.class,Logger.DEBUG);
 	
@@ -204,10 +211,11 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		gaugeDetailBoost = new Gauge("Increase Detail of lower Zoom Levels", true, 3, 0);
 		menuDisplayOptions.append(gaugeDetailBoost);
 
+		String [] backlights;
 		//#if polish.api.nokia-ui
-		String [] backlights = new String[5];
+			backlights = new String[5];
 		//#else
-		String [] backlights = new String[3];
+			backlights = new String[3];
 		//#endif
 		backlights[Configuration.BACKLIGHT_ON] = "Keep Backlight On";
 		backlights[Configuration.BACKLIGHT_MAPONLY] = "only in map screen";
@@ -285,6 +293,19 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		debugSeverity.setSelectedFlags(selDebug);
 		menuDebug.append(debugSeverity);
 		
+		// Prepare routingOptions menu
+		menuRoutingOptions.addCommand(BACK_CMD);
+		menuRoutingOptions.addCommand(OK_CMD);
+		menuRoutingOptions.setCommandListener(this);
+		
+		String [] routingBack = new String[2];
+		routingBack[0] = "No";
+		routingBack[1] = "Yes";
+		stopAllWhileRouting = new ChoiceGroup("Continue Map while calculation:", Choice.EXCLUSIVE, routingBack ,null);
+		stopAllWhileRouting.setSelectedIndex(config.isStopAllWhileRouteing()?0:1,true);
+		menuRoutingOptions.append(stopAllWhileRouting);
+		gaugeRoutingEsatimationFac=new Gauge("Speed of route calculation", true, 100, config.getRouteEstimationFac());
+		menuRoutingOptions.append(gaugeRoutingEsatimationFac);
 		show();
 	}
 
@@ -449,6 +470,10 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 					GpsMid.getInstance().show(menuDebug);
 					state = STATE_DEBUG;
 					break;
+				case MENU_ITEM_ROUTING_OPT:
+					GpsMid.getInstance().show(menuRoutingOptions);
+					state = STATE_ROUTING_OPT;
+					break;
 				}
 				break;
 			case STATE_BT_GPS: 
@@ -577,8 +602,12 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				state = STATE_ROOT;
 				this.show();			
 				break;
-			}
-		
+
+			case STATE_ROUTING_OPT:
+				config.setRouteEstimationFac(gaugeRoutingEsatimationFac.getValue()); 
+				config.setStopAllWhileRouteing(stopAllWhileRouting.isSelected(1));
+				break;
+			}		
 		}
 	}
 

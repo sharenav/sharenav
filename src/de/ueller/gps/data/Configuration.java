@@ -61,6 +61,8 @@ public class Configuration {
 	private static final int RECORD_ID_GPX_FILTER_DIST = 15;
 	private static final int RECORD_ID_GPX_FILTER_ALWAYS_DIST = 16;
 	private static final int RECORD_ID_LOG_DEBUG_SEVERITY = 17;
+	private static final int RECORD_ID_ROUTE_ESTIMATION_FAC=18;
+	private static final int RECORD_ID_STOP_ALL_WHILE_ROUTING=19;
 
 	// Gpx Recording modes
 	// GpsMid determines adaptive if a trackpoint is written
@@ -93,6 +95,8 @@ public class Configuration {
 	private int backlightDefault;
 	private String gpxUrl;
 	private int debugSeverity;
+	private int routeEstimationFac=30;
+	private boolean stopAllWhileRouteing=false;
 		
 	private boolean mapFromJar;
 	private String mapFileUrl;
@@ -131,6 +135,8 @@ public class Configuration {
 			rawDebugLogUrl=readString(database, RECORD_ID_LOG_DEBUG_URL);
 			rawDebugLogEnable = readInt(database,  RECORD_ID_LOG_DEBUG_ENABLE) !=0;
 			debugSeverity=readInt(database, RECORD_ID_LOG_DEBUG_SEVERITY);
+			routeEstimationFac=readInt(database,RECORD_ID_ROUTE_ESTIMATION_FAC);
+			stopAllWhileRouteing=readInt(database,  RECORD_ID_STOP_ALL_WHILE_ROUTING) !=0;
 			database.closeRecordStore();
 		} catch (Exception e) {
 			logger.exception("Problems with reading our configuration: ", e);
@@ -444,6 +450,24 @@ public class Configuration {
 			
 		}
 		return is;
+	}
+
+	public int getRouteEstimationFac() {
+		return routeEstimationFac;
+	}
+
+	public void setRouteEstimationFac(int routeEstimationFac) {
+		write(routeEstimationFac,RECORD_ID_ROUTE_ESTIMATION_FAC);
+		this.routeEstimationFac = routeEstimationFac;
+	}
+
+	public boolean isStopAllWhileRouteing() {
+		return stopAllWhileRouteing;
+	}
+
+	public void setStopAllWhileRouteing(boolean stopAllWhileRouteing) {
+		write(stopAllWhileRouteing?0:1, RECORD_ID_STOP_ALL_WHILE_ROUTING);
+		this.stopAllWhileRouteing = stopAllWhileRouteing;
 	}
 
 }
