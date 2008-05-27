@@ -40,7 +40,7 @@ public class Routing implements Runnable {
 	private final Trace parent;
 	private int bestTotal;
 	private long nextUpdate;
-	private float estimateFac=1.00f;
+	private float estimateFac=1.40f;
 	private int oomCounter=0;
 //	private Tile destinationTile=new RouteTile();
 	private int expanded;
@@ -52,7 +52,7 @@ public class Routing implements Runnable {
 		//#debug error
 		logger.debug("init Routing engine");
 
-		
+		estimateFac=(parent.getConfig().getRouteEstimationFac()/30f)+0.5f;
 //		rnt=new RouteNodeTools();
 		//#debug error
 		logger.debug("ready Routing engine ");
@@ -416,6 +416,7 @@ public class Routing implements Runnable {
 			nodeTile.tile.addConnection(nextNode,newCon,bestTime);
 			logger.debug("start routing Thread from :" + fromMark + " to " + toMark);
 			if (routeTo != null){
+				parent.cleanup();
 				processorThread = new Thread(this);
 				processorThread.setPriority(Thread.NORM_PRIORITY);
 				processorThread.start();
