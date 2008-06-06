@@ -103,13 +103,7 @@ public class SingleTile extends Tile implements QueueableTile {
 //		logger.info("Potentially Painting single tile " + this +  " at layer " + layer);
 		
 		
-		/**
-		 * Calculate pc coordinates in terms of relative single tile coordinates
-		 */
-		short pcLDlat = (short)((pc.screenLD.radlat - this.centerLat) * SingleTile.fpm);
-		short pcLDlon = (short)((pc.screenLD.radlon - this.centerLon) * SingleTile.fpm);
-		short pcRUlat = (short)((pc.screenRU.radlat - this.centerLat) * SingleTile.fpm);
-		short pcRUlon = (short)((pc.screenRU.radlon - this.centerLon) * SingleTile.fpm);
+		
 		
 		
 		boolean renderArea = ((layer & Tile.LAYER_AREA) != 0);
@@ -124,6 +118,56 @@ public class SingleTile extends Tile implements QueueableTile {
 				 */
 				return;
 			}
+			
+			
+			/**
+			 * Calculate pc coordinates in terms of relative single tile coordinates
+			 */
+			
+			float pcLDlatF = ((pc.screenLD.radlat - this.centerLat) * SingleTile.fpm);
+			float pcLDlonF = ((pc.screenLD.radlon - this.centerLon) * SingleTile.fpm);
+			float pcRUlatF = ((pc.screenRU.radlat - this.centerLat) * SingleTile.fpm);
+			float pcRUlonF = ((pc.screenRU.radlon - this.centerLon) * SingleTile.fpm);
+			short pcLDlat;
+			short pcLDlon;
+			short pcRUlat;
+			short pcRUlon;
+			
+			if (pcLDlatF > Short.MAX_VALUE || pcLDlatF < Short.MIN_VALUE) {
+				if (pcLDlatF > Short.MAX_VALUE) 
+					pcLDlat = Short.MAX_VALUE;
+				else
+					pcLDlat = Short.MIN_VALUE;
+			} else {
+				pcLDlat = (short)pcLDlatF;
+			}
+			
+			if (pcRUlatF > Short.MAX_VALUE || pcRUlatF < Short.MIN_VALUE) {
+				if (pcRUlatF > Short.MAX_VALUE) 
+					pcRUlat = Short.MAX_VALUE;
+				else
+					pcRUlat = Short.MIN_VALUE;
+			} else {
+				pcRUlat = (short)pcRUlatF;
+			}
+			if (pcLDlonF > Short.MAX_VALUE || pcLDlonF < Short.MIN_VALUE) {
+				if (pcLDlonF > Short.MAX_VALUE) 
+					pcLDlon = Short.MAX_VALUE;
+				else
+					pcLDlon = Short.MIN_VALUE;
+			} else {
+				pcLDlon = (short)pcLDlonF;
+			}
+			if (pcRUlonF > Short.MAX_VALUE || pcRUlonF < Short.MIN_VALUE) {
+				if (pcRUlonF > Short.MAX_VALUE) 
+					pcRUlon = Short.MAX_VALUE;
+				else
+					pcRUlon = Short.MIN_VALUE;
+			} else {
+				pcRUlon = (short)pcLDlatF;
+			}
+			
+			
 			lastUse = 0;
 			if (layer != Tile.LAYER_NODE) {
 				if (ways != null) {
@@ -133,6 +177,7 @@ public class SingleTile extends Tile implements QueueableTile {
 					}
 					if (ways[relLayer] == null)
 						return;
+					
 					/**
 					 * Render all ways in the appropriate layer
 					 */
