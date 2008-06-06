@@ -61,8 +61,8 @@ public final class Mercator extends Cylindrical {
     private float scaled_lat;
     
     private SingleTile tileCache;
-    private short ctrLonRel;
-    private short ctrLatRel;
+    private int ctrLonRel;
+    private int ctrLatRel;
     private float scaled_radius_rel;    
     private float scaled_lat_rel;
     
@@ -232,8 +232,8 @@ public final class Mercator extends Cylindrical {
     private IntPoint forward_full(float lat, float lon, IntPoint p, boolean isRadian) {
         // same as forward_x and forward_y, and convert to screen
         // coords
-        p.setX((int) (scaled_radius * wrap_longitude(lon - ctrLon) + wx));
-        p.setY((int) (hy - scaled_radius * (MoreMath.asinh((float) Math.tan(lat)) - asinh_of_tanCtrLat)));
+        p.setX((int) (scaled_radius * wrap_longitude(lon - ctrLon) + 0.49f) + wx);
+        p.setY(hy - (int)(scaled_radius * (MoreMath.asinh((float) Math.tan(lat)) - asinh_of_tanCtrLat) + 0.49f));
         return p;
     }
     
@@ -241,9 +241,8 @@ public final class Mercator extends Cylindrical {
     	
         // same as forward_x and forward_y, and convert to screen
         // coords
-        p.setX((int) (scaled_radius * wrap_longitude(lon - ctrLon) + wx));
-        //p.setY((int) (hy - scaled_radius * (MoreMath.asinh((float) Math.tan(lat)) - asinh_of_tanCtrLat)));
-        p.setY((int) hy - scaled_lat * (lat - ctrLat));
+        p.setX((int) (scaled_radius * wrap_longitude(lon - ctrLon) + 0.49f) + wx);        
+        p.setY(hy - (int)(scaled_lat * (lat - ctrLat) + 0.49f));
         //System.out.println("forward_approx");
         return p;
     }
@@ -252,11 +251,11 @@ public final class Mercator extends Cylindrical {
     
     private IntPoint forward_approx(short lat, short lon, IntPoint p, boolean isRadian, SingleTile t) {
     	if (t != tileCache) {
-    		ctrLonRel = (short)((ctrLon - t.centerLon)*SingleTile.fpm);
-    		ctrLatRel = (short)((ctrLat - t.centerLat)*SingleTile.fpm);
+    		ctrLonRel = (int)((ctrLon - t.centerLon)*SingleTile.fpm);
+    		ctrLatRel = (int)((ctrLat - t.centerLat)*SingleTile.fpm);
     		scaled_radius_rel = (scaled_radius*SingleTile.fpminv);
     		scaled_lat_rel = (scaled_lat*SingleTile.fpminv);    		
-    		tileCache = t;
+    		tileCache = t;    		
     	} 
         
         p.setX(((int)((scaled_radius_rel * (lon - ctrLonRel))) + wx));        
