@@ -164,10 +164,9 @@ public class SingleTile extends Tile implements QueueableTile {
 				else
 					pcRUlon = Short.MIN_VALUE;
 			} else {
-				pcRUlon = (short)pcLDlatF;
+				pcRUlon = (short)pcRUlonF;
 			}
-			
-			
+
 			lastUse = 0;
 			if (layer != Tile.LAYER_NODE) {
 				if (ways != null) {
