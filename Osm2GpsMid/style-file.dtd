@@ -5,7 +5,7 @@
 <!ELEMENT key (value+)>
 <!ELEMENT keyW (Wvalue+)>
 <!ELEMENT value (description , image? , searchIcon? , namekey , namefallback? , scale , textscale? , imageCentered?)>
-<!ELEMENT Wvalue (description, namekey, namefallback?, isArea, scale, lineColor, boarderColor?, lineStyle?, wayWidth?, searchIcon?, routing?, force_to?)>
+<!ELEMENT Wvalue (description, namekey, namefallback?, isArea, scale, textscale?, lineColor, borderColor?, lineStyle?, wayWidth?, searchIcon?, routing?, force_to?)>
 <!ELEMENT description EMPTY>
 <!ELEMENT image EMPTY>
 <!ELEMENT searchIcon EMPTY>
@@ -35,7 +35,7 @@
 <!ATTLIST imageCentered value CDATA #REQUIRED>
 <!ATTLIST isArea area CDATA #REQUIRED>
 <!ATTLIST lineColor color CDATA #REQUIRED>
-<!ATTLIST boarderColor color CDATA #REQUIRED>
+<!ATTLIST borderColor color CDATA #REQUIRED>
 <!ATTLIST lineStyle dashed CDATA #REQUIRED>
 <!ATTLIST wayWidth width CDATA #REQUIRED>
 <!ATTLIST routing accessible CDATA #REQUIRED>

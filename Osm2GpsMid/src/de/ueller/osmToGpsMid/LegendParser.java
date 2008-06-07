@@ -138,12 +138,20 @@ public class LegendParser extends DefaultHandler{
 				currentPoi.nameFallbackKey = atts.getValue("tag");
 			}
 			if (qName.equals("scale")) {
-				currentPoi.minImageScale = config.getRealScale( Integer.parseInt(atts.getValue("scale")) );
+				try {
+					currentPoi.minImageScale = config.getRealScale( Integer.parseInt(atts.getValue("scale")) );
+				} catch (NumberFormatException nfe) {
+					System.out.println("Error: scale for " +currentPoi.description + " is incorrect");
+				}
 				if (currentPoi.minTextScale == 0)
 					currentPoi.minTextScale = currentPoi.minImageScale;
 			}
 			if (qName.equals("textscale")) {
-				currentPoi.minTextScale = config.getRealScale( Integer.parseInt(atts.getValue("scale")) );
+				try {
+					currentPoi.minTextScale = config.getRealScale( Integer.parseInt(atts.getValue("scale")) );
+				} catch (NumberFormatException nfe) {
+					System.out.println("Error: textscale for " +currentPoi.description + " is incorrect");
+				}
 			}
 			if (qName.equals("image")) {
 				currentPoi.image = atts.getValue("src");
@@ -181,20 +189,38 @@ public class LegendParser extends DefaultHandler{
 				currentWay.nameFallbackKey = atts.getValue("tag");
 			}
 			if (qName.equals("scale")) {
-				currentWay.minScale = config.getRealScale( Integer.parseInt(atts.getValue("scale")) );				
+				try {
+					currentWay.minScale = config.getRealScale( Integer.parseInt(atts.getValue("scale")) );				
+				} catch (NumberFormatException nfe) {
+					System.out.println("Error: scale for " +currentWay.description + " is incorrect");
+				}
+				if (currentWay.minTextScale == 0)
+						currentWay.minTextScale = currentWay.minScale;			}
+
+			if (qName.equals("textscale")) {
+				try {
+					currentWay.minTextScale = config.getRealScale( Integer.parseInt(atts.getValue("scale")) );				
+				} catch (NumberFormatException nfe) {
+					System.out.println("Error: textscale for " +currentWay.description + " is incorrect");
+				}
 			}
+			
 			if (qName.equals("isArea")) {
 				currentWay.isArea = atts.getValue("area").equalsIgnoreCase("true");
 			}
 			if (qName.equals("lineColor")) {
 				try {
-				currentWay.lineColor = Integer.parseInt(atts.getValue("color"),16);
+					currentWay.lineColor = Integer.parseInt(atts.getValue("color"),16);
 				} catch (NumberFormatException nfe){
 					System.out.println("Error: lineColor for " + currentWay.description + " is incorrect. Must be a hex coded ARGB value");
 				}
 			}
 			if (qName.equals("borderColor")) {
-				currentWay.boardedColor = Integer.parseInt(atts.getValue("color"));				
+				try {
+					currentWay.boardedColor = Integer.parseInt(atts.getValue("color"));				
+				} catch (NumberFormatException nfe){
+					System.out.println("Error: borderColor for " + currentWay.description + " is incorrect. Must be a hex coded ARGB value");
+				}
 			}
 			if (qName.equals("wayWidth")) {
 				try {

@@ -18,6 +18,7 @@ public class WayDescription {
 	public String	nameKey;
 	public String	nameFallbackKey;
 	public int		minScale;
+	public int		minTextScale;
 	public int		lineColor;	
 	public boolean	lineStyleDashed; //
 	public int		boardedColor;
@@ -39,6 +40,6 @@ public class WayDescription {
 	}
 	
 	public String toString() {
-		return "Desc: " + description + "; " + key + "=" + value + " nametag: " + nameKey + " or " + nameFallbackKey + " Scale: " + minScale;
+		return "Desc: " + description + "; " + key + "=" + value + " nametag: " + nameKey + " or " + nameFallbackKey + " Scale: " + minScale+ " textScale: " + minTextScale ;
 	}
 }

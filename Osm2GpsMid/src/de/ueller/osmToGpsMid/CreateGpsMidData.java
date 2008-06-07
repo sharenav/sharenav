@@ -192,6 +192,7 @@ public class CreateGpsMidData {
 				dsi.writeByte(flags);
 				dsi.writeUTF(way.description);								
 				dsi.writeInt(way.minScale);
+				dsi.writeInt(way.minTextScale);
 				dsi.writeBoolean(way.isArea);
 				dsi.writeInt(way.lineColor);
 				dsi.writeInt(way.boardedColor);
