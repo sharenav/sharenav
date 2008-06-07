@@ -21,7 +21,7 @@ public class C {
 	 * Specifies the format of the map on disk we expect to see
 	 * This constant must be in sync with Osm2GpsMid
 	 */
-	public final static short MAP_FORMAT_VERSION = 14;
+	public final static short MAP_FORMAT_VERSION = 15;
 	
 	public final static byte NODE_MASK_ROUTENODELINK=0x1;
 	public final static byte NODE_MASK_TYPE=0x2;
@@ -136,6 +136,7 @@ public class C {
 			byte flags = ds.readByte();
 			ways[i].description = ds.readUTF();			
 			ways[i].maxScale = ds.readInt();
+			ways[i].maxTextScale = ds.readInt();
 			ways[i].isArea = ds.readBoolean();
 			ways[i].lineColor = ds.readInt();
 			ways[i].boardedColor = ds.readInt();

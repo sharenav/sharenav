@@ -8,6 +8,7 @@ package de.ueller.midlet.gps.data;
 import java.io.DataInputStream;
 import java.io.IOException;
 
+import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 
 import net.sourceforge.jmicropolygon.PolygonGraphics;
@@ -65,6 +66,9 @@ public class Way extends Entity{
 	 */
 	private static int [] x = new int[100];
 	private static int [] y = new int[100];
+	private static Font areaFont;
+	private static int areaFontHeight;
+
 	static final IntPoint l1b = new IntPoint();
 	static final IntPoint l1e = new IntPoint();
 	static final IntPoint l2b = new IntPoint();
@@ -429,8 +433,92 @@ public class Way extends Entity{
 		//PolygonGraphics.drawPolygon(g, x, y);
 
 		PolygonGraphics.fillPolygon(pc.g, x, y);
+		paintAreaName(pc,t);
 	}
 
+	public void paintAreaName(PaintContext pc, SingleTile t) {
+		WayDescription wayDesc = C.getWayDescription(type);
+		if (pc.scale > wayDesc.maxTextScale * pc.config.getDetailBoostMultiplier() ) {			
+			return;
+		}		
+		String name=null;
+		if (nameIdx != -1) {
+			name=Trace.getInstance().getName(nameIdx);
+		}
+		// if zoomed in, show description 
+		if (pc.scale<15000) {
+		// show waydescription
+			if (name==null) {
+				name=wayDesc.description;
+			} else {
+				name=name + " (" + wayDesc.description + ")";
+			}
+		}
+		IntPoint lineP2 = pc.lineP2;
+		Projection p = pc.getP();
+		int x;
+		int y;
+
+		// get screen clip
+		int clipX=pc.g.getClipX();
+		int clipY=pc.g.getClipY();
+		int clipMaxX=clipX+pc.g.getClipWidth();
+		int clipMaxY=clipY+pc.g.getClipHeight();;
+
+		// find center of area
+		int minX=clipMaxX;
+		int maxX=clipX;
+		int minY=clipMaxY;
+		int maxY=clipY;
+		for (int i1 = 0; i1 < path.length; i1++) {
+			int idx = path[i1];			
+			p.forward(t.nodeLat[idx], t.nodeLon[idx], lineP2, true, t);
+			x = lineP2.x;
+			y = lineP2.y;
+			if (minX>x) minX=x;
+			if (minY>y) minY=y;
+			if (maxX<x) maxX=x;
+			if (maxY<y) maxY=y;
+		}
+	
+		// System.out.println("name:" + name + " ClipX:" + clipX + " ClipMaxX:" + clipMaxX + " ClipY:" + clipY + " ClipMaxY:" + clipMaxY + " minx:" + minX + " maxX:"+maxX + " miny:"+minY+ " maxY" + maxY);
+		if (name!=null) {
+			Font originalFont = pc.g.getFont();
+			if (areaFont==null) {
+				areaFont=Font.getFont(Font.FACE_SYSTEM, Font.STYLE_PLAIN, Font.SIZE_SMALL);
+				areaFontHeight=areaFont.getHeight();
+			}
+			// find out how many chars of the name fit into the area
+			int i=name.length()+1;
+			int w;
+			do {
+				i--;
+				w=areaFont.substringWidth(name,0,i);
+			} while (w>(maxX-minX) && i>1);
+			// is area wide enough to draw at least a dot into it?
+			if ((maxX-minX)>=3 ) {
+				pc.g.setColor(0,0,0);
+				// if at least two chars have fit or name is a fitting single char, draw name
+				if (i>1 || (i==name.length() && w<=(maxX-minX))  ) {
+					pc.g.setFont(areaFont);
+					// center vertically in area
+					int y1=(minY+maxY-areaFontHeight)/2;
+					// draw centered into area
+					pc.g.drawSubstring(name, 0, i, (minX+maxX-w)/2, y1, Graphics.TOP | Graphics.LEFT);
+					// if name fits not completely, append "..."
+					if (i!=name.length()) {
+						pc.g.drawString("...", (minX+maxX+w)/2, y1, Graphics.TOP | Graphics.LEFT);
+					}
+					pc.g.setFont(originalFont);
+				// else draw a dot to indicate there's a name for this area available
+				} else {
+					pc.g.drawRect((minX+maxX)/2, (minY+maxY)/2, 0, 0 );
+				}
+			}
+		}
+	}
+	
+	
 	public void setColor(PaintContext pc) {		
 		WayDescription wayDesc = C.getWayDescription(type);
 		pc.g.setStrokeStyle(wayDesc.lineStyle);
