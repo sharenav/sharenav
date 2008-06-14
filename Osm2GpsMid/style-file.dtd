@@ -16,6 +16,7 @@
 <!ELEMENT imageCentered EMPTY>
 <!ELEMENT isArea EMPTY>
 <!ELEMENT lineColor EMPTY>
+<!ELEMENT borderColor EMPTY>
 <!ELEMENT lineStyle EMPTY>
 <!ELEMENT wayWidth EMPTY>
 <!ELEMENT routing EMPTY>

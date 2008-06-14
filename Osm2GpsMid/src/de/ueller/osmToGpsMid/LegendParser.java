@@ -229,7 +229,7 @@ public class LegendParser extends DefaultHandler{
 			}
 			if (qName.equals("borderColor")) {
 				try {
-					currentWay.boardedColor = Integer.parseInt(atts.getValue("color"));				
+					currentWay.boardedColor = Integer.parseInt(atts.getValue("color"),16);				
 				} catch (NumberFormatException nfe){
 					System.out.println("Error: borderColor for " + currentWay.description + " is incorrect. Must be a hex coded ARGB value");
 				}
