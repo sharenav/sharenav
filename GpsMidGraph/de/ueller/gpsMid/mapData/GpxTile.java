@@ -8,10 +8,10 @@ import java.util.Random;
 
 import javax.microedition.lcdui.Graphics;
 
+import de.ueller.gps.tools.HelperRoutines;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.PositionMark;
-import de.ueller.midlet.gps.data.Way;
 import de.ueller.midlet.gps.tile.PaintContext;
 
 public class GpxTile extends Tile {	
@@ -58,44 +58,18 @@ public class GpxTile extends Tile {
 			maxLon = lon;
 		
 		if (trkPtLat == null) {
-			if (splitDimension) {
-				if (lat < splitCoord) {
-					t1.addTrkPt(lat, lon, rad);
-				} else {
-					t2.addTrkPt(lat, lon, rad);
-				}
-			} else {
-				if (lon < splitCoord) {
-					t1.addTrkPt(lat, lon, rad);
-				} else {
-					t2.addTrkPt(lat, lon, rad);
-				}
-				
-			}			
+			if (t1t2TrackPoint(lat, lon))
+				t1.addTrkPt(lat, lon, rad);
+			else
+				t2.addTrkPt(lat, lon, rad);
 		} else {
-
 			trkPtLat[noTrkPts] = lat;
 			trkPtLon[noTrkPts++] = lon;
-
 			if (noTrkPts + 3 > trkPtLat.length) {
-				if (noTrkPts > 90) {
-					Random r = new Random();
-					if (maxLat - minLat > maxLon - minLon) {
-						splitDimension = true;						
-						splitCoord = trkPtLat[r.nextInt(noTrkPts)];
-					} else {
-						splitDimension = false;
-						splitCoord = trkPtLon[r.nextInt(noTrkPts)];
-					}					
-					splitTile();
+				if (noTrkPts > 90) {									
+					splitTile(false);
 				} else {
-					float [] tmp;
-					tmp = new float[trkPtLat.length + 10];
-					System.arraycopy(trkPtLat, 0, tmp, 0, trkPtLat.length);
-					trkPtLat = tmp;
-					tmp = new float[trkPtLat.length];
-					System.arraycopy(trkPtLon, 0, tmp, 0, trkPtLon.length);
-					trkPtLon = tmp;
+					extendTile();
 				}
 			}
 		}
@@ -105,19 +79,11 @@ public class GpxTile extends Tile {
 		//#debug debug
 		logger.debug("Adding waypoint: " + waypt);
 		if (trkPtLat == null) {
-			if (splitDimension) {
-				if (waypt.lat < splitCoord) {
-					t1.addWayPt(waypt);
-				} else {
-					t2.addWayPt(waypt);
-				}
+			if (t1t2WayPoint(waypt)) {
+				t1.addWayPt(waypt);
 			} else {
-				if (waypt.lon < splitCoord) {
-					t1.addWayPt(waypt);
-				} else {
-					t2.addWayPt(waypt);
-				}				
-			}			
+				t2.addWayPt(waypt);
+			}						
 		} else {
 			waypts[noWayPts++] = waypt;
 
@@ -132,16 +98,8 @@ public class GpxTile extends Tile {
 				maxLon = waypt.lon;
 
 			if (noWayPts + 3 > waypts.length) {
-				if (noWayPts > 90) {
-					Random r = new Random();
-					if (maxLat - minLat > maxLon - minLon) {
-						splitDimension = true;
-						splitCoord = waypts[r.nextInt(noWayPts)].lat;
-					} else {
-						splitDimension = false;
-						splitCoord = waypts[r.nextInt(noWayPts)].lon;
-					}					
-					splitTile();
+				if (noWayPts > 90) {										
+					splitTile(true);
 				} else {
 					PositionMark [] tmp;
 					tmp = new PositionMark[waypts.length + 10];
@@ -261,36 +219,82 @@ public class GpxTile extends Tile {
 		}
 	}
 	
-	private void splitTile() {
+	private void extendTile() {
+		logger.info("Extending trackpoint array to: " + (trkPtLat.length + 10));
+		float [] tmp;
+		tmp = new float[trkPtLat.length + 10];
+		System.arraycopy(trkPtLat, 0, tmp, 0, trkPtLat.length);
+		trkPtLat = tmp;
+		tmp = new float[trkPtLat.length];
+		System.arraycopy(trkPtLon, 0, tmp, 0, trkPtLon.length);
+		trkPtLon = tmp;		
+	}
+	
+	private void splitTile(boolean waypointSplit) {
+		logger.info("Trying to split GPX tile containing " + noTrkPts + "track points and " + noWayPts + " Waypoints");
+		Random r = new Random();
+		if (waypointSplit) {
+			if (maxLat - minLat > maxLon - minLon) {
+				splitDimension = true;			
+				splitCoord = waypts[r.nextInt(noWayPts)].lat;				
+			} else {
+				splitDimension = false;
+				splitCoord = waypts[r.nextInt(noWayPts)].lon;
+			}
+			/**
+			 * Check to see that we reduce the number of waypoints / track points
+			 * by at least 5, as otherwise we can get into an infinite recurrsion.
+			 * This can happen for example if many points are recorded that have
+			 * identical coordinates		 *  
+			 */
+			int [] t1t2count = new int[2];
+			for (int i = 0; i < noWayPts; i++) {
+				t1t2count[t1t2WayPoint(waypts[i])?0:1]++;			
+			}
+			if (t1t2count[0] < 5 || t1t2count[1] < 5) {
+				logger.info("Split was unsuccessfull, perhaps too many identical coordinates");
+				extendTile();
+				return;
+			}
+		} else {
+			if (maxLat - minLat > maxLon - minLon) {
+				splitDimension = true;
+				splitCoord = HelperRoutines.medianElement(trkPtLat, noTrkPts);				
+			} else {
+				splitDimension = false;
+				splitCoord = HelperRoutines.medianElement(trkPtLon, noTrkPts);
+			}
+			/**
+			 * Check to see that we reduce the number of waypoints / track points
+			 * by at least 5, as otherwise we can get into an infinite recurrsion.
+			 * This can happen for example if many points are recorded that have
+			 * identical coordinates		 *  
+			 */
+			int [] t1t2count = new int[2];
+			for (int i = 0; i < noTrkPts; i++) {
+				t1t2count[t1t2TrackPoint(trkPtLat[i], trkPtLon[i])?0:1]++;			
+			}
+			if (t1t2count[0] < 5 || t1t2count[1] < 5) {
+				logger.info("Split was unsuccessfull, perhaps too many identical coordinates");
+				extendTile();
+				return;
+			}
+		}		
 		//#debug debug
 		logger.debug("Splitting GpxTile (" + splitDimension + ") "  + splitCoord);
 		t1 = new GpxTile();
 		t2 = new GpxTile();
 		for (int i = 0; i < noTrkPts; i++) {
-			if (splitDimension) {
-				if (trkPtLat[i] < splitCoord) 
-					t1.addTrkPt(trkPtLat[i], trkPtLon[i],true);
-				else
-					t2.addTrkPt(trkPtLat[i], trkPtLon[i], true);
-			} else {
-				if (trkPtLon[i] < splitCoord) 
-					t1.addTrkPt(trkPtLat[i], trkPtLon[i], true);
-				else
-					t2.addTrkPt(trkPtLat[i], trkPtLon[i], true);
-			}
+			if (t1t2TrackPoint(trkPtLat[i], trkPtLon[i]))
+				t1.addTrkPt(trkPtLat[i], trkPtLon[i],true);
+			else
+				t2.addTrkPt(trkPtLat[i], trkPtLon[i], true);			
 		}
 		for (int i = 0; i < noWayPts; i++) {
-			if (splitDimension) {
-				if (waypts[i].lat < splitCoord) 
-					t1.addWayPt(waypts[i]);
-				else
-					t2.addWayPt(waypts[i]);
-			} else {
-				if (waypts[i].lon < splitCoord) 
-					t1.addWayPt(waypts[i]);
-				else
-					t2.addWayPt(waypts[i]);
-			}
+			if (t1t2WayPoint(waypts[i]))
+				t1.addWayPt(waypts[i]);
+			else
+				t2.addWayPt(waypts[i]);			
 		}
 		waypts = null;
 		trkPtLat = null;
@@ -329,5 +333,34 @@ public class GpxTile extends Tile {
 	public void walk(PaintContext pc, int opt) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	private boolean t1t2TrackPoint(float lat, float lon) {		
+		if (splitDimension) {
+			if (lat < splitCoord) 
+				return true;
+			else
+				return false;
+		} else {
+			if (lon < splitCoord) 
+				return true;
+			else
+				return false;
+		}
+
+	}
+	private boolean t1t2WayPoint(PositionMark p) {		
+		if (splitDimension) {
+			if (p.lat < splitCoord) 
+				return true;
+			else
+				return false;
+		} else {
+			if (p.lon < splitCoord) 
+				return true;
+			else
+				return false;
+		}
+
 	}
 }
