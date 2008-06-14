@@ -237,7 +237,7 @@ public class NmeaMessage {
 	            }
 			}
 		} catch (RuntimeException e) {
-			logger.error("Error while decoding "+sentence + " " + e.getMessage());
+			logger.exception("Error while decoding "+sentence, e);
 		}
 		
 	}
