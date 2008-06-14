@@ -32,6 +32,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 	private final static Logger logger = Logger.getInstance(GuiSearch.class,Logger.DEBUG);
 
 	private final Command OK_CMD = new Command("Ok", Command.OK, 1);
+	private final Command DISP_CMD = new Command("Display", Command.ITEM, 1);
 	private final Command DEL_CMD = new Command("delete", Command.ITEM, 2);
 	private final Command CLEAR_CMD = new Command("clear", Command.ITEM, 3);
 	private final Command BOOKMARK_CMD = new Command("add to Waypoint", Command.ITEM, 4);
@@ -95,6 +96,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		searchThread = new SearchNames(this);
 		setTitle("Search for name");
 		addCommand(OK_CMD);
+		addCommand(DISP_CMD);
 		addCommand(DEL_CMD);
 		addCommand(CLEAR_CMD);
 		addCommand(BOOKMARK_CMD);
@@ -123,8 +125,14 @@ public class GuiSearch extends Canvas implements CommandListener,
 				positionMark.nameIdx=sr.nameIdx;
 				positionMark.displayName=parent.getName(sr.nameIdx);
 				parent.setTarget(positionMark);
-				parent.show();
-				repaint(0, 0, getWidth(), getHeight());
+				parent.show();				
+				destroy();
+				return;
+			}
+			if (c == DISP_CMD) {			
+				SearchResult sr = (SearchResult) result.elementAt(cursor);				
+				parent.receivePosItion(sr.lat, sr.lon, 15000f);				
+				parent.show();				
 				destroy();
 				return;
 			}
