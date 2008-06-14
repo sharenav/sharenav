@@ -201,6 +201,13 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		addCommand(CAMERA_CMD);
 		//#endif
 		setCommandListener(this);
+		
+		try {
+			satelit = Image.createImage("/satelit.png");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		try {
 			startup();
@@ -210,12 +217,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			return;
 		}
 		// setTitle("initTrace ready");
-		try {
-			satelit = Image.createImage("/satelit.png");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
 		
 		traceInstance = this;
 	}
@@ -553,9 +555,10 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		tileReader = new QueueDataReader(this);
 //		logger.info("create imageCollector");
 		dictReader = new QueueDictReader(this);
-		startImageCollector();
 		this.gpx = new Gpx();
 		setDict(gpx, (byte)5);
+		startImageCollector();
+		
 	}
 
 	public void shutdown() {
@@ -629,8 +632,8 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			// cleans the screen
 			g.setColor(C.BACKGROUND_COLOR);
 			g.fillRect(0, 0, this.getWidth(), this.getHeight());
-			if (imageCollector != null){
-				pc.g = g;
+			pc.g = g;
+			if (imageCollector != null){				
 				imageCollector.paint(pc);
 			}
 			switch (showAddons) {
@@ -835,7 +838,6 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		
 		//Calculate the distance between them in meters
 		float d = ProjMath.getDistance(n1, n2);
-		
 		//round this distance up to the nearest 5 or 10
 		int ordMag = (int)(MoreMath.log(d)/MoreMath.log(10.0f));
 		if (d < 2.5*MoreMath.pow(10,ordMag)) {
