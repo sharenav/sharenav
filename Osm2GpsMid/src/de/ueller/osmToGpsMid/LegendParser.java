@@ -1,5 +1,6 @@
 package de.ueller.osmToGpsMid;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
@@ -40,6 +41,7 @@ public class LegendParser extends DefaultHandler{
 	private boolean readingPOIs = false;
 	private byte poiIdx = 0;
 	private byte wayIdx = 0;
+	private boolean nonValidStyleFile;
 	
 	public LegendParser(InputStream i) {
 		System.out.println("Style file parser started...");
@@ -78,17 +80,27 @@ public class LegendParser extends DefaultHandler{
 			SAXParserFactory factory = SAXParserFactory.newInstance();
 			factory.setValidating(true);
 			// Parse the input
-            SAXParser saxParser = factory.newSAXParser();            
-            saxParser.parse(i, this);            
+            SAXParser saxParser = factory.newSAXParser();
+            nonValidStyleFile = false;
+            saxParser.parse(i, this);
+            if (nonValidStyleFile) {
+            	System.out.println("ERROR: your style file is not valid. Please correct the file and try Osm2GpsMid again");
+            	System.exit(1);
+            }
+		} catch (FileNotFoundException fnfe) {
+			System.out.println("ERROR, could not find necessary file: " + fnfe.getMessage());
+			System.out.println("If the missing file is the style-file.dtd and you can't " +
+					"optain the file otherwise, consider as a workaround to remove the line <!DOCTYPE line from the style-file.xml");
+			System.exit(1);
 		} catch (IOException e) {
-			System.out.println("IOException: " + e);
-			e.printStackTrace();
+			System.out.println("ERROR: IOException: " + e);			
+			System.exit(1);
 		} catch (SAXException e) {
-			System.out.println("SAXException: " + e);
-			e.printStackTrace();
+			System.out.println("ERROR: SAXException: " + e);			
+			System.exit(1);
 		} catch (Exception e) {
-			System.out.println("Other Exception: " + e);
-			e.printStackTrace();
+			System.out.println("ERROR: Other Exception: " + e);			
+			System.exit(1);
 		}
 	}
 
@@ -294,6 +306,7 @@ public class LegendParser extends DefaultHandler{
         
      }
      public void error(SAXParseException e) throws SAXException {
-        System.out.println("Error on line " + e.getLineNumber()+ " (remember ordering matters): " + e.getMessage());        
+        System.out.println("Error on line " + e.getLineNumber()+ " (remember ordering matters): " + e.getMessage());
+        nonValidStyleFile = true;
      }
 }
