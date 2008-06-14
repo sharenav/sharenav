@@ -81,6 +81,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	private final Command MAN_WAYP_CMD = new Command("Manage waypoints",Command.ITEM, 7);
 	private final Command ROUTE_TO_CMD = new Command("Route",Command.ITEM, 3);
 	private final Command CAMERA_CMD = new Command("Camera",Command.ITEM, 9);
+	private final Command SETTARGET_CMD = new Command("As Target",Command.ITEM, 10);
 
 
 	private InputStream inputStream;
@@ -200,6 +201,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		//#if polish.api.mmapi && polish.api.advancedmultimedia
 		addCommand(CAMERA_CMD);
 		//#endif
+		addCommand(SETTARGET_CMD);
 		setCommandListener(this);
 		
 		try {
@@ -481,6 +483,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				if (config.isStopAllWhileRouteing()){
   				   stopImageCollector();
 				}
+				System.out.println("Routing source: " + source);
 				routeNodes=new Vector();
 				routeEngine = new Routing(t,this);
 				routeEngine.solve(source, pc.target);
@@ -509,6 +512,11 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 					logger.exception("Your phone does not support the necessary JSRs to use the camera", cnfe);
 				}
 				
+			}
+			if (c == SETTARGET_CMD) {				
+				if (source != null) {
+					setTarget(source);
+				}
 			}
 			//#endif
 			} else {
