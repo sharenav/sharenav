@@ -604,8 +604,11 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				break;
 
 			case STATE_ROUTING_OPT:
-				config.setRouteEstimationFac(gaugeRoutingEsatimationFac.getValue()); 
-				config.setStopAllWhileRouteing(stopAllWhileRouting.isSelected(1));
+				config.setRouteEstimationFac(gaugeRoutingEsatimationFac.getValue());
+				logger.debug("set stopAllWhileRounting " + stopAllWhileRouting.isSelected(1));
+				config.setStopAllWhileRouteing(stopAllWhileRouting.isSelected(0));
+				state = STATE_ROOT;
+				this.show();			
 				break;
 			}		
 		}
