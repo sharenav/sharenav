@@ -439,14 +439,16 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				
 			}
 			if (c == STOP_RECORD_CMD){
-					gpx.saveTrk();
-					removeCommand(STOP_RECORD_CMD);
-					addCommand(START_RECORD_CMD);
-					addCommand(TRANSFER_RECORD_CMD);
+				gpx.saveTrk();
+				removeCommand(STOP_RECORD_CMD);
+				addCommand(START_RECORD_CMD);
+				addCommand(TRANSFER_RECORD_CMD);
 			}
 			if (c == TRANSFER_RECORD_CMD){
-			    if (locationProducer != null) {
-				locationProducer.close();
+			    if (gpx.isRecordingTrk()) {
+			    	gpx.saveTrk();
+					removeCommand(STOP_RECORD_CMD);
+					addCommand(START_RECORD_CMD);			    	
 			    }
 				if (imageCollector != null) { 
                     imageCollector.suspend(); 
