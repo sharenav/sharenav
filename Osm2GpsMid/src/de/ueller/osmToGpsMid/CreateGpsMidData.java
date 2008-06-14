@@ -4,9 +4,11 @@ package de.ueller.osmToGpsMid;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -167,6 +169,20 @@ public class CreateGpsMidData {
 					if (!(new File(path + poi.image).exists())) {
 						System.out.println("Couldn't find image " + poi.image
 								+ " for " + poi.description);
+						System.out.println("Trying local directory");
+						String localName;
+						if (poi.image.startsWith("/")) {
+							localName = poi.image.substring(1);
+						} else
+							localName = poi.image;
+						if (new File(localName).exists()) {
+							System.out.println("Found in local directory, copying it over");
+							FileChannel ic = new FileInputStream(localName).getChannel();
+							FileChannel oc = new FileOutputStream(path + poi.image).getChannel();
+							ic.transferTo(0, ic.size(), oc);
+							ic.close();
+							oc.close(); 
+						}
 					}
 				}
 				if ((flags & LEGEND_FLAG_SEARCH_IMAGE) > 0) {					
