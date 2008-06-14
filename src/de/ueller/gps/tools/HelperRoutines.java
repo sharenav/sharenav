@@ -67,5 +67,36 @@ public class HelperRoutines {
 		}
 	}
 	
+	/**
+	 * Calculate the median value of a float array.
+	 * 
+	 * This is currently done in a stupidly inefficient way
+	 * using bubble sort.
+	 * 
+	 * TODO: Need to implement a proper algorithm
+	 * to find the median
+	 * 
+	 * @param array
+	 * @param size
+	 * @return
+	 */
+	public static float medianElement(float[] array, int size) {
+		float [] tmpArray = new float[size];
+		System.arraycopy(array, 0, tmpArray, 0, size);
+		boolean changed = true;
+		while (changed) {
+			changed = false;
+			for (int i = 0; i < size - 1; i++) {
+				if (tmpArray[i] > tmpArray[i+1]) {
+					changed = true;
+					float tmp = tmpArray[i];
+					tmpArray[i] = tmpArray[i + 1];
+					tmpArray[i+1] = tmp;					
+				}
+			}
+		}
+		return tmpArray[size/2];
+	}
+	
 
 }
