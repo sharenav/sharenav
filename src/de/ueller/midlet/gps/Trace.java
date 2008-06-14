@@ -7,8 +7,11 @@ package de.ueller.midlet.gps;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.Vector;
 
 
@@ -402,6 +405,33 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		try {
 			conn = (StreamConnection) Connector.open(url);
 			inputStream = conn.openInputStream();
+			/**
+			 * There is at least one, perhaps more BT gps receivers, that
+			 * seem to kill the bluetooth connection if we don't send it
+			 * something for some reason. Perhaps due to poor powermanagment?
+			 * We don't have anything to send, so send an arbitrary 0.
+			 */
+			if (getConfig().getBtKeepAlive()) {
+				final OutputStream os = conn.openOutputStream();
+				TimerTask tt = new TimerTask() {
+					public void run() {
+						if (os != null) {
+							try {
+								logger.debug("Writing bogus keep-alive");
+								os.write(0);
+							} catch (IOException e) {
+								logger.info("Closing keep alive timer");
+								this.cancel();
+							}
+						}
+					}
+
+				};
+				logger.info("Setting keep alive timer: " + t);
+				Timer t = new Timer();
+				t.schedule(tt, 1000,1000);				
+			}
+			
 		} catch (SecurityException se) {
 			/**
 			 * The application was not permitted to connect to bluetooth  

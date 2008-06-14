@@ -63,6 +63,7 @@ public class Configuration {
 	private static final int RECORD_ID_LOG_DEBUG_SEVERITY = 17;
 	private static final int RECORD_ID_ROUTE_ESTIMATION_FAC=18;
 	private static final int RECORD_ID_STOP_ALL_WHILE_ROUTING=19;
+	private static final int RECORD_ID_BT_KEEPALIVE=20;
 
 	// Gpx Recording modes
 	// GpsMid determines adaptive if a trackpoint is written
@@ -97,6 +98,7 @@ public class Configuration {
 	private int debugSeverity;
 	private int routeEstimationFac=30;
 	private boolean stopAllWhileRouteing=false;
+	private boolean btKeepAlive = false;
 		
 	private boolean mapFromJar;
 	private String mapFileUrl;
@@ -137,6 +139,7 @@ public class Configuration {
 			debugSeverity=readInt(database, RECORD_ID_LOG_DEBUG_SEVERITY);
 			routeEstimationFac=readInt(database,RECORD_ID_ROUTE_ESTIMATION_FAC);
 			stopAllWhileRouteing=readInt(database,  RECORD_ID_STOP_ALL_WHILE_ROUTING) !=0;
+			btKeepAlive = readInt(database,  RECORD_ID_BT_KEEPALIVE) !=0;
 			database.closeRecordStore();
 		} catch (Exception e) {
 			logger.exception("Problems with reading our configuration: ", e);
@@ -468,6 +471,15 @@ public class Configuration {
 	public void setStopAllWhileRouteing(boolean stopAllWhileRouteing) {
 		write(stopAllWhileRouteing?1:0, RECORD_ID_STOP_ALL_WHILE_ROUTING);
 		this.stopAllWhileRouteing = stopAllWhileRouteing;
+	}
+	
+	public boolean getBtKeepAlive() {
+		return btKeepAlive;
+	}
+	
+	public void setBtKeepAlive(boolean keepAlive) {
+		write(keepAlive?0:1, RECORD_ID_BT_KEEPALIVE);
+		this.btKeepAlive = keepAlive;
 	}
 
 }

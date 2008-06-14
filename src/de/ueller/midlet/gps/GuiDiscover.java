@@ -134,7 +134,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private ChoiceGroup debugLog;
 	private ChoiceGroup debugSeverity;
 	private StringItem  gpxUrl;
-	private StringItem  gpsUrl; 
+	private StringItem  gpsUrl;
+	private ChoiceGroup btKeepAlive;
 	  
 	private String gpsUrlStr;
 	
@@ -178,12 +179,17 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
         selraw[0] = GpsMid.getInstance().getConfig().getGpsRawLoggerEnable(); 
 
 		rawLog = new ChoiceGroup("Raw gps logging to:", ChoiceGroup.MULTIPLE);
+		
+		String [] btka = new String[1];
+		btka[0] = "Send keep alives"; 
+		btKeepAlive = new ChoiceGroup("BT keep alive",ChoiceGroup.MULTIPLE, btka, null);		
 
 		menuSelectLocProv.append(gpsUrl);
+		menuSelectLocProv.append(btKeepAlive);
 		menuSelectLocProv.append(locProv);
 		menuSelectLocProv.append(rawLog);
-		menuSelectLocProv.setCommandListener(this);
 		
+		menuSelectLocProv.setCommandListener(this);
 		//Prepare Map Source selection menu
 		menuSelectMapSource.addCommand(BACK_CMD);
 		menuSelectMapSource.addCommand(OK_CMD);
@@ -408,7 +414,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 					selraw[0] = config.getGpsRawLoggerEnable();
 					rawLog.deleteAll();
 					rawLog.append(logUrl, null);
-					rawLog.setSelectedFlags(selraw);					
+					rawLog.setSelectedFlags(selraw);
+					selraw[0] = config.getBtKeepAlive();
+					btKeepAlive.setSelectedFlags(selraw);					
 					Display.getDisplay(parent).setCurrentItem(gpsUrl);
 					//Display.getDisplay(parent).setCurrent(menuSelectLocProv);
 					state = STATE_LP;
@@ -538,7 +546,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				} else {
 					config.setGpsRawLoggerUrl(null); 
 					config.setGpsRawLoggerEnable(false);					
-				}				
+				}
+				btKeepAlive.getSelectedFlags(selraw);
+				config.setBtKeepAlive(selraw[0]);
 				state = STATE_ROOT;
 				show();
 				break;
