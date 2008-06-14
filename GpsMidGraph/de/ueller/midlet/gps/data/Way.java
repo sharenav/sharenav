@@ -454,6 +454,8 @@ public class Way extends Entity{
 				name=name + " (" + wayDesc.description + ")";
 			}
 		}
+		if (name == null)
+			return;
 		IntPoint lineP2 = pc.lineP2;
 		Projection p = pc.getP();
 		int x;
@@ -482,40 +484,39 @@ public class Way extends Entity{
 		}
 	
 		// System.out.println("name:" + name + " ClipX:" + clipX + " ClipMaxX:" + clipMaxX + " ClipY:" + clipY + " ClipMaxY:" + clipMaxY + " minx:" + minX + " maxX:"+maxX + " miny:"+minY+ " maxY" + maxY);
-		if (name!=null) {
-			Font originalFont = pc.g.getFont();
-			if (areaFont==null) {
-				areaFont=Font.getFont(Font.FACE_SYSTEM, Font.STYLE_PLAIN, Font.SIZE_SMALL);
-				areaFontHeight=areaFont.getHeight();
-			}
-			// find out how many chars of the name fit into the area
-			int i=name.length()+1;
-			int w;
-			do {
-				i--;
-				w=areaFont.substringWidth(name,0,i);
-			} while (w>(maxX-minX) && i>1);
-			// is area wide enough to draw at least a dot into it?
-			if ((maxX-minX)>=3 ) {
-				pc.g.setColor(0,0,0);
-				// if at least two chars have fit or name is a fitting single char, draw name
-				if (i>1 || (i==name.length() && w<=(maxX-minX))  ) {
-					pc.g.setFont(areaFont);
-					// center vertically in area
-					int y1=(minY+maxY-areaFontHeight)/2;
-					// draw centered into area
-					pc.g.drawSubstring(name, 0, i, (minX+maxX-w)/2, y1, Graphics.TOP | Graphics.LEFT);
-					// if name fits not completely, append "..."
-					if (i!=name.length()) {
-						pc.g.drawString("...", (minX+maxX+w)/2, y1, Graphics.TOP | Graphics.LEFT);
-					}
-					pc.g.setFont(originalFont);
-				// else draw a dot to indicate there's a name for this area available
-				} else {
-					pc.g.drawRect((minX+maxX)/2, (minY+maxY)/2, 0, 0 );
-				}
-			}
+
+		Font originalFont = pc.g.getFont();
+		if (areaFont==null) {
+			areaFont=Font.getFont(Font.FACE_SYSTEM, Font.STYLE_PLAIN, Font.SIZE_SMALL);
+			areaFontHeight=areaFont.getHeight();
 		}
+		// find out how many chars of the name fit into the area
+		int i=name.length()+1;
+		int w;
+		do {
+			i--;
+			w=areaFont.substringWidth(name,0,i);
+		} while (w>(maxX-minX) && i>1);
+		// is area wide enough to draw at least a dot into it?
+		if ((maxX-minX)>=3 ) {
+			pc.g.setColor(0,0,0);
+			// if at least two chars have fit or name is a fitting single char, draw name
+			if (i>1 || (i==name.length() && w<=(maxX-minX))  ) {
+				pc.g.setFont(areaFont);
+				// center vertically in area
+				int y1=(minY+maxY-areaFontHeight)/2;
+				// draw centered into area
+				pc.g.drawSubstring(name, 0, i, (minX+maxX-w)/2, y1, Graphics.TOP | Graphics.LEFT);
+				// if name fits not completely, append "..."
+				if (i!=name.length()) {
+					pc.g.drawString("...", (minX+maxX+w)/2, y1, Graphics.TOP | Graphics.LEFT);
+				}
+				pc.g.setFont(originalFont);
+				// else draw a dot to indicate there's a name for this area available
+			} else {
+				pc.g.drawRect((minX+maxX)/2, (minY+maxY)/2, 0, 0 );
+			}
+		}		
 	}
 	
 	
