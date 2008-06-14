@@ -466,7 +466,7 @@ public class Configuration {
 	}
 
 	public void setStopAllWhileRouteing(boolean stopAllWhileRouteing) {
-		write(stopAllWhileRouteing?0:1, RECORD_ID_STOP_ALL_WHILE_ROUTING);
+		write(stopAllWhileRouteing?1:0, RECORD_ID_STOP_ALL_WHILE_ROUTING);
 		this.stopAllWhileRouteing = stopAllWhileRouteing;
 	}
 
