@@ -64,6 +64,8 @@ public class CreateGpsMidData {
 	private final String	path;
 	TreeSet<MapName> names;
 	Names names1;
+	StringBuffer sbCopiedImages= new StringBuffer();
+	short imageInclusionErrors=0;
 	
 	private final static int INODE=1;
 	private final static int SEGNODE=2;
@@ -137,6 +139,7 @@ public class CreateGpsMidData {
 	
 	private void exportLegend(String path) {
 		FileOutputStream foi;
+		String outputImage;
 		try {
 			foi = new FileOutputStream(path + "/legend.dat");
 			DataOutputStream dsi = new DataOutputStream(foi);
@@ -165,38 +168,28 @@ public class CreateGpsMidData {
 				dsi.writeBoolean(poi.imageCenteredOnNode);
 				dsi.writeInt(poi.minImageScale);
 				if ((flags & LEGEND_FLAG_IMAGE) > 0) {
-					dsi.writeUTF(poi.image);
-					if (!(new File(path + poi.image).exists())) {
-						System.out.println("Couldn't find image " + poi.image
-								+ " for " + poi.description);
-						System.out.println("Trying local directory");
-						String localName;
-						if (poi.image.startsWith("/")) {
-							localName = poi.image.substring(1);
-						} else
-							localName = poi.image;
-						if (new File(localName).exists()) {
-							System.out.println("Found in local directory, copying it over");
-							FileChannel ic = new FileInputStream(localName).getChannel();
-							FileChannel oc = new FileOutputStream(path + poi.image).getChannel();
-							ic.transferTo(0, ic.size(), oc);
-							ic.close();
-							oc.close(); 
-						}
-					}
+					outputImage=copyImageToMid(poi.image, path);
+					dsi.writeUTF(outputImage);
 				}
 				if ((flags & LEGEND_FLAG_SEARCH_IMAGE) > 0) {					
-					dsi.writeUTF(poi.searchIcon);
-					if (!(new File(path + poi.searchIcon).exists())) {
-						System.out.println("Couldn't find search icon " + poi.searchIcon
-								+ " for " + poi.description);
-					}
+					outputImage=copyImageToMid(poi.searchIcon, path);
+					dsi.writeUTF(outputImage);
 				}
 				if ((flags & LEGEND_FLAG_MIN_IMAGE_SCALE) > 0)
 					dsi.writeInt(poi.minTextScale);
 				if ((flags & LEGEND_FLAG_TEXT_COLOR) > 0)
 					dsi.writeInt(poi.textColor);
 				
+			}
+			// show summary for copied images
+			if (sbCopiedImages.length()!=0) {
+				System.out.println("External images inclusion summary:");
+				System.out.println(sbCopiedImages.toString());
+				if (imageInclusionErrors!=0) {					
+					System.out.println("");
+					System.out.println("Warning: " + imageInclusionErrors + " images could NOT be included - see details above");
+					System.out.println("");
+				}
 			}
 			/**
 			 * Writing Way legend data 
@@ -227,7 +220,83 @@ public class CreateGpsMidData {
 
 	} 
 
+	/* Copies the given file in imagePath to destDir
+	 * - if you specify a filename only it will look for the file in this order 1. current directory 2. png subdirectory 3.internal file
+	 * - for file names only preceded by a single "/" Osm2GpsMid will always assume you want to explicitely use the internal image
+	 * - directory path information as part of source image path is allowed, however image file will ALWAYS be copied to destDir root
+	 * - remembers copied files in sbCopiedImages (adds i.e. "(REPLACED)" for replaced files)
+	 */
+	private String copyImageToMid(String imagePath, String destDir) {
+		// output filename is just the name part of the imagePath filename preceded by "/"  
+		int iPos=imagePath.lastIndexOf("/");
+		String outputImageName;
+		// if no "/" is contained look for file in current directory and /png
+		if(iPos==-1) {
+			outputImageName="/" + imagePath;
+			// check if file exists in current directory
+			if (! (new File(imagePath).exists())) {
+				// check if file exists in current directory + "/png"
+				if (! (new File("png/"+imagePath).exists())) {
+					// if not check if we can use the internal image file
+					if (!(new File(path + outputImageName).exists())) {	
+						// append image name if first image or " ,"+image name for the following ones
+						sbCopiedImages.append( (sbCopiedImages.length()==0)?"":", " + imagePath);				
+						sbCopiedImages.append("(ERROR: image not found)");
+						imageInclusionErrors++;
+					}
+					return outputImageName;
+				}
+				else {
+					// otherwise use from png directory
+					imagePath="png/"+imagePath;
+				}
+			}
+		// if the first and only "/" is at the beginning its the explicit syntax for internal images
+		} else if(iPos==0) {
+			if (!(new File(path + imagePath).exists())) {	
+				// append image name if first image or " ,"+image name for the following ones
+				sbCopiedImages.append( (sbCopiedImages.length()==0)?"":", " + imagePath);				
+				sbCopiedImages.append("(ERROR: INTERNAL image not found)");
+				imageInclusionErrors++;
+			}
+			return imagePath;
+		// else it's an external file with explicit path
+		} else {
+			outputImageName=imagePath.substring(iPos);
+		}
+		
+		// append image name if first image or " ,"+image name for rhe following ones
+		sbCopiedImages.append( (sbCopiedImages.length()==0)?"":", " + imagePath);					
 
+		try {
+			//System.out.println("Copying " + imagePath + " as " + outputImageName + " into the midlet");
+			FileChannel fromChannel = new FileInputStream(imagePath).getChannel();
+			// Copy image
+			try {
+				// check if output file already exists
+				boolean alreadyExists= (new File(destDir + outputImageName).exists());
+				FileChannel toChannel = new FileOutputStream(destDir + outputImageName).getChannel();
+				fromChannel.transferTo(0, fromChannel.size(), toChannel);
+				toChannel.close();
+				if(alreadyExists) {
+					sbCopiedImages.append("(REPLACED " + outputImageName + ")");
+				}
+			}
+			catch(Exception e) {
+				sbCopiedImages.append("(ERROR accessing destination file " + destDir + outputImageName + ")");
+				imageInclusionErrors++;
+				e.printStackTrace();
+			}
+			fromChannel.close();
+		}
+		catch(Exception e) {
+			System.out.println("Error accessing source file: " + imagePath);
+			sbCopiedImages.append("(ERROR accessing source file " + imagePath + ")");
+			imageInclusionErrors++;
+			e.printStackTrace();
+		}
+		return outputImageName;
+	}
 
 	
 	private void exportMapToMid(int zl){
