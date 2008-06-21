@@ -3,6 +3,7 @@ package de.ueller.midlet.gps;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
+import de.ueller.gps.data.Configuration;
 import de.ueller.gpsMid.mapData.QueueDataReader;
 import de.ueller.gpsMid.mapData.QueueReader;
 import de.ueller.gpsMid.mapData.Tile;
@@ -13,6 +14,8 @@ import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.tile.C;
 import de.ueller.midlet.gps.tile.Images;
 import de.ueller.midlet.gps.tile.PaintContext;
+
+
 /*
  * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net
  * 			Copyright (c) 2008 Kai Krueger apm at users dot sourceforge dot net 
@@ -256,12 +259,13 @@ public class ImageCollector implements Runnable {
 			}
 			tr.source=pc[nextPaint].currentPos;
 		}
-		if (Trace.showLatLon == 1 || name!=null) {
+		boolean showLatLon=tr.getConfig().getCfgBitState(Configuration.CFGBIT_SHOWLATLON);
+		if ( showLatLon || name!=null) {
 			screenPc.g.setColor(255,255,255);
 			screenPc.g.fillRect(0,screenPc.ySize-15, screenPc.xSize, 15);
 			screenPc.g.setColor(0,0,0);
 		}
-		if (Trace.showLatLon == 1) {
+		if (showLatLon) {
 			screenPc.g.drawString("lat: " + Float.toString(pc[nextPaint].center.radlat*MoreMath.FAC_RADTODEC),5,screenPc.ySize, Graphics.LEFT | Graphics.BOTTOM);
 			screenPc.g.drawString("lon: " + Float.toString(pc[nextPaint].center.radlon*MoreMath.FAC_RADTODEC),screenPc.xSize/2 + 5,screenPc.ySize, Graphics.LEFT | Graphics.BOTTOM);
 		} else {

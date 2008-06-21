@@ -40,6 +40,11 @@ public class Way extends Entity{
 	
 	public static final byte WAY_ONEWAY=1;
 	public static final byte WAY_AREA=2;
+
+	public static final byte PAINTMODE_COUNTFITTINGCHARS = 0;
+	public static final byte PAINTMODE_DRAWCHARS = 1;
+	public static final byte INDENT_PATHNAME = 2;
+
 	
 	public byte maxspeed;
 	//This is not currently used, so save the 4 bytes of memory per way
@@ -68,6 +73,8 @@ public class Way extends Entity{
 	private static int [] y = new int[100];
 	private static Font areaFont;
 	private static int areaFontHeight;
+	private static Font pathFont;
+	private static int pathFontHeight;
 
 	static final IntPoint l1b = new IntPoint();
 	static final IntPoint l1e = new IntPoint();
@@ -185,7 +192,7 @@ public class Way extends Entity{
 		 * Calculate the width of the path to be drawn. A width of 1 corresponds to
 		 * it being draw as a thin line rather than as a street 
 		 */
-		if ((pc.config.getRender() == Configuration.RENDER_STREET) && (wayDesc.wayWidth > 1)){
+		if ( pc.config.getCfgBitState(Configuration.CFGBIT_STREETRENDERMODE) && wayDesc.wayWidth>1 ){
 			w = (int)(pc.ppm*wayDesc.wayWidth/2 + 0.5);
 		}
 		
@@ -281,6 +288,12 @@ public class Way extends Entity{
 		if (pc.scale > wayDesc.maxTextScale * pc.config.getDetailBoostMultiplier() ) {			
 			return;
 		}	
+
+		if ( !Trace.getInstance().getConfig().getCfgBitState(Configuration.CFGBIT_WAYTEXTS)) {
+			return;
+		}
+
+		
 		//remember previous font
 		Font originalFont = pc.g.getFont();
 		if (pathFont==null) {
@@ -295,7 +308,7 @@ public class Way extends Entity{
 		}
 		
 		String name=null;
-		if (Trace.getInstance().showLatLon ==1 ) {
+		if ( Trace.getInstance().getConfig().getCfgBitState(Configuration.CFGBIT_SHOWWAYPOITYPE)) {
 			name=wayDesc.description;
 		} else {			
 			if (nameIdx != -1) {
@@ -357,7 +370,7 @@ public class Way extends Entity{
 			    	slope_x = ((double)lineP2.x-(double)lineP1.x)/distance;
 					slope_y = ((double)lineP2.y-(double)lineP1.y)/distance;
 				} else {
-					//System.out.println("ZERO distance in path segment " + i1 + "/" + path.length + " of " + name);
+					//logger.debug("ZERO distance in path segment " + i1 + "/" + path.length + " of " + name);
 					break;
 				}
 				// new char position is first line point position
@@ -639,9 +652,18 @@ public class Way extends Entity{
 		if (pc.scale > wayDesc.maxTextScale * pc.config.getDetailBoostMultiplier() ) {			
 			return;
 		}		
+		
+		if ( !Trace.getInstance().getConfig().getCfgBitState(Configuration.CFGBIT_AREATEXTS)) {
+			return;
+		}
+
 		String name=null;
-		if (nameIdx != -1) {
-			name=Trace.getInstance().getName(nameIdx);
+		if ( Trace.getInstance().getConfig().getCfgBitState(Configuration.CFGBIT_SHOWWAYPOITYPE)) {
+			name=wayDesc.description;
+		} else {			
+			if (nameIdx != -1) {
+				name=Trace.getInstance().getName(nameIdx);
+			}
 		}
 		// if zoomed in, show description 
 		if (pc.scale<15000) {

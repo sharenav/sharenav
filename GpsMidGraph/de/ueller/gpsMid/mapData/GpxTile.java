@@ -8,8 +8,10 @@ import java.util.Random;
 
 import javax.microedition.lcdui.Graphics;
 
+import de.ueller.gps.data.Configuration;
 import de.ueller.gps.tools.HelperRoutines;
 import de.ueller.midlet.gps.Logger;
+import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.tile.PaintContext;
@@ -191,8 +193,10 @@ public class GpxTile extends Tile {
 				
 				pc.getP().forward(waypt.lat, waypt.lon, pc.lineP2,true);
 				pc.g.drawImage(pc.images.IMG_MARK,pc.lineP2.x,pc.lineP2.y,Graphics.HCENTER|Graphics.VCENTER);
-				pc.g.setColor(0,0,0);
-				pc.g.drawString(waypt.displayName,pc.lineP2.x,pc.lineP2.y,Graphics.HCENTER|Graphics.BOTTOM);
+				if (Trace.getInstance().getConfig().getCfgBitState(Configuration.CFGBIT_WPTTEXTS) ) {
+					pc.g.setColor(0,0,0);
+					pc.g.drawString(waypt.displayName,pc.lineP2.x,pc.lineP2.y,Graphics.HCENTER|Graphics.BOTTOM);					
+				}
 			}
 			
 		}

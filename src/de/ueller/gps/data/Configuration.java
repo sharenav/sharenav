@@ -20,8 +20,6 @@ public class Configuration {
 	private static Logger logger;
 	
 	public final static int VERSION=1;
-	public final static int RENDER_LINE=0;
-	public final static int RENDER_STREET=1;
 
 	public final static int LOCATIONPROVIDER_NONE=0;
 	public final static int LOCATIONPROVIDER_SIRF=1; 
@@ -41,12 +39,33 @@ public class Configuration {
 	// MUST contain maximum number of backlight flags
 	public final static int BACKLIGHT_OPTIONS_COUNT=5;
 	
+	// bit 0: render as street
+	public final static byte CFGBIT_STREETRENDERMODE=0;
+	// bit 1 have default values been once applied?
+	public final static byte CFGBIT_DEFAULTVALUESAPPLIED=1;
+	// bit 2: show POITEXT
+	public final static byte CFGBIT_POITEXTS=2;
+	// bit 3: show WAYTEXT
+	public final static byte CFGBIT_WAYTEXTS=3;
+	// bit 4: show AREATEXT
+	public final static byte CFGBIT_AREATEXTS=4;
+	// bit 5: show POIS
+	public final static byte CFGBIT_POIS=5;
+	// bit 6: show WPTTTEXT
+	public final static byte CFGBIT_WPTTEXTS=6;
+	// bit 7: show descriptions
+	public final static byte CFGBIT_SHOWWAYPOITYPE=7;
+	// bit 8: show latlon
+	public final static byte CFGBIT_SHOWLATLON=8;
+	// bit 9: full screen
+	public final static byte CFGBIT_FULLSCREEN=9;
+
 	/**
 	 * These are the database record ids for each configuration option	 * 
 	 */
 	private static final int  RECORD_ID_BT_URL = 1;
 	private static final int RECORD_ID_LOCATION_PROVIDER  = 2;
-	private static final int RECORD_ID_RENDER_OPT  = 3;
+	private static final int RECORD_ID_CFGBITS  = 3;
 	private static final int RECORD_ID_GPX_URL = 4;
 	private static final int RECORD_ID_MAP_FROM_JAR = 5;
 	private static final int RECORD_ID_MAP_FILE_URL = 6;
@@ -89,8 +108,10 @@ public class Configuration {
 	private int gpxRecordMinMilliseconds;
 	private int gpxRecordMinDistanceCentimeters;
 	private int gpxRecordAlwaysDistanceCentimeters;
-	private int render=RENDER_STREET;
+	private int cfgBits=0;
+	private int cfgBitsDefault=0;
 	private int detailBoost=0;
+	private int detailBoostDefault=0;
 	private float detailBoostMultiplier;
 	private int backlight;
 	private int backlightDefault;
@@ -120,7 +141,19 @@ public class Configuration {
 			}
 			btUrl=readString(database, RECORD_ID_BT_URL);
 			locationProvider=readInt(database, RECORD_ID_LOCATION_PROVIDER);
-			render=readInt(database, RECORD_ID_RENDER_OPT);
+			cfgBits=readInt(database, RECORD_ID_CFGBITS);
+			if( ! getCfgBitState(CFGBIT_DEFAULTVALUESAPPLIED) ) {
+				cfgBits=1<<CFGBIT_DEFAULTVALUESAPPLIED | 
+				   		1<<CFGBIT_STREETRENDERMODE |
+				   		1<<CFGBIT_POITEXTS |
+				   		1<<CFGBIT_AREATEXTS |
+				   		1<<CFGBIT_WPTTEXTS |
+				   		// 1<<CFGBIT_WAYTEXTS | // way texts are still experimental
+				   		1<<CFGBIT_POIS;
+				setCfgBitsDefault(cfgBits);
+				//#debug info
+				logger.info("Initial cfgBits where set.");
+			}
 			gpxUrl=readString(database, RECORD_ID_GPX_URL);
 			mapFromJar=readInt(database, RECORD_ID_MAP_FROM_JAR) == 0;
 			mapFileUrl=readString(database, RECORD_ID_MAP_FILE_URL);
@@ -345,13 +378,34 @@ public class Configuration {
 			write(gpxRecordAlwaysDistanceCentimeters, RECORD_ID_GPX_FILTER_ALWAYS_DIST);
 	}	
 
-	public int getRender() {
-		return render;
+	public int getCfgBits() {
+		return cfgBits;
+	}
+
+	public boolean getCfgBitState(byte bit) {
+		return ((this.cfgBits & (1<<bit)) !=0);
+	}
+
+	public void setCfgBitState(byte bit, boolean state) {
+		// set bit
+		this.cfgBits|=(1<<bit);
+		if (!state) {
+			// clear bit
+			this.cfgBits^=(1<<bit);
+		}
+	}	
+	
+	public void setCfgBits(int cfgBits) {
+		this.cfgBits = cfgBits;
 	}
 	
-	public void setRender(int render) {
-		this.render = render;
-		write(render, RECORD_ID_RENDER_OPT);
+	public int getCfgBitsDefault() {
+		return cfgBitsDefault;
+	}
+	
+	public void setCfgBitsDefault(int cfgBits) {
+		this.cfgBitsDefault = cfgBits;
+		write(cfgBits, RECORD_ID_CFGBITS);
 	}
 	
 	public int getBacklight() {
@@ -375,12 +429,20 @@ public class Configuration {
 		return this.detailBoost;
 	}
 
+	public void setDetailBoost(int detailBoost) {
+		this.detailBoost = detailBoost;
+	}
+	
 	public float getDetailBoostMultiplier() {
 		return this.detailBoostMultiplier;
 	}
 
-	public void setDetailBoost(int detailBoost) {
-		this.detailBoost = detailBoost;
+	public int getDetailBoostDefault() {
+		return this.detailBoostDefault;
+	}
+
+	public void setDetailBoostDefault(int detailBoost) {
+		this.detailBoostDefault = detailBoost;
 		write(detailBoost, RECORD_ID_DETAIL_BOOST);
 		calculateDetailBoostMultiplier();
 	}

@@ -44,6 +44,7 @@ import de.ueller.gpsMid.mapData.QueueDataReader;
 import de.ueller.gpsMid.mapData.QueueDictReader;
 import de.ueller.gpsMid.mapData.QueueReader;
 import de.ueller.gpsMid.mapData.Tile;
+import de.ueller.midlet.gps.data.MapName;
 import de.ueller.midlet.gps.data.ProjMath;
 import de.ueller.midlet.gps.data.Gpx;
 import de.ueller.midlet.gps.data.IntPoint;
@@ -58,6 +59,7 @@ import de.ueller.midlet.gps.routing.RouteHelper;
 import de.ueller.midlet.gps.routing.RouteNode;
 import de.ueller.midlet.gps.routing.Routing;
 import de.ueller.midlet.gps.tile.C;
+import de.ueller.midlet.gps.GuiMapFeatures;
 import de.ueller.midlet.gps.tile.Images;
 import de.ueller.midlet.gps.tile.PaintContext;
 import de.ueller.midlet.gps.GpsMidDisplayable;
@@ -85,6 +87,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	private final Command ROUTE_TO_CMD = new Command("Route",Command.ITEM, 3);
 	private final Command CAMERA_CMD = new Command("Camera",Command.ITEM, 9);
 	private final Command SETTARGET_CMD = new Command("As Target",Command.ITEM, 10);
+	private final Command MAPFEATURES_CMD = new Command("Map Features",Command.ITEM, 11);
 
 
 	private InputStream inputStream;
@@ -116,9 +119,6 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 	public float scale = 15000f;
 	
-	private boolean fullSreen;
-
-	public static int showLatLon = 0;
 	int showAddons = 0;
 	private int fontHeight = 0;
 	
@@ -191,7 +191,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		//#debug
 		System.out.println("init Trace");
 		this.config = config;
-
+		
 		this.parent = parent;
 		addCommand(EXIT_CMD);
 		addCommand(SEARCH_CMD);
@@ -205,6 +205,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		addCommand(CAMERA_CMD);
 		//#endif
 		addCommand(SETTARGET_CMD);
+		addCommand(MAPFEATURES_CMD);
 		setCommandListener(this);
 		
 		try {
@@ -526,6 +527,11 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			if (c == MAN_WAYP_CMD) {				
 				GuiWaypoint gwp = new GuiWaypoint(this);
 				gwp.show();
+			}
+			if (c == MAPFEATURES_CMD) {				
+				GuiMapFeatures gmf = new GuiMapFeatures(this);
+				gmf.show();
+				repaint(0, 0, getWidth(), getHeight());
 			}
 			//#if polish.api.mmapi && polish.api.advancedmultimedia
 			if (c == CAMERA_CMD){				
@@ -1203,9 +1209,8 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		if (keyCode == KEY_NUM5) {
 			gpsRecenter = true;
 		} else if (keyCode == KEY_STAR) {
-			showLatLon++;
-			if(showLatLon == 2) showLatLon=0; 
-			;
+			commandAction(MAPFEATURES_CMD,(Displayable) null);
+			return;
 		} else if (keyCode == KEY_POUND) {
 			int backlight=config.getBacklight();
 			// toggle Backlight
@@ -1219,8 +1224,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			parent.stopBackLightTimer();
 			parent.startBackLightTimer();
 		} else if (keyCode == KEY_NUM0) {
-			fullSreen = !fullSreen;
-			setFullScreenMode(fullSreen);			
+			boolean fullScreen = !config.getCfgBitState(config.CFGBIT_FULLSCREEN);
+			config.setCfgBitState(config.CFGBIT_FULLSCREEN, fullScreen);
+			setFullScreenMode(fullScreen);			
 		}
 		repaint(0, 0, getWidth(), getHeight());	
 	}
@@ -1380,6 +1386,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	public void show() {
 		//Display.getDisplay(parent).setCurrent(this);
 		GpsMid.getInstance().show(this);
+		setFullScreenMode(config.getCfgBitState(config.CFGBIT_FULLSCREEN));
 		if (imageCollector != null) {
 			imageCollector.resume();
 			imageCollector.newDataReady();			

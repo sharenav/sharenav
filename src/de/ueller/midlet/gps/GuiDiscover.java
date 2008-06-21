@@ -26,7 +26,7 @@ import javax.microedition.lcdui.TextField;
 
 import de.ueller.gps.data.Configuration;
 import de.ueller.midlet.gps.data.Gpx;
-import de.ueller.midlet.gps.options.OptionsRender;
+
 
 public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMidDisplayable, SelectionListener {
 
@@ -448,8 +448,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 					state = STATE_RECORDING_OPTIONS;
 					break;
 				case MENU_ITEM_DISP_OPT: // Display Options
-					renderOpts.setSelectedIndex(config.getRender(), true);
-					gaugeDetailBoost.setValue(config.getDetailBoost());
+					renderOpts.setSelectedIndex( config.getCfgBitState(config.CFGBIT_STREETRENDERMODE)?1:0, true);
+					gaugeDetailBoost.setValue(config.getDetailBoostDefault());
 					// convert bits from backlight flag into selection states
 					boolean[] sellight = new boolean[ Configuration.BACKLIGHT_OPTIONS_COUNT ];
 	                int backlight=config.getBacklight();	                
@@ -568,8 +568,15 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				logger.fatal("Need to restart GpsMid, otherwise map is in an inconsistant state");
 				break;			
 			case STATE_DISPOPT:
-				config.setRender(renderOpts.getSelectedIndex()); 
+				int cfgFlags=config.getCfgBitsDefault();
+				cfgFlags|= 1<<config.CFGBIT_STREETRENDERMODE;
+				if( !(renderOpts.getSelectedIndex()==1) ) {
+					cfgFlags^=1<<config.CFGBIT_STREETRENDERMODE;
+				}
+				config.setCfgBits(cfgFlags); 
+				config.setCfgBitsDefault(cfgFlags); 
 				config.setDetailBoost(gaugeDetailBoost.getValue()); 
+				config.setDetailBoostDefault(config.getDetailBoost()); 
 
 				// convert boolean array with selection states for backlight
 				// to one flag with corresponding bits set

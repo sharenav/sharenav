@@ -12,6 +12,7 @@ import java.util.Vector;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
+import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.SearchResult;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
@@ -372,13 +373,17 @@ public class SingleTile extends Tile implements QueueableTile {
 		if (pc.scale > C.getNodeMaxScale(t)) {
 			return;
 		}
+
+		if ( !Trace.getInstance().getConfig().getCfgBitState(Configuration.CFGBIT_POIS) ) {
+			return;
+		}
 		pc.g.setColor(C.getNodeTextColor(t));
 		img = C.getNodeImage(t);
 		// logger.debug("calc pos "+pc);
 		
 		pc.getP().forward(nodeLat[i], nodeLon[i], pc.swapLineP, true, this);
 		
-		if (img != null) {
+		if (img != null ) {
 			// logger.debug("draw img " + img);
 			if (nameIdx[i] == -1 || C.isNodeImageCentered(t) || pc.scale > C.getNodeMaxTextScale(t)) {
 				pc.g.drawImage(img, pc.swapLineP.x, pc.swapLineP.y,
@@ -391,8 +396,19 @@ public class SingleTile extends Tile implements QueueableTile {
 		if (pc.scale > C.getNodeMaxTextScale(t)) {
 			return;
 		}
+		if ( !Trace.getInstance().getConfig().getCfgBitState(Configuration.CFGBIT_POITEXTS) ) {
+			return;
+		}
+
+		
 		// logger.debug("draw txt " + );
-		String name = pc.trace.getName(nameIdx[i]);
+		String name;
+		if (Trace.getInstance().getConfig().getCfgBitState(Configuration.CFGBIT_SHOWWAYPOITYPE)) {
+			name = pc.c.getNodeTypeDesc(t);
+		}
+		else {
+			name = pc.trace.getName(nameIdx[i]);
+		}
 		if (name != null) {			
 			if (img == null) {
 				pc.g.drawString(name, pc.swapLineP.x, pc.swapLineP.y,
