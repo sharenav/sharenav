@@ -411,8 +411,8 @@ public class Configuration {
 			if (!state) {
 				// clear bit
 				this.cfgBitsDefault^=(1<<bit);
-				write(cfgBitsDefault, RECORD_ID_CFGBITS);
 			}			
+			write(cfgBitsDefault, RECORD_ID_CFGBITS);
 		}	
 	}	
 	
