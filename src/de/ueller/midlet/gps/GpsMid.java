@@ -342,17 +342,13 @@ private Trace trace=null;
 	}
 	
 	public void startBackLightTimer() {		
-		int backlight=config.getBacklight();
-		if ((backlight & (1<<Configuration.BACKLIGHT_ON) )!=0 ) {
+		if (config.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON) ) {
 			// Warn the user if none of the methods
 			// to keep backlight on was selected
-			if( (backlight & 
-					(
-					 (1<<Configuration.BACKLIGHT_MIDP2)
-					+(1<<Configuration.BACKLIGHT_NOKIA)
-					+(1<<Configuration.BACKLIGHT_NOKIAFLASH)
-					)
-				 ) == 0
+			if( ! (config.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_MIDP2) || 
+				   config.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIA) ||
+				   config.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIAFLASH)
+				  )
 			) {				
 				l.error("Backlight cannot be kept on when no 'with'-method is specified in Setup");
 			}
@@ -363,24 +359,23 @@ private Trace trace=null;
 						try {
 							boolean notInterupted = true;
 							while(notInterupted) {							
-								int backlight=config.getBacklight();
 								// only when map is displayed or
 								// option "only when map is displayed" is off 
 								if ( (Trace.getInstance()!=null && Trace.getInstance().isShown())
-								|| (backlight & (1<<Configuration.BACKLIGHT_MAPONLY)) ==0
+									|| !config.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_MAPONLY)
 								) {
 									//Method to keep the backlight on
 									//some MIDP2 phones
-									if ((backlight & (1<<Configuration.BACKLIGHT_MIDP2) ) !=0) {
+									if (config.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_MIDP2) ) {
 										Display.getDisplay(GpsMid.getInstance()).flashBacklight(6000);						
 									//#if polish.api.nokia-ui
 									//Method to keep the backlight on
 									//on SE K750i and some other models
-									} else if ((backlight & (1<<Configuration.BACKLIGHT_NOKIAFLASH) ) !=0) {  
+									} else if (config.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIAFLASH) ) {  
 										DeviceControl.flashLights(1);								
 									//Method to keep the backlight on
 									//on those phones that support the nokia-ui 
-									} else if ((backlight & (1<<Configuration.BACKLIGHT_NOKIA) ) !=0) {
+									} else if (config.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIA) ) {  
 										DeviceControl.setLights(0, 100);
 									//#endif		
 									}

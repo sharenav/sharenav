@@ -223,12 +223,12 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		//#else
 			backlights = new String[3];
 		//#endif
-		backlights[Configuration.BACKLIGHT_ON] = "Keep Backlight On";
-		backlights[Configuration.BACKLIGHT_MAPONLY] = "only in map screen";
-		backlights[Configuration.BACKLIGHT_MIDP2] = "with MIDP2.0";
+		backlights[0] = "Keep Backlight On";
+		backlights[1] = "only in map screen";
+		backlights[2] = "with MIDP2.0";
 		//#if polish.api.nokia-ui
-		backlights[Configuration.BACKLIGHT_NOKIA] = "with Nokia API";
-		backlights[Configuration.BACKLIGHT_NOKIAFLASH] = "with Nokia Flashlight";
+		backlights[3] = "with Nokia API";
+		backlights[4] = "with Nokia Flashlight";
 		//#endif
 		backlightOpts = new ChoiceGroup("Backlight Options:", Choice.MULTIPLE, backlights ,null);
 		menuDisplayOptions.append(backlightOpts);
@@ -451,13 +451,12 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 					renderOpts.setSelectedIndex( config.getCfgBitState(config.CFGBIT_STREETRENDERMODE)?1:0, true);
 					gaugeDetailBoost.setValue(config.getDetailBoostDefault());
 					// convert bits from backlight flag into selection states
-					boolean[] sellight = new boolean[ Configuration.BACKLIGHT_OPTIONS_COUNT ];
-	                int backlight=config.getBacklight();	                
-	                for (int i=0;i<Configuration.BACKLIGHT_OPTIONS_COUNT;i++) {
-	                	if ((backlight & (1<<i)) !=0) {
-	                		sellight[i]=true;
-	                	}
-	                }
+					boolean[] sellight = new boolean[5];
+					sellight[0]=config.getCfgBitState(config.CFGBIT_BACKLIGHT_ON, true);
+					sellight[1]=config.getCfgBitState(config.CFGBIT_BACKLIGHT_MAPONLY, true);
+					sellight[2]=config.getCfgBitState(config.CFGBIT_BACKLIGHT_MIDP2, true);
+					sellight[3]=config.getCfgBitState(config.CFGBIT_BACKLIGHT_NOKIA, true);
+					sellight[4]=config.getCfgBitState(config.CFGBIT_BACKLIGHT_NOKIAFLASH, true);
 					backlightOpts.setSelectedFlags(sellight);
 					
 					GpsMid.getInstance().show(menuDisplayOptions);
@@ -568,36 +567,21 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				logger.fatal("Need to restart GpsMid, otherwise map is in an inconsistant state");
 				break;			
 			case STATE_DISPOPT:
-				int cfgFlags=config.getCfgBitsDefault();
-				cfgFlags|= 1<<config.CFGBIT_STREETRENDERMODE;
-				if( !(renderOpts.getSelectedIndex()==1) ) {
-					cfgFlags^=1<<config.CFGBIT_STREETRENDERMODE;
-				}
-				config.setCfgBits(cfgFlags); 
-				config.setCfgBitsDefault(cfgFlags); 
-				config.setDetailBoost(gaugeDetailBoost.getValue()); 
-				config.setDetailBoostDefault(config.getDetailBoost()); 
-
+				config.setCfgBitState(config.CFGBIT_STREETRENDERMODE,
+						(renderOpts.getSelectedIndex()==1),
+						true); 
+				config.setDetailBoost(gaugeDetailBoost.getValue(), true); 
+				
 				// convert boolean array with selection states for backlight
 				// to one flag with corresponding bits set
-				boolean[] sellight = new boolean[ Configuration.BACKLIGHT_OPTIONS_COUNT ];
-                backlightOpts.getSelectedFlags( sellight );
-                int backlight=0;
-                for (int i=0;i<Configuration.BACKLIGHT_OPTIONS_COUNT;i++) {
-                	if (sellight[i]) {
-                		backlight|=1<<i;
-                	}
-                }
-
-				logger.info("Backlight Options:" + backlight);
-
-                // value saved into recordstore as startup default
-                config.setBacklightDefault(backlight);
-
-				// value used by Backlight timer -
-				// this value is toggleable using key on map screen
-				config.setBacklight(backlight);
-								
+				boolean[] sellight = new boolean[5];
+				backlightOpts.getSelectedFlags( sellight );
+	            // save selected values to record store
+				config.setCfgBitState(config.CFGBIT_BACKLIGHT_ON, sellight[0], true);
+				config.setCfgBitState(config.CFGBIT_BACKLIGHT_MAPONLY, sellight[1], true);
+				config.setCfgBitState(config.CFGBIT_BACKLIGHT_MIDP2, sellight[2], true);
+				config.setCfgBitState(config.CFGBIT_BACKLIGHT_NOKIA , sellight[3], true);
+				config.setCfgBitState(config.CFGBIT_BACKLIGHT_NOKIAFLASH , sellight[4], true);
 				state = STATE_ROOT;
 				show();
 

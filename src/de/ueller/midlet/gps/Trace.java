@@ -1212,10 +1212,11 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			commandAction(MAPFEATURES_CMD,(Displayable) null);
 			return;
 		} else if (keyCode == KEY_POUND) {
-			int backlight=config.getBacklight();
 			// toggle Backlight
-			config.setBacklight(backlight^(1<<config.BACKLIGHT_ON));			
-			if ( (config.getBacklight() & (1<<config.BACKLIGHT_ON) )!=0 ) {
+			config.setCfgBitState(config.CFGBIT_BACKLIGHT_ON,
+								!(config.getCfgBitState(config.CFGBIT_BACKLIGHT_ON)),
+								false);			
+			if ( config.getCfgBitState(config.CFGBIT_BACKLIGHT_ON, false) ) {
 				GpsMid.getInstance().alert("Backlight", "Backlight ON" , 750);
 				
 			} else {
@@ -1225,7 +1226,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			parent.startBackLightTimer();
 		} else if (keyCode == KEY_NUM0) {
 			boolean fullScreen = !config.getCfgBitState(config.CFGBIT_FULLSCREEN);
-			config.setCfgBitState(config.CFGBIT_FULLSCREEN, fullScreen);
+			config.setCfgBitState(config.CFGBIT_FULLSCREEN, fullScreen, false);
 			setFullScreenMode(fullScreen);			
 		}
 		repaint(0, 0, getWidth(), getHeight());	

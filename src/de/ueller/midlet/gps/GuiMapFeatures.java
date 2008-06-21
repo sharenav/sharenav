@@ -91,29 +91,28 @@ public class GuiMapFeatures extends Form implements CommandListener {
 		}
 
 		if (c == CMD_APPLY || c == CMD_SAVE) {			
+			// determine if changes should be written to recordstore
+			boolean setAsDefault=(c==CMD_SAVE);
+			
 			// convert boolean array with selection states for renderOpts
 			// to one flag with corresponding bits set
 	        elemsGroup.getSelectedFlags(selElems);
-			config.setCfgBitState(config.CFGBIT_POITEXTS, selElems[0]);
-			config.setCfgBitState(config.CFGBIT_POIS, selElems[1]);
-			config.setCfgBitState(config.CFGBIT_AREATEXTS, selElems[2]);
-			config.setCfgBitState(config.CFGBIT_WAYTEXTS, selElems[3]);
-			config.setCfgBitState(config.CFGBIT_WPTTEXTS, selElems[4]);
+			config.setCfgBitState(config.CFGBIT_POITEXTS, selElems[0], setAsDefault);
+			config.setCfgBitState(config.CFGBIT_POIS, selElems[1], setAsDefault);
+			config.setCfgBitState(config.CFGBIT_AREATEXTS, selElems[2], setAsDefault);
+			config.setCfgBitState(config.CFGBIT_WAYTEXTS, selElems[3], setAsDefault);
+			config.setCfgBitState(config.CFGBIT_WPTTEXTS, selElems[4], setAsDefault);
 
 			altInfosGroup.getSelectedFlags(selAltInfos);
-			config.setCfgBitState(config.CFGBIT_SHOWLATLON, selAltInfos[0]);
-			config.setCfgBitState(config.CFGBIT_SHOWWAYPOITYPE, selAltInfos[1]);
+			config.setCfgBitState(config.CFGBIT_SHOWLATLON, selAltInfos[0], setAsDefault);
+			config.setCfgBitState(config.CFGBIT_SHOWWAYPOITYPE, selAltInfos[1], setAsDefault);
 
 			modesGroup.getSelectedFlags(selModes);
-			config.setCfgBitState(config.CFGBIT_FULLSCREEN, selModes[0]);
-			config.setCfgBitState(config.CFGBIT_STREETRENDERMODE, selModes[1]);
+			config.setCfgBitState(config.CFGBIT_FULLSCREEN, selModes[0], setAsDefault);
+			config.setCfgBitState(config.CFGBIT_STREETRENDERMODE, selModes[1], setAsDefault);
 
-			config.setDetailBoost(gaugeDetailBoost.getValue()); 
+			config.setDetailBoost(gaugeDetailBoost.getValue(), setAsDefault); 
 
-			if (c == CMD_SAVE) {			
-	            config.setCfgBitsDefault(config.getCfgBits());
-				config.setDetailBoostDefault(config.getDetailBoost()); 
-			}
 			parent.show();
 			return;
 		}
