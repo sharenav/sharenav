@@ -118,7 +118,7 @@ public class RouteTile extends RouteBaseTile {
 //			ts.readInt();
 			n.conSize=ts.readByte();
 //			n.fid=fileId;
-			n.id=(short) (i+minId);
+			n.id=i+minId;
 			nodes[i]=n;
 		}
 		ts.close();

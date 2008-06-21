@@ -13,7 +13,7 @@ public class RouteNode {
 	public float lon;
 //	public int conFp;
 	public byte conSize;
-	public short id;
+	public int id;
 //	public short fid;
 	//#debug error
 	private final static Logger logger=Logger.getInstance(RouteNode.class,Logger.TRACE);
