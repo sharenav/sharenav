@@ -138,10 +138,9 @@ public class Configuration {
 				//#debug info
 				logger.info("No database loaded at the moment");
 				return;
-			}
-			btUrl=readString(database, RECORD_ID_BT_URL);
-			locationProvider=readInt(database, RECORD_ID_LOCATION_PROVIDER);
+			}	
 			cfgBits=readInt(database, RECORD_ID_CFGBITS);
+			// set initial values if record store does not exist yet
 			if( ! getCfgBitState(CFGBIT_DEFAULTVALUESAPPLIED) ) {
 				cfgBits=1<<CFGBIT_DEFAULTVALUESAPPLIED | 
 				   		1<<CFGBIT_STREETRENDERMODE |
@@ -153,7 +152,21 @@ public class Configuration {
 				setCfgBitsDefault(cfgBits);
 				//#debug info
 				logger.info("Initial cfgBits where set.");
+				// Record Rule Default
+				setGpxRecordRuleMode(GPX_RECORD_MINIMUM_SECS_DIST);
+				setGpxRecordMinMilliseconds(1000);				
+				setGpxRecordMinDistanceCentimeters(300);
+				setGpxRecordAlwaysDistanceCentimeters(500);
+				// Routing defaults
+				setStopAllWhileRouteing(true);
+				setRouteEstimationFac(100);
+				// Backlight default
+				setBacklightDefault(1<<BACKLIGHT_MAPONLY);
+				//#debug info
+				logger.info("More initial default values where set.");
 			}
+			btUrl=readString(database, RECORD_ID_BT_URL);
+			locationProvider=readInt(database, RECORD_ID_LOCATION_PROVIDER);
 			gpxUrl=readString(database, RECORD_ID_GPX_URL);
 			mapFromJar=readInt(database, RECORD_ID_MAP_FROM_JAR) == 0;
 			mapFileUrl=readString(database, RECORD_ID_MAP_FILE_URL);
