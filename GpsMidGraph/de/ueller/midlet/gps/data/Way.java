@@ -269,6 +269,204 @@ public class Way extends Entity{
 			pc.currentPos=new PositionMark(pc.center.radlat,pc.center.radlon);
 			pc.currentPos.setEntity(this, getFloatNodes(t,t.nodeLat,t.centerLat), getFloatNodes(t,t.nodeLon,t.centerLon));
 		}
+		paintPathName(pc, t);
+	}
+	
+
+    public void paintPathName(PaintContext pc, SingleTile t) {
+		//boolean info=false;
+    	
+    	// exit if not zoomed in enough
+    	WayDescription wayDesc = C.getWayDescription(type);
+		if (pc.scale > wayDesc.maxTextScale * pc.config.getDetailBoostMultiplier() ) {			
+			return;
+		}	
+		//remember previous font
+		Font originalFont = pc.g.getFont();
+		if (pathFont==null) {
+			pathFont=Font.getFont(Font.FACE_SYSTEM, Font.STYLE_PLAIN, Font.SIZE_SMALL);
+			pathFontHeight=pathFont.getHeight();
+		}
+		// At least the half font height must fit to the on-screen-width of the way
+		// (is calculation of w correct???)
+		int w = (int)(pc.ppm*wayDesc.wayWidth);
+		if (pathFontHeight/4>w) {
+			return;
+		}
+		
+		String name=null;
+		if (Trace.getInstance().showLatLon ==1 ) {
+			name=wayDesc.description;
+		} else {			
+			if (nameIdx != -1) {
+				name=Trace.getInstance().getName(nameIdx);
+			}
+		}
+
+		
+		if (name==null) {
+			return;
+		}		
+
+		StringBuffer sbName= new StringBuffer();
+    	
+		pc.g.setFont(pathFont);
+		pc.g.setColor(0,0,0);
+
+    	IntPoint posChar = new IntPoint();
+		char letter=' ';
+		short charsDrawable=0;
+    	Projection p = pc.getP();
+    	
+		//if(info)System.out.println("Draw "  + name + " from " + path.length + " points");
+		
+		boolean reversed=false;
+		boolean abbreviated=false;
+    	int lastFittingI1=0;
+
+    	// draw name again and again until end of path
+		for (byte mode=PAINTMODE_COUNTFITTINGCHARS;mode<=PAINTMODE_DRAWCHARS; mode++) { 
+	    	double posChar_x = 0;
+	    	double posChar_y = 0;
+			double slope_x=0;
+			double slope_y=0;
+			double nextDeltaSub=0;
+	    	int delta=0;
+	    	IntPoint lineP1 = pc.lineP1;
+	    	IntPoint lineP2 = pc.lineP2;
+	    	IntPoint swapLineP = pc.swapLineP;
+			// do indent because first letter position would often
+			// be covered by other connecting  streets
+			short streetNameCharIndex=-INDENT_PATHNAME;
+
+			for (int i1 = 0; i1 < path.length; i1++) {
+				// get the next line point coordinates into lineP2
+				int idx = this.path[i1];
+				// forward() is in Mercator.java
+				p.forward(t.nodeLat[idx], t.nodeLon[idx], lineP2, true,t);
+	    		// if we got only one line point, get a second one 
+				if (lineP1 == null) {
+	    		    lineP1 = lineP2;
+	    		    lineP2 = swapLineP;
+	    		    continue;
+	    		}
+	   			// calculate the slope of the new line 
+    			double distance = Math.sqrt( ((double)lineP2.y-(double)lineP1.y)*((double)lineP2.y-(double)lineP1.y) +
+					     ((double)lineP2.x-(double)lineP1.x)*((double)lineP2.x-(double)lineP1.x) );
+				if (distance!=0) {
+			    	slope_x = ((double)lineP2.x-(double)lineP1.x)/distance;
+					slope_y = ((double)lineP2.y-(double)lineP1.y)/distance;
+				} else {
+					//System.out.println("ZERO distance in path segment " + i1 + "/" + path.length + " of " + name);
+					break;
+				}
+				// new char position is first line point position
+				// minus the delta we've drawn over the previous
+				// line point
+				posChar_x = lineP1.x - nextDeltaSub * slope_x;
+				posChar_y = lineP1.y - nextDeltaSub * slope_y;
+				
+				// as long as we have not passed the next line point
+				while( ((slope_x<=0 && posChar_x >= lineP2.x) ||
+						(slope_x>=0 && posChar_x <= lineP2.x)) &&
+					   ((slope_y<=0 && posChar_y >= lineP2.y) ||
+						(slope_y>=0 && posChar_y <= lineP2.y))
+				) {
+					
+
+					// get the street name into the buffer
+					if (streetNameCharIndex==-INDENT_PATHNAME) {
+						// use full name to count fitting chars
+						sbName.setLength(0);
+						sbName.append(name);
+						abbreviated=false;
+						reversed=false;
+				    	if(mode==PAINTMODE_DRAWCHARS) {
+				    		if (
+					    	   i1>lastFittingI1 &&
+					    	   charsDrawable>0 &&
+					    	   charsDrawable<name.length()
+					    	) {
+				    			//if(info)System.out.println(sbName.toString() + " i1: " + i1 + " lastFitI1 " + lastFittingI1 + " charsdrawable: " + charsDrawable );
+					    		sbName.setLength(charsDrawable-1);
+					    		abbreviated=true;
+					    		if (sbName.length()==0) {
+					    			sbName.append(".");
+					    		}
+							}
+							// always begin drawing street names
+							// left to right
+							if (lineP1.x > lineP2.x) {
+								sbName.reverse();
+								reversed=true;
+							}
+				    	}
+				    }	
+					// draw letter
+					if (streetNameCharIndex >=0) {
+						// char to draw
+						letter=sbName.charAt(streetNameCharIndex);
+						
+						if (mode==PAINTMODE_DRAWCHARS) {
+							if (abbreviated) {
+								pc.g.setColor(100,100,100);
+							} else {
+								pc.g.setColor(0,0,0);
+							}
+							pc.g.drawChar(letter,
+								(int)posChar_x, (int)(posChar_y+(w/2)),
+								Graphics.BASELINE | Graphics.HCENTER);
+						}
+//						if (mode==PAINTMODE_COUNTFITTINGCHARS ) {
+//							pc.g.setColor(150,150,150);
+//							pc.g.drawChar(letter,
+//								(int)posChar_x, (int)(posChar_y+(w/2)),
+//								Graphics.BASELINE | Graphics.HCENTER);
+//						}
+
+						// delta calculation should be improved
+						if (Math.abs(slope_x) > Math.abs(slope_y)) {
+							delta=(pathFont.charWidth(letter) + pathFontHeight ) /2;							
+						} else {
+							delta=pathFontHeight*3/4;							
+						}
+					} else {
+						// delta for indent 
+						delta=pathFontHeight;
+					}
+
+					streetNameCharIndex++;
+					if(mode==PAINTMODE_COUNTFITTINGCHARS) {
+						charsDrawable=streetNameCharIndex;
+					}
+					// if at end of name
+					if (streetNameCharIndex>=sbName.length()) {
+						streetNameCharIndex=-INDENT_PATHNAME;
+						if(mode==PAINTMODE_COUNTFITTINGCHARS) {
+							// path segment where name fitted last during counting
+							lastFittingI1=i1;
+						}
+					}
+					
+					// add slope to char position
+					posChar_x += slope_x * delta;
+					posChar_y += slope_y * delta;
+					
+					// how much would we start to draw the next char over the end point
+					nextDeltaSub=(lineP2.x-posChar_x) / slope_x; 					
+					
+				} // end while loop
+							
+				
+				// continue in next path segment
+				swapLineP = lineP1;
+				lineP1 = lineP2;
+				lineP2 = swapLineP;	
+			} // end segment for-loop
+
+		} // end mode for-loop
+		
+		pc.g.setFont(originalFont);
 	}
 
 	private float getParLines(int xPoints[], int yPoints[], int i, int w,
