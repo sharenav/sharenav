@@ -540,7 +540,7 @@ public class Configuration {
 	}
 	
 	public void setBtKeepAlive(boolean keepAlive) {
-		write(keepAlive?0:1, RECORD_ID_BT_KEEPALIVE);
+		write(keepAlive?1:0, RECORD_ID_BT_KEEPALIVE);
 		this.btKeepAlive = keepAlive;
 	}
 
