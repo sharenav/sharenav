@@ -187,6 +187,10 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 	private Routing	routeEngine;
 
+	private byte arrow;
+	private Image scaledPict = null;
+
+	
 	public Trace(GpsMid parent, Configuration config) throws Exception {
 		//#debug
 		System.out.println("init Trace");
@@ -920,9 +924,31 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			pc.g.drawString(n.name, pc.lineP2.x+7, pc.lineP2.y+5, Graphics.BOTTOM | Graphics.LEFT);
 		}
 		if (route != null && route.size() > 0){
+			RouteNode lastTo;
+
+			// find nearest routing arrow (to center of screen)
+			int iNearest=0;
+			if (config.getCfgBitState(config.CFGBIT_LARGE_NEAREST_ARROW)) {
+				c = (Connection) route.elementAt(0);
+				lastTo=c.to;
+				float minimumDistance=99999;
+				for (int i=1; i<route.size();i++){
+					c = (Connection) route.elementAt(i);
+					if (c!=null) {
+						float distance = 100*ProjMath.getDistance(center.radlat, center.radlon, lastTo.lat, lastTo.lon); 
+						if (distance<minimumDistance) {
+							minimumDistance=distance;
+							iNearest=i;
+						}
+						lastTo=c.to;
+					}
+				}
+			}
+			
 			c = (Connection) route.elementAt(0);
-			byte lastEndBearing=c.endBearing;
-			RouteNode lastTo=c.to;
+			byte lastEndBearing=c.endBearing;			
+			lastTo=c.to;
+			byte a=0;
 			for (int i=1; i<route.size();i++){
 				c = (Connection) route.elementAt(i);
 				if (c == null){
@@ -962,33 +988,83 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 					continue;
 				}
 
-				Image pict = pc.images.IMG_MARK;
+				Image pict = pc.images.IMG_MARK; a=0;
 				int turn=(c.startBearing-lastEndBearing) * 2;
 				if (turn > 180) turn -= 360;
 				if (turn < -180) turn += 360;
 //				System.out.println("from: " + lastEndBearing*2 + " to:" +c.startBearing*2+ " turn " + turn);
 				if (turn > 110) {
-					pict=pc.images.IMG_HARDRIGHT;
+					pict=pc.images.IMG_HARDRIGHT; a=1;
 				} else if (turn > 70){
-					pict=pc.images.IMG_RIGHT;
+					pict=pc.images.IMG_RIGHT; a=2;
 				} else if (turn > 20){
-					pict=pc.images.IMG_HALFRIGHT;
+					pict=pc.images.IMG_HALFRIGHT; a=3;
 				} else if (turn >= -20){
-					pict=pc.images.IMG_STRAIGHTON;
+					pict=pc.images.IMG_STRAIGHTON; a=4;
 				} else if (turn >= -70){
-					pict=pc.images.IMG_HALFLEFT;
+					pict=pc.images.IMG_HALFLEFT; a=5;
 				} else if (turn >= -110){
-					pict=pc.images.IMG_LEFT;
+					pict=pc.images.IMG_LEFT;  a=6;
 				} else {
-					pict=pc.images.IMG_HARDLEFT;
+					pict=pc.images.IMG_HARDLEFT; a=7;
 				} 
 				pc.getP().forward(lastTo.lat, lastTo.lon, pc.lineP2,true);
+				// optionally scale nearest arrow
+				if (i==iNearest) {
+					if (a!=arrow) {
+						arrow=a;
+						scaledPict=doubleImage(pict);
+					}
+					pict=scaledPict;
+				}
 				pc.g.drawImage(pict,pc.lineP2.x,pc.lineP2.y,CENTERPOS);
 				lastEndBearing=c.endBearing;
 				lastTo=c.to;
 			}
 		}
 	}
+	
+	public static Image doubleImage(Image original)
+    {        
+        int w=original.getWidth();
+        int h=original.getHeight();
+		int[] rawInput = new int[w * h];
+        original.getRGB(rawInput, 0, w, 0, 0, h, h);
+        
+        int[] rawOutput = new int[w*h*4];        
+
+        int outOffset= 1;
+        int inOffset=  0;
+        int lineInOffset=0;
+        int val=0;
+        
+        for (int y=0;y<h*2;y++) {            
+        	if((y&1)==1) {
+        		outOffset++;
+        		inOffset=lineInOffset;
+        	} else {
+        		outOffset--;
+        		lineInOffset=inOffset;
+        	}
+        	for (int x=0; x<w; x++) {
+        		/* unfortunately many devices can draw semitransparent
+        		   pictures but only support transparent and opaque
+        		   in their graphics routines. So we just keep full transparency
+        		   as otherwise the device will convert semitransparent from the png
+        		   to full transparent pixels making the new picture much too bright
+        		*/
+        		val=rawInput[inOffset];
+            	if( (val & 0xFF000000) != 0 ) {
+            		val|=0xFF000000;
+            	}
+            	rawOutput[outOffset]=val; 
+                /// as a workaround for semitransparency we only draw every 2nd pixel
+            	outOffset+=2;
+                inOffset++;
+            }            
+        }               
+        return Image.createRGBImage(rawOutput, w*2, h*2, true);        
+    }
 
 	public void showMovement(Graphics g) {
 		g.setColor(0, 0, 0);
