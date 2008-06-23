@@ -1507,6 +1507,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		try {
 			if (config.isStopAllWhileRouteing()){
 				startImageCollector();
+				// imageCollector thread starts up suspended,
+				// so we need to resume it
+				imageCollector.resume();
 			} else {
 //				resume();
 			}
