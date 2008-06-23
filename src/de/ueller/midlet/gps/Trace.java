@@ -934,7 +934,11 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				float minimumDistance=99999;
 				for (int i=1; i<route.size();i++){
 					c = (Connection) route.elementAt(i);
-					if (c!=null) {
+					if (c!=null && c.to!=null && lastTo!=null) {
+						// skip connections that are closer than 25 m to the previous one
+						if( i<route.size()-1 && ProjMath.getDistance(c.to.lat, c.to.lon, lastTo.lat, lastTo.lon) < 25 ) {
+							continue;
+						}
 						float distance = ProjMath.getDistance(center.radlat, center.radlon, lastTo.lat, lastTo.lon); 
 						if (distance<minimumDistance) {
 							minimumDistance=distance;
@@ -967,6 +971,17 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 					System.out.println("show Route strange pc.screenLD is null");
 				}
 
+				// skip connections that are closer than 25 m to the previous one
+				if( i<route.size()-1 && ProjMath.getDistance(c.to.lat, c.to.lon, lastTo.lat, lastTo.lon) < 25 ) {
+					// draw small circle for left out connection
+					pc.g.setColor(0x00FDDF9F);
+					pc.getP().forward(c.to.lat, c.to.lon, pc.lineP2,true);
+					final byte radius=6;
+					pc.g.fillArc(pc.lineP2.x-radius/2,pc.lineP2.y-radius/2,radius,radius,0,359);
+					//System.out.println("Skipped routing arrow " + i);
+					continue;
+				}
+				
 				if (lastTo.lat < pc.screenLD.radlat) {
 					lastEndBearing=c.endBearing;
 					lastTo=c.to;
