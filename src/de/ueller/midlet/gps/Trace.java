@@ -935,7 +935,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				for (int i=1; i<route.size();i++){
 					c = (Connection) route.elementAt(i);
 					if (c!=null) {
-						float distance = 100*ProjMath.getDistance(center.radlat, center.radlon, lastTo.lat, lastTo.lon); 
+						float distance = ProjMath.getDistance(center.radlat, center.radlon, lastTo.lat, lastTo.lon); 
 						if (distance<minimumDistance) {
 							minimumDistance=distance;
 							iNearest=i;
