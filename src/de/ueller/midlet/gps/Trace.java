@@ -1344,6 +1344,14 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			showAddons++;
 		} else if (keyCode == KEY_NUM9) {
 			course += 5;
+		/** Non standard Key: hopefully is mapped to
+		 * the delete / clear key. According to
+		 * www.j2meforums.com/wiki/index.php/Canvas_Keycodes
+		 * most major mobiles that have this key map to -8
+		 **/
+		} else if (keyCode == -8) {
+			   commandAction(ROUTE_TO_CMD,(Displayable) null);
+			   return;   		
 		//#if polish.api.mmapi && polish.api.advancedmultimedia
 		} else if (keyCode == Configuration.KEYCODE_CAMERA_COVER_OPEN) {
 			if (imageCollector != null) {
