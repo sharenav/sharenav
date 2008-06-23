@@ -82,6 +82,9 @@ public class ImageCollector implements Runnable {
 	}
 
 	public void run() {
+		final byte MAXCRASHES = 5;
+		byte crash=0;
+		do {
 		try {
 			// logger.info("wait for sc");
 			while (stat == STATE_WAIT_FOR_SC && !shutdown) {
@@ -196,10 +199,21 @@ public class ImageCollector implements Runnable {
 
 			}
 		} catch (OutOfMemoryError oome) {
-			logger.fatal("ImageCollector thread crashed with out of memory: " + oome.getMessage());			
+		   String recoverZoomedIn="";
+		   crash++;
+		   if(tr.scale>10000 && crash < MAXCRASHES) {
+		    tr.scale/= 1.5f;
+		    recoverZoomedIn=" Zooming in to recover.";
+		   }   
+		   logger.fatal("ImageCollector thread crashed with out of memory: " + oome.getMessage() + recoverZoomedIn);
 		} catch (Exception e) {
+			crash++;
 			logger.exception("ImageCollector thread crashed unexpectadly with error ", e);
 		}
+		if(crash>=MAXCRASHES) {
+		   logger.fatal("ImageCollector crashed too often. Aborting.");
+		}
+		} while (!shutdown && crash <MAXCRASHES);
 	}
 	
 	public void suspend() {
