@@ -32,6 +32,7 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 	private final GpsMid main;
 	String[] txt={"Copyright:",
 				  " Harald Mueller",
+				  " A. P. Monkey",
 	              "Applicaton:",
 	              " licensd by GPL2",
 	              " http://www.gnu.org/",
@@ -42,7 +43,6 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 	  "Thanks for source parts to:",
 	  " Nikolay Klimchuk",
 	  " Simon Turner",
-	  " A. P. Monkey",
       "Artwork:",
       " Tobias Mueller"};
 	private Font f;
