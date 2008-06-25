@@ -924,6 +924,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	 * @param pc
 	 */
 	private void showRoute(PaintContext pc) {
+		final int PASSINGDISTANCE=25;
 		Connection c;
 		// Show helper nodes for Routing
 		for (int x=0; x<routeNodes.size();x++){
@@ -958,14 +959,14 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 					}
 				}
 				System.out.println("iNearest "+ iNearest + "dist: " + minimumDistance);				    	
-				// if nearest route arrow is closer than 25m we're currently passing this route arrow
-				if (minimumDistance<25) {
+				// if nearest route arrow is closer than PASSINGDISTANCE meters we're currently passing this route arrow
+				if (minimumDistance<PASSINGDISTANCE) {
 					iPassedRouteArrow=iNearest;
 					System.out.println("iPassedRouteArrow "+ iPassedRouteArrow);
 				} else {
 					c = (Connection) route.elementAt(iPassedRouteArrow);
-					// if we got away more than 25m of the previously passed routing arrow
-					if (ProjMath.getDistance(center.radlat, center.radlon, c.to.lat, c.to.lon) >= 25) {
+					// if we got away more than PASSINGDISTANCE m of the previously passed routing arrow
+					if (ProjMath.getDistance(center.radlat, center.radlon, c.to.lat, c.to.lon) >= PASSINGDISTANCE) {
 						// assume we should start to emphasize the next routing arrow now
 						iNearest=iPassedRouteArrow+1;
 					}
@@ -1007,26 +1008,26 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				}
 				
 				if(i!=iNearest) {
-				if (lastTo.lat < pc.screenLD.radlat) {
-					lastEndBearing=c.endBearing;
-					lastTo=c.to;
-					continue;
-				}
-				if (lastTo.lon < pc.screenLD.radlon) {
-					lastEndBearing=c.endBearing;
-					lastTo=c.to;
-					continue;
-				}
-				if (lastTo.lat > pc.screenRU.radlat) {
-					lastEndBearing=c.endBearing;
-					lastTo=c.to;
-					continue;
-				}
-				if (lastTo.lon > pc.screenRU.radlon) {
-					lastEndBearing=c.endBearing;
-					lastTo=c.to;
-					continue;
-				}
+					if (lastTo.lat < pc.screenLD.radlat) {
+						lastEndBearing=c.endBearing;
+						lastTo=c.to;
+						continue;
+					}
+					if (lastTo.lon < pc.screenLD.radlon) {
+						lastEndBearing=c.endBearing;
+						lastTo=c.to;
+						continue;
+					}
+					if (lastTo.lat > pc.screenRU.radlat) {
+						lastEndBearing=c.endBearing;
+						lastTo=c.to;
+						continue;
+					}
+					if (lastTo.lon > pc.screenRU.radlon) {
+						lastEndBearing=c.endBearing;
+						lastTo=c.to;
+						continue;
+					}
 				}
 
 				Image pict = pc.images.IMG_MARK; a=0;
@@ -1065,7 +1066,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 					int intDistance=new Double(distance).intValue();
 					pc.g.drawString(directions[a]
 					                      +
-					                      ((intDistance<20)?"":" in " + intDistance + "m"),
+					                      ((intDistance<PASSINGDISTANCE)?"":" in " + intDistance + "m"),
 					                      pc.xSize/2,pc.ySize-15, Graphics.HCENTER | Graphics.BOTTOM
                     );
 					pc.g.setFont(originalFont);
