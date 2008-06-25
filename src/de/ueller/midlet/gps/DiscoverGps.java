@@ -343,28 +343,39 @@ public class DiscoverGps
 				ServiceRecord service=(ServiceRecord) records.elementAt(i);
 				parent.addDevice(service.getConnectionURL(ServiceRecord.NOAUTHENTICATE_NOENCRYPT, false));
 			}
-			
+			// if no Services found, try with the discovered BT devices
+			// this is because RAZER V3i is after firmware update not able
+			// to discover services
+			parent.addDevice("constuct "+devices.size()+" services");
+			if (records.size()==0 && devices.size() > 0){
+				for (int dl=0; dl < devices.size(); dl++){
+					RemoteDevice rd = (RemoteDevice) devices.elementAt(dl);
+					parent.addDevice("btspp://"+rd.getBluetoothAddress()+":1;authenticate=false;encrypt=false;master=false",friendlyName(rd)+ " no Service disc.");
+				}
+			}
+
 //		}
 
 	}
 	public void servicesDiscovered(int transID, ServiceRecord[] servRecord) {
-		String name;
 		for (int i = 0; i < servRecord.length; i++) {
 //			String connectionURL = servRecord[i].getConnectionURL(ServiceRecord.NOAUTHENTICATE_NOENCRYPT, false);
 //			parent.addDevice(connectionURL);
 			records.addElement(servRecord[i]);
-			try {
-				name=servRecord[i].getHostDevice().getFriendlyName(true);
-			} catch (IOException e) {
-				name=servRecord[i].getHostDevice().getBluetoothAddress();
-			}
 			parent.addDevice(
 					servRecord[i].getConnectionURL(ServiceRecord.NOAUTHENTICATE_NOENCRYPT, false),
-					name);
-			
-			parent.addDevice("found " + name);
+					friendlyName(servRecord[i].getHostDevice()));
 		}
 	}
+	private String friendlyName(RemoteDevice rd){
+		try {
+			return rd.getFriendlyName(true);
+		} catch (IOException e) {
+			return rd.getBluetoothAddress();
+		}
+
+	}
+	
 	public void serviceSearchCompleted(int transID, int respCode) {		
 		// first, find the service search transaction index
 		int index = -1;
