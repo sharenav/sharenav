@@ -25,6 +25,7 @@ import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
+import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import javax.microedition.midlet.MIDlet;
@@ -190,7 +191,14 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	private byte arrow;
 	private Image scaledPict = null;
 
-	private int iPassedRouteArrow=0; 
+	private int iPassedRouteArrow=0;
+	private static Font routeFont;
+	private static int routeFontHeight;
+	private static final String[] directions  = { "mark",
+		"hard right", "right", "half right",
+		"straight on",
+		"half left", "left", "hard left"};
+	 
 	
 	public Trace(GpsMid parent, Configuration config) throws Exception {
 		//#debug
@@ -1044,6 +1052,23 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				pc.getP().forward(lastTo.lat, lastTo.lon, pc.lineP2,true);
 			    // optionally scale nearest arrow
 			    if (i==iNearest) {
+			    	Font originalFont = pc.g.getFont();
+			    	if (routeFont==null) {
+						routeFont=Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_MEDIUM);
+						routeFontHeight=routeFont.getHeight();
+					}
+			    	pc.g.setFont(routeFont);
+			    	pc.g.setColor(230,230,230);
+					pc.g.fillRect(0,pc.ySize-15-routeFontHeight, pc.xSize, routeFontHeight);
+					pc.g.setColor(0,0,0);
+					double distance=ProjMath.getDistance(center.radlat, center.radlon, lastTo.lat, lastTo.lon);
+					int intDistance=new Double(distance).intValue();
+					pc.g.drawString(directions[a]
+					                      +
+					                      ((intDistance<20)?"":" in " + intDistance + "m"),
+					                      pc.xSize/2,pc.ySize-15, Graphics.HCENTER | Graphics.BOTTOM
+                    );
+					pc.g.setFont(originalFont);
 					if (a!=arrow) {
 						arrow=a;
 						scaledPict=doubleImage(pict);
