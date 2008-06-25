@@ -190,6 +190,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	private byte arrow;
 	private Image scaledPict = null;
 
+	private int iPassedRouteArrow=0; 
 	
 	public Trace(GpsMid parent, Configuration config) throws Exception {
 		//#debug
@@ -932,6 +933,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				c = (Connection) route.elementAt(0);
 				lastTo=c.to;
 				float minimumDistance=99999;
+				float distance=99999;
 				for (int i=1; i<route.size();i++){
 					c = (Connection) route.elementAt(i);
 					if (c!=null && c.to!=null && lastTo!=null) {
@@ -939,7 +941,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 						if( i<route.size()-1 && ProjMath.getDistance(c.to.lat, c.to.lon, lastTo.lat, lastTo.lon) < 25 ) {
 							continue;
 						}
-						float distance = ProjMath.getDistance(center.radlat, center.radlon, lastTo.lat, lastTo.lon); 
+						distance = ProjMath.getDistance(center.radlat, center.radlon, lastTo.lat, lastTo.lon); 
 						if (distance<minimumDistance) {
 							minimumDistance=distance;
 							iNearest=i;
@@ -947,8 +949,20 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 						lastTo=c.to;
 					}
 				}
+				System.out.println("iNearest "+ iNearest + "dist: " + minimumDistance);				    	
+				// if nearest route arrow is closer than 25m we're currently passing this route arrow
+				if (minimumDistance<25) {
+					iPassedRouteArrow=iNearest;
+					System.out.println("iPassedRouteArrow "+ iPassedRouteArrow);
+				} else {
+					c = (Connection) route.elementAt(iPassedRouteArrow);
+					// if we got away more than 25m of the previously passed routing arrow
+					if (ProjMath.getDistance(center.radlat, center.radlon, c.to.lat, c.to.lon) >= 25) {
+						// assume we should start to emphasize the next routing arrow now
+						iNearest=iPassedRouteArrow+1;
+					}
+				}
 			}
-			
 			c = (Connection) route.elementAt(0);
 			byte lastEndBearing=c.endBearing;			
 			lastTo=c.to;
@@ -979,9 +993,12 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 					final byte radius=6;
 					pc.g.fillArc(pc.lineP2.x-radius/2,pc.lineP2.y-radius/2,radius,radius,0,359);
 					//System.out.println("Skipped routing arrow " + i);
+					// if this would have been our iNearest, use next one as iNearest
+					if(i==iNearest) iNearest++;
 					continue;
 				}
 				
+				if(i!=iNearest) {
 				if (lastTo.lat < pc.screenLD.radlat) {
 					lastEndBearing=c.endBearing;
 					lastTo=c.to;
@@ -1001,6 +1018,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 					lastEndBearing=c.endBearing;
 					lastTo=c.to;
 					continue;
+				}
 				}
 
 				Image pict = pc.images.IMG_MARK; a=0;
@@ -1024,14 +1042,14 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 					pict=pc.images.IMG_HARDLEFT; a=7;
 				} 
 				pc.getP().forward(lastTo.lat, lastTo.lon, pc.lineP2,true);
-				// optionally scale nearest arrow
-				if (i==iNearest) {
+			    // optionally scale nearest arrow
+			    if (i==iNearest) {
 					if (a!=arrow) {
 						arrow=a;
 						scaledPict=doubleImage(pict);
 					}
 					pict=scaledPict;
-				}
+			    }
 				pc.g.drawImage(pict,pc.lineP2.x,pc.lineP2.y,CENTERPOS);
 				lastEndBearing=c.endBearing;
 				lastTo=c.to;
@@ -1536,6 +1554,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			} else {
 //				resume();
 			}
+			iPassedRouteArrow=0;
 			repaint(0, 0, getWidth(), getHeight());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
