@@ -25,12 +25,9 @@ public class Routing implements Runnable {
 	private Thread processorThread;
 	public boolean bestTime=true;
 	private final Vector nodes = new Vector();
-//	private final Hashtable open = new Hashtable(50);
-//	private final Hashtable closed = new Hashtable(150);
 	private final intTree open = new intTree();
 	private final intTree closed = new intTree();
 	private Runtime runtime = Runtime.getRuntime();
-//	private RouteNodeTools rnt;
 
 	private final static Logger logger = Logger.getInstance(Routing.class,Logger.INFO);
 	private final RouteBaseTile tile;
@@ -42,7 +39,6 @@ public class Routing implements Runnable {
 	private long nextUpdate;
 	private float estimateFac=1.40f;
 	private int oomCounter=0;
-//	private Tile destinationTile=new RouteTile();
 	private int expanded;
 	
 	public Routing(Tile[] tile,Trace parent) throws IOException {
@@ -156,13 +152,6 @@ public class Routing implements Runnable {
 					}
 				// not in open or closed
 				} else { 
-					if (nodeSuccessor.to == null){
-						nodeSuccessor.to=tile.getRouteNode(nodeSuccessor.toId);
-					}
-					if (nodeSuccessor.to == null){
-						logger.error("Successor without target");
-						continue;
-					}
 					int estimation;
 					GraphNode newNode;
 					estimation = estimate(currentNode.state,nodeSuccessor, target);
@@ -255,17 +244,16 @@ public class Routing implements Runnable {
 //		if (from.to == null){
 //			from.to=tile.getRouteNode(from.toId.shortValue());
 //		}
-		if (to.to == null){
-			to.to=tile.getRouteNode(to.toId);
-			if (to.to == null){
-				System.out.println("RouteNode ("+to.toId+") = null" );
-				return (10000000);
-			}
+		RouteNode toNode=tile.getRouteNode(to.toId);
+		if (toNode == null){
+			//#debug error
+			System.out.println("RouteNode ("+to.toId+") = null" );
+			return (10000000);
 		}
 		if (target == null){
 			throw new Error("Target is NULL");
 		}
-		int dist = MoreMath.dist(to.to.lat,to.to.lon,target.lat,target.lon);
+		int dist = MoreMath.dist(toNode.lat,toNode.lon,target.lat,target.lon);
 		if (bestTime) {
 			if (dist > 100000){
 				   // estimate 100 Km/h (28 m/s) as average speed 
@@ -414,9 +402,13 @@ public class Routing implements Runnable {
 			Connection newCon=new Connection(routeTo,0,(byte)0,(byte)0);
 			tile.getRouteNode(nextNode.lat, nextNode.lon, nodeTile);
 			nodeTile.tile.addConnection(nextNode,newCon,bestTime);
-			logger.debug("start routing Thread from :" + fromMark + " to " + toMark);
+			//#debug error
+			System.out.println("start routing Thread from :" + fromMark + " to " + toMark);
 			if (routeTo != null){
 				parent.cleanup();
+				System.gc();
+				//#debug error
+				System.out.println("free mem: "+runtime.freeMemory());
 				processorThread = new Thread(this);
 				processorThread.setPriority(Thread.NORM_PRIORITY);
 				processorThread.start();
@@ -457,6 +449,7 @@ public class Routing implements Runnable {
 	private RouteNode findNextRouteNode(int begin,float lat, float lon,float[] lats,float[] lons){
 		RouteNode rn=null;
 		for (int v=begin;v < lats.length; v++){
+			//#debug error
 			System.out.println("search point "+ lats[v] +"," + lons[v]);
 			rn=tile.getRouteNode(lats[v], lons[v]);
 			if (rn !=null){return rn;}
@@ -466,6 +459,7 @@ public class Routing implements Runnable {
 	private RouteNode findPrevRouteNode(int end,float lat, float lon,float[] lats,float[] lons){
 		RouteNode rn=null;
 		for (int v=end;v >= 0; v--){
+			//#debug error
 			System.out.println("search point "+ lats[v] +"," + lons[v]);
 			rn=tile.getRouteNode(lats[v], lons[v]);
 			if (rn !=null){return rn;}
@@ -496,16 +490,15 @@ public class Routing implements Runnable {
 			result = new Vector();
 		} else { 
 			result = getSequence (n.parent);
-			if (n.state.to == null){
-				n.state.to=tile.getRouteNode(n.state.toId);
-			}
-			result.addElement(n.state);
+			ConnectionWithNode c=new ConnectionWithNode(tile.getRouteNode(n.state.toId),n.state);
+			result.addElement(c);
 		} 
 		return result; 
 	}
 
 	public void run() {
 		try {
+			//#debug error
 			System.out.println("Start Routing thread");
 			Vector solve = solve();
 			parent.setRoute(solve);

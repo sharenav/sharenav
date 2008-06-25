@@ -56,6 +56,7 @@ import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.data.Projection;
 import de.ueller.midlet.gps.names.Names;
 import de.ueller.midlet.gps.routing.Connection;
+import de.ueller.midlet.gps.routing.ConnectionWithNode;
 import de.ueller.midlet.gps.routing.RouteHelper;
 import de.ueller.midlet.gps.routing.RouteNode;
 import de.ueller.midlet.gps.routing.Routing;
@@ -925,7 +926,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	 */
 	private void showRoute(PaintContext pc) {
 		final int PASSINGDISTANCE=25;
-		Connection c;
+		ConnectionWithNode c;
 		// Show helper nodes for Routing
 		for (int x=0; x<routeNodes.size();x++){
 			RouteHelper n=(RouteHelper) routeNodes.elementAt(x);
@@ -939,12 +940,12 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			// find nearest routing arrow (to center of screen)
 			int iNearest=0;
 			if (config.getCfgBitState(config.CFGBIT_ROUTING_HELP)) {
-				c = (Connection) route.elementAt(0);
+				c = (ConnectionWithNode) route.elementAt(0);
 				lastTo=c.to;
 				float minimumDistance=99999;
 				float distance=99999;
 				for (int i=1; i<route.size();i++){
-					c = (Connection) route.elementAt(i);
+					c = (ConnectionWithNode) route.elementAt(i);
 					if (c!=null && c.to!=null && lastTo!=null) {
 						// skip connections that are closer than 25 m to the previous one
 						if( i<route.size()-1 && ProjMath.getDistance(c.to.lat, c.to.lon, lastTo.lat, lastTo.lon) < 25 ) {
@@ -964,7 +965,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 					iPassedRouteArrow=iNearest;
 					System.out.println("iPassedRouteArrow "+ iPassedRouteArrow);
 				} else {
-					c = (Connection) route.elementAt(iPassedRouteArrow);
+					c = (ConnectionWithNode) route.elementAt(iPassedRouteArrow);
 					// if we got away more than PASSINGDISTANCE m of the previously passed routing arrow
 					if (ProjMath.getDistance(center.radlat, center.radlon, c.to.lat, c.to.lon) >= PASSINGDISTANCE) {
 						// assume we should start to emphasize the next routing arrow now
@@ -972,12 +973,12 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 					}
 				}
 			}
-			c = (Connection) route.elementAt(0);
+			c = (ConnectionWithNode) route.elementAt(0);
 			byte lastEndBearing=c.endBearing;			
 			lastTo=c.to;
 			byte a=0;
 			for (int i=1; i<route.size();i++){
-				c = (Connection) route.elementAt(i);
+				c = (ConnectionWithNode) route.elementAt(i);
 				if (c == null){
 					System.out.println("show Route got null connection");
 				}
