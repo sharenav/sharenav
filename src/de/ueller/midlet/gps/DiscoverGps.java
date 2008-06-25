@@ -350,7 +350,7 @@ public class DiscoverGps
 			if (records.size()==0 && devices.size() > 0){
 				for (int dl=0; dl < devices.size(); dl++){
 					RemoteDevice rd = (RemoteDevice) devices.elementAt(dl);
-					parent.addDevice("btspp://"+rd.getBluetoothAddress()+":1;authenticate=false;encrypt=false;master=false",friendlyName(rd)+ " no Service disc.");
+					parent.addDevice("btspp://"+rd.getBluetoothAddress()+":1;authenticate=false;encrypt=false;master=false",friendlyName(rd)+ "?");
 				}
 			}
 
