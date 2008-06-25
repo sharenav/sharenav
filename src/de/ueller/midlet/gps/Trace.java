@@ -937,7 +937,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 			// find nearest routing arrow (to center of screen)
 			int iNearest=0;
-			if (config.getCfgBitState(config.CFGBIT_LARGE_NEAREST_ARROW)) {
+			if (config.getCfgBitState(config.CFGBIT_ROUTING_HELP)) {
 				c = (Connection) route.elementAt(0);
 				lastTo=c.to;
 				float minimumDistance=99999;

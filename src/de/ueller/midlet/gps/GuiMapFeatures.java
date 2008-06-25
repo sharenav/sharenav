@@ -58,7 +58,7 @@ public class GuiMapFeatures extends Form implements CommandListener {
 			
 			modes[0] = "Full Screen"; 			selModes[0]=config.getCfgBitState(config.CFGBIT_FULLSCREEN);
 			modes[1] = "Render as streets"; 	selModes[1]=config.getCfgBitState(config.CFGBIT_STREETRENDERMODE);
-			modes[2] = "Larger routing arrow"; 	selModes[2]=config.getCfgBitState(config.CFGBIT_LARGE_NEAREST_ARROW);
+			modes[2] = "Routing help"; 	selModes[2]=config.getCfgBitState(config.CFGBIT_ROUTING_HELP);
 			modesGroup = new ChoiceGroup("Mode", Choice.MULTIPLE, modes ,null);
 			modesGroup.setSelectedFlags(selModes);			
 			append(modesGroup);
@@ -111,7 +111,7 @@ public class GuiMapFeatures extends Form implements CommandListener {
 			modesGroup.getSelectedFlags(selModes);
 			config.setCfgBitState(config.CFGBIT_FULLSCREEN, selModes[0], setAsDefault);
 			config.setCfgBitState(config.CFGBIT_STREETRENDERMODE, selModes[1], setAsDefault);
-			config.setCfgBitState(config.CFGBIT_LARGE_NEAREST_ARROW, selModes[2], setAsDefault);
+			config.setCfgBitState(config.CFGBIT_ROUTING_HELP, selModes[2], setAsDefault);
 
 			config.setDetailBoost(gaugeDetailBoost.getValue(), setAsDefault); 
 

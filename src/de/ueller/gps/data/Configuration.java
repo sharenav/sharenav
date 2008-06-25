@@ -57,7 +57,7 @@ public class Configuration {
 	// bit 14: backlight method NOKIA/FLASH
 	public final static byte CFGBIT_BACKLIGHT_NOKIAFLASH=14;	
 	// bit 15: large nearest routing arrow
-	public final static byte CFGBIT_LARGE_NEAREST_ARROW=15;	
+	public final static byte CFGBIT_ROUTING_HELP=15;	
 	
 	
 	/**
@@ -147,7 +147,7 @@ public class Configuration {
 				   		1<<CFGBIT_WPTTEXTS |
 				   		// 1<<CFGBIT_WAYTEXTS | // way texts are still experimental
 				   		1<<CFGBIT_POIS |
-				   		1<<CFGBIT_LARGE_NEAREST_ARROW |
+				   		1<<CFGBIT_ROUTING_HELP |
 				   		1<<CFGBIT_BACKLIGHT_MAPONLY;
 				setCfgBits(cfgBits, true);
 				//#debug info
