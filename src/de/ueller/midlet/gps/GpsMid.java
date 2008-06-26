@@ -40,6 +40,7 @@ import com.nokia.mid.ui.DeviceControl;
 
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.tools.HelperRoutines;
+import de.ueller.midlet.gps.data.Node;
 
 
 
@@ -117,7 +118,17 @@ private Trace trace=null;
 	}
 	
 	protected void destroyApp(boolean arg0) throws MIDletStateChangeException {
-//		#debug
+		//remember last position
+		if(trace!=null) {
+			if(config.getCfgBitState(config.CFGBIT_AUTOSAVE_MAPPOS)) {
+				// use current display center on next startup
+				config.setStartupPos(trace.center);				
+			} else {				
+				// use center of map on next startup
+				config.setStartupPos(new Node(0.0f,0.0f));				
+			}
+		}
+		//		#debug
 		System.out.println("destroy GpsMid");
 	}
 

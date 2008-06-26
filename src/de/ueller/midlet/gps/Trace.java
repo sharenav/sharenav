@@ -1452,7 +1452,13 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 //			setTitle("dict " + zl + "ready");
 //		}
 		if (zl == 0) {
-			dict.getCenter(center);
+			// read saved position from config
+			config.getStartupPos(center);
+			if(center.radlat==0.0f && center.radlon==0.0f) {
+				// if no saved position use center of map
+				dict.getCenter(center);
+			}
+
 			projection = new Mercator(center, scale, getWidth(), getHeight());
 			if (pc != null) {				
 				pc.setP(projection);

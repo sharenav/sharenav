@@ -14,6 +14,8 @@ import javax.microedition.rms.RecordStore;
 import de.ueller.gpsMid.mapData.QueueReader;
 import de.ueller.midlet.gps.GuiCamera;
 import de.ueller.midlet.gps.Logger;
+import de.ueller.midlet.gps.data.MoreMath;
+import de.ueller.midlet.gps.data.Node;
 
 public class Configuration {
 	
@@ -58,6 +60,8 @@ public class Configuration {
 	public final static byte CFGBIT_BACKLIGHT_NOKIAFLASH=14;	
 	// bit 15: large nearest routing arrow
 	public final static byte CFGBIT_ROUTING_HELP=15;	
+	// bit 16: save map position on exit
+	public final static byte CFGBIT_AUTOSAVE_MAPPOS=16;	
 	
 	
 	/**
@@ -83,6 +87,8 @@ public class Configuration {
 	private static final int RECORD_ID_ROUTE_ESTIMATION_FAC=18;
 	private static final int RECORD_ID_STOP_ALL_WHILE_ROUTING=19;
 	private static final int RECORD_ID_BT_KEEPALIVE=20;
+	private static final int RECORD_ID_STARTUP_RADLAT=21;
+	private static final int RECORD_ID_STARTUP_RADLON=22;
 
 	// Gpx Recording modes
 	// GpsMid determines adaptive if a trackpoint is written
@@ -118,7 +124,8 @@ public class Configuration {
 	private int routeEstimationFac=30;
 	private boolean stopAllWhileRouteing=false;
 	private boolean btKeepAlive = false;
-		
+	private Node startupPos = new Node(0.0f, 0.0f);
+	
 	private boolean mapFromJar;
 	private String mapFileUrl;
 	
@@ -148,6 +155,7 @@ public class Configuration {
 				   		// 1<<CFGBIT_WAYTEXTS | // way texts are still experimental
 				   		1<<CFGBIT_POIS |
 				   		1<<CFGBIT_ROUTING_HELP |
+				   		1<<CFGBIT_AUTOSAVE_MAPPOS |
 				   		1<<CFGBIT_BACKLIGHT_MAPONLY;
 				setCfgBits(cfgBits, true);
 				//#debug info
@@ -184,6 +192,13 @@ public class Configuration {
 			routeEstimationFac=readInt(database,RECORD_ID_ROUTE_ESTIMATION_FAC);
 			stopAllWhileRouteing=readInt(database,  RECORD_ID_STOP_ALL_WHILE_ROUTING) !=0;
 			btKeepAlive = readInt(database,  RECORD_ID_BT_KEEPALIVE) !=0;
+			String s=readString(database, RECORD_ID_STARTUP_RADLAT);
+			String s2=readString(database, RECORD_ID_STARTUP_RADLON);
+			if(s!=null && s2!=null) {
+				startupPos.radlat=Float.parseFloat(s);
+				startupPos.radlon=Float.parseFloat(s2);
+			}
+			//System.out.println("Map startup lat/lon: " + startupPos.radlat*MoreMath.FAC_RADTODEC + "/" + startupPos.radlon*MoreMath.FAC_RADTODEC);
 			database.closeRecordStore();
 		} catch (Exception e) {
 			logger.exception("Problems with reading our configuration: ", e);
@@ -549,4 +564,15 @@ public class Configuration {
 		this.btKeepAlive = keepAlive;
 	}
 
+	public void getStartupPos(Node pos) {
+		pos.setLatLon(startupPos.radlat, startupPos.radlon, true);
+	}
+
+	public void setStartupPos(Node pos) {
+		//System.out.println("Save Map startup lat/lon: " + startupPos.radlat*MoreMath.FAC_RADTODEC + "/" + startupPos.radlon*MoreMath.FAC_RADTODEC);
+		write(Double.toString(pos.radlat),RECORD_ID_STARTUP_RADLAT);
+		write(Double.toString(pos.radlon),RECORD_ID_STARTUP_RADLON);
+	}
+
+	
 }
