@@ -199,7 +199,8 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		"hard right", "right", "half right",
 		"straight on",
 		"half left", "left", "hard left"};
-	 
+	private boolean keyboardLocked=false;
+	
 	
 	public Trace(GpsMid parent, Configuration config) throws Exception {
 		//#debug
@@ -463,6 +464,11 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 	public void commandAction(Command c, Displayable d) {
 		try {
+			if(keyboardLocked) {
+				// show alert in keypressed() that keyboard is locked
+				keyPressed(0);
+				return;
+			}
 			if (c == EXIT_CMD) {
 				// FIXME: This is a workaround. It would be better if recording would not be stopped when returning to map
 				if (gpx.isRecordingTrk()) {
@@ -1316,7 +1322,17 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				ignoreKeyCode=keyCode;
 				commandAction(SAVE_WAYP_CMD,(Displayable) null);
 				return;
-			}		
+			}
+			if(keyCode == KEY_NUM9) {
+				ignoreKeyCode=keyCode;
+				keyboardLocked=!keyboardLocked;
+				if(keyboardLocked) {
+					// show alert that keys are locked
+					keyPressed(0);
+				} else {
+					parent.getInstance().alert("GpsMid", "Keys unlocked",750);					
+				}
+			}	
 			if(keyCode == KEY_STAR) {
 				ignoreKeyCode=keyCode;
 				commandAction(MAN_WAYP_CMD,(Displayable) null);
@@ -1355,6 +1371,12 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		// handle this key normally (shortly pressed)
 		if (keyCode == KEY_NUM5) {
 			gpsRecenter = true;
+		} else if (keyCode == KEY_NUM9) {
+			if(keyboardLocked) {
+				keyPressed(0);
+				return;
+			}
+			course += 5;
 		} else if (keyCode == KEY_STAR) {
 			commandAction(MAPFEATURES_CMD,(Displayable) null);
 			return;
@@ -1380,10 +1402,16 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	}
 	
 	protected void keyPressed(int keyCode) {
-//		logger.debug("keyPressed " + keyCode);
+//		logger.debug("keyPressed " + keyCode);		
 		ignoreKeyCode=0;
 		pressedKeyCode=keyCode;
-		pressedKeyTime=System.currentTimeMillis();	
+		pressedKeyTime=System.currentTimeMillis();
+		if(keyboardLocked && keyCode!=KEY_NUM9) {
+			parent.getInstance().alert("GpsMid", "Keys locked. Hold down '9' to unlock.",1500);
+			ignoreKeyCode=keyCode;
+			return;
+		}
+	
 		float f = 0.00003f / 15000f;
 		int keyStatus;		
 		if (this.getGameAction(keyCode) == UP) {			
@@ -1413,8 +1441,6 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			scale = scale / 1.5f;
 		} else if (keyCode == KEY_NUM7) {
 			showAddons++;
-		} else if (keyCode == KEY_NUM9) {
-			course += 5;
 		/** Non standard Key: hopefully is mapped to
 		 * the delete / clear key. According to
 		 * www.j2meforums.com/wiki/index.php/Canvas_Keycodes
