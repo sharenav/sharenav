@@ -22,7 +22,7 @@ public class Routing implements Runnable {
 	private final intTree closed = new intTree();
 	private Runtime runtime = Runtime.getRuntime();
 
-	private final static Logger logger = Logger.getInstance(Routing.class,Logger.INFO);
+	private final static Logger logger = Logger.getInstance(Routing.class,Logger.ERROR);
 	private final RouteBaseTile tile;
 	private final Tile[] tiles;
 	private RouteNode routeFrom;
@@ -38,14 +38,7 @@ public class Routing implements Runnable {
 		this.parent = parent;
 		this.tile = (RouteBaseTile) tile[4];
 		this.tiles = tile;
-		//#debug error
-		logger.debug("init Routing engine");
-
-		estimateFac=(parent.getConfig().getRouteEstimationFac()/30f)+0.5f;
-//		rnt=new RouteNodeTools();
-		//#debug error
-		logger.debug("ready Routing engine ");
-
+		estimateFac=(parent.getConfig().getRouteEstimationFac()/10f)+0.8f;
 	}
 	
 	private GraphNode search(RouteNode target) throws Exception {
@@ -280,8 +273,6 @@ public class Routing implements Runnable {
 	} 
 
 	public void solve (float fromLat,float fromLon,float toLat,float toLon) {
-		//#debug error
-		logger.debug("Route search from "+fromLat+","+fromLon+ " to "+toLat+","+toLon);
 
 		try {
 			// search ways new  
@@ -293,18 +284,11 @@ public class Routing implements Runnable {
 			
 			if (routeFrom == null){
 				parent.receiveMessage("No startpoint found");
-			} else {
-				//#debug error
-				logger.debug("Route from " + routeFrom);
-				
-			}
+			} 
 			routeTo = tile.getRouteNode(null,toLat,toLon);
 			if (routeTo == null){
 				parent.receiveMessage("No targetpoint found");
-			} else {
-				//#debug error
-				logger.debug("Route to " + routeTo);
-			}
+			} 
 			if (routeFrom != null && routeTo != null){
 				processorThread = new Thread(this,"Routing");
 				processorThread.setPriority(Thread.NORM_PRIORITY);
@@ -314,20 +298,17 @@ public class Routing implements Runnable {
 			}
 		} catch (Exception e) {
 			parent.receiveMessage("Routing Ex " + e.getMessage());
-			//#debug error
-			e.printStackTrace();
 			parent.setRoute(null);
 		}
 	}
 	public void solve (PositionMark fromMark,PositionMark toMark) {
-		//#debug error
-		logger.debug("Route search from "+fromMark+" to "+toMark);
+
 
 		try {
 			RouteNode startNode=new RouteNode();
 			startNode.lat=fromMark.lat;
 			startNode.lon=fromMark.lon;
-			logger.debug("search nodes for start point");
+
 			if (fromMark.e == null){
 				// if there is no element at the from Mark, then search it from 
 				// the data.
@@ -351,13 +332,11 @@ public class Routing implements Runnable {
 				parent.receiveMessage("create from Connections");
 				Way w=(Way) fromMark.e;
 				int nearestSegment=getNearestSeg(w, startNode.lat, startNode.lon, fromMark.nodeLat,fromMark.nodeLon);
-				logger.debug("index endpoint of nearest segment " + nearestSegment);
 				if (! w.isOneway()){
 					
 //					parent.getRouteNodes().addElement(new RouteHelper(fromMark.nodeLat[nearestSegment],fromMark.nodeLon[nearestSegment],"oneWay sec"));
 					RouteNode rn=findPrevRouteNode(nearestSegment-1, startNode.lat, startNode.lon, fromMark.nodeLat,fromMark.nodeLon);
 					if (rn != null){
-						logger.debug("add start connection to " + rn);
 //						parent.getRouteNodes().addElement(new RouteHelper(rn.lat,rn.lon,"next back"));
 						// TODO: fill in bearings and cost
 						Connection initialState=new Connection(rn,0,(byte)0,(byte)0);
@@ -365,13 +344,9 @@ public class Routing implements Runnable {
 						open.put(initialState.toId, firstNode);
 						nodes.addElement(firstNode);						
 					}
-				} else {
-					logger.debug("start point is on oneway");
-				}
+				} 
 				RouteNode rn=findNextRouteNode(nearestSegment, startNode.lat, startNode.lon, fromMark.nodeLat,fromMark.nodeLon);
 				if (rn != null){
-					logger.debug("add start connection to " + rn);
-//					parent.getRouteNodes().addElement(new RouteHelper(rn.lat,rn.lon,"next forward"));
 					// TODO: fill in bearings and cost
 					Connection initialState=new Connection(rn,0,(byte)0,(byte)0);
 					GraphNode firstNode=new GraphNode(initialState,null,0,0,(byte)0);
@@ -403,8 +378,6 @@ public class Routing implements Runnable {
 			Connection newCon=new Connection(routeTo,0,(byte)0,(byte)0);
 			tile.getRouteNode(nextNode.lat, nextNode.lon, nodeTile);
 			nodeTile.tile.addConnection(nextNode,newCon,bestTime);
-			//#debug error
-			System.out.println("start routing Thread from :" + fromMark + " to " + toMark);
 			if (routeTo != null){
 				parent.cleanup();
 				System.gc();
@@ -437,9 +410,9 @@ public class Routing implements Runnable {
 						  lons[u+1],
 						  lat,
 						  lon);
-				  logger.debug("dist:" + distSq + "  minDist:" + minDistSq);
+//				  logger.debug("dist:" + distSq + "  minDist:" + minDistSq);
 				  if (distSq < minDistSq){
-					  logger.debug("index " + (u+1) + " is actual min");
+//					  logger.debug("index " + (u+1) + " is actual min");
 					  minDistSq=distSq;
 					  startAt=u+1;
 				  }
@@ -476,7 +449,7 @@ public class Routing implements Runnable {
 			closed.removeAll();
 			tile.cleanup(-1);
 			Vector sequence = getSequence(solution);
-			logger.info("Ready with route discovery");
+//			logger.info("Ready with route discovery");
 			return sequence;
 		} catch (Exception e) {
 			parent.receiveMessage("Routing Ex " + e.getMessage());
