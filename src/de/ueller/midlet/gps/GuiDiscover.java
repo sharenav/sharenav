@@ -310,7 +310,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		stopAllWhileRouting = new ChoiceGroup("Continue Map while calculation:", Choice.EXCLUSIVE, routingBack ,null);
 		stopAllWhileRouting.setSelectedIndex(config.isStopAllWhileRouteing()?0:1,true);
 		menuRoutingOptions.append(stopAllWhileRouting);
-		gaugeRoutingEsatimationFac=new Gauge("Speed of route calculation", true, 100, config.getRouteEstimationFac());
+		gaugeRoutingEsatimationFac=new Gauge("Speed of route calculation", true, 10, config.getRouteEstimationFac());
 		menuRoutingOptions.append(gaugeRoutingEsatimationFac);
 		show();
 	}
