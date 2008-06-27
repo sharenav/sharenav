@@ -121,7 +121,7 @@ public class Configuration {
 	private float detailBoostMultiplier;
 	private String gpxUrl;
 	private int debugSeverity;
-	private int routeEstimationFac=30;
+	private int routeEstimationFac=6;
 	private boolean stopAllWhileRouteing=false;
 	private boolean btKeepAlive = false;
 	private Node startupPos = new Node(0.0f, 0.0f);
