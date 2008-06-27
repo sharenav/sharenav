@@ -73,7 +73,7 @@ import de.ueller.midlet.gps.GpsMidDisplayable;
  */
 public class Trace extends Canvas implements CommandListener, LocationMsgReceiver,
 		Runnable , GpsMidDisplayable{
-	/** Soft button for exiting the demo. */
+	/** Soft button for exiting the map screen */
 	private final Command EXIT_CMD = new Command("Back", Command.BACK, 5);
 
 	private final Command REFRESH_CMD = new Command("Refresh", Command.ITEM, 4);
@@ -83,8 +83,8 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	private final Command DISCONNECT_GPS_CMD = new Command("Stop gps",Command.ITEM, 2);
 	private final Command START_RECORD_CMD = new Command("Start record",Command.ITEM, 4);
 	private final Command STOP_RECORD_CMD = new Command("Stop record",Command.ITEM, 4);
-	private final Command TRANSFER_RECORD_CMD = new Command("Manage recorded",Command.ITEM, 5);
-	private final Command SAVE_WAYP_CMD = new Command("Save waypoint ",Command.ITEM, 7);
+	private final Command MANAGE_TRACKS_CMD = new Command("Manage tracks",Command.ITEM, 5);
+	private final Command SAVE_WAYP_CMD = new Command("Save waypoint",Command.ITEM, 7);
 	private final Command MAN_WAYP_CMD = new Command("Manage waypoints",Command.ITEM, 7);
 	private final Command ROUTE_TO_CMD = new Command("Route",Command.ITEM, 3);
 	private final Command CAMERA_CMD = new Command("Camera",Command.ITEM, 9);
@@ -212,7 +212,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		addCommand(CONNECT_GPS_CMD);
 		addCommand(ROUTE_TO_CMD);
 		addCommand(START_RECORD_CMD);
-		addCommand(TRANSFER_RECORD_CMD);		           
+		addCommand(MANAGE_TRACKS_CMD);		           
 		addCommand(SAVE_WAYP_CMD);
 		addCommand(MAN_WAYP_CMD);
 		//#if polish.api.mmapi && polish.api.advancedmultimedia
@@ -497,9 +497,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				gpx.saveTrk();
 				removeCommand(STOP_RECORD_CMD);
 				addCommand(START_RECORD_CMD);
-				addCommand(TRANSFER_RECORD_CMD);
+				addCommand(MANAGE_TRACKS_CMD);
 			}
-			if (c == TRANSFER_RECORD_CMD){
+			if (c == MANAGE_TRACKS_CMD){
 				if (gpx.isRecordingTrk()) {
 					parent.getInstance().alert("Record Mode", "You need to stop recording before managing tracks." , 2000);
 					return;
@@ -574,12 +574,12 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				}
 				
 			}
+			//#endif
 			if (c == SETTARGET_CMD) {				
 				if (source != null) {
 					setTarget(source);
 				}
 			}
-			//#endif
 			} else {
 				logger.error(" currently in route Caclulation");
 			}
@@ -1324,7 +1324,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			}		
 			if(keyCode == KEY_POUND) {
 				ignoreKeyCode=keyCode;
-				commandAction(TRANSFER_RECORD_CMD,(Displayable) null);
+				commandAction(MANAGE_TRACKS_CMD,(Displayable) null);
 				return;
 			}
 			if(keyCode == KEY_NUM0) {
