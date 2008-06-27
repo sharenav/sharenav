@@ -491,7 +491,7 @@ public class Routing implements Runnable {
 			result = new Vector();
 		} else { 
 			result = getSequence (n.parent);
-			ConnectionWithNode c=new ConnectionWithNode(tile.getRouteNode(n.state.toId),n.state);
+			ConnectionWithNode c=new ConnectionWithNode(getRouteNode(n.state.toId),n.state);
 			result.addElement(c);
 		} 
 		return result; 
