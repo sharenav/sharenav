@@ -472,7 +472,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			if (c == EXIT_CMD) {
 				// FIXME: This is a workaround. It would be better if recording would not be stopped when returning to map
 				if (gpx.isRecordingTrk()) {
-					parent.getInstance().alert("Record Mode", "Please stop recording before returning to the map screen." , 2000);
+					parent.getInstance().alert("Record Mode", "Please stop recording before returning to the main screen." , 2000);
 					return;
 				}
 				
