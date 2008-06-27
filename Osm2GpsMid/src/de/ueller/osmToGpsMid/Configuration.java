@@ -124,8 +124,15 @@ public class Configuration {
 				useRouting=use("useRouting");
 				maxRouteTileSize=Integer.parseInt(getString("routing.maxTileSize"));
 				maxTileSize=Integer.parseInt(getString("maxTileSize"));
-				styleFile = getString("style-file");				
-				legend = new LegendParser(new FileInputStream(styleFile));				
+				styleFile = getString("style-file");
+				InputStream is;
+				try {
+					is = new FileInputStream(styleFile);
+				} catch (IOException e) {
+					System.out.println("Warning: Style file (" + styleFile + ") not found. Using internal one!"); 
+					is = getClass().getResourceAsStream("/style-file.xml");
+				}
+				legend = new LegendParser(is);
 			} catch (IOException e) {
 				System.out.println("Could not load the configuration properly for conversion");
 				e.printStackTrace();
