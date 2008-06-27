@@ -1,22 +1,15 @@
 package de.ueller.midlet.gps.routing;
-//test
-import java.io.DataInputStream;
 import java.io.IOException;
-import java.util.Hashtable;
 import java.util.Vector;
 
 import de.ueller.gps.tools.intTree;
-import de.ueller.gpsMid.mapData.QueueReader;
 import de.ueller.gpsMid.mapData.RouteBaseTile;
-import de.ueller.gpsMid.mapData.RouteFileTile;
-import de.ueller.gpsMid.mapData.RouteTile;
 import de.ueller.gpsMid.mapData.Tile;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.data.Way;
-import de.ueller.midlet.gps.tile.C;
 
 
 
@@ -241,10 +234,7 @@ public class Routing implements Runnable {
 //		}
 		int dTurn=from.endBearing-to.startBearing;
 		int turnCost=getTurnCost(dTurn);
-//		if (from.to == null){
-//			from.to=tile.getRouteNode(from.toId.shortValue());
-//		}
-		RouteNode toNode=tile.getRouteNode(to.toId);
+		RouteNode toNode=getRouteNode(to.toId);
 		if (toNode == null){
 			//#debug error
 			System.out.println("RouteNode ("+to.toId+") = null" );
@@ -276,6 +266,17 @@ public class Routing implements Runnable {
 		} else {
 			return (int) ((dist*1.1f + turnCost)*estimateFac);
 		}
+	}
+
+	/**
+	 * @param to
+	 * @return
+	 */
+	private RouteNode getRouteNode(int id) {
+		if (id == Integer.MAX_VALUE){
+			return routeTo;
+		}
+		return tile.getRouteNode(id);
 	} 
 
 	public void solve (float fromLat,float fromLon,float toLat,float toLon) {
@@ -383,7 +384,7 @@ public class Routing implements Runnable {
 			// same for the endpoint
 			
 			routeTo=new RouteNode();
-			routeTo.id=-1;
+			routeTo.id=Integer.MAX_VALUE;
 			routeTo.conSize=0;
 			routeTo.lat=toMark.lat;
 			routeTo.lon=toMark.lon;
