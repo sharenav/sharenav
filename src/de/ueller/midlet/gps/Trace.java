@@ -464,6 +464,12 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	public void commandAction(Command c, Displayable d) {
 		try {
 			if (c == EXIT_CMD) {
+				// FIXME: This is a workaround. It would be better if recording would not be stopped when returning to map
+				if (gpx.isRecordingTrk()) {
+					parent.getInstance().alert("Record Mode", "Please stop recording before returning to the map screen." , 2000);
+					return;
+				}
+				
 				if (locationProducer != null){
 					locationProducer.close();
 				}
@@ -494,11 +500,16 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				addCommand(TRANSFER_RECORD_CMD);
 			}
 			if (c == TRANSFER_RECORD_CMD){
-			    if (gpx.isRecordingTrk()) {
-			    	gpx.saveTrk();
-					removeCommand(STOP_RECORD_CMD);
-					addCommand(START_RECORD_CMD);			    	
-			    }
+				if (gpx.isRecordingTrk()) {
+					parent.getInstance().alert("Record Mode", "You need to stop recording before managing tracks." , 2000);
+					return;
+				}
+
+//				if (gpx.isRecordingTrk()) {
+//			    	gpx.saveTrk();
+//					removeCommand(STOP_RECORD_CMD);
+//					addCommand(START_RECORD_CMD);			    	
+//			    }
 				if (imageCollector != null) { 
                     imageCollector.suspend(); 
                 } 
