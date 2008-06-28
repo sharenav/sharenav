@@ -99,7 +99,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 
 	private final Form				menuRecordingOptions = new Form("Recording Rules");
 	
-	private final Form				menuRoutingOptions = new Form("Rounting Options");
+	private final Form				menuRoutingOptions = new Form("Routing Options");
 	
 	private final GpsMid			parent;
 
