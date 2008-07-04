@@ -253,13 +253,6 @@ zoomed out 21x (pseudo zoom 1:  500km)
 		<scale scale="25"/>
 		<textscale scale="26"/>
 	  </value>
-	  <value name="*">
-		<description desc = "Other Shop"/>
-		<image src="/othershop.png"/>
-		<namekey tag="name"/>
-		<scale scale="23"/>
-		<textscale scale="26"/>
-	  </value>
 	</key>
 	<key tag="highway">
 	   <value name="bus_stop">
