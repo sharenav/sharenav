@@ -59,25 +59,25 @@ zoomed out 21x (scale alias 1:  500km)
 	  </value>
 	  <value name="town">
 		<description desc = "Town"/>
-		<searchIcon src = "/city.png"/>
+		<searchIcon src = "city.png"/>
 		<namekey tag="name"/>
 		<scale scale = "16"/>
 	  </value>
 	  <value name="village">
 		<description desc = "Village"/>
-		<searchIcon src = "/city.png"/>
+		<searchIcon src = "city.png"/>
 		<namekey tag="name"/>
 		<scale scale = "22"/>
 	  </value>
 	  <value name="hamlet">
 		<description desc = "Hamlet"/>
-		<searchIcon src = "/city.png"/>
+		<searchIcon src = "city.png"/>
 		<namekey tag="name"/>
 		<scale scale = "23"/>
 	  </value>
 	  <value name="suburb">
 		<description desc = "Suburb"/>
-		<searchIcon src = "/city.png"/>
+		<searchIcon src = "city.png"/>
 		<namekey tag="name"/>
 		<scale scale = "23"/>
 	  </value>
@@ -85,154 +85,154 @@ zoomed out 21x (scale alias 1:  500km)
 	<key tag="amenity">
 	  <value name ="post_box">
 		<description desc = "Post box"/>
-		<image src="/post_box.png"/>
+		<image src="post_box.png"/>
 		<namekey tag="name"/>
 		<scale scale="25"/>
 		<textscale scale="18"/>
 	  </value>	
 	  <value name ="post_office">
 		<description desc = "Post box"/>
-		<image src="/post_office.png"/>
+		<image src="post_office.png"/>
 		<namekey tag="name"/>
 		<scale scale="23"/>
 		<textscale scale="18"/>
 	  </value>	
 	  <value name ="school">
 		<description desc = "School"/>
-		<image src="/school.png"/>
+		<image src="school.png"/>
 		<namekey tag="name"/>
 		<scale scale="24"/>
 		<textscale scale="26"/>
 	  </value>
 	  <value name ="telephone">
 		<description desc = "Public telephone"/>
-		<image src="/telephone.png"/>
+		<image src="telephone.png"/>
 		<namekey tag="name"/>
 		<scale scale="25"/>
 		<textscale scale = "26"/>
 	  </value>
 	  <value name ="restaurant">
 		<description desc = "Restaurant"/>
-		<image src="/restaurant.png"/>
+		<image src="restaurant.png"/>
 		<namekey tag="name"/>
 		<scale scale="24"/>
 		<textscale scale="26"/>
 	  </value>
 	  <value name ="hospital">
 		<description desc = "Hospital"/>
-		<image src="/hospital.png"/>
+		<image src="hospital.png"/>
 		<namekey tag="name"/>
 		<scale scale="20"/>
 		<textscale scale="24"/>
 	  </value>
 	  <value name ="pub">
 		<description desc = "Pub"/>
-		<image src="/pub.png"/>
+		<image src="pub.png"/>
 		<namekey tag="name"/>
 		<scale scale="25"/>
 		<textscale scale="26"/>
 	  </value>
 	  <value name ="atm">
 		<description desc = "Cash machine"/>
-		<image src="/atm.png"/>
+		<image src="atm.png"/>
 		<namekey tag="name"/>
 		<scale scale="25"/>
 		<textscale scale="26"/>
 	  </value>
 	  <value name ="cinema">
 		<description desc = "Cinema"/>
-		<image src="/cinema.png"/>
+		<image src="cinema.png"/>
 		<namekey tag="name"/>
 		<scale scale="24"/>
 		<textscale scale="26"/>
 	  </value>
 	  <value name ="pharmacy">
 		<description desc = "Pharmacy"/>
-		<image src="/pharmacy.png"/>
+		<image src="pharmacy.png"/>
 		<namekey tag="name"/>
 		<scale scale="24"/>
 		<textscale scale="26"/>
 	  </value>
 	  <value name ="place_of_worship">
 		<description desc = "Church"/>
-		<image src="/church.png"/>
+		<image src="church.png"/>
 		<namekey tag="name"/>
 		<scale scale="24"/>
 		<textscale scale="26"/>
 	  </value>
 	  <value name ="fuel">
 		<description desc = "Refueling station"/>
-		<image src="/fuel.png"/>
+		<image src="fuel.png"/>
 		<namekey tag="name"/>
 		<scale scale="23"/>
 		<textscale scale="26"/>		
 	  </value>
 	  <value name ="bicycle_parking">
 		<description desc = "Bicycle parking"/>
-		<image src="/bicycling.png"/>
+		<image src="bicycling.png"/>
 		<namekey tag="name"/>
 		<scale scale="23"/>
 		<textscale scale="26"/>		
 	  </value>
 	  <value name ="toilets">
 		<description desc = "Public toilet"/>
-		<image src="/toilets.png"/>
+		<image src="toilets.png"/>
 		<namekey tag="name"/>
 		<scale scale="25"/>
 		<textscale scale="26"/>		
 	  </value>
 	  <value name ="recycling">
 		<description desc = "Recycling"/>
-		<image src="/recycling.png"/>
+		<image src="recycling.png"/>
 		<namekey tag="name"/>
 		<scale scale="25"/>
 		<textscale scale="26"/>		
 	  </value>
 	  <value name ="library">
 		<description desc = "Library"/>
-		<image src="/library.png"/>
+		<image src="library.png"/>
 		<namekey tag="name"/>
 		<scale scale="22"/>
 		<textscale scale="26"/>		
 	  </value>
 	  <value name ="biergarten">
 		<description desc = "Biergarten"/>
-		<image src="/biergarten.png"/>
+		<image src="biergarten.png"/>
 		<namekey tag="name"/>
 		<scale scale="25"/>
 		<textscale scale="26"/>
 	  </value>
 	  <value name ="fire_station">
 		<description desc = "Fire station"/>
-		<image src="/firebrigade.png"/>
+		<image src="firebrigade.png"/>
 		<namekey tag="name"/>
 		<scale scale="25"/>
 		<textscale scale="26"/>
 	  </value>	
 	  <value name ="nightclub">
 		<description desc = "Nightclub"/>
-		<image src="/nightclub.png"/>
+		<image src="nightclub.png"/>
 		<namekey tag="name"/>
 		<scale scale="25"/>
 		<textscale scale="26"/>
 	  </value>	
 	  <value name ="police">
 		<description desc = "Police station"/>
-		<image src="/police.png"/>
+		<image src="police.png"/>
 		<namekey tag="name"/>
 		<scale scale="24"/>
 		<textscale scale="26"/>
 	  </value>	
 	  <value name ="parking">
 		<description desc = "Car parking"/>
-		<image src="/parking.png"/>
+		<image src="parking.png"/>
 		<namekey tag="name"/>
 		<scale scale="23"/>
 		<textscale scale="26"/>
 	  </value>
 	  <value name ="taxi">
 		<description desc = "Taxi"/>
-		<image src="/taxi.png"/>
+		<image src="taxi.png"/>
 		<namekey tag="name"/>
 		<scale scale="23"/>
 		<textscale scale="26"/>
@@ -241,14 +241,14 @@ zoomed out 21x (scale alias 1:  500km)
 	<key tag="shop">
 	   <value name="supermarket">
 		<description desc = "Supermarket"/>
-		<image src="/supermarket.png"/>
+		<image src="supermarket.png"/>
 		<namekey tag="name"/>
 		<scale scale="22"/>
 		<textscale scale="26"/>
 	  </value>
 	  <value name="kiosk">
 		<description desc = "Kiosk"/>
-		<image src="/kiosk.png"/>
+		<image src="kiosk.png"/>
 		<namekey tag="name"/>
 		<scale scale="25"/>
 		<textscale scale="26"/>
@@ -257,7 +257,7 @@ zoomed out 21x (scale alias 1:  500km)
 	<key tag="highway">
 	   <value name="bus_stop">
 		<description desc = "Bus stop"/>
-		<image src="/bus.png"/>		
+		<image src="bus.png"/>		
 		<namekey tag="name"/>
 		<scale scale="22"/>
 		<textscale scale="26"/>
@@ -267,7 +267,7 @@ zoomed out 21x (scale alias 1:  500km)
 	<key tag="railway">
 	   <value name="station">
 		<description desc = "Railway station"/>
-		<image src="/railstation.png"/>		
+		<image src="railstation.png"/>		
 		<namekey tag="name"/>
 		<scale scale="19"/>
 		<textscale scale="24"/>
@@ -275,7 +275,7 @@ zoomed out 21x (scale alias 1:  500km)
 	  </value>
 	  <value name="tram_stop">
 		<description desc = "Tram station"/>
-		<image src="/railstation.png"/>		
+		<image src="railstation.png"/>		
 		<namekey tag="name"/>
 		<scale scale="22"/>
 		<textscale scale="26"/>
@@ -285,14 +285,14 @@ zoomed out 21x (scale alias 1:  500km)
 	  <key tag="tourism">
 	   <value name="hotel">
 		<description desc = "Hotel"/>
-		<image src="/hotel.png"/>
+		<image src="hotel.png"/>
 		<namekey tag="name"/>
 		<scale scale="24"/>
 		<textscale scale="26"/>		
 	  </value>
 	  <value name="museum">
 		<description desc = "Museum"/>
-		<image src="/museum.png"/>
+		<image src="museum.png"/>
 		<namekey tag="name"/>
 		<scale scale="23"/>
 		<textscale scale="26"/>
