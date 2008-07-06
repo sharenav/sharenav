@@ -89,8 +89,9 @@ public class LegendParser extends DefaultHandler{
             }
 		} catch (FileNotFoundException fnfe) {
 			System.out.println("ERROR, could not find necessary file: " + fnfe.getMessage());
-			System.out.println("If the missing file is the style-file.dtd and you can't " +
-					"optain the file otherwise, consider as a workaround to remove the line <!DOCTYPE line from the style-file.xml");
+			System.out.println("If the missing file is the style-file.dtd you can");
+			System.out.println("rename a copy of Osm2GpsMid*.jar to Osm2GpsMid*.zip");
+			System.out.println("and extract the style-file.dtd from there.");
 			System.exit(1);
 		} catch (IOException e) {
 			System.out.println("ERROR: IOException: " + e);			
