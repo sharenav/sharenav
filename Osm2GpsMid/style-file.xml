@@ -209,13 +209,6 @@ zoomed out 21x (scale alias 1:  500km)
 		<scale scale="25"/>
 		<textscale scale="26"/>
 	  </value>	
-	  <value name ="nightclub">
-		<description desc = "Nightclub"/>
-		<image src="nightclub.png"/>
-		<namekey tag="name"/>
-		<scale scale="25"/>
-		<textscale scale="26"/>
-	  </value>	
 	  <value name ="police">
 		<description desc = "Police station"/>
 		<image src="police.png"/>
