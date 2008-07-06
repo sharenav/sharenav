@@ -208,7 +208,7 @@ public class ImageCollector implements Runnable {
 		   logger.fatal("ImageCollector thread crashed with out of memory: " + oome.getMessage() + recoverZoomedIn);
 		} catch (Exception e) {
 			crash++;
-			logger.exception("ImageCollector thread crashed unexpectadly with error ", e);
+			logger.silentexception("ImageCollector thread crashed unexpectadly with error ", e);
 		}
 		if(crash>=MAXCRASHES) {
 		   logger.fatal("ImageCollector crashed too often. Aborting.");

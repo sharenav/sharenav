@@ -53,13 +53,22 @@ public class Logger {
 		}
 	}
 	public void error(String msg){		
+		error(msg, false);
+	}
+	public void error(String msg, boolean silent){		
 		if (level >= ERROR) {
 			app.log("E["+source + msg);
-			GpsMid.getInstance().alert("Error", msg, 5000);			
+			if(!silent) {
+				GpsMid.getInstance().alert("Error", msg, 5000);			
+			}
 		}		
 	}
 	public void exception(String msg, Exception e) {		
 		error(msg + " (" + e + ": " + e.getMessage());
+		e.printStackTrace();		
+	}
+	public void silentexception(String msg, Exception e) {		
+		error(msg + " (" + e + ": " + e.getMessage(), true);
 		e.printStackTrace();		
 	}
 	public void info(String msg){
