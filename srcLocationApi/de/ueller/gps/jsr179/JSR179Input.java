@@ -53,8 +53,10 @@ public class JSR179Input implements LocationListener ,LocationMsgProducer{
                 logger.error("Cannot create LocationProvider for this criteria.");
                 locationProvider=null;
         		receiver.locationDecoderEnd("no JSR179 Provider");
-            }            
-            updateSolution(locationProvider.getState());
+			}
+            if(locationProvider!=null) {
+            	updateSolution(locationProvider.getState());
+            }
         }
         //#debug
     	logger.trace("exit createLocationProvider()");
@@ -84,7 +86,13 @@ public class JSR179Input implements LocationListener ,LocationMsgProducer{
 //		if (locationProvider != null){
 //			locationProvider.setLocationListener(null, -1, -1, -1);
 //		}
-    	locationProvider.setLocationListener(null, 0, 0, 0);
+    	if (locationProvider != null){
+	    	//locationProvider.reset();
+	    	try {
+	    		locationProvider.setLocationListener(null, 0, 0, 0);
+	    	} catch (Exception e) {
+    		}
+    	}
 		locationProvider=null;
 		receiver.locationDecoderEnd();
 		//#debug
