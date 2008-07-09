@@ -58,6 +58,7 @@ public class ImageCollector implements Runnable {
 	private boolean needRedraw=false;
 	int createImageCount=0;
 	private final Trace tr;
+	public int statusFontHeight=0;
 	
 	public ImageCollector(Tile[] t,int x,int y,Trace tr, Images i, C c) {
 		super();
@@ -273,10 +274,13 @@ public class ImageCollector implements Runnable {
 			}
 			tr.source=pc[nextPaint].currentPos;
 		}
+		if(statusFontHeight==0) {
+			statusFontHeight=screenPc.g.getFont().getHeight();
+		}
 		boolean showLatLon=tr.getConfig().getCfgBitState(Configuration.CFGBIT_SHOWLATLON);
 		if ( showLatLon || name!=null) {
 			screenPc.g.setColor(255,255,255);
-			screenPc.g.fillRect(0,screenPc.ySize-15, screenPc.xSize, 15);
+			screenPc.g.fillRect(0,screenPc.ySize-statusFontHeight, screenPc.xSize, statusFontHeight);
 			screenPc.g.setColor(0,0,0);
 		}
 		if (showLatLon) {

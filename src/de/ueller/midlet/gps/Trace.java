@@ -1078,14 +1078,14 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 					}
 			    	pc.g.setFont(routeFont);
 			    	pc.g.setColor(230,230,230);
-					pc.g.fillRect(0,pc.ySize-15-routeFontHeight, pc.xSize, routeFontHeight);
+					pc.g.fillRect(0,pc.ySize-imageCollector.statusFontHeight-routeFontHeight, pc.xSize, routeFontHeight);
 					pc.g.setColor(0,0,0);
 					double distance=ProjMath.getDistance(center.radlat, center.radlon, lastTo.lat, lastTo.lon);
 					int intDistance=new Double(distance).intValue();
 					pc.g.drawString(directions[a]
 					                      +
 					                      ((intDistance<PASSINGDISTANCE)?"":" in " + intDistance + "m"),
-					                      pc.xSize/2,pc.ySize-15, Graphics.HCENTER | Graphics.BOTTOM
+					                      pc.xSize/2,pc.ySize-imageCollector.statusFontHeight, Graphics.HCENTER | Graphics.BOTTOM
                     );
 					pc.g.setFont(originalFont);
 					if (a!=arrow) {
