@@ -41,7 +41,12 @@ public class Node extends Entity{
 			POIdescription desc = Configuration.getConfiguration().getpoiDesc(type);
 			if (desc != null) {
 				String name = getAttribute(desc.nameKey);
-				String nameFallback = getAttribute(desc.nameFallbackKey); 
+				String nameFallback=null;
+				if(desc.nameFallbackKey!= null && desc.nameFallbackKey.equals("*") ) {
+					nameFallback = getAttribute(desc.key);
+				} else {
+					nameFallback = getAttribute(desc.nameFallbackKey);
+				}
 				if (name != null && nameFallback != null) {
 					name += " (" + nameFallback + ")";
 				} else if ((name == null) && (nameFallback != null)) {
