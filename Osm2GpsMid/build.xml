@@ -133,6 +133,7 @@
      	 </fileset>
 	 <fileset file="style-file.xml" />
    	 <fileset file="style-file.dtd" />
+   	 <fileset file="high-style.zip" />
       </jar>
    </target>
 
