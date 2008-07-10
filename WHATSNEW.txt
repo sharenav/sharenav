@@ -1,4 +1,27 @@
-GpsMid 0.X.xx
+GpsMid 0.x.xx
+	   - map content and look (ways, areas, pois) is configurable on midlet creation
+	   - Search for nearest POIs
+	   - Improved Search for name dialog
+	   - Improved Routing
+	   - Routing is now possible in large midlets
+	   - Large next routing arrow and routing instruction text
+	   - Import only waypoints with maximum distance to target
+	   - Options to keep backlight on for various phones
+	   - Recording Rules
+	   - NMEA logging to file
+	   - Debug logging to file
+	   - Use Map Source from file system
+	   - Use layer tag (from -2..+2) for drawing order of ways and areas
+	   - Increase detail of map when zooming out during runtime
+	   - Map features Dialog (i.e. show type, lat/lon, Full Screen Mode, toggle map elements)
+	   - Area labels in Map
+	   - Experimental way labels in Map
+	   - Repeating keys for panning
+	   - New Map Key shortcuts (for short and long pressed keys)
+	   - Wiki: http://gpsmid.wiki.sourceforge.net/
+	   - many more new features and bugfixes
+
+GpsMid 0.3.50
 	   BugFix: NMEA input mode could get stuck in an infinite loop
 	   BugFix: Could not detect GPS bluetooth devices
 	   BugFix: Correct speed calculation for NMEA input
