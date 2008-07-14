@@ -2,10 +2,10 @@ package de.ueller.gpsMid.mapData;
 
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.Logger;
+import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.routing.Connection;
 import de.ueller.midlet.gps.routing.RouteNode;
@@ -56,12 +56,15 @@ public class RouteTile extends RouteBaseTile {
 		return false;
 	}
 
+	/**
+	 * Only for debuging pruposes to show the routeNode and their connections
+	 */
 	public void paint(PaintContext pc, byte layer) {
 		if (pc == null && layer != Tile.LAYER_NODE){ //Which layer should this be at?
 			return;
 		}
 		if (contain(pc)){
-			drawBounds(pc, 255, 255, 255);
+//			drawBounds(pc, 255, 255, 255);
 			if (nodes == null){
 				try {
 					loadNodes();
@@ -69,13 +72,37 @@ public class RouteTile extends RouteBaseTile {
 					e.printStackTrace();
 					return;
 				}
-
+			}
+			if (connections == null){
+				try {
+					loadConnections(true);
+				} catch (IOException e) {
+					e.printStackTrace();
+					return;
+				}
 			}
 			pc.g.setColor(255, 100, 100);
 			for (int i=0; i< nodes.length;i++){
 				if (pc.isVisible(nodes[i].lat, nodes[i].lon)){
 					pc.getP().forward(nodes[i].lat, nodes[i].lon, pc.swapLineP,true);
 					pc.g.drawRect(pc.swapLineP.x-2, pc.swapLineP.y-2, 5, 5);
+//					pc.g.drawString(" "+nodes[i].lat+"/"+ nodes[i].lon,pc.swapLineP.x+2, pc.swapLineP.y+2, 0);
+//					System.out.println("have to draw " + connections[i].length + " connections");
+					for (int ii=0; ii< connections[i].length;ii++){
+
+						Connection c=connections[i][ii];
+						RouteNode rnt=getRouteNode(c.toId);
+						if (rnt == null){
+							RouteBaseTile dict = (RouteBaseTile) Trace.getInstance().getDict((byte)4);
+							rnt=dict.getRouteNode(c.toId);
+						}
+						if (rnt == null){
+							System.out.println("Routenode not found");
+						} else {
+							pc.getP().forward(rnt.lat, rnt.lon, pc.lineP2,true);
+							pc.g.drawLine(pc.swapLineP.x, pc.swapLineP.y, pc.lineP2.x, pc.lineP2.y);
+						}
+					}
 				}
 			}
 			lastUse=0;

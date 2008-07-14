@@ -51,8 +51,8 @@ public class Names implements Runnable {
 			while (! shutdown){			
 				synchronized (this) {
 					try {
-						if (addQueue2.size() == 0) {
-							wait(20000l);
+						if (addQueue2.size() == 0 && (!cleanup)) {
+							wait(60000l);
 						}
 					} catch (InterruptedException e1) {
 //						logger.error("interrupted");
@@ -64,12 +64,14 @@ public class Names implements Runnable {
 				//efficiency. Should not effect perceived
 				//Speed much
 				Thread.sleep(500);
-				if (addQueue2.size() == 0) continue;
-				synchronized (addQueue2) {					
-					queue2.clone(addQueue2);
-					addQueue2.removeAll();					
+				// change to give cleanup a chance
+				if (addQueue2.size() != 0) {
+					synchronized (addQueue2) {					
+						queue2.clone(addQueue2);
+						addQueue2.removeAll();					
+					}
+					readData(queue2);
 				}
-				readData(queue2);
 				if (cleanup){
 					cleanupStringCache();
 				}
@@ -86,8 +88,9 @@ public class Names implements Runnable {
 		shutdown=true;
 	}
 	
-	public void cleanup(){
+	public synchronized void cleanup(){
 		cleanup=true;
+		notify();
 	}
 
 	

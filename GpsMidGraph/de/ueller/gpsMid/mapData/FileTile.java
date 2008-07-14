@@ -19,7 +19,7 @@ import de.ueller.midlet.gps.tile.QueueableTile;
 public class FileTile extends Tile implements QueueableTile {
 	byte zl;
 	Tile tile=null;
-	boolean inLoad=false;
+	volatile boolean inLoad=false;
 	private final static Logger logger=Logger.getInstance(FileTile.class,Logger.INFO);
 
 	public FileTile(DataInputStream dis, int deep, byte zl) throws IOException {

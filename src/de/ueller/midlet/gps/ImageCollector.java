@@ -21,8 +21,8 @@ import de.ueller.midlet.gps.tile.PaintContext;
  * 			Copyright (c) 2008 Kai Krueger apm at users dot sourceforge dot net 
  * See Copying
  * 
- * this class collects all visible obeject to a offline image for later painting .
- * Run in a low proirity to avoid interruptin GUI.
+ * this class collects all visible object to a off line image for later painting .
+ * Run in a low priority to avoid interrupting GUI.
  */
 
 
@@ -37,9 +37,9 @@ public class ImageCollector implements Runnable {
 
 	//private boolean lockg=false;
 	//private boolean lockc=false;
-	private boolean newPaintAvail=false;
-	private boolean shutdown=false;
-	private boolean suspended=true;
+	private volatile boolean newPaintAvail=false;
+	private volatile boolean shutdown=false;
+	private volatile boolean suspended=true;
 	private final Tile t[];
 	private Thread processorThread;
 	private ScreenContext nextSc;
@@ -50,12 +50,12 @@ public class ImageCollector implements Runnable {
 	byte nextCreate=0;
 	byte nextPaint=0;
 
-	byte stat=0;
+	volatile byte stat=0;
 	int xSize;
 	int ySize;
 	IntPoint newCenter=new IntPoint(0,0);
 	IntPoint oldCenter=new IntPoint(0,0);
-	private boolean needRedraw=false;
+	private volatile boolean needRedraw=false;
 	int createImageCount=0;
 	private final Trace tr;
 	public int statusFontHeight=0;
@@ -180,6 +180,12 @@ public class ImageCollector implements Runnable {
 					if (t[5] != null) {
 						t[5].paint(pc[nextCreate], layersToRender[layer]);
 					}
+					/**
+					 * Drawing debuginfo for routing
+					 */
+//					if (t[4] != null) {
+//						t[4].paint(pc[nextCreate], layersToRender[layer]);
+//					}
 					if (suspended) {
 						// Don't continue rendering if suspended
 						pc[nextCreate].state = PaintContext.STATE_READY;

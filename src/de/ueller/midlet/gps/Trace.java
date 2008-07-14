@@ -166,7 +166,6 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 	private Names namesThread;
 
-	// private VisibleCollector vc;
 	private ImageCollector imageCollector;
 
 	private QueueDataReader tileReader;
@@ -1479,6 +1478,10 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		repaint(0, 0, getWidth(), getHeight());
 	}
 
+	public Tile getDict(byte zl) {
+		return t[zl];
+	}
+	
 	public void setDict(Tile dict, byte zl) {		
 		t[zl] = dict;
 		// Tile.trace=this;
