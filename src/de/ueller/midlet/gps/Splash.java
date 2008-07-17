@@ -33,8 +33,8 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 	String[] txt={"Copyright:",
 				  " Harald Mueller",
 				  " A. P. Monkey",
-	              "Applicaton:",
-	              " licensd by GPL2",
+	              "Application:",
+	              " licensed by GPL2",
 	              " http://www.gnu.org/",
 	              "Map data:",
 	              " from OpenStreetMap",
@@ -43,6 +43,7 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 	  "Thanks for source parts to:",
 	  " Nikolay Klimchuk",
 	  " Simon Turner",
+	  " Will Perone",
       "Artwork:",
       " Tobias Mueller"};
 	private Font f;
@@ -52,7 +53,7 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 	private int ssize;
 	private int topStart=106;
 	private int space;
-
+	private double scale=1;
 
 
 	public Splash(GpsMid main){
@@ -64,6 +65,17 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
+	if(splash.getWidth()<getWidth() ) {
+		double scaleW=(double) getWidth()/ (double) splash.getWidth();
+		double scaleH=(double) getHeight()/(double) splash.getHeight();
+		scale=scaleH;
+		if(scaleW<scaleH) {
+			scale=scaleW;
+		}
+		splash=scaleImage(splash, (int)(scale*(double) splash.getWidth()), (int)(scale* (double) splash.getHeight()) );
+		topStart*=scale;
+	}
+
 	f=Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_ITALIC, Font.SIZE_SMALL);
 	space=getHeight()-topStart;
 	ssize=f.getHeight()*txt.length+space;
@@ -80,10 +92,11 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 
 	protected void paint(Graphics g) {
 		// cleans the screen
-		g.setColor(180, 180, 255);
+		g.setColor(150, 200, 250);
 		g.setFont(f);
 		g.fillRect(0, 0, getWidth(), getHeight());
 		int sp=f.getHeight();
+		
 		g.drawImage(splash,getWidth()/2, 0,Graphics.HCENTER|Graphics.TOP);
 
 		g.setColor(255, 40, 40);
@@ -98,7 +111,7 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 			if (w > (getWidth()-10)){
 				System.out.println("to long");
 			}
-			g.drawString(txt[i], 5, yc, 0);
+			g.drawString(txt[i], (int) (5*scale+ (getWidth()-splash.getWidth())/2), yc, 0);
 			}
 			yc+=sp;
 			if (! visible){
@@ -141,4 +154,54 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 		}
 		}
 	}
+	
+	
+	// based on Public Domain code (confirmed by E-Mail)
+	// from http://willperone.net/Code/codescaling.php 
+	public Image scaleImage(Image original, int newWidth, int newHeight)
+    {        
+    	// if we would not be able to allocate memory for
+		// at least the memory for the original and the scaled image
+		// plus 25% do not scale
+		if(Runtime.getRuntime().freeMemory()<5*(original.getHeight() * original.getWidth() + newWidth*newHeight) ) {
+    		scale=1;
+    		return original;
+    	}
+        try {
+			int[] rawInput = new int[original.getHeight() * original.getWidth()];
+	        original.getRGB(rawInput, 0, original.getWidth(), 0, 0, original.getWidth(), original.getHeight());
+	        
+	        int[] rawOutput = new int[newWidth*newHeight];        
+	
+	        // YD compensates for the x loop by subtracting the width back out
+	        int YD = (original.getHeight() / newHeight) * original.getWidth() - original.getWidth(); 
+	        int YR = original.getHeight() % newHeight;
+	        int XD = original.getWidth() / newWidth;
+	        int XR = original.getWidth() % newWidth;        
+	        int outOffset= 0;
+	        int inOffset=  0;
+	        
+	        for (int y= newHeight, YE= 0; y > 0; y--) {            
+	            for (int x= newWidth, XE= 0; x > 0; x--) {
+	                rawOutput[outOffset++]= rawInput[inOffset];
+	                inOffset+=XD;
+	                XE+=XR;
+	                if (XE >= newWidth) {
+	                    XE-= newWidth;
+	                    inOffset++;
+	                }
+	            }            
+	            inOffset+= YD;
+	            YE+= YR;
+	            if (YE >= newHeight) {
+	                YE -= newHeight;     
+	                inOffset+=original.getWidth();
+	            }
+	        }               
+	        return Image.createRGBImage(rawOutput, newWidth, newHeight, false);
+        } catch (Exception e) {
+        	scale=1;
+        	return original;
+        }
+    }
 }
