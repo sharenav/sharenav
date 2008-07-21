@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedList;
+import java.util.Vector;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -23,6 +24,7 @@ import de.ueller.osmToGpsMid.model.Member;
 import de.ueller.osmToGpsMid.model.Node;
 import de.ueller.osmToGpsMid.model.POIdescription;
 import de.ueller.osmToGpsMid.model.Relation;
+import de.ueller.osmToGpsMid.model.SoundDescription;
 import de.ueller.osmToGpsMid.model.Way;
 import de.ueller.osmToGpsMid.model.WayDescription;
 
@@ -33,12 +35,18 @@ public class LegendParser extends DefaultHandler{
 	private Hashtable<String, Hashtable<String,WayDescription>> wayMap;
 	private LongTri<POIdescription> pois;
 	private LongTri<WayDescription> ways;
+	private Vector<SoundDescription> sounds;
 	private POIdescription currentPoi;
+	private SoundDescription currentSound;
 	private WayDescription currentWay;
 	private String currentKey;
 	private Hashtable<String,POIdescription> keyValuesPoi;
 	private Hashtable<String,WayDescription> keyValuesWay;
-	private boolean readingPOIs = false;
+	private final byte READING_WAYS=0;
+	private final byte READING_POIS=1;
+	private final byte READING_SOUNDS=2;
+	private byte readingType = READING_WAYS;
+	
 	private byte poiIdx = 0;
 	private byte wayIdx = 0;
 	private boolean nonValidStyleFile;
@@ -77,6 +85,8 @@ public class LegendParser extends DefaultHandler{
 			currentWay.description = "No description";
 			ways.put(currentWay.typeNum, currentWay);
 			
+			sounds = new Vector<SoundDescription>();		
+			
 			SAXParserFactory factory = SAXParserFactory.newInstance();
 			factory.setValidating(true);
 			// Parse the input
@@ -114,9 +124,12 @@ public class LegendParser extends DefaultHandler{
 	public void startElement(String namespaceURI, String localName, String qName, Attributes atts) {		
 //		System.out.println("start " + localName + " " + qName);
 		if (qName.equals("pois")) {
-			readingPOIs = true;			
-		}
-		if (qName.equals("background")) {
+			readingType=READING_POIS;			
+		} else if (qName.equals("ways")) {
+			readingType=READING_WAYS;			
+		} else if (qName.equals("sounds")) {
+			readingType=READING_SOUNDS;			
+		} else if (qName.equals("background")) {
 			try {
 				Configuration.getConfiguration().background_color = Integer.parseInt(atts.getValue("color"),16);
 			} catch (NumberFormatException nfe){
@@ -124,154 +137,168 @@ public class LegendParser extends DefaultHandler{
 				Configuration.getConfiguration().background_color = 0x009bFF9b;				
 			}
 		}
-		if (readingPOIs) {
-			if (qName.equals("key")) {
-				currentKey = atts.getValue("tag");
-				keyValuesPoi = poiMap.get(currentKey);
-				if (keyValuesPoi == null) {
-					keyValuesPoi = new Hashtable<String,POIdescription>();
-					poiMap.put(currentKey, keyValuesPoi);
-				}
-			}
-			if (qName.equals("value")) {				
-				currentPoi = new POIdescription();
-				currentPoi.typeNum = poiIdx++;
-				currentPoi.key = currentKey;
-				currentPoi.value = atts.getValue("name"); 
-				keyValuesPoi.put(currentPoi.value, currentPoi);
-				pois.put(currentPoi.typeNum, currentPoi);
-			}
-			if (qName.equals("description")) {
-				currentPoi.description = atts.getValue("desc");
-			}
-			if (qName.equals("namekey")) {
-				currentPoi.nameKey = atts.getValue("tag");
-			}
-			if (qName.equals("namefallback")) {
-				currentPoi.nameFallbackKey = atts.getValue("tag");
-			}
-			if (qName.equals("scale")) {
-				try {
-					currentPoi.minImageScale = config.getRealScale( Integer.parseInt(atts.getValue("scale")) );
-				} catch (NumberFormatException nfe) {
-					System.out.println("Error: scale for " +currentPoi.description + " is incorrect");
-				}
-				if (currentPoi.minTextScale == 0)
-					currentPoi.minTextScale = currentPoi.minImageScale;
-			}
-			if (qName.equals("textscale")) {
-				try {
-					currentPoi.minTextScale = config.getRealScale( Integer.parseInt(atts.getValue("scale")) );
-				} catch (NumberFormatException nfe) {
-					System.out.println("Error: textscale for " +currentPoi.description + " is incorrect");
-				}
-			}
-			if (qName.equals("image")) {
-				currentPoi.image = atts.getValue("src");
-			}
-			if (qName.equals("searchIcon")) {			
-				currentPoi.searchIcon = atts.getValue("src");
-			}
-			if (qName.equals("imageCentered")) {
-				currentPoi.imageCenteredOnNode = atts.getValue("value").equalsIgnoreCase("true");
-			}
-		} else {
-			if (qName.equals("keyW")) {
-				currentKey = atts.getValue("tag");
-				keyValuesWay = wayMap.get(currentKey);
-				if (keyValuesWay == null) {
-					keyValuesWay = new Hashtable<String,WayDescription>();
-					wayMap.put(currentKey, keyValuesWay);
-				}
-			}
-			if (qName.equals("Wvalue")) {
-				currentWay = new WayDescription();
-				currentWay.typeNum = wayIdx++;
-				currentWay.key = currentKey;
-				currentWay.value = atts.getValue("name"); 
-				keyValuesWay.put(currentWay.value, currentWay);
-				ways.put(currentWay.typeNum, currentWay);
-			}
-			if (qName.equals("description")) {
-				currentWay.description = atts.getValue("desc");
-			}
-			if (qName.equals("namekey")) {
-				currentWay.nameKey = atts.getValue("tag");
-			}
-			if (qName.equals("namefallback")) {
-				currentWay.nameFallbackKey = atts.getValue("tag");
-			}
-			if (qName.equals("scale")) {
-				try {
-					currentWay.minScale = config.getRealScale( Integer.parseInt(atts.getValue("scale")) );				
-				} catch (NumberFormatException nfe) {
-					System.out.println("Error: scale for " +currentWay.description + " is incorrect");
-				}
-				if (currentWay.minTextScale == 0)
-						currentWay.minTextScale = currentWay.minScale;			}
-
-			if (qName.equals("textscale")) {
-				try {
-					currentWay.minTextScale = config.getRealScale( Integer.parseInt(atts.getValue("scale")) );				
-				} catch (NumberFormatException nfe) {
-					System.out.println("Error: textscale for " +currentWay.description + " is incorrect");
-				}
-			}
-			
-			if (qName.equals("isArea")) {
-				currentWay.isArea = atts.getValue("area").equalsIgnoreCase("true");
-			}
-			if (qName.equals("lineColor")) {
-				try {
-					currentWay.lineColor = Integer.parseInt(atts.getValue("color"),16);
-				} catch (NumberFormatException nfe){
-					System.out.println("Error: lineColor for " + currentWay.description + " is incorrect. Must be a hex coded ARGB value");
-				}
-			}
-			if (qName.equals("borderColor")) {
-				try {
-					currentWay.boardedColor = Integer.parseInt(atts.getValue("color"),16);				
-				} catch (NumberFormatException nfe){
-					System.out.println("Error: borderColor for " + currentWay.description + " is incorrect. Must be a hex coded ARGB value");
-				}
-			}
-			if (qName.equals("wayWidth")) {
-				try {
-					currentWay.wayWidth = Integer.parseInt(atts.getValue("width"));
-				} catch (NumberFormatException nfe) {
-					System.out.println("Error: wayWidth for " +currentWay.description + " is incorrect");
-				}
-			}
-			if (qName.equals("lineStyle")) {				
-				currentWay.lineStyleDashed = atts.getValue("dashed").equalsIgnoreCase("true");				
-			}
-			if (qName.equals("routing")) {
-				currentWay.routable = atts.getValue("accessible").equalsIgnoreCase("true");
-				String typicalSpeed = atts.getValue("speed");
-				if (typicalSpeed != null) {
-					try {
-						currentWay.typicalSpeed = Integer.parseInt(typicalSpeed);
-					} catch (NumberFormatException nfe) {
-						System.out.println("Invalid speed for " + currentWay.description);
+		switch (readingType) {
+			case READING_POIS:
+				if (qName.equals("key")) {
+					currentKey = atts.getValue("tag");
+					keyValuesPoi = poiMap.get(currentKey);
+					if (keyValuesPoi == null) {
+						keyValuesPoi = new Hashtable<String,POIdescription>();
+						poiMap.put(currentKey, keyValuesPoi);
 					}
-				} else
-					currentWay.typicalSpeed = 50;								
-			}
-			if (qName.equals("force_to")) {
-				try {
-					currentWay.forceToLayer = Byte.parseByte(atts.getValue("layer"));
-				} catch (NumberFormatException nfe) {
-					// Just ignore this entry if it is not correct
 				}
-			}
-			
-		}
+				if (qName.equals("value")) {				
+					currentPoi = new POIdescription();
+					currentPoi.typeNum = poiIdx++;
+					currentPoi.key = currentKey;
+					currentPoi.value = atts.getValue("name"); 
+					keyValuesPoi.put(currentPoi.value, currentPoi);
+					pois.put(currentPoi.typeNum, currentPoi);
+				}
+				if (qName.equals("description")) {
+					currentPoi.description = atts.getValue("desc");
+				}
+				if (qName.equals("namekey")) {
+					currentPoi.nameKey = atts.getValue("tag");
+				}
+				if (qName.equals("namefallback")) {
+					currentPoi.nameFallbackKey = atts.getValue("tag");
+				}
+				if (qName.equals("scale")) {
+					try {
+						currentPoi.minImageScale = config.getRealScale( Integer.parseInt(atts.getValue("scale")) );
+					} catch (NumberFormatException nfe) {
+						System.out.println("Error: scale for " +currentPoi.description + " is incorrect");
+					}
+					if (currentPoi.minTextScale == 0)
+						currentPoi.minTextScale = currentPoi.minImageScale;
+				}
+				if (qName.equals("textscale")) {
+					try {
+						currentPoi.minTextScale = config.getRealScale( Integer.parseInt(atts.getValue("scale")) );
+					} catch (NumberFormatException nfe) {
+						System.out.println("Error: textscale for " +currentPoi.description + " is incorrect");
+					}
+				}
+				if (qName.equals("image")) {
+					currentPoi.image = atts.getValue("src");
+				}
+				if (qName.equals("searchIcon")) {			
+					currentPoi.searchIcon = atts.getValue("src");
+				}
+				if (qName.equals("imageCentered")) {
+					currentPoi.imageCenteredOnNode = atts.getValue("value").equalsIgnoreCase("true");
+				}
+				break;
+			case READING_WAYS:
+				if (qName.equals("keyW")) {
+					currentKey = atts.getValue("tag");
+					keyValuesWay = wayMap.get(currentKey);
+					if (keyValuesWay == null) {
+						keyValuesWay = new Hashtable<String,WayDescription>();
+						wayMap.put(currentKey, keyValuesWay);
+					}
+				}
+				if (qName.equals("Wvalue")) {
+					currentWay = new WayDescription();
+					currentWay.typeNum = wayIdx++;
+					currentWay.key = currentKey;
+					currentWay.value = atts.getValue("name"); 
+					keyValuesWay.put(currentWay.value, currentWay);
+					ways.put(currentWay.typeNum, currentWay);
+				}
+				if (qName.equals("description")) {
+					currentWay.description = atts.getValue("desc");
+				}
+				if (qName.equals("namekey")) {
+					currentWay.nameKey = atts.getValue("tag");
+				}
+				if (qName.equals("namefallback")) {
+					currentWay.nameFallbackKey = atts.getValue("tag");
+				}
+				if (qName.equals("scale")) {
+					try {
+						currentWay.minScale = config.getRealScale( Integer.parseInt(atts.getValue("scale")) );				
+					} catch (NumberFormatException nfe) {
+						System.out.println("Error: scale for " +currentWay.description + " is incorrect");
+					}
+					if (currentWay.minTextScale == 0)
+							currentWay.minTextScale = currentWay.minScale;			}
+	
+				if (qName.equals("textscale")) {
+					try {
+						currentWay.minTextScale = config.getRealScale( Integer.parseInt(atts.getValue("scale")) );				
+					} catch (NumberFormatException nfe) {
+						System.out.println("Error: textscale for " +currentWay.description + " is incorrect");
+					}
+				}
+				
+				if (qName.equals("isArea")) {
+					currentWay.isArea = atts.getValue("area").equalsIgnoreCase("true");
+				}
+				if (qName.equals("lineColor")) {
+					try {
+						currentWay.lineColor = Integer.parseInt(atts.getValue("color"),16);
+					} catch (NumberFormatException nfe){
+						System.out.println("Error: lineColor for " + currentWay.description + " is incorrect. Must be a hex coded ARGB value");
+					}
+				}
+				if (qName.equals("borderColor")) {
+					try {
+						currentWay.boardedColor = Integer.parseInt(atts.getValue("color"),16);				
+					} catch (NumberFormatException nfe){
+						System.out.println("Error: borderColor for " + currentWay.description + " is incorrect. Must be a hex coded ARGB value");
+					}
+				}
+				if (qName.equals("wayWidth")) {
+					try {
+						currentWay.wayWidth = Integer.parseInt(atts.getValue("width"));
+					} catch (NumberFormatException nfe) {
+						System.out.println("Error: wayWidth for " +currentWay.description + " is incorrect");
+					}
+				}
+				if (qName.equals("lineStyle")) {				
+					currentWay.lineStyleDashed = atts.getValue("dashed").equalsIgnoreCase("true");				
+				}
+				if (qName.equals("routing")) {
+					currentWay.routable = atts.getValue("accessible").equalsIgnoreCase("true");
+					String typicalSpeed = atts.getValue("speed");
+					if (typicalSpeed != null) {
+						try {
+							currentWay.typicalSpeed = Integer.parseInt(typicalSpeed);
+						} catch (NumberFormatException nfe) {
+							System.out.println("Invalid speed for " + currentWay.description);
+						}
+					} else
+						currentWay.typicalSpeed = 50;								
+				}
+				if (qName.equals("force_to")) {
+					try {
+						currentWay.forceToLayer = Byte.parseByte(atts.getValue("layer"));
+					} catch (NumberFormatException nfe) {
+						// Just ignore this entry if it is not correct
+					}
+				}
+				break;
+			case READING_SOUNDS:
+				if (qName.equals("sound")) {				
+					currentSound = new SoundDescription();
+					currentSound.name = atts.getValue("name");
+					sounds.addElement(currentSound);
+				} else if (qName.equals("soundFile")) {
+					if (currentSound!=null) {
+						currentSound.soundFile  = atts.getValue("src");
+					} else {
+						System.out.println("soundFile without sound in style file");						
+					}
+				}
+				break;		}
 	} // startElement
 
 	public void endElement(String namespaceURI, String localName, String qName) {		
-		if (qName.equals("pois")) {
-			readingPOIs = false;
-		}				
+//		if (qName.equals("pois")) {
+//			readingPOIs = false;
+//		}				
 	} // endElement
 
 	public void fatalError(SAXParseException e) throws SAXException {
@@ -301,6 +328,11 @@ public class LegendParser extends DefaultHandler{
 	public Collection<WayDescription> getWayDescs() {
 		return ways.values();
 	}
+	public Vector<SoundDescription> getSoundDescs() {
+		return sounds;
+	}
+
+	
 	
 	public void warning(SAXParseException e) throws SAXException {
         System.out.println("Warning: " + e.getMessage()); 

@@ -21,12 +21,14 @@ import java.util.MissingResourceException;
 import java.util.PropertyResourceBundle;
 import java.util.Random;
 import java.util.ResourceBundle;
+import java.util.Vector;
 import java.util.zip.GZIPInputStream;
 import java.net.URL;
 
 import org.apache.tools.bzip2.CBZip2InputStream;
 
 import de.ueller.osmToGpsMid.model.Bounds;
+import de.ueller.osmToGpsMid.model.SoundDescription;
 import de.ueller.osmToGpsMid.model.POIdescription;
 import de.ueller.osmToGpsMid.model.WayDescription;
 
@@ -40,7 +42,7 @@ public class Configuration {
 	 * Specifies the format of the map on disk we are about to write
 	 * This constant must be in sync with GpsMid
 	 */
-	public final static short MAP_FORMAT_VERSION = 15;
+	public final static short MAP_FORMAT_VERSION = 16;
 	
 		private ResourceBundle rb;
 		private ResourceBundle vb;
@@ -309,6 +311,9 @@ public class Configuration {
 		}
 		public Collection<WayDescription> getWayDescs() {
 			return legend.getWayDescs();
+		}
+		public Vector<SoundDescription> getSoundDescs() {
+			return legend.getSoundDescs();
 		}
 		
 		/*

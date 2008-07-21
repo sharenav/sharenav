@@ -49,6 +49,14 @@ zoomed out 21x (scale alias 1:  500km)
 
 <legend>
   <background color="009BFF9B" />
+  <sounds>
+	<sound name="CONNECT">
+		<soundFile src="connect.wav"/>
+	</sound>
+	<sound name="DISCONNECT">
+		<soundFile src="disconnect.wav"/>
+	</sound>
+  </sounds>
   <pois>
 	<key tag="place">
 	   <value name="city">

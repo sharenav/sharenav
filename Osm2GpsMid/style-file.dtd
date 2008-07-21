@@ -1,11 +1,14 @@
-<!ELEMENT legend (background, pois,ways)>
+<!ELEMENT legend (background, sounds, pois, ways)>
 <!ELEMENT background EMPTY>
+<!ELEMENT sounds (sound*)>
 <!ELEMENT pois (key*)>
 <!ELEMENT ways (keyW*)>
 <!ELEMENT key (value+)>
 <!ELEMENT keyW (Wvalue+)>
 <!ELEMENT value (description , image? , searchIcon? , namekey , namefallback? , scale , textscale? , imageCentered?)>
 <!ELEMENT Wvalue (description, namekey, namefallback?, isArea, scale, textscale?, lineColor, borderColor?, lineStyle?, wayWidth?, searchIcon?, routing?, force_to?)>
+<!ELEMENT sound (soundFile)>
+<!ELEMENT soundFile EMPTY>
 <!ELEMENT description EMPTY>
 <!ELEMENT image EMPTY>
 <!ELEMENT searchIcon EMPTY>
@@ -16,7 +19,6 @@
 <!ELEMENT imageCentered EMPTY>
 <!ELEMENT isArea EMPTY>
 <!ELEMENT lineColor EMPTY>
-<!ELEMENT borderColor EMPTY>
 <!ELEMENT lineStyle EMPTY>
 <!ELEMENT wayWidth EMPTY>
 <!ELEMENT routing EMPTY>
@@ -26,6 +28,7 @@
 <!ATTLIST keyW tag CDATA #REQUIRED>
 <!ATTLIST value name CDATA #REQUIRED>
 <!ATTLIST Wvalue name CDATA #REQUIRED>
+<!ATTLIST sound name CDATA #REQUIRED>
 <!ATTLIST description desc CDATA #REQUIRED>
 <!ATTLIST namekey tag CDATA #REQUIRED>
 <!ATTLIST namefallback tag CDATA #REQUIRED>
@@ -42,3 +45,4 @@
 <!ATTLIST routing accessible CDATA #REQUIRED>
 <!ATTLIST routing speed CDATA #REQUIRED>
 <!ATTLIST force_to layer CDATA #REQUIRED>
+<!ATTLIST soundFile src CDATA #REQUIRED>

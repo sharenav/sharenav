@@ -22,6 +22,7 @@ import java.util.TreeSet;
 import de.ueller.osmToGpsMid.model.Bounds;
 import de.ueller.osmToGpsMid.model.Connection;
 import de.ueller.osmToGpsMid.model.MapName;
+import de.ueller.osmToGpsMid.model.SoundDescription;
 import de.ueller.osmToGpsMid.model.Node;
 import de.ueller.osmToGpsMid.model.POIdescription;
 import de.ueller.osmToGpsMid.model.WayDescription;
@@ -64,8 +65,8 @@ public class CreateGpsMidData {
 	private final String	path;
 	TreeSet<MapName> names;
 	Names names1;
-	StringBuffer sbCopiedImages= new StringBuffer();
-	short imageInclusionErrors=0;
+	StringBuffer sbCopiedMedias= new StringBuffer();
+	short mediaInclusionErrors=0;
 	
 	private final static int INODE=1;
 	private final static int SEGNODE=2;
@@ -139,7 +140,7 @@ public class CreateGpsMidData {
 	
 	private void exportLegend(String path) {
 		FileOutputStream foi;
-		String outputImage;
+		String outputMedia;
 		try {
 			foi = new FileOutputStream(path + "/legend.dat");
 			DataOutputStream dsi = new DataOutputStream(foi);
@@ -168,28 +169,18 @@ public class CreateGpsMidData {
 				dsi.writeBoolean(poi.imageCenteredOnNode);
 				dsi.writeInt(poi.minImageScale);
 				if ((flags & LEGEND_FLAG_IMAGE) > 0) {
-					outputImage=copyImageToMid(poi.image, path);
-					dsi.writeUTF(outputImage);
+					outputMedia=copyMediaToMid(poi.image, path, "png");
+					dsi.writeUTF(outputMedia);
 				}
 				if ((flags & LEGEND_FLAG_SEARCH_IMAGE) > 0) {					
-					outputImage=copyImageToMid(poi.searchIcon, path);
-					dsi.writeUTF(outputImage);
+					outputMedia=copyMediaToMid(poi.searchIcon, path, "png");
+					dsi.writeUTF(outputMedia);
 				}
 				if ((flags & LEGEND_FLAG_MIN_IMAGE_SCALE) > 0)
 					dsi.writeInt(poi.minTextScale);
 				if ((flags & LEGEND_FLAG_TEXT_COLOR) > 0)
 					dsi.writeInt(poi.textColor);
 				
-			}
-			// show summary for copied images
-			if (sbCopiedImages.length()!=0) {
-				System.out.println("External images inclusion summary:");
-				System.out.println(sbCopiedImages.toString());
-				if (imageInclusionErrors!=0) {					
-					System.out.println("");
-					System.out.println("Warning: " + imageInclusionErrors + " images could NOT be included - see details above");
-					System.out.println("");
-				}
 			}
 			/**
 			 * Writing Way legend data 
@@ -208,6 +199,27 @@ public class CreateGpsMidData {
 				dsi.writeByte(way.wayWidth);
 				dsi.writeBoolean(way.lineStyleDashed);				
 			}
+			/**
+			 * Writing Sound Descriptions 
+			 */
+			dsi.writeByte(Configuration.getConfiguration().getSoundDescs().size());
+			for (SoundDescription sound : Configuration.getConfiguration().getSoundDescs()) {
+				dsi.writeUTF(sound.name);								
+				outputMedia=copyMediaToMid(sound.soundFile, path, "sound");
+				dsi.writeUTF(outputMedia);
+			}
+
+			// show summary for copied media files
+			if (sbCopiedMedias.length()!=0) {
+				System.out.println("External media inclusion summary:");
+				System.out.println(sbCopiedMedias.toString());
+				if (mediaInclusionErrors!=0) {					
+					System.out.println("");
+					System.out.println("Warning: " + mediaInclusionErrors + " media files could NOT be included - see details above");
+					System.out.println("");
+				}
+			}
+			
 			dsi.close();
 			foi.close();
 		} catch (FileNotFoundException e) {
@@ -220,82 +232,82 @@ public class CreateGpsMidData {
 
 	} 
 
-	/* Copies the given file in imagePath to destDir
-	 * - if you specify a filename only it will look for the file in this order 1. current directory 2. png subdirectory 3.internal file
-	 * - for file names only preceded by a single "/" Osm2GpsMid will always assume you want to explicitely use the internal image
-	 * - directory path information as part of source image path is allowed, however image file will ALWAYS be copied to destDir root
-	 * - remembers copied files in sbCopiedImages (adds i.e. "(REPLACED)" for replaced files)
+	/* Copies the given file in mediaPath to destDir
+	 * - if you specify a filename only it will look for the file in this order 1. current directory 2. additional source subdirectory 3.internal file
+	 * - for file names only preceded by a single "/" Osm2GpsMid will always assume you want to explicitely use the internal media file
+	 * - directory path information as part of source media path is allowed, however the media file will ALWAYS be copied to destDir root
+	 * - remembers copied files in sbCopiedMedias (adds i.e. "(REPLACED)" for replaced files)
 	 */
-	private String copyImageToMid(String imagePath, String destDir) {
+	private String copyMediaToMid(String mediaPath, String destDir, String additionalSrcPath) {
 		// output filename is just the name part of the imagePath filename preceded by "/"  
-		int iPos=imagePath.lastIndexOf("/");
-		String outputImageName;
+		int iPos=mediaPath.lastIndexOf("/");
+		String outputMediaName;
 		// if no "/" is contained look for file in current directory and /png
 		if(iPos==-1) {
-			outputImageName="/" + imagePath;
+			outputMediaName="/" + mediaPath;
 			// check if file exists in current directory
-			if (! (new File(imagePath).exists())) {
+			if (! (new File(mediaPath).exists())) {
 				// check if file exists in current directory + "/png"
-				if (! (new File("png/"+imagePath).exists())) {
+				if (! (new File(additionalSrcPath+"/"+mediaPath).exists())) {
 					// if not check if we can use the internal image file
-					if (!(new File(path + outputImageName).exists())) {	
-						// append image name if first image or " ,"+image name for the following ones
-						sbCopiedImages.append( (sbCopiedImages.length()==0)?imagePath:", " + imagePath);				
-						sbCopiedImages.append("(ERROR: image not found)");
-						imageInclusionErrors++;
+					if (!(new File(path + outputMediaName).exists())) {	
+						// append media name if first media or " ,"+media name for the following ones
+						sbCopiedMedias.append( (sbCopiedMedias.length()==0)?mediaPath:", " + mediaPath);				
+						sbCopiedMedias.append("(ERROR: file not found)");
+						mediaInclusionErrors++;
 					}
-					return outputImageName;
+					return outputMediaName;
 				}
 				else {
-					// otherwise use from png directory
-					imagePath="png/"+imagePath;
+					// otherwise use from additional directory
+					mediaPath=additionalSrcPath+"/"+mediaPath;
 				}
 			}
 		// if the first and only "/" is at the beginning its the explicit syntax for internal images
 		} else if(iPos==0) {
-			if (!(new File(path + imagePath).exists())) {	
-				// append image name if first image or " ,"+image name for the following ones
-				sbCopiedImages.append( (sbCopiedImages.length()==0)?imagePath:", " + imagePath);				
-				sbCopiedImages.append("(ERROR: INTERNAL image not found)");
-				imageInclusionErrors++;
+			if (!(new File(path + mediaPath).exists())) {	
+				// append media name if first media or " ,"+media name for the following ones
+				sbCopiedMedias.append( (sbCopiedMedias.length()==0)?mediaPath:", " + mediaPath);				
+				sbCopiedMedias.append("(ERROR: INTERNAL media file not found)");
+				mediaInclusionErrors++;
 			}
-			return imagePath;
+			return mediaPath;
 		// else it's an external file with explicit path
 		} else {
-			outputImageName=imagePath.substring(iPos);
+			outputMediaName=mediaPath.substring(iPos);
 		}
 		
-		// append image name if first image or " ,"+image name for rhe following ones
-		sbCopiedImages.append( (sbCopiedImages.length()==0)?imagePath:", " + imagePath);					
+		// append media name if first media or " ,"+media name for the following ones
+		sbCopiedMedias.append( (sbCopiedMedias.length()==0)?mediaPath:", " + mediaPath);					
 
 		try {
-			//System.out.println("Copying " + imagePath + " as " + outputImageName + " into the midlet");
-			FileChannel fromChannel = new FileInputStream(imagePath).getChannel();
-			// Copy image
+			//System.out.println("Copying " + mediaPath + " as " + outputMediaName + " into the midlet");
+			FileChannel fromChannel = new FileInputStream(mediaPath).getChannel();
+			// Copy Media file
 			try {
 				// check if output file already exists
-				boolean alreadyExists= (new File(destDir + outputImageName).exists());
-				FileChannel toChannel = new FileOutputStream(destDir + outputImageName).getChannel();
+				boolean alreadyExists= (new File(destDir + outputMediaName).exists());
+				FileChannel toChannel = new FileOutputStream(destDir + outputMediaName).getChannel();
 				fromChannel.transferTo(0, fromChannel.size(), toChannel);
 				toChannel.close();
 				if(alreadyExists) {
-					sbCopiedImages.append("(REPLACED " + outputImageName + ")");
+					sbCopiedMedias.append("(REPLACED " + outputMediaName + ")");
 				}
 			}
 			catch(Exception e) {
-				sbCopiedImages.append("(ERROR accessing destination file " + destDir + outputImageName + ")");
-				imageInclusionErrors++;
+				sbCopiedMedias.append("(ERROR accessing destination file " + destDir + outputMediaName + ")");
+				mediaInclusionErrors++;
 				e.printStackTrace();
 			}
 			fromChannel.close();
 		}
 		catch(Exception e) {
-			System.out.println("Error accessing source file: " + imagePath);
-			sbCopiedImages.append("(ERROR accessing source file " + imagePath + ")");
-			imageInclusionErrors++;
+			System.out.println("Error accessing source file: " + mediaPath);
+			sbCopiedMedias.append("(ERROR accessing source file " + mediaPath + ")");
+			mediaInclusionErrors++;
 			e.printStackTrace();
 		}
-		return outputImageName;
+		return outputMediaName;
 	}
 
 	
