@@ -198,6 +198,10 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		"hard right", "right", "half right",
 		"straight on",
 		"half left", "left", "hard left"};
+	private static final String[] soundDirections  = { "",
+		"RIGHT", "RIGHT", "RIGHT",
+		"STRAIGHTON",
+		"LEFT", "LEFT", "LEFT"};
 	private boolean keyboardLocked=false;
 	
 	
@@ -279,6 +283,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 					}
 			}
 			receiveMessage("BT Connected");
+			parent.mNoiseMaker.playSound("CONNECT");
 			//#debug debug
 			logger.debug("rm connect, add disconnect");
 			removeCommand(CONNECT_GPS_CMD);
@@ -1086,6 +1091,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 					                      ((intDistance<PASSINGDISTANCE)?"":" in " + intDistance + "m"),
 					                      pc.xSize/2,pc.ySize-imageCollector.statusFontHeight, Graphics.HCENTER | Graphics.BOTTOM
                     );
+					if(intDistance<PASSINGDISTANCE) {
+						parent.mNoiseMaker.playSound(soundDirections[a]);
+					}
 					pc.g.setFont(originalFont);
 					if (a!=arrow) {
 						arrow=a;
@@ -1519,7 +1527,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	public synchronized void locationDecoderEnd() {
 //#debug info
 		logger.info("enter locationDecoderEnd");
-		
+		parent.mNoiseMaker.playSound("DISCONNECT");
 		if (gpx != null) {
 			/**
 			 * Close and Save the gpx recording, to ensure we don't loose data

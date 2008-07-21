@@ -75,6 +75,8 @@ public class GpsMid extends MIDlet implements CommandListener{
 	
 	private OutputStreamWriter logFile;
 	
+	public NoiseMaker mNoiseMaker = null;
+	
 	/**
 	 * This Thread is used to periodically prod the display
 	 * to keep the backlight illuminator if this is wanted
@@ -101,6 +103,10 @@ public class GpsMid extends MIDlet implements CommandListener{
 		
 		enableDebugFileLogging();
 		Logger.setGlobalLevel();
+
+
+		mNoiseMaker = new NoiseMaker();
+
 		
 		phoneMaxMemory = determinPhoneMaxMemory();
 		
