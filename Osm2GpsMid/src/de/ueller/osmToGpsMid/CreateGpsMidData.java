@@ -240,7 +240,7 @@ public class CreateGpsMidData {
 					// if not check if we can use the internal image file
 					if (!(new File(path + outputImageName).exists())) {	
 						// append image name if first image or " ,"+image name for the following ones
-						sbCopiedImages.append( (sbCopiedImages.length()==0)?"":", " + imagePath);				
+						sbCopiedImages.append( (sbCopiedImages.length()==0)?imagePath:", " + imagePath);				
 						sbCopiedImages.append("(ERROR: image not found)");
 						imageInclusionErrors++;
 					}
@@ -255,7 +255,7 @@ public class CreateGpsMidData {
 		} else if(iPos==0) {
 			if (!(new File(path + imagePath).exists())) {	
 				// append image name if first image or " ,"+image name for the following ones
-				sbCopiedImages.append( (sbCopiedImages.length()==0)?"":", " + imagePath);				
+				sbCopiedImages.append( (sbCopiedImages.length()==0)?imagePath:", " + imagePath);				
 				sbCopiedImages.append("(ERROR: INTERNAL image not found)");
 				imageInclusionErrors++;
 			}
@@ -266,7 +266,7 @@ public class CreateGpsMidData {
 		}
 		
 		// append image name if first image or " ,"+image name for rhe following ones
-		sbCopiedImages.append( (sbCopiedImages.length()==0)?"":", " + imagePath);					
+		sbCopiedImages.append( (sbCopiedImages.length()==0)?imagePath:", " + imagePath);					
 
 		try {
 			//System.out.println("Copying " + imagePath + " as " + outputImageName + " into the midlet");
