@@ -21,7 +21,7 @@ public class C {
 	 * Specifies the format of the map on disk we expect to see
 	 * This constant must be in sync with Osm2GpsMid
 	 */
-	public final static short MAP_FORMAT_VERSION = 15;
+	public final static short MAP_FORMAT_VERSION = 16;
 	
 	public final static byte NODE_MASK_ROUTENODELINK=0x1;
 	public final static byte NODE_MASK_TYPE=0x2;
@@ -48,6 +48,7 @@ public class C {
 	
 	private static POIdescription[] pois;
 	private static WayDescription[] ways;
+	private static SoundDescription[] sounds;
 	
 	private final static Logger logger=Logger.getInstance(C.class,Logger.TRACE);
 	
@@ -76,8 +77,10 @@ public class C {
 		
 		readPOIdescriptions(ds);
 		readWayDescriptions(ds);
-		//readWayDescriptionsOld(ds);
-		
+		readSoundDescriptions(ds);
+		//System.out.println(getSoundDescription("DISCONNECT").soundFile);
+		//System.out.println(getSoundDescription("CONNECT").soundFile);
+				
 		ds.close();				
 	}
 	
@@ -149,6 +152,16 @@ public class C {
 		}
 	}	
 	
+	private void readSoundDescriptions(DataInputStream ds) throws IOException {		
+		sounds = new SoundDescription[ds.readByte()];
+		for (int i = 0; i < sounds.length; i++) {
+			sounds[i] = new SoundDescription();
+			sounds[i].name= ds.readUTF();
+			sounds[i].soundFile= ds.readUTF();
+		}
+	}
+	
+	
 	public static final int getNodeTextColor(byte type) {
 		return pois[type].textColor;
 	}
@@ -185,6 +198,15 @@ public class C {
 			return null;
  		}
 		return ways[type];
+	}
+	
+	public static final SoundDescription getSoundDescription(String Name) {			
+		for(byte i=0;i<sounds.length;i++) {
+			if (sounds[i].name.equals(Name)) {
+				return sounds[i];
+			}			
+		}
+		return null;
 	}
 	
 	public static final byte getMaxType() {
