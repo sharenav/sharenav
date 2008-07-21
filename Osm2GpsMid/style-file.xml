@@ -51,10 +51,19 @@ zoomed out 21x (scale alias 1:  500km)
   <background color="009BFF9B" />
   <sounds>
 	<sound name="CONNECT">
-		<soundFile src="connect.wav"/>
+		<soundFile src="connect.mp3"/>
 	</sound>
 	<sound name="DISCONNECT">
-		<soundFile src="disconnect.wav"/>
+		<soundFile src="disconnect.mp3"/>
+	</sound>
+	<sound name="LEFT">
+		<soundFile src="left.mp3"/>
+	</sound>
+	<sound name="RIGHT">
+		<soundFile src="right.mp3"/>
+	</sound>
+	<sound name="STRAIGHTON">
+		<soundFile src="straighton.mp3"/>
 	</sound>
   </sounds>
   <pois>
