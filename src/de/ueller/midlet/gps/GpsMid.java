@@ -54,7 +54,7 @@ public class GpsMid extends MIDlet implements CommandListener{
     /** Soft button for exiting GpsMid. */
     private final Command EXIT_CMD = new Command("Exit", Command.EXIT, 2);
 
-    /** Soft button for launching a client or sever. */
+    /** Soft button for launching a client or server. */
     private final Command OK_CMD = new Command("Ok", Command.SCREEN, 1);
     /** Soft button to go back from about screen. */
     private final Command BACK_CMD = new Command("Back", Command.BACK, 1);
@@ -89,7 +89,7 @@ public class GpsMid extends MIDlet implements CommandListener{
 	 */
 	private long phoneMaxMemory;
 
-private Trace trace=null;
+	private Trace trace=null;
 
 
 	public GpsMid() {		
@@ -215,8 +215,6 @@ private Trace trace=null;
             }
 
 //            isInit = true;
-
-
 		
 	}
 
@@ -229,6 +227,7 @@ private Trace trace=null;
 		}
 		notifyDestroyed();
 	}
+
     /** Shows main menu of MIDlet on the screen. */
     void show() {
         show(menu);
@@ -288,7 +287,7 @@ private Trace trace=null;
 			//#debug
 			System.out.println(msg);
 			/**
-			 * Adding the log hist seems to cause very wierd problems
+			 * Adding the log hist seems to cause very weird problems
 			 * even in the emulator. So leave this commented out
 			 */
 			//loghist.append(msg, null);
