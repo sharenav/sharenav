@@ -1092,10 +1092,10 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 					                      pc.xSize/2,pc.ySize-imageCollector.statusFontHeight, Graphics.HCENTER | Graphics.BOTTOM
                     );
 					if(intDistance<PASSINGDISTANCE) {
-						parent.mNoiseMaker.playSound(soundDirections[a]);
+						parent.mNoiseMaker.playSound(soundDirections[a], (byte) 3);
 					}
 					if(intDistance>=PASSINGDISTANCE && intDistance<=3*PASSINGDISTANCE) {
-						parent.mNoiseMaker.playSound("PREPARE_" + soundDirections[a]);
+						parent.mNoiseMaker.playSound("PREPARE_" + soundDirections[a], (byte) 5);
 					}
 					pc.g.setFont(originalFont);
 					if (a!=arrow) {

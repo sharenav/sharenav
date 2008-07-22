@@ -36,8 +36,12 @@ public class NoiseMaker
 	
 	private final static Logger mLogger = Logger.getInstance(NoiseMaker.class, Logger.DEBUG);
 	
-	private static volatile boolean playing=false;
+	private static volatile String playingName="";
 
+	private static long oldMsTime=0;
+	private static String oldPlayingName="";
+
+	
 	public NoiseMaker()
 	{
 //#if polish.api.mmapi	
@@ -78,7 +82,8 @@ public class NoiseMaker
 		if (event == PlayerListener.END_OF_MEDIA)
 		{
 			//System.out.println("Playing stopped");
-			playing=false;
+			playingName="";
+			oldMsTime=System.currentTimeMillis();
 			player.close();
 		}
 
@@ -122,7 +127,7 @@ public class NoiseMaker
 		        player.realize(); 
 		    	ToneControl toneCtrl = (ToneControl)player.getControl( "ToneControl" ); 
 		        toneCtrl.setSequence( sequence ); 
-				playing=true;
+				playingName=name;
 		        player.start();
 	    	}
 	    } catch (Exception ex) {		
@@ -131,13 +136,28 @@ public class NoiseMaker
 //#endif
 	}
 	
-	
+
 	public void playSound( String name )
 	{
-		if (playing) {
+		playSound(name, (byte) 0);
+	}
+
+	
+	public void playSound( String name, byte minSecsBeforeRepeat )
+	{
+		if (playingName.equals(name)) {			
 			//System.out.println("Already playing");
 			return;
 		}
+
+		// do not repeat same sound before minSecsBeforeRepeat
+		long msTime=System.currentTimeMillis();
+		if (oldPlayingName.equals(name) && Math.abs(msTime-oldMsTime) < minSecsBeforeRepeat*1000) {
+			//System.out.println(msTime-oldMsTime + " " + name + oldPlayingName);
+			return;
+		}
+		oldPlayingName=name;
+		
 		//#if polish.api.mmapi	
 		String soundFile=null;
 		SoundDescription sDes=C.getSoundDescription(name);
@@ -155,7 +175,7 @@ public class NoiseMaker
 				player.realize();
 				VolumeControl volCtrl = (VolumeControl) player.getControl("VolumeControl");
 				volCtrl.setLevel(100);
-				playing=true;
+				playingName=name;
 				player.start();
 			} else {
 				playSequence(name);
