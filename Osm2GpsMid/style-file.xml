@@ -49,6 +49,7 @@ zoomed out 21x (scale alias 1:  500km)
 
 <legend>
   <background color="009BFF9B" />
+<!-- 
   <sounds>
 	<sound name="CONNECT">
 		<soundFile src="connect.mp3"/>
@@ -56,16 +57,50 @@ zoomed out 21x (scale alias 1:  500km)
 	<sound name="DISCONNECT">
 		<soundFile src="disconnect.mp3"/>
 	</sound>
+	<sound name="HARDLEFT">
+		<soundFile src="left.mp3"/>
+	</sound>
 	<sound name="LEFT">
 		<soundFile src="left.mp3"/>
 	</sound>
+	<sound name="HALFLEFT">
+		<soundFile src="left.mp3"/>
+	</sound>
+	<sound name="HARDRIGHT">
+		<soundFile src="right.mp3"/>
+	</sound>
 	<sound name="RIGHT">
+		<soundFile src="right.mp3"/>
+	</sound>
+	<sound name="HALFRIGHT">
 		<soundFile src="right.mp3"/>
 	</sound>
 	<sound name="STRAIGHTON">
 		<soundFile src="straighton.mp3"/>
 	</sound>
+	<sound name="PREPARE_HARDLEFT">
+		<soundFile src="p_left.mp3"/>
+	</sound>
+	<sound name="PREPARE_LEFT">
+		<soundFile src="p_left.mp3"/>
+	</sound>
+	<sound name="PREPARE_HALFLEFT">
+		<soundFile src="p_left.mp3"/>
+	</sound>
+	<sound name="PREPARE_HARDRIGHT">
+		<soundFile src="p_right.mp3"/>
+	</sound>
+	<sound name="PREPARE_RIGHT">
+		<soundFile src="p_right.mp3"/>
+	</sound>
+	<sound name="PREPARE_HALFRIGHT">
+		<soundFile src="p_right.mp3"/>
+	</sound>
+	<sound name="PREPARE_STRAIGHTON">
+		<soundFile src="p_straighton.mp3"/>
+	</sound>
   </sounds>
+-->  
   <pois>
 	<key tag="place">
 	   <value name="city">
