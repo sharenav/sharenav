@@ -88,8 +88,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	private final Command MAN_WAYP_CMD = new Command("Manage waypoints",Command.ITEM, 7);
 	private final Command ROUTE_TO_CMD = new Command("Route",Command.ITEM, 3);
 	private final Command CAMERA_CMD = new Command("Camera",Command.ITEM, 9);
-	private final Command SETTARGET_CMD = new Command("As Target",Command.ITEM, 10);
-	private final Command MAPFEATURES_CMD = new Command("Map Features",Command.ITEM, 11);
+	private final Command CLEARTARGET_CMD = new Command("Clear Target",Command.ITEM, 10);
+	private final Command SETTARGET_CMD = new Command("As Target",Command.ITEM, 11);
+	private final Command MAPFEATURES_CMD = new Command("Map Features",Command.ITEM, 12);
 
 
 	private InputStream inputStream;
@@ -222,6 +223,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		//#if polish.api.mmapi && polish.api.advancedmultimedia
 		addCommand(CAMERA_CMD);
 		//#endif
+		addCommand(CLEARTARGET_CMD);
 		addCommand(SETTARGET_CMD);
 		addCommand(MAPFEATURES_CMD);
 		setCommandListener(this);
@@ -585,6 +587,11 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				
 			}
 			//#endif
+			if (c == CLEARTARGET_CMD) {				
+				setTarget(null);
+				setRoute(null);
+				setRouteNodes(null);				
+			}
 			if (c == SETTARGET_CMD) {				
 				if (source != null) {
 					setTarget(source);
@@ -980,11 +987,11 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 						lastTo=c.to;
 					}
 				}
-				System.out.println("iNearest "+ iNearest + "dist: " + minimumDistance);				    	
+				//System.out.println("iNearest "+ iNearest + "dist: " + minimumDistance);				    	
 				// if nearest route arrow is closer than PASSINGDISTANCE meters we're currently passing this route arrow
 				if (minimumDistance<PASSINGDISTANCE) {
 					iPassedRouteArrow=iNearest;
-					System.out.println("iPassedRouteArrow "+ iPassedRouteArrow);
+					//System.out.println("iPassedRouteArrow "+ iPassedRouteArrow);
 				} else {
 					c = (ConnectionWithNode) route.elementAt(iPassedRouteArrow);
 					// if we got away more than PASSINGDISTANCE m of the previously passed routing arrow
@@ -1612,11 +1619,13 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	public void setTarget(PositionMark target) {
 		this.target = target;
 		pc.target = target;
-		center.setLatLon(target.lat, target.lon,true);
-		projection = new Mercator(center, scale, getWidth(), getHeight());
-		pc.setP( projection);
-		pc.center = center.clone();
-		pc.scale = scale;
+		if(target!=null) {
+			center.setLatLon(target.lat, target.lon,true);
+			projection = new Mercator(center, scale, getWidth(), getHeight());
+			pc.setP( projection);
+			pc.center = center.clone();
+			pc.scale = scale;
+		}
 		repaint(0, 0, getWidth(), getHeight());
 
 	}
