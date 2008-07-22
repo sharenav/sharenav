@@ -199,9 +199,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		"straight on",
 		"half left", "left", "hard left"};
 	private static final String[] soundDirections  = { "",
-		"RIGHT", "RIGHT", "RIGHT",
+		"HARDRIGHT", "RIGHT", "HALFRIGHT",
 		"STRAIGHTON",
-		"LEFT", "LEFT", "LEFT"};
+		"HARDLEFT", "LEFT", "HALFLEFT"};
 	private boolean keyboardLocked=false;
 	
 	
@@ -1093,6 +1093,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
                     );
 					if(intDistance<PASSINGDISTANCE) {
 						parent.mNoiseMaker.playSound(soundDirections[a]);
+					}
+					if(intDistance>=PASSINGDISTANCE && intDistance<=3*PASSINGDISTANCE) {
+						parent.mNoiseMaker.playSound("PREPARE_" + soundDirections[a]);
 					}
 					pc.g.setFont(originalFont);
 					if (a!=arrow) {
