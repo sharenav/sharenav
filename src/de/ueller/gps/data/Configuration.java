@@ -100,7 +100,7 @@ public class Configuration {
 	public static int KEYCODE_CAMERA_COVER_CLOSE = -35;
 	public static int KEYCODE_CAMERA_CAPTURE = -26;
 
-	public final static String[] LOCATIONPROVIDER={"None","Sirf","NMEA","JSR179"};
+	public final static String[] LOCATIONPROVIDER={"None","Bluetooth (Sirf)","Bluetooth (NMEA)","Internal (JSR179)"};
 	private final static byte[] empty="".getBytes();
 
 	private String btUrl;
