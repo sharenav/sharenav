@@ -1,4 +1,4 @@
-<!ELEMENT legend (background, sounds, pois, ways)>
+<!ELEMENT legend (background, sounds?, pois, ways)>
 <!ELEMENT background EMPTY>
 <!ELEMENT sounds (sound*)>
 <!ELEMENT pois (key*)>
