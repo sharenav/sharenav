@@ -31,9 +31,9 @@ public class OxParser extends DefaultHandler{
 	 * Maps id to already read nodes.
 	 * Key: Long   Value: Node
 	 */
-	public HashMap<Long,Node> nodes = new HashMap<Long,Node>(80000,0.60f);
-	public LinkedList<Way> ways = new LinkedList<Way>();
-	public LinkedList<Relation> relations = new LinkedList<Relation>();
+	private HashMap<Long,Node> nodes = new HashMap<Long,Node>(80000,0.60f);
+	private LinkedList<Way> ways = new LinkedList<Way>();
+	private LinkedList<Relation> relations = new LinkedList<Relation>();
 	private Hashtable<String, String> tagsCache = new Hashtable<String,String>();
 	private int nodeTot,nodeIns,segTot,segIns,wayTot,wayIns,ele;
 	private Bounds[] bounds=null;
@@ -255,6 +255,18 @@ public class OxParser extends DefaultHandler{
 
 	public Collection<Way> getWays() {
 		return ways;
+	}
+	
+	public Collection<Way> getRelations() {
+		return ways;
+	}
+	
+	public void removeNode(long id) {
+		nodes.remove(new Long(id));
+	}
+	
+	public void addWay(Way w) {
+		ways.add(w);
 	}
 
 	/**

@@ -127,10 +127,10 @@ public class CreateGpsMidData {
 
 	private Names getNames1(){
 		Names na=new Names();
-		for (Way w : parser.ways) {
+		for (Way w : parser.getWays()) {
 			na.addName(w);		
 		}
-		for (Node n : parser.nodes.values()) {
+		for (Node n : parser.getNodes()) {
 			na.addName(n);
 		}
 		System.out.println("found " + na.getNames().size() + " names " + na.getCanons().size() + " canon");
@@ -321,21 +321,20 @@ public class CreateGpsMidData {
 // Node max=new Node(-90f,-180f,0);
 			ds.writeUTF("DictMid"); // magig number
 			Bounds allBound=new Bounds();
-			for (Iterator wi = parser.ways.iterator(); wi.hasNext();) {
-				Way w1=(Way)wi.next();
+			for (Way w1 : parser.getWays()) {				
 				if (w1.getZoomlevel(configuration) != zl) continue;
 				w1.used=false;
 				allBound.extend(w1.getBounds());
 			}			
 			if (zl == ROUTEZOOMLEVEL){
 				// for RouteNodes
-				for (Node n : parser.nodes.values()) {
+				for (Node n : parser.getNodes()) {
 					n.used=false;
 					if (n.routeNode == null) continue;
 					allBound.extend(n.lat,n.lon);
 				}
 			} else {
-				for (Node n : parser.nodes.values()) {
+				for (Node n : parser.getNodes()) {
 					if (n.getZoomlevel(configuration) != zl) continue;
 					allBound.extend(n.lat,n.lon);
 				}
@@ -343,8 +342,8 @@ public class CreateGpsMidData {
 			tile[zl]=new Tile((byte) zl);
 			Sequence routeNodeSeq=new Sequence();
 			Sequence tileSeq=new Sequence();
-			tile[zl].ways=parser.ways;
-			tile[zl].nodes=parser.nodes.values();
+			tile[zl].ways=parser.getWays();
+			tile[zl].nodes=parser.getNodes();
 			// create the tiles and write the content 
 			exportTile(tile[zl],tileSeq,allBound,routeNodeSeq);
 			
@@ -561,7 +560,9 @@ public class CreateGpsMidData {
 		//System.out.println("Write routeTile "+t.zl+":"+t.fid+ " ways:"+t.ways.size() + " nodes:"+nodes.size());
 		totalNodesWritten+=nodes.size();
 		totalWaysWritten+=t.ways.size();
-		Collections.sort(t.ways);
+		
+		//TODO: Is this safe to comment out??
+		//Collections.sort(t.ways);
 		for (Way w: t.ways){
 			totalSegsWritten+=w.getLineCount();
 		}
@@ -589,8 +590,8 @@ public class CreateGpsMidData {
 				n.fid = t.fid; 
 			}
 			// mark ways as written to MidStorage
-			for (Iterator wi = t.ways.iterator(); wi.hasNext();) {
-				Way w1=(Way)wi.next();
+			for (Iterator<Way> wi = t.ways.iterator(); wi.hasNext();) {
+				Way w1=wi.next();
 				w1.used=true;
 				w1.fid=t.fid;
 			}

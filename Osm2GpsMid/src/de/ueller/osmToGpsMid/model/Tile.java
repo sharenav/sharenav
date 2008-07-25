@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import de.ueller.osmToGpsMid.Configuration;
 import de.ueller.osmToGpsMid.CreateGpsMidData;
 import de.ueller.osmToGpsMid.MyMath;
 
@@ -29,7 +30,7 @@ public class Tile {
 	public int fid;
 	public byte type;
 	public byte zl;
-	public LinkedList<Way> ways=null;
+	public Collection<Way> ways=null;
 	private ArrayList<RouteNode> routeNodes=null;
 	public Collection<Node> nodes=new ArrayList<Node>();
 	int idxMin=Integer.MAX_VALUE;
@@ -209,7 +210,7 @@ public class Tile {
 			return ret;
 	    }
 		
-		public LinkedList<Way> getWays() {
+		public Collection<Way> getWays() {
 			return ways;
 		}
 		

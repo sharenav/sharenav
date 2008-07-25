@@ -34,7 +34,7 @@ public class CalcNearBy {
 	 * @param nearByElements
 	 */
 	private void calcWayIsIn(OxParser parser2, KDTree nearByElements) {		
-		for (Way w : parser.ways) {
+		for (Way w : parser.getWays()) {
 			if (w.isHighway() /*&& w.getIsIn() == null */){
 				Node thisNode=w.getMidPoint();
 				Node nearestPlace = null;				
@@ -91,7 +91,7 @@ public class CalcNearBy {
 
 	private void calcCityNearBy(OxParser parser, KDTree nearByElements) {
 		//double [] latlonKey = new double[2];
-		for (Node n : parser.nodes.values()) {
+		for (Node n : parser.getNodes()) {
 			String place = n.getPlace();
 			if (place != null) {
 				Node nearestPlace = null;
@@ -144,7 +144,7 @@ public class CalcNearBy {
 		System.out.println("create nearBy candidates");
 		KDTree kd = new KDTree(3);
 		//double [] latlonKey = new double[2]; 
-		for (Node n : parser.nodes.values()) {
+		for (Node n : parser.getNodes()) {
 			if (n.isPlace()) {
 				//latlonKey[0] = n.lat;
 				//latlonKey[1] = n.lon;

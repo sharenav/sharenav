@@ -9,8 +9,9 @@ public class Main {
 
 	/**
 	 * @param args
+	 * @deprecated
 	 */
-	public static void main(String[] args) {
+	/* public static void main(String[] args) {
 		if (args.length > 1){
 			FileInputStream fr;
 			try {
@@ -28,7 +29,8 @@ public class Main {
 				e.printStackTrace();
 			}
 
-		}
+		}		
+		
 	}
-
+	*/
 }

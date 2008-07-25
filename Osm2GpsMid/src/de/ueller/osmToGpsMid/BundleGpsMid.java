@@ -42,9 +42,9 @@ public class BundleGpsMid {
 				createPath(target);				
 				fr= c.getPlanetSteam();
 				OxParser parser = new OxParser(fr,c);
-				System.out.println("read Nodes " + parser.nodes.size());
-				System.out.println("read Ways  " + parser.ways.size());
-				System.out.println("read Relations  " + parser.relations.size());
+				System.out.println("read Nodes " + parser.getNodes().size());
+				System.out.println("read Ways  " + parser.getWays().size());
+				System.out.println("read Relations  " + parser.getRelations().size());
 				System.out.println("reorder Ways");
 				new CleanUpData(parser,c);
 				
@@ -59,9 +59,9 @@ public class BundleGpsMid {
 //				rd.write(target.getCanonicalPath());
 //				cd.setRouteData(rd);
 				cd.setConfiguration(c);
-				System.out.println("split long ways " + parser.ways.size());
+				System.out.println("split long ways " + parser.getWays().size());
 				new SplitLongWays(parser);
-				System.out.println("splited long ways to " + parser.ways.size());
+				System.out.println("splited long ways to " + parser.getWays().size());
 				new CalcNearBy(parser);
 				cd.exportMapToMid();
 				//Drop parser to conserve Memory

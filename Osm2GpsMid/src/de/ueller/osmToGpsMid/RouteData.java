@@ -47,11 +47,11 @@ public class RouteData {
 	
 	public void create(){
 		// reset connectedLineCount for each Node to 0
-		for (Node n:parser.nodes.values()){
+		for (Node n:parser.getNodes()){
 			n.connectedLineCount=0;
 		}
 		// count all connections for all nodes
-		for (Way w:parser.ways){
+		for (Way w:parser.getWays()){
 			if (! w.isAccessByCar()){
 				continue;
 			}
@@ -70,7 +70,7 @@ public class RouteData {
 			}
 		}
 		 
-		for (Way w:parser.ways){
+		for (Way w:parser.getWays()){
 			if (! w.isAccessByCar()){
 				continue;
 			}
@@ -278,8 +278,8 @@ public class RouteData {
 					FileInputStream fr = new FileInputStream("/Massenspeicher/myStreetMap0.5.osm");
 //					FileInputStream fr = new FileInputStream("/Massenspeicher/planet-070725.osm");
 					OxParser parser = new OxParser(fr,conf);
-					System.out.println("read Nodes " + parser.nodes.size());
-					System.out.println("read Ways  " + parser.ways.size());
+					System.out.println("read Nodes " + parser.getNodes().size());
+					System.out.println("read Ways  " + parser.getNodes().size());
 					new CleanUpData(parser,conf);
 					RouteData rd=new RouteData(parser,"");
 

@@ -15,11 +15,11 @@ public class SplitLongWays {
 	public SplitLongWays(OxParser parser) {
 		super();
 		this.parser = parser;
-		for (Way way : parser.ways) {
+		for (Way way : parser.getWays()) {
 			testAndSplit(way);
 		}
-		for (Way w : added) {
-			parser.ways.add(w);
+		for (Way w : added) {			
+			parser.addWay(w);
 		}
 		added=null;
 	}

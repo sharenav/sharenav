@@ -37,9 +37,9 @@ public class CleanUpData {
 		removeDupNodes();
 		removeUnusedNodes();
 		parser.resize();
-		System.out.println("after cleanup Nodes " + parser.nodes.size());
-		System.out.println("after cleanup Ways  " + parser.ways.size());
-		System.out.println("after cleanup Relations  " + parser.relations.size());
+		System.out.println("after cleanup Nodes " + parser.getNodes().size());
+		System.out.println("after cleanup Ways  " + parser.getWays().size());
+		System.out.println("after cleanup Relations  " + parser.getRelations().size());
 //		System.exit(1);
 	}
 	
@@ -48,12 +48,12 @@ public class CleanUpData {
 	 */
 	private void removeDupNodes() {
 		int progressCounter = 0;
-		int noNodes = parser.nodes.size()/20;
+		int noNodes = parser.getNodes().size()/20;
 		KDTree kd = new KDTree(3);
 		double [] latlonKey; 
 		double [] lowk = new double[3];
 		double [] uppk = new double[3];		
-		for (Node n:parser.nodes.values()){
+		for (Node n:parser.getNodes()){
 			
 			progressCounter++;
 			if (noNodes > 0 && progressCounter % noNodes == 0) {
@@ -107,7 +107,7 @@ public class CleanUpData {
 			}			
 		}
 		
-		Iterator<Node> it=parser.nodes.values().iterator();
+		Iterator<Node> it=parser.getNodes().iterator();
 		int rm=0;
 		while (it.hasNext()){
 			Node n=it.next();
@@ -124,7 +124,7 @@ public class CleanUpData {
 	 * @param n
 	 */
 	private boolean substitute() {		
-		for (Way w:parser.ways){
+		for (Way w:parser.getWays()){
 			w.replace(replaceNodes);
 		}
 		return true;
@@ -134,7 +134,7 @@ public class CleanUpData {
 	 * 
 	 */
 	private void removeUnusedNodes() {
-		for (Node n:parser.nodes.values()){
+		for (Node n:parser.getNodes()){
 			if (n.getType(conf) < 0 ){
 				n.used=false;
 			} else {
@@ -142,7 +142,7 @@ public class CleanUpData {
 			}
 		}
 
-		for (Way w:parser.ways){
+		for (Way w:parser.getWays()){
 			for (SubPath s:w.getSubPaths()){
 				for (Node n:s.getNodes()){
 					n.used=true;
@@ -150,15 +150,14 @@ public class CleanUpData {
 			}
 		}
 		ArrayList<Node> rmNodes=new ArrayList<Node>();
-		for (Node n:parser.nodes.values()){
+		for (Node n:parser.getNodes()){
 			if (! n.used){
 				rmNodes.add(n);
 			}
 		}
 		System.out.println("remove " + rmNodes.size() + " unused Nodes");
 	    for (Node n:rmNodes){
-	    	parser.nodes.remove(n.id);
-	    }
-		
+	    	parser.removeNode(n.id);
+	    }		
 	}
 }
