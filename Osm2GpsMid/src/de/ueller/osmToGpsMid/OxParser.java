@@ -32,10 +32,10 @@ public class OxParser extends DefaultHandler{
 	 * Key: Long   Value: Node
 	 */
 	private HashMap<Long,Node> nodes = new HashMap<Long,Node>(80000,0.60f);
-	private LinkedList<Way> ways = new LinkedList<Way>();
-	private LinkedList<Relation> relations = new LinkedList<Relation>();
+	private HashMap<Long,Way> ways = new HashMap<Long,Way>();
+	private HashMap<Long,Relation> relations = new HashMap<Long,Relation>();
 	private Hashtable<String, String> tagsCache = new Hashtable<String,String>();
-	private int nodeTot,nodeIns,segTot,segIns,wayTot,wayIns,ele;
+	private int nodeTot,nodeIns,segTot,segIns,wayTot,wayIns,ele, relTot, relPart, relIns;
 	private Bounds[] bounds=null;
 	private Configuration configuration;
 	/**
@@ -86,6 +86,7 @@ public class OxParser extends DefaultHandler{
 	}
 
 	public void endDocument() {
+		System.out.println("node "+ nodeTot+"/"+nodeIns + "  way "+ wayTot+"/"+wayIns + " relations " + relTot + "/" +relPart + "/" + relIns);	
 		System.out.println("End of Document");
 	}
 
@@ -167,12 +168,39 @@ public class OxParser extends DefaultHandler{
 			}
 		}
 		if (qName.equals("relation")) {
-			current=new Relation();
+			long id = Long.parseLong(atts.getValue("id"));
+			current=new Relation(id);
 		}
 		if (qName.equals("member")) {
 			if (current instanceof Relation) {
 				Relation r=(Relation)current;
+				String type = atts.getValue("type");				
 				Member m=new Member(atts.getValue("type"),atts.getValue("ref"),atts.getValue("role"));
+				switch(m.getType()) {
+				case Member.TYPE_NODE: {
+					if (!nodes.containsKey(new Long(m.getRef()))) {
+						r.setPartial();
+						return;
+					}					
+				}
+				case Member.TYPE_WAY: {
+					if (!ways.containsKey(new Long(m.getRef()))) {
+						r.setPartial();
+						return;
+					}			
+				}
+				case Member.TYPE_RELATION: {
+					if (m.getRef() > r.id) {
+						//We haven't parsed this relation yet, so
+						//we have to assume it is valid for the moment
+					} else {
+						if (!relations.containsKey(new Long(m.getRef()))) {
+							r.setPartial();
+							return;
+						}
+					}
+				}
+				}
 				r.add(m);
 			}
 		}
@@ -184,7 +212,7 @@ public class OxParser extends DefaultHandler{
 		ele++;
 		if (ele > 1000000){
 			ele=0;
-			System.out.println("node "+ nodeTot+"/"+nodeIns + "  seg "+ segTot+"/"+segIns + "  way "+ wayTot+"/"+wayIns);
+			System.out.println("node "+ nodeTot+"/"+nodeIns + "  way "+ wayTot+"/"+wayIns + " relations " + relTot + "/" +relPart + "/" + relIns);
 		}
 		if (qName.equals("node")) {
 			Node n=(Node) current;
@@ -212,18 +240,26 @@ public class OxParser extends DefaultHandler{
 			if (dupplicateWays != null) {
 				for (Way ww : dupplicateWays) {
 					ww.cloneTags(w);
-					addNewWay(ww);
+					addWay(ww);
 				}
 				dupplicateWays = null;
 			}
-			addNewWay(w);
+			addWay(w);
 			
 
 			current = null;
 		} else if (qName.equals("relation")) {
+			relTot++;
 			Relation r=(Relation) current;
-			//System.out.println("got " + r);
-			relations.add(r);
+			if (r.isValid()) {				
+				if (!r.isPartial()) {
+					relIns++;										
+				} else {
+					relPart++;
+				}
+				relations.put(new Long(r.id),r);
+			}
+			
 			current=null;
 		}
 	} // endElement
@@ -231,14 +267,27 @@ public class OxParser extends DefaultHandler{
 	/**
 	 * @param w
 	 */
-	private void addNewWay(Way w) {
+	public void addWay(Way w) {
 		byte t=w.getType(configuration);
 		/**
 		 * We seem to have a bit of a mess with respect to type -1 and 0.
 		 * Both are used to indicate invalid type it seems.
 		 */
 		if (w.isValid() && t > 0){
-			ways.add(w);
+			if (ways.get(new Long(w.id)) != null) {
+				/**
+				 * This way is already in datastrorage.
+				 * This results from splitting a single
+				 * osm way into severals GpsMid ways.
+				 * We can simply invent an id in this
+				 * case, as we currently don't use them
+				 * for anything other than checking if
+				 * an id is valid for use in relations
+				 */				
+				ways.put(new Long(-1*wayIns),w);
+			} else {
+				ways.put(new Long(w.id),w);
+			}
 			wayIns++;
 		}
 	}
@@ -254,21 +303,17 @@ public class OxParser extends DefaultHandler{
 
 
 	public Collection<Way> getWays() {
-		return ways;
+		return ways.values();
 	}
 	
-	public Collection<Way> getRelations() {
-		return ways;
+	public Collection<Relation> getRelations() {
+		return relations.values();
 	}
 	
 	public void removeNode(long id) {
 		nodes.remove(new Long(id));
 	}
 	
-	public void addWay(Way w) {
-		ways.add(w);
-	}
-
 	/**
 	 * 
 	 */

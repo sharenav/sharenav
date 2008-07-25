@@ -15,11 +15,12 @@ package de.ueller.osmToGpsMid.model;
 
 public class Member {
 
-	public final byte TYPE_UNKOWN=0;
-	public final byte TYPE_WAY=1;
-	public final byte TYPE_NODE=2;
-	public final byte ROLE_UNKOWN=0;
-	public final byte ROLE_EMPTY=1;
+	public static final byte TYPE_UNKOWN=0;
+	public static final byte TYPE_WAY=1;
+	public static final byte TYPE_NODE=2;
+	public static final byte TYPE_RELATION=3;
+	public static final byte ROLE_UNKOWN=0;
+	public static final byte ROLE_EMPTY=1;
 	
 	private byte type;
 	private long ref;
@@ -39,6 +40,7 @@ public class Member {
 		case TYPE_UNKOWN: return "unknown";
 		case TYPE_WAY: return "way";
 		case TYPE_NODE: return "node";
+		case TYPE_RELATION: return "relation";
 		}
 		return "undef";
 	}
@@ -50,6 +52,8 @@ public class Member {
 		if ("way".equals(type)){
 			this.type = TYPE_WAY;
 		} else if ("node".equals(type)){
+			this.type = TYPE_NODE;
+		} else if ("relation".equals(type)){
 			this.type = TYPE_NODE;
 		} else {
 		    this.type = TYPE_UNKOWN;

@@ -1,6 +1,7 @@
 package de.ueller.osmToGpsMid.model;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Set;
@@ -61,7 +62,7 @@ public class Entity {
 
 	public Set<String> getTags() {
 		if (tags == null)
-			return null;
+			return new HashSet<String>();
 		return tags.keySet();
 	}
 }
