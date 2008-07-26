@@ -89,6 +89,7 @@ public class Configuration {
 	private static final int RECORD_ID_BT_KEEPALIVE=20;
 	private static final int RECORD_ID_STARTUP_RADLAT=21;
 	private static final int RECORD_ID_STARTUP_RADLON=22;
+	private static final int RECORD_ID_PHOTO_URL = 23;
 
 	// Gpx Recording modes
 	// GpsMid determines adaptive if a trackpoint is written
@@ -120,6 +121,7 @@ public class Configuration {
 	private int detailBoostDefault=0;
 	private float detailBoostMultiplier;
 	private String gpxUrl;
+	private String photoUrl;
 	private int debugSeverity;
 	private int routeEstimationFac=6;
 	private boolean stopAllWhileRouteing=false;
@@ -175,6 +177,7 @@ public class Configuration {
 			btUrl=readString(database, RECORD_ID_BT_URL);
 			locationProvider=readInt(database, RECORD_ID_LOCATION_PROVIDER);
 			gpxUrl=readString(database, RECORD_ID_GPX_URL);
+			photoUrl=readString(database, RECORD_ID_PHOTO_URL);
 			mapFromJar=readInt(database, RECORD_ID_MAP_FROM_JAR) == 0;
 			mapFileUrl=readString(database, RECORD_ID_MAP_FILE_URL);
 			rawGpsLogUrl=readString(database, RECORD_ID_LOG_RAW_GPS_URL);
@@ -486,6 +489,15 @@ public class Configuration {
 
 	public String getGpxUrl() {
 		return gpxUrl;
+	}
+	
+	public void setPhotoUrl(String url) {
+		this.photoUrl = url;
+		write(url, RECORD_ID_PHOTO_URL);
+	}
+
+	public String getPhotoUrl() {
+		return photoUrl;
 	}
 	
 	public boolean usingBuiltinMap() {

@@ -51,7 +51,19 @@ public class HelperRoutines {
 		
 		return formatedStr.toString();
 	}
-	
+	public static final String formatSimpleDateSecondNow() {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(new Date());
+		
+		//Construct a track name from the current time
+		StringBuffer formatedStr = new StringBuffer();
+		formatedStr.append(cal.get(Calendar.YEAR)).append("-").append(formatInt2(cal.get(Calendar.MONTH) + 1));
+		formatedStr.append("-").append(formatInt2(cal.get(Calendar.DAY_OF_MONTH))).append("_");
+		formatedStr.append(formatInt2(cal.get(Calendar.HOUR_OF_DAY))).append("-").append(formatInt2(cal.get(Calendar.MINUTE)))
+			.append("-").append(formatInt2(cal.get(Calendar.SECOND)));
+		
+		return formatedStr.toString();
+	}
 	/**
 	 * 
 	 */
