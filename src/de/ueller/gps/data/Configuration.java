@@ -62,7 +62,13 @@ public class Configuration {
 	public final static byte CFGBIT_ROUTING_HELP=15;	
 	// bit 16: save map position on exit
 	public final static byte CFGBIT_AUTOSAVE_MAPPOS=16;	
-	
+	// bit 17: Sound on Connect
+	public final static byte CFGBIT_SND_CONNECT=17;	
+	// bit 18: Sound on Disconnect
+	public final static byte CFGBIT_SND_DISCONNECT=18;	
+	// bit 19: Routing Instructions
+	public final static byte CFGBIT_SND_ROUTINGINSTRUCTIONS=19;	
+
 	
 	/**
 	 * These are the database record ids for each configuration option	 * 
@@ -158,6 +164,7 @@ public class Configuration {
 				   		1<<CFGBIT_POIS |
 				   		1<<CFGBIT_ROUTING_HELP |
 				   		1<<CFGBIT_AUTOSAVE_MAPPOS |
+				   		1<<CFGBIT_SND_ROUTINGINSTRUCTIONS |
 				   		1<<CFGBIT_BACKLIGHT_MAPONLY;
 				setCfgBits(cfgBits, true);
 				//#debug info

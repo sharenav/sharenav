@@ -33,7 +33,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	/** A menu list instance */
 	private static final String[]	elements		= { "Location Receiver",
 		"Recording Rules", "Display options", "Routing options",
-		"GPX Receiver", "Map source", "Debug options"};
+		"GPX Receiver", "Sounds", "Map source", "Debug options"};
 	
 	/**
 	 * The following MENU_ITEM constatants have to be in
@@ -45,8 +45,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private static final int MENU_ITEM_DISP_OPT = 2;
 	private static final int MENU_ITEM_ROUTING_OPT = 3;
 	private static final int MENU_ITEM_GPX_DEVICE = 4;
-	private static final int MENU_ITEM_MAP_SRC = 5;
-	private static final int MENU_ITEM_DEBUG_OPT = 6;
+	private static final int MENU_ITEM_SOUNDS_OPT = 5;
+	private static final int MENU_ITEM_MAP_SRC = 6;
+	private static final int MENU_ITEM_DEBUG_OPT = 7;
 
 	private static final String[]	empty			= {};
 
@@ -480,6 +481,10 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				case MENU_ITEM_ROUTING_OPT:
 					GpsMid.getInstance().show(menuRoutingOptions);
 					state = STATE_ROUTING_OPT;
+					break;
+				case MENU_ITEM_SOUNDS_OPT:
+					GuiSetupSound gs = new GuiSetupSound(this);
+					gs.show();
 					break;
 				}
 				break;

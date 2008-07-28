@@ -285,7 +285,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 					}
 			}
 			receiveMessage("BT Connected");
-			parent.mNoiseMaker.playSound("CONNECT");
+			if (config.getCfgBitState(config.CFGBIT_SND_CONNECT)) {
+				parent.mNoiseMaker.playSound("CONNECT");
+			}
 			//#debug debug
 			logger.debug("rm connect, add disconnect");
 			removeCommand(CONNECT_GPS_CMD);
@@ -1098,11 +1100,13 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 					                      ((intDistance<PASSINGDISTANCE)?"":" in " + intDistance + "m"),
 					                      pc.xSize/2,pc.ySize-imageCollector.statusFontHeight, Graphics.HCENTER | Graphics.BOTTOM
                     );
-					if(intDistance<PASSINGDISTANCE) {
-						parent.mNoiseMaker.playSound(soundDirections[a], (byte) 3);
-					}
-					if(intDistance>=PASSINGDISTANCE && intDistance<=3*PASSINGDISTANCE) {
-						parent.mNoiseMaker.playSound("PREPARE_" + soundDirections[a], (byte) 5);
+					if (config.getCfgBitState(config.CFGBIT_SND_ROUTINGINSTRUCTIONS)) {
+						if(intDistance<PASSINGDISTANCE) {
+							parent.mNoiseMaker.playSound(soundDirections[a], (byte) 3);
+						}
+						if(intDistance>=PASSINGDISTANCE && intDistance<=3*PASSINGDISTANCE) {
+							parent.mNoiseMaker.playSound("PREPARE_" + soundDirections[a], (byte) 5);
+						}
 					}
 					pc.g.setFont(originalFont);
 					if (a!=arrow) {
@@ -1537,7 +1541,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	public synchronized void locationDecoderEnd() {
 //#debug info
 		logger.info("enter locationDecoderEnd");
-		parent.mNoiseMaker.playSound("DISCONNECT");
+		if (config.getCfgBitState(config.CFGBIT_SND_DISCONNECT)) {
+			parent.mNoiseMaker.playSound("DISCONNECT");			
+		}
 		if (gpx != null) {
 			/**
 			 * Close and Save the gpx recording, to ensure we don't loose data
