@@ -322,37 +322,37 @@ public class Way extends Entity{
 		}		
 
 		StringBuffer sbName= new StringBuffer();
-    	
+  	
 		pc.g.setFont(pathFont);
 		pc.g.setColor(0,0,0);
 
-    	IntPoint posChar = new IntPoint();
+		IntPoint posChar = new IntPoint();
 		char letter=' ';
 		short charsDrawable=0;
-    	Projection p = pc.getP();
-    	
+		Projection p = pc.getP();
+
 		//if(info)System.out.println("Draw "  + name + " from " + path.length + " points");
 		
 		boolean reversed=false;
 		boolean abbreviated=false;
-    	int lastFittingI1=0;
+		int lastFittingI1=0;
 
     	// 2 passes:
     	// - 1st pass only counts fitting chars, so we can correctly
     	//   abbreviate reversed strings
     	// - 2nd pass actually draws
     	for (byte mode=PAINTMODE_COUNTFITTINGCHARS;mode<=PAINTMODE_DRAWCHARS; mode++) { 
-	    	double posChar_x = 0;
-	    	double posChar_y = 0;
-			double slope_x=0;
-			double slope_y=0;
-			double nextDeltaSub=0;
-	    	int delta=0;
-	    	IntPoint lineP1 = pc.lineP1;
-	    	IntPoint lineP2 = pc.lineP2;
-	    	IntPoint swapLineP = pc.swapLineP;
-			// do indent because first letter position would often
-			// be covered by other connecting  streets
+    		double posChar_x = 0;
+    		double posChar_y = 0;
+    		double slope_x=0;
+    		double slope_y=0;
+    		double nextDeltaSub=0;
+    		int delta=0;
+    		IntPoint lineP1 = pc.lineP1;
+    		IntPoint lineP2 = pc.lineP2;
+    		IntPoint swapLineP = pc.swapLineP;
+    		// do indent because first letter position would often
+    		// be covered by other connecting  streets
 			short streetNameCharIndex=-INDENT_PATHNAME;
 
 	    	// draw name again and again until end of path
@@ -363,15 +363,15 @@ public class Way extends Entity{
 				p.forward(t.nodeLat[idx], t.nodeLon[idx], lineP2, true,t);
 	    		// if we got only one line point, get a second one 
 				if (lineP1 == null) {
-	    		    lineP1 = lineP2;
-	    		    lineP2 = swapLineP;
-	    		    continue;
-	    		}
-	   			// calculate the slope of the new line 
-    			double distance = Math.sqrt( ((double)lineP2.y-(double)lineP1.y)*((double)lineP2.y-(double)lineP1.y) +
-					     ((double)lineP2.x-(double)lineP1.x)*((double)lineP2.x-(double)lineP1.x) );
+					lineP1 = lineP2;
+					lineP2 = swapLineP;
+					continue;
+				}
+				// calculate the slope of the new line 
+				double distance = Math.sqrt( ((double)lineP2.y-(double)lineP1.y)*((double)lineP2.y-(double)lineP1.y) +
+						((double)lineP2.x-(double)lineP1.x)*((double)lineP2.x-(double)lineP1.x) );
 				if (distance!=0) {
-			    	slope_x = ((double)lineP2.x-(double)lineP1.x)/distance;
+					slope_x = ((double)lineP2.x-(double)lineP1.x)/distance;
 					slope_y = ((double)lineP2.y-(double)lineP1.y)/distance;
 				} else {
 					//logger.debug("ZERO distance in path segment " + i1 + "/" + path.length + " of " + name);
@@ -384,10 +384,10 @@ public class Way extends Entity{
 				posChar_y = lineP1.y - nextDeltaSub * slope_y;
 				
 				// as long as we have not passed the next line point
-				while( ((slope_x<=0 && posChar_x >= lineP2.x) ||
-						(slope_x>=0 && posChar_x <= lineP2.x)) &&
-					   ((slope_y<=0 && posChar_y >= lineP2.y) ||
-						(slope_y>=0 && posChar_y <= lineP2.y))
+				while( 	(	(slope_x<=0 && posChar_x >= lineP2.x) ||
+							(slope_x>=0 && posChar_x <= lineP2.x)) &&
+						(	(slope_y<=0 && posChar_y >= lineP2.y) ||
+							(slope_y>=0 && posChar_y <= lineP2.y))
 				) {
 					
 
