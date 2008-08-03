@@ -337,8 +337,11 @@ public class Way extends Entity{
 		boolean abbreviated=false;
     	int lastFittingI1=0;
 
-    	// draw name again and again until end of path
-		for (byte mode=PAINTMODE_COUNTFITTINGCHARS;mode<=PAINTMODE_DRAWCHARS; mode++) { 
+    	// 2 passes:
+    	// - 1st pass only counts fitting chars, so we can correctly
+    	//   abbreviate reversed strings
+    	// - 2nd pass actually draws
+    	for (byte mode=PAINTMODE_COUNTFITTINGCHARS;mode<=PAINTMODE_DRAWCHARS; mode++) { 
 	    	double posChar_x = 0;
 	    	double posChar_y = 0;
 			double slope_x=0;
@@ -352,6 +355,7 @@ public class Way extends Entity{
 			// be covered by other connecting  streets
 			short streetNameCharIndex=-INDENT_PATHNAME;
 
+	    	// draw name again and again until end of path
 			for (int i1 = 0; i1 < path.length; i1++) {
 				// get the next line point coordinates into lineP2
 				int idx = this.path[i1];
@@ -394,18 +398,18 @@ public class Way extends Entity{
 						sbName.append(name);
 						abbreviated=false;
 						reversed=false;
-				    	if(mode==PAINTMODE_DRAWCHARS) {
-				    		if (
-					    	   i1>lastFittingI1 &&
-					    	   charsDrawable>0 &&
-					    	   charsDrawable<name.length()
-					    	) {
-				    			//if(info)System.out.println(sbName.toString() + " i1: " + i1 + " lastFitI1 " + lastFittingI1 + " charsdrawable: " + charsDrawable );
-					    		sbName.setLength(charsDrawable-1);
-					    		abbreviated=true;
-					    		if (sbName.length()==0) {
-					    			sbName.append(".");
-					    		}
+						if(mode==PAINTMODE_DRAWCHARS) {
+							if (
+								i1>lastFittingI1 &&
+								charsDrawable>0 &&
+								charsDrawable<name.length()
+							) {
+								//if(info)System.out.println(sbName.toString() + " i1: " + i1 + " lastFitI1 " + lastFittingI1 + " charsdrawable: " + charsDrawable );
+								sbName.setLength(charsDrawable-1);
+								abbreviated=true;
+								if (sbName.length()==0) {
+									sbName.append(".");
+								}
 							}
 							// always begin drawing street names
 							// left to right
@@ -413,8 +417,8 @@ public class Way extends Entity{
 								sbName.reverse();
 								reversed=true;
 							}
-				    	}
-				    }	
+						}
+					}	
 					// draw letter
 					if (streetNameCharIndex >=0) {
 						// char to draw
@@ -426,15 +430,17 @@ public class Way extends Entity{
 							} else {
 								pc.g.setColor(0,0,0);
 							}
-							pc.g.drawChar(letter,
+							pc.g.drawChar(
+								letter,
 								(int)posChar_x, (int)(posChar_y+(w/2)),
-								Graphics.BASELINE | Graphics.HCENTER);
+								Graphics.BASELINE | Graphics.HCENTER
+							);
 						}
 //						if (mode==PAINTMODE_COUNTFITTINGCHARS ) {
 //							pc.g.setColor(150,150,150);
 //							pc.g.drawChar(letter,
-//								(int)posChar_x, (int)(posChar_y+(w/2)),
-//								Graphics.BASELINE | Graphics.HCENTER);
+//							(int)posChar_x, (int)(posChar_y+(w/2)),
+//							Graphics.BASELINE | Graphics.HCENTER);
 //						}
 
 						// delta calculation should be improved
@@ -480,7 +486,7 @@ public class Way extends Entity{
 		} // end mode for-loop
 		
 		pc.g.setFont(originalFont);
-	}
+    }
 
 	private float getParLines(int xPoints[], int yPoints[], int i, int w,
 			IntPoint p1, IntPoint p2, IntPoint p3, IntPoint p4) {
