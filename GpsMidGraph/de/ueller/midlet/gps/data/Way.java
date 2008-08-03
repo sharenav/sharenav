@@ -384,10 +384,13 @@ public class Way extends Entity{
 				posChar_y = lineP1.y - nextDeltaSub * slope_y;
 				
 				// as long as we have not passed the next line point
-				while( 	(	(slope_x<=0 && posChar_x >= lineP2.x) ||
-							(slope_x>=0 && posChar_x <= lineP2.x)) &&
-						(	(slope_y<=0 && posChar_y >= lineP2.y) ||
-							(slope_y>=0 && posChar_y <= lineP2.y))
+				while( 	(
+							(slope_x<=0 && posChar_x >= lineP2.x) ||
+							(slope_x>=0 && posChar_x <= lineP2.x)
+						) && (
+							(slope_y<=0 && posChar_y >= lineP2.y) ||
+							(slope_y>=0 && posChar_y <= lineP2.y)
+						)
 				) {
 					
 
