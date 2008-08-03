@@ -355,13 +355,13 @@ public class Way extends Entity{
     		// be covered by other connecting  streets
 			short streetNameCharIndex=-INDENT_PATHNAME;
 
-	    	// draw name again and again until end of path
+			// draw name again and again until end of path
 			for (int i1 = 0; i1 < path.length; i1++) {
 				// get the next line point coordinates into lineP2
 				int idx = this.path[i1];
 				// forward() is in Mercator.java
 				p.forward(t.nodeLat[idx], t.nodeLon[idx], lineP2, true,t);
-	    		// if we got only one line point, get a second one 
+				// if we got only one line point, get a second one 
 				if (lineP1 == null) {
 					lineP1 = lineP2;
 					lineP2 = swapLineP;
