@@ -2,6 +2,7 @@ package de.ueller.gps.jsr179;
 
 import java.io.InputStream;
 import java.util.Date;
+import java.util.Vector;
 
 import javax.microedition.location.Coordinates;
 import javax.microedition.location.Criteria;
@@ -11,6 +12,8 @@ import javax.microedition.location.LocationListener;
 import javax.microedition.location.LocationProvider;
 
 import de.ueller.gps.data.Position;
+import de.ueller.gps.nmea.NmeaMessage;
+import de.ueller.gps.tools.StringTokenizer;
 import de.ueller.midlet.gps.LocationMsgProducer;
 import de.ueller.midlet.gps.LocationMsgReceiver;
 import de.ueller.midlet.gps.Logger;
@@ -22,6 +25,7 @@ public class JSR179Input implements LocationListener ,LocationMsgProducer{
     /** location provider */
     private LocationProvider locationProvider = null;
 	private LocationMsgReceiver receiver;
+	private NmeaMessage smsg;
 	Date date=new Date();
 	Position pos=new Position(0f,0f,0f,0f,0f,0,date);
 	
@@ -34,6 +38,8 @@ public class JSR179Input implements LocationListener ,LocationMsgProducer{
 		logger.info("start JSR179 LocationProvider");
 		this.receiver = receiver;
 		createLocationProvider();
+		//We may be able to get some additional information such as the number of satellites form the NMEA string
+		smsg=new NmeaMessage(receiver); 
 	}
     /**
      * Initializes LocationProvider
@@ -72,6 +78,29 @@ public class JSR179Input implements LocationListener ,LocationMsgProducer{
         pos.speed=location.getSpeed();
         pos.date.setTime(location.getTimestamp());
         receiver.receivePosItion(pos);
+        String nmeaString = location.getExtraInfo("application/X-jsr179-location-nmea");
+        //String nmeaString = "$GPGSA,A,3,32,23,31,11,20,,,,,,,,2.8,2.6,1.0*3D\r\n$GPGSV,3,1,10,20,71,071,38,23,60,168,41,17,42,251,25,11,36,148,37*73\r\n$GPGSV,3,2,10,04,29,300,16,13,26,197,,31,21,054,47,32,10,074,38*70\r\n$GPGSV,3,3,10,12,04,339,17,05,01,353,15*75\r\n";
+        logger.info("Using extra NMEA info in JSR179: " + nmeaString);
+        if (nmeaString != null) {
+        	Vector messages = StringTokenizer.getVector(nmeaString, "\n");        	
+        	if (messages != null) {
+        		for (int i = 0; i < messages.size(); i++) {
+        			String nmeaMessage = (String)messages.elementAt(i);
+        			if (nmeaMessage.startsWith("$")) {
+        				//Cut off $GP from the start
+        				nmeaMessage = nmeaMessage.substring(3);
+        			}
+        			int starIdx = nmeaMessage.indexOf("*");
+        			if (starIdx > 0) {
+        				//remove the checksum
+        				nmeaMessage = nmeaMessage.substring(0,starIdx);
+        			}        			
+        			if ((nmeaMessage != null) && (nmeaMessage.length() > 5))        		
+        				smsg.decodeMessage(nmeaMessage);
+        		}
+        	}	
+        }
+        
 //    	logger.trace("exit locationUpdated(provider,location)");
 	}
 
