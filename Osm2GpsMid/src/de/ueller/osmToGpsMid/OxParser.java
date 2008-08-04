@@ -174,20 +174,21 @@ public class OxParser extends DefaultHandler{
 		if (qName.equals("member")) {
 			if (current instanceof Relation) {
 				Relation r=(Relation)current;
-				String type = atts.getValue("type");				
 				Member m=new Member(atts.getValue("type"),atts.getValue("ref"),atts.getValue("role"));
 				switch(m.getType()) {
 				case Member.TYPE_NODE: {
 					if (!nodes.containsKey(new Long(m.getRef()))) {
 						r.setPartial();
 						return;
-					}					
+					}
+					break;
 				}
 				case Member.TYPE_WAY: {
 					if (!ways.containsKey(new Long(m.getRef()))) {
 						r.setPartial();
 						return;
-					}			
+					}
+					break;
 				}
 				case Member.TYPE_RELATION: {
 					if (m.getRef() > r.id) {
@@ -199,6 +200,7 @@ public class OxParser extends DefaultHandler{
 							return;
 						}
 					}
+					break;
 				}
 				}
 				r.add(m);
