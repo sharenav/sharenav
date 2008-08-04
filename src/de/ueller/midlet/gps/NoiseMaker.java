@@ -168,7 +168,9 @@ public class NoiseMaker
 			}
 		}
 		try {
-			InputStream is = getClass().getResourceAsStream(soundFile);
+			InputStream is = null;
+			if (soundFile != null)
+				is = getClass().getResourceAsStream(soundFile);
 			if(is!=null) {
 				Player player = Manager.createPlayer(is, "audio/mpeg");
 		        player.addPlayerListener( this );
