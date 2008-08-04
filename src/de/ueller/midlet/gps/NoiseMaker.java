@@ -167,24 +167,30 @@ public class NoiseMaker
 				playSequence(name);
 			}
 		}
-		try {
-			InputStream is = null;
-			if (soundFile != null)
-				is = getClass().getResourceAsStream(soundFile);
-			if(is!=null) {
-				Player player = Manager.createPlayer(is, "audio/mpeg");
-		        player.addPlayerListener( this );
-				player.realize();
-				VolumeControl volCtrl = (VolumeControl) player.getControl("VolumeControl");
-				volCtrl.setLevel(100);
-				playingName=name;
-				player.start();
-			} else {
+		if (soundFile != null) {
+			try {
+				InputStream is = getClass().getResourceAsStream(soundFile);
+				if(is!=null) {
+					String mediaType=null;
+					if (soundFile.toLowerCase().endsWith(".mp3") ) {
+						mediaType="audio/mpeg";
+					} else if (soundFile.toLowerCase().endsWith(".wav") ) {
+						mediaType="audio/x-wav";
+					}
+					Player player = Manager.createPlayer(is, mediaType);
+			        player.addPlayerListener( this );
+					player.realize();
+					VolumeControl volCtrl = (VolumeControl) player.getControl("VolumeControl");
+					volCtrl.setLevel(100);
+					playingName=name;
+					player.start();
+				} else {
+					playSequence(name);
+				}
+			} catch (Exception ex) {
+		    	mLogger.exception("Failed to play sound from resource", ex);
 				playSequence(name);
 			}
-		} catch (Exception ex) {
-	    	mLogger.exception("Failed to play sound from resource", ex);
-			playSequence(name);
 		}
 //#endif
 	}
