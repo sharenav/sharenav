@@ -158,7 +158,7 @@ public class GuiCamera extends Canvas implements CommandListener, GuiCameraInter
 		//#endif
 	}
 	
-	private void takePicture135() {
+	private void takePicture135() throws SecurityException {
 		logger.info("Captureing photo with jsr 135");
 		//#if polish.api.mmapi
 		if (mPlayer == null || video == null) {
@@ -189,7 +189,7 @@ public class GuiCamera extends Canvas implements CommandListener, GuiCameraInter
  
 	}
 
-	private void takePicture234() {
+	private void takePicture234() throws SecurityException {
 		logger.info("Captureing photo with jsr 234");
 		//#if polish.api.mmapi && polish.api.advancedmultimedia		
 		if (mPlayer == null) {
@@ -244,11 +244,15 @@ public class GuiCamera extends Canvas implements CommandListener, GuiCameraInter
 	}
 	
 	private void takePicture() {
-		//#if polish.api.mmapi && polish.api.advancedmultimedia
-		takePicture234();
-		//#else
-		takePicture135();
-		//#endif
+		try {
+			//#if polish.api.mmapi && polish.api.advancedmultimedia
+			takePicture234();
+			//#else
+			takePicture135();			
+			//#endif
+		} catch (SecurityException se) {
+			logger.error("Permission denied to take a photo");
+		}
 	}
 
 	protected void paint(Graphics arg0) {
