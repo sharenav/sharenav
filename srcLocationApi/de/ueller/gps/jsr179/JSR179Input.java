@@ -1,6 +1,8 @@
 package de.ueller.gps.jsr179;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Date;
 import java.util.Vector;
 
@@ -28,6 +30,8 @@ public class JSR179Input implements LocationListener ,LocationMsgProducer{
 	private NmeaMessage smsg;
 	Date date=new Date();
 	Position pos=new Position(0f,0f,0f,0f,0f,0,date);
+	
+	private OutputStream rawDataLogger;
 	
 
 	/*public JSR179Input(){			
@@ -82,6 +86,14 @@ public class JSR179Input implements LocationListener ,LocationMsgProducer{
         //String nmeaString = "$GPGSA,A,3,32,23,31,11,20,,,,,,,,2.8,2.6,1.0*3D\r\n$GPGSV,3,1,10,20,71,071,38,23,60,168,41,17,42,251,25,11,36,148,37*73\r\n$GPGSV,3,2,10,04,29,300,16,13,26,197,,31,21,054,47,32,10,074,38*70\r\n$GPGSV,3,3,10,12,04,339,17,05,01,353,15*75\r\n";
         logger.info("Using extra NMEA info in JSR179: " + nmeaString);
         if (nmeaString != null) {
+        	if (rawDataLogger != null) {
+        		try {
+        			rawDataLogger.write(nmeaString.getBytes());						
+        			rawDataLogger.flush();
+        		} catch (IOException ioe) {
+        			logger.exception("Could not write raw GPS log", ioe);
+        		}        		
+        	}
         	Vector messages = StringTokenizer.getVector(nmeaString, "\n");        	
         	if (messages != null) {
         		for (int i = 0; i < messages.size(); i++) {
@@ -146,6 +158,19 @@ public class JSR179Input implements LocationListener ,LocationMsgProducer{
 			if (receiver != null)
 				receiver.receiveSolution("0");
 		}
+	}
+	public void disableRawLogging() {
+		if (rawDataLogger != null) {
+			try {
+				rawDataLogger.close();
+			} catch (IOException e) {
+				logger.exception("Couldn't close raw gps logger", e);
+			}
+			rawDataLogger = null;
+		}		
+	}
+	public void enableRawLogging(OutputStream os) {
+		rawDataLogger = os;		
 	}
 
 }

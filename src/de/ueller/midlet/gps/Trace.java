@@ -295,40 +295,10 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			switch (config.getLocationProvider()){
 				case Configuration.LOCATIONPROVIDER_SIRF:
 					locationProducer = new SirfInput();
-
 					break;
 				case Configuration.LOCATIONPROVIDER_NMEA:
-					locationProducer = new NmeaInput();			
-					//#if polish.api.fileconnection	
-					/**
-					 * Allow for logging the raw NMEA data coming from the gps mouse
-					 */
-
-					String url = config.getGpsRawLoggerUrl();
-					//logger.error("Raw logging url: " + url);
-					if (config.getGpsRawLoggerEnable() && (url != null)) {
-						try {
-							logger.info("Raw NMEA logging to: " + url);
-							url += "rawGpsNMEA" + HelperRoutines.formatSimpleDateNow() + ".txt";
-
-							javax.microedition.io.Connection logCon = Connector.open(url);				
-							if (logCon instanceof FileConnection) {
-								FileConnection fileCon = (FileConnection)logCon;
-								if (!fileCon.exists())
-									fileCon.create();
-								((NmeaInput)locationProducer).enableRawLogging(((FileConnection)logCon).openOutputStream());
-							} else {
-								logger.info("Trying to perform raw logging of NMEA on anything else than filesystem is currently not supported");
-							}
-						} catch (IOException ioe) {
-							logger.exception("Couldn't open file for raw logging of Gps data",ioe);
-						} catch (SecurityException se) {
-							logger.error("Permission to write data for NMEA raw logging was denied");
-						}				
-					}
-					//#endif
+					locationProducer = new NmeaInput();
 					break;
-
 				case Configuration.LOCATIONPROVIDER_JSR179:
 					//#if polish.api.locationapi
 					try {
@@ -366,6 +336,34 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 					break;
 
 			}
+			//#if polish.api.fileconnection	
+			/**
+			 * Allow for logging the raw data coming from the gps
+			 */
+
+			String url = config.getGpsRawLoggerUrl();
+			//logger.error("Raw logging url: " + url);
+			if (config.getGpsRawLoggerEnable() && (url != null)) {
+				try {
+					logger.info("Raw Location logging to: " + url);
+					url += "rawGpsLog" + HelperRoutines.formatSimpleDateNow() + ".txt";
+
+					javax.microedition.io.Connection logCon = Connector.open(url);				
+					if (logCon instanceof FileConnection) {
+						FileConnection fileCon = (FileConnection)logCon;
+						if (!fileCon.exists())
+							fileCon.create();
+						locationProducer.enableRawLogging(((FileConnection)logCon).openOutputStream());
+					} else {
+						logger.info("Trying to perform raw logging of NMEA on anything else than filesystem is currently not supported");
+					}
+				} catch (IOException ioe) {
+					logger.exception("Couldn't open file for raw logging of Gps data",ioe);
+				} catch (SecurityException se) {
+					logger.error("Permission to write data for NMEA raw logging was denied");
+				}				
+			}
+			//#endif
 			if (locationProducer == null) {
 				logger.error("Your phone does not seem to support this method of location input, please choose a different one");
 				running  = false;
