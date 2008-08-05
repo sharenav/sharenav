@@ -67,7 +67,9 @@ public class Configuration {
 	// bit 18: Sound on Disconnect
 	public final static byte CFGBIT_SND_DISCONNECT=18;	
 	// bit 19: Routing Instructions
-	public final static byte CFGBIT_SND_ROUTINGINSTRUCTIONS=19;	
+	public final static byte CFGBIT_SND_ROUTINGINSTRUCTIONS=19;
+	// bit 20: Gps Auto Reconnect
+	public final static byte CFGBIT_GPS_AUTORECONNECT=20;
 
 	
 	/**
@@ -96,6 +98,7 @@ public class Configuration {
 	private static final int RECORD_ID_STARTUP_RADLAT=21;
 	private static final int RECORD_ID_STARTUP_RADLON=22;
 	private static final int RECORD_ID_PHOTO_URL = 23;
+	private static final int RECORD_ID_GPS_RECONNECT = 24;
 
 	// Gpx Recording modes
 	// GpsMid determines adaptive if a trackpoint is written
@@ -132,6 +135,7 @@ public class Configuration {
 	private int routeEstimationFac=6;
 	private boolean stopAllWhileRouteing=false;
 	private boolean btKeepAlive = false;
+	private boolean btAutoRecon = false;
 	private Node startupPos = new Node(0.0f, 0.0f);
 	
 	private boolean mapFromJar;
@@ -202,6 +206,7 @@ public class Configuration {
 			routeEstimationFac=readInt(database,RECORD_ID_ROUTE_ESTIMATION_FAC);
 			stopAllWhileRouteing=readInt(database,  RECORD_ID_STOP_ALL_WHILE_ROUTING) !=0;
 			btKeepAlive = readInt(database,  RECORD_ID_BT_KEEPALIVE) !=0;
+			btAutoRecon = readInt(database,  RECORD_ID_GPS_RECONNECT) !=0;
 			String s=readString(database, RECORD_ID_STARTUP_RADLAT);
 			String s2=readString(database, RECORD_ID_STARTUP_RADLON);
 			if(s!=null && s2!=null) {
@@ -581,6 +586,15 @@ public class Configuration {
 	public void setBtKeepAlive(boolean keepAlive) {
 		write(keepAlive?1:0, RECORD_ID_BT_KEEPALIVE);
 		this.btKeepAlive = keepAlive;
+	}
+	
+	public boolean getBtAutoRecon() {
+		return btAutoRecon;
+	}
+	
+	public void setBtAutoRecon(boolean autoRecon) {
+		write(autoRecon?1:0, RECORD_ID_GPS_RECONNECT);
+		this.btAutoRecon = autoRecon;
 	}
 
 	public void getStartupPos(Node pos) {

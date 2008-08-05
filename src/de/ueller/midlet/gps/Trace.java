@@ -93,7 +93,8 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	private final Command MAPFEATURES_CMD = new Command("Map Features",Command.ITEM, 12);
 
 
-	private InputStream inputStream;
+	private InputStream btGpsInputStream;
+	private OutputStream btGpsOutputStream;
 	private StreamConnection conn;
 
 	
@@ -369,7 +370,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				running  = false;
 				return;
 			}
-			locationProducer.init(inputStream, this);
+			locationProducer.init(btGpsInputStream, btGpsOutputStream, this);
 			//#debug info
 			logger.info("end startLocationPovider thread");
 			//		setTitle("lp="+config.getLocationProvider() + " " + config.getBtUrl());			
@@ -419,14 +420,14 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 
 	private boolean openBtConnection(String url){
-		if (inputStream != null){
+		if (btGpsInputStream != null){
 			return true;
 		}
 		if (url == null)
 			return false;
 		try {
 			conn = (StreamConnection) Connector.open(url);
-			inputStream = conn.openInputStream();
+			btGpsInputStream = conn.openInputStream();
 			/**
 			 * There is at least one, perhaps more BT gps receivers, that
 			 * seem to kill the bluetooth connection if we don't send it
@@ -434,24 +435,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			 * We don't have anything to send, so send an arbitrary 0.
 			 */
 			if (getConfig().getBtKeepAlive()) {
-				final OutputStream os = conn.openOutputStream();
-				TimerTask tt = new TimerTask() {
-					public void run() {
-						if (os != null) {
-							try {
-								logger.debug("Writing bogus keep-alive");
-								os.write(0);
-							} catch (IOException e) {
-								logger.info("Closing keep alive timer");
-								this.cancel();
-							}
-						}
-					}
-
-				};
-				logger.info("Setting keep alive timer: " + t);
-				Timer t = new Timer();
-				t.schedule(tt, 1000,1000);				
+				btGpsOutputStream = conn.openOutputStream();								
 			}
 			
 		} catch (SecurityException se) {
@@ -466,6 +450,68 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			return false;
 		}
 		return true;
+	}
+	
+	private void closeBtConnection() {
+		if (btGpsInputStream != null){
+			try {
+				btGpsInputStream.close();
+			} catch (IOException e) {
+			}
+			btGpsInputStream=null;
+		}
+		if (btGpsOutputStream != null){
+			try {
+				btGpsOutputStream.close();
+			} catch (IOException e) {
+			}
+			btGpsOutputStream=null;
+		}
+		if (conn != null){
+			try {
+				conn.close();
+			} catch (IOException e) {
+			}
+			conn=null;			
+		}		
+	}
+	
+	/**
+	 * This function tries to reconnect to the bluetooth
+	 * it retries for up to 40 seconds and blocks in the
+	 * mean time, so this function has to be called from
+	 * within a separate thread. If successful, it will
+	 * re initialise the location producer with the new
+	 * streams.
+	 * 
+	 * @return weather the reconnect was successful
+	 */
+	public boolean autoReconnectBtConnection() {
+		if (!getConfig().getBtAutoRecon()) {
+			logger.info("Not trying to reconnect");
+			return false;
+		}
+		/**
+		 * If there are still parts of the old connection
+		 * left over, close these cleanly.
+		 */
+		closeBtConnection();
+		int reconnectFailures = 0;
+		while ((reconnectFailures < 4) && (! openBtConnection(config.getBtUrl()))){
+			reconnectFailures++;
+			try {
+				Thread.sleep(10000);
+			} catch (InterruptedException e) {
+				return false;
+			}
+		}
+		if (reconnectFailures < 4) {
+			if (locationProducer != null) {
+				locationProducer.init(btGpsInputStream, btGpsOutputStream, this);
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public void commandAction(Command c, Displayable d) {
@@ -650,9 +696,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	public void shutdown() {
 		try {
 			stopImageCollector();
-			if (inputStream != null) {
-				inputStream.close();
-				inputStream = null;
+			if (btGpsInputStream != null) {
+				btGpsInputStream.close();
+				btGpsInputStream = null;
 			}
 			if (namesThread != null) {
 				namesThread.stop();
@@ -1555,21 +1601,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			return;
 		}
 		locationProducer = null;
-		if (inputStream != null){
-			try {
-				inputStream.close();
-			} catch (IOException e) {
-			}
-			inputStream=null;
-		}
-		if (conn != null){
-			try {
-				conn.close();
-			} catch (IOException e) {
-			}
-			conn=null;
-			inputStream=null;
-		}
+		closeBtConnection();
 		notify();		
 		addCommand(CONNECT_GPS_CMD);
 //#debug info

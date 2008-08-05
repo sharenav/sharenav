@@ -137,6 +137,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private StringItem  gpxUrl;
 	private StringItem  gpsUrl;
 	private ChoiceGroup btKeepAlive;
+	private ChoiceGroup btAutoRecon;
 	  
 	private String gpsUrlStr;
 	
@@ -183,10 +184,15 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		
 		String [] btka = new String[1];
 		btka[0] = "Send keep alives"; 
-		btKeepAlive = new ChoiceGroup("BT keep alive",ChoiceGroup.MULTIPLE, btka, null);		
+		btKeepAlive = new ChoiceGroup("BT keep alive",ChoiceGroup.MULTIPLE, btka, null);
+		
+		String [] btar = new String[1];
+		btar[0] = "Auto reconnect GPS"; 
+		btAutoRecon = new ChoiceGroup("BT reconnect",ChoiceGroup.MULTIPLE, btar, null);
 
 		menuSelectLocProv.append(gpsUrl);
 		menuSelectLocProv.append(btKeepAlive);
+		menuSelectLocProv.append(btAutoRecon);
 		menuSelectLocProv.append(locProv);
 		menuSelectLocProv.append(rawLog);
 		
@@ -417,7 +423,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 					rawLog.append(logUrl, null);
 					rawLog.setSelectedFlags(selraw);
 					selraw[0] = config.getBtKeepAlive();
-					btKeepAlive.setSelectedFlags(selraw);					
+					btKeepAlive.setSelectedFlags(selraw);
+					selraw[0] = config.getBtAutoRecon();
+					btAutoRecon.setSelectedFlags(selraw);
 					Display.getDisplay(parent).setCurrentItem(gpsUrl);
 					//Display.getDisplay(parent).setCurrent(menuSelectLocProv);
 					state = STATE_LP;
@@ -553,6 +561,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				}
 				btKeepAlive.getSelectedFlags(selraw);
 				config.setBtKeepAlive(selraw[0]);
+				btAutoRecon.getSelectedFlags(selraw);
+				config.setBtAutoRecon(selraw[0]);
 				state = STATE_ROOT;
 				show();
 				break;

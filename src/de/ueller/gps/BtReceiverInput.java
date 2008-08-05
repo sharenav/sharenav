@@ -107,8 +107,8 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer{
 					}
 					receiver.receiveStatistics(connectError,connectQuality);
 					//watchdog if no bytes received in 10 sec then exit thread
-					if (bytesReceived == 0){
-						close("No Data from NMEA");
+					if (bytesReceived == 0){						
+						throw new IOException("No Data from Gps");
 					} else {
 						bytesReceived=0;
 					}
@@ -116,8 +116,24 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer{
 				try {
 					process();
 				} catch (IOException e) {
-					receiver.receiveMessage("Closing: " + e.getMessage());
-					close("Closed: " + e.getMessage());
+					/**
+					 * The bluetooth connection seems to have died,
+					 * try and reconnect. If the reconnect was successful
+					 * the reconnect function will call the init function,
+					 * which will create a new thread. In that case we simply
+					 * exit this old thread. If the reconnect was unsuccessful
+					 * then we close the connection and give an error message.
+					 */
+					logger.info("Failed to read from GPS trying to reconnect: " + e.getMessage());
+					receiver.receiveSolution("~~");
+					if (!Trace.getInstance().autoReconnectBtConnection()) {
+						logger.info("Gps bluethooth could not reconnect");
+						receiver.receiveMessage("Closing: " + e.getMessage());
+						close("Closed: " + e.getMessage());
+					} else {
+						logger.info("Gps bluetooth reconnect was successful");
+						return;
+					}
 				}
 				if (! closed)
 					try {
