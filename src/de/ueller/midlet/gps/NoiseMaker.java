@@ -176,6 +176,8 @@ public class NoiseMaker
 						mediaType="audio/mpeg";
 					} else if (soundFile.toLowerCase().endsWith(".wav") ) {
 						mediaType="audio/x-wav";
+					} else if (soundFile.toLowerCase().endsWith(".amr") ) {
+						mediaType="audio/amr";
 					}
 					Player player = Manager.createPlayer(is, mediaType);
 			        player.addPlayerListener( this );
