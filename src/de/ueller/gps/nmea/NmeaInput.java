@@ -23,8 +23,6 @@ import de.ueller.midlet.gps.Logger;
 public class NmeaInput implements Runnable, LocationMsgProducer{
 
 	protected static final Logger logger = Logger.getInstance(NmeaInput.class,Logger.TRACE);
-	private int	start;
-	private int	checksum;
 	private NmeaMessage smsg;
 	private InputStream ins;
 	private OutputStream rawDataLogger;
@@ -35,26 +33,9 @@ public class NmeaInput implements Runnable, LocationMsgProducer{
 	int bytesReceived=0;
 	private int[] connectError=new int[LocationMsgReceiver.SIRF_FAIL_COUNT];
 	private String message;
-	private static final int STATE_EXPECT_START_1=0;
-	private static final int STATE_EXPECT_PREFIX=1;
-	private static final int STATE_EXPECT_BODY=2;
-	private static final int STATE_EXPECT_CHECKSUM=3;
 	
 	private byte [] buf1 = new byte[512]; //Buffer used to read data from GPS-receiver
 	private byte [] buf2 = new byte[128]; //Buffer used to recombine data into NMEA sentences
-	
-	/*public NmeaInput(InputStream ins,LocationMsgReceiver receiver) {
-		super();
-		
-
-	}
-	public NmeaInput(boolean test,InputStream ins,LocationMsgReceiver receiver) {
-		super();
-		this.ins = ins;
-		this.receiver = receiver;
-		smsg=new NmeaMessage(receiver);
-
-	}*/
 	
 	public void init(InputStream ins,LocationMsgReceiver receiver) {
 		this.ins = ins;
@@ -218,118 +199,6 @@ public class NmeaInput implements Runnable, LocationMsgProducer{
 	}
 	
 	/**
-	 * @deprecated	 
-	 */
-	public void processOld() {
-		StringBuffer readBuffer = smsg.getBuffer();
-		try {
-			while (ins.available() > 0) {
-			    switch (start) {
-				case STATE_EXPECT_START_1:
-					char c = (char)ins.read();
-//					System.out.println("got char:" + c);
-					if (c == '$') {
-							start = STATE_EXPECT_PREFIX;
-						} else {
-							connectError[LocationMsgReceiver.SIRF_FAIL_NO_START_SIGN1]++;
-							connectQuality--;
-							break;
-						}
-				case STATE_EXPECT_PREFIX:
-					if (ins.available() < 2) // expect GP
-						break;
-					if (ins.read() != 'G'){
-						start=STATE_EXPECT_START_1;
-						connectError[LocationMsgReceiver.SIRF_FAIL_NO_START_SIGN2]++;
-						connectQuality--;
-						break;
-					}
-					if (ins.read() != 'P'){
-						start=0;
-						connectError[LocationMsgReceiver.SIRF_FAIL_NO_START_SIGN2]++;
-						connectQuality--;
-						break;
-					}
-					// buffer prepare for body
-					readBuffer.setLength(0);
-				case STATE_EXPECT_BODY:
-					if (readBody(readBuffer)){
-						break;
-					}
-				case STATE_EXPECT_CHECKSUM: // checksum
-					if (ins.available() < 4) {
-						break;
-					}
-					checksum = Character.digit((char) ins.read(),16);
-					checksum = checksum * 16 + Character.digit((char) ins.read(),16);
-//					System.out.println("checksum "+checksum+" "+calcChecksum(smsg));
-					if (ins.read() != '\r'){
-						connectError[LocationMsgReceiver.SIRF_FAIL_NO_END_SIGN1]++;						
-						start=STATE_EXPECT_START_1;
-						break;
-					}
-					if (ins.read() != '\n'){
-						connectError[LocationMsgReceiver.SIRF_FAIL_NO_END_SIGN2]++;						
-						connectQuality--;
-					}
-					smsg.decodeMessage();
-					start=STATE_EXPECT_START_1;
-					break;
-				} // switch
-			} // while
-		} catch (IOException e) {
-			receiver.receiveMessage("Error: " + e.getMessage());
-			close();
-		}
-
-	}
-
-	/**
-	 * read body til end or til checksum
-	 * @param readBuffer
-	 * @return true if not found * for checksum
-	 * @throws IOException
-	 */
-	private boolean readBody(StringBuffer readBuffer) throws IOException{
-		while (ins.available() > 0){
-			int b=ins.read();
-			switch (b){
-			case '$':
-				start=STATE_EXPECT_PREFIX;
-				connectQuality--;
-				System.out.println("Error: Got $ in message body");
-			case '\r':
-				connectQuality++;
-				break;
-			case '\n':
-				connectQuality++;
-				start=0;
-				try {
-					smsg.decodeMessage();
-					connectQuality++;
-				} catch (RuntimeException e) {
-					receiver.receiveMessage(e.toString());
-				}
-				break;
-			case '*':
-				start=3;
-				connectQuality++;
-				return false;
-			default:
-				readBuffer.append((char) b);
-			if (readBuffer.length() > 80){
-				start=0;
-				connectQuality--;
-				connectError[LocationMsgReceiver.SIRF_FAIL_MSG_TO_LONG]++;
-				return true;
-			}
-			}
-		}
-		return true;
-
-	}
-	
-	/**
 	 * Calculate the NMEA checksum. This is a byte wise XOR of the NMEA string between (excluding)
 	 * the $ and the * 
 	 * @param buf the entire NMEA sentence including $ and \r\n
@@ -355,6 +224,7 @@ public class NmeaInput implements Runnable, LocationMsgProducer{
 	public void enableRawLogging(OutputStream os) {
 		rawDataLogger = os;		
 	}
+
 	public void disableRawLogging() {
 		if (rawDataLogger != null) {
 			try {
@@ -365,6 +235,7 @@ public class NmeaInput implements Runnable, LocationMsgProducer{
 			rawDataLogger = null;
 		}
 	}
+
 	public void addLocationMsgReceiver(LocationMsgReceiver receiver) {
 		// TODO Auto-generated method stub
 		
