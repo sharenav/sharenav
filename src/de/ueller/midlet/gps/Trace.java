@@ -202,7 +202,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	private static final String[] soundDirections  = { "",
 		"HARDRIGHT", "RIGHT", "HALFRIGHT",
 		"STRAIGHTON",
-		"HARDLEFT", "LEFT", "HALFLEFT"};
+		"HALFLEFT", "LEFT", "HARDLEFT"};
 	private boolean keyboardLocked=false;
 	
 	
