@@ -3,11 +3,15 @@ package de.ueller.gps;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Timer;
+import java.util.TimerTask;
 
+import de.ueller.gps.data.Configuration;
 import de.ueller.gps.nmea.NmeaInput;
 import de.ueller.midlet.gps.LocationMsgProducer;
 import de.ueller.midlet.gps.LocationMsgReceiver;
 import de.ueller.midlet.gps.Logger;
+import de.ueller.midlet.gps.Trace;
 
 /**
  * 
@@ -21,6 +25,7 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer{
 	private static final Logger logger = Logger.getInstance(NmeaInput.class,Logger.TRACE);
 
 	protected InputStream ins;
+	private OutputStream outs;
 	protected OutputStream rawDataLogger;
 	protected Thread					processorThread;
 	protected LocationMsgReceiver	receiver;
@@ -30,14 +35,40 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer{
 	protected int[] connectError=new int[LocationMsgReceiver.SIRF_FAIL_COUNT];
 	protected String message;
 	protected int msgsReceived=1;
+	
+	protected class KeepAliveTimer extends TimerTask {
+		public void run() {
+			if (outs != null) {
+				try {
+					logger.debug("Writing bogus keep-alive");
+					outs.write(0);
+				} catch (IOException e) {
+					logger.info("Closing keep alive timer");
+					this.cancel();
+				}
+			}
+		}		
+	}
 
-	public void init(InputStream ins,LocationMsgReceiver receiver) {
+	public void init(InputStream ins, OutputStream outs, LocationMsgReceiver receiver) {
 		this.ins = ins;
+		this.outs = outs;
 		this.receiver = receiver;
 		processorThread = new Thread(this,"NMEA Decoder");
 		processorThread.setPriority(Thread.MAX_PRIORITY);
 		processorThread.start();
-
+		/**
+		 * There is at least one, perhaps more BT gps receivers, that
+		 * seem to kill the bluetooth connection if we don't send it
+		 * something for some reason. Perhaps due to poor powermanagment?
+		 * We don't have anything to send, so send an arbitrary 0.
+		 */
+		if (Trace.getInstance().getConfig().getBtKeepAlive()) {
+			TimerTask tt = new KeepAliveTimer();
+			logger.info("Setting keep alive timer: " + tt);
+			Timer t = new Timer();
+			t.schedule(tt, 1000,1000);
+		}
 	}
 
 	abstract protected void process() throws IOException;

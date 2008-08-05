@@ -38,7 +38,7 @@ public class JSR179Input implements LocationListener ,LocationMsgProducer{
 		
 	}*/
 	
-	public void init(InputStream ins, LocationMsgReceiver receiver) {
+	public void init(InputStream ins, OutputStream outs, LocationMsgReceiver receiver) {
 		logger.info("start JSR179 LocationProvider");
 		this.receiver = receiver;
 		createLocationProvider();

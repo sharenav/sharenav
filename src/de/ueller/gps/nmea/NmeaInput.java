@@ -12,6 +12,7 @@ package de.ueller.gps.nmea;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 import de.ueller.gps.BtReceiverInput;
 import de.ueller.midlet.gps.LocationMsgProducer;
@@ -28,11 +29,11 @@ public class NmeaInput extends BtReceiverInput {
 	private byte [] buf1 = new byte[512]; //Buffer used to read data from GPS-receiver
 	private byte [] buf2 = new byte[128]; //Buffer used to recombine data into NMEA sentences
 	
-	public void init(InputStream ins,LocationMsgReceiver receiver) {
+	public void init(InputStream ins, OutputStream outs, LocationMsgReceiver receiver) {
 		//#debug
 		logger.debug("Starting NMEA");
 		smsg=new NmeaMessage(receiver);		
-		super.init(ins, receiver);
+		super.init(ins, outs, receiver);
 	}
 
 	public void process() throws IOException{		
