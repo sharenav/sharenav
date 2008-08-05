@@ -13,6 +13,7 @@ package de.ueller.gps.sirf;
 import java.io.IOException;
 import java.io.InputStream;
 
+import de.ueller.gps.BtReceiverInput;
 import de.ueller.midlet.gps.LocationMsgProducer;
 import de.ueller.midlet.gps.LocationMsgReceiver;
 import de.ueller.midlet.gps.Logger;
@@ -20,43 +21,23 @@ import de.ueller.midlet.gps.Trace;
 
 
 
-public class SirfInput implements Runnable, LocationMsgProducer{
+public class SirfInput extends BtReceiverInput {
 
-	
+	private final static Logger logger = Logger.getInstance(SirfInput.class,Logger.DEBUG);
 	private int	start;
 	private int	checksum;
 	private int	length;
 	private SirfMessage smsg;
-	private InputStream ins;
-	private Thread					processorThread;
-	private LocationMsgReceiver	receiver;
-	private boolean closed=false;
-	private byte connectQuality=100;
-	//#debug info
-	private int[] connectError=new int[LocationMsgReceiver.SIRF_FAIL_COUNT];
 	private int msgsReceived;
-	//#debug error
-	private final static Logger logger = Logger.getInstance(SirfInput.class,Logger.DEBUG);
 
-	
-	/*public SirfInput(InputStream ins,LocationMsgReceiver receiver) {
-		super();
-		
-
-	}*/
-	
 	public void init (InputStream ins, LocationMsgReceiver receiver) {
 		//#debug
-		logger.debug("init SirfInput");
-		this.ins = ins;
-		this.receiver = receiver;
-		processorThread = new Thread(this,"Sirf Decoder");
-		processorThread.setPriority(7);
-		processorThread.start();
-		smsg=new SirfMessage(receiver);				
+		logger.debug("Starting Sirf Decoder");
+		smsg=new SirfMessage(receiver);
+		super.init(ins, receiver);
 	}
 
-	public void run(){
+	/*	public void run(){
 		receiver.receiveMessage("start SIRF receiver");
 		//#debug debug
 		logger.debug("start SIRF receiver");
@@ -104,128 +85,117 @@ public class SirfInput implements Runnable, LocationMsgProducer{
 				synchronized (this) {
 					wait(250);
 				}
-				
+
 			} catch (InterruptedException e) {
 				//#debug
 				logger.debug(e.getMessage());
 			}
-			
+
 		}
 		receiver.locationDecoderEnd();
 	}
-	
-	public synchronized void close() {
-		closed=true;
-	}
-	public synchronized void close(String msg) {
-		closed=true;
-		
-	}
-	
-	public void process() {
+	 */	
+	public void process() throws IOException {
 		byte[] readBuffer = smsg.readBuffer;
-		try {
-			//#debug debug
-			logger.debug("loop avail :" + ins.available() );
-			while (ins.available() > 0) {
-				long mesChecksum;
-				switch (start) {
-				case 0:
-					// leave on messages begin if close is requested
-					if (closed) {
-						return;
-					}
-					if (ins.available() < 2) {
-						break;
-					}
-					if (ins.read() == 0xA0) {
-						if (ins.read() == 0xA2) {
-							start = 2;
-							msgsReceived++;
-						} else {
-							//#debug info
-							connectError[LocationMsgReceiver.SIRF_FAIL_NO_START_SIGN2]++;
-							connectQuality--;
-							break;
-						}
-					} else {
-						//#debug info
-						connectError[LocationMsgReceiver.SIRF_FAIL_NO_START_SIGN1]++;
-						connectQuality--;
-						break;
-					}
-				case 2:
-					if (ins.available() < 2) {
-						break;
-					}
-					length = ins.read() * 256;
-					length += ins.read();
-					if (length >= 1023) {
-						//#debug info
-						connectError[LocationMsgReceiver.SIRF_FAIL_MSG_TO_LONG]++;
-						connectQuality--;
-						start = 0;
-						break;
-					}
-					start = 3;
-					smsg.length = length;
-				case 3:
-					if (ins.available() <= length) {
-						break;
-					}
-					if (ins.read(readBuffer, 0, length) != length) {
-						//#debug info
-						connectError[LocationMsgReceiver.SIRF_FAIL_MSG_INTERUPTED]++;
-						connectQuality-=2;
-						start = 0;
-						break;
-					}
-					start = 4;
-				case 4:
-					if (ins.available() < 2) {
-						break;
-					}
-					checksum = ins.read();
-					checksum = checksum * 256 + ins.read();
-					mesChecksum = calcChecksum(smsg);
-					if (mesChecksum != checksum) {
-						connectQuality-=10;
-						//#debug info
-						connectError[LocationMsgReceiver.SIRF_FAIL_MSG_CHECKSUM_ERROR]++;
-						start = 0;
-					}
-					start = 5;
-				case 5:
-					if (ins.available() < 2) {
-						break;
-					}
-					if (ins.read() == 0xB0) {
-						if (ins.read() == 0xB3) {
-							connectQuality++;
-							smsg.decodeMsg(smsg);
-							start = 0;
-						} else {
-							start = 0;
-							connectQuality--;
-							//#debug info
-							connectError[LocationMsgReceiver.SIRF_FAIL_NO_END_SIGN2]++;
-						}
-					} else {
-						start = 0;
-						connectQuality--;
-						//#debug info
-						connectError[LocationMsgReceiver.SIRF_FAIL_NO_END_SIGN1]++;
-					}
+		//#debug debug
+		logger.debug("loop avail :" + ins.available() );
+		while (ins.available() > 0) {
+			long mesChecksum;
+			switch (start) {
+			case 0:
+				// leave on messages begin if close is requested
+				if (closed) {
+					return;
+				}
+				if (ins.available() < 2) {
 					break;
-				} // switch
-			} // while
-		} catch (IOException e) {
-			receiver.receiveMessage("Fehler: " + e.getMessage());
-			close();
-		}
+				}
+				if (ins.read() == 0xA0) {
+					if (ins.read() == 0xA2) {
+						start = 2;
+						msgsReceived++;
+					} else {
+						//#debug info
+						connectError[LocationMsgReceiver.SIRF_FAIL_NO_START_SIGN2]++;
+						connectQuality--;
+						break;
+					}
+				} else {
+					//#debug info
+					connectError[LocationMsgReceiver.SIRF_FAIL_NO_START_SIGN1]++;
+					connectQuality--;
+					break;
+				}
+			case 2:
+				if (ins.available() < 2) {
+					break;
+				}
+				length = ins.read() * 256;
+				length += ins.read();
+				if (length >= 1023) {
+					//#debug info
+					connectError[LocationMsgReceiver.SIRF_FAIL_MSG_TO_LONG]++;
+					connectQuality--;
+					start = 0;
+					break;
+				}
+				start = 3;
+				smsg.length = length;
+			case 3:
+				if (ins.available() <= length) {
+					break;
+				}
+				if (ins.read(readBuffer, 0, length) != length) {
+					//#debug info
+					connectError[LocationMsgReceiver.SIRF_FAIL_MSG_INTERUPTED]++;
+					connectQuality-=2;
+					start = 0;
+					break;
+				}
+				start = 4;
+			case 4:
+				if (ins.available() < 2) {
+					break;
+				}
+				checksum = ins.read();
+				checksum = checksum * 256 + ins.read();
+				mesChecksum = calcChecksum(smsg);
+				if (mesChecksum != checksum) {
+					connectQuality-=10;
+					//#debug info
+					connectError[LocationMsgReceiver.SIRF_FAIL_MSG_CHECKSUM_ERROR]++;
+					start = 0;
+				}
+				start = 5;
+			case 5:
+				if (ins.available() < 2) {
+					break;
+				}
+				if (ins.read() == 0xB0) {
+					if (ins.read() == 0xB3) {
+						connectQuality++;
+						smsg.decodeMsg(smsg);
+						start = 0;
+					} else {
+						start = 0;
+						connectQuality--;
+						//#debug info
+						connectError[LocationMsgReceiver.SIRF_FAIL_NO_END_SIGN2]++;
+					}
+				} else {
+					start = 0;
+					connectQuality--;
+					//#debug info
+					connectError[LocationMsgReceiver.SIRF_FAIL_NO_END_SIGN1]++;
+				}
+				break;
+			} // switch
+		} // while
+		//This is put here temporarilly while merging SirfInput and NmeaInput
+		if (msgsReceived > 0) bytesReceived = 100; 
 
 	}
-	
+
 	public long calcChecksum(SirfMessage s) {
 		long mesChecksum;
 		mesChecksum = 0;
@@ -234,10 +204,5 @@ public class SirfInput implements Runnable, LocationMsgProducer{
 		}
 		mesChecksum &= 32767l;
 		return mesChecksum;
-	}
-
-	public void addLocationMsgReceiver(LocationMsgReceiver receiver) {
-		// TODO Auto-generated method stub
-		
 	}
 }
