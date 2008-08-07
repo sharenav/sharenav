@@ -10,10 +10,7 @@ import java.util.Vector;
 
 import de.ueller.gps.data.SearchResult;
 import de.ueller.midlet.gps.Logger;
-import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.data.ProjMath;
-import de.ueller.midlet.gps.data.Way;
-import de.ueller.midlet.gps.routing.RouteNode;
 import de.ueller.midlet.gps.tile.PaintContext;
 
 
