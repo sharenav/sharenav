@@ -27,7 +27,9 @@
 <!ATTLIST key tag CDATA #REQUIRED>
 <!ATTLIST keyW tag CDATA #REQUIRED>
 <!ATTLIST value name CDATA #REQUIRED>
+<!ATTLIST value priority CDATA #IMPLIED>
 <!ATTLIST Wvalue name CDATA #REQUIRED>
+<!ATTLIST Wvalue priority CDATA #IMPLIED>
 <!ATTLIST sound name CDATA #REQUIRED>
 <!ATTLIST description desc CDATA #REQUIRED>
 <!ATTLIST namekey tag CDATA #REQUIRED>

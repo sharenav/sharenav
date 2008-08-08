@@ -151,7 +151,15 @@ public class LegendParser extends DefaultHandler{
 					currentPoi = new POIdescription();
 					currentPoi.typeNum = poiIdx++;
 					currentPoi.key = currentKey;
-					currentPoi.value = atts.getValue("name"); 
+					currentPoi.value = atts.getValue("name");
+					String rulePrio = atts.getValue("priority");
+					if (rulePrio != null) {
+						try {
+							currentPoi.rulePriority = (byte)Integer.parseInt(rulePrio);
+						} catch (NumberFormatException nfe) {
+							System.out.println("WARNING: Rule priority is invalid, using default");
+						}
+					}
 					keyValuesPoi.put(currentPoi.value, currentPoi);
 					pois.put(currentPoi.typeNum, currentPoi);
 				}
@@ -203,8 +211,16 @@ public class LegendParser extends DefaultHandler{
 					currentWay = new WayDescription();
 					currentWay.typeNum = wayIdx++;
 					currentWay.key = currentKey;
-					currentWay.value = atts.getValue("name"); 
+					currentWay.value = atts.getValue("name");					
 					keyValuesWay.put(currentWay.value, currentWay);
+					String rulePrio = atts.getValue("priority");
+					if (rulePrio != null) {
+						try {
+							currentWay.rulePriority = (byte)Integer.parseInt(rulePrio);
+						} catch (NumberFormatException nfe) {
+							System.out.println("WARNING: Rule priority is invalid, using default");
+						}
+					}
 					ways.put(currentWay.typeNum, currentWay);
 				}
 				if (qName.equals("description")) {

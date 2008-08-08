@@ -95,6 +95,7 @@ public class Node extends Entity{
 			if (legend != null) {				
 				Set<String> tags = getTags();
 				if (tags != null) {
+					byte currentPrio = Byte.MIN_VALUE;
 					for (String s: tags) {						
 						Hashtable<String,POIdescription> keyValues = legend.get(s);
 						if (keyValues != null) {							
@@ -102,13 +103,13 @@ public class Node extends Entity{
 							if (poi == null) {
 								poi = keyValues.get("*");
 							}
-							if (poi != null) {
-								type = poi.typeNum;
-								//System.out.println(toString() + " is a " + poi.description);
-								return poi.typeNum;
+							if ((poi != null) && (poi.rulePriority > currentPrio)) {
+								currentPrio = poi.rulePriority;
+								type = poi.typeNum;								
 							}
 						}
 					}
+					return type;
 				}			
 			}
 		}

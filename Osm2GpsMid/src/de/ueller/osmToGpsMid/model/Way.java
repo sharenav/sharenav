@@ -91,6 +91,7 @@ public class Way extends Entity implements Comparable<Way>{
 			if (legend != null) {				
 				Set<String> tags = getTags();
 				if (tags != null) {
+					byte currentPrio = Byte.MIN_VALUE;
 					for (String s: tags) {						
 						Hashtable<String,WayDescription> keyValues = legend.get(s);
 						//System.out.println("Calculating type for " + toString() + " " + s + " " + keyValues);
@@ -100,13 +101,14 @@ public class Way extends Entity implements Comparable<Way>{
 							if (way == null) {
 								way = keyValues.get("*");
 							}
-							if (way != null) {
-								type = way.typeNum;								
+							if (way != null && way.rulePriority > currentPrio) {
+								currentPrio = way.rulePriority;
+								type = way.typeNum;
 								way.noWaysOfType++;
-								return way.typeNum;								
 							}
 						}
 					}
+					return type;
 				}			
 			}
 		}

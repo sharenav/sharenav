@@ -29,6 +29,7 @@ public class WayDescription {
 	public String   searchIcon;
 	public int      noWaysOfType;
 	public byte		forceToLayer;
+	public byte     rulePriority;
 	
 	public WayDescription() {
 		lineStyleDashed = false; //TODO: This needs to be corrected to Graphics.SOLID
@@ -37,6 +38,7 @@ public class WayDescription {
 		wayWidth = 2;
 		routable = false;
 		typicalSpeed = 60;
+		rulePriority = 0;
 	}
 	
 	public String toString() {
