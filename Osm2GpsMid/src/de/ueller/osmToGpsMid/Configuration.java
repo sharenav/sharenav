@@ -21,6 +21,7 @@ import java.util.MissingResourceException;
 import java.util.PropertyResourceBundle;
 import java.util.Random;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.Vector;
 import java.util.zip.GZIPInputStream;
 import java.net.URL;
@@ -286,11 +287,11 @@ public class Configuration {
 			return maxRouteTileSize;
 		}
 
-		public Hashtable<String, Hashtable<String,POIdescription>> getPOIlegend() {
+		public Hashtable<String, Hashtable<String,Set<POIdescription>>> getPOIlegend() {
 			return legend.getPOIlegend();
 		}
 		
-		public Hashtable<String, Hashtable<String,WayDescription>> getWayLegend() {
+		public Hashtable<String, Hashtable<String,Set<WayDescription>>> getWayLegend() {
 			return legend.getWayLegend();
 		}
 		

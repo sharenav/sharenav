@@ -5,8 +5,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.LinkedList;
+import java.util.Set;
 import java.util.Vector;
 
 import javax.xml.parsers.SAXParser;
@@ -19,6 +21,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import de.ueller.osmToGpsMid.Configuration;
 import de.ueller.osmToGpsMid.model.Bounds;
+import de.ueller.osmToGpsMid.model.ConditionTuple;
 import de.ueller.osmToGpsMid.model.Entity;
 import de.ueller.osmToGpsMid.model.Member;
 import de.ueller.osmToGpsMid.model.Node;
@@ -31,8 +34,8 @@ import de.ueller.osmToGpsMid.model.WayDescription;
 public class LegendParser extends DefaultHandler{
 	public static Configuration config;
 	
-	private Hashtable<String, Hashtable<String,POIdescription>> poiMap;
-	private Hashtable<String, Hashtable<String,WayDescription>> wayMap;
+	private Hashtable<String, Hashtable<String,Set<POIdescription>>> poiMap;
+	private Hashtable<String, Hashtable<String,Set<WayDescription>>> wayMap;
 	private LongTri<POIdescription> pois;
 	private LongTri<WayDescription> ways;
 	private Vector<SoundDescription> sounds;
@@ -40,8 +43,8 @@ public class LegendParser extends DefaultHandler{
 	private SoundDescription currentSound;
 	private WayDescription currentWay;
 	private String currentKey;
-	private Hashtable<String,POIdescription> keyValuesPoi;
-	private Hashtable<String,WayDescription> keyValuesWay;
+	private Hashtable<String,Set<POIdescription>> keyValuesPoi;
+	private Hashtable<String,Set<WayDescription>> keyValuesWay;
 	private final byte READING_WAYS=0;
 	private final byte READING_POIS=1;
 	private final byte READING_SOUNDS=2;
@@ -61,7 +64,7 @@ public class LegendParser extends DefaultHandler{
 
 	private void init(InputStream i) {
 		try {			
-			poiMap = new Hashtable<String, Hashtable<String,POIdescription>>();
+			poiMap = new Hashtable<String, Hashtable<String,Set<POIdescription>>>();
 			pois = new LongTri<POIdescription>();
 			currentPoi = new POIdescription();
 			/**
@@ -73,7 +76,7 @@ public class LegendParser extends DefaultHandler{
 			currentPoi.description = "No description";
 			pois.put(currentPoi.typeNum, currentPoi);
 			
-			wayMap = new Hashtable<String, Hashtable<String,WayDescription>>();
+			wayMap = new Hashtable<String, Hashtable<String,Set<WayDescription>>>();
 			ways = new LongTri<WayDescription>();
 			currentWay = new WayDescription();
 			/**
@@ -143,7 +146,7 @@ public class LegendParser extends DefaultHandler{
 					currentKey = atts.getValue("tag");
 					keyValuesPoi = poiMap.get(currentKey);
 					if (keyValuesPoi == null) {
-						keyValuesPoi = new Hashtable<String,POIdescription>();
+						keyValuesPoi = new Hashtable<String,Set<POIdescription>>();
 						poiMap.put(currentKey, keyValuesPoi);
 					}
 				}
@@ -160,8 +163,27 @@ public class LegendParser extends DefaultHandler{
 							System.out.println("WARNING: Rule priority is invalid, using default");
 						}
 					}
-					keyValuesPoi.put(currentPoi.value, currentPoi);
+					Set<POIdescription> poiDescs = keyValuesPoi.get(currentPoi.value);
+					if (poiDescs == null)
+						poiDescs = new HashSet<POIdescription>();
+					poiDescs.add(currentPoi);
+					keyValuesPoi.put(currentPoi.value, poiDescs);					
 					pois.put(currentPoi.typeNum, currentPoi);
+				}
+				if (qName.equals("specialisation")) {
+					if (currentPoi.specialisation == null) {
+						currentPoi.specialisation = new LinkedList<ConditionTuple>();
+					}
+					ConditionTuple ct = new ConditionTuple();
+					ct.key = atts.getValue("key");
+					ct.value = atts.getValue("value");
+					String condition = atts.getValue("condition");
+					if (condition.equalsIgnoreCase("exclude")) {
+						ct.exclude = true;
+					} else {
+						ct.exclude = false;
+					}
+					currentPoi.specialisation.add(ct);
 				}
 				if (qName.equals("description")) {
 					currentPoi.description = atts.getValue("desc");
@@ -203,7 +225,7 @@ public class LegendParser extends DefaultHandler{
 					currentKey = atts.getValue("tag");
 					keyValuesWay = wayMap.get(currentKey);
 					if (keyValuesWay == null) {
-						keyValuesWay = new Hashtable<String,WayDescription>();
+						keyValuesWay = new Hashtable<String,Set<WayDescription>>();
 						wayMap.put(currentKey, keyValuesWay);
 					}
 				}
@@ -211,8 +233,12 @@ public class LegendParser extends DefaultHandler{
 					currentWay = new WayDescription();
 					currentWay.typeNum = wayIdx++;
 					currentWay.key = currentKey;
-					currentWay.value = atts.getValue("name");					
-					keyValuesWay.put(currentWay.value, currentWay);
+					currentWay.value = atts.getValue("name");
+					Set<WayDescription> wayDescs = keyValuesWay.get(currentWay.value);
+					if (wayDescs == null)
+						wayDescs = new HashSet<WayDescription>();
+					wayDescs.add(currentWay);
+					keyValuesWay.put(currentWay.value, wayDescs);
 					String rulePrio = atts.getValue("priority");
 					if (rulePrio != null) {
 						try {
@@ -222,6 +248,21 @@ public class LegendParser extends DefaultHandler{
 						}
 					}
 					ways.put(currentWay.typeNum, currentWay);
+				}
+				if (qName.equals("specialisation")) {
+					if (currentWay.specialisation == null) {
+						currentWay.specialisation = new LinkedList<ConditionTuple>();
+					}
+					ConditionTuple ct = new ConditionTuple();
+					ct.key = atts.getValue("key");
+					ct.value = atts.getValue("value");
+					String condition = atts.getValue("condition");
+					if (condition.equalsIgnoreCase("exclude")) {
+						ct.exclude = true;
+					} else {
+						ct.exclude = false;
+					}
+					currentWay.specialisation.add(ct);
 				}
 				if (qName.equals("description")) {
 					currentWay.description = atts.getValue("desc");
@@ -321,7 +362,7 @@ public class LegendParser extends DefaultHandler{
 		System.out.println("Error: " + e);
 		throw e;	
 	}
-	public Hashtable<String, Hashtable<String,POIdescription>> getPOIlegend() {
+	public Hashtable<String, Hashtable<String,Set<POIdescription>>> getPOIlegend() {
 		return poiMap;
 	}
 	
@@ -333,7 +374,7 @@ public class LegendParser extends DefaultHandler{
 		return pois.values();
 	}
 	
-	public Hashtable<String, Hashtable<String,WayDescription>> getWayLegend() {
+	public Hashtable<String, Hashtable<String,Set<WayDescription>>> getWayLegend() {
 		return wayMap;
 	}
 	

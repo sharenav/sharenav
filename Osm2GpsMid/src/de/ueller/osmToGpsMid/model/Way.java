@@ -87,24 +87,45 @@ public class Way extends Entity implements Comparable<Way>{
 	private byte calcType(Configuration c){
 		//System.out.println("Calculating type for " + toString());
 		if (c != null) {			
-			Hashtable<String, Hashtable<String,WayDescription>> legend = c.getWayLegend();
+			Hashtable<String, Hashtable<String,Set<WayDescription>>> legend = c.getWayLegend();
 			if (legend != null) {				
 				Set<String> tags = getTags();
 				if (tags != null) {
 					byte currentPrio = Byte.MIN_VALUE;
 					for (String s: tags) {						
-						Hashtable<String,WayDescription> keyValues = legend.get(s);
+						Hashtable<String,Set<WayDescription>> keyValues = legend.get(s);
 						//System.out.println("Calculating type for " + toString() + " " + s + " " + keyValues);
 						if (keyValues != null) {
 							//System.out.println("found key index for " + s);
-							WayDescription way = keyValues.get(getAttribute(s));
-							if (way == null) {
-								way = keyValues.get("*");
+							Set<WayDescription> ways = keyValues.get(getAttribute(s));
+							if (ways == null) {
+								ways = keyValues.get("*");
 							}
-							if (way != null && way.rulePriority > currentPrio) {
-								currentPrio = way.rulePriority;
-								type = way.typeNum;
-								way.noWaysOfType++;
+							if (ways != null) {
+								for (WayDescription way : ways) {
+									if ((way != null) && (way.rulePriority > currentPrio)) {
+										boolean failedSpecialisations = false;
+										if (way.specialisation != null) {
+											boolean failedSpec = false;
+											for (ConditionTuple ct : way.specialisation) {
+												//System.out.println("Testing specialisation " + ct + " on " + this);
+												failedSpec = !ct.exclude;
+												for (String ss : tags) {
+													if ((ss.equalsIgnoreCase(ct.key)) && (getAttribute(ss).equalsIgnoreCase(ct.value))) {													
+														failedSpec = ct.exclude;
+													}
+												}
+												if (failedSpec) 
+													failedSpecialisations = true;
+											}									
+										}
+										if (!failedSpecialisations) {
+											currentPrio = way.rulePriority;
+											type = way.typeNum;
+											way.noWaysOfType++;
+										}
+									}
+								}
 							}
 						}
 					}
@@ -202,7 +223,15 @@ public class Way extends Entity implements Comparable<Way>{
 		bound=null;
 	}
 	public String toString(){
-		return "Way(" + id + ") "+ getName()  + ((nearBy == null)?"":(" by " + nearBy)) + " type=" + getType();
+		String res = "Way(" + id + ") " + getName()  + ((nearBy == null)?"":(" by " + nearBy)) + " type=" + getType() + "[";
+		Set<String> tags = getTags();
+		if (tags != null) {
+			for (String key : tags) {
+				res = res + key + "=" + getAttribute(key) + " "; 
+			}			 
+		}
+		res = res + "]";
+		return res;
 	}
 
 	/**

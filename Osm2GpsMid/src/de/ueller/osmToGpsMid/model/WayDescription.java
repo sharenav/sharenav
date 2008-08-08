@@ -7,13 +7,14 @@
  */
 package de.ueller.osmToGpsMid.model;
 
-import java.awt.Graphics;
+import java.util.List;
 
 
 public class WayDescription {
 	public String	description;
 	public String	key;
 	public String	value;
+	public List<ConditionTuple> specialisation;
 	public byte		typeNum;
 	public String	nameKey;
 	public String	nameFallbackKey;

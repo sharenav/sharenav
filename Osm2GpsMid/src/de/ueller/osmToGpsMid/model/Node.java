@@ -91,21 +91,41 @@ public class Node extends Entity{
 	}
 	private byte calcType(Configuration c){		
 		if (c != null) {
-			Hashtable<String, Hashtable<String,POIdescription>> legend = c.getPOIlegend();
+			Hashtable<String, Hashtable<String,Set<POIdescription>>> legend = c.getPOIlegend();
 			if (legend != null) {				
 				Set<String> tags = getTags();
 				if (tags != null) {
 					byte currentPrio = Byte.MIN_VALUE;
 					for (String s: tags) {						
-						Hashtable<String,POIdescription> keyValues = legend.get(s);
+						Hashtable<String,Set<POIdescription>> keyValues = legend.get(s);
 						if (keyValues != null) {							
-							POIdescription poi = keyValues.get(getAttribute(s));
-							if (poi == null) {
-								poi = keyValues.get("*");
+							Set<POIdescription> pois = keyValues.get(getAttribute(s));
+							if (pois == null) {
+								pois = keyValues.get("*");
 							}
-							if ((poi != null) && (poi.rulePriority > currentPrio)) {
-								currentPrio = poi.rulePriority;
-								type = poi.typeNum;								
+							if (pois != null) {
+								for (POIdescription poi : pois) {
+									if ((poi != null) && (poi.rulePriority > currentPrio)) {
+										boolean failedSpecialisations = false;
+										if (poi.specialisation != null) {
+											boolean failedSpec = false;
+											for (ConditionTuple ct : poi.specialisation) {										
+												failedSpec = !ct.exclude;
+												for (String ss : tags) {
+													if ((ss.equalsIgnoreCase(ct.key)) && (getAttribute(ss).equalsIgnoreCase(ct.value))) {											
+														failedSpec = ct.exclude;
+													}
+												}
+												if (failedSpec) 
+													failedSpecialisations = true;
+											}																		
+										}
+										if (!failedSpecialisations) {
+											currentPrio = poi.rulePriority;
+											type = poi.typeNum;
+										}
+									}
+								}
 							}
 						}
 					}
