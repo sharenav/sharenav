@@ -181,6 +181,13 @@ public class Configuration {
 				// Routing defaults
 				setStopAllWhileRouteing(true);
 				setRouteEstimationFac(100);
+				// set default location provider to JSR-179 if available
+				//#if polish.api.locationapi
+				if (getDeviceSupportsJSR179()) {
+					setLocationProvider(LOCATIONPROVIDER_JSR179);
+				}
+				//#endif
+
 				//#debug info
 				logger.info("More initial default values where set.");
 			}
@@ -607,5 +614,23 @@ public class Configuration {
 		write(Double.toString(pos.radlon),RECORD_ID_STARTUP_RADLON);
 	}
 
-	
+	public boolean getDeviceSupportsJSR179() {
+		String jsr179Version = null;
+		try {
+			jsr179Version = System.getProperty("microedition.location.version");
+		} catch (RuntimeException re) {
+			/**
+			 * Some phones throw exceptions if trying to access properties that don't
+			 * exist, so we have to catch these and just ignore them.
+			 */
+		} catch (Exception e) {
+			/**
+			 * See above 
+			 */				
+		}
+		if (jsr179Version != null && jsr179Version.length() > 0) {
+			return true;
+		}
+		return false;
+	}
 }
