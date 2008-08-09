@@ -1,4 +1,14 @@
-GpsMid 0.x.xx
+GpsMid 0.4.x
+       - Scale splash screen for devices with more than 176x220 and enough memory
+       - getExtraInfo-NMEA-logging for JSR-179
+       - priority and specialisation conditions for POIs and ways
+       - sounds section in style file / sound playback routines supporting *.amr, *.wav and *.mp3, .amr recommended 
+       - sound for GPS start / stop (CONNECT and DISCONNECT sound in style file OR internal melody)
+       - basic voice routing instructions (names see style file)
+       - "Clear Target" menu entry to remove route arrows and navigation line
+       
+
+GpsMid 0.4.0
 	   - map content and look (ways, areas, pois) is configurable on midlet creation
 	   - Search for nearest POIs
 	   - Improved Search for name dialog
