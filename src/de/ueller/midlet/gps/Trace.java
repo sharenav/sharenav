@@ -1593,6 +1593,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			 * Close and Save the gpx recording, to ensure we don't loose data
 			 */
 			gpx.saveTrk();
+			
+			removeCommand(STOP_RECORD_CMD);
+			removeCommand(START_RECORD_CMD);
 		}
 		removeCommand(DISCONNECT_GPS_CMD);
 		if (locationProducer == null){
@@ -1604,6 +1607,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		closeBtConnection();
 		notify();		
 		addCommand(CONNECT_GPS_CMD);
+		addCommand(START_RECORD_CMD);
 //#debug info
 		logger.info("end locationDecoderEnd");
 	}
