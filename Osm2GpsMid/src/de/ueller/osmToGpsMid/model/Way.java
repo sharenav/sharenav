@@ -65,6 +65,8 @@ public class Way extends Entity implements Comparable<Way>{
 		return (getAttribute("motorcar"));
 	}
 	public boolean isAccessByCar(){
+		if (Configuration.attrToBoolean(getAttribute("motorcar")) < 0) return false;
+		if (Configuration.attrToBoolean(getAttribute("access")) < 0) return false;
 		if (config == null)
 			config = Configuration.getConfiguration();
 		WayDescription wayDesc = config.getWayDesc(getType());
