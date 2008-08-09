@@ -30,6 +30,7 @@ public class LongTri<V>  {
 	public LongTri() {
 		size = 0;		
 	}
+	@SuppressWarnings("unchecked")
 	public V get(long idx) {
 		int ppidx = 64 - levelSize;
 		Object[] p = topLevel;
@@ -44,7 +45,8 @@ public class LongTri<V>  {
 			ppidx -= levelSize;
 			p = pn1;
 		}
-		pidx = (int)(idx & mask); 
+		pidx = (int)(idx & mask);
+		 
 		return (V)p[pidx];
 	}
 	
@@ -70,6 +72,7 @@ public class LongTri<V>  {
 		p[pidx] = obj;
 	}
 	
+	@SuppressWarnings("unchecked")
 	private Collection<V> valuesLevel(Object[] level, Collection<V> values) {
 		for (int i = 0; i < (level2Size); i++) {
 			Object obj = level[i];
