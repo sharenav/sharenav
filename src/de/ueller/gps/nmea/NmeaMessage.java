@@ -235,6 +235,10 @@ public class NmeaMessage {
 	            for (int i = noSatInView; i < 12; i++) {
 	            	satelit[i] = null;
 	            }
+	            if (getIntegerToken((String)param.elementAt(2)) == getIntegerToken((String)param.elementAt(1))) {
+	            	receiver.receiveStatelit(satelit);	            	
+		            lastMsgGSV=false;
+	            }
 			}
 		} catch (RuntimeException e) {
 			logger.exception("Error while decoding "+sentence, e);
