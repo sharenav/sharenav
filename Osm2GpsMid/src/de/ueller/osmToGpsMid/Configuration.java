@@ -333,21 +333,27 @@ public class Configuration {
 			}
 		}
 		
-		public static boolean attrToBoolean(String attr) {
+		/**
+		 * attrToBoolean canonicalises textual boolean values e.g. yes, true and 1
+		 * 
+		 * @param a string to be canonicalised
+		 * @return It returns 1 if it is a valid true, -1 if it is a valid false and 0 otherwise
+		 */
+		public static int attrToBoolean(String attr) {
 			if (attr == null)
-				return false;
+				return 0;
 			if (attr.equalsIgnoreCase("yes"))
-				return true;
+				return 1;
 			if (attr.equalsIgnoreCase("true"))
-				return true;
+				return 1;
 			if (attr.equalsIgnoreCase("1"))
-				return true;
+				return 1;
 			if (attr.equalsIgnoreCase("no"))
-				return false;
+				return -1;
 			if (attr.equalsIgnoreCase("false"))
-				return false;
+				return -1;
 			if (attr.equalsIgnoreCase("0"))
-				return false;
-			return false;
+				return -1;
+			return 0;
 		}
 }

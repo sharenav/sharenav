@@ -264,11 +264,11 @@ public class Way extends Entity implements Comparable<Way>{
 	 * @return
 	 */
 	public boolean isOneWay() {		
-		return Configuration.attrToBoolean(getAttribute("oneway"));
+		return Configuration.attrToBoolean(getAttribute("oneway")) > 0;
 	}
 	
 	public boolean isExplicitArea() {
-		return Configuration.attrToBoolean(getAttribute("area"));
+		return Configuration.attrToBoolean(getAttribute("area")) > 0;
 	}
 
 	public void write(DataOutputStream ds,Names names1,Tile t) throws IOException{		
