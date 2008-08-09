@@ -163,11 +163,10 @@ public class NoiseMaker
 		SoundDescription sDes=C.getSoundDescription(name);
 		if (sDes!=null) {
 			soundFile=sDes.soundFile;
-			if ( soundFile== null) {
-				playSequence(name);
-			}
 		}
-		if (soundFile != null) {
+		if ( sDes==null || soundFile==null) {
+			playSequence(name);
+		} else {
 			try {
 				InputStream is = getClass().getResourceAsStream(soundFile);
 				if(is!=null) {
