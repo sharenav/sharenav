@@ -96,24 +96,24 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer{
 
 			byte timeCounter=41;
 			while (!closed){
-				timeCounter++;
-				if (timeCounter > 40){
-					timeCounter = 0;
-					if(connectQuality > 100) {
-						connectQuality=100;
-					}
-					if(connectQuality < 0) {
-						connectQuality=0;
-					}
-					receiver.receiveStatistics(connectError,connectQuality);
-					//watchdog if no bytes received in 10 sec then exit thread
-					if (bytesReceived == 0){						
-						throw new IOException("No Data from Gps");
-					} else {
-						bytesReceived=0;
-					}
-				}
 				try {
+					timeCounter++;
+					if (timeCounter > 40){
+						timeCounter = 0;
+						if(connectQuality > 100) {
+							connectQuality=100;
+						}
+						if(connectQuality < 0) {
+							connectQuality=0;
+						}
+						receiver.receiveStatistics(connectError,connectQuality);
+						//watchdog if no bytes received in 10 sec then exit thread
+						if (bytesReceived == 0){						
+							throw new IOException("No Data from Gps");
+						} else {
+							bytesReceived=0;
+						}
+					}
 					process();
 				} catch (IOException e) {
 					/**
