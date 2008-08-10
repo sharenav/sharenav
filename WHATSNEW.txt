@@ -1,14 +1,18 @@
 GpsMid 0.4.x
        - Scale splash screen for devices with more than 176x220 and enough memory
-       - getExtraInfo-NMEA-logging for JSR-179
+       - priority and specialisation conditions for POIs and ways
        - sounds section in style file / sound playback routines supporting *.amr, *.wav and *.mp3, .amr recommended 
        - sound for GPS start / stop (CONNECT and DISCONNECT sound in style file OR internal melody)
        - basic voice routing instructions (sound names see style-file.xml of high-style.zip)
        - "Clear Target" menu entry to remove route arrows and navigation line
-       untested (please move up, when tested):
-       - BT auto-reconnect
-       - priority and specialisation conditions for POIs and ways
-       
+       - increased robustness of track and waypoint storage
+       - JSR-179: initial default location provider is set to JSR-179
+         if available on device and supported by app defined in .properties file
+         (only in GpsMid-Generic-Full)         
+       - JSR-179: getExtraInfo-NMEA-logging
+       - JSR-179: show satellites in overlay if device gives $GPGSV-information
+       - BT-GPS: auto-reconnect feature
+       - BT-GPS: Remove the Stop recording command if the Location receiver gets closed
 
 GpsMid 0.4.0
 	   - map content and look (ways, areas, pois) is configurable on midlet creation
