@@ -506,7 +506,7 @@ zoomed out 21x (scale alias 1:  500km)
 		<scale scale="20"/>
 		<textscale scale="23"/>		
 	  </value>
-	  <value name="attraction">
+	  <value name="attraction"  priority = "-10">
 		<description desc = "Tourism attraction"/>
 		<image src="attraction.png"/>
 		<namekey tag="name"/>
@@ -1331,5 +1331,29 @@ zoomed out 21x (scale alias 1:  500km)
   				<lineColor color = "00EE0000" />
 			</Wvalue>  			
   		</keyW>  		
+		<keyW tag = "boundary">
+  			<Wvalue name = "administrative" priority = "1">
+  				<specialisation key="admin_level" value="2"/>
+  				<description desc = "Country border"/>
+  				<namekey tag = "name"/>
+  				<isArea area = "false" />
+  				<scale scale = "5"/>
+  				<lineColor color = "0000AA00" />
+  				<lineStyle dashed = "true" />
+  				<wayWidth width="5" />
+				<force_to layer = "-2"/>
+  			</Wvalue>
+  			<Wvalue name = "administrative" priority = "0">
+  				<specialisation key="admin_level" value="6"/>
+  				<description desc = "City border"/>
+  				<namekey tag = "name"/>
+  				<isArea area = "false"/>
+  				<scale scale = "8"/>
+  				<lineColor color = "0000AA00" />
+  				<lineStyle dashed = "true" />
+  				<wayWidth width="3" />
+				<force_to layer = "-2"/>
+  			</Wvalue>
+  		</keyW>
 	</ways>
 </legend>
