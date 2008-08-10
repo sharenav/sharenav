@@ -10,7 +10,6 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.Math;
 import java.util.Calendar;
@@ -45,16 +44,15 @@ public class Gpx extends Tile implements Runnable {
 	private static float oldlat;
 	private static float oldlon;		
 	
-	private final static Logger logger=Logger.getInstance(Gpx.class,Logger.DEBUG);
+	private final static Logger logger = Logger.getInstance(Gpx.class,Logger.DEBUG);
 	
-	private RecordStore trackDatabase;
-	private RecordStore wayptDatabase;
-	public int recorded=0;
+	private RecordStore trackDatabase = null;
+	private RecordStore wayptDatabase = null;
+	public int recorded = 0;
 	public int delay = 0;
 	
-	
-	private Thread processorThread=null;
-	private String url=null;
+	private Thread processorThread = null;
+	private String url = null;
 	
 	private boolean sendWpt;
 	private boolean sendTrk;
@@ -81,8 +79,7 @@ public class Gpx extends Tile implements Runnable {
 	private GpxTile tile;
 	
 	public Gpx() {
-		tile = new GpxTile();		
-		loadTrksFromDatabase();
+		tile = new GpxTile();
 		reloadWpt = true;
 		processorThread = new Thread(this);
 		processorThread.setPriority(Thread.MIN_PRIORITY);
@@ -99,6 +96,7 @@ public class Gpx extends Tile implements Runnable {
 		} else {
 			try {
 			tile.dropTrk();
+			openTrackDatabase();
 			DataInputStream dis1 = new DataInputStream(new ByteArrayInputStream(trackDatabase.getRecord(trk.id)));
 			trackName = dis1.readUTF();
 			recorded = dis1.readInt();
@@ -114,17 +112,16 @@ public class Gpx extends Tile implements Runnable {
 			}
 			dis1.close();
 			dis1 = null;
+			trackDatabase.closeRecordStore();
+			trackDatabase = null;
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.exception("IOException displaying track", e);
 			} catch (RecordStoreNotOpenException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.exception("Exception displaying track (database not open)", e);
 			} catch (InvalidRecordIDException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.exception("Exception displaying track (ID invalid)", e);
 			} catch (RecordStoreException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.exception("Exception displaying track", e);
 			}
 		}
 		
@@ -133,9 +130,12 @@ public class Gpx extends Tile implements Runnable {
 	public void addWayPt(PositionMark waypt) {
 		byte[] buf = waypt.toByte();
 		try {
+			openWayPtDatabase();
 			int id = wayptDatabase.addRecord(buf, 0, buf.length);
 			waypt.id = id;
-		} catch (RecordStoreNotOpenException e) {			
+			wayptDatabase.closeRecordStore();
+			wayptDatabase = null;
+		} catch (RecordStoreNotOpenException e) {
 			logger.exception("Exception storing waypoint (database not open)", e);
 		} catch (RecordStoreFullException e) {
 			logger.exception("Record store is full, could not store waypoint", e);			
@@ -248,19 +248,20 @@ public class Gpx extends Tile implements Runnable {
 	public void deleteWayPt(PositionMark waypt) {
 		deleteWayPt(waypt, null);
 	}
+
 	public void deleteWayPt(PositionMark waypt, UploadListener ul) {
 		this.feedbackListener = ul;
 		try {
+			openWayPtDatabase();
 			wayptDatabase.deleteRecord(waypt.id);
+			wayptDatabase.closeRecordStore();
+			wayptDatabase = null;
 		} catch (RecordStoreNotOpenException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.exception("Exception deleting waypoint (database not open)", e);
 		} catch (InvalidRecordIDException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.exception("Exception deleting waypoint (ID invalid)", e);
 		} catch (RecordStoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.exception("Exception deleting waypoint", e);
 		}
 	}
 
@@ -295,12 +296,12 @@ public class Gpx extends Tile implements Runnable {
 	
 	public void saveTrk() {
 		try {
-			logger.debug("Finishing track with " + recorded + " points");
 			if (dos == null) {
-				logger.debug("Not currently recording, so can't save the track");
+				logger.debug("Not recording, so no track to save");
 				return;
 			}
 			dos.flush();			
+			logger.debug("Finishing track with " + recorded + " points");
 			ByteArrayOutputStream baosDb = new ByteArrayOutputStream();
 			DataOutputStream dosDb = new DataOutputStream(baosDb);
 			dosDb.writeUTF(trackName);
@@ -308,19 +309,22 @@ public class Gpx extends Tile implements Runnable {
 			dosDb.writeInt(baos.size());
 			dosDb.write(baos.toByteArray());
 			dosDb.flush();
+			openTrackDatabase();
 			trackDatabase.addRecord(baosDb.toByteArray(), 0, baosDb.size());
+			trackDatabase.closeRecordStore();
+			trackDatabase = null;
 			dos.close();
 			dos = null;
 			baos = null;
 			tile.dropTrk();
 		} catch (IOException e) {
-			logger.error("IOE: " + e.getMessage());
+			logger.exception("IOException saving track", e);
 		} catch (RecordStoreNotOpenException e) {
-			logger.error("RSNOE: " + e.getMessage());
+			logger.exception("Exception saving track (database not open)", e);
 		} catch (RecordStoreFullException e) {
-			logger.error("RSFE: " + e.getMessage());
+			logger.exception("Exception saving track (database full)", e);
 		} catch (RecordStoreException e) {
-			logger.error("RSE: " + e.getMessage());
+			logger.exception("Exception saving track", e);
 		} catch (OutOfMemoryError oome) {
 			logger.fatal("Out of memory, can't save tracklog");			
 		}
@@ -329,17 +333,17 @@ public class Gpx extends Tile implements Runnable {
 	
 	public void deleteTrk(PersistEntity trk) {
 		try {
+			openTrackDatabase();
 			trackDatabase.deleteRecord(trk.id);
+			trackDatabase.closeRecordStore();
+			trackDatabase = null;
 			tile.dropTrk();
 		} catch (RecordStoreNotOpenException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.exception("Exception deleting track (database not open)", e);
 		} catch (InvalidRecordIDException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.exception("Exception deleting track (ID invalid)", e);
 		} catch (RecordStoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.exception("Exception deleting track", e);
 		}		
 	}
 	
@@ -384,14 +388,17 @@ public class Gpx extends Tile implements Runnable {
 		return tile.listWayPt();
 	}
 	
+	/**
+	 * Read tracks from the RecordStore to display the names in the list on screen.
+	 */
 	public PersistEntity[] listTrks() {
 		PersistEntity[] trks;
 		byte [] record = new byte[16000];		
 		DataInputStream dis = new DataInputStream(new ByteArrayInputStream(record));		
 		try {
-			if (trackDatabase == null)
-				trackDatabase = RecordStore.openRecordStore("tracks", false);
-			logger.info("GPX database has " +trackDatabase.getNumRecords() + " entries and a size of " + trackDatabase.getSize());
+			openTrackDatabase();
+			logger.info("GPX database has " + trackDatabase.getNumRecords() 
+					+ " entries and a size of " + trackDatabase.getSize());
 			trks = new PersistEntity[trackDatabase.getNumRecords()];
 			
 			RecordEnumeration p = trackDatabase.enumerateRecords(null, null, false);			
@@ -415,6 +422,8 @@ public class Gpx extends Tile implements Runnable {
 				trks[i++] = trk;
 			}
 			logger.info("Enumerated tracks");
+			trackDatabase.closeRecordStore();
+			trackDatabase = null;
 			return trks;
 		} catch (RecordStoreFullException e) {
 			logger.error("Record Store is full, can't load list" + e.getMessage());
@@ -484,9 +493,26 @@ public class Gpx extends Tile implements Runnable {
 		sendTrk = false;
 		sendWpt = false;
 	}
-	
+
+	private void openWayPtDatabase() {
+		try {
+			if (wayptDatabase == null)
+			{
+				wayptDatabase = RecordStore.openRecordStore("waypoints", true);
+			}
+		} catch (RecordStoreFullException e) {
+			logger.exception("Recordstore full while trying to open waypoints", e);
+		} catch (RecordStoreNotFoundException e) {
+			logger.exception("Waypoint recordstore not found", e);
+		} catch (RecordStoreException e) {
+			logger.exception("RecordStoreException opening waypoints", e);
+		} catch (OutOfMemoryError oome) {
+			logger.error("Out of memory opening waypoints");
+		}
+	}
+
 	/**
-	 * Read tracks from the GPX recordStore and display the names in the list on screen.
+	 * Read waypoints from the RecordStore and put them in a tile for displaying.
 	 */
 	private void loadWaypointsFromDatabase() {		
 		try {
@@ -494,42 +520,43 @@ public class Gpx extends Tile implements Runnable {
 			RecordEnumeration renum;
 			
 			logger.info("Loading waypoints into tile");
-			wayptDatabase = RecordStore.openRecordStore("waypoints", true);			
+			openWayPtDatabase();
 			renum = wayptDatabase.enumerateRecords(null, null, false);			
 			while (renum.hasNextElement()) {
 				int id;			
 				id = renum.nextRecordId();			
-				PositionMark waypt = new PositionMark(id,wayptDatabase.getRecord(id));
+				PositionMark waypt = new PositionMark(id, wayptDatabase.getRecord(id));
 				tile.addWayPt(waypt);						
 			}
-		} catch (RecordStoreFullException e) {
-			logger.error("Recordstore is full while trying to open waypoints");
-		} catch (RecordStoreNotFoundException e) {
-			logger.error("Waypoints recordstore not found");
+			wayptDatabase.closeRecordStore();
+			wayptDatabase = null;
 		} catch (RecordStoreException e) {
-			logger.exception("RecordStoreException", e);
+			logger.exception("RecordStoreException loading waypoints", e);
 		}  catch (OutOfMemoryError oome) {
 			logger.error("Out of memory loading waypoints");
 		}
 	}
-	
-	private void loadTrksFromDatabase() {
+
+	private void openTrackDatabase() {
 		try {			
-			logger.info("Opening track database");
-			trackDatabase = RecordStore.openRecordStore("tracks", true);			
+			if (trackDatabase == null)
+			{
+				logger.info("Opening track database");
+				trackDatabase = RecordStore.openRecordStore("tracks", true);
+			}
 		} catch (RecordStoreFullException e) {
-			logger.error("Recordstore is full while trying to open waypoints");
+			logger.exception("Recordstore is full while trying to open tracks", e);
 		} catch (RecordStoreNotFoundException e) {
-			logger.error("Waypoints recordstore not found");
+			logger.exception("Tracks recordstore not found", e);
 		} catch (RecordStoreException e) {
-			logger.exception("RecordStoreException", e);
+			logger.exception("RecordStoreException opening tracks", e);
 		} catch (OutOfMemoryError oome) {
-			logger.error("Out of memory opening Tracks");
+			logger.error("Out of memory opening tracks");
 		}
 	}
-	
-	
-	private void streamTracks (OutputStream oS) throws IOException, RecordStoreNotOpenException, InvalidRecordIDException, RecordStoreException{		
+
+	private void streamTracks (OutputStream oS) throws IOException, RecordStoreNotOpenException, InvalidRecordIDException, RecordStoreException{
+		openTrackDatabase();
 		DataInputStream dis1 = new DataInputStream(new ByteArrayInputStream(trackDatabase.getRecord(currentTrk.id)));
 		trackName = dis1.readUTF();
 		recorded = dis1.readInt();
@@ -552,7 +579,8 @@ public class Gpx extends Tile implements Runnable {
 			oS.write(sb.toString().getBytes());
 		}
 		oS.write("</trkseg>\r\n</trk>\r\n".getBytes());
-		
+		trackDatabase.closeRecordStore();
+		trackDatabase = null;
 	}
 	
 	private void streamWayPts (OutputStream oS) throws IOException{		
@@ -575,10 +603,14 @@ public class Gpx extends Tile implements Runnable {
 			
 			logger.trace("Starting to send a GPX file, about to open a connection to" + url);
 			
-			if (sendTrk) {
+			if (sendTrk) 
+			{
 				name = currentTrk.displayName;
-			} else if (sendWpt)
+			}
+			else if (sendWpt)
+			{
 				name = "Waypoints";
+			}
 			
 			if (url == null) {
 				importExportMessage = "No GPX receiver specified. Please select a GPX receiver in the setup menu";
@@ -597,7 +629,7 @@ public class Gpx extends Tile implements Runnable {
 				 * is not available on this phone. 
 				 */
 				/**
-				 * The Class.forName and the instantition of the class must be separate
+				 * The Class.forName and the instantiation of the class must be separate
 				 * statements, as otherwise this confuses the proguard obfuscator when
 				 * rewriting the flattened renamed classes.
 				 */
@@ -639,9 +671,13 @@ public class Gpx extends Tile implements Runnable {
 			oS.write("<gpx version='1.1' creator='GPSMID' xmlns='http://www.topografix.com/GPX/1/1'>\r\n".getBytes());
 			
 			if (sendWpt)
+			{
 				streamWayPts(oS);
+			}
 			if (sendTrk)
+			{
 				streamTracks(oS);
+			}
 			
 			oS.write("</gpx>\r\n\r\n".getBytes());
 						
@@ -651,9 +687,9 @@ public class Gpx extends Tile implements Runnable {
 			importExportMessage = "success";
 			return true;
 		} catch (IOException e) {			
-			logger.error("IOE:" + e);	
+			logger.error("IOException, can't transmit tracklog: " + e);	
 		} catch (OutOfMemoryError oome) {
-			logger.fatal("Out of memory, can't transmit tracklogs");
+			logger.fatal("Out of memory, can't transmit tracklog");
 		} catch (Exception ee) {			
 			logger.error("Error while sending tracklogs: " + ee);
 		}
@@ -663,7 +699,7 @@ public class Gpx extends Tile implements Runnable {
 	private boolean receiveGpx() {		
 		try {
 			boolean success;
-			String jsr172Version = null;
+//			String jsr172Version = null;
 			Class parserClass;
 			Object parserObject;
 			GpxParser parser;
@@ -715,9 +751,10 @@ public class Gpx extends Tile implements Runnable {
 			return Integer.toString(n);
 		}
 			
-	}	
+	}
+
 	/**
-	 * Date-Time formater that corresponds to the standard UTC time as used in XML
+	 * Date-Time formatter that corresponds to the standard UTC time as used in XML
 	 * @param time
 	 * @return
 	 */
@@ -732,7 +769,6 @@ public class Gpx extends Tile implements Runnable {
 		formatInt2(c.get(Calendar.MINUTE)) + ":" + formatInt2(c.get(Calendar.SECOND)) + "Z";		 
 		
 	}
-
 
 	public void walk(PaintContext pc, int opt) {
 		// TODO Auto-generated method stub
