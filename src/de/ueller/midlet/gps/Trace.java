@@ -999,7 +999,33 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	 * @param pc
 	 */
 	private void showRoute(PaintContext pc) {
+		/*	PASSINGDISTANCE is the distance when a routing arrow
+			is considered to match to the current position.
+			We currently can't adjust this value according to the speed
+			because if we would be slowing down during approaching the arrow,
+			then PASSINGDISTANCE could become smaller than the distance
+			to the arrow due and thus the routines would already use the
+			next arrow for routing assistance
+		*/
 		final int PASSINGDISTANCE=25;
+		// this makes the distance when prepare-sound is played depending on the speed
+		int PREPAREDISTANCE=75;
+		if (speed>120) {
+			PREPAREDISTANCE=1000;							
+		} else if (speed>100) {
+			PREPAREDISTANCE=750;							
+		} else if (speed>80) {
+			PREPAREDISTANCE=500;							
+		} else if (speed>70) {
+			PREPAREDISTANCE=250;							
+		} else if (speed>50) {
+			PREPAREDISTANCE=200;							
+		} else if (speed>40) {
+			PREPAREDISTANCE=150;							
+		} else if (speed>25) {
+			PREPAREDISTANCE=100;							
+		}
+		
 		ConnectionWithNode c;
 		// Show helper nodes for Routing
 		for (int x=0; x<routeNodes.size();x++){
@@ -1148,7 +1174,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 						if(intDistance<PASSINGDISTANCE) {
 							parent.mNoiseMaker.playSound(soundDirections[a], (byte) 3);
 						}
-						if(intDistance>=PASSINGDISTANCE && intDistance<=3*PASSINGDISTANCE) {
+						if(intDistance>=PASSINGDISTANCE && intDistance<=PREPAREDISTANCE) {
 							parent.mNoiseMaker.playSound("PREPARE_" + soundDirections[a], (byte) 5);
 						}
 					}
