@@ -50,6 +50,56 @@ zoomed out 21x (scale alias 1:  500km)
 
 <legend>
   <background color="009BFF9B" />
+  <sounds>
+	<sound name="CONNECT">
+		<soundFile src="connect.amr"/>
+	</sound>
+	<sound name="DISCONNECT">
+		<soundFile src="disconnect.amr"/>
+	</sound>
+	<sound name="HARDLEFT">
+		<soundFile src="hardleft.amr"/>
+	</sound>
+	<sound name="LEFT">
+		<soundFile src="left.amr"/>
+	</sound>
+	<sound name="HALFLEFT">
+		<soundFile src="halfleft.amr"/>
+	</sound>
+	<sound name="HARDRIGHT">
+		<soundFile src="hardright.amr"/>
+	</sound>
+	<sound name="RIGHT">
+		<soundFile src="right.amr"/>
+	</sound>
+	<sound name="HALFRIGHT">
+		<soundFile src="halfright.amr"/>
+	</sound>
+	<sound name="STRAIGHTON">
+		<soundFile src="straighton.amr"/>
+	</sound>
+	<sound name="PREPARE_HARDLEFT">
+		<soundFile src="p_hardleft.amr"/>
+	</sound>
+	<sound name="PREPARE_LEFT">
+		<soundFile src="p_left.amr"/>
+	</sound>
+	<sound name="PREPARE_HALFLEFT">
+		<soundFile src="p_halfleft.amr"/>
+	</sound>
+	<sound name="PREPARE_HARDRIGHT">
+		<soundFile src="p_hardright.amr"/>
+	</sound>
+	<sound name="PREPARE_RIGHT">
+		<soundFile src="p_right.amr"/>
+	</sound>
+	<sound name="PREPARE_HALFRIGHT">
+		<soundFile src="p_halfright.amr"/>
+	</sound>
+	<sound name="PREPARE_STRAIGHTON">
+		<soundFile src="p_straighton.amr"/>
+	</sound>
+  </sounds>
   <pois>
 	<key tag="place">
 	  <value name="city">
@@ -828,6 +878,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<isArea area = "true"/>
   				<scale scale = "19"/>
   				<lineColor color = "006868FF" />
+				<force_to layer = "-2"/>
   			</Wvalue>
   			<Wvalue name = "garden">
   				<description desc = "garden"/>
