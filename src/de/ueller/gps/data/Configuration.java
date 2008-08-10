@@ -168,6 +168,8 @@ public class Configuration {
 				   		1<<CFGBIT_POIS |
 				   		1<<CFGBIT_ROUTING_HELP |
 				   		1<<CFGBIT_AUTOSAVE_MAPPOS |
+				   		1<<CFGBIT_SND_CONNECT |
+				   		1<<CFGBIT_SND_DISCONNECT |
 				   		1<<CFGBIT_SND_ROUTINGINSTRUCTIONS |
 				   		1<<CFGBIT_BACKLIGHT_MAPONLY;
 				setCfgBits(cfgBits, true);
@@ -181,6 +183,8 @@ public class Configuration {
 				// Routing defaults
 				setStopAllWhileRouteing(true);
 				setRouteEstimationFac(100);
+				// Auto-reconnect GPS
+				setBtAutoRecon(true);
 				// set default location provider to JSR-179 if available
 				//#if polish.api.locationapi
 				if (getDeviceSupportsJSR179()) {
