@@ -185,7 +185,7 @@ public class Configuration {
 				setGpxRecordAlwaysDistanceCentimeters(500);
 				// Routing defaults
 				setStopAllWhileRouteing(true);
-				setRouteEstimationFac(100);
+				setRouteEstimationFac(7);
 				// Auto-reconnect GPS
 				setBtAutoRecon(true);
 				// set default location provider to JSR-179 if available
