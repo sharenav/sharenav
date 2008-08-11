@@ -31,9 +31,10 @@ import de.ueller.midlet.gps.data.Gpx;
 public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMidDisplayable, SelectionListener {
 
 	/** A menu list instance */
-	private static final String[]	elements		= { "Location Receiver",
-		"Recording Rules", "Display options", "Routing options",
-		"GPX Receiver", "Sounds", "Map source", "Debug options"};
+	private static final String[]	elements		= {
+		"Location Receiver", "Recording Rules",
+		"Display options", "Sound options", "Routing options",
+		"GPX Receiver", "Map source", "Debug options"};
 	
 	/**
 	 * The following MENU_ITEM constatants have to be in
@@ -43,9 +44,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private static final int MENU_ITEM_LOCATION = 0;
 	private static final int MENU_ITEM_GPX_FILTER = 1;	
 	private static final int MENU_ITEM_DISP_OPT = 2;
-	private static final int MENU_ITEM_ROUTING_OPT = 3;
-	private static final int MENU_ITEM_GPX_DEVICE = 4;
-	private static final int MENU_ITEM_SOUNDS_OPT = 5;
+	private static final int MENU_ITEM_SOUNDS_OPT = 3;
+	private static final int MENU_ITEM_ROUTING_OPT = 4;
+	private static final int MENU_ITEM_GPX_DEVICE = 5;
 	private static final int MENU_ITEM_MAP_SRC = 6;
 	private static final int MENU_ITEM_DEBUG_OPT = 7;
 
