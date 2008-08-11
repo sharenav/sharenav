@@ -99,6 +99,9 @@ zoomed out 21x (scale alias 1:  500km)
 	<sound name="PREPARE_STRAIGHTON">
 		<soundFile src="p_straighton.amr"/>
 	</sound>
+	<sound name="TARGET_REACHED">
+		<soundFile src="target_reached.amr"/>
+	</sound>
   </sounds>
   <pois>
 	<key tag="place">
