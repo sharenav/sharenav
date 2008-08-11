@@ -199,12 +199,14 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	private static final String[] directions  = { "mark",
 		"hard right", "right", "half right",
 		"straight on",
-		"half left", "left", "hard left"};
+		"half left", "left", "hard left", "Target reached"};
 	private static final String[] soundDirections  = { "",
 		"HARDRIGHT", "RIGHT", "HALFRIGHT",
 		"STRAIGHTON",
 		"HALFLEFT", "LEFT", "HARDLEFT"};
 	private boolean keyboardLocked=false;
+	private boolean movedAwayFromTarget=true;
+	private boolean atTarget=false;
 	
 	
 	public Trace(GpsMid parent, Configuration config) throws Exception {
@@ -920,6 +922,15 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			pc.g.setColor(255,50,50);
 			pc.g.setStrokeStyle(Graphics.DOTTED);
 			pc.g.drawLine(pc.lineP2.x,pc.lineP2.y,pc.xSize/2,pc.ySize/2);
+			float distance = ProjMath.getDistance(target.lat, target.lon, center.radlat, center.radlon);
+			atTarget = (distance < 25);
+			if (atTarget) {
+				if (movedAwayFromTarget && config.getCfgBitState(config.CFGBIT_SND_TARGETREACHED)) {
+					parent.mNoiseMaker.playSound("TARGET_REACHED", (byte) 7);
+				}
+			} else {
+				movedAwayFromTarget=true;
+			}
 			showRoute(pc);
 		}
 		if (recordMark != null){
@@ -1151,6 +1162,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				} else {
 					pict=pc.images.IMG_HARDLEFT; a=7;
 				} 
+				if (atTarget) {
+					a=8;
+				}
 				pc.getP().forward(lastTo.lat, lastTo.lon, pc.lineP2,true);
 			    // optionally scale nearest arrow
 			    if (i==iNearest) {
@@ -1171,7 +1185,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 					                      pc.xSize/2,pc.ySize-imageCollector.statusFontHeight, Graphics.HCENTER | Graphics.BOTTOM
                     );
 					if (config.getCfgBitState(config.CFGBIT_SND_ROUTINGINSTRUCTIONS)) {
-						if(intDistance<PASSINGDISTANCE) {
+						if(!atTarget && intDistance<PASSINGDISTANCE) {
 							parent.mNoiseMaker.playSound(soundDirections[a], (byte) 3);
 						}
 						if(intDistance>=PASSINGDISTANCE && intDistance<=PREPAREDISTANCE) {
@@ -1693,7 +1707,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			pc.scale = scale;
 		}
 		repaint(0, 0, getWidth(), getHeight());
-
+		movedAwayFromTarget=false;
 	}
 
 	/**

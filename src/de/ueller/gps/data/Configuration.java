@@ -70,6 +70,8 @@ public class Configuration {
 	public final static byte CFGBIT_SND_ROUTINGINSTRUCTIONS=19;
 	// bit 20: Gps Auto Reconnect
 	public final static byte CFGBIT_GPS_AUTORECONNECT=20;
+	// bit 21: Sound on target reached
+	public final static byte CFGBIT_SND_TARGETREACHED=21;
 
 	
 	/**
@@ -171,6 +173,7 @@ public class Configuration {
 				   		1<<CFGBIT_SND_CONNECT |
 				   		1<<CFGBIT_SND_DISCONNECT |
 				   		1<<CFGBIT_SND_ROUTINGINSTRUCTIONS |
+				   		1<<CFGBIT_SND_TARGETREACHED |
 				   		1<<CFGBIT_BACKLIGHT_MAPONLY;
 				setCfgBits(cfgBits, true);
 				//#debug info

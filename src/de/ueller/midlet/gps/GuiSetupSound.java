@@ -18,8 +18,8 @@ public class GuiSetupSound extends Form implements CommandListener {
 	private boolean[] selSndGps = new boolean[2];
 
 	private ChoiceGroup sndRoutingGroup=null;
-	private	String [] sndRouting = new String[1];
-	private	boolean[] selSndRouting = new boolean[1];
+	private	String [] sndRouting = new String[2];
+	private	boolean[] selSndRouting = new boolean[2];
 
 	// commands
 	private static final Command CMD_SAVE = new Command("Ok", Command.ITEM, 2);
@@ -49,8 +49,9 @@ public class GuiSetupSound extends Form implements CommandListener {
 				soundFile=sDes.soundFile;
 			}
 			if(soundFile!=null) {			
-				sndRouting[0] = "Routing Instructions"; 			selSndRouting[0]=config.getCfgBitState(config.CFGBIT_SND_ROUTINGINSTRUCTIONS);
-				sndRoutingGroup = new ChoiceGroup("Routing", Choice.MULTIPLE, sndRouting ,null);
+				sndRouting[0] = "Routing Instructions"; 	selSndRouting[0]=config.getCfgBitState(config.CFGBIT_SND_ROUTINGINSTRUCTIONS);
+				sndRouting[1] = "Target Reached"; 			selSndRouting[1]=config.getCfgBitState(config.CFGBIT_SND_TARGETREACHED);
+				sndRoutingGroup = new ChoiceGroup("Navigation / Routing", Choice.MULTIPLE, sndRouting ,null);
 				sndRoutingGroup.setSelectedFlags(selSndRouting);
 				append(sndRoutingGroup);
 			}
@@ -85,6 +86,7 @@ public class GuiSetupSound extends Form implements CommandListener {
 			if (sndRoutingGroup!=null) {
 				sndRoutingGroup.getSelectedFlags(selSndRouting);
 				config.setCfgBitState(config.CFGBIT_SND_ROUTINGINSTRUCTIONS, selSndRouting[0], true);
+				config.setCfgBitState(config.CFGBIT_SND_TARGETREACHED, selSndRouting[1], true);
 			}
 
 			parent.show();
