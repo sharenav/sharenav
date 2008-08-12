@@ -237,6 +237,48 @@ public class Names implements Runnable {
 		return null;
 	}
 	
+	/**
+	 * Search linearly through all names in the names files and do a comparison
+	 * to the search string. If the search string is contained somewhere in the name,
+	 * return it as a hit. The comparison is done in lower case and so is case insensitive 
+	 * @param snippet
+	 * @return a Vector of Strings containing the name.
+	 */
+	public Vector fulltextSearch (String snippet) {
+		logger.info("Beginning fulltext search for " + snippet);
+		Vector hits = new Vector();
+		int count;		
+		try {
+			for (int fid = 0; fid < startIndexes.length;fid++) {
+				InputStream is=GpsMid.getInstance().getConfig().getMapResource("/names-" + fid + ".dat");
+				count=startIndexes[fid + 1]-startIndexes[fid];				
+				if (is==null){
+					break;
+				}
+				DataInputStream ds=new DataInputStream(is);
+
+				int pos=0;
+				StringBuffer name=new StringBuffer();
+				StringEntry bufferSe = new StringEntry(null);
+				//Search through all names in the the given file
+				//as we can only read linearly in this file 
+				for (int l=0;l<count;l++){
+					pos = readNextWord(ds, pos, name,bufferSe);
+					String fullName = name.toString().toLowerCase();
+					if (fullName.indexOf(snippet) > -1) {
+						logger.info("found fulltext match: " + fullName);
+						hits.addElement(fullName);
+					}
+				}
+				ds.close();
+			}
+			logger.info("Finished fulltext search. Found " + hits.size() + " hits");
+		} catch (IOException e) {
+			logger.exception("Could not perform fulltext search", e);
+		}
+		return hits;
+	}
+	
 	private void cleanupStringCache(){
 		//#debug info
 		logger.info("cleanup namesCache " + stringCache.size());

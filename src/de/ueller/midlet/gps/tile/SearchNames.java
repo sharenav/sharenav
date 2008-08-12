@@ -26,6 +26,7 @@ public class SearchNames implements Runnable{
 	private String search;
 	private final GuiSearch gui;
 	private boolean newSearch=false;
+	private boolean appendRes=false;
 	protected static final Logger logger = Logger.getInstance(SearchNames.class,Logger.TRACE);
 
 	public SearchNames(GuiSearch gui) {
@@ -71,8 +72,10 @@ public class SearchNames implements Runnable{
 			StringBuffer current=new StringBuffer();
 			synchronized(this) {
 				stopSearch=false;
-				if (newSearch){
-					gui.clearList();
+				if (newSearch) {
+					if (!appendRes) {
+						gui.clearList();
+					}
 					newSearch=false;
 				}
 			}
@@ -188,8 +191,10 @@ public class SearchNames implements Runnable{
 						sr.lat=lat;
 						sr.lon=lon;
 						sr.nearBy=isInArray;
-						if (newSearch){
-							gui.clearList();
+						if (newSearch) {
+							if (!appendRes) {						
+								gui.clearList();
+							}
 							newSearch=false;
 						}
 						gui.addResult(sr);
@@ -213,12 +218,32 @@ public class SearchNames implements Runnable{
 	public void shutdown(){
 		stopSearch=true;
 	}
+	
+	/**
+	 * search for a canonicalised name and return a list of results through callbacks
+	 * This call blocks until the search has finished.
+	 * @param search
+	 * @param append
+	 */
+	public synchronized void appendSearchBlocking(String search) {
+		logger.info("search for  " + search);
+		stopSearch=true;
+		newSearch=true;
+		appendRes = true;
+		foundEntries=0;
+		try {
+			doSearch(search);
+		} catch (IOException ioe) {
+			//Do nothing
+		}
+	}
 
 	public synchronized void search(String search){
 		//#debug
 		logger.info("search for  " + search);
 		stopSearch=true;
 		newSearch=true;
+		appendRes = false;
 		foundEntries=0;
 		this.search=search;
 		if (processorThread == null || !processorThread.isAlive()) {

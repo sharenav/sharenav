@@ -1662,6 +1662,10 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			return null;
 		return namesThread.getName(idx);
 	}
+	
+	public Vector fulltextSearch (String snippet) {
+		return namesThread.fulltextSearch(snippet);
+	}
 
 	public void requestRedraw() {
 		repaint(0, 0, getWidth(), getHeight());

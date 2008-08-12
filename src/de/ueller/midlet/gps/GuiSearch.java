@@ -24,6 +24,7 @@ import javax.microedition.lcdui.TextField;
 import de.ueller.gps.data.SearchResult;
 import de.ueller.gps.tools.HelperRoutines;
 import de.ueller.midlet.gps.data.PositionMark;
+import de.ueller.midlet.gps.names.NumberCanon;
 import de.ueller.midlet.gps.tile.SearchNames;
 
 public class GuiSearch extends Canvas implements CommandListener,
@@ -38,6 +39,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 	private final Command BOOKMARK_CMD = new Command("add to Waypoint", Command.ITEM, 4);
 	private final Command BACK_CMD = new Command("Back", Command.BACK, 5);
 	private final Command POI_CMD = new Command("Nearest POI", Command.ITEM, 6);
+	private final Command FULLT_CMD = new Command("Fulltext Search", Command.ITEM, 7);
 
 	//private Form form;
 
@@ -76,12 +78,14 @@ public class GuiSearch extends Canvas implements CommandListener,
 	
 	private ChoiceGroup poiSelectionCG;
 	private TextField poiSelectionMaxDistance;
+	private TextField fulltextSearchField;
 	
 	
 	private byte state;
 	
 	private final static byte STATE_MAIN = 0;
 	private final static byte STATE_POI = 1;
+	private final static byte STATE_FULLTEXT = 2;
 	
 	private int fontSize;
 	
@@ -102,6 +106,9 @@ public class GuiSearch extends Canvas implements CommandListener,
 		addCommand(BOOKMARK_CMD);
 		addCommand(BACK_CMD);
 		addCommand(POI_CMD);
+		//Commented out, as I am not yet convinced that if fully
+		//works. If you want to test it, then add it back again
+		//addCommand(FULLT_CMD);
 		
 		timerT = new TimerTask() {
 			public void run() {
@@ -184,6 +191,32 @@ public class GuiSearch extends Canvas implements CommandListener,
 				show();
 				return;
 			}			
+		} else if (state == STATE_FULLTEXT) {
+			if (c == BACK_CMD) {
+				state = STATE_MAIN;
+				show();
+				return;
+			}
+			if (c == OK_CMD) {
+				clearList();
+				Thread t = new Thread(new Runnable() {
+					public void run() {
+						setTitle("searching...");
+						show();
+						Vector names = parent.fulltextSearch(fulltextSearchField.getString().toLowerCase());
+						for (int i = 0; i < names.size(); i++) {
+							searchCanon.setLength(0);
+							String name = (String)names.elementAt(i);
+							logger.info("Retrieving entries for " + name);							
+							searchThread.appendSearchBlocking(NumberCanon.canonial(name));
+						}
+						setTitle("Search results:");
+						triggerRepaint();
+					}
+				}, "fulltextSearch");
+				t.start();
+				state = STATE_MAIN;				
+			}			
 		}
 		if (c == DEL_CMD) {
 			if (carret > 0){
@@ -224,6 +257,16 @@ public class GuiSearch extends Canvas implements CommandListener,
 			poiSelectionForm.setCommandListener(this);
 			
 			GpsMid.getInstance().show(poiSelectionForm);			
+		}
+		if (c == FULLT_CMD) {
+			state = STATE_FULLTEXT;
+			Form fulltextForm = new Form("Fulltext search");
+			fulltextSearchField = new TextField("Find: ", "", 40, TextField.ANY);
+			fulltextForm.append(fulltextSearchField);
+			fulltextForm.addCommand(BACK_CMD);
+			fulltextForm.addCommand(OK_CMD);
+			fulltextForm.setCommandListener(this);
+			GpsMid.getInstance().show(fulltextForm);			
 		}
 
 	}
