@@ -182,7 +182,7 @@ public class WaypointsTileOff extends Tile {
 					}
 					
 
-					pc.getP().forward(waypt.lat, waypt.lon, pc.lineP2,true);
+					pc.getP().forward(waypt.lat, waypt.lon, pc.lineP2);
 					pc.g.drawImage(pc.images.IMG_MARK,pc.lineP2.x,pc.lineP2.y,Graphics.HCENTER|Graphics.VCENTER);
 					if ( Trace.getInstance().getConfig().getCfgBitState(Configuration.CFGBIT_WPTTEXTS) ) {
 						pc.g.setColor(0,0,0);

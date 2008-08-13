@@ -137,10 +137,10 @@ public abstract class Tile {
 			IntPoint p3=new IntPoint(0,0);
 			IntPoint p4=new IntPoint(0,0);
 			Projection p = pc.getP();
-			p.forward(minLat,minLon,p1,true);
-			p.forward(minLat,maxLon,p2,true);
-			p.forward(maxLat,maxLon,p3,true);
-			p.forward(maxLat,minLon,p4,true);
+			p.forward(minLat,minLon,p1);
+			p.forward(minLat,maxLon,p2);
+			p.forward(maxLat,maxLon,p3);
+			p.forward(maxLat,minLon,p4);
 			pc.g.drawLine(p1.x, p1.y, p2.x, p2.y);
 			pc.g.drawLine(p2.x, p2.y, p3.x, p3.y);
 			pc.g.drawLine(p3.x, p3.y, p4.x, p4.y);

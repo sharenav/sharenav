@@ -426,6 +426,7 @@ public final class ProjMath {
      * @param ll2 the lower right coordinates of the bounding box.
      * @param projection the projection to use for other projection
      *        parameters, like map width and map height.
+     *        @deprecated never used so far
      */
     public static float getScale(Node ll1,
                                  Node ll2,
@@ -440,32 +441,6 @@ public final class ProjMath {
         return getScale(ll1, ll2, IntPoint1, IntPoint2, projection);
     }
 
-    /**
-     * Given a couple of IntPoints representing a bounding box, find out
-     * what the scale should be in order to make those IntPoints appear
-     * at the corners of the projection.
-     * 
-     * @param IntPoint1 a java.awt.IntPoint reflecting a pixel spot on the
-     *        projection, usually the upper left corner of the area of
-     *        interest.
-     * @param IntPoint2 a java.awt.IntPoint reflecting a pixel spot on the
-     *        projection, usually the lower right corner of the area
-     *        of interest.
-     * @param projection the projection to use for other projection
-     *        parameters, like map width and map height.
-     */
-    public static float getScale(IntPoint IntPoint1, IntPoint IntPoint2,
-                                 Projection projection) {
-
-        if (projection == null) {
-            return Float.MAX_VALUE;
-        }
-
-        Node ll1 = projection.inverse(IntPoint1);
-        Node ll2 = projection.inverse(IntPoint2);
-
-        return getScale(ll1, ll2, IntPoint1, IntPoint2, projection);
-    }
 
     /**
      * Given a couple of IntPoints representing a bounding box, find out
@@ -482,6 +457,7 @@ public final class ProjMath {
      *        lower right corner of the area of interest.
      * @param projection the projection to use to query to get the
      *        scale for, for projection type and height and width.
+     *        @deprecated never used so far
      */
     protected static float getScale(Node ll1,
                                     Node ll2,

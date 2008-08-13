@@ -214,7 +214,7 @@ public class Way extends Entity{
 		
 		for (int i1 = 0; i1 < path.length; i1++) {
 			int idx = path[i1];
-			p.forward(t.nodeLat[idx], t.nodeLon[idx], lineP2, true,t);
+			p.forward(t.nodeLat[idx], t.nodeLon[idx], lineP2,t);
 			if (lineP1 == null) {
 				lineP1 = lineP2;
 				lineP2 = swapLineP;	
@@ -360,7 +360,7 @@ public class Way extends Entity{
 				// get the next line point coordinates into lineP2
 				int idx = this.path[i1];
 				// forward() is in Mercator.java
-				p.forward(t.nodeLat[idx], t.nodeLon[idx], lineP2, true,t);
+				p.forward(t.nodeLat[idx], t.nodeLon[idx], lineP2, t);
 				// if we got only one line point, get a second one 
 				if (lineP1 == null) {
 					lineP1 = lineP2;
@@ -642,7 +642,7 @@ public class Way extends Entity{
 		
 		for (int i1 = 0; i1 < path.length; i1++) {
 			int idx = path[i1];			
-			p.forward(t.nodeLat[idx], t.nodeLon[idx], lineP2, true, t);
+			p.forward(t.nodeLat[idx], t.nodeLon[idx], lineP2, t);
 			x[i1] = lineP2.x;
 			y[i1] = lineP2.y;
 		}
@@ -703,7 +703,7 @@ public class Way extends Entity{
 		int maxY=clipY;
 		for (int i1 = 0; i1 < path.length; i1++) {
 			int idx = path[i1];			
-			p.forward(t.nodeLat[idx], t.nodeLon[idx], lineP2, true, t);
+			p.forward(t.nodeLat[idx], t.nodeLon[idx], lineP2, t);
 			x = lineP2.x;
 			y = lineP2.y;
 			if (minX>x) minX=x;

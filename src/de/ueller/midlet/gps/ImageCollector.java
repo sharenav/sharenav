@@ -4,13 +4,12 @@ import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
 import de.ueller.gps.data.Configuration;
-import de.ueller.gpsMid.mapData.QueueDataReader;
-import de.ueller.gpsMid.mapData.QueueReader;
 import de.ueller.gpsMid.mapData.Tile;
 import de.ueller.midlet.gps.data.IntPoint;
-import de.ueller.midlet.gps.data.Mercator;
 import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.Node;
+import de.ueller.midlet.gps.data.Proj2D;
+import de.ueller.midlet.gps.data.Projection;
 import de.ueller.midlet.gps.tile.C;
 import de.ueller.midlet.gps.tile.Images;
 import de.ueller.midlet.gps.tile.PaintContext;
@@ -127,7 +126,7 @@ public class ImageCollector implements Runnable {
 				pc[nextCreate].center = nextSc.center.clone();
 				mapCenter=nextSc.center.clone();
 				pc[nextCreate].scale = nextSc.scale;
-				Mercator p = new Mercator(pc[nextCreate].center, nextSc.scale, xSize, ySize);
+				Projection p = new Proj2D(pc[nextCreate].center, nextSc.scale, xSize, ySize);
 				pc[nextCreate].setP(p);
 				p.inverse(xSize, 0, pc[nextCreate].screenRU);
 				p.inverse(0, ySize, pc[nextCreate].screenLD);

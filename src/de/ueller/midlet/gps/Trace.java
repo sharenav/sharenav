@@ -46,16 +46,15 @@ import de.ueller.gpsMid.mapData.QueueDictReader;
 import de.ueller.gpsMid.mapData.QueueReader;
 import de.ueller.gpsMid.mapData.Tile;
 import de.ueller.midlet.gps.data.MapName;
+import de.ueller.midlet.gps.data.Proj2D;
 import de.ueller.midlet.gps.data.ProjMath;
 import de.ueller.midlet.gps.data.Gpx;
 import de.ueller.midlet.gps.data.IntPoint;
-import de.ueller.midlet.gps.data.Mercator;
 import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.data.Projection;
 import de.ueller.midlet.gps.names.Names;
-import de.ueller.midlet.gps.routing.Connection;
 import de.ueller.midlet.gps.routing.ConnectionWithNode;
 import de.ueller.midlet.gps.routing.RouteHelper;
 import de.ueller.midlet.gps.routing.RouteNode;
@@ -665,7 +664,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		pc.c = new C();
 		imageCollector = new ImageCollector(t, this.getWidth(), this.getHeight(), this,
 				i, pc.c);
-		projection = new Mercator(center, scale, getWidth(), getHeight());
+		projection = new Proj2D(center, scale, getWidth(), getHeight());
 		pc.setP(projection);
 		pc.center = center.clone();
 		pc.scale = scale;
@@ -912,7 +911,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 	public void showTarget(PaintContext pc){
 		if (target != null){
-			pc.getP().forward(target.lat, target.lon, pc.lineP2,true);
+			pc.getP().forward(target.lat, target.lon, pc.lineP2);
 //			System.out.println(target.toString());
 			pc.g.drawImage(pc.images.IMG_TARGET,pc.lineP2.x,pc.lineP2.y,CENTERPOS);
 			pc.g.setColor(0,0,0);
@@ -952,7 +951,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 					continue;
 				}
 
-				pc.getP().forward(pm.lat, pm.lon, pc.lineP2,true);
+				pc.getP().forward(pm.lat, pm.lon, pc.lineP2);
 				pc.g.drawImage(pc.images.IMG_MARK,pc.lineP2.x,pc.lineP2.y,CENTERPOS);				
 			}
 		}
@@ -1041,7 +1040,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		// Show helper nodes for Routing
 		for (int x=0; x<routeNodes.size();x++){
 			RouteHelper n=(RouteHelper) routeNodes.elementAt(x);
-			pc.getP().forward(n.node.radlat, n.node.radlon, pc.lineP2,true);
+			pc.getP().forward(n.node.radlat, n.node.radlon, pc.lineP2);
 			pc.g.drawRect(pc.lineP2.x-5, pc.lineP2.y-5, 10, 10);
 			pc.g.drawString(n.name, pc.lineP2.x+7, pc.lineP2.y+5, Graphics.BOTTOM | Graphics.LEFT);
 		}
@@ -1110,7 +1109,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				if( i<route.size()-1 && ProjMath.getDistance(c.to.lat, c.to.lon, lastTo.lat, lastTo.lon) < 25 ) {
 					// draw small circle for left out connection
 					pc.g.setColor(0x00FDDF9F);
-					pc.getP().forward(c.to.lat, c.to.lon, pc.lineP2,true);
+					pc.getP().forward(c.to.lat, c.to.lon, pc.lineP2);
 					final byte radius=6;
 					pc.g.fillArc(pc.lineP2.x-radius/2,pc.lineP2.y-radius/2,radius,radius,0,359);
 					//System.out.println("Skipped routing arrow " + i);
@@ -1165,7 +1164,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				if (atTarget) {
 					a=8;
 				}
-				pc.getP().forward(lastTo.lat, lastTo.lon, pc.lineP2,true);
+				pc.getP().forward(lastTo.lat, lastTo.lon, pc.lineP2);
 			    // optionally scale nearest arrow
 			    if (i==iNearest) {
 			    	Font originalFont = pc.g.getFont();
@@ -1255,7 +1254,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		int posX, posY;
 		if (!gpsRecenter) {
 			IntPoint p1 = new IntPoint(0,0);				
-			pc.getP().forward((float)(pos.latitude/360.0*2*Math.PI), (float)(pos.longitude/360.0*2*Math.PI),p1,true);
+			pc.getP().forward((float)(pos.latitude/360.0*2*Math.PI), (float)(pos.longitude/360.0*2*Math.PI),p1);
 			posX = p1.getX();
 			posY = p1.getY();		
 		} else {
@@ -1346,7 +1345,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 	private void updatePosition() {
 		if (pc != null){
-			projection = new Mercator(center, scale, getWidth(), getHeight());
+			projection = new Proj2D(center, scale, getWidth(), getHeight());
 			pc.setP(projection);
 			pc.center = center.clone();
 			pc.scale = scale;
@@ -1577,7 +1576,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		} else {		
 			keyStatus = keyCode;
 		}
-		projection = new Mercator(center, scale, getWidth(), getHeight());
+		projection = new Proj2D(center, scale, getWidth(), getHeight());
 		pc.setP(projection);
 		pc.center = center.clone();
 		pc.scale = scale;
@@ -1605,7 +1604,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				dict.getCenter(center);
 			}
 
-			projection = new Mercator(center, scale, getWidth(), getHeight());
+			projection = new Proj2D(center, scale, getWidth(), getHeight());
 			if (pc != null) {				
 				pc.setP(projection);
 				pc.center = center.clone();
@@ -1705,7 +1704,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		pc.target = target;
 		if(target!=null) {
 			center.setLatLon(target.lat, target.lon,true);
-			projection = new Mercator(center, scale, getWidth(), getHeight());
+			projection = new Proj2D(center, scale, getWidth(), getHeight());
 			pc.setP( projection);
 			pc.center = center.clone();
 			pc.scale = scale;
