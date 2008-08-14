@@ -10,6 +10,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.CRC32;
@@ -20,6 +22,8 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.tools.bzip2.CBZip2InputStream;
+
+import de.ueller.osmToGpsMid.model.Relation;
 
 
 
@@ -45,6 +49,28 @@ public class BundleGpsMid {
 				System.out.println("read Nodes " + parser.getNodes().size());
 				System.out.println("read Ways  " + parser.getWays().size());
 				System.out.println("read Relations  " + parser.getRelations().size());
+				/**
+				 * Display some stats about the type of relations we currently aren't handling
+				 * to see which ones would be particularly useful to deal with eventually 
+				 */
+				Hashtable<String,Integer> relTypes = new Hashtable<String,Integer>();
+				for (Relation r : parser.getRelations()) {
+					String type = r.getAttribute("type");
+					if (type == null) type = "unknown";	
+					Integer count = relTypes.get(type);
+					if (count != null) {
+						count = new Integer(count.intValue() + 1);
+					} else {
+						count = new Integer(1);
+					}
+					relTypes.put(type, count);
+				}
+				System.out.println("Types of relations present but ignored: ");
+				for (Entry<String, Integer> e : relTypes.entrySet()) {
+					System.out.println("   " + e.getKey() + ": " + e.getValue());
+					
+				}
+				
 				System.out.println("reorder Ways");
 				new CleanUpData(parser,c);
 				
