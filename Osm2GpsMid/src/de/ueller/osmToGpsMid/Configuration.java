@@ -49,16 +49,6 @@ public class Configuration {
 		private ResourceBundle vb;
 		private String tmp=null;
 		private final String planet;
-		private boolean highway_only=false;
-		public boolean useHighway=true;
-		public boolean useRailway=true;
-		public boolean useRiver=true;
-		public boolean useCycleway=true;
-		public boolean useAmenity=true;
-		public boolean useLanduse=true;
-		public boolean useNatural=true;
-		public boolean useLeisure=true;
-		public boolean useWaterway=true;
 		public boolean useRouting=false;
 		public int maxTileSize=20000;
 		public int maxRouteTileSize=3000;
@@ -110,20 +100,8 @@ public class Configuration {
 					}
 				}
 				rb= new PropertyResourceBundle(cf);
-//				try {
 				vb=new PropertyResourceBundle(getClass().getResourceAsStream("/version.properties"));
-//				} catch(Exception e) {
-//					vb=new PropertyResourceBundle(getClass().getResourceAsStream("/resources/version.properties"));
-//				}
-				useHighway=use("useHighway");
-				useRailway=use("useRailway");
-				useRiver=use("useRiver");
-				useCycleway=use("useCycleway");
-				useAmenity=use("useAmenity");
-				useLanduse=use("useLanduse");
-				useNatural=use("useNatural");
-				useLeisure=use("useLeisure");
-				useWaterway=use("useWaterway");
+
 				useRouting=use("useRouting");
 				maxRouteTileSize=Integer.parseInt(getString("routing.maxTileSize"));
 				maxTileSize=Integer.parseInt(getString("maxTileSize"));
@@ -165,12 +143,7 @@ public class Configuration {
 			}
 		}
 		public float getFloat(String key){
-//			try {
-				return Float.parseFloat(getString(key));
-//			} catch (Exception e) {
-//				System.err.println(getString(key) + " not a number");
-//				return Float.NaN;
-//			}
+			return Float.parseFloat(getString(key));
 		}
 		public String getName(){
 			return getString("bundle.name");
@@ -273,10 +246,6 @@ public class Configuration {
 		 */
 		public String getVersion() {
 			return vb.getString("version");
-		}
-
-		public boolean isHighway_only() {
-			return highway_only;
 		}
 
 		public int getMaxTileSize() {
