@@ -180,6 +180,13 @@ public class Configuration {
 			return tmp;
 //			return getString("tmp.dir");
 		}
+		
+		public boolean cleanupTmpDirAfterUse() {
+			if ("true".equalsIgnoreCase(getString("keepTemporaryFiles"))){
+				return false;
+			} else return true;
+		}
+		
 		public File getPlanet(){
 			return new File(planet);
 		}

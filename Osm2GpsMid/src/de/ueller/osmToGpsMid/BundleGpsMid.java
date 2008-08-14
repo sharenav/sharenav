@@ -94,6 +94,14 @@ public class BundleGpsMid {
 				parser=null;
 				pack(c);
 				
+				//Cleanup after us again. The .jar and .jad file are in the main directory,
+				//so these won't get deleted
+				if (c.cleanupTmpDirAfterUse()) {
+					File tmpBaseDir = new File(c.getTempBaseDir());
+					System.out.println("Cleaning up temporary directory " + tmpBaseDir);
+					deleteDirectory(tmpBaseDir);					
+				}
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -312,5 +320,26 @@ public class BundleGpsMid {
 			createPath(f.getParentFile());
 		f.mkdir();
 	}
+	
+	/**
+	 * remove a directory and all its subdirectories and files
+	 * @param path
+	 * @return
+	 */
+	static private boolean deleteDirectory(File path) {
+		if( path.exists() ) {
+			File[] files = path.listFiles();
+			for(int i=0; i<files.length; i++) {
+				if(files[i].isDirectory()) {
+					deleteDirectory(files[i]);
+				}
+				else {
+					files[i].delete();
+				}
+			}
+		}
+		return( path.delete() );
+	}
+
 
 }
