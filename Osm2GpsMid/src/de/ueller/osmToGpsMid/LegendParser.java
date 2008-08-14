@@ -4,7 +4,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -15,20 +14,17 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.xml.sax.Attributes;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
+import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
 import de.ueller.osmToGpsMid.Configuration;
-import de.ueller.osmToGpsMid.model.Bounds;
 import de.ueller.osmToGpsMid.model.ConditionTuple;
-import de.ueller.osmToGpsMid.model.Entity;
-import de.ueller.osmToGpsMid.model.Member;
-import de.ueller.osmToGpsMid.model.Node;
 import de.ueller.osmToGpsMid.model.POIdescription;
-import de.ueller.osmToGpsMid.model.Relation;
 import de.ueller.osmToGpsMid.model.SoundDescription;
-import de.ueller.osmToGpsMid.model.Way;
 import de.ueller.osmToGpsMid.model.WayDescription;
 
 public class LegendParser extends DefaultHandler{
@@ -53,6 +49,36 @@ public class LegendParser extends DefaultHandler{
 	private byte poiIdx = 0;
 	private byte wayIdx = 0;
 	private boolean nonValidStyleFile;
+	
+	public class DTDresolver implements EntityResolver {
+
+		/* (non-Javadoc)
+		 * @see org.xml.sax.EntityResolver#resolveEntity(java.lang.String, java.lang.String)
+		 */
+		@Override
+		public InputSource resolveEntity(String publicId, String systemId)
+				throws SAXException, IOException {
+			
+			/**
+			 * Use the style-file.dtd that is internl to the Osm2GpsMid jar
+			 */
+			if (systemId.endsWith("style-file.dtd")) {
+				
+					InputStream is = this.getClass().getResourceAsStream("/style-file.dtd");
+					if (is != null)
+						return new InputSource(is);
+					else {
+						System.out.println("Warning: Could not read internal dtd file");
+						return null;
+					}
+				
+			}
+			System.out.println("Resolving entity: " + systemId);
+			
+			return null;
+		}
+		
+	}
 	
 	public LegendParser(InputStream i) {
 		System.out.println("Style file parser started...");
@@ -93,9 +119,11 @@ public class LegendParser extends DefaultHandler{
 			SAXParserFactory factory = SAXParserFactory.newInstance();
 			factory.setValidating(true);
 			// Parse the input
-            SAXParser saxParser = factory.newSAXParser();
-            nonValidStyleFile = false;
-            saxParser.parse(i, this);
+			nonValidStyleFile = false;
+            XMLReader xmlReader = factory.newSAXParser().getXMLReader();
+            xmlReader.setEntityResolver(new DTDresolver());            
+            xmlReader.setContentHandler(this);
+            xmlReader.parse(new InputSource(i));            
             if (nonValidStyleFile) {
             	System.out.println("ERROR: your style file is not valid. Please correct the file and try Osm2GpsMid again");
             	System.exit(1);
