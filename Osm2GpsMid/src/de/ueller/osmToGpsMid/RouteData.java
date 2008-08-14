@@ -273,8 +273,8 @@ public class RouteData {
 	 */
 	public static void main(String[] args) {
 
-				try {
-					Configuration conf=new Configuration("/Massenspeicher/myStreetMap0.5.osm","bavaria");
+				try {					
+					Configuration conf=new Configuration(args);
 					FileInputStream fr = new FileInputStream("/Massenspeicher/myStreetMap0.5.osm");
 //					FileInputStream fr = new FileInputStream("/Massenspeicher/planet-070725.osm");
 					OxParser parser = new OxParser(fr,conf);

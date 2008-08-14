@@ -48,11 +48,12 @@ public class Configuration {
 		private ResourceBundle rb;
 		private ResourceBundle vb;
 		private String tmp=null;
-		private final String planet;
+		private String planet;
 		public boolean useRouting=false;
 		public int maxTileSize=20000;
 		public int maxRouteTileSize=3000;
 		public String styleFile;
+		private Bounds[] bounds;
 		
 		public int background_color;
 				
@@ -66,7 +67,47 @@ public class Configuration {
 //		private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
 //				.getBundle(BUNDLE_NAME);
 
-		public Configuration(String planet,String file) {
+		public Configuration(String [] args) {
+			String propFile = null;
+			for (String arg : args) {
+				if (arg.startsWith("--")) {
+					if (arg.startsWith("--bounds=")) {
+						String bound = arg.substring(9);
+						System.out.println("Found bound: " + bound);
+						String [] boundValues = bound.split(",");						
+						if (boundValues.length == 4) {
+							if (bounds == null) {
+								bounds = new Bounds[1];
+							} else {
+								Bounds [] tmp = new Bounds[bounds.length + 1];
+								System.arraycopy(bounds, 0, tmp, 0, bounds.length);
+								bounds = tmp;
+							}
+							Bounds b = new Bounds();
+							try {
+							b.maxLat = Float.parseFloat(boundValues[0]);
+							b.maxLon = Float.parseFloat(boundValues[1]);
+							b.minLat = Float.parseFloat(boundValues[2]);
+							b.minLon = Float.parseFloat(boundValues[3]);
+							} catch (NumberFormatException nfe) {
+								System.out.println("ERROR: invalid bound");
+								nfe.printStackTrace();
+								System.exit(1);
+							}
+							bounds[bounds.length - 1] = b;
+						} else {
+							System.out.println("ERROR: Invalid bounds parameter");
+							System.exit(1);
+						}
+					}
+					
+				} else if (planet == null) {
+					planet = arg;
+				} else {
+					propFile = arg;
+				}				
+			}
+			
 			// precalculate real scale levels for pseudo zoom levels
 			// pseudo zoom level 0 equals to scale 0
 			realScale[0]=0;
@@ -86,20 +127,26 @@ public class Configuration {
 				//System.out.println("Pseudo Zoom Level: " + i + " Real Scale: " + realScale[i]);
 			}
 				
-			this.planet = planet;
 			conf = this;
 			try {
 				InputStream cf;
-				try {
-					cf = new FileInputStream(file+".properties");
-				} catch (FileNotFoundException e) {
-					System.out.println(file + ".properties not found, try bundled version");
-					cf=getClass().getResourceAsStream("/"+file+".properties");
-					if (cf == null){
-						throw new IOException(file + " is not a valid region");
+				if (propFile != null) {
+					try {
+						cf = new FileInputStream(propFile+".properties");
+					} catch (FileNotFoundException e) {
+						System.out.println(propFile + ".properties not found, try bundled version");
+						cf=getClass().getResourceAsStream("/"+propFile+".properties");
+						if (cf == null){
+							throw new IOException(propFile + " is not a valid region");
+						}
 					}
+					rb= new PropertyResourceBundle(cf);
+				} else if (bounds != null) {
+					//No .properties file was specified, so use the default one
+					rb=new PropertyResourceBundle(getClass().getResourceAsStream("/version.properties"));
+				} else {
+					System.out.println("ERROR: No bounds specified on the command line and no property file");
 				}
-				rb= new PropertyResourceBundle(cf);
 				vb=new PropertyResourceBundle(getClass().getResourceAsStream("/version.properties"));
 
 				useRouting=use("useRouting");
@@ -227,6 +274,8 @@ public class Configuration {
 			return fr;
 		}
 		public Bounds[] getBounds(){
+			if (bounds != null)
+				return bounds;
 			int i;
 			i=0;
 			try {

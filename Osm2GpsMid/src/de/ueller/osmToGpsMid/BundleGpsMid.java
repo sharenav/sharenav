@@ -36,7 +36,7 @@ public class BundleGpsMid {
 		if (args.length > 1){
 			InputStream fr;
 			try {
-				Configuration c=new Configuration(args[0],args[1]);
+				Configuration c=new Configuration(args);
 				System.out.println("create Bundle for " + c.getName());
 				System.out.println("Midlet Name: " + c.getMidletName());
 				String tmpDir = c.getTempDir();
