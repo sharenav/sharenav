@@ -1020,18 +1020,20 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		final int PASSINGDISTANCE=25;
 		// this makes the distance when prepare-sound is played depending on the speed
 		int PREPAREDISTANCE=75;
-		if (speed>120) {
+		if (speed>150) {
 			PREPAREDISTANCE=1000;							
+		} else if (speed>120) {
+			PREPAREDISTANCE=700;							
 		} else if (speed>100) {
-			PREPAREDISTANCE=750;							
-		} else if (speed>80) {
 			PREPAREDISTANCE=500;							
+		} else if (speed>80) {
+			PREPAREDISTANCE=300;							
 		} else if (speed>70) {
 			PREPAREDISTANCE=250;							
 		} else if (speed>50) {
-			PREPAREDISTANCE=200;							
-		} else if (speed>40) {
 			PREPAREDISTANCE=150;							
+		} else if (speed>40) {
+			PREPAREDISTANCE=125;							
 		} else if (speed>25) {
 			PREPAREDISTANCE=100;							
 		}
