@@ -200,9 +200,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		"straight on",
 		"half left", "left", "hard left", "Target reached"};
 	private static final String[] soundDirections  = { "",
-		"HARDRIGHT", "RIGHT", "HALFRIGHT",
+		"HARD;RIGHT", "RIGHT", "HALF;RIGHT",
 		"STRAIGHTON",
-		"HALFLEFT", "LEFT", "HARDLEFT"};
+		"HALF;LEFT", "LEFT", "HARD;LEFT"};
 	private boolean keyboardLocked=false;
 	private boolean movedAwayFromTarget=true;
 	private boolean atTarget=false;
@@ -1018,6 +1018,13 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			next arrow for routing assistance
 		*/
 		final int PASSINGDISTANCE=25;
+
+		StringBuffer soundToPlay = new StringBuffer();
+		byte soundRepeatDelay=3;
+		float nearestLat=0.0f;
+		float nearestLon=0.0f;
+		
+
 		// this makes the distance when prepare-sound is played depending on the speed
 		int PREPAREDISTANCE=75;
 		if (speed>150) {
@@ -1169,6 +1176,8 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				pc.getP().forward(lastTo.lat, lastTo.lon, pc.lineP2);
 			    // optionally scale nearest arrow
 			    if (i==iNearest) {
+			    	nearestLat=lastTo.lat;
+			    	nearestLon=lastTo.lon;
 			    	Font originalFont = pc.g.getFont();
 			    	if (routeFont==null) {
 						routeFont=Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_MEDIUM);
@@ -1185,13 +1194,12 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 					                      ((intDistance<PASSINGDISTANCE)?"":" in " + intDistance + "m"),
 					                      pc.xSize/2,pc.ySize-imageCollector.statusFontHeight, Graphics.HCENTER | Graphics.BOTTOM
                     );
-					if (config.getCfgBitState(config.CFGBIT_SND_ROUTINGINSTRUCTIONS)) {
-						if(!atTarget && intDistance<PASSINGDISTANCE) {
-							parent.mNoiseMaker.playSound(soundDirections[a], (byte) 3);
-						}
-						if(intDistance>=PASSINGDISTANCE && intDistance<=PREPAREDISTANCE) {
-							parent.mNoiseMaker.playSound("PREPARE_" + soundDirections[a], (byte) 5);
-						}
+					if(!atTarget && intDistance<PASSINGDISTANCE) {
+						soundToPlay.append (soundDirections[a]);							
+					}
+					if(intDistance>=PASSINGDISTANCE && intDistance<=PREPAREDISTANCE) {
+						soundToPlay.append ("PREPARE;" + soundDirections[a]);
+						soundRepeatDelay=5;
 					}
 					pc.g.setFont(originalFont);
 					if (a!=arrow) {
@@ -1200,10 +1208,26 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 					}
 					pict=scaledPict;
 			    }
+				if (i == iNearest + 1) {
+					double distance=ProjMath.getDistance(nearestLat, nearestLon, lastTo.lat, lastTo.lon);
+					// if there is a close direction arrow after the current one
+					// inform the user about its direction
+					if (distance <= PASSINGDISTANCE*2) {
+						soundToPlay.append(";THEN_IMMEDIATELY;");
+						if (distance > PASSINGDISTANCE) {
+							soundToPlay.append("PREPARE;");
+						}
+						soundToPlay.append(soundDirections[a]);
+						//System.out.println(soundToPlay.toString());
+					}
+				}
 				pc.g.drawImage(pict,pc.lineP2.x,pc.lineP2.y,CENTERPOS);
 				lastEndBearing=c.endBearing;
 				lastTo=c.to;
 			}
+		}
+		if (soundToPlay.length()!=0 && config.getCfgBitState(config.CFGBIT_SND_ROUTINGINSTRUCTIONS)) {
+			parent.mNoiseMaker.playSound(soundToPlay.toString(), (byte) soundRepeatDelay);			
 		}
 	}
 	
