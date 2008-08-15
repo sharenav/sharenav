@@ -38,6 +38,11 @@ public class NoiseMaker
 	
 	private static volatile String playingNames = "";
 	private static volatile int playingNameIndex=0;
+	private static volatile Player [] player = new Player[3]; 
+	private static volatile byte currentPlayerNr=0; 
+	private static volatile byte prefetchPlayerNr=1; 
+	private static volatile boolean [] prefetched={false, false, false}; 
+	
 	
 	private static long oldMsTime = 0;
 	private static String oldplayingNames = "";
@@ -83,15 +88,13 @@ public class NoiseMaker
 		if (event == PlayerListener.END_OF_MEDIA)
 		{
 			//System.out.println("Playing stopped");
-			int iEnd = playingNames.indexOf(';', playingNameIndex);
 			player.close();
-			if (iEnd == -1 ) {
+			if (prefetched[prefetchPlayerNr]) {
+				playPrefetched();
+			} else {
 				playingNames = "";
 				playingNameIndex=0;
 				oldMsTime = System.currentTimeMillis();
-			} else {
-				playingNameIndex=iEnd+1;
-				playSoundPart();
 			}
 		}
 	}
@@ -169,54 +172,87 @@ public class NoiseMaker
 
 		playingNameIndex = 0;
 		playingNames=names;
-		playSoundPart();
+		if (prefetchNextSound()) {
+			playPrefetched();
+		} else {
+			playSequence(names);
+		}
 	}
 	
 	
-	public void playSoundPart()
-	{
+	// prefetches next sound part
+	private synchronized boolean prefetchNextSound() {
+		// ignore request if we've got no free player
+		if (prefetched[prefetchPlayerNr]==true) {
+			return false;
+		}
+		
+		// use next prefetch player
+		prefetchPlayerNr++;
+		if (prefetchPlayerNr > 2) {
+			prefetchPlayerNr = 0;
+		}
+
+		// end of names to play?
+		if (playingNameIndex>playingNames.length() ) {
+			return false;
+		}
+		
 		int iEnd = playingNames.indexOf(';', playingNameIndex);
 		if (iEnd == -1 ) {
 			iEnd = playingNames.length();
 		}
 		String name = playingNames.substring(playingNameIndex, iEnd);
-		//System.out.println("Sound part: " + name + "/" + playingNames + "/" + playingNameIndex + "/" + iEnd);
+		//System.out.println("Prefetching sound part: " + name + "/" + playingNames + "/" + playingNameIndex + "/" + iEnd + " to player " + prefetchPlayerNr);
+		playingNameIndex = iEnd + 1;
 		
-		//#if polish.api.mmapi
 		String soundFile = null;
 		SoundDescription sDes = C.getSoundDescription(name);
 		if (sDes != null) {
 			soundFile = sDes.soundFile;
 		}
 		if (sDes == null || soundFile == null) {
-			playSequence(name);
-		} else {
-			try {
-				InputStream is = getClass().getResourceAsStream(soundFile);
-				if (is != null) {
-					String mediaType = null;
-					if (soundFile.toLowerCase().endsWith(".mp3") ) {
-						mediaType = "audio/mpeg";
-					} else if (soundFile.toLowerCase().endsWith(".wav") ) {
-						mediaType = "audio/x-wav";
-					} else if (soundFile.toLowerCase().endsWith(".amr") ) {
-						mediaType = "audio/amr";
-					}
-					Player player = Manager.createPlayer(is, mediaType);
-					player.addPlayerListener( this );
-					player.realize();
-					VolumeControl volCtrl = (VolumeControl) player.getControl("VolumeControl");
-					volCtrl.setLevel(100);
-					player.start();
-				} else {
-					playSequence(name);
-				}
-			} catch (Exception ex) {
-		    	mLogger.exception("Failed to play sound from resource", ex);
-				playSequence(name);
-			}
+			return false;
 		}
-		//#endif
+		
+		try {
+			InputStream is = getClass().getResourceAsStream(soundFile);
+			if (is != null) {
+				String mediaType = null;
+				if (soundFile.toLowerCase().endsWith(".mp3") ) {
+					mediaType = "audio/mpeg";
+				} else if (soundFile.toLowerCase().endsWith(".wav") ) {
+					mediaType = "audio/x-wav";
+				} else if (soundFile.toLowerCase().endsWith(".amr") ) {
+					mediaType = "audio/amr";
+				}
+				player[prefetchPlayerNr] = Manager.createPlayer(is, mediaType);
+				player[prefetchPlayerNr].addPlayerListener( this );
+				player[prefetchPlayerNr].prefetch();
+				VolumeControl volCtrl = (VolumeControl) player[prefetchPlayerNr].getControl("VolumeControl");
+				volCtrl.setLevel(100);
+				prefetched[prefetchPlayerNr]=true;
+			} else {
+				return false;
+			}
+		} catch (Exception ex) {
+	    	mLogger.exception("Failed to play sound from resource", ex);
+			return false;
+		}
+		return true;
 	}
-
+	
+	
+	private synchronized void playPrefetched() {
+		try {
+			//System.out.println("Playing Player " + prefetchPlayerNr);
+			if (player[prefetchPlayerNr].getState() == Player.PREFETCHED) {
+				player[prefetchPlayerNr].start();
+			}
+		} catch (Exception ex) {
+	    	mLogger.exception("Failed to play prefetched sound", ex);
+		}
+		prefetched[prefetchPlayerNr] = false;
+		prefetchNextSound();
+	}
 }
