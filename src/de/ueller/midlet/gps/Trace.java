@@ -1096,6 +1096,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			byte lastEndBearing=c.endBearing;			
 			lastTo=c.to;
 			byte a=0;
+			byte aNearest=0;
 			for (int i=1; i<route.size();i++){
 				c = (ConnectionWithNode) route.elementAt(i);
 				if (c == null){
@@ -1178,6 +1179,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			    if (i==iNearest) {
 			    	nearestLat=lastTo.lat;
 			    	nearestLon=lastTo.lon;
+					aNearest=a;
 			    	Font originalFont = pc.g.getFont();
 			    	if (routeFont==null) {
 						routeFont=Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_MEDIUM);
@@ -1212,12 +1214,17 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 					double distance=ProjMath.getDistance(nearestLat, nearestLon, lastTo.lat, lastTo.lon);
 					// if there is a close direction arrow after the current one
 					// inform the user about its direction
-					if (distance <= PASSINGDISTANCE*2) {
+					if (distance <= PASSINGDISTANCE*3) {
 						soundToPlay.append(";THEN_IMMEDIATELY;");
 						if (distance > PASSINGDISTANCE) {
 							soundToPlay.append("PREPARE;");
 						}
 						soundToPlay.append(soundDirections[a]);
+						// same arrow as currently nearest arrow?
+						if (a==aNearest) {
+							soundToPlay.append(";AGAIN");							
+						}
+						
 						//System.out.println(soundToPlay.toString());
 					}
 				}
