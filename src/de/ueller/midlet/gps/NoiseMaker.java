@@ -38,7 +38,9 @@ public class NoiseMaker
 	
 	private static volatile String playingNames = "";
 	private static volatile int playingNameIndex=0;
+//#if polish.api.mmapi			
 	private static volatile Player [] player = new Player[3]; 
+//#endif			
 	private static volatile byte currentPlayerNr=0; 
 	private static volatile byte prefetchPlayerNr=1; 
 	private static volatile boolean [] prefetched={false, false, false}; 
@@ -182,6 +184,7 @@ public class NoiseMaker
 	
 	// prefetches next sound part
 	private synchronized boolean prefetchNextSound() {
+//#if polish.api.mmapi			
 		// ignore request if we've got no free player
 		if (prefetched[prefetchPlayerNr]==true) {
 			return false;
@@ -239,11 +242,13 @@ public class NoiseMaker
 	    	mLogger.exception("Failed to play sound from resource", ex);
 			return false;
 		}
+//#endif
 		return true;
 	}
 	
 	
 	private synchronized void playPrefetched() {
+//#if polish.api.mmapi			
 		try {
 			//System.out.println("Playing Player " + prefetchPlayerNr);
 			if (player[prefetchPlayerNr].getState() == Player.PREFETCHED) {
@@ -254,5 +259,6 @@ public class NoiseMaker
 		}
 		prefetched[prefetchPlayerNr] = false;
 		prefetchNextSound();
+//#endif
 	}
 }
