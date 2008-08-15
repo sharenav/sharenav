@@ -36,10 +36,11 @@ public class NoiseMaker
 	
 	private final static Logger mLogger = Logger.getInstance(NoiseMaker.class, Logger.DEBUG);
 	
-	private static volatile String playingName = "";
-
+	private static volatile String playingNames = "";
+	private static volatile int playingNameIndex=0;
+	
 	private static long oldMsTime = 0;
-	private static String oldPlayingName = "";
+	private static String oldplayingNames = "";
 
 	
 	public NoiseMaker()
@@ -82,11 +83,17 @@ public class NoiseMaker
 		if (event == PlayerListener.END_OF_MEDIA)
 		{
 			//System.out.println("Playing stopped");
-			playingName = "";
-			oldMsTime = System.currentTimeMillis();
+			int iEnd = playingNames.indexOf(';', playingNameIndex);
 			player.close();
+			if (iEnd == -1 ) {
+				playingNames = "";
+				playingNameIndex=0;
+				oldMsTime = System.currentTimeMillis();
+			} else {
+				playingNameIndex=iEnd+1;
+				playSoundPart();
+			}
 		}
-
 	}
 //#endif
 	
@@ -127,7 +134,7 @@ public class NoiseMaker
 		        player.realize(); 
 		    	ToneControl toneCtrl = (ToneControl)player.getControl( "ToneControl" ); 
 		        toneCtrl.setSequence( sequence ); 
-				playingName = name;
+				playingNames = name;
 		        player.start();
 	    	}
 	    } catch (Exception ex) {		
@@ -137,26 +144,43 @@ public class NoiseMaker
 	}
 	
 
-	public void playSound( String name )
+	public void playSound( String names )
 	{
-		playSound(name, (byte) 0);
+		playSound(names, (byte) 0);
 	}
 
-	
-	public void playSound( String name, byte minSecsBeforeRepeat )
+	/* names can contain multiple sound names separated by ;
+	 * the contained sound parts will be played after each other
+	 * */
+	public void playSound( String names, byte minSecsBeforeRepeat )
 	{
-		if (playingName.equals(name)) {			
+		if (playingNames.equals(names)) {			
 			//System.out.println("Already playing");
 			return;
 		}
 
 		// do not repeat same sound before minSecsBeforeRepeat
 		long msTime = System.currentTimeMillis();
-		if (oldPlayingName.equals(name) && Math.abs(msTime-oldMsTime) < minSecsBeforeRepeat*1000) {
-			//System.out.println(msTime-oldMsTime + " " + name + oldPlayingName);
+		if (oldplayingNames.equals(names) && Math.abs(msTime-oldMsTime) < minSecsBeforeRepeat*1000) {
+			//System.out.println(msTime-oldMsTime + " " + name + oldplayingNames);
 			return;
 		}
-		oldPlayingName = name;
+		oldplayingNames = names;
+
+		playingNameIndex = 0;
+		playingNames=names;
+		playSoundPart();
+	}
+	
+	
+	public void playSoundPart()
+	{
+		int iEnd = playingNames.indexOf(';', playingNameIndex);
+		if (iEnd == -1 ) {
+			iEnd = playingNames.length();
+		}
+		String name = playingNames.substring(playingNameIndex, iEnd);
+		//System.out.println("Sound part: " + name + "/" + playingNames + "/" + playingNameIndex + "/" + iEnd);
 		
 		//#if polish.api.mmapi
 		String soundFile = null;
@@ -183,7 +207,6 @@ public class NoiseMaker
 					player.realize();
 					VolumeControl volCtrl = (VolumeControl) player.getControl("VolumeControl");
 					volCtrl.setLevel(100);
-					playingName = name;
 					player.start();
 				} else {
 					playSequence(name);
@@ -195,4 +218,5 @@ public class NoiseMaker
 		}
 		//#endif
 	}
+
 }
