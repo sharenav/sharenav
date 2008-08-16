@@ -84,6 +84,12 @@ zoomed out 21x (scale alias 1:  500km)
 	<sound name="AGAIN">
 		<soundFile src="again.amr"/>
 	</sound>
+	<sound name="CHECK_DIRECTION">
+		<soundFile src="check_direction.amr"/>
+	</sound>
+	<sound name="ROUTE_RECALCULATION">
+		<soundFile src="route_recalculation.amr"/>
+	</sound>
 	<sound name="TARGET_REACHED">
 		<soundFile src="target_reached.amr"/>
 	</sound>
