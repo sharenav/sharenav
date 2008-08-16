@@ -215,7 +215,7 @@ public class NoiseMaker
 			soundFile = sDes.soundFile;
 		}
 		if (sDes == null || soundFile == null) {
-			return false;
+			soundFile = name.toLowerCase() + ".amr";
 		}
 		
 		try {
