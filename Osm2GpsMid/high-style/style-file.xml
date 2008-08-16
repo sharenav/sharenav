@@ -75,8 +75,11 @@ zoomed out 21x (scale alias 1:  500km)
 	<sound name="STRAIGHTON">
 		<soundFile src="straighton.amr"/>
 	</sound>
-	<sound name="THEN_IMMEDIATELY">
-		<soundFile src="then_immediately.amr"/>
+	<sound name="THEN">
+		<soundFile src="then.amr"/>
+	</sound>
+	<sound name="SOON">
+		<soundFile src="soon.amr"/>
 	</sound>
 	<sound name="AGAIN">
 		<soundFile src="again.amr"/>
