@@ -252,8 +252,9 @@ public class Configuration {
 				System.out.println("This may take a while!");
 				fr = new TeeInputStream(url.openStream(),new FileOutputStream(new File(getTempDir() + "osmXapi.osm")));				
 			} else {
-				System.out.println("Opening planet file: " + planet);
-				fr= new BufferedInputStream(new FileInputStream(planet), 4096);
+				System.out.println("Opening planet file: " + planet);				
+				
+				fr= new FileInputStream(planet);
 				if (planet.endsWith(".bz2") || planet.endsWith(".gz")){
 					if (planet.endsWith(".bz2")) {
 						fr.read();
@@ -262,14 +263,24 @@ public class Configuration {
 					} else if (planet.endsWith(".gz")) {
 						fr = new GZIPInputStream(fr);							
 					}
-					int availableProcessors = Runtime.getRuntime().availableProcessors();
+					/*int availableProcessors = Runtime.getRuntime().availableProcessors();
 					if (availableProcessors > 1){
 						System.out.println("found " + availableProcessors + " CPU's: uncompress in seperate thread");
-						fr = new ThreadBufferedInputStream(fr);						
+						fr = new ThreadBufferedInputStream(fr);				
 					} else {						
 						System.out.println("only one CPU: uncompress in same thread");						
-					}
+					}*/
 				}
+				/**
+				 * The BufferedInputStream isn't doing a particularly good job at buffering,
+				 * so we need to use our own implementation of a BufferedInputStream.
+				 * As it uses a separate thread for reading, it should paralyse any CPU intensive
+				 * read operations such as decomressing bz2. However even when only reading from
+				 * a named pipe and let an external program (bzCat) do the decompression, somehow
+				 * still the standard BufferedInputStream does poorly and blocks a lot leaving
+				 * CPUs idle.   
+				 */
+				fr = new ThreadBufferedInputStream(fr);
 			}
 			return fr;
 		}
