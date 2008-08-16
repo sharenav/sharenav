@@ -107,9 +107,12 @@ public class BundleGpsMid {
 			}
 
 		} else {
-			System.err.println("please give arguments");
-			System.err.println("  arg1: planet file");
-			System.err.println("  arg2: location configfile");		
+			System.err.println("Usage: Osm2GpsMid [--bounds=left,bottom,right,top] planet.osm.bz2 [location]");
+			System.err.println("  \"--bounds=\" specifies the set of bounds to use in GpsMid ");
+			System.err.println("       Can be left out, if bounds are specified in location.properties");
+			System.err.println("  planet.osm.bz2: points to a (compressed) .osm file");
+			System.err.println("       By specifying osmXapi, the data can be fetched straight from the server (only works for small areas)");
+			System.err.println("  location: points to a .properties file specifying additional parameters");
 		}
 	}
 

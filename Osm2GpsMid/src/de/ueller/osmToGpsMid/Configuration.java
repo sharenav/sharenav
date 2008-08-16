@@ -84,19 +84,19 @@ public class Configuration {
 								bounds = tmp;
 							}
 							Bounds b = new Bounds();
-							try {
-							b.maxLat = Float.parseFloat(boundValues[0]);
-							b.maxLon = Float.parseFloat(boundValues[1]);
-							b.minLat = Float.parseFloat(boundValues[2]);
-							b.minLon = Float.parseFloat(boundValues[3]);
+							try {								
+								b.minLon = Float.parseFloat(boundValues[0]);
+								b.minLat = Float.parseFloat(boundValues[1]);
+								b.maxLon = Float.parseFloat(boundValues[2]);
+								b.maxLat = Float.parseFloat(boundValues[3]);
 							} catch (NumberFormatException nfe) {
-								System.out.println("ERROR: invalid bound");
+								System.out.println("ERROR: invalid coordinate specified in bounds");
 								nfe.printStackTrace();
 								System.exit(1);
 							}
 							bounds[bounds.length - 1] = b;
 						} else {
-							System.out.println("ERROR: Invalid bounds parameter");
+							System.out.println("ERROR: Invalid bounds parameter, should be specified as --bounds=left,bottom,right,top");
 							System.exit(1);
 						}
 					}
