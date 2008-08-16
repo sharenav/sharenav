@@ -1214,8 +1214,10 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 					double distance=ProjMath.getDistance(nearestLat, nearestLon, lastTo.lat, lastTo.lon);
 					// if there is a close direction arrow after the current one
 					// inform the user about its direction
-					if (distance <= PASSINGDISTANCE*3) {
-						soundToPlay.append(";THEN_IMMEDIATELY;");
+					if (distance <= PASSINGDISTANCE*3 &&
+						// only if not both arrows are STRAIGHT_ON
+						!(a==4 && aNearest == 4) ) {
+						soundToPlay.append(";THEN;");
 						if (distance > PASSINGDISTANCE) {
 							soundToPlay.append("PREPARE;");
 						}
