@@ -1219,7 +1219,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 						!(a==4 && aNearest == 4) ) {
 						soundToPlay.append(";THEN;");
 						if (distance > PASSINGDISTANCE) {
-							soundToPlay.append("PREPARE;");
+							soundToPlay.append("SOON;");
 						}
 						soundToPlay.append(soundDirections[a]);
 						// same arrow as currently nearest arrow?
