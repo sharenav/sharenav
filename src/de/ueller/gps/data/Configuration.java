@@ -72,6 +72,8 @@ public class Configuration {
 	public final static byte CFGBIT_GPS_AUTORECONNECT=20;
 	// bit 21: Sound on target reached
 	public final static byte CFGBIT_SND_TARGETREACHED=21;
+	// bit 22: auto recalculate route
+	public final static byte CFGBIT_ROUTE_AUTO_RECALC=22;	
 
 	
 	/**
@@ -174,6 +176,7 @@ public class Configuration {
 				   		1<<CFGBIT_SND_DISCONNECT |
 				   		1<<CFGBIT_SND_ROUTINGINSTRUCTIONS |
 				   		1<<CFGBIT_SND_TARGETREACHED |
+				   		1<<CFGBIT_ROUTE_AUTO_RECALC |
 				   		1<<CFGBIT_BACKLIGHT_MAPONLY;
 				setCfgBits(cfgBits, true);
 				//#debug info

@@ -206,6 +206,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	private boolean keyboardLocked=false;
 	private boolean movedAwayFromTarget=true;
 	private boolean atTarget=false;
+	private int sumWrongDirection=0;
+	private int oldAwayFromNextArrow=0;
+	private boolean routeRecalculationRequired=false;
 	
 	
 	public Trace(GpsMid parent, Configuration config) throws Exception {
@@ -1054,6 +1057,8 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			pc.g.drawString(n.name, pc.lineP2.x+7, pc.lineP2.y+5, Graphics.BOTTOM | Graphics.LEFT);
 		}
 		if (route != null && route.size() > 0){
+			// there's a route so no calculation required
+			routeRecalculationRequired = false;
 			RouteNode lastTo;
 
 			// find nearest routing arrow (to center of screen)
@@ -1196,9 +1201,18 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 					                      ((intDistance<PASSINGDISTANCE)?"":" in " + intDistance + "m"),
 					                      pc.xSize/2,pc.ySize-imageCollector.statusFontHeight, Graphics.HCENTER | Graphics.BOTTOM
                     );
-					if(!atTarget && intDistance<PASSINGDISTANCE) {
-						soundToPlay.append (soundDirections[a]);							
+					if(intDistance<PASSINGDISTANCE) {
+						if (!atTarget) { 
+							soundToPlay.append (soundDirections[a]);
+						}
+						sumWrongDirection = -1;
+					} else if (sumWrongDirection == -1) {
+						oldAwayFromNextArrow = intDistance;
+						sumWrongDirection=0;
 					}
+					sumWrongDirection += (intDistance - oldAwayFromNextArrow);
+					System.out.println("Sum wrong direction: " + sumWrongDirection);
+					oldAwayFromNextArrow = intDistance;
 					if(intDistance>=PASSINGDISTANCE && intDistance<=PREPAREDISTANCE) {
 						soundToPlay.append ("PREPARE;" + soundDirections[a]);
 						soundRepeatDelay=5;
@@ -1230,10 +1244,34 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 						//System.out.println(soundToPlay.toString());
 					}
 				}
+				// if the sum of movement away from the next arrow
+				// is much too high then recalculate route
+				if ( sumWrongDirection >= PREPAREDISTANCE*2
+						|| sumWrongDirection >= 500) {
+						routeRecalculationRequired = true;
+				// if the sum of movement away from the next arrow
+				// is high then ask user to check direction
+		    	} else if ( sumWrongDirection >= PREPAREDISTANCE
+					|| sumWrongDirection >= 300) {
+		    		soundToPlay.setLength(0);
+		    		soundToPlay.append ("CHECK_DIRECTION");
+		    	}
 				pc.g.drawImage(pict,pc.lineP2.x,pc.lineP2.y,CENTERPOS);
 				lastEndBearing=c.endBearing;
 				lastTo=c.to;
 			}
+		}
+
+		if (routeRecalculationRequired && 
+			config.getCfgBitState(config.CFGBIT_ROUTE_AUTO_RECALC) &&
+			source != null
+		) {
+			soundToPlay.setLength(0);
+			soundToPlay.append ("ROUTE_RECALCULATION");
+			commandAction(ROUTE_TO_CMD,(Displayable) null);
+			// set source to null to not recalculate
+			// route again before map was drawn
+			source=null;
 		}
 		if (soundToPlay.length()!=0 && config.getCfgBitState(config.CFGBIT_SND_ROUTINGINSTRUCTIONS)) {
 			parent.mNoiseMaker.playSound(soundToPlay.toString(), (byte) soundRepeatDelay);			
@@ -1756,6 +1794,8 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		this.route = route;
 		rootCalc=false;
 		routeEngine=null;
+		iPassedRouteArrow=0;
+		sumWrongDirection=-1;
 		try {
 			if (config.isStopAllWhileRouteing()){
 				startImageCollector();
@@ -1765,7 +1805,6 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			} else {
 //				resume();
 			}
-			iPassedRouteArrow=0;
 			repaint(0, 0, getWidth(), getHeight());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

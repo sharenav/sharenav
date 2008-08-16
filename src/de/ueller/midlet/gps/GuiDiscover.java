@@ -144,6 +144,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	
 	private Gauge gaugeRoutingEsatimationFac; 
 	private ChoiceGroup stopAllWhileRouting;
+	private ChoiceGroup routingOptsGroup;
 
 	private final static Logger logger=Logger.getInstance(GuiDiscover.class,Logger.DEBUG);
 	
@@ -320,6 +321,14 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		menuRoutingOptions.append(stopAllWhileRouting);
 		gaugeRoutingEsatimationFac=new Gauge("Speed of route calculation", true, 10, config.getRouteEstimationFac());
 		menuRoutingOptions.append(gaugeRoutingEsatimationFac);
+
+		String [] routingOpts = new String[1];
+		boolean[] selRouting = new boolean[1];
+		routingOpts[0] = "Auto Recalculation"; selRouting[0]=config.getCfgBitState(config.CFGBIT_ROUTE_AUTO_RECALC);
+		routingOptsGroup = new ChoiceGroup("Other", Choice.MULTIPLE, routingOpts ,null);
+		routingOptsGroup.setSelectedFlags(selRouting);
+		menuRoutingOptions.append(routingOptsGroup);
+		
 		show();
 	}
 
@@ -624,6 +633,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				config.setRouteEstimationFac(gaugeRoutingEsatimationFac.getValue());
 				logger.debug("set stopAllWhileRounting " + stopAllWhileRouting.isSelected(1));
 				config.setStopAllWhileRouteing(stopAllWhileRouting.isSelected(0));
+				boolean[] selRouting = new boolean[1];
+				routingOptsGroup.getSelectedFlags(selRouting);
+				config.setCfgBitState(config.CFGBIT_ROUTE_AUTO_RECALC, selRouting[0], true);
 				state = STATE_ROOT;
 				this.show();			
 				break;
