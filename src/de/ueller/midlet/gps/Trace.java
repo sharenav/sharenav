@@ -208,8 +208,8 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	private boolean atTarget=false;
 	private int sumWrongDirection=0;
 	private int oldAwayFromNextArrow=0;
+	private int oldRouteInstructionColor=0x00E6E6E6;	
 	private boolean routeRecalculationRequired=false;
-	
 	
 	public Trace(GpsMid parent, Configuration config) throws Exception {
 		//#debug
@@ -1023,6 +1023,10 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		final int PASSINGDISTANCE=25;
 
 		StringBuffer soundToPlay = new StringBuffer();
+		String routeInstruction = null;
+    	// backgound colour for standard routing instructions
+		int routeInstructionColor=0x00E6E6E6;
+		int diffArrowDist=0;
 		byte soundRepeatDelay=3;
 		float nearestLat=0.0f;
 		float nearestLon=0.0f;
@@ -1185,23 +1189,12 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			    	nearestLat=lastTo.lat;
 			    	nearestLon=lastTo.lon;
 					aNearest=a;
-			    	Font originalFont = pc.g.getFont();
-			    	if (routeFont==null) {
-						routeFont=Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_MEDIUM);
-						routeFontHeight=routeFont.getHeight();
-					}
-			    	pc.g.setFont(routeFont);
-			    	pc.g.setColor(230,230,230);
-					pc.g.fillRect(0,pc.ySize-imageCollector.statusFontHeight-routeFontHeight, pc.xSize, routeFontHeight);
-					pc.g.setColor(0,0,0);
 					double distance=ProjMath.getDistance(center.radlat, center.radlon, lastTo.lat, lastTo.lon);
 					int intDistance=new Double(distance).intValue();
-					pc.g.drawString(directions[a]
-					                      +
-					                      ((intDistance<PASSINGDISTANCE)?"":" in " + intDistance + "m"),
-					                      pc.xSize/2,pc.ySize-imageCollector.statusFontHeight, Graphics.HCENTER | Graphics.BOTTOM
-                    );
-					if(intDistance<PASSINGDISTANCE) {
+
+					routeInstruction=directions[a] + ((intDistance<PASSINGDISTANCE)?"":" in " + intDistance + "m");
+
+			    	if(intDistance<PASSINGDISTANCE) {
 						if (!atTarget) { 
 							soundToPlay.append (soundDirections[a]);
 						}
@@ -1210,14 +1203,27 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 						oldAwayFromNextArrow = intDistance;
 						sumWrongDirection=0;
 					}
-					sumWrongDirection += (intDistance - oldAwayFromNextArrow);
+			    	diffArrowDist = (intDistance - oldAwayFromNextArrow);
+					if ( diffArrowDist == 0 ) {
+		    			routeInstructionColor=oldRouteInstructionColor;
+					} else if (intDistance < PASSINGDISTANCE) {
+				    	// background colour if currently passing
+			    		routeInstructionColor=0x00E6E6E6;
+		    		} else if ( diffArrowDist > 0) {
+				    	// background colour if distance to next arrow has just increased
+			    		routeInstructionColor=0x00FFCD9B;
+					} else {
+				    	// background colour if distance to next arrow has just decreased
+			    		routeInstructionColor=0x00B7FBBA;						
+					}
+					oldRouteInstructionColor=routeInstructionColor;
+					sumWrongDirection += diffArrowDist;
 					System.out.println("Sum wrong direction: " + sumWrongDirection);
 					oldAwayFromNextArrow = intDistance;
 					if(intDistance>=PASSINGDISTANCE && intDistance<=PREPAREDISTANCE) {
 						soundToPlay.append ("PREPARE;" + soundDirections[a]);
 						soundRepeatDelay=5;
 					}
-					pc.g.setFont(originalFont);
 					if (a!=arrow) {
 						arrow=a;
 						scaledPict=doubleImage(pict);
@@ -1255,6 +1261,8 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 					|| sumWrongDirection >= 300) {
 		    		soundToPlay.setLength(0);
 		    		soundToPlay.append ("CHECK_DIRECTION");
+			    	// background colour if distance to next arrow is high
+		    		routeInstructionColor=0x00E6A03C;
 		    	}
 				pc.g.drawImage(pict,pc.lineP2.x,pc.lineP2.y,CENTERPOS);
 				lastEndBearing=c.endBearing;
@@ -1273,6 +1281,25 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			// route again before map was drawn
 			source=null;
 		}
+		// Route instruction text output
+		if (routeInstruction != null) {			
+			Font originalFont = pc.g.getFont();
+	    	if (routeFont==null) {
+				routeFont=Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_MEDIUM);
+				routeFontHeight=routeFont.getHeight();
+			}
+	    	pc.g.setFont(routeFont);
+	    	pc.g.setColor(routeInstructionColor);
+			pc.g.fillRect(0,pc.ySize-imageCollector.statusFontHeight-routeFontHeight, pc.xSize, routeFontHeight);
+			pc.g.setColor(0,0,0);
+			pc.g.drawString(routeInstruction,
+							pc.xSize/2,
+							pc.ySize-imageCollector.statusFontHeight,
+							Graphics.HCENTER | Graphics.BOTTOM
+	        );
+			pc.g.setFont(originalFont);
+		}
+		// Route instruction sound output
 		if (soundToPlay.length()!=0 && config.getCfgBitState(config.CFGBIT_SND_ROUTINGINSTRUCTIONS)) {
 			parent.mNoiseMaker.playSound(soundToPlay.toString(), (byte) soundRepeatDelay);			
 		}
