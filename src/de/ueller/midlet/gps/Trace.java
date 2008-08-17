@@ -1277,16 +1277,21 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			}
 		}
 
-		if (routeRecalculationRequired && 
-			config.getCfgBitState(config.CFGBIT_ROUTE_AUTO_RECALC) &&
-			source != null
-		) {
-			soundToPlay.setLength(0);
-			soundToPlay.append ("ROUTE_RECALCULATION");
-			commandAction(ROUTE_TO_CMD,(Displayable) null);
-			// set source to null to not recalculate
-			// route again before map was drawn
-			source=null;
+		if (routeRecalculationRequired) {
+			if (gpsRecenter && 
+				config.getCfgBitState(config.CFGBIT_ROUTE_AUTO_RECALC) &&
+				source != null
+			) {
+				// if map is gps-centered recalculate route
+				soundToPlay.setLength(0);
+				soundToPlay.append ("ROUTE_RECALCULATION");
+				commandAction(ROUTE_TO_CMD,(Displayable) null);
+				// set source to null to not recalculate
+				// route again before map was drawn
+				source=null;
+			}
+			// use red background color	    		
+			routeInstructionColor=0x00FF5402;				
 		}
 		// Route instruction text output
 		if (routeInstruction != null) {			
