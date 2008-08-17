@@ -1042,13 +1042,13 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			PREPAREDISTANCE=500;							
 		} else if (speed>80) {
 			PREPAREDISTANCE=300;							
-		} else if (speed>70) {
-			PREPAREDISTANCE=250;							
-		} else if (speed>50) {
+		} else if (speed>55) {
+			PREPAREDISTANCE=200;							
+		} else if (speed>45) {
 			PREPAREDISTANCE=150;							
-		} else if (speed>40) {
+		} else if (speed>35) {
 			PREPAREDISTANCE=125;							
-		} else if (speed>25) {
+		} else if (speed>20) {
 			PREPAREDISTANCE=100;							
 		}
 		
@@ -1237,7 +1237,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 					double distance=ProjMath.getDistance(nearestLat, nearestLon, lastTo.lat, lastTo.lon);
 					// if there is a close direction arrow after the current one
 					// inform the user about its direction
-					if (distance <= PASSINGDISTANCE*3 &&
+					if (distance <= PREPAREDISTANCE &&
 						// only if not both arrows are STRAIGHT_ON
 						!(a==4 && aNearest == 4) ) {
 						soundToPlay.append(";THEN;");
@@ -1254,15 +1254,15 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 					}
 				}
 				// give off-route bonus for first route arrow (newly created route)
-				int offRouteBonus= ( (iPassedRouteArrow <= 1) ? 300 : 0);
+				int offRouteBonus= ( (iPassedRouteArrow <= 1) ? 200 : 0);
 				// if the sum of movement away from the next arrow
 				// is much too high then recalculate route
-				if ( sumWrongDirection >= PREPAREDISTANCE*2 + offRouteBonus 
-						|| sumWrongDirection >= 500 + offRouteBonus ) {
+				if ( sumWrongDirection >= PREPAREDISTANCE + offRouteBonus 
+						|| sumWrongDirection >= 500) {
 						routeRecalculationRequired = true;
 				// if the sum of movement away from the next arrow is high
-		    	} else if ( sumWrongDirection >= PREPAREDISTANCE
-					|| sumWrongDirection >= 300) {
+		    	} else if ( sumWrongDirection >= PREPAREDISTANCE /2
+					|| sumWrongDirection >= 200) {
 		    		// if distance to next arrow is high
 	    			// and moving away from next arrow
 		    		// ask user to check direction
@@ -1288,7 +1288,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			) {
 				// if map is gps-centered recalculate route
 				soundToPlay.setLength(0);
-				soundToPlay.append ("ROUTE_RECALCULATION");
+				parent.mNoiseMaker.playSound("ROUTE_RECALCULATION");
 				commandAction(ROUTE_TO_CMD,(Displayable) null);
 				// set source to null to not recalculate
 				// route again before map was drawn
