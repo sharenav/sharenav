@@ -1199,11 +1199,15 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 							soundToPlay.append (soundDirections[a]);
 						}
 						sumWrongDirection = -1;
+						diffArrowDist = 0;
+						oldRouteInstructionColor=0x00E6E6E6;
 					} else if (sumWrongDirection == -1) {
 						oldAwayFromNextArrow = intDistance;
 						sumWrongDirection=0;
+						diffArrowDist = 0;
+					} else {
+						diffArrowDist = (intDistance - oldAwayFromNextArrow);
 					}
-			    	diffArrowDist = (intDistance - oldAwayFromNextArrow);
 					if ( diffArrowDist == 0 ) {
 		    			routeInstructionColor=oldRouteInstructionColor;
 					} else if (intDistance < PASSINGDISTANCE) {
@@ -1290,8 +1294,12 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				// route again before map was drawn
 				source=null;
 			}
-			// use red background color	    		
-			routeInstructionColor=0x00FF5402;				
+    		if (diffArrowDist > 0) {
+    			// use red background color if moving away	    		
+    			routeInstructionColor=0x00FF5402;				
+    		} else if (diffArrowDist == 0) {
+    			routeInstructionColor = oldRouteInstructionColor;
+    		}
 		}
 		// Route instruction text output
 		if (routeInstruction != null) {			
@@ -1836,6 +1844,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		routeEngine=null;
 		iPassedRouteArrow=0;
 		sumWrongDirection=-1;
+		oldRouteInstructionColor = 0x00E6E6E6;
 		try {
 			if (config.isStopAllWhileRouteing()){
 				startImageCollector();
