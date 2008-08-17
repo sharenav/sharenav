@@ -1216,7 +1216,6 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				    	// background colour if distance to next arrow has just decreased
 			    		routeInstructionColor=0x00B7FBBA;						
 					}
-					oldRouteInstructionColor=routeInstructionColor;
 					sumWrongDirection += diffArrowDist;
 					System.out.println("Sum wrong direction: " + sumWrongDirection);
 					oldAwayFromNextArrow = intDistance;
@@ -1250,19 +1249,27 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 						//System.out.println(soundToPlay.toString());
 					}
 				}
+				// give off-route bonus for first route arrow (newly created route)
+				int offRouteBonus= ( (iPassedRouteArrow <= 1) ? 300 : 0);
 				// if the sum of movement away from the next arrow
 				// is much too high then recalculate route
-				if ( sumWrongDirection >= PREPAREDISTANCE*2
-						|| sumWrongDirection >= 500) {
+				if ( sumWrongDirection >= PREPAREDISTANCE*2 + offRouteBonus 
+						|| sumWrongDirection >= 500 + offRouteBonus ) {
 						routeRecalculationRequired = true;
-				// if the sum of movement away from the next arrow
-				// is high then ask user to check direction
+				// if the sum of movement away from the next arrow is high
 		    	} else if ( sumWrongDirection >= PREPAREDISTANCE
 					|| sumWrongDirection >= 300) {
-		    		soundToPlay.setLength(0);
-		    		soundToPlay.append ("CHECK_DIRECTION");
-			    	// background colour if distance to next arrow is high
-		    		routeInstructionColor=0x00E6A03C;
+		    		// if distance to next arrow is high
+	    			// and moving away from next arrow
+		    		// ask user to check direction
+		    		if (diffArrowDist > 0) {
+			    		soundToPlay.setLength(0);
+			    		soundToPlay.append ("CHECK_DIRECTION");
+			    		soundRepeatDelay=5;
+			    		routeInstructionColor=0x00E6A03C;
+		    		} else if (diffArrowDist == 0) {
+		    			routeInstructionColor = oldRouteInstructionColor;
+		    		}
 		    	}
 				pc.g.drawImage(pict,pc.lineP2.x,pc.lineP2.y,CENTERPOS);
 				lastEndBearing=c.endBearing;
@@ -1290,6 +1297,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			}
 	    	pc.g.setFont(routeFont);
 	    	pc.g.setColor(routeInstructionColor);
+			oldRouteInstructionColor=routeInstructionColor;
 			pc.g.fillRect(0,pc.ySize-imageCollector.statusFontHeight-routeFontHeight, pc.xSize, routeFontHeight);
 			pc.g.setColor(0,0,0);
 			pc.g.drawString(routeInstruction,
