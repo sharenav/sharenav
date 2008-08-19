@@ -177,7 +177,8 @@ public class Configuration {
 				   		1<<CFGBIT_SND_ROUTINGINSTRUCTIONS |
 				   		1<<CFGBIT_SND_TARGETREACHED |
 				   		1<<CFGBIT_ROUTE_AUTO_RECALC |
-				   		1<<CFGBIT_BACKLIGHT_MAPONLY;
+				   		1<<CFGBIT_BACKLIGHT_MAPONLY |
+				   		getDefaultDeviceBacklightMethodMask();
 				setCfgBits(cfgBits, true);
 				//#debug info
 				logger.info("Default cfgBits where set.");
@@ -642,5 +643,26 @@ public class Configuration {
 			return true;
 		}
 		return false;
+	}
+	
+	private int getDefaultDeviceBacklightMethodMask() {
+		// a list of return codes for microedition.platform can be found at:
+		// http://www.club-java.com/TastePhone/J2ME/MIDP_Benchmark.jsp
+		String phoneModel=System.getProperty("microedition.platform");
+		if (phoneModel != null) {
+			// determine default backlight method for devices from the wiki
+			if (phoneModel.startsWith("Nokia") ||
+				phoneModel.startsWith("SonyEricssonC") ||
+				phoneModel.startsWith("SonyEricssonK550")
+			) {
+				return 1<<CFGBIT_BACKLIGHT_NOKIA;			
+			}
+			if (phoneModel.startsWith("SonyEricssonK750") ||
+				phoneModel.startsWith("SonyEricssonW800")
+			) {
+				return 1<<CFGBIT_BACKLIGHT_NOKIAFLASH;
+			}
+		}
+		return 0;
 	}
 }
