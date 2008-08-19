@@ -1253,16 +1253,14 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 						//System.out.println(soundToPlay.toString());
 					}
 				}
-				// give off-route bonus for first route arrow (newly created route)
-				int offRouteBonus= ( (iPassedRouteArrow <= 1) ? 200 : 0);
 				// if the sum of movement away from the next arrow
 				// is much too high then recalculate route
-				if ( sumWrongDirection >= PREPAREDISTANCE + offRouteBonus 
-						|| sumWrongDirection >= 500) {
+				if ( sumWrongDirection >= PREPAREDISTANCE * 2 / 3
+						|| sumWrongDirection >= 300) {
 						routeRecalculationRequired = true;
 				// if the sum of movement away from the next arrow is high
-		    	} else if ( sumWrongDirection >= PREPAREDISTANCE /2
-					|| sumWrongDirection >= 200) {
+		    	} else if ( sumWrongDirection >= PREPAREDISTANCE / 3
+					|| sumWrongDirection >= 150) {
 		    		// if distance to next arrow is high
 	    			// and moving away from next arrow
 		    		// ask user to check direction
@@ -1288,7 +1286,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			) {
 				// if map is gps-centered recalculate route
 				soundToPlay.setLength(0);
-				parent.mNoiseMaker.playSound("ROUTE_RECALCULATION");
+				if (config.getCfgBitState(config.CFGBIT_SND_ROUTINGINSTRUCTIONS)) {
+					parent.mNoiseMaker.playSound("ROUTE_RECALCULATION", (byte) 5 );
+				}
 				commandAction(ROUTE_TO_CMD,(Displayable) null);
 				// set source to null to not recalculate
 				// route again before map was drawn
