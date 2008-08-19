@@ -1278,6 +1278,18 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				lastTo=c.to;
 			}
 		}
+		/* if we just moved away from target,
+		  and the map is gpscentered 
+		  and there's only one route arrow
+		  ==> auto recalculation
+		*/
+		if (movedAwayFromTarget
+			&& gpsRecenter
+			&& route.size()==2
+			&& ProjMath.getDistance(target.lat, target.lon, center.radlat, center.radlon) > PREPAREDISTANCE
+		) {
+			routeRecalculationRequired=true;		
+		}
 
 		if (routeRecalculationRequired) {
 			if (gpsRecenter && 
