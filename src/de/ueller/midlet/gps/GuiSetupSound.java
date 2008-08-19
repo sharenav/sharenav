@@ -5,6 +5,7 @@ package de.ueller.midlet.gps;
  */
 
 import javax.microedition.lcdui.*;
+import java.io.InputStream;
 
 import de.ueller.gps.data.Configuration;
 import de.ueller.midlet.gps.tile.C;
@@ -41,20 +42,11 @@ public class GuiSetupSound extends Form implements CommandListener {
 			sndGpsGroup.setSelectedFlags(selSndGps);
 			append(sndGpsGroup);
 			
-			// only add Routing Sound Group if we have Sound Description
-			// at least for LEFT
-			String soundFile=null;
-			SoundDescription sDes=C.getSoundDescription("LEFT");
-			if (sDes!=null) {
-				soundFile=sDes.soundFile;
-			}
-			if(soundFile!=null) {			
-				sndRouting[0] = "Routing Instructions"; 	selSndRouting[0]=config.getCfgBitState(config.CFGBIT_SND_ROUTINGINSTRUCTIONS);
-				sndRouting[1] = "Target Reached"; 			selSndRouting[1]=config.getCfgBitState(config.CFGBIT_SND_TARGETREACHED);
-				sndRoutingGroup = new ChoiceGroup("Navigation / Routing", Choice.MULTIPLE, sndRouting ,null);
-				sndRoutingGroup.setSelectedFlags(selSndRouting);
-				append(sndRoutingGroup);
-			}
+			sndRouting[0] = "Routing Instructions"; 	selSndRouting[0]=config.getCfgBitState(config.CFGBIT_SND_ROUTINGINSTRUCTIONS);
+			sndRouting[1] = "Target Reached"; 			selSndRouting[1]=config.getCfgBitState(config.CFGBIT_SND_TARGETREACHED);
+			sndRoutingGroup = new ChoiceGroup("Navigation / Routing", Choice.MULTIPLE, sndRouting ,null);
+			sndRoutingGroup.setSelectedFlags(selSndRouting);
+			append(sndRoutingGroup);
 			
 			addCommand(CMD_SAVE);
 			addCommand(CMD_CANCEL);

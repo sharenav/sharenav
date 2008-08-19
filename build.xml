@@ -164,6 +164,7 @@
 				<fileset dir="resources" includes="**/*.dat" if="test"/>
 				<fileset dir="resources" includes="**/*.d" if="test" />
 				<fileset dir="resources" includes="**/*.png"/>
+				<fileset dir="resources" includes="**/*.amr"/>
 
 				<!-- you can add resources based on complex criterias: 
 				<fileset 

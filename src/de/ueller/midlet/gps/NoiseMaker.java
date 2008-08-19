@@ -102,34 +102,40 @@ public class NoiseMaker
 	}
 //#endif
 	
+	private byte [] getToneSequence( String name ) {
+    	byte sequence[] = null;
+		if(name.equals("CONNECT")) {
+			/**
+			 * Sound for the situation that the connection to the
+			 * GPS device has been (re)established.
+			 */
+			sequence= mConnOpenedSequence;	
+		} else if (name.equals("DISCONNECT")) {
+			/**
+			 * Sound for the situation that the connection to the
+			 * GPS device has been (re)established.
+			 */
+			sequence= mConnLostSequence;				
+		} else if (name.equals("FIX")) {
+			/**
+			 * Sound for the situation that a valid position was received
+			 */
+			//sequence= mPosFixSequence;				
+		} else if (name.equals("NOFIX")) {
+			/**
+			 * Sound for the situation that the position has become unknown.
+			 */
+			//sequence= mNoFixSequence;				
+		}
+		return sequence;
+	}
+	
+	
 	private void playSequence( String name )
 	{
 //#if polish.api.mmapi	
 	    try { 
-	    	byte sequence[] = null;
-			if(name.equals("CONNECT")) {
-				/**
-				 * Sound for the situation that the connection to the
-				 * GPS device has been (re)established.
-				 */
-				sequence= mConnOpenedSequence;	
-			} else if (name.equals("DISCONNECT")) {
-				/**
-				 * Sound for the situation that the connection to the
-				 * GPS device has been (re)established.
-				 */
-				sequence= mConnLostSequence;				
-			} else if (name.equals("FIX")) {
-				/**
-				 * Sound for the situation that a valid position was received
-				 */
-				//sequence= mPosFixSequence;				
-			} else if (name.equals("NOFIX")) {
-				/**
-				 * Sound for the situation that the position has become unknown.
-				 */
-				//sequence= mNoFixSequence;				
-			}
+	    	byte sequence[] = getToneSequence(name);
 	    	if (sequence != null) {
 		    	// As a player cannot return to a state before PREFETCHED
 		    	// once it has played, the tone sequence cannot be changed.
@@ -215,6 +221,9 @@ public class NoiseMaker
 			soundFile = sDes.soundFile;
 		}
 		if (sDes == null || soundFile == null) {
+			if (getToneSequence(name) != null) {
+				return false;
+			}
 			soundFile = name.toLowerCase() + ".amr";
 		}
 		
