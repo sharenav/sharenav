@@ -57,6 +57,9 @@ zoomed out 21x (scale alias 1:  500km)
 	<sound name="DISCONNECT">
 		<soundFile src="disconnect.amr"/>
 	</sound>
+<!-- these soundFiles are automatically determined by the midlet
+      and can stay commented out as long as you don't want
+      to include other sound files or formats (.mp3, .wav) for them.
 	<sound name="PREPARE">
 		<soundFile src="prepare.amr"/>
 	</sound>
@@ -93,6 +96,7 @@ zoomed out 21x (scale alias 1:  500km)
 	<sound name="TARGET_REACHED">
 		<soundFile src="target_reached.amr"/>
 	</sound>
+-->
   </sounds>
   <pois>
 	<key tag="place">
