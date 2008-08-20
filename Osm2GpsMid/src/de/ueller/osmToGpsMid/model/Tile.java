@@ -1,5 +1,6 @@
 package de.ueller.osmToGpsMid.model;
 
+import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -339,9 +340,9 @@ public class Tile {
 		if (routeNodes != null){
 			//System.out.println("Write Routenodes " + fid + " nodes " + routeNodes.size()+"  with " + idxMin + " to "+ idxMax);
 			FileOutputStream cfo = new FileOutputStream(path+"/c"+fid+".d");
-			DataOutputStream cds = new DataOutputStream(cfo);
+			DataOutputStream cds = new DataOutputStream(new BufferedOutputStream(cfo));
 			FileOutputStream fo = new FileOutputStream(path+"/t"+zl+fid+".d");
-			DataOutputStream nds = new DataOutputStream(fo);
+			DataOutputStream nds = new DataOutputStream(new BufferedOutputStream(fo));
 			nds.writeShort(routeNodes.size());
 			for (RouteNode n : routeNodes){
 				nds.writeFloat(MyMath.degToRad(n.node.lat));
