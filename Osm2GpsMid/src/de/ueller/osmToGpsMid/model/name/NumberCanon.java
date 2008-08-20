@@ -77,7 +77,7 @@ public class NumberCanon {
 		case 'Δ':
 		case 'δ':
 		case 'ε':
-		case 'ζ';
+		case 'ζ':
 			return ('3');
 		case 'g':
 		case 'G':
