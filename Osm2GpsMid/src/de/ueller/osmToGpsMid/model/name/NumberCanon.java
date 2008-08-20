@@ -49,7 +49,12 @@ public class NumberCanon {
 		case 'â':
 		case 'Ç':
 		case 'ç':
+// Greek
+		case 'Α':
+		case 'Ά':
 		case 'α':
+		case 'ά':
+		case 'Β':
 		case 'β':
 		case 'Γ':
 		case 'γ':
@@ -74,9 +79,14 @@ public class NumberCanon {
 		case 'Ě':
 		case 'ě':
 		case 'ď':
+// Greek
 		case 'Δ':
 		case 'δ':
+		case 'Ε':
+		case 'Έ':
 		case 'ε':
+		case 'έ':
+		case 'Ζ':
 		case 'ζ':
 			return ('3');
 		case 'g':
@@ -96,10 +106,19 @@ public class NumberCanon {
 		case 'ì':
 		case 'İ':
 		case 'ı':
+		case 'ί':
+// Greek
+		case 'Η':
+		case 'Ή':
 		case 'η':
+		case 'ή':
 		case 'Θ':
 		case 'θ':
+		case 'Ι':
+		case 'Ϊ':
 		case 'ι':
+		case 'ΐ':
+		case 'ϊ':
 			return ('4');
 		case 'j':
 		case 'J':
@@ -112,10 +131,13 @@ public class NumberCanon {
 		case 'ĺ':
 		case 'Ł':
 		case 'ł':
+// Greek
+		case 'Κ':
 		case 'κ':
 		case 'Λ':
 		case 'λ':
 		case 'μ':
+		case 'Μ':
 			return ('5');
 		case 'm':
 		case 'M':
@@ -140,9 +162,15 @@ public class NumberCanon {
 		case 'ñ':
 		case 'Œ':
 		case 'œ':
+// Greek
+		case 'Ν':
 		case 'ν':
 		case 'Ξ':
 		case 'ξ':
+		case 'Ο':
+		case 'Ό':
+		case 'ο':
+		case 'ό':
 			return ('6');
 		case 'p':
 		case 'P':
@@ -166,8 +194,10 @@ public class NumberCanon {
 		case 'ș':
 		case 'Ş':
 		case 'ş':
+// Greek
 		case 'Π':
 		case 'π':
+		case 'Ρ':
 		case 'ρ':
 		case 'Σ':
 		case 'σ':
@@ -194,8 +224,19 @@ public class NumberCanon {
 		case 'ţ':
 		case 'Û':
 		case 'û':
+// Greek
+		case 'Τ':
 		case 'τ':
+		case 'Υ':
+		case 'Ύ':
+		case 'Ϋ':
+		case 'ϒ':
+		case 'ϓ':
+		case 'ϔ':
 		case 'υ':
+		case 'ΰ':
+		case 'ϋ':
+		case 'ύ':
 		case 'Φ':
 		case 'φ':
 			return ('8');
@@ -218,11 +259,15 @@ public class NumberCanon {
 		case 'ż':
 		case 'Ž':
 		case 'ž':
+// Greek
+		case 'Χ':
 		case 'χ':
 		case 'Ψ':
 		case 'ψ':
 		case 'Ω':
+		case 'Ώ':
 		case 'ω':			
+		case 'ώ':			
 			return ('9');
 		case '\0':
 			return ('\0');
