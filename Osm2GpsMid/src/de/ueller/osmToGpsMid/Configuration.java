@@ -141,11 +141,9 @@ public class Configuration {
 						}
 					}
 					rb= new PropertyResourceBundle(cf);
-				} else if (bounds != null) {
+				} else {
 					//No .properties file was specified, so use the default one
 					rb=new PropertyResourceBundle(getClass().getResourceAsStream("/version.properties"));
-				} else {
-					System.out.println("ERROR: No bounds specified on the command line and no property file");
 				}
 				vb=new PropertyResourceBundle(getClass().getResourceAsStream("/version.properties"));
 
@@ -295,17 +293,30 @@ public class Configuration {
 					i++;
 				}
 			} catch (RuntimeException e) {
+				;
+			}
+			
+			if (i>0) {
 				System.out.println("found " + i + " bounds");
+				Bounds[] ret=new Bounds[i];
+				for (int l=0;l < i;l++){
+					ret[l]=new Bounds();
+					ret[l].extend(getFloat("region."+(l+1)+".lat.min"),
+							getFloat("region."+(l+1)+".lon.min"));
+					ret[l].extend(getFloat("region."+(l+1)+".lat.max"),
+							getFloat("region."+(l+1)+".lon.max"));
+				}
+				return ret;				
+			} else {
+				System.out.println("Warning: No bounds were given - using [-180,-90,180,90]");
+				System.out.println("This will try to create a GpsMid for the whole region");
+				System.out.println("contained in " + planet);
+				Bounds[] ret=new Bounds[1];
+				ret[0]=new Bounds();
+				ret[0].extend(-180.0, -90.0);
+				ret[0].extend(180.0, 90.0);
+				return ret;	
 			}
-			Bounds[] ret=new Bounds[i];
-			for (int l=0;l < i;l++){
-				ret[l]=new Bounds();
-				ret[l].extend(getFloat("region."+(l+1)+".lat.min"),
-						getFloat("region."+(l+1)+".lon.min"));
-				ret[l].extend(getFloat("region."+(l+1)+".lat.max"),
-						getFloat("region."+(l+1)+".lon.max"));
-			}
-			return ret;
 		}
 
 		/**
