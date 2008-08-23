@@ -148,10 +148,16 @@ public class GuiCamera extends Canvas implements CommandListener, GuiCameraInter
 			//#endif
 		} catch (SecurityException se) {
 			logger.exception("Security Exception: ", se);
+			mPlayer = null;
+			video = null;
 		} catch (IOException e) {
 			logger.exception("IOexception", e);
+			mPlayer = null;
+			video = null;
 		} catch (MediaException e) {
 			logger.exception("MediaExcpetion", e);
+			mPlayer = null;
+			video = null;
 		}
 		//#else
 		logger.error("Camera control is not supported by this device");
