@@ -21,6 +21,7 @@ import javax.microedition.io.StreamConnection;
 import javax.microedition.io.file.FileConnection;
 //#endif
 import javax.microedition.lcdui.Canvas;
+import javax.microedition.lcdui.Choice;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Display;
@@ -28,10 +29,12 @@ import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
+import javax.microedition.lcdui.List;
 import javax.microedition.midlet.MIDlet;
 import javax.microedition.rms.RecordStoreException;
 import javax.microedition.rms.RecordStoreFullException;
 import javax.microedition.rms.RecordStoreNotOpenException;
+
 
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Position;
@@ -90,6 +93,10 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	private final Command CLEARTARGET_CMD = new Command("Clear Target",Command.ITEM, 10);
 	private final Command SETTARGET_CMD = new Command("As Target",Command.ITEM, 11);
 	private final Command MAPFEATURES_CMD = new Command("Map Features",Command.ITEM, 12);
+	private final Command RECORDINGS_CMD = new Command("Recordings...",Command.ITEM, 4);
+	private final Command ROUTINGS_CMD = new Command("Routing...",Command.ITEM, 3);
+	private final Command OK_CMD = new Command("OK",Command.OK, 14);
+	private final Command BACK_CMD = new Command("Back",Command.BACK, 15);
 
 
 	private InputStream btGpsInputStream;
@@ -134,7 +141,10 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	PositionMark source;
 
 	// this is only for visual debugging of the routing engine
-	Vector routeNodes=new Vector(); 
+	Vector routeNodes=new Vector();
+	
+	private List recordingsMenu;
+	private List routingsMenu;
 
 	private final static Logger logger = Logger.getInstance(Trace.class,Logger.DEBUG);
 
@@ -184,6 +194,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	private static final int CENTERPOS = Graphics.HCENTER|Graphics.VCENTER;
 
 	public Gpx gpx;
+	private AudioRecorder audioRec;
 	
 	private static Trace traceInstance=null;
 
@@ -220,17 +231,11 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		addCommand(EXIT_CMD);
 		addCommand(SEARCH_CMD);
 		addCommand(CONNECT_GPS_CMD);
-		addCommand(ROUTE_TO_CMD);
-		addCommand(START_RECORD_CMD);
-		addCommand(MANAGE_TRACKS_CMD);		           
-		addCommand(SAVE_WAYP_CMD);
+		addCommand(MANAGE_TRACKS_CMD);
 		addCommand(MAN_WAYP_CMD);
-		//#if polish.api.mmapi && polish.api.advancedmultimedia
-		addCommand(CAMERA_CMD);
-		//#endif
-		addCommand(CLEARTARGET_CMD);
-		addCommand(SETTARGET_CMD);
 		addCommand(MAPFEATURES_CMD);
+		addCommand(RECORDINGS_CMD);
+		addCommand(ROUTINGS_CMD);
 		setCommandListener(this);
 		
 		try {
@@ -548,17 +553,12 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			if (c == START_RECORD_CMD){
 				try {
 					gpx.newTrk();
-					removeCommand(START_RECORD_CMD);
-					addCommand(STOP_RECORD_CMD);
 				} catch (RuntimeException e) {
 					receiveMessage(e.getMessage());
 				}
-				
 			}
 			if (c == STOP_RECORD_CMD){
 				gpx.saveTrk();
-				removeCommand(STOP_RECORD_CMD);
-				addCommand(START_RECORD_CMD);
 				addCommand(MANAGE_TRACKS_CMD);
 			}
 			if (c == MANAGE_TRACKS_CMD){
@@ -567,11 +567,6 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 					return;
 				}
 
-//				if (gpx.isRecordingTrk()) {
-//			    	gpx.saveTrk();
-//					removeCommand(STOP_RECORD_CMD);
-//					addCommand(START_RECORD_CMD);			    	
-//			    }
 				if (imageCollector != null) { 
                     imageCollector.suspend(); 
                 } 
@@ -620,8 +615,99 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				gmf.show();
 				repaint(0, 0, getWidth(), getHeight());
 			}
+			if (c == RECORDINGS_CMD) {
+				int noElements = 2;
+				//#if polish.api.mmapi
+				noElements = 4;
+				//#endif
+				String[] elements = new String[noElements];
+				if (gpx.isRecordingTrk()) {
+					elements[0] = "Stop Gpx tracklog";
+				} else {
+					elements[0] = "Start Gpx tracklog";
+				}
+				elements[1] = "Add a waypoint";
+				//#if polish.api.mmapi
+				elements[2] = "Take pictures";
+				if (audioRec.isRecording()) {
+					elements[3] = "Stop audio recording";
+				} else {
+					elements[3] = "Start audio recording";					
+				}
+				//#endif
+					
+				recordingsMenu = new List("Recordings..",Choice.IMPLICIT,elements,null);
+				recordingsMenu.addCommand(OK_CMD);
+				recordingsMenu.addCommand(BACK_CMD);
+				recordingsMenu.setSelectCommand(OK_CMD);
+				parent.show(recordingsMenu);
+				recordingsMenu.setCommandListener(this);				
+			}
+			if (c == ROUTINGS_CMD) {				
+				String[] elements = {"Calculate route", "Set target" , "Clear target"};					
+				routingsMenu = new List("Routing..",Choice.IMPLICIT,elements,null);
+				routingsMenu.addCommand(OK_CMD);
+				routingsMenu.addCommand(BACK_CMD);
+				routingsMenu.setSelectCommand(OK_CMD);
+				parent.show(routingsMenu);
+				routingsMenu.setCommandListener(this);				
+			}
+			if (c == BACK_CMD) {
+				show();
+			}
+			if (c == OK_CMD) {
+				if (d == recordingsMenu) {
+					 switch (recordingsMenu.getSelectedIndex()) {
+			            case 0: {
+			            	if (!gpx.isRecordingTrk()){			    				
+			    					gpx.newTrk();
+			    			} else {			    			
+			    				gpx.saveTrk();			    				
+			    			}
+			            	show();
+			            	break;
+			            }
+			            case 1: {
+			            	commandAction(SAVE_WAYP_CMD, null);			            	
+							break;
+			            }
+			          //#if polish.api.mmapi
+			            case 2: {
+			            	commandAction(CAMERA_CMD, null);			            	
+			            	break;
+			            }
+			            case 3: {
+			            	show();
+			            	if (audioRec.isRecording()) {
+			            		audioRec.stopRecord();
+			            	} else {
+			            		audioRec.startRecorder();
+			            	}			            	
+			            	break;
+			            }
+			          //#endif
+					 }
+				}
+				if (d == routingsMenu) {
+					show();
+					switch (routingsMenu.getSelectedIndex()) {
+					case 0: {			            	
+						commandAction(ROUTE_TO_CMD, null);
+						break;
+					}
+					case 1: {
+						commandAction(SETTARGET_CMD, null);
+						break;
+					}
+					case 2: {
+						commandAction(CLEARTARGET_CMD, null);
+						break;
+					}			            	
+					}
+				}
+			}
 			//#if polish.api.mmapi && polish.api.advancedmultimedia
-			if (c == CAMERA_CMD){				
+			if (c == CAMERA_CMD){		
 				if (imageCollector != null) {
 					imageCollector.suspend();
 				}
@@ -692,6 +778,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 //		logger.info("create imageCollector");
 		dictReader = new QueueDictReader(this);
 		this.gpx = new Gpx();
+		this.audioRec = new AudioRecorder();
 		setDict(gpx, (byte)5);
 		startImageCollector();
 		
@@ -1685,27 +1772,11 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		 **/
 		} else if (keyCode == -8) {
 			   commandAction(ROUTE_TO_CMD,(Displayable) null);
-			   return;   		
-		//#if polish.api.mmapi && polish.api.advancedmultimedia
+			   return;		
 		} else if (keyCode == Configuration.KEYCODE_CAMERA_COVER_OPEN) {
-			if (imageCollector != null) {
-				imageCollector.suspend();
-			}
-			try {
-				Class GuiCameraClass = Class.forName("de.ueller.midlet.gps.GuiCamera");
-				Object GuiCameraObject = GuiCameraClass.newInstance();					
-				GuiCameraInterface cam = (GuiCameraInterface)GuiCameraObject;
-				cam.init(this, getConfig());
-				cam.show();
-			} catch (ClassNotFoundException cnfe) {
-				logger.exception("Your phone does not support the necessary JSRs to use the camera", cnfe);
-			} catch (InstantiationException e) {
-				logger.exception("Your phone does not support the necessary JSRs to use the camera", e);
-			} catch (IllegalAccessException e) {
-				logger.exception("Your phone does not support the necessary JSRs to use the camera", e);
-			}
-		//#endif
- 
+			//#if polish.api.mmapi && polish.api.advancedmultimedia
+			commandAction(CAMERA_CMD, (Displayable)null);
+			//#endif
 		} else {		
 			keyStatus = keyCode;
 		}
@@ -1723,7 +1794,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	public void setDict(Tile dict, byte zl) {		
 		t[zl] = dict;
 		// Tile.trace=this;
-		addCommand(REFRESH_CMD);
+		//addCommand(REFRESH_CMD);
 //		if (zl == 3) {
 //			setTitle(null);
 //		} else {
@@ -1765,9 +1836,6 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			 * Close and Save the gpx recording, to ensure we don't loose data
 			 */
 			gpx.saveTrk();
-			
-			removeCommand(STOP_RECORD_CMD);
-			removeCommand(START_RECORD_CMD);
 		}
 		removeCommand(DISCONNECT_GPS_CMD);
 		if (locationProducer == null){
@@ -1779,7 +1847,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		closeBtConnection();
 		notify();		
 		addCommand(CONNECT_GPS_CMD);
-		addCommand(START_RECORD_CMD);
+//		addCommand(START_RECORD_CMD);
 //#debug info
 		logger.info("end locationDecoderEnd");
 	}
