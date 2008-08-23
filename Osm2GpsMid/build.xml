@@ -33,6 +33,12 @@
 			<include name="**/*.jar" />
 		</fileset>
 	</path>
+	<path id="test.classpath">
+		<pathelement location="${basedir}/bin-tests" />
+		<fileset dir="${lib.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
 
    <target name="clover-yes" depends="prepare" if="clover.available">
       <property name="compiler" value="org.apache.tools.ant.taskdefs.CloverCompilerAdapter"/>
@@ -44,6 +50,7 @@
 
    <target name="prepare">
    	  <mkdir dir="bin"/>
+	  <mkdir dir="bin-tests"/>
       <mkdir dir="${dist.dir}"/>
    	  <mkdir dir="exploded"/>
       <mkdir dir="resources"/>
@@ -72,6 +79,7 @@
    <target name="clean">
     <delete dir="${build.dir}"/>
    	<delete dir="bin"/>
+   	<delete dir="bin-tests" />
     <delete dir="deploy"/>
    	<delete dir="exploded"/>
    	<delete dir="${dist.dir}"/>
@@ -147,6 +155,23 @@
           todir="${basedir}"
           name="exploded"/>
    </target>
+	
+	<target name="compile-test" depends="prepare">
+		<javac srcdir="${basedir}/test;${src.dir}" destdir="bin-tests" debug="on">
+			<classpath>
+				<path refid="test.classpath" />
+			</classpath>
+		</javac>
+	</target>
+
+	<target name="unit-test" depends="compile-test">
+		<junit>
+			<classpath refid="test.classpath" />
+			<formatter type="plain" usefile="false" />
+			<test name="de.ueller.osmToGpsMid.AllTests" />
+		</junit>
+	</target>
+
 	
 	<target name="app-germany" depends="deploy">
 		<java jar="${dist.dir}/${ant.project.name}-${version}.jar" fork="true" maxmemory="1280m">
