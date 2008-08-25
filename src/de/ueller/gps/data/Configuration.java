@@ -73,7 +73,9 @@ public class Configuration {
 	// bit 21: Sound on target reached
 	public final static byte CFGBIT_SND_TARGETREACHED=21;
 	// bit 22: auto recalculate route
-	public final static byte CFGBIT_ROUTE_AUTO_RECALC=22;	
+	public final static byte CFGBIT_ROUTE_AUTO_RECALC=22;
+	// bit 23: use JSR135 or JSR 234 for taking pictures;
+	public final static byte CFGBIT_USE_JSR_234=23;
 
 	
 	/**
@@ -103,6 +105,8 @@ public class Configuration {
 	private static final int RECORD_ID_STARTUP_RADLON=22;
 	private static final int RECORD_ID_PHOTO_URL = 23;
 	private static final int RECORD_ID_GPS_RECONNECT = 24;
+	private static final int RECORD_ID_PHOTO_ENCODING = 25;
+	
 
 	// Gpx Recording modes
 	// GpsMid determines adaptive if a trackpoint is written
@@ -135,6 +139,7 @@ public class Configuration {
 	private float detailBoostMultiplier;
 	private String gpxUrl;
 	private String photoUrl;
+	private String photoEncoding;
 	private int debugSeverity;
 	private int routeEstimationFac=6;
 	private boolean stopAllWhileRouteing=false;
@@ -207,6 +212,7 @@ public class Configuration {
 			locationProvider=readInt(database, RECORD_ID_LOCATION_PROVIDER);
 			gpxUrl=readString(database, RECORD_ID_GPX_URL);
 			photoUrl=readString(database, RECORD_ID_PHOTO_URL);
+			photoEncoding=readString(database, RECORD_ID_PHOTO_ENCODING);
 			mapFromJar=readInt(database, RECORD_ID_MAP_FROM_JAR) == 0;
 			mapFileUrl=readString(database, RECORD_ID_MAP_FILE_URL);
 			rawGpsLogUrl=readString(database, RECORD_ID_LOG_RAW_GPS_URL);
@@ -528,6 +534,15 @@ public class Configuration {
 
 	public String getPhotoUrl() {
 		return photoUrl;
+	}
+	
+	public void setPhotoEncoding(String encoding) {
+		this.photoEncoding = encoding;
+		write(encoding, RECORD_ID_PHOTO_ENCODING);
+	}
+
+	public String getPhotoEncoding() {
+		return photoEncoding;
 	}
 	
 	public boolean usingBuiltinMap() {

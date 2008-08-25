@@ -13,10 +13,14 @@ import javax.microedition.io.Connector;
 import javax.microedition.io.file.FileConnection;
 //#endif
 import javax.microedition.lcdui.Canvas;
+import javax.microedition.lcdui.Choice;
+import javax.microedition.lcdui.ChoiceGroup;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
+import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.Graphics;
+import javax.microedition.lcdui.TextField;
 //#if polish.api.mmapi
 import javax.microedition.media.Manager;
 import javax.microedition.media.MediaException;
@@ -31,6 +35,7 @@ import javax.microedition.amms.control.camera.SnapshotControl;
 //#endif
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.tools.HelperRoutines;
+import de.ueller.gps.tools.StringTokenizer;
 
 /**
  * 
@@ -45,8 +50,10 @@ import de.ueller.gps.tools.HelperRoutines;
 public class GuiCamera extends Canvas implements CommandListener, GuiCameraInterface, SelectionListener, GpsMidDisplayable {
 
 	private final Command BACK_CMD = new Command("Back", Command.BACK, 5);
+	private final Command OK_CMD = new Command("Ok", Command.OK, 5);
 	private final Command CAPTURE_CMD = new Command("Capture", Command.OK, 5);
 	private final Command STORE_CMD = new Command("Select directory", Command.ITEM, 5);
+	private final Command SETUP_CMD = new Command("Setup", Command.ITEM, 6);
 
 	private final static Logger logger = Logger.getInstance(GuiCamera.class,
 			Logger.DEBUG);
@@ -57,16 +64,25 @@ public class GuiCamera extends Canvas implements CommandListener, GuiCameraInter
 	private FocusControl focus;	
 	//#endif
 	//#endif
+	private String encoding;
 	private Trace parent;
 	private String basedirectory;
+	
+	private ChoiceGroup selectJsrCG;
+	private TextField   encodingTF;
+	private ChoiceGroup encodingCG;
+	private Configuration config;
 
 	public void init(Trace parent, Configuration config) {
 		this.parent = parent;
+		this.config = config;
 		addCommand(BACK_CMD);
 		addCommand(CAPTURE_CMD);
-		addCommand(STORE_CMD);
+		//addCommand(STORE_CMD);
+		addCommand(SETUP_CMD);
 		setCommandListener(this);
 		setUpCamera();
+		
 	}
 
 	/*
@@ -146,6 +162,9 @@ public class GuiCamera extends Canvas implements CommandListener, GuiCameraInter
 				logger.info("Device doesn't support ImageFormatControl");
 			}
 			//#endif
+			
+			
+			
 		} catch (SecurityException se) {
 			logger.exception("Security Exception: ", se);
 			mPlayer = null;
@@ -174,7 +193,7 @@ public class GuiCamera extends Canvas implements CommandListener, GuiCameraInter
 		
 		try {
 			int idx = 0; 
-			byte [] photo = video.getSnapshot("encoding=jpeg&width=1600&height=1200");
+			byte [] photo = video.getSnapshot(config.getPhotoEncoding());
 			logger.info("Captured photo of size : " + photo.length);
 			
 			FileConnection fc = (FileConnection)Connector.open(basedirectory + "GpsMid-" + HelperRoutines.formatInt2(idx) + "-" + HelperRoutines.formatSimpleDateSecondNow() + ".jpg");
@@ -190,7 +209,9 @@ public class GuiCamera extends Canvas implements CommandListener, GuiCameraInter
 			logger.exception("Couldn't take picture", e);			
 		} catch (IOException e) {
 			logger.exception("IOException capturing the photo", e);
-		}		
+		} catch (NullPointerException npe) {
+			logger.exception("Failed to take a picture", npe);
+		}
 		//#endif
  
 	}
@@ -245,17 +266,19 @@ public class GuiCamera extends Canvas implements CommandListener, GuiCameraInter
 		} catch (MediaException e) {
 			logger.exception("Couldn't capture photo", e);
 		}
+		//#else
+		logger.error("JSR-234 support is not compiled into this MIDlet. Please use JSR-135");
 		//#endif
 
 	}
 	
 	private void takePicture() {
 		try {
-			//#if polish.api.mmapi && polish.api.advancedmultimedia
-			takePicture234();
-			//#else
-			takePicture135();			
-			//#endif
+			if (config.getCfgBitState(Configuration.CFGBIT_USE_JSR_234)) {
+				takePicture234();
+			} else {
+				takePicture135();
+			}			
 		} catch (SecurityException se) {
 			logger.error("Permission denied to take a photo");
 		}
@@ -268,11 +291,11 @@ public class GuiCamera extends Canvas implements CommandListener, GuiCameraInter
 
 	public void keyPressed(int keyCode) {
 		
-		if (keyCode == Configuration.KEYCODE_CAMERA_CAPTURE) {
+		if ((getGameAction(keyCode) == FIRE) || (keyCode == Configuration.KEYCODE_CAMERA_CAPTURE)) {
 			takePicture();
 		}
 		if (keyCode == Configuration.KEYCODE_CAMERA_COVER_CLOSE) {
-			//#if polish.api.mmapi && polish.api.advancedmultimedia
+			//#if polish.api.mmapi
 			if (mPlayer != null)
 				mPlayer.close();
 			//#endif
@@ -281,14 +304,20 @@ public class GuiCamera extends Canvas implements CommandListener, GuiCameraInter
 		
 	}
 
+	
 	public void commandAction(Command c, Displayable disp) {
 		if (c == BACK_CMD) {
-			//#if polish.api.mmapi && polish.api.advancedmultimedia
-			if (mPlayer != null)
-				mPlayer.close();
-			//#endif
-			parent.show();
+			if (disp == this) {
+				//#if polish.api.mmapi
+				if (mPlayer != null)
+					mPlayer.close();
+				//#endif
+				parent.show();
+			} else {
+				this.show();
+			}
 		}
+		//#if polish.api.mmapi
 		if (c == CAPTURE_CMD) {
 			if ((basedirectory == null) ||(!basedirectory.startsWith("file:///"))) {
 				logger.error("You need to select a directory where to save first");
@@ -301,11 +330,98 @@ public class GuiCamera extends Canvas implements CommandListener, GuiCameraInter
 			new FsDiscover(this,this,basedirectory,true,null,"Directory to store photos");
 			//#endif
 		}
-
+		if (c == SETUP_CMD) {
+			logger.info("Starting Setup dialog");
+			
+			if ((mPlayer != null) && (video != null)) {
+				try {
+					mPlayer.stop();
+					video.setVisible(false);
+				} catch (MediaException e) {
+					logger.exception("Could not stop camera viewer", e);
+				}
+			}
+			Form setupDialog = new Form("Setup");
+			setupDialog.addCommand(BACK_CMD);
+			setupDialog.addCommand(OK_CMD);
+			setupDialog.addCommand(STORE_CMD);
+			setupDialog.setCommandListener(this);
+			String [] selectJsr = {"JSR-135", "JSR-234"};			
+			selectJsrCG = new ChoiceGroup("Pictures via...", Choice.EXCLUSIVE, selectJsr ,null);
+			if (config.getCfgBitState(Configuration.CFGBIT_USE_JSR_234)) {
+				selectJsrCG.setSelectedIndex(1, true);
+			} else {
+				selectJsrCG.setSelectedIndex(0, true);
+			}
+			encodingTF = new TextField("Encoding string: ", config.getPhotoEncoding() , 100 ,TextField.ANY);
+			String encodings = null;
+			try {
+				 encodings = System.getProperty("video.snapshot.encodings");
+				logger.info("Encodings: " + encodings); 
+			} catch (Exception e) {
+				logger.info("Device does not support the encoding property");
+			}
+			String [] encStrings = new String[0];
+			String setEnc = config.getPhotoEncoding();
+			if (setEnc == null) setEnc = "";
+			int encodingSel = -1;
+			if (encodings != null) {
+				encStrings = StringTokenizer.getArray(encodings, " ");
+				for (int i = 0; i < encStrings.length; i++) {
+					logger.info("Enc: " + encStrings[i]);
+					if (setEnc.equalsIgnoreCase(encStrings[i])) {
+						encodingSel = i;
+						logger.info("Enc Sel: " + encStrings[i]);
+					}
+				}
+			} else {
+				encStrings = new String [0];
+			}
+			if (encodingSel == -1)				
+					encodingSel = encStrings.length;				
+			String [] tmp = new String[encStrings.length + 1];
+			System.arraycopy(encStrings, 0, tmp, 0, encStrings.length);
+			tmp[encStrings.length] = "Custom";
+			encStrings = tmp;
+			encodingCG = new ChoiceGroup("Select encoding: ", Choice.EXCLUSIVE, encStrings, null);
+			encodingCG.setSelectedIndex(encodingSel, true);
+			TextField storageDir = new TextField("store: ", basedirectory, 100, TextField.UNEDITABLE);
+			storageDir.setDefaultCommand(STORE_CMD);			
+			setupDialog.append(selectJsrCG);
+			setupDialog.append(encodingCG);
+			setupDialog.append(encodingTF);			
+			setupDialog.append(storageDir);
+			GpsMid.getInstance().show(setupDialog);
+			logger.info("Showing Setup dialog");
+			
+		}
+		if (c == OK_CMD) {
+			if (selectJsrCG.getSelectedIndex() == 1) {
+				Trace.getInstance().getConfig().setCfgBits(Configuration.CFGBIT_USE_JSR_234, true);
+			} else {
+				Trace.getInstance().getConfig().setCfgBits(Configuration.CFGBIT_USE_JSR_234, false);
+			}
+			String encType = encodingCG.getString(encodingCG.getSelectedIndex());
+			if (encType.equals("Custom"))
+				encType = encodingTF.getString();
+			config.setPhotoEncoding(encType);
+			this.show();
+		}
+		//#endif
 	}
 
 	public void show() {
 		GpsMid.getInstance().show(this);
+		//#if polish.api.mmapi
+		if ((mPlayer != null) && (video != null)) {
+			try {
+				mPlayer.start();
+				video.setVisible(true);
+			} catch (MediaException e) {
+				logger.exception("Could not show camera viewer", e);
+			}
+		}
+		//#endif
 		//Display.getDisplay(parent.getParent()).setCurrent(this);
 	}
 
