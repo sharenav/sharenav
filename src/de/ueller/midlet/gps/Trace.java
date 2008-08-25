@@ -525,7 +525,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 	public void commandAction(Command c, Displayable d) {
 		try {
-			if(keyboardLocked) {
+			if((keyboardLocked) && (d != null)) {
 				// show alert in keypressed() that keyboard is locked
 				keyPressed(0);
 				return;
