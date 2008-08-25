@@ -1015,7 +1015,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			atTarget = (distance < 25);
 			if (atTarget) {
 				if (movedAwayFromTarget && config.getCfgBitState(config.CFGBIT_SND_TARGETREACHED)) {
-					parent.mNoiseMaker.playSound("TARGET_REACHED", (byte) 7);
+					parent.mNoiseMaker.playSound("TARGET_REACHED", (byte) 7, (byte) 1);
 				}
 			} else {
 				movedAwayFromTarget=true;
@@ -1177,7 +1177,10 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				//System.out.println("iNearest "+ iNearest + "dist: " + minimumDistance);				    	
 				// if nearest route arrow is closer than PASSINGDISTANCE meters we're currently passing this route arrow
 				if (minimumDistance<PASSINGDISTANCE) {
-					iPassedRouteArrow=iNearest;
+					if (iPassedRouteArrow != iNearest) {
+						iPassedRouteArrow = iNearest;
+						parent.mNoiseMaker.resetSoundRepeatTimes();
+					}
 					//System.out.println("iPassedRouteArrow "+ iPassedRouteArrow);
 				} else {
 					c = (ConnectionWithNode) route.elementAt(iPassedRouteArrow);
@@ -1308,10 +1311,10 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			    		routeInstructionColor=0x00B7FBBA;						
 					}
 					sumWrongDirection += diffArrowDist;
-					System.out.println("Sum wrong direction: " + sumWrongDirection);
+					//System.out.println("Sum wrong direction: " + sumWrongDirection);
 					oldAwayFromNextArrow = intDistance;
 					if(intDistance>=PASSINGDISTANCE && intDistance<=PREPAREDISTANCE) {
-						soundToPlay.append ("PREPARE;" + soundDirections[a]);
+						soundToPlay.append( (a==4 ? "CONTINUE" : "PREPARE") + ";" + soundDirections[a]);
 						soundRepeatDelay=5;
 					}
 					if (a!=arrow) {
@@ -1386,7 +1389,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				// if map is gps-centered recalculate route
 				soundToPlay.setLength(0);
 				if (config.getCfgBitState(config.CFGBIT_SND_ROUTINGINSTRUCTIONS)) {
-					parent.mNoiseMaker.playSound("ROUTE_RECALCULATION", (byte) 5 );
+					parent.mNoiseMaker.playSound("ROUTE_RECALCULATION", (byte) 5, (byte) 1 );
 				}
 				commandAction(ROUTE_TO_CMD,(Displayable) null);
 				// set source to null to not recalculate
@@ -1421,7 +1424,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		}
 		// Route instruction sound output
 		if (soundToPlay.length()!=0 && config.getCfgBitState(config.CFGBIT_SND_ROUTINGINSTRUCTIONS)) {
-			parent.mNoiseMaker.playSound(soundToPlay.toString(), (byte) soundRepeatDelay);			
+			parent.mNoiseMaker.playSound(soundToPlay.toString(), (byte) soundRepeatDelay, (byte) 2);			
 		}
 	}
 	

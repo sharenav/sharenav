@@ -46,8 +46,9 @@ public class NoiseMaker
 	private static volatile boolean [] prefetched={false, false, false}; 
 	
 	
-	private static long oldMsTime = 0;
-	private static String oldplayingNames = "";
+	private static volatile long oldMsTime = 0;
+	private static volatile String oldPlayingNames = "";
+	private static volatile byte timesToPlay = 0;
 
 	
 	public NoiseMaker()
@@ -157,26 +158,39 @@ public class NoiseMaker
 
 	public void playSound( String names )
 	{
-		playSound(names, (byte) 0);
+		playSound(names, (byte) 0, (byte) 1 );
 	}
 
 	/* names can contain multiple sound names separated by ;
 	 * the contained sound parts will be played after each other
 	 * */
-	public void playSound( String names, byte minSecsBeforeRepeat )
+	public void playSound( String names, byte minSecsBeforeRepeat, byte maxTimesToPlay )
 	{
 		if (playingNames.equals(names)) {			
 			//System.out.println("Already playing");
 			return;
 		}
 
+
+		
 		// do not repeat same sound before minSecsBeforeRepeat
 		long msTime = System.currentTimeMillis();
-		if (oldplayingNames.equals(names) && Math.abs(msTime-oldMsTime) < minSecsBeforeRepeat*1000) {
-			//System.out.println(msTime-oldMsTime + " " + name + oldplayingNames);
+
+		System.out.println(msTime-oldMsTime + " " + names + oldPlayingNames + timesToPlay);
+		
+		if (oldPlayingNames.equals(names) &&
+				(Math.abs(msTime-oldMsTime) < minSecsBeforeRepeat*1000
+			  || timesToPlay == 0 )
+		) {
+			//System.out.println(msTime-oldMsTime + " " + names + oldPlayingNames);
 			return;
 		}
-		oldplayingNames = names;
+		if (! oldPlayingNames.equals(names) ) {
+			timesToPlay = maxTimesToPlay;
+		}
+		
+		oldPlayingNames = names;
+		System.out.println("timestoplay" + timesToPlay);
 
 		playingNameIndex = 0;
 		playingNames=names;
@@ -187,6 +201,12 @@ public class NoiseMaker
 		}
 	}
 	
+	// allow to play same sound again
+	public void resetSoundRepeatTimes() {
+		oldPlayingNames = "";
+		System.out.println("reset sound repeat");
+	}
+
 	
 	// prefetches next sound part
 	private synchronized boolean prefetchNextSound() {
@@ -204,6 +224,8 @@ public class NoiseMaker
 
 		// end of names to play?
 		if (playingNameIndex>playingNames.length() ) {
+			timesToPlay--;
+			System.out.println("timestoplay--" + timesToPlay);
 			return false;
 		}
 		
