@@ -751,7 +751,16 @@ zoomed out 21x (scale alias 1:  500km)
   				<isArea area = "true"/>
   				<scale scale = "15"/>
   				<lineColor color = "000000CC" />  				  				  				
-  			</Wvalue>  			
+  			</Wvalue> 
+	        <Wvalue name = "coastline">
+  				<description desc = "coastline"/>
+  				<namekey tag = "name"/>  				
+  				<isArea area = "false"/>
+  				<scale scale = "2"/>
+  				<lineColor color = "00005555" />  				  				  				
+  				<wayWidth width="10" />
+				<force_to layer = "-2"/>
+			</Wvalue>
   		</keyW>
 	<keyW tag = "building">
 	  <Wvalue name = "*">
