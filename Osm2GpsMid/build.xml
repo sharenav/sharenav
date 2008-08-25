@@ -131,6 +131,7 @@
 		</fileset>
      	 <fileset dir="${properties.dir}">
      		<include name="**/*.properties" />
+     	 	<include name="**/charMap.txt" />
      	 </fileset>
 	 <fileset file="style-file.xml" />
    	 <fileset file="style-file.dtd" />
