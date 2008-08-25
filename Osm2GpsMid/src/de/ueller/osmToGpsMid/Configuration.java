@@ -364,6 +364,18 @@ public class Configuration {
 			return legend.getSoundDescs();
 		}
 		
+		public SoundDescription getSoundDescription(String Name) {			
+			for (SoundDescription sound : getSoundDescs()) {
+				if (sound.name.equals(Name)) {
+					return sound;
+				}			
+			}
+			return null;
+		}
+		
+		
+		
+		
 		/*
 		 * returns the real scale level
 		 * 

@@ -222,6 +222,24 @@ public class CreateGpsMidData {
 			
 			dsi.close();
 			foi.close();
+			
+			if (! Configuration.getConfiguration().useRouting) {
+				System.out.println("Routing disabled - removing routing sound files from midlet:");
+				removeSoundFile("AGAIN");
+				removeSoundFile("CHECK_DIRECTION");
+				removeSoundFile("CONTINUE");
+				removeSoundFile("HALF");
+				removeSoundFile("HARD");
+				removeSoundFile("LEFT");
+				removeSoundFile("PREPARE");
+				removeSoundFile("RIGHT");
+				removeSoundFile("ROUTE_RECALCULATION");
+				removeSoundFile("SOON");
+				removeSoundFile("STRAIGHTON");
+				//removeSoundFile("TARGET_REACHED");
+				removeSoundFile("THEN");
+			}
+			
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -232,6 +250,24 @@ public class CreateGpsMidData {
 
 	} 
 
+	private void removeSoundFile(String soundName) {
+		String soundFile = null;
+		SoundDescription sDes = Configuration.getConfiguration().getSoundDescription(soundName);
+		if (sDes != null) {
+			soundFile = sDes.soundFile;
+		} else {
+			soundFile = soundName.toLowerCase() + ".amr";
+		}
+		
+		File target = new File(path + "/" + soundFile);
+ 
+		if (target.exists()) {
+			target.delete();
+			System.out.println(" - removed " + soundFile);
+		}		
+	}
+	
+	
 	/* Copies the given file in mediaPath to destDir
 	 * - if you specify a filename only it will look for the file in this order 1. current directory 2. additional source subdirectory 3.internal file
 	 * - for file names only preceded by a single "/" Osm2GpsMid will always assume you want to explicitely use the internal media file
