@@ -1367,64 +1367,65 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				lastEndBearing=c.endBearing;
 				lastTo=c.to;
 			}
-		}
-		/* if we just moved away from target,
-		  and the map is gpscentered 
-		  and there's only one route arrow
-		  ==> auto recalculation
-		*/
-		if (movedAwayFromTarget
-			&& gpsRecenter
-			&& route.size()==2
-			&& ProjMath.getDistance(target.lat, target.lon, center.radlat, center.radlon) > PREPAREDISTANCE
-		) {
-			routeRecalculationRequired=true;		
-		}
 
-		if (routeRecalculationRequired) {
-			if (gpsRecenter && 
-				config.getCfgBitState(config.CFGBIT_ROUTE_AUTO_RECALC) &&
-				source != null
+			/* if we just moved away from target,
+			 * and the map is gpscentered
+			 * and there's only one route arrow
+			 * ==> auto recalculation
+			 */
+			if (movedAwayFromTarget
+					&& gpsRecenter
+					&& route.size()==2
+					&& ProjMath.getDistance(target.lat, target.lon, center.radlat, center.radlon) > PREPAREDISTANCE
 			) {
-				// if map is gps-centered recalculate route
-				soundToPlay.setLength(0);
-				if (config.getCfgBitState(config.CFGBIT_SND_ROUTINGINSTRUCTIONS)) {
-					parent.mNoiseMaker.playSound("ROUTE_RECALCULATION", (byte) 5, (byte) 1 );
+				routeRecalculationRequired=true;
+			}
+
+			if (routeRecalculationRequired) {
+				if (gpsRecenter && 
+						config.getCfgBitState(config.CFGBIT_ROUTE_AUTO_RECALC) &&
+						source != null
+				) {
+					// if map is gps-centered recalculate route
+					soundToPlay.setLength(0);
+					if (config.getCfgBitState(config.CFGBIT_SND_ROUTINGINSTRUCTIONS)) {
+						parent.mNoiseMaker.playSound("ROUTE_RECALCULATION", (byte) 5, (byte) 1 );
+					}
+					commandAction(ROUTE_TO_CMD,(Displayable) null);
+					// set source to null to not recalculate
+					// route again before map was drawn
+					source=null;
 				}
-				commandAction(ROUTE_TO_CMD,(Displayable) null);
-				// set source to null to not recalculate
-				// route again before map was drawn
-				source=null;
+				if (diffArrowDist > 0) {
+					// use red background color if moving away
+					routeInstructionColor=0x00FF5402;
+				} else if (diffArrowDist == 0) {
+					routeInstructionColor = oldRouteInstructionColor;
+				}
 			}
-    		if (diffArrowDist > 0) {
-    			// use red background color if moving away	    		
-    			routeInstructionColor=0x00FF5402;				
-    		} else if (diffArrowDist == 0) {
-    			routeInstructionColor = oldRouteInstructionColor;
-    		}
-		}
-		// Route instruction text output
-		if (routeInstruction != null) {			
-			Font originalFont = pc.g.getFont();
-	    	if (routeFont==null) {
-				routeFont=Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_MEDIUM);
-				routeFontHeight=routeFont.getHeight();
+			// Route instruction text output
+			if (routeInstruction != null) {
+				Font originalFont = pc.g.getFont();
+				if (routeFont==null) {
+					routeFont=Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_MEDIUM);
+					routeFontHeight=routeFont.getHeight();
+				}
+				pc.g.setFont(routeFont);
+				pc.g.setColor(routeInstructionColor);
+				oldRouteInstructionColor=routeInstructionColor;
+				pc.g.fillRect(0,pc.ySize-imageCollector.statusFontHeight-routeFontHeight, pc.xSize, routeFontHeight);
+				pc.g.setColor(0,0,0);
+				pc.g.drawString(routeInstruction,
+						pc.xSize/2,
+						pc.ySize-imageCollector.statusFontHeight,
+						Graphics.HCENTER | Graphics.BOTTOM
+				);
+				pc.g.setFont(originalFont);
 			}
-	    	pc.g.setFont(routeFont);
-	    	pc.g.setColor(routeInstructionColor);
-			oldRouteInstructionColor=routeInstructionColor;
-			pc.g.fillRect(0,pc.ySize-imageCollector.statusFontHeight-routeFontHeight, pc.xSize, routeFontHeight);
-			pc.g.setColor(0,0,0);
-			pc.g.drawString(routeInstruction,
-							pc.xSize/2,
-							pc.ySize-imageCollector.statusFontHeight,
-							Graphics.HCENTER | Graphics.BOTTOM
-	        );
-			pc.g.setFont(originalFont);
-		}
-		// Route instruction sound output
-		if (soundToPlay.length()!=0 && config.getCfgBitState(config.CFGBIT_SND_ROUTINGINSTRUCTIONS)) {
-			parent.mNoiseMaker.playSound(soundToPlay.toString(), (byte) soundRepeatDelay, (byte) 2);			
+			// Route instruction sound output
+			if (soundToPlay.length()!=0 && config.getCfgBitState(config.CFGBIT_SND_ROUTINGINSTRUCTIONS)) {
+				parent.mNoiseMaker.playSound(soundToPlay.toString(), (byte) soundRepeatDelay, (byte) 2);
+			}
 		}
 	}
 	
