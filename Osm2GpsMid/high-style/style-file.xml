@@ -51,6 +51,9 @@ zoomed out 21x (scale alias 1:  500km)
 <legend>
   <background color="009BFF9B" />
   <sounds>
+<!-- these sounds have internal tone sequence
+     that will be used if commented out here
+-->	
 	<sound name="CONNECT">
 		<soundFile src="connect.amr"/>
 	</sound>
@@ -60,6 +63,7 @@ zoomed out 21x (scale alias 1:  500km)
 <!-- these soundFiles are automatically determined by the midlet
       and can stay commented out as long as you don't want
       to include other sound files or formats (.mp3, .wav) for them.
+
 	<sound name="PREPARE">
 		<soundFile src="prepare.amr"/>
 	</sound>
@@ -74,6 +78,9 @@ zoomed out 21x (scale alias 1:  500km)
 	</sound>
 	<sound name="RIGHT">
 		<soundFile src="right.amr"/>
+	</sound>
+	<sound name="CONTINUE">
+		<soundFile src="continue.amr"/>
 	</sound>
 	<sound name="STRAIGHTON">
 		<soundFile src="straighton.amr"/>
@@ -1312,6 +1319,11 @@ zoomed out 21x (scale alias 1:  500km)
 			</keyW>  		
   		<keyW tag = "building">
   			<Wvalue name = "yes">
+				<!-- if * is specified as value for a specialisation key,
+				this will match only if the specialisation key exists:
+				 so only named buildings would be included
+				<specialisation key="name" value="*"/>
+				 -->
   				<description desc = "Building"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>

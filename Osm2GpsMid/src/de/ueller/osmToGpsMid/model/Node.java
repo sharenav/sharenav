@@ -112,7 +112,12 @@ public class Node extends Entity{
 											for (ConditionTuple ct : poi.specialisation) {										
 												failedSpec = !ct.exclude;
 												for (String ss : tags) {
-													if ((ss.equalsIgnoreCase(ct.key)) && (getAttribute(ss).equalsIgnoreCase(ct.value))) {											
+													if ( (ss.equalsIgnoreCase(ct.key)) &&
+														 (
+															getAttribute(ss).equalsIgnoreCase(ct.value) ||
+															ct.value.equals("*")
+														 )
+														) {		
 														failedSpec = ct.exclude;
 													}
 												}

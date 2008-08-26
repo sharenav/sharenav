@@ -113,7 +113,12 @@ public class Way extends Entity implements Comparable<Way>{
 												//System.out.println("Testing specialisation " + ct + " on " + this);
 												failedSpec = !ct.exclude;
 												for (String ss : tags) {
-													if ((ss.equalsIgnoreCase(ct.key)) && (getAttribute(ss).equalsIgnoreCase(ct.value))) {													
+													if ( (ss.equalsIgnoreCase(ct.key)) &&
+														 (
+															getAttribute(ss).equalsIgnoreCase(ct.value) ||
+															ct.value.equals("*")
+														 )
+													) {													
 														failedSpec = ct.exclude;
 													}
 												}

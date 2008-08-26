@@ -756,14 +756,29 @@ zoomed out 21x (scale alias 1:  500km)
   				<lineColor color = "000000CC" />  				  				  				
   			</Wvalue>  			
   		</keyW>
-	<keyW tag = "building">
-	  <Wvalue name = "*">
-		<description desc = "Other Building"/>
-		<namekey tag = "name"/> <isArea area = "true"/>
-		<scale scale = "22"/>
-		<lineColor color = "00CC0000" />
-	  </Wvalue>
-	</keyW>
-
+  		<keyW tag = "building">
+  			<Wvalue name = "yes">
+				<!-- if * is specified as value for a specialisation key,
+				this will match only if the specialisation key exists:
+				 so only named buildings will be included
+				 -->
+				<specialisation key="name" value="*"/>
+  				<description desc = "Building"/>
+  				<namekey tag = "name"/>  				
+  				<isArea area = "true"/>
+  				<scale scale = "20"/>
+  				<textscale scale = "21"/>
+  				<lineColor color = "00CC0000" />
+			</Wvalue>  			
+  			<Wvalue name = "*">
+  				<description desc = "Other building"/>
+  				<namekey tag = "name"/>  				
+  				<namefallback tag = "*"/>  				
+  				<isArea area = "true"/>
+  				<scale scale = "20"/>
+  				<textscale scale = "21"/>
+  				<lineColor color = "00EE0000" />
+			</Wvalue>  			
+  		</keyW>  		
 	</ways>
 </legend> 
