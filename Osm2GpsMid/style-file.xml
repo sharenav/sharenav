@@ -49,58 +49,61 @@ zoomed out 21x (scale alias 1:  500km)
 
 <legend>
   <background color="009BFF9B" />
-<!-- 
   <sounds>
+<!-- these sounds have internal tone sequence
+     that will be used if commented out here
 	<sound name="CONNECT">
-		<soundFile src="connect.mp3"/>
+		<soundFile src="connect.amr"/>
 	</sound>
 	<sound name="DISCONNECT">
-		<soundFile src="disconnect.mp3"/>
+		<soundFile src="disconnect.amr"/>
 	</sound>
-	<sound name="HARDLEFT">
-		<soundFile src="left.mp3"/>
+-->
+<!-- these soundFiles are automatically determined by the midlet
+      and can stay commented out as long as you don't want
+      to include other sound files or formats (.mp3, .wav) for them.
+
+	<sound name="PREPARE">
+		<soundFile src="prepare.amr"/>
+	</sound>
+	<sound name="HALF">
+		<soundFile src="half.amr"/>
+	</sound>
+	<sound name="HARD">
+		<soundFile src="hard.amr"/>
 	</sound>
 	<sound name="LEFT">
-		<soundFile src="left.mp3"/>
-	</sound>
-	<sound name="HALFLEFT">
-		<soundFile src="left.mp3"/>
-	</sound>
-	<sound name="HARDRIGHT">
-		<soundFile src="right.mp3"/>
+		<soundFile src="left.amr"/>
 	</sound>
 	<sound name="RIGHT">
-		<soundFile src="right.mp3"/>
+		<soundFile src="right.amr"/>
 	</sound>
-	<sound name="HALFRIGHT">
-		<soundFile src="right.mp3"/>
+	<sound name="CONTINUE">
+		<soundFile src="continue.amr"/>
 	</sound>
 	<sound name="STRAIGHTON">
-		<soundFile src="straighton.mp3"/>
+		<soundFile src="straighton.amr"/>
 	</sound>
-	<sound name="PREPARE_HARDLEFT">
-		<soundFile src="p_left.mp3"/>
+	<sound name="THEN">
+		<soundFile src="then.amr"/>
 	</sound>
-	<sound name="PREPARE_LEFT">
-		<soundFile src="p_left.mp3"/>
+	<sound name="SOON">
+		<soundFile src="soon.amr"/>
 	</sound>
-	<sound name="PREPARE_HALFLEFT">
-		<soundFile src="p_left.mp3"/>
+	<sound name="AGAIN">
+		<soundFile src="again.amr"/>
 	</sound>
-	<sound name="PREPARE_HARDRIGHT">
-		<soundFile src="p_right.mp3"/>
+	<sound name="CHECK_DIRECTION">
+		<soundFile src="check_direction.amr"/>
 	</sound>
-	<sound name="PREPARE_RIGHT">
-		<soundFile src="p_right.mp3"/>
+	<sound name="ROUTE_RECALCULATION">
+		<soundFile src="route_recalculation.amr"/>
 	</sound>
-	<sound name="PREPARE_HALFRIGHT">
-		<soundFile src="p_right.mp3"/>
+	<sound name="TARGET_REACHED">
+		<soundFile src="target_reached.amr"/>
 	</sound>
-	<sound name="PREPARE_STRAIGHTON">
-		<soundFile src="p_straighton.mp3"/>
-	</sound>
-  </sounds>
 -->  
+  </sounds>
   <pois>
 	<key tag="place">
 	   <value name="city">
@@ -751,16 +754,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<isArea area = "true"/>
   				<scale scale = "15"/>
   				<lineColor color = "000000CC" />  				  				  				
-  			</Wvalue> 
-	        <Wvalue name = "coastline">
-  				<description desc = "coastline"/>
-  				<namekey tag = "name"/>  				
-  				<isArea area = "false"/>
-  				<scale scale = "2"/>
-  				<lineColor color = "00005555" />  				  				  				
-  				<wayWidth width="10" />
-				<force_to layer = "-2"/>
-			</Wvalue>
+  			</Wvalue>  			
   		</keyW>
 	<keyW tag = "building">
 	  <Wvalue name = "*">
