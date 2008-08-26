@@ -1,22 +1,18 @@
 /**
  * OSM2GpsMid 
- *  
  *
- * @version $Revision$ ($Name$)
+ *
  *
  * Copyright (C) 2007 Harald Mueller
+ * Copyright (C) 2008 Kai Krueger
  */
 package de.ueller.osmToGpsMid.model.name;
 
-import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 
-/**
- * @author hmueller
- *
- */
+import de.ueller.osmToGpsMid.Configuration;
+
 public class NumberCanon {
 	
 	private static char [] charMapCore; //fast direct lookup table (Can't cover the entire unicode code range though)
@@ -28,15 +24,14 @@ public class NumberCanon {
 	
 	private static final int canonType = 0;
 	private static final int normType = 2;
-	private static NumberCanon o = new NumberCanon(); 
-	
+
 	public static void initCharMaps() {
 		try {
 			charMapCore = new char[maxFastRange - minFastRange];
 			for (int i = 0; i < charMapCore.length; i++) {
 				charMapCore[i] = defaultChar;
 			}
-			InputStream is = o.getClass().getResourceAsStream("/charMap.txt");
+			InputStream is = Configuration.getConfiguration().getCharMapStream();
 			InputStreamReader isr = new InputStreamReader(is,"UTF8");
 			char [] buf = new char[1024];
 			int readChars = isr.read(buf);

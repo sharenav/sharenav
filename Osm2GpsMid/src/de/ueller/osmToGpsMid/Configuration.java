@@ -282,6 +282,24 @@ public class Configuration {
 			}
 			return fr;
 		}
+
+		public InputStream getCharMapStream() throws IOException{
+			InputStream cmis = null;
+			try {
+				cmis = new FileInputStream("charMap.txt");
+			} catch (FileNotFoundException e) {
+				try {
+					cmis = new FileInputStream(getTempDir() + "/charMap.txt");
+					if (cmis == null){
+						throw new IOException("Could not find a valid charMap.txt");
+					}
+				} catch (FileNotFoundException fnfe) {
+					throw new IOException("Could not find a valid charMap.txt");
+				}
+			}
+			return cmis;
+		}
+
 		public Bounds[] getBounds(){
 			if (bounds != null)
 				return bounds;
