@@ -82,8 +82,8 @@ public class NmeaInput extends BtReceiverInput {
 				System.out.println("Error: NMEA string was longer than 128 char, but max should be 82");
 				p1 = 0; p2 = 0; found_start = false; found_end = false;
 				continue;
-			}								
-			System.arraycopy(buf1, start1, buf2, p2, p1 - start1);				
+			}
+			System.arraycopy(buf1, start1, buf2, p2, p1 - start1);
 			p2 += p1 - start1;				
 			if (p1 == len1) p1 = 0; //consumed all of buf1, begin at the start again
 			if (!found_end)	continue;
@@ -91,8 +91,10 @@ public class NmeaInput extends BtReceiverInput {
 			//First check the checksum and ignore incorrect data
 			if (isChecksumCorrect(buf2, p2)) {
 				//Throw away the first 3 characters ($GP) and the last 5 (checksum and \r\n)
-				String nmea_sentence = new String(buf2,3,p2-8);					
+				String nmea_sentence = new String(buf2,3,p2-8);
 				smsg.decodeMessage(nmea_sentence);
+			} else {
+				logger.info("NMEA sentence has incorrect checksum, discarding: " + new String(buf2));
 			}
 
 			//Reset buf2 for the next sentence
@@ -118,6 +120,7 @@ public class NmeaInput extends BtReceiverInput {
 		try {
 			targetChecksum = (Integer.valueOf(new String(buf,len-4,2), 16).byteValue());
 		} catch (NumberFormatException nfe) {
+			logger.info("Target checksum not recognised: " + new String(buf,len-4,2));
 			return false;
 		}
 		return (targetChecksum == checksum);
