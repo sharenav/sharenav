@@ -130,6 +130,7 @@ public class NMEAsimMidlet extends MIDlet implements Runnable {
 						tmp = (char)isr.read();
 						sb.append(tmp);
 					}
+					sb.append("\r\n");
 					String nmeaMessage = sb.toString();
 					addMsg(nmeaMessage);
 					if (nmeaMessage.startsWith("$GPGGA")) {
