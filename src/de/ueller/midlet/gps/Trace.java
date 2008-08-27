@@ -10,8 +10,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.Vector;
 
 
@@ -24,16 +22,13 @@ import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Choice;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
-import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.List;
 import javax.microedition.midlet.MIDlet;
-import javax.microedition.rms.RecordStoreException;
-import javax.microedition.rms.RecordStoreFullException;
-import javax.microedition.rms.RecordStoreNotOpenException;
+
 
 
 import de.ueller.gps.data.Configuration;
@@ -46,18 +41,13 @@ import de.ueller.gps.tools.HelperRoutines;
 import de.ueller.gpsMid.mapData.DictReader;
 import de.ueller.gpsMid.mapData.QueueDataReader;
 import de.ueller.gpsMid.mapData.QueueDictReader;
-import de.ueller.gpsMid.mapData.QueueReader;
 import de.ueller.gpsMid.mapData.Tile;
-import de.ueller.midlet.gps.data.MapName;
-import de.ueller.midlet.gps.data.Proj2D;
-import de.ueller.midlet.gps.data.ProjFactory;
 import de.ueller.midlet.gps.data.ProjMath;
 import de.ueller.midlet.gps.data.Gpx;
 import de.ueller.midlet.gps.data.IntPoint;
 import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.PositionMark;
-import de.ueller.midlet.gps.data.Projection;
 import de.ueller.midlet.gps.names.Names;
 import de.ueller.midlet.gps.routing.ConnectionWithNode;
 import de.ueller.midlet.gps.routing.RouteHelper;
@@ -1797,8 +1787,8 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		} else if (keyCode == KEY_NUM3) {
 			scale = scale / 1.5f;
 		} else if (keyCode == KEY_NUM7) {
-//			showAddons++;
-			course++;
+			showAddons++;
+//			course++;
 		/** Non standard Key: hopefully is mapped to
 		 * the delete / clear key. According to
 		 * www.j2meforums.com/wiki/index.php/Canvas_Keycodes
@@ -1814,9 +1804,10 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		} else {		
 			keyStatus = keyCode;
 		}
-		pc.center = center.clone();
-		pc.scale = scale;
-		pc.course = course;
+// this is already done in paint
+//		pc.center = center.clone();
+//		pc.scale = scale;
+//		pc.course = course;
 		repaint(0, 0, getWidth(), getHeight());
 	}
 
