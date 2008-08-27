@@ -1611,8 +1611,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			} 
 		}
 		// don't rotate to fast
-		if (speed < 3) {
-			course = (int) ((pos.course * 3 + course) / 4);
+		if (speed > 2) {
+			course = (int) ((pos.course * 3 + course) / 4)+360;
+			while (course > 360) course-=360;
 		}
 		updatePosition();		
 	}
