@@ -124,10 +124,10 @@ public class SingleTile extends Tile implements QueueableTile {
 			 * Calculate pc coordinates in terms of relative single tile coordinates
 			 */
 			
-			float pcLDlatF = ((pc.screenLD.radlat - this.centerLat) * SingleTile.fpm);
-			float pcLDlonF = ((pc.screenLD.radlon - this.centerLon) * SingleTile.fpm);
-			float pcRUlatF = ((pc.screenRU.radlat - this.centerLat) * SingleTile.fpm);
-			float pcRUlonF = ((pc.screenRU.radlon - this.centerLon) * SingleTile.fpm);
+			float pcLDlatF = ((pc.getP().getMinLat() - this.centerLat) * SingleTile.fpm);
+			float pcLDlonF = ((pc.getP().getMinLon() - this.centerLon) * SingleTile.fpm);
+			float pcRUlatF = ((pc.getP().getMaxLat() - this.centerLat) * SingleTile.fpm);
+			float pcRUlonF = ((pc.getP().getMaxLon() - this.centerLon) * SingleTile.fpm);
 			short pcLDlat;
 			short pcLDlon;
 			short pcRUlat;
@@ -191,7 +191,6 @@ public class SingleTile extends Tile implements QueueableTile {
 
 						// logger.debug("test Bounds of way");
 						if (!w.isOnScreen(pcLDlat, pcLDlon, pcRUlat, pcRUlon)) continue; 
-
 						/**
 						 * In addition to rendering we also check for which way
 						 * corresponds to the target set in the paintcontext identified
@@ -275,10 +274,10 @@ public class SingleTile extends Tile implements QueueableTile {
 			/**
 			 * Calculate pc coordinates in terms of relative single tile coordinates
 			 */
-			short pcLDlat = (short)((pc.screenLD.radlat - this.centerLat) * SingleTile.fpm);
-			short pcLDlon = (short)((pc.screenLD.radlon - this.centerLon) * SingleTile.fpm);
-			short pcRUlat = (short)((pc.screenRU.radlat - this.centerLat) * SingleTile.fpm);
-			short pcRUlon = (short)((pc.screenRU.radlon - this.centerLon) * SingleTile.fpm);
+			short pcLDlat = (short)((pc.getP().getMinLat() - this.centerLat) * SingleTile.fpm);
+			short pcLDlon = (short)((pc.getP().getMinLon() - this.centerLon) * SingleTile.fpm);
+			short pcRUlat = (short)((pc.getP().getMaxLat() - this.centerLat) * SingleTile.fpm);
+			short pcRUlon = (short)((pc.getP().getMaxLon() - this.centerLon) * SingleTile.fpm);
 			
 			if (ways != null) {
 				short targetLat = (short)((pc.target.lat - centerLat)*fpm);

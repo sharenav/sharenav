@@ -83,7 +83,7 @@ public class RouteTile extends RouteBaseTile {
 			}
 			pc.g.setColor(255, 100, 100);
 			for (int i=0; i< nodes.length;i++){
-				if (pc.isVisible(nodes[i].lat, nodes[i].lon)){
+				if (pc.getP().isPlotable(nodes[i].lat, nodes[i].lon)){
 					pc.getP().forward(nodes[i].lat, nodes[i].lon, pc.swapLineP);
 					pc.g.drawRect(pc.swapLineP.x-2, pc.swapLineP.y-2, 5, 5);
 //					pc.g.drawString(" "+nodes[i].lat+"/"+ nodes[i].lon,pc.swapLineP.x+2, pc.swapLineP.y+2, 0);

@@ -124,5 +124,26 @@ public interface Projection {
     public float getScale(Node ll1, Node ll2, IntPoint IntPoint1,
                           IntPoint IntPoint2);
 
+    /**
+     * calculate the new center for pan
+     * @param n the node (old center) that has to be moved
+     * @param xd percent that has to be moved in x-direction
+     * @param yd percent that has to be moved in y-direction
+     */
+    public void pan(Node n,int xd, int yd);
+    
     public int getPPM();
+    
+	public float getMinLat();
+
+
+	public float getMaxLat();
+
+
+	public float getMinLon();
+
+
+	public float getMaxLon();
+
+	public String toString();
 }

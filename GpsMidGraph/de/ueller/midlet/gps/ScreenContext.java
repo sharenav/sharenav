@@ -15,12 +15,13 @@ public class ScreenContext {
 
 	public int xSize;
 	public int ySize;
-	public Node screenRU = new Node();
-	public Node screenLD = new Node();
+	public Node searchRU = new Node();
+	public Node searchLD = new Node();
 	public Node center = new Node();
 	public float scale = 15000f;
 	byte viewId = 1;
 	private Projection p;
+	public int course=0;
 	public Trace trace;
 	
 	public float ppm=1f;
@@ -39,14 +40,15 @@ public class ScreenContext {
 	public ScreenContext cloneToScreenContext() {
 		ScreenContext sc=new ScreenContext();
 		sc.scale=scale;
-		sc.screenLD=screenLD.clone();
-		sc.screenRU=screenRU.clone();
+//		sc.screenLD=screenLD.clone();
+//		sc.screenRU=screenRU.clone();
 		sc.xSize=xSize;
 		sc.ySize=ySize;
 		sc.center=center.clone();
 		sc.trace=trace;		
 		sc.ppm=ppm;
 		sc.target=target;
+		sc.course=course;
 		return sc;
 	}
 
@@ -60,19 +62,23 @@ public class ScreenContext {
 		ppm=(40075016.6855784861531768177614f/scale/p.getPPM());
 	}
 
-	public boolean isVisible(float lat, float lon){
-		if (lat < screenLD.radlat) {
-			return false;
-		}
-		if (lon < screenLD.radlon) {
-			return false;
-		}
-		if (lat > screenRU.radlat) {
-			return false;
-		}
-		if (lon > screenRU.radlon) {
-			return false;
-		}
-		return true;
+//	public boolean isVisible(float lat, float lon){
+//		if (lat < screenLD.radlat) {
+//			return false;
+//		}
+//		if (lon < screenLD.radlon) {
+//			return false;
+//		}
+//		if (lat > screenRU.radlat) {
+//			return false;
+//		}
+//		if (lon > screenRU.radlon) {
+//			return false;
+//		}
+//		return true;
+//	}
+	
+	public String toString() {
+		return "SC : " + p;
 	}
 }

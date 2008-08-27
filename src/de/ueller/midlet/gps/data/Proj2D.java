@@ -28,7 +28,7 @@ import de.ueller.gpsMid.mapData.SingleTile;
 /**
  * Implements the Mercator projection.
  */
-public final class Proj2D implements Projection {
+public class Proj2D implements Projection {
 	
     protected float ctrLat = 0.0f; // center latitude in radians
     protected float ctrLon = 0.0f; // center longitude in radians
@@ -49,6 +49,10 @@ public final class Proj2D implements Projection {
     private int ctrLatRel;
     private float scaled_radius_rel;    
     private float scaled_lat_rel;
+    private float minLat=Float.MAX_VALUE;
+    private float maxLat=Float.MIN_VALUE;
+    private float minLon=Float.MAX_VALUE;
+    private float maxLon=Float.MIN_VALUE;
 
 
 	public Proj2D(Node center, float scale, int width, int height) {
@@ -57,6 +61,7 @@ public final class Proj2D implements Projection {
 		this.scale = scale;
 		this.width = width;
 		this.height = height;
+		System.out.println("init projMU s=" + scale + " w="+ width + " h=" + height);
 		computeParameters();
     }
 
@@ -78,7 +83,35 @@ public final class Proj2D implements Projection {
     	n1 = inverse_full(width/2, 0, n1);
     	n2 = inverse_full(width/2, height, n2);
     	scaled_lat = height/(n1.radlat - n2.radlat);        	
-
+    	Node ret=new Node();
+    	inverse(0, 0, ret);
+    	extendMinMax(ret);
+    	inverse(0, width, ret);
+    	extendMinMax(ret);
+    	inverse(height, 0, ret);
+    	extendMinMax(ret);
+    	inverse(height, width, ret);
+    	extendMinMax(ret);
+    	
+    	System.out.println("scaled lat=" + scaled_lat);
+    	System.out.println("scaled_Radius=" + scaled_radius);
+    	System.out.println("tanCtrLat=" + tanCtrLat);
+    	System.out.println("asinh_of_tanCtrLat=" + asinh_of_tanCtrLat);
+	}
+	
+	private void extendMinMax(Node n) {
+		if (n.radlat > maxLat){
+			maxLat=n.radlat;
+		}
+		if (n.radlat < minLat){
+			minLat=n.radlat;
+		}
+		if (n.radlon > maxLon){
+			maxLon=n.radlon;
+		}
+		if (n.radlon < minLon){
+			minLon=n.radlon;
+		}
 	}
 
 	public IntPoint forward(Node n) {
@@ -160,6 +193,10 @@ public final class Proj2D implements Projection {
 	}
 
 	public boolean isPlotable(float lat, float lon) {
+		if (lat < minLat) return false;
+		if (lat > maxLat) return false;
+		if (lon < minLon) return false;
+		if (lon > maxLon) return false;
 		return true;
 	}
 	
@@ -174,5 +211,29 @@ public final class Proj2D implements Projection {
         return llp;
     }
 
+
+	public float getMinLat() {
+		return minLat;
+	}
+
+
+	public float getMaxLat() {
+		return maxLat;
+	}
+
+
+	public float getMinLon() {
+		return minLon;
+	}
+
+
+	public float getMaxLon() {
+		return maxLon;
+	}
+
+	public void pan(Node n, int xd, int yd) {
+		inverse((width*xd/100)+width/2,( height*yd/100)+height/2, n);
+		
+	}
 
 }

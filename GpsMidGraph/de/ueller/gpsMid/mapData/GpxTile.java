@@ -178,18 +178,18 @@ public class GpxTile extends Tile {
 			PositionMark waypt = waypts[i];
 			
 			if (pc.getP().isPlotable(waypt.lat, waypt.lon)) {
-				if (waypt.lat < pc.screenLD.radlat) {
-					continue;
-				}
-				if (waypt.lon < pc.screenLD.radlon) {
-					continue;
-				}
-				if (waypt.lat > pc.screenRU.radlat) {
-					continue;
-				}
-				if (waypt.lon > pc.screenRU.radlon) {
-					continue;
-				}					
+//				if (waypt.lat < pc.screenLD.radlat) {
+//					continue;
+//				}
+//				if (waypt.lon < pc.screenLD.radlon) {
+//					continue;
+//				}
+//				if (waypt.lat > pc.screenRU.radlat) {
+//					continue;
+//				}
+//				if (waypt.lon > pc.screenRU.radlon) {
+//					continue;
+//				}					
 				
 				pc.getP().forward(waypt.lat, waypt.lon, pc.lineP2);
 				pc.g.drawImage(pc.images.IMG_MARK,pc.lineP2.x,pc.lineP2.y,Graphics.HCENTER|Graphics.VCENTER);
@@ -205,18 +205,18 @@ public class GpxTile extends Tile {
 		 */			
 		for (int i = 0; i < noTrkPts; i++) {
 			if (pc.getP().isPlotable(trkPtLat[i], trkPtLon[i])) {					
-				if (trkPtLat[i] < pc.screenLD.radlat) {
-					continue;
-				}
-				if (trkPtLon[i] < pc.screenLD.radlon) {
-					continue;
-				}
-				if (trkPtLat[i] > pc.screenRU.radlat) {
-					continue;
-				}
-				if (trkPtLon[i] > pc.screenRU.radlon) {
-					continue;
-				}
+//				if (trkPtLat[i] < pc.screenLD.radlat) {
+//					continue;
+//				}
+//				if (trkPtLon[i] < pc.screenLD.radlon) {
+//					continue;
+//				}
+//				if (trkPtLat[i] > pc.screenRU.radlat) {
+//					continue;
+//				}
+//				if (trkPtLon[i] > pc.screenRU.radlon) {
+//					continue;
+//				}
 				pc.getP().forward(trkPtLat[i], trkPtLon[i], pc.lineP2);
 				pc.g.drawImage(pc.images.IMG_MARK,pc.lineP2.x,pc.lineP2.y,Graphics.HCENTER|Graphics.VCENTER);					
 			}

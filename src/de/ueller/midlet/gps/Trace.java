@@ -50,6 +50,7 @@ import de.ueller.gpsMid.mapData.QueueReader;
 import de.ueller.gpsMid.mapData.Tile;
 import de.ueller.midlet.gps.data.MapName;
 import de.ueller.midlet.gps.data.Proj2D;
+import de.ueller.midlet.gps.data.ProjFactory;
 import de.ueller.midlet.gps.data.ProjMath;
 import de.ueller.midlet.gps.data.Gpx;
 import de.ueller.midlet.gps.data.IntPoint;
@@ -117,7 +118,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 	Node center = new Node(49.328010f, 11.352556f);
 
-	Projection projection;
+//	Projection projection;
 
 	private final GpsMid parent;
 
@@ -173,7 +174,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	/**
 	 * Current course from GPS in compass degrees, 0..359.  
 	 */
-	private int course;
+	private int course=90;
 
 
 	private Names namesThread;
@@ -769,8 +770,8 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		pc.c = new C();
 		imageCollector = new ImageCollector(t, this.getWidth(), this.getHeight(), this,
 				i, pc.c);
-		projection = new Proj2D(center, scale, getWidth(), getHeight());
-		pc.setP(projection);
+//		projection = ProjFactory.getInstance(center,course, scale, getWidth(), getHeight());
+//		pc.setP(projection);
 		pc.center = center.clone();
 		pc.scale = scale;
 		pc.xSize = this.getWidth();
@@ -930,11 +931,12 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	 * 
 	 */
 	private void getPC() {
-			pc.xSize = this.getWidth();
-			pc.ySize = this.getHeight();
-			pc.setP( projection);
-			projection.inverse(pc.xSize, 0, pc.screenRU);
-			projection.inverse(0, pc.ySize, pc.screenLD);
+			pc.course=course;
+			pc.scale=scale;
+			pc.center=center.clone();
+//			pc.setP( projection);
+//			projection.inverse(pc.xSize, 0, pc.screenRU);
+//			projection.inverse(0, pc.ySize, pc.screenLD);
 			pc.target=target;
 	}
 
@@ -949,11 +951,12 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		// take a bigger angle for lon because of positions near to the pols.
 		Node nld=new Node(pm.lat - 0.0001f,pm.lon - 0.0005f,true);
 		Node nru=new Node(pm.lat + 0.0001f,pm.lon + 0.0005f,true);		
-		pc.screenLD=nld;
-		pc.screenRU=nru;
+		pc.searchLD=nld;
+		pc.searchRU=nru;
 		pc.target=pm;
 		for (int i=0; i<4; i++){
 			t[i].walk(pc, Tile.OPT_WAIT_FOR_LOAD);
+//			t[i].walk(nld,nru, Tile.OPT_WAIT_FOR_LOAD);
 		}
 	}
 
@@ -1044,18 +1047,19 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			pc.g.setColor(255, 100, 100);
 			for (int i=0; i<recordMark.size();i++){
 				pm = (PositionMark) recordMark.elementAt(i);
-				if (pm.lat < pc.screenLD.radlat) {
-					continue;
-				}
-				if (pm.lon < pc.screenLD.radlon) {
-					continue;
-				}
-				if (pm.lat > pc.screenRU.radlat) {
-					continue;
-				}
-				if (pm.lon > pc.screenRU.radlon) {
-					continue;
-				}
+				if (! pc.getP().isPlotable(pm.lat, pm.lon)) continue;
+//				if (pm.lat < pc.screenLD.radlat) {
+//					continue;
+//				}
+//				if (pm.lon < pc.screenLD.radlon) {
+//					continue;
+//				}
+//				if (pm.lat > pc.screenRU.radlat) {
+//					continue;
+//				}
+//				if (pm.lon > pc.screenRU.radlon) {
+//					continue;
+//				}
 
 				pc.getP().forward(pm.lat, pm.lon, pc.lineP2);
 				pc.g.drawImage(pc.images.IMG_MARK,pc.lineP2.x,pc.lineP2.y,CENTERPOS);				
@@ -1226,9 +1230,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				if (pc == null){
 					System.out.println("show Route strange pc is null");
 				}
-				if (pc.screenLD == null){
-					System.out.println("show Route strange pc.screenLD is null");
-				}
+//				if (pc.screenLD == null){
+//					System.out.println("show Route strange pc.screenLD is null");
+//				}
 
 				// skip connections that are closer than 25 m to the previous one
 				if( i<route.size()-1 && ProjMath.getDistance(c.to.lat, c.to.lon, lastTo.lat, lastTo.lon) < 25 ) {
@@ -1244,22 +1248,22 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				}
 				
 				if(i!=iNearest) {
-					if (lastTo.lat < pc.screenLD.radlat) {
+					if (lastTo.lat < pc.getP().getMinLat()) {
 						lastEndBearing=c.endBearing;
 						lastTo=c.to;
 						continue;
 					}
-					if (lastTo.lon < pc.screenLD.radlon) {
+					if (lastTo.lon < pc.getP().getMinLon()) {
 						lastEndBearing=c.endBearing;
 						lastTo=c.to;
 						continue;
 					}
-					if (lastTo.lat > pc.screenRU.radlat) {
+					if (lastTo.lat > pc.getP().getMaxLat()) {
 						lastEndBearing=c.endBearing;
 						lastTo=c.to;
 						continue;
 					}
-					if (lastTo.lon > pc.screenRU.radlon) {
+					if (lastTo.lon > pc.getP().getMaxLon()) {
 						lastEndBearing=c.endBearing;
 						lastTo=c.to;
 						continue;
@@ -1585,10 +1589,11 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 	private void updatePosition() {
 		if (pc != null){
-			projection = new Proj2D(center, scale, getWidth(), getHeight());
-			pc.setP(projection);
+//			projection = ProjFactory.getInstance(center,course, scale, getWidth(), getHeight());
+//			pc.setP(projection);
 			pc.center = center.clone();
 			pc.scale = scale;
+			pc.course=course;
 			repaint(0, 0, getWidth(), getHeight());
 		}
 	}
@@ -1758,33 +1763,42 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	
 		float f = 0.00003f / 15000f;
 		int keyStatus;		
-		if (this.getGameAction(keyCode) == UP) {			
-			center.radlat += f * scale * 0.1f;
+		if (this.getGameAction(keyCode) == UP) {
+			imageCollector.getCurrentProjection().pan(center, 0, -2);
+//			center.radlat += f * scale * 0.1f;
 			gpsRecenter = false;
-		} else if (this.getGameAction(keyCode) == DOWN) {			
-			center.radlat -= f * scale * 0.1f;
+		} else if (this.getGameAction(keyCode) == DOWN) {	
+			imageCollector.getCurrentProjection().pan(center, 0, 2);
+//			center.radlat -= f * scale * 0.1f;
 			gpsRecenter = false;
-		} else if (this.getGameAction(keyCode) == LEFT) {			
-			center.radlon -= f * scale * 0.1f;
+		} else if (this.getGameAction(keyCode) == LEFT) {		
+			imageCollector.getCurrentProjection().pan(center, -2, 0);
+//			center.radlon -= f * scale * 0.1f;
 			gpsRecenter = false;
-		} else if (this.getGameAction(keyCode) == RIGHT) {			
-			center.radlon += f * scale * 0.1f;
+		} else if (this.getGameAction(keyCode) == RIGHT) {		
+			imageCollector.getCurrentProjection().pan(center, 2, 0);
+//			center.radlon += f * scale * 0.1f;
 			gpsRecenter = false;
 		}				
-		if (keyCode == KEY_NUM2) {			
-			center.radlat += f * scale;
+		if (keyCode == KEY_NUM2) {		
+			imageCollector.getCurrentProjection().pan(center, 0, -25);
+//			center.radlat += f * scale;
 		} else if (keyCode == KEY_NUM8) {
-			center.radlat -= f * scale;
+			imageCollector.getCurrentProjection().pan(center, 0, 25);
+//			center.radlat -= f * scale;
 		} else if (keyCode == KEY_NUM4) {
-			center.radlon -= f * scale;
+			imageCollector.getCurrentProjection().pan(center, -25, 0);
+//			center.radlon -= f * scale;
 		} else if (keyCode == KEY_NUM6) {
-			center.radlon += f * scale;
+			imageCollector.getCurrentProjection().pan(center, 25, 0);
+//			center.radlon += f * scale;
 		} else if (keyCode == KEY_NUM1) {
 			scale = scale * 1.5f;
 		} else if (keyCode == KEY_NUM3) {
 			scale = scale / 1.5f;
 		} else if (keyCode == KEY_NUM7) {
-			showAddons++;
+//			showAddons++;
+			course++;
 		/** Non standard Key: hopefully is mapped to
 		 * the delete / clear key. According to
 		 * www.j2meforums.com/wiki/index.php/Canvas_Keycodes
@@ -1800,10 +1814,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		} else {		
 			keyStatus = keyCode;
 		}
-		projection = new Proj2D(center, scale, getWidth(), getHeight());
-		pc.setP(projection);
 		pc.center = center.clone();
 		pc.scale = scale;
+		pc.course = course;
 		repaint(0, 0, getWidth(), getHeight());
 	}
 
@@ -1828,11 +1841,10 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				dict.getCenter(center);
 			}
 
-			projection = new Proj2D(center, scale, getWidth(), getHeight());
 			if (pc != null) {				
-				pc.setP(projection);
 				pc.center = center.clone();
 				pc.scale = scale;
+				pc.course = course;
 			}
 		}
 		updatePosition();
@@ -1925,10 +1937,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		pc.target = target;
 		if(target!=null) {
 			center.setLatLon(target.lat, target.lon,true);
-			projection = new Proj2D(center, scale, getWidth(), getHeight());
-			pc.setP( projection);
 			pc.center = center.clone();
 			pc.scale = scale;
+			pc.course = course;
 		}
 		repaint(0, 0, getWidth(), getHeight());
 		movedAwayFromTarget=false;

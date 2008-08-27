@@ -168,18 +168,18 @@ public class WaypointsTile extends Tile {
 				PositionMark waypt = (PositionMark)waypts.elementAt(i);
 				
 				if (pc.getP().isPlotable(waypt.lat, waypt.lon)) {
-					if (waypt.lat < pc.screenLD.radlat) {
-						continue;
-					}
-					if (waypt.lon < pc.screenLD.radlon) {
-						continue;
-					}
-					if (waypt.lat > pc.screenRU.radlat) {
-						continue;
-					}
-					if (waypt.lon > pc.screenRU.radlon) {
-						continue;
-					}
+//					if (waypt.lat < pc.screenLD.radlat) {
+//						continue;
+//					}
+//					if (waypt.lon < pc.screenLD.radlon) {
+//						continue;
+//					}
+//					if (waypt.lat > pc.screenRU.radlat) {
+//						continue;
+//					}
+//					if (waypt.lon > pc.screenRU.radlon) {
+//						continue;
+//					}
 					
 					
 					pc.getP().forward(waypt.lat, waypt.lon, pc.lineP2);

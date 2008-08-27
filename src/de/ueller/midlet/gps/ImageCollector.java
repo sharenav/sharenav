@@ -8,7 +8,7 @@ import de.ueller.gpsMid.mapData.Tile;
 import de.ueller.midlet.gps.data.IntPoint;
 import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.Node;
-import de.ueller.midlet.gps.data.Proj2D;
+import de.ueller.midlet.gps.data.ProjFactory;
 import de.ueller.midlet.gps.data.Projection;
 import de.ueller.midlet.gps.tile.C;
 import de.ueller.midlet.gps.tile.Images;
@@ -41,7 +41,7 @@ public class ImageCollector implements Runnable {
 	private volatile boolean suspended=true;
 	private final Tile t[];
 	private Thread processorThread;
-	private ScreenContext nextSc;
+	private ScreenContext nextSc=new ScreenContext() ;
 
 	private Image[] img=new Image[2];
 	private PaintContext[] pc=new PaintContext[2];
@@ -54,6 +54,7 @@ public class ImageCollector implements Runnable {
 	int ySize;
 	IntPoint newCenter=new IntPoint(0,0);
 	IntPoint oldCenter=new IntPoint(0,0);
+	float oldCourse;
 	private volatile boolean needRedraw=false;
 	int createImageCount=0;
 	private final Trace tr;
@@ -63,15 +64,19 @@ public class ImageCollector implements Runnable {
 		super();
 		this.t=t;
 		this.tr = tr;
-		xSize=x+10;
-		ySize=y+10;
+		xSize=x;
+		ySize=y;
 		img[0]=Image.createImage(xSize,ySize);
 		img[1]=Image.createImage(xSize,ySize);
 		try {
+			Node n=new Node(2f,0f);
 			pc[0]=new PaintContext(tr, i);
 			pc[0].c = c;
+			pc[0].setP(ProjFactory.getInstance(n, 0, 1500, xSize, ySize));
 			pc[1]=new PaintContext(tr, i);
 			pc[1].c = c;
+			pc[1].setP(ProjFactory.getInstance(n, 0, 1500, xSize, ySize));
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -126,16 +131,19 @@ public class ImageCollector implements Runnable {
 				pc[nextCreate].center = nextSc.center.clone();
 				mapCenter=nextSc.center.clone();
 				pc[nextCreate].scale = nextSc.scale;
-				Projection p = new Proj2D(pc[nextCreate].center, nextSc.scale, xSize, ySize);
+				Projection p = ProjFactory.getInstance(pc[nextCreate].center,nextSc.course, nextSc.scale, xSize, ySize);
 				pc[nextCreate].setP(p);
-				p.inverse(xSize, 0, pc[nextCreate].screenRU);
-				p.inverse(0, ySize, pc[nextCreate].screenLD);
+//				p.inverse(xSize, 0, pc[nextCreate].screenRU);
+//				p.inverse(0, ySize, pc[nextCreate].screenLD);
 				// pcCollect.trace=nextSc.trace;
 				// pcCollect.dataReader=nextSc.dataReader;
 				// cleans the screen
 				pc[nextCreate].g = img[nextCreate].getGraphics();
 				pc[nextCreate].g.setColor(C.BACKGROUND_COLOR);
 				pc[nextCreate].g.fillRect(0, 0, xSize, ySize);
+//				pc[nextCreate].g.setColor(0x00FF0000);
+//				pc[nextCreate].g.drawRect(0, 0, xSize-1, ySize-1);
+//				pc[nextCreate].g.drawRect(20, 20, xSize-41, ySize-41);
 				pc[nextCreate].squareDstToWay = Float.MAX_VALUE;
 				pc[nextCreate].config = tr.getConfig();
 				pc[nextCreate].target = nextSc.target;
@@ -242,28 +250,48 @@ public class ImageCollector implements Runnable {
 	 *  but with the last collected position in the center
 	 */
 	public void paint(PaintContext screenPc){
-		
+		System.out.println("paint this: " +screenPc);
+		System.out.println("paint image: " +pc[nextPaint]);
 		if (suspended) return;
 		
-		nextSc=screenPc.cloneToScreenContext();
-		
-		stat=STATE_SC_READY;		
+//		nextSc=screenPc.cloneToScreenContext();
+		if (screenPc == null){
+			System.out.println("ScreenPc ist null");
+		}
+		if (screenPc.center == null){
+			System.out.println("ScreenPc.center ist null");
+		}
+		nextSc.center=screenPc.center.clone();
+		nextSc.course=screenPc.course;
+		nextSc.scale=screenPc.scale;
+		nextSc.xSize=xSize;
+		nextSc.ySize=ySize;
+		Projection p = ProjFactory.getInstance(nextSc.center,nextSc.course, nextSc.scale, xSize, ySize);
+		nextSc.setP(p);
+		screenPc.setP(p);
+		screenPc.xSize=xSize;
+		screenPc.ySize=ySize;
+		stat=STATE_SC_READY;
 		newPaintAvail=false;
-		screenPc.getP().forward(pc[nextPaint].center, oldCenter);
-//		System.out.println("old Center = " + oldCenter.x + "/" + oldCenter.y);
-//		System.out.println("paint: " +pc[nextPaint]);
+		if (pc[nextPaint].getP() == null){
+			pc[nextPaint].setP(nextSc.getP());
+		}
+		pc[nextPaint].getP().forward(nextSc.center, oldCenter);
+		System.out.println("old Center = " + oldCenter.x + "/" + oldCenter.y);
+		System.out.println("paint nextCreate: " +pc[nextCreate]);
+
 		screenPc.g.drawImage(img[nextPaint], 
-				oldCenter.x,
-				oldCenter.y,
+				nextSc.xSize-oldCenter.x,
+				nextSc.ySize-oldCenter.y,
 				Graphics.VCENTER|Graphics.HCENTER); 
 		//Test if the new center is in the midle of the screen, in which 
 		//case we don't need to redraw, as nothing has changed. 
-		if (oldCenter.x != nextSc.xSize/2 || oldCenter.y != nextSc.ySize/2) { 
+//		if (oldCenter.x != nextSc.xSize/2 || oldCenter.y != nextSc.ySize/2 || oldCourse != nextSc.course ) { 
 			//The center of the screen has moved, so need 
 			//to redraw the map image  
 			needRedraw = true; 
 			//System.out.println("Moved, needs redrawing"); 
-		} 
+//		} 
 
 		String name = null;
 		if (pc[nextPaint].actualWay != null && pc[nextPaint].actualWay.nameIdx != -1){
@@ -310,7 +338,7 @@ public class ImageCollector implements Runnable {
 		}
 	}
 	private synchronized void newCollected(){
-		pc[nextCreate].state=PaintContext.STATE_READY;		
+		pc[nextCreate].state=PaintContext.STATE_READY;
 		nextPaint=nextCreate;
 		nextCreate=(byte) ((nextCreate + 1) % 2);
 		newPaintAvail=true;		
@@ -324,6 +352,10 @@ public class ImageCollector implements Runnable {
 	public synchronized void newDataReady() {
 		needRedraw=true;
 		notify();
+	}
+	
+	public Projection getCurrentProjection(){
+		return pc[nextPaint].getP();
 	}
 	
 }
