@@ -5,7 +5,7 @@ import de.ueller.gpsMid.mapData.SingleTile;
 public class Proj2DMoveUp  implements Projection {
 	private float upDir;
 
-	
+	private int course;
     protected float ctrLat = 0.0f; // center latitude in radians
     protected float ctrLon = 0.0f; // center longitude in radians
 	private final float	scale;
@@ -39,6 +39,7 @@ public class Proj2DMoveUp  implements Projection {
 
 	public Proj2DMoveUp(Node center, int upDir, float scale, int width, int height) {
         this.upDir = ProjMath.degToRad(upDir);
+        this.course=upDir;
 		this.ctrLat = center.radlat;
         this.ctrLon = center.radlon;
 		this.scale = scale;
@@ -283,7 +284,7 @@ public class Proj2DMoveUp  implements Projection {
 	}
 
 	public float getCourse() {
-		return upDir;
+		return course;
 	}
 
 }

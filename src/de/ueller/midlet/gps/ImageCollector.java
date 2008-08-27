@@ -250,17 +250,11 @@ public class ImageCollector implements Runnable {
 	 *  but with the last collected position and direction in the center
 	 */
 	public void paint(PaintContext screenPc){
-		System.out.println("paint this: " +screenPc);
-		System.out.println("paint image: " +pc[nextPaint]);
+//		System.out.println("paint this: " +screenPc);
+//		System.out.println("paint image: " +pc[nextPaint]);
 		if (suspended) return;
 		
 //		nextSc=screenPc.cloneToScreenContext();
-		if (screenPc == null){
-			System.out.println("ScreenPc ist null");
-		}
-		if (screenPc.center == null){
-			System.out.println("ScreenPc.center ist null");
-		}
 		nextSc.center=screenPc.center.clone();
 		nextSc.course=screenPc.course;
 		nextSc.scale=screenPc.scale;
@@ -278,8 +272,8 @@ public class ImageCollector implements Runnable {
 			pc[nextPaint].setP(nextSc.getP());
 		}
 		p2.forward(nextSc.center, oldCenter);
-		System.out.println("old Center = " + oldCenter.x + "/" + oldCenter.y);
-		System.out.println("paint nextCreate: " +pc[nextCreate]);
+//		System.out.println("old Center = " + oldCenter.x + "/" + oldCenter.y);
+//		System.out.println("paint nextCreate: " +pc[nextCreate]);
 
 		screenPc.g.drawImage(img[nextPaint], 
 				nextSc.xSize-oldCenter.x,
@@ -291,11 +285,7 @@ public class ImageCollector implements Runnable {
 			//The center of the screen has moved, so need 
 			//to redraw the map image  
 			needRedraw = true; 
-			System.out.println("Moved, needs redrawing"); 
-		} else {
-			System.out.println("same Pos no needs  for redrawing"); 
-
-		}
+		} 
 
 		String name = null;
 		if (pc[nextPaint].actualWay != null && pc[nextPaint].actualWay.nameIdx != -1){
