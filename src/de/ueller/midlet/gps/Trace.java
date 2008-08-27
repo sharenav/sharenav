@@ -723,7 +723,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 					}
 				}
 			}
-			//#if polish.api.mmapi && polish.api.advancedmultimedia
+			//#if polish.api.mmapi
 			if (c == CAMERA_CMD){		
 				if (imageCollector != null) {
 					imageCollector.suspend();
@@ -1808,7 +1808,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			   commandAction(ROUTE_TO_CMD,(Displayable) null);
 			   return;		
 		} else if (keyCode == Configuration.KEYCODE_CAMERA_COVER_OPEN) {
-			//#if polish.api.mmapi && polish.api.advancedmultimedia
+			//#if polish.api.mmapi
 			commandAction(CAMERA_CMD, (Displayable)null);
 			//#endif
 		} else {		
