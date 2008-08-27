@@ -144,6 +144,8 @@ public interface Projection {
 
 
 	public float getMaxLon();
+	
+	public float getCourse();
 
 	public String toString();
 }

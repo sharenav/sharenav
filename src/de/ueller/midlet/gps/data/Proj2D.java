@@ -53,6 +53,7 @@ public class Proj2D implements Projection {
     private float maxLat=Float.MIN_VALUE;
     private float minLon=Float.MAX_VALUE;
     private float maxLon=Float.MIN_VALUE;
+	private IntPoint	panP=new IntPoint();
 
 
 	public Proj2D(Node center, float scale, int width, int height) {
@@ -232,8 +233,13 @@ public class Proj2D implements Projection {
 	}
 
 	public void pan(Node n, int xd, int yd) {
-		inverse((width*xd/100)+width/2,( height*yd/100)+height/2, n);
-		
+		forward(n,panP);
+		inverse((width*xd/100)+panP.x,( height*yd/100)+panP.y, n);		
+	}
+
+
+	public float getCourse() {
+		return 0;
 	}
 
 }

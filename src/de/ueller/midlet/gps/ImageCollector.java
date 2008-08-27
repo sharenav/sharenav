@@ -247,7 +247,7 @@ public class ImageCollector implements Runnable {
 		processorThread.start();
 	}
 	/** copy the last created image to the real screen
-	 *  but with the last collected position in the center
+	 *  but with the last collected position and direction in the center
 	 */
 	public void paint(PaintContext screenPc){
 		System.out.println("paint this: " +screenPc);
@@ -273,10 +273,11 @@ public class ImageCollector implements Runnable {
 		screenPc.ySize=ySize;
 		stat=STATE_SC_READY;
 		newPaintAvail=false;
-		if (pc[nextPaint].getP() == null){
+		Projection p2 = pc[nextPaint].getP();
+		if (p2 == null){
 			pc[nextPaint].setP(nextSc.getP());
 		}
-		pc[nextPaint].getP().forward(nextSc.center, oldCenter);
+		p2.forward(nextSc.center, oldCenter);
 		System.out.println("old Center = " + oldCenter.x + "/" + oldCenter.y);
 		System.out.println("paint nextCreate: " +pc[nextCreate]);
 
@@ -286,12 +287,15 @@ public class ImageCollector implements Runnable {
 				Graphics.VCENTER|Graphics.HCENTER); 
 		//Test if the new center is in the midle of the screen, in which 
 		//case we don't need to redraw, as nothing has changed. 
-//		if (oldCenter.x != nextSc.xSize/2 || oldCenter.y != nextSc.ySize/2 || oldCourse != nextSc.course ) { 
+		if (oldCenter.x != nextSc.xSize/2 || oldCenter.y != nextSc.ySize/2 || p2.getCourse() != nextSc.course ) { 
 			//The center of the screen has moved, so need 
 			//to redraw the map image  
 			needRedraw = true; 
-			//System.out.println("Moved, needs redrawing"); 
-//		} 
+			System.out.println("Moved, needs redrawing"); 
+		} else {
+			System.out.println("same Pos no needs  for redrawing"); 
+
+		}
 
 		String name = null;
 		if (pc[nextPaint].actualWay != null && pc[nextPaint].actualWay.nameIdx != -1){

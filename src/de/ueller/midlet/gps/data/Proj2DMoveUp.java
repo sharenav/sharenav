@@ -33,6 +33,9 @@ public class Proj2DMoveUp  implements Projection {
     private float maxLon=Float.MIN_VALUE;
 
 
+	private IntPoint	panP=new IntPoint();
+
+
 
 	public Proj2DMoveUp(Node center, int upDir, float scale, int width, int height) {
         this.upDir = ProjMath.degToRad(upDir);
@@ -42,7 +45,7 @@ public class Proj2DMoveUp  implements Projection {
 		this.width = width;
 		this.height = height;
 		computeParameters();
-		System.out.println(center + " " + upDir + " " + scale );
+//		System.out.println(center + " " + upDir + " " + scale );
     }
 
 	public void computeParameters(){
@@ -269,11 +272,18 @@ public class Proj2DMoveUp  implements Projection {
 	}
 
 	public void pan(Node n, int xd,int yd) {
-		inverse((width*xd/100)+width/2,( height*yd/100)+height/2, n);
+		System.out.println("Pan from " + n);
+		forward(n,panP);
+		inverse((width*xd/100)+panP.x,( height*yd/100)+panP.y, n);
+		System.out.println("Pan to " + n);
 	}
 
 	public String toString() {
 		return "P " + ProjMath.radToDeg(ctrLat) + "/"+ ProjMath.radToDeg(ctrLon) + " s:" + scale + " u"+upDir;
+	}
+
+	public float getCourse() {
+		return upDir;
 	}
 
 }
