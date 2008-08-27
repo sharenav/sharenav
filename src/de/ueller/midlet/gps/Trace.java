@@ -491,15 +491,18 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	 * it retries for up to 40 seconds and blocks in the
 	 * mean time, so this function has to be called from
 	 * within a separate thread. If successful, it will
-	 * re initialise the location producer with the new
+	 * reinitialise the location producer with the new
 	 * streams.
 	 * 
-	 * @return weather the reconnect was successful
+	 * @return whether the reconnect was successful
 	 */
 	public boolean autoReconnectBtConnection() {
 		if (!getConfig().getBtAutoRecon()) {
 			logger.info("Not trying to reconnect");
 			return false;
+		}
+		if (config.getCfgBitState(Configuration.CFGBIT_SND_DISCONNECT)) {
+			parent.mNoiseMaker.playSound("DISCONNECT");			
 		}
 		/**
 		 * If there are still parts of the old connection
@@ -517,6 +520,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		}
 		if (reconnectFailures < 4) {
 			if (locationProducer != null) {
+				if (config.getCfgBitState(Configuration.CFGBIT_SND_CONNECT)) {
+					parent.mNoiseMaker.playSound("CONNECT");
+				}
 				locationProducer.init(btGpsInputStream, btGpsOutputStream, this);
 				return true;
 			}
