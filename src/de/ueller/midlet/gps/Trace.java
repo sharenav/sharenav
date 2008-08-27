@@ -87,6 +87,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	private final Command STOP_RECORD_CMD = new Command("Stop record",Command.ITEM, 4);
 	private final Command MANAGE_TRACKS_CMD = new Command("Manage tracks",Command.ITEM, 5);
 	private final Command SAVE_WAYP_CMD = new Command("Save waypoint",Command.ITEM, 7);
+	private final Command ENTER_WAYP_CMD = new Command("Enter waypoint",Command.ITEM, 7);
 	private final Command MAN_WAYP_CMD = new Command("Manage waypoints",Command.ITEM, 7);
 	private final Command ROUTE_TO_CMD = new Command("Route",Command.ITEM, 3);
 	private final Command CAMERA_CMD = new Command("Camera",Command.ITEM, 9);
@@ -603,8 +604,12 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 //				resume();
 			}
 			if (c == SAVE_WAYP_CMD) {				
-				GuiWaypointSave gwps = new GuiWaypointSave(this,new PositionMark(center.radlat, center.radlon));
+				GuiWaypointSave gwps = new GuiWaypointSave(this, new PositionMark(center.radlat, center.radlon));
 				gwps.show();
+			}
+			if (c == ENTER_WAYP_CMD) {				
+				GuiWaypointEnter gwpe = new GuiWaypointEnter(this);
+				gwpe.show();
 			}
 			if (c == MAN_WAYP_CMD) {				
 				GuiWaypoint gwp = new GuiWaypoint(this);
@@ -616,9 +621,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				repaint(0, 0, getWidth(), getHeight());
 			}
 			if (c == RECORDINGS_CMD) {
-				int noElements = 2;
+				int noElements = 3;
 				//#if polish.api.mmapi
-				noElements = 4;
+				noElements = 5;
 				//#endif
 				String[] elements = new String[noElements];
 				if (gpx.isRecordingTrk()) {
@@ -626,13 +631,14 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				} else {
 					elements[0] = "Start Gpx tracklog";
 				}
-				elements[1] = "Add a waypoint";
+				elements[1] = "Add waypoint";
+				elements[2] = "Enter waypoint";
 				//#if polish.api.mmapi
-				elements[2] = "Take pictures";
+				elements[3] = "Take pictures";
 				if (audioRec.isRecording()) {
-					elements[3] = "Stop audio recording";
+					elements[4] = "Stop audio recording";
 				} else {
-					elements[3] = "Start audio recording";					
+					elements[4] = "Start audio recording";					
 				}
 				//#endif
 					
@@ -671,12 +677,16 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			            	commandAction(SAVE_WAYP_CMD, null);			            	
 							break;
 			            }
-			          //#if polish.api.mmapi
 			            case 2: {
+			            	commandAction(ENTER_WAYP_CMD, null);			            	
+							break;
+			            }
+			          //#if polish.api.mmapi
+			            case 3: {
 			            	commandAction(CAMERA_CMD, null);			            	
 			            	break;
 			            }
-			            case 3: {
+			            case 4: {
 			            	show();
 			            	if (audioRec.isRecording()) {
 			            		audioRec.stopRecord();
