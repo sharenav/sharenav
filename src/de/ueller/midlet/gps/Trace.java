@@ -10,8 +10,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.Vector;
-
 
 import javax.microedition.io.Connector;
 import javax.microedition.io.StreamConnection;
@@ -42,6 +43,7 @@ import de.ueller.gpsMid.mapData.DictReader;
 import de.ueller.gpsMid.mapData.QueueDataReader;
 import de.ueller.gpsMid.mapData.QueueDictReader;
 import de.ueller.gpsMid.mapData.Tile;
+import de.ueller.midlet.gps.data.ProjFactory;
 import de.ueller.midlet.gps.data.ProjMath;
 import de.ueller.midlet.gps.data.Gpx;
 import de.ueller.midlet.gps.data.IntPoint;
@@ -126,6 +128,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	
 	private static long pressedKeyTime = 0;
 	private static int pressedKeyCode = 0;
+	private static volatile long releasedKeyCode = 0;
 	private static int ignoreKeyCode = 0;
 	
 	private boolean rootCalc=false;
@@ -1700,6 +1703,40 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		}	
 	}
 
+	public void singleOrDoubleKeyPress(int keyCode) {		
+		// key was pressed twice quickly
+		if (releasedKeyCode == keyCode) {
+			if (keyCode == KEY_NUM5) {			
+				if (ProjFactory.getProj() == ProjFactory.NORTH_UP ) {
+					ProjFactory.setProj(ProjFactory.MOVE_UP);
+					// why must this be zero to be northed here...
+					course = 0;
+					parent.getInstance().alert("Map Rotation", "Rotate to Movement Direction" , 500);
+				} else {
+					ProjFactory.setProj(ProjFactory.NORTH_UP);					
+					// ... and 90 to be northed there?
+					course = 90;
+					parent.getInstance().alert("Map Rotation", "NORTH UP" , 500);
+				}
+			}
+		}
+		
+		releasedKeyCode=keyCode;
+		TimerTask timerT;
+		Timer tm = new Timer();	    
+	    timerT = new TimerTask() {
+			public void run() {
+				// key was not pressed again within
+				if (releasedKeyCode == KEY_NUM5) {
+					gpsRecenter = true;
+				}
+				releasedKeyCode = 0;
+			}			
+		};
+	    tm.schedule(timerT, 250);   
+
+	}
+	
 	
 //	// manage keys that would have different meanings when
 //	// held down in keyReleased
@@ -1713,6 +1750,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		}
 		// handle this key normally (shortly pressed)
 		if (keyCode == KEY_NUM5) {
+			singleOrDoubleKeyPress(keyCode);
 			gpsRecenter = true;
 		} else if (keyCode == KEY_NUM9) {
 			if(keyboardLocked) {

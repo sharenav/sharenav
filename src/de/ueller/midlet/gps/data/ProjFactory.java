@@ -18,4 +18,9 @@ public final class ProjFactory {
 	public static void setProj(byte t){
 		type=t;
 	}
+
+	public static byte getProj(){
+		return type;
+	}
+
 }
