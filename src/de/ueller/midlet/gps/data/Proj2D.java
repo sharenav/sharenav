@@ -50,9 +50,9 @@ public class Proj2D implements Projection {
     private float scaled_radius_rel;    
     private float scaled_lat_rel;
     private float minLat=Float.MAX_VALUE;
-    private float maxLat=Float.MIN_VALUE;
+    private float maxLat=-Float.MAX_VALUE;
     private float minLon=Float.MAX_VALUE;
-    private float maxLon=Float.MIN_VALUE;
+    private float maxLon=-Float.MAX_VALUE;
 	private IntPoint	panP=new IntPoint();
 
 
