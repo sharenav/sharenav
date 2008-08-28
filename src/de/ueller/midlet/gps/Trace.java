@@ -1706,6 +1706,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	public void singleOrDoubleKeyPress(int keyCode) {		
 		// key was pressed twice quickly
 		if (releasedKeyCode == keyCode) {
+			releasedKeyCode = 0;
 			if (keyCode == KEY_NUM5) {			
 				if (ProjFactory.getProj() == ProjFactory.NORTH_UP ) {
 					ProjFactory.setProj(ProjFactory.MOVE_UP);
@@ -1719,22 +1720,21 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 					parent.getInstance().alert("Map Rotation", "NORTH UP" , 500);
 				}
 			}
+		} else {		
+			releasedKeyCode=keyCode;
+			TimerTask timerT;
+			Timer tm = new Timer();	    
+		    timerT = new TimerTask() {
+				public void run() {
+					// key was not pressed again within
+					if (releasedKeyCode == KEY_NUM5) {
+						gpsRecenter = true;
+					}
+					releasedKeyCode = 0;
+				}			
+			};
+		    tm.schedule(timerT, 250);
 		}
-		
-		releasedKeyCode=keyCode;
-		TimerTask timerT;
-		Timer tm = new Timer();	    
-	    timerT = new TimerTask() {
-			public void run() {
-				// key was not pressed again within
-				if (releasedKeyCode == KEY_NUM5) {
-					gpsRecenter = true;
-				}
-				releasedKeyCode = 0;
-			}			
-		};
-	    tm.schedule(timerT, 250);   
-
 	}
 	
 	
@@ -1751,7 +1751,6 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		// handle this key normally (shortly pressed)
 		if (keyCode == KEY_NUM5) {
 			singleOrDoubleKeyPress(keyCode);
-			gpsRecenter = true;
 		} else if (keyCode == KEY_NUM9) {
 			if(keyboardLocked) {
 				keyPressed(0);
