@@ -60,17 +60,35 @@ public abstract class Tile {
 	boolean contain(ScreenContext pc){
 //		System.out.println(this);
 //		System.out.println(pc.screenLD + "   " + pc.screenRU);
-		if(maxLat < pc.getP().getMinLat()) {
-			return false;
-		}
-		if(maxLon < pc.getP().getMinLon()) {
-			return false;
-		}
-		if(minLat > pc.getP().getMaxLat()) {
-			return false;
-		}
-		if(minLon > pc.getP().getMaxLon()) {
-			return false;
+		//TODO: HMU there must be a better way
+		if (pc.getP() == null){
+			if(maxLat < pc.searchLD.radlat) {
+				return false;
+			}
+			if(maxLon < pc.searchLD.radlon) {
+				return false;
+			}
+			if(minLat > pc.searchRU.radlat) {
+				return false;
+			}
+			if(minLon > pc.searchRU.radlon) {
+				return false;
+			}
+
+
+		} else {
+			if(maxLat < pc.getP().getMinLat()) {
+				return false;
+			}
+			if(maxLon < pc.getP().getMinLon()) {
+				return false;
+			}
+			if(minLat > pc.getP().getMaxLat()) {
+				return false;
+			}
+			if(minLon > pc.getP().getMaxLon()) {
+				return false;
+			}
 		}
 //		System.out.println("Paint gpsMidMap");
 		return true;

@@ -274,10 +274,10 @@ public class SingleTile extends Tile implements QueueableTile {
 			/**
 			 * Calculate pc coordinates in terms of relative single tile coordinates
 			 */
-			short pcLDlat = (short)((pc.getP().getMinLat() - this.centerLat) * SingleTile.fpm);
-			short pcLDlon = (short)((pc.getP().getMinLon() - this.centerLon) * SingleTile.fpm);
-			short pcRUlat = (short)((pc.getP().getMaxLat() - this.centerLat) * SingleTile.fpm);
-			short pcRUlon = (short)((pc.getP().getMaxLon() - this.centerLon) * SingleTile.fpm);
+			short pcLDlat = (short)((pc.searchLD.radlat - this.centerLat) * SingleTile.fpm);
+			short pcLDlon = (short)((pc.searchLD.radlon - this.centerLon) * SingleTile.fpm);
+			short pcRUlat = (short)((pc.searchRU.radlat - this.centerLat) * SingleTile.fpm);
+			short pcRUlon = (short)((pc.searchRU.radlon - this.centerLon) * SingleTile.fpm);
 			
 			if (ways != null) {
 				short targetLat = (short)((pc.target.lat - centerLat)*fpm);
