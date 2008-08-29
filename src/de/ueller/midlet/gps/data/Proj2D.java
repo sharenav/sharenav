@@ -87,11 +87,11 @@ public class Proj2D implements Projection {
     	Node ret=new Node();
     	inverse(0, 0, ret);
     	extendMinMax(ret);
-    	inverse(0, width, ret);
+    	inverse(0, height, ret);
     	extendMinMax(ret);
-    	inverse(height, 0, ret);
+    	inverse(width, 0, ret);
     	extendMinMax(ret);
-    	inverse(height, width, ret);
+    	inverse(width, height, ret);
     	extendMinMax(ret);
     	
     	System.out.println("scaled lat=" + scaled_lat);
