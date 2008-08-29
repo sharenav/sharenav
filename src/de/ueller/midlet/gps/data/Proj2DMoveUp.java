@@ -205,8 +205,8 @@ public class Proj2DMoveUp  implements Projection {
     	if (llp==null) llp = new Node();    	    	
     	x -= wx;
     	y = hy - y;
-		float x1= y*sinRoh - x*cosRoh;
-		float y1= -x*sinRoh - y*cosRoh;
+		float x1= y*sinRoh + x*cosRoh;
+		float y1= -x*sinRoh + y*cosRoh;
        llp.setLatLon((y1/scaled_lat + ctrLat),
                 (x1 / scaled_radius) + ctrLon,
                 true);        
@@ -230,8 +230,8 @@ public class Proj2DMoveUp  implements Projection {
 //    	System.out.println("sinRoh=" + sinRoh);
 //    	System.out.println("cosRoh=" + cosRoh);
 //    	System.out.println("1 x="+x + "  y="+y);
-		float x1= y*sinRoh - x*cosRoh;
-		float y1= -x*sinRoh - y*cosRoh;
+		float x1= y*sinRoh + x*cosRoh;
+		float y1= -x*sinRoh + y*cosRoh;
 //    	System.out.println("1 x'="+x1 + "  y'="+y1);
  
         float y_=(y1/scaled_radius)+asinh_of_tanCtrLat ;
