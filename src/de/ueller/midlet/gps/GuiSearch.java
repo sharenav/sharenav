@@ -108,7 +108,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		addCommand(POI_CMD);
 		//Commented out, as I am not yet convinced that if fully
 		//works. If you want to test it, then add it back again
-		//addCommand(FULLT_CMD);
+		addCommand(FULLT_CMD);
 		
 		timerT = new TimerTask() {
 			public void run() {
