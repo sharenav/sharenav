@@ -288,8 +288,8 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 						running=false;
 						return;
 					}
+					receiveMessage("BT Connected");
 			}
-			receiveMessage("BT Connected");
 			if (config.getCfgBitState(config.CFGBIT_SND_CONNECT)) {
 				parent.mNoiseMaker.playSound("CONNECT");
 			}
