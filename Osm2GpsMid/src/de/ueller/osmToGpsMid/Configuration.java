@@ -49,6 +49,7 @@ public class Configuration {
 		private ResourceBundle vb;
 		private String tmp=null;
 		private String planet;
+		private String propFile;
 		public boolean useRouting=false;
 		public int maxTileSize=20000;
 		public int maxRouteTileSize=3000;
@@ -68,13 +69,17 @@ public class Configuration {
 //				.getBundle(BUNDLE_NAME);
 
 		public Configuration(String [] args) {
-			String propFile = null;
+			
+			if (args.length == 0) {
+				GuiConfigWizard gcw = new GuiConfigWizard(this);
+				gcw.startWizard();
+			}
 			for (String arg : args) {
 				if (arg.startsWith("--")) {
 					if (arg.startsWith("--bounds=")) {
 						String bound = arg.substring(9);
 						System.out.println("Found bound: " + bound);
-						String [] boundValues = bound.split(",");						
+						String [] boundValues = bound.split(",");
 						if (boundValues.length == 4) {
 							if (bounds == null) {
 								bounds = new Bounds[1];
@@ -100,12 +105,22 @@ public class Configuration {
 							System.exit(1);
 						}
 					}
+					if (arg.startsWith("--help")) {
+						System.err.println("Usage: Osm2GpsMid [--bounds=left,bottom,right,top] planet.osm.bz2 [location]");
+						System.err.println("  \"--bounds=\" specifies the set of bounds to use in GpsMid ");
+						System.err.println("       Can be left out to use the regions specified in location.properties");
+						System.err.println("       or if you want to create a GpsMid for the whole region");
+						System.err.println("       contained in the.osm(.bz2) file");
+						System.err.println("  planet.osm.bz2: points to a (compressed) .osm file");
+						System.err.println("       By specifying osmXapi, the data can be fetched straight from the server (only works for small areas)");
+						System.err.println("  location: points to a .properties file specifying additional parameters");
+					}
 					
 				} else if (planet == null) {
 					planet = arg;
 				} else {
 					propFile = arg;
-				}				
+				}
 			}
 			
 			// precalculate real scale levels for pseudo zoom levels
@@ -173,7 +188,12 @@ public class Configuration {
 			planet="TEST";
 		}
 
-		
+		public void setPlanetName(String p) {
+			planet = p;
+		}
+		public void setPropFileName(String p) {
+			propFile = p;
+		}
 		
 		public boolean use(String key){
 			if ("true".equalsIgnoreCase(getString(key))){

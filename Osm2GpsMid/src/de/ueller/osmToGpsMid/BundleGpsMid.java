@@ -33,89 +33,80 @@ public class BundleGpsMid {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		if (args.length > 0){
-			InputStream fr;
-			try {
-				Configuration c=new Configuration(args);
-				System.out.println("create Bundle for " + c.getName());
-				System.out.println("Midlet Name: " + c.getMidletName());
-				String tmpDir = c.getTempDir();
-				System.out.println("unpack Application to " + tmpDir);
-				expand(c, tmpDir);
-				File target=new File(tmpDir);
-				createPath(target);				
-				fr= c.getPlanetSteam();
-				OxParser parser = new OxParser(fr,c);
-				System.out.println("read Nodes " + parser.getNodes().size());
-				System.out.println("read Ways  " + parser.getWays().size());
-				System.out.println("read Relations  " + parser.getRelations().size());
-				/**
-				 * Display some stats about the type of relations we currently aren't handling
-				 * to see which ones would be particularly useful to deal with eventually 
-				 */
-				Hashtable<String,Integer> relTypes = new Hashtable<String,Integer>();
-				for (Relation r : parser.getRelations()) {
-					String type = r.getAttribute("type");
-					if (type == null) type = "unknown";	
-					Integer count = relTypes.get(type);
-					if (count != null) {
-						count = new Integer(count.intValue() + 1);
-					} else {
-						count = new Integer(1);
-					}
-					relTypes.put(type, count);
+
+		InputStream fr;
+		try {
+			Configuration c=new Configuration(args);
+			System.out.println("create Bundle for " + c.getName());
+			System.out.println("Midlet Name: " + c.getMidletName());
+			String tmpDir = c.getTempDir();
+			System.out.println("unpack Application to " + tmpDir);
+			expand(c, tmpDir);
+			File target=new File(tmpDir);
+			createPath(target);				
+			fr= c.getPlanetSteam();
+			OxParser parser = new OxParser(fr,c);
+			System.out.println("read Nodes " + parser.getNodes().size());
+			System.out.println("read Ways  " + parser.getWays().size());
+			System.out.println("read Relations  " + parser.getRelations().size());
+
+			/**
+			 * Display some stats about the type of relations we currently aren't handling
+			 * to see which ones would be particularly useful to deal with eventually 
+			 */
+			Hashtable<String,Integer> relTypes = new Hashtable<String,Integer>();
+			for (Relation r : parser.getRelations()) {
+				String type = r.getAttribute("type");
+				if (type == null) type = "unknown";	
+				Integer count = relTypes.get(type);
+				if (count != null) {
+					count = new Integer(count.intValue() + 1);
+				} else {
+					count = new Integer(1);
 				}
-				System.out.println("Types of relations present but ignored: ");
-				for (Entry<String, Integer> e : relTypes.entrySet()) {
-					System.out.println("   " + e.getKey() + ": " + e.getValue());
-					
-				}
-				
-				System.out.println("reorder Ways");
-				new CleanUpData(parser,c);
-				
-				if (c.useRouting){
-					RouteData rd=new RouteData(parser,target.getCanonicalPath());
-					System.out.println("create Route Data");
-					rd.create();
-					System.out.println("optimize Route Date");
-					rd.optimise();
-				}
-				CreateGpsMidData cd=new CreateGpsMidData(parser,target.getCanonicalPath());
-//				rd.write(target.getCanonicalPath());
-//				cd.setRouteData(rd);
-				cd.setConfiguration(c);
-				System.out.println("split long ways " + parser.getWays().size());
-				new SplitLongWays(parser);
-				System.out.println("splited long ways to " + parser.getWays().size());
-				new CalcNearBy(parser);
-				cd.exportMapToMid();
-				//Drop parser to conserve Memory
-				parser=null;
-				pack(c);
-				
-				//Cleanup after us again. The .jar and .jad file are in the main directory,
-				//so these won't get deleted
-				if (c.cleanupTmpDirAfterUse()) {
-					File tmpBaseDir = new File(c.getTempBaseDir());
-					System.out.println("Cleaning up temporary directory " + tmpBaseDir);
-					deleteDirectory(tmpBaseDir);					
-				}
-				
-			} catch (Exception e) {
-				e.printStackTrace();
+				relTypes.put(type, count);
+			}
+			System.out.println("Types of relations present but ignored: ");
+			for (Entry<String, Integer> e : relTypes.entrySet()) {
+				System.out.println("   " + e.getKey() + ": " + e.getValue());
+
 			}
 
-		} else {
-			System.err.println("Usage: Osm2GpsMid [--bounds=left,bottom,right,top] planet.osm.bz2 [location]");
-			System.err.println("  \"--bounds=\" specifies the set of bounds to use in GpsMid ");
-			System.err.println("       Can be left out to use the regions specified in location.properties");
-			System.err.println("       or if you want to create a GpsMid for the whole region");
-			System.err.println("       contained in the.osm(.bz2) file");					
-			System.err.println("  planet.osm.bz2: points to a (compressed) .osm file");
-			System.err.println("       By specifying osmXapi, the data can be fetched straight from the server (only works for small areas)");
-			System.err.println("  location: points to a .properties file specifying additional parameters");
+			System.out.println("reorder Ways");
+			new CleanUpData(parser,c);
+
+			if (c.useRouting){
+				RouteData rd=new RouteData(parser,target.getCanonicalPath());
+				System.out.println("create Route Data");
+				rd.create();
+				System.out.println("optimize Route Date");
+				rd.optimise();
+			}
+			CreateGpsMidData cd=new CreateGpsMidData(parser,target.getCanonicalPath());
+			//				rd.write(target.getCanonicalPath());
+			//				cd.setRouteData(rd);
+			cd.setConfiguration(c);
+			System.out.println("split long ways " + parser.getWays().size());
+			new SplitLongWays(parser);
+			System.out.println("splited long ways to " + parser.getWays().size());
+			new CalcNearBy(parser);
+			cd.exportMapToMid();
+			//Drop parser to conserve Memory
+			parser=null;
+			pack(c);
+
+			//Cleanup after us again. The .jar and .jad file are in the main directory,
+			//so these won't get deleted
+			if (c.cleanupTmpDirAfterUse()) {
+				File tmpBaseDir = new File(c.getTempBaseDir());
+				System.out.println("Cleaning up temporary directory " + tmpBaseDir);
+				deleteDirectory(tmpBaseDir);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
+
 	}
 
 	private static void expand(Configuration c, String tmpDir) throws ZipException, IOException {
