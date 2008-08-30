@@ -475,7 +475,11 @@ public class Way extends Entity{
 					posChar_y += slope_y * delta;
 					
 					// how much would we start to draw the next char over the end point
-					nextDeltaSub=(lineP2.x-posChar_x) / slope_x; 					
+					if (slope_x != 0) {
+						nextDeltaSub=(lineP2.x-posChar_x) / slope_x;
+					} else {
+						nextDeltaSub=0;
+					}
 					
 				} // end while loop
 							
