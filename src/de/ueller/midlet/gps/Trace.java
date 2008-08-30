@@ -125,7 +125,8 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	
 	int showAddons = 0;
 	private int fontHeight = 0;
-	
+	private int compassRectHeight = 0;
+		
 	private static long pressedKeyTime = 0;
 	private static int pressedKeyCode = 0;
 	private static volatile long releasedKeyCode = 0;
@@ -209,6 +210,12 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		"HARD;RIGHT", "RIGHT", "HALF;RIGHT",
 		"STRAIGHTON",
 		"HALF;LEFT", "LEFT", "HARD;LEFT"};
+
+	private static final String[] compassDirections  =
+	{ "N", "NNE", "NE", "NEE", "E", "SEE", "SE", "SSE",
+	  "S", "SSW", "SW", "SWW", "W", "NWW", "NW", "NNW",
+	  "N"};
+
 	private boolean keyboardLocked=false;
 	private boolean movedAwayFromTarget=true;
 	private boolean atTarget=false;
@@ -888,7 +895,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				break;
 			default:
 				showAddons = 0;
-
+				if (ProjFactory.getProj() == ProjFactory.MOVE_UP) {
+					showPointOfTheCompass(pc);
+				}
 			}
 			showMovement(g);
 			g.setColor(0, 0, 0);
@@ -953,6 +962,19 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		}
 	}
 
+	private void showPointOfTheCompass(PaintContext pc) {
+		if (compassRectHeight == 0) {
+			compassRectHeight = pc.g.getFont().getHeight()-2;
+		}
+		String c = compassDirections[(int) ((float) ((course%360 + 11.25f) / 22.5f)) ];
+		int compassRectWidth = pc.g.getFont().stringWidth(c);
+		pc.g.setColor(200, 200, 200); 
+		pc.g.fillRect(pc.xSize/2 - compassRectWidth / 2 , 0,
+					  compassRectWidth, compassRectHeight);
+		pc.g.setColor(0, 0, 0); 
+		pc.g.drawString( compassDirections[(int) ((float) ((course%360 + 11.25f) / 22.5f)) ], pc.xSize/2,  0 , Graphics.HCENTER | Graphics.TOP);
+	}
+	
 	private int showConnectStatistics(Graphics g, int yc, int la) {
 		if (statRecord == null) {
 			g.drawString("No stats yet", 0, yc, Graphics.TOP
