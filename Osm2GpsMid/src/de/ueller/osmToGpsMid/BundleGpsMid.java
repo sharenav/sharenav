@@ -210,6 +210,7 @@ public class BundleGpsMid {
 		fw.write("MIDlet-Jar-Size: "+jarLength+"\n");
 		fw.write("MIDlet-Jar-URL: "+c.getMidletName()+"-"+c.getName()+"-"+c.getVersion()+".jar\n");
 		fw.close();
+		fr.close();
 	}
 
 	private static void pack(Configuration c) throws ZipException, IOException{
