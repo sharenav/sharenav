@@ -968,7 +968,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		}
 		String c = compassDirections[(int) ((float) ((course%360 + 11.25f) / 22.5f)) ];
 		int compassRectWidth = pc.g.getFont().stringWidth(c);
-		pc.g.setColor(200, 200, 200); 
+		pc.g.setColor(255, 255, 150); 
 		pc.g.fillRect(pc.xSize/2 - compassRectWidth / 2 , 0,
 					  compassRectWidth, compassRectHeight);
 		pc.g.setColor(0, 0, 0); 
