@@ -397,9 +397,9 @@ public class GuiCamera extends Canvas implements CommandListener, GuiCameraInter
 		}
 		if (c == OK_CMD) {
 			if (selectJsrCG.getSelectedIndex() == 1) {
-				Trace.getInstance().getConfig().setCfgBits(Configuration.CFGBIT_USE_JSR_234, true);
+				Trace.getInstance().getConfig().setCfgBitState(Configuration.CFGBIT_USE_JSR_234, true, true);
 			} else {
-				Trace.getInstance().getConfig().setCfgBits(Configuration.CFGBIT_USE_JSR_234, false);
+				Trace.getInstance().getConfig().setCfgBitState(Configuration.CFGBIT_USE_JSR_234, false, true);
 			}
 			String encType = encodingCG.getString(encodingCG.getSelectedIndex());
 			if (encType.equals("Custom"))
