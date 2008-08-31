@@ -7,6 +7,7 @@ package de.ueller.midlet.gps;
 import javax.microedition.lcdui.*;
 
 import de.ueller.gps.data.Configuration;
+import de.ueller.midlet.gps.data.ProjFactory;
 
 public class GuiMapFeatures extends Form implements CommandListener {
 	private final Form	menuMapFeatures = new Form("Map Features");
@@ -19,13 +20,17 @@ public class GuiMapFeatures extends Form implements CommandListener {
 	private	String [] altInfos = new String[2];
 	private	boolean[] selAltInfos = new boolean[2];
 
+	private ChoiceGroup rotationGroup;
+	private	String [] rotation = new String[2];
+	private	boolean[] selRotation = new boolean[2];
+	
 	private ChoiceGroup modesGroup;
 	private	String [] modes = new String[3];
 	private	boolean[] selModes = new boolean[3];
 
 	private ChoiceGroup otherGroup;
-	private	String [] other = new String[1];
-	private	boolean[] selOther = new boolean[1];
+	private	String [] other = new String[2];
+	private	boolean[] selOther = new boolean[2];
 	
 	
 	private Gauge gaugeDetailBoost; 
@@ -60,6 +65,12 @@ public class GuiMapFeatures extends Form implements CommandListener {
 			altInfosGroup = new ChoiceGroup("Alternative Info", Choice.MULTIPLE, altInfos ,null);
 			altInfosGroup.setSelectedFlags(selAltInfos);
 			append(altInfosGroup);
+
+			rotation[0] = "North Up";
+			rotation[1] = "to Driving Direction";
+			rotationGroup = new ChoiceGroup("Map Rotation", Choice.EXCLUSIVE, rotation ,null);
+			rotationGroup.setSelectedIndex((int) ProjFactory.getProj(), true);
+			append(rotationGroup);			
 			
 			modes[0] = "Full Screen"; 			selModes[0]=config.getCfgBitState(config.CFGBIT_FULLSCREEN);
 			modes[1] = "Render as streets"; 	selModes[1]=config.getCfgBitState(config.CFGBIT_STREETRENDERMODE);
@@ -68,7 +79,8 @@ public class GuiMapFeatures extends Form implements CommandListener {
 			modesGroup.setSelectedFlags(selModes);			
 			append(modesGroup);
 
-			other[0] = "Save map position on exit for next start";	selOther[0]=config.getCfgBitState(config.CFGBIT_AUTOSAVE_MAPPOS);
+			other[0] = "Show Point of Compass in rotated map";	selOther[0]=config.getCfgBitState(config.CFGBIT_SHOW_POINT_OF_COMPASS);
+			other[1] = "Save map position on exit for next start";	selOther[1]=config.getCfgBitState(config.CFGBIT_AUTOSAVE_MAPPOS);
 			otherGroup = new ChoiceGroup("Other", Choice.MULTIPLE, other ,null);
 			otherGroup.setSelectedFlags(selOther);			
 			append(otherGroup);
@@ -118,13 +130,20 @@ public class GuiMapFeatures extends Form implements CommandListener {
 			config.setCfgBitState(config.CFGBIT_SHOWLATLON, selAltInfos[0], setAsDefault);
 			config.setCfgBitState(config.CFGBIT_SHOWWAYPOITYPE, selAltInfos[1], setAsDefault);
 
+			byte t = (byte) rotationGroup.getSelectedIndex();
+			ProjFactory.setProj(t);
+			if (setAsDefault) {
+				config.setProjTypeDefault(t);
+			}
+			
 			modesGroup.getSelectedFlags(selModes);
 			config.setCfgBitState(config.CFGBIT_FULLSCREEN, selModes[0], setAsDefault);
 			config.setCfgBitState(config.CFGBIT_STREETRENDERMODE, selModes[1], setAsDefault);
 			config.setCfgBitState(config.CFGBIT_ROUTING_HELP, selModes[2], setAsDefault);
-
+			
 			otherGroup.getSelectedFlags(selOther);
 			config.setCfgBitState(config.CFGBIT_AUTOSAVE_MAPPOS, selOther[0], setAsDefault);
+			config.setCfgBitState(config.CFGBIT_SHOW_POINT_OF_COMPASS, selOther[1], setAsDefault);
 			
 			config.setDetailBoost(gaugeDetailBoost.getValue(), setAsDefault); 
 

@@ -16,6 +16,7 @@ import de.ueller.midlet.gps.GuiCamera;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.Node;
+import de.ueller.midlet.gps.data.ProjFactory;
 
 public class Configuration {
 	
@@ -76,6 +77,8 @@ public class Configuration {
 	public final static byte CFGBIT_ROUTE_AUTO_RECALC=22;
 	// bit 23: use JSR135 or JSR 234 for taking pictures;
 	public final static byte CFGBIT_USE_JSR_234=23;
+	// bit 24: show point of compass in rotated map
+	public final static byte CFGBIT_SHOW_POINT_OF_COMPASS=25;
 
 	
 	/**
@@ -106,6 +109,7 @@ public class Configuration {
 	private static final int RECORD_ID_PHOTO_URL = 23;
 	private static final int RECORD_ID_GPS_RECONNECT = 24;
 	private static final int RECORD_ID_PHOTO_ENCODING = 25;
+	private static final int RECORD_ID_MAP_PROJECTION = 26;
 	
 
 	// Gpx Recording modes
@@ -146,6 +150,7 @@ public class Configuration {
 	private boolean btKeepAlive = false;
 	private boolean btAutoRecon = false;
 	private Node startupPos = new Node(0.0f, 0.0f);
+	private byte projTypeDefault = ProjFactory.NORTH_UP;
 	
 	private boolean mapFromJar;
 	private String mapFileUrl;
@@ -202,8 +207,8 @@ public class Configuration {
 				if (getDeviceSupportsJSR179()) {
 					setLocationProvider(LOCATIONPROVIDER_JSR179);
 				}
-				//#endif
-
+				//#endif				
+				setProjTypeDefault(ProjFactory.NORTH_UP);
 				//#debug info
 				logger.info("More initial default values where set.");
 			}
@@ -238,6 +243,7 @@ public class Configuration {
 				startupPos.radlon=Float.parseFloat(s2);
 			}
 			//System.out.println("Map startup lat/lon: " + startupPos.radlat*MoreMath.FAC_RADTODEC + "/" + startupPos.radlon*MoreMath.FAC_RADTODEC);
+			setProjTypeDefault((byte) readInt(database,  RECORD_ID_MAP_PROJECTION));
 			database.closeRecordStore();
 		} catch (Exception e) {
 			logger.exception("Problems with reading our configuration: ", e);
@@ -640,6 +646,16 @@ public class Configuration {
 		write(Double.toString(pos.radlon),RECORD_ID_STARTUP_RADLON);
 	}
 
+	public void setProjTypeDefault(byte t) {
+		ProjFactory.setProj(t);
+		projTypeDefault = t;
+		write((int) t, RECORD_ID_MAP_PROJECTION);
+	}
+
+	public byte getProjDefault() {
+		return projTypeDefault;
+	}
+	
 	public boolean getDeviceSupportsJSR179() {
 		String jsr179Version = null;
 		try {

@@ -895,7 +895,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				break;
 			default:
 				showAddons = 0;
-				if (ProjFactory.getProj() == ProjFactory.MOVE_UP) {
+				if (ProjFactory.getProj() == ProjFactory.MOVE_UP
+					&& config.getCfgBitState(config.CFGBIT_SHOW_POINT_OF_COMPASS)
+				) {
 					showPointOfTheCompass(pc);
 				}
 			}
@@ -1734,7 +1736,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 					ProjFactory.setProj(ProjFactory.MOVE_UP);
 					// why must this be zero to be northed here...
 					course = 0;
-					parent.getInstance().alert("Map Rotation", "Rotate to Movement Direction" , 500);
+					parent.getInstance().alert("Map Rotation", "Rotate to Driving Direction" , 500);
 				} else {
 					ProjFactory.setProj(ProjFactory.NORTH_UP);					
 					// ... and 90 to be northed there?
@@ -1748,14 +1750,15 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			Timer tm = new Timer();	    
 		    timerT = new TimerTask() {
 				public void run() {
-					// key was not pressed again within
+					// key was not pressed again within double press time
 					if (releasedKeyCode == KEY_NUM5) {
 						gpsRecenter = true;
 					}
 					releasedKeyCode = 0;
 				}			
 			};
-		    tm.schedule(timerT, 250);
+		    // set double press time
+			tm.schedule(timerT, 250);
 		}
 	}
 	
