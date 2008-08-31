@@ -15,7 +15,10 @@ import javax.microedition.media.control.RecordControl;
 
 
 import de.ueller.gps.data.Configuration;
+import de.ueller.gps.data.Position;
 import de.ueller.gps.tools.HelperRoutines;
+import de.ueller.midlet.gps.data.MoreMath;
+import de.ueller.midlet.gps.data.PositionMark;
 
 public class AudioRecorder  implements SelectionListener{
 	private final static Logger logger = Logger.getInstance(AudioRecorder.class, Logger.DEBUG);
@@ -55,11 +58,22 @@ public class AudioRecorder  implements SelectionListener{
 				record = null;
 				return false;
 			}
-			String fileName = basedirectory + "GpsMid-" + HelperRoutines.formatSimpleDateSecondNow() +".amr";			
+			String fileSubPart = "GpsMid-" + HelperRoutines.formatSimpleDateSecondNow();
+			String fileName = basedirectory + fileSubPart +".amr";
 			logger.info("Saving audio stream to " + fileName);
-			record.setRecordLocation(fileName);			
+			record.setRecordLocation(fileName);
 			record.startRecord();
 			mPlayer.start();
+			
+			/**
+			 * Add a waypoint marker at the current position in order to later
+			 * on be able to synchronize the audio track
+			 */
+			Trace tr = Trace.getInstance();
+			Position pos = tr.getCurrentPosition();
+			PositionMark here = new PositionMark(pos.latitude *MoreMath.FAC_DECTORAD, pos.longitude *MoreMath.FAC_DECTORAD);
+			here.displayName = "AudioMarker-" + fileSubPart;
+			Trace.getInstance().gpx.addWayPt(here);
 		} catch (SecurityException se) {
 			record = null;
 			logger.error("Permision denied to record audio");

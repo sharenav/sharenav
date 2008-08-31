@@ -1643,6 +1643,10 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		}
 		updatePosition();		
 	}
+	
+	public synchronized Position getCurrentPosition() {
+		return this.pos;
+	}
 
 	public synchronized void receiveMessage(String s) {
 		lastMsg = s;
@@ -2064,7 +2068,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	}
 	
 	protected void hideNotify() {
-		logger.info("Hide notify has been called, screen will nolonger be updated");		
+		logger.info("Hide notify has been called, screen will nolonger be updated");
 	}
 	
 	protected void showNotify() {
