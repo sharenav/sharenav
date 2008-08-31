@@ -22,7 +22,7 @@ public class Configuration {
 	
 	private static Logger logger;
 	
-	public final static int VERSION=1;
+	public final static int VERSION=2;
 
 	public final static int LOCATIONPROVIDER_NONE=0;
 	public final static int LOCATIONPROVIDER_SIRF=1; 
@@ -110,6 +110,7 @@ public class Configuration {
 	private static final int RECORD_ID_GPS_RECONNECT = 24;
 	private static final int RECORD_ID_PHOTO_ENCODING = 25;
 	private static final int RECORD_ID_MAP_PROJECTION = 26;
+	private static final int RECORD_ID_CONFIG_VERSION = 27;
 	
 
 	// Gpx Recording modes
@@ -182,16 +183,8 @@ public class Configuration {
 				   		1<<CFGBIT_POIS |
 				   		1<<CFGBIT_ROUTING_HELP |
 				   		1<<CFGBIT_AUTOSAVE_MAPPOS |
-				   		1<<CFGBIT_SND_CONNECT |
-				   		1<<CFGBIT_SND_DISCONNECT |
-				   		1<<CFGBIT_SND_ROUTINGINSTRUCTIONS |
-				   		1<<CFGBIT_SND_TARGETREACHED |
-				   		1<<CFGBIT_ROUTE_AUTO_RECALC |
 				   		1<<CFGBIT_BACKLIGHT_MAPONLY |
 				   		getDefaultDeviceBacklightMethodMask();
-				setCfgBits(cfgBits, true);
-				//#debug info
-				logger.info("Default cfgBits where set.");
 				// Record Rule Default
 				setGpxRecordRuleMode(GPX_RECORD_MINIMUM_SECS_DIST);
 				setGpxRecordMinMilliseconds(1000);				
@@ -200,19 +193,35 @@ public class Configuration {
 				// Routing defaults
 				setStopAllWhileRouteing(true);
 				setRouteEstimationFac(7);
-				// Auto-reconnect GPS
-				setBtAutoRecon(true);
 				// set default location provider to JSR-179 if available
 				//#if polish.api.locationapi
 				if (getDeviceSupportsJSR179()) {
 					setLocationProvider(LOCATIONPROVIDER_JSR179);
 				}
 				//#endif				
-				setProjTypeDefault(ProjFactory.NORTH_UP);
 				//#debug info
-				logger.info("More initial default values where set.");
+				logger.info("Default config for version 0.4.0+ set.");
 			}
-			cfgBitsDefault=cfgBits;
+			int configVersionStored = readInt(database, RECORD_ID_CONFIG_VERSION);
+			// default values for config version 2 (0.4.1)
+			if(configVersionStored < 2) {				
+				cfgBits |=	1<<CFGBIT_SND_CONNECT |
+					   		1<<CFGBIT_SND_DISCONNECT |
+					   		1<<CFGBIT_SND_ROUTINGINSTRUCTIONS |
+					   		1<<CFGBIT_SND_TARGETREACHED |
+					   		1<<CFGBIT_SHOW_POINT_OF_COMPASS |
+					   		1<<CFGBIT_ROUTE_AUTO_RECALC;
+
+				// Auto-reconnect GPS
+				setBtAutoRecon(true);
+				setProjTypeDefault(ProjFactory.NORTH_UP);								
+				//#debug info
+				logger.info("Default config for version 2+ set.");
+			}			
+			setCfgBits(cfgBits, true);
+			// remember for which version the default values were stored
+			write(VERSION, RECORD_ID_CONFIG_VERSION);
+			
 			btUrl=readString(database, RECORD_ID_BT_URL);
 			locationProvider=readInt(database, RECORD_ID_LOCATION_PROVIDER);
 			gpxUrl=readString(database, RECORD_ID_GPX_URL);
