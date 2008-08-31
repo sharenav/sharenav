@@ -703,10 +703,18 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 			case STATE_GPX:
 				GpsMid.getInstance().show(menuGpx);
 				break;
+			case STATE_BT_GPX:
+				GpsMid.getInstance().show(menuBT);
+				break;
 			case STATE_DEBUG:
 				GpsMid.getInstance().show(menuDebug);
-				
-		}		
+				break;
+			case STATE_BT_GPS:
+				GpsMid.getInstance().show(menuBT);
+				break;
+			default:
+				logger.error("Show called without a valid state");
+		}
 	}
 
 	public void addDevice(String s) {

@@ -78,6 +78,8 @@ public class DiscoverGps
 	private DiscoveryAgent			discoveryAgent;
 
 	private boolean					isClosed;
+	
+	private GuiBusy					guiBusy;
 
 	/** Keeps the device index for witch a Service discover is requested */
 	private int	selectedDevice = -1;
@@ -177,6 +179,8 @@ public class DiscoverGps
 
 	public void run() {
 		try {
+			guiBusy = new GuiBusy();
+			guiBusy.show();
 			//Probe Commports:
 			try {
 				String commports = System.getProperty("microedition.commports");			
@@ -227,8 +231,9 @@ public class DiscoverGps
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		parent.show();
 		parent.addDevice("Thread end");
-		parent.btDiscoverReady();			
+		parent.btDiscoverReady();
 
 	}
 
