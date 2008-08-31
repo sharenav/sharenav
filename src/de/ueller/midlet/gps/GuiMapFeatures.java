@@ -22,7 +22,6 @@ public class GuiMapFeatures extends Form implements CommandListener {
 
 	private ChoiceGroup rotationGroup;
 	private	String [] rotation = new String[2];
-	private	boolean[] selRotation = new boolean[2];
 	
 	private ChoiceGroup modesGroup;
 	private	String [] modes = new String[3];
