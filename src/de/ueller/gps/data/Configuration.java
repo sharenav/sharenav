@@ -473,7 +473,7 @@ public class Configuration {
 		}	
 	}	
 	
-	public void setCfgBits(int cfgBits, boolean setAsDefault) {
+	private void setCfgBits(int cfgBits, boolean setAsDefault) {
 		this.cfgBits = cfgBits;
 		if (setAsDefault) {
 			this.cfgBitsDefault = cfgBits;
@@ -481,7 +481,7 @@ public class Configuration {
 		}
 	}
 	
-	public int getCfgBitsDefault() {
+	private int getCfgBitsDefault() {
 		return cfgBitsDefault;
 	}
 	
