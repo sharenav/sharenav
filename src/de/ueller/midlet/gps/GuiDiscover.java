@@ -26,6 +26,7 @@ import javax.microedition.lcdui.TextField;
 
 import de.ueller.gps.data.Configuration;
 import de.ueller.midlet.gps.data.Gpx;
+import de.ueller.midlet.gps.data.Projection;
 
 
 public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMidDisplayable, SelectionListener {
@@ -131,6 +132,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private ChoiceGroup rawLog;
 	private ChoiceGroup mapSrc;
 	private Gauge gaugeDetailBoost; 
+	private ChoiceGroup rotationGroup;
 	private ChoiceGroup renderOpts;
 	private ChoiceGroup backlightOpts;
 	private ChoiceGroup debugLog;
@@ -215,6 +217,12 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		menuDisplayOptions.addCommand(BACK_CMD);
 		menuDisplayOptions.addCommand(OK_CMD);
 
+		String [] rotation = new String[2];
+		rotation[0] = "North Up";
+		rotation[1] = "to Driving Direction";
+		rotationGroup = new ChoiceGroup("Map Rotation", Choice.EXCLUSIVE, rotation ,null);
+		menuDisplayOptions.append(rotationGroup);
+		
 		String [] renders = new String[2];
 		renders[0] = "as lines";
 		renders[1] = "as streets";
@@ -467,6 +475,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 					state = STATE_RECORDING_OPTIONS;
 					break;
 				case MENU_ITEM_DISP_OPT: // Display Options
+					rotationGroup.setSelectedIndex(config.getProjDefault(), true);
 					renderOpts.setSelectedIndex( config.getCfgBitState(config.CFGBIT_STREETRENDERMODE)?1:0, true);
 					gaugeDetailBoost.setValue(config.getDetailBoostDefault());
 					// convert bits from backlight flag into selection states
@@ -592,6 +601,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				logger.fatal("Need to restart GpsMid, otherwise map is in an inconsistant state");
 				break;			
 			case STATE_DISPOPT:
+				config.setProjTypeDefault( (byte) rotationGroup.getSelectedIndex() );
 				config.setCfgBitState(config.CFGBIT_STREETRENDERMODE,
 						(renderOpts.getSelectedIndex()==1),
 						true); 
