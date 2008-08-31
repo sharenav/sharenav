@@ -661,11 +661,14 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		sb.append(Float.toString(f));
 		// limit to maximum length of TextField
 		sb.setLength(maxlen);
+		boolean hasDecimalPoint = sb.toString().indexOf(".") != -1;
 		// cut unnecessary trailing chars and digits
-		while(sb.length()>1 && (sb.toString().endsWith(".")||sb.toString().endsWith("0"))) {
+		while((sb.length()>1) && ((sb.charAt(sb.length() - 1) == '.')||((sb.charAt(sb.length() - 1) == '0') && hasDecimalPoint))) {
+			if (sb.charAt(sb.length() - 1) == '.')
+				hasDecimalPoint = false;
 			sb.setLength(sb.length()-1);
 		}
-		return sb.toString();				
+		return sb.toString();
 	}
 	
 	private void destroy() {
