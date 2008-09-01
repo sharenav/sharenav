@@ -168,7 +168,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	/**
 	 * Current course from GPS in compass degrees, 0..359.  
 	 */
-	private int course=90;
+	private int course=0;
 
 
 	private Names namesThread;
@@ -1412,7 +1412,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		 */
 		if (movedAwayFromTarget
 				&& gpsRecenter
-				&& route == null || (route != null && route.size()==2)
+				&& (route != null && route.size()==2)
 				&& ProjMath.getDistance(target.lat, target.lon, center.radlat, center.radlon) > PREPAREDISTANCE
 		) {
 			routeRecalculationRequired=true;
@@ -1737,14 +1737,16 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			if (keyCode == KEY_NUM5) {			
 				if (ProjFactory.getProj() == ProjFactory.NORTH_UP ) {
 					ProjFactory.setProj(ProjFactory.MOVE_UP);
-					// why must this be zero to be northed here...
-					course = 0;
 					parent.getInstance().alert("Map Rotation", "Rotate to Driving Direction" , 500);
 				} else {
 					ProjFactory.setProj(ProjFactory.NORTH_UP);					
-					// ... and 90 to be northed there?
-					course = 90;
 					parent.getInstance().alert("Map Rotation", "NORTH UP" , 500);
+				}
+				// redraw immediately
+				synchronized (this) {
+					if (imageCollector != null) {
+						imageCollector.newDataReady();
+					}
 				}
 			}
 		} else {		
@@ -1758,6 +1760,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 						gpsRecenter = true;
 					}
 					releasedKeyCode = 0;
+					repaint(0, 0, getWidth(), getHeight());	
 				}			
 			};
 		    // set double press time
