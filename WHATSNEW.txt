@@ -1,18 +1,34 @@
 GpsMid 0.4.x
-       - Scale splash screen for devices with more than 176x220 and enough memory
-       - priority and specialisation conditions for POIs and ways
+       - Rotate map to driving direction
+         (specify default rotation in Display Options or Map Features
+          or toggle rotation by quickly pressing 5 twice)
+       - increased robustness of track and waypoint storage
+       - Full text search (Search / Fulltext Search)
+       - Take pictures from GpsMid if JSR-135 or JSR-234 is supported by phone
+       - Record audio notes with GpsMid
        - sounds section in style file / sound playback routines supporting *.amr, *.wav and *.mp3, .amr recommended 
        - sound for GPS start / stop (CONNECT and DISCONNECT sound in style file OR internal melody)
-       - basic voice routing instructions (sound names see style-file.xml of high-style.zip)
+       - experimental voice routing instructions (sound names see style-file.xml of high-style.zip)
+       - priority and specialisation conditions in style-file for POIs and ways
        - "Clear Target" menu entry to remove route arrows and navigation line
-       - increased robustness of track and waypoint storage
+       - automatically default new midlets to correct backlight method for devices that were listed
+         with backlight method at http://gpsmid.wiki.sourceforge.net/DevicesList
        - JSR-179: initial default location provider is set to JSR-179
          if available on device and supported by app defined in .properties file
-         (only in GpsMid-Generic-Full)         
        - JSR-179: getExtraInfo-NMEA-logging
        - JSR-179: show satellites in overlay if device gives $GPGSV-information
        - BT-GPS: auto-reconnect feature
        - BT-GPS: Remove the Stop recording command if the Location receiver gets closed
+       - Manually enter new waypoints by coordinates 
+         (i.e. 48° 30' 45" or 48° 30.75' or 48.5125° and leave the other fields empty)
+       - Usability: Restructured Map Menu
+       - Usability: allow to specify bounds on command line if no properties file is specified:
+         java -Xmx1024M -jar Osm2GpsMid-0.4.x.jar --bounds=23.48,34.78,26.37,35.7 osmxapi
+       - Usability: create midlet from whole osm file if no properties file and no bounds are specified, i.e.:
+         java -Xmx1024M -jar Osm2GpsMid-0.4.x.jar greece.osm.bz2
+       - Usability: show busy screen while discovering BT devices
+       - Scale splash screen on devices with more than 176x220 and enough memory
+	   - many more new features and bugfixes
 
 GpsMid 0.4.0
 	   - map content and look (ways, areas, pois) is configurable on midlet creation
