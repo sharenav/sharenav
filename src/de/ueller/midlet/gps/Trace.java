@@ -218,11 +218,13 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 	private boolean keyboardLocked=false;
 	private boolean movedAwayFromTarget=true;
+	private long oldRecalculationTime;
 	private boolean atTarget=false;
 	private int sumWrongDirection=0;
 	private int oldAwayFromNextArrow=0;
 	private int oldRouteInstructionColor=0x00E6E6E6;	
 	private boolean routeRecalculationRequired=false;
+	// private int routerecalculations=0;
 	
 	public Trace(GpsMid parent, Configuration config) throws Exception {
 		//#debug
@@ -605,6 +607,8 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
   				   stopImageCollector();
 				}
 				System.out.println("Routing source: " + source);
+				// route recalculation is required until route calculation successful
+				routeRecalculationRequired=true;
 				routeNodes=new Vector();
 				routeEngine = new Routing(t,this);
 				routeEngine.solve(source, pc.target);
@@ -1053,8 +1057,11 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				if (movedAwayFromTarget && config.getCfgBitState(config.CFGBIT_SND_TARGETREACHED)) {
 					parent.mNoiseMaker.playSound("TARGET_REACHED", (byte) 7, (byte) 1);
 				}
-			} else {
+			} else if (!movedAwayFromTarget) {
 				movedAwayFromTarget=true;
+				// wait with possible route recalculation until we've got a new source
+				// as current source might still contain an old position
+				source = null;
 			}
 			showRoute(pc);
 		}
@@ -1184,260 +1191,266 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			pc.g.drawRect(pc.lineP2.x-5, pc.lineP2.y-5, 10, 10);
 			pc.g.drawString(n.name, pc.lineP2.x+7, pc.lineP2.y+5, Graphics.BOTTOM | Graphics.LEFT);
 		}
-		if (route != null && route.size() > 0){
-			// there's a route so no calculation required
-			routeRecalculationRequired = false;
-			RouteNode lastTo;
-
-			// find nearest routing arrow (to center of screen)
-			int iNearest=0;
-			if (config.getCfgBitState(config.CFGBIT_ROUTING_HELP)) {
+		synchronized(this) {
+			if (route != null && route.size() > 0){
+				// there's a route so no calculation required
+				routeRecalculationRequired = false;
+				RouteNode lastTo;
+	
+				// find nearest routing arrow (to center of screen)
+				int iNearest=0;
+				if (config.getCfgBitState(config.CFGBIT_ROUTING_HELP)) {
+					c = (ConnectionWithNode) route.elementAt(0);
+					lastTo=c.to;
+					float minimumDistance=99999;
+					float distance=99999;
+					for (int i=1; i<route.size();i++){
+						c = (ConnectionWithNode) route.elementAt(i);
+						if (c!=null && c.to!=null && lastTo!=null) {
+							// skip connections that are closer than 25 m to the previous one
+							if( i<route.size()-1 && ProjMath.getDistance(c.to.lat, c.to.lon, lastTo.lat, lastTo.lon) < 25 ) {
+								continue;
+							}
+							distance = ProjMath.getDistance(center.radlat, center.radlon, lastTo.lat, lastTo.lon); 
+							if (distance<minimumDistance) {
+								minimumDistance=distance;
+								iNearest=i;
+							}
+							lastTo=c.to;
+						}
+					}
+					//System.out.println("iNearest "+ iNearest + "dist: " + minimumDistance);				    	
+					// if nearest route arrow is closer than PASSINGDISTANCE meters we're currently passing this route arrow
+					if (minimumDistance<PASSINGDISTANCE) {
+						if (iPassedRouteArrow != iNearest) {
+							iPassedRouteArrow = iNearest;
+							parent.mNoiseMaker.resetSoundRepeatTimes();
+						}
+						//System.out.println("iPassedRouteArrow "+ iPassedRouteArrow);
+					} else {
+						c = (ConnectionWithNode) route.elementAt(iPassedRouteArrow);
+						// if we got away more than PASSINGDISTANCE m of the previously passed routing arrow
+						if (ProjMath.getDistance(center.radlat, center.radlon, c.to.lat, c.to.lon) >= PASSINGDISTANCE) {
+							// assume we should start to emphasize the next routing arrow now
+							iNearest=iPassedRouteArrow+1;
+						}
+					}
+				}
 				c = (ConnectionWithNode) route.elementAt(0);
+				byte lastEndBearing=c.endBearing;			
 				lastTo=c.to;
-				float minimumDistance=99999;
-				float distance=99999;
+				byte a=0;
+				byte aNearest=0;
 				for (int i=1; i<route.size();i++){
 					c = (ConnectionWithNode) route.elementAt(i);
-					if (c!=null && c.to!=null && lastTo!=null) {
-						// skip connections that are closer than 25 m to the previous one
-						if( i<route.size()-1 && ProjMath.getDistance(c.to.lat, c.to.lon, lastTo.lat, lastTo.lon) < 25 ) {
+					if (c == null){
+						System.out.println("show Route got null connection");
+					}
+					if (c.to == null){
+						System.out.println("show Route got connection with NULL as target");
+					}
+					if (lastTo == null){
+						System.out.println("show Route strange lastTo is null");
+					}
+					if (pc == null){
+						System.out.println("show Route strange pc is null");
+					}
+	//				if (pc.screenLD == null){
+	//					System.out.println("show Route strange pc.screenLD is null");
+	//				}
+	
+					// skip connections that are closer than 25 m to the previous one
+					if( i<route.size()-1 && ProjMath.getDistance(c.to.lat, c.to.lon, lastTo.lat, lastTo.lon) < 25 ) {
+						// draw small circle for left out connection
+						pc.g.setColor(0x00FDDF9F);
+						pc.getP().forward(c.to.lat, c.to.lon, pc.lineP2);
+						final byte radius=6;
+						pc.g.fillArc(pc.lineP2.x-radius/2,pc.lineP2.y-radius/2,radius,radius,0,359);
+						//System.out.println("Skipped routing arrow " + i);
+						// if this would have been our iNearest, use next one as iNearest
+						if(i==iNearest) iNearest++;
+						continue;
+					}
+					
+					if(i!=iNearest) {
+						if (lastTo.lat < pc.getP().getMinLat()) {
+							lastEndBearing=c.endBearing;
+							lastTo=c.to;
 							continue;
 						}
-						distance = ProjMath.getDistance(center.radlat, center.radlon, lastTo.lat, lastTo.lon); 
-						if (distance<minimumDistance) {
-							minimumDistance=distance;
-							iNearest=i;
+						if (lastTo.lon < pc.getP().getMinLon()) {
+							lastEndBearing=c.endBearing;
+							lastTo=c.to;
+							continue;
 						}
-						lastTo=c.to;
-					}
-				}
-				//System.out.println("iNearest "+ iNearest + "dist: " + minimumDistance);				    	
-				// if nearest route arrow is closer than PASSINGDISTANCE meters we're currently passing this route arrow
-				if (minimumDistance<PASSINGDISTANCE) {
-					if (iPassedRouteArrow != iNearest) {
-						iPassedRouteArrow = iNearest;
-						parent.mNoiseMaker.resetSoundRepeatTimes();
-					}
-					//System.out.println("iPassedRouteArrow "+ iPassedRouteArrow);
-				} else {
-					c = (ConnectionWithNode) route.elementAt(iPassedRouteArrow);
-					// if we got away more than PASSINGDISTANCE m of the previously passed routing arrow
-					if (ProjMath.getDistance(center.radlat, center.radlon, c.to.lat, c.to.lon) >= PASSINGDISTANCE) {
-						// assume we should start to emphasize the next routing arrow now
-						iNearest=iPassedRouteArrow+1;
-					}
-				}
-			}
-			c = (ConnectionWithNode) route.elementAt(0);
-			byte lastEndBearing=c.endBearing;			
-			lastTo=c.to;
-			byte a=0;
-			byte aNearest=0;
-			for (int i=1; i<route.size();i++){
-				c = (ConnectionWithNode) route.elementAt(i);
-				if (c == null){
-					System.out.println("show Route got null connection");
-				}
-				if (c.to == null){
-					System.out.println("show Route got connection with NULL as target");
-				}
-				if (lastTo == null){
-					System.out.println("show Route strange lastTo is null");
-				}
-				if (pc == null){
-					System.out.println("show Route strange pc is null");
-				}
-//				if (pc.screenLD == null){
-//					System.out.println("show Route strange pc.screenLD is null");
-//				}
-
-				// skip connections that are closer than 25 m to the previous one
-				if( i<route.size()-1 && ProjMath.getDistance(c.to.lat, c.to.lon, lastTo.lat, lastTo.lon) < 25 ) {
-					// draw small circle for left out connection
-					pc.g.setColor(0x00FDDF9F);
-					pc.getP().forward(c.to.lat, c.to.lon, pc.lineP2);
-					final byte radius=6;
-					pc.g.fillArc(pc.lineP2.x-radius/2,pc.lineP2.y-radius/2,radius,radius,0,359);
-					//System.out.println("Skipped routing arrow " + i);
-					// if this would have been our iNearest, use next one as iNearest
-					if(i==iNearest) iNearest++;
-					continue;
-				}
-				
-				if(i!=iNearest) {
-					if (lastTo.lat < pc.getP().getMinLat()) {
-						lastEndBearing=c.endBearing;
-						lastTo=c.to;
-						continue;
-					}
-					if (lastTo.lon < pc.getP().getMinLon()) {
-						lastEndBearing=c.endBearing;
-						lastTo=c.to;
-						continue;
-					}
-					if (lastTo.lat > pc.getP().getMaxLat()) {
-						lastEndBearing=c.endBearing;
-						lastTo=c.to;
-						continue;
-					}
-					if (lastTo.lon > pc.getP().getMaxLon()) {
-						lastEndBearing=c.endBearing;
-						lastTo=c.to;
-						continue;
-					}
-				}
-
-				Image pict = pc.images.IMG_MARK; a=0;
-				int turn=(c.startBearing-lastEndBearing) * 2;
-				if (turn > 180) turn -= 360;
-				if (turn < -180) turn += 360;
-//				System.out.println("from: " + lastEndBearing*2 + " to:" +c.startBearing*2+ " turn " + turn);
-				if (turn > 110) {
-					pict=pc.images.IMG_HARDRIGHT; a=1;
-				} else if (turn > 70){
-					pict=pc.images.IMG_RIGHT; a=2;
-				} else if (turn > 20){
-					pict=pc.images.IMG_HALFRIGHT; a=3;
-				} else if (turn >= -20){
-					pict=pc.images.IMG_STRAIGHTON; a=4;
-				} else if (turn >= -70){
-					pict=pc.images.IMG_HALFLEFT; a=5;
-				} else if (turn >= -110){
-					pict=pc.images.IMG_LEFT;  a=6;
-				} else {
-					pict=pc.images.IMG_HARDLEFT; a=7;
-				} 
-				if (atTarget) {
-					a=8;
-				}
-				pc.getP().forward(lastTo.lat, lastTo.lon, pc.lineP2);
-			    // optionally scale nearest arrow
-			    if (i==iNearest) {
-			    	nearestLat=lastTo.lat;
-			    	nearestLon=lastTo.lon;
-					aNearest=a;
-					double distance=ProjMath.getDistance(center.radlat, center.radlon, lastTo.lat, lastTo.lon);
-					int intDistance=new Double(distance).intValue();
-
-					routeInstruction=directions[a] + ((intDistance<PASSINGDISTANCE)?"":" in " + intDistance + "m");
-
-			    	if(intDistance<PASSINGDISTANCE) {
-						if (!atTarget) { 
-							soundToPlay.append (soundDirections[a]);
+						if (lastTo.lat > pc.getP().getMaxLat()) {
+							lastEndBearing=c.endBearing;
+							lastTo=c.to;
+							continue;
 						}
-						sumWrongDirection = -1;
-						diffArrowDist = 0;
-						oldRouteInstructionColor=0x00E6E6E6;
-					} else if (sumWrongDirection == -1) {
+						if (lastTo.lon > pc.getP().getMaxLon()) {
+							lastEndBearing=c.endBearing;
+							lastTo=c.to;
+							continue;
+						}
+					}
+	
+					Image pict = pc.images.IMG_MARK; a=0;
+					int turn=(c.startBearing-lastEndBearing) * 2;
+					if (turn > 180) turn -= 360;
+					if (turn < -180) turn += 360;
+	//				System.out.println("from: " + lastEndBearing*2 + " to:" +c.startBearing*2+ " turn " + turn);
+					if (turn > 110) {
+						pict=pc.images.IMG_HARDRIGHT; a=1;
+					} else if (turn > 70){
+						pict=pc.images.IMG_RIGHT; a=2;
+					} else if (turn > 20){
+						pict=pc.images.IMG_HALFRIGHT; a=3;
+					} else if (turn >= -20){
+						pict=pc.images.IMG_STRAIGHTON; a=4;
+					} else if (turn >= -70){
+						pict=pc.images.IMG_HALFLEFT; a=5;
+					} else if (turn >= -110){
+						pict=pc.images.IMG_LEFT;  a=6;
+					} else {
+						pict=pc.images.IMG_HARDLEFT; a=7;
+					} 
+					if (atTarget) {
+						a=8;
+					}
+					pc.getP().forward(lastTo.lat, lastTo.lon, pc.lineP2);
+				    // optionally scale nearest arrow
+				    if (i==iNearest) {
+				    	nearestLat=lastTo.lat;
+				    	nearestLon=lastTo.lon;
+						aNearest=a;
+						double distance=ProjMath.getDistance(center.radlat, center.radlon, lastTo.lat, lastTo.lon);
+						int intDistance=new Double(distance).intValue();
+	
+						routeInstruction=directions[a] + ((intDistance<PASSINGDISTANCE)?"":" in " + intDistance + "m");
+	
+				    	if(intDistance<PASSINGDISTANCE) {
+							if (!atTarget) { 
+								soundToPlay.append (soundDirections[a]);
+							}
+							sumWrongDirection = -1;
+							diffArrowDist = 0;
+							oldRouteInstructionColor=0x00E6E6E6;
+						} else if (sumWrongDirection == -1) {
+							oldAwayFromNextArrow = intDistance;
+							sumWrongDirection=0;
+							diffArrowDist = 0;
+						} else {
+							diffArrowDist = (intDistance - oldAwayFromNextArrow);
+						}
+						if ( diffArrowDist == 0 ) {
+			    			routeInstructionColor=oldRouteInstructionColor;
+						} else if (intDistance < PASSINGDISTANCE) {
+					    	// background colour if currently passing
+				    		routeInstructionColor=0x00E6E6E6;
+			    		} else if ( diffArrowDist > 0) {
+					    	// background colour if distance to next arrow has just increased
+				    		routeInstructionColor=0x00FFCD9B;
+						} else {
+					    	// background colour if distance to next arrow has just decreased
+				    		routeInstructionColor=0x00B7FBBA;						
+						}
+						sumWrongDirection += diffArrowDist;
+						//System.out.println("Sum wrong direction: " + sumWrongDirection);
 						oldAwayFromNextArrow = intDistance;
-						sumWrongDirection=0;
-						diffArrowDist = 0;
-					} else {
-						diffArrowDist = (intDistance - oldAwayFromNextArrow);
-					}
-					if ( diffArrowDist == 0 ) {
-		    			routeInstructionColor=oldRouteInstructionColor;
-					} else if (intDistance < PASSINGDISTANCE) {
-				    	// background colour if currently passing
-			    		routeInstructionColor=0x00E6E6E6;
-		    		} else if ( diffArrowDist > 0) {
-				    	// background colour if distance to next arrow has just increased
-			    		routeInstructionColor=0x00FFCD9B;
-					} else {
-				    	// background colour if distance to next arrow has just decreased
-			    		routeInstructionColor=0x00B7FBBA;						
-					}
-					sumWrongDirection += diffArrowDist;
-					//System.out.println("Sum wrong direction: " + sumWrongDirection);
-					oldAwayFromNextArrow = intDistance;
-					if(intDistance>=PASSINGDISTANCE && intDistance<=PREPAREDISTANCE) {
-						soundToPlay.append( (a==4 ? "CONTINUE" : "PREPARE") + ";" + soundDirections[a]);
-						soundRepeatDelay=5;
-					}
-					if (a!=arrow) {
-						arrow=a;
-						scaledPict=doubleImage(pict);
-					}
-					pict=scaledPict;
-			    }
-				if (i == iNearest + 1) {
-					double distance=ProjMath.getDistance(nearestLat, nearestLon, lastTo.lat, lastTo.lon);
-					// if there is a close direction arrow after the current one
-					// inform the user about its direction
-					if (distance <= PREPAREDISTANCE &&
-						// only if not both arrows are STRAIGHT_ON
-						!(a==4 && aNearest == 4) ) {
-						soundToPlay.append(";THEN;");
-						if (distance > PASSINGDISTANCE) {
-							soundToPlay.append("SOON;");
+						if(intDistance>=PASSINGDISTANCE && intDistance<=PREPAREDISTANCE) {
+							soundToPlay.append( (a==4 ? "CONTINUE" : "PREPARE") + ";" + soundDirections[a]);
+							soundRepeatDelay=5;
 						}
-						soundToPlay.append(soundDirections[a]);
-						// same arrow as currently nearest arrow?
-						if (a==aNearest) {
-							soundToPlay.append(";AGAIN");							
+						if (a!=arrow) {
+							arrow=a;
+							scaledPict=doubleImage(pict);
 						}
-						
-						//System.out.println(soundToPlay.toString());
+						pict=scaledPict;
+				    }
+					if (i == iNearest + 1) {
+						double distance=ProjMath.getDistance(nearestLat, nearestLon, lastTo.lat, lastTo.lon);
+						// if there is a close direction arrow after the current one
+						// inform the user about its direction
+						if (distance <= PREPAREDISTANCE &&
+							// only if not both arrows are STRAIGHT_ON
+							!(a==4 && aNearest == 4) ) {
+							soundToPlay.append(";THEN;");
+							if (distance > PASSINGDISTANCE) {
+								soundToPlay.append("SOON;");
+							}
+							soundToPlay.append(soundDirections[a]);
+							// same arrow as currently nearest arrow?
+							if (a==aNearest) {
+								soundToPlay.append(";AGAIN");							
+							}
+							
+							//System.out.println(soundToPlay.toString());
+						}
 					}
+					// if the sum of movement away from the next arrow
+					// is much too high then recalculate route
+					if ( sumWrongDirection >= PREPAREDISTANCE * 2 / 3
+							|| sumWrongDirection >= 300) {
+							routeRecalculationRequired = true;
+					// if the sum of movement away from the next arrow is high
+			    	} else if ( sumWrongDirection >= PREPAREDISTANCE / 3
+						|| sumWrongDirection >= 150) {
+			    		// if distance to next arrow is high
+		    			// and moving away from next arrow
+			    		// ask user to check direction
+			    		if (diffArrowDist > 0) {
+				    		soundToPlay.setLength(0);
+				    		soundToPlay.append ("CHECK_DIRECTION");
+				    		soundRepeatDelay=5;
+				    		routeInstructionColor=0x00E6A03C;
+			    		} else if (diffArrowDist == 0) {
+			    			routeInstructionColor = oldRouteInstructionColor;
+			    		}
+			    	}
+					pc.g.drawImage(pict,pc.lineP2.x,pc.lineP2.y,CENTERPOS);
+					lastEndBearing=c.endBearing;
+					lastTo=c.to;
 				}
-				// if the sum of movement away from the next arrow
-				// is much too high then recalculate route
-				if ( sumWrongDirection >= PREPAREDISTANCE * 2 / 3
-						|| sumWrongDirection >= 300) {
-						routeRecalculationRequired = true;
-				// if the sum of movement away from the next arrow is high
-		    	} else if ( sumWrongDirection >= PREPAREDISTANCE / 3
-					|| sumWrongDirection >= 150) {
-		    		// if distance to next arrow is high
-	    			// and moving away from next arrow
-		    		// ask user to check direction
-		    		if (diffArrowDist > 0) {
-			    		soundToPlay.setLength(0);
-			    		soundToPlay.append ("CHECK_DIRECTION");
-			    		soundRepeatDelay=5;
-			    		routeInstructionColor=0x00E6A03C;
-		    		} else if (diffArrowDist == 0) {
-		    			routeInstructionColor = oldRouteInstructionColor;
-		    		}
-		    	}
-				pc.g.drawImage(pict,pc.lineP2.x,pc.lineP2.y,CENTERPOS);
-				lastEndBearing=c.endBearing;
-				lastTo=c.to;
 			}
-		}	
-		/* if we just moved away from target,
-		 * and the map is gpscentered
-		 * and there's only one or no route arrow
-		 * ==> auto recalculation
-		 */
-		if (movedAwayFromTarget
+			/* if we just moved away from target,
+			 * and the map is gpscentered
+			 * and there's only one or no route arrow
+			 * ==> auto recalculation
+			 */
+			if (movedAwayFromTarget
 				&& gpsRecenter
 				&& (route != null && route.size()==2)
 				&& ProjMath.getDistance(target.lat, target.lon, center.radlat, center.radlon) > PREPAREDISTANCE
-		) {
-			routeRecalculationRequired=true;
-		}
-
-		if (routeRecalculationRequired) {
-			if (gpsRecenter && 
-					config.getCfgBitState(config.CFGBIT_ROUTE_AUTO_RECALC) &&
-					source != null
 			) {
-				// if map is gps-centered recalculate route
-				soundToPlay.setLength(0);
-				if (config.getCfgBitState(config.CFGBIT_SND_ROUTINGINSTRUCTIONS)) {
-					parent.mNoiseMaker.playSound("ROUTE_RECALCULATION", (byte) 5, (byte) 1 );
-				}
-				commandAction(ROUTE_TO_CMD,(Displayable) null);
-				// set source to null to not recalculate
-				// route again before map was drawn
-				source=null;
+				routeRecalculationRequired=true;
 			}
-			if (diffArrowDist > 0) {
-				// use red background color if moving away
-				routeInstructionColor=0x00FF5402;
-			} else if (diffArrowDist == 0) {
-				routeInstructionColor = oldRouteInstructionColor;
+			if ( routeRecalculationRequired && !atTarget ) {
+				long recalculationTime=System.currentTimeMillis();
+				if ( source != null
+					 && gpsRecenter
+					 && config.getCfgBitState(config.CFGBIT_ROUTE_AUTO_RECALC)
+					// do not recalculate route more often than every 7 seconds
+					 && Math.abs(recalculationTime-oldRecalculationTime) >= 7000
+				) {
+					// if map is gps-centered recalculate route
+					soundToPlay.setLength(0);
+					if (config.getCfgBitState(config.CFGBIT_SND_ROUTINGINSTRUCTIONS)) {
+						parent.mNoiseMaker.playSound("ROUTE_RECALCULATION", (byte) 5, (byte) 1 );
+					}
+					commandAction(ROUTE_TO_CMD,(Displayable) null);
+					// set source to null to not recalculate
+					// route again before map was drawn
+					source=null;
+					oldRecalculationTime = recalculationTime;
+					// routerecalculations++;
+				}
+				if (diffArrowDist > 0) {
+					// use red background color if moving away
+					routeInstructionColor=0x00FF5402;
+				} else if (diffArrowDist == 0) {
+					routeInstructionColor = oldRouteInstructionColor;
+				}
 			}
 		}
 		// Route instruction text output
@@ -1452,6 +1465,11 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			oldRouteInstructionColor=routeInstructionColor;
 			pc.g.fillRect(0,pc.ySize-imageCollector.statusFontHeight-routeFontHeight, pc.xSize, routeFontHeight);
 			pc.g.setColor(0,0,0);
+//			pc.g.drawString(""+routerecalculations,
+//					0,
+//					pc.ySize-imageCollector.statusFontHeight,
+//					Graphics.LEFT | Graphics.BOTTOM
+//			);
 			pc.g.drawString(routeInstruction,
 					pc.xSize/2,
 					pc.ySize-imageCollector.statusFontHeight,
@@ -2004,8 +2022,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			pc.scale = scale;
 			pc.course = course;
 		}
-		repaint(0, 0, getWidth(), getHeight());
+		routeRecalculationRequired = false;
 		movedAwayFromTarget=false;
+		repaint(0, 0, getWidth(), getHeight());
 	}
 
 	/**
@@ -2013,12 +2032,14 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	 * @param route
 	 */
 	public void setRoute(Vector route) {
-		this.route = route;
-		rootCalc=false;
-		routeEngine=null;
-		iPassedRouteArrow=0;
-		sumWrongDirection=-1;
-		oldRouteInstructionColor = 0x00E6E6E6;
+		synchronized(this) {
+			this.route = route;
+			rootCalc=false;
+			routeEngine=null;
+			iPassedRouteArrow=0;
+			sumWrongDirection=-1;
+			oldRouteInstructionColor = 0x00E6E6E6;
+		}
 		try {
 			if (config.isStopAllWhileRouteing()){
 				startImageCollector();
