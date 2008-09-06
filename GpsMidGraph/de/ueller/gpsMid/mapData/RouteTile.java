@@ -97,7 +97,7 @@ public class RouteTile extends RouteBaseTile {
 							rnt=dict.getRouteNode(c.toId);
 						}
 						if (rnt == null){
-							System.out.println("Routenode not found");
+							logger.info("Routenode not found");
 						} else {
 							pc.getP().forward(rnt.lat, rnt.lon, pc.lineP2);
 							pc.g.drawLine(pc.swapLineP.x, pc.swapLineP.y, pc.lineP2.x, pc.lineP2.y);
@@ -197,7 +197,7 @@ public class RouteTile extends RouteBaseTile {
 				// due the shorts in map data we don't match exactly
 				if (MoreMath.approximately_equal(n.lat,lat,0.0000005f) &&
 					MoreMath.approximately_equal(n.lon,lon,0.0000005f)){
-					System.out.println("aprox equal matches");
+					logger.debug("aprox equal matches");
 					return n;
 				}
 			}

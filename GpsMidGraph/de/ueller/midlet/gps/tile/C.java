@@ -109,7 +109,7 @@ public class C {
 			}
 			if ((flags & LEGEND_FLAG_SEARCH_IMAGE) > 0) {
 				String imageName = ds.readUTF();
-				System.out.println("trying to open search image " + imageName);
+				logger.debug("trying to open search image " + imageName);
 				try {
 					pois[i].searchIcon = Image.createImage(imageName);
 				} catch (IOException e) {
@@ -186,7 +186,7 @@ public class C {
 	
 	public static final  String getNodeTypeDesc(byte type) {
 		if (type < 0 || type > pois.length) {
-			System.out.println("ERROR: wrong type " + type);
+			logger.error("ERROR: wrong type " + type);
 			return null;
 		}
 		return pois[type].description;

@@ -104,6 +104,8 @@ public abstract class QueueReader implements Runnable {
 		// logger.info("DataReader Thread start ");
 		try {
 			while (!shut) {
+				//#debug debug
+				logger.debug("DataReader Thread looped ");
 				try {
 					// logger.info("loop: " + livingQueue.size() + " / " + requestQueue.size());
 					// logger.info(toString());

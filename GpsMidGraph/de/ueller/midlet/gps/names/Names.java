@@ -48,7 +48,8 @@ public class Names implements Runnable {
 	public void run() {
 		try {
 			readIndex();
-			while (! shutdown){			
+			while (! shutdown){
+				logger.debug("Names resolver thread looped");
 				synchronized (this) {
 					try {
 						if (addQueue2.size() == 0 && (!cleanup)) {

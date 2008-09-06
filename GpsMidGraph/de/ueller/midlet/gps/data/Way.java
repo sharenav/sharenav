@@ -44,6 +44,8 @@ public class Way extends Entity{
 	public static final byte PAINTMODE_COUNTFITTINGCHARS = 0;
 	public static final byte PAINTMODE_DRAWCHARS = 1;
 	public static final byte INDENT_PATHNAME = 2;
+	
+	protected static final Logger logger = Logger.getInstance(Way.class,Logger.TRACE);
 
 	
 	public byte maxspeed;
@@ -138,7 +140,7 @@ public class Way extends Entity{
 		}
 		if (((f & WAY_FLAG_AREA) == WAY_FLAG_AREA) || C.getWayDescription(type).isArea) {
 			if ((f & WAY_FLAG_AREA) == WAY_FLAG_AREA){
-				System.out.println("Loading explicit Area: " + this);
+				logger.debug("Loading explicit Area: " + this);
 				System.out.println("f: " + f);
 			}
 			mod += WAY_AREA;

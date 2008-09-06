@@ -96,12 +96,12 @@ public class Routing implements Runnable {
 				tile.cleanup(0);
 				System.gc();
 				//#debug error
-				System.out.println("after cleanUp : " + runtime.freeMemory());
+				logger.debug("after cleanUp : " + runtime.freeMemory());
 //				successor=currentNode.state.to.getConnections(tile);
 				estimateFac += 0.02f;
 				successor=tile.getConnections(currentNode.state.toId,tile,bestTime);
 				//#debug error
-				System.out.println("after load single Conection : " + runtime.freeMemory());
+				logger.debug("after load single Conection : " + runtime.freeMemory());
 			}
 			if (successor == null){
 				successor=new Connection[0];
@@ -230,7 +230,7 @@ public class Routing implements Runnable {
 		RouteNode toNode=getRouteNode(to.toId);
 		if (toNode == null){
 			//#debug error
-			System.out.println("RouteNode ("+to.toId+") = null" );
+			logger.info("RouteNode ("+to.toId+") = null" );
 			return (10000000);
 		}
 		if (target == null){
@@ -382,7 +382,7 @@ public class Routing implements Runnable {
 				parent.cleanup();
 				System.gc();
 				//#debug error
-				System.out.println("free mem: "+runtime.freeMemory());
+				logger.info("free mem: "+runtime.freeMemory());
 				processorThread = new Thread(this);
 				processorThread.setPriority(Thread.NORM_PRIORITY);
 				processorThread.start();
@@ -424,7 +424,7 @@ public class Routing implements Runnable {
 		RouteNode rn=null;
 		for (int v=begin;v < lats.length; v++){
 			//#debug error
-			System.out.println("search point "+ lats[v] +"," + lons[v]);
+			logger.info("search point "+ lats[v] +"," + lons[v]);
 			rn=tile.getRouteNode(lats[v], lons[v]);
 			if (rn !=null){return rn;}
 		} 
@@ -434,7 +434,7 @@ public class Routing implements Runnable {
 		RouteNode rn=null;
 		for (int v=end;v >= 0; v--){
 			//#debug error
-			System.out.println("search point "+ lats[v] +"," + lons[v]);
+			logger.info("search point "+ lats[v] +"," + lons[v]);
 			rn=tile.getRouteNode(lats[v], lons[v]);
 			if (rn !=null){return rn;}
 		} 
@@ -473,7 +473,7 @@ public class Routing implements Runnable {
 	public void run() {
 		try {
 			//#debug error
-			System.out.println("Start Routing thread");
+			logger.info("Start Routing thread");
 			Vector solve = solve();
 			parent.setRoute(solve);
 		} catch (NullPointerException npe) {
