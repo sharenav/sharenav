@@ -63,7 +63,6 @@ zoomed out 21x (scale alias 1:  500km)
 <!-- these soundFiles are automatically determined by the midlet
       and can stay commented out as long as you don't want
       to include other sound files or formats (.mp3, .wav) for them.
-
 	<sound name="PREPARE">
 		<soundFile src="prepare.amr"/>
 	</sound>
@@ -102,6 +101,36 @@ zoomed out 21x (scale alias 1:  500km)
 	</sound>
 	<sound name="TARGET_REACHED">
 		<soundFile src="target_reached.amr"/>
+	</sound>
+	<sound name="IN">
+		<soundFile src="in.amr"/>
+	</sound>
+	<sound name="100">
+		<soundFile src="100.amr"/>
+	</sound>
+	<sound name="200">
+		<soundFile src="200.amr"/>
+	</sound>
+	<sound name="300">
+		<soundFile src="300.amr"/>
+	</sound>
+	<sound name="400">
+		<soundFile src="400.amr"/>
+	</sound>
+	<sound name="500">
+		<soundFile src="500.amr"/>
+	</sound>
+	<sound name="600">
+		<soundFile src="600.amr"/>
+	</sound>
+	<sound name="700">
+		<soundFile src="700.amr"/>
+	</sound>
+	<sound name="800">
+		<soundFile src="800.amr"/>
+	</sound>
+	<sound name="METERS">
+		<soundFile src="meters.amr"/>
 	</sound>
 -->
   </sounds>
