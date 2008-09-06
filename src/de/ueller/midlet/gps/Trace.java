@@ -1164,12 +1164,8 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		
 
 		// this makes the distance when prepare-sound is played depending on the speed
-		int PREPAREDISTANCE=75;
-		if (speed>150) {
-			PREPAREDISTANCE=1000;							
-		} else if (speed>120) {
-			PREPAREDISTANCE=700;							
-		} else if (speed>100) {
+		int PREPAREDISTANCE=100;
+		if (speed>100) {
 			PREPAREDISTANCE=500;							
 		} else if (speed>80) {
 			PREPAREDISTANCE=300;							
@@ -1178,9 +1174,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		} else if (speed>45) {
 			PREPAREDISTANCE=150;							
 		} else if (speed>35) {
-			PREPAREDISTANCE=125;							
-		} else if (speed>20) {
-			PREPAREDISTANCE=100;							
+			PREPAREDISTANCE=125;													
 		}
 		
 		ConnectionWithNode c;
@@ -1358,9 +1352,14 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 						sumWrongDirection += diffArrowDist;
 						//System.out.println("Sum wrong direction: " + sumWrongDirection);
 						oldAwayFromNextArrow = intDistance;
-						if(intDistance>=PASSINGDISTANCE && intDistance<=PREPAREDISTANCE) {
-							soundToPlay.append( (a==4 ? "CONTINUE" : "PREPARE") + ";" + soundDirections[a]);
-							soundRepeatDelay=5;
+						if (intDistance>=PASSINGDISTANCE) {
+							if (intDistance <= PREPAREDISTANCE) {
+								soundToPlay.append( (a==4 ? "CONTINUE" : "PREPARE") + ";" + soundDirections[a]);
+								soundRepeatDelay=5;
+							} else if (intDistance < 900) {
+								soundRepeatDelay=0;
+								soundToPlay.append("IN;" + Integer.toString(intDistance / 100)+ "00;METERS;" + soundDirections[a]);								
+							}							
 						}
 						if (a!=arrow) {
 							arrow=a;
