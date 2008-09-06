@@ -6,7 +6,9 @@ package de.ueller.midlet.gps;
  */
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Enumeration;
 
 //#if polish.api.fileConnection
 import javax.microedition.io.Connector;
@@ -34,8 +36,10 @@ import javax.microedition.amms.control.camera.SnapshotControl;
 //#endif
 //#endif
 import de.ueller.gps.data.Configuration;
+import de.ueller.gps.data.Position;
 import de.ueller.gps.tools.HelperRoutines;
 import de.ueller.gps.tools.StringTokenizer;
+import de.ueller.midlet.gps.data.MoreMath;
 
 /**
  * 
@@ -69,6 +73,7 @@ public class GuiCamera extends Canvas implements CommandListener, GuiCameraInter
 	private String basedirectory;
 	
 	private ChoiceGroup selectJsrCG;
+	private ChoiceGroup selectExifCG;
 	private TextField   encodingTF;
 	private ChoiceGroup encodingCG;
 	private Configuration config;
@@ -93,7 +98,8 @@ public class GuiCamera extends Canvas implements CommandListener, GuiCameraInter
 		//#if polish.api.mmapi 		
 		try {
 			basedirectory = GpsMid.getInstance().getConfig().getPhotoUrl();
-			logger.info("Storing photos at " + basedirectory);			
+			//#debug debug
+			logger.debug("Storing photos at " + basedirectory);
 			try {
 				/**
 				 * Nokia seems to have used a non standard locator to specify
@@ -124,15 +130,18 @@ public class GuiCamera extends Canvas implements CommandListener, GuiCameraInter
 			//#if polish.api.advancedmultimedia
 			CameraControl camera = (CameraControl) mPlayer
 					.getControl("CameraControl");
-			logger.info("Initialised Camera: " + camera);
+			//#debug trace
+			logger.trace("Initialised Camera: " + camera);
 
 			if (camera != null) {
 				int[] res = camera.getSupportedStillResolutions();
 				for (int i = 0; i < res.length; i++) {
-					logger.info("res: " + res[i]);
+					//#debug debug
+					logger.debug("res: " + res[i]);
 				}
 				camera.setStillResolution(res.length / 2 - 1);
-				logger.info("Resolution: " + camera.getStillResolution());
+				//#debug debug
+				logger.debug("Resolution: " + camera.getStillResolution());
 			} else {
 				logger.error("Can't get access to camera properties");
 			}
@@ -140,26 +149,27 @@ public class GuiCamera extends Canvas implements CommandListener, GuiCameraInter
 			ImageFormatControl format = (ImageFormatControl) mPlayer
 					.getControl("ImageFormatControl");
 			if (format != null) {
-				logger.info("Format: " + format.getFormat());
-				logger.info("MeteDataSupportMode: "
+				//#mdebug
+				logger.debug("Format: " + format.getFormat());
+				logger.debug("MeteDataSupportMode: "
 						+ format.getMetadataSupportMode());
 
 				String[] formats = format.getSupportedFormats();
+				
 				for (int i = 0; i < formats.length; i++) {
-					logger.info("Supported format: " + formats[i]);
+					logger.debug("Supported format: " + formats[i]);
 				}
 
 				String[] metaData = format.getSupportedMetadataKeys();
 				if (metaData != null) {
 					for (int i = 0; i < metaData.length; i++) {
-						logger.info("Supported metadata: " + metaData[i]);
+						logger.debug("Supported metadata: " + metaData[i]);
 					}
-				} else {
-					logger.info("MetaData not supported! Won't be able to geotag from within GpsMid");
 				}
+				//#enddebug
 				
 			} else {
-				logger.info("Device doesn't support ImageFormatControl");
+				logger.debug("Device doesn't support ImageFormatControl");
 			}
 			//#endif
 			
@@ -194,19 +204,23 @@ public class GuiCamera extends Canvas implements CommandListener, GuiCameraInter
 		try {
 			int idx = 0; 
 			byte [] photo = video.getSnapshot(config.getPhotoEncoding());
-			logger.info("Captured photo of size : " + photo.length);
+			if (Trace.getInstance().getConfig().getCfgBitState(Configuration.CFGBIT_ADD_EXIF)) {
+				photo = addExifEncoding(photo);
+			}
+			//#debug debug
+			logger.debug("Captured photo of size : " + photo.length);
 			
 			FileConnection fc = (FileConnection)Connector.open(basedirectory + "GpsMid-" + HelperRoutines.formatInt2(idx) + "-" + HelperRoutines.formatSimpleDateSecondNow() + ".jpg");
 			while (fc.exists()) {
 				fc = (FileConnection)Connector.open(basedirectory + "GpsMid-" + HelperRoutines.formatInt2(idx) + "-" + HelperRoutines.formatSimpleDateSecondNow() + ".jpg");
 				idx++;
 			}
-			fc.create();			
-			OutputStream fos = fc.openOutputStream();			
+			fc.create();
+			OutputStream fos = fc.openOutputStream();
 			fos.write(photo, 0, photo.length);
 			fos.close();
 		} catch (MediaException e) {
-			logger.exception("Couldn't take picture", e);			
+			logger.exception("Couldn't take picture", e);
 		} catch (IOException e) {
 			logger.exception("IOException capturing the photo", e);
 		} catch (NullPointerException npe) {
@@ -236,10 +250,12 @@ public class GuiCamera extends Canvas implements CommandListener, GuiCameraInter
 					int focusSet = focus.setFocus(Integer.MAX_VALUE);
 				}
 			} else {
-				logger.info("Couldn't get focus control");
+				//#debug debug
+				logger.debug("Couldn't get focus control");
 			}
 			
-			logger.info("Finished focusing");
+			//#debug trace
+			logger.trace("Finished focusing");
 
 			SnapshotControl snapshot = (SnapshotControl) mPlayer
 					.getControl("SnapshotControl");
@@ -259,10 +275,46 @@ public class GuiCamera extends Canvas implements CommandListener, GuiCameraInter
 				logger.exception("Failed to set directory", e);
 			}
 			
-			logger.info("About to capture to file " + snapshot.getDirectory() + snapshot.getFilePrefix());
+			//#debug
+			logger.debug("About to capture to file " + snapshot.getDirectory() + snapshot.getFilePrefix());
 
 			// Take one picture and allow the user to keep or discard it
 			snapshot.start(SnapshotControl.FREEZE);
+			
+			//#if polish.api.pdaapi
+			if (Trace.getInstance().getConfig().getCfgBitState(Configuration.CFGBIT_ADD_EXIF)) {
+				try {
+					Thread.sleep(3000);
+					FileConnection fcDir = (FileConnection)Connector.open(basedirectory);
+					Enumeration filelist = fcDir.list();
+					while (filelist.hasMoreElements()) {
+						String fileName = (String) filelist.nextElement();
+						logger.debug("File in camera dir: " + fileName);
+						if (fileName.indexOf(snapshot.getFilePrefix()) >= 0) {
+							logger.debug("Found photo, adding Exif: " + fileName);
+							FileConnection fcIn = (FileConnection)Connector.open(basedirectory + fileName);
+							InputStream is = fcIn.openInputStream();
+							byte [] image = new byte[(int)fcIn.fileSize()];
+							is.read(image);
+							FileConnection fcOut = (FileConnection)Connector.open(basedirectory + fileName + "-exif.jpg");
+							fcOut.create();
+							OutputStream os = fcOut.openOutputStream();
+							os.write(addExifEncoding(image));
+							os.close();
+							is.close();
+							return;
+						}
+					}
+					logger.info("Could not find the image file to add exif information");
+				} catch (IOException ioe) {
+					logger.exception("Trying to read file after picture", ioe);
+				} catch (InterruptedException ie) {
+					logger.info("Sleep was interupted");
+				}
+			}
+			//#endif
+			
+			
 		} catch (MediaException e) {
 			logger.exception("Couldn't capture photo", e);
 		}
@@ -290,6 +342,7 @@ public class GuiCamera extends Canvas implements CommandListener, GuiCameraInter
 	}
 
 	public void keyPressed(int keyCode) {
+		logger.info("Pressed key code " + keyCode + " in Camera GUI");
 		
 		if ((getGameAction(keyCode) == FIRE) || (keyCode == Configuration.KEYCODE_CAMERA_CAPTURE)) {
 			takePicture();
@@ -346,18 +399,35 @@ public class GuiCamera extends Canvas implements CommandListener, GuiCameraInter
 			setupDialog.addCommand(OK_CMD);
 			setupDialog.addCommand(STORE_CMD);
 			setupDialog.setCommandListener(this);
-			String [] selectJsr = {"JSR-135", "JSR-234"};			
+			
+			/**
+			 * Setup JSR selector
+			 */
+			String [] selectJsr = {"JSR-135", "JSR-234"};
 			selectJsrCG = new ChoiceGroup("Pictures via...", Choice.EXCLUSIVE, selectJsr ,null);
 			if (config.getCfgBitState(Configuration.CFGBIT_USE_JSR_234)) {
 				selectJsrCG.setSelectedIndex(1, true);
 			} else {
 				selectJsrCG.setSelectedIndex(0, true);
 			}
+			
+			/**
+			 * Setup Exif selector
+			 */
+			String [] selectExif = {"Add exif"};
+			selectExifCG = new ChoiceGroup("Geocoding", Choice.MULTIPLE,selectExif,null);
+			boolean [] selExif = new boolean[1];
+			selExif[0] = Trace.getInstance().getConfig().getCfgBitState(Configuration.CFGBIT_ADD_EXIF);
+			selectExifCG.setSelectedFlags(selExif);
+			
+			/**
+			 * Setup Encoding
+			 */
 			encodingTF = new TextField("Encoding string: ", config.getPhotoEncoding() , 100 ,TextField.ANY);
 			String encodings = null;
 			try {
 				 encodings = System.getProperty("video.snapshot.encodings");
-				logger.info("Encodings: " + encodings); 
+				logger.debug("Encodings: " + encodings); 
 			} catch (Exception e) {
 				logger.info("Device does not support the encoding property");
 			}
@@ -368,46 +438,152 @@ public class GuiCamera extends Canvas implements CommandListener, GuiCameraInter
 			if (encodings != null) {
 				encStrings = StringTokenizer.getArray(encodings, " ");
 				for (int i = 0; i < encStrings.length; i++) {
-					logger.info("Enc: " + encStrings[i]);
+					logger.debug("Enc: " + encStrings[i]);
 					if (setEnc.equalsIgnoreCase(encStrings[i])) {
 						encodingSel = i;
-						logger.info("Enc Sel: " + encStrings[i]);
+						logger.debug("Enc Sel: " + encStrings[i]);
 					}
 				}
 			} else {
 				encStrings = new String [0];
 			}
-			if (encodingSel == -1)				
-					encodingSel = encStrings.length;				
+			if (encodingSel == -1)
+					encodingSel = encStrings.length;
 			String [] tmp = new String[encStrings.length + 1];
 			System.arraycopy(encStrings, 0, tmp, 0, encStrings.length);
 			tmp[encStrings.length] = "Custom";
 			encStrings = tmp;
 			encodingCG = new ChoiceGroup("Select encoding: ", Choice.EXCLUSIVE, encStrings, null);
 			encodingCG.setSelectedIndex(encodingSel, true);
+			
+			/**
+			 * Setup custom encoding text field
+			 */
 			TextField storageDir = new TextField("store: ", basedirectory, 100, TextField.UNEDITABLE);
-			storageDir.setDefaultCommand(STORE_CMD);			
+			storageDir.setDefaultCommand(STORE_CMD);
+			
 			setupDialog.append(selectJsrCG);
+			setupDialog.append(selectExifCG);
 			setupDialog.append(encodingCG);
-			setupDialog.append(encodingTF);			
+			setupDialog.append(encodingTF);
 			setupDialog.append(storageDir);
 			GpsMid.getInstance().show(setupDialog);
-			logger.info("Showing Setup dialog");
+			//#debug trace
+			logger.trace("Showing Setup dialog");
 			
 		}
+		/**
+		 * OK command for the setup dialog
+		 */
 		if (c == OK_CMD) {
 			if (selectJsrCG.getSelectedIndex() == 1) {
 				Trace.getInstance().getConfig().setCfgBitState(Configuration.CFGBIT_USE_JSR_234, true, true);
 			} else {
 				Trace.getInstance().getConfig().setCfgBitState(Configuration.CFGBIT_USE_JSR_234, false, true);
 			}
+			
+			boolean [] selExif = new boolean[1];
+			selectExifCG.getSelectedFlags(selExif);
+			if (selExif[0]) {
+				Trace.getInstance().getConfig().setCfgBitState(Configuration.CFGBIT_ADD_EXIF, true, true);
+			} else {
+				Trace.getInstance().getConfig().setCfgBitState(Configuration.CFGBIT_ADD_EXIF, false, true);
+			}
+			
 			String encType = encodingCG.getString(encodingCG.getSelectedIndex());
 			if (encType.equals("Custom"))
 				encType = encodingTF.getString();
 			config.setPhotoEncoding(encType);
+			
 			this.show();
 		}
 		//#endif
+	}
+	
+	/**
+	 * Add a EXIF header to a JPEG byte array containing information about the current
+	 * GPS position and height. This is currently not particularly smart, as it does
+	 * not try and parse any information, but simply copies in a binary blob containing
+	 * the exif header to the start of the jpg file. It does not check if the data
+	 * already contains an exif header. 
+	 * @param jpgImage
+	 * @return
+	 */
+	private byte [] addExifEncoding(byte [] jpgImage) {
+		byte [] newImage = new byte[jpgImage.length + 201];
+		/**
+		 * Exif binary blob:
+		 * byte  value      comment
+		 * 0 - 1 0xff 0xd8: Start of image marker. Must be the first 2 bytes in a jpeg file
+		 * 2 - 3 0xff 0xe1: App1 (exif) marker
+		 * 4 - 5          : length of the exif block including these two bytes (199 in the case of this block) 
+		 */
+		byte [] tmp = {
+				(byte) 0xff, (byte) 0xd8, (byte)0xff,(byte)0xe1,0x00,(byte)0xc7,0x45,0x78,0x69,0x66,0x00,0x00,0x49,0x49,
+				0x2a, 0x00, 0x08, 0x00, 0x00, 0x00, 0x01, 0x00, 0x25, (byte)0x88, 0x04, 0x00, 0x01, 0x00, 0x00, 0x00, 
+				0x1a, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x08, 0x00, 0x00, 0x00, 0x01, 0x00, 0x04, 0x00, 
+				0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x01, 0x00, 0x02, 0x00, 0x02, 0x00, 0x00, 0x00, 0x4e, 0x00, 
+				0x00, 0x00, 0x02, 0x00, 0x05, 0x00, 0x03, 0x00, 0x00, 0x00, (byte)0x80, 0x00, 0x00, 0x00, 0x03, 0x00, 
+				0x02, 0x00, 0x02, 0x00, 0x00, 0x00, 0x45, 0x00, 0x00, 0x00, 0x04, 0x00, 0x05, 0x00, 0x03, 0x00, 
+				0x00, 0x00, (byte)0x98, 0x00, 0x00, 0x00, 0x05, 0x00, 0x01, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 
+				0x00, 0x00, 0x06, 0x00, 0x05, 0x00, 0x01, 0x00, 0x00, 0x00, (byte)0xb0, 0x00, 0x00, 0x00, 0x12, 0x00, 
+				0x02, 0x00, 0x07, 0x00, 0x00, 0x00, (byte)0xb8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x2e, 0x00, 
+				0x00, 0x00, 0x01, 0x00, 0x00, 0x00, (byte)0xa9, 0x31, 0x3b, 0x00, 0x40, 0x42, 0x0f, 0x00, 0x00, 0x00, 
+				0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x0b, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x07, 0x78, 
+				0x72, 0x00, 0x40, 0x42, 0x0f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, (byte)0xd2, 0x04, 
+				0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x57, 0x47, 0x53, 0x2d, 0x38, 0x34, 0x00};
+		
+		/**
+		 * The exif header must be directly after the Start of image marker. and is 201 bytes long 
+		 */
+		System.arraycopy(jpgImage, 2, newImage, 203, jpgImage.length - 2);
+		System.arraycopy(tmp,0,newImage,0,203);
+		
+		Position pos = parent.getCurrentPosition();
+		int altitude = (int)pos.altitude;
+		
+		HelperRoutines.copyInt2ByteArray(newImage, 188, altitude);
+		
+		float lat = pos.latitude;
+		float lon = pos.longitude;
+
+		
+
+		if (lat > 0)
+			newImage[60] = 0x4e; //N orth
+		else {
+			newImage[60] = 0x53; //S outh
+			lat *= -1;
+		}
+		if (lon > 0)
+			newImage[84] = 0x45; //E ast
+		else {
+			newImage[84] = 0x57; //W est
+			lon *= -1;
+		}
+		
+		/**
+		 * The exif encoding for positions are three "Rationals"
+		 * one for degree, one for minutes and one for seconds.
+		 * Each rational is 8bytes long. The first 4 are the numerator
+		 * the last are the denominator
+		 * 
+		 * We only use Degrees and Minutes and set Seconds to 0.
+		 * Instead the Minutes are devided by 1000000, to get 6 decimal
+		 * places.
+		 */
+		
+		HelperRoutines.copyInt2ByteArray(newImage, 140, (int)Math.abs(lat));
+		float lat_min = (float)(lat - Math.floor(lat))  * 60000000.0f;
+		HelperRoutines.copyInt2ByteArray(newImage, 148, (int)lat_min);
+		
+		
+		HelperRoutines.copyInt2ByteArray(newImage, 164, (int)Math.abs(lon));
+		float lon_min = (float)(lon - Math.floor(lon))  * 60000000.0f;
+		HelperRoutines.copyInt2ByteArray(newImage, 172, (int)lon_min);
+		
+		
+		return newImage;
 	}
 
 	public void show() {

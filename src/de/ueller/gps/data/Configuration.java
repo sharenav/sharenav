@@ -77,8 +77,10 @@ public class Configuration {
 	public final static byte CFGBIT_ROUTE_AUTO_RECALC=22;
 	// bit 23: use JSR135 or JSR 234 for taking pictures;
 	public final static byte CFGBIT_USE_JSR_234=23;
-	// bit 24: show point of compass in rotated map
+	// bit 25: show point of compass in rotated map
 	public final static byte CFGBIT_SHOW_POINT_OF_COMPASS=25;
+	// bit 26: add geo reference into the exif of a photo;
+	public final static byte CFGBIT_ADD_EXIF=26;
 
 	
 	/**

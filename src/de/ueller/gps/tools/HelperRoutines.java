@@ -110,5 +110,12 @@ public class HelperRoutines {
 		return tmpArray[size/2];
 	}
 	
+	public static void copyInt2ByteArray(byte[] array, int pos, int val) {
+		array[pos] = (byte)val;
+		array[pos + 1] = (byte)(val >> 8);
+		array[pos + 2] = (byte)(val >> 16);
+		array[pos + 3] = (byte)(val >> 24);
+	}
+	
 
 }
