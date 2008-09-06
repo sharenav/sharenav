@@ -97,6 +97,7 @@ public class RouteTile extends RouteBaseTile {
 							rnt=dict.getRouteNode(c.toId);
 						}
 						if (rnt == null){
+							//#debug info
 							logger.info("Routenode not found");
 						} else {
 							pc.getP().forward(rnt.lat, rnt.lon, pc.lineP2);
@@ -112,7 +113,7 @@ public class RouteTile extends RouteBaseTile {
 
 	public RouteNode getRouteNode(int id) {
 		if (minId <= id && maxId >= id){
-			//#debug error
+			//#debug debug
 			logger.debug("getRouteNode("+id+")");
 			lastUse=0;
 			if (nodes == null){
@@ -123,7 +124,7 @@ public class RouteTile extends RouteBaseTile {
 					return null;
 				}
 			}
-			//#debug error
+			//#debug debug
 			logger.debug("getRouteNode("+id+") at "+(id-minId));
 			return nodes[id - minId];
 		} else 
@@ -134,7 +135,7 @@ public class RouteTile extends RouteBaseTile {
 	private void loadNodes() throws IOException {
 		DataInputStream ts=new DataInputStream(GpsMid.getInstance().getConfig().getMapResource("/t4" + fileId + ".d"));
 		short count = ts.readShort();
-		//#debug error
+		//#debug debug
 		logger.debug("load nodes "+count+" ("+minId+"/"+maxId+") in Tile t4" + fileId + ".d");
 		nodes = new RouteNode[count];
 		for (short i = 0; i< count ; i++){
@@ -197,6 +198,7 @@ public class RouteTile extends RouteBaseTile {
 				// due the shorts in map data we don't match exactly
 				if (MoreMath.approximately_equal(n.lat,lat,0.0000005f) &&
 					MoreMath.approximately_equal(n.lon,lon,0.0000005f)){
+					//#debug debug
 					logger.debug("aprox equal matches");
 					return n;
 				}
@@ -249,7 +251,7 @@ public class RouteTile extends RouteBaseTile {
 	 */
 	private void loadConnections(boolean bestTime) throws IOException {
 		connections = new Connection[nodes.length][];
-		//#debug error
+		//#debug debug
 		logger.debug("getConnections in file " + "/c" + fileId + ".d");
 		DataInputStream cs=new DataInputStream(GpsMid.getInstance().getConfig().getMapResource("/c" + fileId + ".d"));
 		for (int in=0; in<nodes.length;in++){
