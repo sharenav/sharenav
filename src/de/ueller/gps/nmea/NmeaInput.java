@@ -79,7 +79,7 @@ public class NmeaInput extends BtReceiverInput {
 			}
 			//Check to make sure we don't overrun the buffer
 			if (p2 + p1 - start1 > 128) {
-				System.out.println("Error: NMEA string was longer than 128 char, but max should be 82");
+				logger.info("Error: NMEA string was longer than 128 char, but max should be 82");
 				p1 = 0; p2 = 0; found_start = false; found_end = false;
 				continue;
 			}

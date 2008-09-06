@@ -96,6 +96,7 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer{
 
 			byte timeCounter=41;
 			while (!closed){
+				logger.debug("BT receiver thread looped");
 				try {
 					timeCounter++;
 					if (timeCounter > 40){

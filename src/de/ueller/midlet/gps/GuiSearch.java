@@ -118,7 +118,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		timer = new Timer();
 		
 		//#debug
-		System.out.println("GuiSearch initialisied");
+		logger.debug("GuiSearch initialisied");
 		
 	}
 
@@ -438,7 +438,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 
 	protected void keyPressed(int keyCode) {
 		int action = getGameAction(keyCode);
-		System.out.println("got key " + keyCode + " " + action);
+		logger.info("Search dialog: got key " + keyCode + " " + action);
 		if (keyCode == KEY_NUM1) {
 			searchCanon.insert(carret++,'1');
 		} else if (keyCode == KEY_NUM2) {

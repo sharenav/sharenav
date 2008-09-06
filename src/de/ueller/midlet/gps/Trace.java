@@ -228,7 +228,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	
 	public Trace(GpsMid parent, Configuration config) throws Exception {
 		//#debug
-		System.out.println("init Trace");
+		logger.info("init Trace");
 		this.config = config;
 		
 		this.parent = parent;
@@ -606,7 +606,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				if (config.isStopAllWhileRouteing()){
   				   stopImageCollector();
 				}
-				System.out.println("Routing source: " + source);
+				logger.info("Routing source: " + source);
 				// route recalculation is required until route calculation successful
 				routeRecalculationRequired=true;
 				routeNodes=new Vector();
@@ -837,7 +837,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		if (imageCollector != null){
 			logger.info("Size of Canvas changed to " + w + "|" + h);
 			if (w > imageCollector.xSize || h > imageCollector.ySize) {
-				System.out.println(pc.xSize + " | " + pc.ySize);
+				logger.info(pc.xSize + " | " + pc.ySize);
 				stopImageCollector();
 				try {
 					startImageCollector();
@@ -856,6 +856,8 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 
 	protected void paint(Graphics g) {
+		//#debug debug
+		logger.debug("Drawing Map screen");
 		if (lastMsg != null && getTitle() != null) {
 			if (System.currentTimeMillis() 
 					> (lastMsgTime.getTime().getTime() + 5000))
@@ -866,6 +868,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				 * cause the painter thread to spinn slowing
 				 * everything else down 
 				 */
+				logger.info("Setting title back to nukk");
 				setTitle(null);
 			}
 		}
@@ -929,9 +932,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				showTarget(pc);
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-//			System.out.println("continue ..");
+			logger.silentexception("Unhandled exception in the paint code", e);
 		}
 	}
 
@@ -1238,16 +1239,20 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				for (int i=1; i<route.size();i++){
 					c = (ConnectionWithNode) route.elementAt(i);
 					if (c == null){
-						System.out.println("show Route got null connection");
+						logger.error("show Route got null connection");
+						break;
 					}
 					if (c.to == null){
-						System.out.println("show Route got connection with NULL as target");
+						logger.error("show Route got connection with NULL as target");
+						break;
 					}
 					if (lastTo == null){
-						System.out.println("show Route strange lastTo is null");
+						logger.error("show Route strange lastTo is null");
+						break;
 					}
 					if (pc == null){
-						System.out.println("show Route strange pc is null");
+						logger.error("show Route strange pc is null");
+						break;
 					}
 	//				if (pc.screenLD == null){
 	//					System.out.println("show Route strange pc.screenLD is null");

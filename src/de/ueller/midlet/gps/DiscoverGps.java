@@ -208,7 +208,7 @@ public class DiscoverGps
 				// remember we've reached this point.
 				isBTReady = true;
 			} catch (Exception e) {
-				System.err.println("Can't initialize bluetooth: " + e);
+				logger.exception("Can't initialize bluetooth: ", e);
 				parent.addDevice("Can't init bluetooth");
 			}
 
@@ -272,7 +272,7 @@ public class DiscoverGps
 			default:
 				// what kind of system you are?... :(
 				parent.addDevice("unknown Return from Discover");
-				System.err.println("system error:"
+				logger.error("system error:"
 						+ " unexpected device discovery code: " + discType);
 //					destroy();
 
@@ -394,7 +394,7 @@ public class DiscoverGps
 
 		// error - unexpected transaction index
 		if (index == -1) {
-			System.err.println("Unexpected transaction index: " + transID);
+			logger.error("Unexpected transaction index: " + transID);
 
 			// FIXME: process the error case
 		} else {
@@ -436,7 +436,7 @@ public class DiscoverGps
 			try {
 				wait(); // until devices or service are found
 			} catch (InterruptedException e) {
-				System.err.println("Unexpected interruption: " + e);
+				logger.info("Unexpected interruption: " + e);
 				parent.addDevice("interrupted");
 				return true;
 			}

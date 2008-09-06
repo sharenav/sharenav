@@ -10,6 +10,7 @@ import javax.microedition.lcdui.*;
 
 import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.PositionMark;
+import de.ueller.midlet.gps.data.Proj2DMoveUp;
 
 /*
  * GUI to enter a waypoint with coordinates.
@@ -31,6 +32,8 @@ public class GuiWaypointEnter extends Form implements CommandListener {
 	private static final Command saveCmd = new Command("Save", Command.OK, 1);
 	private static final Command backCmd = new Command("Back", Command.OK, 2);
 	private Trace parent;
+	
+	protected static final Logger logger = Logger.getInstance(GuiWaypointEnter.class,Logger.TRACE);
 
 	public GuiWaypointEnter(Trace tr) {
 		super("Enter Waypoint");
@@ -116,7 +119,7 @@ public class GuiWaypointEnter extends Form implements CommandListener {
 					waypt.lat = waypt.lat / MoreMath.FAC_RADTODEC;
 					waypt.lon = waypt.lon / MoreMath.FAC_RADTODEC;
 					waypt.displayName = fldName.getString();
-					System.out.println("Waypoint entered: " + waypt.toString());
+					logger.info("Waypoint entered: " + waypt.toString());
 					parent.gpx.addWayPt(waypt);				
 					parent.show();
 				} else {

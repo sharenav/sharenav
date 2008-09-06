@@ -66,7 +66,7 @@ public class SearchNames implements Runnable{
 	private void doSearch(String search) throws IOException {
 		try {
 			//#debug
-			System.out.println("search");
+			logger.info("Searching for " + search);
 			String fn=search.substring(0,2);
 			String compare=search.substring(2);
 			StringBuffer current=new StringBuffer();

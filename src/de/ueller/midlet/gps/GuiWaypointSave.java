@@ -7,6 +7,7 @@ package de.ueller.midlet.gps;
 import javax.microedition.lcdui.*;
 
 import de.ueller.midlet.gps.data.PositionMark;
+import de.ueller.midlet.gps.data.Proj2DMoveUp;
 
 /*
  * GpsMid - Copyright (c) 2007 Kai Krueger apm at users dot sourceforge dot net 
@@ -20,6 +21,8 @@ public class GuiWaypointSave extends Form implements CommandListener {
 	private Trace parent;
 	private String name;
 	private PositionMark waypt;
+	
+	protected static final Logger logger = Logger.getInstance(GuiWaypointSave.class,Logger.TRACE);
 
 	public GuiWaypointSave(Trace tr, PositionMark waypt) {
 		super("Enter Waypoint name");
@@ -44,7 +47,7 @@ public class GuiWaypointSave extends Form implements CommandListener {
 	public void commandAction(Command cmd, Displayable displayable) {
 		if (cmd == saveCmd) {
 			name = fldName.getString();
-			System.out.println("Name:" + name);
+			logger.info("Saving waypoint with name:" + name);
 			waypt.displayName = name;			
 			parent.gpx.addWayPt(waypt);				
 			parent.show();

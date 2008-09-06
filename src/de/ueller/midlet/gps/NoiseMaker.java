@@ -5,6 +5,7 @@
 
 package de.ueller.midlet.gps;
 
+import de.ueller.midlet.gps.data.Proj2DMoveUp;
 import de.ueller.midlet.gps.tile.C;
 import de.ueller.midlet.gps.tile.SoundDescription;
 
@@ -50,7 +51,6 @@ public class NoiseMaker
 	private static volatile String oldPlayingNames = "";
 	private static volatile byte timesToPlay = 0;
 
-	
 	public NoiseMaker()
 	{
 //#if polish.api.mmapi	
@@ -176,7 +176,7 @@ public class NoiseMaker
 		// do not repeat same sound before minSecsBeforeRepeat
 		long msTime = System.currentTimeMillis();
 
-		System.out.println(msTime-oldMsTime + " " + names + oldPlayingNames + timesToPlay);
+		mLogger.debug(msTime-oldMsTime + " " + names + oldPlayingNames + timesToPlay);
 		
 		if (oldPlayingNames.equals(names) &&
 				(Math.abs(msTime-oldMsTime) < minSecsBeforeRepeat*1000
@@ -190,7 +190,7 @@ public class NoiseMaker
 		}
 		
 		oldPlayingNames = names;
-		System.out.println("timestoplay" + timesToPlay);
+		mLogger.debug("timestoplay" + timesToPlay);
 
 		playingNameIndex = 0;
 		playingNames=names;
@@ -204,7 +204,7 @@ public class NoiseMaker
 	// allow to play same sound again
 	public void resetSoundRepeatTimes() {
 		oldPlayingNames = "";
-		System.out.println("reset sound repeat");
+		mLogger.debug("reset sound repeat");
 	}
 
 	
@@ -225,7 +225,7 @@ public class NoiseMaker
 		// end of names to play?
 		if (playingNameIndex>playingNames.length() ) {
 			timesToPlay--;
-			System.out.println("timestoplay--" + timesToPlay);
+			mLogger.debug("timestoplay--" + timesToPlay);
 			return false;
 		}
 		

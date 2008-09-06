@@ -109,9 +109,6 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 			visible=true;
 			if (i >= 0){
 			int w=f.stringWidth(txt[i]);
-			if (w > (getWidth()-10)){
-				System.out.println("to long");
-			}
 			g.drawString(txt[i], (int) (5*scale+ (getWidth()-splash.getWidth())/2), yc, 0);
 			}
 			yc+=sp;

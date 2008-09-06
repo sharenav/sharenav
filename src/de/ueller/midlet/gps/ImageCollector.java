@@ -108,7 +108,7 @@ public class ImageCollector implements Runnable {
 						continue; // Recheck condition of the loop
 					}
 				}
-				// logger.info("loop");
+				logger.debug("Redrawing Map");
 				while (pc[nextCreate].state != PaintContext.STATE_READY && !shutdown) {
 					synchronized (this) {
 						try {

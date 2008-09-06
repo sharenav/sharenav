@@ -1,6 +1,8 @@
 package de.ueller.midlet.gps.data;
 
+import de.ueller.gps.nmea.NmeaInput;
 import de.ueller.gpsMid.mapData.SingleTile;
+import de.ueller.midlet.gps.Logger;
 
 public class Proj2DMoveUp  implements Projection {
 	private float upDir;
@@ -35,7 +37,7 @@ public class Proj2DMoveUp  implements Projection {
 
 	private IntPoint	panP=new IntPoint();
 
-
+	protected static final Logger logger = Logger.getInstance(Proj2DMoveUp.class,Logger.TRACE);
 
 	public Proj2DMoveUp(Node center, int upDir, float scale, int width, int height) {
         this.upDir = ProjMath.degToRad(upDir);
@@ -272,11 +274,9 @@ public class Proj2DMoveUp  implements Projection {
 		return maxLon;
 	}
 
-	public void pan(Node n, int xd,int yd) {
-		System.out.println("Pan from " + n);
+	public void pan(Node n, int xd,int yd) {		
 		forward(n,panP);
 		inverse((width*xd/100)+panP.x,( height*yd/100)+panP.y, n);
-		System.out.println("Pan to " + n);
 	}
 
 	public String toString() {
