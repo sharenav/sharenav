@@ -1362,7 +1362,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 								soundToPlay.append( (a==4 ? "CONTINUE" : "PREPARE") + ";" + soundDirections[a]);
 								soundRepeatDelay=5;
 							} else if (intDistance < 900) {
-								soundRepeatDelay=0;
+								soundRepeatDelay=60;
 								soundToPlay.append("IN;" + Integer.toString(intDistance / 100)+ "00;METERS;" + soundDirections[a]);								
 							}							
 						}
