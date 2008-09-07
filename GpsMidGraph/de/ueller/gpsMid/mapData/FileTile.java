@@ -65,13 +65,15 @@ public class FileTile extends Tile implements QueueableTile {
 		if (contain(pc)) {
 			while (!isDataReady()) {
 				if ((opt & Tile.OPT_WAIT_FOR_LOAD) == 0){
-					logger.info("Walk don't wait for Data");
+					//#debug debug
+					logger.debug("Walk don't wait for Data");
 					return;
 				} else {
 					synchronized (this) {
 						try {
 							wait(1000);
-							logger.info("Walk Wait for Data");
+							//#debug debug
+							logger.debug("Walk Wait for Data");
 						} catch (InterruptedException e) {
 						}						
 					}

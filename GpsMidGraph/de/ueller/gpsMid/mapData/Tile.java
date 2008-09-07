@@ -61,7 +61,8 @@ public abstract class Tile {
 //		System.out.println(this);
 //		System.out.println(pc.screenLD + "   " + pc.screenRU);
 		//TODO: HMU there must be a better way
-		if (pc.getP() == null){
+		Projection p = pc.getP();
+		if (p == null){
 			if(maxLat < pc.searchLD.radlat) {
 				return false;
 			}
@@ -76,17 +77,17 @@ public abstract class Tile {
 			}
 
 
-		} else {
-			if(maxLat < pc.getP().getMinLat()) {
+		} else {			
+			if(maxLat < p.getMinLat()) {
 				return false;
 			}
-			if(maxLon < pc.getP().getMinLon()) {
+			if(maxLon < p.getMinLon()) {
 				return false;
 			}
-			if(minLat > pc.getP().getMaxLat()) {
+			if(minLat > p.getMaxLat()) {
 				return false;
 			}
-			if(minLon > pc.getP().getMaxLon()) {
+			if(minLon > p.getMaxLon()) {
 				return false;
 			}
 		}

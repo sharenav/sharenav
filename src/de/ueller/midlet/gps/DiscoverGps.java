@@ -436,7 +436,7 @@ public class DiscoverGps
 			try {
 				wait(); // until devices or service are found
 			} catch (InterruptedException e) {
-				logger.info("Unexpected interruption: " + e);
+				logger.silentexception("Unexpected interruption: ",  e);
 				parent.addDevice("interrupted");
 				return true;
 			}

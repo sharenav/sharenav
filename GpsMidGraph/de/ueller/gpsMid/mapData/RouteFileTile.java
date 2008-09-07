@@ -15,7 +15,7 @@ import de.ueller.midlet.gps.tile.QueueableTile;
 public class RouteFileTile extends RouteBaseTile {
 	byte zl;
 	RouteBaseTile tile=null;
-	//#debug error
+	
 	private final static Logger logger=Logger.getInstance(FileTile.class,Logger.INFO);
 
 	public RouteFileTile(DataInputStream dis, int deep, byte zl) throws IOException {
@@ -41,8 +41,8 @@ public class RouteFileTile extends RouteBaseTile {
 			// logger.info("test tile unused fid:" + fileId + "c:"+lastUse);
 			if (lastUse > level) {
 				tile=null;
-				//#debug error
-				 logger.info("discard content for " + this);
+				//#debug debug
+				 logger.debug("discard content for " + this);
 				return true;
 			} else {
 				tile.cleanup(level);
@@ -77,8 +77,7 @@ public class RouteFileTile extends RouteBaseTile {
 				try {
 					loadTile();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					logger.silentexception("loadTile failed", e);
 					return null;
 				}
 			}
@@ -88,8 +87,8 @@ public class RouteFileTile extends RouteBaseTile {
 	}
 
 	private void loadTile() throws IOException {
-            //#debug error
-			logger.info("load Tile /d"+zl+fileId+".d");
+            //#debug debug
+			logger.debug("load Tile /d"+zl+fileId+".d");
 			InputStream is = GpsMid.getInstance().getConfig().getMapResource("/d"+zl+fileId+".d");
 			if (is == null){
 //				logger.error("file inputStream /d"+tt.zl+tt.fileId+".d not found" );
@@ -129,8 +128,8 @@ public class RouteFileTile extends RouteBaseTile {
 	    	
 	    	tile=dict;
 			lastUse=0;
-			//#debug error
-			logger.info("DictReader ready "+ fileId);
+			//#debug debug
+			logger.debug("DictReader ready "+ fileId);
 
 //			}
 
@@ -141,8 +140,7 @@ public class RouteFileTile extends RouteBaseTile {
 			try {
 				loadTile();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.silentexception("loadTile failed", e);
 			}
 		}
 		tile.paint(pc, layer);
@@ -154,7 +152,7 @@ public class RouteFileTile extends RouteBaseTile {
 				try {
 					loadTile();
 				} catch (IOException e) {
-					e.printStackTrace();
+					logger.silentexception("loadTile failed", e);
 					return null;
 				}
 			}
@@ -170,8 +168,7 @@ public class RouteFileTile extends RouteBaseTile {
 				try {
 					loadTile();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					logger.silentexception("loadTile failed", e);
 					return null;
 				}
 			}
@@ -187,8 +184,7 @@ public class RouteFileTile extends RouteBaseTile {
 				try {
 					loadTile();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					logger.silentexception("loadTile failed", e);
 					return null;
 				}
 			}

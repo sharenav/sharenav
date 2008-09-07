@@ -154,8 +154,8 @@ public class Names implements Runnable {
 		int actIdx=0;
 
 		while (idx != -1){
-			//#debug info
-			logger.info("Looking up name " + idx);
+			//#debug debug
+			logger.debug("Looking up name " + idx);
 			/* Lookup in which names file the entry is contained */
 			for (int i=fid;i < startIndexes.length;i++){
 				if (startIndexes[i] > idx){
@@ -267,12 +267,14 @@ public class Names implements Runnable {
 					pos = readNextWord(ds, pos, name,bufferSe);
 					String fullName = name.toString().toLowerCase();
 					if (fullName.indexOf(snippet) > -1) {
-						logger.info("found fulltext match: " + fullName);
+						//#debug debug
+						logger.debug("found fulltext match: " + fullName);
 						hits.addElement(fullName);
 					}
 				}
 				ds.close();
 			}
+			//#debug
 			logger.info("Finished fulltext search. Found " + hits.size() + " hits");
 		} catch (IOException e) {
 			logger.exception("Could not perform fulltext search", e);

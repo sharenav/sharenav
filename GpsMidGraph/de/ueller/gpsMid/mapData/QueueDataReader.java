@@ -51,20 +51,22 @@ public class QueueDataReader extends QueueReader implements Runnable {
 		}
 		tt.centerLat = ds.readFloat();
 		tt.centerLon = ds.readFloat();
-		logger.info("Center coordinates of tile: " + tt.centerLat + "/" + tt.centerLon);
+		//#debug debug
+		logger.debug("Center coordinates of tile: " + tt.centerLat + "/" + tt.centerLon);
 		int nodeCount=ds.readShort();
 		short[] radlat = new short[nodeCount];
 		short[] radlon = new short[nodeCount];
 		int iNodeCount=ds.readShort();
-		//#debug error
-		  logger.trace("nodes total :"+nodeCount + "  interestNode :" + iNodeCount);
+		//#debug trace
+		logger.trace("nodes total :"+nodeCount + "  interestNode :" + iNodeCount);
 		int[] nameIdx=new int[iNodeCount];
 		for (int i = 0; i < iNodeCount; i++) {
 			nameIdx[i] = -1;
 		}
 		byte[] type = new byte[iNodeCount];
 		byte flag=0;
-		logger.info("About to read nodes");
+		//#debug trace
+		logger.trace("About to read nodes");
 		try {
 			for (int i=0; i< nodeCount;i++){
 				//#debug error
@@ -93,15 +95,11 @@ public class QueueDataReader extends QueueReader implements Runnable {
 			tt.nodeLon=radlon;
 			tt.type=type;
 		} catch (RuntimeException e) {
-			//#debug error
-			logger.trace("RuntimeExeption :"+e.getMessage());
-			//#debug error
-			e.printStackTrace();
+			logger.exception("Runtime error in QueueDataReader", e);			
 			throwError(e, "reading Nodes", tt);
 		}
 		logger.info("read nodes");
-		if (ds.readByte()!=0x55){
-			//#debug
+		if (ds.readByte()!=0x55){			
 			logger.error("Reading Nodes whent wrong / Start of Ways not found");
 			throwError("Nodes not OK", tt);
 		}
@@ -167,7 +165,8 @@ public class QueueDataReader extends QueueReader implements Runnable {
 				notifyReady.notifyAll();
 			}
 		}
-		logger.info("DataReader ready "+ tt.fileId + " " + tt.nodeLat.length + " Nodes " + tt.ways.length + " Ways" );
+		//#debug debug
+		logger.debug("DataReader ready "+ tt.fileId + " " + tt.nodeLat.length + " Nodes " + tt.ways.length + " Ways" );
 
 //		}
 

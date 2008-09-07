@@ -868,7 +868,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				 * cause the painter thread to spinn slowing
 				 * everything else down 
 				 */
-				logger.info("Setting title back to nukk");
+				logger.info("Setting title back to null");
 				setTitle(null);
 			}
 		}
@@ -1644,6 +1644,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	}
 
 	public synchronized void receivePosItion(Position pos) {
+		//#debug info
 		logger.info("New position: " + pos);
 		this.pos = pos;
 		collected++;

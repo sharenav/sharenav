@@ -423,8 +423,8 @@ public class Routing implements Runnable {
 	private RouteNode findNextRouteNode(int begin,float lat, float lon,float[] lats,float[] lons){
 		RouteNode rn=null;
 		for (int v=begin;v < lats.length; v++){
-			//#debug error
-			logger.info("search point "+ lats[v] +"," + lons[v]);
+			//#debug debug
+			logger.debug("search point "+ lats[v] +"," + lons[v]);
 			rn=tile.getRouteNode(lats[v], lons[v]);
 			if (rn !=null){return rn;}
 		} 
@@ -433,8 +433,8 @@ public class Routing implements Runnable {
 	private RouteNode findPrevRouteNode(int end,float lat, float lon,float[] lats,float[] lons){
 		RouteNode rn=null;
 		for (int v=end;v >= 0; v--){
-			//#debug error
-			logger.info("search point "+ lats[v] +"," + lons[v]);
+			//#debug debug
+			logger.debug("search point "+ lats[v] +"," + lons[v]);
 			rn=tile.getRouteNode(lats[v], lons[v]);
 			if (rn !=null){return rn;}
 		} 
