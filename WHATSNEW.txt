@@ -28,6 +28,7 @@ GpsMid 0.4.x
          java -Xmx1024M -jar Osm2GpsMid-0.4.x.jar greece.osm.bz2
        - Usability: show busy screen while discovering BT devices
        - Scale splash screen on devices with more than 176x220 and enough memory
+       - rendering fixes for way labels in the map 
 	   - many more new features and bugfixes
 
 GpsMid 0.4.0

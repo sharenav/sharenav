@@ -337,7 +337,8 @@ public class Way extends Entity{
 		
 		boolean reversed=false;
 		boolean abbreviated=false;
-		int lastFittingI1=0;
+		int iNameRepeatable=0;
+		int iNameRepeated=0;
 
     	// 2 passes:
     	// - 1st pass only counts fitting chars, so we can correctly
@@ -405,7 +406,7 @@ public class Way extends Entity{
 						reversed=false;
 						if(mode==PAINTMODE_DRAWCHARS) {
 							if (
-								i1>lastFittingI1 &&
+								iNameRepeated>=iNameRepeatable &&
 								charsDrawable>0 &&
 								charsDrawable<name.length()
 							) {
@@ -467,8 +468,10 @@ public class Way extends Entity{
 					if (streetNameCharIndex>=sbName.length()) {
 						streetNameCharIndex=-INDENT_PATHNAME;
 						if(mode==PAINTMODE_COUNTFITTINGCHARS) {
-							// path segment where name fitted last during counting
-							lastFittingI1=i1;
+							// increase number of times the name fitted completely
+							iNameRepeatable++;
+						} else {
+							iNameRepeated++;							
 						}
 					}
 					
