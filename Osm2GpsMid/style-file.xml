@@ -379,7 +379,7 @@ zoomed out 21x (scale alias 1:  500km)
   </pois>
   <ways>
   		<keyW tag = "highway">
-  			<Wvalue name = "motorway">
+  			<Wvalue name = "motorway" priority = "10">
   				<description desc = "Motorway"/>
   				<namekey tag = "name"/>
   				<namefallback tag = "ref"/>
@@ -389,7 +389,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<wayWidth width="8" />
   				<routing accessible="true" speed="120" />  				  				
   			</Wvalue>
-  			<Wvalue name = "motorway_link">
+  			<Wvalue name = "motorway_link" priority = "10">
   				<description desc = "Motorway"/>
   				<namekey tag = "name"/>
   				<namefallback tag = "ref"/>
@@ -399,7 +399,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<wayWidth width="8" />
   				<routing accessible="true" speed="120" />  				  				
   			</Wvalue>
-  			<Wvalue name = "trunk">
+  			<Wvalue name = "trunk" priority = "10">
   				<description desc = "Trunk"/>
   				<namekey tag = "name"/>
   				<namefallback tag = "ref"/>
@@ -409,7 +409,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<wayWidth width="6" />
   				<routing accessible="true" speed="100" />  				  				
   			</Wvalue>
-  			<Wvalue name = "trunk_link">
+  			<Wvalue name = "trunk_link" priority = "10">
   				<description desc = "Trunk"/>
   				<namekey tag = "name"/>
   				<namefallback tag = "ref"/>
@@ -419,7 +419,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<wayWidth width="6" />
   				<routing accessible="true" speed="100" />  				  				
   			</Wvalue>
-  			<Wvalue name = "primary">
+  			<Wvalue name = "primary" priority = "10">
   				<description desc = "Primary"/>
   				<namekey tag = "name"/>
   				<namefallback tag = "ref"/>
@@ -429,7 +429,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<wayWidth width="6" />
   				<routing accessible="true" speed="80" />  				  				
   			</Wvalue>
-  			<Wvalue name = "primary_link">
+  			<Wvalue name = "primary_link" priority = "10">
   				<description desc = "Primary"/>
   				<namekey tag = "name"/>
   				<namefallback tag = "ref"/>
@@ -439,7 +439,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<wayWidth width="6" />
   				<routing accessible="true" speed="80" />  				  				
   			</Wvalue>
-  			<Wvalue name = "secondary">
+  			<Wvalue name = "secondary" priority = "10">
   				<description desc = "Secondary"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
@@ -448,16 +448,16 @@ zoomed out 21x (scale alias 1:  500km)
   				<wayWidth width="5" />
   				<routing accessible="true" speed="80" />  				  				
   			</Wvalue>
-  			<Wvalue name = "tertiary">
+  			<Wvalue name = "tertiary" priority = "10">
   				<description desc = "Tertiary"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
   				<scale scale = "17"/>
   				<lineColor color = "00FFFFFF" />
   				<wayWidth width="4" />
-  				<routing accessible="true" speed="80" />  				  				
+  				<routing accessible="true" speed="50" />  				  				
   			</Wvalue>
-  			<Wvalue name = "unclassified">  					        
+  			<Wvalue name = "unclassified" priority = "9">  					        
   				<description desc = "Small road"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
@@ -466,7 +466,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<wayWidth width="4" />
   				<routing accessible="true" speed="50" />  				  				
   			</Wvalue>  			
-  			<Wvalue name = "residential">
+  			<Wvalue name = "residential" priority = "10">
   				<description desc = "Residential"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
@@ -475,7 +475,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<wayWidth width="3" />
   				<routing accessible="true" speed="30" />  				  				
   			</Wvalue>
-  			<Wvalue name = "living_street">
+  			<Wvalue name = "living_street" priority = "9">
   				<description desc = "Spiel strasse"/>
   				<namekey tag = "name"/>
   				<isArea area = "false"/>
@@ -484,7 +484,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<wayWidth width="2" />
   				<routing accessible="true" speed="5" />  				  				
   			</Wvalue>
-			<Wvalue name = "track">
+			<Wvalue name = "track" priority = "9">
   				<description desc = "track"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
@@ -494,7 +494,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<wayWidth width="3" />
   				<routing accessible="no" speed="10" />  				  				
   			</Wvalue>
-  			<Wvalue name = "service">
+  			<Wvalue name = "service" priority = "9">
   				<description desc = "Service"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
@@ -503,7 +503,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<wayWidth width="2" />
   				<routing accessible="true" speed="30" />  				  				
   			</Wvalue>
-  			<Wvalue name = "roundabout">
+  			<Wvalue name = "roundabout" priority = "9">
   				<description desc = "roundabout"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
@@ -532,7 +532,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<wayWidth width="2" />
   				<routing accessible="false" speed="20" />  				  				
   			</Wvalue>
-  			<Wvalue name = "footway">
+  			<Wvalue name = "footway" priority = "7">
   				<description desc = "Foot way"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
@@ -542,7 +542,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<wayWidth width="2" />
   				<routing accessible="false" speed="3" />  				  				
   			</Wvalue>
-  			<Wvalue name = "pedestrian">
+  			<Wvalue name = "pedestrian" priority = "6">
   				<description desc = "Pedestrian zone"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
