@@ -22,6 +22,8 @@ import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.Graphics;
+import javax.microedition.lcdui.Item;
+import javax.microedition.lcdui.ItemCommandListener;
 import javax.microedition.lcdui.TextField;
 //#if polish.api.mmapi
 import javax.microedition.media.Manager;
@@ -51,7 +53,7 @@ import de.ueller.midlet.gps.data.MoreMath;
  * for example when survaying for OSM.
  *
  */
-public class GuiCamera extends Canvas implements CommandListener, GuiCameraInterface, SelectionListener, GpsMidDisplayable {
+public class GuiCamera extends Canvas implements CommandListener, ItemCommandListener, GuiCameraInterface, SelectionListener, GpsMidDisplayable {
 
 	private final Command BACK_CMD = new Command("Back", Command.BACK, 5);
 	private final Command OK_CMD = new Command("Ok", Command.OK, 5);
@@ -356,7 +358,12 @@ public class GuiCamera extends Canvas implements CommandListener, GuiCameraInter
 		}
 		
 	}
-
+	
+	public void commandAction(Command c, Item i) {
+//		 forward item command action to form
+		commandAction(c, (Displayable) null);
+		
+	}
 	
 	public void commandAction(Command c, Displayable disp) {
 		if (c == BACK_CMD) {
@@ -461,6 +468,7 @@ public class GuiCamera extends Canvas implements CommandListener, GuiCameraInter
 			 */
 			TextField storageDir = new TextField("store: ", basedirectory, 100, TextField.UNEDITABLE);
 			storageDir.setDefaultCommand(STORE_CMD);
+			storageDir.setItemCommandListener(this);
 			
 			setupDialog.append(selectJsrCG);
 			setupDialog.append(selectExifCG);
