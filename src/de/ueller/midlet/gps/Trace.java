@@ -1697,6 +1697,10 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			logger.debug("key ignored " + keyCode);
 			return;
 		}
+		if (keyCode==releasedKeyCode) {
+			logger.debug("released key ignored " + keyCode);
+			return;
+		}
 		int gameActionCode = this.getGameAction(keyCode);
 		if ((gameActionCode == UP) || (gameActionCode == DOWN) ||
 				(gameActionCode == RIGHT) || (gameActionCode == LEFT)) {
@@ -1753,7 +1757,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		}	
 	}
 
-	public void singleOrDoubleKeyPress(int keyCode) {		
+	private void singleOrDoubleKeyPress(int keyCode) {		
 		// key was pressed twice quickly
 		if (releasedKeyCode == keyCode) {
 			releasedKeyCode = 0;
