@@ -375,6 +375,41 @@ public class Gpx extends Tile implements Runnable {
 		processorThread.start();
 	}
 	
+	public void sendTrkAll(String url, UploadListener ul) {
+		logger.debug("Exporting all tracklogs to " + url);
+		feedbackListener = ul;
+		this.url = url;
+		sendTrk = true;
+		tile.dropTrk();
+		//
+		processorThread = new Thread( new Runnable() {
+
+			public void run() {
+				PersistEntity [] trks = listTrks();
+				for (int i = 0; i < trks.length; i++) {
+					currentTrk = trks[i];
+					boolean success = sendGpx();
+					if (!success) {
+						logger.error("Failed to export track " + currentTrk);
+						if (feedbackListener != null) {			
+							feedbackListener.completedUpload(success, importExportMessage);
+						}
+						return;						
+					}
+				}
+				if (feedbackListener != null) {			
+					feedbackListener.completedUpload(true, importExportMessage);
+				}
+				feedbackListener = null;
+				sendTrk = false;
+				sendWpt = false;								
+			}
+			
+		});
+		processorThread.setPriority(Thread.MIN_PRIORITY);
+		processorThread.start();
+	}
+	
 	public void sendWayPt(String url, UploadListener ul) {
 		this.url = url;
 		feedbackListener = ul;

@@ -18,11 +18,12 @@ public class GuiGpx extends List implements CommandListener,
 
 	private final static Logger logger=Logger.getInstance(GuiGpx.class,Logger.DEBUG);
 	
-	private final Command SEND_CMD = new Command("Send", Command.OK, 1);
-	private final Command LOAD_CMD = new Command("Load", Command.ITEM, 1);
-	private final Command DISP_CMD = new Command("Display", Command.ITEM, 1);
-	private final Command DEL_CMD = new Command("delete", Command.ITEM, 2);	
-	private final Command CLEAR_CMD = new Command("clear all", Command.ITEM, 3);	
+	private final Command SEND_CMD = new Command("Export", Command.OK, 1);
+	private final Command SEND_ALL_CMD = new Command("Export all", Command.ITEM, 2);
+	private final Command LOAD_CMD = new Command("Import", Command.ITEM, 3);
+	private final Command DISP_CMD = new Command("Display", Command.ITEM, 4);
+	private final Command DEL_CMD = new Command("Delete", Command.ITEM, 5);	
+	private final Command CLEAR_CMD = new Command("Delete all", Command.ITEM, 6);	
 	private final Command BACK_CMD = new Command("Back", Command.BACK, 5);
 
 	private boolean uploading;
@@ -39,6 +40,7 @@ public class GuiGpx extends List implements CommandListener,
 		initTracks();
 		
 		addCommand(SEND_CMD);
+		addCommand(SEND_ALL_CMD);
 		addCommand(LOAD_CMD);
 		addCommand(DISP_CMD);
 		addCommand(DEL_CMD);		
@@ -64,6 +66,11 @@ public class GuiGpx extends List implements CommandListener,
 			uploading = true;
 			int idx = this.getSelectedIndex();
 			parent.gpx.sendTrk(parent.getConfig().getGpxUrl(), this, trks[idx]);			
+			return;
+		}
+		if (c == SEND_ALL_CMD) {
+			uploading = true;			
+			parent.gpx.sendTrkAll(parent.getConfig().getGpxUrl(), this);			
 			return;
 		}
 		if (c == LOAD_CMD) {
@@ -112,9 +119,9 @@ public class GuiGpx extends List implements CommandListener,
 		String alertMsg;		
 		if (uploading) {
 			if (success)
-				alertMsg = "Completed GPX upload: " + message;
+				alertMsg = "Completed GPX export: " + message;
 			else {
-				alertMsg = "GPX upload failed: " + message;
+				alertMsg = "GPX export failed: " + message;
 			}
 		} else {
 			if (success) {
