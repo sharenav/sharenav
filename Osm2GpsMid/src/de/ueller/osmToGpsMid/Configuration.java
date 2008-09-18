@@ -147,7 +147,11 @@ public class Configuration {
 				InputStream cf;
 				if (propFile != null) {
 					try {
-						cf = new FileInputStream(propFile+".properties");
+						if (propFile.endsWith(".properties")) {
+							cf = new FileInputStream(propFile);
+						} else {
+							cf = new FileInputStream(propFile+".properties");
+						}
 					} catch (FileNotFoundException e) {
 						System.out.println(propFile + ".properties not found, try bundled version");
 						cf=getClass().getResourceAsStream("/"+propFile+".properties");
