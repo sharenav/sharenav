@@ -266,6 +266,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		singleKeyPressCommand.put(KEY_STAR, MAPFEATURES_CMD);		
 		singleKeyPressCommand.put(KEY_POUND, TOGGLE_BACKLIGHT_CMD);
 		singleKeyPressCommand.put(Configuration.KEYCODE_CAMERA_COVER_OPEN, CAMERA_CMD);
+		singleKeyPressCommand.put(-8, ROUTE_TO_CMD);
 		doubleKeyPressCommand.put(KEY_NUM5, TOGGLE_MAP_PROJ_CMD);
 		longKeyPressCommand.put(KEY_NUM5, SAVE_WAYP_CMD);
 		longKeyPressCommand.put(KEY_NUM9, TOGGLE_KEY_LOCK_CMD);
