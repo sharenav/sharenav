@@ -100,6 +100,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	private final Command TOGGLE_MAP_PROJ_CMD = new Command("Next map projection",Command.ITEM, 100);
 	private final Command TOGGLE_KEY_LOCK_CMD = new Command("(De)Activate Keylock",Command.ITEM, 100);
 	private final Command TOGGLE_RECORDING_CMD = new Command("(De)Activate recording",Command.ITEM, 100);
+	private final Command TOGGLE_RECORDING_SUSP_CMD = new Command("Suspend recording",Command.ITEM, 100);
 	private final Command RECENTER_GPS_CMD = new Command("Recenter on GPS",Command.ITEM, 100);
 
 
@@ -268,6 +269,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		singleKeyPressCommand.put(Configuration.KEYCODE_CAMERA_COVER_OPEN, CAMERA_CMD);
 		singleKeyPressCommand.put(-8, ROUTE_TO_CMD);
 		doubleKeyPressCommand.put(KEY_NUM5, TOGGLE_MAP_PROJ_CMD);
+		doubleKeyPressCommand.put(KEY_NUM0, TOGGLE_RECORDING_SUSP_CMD);
 		longKeyPressCommand.put(KEY_NUM5, SAVE_WAYP_CMD);
 		longKeyPressCommand.put(KEY_NUM9, TOGGLE_KEY_LOCK_CMD);
 		longKeyPressCommand.put(KEY_NUM0, TOGGLE_RECORDING_CMD);
@@ -839,6 +841,16 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 					parent.alert("Gps track recording", "Starting to record" , 750);
 					commandAction(START_RECORD_CMD,(Displayable) null);
 				}
+			} else if (c == TOGGLE_RECORDING_SUSP_CMD) {
+				if (gpx.isRecordingTrk()) {
+					if ( gpx.isRecordingTrkSuspended() ) {
+						parent.alert("Gps track recording", "Resuming recording" , 750);
+						gpx.resumTrk();
+					} else {
+						parent.alert("Gps track recording", "Suspending recording" , 750);
+						gpx.suspendTrk();
+					}
+				}
 			} else if (c == RECENTER_GPS_CMD) {
 				gpsRecenter = true;
 			}
@@ -987,7 +999,12 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 					if(fontHeight==0) {
 						fontHeight=g.getFont().getHeight();
 					}
-					g.setColor(255, 0, 0);
+					if (gpx.isRecordingTrkSuspended()) {
+						g.setColor(0, 0, 255);
+					} else {
+						g.setColor(255, 0, 0);
+					}
+					
 					g.drawString(gpx.recorded+"r", getWidth() - 1, 1+fontHeight, Graphics.TOP
 							| Graphics.RIGHT);
 					g.setColor(0);

@@ -75,6 +75,7 @@ public class Gpx extends Tile implements Runnable {
 	
 	private ByteArrayOutputStream baos;
 	private DataOutputStream dos;
+	private boolean trkRecordingSuspended;
 		
 	private GpxTile tile;
 	
@@ -154,7 +155,10 @@ public class Gpx extends Tile implements Runnable {
 		
 	
 	public void addTrkPt(Position trkpt) {
+		if (trkRecordingSuspended)
+			return;
 		Configuration config=GpsMid.getInstance().getConfig();
+		//#debug info
 		logger.info("Adding trackpoint: " + trkpt);
 		boolean doRecord=false;
 		try {
@@ -291,7 +295,8 @@ public class Gpx extends Tile implements Runnable {
 		
 		baos = new ByteArrayOutputStream();
 		dos = new DataOutputStream(baos);
-		recorded = 0;		
+		recorded = 0;
+		trkRecordingSuspended = false;
 	}
 	
 	public void saveTrk() {
@@ -329,6 +334,14 @@ public class Gpx extends Tile implements Runnable {
 			logger.fatal("Out of memory, can't save tracklog");			
 		}
 		
+	}
+	
+	public void suspendTrk() {
+		trkRecordingSuspended = true;
+	}
+	
+	public void resumTrk() {
+		trkRecordingSuspended = false;
 	}
 	
 	public void deleteTrk(PersistEntity trk) {
@@ -492,6 +505,10 @@ public class Gpx extends Tile implements Runnable {
 	
 	public boolean isRecordingTrk() {
 		return (dos != null);
+	}
+	
+	public boolean isRecordingTrkSuspended() {
+		return trkRecordingSuspended;
 	}
 	
 	public void run() {
