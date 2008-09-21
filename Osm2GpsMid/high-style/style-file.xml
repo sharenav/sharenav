@@ -586,6 +586,14 @@ zoomed out 21x (scale alias 1:  500km)
 		<scale scale="20"/>
 		<textscale scale="23"/>
 	  </value>	
+	  <value name ="monument">
+		<description desc = "Monument"/>
+		<image src="monument.png"/>
+		<namekey tag="name"/>
+		<scale scale="20"/>
+		<textscale scale="23"/>
+		<imageCentered value="true"/>
+	  </value>	
 	</key>
 	<key tag="natural">
 	  <value name="beach">
