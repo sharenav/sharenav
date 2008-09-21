@@ -206,8 +206,8 @@ public class ImageCollector implements Runnable {
 				long endTime = System.currentTimeMillis();
 				logger.info("Painting map took " + (endTime - startTime) + "ms");
 				//#enddebug
-
-				newCollected();
+				if (!shutdown)
+					newCollected();
 				createImageCount++;				
 				needRedraw = false;
 				tr.cleanup();
@@ -225,12 +225,13 @@ public class ImageCollector implements Runnable {
 		   logger.fatal("ImageCollector thread crashed with out of memory: " + oome.getMessage() + recoverZoomedIn);
 		} catch (Exception e) {
 			crash++;
-			logger.silentexception("ImageCollector thread crashed unexpectadly with error ", e);
+			logger.exception("ImageCollector thread crashed unexpectadly with error ", e);
 		}
 		if(crash>=MAXCRASHES) {
 		   logger.fatal("ImageCollector crashed too often. Aborting.");
 		}
 		} while (!shutdown && crash <MAXCRASHES);
+		processorThread = null;
 	}
 	
 	public void suspend() {
@@ -240,9 +241,19 @@ public class ImageCollector implements Runnable {
 		suspended = false;
 	}
 	
-	public synchronized void stop(){
-		shutdown=true;
-		notify();
+	public void stop(){
+		synchronized (this) {
+			shutdown=true;
+			notify();
+		}
+		if (processorThread != null && processorThread.isAlive()) {
+			try {
+				processorThread.join();
+			} catch (InterruptedException e) {
+				//Nothing to do
+			}
+			
+		}
 	}
 	public void restart(){
 		processorThread = new Thread(this,"ImageCollector");
