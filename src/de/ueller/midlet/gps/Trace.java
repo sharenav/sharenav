@@ -91,6 +91,14 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	private final Command ROUTINGS_CMD = new Command("Routing...",Command.ITEM, 3);
 	private final Command OK_CMD = new Command("OK",Command.OK, 14);
 	private final Command BACK_CMD = new Command("Back",Command.BACK, 15);
+	private final Command ZOOM_IN_CMD = new Command("Zoom in",Command.ITEM, 100);
+	private final Command ZOOM_OUT_CMD = new Command("Zoom out",Command.ITEM, 100);
+	private final Command TOGGLE_OVERLAY_CMD = new Command("Next overlay",Command.ITEM, 100);
+	private final Command TOGGLE_BACKLIGHT_CMD = new Command("Keep backlight on/off",Command.ITEM, 100);
+	private final Command TOGGLE_FULLSCREEN_CMD = new Command("Switch to fullscreen",Command.ITEM, 100);
+	private final Command TOGGLE_MAP_PROJ_CMD = new Command("Next map projection",Command.ITEM, 100);
+	private final Command TOGGLE_KEY_LOCK_CMD = new Command("(De)Activate Keylock",Command.ITEM, 100);
+	private final Command RECENTER_GPS_CMD = new Command("Recenter on GPS",Command.ITEM, 100);
 
 
 	private InputStream btGpsInputStream;
@@ -754,6 +762,61 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				if (source != null) {
 					setTarget(source);
 				}
+			}
+			if (c == ZOOM_IN_CMD) {
+				scale = scale / 1.5f;
+			}
+			if (c == ZOOM_OUT_CMD) {
+				scale = scale * 1.5f;
+			}
+			if (c == TOGGLE_OVERLAY_CMD) {
+				showAddons++;
+			}
+			if (c == TOGGLE_BACKLIGHT_CMD) {
+//				 toggle Backlight
+				config.setCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON,
+									!(config.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON)),
+									false);
+				if ( config.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON, false) ) {
+					parent.alert("Backlight", "Backlight ON" , 750);
+
+				} else {
+					parent.alert("Backlight", "Backlight off" , 750);
+				}
+				parent.stopBackLightTimer();
+				parent.startBackLightTimer();
+			}
+			if (c == TOGGLE_FULLSCREEN_CMD) {
+				boolean fullScreen = !config.getCfgBitState(Configuration.CFGBIT_FULLSCREEN);
+				config.setCfgBitState(Configuration.CFGBIT_FULLSCREEN, fullScreen, false);
+				setFullScreenMode(fullScreen);
+			}
+			if (c == TOGGLE_MAP_PROJ_CMD) {
+				if (ProjFactory.getProj() == ProjFactory.NORTH_UP ) {
+					ProjFactory.setProj(ProjFactory.MOVE_UP);
+					parent.alert("Map Rotation", "Rotate to Driving Direction" , 500);
+				} else {
+					ProjFactory.setProj(ProjFactory.NORTH_UP);					
+					parent.alert("Map Rotation", "NORTH UP" , 500);
+				}
+				// redraw immediately
+				synchronized (this) {
+					if (imageCollector != null) {
+						imageCollector.newDataReady();
+					}
+				}
+			}
+			if (c == TOGGLE_KEY_LOCK_CMD) {
+				keyboardLocked=!keyboardLocked;
+				if(keyboardLocked) {
+					// show alert that keys are locked
+					keyPressed(0);
+				} else {
+					parent.alert("GpsMid", "Keys unlocked",750);					
+				}
+			}
+			if (c == RECENTER_GPS_CMD) {
+				gpsRecenter = true;
 			}
 			} else {
 				logger.error(" currently in route Caclulation");
@@ -1728,17 +1791,10 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			if(keyCode == KEY_NUM5) {
 				ignoreKeyCode=keyCode;
 				commandAction(SAVE_WAYP_CMD,(Displayable) null);
-				return;
 			}
 			if(keyCode == KEY_NUM9) {
 				ignoreKeyCode=keyCode;
-				keyboardLocked=!keyboardLocked;
-				if(keyboardLocked) {
-					// show alert that keys are locked
-					keyPressed(0);
-				} else {
-					parent.getInstance().alert("GpsMid", "Keys unlocked",750);					
-				}
+				commandAction(TOGGLE_KEY_LOCK_CMD, (Displayable) null);
 			}	
 			if(keyCode == KEY_STAR) {
 				ignoreKeyCode=keyCode;
@@ -1753,10 +1809,10 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			if(keyCode == KEY_NUM0) {
 				ignoreKeyCode=keyCode;				
 				if ( gpx.isRecordingTrk() ) {
-					GpsMid.getInstance().alert("Gps track recording", "Stopping to record" , 750);					
+					parent.alert("Gps track recording", "Stopping to record" , 750);					
 					commandAction(STOP_RECORD_CMD,(Displayable) null);
 				} else {
-					GpsMid.getInstance().alert("Gps track recording", "Starting to record" , 750);
+					parent.alert("Gps track recording", "Starting to record" , 750);
 					commandAction(START_RECORD_CMD,(Displayable) null);
 				}
 				return;
@@ -1768,20 +1824,8 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		// key was pressed twice quickly
 		if (releasedKeyCode == keyCode) {
 			releasedKeyCode = 0;
-			if (keyCode == KEY_NUM5) {			
-				if (ProjFactory.getProj() == ProjFactory.NORTH_UP ) {
-					ProjFactory.setProj(ProjFactory.MOVE_UP);
-					parent.getInstance().alert("Map Rotation", "Rotate to Driving Direction" , 500);
-				} else {
-					ProjFactory.setProj(ProjFactory.NORTH_UP);					
-					parent.getInstance().alert("Map Rotation", "NORTH UP" , 500);
-				}
-				// redraw immediately
-				synchronized (this) {
-					if (imageCollector != null) {
-						imageCollector.newDataReady();
-					}
-				}
+			if (keyCode == KEY_NUM5) {
+				commandAction(TOGGLE_MAP_PROJ_CMD,(Displayable) null);				
 			}
 		} else {		
 			releasedKeyCode=keyCode;
@@ -1791,7 +1835,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				public void run() {
 					// key was not pressed again within double press time
 					if (releasedKeyCode == KEY_NUM5) {
-						gpsRecenter = true;
+						commandAction(RECENTER_GPS_CMD,(Displayable) null);
 					}
 					releasedKeyCode = 0;
 					repaint(0, 0, getWidth(), getHeight());	
@@ -1824,24 +1868,10 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			course += 5;
 		} else if (keyCode == KEY_STAR) {
 			commandAction(MAPFEATURES_CMD,(Displayable) null);
-			return;
 		} else if (keyCode == KEY_POUND) {
-			// toggle Backlight
-			config.setCfgBitState(config.CFGBIT_BACKLIGHT_ON,
-								!(config.getCfgBitState(config.CFGBIT_BACKLIGHT_ON)),
-								false);			
-			if ( config.getCfgBitState(config.CFGBIT_BACKLIGHT_ON, false) ) {
-				GpsMid.getInstance().alert("Backlight", "Backlight ON" , 750);
-				
-			} else {
-				GpsMid.getInstance().alert("Backlight", "Backlight off" , 750);				
-			}			
-			parent.stopBackLightTimer();
-			parent.startBackLightTimer();
+			commandAction(TOGGLE_BACKLIGHT_CMD,(Displayable) null);
 		} else if (keyCode == KEY_NUM0) {
-			boolean fullScreen = !config.getCfgBitState(config.CFGBIT_FULLSCREEN);
-			config.setCfgBitState(config.CFGBIT_FULLSCREEN, fullScreen, false);
-			setFullScreenMode(fullScreen);			
+			commandAction(TOGGLE_FULLSCREEN_CMD,(Displayable) null);
 		}
 		repaint(0, 0, getWidth(), getHeight());	
 	}
@@ -1852,49 +1882,38 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		pressedKeyCode=keyCode;
 		pressedKeyTime=System.currentTimeMillis();
 		if(keyboardLocked && keyCode!=KEY_NUM9) {
-			parent.getInstance().alert("GpsMid", "Keys locked. Hold down '9' to unlock.",1500);
+			GpsMid.getInstance().alert("GpsMid", "Keys locked. Hold down '9' to unlock.",1500);
 			ignoreKeyCode=keyCode;
 			return;
 		}
-	
-		float f = 0.00003f / 15000f;
-		int keyStatus;		
+
 		if (this.getGameAction(keyCode) == UP) {
 			imageCollector.getCurrentProjection().pan(center, 0, -2);
-//			center.radlat += f * scale * 0.1f;
 			gpsRecenter = false;
 		} else if (this.getGameAction(keyCode) == DOWN) {	
 			imageCollector.getCurrentProjection().pan(center, 0, 2);
-//			center.radlat -= f * scale * 0.1f;
 			gpsRecenter = false;
 		} else if (this.getGameAction(keyCode) == LEFT) {		
 			imageCollector.getCurrentProjection().pan(center, -2, 0);
-//			center.radlon -= f * scale * 0.1f;
 			gpsRecenter = false;
 		} else if (this.getGameAction(keyCode) == RIGHT) {		
 			imageCollector.getCurrentProjection().pan(center, 2, 0);
-//			center.radlon += f * scale * 0.1f;
 			gpsRecenter = false;
 		}				
 		if (keyCode == KEY_NUM2) {		
 			imageCollector.getCurrentProjection().pan(center, 0, -25);
-//			center.radlat += f * scale;
 		} else if (keyCode == KEY_NUM8) {
 			imageCollector.getCurrentProjection().pan(center, 0, 25);
-//			center.radlat -= f * scale;
 		} else if (keyCode == KEY_NUM4) {
 			imageCollector.getCurrentProjection().pan(center, -25, 0);
-//			center.radlon -= f * scale;
 		} else if (keyCode == KEY_NUM6) {
 			imageCollector.getCurrentProjection().pan(center, 25, 0);
-//			center.radlon += f * scale;
 		} else if (keyCode == KEY_NUM1) {
-			scale = scale * 1.5f;
+			commandAction(ZOOM_OUT_CMD,(Displayable) null);			
 		} else if (keyCode == KEY_NUM3) {
-			scale = scale / 1.5f;
+			commandAction(ZOOM_IN_CMD,(Displayable) null);			
 		} else if (keyCode == KEY_NUM7) {
-			showAddons++;
-//			course++;
+			commandAction(TOGGLE_OVERLAY_CMD,(Displayable) null);			
 		/** Non standard Key: hopefully is mapped to
 		 * the delete / clear key. According to
 		 * www.j2meforums.com/wiki/index.php/Canvas_Keycodes
@@ -1907,13 +1926,8 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			//#if polish.api.mmapi
 			commandAction(CAMERA_CMD, (Displayable)null);
 			//#endif
-		} else {		
-			keyStatus = keyCode;
 		}
-// this is already done in paint
-//		pc.center = center.clone();
-//		pc.scale = scale;
-//		pc.course = course;
+		
 		repaint(0, 0, getWidth(), getHeight());
 	}
 
