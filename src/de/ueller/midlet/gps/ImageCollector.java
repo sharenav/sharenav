@@ -101,13 +101,16 @@ public class ImageCollector implements Runnable {
 				}
 			}
 			while (!shutdown) {
-				synchronized (this) {
-					try {
-						wait(10000);
-					} catch (InterruptedException e) {
-						continue; // Recheck condition of the loop
+				if (!needRedraw || suspended) {
+					synchronized (this) {
+						try {
+							wait(30000);
+						} catch (InterruptedException e) {
+							continue; // Recheck condition of the loop
+						}
 					}
 				}
+				//#debug debug
 				logger.debug("Redrawing Map");
 				while (pc[nextCreate].state != PaintContext.STATE_READY && !shutdown) {
 					synchronized (this) {
