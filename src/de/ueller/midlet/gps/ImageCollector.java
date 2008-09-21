@@ -95,7 +95,7 @@ public class ImageCollector implements Runnable {
 			while (stat == STATE_WAIT_FOR_SC && !shutdown) {
 				synchronized (this) {
 					try {
-						wait();
+						wait(1000);
 					} catch (InterruptedException e) {
 					}
 				}
@@ -116,7 +116,7 @@ public class ImageCollector implements Runnable {
 					synchronized (this) {
 						try {
 							// System.out.println("img not ready");
-							wait();
+							wait(1000);
 						} catch (InterruptedException e) {
 						}
 					}
@@ -165,10 +165,10 @@ public class ImageCollector implements Runnable {
 				
 				/**
 				 * Draw each layer seperately to enforce paint ordering.
-				 *   
-				 */				
+				 *
+				 */
 				for (byte layer = 0; layer < layersToRender.length; layer++) {
-					byte minTile = pc[nextCreate].c.scaleToTile((int)(pc[nextCreate].scale / boost));
+					byte minTile = C.scaleToTile((int)(pc[nextCreate].scale / boost));
 					if ((minTile >= 3) && (t[3] != null)) {
 						t[3].paint(pc[nextCreate],layersToRender[layer]);
 						Thread.yield();
@@ -213,7 +213,6 @@ public class ImageCollector implements Runnable {
 				tr.cleanup();
 				// System.out.println("create ready");
 				//System.gc();
-
 			}
 		} catch (OutOfMemoryError oome) {
 		   String recoverZoomedIn="";
@@ -232,6 +231,9 @@ public class ImageCollector implements Runnable {
 		}
 		} while (!shutdown && crash <MAXCRASHES);
 		processorThread = null;
+		synchronized (this) {
+			notifyAll();
+		}
 	}
 	
 	public void suspend() {
@@ -241,20 +243,18 @@ public class ImageCollector implements Runnable {
 		suspended = false;
 	}
 	
-	public void stop(){
-		synchronized (this) {
-			shutdown=true;
-			notify();
-		}
-		if (processorThread != null && processorThread.isAlive()) {
-			try {
-				processorThread.join();
-			} catch (InterruptedException e) {
-				//Nothing to do
+	public synchronized void stop(){
+		shutdown=true;
+		notifyAll();
+		try {
+			while ((processorThread != null) && (processorThread.isAlive())) {
+				wait(1000);
 			}
-			
+		} catch (InterruptedException e) {
+			//Nothing to do
 		}
 	}
+	
 	public void restart(){
 		processorThread = new Thread(this,"ImageCollector");
 		processorThread.setPriority(Thread.MIN_PRIORITY);
