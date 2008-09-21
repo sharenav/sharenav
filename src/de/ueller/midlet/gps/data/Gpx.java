@@ -338,6 +338,18 @@ public class Gpx extends Tile implements Runnable {
 	
 	public void suspendTrk() {
 		trkRecordingSuspended = true;
+		try {
+			if(dos != null) {
+				dos.writeFloat(0.0f);
+				dos.writeFloat(0.0f);
+				dos.writeShort(0);
+				dos.writeLong(Long.MIN_VALUE);
+				dos.writeByte(0); //Convert to km/h				
+				recorded++;			
+			}
+		} catch (IOException ioe) {
+			logger.exception("Failed to write track segmentation marker", ioe);
+		}
 	}
 	
 	public void resumTrk() {
@@ -608,6 +620,11 @@ public class Gpx extends Tile implements Runnable {
 	}
 
 	private void streamTracks (OutputStream oS) throws IOException, RecordStoreNotOpenException, InvalidRecordIDException, RecordStoreException{
+		float lat, lon;
+		short ele;
+		long time;
+		Date d = new Date();
+		
 		openTrackDatabase();
 		DataInputStream dis1 = new DataInputStream(new ByteArrayInputStream(trackDatabase.getRecord(currentTrk.id)));
 		trackName = dis1.readUTF();
@@ -618,17 +635,26 @@ public class Gpx extends Tile implements Runnable {
 		DataInputStream trackIS = new DataInputStream(new ByteArrayInputStream(trackArray));
 				
 		oS.write("<trk>\r\n<trkseg>\r\n".getBytes());						
-		
+		StringBuffer sb = new StringBuffer(128);
 		for (int i = 1; i <= recorded; i++) {
-			StringBuffer sb = new StringBuffer(128);
-			sb.append("<trkpt lat='").append(trackIS.readFloat()).append("' lon='").append(trackIS.readFloat()).append("' >\r\n");
-			sb.append("<ele>").append(trackIS.readShort()).append("</ele>\r\n");
-			sb.append("<time>").append(formatUTC(new Date(trackIS.readLong()))).append("</time>\r\n");
-			sb.append("</trkpt>\r\n");				
+			lat = trackIS.readFloat(); lon = trackIS.readFloat();
+			ele = trackIS.readShort();
+			time = trackIS.readLong();
 			// Read extra bytes in the buffer, that are currently not written to the GPX file.
 			// Will add these at a later time.
-			trackIS.readByte(); //Speed			
-			oS.write(sb.toString().getBytes());
+			trackIS.readByte(); //Speed
+			if (time == Long.MIN_VALUE) {
+				oS.write("</trkseg>\r\n".getBytes());
+				oS.write("<trkseg>\r\n".getBytes());
+			} else {
+				sb.setLength(0);
+				sb.append("<trkpt lat='").append(lat).append("' lon='").append(lon).append("' >\r\n");
+				sb.append("<ele>").append(ele).append("</ele>\r\n");
+				d.setTime(time);
+				sb.append("<time>").append(formatUTC(d)).append("</time>\r\n");
+				sb.append("</trkpt>\r\n");
+				oS.write(sb.toString().getBytes());
+			}
 		}
 		oS.write("</trkseg>\r\n</trk>\r\n".getBytes());
 		trackDatabase.closeRecordStore();
