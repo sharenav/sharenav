@@ -923,16 +923,13 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	protected void sizeChanged(int w, int h) {
 		if (imageCollector != null){
 			logger.info("Size of Canvas changed to " + w + "|" + h);
-			if (w > imageCollector.xSize || h > imageCollector.ySize) {
-				logger.info(pc.xSize + " | " + pc.ySize);
-				stopImageCollector();
-				try {
-					startImageCollector();
-					imageCollector.resume();
-					imageCollector.newDataReady();
-				} catch (Exception e) {
-					logger.exception("Could not reinitialise Image Collector after size change", e);
-				}
+			stopImageCollector();
+			try {
+				startImageCollector();
+				imageCollector.resume();
+				imageCollector.newDataReady();
+			} catch (Exception e) {
+				logger.exception("Could not reinitialise Image Collector after size change", e);
 			}
 			/**
 			 * Recalculate the projection, as it may depends on the size of the screen
