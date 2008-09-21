@@ -115,6 +115,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	private final GpsMid parent;
 
 	private String lastMsg;
+	private String currentMsg;
 	private Calendar lastMsgTime = Calendar.getInstance();
 
 	private long collected = 0;
@@ -858,20 +859,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	protected void paint(Graphics g) {
 		//#debug debug
 		logger.debug("Drawing Map screen");
-		if (lastMsg != null && getTitle() != null) {
-			if (System.currentTimeMillis() 
-					> (lastMsgTime.getTime().getTime() + 5000))
-			{
-				/**
-				 * Be careful with calling setTitle in paint.
-				 * setTitle may cause a repaint, which would
-				 * cause the painter thread to spinn slowing
-				 * everything else down 
-				 */
-				logger.info("Setting title back to null");
-				setTitle(null);
-			}
-		}
+		
 		try {
 			int yc = 1;
 			int la = 18;
@@ -931,6 +919,25 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			if (pc != null){
 				showTarget(pc);
 			}
+			
+			if (currentMsg != null) {
+				if (compassRectHeight == 0) {
+					compassRectHeight = pc.g.getFont().getHeight()-2;
+				}
+				g.setColor(255,255,255);
+				g.fillRect(0,0, imageCollector.xSize, compassRectHeight + 2);
+				g.setColor(0,0,0);
+				g.drawString(currentMsg, 
+						imageCollector.xSize/2, 0, Graphics.TOP|Graphics.HCENTER);
+				
+				if (System.currentTimeMillis() 
+						> (lastMsgTime.getTime().getTime() + 5000)) {			
+					logger.info("Setting title back to null");
+					lastMsg = currentMsg;
+					currentMsg = null;
+				}
+			}
+			
 		} catch (Exception e) {
 			logger.silentexception("Unhandled exception in the paint code", e);
 		}
@@ -1672,11 +1679,11 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	}
 
 	public synchronized void receiveMessage(String s) {
-		lastMsg = s;
-		//#debug
-		parent.log(s);
-		setTitle(lastMsg);
+//		#debug info
+		logger.info("Setting title: " + s);
+		currentMsg = s;
 		lastMsgTime.setTime( new Date( System.currentTimeMillis() ) );
+		repaint();
 	}
 
 	public void receiveStatelit(Satelit[] sat) {
