@@ -883,8 +883,10 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	}
 	private void stopImageCollector(){
 		cleanup();
-		imageCollector.stop();
-		imageCollector=null;
+		if (imageCollector != null ) {
+			imageCollector.stop();
+			imageCollector=null;
+		}
 		System.gc();
 	}
 
@@ -1026,10 +1028,10 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 					compassRectHeight = pc.g.getFont().getHeight()-2;
 				}
 				g.setColor(255,255,255);
-				g.fillRect(0,0, imageCollector.xSize, compassRectHeight + 2);
+				g.fillRect(0,0, getWidth(), compassRectHeight + 2);
 				g.setColor(0,0,0);
 				g.drawString(currentMsg, 
-						imageCollector.xSize/2, 0, Graphics.TOP|Graphics.HCENTER);
+						getWidth()/2, 0, Graphics.TOP|Graphics.HCENTER);
 				
 				if (System.currentTimeMillis() 
 						> (lastMsgTime.getTime().getTime() + 5000)) {			
@@ -1566,7 +1568,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			}
 		}
 		// Route instruction text output
-		if (routeInstruction != null) {
+		if ((routeInstruction != null) && (imageCollector != null)) {
 			Font originalFont = pc.g.getFont();
 			if (routeFont==null) {
 				routeFont=Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_MEDIUM);
@@ -1897,31 +1899,33 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			return;
 		}
 
-		if (this.getGameAction(keyCode) == UP) {
-			imageCollector.getCurrentProjection().pan(center, 0, -2);
-			gpsRecenter = false;
-		} else if (this.getGameAction(keyCode) == DOWN) {	
-			imageCollector.getCurrentProjection().pan(center, 0, 2);
-			gpsRecenter = false;
-		} else if (this.getGameAction(keyCode) == LEFT) {		
-			imageCollector.getCurrentProjection().pan(center, -2, 0);
-			gpsRecenter = false;
-		} else if (this.getGameAction(keyCode) == RIGHT) {		
-			imageCollector.getCurrentProjection().pan(center, 2, 0);
-			gpsRecenter = false;
-		}				
-		if (keyCode == KEY_NUM2) {		
-			imageCollector.getCurrentProjection().pan(center, 0, -25);
-			gpsRecenter = false;
-		} else if (keyCode == KEY_NUM8) {
-			imageCollector.getCurrentProjection().pan(center, 0, 25);
-			gpsRecenter = false;
-		} else if (keyCode == KEY_NUM4) {
-			imageCollector.getCurrentProjection().pan(center, -25, 0);
-			gpsRecenter = false;
-		} else if (keyCode == KEY_NUM6) {
-			imageCollector.getCurrentProjection().pan(center, 25, 0);
-			gpsRecenter = false;
+		if (imageCollector != null) {
+			if (this.getGameAction(keyCode) == UP) {
+				imageCollector.getCurrentProjection().pan(center, 0, -2);
+				gpsRecenter = false;
+			} else if (this.getGameAction(keyCode) == DOWN) {	
+				imageCollector.getCurrentProjection().pan(center, 0, 2);
+				gpsRecenter = false;
+			} else if (this.getGameAction(keyCode) == LEFT) {		
+				imageCollector.getCurrentProjection().pan(center, -2, 0);
+				gpsRecenter = false;
+			} else if (this.getGameAction(keyCode) == RIGHT) {		
+				imageCollector.getCurrentProjection().pan(center, 2, 0);
+				gpsRecenter = false;
+			}				
+			if (keyCode == KEY_NUM2) {		
+				imageCollector.getCurrentProjection().pan(center, 0, -25);
+				gpsRecenter = false;
+			} else if (keyCode == KEY_NUM8) {
+				imageCollector.getCurrentProjection().pan(center, 0, 25);
+				gpsRecenter = false;
+			} else if (keyCode == KEY_NUM4) {
+				imageCollector.getCurrentProjection().pan(center, -25, 0);
+				gpsRecenter = false;
+			} else if (keyCode == KEY_NUM6) {
+				imageCollector.getCurrentProjection().pan(center, 25, 0);
+				gpsRecenter = false;
+			}
 		}
 		repaint(0, 0, getWidth(), getHeight());
 	}
