@@ -1025,13 +1025,18 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			
 			if (currentMsg != null) {
 				if (compassRectHeight == 0) {
-					compassRectHeight = pc.g.getFont().getHeight()-2;
+					compassRectHeight = g.getFont().getHeight()-2;
 				}
 				g.setColor(255,255,255);
 				g.fillRect(0,0, getWidth(), compassRectHeight + 2);
 				g.setColor(0,0,0);
-				g.drawString(currentMsg, 
-						getWidth()/2, 0, Graphics.TOP|Graphics.HCENTER);
+				if (g.getFont().stringWidth(currentMsg) < getWidth()) {
+					g.drawString(currentMsg, 
+							getWidth()/2, 0, Graphics.TOP|Graphics.HCENTER);
+				} else {
+					g.drawString(currentMsg, 
+							0, 0, Graphics.TOP|Graphics.LEFT);					
+				}
 				
 				if (System.currentTimeMillis() 
 						> (lastMsgTime.getTime().getTime() + 5000)) {			
@@ -1086,10 +1091,10 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		String c = compassDirections[(int) ((float) ((course%360 + 11.25f) / 22.5f)) ];
 		int compassRectWidth = pc.g.getFont().stringWidth(c);
 		pc.g.setColor(255, 255, 150); 
-		pc.g.fillRect(pc.xSize/2 - compassRectWidth / 2 , 0,
+		pc.g.fillRect(getWidth()/2 - compassRectWidth / 2 , 0,
 					  compassRectWidth, compassRectHeight);
 		pc.g.setColor(0, 0, 0); 
-		pc.g.drawString( compassDirections[(int) ((float) ((course%360 + 11.25f) / 22.5f)) ], pc.xSize/2,  0 , Graphics.HCENTER | Graphics.TOP);
+		pc.g.drawString( compassDirections[(int) ((float) ((course%360 + 11.25f) / 22.5f)) ], getWidth()/2,  0 , Graphics.HCENTER | Graphics.TOP);
 	}
 	
 	private int showConnectStatistics(Graphics g, int yc, int la) {
