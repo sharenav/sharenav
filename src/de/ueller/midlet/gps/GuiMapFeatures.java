@@ -37,8 +37,7 @@ public class GuiMapFeatures extends Form implements CommandListener {
 	// commands
 	private static final Command CMD_APPLY = new Command("Apply", Command.BACK, 1);
 	private static final Command CMD_SAVE = new Command("Save", Command.ITEM, 2);
-	private static final Command CMD_CANCEL = new Command("Cancel", Command.CANCEL, 3);
-	//private static final Command CMD_SETSTARTUPPOS = new Command("Set map startup position", Command.ITEM, 3);
+	//private static final Command CMD_CANCEL = new Command("Cancel", Command.CANCEL, 3);
 	
 	// other
 	private Trace parent;
@@ -90,10 +89,7 @@ public class GuiMapFeatures extends Form implements CommandListener {
 			
 			addCommand(CMD_APPLY);
 			addCommand(CMD_SAVE);
-			addCommand(CMD_CANCEL);
-			//addCommand(CMD_SETSTARTUPPOS);
-
-
+			//addCommand(CMD_CANCEL);
 			
 			// Set up this Displayable to listen to command events
 			setCommandListener(this);
@@ -107,10 +103,10 @@ public class GuiMapFeatures extends Form implements CommandListener {
 
 	public void commandAction(Command c, Displayable d) {
 
-		if (c == CMD_CANCEL) {			
-			parent.show();
-			return;
-		}
+//		if (c == CMD_CANCEL) {			
+//			parent.show();
+//			return;
+//		}
 
 		if (c == CMD_APPLY || c == CMD_SAVE) {			
 			// determine if changes should be written to recordstore
