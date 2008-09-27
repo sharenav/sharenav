@@ -216,7 +216,8 @@ public class Configuration {
 
 				// Auto-reconnect GPS
 				setBtAutoRecon(true);
-				setProjTypeDefault(ProjFactory.NORTH_UP);								
+				// make MOVE_UP map the default
+				setProjTypeDefault(ProjFactory.MOVE_UP);
 				//#debug info
 				logger.info("Default config for version 2+ set.");
 			}			
