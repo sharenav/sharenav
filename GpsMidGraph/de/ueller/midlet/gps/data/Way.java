@@ -2,6 +2,7 @@ package de.ueller.midlet.gps.data;
 
 /*
  * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net 
+ * 			Copyright (c) 2008 sk750 at users dot sourceforge dot net 
  * See Copying
  */
 
@@ -77,6 +78,8 @@ public class Way extends Entity{
 	private static int areaFontHeight;
 	private static Font pathFont;
 	private static int pathFontHeight;
+	private static int pathFontMaxCharWidth;
+	private static int pathFontBaseLinePos;	
 
 	static final IntPoint l1b = new IntPoint();
 	static final IntPoint l1e = new IntPoint();
@@ -301,6 +304,8 @@ public class Way extends Entity{
 		if (pathFont==null) {
 			pathFont=Font.getFont(Font.FACE_SYSTEM, Font.STYLE_PLAIN, Font.SIZE_SMALL);
 			pathFontHeight=pathFont.getHeight();
+			pathFontMaxCharWidth = pathFont.charWidth('W');
+			pathFontBaseLinePos = pathFont.getBaselinePosition();
 		}
 		// At least the half font height must fit to the on-screen-width of the way
 		// (is calculation of w correct???)
@@ -323,6 +328,12 @@ public class Way extends Entity{
 			return;
 		}		
 
+		// determine region in which chars can be drawn
+		int minCharScreenX = pc.g.getClipX() - pathFontMaxCharWidth;
+		int minCharScreenY = pc.g.getClipY() - pathFontBaseLinePos - (w/2);
+		int maxCharScreenX = minCharScreenX + pc.g.getClipWidth() + pathFontMaxCharWidth;
+		int maxCharScreenY = minCharScreenY + pc.g.getClipHeight() + pathFontBaseLinePos * 2;
+		
 		StringBuffer sbName= new StringBuffer();
   	
 		pc.g.setFont(pathFont);
@@ -431,16 +442,23 @@ public class Way extends Entity{
 						letter=sbName.charAt(streetNameCharIndex);
 						
 						if (mode==PAINTMODE_DRAWCHARS) {
-							if (abbreviated) {
-								pc.g.setColor(100,100,100);
-							} else {
-								pc.g.setColor(0,0,0);
+							// draw char only if it's at least partly on-screen
+							if ( (int)posChar_x >= minCharScreenX &&
+								 (int)posChar_x <= maxCharScreenX &&
+								 (int)posChar_y >= minCharScreenX &&
+								 (int)posChar_y <= maxCharScreenY									
+							) {
+								if (abbreviated) {
+									pc.g.setColor(100,100,100);
+								} else {
+									pc.g.setColor(0,0,0);
+								}
+								pc.g.drawChar(
+									letter,
+									(int)posChar_x, (int)(posChar_y+(w/2)),
+									Graphics.BASELINE | Graphics.HCENTER
+								);
 							}
-							pc.g.drawChar(
-								letter,
-								(int)posChar_x, (int)(posChar_y+(w/2)),
-								Graphics.BASELINE | Graphics.HCENTER
-							);
 						}
 //						if (mode==PAINTMODE_COUNTFITTINGCHARS ) {
 //							pc.g.setColor(150,150,150);
