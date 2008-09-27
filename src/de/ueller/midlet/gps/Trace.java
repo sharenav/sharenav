@@ -94,6 +94,8 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	private final Command BACK_CMD = new Command("Back",Command.BACK, 15);
 	private final Command ZOOM_IN_CMD = new Command("Zoom in",Command.ITEM, 100);
 	private final Command ZOOM_OUT_CMD = new Command("Zoom out",Command.ITEM, 100);
+	private final Command ROTATE_COUNTERCLOCKWISE_CMD = new Command("Rotate counterclockwise",Command.ITEM, 100);
+	private final Command ROTATE_CLOCKWISE_CMD = new Command("Rotate clockwise",Command.ITEM, 100);
 	private final Command TOGGLE_OVERLAY_CMD = new Command("Next overlay",Command.ITEM, 100);
 	private final Command TOGGLE_BACKLIGHT_CMD = new Command("Keep backlight on/off",Command.ITEM, 100);
 	private final Command TOGGLE_FULLSCREEN_CMD = new Command("Switch to fullscreen",Command.ITEM, 100);
@@ -262,7 +264,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		singleKeyPressCommand.put(KEY_NUM3, ZOOM_IN_CMD);
 		singleKeyPressCommand.put(KEY_NUM5, RECENTER_GPS_CMD);
 		singleKeyPressCommand.put(KEY_NUM7, TOGGLE_OVERLAY_CMD);
-		//singleKeyPressCommand.put(KEY_NUM9, ROTATE_CMD);
+		singleKeyPressCommand.put(KEY_NUM9, ROTATE_COUNTERCLOCKWISE_CMD);
 		singleKeyPressCommand.put(KEY_NUM0, TOGGLE_FULLSCREEN_CMD);
 		singleKeyPressCommand.put(KEY_STAR, MAPFEATURES_CMD);		
 		singleKeyPressCommand.put(KEY_POUND, TOGGLE_BACKLIGHT_CMD);
@@ -792,6 +794,10 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				scale = scale / 1.5f;
 			} else if (c == ZOOM_OUT_CMD) {
 				scale = scale * 1.5f;
+			} else if (c == ROTATE_COUNTERCLOCKWISE_CMD) {
+				course += 5;
+			} else if (c == ROTATE_CLOCKWISE_CMD) {
+				course -= 5;
 			} else if (c == TOGGLE_OVERLAY_CMD) {
 				showAddons++;
 			} else if (c == TOGGLE_BACKLIGHT_CMD) {
