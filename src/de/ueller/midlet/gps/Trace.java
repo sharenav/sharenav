@@ -240,7 +240,8 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	private boolean atTarget=false;
 	private int sumWrongDirection=0;
 	private int oldAwayFromNextArrow=0;
-	private int oldRouteInstructionColor=0x00E6E6E6;	
+	private int oldRouteInstructionColor=0x00E6E6E6;
+	private boolean prepareInstructionSaid=false;
 	private boolean routeRecalculationRequired=false;
 	// private int routerecalculations=0;
 	
@@ -1340,8 +1341,11 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 					if (minimumDistance<PASSINGDISTANCE) {
 						if (iPassedRouteArrow != iNearest) {
 							iPassedRouteArrow = iNearest;
+							// if there's i.e. a 2nd left arrow in row "left" must be repeated
 							parent.mNoiseMaker.resetSoundRepeatTimes();
 						}
+						// after passing an arrow saying "in xxx metres" is allowed again 
+						prepareInstructionSaid = false;
 						//System.out.println("iPassedRouteArrow "+ iPassedRouteArrow);
 					} else {
 						c = (ConnectionWithNode) route.elementAt(iPassedRouteArrow);
@@ -1482,7 +1486,11 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 							if (intDistance <= PREPAREDISTANCE) {
 								soundToPlay.append( (a==4 ? "CONTINUE" : "PREPARE") + ";" + soundDirections[a]);
 								soundRepeatDelay=5;
-							} else if (intDistance < 900) {
+								// Because of adaptive-to-speed distances for "prepare"-instructions
+								// GpsMid could fall back from "prepare"-instructions to "in xxx metres" voice instructions
+								// Remembering and checking if the prepare instruction already was given since the latest passing of an arrow avoids this
+								prepareInstructionSaid = true;
+							} else if (intDistance < 900  && !prepareInstructionSaid) {
 								soundRepeatDelay=60;
 								soundToPlay.append("IN;" + Integer.toString(intDistance / 100)+ "00;METERS;" + soundDirections[a]);								
 							}							
@@ -1499,7 +1507,10 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 						// inform the user about its direction
 						if (distance <= PREPAREDISTANCE &&
 							// only if not both arrows are STRAIGHT_ON
-							!(a==4 && aNearest == 4) ) {
+							!(a==4 && aNearest == 4) &&
+							// and only as continuation of instruction
+							soundToPlay.length()!=0
+						   ) {
 							soundToPlay.append(";THEN;");
 							if (distance > PASSINGDISTANCE) {
 								soundToPlay.append("SOON;");
