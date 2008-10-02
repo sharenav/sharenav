@@ -51,6 +51,11 @@ public class Gpx extends Tile implements Runnable {
 	public int recorded = 0;
 	public int delay = 0;
 	
+	private float trkOdo;
+	private float trkVertSpd;
+	private float trkVmax;
+	private int   trkTimeTot;
+	
 	private Thread processorThread = null;
 	private String url = null;
 	
@@ -157,15 +162,23 @@ public class Gpx extends Tile implements Runnable {
 	public void addTrkPt(Position trkpt) {
 		if (trkRecordingSuspended)
 			return;
-		Configuration config=GpsMid.getInstance().getConfig();
+		
 		//#debug info
 		logger.info("Adding trackpoint: " + trkpt);
+		
+		Configuration config=GpsMid.getInstance().getConfig();
+		long msTime=trkpt.date.getTime();
+		float lat=trkpt.latitude*MoreMath.FAC_DECTORAD;
+		float lon=trkpt.longitude*MoreMath.FAC_DECTORAD;
+		float distance = 0.0f;
 		boolean doRecord=false;
+
 		try {
 			// always record when i.e. receiving or loading tracklogs
 			// or when starting to record
 			if (!applyRecordingRules || recorded==0) {
 				doRecord=true;
+				distance = ProjMath.getDistance(lat, lon, oldlat, oldlon);
 			}
 			// check which record rules to apply
 			else if (config.getGpxRecordRuleMode()==Configuration.GPX_RECORD_ADAPTIVE) {
@@ -186,6 +199,7 @@ public class Gpx extends Tile implements Runnable {
 				if ( (trkpt.speed > 2.222f) || ((trkpt.speed > 1.111f) && (delay > 0 )) || 
 						((trkpt.speed > 0.556) && delay > 3 ) || (delay > 10)) {
 					doRecord=true;
+					distance = ProjMath.getDistance(lat, lon, oldlat, oldlon);
 					delay = 0;
 				} else {
 					delay++;
@@ -194,16 +208,13 @@ public class Gpx extends Tile implements Runnable {
 				/*
 				 user-specified recording rules
 				*/
-				long msTime=System.currentTimeMillis();
-				float lat=trkpt.latitude*MoreMath.FAC_DECTORAD;
-				float lon=trkpt.longitude*MoreMath.FAC_DECTORAD;
-				float distance = 100*ProjMath.getDistance(lat, lon, oldlat, oldlon); 
+				distance = ProjMath.getDistance(lat, lon, oldlat, oldlon);
 				if ( 
 						// is not always record distance not set
 						// or always record distance reached
 						(
 							config.getGpxRecordAlwaysDistanceCentimeters()!=0 &&
-							distance >= config.getGpxRecordAlwaysDistanceCentimeters()
+							100*distance >= config.getGpxRecordAlwaysDistanceCentimeters()
 						)
 						||
 						(  
@@ -218,14 +229,11 @@ public class Gpx extends Tile implements Runnable {
 							// is minimum distance not set
 							// or distance at least minimum distance?
 							config.getGpxRecordMinDistanceCentimeters()==0 ||
-							distance >= config.getGpxRecordMinDistanceCentimeters()
+							100*distance >= config.getGpxRecordMinDistanceCentimeters()
 							)
 						)
 				) {
 					doRecord=true;
-					oldMsTime=msTime;
-					oldlat=lat;
-					oldlon=lon;
 				}
 			}
 			if(doRecord) {
@@ -233,9 +241,17 @@ public class Gpx extends Tile implements Runnable {
 				dos.writeFloat(trkpt.longitude);
 				dos.writeShort((short)trkpt.altitude);
 				dos.writeLong(trkpt.date.getTime());
-				dos.writeByte((byte)(trkpt.speed*3.6f)); //Convert to km/h				
+				dos.writeByte((byte)(trkpt.speed*3.6f)); //Convert to km/h
 				recorded++;
-				tile.addTrkPt(trkpt.latitude, trkpt.longitude, false);
+				if ((oldlat != 0.0f) || (oldlon != 0.0f)) {
+					trkOdo += distance;
+					trkTimeTot += msTime - oldMsTime;
+					if (trkVmax < trkpt.speed)
+						trkVmax = trkpt.speed;
+				}
+				oldMsTime=msTime;
+				oldlat=lat;
+				oldlon=lon;
 			}
 		} catch (OutOfMemoryError oome) {
 			try {				
@@ -295,6 +311,10 @@ public class Gpx extends Tile implements Runnable {
 		
 		baos = new ByteArrayOutputStream();
 		dos = new DataOutputStream(baos);
+		trkOdo = 0.0f;
+		trkVmax = 0.0f;
+		trkVertSpd = 0.0f;
+		trkTimeTot = 0;
 		recorded = 0;
 		trkRecordingSuspended = false;
 	}
@@ -340,12 +360,19 @@ public class Gpx extends Tile implements Runnable {
 		trkRecordingSuspended = true;
 		try {
 			if(dos != null) {
+				/**
+				 * Add a marker to the recording to be able to
+				 * break up the GPX file into separate track segments
+				 * after each suspend
+				 */
 				dos.writeFloat(0.0f);
 				dos.writeFloat(0.0f);
 				dos.writeShort(0);
 				dos.writeLong(Long.MIN_VALUE);
-				dos.writeByte(0); //Convert to km/h				
-				recorded++;			
+				dos.writeByte(0);
+				recorded++;
+				oldlat = 0.0f;
+				oldlon = 0.0f;
 			}
 		} catch (IOException ioe) {
 			logger.exception("Failed to write track segmentation marker", ioe);
@@ -522,6 +549,35 @@ public class Gpx extends Tile implements Runnable {
 	public boolean isRecordingTrkSuspended() {
 		return trkRecordingSuspended;
 	}
+	
+	/** 
+	 * @return current GPX track length in m
+	 */
+	public float currentTrkLength() {
+		return trkOdo;
+	}
+	
+	/** 
+	 * @return current GPX track's average speed in m/s
+	 */
+	public float currentTrkAvgSpd() {
+		return (1000.0f*trkOdo) / trkTimeTot;
+	}
+	
+	/** 
+	 * @return current GPX tracks time duration in ms
+	 */
+	public long currentTrkDuration() {
+		return trkTimeTot;
+	}
+	
+	/** 
+	 * @return current GPX track's maximum speed in m/s
+	 */
+	public float maxTrkSpeed() {
+		return trkVmax;
+	}
+	
 	
 	public void run() {
 		logger.info("GPX processing thread started");
