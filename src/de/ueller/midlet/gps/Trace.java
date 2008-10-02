@@ -104,6 +104,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	private final Command TOGGLE_RECORDING_CMD = new Command("(De)Activate recording",Command.ITEM, 100);
 	private final Command TOGGLE_RECORDING_SUSP_CMD = new Command("Suspend recording",Command.ITEM, 100);
 	private final Command RECENTER_GPS_CMD = new Command("Recenter on GPS",Command.ITEM, 100);
+	private final Command TACHO_CMD = new Command("Tacho",Command.ITEM, 100);
 
 
 	private InputStream btGpsInputStream;
@@ -114,7 +115,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 //	private SirfInput si;
 	private LocationMsgProducer locationProducer;
 
-	private String solution = "NoFix";
+	public String solution = "NoFix";
 	
 	private boolean gpsRecenter = true;
 	
@@ -245,6 +246,8 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	private boolean routeRecalculationRequired=false;
 	// private int routerecalculations=0;
 	
+	public Vector locationUpdateListeners;
+	
 	public Trace(GpsMid parent, Configuration config) throws Exception {
 		//#debug
 		logger.info("init Trace");
@@ -259,6 +262,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		addCommand(MAPFEATURES_CMD);
 		addCommand(RECORDINGS_CMD);
 		addCommand(ROUTINGS_CMD);
+		addCommand(TACHO_CMD);
 		setCommandListener(this);
 		
 		singleKeyPressCommand.put(KEY_NUM1, ZOOM_OUT_CMD);
@@ -297,6 +301,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		}
 		// setTitle("initTrace ready");
 		
+		locationUpdateListeners = new Vector();
 		
 		traceInstance = this;
 	}
@@ -860,6 +865,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				}
 			} else if (c == RECENTER_GPS_CMD) {
 				gpsRecenter = true;
+			} else if (c == TACHO_CMD) {
+				GuiTacho tacho = new GuiTacho(this);
+				tacho.show();
 			}
 			} else {
 				logger.error(" currently in route Caclulation");
@@ -1765,6 +1773,15 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			pc.scale = scale;
 			pc.course=course;
 			repaint(0, 0, getWidth(), getHeight());
+			
+			if (locationUpdateListeners != null) {
+				synchronized (locationUpdateListeners) {
+					for (int i = 0; i < locationUpdateListeners.size(); i++) {
+						((LocationUpdateListener)locationUpdateListeners.elementAt(i)).loctionUpdated();
+					}
+				}
+			}
+			
 		}
 	}
 	
