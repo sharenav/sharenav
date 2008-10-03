@@ -594,9 +594,6 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				if (locationProducer != null){
 					locationProducer.close();
 				}
-				if (imageCollector != null) {
-					imageCollector.suspend();
-				}
 				
 				// shutdown();
 				pause();
@@ -621,9 +618,6 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 					return;
 				}
 
-				if (imageCollector != null) { 
-                    imageCollector.suspend(); 
-                } 
 			    GuiGpx gpx = new GuiGpx(this);
 			    gpx.show();
 			}
@@ -636,10 +630,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 					thread.start();
 				}
 			}
-			if (c == SEARCH_CMD){				
-				if (imageCollector != null) {
-					imageCollector.suspend();
-				}
+			if (c == SEARCH_CMD){
 				GuiSearch search = new GuiSearch(this);
 				search.show();
 			}
@@ -772,10 +763,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				}
 			}
 			//#if polish.api.mmapi
-			if (c == CAMERA_CMD){		
-				if (imageCollector != null) {
-					imageCollector.suspend();
-				}
+			if (c == CAMERA_CMD){
 				try {
 					Class GuiCameraClass = Class.forName("de.ueller.midlet.gps.GuiCamera");
 					Object GuiCameraObject = GuiCameraClass.newInstance();					
@@ -2061,10 +2049,6 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		//Display.getDisplay(parent).setCurrent(this);
 		GpsMid.getInstance().show(this);
 		setFullScreenMode(config.getCfgBitState(config.CFGBIT_FULLSCREEN));
-		if (imageCollector != null) {
-			imageCollector.resume();
-			imageCollector.newDataReady();			
-		}
 		requestRedraw();
 	}
 
@@ -2161,10 +2145,17 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	
 	protected void hideNotify() {
 		logger.info("Hide notify has been called, screen will nolonger be updated");
+		if (imageCollector != null) {
+			imageCollector.suspend();
+		}
 	}
 	
 	protected void showNotify() {
 		logger.info("Show notify has been called, screen will be updated again");
+		if (imageCollector != null) {
+			imageCollector.resume();
+			imageCollector.newDataReady();
+		}
 	}
 
 }
