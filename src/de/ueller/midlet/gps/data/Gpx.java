@@ -243,6 +243,7 @@ public class Gpx extends Tile implements Runnable {
 				dos.writeLong(trkpt.date.getTime());
 				dos.writeByte((byte)(trkpt.speed*3.6f)); //Convert to km/h
 				recorded++;
+				tile.addTrkPt(trkpt.latitude, trkpt.longitude, false);
 				if ((oldlat != 0.0f) || (oldlon != 0.0f)) {
 					trkOdo += distance;
 					trkTimeTot += msTime - oldMsTime;
