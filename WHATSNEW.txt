@@ -10,6 +10,8 @@ GpsMid 0.4.x
        - sound for GPS start / stop (CONNECT and DISCONNECT sound in style file OR internal melody)
        - experimental voice routing instructions (sound names see style-file.xml of high-style.zip)
        - priority and specialisation conditions in style-file for POIs and ways
+       - pois and areas marked with "hideable=false" in style-file
+         are not allowed be hidden using map features anymore (useful i.e. to keep place names)
        - "Clear Target" menu entry to remove route arrows and navigation line
        - automatically default new midlets to correct backlight method for devices that were listed
          with backlight method at http://gpsmid.wiki.sourceforge.net/DevicesList
