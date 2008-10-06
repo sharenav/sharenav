@@ -29,8 +29,9 @@ public class POIdescription {
 	public int 		textColor;
 	public boolean	imageCenteredOnNode;
 	public byte     rulePriority;
+	public boolean	hideable;
 	
 	public String toString() {
-		return "Desc: " + description + "; " + key + "=" + value + " nametag: " + nameKey + " or " + nameFallbackKey + " Scale: " + minImageScale;
+		return "Desc: " + description + "; " + key + "=" + value + " nametag: " + nameKey + " or " + nameFallbackKey + " Scale: " + minImageScale + " hideable: " + hideable;
 	}
 }

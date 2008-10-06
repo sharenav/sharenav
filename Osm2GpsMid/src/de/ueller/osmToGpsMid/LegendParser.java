@@ -183,6 +183,7 @@ public class LegendParser extends DefaultHandler{
 					currentPoi.typeNum = poiIdx++;
 					currentPoi.key = currentKey;
 					currentPoi.value = atts.getValue("name");
+					currentPoi.hideable = true;
 					String rulePrio = atts.getValue("priority");
 					if (rulePrio != null) {
 						try {
@@ -247,6 +248,9 @@ public class LegendParser extends DefaultHandler{
 				if (qName.equals("imageCentered")) {
 					currentPoi.imageCenteredOnNode = atts.getValue("value").equalsIgnoreCase("true");
 				}
+				if (qName.equals("hideable")) {
+					currentPoi.hideable = atts.getValue("hideable").equalsIgnoreCase("true");
+				}
 				break;
 			case READING_WAYS:
 				if (qName.equals("keyW")) {
@@ -262,6 +266,7 @@ public class LegendParser extends DefaultHandler{
 					currentWay.typeNum = wayIdx++;
 					currentWay.key = currentKey;
 					currentWay.value = atts.getValue("name");
+					currentWay.hideable = true;
 					Set<WayDescription> wayDescs = keyValuesWay.get(currentWay.value);
 					if (wayDescs == null)
 						wayDescs = new HashSet<WayDescription>();
@@ -363,6 +368,9 @@ public class LegendParser extends DefaultHandler{
 					} catch (NumberFormatException nfe) {
 						// Just ignore this entry if it is not correct
 					}
+				}
+				if (qName.equals("hideable")) {
+					currentWay.hideable = atts.getValue("hideable").equalsIgnoreCase("true");
 				}
 				break;
 			case READING_SOUNDS:

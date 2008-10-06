@@ -31,6 +31,7 @@ public class WayDescription {
 	public int      noWaysOfType;
 	public byte		forceToLayer;
 	public byte     rulePriority;
+	public boolean	hideable;
 	
 	public WayDescription() {
 		lineStyleDashed = false; //TODO: This needs to be corrected to Graphics.SOLID
@@ -43,6 +44,6 @@ public class WayDescription {
 	}
 	
 	public String toString() {
-		return "Desc: " + description + "; " + key + "=" + value + " nametag: " + nameKey + " or " + nameFallbackKey + " Scale: " + minScale+ " textScale: " + minTextScale ;
+		return "Desc: " + description + "; " + key + "=" + value + " nametag: " + nameKey + " or " + nameFallbackKey + " Scale: " + minScale+ " textScale: " + minTextScale + " hideable: " + hideable;
 	}
 }

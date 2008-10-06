@@ -141,30 +141,35 @@ zoomed out 21x (scale alias 1:  500km)
 		<searchIcon src = "/city.png"/>
 		<namekey tag="name"/>		
 		<scale scale="12"/>
+		<hideable hideable="false"/>
 	  </value>
 	  <value name="town">
 		<description desc = "Town"/>
 		<searchIcon src = "city.png"/>
 		<namekey tag="name"/>
 		<scale scale = "16"/>
+		<hideable hideable="false"/>
 	  </value>
 	  <value name="village">
 		<description desc = "Village"/>
 		<searchIcon src = "city.png"/>
 		<namekey tag="name"/>
 		<scale scale = "22"/>
+		<hideable hideable="false"/>
 	  </value>
 	  <value name="hamlet">
 		<description desc = "Hamlet"/>
 		<searchIcon src = "city.png"/>
 		<namekey tag="name"/>
 		<scale scale = "23"/>
+		<hideable hideable="false"/>
 	  </value>
 	  <value name="suburb">
 		<description desc = "Suburb"/>
 		<searchIcon src = "city.png"/>
 		<namekey tag="name"/>
 		<scale scale = "23"/>
+		<hideable hideable="false"/>
 	  </value>
 	</key>
 	<key tag="amenity">

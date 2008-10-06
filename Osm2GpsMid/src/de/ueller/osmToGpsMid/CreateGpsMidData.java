@@ -54,6 +54,7 @@ public class CreateGpsMidData {
 	public final static byte LEGEND_FLAG_SEARCH_IMAGE = 0x02;
 	public final static byte LEGEND_FLAG_MIN_IMAGE_SCALE = 0x04;
 	public final static byte LEGEND_FLAG_TEXT_COLOR = 0x08;
+	public final static byte LEGEND_FLAG_NON_HIDEABLE = 0x10;
 	
 		
 //	private final static int MAX_TILE_FILESIZE=20000;
@@ -163,6 +164,8 @@ public class CreateGpsMidData {
 					flags |= LEGEND_FLAG_MIN_IMAGE_SCALE;
 				if (poi.textColor != 0)
 					flags |= LEGEND_FLAG_TEXT_COLOR;				
+				if (!poi.hideable)
+					flags |= LEGEND_FLAG_NON_HIDEABLE;
 				dsi.writeByte(poi.typeNum);
 				dsi.writeByte(flags);
 				dsi.writeUTF(poi.description);
@@ -180,7 +183,8 @@ public class CreateGpsMidData {
 					dsi.writeInt(poi.minTextScale);
 				if ((flags & LEGEND_FLAG_TEXT_COLOR) > 0)
 					dsi.writeInt(poi.textColor);
-				
+				// System.out.println(poi);
+	
 			}
 			/**
 			 * Writing Way legend data 
@@ -188,6 +192,8 @@ public class CreateGpsMidData {
 			dsi.writeByte(Configuration.getConfiguration().getWayDescs().size());
 			for (WayDescription way : Configuration.getConfiguration().getWayDescs()) {
 				byte flags = 0;
+				if (!way.hideable)
+					flags |= LEGEND_FLAG_NON_HIDEABLE;				
 				dsi.writeByte(way.typeNum);
 				dsi.writeByte(flags);
 				dsi.writeUTF(way.description);								
@@ -197,7 +203,8 @@ public class CreateGpsMidData {
 				dsi.writeInt(way.lineColor);
 				dsi.writeInt(way.boardedColor);
 				dsi.writeByte(way.wayWidth);
-				dsi.writeBoolean(way.lineStyleDashed);				
+				dsi.writeBoolean(way.lineStyleDashed);
+				// System.out.println(way);
 			}
 			/**
 			 * Writing Sound Descriptions 
