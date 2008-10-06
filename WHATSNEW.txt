@@ -31,6 +31,7 @@ GpsMid 0.4.x
        - speed up and rendering fixes for way labels in the map
        - map "freeze" bug on SE phones fixed
        - delayed map draw bug fixed
+       - Areas can now be hidden in Map Features dialog
        - some new map features in high-style.zip
 	   - many more new features and bugfixes
 

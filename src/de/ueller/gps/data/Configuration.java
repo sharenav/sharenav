@@ -81,6 +81,8 @@ public class Configuration {
 	public final static byte CFGBIT_SHOW_POINT_OF_COMPASS=25;
 	// bit 26: add geo reference into the exif of a photo;
 	public final static byte CFGBIT_ADD_EXIF=26;
+	// bit 27: show AREAS
+	public final static byte CFGBIT_AREAS=27;
 
 	
 	/**
@@ -205,13 +207,14 @@ public class Configuration {
 				logger.info("Default config for version 0.4.0+ set.");
 			}
 			int configVersionStored = readInt(database, RECORD_ID_CONFIG_VERSION);
-			// default values for config version 2 (0.4.1)
-			if(configVersionStored < 2) {				
+			// default values for config version 3
+			if(configVersionStored < 3) {				
 				cfgBits |=	1<<CFGBIT_SND_CONNECT |
 					   		1<<CFGBIT_SND_DISCONNECT |
 					   		1<<CFGBIT_SND_ROUTINGINSTRUCTIONS |
 					   		1<<CFGBIT_SND_TARGETREACHED |
 					   		1<<CFGBIT_SHOW_POINT_OF_COMPASS |
+					   		1<<CFGBIT_AREAS |
 					   		1<<CFGBIT_ROUTE_AUTO_RECALC;
 
 				// Auto-reconnect GPS
@@ -219,7 +222,7 @@ public class Configuration {
 				// make MOVE_UP map the default
 				setProjTypeDefault(ProjFactory.MOVE_UP);
 				//#debug info
-				logger.info("Default config for version 2+ set.");
+				logger.info("Default config for version 3+ set.");
 			}			
 			setCfgBits(cfgBits, true);
 			// remember for which version the default values were stored

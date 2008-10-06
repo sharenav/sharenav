@@ -656,7 +656,12 @@ public class Way extends Entity{
 		WayDescription wayDesc = C.getWayDescription(type);
 		if (pc.scale > wayDesc.maxScale * pc.config.getDetailBoostMultiplier() ) {			
 			return;
-		}		
+		}
+		
+		if ( !Trace.getInstance().getConfig().getCfgBitState(Configuration.CFGBIT_AREAS)) {
+			return;
+		}
+		
 		IntPoint lineP2 = pc.lineP2;
 		Projection p = pc.getP();
 		/**
