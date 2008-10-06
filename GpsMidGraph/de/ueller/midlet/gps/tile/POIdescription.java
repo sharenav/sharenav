@@ -10,4 +10,5 @@ public class POIdescription {
 	public int		textColor;
 	public int		maxTextScale;
 	public int		maxImageScale;
+	public boolean	hideable;
 }

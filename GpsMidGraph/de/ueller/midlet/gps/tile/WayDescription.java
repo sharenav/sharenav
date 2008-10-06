@@ -9,5 +9,5 @@ public class WayDescription {
 	public int boardedColor;
 	public boolean isArea;
 	public byte wayWidth;
-
+	public boolean hideable;
 }

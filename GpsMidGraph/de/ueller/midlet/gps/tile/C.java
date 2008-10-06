@@ -33,7 +33,8 @@ public class C {
 	public final static byte LEGEND_FLAG_SEARCH_IMAGE = 0x02;
 	public final static byte LEGEND_FLAG_MIN_IMAGE_SCALE = 0x04;
 	public final static byte LEGEND_FLAG_TEXT_COLOR = 0x08;
-	
+	public final static byte LEGEND_FLAG_NON_HIDEABLE = 0x10;
+
 	/**
 	 * minimum distances to set the is_in name to the next city
 	 * to get the minimum distance use: <code>MAX_DIST_CITY[node.getType(null)]</code>
@@ -96,6 +97,7 @@ public class C {
 			//System.out.println("POI: " +  pois[i].description);
 			pois[i].imageCenteredOnNode = ds.readBoolean();
 			pois[i].maxImageScale = ds.readInt();
+			pois[i].hideable = ((flags & LEGEND_FLAG_NON_HIDEABLE) == 0);	
 			if ((flags & LEGEND_FLAG_IMAGE) > 0) {
 				String imageName = ds.readUTF();
 				//System.out.println("trying to open image " + imageName);
@@ -137,6 +139,7 @@ public class C {
 			if (ds.readByte() != i)
 				logger.error("Read legend had troubles");
 			byte flags = ds.readByte();
+			ways[i].hideable = ((flags & LEGEND_FLAG_NON_HIDEABLE) == 0);
 			ways[i].description = ds.readUTF();			
 			ways[i].maxScale = ds.readInt();
 			ways[i].maxTextScale = ds.readInt();
@@ -182,6 +185,9 @@ public class C {
 	
 	public static final boolean isNodeImageCentered(byte type) {
 		return pois[type].imageCenteredOnNode;
+	}
+	public static final boolean isNodeHideable(byte type) {
+		return pois[type].hideable;
 	}
 	
 	public static final  String getNodeTypeDesc(byte type) {

@@ -372,7 +372,8 @@ public class SingleTile extends Tile implements QueueableTile {
 			return;
 		}
 
-		if ( !Trace.getInstance().getConfig().getCfgBitState(Configuration.CFGBIT_POIS) ) {
+		boolean hideable = C.isNodeHideable(t);
+		if (hideable && !Trace.getInstance().getConfig().getCfgBitState(Configuration.CFGBIT_POIS) ) {
 			return;
 		}
 		pc.g.setColor(C.getNodeTextColor(t));
@@ -394,7 +395,7 @@ public class SingleTile extends Tile implements QueueableTile {
 		if (pc.scale > C.getNodeMaxTextScale(t)) {
 			return;
 		}
-		if ( !Trace.getInstance().getConfig().getCfgBitState(Configuration.CFGBIT_POITEXTS) ) {
+		if (hideable && !Trace.getInstance().getConfig().getCfgBitState(Configuration.CFGBIT_POITEXTS) ) {
 			return;
 		}
 

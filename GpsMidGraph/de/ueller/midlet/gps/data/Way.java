@@ -658,7 +658,7 @@ public class Way extends Entity{
 			return;
 		}
 		
-		if ( !Trace.getInstance().getConfig().getCfgBitState(Configuration.CFGBIT_AREAS)) {
+		if (wayDesc.hideable && !Trace.getInstance().getConfig().getCfgBitState(Configuration.CFGBIT_AREAS)) {
 			return;
 		}
 		
@@ -694,7 +694,7 @@ public class Way extends Entity{
 			return;
 		}		
 		
-		if ( !Trace.getInstance().getConfig().getCfgBitState(Configuration.CFGBIT_AREATEXTS)) {
+		if (wayDesc.hideable && !Trace.getInstance().getConfig().getCfgBitState(Configuration.CFGBIT_AREATEXTS)) {
 			return;
 		}
 
