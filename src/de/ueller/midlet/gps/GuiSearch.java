@@ -38,8 +38,9 @@ public class GuiSearch extends Canvas implements CommandListener,
 	private final Command CLEAR_CMD = new Command("clear", Command.ITEM, 3);
 	private final Command BOOKMARK_CMD = new Command("add to Waypoint", Command.ITEM, 4);
 	private final Command BACK_CMD = new Command("Back", Command.BACK, 5);
-	private final Command POI_CMD = new Command("Nearest POI", Command.ITEM, 6);
-	private final Command FULLT_CMD = new Command("Fulltext Search", Command.ITEM, 7);
+	private final Command OVERVIEW_CMD = new Command("POI Overview", Command.ITEM, 6);
+	private final Command POI_CMD = new Command("Nearest POI", Command.ITEM, 7);
+	private final Command FULLT_CMD = new Command("Fulltext Search", Command.ITEM, 8);
 
 	//private Form form;
 
@@ -105,9 +106,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 		addCommand(CLEAR_CMD);
 		addCommand(BOOKMARK_CMD);
 		addCommand(BACK_CMD);
+		addCommand(OVERVIEW_CMD);
 		addCommand(POI_CMD);
-		//Commented out, as I am not yet convinced that if fully
-		//works. If you want to test it, then add it back again
 		addCommand(FULLT_CMD);
 		
 		timerT = new TimerTask() {
@@ -241,6 +241,11 @@ public class GuiSearch extends Canvas implements CommandListener,
 			parent.gpx.addWayPt(positionMark);
 			parent.show();
 			return;
+		}
+		
+		if (c == OVERVIEW_CMD) {
+			GuiOverviewElement ovEl = new GuiOverviewElement(parent);
+			ovEl.show();
 		}
 		
 		if (c == POI_CMD) {

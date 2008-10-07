@@ -65,6 +65,8 @@ public class SingleTile extends Tile implements QueueableTile {
 	 private final static Logger logger= Logger.getInstance(SingleTile.class,Logger.DEBUG);
 
 	public final byte zl;
+	
+	private static byte overviewElementType;
 
 	SingleTile(DataInputStream dis, int deep, byte zl) throws IOException {
 //		 logger.debug("load " + deep + ":ST Nr=" + fileId);
@@ -368,14 +370,24 @@ public class SingleTile extends Tile implements QueueableTile {
 	public void paintNode(PaintContext pc, int i) {
 		Image img = null;
 		byte t=type[i];
-		if (pc.scale > C.getNodeMaxScale(t)) {
-			return;
-		}
-
 		boolean hideable = C.isNodeHideable(t);
-		if (hideable && !Trace.getInstance().getConfig().getCfgBitState(Configuration.CFGBIT_POIS) ) {
-			return;
+		if (t != overviewElementType) {
+			// if not in Overview Mode check for scale
+			if (pc.scale > C.getNodeMaxScale(t)) {
+				return;
+			}
+			if (hideable) {
+				// if not in Overview Mode check if POIs are on in Map Features 
+				if (Trace.getInstance().getConfig().getCfgBitState(Configuration.CFGBIT_POIS) ) {
+					return;
+				}		
+				// in Overview Mode hide all other hideable POIs
+				if (overviewElementType!=0) {
+					return;
+				}
+			}
 		}
+				
 		pc.g.setColor(C.getNodeTextColor(t));
 		img = C.getNodeImage(t);
 		// logger.debug("calc pos "+pc);
@@ -523,6 +535,10 @@ public class SingleTile extends Tile implements QueueableTile {
 	   }
 	   return true;
    }
-
+   
+   
+   public static void setOverviewElementType(byte type) {
+	   overviewElementType = type;
+   }
 
 }
