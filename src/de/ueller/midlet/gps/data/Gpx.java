@@ -48,6 +48,7 @@ public class Gpx extends Tile implements Runnable {
 	
 	private RecordStore trackDatabase = null;
 	private RecordStore wayptDatabase = null;
+	private int trackDatabaseRecordId = -1;
 	public int recorded = 0;
 	public int delay = 0;
 	
@@ -312,6 +313,7 @@ public class Gpx extends Tile implements Runnable {
 		
 		baos = new ByteArrayOutputStream();
 		dos = new DataOutputStream(baos);
+		trackDatabaseRecordId = -1;
 		trkOdo = 0.0f;
 		trkVmax = 0.0f;
 		trkVertSpd = 0.0f;
@@ -320,14 +322,15 @@ public class Gpx extends Tile implements Runnable {
 		trkRecordingSuspended = false;
 	}
 	
-	public void saveTrk() {
+	private void storeTrk() {
 		try {
 			if (dos == null) {
 				logger.debug("Not recording, so no track to save");
 				return;
 			}
-			dos.flush();			
-			logger.debug("Finishing track with " + recorded + " points");
+			dos.flush();
+			//#debug debug
+			logger.debug("storing track with " + recorded + " points");
 			ByteArrayOutputStream baosDb = new ByteArrayOutputStream();
 			DataOutputStream dosDb = new DataOutputStream(baosDb);
 			dosDb.writeUTF(trackName);
@@ -336,13 +339,14 @@ public class Gpx extends Tile implements Runnable {
 			dosDb.write(baos.toByteArray());
 			dosDb.flush();
 			openTrackDatabase();
-			trackDatabase.addRecord(baosDb.toByteArray(), 0, baosDb.size());
+			if (trackDatabaseRecordId < 0)
+				trackDatabaseRecordId = trackDatabase.addRecord(baosDb.toByteArray(), 0, baosDb.size());
+			else {
+				trackDatabase.setRecord(trackDatabaseRecordId,baosDb.toByteArray(), 0, baosDb.size());
+			}
 			trackDatabase.closeRecordStore();
 			trackDatabase = null;
-			dos.close();
-			dos = null;
-			baos = null;
-			tile.dropTrk();
+			
 		} catch (IOException e) {
 			logger.exception("IOException saving track", e);
 		} catch (RecordStoreNotOpenException e) {
@@ -352,10 +356,29 @@ public class Gpx extends Tile implements Runnable {
 		} catch (RecordStoreException e) {
 			logger.exception("Exception saving track", e);
 		} catch (OutOfMemoryError oome) {
-			logger.fatal("Out of memory, can't save tracklog");			
+			logger.fatal("Out of memory, can't save tracklog");
 		}
 		
 	}
+
+	public void saveTrk() {
+		if (dos == null) {
+			logger.debug("Not recording, so no track to save");
+			return;
+		}
+		//#debug debug
+		logger.debug("closing track with " + recorded + " points");
+		storeTrk();
+		try {
+			dos.close();
+		} catch (IOException e) {
+			logger.exception("Failed to close trackrecording", e);
+		}
+		dos = null;
+		baos = null;
+		tile.dropTrk();
+	}
+	
 	
 	public void suspendTrk() {
 		trkRecordingSuspended = true;
@@ -374,6 +397,7 @@ public class Gpx extends Tile implements Runnable {
 				recorded++;
 				oldlat = 0.0f;
 				oldlon = 0.0f;
+				storeTrk();
 			}
 		} catch (IOException ioe) {
 			logger.exception("Failed to write track segmentation marker", ioe);
