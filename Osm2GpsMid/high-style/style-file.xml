@@ -378,7 +378,7 @@ zoomed out 21x (scale alias 1:  500km)
 	  </value>
 	  <!--
 	     <value name="*">
-		<description desc = "Other Amenity"/>
+		<description desc = "Other amenity"/>
 		<image src="otheramenity.png"/>
 		<namekey tag="name"/>
 		<scale scale="20"/>
@@ -577,7 +577,7 @@ zoomed out 21x (scale alias 1:  500km)
 	  </value>
 	  <!--
 	  <value name="*">
-		<description desc = "Other Tourism"/>
+		<description desc = "Other tourism"/>
 		<image src="othertourism.png"/>
 		<namekey tag="name"/>
 		<scale scale="20"/>
@@ -677,7 +677,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<routing accessible="true" speed="120" />  				  				
   			</Wvalue>
   			<Wvalue name = "motorway_link" priority = "10">
-  				<description desc = "Motorway"/>
+  				<description desc = "Motorway link"/>
   				<namekey tag = "name"/>
   				<namefallback tag = "ref"/>
   				<isArea area = "false"/>
@@ -697,7 +697,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<routing accessible="true" speed="100" />  				  				
   			</Wvalue>
   			<Wvalue name = "trunk_link" priority = "10">
-  				<description desc = "Trunk"/>
+  				<description desc = "Trunk link"/>
   				<namekey tag = "name"/>
   				<namefallback tag = "ref"/>
   				<isArea area = "false"/>
@@ -717,7 +717,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<routing accessible="true" speed="80" />  				  				
   			</Wvalue>
   			<Wvalue name = "primary_link" priority = "10">
-  				<description desc = "Primary"/>
+  				<description desc = "Primary link"/>
   				<namekey tag = "name"/>
   				<namefallback tag = "ref"/>
   				<isArea area = "false"/>
@@ -764,7 +764,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<routing accessible="true" speed="30" />  				  				
   			</Wvalue>
   			<Wvalue name = "living_street" priority = "9">
-  				<description desc = "Spiel strasse"/>
+  				<description desc = "Living street"/>
   				<namekey tag = "name"/>
   				<isArea area = "false"/>
   				<scale scale = "20"/>
@@ -773,7 +773,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<routing accessible="true" speed="5" />  				  				
   			</Wvalue>
 			<Wvalue name = "track" priority = "9">
-  				<description desc = "track"/>
+  				<description desc = "Track"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
   				<scale scale = "20"/>
@@ -792,7 +792,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<routing accessible="true" speed="30" />  				  				
   			</Wvalue>
   			<Wvalue name = "roundabout" priority = "9">
-  				<description desc = "roundabout"/>
+  				<description desc = "Roundabout"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
   				<scale scale = "20"/>
@@ -801,7 +801,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<routing accessible="true" speed="30" />  				  				
   			</Wvalue>
   			<Wvalue name = "cycleway" priority = "8">
-  				<description desc = "Cycle way"/>
+  				<description desc = "Cycleway"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
   				<scale scale = "20"/>
@@ -811,7 +811,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<routing accessible="false" speed="20" />  				  				
   			</Wvalue>
   			<Wvalue name = "footway" priority = "7">
-  				<description desc = "Foot way"/>
+  				<description desc = "Footway"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
   				<scale scale = "20"/>
@@ -898,7 +898,7 @@ zoomed out 21x (scale alias 1:  500km)
   		</keyW>
   		<keyW tag = "aerialway">
   			<Wvalue name = "*">
-  				<description desc = "aerialway"/>
+  				<description desc = "Aerialway"/>
   				<namekey tag = "name"/>  				
   				<namefallback tag = "*"/>  				
   				<isArea area = "false"/>
@@ -916,14 +916,14 @@ zoomed out 21x (scale alias 1:  500km)
 				<force_to layer = "-2"/>
   			</Wvalue>
   			<Wvalue name = "stadium">
-  				<description desc = "stadium"/>
+  				<description desc = "Stadium"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
   				<lineColor color = "00FFFFBB" />
   			</Wvalue>
   			<Wvalue name = "water_park">
-  				<description desc = "water_park"/>
+  				<description desc = "Water Park"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
@@ -931,14 +931,14 @@ zoomed out 21x (scale alias 1:  500km)
 				<force_to layer = "-2"/>
   			</Wvalue>
   			<Wvalue name = "garden">
-  				<description desc = "garden"/>
+  				<description desc = "Garden"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
   				<lineColor color = "000AD351" />
   			</Wvalue>
   			<Wvalue name = "nature_reserve">
-  				<description desc = "nature_reserve"/>
+  				<description desc = "Nature reserve"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
@@ -969,70 +969,70 @@ zoomed out 21x (scale alias 1:  500km)
   		</keyW>
   		<keyW tag = "amenity">
   			<Wvalue name = "parking">
-  				<description desc = "parking"/>
+  				<description desc = "Parking"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
   				<lineColor color = "00FFFF64" />
 			</Wvalue>  			
   			<Wvalue name = "taxi">
-  				<description desc = "taxi"/>
+  				<description desc = "Taxi"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
   				<lineColor color = "00F2F200" />
 			</Wvalue>  			
   			<Wvalue name = "bicycle_parking">
-  				<description desc = "bicycle_parking"/>
+  				<description desc = "Bicycle parking"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
   				<lineColor color = "004D9999" />
 			</Wvalue>
   			<Wvalue name = "university">
-  				<description desc = "university"/>
+  				<description desc = "University"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
   				<lineColor color = "00EEEEEE" />
 			</Wvalue>  			
   			<Wvalue name = "school">
-  				<description desc = "school"/>
+  				<description desc = "School"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
   				<lineColor color = "00EEEEEE" />
 			</Wvalue>  			
   			<Wvalue name = "college">
-  				<description desc = "college"/>
+  				<description desc = "College"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
   				<lineColor color = "00EEEEEE" />
 			</Wvalue>
 			<Wvalue name = "public_building">
-  				<description desc = "public_building"/>
+  				<description desc = "Public building"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
   				<lineColor color = "00CC4444" />
 			</Wvalue>  			
   			<Wvalue name = "hospital">
-  				<description desc = "hospital"/>
+  				<description desc = "Hospital"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
   				<lineColor color = "00FF9900" />
 			</Wvalue>
   			<Wvalue name = "fountain">
-  				<description desc = "fountain"/>
+  				<description desc = "Fountain"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
   				<lineColor color = "000000FF" />
 			</Wvalue>  				
   			<Wvalue name = "grave_yard">
-  				<description desc = "Grave Yardk"/>
+  				<description desc = "Grave Yard"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
@@ -1083,7 +1083,7 @@ zoomed out 21x (scale alias 1:  500km)
   		</keyW>
 		<keyW tag = "aeroway">
   			<Wvalue name = "terminal">
-  				<description desc = "aeroway runway"/>
+  				<description desc = "Aeroway terminal"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "17"/>
@@ -1091,7 +1091,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<wayWidth width="16" />  				  				  				
   			</Wvalue>
   			<Wvalue name = "apron">
-  				<description desc = "apron"/>
+  				<description desc = "Aeroway apron"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "17"/>
@@ -1099,15 +1099,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<wayWidth width="16" />  				  				  				
   			</Wvalue>
   			<Wvalue name = "runway">
-  				<description desc = "aeroway runway"/>
-  				<namekey tag = "name"/>  				
-  				<isArea area = "false"/>
-  				<scale scale = "17"/>
-  				<lineColor color = "00AAAAAA" />
-  				<wayWidth width="16" />  				  				  				
-  			</Wvalue>
-  			<Wvalue name = "runway">
-  				<description desc = "aeroway runway"/>
+  				<description desc = "Aeroway runway"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
   				<scale scale = "17"/>
@@ -1115,7 +1107,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<wayWidth width="16" />  				  				  				
   			</Wvalue>
   			<Wvalue name = "taxiway">
-  				<description desc = "aeroway taxiway"/>
+  				<description desc = "Aeroway taxiway"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
   				<scale scale = "17"/>
@@ -1123,7 +1115,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<wayWidth width="8" />  				  				  				
   			</Wvalue>
   			<Wvalue name = "*">
-  				<description desc = "other aeroway"/>
+  				<description desc = "Other aeroway"/>
   				<namekey tag = "name"/>  				
   				<namefallback tag = "*"/>  				
   				<isArea area = "false"/>
@@ -1142,7 +1134,7 @@ zoomed out 21x (scale alias 1:  500km)
 				<force_to layer = "-2"/>
   			</Wvalue>
   			<Wvalue name = "farm">
-  				<description desc = "farm"/>
+  				<description desc = "Farm"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
@@ -1150,7 +1142,7 @@ zoomed out 21x (scale alias 1:  500km)
 				<force_to layer = "-2"/>
   			</Wvalue>  		
   			<Wvalue name = "landfill">
-  				<description desc = "landfill"/>
+  				<description desc = "Landfill"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
@@ -1158,14 +1150,14 @@ zoomed out 21x (scale alias 1:  500km)
 				<force_to layer = "-2"/>
   			</Wvalue>
   			<Wvalue name = "basin">
-  				<description desc = "basin"/>
+  				<description desc = "Basin"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
   				<lineColor color = "000A0ACD" />  				  				
   			</Wvalue>
   			<Wvalue name = "reservoir">
-  				<description desc = "reservoir"/>
+  				<description desc = "Reservoir"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
@@ -1173,7 +1165,7 @@ zoomed out 21x (scale alias 1:  500km)
 				<force_to layer = "-2"/>
   			</Wvalue>
   			<Wvalue name = "allotments">
-  				<description desc = "allotments"/>
+  				<description desc = "Allotments"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
@@ -1181,7 +1173,7 @@ zoomed out 21x (scale alias 1:  500km)
 				<force_to layer = "-2"/>
   			</Wvalue>
   			<Wvalue name = "residential">
-  				<description desc = "residential"/>
+  				<description desc = "Residential"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
@@ -1189,7 +1181,7 @@ zoomed out 21x (scale alias 1:  500km)
 				<force_to layer = "-2"/>
   			</Wvalue>
   			<Wvalue name = "retail">
-  				<description desc = "retail"/>
+  				<description desc = "Retail"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
@@ -1197,7 +1189,7 @@ zoomed out 21x (scale alias 1:  500km)
 				<force_to layer = "-2"/>
 			</Wvalue>
   			<Wvalue name = "commercial">
-  				<description desc = "commercial"/>
+  				<description desc = "Commercial"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
@@ -1205,7 +1197,7 @@ zoomed out 21x (scale alias 1:  500km)
 				<force_to layer = "-2"/>
 			</Wvalue>
   			<Wvalue name = "industrial">
-  				<description desc = "industrial"/>
+  				<description desc = "Industrial"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
@@ -1213,7 +1205,7 @@ zoomed out 21x (scale alias 1:  500km)
 				<force_to layer = "-2"/>
   			</Wvalue>
   			<Wvalue name = "brownfield">
-  				<description desc = "brownfield"/>
+  				<description desc = "Brownfield"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
@@ -1221,7 +1213,7 @@ zoomed out 21x (scale alias 1:  500km)
 				<force_to layer = "-2"/>
   			</Wvalue>
   			<Wvalue name = "greenfield">
-  				<description desc = "greenfield"/>
+  				<description desc = "Greenfield"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
@@ -1229,7 +1221,7 @@ zoomed out 21x (scale alias 1:  500km)
 				<force_to layer = "-2"/>
   			</Wvalue>
   			<Wvalue name = "construction">
-  				<description desc = "construction"/>
+  				<description desc = "Construction"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
@@ -1237,7 +1229,7 @@ zoomed out 21x (scale alias 1:  500km)
 				<force_to layer = "-2"/>
   			</Wvalue>
   			<Wvalue name = "cemetery">
-  				<description desc = "cemetery"/>
+  				<description desc = "Cemetery"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
@@ -1245,7 +1237,7 @@ zoomed out 21x (scale alias 1:  500km)
 				<force_to layer = "-2"/>
   			</Wvalue>
 			<Wvalue name = "village_green">
-  				<description desc = "village_green"/>
+  				<description desc = "Village green"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
@@ -1253,7 +1245,7 @@ zoomed out 21x (scale alias 1:  500km)
 				<force_to layer = "-2"/>
 			</Wvalue>
   			<Wvalue name = "recreation_ground">
-  				<description desc = "recreation_ground"/>
+  				<description desc = "Recreation ground"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
@@ -1261,14 +1253,14 @@ zoomed out 21x (scale alias 1:  500km)
 				<force_to layer = "-2"/>
 			</Wvalue>
   			<Wvalue name = "railway">
-  				<description desc = "railway"/>
+  				<description desc = "Railway"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
   				<lineColor color = "00967777" />
 			</Wvalue>
   			<Wvalue name = "quarry">
-  				<description desc = "quarry"/>
+  				<description desc = "Quarry"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
@@ -1302,7 +1294,7 @@ zoomed out 21x (scale alias 1:  500km)
 				<force_to layer = "-2"/>
 			</Wvalue>  			
   			<Wvalue name = "coastline">
-  				<description desc = "coastline"/>
+  				<description desc = "Coastline"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
   				<scale scale = "6"/>
@@ -1311,7 +1303,7 @@ zoomed out 21x (scale alias 1:  500km)
 				<force_to layer = "-2"/>
 			</Wvalue>  			
   			<Wvalue name = "beach">
-  				<description desc = "beach"/>
+  				<description desc = "Beach"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
@@ -1319,35 +1311,35 @@ zoomed out 21x (scale alias 1:  500km)
 				<force_to layer = "-2"/>
 			</Wvalue>
   			<Wvalue name = "glacier">
-  				<description desc = "glacier"/>
+  				<description desc = "Glacier"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
   				<lineColor color = "00FFFFFF" />  				  				  				
 			</Wvalue>  			
   			<Wvalue name = "cliff">
-  				<description desc = "cliff"/>
+  				<description desc = "Cliff"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
   				<lineColor color = "00BDBDBD" />  				  				  				
 			</Wvalue>  			
   			<Wvalue name = "scree">
-  				<description desc = "scree"/>
+  				<description desc = "Scree"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
   				<lineColor color = "00A0A0A0" />  				  				  				
 			</Wvalue>  			
   			<Wvalue name = "mud">
-  				<description desc = "mud"/>
+  				<description desc = "Mud"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
   				<lineColor color = "00804000" />  				  				  				
 			</Wvalue>  			
   			<Wvalue name = "cave_entrance">
-  				<description desc = "cave_entrance"/>
+  				<description desc = "Cave entrance"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
@@ -1406,7 +1398,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<scale scale = "8"/>
   				<lineColor color = "0000AA00" />
   				<lineStyle dashed = "true" />
-  				<wayWidth width="3" />
+  				<wayWidth width="1" />
 				<force_to layer = "-2"/>
   			</Wvalue>
   		</keyW>
