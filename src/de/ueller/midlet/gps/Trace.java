@@ -1285,6 +1285,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		int routeInstructionColor=0x00E6E6E6;
 		int diffArrowDist=0;
 		byte soundRepeatDelay=3;
+		byte soundRepeatTimes=2;
 		float nearestLat=0.0f;
 		float nearestLon=0.0f;
 		
@@ -1460,6 +1461,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 							if (!atTarget) { 
 								soundToPlay.append (soundDirections[a]);
 							}
+							soundRepeatTimes=1;
 							sumWrongDirection = -1;
 							diffArrowDist = 0;
 							oldRouteInstructionColor=0x00E6E6E6;
@@ -1618,7 +1620,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		}
 		// Route instruction sound output
 		if (soundToPlay.length()!=0 && config.getCfgBitState(config.CFGBIT_SND_ROUTINGINSTRUCTIONS)) {
-			parent.mNoiseMaker.playSound(soundToPlay.toString(), (byte) soundRepeatDelay, (byte) 2);
+			parent.mNoiseMaker.playSound(soundToPlay.toString(), (byte) soundRepeatDelay, (byte) soundRepeatTimes);
 		}
 	}
 	
