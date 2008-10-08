@@ -105,6 +105,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	private final Command TOGGLE_RECORDING_SUSP_CMD = new Command("Suspend recording",Command.ITEM, 100);
 	private final Command RECENTER_GPS_CMD = new Command("Recenter on GPS",Command.ITEM, 100);
 	private final Command TACHO_CMD = new Command("Tacho",Command.ITEM, 100);
+	private final Command OVERVIEW_MAP_CMD = new Command("Overview/Filter Map",Command.ITEM, 200);
 
 
 	private InputStream btGpsInputStream;
@@ -277,6 +278,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		singleKeyPressCommand.put(-8, ROUTE_TO_CMD);
 		doubleKeyPressCommand.put(KEY_NUM5, TOGGLE_MAP_PROJ_CMD);
 		doubleKeyPressCommand.put(KEY_NUM0, TOGGLE_RECORDING_SUSP_CMD);
+		doubleKeyPressCommand.put(KEY_STAR, OVERVIEW_MAP_CMD);
 		longKeyPressCommand.put(KEY_NUM5, SAVE_WAYP_CMD);
 		longKeyPressCommand.put(KEY_NUM9, TOGGLE_KEY_LOCK_CMD);
 		longKeyPressCommand.put(KEY_NUM0, TOGGLE_RECORDING_CMD);
@@ -664,6 +666,11 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			if (c == MAPFEATURES_CMD) {				
 				GuiMapFeatures gmf = new GuiMapFeatures(this);
 				gmf.show();
+				repaint(0, 0, getWidth(), getHeight());
+			}
+			if (c == OVERVIEW_MAP_CMD) {
+				GuiOverviewElement ovEl = new GuiOverviewElement(this);
+				ovEl.show();
 				repaint(0, 0, getWidth(), getHeight());
 			}
 			if (c == RECORDINGS_CMD) {

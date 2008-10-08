@@ -38,7 +38,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 	private final Command CLEAR_CMD = new Command("clear", Command.ITEM, 3);
 	private final Command BOOKMARK_CMD = new Command("add to Waypoint", Command.ITEM, 4);
 	private final Command BACK_CMD = new Command("Back", Command.BACK, 5);
-	private final Command OVERVIEW_CMD = new Command("POI Overview", Command.ITEM, 6);
+	private final Command OVERVIEW_MAP_CMD = new Command("Overview/Filter Map", Command.ITEM, 6);
 	private final Command POI_CMD = new Command("Nearest POI", Command.ITEM, 7);
 	private final Command FULLT_CMD = new Command("Fulltext Search", Command.ITEM, 8);
 
@@ -106,7 +106,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		addCommand(CLEAR_CMD);
 		addCommand(BOOKMARK_CMD);
 		addCommand(BACK_CMD);
-		addCommand(OVERVIEW_CMD);
+		addCommand(OVERVIEW_MAP_CMD);
 		addCommand(POI_CMD);
 		addCommand(FULLT_CMD);
 		
@@ -243,7 +243,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			return;
 		}
 		
-		if (c == OVERVIEW_CMD) {
+		if (c == OVERVIEW_MAP_CMD) {
 			GuiOverviewElement ovEl = new GuiOverviewElement(parent);
 			ovEl.show();
 		}

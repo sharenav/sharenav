@@ -11,4 +11,6 @@ public class POIdescription {
 	public int		maxTextScale;
 	public int		maxImageScale;
 	public boolean	hideable;
+	public byte		overviewMode;
 }
+

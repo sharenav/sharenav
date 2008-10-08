@@ -45,6 +45,10 @@ public class C {
 	public final static byte NAME_STREET=3;
 	public final static byte NAME_AMENITY=4;
 	
+	public final static byte OM_HIDE=0;
+	public final static byte OM_SHOWNORMAL=1;
+	public final static byte OM_OVERVIEW=2;
+	
 	public static int BACKGROUND_COLOR = 0x009BFF9B;
 	
 	private static POIdescription[] pois;
@@ -128,6 +132,7 @@ public class C {
 				pois[i].maxTextScale = pois[i].maxImageScale; 
 			if ((flags & LEGEND_FLAG_TEXT_COLOR) > 0)			
 				pois[i].textColor = ds.readInt();
+			pois[i].overviewMode=OM_SHOWNORMAL;
 		}
 	}
 	
@@ -146,7 +151,8 @@ public class C {
 			ways[i].isArea = ds.readBoolean();
 			ways[i].lineColor = ds.readInt();
 			ways[i].boardedColor = ds.readInt();
-			ways[i].wayWidth = ds.readByte();			
+			ways[i].wayWidth = ds.readByte();
+			ways[i].overviewMode = OM_SHOWNORMAL;
 			boolean lineStyle = ds.readBoolean();
 			if (lineStyle)
 				ways[i].lineStyle = Graphics.DOTTED;
@@ -189,7 +195,17 @@ public class C {
 	public static final boolean isNodeHideable(byte type) {
 		return pois[type].hideable;
 	}
-	
+	public static final byte getNodeOverviewMode(byte type) {
+		return pois[type].overviewMode;
+	}
+	public static void setNodeOverviewMode(byte type, byte state) {
+		pois[type].overviewMode = state;
+	}
+	public static void clearAllNodesOverviewMode() {
+		for (byte i = 1; i < getMaxType(); i++) {
+			pois[i].overviewMode = OM_SHOWNORMAL;
+		}
+	}	
 	public static final  String getNodeTypeDesc(byte type) {
 		if (type < 0 || type > pois.length) {
 			logger.error("ERROR: wrong type " + type);
@@ -204,6 +220,28 @@ public class C {
 			return null;
  		}
 		return ways[type];
+	}
+	
+	public static final boolean isWayHideable(byte type) {
+		return ways[type].hideable;
+	}
+
+	public static final byte getWayOverviewMode(byte type) {
+		return ways[type].overviewMode;
+	}
+
+	public static void setWayOverviewMode(byte type, byte state) {
+		ways[type].overviewMode = state;
+	}
+
+	public static void clearAllWaysOverviewMode() {
+		for (byte i = 1; i < getMaxWayType(); i++) {
+			ways[i].overviewMode = OM_SHOWNORMAL;
+		}
+	}
+	
+	public static final byte getMaxWayType() {
+		return (byte)ways.length;
 	}
 	
 	public static final SoundDescription getSoundDescription(String Name) {			

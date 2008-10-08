@@ -34,8 +34,12 @@ GpsMid 0.4.x
        - map "freeze" bug on SE phones fixed
        - delayed map draw bug fixed
        - Areas can now be hidden in Map Features dialog
-       - Search/POI Overview shows only the chosen hideable POI type in the map (regardless of zoom level)
-         This can be useful to get a quick overview of a certain POI type in the area, i.e. hotels.
+       - "Search=>Overview/Filter Map" or double-press "*"
+         shows the chosen hideable POI/Area/Way types
+         in the map regardless of zoom level for an overview.
+         This can be useful to get a quick overview of a certain POI/Area/Way type in the area, i.e. hotels or railways.
+         You can optionally choose to show POI/Area/Way types that are
+         not selected in the Overview list normal or filter them out from display.
        - some new map features in high-style.zip
 	   - many more new features and bugfixes
 

@@ -190,9 +190,21 @@ public class Way extends Entity{
 	public void paintAsPath(PaintContext pc, SingleTile t) {
 		WayDescription wayDesc = C.getWayDescription(type);
 		int w = 0;
-		if (pc.scale > wayDesc.maxScale * pc.config.getDetailBoostMultiplier()) {			
-			return;
+
+		switch (C.getWayOverviewMode(type)) {
+			case C.OM_SHOWNORMAL: 
+				// if not in Overview Mode check for scale
+				if (pc.scale > wayDesc.maxScale * pc.config.getDetailBoostMultiplier()) {			
+					return;
+				}
+				break;
+			case C.OM_HIDE: 
+				if (wayDesc.hideable) {
+					return;
+				}
+				break;
 		}
+
 		/**
 		 * Calculate the width of the path to be drawn. A width of 1 corresponds to
 		 * it being draw as a thin line rather than as a street 
@@ -654,12 +666,23 @@ public class Way extends Entity{
 
 	public void paintAsArea(PaintContext pc, SingleTile t) {
 		WayDescription wayDesc = C.getWayDescription(type);
-		if (pc.scale > wayDesc.maxScale * pc.config.getDetailBoostMultiplier() ) {			
-			return;
-		}
 		
-		if (wayDesc.hideable && !Trace.getInstance().getConfig().getCfgBitState(Configuration.CFGBIT_AREAS)) {
-			return;
+		
+		switch (C.getWayOverviewMode(type)) {
+			case C.OM_SHOWNORMAL: 
+				// if not in Overview Mode check for scale
+				if (pc.scale > wayDesc.maxScale * pc.config.getDetailBoostMultiplier()) {			
+					return;
+				}
+				if (wayDesc.hideable && !Trace.getInstance().getConfig().getCfgBitState(Configuration.CFGBIT_AREAS)) {
+					return;
+				}
+				break;
+			case C.OM_HIDE: 
+				if (wayDesc.hideable) {
+					return;
+				}
+				break;
 		}
 		
 		IntPoint lineP2 = pc.lineP2;

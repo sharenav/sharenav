@@ -10,4 +10,6 @@ public class WayDescription {
 	public boolean isArea;
 	public byte wayWidth;
 	public boolean hideable;
+	public byte overviewMode;
 }
+

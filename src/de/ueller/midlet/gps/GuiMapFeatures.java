@@ -10,7 +10,6 @@ import de.ueller.gps.data.Configuration;
 import de.ueller.midlet.gps.data.ProjFactory;
 
 public class GuiMapFeatures extends Form implements CommandListener {
-	private final Form	menuMapFeatures = new Form("Map Features");
 	// Groups
 	private ChoiceGroup elemsGroup;
 	private	String [] elems = new String[6];
