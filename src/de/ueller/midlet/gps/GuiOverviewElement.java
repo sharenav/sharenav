@@ -124,7 +124,7 @@ public class GuiOverviewElement extends Form implements CommandListener, ItemSta
 
 			// set None-Overview state in form
 			ovElHideOtherCG = new ChoiceGroup("Non-Overview " + ovElGroupName, ChoiceGroup.EXCLUSIVE);
-			ovElHideOtherCG.append("Show normal", null);
+			ovElHideOtherCG.append("Show normally", null);
 			ovElHideOtherCG.append("Filter out", null);			
 			if (showOther[ovElGroupNr]) {
 				ovElHideOtherCG.setSelectedIndex(0, true);
@@ -201,7 +201,6 @@ public class GuiOverviewElement extends Form implements CommandListener, ItemSta
         return img;
     }
 
-	
 	public void show() {
 		GpsMid.getInstance().show(this);
 	}
