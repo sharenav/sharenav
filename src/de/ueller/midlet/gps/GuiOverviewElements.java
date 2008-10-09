@@ -57,48 +57,54 @@ public class GuiOverviewElements extends Form implements CommandListener, ItemSt
 		}
 	}
 
+	public void applyElGroupElementStates() {
+		byte count = 0;
+		byte nonOverviewMode = C.OM_SHOWNORMAL;
+
+		showOther[ovElGroupNr] = true;
+		if (ovElHideOtherCG.isSelected(1)) {
+			nonOverviewMode = C.OM_HIDE;
+			showOther[ovElGroupNr] = false;
+		}
+		switch (ovElGroupNr) {
+			case 0:
+				// save overview mode state to node description
+				for (byte i = 1; i < parent.pc.c.getMaxType(); i++) {				
+					if (parent.pc.c.isNodeHideable(i)) {
+						parent.pc.c.setNodeOverviewMode(i, ovElSelectionCG.isSelected(count)?C.OM_OVERVIEW:nonOverviewMode);
+						count++;
+					}
+				}
+				break;
+			case 1:
+				// save overview mode state to 'area' description
+				for (byte i = 1; i < parent.pc.c.getMaxWayType(); i++) {				
+					WayDescription w = parent.pc.c.getWayDescription(i);
+					if (w.isArea && parent.pc.c.isWayHideable(i) ) {
+						parent.pc.c.setWayOverviewMode(i, ovElSelectionCG.isSelected(count)?C.OM_OVERVIEW:nonOverviewMode);
+						count++;
+					}
+				}
+				break;
+			case 2:
+				// save overview mode state to way description
+				for (byte i = 1; i < parent.pc.c.getMaxWayType(); i++) {				
+					WayDescription w = parent.pc.c.getWayDescription(i);
+					if (!w.isArea && parent.pc.c.isWayHideable(i) ) {
+						parent.pc.c.setWayOverviewMode(i, ovElSelectionCG.isSelected(count)?C.OM_OVERVIEW:nonOverviewMode);
+						count++;
+					}
+				}
+				break;
+		}
+		
+	}
+	
+	
 	public void commandAction(Command c, Displayable d) {
-		if (c == CMD_OK) {			
-			byte count = 0;
-			
+		if (c == CMD_OK) {				
 			ovElGroupNr = (byte) ovElGroupCG.getSelectedIndex();
-			byte nonOverviewMode = C.OM_SHOWNORMAL;
-			showOther[ovElGroupNr] = true;
-			if (ovElHideOtherCG.isSelected(1)) {
-				nonOverviewMode = C.OM_HIDE;
-				showOther[ovElGroupNr] = false;
-			}
-			switch (ovElGroupNr) {
-				case 0:
-					// save overview mode state to node description
-					for (byte i = 1; i < parent.pc.c.getMaxType(); i++) {				
-						if (parent.pc.c.isNodeHideable(i)) {
-							parent.pc.c.setNodeOverviewMode(i, ovElSelectionCG.isSelected(count)?C.OM_OVERVIEW:nonOverviewMode);
-							count++;
-						}
-					}
-					break;
-				case 1:
-					// save overview mode state to 'area' description
-					for (byte i = 1; i < parent.pc.c.getMaxWayType(); i++) {				
-						WayDescription w = parent.pc.c.getWayDescription(i);
-						if (w.isArea && parent.pc.c.isWayHideable(i) ) {
-							parent.pc.c.setWayOverviewMode(i, ovElSelectionCG.isSelected(count)?C.OM_OVERVIEW:nonOverviewMode);
-							count++;
-						}
-					}
-					break;
-				case 2:
-					// save overview mode state to way description
-					for (byte i = 1; i < parent.pc.c.getMaxWayType(); i++) {				
-						WayDescription w = parent.pc.c.getWayDescription(i);
-						if (!w.isArea && parent.pc.c.isWayHideable(i) ) {
-							parent.pc.c.setWayOverviewMode(i, ovElSelectionCG.isSelected(count)?C.OM_OVERVIEW:nonOverviewMode);
-							count++;
-						}
-					}
-					break;
-			}
+			applyElGroupElementStates();
 			parent.show();
 			return;
 		}
@@ -111,16 +117,16 @@ public class GuiOverviewElements extends Form implements CommandListener, ItemSt
 	}
 	
 	public void itemStateChanged(Item item) {
-		if (item == ovElGroupCG) {
-			
+		if (item == ovElGroupCG) {			
 			// only delete variable Choice groups if they were added
 			if (variableGroupsAdded) {
+				applyElGroupElementStates();
 				delete(2);
 				delete(1);
 			}
 
 			byte count=0;
-			byte ovElGroupNr = (byte) ovElGroupCG.getSelectedIndex();
+			ovElGroupNr = (byte) ovElGroupCG.getSelectedIndex();
 			String ovElGroupName = ovElGroupCG.getString(ovElGroupNr); 
 
 			// set None-Overview state in form
@@ -177,6 +183,7 @@ public class GuiOverviewElements extends Form implements CommandListener, ItemSt
 				append(ovElSelectionCG);
 			}
 			variableGroupsAdded = true;
+			ovElGroupNr = (byte) ovElGroupCG.getSelectedIndex();
 		}
 	}
 	
