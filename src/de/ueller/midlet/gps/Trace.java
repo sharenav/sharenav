@@ -669,7 +669,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				repaint(0, 0, getWidth(), getHeight());
 			}
 			if (c == OVERVIEW_MAP_CMD) {
-				GuiOverviewElement ovEl = new GuiOverviewElement(this);
+				GuiOverviewElements ovEl = new GuiOverviewElements(this);
 				ovEl.show();
 				repaint(0, 0, getWidth(), getHeight());
 			}

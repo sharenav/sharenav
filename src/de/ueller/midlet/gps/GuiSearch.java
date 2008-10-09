@@ -244,7 +244,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		}
 		
 		if (c == OVERVIEW_MAP_CMD) {
-			GuiOverviewElement ovEl = new GuiOverviewElement(parent);
+			GuiOverviewElements ovEl = new GuiOverviewElements(parent);
 			ovEl.show();
 		}
 		
