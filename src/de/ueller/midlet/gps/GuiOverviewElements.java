@@ -63,7 +63,15 @@ public class GuiOverviewElements extends Form implements CommandListener, ItemSt
 
 		showOther[ovElGroupNr] = true;
 		if (ovElHideOtherCG.isSelected(1)) {
-			nonOverviewMode = C.OM_HIDE;
+			// only hide non-overview elements if at least one overview element is selected
+			// This is implemented so because otherwise simple switching between POIs, areas and ways would
+			// cause to disappear all the elements in the list unintentionally
+			for(byte i = 0; i < ovElSelectionCG.size(); i++ ) {
+				if (ovElSelectionCG.isSelected(i)) {
+					nonOverviewMode = C.OM_HIDE;
+					break;
+				}
+			}
 			showOther[ovElGroupNr] = false;
 		}
 		switch (ovElGroupNr) {
