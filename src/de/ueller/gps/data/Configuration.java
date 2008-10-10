@@ -22,7 +22,7 @@ public class Configuration {
 	
 	private static Logger logger;
 	
-	public final static int VERSION=2;
+	public final static int VERSION=3;
 
 	public final static int LOCATIONPROVIDER_NONE=0;
 	public final static int LOCATIONPROVIDER_SIRF=1; 
