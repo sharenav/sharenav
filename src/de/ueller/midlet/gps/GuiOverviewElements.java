@@ -6,6 +6,7 @@ package de.ueller.midlet.gps;
 
 import javax.microedition.lcdui.*;
 
+import de.ueller.gps.data.Configuration;
 import de.ueller.gpsMid.mapData.SingleTile;
 import de.ueller.midlet.gps.tile.C;
 import de.ueller.midlet.gps.tile.POIdescription;
@@ -211,14 +212,14 @@ public class GuiOverviewElements extends Form implements CommandListener, ItemSt
         g.setColor(parent.pc.c.BACKGROUND_COLOR);
         g.fillRect(0, 0, 16, 16);
         g.setColor(w.lineColor);
-        if (w.wayWidth == 1) {
+        if (w.wayWidth == 1 || !GpsMid.getInstance().getConfig().getCfgBitState(Configuration.CFGBIT_STREETRENDERMODE)) {
         	g.setStrokeStyle(w.lineStyle);
-        	g.drawLine(0, (16-w.wayWidth)/2, 16, (16-w.wayWidth)/2);
+        	g.drawLine(0, 8, 15, 8);
         } else {
         	g.fillRect(0, (16-w.wayWidth)/2, 16, w.wayWidth);
         	g.setColor(w.boardedColor);
-        	g.drawLine(0, (16-w.wayWidth)/2-1, 16, (16-w.wayWidth)/2-1);
-        	g.drawLine(0, (16-w.wayWidth)/2+1 + w.wayWidth, 16, (16-w.wayWidth)/2 + w.wayWidth+1);
+        	g.drawLine(0, (16-w.wayWidth)/2-1, 15, (16-w.wayWidth)/2-1);
+        	g.drawLine(0, (16-w.wayWidth)/2 + w.wayWidth, 15, (16-w.wayWidth)/2 + w.wayWidth);
         }
         return img;
     }
