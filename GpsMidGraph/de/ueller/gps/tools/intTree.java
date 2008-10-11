@@ -18,6 +18,11 @@ package de.ueller.gps.tools;
  *
  */
 public class intTree  {
+	
+	/**
+	 * Initial capacity of the tree and the amount by which it is extended.
+	 */
+	private static final int capacityInc = 20;
 	/**
 	 * keys are stored in ascending order. Empty entries are filled with Integer.MinValue
 	 * therefore the array grows from the end downwards
@@ -103,14 +108,14 @@ public class intTree  {
 		return keys[treeSize + idx + 1];
 	}
 	
-	public synchronized void put (int key, Object value) {		
+	public synchronized void put (int key, Object value) {
 		clearCache();
 		int idx = bisect(key);
 		if (idx >= 0) { // key already in array. Overwrite
 			values[idx] = value;
 		} else {
 			idx *= -1; // indicates position it should be stored 
-			if (treeSize > 0) {	//Still space left in array			
+			if ((treeSize - 1) > 0) {	//Still space left in array
 				if (treeSize < keys.length -1) {
 					/*
 					 * Copy the elements before idx one position down to make
@@ -119,20 +124,20 @@ public class intTree  {
 					System.arraycopy(keys, treeSize+1, keys, treeSize, idx - treeSize);
 					System.arraycopy(values, treeSize+1, values, treeSize, idx - treeSize);
 				}
-				treeSize--;				
+				treeSize--;
 			} else { //Need to grow array
-				//Create a new array of 20 more elements
-				int [] keys2 = new int[keys.length + 20];
-				Object[] values2 = new Object[keys.length + 20];
-				for (int i = 0; i < 20; i++) keys2[i] = Integer.MIN_VALUE;				
-				System.arraycopy(keys, treeSize + 1, keys2, treeSize + 20, idx - treeSize);
-				System.arraycopy(values, treeSize + 1, values2, treeSize  + 20, idx - treeSize);				
-				System.arraycopy(keys, idx + 1, keys2, idx + 21, keys.length - idx - 1);				
-				System.arraycopy(values, idx + 1, values2, idx + 21, keys.length - idx - 1);				
+				//Create a new array of capacityInc more elements
+				int [] keys2 = new int[keys.length + capacityInc];
+				Object[] values2 = new Object[keys.length + capacityInc];
+				for (int i = 0; i < capacityInc + treeSize; i++) keys2[i] = Integer.MIN_VALUE;
+				System.arraycopy(keys, treeSize + 1, keys2, treeSize + capacityInc, idx - treeSize);
+				System.arraycopy(values, treeSize + 1, values2, treeSize  + capacityInc, idx - treeSize);
+				System.arraycopy(keys, idx + 1, keys2, idx + capacityInc + 1, keys.length - idx - 1);
+				System.arraycopy(values, idx + 1, values2, idx + capacityInc + 1, keys.length - idx - 1);
 				keys = keys2;
 				values = values2;
-				idx += 20;
-				treeSize+=19;
+				idx += capacityInc;
+				treeSize+= capacityInc - 1;
 			}
 			keys[idx] = key;
 			values[idx] = value;
@@ -163,7 +168,7 @@ public class intTree  {
 	}
 	
 	public synchronized void removeAll() {
-		int size = 20;
+		int size = capacityInc;
 		keys = new int[size];
 		values = new Object[size];
 		for (int i = 0; i < size; i++) {
