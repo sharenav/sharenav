@@ -252,6 +252,7 @@
 <target name="clean" 
   		description="allows a clean build. You should call [ant clean] whenever you made changes to devices.xml, vendors.xml or groups.xml">
 	<delete dir="build" />
+	<delete dir="build-test" />
 	<delete dir="dist" />
 </target>
 	
@@ -319,6 +320,30 @@
 				</emulator>		
 			</j2mepolish>
 	</target>
+	
+	<path id="test.classpath">
+		<pathelement location="${basedir}/bin-tests" />
+	</path>
+	
+	<target name="prepare">
+		<mkdir dir="bin-tests"/>
+	</target>
 
+	<target name="compile-test" depends="prepare">
+		<javac srcdir="${basedir}/test/unit-tests;${basedir}/GpsMidGraph/de/ueller/midlet/gps/data/;${basedir}/GpsMidGraph/de/ueller/gps/tools/" destdir="bin-tests" debug="on" 
+			includes="MoreMath.java, intTree.java, MoreMathTests.java, IntTreeTests.java, AllTests.java">
+			<classpath>
+				<path refid="test.classpath" />
+			</classpath>
+		</javac>
+	</target>
+
+	<target name="unit-test" depends="compile-test">
+		<junit>
+			<classpath refid="test.classpath" />
+			<formatter type="plain" usefile="false" />
+			<test name="AllTests" />
+		</junit>
+	</target>
 
 </project>
