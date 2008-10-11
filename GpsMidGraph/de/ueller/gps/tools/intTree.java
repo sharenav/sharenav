@@ -90,11 +90,17 @@ public class intTree  {
 	}
 	
 	public synchronized Object getValueIdx(int idx) {
-		return values[idx];
+		if (idx < 0 || idx >= size()) {
+			return null;
+		}
+		return values[treeSize + idx + 1];
 	}
 	
 	public synchronized int getKeyIdx(int idx) {
-		return keys[idx];
+		if (idx < 0 || idx >= size()) {
+			return 0;
+		}
+		return keys[treeSize + idx + 1];
 	}
 	
 	public synchronized void put (int key, Object value) {		
