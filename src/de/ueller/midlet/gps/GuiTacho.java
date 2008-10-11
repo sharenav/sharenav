@@ -6,7 +6,6 @@ package de.ueller.midlet.gps;
  */
 
 import java.util.Calendar;
-import java.util.Date;
 
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
@@ -31,7 +30,6 @@ public class GuiTacho extends Canvas implements CommandListener,
 
 	private Calendar cal = Calendar.getInstance();
 	private StringBuffer timeString;
-	private Date dur;
 
 	private float alt_delta = 0.0f;
 	private float odo = 0.0f;
@@ -56,7 +54,6 @@ public class GuiTacho extends Canvas implements CommandListener,
 		lcdFont = new LcdNumericFont();
 
 		timeString = new StringBuffer();
-		dur = new Date();
 	}
 
 	protected void paint(Graphics g) {
@@ -76,7 +73,7 @@ public class GuiTacho extends Canvas implements CommandListener,
 		Position pos = parent.getCurrentPosition();
 		odo = parent.gpx.currentTrkLength() / 1000.0f;
 		avg_spd = parent.gpx.currentTrkAvgSpd() * 3.6f;
-		max_spd = parent.gpx.maxTrkSpeed() * 3.6f;
+		max_spd = ((int)(parent.gpx.maxTrkSpeed() * 36.0f))/10.0f;
 		duration = parent.gpx.currentTrkDuration();
 		
 		int h = getHeight();
@@ -160,15 +157,15 @@ public class GuiTacho extends Canvas implements CommandListener,
 		g.drawLine(0, y, w, y);
 		y += fHeight;
 		
-		dur.setTime(duration);
-		cal.setTime(dur);
+		//dur.setTime(duration);
+		//cal.setTime(dur);
 		timeString.setLength(0);
 		timeString.append(
-				HelperRoutines.formatInt2(cal.get(Calendar.HOUR_OF_DAY)))
+				HelperRoutines.formatInt2((int)(duration/(1000*60*60))))
 				.append(":").append(
-						HelperRoutines.formatInt2(cal.get(Calendar.MINUTE)))
+						HelperRoutines.formatInt2((int)(duration/(1000*60)) % 60))
 				.append(":").append(
-						HelperRoutines.formatInt2(cal.get(Calendar.SECOND)));
+						HelperRoutines.formatInt2((int)(duration/(1000)) % 60));
 		g.drawString(timeString.toString(), (w >> 1) - 1, y + 3,
 				Graphics.BOTTOM | Graphics.RIGHT);
 		g.drawString(max_spd + " km/h", w - 1, y + 3, Graphics.BOTTOM
