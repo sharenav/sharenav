@@ -790,8 +790,6 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			//#endif
 			if (c == CLEARTARGET_CMD) {				
 				setTarget(null);
-				setRoute(null);
-				setRouteNodes(null);				
 			} else if (c == SETTARGET_CMD) {				
 				if (source != null) {
 					setTarget(source);
@@ -2074,6 +2072,8 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	}
 
 	public void setTarget(PositionMark target) {
+		setRoute(null);
+		setRouteNodes(null);
 		this.target = target;
 		pc.target = target;
 		if(target!=null) {
