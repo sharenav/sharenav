@@ -330,8 +330,12 @@
 	</target>
 
 	<target name="compile-test" depends="prepare">
-		<javac srcdir="${basedir}/test/unit-tests;${basedir}/GpsMidGraph/de/ueller/midlet/gps/data/;${basedir}/GpsMidGraph/de/ueller/gps/tools/" destdir="bin-tests" debug="on" 
-			includes="MoreMath.java, intTree.java, MoreMathTests.java, IntTreeTests.java, AllTests.java">
+		<javac srcdir="${basedir}/test/unit-tests;${basedir}/test/unit-tests/j2se_replacements;${basedir}/src/de/ueller/gps/tools;${basedir}/src/de/ueller/gps/nmea;
+			${basedir}/src/de/ueller/gps/data; ${basedir}/GpsMidGraph/de/ueller/midlet/gps;
+			${basedir}/GpsMidGraph/de/ueller/midlet/gps/data/;${basedir}/GpsMidGraph/de/ueller/gps/tools/" destdir="bin-tests" debug="on" 
+			includes="StringTokenizer.java, MoreMath.java, intTree.java,
+			MoreMathTests.java,
+			IntTreeTests.java, StringTokenizerTests.java, AllTests.java">
 			<classpath>
 				<path refid="test.classpath" />
 			</classpath>

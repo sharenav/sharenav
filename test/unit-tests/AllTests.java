@@ -10,6 +10,7 @@ public class AllTests {
 		//$JUnit-BEGIN$
 		suite.addTestSuite(MoreMathTests.class);
 		suite.addTestSuite(IntTreeTests.class);
+		suite.addTestSuite(StringTokenizerTests.class);
 		//$JUnit-END$
 		return suite;
 	}
