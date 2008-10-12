@@ -344,7 +344,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 					}
 					receiveMessage("BT Connected");
 			}
-			if (config.getCfgBitState(config.CFGBIT_SND_CONNECT)) {
+			if (config.getCfgBitState(Configuration.CFGBIT_SND_CONNECT)) {
 				parent.mNoiseMaker.playSound("CONNECT");
 			}
 			//#debug debug
@@ -588,7 +588,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			if (c == EXIT_CMD) {
 				// FIXME: This is a workaround. It would be better if recording would not be stopped when returning to map
 				if (gpx.isRecordingTrk()) {
-					parent.getInstance().alert("Record Mode", "Please stop recording before returning to the main screen." , 2000);
+					parent.alert("Record Mode", "Please stop recording before returning to the main screen." , 2000);
 					return;
 				}
 				
@@ -615,7 +615,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			}
 			if (c == MANAGE_TRACKS_CMD){
 				if (gpx.isRecordingTrk()) {
-					parent.getInstance().alert("Record Mode", "You need to stop recording before managing tracks." , 2000);
+					parent.alert("Record Mode", "You need to stop recording before managing tracks." , 2000);
 					return;
 				}
 
@@ -998,7 +998,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			default:
 				showAddons = 0;
 				if (ProjFactory.getProj() == ProjFactory.MOVE_UP
-					&& config.getCfgBitState(config.CFGBIT_SHOW_POINT_OF_COMPASS)
+					&& config.getCfgBitState(Configuration.CFGBIT_SHOW_POINT_OF_COMPASS)
 				) {
 					showPointOfTheCompass(pc);
 				}
@@ -1179,7 +1179,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			float distance = ProjMath.getDistance(target.lat, target.lon, center.radlat, center.radlon);
 			atTarget = (distance < 25);
 			if (atTarget) {
-				if (movedAwayFromTarget && config.getCfgBitState(config.CFGBIT_SND_TARGETREACHED)) {
+				if (movedAwayFromTarget && config.getCfgBitState(Configuration.CFGBIT_SND_TARGETREACHED)) {
 					parent.mNoiseMaker.playSound("TARGET_REACHED", (byte) 7, (byte) 1);
 				}
 			} else if (!movedAwayFromTarget) {
@@ -1295,7 +1295,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	
 				// find nearest routing arrow (to center of screen)
 				int iNearest=0;
-				if (config.getCfgBitState(config.CFGBIT_ROUTING_HELP)) {
+				if (config.getCfgBitState(Configuration.CFGBIT_ROUTING_HELP)) {
 					c = (ConnectionWithNode) route.elementAt(0);
 					lastTo=c.to;
 					float minimumDistance=99999;
@@ -1545,13 +1545,13 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				long recalculationTime=System.currentTimeMillis();
 				if ( source != null
 					 && gpsRecenter
-					 && config.getCfgBitState(config.CFGBIT_ROUTE_AUTO_RECALC)
+					 && config.getCfgBitState(Configuration.CFGBIT_ROUTE_AUTO_RECALC)
 					// do not recalculate route more often than every 7 seconds
 					 && Math.abs(recalculationTime-oldRecalculationTime) >= 7000
 				) {
 					// if map is gps-centered recalculate route
 					soundToPlay.setLength(0);
-					if (config.getCfgBitState(config.CFGBIT_SND_ROUTINGINSTRUCTIONS)) {
+					if (config.getCfgBitState(Configuration.CFGBIT_SND_ROUTINGINSTRUCTIONS)) {
 						parent.mNoiseMaker.playSound("ROUTE_RECALCULATION", (byte) 5, (byte) 1 );
 					}
 					commandAction(ROUTE_TO_CMD,(Displayable) null);
@@ -1594,7 +1594,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			pc.g.setFont(originalFont);
 		}
 		// Route instruction sound output
-		if (soundToPlay.length()!=0 && config.getCfgBitState(config.CFGBIT_SND_ROUTINGINSTRUCTIONS)) {
+		if (soundToPlay.length()!=0 && config.getCfgBitState(Configuration.CFGBIT_SND_ROUTINGINSTRUCTIONS)) {
 			parent.mNoiseMaker.playSound(soundToPlay.toString(), (byte) soundRepeatDelay, (byte) soundRepeatTimes);
 		}
 	}
@@ -1981,7 +1981,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	public synchronized void locationDecoderEnd() {
 //#debug info
 		logger.info("enter locationDecoderEnd");
-		if (config.getCfgBitState(config.CFGBIT_SND_DISCONNECT)) {
+		if (config.getCfgBitState(Configuration.CFGBIT_SND_DISCONNECT)) {
 			parent.mNoiseMaker.playSound("DISCONNECT");			
 		}
 		if (gpx != null) {
@@ -2032,7 +2032,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	public void show() {
 		//Display.getDisplay(parent).setCurrent(this);
 		GpsMid.getInstance().show(this);
-		setFullScreenMode(config.getCfgBitState(config.CFGBIT_FULLSCREEN));
+		setFullScreenMode(config.getCfgBitState(Configuration.CFGBIT_FULLSCREEN));
 		requestRedraw();
 	}
 
