@@ -9,6 +9,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.Vector;
 
+import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
@@ -19,6 +20,7 @@ import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.data.ProjMath;
 import de.ueller.midlet.gps.data.Way;
 import de.ueller.midlet.gps.tile.C;
+import de.ueller.midlet.gps.tile.POIdescription;
 import de.ueller.midlet.gps.tile.PaintContext;
 import de.ueller.midlet.gps.tile.QueueableTile;
 
@@ -62,7 +64,8 @@ public class SingleTile extends Tile implements QueueableTile {
 	
 	boolean abortPainting = false;
 
-
+	private static Font poiFont;
+	
 	 private final static Logger logger= Logger.getInstance(SingleTile.class,Logger.DEBUG);
 
 	public final byte zl;
@@ -420,6 +423,16 @@ public class SingleTile extends Tile implements QueueableTile {
 			name = pc.trace.getName(nameIdx[i]);
 		}
 		if (name != null) {			
+			Font originalFont = pc.g.getFont();
+			if (poiFont==null) {
+				if (Trace.getInstance().getConfig().getCfgBitState(Configuration.CFGBIT_POI_LABELS_LARGER)) {
+					poiFont = originalFont;
+				} else {
+					poiFont=Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_SMALL);
+				}
+			}
+			pc.g.setFont(poiFont);
+
 			if (img == null) {
 				pc.g.drawString(name, pc.swapLineP.x, pc.swapLineP.y,
 						Graphics.BASELINE | Graphics.HCENTER);
@@ -432,6 +445,7 @@ public class SingleTile extends Tile implements QueueableTile {
 							Graphics.TOP | Graphics.HCENTER);
 				}
 			}
+			pc.g.setFont(originalFont);
 		}
 		
 	}
@@ -534,4 +548,8 @@ public class SingleTile extends Tile implements QueueableTile {
 	   }
 	   return true;
    }
+   
+   public static void newPOIFont() {
+	   poiFont = null;
+   }   	
 }

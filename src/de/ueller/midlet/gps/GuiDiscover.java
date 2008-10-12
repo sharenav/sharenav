@@ -25,9 +25,10 @@ import javax.microedition.lcdui.TextField;
 
 
 import de.ueller.gps.data.Configuration;
+import de.ueller.gpsMid.mapData.SingleTile;
 import de.ueller.midlet.gps.data.Gpx;
 import de.ueller.midlet.gps.data.Projection;
-
+import de.ueller.gpsMid.mapData.GpxTile;
 
 public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMidDisplayable, SelectionListener {
 
@@ -134,6 +135,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private Gauge gaugeDetailBoost; 
 	private ChoiceGroup rotationGroup;
 	private ChoiceGroup renderOpts;
+	private ChoiceGroup sizeOpts;
 	private ChoiceGroup backlightOpts;
 	private ChoiceGroup debugLog;
 	private ChoiceGroup debugSeverity;
@@ -249,6 +251,13 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		//#endif
 		backlightOpts = new ChoiceGroup("Backlight Options:", Choice.MULTIPLE, backlights ,null);
 		menuDisplayOptions.append(backlightOpts);
+
+		String [] sizes = new String[2];
+		sizes[0] = "larger POI labels";
+		sizes[1] = "larger waypoint labels";
+		sizeOpts = new ChoiceGroup("Size Options:", Choice.MULTIPLE, sizes ,null);
+		menuDisplayOptions.append(sizeOpts);
+		
 		menuDisplayOptions.setCommandListener(this);
 		
 		//Prepare Gpx receiver selection menu
@@ -476,7 +485,11 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 					break;
 				case MENU_ITEM_DISP_OPT: // Display Options
 					rotationGroup.setSelectedIndex(config.getProjDefault(), true);
-					renderOpts.setSelectedIndex( config.getCfgBitState(config.CFGBIT_STREETRENDERMODE)?1:0, true);
+					renderOpts.setSelectedIndex( config.getCfgBitState(Configuration.CFGBIT_STREETRENDERMODE)?1:0, true);
+					sizeOpts.setSelectedIndex(0, config.getCfgBitState(Configuration.CFGBIT_POI_LABELS_LARGER));
+					sizeOpts.setSelectedIndex(1, config.getCfgBitState(Configuration.CFGBIT_WPT_LABELS_LARGER));
+					SingleTile.newPOIFont();
+					GpxTile.newWptFont();
 					gaugeDetailBoost.setValue(config.getDetailBoostDefault());
 					// convert bits from backlight flag into selection states
 					boolean[] sellight = new boolean[5];
@@ -605,6 +618,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				config.setCfgBitState(config.CFGBIT_STREETRENDERMODE,
 						(renderOpts.getSelectedIndex()==1),
 						true); 
+				config.setCfgBitState(config.CFGBIT_POI_LABELS_LARGER, sizeOpts.isSelected(0), true);
+				config.setCfgBitState(config.CFGBIT_WPT_LABELS_LARGER, sizeOpts.isSelected(1), true);
 				config.setDetailBoost(gaugeDetailBoost.getValue(), true); 
 				
 				// convert boolean array with selection states for backlight

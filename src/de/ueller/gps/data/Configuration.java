@@ -83,6 +83,10 @@ public class Configuration {
 	public final static byte CFGBIT_ADD_EXIF=26;
 	// bit 27: show AREAS
 	public final static byte CFGBIT_AREAS=27;
+	// bit 28: big poi labels
+	public final static byte CFGBIT_POI_LABELS_LARGER=28;
+	// bit 29: big wpt labels
+	public final static byte CFGBIT_WPT_LABELS_LARGER=29;
 
 	
 	/**

@@ -6,6 +6,7 @@ package de.ueller.gpsMid.mapData;
 
 import java.util.Random;
 
+import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 
 import de.ueller.gps.data.Configuration;
@@ -18,6 +19,8 @@ import de.ueller.midlet.gps.tile.PaintContext;
 
 public class GpxTile extends Tile {	
 	private final static Logger logger=Logger.getInstance(GpxTile.class,Logger.DEBUG);
+	
+	private static Font wptFont;
 	
 	PositionMark [] waypts;
 	float [] trkPtLat;
@@ -195,7 +198,17 @@ public class GpxTile extends Tile {
 				pc.g.drawImage(pc.images.IMG_MARK,pc.lineP2.x,pc.lineP2.y,Graphics.HCENTER|Graphics.VCENTER);
 				if (Trace.getInstance().getConfig().getCfgBitState(Configuration.CFGBIT_WPTTEXTS) ) {
 					pc.g.setColor(0,0,0);
-					pc.g.drawString(waypt.displayName,pc.lineP2.x,pc.lineP2.y,Graphics.HCENTER|Graphics.BOTTOM);					
+					Font originalFont = pc.g.getFont();
+					if (wptFont==null) {
+						if (Trace.getInstance().getConfig().getCfgBitState(Configuration.CFGBIT_WPT_LABELS_LARGER)) {
+							wptFont = originalFont;
+						} else {
+							wptFont=Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_SMALL);
+						}
+					}
+					pc.g.setFont(wptFont);
+					pc.g.drawString(waypt.displayName,pc.lineP2.x,pc.lineP2.y,Graphics.HCENTER|Graphics.BOTTOM);
+					pc.g.setFont(originalFont);
 				}
 			}
 			
@@ -367,4 +380,8 @@ public class GpxTile extends Tile {
 		}
 
 	}
+
+	public static void newWptFont() {
+	   wptFont = null;
+   }   	
 }
