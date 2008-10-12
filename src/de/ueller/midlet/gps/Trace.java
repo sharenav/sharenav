@@ -221,6 +221,12 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	private int iPassedRouteArrow=0;
 	private static Font routeFont;
 	private static int routeFontHeight;
+
+	/*
+	private static Font smallBoldFont;
+	private static int smallBoldFontHeight;
+	*/
+	
 	private static final String[] directions  = { "mark",
 		"hard right", "right", "half right",
 		"straight on",
@@ -1525,6 +1531,23 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			    		}
 			    	}
 					pc.g.drawImage(pict,pc.lineP2.x,pc.lineP2.y,CENTERPOS);
+					/*
+					Font originalFont = pc.g.getFont();
+					if (smallBoldFont==null) {
+						smallBoldFont=Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_SMALL);
+						smallBoldFontHeight=smallBoldFont.getHeight();
+					}
+					pc.g.setFont(smallBoldFont);
+					pc.g.setColor(0,0,0);
+					int turnOrg=(c.startBearing - lastEndBearing)*2;
+					pc.g.drawString("S: " + c.startBearing*2 + " E: " + lastEndBearing*2 + " T: " + turn + "(" + turnOrg + ")",
+							pc.lineP2.x,
+							pc.lineP2.y-smallBoldFontHeight / 2,
+							Graphics.HCENTER | Graphics.TOP
+					);
+					pc.g.setFont(originalFont);
+					*/
+					
 					lastEndBearing=c.endBearing;
 					lastTo=c.to;
 				}
