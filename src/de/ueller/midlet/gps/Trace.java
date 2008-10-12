@@ -1406,6 +1406,10 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 					}
 	
 					Image pict = pc.images.IMG_MARK; a=0;
+					// make bearing relative to current course for the first route arrow
+					if (i==1) {
+						lastEndBearing = (byte) (course%360 / 2);
+					}
 					int turn=(c.startBearing-lastEndBearing) * 2;
 					if (turn > 180) turn -= 360;
 					if (turn < -180) turn += 360;
