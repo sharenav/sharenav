@@ -10,9 +10,9 @@ public class StringTokenizer {
         String token = "";
         int cnt = 0;
         commaPos = tokenList.indexOf(separator);
-        while (commaPos > 0) {
+        while (commaPos >= 0) {
             commaPos = tokenList.indexOf(separator);
-            if (commaPos > 0) {
+            if (commaPos >= 0) {
                 token = tokenList.substring(0, commaPos);
                 tokenList = tokenList.substring(commaPos,tokenList.length());
             }
