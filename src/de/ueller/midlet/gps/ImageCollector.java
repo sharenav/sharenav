@@ -272,6 +272,7 @@ public class ImageCollector implements Runnable {
 		nextSc.center=screenPc.center.clone();
 		nextSc.course=screenPc.course;
 		nextSc.scale=screenPc.scale;
+		nextSc.target=screenPc.target;
 		nextSc.xSize=xSize;
 		nextSc.ySize=ySize;
 		Projection p = ProjFactory.getInstance(nextSc.center,nextSc.course, nextSc.scale, xSize, ySize);
