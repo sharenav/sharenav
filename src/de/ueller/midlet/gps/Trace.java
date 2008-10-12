@@ -1194,7 +1194,8 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				// as current source might still contain an old position
 				source = null;
 			}
-			showRoute(pc);
+			if (route != null)
+				showRoute(pc);
 		}
 
 	}
