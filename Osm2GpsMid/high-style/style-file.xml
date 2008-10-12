@@ -667,7 +667,7 @@ zoomed out 21x (scale alias 1:  500km)
   <ways>
   		<keyW tag = "highway">
   			<Wvalue name = "motorway" priority = "10">
-  				<description desc = "Motorway"/>
+  				<description desc = "motorway"/>
   				<namekey tag = "name"/>
   				<namefallback tag = "ref"/>
   				<isArea area = "false"/>
@@ -677,7 +677,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<routing accessible="true" speed="120" />  				  				
   			</Wvalue>
   			<Wvalue name = "motorway_link" priority = "10">
-  				<description desc = "Motorway link"/>
+  				<description desc = "motorway link"/>
   				<namekey tag = "name"/>
   				<namefallback tag = "ref"/>
   				<isArea area = "false"/>
@@ -687,7 +687,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<routing accessible="true" speed="120" />  				  				
   			</Wvalue>
   			<Wvalue name = "trunk" priority = "10">
-  				<description desc = "Trunk"/>
+  				<description desc = "trunk"/>
   				<namekey tag = "name"/>
   				<namefallback tag = "ref"/>
   				<isArea area = "false"/>
@@ -697,7 +697,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<routing accessible="true" speed="100" />  				  				
   			</Wvalue>
   			<Wvalue name = "trunk_link" priority = "10">
-  				<description desc = "Trunk link"/>
+  				<description desc = "trunk link"/>
   				<namekey tag = "name"/>
   				<namefallback tag = "ref"/>
   				<isArea area = "false"/>
@@ -707,7 +707,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<routing accessible="true" speed="100" />  				  				
   			</Wvalue>
   			<Wvalue name = "primary" priority = "10">
-  				<description desc = "Primary"/>
+  				<description desc = "primary"/>
   				<namekey tag = "name"/>
   				<namefallback tag = "ref"/>
   				<isArea area = "false"/>
@@ -717,7 +717,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<routing accessible="true" speed="80" />  				  				
   			</Wvalue>
   			<Wvalue name = "primary_link" priority = "10">
-  				<description desc = "Primary link"/>
+  				<description desc = "primary link"/>
   				<namekey tag = "name"/>
   				<namefallback tag = "ref"/>
   				<isArea area = "false"/>
@@ -727,7 +727,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<routing accessible="true" speed="80" />  				  				
   			</Wvalue>
   			<Wvalue name = "secondary" priority = "10">
-  				<description desc = "Secondary"/>
+  				<description desc = "secondary"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
   				<scale scale = "18"/>
@@ -736,7 +736,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<routing accessible="true" speed="80" />  				  				
   			</Wvalue>
   			<Wvalue name = "tertiary" priority = "10">
-  				<description desc = "Tertiary"/>
+  				<description desc = "tertiary"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
   				<scale scale = "19"/>
@@ -745,7 +745,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<routing accessible="true" speed="50" />  				  				
   			</Wvalue>
   			<Wvalue name = "unclassified" priority = "9">  					        
-  				<description desc = "Small road"/>
+  				<description desc = "small road"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
   				<scale scale = "20"/>
@@ -754,7 +754,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<routing accessible="true" speed="50" />  				  				
   			</Wvalue>  			
   			<Wvalue name = "residential" priority = "10">
-  				<description desc = "Residential"/>
+  				<description desc = "residential"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
   				<scale scale = "20"/>
@@ -764,7 +764,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<routing accessible="true" speed="30" />  				  				
   			</Wvalue>
   			<Wvalue name = "living_street" priority = "9">
-  				<description desc = "Living street"/>
+  				<description desc = "living street"/>
   				<namekey tag = "name"/>
   				<isArea area = "false"/>
   				<scale scale = "20"/>
@@ -773,7 +773,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<routing accessible="true" speed="5" />  				  				
   			</Wvalue>
 			<Wvalue name = "track" priority = "9">
-  				<description desc = "Track"/>
+  				<description desc = "track"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
   				<scale scale = "20"/>
@@ -783,7 +783,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<routing accessible="no" speed="10" />  				  				
   			</Wvalue>
   			<Wvalue name = "service" priority = "9">
-  				<description desc = "Service"/>
+  				<description desc = "service"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
   				<scale scale = "20"/>
@@ -792,7 +792,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<routing accessible="true" speed="30" />  				  				
   			</Wvalue>
   			<Wvalue name = "roundabout" priority = "9">
-  				<description desc = "Roundabout"/>
+  				<description desc = "roundabout"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
   				<scale scale = "20"/>
@@ -801,7 +801,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<routing accessible="true" speed="30" />  				  				
   			</Wvalue>
   			<Wvalue name = "cycleway" priority = "8">
-  				<description desc = "Cycleway"/>
+  				<description desc = "cycleway"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
   				<scale scale = "20"/>
@@ -811,7 +811,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<routing accessible="false" speed="20" />  				  				
   			</Wvalue>
   			<Wvalue name = "footway" priority = "7">
-  				<description desc = "Footway"/>
+  				<description desc = "footway"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
   				<scale scale = "20"/>
@@ -821,7 +821,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<routing accessible="false" speed="3" />  				  				
   			</Wvalue>
   			<Wvalue name = "pedestrian" priority = "6">
-  				<description desc = "Pedestrian zone"/>
+  				<description desc = "pedestrian zone"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
   				<scale scale = "20"/>
@@ -831,7 +831,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<routing accessible="false" speed="3" />  				  				
   			</Wvalue>
   			<Wvalue name = "bridleway" priority = "5">
-  				<description desc = "Bridleway"/>
+  				<description desc = "bridleway"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
   				<scale scale = "20"/>
@@ -841,7 +841,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<routing accessible="false" speed="30" />  				  				
   			</Wvalue>
   			<Wvalue name = "*" priority = "4">
-  				<description desc = "Other highway"/>
+  				<description desc = "other highway"/>
   				<namekey tag = "name"/>  				
   				<namefallback tag = "*"/>  				
   				<isArea area = "false"/>
@@ -851,7 +851,7 @@ zoomed out 21x (scale alias 1:  500km)
   		</keyW>
   		<keyW tag = "railway">
   			<Wvalue name = "rail">
-  				<description desc = "Mainline rail"/>
+  				<description desc = "mainline rail"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
   				<scale scale = "20"/>
@@ -860,7 +860,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<wayWidth width="1" />  				  				  				
   			</Wvalue>
   			<Wvalue name = "tram">
-  				<description desc = "Tram"/>
+  				<description desc = "tram"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
   				<scale scale = "20"/>
@@ -869,7 +869,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<wayWidth width="1" />  				  				  				
   			</Wvalue>
   			<Wvalue name = "subway">
-  				<description desc = "Tube"/>
+  				<description desc = "tube"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
   				<scale scale = "20"/>
@@ -878,7 +878,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<wayWidth width="1" />  				  				  				
   			</Wvalue>
   			<Wvalue name = "light_rail">
-  				<description desc = "Light rail"/>
+  				<description desc = "light rail"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
   				<scale scale = "20"/>
@@ -887,7 +887,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<wayWidth width="1" />  				  				  				
   			</Wvalue>
   			<Wvalue name = "*">
-  				<description desc = "Other railway"/>
+  				<description desc = "other railway"/>
   				<namekey tag = "name"/>  				
   				<namefallback tag = "*"/>  				
   				<isArea area = "false"/>
@@ -898,7 +898,7 @@ zoomed out 21x (scale alias 1:  500km)
   		</keyW>
   		<keyW tag = "aerialway">
   			<Wvalue name = "*">
-  				<description desc = "Aerialway"/>
+  				<description desc = "aerialway"/>
   				<namekey tag = "name"/>  				
   				<namefallback tag = "*"/>  				
   				<isArea area = "false"/>
@@ -1049,7 +1049,7 @@ zoomed out 21x (scale alias 1:  500km)
   		</keyW>
   		<keyW tag = "waterway">
   			<Wvalue name = "river">
-  				<description desc = "River"/>
+  				<description desc = "river"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
   				<scale scale = "17"/>
@@ -1057,7 +1057,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<wayWidth width="10" />  				  				  				
   			</Wvalue>
   			<Wvalue name = "canal">
-  				<description desc = "Canal"/>
+  				<description desc = "canal"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
   				<scale scale = "19"/>
@@ -1065,7 +1065,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<wayWidth width="6" />  				  				  				
   			</Wvalue>
   			<Wvalue name = "stream">
-  				<description desc = "Stream"/>
+  				<description desc = "stream"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
   				<scale scale = "19"/>
@@ -1073,7 +1073,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<wayWidth width="3" />  				  				  				
   			</Wvalue>
   			<Wvalue name = "*">
-  				<description desc = "Other waterway"/>
+  				<description desc = "other waterway"/>
   				<namekey tag = "name"/>  				
   				<namefallback tag = "*"/>  				
   				<isArea area = "false"/>
@@ -1099,7 +1099,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<wayWidth width="16" />  				  				  				
   			</Wvalue>
   			<Wvalue name = "runway">
-  				<description desc = "Aeroway runway"/>
+  				<description desc = "aeroway runway"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
   				<scale scale = "17"/>
@@ -1107,7 +1107,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<wayWidth width="16" />  				  				  				
   			</Wvalue>
   			<Wvalue name = "taxiway">
-  				<description desc = "Aeroway taxiway"/>
+  				<description desc = "aeroway taxiway"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
   				<scale scale = "17"/>
@@ -1115,7 +1115,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<wayWidth width="8" />  				  				  				
   			</Wvalue>
   			<Wvalue name = "*">
-  				<description desc = "Other aeroway"/>
+  				<description desc = "other aeroway"/>
   				<namekey tag = "name"/>  				
   				<namefallback tag = "*"/>  				
   				<isArea area = "false"/>
@@ -1294,7 +1294,7 @@ zoomed out 21x (scale alias 1:  500km)
 				<force_to layer = "-2"/>
 			</Wvalue>  			
   			<Wvalue name = "coastline">
-  				<description desc = "Coastline"/>
+  				<description desc = "coastline"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
   				<scale scale = "6"/>
@@ -1381,7 +1381,7 @@ zoomed out 21x (scale alias 1:  500km)
 		<keyW tag = "boundary">
   			<Wvalue name = "administrative" priority = "1">
   				<specialisation key="admin_level" value="2"/>
-  				<description desc = "Country border"/>
+  				<description desc = "country border"/>
   				<namekey tag = "name"/>
   				<isArea area = "false" />
   				<scale scale = "5"/>
@@ -1392,7 +1392,7 @@ zoomed out 21x (scale alias 1:  500km)
   			</Wvalue>
   			<Wvalue name = "administrative" priority = "0">
   				<specialisation key="admin_level" value="6"/>
-  				<description desc = "City border"/>
+  				<description desc = "city border"/>
   				<namekey tag = "name"/>
   				<isArea area = "false"/>
   				<scale scale = "8"/>
