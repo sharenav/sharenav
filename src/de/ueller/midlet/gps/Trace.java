@@ -642,7 +642,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				search.show();
 			}
 			if (c == DISCONNECT_GPS_CMD){
-				pause();
+				if (locationProducer != null){
+					locationProducer.close();
+				}
 			}
 			if (c == ROUTE_TO_CMD){
 				if (config.isStopAllWhileRouteing()){
