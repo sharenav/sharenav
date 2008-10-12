@@ -305,6 +305,12 @@ public class Routing implements Runnable {
 
 
 		try {
+			if (toMark == null){
+				parent.receiveMessage("Please set target first");
+				parent.setRoute(null);
+				return;
+			} 
+			
 			RouteNode startNode=new RouteNode();
 			startNode.lat=fromMark.lat;
 			startNode.lon=fromMark.lon;
