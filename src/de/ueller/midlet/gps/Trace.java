@@ -204,7 +204,6 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	private PositionMark target;
 	private Vector route=null;
 	private final Configuration config;
-	private Vector recordMark=null;
 
 	private boolean running=false;
 	private static final int CENTERPOS = Graphics.HCENTER|Graphics.VCENTER;
@@ -1190,30 +1189,6 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				source = null;
 			}
 			showRoute(pc);
-		}
-		if (recordMark != null){
-			PositionMark pm;
-			pc.g.setStrokeStyle(Graphics.SOLID);
-			pc.g.setColor(255, 100, 100);
-			for (int i=0; i<recordMark.size();i++){
-				pm = (PositionMark) recordMark.elementAt(i);
-				if (! pc.getP().isPlotable(pm.lat, pm.lon)) continue;
-//				if (pm.lat < pc.screenLD.radlat) {
-//					continue;
-//				}
-//				if (pm.lon < pc.screenLD.radlon) {
-//					continue;
-//				}
-//				if (pm.lat > pc.screenRU.radlat) {
-//					continue;
-//				}
-//				if (pm.lon > pc.screenRU.radlon) {
-//					continue;
-//				}
-
-				pc.getP().forward(pm.lat, pm.lon, pc.lineP2);
-				pc.g.drawImage(pc.images.IMG_MARK,pc.lineP2.x,pc.lineP2.y,CENTERPOS);				
-			}
 		}
 
 	}
