@@ -13,6 +13,7 @@ import de.ueller.midlet.gps.data.Projection;
 import de.ueller.midlet.gps.tile.C;
 import de.ueller.midlet.gps.tile.Images;
 import de.ueller.midlet.gps.tile.PaintContext;
+import de.ueller.midlet.gps.tile.WayDescription;
 
 
 /*
@@ -303,16 +304,21 @@ public class ImageCollector implements Runnable {
 		} 
 
 		String name = null;
-		if (pc[nextPaint].actualWay != null && pc[nextPaint].actualWay.nameIdx != -1){
-			name=screenPc.trace.getName(pc[nextPaint].actualWay.nameIdx);
-			String maxspeed=null;
+		if (pc[nextPaint].actualWay != null){
+			String maxspeed="";
 			if (pc[nextPaint].actualWay.maxspeed != 0){
 				maxspeed=" SL:" + pc[nextPaint].actualWay.maxspeed;
-				if (name == null){
-					name = maxspeed;
-				} else {
-					name = name + maxspeed;
-				}
+			}
+			if (pc[nextPaint].actualWay.nameIdx != -1) {
+				name=screenPc.trace.getName(pc[nextPaint].actualWay.nameIdx);
+			} else {
+				WayDescription wayDesc = C.getWayDescription(pc[nextPaint].actualWay.type);
+				name = "(unnamed " + wayDesc.description + ")";
+			}
+			if (name == null){
+				name = maxspeed;
+			} else {
+				name = name + maxspeed;
 			}
 			tr.source=pc[nextPaint].currentPos;
 		}
