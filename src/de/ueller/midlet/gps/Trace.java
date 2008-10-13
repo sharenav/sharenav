@@ -1343,7 +1343,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 					}
 				}
 				c = (ConnectionWithNode) route.elementAt(0);
-				byte lastEndBearing=c.endBearing;			
+				int lastEndBearing=c.endBearing;			
 				lastTo=c.to;
 				byte a=0;
 				byte aNearest=0;
@@ -1408,7 +1408,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 					Image pict = pc.images.IMG_MARK; a=0;
 					// make bearing relative to current course for the first route arrow
 					if (i==1) {
-						lastEndBearing = (byte) (course%360 / 2);
+						lastEndBearing = (course%360) / 2;
 					}
 					int turn=(c.startBearing-lastEndBearing) * 2;
 					if (turn > 180) turn -= 360;
@@ -1545,7 +1545,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 					pc.g.setFont(smallBoldFont);
 					pc.g.setColor(0,0,0);
 					int turnOrg=(c.startBearing - lastEndBearing)*2;
-					pc.g.drawString("S: " + c.startBearing*2 + " E: " + lastEndBearing*2 + " T: " + turn + "(" + turnOrg + ")",
+					pc.g.drawString("S: " + c.startBearing*2 + " E: " + lastEndBearing*2 + " C: " + course + " T: " + turn + "(" + turnOrg + ")",
 							pc.lineP2.x,
 							pc.lineP2.y-smallBoldFontHeight / 2,
 							Graphics.HCENTER | Graphics.TOP
