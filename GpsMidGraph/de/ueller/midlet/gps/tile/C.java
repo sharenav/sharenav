@@ -34,6 +34,7 @@ public class C {
 	public final static byte LEGEND_FLAG_MIN_IMAGE_SCALE = 0x04;
 	public final static byte LEGEND_FLAG_TEXT_COLOR = 0x08;
 	public final static byte LEGEND_FLAG_NON_HIDEABLE = 0x10;
+	public final static byte LEGEND_FLAG_NON_ROUTABLE = 0x20;
 
 	/**
 	 * minimum distances to set the is_in name to the next city
@@ -145,6 +146,7 @@ public class C {
 				logger.error("Read legend had troubles");
 			byte flags = ds.readByte();
 			ways[i].hideable = ((flags & LEGEND_FLAG_NON_HIDEABLE) == 0);
+			ways[i].routable = ((flags & LEGEND_FLAG_NON_ROUTABLE) == 0);
 			ways[i].description = ds.readUTF();			
 			ways[i].maxScale = ds.readInt();
 			ways[i].maxTextScale = ds.readInt();
