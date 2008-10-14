@@ -55,7 +55,7 @@ public class CreateGpsMidData {
 	public final static byte LEGEND_FLAG_MIN_IMAGE_SCALE = 0x04;
 	public final static byte LEGEND_FLAG_TEXT_COLOR = 0x08;
 	public final static byte LEGEND_FLAG_NON_HIDEABLE = 0x10;
-	public final static byte LEGEND_FLAG_NON_ROUTABLE = 0x10;
+	public final static byte LEGEND_FLAG_NON_ROUTABLE = 0x20;
 	
 		
 //	private final static int MAX_TILE_FILESIZE=20000;
