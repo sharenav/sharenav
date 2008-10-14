@@ -149,6 +149,7 @@ public class ImageCollector implements Runnable {
 //				pc[nextCreate].g.drawRect(0, 0, xSize-1, ySize-1);
 //				pc[nextCreate].g.drawRect(20, 20, xSize-41, ySize-41);
 				pc[nextCreate].squareDstToWay = Float.MAX_VALUE;
+				pc[nextCreate].squareDstToRoutableWay = Float.MAX_VALUE;
 				pc[nextCreate].config = tr.getConfig();
 				pc[nextCreate].target = nextSc.target;
 				// System.out.println("create " + pcCollect);
@@ -320,6 +321,8 @@ public class ImageCollector implements Runnable {
 			} else {
 				name = name + maxspeed;
 			}
+		}
+		if (pc[nextPaint].nearestRoutableWay != null){
 			tr.source=pc[nextPaint].currentPos;
 		}
 		if(statusFontHeight==0) {

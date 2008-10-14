@@ -251,6 +251,10 @@ public class Way extends Entity{
 						pc.squareDstToWay = dst;
 						pc.actualWay = this;												
 					}
+					if (dst < pc.squareDstToRoutableWay && wayDesc.routable) {
+						pc.squareDstToRoutableWay = dst;
+						pc.nearestRoutableWay = this;												
+					}
 					x[pi] = lineP2.x;
 					y[pi++] = lineP2.y;					
 					swapLineP = lineP1;
@@ -289,7 +293,7 @@ public class Way extends Entity{
 			}
 		}		
 		
-		if ((pc.actualWay == this) && ((pc.currentPos == null) || (pc.currentPos.e != this))) {
+		if ((pc.nearestRoutableWay == this) && ((pc.currentPos == null) || (pc.currentPos.e != this))) {
 			pc.currentPos=new PositionMark(pc.center.radlat,pc.center.radlon);
 			pc.currentPos.setEntity(this, getFloatNodes(t,t.nodeLat,t.centerLat), getFloatNodes(t,t.nodeLon,t.centerLon));
 		}

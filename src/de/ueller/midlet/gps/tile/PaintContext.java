@@ -57,10 +57,15 @@ public class PaintContext extends ScreenContext {
 	 * of projection. 
 	 */
 	public Way actualWay=null;
+	public Way nearestRoutableWay=null;
 	/**
 	 * the square of distance from center to the nearest point of actualWay
 	 */
 	public float squareDstToWay;
+	/**
+	 * the square of distance from center to the nearest point of nearestRoutableWay
+	 */
+	public float squareDstToRoutableWay;
 	/**
 	 * the actual configuration
 	 */
