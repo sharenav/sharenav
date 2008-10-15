@@ -11,6 +11,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.lang.Math;
 import java.util.Calendar;
 import java.util.Date;
@@ -734,12 +735,36 @@ public class Gpx extends Tile implements Runnable {
 				d.setTime(time);
 				sb.append("<time>").append(formatUTC(d)).append("</time>\r\n");
 				sb.append("</trkpt>\r\n");
-				oS.write(sb.toString().getBytes());
+				writeUTF(oS, sb);
 			}
 		}
 		oS.write("</trkseg>\r\n</trk>\r\n".getBytes());
 		trackDatabase.closeRecordStore();
 		trackDatabase = null;
+	}
+	
+	private void writeUTF(OutputStream oS, StringBuffer sb) {
+		final String[] encodings  = { "UTF-8", "UTF8", "utf-8", "utf8", "" };
+
+		try {
+			boolean written = false;
+			byte nr = 0;
+			do {
+				if (encodings[nr].length() != 0) {
+					try {
+						oS.write(sb.toString().getBytes(encodings[nr]));
+						written = true;
+					} catch (UnsupportedEncodingException e) {
+						nr++;
+					}
+				} else {
+					oS.write(sb.toString().getBytes());							
+					written = true;
+				}
+			} while (!written);						
+		} catch (IOException e) {
+			logger.exception("IOException in writeUTF()", e);
+		}
 	}
 	
 	private void streamWayPts (OutputStream oS) throws IOException{		
@@ -752,7 +777,8 @@ public class Gpx extends Tile implements Runnable {
 			sb.append("<wpt lat='").append(wayPt.lat*MoreMath.FAC_RADTODEC).append("' lon='").append(wayPt.lon*MoreMath.FAC_RADTODEC).append("' >\r\n");
 			sb.append("<name>").append(wayPt.displayName).append("</name>\r\n");
 			sb.append("</wpt>\r\n");
-			oS.write(sb.toString().getBytes());
+
+			writeUTF(oS, sb);
 		}
 	}
 	
