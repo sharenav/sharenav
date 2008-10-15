@@ -39,8 +39,11 @@ public class FileExportSession implements ExportSession {
 			FileConnection fileCon = (FileConnection) session;
 			if (fileCon == null)
 				throw new IOException("Couldn't open url " + url);
-			if (!fileCon.exists())
+			if (!fileCon.exists()) {
 				fileCon.create();
+			} else {
+				fileCon.truncate(0);
+			}
 			
 			oS = fileCon.openOutputStream();
 		} catch (IOException e) {
