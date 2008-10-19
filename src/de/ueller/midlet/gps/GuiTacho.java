@@ -38,7 +38,8 @@ public class GuiTacho extends Canvas implements CommandListener,
 	private float max_spd = 0.0f;
 
 	private int kmhWidth = -1;
-	private int msWidth = -1;
+	//private int msWidth = -1;
+	private int mminWidth = -1;
 	private int mWidth = -1;
 	private int kmWidth = -1;
 	private int fHeight = -1;
@@ -66,7 +67,7 @@ public class GuiTacho extends Canvas implements CommandListener,
 			Font f = g.getFont();
 			kmhWidth = f.stringWidth("km/h");
 			kmWidth = f.stringWidth("km");
-			msWidth = f.stringWidth("m/s");
+			mminWidth = f.stringWidth("m/min");
 			mWidth = f.stringWidth("m");
 			fHeight = f.getHeight();
 		}
@@ -74,6 +75,7 @@ public class GuiTacho extends Canvas implements CommandListener,
 		odo = parent.gpx.currentTrkLength() / 1000.0f;
 		avg_spd = parent.gpx.currentTrkAvgSpd() * 3.6f;
 		max_spd = ((int)(parent.gpx.maxTrkSpeed() * 36.0f))/10.0f;
+		alt_delta = parent.gpx.deltaAltTrkSpeed();
 		duration = parent.gpx.currentTrkDuration();
 		
 		int h = getHeight();
@@ -111,7 +113,7 @@ public class GuiTacho extends Canvas implements CommandListener,
 						HelperRoutines.formatInt2(cal.get(Calendar.SECOND)));
 		g.drawString(timeString.toString(), 3, y, Graphics.TOP | Graphics.LEFT);
 		
-		g.drawString("DOP: " + 0.0f, (w >> 1) + 3, y, Graphics.TOP
+		g.drawString("DOP: " + pos.pdop, (w >> 1) + 3, y, Graphics.TOP
 				| Graphics.LEFT);
 
 		y += fHeight;
@@ -152,8 +154,8 @@ public class GuiTacho extends Canvas implements CommandListener,
 						| Graphics.RIGHT);
 		lcdFont.drawInt(g, (int) pos.altitude, (w >> 1) - mWidth, y);
 		
-		g.drawString("m/s", w - 1, y - 3, Graphics.BOTTOM | Graphics.RIGHT);
-		lcdFont.drawFloat(g, alt_delta, 1, w - msWidth, y);
+		g.drawString("m/min", w - 1, y - 3, Graphics.BOTTOM | Graphics.RIGHT);
+		lcdFont.drawFloat(g, alt_delta * 60, 1, w - mminWidth, y);
 		g.drawLine(0, y, w, y);
 		y += fHeight;
 		
