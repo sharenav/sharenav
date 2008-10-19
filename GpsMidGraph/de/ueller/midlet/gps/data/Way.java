@@ -13,6 +13,7 @@ import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 
 import net.sourceforge.jmicropolygon.PolygonGraphics;
+import de.enough.polish.util.DrawUtil;
 import de.ueller.gps.data.Configuration;
 import de.ueller.gpsMid.mapData.SingleTile;
 import de.ueller.gpsMid.mapData.Tile;
@@ -299,7 +300,7 @@ public class Way extends Entity{
 		
 		if ((pc.nearestRoutableWay == this) && ((pc.currentPos == null) || (pc.currentPos.e != this))) {
 			pc.currentPos=new PositionMark(pc.center.radlat,pc.center.radlon);
-			pc.currentPos.setEntity(this, getFloatNodes(t,t.nodeLat,t.centerLat), getFloatNodes(t,t.nodeLon,t.centerLon));
+			pc.currentPos.setEntity(this, getNodesLatLon(t, true), getNodesLatLon(t, false));
 		}
 		paintPathName(pc, t);
 	}
@@ -714,7 +715,7 @@ public class Way extends Entity{
 			return;
 		}*/
 		//PolygonGraphics.drawPolygon(g, x, y);
-
+		//DrawUtil.fillPolygon(x, y, wayDesc.lineColor, pc.g);
 		PolygonGraphics.fillPolygon(pc.g, x, y);
 		paintAreaName(pc,t);
 	}
@@ -846,12 +847,32 @@ public class Way extends Entity{
 		return (byte)((flags & MaxSpeedMask) >> MaxSpeedShift);
 	}
 	
-	private float[] getFloatNodes(SingleTile t, short[] nodes, float offset) {
+/*	private float[] getFloatNodes(SingleTile t, short[] nodes, float offset) {
 	    float [] res = new float[nodes.length];
 	    for (int i = 0; i < nodes.length; i++) {
 		res[i] = nodes[i]*SingleTile.fpminv + offset;
 	    }
 	    return res;
+	}
+*/
+	
+	public float[] getNodesLatLon(SingleTile t, boolean latlon) {
+		float offset; 
+		short [] nodes;
+		int len = path.length;
+		float [] lat = new float[len];
+		
+		if (latlon) { 
+			offset = t.centerLat;
+			nodes = t.nodeLat;
+		} else {
+			offset = t.centerLon;
+			nodes = t.nodeLon;
+		}
+		for (int i = 0; i < len; i++) {
+			lat[i] = nodes[path[i]]*SingleTile.fpminv + offset;
+		}
+		return lat;
 	}
 	
 	public String toString() {

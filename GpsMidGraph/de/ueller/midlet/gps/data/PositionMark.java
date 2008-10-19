@@ -61,15 +61,8 @@ public class PositionMark extends PersistEntity{
 	
 	public void setEntity(Way w,float lat[],float lon[]){
 		e=w;
-		int count=w.path.length;
-		nodeLat=new float[count];
-		nodeLon=new float[count];
-		for (int ni=0;ni < count; ni++){
-			int nodeIdx=w.path[ni];
-			nodeLat[ni]=lat[nodeIdx];	
-			nodeLon[ni]=lon[nodeIdx];	
-		}
-	
+		nodeLat=lat;
+		nodeLon=lon;
 	}
 	
 

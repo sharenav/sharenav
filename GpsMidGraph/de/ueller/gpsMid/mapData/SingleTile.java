@@ -220,7 +220,7 @@ public class SingleTile extends Tile implements QueueableTile {
 									if ((Math.abs(nodeLat[s] - targetLat) < 2) && 
 											(Math.abs(nodeLon[s] - targetLon) < 2)){
 //										logger.debug("found Target way");
-										pc.target.setEntity(w, getFloatNodes(nodeLat,centerLat), getFloatNodes(nodeLon,centerLon));
+										pc.target.setEntity(w, w.getNodesLatLon(this, true), w.getNodesLatLon(this, false));
 									}
 								}
 							}
@@ -306,7 +306,7 @@ public class SingleTile extends Tile implements QueueableTile {
 									if (nodeLat[s] == targetLat &&
 											nodeLon[s] == targetLon){
 										//									logger.debug("found Target way");										
-										pc.target.setEntity(w, getFloatNodes(nodeLat,centerLat), getFloatNodes(nodeLon,centerLon));
+										pc.target.setEntity(w, w.getNodesLatLon(this, true), w.getNodesLatLon(this, false));
 									}
 								}
 							}
@@ -454,14 +454,14 @@ public class SingleTile extends Tile implements QueueableTile {
 		return "ST" + zl + "-" + fileId+ ":" + lastUse;
 	}
 
-   private float[] getFloatNodes(short[] nodes, float offset) {
+/*   private float[] getFloatNodes(short[] nodes, float offset) {
 	    float [] res = new float[nodes.length];
 	    for (int i = 0; i < nodes.length; i++) {
 		res[i] = nodes[i]*fpminv + offset;
 	    }
 	    return res;
 	}
-   
+*/
    /**
     * Returns a Vector of SearchResult containing POIs of
     * type searchType close to lat/lon. The list is ordered
