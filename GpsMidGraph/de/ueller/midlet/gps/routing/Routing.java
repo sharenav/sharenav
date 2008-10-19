@@ -163,7 +163,7 @@ public class Routing implements Runnable {
 		long now=System.currentTimeMillis();
 		if (now > nextUpdate){
 		if (bestTime){
-			parent.receiveMessage("" + (bestTotal/60) 
+			parent.receiveMessage("" + (bestTotal/600) 
 					+ "min " + (100*actual/total)
 					+ "% m:" + runtime.freeMemory()/1000 
 					+ "k s:" + oomCounter+"/"+expanded+"/"+open.size());
@@ -240,22 +240,22 @@ public class Routing implements Runnable {
 		if (bestTime) {
 			if (dist > 100000){
 				   // estimate 100 Km/h (28 m/s) as average speed 
-				   return (int) (((dist/28f)+turnCost)*estimateFac);
+				   return (int) (((dist/2.8f)+turnCost)*estimateFac);
 				}
 			if (dist > 50000){
 				   // estimate 80 Km/h (22 m/s) as average speed 
-				   return (int) (((dist/22f)+turnCost)*estimateFac);
+				   return (int) (((dist/2.2f)+turnCost)*estimateFac);
 				}
 			if (dist > 10000){
 				   // estimate 60 Km/h (17 m/s) as average speed 
-				   return (int) (((dist/17f)+turnCost)*estimateFac);
+				   return (int) (((dist/1.7f)+turnCost)*estimateFac);
 				}
 			if (dist > 5000){
 				   // estimate 45 Km/h (12 m/s) as average speed 
-				   return (int) (((dist/12f)+turnCost)*estimateFac);
+				   return (int) (((dist/1.2f)+turnCost)*estimateFac);
 				}
 			// estimate 30 Km/h (8 m/s) as average speed 
-			return (int) (((dist/18f)+turnCost)*estimateFac);
+			return (int) (((dist/2.2f)+turnCost)*estimateFac);
 		} else {
 			return (int) ((dist*1.1f + turnCost)*estimateFac);
 		}
@@ -450,6 +450,11 @@ public class Routing implements Runnable {
 	private final Vector solve () {
 		try {
 			GraphNode solution=search(routeTo);
+			if (bestTime){
+				parent.receiveMessage("Route found: " + (bestTotal/600) + "min");
+			} else {
+				parent.receiveMessage("Route found: " + (bestTotal/1000f) + "km");
+			}
 			nodes.removeAllElements();
 			open.removeAll();
 			closed.removeAll();
