@@ -143,7 +143,7 @@ public class RouteData {
 	 */
 	private void addConnection(RouteNode from, RouteNode to, short dist, Way w,byte bs, byte be) {
 		float speed=w.getSpeed();
-		float time=(short)(dist/speed);
+		float time=dist * 10.0f / speed;
 		if (time > Short.MAX_VALUE)
 			System.out.println("ERROR: overflow! Routing down path takes too long (" + time + ")");
 		nodes.put(from.node.id, from);
