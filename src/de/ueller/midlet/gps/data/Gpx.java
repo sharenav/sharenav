@@ -257,7 +257,7 @@ public class Gpx extends Tile implements Runnable {
 					} else {
 						//TODO: This formula is not consistent and needs improvement!!
 						float alpha = (300000 - timeDelta) / 300000.0f;
-						System.out.println("trkVertSpeed: " + trkVertSpd + " timeDelta: " + timeDelta + " Alpha: " + alpha + " deltaV " + deltaV + " instVertSpeed: " + (deltaV / timeDelta * 1000.0f));
+//						System.out.println("trkVertSpeed: " + trkVertSpd + " timeDelta: " + timeDelta + " Alpha: " + alpha + " deltaV " + deltaV + " instVertSpeed: " + (deltaV / timeDelta * 1000.0f));
 						trkVertSpd = trkVertSpd * alpha + (1 - alpha) * (deltaV / timeDelta * 1000.0f);
 						
 					}
