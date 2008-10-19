@@ -43,7 +43,8 @@ public class Gpx extends Tile implements Runnable {
 	// statics for user-defined rules for record trackpoint
 	private static long oldMsTime;
 	private static float oldlat;
-	private static float oldlon;		
+	private static float oldlon;
+	private static float oldheight;
 	
 	private final static Logger logger = Logger.getInstance(Gpx.class,Logger.DEBUG);
 	
@@ -248,7 +249,19 @@ public class Gpx extends Tile implements Runnable {
 				tile.addTrkPt(trkpt.latitude, trkpt.longitude, false);
 				if ((oldlat != 0.0f) || (oldlon != 0.0f)) {
 					trkOdo += distance;
-					trkTimeTot += msTime - oldMsTime;
+					long timeDelta = msTime - oldMsTime;
+					float deltaV = trkpt.altitude - oldheight;
+					trkTimeTot += timeDelta;
+					if (timeDelta > 300000) {
+						trkVertSpd = deltaV / timeDelta * 1000.0f;
+					} else {
+						//TODO: This formula is not consistent and needs improvement!!
+						float alpha = (300000 - timeDelta) / 300000.0f;
+						System.out.println("trkVertSpeed: " + trkVertSpd + " Alpha: " + alpha + " deltaV " + (deltaV / timeDelta * 1000.0f));
+						trkVertSpd = trkVertSpd * alpha + (1 - alpha) * (deltaV / timeDelta * 1000.0f);
+						
+					}
+					
 					if (trkVmax < trkpt.speed)
 						trkVmax = trkpt.speed;
 				}
@@ -603,6 +616,14 @@ public class Gpx extends Tile implements Runnable {
 	public float maxTrkSpeed() {
 		return trkVmax;
 	}
+	
+	/** 
+	 * @return current GPX track's exponentially averaged vertical speed in m/s
+	 */
+	public float deltaAltTrkSpeed() {
+		return trkVertSpd;
+	}
+	
 	
 	
 	public void run() {
