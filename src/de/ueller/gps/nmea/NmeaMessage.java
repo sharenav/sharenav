@@ -66,12 +66,14 @@ public class NmeaMessage {
 	protected static final Logger logger = Logger.getInstance(NmeaMessage.class,Logger.TRACE);
 	public StringBuffer buffer=new StringBuffer(80);
 	private static String spChar=",";
-	private float head,speed,alt;
+	private float head,speed,alt,pdop;
 	private final LocationMsgReceiver receiver;
 	private int mAllSatellites;
 	private int qual;
 	private boolean lastMsgGSV=false;
 	private Satelit satelit[]=new Satelit[12];
+	private Position pos = new Position(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1,
+			new Date());
 	private Calendar cal = Calendar.getInstance();
 	public NmeaMessage(LocationMsgReceiver receiver) {
 		this.receiver = receiver;
@@ -163,8 +165,9 @@ public class NmeaMessage {
 				cal.set(Calendar.MONTH, ((date_tmp / 100) % 100) - 1);
 				cal.set(Calendar.DAY_OF_MONTH, (date_tmp / 10000) % 100);				
 			    //Magnetic Variation
-				Position p=new Position(lat,lon,alt,speed,head,0,cal.getTime());
-				receiver.receivePosItion(p);
+				pos.latitude = lat; pos.longitude = lon; pos.altitude = alt; pos.speed = speed; pos.course = head;
+				pos.pdop = pdop; pos.mode = 0; pos.date = cal.getTime();
+				receiver.receivePosItion(pos);
 				if (this.qual > 1) {
 					receiver.receiveSolution("D" + mAllSatellites + "S");
 				} else {
@@ -209,7 +212,10 @@ public class NmeaMessage {
 					}
 				}
 				/**
-				 *	PDOP (dilution of precision) 
+				 * PDOP (dilution of precision)
+				 */
+				pdop = getFloatToken((String)param.elementAt(15));
+				/**
 			     *  Horizontal dilution of precision (HDOP) 
 			     *  Vertical dilution of precision (VDOP) 
 				 */

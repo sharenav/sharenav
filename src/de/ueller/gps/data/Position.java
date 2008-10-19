@@ -28,6 +28,7 @@ public class Position {
 	 */
 	public float speed;
 	public float course;
+	public float pdop = 0.0f;
 	public int mode=-1;
 	public Date date;
 //	 
