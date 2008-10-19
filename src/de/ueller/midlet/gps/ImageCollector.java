@@ -307,8 +307,8 @@ public class ImageCollector implements Runnable {
 		String name = null;
 		if (pc[nextPaint].actualWay != null){
 			String maxspeed="";
-			if (pc[nextPaint].actualWay.maxspeed != 0){
-				maxspeed=" SL:" + pc[nextPaint].actualWay.maxspeed;
+			if (pc[nextPaint].actualWay.getMaxSpeed() != 0){
+				maxspeed=" SL:" + pc[nextPaint].actualWay.getMaxSpeed();
 			}
 			if (pc[nextPaint].actualWay.nameIdx != -1) {
 				name=screenPc.trace.getName(pc[nextPaint].actualWay.nameIdx);

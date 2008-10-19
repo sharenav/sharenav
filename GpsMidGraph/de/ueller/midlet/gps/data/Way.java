@@ -39,8 +39,13 @@ public class Way extends Entity{
 	public static final byte DRAW_AREA=2;
 	public static final byte DRAW_FULL=3;
 	
-	public static final byte WAY_ONEWAY=1;
-	public static final byte WAY_AREA=2;
+	private static final int MaxSpeedMask = 0xff;
+	private static final int MaxSpeedShift = 0;
+	private static final int ModMask = 0xff00;
+	private static final int ModShift = 8;
+	
+	public static final int WAY_ONEWAY=1 << ModShift;
+	public static final int WAY_AREA=2 << ModShift;
 
 	public static final byte PAINTMODE_COUNTFITTINGCHARS = 0;
 	public static final byte PAINTMODE_DRAWCHARS = 1;
@@ -48,12 +53,8 @@ public class Way extends Entity{
 	
 	protected static final Logger logger = Logger.getInstance(Way.class,Logger.TRACE);
 
-	
-	public byte maxspeed;
-	//This is not currently used, so save the 4 bytes of memory per way
-	//public int isInIdx=-1;
-	public byte mod=0;
-//	public short[][] paths;
+	private int flags=0;
+
 
 	public short[] path;
 	public short minLat;
@@ -79,7 +80,9 @@ public class Way extends Entity{
 	private static Font pathFont;
 	private static int pathFontHeight;
 	private static int pathFontMaxCharWidth;
-	private static int pathFontBaseLinePos;	
+	private static int pathFontBaseLinePos;
+	
+	
 
 	static final IntPoint l1b = new IntPoint();
 	static final IntPoint l1e = new IntPoint();
@@ -91,6 +94,7 @@ public class Way extends Entity{
 	static final IntPoint l4e = new IntPoint();
 	static final IntPoint s1 = new IntPoint();
 	static final IntPoint s2 = new IntPoint();
+	
 
 //	private final static Logger logger = Logger.getInstance(Way.class,
 //			Logger.TRACE);
@@ -128,7 +132,7 @@ public class Way extends Entity{
 		}
 		if ((f & WAY_FLAG_MAXSPEED) == WAY_FLAG_MAXSPEED) {
 //			logger.debug("read maxspeed");
-			maxspeed = is.readByte();
+			flags = is.readByte();
 		}
 		layers[idx] = 0;
 		if ((f & WAY_FLAG_LAYER) == WAY_FLAG_LAYER) {
@@ -139,14 +143,14 @@ public class Way extends Entity{
 			layers[idx] = is.readByte();
 		}
 		if ((f & WAY_FLAG_ONEWAY) == WAY_FLAG_ONEWAY) {
-			mod += WAY_ONEWAY;
+			flags += WAY_ONEWAY;
 		}
 		if (((f & WAY_FLAG_AREA) == WAY_FLAG_AREA) || C.getWayDescription(type).isArea) {
 			if ((f & WAY_FLAG_AREA) == WAY_FLAG_AREA){
 				logger.debug("Loading explicit Area: " + this);
 				System.out.println("f: " + f);
 			}
-			mod += WAY_AREA;
+			flags += WAY_AREA;
 		}
 
 		boolean longWays=false;
@@ -831,11 +835,15 @@ public class Way extends Entity{
 	}
 	
 	public boolean isOneway(){
-		return ((mod & WAY_ONEWAY) == WAY_ONEWAY);
+		return ((flags & WAY_ONEWAY) == WAY_ONEWAY);
 	}
 	
 	public boolean isArea() {
-		return ((mod & WAY_AREA) > 0);
+		return ((flags & WAY_AREA) > 0);
+	}
+	
+	public byte getMaxSpeed() {
+		return (byte)((flags & MaxSpeedMask) >> MaxSpeedShift);
 	}
 	
 	private float[] getFloatNodes(SingleTile t, short[] nodes, float offset) {
