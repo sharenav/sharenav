@@ -3,6 +3,8 @@ package de.ueller.gpsMid.mapData;
 import java.io.DataInputStream;
 import java.io.IOException;
 
+import javax.microedition.lcdui.Graphics;
+
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
@@ -58,6 +60,7 @@ public class RouteTile extends RouteBaseTile {
 
 	/**
 	 * Only for debuging pruposes to show the routeNode and their connections
+	 * This debugging can be activated by uncommenting the call to tile[4].paint in ImageCollector
 	 */
 	public void paint(PaintContext pc, byte layer) {
 		if (pc == null && layer != Tile.LAYER_NODE){ //Which layer should this be at?
@@ -69,7 +72,7 @@ public class RouteTile extends RouteBaseTile {
 				try {
 					loadNodes();
 				} catch (IOException e) {
-					e.printStackTrace();
+					logger.exception("Failed to load routing nodes", e);
 					return;
 				}
 			}
@@ -77,31 +80,50 @@ public class RouteTile extends RouteBaseTile {
 				try {
 					loadConnections(true);
 				} catch (IOException e) {
-					e.printStackTrace();
+					logger.exception("Failed to load routing connections", e);
 					return;
 				}
 			}
-			pc.g.setColor(255, 100, 100);
+			
 			for (int i=0; i< nodes.length;i++){
 				if (pc.getP().isPlotable(nodes[i].lat, nodes[i].lon)){
 					pc.getP().forward(nodes[i].lat, nodes[i].lon, pc.swapLineP);
-					pc.g.drawRect(pc.swapLineP.x-2, pc.swapLineP.y-2, 5, 5);
-//					pc.g.drawString(" "+nodes[i].lat+"/"+ nodes[i].lon,pc.swapLineP.x+2, pc.swapLineP.y+2, 0);
-//					System.out.println("have to draw " + connections[i].length + " connections");
+					pc.g.drawRect(pc.swapLineP.x-2, pc.swapLineP.y-2, 5, 5); //Draw node
 					for (int ii=0; ii< connections[i].length;ii++){
-
 						Connection c=connections[i][ii];
+						Connection [] reverseCons;
 						RouteNode rnt=getRouteNode(c.toId);
+						
 						if (rnt == null){
 							RouteBaseTile dict = (RouteBaseTile) Trace.getInstance().getDict((byte)4);
 							rnt=dict.getRouteNode(c.toId);
+							reverseCons = dict.getConnections(rnt.id,dict,true);
+						} else {
+							reverseCons = getConnections(rnt.id, this, true);
 						}
 						if (rnt == null){
 							//#debug info
 							logger.info("Routenode not found");
 						} else {
+							/**
+							 * Try and determine if the connection is a one way connection
+							 */
+							boolean oneway = true; 
+							for (int iii = 0;iii < reverseCons.length; iii ++) {
+								Connection c2=reverseCons[iii];
+								if (c2.toId - minId == i) {
+									oneway = false;
+								}
+							}
+							if (oneway) {
+								pc.g.setColor(255, 100, 100);
+							} else {
+								pc.g.setColor(0, 100, 255);
+							}
 							pc.getP().forward(rnt.lat, rnt.lon, pc.lineP2);
 							pc.g.drawLine(pc.swapLineP.x, pc.swapLineP.y, pc.lineP2.x, pc.lineP2.y);
+							pc.g.setColor(0, 0, 0);
+							pc.g.drawString(Integer.toString(c.cost), (pc.swapLineP.x + pc.lineP2.x) / 2, (pc.swapLineP.y + pc.lineP2.y) / 2, Graphics.TOP | Graphics.RIGHT);
 						}
 					}
 				}
