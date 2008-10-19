@@ -89,7 +89,7 @@ public class RouteData {
 		int lastIndex=nl.size();
 		Node lastNode=null;
 		int thisIndex=0;
-		long dist=0;
+		int dist=0;
 		int count=0;
 		byte bearing=0;
 		for (Node n:nl){
@@ -108,7 +108,9 @@ public class RouteData {
 				if (thisIndex==lastIndex || (n.connectedLineCount != 2)){
 					RouteNode next=getRouteNode(n);
 					byte endBearing=MyMath.bearing_start(lastNode,n);
-					addConnection(from, next,dist,w,bearing,endBearing);
+					if (dist > Short.MAX_VALUE)
+						System.out.println("ERROR: overflow! Routing connection (" + dist + "m) too long: ");
+					addConnection(from, next,(short)dist,w,bearing,endBearing);
 					from=next;
 					dist=0;
 					count=1;
@@ -139,16 +141,18 @@ public class RouteData {
 	 * @param dist 
 	 * @param routeNode
 	 */
-	private void addConnection(RouteNode from, RouteNode to, long dist, Way w,byte bs, byte be) {
+	private void addConnection(RouteNode from, RouteNode to, short dist, Way w,byte bs, byte be) {
 		float speed=w.getSpeed();
-		long time=(int)(dist/speed);
+		float time=(short)(dist/speed);
+		if (time > Short.MAX_VALUE)
+			System.out.println("ERROR: overflow! Routing down path takes too long (" + time + ")");
 		nodes.put(from.node.id, from);
 		nodes.put(to.node.id, to);
-		Connection c=new Connection(to,dist,time,bs,be,w);
+		Connection c=new Connection(to,dist,(short)time,bs,be,w);
 		from.connected.add(c);
 		to.connectedFrom.add(c);
 		if (! w.isOneWay()){
-			Connection cr=new Connection(from,dist,time,MyMath.inversBearing(be),MyMath.inversBearing(bs),w);
+			Connection cr=new Connection(from,dist,(short)time,MyMath.inversBearing(be),MyMath.inversBearing(bs),w);
 			cr.from=to;
 			to.connected.add(cr);
 			from.connectedFrom.add(cr);
