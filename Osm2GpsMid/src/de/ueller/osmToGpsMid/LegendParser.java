@@ -322,6 +322,14 @@ public class LegendParser extends DefaultHandler{
 						System.out.println("Error: textscale for " +currentWay.description + " is incorrect");
 					}
 				}
+
+				if (qName.equals("onewayArrowScale")) {
+					try {
+						currentWay.minOnewayArrowScale = config.getRealScale( Integer.parseInt(atts.getValue("scale")) );				
+					} catch (NumberFormatException nfe) {
+						System.out.println("Error: oneway arrow scale for " +currentWay.description + " is incorrect");
+					}
+				}
 				
 				if (qName.equals("isArea")) {
 					currentWay.isArea = atts.getValue("area").equalsIgnoreCase("true");

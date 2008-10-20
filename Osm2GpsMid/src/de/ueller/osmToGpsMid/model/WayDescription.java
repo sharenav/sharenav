@@ -20,6 +20,7 @@ public class WayDescription {
 	public String	nameFallbackKey;
 	public int		minScale;
 	public int		minTextScale;
+	public int		minOnewayArrowScale;
 	public int		lineColor;	
 	public boolean	lineStyleDashed; //
 	public int		boardedColor;

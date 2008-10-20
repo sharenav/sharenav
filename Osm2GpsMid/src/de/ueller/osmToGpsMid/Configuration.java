@@ -43,7 +43,7 @@ public class Configuration {
 	 * Specifies the format of the map on disk we are about to write
 	 * This constant must be in sync with GpsMid
 	 */
-	public final static short MAP_FORMAT_VERSION = 16;
+	public final static short MAP_FORMAT_VERSION = 17;
 	
 		private ResourceBundle rb;
 		private ResourceBundle vb;
