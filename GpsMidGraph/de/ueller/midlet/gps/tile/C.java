@@ -21,7 +21,7 @@ public class C {
 	 * Specifies the format of the map on disk we expect to see
 	 * This constant must be in sync with Osm2GpsMid
 	 */
-	public final static short MAP_FORMAT_VERSION = 16;
+	public final static short MAP_FORMAT_VERSION = 17;
 	
 	public final static byte NODE_MASK_ROUTENODELINK=0x1;
 	public final static byte NODE_MASK_TYPE=0x2;
@@ -32,6 +32,7 @@ public class C {
 	public final static byte LEGEND_FLAG_IMAGE = 0x01;
 	public final static byte LEGEND_FLAG_SEARCH_IMAGE = 0x02;
 	public final static byte LEGEND_FLAG_MIN_IMAGE_SCALE = 0x04;
+	public final static byte LEGEND_FLAG_MIN_ONEWAY_ARROW_SCALE = LEGEND_FLAG_MIN_IMAGE_SCALE;
 	public final static byte LEGEND_FLAG_TEXT_COLOR = 0x08;
 	public final static byte LEGEND_FLAG_NON_HIDEABLE = 0x10;
 	public final static byte LEGEND_FLAG_NON_ROUTABLE = 0x20;
@@ -159,7 +160,11 @@ public class C {
 			if (lineStyle)
 				ways[i].lineStyle = Graphics.DOTTED;
 			else
-				ways[i].lineStyle = Graphics.SOLID;			
+				ways[i].lineStyle = Graphics.SOLID;
+			if ((flags & LEGEND_FLAG_MIN_ONEWAY_ARROW_SCALE) > 0)
+				ways[i].maxOnewayArrowScale = ds.readInt();
+			else
+				ways[i].maxOnewayArrowScale = ways[i].maxScale; 
 		}
 	}	
 	

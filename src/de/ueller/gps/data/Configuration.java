@@ -87,6 +87,8 @@ public class Configuration {
 	public final static byte CFGBIT_POI_LABELS_LARGER=28;
 	// bit 29: big wpt labels
 	public final static byte CFGBIT_WPT_LABELS_LARGER=29;
+	// bit 30: show oneway arrows
+	public final static byte CFGBIT_ONEWAY_ARROWS=30;
 
 	
 	/**
@@ -188,6 +190,7 @@ public class Configuration {
 				   		1<<CFGBIT_AREATEXTS |
 				   		1<<CFGBIT_WPTTEXTS |
 				   		// 1<<CFGBIT_WAYTEXTS | // way texts are still experimental
+				   		1<<CFGBIT_ONEWAY_ARROWS |
 				   		1<<CFGBIT_POIS |
 				   		1<<CFGBIT_ROUTING_HELP |
 				   		1<<CFGBIT_AUTOSAVE_MAPPOS |

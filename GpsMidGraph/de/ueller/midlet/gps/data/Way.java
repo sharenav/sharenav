@@ -302,6 +302,9 @@ public class Way extends Entity{
 			pc.currentPos=new PositionMark(pc.center.radlat,pc.center.radlon);
 			pc.currentPos.setEntity(this, getNodesLatLon(t, true), getNodesLatLon(t, false));
 		}
+		if (isOneway()) {
+			paintPathOnewayArrows(pc, t);
+		}
 		paintPathName(pc, t);
 	}
 	
@@ -539,6 +542,150 @@ public class Way extends Entity{
 		pc.g.setFont(originalFont);
     }
 
+    public void paintPathOnewayArrows(PaintContext pc, SingleTile t) {
+    	// exit if not zoomed in enough
+    	WayDescription wayDesc = C.getWayDescription(type);
+		if (pc.scale > wayDesc.maxOnewayArrowScale /* * pc.config.getDetailBoostMultiplier() */ ) {			
+			return;
+		}	
+
+		if ( !Trace.getInstance().getConfig().getCfgBitState(Configuration.CFGBIT_ONEWAY_ARROWS)) {
+			return;
+		}
+		
+		// calculate on-screen-width of the way
+		double w = (int)(pc.ppm*wayDesc.wayWidth + 1);
+		 
+		// if arrow would get too small do not draw
+		if(w<3) {
+			return;
+		}
+		// if arrow would be very small make it a bit larger
+		if(w<4) {
+			w=4;
+		}
+		// maximum arrow size
+		int lenTriangle = 10;
+		int lenLine = 10;
+		// calculated arrow size
+		if (w < 6) {
+			lenLine = (int) ((w * 4) / 3);
+			lenTriangle = lenLine;
+		} else {
+			w=6;
+		}
+		int completeLen = lenTriangle + lenLine;
+		int sumTooSmallLen = 0;
+			
+		// determine region in which arrows can be drawn
+		int minArrowScreenX = pc.g.getClipX() - completeLen;
+		int minArrowScreenY = pc.g.getClipY() - completeLen;
+		int maxArrowScreenX = minArrowScreenX + pc.g.getClipWidth() + completeLen;
+		int maxArrowScreenY = minArrowScreenY + pc.g.getClipHeight() + completeLen;
+				
+		Projection p = pc.getP();
+		
+		double posArrow_x = 0;
+    	double posArrow_y = 0;    	
+    	double slope_x=0;
+    	double slope_y=0;
+    	
+//    	int delta=0;
+//    	double nextDeltaSub=0;
+    	
+    	IntPoint lineP1 = pc.lineP1;
+    	IntPoint lineP2 = pc.lineP2;
+    	IntPoint swapLineP = pc.swapLineP;
+    	
+		// draw arrow in each segment of path
+		for (int i1 = 0; i1 < path.length; i1++) {
+			// get the next line point coordinates into lineP2
+			int idx = this.path[i1];
+			// forward() is in Mercator.java
+			p.forward(t.nodeLat[idx], t.nodeLon[idx], lineP2, t);
+			// if we got only one line point, get a second one 
+			if (lineP1 == null) {
+				lineP1 = lineP2;
+				lineP2 = swapLineP;
+				continue;
+			}
+			// calculate the slope of the new line 
+			double distance = Math.sqrt( ((double)lineP2.y-(double)lineP1.y)*((double)lineP2.y-(double)lineP1.y) +
+					((double)lineP2.x-(double)lineP1.x)*((double)lineP2.x-(double)lineP1.x) );
+
+			if (distance > completeLen || sumTooSmallLen > completeLen) {
+				if (sumTooSmallLen > completeLen) {
+					sumTooSmallLen = 0;
+					// special color for not completely fitting arrows
+					pc.g.setColor(80,80,80);
+				} else {
+					// normal color
+					pc.g.setColor(50,50,50);
+				}
+				if (distance!=0) {
+					slope_x = ((double)lineP2.x-(double)lineP1.x)/distance;
+					slope_y = ((double)lineP2.y-(double)lineP1.y)/distance;
+				} else {
+					//logger.debug("ZERO distance in path segment " + i1 + "/" + path.length + " of " + name);
+					break;
+				}
+				// new arrow position is middle of way segment
+				posArrow_x = lineP1.x + slope_x * (distance-completeLen)/2;
+				posArrow_y = lineP1.y + slope_y * (distance-completeLen)/2;				
+				
+				// draw arrow only if it's at least partly on-screen
+				if ( (int)posArrow_x >= minArrowScreenX &&
+					 (int)posArrow_x <= maxArrowScreenX &&
+					 (int)posArrow_y >= minArrowScreenX &&
+					 (int)posArrow_y <= maxArrowScreenY									
+				) {
+					drawArrow(pc,
+							  posArrow_x, posArrow_y,
+							  slope_x, slope_y,
+							  w, lenLine, lenTriangle 
+					);					
+				}
+				
+//				// delta calculation should be improved
+//				delta = completeLen * 3;							
+//				// add slope to arrow position
+//				posArrow_x += slope_x * delta;
+//				posArrow_y += slope_y * delta;
+//				if (slope_x==0 && slope_y==0) {
+//					break;
+//				}
+//
+//				// how much would we start to draw the next arrow over the end point
+//				if (slope_x != 0) {
+//					nextDeltaSub=(lineP2.x-posArrow_x) / slope_x;
+//				}
+			} else {
+				sumTooSmallLen += distance;
+			}		
+				
+			// continue in next path segment
+			swapLineP = lineP1;
+			lineP1 = lineP2;
+			lineP2 = swapLineP;	
+		} // end segment for-loop		
+    }
+    
+    private void drawArrow( PaintContext pc,
+    						double x, double y,
+    						double slopeX, double slopeY,
+    						double w, int lenLine, int lenTriangle)
+    {
+    	double x2 = x + slopeX * (double) lenLine;
+    	double y2 = y + slopeY * (double) lenLine;
+    	
+    	pc.g.drawLine((int) x, (int) y, (int) x2, (int) y2);
+    	pc.g.fillTriangle(
+			(int)(x2 + slopeY * w/2), (int)(y2 - slopeX * w/2),
+			(int)(x2 - slopeY * w/2), (int)(y2 + slopeX * w/2),
+			(int)(x2 + slopeX * lenTriangle), (int)(y2 + slopeY * lenTriangle)
+    	);
+    }
+    
 	private float getParLines(int xPoints[], int yPoints[], int i, int w,
 			IntPoint p1, IntPoint p2, IntPoint p3, IntPoint p4) {
 		int i1 = i + 1;
