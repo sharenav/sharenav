@@ -89,6 +89,8 @@ public class Configuration {
 	public final static byte CFGBIT_WPT_LABELS_LARGER=29;
 	// bit 30: show oneway arrows
 	public final static byte CFGBIT_ONEWAY_ARROWS=30;
+	// bit 31: Debug Option: show route connections
+	public final static byte CFGBIT_ROUTE_CONNECTIONS=31;
 
 	
 	/**

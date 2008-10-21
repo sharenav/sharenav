@@ -139,6 +139,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private ChoiceGroup backlightOpts;
 	private ChoiceGroup debugLog;
 	private ChoiceGroup debugSeverity;
+	private ChoiceGroup debugOther;
 	private StringItem  gpxUrl;
 	private StringItem  gpsUrl;
 	private ChoiceGroup btKeepAlive;
@@ -324,6 +325,12 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		debugSeverity = new ChoiceGroup("Log severity:", ChoiceGroup.MULTIPLE,loggings,null);
 		debugSeverity.setSelectedFlags(selDebug);
 		menuDebug.append(debugSeverity);
+
+		loggings = new String[1];
+		loggings[0] = "Show route connections";
+		debugOther = new ChoiceGroup("Other:", ChoiceGroup.MULTIPLE,loggings,null);
+		debugOther.setSelectedIndex(0, config.getCfgBitState(Configuration.CFGBIT_ROUTE_CONNECTIONS, true));
+		menuDebug.append(debugOther);
 		
 		// Prepare routingOptions menu
 		menuRoutingOptions.addCommand(BACK_CMD);
@@ -649,6 +656,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				GpsMid.getInstance().getConfig().setDebugSeverityInfo(selDebug[0]);
 				GpsMid.getInstance().getConfig().setDebugSeverityDebug(selDebug[1]);
 				GpsMid.getInstance().getConfig().setDebugSeverityTrace(selDebug[2]);
+				GpsMid.getInstance().getConfig().setCfgBitState(Configuration.CFGBIT_ROUTE_CONNECTIONS, debugOther.isSelected(0), true);
 				Logger.setGlobalLevel();
 				state = STATE_ROOT;
 				this.show();			
