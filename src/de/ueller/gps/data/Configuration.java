@@ -147,8 +147,8 @@ public class Configuration {
 	private int gpxRecordMinMilliseconds;
 	private int gpxRecordMinDistanceCentimeters;
 	private int gpxRecordAlwaysDistanceCentimeters;
-	private int cfgBits=0;
-	private int cfgBitsDefault=0;
+	private long cfgBits=0;
+	private long cfgBitsDefault=0;
 	private int detailBoost=0;
 	private int detailBoostDefault=0;
 	private float detailBoostMultiplier;
@@ -181,7 +181,7 @@ public class Configuration {
 				logger.info("No database loaded at the moment");
 				return;
 			}	
-			cfgBits=readInt(database, RECORD_ID_CFGBITS);
+			cfgBits=readLong(database, RECORD_ID_CFGBITS);
 			// set initial values if record store does not exist yet
 			if( ! getCfgBitState(CFGBIT_DEFAULTVALUESAPPLIED) ) {
 				cfgBits=1<<CFGBIT_DEFAULTVALUESAPPLIED | 
@@ -296,6 +296,9 @@ public class Configuration {
 	private void write(int i,int idx){
 		write(""+i,idx);
 	}
+	private void write(long i,int idx){
+		write(""+i,idx);
+	}
 
 
 	public String readString(RecordStore database,int idx){
@@ -336,6 +339,22 @@ public class Configuration {
 			}			
 		} catch (Exception e){
 			logger.exception("Failed to read int from config database", e);
+			return 0;
+		}
+	}
+	
+	public long readLong(RecordStore database,int idx){
+		try {
+			String tmp = readString(database, idx);
+			//#debug info
+			logger.info("Read from config database " + idx + ": " + tmp);
+			if (tmp == null) {
+				return 0;
+			} else {
+				return Long.parseLong(tmp);
+			}			
+		} catch (Exception e){
+			logger.exception("Failed to read Long from config database", e);
 			return 0;
 		}
 	}
@@ -501,16 +520,12 @@ public class Configuration {
 		}	
 	}	
 	
-	private void setCfgBits(int cfgBits, boolean setAsDefault) {
+	private void setCfgBits(long cfgBits, boolean setAsDefault) {
 		this.cfgBits = cfgBits;
 		if (setAsDefault) {
 			this.cfgBitsDefault = cfgBits;
 			write(cfgBitsDefault, RECORD_ID_CFGBITS);
 		}
-	}
-	
-	private int getCfgBitsDefault() {
-		return cfgBitsDefault;
 	}
 	
 	public int getDetailBoost() {
