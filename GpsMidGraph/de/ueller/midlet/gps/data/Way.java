@@ -561,19 +561,17 @@ public class Way extends Entity{
 			return;
 		}
 		// if arrow would be very small make it a bit larger
-		if(w<4) {
-			w=4;
+		if(w<5) {
+			w=5;
 		}
-		// maximum arrow size
-		int lenTriangle = 10;
-		int lenLine = 10;
-		// calculated arrow size
-		if (w < 6) {
-			lenLine = (int) ((w * 4) / 3);
-			lenTriangle = lenLine;
-		} else {
-			w=6;
+		// limit maximum arrow width
+		if (w > 10) {
+			w=10;
 		}
+		// calculate arrow length
+		int lenTriangle = (int) ((w * 5) / 4);
+		int lenLine = (int) ((w * 4) / 3);
+
 		int completeLen = lenTriangle + lenLine;
 		int sumTooSmallLen = 0;
 			
