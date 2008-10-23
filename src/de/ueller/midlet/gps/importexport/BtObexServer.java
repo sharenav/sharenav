@@ -58,7 +58,7 @@ public class BtObexServer
 		   String fileName = op.getReceivedHeaders().getHeader(HeaderSet.NAME).toString();
 		   
 		   if (!fileName.endsWith(".gpx")) {
-			   logger.error("Can only except GPX files. File not valid: " + fileName);
+			   logger.error("Can only accept GPX files. File not valid: " + fileName);
 			   return ResponseCodes.OBEX_HTTP_UNSUPPORTED_TYPE;
 		   }
 		   					
