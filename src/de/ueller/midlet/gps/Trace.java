@@ -248,8 +248,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	private int sumWrongDirection=0;
 	private int oldAwayFromNextArrow=0;
 	private int oldRouteInstructionColor=0x00E6E6E6;
-	private boolean prepareInstructionSaid=false;
-	private boolean routeRecalculationRequired=false;
+	private static boolean prepareInstructionSaid=false;
+	private static boolean checkDirectionSaid=false;
+	private static boolean routeRecalculationRequired=false;
 	// private int routerecalculations=0;
 	
 	public Vector locationUpdateListeners;
@@ -1330,8 +1331,8 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 							// if there's i.e. a 2nd left arrow in row "left" must be repeated
 							parent.mNoiseMaker.resetSoundRepeatTimes();
 						}
-						// after passing an arrow saying "in xxx metres" is allowed again 
-						prepareInstructionSaid = false;
+						// after passing an arrow all instructions, i.e. saying "in xxx metres" are allowed again 
+						resetVoiceInstructions();
 						//System.out.println("iPassedRouteArrow "+ iPassedRouteArrow);
 					} else {
 						c = (ConnectionWithNode) route.elementAt(iPassedRouteArrow);
@@ -1468,12 +1469,15 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				    		routeInstructionColor=0x00FFCD9B;
 						} else {
 					    	// background colour if distance to next arrow has just decreased
-				    		routeInstructionColor=0x00B7FBBA;						
+				    		routeInstructionColor=0x00B7FBBA;
+				    		// we are going towards the next arrow again, so we need to warn again
+				    		// if we go away
+				    		checkDirectionSaid = false;
 						}
 						sumWrongDirection += diffArrowDist;
 						//System.out.println("Sum wrong direction: " + sumWrongDirection);
 						oldAwayFromNextArrow = intDistance;
-						if (intDistance>=PASSINGDISTANCE) {
+						if (intDistance>=PASSINGDISTANCE && !checkDirectionSaid) {
 							if (intDistance <= PREPAREDISTANCE) {
 								soundToPlay.append( (a==4 ? "CONTINUE" : "PREPARE") + ";" + soundDirections[a]);
 								soundRepeatDelay=5;
@@ -1492,7 +1496,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 						}
 						pict=scaledPict;
 				    }
-					if (i == iNearest + 1) {
+					if (i == iNearest + 1 && !checkDirectionSaid) {
 						double distance=ProjMath.getDistance(nearestLat, nearestLon, lastTo.lat, lastTo.lon);
 						// if there is a close direction arrow after the current one
 						// inform the user about its direction
@@ -1529,7 +1533,8 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			    		if (diffArrowDist > 0) {
 				    		soundToPlay.setLength(0);
 				    		soundToPlay.append ("CHECK_DIRECTION");
-				    		soundRepeatDelay=5;
+				    		soundRepeatDelay=30;
+				    		checkDirectionSaid = true;
 				    		routeInstructionColor=0x00E6A03C;
 			    		} else if (diffArrowDist == 0) {
 			    			routeInstructionColor = oldRouteInstructionColor;
@@ -1625,6 +1630,11 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		if (soundToPlay.length()!=0 && config.getCfgBitState(Configuration.CFGBIT_SND_ROUTINGINSTRUCTIONS)) {
 			parent.mNoiseMaker.playSound(soundToPlay.toString(), (byte) soundRepeatDelay, (byte) soundRepeatTimes);
 		}
+	}
+	
+	private static void resetVoiceInstructions() {
+		prepareInstructionSaid = false;
+		checkDirectionSaid = false;
 	}
 	
 	public static Image doubleImage(Image original)
@@ -2105,6 +2115,8 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			iPassedRouteArrow=0;
 			sumWrongDirection=-1;
 			oldRouteInstructionColor = 0x00E6E6E6;
+			resetVoiceInstructions();			
+			parent.mNoiseMaker.resetSoundRepeatTimes();
 		}
 		try {
 			if (config.isStopAllWhileRouteing()){
