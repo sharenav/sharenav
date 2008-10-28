@@ -13,6 +13,8 @@
  */
 package de.ueller.midlet.gps;
 
+import de.ueller.midlet.gps.tile.C;
+
 import java.io.IOException;
 
 import javax.microedition.lcdui.Canvas;
@@ -55,6 +57,7 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 	private int topStart=106;
 	private int space;
 	private double scale=1;
+	private String strVersion; 
 
 
 	public Splash(GpsMid main){
@@ -81,6 +84,7 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 	space=getHeight()-topStart;
 	ssize=f.getHeight()*txt.length+space;
 	top=-space;
+	strVersion = "V" + C.getAppVersion() + " (" + C.getBundleDate() + ")";
 	show();
 	addCommand(BACK_CMD);
 	addCommand(EXIT_CMD);
@@ -97,9 +101,13 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 		g.setFont(f);
 		g.fillRect(0, 0, getWidth(), getHeight());
 		int sp=f.getHeight();
+		int x = (int) (5*scale+ (getWidth()-splash.getWidth())/2);
 		
 		g.drawImage(splash,getWidth()/2, 0,Graphics.HCENTER|Graphics.TOP);
 
+		g.setColor(0xFFFF99);
+		g.drawString(strVersion, (getWidth() + splash.getWidth())/2 - 2 , 2, Graphics.TOP|Graphics.RIGHT);		
+		
 		g.setColor(255, 40, 40);
 		int startLine=top/sp;
 		int yc= topStart-top % sp;
@@ -108,8 +116,8 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 		for (int i=startLine; i< txt.length;i++){
 			visible=true;
 			if (i >= 0){
-			int w=f.stringWidth(txt[i]);
-			g.drawString(txt[i], (int) (5*scale+ (getWidth()-splash.getWidth())/2), yc, 0);
+				int w=f.stringWidth(txt[i]);
+				g.drawString(txt[i], x, yc, 0);
 			}
 			yc+=sp;
 			if (! visible){

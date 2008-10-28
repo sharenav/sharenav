@@ -21,7 +21,7 @@ public class C {
 	 * Specifies the format of the map on disk we expect to see
 	 * This constant must be in sync with Osm2GpsMid
 	 */
-	public final static short MAP_FORMAT_VERSION = 17;
+	public final static short MAP_FORMAT_VERSION = 18;
 	
 	public final static byte NODE_MASK_ROUTENODELINK=0x1;
 	public final static byte NODE_MASK_TYPE=0x2;
@@ -52,6 +52,8 @@ public class C {
 	public final static byte OM_OVERVIEW=2;
 	
 	public static int BACKGROUND_COLOR = 0x009BFF9B;
+	public static String appVersion;
+	public static String bundleDate;
 	
 	private static POIdescription[] pois;
 	private static WayDescription[] ways;
@@ -79,6 +81,9 @@ public class C {
 					"data.  Expected: " + MAP_FORMAT_VERSION + " Read: " + mapVersion);
 			throw new IOException("Wrong map file format");
 		}
+		
+		appVersion = ds.readUTF();
+		bundleDate = ds.readUTF();
 		
 		BACKGROUND_COLOR = ds.readInt();		
 		
@@ -276,4 +281,12 @@ public class C {
 		}		
 		return 0;
 	}
+
+	public static String getAppVersion() {
+		return appVersion;
+	}
+
+	public static String getBundleDate() {
+		return bundleDate;
+	}	
 }
