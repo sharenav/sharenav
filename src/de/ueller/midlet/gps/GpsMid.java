@@ -41,6 +41,7 @@ import com.nokia.mid.ui.DeviceControl;
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.tools.HelperRoutines;
 import de.ueller.midlet.gps.data.Node;
+import de.ueller.midlet.gps.tile.C;
 
 
 
@@ -77,6 +78,8 @@ public class GpsMid extends MIDlet implements CommandListener{
 	
 	public NoiseMaker mNoiseMaker = null;
 	
+	public static C c;
+	
 	/**
 	 * This Thread is used to periodically prod the display
 	 * to keep the backlight illuminator if this is wanted
@@ -107,6 +110,12 @@ public class GpsMid extends MIDlet implements CommandListener{
 
 		mNoiseMaker = new NoiseMaker();
 
+		// read in legend.dat to have i.e. bundle date already accessable from the splash screen
+		try {
+			this.c = new C();
+		} catch (Exception e) {
+			l.exception("Error loading legend.dat on startup", e);
+		}
 		
 		phoneMaxMemory = determinPhoneMaxMemory();
 		

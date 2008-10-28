@@ -887,7 +887,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		Images i;
 		i = new Images();
 		pc = new PaintContext(this, i);
-		pc.c = new C();
+		pc.c = GpsMid.c;
 		imageCollector = new ImageCollector(t, this.getWidth(), this.getHeight(), this,
 				i, pc.c);
 //		projection = ProjFactory.getInstance(center,course, scale, getWidth(), getHeight());
