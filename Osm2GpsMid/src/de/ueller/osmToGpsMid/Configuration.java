@@ -15,7 +15,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Hashtable;
 import java.util.MissingResourceException;
 import java.util.PropertyResourceBundle;
@@ -43,7 +45,7 @@ public class Configuration {
 	 * Specifies the format of the map on disk we are about to write
 	 * This constant must be in sync with GpsMid
 	 */
-	public final static short MAP_FORMAT_VERSION = 17;
+	public final static short MAP_FORMAT_VERSION = 18;
 	
 		private ResourceBundle rb;
 		private ResourceBundle vb;
@@ -366,6 +368,11 @@ public class Configuration {
 		 */
 		public String getVersion() {
 			return vb.getString("version");
+		}
+
+		public String getBundleDate() {
+	        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+	        return format.format(new Date());	
 		}
 
 		public int getMaxTileSize() {

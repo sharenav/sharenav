@@ -147,9 +147,17 @@ public class CreateGpsMidData {
 		try {
 			foi = new FileOutputStream(path + "/legend.dat");
 			DataOutputStream dsi = new DataOutputStream(foi);
-			dsi.writeShort(Configuration.MAP_FORMAT_VERSION);
+			dsi.writeShort(Configuration.MAP_FORMAT_VERSION);			
 			/**
-			 * Writing gloabal info 
+			 * Write application version
+			 */
+			dsi.writeUTF(Configuration.getConfiguration().getVersion());
+			/**
+			 * Write bundle date
+			 */
+			dsi.writeUTF(Configuration.getConfiguration().getBundleDate());
+			/**
+			 * Writing global info 
 			 */
 			dsi.writeInt(Configuration.getConfiguration().background_color);
 			/**
