@@ -135,6 +135,7 @@ public class Jsr172GpxParser extends DefaultHandler implements GpxParser {
 		logger.debug("Finished parsing XML document");
 	}
 	public void characters(char[] ch, int start, int length) {
+		// FIXME: JSR172 parsing is disabled, so UTF-8 decoding is not done here like in MinML2GpxParser.java
 		if (wayPt != null) {
 			if (name) {
 				if (wayPt.displayName == null) {

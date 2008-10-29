@@ -3,6 +3,7 @@ package de.ueller.midlet.gps.importexport;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
 import org.xml.sax.Attributes;
@@ -129,12 +130,26 @@ public class MinML2GpxParser extends MinML2 implements GpxParser{
 		logger.debug("Finished parsing XML document");
 	}
 	public void characters(char[] ch, int start, int length) {
+		// FIXME: This is a copy of the encodings in Gpx.java
+		final String[] encodings  = { "UTF-8", "UTF8", "utf-8", "utf8"};
+		
+		boolean read = false;
 		if (wayPt != null) {
 			if (name) {
+				byte nr = 0;
+				String wptName = new String(ch,start,length);
+				for (nr=0; nr<encodings.length; nr++) {
+					try {
+						wptName = new String(wptName.getBytes(), encodings[nr]);
+						break;
+					} catch (UnsupportedEncodingException e) {
+						continue;
+					}
+				}
 				if (wayPt.displayName == null) {
-					wayPt.displayName = new String(ch,start,length);
+					wayPt.displayName = wptName;
 				} else {
-					wayPt.displayName += new String(ch,start,length);
+					wayPt.displayName += wptName;
 				}
 			}
 		} else if (p != null) {
