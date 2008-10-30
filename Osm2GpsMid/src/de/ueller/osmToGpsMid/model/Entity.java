@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import de.ueller.osmToGpsMid.SmallArrayMap;
+
 
 public class Entity {
 
@@ -43,7 +45,7 @@ public class Entity {
 	
 	public void setAttribute(String key, String value) {
 		if (tags == null)
-			tags = new HashMap<String,String>(4,0.8f);
+			tags = new SmallArrayMap<String,String>();
 		
 		tags.put(key, value);
 	}
