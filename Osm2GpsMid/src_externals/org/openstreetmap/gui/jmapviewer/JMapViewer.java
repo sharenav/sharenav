@@ -24,6 +24,7 @@ import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.gui.jmapviewer.JobDispatcher.JobThread;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapMarkerArea;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileCache;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
@@ -55,6 +56,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 	protected TileSource tileSource;
 
 	protected List<MapMarker> mapMarkerList;
+	protected List<MapMarkerArea> mapMarkerAreaList;
 	protected boolean mapMarkersVisible;
 	protected boolean tileGridVisible;
 
@@ -98,6 +100,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 		this.tileCache = tileCache;
 		jobDispatcher = JobDispatcher.getInstance();
 		mapMarkerList = new LinkedList<MapMarker>();
+		mapMarkerAreaList = new LinkedList<MapMarkerArea>();
 		mapMarkersVisible = true;
 		tileGridVisible = false;
 		setLayout(null);
@@ -390,8 +393,19 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 		g.drawRect(w2 - center.x, h2 - center.y, mapSize, mapSize);
 
 		// g.drawString("Tiles in cache: " + tileCache.getTileCount(), 50, 20);
-		if (!mapMarkersVisible || mapMarkerList == null)
+		if (!mapMarkersVisible)
 			return;
+
+		if (mapMarkerAreaList != null) {
+			for (MapMarkerArea marker : mapMarkerAreaList) {
+				marker.paint(g, this);
+			}
+		}
+
+		if (mapMarkerList == null)
+			return;
+
+		
 		for (MapMarker marker : mapMarkerList) {
 			Point p = getMapPosition(marker.getLat(), marker.getLon());
 			// System.out.println(marker + " -> " + p);
@@ -534,6 +548,26 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 		this.mapMarkerList = mapMarkerList;
 		repaint();
 	}
+	
+	public void setMapMarkerAreaList(List<MapMarkerArea> mapMarkerList) {
+		this.mapMarkerAreaList = mapMarkerList;
+		repaint();
+	}
+
+	public List<MapMarkerArea> getMapMarkerAreaList() {
+		return mapMarkerAreaList;
+	}
+
+	public void addMapMarkerArea(MapMarkerArea marker) {
+		mapMarkerAreaList.add(marker);
+		repaint();
+	}
+
+	public void removeMapMarkerArea(MapMarkerArea marker) {
+		mapMarkerAreaList.remove(marker);
+		repaint();
+	}
+
 
 	public List<MapMarker> getMapMarkerList() {
 		return mapMarkerList;
