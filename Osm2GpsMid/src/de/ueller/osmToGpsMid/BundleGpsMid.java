@@ -36,7 +36,12 @@ public class BundleGpsMid {
 
 		InputStream fr;
 		try {
-			Configuration c=new Configuration(args);
+			Configuration c;
+			if (args.length == 0) {
+				GuiConfigWizard gcw = new GuiConfigWizard();
+				c = gcw.startWizard();
+			} else
+				c=new Configuration(args);
 			System.out.println("create Bundle for " + c.getName());
 			System.out.println("Midlet Name: " + c.getMidletName());
 			String tmpDir = c.getTempDir();
