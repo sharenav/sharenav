@@ -72,10 +72,9 @@ public class Configuration {
 
 		public Configuration(String [] args) {
 			
-			if (args.length == 0) {
-				GuiConfigWizard gcw = new GuiConfigWizard(this);
-				gcw.startWizard();
-			}
+			//Set singleton
+			conf = this;
+			
 			for (String arg : args) {
 				if (arg.startsWith("--")) {
 					if (arg.startsWith("--bounds=")) {
@@ -144,7 +143,7 @@ public class Configuration {
 				//System.out.println("Pseudo Zoom Level: " + i + " Real Scale: " + realScale[i]);
 			}
 				
-			conf = this;
+			
 			try {
 				InputStream cf;
 				if (propFile != null) {
@@ -161,25 +160,11 @@ public class Configuration {
 							throw new IOException(propFile + " is not a valid region");
 						}
 					}
-					rb= new PropertyResourceBundle(cf);
 				} else {
 					//No .properties file was specified, so use the default one
-					rb=new PropertyResourceBundle(getClass().getResourceAsStream("/version.properties"));
+					cf = getClass().getResourceAsStream("/version.properties");
 				}
-				vb=new PropertyResourceBundle(getClass().getResourceAsStream("/version.properties"));
-
-				useRouting=use("useRouting");
-				maxRouteTileSize=Integer.parseInt(getString("routing.maxTileSize"));
-				maxTileSize=Integer.parseInt(getString("maxTileSize"));
-				styleFile = getString("style-file");
-				InputStream is;
-				try {
-					is = new FileInputStream(styleFile);
-				} catch (IOException e) {
-					System.out.println("Warning: Style file (" + styleFile + ") not found. Using internal one!"); 
-					is = getClass().getResourceAsStream("/style-file.xml");
-				}
-				legend = new LegendParser(is);
+				loadPropFile(cf);
 			} catch (IOException e) {
 				System.out.println("Could not load the configuration properly for conversion");
 				e.printStackTrace();
@@ -191,7 +176,36 @@ public class Configuration {
 		 * 
 		 */
 		public Configuration() {
+			//Set singleton
+			conf = this;
+			try {
+				loadPropFile(getClass().getResourceAsStream("/version.properties"));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			planet="TEST";
+		}
+		
+		public void loadPropFile(InputStream propIS) throws IOException {
+			if (propIS == null)
+				throw new IOException("Invalid properties file");
+			System.out.println("Loading prop file");
+			rb= new PropertyResourceBundle(propIS);
+			vb=new PropertyResourceBundle(getClass().getResourceAsStream("/version.properties"));
+			useRouting=use("useRouting");
+			maxRouteTileSize=Integer.parseInt(getString("routing.maxTileSize"));
+			maxTileSize=Integer.parseInt(getString("maxTileSize"));
+			styleFile = getString("style-file");
+			InputStream is;
+			try {
+				is = new FileInputStream(styleFile);
+			} catch (IOException e) {
+				styleFile = "/style-file.xml";
+				System.out.println("Warning: Style file (" + styleFile + ") not found. Using internal one!"); 
+				is = getClass().getResourceAsStream(styleFile);
+			}
+			legend = new LegendParser(is);
 		}
 
 		public void setPlanetName(String p) {
@@ -199,6 +213,10 @@ public class Configuration {
 		}
 		public void setPropFileName(String p) {
 			propFile = p;
+		}
+		
+		public String getStyleFileName() {
+			return styleFile;
 		}
 		
 		public boolean use(String key){
@@ -357,10 +375,27 @@ public class Configuration {
 				System.out.println("contained in " + planet);
 				Bounds[] ret=new Bounds[1];
 				ret[0]=new Bounds();
-				ret[0].extend(-180.0, -90.0);
-				ret[0].extend(180.0, 90.0);
+				ret[0].extend(-90.0, -180.0);
+				ret[0].extend(90.0, 180.0);
 				return ret;	
 			}
+		}
+		
+		public void addBounds(Bounds bound) {
+			Bounds [] tmp;
+			if (bounds == null) {
+				tmp = new Bounds[1];
+				tmp[0] = bound;
+			} else {
+				tmp = new Bounds[bounds.length + 1];
+				System.arraycopy(bounds, 0, tmp, 0, bounds.length);
+				tmp[bounds.length] = bound;
+			}
+			bounds = tmp;
+		}
+		
+		public void setRouting(boolean routing) {
+			useRouting = routing;
 		}
 
 		/**
