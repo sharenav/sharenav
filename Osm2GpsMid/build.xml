@@ -14,6 +14,7 @@
 
 
 	<property name="src.dir" value="${basedir}/src"/>
+	<property name="src.jmv" value="${basedir}/src_externals"/>
 	<property name="properties.dir" value="${basedir}/mapdef"/>
 	<property name="resources.dir" value="${basedir}/resources"/>
 	<property name="app" value="GpsMid-Generic-full"/>
@@ -96,7 +97,7 @@
    </target>
 
    <target name="compile" depends="clover-yes, clover-no">
-    <javac srcdir="${src.dir}"
+    <javac srcdir="${src.dir}:${src.jmv}"
             destdir="bin"
             debug="on"
             optimize="on"
