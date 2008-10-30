@@ -285,21 +285,36 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 	}
 
 	/**
-	 * Calculates the position on the map of a given coordinate
+	 * Calculates the position on the map of a given coordinate.
+	 * 
+	 * @param lat
+	 * @param lon
+	 * @param onscreen - if set to true, points that are not on screen are returned as null
+	 *                 - if set to false, the coordinates returned can be negative or very large
+	 * @return point on the map or <code>null</code> if the point is not visible
+	 */
+	public Point getMapPosition(double lat, double lon, boolean onscreen) {
+		int x = OsmMercator.LonToX(lon, zoom);
+		int y = OsmMercator.LatToY(lat, zoom);
+		x -= center.x - getWidth() / 2;
+		y -= center.y - getHeight() / 2;
+		if (onscreen && (x < 0 || y < 0 || x > getWidth() || y > getHeight()))
+			return null;
+		return new Point(x, y);
+	}
+
+	/**
+	 * Calculates the position on the map of a given coordinate. If the coordinate is not
+	 * in the visible display area, the function returns null
 	 * 
 	 * @param lat
 	 * @param lon
 	 * @return point on the map or <code>null</code> if the point is not visible
 	 */
 	public Point getMapPosition(double lat, double lon) {
-		int x = OsmMercator.LonToX(lon, zoom);
-		int y = OsmMercator.LatToY(lat, zoom);
-		x -= center.x - getWidth() / 2;
-		y -= center.y - getHeight() / 2;
-		if (x < 0 || y < 0 || x > getWidth() || y > getHeight())
-			return null;
-		return new Point(x, y);
+		return getMapPosition(lat,lon,true);
 	}
+
 
 	@Override
 	protected void paintComponent(Graphics g) {
