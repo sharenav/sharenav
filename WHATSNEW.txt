@@ -36,8 +36,9 @@ GpsMid 0.4.50
        - JSR-179: show satellites in overlay if device gives $GPGSV-information
 	   *** Usability ***
        - Restructured Map Menu
-       - Full text search (Search / Fulltext Search)
        - map "freeze" bug on SE phones fixed
+       - new Full text search (Search / Fulltext Search)
+       - More international characters are mapped to number keys in normal search window
        - allow to specify bounds on command line if no properties file is specified:
          java -Xmx1024M -jar Osm2GpsMid-0.4.x.jar --bounds=23.48,34.78,26.37,35.7 osmxapi
        - create midlet from whole osm file if no properties file and no bounds are specified, i.e.:
