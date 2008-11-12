@@ -1480,7 +1480,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 						if (intDistance>=PASSINGDISTANCE && !checkDirectionSaid) {
 							if (intDistance <= PREPAREDISTANCE) {
 								soundToPlay.append( (a==4 ? "CONTINUE" : "PREPARE") + ";" + soundDirections[a]);
-								soundRepeatDelay=5;
+								soundMaxTimesToPlay=1;
 								// Because of adaptive-to-speed distances for "prepare"-instructions
 								// GpsMid could fall back from "prepare"-instructions to "in xxx metres" voice instructions
 								// Remembering and checking if the prepare instruction already was given since the latest passing of an arrow avoids this
