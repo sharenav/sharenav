@@ -883,8 +883,8 @@ public class Way extends Entity{
 				name=Trace.getInstance().getName(nameIdx);
 			}
 		}
-		// if zoomed in, show description 
-		if (pc.scale<15000) {
+		// if zoomed in enough, show description 
+		if (pc.scale < wayDesc.maxDescriptionScale) {
 		// show waydescription
 			if (name==null) {
 				name=wayDesc.description;

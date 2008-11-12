@@ -11,7 +11,7 @@ import javax.microedition.lcdui.Image;
  * See Copying
  */
 
-import de.ueller.gpsMid.mapData.QueueReader;
+//import de.ueller.gpsMid.mapData.QueueReader;
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.names.Names;
@@ -21,7 +21,7 @@ public class C {
 	 * Specifies the format of the map on disk we expect to see
 	 * This constant must be in sync with Osm2GpsMid
 	 */
-	public final static short MAP_FORMAT_VERSION = 18;
+	public final static short MAP_FORMAT_VERSION = 19;
 	
 	public final static byte NODE_MASK_ROUTENODELINK=0x1;
 	public final static byte NODE_MASK_TYPE=0x2;
@@ -36,7 +36,8 @@ public class C {
 	public final static byte LEGEND_FLAG_TEXT_COLOR = 0x08;
 	public final static byte LEGEND_FLAG_NON_HIDEABLE = 0x10;
 	public final static byte LEGEND_FLAG_NON_ROUTABLE = 0x20;
-
+	public final static byte LEGEND_FLAG_MIN_DESCRIPTION_SCALE = 0x40;
+	
 	/**
 	 * minimum distances to set the is_in name to the next city
 	 * to get the minimum distance use: <code>MAX_DIST_CITY[node.getType(null)]</code>
@@ -170,6 +171,11 @@ public class C {
 				ways[i].maxOnewayArrowScale = ds.readInt();
 			else
 				ways[i].maxOnewayArrowScale = ways[i].maxScale; 
+			
+			if ((flags & LEGEND_FLAG_MIN_DESCRIPTION_SCALE) > 0)
+				ways[i].maxDescriptionScale = ds.readInt();
+			else
+				ways[i].maxDescriptionScale = 15000; 
 		}
 	}	
 	

@@ -5,6 +5,7 @@ public class WayDescription {
 	public int maxScale;
 	public int maxTextScale;
 	public int maxOnewayArrowScale;
+	public int maxDescriptionScale;
 	public int lineColor;
 	public int lineStyle;
 	public int boardedColor;
