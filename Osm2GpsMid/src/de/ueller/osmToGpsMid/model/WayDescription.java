@@ -21,6 +21,7 @@ public class WayDescription {
 	public int		minScale;
 	public int		minTextScale;
 	public int		minOnewayArrowScale;
+	public int		minDescriptionScale;
 	public int		lineColor;	
 	public boolean	lineStyleDashed; //
 	public int		boardedColor;

@@ -6,7 +6,7 @@
 <!ELEMENT key (value+)>
 <!ELEMENT keyW (Wvalue+)>
 <!ELEMENT value (specialisation*, description , image? , searchIcon? , namekey , namefallback? , scale , textscale? , imageCentered?, hideable?)>
-<!ELEMENT Wvalue (specialisation*, description, namekey, namefallback?, isArea, scale, textscale?, arrowscale?, lineColor, borderColor?, lineStyle?, wayWidth?, searchIcon?, routing?, force_to?, hideable?)>
+<!ELEMENT Wvalue (specialisation*, description, namekey, namefallback?, isArea, scale, textscale?, arrowscale?, descriptionscale?, lineColor, borderColor?, lineStyle?, wayWidth?, searchIcon?, routing?, force_to?, hideable?)>
 <!ELEMENT sound (soundFile)>
 <!ELEMENT soundFile EMPTY>
 <!ELEMENT description EMPTY>
@@ -17,6 +17,7 @@
 <!ELEMENT scale EMPTY>
 <!ELEMENT textscale EMPTY>
 <!ELEMENT arrowscale EMPTY>
+<!ELEMENT descriptionscale EMPTY>
 <!ELEMENT imageCentered EMPTY>
 <!ELEMENT isArea EMPTY>
 <!ELEMENT lineColor EMPTY>
@@ -39,7 +40,8 @@
 <!ATTLIST namefallback tag CDATA #REQUIRED>
 <!ATTLIST scale scale CDATA #REQUIRED>
 <!ATTLIST textscale scale CDATA #REQUIRED>
-<!ATTLIST onewayArrowScale scale CDATA #REQUIRED>
+<!ATTLIST arrowscale scale CDATA #REQUIRED>
+<!ATTLIST descriptionscale scale CDATA #REQUIRED>
 <!ATTLIST image src CDATA #REQUIRED>
 <!ATTLIST searchIcon src CDATA #REQUIRED>
 <!ATTLIST imageCentered value CDATA #REQUIRED>

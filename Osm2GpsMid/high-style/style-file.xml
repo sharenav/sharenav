@@ -684,7 +684,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<scale scale = "14"/>
   				<lineColor color = "00809BC0" />
   				<wayWidth width="8" />
-  				<routing accessible="true" speed="120" />  				  				
+  				<routing accessible="true" speed="60" />  				  				
   			</Wvalue>
   			<Wvalue name = "trunk" priority = "10">
   				<description desc = "trunk"/>
@@ -704,7 +704,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<scale scale = "14"/>
   				<lineColor color = "007FC97F" />
   				<wayWidth width="6" />
-  				<routing accessible="true" speed="100" />  				  				
+  				<routing accessible="true" speed="60" />  				  				
   			</Wvalue>
   			<Wvalue name = "primary" priority = "10">
   				<description desc = "primary"/>
@@ -724,7 +724,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<scale scale = "15"/>
   				<lineColor color = "007FC97F" />
   				<wayWidth width="6" />
-  				<routing accessible="true" speed="80" />  				  				
+  				<routing accessible="true" speed="60" />  				  				
   			</Wvalue>
   			<Wvalue name = "secondary" priority = "10">
   				<description desc = "secondary"/>
@@ -1366,6 +1366,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<isArea area = "true"/>
   				<scale scale = "20"/>
   				<textscale scale = "21"/>
+  				<descriptionscale scale = "27"/> <!-- scale level when area descriptions will start to show, default is 23 -->
   				<lineColor color = "00CC0000" />
 			</Wvalue>  			
   			<Wvalue name = "*">

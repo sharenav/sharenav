@@ -323,13 +323,21 @@ public class LegendParser extends DefaultHandler{
 					}
 				}
 
-				if (qName.equals("onewayArrowScale")) {
+				if (qName.equals("arrowscale")) {
 					try {
 						currentWay.minOnewayArrowScale = config.getRealScale( Integer.parseInt(atts.getValue("scale")) );				
 					} catch (NumberFormatException nfe) {
-						System.out.println("Error: oneway arrow scale for " +currentWay.description + " is incorrect");
+						System.out.println("Error: oneway arrowscale for " +currentWay.description + " is incorrect");
 					}
 				}
+
+				if (qName.equals("descriptionscale")) {
+					try {
+						currentWay.minDescriptionScale = config.getRealScale( Integer.parseInt(atts.getValue("scale")) );				
+					} catch (NumberFormatException nfe) {
+						System.out.println("Error: descriptionscale for " +currentWay.description + " is incorrect");
+					}
+				}				
 				
 				if (qName.equals("isArea")) {
 					currentWay.isArea = atts.getValue("area").equalsIgnoreCase("true");

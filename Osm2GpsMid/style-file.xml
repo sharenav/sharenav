@@ -812,6 +812,10 @@ zoomed out 21x (scale alias 1:  500km)
   				<isArea area = "true"/>
   				<scale scale = "20"/>
   				<textscale scale = "21"/>
+  				<!-- scale level when area descriptions
+  				     will start to show, default is 23
+  				 -->
+  				<descriptionscale scale = "27"/>
   				<lineColor color = "00CC0000" />
 			</Wvalue>  			
   			<Wvalue name = "*">

@@ -57,6 +57,7 @@ public class CreateGpsMidData {
 	public final static byte LEGEND_FLAG_TEXT_COLOR = 0x08;
 	public final static byte LEGEND_FLAG_NON_HIDEABLE = 0x10;
 	public final static byte LEGEND_FLAG_NON_ROUTABLE = 0x20;
+	public final static byte LEGEND_FLAG_MIN_DESCRIPTION_SCALE = 0x40;
 	
 		
 //	private final static int MAX_TILE_FILESIZE=20000;
@@ -208,6 +209,8 @@ public class CreateGpsMidData {
 					flags |= LEGEND_FLAG_NON_ROUTABLE;				
 				if (way.minOnewayArrowScale != 0)
 					flags |= LEGEND_FLAG_MIN_ONEWAY_ARROW_SCALE;
+				if (way.minDescriptionScale != 0)
+					flags |= LEGEND_FLAG_MIN_DESCRIPTION_SCALE;
 				dsi.writeByte(way.typeNum);
 				dsi.writeByte(flags);
 				dsi.writeUTF(way.description);								
@@ -220,6 +223,8 @@ public class CreateGpsMidData {
 				dsi.writeBoolean(way.lineStyleDashed);
 				if ((flags & LEGEND_FLAG_MIN_ONEWAY_ARROW_SCALE) > 0)
 					dsi.writeInt(way.minOnewayArrowScale);
+				if ((flags & LEGEND_FLAG_MIN_DESCRIPTION_SCALE) > 0)
+					dsi.writeInt(way.minDescriptionScale);
 				// System.out.println(way);
 			}
 			/**
