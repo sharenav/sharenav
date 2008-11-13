@@ -4,11 +4,9 @@ GpsMid 0.4.50
          (specify default rotation in Display Options or Map Features
           or toggle rotation by quickly pressing 5 twice)
        - Faster and more correct route calculation
-       - experimental voice routing instructions (sound names see style-file.xml of high-style.zip)
        - Routing from unnamed streets is now possible
          (GpsMid will route from nearest routable way)       
-       - Manually enter new waypoints by coordinates 
-         (i.e. 48° 30' 45" or 48° 30.75' or 48.5125° and leave the other fields empty)
+       - experimental voice routing instructions (sound names see style-file.xml of high-style.zip)
        - "Clear Target" menu entry to remove route arrows and navigation line
 	   *** Map ***
        - One-way street arrows in the map
@@ -22,18 +20,25 @@ GpsMid 0.4.50
        - speed up and rendering fixes for way labels in the map
        - delayed map draw bug fixed	   
        - some new map features in high-style.zip
-       *** Recording ***
-       - Take pictures from GpsMid if JSR-135 or JSR-234 is supported by phone
-       - Record audio notes with GpsMid
-       - increased robustness of track and waypoint storage
+       *** Tracks and Waypoints ***
+       - increased robustness of track and waypoint storage (thx mbaeurle)
+       - Enter new waypoints by coordinates using Recordings.../Enter waypoint (thx mbaeurle)
+         (i.e. 48° 30' 45" or 48° 30.75' or 48.5125° and leave the other fields empty)
+       - Exporting and importing waypoints always use UTF-8 now (thx bilboq)
+       - Existing waypoints.gpx files are now correctly overwritten (thx bilboq)
+       - "Export all" command for GPX tracklogs
 	   *** GPS ***
        - BT-GPS: auto-reconnect feature
        - BT-GPS: Remove the Stop recording command if the Location receiver gets closed
-       - sound for GPS start / stop (CONNECT and DISCONNECT sound in style file OR internal melody)
+       - sound for GPS start / stop (thx mbaeurle)
+       - CONNECT and DISCONNECT sound in style file OR internal melody
        - JSR-179: initial default location provider is set to JSR-179
          if available on device and supported by app defined in .properties file
        - JSR-179: getExtraInfo-NMEA-logging
        - JSR-179: show satellites in overlay if device gives $GPGSV-information
+       *** Audio & Picture Recording ***
+       - Take pictures from GpsMid if JSR-135 or JSR-234 is supported by phone
+       - Record audio notes with GpsMid
 	   *** Usability ***
        - Restructured Map Menu
        - map "freeze" bug on SE phones fixed
@@ -47,11 +52,13 @@ GpsMid 0.4.50
        - automatically default new midlets to correct backlight method for devices that were listed
          with backlight method at http://gpsmid.wiki.sourceforge.net/DevicesList
        - Scale splash screen on devices with more than 176x220 and enough memory
+       - show midlet version and bundling date in splash screen
 	   *** Style File ***
        - priority and specialisation conditions in style-file for POIs and ways
        - pois and areas marked with "hideable=false" in style-file
          are not allowed be hidden using map features anymore (useful i.e. to keep place names)
-       - sounds section in style file / sound playback routines supporting *.amr, *.wav and *.mp3, .amr recommended 
+       - sounds section in style file / sound playback routines supporting *.amr, *.wav and *.mp3, .amr recommended
+       - descriptionscale for areas allowing to specify scale when type description is shown  
 	   *** Others ***
 	   - many more new features and bugfixes
 
