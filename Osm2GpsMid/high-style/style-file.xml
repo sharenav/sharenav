@@ -662,7 +662,15 @@ zoomed out 21x (scale alias 1:  500km)
 		<textscale scale="23"/>
 	  </value>	
 	</key>	
-  
+	<key tag="sport">
+	  <value name ="table_tennis">
+		<description desc = "Table tennis"/>
+		<image src="table_tennis.png"/>
+		<namekey tag="name"/>
+		<scale scale="20"/>
+		<textscale scale="23"/>
+	  </value>
+  	</key>
   </pois>
   <ways>
   		<keyW tag = "highway">
@@ -1366,7 +1374,10 @@ zoomed out 21x (scale alias 1:  500km)
   				<isArea area = "true"/>
   				<scale scale = "20"/>
   				<textscale scale = "21"/>
-  				<descriptionscale scale = "27"/> <!-- scale level when area descriptions will start to show, default is 23 -->
+				<!-- scale level when area descriptions
+  				     will start to show, default is 23
+  				 -->
+  				<descriptionscale scale = "27"/>
   				<lineColor color = "00CC0000" />
 			</Wvalue>  			
   			<Wvalue name = "*">
