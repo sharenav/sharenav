@@ -8,6 +8,7 @@ GpsMid 0.4.50
          (GpsMid will route from nearest routable way)       
        - experimental voice routing instructions (sound names see style-file.xml of high-style.zip)
        - "Clear Target" menu entry to remove route arrows and navigation line
+	   - Possibility to show the routing graph as a route debuging feature
 	   *** Map ***
        - One-way street arrows in the map
        - "Search=>Overview/Filter Map" or double-press "*"
@@ -36,14 +37,18 @@ GpsMid 0.4.50
          if available on device and supported by app defined in .properties file
        - JSR-179: getExtraInfo-NMEA-logging
        - JSR-179: show satellites in overlay if device gives $GPGSV-information
+	   - Ability to suspend track recordings and later continue in the same track
+	   - Include an Odometer for the recorded tracks 
        *** Audio & Picture Recording ***
        - Take pictures from GpsMid if JSR-135 or JSR-234 is supported by phone
        - Record audio notes with GpsMid
+	   - Geotag pictures in exif header (experimental)
 	   *** Usability ***
        - Restructured Map Menu
        - map "freeze" bug on SE phones fixed
        - new Full text search (Search / Fulltext Search)
        - More international characters are mapped to number keys in the Search form
+	   - show a Configuaration wizard if no comand line parameters are given
        - allow to specify bounds on command line if no properties file is specified:
          java -Xmx1024M -jar Osm2GpsMid-0.4.x.jar --bounds=23.48,34.78,26.37,35.7 osmxapi
        - create midlet from whole osm file if no properties file and no bounds are specified, i.e.:
