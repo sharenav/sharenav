@@ -74,7 +74,9 @@ public class Jsr172GpxParser extends DefaultHandler implements GpxParser {
 				wayPt = new PositionMark(node_lat,node_lon);
 			}
 		} else if (qName.equalsIgnoreCase("name")) {
-			name = true;				
+			name = true;
+		} else if (qName.equalsIgnoreCase("desc")) {
+					name = true;
 		} else if (qName.equalsIgnoreCase("trk")) {
 			gpx.newTrk();
 		} else if (qName.equalsIgnoreCase("trkseg")) {
@@ -113,6 +115,8 @@ public class Jsr172GpxParser extends DefaultHandler implements GpxParser {
 							
 		} else if (qName.equalsIgnoreCase("name")) {
 			name = false;
+		} else if (qName.equalsIgnoreCase("desc")) {
+				name = false;
 		} else if (qName.equalsIgnoreCase("trk")) {
 			gpx.saveTrk();				
 		} else if (qName.equalsIgnoreCase("trkseg")) {
