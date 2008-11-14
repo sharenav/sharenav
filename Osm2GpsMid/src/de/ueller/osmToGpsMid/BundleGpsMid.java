@@ -42,8 +42,7 @@ public class BundleGpsMid {
 				c = gcw.startWizard();
 			} else
 				c=new Configuration(args);
-			System.out.println("create Bundle for " + c.getName());
-			System.out.println("Midlet Name: " + c.getMidletName());
+			System.out.println(c.toString());
 			String tmpDir = c.getTempDir();
 			System.out.println("unpack Application to " + tmpDir);
 			expand(c, tmpDir);
