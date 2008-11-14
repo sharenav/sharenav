@@ -84,7 +84,7 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 	space=getHeight()-topStart;
 	ssize=f.getHeight()*txt.length+space;
 	top=-space;
-	strVersion = "V" + C.getAppVersion() + " (" + C.getBundleDate() + ")";
+	strVersion = "V" + main.c.getAppVersion() + " (" + main.c.getBundleDate() + ")";
 	show();
 	addCommand(BACK_CMD);
 	addCommand(EXIT_CMD);
