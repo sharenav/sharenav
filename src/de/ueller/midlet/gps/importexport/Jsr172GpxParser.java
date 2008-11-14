@@ -35,7 +35,7 @@ public class Jsr172GpxParser extends DefaultHandler implements GpxParser {
 	 */
 	
 	
-	private final static Logger logger=Logger.getInstance(MinML2GpxParser.class,Logger.DEBUG);
+	private final static Logger logger=Logger.getInstance(Jsr172GpxParser.class,Logger.DEBUG);
 	
 	private PositionMark wayPt;
 	private Position p = new Position(0,0,0,0,0,0,new Date());
