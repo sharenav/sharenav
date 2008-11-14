@@ -1976,6 +1976,15 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				gpsRecenter = false;
 			}
 		}
+		
+		/**
+		 * The camera cover switch does not report a keyreleased event, so
+		 * we need to special case it here in the keypressed routine
+		 */
+		if (keyCode == Configuration.KEYCODE_CAMERA_COVER_OPEN) {
+			commandAction(CAMERA_CMD,(Displayable) null);
+		}
+		
 		repaint(0, 0, getWidth(), getHeight());
 	}
 
