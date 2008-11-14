@@ -197,16 +197,16 @@ public class Way extends Entity implements Comparable<Way>{
 			try {
 				boolean mph = false;
 				String maxSpeedAttr = getAttribute("maxspeed");
-				if (maxSpeedAttr.endsWith("mph")) {
+				if (maxSpeedAttr.toLowerCase().endsWith("mph")) {
 					mph = true;
 					maxSpeedAttr = maxSpeedAttr.substring(0, maxSpeedAttr.length() - 3).trim();
 				}
-				if (maxSpeedAttr.endsWith("km/h")) {
+				if (maxSpeedAttr.toLowerCase().endsWith("km/h")) {
 					maxSpeedAttr = maxSpeedAttr.substring(0, maxSpeedAttr.length() - 4).trim();
 				}
 				maxSpeed=(Float.parseFloat(maxSpeedAttr));
-				if (mph) {					
-					maxSpeed *= 1.609; //Convert to km/h					
+				if (mph) {
+					maxSpeed *= 1.609; //Convert to km/h
 				}
 			} catch (NumberFormatException e) {
 				System.out.println("Invalid MaxSpeed for Way + " + toString() +": " + getAttribute("maxspeed"));
