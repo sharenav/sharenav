@@ -178,13 +178,18 @@ public class Configuration {
 		public Configuration() {
 			//Set singleton
 			conf = this;
+			resetConfig();
+			planet="TEST";
+		}
+		
+		public void resetConfig() {
 			try {
 				loadPropFile(getClass().getResourceAsStream("/version.properties"));
+				bounds = null;
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			planet="TEST";
 		}
 		
 		public void loadPropFile(InputStream propIS) throws IOException {
@@ -498,5 +503,27 @@ public class Configuration {
 			if (attr.equalsIgnoreCase("0"))
 				return -1;
 			return 0;
+		}
+		
+		public String toString() {
+			String confString = "Osm2GpsMid configuration:\n";
+			confString += "\t Bundle name: " + getName() + "\n";
+			confString += "\t Midlet name: " + getMidletName() + "\n";
+			confString += "\t Code base: " + getString("app") + "\n";
+			confString += "\t Keeping map files after .jar creation: " + cleanupTmpDirAfterUse() + "\n";
+			confString += "\t Enable routing: " + useRouting + "\n";
+			confString += "\t used Style-file: " + getStyleFileName() + "\n";
+			confString += "\t Planet source: " + planet + "\n";
+			Bounds[] bounds = getBounds();
+			if (bounds != null) {
+				confString += "\t Using " + bounds.length + " bounding boxes\n";
+				for (Bounds b : bounds) {
+					confString += "\t\t" + b + "\n";
+				}
+			} else {
+				confString += "\t Using the complete osm file\n";
+			}
+			
+			return confString;
 		}
 }
