@@ -52,6 +52,8 @@ public class Configuration {
 		private String tmp=null;
 		private String planet;
 		private String propFile;
+		private String bundleName;
+		private String appParam;
 		public boolean useRouting=false;
 		public int maxTileSize=20000;
 		public int maxRouteTileSize=3000;
@@ -202,6 +204,7 @@ public class Configuration {
 			maxRouteTileSize=Integer.parseInt(getString("routing.maxTileSize"));
 			maxTileSize=Integer.parseInt(getString("maxTileSize"));
 			styleFile = getString("style-file");
+			appParam = getString("app");
 			InputStream is;
 			try {
 				is = new FileInputStream(styleFile);
@@ -224,6 +227,10 @@ public class Configuration {
 			return styleFile;
 		}
 		
+		public void setStyleFileName(String name) {
+			styleFile = name;
+		}
+		
 		public boolean use(String key){
 			if ("true".equalsIgnoreCase(getString(key))){
 				return true;
@@ -240,8 +247,16 @@ public class Configuration {
 			return Float.parseFloat(getString(key));
 		}
 		public String getName(){
+			if (bundleName != null) {
+				return bundleName;
+			}
 			return getString("bundle.name");
 		}
+		
+		public void setName(String name){
+			bundleName = name;
+		}
+		
 		public String getMidletName(){
 		    String mn=getString("midlet.name");
 		    if (mn != null)
@@ -250,8 +265,12 @@ public class Configuration {
 		    	return "GpsMid";
 		}
 		
+		public void setCodeBase (String app) {
+			appParam = app;
+		}
+		
 		public InputStream getJarFile(){
-			String baseName = getString("app");			
+			String baseName = appParam;
 			if ("false".equals(baseName)){
 				return null;
 			}			
@@ -260,7 +279,7 @@ public class Configuration {
 			+".jar");
 		}
 		public String getJarFileName(){
-			return getString("app")
+			return appParam
 			+"-"+getVersion()
 			+".jar";
 		}
@@ -297,7 +316,19 @@ public class Configuration {
 						bound.minLon + "," + bound.minLat + "," + bound.maxLon + "," + bound.maxLat + "]");
 				System.out.println("Connecting to Osmxapi: " + url);
 				System.out.println("This may take a while!");
-				fr = new TeeInputStream(url.openStream(),new FileOutputStream(new File(getTempDir() + "osmXapi.osm")));				
+				fr = new TeeInputStream(url.openStream(),new FileOutputStream(new File(getTempDir() + "osmXapi.osm")));
+			} else if (planet.equalsIgnoreCase("ROMA")) {
+				Bounds[] bounds = getBounds();
+				if (bounds.length > 1) {
+					System.out.println("Can't deal with multiple bounds when requesting from ROMA yet");
+					throw new IOException("Can't handle specified bounds with ROMA");
+				}
+				Bounds bound = bounds[0];
+				URL url = new URL("http://roma.osm.lab.rfc822.org/api/0.5/map?bbox=" + 
+						bound.minLon + "," + bound.minLat + "," + bound.maxLon + "," + bound.maxLat);
+				System.out.println("Connecting to ROMA: " + url);
+				System.out.println("This may take a while!");
+				fr = new TeeInputStream(url.openStream(),new FileOutputStream(new File(getTempDir() + "osmXapi.osm")));
 			} else {
 				System.out.println("Opening planet file: " + planet);				
 				
@@ -509,7 +540,7 @@ public class Configuration {
 			String confString = "Osm2GpsMid configuration:\n";
 			confString += "\t Bundle name: " + getName() + "\n";
 			confString += "\t Midlet name: " + getMidletName() + "\n";
-			confString += "\t Code base: " + getString("app") + "\n";
+			confString += "\t Code base: " + appParam + "\n";
 			confString += "\t Keeping map files after .jar creation: " + cleanupTmpDirAfterUse() + "\n";
 			confString += "\t Enable routing: " + useRouting + "\n";
 			confString += "\t used Style-file: " + getStyleFileName() + "\n";
