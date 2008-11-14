@@ -63,7 +63,8 @@ public class SelectionMapController extends JMapController implements
 		}
 
 		if (isSelecting) {
-			if ((e.getModifiersEx() & MOUSE_BUTTONS_MASK) == MouseEvent.BUTTON3_DOWN_MASK) {
+			if (((e.getModifiersEx() & MOUSE_BUTTONS_MASK) == MouseEvent.BUTTON3_DOWN_MASK) ||
+					((((e.getModifiersEx() & MOUSE_BUTTONS_MASK) == MouseEvent.BUTTON1_DOWN_MASK)) && ((e.getModifiersEx() & MouseEvent.CTRL_DOWN_MASK) > 0))){
 				Point p = e.getPoint();
 
 				Point2D.Double endSelPoint = map.getPosition(e.getPoint());
@@ -82,18 +83,18 @@ public class SelectionMapController extends JMapController implements
 	}
 
 	public void mousePressed(MouseEvent e) {
-		if (e.getButton() == MouseEvent.BUTTON1) {
-			lastDragPoint = null;
-			isMoving = true;
-		}
 
-		if (e.getButton() == MouseEvent.BUTTON3) {
+		if ((e.getButton() == MouseEvent.BUTTON3) || 
+				((e.getButton() == MouseEvent.BUTTON1) && ((e.getModifiersEx() & MouseEvent.CTRL_DOWN_MASK) > 0))) {
 			isSelecting = true;
 			startSelPoint = map.getPosition(e.getPoint());
 			selRegion = new MapMarkerRectangle(Color.BLACK, new Color(0x9fafafaf, true),startSelPoint.y,
 					startSelPoint.x, startSelPoint.y, startSelPoint.x);
 			map.addMapMarkerArea(selRegion);
 
+		} else if (e.getButton() == MouseEvent.BUTTON1) {
+			lastDragPoint = null;
+			isMoving = true;
 		}
 	}
 
