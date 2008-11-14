@@ -25,7 +25,10 @@ public class PositionMark extends PersistEntity{
 		ByteArrayOutputStream bs = new ByteArrayOutputStream();
 		DataOutputStream ds = new DataOutputStream(bs);
 		try {
-			ds.writeUTF(displayName);
+			if (displayName == null)
+				ds.writeUTF("");
+			else
+				ds.writeUTF(displayName);
 			ds.writeFloat(lat);
 			ds.writeFloat(lon);
 			ds.writeByte(zl);

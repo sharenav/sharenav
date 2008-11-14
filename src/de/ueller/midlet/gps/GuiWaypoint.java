@@ -59,7 +59,11 @@ public class GuiWaypoint extends List implements CommandListener,
 		this.deleteAll();		
 		waypoints = parent.gpx.listWayPt();
 		for (int i = 0; i < waypoints.length; i++) {
-			this.append(waypoints[i].displayName,null);
+			if ((waypoints[i].displayName == null) || (waypoints[i].displayName.equals(""))) {
+				this.append("(unnamed)",null);
+			} else {
+				this.append(waypoints[i].displayName,null);
+			}
 		}
 	}
 
