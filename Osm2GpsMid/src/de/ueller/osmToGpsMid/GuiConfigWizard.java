@@ -86,6 +86,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		GridBagLayout gbl = new GridBagLayout();
 		GridBagConstraints gbc = new GridBagConstraints();
 
+		this.setTitle("Osm2GpsMid V" + Configuration.getConfiguration().getVersion() + " (" + Configuration.getConfiguration().getBundleDate() + ")");
 		this.setLayout(gbl);
 		
 		map = new JMapViewer();
@@ -456,22 +457,27 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		
 		if ("help-click".equalsIgnoreCase(e.getActionCommand())) {
 			JOptionPane.showMessageDialog(
-					this, "Welcome to Osm2GpsMid!\n" +
-							"Osm2GpsMid is a conversion program to package" +
-							" OpenStreetMap data with GpsMid to create a ready to use mapping midlet to upload to your phone.\n" +
-							"You will have to specify a Region of the world which you want included in your midlet. \n" +
-							"This can either be done by dragging out an area on the world map with the right mouse button\n" +
-							"or by specifying a .properties file that already contains the area you want. If you want to determin all the\n" +
-							"parameters through this wizard, then leave the .properties file on custom.\n" +
-							"Next you will need to specify a source for the OpenStreetMap data. Currently three sources are directly" +
-							"supported.\n" +
-							"1) ROMA: This is the Read Only Map Api and downloads data directly from the API server.\n" +
-							"2) osmXapi: This is an alternative server and very similar to ROMA\n" +
-							"3) load from file: Use a .osm or .osm.bz2 file that has been stored on your computer This is the prefered way.\n" +
-							"Both ROMA and osmXapi only support small regions of the order of a town, but should give up to date data\n" +
-							"Good alternatives are to get country level extracts from for example http://download.geofabrik.de/osm/ or http://downloads.cloudmade.com/" +
+					this,   "Welcome to the Osm2GpsMid Wizard!\n\n" +
+							"Osm2GpsMid and GpsMid are licensed by GPL2 (http://www.gnu.org/)\n" + 
+							"OpenStreetMap Data is licensed by CC 2.0 (http://www.creativecommons.org/)\n" +
+							"\n" + 
+							"Osm2GpsMid is a conversion program to package map data from OpenStreetMap into a 'midlet' called GpsMid.\n" +
+							"The resulting midlet includes the specified map data and can be uploaded to J2ME ready mobiles for offline navigation.\n" +
 							"\n" +
-							"For more detailed help see http://gpsmid.wiki.sourceforge.net/");
+							"Usage:\n" +
+							"1. Specify which region the world you want to include in your midlet. \n" +
+							" This can either be done by dragging over an area on the world map with the right mouse button\n" +
+							" or by specifying a .properties file that already contains the area you want.\n" +
+							" If you want to set all the parameters using this wizard, please leave the .properties file on custom.\n" +
+							"2. Specify a source for the OpenStreetMap data. Currently three sources are directly supported:\n" +
+							" a) ROMA: This is the Read Only Map Api and downloads data directly from the API server (only for small regions like towns)\n" +
+							" b) osmXapi: This is an alternative server and very similar to ROMA (only for small regions like towns)\n" +
+							" c) load from file: Use a .osm or .osm.bz2 file previously downloaded to your computer (recommended)\n" +
+							"    Country level extracts in .osm.bz2 file format are available\n" +
+							"    i.e. at http://download.geofabrik.de/osm/ and http://downloads.cloudmade.com/\n" +
+							"3. Press 'Create GpsMid midlet'\n" +
+							"\n" +
+							"For more information please visit http://gpsmid.sourceforge.net/ and http://gpsmid.wiki.sourceforge.net/");
 			
 		}
 		
