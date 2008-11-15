@@ -466,7 +466,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		} else if (keyCode == KEY_NUM0) {
 			searchCanon.insert(carret++,'0');
 		} else if (keyCode == KEY_POUND) {
-			searchCanon.insert(carret++,'0');
+			searchCanon.insert(carret++,'1');
 		} else if (keyCode == KEY_STAR) {
 			displayReductionLevel++;
 			if (displayReductionLevel > 3)
