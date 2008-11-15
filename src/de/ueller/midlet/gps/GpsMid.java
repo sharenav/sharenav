@@ -15,15 +15,16 @@ package de.ueller.midlet.gps;
 
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 
 import javax.microedition.lcdui.Alert;
+import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Choice;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
+import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.List;
 import javax.microedition.midlet.MIDlet;
 import javax.microedition.midlet.MIDletStateChangeException;
@@ -112,9 +113,20 @@ public class GpsMid extends MIDlet implements CommandListener{
 
 		// read in legend.dat to have i.e. bundle date already accessable from the splash screen
 		try {
-			this.c = new C();
+			c = new C();
 		} catch (Exception e) {
-			l.exception("Error loading legend.dat on startup", e);
+			Canvas blankScreen = new Canvas() {
+
+				protected void paint(Graphics g) {
+					/* This is a blank page */
+				}
+				
+			};
+			blankScreen.addCommand(EXIT_CMD);
+			blankScreen.setCommandListener(this);
+			show(blankScreen);
+			l.exception("Failed to initialise the configuration: ", e);
+			return;
 		}
 		
 		phoneMaxMemory = determinPhoneMaxMemory();
@@ -255,7 +267,10 @@ public class GpsMid extends MIDlet implements CommandListener{
 		//#debug info
 		l.info("Showing Alert: " + message);
 		try {
-			Display.getDisplay(this).setCurrent(alert, shouldBeDisplaying);
+			if (shouldBeDisplaying == null)
+				Display.getDisplay(this).setCurrent(alert);
+			else
+				Display.getDisplay(this).setCurrent(alert, shouldBeDisplaying);
 		} catch (IllegalArgumentException iae) {
 			/**
     		 * Nokia S40 phones seem to throw an exception

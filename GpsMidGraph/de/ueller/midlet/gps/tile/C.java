@@ -77,10 +77,9 @@ public class C {
 		 */
 		short mapVersion = ds.readShort();
 		if (mapVersion != MAP_FORMAT_VERSION) {
-			logger.fatal("The Map files are not the version we expected, " +
+			throw new IOException("The Map files are not the version we expected, " +
 					"please ues the correct Osm2GpsMid to recreate the map " +
 					"data.  Expected: " + MAP_FORMAT_VERSION + " Read: " + mapVersion);
-			throw new IOException("Wrong map file format");
 		}
 		
 		appVersion = ds.readUTF();
