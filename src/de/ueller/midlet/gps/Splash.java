@@ -32,10 +32,13 @@ public class Splash extends Canvas implements CommandListener,Runnable{
     private final Command BACK_CMD = new Command("Accept", Command.OK, 2);
     private final Command EXIT_CMD = new Command("Decline", Command.EXIT, 1);
 	private final GpsMid main;
-	String[] txt={"Copyright:",
+	String[] txt={"Disclaimer:",
+			      " No warranty, no liability.",
+			      " Don't handle while driving!",
+				  "Copyright:",
 				  " Harald Mueller",
 				  " Kai Krueger",
-				  " sk750",
+				  " S. Hochmuth",
 	              "Application:",
 	              " licensed by GPL2",
 	              " http://www.gnu.org/",
