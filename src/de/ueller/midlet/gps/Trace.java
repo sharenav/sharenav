@@ -884,6 +884,8 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	}
 	
 	private void startImageCollector() throws Exception {
+		//#debug info
+		logger.info("Starting ImageCollector");
 		Images i;
 		i = new Images();
 		pc = new PaintContext(this, i);
@@ -898,6 +900,8 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		pc.ySize = this.getHeight();
 	}
 	private void stopImageCollector(){
+		//#debug info
+		logger.info("Stopping ImageCollector");
 		cleanup();
 		if (imageCollector != null ) {
 			imageCollector.stop();
@@ -2128,7 +2132,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			parent.mNoiseMaker.resetSoundRepeatTimes();
 		}
 		try {
-			if (config.isStopAllWhileRouteing()){
+			if ((config.isStopAllWhileRouteing())&&(imageCollector == null)){
 				startImageCollector();
 				// imageCollector thread starts up suspended,
 				// so we need to resume it
