@@ -343,7 +343,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 
 			@Override
 			public String getDescription() {
-				return "Openstreetmap file";
+				return "Openstreetmap file (*.osm.bz2, *.osm)";
 			}
 
 		};
