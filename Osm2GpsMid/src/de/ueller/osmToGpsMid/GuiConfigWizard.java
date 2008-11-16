@@ -177,7 +177,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		gbc.gridwidth = 1;
 		jpOptions.add(jcbRouting, gbc);
 		
-		JLabel jlName = new JLabel("Midlet name: ");
+		JLabel jlName = new JLabel("Midlet name:");
 		gbc.gridx = 0;
 		gbc.gridy = 1;
 		gbc.weighty = 0;
@@ -256,13 +256,16 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		}
 	}
 	
-	private void resetPropertiesSelectors() {
+	private void addMapMarkers() {	
 		map.setMapMarkerAreaList(new LinkedList<MapMarkerArea>());
 		Bounds [] bounds = config.getBounds();
 		for (Bounds b : bounds) {
 			MapMarkerRectangle boundMarker = new MapMarkerRectangle(Color.BLACK,new Color(0x2fffffaf,true),b.maxLat,b.maxLon,b.minLat, b.minLon);
 			map.addMapMarkerArea(boundMarker);
 		}
+	}
+	
+	private void resetPropertiesSelectors() {
 		String styleFile = config.getStyleFileName();
 		if (styleFile != null) {
 			System.out.println("Style: " +styleFile);
@@ -279,7 +282,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		}
 		jcbRouting.setSelected(config.useRouting);
 		jcbPhone.setSelectedItem(config.getString("app"));
-		jtfName.setText(config.getMidletName());
+		jtfName.setText(config.getString("midlet.name"));
 	}
 
 	private Vector<String> enumerateAppParam() {
@@ -444,7 +447,6 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if ("OK-click".equalsIgnoreCase(e.getActionCommand())) {
-			config.setName(jtfName.getText());
 			System.out.println("Configuration wizard has finished");
 
 			dialogFinished = true;
@@ -485,16 +487,19 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			config.setRouting(((JCheckBox)e.getSource()).isSelected());
 		}
 		
+		//if (e.getSource() == jtfName) {
+			config.setMidletName(jtfName.getText());
+		//}
 		if ("comboBoxChanged".equalsIgnoreCase(e.getActionCommand())) {
 			if (e.getSource() == jcbProperties) {
 				
+				config.resetConfig();
 				String chosenProperty = (String) jcbProperties.getSelectedItem();
 				if (chosenProperty
 						.equalsIgnoreCase(LOAD_PROP)) {
 					askPropFile();
 				} else if (chosenProperty
 						.equalsIgnoreCase(CUSTOM_PROP)){
-					config.resetConfig();
 				} else {
 					try {
 						InputStream is = getClass().getResourceAsStream("/"+chosenProperty+".properties");
@@ -509,6 +514,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 						return;
 					}
 				}
+				addMapMarkers();
 				resetPropertiesSelectors();
 			}
 			if (e.getSource() == jcbPlanet) {
@@ -517,7 +523,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 				if (chosenProperty
 						.equalsIgnoreCase(FILE_SRC)) {
 					askOsmFile();
-					resetPropertiesSelectors();
+					//resetPropertiesSelectors();
 				} else {
 					config.setPlanetName(chosenProperty);
 				}
@@ -528,7 +534,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 				if (chosenProperty
 						.equalsIgnoreCase(LOAD_STYLE)) {
 					askStyleFile();
-					resetPropertiesSelectors();
+					//resetPropertiesSelectors();
 				} else  if(chosenProperty
 						.equalsIgnoreCase(DEFAULT_STYLE)) {
 					config.setStyleFileName("style-file.xml");
@@ -550,7 +556,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	@Override
 	public void regionSelected(Bounds bound) {
 		config.addBounds(bound);
-		resetPropertiesSelectors();
+		addMapMarkers();
 	}
 
 }

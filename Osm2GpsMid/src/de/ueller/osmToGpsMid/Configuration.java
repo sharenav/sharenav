@@ -53,6 +53,7 @@ public class Configuration {
 		private String planet;
 		private String propFile;
 		private String bundleName;
+		private String midletName;
 		private String appParam;
 		public boolean useRouting=false;
 		public int maxTileSize=20000;
@@ -257,12 +258,15 @@ public class Configuration {
 			bundleName = name;
 		}
 		
+		public void setMidletName(String name){
+			midletName = name;
+		}
+				
 		public String getMidletName(){
-		    String mn=getString("midlet.name");
-		    if (mn != null)
-		    	return mn;
-		    else 
-		    	return "GpsMid";
+			if (midletName != null) {
+				return midletName;
+			}
+			return getString("midlet.name");
 		}
 		
 		public void setCodeBase (String app) {
