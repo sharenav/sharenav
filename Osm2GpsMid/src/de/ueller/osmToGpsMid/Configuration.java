@@ -204,17 +204,9 @@ public class Configuration {
 			useRouting=use("useRouting");
 			maxRouteTileSize=Integer.parseInt(getString("routing.maxTileSize"));
 			maxTileSize=Integer.parseInt(getString("maxTileSize"));
-			styleFile = getString("style-file");
+			setStyleFileName(getString("style-file"));
 			appParam = getString("app");
-			InputStream is;
-			try {
-				is = new FileInputStream(styleFile);
-			} catch (IOException e) {
-				styleFile = "/style-file.xml";
-				System.out.println("Warning: Style file (" + styleFile + ") not found. Using internal one!"); 
-				is = getClass().getResourceAsStream(styleFile);
-			}
-			legend = new LegendParser(is);
+			
 		}
 
 		public void setPlanetName(String p) {
@@ -230,6 +222,15 @@ public class Configuration {
 		
 		public void setStyleFileName(String name) {
 			styleFile = name;
+			InputStream is;
+			try {
+				is = new FileInputStream(styleFile);
+			} catch (IOException e) {
+				styleFile = "/style-file.xml";
+				System.out.println("Warning: Style file (" + styleFile + ") not found. Using internal one!"); 
+				is = getClass().getResourceAsStream(styleFile);
+			}
+			legend = new LegendParser(is);
 		}
 		
 		public boolean use(String key){
