@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import javax.microedition.lcdui.Graphics;
 
+import de.ueller.gps.data.Configuration;
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
@@ -84,6 +85,9 @@ public class RouteTile extends RouteBaseTile {
 					return;
 				}
 			}
+
+			// show route cost only if Alternative Info/Type Information in Map Features is activated
+			boolean showCost = Trace.getInstance().getConfig().getCfgBitState(Configuration.CFGBIT_SHOWWAYPOITYPE);			
 			
 			for (int i=0; i< nodes.length;i++){
 				if (pc.getP().isPlotable(nodes[i].lat, nodes[i].lon)){
@@ -123,7 +127,9 @@ public class RouteTile extends RouteBaseTile {
 							pc.getP().forward(rnt.lat, rnt.lon, pc.lineP2);
 							pc.g.drawLine(pc.swapLineP.x, pc.swapLineP.y, pc.lineP2.x, pc.lineP2.y);
 							pc.g.setColor(0, 0, 0);
-							pc.g.drawString(Integer.toString(c.cost), (pc.swapLineP.x + pc.lineP2.x) / 2, (pc.swapLineP.y + pc.lineP2.y) / 2, Graphics.TOP | Graphics.RIGHT);
+							if (showCost) {
+								pc.g.drawString(Integer.toString(c.cost), (pc.swapLineP.x + pc.lineP2.x) / 2, (pc.swapLineP.y + pc.lineP2.y) / 2, Graphics.TOP | Graphics.RIGHT);
+							}
 						}
 					}
 				}
