@@ -43,21 +43,23 @@ GpsMid 0.4.50
        - Take pictures from GpsMid if JSR-135 or JSR-234 is supported by phone
        - Record audio notes with GpsMid
 	   - Geotag pictures in exif header (experimental)
-	   *** Usability ***
+	   *** GpsMid Usability ***
        - Restructured Map Menu
        - map "freeze" bug on SE phones fixed
        - new Full text search (Search / Fulltext Search)
        - More international characters are mapped to number keys in the Search form
-	   - show a Configuaration wizard if no comand line parameters are given
-       - allow to specify bounds on command line if no properties file is specified:
-         java -Xmx1024M -jar Osm2GpsMid-0.4.x.jar --bounds=23.48,34.78,26.37,35.7 osmxapi
-       - create midlet from whole osm file if no properties file and no bounds are specified, i.e.:
-         java -Xmx1024M -jar Osm2GpsMid-0.4.x.jar greece.osm.bz2
        - show busy screen while discovering BT devices
        - automatically default new midlets to correct backlight method for devices that were listed
          with backlight method at http://gpsmid.wiki.sourceforge.net/DevicesList
        - Scale splash screen on devices with more than 176x220 and enough memory
        - show midlet version and bundling date in splash screen
+	   *** Osm2GpsMid Usability ***
+	   - A graphical Osm2GpsMid Wizard starts if no command line parameters are given
+       - allow to specify bounds on command line if no properties file is specified:
+         java -Xmx1024M -jar Osm2GpsMid-0.4.x.jar --bounds=23.48,34.78,26.37,35.7 osmxapi
+       - create midlet from whole osm file if no properties file and no bounds are specified, i.e.:
+         java -Xmx1024M -jar Osm2GpsMid-0.4.x.jar greece.osm.bz2
+       - display configuration summary of parameters that are used for midlet creation	   
 	   *** Style File ***
        - priority and specialisation conditions in style-file for POIs and ways
        - pois and areas marked with "hideable=false" in style-file
