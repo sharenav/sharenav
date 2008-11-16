@@ -139,11 +139,12 @@ public abstract class QueueReader implements Runnable {
 						logger.error("Out of memory reading tiles, trying to recover");
 						Trace.getInstance().dropCache();
 					} catch (final IOException e) {
-						tt = (Tile) requestQueue.firstElement();
-						// logger.info(e.getMessage()+ "in read dict " + tt.fileId);
-						requestQueue.removeElementAt(0);
-						notificationQueue.removeElementAt(0);
-						e.printStackTrace();
+						logger.exception("Failed to read tile: ", e);
+						synchronized (this) {
+							/* Start a fresh */
+							requestQueue.removeAllElements();
+							notificationQueue.removeAllElements();
+						}
 					}
 
 					synchronized (this) {

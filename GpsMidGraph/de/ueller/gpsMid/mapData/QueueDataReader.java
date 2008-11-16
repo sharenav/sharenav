@@ -95,7 +95,6 @@ public class QueueDataReader extends QueueReader implements Runnable {
 			tt.nodeLon=radlon;
 			tt.type=type;
 		} catch (RuntimeException e) {
-			logger.exception("Runtime error in QueueDataReader", e);			
 			throwError(e, "reading Nodes", tt);
 		}
 		logger.info("read nodes");
@@ -149,10 +148,10 @@ public class QueueDataReader extends QueueReader implements Runnable {
 				}
 			}			
 		} catch (RuntimeException e) {			
-			throwError(e,"Ways(last ok index " + lastread,tt);
+			throwError(e,"Ways(last ok index " + lastread + " out of " + wayCount +")",tt);
 		}
 		if (ds.readByte() != 0x56){
-			throwError("Ways not OK", tt);
+			throwError("Ways not OK, failed to read final magic value", tt);
 		} else {
 //			logger.info("ready");
 		}
@@ -176,7 +175,8 @@ public class QueueDataReader extends QueueReader implements Runnable {
 		
 	}
 	private void throwError(RuntimeException e, String string, SingleTile tt) throws IOException {
-		throw new IOException("MapMid-file corrupt: " + string + " zl=" + tt.zl + " fid=" + tt.fileId + " :" + e.getMessage());
+		e.printStackTrace();
+		throw new IOException("MapMid-file corrupt: " + string + " Problem was in: zl=" + tt.zl + " fid=" + tt.fileId + " :" + e.getMessage());
 	}
 	public String toString(){
 		int loop;
