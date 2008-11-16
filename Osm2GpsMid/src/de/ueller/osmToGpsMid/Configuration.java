@@ -545,7 +545,7 @@ public class Configuration {
 			confString += "\t Bundle name: " + getName() + "\n";
 			confString += "\t Midlet name: " + getMidletName() + "\n";
 			confString += "\t Code base: " + appParam + "\n";
-			confString += "\t Keeping map files after .jar creation: " + cleanupTmpDirAfterUse() + "\n";
+			confString += "\t Keeping map files after .jar creation: " + !cleanupTmpDirAfterUse() + "\n";
 			confString += "\t Enable routing: " + useRouting + "\n";
 			confString += "\t used Style-file: " + getStyleFileName() + "\n";
 			confString += "\t Planet source: " + planet + "\n";
