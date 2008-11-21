@@ -8,8 +8,8 @@ GpsMid 0.4.50
          (GpsMid will route from nearest routable way)       
        - experimental voice routing instructions (sound names see style-file.xml of high-style.zip)
        - "Clear Target" menu entry to remove route arrows and navigation line
-	   - Possibility to show the routing graph as a route debuging feature
-	   *** Map ***
+       - Possibility to show the routing graph as a route debuging feature
+       *** Map ***
        - One-way street arrows in the map
        - "Search=>Overview/Filter Map" or double-press "*"
          shows the chosen hideable POI/Area/Way types
@@ -28,7 +28,7 @@ GpsMid 0.4.50
        - Exporting and importing waypoints always use UTF-8 now (thx bilboq)
        - Existing waypoints.gpx files are now correctly overwritten (thx bilboq)
        - "Export all" command for GPX tracklogs
-	   *** GPS ***
+       *** GPS ***
        - BT-GPS: auto-reconnect feature
        - BT-GPS: Remove the Stop recording command if the Location receiver gets closed
        - sound for GPS start / stop (thx mbaeurle)
@@ -42,8 +42,8 @@ GpsMid 0.4.50
        *** Audio & Picture Recording ***
        - Take pictures from GpsMid if JSR-135 or JSR-234 is supported by phone
        - Record audio notes with GpsMid
-	   - Geotag pictures in exif header (experimental)
-	   *** GpsMid Usability ***
+       - Geotag pictures in exif header (experimental)
+       *** GpsMid Usability ***
        - Restructured Map Menu
        - map "freeze" bug on SE phones fixed
        - new Full text search (Search / Fulltext Search)
@@ -53,21 +53,21 @@ GpsMid 0.4.50
          with backlight method at http://gpsmid.wiki.sourceforge.net/DevicesList
        - Scale splash screen on devices with more than 176x220 and enough memory
        - show midlet version and bundling date in splash screen
-	   *** Osm2GpsMid Usability ***
-	   - A graphical Osm2GpsMid Wizard starts if no command line parameters are given
+       *** Osm2GpsMid Usability ***
+       - A graphical Osm2GpsMid Wizard starts if no command line parameters are given
        - allow to specify bounds on command line if no properties file is specified:
          java -Xmx1024M -jar Osm2GpsMid-0.4.x.jar --bounds=23.48,34.78,26.37,35.7 osmxapi
        - create midlet from whole osm file if no properties file and no bounds are specified, i.e.:
          java -Xmx1024M -jar Osm2GpsMid-0.4.x.jar greece.osm.bz2
        - display configuration summary of parameters that are used for midlet creation	   
-	   *** Style File ***
+       *** Style File ***
        - priority and specialisation conditions in style-file for POIs and ways
        - pois and areas marked with "hideable=false" in style-file
          are not allowed be hidden using map features anymore (useful i.e. to keep place names)
        - sounds section in style file / sound playback routines supporting *.amr, *.wav and *.mp3, .amr recommended
        - descriptionscale for areas allowing to specify scale when type description is shown  
-	   *** Others ***
-	   - many more new features and bugfixes
+       *** Others ***
+       - many more new features and bugfixes
 
 GpsMid 0.4.0
 	   - map content and look (ways, areas, pois) is configurable on midlet creation
