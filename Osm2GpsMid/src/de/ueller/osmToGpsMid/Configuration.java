@@ -334,11 +334,11 @@ public class Configuration {
 					throw new IOException("Can't handle specified bounds with ROMA");
 				}
 				Bounds bound = bounds[0];
-				URL url = new URL("http://roma.osm.lab.rfc822.org/api/0.5/map?bbox=" + 
+				URL url = new URL("http://api1.osm.mat.cc:8080/api/0.5/map?bbox=" + 
 						bound.minLon + "," + bound.minLat + "," + bound.maxLon + "," + bound.maxLat);
 				System.out.println("Connecting to ROMA: " + url);
 				System.out.println("This may take a while!");
-				fr = new TeeInputStream(url.openStream(),new FileOutputStream(new File(getTempDir() + "osmXapi.osm")));
+				fr = new TeeInputStream(url.openStream(),new FileOutputStream(new File(getTempDir() + "ROMA.osm")));
 			} else {
 				System.out.println("Opening planet file: " + planet);				
 				
