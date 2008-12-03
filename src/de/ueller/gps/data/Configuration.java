@@ -186,17 +186,17 @@ public class Configuration {
 			cfgBits=readLong(database, RECORD_ID_CFGBITS);
 			// set initial values if record store does not exist yet
 			if( ! getCfgBitState(CFGBIT_DEFAULTVALUESAPPLIED) ) {
-				cfgBits=1<<CFGBIT_DEFAULTVALUESAPPLIED | 
-				   		1<<CFGBIT_STREETRENDERMODE |
-				   		1<<CFGBIT_POITEXTS |
-				   		1<<CFGBIT_AREATEXTS |
-				   		1<<CFGBIT_WPTTEXTS |
-				   		// 1<<CFGBIT_WAYTEXTS | // way texts are still experimental
-				   		1<<CFGBIT_ONEWAY_ARROWS |
-				   		1<<CFGBIT_POIS |
-				   		1<<CFGBIT_ROUTING_HELP |
-				   		1<<CFGBIT_AUTOSAVE_MAPPOS |
-				   		1<<CFGBIT_BACKLIGHT_MAPONLY |
+				cfgBits=1L<<CFGBIT_DEFAULTVALUESAPPLIED | 
+				   		1L<<CFGBIT_STREETRENDERMODE |
+				   		1L<<CFGBIT_POITEXTS |
+				   		1L<<CFGBIT_AREATEXTS |
+				   		1L<<CFGBIT_WPTTEXTS |
+				   		// 1L<<CFGBIT_WAYTEXTS | // way texts are still experimental
+				   		1L<<CFGBIT_ONEWAY_ARROWS |
+				   		1L<<CFGBIT_POIS |
+				   		1L<<CFGBIT_ROUTING_HELP |
+				   		1L<<CFGBIT_AUTOSAVE_MAPPOS |
+				   		1L<<CFGBIT_BACKLIGHT_MAPONLY |
 				   		getDefaultDeviceBacklightMethodMask();
 				// Record Rule Default
 				setGpxRecordRuleMode(GPX_RECORD_MINIMUM_SECS_DIST);
@@ -218,13 +218,13 @@ public class Configuration {
 			int configVersionStored = readInt(database, RECORD_ID_CONFIG_VERSION);
 			// default values for config version 3
 			if(configVersionStored < 3) {				
-				cfgBits |=	1<<CFGBIT_SND_CONNECT |
-					   		1<<CFGBIT_SND_DISCONNECT |
-					   		1<<CFGBIT_SND_ROUTINGINSTRUCTIONS |
-					   		1<<CFGBIT_SND_TARGETREACHED |
-					   		1<<CFGBIT_SHOW_POINT_OF_COMPASS |
-					   		1<<CFGBIT_AREAS |
-					   		1<<CFGBIT_ROUTE_AUTO_RECALC;
+				cfgBits |=	1L<<CFGBIT_SND_CONNECT |
+					   		1L<<CFGBIT_SND_DISCONNECT |
+					   		1L<<CFGBIT_SND_ROUTINGINSTRUCTIONS |
+					   		1L<<CFGBIT_SND_TARGETREACHED |
+					   		1L<<CFGBIT_SHOW_POINT_OF_COMPASS |
+					   		1L<<CFGBIT_AREAS |
+					   		1L<<CFGBIT_ROUTE_AUTO_RECALC;
 
 				// Auto-reconnect GPS
 				setBtAutoRecon(true);
@@ -494,9 +494,9 @@ public class Configuration {
 
 	public boolean getCfgBitState(byte bit,boolean getDefault) {
 		if (getDefault) {
-			return ((this.cfgBitsDefault & (1<<bit)) !=0);			
+			return ((this.cfgBitsDefault & (1L<<bit)) !=0);			
 		} else {
-			return ((this.cfgBits & (1<<bit)) !=0);
+			return ((this.cfgBits & (1L<<bit)) !=0);
 		}
 	}
 
@@ -507,16 +507,16 @@ public class Configuration {
 	
 	public void setCfgBitState(byte bit, boolean state, boolean setAsDefault) {
 		// set bit
-		this.cfgBits|=(1<<bit);
+		this.cfgBits|= (1L<<bit);
 		if (!state) {
 			// clear bit
-			this.cfgBits^=(1<<bit);
+			this.cfgBits^= (1L<<bit);
 		}
 		if (setAsDefault) {
-			this.cfgBitsDefault|=(1<<bit);
+			this.cfgBitsDefault|= (1L<<bit);
 			if (!state) {
 				// clear bit
-				this.cfgBitsDefault^=(1<<bit);
+				this.cfgBitsDefault^= (1L<<bit);
 			}			
 			write(cfgBitsDefault, RECORD_ID_CFGBITS);
 		}	
@@ -715,7 +715,7 @@ public class Configuration {
 		return false;
 	}
 	
-	private int getDefaultDeviceBacklightMethodMask() {
+	private long getDefaultDeviceBacklightMethodMask() {
 		// a list of return codes for microedition.platform can be found at:
 		// http://www.club-java.com/TastePhone/J2ME/MIDP_Benchmark.jsp
 		String phoneModel=System.getProperty("microedition.platform");
@@ -725,12 +725,12 @@ public class Configuration {
 				phoneModel.startsWith("SonyEricssonC") ||
 				phoneModel.startsWith("SonyEricssonK550")
 			) {
-				return 1<<CFGBIT_BACKLIGHT_NOKIA;			
+				return 1L<<CFGBIT_BACKLIGHT_NOKIA;			
 			}
 			if (phoneModel.startsWith("SonyEricssonK750") ||
 				phoneModel.startsWith("SonyEricssonW800")
 			) {
-				return 1<<CFGBIT_BACKLIGHT_NOKIAFLASH;
+				return 1L<<CFGBIT_BACKLIGHT_NOKIAFLASH;
 			}
 		}
 		return 0;
