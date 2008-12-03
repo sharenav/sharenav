@@ -350,4 +350,13 @@
 		</junit>
 	</target>
 
+    <target name="min-siemapi-compile" description="compile min-siemapi class files for api jar">
+        <mkdir dir="build/min-siemapi"/>
+        <javac srcdir="src-lib/min-siemapi" destdir="build/min-siemapi"/>
+    </target>
+    	
+	<target name="min-siemapi" description="create api jar for some Siemens-specific functions" depends="min-siemapi-compile">
+        <jar destfile="lib/min-siemapi.jar" basedir="build/min-siemapi"/>
+    </target>
+	
 </project>
