@@ -1,4 +1,7 @@
-GpsMid 0.4.50
+GpsMid 0.4.55
+
+
+GpsMid 0.4.51
        *** Navigation ***
        - Rotate map to driving direction
          (specify default rotation in Display Options or Map Features
