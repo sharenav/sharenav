@@ -238,18 +238,27 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		menuDisplayOptions.append(gaugeDetailBoost);
 
 		String [] backlights;
+		byte i = 3;
 		//#if polish.api.nokia-ui
-			backlights = new String[5];
-		//#else
-			backlights = new String[3];
+			i += 2;
 		//#endif
+		//#if polish.api.min-siemapi
+			i++;
+		//#endif
+		backlights = new String[i];
+			
 		backlights[0] = "Keep Backlight On";
 		backlights[1] = "only in map screen";
 		backlights[2] = "with MIDP2.0";
+		i = 3;
 		//#if polish.api.nokia-ui
-		backlights[3] = "with Nokia API";
-		backlights[4] = "with Nokia Flashlight";
+		backlights[i++] = "with Nokia API";
+		backlights[i++] = "with Nokia Flashlight";
 		//#endif
+		//#if polish.api.min-siemapi
+		backlights[i++] = "with Siemens API";
+		//#endif
+		
 		backlightOpts = new ChoiceGroup("Backlight Options:", Choice.MULTIPLE, backlights ,null);
 		menuDisplayOptions.append(backlightOpts);
 
@@ -499,12 +508,19 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 					GpxTile.newWptFont();
 					gaugeDetailBoost.setValue(config.getDetailBoostDefault());
 					// convert bits from backlight flag into selection states
-					boolean[] sellight = new boolean[5];
+					boolean[] sellight = new boolean[6];
 					sellight[0]=config.getCfgBitState(config.CFGBIT_BACKLIGHT_ON, true);
 					sellight[1]=config.getCfgBitState(config.CFGBIT_BACKLIGHT_MAPONLY, true);
 					sellight[2]=config.getCfgBitState(config.CFGBIT_BACKLIGHT_MIDP2, true);
-					sellight[3]=config.getCfgBitState(config.CFGBIT_BACKLIGHT_NOKIA, true);
-					sellight[4]=config.getCfgBitState(config.CFGBIT_BACKLIGHT_NOKIAFLASH, true);
+					byte i = 3;
+					//#if polish.api.nokia-ui
+						sellight[i++]=config.getCfgBitState(config.CFGBIT_BACKLIGHT_NOKIA, true);
+						sellight[i++]=config.getCfgBitState(config.CFGBIT_BACKLIGHT_NOKIAFLASH, true);
+					//#endif	
+					//#if polish.api.min-siemapi
+						sellight[i++]=config.getCfgBitState(config.CFGBIT_BACKLIGHT_SIEMENS, true);
+					//#endif
+
 					backlightOpts.setSelectedFlags(sellight);
 					
 					GpsMid.getInstance().show(menuDisplayOptions);
@@ -631,7 +647,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				
 				// convert boolean array with selection states for backlight
 				// to one flag with corresponding bits set
-				boolean[] sellight = new boolean[5];
+				boolean[] sellight = new boolean[6];
 				backlightOpts.getSelectedFlags( sellight );
 	            // save selected values to record store
 				config.setCfgBitState(config.CFGBIT_BACKLIGHT_ON, sellight[0], true);
@@ -639,6 +655,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				config.setCfgBitState(config.CFGBIT_BACKLIGHT_MIDP2, sellight[2], true);
 				config.setCfgBitState(config.CFGBIT_BACKLIGHT_NOKIA , sellight[3], true);
 				config.setCfgBitState(config.CFGBIT_BACKLIGHT_NOKIAFLASH , sellight[4], true);
+				config.setCfgBitState(config.CFGBIT_BACKLIGHT_SIEMENS , sellight[5], true);
 				state = STATE_ROOT;
 				show();
 

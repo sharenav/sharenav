@@ -10,6 +10,16 @@
 		<files>btapi.jar, j2me-btapi.jar, bluetooth.zip</files>
 		<path>import/btapi.jar</path>
 	</api>
+	<api>
+		<name>min-siemapi</name>
+		<description>minimal Siemens API for backlight and vibration
+		</description>
+		<names>min-siemapi</names>
+		<symbol>min-siemapi</symbol>
+		<files>min-siemapi</files>
+		<path>lib/min-siemapi.jar</path>
+	</api>
+
 <!--
 	You can use this block to define a new API
 	( remove these XML-comments ):
@@ -24,5 +34,6 @@
 		<path>import/-1.0.jar</path>
 	</api>
 -->
+
 </apis>
 

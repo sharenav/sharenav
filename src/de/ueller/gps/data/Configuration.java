@@ -91,7 +91,8 @@ public class Configuration {
 	public final static byte CFGBIT_ONEWAY_ARROWS=30;
 	// bit 31: Debug Option: show route connections
 	public final static byte CFGBIT_ROUTE_CONNECTIONS=31;
-
+	// bit 32: backlight method SIEMENS
+	public final static byte CFGBIT_BACKLIGHT_SIEMENS=32;
 	
 	/**
 	 * These are the database record ids for each configuration option	 * 
@@ -726,12 +727,15 @@ public class Configuration {
 				phoneModel.startsWith("SonyEricssonK550")
 			) {
 				return 1L<<CFGBIT_BACKLIGHT_NOKIA;			
-			}
-			if (phoneModel.startsWith("SonyEricssonK750") ||
+			} else if (phoneModel.startsWith("SonyEricssonK750") ||
 				phoneModel.startsWith("SonyEricssonW800")
 			) {
 				return 1L<<CFGBIT_BACKLIGHT_NOKIAFLASH;
-			}
+			} else if (phoneModel.endsWith("(NSG)") || 
+			    phoneModel.startsWith("SIE")
+			) {
+				 return 1<<CFGBIT_BACKLIGHT_SIEMENS;
+	        } 			
 		}
 		return 0;
 	}

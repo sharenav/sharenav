@@ -38,6 +38,9 @@ import javax.microedition.io.file.FileConnection;
 //#if polish.api.nokia-ui
 import com.nokia.mid.ui.DeviceControl;
 //#endif
+//#if polish.api.min-siemapi
+import de.ueller.midlet.gps.importexport.SiemGameLight;
+//#endif
 
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.tools.HelperRoutines;
@@ -387,7 +390,8 @@ public class GpsMid extends MIDlet implements CommandListener{
 			// to keep backlight on was selected
 			if( ! (config.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_MIDP2) || 
 				   config.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIA) ||
-				   config.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIAFLASH)
+				   config.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIAFLASH) ||
+				   config.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_SIEMENS)
 				  )
 			) {				
 				l.error("Backlight cannot be kept on when no 'with'-method is specified in Setup");
@@ -417,8 +421,21 @@ public class GpsMid extends MIDlet implements CommandListener{
 									//on those phones that support the nokia-ui 
 									} else if (config.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIA) ) {  
 										DeviceControl.setLights(0, 100);
-									//#endif		
+									//#endif
+									//#if polish.api.min-siemapi
+									} else if (config.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_SIEMENS) ) {
+										try {
+											Class.forName("com.siemens.mp.game.Light");
+											SiemGameLight.SwitchOn();
+										}
+									catch (Exception e) {
+										l.exception("Siemens API error: " , e);
 									}
+									//#endif
+									} 
+									
+									
+									
 								}
 								try {
 									synchronized(this) {

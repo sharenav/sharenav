@@ -22,7 +22,7 @@ at large.
 		<features>isVirtual</features>
 		<capability name="JavaPlatform" value="MIDP/2.0"/>
 		<capability name="JavaConfiguration" value="CLDC/1.1"/>
-		<capability name="JavaPackage" value="location-api, webservices,  btapi, obex, pdaapi, fileconnection, mmapi, wmapi, 3dapi, svg, nokia-ui"/>
+		<capability name="JavaPackage" value="location-api, webservices,  btapi, obex, pdaapi, fileconnection, mmapi, wmapi, 3dapi, svg, nokia-ui, min-siemapi"/>
 	</device>
 	
 	<device supportsPolishGui="true">
