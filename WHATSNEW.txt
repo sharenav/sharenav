@@ -1,6 +1,11 @@
 GpsMid 0.4.55
-	   *** Usability ***
-	   - add backlight method for Siemens mobiles to Generic-Full (thx beni123)
+       *** Usability ***
+       - added backlight method for Siemens mobiles to Generic-Full (thx beni123)
+       *** Recordings ***
+       - Added feature to send an SMS with the current map position (map center)
+         if JSR-120 is available. It is also possible
+         to save the specified recipient as default recipient,
+         even when leaving the form with the Back command
 
 GpsMid 0.4.51
        *** Navigation ***

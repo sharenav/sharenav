@@ -124,6 +124,7 @@ public class Configuration {
 	private static final int RECORD_ID_PHOTO_ENCODING = 25;
 	private static final int RECORD_ID_MAP_PROJECTION = 26;
 	private static final int RECORD_ID_CONFIG_VERSION = 27;
+	private static final int RECORD_ID_SMS_RECIPIENT = 28;
 	
 
 	// Gpx Recording modes
@@ -168,6 +169,8 @@ public class Configuration {
 	
 	private boolean mapFromJar;
 	private String mapFileUrl;
+
+	private String smsRecipient; 
 	
 	
 	public Configuration() {		
@@ -261,14 +264,15 @@ public class Configuration {
 			stopAllWhileRouteing=readInt(database,  RECORD_ID_STOP_ALL_WHILE_ROUTING) !=0;
 			btKeepAlive = readInt(database,  RECORD_ID_BT_KEEPALIVE) !=0;
 			btAutoRecon = readInt(database,  RECORD_ID_GPS_RECONNECT) !=0;
-			String s=readString(database, RECORD_ID_STARTUP_RADLAT);
-			String s2=readString(database, RECORD_ID_STARTUP_RADLON);
+			String s = readString(database, RECORD_ID_STARTUP_RADLAT);
+			String s2 = readString(database, RECORD_ID_STARTUP_RADLON);
 			if(s!=null && s2!=null) {
 				startupPos.radlat=Float.parseFloat(s);
 				startupPos.radlon=Float.parseFloat(s2);
 			}
 			//System.out.println("Map startup lat/lon: " + startupPos.radlat*MoreMath.FAC_RADTODEC + "/" + startupPos.radlon*MoreMath.FAC_RADTODEC);
 			setProjTypeDefault((byte) readInt(database,  RECORD_ID_MAP_PROJECTION));
+			smsRecipient = readString(database, RECORD_ID_SMS_RECIPIENT);
 			database.closeRecordStore();
 		} catch (Exception e) {
 			logger.exception("Problems with reading our configuration: ", e);
@@ -608,6 +612,15 @@ public class Configuration {
 		write(url, RECORD_ID_MAP_FILE_URL);
 		mapFileUrl = url;		
 	}
+
+	public String getSmsRecipient() {
+		return smsRecipient;
+	}
+	
+	public void setSmsRecipient(String s) {
+		write(s, RECORD_ID_SMS_RECIPIENT);
+		smsRecipient = s;		
+	}
 	
 	public InputStream getMapResource(String name) throws IOException{
 		InputStream is;
@@ -714,6 +727,16 @@ public class Configuration {
 			return true;
 		}
 		return false;
+	}
+	
+	public static boolean hasDeviceJSR120(){
+		try {
+		Class.forName("javax.wireless.messaging.MessageConnection" );
+			return true;
+		}
+		catch( Exception e ){
+			return false;
+		}
 	}
 	
 	private long getDefaultDeviceBacklightMethodMask() {
