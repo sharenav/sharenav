@@ -4,6 +4,9 @@ package de.ueller.midlet.gps;
  * See Copying
  */
 
+//#if polish.api.wmapi
+
+
 import javax.microedition.lcdui.*;
 import javax.wireless.messaging.*;
 import javax.microedition.io.*;
@@ -12,7 +15,7 @@ import de.ueller.gps.data.Configuration;
 import de.ueller.midlet.gps.data.MoreMath;
 
 public class GuiSendMessage extends Form implements CommandListener {
-	
+		
 	// commands
 	private static final Command CMD_SEND = new Command("Send", Command.OK, 1);
 	private static final Command CMD_BACK = new Command("Back", Command.BACK, 2);
@@ -72,7 +75,7 @@ public class GuiSendMessage extends Form implements CommandListener {
 		}
 		
 		if (c == CMD_SEND) {				
-	        String recipientAddr = "sms://" + tfRecipientPhoneNumber.getString();
+			String recipientAddr = "sms://" + tfRecipientPhoneNumber.getString();
 	        MessageConnection conn = null;
 	        try {
 	        	conn = (MessageConnection) Connector.open(recipientAddr);
@@ -94,7 +97,6 @@ public class GuiSendMessage extends Form implements CommandListener {
 	        		}
 	        	}
 	        }
-
 		    parent.show();
 			return;
 		}
@@ -107,5 +109,5 @@ public class GuiSendMessage extends Form implements CommandListener {
 	public void show() {
 		GpsMid.getInstance().show(this);
 	}
-
 }
+//#endif

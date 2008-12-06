@@ -106,8 +106,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	private final Command RECENTER_GPS_CMD = new Command("Recenter on GPS",Command.ITEM, 100);
 	private final Command TACHO_CMD = new Command("Tacho",Command.ITEM, 100);
 	private final Command OVERVIEW_MAP_CMD = new Command("Overview/Filter Map",Command.ITEM, 200);
+	//#if polish.api.wmapi
 	private final Command SEND_MESSAGE_CMD = new Command("Send SMS (map pos)",Command.ITEM, 200);
-
+	//#endif
 
 	private InputStream btGpsInputStream;
 	private OutputStream btGpsOutputStream;
@@ -286,7 +287,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		doubleKeyPressCommand.put(KEY_NUM5, TOGGLE_MAP_PROJ_CMD);
 		doubleKeyPressCommand.put(KEY_NUM0, TOGGLE_RECORDING_SUSP_CMD);
 		doubleKeyPressCommand.put(KEY_STAR, OVERVIEW_MAP_CMD);
+		//#if polish.api.wmapi
 		//doubleKeyPressCommand.put(KEY_POUND, SEND_MESSAGE_CMD);
+		//#endif
 		longKeyPressCommand.put(KEY_NUM5, SAVE_WAYP_CMD);
 		longKeyPressCommand.put(KEY_NUM9, TOGGLE_KEY_LOCK_CMD);
 		longKeyPressCommand.put(KEY_NUM0, TOGGLE_RECORDING_CMD);
@@ -683,13 +686,13 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				ovEl.show();
 				repaint(0, 0, getWidth(), getHeight());
 			}
+			//#if polish.api.wmapi
 			if (c == SEND_MESSAGE_CMD) {
-				if (config.hasDeviceJSR120()) {
-					GuiSendMessage sendMsg = new GuiSendMessage(this);
-					sendMsg.show();
-					repaint(0, 0, getWidth(), getHeight());
-				}
+				GuiSendMessage sendMsg = new GuiSendMessage(this);
+				sendMsg.show();
+				repaint(0, 0, getWidth(), getHeight());
 			}
+			//#endif
 			if (c == RECORDINGS_CMD) {
 				int noElements = 4;
 				//#if polish.api.mmapi
@@ -709,14 +712,18 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 					elements[4] = "Stop audio recording";
 				} else {
 					elements[4] = "Start audio recording";					
+					//#if polish.api.wmapi
 					if (config.hasDeviceJSR120()) {
 						elements[5] = "Send SMS (map pos)";									
 					}
+					//#endif
 				}				
 				//#else
-				if (config.hasDeviceJSR120()) {
-					elements[3] = "Send SMS (map pos)";									
-				}
+					//#if polish.api.wmapi
+					if (config.hasDeviceJSR120()) {
+						elements[3] = "Send SMS (map pos)";									
+					}
+					//#endif
 				//#endif
 				
 				recordingsMenu = new List("Recordings...",Choice.IMPLICIT,elements,null);
@@ -773,12 +780,12 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			            	break;
 			            }
 			          //#endif
-			          //#if polish.api.mmapi
+			          //#if polish.api.mmapi && polish.api.wmapi
 			            case 5: {
 			            	commandAction(SEND_MESSAGE_CMD, null);			            	
 			            	break;
 			            }			            	
-			          //#else
+			          //#elif polish.api.wmapi
 			            case 3: {
 			            	commandAction(SEND_MESSAGE_CMD, null);			            	
 			            	break;
