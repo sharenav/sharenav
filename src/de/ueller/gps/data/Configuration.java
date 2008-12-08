@@ -746,8 +746,9 @@ public class Configuration {
 		// http://www.club-java.com/TastePhone/J2ME/MIDP_Benchmark.jsp
 
 		//#if polish.api.nokia-ui || polish.api.min-siemapi
+			String phoneModel = null;
 			try {
-				String phoneModel=System.getProperty("microedition.platform");
+				phoneModel = System.getProperty("microedition.platform");
 			} catch (RuntimeException re) {
 				/**
 				 * Some phones throw exceptions if trying to access properties that don't
@@ -755,7 +756,6 @@ public class Configuration {
 				 */
 				return 0;
 			} catch (Exception e) {
-				phoneModel = null;
 				/**
 				 * See above 
 				 */
