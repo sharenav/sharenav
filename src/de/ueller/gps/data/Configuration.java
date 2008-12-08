@@ -710,22 +710,24 @@ public class Configuration {
 	}
 	
 	public boolean getDeviceSupportsJSR179() {
-		String jsr179Version = null;
-		try {
-			jsr179Version = System.getProperty("microedition.location.version");
-		} catch (RuntimeException re) {
-			/**
-			 * Some phones throw exceptions if trying to access properties that don't
-			 * exist, so we have to catch these and just ignore them.
-			 */
-		} catch (Exception e) {
-			/**
-			 * See above 
-			 */				
-		}
-		if (jsr179Version != null && jsr179Version.length() > 0) {
-			return true;
-		}
+		//#if polish.api.locationapi
+			String jsr179Version = null;
+			try {
+				jsr179Version = System.getProperty("microedition.location.version");
+			} catch (RuntimeException re) {
+				/**
+				 * Some phones throw exceptions if trying to access properties that don't
+				 * exist, so we have to catch these and just ignore them.
+				 */
+			} catch (Exception e) {
+				/**
+				 * See above 
+				 */				
+			}
+			if (jsr179Version != null && jsr179Version.length() > 0) {
+				return true;
+			}
+		//#endif
 		return false;
 	}
 	
@@ -742,24 +744,41 @@ public class Configuration {
 	private long getDefaultDeviceBacklightMethodMask() {
 		// a list of return codes for microedition.platform can be found at:
 		// http://www.club-java.com/TastePhone/J2ME/MIDP_Benchmark.jsp
-		String phoneModel=System.getProperty("microedition.platform");
-		if (phoneModel != null) {
-			// determine default backlight method for devices from the wiki
-			if (phoneModel.startsWith("Nokia") ||
-				phoneModel.startsWith("SonyEricssonC") ||
-				phoneModel.startsWith("SonyEricssonK550")
-			) {
-				return 1L<<CFGBIT_BACKLIGHT_NOKIA;			
-			} else if (phoneModel.startsWith("SonyEricssonK750") ||
-				phoneModel.startsWith("SonyEricssonW800")
-			) {
-				return 1L<<CFGBIT_BACKLIGHT_NOKIAFLASH;
-			} else if (phoneModel.endsWith("(NSG)") || 
-			    phoneModel.startsWith("SIE")
-			) {
-				 return 1<<CFGBIT_BACKLIGHT_SIEMENS;
-	        } 			
-		}
+
+		//#if polish.api.nokia-ui || polish.api.min-siemapi
+			try {
+				String phoneModel=System.getProperty("microedition.platform");
+			} catch (RuntimeException re) {
+				/**
+				 * Some phones throw exceptions if trying to access properties that don't
+				 * exist, so we have to catch these and just ignore them.
+				 */
+				return 0;
+			} catch (Exception e) {
+				phoneModel = null;
+				/**
+				 * See above 
+				 */
+				return 0;
+			}
+			if (phoneModel != null) {
+				// determine default backlight method for devices from the wiki
+				if (phoneModel.startsWith("Nokia") ||
+					phoneModel.startsWith("SonyEricssonC") ||
+					phoneModel.startsWith("SonyEricssonK550")
+				) {
+					return 1L<<CFGBIT_BACKLIGHT_NOKIA;			
+				} else if (phoneModel.startsWith("SonyEricssonK750") ||
+					phoneModel.startsWith("SonyEricssonW800")
+				) {
+					return 1L<<CFGBIT_BACKLIGHT_NOKIAFLASH;
+				} else if (phoneModel.endsWith("(NSG)") || 
+				    phoneModel.startsWith("SIE")
+				) {
+					return 1<<CFGBIT_BACKLIGHT_SIEMENS;
+		        } 			
+			}
+		//#endif
 		return 0;
 	}
 }
