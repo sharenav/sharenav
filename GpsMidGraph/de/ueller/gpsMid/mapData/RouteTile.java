@@ -95,13 +95,20 @@ public class RouteTile extends RouteBaseTile {
 					pc.g.drawRect(pc.swapLineP.x-2, pc.swapLineP.y-2, 5, 5); //Draw node
 					for (int ii=0; ii< connections[i].length;ii++){
 						Connection c=connections[i][ii];
-						Connection [] reverseCons;
+						Connection [] reverseCons = null;
 						RouteNode rnt=getRouteNode(c.toId);
 						
 						if (rnt == null){
 							RouteBaseTile dict = (RouteBaseTile) Trace.getInstance().getDict((byte)4);
 							rnt=dict.getRouteNode(c.toId);
-							reverseCons = dict.getConnections(rnt.id,dict,true);
+							if (rnt != null) {
+								reverseCons = dict.getConnections(rnt.id,dict,true);
+							} else {
+								//FIXME: We couldn't get a ReverseConnection, can this cause problems in other routing code
+								pc.g.setColor(255, 70, 70);
+								final byte radius = 10;
+								pc.g.fillArc(pc.swapLineP.x-radius/2,pc.swapLineP.y-radius/2,radius,radius,0,359);
+							}
 						} else {
 							reverseCons = getConnections(rnt.id, this, true);
 						}
