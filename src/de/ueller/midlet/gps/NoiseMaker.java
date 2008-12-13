@@ -1,6 +1,7 @@
 /*
- * GpsMid - Copyright (c) 2008 mbaeuerle at users dot sourceforge dot net 
- *          Copyright (c) 2008 sk750 at users dot sourceforge dot net 
+ * GpsMid - Copyright (c) 2008 mbaeurle at users dot sourceforge dot net 
+ *          Copyright (c) 2008 sk750 at users dot sourceforge dot net
+ * See Copying 
  */
 
 package de.ueller.midlet.gps;
