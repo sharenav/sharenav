@@ -185,14 +185,14 @@ public class Way extends Entity implements Comparable<Way>{
 		
 		return 0;		
 	}
-    /**
-     * get or estimate speed in m/s for routing purposes
+	
+	/**
+     * Returns the maximum speed in km/h if explicitly set for this way,
+     * if not, it returns -1.0
      * @return
      */
-	public float getSpeed(){
-		if (config == null)
-			config = Configuration.getConfiguration();
-		float maxSpeed = Float.MAX_VALUE;
+	public float getMaxSpeed() {
+		float maxSpeed = -1.0f;
 		if (containsKey("maxspeed")){
 			try {
 				boolean mph = false;
@@ -212,13 +212,24 @@ public class Way extends Entity implements Comparable<Way>{
 				System.out.println("Invalid MaxSpeed for Way + " + toString() +": " + getAttribute("maxspeed"));
 			}
 		}
+		return maxSpeed;
+	}
+	
+    /**
+     * get or estimate speed in m/s for routing purposes
+     * @return
+     */
+	public float getRoutingSpeed(){
+		if (config == null)
+			config = Configuration.getConfiguration();
+		float maxSpeed = getMaxSpeed();
 		float typicalSpeed = config.getWayDesc(type).typicalSpeed;
+		if (maxSpeed <= 0)
+			maxSpeed = 60.0f; //Default case;
 		if (typicalSpeed != 0)
 			if (typicalSpeed < maxSpeed)
 				maxSpeed = typicalSpeed;
-		if (maxSpeed == Float.MAX_VALUE)
-			maxSpeed = 60.0f; //Default case;
-		return maxSpeed / 3.6f;		
+		return maxSpeed / 3.6f;
 	}
 
 	public int compareTo(Way o) {
@@ -311,12 +322,9 @@ public class Way extends Entity implements Comparable<Way>{
 				flags += WAY_FLAG_NAMEHIGH;
 			}
 		}
-		if (containsKey("maxspeed")){
-			try {
-				maxspeed=Integer.parseInt(getAttribute("maxspeed"));
-				flags+=WAY_FLAG_MAXSPEED;
-			} catch (NumberFormatException e) {
-			}
+		maxspeed = (int)getMaxSpeed();
+		if (maxspeed > 0){
+			flags+=WAY_FLAG_MAXSPEED;
 		}
 		
 		if (containsKey("layer")) {
