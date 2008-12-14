@@ -313,7 +313,8 @@ public class Configuration {
 		public File getPlanet(){
 			return new File(planet);
 		}
-		public InputStream getPlanetSteam() throws IOException {			
+		public InputStream getPlanetSteam() throws IOException {
+			System.setProperty( "http.agent", "Osm2GpsMid");
 			InputStream fr = null;
 			if (planet.equalsIgnoreCase("osmxapi")) {
 				Bounds[] bounds = getBounds();
