@@ -1,7 +1,12 @@
 /**
- * OSM2GpsMid 
- *  
- * Copyright (C) 2008 Kai Krueger
+ * This file is part of OSM2GpsMid 
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as published by
+ * the Free Software Foundation.
+ *
+ * Copyright (C) 2008  Kai Krueger
+ * 
  */
 package de.ueller.osmToGpsMid;
 
