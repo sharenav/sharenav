@@ -102,6 +102,7 @@
             debug="on"
             optimize="on"
             deprecation="on"
+			target="1.5"
             compiler="${compiler}" encoding="UTF8">
      	<classpath>
      		<path refid="main.classpath" />
