@@ -26,6 +26,9 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.Vector;
 import java.util.zip.GZIPInputStream;
+import java.util.zip.Inflater;
+import java.util.zip.InflaterInputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 
 import org.apache.tools.bzip2.CBZip2InputStream;
@@ -314,34 +317,43 @@ public class Configuration {
 			return new File(planet);
 		}
 		public InputStream getPlanetSteam() throws IOException {
-			System.setProperty( "http.agent", "Osm2GpsMid");
 			InputStream fr = null;
-			if (planet.equalsIgnoreCase("osmxapi")) {
+			if (planet.equalsIgnoreCase("osmxapi") || planet.equalsIgnoreCase("ROMA")) {
 				Bounds[] bounds = getBounds();
 				if (bounds.length > 1) {
-					System.out.println("Can't deal with multiple bounds when requesting from osmxapi yet");
-					throw new IOException("Can't handle specified bounds with osmxapi");
+					System.out.println("Can't deal with multiple bounds when requesting from a Server yet");
+					throw new IOException("Can't handle specified bounds with online data");
 				}
 				Bounds bound = bounds[0];
-				URL url = new URL("http://osmxapi.informationfreeway.org/api/0.5/*[bbox=" + 
-						bound.minLon + "," + bound.minLat + "," + bound.maxLon + "," + bound.maxLat + "]");
-				System.out.println("Connecting to Osmxapi: " + url);
-				System.out.println("This may take a while!");
-				fr = new TeeInputStream(url.openStream(),new FileOutputStream(new File(getTempDir() + "osmXapi.osm")));
-			} else if (planet.equalsIgnoreCase("ROMA")) {
-				Bounds[] bounds = getBounds();
-				if (bounds.length > 1) {
-					System.out.println("Can't deal with multiple bounds when requesting from ROMA yet");
-					throw new IOException("Can't handle specified bounds with ROMA");
+				URL url = null;
+				if (planet.equalsIgnoreCase("osmxapi")) {
+					url = new URL("http://osmxapi.informationfreeway.org/api/0.5/*[bbox=" + 
+							bound.minLon + "," + bound.minLat + "," + bound.maxLon + "," + bound.maxLat + "]");
+				} else if (planet.equalsIgnoreCase("ROMA")){
+					url = new URL("http://api1.osm.mat.cc:8080/api/0.5/map?bbox=" + 
+							bound.minLon + "," + bound.minLat + "," + bound.maxLon + "," + bound.maxLat);
 				}
-				Bounds bound = bounds[0];
-				URL url = new URL("http://api1.osm.mat.cc:8080/api/0.5/map?bbox=" + 
-						bound.minLon + "," + bound.minLat + "," + bound.maxLon + "," + bound.maxLat);
-				System.out.println("Connecting to ROMA: " + url);
+				 
+				System.out.println("Connecting to server: " + url);
 				System.out.println("This may take a while!");
-				fr = new TeeInputStream(url.openStream(),new FileOutputStream(new File(getTempDir() + "ROMA.osm")));
+				HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+				conn.setRequestProperty("User-Agent", "Osm2GpsMid");
+				conn.setRequestProperty("Accept-Encoding", "gzip; deflate");
+				conn.connect();
+				String encoding = conn.getContentEncoding();
+				System.out.println("Encoding: " + encoding);
+				InputStream apiStream;
+				if (encoding != null && encoding.equalsIgnoreCase("gzip")) {
+					apiStream = new GZIPInputStream(conn.getInputStream());
+				} else if (encoding != null && encoding.equalsIgnoreCase("deflate")) {
+					apiStream = new InflaterInputStream(conn.getInputStream(), new Inflater(true));
+				} else {
+					apiStream = conn.getInputStream();
+				}
+
+				fr = new TeeInputStream(apiStream,new FileOutputStream(new File(getTempDir() + "Online.osm")));
 			} else {
-				System.out.println("Opening planet file: " + planet);				
+				System.out.println("Opening planet file: " + planet);
 				
 				fr= new FileInputStream(planet);
 				if (planet.endsWith(".bz2") || planet.endsWith(".gz")){
@@ -350,7 +362,7 @@ public class Configuration {
 						fr.read();
 						fr = new CBZip2InputStream(fr);
 					} else if (planet.endsWith(".gz")) {
-						fr = new GZIPInputStream(fr);							
+						fr = new GZIPInputStream(fr);
 					}
 					/*int availableProcessors = Runtime.getRuntime().availableProcessors();
 					if (availableProcessors > 1){
