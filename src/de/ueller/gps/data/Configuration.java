@@ -93,6 +93,8 @@ public class Configuration {
 	public final static byte CFGBIT_ROUTE_CONNECTIONS=31;
 	// bit 32: backlight method SIEMENS
 	public final static byte CFGBIT_BACKLIGHT_SIEMENS=32;
+	// bit 33: Skip initial splash screen
+	public final static byte CFGBIT_SKIPP_SPLASHSCREEN=33;
 	
 	/**
 	 * These are the database record ids for each configuration option	 * 

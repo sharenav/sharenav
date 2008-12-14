@@ -13,6 +13,7 @@
  */
 package de.ueller.midlet.gps;
 
+import de.ueller.gps.data.Configuration;
 import de.ueller.midlet.gps.tile.C;
 
 import java.io.IOException;
@@ -138,6 +139,7 @@ public class Splash extends Canvas implements CommandListener,Runnable{
         }
         if (c == EXIT_CMD) {
         	shutdown=true;
+        	main.getConfig().setCfgBitState(Configuration.CFGBIT_SKIPP_SPLASHSCREEN, false, true);
         	main.exit();
         	return;
         }
@@ -213,4 +215,16 @@ public class Splash extends Canvas implements CommandListener,Runnable{
         	return original;
         }
     }
+	protected void keyPressed(int keyCode) {
+		if (keyCode == KEY_STAR) {
+			boolean current = main.getConfig().getCfgBitState(Configuration.CFGBIT_SKIPP_SPLASHSCREEN);
+			main.getConfig().setCfgBitState(Configuration.CFGBIT_SKIPP_SPLASHSCREEN, !current, true);
+			if (current) {
+				main.alert("Splash", "Showing splash screen on startup", 500);
+			} else {
+				main.alert("Splash", "Not showing splash screen again...", 500);
+			}
+				
+		}
+	}
 }

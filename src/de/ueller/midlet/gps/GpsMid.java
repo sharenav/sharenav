@@ -141,8 +141,13 @@ public class GpsMid extends MIDlet implements CommandListener{
 		loghist.addCommand(CLEAR_DEBUG_CMD);
 		loghist.setCommandListener(this);
 		
-//		
-		new Splash(this);
+//
+		if (config.getCfgBitState(Configuration.CFGBIT_SKIPP_SPLASHSCREEN)) {
+			this.show();
+		} else {
+			new Splash(this);
+		}
+		
 //		RouteNodeTools.initRecordStore();
 		startBackLightTimer();
 	}
