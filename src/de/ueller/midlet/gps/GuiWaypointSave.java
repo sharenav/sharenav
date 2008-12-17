@@ -14,8 +14,7 @@ import de.ueller.midlet.gps.data.Proj2DMoveUp;
  * See Copying
  */
 public class GuiWaypointSave extends Form implements CommandListener {
-
-	private TextField fldName = new TextField("Name:", "", 20, TextField.ANY);
+	private TextField fldName;
 	private static final Command saveCmd = new Command("Save", Command.OK, 1);
 	private static final Command backCmd = new Command("Back", Command.OK, 2);
 	private Trace parent;
@@ -36,6 +35,7 @@ public class GuiWaypointSave extends Form implements CommandListener {
 	}
 
 	private void jbInit() throws Exception {
+		fldName = new TextField("Name:", "", parent.getConfig().MAX_WAYPOINTNAME_LENGTH, TextField.ANY);
 		// Set up this Displayable to listen to command events
 		setCommandListener(this);
 		// add the commands

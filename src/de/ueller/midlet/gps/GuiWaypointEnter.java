@@ -21,8 +21,7 @@ import de.ueller.midlet.gps.data.Proj2DMoveUp;
  * waypoints that are outside the coordinate system.
  */
 public class GuiWaypointEnter extends Form implements CommandListener {
-
-	private TextField fldName = new TextField("Name:", "", 20, TextField.ANY);
+	private TextField fldName;
 	private TextField fldLatDeg = new TextField("Lat deg:", "", 10, TextField.DECIMAL);
 	private TextField fldLatMin = new TextField("Lat min:", "", 10, TextField.DECIMAL);
 	private TextField fldLatSec = new TextField("Lat sec:", "", 10, TextField.DECIMAL);
@@ -46,6 +45,7 @@ public class GuiWaypointEnter extends Form implements CommandListener {
 	}
 
 	private void jbInit() throws Exception {
+		fldName = new TextField("Name:", "", parent.getConfig().MAX_WAYPOINTNAME_LENGTH, TextField.ANY);
 		// Set up this Displayable to listen to command events
 		setCommandListener(this);
 		// add the commands
