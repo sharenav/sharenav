@@ -153,6 +153,25 @@ public class Gpx extends Tile implements Runnable {
 		}
 		tile.addWayPt(waypt);		
 	}
+
+	public void updateWayPt(PositionMark waypt) {
+		byte[] buf = waypt.toByte();
+		try {
+			openWayPtDatabase();
+			wayptDatabase.setRecord(waypt.id, buf, 0, buf.length);
+			wayptDatabase.closeRecordStore();
+			wayptDatabase = null;
+		} catch (RecordStoreNotOpenException e) {
+			logger.exception("Exception updating  waypoint (database not open)", e);
+		} catch (RecordStoreFullException e) {
+			logger.exception("Record store is full, could not update waypoint", e);			
+		} catch (RecordStoreException e) {
+			logger.exception("Exception updating waypoint", e);
+		}
+	}
+	
+	
+	
 	
 	public boolean existsWayPt(PositionMark newWayPt) {
 		if (tile != null) {

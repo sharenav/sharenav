@@ -10,6 +10,8 @@ import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.List;
+
+import de.ueller.gps.data.Configuration;
 import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.IntPoint;
 import de.ueller.midlet.gps.data.Node;
@@ -17,13 +19,14 @@ import de.ueller.midlet.gps.data.PositionMark;
 
 
 public class GuiWaypoint extends List implements CommandListener,
-		GpsMidDisplayable, UploadListener {
+		GpsMidDisplayable, UploadListener, CompletionListener {
 
 	private final static Logger logger=Logger.getInstance(GuiWaypoint.class,Logger.DEBUG);
 	
 	private final Command SEND_ALL_CMD = new Command("Send All", Command.ITEM, 1);	
 	private final Command LOAD_CMD = new Command("Load Gpx", Command.ITEM, 2);
 	private final Command SEND_CMD = new Command("Send", Command.ITEM, 4);
+	private final Command RENAME_CMD = new Command("Rename", Command.ITEM, 2);	
 	private final Command DEL_CMD = new Command("Delete", Command.ITEM, 2);	
 	private final Command SALL_CMD = new Command("Select All", Command.ITEM, 2);
 	private final Command DSALL_CMD = new Command("Deselect All", Command.ITEM, 2);
@@ -32,18 +35,22 @@ public class GuiWaypoint extends List implements CommandListener,
 
 	private PositionMark[] waypoints;
 	private final Trace parent;
+	private final Configuration config;
+	private static int iWptNr;
 	
 	private boolean uploading;
 	
 	public GuiWaypoint(Trace parent) throws Exception {
 		super("Waypoints", List.MULTIPLE);
 		this.parent = parent;
+		this.config = parent.getConfig();
 		setCommandListener(this);
 		initWaypoints();
 		
 		//addCommand(SEND_CMD);
 		addCommand(SEND_ALL_CMD);
 		addCommand(LOAD_CMD);
+		addCommand(RENAME_CMD);		
 		addCommand(DEL_CMD);		
 		addCommand(SALL_CMD);		
 		addCommand(DSALL_CMD);
@@ -72,6 +79,20 @@ public class GuiWaypoint extends List implements CommandListener,
 		logger.debug("got Command " + c);
 		if (c == SEND_CMD) {			
 			/* TODO */			
+			return;
+		}
+		if (c == RENAME_CMD) {
+			uploading = false;
+			boolean[] sel = new boolean[waypoints.length];
+			this.getSelectedFlags(sel);			
+			for (int i = 0; i < sel.length; i++) {
+				if (sel[i]) {
+					iWptNr = i;
+					GuiNameEnter gne = new GuiNameEnter(parent, this, "Rename Waypoint", waypoints[i].displayName, config.MAX_WAYPOINTNAME_LENGTH);
+					gne.show();
+					break;
+				}
+			}
 			return;
 		}
 		if (c == DEL_CMD) {
@@ -187,4 +208,20 @@ public class GuiWaypoint extends List implements CommandListener,
 	public void uploadAborted() {
 		initWaypoints();				
 	}
+
+	public void actionCompleted(boolean success, String strResult) {
+		if (success) {
+			// rename waypoint
+			waypoints[iWptNr].displayName = strResult;
+			parent.gpx.updateWayPt(waypoints[iWptNr]);
+			// change item in list
+			set(iWptNr, strResult, null);
+			// unselect changed item
+			setSelectedIndex(iWptNr, false);
+		}
+		show();
+	}
+	
 }
+
+
