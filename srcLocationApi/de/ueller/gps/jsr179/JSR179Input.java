@@ -52,20 +52,32 @@ public class JSR179Input implements LocationListener ,LocationMsgProducer{
      */
     void createLocationProvider() {
     	logger.trace("enter createLocationProvider()");
-        if (locationProvider == null) {
-            Criteria criteria = new Criteria();
-
-            try {
-                locationProvider = LocationProvider.getInstance(criteria);
-                logger.info(locationProvider.toString());
-            } catch (LocationException le) {
-            	//#debug
-                logger.error("Cannot create LocationProvider for this criteria.");
-                locationProvider=null;
-        		receiver.locationDecoderEnd("no JSR179 Provider");
-			}
+        if (locationProvider == null) {            
+        	// try out different locationprovider criteria combinations, the ones with maximum features first 
+        	for (int i=0; i<=2; i++) {
+	            try {
+		        	Criteria criteria = new Criteria();
+		        	switch(i) {
+		        		case 0:
+		        			criteria.setAltitudeRequired(true); // also require the criteria below
+		        		case 1:
+		        			criteria.setSpeedAndCourseRequired(true);
+		        			break;
+		        	}
+	                locationProvider = LocationProvider.getInstance(criteria);
+	                logger.info(locationProvider.toString());
+	                break; // we are using this criteria
+	            } catch (LocationException le) {
+	                logger.info("LocationProvider criteria not fitting: " + i);
+	                locationProvider=null;
+	            }
+        	}
             if(locationProvider!=null) {
             	updateSolution(locationProvider.getState());
+            } else {
+        		receiver.locationDecoderEnd("no JSR179 Provider");            	
+            	//#debug
+                logger.error("Cannot create LocationProvider for criteria.");
             }
         }
         //#debug
