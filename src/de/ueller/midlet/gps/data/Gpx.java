@@ -86,10 +86,14 @@ public class Gpx extends Tile implements Runnable {
 	private boolean trkRecordingSuspended;
 		
 	private GpxTile tile;
+
+	private Configuration config=null;
+
 	
 	public Gpx() {
 		tile = new GpxTile();
 		reloadWpt = true;
+		config=GpsMid.getInstance().getConfig();
 		processorThread = new Thread(this);
 		processorThread.setPriority(Thread.MIN_PRIORITY);
 		processorThread.start();		
@@ -169,10 +173,7 @@ public class Gpx extends Tile implements Runnable {
 			logger.exception("Exception updating waypoint", e);
 		}
 	}
-	
-	
-	
-	
+		
 	public boolean existsWayPt(PositionMark newWayPt) {
 		if (tile != null) {
 			return tile.existsWayPt(newWayPt);
@@ -188,7 +189,6 @@ public class Gpx extends Tile implements Runnable {
 		//#debug info
 		logger.info("Adding trackpoint: " + trkpt);
 		
-		Configuration config=GpsMid.getInstance().getConfig();
 		long msTime=trkpt.date.getTime();
 		float lat=trkpt.latitude*MoreMath.FAC_DECTORAD;
 		float lon=trkpt.longitude*MoreMath.FAC_DECTORAD;
@@ -456,6 +456,45 @@ public class Gpx extends Tile implements Runnable {
 		} catch (RecordStoreException e) {
 			logger.exception("Exception deleting track", e);
 		}		
+	}
+	
+	public void updateTrackName(PersistEntity trk) {
+		String action = " reading for updating trackname";
+		try {
+			openTrackDatabase();
+			DataInputStream dis1 = new DataInputStream(new ByteArrayInputStream(trackDatabase.getRecord(trk.id)));
+			String trackName = dis1.readUTF();
+			int recorded = dis1.readInt();
+			int trackSize = dis1.readInt();
+			byte[] trackArray = new byte[trackSize];
+			dis1.read(trackArray);
+
+			action = " preparing update of ";
+			ByteArrayOutputStream baosDb = new ByteArrayOutputStream();
+			DataOutputStream dosDb = new DataOutputStream(baosDb);
+			dosDb.writeUTF(trk.displayName);
+			dosDb.writeInt(recorded);
+			dosDb.writeInt(trackSize);
+			dosDb.write(trackArray);
+			dosDb.flush();
+			
+			action = " updating of ";
+			trackDatabase.setRecord(trk.id, baosDb.toByteArray(), 0, baosDb.size());
+			
+			trackDatabase.closeRecordStore();
+			trackDatabase = null;
+
+		} catch (IOException e) {
+			logger.exception("IOException" + action, e);
+		} catch (RecordStoreNotOpenException e) {
+			logger.exception("Exception" + action + " (database not open)", e);
+		} catch (RecordStoreFullException e) {
+			logger.exception("Exception" + action + " (database full)", e);
+		} catch (RecordStoreException e) {
+			logger.exception("Exception" + action, e);
+		} catch (OutOfMemoryError oome) {
+			logger.fatal("Out of memory, can't do" + action);
+		}
 	}
 	
 	public void receiveGpx(InputStream in, UploadListener ul, float maxDistance) {
@@ -831,7 +870,7 @@ public class Gpx extends Tile implements Runnable {
 			
 			if (sendTrk) 
 			{
-				name = currentTrk.displayName;
+				name = config.getValidFileName(currentTrk.displayName);
 			}
 			else if (sendWpt)
 			{

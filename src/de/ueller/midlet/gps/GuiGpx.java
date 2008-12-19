@@ -14,7 +14,7 @@ import de.ueller.midlet.gps.data.PersistEntity;
 
 
 public class GuiGpx extends List implements CommandListener,
-		GpsMidDisplayable, UploadListener {
+		GpsMidDisplayable, UploadListener, CompletionListener {
 
 	private final static Logger logger=Logger.getInstance(GuiGpx.class,Logger.DEBUG);
 	
@@ -22,11 +22,15 @@ public class GuiGpx extends List implements CommandListener,
 	private final Command SEND_ALL_CMD = new Command("Export all", Command.ITEM, 2);
 	private final Command LOAD_CMD = new Command("Import", Command.ITEM, 3);
 	private final Command DISP_CMD = new Command("Display", Command.ITEM, 4);
+	private final Command RENAME_CMD = new Command("Rename", Command.ITEM, 5);	
 	private final Command DEL_CMD = new Command("Delete", Command.ITEM, 5);	
 	private final Command CLEAR_CMD = new Command("Delete all", Command.ITEM, 6);	
 	private final Command BACK_CMD = new Command("Back", Command.BACK, 5);
 
 	private boolean uploading;
+	
+	private int idx;
+	private String sCount;
 	
 	private final Trace parent;
 	
@@ -43,6 +47,7 @@ public class GuiGpx extends List implements CommandListener,
 		addCommand(SEND_ALL_CMD);
 		addCommand(LOAD_CMD);
 		addCommand(DISP_CMD);
+		addCommand(RENAME_CMD);		
 		addCommand(DEL_CMD);		
 		addCommand(CLEAR_CMD);		
 		addCommand(BACK_CMD);		
@@ -60,11 +65,11 @@ public class GuiGpx extends List implements CommandListener,
 	}
 
 	public void commandAction(Command c, Displayable d) {
+		idx = this.getSelectedIndex();
 		//#debug debug
 		logger.debug("got Command " + c);
 		if (c == SEND_CMD) {
 			uploading = true;
-			int idx = this.getSelectedIndex();
 			parent.gpx.sendTrk(parent.getConfig().getGpxUrl(), this, trks[idx]);			
 			return;
 		}
@@ -83,6 +88,18 @@ public class GuiGpx extends List implements CommandListener,
 			int idx = this.getSelectedIndex();
 			parent.gpx.displayTrk(trks[idx]);
 			parent.show();
+			return;
+		}
+		if (c == RENAME_CMD) {
+			sCount = "";
+			String sNameOnly = trks[idx].displayName;
+			int iCountPos = sNameOnly.lastIndexOf('(');
+			if (iCountPos > 0 && sNameOnly.lastIndexOf(' ') == (iCountPos - 1) ) {
+				sCount = sNameOnly.substring(iCountPos - 1);
+				sNameOnly = sNameOnly.substring(0, iCountPos - 1);
+			}
+			GuiNameEnter gne = new GuiNameEnter(parent, this, "Rename Track", sNameOnly, parent.getConfig().MAX_TRACKNAME_LENGTH);
+			gne.show();
 			return;
 		}
 		if (c == DEL_CMD) {
@@ -135,7 +152,18 @@ public class GuiGpx extends List implements CommandListener,
 	}
 
 	public void uploadAborted() {
-		initTracks();
-		
+		initTracks();	
 	}
+	
+	public void actionCompleted(boolean success, String strResult) {
+		if (success) {		
+			// rename track
+			trks[idx].displayName = strResult;
+			parent.gpx.updateTrackName(trks[idx]);
+			// change item in list
+			set(idx, strResult + sCount, null);
+		}
+		show();
+	}
+	
 }
