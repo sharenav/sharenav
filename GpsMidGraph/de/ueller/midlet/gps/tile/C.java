@@ -51,6 +51,12 @@ public class C {
 	public final static byte OM_HIDE=0;
 	public final static byte OM_SHOWNORMAL=1;
 	public final static byte OM_OVERVIEW=2;
+	public final static byte OM_MODE_MASK=OM_SHOWNORMAL | OM_OVERVIEW;
+	
+	public final static byte OM_NAME_ALL=0;
+	public final static byte OM_NO_NAME=4;
+	public final static byte OM_WITH_NAME=8;
+	public final static byte OM_NAME_MASK=OM_NO_NAME | OM_WITH_NAME;
 	
 	public static int BACKGROUND_COLOR = 0x009BFF9B;
 	public static String appVersion;

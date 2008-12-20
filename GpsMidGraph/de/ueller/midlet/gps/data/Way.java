@@ -196,7 +196,9 @@ public class Way extends Entity{
 		WayDescription wayDesc = C.getWayDescription(type);
 		int w = 0;
 
-		switch (C.getWayOverviewMode(type)) {
+		byte om = C.getWayOverviewMode(type);
+		if (om!=0) { // speed up non-overview mode
+			switch (om & C.OM_MODE_MASK) {
 			case C.OM_SHOWNORMAL: 
 				// if not in Overview Mode check for scale
 				if (pc.scale > wayDesc.maxScale * pc.config.getDetailBoostMultiplier()) {			
@@ -208,8 +210,18 @@ public class Way extends Entity{
 					return;
 				}
 				break;
-		}
+			}
 
+			switch (om & C.OM_NAME_MASK) {
+				case C.OM_WITH_NAME: 
+					if (nameIdx == -1) return;
+					break;
+				case C.OM_NO_NAME: 
+					if (nameIdx != -1) return;
+					break;
+			}
+		}
+				
 		/**
 		 * Calculate the width of the path to be drawn. A width of 1 corresponds to
 		 * it being draw as a thin line rather than as a street 
@@ -821,8 +833,9 @@ public class Way extends Entity{
 	public void paintAsArea(PaintContext pc, SingleTile t) {
 		WayDescription wayDesc = C.getWayDescription(type);
 		
-		
-		switch (C.getWayOverviewMode(type)) {
+		byte om = C.getWayOverviewMode(type);
+		if (om!=0) { // speed up non-overview mode		
+			switch (om & C.OM_MODE_MASK) {
 			case C.OM_SHOWNORMAL: 
 				// if not in Overview Mode check for scale
 				if (pc.scale > wayDesc.maxScale * pc.config.getDetailBoostMultiplier()) {			
@@ -837,6 +850,16 @@ public class Way extends Entity{
 					return;
 				}
 				break;
+			}
+		
+			switch (om & C.OM_NAME_MASK) {
+				case C.OM_WITH_NAME: 
+					if (nameIdx == -1) return;
+					break;
+				case C.OM_NO_NAME: 
+					if (nameIdx != -1) return;
+					break;
+			}
 		}
 		
 		IntPoint lineP2 = pc.lineP2;
