@@ -736,7 +736,8 @@ zoomed out 21x (scale alias 1:  500km)
   			</Wvalue>
   			<Wvalue name = "secondary" priority = "10">
   				<description desc = "secondary"/>
-  				<namekey tag = "name"/>  				
+  				<namekey tag = "name"/>
+				<namefallback tag = "ref"/>
   				<isArea area = "false"/>
   				<scale scale = "18"/>
   				<lineColor color = "00FDBF6F" />
@@ -746,6 +747,7 @@ zoomed out 21x (scale alias 1:  500km)
   			<Wvalue name = "tertiary" priority = "10">
   				<description desc = "tertiary"/>
   				<namekey tag = "name"/>  				
+				<namefallback tag = "ref"/>
   				<isArea area = "false"/>
   				<scale scale = "19"/>
   				<lineColor color = "00FFFFFF" />
@@ -755,6 +757,7 @@ zoomed out 21x (scale alias 1:  500km)
   			<Wvalue name = "unclassified" priority = "9">  					        
   				<description desc = "small road"/>
   				<namekey tag = "name"/>  				
+  				<namefallback tag = "ref"/>
   				<isArea area = "false"/>
   				<scale scale = "20"/>
   				<lineColor color = "00FFFFFF" />
@@ -764,6 +767,7 @@ zoomed out 21x (scale alias 1:  500km)
   			<Wvalue name = "residential" priority = "10">
   				<description desc = "residential"/>
   				<namekey tag = "name"/>  				
+  				<namefallback tag = "ref"/>
   				<isArea area = "false"/>
   				<scale scale = "20"/>
   				<textscale scale = "23"/>
@@ -774,6 +778,7 @@ zoomed out 21x (scale alias 1:  500km)
   			<Wvalue name = "living_street" priority = "9">
   				<description desc = "living street"/>
   				<namekey tag = "name"/>
+				<namefallback tag = "ref"/>
   				<isArea area = "false"/>
   				<scale scale = "20"/>
   				<lineColor color = "00B4B4FF" />
