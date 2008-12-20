@@ -88,7 +88,7 @@ public class GuiWaypoint extends List implements CommandListener,
 			for (int i = 0; i < sel.length; i++) {
 				if (sel[i]) {
 					iWptNr = i;
-					GuiNameEnter gne = new GuiNameEnter(parent, this, "Rename Waypoint", waypoints[i].displayName, config.MAX_WAYPOINTNAME_LENGTH);
+					GuiNameEnter gne = new GuiNameEnter(this, "Rename Waypoint", waypoints[i].displayName, config.MAX_WAYPOINTNAME_LENGTH);
 					gne.show();
 					break;
 				}
@@ -209,8 +209,8 @@ public class GuiWaypoint extends List implements CommandListener,
 		initWaypoints();				
 	}
 
-	public void actionCompleted(boolean success, String strResult) {
-		if (success) {
+	public void actionCompleted(String strResult) {
+		if (strResult != null) {
 			// rename waypoint
 			waypoints[iWptNr].displayName = strResult;
 			parent.gpx.updateWayPt(waypoints[iWptNr]);

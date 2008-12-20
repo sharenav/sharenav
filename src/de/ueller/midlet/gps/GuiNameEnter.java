@@ -15,18 +15,17 @@ import de.ueller.midlet.gps.data.Proj2DMoveUp;
  */
 public class GuiNameEnter extends Form implements CommandListener {
 	private TextField fldName; 
-	private static final Command saveCmd = new Command("Save", Command.OK, 1);
-	private static final Command backCmd = new Command("Back", Command.OK, 2);
-	private Trace parentTrace;
-	private GpsMidDisplayable parentDisp;
+	private static final Command saveCmd = new Command("Ok", Command.OK, 1);
+	private static final Command backCmd = new Command("Cancel", Command.OK, 2);
+	private CompletionListener compListener;
+	private Displayable oldDisplay;
 	private String name;
 	
 	protected static final Logger logger = Logger.getInstance(GuiWaypointSave.class,Logger.TRACE);
 
-	public GuiNameEnter(Trace parentTrace, GpsMidDisplayable parentDisp, String title, String defaultName, int maxLen) {
+	public GuiNameEnter(CompletionListener compListener, String title, String defaultName, int maxLen) {
 		super(title);
-		this.parentTrace = parentTrace;
-		this.parentDisp = parentDisp;
+		this.compListener = compListener;
 
 		fldName = new TextField("Name:", defaultName, maxLen, TextField.ANY);
 		
@@ -44,13 +43,12 @@ public class GuiNameEnter extends Form implements CommandListener {
 
 	public void commandAction(Command cmd, Displayable displayable) {
 		CompletionListener compListener=null;
-		compListener= (CompletionListener) parentDisp;
 		if (cmd == saveCmd) {
-			compListener.actionCompleted(true, fldName.getString());
+			this.compListener.actionCompleted(fldName.getString());
 			return;
 		}
 		else if (cmd == backCmd) {
-			compListener.actionCompleted(false, null);
+			this.compListener.actionCompleted(null);
 	    	return;
 		}
 	}

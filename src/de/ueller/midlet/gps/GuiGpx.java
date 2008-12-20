@@ -98,7 +98,7 @@ public class GuiGpx extends List implements CommandListener,
 				sCount = sNameOnly.substring(iCountPos - 1);
 				sNameOnly = sNameOnly.substring(0, iCountPos - 1);
 			}
-			GuiNameEnter gne = new GuiNameEnter(parent, this, "Rename Track", sNameOnly, parent.getConfig().MAX_TRACKNAME_LENGTH);
+			GuiNameEnter gne = new GuiNameEnter(this, "Rename Track", sNameOnly, parent.getConfig().MAX_TRACKNAME_LENGTH);
 			gne.show();
 			return;
 		}
@@ -155,8 +155,8 @@ public class GuiGpx extends List implements CommandListener,
 		initTracks();	
 	}
 	
-	public void actionCompleted(boolean success, String strResult) {
-		if (success) {		
+	public void actionCompleted(String strResult) {
+		if (strResult != null) {		
 			// rename track
 			trks[idx].displayName = strResult;
 			parent.gpx.updateTrackName(trks[idx]);
