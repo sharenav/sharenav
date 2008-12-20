@@ -28,7 +28,9 @@ import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Position;
 import de.ueller.gpsMid.mapData.GpxTile;
 import de.ueller.gpsMid.mapData.Tile;
+import de.ueller.midlet.gps.CompletionListener;
 import de.ueller.midlet.gps.GpsMid;
+import de.ueller.midlet.gps.GuiNameEnter;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.UploadListener;
@@ -36,7 +38,7 @@ import de.ueller.midlet.gps.importexport.ExportSession;
 import de.ueller.midlet.gps.importexport.GpxParser;
 import de.ueller.midlet.gps.tile.PaintContext;
 
-public class Gpx extends Tile implements Runnable {
+public class Gpx extends Tile implements Runnable, CompletionListener {
 	private float maxDistance;
 	
 	
@@ -61,6 +63,7 @@ public class Gpx extends Tile implements Runnable {
 	
 	private Thread processorThread = null;
 	private String url = null;
+	private String waypointsSaveFileName = null;
 	
 	private boolean sendWpt;
 	private boolean sendTrk;
@@ -564,9 +567,8 @@ public class Gpx extends Tile implements Runnable {
 		this.url = url;
 		feedbackListener = ul;
 		sendWpt = true;
-		processorThread = new Thread(this);
-		processorThread.setPriority(Thread.MIN_PRIORITY);
-		processorThread.start();
+		GuiNameEnter gne = new GuiNameEnter(this, "Send as (without .gpx)", "Waypoints", config.MAX_WAYPOINTS_NAME_LENGTH);
+		gne.show();
 	}
 	
 	public PositionMark [] listWayPt() {
@@ -874,7 +876,11 @@ public class Gpx extends Tile implements Runnable {
 			}
 			else if (sendWpt)
 			{
-				name = "Waypoints";
+				if (waypointsSaveFileName == null) {
+					importExportMessage = "Waypoints sending aborted";
+					return false;
+				}
+				name = config.getValidFileName(waypointsSaveFileName);
 			}
 			
 			if (url == null) {
@@ -1038,5 +1044,14 @@ public class Gpx extends Tile implements Runnable {
 	public void walk(PaintContext pc, int opt) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	public void actionCompleted(String strResult) {
+		waypointsSaveFileName = strResult;
+		GpsMid.getInstance().showPreviousDisplayable();
+
+		processorThread = new Thread(this);
+		processorThread.setPriority(Thread.MIN_PRIORITY);
+		processorThread.start();
 	}
 }

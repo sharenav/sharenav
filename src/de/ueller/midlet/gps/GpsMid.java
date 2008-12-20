@@ -92,6 +92,7 @@ public class GpsMid extends MIDlet implements CommandListener{
 	private Thread lightTimer;
 	
 	private Displayable shouldBeDisplaying;
+	private Displayable prevDisplayable;
 	
 	/**
 	 * Runtime detected properties of the phone
@@ -292,9 +293,14 @@ public class GpsMid extends MIDlet implements CommandListener{
     		l.info("Could not display this alert (" + message + "), " + iae.getMessage());			
 		}
     }
+
+    public void showPreviousDisplayable() {
+    	show(prevDisplayable);
+    }
     
     public void show(Displayable d) {
     	try{
+    		prevDisplayable = shouldBeDisplaying;
     		Display.getDisplay(this).setCurrent(d);
     	} catch (IllegalArgumentException iae) {    		
     		l.info("Could not display the new displayable " + d + ", " + iae.getMessage());

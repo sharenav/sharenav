@@ -142,6 +142,7 @@ public class Configuration {
 	public static final int MAX_WAYPOINTNAME_LENGTH = 255;
 	public static final int MAX_WAYPOINTNAME_DRAWLENGTH = 25;
 	public static final int MAX_TRACKNAME_LENGTH = 50;
+	public static final int MAX_WAYPOINTS_NAME_LENGTH = 50;
 	
 	public final static String[] LOCATIONPROVIDER={"None","Bluetooth (Sirf)","Bluetooth (NMEA)","Internal (JSR179)"};
 	private final static byte[] empty="".getBytes();
