@@ -64,7 +64,7 @@ public class GuiOverviewElements extends Form implements CommandListener, ItemSt
 		byte count = 0;
 		byte nonOverviewMode = C.OM_SHOWNORMAL;
 		byte overviewMode = C.OM_OVERVIEW;
-		byte nameReq = C.OM_NAME_ALL;;
+		byte nameReq = C.OM_NAME_ALL;
 		
 		nameRequirement[ovElGroupNr] = (byte) ovElNameRequirementCG.getSelectedIndex();
 		switch (nameRequirement[ovElGroupNr]) {
@@ -88,8 +88,8 @@ public class GuiOverviewElements extends Form implements CommandListener, ItemSt
 			}
 			showOther[ovElGroupNr] = false;
 		}
-		nonOverviewMode += nameReq;
-		overviewMode += nameReq;
+		nonOverviewMode |= nameReq;
+		overviewMode |= nameReq;
 		
 		switch (ovElGroupNr) {
 			case 0:
