@@ -17,8 +17,8 @@ GpsMid 0.4.55
           This can be used to show only unnamed/named ways/areas/POIs in the map
         - fixed crashes when displaying route connections via Debug Options
 		*** Midlet creation with Osm2GpsMid ***
-		- Osm2GpsMid is now compiled to be compatible with Java 1.5 Runtime (for example on older Mac OSX)
-		- use HTTP compression for downloading map data if the server supports it
+        - Osm2GpsMid is now compiled to be compatible with Java 1.5 Runtime (for example on older Mac OSX)
+        - use HTTP compression for downloading map data if the server supports it
 
 GpsMid 0.4.51
        *** Navigation ***
