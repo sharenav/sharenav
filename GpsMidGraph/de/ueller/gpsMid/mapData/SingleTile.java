@@ -375,32 +375,31 @@ public class SingleTile extends Tile implements QueueableTile {
 		boolean hideable = C.isNodeHideable(t);
 		
 		byte om = C.getNodeOverviewMode(t);
-		if (om!=0) { // speed up non-overview mode
-			switch (om & C.OM_MODE_MASK) {
-				case C.OM_SHOWNORMAL: 
-					// if not in Overview Mode check for scale
-					if (pc.scale > C.getNodeMaxScale(t)) {
-						return;
-					}
-					if (hideable & !Trace.getInstance().getConfig().getCfgBitState(Configuration.CFGBIT_POIS)) {
-						return;
-					}
-					break;
-				case C.OM_HIDE: 
-					if (hideable) {
-						return;
-					}
-					break;
-			}
-			switch (om & C.OM_NAME_MASK) {
-				case C.OM_WITH_NAME: 
-					if (nameIdx[i] == -1) return;
-					break;
-				case C.OM_NO_NAME: 
-					if (nameIdx[i] != -1) return;
-					break;
-			}
+		switch (om & C.OM_MODE_MASK) {
+			case C.OM_SHOWNORMAL: 
+				// if not in Overview Mode check for scale
+				if (pc.scale > C.getNodeMaxScale(t)) {
+					return;
+				}
+				if (hideable & !Trace.getInstance().getConfig().getCfgBitState(Configuration.CFGBIT_POIS)) {
+					return;
+				}
+				break;
+			case C.OM_HIDE: 				
+				if (hideable) {
+					return;
+				}
+				break;
 		}
+		switch (om & C.OM_NAME_MASK) {
+			case C.OM_WITH_NAME: 
+				if (nameIdx[i] == -1) return;
+				break;
+			case C.OM_NO_NAME: 
+				if (nameIdx[i] != -1) return;
+				break;
+		}
+
 		pc.g.setColor(C.getNodeTextColor(t));
 		img = C.getNodeImage(t);
 		// logger.debug("calc pos "+pc);
