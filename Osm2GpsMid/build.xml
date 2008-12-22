@@ -65,7 +65,7 @@
    	</copy>
    	<propertyfile file="${resources.dir}/version.properties">
    		<entry key="app" value="${app}"/>
-   		<entry key="version" value="${version}"/>   		
+   		<entry key="version" value="${version}"/>
         <entry key="useRouting" value="true"/>
    		<entry key="midlet.name" value="GpsMid"/>
 		<entry key="routing.maxTileSize" value="3000"/>
@@ -74,6 +74,7 @@
    		<entry key="bundle.name" value="GpsMid"/>
 		<entry key="maxTileSize" value="20000"/>
    		<entry key="style-file" value="style-file.xml"/>
+   		<entry key="EnableEditing" value="false"/>
    	</propertyfile>
    </target>
 

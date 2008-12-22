@@ -408,6 +408,13 @@ public class Way extends Entity implements Comparable<Way>{
 //				System.out.println("   write magic code 0x59");
 //				ds.writeByte(0x59);
 			}
+			if (config.enableEditingSupport) {
+				if (id > Integer.MAX_VALUE) {
+					System.out.println("WARNING: Osm-ID won't fit in 32-bit for way " + this);
+					ds.writeInt(-1);
+				} else
+					ds.writeInt((int)id);
+			}
 		} else {
 			ds.write(128); // flag that mark there is no way
 		}		

@@ -52,7 +52,7 @@ public class Configuration {
 	 * Specifies the format of the map on disk we are about to write
 	 * This constant must be in sync with GpsMid
 	 */
-	public final static short MAP_FORMAT_VERSION = 19;
+	public final static short MAP_FORMAT_VERSION = 20;
 	
 		private ResourceBundle rb;
 		private ResourceBundle vb;
@@ -63,6 +63,7 @@ public class Configuration {
 		private String midletName;
 		private String appParam;
 		public boolean useRouting=false;
+		public boolean enableEditingSupport=false;
 		public int maxTileSize=20000;
 		public int maxRouteTileSize=3000;
 		public String styleFile;
@@ -174,6 +175,7 @@ public class Configuration {
 			initialiseRealScale();
 			resetConfig();
 			planet="TEST";
+			enableEditingSupport = getString("EnableEditing").equalsIgnoreCase("true");
 		}
 		
 		private void initialiseRealScale() {

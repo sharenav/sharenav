@@ -160,24 +160,29 @@ public class CreateGpsMidData {
 		try {
 			foi = new FileOutputStream(path + "/legend.dat");
 			DataOutputStream dsi = new DataOutputStream(foi);
-			dsi.writeShort(Configuration.MAP_FORMAT_VERSION);			
+			dsi.writeShort(Configuration.MAP_FORMAT_VERSION);
+			Configuration config = Configuration.getConfiguration();
 			/**
 			 * Write application version
 			 */
-			dsi.writeUTF(Configuration.getConfiguration().getVersion());
+			dsi.writeUTF(config.getVersion());
 			/**
 			 * Write bundle date
 			 */
-			dsi.writeUTF(Configuration.getConfiguration().getBundleDate());
+			dsi.writeUTF(config.getBundleDate());
+			/**
+			 * Note if additional information is included that can enable editing of OSM data
+			 */
+			dsi.writeBoolean(config.enableEditingSupport);
 			/**
 			 * Writing global info 
 			 */
-			dsi.writeInt(Configuration.getConfiguration().background_color);
+			dsi.writeInt(config.background_color);
 			/**
 			 * Writing POI legend data			 * 
 			 */
-			dsi.writeByte(Configuration.getConfiguration().getPOIDescs().size());
-			for (POIdescription poi : Configuration.getConfiguration().getPOIDescs()) {
+			dsi.writeByte(config.getPOIDescs().size());
+			for (POIdescription poi : config.getPOIDescs()) {
 				byte flags = 0;
 				if (poi.image != null && !poi.image.equals(""))
 					flags |= LEGEND_FLAG_IMAGE;
@@ -928,7 +933,15 @@ public class CreateGpsMidData {
 		}
 		if ((flags & Constants.NODE_MASK_TYPE) > 0){
 			ds.writeByte(n.getType(configuration));
+			if (configuration.enableEditingSupport) {
+				if (n.id > Integer.MAX_VALUE) {
+					System.out.println("WARNING: Osm-ID won't fit in 32-bit for way " + n);
+					ds.writeInt(-1);
+				} else
+					ds.writeInt((int)n.id);
+			}
 		}
+		
 
 	}
 
