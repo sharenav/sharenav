@@ -11,6 +11,9 @@ import java.io.InputStream;
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
+//#if ENABLE_EDIT
+import de.ueller.midlet.gps.data.EditableWay;
+//#endif
 import de.ueller.midlet.gps.data.Way;
 import de.ueller.midlet.gps.tile.C;
 
@@ -64,6 +67,16 @@ public class QueueDataReader extends QueueReader implements Runnable {
 			nameIdx[i] = -1;
 		}
 		byte[] type = new byte[iNodeCount];
+		int[] osmID;
+		//#if ENABLE_EDIT
+		if (C.enableEdits) {
+			osmID = new int[iNodeCount];
+		} else {
+			osmID = null;
+		}
+		//#else
+		osmID = null;
+		//#endif
 		byte flag=0;
 		//#debug trace
 		logger.trace("About to read nodes");
@@ -88,6 +101,12 @@ public class QueueDataReader extends QueueReader implements Runnable {
 				} 
 				if ((flag & C.NODE_MASK_TYPE) > 0){
 					type[i]=ds.readByte();
+					//#if ENABLE_EDIT
+					if (C.enableEdits) {
+						osmID[i] = ds.readInt();
+					}
+					//#endif
+					
 				}
 			}
 			tt.nameIdx=nameIdx;
@@ -116,7 +135,16 @@ public class QueueDataReader extends QueueReader implements Runnable {
 			for (int i=0; i< wayCount;i++){				
 				byte flags=ds.readByte();
 				if (flags != 128){
-					Way w=new Way(ds,flags,tt, layers, i);			
+					Way w;
+					//#if ENABLE_EDIT
+					if (C.enableEdits) {
+						w = new EditableWay(ds,flags,tt,layers,i);
+					} else {
+						w = new Way(ds,flags,tt,layers,i);
+					}
+					//#else
+					w=new Way(ds,flags,tt, layers, i);
+					//#endif
 					tmpWays[i]=w;
 					/**
 					 * To save resources, only allow layers -2 .. +2

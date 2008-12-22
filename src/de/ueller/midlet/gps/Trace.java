@@ -41,6 +41,10 @@ import de.ueller.gps.sirf.SirfInput;
 import de.ueller.gps.tools.HelperRoutines;
 import de.ueller.gps.tools.intTree;
 import de.ueller.gpsMid.mapData.DictReader;
+//#if ENABLE_EDIT
+import de.ueller.gpsMid.GUIosmWayDisplay;
+import de.ueller.midlet.gps.data.EditableWay;
+//#endif
 import de.ueller.gpsMid.mapData.QueueDataReader;
 import de.ueller.gpsMid.mapData.QueueDictReader;
 import de.ueller.gpsMid.mapData.Tile;
@@ -51,6 +55,7 @@ import de.ueller.midlet.gps.data.IntPoint;
 import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.PositionMark;
+import de.ueller.midlet.gps.data.Way;
 import de.ueller.midlet.gps.names.Names;
 import de.ueller.midlet.gps.routing.ConnectionWithNode;
 import de.ueller.midlet.gps.routing.RouteHelper;
@@ -106,6 +111,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	private final Command RECENTER_GPS_CMD = new Command("Recenter on GPS",Command.ITEM, 100);
 	private final Command TACHO_CMD = new Command("Tacho",Command.ITEM, 100);
 	private final Command OVERVIEW_MAP_CMD = new Command("Overview/Filter Map",Command.ITEM, 200);
+	private final Command RETRIEVE_XML = new Command("Retrive XML",Command.ITEM, 200);
 	//#if polish.api.wmapi
 	private final Command SEND_MESSAGE_CMD = new Command("Send SMS (map pos)",Command.ITEM, 200);
 	//#endif
@@ -152,6 +158,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	
 	private boolean rootCalc=false;
 	Tile t[] = new Tile[6];
+	public Way actualWay;
 	PositionMark source;
 
 	// this is only for visual debugging of the routing engine
@@ -272,6 +279,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		addCommand(RECORDINGS_CMD);
 		addCommand(ROUTINGS_CMD);
 		addCommand(TACHO_CMD);
+		//#if ENABLE_EDIT
+		addCommand(RETRIEVE_XML);
+		//#endif
 		setCommandListener(this);
 		
 		singleKeyPressCommand.put(KEY_NUM1, ZOOM_OUT_CMD);
@@ -904,6 +914,20 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				GuiTacho tacho = new GuiTacho(this);
 				tacho.show();
 			}
+			//#if ENABLE_EDIT 
+				else if (c == RETRIEVE_XML) {
+					if (C.enableEdits) {
+						if ((actualWay != null) && (actualWay instanceof EditableWay)) {
+							EditableWay eway = (EditableWay)actualWay;
+							GUIosmWayDisplay guiWay = new GUIosmWayDisplay(eway,this);
+							guiWay.show();
+							guiWay.refresh();
+						}
+					} else {
+						parent.alert("Editing", "Editing support was not enabled in Osm2GpsMid", 2000);
+					}
+			}
+			//#endif
 			} else {
 				logger.error(" currently in route Caclulation");
 			}

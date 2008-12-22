@@ -321,6 +321,7 @@ public class ImageCollector implements Runnable {
 			} else {
 				name = name + maxspeed;
 			}
+			tr.actualWay = pc[nextPaint].actualWay;
 		}
 		if (pc[nextPaint].nearestRoutableWay != null){
 			tr.source=pc[nextPaint].currentPos;

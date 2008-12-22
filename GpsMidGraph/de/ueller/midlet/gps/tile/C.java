@@ -21,7 +21,7 @@ public class C {
 	 * Specifies the format of the map on disk we expect to see
 	 * This constant must be in sync with Osm2GpsMid
 	 */
-	public final static short MAP_FORMAT_VERSION = 19;
+	public final static short MAP_FORMAT_VERSION = 20;
 	
 	public final static byte NODE_MASK_ROUTENODELINK=0x1;
 	public final static byte NODE_MASK_TYPE=0x2;
@@ -61,6 +61,7 @@ public class C {
 	public static int BACKGROUND_COLOR = 0x009BFF9B;
 	public static String appVersion;
 	public static String bundleDate;
+	public static boolean enableEdits;
 	
 	private static POIdescription[] pois;
 	private static WayDescription[] ways;
@@ -90,6 +91,15 @@ public class C {
 		
 		appVersion = ds.readUTF();
 		bundleDate = ds.readUTF();
+		enableEdits = ds.readBoolean();
+		//#if ENABLE_EDIT
+		
+		//#else
+		if (enableEdits) {
+			throw new IOException("The Map files are enabled for editing, but editing is not compiled into GpsMid." +
+					"Please ues the correct Osm2GpsMid to recreate the map ");
+		}
+		//#endif
 		
 		BACKGROUND_COLOR = ds.readInt();		
 		
