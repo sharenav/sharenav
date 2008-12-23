@@ -99,8 +99,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	private final Command BACK_CMD = new Command("Back",Command.BACK, 15);
 	private final Command ZOOM_IN_CMD = new Command("Zoom in",Command.ITEM, 100);
 	private final Command ZOOM_OUT_CMD = new Command("Zoom out",Command.ITEM, 100);
-	private final Command ROTATE_COUNTERCLOCKWISE_CMD = new Command("Rotate counterclockwise",Command.ITEM, 100);
-	private final Command ROTATE_CLOCKWISE_CMD = new Command("Rotate clockwise",Command.ITEM, 100);
+	private final Command MANUAL_ROTATION_MODE_CMD = new Command("Manual Rotation Mode",Command.ITEM, 100);
 	private final Command TOGGLE_OVERLAY_CMD = new Command("Next overlay",Command.ITEM, 100);
 	private final Command TOGGLE_BACKLIGHT_CMD = new Command("Keep backlight on/off",Command.ITEM, 100);
 	private final Command TOGGLE_FULLSCREEN_CMD = new Command("Switch to fullscreen",Command.ITEM, 100);
@@ -251,6 +250,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	  "N"};
 
 	private boolean keyboardLocked=false;
+	private boolean manualRotationMode=false;
 	private boolean movedAwayFromTarget=true;
 	private long oldRecalculationTime;
 	private boolean atTarget=false;
@@ -288,7 +288,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		singleKeyPressCommand.put(KEY_NUM3, ZOOM_IN_CMD);
 		singleKeyPressCommand.put(KEY_NUM5, RECENTER_GPS_CMD);
 		singleKeyPressCommand.put(KEY_NUM7, TOGGLE_OVERLAY_CMD);
-		singleKeyPressCommand.put(KEY_NUM9, ROTATE_COUNTERCLOCKWISE_CMD);
+		singleKeyPressCommand.put(KEY_NUM9, SAVE_WAYP_CMD);
 		singleKeyPressCommand.put(KEY_NUM0, TOGGLE_FULLSCREEN_CMD);
 		singleKeyPressCommand.put(KEY_STAR, MAPFEATURES_CMD);		
 		singleKeyPressCommand.put(KEY_POUND, TOGGLE_BACKLIGHT_CMD);
@@ -300,7 +300,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		//#if polish.api.wmapi
 		//doubleKeyPressCommand.put(KEY_POUND, SEND_MESSAGE_CMD);
 		//#endif
-		longKeyPressCommand.put(KEY_NUM5, SAVE_WAYP_CMD);
+		longKeyPressCommand.put(KEY_NUM5, MANUAL_ROTATION_MODE_CMD);
 		longKeyPressCommand.put(KEY_NUM9, TOGGLE_KEY_LOCK_CMD);
 		longKeyPressCommand.put(KEY_NUM0, TOGGLE_RECORDING_CMD);
 		longKeyPressCommand.put(KEY_STAR, MAN_WAYP_CMD);
@@ -845,10 +845,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				scale = scale / 1.5f;
 			} else if (c == ZOOM_OUT_CMD) {
 				scale = scale * 1.5f;
-			} else if (c == ROTATE_COUNTERCLOCKWISE_CMD) {
-				course += 5;
-			} else if (c == ROTATE_CLOCKWISE_CMD) {
-				course -= 5;
+			} else if (c == MANUAL_ROTATION_MODE_CMD) {
+				parent.alert("Manual Rotation", "Rotate with left/right or 1,3,4,6,7,8,9. North: 2" , 500);
+				manualRotationMode = true;
 			} else if (c == TOGGLE_OVERLAY_CMD) {
 				showAddons++;
 			} else if (c == TOGGLE_BACKLIGHT_CMD) {
@@ -1871,6 +1870,11 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		collected++;
 		if (gpsRecenter) {
 			center.setLatLon(pos.latitude, pos.longitude);
+			// don't rotate too fast
+			if (speed > 2) {
+				course = (int) ((pos.course * 3 + course) / 4)+360;
+				while (course > 360) course-=360;
+			}
 		}		
 		speed = (int) (pos.speed * 3.6f);		
 		if (gpx.isRecordingTrk()){
@@ -1879,11 +1883,6 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			} catch (Exception e) {
 				receiveMessage(e.getMessage());
 			} 
-		}
-		// don't rotate to fast
-		if (speed > 2) {
-			course = (int) ((pos.course * 3 + course) / 4)+360;
-			while (course > 360) course-=360;
 		}
 		updatePosition();		
 	}
@@ -1909,6 +1908,36 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		return parent;
 	}
 
+	private int getManualRotationFromKey(int keyCode) {
+		int courseDiff=0;
+		switch (keyCode) {
+			case KEY_NUM2:
+				courseDiff=360;  break;  // N				
+			case KEY_NUM8:
+				courseDiff=180; break;
+			case KEY_NUM4:
+				courseDiff=-90;  break;
+			case KEY_NUM6:
+				courseDiff=90;  break;
+			case KEY_NUM1:
+				courseDiff=-45;  break;
+			case KEY_NUM3:
+				courseDiff=45;  break;
+			case KEY_NUM7:
+				courseDiff=-135; break;
+			case KEY_NUM9:
+				courseDiff=135; break;
+			default:
+				if (this.getGameAction(keyCode) == LEFT) {		
+					courseDiff=-5;
+				} else if (this.getGameAction(keyCode) == RIGHT) {		
+					courseDiff=5;
+				}
+				break;
+		}
+		return courseDiff;
+	}
+	
 	protected void keyRepeated(int keyCode) {
 		// strange seem to be working in emulator only with this debug line
 		logger.debug("keyRepeated " + keyCode);
@@ -1918,14 +1947,23 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			logger.debug("key ignored " + keyCode);
 			return;
 		}
+		// non-rotation keys turn off rotation mode
+		if (manualRotationMode && getManualRotationFromKey(keyCode) == 0) {
+			keyPressed(0);
+		}
 		int gameActionCode = this.getGameAction(keyCode);
 		if ((gameActionCode == UP) || (gameActionCode == DOWN) ||
 				(gameActionCode == RIGHT) || (gameActionCode == LEFT)) {
 			keyPressed(keyCode);
 			return;
 		}
+		// repeat actions for direction keys and manual rotation keys
 		if ((keyCode == KEY_NUM2) || (keyCode == KEY_NUM8)
-				|| (keyCode == KEY_NUM4) || (keyCode == KEY_NUM6)) {
+				|| (keyCode == KEY_NUM4) || (keyCode == KEY_NUM6)
+			||
+			(manualRotationMode && getManualRotationFromKey(keyCode) != 0)
+			)
+		{
 			keyPressed(keyCode);
 			return;
 		}
@@ -1946,9 +1984,25 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	}
 
 	
-//	// manage keys that would have different meanings when
-//	// held down in keyReleased
+// manage keys that would have different meanings when
+// held down in keyReleased
 	protected void keyReleased(final int keyCode) {
+		// show alert in keypressed() that keyboard is locked
+		if (keyboardLocked && keyCode==KEY_NUM9) {
+			keyPressed(0);
+			return;
+		}
+		if (manualRotationMode) {
+			// non-rotation keys turn off rotation mode
+			if (getManualRotationFromKey(keyCode) == 0) {
+				keyPressed(0);
+				return;
+			// ignore rotation keys
+			} else {
+				ignoreKeyCode = keyCode;
+			}
+		}
+		
 		// if key was not handled as held down key
 		// strange seem to be working in emulator only with this debug line
 		logger.debug("keyReleased " + keyCode + " ignoreKeyCode: " + ignoreKeyCode + " prevRelCode: " + releasedKeyCode);
@@ -2009,44 +2063,61 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			ignoreKeyCode=keyCode;
 			return;
 		}
-
-		if (imageCollector != null) {
-			if (this.getGameAction(keyCode) == UP) {
-				imageCollector.getCurrentProjection().pan(center, 0, -2);
-				gpsRecenter = false;
-			} else if (this.getGameAction(keyCode) == DOWN) {	
-				imageCollector.getCurrentProjection().pan(center, 0, 2);
-				gpsRecenter = false;
-			} else if (this.getGameAction(keyCode) == LEFT) {		
-				imageCollector.getCurrentProjection().pan(center, -2, 0);
-				gpsRecenter = false;
-			} else if (this.getGameAction(keyCode) == RIGHT) {		
-				imageCollector.getCurrentProjection().pan(center, 2, 0);
-				gpsRecenter = false;
-			}				
-			if (keyCode == KEY_NUM2) {		
-				imageCollector.getCurrentProjection().pan(center, 0, -25);
-				gpsRecenter = false;
-			} else if (keyCode == KEY_NUM8) {
-				imageCollector.getCurrentProjection().pan(center, 0, 25);
-				gpsRecenter = false;
-			} else if (keyCode == KEY_NUM4) {
-				imageCollector.getCurrentProjection().pan(center, -25, 0);
-				gpsRecenter = false;
-			} else if (keyCode == KEY_NUM6) {
-				imageCollector.getCurrentProjection().pan(center, 25, 0);
-				gpsRecenter = false;
+		
+		if (manualRotationMode) {
+			int courseDiff = getManualRotationFromKey(keyCode);
+			if (courseDiff != 0) {		
+				if (courseDiff == 360) {
+					course = 0; //N
+				} else {
+					course += courseDiff;
+					course %= 360;
+					if (course < 0) {
+						course += 360;
+					}
+				}
+			} else {
+				parent.alert("Manual Rotation", "Off" , 500);
+				manualRotationMode = false;
+			}
+		} else {		
+			if (imageCollector != null) {
+				if (this.getGameAction(keyCode) == UP) {
+					imageCollector.getCurrentProjection().pan(center, 0, -2);
+					gpsRecenter = false;
+				} else if (this.getGameAction(keyCode) == DOWN) {	
+					imageCollector.getCurrentProjection().pan(center, 0, 2);
+					gpsRecenter = false;
+				} else if (this.getGameAction(keyCode) == LEFT) {		
+					imageCollector.getCurrentProjection().pan(center, -2, 0);
+					gpsRecenter = false;
+				} else if (this.getGameAction(keyCode) == RIGHT) {		
+					imageCollector.getCurrentProjection().pan(center, 2, 0);
+					gpsRecenter = false;
+				}				
+				if (keyCode == KEY_NUM2) {		
+					imageCollector.getCurrentProjection().pan(center, 0, -25);
+					gpsRecenter = false;
+				} else if (keyCode == KEY_NUM8) {
+					imageCollector.getCurrentProjection().pan(center, 0, 25);
+					gpsRecenter = false;
+				} else if (keyCode == KEY_NUM4) {
+					imageCollector.getCurrentProjection().pan(center, -25, 0);
+					gpsRecenter = false;
+				} else if (keyCode == KEY_NUM6) {
+					imageCollector.getCurrentProjection().pan(center, 25, 0);
+					gpsRecenter = false;
+				}
+			}
+			
+			/**
+			 * The camera cover switch does not report a keyreleased event, so
+			 * we need to special case it here in the keypressed routine
+			 */
+			if (keyCode == Configuration.KEYCODE_CAMERA_COVER_OPEN) {
+				commandAction(CAMERA_CMD,(Displayable) null);
 			}
 		}
-		
-		/**
-		 * The camera cover switch does not report a keyreleased event, so
-		 * we need to special case it here in the keypressed routine
-		 */
-		if (keyCode == Configuration.KEYCODE_CAMERA_COVER_OPEN) {
-			commandAction(CAMERA_CMD,(Displayable) null);
-		}
-		
 		repaint(0, 0, getWidth(), getHeight());
 	}
 
