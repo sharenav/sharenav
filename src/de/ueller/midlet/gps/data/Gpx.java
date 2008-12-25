@@ -15,6 +15,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.Math;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Vector;
 import javax.microedition.rms.InvalidRecordIDException;
 import javax.microedition.rms.RecordEnumeration;
 import javax.microedition.rms.RecordStore;
@@ -72,6 +73,7 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 	private boolean applyRecordingRules = true;
 	
 	private String trackName;
+	private Vector exportTracks;
 	private PersistEntity currentTrk;
 	
 	private UploadListener feedbackListener;
@@ -445,10 +447,13 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		trkRecordingSuspended = false;
 	}
 	
-	public void deleteTrk(PersistEntity trk) {
+	public void deleteTracks(Vector tracks) {
 		try {
 			openTrackDatabase();
-			trackDatabase.deleteRecord(trk.id);
+			for (int i = 0; i < tracks.size(); i++)
+			{
+				trackDatabase.deleteRecord(((PersistEntity)tracks.elementAt(i)).id);
+			}
 			trackDatabase.closeRecordStore();
 			trackDatabase = null;
 			tile.dropTrk();
@@ -516,53 +521,18 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		processorThread.start();
 	}
 	
-	public void sendTrk(String url, UploadListener ul, PersistEntity trk) {
-		logger.debug("Sending " + trk + " to " + url);
+	public void exportTracks(String url, UploadListener ul, Vector tracks) {
+		logger.debug("Exporting tracks to " + url);
 		feedbackListener = ul;
 		this.url = url;
 		sendTrk = true;
 		tile.dropTrk();
-		currentTrk = trk;
+		exportTracks = tracks;
 		processorThread = new Thread(this);
 		processorThread.setPriority(Thread.MIN_PRIORITY);
 		processorThread.start();
 	}
-	
-	public void sendTrkAll(String url, UploadListener ul) {
-		logger.debug("Exporting all tracklogs to " + url);
-		feedbackListener = ul;
-		this.url = url;
-		sendTrk = true;
-		tile.dropTrk();
-		//
-		processorThread = new Thread( new Runnable() {
 
-			public void run() {
-				PersistEntity [] trks = listTrks();
-				for (int i = 0; i < trks.length; i++) {
-					currentTrk = trks[i];
-					boolean success = sendGpx();
-					if (!success) {
-						logger.error("Failed to export track " + currentTrk);
-						if (feedbackListener != null) {			
-							feedbackListener.completedUpload(success, importExportMessage);
-						}
-						return;						
-					}
-				}
-				if (feedbackListener != null) {			
-					feedbackListener.completedUpload(true, importExportMessage);
-				}
-				feedbackListener = null;
-				sendTrk = false;
-				sendWpt = false;								
-			}
-			
-		});
-		processorThread.setPriority(Thread.MIN_PRIORITY);
-		processorThread.start();
-	}
-	
 	public void sendWayPt(String url, UploadListener ul) {
 		this.url = url;
 		feedbackListener = ul;
@@ -707,7 +677,28 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 				feedbackListener = null;
 			}
 			return;
-		} else if (sendTrk || sendWpt) {
+		} else if (sendTrk) {
+			for (int i = 0; i < exportTracks.size(); i++) {
+				currentTrk = (PersistEntity)exportTracks.elementAt(i);
+				if (feedbackListener != null) {			
+					feedbackListener.updateProgress("Exporting " + currentTrk.displayName + "\n");
+				}
+				success = sendGpx();
+				if (!success) {
+					logger.error("Failed to export track " + currentTrk);
+					if (feedbackListener != null) {			
+						feedbackListener.completedUpload(success, importExportMessage);
+					}
+					return;						
+				}
+			}
+			if (feedbackListener != null) {			
+				feedbackListener.completedUpload(true, importExportMessage);
+			}
+			feedbackListener = null;
+			sendTrk = false;
+			sendWpt = false;
+		} else if (sendWpt) {
 			success = sendGpx();
 		} else if (in != null) {
 			success = receiveGpx();
@@ -907,7 +898,6 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 				Class tmp = null;
 				if (url.startsWith("file:")) {
 					tmp = Class.forName("de.ueller.midlet.gps.importexport.FileExportSession");
-					
 				} else if (url.startsWith("comm:")) {
 					tmp = Class.forName("de.ueller.midlet.gps.importexport.CommExportSession");					
 				} else if (url.startsWith("btgoep:")){

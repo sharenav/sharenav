@@ -82,6 +82,12 @@ public class BtObexServer
 		
 	}
 
+	public void updateProgress(String message)
+	{
+		// Not supported/used at the moment.
+
+	}
+
 	public synchronized void completedUpload(boolean success, String message) {
 		if (success) {
 			response = ResponseCodes.OBEX_HTTP_OK;

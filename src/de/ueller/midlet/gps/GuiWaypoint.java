@@ -180,6 +180,10 @@ public class GuiWaypoint extends List implements CommandListener,
 
 	}
 	
+	public void updateProgress(String message) {
+		// Only final message is supported/used at the moment.
+	}
+
 	public void completedUpload(boolean success, String message) {
 		String alertMsg;		
 		if (uploading) {
@@ -197,7 +201,7 @@ public class GuiWaypoint extends List implements CommandListener,
 			}
 		}	
 		
-		GpsMid.getInstance().alert("Information", alertMsg, 5000);
+		GpsMid.getInstance().alert("Information", alertMsg, Alert.FOREVER);
 	}
 
 	public void show() {
