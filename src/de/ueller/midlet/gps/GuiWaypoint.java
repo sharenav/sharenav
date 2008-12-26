@@ -18,7 +18,7 @@ import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.PositionMark;
 
 
-public class GuiWaypoint extends List implements CommandListener,
+public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 		GpsMidDisplayable, UploadListener, CompletionListener {
 
 	private final static Logger logger=Logger.getInstance(GuiWaypoint.class,Logger.DEBUG);
@@ -177,7 +177,8 @@ public class GuiWaypoint extends List implements CommandListener,
 			parent.show();
 			return;
 		}
-
+		// uncomment this for use with GuiCustomList.java
+		//super.commandAction(c, d);
 	}
 	
 	public void updateProgress(String message) {
