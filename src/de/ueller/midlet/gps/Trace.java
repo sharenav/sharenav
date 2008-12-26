@@ -295,12 +295,13 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		singleKeyPressCommand.put(Configuration.KEYCODE_CAMERA_COVER_OPEN, CAMERA_CMD);
 		singleKeyPressCommand.put(-8, ROUTE_TO_CMD);
 		doubleKeyPressCommand.put(KEY_NUM5, TOGGLE_MAP_PROJ_CMD);
+		doubleKeyPressCommand.put(KEY_NUM9, MANUAL_ROTATION_MODE_CMD);
 		doubleKeyPressCommand.put(KEY_NUM0, TOGGLE_RECORDING_SUSP_CMD);
 		doubleKeyPressCommand.put(KEY_STAR, OVERVIEW_MAP_CMD);
 		//#if polish.api.wmapi
 		//doubleKeyPressCommand.put(KEY_POUND, SEND_MESSAGE_CMD);
 		//#endif
-		longKeyPressCommand.put(KEY_NUM5, MANUAL_ROTATION_MODE_CMD);
+		longKeyPressCommand.put(KEY_NUM5, SAVE_WAYP_CMD);
 		longKeyPressCommand.put(KEY_NUM9, TOGGLE_KEY_LOCK_CMD);
 		longKeyPressCommand.put(KEY_NUM0, TOGGLE_RECORDING_CMD);
 		longKeyPressCommand.put(KEY_STAR, MAN_WAYP_CMD);
@@ -846,8 +847,12 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			} else if (c == ZOOM_OUT_CMD) {
 				scale = scale * 1.5f;
 			} else if (c == MANUAL_ROTATION_MODE_CMD) {
-				parent.alert("Manual Rotation", "Rotate with left/right or 1,3,4,6,7,8,9. North: 2" , 500);
-				manualRotationMode = true;
+				manualRotationMode = !manualRotationMode;
+				if (manualRotationMode) {
+					parent.alert("Manual Rotation", "Rotate with left/right, double press 5 for North, double press 9 to turn off" , 750);
+				} else {
+					parent.alert("Manual Rotation", "Off" , 500);
+				}
 			} else if (c == TOGGLE_OVERLAY_CMD) {
 				showAddons++;
 			} else if (c == TOGGLE_BACKLIGHT_CMD) {
@@ -872,8 +877,12 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 					ProjFactory.setProj(ProjFactory.MOVE_UP);
 					parent.alert("Map Rotation", "Rotate to Driving Direction" , 500);
 				} else {
-					ProjFactory.setProj(ProjFactory.NORTH_UP);					
-					parent.alert("Map Rotation", "NORTH UP" , 500);
+					if (manualRotationMode) {
+						course = 0;
+					} else {
+						ProjFactory.setProj(ProjFactory.NORTH_UP);					
+						parent.alert("Map Rotation", "NORTH UP" , 500);
+					}
 				}
 				// redraw immediately
 				synchronized (this) {
@@ -1911,22 +1920,10 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	private int getManualRotationFromKey(int keyCode) {
 		int courseDiff=0;
 		switch (keyCode) {
-			case KEY_NUM2:
-				courseDiff=360;  break;  // N				
-			case KEY_NUM8:
-				courseDiff=180; break;
+			// do not pass KEY_NUM4 and KEY_NUM6 to getGameAction()
 			case KEY_NUM4:
-				courseDiff=-90;  break;
 			case KEY_NUM6:
-				courseDiff=90;  break;
-			case KEY_NUM1:
-				courseDiff=-45;  break;
-			case KEY_NUM3:
-				courseDiff=45;  break;
-			case KEY_NUM7:
-				courseDiff=-135; break;
-			case KEY_NUM9:
-				courseDiff=135; break;
+				break;
 			default:
 				if (this.getGameAction(keyCode) == LEFT) {		
 					courseDiff=-5;
@@ -1946,10 +1943,6 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		if (keyCode==ignoreKeyCode) {
 			logger.debug("key ignored " + keyCode);
 			return;
-		}
-		// non-rotation keys turn off rotation mode
-		if (manualRotationMode && getManualRotationFromKey(keyCode) == 0) {
-			keyPressed(0);
 		}
 		int gameActionCode = this.getGameAction(keyCode);
 		if ((gameActionCode == UP) || (gameActionCode == DOWN) ||
@@ -1991,16 +1984,6 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		if (keyboardLocked && keyCode==KEY_NUM9) {
 			keyPressed(0);
 			return;
-		}
-		if (manualRotationMode) {
-			// non-rotation keys turn off rotation mode
-			if (getManualRotationFromKey(keyCode) == 0) {
-				keyPressed(0);
-				return;
-			// ignore rotation keys
-			} else {
-				ignoreKeyCode = keyCode;
-			}
 		}
 		
 		// if key was not handled as held down key
@@ -2064,21 +2047,16 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			return;
 		}
 		
-		if (manualRotationMode) {
-			int courseDiff = getManualRotationFromKey(keyCode);
-			if (courseDiff != 0) {		
-				if (courseDiff == 360) {
-					course = 0; //N
-				} else {
-					course += courseDiff;
-					course %= 360;
-					if (course < 0) {
-						course += 360;
-					}
-				}
+		int courseDiff = getManualRotationFromKey(keyCode);
+		if (manualRotationMode && courseDiff != 0) {	
+			if (courseDiff == 360) {
+				course = 0; //N
 			} else {
-				parent.alert("Manual Rotation", "Off" , 500);
-				manualRotationMode = false;
+				course += courseDiff;
+				course %= 360;
+				if (course < 0) {
+					course += 360;
+				}
 			}
 		} else {		
 			if (imageCollector != null) {
