@@ -2111,8 +2111,8 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	
 	protected void pointerReleased(int x, int y) {
 		// calculate difference between where the pointer was pressed and released
-		int diffX = x - this.touchX;
-		int diffY = y - this.touchY;
+		int diffX = this.touchX - x;
+		int diffY = this.touchY - y;
 		// pan map by percentage of display size the pointer was moved
 		imageCollector.getCurrentProjection().pan(center, 100 * diffX / getWidth(), 100 * diffY / getHeight());
 		gpsRecenter = false;
