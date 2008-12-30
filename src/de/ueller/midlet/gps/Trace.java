@@ -155,6 +155,10 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	private static volatile long releasedKeyCode = 0;
 	private static int ignoreKeyCode = 0;
 	
+	// position display was touched last time
+	private static int touchX = 0;
+	private static int touchY = 0;
+	
 	private boolean rootCalc=false;
 	Tile t[] = new Tile[6];
 	public Way actualWay;
@@ -2099,6 +2103,22 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		repaint(0, 0, getWidth(), getHeight());
 	}
 
+	protected void pointerPressed(int x, int y) {
+		// remember position the pointer was pressed
+		this.touchX = x;
+		this.touchY = y;
+	}
+	
+	protected void pointerReleased(int x, int y) {
+		// calculate difference between where the pointer was pressed and released
+		int diffX = x - this.touchX;
+		int diffY = y - this.touchY;
+		// pan map by percentage of display size the pointer was moved
+		imageCollector.getCurrentProjection().pan(center, 100 * diffX / getWidth(), 100 * diffY / getHeight());
+		gpsRecenter = false;
+		repaint(0, 0, getWidth(), getHeight());
+	}
+	
 	public Tile getDict(byte zl) {
 		return t[zl];
 	}
