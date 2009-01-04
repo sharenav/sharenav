@@ -159,6 +159,8 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	private static int touchX = 0;
 	private static int touchY = 0;
 	
+	private static IntPoint	centerTouchPressedP = new IntPoint();
+	
 	private boolean rootCalc=false;
 	Tile t[] = new Tile[6];
 	public Way actualWay;
@@ -2107,16 +2109,25 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		// remember position the pointer was pressed
 		this.touchX = x;
 		this.touchY = y;
+		imageCollector.getCurrentProjection().forward(center, centerTouchPressedP);
 	}
 	
 	protected void pointerReleased(int x, int y) {
-		// calculate difference between where the pointer was pressed and released
-		int diffX = this.touchX - x;
-		int diffY = this.touchY - y;
-		// pan map by percentage of display size the pointer was moved
-		imageCollector.getCurrentProjection().pan(center, 100 * diffX / getWidth(), 100 * diffY / getHeight());
+		// difference between where the pointer was pressed and released
+		int touchDiffX = this.touchX - x;
+		int touchDiffY = this.touchY - y;
+		
+		imageCollector.getCurrentProjection().inverse(this.centerTouchPressedP.x + touchDiffX, this.centerTouchPressedP.y + touchDiffY, center);
 		gpsRecenter = false;
 		repaint(0, 0, getWidth(), getHeight());
+//		System.out.println("released: " + x + ", " + y);
+	}
+	
+	protected void pointerDragged (int x, int y) {
+		// dragging should pan the map all the time like releasing the pointer
+		// FIXME: This does not work
+//		pointerReleased(x, y);
+//		System.out.println("dragged: " + x + ", " + y);
 	}
 	
 	public Tile getDict(byte zl) {
