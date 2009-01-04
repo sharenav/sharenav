@@ -3,8 +3,8 @@ GpsMid 0.4.55
        - touchscreen devices: touch and drag to pan around the map
        - added backlight method for Siemens mobiles to Generic-Full (thx beni123)
        *** Tracks and Waypoints ***
-       - Multiple selection of tracks: this allows to delete or export the selected tracks (thx mbaeurle)
-       - Rename functionality for tracks and waypoints
+       - Perform actions like export/delete on multiple selected tracks (thx mbaeurle)
+       - Ability to rename tracks and waypoints
        - Waypoint names can now be entered with up to 255 chars (instead of 20)
        - When sending waypoints you are now asked for a name (Waypoints.gpx remains default filename)
        *** GPS ***
