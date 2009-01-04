@@ -158,8 +158,8 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	// position display was touched last time
 	private static int touchX = 0;
 	private static int touchY = 0;
-	
-	private static IntPoint	centerTouchPressedP = new IntPoint();
+	// center when display was touched last time
+	private static Node	centerPointerPressedN = new Node();
 	
 	private boolean rootCalc=false;
 	Tile t[] = new Tile[6];
@@ -2109,25 +2109,26 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		// remember position the pointer was pressed
 		this.touchX = x;
 		this.touchY = y;
-		imageCollector.getCurrentProjection().forward(center, centerTouchPressedP);
+		// remember center when the pointer was pressed
+		centerPointerPressedN = center.clone();
 	}
 	
 	protected void pointerReleased(int x, int y) {
-		// difference between where the pointer was pressed and released
-		int touchDiffX = this.touchX - x;
-		int touchDiffY = this.touchY - y;
-		
-		imageCollector.getCurrentProjection().inverse(this.centerTouchPressedP.x + touchDiffX, this.centerTouchPressedP.y + touchDiffY, center);
-		gpsRecenter = false;
-		repaint(0, 0, getWidth(), getHeight());
-//		System.out.println("released: " + x + ", " + y);
+		pointerDragged(x , y);
 	}
 	
 	protected void pointerDragged (int x, int y) {
-		// dragging should pan the map all the time like releasing the pointer
-		// FIXME: This does not work
-//		pointerReleased(x, y);
-//		System.out.println("dragged: " + x + ", " + y);
+		if (imageCollector != null) {
+			// difference between where the pointer was pressed and is currently dragged
+			int diffX = this.touchX - x;
+			int diffY = this.touchY - y;
+			
+			IntPoint centerPointerPressedP = new IntPoint();
+			imageCollector.getCurrentProjection().forward(centerPointerPressedN, centerPointerPressedP);
+			imageCollector.getCurrentProjection().inverse(centerPointerPressedP.x + diffX, centerPointerPressedP.y + diffY, center);
+			imageCollector.newDataReady();
+			gpsRecenter = false;			
+		}
 	}
 	
 	public Tile getDict(byte zl) {
