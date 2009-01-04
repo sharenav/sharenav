@@ -1,24 +1,25 @@
 GpsMid 0.4.55
-       *** GPS ***
-       - JSR-179: Some devices did not rotate map to driving direction. This is hopefully fixed now. 
        *** Usability ***
+       - touchscreen devices: touch and drag to pan around the map
        - added backlight method for Siemens mobiles to Generic-Full (thx beni123)
+       *** GPS ***
+       - JSR-179: Some devices (e.g. Nokia E71 and E90) did not show the speed / rotate the map to the driving direction. 
        *** Recordings ***
        - Added feature to send an SMS with the current map position (map center)
          if JSR-120 is available. It is also possible
          to save the specified recipient as default recipient,
          even when leaving the form with the Back command
-        *** Tracks and Waypoints ***
-        - Ability to Rename Tracks/Waypoints
-        - Waypoint names can now be entered with up to 255 chars (instead of 20)
-        - When sending waypoints you are now asked for a name (Waypoints.gpx remains default filename)
-        *** Map ***
-        - added "Name Check" feature to Overview/Filter Map
-          This can be used to show only unnamed/named ways/areas/POIs in the map
-        - fixed crashes when displaying route connections via Debug Options
-		*** Midlet creation with Osm2GpsMid ***
-        - Osm2GpsMid is now compiled to be compatible with Java 1.5 Runtime (for example on older Mac OSX)
-        - use HTTP compression for downloading map data if the server supports it
+       *** Tracks and Waypoints ***
+       - Ability to Rename Tracks/Waypoints
+       - Waypoint names can now be entered with up to 255 chars (instead of 20)
+       - When sending waypoints you are now asked for a name (Waypoints.gpx remains default filename)
+       *** Map ***
+       - added "Name Check" feature to Overview/Filter Map
+         This can be used to show only unnamed/named ways/areas/POIs in the map
+       - fixed crashes when displaying route connections via Debug Options
+       *** Midlet creation with Osm2GpsMid ***
+       - Osm2GpsMid is now compiled to be compatible with Java 1.5 Runtime (for example on older Mac OSX)
+       - use HTTP compression for downloading map data if the server supports it
 
 GpsMid 0.4.51
        *** Navigation ***
