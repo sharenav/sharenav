@@ -17,11 +17,14 @@ GpsMid 0.4.55
        *** Map ***
        - added "Name Check" feature to Overview/Filter Map
          This can be used to show only unnamed/named ways/areas/POIs in the map
+       - added POIs for beacons, towers and power objects to high-style.zip (thx mbaeurle) 
        - fixed crashes when displaying route connections via Debug Options
        *** Midlet creation with Osm2GpsMid ***
        - Osm2GpsMid is now compiled to be compatible with Java 1.5 Runtime (for example on older Mac OSX)
        - use HTTP compression for downloading map data if the server supports it
-
+       *** Others ***
+       - many more small improvements and bugfixes
+       
 GpsMid 0.4.51
        *** Navigation ***
        - Rotate map to driving direction
