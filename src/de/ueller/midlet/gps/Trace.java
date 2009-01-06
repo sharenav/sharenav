@@ -333,10 +333,20 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		singleKeyPressCommand.put('o', ZOOM_OUT_CMD);
 		singleKeyPressCommand.put('i', ZOOM_IN_CMD);
 		singleKeyPressCommand.put('g', RECENTER_GPS_CMD);
-		singleKeyPressCommand.put('w', SAVE_WAYP_CMD);
+		singleKeyPressCommand.put('u', MANUAL_ROTATION_MODE_CMD);
+		singleKeyPressCommand.put('s', SAVE_WAYP_CMD);
+		singleKeyPressCommand.put('w', MAN_WAYP_CMD);
+		singleKeyPressCommand.put('t', MANAGE_TRACKS_CMD);
+		singleKeyPressCommand.put('d', RECORDINGS_CMD);
+		singleKeyPressCommand.put('x', ROUTINGS_CMD);
+		singleKeyPressCommand.put('c', ROUTE_TO_CMD);
 		singleKeyPressCommand.put('f', TOGGLE_FULLSCREEN_CMD);		
 		singleKeyPressCommand.put('b', TOGGLE_BACKLIGHT_CMD);		
-		
+		singleKeyPressCommand.put('p', TOGGLE_RECORDING_SUSP_CMD);
+		singleKeyPressCommand.put('y', TOGGLE_OVERLAY_CMD);
+		singleKeyPressCommand.put('v', OVERVIEW_MAP_CMD);
+		singleKeyPressCommand.put('m', MAPFEATURES_CMD);
+		longKeyPressCommand.put('r', TOGGLE_RECORDING_CMD);
 		
 		try {
 			satelit = Image.createImage("/satelit.png");
