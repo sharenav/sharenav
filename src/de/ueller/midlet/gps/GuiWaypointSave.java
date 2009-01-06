@@ -16,7 +16,7 @@ import de.ueller.midlet.gps.data.Proj2DMoveUp;
 public class GuiWaypointSave extends Form implements CommandListener {
 	private TextField fldName;
 	private static final Command saveCmd = new Command("Save", Command.OK, 1);
-	private static final Command backCmd = new Command("Back", Command.OK, 2);
+	private static final Command backCmd = new Command("Back", Command.BACK, 2);
 	private Trace parent;
 	private String name;
 	private PositionMark waypt;
