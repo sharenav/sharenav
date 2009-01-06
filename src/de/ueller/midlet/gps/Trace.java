@@ -334,8 +334,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		singleKeyPressCommand.put('i', ZOOM_IN_CMD);
 		singleKeyPressCommand.put('g', RECENTER_GPS_CMD);
 		singleKeyPressCommand.put('u', MANUAL_ROTATION_MODE_CMD);
-		singleKeyPressCommand.put('s', SAVE_WAYP_CMD);
-		singleKeyPressCommand.put('w', MAN_WAYP_CMD);
+		singleKeyPressCommand.put(' ', SAVE_WAYP_CMD);
 		singleKeyPressCommand.put('t', MANAGE_TRACKS_CMD);
 		singleKeyPressCommand.put('d', RECORDINGS_CMD);
 		singleKeyPressCommand.put('x', ROUTINGS_CMD);
@@ -1975,18 +1974,12 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 	private int getManualRotationFromKey(int keyCode) {
 		int courseDiff=0;
-		switch (keyCode) {
-			// do not pass KEY_NUM4 and KEY_NUM6 to getGameAction()
-			case KEY_NUM4:
-			case KEY_NUM6:
-				break;
-			default:
-				if (this.getGameAction(keyCode) == LEFT) {		
-					courseDiff=-5;
-				} else if (this.getGameAction(keyCode) == RIGHT) {		
-					courseDiff=5;
-				}
-				break;
+		if (manualRotationMode) {
+			if (this.getGameAction(keyCode) == LEFT) {		
+				courseDiff=-5;
+			} else if (this.getGameAction(keyCode) == RIGHT) {		
+				courseDiff=5;
+			}
 		}
 		return courseDiff;
 	}
@@ -2010,7 +2003,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		Command c = (Command)repeatableKeyPressCommand.get(keyCode);
 		if ((c != null)
 			||
-			(manualRotationMode && getManualRotationFromKey(keyCode) != 0)
+			(getManualRotationFromKey(keyCode) != 0)
 			)
 		{
 			keyPressed(keyCode);
@@ -2103,8 +2096,14 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			return;
 		}
 		
-		int courseDiff = getManualRotationFromKey(keyCode);
-		if (manualRotationMode && courseDiff != 0) {	
+		int panHorizontal = 0;
+		int panVertical = 0;
+		// handle actions for repeatable keys like direction keys immediately
+		Command c = (Command)repeatableKeyPressCommand.get(keyCode);
+		if (c != null) {
+			commandAction(c,(Displayable) null);
+		} else if (getManualRotationFromKey(keyCode) != 0) {
+			int courseDiff = getManualRotationFromKey(keyCode);
 			if (courseDiff == 360) {
 				course = 0; //N
 			} else {
@@ -2114,35 +2113,30 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 					course += 360;
 				}
 			}
-		} else {		
-			if (imageCollector != null) {
-				if (this.getGameAction(keyCode) == UP) {
-					imageCollector.getCurrentProjection().pan(center, 0, -2);
-					gpsRecenter = false;
-				} else if (this.getGameAction(keyCode) == DOWN) {	
-					imageCollector.getCurrentProjection().pan(center, 0, 2);
-					gpsRecenter = false;
-				} else if (this.getGameAction(keyCode) == LEFT) {		
-					imageCollector.getCurrentProjection().pan(center, -2, 0);
-					gpsRecenter = false;
-				} else if (this.getGameAction(keyCode) == RIGHT) {		
-					imageCollector.getCurrentProjection().pan(center, 2, 0);
-					gpsRecenter = false;
-				}
-				// handle actions for repeatable keys like direction keys immediately
-				Command c = (Command)repeatableKeyPressCommand.get(keyCode);
-				if (c != null) {
-					commandAction(c,(Displayable) null);
-				}
-			}
-			
-			/**
-			 * The camera cover switch does not report a keyreleased event, so
-			 * we need to special case it here in the keypressed routine
-			 */
-			if (keyCode == Configuration.KEYCODE_CAMERA_COVER_OPEN) {
-				commandAction(CAMERA_CMD,(Displayable) null);
-			}
+		} else if (this.getGameAction(keyCode) == UP) {
+			panVertical = -2;
+		} else if (this.getGameAction(keyCode) == DOWN) {	
+			panVertical = 2;
+		} else if (this.getGameAction(keyCode) == LEFT) {		
+			panHorizontal = -2;
+		} else if (this.getGameAction(keyCode) == RIGHT) {		
+			panHorizontal = 2;
+		}
+		if (	(imageCollector != null) &&
+				(
+				 (panHorizontal != 0) || (panVertical != 0)
+				)
+		) {
+			imageCollector.getCurrentProjection().pan(center, panHorizontal, panVertical);
+			gpsRecenter = false;			
+		}	
+		
+		/**
+		 * The camera cover switch does not report a keyreleased event, so
+		 * we need to special case it here in the keypressed routine
+		 */
+		if (keyCode == Configuration.KEYCODE_CAMERA_COVER_OPEN) {
+			commandAction(CAMERA_CMD,(Displayable) null);
 		}
 		repaint(0, 0, getWidth(), getHeight());
 	}
