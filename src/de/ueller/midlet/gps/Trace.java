@@ -316,7 +316,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		//#if polish.api.wmapi
 		//doubleKeyPressCommand.put(KEY_POUND, SEND_MESSAGE_CMD);
 		//#endif
-		longKeyPressCommand.put(KEY_NUM5, SAVE_WAYP_CMD);
+		longKeyPressCommand.put(KEY_NUM5, RECORDINGS_CMD);
 		longKeyPressCommand.put(KEY_NUM9, TOGGLE_KEY_LOCK_CMD);
 		longKeyPressCommand.put(KEY_NUM0, TOGGLE_RECORDING_CMD);
 		longKeyPressCommand.put(KEY_STAR, MAN_WAYP_CMD);
