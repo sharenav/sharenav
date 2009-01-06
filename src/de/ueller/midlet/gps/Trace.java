@@ -2119,13 +2119,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 					imageCollector.getCurrentProjection().pan(center, 2, 0);
 					gpsRecenter = false;
 				}
-				// handle actions for repeatable keys like direction keys and manual rotation keys immediately
+				// handle actions for repeatable keys like direction keys immediately
 				Command c = (Command)repeatableKeyPressCommand.get(keyCode);
-				if ((c != null)
-					||
-					(manualRotationMode && getManualRotationFromKey(keyCode) != 0)
-					)
-				{
+				if (c != null) {
 					commandAction(c,(Displayable) null);
 				}
 			}
