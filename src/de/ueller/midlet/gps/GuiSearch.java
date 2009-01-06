@@ -473,7 +473,9 @@ public class GuiSearch extends Canvas implements CommandListener,
 				displayReductionLevel = 0;
 			repaint(0, 0, getWidth(), getHeight());
 			return;
-		} else if (action == FIRE) {
+			// Unicode character 10 is LF
+			// so 10 should correspond to Enter key on QWERT keyboards
+		} else if (keyCode == 10 || action == FIRE) {
 			SearchResult sr = (SearchResult) result.elementAt(cursor);
 //			System.out.println("select " + sr);
 			PositionMark positionMark = new PositionMark(sr.lat,sr.lon);
@@ -516,11 +518,14 @@ public class GuiSearch extends Canvas implements CommandListener,
 				carret++;
 			repaint(0, 0, getWidth(), getHeight());
 			return;
-		} else if (keyCode == -8) { 
-			/** Non standard Key: hopefully is mapped to
+		} else if (keyCode == -8 || keyCode == 8) { 
+			/** Non standard Key -8: hopefully is mapped to
 			 * the delete / clear key. According to 
 			 * www.j2meforums.com/wiki/index.php/Canvas_Keycodes
-			 * most major mobiles that have this key map to -8 */
+			 * most major mobiles that have this key map to -8
+			 * 
+			 * Unicode Character Key: 8 is backspace so this should be standard
+			 **/
 			
 			if (carret > 0){
 				searchCanon.deleteCharAt(--carret);				
