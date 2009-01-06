@@ -1,6 +1,8 @@
 GpsMid 0.4.55
        *** Usability ***
        - touchscreen devices: touch and drag to pan around the map
+       - new keyboard shortcuts for QWERT keyboards in the map screen and some changes to numeric keyboard shortcuts
+         (see http://gpsmid.wiki.sourceforge.net/Keyboard_Layout)
        - added backlight method for Siemens mobiles to Generic-Full (thx beni123)
        *** Tracks and Waypoints ***
        - Perform actions like export/delete on multiple selected tracks (thx mbaeurle)
@@ -17,6 +19,7 @@ GpsMid 0.4.55
        *** Map ***
        - added "Name Check" feature to Overview/Filter Map
          This can be used to show only unnamed/named ways/areas/POIs in the map
+       - double press of 9 / single press of U-key toggles manual rotation mode (use left / right to rotate)
        - added POIs for beacons, towers and power objects to high-style.zip (thx mbaeurle) 
        - fixed crashes when displaying route connections via Debug Options
        *** Midlet creation with Osm2GpsMid ***
