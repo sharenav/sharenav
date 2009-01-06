@@ -621,23 +621,53 @@ zoomed out 21x (scale alias 1:  500km)
 	  </value>	
 	</key>
 	<key tag="man_made">
-	  <value name ="lighthouse">
-		<description desc = "Lighthouse"/>
-		<image src="lighthouse.png"/>
-		<namekey tag="name"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
-	  </value>	
+		<value name ="beacon">
+			<description desc = "Beacon"/>
+			<image src="beacon.png"/>
+			<namekey tag="name"/>
+			<scale scale="20"/>
+			<textscale scale="23"/>
+		</value>
+		<value name ="lighthouse">
+			<description desc = "Lighthouse"/>
+			<image src="lighthouse.png"/>
+			<namekey tag="name"/>
+			<scale scale="20"/>
+			<textscale scale="23"/>
+		</value>	
+		<value name ="tower">
+			<description desc = "Tower"/>
+			<image src="tower.png"/>
+			<namekey tag="name"/>
+			<scale scale="20"/>
+			<textscale scale="23"/>
+		</value>
+		<value name ="water_tower">
+			<description desc = "Water tower"/>
+			<image src="water_tower.png"/>
+			<namekey tag="name"/>
+			<scale scale="20"/>
+			<textscale scale="23"/>
+		</value>
+		<value name ="power_wind">
+			<description desc = "Power wind"/>
+			<image src="power_wind.png"/>
+			<namekey tag="name"/>
+			<scale scale="20"/>
+			<textscale scale="23"/>
+		</value>	
 	</key>
-	<key tag="man_made">
-	  <value name ="power_wind">
-		<description desc = "Power wind"/>
-		<image src="power_wind.png"/>
-		<namekey tag="name"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
-	  </value>	
+<!--
+	<key tag = "power">
+		<value name = "tower">
+			<description desc = "Power tower"/>
+			<image src="power_tower.png"/>
+			<namekey tag="ref"/>
+			<scale scale="20"/>
+			<textscale scale="23"/>
+		</value>
 	</key>
+-->
 	<key tag="aeroway">
 	  <value name ="aerodrome">
 		<description desc = "Aerodrome"/>
@@ -919,6 +949,33 @@ zoomed out 21x (scale alias 1:  500km)
   				<lineColor color = "00800080" />  				  				  				
   			</Wvalue>
   		</keyW>
+<!--
+        <keyW tag = "power">
+			<Wvalue name = "line">
+				<description desc = "power line"/>
+				<namekey tag = "name"/>
+				<isArea area = "false"/>
+				<scale scale = "19"/>
+				<lineColor color = "00800080" />
+				<lineStyle dashed = "true" />
+				<wayWidth width = "1" />
+			</Wvalue>
+			<Wvalue name = "station">
+				<description desc = "power station"/>
+				<namekey tag = "name"/>
+				<isArea area = "true"/>
+				<scale scale = "19"/>
+                <lineColor color = "00800080" />
+			</Wvalue>
+            <Wvalue name = "sub_station">
+				<description desc = "power sub-station"/>
+				<namekey tag = "name"/>
+				<isArea area = "true"/>
+				<scale scale = "19"/>
+				<lineColor color = "00800080" />
+            </Wvalue>
+        </keyW>
+-->
 		<keyW tag = "leisure">
   			<Wvalue name = "park">
   				<description desc = "Park"/>
