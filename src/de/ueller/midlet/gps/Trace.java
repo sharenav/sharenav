@@ -110,7 +110,11 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	private final Command RECENTER_GPS_CMD = new Command("Recenter on GPS",Command.ITEM, 100);
 	private final Command TACHO_CMD = new Command("Tacho",Command.ITEM, 100);
 	private final Command OVERVIEW_MAP_CMD = new Command("Overview/Filter Map",Command.ITEM, 200);
-	private final Command RETRIEVE_XML = new Command("Retrive XML",Command.ITEM, 200);
+	private final Command RETRIEVE_XML = new Command("Retrieve XML",Command.ITEM, 200);
+	private final Command PAN_LEFT25_CMD = new Command("left 25%",Command.ITEM, 100);
+	private final Command PAN_RIGHT25_CMD = new Command("right 25%",Command.ITEM, 100);
+	private final Command PAN_UP25_CMD = new Command("up 25%",Command.ITEM, 100);
+	private final Command PAN_DOWN25_CMD = new Command("down 25%",Command.ITEM, 100);
 	//#if polish.api.wmapi
 	private final Command SEND_MESSAGE_CMD = new Command("Send SMS (map pos)",Command.ITEM, 200);
 	//#endif
@@ -312,7 +316,21 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		longKeyPressCommand.put(KEY_NUM0, TOGGLE_RECORDING_CMD);
 		longKeyPressCommand.put(KEY_STAR, MAN_WAYP_CMD);
 		longKeyPressCommand.put(KEY_POUND, MANAGE_TRACKS_CMD);
+
 		
+		/*
+		 *  additional shortcuts for QWERT keyboards
+		 */
+		singleKeyPressCommand.put('h', PAN_LEFT25_CMD);		
+		singleKeyPressCommand.put('j', PAN_DOWN25_CMD);		
+		singleKeyPressCommand.put('k', PAN_UP25_CMD);		
+		singleKeyPressCommand.put('l', PAN_RIGHT25_CMD);		
+		singleKeyPressCommand.put('o', ZOOM_OUT_CMD);
+		singleKeyPressCommand.put('i', ZOOM_IN_CMD);
+		singleKeyPressCommand.put('g', RECENTER_GPS_CMD);
+		singleKeyPressCommand.put('w', SAVE_WAYP_CMD);
+		singleKeyPressCommand.put('f', TOGGLE_FULLSCREEN_CMD);		
+		singleKeyPressCommand.put('b', TOGGLE_BACKLIGHT_CMD);		
 		
 		
 		try {
@@ -612,6 +630,19 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			if((keyboardLocked) && (d != null)) {
 				// show alert in keypressed() that keyboard is locked
 				keyPressed(0);
+				return;
+			}
+			if (c == PAN_UP25_CMD) {
+				keyPressed(KEY_NUM2);
+				return;
+			} else if (c == PAN_DOWN25_CMD) {
+				keyPressed(KEY_NUM8);
+				return;
+			} else if (c == PAN_LEFT25_CMD) {
+				keyPressed(KEY_NUM4);
+				return;
+			} else if (c == PAN_RIGHT25_CMD) {
+				keyPressed(KEY_NUM6);
 				return;
 			}
 			if (c == EXIT_CMD) {
