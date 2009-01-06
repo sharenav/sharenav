@@ -335,6 +335,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		singleKeyPressCommand.put('g', RECENTER_GPS_CMD);
 		singleKeyPressCommand.put('u', MANUAL_ROTATION_MODE_CMD);
 		singleKeyPressCommand.put(' ', SAVE_WAYP_CMD);
+		singleKeyPressCommand.put('w', MAN_WAYP_CMD);
 		singleKeyPressCommand.put('t', MANAGE_TRACKS_CMD);
 		singleKeyPressCommand.put('d', RECORDINGS_CMD);
 		singleKeyPressCommand.put('x', ROUTINGS_CMD);
