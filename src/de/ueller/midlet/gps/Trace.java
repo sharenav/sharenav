@@ -177,6 +177,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	private List routingsMenu;
 	
 	private intTree singleKeyPressCommand = new intTree();
+	private intTree repeatableKeyPressCommand = new intTree();
 	private intTree doubleKeyPressCommand = new intTree();
 	private intTree longKeyPressCommand = new intTree();
 
@@ -294,6 +295,10 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		//#endif
 		setCommandListener(this);
 		
+		repeatableKeyPressCommand.put(KEY_NUM4, PAN_LEFT25_CMD);		
+		repeatableKeyPressCommand.put(KEY_NUM6, PAN_RIGHT25_CMD);		
+		repeatableKeyPressCommand.put(KEY_NUM2, PAN_UP25_CMD);		
+		repeatableKeyPressCommand.put(KEY_NUM8, PAN_DOWN25_CMD);		
 		singleKeyPressCommand.put(KEY_NUM1, ZOOM_OUT_CMD);
 		singleKeyPressCommand.put(KEY_NUM3, ZOOM_IN_CMD);
 		singleKeyPressCommand.put(KEY_NUM5, RECENTER_GPS_CMD);
@@ -321,10 +326,10 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		/*
 		 *  additional shortcuts for QWERT keyboards
 		 */
-		singleKeyPressCommand.put('h', PAN_LEFT25_CMD);		
-		singleKeyPressCommand.put('j', PAN_DOWN25_CMD);		
-		singleKeyPressCommand.put('k', PAN_UP25_CMD);		
-		singleKeyPressCommand.put('l', PAN_RIGHT25_CMD);		
+		repeatableKeyPressCommand.put('h', PAN_LEFT25_CMD);		
+		repeatableKeyPressCommand.put('l', PAN_RIGHT25_CMD);		
+		repeatableKeyPressCommand.put('k', PAN_UP25_CMD);		
+		repeatableKeyPressCommand.put('j', PAN_DOWN25_CMD);		
 		singleKeyPressCommand.put('o', ZOOM_OUT_CMD);
 		singleKeyPressCommand.put('i', ZOOM_IN_CMD);
 		singleKeyPressCommand.put('g', RECENTER_GPS_CMD);
@@ -632,17 +637,21 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				keyPressed(0);
 				return;
 			}
-			if (c == PAN_UP25_CMD) {
-				keyPressed(KEY_NUM2);
-				return;
-			} else if (c == PAN_DOWN25_CMD) {
-				keyPressed(KEY_NUM8);
-				return;
-			} else if (c == PAN_LEFT25_CMD) {
-				keyPressed(KEY_NUM4);
+			if (c == PAN_LEFT25_CMD) {
+				imageCollector.getCurrentProjection().pan(center, -25, 0);
+				gpsRecenter = false;
 				return;
 			} else if (c == PAN_RIGHT25_CMD) {
-				keyPressed(KEY_NUM6);
+				imageCollector.getCurrentProjection().pan(center, 25, 0);
+				gpsRecenter = false;
+				return;
+			} else if (c == PAN_UP25_CMD) {
+				imageCollector.getCurrentProjection().pan(center, 0, -25);
+				gpsRecenter = false;
+				return;
+			} else if (c == PAN_DOWN25_CMD) {
+				imageCollector.getCurrentProjection().pan(center, 0, 25);
+				gpsRecenter = false;
 				return;
 			}
 			if (c == EXIT_CMD) {
@@ -1987,9 +1996,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			keyPressed(keyCode);
 			return;
 		}
-		// repeat actions for direction keys and manual rotation keys
-		if ((keyCode == KEY_NUM2) || (keyCode == KEY_NUM8)
-				|| (keyCode == KEY_NUM4) || (keyCode == KEY_NUM6)
+		// repeat actions for repeatable keys like direction keys and manual rotation keys
+		Command c = (Command)repeatableKeyPressCommand.get(keyCode);
+		if ((c != null)
 			||
 			(manualRotationMode && getManualRotationFromKey(keyCode) != 0)
 			)
@@ -2109,19 +2118,15 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				} else if (this.getGameAction(keyCode) == RIGHT) {		
 					imageCollector.getCurrentProjection().pan(center, 2, 0);
 					gpsRecenter = false;
-				}				
-				if (keyCode == KEY_NUM2) {		
-					imageCollector.getCurrentProjection().pan(center, 0, -25);
-					gpsRecenter = false;
-				} else if (keyCode == KEY_NUM8) {
-					imageCollector.getCurrentProjection().pan(center, 0, 25);
-					gpsRecenter = false;
-				} else if (keyCode == KEY_NUM4) {
-					imageCollector.getCurrentProjection().pan(center, -25, 0);
-					gpsRecenter = false;
-				} else if (keyCode == KEY_NUM6) {
-					imageCollector.getCurrentProjection().pan(center, 25, 0);
-					gpsRecenter = false;
+				}
+				// handle actions for repeatable keys like direction keys and manual rotation keys immediately
+				Command c = (Command)repeatableKeyPressCommand.get(keyCode);
+				if ((c != null)
+					||
+					(manualRotationMode && getManualRotationFromKey(keyCode) != 0)
+					)
+				{
+					commandAction(c,(Displayable) null);
 				}
 			}
 			
