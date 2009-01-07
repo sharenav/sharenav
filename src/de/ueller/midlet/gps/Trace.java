@@ -158,6 +158,8 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	private static int pressedKeyCode = 0;
 	private static volatile long releasedKeyCode = 0;
 	private static int ignoreKeyCode = 0;
+	private static int lastGameKeyCode = 0;
+	private static int lastGameAction = 0;
 	
 	// position display was touched last time
 	private static int touchX = 0;
@@ -1976,14 +1978,34 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	private int getManualRotationFromKey(int keyCode) {
 		int courseDiff=0;
 		if (manualRotationMode) {
-			if (this.getGameAction(keyCode) == LEFT) {		
+			if (getGameActionIfNotOverloaded(keyCode) == LEFT) {		
 				courseDiff=-5;
-			} else if (this.getGameAction(keyCode) == RIGHT) {		
+			} else if (getGameActionIfNotOverloaded(keyCode) == RIGHT) {		
 				courseDiff=5;
 			}
 		}
 		return courseDiff;
 	}
+	
+	private int getGameActionIfNotOverloaded(int keyCode) {		 
+		// speed up repeatedly asked keyCode by returning remembered gameAction
+		if (lastGameKeyCode == keyCode) {
+			return lastGameAction;
+		} else if  (
+			repeatableKeyPressCommand.get(keyCode) != null ||
+			singleKeyPressCommand.get(keyCode) != null ||
+			longKeyPressCommand.get(keyCode) != null ||
+			doubleKeyPressCommand.get(keyCode) != null
+		 ) {
+			// filter out game keys that are used for other commands
+			lastGameAction=0;
+		} else {
+			lastGameAction = this.getGameAction(keyCode);
+		}
+		lastGameKeyCode = keyCode;
+		return lastGameAction;
+	}
+		 
 	
 	protected void keyRepeated(int keyCode) {
 		// strange seem to be working in emulator only with this debug line
@@ -1994,7 +2016,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 			logger.debug("key ignored " + keyCode);
 			return;
 		}
-		int gameActionCode = this.getGameAction(keyCode);
+		int gameActionCode = getGameActionIfNotOverloaded(keyCode);
 		if ((gameActionCode == UP) || (gameActionCode == DOWN) ||
 				(gameActionCode == RIGHT) || (gameActionCode == LEFT)) {
 			keyPressed(keyCode);
@@ -2067,8 +2089,9 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 								//#debug debug
 								logger.debug("single key pressed " + keyCode +  " delayed executing command " + singleC);
 								// key was not pressed again within double press time
-								commandAction(singleC,(Displayable) null);
 								releasedKeyCode = 0;
+								// so this is a single press key
+								commandAction(singleC,(Displayable) null);
 								repaint(0, 0, getWidth(), getHeight());
 							}
 						}			
@@ -2114,13 +2137,13 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 					course += 360;
 				}
 			}
-		} else if (this.getGameAction(keyCode) == UP) {
+		} else if (getGameActionIfNotOverloaded(keyCode) == UP) {
 			panVertical = -2;
-		} else if (this.getGameAction(keyCode) == DOWN) {	
+		} else if (getGameActionIfNotOverloaded(keyCode) == DOWN) {	
 			panVertical = 2;
-		} else if (this.getGameAction(keyCode) == LEFT) {		
+		} else if (getGameActionIfNotOverloaded(keyCode) == LEFT) {		
 			panHorizontal = -2;
-		} else if (this.getGameAction(keyCode) == RIGHT) {		
+		} else if (getGameActionIfNotOverloaded(keyCode) == RIGHT) {		
 			panHorizontal = 2;
 		}
 		if (	(imageCollector != null) &&
