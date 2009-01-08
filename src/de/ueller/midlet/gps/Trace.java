@@ -28,6 +28,7 @@ import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.List;
+import javax.microedition.lcdui.game.GameCanvas;
 import javax.microedition.midlet.MIDlet;
 
 
@@ -72,7 +73,7 @@ import de.ueller.midlet.gps.GpsMidDisplayable;
  * @author Harald Mueller 
  * 
  */
-public class Trace extends Canvas implements CommandListener, LocationMsgReceiver,
+public class Trace extends KeyCommandCanvas implements CommandListener, LocationMsgReceiver,
 		Runnable , GpsMidDisplayable{
 	/** Soft button for exiting the map screen */
 	private final Command EXIT_CMD = new Command("Back", Command.BACK, 5);
@@ -115,6 +116,10 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	private final Command PAN_RIGHT25_CMD = new Command("right 25%",Command.ITEM, 100);
 	private final Command PAN_UP25_CMD = new Command("up 25%",Command.ITEM, 100);
 	private final Command PAN_DOWN25_CMD = new Command("down 25%",Command.ITEM, 100);
+	private final Command PAN_LEFT2_CMD = new Command("left 2",Command.ITEM, 100);
+	private final Command PAN_RIGHT2_CMD = new Command("right 2",Command.ITEM, 100);
+	private final Command PAN_UP2_CMD = new Command("up 2",Command.ITEM, 100);
+	private final Command PAN_DOWN2_CMD = new Command("down 2",Command.ITEM, 100);
 	//#if polish.api.wmapi
 	private final Command SEND_MESSAGE_CMD = new Command("Send SMS (map pos)",Command.ITEM, 200);
 	//#endif
@@ -153,11 +158,7 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	int showAddons = 0;
 	private int fontHeight = 0;
 	private int compassRectHeight = 0;
-		
-	private static long pressedKeyTime = 0;
-	private static int pressedKeyCode = 0;
-	private static volatile long releasedKeyCode = 0;
-	private static int ignoreKeyCode = 0;
+	
 	
 	// position display was touched last time
 	private static int touchX = 0;
@@ -175,11 +176,6 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	
 	private List recordingsMenu;
 	private List routingsMenu;
-	
-	private intTree singleKeyPressCommand = new intTree();
-	private intTree repeatableKeyPressCommand = new intTree();
-	private intTree doubleKeyPressCommand = new intTree();
-	private intTree longKeyPressCommand = new intTree();
 
 	private final static Logger logger = Logger.getInstance(Trace.class,Logger.DEBUG);
 
@@ -260,7 +256,6 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 	  "S", "SSW", "SW", "SWW", "W", "NWW", "NW", "NNW",
 	  "N"};
 
-	private boolean keyboardLocked=false;
 	private boolean manualRotationMode=false;
 	private boolean movedAwayFromTarget=true;
 	private long oldRecalculationTime;
@@ -299,6 +294,10 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		repeatableKeyPressCommand.put(KEY_NUM6, PAN_RIGHT25_CMD);		
 		repeatableKeyPressCommand.put(KEY_NUM2, PAN_UP25_CMD);		
 		repeatableKeyPressCommand.put(KEY_NUM8, PAN_DOWN25_CMD);		
+		gameKeyCommand.put(LEFT, PAN_LEFT2_CMD);
+		gameKeyCommand.put(RIGHT, PAN_RIGHT2_CMD);
+		gameKeyCommand.put(UP, PAN_UP2_CMD);
+		gameKeyCommand.put(DOWN, PAN_DOWN2_CMD);
 		singleKeyPressCommand.put(KEY_NUM1, ZOOM_OUT_CMD);
 		singleKeyPressCommand.put(KEY_NUM3, ZOOM_IN_CMD);
 		singleKeyPressCommand.put(KEY_NUM5, RECENTER_GPS_CMD);
@@ -321,6 +320,8 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 		longKeyPressCommand.put(KEY_NUM0, TOGGLE_RECORDING_CMD);
 		longKeyPressCommand.put(KEY_STAR, MAN_WAYP_CMD);
 		longKeyPressCommand.put(KEY_POUND, MANAGE_TRACKS_CMD);
+		
+		nonReleasableKeyPressCommand.put(Configuration.KEYCODE_CAMERA_COVER_OPEN, CAMERA_CMD);
 
 		
 		/*
@@ -647,20 +648,46 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 				keyPressed(0);
 				return;
 			}
-			if (c == PAN_LEFT25_CMD) {
-				imageCollector.getCurrentProjection().pan(center, -25, 0);
-				gpsRecenter = false;
-				return;
-			} else if (c == PAN_RIGHT25_CMD) {
-				imageCollector.getCurrentProjection().pan(center, 25, 0);
-				gpsRecenter = false;
-				return;
-			} else if (c == PAN_UP25_CMD) {
-				imageCollector.getCurrentProjection().pan(center, 0, -25);
-				gpsRecenter = false;
-				return;
-			} else if (c == PAN_DOWN25_CMD) {
-				imageCollector.getCurrentProjection().pan(center, 0, 25);
+			if ((c == PAN_LEFT25_CMD) || (c == PAN_RIGHT25_CMD) || (c == PAN_UP25_CMD) || (c == PAN_DOWN25_CMD)
+					|| (c == PAN_LEFT2_CMD) || (c == PAN_RIGHT2_CMD) || (c == PAN_UP2_CMD) || (c == PAN_DOWN2_CMD)) {
+				int panX = 0; int panY = 0;
+				int courseDiff = 0;
+				if (c == PAN_LEFT25_CMD) {
+					panX = -25;
+				} else if (c == PAN_RIGHT25_CMD) {
+					panX = 25;
+				} else if (c == PAN_UP25_CMD) {
+					panY = -25;
+				} else if (c == PAN_DOWN25_CMD) {
+					panY = 25;
+				} else if (c == PAN_LEFT2_CMD) {
+					if (manualRotationMode) {
+						courseDiff=-5;
+					} else {
+						panX = -2;
+					}
+				} else if (c == PAN_RIGHT2_CMD) {
+					if (manualRotationMode) {
+						courseDiff=5;
+					} else {
+						panX = 2;
+					}
+				} else if (c == PAN_UP2_CMD) {
+					panY = -2;
+				} else if (c == PAN_DOWN2_CMD) {
+					panY = 2;
+				}
+				
+				imageCollector.getCurrentProjection().pan(center, panX, panY);
+				if (courseDiff == 360) {
+					course = 0; //N
+				} else {
+					course += courseDiff;
+					course %= 360;
+					if (course < 0) {
+						course += 360;
+					}
+				}
 				gpsRecenter = false;
 				return;
 			}
@@ -1971,175 +1998,6 @@ public class Trace extends Canvas implements CommandListener, LocationMsgReceive
 
 	public MIDlet getParent() {
 		return parent;
-	}
-
-	private int getManualRotationFromKey(int keyCode) {
-		int courseDiff=0;
-		if (manualRotationMode) {
-			if (this.getGameAction(keyCode) == LEFT) {		
-				courseDiff=-5;
-			} else if (this.getGameAction(keyCode) == RIGHT) {		
-				courseDiff=5;
-			}
-		}
-		return courseDiff;
-	}
-	
-	protected void keyRepeated(int keyCode) {
-		// strange seem to be working in emulator only with this debug line
-		logger.debug("keyRepeated " + keyCode);
-		//Scrolling should work with repeated keys the same
-		//as pressing the key multiple times
-		if (keyCode==ignoreKeyCode) {
-			logger.debug("key ignored " + keyCode);
-			return;
-		}
-		int gameActionCode = this.getGameAction(keyCode);
-		if ((gameActionCode == UP) || (gameActionCode == DOWN) ||
-				(gameActionCode == RIGHT) || (gameActionCode == LEFT)) {
-			keyPressed(keyCode);
-			return;
-		}
-		// repeat actions for repeatable keys like direction keys and manual rotation keys
-		Command c = (Command)repeatableKeyPressCommand.get(keyCode);
-		if ((c != null)
-			||
-			(getManualRotationFromKey(keyCode) != 0)
-			)
-		{
-			keyPressed(keyCode);
-			return;
-		}
-
-		long keyTime=System.currentTimeMillis();
-		// other key is held down
-		if ( (keyTime-pressedKeyTime)>=1000 &&
-			 pressedKeyCode==keyCode)
-		{
-			Command longC = (Command)longKeyPressCommand.get(keyCode);
-			//#debug debug
-			logger.debug("long key pressed " + keyCode +  " executing command " + longC);
-			if (longC != null) {
-				ignoreKeyCode=keyCode;
-				commandAction(longC,(Displayable) null);
-			}
-		}	
-	}
-
-	
-// manage keys that would have different meanings when
-// held down in keyReleased
-	protected void keyReleased(final int keyCode) {
-		// show alert in keypressed() that keyboard is locked
-		if (keyboardLocked && keyCode==KEY_NUM9) {
-			keyPressed(0);
-			return;
-		}
-		
-		// if key was not handled as held down key
-		// strange seem to be working in emulator only with this debug line
-		logger.debug("keyReleased " + keyCode + " ignoreKeyCode: " + ignoreKeyCode + " prevRelCode: " + releasedKeyCode);
-		if (keyCode == ignoreKeyCode) {
-			ignoreKeyCode=0;
-			return;
-		}
-		final Command doubleC = (Command)doubleKeyPressCommand.get(keyCode);
-//		key was pressed twice quickly
-		if (releasedKeyCode == keyCode) {
-			releasedKeyCode = 0;
-			//#debug debug
-			logger.debug("double key pressed " + keyCode +  " executing command " + doubleC);
-			if (doubleC != null) {				
-				commandAction(doubleC,(Displayable) null);
-			}
-		} else {
-			releasedKeyCode = keyCode;
-			final Command singleC = (Command)singleKeyPressCommand.get(keyCode);
-//			#debug debug
-			logger.debug("single key initiated " + keyCode +  " executing command " + singleC);
-			if (singleC != null) {
-				if (doubleC != null) {
-					TimerTask timerT;
-					Timer tm = new Timer();	    
-					timerT = new TimerTask() {
-						public void run() {
-							if (releasedKeyCode == keyCode) {
-								//#debug debug
-								logger.debug("single key pressed " + keyCode +  " delayed executing command " + singleC);
-								// key was not pressed again within double press time
-								commandAction(singleC,(Displayable) null);
-								releasedKeyCode = 0;
-								repaint(0, 0, getWidth(), getHeight());
-							}
-						}			
-					};
-					// set double press time
-					tm.schedule(timerT, 300);
-				} else {
-					//#debug debug
-					logger.debug("single key pressed " + keyCode +  " executing command " + singleC);
-					commandAction(singleC,(Displayable) null);
-					releasedKeyCode = 0;
-				}
-			}
-		}
-		repaint();
-	}
-	
-	protected void keyPressed(int keyCode) {
-		logger.debug("keyPressed " + keyCode);		
-		ignoreKeyCode=0;
-		pressedKeyCode=keyCode;
-		pressedKeyTime=System.currentTimeMillis();
-		if(keyboardLocked && keyCode!=KEY_NUM9) {
-			GpsMid.getInstance().alert("GpsMid", "Keys locked. Hold down '9' to unlock.",1500);
-			ignoreKeyCode=keyCode;
-			return;
-		}
-		
-		int panHorizontal = 0;
-		int panVertical = 0;
-		// handle actions for repeatable keys like direction keys immediately
-		Command c = (Command)repeatableKeyPressCommand.get(keyCode);
-		if (c != null) {
-			commandAction(c,(Displayable) null);
-		} else if (getManualRotationFromKey(keyCode) != 0) {
-			int courseDiff = getManualRotationFromKey(keyCode);
-			if (courseDiff == 360) {
-				course = 0; //N
-			} else {
-				course += courseDiff;
-				course %= 360;
-				if (course < 0) {
-					course += 360;
-				}
-			}
-		} else if (this.getGameAction(keyCode) == UP) {
-			panVertical = -2;
-		} else if (this.getGameAction(keyCode) == DOWN) {	
-			panVertical = 2;
-		} else if (this.getGameAction(keyCode) == LEFT) {		
-			panHorizontal = -2;
-		} else if (this.getGameAction(keyCode) == RIGHT) {		
-			panHorizontal = 2;
-		}
-		if (	(imageCollector != null) &&
-				(
-				 (panHorizontal != 0) || (panVertical != 0)
-				)
-		) {
-			imageCollector.getCurrentProjection().pan(center, panHorizontal, panVertical);
-			gpsRecenter = false;			
-		}	
-		
-		/**
-		 * The camera cover switch does not report a keyreleased event, so
-		 * we need to special case it here in the keypressed routine
-		 */
-		if (keyCode == Configuration.KEYCODE_CAMERA_COVER_OPEN) {
-			commandAction(CAMERA_CMD,(Displayable) null);
-		}
-		repaint(0, 0, getWidth(), getHeight());
 	}
 
 	protected void pointerPressed(int x, int y) {
