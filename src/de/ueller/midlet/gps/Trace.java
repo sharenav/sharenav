@@ -76,54 +76,54 @@ import de.ueller.midlet.gps.GpsMidDisplayable;
 public class Trace extends KeyCommandCanvas implements CommandListener, LocationMsgReceiver,
 		Runnable , GpsMidDisplayable{
 	/** Soft button for exiting the map screen */
-	private final Command EXIT_CMD = new Command("Back", Command.BACK, 5);
+	private final int EXIT_CMD = 1;
+	private final int CONNECT_GPS_CMD = 2;
+		private final int DISCONNECT_GPS_CMD = 3;
+		private final int START_RECORD_CMD = 4;
+		private final int STOP_RECORD_CMD = 5;
+		private final int MANAGE_TRACKS_CMD = 6;
+		private final int SAVE_WAYP_CMD = 7;
+		private final int ENTER_WAYP_CMD = 8;
+		private final int MAN_WAYP_CMD = 9;
+		private final int ROUTE_TO_CMD = 10;
+		private final int CAMERA_CMD = 11;
+		private final int CLEARTARGET_CMD = 12;
+		private final int SETTARGET_CMD = 13;
+		private final int MAPFEATURES_CMD = 14;
+		private final int RECORDINGS_CMD = 16;
+		private final int ROUTINGS_CMD = 17;
+		private final int OK_CMD =18;
+		private final int BACK_CMD = 19;
+		private final int ZOOM_IN_CMD = 20;
+		private final int ZOOM_OUT_CMD = 21;
+		private final int MANUAL_ROTATION_MODE_CMD = 22;
+		private final int TOGGLE_OVERLAY_CMD = 23;
+		private final int TOGGLE_BACKLIGHT_CMD = 24;
+		private final int TOGGLE_FULLSCREEN_CMD = 25;
+		private final int TOGGLE_MAP_PROJ_CMD = 26;
+		private final int TOGGLE_KEY_LOCK_CMD = 27;
+		private final int TOGGLE_RECORDING_CMD = 28;
+		private final int TOGGLE_RECORDING_SUSP_CMD = 29;
+		private final int RECENTER_GPS_CMD = 30;
+		private final int TACHO_CMD = 31;
+		private final int OVERVIEW_MAP_CMD = 32;
+		private final int RETRIEVE_XML = 33;
+		private final int PAN_LEFT25_CMD = 34;
+		private final int PAN_RIGHT25_CMD = 35;
+		private final int PAN_UP25_CMD = 36;
+		private final int PAN_DOWN25_CMD = 37;
+		private final int PAN_LEFT2_CMD = 38;
+		private final int PAN_RIGHT2_CMD = 39;
+		private final int PAN_UP2_CMD = 40;
+		private final int PAN_DOWN2_CMD = 41;
+		private final int REFRESH_CMD = 42;
+		private final int SEARCH_CMD = 43;
+		//#if polish.api.wmapi
+		private final int SEND_MESSAGE_CMD = 44;
+		//#endif
 
-	private final Command REFRESH_CMD = new Command("Refresh", Command.ITEM, 4);
-	private final Command SEARCH_CMD = new Command("Search", Command.OK, 1);
-
-	private final Command CONNECT_GPS_CMD = new Command("Start gps",Command.ITEM, 2);
-	private final Command DISCONNECT_GPS_CMD = new Command("Stop gps",Command.ITEM, 2);
-	private final Command START_RECORD_CMD = new Command("Start record",Command.ITEM, 4);
-	private final Command STOP_RECORD_CMD = new Command("Stop record",Command.ITEM, 4);
-	private final Command MANAGE_TRACKS_CMD = new Command("Manage tracks",Command.ITEM, 5);
-	private final Command SAVE_WAYP_CMD = new Command("Save waypoint",Command.ITEM, 7);
-	private final Command ENTER_WAYP_CMD = new Command("Enter waypoint",Command.ITEM, 7);
-	private final Command MAN_WAYP_CMD = new Command("Manage waypoints",Command.ITEM, 7);
-	private final Command ROUTE_TO_CMD = new Command("Route",Command.ITEM, 3);
-	private final Command CAMERA_CMD = new Command("Camera",Command.ITEM, 9);
-	private final Command CLEARTARGET_CMD = new Command("Clear Target",Command.ITEM, 10);
-	private final Command SETTARGET_CMD = new Command("As Target",Command.ITEM, 11);
-	private final Command MAPFEATURES_CMD = new Command("Map Features",Command.ITEM, 12);
-	private final Command RECORDINGS_CMD = new Command("Recordings...",Command.ITEM, 4);
-	private final Command ROUTINGS_CMD = new Command("Routing...",Command.ITEM, 3);
-	private final Command OK_CMD = new Command("OK",Command.OK, 14);
-	private final Command BACK_CMD = new Command("Back",Command.BACK, 15);
-	private final Command ZOOM_IN_CMD = new Command("Zoom in",Command.ITEM, 100);
-	private final Command ZOOM_OUT_CMD = new Command("Zoom out",Command.ITEM, 100);
-	private final Command MANUAL_ROTATION_MODE_CMD = new Command("Manual Rotation Mode",Command.ITEM, 100);
-	private final Command TOGGLE_OVERLAY_CMD = new Command("Next overlay",Command.ITEM, 100);
-	private final Command TOGGLE_BACKLIGHT_CMD = new Command("Keep backlight on/off",Command.ITEM, 100);
-	private final Command TOGGLE_FULLSCREEN_CMD = new Command("Switch to fullscreen",Command.ITEM, 100);
-	private final Command TOGGLE_MAP_PROJ_CMD = new Command("Next map projection",Command.ITEM, 100);
-	private final Command TOGGLE_KEY_LOCK_CMD = new Command("(De)Activate Keylock",Command.ITEM, 100);
-	private final Command TOGGLE_RECORDING_CMD = new Command("(De)Activate recording",Command.ITEM, 100);
-	private final Command TOGGLE_RECORDING_SUSP_CMD = new Command("Suspend recording",Command.ITEM, 100);
-	private final Command RECENTER_GPS_CMD = new Command("Recenter on GPS",Command.ITEM, 100);
-	private final Command TACHO_CMD = new Command("Tacho",Command.ITEM, 100);
-	private final Command OVERVIEW_MAP_CMD = new Command("Overview/Filter Map",Command.ITEM, 200);
-	private final Command RETRIEVE_XML = new Command("Retrieve XML",Command.ITEM, 200);
-	private final Command PAN_LEFT25_CMD = new Command("left 25%",Command.ITEM, 100);
-	private final Command PAN_RIGHT25_CMD = new Command("right 25%",Command.ITEM, 100);
-	private final Command PAN_UP25_CMD = new Command("up 25%",Command.ITEM, 100);
-	private final Command PAN_DOWN25_CMD = new Command("down 25%",Command.ITEM, 100);
-	private final Command PAN_LEFT2_CMD = new Command("left 2",Command.ITEM, 100);
-	private final Command PAN_RIGHT2_CMD = new Command("right 2",Command.ITEM, 100);
-	private final Command PAN_UP2_CMD = new Command("up 2",Command.ITEM, 100);
-	private final Command PAN_DOWN2_CMD = new Command("down 2",Command.ITEM, 100);
-	//#if polish.api.wmapi
-	private final Command SEND_MESSAGE_CMD = new Command("Send SMS (map pos)",Command.ITEM, 200);
-	//#endif
-
+	private final Command [] CMDS = new Command[45];
+	
 	private InputStream btGpsInputStream;
 	private OutputStream btGpsOutputStream;
 	private StreamConnection conn;
@@ -276,78 +276,129 @@ public class Trace extends KeyCommandCanvas implements CommandListener, Location
 		this.config = config;
 		
 		this.parent = parent;
-		addCommand(EXIT_CMD);
-		addCommand(SEARCH_CMD);
-		addCommand(CONNECT_GPS_CMD);
-		addCommand(MANAGE_TRACKS_CMD);
-		addCommand(MAN_WAYP_CMD);
-		addCommand(MAPFEATURES_CMD);
-		addCommand(RECORDINGS_CMD);
-		addCommand(ROUTINGS_CMD);
-		addCommand(TACHO_CMD);
+		
+		CMDS[EXIT_CMD] = new Command("Exit", Command.EXIT, 2);
+		CMDS[REFRESH_CMD] = new Command("Refresh", Command.ITEM, 4);
+		CMDS[SEARCH_CMD] = new Command("Search", Command.OK, 1);
+		CMDS[CONNECT_GPS_CMD] = new Command("Start gps",Command.ITEM, 2);
+		 
+		CMDS[DISCONNECT_GPS_CMD] = new Command("Stop gps",Command.ITEM, 2);
+		CMDS[START_RECORD_CMD] = new Command("Start record",Command.ITEM, 4);
+		CMDS[STOP_RECORD_CMD] = new Command("Stop record",Command.ITEM, 4);
+		CMDS[MANAGE_TRACKS_CMD] = new Command("Manage tracks",Command.ITEM, 5);
+		CMDS[SAVE_WAYP_CMD] = new Command("Save waypoint",Command.ITEM, 7);
+		CMDS[ENTER_WAYP_CMD] = new Command("Enter waypoint",Command.ITEM, 7);
+		CMDS[MAN_WAYP_CMD] = new Command("Manage waypoints",Command.ITEM, 7);
+		CMDS[ROUTE_TO_CMD] = new Command("Route",Command.ITEM, 3);
+		CMDS[CAMERA_CMD] = new Command("Camera",Command.ITEM, 9);
+		CMDS[CLEARTARGET_CMD] = new Command("Clear Target",Command.ITEM, 10);
+		CMDS[SETTARGET_CMD] = new Command("As Target",Command.ITEM, 11);
+		CMDS[MAPFEATURES_CMD] = new Command("Map Features",Command.ITEM, 12);
+		CMDS[RECORDINGS_CMD] = new Command("Recordings...",Command.ITEM, 4);
+		CMDS[ROUTINGS_CMD] = new Command("Routing...",Command.ITEM, 3);
+		CMDS[OK_CMD] = new Command("OK",Command.OK, 14);
+		CMDS[BACK_CMD] = new Command("Back",Command.BACK, 15);
+		CMDS[ZOOM_IN_CMD] = new Command("Zoom in",Command.ITEM, 100);
+		CMDS[ZOOM_OUT_CMD] = new Command("Zoom out",Command.ITEM, 100);
+		CMDS[MANUAL_ROTATION_MODE_CMD] = new Command("Manual Rotation Mode",Command.ITEM, 100);
+		CMDS[TOGGLE_OVERLAY_CMD] = new Command("Next overlay",Command.ITEM, 100);
+		CMDS[TOGGLE_BACKLIGHT_CMD] = new Command("Keep backlight on/off",Command.ITEM, 100);
+		CMDS[TOGGLE_FULLSCREEN_CMD] = new Command("Switch to fullscreen",Command.ITEM, 100);
+		CMDS[TOGGLE_MAP_PROJ_CMD] = new Command("Next map projection",Command.ITEM, 100);
+		CMDS[TOGGLE_KEY_LOCK_CMD] = new Command("(De)Activate Keylock",Command.ITEM, 100);
+		CMDS[TOGGLE_RECORDING_CMD] = new Command("(De)Activate recording",Command.ITEM, 100);
+		CMDS[TOGGLE_RECORDING_SUSP_CMD] = new Command("Suspend recording",Command.ITEM, 100);
+		CMDS[RECENTER_GPS_CMD] = new Command("Recenter on GPS",Command.ITEM, 100);
+		CMDS[TACHO_CMD] = new Command("Tacho",Command.ITEM, 100);
+		CMDS[OVERVIEW_MAP_CMD] = new Command("Overview/Filter Map",Command.ITEM, 200);
+		CMDS[RETRIEVE_XML] = new Command("Retrieve XML",Command.ITEM, 200);
+		CMDS[PAN_LEFT25_CMD] = new Command("left 25%",Command.ITEM, 100);
+		CMDS[PAN_RIGHT25_CMD] = new Command("right 25%",Command.ITEM, 100);
+		CMDS[PAN_UP25_CMD] = new Command("up 25%",Command.ITEM, 100);
+		CMDS[PAN_DOWN25_CMD] = new Command("down 25%",Command.ITEM, 100);
+		CMDS[PAN_LEFT2_CMD] = new Command("left 2",Command.ITEM, 100);
+		CMDS[PAN_RIGHT2_CMD] = new Command("right 2",Command.ITEM, 100);
+		CMDS[PAN_UP2_CMD] = new Command("up 2",Command.ITEM, 100);
+		CMDS[PAN_DOWN2_CMD] = new Command("down 2",Command.ITEM, 100);
+		//#if polish.api.wmapi
+		CMDS[SEND_MESSAGE_CMD] = new Command("Send SMS (map pos)",Command.ITEM, 200);
+		//#endif
+
+		for (int i = 0; i < 45; i ++) {
+			System.out.println("CMDS[" + i +"] " + CMDS[i]);
+		}
+		
+		addCommand(CMDS[EXIT_CMD]);
+		addCommand(CMDS[SEARCH_CMD]);
+		addCommand(CMDS[CONNECT_GPS_CMD]);
+		addCommand(CMDS[MANAGE_TRACKS_CMD]);
+		addCommand(CMDS[MAN_WAYP_CMD]);
+		addCommand(CMDS[MAPFEATURES_CMD]);
+		addCommand(CMDS[RECORDINGS_CMD]);
+		addCommand(CMDS[ROUTINGS_CMD]);
+		addCommand(CMDS[TACHO_CMD]);
 		//#if ENABLE_EDIT
-		addCommand(RETRIEVE_XML);
+		addCommand(CMDS[RETRIEVE_XML]);
 		//#endif
 		setCommandListener(this);
 		
-		repeatableKeyPressCommand.put(KEY_NUM4, PAN_LEFT25_CMD);		
-		repeatableKeyPressCommand.put(KEY_NUM6, PAN_RIGHT25_CMD);		
-		repeatableKeyPressCommand.put(KEY_NUM2, PAN_UP25_CMD);		
-		repeatableKeyPressCommand.put(KEY_NUM8, PAN_DOWN25_CMD);		
-		gameKeyCommand.put(LEFT, PAN_LEFT2_CMD);
-		gameKeyCommand.put(RIGHT, PAN_RIGHT2_CMD);
-		gameKeyCommand.put(UP, PAN_UP2_CMD);
-		gameKeyCommand.put(DOWN, PAN_DOWN2_CMD);
-		singleKeyPressCommand.put(KEY_NUM1, ZOOM_OUT_CMD);
-		singleKeyPressCommand.put(KEY_NUM3, ZOOM_IN_CMD);
-		singleKeyPressCommand.put(KEY_NUM5, RECENTER_GPS_CMD);
-		singleKeyPressCommand.put(KEY_NUM7, TOGGLE_OVERLAY_CMD);
-		singleKeyPressCommand.put(KEY_NUM9, SAVE_WAYP_CMD);
-		singleKeyPressCommand.put(KEY_NUM0, TOGGLE_FULLSCREEN_CMD);
-		singleKeyPressCommand.put(KEY_STAR, MAPFEATURES_CMD);		
-		singleKeyPressCommand.put(KEY_POUND, TOGGLE_BACKLIGHT_CMD);
-		singleKeyPressCommand.put(Configuration.KEYCODE_CAMERA_COVER_OPEN, CAMERA_CMD);
-		singleKeyPressCommand.put(-8, ROUTE_TO_CMD);
-		doubleKeyPressCommand.put(KEY_NUM5, TOGGLE_MAP_PROJ_CMD);
-		doubleKeyPressCommand.put(KEY_NUM9, MANUAL_ROTATION_MODE_CMD);
-		doubleKeyPressCommand.put(KEY_NUM0, TOGGLE_RECORDING_SUSP_CMD);
-		doubleKeyPressCommand.put(KEY_STAR, OVERVIEW_MAP_CMD);
+		repeatableKeyPressCommand.put(KEY_NUM4, CMDS[PAN_LEFT25_CMD]);
+		repeatableKeyPressCommand.put(KEY_NUM6, CMDS[PAN_RIGHT25_CMD]);
+		repeatableKeyPressCommand.put(KEY_NUM2, CMDS[PAN_UP25_CMD]);
+		repeatableKeyPressCommand.put(KEY_NUM8, CMDS[PAN_DOWN25_CMD]);
+		gameKeyCommand.put(LEFT, CMDS[PAN_LEFT2_CMD]);
+		gameKeyCommand.put(RIGHT, CMDS[PAN_RIGHT2_CMD]);
+		gameKeyCommand.put(UP, CMDS[PAN_UP2_CMD]);
+		gameKeyCommand.put(DOWN, CMDS[PAN_DOWN2_CMD]);
+		singleKeyPressCommand.put(KEY_NUM1, CMDS[ZOOM_OUT_CMD]);
+		singleKeyPressCommand.put(KEY_NUM3, CMDS[ZOOM_IN_CMD]);
+		singleKeyPressCommand.put(KEY_NUM5, CMDS[RECENTER_GPS_CMD]);
+		singleKeyPressCommand.put(KEY_NUM7, CMDS[TOGGLE_OVERLAY_CMD]);
+		singleKeyPressCommand.put(KEY_NUM9, CMDS[SAVE_WAYP_CMD]);
+		singleKeyPressCommand.put(KEY_NUM0, CMDS[TOGGLE_FULLSCREEN_CMD]);
+		singleKeyPressCommand.put(KEY_STAR, CMDS[MAPFEATURES_CMD]);
+		singleKeyPressCommand.put(KEY_POUND, CMDS[TOGGLE_BACKLIGHT_CMD]);
+		singleKeyPressCommand.put(-8, CMDS[ROUTE_TO_CMD]);
+		doubleKeyPressCommand.put(KEY_NUM5, CMDS[TOGGLE_MAP_PROJ_CMD]);
+		doubleKeyPressCommand.put(KEY_NUM9, CMDS[MANUAL_ROTATION_MODE_CMD]);
+		doubleKeyPressCommand.put(KEY_NUM0, CMDS[TOGGLE_RECORDING_SUSP_CMD]);
+		doubleKeyPressCommand.put(KEY_STAR, CMDS[OVERVIEW_MAP_CMD]);
 		//#if polish.api.wmapi
 		//doubleKeyPressCommand.put(KEY_POUND, SEND_MESSAGE_CMD);
 		//#endif
-		longKeyPressCommand.put(KEY_NUM5, RECORDINGS_CMD);
-		longKeyPressCommand.put(KEY_NUM9, TOGGLE_KEY_LOCK_CMD);
-		longKeyPressCommand.put(KEY_NUM0, TOGGLE_RECORDING_CMD);
-		longKeyPressCommand.put(KEY_STAR, MAN_WAYP_CMD);
-		longKeyPressCommand.put(KEY_POUND, MANAGE_TRACKS_CMD);
+		longKeyPressCommand.put(KEY_NUM5, CMDS[RECORDINGS_CMD]);
+		longKeyPressCommand.put(KEY_NUM9, CMDS[TOGGLE_KEY_LOCK_CMD]);
+		longKeyPressCommand.put(KEY_NUM0, CMDS[TOGGLE_RECORDING_CMD]);
+		longKeyPressCommand.put(KEY_STAR, CMDS[MAN_WAYP_CMD]);
+		longKeyPressCommand.put(KEY_POUND, CMDS[MANAGE_TRACKS_CMD]);
 		
-		nonReleasableKeyPressCommand.put(Configuration.KEYCODE_CAMERA_COVER_OPEN, CAMERA_CMD);
+		nonReleasableKeyPressCommand.put(Configuration.KEYCODE_CAMERA_COVER_OPEN, CMDS[CAMERA_CMD]);
 
 		
 		/*
 		 *  additional shortcuts for QWERT keyboards
 		 */
-		repeatableKeyPressCommand.put('h', PAN_LEFT25_CMD);		
-		repeatableKeyPressCommand.put('l', PAN_RIGHT25_CMD);		
-		repeatableKeyPressCommand.put('k', PAN_UP25_CMD);		
-		repeatableKeyPressCommand.put('j', PAN_DOWN25_CMD);		
-		singleKeyPressCommand.put('o', ZOOM_OUT_CMD);
-		singleKeyPressCommand.put('i', ZOOM_IN_CMD);
-		singleKeyPressCommand.put('g', RECENTER_GPS_CMD);
-		singleKeyPressCommand.put('u', MANUAL_ROTATION_MODE_CMD);
-		singleKeyPressCommand.put(' ', SAVE_WAYP_CMD);
-		singleKeyPressCommand.put('w', MAN_WAYP_CMD);
-		singleKeyPressCommand.put('t', MANAGE_TRACKS_CMD);
-		singleKeyPressCommand.put('d', RECORDINGS_CMD);
-		singleKeyPressCommand.put('x', ROUTINGS_CMD);
-		singleKeyPressCommand.put('c', ROUTE_TO_CMD);
-		singleKeyPressCommand.put('f', TOGGLE_FULLSCREEN_CMD);		
-		singleKeyPressCommand.put('b', TOGGLE_BACKLIGHT_CMD);		
-		singleKeyPressCommand.put('p', TOGGLE_RECORDING_SUSP_CMD);
-		singleKeyPressCommand.put('y', TOGGLE_OVERLAY_CMD);
-		singleKeyPressCommand.put('v', OVERVIEW_MAP_CMD);
-		singleKeyPressCommand.put('m', MAPFEATURES_CMD);
-		longKeyPressCommand.put('r', TOGGLE_RECORDING_CMD);
+		repeatableKeyPressCommand.put('h', CMDS[PAN_LEFT25_CMD]);
+		repeatableKeyPressCommand.put('l', CMDS[PAN_RIGHT25_CMD]);
+		repeatableKeyPressCommand.put('k', CMDS[PAN_UP25_CMD]);
+		repeatableKeyPressCommand.put('j', CMDS[PAN_DOWN25_CMD]);
+		singleKeyPressCommand.put('o', CMDS[ZOOM_OUT_CMD]);
+		singleKeyPressCommand.put('i', CMDS[ZOOM_IN_CMD]);
+		singleKeyPressCommand.put('g', CMDS[RECENTER_GPS_CMD]);
+		singleKeyPressCommand.put('u', CMDS[MANUAL_ROTATION_MODE_CMD]);
+		singleKeyPressCommand.put(' ', CMDS[SAVE_WAYP_CMD]);
+		singleKeyPressCommand.put('w', CMDS[MAN_WAYP_CMD]);
+		singleKeyPressCommand.put('t', CMDS[MANAGE_TRACKS_CMD]);
+		singleKeyPressCommand.put('d', CMDS[RECORDINGS_CMD]);
+		singleKeyPressCommand.put('x', CMDS[ROUTINGS_CMD]);
+		singleKeyPressCommand.put('c', CMDS[ROUTE_TO_CMD]);
+		singleKeyPressCommand.put('f', CMDS[TOGGLE_FULLSCREEN_CMD]);
+		singleKeyPressCommand.put('b', CMDS[TOGGLE_BACKLIGHT_CMD]);
+		singleKeyPressCommand.put('p', CMDS[TOGGLE_RECORDING_SUSP_CMD]);
+		singleKeyPressCommand.put('y', CMDS[TOGGLE_OVERLAY_CMD]);
+		singleKeyPressCommand.put('v', CMDS[OVERVIEW_MAP_CMD]);
+		singleKeyPressCommand.put('m', CMDS[MAPFEATURES_CMD]);
+		longKeyPressCommand.put('r', CMDS[TOGGLE_RECORDING_CMD]);
 		
 		try {
 			satelit = Image.createImage("/satelit.png");
@@ -412,8 +463,8 @@ public class Trace extends KeyCommandCanvas implements CommandListener, Location
 			}
 			//#debug debug
 			logger.debug("rm connect, add disconnect");
-			removeCommand(CONNECT_GPS_CMD);
-			addCommand(DISCONNECT_GPS_CMD);
+			removeCommand(CMDS[CONNECT_GPS_CMD]);
+			addCommand(CMDS[DISCONNECT_GPS_CMD]);
 			switch (config.getLocationProvider()){
 				case Configuration.LOCATIONPROVIDER_SIRF:
 					locationProducer = new SirfInput();
@@ -648,33 +699,33 @@ public class Trace extends KeyCommandCanvas implements CommandListener, Location
 				keyPressed(0);
 				return;
 			}
-			if ((c == PAN_LEFT25_CMD) || (c == PAN_RIGHT25_CMD) || (c == PAN_UP25_CMD) || (c == PAN_DOWN25_CMD)
-					|| (c == PAN_LEFT2_CMD) || (c == PAN_RIGHT2_CMD) || (c == PAN_UP2_CMD) || (c == PAN_DOWN2_CMD)) {
+			if ((c == CMDS[PAN_LEFT25_CMD]) || (c == CMDS[PAN_RIGHT25_CMD]) || (c == CMDS[PAN_UP25_CMD]) || (c == CMDS[PAN_DOWN25_CMD])
+					|| (c == CMDS[PAN_LEFT2_CMD]) || (c == CMDS[PAN_RIGHT2_CMD]) || (c == CMDS[PAN_UP2_CMD]) || (c == CMDS[PAN_DOWN2_CMD])) {
 				int panX = 0; int panY = 0;
 				int courseDiff = 0;
-				if (c == PAN_LEFT25_CMD) {
+				if (c == CMDS[PAN_LEFT25_CMD]) {
 					panX = -25;
-				} else if (c == PAN_RIGHT25_CMD) {
+				} else if (c == CMDS[PAN_RIGHT25_CMD]) {
 					panX = 25;
-				} else if (c == PAN_UP25_CMD) {
+				} else if (c == CMDS[PAN_UP25_CMD]) {
 					panY = -25;
-				} else if (c == PAN_DOWN25_CMD) {
+				} else if (c == CMDS[PAN_DOWN25_CMD]) {
 					panY = 25;
-				} else if (c == PAN_LEFT2_CMD) {
+				} else if (c == CMDS[PAN_LEFT2_CMD]) {
 					if (manualRotationMode) {
 						courseDiff=-5;
 					} else {
 						panX = -2;
 					}
-				} else if (c == PAN_RIGHT2_CMD) {
+				} else if (c == CMDS[PAN_RIGHT2_CMD]) {
 					if (manualRotationMode) {
 						courseDiff=5;
 					} else {
 						panX = 2;
 					}
-				} else if (c == PAN_UP2_CMD) {
+				} else if (c == CMDS[PAN_UP2_CMD]) {
 					panY = -2;
-				} else if (c == PAN_DOWN2_CMD) {
+				} else if (c == CMDS[PAN_DOWN2_CMD]) {
 					panY = 2;
 				}
 				
@@ -691,7 +742,7 @@ public class Trace extends KeyCommandCanvas implements CommandListener, Location
 				gpsRecenter = false;
 				return;
 			}
-			if (c == EXIT_CMD) {
+			if (c == CMDS[EXIT_CMD]) {
 				// FIXME: This is a workaround. It would be better if recording would not be stopped when returning to map
 				if (gpx.isRecordingTrk()) {
 					parent.alert("Record Mode", "Please stop recording before returning to the main screen." , 2000);
@@ -708,18 +759,18 @@ public class Trace extends KeyCommandCanvas implements CommandListener, Location
 				return;
 			}
 			if (! rootCalc){
-			if (c == START_RECORD_CMD){
+			if (c == CMDS[START_RECORD_CMD]){
 				try {
 					gpx.newTrk();
 				} catch (RuntimeException e) {
 					receiveMessage(e.getMessage());
 				}
 			}
-			if (c == STOP_RECORD_CMD){
+			if (c == CMDS[STOP_RECORD_CMD]){
 				gpx.saveTrk();
-				addCommand(MANAGE_TRACKS_CMD);
+				addCommand(CMDS[MANAGE_TRACKS_CMD]);
 			}
-			if (c == MANAGE_TRACKS_CMD){
+			if (c == CMDS[MANAGE_TRACKS_CMD]){
 				if (gpx.isRecordingTrk()) {
 					parent.alert("Record Mode", "You need to stop recording before managing tracks." , 2000);
 					return;
@@ -728,25 +779,25 @@ public class Trace extends KeyCommandCanvas implements CommandListener, Location
 			    GuiGpx gpx = new GuiGpx(this);
 			    gpx.show();
 			}
-			if (c == REFRESH_CMD) {
+			if (c == CMDS[REFRESH_CMD]) {
 				repaint(0, 0, getWidth(), getHeight());
 			}
-			if (c == CONNECT_GPS_CMD){
+			if (c == CMDS[CONNECT_GPS_CMD]){
 				if (locationProducer == null){
 					Thread thread = new Thread(this);
 					thread.start();
 				}
 			}
-			if (c == SEARCH_CMD){
+			if (c == CMDS[SEARCH_CMD]){
 				GuiSearch search = new GuiSearch(this);
 				search.show();
 			}
-			if (c == DISCONNECT_GPS_CMD){
+			if (c == CMDS[DISCONNECT_GPS_CMD]){
 				if (locationProducer != null){
 					locationProducer.close();
 				}
 			}
-			if (c == ROUTE_TO_CMD){
+			if (c == CMDS[ROUTE_TO_CMD]){
 				if (config.isStopAllWhileRouteing()){
   				   stopImageCollector();
 				}
@@ -758,36 +809,36 @@ public class Trace extends KeyCommandCanvas implements CommandListener, Location
 				routeEngine.solve(source, pc.target);
 //				resume();
 			}
-			if (c == SAVE_WAYP_CMD) {				
+			if (c == CMDS[SAVE_WAYP_CMD]) {
 				GuiWaypointSave gwps = new GuiWaypointSave(this, new PositionMark(center.radlat, center.radlon));
 				gwps.show();
 			}
-			if (c == ENTER_WAYP_CMD) {				
+			if (c == CMDS[ENTER_WAYP_CMD]) {
 				GuiWaypointEnter gwpe = new GuiWaypointEnter(this);
 				gwpe.show();
 			}
-			if (c == MAN_WAYP_CMD) {				
+			if (c == CMDS[MAN_WAYP_CMD]) {
 				GuiWaypoint gwp = new GuiWaypoint(this);
 				gwp.show();
 			}
-			if (c == MAPFEATURES_CMD) {				
+			if (c == CMDS[MAPFEATURES_CMD]) {
 				GuiMapFeatures gmf = new GuiMapFeatures(this);
 				gmf.show();
 				repaint(0, 0, getWidth(), getHeight());
 			}
-			if (c == OVERVIEW_MAP_CMD) {
+			if (c == CMDS[OVERVIEW_MAP_CMD]) {
 				GuiOverviewElements ovEl = new GuiOverviewElements(this);
 				ovEl.show();
 				repaint(0, 0, getWidth(), getHeight());
 			}
 			//#if polish.api.wmapi
-			if (c == SEND_MESSAGE_CMD) {
+			if (c == CMDS[SEND_MESSAGE_CMD]) {
 				GuiSendMessage sendMsg = new GuiSendMessage(this);
 				sendMsg.show();
 				repaint(0, 0, getWidth(), getHeight());
 			}
 			//#endif
-			if (c == RECORDINGS_CMD) {
+			if (c == CMDS[RECORDINGS_CMD]) {
 				int noElements = 4;
 				//#if polish.api.mmapi
 				noElements = 6;
@@ -821,25 +872,25 @@ public class Trace extends KeyCommandCanvas implements CommandListener, Location
 				//#endif
 				
 				recordingsMenu = new List("Recordings...",Choice.IMPLICIT,elements,null);
-				recordingsMenu.addCommand(OK_CMD);
-				recordingsMenu.addCommand(BACK_CMD);
-				recordingsMenu.setSelectCommand(OK_CMD);
+				recordingsMenu.addCommand(CMDS[OK_CMD]);
+				recordingsMenu.addCommand(CMDS[BACK_CMD]);
+				recordingsMenu.setSelectCommand(CMDS[OK_CMD]);
 				parent.show(recordingsMenu);
 				recordingsMenu.setCommandListener(this);				
 			}
-			if (c == ROUTINGS_CMD) {				
+			if (c == CMDS[ROUTINGS_CMD]) {
 				String[] elements = {"Calculate route", "Set target" , "Clear target"};					
 				routingsMenu = new List("Routing..",Choice.IMPLICIT,elements,null);
-				routingsMenu.addCommand(OK_CMD);
-				routingsMenu.addCommand(BACK_CMD);
-				routingsMenu.setSelectCommand(OK_CMD);
+				routingsMenu.addCommand(CMDS[OK_CMD]);
+				routingsMenu.addCommand(CMDS[BACK_CMD]);
+				routingsMenu.setSelectCommand(CMDS[OK_CMD]);
 				parent.show(routingsMenu);
 				routingsMenu.setCommandListener(this);				
 			}
-			if (c == BACK_CMD) {
+			if (c == CMDS[BACK_CMD]) {
 				show();
 			}
-			if (c == OK_CMD) {
+			if (c == CMDS[OK_CMD]) {
 				if (d == recordingsMenu) {
 					 switch (recordingsMenu.getSelectedIndex()) {
 			            case 0: {
@@ -852,16 +903,16 @@ public class Trace extends KeyCommandCanvas implements CommandListener, Location
 			            	break;
 			            }
 			            case 1: {
-			            	commandAction(SAVE_WAYP_CMD, null);			            	
+			            	commandAction(CMDS[SAVE_WAYP_CMD], null);
 							break;
 			            }
 			            case 2: {
-			            	commandAction(ENTER_WAYP_CMD, null);			            	
+			            	commandAction(CMDS[ENTER_WAYP_CMD], null);
 							break;
 			            }
 			          //#if polish.api.mmapi
 			            case 3: {
-			            	commandAction(CAMERA_CMD, null);			            	
+			            	commandAction(CMDS[CAMERA_CMD], null);
 			            	break;
 			            }
 			            case 4: {
@@ -876,12 +927,12 @@ public class Trace extends KeyCommandCanvas implements CommandListener, Location
 			          //#endif
 			          //#if polish.api.mmapi && polish.api.wmapi
 			            case 5: {
-			            	commandAction(SEND_MESSAGE_CMD, null);			            	
+			            	commandAction(CMDS[SEND_MESSAGE_CMD], null);
 			            	break;
 			            }			            	
 			          //#elif polish.api.wmapi
 			            case 3: {
-			            	commandAction(SEND_MESSAGE_CMD, null);			            	
+			            	commandAction(CMDS[SEND_MESSAGE_CMD], null);
 			            	break;
 			            }			            	
 			          //#endif					 
@@ -891,22 +942,22 @@ public class Trace extends KeyCommandCanvas implements CommandListener, Location
 					show();
 					switch (routingsMenu.getSelectedIndex()) {
 					case 0: {			            	
-						commandAction(ROUTE_TO_CMD, null);
+						commandAction(CMDS[ROUTE_TO_CMD], null);
 						break;
 					}
 					case 1: {
-						commandAction(SETTARGET_CMD, null);
+						commandAction(CMDS[SETTARGET_CMD], null);
 						break;
 					}
 					case 2: {
-						commandAction(CLEARTARGET_CMD, null);
+						commandAction(CMDS[CLEARTARGET_CMD], null);
 						break;
 					}			            	
 					}
 				}
 			}
 			//#if polish.api.mmapi
-			if (c == CAMERA_CMD){
+			if (c == CMDS[CAMERA_CMD]){
 				try {
 					Class GuiCameraClass = Class.forName("de.ueller.midlet.gps.GuiCamera");
 					Object GuiCameraObject = GuiCameraClass.newInstance();					
@@ -919,26 +970,26 @@ public class Trace extends KeyCommandCanvas implements CommandListener, Location
 				
 			}
 			//#endif
-			if (c == CLEARTARGET_CMD) {				
+			if (c == CMDS[CLEARTARGET_CMD]) {
 				setTarget(null);
-			} else if (c == SETTARGET_CMD) {				
+			} else if (c == CMDS[SETTARGET_CMD]) {
 				if (source != null) {
 					setTarget(source);
 				}
-			} else if (c == ZOOM_IN_CMD) {
+			} else if (c == CMDS[ZOOM_IN_CMD]) {
 				scale = scale / 1.5f;
-			} else if (c == ZOOM_OUT_CMD) {
+			} else if (c == CMDS[ZOOM_OUT_CMD]) {
 				scale = scale * 1.5f;
-			} else if (c == MANUAL_ROTATION_MODE_CMD) {
+			} else if (c == CMDS[MANUAL_ROTATION_MODE_CMD]) {
 				manualRotationMode = !manualRotationMode;
 				if (manualRotationMode) {
 					parent.alert("Manual Rotation", "Rotate with left/right, double press 5 for North, double press 9 to turn off" , 750);
 				} else {
 					parent.alert("Manual Rotation", "Off" , 500);
 				}
-			} else if (c == TOGGLE_OVERLAY_CMD) {
+			} else if (c == CMDS[TOGGLE_OVERLAY_CMD]) {
 				showAddons++;
-			} else if (c == TOGGLE_BACKLIGHT_CMD) {
+			} else if (c == CMDS[TOGGLE_BACKLIGHT_CMD]) {
 //				 toggle Backlight
 				config.setCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON,
 									!(config.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON)),
@@ -951,11 +1002,11 @@ public class Trace extends KeyCommandCanvas implements CommandListener, Location
 				}
 				parent.stopBackLightTimer();
 				parent.startBackLightTimer();
-			} else if (c == TOGGLE_FULLSCREEN_CMD) {
+			} else if (c == CMDS[TOGGLE_FULLSCREEN_CMD]) {
 				boolean fullScreen = !config.getCfgBitState(Configuration.CFGBIT_FULLSCREEN);
 				config.setCfgBitState(Configuration.CFGBIT_FULLSCREEN, fullScreen, false);
 				setFullScreenMode(fullScreen);
-			} else if (c == TOGGLE_MAP_PROJ_CMD) {
+			} else if (c == CMDS[TOGGLE_MAP_PROJ_CMD]) {
 				if (ProjFactory.getProj() == ProjFactory.NORTH_UP ) {
 					ProjFactory.setProj(ProjFactory.MOVE_UP);
 					parent.alert("Map Rotation", "Rotate to Driving Direction" , 500);
@@ -973,7 +1024,7 @@ public class Trace extends KeyCommandCanvas implements CommandListener, Location
 						imageCollector.newDataReady();
 					}
 				}
-			} else if (c == TOGGLE_KEY_LOCK_CMD) {
+			} else if (c == CMDS[TOGGLE_KEY_LOCK_CMD]) {
 				keyboardLocked=!keyboardLocked;
 				if(keyboardLocked) {
 					// show alert that keys are locked
@@ -981,15 +1032,15 @@ public class Trace extends KeyCommandCanvas implements CommandListener, Location
 				} else {
 					parent.alert("GpsMid", "Keys unlocked",750);					
 				}
-			} else if (c == TOGGLE_RECORDING_CMD) {
+			} else if (c == CMDS[TOGGLE_RECORDING_CMD]) {
 				if ( gpx.isRecordingTrk() ) {
 					parent.alert("Gps track recording", "Stopping to record" , 750);                                        
-					commandAction(STOP_RECORD_CMD,(Displayable) null);
+					commandAction(CMDS[STOP_RECORD_CMD],(Displayable) null);
 				} else {
 					parent.alert("Gps track recording", "Starting to record" , 750);
-					commandAction(START_RECORD_CMD,(Displayable) null);
+					commandAction(CMDS[START_RECORD_CMD],(Displayable) null);
 				}
-			} else if (c == TOGGLE_RECORDING_SUSP_CMD) {
+			} else if (c == CMDS[TOGGLE_RECORDING_SUSP_CMD]) {
 				if (gpx.isRecordingTrk()) {
 					if ( gpx.isRecordingTrkSuspended() ) {
 						parent.alert("Gps track recording", "Resuming recording" , 750);
@@ -999,9 +1050,9 @@ public class Trace extends KeyCommandCanvas implements CommandListener, Location
 						gpx.suspendTrk();
 					}
 				}
-			} else if (c == RECENTER_GPS_CMD) {
+			} else if (c == CMDS[RECENTER_GPS_CMD]) {
 				gpsRecenter = true;
-			} else if (c == TACHO_CMD) {
+			} else if (c == CMDS[TACHO_CMD]) {
 				GuiTacho tacho = new GuiTacho(this);
 				tacho.show();
 			}
@@ -1740,7 +1791,7 @@ public class Trace extends KeyCommandCanvas implements CommandListener, Location
 					if (config.getCfgBitState(Configuration.CFGBIT_SND_ROUTINGINSTRUCTIONS)) {
 						parent.mNoiseMaker.playSound("ROUTE_RECALCULATION", (byte) 5, (byte) 1 );
 					}
-					commandAction(ROUTE_TO_CMD,(Displayable) null);
+					commandAction(CMDS[ROUTE_TO_CMD],(Displayable) null);
 					// set source to null to not recalculate
 					// route again before map was drawn
 					source=null;
@@ -2075,7 +2126,7 @@ public class Trace extends KeyCommandCanvas implements CommandListener, Location
 			 */
 			gpx.saveTrk();
 		}
-		removeCommand(DISCONNECT_GPS_CMD);
+		removeCommand(CMDS[DISCONNECT_GPS_CMD]);
 		if (locationProducer == null){
 //#debug info
 			logger.info("leave locationDecoderEnd no producer");
@@ -2084,7 +2135,7 @@ public class Trace extends KeyCommandCanvas implements CommandListener, Location
 		locationProducer = null;
 		closeBtConnection();
 		notify();		
-		addCommand(CONNECT_GPS_CMD);
+		addCommand(CMDS[CONNECT_GPS_CMD]);
 //		addCommand(START_RECORD_CMD);
 //#debug info
 		logger.info("end locationDecoderEnd");
