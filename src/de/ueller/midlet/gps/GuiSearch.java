@@ -447,6 +447,14 @@ public class GuiSearch extends Canvas implements CommandListener,
 		logger.info("Search dialog: got key " + keyCode + " " + action);
 		if (keyCode == KEY_NUM1) {
 			searchCanon.insert(carret++,'1');
+		} else if (keyCode == 'a' || keyCode == 'd' ||
+				keyCode == 'g' || keyCode == 'j' ||
+				keyCode == 'l' || keyCode == 'p' ||
+				keyCode == 'r' || keyCode == 'v') {
+			/** These keys are mapped to GameAction keys on some phones.
+			 * In the search screen however they shouldn't trigger the UP DOWN LEFT RIGHT actions
+			 * so special case them here before they reach the checks for action keys. */
+			searchCanon.insert(carret++,(char)keyCode);
 		} else if (keyCode == KEY_NUM2) {
 			searchCanon.insert(carret++,'2');
 		} else if (keyCode == KEY_NUM3) {
@@ -528,10 +536,13 @@ public class GuiSearch extends Canvas implements CommandListener,
 			 **/
 			
 			if (carret > 0){
-				searchCanon.deleteCharAt(--carret);				
-			}			
+				searchCanon.deleteCharAt(--carret);
+			}
 		} else {
-			return;
+			// filter out special keys such as shift key (-50), volume keys, camera keys...
+			if (keyCode > 0) {
+				searchCanon.insert(carret++,(char)keyCode);
+			}
 		}
 		reSearch();
 	}
@@ -544,7 +555,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		if (searchCanon.length() >= 2) {
 			
 //			result.removeAllElements();
-			searchThread.search(searchCanon.toString());
+			searchThread.search(NumberCanon.canonial(searchCanon.toString()));
 		} else {
 			clearList();
 		}
