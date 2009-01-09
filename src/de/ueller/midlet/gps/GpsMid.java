@@ -270,27 +270,31 @@ public class GpsMid extends MIDlet implements CommandListener{
     }
     
     public void alert(String title, String message, int timeout) {
-    	Alert alert = new Alert(title);
-		alert.setTimeout(timeout);
-		alert.setString(message);
 		//#debug info
 		l.info("Showing Alert: " + message);
-		try {
-			if (shouldBeDisplaying == null)
-				Display.getDisplay(this).setCurrent(alert);
-			else
-				Display.getDisplay(this).setCurrent(alert, shouldBeDisplaying);
-		} catch (IllegalArgumentException iae) {
-			/**
-    		 * Nokia S40 phones seem to throw an exception
-    		 * if one tries to set an Alert displayable when
-    		 * the current displayable is an alert too.
-    		 * 
-    		 * Not much we can do about this, other than just
-    		 * ignore the exception and not display the new
-    		 * alert. 
-    		 */
-    		l.info("Could not display this alert (" + message + "), " + iae.getMessage());			
+		if ( Trace.getInstance()!=null && Trace.getInstance().isShown() ) {
+			Trace.getInstance().alert(title, message, timeout);
+		} else {
+	    	Alert alert = new Alert(title);
+			alert.setTimeout(timeout);
+			alert.setString(message);
+			try {
+				if (shouldBeDisplaying == null)
+					Display.getDisplay(this).setCurrent(alert);
+				else
+					Display.getDisplay(this).setCurrent(alert, shouldBeDisplaying);
+			} catch (IllegalArgumentException iae) {
+				/**
+	    		 * Nokia S40 phones seem to throw an exception
+	    		 * if one tries to set an Alert displayable when
+	    		 * the current displayable is an alert too.
+	    		 * 
+	    		 * Not much we can do about this, other than just
+	    		 * ignore the exception and not display the new
+	    		 * alert. 
+	    		 */
+	    		l.info("Could not display this alert (" + message + "), " + iae.getMessage());			
+			}
 		}
     }
 
