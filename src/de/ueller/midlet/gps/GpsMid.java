@@ -90,6 +90,7 @@ public class GpsMid extends MIDlet implements CommandListener{
 	 * by the user
 	 */
 	private Thread lightTimer;
+	private volatile int backLightLevel = 100;
 	
 	private Displayable shouldBeDisplaying;
 	private Displayable prevDisplayable;
@@ -435,7 +436,7 @@ public class GpsMid extends MIDlet implements CommandListener{
 									//Method to keep the backlight on
 									//on those phones that support the nokia-ui 
 									} else if (config.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIA) ) {  
-										DeviceControl.setLights(0, 100);
+										DeviceControl.setLights(0, backLightLevel);
 									//#endif
 									//#if polish.api.min-siemapi
 									} else if (config.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_SIEMENS) ) {
@@ -464,9 +465,9 @@ public class GpsMid extends MIDlet implements CommandListener{
 							// Backlight prodding sometimes fails when minimizing the
 							// application. Don't display an alert because of this
 							//#debug info
-							logger.info("Blacklight prodding failed: " + rte.getMessage());
+							logger.info("Backlight prodding failed: " + rte.getMessage());
 						} catch (NoClassDefFoundError ncdfe) {
-							logger.error("Blacklight prodding failed, API not supported: " + ncdfe.getMessage());
+							logger.error("Backlight prodding failed, API not supported: " + ncdfe.getMessage());
 						}
 					}
 				});
@@ -474,6 +475,30 @@ public class GpsMid extends MIDlet implements CommandListener{
 				lightTimer.start();
 			}
 		}
+	}
+	
+	public void addToBackLightLevel(int diffBacklight) {
+		backLightLevel += diffBacklight;
+		if (backLightLevel > 100) {
+			backLightLevel = 100;
+		}
+		if (backLightLevel < 25) {
+			backLightLevel = 25;
+		}
+	}
+
+	public int getBackLightLevel() {
+		return backLightLevel;
+	}
+	
+	public void showBackLightLevel() {
+		if ( config.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON, false) ) {
+			alert("Backlight", "Backlight " + (backLightLevel==100?"ON":(backLightLevel + "%")), 750);
+		} else {
+			alert("Backlight", "Backlight off" , 750);
+		}
+		stopBackLightTimer();
+		startBackLightTimer();
 	}
 	
 	public void stopBackLightTimer() {
@@ -531,6 +556,6 @@ public class GpsMid extends MIDlet implements CommandListener{
 			l.trace("Enough memory, no need to cleanup");
 			return false;
 		}
-	}
+	}	
 }
 

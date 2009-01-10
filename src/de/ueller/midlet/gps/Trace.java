@@ -152,6 +152,8 @@ public class Trace extends KeyCommandCanvas implements CommandListener, Location
 	private String currentAlertTitle;
 	private String currentAlertMessage;
 	private volatile int currentAlertsOpenCount; 
+
+	private long lastBackLightOnTime = 0;
 	
 	private long collected = 0;
 
@@ -707,6 +709,7 @@ public class Trace extends KeyCommandCanvas implements CommandListener, Location
 					|| (c == CMDS[PAN_LEFT2_CMD]) || (c == CMDS[PAN_RIGHT2_CMD]) || (c == CMDS[PAN_UP2_CMD]) || (c == CMDS[PAN_DOWN2_CMD])) {
 				int panX = 0; int panY = 0;
 				int courseDiff = 0;
+				int backLightLevelDiff = 0;
 				if (c == CMDS[PAN_LEFT25_CMD]) {
 					panX = -25;
 				} else if (c == CMDS[PAN_RIGHT25_CMD]) {
@@ -721,29 +724,37 @@ public class Trace extends KeyCommandCanvas implements CommandListener, Location
 					} else {
 						panX = -2;
 					}
+					backLightLevelDiff = -25;
 				} else if (c == CMDS[PAN_RIGHT2_CMD]) {
 					if (manualRotationMode) {
 						courseDiff=5;
 					} else {
 						panX = 2;
 					}
+					backLightLevelDiff = 25;
 				} else if (c == CMDS[PAN_UP2_CMD]) {
 					panY = -2;
 				} else if (c == CMDS[PAN_DOWN2_CMD]) {
 					panY = 2;
 				}
 				
-				imageCollector.getCurrentProjection().pan(center, panX, panY);
-				if (courseDiff == 360) {
-					course = 0; //N
+				if (backLightLevelDiff !=0  &&  System.currentTimeMillis() < (lastBackLightOnTime + 1000)) { 
+					lastBackLightOnTime = System.currentTimeMillis();
+					parent.addToBackLightLevel(backLightLevelDiff);
+					parent.showBackLightLevel();
 				} else {
-					course += courseDiff;
-					course %= 360;
-					if (course < 0) {
-						course += 360;
+					imageCollector.getCurrentProjection().pan(center, panX, panY);
+					if (courseDiff == 360) {
+						course = 0; //N
+					} else {
+						course += courseDiff;
+						course %= 360;
+						if (course < 0) {
+							course += 360;
+						}
 					}
+					gpsRecenter = false;
 				}
-				gpsRecenter = false;
 				return;
 			}
 			if (c == CMDS[EXIT_CMD]) {
@@ -998,14 +1009,8 @@ public class Trace extends KeyCommandCanvas implements CommandListener, Location
 				config.setCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON,
 									!(config.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON)),
 									false);
-				if ( config.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON, false) ) {
-					parent.alert("Backlight", "Backlight ON" , 750);
-
-				} else {
-					parent.alert("Backlight", "Backlight off" , 750);
-				}
-				parent.stopBackLightTimer();
-				parent.startBackLightTimer();
+				lastBackLightOnTime = System.currentTimeMillis(); 
+				parent.showBackLightLevel();
 			} else if (c == CMDS[TOGGLE_FULLSCREEN_CMD]) {
 				boolean fullScreen = !config.getCfgBitState(Configuration.CFGBIT_FULLSCREEN);
 				config.setCfgBitState(Configuration.CFGBIT_FULLSCREEN, fullScreen, false);
