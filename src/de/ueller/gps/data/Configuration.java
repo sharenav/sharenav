@@ -145,6 +145,12 @@ public class Configuration {
 	public static final int MAX_WAYPOINTS_NAME_LENGTH = 50;
 	
 	public final static String[] LOCATIONPROVIDER={"None","Bluetooth (Sirf)","Bluetooth (NMEA)","Internal (JSR179)"};
+	
+	private static final String[] compassDirections  =
+	{ "N", "NNE", "NE", "NEE", "E", "SEE", "SE", "SSE",
+	  "S", "SSW", "SW", "SWW", "W", "NWW", "NW", "NNW",
+	  "N"};
+	
 	private final static byte[] empty="".getBytes();
 
 	private String btUrl;
@@ -793,4 +799,7 @@ public class Configuration {
 		return fileName.replace('\\','_').replace('/','_').replace('>','_').replace('<','_').replace(':','_').replace('?','_').replace('*','_');
 	}
 	
+	public String getCompassDirection(int course) {
+		return compassDirections[(int) ((float) ((course%360 + 11.25f) / 22.5f)) ];
+	}	
 }

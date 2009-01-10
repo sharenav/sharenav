@@ -257,11 +257,6 @@ public class Trace extends KeyCommandCanvas implements LocationMsgReceiver,
 		"STRAIGHTON",
 		"HALF;LEFT", "LEFT", "HARD;LEFT"};
 
-	private static final String[] compassDirections  =
-	{ "N", "NNE", "NE", "NEE", "E", "SEE", "SE", "SSE",
-	  "S", "SSW", "SW", "SWW", "W", "NWW", "NW", "NNW",
-	  "N"};
-
 	private boolean manualRotationMode=false;
 	private boolean movedAwayFromTarget=true;
 	private long oldRecalculationTime;
@@ -1395,13 +1390,13 @@ public class Trace extends KeyCommandCanvas implements LocationMsgReceiver,
 		if (compassRectHeight == 0) {
 			compassRectHeight = pc.g.getFont().getHeight()-2;
 		}
-		String c = compassDirections[(int) ((float) ((course%360 + 11.25f) / 22.5f)) ];
+		String c = config.getCompassDirection(course);
 		int compassRectWidth = pc.g.getFont().stringWidth(c);
 		pc.g.setColor(255, 255, 150); 
 		pc.g.fillRect(getWidth()/2 - compassRectWidth / 2 , 0,
 					  compassRectWidth, compassRectHeight);
 		pc.g.setColor(0, 0, 0); 
-		pc.g.drawString( compassDirections[(int) ((float) ((course%360 + 11.25f) / 22.5f)) ], getWidth()/2,  0 , Graphics.HCENTER | Graphics.TOP);
+		pc.g.drawString(c, getWidth()/2,  0 , Graphics.HCENTER | Graphics.TOP);
 	}
 	
 	private int showConnectStatistics(Graphics g, int yc, int la) {
