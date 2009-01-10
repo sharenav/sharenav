@@ -73,7 +73,7 @@ import de.ueller.midlet.gps.GpsMidDisplayable;
  * @author Harald Mueller 
  * 
  */
-public class Trace extends KeyCommandCanvas implements CommandListener, LocationMsgReceiver,
+public class Trace extends KeyCommandCanvas implements LocationMsgReceiver,
 		Runnable , GpsMidDisplayable{
 	/** Soft button for exiting the map screen */
 	private final int EXIT_CMD = 1;

@@ -31,6 +31,12 @@ public abstract class KeyCommandCanvas extends Canvas implements
 	protected intTree gameKeyCommand = new intTree();
 	protected intTree nonReleasableKeyPressCommand = new intTree();
 
+	/*
+	 * Explicitly make this function static, as otherwise some jvm implementations
+	 * can't find the commandAction method in the inherited object.
+	 */
+	abstract public void commandAction(Command c, Displayable d);
+	
 	private final static Logger logger = Logger.getInstance(
 			KeyCommandCanvas.class, Logger.DEBUG);
 
