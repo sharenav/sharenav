@@ -784,7 +784,7 @@ public class Trace extends KeyCommandCanvas implements CommandListener, Location
 			    gpx.show();
 			}
 			if (c == CMDS[REFRESH_CMD]) {
-				repaint(0, 0, getWidth(), getHeight());
+				repaint();
 			}
 			if (c == CMDS[CONNECT_GPS_CMD]){
 				if (locationProducer == null){
@@ -828,18 +828,18 @@ public class Trace extends KeyCommandCanvas implements CommandListener, Location
 			if (c == CMDS[MAPFEATURES_CMD]) {
 				GuiMapFeatures gmf = new GuiMapFeatures(this);
 				gmf.show();
-				repaint(0, 0, getWidth(), getHeight());
+				repaint();
 			}
 			if (c == CMDS[OVERVIEW_MAP_CMD]) {
 				GuiOverviewElements ovEl = new GuiOverviewElements(this);
 				ovEl.show();
-				repaint(0, 0, getWidth(), getHeight());
+				repaint();
 			}
 			//#if polish.api.wmapi
 			if (c == CMDS[SEND_MESSAGE_CMD]) {
 				GuiSendMessage sendMsg = new GuiSendMessage(this);
 				sendMsg.show();
-				repaint(0, 0, getWidth(), getHeight());
+				repaint();
 			}
 			//#endif
 			if (c == CMDS[RECORDINGS_CMD]) {
@@ -1017,6 +1017,7 @@ public class Trace extends KeyCommandCanvas implements CommandListener, Location
 				} else {
 					if (manualRotationMode) {
 						course = 0;
+						parent.alert("Manual Rotation", "to North" , 500);
 					} else {
 						ProjFactory.setProj(ProjFactory.NORTH_UP);					
 						parent.alert("Map Rotation", "NORTH UP" , 500);
@@ -1668,6 +1669,18 @@ public class Trace extends KeyCommandCanvas implements CommandListener, Location
 						continue;
 					}
 					
+					//****************************skip straight on-s start********************************
+
+//					int turnb=(c.startBearing-lastEndBearing) * 2;
+//					if (turnb > 180) turnb -= 360;
+//					if (turnb < -180) turnb += 360;
+//					if (i<route.size()-1 && turnb >= -20 && turnb <= 20){
+//					if(i==iNearest) iNearest++;
+//					}
+
+					//***************************skip straightnsend************************
+					
+					
 					if(i!=iNearest) {
 						if (lastTo.lat < pc.getP().getMinLat()) {
 							lastEndBearing=c.endBearing;
@@ -2067,7 +2080,7 @@ public class Trace extends KeyCommandCanvas implements CommandListener, Location
 			pc.center = center.clone();
 			pc.scale = scale;
 			pc.course=course;
-			repaint(0, 0, getWidth(), getHeight());
+			repaint();
 			
 			if (locationUpdateListeners != null) {
 				synchronized (locationUpdateListeners) {
@@ -2215,7 +2228,7 @@ public class Trace extends KeyCommandCanvas implements CommandListener, Location
 	public void receiveStatistics(int[] statRecord, byte quality) {
 		this.btquality = quality;
 		this.statRecord = statRecord;
-		repaint(0, 0, getWidth(), getHeight());
+		repaint();
 	}
 
 	
@@ -2261,8 +2274,9 @@ public class Trace extends KeyCommandCanvas implements CommandListener, Location
 		return namesThread.fulltextSearch(snippet);
 	}
 
+	// this is called by ImageCollector
 	public void requestRedraw() {
-		repaint(0, 0, getWidth(), getHeight());
+		repaint();
 	}
 
 	public void newDataReady() {
@@ -2274,7 +2288,7 @@ public class Trace extends KeyCommandCanvas implements CommandListener, Location
 		//Display.getDisplay(parent).setCurrent(this);
 		GpsMid.getInstance().show(this);
 		setFullScreenMode(config.getCfgBitState(Configuration.CFGBIT_FULLSCREEN));
-		requestRedraw();
+		repaint();
 	}
 
 	public Configuration getConfig() {
@@ -2303,7 +2317,7 @@ public class Trace extends KeyCommandCanvas implements CommandListener, Location
 		}
 		routeRecalculationRequired = false;
 		movedAwayFromTarget=false;
-		repaint(0, 0, getWidth(), getHeight());
+		repaint();
 	}
 
 	/**
@@ -2330,7 +2344,7 @@ public class Trace extends KeyCommandCanvas implements CommandListener, Location
 			} else {
 //				resume();
 			}
-			repaint(0, 0, getWidth(), getHeight());
+			repaint();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
