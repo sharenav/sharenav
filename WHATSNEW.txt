@@ -5,6 +5,7 @@ GpsMid 0.4.55
          (see http://gpsmid.wiki.sourceforge.net/Keyboard_Layout)
        - better support for QWERT keyboards in the Search dialog
        - new custom alert boxes hiding the map only partially
+       - Results from "Search / Nearest POI" include the compass direction now
        - added backlight method for Siemens mobiles to Generic-Full (thx beni123)
        - display backlight dimming for phones like Nokia E90 that support this
          (use left / right keys during "Backlight ON" message to check out if dimming has an effect on your mobile)
