@@ -22,6 +22,9 @@ public abstract class KeyCommandCanvas extends Canvas implements
 	protected static volatile long releasedKeyCode = 0;
 	protected static int ignoreKeyCode = 0;
 
+	protected static int lastGameKeyCode = 0; 	 
+	protected static int lastGameAction = 0;
+	
 	protected boolean keyboardLocked = false;
 
 	protected intTree singleKeyPressCommand = new intTree();
@@ -62,7 +65,7 @@ public abstract class KeyCommandCanvas extends Canvas implements
 			c = (Command) nonReleasableKeyPressCommand.get(keyCode);
 		}
 		if (c == null) {
-			c = (Command) gameKeyCommand.get(getGameAction(keyCode));
+			c = (Command) gameKeyCommand.get(getGameActionIfNotOverloaded(keyCode));
 		}
 		if (c != null) {
 			logger.debug("KeyPressed " + keyCode + " executing command " + c);
@@ -85,7 +88,7 @@ public abstract class KeyCommandCanvas extends Canvas implements
 		// rotation keys
 		Command c = (Command) repeatableKeyPressCommand.get(keyCode);
 		if (c == null) {
-			c = (Command) gameKeyCommand.get(getGameAction(keyCode));
+			c = (Command) gameKeyCommand.get(getGameActionIfNotOverloaded(keyCode));
 		}
 		if (c != null) {
 			keyPressed(keyCode);
@@ -171,6 +174,26 @@ public abstract class KeyCommandCanvas extends Canvas implements
 			}
 		}
 		repaint();
+	}
+
+	private int getGameActionIfNotOverloaded(int keyCode) { 	 
+        // speed up repeatedly asked keyCode by returning remembered gameAction 	 
+        if (lastGameKeyCode == keyCode) { 	 
+                return lastGameAction; 	 
+        } else if  ( 	 
+                repeatableKeyPressCommand.get(keyCode) != null || 	 
+                singleKeyPressCommand.get(keyCode) != null || 	 
+                longKeyPressCommand.get(keyCode) != null || 	 
+                doubleKeyPressCommand.get(keyCode) != null ||
+                nonReleasableKeyPressCommand.get(keyCode) != null
+         ) { 	 
+                // filter out game keys that are used for other commands 	 
+                lastGameAction=0; 	 
+        } else { 	 
+                lastGameAction = this.getGameAction(keyCode); 	 
+        } 	 
+        lastGameKeyCode = keyCode; 	 
+        return lastGameAction; 	 
 	}
 
 }
