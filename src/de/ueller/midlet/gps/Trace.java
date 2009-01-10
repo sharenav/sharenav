@@ -1335,6 +1335,7 @@ public class Trace extends KeyCommandCanvas implements LocationMsgReceiver,
 						g.fillRect(alertLeft, alertTop , alertWidth, fontHeight + 3);
 						// alert border
 						g.setColor(0, 0, 0);
+						g.setStrokeStyle(Graphics.SOLID);
 						g.drawRect(alertLeft, alertTop, alertWidth, fontHeight + 3); // title border
 						g.drawRect(alertLeft, alertTop, alertWidth, alertHeight); // alert border
 						// draw alert title
