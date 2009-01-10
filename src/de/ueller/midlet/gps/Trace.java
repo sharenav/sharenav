@@ -998,7 +998,7 @@ public class Trace extends KeyCommandCanvas implements CommandListener, Location
 			} else if (c == CMDS[MANUAL_ROTATION_MODE_CMD]) {
 				manualRotationMode = !manualRotationMode;
 				if (manualRotationMode) {
-					parent.alert("Manual Rotation", "Rotate with left/right, double press 5 for North, double press 9 to turn off" , 750);
+					parent.alert("Manual Rotation", "Change course with left/right keys" , 750);
 				} else {
 					parent.alert("Manual Rotation", "Off" , 500);
 				}
@@ -1281,7 +1281,7 @@ public class Trace extends KeyCommandCanvas implements CommandListener, Location
 				// request same font in bold for title
 				Font titleFont = Font.getFont(font.getFace(), Font.STYLE_BOLD, font.getSize());
 				int fontHeight = font.getHeight();
-				int y = titleFont.getHeight() + fontHeight; // add alert title height plus extra space of one line for calculation of alertHeight
+				int y = titleFont.getHeight() + 2 + fontHeight; // add alert title height plus extra space of one line for calculation of alertHeight
 				int extraWidth = font.charWidth('W'); // extra width for alert
 				int alertWidth = titleFont.stringWidth(currentAlertTitle); // alert is at least as wide as alert title
 				int maxWidth = getWidth() - extraWidth; // width each alert message line must fit in
@@ -1337,13 +1337,13 @@ public class Trace extends KeyCommandCanvas implements CommandListener, Location
 						g.fillRect(alertLeft, alertTop , alertWidth, alertHeight);
 						// background color for alert title
 						pc.g.setColor(255, 255, 255); 
-						g.fillRect(alertLeft, alertTop , alertWidth, fontHeight);
+						g.fillRect(alertLeft, alertTop , alertWidth, fontHeight + 3);
 						// alert border
 						g.setColor(0, 0, 0);
-						g.drawRect(alertLeft, alertTop , alertWidth, fontHeight); // alert border
-						g.drawRect(alertLeft, alertTop , alertWidth, alertHeight); // title border
+						g.drawRect(alertLeft, alertTop, alertWidth, fontHeight + 3); // title border
+						g.drawRect(alertLeft, alertTop, alertWidth, alertHeight); // alert border
 						// draw alert title
-						y = alertTop; // output position of alert title
+						y = alertTop + 2; // output position of alert title
 						g.setFont(titleFont);
 						g.drawString(currentAlertTitle, getWidth()/2, y , Graphics.TOP|Graphics.HCENTER);
 						g.setFont(font);
