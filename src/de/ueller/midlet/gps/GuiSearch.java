@@ -23,6 +23,7 @@ import javax.microedition.lcdui.TextField;
 
 import de.ueller.gps.data.SearchResult;
 import de.ueller.gps.tools.HelperRoutines;
+import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.names.NumberCanon;
 import de.ueller.midlet.gps.tile.SearchNames;
@@ -387,7 +388,18 @@ public class GuiSearch extends Canvas implements CommandListener,
 				}
 			}
 			if (sr.dist >= 0) {
-				nameb.append("  (").append(HelperRoutines.formatDistance(sr.dist)).append(")");
+				int courseToGo;
+				courseToGo = (int) (MoreMath.bearing_int(
+						parent.center.radlat,
+						parent.center.radlon,
+						sr.lat,
+						sr.lon
+				)  * 180 / Math.PI);
+				courseToGo %= 360;
+				if (courseToGo < 0) {
+					courseToGo += 360;
+				}
+				nameb.append("  (").append(HelperRoutines.formatDistance(sr.dist)).append(" ").append(parent.getConfig().getCompassDirection(courseToGo)).append(")");
 			}
 			name=nameb.toString();
 			if (name != null) {
