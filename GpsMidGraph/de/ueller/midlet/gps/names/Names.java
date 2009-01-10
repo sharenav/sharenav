@@ -116,6 +116,7 @@ public class Names implements Runnable {
 				nameIdxs = tmp;
 			}
 		}
+		count--;
 		startIndexes = new int[count];
 		System.arraycopy(nameIdxs,0, startIndexes, 0, count);		
 		isReady=true;
@@ -250,7 +251,7 @@ public class Names implements Runnable {
 		Vector hits = new Vector();
 		int count;		
 		try {
-			for (int fid = 0; fid < startIndexes.length;fid++) {
+			for (int fid = 0; fid < (startIndexes.length - 1);fid++) {
 				InputStream is=GpsMid.getInstance().getConfig().getMapResource("/names-" + fid + ".dat");
 				count=startIndexes[fid + 1]-startIndexes[fid];				
 				if (is==null){
