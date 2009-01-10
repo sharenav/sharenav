@@ -456,17 +456,18 @@ public class GuiSearch extends Canvas implements CommandListener,
 
 	protected void keyPressed(int keyCode) {
 		int action = getGameAction(keyCode);
+		/** Ignore gameActions from unicode character keys (space char and above).
+		 *  By not treating those keys as game actions they get added to the search canon
+		 *  by default if not handled otherwise */
+		if (keyCode >= 32) {
+			action = 0;
+		}
 		logger.info("Search dialog: got key " + keyCode + " " + action);
-		if (keyCode == KEY_NUM1) {
+/* the commented out code below is redundant because the KEY_NUM constants match "(char) keycode"
+ * and any keyCode >= 32 will be inserted as default action
+ */
+/*		if (keyCode == KEY_NUM1) {
 			searchCanon.insert(carret++,'1');
-		} else if (keyCode == 'a' || keyCode == 'd' ||
-				keyCode == 'g' || keyCode == 'j' ||
-				keyCode == 'l' || keyCode == 'p' ||
-				keyCode == 'r' || keyCode == 'v') {
-			/** These keys are mapped to GameAction keys on some phones.
-			 * In the search screen however they shouldn't trigger the UP DOWN LEFT RIGHT actions
-			 * so special case them here before they reach the checks for action keys. */
-			searchCanon.insert(carret++,(char)keyCode);
 		} else if (keyCode == KEY_NUM2) {
 			searchCanon.insert(carret++,'2');
 		} else if (keyCode == KEY_NUM3) {
@@ -485,7 +486,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 			searchCanon.insert(carret++,'9');
 		} else if (keyCode == KEY_NUM0) {
 			searchCanon.insert(carret++,'0');
-		} else if (keyCode == KEY_POUND) {
+		} else */
+		if (keyCode == KEY_POUND) {
 			searchCanon.insert(carret++,'1');
 		} else if (keyCode == KEY_STAR) {
 			displayReductionLevel++;
@@ -538,13 +540,14 @@ public class GuiSearch extends Canvas implements CommandListener,
 				carret++;
 			repaint(0, 0, getWidth(), getHeight());
 			return;
-		} else if (keyCode == -8 || keyCode == 8) { 
+		} else if (keyCode == -8 || keyCode == 8 || keyCode == 127) { 
 			/** Non standard Key -8: hopefully is mapped to
 			 * the delete / clear key. According to 
 			 * www.j2meforums.com/wiki/index.php/Canvas_Keycodes
 			 * most major mobiles that have this key map to -8
 			 * 
 			 * Unicode Character Key: 8 is backspace so this should be standard
+			 * Keycode 127 is Clear-Key passed by MicroEmulator
 			 **/
 			
 			if (carret > 0){
