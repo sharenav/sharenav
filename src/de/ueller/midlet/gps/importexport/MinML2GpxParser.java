@@ -11,9 +11,11 @@ import org.xml.sax.SAXException;
 
 import uk.co.wilson.xml.MinML2;
 
+import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Position;
 import de.ueller.midlet.gps.ImageCollector;
 import de.ueller.midlet.gps.Logger;
+import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.data.Gpx;
 import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.PositionMark;
@@ -134,21 +136,14 @@ public class MinML2GpxParser extends MinML2 implements GpxParser{
 		logger.debug("Finished parsing XML document");
 	}
 	public void characters(char[] ch, int start, int length) {
-		// FIXME: This is a copy of the encodings in Gpx.java
-		final String[] encodings  = { "UTF-8", "UTF8", "utf-8", "utf8"};
-		
-		boolean read = false;
+
 		if (wayPt != null) {
 			if (name) {
-				byte nr = 0;
 				String wptName = new String(ch,start,length);
-				for (nr=0; nr<encodings.length; nr++) {
-					try {
-						wptName = new String(wptName.getBytes(), encodings[nr]);
-						break;
-					} catch (UnsupportedEncodingException e) {
-						continue;
-					}
+				try {
+					wptName = new String(wptName.getBytes(), Trace.getInstance().getConfig().getUtf8Encoding());
+				} catch (UnsupportedEncodingException e) {
+					logger.exception("Could not create String due to failed char encoding", e);
 				}
 				if (wayPt.displayName == null) {
 					wayPt.displayName = wptName;

@@ -11,6 +11,9 @@ package de.ueller.midlet.gps.names;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import de.ueller.gps.data.Configuration;
+import de.ueller.midlet.gps.Trace;
+
 
 public class NumberCanon {
 	
@@ -32,7 +35,7 @@ public class NumberCanon {
 				charMapCore[i] = defaultChar;
 			}
 			InputStream is = o.getClass().getResourceAsStream("/charMap.txt");
-			InputStreamReader isr = new InputStreamReader(is,"UTF8");
+			InputStreamReader isr = new InputStreamReader(is,Trace.getInstance().getConfig().getUtf8Encoding());
 			char [] buf = new char[1024];
 			int readChars = isr.read(buf);
 			int idx = 0;

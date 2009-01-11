@@ -817,24 +817,8 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 	}
 	
 	private void writeUTF(OutputStream oS, StringBuffer sb) {
-		final String[] encodings  = { "UTF-8", "UTF8", "utf-8", "utf8", "" };
-
 		try {
-			boolean written = false;
-			byte nr = 0;
-			do {
-				if (encodings[nr].length() != 0) {
-					try {
-						oS.write(sb.toString().getBytes(encodings[nr]));
-						written = true;
-					} catch (UnsupportedEncodingException e) {
-						nr++;
-					}
-				} else {
-					oS.write(sb.toString().getBytes());							
-					written = true;
-				}
-			} while (!written);						
+			oS.write(sb.toString().getBytes(config.getUtf8Encoding()));
 		} catch (IOException e) {
 			logger.exception("IOException in writeUTF()", e);
 		}

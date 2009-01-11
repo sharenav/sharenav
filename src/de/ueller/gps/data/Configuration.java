@@ -2,6 +2,7 @@ package de.ueller.gps.data;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 
 import javax.microedition.io.Connection;
 import javax.microedition.io.Connector;
@@ -185,6 +186,7 @@ public class Configuration {
 
 	private String smsRecipient; 
 	
+	private String utf8encodingstring = null;
 	
 	public Configuration() {		
 		logger = Logger.getInstance(Configuration.class, Logger.DEBUG);
@@ -801,5 +803,25 @@ public class Configuration {
 	
 	public String getCompassDirection(int course) {
 		return compassDirections[(int) ((float) ((course%360 + 11.25f) / 22.5f)) ];
-	}	
+	}
+	
+	public String getUtf8Encoding() {
+		final String[] encodings  = { "UTF-8", "UTF8", "utf-8", "utf8", "" };
+		
+		if (utf8encodingstring != null)
+			return utf8encodingstring;
+		
+		StringBuffer sb = new StringBuffer();
+		sb.append("Testing String");
+		for (int i = 0; i < encodings.length; i++) {
+				try {
+					logger.info("Testing encoding " + encodings[i] + ": " + sb.toString().getBytes(encodings[i]));
+					utf8encodingstring = encodings[i];
+					return utf8encodingstring;
+				} catch (UnsupportedEncodingException e) {
+					continue;
+				}
+		}
+		return "";
+	}
 }
