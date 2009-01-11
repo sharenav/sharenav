@@ -36,7 +36,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private static final String[]	elements		= {
 		"Location Receiver", "Recording Rules",
 		"Display options", "Sound options", "Routing options",
-		"GPX Receiver", "Map source", "Debug options"};
+		"GPX Receiver", "Map source", "Debug options", "Key shortcuts"};
 	
 	/**
 	 * The following MENU_ITEM constatants have to be in
@@ -51,6 +51,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private static final int MENU_ITEM_GPX_DEVICE = 5;
 	private static final int MENU_ITEM_MAP_SRC = 6;
 	private static final int MENU_ITEM_DEBUG_OPT = 7;
+	private static final int MENU_ITEM_KEYS_OPT = 8;
 
 	private static final String[]	empty			= {};
 
@@ -548,6 +549,14 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				case MENU_ITEM_SOUNDS_OPT:
 					GuiSetupSound gs = new GuiSetupSound(this);
 					gs.show();
+					break;
+				case MENU_ITEM_KEYS_OPT:
+					/**
+					 * Display the current Keyboard mappings for the
+					 * Map screen
+					 */
+					GuiKeyShortcuts gks = new GuiKeyShortcuts(this);
+					gks.show();
 					break;
 				}
 				break;
