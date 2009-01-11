@@ -2,16 +2,22 @@ package de.ueller.gps.data;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.util.Vector;
 
 import javax.microedition.io.Connection;
 import javax.microedition.io.Connector;
 //#if polish.api.fileconnection
 import javax.microedition.io.file.FileConnection;
 //#endif
+import javax.microedition.lcdui.Command;
 import javax.microedition.rms.InvalidRecordIDException;
 import javax.microedition.rms.RecordStore;
 
+import de.ueller.gps.tools.BufferedReader;
+import de.ueller.gps.tools.StringTokenizer;
+import de.ueller.gps.tools.intTree;
 import de.ueller.gpsMid.mapData.QueueReader;
 import de.ueller.midlet.gps.GuiCamera;
 import de.ueller.midlet.gps.Logger;
@@ -823,5 +829,95 @@ public class Configuration {
 				}
 		}
 		return "";
+	}
+	
+	public void loadKeyShortcuts(intTree gameKeys, intTree singleKeys, intTree repeatableKeys, intTree doubleKeys, intTree longKeys, intTree specialKeys, Command [] cmds) {
+		int keyType = 0;
+		
+		logger.info("Initialising KeyShortCuts");
+		try {
+			InputStream is = getMapResource("/keyMap.txt");
+			if (is == null)
+				throw new IOException("keyMap.txt not found");
+			InputStreamReader isr = new InputStreamReader(is, getUtf8Encoding());
+			BufferedReader br = new BufferedReader(isr);
+			String line;
+			line = br.readLine().trim();
+			while (line != null) {
+				if (line.charAt(0) == '[') {
+					String sectionName = line.substring(1, line.length() - 1);
+					if (sectionName.equalsIgnoreCase("repeatable")) {
+						logger.debug("Starting repeatable section");
+						keyType = 1;
+					} else if (sectionName.equalsIgnoreCase("game")) {
+						logger.debug("Starting game section");
+						keyType = 4;
+					} else  if (sectionName.equalsIgnoreCase("single")) {
+						logger.debug("Starting single section");
+						keyType = 0;
+					} else  if (sectionName.equalsIgnoreCase("double")) {
+						logger.debug("Starting double section");
+						keyType = 2;
+					} else  if (sectionName.equalsIgnoreCase("long")) {
+						logger.debug("Starting long section");
+						keyType = 3 ;
+					} else  if (sectionName.equalsIgnoreCase("special")) {
+						logger.debug("Starting special section");
+						keyType = 5;
+					} else {
+						logger.info("unknown section: " + sectionName + " falling back to single");
+						keyType = 0;
+					}
+					
+				}
+				Vector shortCut = StringTokenizer.getVector(line, "\t");
+				if (shortCut.size() == 2) {
+					try {
+						int keyCode = Integer.parseInt(((String)shortCut.elementAt(0)));
+						Command c = cmds[Integer.parseInt(((String)shortCut.elementAt(1)))];
+						switch (keyType) {
+						case 0: {
+							logger.debug("Adding single key shortcut for key: " + keyCode + " and command " + c);
+							singleKeys.put(keyCode, c);
+							break;
+						}
+						case 1: {
+							logger.debug("Adding repeatable key shortcut for key: " + keyCode + " and command " + c);
+							repeatableKeys.put(keyCode, c);
+							break;
+						}
+						case 2: {
+							logger.debug("Adding double press key shortcut for key: " + keyCode + " and command " + c);
+							doubleKeys.put(keyCode, c);
+							break;
+						}
+						case 3: {
+							logger.debug("Adding longpress key shortcut for key: " + keyCode + " and command " + c);
+							longKeys.put(keyCode, c);
+							break;
+						}
+						case 4: {
+							logger.debug("Adding game action shortcut for key: " + keyCode + " and command " + c);
+							gameKeys.put(keyCode, c);
+							break;
+						}
+						case 5: {
+							logger.debug("Adding special key shortcut for key: " + keyCode + " and command " + c);
+							specialKeys.put(keyCode, c);
+							break;
+						}
+						}
+					} catch (NumberFormatException nfe) {
+						logger.info("Invalid line in keyMap.txt: " + line + " Error: " +nfe.getMessage());
+					} catch (ArrayIndexOutOfBoundsException aioobe) {
+						logger.info("Invalid command number in keyMap.txt: " + line + " Error: " + aioobe.getMessage());
+					}
+				}
+				line = br.readLine();
+			};
+		} catch (IOException ioe) {
+			logger.exception("Could not load key shortcuts", ioe);
+		}
+		
 	}
 }

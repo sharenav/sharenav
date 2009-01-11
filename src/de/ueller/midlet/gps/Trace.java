@@ -74,53 +74,53 @@ import de.ueller.midlet.gps.GpsMidDisplayable;
  * 
  */
 public class Trace extends KeyCommandCanvas implements LocationMsgReceiver,
-		Runnable , GpsMidDisplayable{
+Runnable , GpsMidDisplayable{
 	/** Soft button for exiting the map screen */
-	private final int EXIT_CMD = 1;
-	private final int CONNECT_GPS_CMD = 2;
-		private final int DISCONNECT_GPS_CMD = 3;
-		private final int START_RECORD_CMD = 4;
-		private final int STOP_RECORD_CMD = 5;
-		private final int MANAGE_TRACKS_CMD = 6;
-		private final int SAVE_WAYP_CMD = 7;
-		private final int ENTER_WAYP_CMD = 8;
-		private final int MAN_WAYP_CMD = 9;
-		private final int ROUTE_TO_CMD = 10;
-		private final int CAMERA_CMD = 11;
-		private final int CLEARTARGET_CMD = 12;
-		private final int SETTARGET_CMD = 13;
-		private final int MAPFEATURES_CMD = 14;
-		private final int RECORDINGS_CMD = 16;
-		private final int ROUTINGS_CMD = 17;
-		private final int OK_CMD =18;
-		private final int BACK_CMD = 19;
-		private final int ZOOM_IN_CMD = 20;
-		private final int ZOOM_OUT_CMD = 21;
-		private final int MANUAL_ROTATION_MODE_CMD = 22;
-		private final int TOGGLE_OVERLAY_CMD = 23;
-		private final int TOGGLE_BACKLIGHT_CMD = 24;
-		private final int TOGGLE_FULLSCREEN_CMD = 25;
-		private final int TOGGLE_MAP_PROJ_CMD = 26;
-		private final int TOGGLE_KEY_LOCK_CMD = 27;
-		private final int TOGGLE_RECORDING_CMD = 28;
-		private final int TOGGLE_RECORDING_SUSP_CMD = 29;
-		private final int RECENTER_GPS_CMD = 30;
-		private final int TACHO_CMD = 31;
-		private final int OVERVIEW_MAP_CMD = 32;
-		private final int RETRIEVE_XML = 33;
-		private final int PAN_LEFT25_CMD = 34;
-		private final int PAN_RIGHT25_CMD = 35;
-		private final int PAN_UP25_CMD = 36;
-		private final int PAN_DOWN25_CMD = 37;
-		private final int PAN_LEFT2_CMD = 38;
-		private final int PAN_RIGHT2_CMD = 39;
-		private final int PAN_UP2_CMD = 40;
-		private final int PAN_DOWN2_CMD = 41;
-		private final int REFRESH_CMD = 42;
-		private final int SEARCH_CMD = 43;
-		//#if polish.api.wmapi
-		private final int SEND_MESSAGE_CMD = 44;
-		//#endif
+	private static final int EXIT_CMD = 1;
+	private static final int CONNECT_GPS_CMD = 2;
+	private static final int DISCONNECT_GPS_CMD = 3;
+	private static final int START_RECORD_CMD = 4;
+	private static final int STOP_RECORD_CMD = 5;
+	private static final int MANAGE_TRACKS_CMD = 6;
+	private static final int SAVE_WAYP_CMD = 7;
+	private static final int ENTER_WAYP_CMD = 8;
+	private static final int MAN_WAYP_CMD = 9;
+	private static final int ROUTE_TO_CMD = 10;
+	private static final int CAMERA_CMD = 11;
+	private static final int CLEARTARGET_CMD = 12;
+	private static final int SETTARGET_CMD = 13;
+	private static final int MAPFEATURES_CMD = 14;
+	private static final int RECORDINGS_CMD = 16;
+	private static final int ROUTINGS_CMD = 17;
+	private static final int OK_CMD =18;
+	private static final int BACK_CMD = 19;
+	private static final int ZOOM_IN_CMD = 20;
+	private static final int ZOOM_OUT_CMD = 21;
+	private static final int MANUAL_ROTATION_MODE_CMD = 22;
+	private static final int TOGGLE_OVERLAY_CMD = 23;
+	private static final int TOGGLE_BACKLIGHT_CMD = 24;
+	private static final int TOGGLE_FULLSCREEN_CMD = 25;
+	private static final int TOGGLE_MAP_PROJ_CMD = 26;
+	private static final int TOGGLE_KEY_LOCK_CMD = 27;
+	private static final int TOGGLE_RECORDING_CMD = 28;
+	private static final int TOGGLE_RECORDING_SUSP_CMD = 29;
+	private static final int RECENTER_GPS_CMD = 30;
+	private static final int TACHO_CMD = 31;
+	private static final int OVERVIEW_MAP_CMD = 32;
+	private static final int RETRIEVE_XML = 33;
+	private static final int PAN_LEFT25_CMD = 34;
+	private static final int PAN_RIGHT25_CMD = 35;
+	private static final int PAN_UP25_CMD = 36;
+	private static final int PAN_DOWN25_CMD = 37;
+	private static final int PAN_LEFT2_CMD = 38;
+	private static final int PAN_RIGHT2_CMD = 39;
+	private static final int PAN_UP2_CMD = 40;
+	private static final int PAN_DOWN2_CMD = 41;
+	private static final int REFRESH_CMD = 42;
+	private static final int SEARCH_CMD = 43;
+	//#if polish.api.wmapi
+	private static final int SEND_MESSAGE_CMD = 44;
+	//#endif
 
 	private final Command [] CMDS = new Command[45];
 	
@@ -325,10 +325,6 @@ public class Trace extends KeyCommandCanvas implements LocationMsgReceiver,
 		CMDS[SEND_MESSAGE_CMD] = new Command("Send SMS (map pos)",Command.ITEM, 200);
 		//#endif
 
-		for (int i = 0; i < 45; i ++) {
-			System.out.println("CMDS[" + i +"] " + CMDS[i]);
-		}
-		
 		addCommand(CMDS[EXIT_CMD]);
 		addCommand(CMDS[SEARCH_CMD]);
 		addCommand(CMDS[CONNECT_GPS_CMD]);
@@ -343,63 +339,9 @@ public class Trace extends KeyCommandCanvas implements LocationMsgReceiver,
 		//#endif
 		setCommandListener(this);
 		
-		repeatableKeyPressCommand.put(KEY_NUM4, CMDS[PAN_LEFT25_CMD]);
-		repeatableKeyPressCommand.put(KEY_NUM6, CMDS[PAN_RIGHT25_CMD]);
-		repeatableKeyPressCommand.put(KEY_NUM2, CMDS[PAN_UP25_CMD]);
-		repeatableKeyPressCommand.put(KEY_NUM8, CMDS[PAN_DOWN25_CMD]);
-		gameKeyCommand.put(LEFT, CMDS[PAN_LEFT2_CMD]);
-		gameKeyCommand.put(RIGHT, CMDS[PAN_RIGHT2_CMD]);
-		gameKeyCommand.put(UP, CMDS[PAN_UP2_CMD]);
-		gameKeyCommand.put(DOWN, CMDS[PAN_DOWN2_CMD]);
-		singleKeyPressCommand.put(KEY_NUM1, CMDS[ZOOM_OUT_CMD]);
-		singleKeyPressCommand.put(KEY_NUM3, CMDS[ZOOM_IN_CMD]);
-		singleKeyPressCommand.put(KEY_NUM5, CMDS[RECENTER_GPS_CMD]);
-		singleKeyPressCommand.put(KEY_NUM7, CMDS[TOGGLE_OVERLAY_CMD]);
-		singleKeyPressCommand.put(KEY_NUM9, CMDS[SAVE_WAYP_CMD]);
-		singleKeyPressCommand.put(KEY_NUM0, CMDS[TOGGLE_FULLSCREEN_CMD]);
-		singleKeyPressCommand.put(KEY_STAR, CMDS[MAPFEATURES_CMD]);
-		singleKeyPressCommand.put(KEY_POUND, CMDS[TOGGLE_BACKLIGHT_CMD]);
-		singleKeyPressCommand.put(-8, CMDS[ROUTE_TO_CMD]);
-		doubleKeyPressCommand.put(KEY_NUM5, CMDS[TOGGLE_MAP_PROJ_CMD]);
-		doubleKeyPressCommand.put(KEY_NUM9, CMDS[MANUAL_ROTATION_MODE_CMD]);
-		doubleKeyPressCommand.put(KEY_NUM0, CMDS[TOGGLE_RECORDING_SUSP_CMD]);
-		doubleKeyPressCommand.put(KEY_STAR, CMDS[OVERVIEW_MAP_CMD]);
-		//#if polish.api.wmapi
-		//doubleKeyPressCommand.put(KEY_POUND, SEND_MESSAGE_CMD);
-		//#endif
-		longKeyPressCommand.put(KEY_NUM5, CMDS[RECORDINGS_CMD]);
-		longKeyPressCommand.put(KEY_NUM9, CMDS[TOGGLE_KEY_LOCK_CMD]);
-		longKeyPressCommand.put(KEY_NUM0, CMDS[TOGGLE_RECORDING_CMD]);
-		longKeyPressCommand.put(KEY_STAR, CMDS[MAN_WAYP_CMD]);
-		longKeyPressCommand.put(KEY_POUND, CMDS[MANAGE_TRACKS_CMD]);
-		
-		nonReleasableKeyPressCommand.put(Configuration.KEYCODE_CAMERA_COVER_OPEN, CMDS[CAMERA_CMD]);
-
-		
-		/*
-		 *  additional shortcuts for QWERT keyboards
-		 */
-		repeatableKeyPressCommand.put('h', CMDS[PAN_LEFT25_CMD]);
-		repeatableKeyPressCommand.put('l', CMDS[PAN_RIGHT25_CMD]);
-		repeatableKeyPressCommand.put('k', CMDS[PAN_UP25_CMD]);
-		repeatableKeyPressCommand.put('j', CMDS[PAN_DOWN25_CMD]);
-		singleKeyPressCommand.put('o', CMDS[ZOOM_OUT_CMD]);
-		singleKeyPressCommand.put('i', CMDS[ZOOM_IN_CMD]);
-		singleKeyPressCommand.put('g', CMDS[RECENTER_GPS_CMD]);
-		singleKeyPressCommand.put('u', CMDS[MANUAL_ROTATION_MODE_CMD]);
-		singleKeyPressCommand.put(' ', CMDS[SAVE_WAYP_CMD]);
-		singleKeyPressCommand.put('w', CMDS[MAN_WAYP_CMD]);
-		singleKeyPressCommand.put('t', CMDS[MANAGE_TRACKS_CMD]);
-		singleKeyPressCommand.put('d', CMDS[RECORDINGS_CMD]);
-		singleKeyPressCommand.put('x', CMDS[ROUTINGS_CMD]);
-		singleKeyPressCommand.put('c', CMDS[ROUTE_TO_CMD]);
-		singleKeyPressCommand.put('f', CMDS[TOGGLE_FULLSCREEN_CMD]);
-		singleKeyPressCommand.put('b', CMDS[TOGGLE_BACKLIGHT_CMD]);
-		singleKeyPressCommand.put('p', CMDS[TOGGLE_RECORDING_SUSP_CMD]);
-		singleKeyPressCommand.put('y', CMDS[TOGGLE_OVERLAY_CMD]);
-		singleKeyPressCommand.put('v', CMDS[OVERVIEW_MAP_CMD]);
-		singleKeyPressCommand.put('m', CMDS[MAPFEATURES_CMD]);
-		longKeyPressCommand.put('r', CMDS[TOGGLE_RECORDING_CMD]);
+		config.loadKeyShortcuts(gameKeyCommand, singleKeyPressCommand, 
+				repeatableKeyPressCommand, doubleKeyPressCommand, longKeyPressCommand, 
+				nonReleasableKeyPressCommand, CMDS);
 		
 		try {
 			satelit = Image.createImage("/satelit.png");
