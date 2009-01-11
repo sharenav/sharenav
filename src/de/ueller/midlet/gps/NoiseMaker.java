@@ -260,6 +260,8 @@ public class NoiseMaker
 					mediaType = "audio/x-wav";
 				} else if (soundFile.toLowerCase().endsWith(".amr") ) {
 					mediaType = "audio/amr";
+                } else if (soundFile.toLowerCase().endsWith(".ogg") ) {
+                        mediaType = "audio/x-ogg";
 				}
 				player[prefetchPlayerNr] = Manager.createPlayer(is, mediaType);
 				player[prefetchPlayerNr].addPlayerListener( this );
