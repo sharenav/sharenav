@@ -23,7 +23,7 @@ GpsMid 0.4.55
          even when leaving the form with the Back command
        *** Map ***
        - added "Name Check" feature to Overview/Filter Map
-         This can be used to show only unnamed/named ways/areas/POIs in the map
+         This can be used to show only unnamed/named or ways/areas/POIs containing a certain string in the map
        - double press of 9 / single press of U-key toggles manual rotation mode (use left / right to rotate)
        - added POIs for beacons, towers and power objects to high-style.zip (thx mbaeurle) 
        - fixed crashes when displaying route connections via Debug Options
