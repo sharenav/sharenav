@@ -51,12 +51,14 @@ public class C {
 	public final static byte OM_HIDE=0;
 	public final static byte OM_SHOWNORMAL=1;
 	public final static byte OM_OVERVIEW=2;
-	public final static byte OM_MODE_MASK=OM_SHOWNORMAL | OM_OVERVIEW;
+	public final static byte OM_OVERVIEW2=4; // this is used to set overview mode for the element without setting the checkbox in the UI
+	public final static byte OM_MODE_MASK=OM_SHOWNORMAL | OM_OVERVIEW | OM_OVERVIEW2;
 	
 	public final static byte OM_NAME_ALL=0;
-	public final static byte OM_NO_NAME=4;
-	public final static byte OM_WITH_NAME=8;
-	public final static byte OM_NAME_MASK=OM_NO_NAME | OM_WITH_NAME;
+	public final static byte OM_NO_NAME=8;
+	public final static byte OM_WITH_NAME=16;
+	public final static byte OM_WITH_NAMEPART=32;
+	public final static byte OM_NAME_MASK=OM_NO_NAME | OM_WITH_NAME | OM_WITH_NAMEPART;
 	
 	public static int BACKGROUND_COLOR = 0x009BFF9B;
 	public static String appVersion;
@@ -66,6 +68,8 @@ public class C {
 	private static POIdescription[] pois;
 	private static WayDescription[] ways;
 	private static SoundDescription[] sounds;
+	
+	private static String namePartRequired[] = new String[3];
 	
 	private final static Logger logger=Logger.getInstance(C.class,Logger.TRACE);
 	
@@ -109,7 +113,11 @@ public class C {
 		//System.out.println(getSoundDescription("DISCONNECT").soundFile);
 		//System.out.println(getSoundDescription("CONNECT").soundFile);
 				
-		ds.close();				
+		ds.close();
+		
+		namePartRequired[0] = "";
+		namePartRequired[1] = "";
+		namePartRequired[2] = "";
 	}
 	
 	private void readPOIdescriptions(DataInputStream ds) throws IOException {		
@@ -259,12 +267,20 @@ public class C {
 		return ways[type].hideable;
 	}
 
-	public static final byte getWayOverviewMode(byte type) {
+	public static byte getWayOverviewMode(byte type) {
 		return ways[type].overviewMode;
 	}
 
 	public static void setWayOverviewMode(byte type, byte state) {
 		ways[type].overviewMode = state;
+	}
+
+	public static String get0Poi1Area2WayNamePart(byte nr) {
+		return namePartRequired[nr];
+	}
+	
+	public static void set0Poi1Area2WayNamePart(byte nr, String namePart) {
+		namePartRequired[nr] = namePart;
 	}
 
 	public static void clearAllWaysOverviewMode() {

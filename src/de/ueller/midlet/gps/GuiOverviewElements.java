@@ -8,6 +8,7 @@ import javax.microedition.lcdui.*;
 
 import de.ueller.gps.data.Configuration;
 import de.ueller.gpsMid.mapData.SingleTile;
+import de.ueller.midlet.gps.importexport.ObexExportSession;
 import de.ueller.midlet.gps.tile.C;
 import de.ueller.midlet.gps.tile.POIdescription;
 import de.ueller.midlet.gps.tile.WayDescription;
@@ -17,6 +18,8 @@ public class GuiOverviewElements extends Form implements CommandListener, ItemSt
 	private ChoiceGroup ovElNameRequirementCG;
 	private ChoiceGroup ovElHideOtherCG;
 
+	private TextField fldNamePart; 
+	
 	private Image areaPict = null;
 	
 	private ChoiceGroup ovElSelectionCG;
@@ -32,7 +35,10 @@ public class GuiOverviewElements extends Form implements CommandListener, ItemSt
 	// other
 	private Trace parent;
 	
+	public int frmMaxEl = 0;
 	public boolean variableGroupsAdded = false;
+	public boolean namePartFieldAdded = false;
+	public boolean hideOtherGroupAdded = false;
 	
 	public GuiOverviewElements(Trace tr) {
 		super("Overview/Filter Map");
@@ -69,14 +75,27 @@ public class GuiOverviewElements extends Form implements CommandListener, ItemSt
 		nameRequirement[ovElGroupNr] = (byte) ovElNameRequirementCG.getSelectedIndex();
 		switch (nameRequirement[ovElGroupNr]) {
 			case 1:
-				nameReq = C.OM_WITH_NAME;				
-				break;
-			case 2:				
 				nameReq = C.OM_NO_NAME;				
 				break;
+			case 2:				
+				nameReq = C.OM_WITH_NAME;				
+				break;
+			case 3:				
+				nameReq = C.OM_WITH_NAMEPART;				
+				break;
 		}
-		showOther[ovElGroupNr] = true;
-		if (ovElHideOtherCG.isSelected(1)) {
+		if (namePartFieldAdded) {
+			parent.pc.c.set0Poi1Area2WayNamePart(ovElGroupNr, fldNamePart.getString());
+		}
+		if (hideOtherGroupAdded) {
+			showOther[ovElGroupNr] = ovElHideOtherCG.isSelected(0);
+		}
+		// default to put all elements in "silent" overview mode
+		// if there's a name requirement but no overview element at all selected
+		if (nameReq != C.OM_NAME_ALL) {
+			nonOverviewMode = C.OM_OVERVIEW2;
+		}
+		if ( !showOther[ovElGroupNr] || nameReq != C.OM_NAME_ALL) {
 			// only hide non-overview elements if at least one overview element is selected
 			// This is implemented so because otherwise simple switching between POIs, areas and ways would
 			// cause to disappear all the elements in the list unintentionally
@@ -86,7 +105,6 @@ public class GuiOverviewElements extends Form implements CommandListener, ItemSt
 					break;
 				}
 			}
-			showOther[ovElGroupNr] = false;
 		}
 		nonOverviewMode |= nameReq;
 		overviewMode |= nameReq;
@@ -146,14 +164,25 @@ public class GuiOverviewElements extends Form implements CommandListener, ItemSt
 			// only delete variable Choice groups if they were added
 			if (variableGroupsAdded) {
 				applyElGroupElementStates();
-				delete(3);
-				delete(2);
-				delete(1);
+				delete(frmMaxEl); // element list				
+				frmMaxEl--;
+				delete(1); // nameReq
+				frmMaxEl--;
 			}
 
 			byte count=0;
+
+			// Warning: do not move this up - it must be after applyElGroupElementStates()
 			ovElGroupNr = (byte) ovElGroupCG.getSelectedIndex();
 			String ovElGroupName = ovElGroupCG.getString(ovElGroupNr); 
+
+			// set NameRequirement state in form
+			ovElNameRequirementCG = new ChoiceGroup("Name Check", ChoiceGroup.EXCLUSIVE);
+			ovElNameRequirementCG.append("off", null);
+			ovElNameRequirementCG.append("only unnamed " + ovElGroupName, null);
+			ovElNameRequirementCG.append("only named " + ovElGroupName, null);
+			ovElNameRequirementCG.append(ovElGroupName + " containing...", null);
+			ovElNameRequirementCG.setSelectedIndex(nameRequirement[ovElGroupNr], true); 
 
 			// set None-Overview state in form
 			ovElHideOtherCG = new ChoiceGroup("Non-Overview " + ovElGroupName, ChoiceGroup.EXCLUSIVE);
@@ -165,13 +194,6 @@ public class GuiOverviewElements extends Form implements CommandListener, ItemSt
 				ovElHideOtherCG.setSelectedIndex(1, true);				
 			}
 
-			// set NameRequirement state in form
-			ovElNameRequirementCG = new ChoiceGroup("Name Check", ChoiceGroup.EXCLUSIVE);
-			ovElNameRequirementCG.append("off", null);
-			ovElNameRequirementCG.append("only named " + ovElGroupName, null);
-			ovElNameRequirementCG.append("only unnamed " + ovElGroupName, null);
-			ovElNameRequirementCG.setSelectedIndex(nameRequirement[ovElGroupNr], true); 
-			
 			ovElSelectionCG = new ChoiceGroup("Overview " + ovElGroupName, ChoiceGroup.MULTIPLE);
 			switch (ovElGroupNr) {
 				case 0:
@@ -207,11 +229,37 @@ public class GuiOverviewElements extends Form implements CommandListener, ItemSt
 					}
 					break;
 			}
-			append(ovElHideOtherCG);
-			append(ovElNameRequirementCG);
 			append(ovElSelectionCG);
+			frmMaxEl++;
+			insert(1, ovElNameRequirementCG);
+			frmMaxEl++;
 			variableGroupsAdded = true;
 			ovElGroupNr = (byte) ovElGroupCG.getSelectedIndex();
+		}
+		ovElGroupNr = (byte) ovElGroupCG.getSelectedIndex();
+		String ovElGroupName = ovElGroupCG.getString(ovElGroupNr); 
+		if (item == ovElNameRequirementCG || item == ovElGroupCG) {
+			if (hideOtherGroupAdded) {
+				frmMaxEl--;
+				delete(frmMaxEl);
+				hideOtherGroupAdded = false;
+			}
+			if ((byte) ovElNameRequirementCG.getSelectedIndex() == 0) {
+				insert(frmMaxEl, ovElHideOtherCG);
+				frmMaxEl++;
+				hideOtherGroupAdded = true;
+			}
+			if (namePartFieldAdded) {
+				delete(2);
+				frmMaxEl--;
+				namePartFieldAdded = false;
+			}
+			if ((byte) ovElNameRequirementCG.getSelectedIndex() == 3) { 
+				fldNamePart = new TextField("...this name part:", parent.pc.c.get0Poi1Area2WayNamePart(ovElGroupNr), 20, TextField.ANY);
+				insert(2, fldNamePart);
+				frmMaxEl++;
+				namePartFieldAdded = true;
+			}
 		}
 	}
 	

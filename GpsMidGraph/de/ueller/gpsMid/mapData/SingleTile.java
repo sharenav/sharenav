@@ -392,6 +392,12 @@ public class SingleTile extends Tile implements QueueableTile {
 				break;
 		}
 		switch (om & C.OM_NAME_MASK) {
+			case C.OM_WITH_NAMEPART: 
+				if (nameIdx[i] == -1) return;
+				String name = pc.trace.getName(nameIdx[i]);
+				if (name == null) return;
+				if (name.toUpperCase().indexOf(C.get0Poi1Area2WayNamePart((byte) 0).toUpperCase()) == -1) return;
+				break;
 			case C.OM_WITH_NAME: 
 				if (nameIdx[i] == -1) return;
 				break;

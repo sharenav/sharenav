@@ -213,6 +213,12 @@ public class Way extends Entity{
 			}
 
 			switch (om & C.OM_NAME_MASK) {
+				case C.OM_WITH_NAMEPART: 
+					if (nameIdx == -1) return;
+					String name = pc.trace.getName(nameIdx);
+					if (name == null) return;
+					if (name.toUpperCase().indexOf(C.get0Poi1Area2WayNamePart((byte) 2).toUpperCase()) == -1) return;
+					break;
 				case C.OM_WITH_NAME: 
 					if (nameIdx == -1) return;
 					break;
@@ -851,6 +857,12 @@ public class Way extends Entity{
 				break;
 		}
 		switch (om & C.OM_NAME_MASK) {
+			case C.OM_WITH_NAMEPART: 
+				if (nameIdx == -1) return;
+				String name = pc.trace.getName(nameIdx);
+				if (name == null) return;
+				if (name.toUpperCase().indexOf(C.get0Poi1Area2WayNamePart((byte) 1).toUpperCase()) == -1) return;
+				break;
 			case C.OM_WITH_NAME: 
 				if (nameIdx == -1) return;
 				break;
