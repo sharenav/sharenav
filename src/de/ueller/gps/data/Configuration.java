@@ -842,9 +842,14 @@ public class Configuration {
 			InputStreamReader isr = new InputStreamReader(is, getUtf8Encoding());
 			BufferedReader br = new BufferedReader(isr);
 			String line;
-			line = br.readLine().trim();
+			line = br.readLine();
 			while (line != null) {
-				if (line.charAt(0) == '[') {
+				line.trim();
+				if (line.length() == 0) {
+					line = br.readLine();
+					continue;
+				}
+				if ((line.length() > 2) && line.charAt(0) == '[') {
 					String sectionName = line.substring(1, line.length() - 1);
 					if (sectionName.equalsIgnoreCase("repeatable")) {
 						logger.debug("Starting repeatable section");
