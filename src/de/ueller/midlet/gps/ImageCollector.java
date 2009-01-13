@@ -275,30 +275,22 @@ public class ImageCollector implements Runnable {
 		nextSc.course=screenPc.course;
 		nextSc.scale=screenPc.scale;
 		nextSc.target=screenPc.target;
-		nextSc.xSize=xSize;
-		nextSc.ySize=ySize;
-		Projection p = ProjFactory.getInstance(nextSc.center,nextSc.course, nextSc.scale, xSize, ySize);
+		nextSc.xSize=screenPc.xSize;
+		nextSc.ySize=screenPc.ySize;
+		Projection p = ProjFactory.getInstance(nextSc.center,nextSc.course, nextSc.scale, nextSc.xSize, nextSc.ySize);
 		nextSc.setP(p);
 		screenPc.setP(p);
-		screenPc.xSize=xSize;
-		screenPc.ySize=ySize;
+
 		stat=STATE_SC_READY;
 		newPaintAvail=false;
-		Projection p2 = pc[nextPaint].getP();
-		if (p2 == null){
-			pc[nextPaint].setP(nextSc.getP());
-		}
-		p2.forward(nextSc.center, oldCenter);
-//		System.out.println("old Center = " + oldCenter.x + "/" + oldCenter.y);
-//		System.out.println("paint nextCreate: " +pc[nextCreate]);
 
+		p.forward(pc[nextPaint].center, oldCenter);
 		screenPc.g.drawImage(img[nextPaint], 
-				nextSc.xSize-oldCenter.x,
-				nextSc.ySize-oldCenter.y,
+				oldCenter.x, oldCenter.y,
 				Graphics.VCENTER|Graphics.HCENTER); 
 		//Test if the new center is in the midle of the screen, in which 
 		//case we don't need to redraw, as nothing has changed. 
-		if (oldCenter.x != nextSc.xSize/2 || oldCenter.y != nextSc.ySize/2 || p2.getCourse() != nextSc.course ) { 
+		if (oldCenter.x != nextSc.xSize/2 || oldCenter.y != nextSc.ySize/2 || pc[nextPaint].course != nextSc.course ) { 
 			//The center of the screen has moved, so need 
 			//to redraw the map image  
 			needRedraw = true; 

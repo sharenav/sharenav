@@ -1037,7 +1037,9 @@ Runnable , GpsMidDisplayable{
 		i = new Images();
 		pc = new PaintContext(this, i);
 		pc.c = parent.c;
-		imageCollector = new ImageCollector(t, this.getWidth(), this.getHeight(), this,
+		int w = (this.getWidth() * 125) / 100;
+		int h = (this.getHeight() * 125) / 100;
+		imageCollector = new ImageCollector(t, w, h, this,
 				i, pc.c);
 //		projection = ProjFactory.getInstance(center,course, scale, getWidth(), getHeight());
 //		pc.setP(projection);
