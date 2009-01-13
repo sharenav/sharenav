@@ -77,7 +77,7 @@ public class BufferedReader extends Reader{
 				char c = buffer[idx++];
 				if (c == '\r') {
 					if (idx < bufferlen) {
-						if (buffer[idx + 1] == '\n') {
+						if (buffer[idx] == '\n') {
 							idx++;
 						}
 					} else {
