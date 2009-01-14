@@ -13,6 +13,7 @@ import de.ueller.midlet.gps.tile.SoundDescription;
 import java.io.InputStream;
 //#if polish.api.mmapi	
 import javax.microedition.media.Manager;
+import javax.microedition.media.MediaException;
 import javax.microedition.media.Player;
 import javax.microedition.media.PlayerListener;
 import javax.microedition.media.control.ToneControl;
@@ -28,13 +29,13 @@ public class NoiseMaker
 //#endif
 {
 	
-	private byte[] mPosFixSequence;
+	// private final byte[] mPosFixSequence;
 	
-	private byte[] mNoFixSequence;
+	// private final byte[] mNoFixSequence;
 
-	private byte[] mConnOpenedSequence;
+	private final byte[] mConnOpenedSequence;
 	
-	private byte[] mConnLostSequence;
+	private final byte[] mConnLostSequence;
 	
 	private final static Logger mLogger = Logger.getInstance(NoiseMaker.class, Logger.DEBUG);
 	
@@ -43,7 +44,6 @@ public class NoiseMaker
 //#if polish.api.mmapi			
 	private static volatile Player [] player = new Player[3]; 
 //#endif			
-	private static volatile byte currentPlayerNr=0; 
 	private static volatile byte prefetchPlayerNr=1; 
 	private static volatile boolean [] prefetched={false, false, false}; 
 	
@@ -55,19 +55,19 @@ public class NoiseMaker
 	public NoiseMaker()
 	{
 //#if polish.api.mmapi	
-	    byte tempo = 30; // set tempo to 120 bpm 
-	    byte e = 8;  // eighth-note
-	    byte q = 16; // quarter-note
+	    final byte tempo = 30; // set tempo to 120 bpm 
+	    final byte e = 8;  // eighth-note
+	    final byte q = 16; // quarter-note
 
-	    byte C4 = ToneControl.C4; 
-	    byte D4 = (byte)(C4 + 2); // a whole step 
-	    byte E4 = (byte)(C4 + 4); // a major third 
-	    byte F4 = (byte)(C4 + 5); // a fourth
-	    byte G4 = (byte)(C4 + 7); // a fifth
-	    byte A4 = (byte)(C4 + 9);
-	    byte B4 = (byte)(C4 + 10);
-	    byte H4 = (byte)(C4 + 11);
-	    byte C5 = (byte)(C4 + 12);
+	    final byte C4 = ToneControl.C4; 
+	    final byte D4 = (byte)(C4 + 2); // a whole step 
+	    final byte E4 = (byte)(C4 + 4); // a major third 
+	    final byte F4 = (byte)(C4 + 5); // a fourth
+	    final byte G4 = (byte)(C4 + 7); // a fifth
+	    final byte A4 = (byte)(C4 + 9);
+	    final byte B4 = (byte)(C4 + 10);
+	    final byte H4 = (byte)(C4 + 11);
+	    final byte C5 = (byte)(C4 + 12);
 
 	    mConnOpenedSequence = new byte[] {
 	        ToneControl.VERSION, 1,
@@ -265,7 +265,13 @@ public class NoiseMaker
 				}
 				player[prefetchPlayerNr] = Manager.createPlayer(is, mediaType);
 				player[prefetchPlayerNr].addPlayerListener( this );
-				player[prefetchPlayerNr].prefetch();
+				// some devices like Nokia 3110 allow only a single player to be
+				// playing at a time. So when prefetch fails, fallback to realize.
+				try {
+					player[prefetchPlayerNr].prefetch();
+				} catch (MediaException mpe) {
+					player[prefetchPlayerNr].realize();					
+				}
 				VolumeControl volCtrl = (VolumeControl) player[prefetchPlayerNr].getControl("VolumeControl");
 				volCtrl.setLevel(100);
 				prefetched[prefetchPlayerNr]=true;
