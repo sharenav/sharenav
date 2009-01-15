@@ -42,10 +42,9 @@ public class NoiseMaker
 	private static volatile String playingNames = "";
 	private static volatile int playingNameIndex=0;
 //#if polish.api.mmapi			
-	private static volatile Player [] player = new Player[3]; 
+	private static volatile Player player[] = {null, null, null}; 
 //#endif			
 	private static volatile byte prefetchPlayerNr=1; 
-	private static volatile boolean [] prefetched={false, false, false}; 
 	
 	
 	private static volatile long oldMsTime = 0;
@@ -86,20 +85,23 @@ public class NoiseMaker
 	}
 
 //#if polish.api.mmapi	
-	public void playerUpdate( Player player, String event, Object eventData )
+	public synchronized void playerUpdate( Player player, String event, Object eventData )
 	{
 		// Release resources used by player when it's finished.
 		if (event == PlayerListener.END_OF_MEDIA)
 		{
 			//System.out.println("Playing stopped");
 			player.close();
-			if (prefetched[prefetchPlayerNr]) {
-				playPrefetched();
-			} else {
-				playingNames = "";
-				playingNameIndex=0;
-				oldMsTime = System.currentTimeMillis();
+			// mark player as free if it's one of the prefetch players
+			for (int i=0; i<3; i++) {
+				if (this.player[i] != null && this.player[i] == player) {
+					this.player[i] = null;
+					break;
+				}
 			}
+			if (this.player[prefetchPlayerNr] != null) {
+				playPrefetched();
+			} 
 		}
 	}
 //#endif
@@ -167,32 +169,22 @@ public class NoiseMaker
 	 * */
 	public void playSound( String names, byte minSecsBeforeRepeat, byte maxTimesToPlay )
 	{
-		if (playingNames.equals(names)) {			
-			//System.out.println("Already playing");
-			return;
-		}
-
-
-		
 		// do not repeat same sound before minSecsBeforeRepeat
-		long msTime = System.currentTimeMillis();
-
-		mLogger.debug(msTime-oldMsTime + " " + names + oldPlayingNames + timesToPlay);
-		
+		long msTime = System.currentTimeMillis();			
 		if (oldPlayingNames.equals(names) &&
-				(Math.abs(msTime-oldMsTime) < minSecsBeforeRepeat*1000
+				(Math.abs(msTime-oldMsTime) < 1000L * minSecsBeforeRepeat
 			  || timesToPlay == 0 )
 		) {
-			//System.out.println(msTime-oldMsTime + " " + names + oldPlayingNames);
 			return;
 		}
+		mLogger.debug(msTime-oldMsTime + " " + names + oldPlayingNames + timesToPlay);
 		if (! oldPlayingNames.equals(names) ) {
 			timesToPlay = maxTimesToPlay;
+			oldPlayingNames = names;
 		}
-		
-		oldPlayingNames = names;
-		mLogger.debug("timestoplay" + timesToPlay);
+		mLogger.debug(names + " timestoplay:" + timesToPlay);
 
+		oldMsTime = System.currentTimeMillis();
 		playingNameIndex = 0;
 		playingNames=names;
 		if (prefetchNextSound()) {
@@ -211,21 +203,29 @@ public class NoiseMaker
 	
 	// prefetches next sound part
 	private synchronized boolean prefetchNextSound() {
-//#if polish.api.mmapi			
-		// ignore request if we've got no free player
-		if (prefetched[prefetchPlayerNr]==true) {
-			return false;
-		}
-		
+//#if polish.api.mmapi				
 		// use next prefetch player
 		prefetchPlayerNr++;
 		if (prefetchPlayerNr > 2) {
 			prefetchPlayerNr = 0;
 		}
-
+	
+		// if next prefetch player is not free, free it
+		if (player[prefetchPlayerNr]!=null && player[prefetchPlayerNr].getState()!=Player.CLOSED) {
+			player[prefetchPlayerNr].close();
+			player[prefetchPlayerNr]=null;
+			mLogger.debug("Player " + prefetchPlayerNr + " terminated.");
+		}
+		
 		// end of names to play?
 		if (playingNameIndex>playingNames.length() ) {
 			timesToPlay--;
+			// maximum times played?
+			if (timesToPlay <= 0) {
+					playingNames = "";
+			}
+			oldMsTime = System.currentTimeMillis();
+			playingNameIndex=0;
 			mLogger.debug("timestoplay--" + timesToPlay);
 			return false;
 		}
@@ -274,7 +274,6 @@ public class NoiseMaker
 				}
 				VolumeControl volCtrl = (VolumeControl) player[prefetchPlayerNr].getControl("VolumeControl");
 				volCtrl.setLevel(100);
-				prefetched[prefetchPlayerNr]=true;
 			} else {
 				return false;
 			}
@@ -291,13 +290,12 @@ public class NoiseMaker
 //#if polish.api.mmapi			
 		try {
 			//System.out.println("Playing Player " + prefetchPlayerNr);
-			if (player[prefetchPlayerNr].getState() == Player.PREFETCHED) {
+			if (player[prefetchPlayerNr] != null) {
 				player[prefetchPlayerNr].start();
 			}
 		} catch (Exception ex) {
 	    	mLogger.exception("Failed to play prefetched sound", ex);
 		}
-		prefetched[prefetchPlayerNr] = false;
 		prefetchNextSound();
 //#endif
 	}
