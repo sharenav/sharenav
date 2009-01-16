@@ -659,58 +659,65 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 	
 	public void run() {
 		logger.info("GPX processing thread started");
-		boolean success = false;
-		if (reloadWpt) {			
-			try {
-				/**
-				 * Sleep for a while to limit the number of reloads happening
-				 */
-				Thread.sleep(300);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			loadWaypointsFromDatabase();
-			reloadWpt = false;
-			if (feedbackListener != null) {
-				feedbackListener.uploadAborted();
-				feedbackListener = null;
-			}
-			return;
-		} else if (sendTrk) {
-			for (int i = 0; i < exportTracks.size(); i++) {
-				currentTrk = (PersistEntity)exportTracks.elementAt(i);
-				if (feedbackListener != null) {			
-					feedbackListener.updateProgress("Exporting " + currentTrk.displayName + "\n");
+		try {
+			boolean success = false;
+			if (reloadWpt) {
+				try {
+					/**
+					 * Sleep for a while to limit the number of reloads happening
+					 */
+					Thread.sleep(300);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-				success = sendGpx();
-				if (!success) {
-					logger.error("Failed to export track " + currentTrk);
-					if (feedbackListener != null) {			
-						feedbackListener.completedUpload(success, importExportMessage);
+				loadWaypointsFromDatabase();
+				reloadWpt = false;
+				if (feedbackListener != null) {
+					feedbackListener.uploadAborted();
+					feedbackListener = null;
+				}
+				return;
+			} else if (sendTrk) {
+				for (int i = 0; i < exportTracks.size(); i++) {
+					currentTrk = (PersistEntity)exportTracks.elementAt(i);
+					if (feedbackListener != null) {
+						feedbackListener.updateProgress("Exporting " + currentTrk.displayName + "\n");
 					}
-					return;						
+					success = sendGpx();
+					if (!success) {
+						logger.error("Failed to export track " + currentTrk);
+						if (feedbackListener != null) {
+							feedbackListener.completedUpload(success, importExportMessage);
+						}
+						return;
+					}
 				}
+				if (feedbackListener != null) {
+					feedbackListener.completedUpload(true, importExportMessage);
+				}
+				feedbackListener = null;
+				sendTrk = false;
+				sendWpt = false;
+			} else if (sendWpt) {
+				success = sendGpx();
+			} else if (in != null) {
+				success = receiveGpx();
+			} else {
+				logger.error("Did not know whether to send or receive");
 			}
-			if (feedbackListener != null) {			
-				feedbackListener.completedUpload(true, importExportMessage);
+			if (feedbackListener != null) {
+				feedbackListener.completedUpload(success, importExportMessage);
 			}
 			feedbackListener = null;
 			sendTrk = false;
 			sendWpt = false;
-		} else if (sendWpt) {
-			success = sendGpx();
-		} else if (in != null) {
-			success = receiveGpx();
-		} else {
-			logger.error("Did not know whether to send or receive");
+		} catch (Exception e) {
+			logger.exception("An error occured in processing GPX", e);
+		} catch (OutOfMemoryError oome) {
+			Trace.getInstance().dropCache();
+			logger.error("Out of memory processing GPX, trying to recover");
 		}
-		if (feedbackListener != null) {			
-			feedbackListener.completedUpload(success, importExportMessage);
-		}
-		feedbackListener = null;
-		sendTrk = false;
-		sendWpt = false;
 	}
 
 	private void openWayPtDatabase() {

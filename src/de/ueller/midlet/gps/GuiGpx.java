@@ -247,8 +247,10 @@ public class GuiGpx extends List implements CommandListener,
 	 */
 	protected void addProgressText(String text)
 	{
-		sbProgress.append(text);
-		progressDisplay.setString(sbProgress.toString());
+		if (sbProgress != null && progressDisplay != null) {
+			sbProgress.append(text);
+			progressDisplay.setString(sbProgress.toString());
+		}
 	}
 	
 	/* After this method was called, the user can dismiss the 
