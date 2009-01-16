@@ -48,6 +48,15 @@ public class GUIosmWayDisplay extends TextBox implements GpsMidDisplayable, Comm
 		GpsMid.getInstance().show(this);
 	}
 
+	public void startProgress(String title) {
+		// Not supported/used at the moment.
+	}
+	
+	public void setProgress(String message) {
+		// Not supported/used at the moment.
+		
+	}
+	
 	public void updateProgress(String message)
 	{
 		// Not supported/used at the moment.

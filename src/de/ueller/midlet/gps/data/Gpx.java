@@ -978,7 +978,7 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 			parser = (GpxParser) parserObject;
 			
 			applyRecordingRules = false;
-			success = parser.parse(in, maxDistance, this);
+			success = parser.parse(in, maxDistance, this, feedbackListener);
 			applyRecordingRules = true;
 			in.close();
 			importExportMessage = parser.getMessage();

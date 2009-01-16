@@ -91,12 +91,19 @@ public class BtObexServer
 		
 	}
 
+	public void startProgress(String title) {
+		// Not supported/used at the moment.
+	}
+	
+	public void setProgress(String message) {
+		// Not supported/used at the moment.
+		
+	}
 
 	public void updateProgress(String message) {
 		// Not supported/used at the moment.
 	}
 
-	
 	
 	public synchronized void completedUpload(boolean success, String message) {
 		if (success) {

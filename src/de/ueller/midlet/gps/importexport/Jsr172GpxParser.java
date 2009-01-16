@@ -17,6 +17,7 @@ import org.xml.sax.helpers.DefaultHandler;
 import de.ueller.gps.data.Position;
 import de.ueller.midlet.gps.ImageCollector;
 import de.ueller.midlet.gps.Logger;
+import de.ueller.midlet.gps.UploadListener;
 import de.ueller.midlet.gps.data.Gpx;
 import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.PositionMark;
@@ -49,6 +50,7 @@ public class Jsr172GpxParser extends DefaultHandler implements GpxParser {
 	private int duplicateWpts;
 	
 	private Gpx gpx;
+	private UploadListener ul;
 	
 	public void startElement(String namespaceURI, String localName, String qName, Attributes atts) {
 		if (qName.equalsIgnoreCase("wpt")) {
@@ -124,6 +126,9 @@ public class Jsr172GpxParser extends DefaultHandler implements GpxParser {
 		} else if (qName.equalsIgnoreCase("trkpt")) {
 			gpx.addTrkPt(p);
 			importedTpts++;
+			if ((importedTpts & 0x7f) == 0x7f) {
+				this.ul.updateProgress("Imported trackpoints: " + importedTpts + "\n");
+			}
 		} else if (qName.equalsIgnoreCase("ele")) {
 			ele = false;
 		} else if (qName.equalsIgnoreCase("time")) {
@@ -156,18 +161,23 @@ public class Jsr172GpxParser extends DefaultHandler implements GpxParser {
 		}
 	}
 	
-	public boolean parse(InputStream in, float maxDistance, Gpx gpx) {
+	public boolean parse(InputStream in, float maxDistance, Gpx gpx, UploadListener ul) {
 		this.maxDistance = maxDistance;
 		this.gpx = gpx;
+		this.ul = ul;
 		importedTpts = 0;
 		importedWpts = 0;
 		duplicateWpts = 0;
 		tooFarWpts = 0;
 				
-        try {
-        	SAXParserFactory factory = SAXParserFactory.newInstance();
-    		// Parse the input
-            SAXParser saxParser = factory.newSAXParser();
+		try {
+			if (ul != null) {
+				ul.startProgress("Importing tracks");
+				ul.updateProgress("Starting GPX import\n");
+			}
+			SAXParserFactory factory = SAXParserFactory.newInstance();
+			// Parse the input
+			SAXParser saxParser = factory.newSAXParser();
 			saxParser.parse(in, this);
 			return true;
 		} catch (SAXException e) {
@@ -181,7 +191,7 @@ public class Jsr172GpxParser extends DefaultHandler implements GpxParser {
 			e.printStackTrace();
 		}
 		return false;
-		        
+
 	}
 	
 	public String getMessage() {

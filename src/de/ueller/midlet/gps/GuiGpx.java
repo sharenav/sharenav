@@ -175,6 +175,15 @@ public class GuiGpx extends List implements CommandListener,
 		return -1;
 	}
 	
+	public void startProgress(String title) {
+		showProgressDisplay(title);
+	}
+	
+	public void setProgress(String message) {
+		// Not supported/used at the moment.
+		
+	}
+	
 	public void updateProgress(String message) {
 		addProgressText(message);
 	}
@@ -189,7 +198,7 @@ public class GuiGpx extends List implements CommandListener,
 			}
 		} else {
 			if (success) {
-				alertMsg = "Completed GPX import: " + message;
+				alertMsg = "\n***********\nCompleted GPX import: " + message;
 				initTracks();
 			} else {
 				alertMsg = "GPX import failed: " + message;

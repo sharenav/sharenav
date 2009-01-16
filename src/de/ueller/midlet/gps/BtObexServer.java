@@ -81,6 +81,15 @@ public class BtObexServer
 			}
 		
 	}
+	
+	public void startProgress(String title) {
+		// Not supported/used at the moment.
+	}
+
+	public void setProgress(String message) {
+		// Not supported/used at the moment.
+		
+	}
 
 	public void updateProgress(String message)
 	{
@@ -103,4 +112,5 @@ public class BtObexServer
 		notify();
 	}
 //#endif
+
 }

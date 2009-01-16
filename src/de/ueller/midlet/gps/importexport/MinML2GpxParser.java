@@ -16,6 +16,7 @@ import de.ueller.gps.data.Position;
 import de.ueller.midlet.gps.ImageCollector;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
+import de.ueller.midlet.gps.UploadListener;
 import de.ueller.midlet.gps.data.Gpx;
 import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.PositionMark;
@@ -47,6 +48,7 @@ public class MinML2GpxParser extends MinML2 implements GpxParser{
 	private int duplicateWpts;
 	
 	private Gpx gpx;
+	private UploadListener ul;
 	
 	public void startElement(String namespaceURI, String localName, String qName, Attributes atts) {
 		if (qName.equalsIgnoreCase("wpt")) {
@@ -121,6 +123,9 @@ public class MinML2GpxParser extends MinML2 implements GpxParser{
 		} else if (qName.equalsIgnoreCase("trkpt")) {
 			gpx.addTrkPt(p);
 			importedTpts++;
+			if (((importedTpts & 0x7f) == 0x7f) && (ul != null)) {
+				ul.updateProgress("Imported trackpoints: " + importedTpts + "\n");
+			}
 		} else if (qName.equalsIgnoreCase("ele")) {
 			ele = false;
 		} else if (qName.equalsIgnoreCase("time")) {
@@ -159,15 +164,20 @@ public class MinML2GpxParser extends MinML2 implements GpxParser{
 		}
 	}
 	
-	public boolean parse(InputStream in, float maxDistance, Gpx gpx) {
+	public boolean parse(InputStream in, float maxDistance, Gpx gpx, UploadListener ul) {
 		this.maxDistance = maxDistance;
 		this.gpx = gpx;
+		this.ul = ul;
 		importedWpts=0;
 		importedTpts=0;
 		tooFarWpts=0;
 		duplicateWpts=0;
 		
 		try {
+			if (ul != null) {
+				ul.startProgress("Importing tracks");
+				ul.updateProgress("Starting GPX import\n");
+			}
 			parse(new InputStreamReader(in));
 			return true;
 		} catch (SAXException e) {

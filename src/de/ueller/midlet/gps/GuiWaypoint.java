@@ -181,6 +181,15 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 		//super.commandAction(c, d);
 	}
 	
+	public void startProgress(String title) {
+		// Not supported/used at the moment.
+	}
+	
+	public void setProgress(String message) {
+		// Not supported/used at the moment.
+		
+	}
+	
 	public void updateProgress(String message) {
 		// Only final message is supported/used at the moment.
 	}
