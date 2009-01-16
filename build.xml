@@ -206,6 +206,7 @@
 				<keep class="de.ueller.midlet.gps.importexport.GpxParser" />
 				<keep class="de.ueller.midlet.gps.GuiCameraInterface" />
 				<keep class="de.ueller.midlet.gps.GuiCamera" />
+				<keep class="org.xml.sax.Attributes" />
 			</obfuscator>
 			
 			<!-- debug settings: only include debug setting when the test-property is true -->

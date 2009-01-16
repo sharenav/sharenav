@@ -951,29 +951,29 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 	private boolean receiveGpx() {		
 		try {
 			boolean success;
-//			String jsr172Version = null;
+			String jsr172Version = null;
 			Class parserClass;
 			Object parserObject;
 			GpxParser parser;
-//			try {
-//				jsr172Version = System.getProperty("xml.jaxp.subset.version");
-//			} catch (RuntimeException re) {
-//				/**
-//				 * Some phones throw exceptions if trying to access properties that don't
-//				 * exist, so we have to catch these and just ignore them.
-//				 */
-//			} catch (Exception e) {
-//				/**
-//				 * See above 
-//				 */				
-//			}
-//			if ((jsr172Version != null) &&  (jsr172Version.length() > 0)) {
-//				logger.info("Using builtin jsr 172 XML parser");
-//				parserClass = Class.forName("de.ueller.midlet.gps.importexport.Jsr172GpxParser");				
-//			} else {
+			try {
+				jsr172Version = System.getProperty("xml.jaxp.subset.version");
+			} catch (RuntimeException re) {
+				/**
+				 * Some phones throw exceptions if trying to access properties that don't
+				 * exist, so we have to catch these and just ignore them.
+				 */
+			} catch (Exception e) {
+				/**
+				 * See above 
+				 */
+			}
+			if ((jsr172Version != null) &&  (jsr172Version.length() > 0)) {
+				logger.info("Using builtin jsr 172 XML parser");
+				parserClass = Class.forName("de.ueller.midlet.gps.importexport.Jsr172GpxParser");
+			} else {
 				logger.info("Using MinML2 XML parser");
 				parserClass = Class.forName("de.ueller.midlet.gps.importexport.MinML2GpxParser");
-//			}
+			}
 			parserObject = parserClass.newInstance();
 			parser = (GpxParser) parserObject;
 			
