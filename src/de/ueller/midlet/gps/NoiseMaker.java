@@ -85,8 +85,9 @@ public class NoiseMaker
 	        A4,e, A4,e, A4,e, F4,q
 	    };
 
-	    deviceSupportsMixing = (System.getProperty("supports.mixing") == "true");
-	    //deviceSupportsMixing = false;
+	   String mixing = System.getProperty("supports.mixing");
+	   deviceSupportsMixing = (mixing != null && mixing.equals("true"));
+	   //deviceSupportsMixing = false;
 //#endif
 	}
 
