@@ -228,7 +228,7 @@ public class NoiseMaker
 		}
 		String nextSoundName = playingNames.substring(playingNameIndex, iEnd);
 		//#debug debug
-		mLogger.debug("Determined sound part: " + name + "/" + playingNames + "/" + playingNameIndex + "/" + iEnd + " to player " + prefetchPlayerNr);
+		mLogger.debug("Determined sound part: " + nextSoundName + "/" + playingNames + "/" + playingNameIndex + "/" + iEnd + " to player " + prefetchPlayerNr);
 		playingNameIndex = iEnd + 1;
 		return nextSoundName;
 	}
