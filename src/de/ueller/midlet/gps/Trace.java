@@ -1629,8 +1629,10 @@ Runnable , GpsMidDisplayable{
 
 					//***************************skip straightnsend************************
 					
-					
-					if(i!=iNearest) {
+					// no off-screen check for current and next route arrow,
+					// so we can do DIRECTION-THEN-DIRECTION instructions
+					// even if both arrows are off-screen
+					if(i!=iNearest && i!=iNearest+1) {
 						if (lastTo.lat < pc.getP().getMinLat()) {
 							lastEndBearing=c.endBearing;
 							lastTo=c.to;
