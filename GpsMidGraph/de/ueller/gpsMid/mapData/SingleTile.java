@@ -381,8 +381,11 @@ public class SingleTile extends Tile implements QueueableTile {
 				if (pc.scale > C.getNodeMaxScale(t)) {
 					return;
 				}
-				if (hideable & !Trace.getInstance().getConfig().getCfgBitState(Configuration.CFGBIT_POIS)) {
-					return;
+				// disabling POIs does not disable PLACE TEXTs (city, suburb, etc.) 
+				if (! (t >= C.MIN_PLACETYPE && t <= C.MAX_PLACETYPE)) {
+					if (hideable & !Trace.getInstance().getConfig().getCfgBitState(Configuration.CFGBIT_POIS)) {
+						return;
+					}
 				}
 				break;
 			case C.OM_HIDE: 				
@@ -406,6 +409,8 @@ public class SingleTile extends Tile implements QueueableTile {
 				break;
 		}
 
+		Configuration config = Trace.getInstance().getConfig();
+		
 		pc.g.setColor(C.getNodeTextColor(t));
 		img = C.getNodeImage(t);
 		// logger.debug("calc pos "+pc);
@@ -425,14 +430,23 @@ public class SingleTile extends Tile implements QueueableTile {
 		if (pc.scale > C.getNodeMaxTextScale(t)) {
 			return;
 		}
-		if (hideable && !Trace.getInstance().getConfig().getCfgBitState(Configuration.CFGBIT_POITEXTS) ) {
-			return;
+		
+		// PLACE TEXTS (from city to suburb)
+		if (t >= C.MIN_PLACETYPE && t <= C.MAX_PLACETYPE) {
+			if (!config.getCfgBitState(Configuration.CFGBIT_PLACETEXTS)) {
+				return;
+			}
+		// OTHER POI texts
+		} else {
+			if (hideable && !config.getCfgBitState(Configuration.CFGBIT_POITEXTS) ) {
+				return;
+			}
 		}
 
 		
 		// logger.debug("draw txt " + );
 		String name;
-		if (Trace.getInstance().getConfig().getCfgBitState(Configuration.CFGBIT_SHOWWAYPOITYPE)) {
+		if (config.getCfgBitState(Configuration.CFGBIT_SHOWWAYPOITYPE)) {
 			name = pc.c.getNodeTypeDesc(t);
 		}
 		else {
@@ -441,7 +455,7 @@ public class SingleTile extends Tile implements QueueableTile {
 		if (name != null) {			
 			Font originalFont = pc.g.getFont();
 			if (poiFont==null) {
-				if (Trace.getInstance().getConfig().getCfgBitState(Configuration.CFGBIT_POI_LABELS_LARGER)) {
+				if (config.getCfgBitState(Configuration.CFGBIT_POI_LABELS_LARGER)) {
 					poiFont = originalFont;
 				} else {
 					poiFont=Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_SMALL);

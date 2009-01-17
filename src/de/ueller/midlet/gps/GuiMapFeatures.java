@@ -12,8 +12,8 @@ import de.ueller.midlet.gps.data.ProjFactory;
 public class GuiMapFeatures extends Form implements CommandListener {
 	// Groups
 	private ChoiceGroup elemsGroup;
-	private	String [] elems = new String[7];
-	private boolean[] selElems = new boolean[7];
+	private	String [] elems = new String[8];
+	private boolean[] selElems = new boolean[8];
 
 	private ChoiceGroup altInfosGroup;
 	private	String [] altInfos = new String[2];
@@ -55,6 +55,7 @@ public class GuiMapFeatures extends Form implements CommandListener {
 			elems[4] = "Areas"; 				selElems[4]=config.getCfgBitState(config.CFGBIT_AREAS);
 			elems[5] = "Area labels"; 			selElems[5]=config.getCfgBitState(config.CFGBIT_AREATEXTS);
 			elems[6] = "Waypoint labels"; 		selElems[6]=config.getCfgBitState(config.CFGBIT_WPTTEXTS);
+			elems[7] = "Place labels (cities, etc.)";	selElems[7]=config.getCfgBitState(config.CFGBIT_PLACETEXTS);
 			elemsGroup = new ChoiceGroup("Elements", Choice.MULTIPLE, elems ,null);
 			elemsGroup.setSelectedFlags(selElems);
 			append(elemsGroup);
@@ -123,6 +124,7 @@ public class GuiMapFeatures extends Form implements CommandListener {
 			config.setCfgBitState(config.CFGBIT_AREAS, selElems[4], setAsDefault);
 			config.setCfgBitState(config.CFGBIT_AREATEXTS, selElems[5], setAsDefault);
 			config.setCfgBitState(config.CFGBIT_WPTTEXTS, selElems[6], setAsDefault);
+			config.setCfgBitState(config.CFGBIT_PLACETEXTS, selElems[7], setAsDefault);
 
 			altInfosGroup.getSelectedFlags(selAltInfos);
 			config.setCfgBitState(config.CFGBIT_SHOWLATLON, selAltInfos[0], setAsDefault);

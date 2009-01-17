@@ -29,7 +29,7 @@ public class Configuration {
 	
 	private static Logger logger;
 	
-	public final static int VERSION=3;
+	public final static int VERSION=4;
 
 	public final static int LOCATIONPROVIDER_NONE=0;
 	public final static int LOCATIONPROVIDER_SIRF=1; 
@@ -102,6 +102,8 @@ public class Configuration {
 	public final static byte CFGBIT_BACKLIGHT_SIEMENS=32;
 	// bit 33: Skip initial splash screen
 	public final static byte CFGBIT_SKIPP_SPLASHSCREEN=33;
+	// bit 34: show place labels
+	public final static byte CFGBIT_PLACETEXTS=34;
 	
 	/**
 	 * These are the database record ids for each configuration option	 * 
@@ -257,6 +259,11 @@ public class Configuration {
 				setProjTypeDefault(ProjFactory.MOVE_UP);
 				//#debug info
 				logger.info("Default config for version 3+ set.");
+			}			
+			if(configVersionStored < 4) {				
+				cfgBits |=	1L<<CFGBIT_PLACETEXTS;
+				//#debug info
+				logger.info("Default config for version 4+ set.");
 			}			
 			setCfgBits(cfgBits, true);
 			// remember for which version the default values were stored

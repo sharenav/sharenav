@@ -23,6 +23,9 @@ public class C {
 	 */
 	public final static short MAP_FORMAT_VERSION = 20;
 	
+	public final static byte MIN_PLACETYPE = 1; // city
+	public final static byte MAX_PLACETYPE = 5; // suburb
+	
 	public final static byte NODE_MASK_ROUTENODELINK=0x1;
 	public final static byte NODE_MASK_TYPE=0x2;
 	public final static byte NODE_MASK_NAME=0x4;
