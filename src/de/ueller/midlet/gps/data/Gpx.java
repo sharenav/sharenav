@@ -36,6 +36,7 @@ import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.UploadListener;
 import de.ueller.midlet.gps.importexport.ExportSession;
+import de.ueller.midlet.gps.importexport.GpxImportHandler;
 import de.ueller.midlet.gps.importexport.GpxParser;
 import de.ueller.midlet.gps.tile.PaintContext;
 
@@ -191,8 +192,8 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		if (trkRecordingSuspended)
 			return;
 		
-		//#debug info
-		logger.info("Adding trackpoint: " + trkpt);
+		//#debug debug
+		logger.debug("Adding trackpoint: " + trkpt);
 		
 		long msTime=trkpt.date.getTime();
 		float lat=trkpt.latitude*MoreMath.FAC_DECTORAD;
@@ -955,6 +956,7 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 			Class parserClass;
 			Object parserObject;
 			GpxParser parser;
+			GpxImportHandler gpxH = new GpxImportHandler(maxDistance, this, feedbackListener);
 			try {
 				jsr172Version = System.getProperty("xml.jaxp.subset.version");
 			} catch (RuntimeException re) {
@@ -978,10 +980,10 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 			parser = (GpxParser) parserObject;
 			
 			applyRecordingRules = false;
-			success = parser.parse(in, maxDistance, this, feedbackListener);
+			success = parser.parse(in, gpxH);
 			applyRecordingRules = true;
 			in.close();
-			importExportMessage = parser.getMessage();
+			importExportMessage = gpxH.getMessage();
 			
 			return success;
 		} catch (ClassNotFoundException cnfe) {
