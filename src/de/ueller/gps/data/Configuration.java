@@ -104,6 +104,10 @@ public class Configuration {
 	public final static byte CFGBIT_SKIPP_SPLASHSCREEN=33;
 	// bit 34: show place labels
 	public final static byte CFGBIT_PLACETEXTS=34;
+	// bit 35: Sound alert for speeding
+	public final static byte CFGBIT_SPEEDALERT_SND=35;
+	// bit 36: Visual alert for speeding
+        public final static byte CFGBIT_SPEEDALERT_VISUAL=36;
 	
 	/**
 	 * These are the database record ids for each configuration option	 * 
@@ -136,6 +140,7 @@ public class Configuration {
 	private static final int RECORD_ID_MAP_PROJECTION = 26;
 	private static final int RECORD_ID_CONFIG_VERSION = 27;
 	private static final int RECORD_ID_SMS_RECIPIENT = 28;
+	private static final int RECORD_ID_SPEED_TOLERANCE = 29;
 	
 
 	// Gpx Recording modes
@@ -193,6 +198,7 @@ public class Configuration {
 	private String mapFileUrl;
 
 	private String smsRecipient; 
+	private int speedTolerance = 0; 
 	
 	private String utf8encodingstring = null;
 	
@@ -233,6 +239,8 @@ public class Configuration {
 				// Routing defaults
 				setStopAllWhileRouteing(true);
 				setRouteEstimationFac(7);
+				// Speed alert tolerance
+				setSpeedTolerance(0);
 				// set default location provider to JSR-179 if available
 				//#if polish.api.locationapi
 				if (getDeviceSupportsJSR179()) {
@@ -301,6 +309,7 @@ public class Configuration {
 			//System.out.println("Map startup lat/lon: " + startupPos.radlat*MoreMath.FAC_RADTODEC + "/" + startupPos.radlon*MoreMath.FAC_RADTODEC);
 			setProjTypeDefault((byte) readInt(database,  RECORD_ID_MAP_PROJECTION));
 			smsRecipient = readString(database, RECORD_ID_SMS_RECIPIENT);
+			speedTolerance = readInt(database, RECORD_ID_SPEED_TOLERANCE);
 			database.closeRecordStore();
 		} catch (Exception e) {
 			logger.exception("Problems with reading our configuration: ", e);
@@ -648,6 +657,15 @@ public class Configuration {
 	public void setSmsRecipient(String s) {
 		write(s, RECORD_ID_SMS_RECIPIENT);
 		smsRecipient = s;		
+	}
+	
+	public int getSpeedTolerance() {
+		return speedTolerance;
+	}
+	
+	public void setSpeedTolerance(int s) {
+		write(s, RECORD_ID_SPEED_TOLERANCE);
+		speedTolerance = s;		
 	}
 	
 	public InputStream getMapResource(String name) throws IOException{

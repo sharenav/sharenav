@@ -35,7 +35,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	/** A menu list instance */
 	private static final String[]	elements		= {
 		"Location Receiver", "Recording Rules",
-		"Display options", "Sound options", "Routing options",
+		"Display options", "Sounds & Alerts", "Routing options",
 		"GPX Receiver", "Map source", "Debug options", "Key shortcuts"};
 	
 	/**

@@ -12,7 +12,7 @@ import de.ueller.midlet.gps.tile.C;
 import de.ueller.midlet.gps.tile.SoundDescription;
 
 public class GuiSetupSound extends Form implements CommandListener {
-	private final Form	menuSetupSound = new Form("Sounds");
+	private final Form	menuSetupSound = new Form("Sounds & Alerts");
 	// Groups
 	private ChoiceGroup sndGpsGroup;
 	private	String [] sndGps = new String[2];
@@ -21,6 +21,12 @@ public class GuiSetupSound extends Form implements CommandListener {
 	private ChoiceGroup sndRoutingGroup=null;
 	private	String [] sndRouting = new String[2];
 	private	boolean[] selSndRouting = new boolean[2];
+
+	private ChoiceGroup spdAlertGroup=null;
+	private	String [] spdAlert = new String[2];
+	private	boolean[] selSpdAlert = new boolean[2];
+
+        private TextField spdAlertTolerance=null;
 
 	// commands
 	private static final Command CMD_SAVE = new Command("Ok", Command.ITEM, 2);
@@ -31,7 +37,7 @@ public class GuiSetupSound extends Form implements CommandListener {
 	private static Configuration config;
 	
 	public GuiSetupSound(GuiDiscover parent) {
-		super("Sounds");
+		super("Sounds & Alerts");
 		config=GpsMid.getInstance().getConfig();
 		this.parent = parent;
 		try {
@@ -48,6 +54,17 @@ public class GuiSetupSound extends Form implements CommandListener {
 			sndRoutingGroup.setSelectedFlags(selSndRouting);
 			append(sndRoutingGroup);
 			
+			spdAlert[0] = "Audio Speeding Alert";
+			selSpdAlert[0]=config.getCfgBitState(config.CFGBIT_SPEEDALERT_SND);
+			spdAlert[1] = "Visual Speeding Alert";
+			selSpdAlert[1]=config.getCfgBitState(config.CFGBIT_SPEEDALERT_VISUAL);
+			spdAlertGroup = new ChoiceGroup("Speeding Alert", Choice.MULTIPLE, spdAlert ,null);
+			spdAlertGroup.setSelectedFlags(selSpdAlert);
+			append(spdAlertGroup);
+
+			spdAlertTolerance=new TextField("Speed Alert Tolerance",Integer.toString(config.getSpeedTolerance()),3,TextField.DECIMAL);
+			append(spdAlertTolerance);
+
 			addCommand(CMD_SAVE);
 			addCommand(CMD_CANCEL);
 
@@ -75,11 +92,15 @@ public class GuiSetupSound extends Form implements CommandListener {
 			config.setCfgBitState(config.CFGBIT_SND_CONNECT, selSndGps[0], true);
 			config.setCfgBitState(config.CFGBIT_SND_DISCONNECT, selSndGps[1], true);
 
-			if (sndRoutingGroup!=null) {
-				sndRoutingGroup.getSelectedFlags(selSndRouting);
-				config.setCfgBitState(config.CFGBIT_SND_ROUTINGINSTRUCTIONS, selSndRouting[0], true);
-				config.setCfgBitState(config.CFGBIT_SND_TARGETREACHED, selSndRouting[1], true);
-			}
+			sndRoutingGroup.getSelectedFlags(selSndRouting);
+			config.setCfgBitState(config.CFGBIT_SND_ROUTINGINSTRUCTIONS, selSndRouting[0], true);
+			config.setCfgBitState(config.CFGBIT_SND_TARGETREACHED, selSndRouting[1], true);
+
+		    config.setSpeedTolerance((int)Float.parseFloat(spdAlertTolerance.getString()));
+
+			spdAlertGroup.getSelectedFlags(selSpdAlert);
+			config.setCfgBitState(config.CFGBIT_SPEEDALERT_SND, selSpdAlert[0], true);
+			config.setCfgBitState(config.CFGBIT_SPEEDALERT_VISUAL, selSpdAlert[1], true);
 
 			parent.show();
 			return;

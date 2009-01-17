@@ -204,7 +204,12 @@ Runnable , GpsMidDisplayable{
 	/** 
 	 * Current speed from GPS in km/h. 
 	 */
-	private int speed;
+	public volatile int speed;
+
+	/** 
+	 * Flag if we're speeding
+	 */
+	public volatile boolean speeding=false;
 
 	/**
 	 * Current course from GPS in compass degrees, 0..359.  
@@ -1193,7 +1198,11 @@ Runnable , GpsMidDisplayable{
 			if (pc != null){
 				showTarget(pc);
 			}
-			
+
+			if (speeding && config.getCfgBitState(Configuration.CFGBIT_SPEEDALERT_VISUAL)) {
+			    parent.mNoiseMaker.playSound("SPEED_LIMIT", (byte) 10, (byte) 10);
+			}
+
 			if (currentMsg != null) {
 				if (compassRectHeight == 0) {
 					compassRectHeight = g.getFont().getHeight()-2;

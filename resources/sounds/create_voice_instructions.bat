@@ -23,6 +23,7 @@ espeak -wagain.wav -z -p0 -s250 -ven-r+m1 -x -k20 "again"
 espeak -wtarget_reached.wav -z -p0 -s150 -ven-r+m0 -x -k20 "target Reached"
 espeak -wcheck_direction.wav -z -p0 -s200 -ven-r+m1 -x -k20 "check Direction!"
 espeak -wroute_recalculation.wav -z -p0 -s150 -ven-r+m0 -x -k20 "Recalculating route"
+espeak -wspeed_limit.wav -z -p0 -s150 -ven-r+m0 -x -k20 "Speed over limit"
 
 REM resample and increase volume of all sounds using sox from http://sox.sf.net
 FOR /F "tokens=*" %%i in ('dir /b *.wav') do (
