@@ -673,19 +673,48 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				break;
 			case STATE_DEBUG:
 				boolean [] selDebug = new boolean[1];
-				debugLog.getSelectedFlags(selDebug);				
-				GpsMid.getInstance().getConfig().setDebugRawLoggerEnable((selDebug[0]));
-				GpsMid.getInstance().getConfig().setDebugRawLoggerUrl(debugLog.getString(0));
+				debugLog.getSelectedFlags(selDebug);
+				config.setDebugRawLoggerEnable((selDebug[0]));
+				config.setDebugRawLoggerUrl(debugLog.getString(0));
 				GpsMid.getInstance().enableDebugFileLogging();
 				selDebug = new boolean[3];
 				debugSeverity.getSelectedFlags(selDebug);
-				GpsMid.getInstance().getConfig().setDebugSeverityInfo(selDebug[0]);
-				GpsMid.getInstance().getConfig().setDebugSeverityDebug(selDebug[1]);
-				GpsMid.getInstance().getConfig().setDebugSeverityTrace(selDebug[2]);
-				GpsMid.getInstance().getConfig().setCfgBitState(Configuration.CFGBIT_ROUTE_CONNECTIONS, debugOther.isSelected(0), true);
+				
+				config.setDebugSeverityInfo(selDebug[0]);
+				config.setDebugSeverityDebug(selDebug[1]);
+				config.setDebugSeverityTrace(selDebug[2]);
+				config.setCfgBitState(Configuration.CFGBIT_ROUTE_CONNECTIONS, debugOther.isSelected(0), true);
 				Logger.setGlobalLevel();
 				state = STATE_ROOT;
-				this.show();			
+				this.show();
+				
+				/**
+				 * In order to minimise surprise of the user that despite enabling logging here
+				 * nothing shows up in the log file, we warn the user if logging at the specified level
+				 * is not compiled into the current Version of GpsMid
+				 * 
+				 * The check needs to be after this.show() so that the alert messages can be shown
+				 * and not disabled by the immediate call to this.show()
+				 */
+				boolean debugAvail = false;
+				//#debug trace
+				debugAvail = true;
+				if (selDebug[2] && !debugAvail) {
+					logger.error("Logging at \"Trace\" level is not compiled into this version of GpsMid so log will be empty");
+				}
+				debugAvail = false;
+				//#debug debug
+				debugAvail = true;
+				if (selDebug[1] && !debugAvail) {
+					logger.error("Logging at \"Debug\" level is not compiled into this version of GpsMid so log will be empty");
+				}
+				debugAvail = false;
+				//#debug info
+				debugAvail = true;
+				if (selDebug[0] && !debugAvail) {
+					logger.error("Logging at \"Info\" level is not compiled into this version of GpsMid so log will be empty");
+				}
+				
 				break;
 
 			case STATE_ROUTING_OPT:
