@@ -33,24 +33,27 @@ public class NoiseMaker
 	
 	// private final byte[] mNoFixSequence;
 
-	private final byte[] mConnOpenedSequence;
-	
-	private final byte[] mConnLostSequence;
 	
 	private final static Logger mLogger = Logger.getInstance(NoiseMaker.class, Logger.DEBUG);
 	
 	private static volatile String playingNames = "";
 	private static volatile int playingNameIndex=0;
+
 //#if polish.api.mmapi			
 	private static volatile Player player[] = {null, null, null}; 
+	private final byte[] mConnOpenedSequence;	
+	private final byte[] mConnLostSequence;
 //#endif			
+
 	private static volatile byte prefetchPlayerNr=1; 
-	
 	
 	private static volatile long oldMsTime = 0;
 	private static volatile String oldPlayingNames = "";
 	private static volatile byte timesToPlay = 0;
+	private static volatile String nextSoundFile = null;
 
+	private static boolean deviceSupportsMixing;
+	
 	public NoiseMaker()
 	{
 //#if polish.api.mmapi	
@@ -81,6 +84,9 @@ public class NoiseMaker
 	        ToneControl.SET_VOLUME, 100,
 	        A4,e, A4,e, A4,e, F4,q
 	    };
+
+	    deviceSupportsMixing = (System.getProperty("supports.mixing") == "true");
+	    //deviceSupportsMixing = false;
 //#endif
 	}
 
@@ -99,12 +105,9 @@ public class NoiseMaker
 					break;
 				}
 			}
-			if (this.player[prefetchPlayerNr] != null) {
-				playPrefetched();
-			} 
+			playPrefetched();
 		}
 	}
-//#endif
 	
 	private byte [] getToneSequence( String name ) {
     	byte sequence[] = null;
@@ -137,7 +140,6 @@ public class NoiseMaker
 	
 	private void playSequence( String name )
 	{
-//#if polish.api.mmapi	
 	    try { 
 	    	byte sequence[] = getToneSequence(name);
 	    	if (sequence != null) {
@@ -155,8 +157,8 @@ public class NoiseMaker
 	    } catch (Exception ex) {		
 	    	mLogger.exception("Failed to play sound", ex);
 	    }
-//#endif
 	}
+//#endif
 	
 
 	public void playSound( String names )
@@ -169,22 +171,27 @@ public class NoiseMaker
 	 * */
 	public void playSound( String names, byte minSecsBeforeRepeat, byte maxTimesToPlay )
 	{
+//#if polish.api.mmapi				
+		
 		// do not repeat same sound before minSecsBeforeRepeat
 		long msTime = System.currentTimeMillis();			
 		if (oldPlayingNames.equals(names) &&
 				(Math.abs(msTime-oldMsTime) < 1000L * minSecsBeforeRepeat
-			  || timesToPlay == 0 )
+			  || timesToPlay <= 0 )
 		) {
 			return;
 		}
+		//#debug debug
 		mLogger.debug(msTime-oldMsTime + " " + names + oldPlayingNames + timesToPlay);
+		oldMsTime = System.currentTimeMillis();
 		if (! oldPlayingNames.equals(names) ) {
 			timesToPlay = maxTimesToPlay;
+			//#debug debug
+			mLogger.debug("new sound " + names + " timestoplay: " + timesToPlay + "   old sound: " + oldPlayingNames );
 			oldPlayingNames = names;
-		}
-		mLogger.debug(names + " timestoplay:" + timesToPlay);
-
-		oldMsTime = System.currentTimeMillis();
+		}		
+		//#debug debug
+		mLogger.debug("play " + names);
 		playingNameIndex = 0;
 		playingNames=names;
 		if (prefetchNextSound()) {
@@ -192,6 +199,10 @@ public class NoiseMaker
 		} else {
 			playSequence(names);
 		}
+		timesToPlay--;
+		//#debug debug
+		mLogger.debug("timestoplay--:" + timesToPlay );
+//#endif
 	}
 	
 	// allow to play same sound again
@@ -200,103 +211,120 @@ public class NoiseMaker
 		mLogger.debug("reset sound repeat");
 	}
 
-	
-	// prefetches next sound part
-	private synchronized boolean prefetchNextSound() {
 //#if polish.api.mmapi				
-		// use next prefetch player
-		prefetchPlayerNr++;
-		if (prefetchPlayerNr > 2) {
-			prefetchPlayerNr = 0;
-		}
+
 	
-		// if next prefetch player is not free, free it
-		if (player[prefetchPlayerNr]!=null && player[prefetchPlayerNr].getState()!=Player.CLOSED) {
-			player[prefetchPlayerNr].close();
-			player[prefetchPlayerNr]=null;
-			mLogger.debug("Player " + prefetchPlayerNr + " terminated.");
-		}
-		
+	// determine next sound name to be played from playingNames
+	private String determineNextSoundName() {	
 		// end of names to play?
 		if (playingNameIndex>playingNames.length() ) {
-			timesToPlay--;
-			// maximum times played?
-			if (timesToPlay <= 0) {
-					playingNames = "";
-			}
-			oldMsTime = System.currentTimeMillis();
-			playingNameIndex=0;
-			mLogger.debug("timestoplay--" + timesToPlay);
-			return false;
+			return null;
 		}
 		
 		int iEnd = playingNames.indexOf(';', playingNameIndex);
 		if (iEnd == -1 ) {
 			iEnd = playingNames.length();
 		}
-		String name = playingNames.substring(playingNameIndex, iEnd);
-		//System.out.println("Prefetching sound part: " + name + "/" + playingNames + "/" + playingNameIndex + "/" + iEnd + " to player " + prefetchPlayerNr);
+		String nextSoundName = playingNames.substring(playingNameIndex, iEnd);
+		//#debug debug
+		mLogger.debug("Determined sound part: " + name + "/" + playingNames + "/" + playingNameIndex + "/" + iEnd + " to player " + prefetchPlayerNr);
 		playingNameIndex = iEnd + 1;
-		
-		String soundFile = null;
-		SoundDescription sDes = C.getSoundDescription(name);
-		if (sDes != null) {
-			soundFile = sDes.soundFile;
+		return nextSoundName;
+	}
+	
+	// prefetches next sound part
+	private synchronized boolean prefetchNextSound() {
+		String nextSoundName = determineNextSoundName();
+		if (nextSoundName == null) {
+			nextSoundFile = null;
+			return false;
 		}
-		if (sDes == null || soundFile == null) {
-			if (getToneSequence(name) != null) {
+		
+		SoundDescription sDes = C.getSoundDescription(nextSoundName);
+		if (sDes != null) {
+			nextSoundFile = sDes.soundFile;
+		}
+		if (sDes == null || nextSoundFile == null) {
+			if (getToneSequence(nextSoundName) != null) {
 				return false;
 			}
-			soundFile = name.toLowerCase() + ".amr";
+			nextSoundFile = nextSoundName.toLowerCase() + ".amr";
 		}
 		
+
+		// use next prefetch player
+		prefetchPlayerNr++;
+		if (prefetchPlayerNr > 2) {
+			prefetchPlayerNr = 0;
+		}
+		
+		if (deviceSupportsMixing) {
+			if (createResourcePlayer(nextSoundFile)) {
+				try {
+					player[prefetchPlayerNr].prefetch();
+				} catch (MediaException mpe) {
+					try {
+						player[prefetchPlayerNr].realize();					
+					} catch (MediaException mpe2) {
+						//#debug debug
+						mLogger.debug("realizing player failed");
+					}
+				}
+			}
+		}
+		return true;
+	}
+	
+	private boolean createResourcePlayer(String soundFile) {
+		// if next prefetch player is not free, free it
+		if (player[prefetchPlayerNr]!=null) {
+			player[prefetchPlayerNr].close();
+			player[prefetchPlayerNr]=null;
+		}	
 		try {
 			InputStream is = getClass().getResourceAsStream(soundFile);
 			if (is != null) {
 				String mediaType = null;
-				if (soundFile.toLowerCase().endsWith(".mp3") ) {
-					mediaType = "audio/mpeg";
+				if (soundFile.toLowerCase().endsWith(".amr") ) {
+					mediaType = "audio/amr";
 				} else if (soundFile.toLowerCase().endsWith(".wav") ) {
 					mediaType = "audio/x-wav";
-				} else if (soundFile.toLowerCase().endsWith(".amr") ) {
-					mediaType = "audio/amr";
+				} else if (soundFile.toLowerCase().endsWith(".mp3") ) {
+					mediaType = "audio/mpeg";
 				} else if (soundFile.toLowerCase().endsWith(".ogg") ) {
-                	mediaType = "audio/x-ogg";
+	            	mediaType = "audio/x-ogg";
 				}
 				player[prefetchPlayerNr] = Manager.createPlayer(is, mediaType);
-				player[prefetchPlayerNr].addPlayerListener( this );
-				// some devices like Nokia 3110 allow only a single player to be
-				// playing at a time. So when prefetch fails, fallback to realize.
-				try {
-					player[prefetchPlayerNr].prefetch();
-				} catch (MediaException mpe) {
-					player[prefetchPlayerNr].realize();					
+				if (player[prefetchPlayerNr]!=null) {
+					player[prefetchPlayerNr].realize();
+					player[prefetchPlayerNr].addPlayerListener( this );
+					VolumeControl volCtrl = (VolumeControl) player[prefetchPlayerNr].getControl("VolumeControl");
+					volCtrl.setLevel(100);
 				}
-				VolumeControl volCtrl = (VolumeControl) player[prefetchPlayerNr].getControl("VolumeControl");
-				volCtrl.setLevel(100);
-			} else {
-				return false;
 			}
 		} catch (Exception ex) {
-	    	mLogger.exception("Failed to play sound from resource", ex);
+	    	mLogger.exception("Failed to create resource player for " + soundFile, ex);
 			return false;
 		}
-//#endif
 		return true;
 	}
 	
-	
+		
 	private synchronized void playPrefetched() {
-//#if polish.api.mmapi			
+		if (!deviceSupportsMixing && nextSoundFile != null) {
+			createResourcePlayer(nextSoundFile);
+		}
+		Player pl = player[prefetchPlayerNr];
 		try {
-			//System.out.println("Playing Player " + prefetchPlayerNr);
-			if (player[prefetchPlayerNr] != null) {
-				player[prefetchPlayerNr].start();
+			//#debug debug
+			mLogger.debug("Playing Player " + prefetchPlayerNr);
+			if (pl != null) {
+				pl.start();
 			}
 		} catch (Exception ex) {
 	    	mLogger.exception("Failed to play prefetched sound", ex);
 		}
 		prefetchNextSound();
-//#endif
 	}
+//#endif
 }
