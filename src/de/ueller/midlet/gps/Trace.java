@@ -1560,7 +1560,9 @@ Runnable , GpsMidDisplayable{
 						if (iPassedRouteArrow != iNearest) {
 							iPassedRouteArrow = iNearest;
 							// if there's i.e. a 2nd left arrow in row "left" must be repeated
-							parent.mNoiseMaker.resetSoundRepeatTimes();
+							if (!atTarget) {
+								parent.mNoiseMaker.resetSoundRepeatTimes();
+							}
 						}
 						// after passing an arrow all instructions, i.e. saying "in xxx metres" are allowed again 
 						resetVoiceInstructions();
