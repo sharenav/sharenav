@@ -479,7 +479,7 @@ public class GpsMid extends MIDlet implements CommandListener{
 	
 	public void addToBackLightLevel(int diffBacklight) {
 		backLightLevel += diffBacklight;
-		if (backLightLevel > 100) {
+		if (backLightLevel > 100 || !config.getCfgBitState(config.CFGBIT_BACKLIGHT_NOKIA)) {
 			backLightLevel = 100;
 		}
 		if (backLightLevel < 25) {

@@ -676,6 +676,8 @@ Runnable , GpsMidDisplayable{
 				}
 				
 				if (backLightLevelDiff !=0  &&  System.currentTimeMillis() < (lastBackLightOnTime + 1000)) { 
+					// turn backlight always on when dimming
+					config.setCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON, true, false);
 					lastBackLightOnTime = System.currentTimeMillis();
 					parent.addToBackLightLevel(backLightLevelDiff);
 					parent.showBackLightLevel();
