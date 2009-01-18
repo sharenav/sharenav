@@ -45,6 +45,7 @@
 		depends="set_test_device"
 		>
 		<property name="test" value="true" />
+		<property name="logging" value="true" />
 		<property name="dir.work" value="build/test" />		
 	</target>
 	
@@ -52,8 +53,15 @@
 		description="Call this target first to set debugging"
 		>
 		<property name="debug" value="true" />
+		<property name="logging" value="true" />
 		<property name="dir.work" value="build/test" />
 	</target>
+	
+	<target name="logging" 
+			description="Call this target first to enable a logging build"
+			>
+			<property name="logging" value="true" />
+		</target>
 		
 <target name="init">
   	<property name="test" value="false" />
@@ -187,7 +195,7 @@
 			</resources>
 			
 			<!-- obfuscator settings: do not obfuscate when the test-property is true -->
-			<obfuscator name="ProGuard" useDefaultPackage="false" unless="test || polish.blackberry" >
+			<obfuscator name="ProGuard" useDefaultPackage="false" unless="logging || polish.blackberry" >
 				<!--
 				You can set additional parameters here, e.g.:
 				<parameter name="optimize" value="false" />
@@ -210,7 +218,8 @@
 			</obfuscator>
 			
 			<!-- debug settings: only include debug setting when the test-property is true -->
-			<debug if="test" showLogOnError="true" verbose="true" level="debug">
+			<debug if="logging" showLogOnError="true" verbose="true" level="debug">
+				
 				<!--filter pattern="de.ueller.gps.sirf.*" level="debug" / -->
 				<!--filter pattern="de.ueller.midlet.gps.Trace" level="debug" / -->
 				<!--<filter pattern="de.ueller.midlet.gps.tile.SearchNames" level="debug" />-->
