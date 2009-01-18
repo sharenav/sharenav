@@ -279,7 +279,7 @@ public class GuiOverviewElements extends Form implements CommandListener, ItemSt
         g.setColor(parent.pc.c.BACKGROUND_COLOR);
         g.fillRect(0, 0, 16, 16);
         g.setColor(w.lineColor);
-        if (w.wayWidth == 1 || !GpsMid.getInstance().getConfig().getCfgBitState(Configuration.CFGBIT_STREETRENDERMODE)) {
+        if (w.wayWidth == 1 || !Configuration.getCfgBitState(Configuration.CFGBIT_STREETRENDERMODE)) {
         	g.setStrokeStyle(w.lineStyle);
         	g.drawLine(0, 8, 15, 8);
         } else {

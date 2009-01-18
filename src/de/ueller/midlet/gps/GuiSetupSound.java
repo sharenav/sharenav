@@ -34,35 +34,33 @@ public class GuiSetupSound extends Form implements CommandListener {
 	
 	// other
 	private GuiDiscover parent;
-	private static Configuration config;
 	
 	public GuiSetupSound(GuiDiscover parent) {
 		super("Sounds & Alerts");
-		config=GpsMid.getInstance().getConfig();
 		this.parent = parent;
 		try {
-			// set choice texts and convert bits from config flag into selection states
-			sndGps[0] = "Connect"; 			selSndGps[0]=config.getCfgBitState(config.CFGBIT_SND_CONNECT);
-			sndGps[1] = "Disconnect";		selSndGps[1]=config.getCfgBitState(config.CFGBIT_SND_DISCONNECT);
+			// set choice texts and convert bits from Configuration flag into selection states
+			sndGps[0] = "Connect"; 			selSndGps[0]=Configuration.getCfgBitState(Configuration.CFGBIT_SND_CONNECT);
+			sndGps[1] = "Disconnect";		selSndGps[1]=Configuration.getCfgBitState(Configuration.CFGBIT_SND_DISCONNECT);
 			sndGpsGroup = new ChoiceGroup("GPS", Choice.MULTIPLE, sndGps ,null);
 			sndGpsGroup.setSelectedFlags(selSndGps);
 			append(sndGpsGroup);
 			
-			sndRouting[0] = "Routing Instructions"; 	selSndRouting[0]=config.getCfgBitState(config.CFGBIT_SND_ROUTINGINSTRUCTIONS);
-			sndRouting[1] = "Target Reached"; 			selSndRouting[1]=config.getCfgBitState(config.CFGBIT_SND_TARGETREACHED);
+			sndRouting[0] = "Routing Instructions"; 	selSndRouting[0]=Configuration.getCfgBitState(Configuration.CFGBIT_SND_ROUTINGINSTRUCTIONS);
+			sndRouting[1] = "Target Reached"; 			selSndRouting[1]=Configuration.getCfgBitState(Configuration.CFGBIT_SND_TARGETREACHED);
 			sndRoutingGroup = new ChoiceGroup("Navigation / Routing", Choice.MULTIPLE, sndRouting ,null);
 			sndRoutingGroup.setSelectedFlags(selSndRouting);
 			append(sndRoutingGroup);
 			
 			spdAlert[0] = "Audio Speeding Alert";
-			selSpdAlert[0]=config.getCfgBitState(config.CFGBIT_SPEEDALERT_SND);
+			selSpdAlert[0]=Configuration.getCfgBitState(Configuration.CFGBIT_SPEEDALERT_SND);
 			spdAlert[1] = "Visual Speeding Alert";
-			selSpdAlert[1]=config.getCfgBitState(config.CFGBIT_SPEEDALERT_VISUAL);
+			selSpdAlert[1]=Configuration.getCfgBitState(Configuration.CFGBIT_SPEEDALERT_VISUAL);
 			spdAlertGroup = new ChoiceGroup("Speeding Alert", Choice.MULTIPLE, spdAlert ,null);
 			spdAlertGroup.setSelectedFlags(selSpdAlert);
 			append(spdAlertGroup);
 
-			spdAlertTolerance=new TextField("Speed Alert Tolerance",Integer.toString(config.getSpeedTolerance()),3,TextField.DECIMAL);
+			spdAlertTolerance=new TextField("Speed Alert Tolerance",Integer.toString(Configuration.getSpeedTolerance()),3,TextField.DECIMAL);
 			append(spdAlertTolerance);
 
 			addCommand(CMD_SAVE);
@@ -86,21 +84,21 @@ public class GuiSetupSound extends Form implements CommandListener {
 		}
 
 		if (c == CMD_SAVE) {			
-			// convert boolean array with selection states for config bits
+			// convert boolean array with selection states for Configuration bits
 			// to one flag with corresponding bits set
 	        sndGpsGroup.getSelectedFlags(selSndGps);
-			config.setCfgBitState(config.CFGBIT_SND_CONNECT, selSndGps[0], true);
-			config.setCfgBitState(config.CFGBIT_SND_DISCONNECT, selSndGps[1], true);
+	        Configuration.setCfgBitState(Configuration.CFGBIT_SND_CONNECT, selSndGps[0], true);
+	        Configuration.setCfgBitState(Configuration.CFGBIT_SND_DISCONNECT, selSndGps[1], true);
 
 			sndRoutingGroup.getSelectedFlags(selSndRouting);
-			config.setCfgBitState(config.CFGBIT_SND_ROUTINGINSTRUCTIONS, selSndRouting[0], true);
-			config.setCfgBitState(config.CFGBIT_SND_TARGETREACHED, selSndRouting[1], true);
+			Configuration.setCfgBitState(Configuration.CFGBIT_SND_ROUTINGINSTRUCTIONS, selSndRouting[0], true);
+			Configuration.setCfgBitState(Configuration.CFGBIT_SND_TARGETREACHED, selSndRouting[1], true);
 
-		    config.setSpeedTolerance((int)Float.parseFloat(spdAlertTolerance.getString()));
+			Configuration.setSpeedTolerance((int)Float.parseFloat(spdAlertTolerance.getString()));
 
 			spdAlertGroup.getSelectedFlags(selSpdAlert);
-			config.setCfgBitState(config.CFGBIT_SPEEDALERT_SND, selSpdAlert[0], true);
-			config.setCfgBitState(config.CFGBIT_SPEEDALERT_VISUAL, selSpdAlert[1], true);
+			Configuration.setCfgBitState(Configuration.CFGBIT_SPEEDALERT_SND, selSpdAlert[0], true);
+			Configuration.setCfgBitState(Configuration.CFGBIT_SPEEDALERT_VISUAL, selSpdAlert[1], true);
 
 			parent.show();
 			return;

@@ -23,6 +23,7 @@ import org.xml.sax.SAXException;
 
 import uk.co.wilson.xml.MinML2;
 
+import de.ueller.gps.data.Configuration;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
 
@@ -72,8 +73,7 @@ public class MinML2GpxParser extends MinML2 implements GpxParser {
 			return false;
 		}
 		try {
-			parse(new InputStreamReader(in, Trace.getInstance().getConfig()
-					.getUtf8Encoding()));
+			parse(new InputStreamReader(in, Configuration.getUtf8Encoding()));
 			return true;
 		} catch (SAXException e) {
 			logger.exception("Error while parsing the XML file", e);

@@ -49,7 +49,7 @@ public class AudioRecorder  implements SelectionListener{
 				logger.error("Failed to get RecordControl");
 				return false;
 			}
-			basedirectory = GpsMid.getInstance().getConfig().getPhotoUrl();
+			basedirectory = Configuration.getPhotoUrl();
 			if (basedirectory == null) {
 				logger.error("Don't know where to save the recording, please specify a directory and try again");
 				//#if polish.api.fileConnection				
@@ -115,7 +115,7 @@ public class AudioRecorder  implements SelectionListener{
 
 	public void selectedFile(String url) {
 		logger.info("Setting picture directory to " + url);
-		GpsMid.getInstance().getConfig().setPhotoUrl(url);
+		Configuration.setPhotoUrl(url);
 		basedirectory = url;
 	}
 

@@ -78,11 +78,9 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 	private ChoiceGroup selectExifCG;
 	private TextField   encodingTF;
 	private ChoiceGroup encodingCG;
-	private Configuration config;
 
-	public void init(Trace parent, Configuration config) {
+	public void init(Trace parent) {
 		this.parent = parent;
-		this.config = config;
 		addCommand(BACK_CMD);
 		addCommand(CAPTURE_CMD);
 		//addCommand(STORE_CMD);
@@ -99,7 +97,7 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 	private void setUpCamera() {
 		//#if polish.api.mmapi 		
 		try {
-			basedirectory = GpsMid.getInstance().getConfig().getPhotoUrl();
+			basedirectory = Configuration.getPhotoUrl();
 			//#debug debug
 			logger.debug("Storing photos at " + basedirectory);
 			try {
@@ -205,8 +203,8 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 		
 		try {
 			int idx = 0; 
-			byte [] photo = video.getSnapshot(config.getPhotoEncoding());
-			if (Trace.getInstance().getConfig().getCfgBitState(Configuration.CFGBIT_ADD_EXIF)) {
+			byte [] photo = video.getSnapshot(Configuration.getPhotoEncoding());
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_ADD_EXIF)) {
 				photo = addExifEncoding(photo);
 			}
 			//#debug debug
@@ -284,7 +282,7 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 			snapshot.start(SnapshotControl.FREEZE);
 			
 			//#if polish.api.pdaapi
-			if (Trace.getInstance().getConfig().getCfgBitState(Configuration.CFGBIT_ADD_EXIF)) {
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_ADD_EXIF)) {
 				try {
 					Thread.sleep(3000);
 					FileConnection fcDir = (FileConnection)Connector.open(basedirectory);
@@ -328,7 +326,7 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 	
 	private void takePicture() {
 		try {
-			if (config.getCfgBitState(Configuration.CFGBIT_USE_JSR_234)) {
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_USE_JSR_234)) {
 				takePicture234();
 			} else {
 				takePicture135();
@@ -412,7 +410,7 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 			 */
 			String [] selectJsr = {"JSR-135", "JSR-234"};
 			selectJsrCG = new ChoiceGroup("Pictures via...", Choice.EXCLUSIVE, selectJsr ,null);
-			if (config.getCfgBitState(Configuration.CFGBIT_USE_JSR_234)) {
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_USE_JSR_234)) {
 				selectJsrCG.setSelectedIndex(1, true);
 			} else {
 				selectJsrCG.setSelectedIndex(0, true);
@@ -424,13 +422,13 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 			String [] selectExif = {"Add exif"};
 			selectExifCG = new ChoiceGroup("Geocoding", Choice.MULTIPLE,selectExif,null);
 			boolean [] selExif = new boolean[1];
-			selExif[0] = Trace.getInstance().getConfig().getCfgBitState(Configuration.CFGBIT_ADD_EXIF);
+			selExif[0] = Configuration.getCfgBitState(Configuration.CFGBIT_ADD_EXIF);
 			selectExifCG.setSelectedFlags(selExif);
 			
 			/**
 			 * Setup Encoding
 			 */
-			encodingTF = new TextField("Encoding string: ", config.getPhotoEncoding() , 100 ,TextField.ANY);
+			encodingTF = new TextField("Encoding string: ", Configuration.getPhotoEncoding() , 100 ,TextField.ANY);
 			String encodings = null;
 			try {
 				 encodings = System.getProperty("video.snapshot.encodings");
@@ -439,7 +437,7 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 				logger.info("Device does not support the encoding property");
 			}
 			String [] encStrings = new String[0];
-			String setEnc = config.getPhotoEncoding();
+			String setEnc = Configuration.getPhotoEncoding();
 			if (setEnc == null) setEnc = "";
 			int encodingSel = -1;
 			if (encodings != null) {
@@ -485,23 +483,23 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 		 */
 		if (c == OK_CMD) {
 			if (selectJsrCG.getSelectedIndex() == 1) {
-				Trace.getInstance().getConfig().setCfgBitState(Configuration.CFGBIT_USE_JSR_234, true, true);
+				Configuration.setCfgBitState(Configuration.CFGBIT_USE_JSR_234, true, true);
 			} else {
-				Trace.getInstance().getConfig().setCfgBitState(Configuration.CFGBIT_USE_JSR_234, false, true);
+				Configuration.setCfgBitState(Configuration.CFGBIT_USE_JSR_234, false, true);
 			}
 			
 			boolean [] selExif = new boolean[1];
 			selectExifCG.getSelectedFlags(selExif);
 			if (selExif[0]) {
-				Trace.getInstance().getConfig().setCfgBitState(Configuration.CFGBIT_ADD_EXIF, true, true);
+				Configuration.setCfgBitState(Configuration.CFGBIT_ADD_EXIF, true, true);
 			} else {
-				Trace.getInstance().getConfig().setCfgBitState(Configuration.CFGBIT_ADD_EXIF, false, true);
+				Configuration.setCfgBitState(Configuration.CFGBIT_ADD_EXIF, false, true);
 			}
 			
 			String encType = encodingCG.getString(encodingCG.getSelectedIndex());
 			if (encType.equals("Custom"))
 				encType = encodingTF.getString();
-			config.setPhotoEncoding(encType);
+			Configuration.setPhotoEncoding(encType);
 			
 			this.show();
 		}
@@ -611,7 +609,7 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 
 	public void selectedFile(String url) {
 		logger.info("Setting picture directory to " + url);
-		GpsMid.getInstance().getConfig().setPhotoUrl(url);
+		Configuration.setPhotoUrl(url);
 		basedirectory = url;
 		
 	}

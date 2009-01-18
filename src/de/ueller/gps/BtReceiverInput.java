@@ -63,7 +63,7 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer{
 		 * something for some reason. Perhaps due to poor powermanagment?
 		 * We don't have anything to send, so send an arbitrary 0.
 		 */
-		if (Trace.getInstance().getConfig().getBtKeepAlive()) {
+		if (Configuration.getBtKeepAlive()) {
 			TimerTask tt = new KeepAliveTimer();
 			logger.info("Setting keep alive timer: " + tt);
 			Timer t = new Timer();

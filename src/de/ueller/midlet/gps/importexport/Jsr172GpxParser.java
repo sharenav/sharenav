@@ -86,7 +86,7 @@ public class Jsr172GpxParser extends DefaultHandler implements GpxParser {
 		} catch (IOException e) {
 			logger.exception("A Problem reading the XML file occured", e);
 		} catch (ParserConfigurationException e) {
-			logger.exception("Your parser was missconfigured", e);
+			logger.exception("Your parser was misconfigured", e);
 		}
 		return false;
 

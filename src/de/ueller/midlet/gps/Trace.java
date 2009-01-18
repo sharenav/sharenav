@@ -229,7 +229,6 @@ Runnable , GpsMidDisplayable{
 
 	private PositionMark target;
 	private Vector route=null;
-	private final Configuration config;
 
 	private boolean running=false;
 	private static final int CENTERPOS = Graphics.HCENTER|Graphics.VCENTER;
@@ -276,10 +275,9 @@ Runnable , GpsMidDisplayable{
 	
 	public Vector locationUpdateListeners;
 	
-	public Trace(GpsMid parent, Configuration config) throws Exception {
+	public Trace(GpsMid parent) throws Exception {
 		//#debug
 		logger.info("init Trace");
-		this.config = config;
 		
 		this.parent = parent;
 		
@@ -344,7 +342,7 @@ Runnable , GpsMidDisplayable{
 		//#endif
 		setCommandListener(this);
 		
-		config.loadKeyShortcuts(gameKeyCommand, singleKeyPressCommand, 
+		Configuration.loadKeyShortcuts(gameKeyCommand, singleKeyPressCommand, 
 				repeatableKeyPressCommand, doubleKeyPressCommand, longKeyPressCommand, 
 				nonReleasableKeyPressCommand, CMDS);
 		
@@ -387,33 +385,33 @@ Runnable , GpsMidDisplayable{
 				receiveMessage("Location provider already running");
 				return;
 			}
-			if (config.getLocationProvider() == Configuration.LOCATIONPROVIDER_NONE){
+			if (Configuration.getLocationProvider() == Configuration.LOCATIONPROVIDER_NONE){
 				receiveMessage("No location provider");
 				return;
 			}
 			running=true;
-			receiveMessage("Connect to "+Configuration.LOCATIONPROVIDER[config.getLocationProvider()]);
-			//		System.out.println(config.getBtUrl());
-			//		System.out.println(config.getRender());
-			switch (config.getLocationProvider()){
+			receiveMessage("Connect to "+Configuration.LOCATIONPROVIDER[Configuration.getLocationProvider()]);
+			//		System.out.println(Configuration.getBtUrl());
+			//		System.out.println(Configuration.getRender());
+			switch (Configuration.getLocationProvider()){
 				case Configuration.LOCATIONPROVIDER_SIRF:
 				case Configuration.LOCATIONPROVIDER_NMEA:
 					//#debug debug
-					logger.debug("Connect to "+config.getBtUrl());
-					if (! openBtConnection(config.getBtUrl())){
+					logger.debug("Connect to "+Configuration.getBtUrl());
+					if (! openBtConnection(Configuration.getBtUrl())){
 						running=false;
 						return;
 					}
 					receiveMessage("BT Connected");
 			}
-			if (config.getCfgBitState(Configuration.CFGBIT_SND_CONNECT)) {
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_SND_CONNECT)) {
 				parent.mNoiseMaker.playSound("CONNECT");
 			}
 			//#debug debug
 			logger.debug("rm connect, add disconnect");
 			removeCommand(CMDS[CONNECT_GPS_CMD]);
 			addCommand(CMDS[DISCONNECT_GPS_CMD]);
-			switch (config.getLocationProvider()){
+			switch (Configuration.getLocationProvider()){
 				case Configuration.LOCATIONPROVIDER_SIRF:
 					locationProducer = new SirfInput();
 					break;
@@ -462,9 +460,9 @@ Runnable , GpsMidDisplayable{
 			 * Allow for logging the raw data coming from the gps
 			 */
 
-			String url = config.getGpsRawLoggerUrl();
+			String url = Configuration.getGpsRawLoggerUrl();
 			//logger.error("Raw logging url: " + url);
-			if (config.getGpsRawLoggerEnable() && (url != null)) {
+			if (Configuration.getGpsRawLoggerEnable() && (url != null)) {
 				try {
 					logger.info("Raw Location logging to: " + url);
 					url += "rawGpsLog" + HelperRoutines.formatSimpleDateNow() + ".txt";
@@ -493,7 +491,7 @@ Runnable , GpsMidDisplayable{
 			locationProducer.init(btGpsInputStream, btGpsOutputStream, this);
 			//#debug info
 			logger.info("end startLocationPovider thread");
-			//		setTitle("lp="+config.getLocationProvider() + " " + config.getBtUrl());			
+			//		setTitle("lp="+Configuration.getLocationProvider() + " " + Configuration.getBtUrl());			
 		} catch (SecurityException se) {
 			/**
 			 * The application was not permitted to connect to the required resources
@@ -554,7 +552,7 @@ Runnable , GpsMidDisplayable{
 			 * something for some reason. Perhaps due to poor powermanagment?
 			 * We don't have anything to send, so send an arbitrary 0.
 			 */
-			if (getConfig().getBtKeepAlive()) {
+			if (Configuration.getBtKeepAlive()) {
 				btGpsOutputStream = conn.openOutputStream();								
 			}
 			
@@ -607,11 +605,11 @@ Runnable , GpsMidDisplayable{
 	 * @return whether the reconnect was successful
 	 */
 	public boolean autoReconnectBtConnection() {
-		if (!getConfig().getBtAutoRecon()) {
+		if (!Configuration.getBtAutoRecon()) {
 			logger.info("Not trying to reconnect");
 			return false;
 		}
-		if (config.getCfgBitState(Configuration.CFGBIT_SND_DISCONNECT)) {
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_SND_DISCONNECT)) {
 			parent.mNoiseMaker.playSound("DISCONNECT");			
 		}
 		/**
@@ -620,7 +618,7 @@ Runnable , GpsMidDisplayable{
 		 */
 		closeBtConnection();
 		int reconnectFailures = 0;
-		while ((reconnectFailures < 4) && (! openBtConnection(config.getBtUrl()))){
+		while ((reconnectFailures < 4) && (! openBtConnection(Configuration.getBtUrl()))){
 			reconnectFailures++;
 			try {
 				Thread.sleep(10000);
@@ -630,7 +628,7 @@ Runnable , GpsMidDisplayable{
 		}
 		if (reconnectFailures < 4) {
 			if (locationProducer != null) {
-				if (config.getCfgBitState(Configuration.CFGBIT_SND_CONNECT)) {
+				if (Configuration.getCfgBitState(Configuration.CFGBIT_SND_CONNECT)) {
 					parent.mNoiseMaker.playSound("CONNECT");
 				}
 				locationProducer.init(btGpsInputStream, btGpsOutputStream, this);
@@ -682,7 +680,7 @@ Runnable , GpsMidDisplayable{
 				
 				if (backLightLevelDiff !=0  &&  System.currentTimeMillis() < (lastBackLightOnTime + 1000)) { 
 					// turn backlight always on when dimming
-					config.setCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON, true, false);
+					Configuration.setCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON, true, false);
 					lastBackLightOnTime = System.currentTimeMillis();
 					parent.addToBackLightLevel(backLightLevelDiff);
 					parent.showBackLightLevel();
@@ -757,7 +755,7 @@ Runnable , GpsMidDisplayable{
 				}
 			}
 			if (c == CMDS[ROUTE_TO_CMD]){
-				if (config.isStopAllWhileRouteing()){
+				if (Configuration.isStopAllWhileRouteing()){
   				   stopImageCollector();
 				}
 				logger.info("Routing source: " + source);
@@ -817,14 +815,14 @@ Runnable , GpsMidDisplayable{
 				} else {
 					elements[4] = "Start audio recording";					
 					//#if polish.api.wmapi
-					if (config.hasDeviceJSR120()) {
+					if (Configuration.hasDeviceJSR120()) {
 						elements[5] = "Send SMS (map pos)";									
 					}
 					//#endif
 				}				
 				//#else
 					//#if polish.api.wmapi
-					if (config.hasDeviceJSR120()) {
+					if (Configuration.hasDeviceJSR120()) {
 						elements[3] = "Send SMS (map pos)";									
 					}
 					//#endif
@@ -921,7 +919,7 @@ Runnable , GpsMidDisplayable{
 					Class GuiCameraClass = Class.forName("de.ueller.midlet.gps.GuiCamera");
 					Object GuiCameraObject = GuiCameraClass.newInstance();					
 					GuiCameraInterface cam = (GuiCameraInterface)GuiCameraObject;
-					cam.init(this, getConfig());
+					cam.init(this);
 					cam.show();
 				} catch (ClassNotFoundException cnfe) {
 					logger.exception("Your phone does not support the necessary JSRs to use the camera", cnfe);
@@ -950,14 +948,14 @@ Runnable , GpsMidDisplayable{
 				showAddons++;
 			} else if (c == CMDS[TOGGLE_BACKLIGHT_CMD]) {
 //				 toggle Backlight
-				config.setCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON,
-									!(config.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON)),
+				Configuration.setCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON,
+									!(Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON)),
 									false);
 				lastBackLightOnTime = System.currentTimeMillis(); 
 				parent.showBackLightLevel();
 			} else if (c == CMDS[TOGGLE_FULLSCREEN_CMD]) {
-				boolean fullScreen = !config.getCfgBitState(Configuration.CFGBIT_FULLSCREEN);
-				config.setCfgBitState(Configuration.CFGBIT_FULLSCREEN, fullScreen, false);
+				boolean fullScreen = !Configuration.getCfgBitState(Configuration.CFGBIT_FULLSCREEN);
+				Configuration.setCfgBitState(Configuration.CFGBIT_FULLSCREEN, fullScreen, false);
 				setFullScreenMode(fullScreen);
 			} else if (c == CMDS[TOGGLE_MAP_PROJ_CMD]) {
 				if (ProjFactory.getProj() == ProjFactory.NORTH_UP ) {
@@ -1165,7 +1163,7 @@ Runnable , GpsMidDisplayable{
 			default:
 				showAddons = 0;
 				if (ProjFactory.getProj() == ProjFactory.MOVE_UP
-					&& config.getCfgBitState(Configuration.CFGBIT_SHOW_POINT_OF_COMPASS)
+					&& Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_POINT_OF_COMPASS)
 				) {
 					showPointOfTheCompass(pc);
 				}
@@ -1199,7 +1197,7 @@ Runnable , GpsMidDisplayable{
 				showTarget(pc);
 			}
 
-			if (speeding && config.getCfgBitState(Configuration.CFGBIT_SPEEDALERT_VISUAL)) {
+			if (speeding && Configuration.getCfgBitState(Configuration.CFGBIT_SPEEDALERT_VISUAL)) {
 			    parent.mNoiseMaker.playSound("SPEED_LIMIT", (byte) 10, (byte) 10);
 			}
 
@@ -1346,7 +1344,7 @@ Runnable , GpsMidDisplayable{
 		if (compassRectHeight == 0) {
 			compassRectHeight = pc.g.getFont().getHeight()-2;
 		}
-		String c = config.getCompassDirection(course);
+		String c = Configuration.getCompassDirection(course);
 		int compassRectWidth = pc.g.getFont().stringWidth(c);
 		pc.g.setColor(255, 255, 150); 
 		pc.g.fillRect(getWidth()/2 - compassRectWidth / 2 , 0,
@@ -1428,7 +1426,7 @@ Runnable , GpsMidDisplayable{
 			float distance = ProjMath.getDistance(target.lat, target.lon, center.radlat, center.radlon);
 			atTarget = (distance < 25);
 			if (atTarget) {
-				if (movedAwayFromTarget && config.getCfgBitState(Configuration.CFGBIT_SND_TARGETREACHED)) {
+				if (movedAwayFromTarget && Configuration.getCfgBitState(Configuration.CFGBIT_SND_TARGETREACHED)) {
 					parent.mNoiseMaker.playSound("TARGET_REACHED", (byte) 7, (byte) 1);
 				}
 			} else if (!movedAwayFromTarget) {
@@ -1545,7 +1543,7 @@ Runnable , GpsMidDisplayable{
 	
 				// find nearest routing arrow (to center of screen)
 				int iNearest=0;
-				if (config.getCfgBitState(Configuration.CFGBIT_ROUTING_HELP)) {
+				if (Configuration.getCfgBitState(Configuration.CFGBIT_ROUTING_HELP)) {
 					c = (ConnectionWithNode) route.elementAt(0);
 					lastTo=c.to;
 					float minimumDistance=99999;
@@ -1836,13 +1834,13 @@ Runnable , GpsMidDisplayable{
 				long recalculationTime=System.currentTimeMillis();
 				if ( source != null
 					 && gpsRecenter
-					 && config.getCfgBitState(Configuration.CFGBIT_ROUTE_AUTO_RECALC)
+					 && Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_AUTO_RECALC)
 					// do not recalculate route more often than every 7 seconds
 					 && Math.abs(recalculationTime-oldRecalculationTime) >= 7000
 				) {
 					// if map is gps-centered recalculate route
 					soundToPlay.setLength(0);
-					if (config.getCfgBitState(Configuration.CFGBIT_SND_ROUTINGINSTRUCTIONS)) {
+					if (Configuration.getCfgBitState(Configuration.CFGBIT_SND_ROUTINGINSTRUCTIONS)) {
 						parent.mNoiseMaker.playSound("ROUTE_RECALCULATION", (byte) 5, (byte) 1 );
 					}
 					commandAction(CMDS[ROUTE_TO_CMD],(Displayable) null);
@@ -1885,7 +1883,7 @@ Runnable , GpsMidDisplayable{
 			pc.g.setFont(originalFont);
 		}
 		// Route instruction sound output
-		if (soundToPlay.length()!=0 && config.getCfgBitState(Configuration.CFGBIT_SND_ROUTINGINSTRUCTIONS)) {
+		if (soundToPlay.length()!=0 && Configuration.getCfgBitState(Configuration.CFGBIT_SND_ROUTINGINSTRUCTIONS)) {
 			parent.mNoiseMaker.playSound(soundToPlay.toString(), (byte) soundRepeatDelay, (byte) soundMaxTimesToPlay);
 		}
 	}
@@ -2169,8 +2167,8 @@ Runnable , GpsMidDisplayable{
 //			setTitle("dict " + zl + "ready");
 //		}
 		if (zl == 0) {
-			// read saved position from config
-			config.getStartupPos(center);
+			// read saved position from Configuration
+			Configuration.getStartupPos(center);
 			if(center.radlat==0.0f && center.radlon==0.0f) {
 				// if no saved position use center of map
 				dict.getCenter(center);
@@ -2195,7 +2193,7 @@ Runnable , GpsMidDisplayable{
 	public synchronized void locationDecoderEnd() {
 //#debug info
 		logger.info("enter locationDecoderEnd");
-		if (config.getCfgBitState(Configuration.CFGBIT_SND_DISCONNECT)) {
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_SND_DISCONNECT)) {
 			parent.mNoiseMaker.playSound("DISCONNECT");			
 		}
 		if (gpx != null) {
@@ -2247,12 +2245,8 @@ Runnable , GpsMidDisplayable{
 	public void show() {
 		//Display.getDisplay(parent).setCurrent(this);
 		GpsMid.getInstance().show(this);
-		setFullScreenMode(config.getCfgBitState(Configuration.CFGBIT_FULLSCREEN));
+		setFullScreenMode(Configuration.getCfgBitState(Configuration.CFGBIT_FULLSCREEN));
 		repaint();
-	}
-
-	public Configuration getConfig() {
-		return config;
 	}
 
 	public void locationDecoderEnd(String msg) {
@@ -2296,7 +2290,7 @@ Runnable , GpsMidDisplayable{
 			parent.mNoiseMaker.resetSoundRepeatTimes();
 		}
 		try {
-			if ((config.isStopAllWhileRouteing())&&(imageCollector == null)){
+			if ((Configuration.isStopAllWhileRouteing())&&(imageCollector == null)){
 				startImageCollector();
 				// imageCollector thread starts up suspended,
 				// so we need to resume it

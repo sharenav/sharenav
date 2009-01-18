@@ -6,6 +6,7 @@ package de.ueller.midlet.gps;
 
 import javax.microedition.lcdui.*;
 
+import de.ueller.gps.data.Configuration;
 import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.data.Proj2DMoveUp;
 
@@ -35,7 +36,7 @@ public class GuiWaypointSave extends Form implements CommandListener {
 	}
 
 	private void jbInit() throws Exception {
-		fldName = new TextField("Name:", "", parent.getConfig().MAX_WAYPOINTNAME_LENGTH, TextField.ANY);
+		fldName = new TextField("Name:", "", Configuration.MAX_WAYPOINTNAME_LENGTH, TextField.ANY);
 		// Set up this Displayable to listen to command events
 		setCommandListener(this);
 		// add the commands

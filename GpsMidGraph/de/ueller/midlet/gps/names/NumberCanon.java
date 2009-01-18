@@ -35,7 +35,7 @@ public class NumberCanon {
 				charMapCore[i] = defaultChar;
 			}
 			InputStream is = o.getClass().getResourceAsStream("/charMap.txt");
-			InputStreamReader isr = new InputStreamReader(is,Trace.getInstance().getConfig().getUtf8Encoding());
+			InputStreamReader isr = new InputStreamReader(is,Configuration.getUtf8Encoding());
 			char [] buf = new char[1024];
 			int readChars = isr.read(buf);
 			int idx = 0;

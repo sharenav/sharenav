@@ -155,7 +155,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private final static Logger logger=Logger.getInstance(GuiDiscover.class,Logger.DEBUG);
 	
 	public GuiDiscover(GpsMid parent) {
-		Configuration config=GpsMid.getInstance().getConfig();
 		this.parent = parent;
 		
 		state = STATE_ROOT;
@@ -181,12 +180,12 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		gpsUrl.setItemCommandListener(this);
 		locProv=new ChoiceGroup("input from:",Choice.EXCLUSIVE,Configuration.LOCATIONPROVIDER,new Image[Configuration.LOCATIONPROVIDER.length]);
 		String [] loggings = new String[1];      
-        loggings[0] = GpsMid.getInstance().getConfig().getGpsRawLoggerUrl(); 
+        loggings[0] = Configuration.getGpsRawLoggerUrl(); 
         if (loggings[0] == null) { 
             loggings[0] = "Please select to destination first"; 
         } 
         boolean [] selraw = new boolean[1]; 
-        selraw[0] = GpsMid.getInstance().getConfig().getGpsRawLoggerEnable(); 
+        selraw[0] = Configuration.getGpsRawLoggerEnable(); 
 
 		rawLog = new ChoiceGroup("Raw gps logging to:", ChoiceGroup.MULTIPLE);
 		
@@ -316,9 +315,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		menuDebug.addCommand(FILE_MAP);
 		menuDebug.setCommandListener(this);
 		boolean [] selDebug = new boolean[1];
-		selDebug[0] = GpsMid.getInstance().getConfig().getDebugRawLoggerEnable();
+		selDebug[0] = Configuration.getDebugRawLoggerEnable();
 		loggings = new String[1];
-		loggings[0] = GpsMid.getInstance().getConfig().getDebugRawLoggerUrl();
+		loggings[0] = Configuration.getDebugRawLoggerUrl();
 		if (loggings[0] == null) {
 			loggings[0] = "Please select directory";
 		}
@@ -328,9 +327,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		
 		loggings = new String[3];
 		selDebug = new boolean[3];
-		selDebug[0] = GpsMid.getInstance().getConfig().getDebugSeverityInfo();
-		selDebug[1] = GpsMid.getInstance().getConfig().getDebugSeverityDebug();
-		selDebug[2] = GpsMid.getInstance().getConfig().getDebugSeverityTrace();
+		selDebug[0] = Configuration.getDebugSeverityInfo();
+		selDebug[1] = Configuration.getDebugSeverityDebug();
+		selDebug[2] = Configuration.getDebugSeverityTrace();
 		loggings[0] = "Info"; loggings[1] = "Debug"; loggings[2] = "Trace"; 
 		debugSeverity = new ChoiceGroup("Log severity:", ChoiceGroup.MULTIPLE,loggings,null);
 		debugSeverity.setSelectedFlags(selDebug);
@@ -339,7 +338,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		loggings = new String[1];
 		loggings[0] = "Show route connections";
 		debugOther = new ChoiceGroup("Other:", ChoiceGroup.MULTIPLE,loggings,null);
-		debugOther.setSelectedIndex(0, config.getCfgBitState(Configuration.CFGBIT_ROUTE_CONNECTIONS, true));
+		debugOther.setSelectedIndex(0, Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_CONNECTIONS, true));
 		menuDebug.append(debugOther);
 		
 		// Prepare routingOptions menu
@@ -351,14 +350,14 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		routingBack[0] = "No";
 		routingBack[1] = "Yes";
 		stopAllWhileRouting = new ChoiceGroup("Continue Map while calculation:", Choice.EXCLUSIVE, routingBack ,null);
-		stopAllWhileRouting.setSelectedIndex(config.isStopAllWhileRouteing()?0:1,true);
+		stopAllWhileRouting.setSelectedIndex(Configuration.isStopAllWhileRouteing()?0:1,true);
 		menuRoutingOptions.append(stopAllWhileRouting);
-		gaugeRoutingEsatimationFac=new Gauge("Speed of route calculation", true, 10, config.getRouteEstimationFac());
+		gaugeRoutingEsatimationFac=new Gauge("Speed of route calculation", true, 10, Configuration.getRouteEstimationFac());
 		menuRoutingOptions.append(gaugeRoutingEsatimationFac);
 
 		String [] routingOpts = new String[1];
 		boolean[] selRouting = new boolean[1];
-		routingOpts[0] = "Auto Recalculation"; selRouting[0]=config.getCfgBitState(config.CFGBIT_ROUTE_AUTO_RECALC);
+		routingOpts[0] = "Auto Recalculation"; selRouting[0]=Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_AUTO_RECALC);
 		routingOptsGroup = new ChoiceGroup("Other", Choice.MULTIPLE, routingOpts ,null);
 		routingOptsGroup.setSelectedFlags(selRouting);
 		menuRoutingOptions.append(routingOptsGroup);
@@ -372,7 +371,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	}
 	
 	public void commandAction(Command c, Displayable d) {
-		Configuration config=GpsMid.getInstance().getConfig();
 
 		if (c == EXIT_CMD) {
 			destroy();
@@ -413,7 +411,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 					break;
 				case STATE_DEBUG:
 					title="Log Directory";
-					initialDir=GpsMid.getInstance().getConfig().getDebugRawLoggerUrl();
+					initialDir=Configuration.getDebugRawLoggerUrl();
 					break;
 			}
 			// no valid url, i.e. "Please select to destination first" ? 
@@ -452,74 +450,74 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 			case STATE_ROOT:
 				switch (menu.getSelectedIndex()) {
 				case MENU_ITEM_LOCATION: // Location Receiver
-					gpsUrlStr=config.getBtUrl();
+					gpsUrlStr=Configuration.getBtUrl();
 					gpsUrl.setText(gpsUrlStr==null?"<Discover>":"<Discovered>");
-					int selIdx = config.getLocationProvider();
+					int selIdx = Configuration.getLocationProvider();
 					locProv.setSelectedIndex(selIdx, true);
 					
-					String logUrl=config.getGpsRawLoggerUrl();		
+					String logUrl=Configuration.getGpsRawLoggerUrl();		
 					if ( logUrl == null) {
 						logUrl= "Please select to destination first";
 					}
 					boolean [] selraw = new boolean[1];
-					selraw[0] = config.getGpsRawLoggerEnable();
+					selraw[0] = Configuration.getGpsRawLoggerEnable();
 					rawLog.deleteAll();
 					rawLog.append(logUrl, null);
 					rawLog.setSelectedFlags(selraw);
-					selraw[0] = config.getBtKeepAlive();
+					selraw[0] = Configuration.getBtKeepAlive();
 					btKeepAlive.setSelectedFlags(selraw);
-					selraw[0] = config.getBtAutoRecon();
+					selraw[0] = Configuration.getBtAutoRecon();
 					btAutoRecon.setSelectedFlags(selraw);
 					Display.getDisplay(parent).setCurrentItem(gpsUrl);
 					//Display.getDisplay(parent).setCurrent(menuSelectLocProv);
 					state = STATE_LP;
 					break;
 				case MENU_ITEM_GPX_FILTER: // Recording Rules
-					choiceGpxRecordRuleMode.setSelectedIndex(config.getGpxRecordRuleMode(), true);
+					choiceGpxRecordRuleMode.setSelectedIndex(Configuration.getGpxRecordRuleMode(), true);
 					/*
 					 * minimum seconds between trackpoints
 					 */
 					tfGpxRecordMinimumSecs.setString(
-						getCleanFloatString( (float)(config.getGpxRecordMinMilliseconds())/1000,3 )
+						getCleanFloatString( (float)(Configuration.getGpxRecordMinMilliseconds())/1000,3 )
 					);				
 
 					/*
 					 * minimum meters between trackpoints
 					 */
 					tfGpxRecordMinimumDistanceMeters.setString(				
-						getCleanFloatString( (float)(config.getGpxRecordMinDistanceCentimeters())/100,3 )
+						getCleanFloatString( (float)(Configuration.getGpxRecordMinDistanceCentimeters())/100,3 )
 					);				
 
 					/*
 					 * meters between trackpoints that will always create a new trackpoint
 					 */
 					tfGpxRecordAlwaysDistanceMeters.setString( 
-						getCleanFloatString( (float)(config.getGpxRecordAlwaysDistanceCentimeters())/100,3 )
+						getCleanFloatString( (float)(Configuration.getGpxRecordAlwaysDistanceCentimeters())/100,3 )
 					);				
 
 					GpsMid.getInstance().show(menuRecordingOptions);
 					state = STATE_RECORDING_OPTIONS;
 					break;
 				case MENU_ITEM_DISP_OPT: // Display Options
-					rotationGroup.setSelectedIndex(config.getProjDefault(), true);
-					renderOpts.setSelectedIndex( config.getCfgBitState(Configuration.CFGBIT_STREETRENDERMODE)?1:0, true);
-					sizeOpts.setSelectedIndex(0, config.getCfgBitState(Configuration.CFGBIT_POI_LABELS_LARGER));
-					sizeOpts.setSelectedIndex(1, config.getCfgBitState(Configuration.CFGBIT_WPT_LABELS_LARGER));
+					rotationGroup.setSelectedIndex(Configuration.getProjDefault(), true);
+					renderOpts.setSelectedIndex( Configuration.getCfgBitState(Configuration.CFGBIT_STREETRENDERMODE)?1:0, true);
+					sizeOpts.setSelectedIndex(0, Configuration.getCfgBitState(Configuration.CFGBIT_POI_LABELS_LARGER));
+					sizeOpts.setSelectedIndex(1, Configuration.getCfgBitState(Configuration.CFGBIT_WPT_LABELS_LARGER));
 					SingleTile.newPOIFont();
 					GpxTile.newWptFont();
-					gaugeDetailBoost.setValue(config.getDetailBoostDefault());
+					gaugeDetailBoost.setValue(Configuration.getDetailBoostDefault());
 					// convert bits from backlight flag into selection states
 					boolean[] sellight = new boolean[6];
-					sellight[0]=config.getCfgBitState(config.CFGBIT_BACKLIGHT_ON, true);
-					sellight[1]=config.getCfgBitState(config.CFGBIT_BACKLIGHT_MAPONLY, true);
-					sellight[2]=config.getCfgBitState(config.CFGBIT_BACKLIGHT_MIDP2, true);
+					sellight[0]=Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON, true);
+					sellight[1]=Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_MAPONLY, true);
+					sellight[2]=Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_MIDP2, true);
 					byte i = 3;
 					//#if polish.api.nokia-ui
-						sellight[i++]=config.getCfgBitState(config.CFGBIT_BACKLIGHT_NOKIA, true);
-						sellight[i++]=config.getCfgBitState(config.CFGBIT_BACKLIGHT_NOKIAFLASH, true);
+						sellight[i++]=Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIA, true);
+						sellight[i++]=Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIAFLASH, true);
 					//#endif	
 					//#if polish.api.min-siemapi
-						sellight[i++]=config.getCfgBitState(config.CFGBIT_BACKLIGHT_SIEMENS, true);
+						sellight[i++]=Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_SIEMENS, true);
 					//#endif
 
 					backlightOpts.setSelectedFlags(sellight);
@@ -528,13 +526,13 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 					state = STATE_DISPOPT;
 					break;
 				case MENU_ITEM_GPX_DEVICE: // GPX Receiver
-					gpxUrl.setText(config.getGpxUrl()==null?"<Please select in menu>":config.getGpxUrl());				
+					gpxUrl.setText(Configuration.getGpxUrl()==null?"<Please select in menu>":Configuration.getGpxUrl());				
 					GpsMid.getInstance().show(menuGpx);
 					state = STATE_GPX;
 					break;
 				case MENU_ITEM_MAP_SRC: // Map Source 
-					mapSrc.setSelectedIndex(config.usingBuiltinMap()?0:1, true); 
-					mapSrc.set(1, "Filesystem: " + ( (config.getMapUrl()==null)?"<Please select map directory first>":config.getMapUrl() ), null);
+					mapSrc.setSelectedIndex(Configuration.usingBuiltinMap()?0:1, true); 
+					mapSrc.set(1, "Filesystem: " + ( (Configuration.getMapUrl()==null)?"<Please select map directory first>":Configuration.getMapUrl() ), null);
 					GpsMid.getInstance().show(menuSelectMapSource);
 					state = STATE_MAP;
 					break;			
@@ -580,30 +578,30 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				show();
 				break;
 			case STATE_GPX:
-				// Save GpxUrl from form to config 
+				// Save GpxUrl from form to Configuration
 				String str=gpxUrl.getText(); 
 				// don't save "Please select..." 
 				if (str.indexOf(":")==-1) { 
 					str=null; 
 				} 
-				config.setGpxUrl(str); 
+				Configuration.setGpxUrl(str); 
 				state = STATE_ROOT; 
 				show(); 
 				break;           
 			case STATE_RECORDING_OPTIONS: 
 				String rule; 
 				// Save Record Rules to Config 
-				config.setGpxRecordRuleMode(choiceGpxRecordRuleMode.getSelectedIndex()); 
+				Configuration.setGpxRecordRuleMode(choiceGpxRecordRuleMode.getSelectedIndex()); 
 				rule=tfGpxRecordMinimumSecs.getString(); 
-				config.setGpxRecordMinMilliseconds( 
+				Configuration.setGpxRecordMinMilliseconds( 
 						rule.length()==0 ? 0 :(int) (1000 * Float.parseFloat(rule)) 
 				); 
 				rule=tfGpxRecordMinimumDistanceMeters.getString(); 
-				config.setGpxRecordMinDistanceCentimeters( 
+				Configuration.setGpxRecordMinDistanceCentimeters( 
 						rule.length()==0 ? 0 :(int) (100 * Float.parseFloat(rule)) 
 				); 
 				rule=tfGpxRecordAlwaysDistanceMeters.getString(); 
-				config.setGpxRecordAlwaysDistanceCentimeters( 
+				Configuration.setGpxRecordAlwaysDistanceCentimeters( 
 						rule.length()==0 ? 0 :(int) (100 * Float.parseFloat(rule)) 
 				); 
 
@@ -611,28 +609,28 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				show();
 				break;			
 			case STATE_LP:				
-				config.setBtUrl(gpsUrlStr); 
-				config.setLocationProvider(locProv.getSelectedIndex()); 
+				Configuration.setBtUrl(gpsUrlStr); 
+				Configuration.setLocationProvider(locProv.getSelectedIndex()); 
 				boolean [] selraw = new boolean[1];
 				rawLog.getSelectedFlags(selraw);
 				// check if url is valid, i.e. not "Please select..."  
 				if (rawLog.getString(0).indexOf(":")!=-1) { 
-					config.setGpsRawLoggerUrl(rawLog.getString(0)); 
-					config.setGpsRawLoggerEnable(selraw[0]);
+					Configuration.setGpsRawLoggerUrl(rawLog.getString(0)); 
+					Configuration.setGpsRawLoggerEnable(selraw[0]);
 				} else {
-					config.setGpsRawLoggerUrl(null); 
-					config.setGpsRawLoggerEnable(false);					
+					Configuration.setGpsRawLoggerUrl(null); 
+					Configuration.setGpsRawLoggerEnable(false);					
 				}
 				btKeepAlive.getSelectedFlags(selraw);
-				config.setBtKeepAlive(selraw[0]);
+				Configuration.setBtKeepAlive(selraw[0]);
 				btAutoRecon.getSelectedFlags(selraw);
-				config.setBtAutoRecon(selraw[0]);
+				Configuration.setBtAutoRecon(selraw[0]);
 				state = STATE_ROOT;
 				show();
 				break;
 			case STATE_MAP:
-				config.setBuiltinMap((mapSrc.getSelectedIndex() == 0)); 
-				// extract map url from form and save it to config               
+				Configuration.setBuiltinMap((mapSrc.getSelectedIndex() == 0)); 
+				// extract map url from form and save it to Configuration              
 				String url=mapSrc.getString(1); 
 				// skip "Filesystem: " 
 				url=url.substring(url.indexOf(":")+2); 
@@ -640,31 +638,31 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				if (url.indexOf(":")==-1) { 
 					url=null; 
 				} 
-				config.setMapUrl(url); 
+				Configuration.setMapUrl(url); 
 				state = STATE_ROOT;
 				this.show();
 				logger.fatal("Need to restart GpsMid, otherwise map is in an inconsistant state");
 				break;			
 			case STATE_DISPOPT:
-				config.setProjTypeDefault( (byte) rotationGroup.getSelectedIndex() );
-				config.setCfgBitState(config.CFGBIT_STREETRENDERMODE,
+				Configuration.setProjTypeDefault( (byte) rotationGroup.getSelectedIndex() );
+				Configuration.setCfgBitState(Configuration.CFGBIT_STREETRENDERMODE,
 						(renderOpts.getSelectedIndex()==1),
 						true); 
-				config.setCfgBitState(config.CFGBIT_POI_LABELS_LARGER, sizeOpts.isSelected(0), true);
-				config.setCfgBitState(config.CFGBIT_WPT_LABELS_LARGER, sizeOpts.isSelected(1), true);
-				config.setDetailBoost(gaugeDetailBoost.getValue(), true); 
+				Configuration.setCfgBitState(Configuration.CFGBIT_POI_LABELS_LARGER, sizeOpts.isSelected(0), true);
+				Configuration.setCfgBitState(Configuration.CFGBIT_WPT_LABELS_LARGER, sizeOpts.isSelected(1), true);
+				Configuration.setDetailBoost(gaugeDetailBoost.getValue(), true); 
 				
 				// convert boolean array with selection states for backlight
 				// to one flag with corresponding bits set
 				boolean[] sellight = new boolean[6];
 				backlightOpts.getSelectedFlags( sellight );
 	            // save selected values to record store
-				config.setCfgBitState(config.CFGBIT_BACKLIGHT_ON, sellight[0], true);
-				config.setCfgBitState(config.CFGBIT_BACKLIGHT_MAPONLY, sellight[1], true);
-				config.setCfgBitState(config.CFGBIT_BACKLIGHT_MIDP2, sellight[2], true);
-				config.setCfgBitState(config.CFGBIT_BACKLIGHT_NOKIA , sellight[3], true);
-				config.setCfgBitState(config.CFGBIT_BACKLIGHT_NOKIAFLASH , sellight[4], true);
-				config.setCfgBitState(config.CFGBIT_BACKLIGHT_SIEMENS , sellight[5], true);
+				Configuration.setCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON, sellight[0], true);
+				Configuration.setCfgBitState(Configuration.CFGBIT_BACKLIGHT_MAPONLY, sellight[1], true);
+				Configuration.setCfgBitState(Configuration.CFGBIT_BACKLIGHT_MIDP2, sellight[2], true);
+				Configuration.setCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIA , sellight[3], true);
+				Configuration.setCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIAFLASH , sellight[4], true);
+				Configuration.setCfgBitState(Configuration.CFGBIT_BACKLIGHT_SIEMENS , sellight[5], true);
 				state = STATE_ROOT;
 				show();
 
@@ -674,16 +672,16 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 			case STATE_DEBUG:
 				boolean [] selDebug = new boolean[1];
 				debugLog.getSelectedFlags(selDebug);
-				config.setDebugRawLoggerEnable((selDebug[0]));
-				config.setDebugRawLoggerUrl(debugLog.getString(0));
+				Configuration.setDebugRawLoggerEnable((selDebug[0]));
+				Configuration.setDebugRawLoggerUrl(debugLog.getString(0));
 				GpsMid.getInstance().enableDebugFileLogging();
 				selDebug = new boolean[3];
 				debugSeverity.getSelectedFlags(selDebug);
 				
-				config.setDebugSeverityInfo(selDebug[0]);
-				config.setDebugSeverityDebug(selDebug[1]);
-				config.setDebugSeverityTrace(selDebug[2]);
-				config.setCfgBitState(Configuration.CFGBIT_ROUTE_CONNECTIONS, debugOther.isSelected(0), true);
+				Configuration.setDebugSeverityInfo(selDebug[0]);
+				Configuration.setDebugSeverityDebug(selDebug[1]);
+				Configuration.setDebugSeverityTrace(selDebug[2]);
+				Configuration.setCfgBitState(Configuration.CFGBIT_ROUTE_CONNECTIONS, debugOther.isSelected(0), true);
 				Logger.setGlobalLevel();
 				state = STATE_ROOT;
 				this.show();
@@ -718,12 +716,12 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				break;
 
 			case STATE_ROUTING_OPT:
-				config.setRouteEstimationFac(gaugeRoutingEsatimationFac.getValue());
+				Configuration.setRouteEstimationFac(gaugeRoutingEsatimationFac.getValue());
 				logger.debug("set stopAllWhileRounting " + stopAllWhileRouting.isSelected(1));
-				config.setStopAllWhileRouteing(stopAllWhileRouting.isSelected(0));
+				Configuration.setStopAllWhileRouteing(stopAllWhileRouting.isSelected(0));
 				boolean[] selRouting = new boolean[1];
 				routingOptsGroup.getSelectedFlags(selRouting);
-				config.setCfgBitState(config.CFGBIT_ROUTE_AUTO_RECALC, selRouting[0], true);
+				Configuration.setCfgBitState(Configuration.CFGBIT_ROUTE_AUTO_RECALC, selRouting[0], true);
 				state = STATE_ROOT;
 				this.show();			
 				break;

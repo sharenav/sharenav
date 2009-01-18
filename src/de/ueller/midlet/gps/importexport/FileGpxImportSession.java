@@ -7,6 +7,7 @@ import javax.microedition.io.Connector;
 import javax.microedition.io.InputConnection;
 import javax.microedition.lcdui.Displayable;
 
+import de.ueller.gps.data.Configuration;
 import de.ueller.midlet.gps.FsDiscover;
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.GpsMidDisplayable;
@@ -29,7 +30,7 @@ public class FileGpxImportSession implements GpxImportSession, SelectionListener
 		feedbackListener = feedback;
 		
 		//#if polish.api.fileconnectionapi
-		FsDiscover fsd = new FsDiscover(this,this,GpsMid.getInstance().getConfig().getGpxUrl(),false,".gpx","Load *.gpx file");
+		FsDiscover fsd = new FsDiscover(this,this,Configuration.getGpxUrl(),false,".gpx","Load *.gpx file");
 		fsd.show();				
 		//#endif
 	}

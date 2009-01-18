@@ -4,7 +4,7 @@ import de.ueller.gps.data.Configuration;
 
 public interface GuiCameraInterface {
 	
-	public void init(Trace parent, Configuration config);
+	public void init(Trace parent);
 	public void show();
 
 }

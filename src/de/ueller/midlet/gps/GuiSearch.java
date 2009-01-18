@@ -20,7 +20,7 @@ import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.List;
 import javax.microedition.lcdui.TextField;
 
-
+import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.SearchResult;
 import de.ueller.gps.tools.HelperRoutines;
 import de.ueller.midlet.gps.data.MoreMath;
@@ -399,7 +399,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				if (courseToGo < 0) {
 					courseToGo += 360;
 				}
-				nameb.append("  (").append(HelperRoutines.formatDistance(sr.dist)).append(" ").append(parent.getConfig().getCompassDirection(courseToGo)).append(")");
+				nameb.append("  (").append(HelperRoutines.formatDistance(sr.dist)).append(" ").append(Configuration.getCompassDirection(courseToGo)).append(")");
 			}
 			name=nameb.toString();
 			if (name != null) {

@@ -201,7 +201,7 @@ public class Way extends Entity{
 			switch (om & C.OM_MODE_MASK) {
 			case C.OM_SHOWNORMAL: 
 				// if not in Overview Mode check for scale
-				if (pc.scale > wayDesc.maxScale * pc.config.getDetailBoostMultiplier()) {			
+				if (pc.scale > wayDesc.maxScale * Configuration.getDetailBoostMultiplier()) {			
 					return;
 				}
 				break;
@@ -232,7 +232,7 @@ public class Way extends Entity{
 		 * Calculate the width of the path to be drawn. A width of 1 corresponds to
 		 * it being draw as a thin line rather than as a street 
 		 */
-		if ( pc.config.getCfgBitState(Configuration.CFGBIT_STREETRENDERMODE) && wayDesc.wayWidth>1 ){
+		if ( Configuration.getCfgBitState(Configuration.CFGBIT_STREETRENDERMODE) && wayDesc.wayWidth>1 ){
 			w = (int)(pc.ppm*wayDesc.wayWidth/2 + 0.5);
 		}
 		
@@ -332,11 +332,11 @@ public class Way extends Entity{
     	
     	// exit if not zoomed in enough
     	WayDescription wayDesc = C.getWayDescription(type);
-		if (pc.scale > wayDesc.maxTextScale * pc.config.getDetailBoostMultiplier() ) {			
+		if (pc.scale > wayDesc.maxTextScale * Configuration.getDetailBoostMultiplier() ) {			
 			return;
 		}	
 
-		if ( !Trace.getInstance().getConfig().getCfgBitState(Configuration.CFGBIT_WAYTEXTS)) {
+		if ( !Configuration.getCfgBitState(Configuration.CFGBIT_WAYTEXTS)) {
 			return;
 		}
 
@@ -357,7 +357,7 @@ public class Way extends Entity{
 		}
 		
 		String name=null;
-		if ( Trace.getInstance().getConfig().getCfgBitState(Configuration.CFGBIT_SHOWWAYPOITYPE)) {
+		if ( Configuration.getCfgBitState(Configuration.CFGBIT_SHOWWAYPOITYPE)) {
 			name=wayDesc.description;
 		} else {			
 			if (nameIdx != -1) {
@@ -567,7 +567,7 @@ public class Way extends Entity{
 			return;
 		}	
 
-		if ( !Trace.getInstance().getConfig().getCfgBitState(Configuration.CFGBIT_ONEWAY_ARROWS)) {
+		if ( !Configuration.getCfgBitState(Configuration.CFGBIT_ONEWAY_ARROWS)) {
 			return;
 		}
 		
@@ -843,10 +843,10 @@ public class Way extends Entity{
 		switch (om & C.OM_MODE_MASK) {
 			case C.OM_SHOWNORMAL: 
 				// if not in Overview Mode check for scale
-				if (pc.scale > wayDesc.maxScale * pc.config.getDetailBoostMultiplier()) {			
+				if (pc.scale > wayDesc.maxScale * Configuration.getDetailBoostMultiplier()) {			
 					return;
 				}
-				if (wayDesc.hideable && !Trace.getInstance().getConfig().getCfgBitState(Configuration.CFGBIT_AREAS)) {
+				if (wayDesc.hideable && !Configuration.getCfgBitState(Configuration.CFGBIT_AREAS)) {
 					return;
 				}
 				break;
@@ -899,16 +899,16 @@ public class Way extends Entity{
 
 	public void paintAreaName(PaintContext pc, SingleTile t) {
 		WayDescription wayDesc = C.getWayDescription(type);
-		if (pc.scale > wayDesc.maxTextScale * pc.config.getDetailBoostMultiplier() ) {			
+		if (pc.scale > wayDesc.maxTextScale * Configuration.getDetailBoostMultiplier() ) {			
 			return;
 		}		
 		
-		if (wayDesc.hideable && !Trace.getInstance().getConfig().getCfgBitState(Configuration.CFGBIT_AREATEXTS)) {
+		if (wayDesc.hideable && !Configuration.getCfgBitState(Configuration.CFGBIT_AREATEXTS)) {
 			return;
 		}
 
 		String name=null;
-		if ( Trace.getInstance().getConfig().getCfgBitState(Configuration.CFGBIT_SHOWWAYPOITYPE)) {
+		if ( Configuration.getCfgBitState(Configuration.CFGBIT_SHOWWAYPOITYPE)) {
 			name=wayDesc.description;
 		} else {			
 			if (nameIdx != -1) {

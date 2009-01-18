@@ -1,5 +1,6 @@
 package de.ueller.midlet.gps;
 
+import de.ueller.gps.data.Configuration;
 import javax.microedition.lcdui.Alert;
 import javax.microedition.lcdui.Display;
 
@@ -111,8 +112,8 @@ public class Logger {
 	}
 	
 	public static void setGlobalLevel() {
-		infoEnabled = GpsMid.getInstance().getConfig().getDebugSeverityInfo();
-		debugEnabled = GpsMid.getInstance().getConfig().getDebugSeverityDebug();
-		traceEnabled = GpsMid.getInstance().getConfig().getDebugSeverityTrace();
+		infoEnabled = Configuration.getDebugSeverityInfo();
+		debugEnabled = Configuration.getDebugSeverityDebug();
+		traceEnabled = Configuration.getDebugSeverityTrace();
 	}
 }

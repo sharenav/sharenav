@@ -144,7 +144,7 @@ public class GpsMid extends MIDlet implements CommandListener{
 		loghist.setCommandListener(this);
 		
 //
-		if (config.getCfgBitState(Configuration.CFGBIT_SKIPP_SPLASHSCREEN)) {
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_SKIPP_SPLASHSCREEN)) {
 			this.show();
 		} else {
 			new Splash(this);
@@ -157,9 +157,9 @@ public class GpsMid extends MIDlet implements CommandListener{
 	protected void destroyApp(boolean arg0) throws MIDletStateChangeException {
 		//remember last position
 		if(trace!=null) {
-			if(config.getCfgBitState(config.CFGBIT_AUTOSAVE_MAPPOS)) {
+			if(Configuration.getCfgBitState(config.CFGBIT_AUTOSAVE_MAPPOS)) {
 				// use current display center on next startup
-				config.setStartupPos(trace.center);				
+				Configuration.setStartupPos(trace.center);				
 			} else {				
 				// use center of map on next startup
 				config.setStartupPos(new Node(0.0f,0.0f));				
@@ -184,7 +184,7 @@ public class GpsMid extends MIDlet implements CommandListener{
 		System.out.println("Start GpsMid");
 		if (trace == null){
 			try {
-				trace = new Trace(this,config);
+				trace = new Trace(this);
 //				trace.show();
 			} catch (Exception e) {
 				trace=null;
@@ -213,7 +213,7 @@ public class GpsMid extends MIDlet implements CommandListener{
             case 0:
             	try {
             		if (trace == null){
-            			trace = new Trace(this,config);
+            			trace = new Trace(this);
             			trace.show();
             		} else {
             			trace.resume();
@@ -227,7 +227,7 @@ public class GpsMid extends MIDlet implements CommandListener{
             case 1:
         		try {
 					if (trace == null){
-						trace = new Trace(this,config);
+						trace = new Trace(this);
 					}
 					GuiSearch search = new GuiSearch(trace);
 					search.show();
@@ -401,13 +401,13 @@ public class GpsMid extends MIDlet implements CommandListener{
 	}
 	
 	public void startBackLightTimer() {		
-		if (config.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON) ) {
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON) ) {
 			// Warn the user if none of the methods
 			// to keep backlight on was selected
-			if( ! (config.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_MIDP2) || 
-				   config.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIA) ||
-				   config.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIAFLASH) ||
-				   config.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_SIEMENS)
+			if( ! (Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_MIDP2) || 
+					Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIA) ||
+					Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIAFLASH) ||
+					Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_SIEMENS)
 				  )
 			) {				
 				l.error("Backlight cannot be kept on when no 'with'-method is specified in Setup");
@@ -422,24 +422,24 @@ public class GpsMid extends MIDlet implements CommandListener{
 								// only when map is displayed or
 								// option "only when map is displayed" is off 
 								if ( (Trace.getInstance()!=null && Trace.getInstance().isShown())
-									|| !config.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_MAPONLY)
+									|| !Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_MAPONLY)
 								) {
 									//Method to keep the backlight on
 									//some MIDP2 phones
-									if (config.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_MIDP2) ) {
+									if (Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_MIDP2) ) {
 										Display.getDisplay(GpsMid.getInstance()).flashBacklight(6000);						
 									//#if polish.api.nokia-ui
 									//Method to keep the backlight on
 									//on SE K750i and some other models
-									} else if (config.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIAFLASH) ) {  
+									} else if (Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIAFLASH) ) {  
 										DeviceControl.flashLights(1);								
 									//Method to keep the backlight on
 									//on those phones that support the nokia-ui 
-									} else if (config.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIA) ) {  
+									} else if (Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIA) ) {  
 										DeviceControl.setLights(0, backLightLevel);
 									//#endif
 									//#if polish.api.min-siemapi
-									} else if (config.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_SIEMENS) ) {
+									} else if (Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_SIEMENS) ) {
 										try {
 											Class.forName("com.siemens.mp.game.Light");
 											SiemGameLight.SwitchOn();
@@ -479,7 +479,7 @@ public class GpsMid extends MIDlet implements CommandListener{
 	
 	public void addToBackLightLevel(int diffBacklight) {
 		backLightLevel += diffBacklight;
-		if (backLightLevel > 100 || !config.getCfgBitState(config.CFGBIT_BACKLIGHT_NOKIA)) {
+		if (backLightLevel > 100 || !Configuration.getCfgBitState(config.CFGBIT_BACKLIGHT_NOKIA)) {
 			backLightLevel = 100;
 		}
 		if (backLightLevel < 25) {
@@ -492,7 +492,7 @@ public class GpsMid extends MIDlet implements CommandListener{
 	}
 	
 	public void showBackLightLevel() {
-		if ( config.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON, false) ) {
+		if ( Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON, false) ) {
 			alert("Backlight", "Backlight " + (backLightLevel==100?"ON":(backLightLevel + "%")), 750);
 		} else {
 			alert("Backlight", "Backlight off" , 750);

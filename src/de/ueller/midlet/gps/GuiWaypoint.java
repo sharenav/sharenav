@@ -35,7 +35,6 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 
 	private PositionMark[] waypoints;
 	private final Trace parent;
-	private final Configuration config;
 	private static int iWptNr;
 	
 	private boolean uploading;
@@ -43,7 +42,6 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 	public GuiWaypoint(Trace parent) throws Exception {
 		super("Waypoints", List.MULTIPLE);
 		this.parent = parent;
-		this.config = parent.getConfig();
 		setCommandListener(this);
 		initWaypoints();
 		
@@ -88,7 +86,7 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 			for (int i = 0; i < sel.length; i++) {
 				if (sel[i]) {
 					iWptNr = i;
-					GuiNameEnter gne = new GuiNameEnter(this, "Rename Waypoint", waypoints[i].displayName, config.MAX_WAYPOINTNAME_LENGTH);
+					GuiNameEnter gne = new GuiNameEnter(this, "Rename Waypoint", waypoints[i].displayName, Configuration.MAX_WAYPOINTNAME_LENGTH);
 					gne.show();
 					break;
 				}
@@ -124,7 +122,7 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 		
 		if (c == SEND_ALL_CMD) {
 			uploading = true;
-			parent.gpx.sendWayPt(parent.getConfig().getGpxUrl(), this);			
+			parent.gpx.sendWayPt(Configuration.getGpxUrl(), this);			
 			return;
 			
 		}

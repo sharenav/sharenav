@@ -8,6 +8,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import de.ueller.gps.data.Configuration;
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
@@ -32,7 +33,7 @@ public class QueueDataReader extends QueueReader implements Runnable {
 	public void readData(Tile t, Object notifyReady) throws IOException{
 		logger.info("Reading tile: " + t);
 		SingleTile tt=(SingleTile) t;
-		InputStream is=GpsMid.getInstance().getConfig().getMapResource("/t"+tt.zl+tt.fileId+".d");
+		InputStream is=Configuration.getMapResource("/t"+tt.zl+tt.fileId+".d");
 		if (is == null){
 		    //#debug error
 				logger.error("file inputStream"+"/t"+tt.zl+tt.fileId+".d"+" not found" );

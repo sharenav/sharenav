@@ -12,6 +12,7 @@ import javax.microedition.lcdui.Image;
  */
 
 //import de.ueller.gpsMid.mapData.QueueReader;
+import de.ueller.gps.data.Configuration;
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.names.Names;
@@ -77,7 +78,7 @@ public class C {
 	private final static Logger logger=Logger.getInstance(C.class,Logger.TRACE);
 	
 	public C() throws IOException {
-		InputStream is = GpsMid.getInstance().getConfig().getMapResource("/legend.dat");
+		InputStream is = Configuration.getMapResource("/legend.dat");
 		
 		if (is == null) {
 			logger.error("Failed to open the legend file");

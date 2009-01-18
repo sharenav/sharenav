@@ -180,8 +180,7 @@ public class GpxTile extends Tile {
 		for (int i = 0; i < noWayPts; i++) {
 			PositionMark waypt = waypts[i];
 			StringBuffer sb = new StringBuffer();
-			Configuration config=Trace.getInstance().getConfig();
-			int maxLen=config.MAX_WAYPOINTNAME_DRAWLENGTH;
+			int maxLen=Configuration.MAX_WAYPOINTNAME_DRAWLENGTH;
 			if (pc.getP().isPlotable(waypt.lat, waypt.lon)) {
 //				if (waypt.lat < pc.screenLD.radlat) {
 //					continue;
@@ -198,11 +197,11 @@ public class GpxTile extends Tile {
 				
 				pc.getP().forward(waypt.lat, waypt.lon, pc.lineP2);
 				pc.g.drawImage(pc.images.IMG_MARK,pc.lineP2.x,pc.lineP2.y,Graphics.HCENTER|Graphics.VCENTER);
-				if ((config.getCfgBitState(Configuration.CFGBIT_WPTTEXTS) && (waypt.displayName != null))) {
+				if ((Configuration.getCfgBitState(Configuration.CFGBIT_WPTTEXTS) && (waypt.displayName != null))) {
 					pc.g.setColor(0,0,0);
 					Font originalFont = pc.g.getFont();
 					if (wptFont==null) {
-						if (config.getCfgBitState(Configuration.CFGBIT_WPT_LABELS_LARGER)) {
+						if (Configuration.getCfgBitState(Configuration.CFGBIT_WPT_LABELS_LARGER)) {
 							wptFont = originalFont;
 						} else {
 							wptFont=Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_SMALL);

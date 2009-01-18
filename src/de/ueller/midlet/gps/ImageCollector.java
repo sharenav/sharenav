@@ -150,12 +150,11 @@ public class ImageCollector implements Runnable {
 //				pc[nextCreate].g.drawRect(20, 20, xSize-41, ySize-41);
 				pc[nextCreate].squareDstToWay = Float.MAX_VALUE;
 				pc[nextCreate].squareDstToRoutableWay = Float.MAX_VALUE;
-				pc[nextCreate].config = tr.getConfig();
 				pc[nextCreate].target = nextSc.target;
 				// System.out.println("create " + pcCollect);
 
 
-				float boost=tr.getConfig().getDetailBoostMultiplier();
+				float boost=Configuration.getDetailBoostMultiplier();
 				
 				/**
 				 * At the moment we don't really have proper layer support
@@ -195,7 +194,7 @@ public class ImageCollector implements Runnable {
 					/**
 					 * Drawing debuginfo for routing
 					 */
-					if (t[4] != null && tr.getConfig().getCfgBitState(Configuration.CFGBIT_ROUTE_CONNECTIONS)) {
+					if (t[4] != null && Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_CONNECTIONS)) {
 						t[4].paint(pc[nextCreate], layersToRender[layer]);
 					}
 					if (suspended) {
@@ -300,8 +299,8 @@ public class ImageCollector implements Runnable {
 		if (pc[nextPaint].actualWay != null){
 			String maxspeed="";
 			if (pc[nextPaint].actualWay.getMaxSpeed() != 0){
-			    if(screenPc.trace.speed > (pc[nextPaint].actualWay.getMaxSpeed() + tr.getConfig().getSpeedTolerance())) {
-					if (tr.getConfig().getCfgBitState(Configuration.CFGBIT_SPEEDALERT_VISUAL)) {
+			    if(screenPc.trace.speed > (pc[nextPaint].actualWay.getMaxSpeed() + Configuration.getSpeedTolerance())) {
+					if (Configuration.getCfgBitState(Configuration.CFGBIT_SPEEDALERT_VISUAL)) {
 				    	maxspeed=" SL:" + pc[nextPaint].actualWay.getMaxSpeed() + "!!";
 					} else {
 					    maxspeed=" SL:" + pc[nextPaint].actualWay.getMaxSpeed();
@@ -334,7 +333,7 @@ public class ImageCollector implements Runnable {
 		if(statusFontHeight==0) {
 			statusFontHeight=screenPc.g.getFont().getHeight();
 		}
-		boolean showLatLon=tr.getConfig().getCfgBitState(Configuration.CFGBIT_SHOWLATLON);
+		boolean showLatLon=Configuration.getCfgBitState(Configuration.CFGBIT_SHOWLATLON);
 		if ( showLatLon || name!=null) {
 			screenPc.g.setColor(255,255,255);
 			screenPc.g.fillRect(0,screenPc.ySize-statusFontHeight, screenPc.xSize, statusFontHeight);

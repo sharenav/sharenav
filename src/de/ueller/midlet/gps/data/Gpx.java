@@ -93,13 +93,10 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		
 	private GpxTile tile;
 
-	private Configuration config=null;
 
-	
 	public Gpx() {
 		tile = new GpxTile();
 		reloadWpt = true;
-		config=GpsMid.getInstance().getConfig();
 		processorThread = new Thread(this);
 		processorThread.setPriority(Thread.MIN_PRIORITY);
 		processorThread.start();		
@@ -209,7 +206,7 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 				distance = ProjMath.getDistance(lat, lon, oldlat, oldlon);
 			}
 			// check which record rules to apply
-			else if (config.getGpxRecordRuleMode()==Configuration.GPX_RECORD_ADAPTIVE) {
+			else if (Configuration.getGpxRecordRuleMode()==Configuration.GPX_RECORD_ADAPTIVE) {
 				/** adaptive recording
 				 * 
 				 * When saving tracklogs and adaptive recording is enabled,
@@ -241,23 +238,23 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 						// is not always record distance not set
 						// or always record distance reached
 						(
-							config.getGpxRecordAlwaysDistanceCentimeters()!=0 &&
-							100*distance >= config.getGpxRecordAlwaysDistanceCentimeters()
+							Configuration.getGpxRecordAlwaysDistanceCentimeters()!=0 &&
+							100*distance >= Configuration.getGpxRecordAlwaysDistanceCentimeters()
 						)
 						||
 						(  
 							(
 								// is minimum time interval not set
 								// or interval at least minimum interval?
-								config.getGpxRecordMinMilliseconds() == 0 ||
-								Math.abs(msTime-oldMsTime) >= config.getGpxRecordMinMilliseconds()
+									Configuration.getGpxRecordMinMilliseconds() == 0 ||
+								Math.abs(msTime-oldMsTime) >= Configuration.getGpxRecordMinMilliseconds()
 							)
 							&&
 							(
 							// is minimum distance not set
 							// or distance at least minimum distance?
-							config.getGpxRecordMinDistanceCentimeters()==0 ||
-							100*distance >= config.getGpxRecordMinDistanceCentimeters()
+							Configuration.getGpxRecordMinDistanceCentimeters()==0 ||
+							100*distance >= Configuration.getGpxRecordMinDistanceCentimeters()
 							)
 						)
 				) {
@@ -538,7 +535,7 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		this.url = url;
 		feedbackListener = ul;
 		sendWpt = true;
-		GuiNameEnter gne = new GuiNameEnter(this, "Send as (without .gpx)", "Waypoints", config.MAX_WAYPOINTS_NAME_LENGTH);
+		GuiNameEnter gne = new GuiNameEnter(this, "Send as (without .gpx)", "Waypoints", Configuration.MAX_WAYPOINTS_NAME_LENGTH);
 		gne.show();
 	}
 	
@@ -826,7 +823,7 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 	
 	private void writeUTF(OutputStream oS, StringBuffer sb) {
 		try {
-			oS.write(sb.toString().getBytes(config.getUtf8Encoding()));
+			oS.write(sb.toString().getBytes(Configuration.getUtf8Encoding()));
 		} catch (IOException e) {
 			logger.exception("IOException in writeUTF()", e);
 		}
@@ -855,7 +852,7 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 			
 			if (sendTrk) 
 			{
-				name = config.getValidFileName(currentTrk.displayName);
+				name = Configuration.getValidFileName(currentTrk.displayName);
 			}
 			else if (sendWpt)
 			{
@@ -863,7 +860,7 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 					importExportMessage = "Waypoints sending aborted";
 					return false;
 				}
-				name = config.getValidFileName(waypointsSaveFileName);
+				name = Configuration.getValidFileName(waypointsSaveFileName);
 			}
 			
 			if (url == null) {

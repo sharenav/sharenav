@@ -2,6 +2,7 @@ package de.ueller.midlet.gps.routing;
 import java.io.IOException;
 import java.util.Vector;
 
+import de.ueller.gps.data.Configuration;
 import de.ueller.gps.tools.intTree;
 import de.ueller.gpsMid.mapData.RouteBaseTile;
 import de.ueller.gpsMid.mapData.Tile;
@@ -38,7 +39,7 @@ public class Routing implements Runnable {
 		this.parent = parent;
 		this.tile = (RouteBaseTile) tile[4];
 		this.tiles = tile;
-		estimateFac=(parent.getConfig().getRouteEstimationFac()/10f)+0.8f;
+		estimateFac=(Configuration.getRouteEstimationFac()/10f)+0.8f;
 	}
 	
 	private GraphNode search(RouteNode target) throws Exception {

@@ -46,7 +46,7 @@ public class GuiSendMessage extends Form implements CommandListener {
 			append(tfMessage);
 
 			tfRecipientPhoneNumber = new TextField("Recipient", 
-													parent.getConfig().getSmsRecipient(),
+													Configuration.getSmsRecipient(),
 													50,
 													TextField.PHONENUMBER
 			); 
@@ -71,7 +71,7 @@ public class GuiSendMessage extends Form implements CommandListener {
 	public void commandAction(Command c, Displayable d) {
 		if (c == CMD_SEND || c == CMD_BACK
 			&& cgRemember.isSelected(0)) {
-			parent.getConfig().setSmsRecipient(tfRecipientPhoneNumber.getString());
+			Configuration.setSmsRecipient(tfRecipientPhoneNumber.getString());
 		}
 		
 		if (c == CMD_SEND) {				

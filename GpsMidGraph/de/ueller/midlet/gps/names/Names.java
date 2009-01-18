@@ -16,6 +16,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import de.ueller.gps.data.Configuration;
 import de.ueller.gps.tools.intTree;
 import de.ueller.gpsMid.mapData.QueueReader;
 import de.ueller.midlet.gps.GpsMid;
@@ -96,7 +97,7 @@ public class Names implements Runnable {
 
 	
 	private void readIndex() throws IOException {
-		InputStream is = GpsMid.getInstance().getConfig().getMapResource("/names-idx.dat");
+		InputStream is = Configuration.getMapResource("/names-idx.dat");
 //		logger.info("read names-idx");
 		DataInputStream ds = new DataInputStream(is);
 
@@ -134,7 +135,7 @@ public class Names implements Runnable {
 	public String getFirstWord(int fid){
 		try {
 //			System.out.println("readFirstWord: /names-" + fid + ".dat");
-			InputStream is = GpsMid.getInstance().getConfig().getMapResource("/names-" + fid + ".dat");
+			InputStream is = Configuration.getMapResource("/names-" + fid + ".dat");
 			DataInputStream ds = new DataInputStream(is);
 			ds.readByte();
 			String firstWord=ds.readUTF();
@@ -160,7 +161,7 @@ public class Names implements Runnable {
 			/* Lookup in which names file the entry is contained */
 			for (int i=fid;i < startIndexes.length;i++){
 				if (startIndexes[i] > idx){
-					is=GpsMid.getInstance().getConfig().getMapResource("/names-" + fid + ".dat");
+					is=Configuration.getMapResource("/names-" + fid + ".dat");
 					count=startIndexes[i]-startIndexes[fid];
 					actIdx=startIndexes[fid];
 					break;
@@ -252,7 +253,7 @@ public class Names implements Runnable {
 		int count;		
 		try {
 			for (int fid = 0; fid < (startIndexes.length - 1);fid++) {
-				InputStream is=GpsMid.getInstance().getConfig().getMapResource("/names-" + fid + ".dat");
+				InputStream is=Configuration.getMapResource("/names-" + fid + ".dat");
 				count=startIndexes[fid + 1]-startIndexes[fid];				
 				if (is==null){
 					break;

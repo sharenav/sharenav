@@ -217,7 +217,7 @@ public class Splash extends Canvas implements CommandListener,Runnable{
     }
 	protected void keyPressed(int keyCode) {
 		if (keyCode == KEY_STAR) {
-			boolean current = main.getConfig().getCfgBitState(Configuration.CFGBIT_SKIPP_SPLASHSCREEN);
+			boolean current = Configuration.getCfgBitState(Configuration.CFGBIT_SKIPP_SPLASHSCREEN);
 			main.getConfig().setCfgBitState(Configuration.CFGBIT_SKIPP_SPLASHSCREEN, !current, true);
 			if (current) {
 				main.alert("Splash", "Showing splash screen on startup", 500);

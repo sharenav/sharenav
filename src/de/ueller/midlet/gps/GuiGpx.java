@@ -12,6 +12,7 @@ import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.List;
 import java.util.Vector;
+import de.ueller.gps.data.Configuration;
 import de.ueller.midlet.gps.data.PersistEntity;
 
 
@@ -86,7 +87,7 @@ public class GuiGpx extends List implements CommandListener,
 			if (processTracks.size() > 0)
 			{
 				showProgressDisplay("Exporting tracks");
-				parent.gpx.exportTracks(parent.getConfig().getGpxUrl(), this, processTracks );
+				parent.gpx.exportTracks(Configuration.getGpxUrl(), this, processTracks );
 			}
 			return;
 		}
@@ -114,7 +115,7 @@ public class GuiGpx extends List implements CommandListener,
 					sCount = sNameOnly.substring(iCountPos - 1);
 					sNameOnly = sNameOnly.substring(0, iCountPos - 1);
 				}
-				GuiNameEnter gne = new GuiNameEnter(this, "Rename Track", sNameOnly, parent.getConfig().MAX_TRACKNAME_LENGTH);
+				GuiNameEnter gne = new GuiNameEnter(this, "Rename Track", sNameOnly, Configuration.MAX_TRACKNAME_LENGTH);
 				gne.show();
 			}
 			return;

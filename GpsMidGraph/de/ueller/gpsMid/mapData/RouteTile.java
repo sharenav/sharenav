@@ -87,7 +87,7 @@ public class RouteTile extends RouteBaseTile {
 			}
 
 			// show route cost only if Alternative Info/Type Information in Map Features is activated
-			boolean showCost = Trace.getInstance().getConfig().getCfgBitState(Configuration.CFGBIT_SHOWWAYPOITYPE);			
+			boolean showCost = Configuration.getCfgBitState(Configuration.CFGBIT_SHOWWAYPOITYPE);			
 			
 			for (int i=0; i< nodes.length;i++){
 				if (pc.getP().isPlotable(nodes[i].lat, nodes[i].lon)){
@@ -168,7 +168,7 @@ public class RouteTile extends RouteBaseTile {
 
 
 	private void loadNodes() throws IOException {
-		DataInputStream ts=new DataInputStream(GpsMid.getInstance().getConfig().getMapResource("/t4" + fileId + ".d"));
+		DataInputStream ts=new DataInputStream(Configuration.getMapResource("/t4" + fileId + ".d"));
 		short count = ts.readShort();
 		//#debug debug
 		logger.debug("load nodes "+count+" ("+minId+"/"+maxId+") in Tile t4" + fileId + ".d");
@@ -288,7 +288,7 @@ public class RouteTile extends RouteBaseTile {
 		connections = new Connection[nodes.length][];
 		//#debug debug
 		logger.debug("getConnections in file " + "/c" + fileId + ".d");
-		DataInputStream cs=new DataInputStream(GpsMid.getInstance().getConfig().getMapResource("/c" + fileId + ".d"));
+		DataInputStream cs=new DataInputStream(Configuration.getMapResource("/c" + fileId + ".d"));
 		for (int in=0; in<nodes.length;in++){
 			RouteNode n=nodes[in];
 			Connection[] cons=new Connection[n.conSize];

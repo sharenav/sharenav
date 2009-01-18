@@ -8,10 +8,10 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import de.ueller.gps.data.Configuration;
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
-
 
 public class DictReader  implements Runnable {
 	private Thread	processorThread;
@@ -50,7 +50,7 @@ public class DictReader  implements Runnable {
 		try{
 		    //#debug error
 		    	logger.info("open dict-"+zl+".dat");
-				InputStream is = GpsMid.getInstance().getConfig().getMapResource("/dict-"+zl+".dat");
+				InputStream is = Configuration.getMapResource("/dict-"+zl+".dat");
 				if (is == null) {
 					//Special case zoom level 4, which is the routing zoom level
 					//If routing was disabled in Osm2GpsMid, then this file shouln't

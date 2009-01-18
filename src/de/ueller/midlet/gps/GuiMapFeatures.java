@@ -40,28 +40,26 @@ public class GuiMapFeatures extends Form implements CommandListener {
 	
 	// other
 	private Trace parent;
-	private static Configuration config;
 	
 	public GuiMapFeatures(Trace tr) {
 		super("Map features");
-		config=GpsMid.getInstance().getConfig();
 		this.parent = tr;
 		try {
 			// set choice texts and convert bits from render flag into selection states
-			elems[0] = "POIs";					selElems[0]=config.getCfgBitState(config.CFGBIT_POIS);
-			elems[1] = "POI labels"; 			selElems[1]=config.getCfgBitState(config.CFGBIT_POITEXTS);
-			elems[2] = "Way labels"; 			selElems[2]=config.getCfgBitState(config.CFGBIT_WAYTEXTS);
-			elems[3] = "Oneway arrows"; 		selElems[3]=config.getCfgBitState(config.CFGBIT_ONEWAY_ARROWS);
-			elems[4] = "Areas"; 				selElems[4]=config.getCfgBitState(config.CFGBIT_AREAS);
-			elems[5] = "Area labels"; 			selElems[5]=config.getCfgBitState(config.CFGBIT_AREATEXTS);
-			elems[6] = "Waypoint labels"; 		selElems[6]=config.getCfgBitState(config.CFGBIT_WPTTEXTS);
-			elems[7] = "Place labels (cities, etc.)";	selElems[7]=config.getCfgBitState(config.CFGBIT_PLACETEXTS);
+			elems[0] = "POIs";					selElems[0]=Configuration.getCfgBitState(Configuration.CFGBIT_POIS);
+			elems[1] = "POI labels"; 			selElems[1]=Configuration.getCfgBitState(Configuration.CFGBIT_POITEXTS);
+			elems[2] = "Way labels"; 			selElems[2]=Configuration.getCfgBitState(Configuration.CFGBIT_WAYTEXTS);
+			elems[3] = "Oneway arrows"; 		selElems[3]=Configuration.getCfgBitState(Configuration.CFGBIT_ONEWAY_ARROWS);
+			elems[4] = "Areas"; 				selElems[4]=Configuration.getCfgBitState(Configuration.CFGBIT_AREAS);
+			elems[5] = "Area labels"; 			selElems[5]=Configuration.getCfgBitState(Configuration.CFGBIT_AREATEXTS);
+			elems[6] = "Waypoint labels"; 		selElems[6]=Configuration.getCfgBitState(Configuration.CFGBIT_WPTTEXTS);
+			elems[7] = "Place labels (cities, etc.)";	selElems[7]=Configuration.getCfgBitState(Configuration.CFGBIT_PLACETEXTS);
 			elemsGroup = new ChoiceGroup("Elements", Choice.MULTIPLE, elems ,null);
 			elemsGroup.setSelectedFlags(selElems);
 			append(elemsGroup);
 			
-			altInfos[0] = "Lat/lon"; 			selAltInfos[0]=config.getCfgBitState(config.CFGBIT_SHOWLATLON);
-			altInfos[1] = "Type information"; 	selAltInfos[1]=config.getCfgBitState(config.CFGBIT_SHOWWAYPOITYPE);
+			altInfos[0] = "Lat/lon"; 			selAltInfos[0]=Configuration.getCfgBitState(Configuration.CFGBIT_SHOWLATLON);
+			altInfos[1] = "Type information"; 	selAltInfos[1]=Configuration.getCfgBitState(Configuration.CFGBIT_SHOWWAYPOITYPE);
 			altInfosGroup = new ChoiceGroup("Alternative Info", Choice.MULTIPLE, altInfos ,null);
 			altInfosGroup.setSelectedFlags(selAltInfos);
 			append(altInfosGroup);
@@ -72,22 +70,22 @@ public class GuiMapFeatures extends Form implements CommandListener {
 			rotationGroup.setSelectedIndex((int) ProjFactory.getProj(), true);
 			append(rotationGroup);			
 			
-			modes[0] = "Full Screen"; 			selModes[0]=config.getCfgBitState(config.CFGBIT_FULLSCREEN);
-			modes[1] = "Render as streets"; 	selModes[1]=config.getCfgBitState(config.CFGBIT_STREETRENDERMODE);
-			modes[2] = "Routing help"; 	selModes[2]=config.getCfgBitState(config.CFGBIT_ROUTING_HELP);
+			modes[0] = "Full Screen"; 			selModes[0]=Configuration.getCfgBitState(Configuration.CFGBIT_FULLSCREEN);
+			modes[1] = "Render as streets"; 	selModes[1]=Configuration.getCfgBitState(Configuration.CFGBIT_STREETRENDERMODE);
+			modes[2] = "Routing help"; 	selModes[2]=Configuration.getCfgBitState(Configuration.CFGBIT_ROUTING_HELP);
 			modesGroup = new ChoiceGroup("Mode", Choice.MULTIPLE, modes ,null);
 			modesGroup.setSelectedFlags(selModes);			
 			append(modesGroup);
 
-			other[0] = "Show Point of Compass in rotated map";	selOther[0]=config.getCfgBitState(config.CFGBIT_SHOW_POINT_OF_COMPASS);
-			other[1] = "Save map position on exit for next start";	selOther[1]=config.getCfgBitState(config.CFGBIT_AUTOSAVE_MAPPOS);
+			other[0] = "Show Point of Compass in rotated map";	selOther[0]=Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_POINT_OF_COMPASS);
+			other[1] = "Save map position on exit for next start";	selOther[1]=Configuration.getCfgBitState(Configuration.CFGBIT_AUTOSAVE_MAPPOS);
 			otherGroup = new ChoiceGroup("Other", Choice.MULTIPLE, other ,null);
 			otherGroup.setSelectedFlags(selOther);			
 			append(otherGroup);
 			
 			gaugeDetailBoost = new Gauge("Increase Detail of lower Zoom Levels", true, 3, 0);
 			append(gaugeDetailBoost);
-			gaugeDetailBoost.setValue(config.getDetailBoost());
+			gaugeDetailBoost.setValue(Configuration.getDetailBoost());
 			
 			addCommand(CMD_APPLY);
 			addCommand(CMD_SAVE);
@@ -117,35 +115,35 @@ public class GuiMapFeatures extends Form implements CommandListener {
 			// convert boolean array with selection states for renderOpts
 			// to one flag with corresponding bits set
 	        elemsGroup.getSelectedFlags(selElems);
-			config.setCfgBitState(config.CFGBIT_POIS, selElems[0], setAsDefault);
-			config.setCfgBitState(config.CFGBIT_POITEXTS, selElems[1], setAsDefault);
-			config.setCfgBitState(config.CFGBIT_WAYTEXTS, selElems[2], setAsDefault);
-			config.setCfgBitState(config.CFGBIT_ONEWAY_ARROWS, selElems[3], setAsDefault);
-			config.setCfgBitState(config.CFGBIT_AREAS, selElems[4], setAsDefault);
-			config.setCfgBitState(config.CFGBIT_AREATEXTS, selElems[5], setAsDefault);
-			config.setCfgBitState(config.CFGBIT_WPTTEXTS, selElems[6], setAsDefault);
-			config.setCfgBitState(config.CFGBIT_PLACETEXTS, selElems[7], setAsDefault);
+	        Configuration.setCfgBitState(Configuration.CFGBIT_POIS, selElems[0], setAsDefault);
+	        Configuration.setCfgBitState(Configuration.CFGBIT_POITEXTS, selElems[1], setAsDefault);
+	        Configuration.setCfgBitState(Configuration.CFGBIT_WAYTEXTS, selElems[2], setAsDefault);
+	        Configuration.setCfgBitState(Configuration.CFGBIT_ONEWAY_ARROWS, selElems[3], setAsDefault);
+	        Configuration.setCfgBitState(Configuration.CFGBIT_AREAS, selElems[4], setAsDefault);
+	        Configuration.setCfgBitState(Configuration.CFGBIT_AREATEXTS, selElems[5], setAsDefault);
+	        Configuration.setCfgBitState(Configuration.CFGBIT_WPTTEXTS, selElems[6], setAsDefault);
+	        Configuration.setCfgBitState(Configuration.CFGBIT_PLACETEXTS, selElems[7], setAsDefault);
 
 			altInfosGroup.getSelectedFlags(selAltInfos);
-			config.setCfgBitState(config.CFGBIT_SHOWLATLON, selAltInfos[0], setAsDefault);
-			config.setCfgBitState(config.CFGBIT_SHOWWAYPOITYPE, selAltInfos[1], setAsDefault);
+			Configuration.setCfgBitState(Configuration.CFGBIT_SHOWLATLON, selAltInfos[0], setAsDefault);
+			Configuration.setCfgBitState(Configuration.CFGBIT_SHOWWAYPOITYPE, selAltInfos[1], setAsDefault);
 
 			byte t = (byte) rotationGroup.getSelectedIndex();
 			ProjFactory.setProj(t);
 			if (setAsDefault) {
-				config.setProjTypeDefault(t);
+				Configuration.setProjTypeDefault(t);
 			}
 			
 			modesGroup.getSelectedFlags(selModes);
-			config.setCfgBitState(config.CFGBIT_FULLSCREEN, selModes[0], setAsDefault);
-			config.setCfgBitState(config.CFGBIT_STREETRENDERMODE, selModes[1], setAsDefault);
-			config.setCfgBitState(config.CFGBIT_ROUTING_HELP, selModes[2], setAsDefault);
+			Configuration.setCfgBitState(Configuration.CFGBIT_FULLSCREEN, selModes[0], setAsDefault);
+			Configuration.setCfgBitState(Configuration.CFGBIT_STREETRENDERMODE, selModes[1], setAsDefault);
+			Configuration.setCfgBitState(Configuration.CFGBIT_ROUTING_HELP, selModes[2], setAsDefault);
 			
 			otherGroup.getSelectedFlags(selOther);
-			config.setCfgBitState(config.CFGBIT_AUTOSAVE_MAPPOS, selOther[0], setAsDefault);
-			config.setCfgBitState(config.CFGBIT_SHOW_POINT_OF_COMPASS, selOther[1], setAsDefault);
+			Configuration.setCfgBitState(Configuration.CFGBIT_AUTOSAVE_MAPPOS, selOther[0], setAsDefault);
+			Configuration.setCfgBitState(Configuration.CFGBIT_SHOW_POINT_OF_COMPASS, selOther[1], setAsDefault);
 			
-			config.setDetailBoost(gaugeDetailBoost.getValue(), setAsDefault); 
+			Configuration.setDetailBoost(gaugeDetailBoost.getValue(), setAsDefault); 
 
 			parent.show();
 			return;

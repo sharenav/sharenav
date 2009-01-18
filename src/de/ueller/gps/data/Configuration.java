@@ -167,47 +167,47 @@ public class Configuration {
 	
 	private final static byte[] empty="".getBytes();
 
-	private String btUrl;
+	private static String btUrl;
 	/** This URL is used to store logs of raw data received from the GPS receiver*/
-	private String rawGpsLogUrl; 
-	private boolean rawGpsLogEnable;
-	private String rawDebugLogUrl; 
-	private boolean rawDebugLogEnable;
-	private int locationProvider=0;
-	private int gpxRecordRuleMode;
-	private int gpxRecordMinMilliseconds;
-	private int gpxRecordMinDistanceCentimeters;
-	private int gpxRecordAlwaysDistanceCentimeters;
-	private long cfgBits=0;
-	private long cfgBitsDefault=0;
-	private int detailBoost=0;
-	private int detailBoostDefault=0;
-	private float detailBoostMultiplier;
-	private String gpxUrl;
-	private String photoUrl;
-	private String photoEncoding;
-	private int debugSeverity;
-	private int routeEstimationFac=6;
-	private boolean stopAllWhileRouteing=false;
-	private boolean btKeepAlive = false;
-	private boolean btAutoRecon = false;
-	private Node startupPos = new Node(0.0f, 0.0f);
-	private byte projTypeDefault = ProjFactory.NORTH_UP;
+	private static String rawGpsLogUrl; 
+	private static boolean rawGpsLogEnable;
+	private static String rawDebugLogUrl; 
+	private static boolean rawDebugLogEnable;
+	private static int locationProvider=0;
+	private static int gpxRecordRuleMode;
+	private static int gpxRecordMinMilliseconds;
+	private static int gpxRecordMinDistanceCentimeters;
+	private static int gpxRecordAlwaysDistanceCentimeters;
+	private static long cfgBits=0;
+	private static long cfgBitsDefault=0;
+	private static int detailBoost=0;
+	private static int detailBoostDefault=0;
+	private static float detailBoostMultiplier;
+	private static String gpxUrl;
+	private static String photoUrl;
+	private static String photoEncoding;
+	private static int debugSeverity;
+	private static int routeEstimationFac=6;
+	private static boolean stopAllWhileRouteing=false;
+	private static boolean btKeepAlive = false;
+	private static boolean btAutoRecon = false;
+	private static Node startupPos = new Node(0.0f, 0.0f);
+	private static byte projTypeDefault = ProjFactory.NORTH_UP;
 	
-	private boolean mapFromJar;
-	private String mapFileUrl;
+	private static boolean mapFromJar;
+	private static String mapFileUrl;
 
-	private String smsRecipient; 
-	private int speedTolerance = 0; 
+	private static String smsRecipient; 
+	private static int speedTolerance = 0; 
 	
-	private String utf8encodingstring = null;
+	private static String utf8encodingstring = null;
 	
 	public Configuration() {		
 		logger = Logger.getInstance(Configuration.class, Logger.DEBUG);
 		read();
 	}
 
-	private void read(){
+	private static void read(){
 	RecordStore	database;
 		try {			
 			database = RecordStore.openRecordStore("Receiver", true);
@@ -316,7 +316,7 @@ public class Configuration {
 		}
 	}
 	
-	private void write(String s, int idx) {
+	private static void write(String s, int idx) {
 		RecordStore	database;
 		try {
 			database = RecordStore.openRecordStore("Receiver", true);
@@ -337,15 +337,15 @@ public class Configuration {
 			e.printStackTrace();
 		}
 	}
-	private void write(int i,int idx){
+	private static void write(int i,int idx){
 		write(""+i,idx);
 	}
-	private void write(long i,int idx){
+	private static void write(long i,int idx){
 		write(""+i,idx);
 	}
 
 
-	public String readString(RecordStore database,int idx){
+	private static String readString(RecordStore database,int idx){
 		try {
 			String ret;
 			byte[] data;
@@ -371,7 +371,7 @@ public class Configuration {
 			return null;
 		} 
 	}
-	public int readInt(RecordStore database,int idx){
+	private static int readInt(RecordStore database,int idx){
 		try {
 			String tmp = readString(database, idx);
 			//#debug info
@@ -387,7 +387,7 @@ public class Configuration {
 		}
 	}
 	
-	public long readLong(RecordStore database,int idx){
+	private static long readLong(RecordStore database,int idx){
 		try {
 			String tmp = readString(database, idx);
 			//#debug info
@@ -403,16 +403,16 @@ public class Configuration {
 		}
 	}
 	
-	public String getGpsRawLoggerUrl() {		
+	public static String getGpsRawLoggerUrl() {		
 		return rawGpsLogUrl;
 	}
 	
-	public void setGpsRawLoggerUrl(String url) {
+	public static void setGpsRawLoggerUrl(String url) {
 		rawGpsLogUrl = url;
 		write(rawGpsLogUrl, RECORD_ID_LOG_RAW_GPS_URL);
 	}
 	
-	public void setGpsRawLoggerEnable(boolean enabled) {
+	public static void setGpsRawLoggerEnable(boolean enabled) {
 		rawGpsLogEnable = enabled;
 		if (rawGpsLogEnable) 
 			write(1, RECORD_ID_LOG_RAW_GPS_ENABLE);
@@ -420,20 +420,20 @@ public class Configuration {
 			write(0, RECORD_ID_LOG_RAW_GPS_ENABLE);
 	}
 	
-	public boolean getDebugRawLoggerEnable() {		
+	public static boolean getDebugRawLoggerEnable() {		
 		return rawDebugLogEnable;		
 	}
 	
-	public String getDebugRawLoggerUrl() {		
+	public static String getDebugRawLoggerUrl() {		
 		return rawDebugLogUrl;		
 	}
 	
-	public void setDebugRawLoggerUrl(String url) {
+	public static void setDebugRawLoggerUrl(String url) {
 		rawDebugLogUrl = url;
 		write(rawDebugLogUrl, RECORD_ID_LOG_DEBUG_URL);
 	}
 	
-	public void setDebugSeverityInfo(boolean enabled) {
+	public static void setDebugSeverityInfo(boolean enabled) {
 		if (enabled) {
 			debugSeverity |= 0x01;
 		} else {
@@ -442,11 +442,11 @@ public class Configuration {
 		write(debugSeverity, RECORD_ID_LOG_DEBUG_SEVERITY);
 	}
 	
-	public boolean getDebugSeverityInfo() {
+	public static boolean getDebugSeverityInfo() {
 		return ((debugSeverity & 0x01) > 0);
 	}
 	
-	public void setDebugSeverityDebug(boolean enabled) {
+	public static void setDebugSeverityDebug(boolean enabled) {
 		if (enabled) {
 			debugSeverity |= 0x02;
 		} else {
@@ -455,11 +455,11 @@ public class Configuration {
 		write(debugSeverity, RECORD_ID_LOG_DEBUG_SEVERITY);
 	}
 	
-	public boolean getDebugSeverityDebug() {
+	public static boolean getDebugSeverityDebug() {
 		return ((debugSeverity & 0x02) > 0);
 	}
 	
-	public void setDebugSeverityTrace(boolean enabled) {
+	public static void setDebugSeverityTrace(boolean enabled) {
 		if (enabled) {
 			debugSeverity |= 0x04;
 		} else {
@@ -468,11 +468,11 @@ public class Configuration {
 		write(debugSeverity, RECORD_ID_LOG_DEBUG_SEVERITY);
 	}
 	
-	public boolean getDebugSeverityTrace() {
+	public static boolean getDebugSeverityTrace() {
 		return ((debugSeverity & 0x04) > 0);
 	}
 	
-	public void setDebugRawLoggerEnable(boolean enabled) {
+	public static void setDebugRawLoggerEnable(boolean enabled) {
 		rawDebugLogEnable = enabled;
 		if (rawDebugLogEnable) 
 			write(1, RECORD_ID_LOG_DEBUG_ENABLE);
@@ -480,117 +480,117 @@ public class Configuration {
 			write(0, RECORD_ID_LOG_DEBUG_ENABLE);
 	}
 	
-	public boolean getGpsRawLoggerEnable() {		
+	public static boolean getGpsRawLoggerEnable() {		
 		return rawGpsLogEnable;
 	}
 
-	public String getBtUrl() {
+	public static String getBtUrl() {
 		return btUrl;
 	}
 
-	public void setBtUrl(String btUrl) {
-		this.btUrl = btUrl;
+	public static void setBtUrl(String btUrl) {
+		Configuration.btUrl = btUrl;
 		write(btUrl, RECORD_ID_BT_URL);
 	}
 
-	public int getLocationProvider() {
+	public static int getLocationProvider() {
 		return locationProvider;
 	}
 
-	public void setLocationProvider(int locationProvider) {
-		this.locationProvider = locationProvider;
+	public static void setLocationProvider(int locationProvider) {
+		Configuration.locationProvider = locationProvider;
 		write(locationProvider, RECORD_ID_LOCATION_PROVIDER);
 	}
 
-	public int getGpxRecordRuleMode() {
+	public static int getGpxRecordRuleMode() {
 		return gpxRecordRuleMode;
 	}
-	public void setGpxRecordRuleMode(int gpxRecordRuleMode) {
-		this.gpxRecordRuleMode = gpxRecordRuleMode;
+	public static void setGpxRecordRuleMode(int gpxRecordRuleMode) {
+		Configuration.gpxRecordRuleMode = gpxRecordRuleMode;
 			write(gpxRecordRuleMode, RECORD_ID_GPX_FILTER_MODE);
 	}
 
-	public int getGpxRecordMinMilliseconds() {
+	public static int getGpxRecordMinMilliseconds() {
 		return gpxRecordMinMilliseconds;
 	}
-	public void setGpxRecordMinMilliseconds(int gpxRecordMinMilliseconds) {
-		this.gpxRecordMinMilliseconds = gpxRecordMinMilliseconds;
+	public static void setGpxRecordMinMilliseconds(int gpxRecordMinMilliseconds) {
+		Configuration.gpxRecordMinMilliseconds = gpxRecordMinMilliseconds;
 			write(gpxRecordMinMilliseconds, RECORD_ID_GPX_FILTER_TIME);
 	}	
 
-	public int getGpxRecordMinDistanceCentimeters() {
+	public static int getGpxRecordMinDistanceCentimeters() {
 		return gpxRecordMinDistanceCentimeters;
 	}
-	public void setGpxRecordMinDistanceCentimeters(int gpxRecordMinDistanceCentimeters) {
-		this.gpxRecordMinDistanceCentimeters = gpxRecordMinDistanceCentimeters;
+	public static void setGpxRecordMinDistanceCentimeters(int gpxRecordMinDistanceCentimeters) {
+		Configuration.gpxRecordMinDistanceCentimeters = gpxRecordMinDistanceCentimeters;
 			write(gpxRecordMinDistanceCentimeters, RECORD_ID_GPX_FILTER_DIST);
 	}	
 
-	public int getGpxRecordAlwaysDistanceCentimeters() {
+	public static int getGpxRecordAlwaysDistanceCentimeters() {
 		return gpxRecordAlwaysDistanceCentimeters;
 	}
-	public void setGpxRecordAlwaysDistanceCentimeters(int gpxRecordAlwaysDistanceCentimeters) {
-		this.gpxRecordAlwaysDistanceCentimeters = gpxRecordAlwaysDistanceCentimeters;
+	public static void setGpxRecordAlwaysDistanceCentimeters(int gpxRecordAlwaysDistanceCentimeters) {
+		Configuration.gpxRecordAlwaysDistanceCentimeters = gpxRecordAlwaysDistanceCentimeters;
 			write(gpxRecordAlwaysDistanceCentimeters, RECORD_ID_GPX_FILTER_ALWAYS_DIST);
 	}	
 
-	public boolean getCfgBitState(byte bit,boolean getDefault) {
+	public static boolean getCfgBitState(byte bit,boolean getDefault) {
 		if (getDefault) {
-			return ((this.cfgBitsDefault & (1L<<bit)) !=0);			
+			return ((cfgBitsDefault & (1L<<bit)) !=0);			
 		} else {
-			return ((this.cfgBits & (1L<<bit)) !=0);
+			return ((cfgBits & (1L<<bit)) !=0);
 		}
 	}
 
-	public boolean getCfgBitState(byte bit) {
+	public static boolean getCfgBitState(byte bit) {
 		return getCfgBitState(bit, false);			
 	}
 	
 	
-	public void setCfgBitState(byte bit, boolean state, boolean setAsDefault) {
+	public static void setCfgBitState(byte bit, boolean state, boolean setAsDefault) {
 		// set bit
-		this.cfgBits|= (1L<<bit);
+		Configuration.cfgBits|= (1L<<bit);
 		if (!state) {
 			// clear bit
-			this.cfgBits^= (1L<<bit);
+			Configuration.cfgBits^= (1L<<bit);
 		}
 		if (setAsDefault) {
-			this.cfgBitsDefault|= (1L<<bit);
+			Configuration.cfgBitsDefault|= (1L<<bit);
 			if (!state) {
 				// clear bit
-				this.cfgBitsDefault^= (1L<<bit);
+				Configuration.cfgBitsDefault^= (1L<<bit);
 			}			
 			write(cfgBitsDefault, RECORD_ID_CFGBITS);
 		}	
 	}	
 	
-	private void setCfgBits(long cfgBits, boolean setAsDefault) {
-		this.cfgBits = cfgBits;
+	private static void setCfgBits(long cfgBits, boolean setAsDefault) {
+		Configuration.cfgBits = cfgBits;
 		if (setAsDefault) {
-			this.cfgBitsDefault = cfgBits;
+			Configuration.cfgBitsDefault = cfgBits;
 			write(cfgBitsDefault, RECORD_ID_CFGBITS);
 		}
 	}
 	
-	public int getDetailBoost() {
-		return this.detailBoost;
+	public static int getDetailBoost() {
+		return detailBoost;
 	}
 
-	public void setDetailBoost(int detailBoost, boolean setAsDefault) {
-		this.detailBoost = detailBoost;
+	public static void setDetailBoost(int detailBoost, boolean setAsDefault) {
+		Configuration.detailBoost = detailBoost;
 		calculateDetailBoostMultiplier();
 		if (setAsDefault) {
-			this.detailBoostDefault = detailBoost;
+			Configuration.detailBoostDefault = detailBoost;
 			write(detailBoost, RECORD_ID_DETAIL_BOOST);		
 		}
 	}
 	
-	public float getDetailBoostMultiplier() {
-		return this.detailBoostMultiplier;
+	public static float getDetailBoostMultiplier() {
+		return detailBoostMultiplier;
 	}
 
-	public int getDetailBoostDefault() {
-		return this.detailBoostDefault;
+	public static int getDetailBoostDefault() {
+		return detailBoostDefault;
 	}
 
 /**
@@ -598,77 +598,77 @@ public class Configuration {
 	calculate 1.5^detailBoost to get factor
 	to multiply with Zoom Level limits
 **/
-	private void calculateDetailBoostMultiplier() {
-		this.detailBoostMultiplier=1;
-		for(int i=1;i<=this.detailBoost;i++) {
-			this.detailBoostMultiplier*=1.5;
+	private static void calculateDetailBoostMultiplier() {
+		detailBoostMultiplier=1;
+		for(int i=1;i<=detailBoost;i++) {
+			detailBoostMultiplier*=1.5;
 		}
 	}
 	
-	public void setGpxUrl(String url) {
-		this.gpxUrl = url;
+	public static void setGpxUrl(String url) {
+		Configuration.gpxUrl = url;
 		write(url, RECORD_ID_GPX_URL);
 	}
 
-	public String getGpxUrl() {
+	public static String getGpxUrl() {
 		return gpxUrl;
 	}
 	
-	public void setPhotoUrl(String url) {
-		this.photoUrl = url;
+	public static void setPhotoUrl(String url) {
+		Configuration.photoUrl = url;
 		write(url, RECORD_ID_PHOTO_URL);
 	}
 
-	public String getPhotoUrl() {
+	public static String getPhotoUrl() {
 		return photoUrl;
 	}
 	
-	public void setPhotoEncoding(String encoding) {
-		this.photoEncoding = encoding;
+	public static void setPhotoEncoding(String encoding) {
+		photoEncoding = encoding;
 		write(encoding, RECORD_ID_PHOTO_ENCODING);
 	}
 
-	public String getPhotoEncoding() {
+	public static String getPhotoEncoding() {
 		return photoEncoding;
 	}
 	
-	public boolean usingBuiltinMap() {
+	public static boolean usingBuiltinMap() {
 		return mapFromJar;
 	}
 	
-	public void setBuiltinMap(boolean mapFromJar) {
+	public static void setBuiltinMap(boolean mapFromJar) {
 		write(mapFromJar?0:1, RECORD_ID_MAP_FROM_JAR);
-		this.mapFromJar = mapFromJar;
+		Configuration.mapFromJar = mapFromJar;
 	}
 	
-	public String getMapUrl() {
+	public static String getMapUrl() {
 		return mapFileUrl;
 	}
 	
-	public void setMapUrl(String url) {
+	public static void setMapUrl(String url) {
 		write(url, RECORD_ID_MAP_FILE_URL);
 		mapFileUrl = url;		
 	}
 
-	public String getSmsRecipient() {
+	public static String getSmsRecipient() {
 		return smsRecipient;
 	}
 	
-	public void setSmsRecipient(String s) {
+	public static void setSmsRecipient(String s) {
 		write(s, RECORD_ID_SMS_RECIPIENT);
 		smsRecipient = s;		
 	}
 	
-	public int getSpeedTolerance() {
+	public static int getSpeedTolerance() {
 		return speedTolerance;
 	}
 	
-	public void setSpeedTolerance(int s) {
+	public static void setSpeedTolerance(int s) {
 		write(s, RECORD_ID_SPEED_TOLERANCE);
 		speedTolerance = s;		
 	}
 	
-	public InputStream getMapResource(String name) throws IOException{
+	public static InputStream getMapResource(String name) throws IOException{
 		InputStream is;
 		if (mapFromJar) {
 			is = QueueReader.class.getResourceAsStream(name);			
@@ -699,63 +699,63 @@ public class Configuration {
 		return is;
 	}
 
-	public int getRouteEstimationFac() {
+	public static int getRouteEstimationFac() {
 		return routeEstimationFac;
 	}
 
-	public void setRouteEstimationFac(int routeEstimationFac) {
+	public static void setRouteEstimationFac(int routeEstimationFac) {
 		write(routeEstimationFac,RECORD_ID_ROUTE_ESTIMATION_FAC);
-		this.routeEstimationFac = routeEstimationFac;
+		Configuration.routeEstimationFac = routeEstimationFac;
 	}
 
-	public boolean isStopAllWhileRouteing() {
+	public static boolean isStopAllWhileRouteing() {
 		return stopAllWhileRouteing;
 	}
 
-	public void setStopAllWhileRouteing(boolean stopAllWhileRouteing) {
+	public static void setStopAllWhileRouteing(boolean stopAllWhileRouteing) {
 		write(stopAllWhileRouteing?1:0, RECORD_ID_STOP_ALL_WHILE_ROUTING);
-		this.stopAllWhileRouteing = stopAllWhileRouteing;
+		Configuration.stopAllWhileRouteing = stopAllWhileRouteing;
 	}
 	
-	public boolean getBtKeepAlive() {
+	public static boolean getBtKeepAlive() {
 		return btKeepAlive;
 	}
 	
-	public void setBtKeepAlive(boolean keepAlive) {
+	public static void setBtKeepAlive(boolean keepAlive) {
 		write(keepAlive?1:0, RECORD_ID_BT_KEEPALIVE);
-		this.btKeepAlive = keepAlive;
+		Configuration.btKeepAlive = keepAlive;
 	}
 	
-	public boolean getBtAutoRecon() {
+	public static boolean getBtAutoRecon() {
 		return btAutoRecon;
 	}
 	
-	public void setBtAutoRecon(boolean autoRecon) {
+	public static void setBtAutoRecon(boolean autoRecon) {
 		write(autoRecon?1:0, RECORD_ID_GPS_RECONNECT);
-		this.btAutoRecon = autoRecon;
+		Configuration.btAutoRecon = autoRecon;
 	}
 
-	public void getStartupPos(Node pos) {
+	public static void getStartupPos(Node pos) {
 		pos.setLatLon(startupPos.radlat, startupPos.radlon, true);
 	}
 
-	public void setStartupPos(Node pos) {
+	public static void setStartupPos(Node pos) {
 		//System.out.println("Save Map startup lat/lon: " + startupPos.radlat*MoreMath.FAC_RADTODEC + "/" + startupPos.radlon*MoreMath.FAC_RADTODEC);
 		write(Double.toString(pos.radlat),RECORD_ID_STARTUP_RADLAT);
 		write(Double.toString(pos.radlon),RECORD_ID_STARTUP_RADLON);
 	}
 
-	public void setProjTypeDefault(byte t) {
+	public static void setProjTypeDefault(byte t) {
 		ProjFactory.setProj(t);
 		projTypeDefault = t;
 		write((int) t, RECORD_ID_MAP_PROJECTION);
 	}
 
-	public byte getProjDefault() {
+	public static byte getProjDefault() {
 		return projTypeDefault;
 	}
 	
-	public boolean getDeviceSupportsJSR179() {
+	public static boolean getDeviceSupportsJSR179() {
 		//#if polish.api.locationapi
 			String jsr179Version = null;
 			try {
@@ -787,7 +787,7 @@ public class Configuration {
 		}
 	}
 	
-	private long getDefaultDeviceBacklightMethodMask() {
+	private static long getDefaultDeviceBacklightMethodMask() {
 		// a list of return codes for microedition.platform can be found at:
 		// http://www.club-java.com/TastePhone/J2ME/MIDP_Benchmark.jsp
 
@@ -828,15 +828,15 @@ public class Configuration {
 		return 0;
 	}
 	
-	public String getValidFileName(String fileName){
+	public static String getValidFileName(String fileName){
 		return fileName.replace('\\','_').replace('/','_').replace('>','_').replace('<','_').replace(':','_').replace('?','_').replace('*','_');
 	}
 	
-	public String getCompassDirection(int course) {
+	public static String getCompassDirection(int course) {
 		return compassDirections[(int) ((float) ((course%360 + 11.25f) / 22.5f)) ];
 	}
 	
-	public String getUtf8Encoding() {
+	public static String getUtf8Encoding() {
 		final String[] encodings  = { "UTF-8", "UTF8", "utf-8", "utf8", "" };
 		
 		if (utf8encodingstring != null)
@@ -856,7 +856,7 @@ public class Configuration {
 		return "";
 	}
 	
-	public void loadKeyShortcuts(intTree gameKeys, intTree singleKeys, intTree repeatableKeys, intTree doubleKeys, intTree longKeys, intTree specialKeys, Command [] cmds) {
+	public static void loadKeyShortcuts(intTree gameKeys, intTree singleKeys, intTree repeatableKeys, intTree doubleKeys, intTree longKeys, intTree specialKeys, Command [] cmds) {
 		int keyType = 0;
 		
 		logger.info("Initialising KeyShortCuts");

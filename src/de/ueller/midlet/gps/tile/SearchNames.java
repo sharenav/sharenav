@@ -10,6 +10,7 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 
+import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.SearchResult;
 import de.ueller.gpsMid.mapData.QueueReader;
 import de.ueller.midlet.gps.GpsMid;
@@ -83,7 +84,7 @@ public class SearchNames implements Runnable{
 //			System.out.println("open " +fileName);
 			InputStream stream;
 			try {
-				 stream = GpsMid.getInstance().getConfig().getMapResource(fileName);
+				 stream = Configuration.getMapResource(fileName);
 				 if (stream == null) {
 					 /**
 					  * This presumably means, that the combination of two letters simply
