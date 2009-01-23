@@ -523,20 +523,20 @@ public class GpsMid extends MIDlet implements CommandListener{
 	 */
 	private long determinPhoneMaxMemory() {
 		long maxMem = Runtime.getRuntime().totalMemory();
-		int [][] buf = new int[2048][];
-		try {			
-			for (int i = 0; i < 2048; i++) {
-				buf[i] = new int[16000]; 
-			}
-		} catch (OutOfMemoryError oome) {
-			//l.info("Hit out of memory while determining maximum heap size");
-			maxMem = Runtime.getRuntime().totalMemory();
-		} finally {
-			for (int i = 0; i < 2048; i++) {
-				buf[i] = null; 
-			}
-		}
-		System.gc();
+//		int [][] buf = new int[2048][];
+//		try {			
+//			for (int i = 0; i < 2048; i++) {
+//				buf[i] = new int[16000]; 
+//			}
+//		} catch (OutOfMemoryError oome) {
+//			//l.info("Hit out of memory while determining maximum heap size");
+//			maxMem = Runtime.getRuntime().totalMemory();
+//		} finally {
+//			for (int i = 0; i < 2048; i++) {
+//				buf[i] = null; 
+//			}
+//		}
+//		System.gc();
 		l.info("Maximum phone memory: " + maxMem);
 		return maxMem;
 	}
@@ -549,6 +549,10 @@ public class GpsMid extends MIDlet implements CommandListener{
 		Runtime runt = Runtime.getRuntime();
 		long freeMem = runt.freeMemory();
 		long totalMem = runt.totalMemory();
+		if (totalMem > phoneMaxMemory) {
+			phoneMaxMemory = totalMem;
+			l.info("New phoneMaxMemory: " + phoneMaxMemory);
+		}
 		if ((freeMem < 30000) || ((totalMem >= phoneMaxMemory) && ((float)freeMem/(float)totalMem < 0.10f))) {
 			l.trace("Memory is low, need freeing " + freeMem);
 			return true;
