@@ -151,6 +151,25 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 			waypt.id = id;
 			wayptDatabase.closeRecordStore();
 			wayptDatabase = null;
+			// TODO: add config option for whether to record waypoints
+			// in GPX track or waypoint store
+			if (isRecordingTrk()){
+				// store waypoint in GPX track
+				//#debug info
+				logger.info("Adding waypoint in GPX track: " + waypt);
+				/**
+				 * Add a marker to the recording for the waypoint
+				 */
+				dos.writeFloat(0.0f);
+				dos.writeFloat(0.0f);
+				dos.writeShort(id);
+				dos.writeLong(Long.MIN_VALUE + 1);
+				dos.writeByte(0);
+				recorded++;
+			}
+			
+		} catch (IOException ioe) {
+			logger.exception("Failed to write waypoint into track", ioe);
 		} catch (RecordStoreNotOpenException e) {
 			logger.exception("Exception storing waypoint (database not open)", e);
 		} catch (RecordStoreFullException e) {
@@ -793,6 +812,7 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		byte[] trackArray = new byte[trackSize];
 		dis1.read(trackArray);
 		DataInputStream trackIS = new DataInputStream(new ByteArrayInputStream(trackArray));
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				
 		oS.write("<trk>\r\n<trkseg>\r\n".getBytes());						
 		StringBuffer sb = new StringBuffer(128);
@@ -806,6 +826,29 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 			if (time == Long.MIN_VALUE) {
 				oS.write("</trkseg>\r\n".getBytes());
 				oS.write("<trkseg>\r\n".getBytes());
+			} else if (time == Long.MIN_VALUE + 1) {
+				PositionMark waypt = null;
+				try {
+					int id;
+					id = ele;
+
+					openWayPtDatabase();
+					waypt = new PositionMark(id, wayptDatabase.getRecord(id));
+					wayptDatabase.closeRecordStore();
+					wayptDatabase = null;
+					if (waypt != null) {
+						// TODO: check if this copes with the case when
+						// waypoint has been removed before converting
+						// track to GPX
+						// Stream waypoint to a separate bytearray to write it out
+						// at the end of the track.
+						streamWayPt (baos, waypt);
+					}
+				} catch (RecordStoreException e) {
+					logger.info("RecordStoreException (" + e.getMessage() + ") loading track embeded waypoint. Has it been deleted?");
+				} catch (OutOfMemoryError oome) {
+					logger.error("Out of memory loading waypoints");
+				}
 			} else {
 				sb.setLength(0);
 				sb.append("<trkpt lat='").append(lat).append("' lon='").append(lon).append("' >\r\n");
@@ -817,6 +860,7 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 			}
 		}
 		oS.write("</trkseg>\r\n</trk>\r\n".getBytes());
+		oS.write(baos.toByteArray());
 		trackDatabase.closeRecordStore();
 		trackDatabase = null;
 	}
@@ -829,18 +873,22 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		}
 	}
 	
+	private void streamWayPt (OutputStream oS, PositionMark wayPt) throws IOException{
+		StringBuffer sb = new StringBuffer(128);
+		sb.append("<wpt lat='").append(wayPt.lat*MoreMath.FAC_RADTODEC).append("' lon='").append(wayPt.lon*MoreMath.FAC_RADTODEC).append("' >\r\n");
+		sb.append("<name>").append(wayPt.displayName).append("</name>\r\n");
+		sb.append("</wpt>\r\n");
+
+		writeUTF(oS, sb);
+	}
+
 	private void streamWayPts (OutputStream oS) throws IOException{		
 		PositionMark[] waypts = tile.listWayPt();
 		PositionMark wayPt = null;
 		
 		for (int i = 0; i < waypts.length; i++) {
-			wayPt = waypts[i];			
-			StringBuffer sb = new StringBuffer(128);
-			sb.append("<wpt lat='").append(wayPt.lat*MoreMath.FAC_RADTODEC).append("' lon='").append(wayPt.lon*MoreMath.FAC_RADTODEC).append("' >\r\n");
-			sb.append("<name>").append(wayPt.displayName).append("</name>\r\n");
-			sb.append("</wpt>\r\n");
-
-			writeUTF(oS, sb);
+			wayPt = waypts[i];
+			streamWayPt (oS, wayPt);
 		}
 	}
 	
