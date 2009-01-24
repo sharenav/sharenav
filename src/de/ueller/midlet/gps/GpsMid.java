@@ -201,6 +201,8 @@ public class GpsMid extends MIDlet implements CommandListener{
 			Object handlerObject = handlerClass.newInstance();
 			Jsr211ContentHandlerInterface handler = (Jsr211ContentHandlerInterface) handlerObject;
 			handler.registerContentHandler();
+		} catch (NoClassDefFoundError ncdfe) {
+			l.error("JSR211 is not available", true);
 		} catch (ClassNotFoundException cnfe) {
 			l.error("JSR211 is not available", true);
 		} catch (InstantiationException e) {
