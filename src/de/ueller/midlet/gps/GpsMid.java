@@ -38,6 +38,9 @@ import javax.microedition.io.file.FileConnection;
 //#if polish.api.nokia-ui
 import com.nokia.mid.ui.DeviceControl;
 //#endif
+
+import de.ueller.midlet.gps.importexport.Jsr211ContentHandlerInterface;
+
 //#if polish.api.min-siemapi
 import de.ueller.midlet.gps.importexport.SiemGameLight;
 //#endif
@@ -46,9 +49,6 @@ import de.ueller.gps.data.Configuration;
 import de.ueller.gps.tools.HelperRoutines;
 import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.tile.C;
-
-
-
 
 public class GpsMid extends MIDlet implements CommandListener{
 	/** */
@@ -194,7 +194,22 @@ public class GpsMid extends MIDlet implements CommandListener{
 				trace.resume();
 //				trace.show();
 		}
+		//#if polish.api.contenthandler
+		try {
+			l.info("Trying to register JSR211 Content Handler");
+			Class handlerClass = Class.forName("de.ueller.midlet.gps.importexport.Jsr211Impl");
+			Object handlerObject = handlerClass.newInstance();
+			Jsr211ContentHandlerInterface handler = (Jsr211ContentHandlerInterface) handlerObject;
+			handler.registerContentHandler();
+		} catch (ClassNotFoundException cnfe) {
+			l.error("JSR211 is not available", true);
+		} catch (InstantiationException e) {
+			l.exception("ContentHandler invokation failed", e);
+		} catch (IllegalAccessException e) {
+			l.exception("ContentHandler invokation failed", e);
 		}
+		//#endif
+	}
 
 	public void commandAction(Command c, Displayable d) {
         if (c == EXIT_CMD) {
