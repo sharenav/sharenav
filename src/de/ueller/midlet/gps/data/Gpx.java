@@ -1029,8 +1029,8 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 				logger.info("Using builtin jsr 172 XML parser");
 				parserClass = Class.forName("de.ueller.midlet.gps.importexport.Jsr172GpxParser");
 			} else {
-				logger.info("Using MinML2 XML parser");
-				parserClass = Class.forName("de.ueller.midlet.gps.importexport.MinML2GpxParser");
+				logger.info("Using QDXMLParser");
+				parserClass = Class.forName("de.ueller.midlet.gps.importexport.QDGpxParser");
 			}
 			parserObject = parserClass.newInstance();
 			parser = (GpxParser) parserObject;

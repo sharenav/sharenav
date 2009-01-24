@@ -18,40 +18,31 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Hashtable;
 
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-
-import uk.co.wilson.xml.MinML2;
-
+import de.ueller.gps.tools.QDXMLParser.*;
 import de.ueller.gps.data.Configuration;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
 
-public class MinML2GpxParser extends MinML2 implements GpxParser {
+public class QDGpxParser extends QDParser implements DocHandler, GpxParser {
 	/**
-	 * This is a wrapper for the MinML2 parser. We need this wrapper so that we
-	 * can use the same code for both the MinML2 parser and the JSR-172 parser.
+	 * This is a wrapper for the QDParser parser. We need this wrapper so that we
+	 * can use the same code for both the QDParser parser and the JSR-172 parser.
 	 * Although they are close to identical, they aren't completely. Hence the
 	 * need for this wrapper. We also need the wrapper to guard against missing
 	 * JSRs
 	 */
 
 	private final static Logger logger = Logger.getInstance(
-			MinML2GpxParser.class, Logger.DEBUG);
+			QDGpxParser.class, Logger.DEBUG);
 
 	private XmlParserContentHandler contentH;
 
-	public void startElement(String namespaceURI, String localName,
-			String qName, Attributes atts) {
-		Hashtable attTable = new Hashtable();
-		for (int i = 0; i < atts.getLength(); i++) {
-			attTable.put(atts.getQName(i), atts.getValue(i));
-		}
-		contentH.startElement(namespaceURI, localName, qName, attTable);
+	public void startElement(String tag, Hashtable h) {
+		contentH.startElement(null, null, tag, h);
 	}
 
-	public void endElement(String namespaceURI, String localName, String qName) {
-		contentH.endElement(namespaceURI, localName, qName);
+	public void endElement(String tag) {
+		contentH.endElement(null, null, tag);
 	}
 
 	public void startDocument() {
@@ -62,23 +53,23 @@ public class MinML2GpxParser extends MinML2 implements GpxParser {
 		contentH.endDocument();
 	}
 
-	public void characters(char[] ch, int start, int length) {
-		contentH.characters(ch, start, length);
+	public void text(String str) {
+		char buf[] = new char[str.length()];
+		str.getChars(0, str.length(), buf, 0);
+		contentH.characters(buf, 0, str.length());
 	}
 
 	public boolean parse(InputStream in, XmlParserContentHandler contentH) {
-		logger.debug("Starting XML parsing with MinML");
+		logger.debug("Starting XML parsing with QDXML");
 		this.contentH = contentH;
 		if (contentH == null) {
 			return false;
 		}
 		try {
-			parse(new InputStreamReader(in, Configuration.getUtf8Encoding()));
+			QDParser.parse( (DocHandler) this, new InputStreamReader(in, Configuration.getUtf8Encoding()));
 			return true;
-		} catch (SAXException e) {
+		} catch (Exception e) {
 			logger.exception("Error while parsing the XML file", e);
-		} catch (IOException e) {
-			logger.exception("Error while reading the XML file", e);
 		}
 		return false;
 	}

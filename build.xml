@@ -113,9 +113,9 @@
 		<deviceRequirements unless="test">
 			<or>
 				<requirement name="Identifier" value="Generic/full" />
+				<requirement name="Identifier" value="Generic/minimal" />
 				<requirement name="Identifier" value="Generic/full-nolocation" />
 				<requirement name="Identifier" value="Generic/multi" />
-				<requirement name="Identifier" value="Generic/minimal" />
 				<requirement name="Identifier" value="Generic/minimal-bt" />
 				<requirement name="Identifier" value="Generic/no-obex" />
 				<requirement name="Identifier" value="Generic/no-xml" />
@@ -136,7 +136,6 @@
 			fullscreen="menu"
 			usePolishGui="false"
 			workDir="${dir.work}"
-			binaryLibrary="lib/MinML2.jar"
 		>     
 		   <!-- postcompiler name="floater">
 			<parameter name="verbose" value="false" />
@@ -210,7 +209,7 @@
 				<keep class="de.ueller.midlet.gps.importexport.CommGpxImportSession" />
 				<keep class="de.ueller.midlet.gps.importexport.FileGpxImportSession" />
 				<keep class="de.ueller.midlet.gps.importexport.Jsr172GpxParser" />
-				<keep class="de.ueller.midlet.gps.importexport.MinML2GpxParser" />
+				<keep class="de.ueller.midlet.gps.importexport.QDGpxParser" />
 				<keep class="de.ueller.midlet.gps.importexport.GpxParser" />
 				<keep class="de.ueller.midlet.gps.GuiCameraInterface" />
 				<keep class="de.ueller.midlet.gps.GuiCamera" />
