@@ -1009,10 +1009,10 @@ Runnable , GpsMidDisplayable{
 				tacho.show();
 			}
 			//#if ENABLE_EDIT 
-				else if (c == RETRIEVE_XML) {
+				else if (c == CMDS[RETRIEVE_XML]) {
 					if (C.enableEdits) {
-						if ((actualWay != null) && (actualWay instanceof EditableWay)) {
-							EditableWay eway = (EditableWay)actualWay;
+						if ((pc.actualWay != null) && (pc.actualWay instanceof EditableWay)) {
+							EditableWay eway = (EditableWay)pc.actualWay;
 							GUIosmWayDisplay guiWay = new GUIosmWayDisplay(eway,this);
 							guiWay.show();
 							guiWay.refresh();
