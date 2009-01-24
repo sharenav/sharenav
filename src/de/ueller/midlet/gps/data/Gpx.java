@@ -121,10 +121,19 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 			dis1.read(trackArray);
 			DataInputStream trackIS = new DataInputStream(new ByteArrayInputStream(trackArray));
 			for (int i = 0; i < recorded; i++) {
-				tile.addTrkPt(trackIS.readFloat(), trackIS.readFloat(), false);
+				float lat = trackIS.readFloat();
+				float lon = trackIS.readFloat();
+				if (i == 0) {
+					Trace tr = Trace.getInstance();
+					tr.receivePosItion(lat * MoreMath.FAC_DECTORAD, lon * MoreMath.FAC_DECTORAD, tr.scale);
+				}
 				trackIS.readShort(); //altitude
-				trackIS.readLong();	//Time			
-				trackIS.readByte(); //Speed				
+				long time = trackIS.readLong();	//Time
+				trackIS.readByte(); //Speed
+				if (time > Long.MIN_VALUE + 10) { //We use some special markers in the Time to indicate 
+								//Data other than trackpoints, so ignore these.
+					tile.addTrkPt(lat, lon, false);
+				}
 			}
 			dis1.close();
 			dis1 = null;
