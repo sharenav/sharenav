@@ -76,6 +76,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 			Command.ITEM, 2);
 	private final Command			BT_MAP	= new Command("Select bluetooth device",
 			Command.ITEM, 2);
+	private final Command			OSM_UPL	= new Command("Upload to OSM", Command.ITEM, 2);
 	private final Command			GPS_DISCOVER	= new Command("Discover GPS",
 			Command.ITEM, 1);
 	
@@ -270,15 +271,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		
 		menuDisplayOptions.setCommandListener(this);
 		
-		//Prepare Gpx receiver selection menu
-		menuGpx.addCommand(BACK_CMD);
-		menuGpx.addCommand(OK_CMD);
-		menuGpx.addCommand(FILE_MAP);
-		menuGpx.addCommand(BT_MAP);
-
-		gpxUrl = new StringItem("Gpx Receiver Url: ","<Please select in menu>");
-		menuGpx.append(gpxUrl);
-		menuGpx.setCommandListener(this);
+		
 
 		//Prepare Recording Options selection menu
 		menuRecordingOptions.addCommand(BACK_CMD);
@@ -444,7 +437,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				logger.error("Bluetooth is not compiled into this version");
 			//#endif
 		}
-		
+		if (c == OSM_UPL) {
+			gpxUrl.setText("http://api06.dev.openstreetmap.org/api/0.6/gpx/create");
+		}
 		if (c == OK_CMD){			
 			switch (state) {
 			case STATE_ROOT:
@@ -526,7 +521,17 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 					state = STATE_DISPOPT;
 					break;
 				case MENU_ITEM_GPX_DEVICE: // GPX Receiver
-					gpxUrl.setText(Configuration.getGpxUrl()==null?"<Please select in menu>":Configuration.getGpxUrl());				
+					//Prepare Gpx receiver selection menu
+					menuGpx.addCommand(BACK_CMD);
+					menuGpx.addCommand(OK_CMD);
+					menuGpx.addCommand(FILE_MAP);
+					menuGpx.addCommand(BT_MAP);
+					menuGpx.addCommand(OSM_UPL);
+
+					gpxUrl = new StringItem("Gpx Receiver Url: ","<Please select in menu>");
+					menuGpx.append(gpxUrl);
+					menuGpx.setCommandListener(this);
+					gpxUrl.setText(Configuration.getGpxUrl()==null?"<Please select in menu>":Configuration.getGpxUrl());
 					GpsMid.getInstance().show(menuGpx);
 					state = STATE_GPX;
 					break;

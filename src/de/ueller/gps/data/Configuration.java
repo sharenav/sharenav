@@ -141,6 +141,8 @@ public class Configuration {
 	private static final int RECORD_ID_CONFIG_VERSION = 27;
 	private static final int RECORD_ID_SMS_RECIPIENT = 28;
 	private static final int RECORD_ID_SPEED_TOLERANCE = 29;
+	private static final int RECORD_ID_OSM_USERNAME = 30;
+	private static final int RECORD_ID_OSM_PWD = 31;
 	
 
 	// Gpx Recording modes
@@ -201,6 +203,9 @@ public class Configuration {
 	private static int speedTolerance = 0; 
 	
 	private static String utf8encodingstring = null;
+	
+	private static String osm_username;
+	private static String osm_pwd;
 	
 	public Configuration() {		
 		logger = Logger.getInstance(Configuration.class, Logger.DEBUG);
@@ -310,6 +315,8 @@ public class Configuration {
 			setProjTypeDefault((byte) readInt(database,  RECORD_ID_MAP_PROJECTION));
 			smsRecipient = readString(database, RECORD_ID_SMS_RECIPIENT);
 			speedTolerance = readInt(database, RECORD_ID_SPEED_TOLERANCE);
+			osm_username = readString(database, RECORD_ID_OSM_USERNAME);
+			osm_pwd = readString(database, RECORD_ID_OSM_PWD);
 			database.closeRecordStore();
 		} catch (Exception e) {
 			logger.exception("Problems with reading our configuration: ", e);
@@ -743,6 +750,22 @@ public class Configuration {
 		//System.out.println("Save Map startup lat/lon: " + startupPos.radlat*MoreMath.FAC_RADTODEC + "/" + startupPos.radlon*MoreMath.FAC_RADTODEC);
 		write(Double.toString(pos.radlat),RECORD_ID_STARTUP_RADLAT);
 		write(Double.toString(pos.radlon),RECORD_ID_STARTUP_RADLON);
+	}
+	
+	public static String getOsmUsername() {
+		return osm_username;
+	}
+
+	public static void setOsmUsername(String name) {
+		write(name,RECORD_ID_OSM_USERNAME);
+	}
+	
+	public static String getOsmPwd() {
+		return osm_pwd;
+	}
+
+	public static void setOsmPwd(String pwd) {
+		write(pwd,RECORD_ID_OSM_PWD);
 	}
 
 	public static void setProjTypeDefault(byte t) {

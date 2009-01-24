@@ -888,9 +888,11 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 				if (url.startsWith("file:")) {
 					tmp = Class.forName("de.ueller.midlet.gps.importexport.FileExportSession");
 				} else if (url.startsWith("comm:")) {
-					tmp = Class.forName("de.ueller.midlet.gps.importexport.CommExportSession");					
+					tmp = Class.forName("de.ueller.midlet.gps.importexport.CommExportSession");
 				} else if (url.startsWith("btgoep:")){
-					tmp = Class.forName("de.ueller.midlet.gps.importexport.ObexExportSession");					
+					tmp = Class.forName("de.ueller.midlet.gps.importexport.ObexExportSession");
+				} else if (url.startsWith("http:")){
+					tmp = Class.forName("de.ueller.midlet.gps.GuiGPXOSMUpload");
 				}
 				if (tmp != null)
 					logger.info("Got class: " + tmp);
