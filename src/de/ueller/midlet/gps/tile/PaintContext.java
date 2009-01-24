@@ -23,10 +23,11 @@ public class PaintContext extends ScreenContext {
 	public final static byte DRAW_AREAS_OUTLINE=1;
 	public final static byte DRAW_AREAS_FILL=2;
 	public final static byte STATE_IN_CREATE=1;
+	public final static byte STATE_IN_PAINT=2;
 	public final static byte STATE_READY=0;
 	public final static byte STATE_IN_COPY=3;
 	
-	public byte state=0;
+	public volatile byte state=0;
 	public Graphics g;
 	/** 
 	 * used to avoid frequent memory allocations this point have to have
@@ -52,12 +53,12 @@ public class PaintContext extends ScreenContext {
 	public C c;
 
 	/**
-	 * @deprecated
+	 * 
 	 * the the paint-process will store Street which is nearest to the center
 	 * of projection. 
 	 */
-	public Way actualWay=null;
-	public Way nearestRoutableWay=null;
+	public volatile Way actualWay=null;
+	public volatile Way nearestRoutableWay=null;
 	/**
 	 * the square of distance from center to the nearest point of actualWay
 	 */

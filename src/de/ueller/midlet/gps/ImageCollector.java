@@ -31,13 +31,8 @@ import de.ueller.midlet.gps.tile.WayDescription;
 public class ImageCollector implements Runnable {
 	private final static Logger logger=Logger.getInstance(ImageCollector.class,Logger.TRACE);
 
-	private final static byte STATE_WAIT_FOR_SC = 0;
-	private final static byte STATE_SC_READY = 1;
-	
-
 	//private boolean lockg=false;
 	//private boolean lockc=false;
-	private volatile boolean newPaintAvail=false;
 	private volatile boolean shutdown=false;
 	private volatile boolean suspended=true;
 	private final Tile t[];
@@ -45,12 +40,12 @@ public class ImageCollector implements Runnable {
 	private ScreenContext nextSc=new ScreenContext() ;
 
 	private Image[] img=new Image[2];
-	private PaintContext[] pc=new PaintContext[2];
+	private volatile PaintContext[] pc=new PaintContext[2];
 	public static Node mapCenter = new Node();
-	byte nextCreate=0;
+	byte nextCreate=1;
 	byte nextPaint=0;
 
-	volatile byte stat=0;
+//	volatile byte stat=0;
 	int xSize;
 	int ySize;
 	IntPoint newCenter=new IntPoint(0,0);
@@ -88,19 +83,11 @@ public class ImageCollector implements Runnable {
 	}
 
 	public void run() {
+		PaintContext createPC = null;
 		final byte MAXCRASHES = 5;
 		byte crash=0;
 		do {
 		try {
-			// logger.info("wait for sc");
-			while (stat == STATE_WAIT_FOR_SC && !shutdown) {
-				synchronized (this) {
-					try {
-						wait(1000);
-					} catch (InterruptedException e) {
-					}
-				}
-			}
 			while (!shutdown) {
 				if (!needRedraw || suspended) {
 					synchronized (this) {
@@ -113,44 +100,46 @@ public class ImageCollector implements Runnable {
 				}
 				//#debug debug
 				logger.debug("Redrawing Map");
-				while (pc[nextCreate].state != PaintContext.STATE_READY && !shutdown) {
-					synchronized (this) {
+				synchronized (this) {
+					while (pc[nextCreate].state != PaintContext.STATE_READY && !shutdown) {
 						try {
 							// System.out.println("img not ready");
 							wait(1000);
 						} catch (InterruptedException e) {
 						}
 					}
+					if (suspended || shutdown)
+						continue;
+					pc[nextCreate].state = PaintContext.STATE_IN_CREATE;
 				}
-				if (suspended || shutdown)
-					continue;
-				pc[nextCreate].state = PaintContext.STATE_IN_CREATE;
+				createPC = pc[nextCreate];
+				
 				
 				//#debug
 				long startTime = System.currentTimeMillis();
 
 				// create PaintContext
-				pc[nextCreate].xSize = xSize;
-				pc[nextCreate].ySize = ySize;
-				pc[nextCreate].center = nextSc.center.clone();
+				createPC.xSize = xSize;
+				createPC.ySize = ySize;
+				createPC.center = nextSc.center.clone();
 				mapCenter=nextSc.center.clone();
-				pc[nextCreate].scale = nextSc.scale;
-				Projection p = ProjFactory.getInstance(pc[nextCreate].center,nextSc.course, nextSc.scale, xSize, ySize);
-				pc[nextCreate].setP(p);
-//				p.inverse(xSize, 0, pc[nextCreate].screenRU);
-//				p.inverse(0, ySize, pc[nextCreate].screenLD);
+				createPC.scale = nextSc.scale;
+				Projection p = ProjFactory.getInstance(createPC.center,nextSc.course, nextSc.scale, xSize, ySize);
+				createPC.setP(p);
+//				p.inverse(xSize, 0, createPC.screenRU);
+//				p.inverse(0, ySize, createPC.screenLD);
 				// pcCollect.trace=nextSc.trace;
 				// pcCollect.dataReader=nextSc.dataReader;
 				// cleans the screen
-				pc[nextCreate].g = img[nextCreate].getGraphics();
-				pc[nextCreate].g.setColor(C.BACKGROUND_COLOR);
-				pc[nextCreate].g.fillRect(0, 0, xSize, ySize);
-//				pc[nextCreate].g.setColor(0x00FF0000);
-//				pc[nextCreate].g.drawRect(0, 0, xSize-1, ySize-1);
-//				pc[nextCreate].g.drawRect(20, 20, xSize-41, ySize-41);
-				pc[nextCreate].squareDstToWay = Float.MAX_VALUE;
-				pc[nextCreate].squareDstToRoutableWay = Float.MAX_VALUE;
-				pc[nextCreate].target = nextSc.target;
+				createPC.g = img[nextCreate].getGraphics();
+				createPC.g.setColor(C.BACKGROUND_COLOR);
+				createPC.g.fillRect(0, 0, xSize, ySize);
+//				createPC.g.setColor(0x00FF0000);
+//				createPC.g.drawRect(0, 0, xSize-1, ySize-1);
+//				createPC.g.drawRect(20, 20, xSize-41, ySize-41);
+				createPC.squareDstToWay = Float.MAX_VALUE;
+				createPC.squareDstToRoutableWay = Float.MAX_VALUE;
+				createPC.target = nextSc.target;
 				// System.out.println("create " + pcCollect);
 
 
@@ -169,37 +158,37 @@ public class ImageCollector implements Runnable {
 				 *
 				 */
 				for (byte layer = 0; layer < layersToRender.length; layer++) {
-					byte minTile = C.scaleToTile((int)(pc[nextCreate].scale / boost));
+					byte minTile = C.scaleToTile((int)(createPC.scale / boost));
 					if ((minTile >= 3) && (t[3] != null)) {
-						t[3].paint(pc[nextCreate],layersToRender[layer]);
+						t[3].paint(createPC,layersToRender[layer]);
 						Thread.yield();
 					}
 					if ((minTile >= 2) && (t[2] != null)) {
-						t[2].paint(pc[nextCreate], layersToRender[layer]);
+						t[2].paint(createPC, layersToRender[layer]);
 						Thread.yield();
 					}
 					if ((minTile >= 1) && (t[1] != null)) {
-						t[1].paint(pc[nextCreate], layersToRender[layer]);
+						t[1].paint(createPC, layersToRender[layer]);
 						Thread.yield();
 					}
 					if (t[0] != null) {
-						t[0].paint(pc[nextCreate], layersToRender[layer]);
+						t[0].paint(createPC, layersToRender[layer]);
 					}
 					/**
 					 * Drawing waypoints
 					 */
 					if (t[5] != null) {
-						t[5].paint(pc[nextCreate], layersToRender[layer]);
+						t[5].paint(createPC, layersToRender[layer]);
 					}
 					/**
 					 * Drawing debuginfo for routing
 					 */
 					if (t[4] != null && Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_CONNECTIONS)) {
-						t[4].paint(pc[nextCreate], layersToRender[layer]);
+						t[4].paint(createPC, layersToRender[layer]);
 					}
 					if (suspended) {
 						// Don't continue rendering if suspended
-						pc[nextCreate].state = PaintContext.STATE_READY;
+						createPC.state = PaintContext.STATE_READY;
 						break;
 					}
 				}
@@ -207,6 +196,7 @@ public class ImageCollector implements Runnable {
 				long endTime = System.currentTimeMillis();
 				logger.info("Painting map took " + (endTime - startTime) + "ms");
 				//#enddebug
+				createPC.state=PaintContext.STATE_READY;
 				if (!shutdown)
 					newCollected();
 				createImageCount++;				
@@ -216,6 +206,9 @@ public class ImageCollector implements Runnable {
 				//System.gc();
 			}
 		} catch (OutOfMemoryError oome) {
+			if (createPC != null) {
+				createPC.state = PaintContext.STATE_READY;
+			}
 		   String recoverZoomedIn="";
 		   crash++;
 		   if(tr.scale>10000 && crash < MAXCRASHES) {
@@ -265,6 +258,7 @@ public class ImageCollector implements Runnable {
 	 *  but with the last collected position and direction in the center
 	 */
 	public void paint(PaintContext screenPc){
+		PaintContext paintPC;
 //		System.out.println("paint this: " +screenPc);
 //		System.out.println("paint image: " +pc[nextPaint]);
 		if (suspended) return;
@@ -279,45 +273,55 @@ public class ImageCollector implements Runnable {
 		Projection p = ProjFactory.getInstance(nextSc.center,nextSc.course, nextSc.scale, nextSc.xSize, nextSc.ySize);
 		nextSc.setP(p);
 		screenPc.setP(p);
+		
+		synchronized (this) {
+			if (pc[nextPaint].state != PaintContext.STATE_READY) {
+				logger.error("ImageCollector was trying to draw a non ready PaintContext " + pc[nextPaint].state);
+				return;
+			}
+			paintPC = pc[nextPaint];
+			paintPC.state = PaintContext.STATE_IN_PAINT;
+		}
 
-		stat=STATE_SC_READY;
-		newPaintAvail=false;
-
-		p.forward(pc[nextPaint].center, oldCenter);
+		p.forward(paintPC.center, oldCenter);
 		screenPc.g.drawImage(img[nextPaint], 
 				oldCenter.x, oldCenter.y,
 				Graphics.VCENTER|Graphics.HCENTER); 
 		//Test if the new center is in the midle of the screen, in which 
 		//case we don't need to redraw, as nothing has changed. 
-		if (oldCenter.x != nextSc.xSize/2 || oldCenter.y != nextSc.ySize/2 || pc[nextPaint].course != nextSc.course ) { 
+		if (oldCenter.x != nextSc.xSize/2 || oldCenter.y != nextSc.ySize/2 || paintPC.course != nextSc.course ) { 
 			//The center of the screen has moved, so need 
 			//to redraw the map image  
 			needRedraw = true; 
 		} 
 
 		String name = null;
-		if (pc[nextPaint].actualWay != null){
+		/*
+		 * As we are double buffering pc, nothing should be writing to paintPC
+		 * therefore it should be safe to access the volatile variable actualWay 
+		 */
+		if (paintPC.actualWay != null){
 			String maxspeed="";
-			if (pc[nextPaint].actualWay.getMaxSpeed() != 0){
-			    if(screenPc.trace.speed > (pc[nextPaint].actualWay.getMaxSpeed() + Configuration.getSpeedTolerance())) {
+			if (paintPC.actualWay.getMaxSpeed() != 0){
+			    if(screenPc.trace.speed > (paintPC.actualWay.getMaxSpeed() + Configuration.getSpeedTolerance())) {
 					if (Configuration.getCfgBitState(Configuration.CFGBIT_SPEEDALERT_VISUAL)) {
-				    	maxspeed=" SL:" + pc[nextPaint].actualWay.getMaxSpeed() + "!!";
+				    	maxspeed=" SL:" + paintPC.actualWay.getMaxSpeed() + "!!";
 					} else {
-					    maxspeed=" SL:" + pc[nextPaint].actualWay.getMaxSpeed();
+					    maxspeed=" SL:" + paintPC.actualWay.getMaxSpeed();
 					}
 					screenPc.trace.speeding=true;
 			    } else {
-					maxspeed=" SL:" + pc[nextPaint].actualWay.getMaxSpeed();
+					maxspeed=" SL:" + paintPC.actualWay.getMaxSpeed();
 					screenPc.trace.speeding=false;
 			    }
 			} else {
 			    screenPc.trace.speeding=false;
 			}
 
-			if (pc[nextPaint].actualWay.nameIdx != -1) {
-				name=screenPc.trace.getName(pc[nextPaint].actualWay.nameIdx);
+			if (paintPC.actualWay.nameIdx != -1) {
+				name=screenPc.trace.getName(paintPC.actualWay.nameIdx);
 			} else {
-				WayDescription wayDesc = C.getWayDescription(pc[nextPaint].actualWay.type);
+				WayDescription wayDesc = C.getWayDescription(paintPC.actualWay.type);
 				name = "(unnamed " + wayDesc.description + ")";
 			}
 			if (name == null){
@@ -327,8 +331,8 @@ public class ImageCollector implements Runnable {
 			}
 			tr.actualWay = pc[nextPaint].actualWay;
 		}
-		if (pc[nextPaint].nearestRoutableWay != null){
-			tr.source=pc[nextPaint].currentPos;
+		if (paintPC.nearestRoutableWay != null){
+			tr.source=paintPC.currentPos;
 		}
 		if(statusFontHeight==0) {
 			statusFontHeight=screenPc.g.getFont().getHeight();
@@ -340,31 +344,38 @@ public class ImageCollector implements Runnable {
 			screenPc.g.setColor(0,0,0);
 		}
 		if (showLatLon) {
-			screenPc.g.drawString("lat: " + Float.toString(pc[nextPaint].center.radlat*MoreMath.FAC_RADTODEC),5,screenPc.ySize, Graphics.LEFT | Graphics.BOTTOM);
-			screenPc.g.drawString("lon: " + Float.toString(pc[nextPaint].center.radlon*MoreMath.FAC_RADTODEC),screenPc.xSize/2 + 5,screenPc.ySize, Graphics.LEFT | Graphics.BOTTOM);
+			screenPc.g.drawString("lat: " + Float.toString(paintPC.center.radlat*MoreMath.FAC_RADTODEC),5,screenPc.ySize, Graphics.LEFT | Graphics.BOTTOM);
+			screenPc.g.drawString("lon: " + Float.toString(paintPC.center.radlon*MoreMath.FAC_RADTODEC),screenPc.xSize/2 + 5,screenPc.ySize, Graphics.LEFT | Graphics.BOTTOM);
 		} else {
 			if (name != null){
 				screenPc.g.drawString(name,
 					screenPc.xSize/2, screenPc.ySize, Graphics.BOTTOM|Graphics.HCENTER);
 			}
 		}
+		
+		
 			
-		if (pc[nextPaint].scale != screenPc.scale){
+		if (paintPC.scale != screenPc.scale){
 			needRedraw=true;
 		}
-		if (needRedraw) {
-			synchronized (this) {
+		synchronized (this) {
+			paintPC.state = PaintContext.STATE_READY;
+			if (needRedraw) {
 				notifyAll();
+			} else {
+				//System.out.println("No need to redraw after painting");
 			}
-		} else {
-			//System.out.println("No need to redraw after painting");
 		}
 	}
 	private synchronized void newCollected(){
-		pc[nextCreate].state=PaintContext.STATE_READY;
+		while ((pc[nextPaint].state != PaintContext.STATE_READY) || (pc[nextCreate].state != PaintContext.STATE_READY)) {
+			try {
+				wait(1000);
+			} catch (InterruptedException e) {
+			}
+		}
 		nextPaint=nextCreate;
 		nextCreate=(byte) ((nextCreate + 1) % 2);
-		newPaintAvail=true;		
 		tr.requestRedraw();
 	}
 

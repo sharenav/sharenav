@@ -763,7 +763,7 @@ Runnable , GpsMidDisplayable{
 				routeRecalculationRequired=true;
 				routeNodes=new Vector();
 				routeEngine = new Routing(t,this);
-				routeEngine.solve(source, pc.target);
+				routeEngine.solve(source, target);
 //				resume();
 			}
 			if (c == CMDS[SAVE_WAYP_CMD]) {
