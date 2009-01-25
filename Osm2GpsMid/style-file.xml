@@ -132,6 +132,9 @@ zoomed out 21x (scale alias 1:  500km)
 	<sound name="METERS">
 		<soundFile src="meters.amr"/>
 	</sound>
+	<sound name="SPEED_LIMIT">
+	<soundFile src="speed_limit.amr"/>
+	</sound>
 -->  
   </sounds>
   <pois>
