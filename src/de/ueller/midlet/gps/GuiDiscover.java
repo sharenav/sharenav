@@ -86,26 +86,24 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 															Choice.IMPLICIT, elements,
 															null);
 
-	private  List				menuBT			= new List("Devices",
-															Choice.IMPLICIT, empty,
-															null);
+	private List					menuBT;
 
 	private final List				menuFS			= new List("Devices",
 															Choice.IMPLICIT, empty,
 															null);
-	private final Form				menuSelectLocProv = new Form("Location Receiver");
+	private Form					menuSelectLocProv;
 	
-	private final Form				menuSelectMapSource = new Form("Select Map Source");
+	private Form					menuSelectMapSource;
 	
-	private final Form				menuDisplayOptions = new Form("Display Options");
+	private Form					menuDisplayOptions;
 	
-	private final Form				menuGpx = new Form("Gpx Receiver");
+	private Form					menuGpx;
 	
-	private final Form				menuDebug = new Form("Debug options");
+	private Form					menuDebug;
 
-	private final Form				menuRecordingOptions = new Form("Recording Rules");
+	private Form					menuRecordingOptions;
 	
-	private final Form				menuRoutingOptions = new Form("Routing Options");
+	private Form					menuRoutingOptions;
 	
 	private final GpsMid			parent;
 
@@ -157,123 +155,37 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	
 	public GuiDiscover(GpsMid parent) {
 		this.parent = parent;
-		
+
 		state = STATE_ROOT;
-		
+
 		//Prepare Main Menu
 		menu.addCommand(EXIT_CMD);
 		menu.addCommand(OK_CMD);
 		menu.setCommandListener(this);
 		menu.setSelectCommand(OK_CMD);
-		
+
 		//Prepare ??? menu
 		menuFS.addCommand(BACK_CMD);
 		menuFS.setCommandListener(this);
-		
-		//Prepare Location Provider setup menu
-		menuSelectLocProv.addCommand(BACK_CMD);
-		menuSelectLocProv.addCommand(OK_CMD);
-		menuSelectLocProv.addCommand(GPS_DISCOVER);
-		menuSelectLocProv.addCommand(FILE_MAP);
-		
-		gpsUrl=new StringItem("GPS: ", null);
-		gpsUrl.setDefaultCommand(GPS_DISCOVER);
-		gpsUrl.setItemCommandListener(this);
-		locProv=new ChoiceGroup("input from:",Choice.EXCLUSIVE,Configuration.LOCATIONPROVIDER,new Image[Configuration.LOCATIONPROVIDER.length]);
-		String [] loggings = new String[1];      
-        loggings[0] = Configuration.getGpsRawLoggerUrl(); 
-        if (loggings[0] == null) { 
-            loggings[0] = "Please select to destination first"; 
-        } 
-        boolean [] selraw = new boolean[1]; 
-        selraw[0] = Configuration.getGpsRawLoggerEnable(); 
 
-		rawLog = new ChoiceGroup("Raw gps logging to:", ChoiceGroup.MULTIPLE);
-		
-		String [] btka = new String[1];
-		btka[0] = "Send keep alives"; 
-		btKeepAlive = new ChoiceGroup("BT keep alive",ChoiceGroup.MULTIPLE, btka, null);
-		
-		String [] btar = new String[1];
-		btar[0] = "Auto reconnect GPS"; 
-		btAutoRecon = new ChoiceGroup("BT reconnect",ChoiceGroup.MULTIPLE, btar, null);
+		show();
+	}
 
-		menuSelectLocProv.append(gpsUrl);
-		menuSelectLocProv.append(btKeepAlive);
-		menuSelectLocProv.append(btAutoRecon);
-		menuSelectLocProv.append(locProv);
-		menuSelectLocProv.append(rawLog);
-		
-		menuSelectLocProv.setCommandListener(this);
-		//Prepare Map Source selection menu
-		menuSelectMapSource.addCommand(BACK_CMD);
-		menuSelectMapSource.addCommand(OK_CMD);
-		menuSelectMapSource.addCommand(FILE_MAP);
-		String [] sources = new String[2];
-		sources[0] = "Built-in map";
-		sources[1] = "Filesystem: ";		
-		mapSrc = new ChoiceGroup("Map source:", Choice.EXCLUSIVE, sources, null);
-		
-		menuSelectMapSource.append(mapSrc);
-		menuSelectMapSource.setCommandListener(this);
-		
-		//Prepare Display options menu
-		menuDisplayOptions.addCommand(BACK_CMD);
-		menuDisplayOptions.addCommand(OK_CMD);
+	private void initBluetoothSelect() {
+		//Prepare Bluetooth selection menu
+		logger.info("Starting bluetooth setup menu");
+		menuBT = new List("Devices", Choice.IMPLICIT, empty, null);
+		menuBT.addCommand(OK_CMD);
+		menuBT.addCommand(BACK_CMD);
+		menuBT.setSelectCommand(OK_CMD);
+		menuBT.setCommandListener(this);
+		menuBT.setTitle("Search Service");
+	}
 
-		String [] rotation = new String[2];
-		rotation[0] = "North Up";
-		rotation[1] = "to Driving Direction";
-		rotationGroup = new ChoiceGroup("Map Rotation", Choice.EXCLUSIVE, rotation ,null);
-		menuDisplayOptions.append(rotationGroup);
-		
-		String [] renders = new String[2];
-		renders[0] = "as lines";
-		renders[1] = "as streets";
-		renderOpts = new ChoiceGroup("Rendering Options:", Choice.EXCLUSIVE, renders ,null);
-		menuDisplayOptions.append(renderOpts);
-
-		// gaugeDetailBoost = new Gauge("Zoom Detail Boost", true, 3, 0);
-		// gaugeDetailBoost = new Gauge("Scale Detail Level", true, 3, 0);
-		gaugeDetailBoost = new Gauge("Increase Detail of lower Zoom Levels", true, 3, 0);
-		menuDisplayOptions.append(gaugeDetailBoost);
-
-		String [] backlights;
-		byte i = 3;
-		//#if polish.api.nokia-ui
-			i += 2;
-		//#endif
-		//#if polish.api.min-siemapi
-			i++;
-		//#endif
-		backlights = new String[i];
-			
-		backlights[0] = "Keep Backlight On";
-		backlights[1] = "only in map screen";
-		backlights[2] = "with MIDP2.0";
-		i = 3;
-		//#if polish.api.nokia-ui
-		backlights[i++] = "with Nokia API";
-		backlights[i++] = "with Nokia Flashlight";
-		//#endif
-		//#if polish.api.min-siemapi
-		backlights[i++] = "with Siemens API";
-		//#endif
-		
-		backlightOpts = new ChoiceGroup("Backlight Options:", Choice.MULTIPLE, backlights ,null);
-		menuDisplayOptions.append(backlightOpts);
-
-		String [] sizes = new String[2];
-		sizes[0] = "larger POI labels";
-		sizes[1] = "larger waypoint labels";
-		sizeOpts = new ChoiceGroup("Size Options:", Choice.MULTIPLE, sizes ,null);
-		menuDisplayOptions.append(sizeOpts);
-		
-		menuDisplayOptions.setCommandListener(this);
-		
-		
-
+	private void initRecordingSetupMenu() {
 		//Prepare Recording Options selection menu
+		logger.info("Starting Recording setup menu");
+		menuRecordingOptions = new Form("Recording Rules");
 		menuRecordingOptions.addCommand(BACK_CMD);
 		menuRecordingOptions.addCommand(OK_CMD);
 		menuRecordingOptions.setCommandListener(this);
@@ -281,7 +193,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		recModes[0] = "adaptive to speed";
 		recModes[1] = "manual rules:";
 		choiceGpxRecordRuleMode = new ChoiceGroup("Record Trackpoints", Choice.EXCLUSIVE, recModes ,null);
-		
+
 		tfGpxRecordMinimumSecs =new TextField("Minimum seconds between trackpoints (0=disabled)","0",3,TextField.DECIMAL);
 		tfGpxRecordMinimumDistanceMeters = new TextField("Minimum meters between trackpoints (0=disabled)","0",3,TextField.DECIMAL);				
 		tfGpxRecordAlwaysDistanceMeters = new TextField("Always record when exceeding these meters between trackpoints (0=disabled)","0",3,TextField.DECIMAL);				
@@ -290,55 +202,16 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		menuRecordingOptions.append(tfGpxRecordMinimumSecs);
 		menuRecordingOptions.append(tfGpxRecordMinimumDistanceMeters);
 		menuRecordingOptions.append(tfGpxRecordAlwaysDistanceMeters);
+	}
 
-		
-		//Prepare Bluetooth selection menu
-		menuBT	= new List("Devices",
-				Choice.IMPLICIT, empty,
-				null);
-		menuBT.addCommand(OK_CMD);
-		menuBT.addCommand(BACK_CMD);
-		menuBT.setSelectCommand(OK_CMD);
-		menuBT.setCommandListener(this);
-		menuBT.setTitle("Search Service");
-		
-		//Prepare Debug selection menu
-		menuDebug.addCommand(BACK_CMD);
-		menuDebug.addCommand(OK_CMD);
-		menuDebug.addCommand(FILE_MAP);
-		menuDebug.setCommandListener(this);
-		boolean [] selDebug = new boolean[1];
-		selDebug[0] = Configuration.getDebugRawLoggerEnable();
-		loggings = new String[1];
-		loggings[0] = Configuration.getDebugRawLoggerUrl();
-		if (loggings[0] == null) {
-			loggings[0] = "Please select directory";
-		}
-		debugLog = new ChoiceGroup("Debug event logging to:", ChoiceGroup.MULTIPLE,loggings,null);
-		debugLog.setSelectedFlags(selDebug);
-		menuDebug.append(debugLog);
-		
-		loggings = new String[3];
-		selDebug = new boolean[3];
-		selDebug[0] = Configuration.getDebugSeverityInfo();
-		selDebug[1] = Configuration.getDebugSeverityDebug();
-		selDebug[2] = Configuration.getDebugSeverityTrace();
-		loggings[0] = "Info"; loggings[1] = "Debug"; loggings[2] = "Trace"; 
-		debugSeverity = new ChoiceGroup("Log severity:", ChoiceGroup.MULTIPLE,loggings,null);
-		debugSeverity.setSelectedFlags(selDebug);
-		menuDebug.append(debugSeverity);
-
-		loggings = new String[1];
-		loggings[0] = "Show route connections";
-		debugOther = new ChoiceGroup("Other:", ChoiceGroup.MULTIPLE,loggings,null);
-		debugOther.setSelectedIndex(0, Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_CONNECTIONS, true));
-		menuDebug.append(debugOther);
-		
+	private void initRoutingOptions() {
 		// Prepare routingOptions menu
+		logger.info("Starting Routing setup menu");
+		menuRoutingOptions = new Form("Routing Options");
 		menuRoutingOptions.addCommand(BACK_CMD);
 		menuRoutingOptions.addCommand(OK_CMD);
 		menuRoutingOptions.setCommandListener(this);
-		
+
 		String [] routingBack = new String[2];
 		routingBack[0] = "No";
 		routingBack[1] = "Yes";
@@ -354,8 +227,162 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		routingOptsGroup = new ChoiceGroup("Other", Choice.MULTIPLE, routingOpts ,null);
 		routingOptsGroup.setSelectedFlags(selRouting);
 		menuRoutingOptions.append(routingOptsGroup);
-		
-		show();
+	}
+
+	private void initDebugSetupMenu() {
+		//Prepare Debug selection menu
+		logger.info("Starting Debug setup menu");
+		menuDebug = new Form("Debug options");
+		String [] loggings = new String[1];
+		menuDebug.addCommand(BACK_CMD);
+		menuDebug.addCommand(OK_CMD);
+		menuDebug.addCommand(FILE_MAP);
+		menuDebug.setCommandListener(this);
+		boolean [] selDebug = new boolean[1];
+		selDebug[0] = Configuration.getDebugRawLoggerEnable();
+		loggings = new String[1];
+		loggings[0] = Configuration.getDebugRawLoggerUrl();
+		if (loggings[0] == null) {
+			loggings[0] = "Please select directory";
+		}
+		debugLog = new ChoiceGroup("Debug event logging to:", ChoiceGroup.MULTIPLE,loggings,null);
+		debugLog.setSelectedFlags(selDebug);
+		menuDebug.append(debugLog);
+
+		loggings = new String[3];
+		selDebug = new boolean[3];
+		selDebug[0] = Configuration.getDebugSeverityInfo();
+		selDebug[1] = Configuration.getDebugSeverityDebug();
+		selDebug[2] = Configuration.getDebugSeverityTrace();
+		loggings[0] = "Info"; loggings[1] = "Debug"; loggings[2] = "Trace"; 
+		debugSeverity = new ChoiceGroup("Log severity:", ChoiceGroup.MULTIPLE,loggings,null);
+		debugSeverity.setSelectedFlags(selDebug);
+		menuDebug.append(debugSeverity);
+
+		loggings = new String[1];
+		loggings[0] = "Show route connections";
+		debugOther = new ChoiceGroup("Other:", ChoiceGroup.MULTIPLE,loggings,null);
+		debugOther.setSelectedIndex(0, Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_CONNECTIONS, true));
+		menuDebug.append(debugOther);
+
+	}
+
+	private void initLocationSetupMenu() {
+		//Prepare Location Provider setup menu
+		logger.info("Starting Locationreceiver setup menu");
+
+		menuSelectLocProv = new Form("Location Receiver");
+
+		menuSelectLocProv.addCommand(BACK_CMD);
+		menuSelectLocProv.addCommand(OK_CMD);
+		menuSelectLocProv.addCommand(GPS_DISCOVER);
+		menuSelectLocProv.addCommand(FILE_MAP);
+
+		gpsUrl=new StringItem("GPS: ", null);
+		gpsUrl.setDefaultCommand(GPS_DISCOVER);
+		gpsUrl.setItemCommandListener(this);
+		locProv=new ChoiceGroup("input from:",Choice.EXCLUSIVE,Configuration.LOCATIONPROVIDER,new Image[Configuration.LOCATIONPROVIDER.length]);
+		String [] loggings = new String[1];      
+		loggings[0] = Configuration.getGpsRawLoggerUrl(); 
+		if (loggings[0] == null) { 
+			loggings[0] = "Please select to destination first"; 
+		} 
+		boolean [] selraw = new boolean[1]; 
+		selraw[0] = Configuration.getGpsRawLoggerEnable(); 
+
+		rawLog = new ChoiceGroup("Raw gps logging to:", ChoiceGroup.MULTIPLE);
+
+		String [] btka = new String[1];
+		btka[0] = "Send keep alives"; 
+		btKeepAlive = new ChoiceGroup("BT keep alive",ChoiceGroup.MULTIPLE, btka, null);
+
+		String [] btar = new String[1];
+		btar[0] = "Auto reconnect GPS"; 
+		btAutoRecon = new ChoiceGroup("BT reconnect",ChoiceGroup.MULTIPLE, btar, null);
+
+		menuSelectLocProv.append(gpsUrl);
+		menuSelectLocProv.append(btKeepAlive);
+		menuSelectLocProv.append(btAutoRecon);
+		menuSelectLocProv.append(locProv);
+		menuSelectLocProv.append(rawLog);
+
+		menuSelectLocProv.setCommandListener(this);
+	}
+
+	private void initMapSource() {
+		//Prepare Map Source selection menu
+		logger.info("Starting map source setup menu");
+		menuSelectMapSource = new Form("Select Map Source");
+		menuSelectMapSource.addCommand(BACK_CMD);
+		menuSelectMapSource.addCommand(OK_CMD);
+		menuSelectMapSource.addCommand(FILE_MAP);
+		String [] sources = new String[2];
+		sources[0] = "Built-in map";
+		sources[1] = "Filesystem: ";		
+		mapSrc = new ChoiceGroup("Map source:", Choice.EXCLUSIVE, sources, null);
+
+		menuSelectMapSource.append(mapSrc);
+		menuSelectMapSource.setCommandListener(this);
+	}
+
+	private void initDisplay() {
+		//Prepare Display options menu
+		logger.info("Starting display setup menu");
+
+		menuDisplayOptions = new Form("Display Options");
+
+		menuDisplayOptions.addCommand(BACK_CMD);
+		menuDisplayOptions.addCommand(OK_CMD);
+
+		String [] rotation = new String[2];
+		rotation[0] = "North Up";
+		rotation[1] = "to Driving Direction";
+		rotationGroup = new ChoiceGroup("Map Rotation", Choice.EXCLUSIVE, rotation ,null);
+		menuDisplayOptions.append(rotationGroup);
+
+		String [] renders = new String[2];
+		renders[0] = "as lines";
+		renders[1] = "as streets";
+		renderOpts = new ChoiceGroup("Rendering Options:", Choice.EXCLUSIVE, renders ,null);
+		menuDisplayOptions.append(renderOpts);
+
+		// gaugeDetailBoost = new Gauge("Zoom Detail Boost", true, 3, 0);
+		// gaugeDetailBoost = new Gauge("Scale Detail Level", true, 3, 0);
+		gaugeDetailBoost = new Gauge("Increase Detail of lower Zoom Levels", true, 3, 0);
+		menuDisplayOptions.append(gaugeDetailBoost);
+
+		String [] backlights;
+		byte i = 3;
+		//#if polish.api.nokia-ui
+		i += 2;
+		//#endif
+		//#if polish.api.min-siemapi
+		i++;
+		//#endif
+		backlights = new String[i];
+
+		backlights[0] = "Keep Backlight On";
+		backlights[1] = "only in map screen";
+		backlights[2] = "with MIDP2.0";
+		i = 3;
+		//#if polish.api.nokia-ui
+		backlights[i++] = "with Nokia API";
+		backlights[i++] = "with Nokia Flashlight";
+		//#endif
+		//#if polish.api.min-siemapi
+		backlights[i++] = "with Siemens API";
+		//#endif
+
+		backlightOpts = new ChoiceGroup("Backlight Options:", Choice.MULTIPLE, backlights ,null);
+		menuDisplayOptions.append(backlightOpts);
+
+		String [] sizes = new String[2];
+		sizes[0] = "larger POI labels";
+		sizes[1] = "larger waypoint labels";
+		sizeOpts = new ChoiceGroup("Size Options:", Choice.MULTIPLE, sizes ,null);
+		menuDisplayOptions.append(sizeOpts);
+
+		menuDisplayOptions.setCommandListener(this);
 	}
 
 	public void commandAction(Command c, Item i) {
@@ -418,9 +445,10 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 			//#endif	
 		}
 		if (c == GPS_DISCOVER || c == BT_MAP) {
-			//#if polish.api.btapi			
+			//#if polish.api.btapi
+			initBluetoothSelect();
 			urlList=new Vector();
-			friendlyName=new Vector();			
+			friendlyName=new Vector();
 			menuBT.deleteAll(); 
 			GpsMid.getInstance().show(menuBT); 
 			if (state==STATE_LP) {
@@ -445,6 +473,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 			case STATE_ROOT:
 				switch (menu.getSelectedIndex()) {
 				case MENU_ITEM_LOCATION: // Location Receiver
+					initLocationSetupMenu();
 					gpsUrlStr=Configuration.getBtUrl();
 					gpsUrl.setText(gpsUrlStr==null?"<Discover>":"<Discovered>");
 					int selIdx = Configuration.getLocationProvider();
@@ -468,6 +497,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 					state = STATE_LP;
 					break;
 				case MENU_ITEM_GPX_FILTER: // Recording Rules
+					initRecordingSetupMenu();
 					choiceGpxRecordRuleMode.setSelectedIndex(Configuration.getGpxRecordRuleMode(), true);
 					/*
 					 * minimum seconds between trackpoints
@@ -494,6 +524,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 					state = STATE_RECORDING_OPTIONS;
 					break;
 				case MENU_ITEM_DISP_OPT: // Display Options
+					initDisplay();
 					rotationGroup.setSelectedIndex(Configuration.getProjDefault(), true);
 					renderOpts.setSelectedIndex( Configuration.getCfgBitState(Configuration.CFGBIT_STREETRENDERMODE)?1:0, true);
 					sizeOpts.setSelectedIndex(0, Configuration.getCfgBitState(Configuration.CFGBIT_POI_LABELS_LARGER));
@@ -522,6 +553,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 					break;
 				case MENU_ITEM_GPX_DEVICE: // GPX Receiver
 					//Prepare Gpx receiver selection menu
+					menuGpx = new Form("Gpx Receiver");
 					menuGpx.addCommand(BACK_CMD);
 					menuGpx.addCommand(OK_CMD);
 					menuGpx.addCommand(FILE_MAP);
@@ -536,16 +568,19 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 					state = STATE_GPX;
 					break;
 				case MENU_ITEM_MAP_SRC: // Map Source 
+					initMapSource();
 					mapSrc.setSelectedIndex(Configuration.usingBuiltinMap()?0:1, true); 
 					mapSrc.set(1, "Filesystem: " + ( (Configuration.getMapUrl()==null)?"<Please select map directory first>":Configuration.getMapUrl() ), null);
 					GpsMid.getInstance().show(menuSelectMapSource);
 					state = STATE_MAP;
 					break;			
-				case MENU_ITEM_DEBUG_OPT:					
+				case MENU_ITEM_DEBUG_OPT:
+					initDebugSetupMenu();
 					GpsMid.getInstance().show(menuDebug);
 					state = STATE_DEBUG;
 					break;
 				case MENU_ITEM_ROUTING_OPT:
+					initRoutingOptions();
 					GpsMid.getInstance().show(menuRoutingOptions);
 					state = STATE_ROUTING_OPT;
 					break;
