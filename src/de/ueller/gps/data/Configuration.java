@@ -205,14 +205,10 @@ public class Configuration {
 	private static String utf8encodingstring = null;
 	
 	private static String osm_username;
-	private static String osm_pwd;
-	
-	public Configuration() {		
-		logger = Logger.getInstance(Configuration.class, Logger.DEBUG);
-		read();
-	}
+	private static String osm_pwd;	
 
-	private static void read(){
+	public static void read(){
+	logger = Logger.getInstance(Configuration.class, Logger.DEBUG);
 	RecordStore	database;
 		try {			
 			database = RecordStore.openRecordStore("Receiver", true);

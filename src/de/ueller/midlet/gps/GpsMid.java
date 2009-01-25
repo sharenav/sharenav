@@ -74,7 +74,6 @@ public class GpsMid extends MIDlet implements CommandListener{
 
     private final List loghist=new List("Log Hist",Choice.IMPLICIT);
 	private String	root;
-	private Configuration config;
 //	#debug
 	private Logger l;
 	
@@ -108,7 +107,7 @@ public class GpsMid extends MIDlet implements CommandListener{
 		System.out.println("Init GpsMid");		
 		l=new Logger(this);
 		l.setLevel(Logger.INFO);
-		config = new Configuration();
+		Configuration.read();
 		
 		enableDebugFileLogging();
 		Logger.setGlobalLevel();
@@ -157,12 +156,12 @@ public class GpsMid extends MIDlet implements CommandListener{
 	protected void destroyApp(boolean arg0) throws MIDletStateChangeException {
 		//remember last position
 		if(trace!=null) {
-			if(Configuration.getCfgBitState(config.CFGBIT_AUTOSAVE_MAPPOS)) {
+			if(Configuration.getCfgBitState(Configuration.CFGBIT_AUTOSAVE_MAPPOS)) {
 				// use current display center on next startup
 				Configuration.setStartupPos(trace.center);				
 			} else {				
 				// use center of map on next startup
-				config.setStartupPos(new Node(0.0f,0.0f));				
+				Configuration.setStartupPos(new Node(0.0f,0.0f));				
 			}
 		}
 		//		#debug
@@ -371,18 +370,14 @@ public class GpsMid extends MIDlet implements CommandListener{
 		}
 	}
 
-	public Configuration getConfig() {
-		return config;
-	}
-
 	public static GpsMid getInstance() {
 		return instance;
 	}
 	
 	public void enableDebugFileLogging() {
 		//#if polish.api.fileconnection
-		String url = config.getDebugRawLoggerUrl();
-		if (config.getDebugRawLoggerEnable() && url != null) {
+		String url = Configuration.getDebugRawLoggerUrl();
+		if (Configuration.getDebugRawLoggerEnable() && url != null) {
 			try {
 				url = url + "GpsMid_log_" + HelperRoutines.formatSimpleDateNow() + ".txt";
 				Connection debugLogConn = Connector.open(url);
@@ -496,7 +491,7 @@ public class GpsMid extends MIDlet implements CommandListener{
 	
 	public void addToBackLightLevel(int diffBacklight) {
 		backLightLevel += diffBacklight;
-		if (backLightLevel > 100 || !Configuration.getCfgBitState(config.CFGBIT_BACKLIGHT_NOKIA)) {
+		if (backLightLevel > 100 || !Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIA)) {
 			backLightLevel = 100;
 		}
 		if (backLightLevel < 25) {
