@@ -192,11 +192,21 @@ public class Way extends Entity{
 		return true; 
 	} 
 
+
 	public void paintAsPath(PaintContext pc, SingleTile t) {
+		processPath(pc,t,Tile.OPT_PAINT);
+	}
+
+	public void processPath(PaintContext pc, SingleTile t, int mode) {
+	
 		WayDescription wayDesc = C.getWayDescription(type);
 		int w = 0;
+		byte om = 0;
+		if ((mode & Tile.OPT_PAINT) > 0) {
+			om = C.getWayOverviewMode(type);
+		}
+    
 
-		byte om = C.getWayOverviewMode(type);
 		switch (om & C.OM_MODE_MASK) {
 		case C.OM_SHOWNORMAL: 
 			// if not in Overview Mode check for scale
@@ -226,13 +236,7 @@ public class Way extends Entity{
 				break;
 		}
 				
-		/**
-		 * Calculate the width of the path to be drawn. A width of 1 corresponds to
-		 * it being draw as a thin line rather than as a street 
-		 */
-		if ( Configuration.getCfgBitState(Configuration.CFGBIT_STREETRENDERMODE) && wayDesc.wayWidth>1 ){
-			w = (int)(pc.ppm*wayDesc.wayWidth/2 + 0.5);
-		}
+		
 		
 		IntPoint lineP1 = pc.lineP1;
 		IntPoint lineP2 = pc.lineP2;
@@ -248,7 +252,6 @@ public class Way extends Entity{
 			x = new int[path.length];
 			y = new int[path.length];
 		}
-		
 		
 		for (int i1 = 0; i1 < path.length; i1++) {
 			int idx = path[i1];
@@ -270,14 +273,14 @@ public class Way extends Entity{
 					if (dst < pc.squareDstToWay) {
 						//System.out.println("set new current Way1 "+ pc.trace.getName(this.nameIdx) + " new dist "+ dst + " old " + pc.squareDstToWay);						
 						pc.squareDstToWay = dst;
-						pc.actualWay = this;												
+						pc.actualWay = this;
 					}
 					if (dst < pc.squareDstToRoutableWay && wayDesc.routable) {
 						pc.squareDstToRoutableWay = dst;
-						pc.nearestRoutableWay = this;												
+						pc.nearestRoutableWay = this;
 					}
 					x[pi] = lineP2.x;
-					y[pi++] = lineP2.y;					
+					y[pi++] = lineP2.y;
 					swapLineP = lineP1;
 					lineP1 = lineP2;
 					lineP2 = swapLineP;
@@ -302,26 +305,40 @@ public class Way extends Entity{
 		}
 		swapLineP = lineP1;
 		lineP1 = null;
-
-		if (pc.target != null && this.equals(pc.target.e)){
-			draw(pc,(w==0)?1:w,x,y,pi-1,true);
-		} else {
-			if (w == 0){
-				setColor(pc);
-				PolygonGraphics.drawOpenPolygon(pc.g, x, y,pi-1);
-			} else {
-				draw(pc, w, x, y,pi-1,false);
-			}
-		}		
 		
 		if ((pc.nearestRoutableWay == this) && ((pc.currentPos == null) || (pc.currentPos.e != this))) {
 			pc.currentPos=new PositionMark(pc.center.radlat,pc.center.radlon);
 			pc.currentPos.setEntity(this, getNodesLatLon(t, true), getNodesLatLon(t, false));
 		}
-		if (isOneway()) {
-			paintPathOnewayArrows(pc, t);
+		
+		if ((mode & Tile.OPT_PAINT) > 0) {
+			/**
+			 * Calculate the width of the path to be drawn. A width of 1
+			 * corresponds to it being draw as a thin line rather than as a
+			 * street
+			 */
+			if (Configuration
+					.getCfgBitState(Configuration.CFGBIT_STREETRENDERMODE)
+					&& wayDesc.wayWidth > 1) {
+				w = (int) (pc.ppm * wayDesc.wayWidth / 2 + 0.5);
+			}
+
+			if (pc.target != null && this.equals(pc.target.e)) {
+				draw(pc, (w == 0) ? 1 : w, x, y, pi - 1, true);
+			} else {
+				if (w == 0) {
+					setColor(pc);
+					PolygonGraphics.drawOpenPolygon(pc.g, x, y, pi - 1);
+				} else {
+					draw(pc, w, x, y, pi - 1, false);
+				}
+			}
+
+			if (isOneway()) {
+				paintPathOnewayArrows(pc, t);
+			}
+			paintPathName(pc, t);
 		}
-		paintPathName(pc, t);
 	}
 	
 

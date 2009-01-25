@@ -304,6 +304,7 @@ public class Routing implements Runnable {
 	}
 	public void solve (PositionMark fromMark,PositionMark toMark) {
 
+		logger.info("Calculating route from " + fromMark + " to " + toMark);
 
 		try {
 			if (toMark == null){
@@ -330,9 +331,17 @@ public class Routing implements Runnable {
 				parent.receiveMessage("search for target element");
 				parent.searchElement(toMark);
 				if (toMark.e == null){
-					parent.receiveMessage("No Way found for target point");
+					parent.receiveMessage("search for routable way close by the target");
+					parent.searchNextRoutableWay(toMark);
+					if (toMark.e == null){
+						parent.receiveMessage("No Way found for target point");
+						return;
+					}
 				}
 			}
+			
+			logger.info("Calculating route from " + fromMark + " to " + toMark);
+			
 			if (fromMark.e instanceof Way){
 				// search the next route node in all accessible directions. Then create 
 				// connections that lead form the start point to the next route nodes.
@@ -370,7 +379,8 @@ public class Routing implements Runnable {
 			routeTo.conSize=0;
 			routeTo.lat=toMark.lat;
 			routeTo.lon=toMark.lon;
-			Way w=(Way) fromMark.e;
+			parent.receiveMessage("create to Connections");
+			Way w=(Way) toMark.e;
 			int nearestSeg = getNearestSeg(w,toMark.lat, toMark.lon, toMark.nodeLat, toMark.nodeLon);
 			RouteTileRet nodeTile=new RouteTileRet();
 			if (! w.isOneway()){

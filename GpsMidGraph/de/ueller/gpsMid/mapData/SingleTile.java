@@ -117,7 +117,11 @@ public class SingleTile extends Tile implements QueueableTile {
 		boolean renderAll = ((layer & Tile.LAYER_ALL) != 0);;
 		byte relLayer = (byte)(((int)layer) & ~Tile.LAYER_AREA);
 		
-		//logger.info("Walking tile " + this + (renderArea?" not ":"") +  "rendering Areas at layer" + relLayer + " " + renderAll);
+		
+		if (pc.getP() == null) {
+			logger.error("We don't have a projection to walk Tile");
+			return;
+		}
 		
 		if (contain(pc)) {
 			if (!isDataReady()) {
@@ -251,6 +255,10 @@ public class SingleTile extends Tile implements QueueableTile {
 								w.paintAsPath(pc, this);
 							} else {
 								w.paintAsArea(pc, this);
+							}
+						} else if ((opt & Tile.OPT_FIND_CURRENT) != 0) {
+							if (!w.isArea()) {
+								w.processPath(pc, this, Tile.OPT_FIND_CURRENT);
 							}
 						}
 					}
