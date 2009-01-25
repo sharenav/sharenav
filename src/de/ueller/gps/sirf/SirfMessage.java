@@ -124,32 +124,12 @@ public class SirfMessage {
 	private Satelit decode1sMeasuredTrackerDataOut(int i) {
 		Satelit s=new Satelit();
 		s.id=getByte(i++);
-		s.azimut=getByte(i++)/2f*3f;
+		s.azimut=getByte(i++)*1.5f;
 		s.elev=getByte(i++)/2f;
 		s.state=get2ByteUnsigned(i);
 		i+=2;
-		s.snr = 0;
-		/**
-		 * We get the signal to noise ratio for each 100ms of a second
-		 * s.snr is the average snr for the whole second 
-		 */
-		for (int l=0;l<10;l++){
-			s.signal[l]=getByte(i++);
-			s.snr += s.signal[l];
-		}
-		s.snr /= 10;
-//		if (s.id != 0)
-//		message("Satelit " + s.id + " Aq s:"+s.isAcquisitionSucessfully()
-//                + " PH:"+s.isCharrierPhaseValid()
-//                + " BS:"+s.isBitSync()
-//                + " SS:"+s.isSubframeSync()
-//                + " CP:"+s.isCarrierPullin()
-//                + " LK:"+s.isLocked()
-//                + " Aq f:"+s.isAcquisitionFaild()
-//                + " EP:"+s.isEphemeris()
-//                + " SI:"+s.signal[0]
-//				+ " "+s.azimut + " " + s.elev
-//				                    );
+		// take only the first of the signal to noise ratio
+		s.snr = getByte(i++);
 		return s;
 	}
 

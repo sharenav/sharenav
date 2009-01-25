@@ -28,14 +28,14 @@ public class Satelit {
 	public float azimut;
 	public float elev;
 	public int state;
-	public int signal[];
+//	public int signal[];
 	/**
 	 * Signal to noise ratio in arbitrary units
 	 */
 	public int snr;
 	public Date lastUpdate;
 	public Satelit() {
-		signal=new int[10];
+//		signal=new int[10];
 	}
 	
 	private boolean isState(int mask){
