@@ -102,25 +102,44 @@ public class SingleTile extends Tile implements QueueableTile {
 
 	}
 
-	public synchronized void paint(PaintContext pc, byte layer) {		
-//		logger.info("paint Single");
-//		logger.info("Potentially Painting single tile " + this +  " at layer " + layer);
-		
-		
-		
-		
-		
+	
+	public void walk(PaintContext pc,int opt) {
+		walk(pc, opt, Tile.LAYER_ALL);
+	}
+	
+	public void paint(PaintContext pc, byte layer) {
+		walk(pc, Tile.OPT_PAINT, layer);
+	}
+	
+	private synchronized void walk(PaintContext pc,int opt, byte layer) {
+
 		boolean renderArea = ((layer & Tile.LAYER_AREA) != 0);
-		byte relLayer = (byte)(((int)layer) & ~Tile.LAYER_AREA);		
+		boolean renderAll = ((layer & Tile.LAYER_ALL) != 0);;
+		byte relLayer = (byte)(((int)layer) & ~Tile.LAYER_AREA);
+		
+		//logger.info("Walking tile " + this + (renderArea?" not ":"") +  "rendering Areas at layer" + relLayer + " " + renderAll);
 		
 		if (contain(pc)) {
 			if (!isDataReady()) {
-				/**
-				 * We don't have the data yet. No need to wait, we 
-				 * will just render it the next time if the data is
-				 * available then.
-				 */
-				return;
+				if ((opt & Tile.OPT_WAIT_FOR_LOAD) == 0){
+					/**
+					 * We don't have the data yet. No need to wait, we 
+					 * will just render it the next time if the data is
+					 * available then.
+					 */
+					//#debug debug
+					logger.debug("Walk don't wait for TileData");
+					return;
+				} else {
+					synchronized (this) {
+						try {
+							wait(1000);
+							//#debug debug
+							logger.debug("Walk Wait for TileData");
+						} catch (InterruptedException e) {
+						}
+					}
+				}
 			}
 			
 			
@@ -173,23 +192,24 @@ public class SingleTile extends Tile implements QueueableTile {
 
 			lastUse = 0;
 			if (layer != Tile.LAYER_NODE) {
-				if (ways != null) {
-					if (relLayer < 0 || relLayer >= ways.length) {
-						logger.error("Trying to paint an invalid layer " + relLayer);
-						return;
+				if (ways == null) {
+					return;
+				}
+
+				for (int l = 0; l < ways.length; l++) {
+					if (((relLayer != l) && !renderAll) || (ways[l] == null)) {
+						continue;
 					}
-					if (ways[relLayer] == null)
-						return;
-					
+
 					/**
 					 * Render all ways in the appropriate layer
 					 */
-					for (int i = 0; i < ways[relLayer].length; i++) {
+					for (int i = 0; i < ways[l].length; i++) {
 						if (abortPainting)
-							return;						
-						Way w = ways[relLayer][i];
+							return;
+						Way w = ways[l][i];
 						if (w == null) continue;
-						//Determin if the way is an area or not. 
+						//Determine if the way is an area or not. 
 						if (w.isArea() != renderArea)
 							continue;
 
@@ -201,9 +221,9 @@ public class SingleTile extends Tile implements QueueableTile {
 						 * by the name of the way and the coordiantes of a node on the way
 						 */
 						if (pc.target != null ){
-//							logger.debug("search target nameIdx" );
+							//							logger.debug("search target nameIdx" );
 							if (pc.target.e == null && pc.target.nameIdx == w.nameIdx){
-// 								logger.debug("search target way");
+								// 								logger.debug("search target way");
 								/**
 								 * The name of the way and the target matches, now we
 								 * check if the coordinates match.
@@ -211,131 +231,45 @@ public class SingleTile extends Tile implements QueueableTile {
 								 * We have to be careful here, to not get into trouble
 								 * with the 32bit float to 16bit short conversion.
 								 * To prevent rounding issues, test for approximate
-								 * equallity
+								 * equality
 								 */
 								short targetLat = (short)((pc.target.lat - centerLat)*fpm);
 								short targetLon = (short)((pc.target.lon - centerLon)*fpm);
 								for (int i1 = 0; i1 < w.path.length; i1++) {
-									short s = w.path[i1];									
+									short s = w.path[i1];
 									if ((Math.abs(nodeLat[s] - targetLat) < 2) && 
 											(Math.abs(nodeLon[s] - targetLon) < 2)){
-//										logger.debug("found Target way");
+										//										logger.debug("found Target way");
 										pc.target.setEntity(w, w.getNodesLatLon(this, true), w.getNodesLatLon(this, false));
 									}
 								}
 							}
 						}
-						w.setColor(pc);
-						if (!w.isArea()) {
-							w.paintAsPath(pc, this);							
-						} else {
-							w.paintAsArea(pc, this);
-						}
-					}
-				}
-			} else {				
-				/**
-				 * Drawing nodes
-				 */
-				for (short i = 0; i < type.length; i++) {
-					if (abortPainting)
-						return;
-					if (type[i] == 0) {
-						break;
-					}
-					if (!isNodeOnScreen(i, pcLDlat, pcLDlon, pcRUlat, pcRUlon))
-						continue;				
-					paintNode(pc, i);
-				}
-			}
-		} else {
-
-		}
-	}
-
-	
-	public void walk(PaintContext pc,int opt) {	
-
-		if (contain(pc)) {
-			while (!isDataReady()) {
-				if ((opt & Tile.OPT_WAIT_FOR_LOAD) == 0){
-					//#debug debug
-					logger.debug("Walk don't wait for TileData");
-					return;
-				} else {
-					synchronized (this) {
-						try {
-							wait(1000);
-							//#debug debug
-							logger.debug("Walk Wait for TileData");
-						} catch (InterruptedException e) {
-						}						
-					}
-				}
-			}
-			lastUse = 0;
-			
-			/**
-			 * Calculate pc coordinates in terms of relative single tile coordinates
-			 */
-			short pcLDlat = (short)((pc.searchLD.radlat - this.centerLat) * SingleTile.fpm);
-			short pcLDlon = (short)((pc.searchLD.radlon - this.centerLon) * SingleTile.fpm);
-			short pcRUlat = (short)((pc.searchRU.radlat - this.centerLat) * SingleTile.fpm);
-			short pcRUlon = (short)((pc.searchRU.radlon - this.centerLon) * SingleTile.fpm);
-			
-			if (ways != null) {
-				short targetLat = (short)((pc.target.lat - centerLat)*fpm);
-				short targetLon = (short)((pc.target.lon - centerLon)*fpm);
-				for (int j = 0; j < ways.length; j++) {
-					if (ways[j] == null)
-						continue;
-					for (int i = 0; i < ways[j].length; i++) {
-						Way w = ways[j][i];
-						if (!w.isOnScreen(pcLDlat, pcLDlon, pcRUlat, pcRUlon))
-							continue;
-
-						// logger.debug("draw " + w.name);
-						// fill the target fields if they are empty
-						//					logger.debug("search target" + pc.target);
-						if (pc.target != null ){
-							//						logger.debug("search target nameIdx" );
-							if (pc.target.e == null && pc.target.nameIdx == w.nameIdx){
-								//							logger.debug("search target way");
-								for (int i1 = 0; i1 < w.path.length; i1++) {
-									short s = w.path[i1];
-									if (nodeLat[s] == targetLat &&
-											nodeLon[s] == targetLon){
-										//									logger.debug("found Target way");										
-										pc.target.setEntity(w, w.getNodesLatLon(this, true), w.getNodesLatLon(this, false));
-									}
-								}
-							}
-						}
-						/**
-						 * Do we need this? 
-						 * When would we want to use this rather than paint()?
-						 * This doesn't handle layers correctly and doesn't seem to be called
-						 * at the moment.
-						 */
 						if ((opt & Tile.OPT_PAINT) != 0){
 							w.setColor(pc);
 							if (!w.isArea()) {
 								w.paintAsPath(pc, this);
-							} else {							
+							} else {
 								w.paintAsArea(pc, this);
 							}
 						}
 					}
 				}
-			}
-			if ((opt & Tile.OPT_PAINT) != 0){
-				for (short i = 0; i < type.length; i++) {
-					if (type[i] == 0) {
-						break;
+			} else {
+				/**
+				 * Drawing nodes
+				 */
+				if ((opt & Tile.OPT_PAINT) != 0){
+					for (short i = 0; i < type.length; i++) {
+						if (abortPainting)
+							return;
+						if (type[i] == 0) {
+							break;
+						}
+						if (!isNodeOnScreen(i, pcLDlat, pcLDlon, pcRUlat, pcRUlon))
+							continue;
+						paintNode(pc, i);
 					}
-					if (!isNodeOnScreen(i,pcLDlat, pcLDlon, pcRUlat, pcRUlon))
-						continue;					
-					paintNode(pc, i);
 				}
 			}
 		}
