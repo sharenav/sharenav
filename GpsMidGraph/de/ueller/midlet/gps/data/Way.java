@@ -205,23 +205,23 @@ public class Way extends Entity{
 		if ((mode & Tile.OPT_PAINT) > 0) {
 			om = C.getWayOverviewMode(type);
 		}
-    
 
-		switch (om & C.OM_MODE_MASK) {
-		case C.OM_SHOWNORMAL: 
-			// if not in Overview Mode check for scale
-			if (pc.scale > wayDesc.maxScale * Configuration.getDetailBoostMultiplier()) {			
-				return;
+		if (om != 0) {
+			switch (om & C.OM_MODE_MASK) {
+			case C.OM_SHOWNORMAL: 
+				// if not in Overview Mode check for scale
+				if (pc.scale > wayDesc.maxScale * Configuration.getDetailBoostMultiplier()) {
+					return;
+				}
+				break;
+			case C.OM_HIDE: 
+				if (wayDesc.hideable) {
+					return;
+				}
+				break;
 			}
-			break;
-		case C.OM_HIDE: 
-			if (wayDesc.hideable) {
-				return;
-			}
-			break;
-		}
 
-		switch (om & C.OM_NAME_MASK) {
+			switch (om & C.OM_NAME_MASK) {
 			case C.OM_WITH_NAMEPART: 
 				if (nameIdx == -1) return;
 				String name = pc.trace.getName(nameIdx);
@@ -234,8 +234,8 @@ public class Way extends Entity{
 			case C.OM_NO_NAME: 
 				if (nameIdx != -1) return;
 				break;
-		}
-				
+			}
+		}		
 		
 		
 		IntPoint lineP1 = pc.lineP1;
