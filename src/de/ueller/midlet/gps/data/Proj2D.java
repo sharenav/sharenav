@@ -248,5 +248,9 @@ public class Proj2D implements Projection {
 	public float getCourse() {
 		return 0;
 	}
+	
+	public String toString() {
+		return "Proj2D " + (ctrLat * MoreMath.FAC_RADTODEC) + "/"+ (ctrLon * MoreMath.FAC_RADTODEC) + " s:" + scale;
+	}
 
 }

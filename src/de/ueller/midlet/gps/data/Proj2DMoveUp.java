@@ -280,7 +280,7 @@ public class Proj2DMoveUp  implements Projection {
 	}
 
 	public String toString() {
-		return "P " + ProjMath.radToDeg(ctrLat) + "/"+ ProjMath.radToDeg(ctrLon) + " s:" + scale + " u"+upDir;
+		return "Proj2DMoveUp: " + (ctrLat * MoreMath.FAC_RADTODEC) + "/"+ (ctrLon * MoreMath.FAC_RADTODEC) + " s:" + scale + " u"+upDir;
 	}
 
 	public float getCourse() {
