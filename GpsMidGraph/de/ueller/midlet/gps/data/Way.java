@@ -197,35 +197,33 @@ public class Way extends Entity{
 		int w = 0;
 
 		byte om = C.getWayOverviewMode(type);
-		if (om!=0) { // speed up non-overview mode
-			switch (om & C.OM_MODE_MASK) {
-			case C.OM_SHOWNORMAL: 
-				// if not in Overview Mode check for scale
-				if (pc.scale > wayDesc.maxScale * Configuration.getDetailBoostMultiplier()) {			
-					return;
-				}
-				break;
-			case C.OM_HIDE: 
-				if (wayDesc.hideable) {
-					return;
-				}
-				break;
+		switch (om & C.OM_MODE_MASK) {
+		case C.OM_SHOWNORMAL: 
+			// if not in Overview Mode check for scale
+			if (pc.scale > wayDesc.maxScale * Configuration.getDetailBoostMultiplier()) {			
+				return;
 			}
+			break;
+		case C.OM_HIDE: 
+			if (wayDesc.hideable) {
+				return;
+			}
+			break;
+		}
 
-			switch (om & C.OM_NAME_MASK) {
-				case C.OM_WITH_NAMEPART: 
-					if (nameIdx == -1) return;
-					String name = pc.trace.getName(nameIdx);
-					if (name == null) return;
-					if (name.toUpperCase().indexOf(C.get0Poi1Area2WayNamePart((byte) 2).toUpperCase()) == -1) return;
-					break;
-				case C.OM_WITH_NAME: 
-					if (nameIdx == -1) return;
-					break;
-				case C.OM_NO_NAME: 
-					if (nameIdx != -1) return;
-					break;
-			}
+		switch (om & C.OM_NAME_MASK) {
+			case C.OM_WITH_NAMEPART: 
+				if (nameIdx == -1) return;
+				String name = pc.trace.getName(nameIdx);
+				if (name == null) return;
+				if (name.toUpperCase().indexOf(C.get0Poi1Area2WayNamePart((byte) 2).toUpperCase()) == -1) return;
+				break;
+			case C.OM_WITH_NAME: 
+				if (nameIdx == -1) return;
+				break;
+			case C.OM_NO_NAME: 
+				if (nameIdx != -1) return;
+				break;
 		}
 				
 		/**
