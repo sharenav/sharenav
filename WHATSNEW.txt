@@ -5,6 +5,7 @@ GpsMid 0.4.55
        - new keyboard shortcuts for QWERT keyboards in the map screen and some changes to numeric keyboard shortcuts
          (see http://gpsmid.wiki.sourceforge.net/Keyboard_Layout)
        - new custom alert boxes for the map screen cover the map only partially when displayed
+       - Setup Dialog speed improved
        - Results from "Search / Nearest POI" include the compass direction now
        - added backlight method for Siemens mobiles to Generic-Full (thx beni123)
        - display backlight dimming for phones like Nokia E90 that support this
@@ -14,6 +15,7 @@ GpsMid 0.4.55
        - Ability to rename tracks and waypoints
        - Waypoint names can now be entered with up to 255 chars (instead of 20)
        - When sending waypoints you are now asked for a name (Waypoints.gpx remains default filename)
+       - The map is centered at the start point when displaying a track
        *** GPS ***
        - JSR-179: Some devices (e.g. Nokia E71 and E90) did not show the speed / rotate the map to the driving direction. 
        *** Recordings ***
@@ -157,8 +159,15 @@ GpsMid 0.3.50
 		Implement waypoints
 				  export as GPX
 				  import from GPX
-				
-
+		***Osm2GpsMid***
+		   Speed up creation of midlets from OSM data
+				 (removed several O(n^2) bottlenecks)
+			Reduce memory usage while converting to midlets
+			Allow to scale to larger midlets
+				Allow for more than 32000 names per midlet
+				Removed potential stack overflow in large midlets due to recursion
+			OSM data can now be fetched directly via osmxapi
+			Several bug fixes
 
 Gpsmid 0.3.01
 	   There are currently no change information for midlets prior to this version
