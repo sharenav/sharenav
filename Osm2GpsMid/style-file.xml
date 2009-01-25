@@ -133,7 +133,7 @@ zoomed out 21x (scale alias 1:  500km)
 		<soundFile src="meters.amr"/>
 	</sound>
 	<sound name="SPEED_LIMIT">
-	<soundFile src="speed_limit.amr"/>
+		<soundFile src="speed_limit.amr"/>
 	</sound>
 -->  
   </sounds>
@@ -675,7 +675,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "21"/>
-  				<lineColor color = "0000CC00" />  				  				  				
+  				<lineColor color = "00196618" />  				  				  				
   			</Wvalue>
   			<Wvalue name = "farm">
   				<description desc = "Farm"/>
@@ -798,6 +798,14 @@ zoomed out 21x (scale alias 1:  500km)
   				<scale scale = "15"/>
   				<lineColor color = "000000CC" />  				  				  				
   			</Wvalue>
+			<Wvalue name = "wood">
+  				<description desc = "Wood"/>
+  				<namekey tag = "name"/>  				
+  				<isArea area = "true"/>
+  				<scale scale = "21"/>
+  				<lineColor color = "00196618" />  				  				  				
+				<force_to layer = "-2"/>
+			</Wvalue>  	
 	        <Wvalue name = "coastline">
   				<description desc = "coastline"/>
   				<namekey tag = "name"/>  				
