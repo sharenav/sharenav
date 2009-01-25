@@ -282,7 +282,7 @@ Runnable , GpsMidDisplayable{
 		
 		this.parent = parent;
 		
-		CMDS[EXIT_CMD] = new Command("Back to main", Command.BACK, 2);
+		CMDS[EXIT_CMD] = new Command("Back", Command.BACK, 2);
 		CMDS[REFRESH_CMD] = new Command("Refresh", Command.ITEM, 4);
 		CMDS[SEARCH_CMD] = new Command("Search", Command.OK, 1);
 		CMDS[CONNECT_GPS_CMD] = new Command("Start gps",Command.ITEM, 2);
