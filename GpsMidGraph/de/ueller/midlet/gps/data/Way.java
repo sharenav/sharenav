@@ -201,16 +201,13 @@ public class Way extends Entity{
 	
 		WayDescription wayDesc = C.getWayDescription(type);
 		int w = 0;
-		byte om = 0;
 		if ((mode & Tile.OPT_PAINT) > 0) {
-			om = C.getWayOverviewMode(type);
-		}
+			byte om = C.getWayOverviewMode(type);    
 
-		if (om != 0) {
 			switch (om & C.OM_MODE_MASK) {
 			case C.OM_SHOWNORMAL: 
 				// if not in Overview Mode check for scale
-				if (pc.scale > wayDesc.maxScale * Configuration.getDetailBoostMultiplier()) {
+				if (pc.scale > wayDesc.maxScale * Configuration.getDetailBoostMultiplier()) {			
 					return;
 				}
 				break;
@@ -220,22 +217,23 @@ public class Way extends Entity{
 				}
 				break;
 			}
-
+	
 			switch (om & C.OM_NAME_MASK) {
-			case C.OM_WITH_NAMEPART: 
-				if (nameIdx == -1) return;
-				String name = pc.trace.getName(nameIdx);
-				if (name == null) return;
-				if (name.toUpperCase().indexOf(C.get0Poi1Area2WayNamePart((byte) 2).toUpperCase()) == -1) return;
-				break;
-			case C.OM_WITH_NAME: 
-				if (nameIdx == -1) return;
-				break;
-			case C.OM_NO_NAME: 
-				if (nameIdx != -1) return;
-				break;
+				case C.OM_WITH_NAMEPART: 
+					if (nameIdx == -1) return;
+					String name = pc.trace.getName(nameIdx);
+					if (name == null) return;
+					if (name.toUpperCase().indexOf(C.get0Poi1Area2WayNamePart((byte) 2).toUpperCase()) == -1) return;
+					break;
+				case C.OM_WITH_NAME: 
+					if (nameIdx == -1) return;
+					break;
+				case C.OM_NO_NAME: 
+					if (nameIdx != -1) return;
+					break;
 			}
-		}		
+		}
+
 		
 		
 		IntPoint lineP1 = pc.lineP1;
