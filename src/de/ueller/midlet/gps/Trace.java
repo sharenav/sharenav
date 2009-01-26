@@ -221,7 +221,7 @@ Runnable , GpsMidDisplayable{
 	private Names namesThread;
 
 	private ImageCollector imageCollector;
-
+	
 	private QueueDataReader tileReader;
 
 	private QueueDictReader dictReader;
@@ -2001,7 +2001,7 @@ Runnable , GpsMidDisplayable{
 				| Graphics.LEFT);
 		yc += la;
 		g.drawString("File T: " + dictReader.getLivingTilesCount() + "/"
-				+ dictReader.getRequestQueueSize(), 0, yc, Graphics.TOP
+				+ dictReader.getRequestQueueSize() + " Map: " + ImageCollector.icDuration + " ms", 0, yc, Graphics.TOP
 				| Graphics.LEFT);
 		yc += la;
 		g.drawString("LastMsg: " + lastMsg, 0, yc, Graphics.TOP

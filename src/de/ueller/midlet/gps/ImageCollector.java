@@ -42,6 +42,7 @@ public class ImageCollector implements Runnable {
 	private Image[] img=new Image[2];
 	private volatile PaintContext[] pc=new PaintContext[2];
 	public static Node mapCenter = new Node();
+	public static volatile long icDuration = 0;
 	byte nextCreate=1;
 	byte nextPaint=0;
 
@@ -112,10 +113,8 @@ public class ImageCollector implements Runnable {
 						continue;
 					pc[nextCreate].state = PaintContext.STATE_IN_CREATE;
 				}
-				createPC = pc[nextCreate];
+				createPC = pc[nextCreate];				
 				
-				
-				//#debug
 				long startTime = System.currentTimeMillis();
 
 				// create PaintContext
@@ -192,9 +191,10 @@ public class ImageCollector implements Runnable {
 						break;
 					}
 				}
+
+				icDuration = System.currentTimeMillis() - startTime;
 				//#mdebug
-				long endTime = System.currentTimeMillis();
-				logger.info("Painting map took " + (endTime - startTime) + "ms");
+				logger.info("Painting map took " + icDuration + " ms");
 				//#enddebug
 				createPC.state=PaintContext.STATE_READY;
 				if (!shutdown)
