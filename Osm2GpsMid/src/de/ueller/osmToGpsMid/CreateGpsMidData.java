@@ -885,9 +885,6 @@ public class CreateGpsMidData {
 		
 		int flags=0;
 		int nameIdx = -1;
-		if (n.routeNode != null){
-			flags += Constants.NODE_MASK_ROUTENODELINK;
-		}
 		if (type == INODE){
 			if (! "".equals(n.getName())){
 				flags += Constants.NODE_MASK_NAME;
@@ -901,9 +898,6 @@ public class CreateGpsMidData {
 			}
 		}
 		ds.writeByte(flags);
-		if ((flags & Constants.NODE_MASK_ROUTENODELINK) > 0){
-			ds.writeShort(n.routeNode.id);			
-		}
 		
 		/**
 		 * Convert coordinates to relative fixpoint (integer) coordinates
