@@ -8,6 +8,7 @@ package de.ueller.midlet.gps.data;
 
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.util.Vector;
 
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
@@ -19,6 +20,7 @@ import de.ueller.gpsMid.mapData.SingleTile;
 import de.ueller.gpsMid.mapData.Tile;
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.Logger;
+import de.ueller.midlet.gps.routing.ConnectionWithNode;
 import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.tile.C;
 import de.ueller.midlet.gps.tile.PaintContext;
@@ -76,6 +78,7 @@ public class Way extends Entity{
 	 */
 	private static int [] x = new int[100];
 	private static int [] y = new int[100];
+	private static boolean [] hl = new boolean[100];  // route highlight
 	private static Font areaFont;
 	private static int areaFontHeight;
 	private static Font pathFont;
@@ -197,11 +200,98 @@ public class Way extends Entity{
 		processPath(pc,t,Tile.OPT_PAINT);
 	}
 
-	public void processPath(PaintContext pc, SingleTile t, int mode) {
+	/* check if the way contains the nodes searchCon1 and searchCon2
+	* if it does, but we already have a matching way,
+	* only take this way if it has the shortest path from searchCon1 to searchCon2
+	**/
+	public void connections2WayMatch(PaintContext pc, SingleTile t) {
+		boolean containsCon1 = false;
+		boolean containsCon2 = false;
+		short containsCon1At = 0;
+		short containsCon2At = 0;
+		short searchCon1Lat = (short) ((pc.searchCon1Lat - t.centerLat) / t.fpminv);
+		short searchCon1Lon = (short) ((pc.searchCon1Lon - t.centerLon) / t.fpminv);
+		short searchCon2Lat = (short) ((pc.searchCon2Lat - t.centerLat) / t.fpminv);
+		short searchCon2Lon = (short) ((pc.searchCon2Lon - t.centerLon) / t.fpminv);
+		
+		
+		// check if way contains both search connections
+		// System.out.println("search path nodes: " + path.length);
+		for (short i = 0; i < path.length; i++) {
+			int idx = path[i];
+			// System.out.println("lat:" + t.nodeLat[idx] + "/" + searchCon1Lat);
+			if ( (Math.abs(t.nodeLat[idx] - searchCon1Lat) < 2)
+					&&
+				 (Math.abs(t.nodeLon[idx] - searchCon1Lon) < 2)
+				) {
+				containsCon1 = true;
+				containsCon1At = i;
+				// System.out.println("con1 match");
+				if (containsCon1 && containsCon2) break;
+			}
+			if ( (Math.abs(t.nodeLat[idx] - searchCon2Lat) < 2)
+					&&
+				 (Math.abs(t.nodeLon[idx] - searchCon2Lon) < 2)
+				) {
+				containsCon2 = true;
+				containsCon2At = i;
+				// System.out.println("con2 match");
+				if (containsCon1 && containsCon2) break;
+			}   
+		}
+	  
+		// we've got a match
+		if (containsCon1 && containsCon2) {
+			float conWayRealDistance = 0;
+			short from = containsCon1At;
+			short to = containsCon2At;
+			if (from > to) {
+				// swap direction
+				from = to;
+				to = containsCon1At;
+			}
+			// sum up the distance of the segments between searchCon1 and searchCon2
+			for (short i = from; i < to; i++) {
+				float a = t.nodeLat[i] - t.nodeLat[i+1];
+				float b = t.nodeLon[i] - t.nodeLon[i+1];    
+				double dist = Math.sqrt( (double) (a * a + b * b) );
+				conWayRealDistance += dist;
+			}
+			/* check if this is a better match than a maybe previous one:
+			if the distance is closer than the already matching one
+			this way contains a better path between the connections
+			*/
+			if (conWayRealDistance < pc.conWayDistanceToNext) {
+				// this is currently the best path between searchCon1 and searchCon2
+				pc.conWayDistanceToNext = conWayRealDistance;
+				pc.conWayFromAt = containsCon1At;
+				pc.conWayToAt = containsCon2At;
+				pc.conWayNameIdx= this.nameIdx;
+				pc.conWayType = this.type;
+			}
+		}
+	}
+
 	
+	
+	public void processPath(PaintContext pc, SingleTile t, int mode) {		
 		WayDescription wayDesc = C.getWayDescription(type);
 		int w = 0;
-		if ((mode & Tile.OPT_PAINT) > 0) {
+		byte highlight=0;
+		
+		/**
+		 * If the static array is not large enough, increase it
+		 */
+		if (x.length < path.length) {		
+			x = new int[path.length];
+			y = new int[path.length];
+			hl = new boolean[path.length];
+		}
+		for (int i1 = 0; i1 < path.length; i1++) {
+			hl[i1] = false;
+		}
+
+		if ((mode & Tile.OPT_PAINT) > 0) {		
 			byte om = C.getWayOverviewMode(type);    
 
 			switch (om & C.OM_MODE_MASK) {
@@ -232,24 +322,60 @@ public class Way extends Entity{
 					if (nameIdx != -1) return;
 					break;
 			}
+			
+			Vector route=pc.trace.getRoute();
+			ConnectionWithNode c;
+			if (route!=null && route.size()!=0) { 
+				for (int i=0; i<route.size()-1; i++){
+					c = (ConnectionWithNode) route.elementAt(i);
+					if (c.wayNameIdx == this.nameIdx && wayDesc.routable) {
+						if (path.length > c.wayFromConAt && path.length > c.wayToConAt) {
+							int idx = path[c.wayFromConAt];
+							short searchCon1Lat = (short) ((c.to.lat - t.centerLat) / t.fpminv);
+							if ( (Math.abs(t.nodeLat[idx] - searchCon1Lat) < 2) ) {
+								short searchCon1Lon = (short) ((c.to.lon - t.centerLon) / t.fpminv);
+								if ( (Math.abs(t.nodeLon[idx] - searchCon1Lon) < 2) ) {
+									idx = path[c.wayToConAt];
+									ConnectionWithNode c2 = (ConnectionWithNode) route.elementAt(i+1);
+									searchCon1Lat = (short) ((c2.to.lat - t.centerLat) / t.fpminv);
+									if ( (Math.abs(t.nodeLat[idx] - searchCon1Lat) < 2) ) {
+										searchCon1Lon = (short) ((c2.to.lon - t.centerLon) / t.fpminv);
+										if ( (Math.abs(t.nodeLon[idx] - searchCon1Lon) < 2) ) {
+											highlight=2;
+											short from = c.wayFromConAt;
+											short to = c.wayToConAt;
+											if (from > to) {
+												// swap direction
+												to = from;
+												from = c.wayToConAt;
+											}
+//											String name=null;
+//											if (nameIdx != -1) {
+//												name=Trace.getInstance().getName(nameIdx);
+//												if (name!=null) {
+//													System.out.println(name + " from: " + from + " to: " + to);
+//												}	
+//											}
+											for (int n = from; n < to; n++) {
+												hl[n] = true;
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}				
+			}		
 		}
 
-		
 		
 		IntPoint lineP1 = pc.lineP1;
 		IntPoint lineP2 = pc.lineP2;
 		IntPoint swapLineP = pc.swapLineP;
 		Projection p = pc.getP();
 		
-		int pi=0;
-		
-		/**
-		 * If the static array is not large enough, increase it
-		 */
-		if (x.length < path.length) {		
-			x = new int[path.length];
-			y = new int[path.length];
-		}
+		int pi=0;		
 		
 		for (int i1 = 0; i1 < path.length; i1++) {
 			int idx = path[i1];
@@ -265,7 +391,7 @@ public class Way extends Entity{
 				 * If two nodes are very close by, then we can simply drop one of the nodes
 				 * and draw the line between the other points. 
 				 */
-				if (! lineP1.approximatelyEquals(lineP2)){
+				if (highlight == 2 || ! lineP1.approximatelyEquals(lineP2)){
 					float dst = MoreMath.ptSegDistSq(lineP1.x, lineP1.y,
 							lineP2.x, lineP2.y, pc.xSize / 2, pc.ySize / 2);
 					if (dst < pc.squareDstToWay) {
@@ -277,6 +403,9 @@ public class Way extends Entity{
 						pc.squareDstToRoutableWay = dst;
 						pc.nearestRoutableWay = this;
 					}
+//					if (hl[pi] && dst < pc.squareDstToRoute) {
+//						pc.squareDstToRoute = dst;					
+//					}
 					x[pi] = lineP2.x;
 					y[pi++] = lineP2.y;
 					swapLineP = lineP1;
@@ -293,7 +422,7 @@ public class Way extends Entity{
 					} else {
 						//System.out.println("   discarding never the less");
 					}
-				}else {
+				} else {
 					/**
 					 * Drop this point, it is redundant
 					 */					
@@ -322,13 +451,18 @@ public class Way extends Entity{
 			}
 
 			if (pc.target != null && this.equals(pc.target.e)) {
-				draw(pc, (w == 0) ? 1 : w, x, y, pi - 1, true);
+				highlight=1;
+				draw(pc, (w == 0) ? 1 : w, x, y, hl, pi - 1, highlight);
 			} else {
 				if (w == 0) {
-					setColor(pc);
-					PolygonGraphics.drawOpenPolygon(pc.g, x, y, pi - 1);
+					if (highlight != 2) {
+						setColor(pc);
+						PolygonGraphics.drawOpenPolygon(pc.g, x, y, pi - 1);
+					} else {
+						drawOpenPolygonHl(pc.g, x, y, hl, pi - 1);
+					}
 				} else {
-					draw(pc, w, x, y, pi - 1, false);
+					draw(pc, w, x, y, hl, pi - 1, highlight);
 				}
 			}
 
@@ -339,6 +473,18 @@ public class Way extends Entity{
 		}
 	}
 	
+    public static void drawOpenPolygonHl(Graphics g, int xPoints[], int yPoints[], boolean hl[], int count)
+    {
+        int defaultColor = g.getColor();
+    	for(int i = 0; i < count; i++) {
+			if (hl[i]) {
+				g.setColor(C.ROUTE_COLOR);
+			} else {
+				g.setColor(defaultColor);
+			}
+        	g.drawLine(xPoints[i], yPoints[i], xPoints[i + 1], yPoints[i + 1]);
+		}
+    }
 
     public void paintPathName(PaintContext pc, SingleTile t) {
 		//boolean info=false;
@@ -756,7 +902,7 @@ public class Way extends Entity{
 	
 	
 
-	private void draw(PaintContext pc, int w, int xPoints[], int yPoints[],int count,boolean highlite/*,byte mode*/) {
+	private void draw(PaintContext pc, int w, int xPoints[], int yPoints[], boolean hl[], int count,byte highlight/*,byte mode*/) {
 		
 		float roh1;
 		float roh2;
@@ -779,14 +925,18 @@ public class Way extends Entity{
 				}
 			}
 //			if (mode == DRAW_AREA){
-				setColor(pc);
+				if (highlight == 2 && hl[i]) {
+					pc.g.setColor(C.ROUTE_COLOR);				
+				} else {
+					setColor(pc);
+				}
 				pc.g.fillTriangle(l2b.x, l2b.y, l1b.x, l1b.y, l1e.x, l1e.y);
 				pc.g.fillTriangle(l1e.x, l1e.y, l2e.x, l2e.y, l2b.x, l2b.y);
 //			}
 //			if (mode == DRAW_BORDER){
-				if (highlite){
+				if (highlight == 1){
 					pc.g.setColor(255,50,50);
-				} else {
+				} else if (!hl[i]) {
 					setBorderColor(pc);
 				}
 				pc.g.drawLine(l1b.x, l1b.y, l1e.x, l1e.y);

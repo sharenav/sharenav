@@ -332,10 +332,13 @@ public class Routing implements Runnable {
 				parent.searchElement(toMark);
 				if (toMark.e == null){
 					parent.receiveMessage("search for routable way close by the target");
+//					long startTime = System.currentTimeMillis();
 					parent.searchNextRoutableWay(toMark);
 					if (toMark.e == null){
 						parent.receiveMessage("No Way found for target point");
 						return;
+//					} else {
+//						parent.alert("Routing", "Source Way found in " + (long)(System.currentTimeMillis() - startTime), 3000);
 					}
 				}
 			}
@@ -498,6 +501,7 @@ public class Routing implements Runnable {
 			logger.info("Start Routing thread");
 			Vector solve = solve();
 			parent.setRoute(solve);
+			parent.determineRoutePath();
 		} catch (NullPointerException npe) {
 			parent.setRoute(null);
 			parent.receiveMessage(npe.getMessage());

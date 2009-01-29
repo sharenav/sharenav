@@ -256,6 +256,10 @@ public class SingleTile extends Tile implements QueueableTile {
 							} else {
 								w.paintAsArea(pc, this);
 							}
+						} else if ((opt & Tile.OPT_CONNECTIONS2WAY) != 0) {
+							if (!w.isArea()) {
+								w.connections2WayMatch(pc, this);
+							}
 						} else if ((opt & Tile.OPT_FIND_CURRENT) != 0) {
 							if (!w.isArea()) {
 								w.processPath(pc, this, Tile.OPT_FIND_CURRENT);

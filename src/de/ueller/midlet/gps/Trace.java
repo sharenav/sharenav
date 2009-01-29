@@ -160,6 +160,8 @@ Runnable , GpsMidDisplayable{
 
 	public PaintContext pc;
 
+	public int connsFound = 0;
+	
 	public float scale = 15000f;
 	
 	int showAddons = 0;
@@ -1341,6 +1343,8 @@ Runnable , GpsMidDisplayable{
 
 		}
 	}
+	
+	
 	public void searchNextRoutableWay(PositionMark pm) throws Exception{
 		PaintContext pc = new PaintContext(this, null);
 		// take a bigger angle for lon because of positions near to the pols.
@@ -1359,6 +1363,54 @@ Runnable , GpsMidDisplayable{
 		pm.setEntity(w, pc.currentPos.nodeLat, pc.currentPos.nodeLon);
 	}
 
+	public void determineRoutePath() throws Exception {
+		PaintContext pc = new PaintContext(this, null);
+		connsFound=0;
+		long startTime = System.currentTimeMillis();
+		if (route != null && route.size() > 0){
+			for (int i=0; i<route.size()-1; i++){
+				searchConnection2Ways(pc, i);
+			}
+			//parent.alert ("Connection2Ways", "found: " + connsFound + "/" + (route.size()-1) + " in " + (long)(System.currentTimeMillis() - startTime) + " ms", 3000);
+			//#debug debug
+			logger.debug("Connection2Ways", "found: " + connsFound + "/" + (route.size()-1) + " in " + (long)(System.currentTimeMillis() - startTime) + " ms", 3000);
+		}
+	}
+	
+	public void searchConnection2Ways(PaintContext pc, int iConnFrom) throws Exception {		
+		ConnectionWithNode c;
+		c = (ConnectionWithNode) route.elementAt(iConnFrom);
+		// take a bigger angle for lon because of positions near to the pols.		
+		Node nld=new Node(c.to.lat - 0.0001f,c.to.lon - 0.0005f,true);
+		Node nru=new Node(c.to.lat + 0.0001f,c.to.lon + 0.0005f,true);
+		pc.searchCon1Lat = c.to.lat;
+		pc.searchCon1Lon = c.to.lon;
+		c = (ConnectionWithNode) route.elementAt(iConnFrom+1);
+		pc.searchCon2Lat = c.to.lat;
+		pc.searchCon2Lon = c.to.lon;
+		
+		pc.searchLD=nld;
+		pc.searchRU=nru;
+		pc.conWayDistanceToNext = Float.MAX_VALUE;
+		pc.xSize = 100;
+		pc.ySize = 100;
+		pc.setP(new Proj2D(new Node(pc.searchCon1Lat,pc.searchCon1Lon, true),5000,100,100));
+		for (int i=0; i<4; i++){
+			t[i].walk(pc, Tile.OPT_WAIT_FOR_LOAD | Tile.OPT_CONNECTIONS2WAY);
+		}
+		// if we've got a match
+		if (pc.conWayDistanceToNext != Float.MAX_VALUE ) {
+			c = (ConnectionWithNode) route.elementAt(iConnFrom);
+			c.wayFromConAt = pc.conWayFromAt;
+			c.wayToConAt = pc.conWayToAt;
+			c.wayNameIdx = pc.conWayNameIdx;
+			c.wayType = pc.conWayType;
+			c.wayDistanceToNext = pc.conWayDistanceToNext;
+			connsFound++;
+		}
+	}
+	
+	
 	private void showPointOfTheCompass(PaintContext pc) {
 		if (compassRectHeight == 0) {
 			compassRectHeight = pc.g.getFont().getHeight()-2;
@@ -2373,5 +2425,8 @@ Runnable , GpsMidDisplayable{
 			imageCollector.newDataReady();
 		}
 	}
-
+	
+	public Vector getRoute() {
+		return route;
+	}
 }

@@ -65,6 +65,7 @@ public class C {
 	public final static byte OM_NAME_MASK=OM_NO_NAME | OM_WITH_NAME | OM_WITH_NAMEPART;
 	
 	public static int BACKGROUND_COLOR = 0x009BFF9B;
+	public static int ROUTE_COLOR = 0x0064FFFF;  // not read from file yet
 	public static String appVersion;
 	public static String bundleDate;
 	public static boolean enableEdits;

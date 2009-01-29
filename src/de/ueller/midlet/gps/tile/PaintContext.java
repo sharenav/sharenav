@@ -59,6 +59,19 @@ public class PaintContext extends ScreenContext {
 	 */
 	public volatile Way actualWay=null;
 	public volatile Way nearestRoutableWay=null;
+	
+	/* variables for searching matching route connections in ways */
+	public volatile float searchCon1Lat;
+	public volatile float searchCon1Lon;
+	public volatile float searchCon2Lat;
+	public volatile float searchCon2Lon;
+	// results
+	public volatile int conWayNameIdx; // used to vaguely identify ways that might contain a solution path for highlighting  
+	public volatile short conWayFromAt; // highlight way from this path node #
+	public volatile short conWayToAt;   // highlight way to this path node #
+	public volatile byte conWayType;   // highlight way to node idx
+	public volatile float conWayDistanceToNext; // distance to next connection when following the route path
+	
 	/**
 	 * the square of distance from center to the nearest point of actualWay
 	 */
