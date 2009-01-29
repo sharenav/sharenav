@@ -135,7 +135,7 @@ Runnable , GpsMidDisplayable{
 
 	public String solution = "NoFix";
 	
-	private boolean gpsRecenter = true;
+	public boolean gpsRecenter = true;
 	
 	private Position pos = new Position(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1,
 			new Date());
