@@ -99,6 +99,21 @@ public class Way extends Entity{
 	static final IntPoint s1 = new IntPoint();
 	static final IntPoint s2 = new IntPoint();
 	
+	/**
+	 * Enables or disables the match travelling direction for actual way calculation heuristic 
+	 */
+	private static boolean addDirectionalPenalty = false;
+	/**
+	 * Sets the scale of the directional penalty dependent on the projection used.
+	 */
+	private static float scalePen = 0;
+	/*
+	 * Precalculated normalised vector for the direction of current travel,
+	 * used in the the directional penalty heuristic
+	 */
+	private static float courseVecX = 0;
+	private static float courseVecY = 0;
+	
 
 //	private final static Logger logger = Logger.getInstance(Way.class,
 //			Logger.TRACE);
@@ -183,6 +198,53 @@ public class Way extends Entity{
 //			if (is.readByte() != 0x59 ){
 //				logger.error("wrong magic code after path");
 //			}			
+	}
+	
+	/**
+	 * Precalculate parameters to quickly test the the directional overlap between
+	 * a way and the current direction of travelling. This is used in processWay
+	 * to calculate the most likely way we are currently travelling on.
+	 * 
+	 * @param pc
+	 * @param speed
+	 */
+	public static void setupDirectionalPenalty(PaintContext pc, int speed, boolean gpsRecenter) {
+		//Only use this heuristic if we are travelling faster than 6 km/h, as otherwise
+		//the direction estimate is too bad to be of much use. Also, only use the direction
+		//if we are actually using the gps to center the map and not manually panning around.
+		if ((speed < 7) || !gpsRecenter) {
+			addDirectionalPenalty = false;
+			scalePen = 0;
+			return;
+		}
+		addDirectionalPenalty = true;
+		Projection p = pc.getP();
+		float lat1 = pc.center.radlat;
+		float lon1 = pc.center.radlon;
+		IntPoint lineP1 = new IntPoint();
+		IntPoint lineP2 = new IntPoint();
+		float lat2 = pc.center.radlat + (float) (0.00001*Math.cos(pc.course * MoreMath.FAC_DECTORAD));
+		float lon2 = pc.center.radlon + (float) (0.00001*Math.sin(pc.course * MoreMath.FAC_DECTORAD));
+		p.forward(lat1, lon1, lineP1);
+		p.forward(lat2, lon2, lineP2);
+		
+		courseVecX = lineP1.x - lineP2.x;
+		courseVecY = lineP1.y - lineP2.y;
+		float norm = (float)Math.sqrt(courseVecX*courseVecX + courseVecY*courseVecY);
+		courseVecX /= norm; courseVecY /= norm;
+		
+		//Calculate the lat and lon coordinates of two
+		//points that are 35 pixels apart
+		Node n1 = new Node();
+		Node n2 = new Node();
+		pc.getP().inverse(10, 10, n1);
+		pc.getP().inverse(45, 10, n2);
+		
+		//Calculate the distance between them in meters
+		float d = ProjMath.getDistance(n1, n2);
+		//Set the scale of the direction penalty to roughly
+		//match that of a penalty of 100m at a 90 degree angle
+		scalePen = 35.0f/d*100.0f;
 	}
 
 	public boolean isOnScreen( short pcLDlat, short pcLDlon, short pcRUlat, short pcRUlon) { 
@@ -394,10 +456,27 @@ public class Way extends Entity{
 				if (highlight == 2 || ! lineP1.approximatelyEquals(lineP2)){
 					float dst = MoreMath.ptSegDistSq(lineP1.x, lineP1.y,
 							lineP2.x, lineP2.y, pc.xSize / 2, pc.ySize / 2);
+					
 					if (dst < pc.squareDstToWay) {
-						//System.out.println("set new current Way1 "+ pc.trace.getName(this.nameIdx) + " new dist "+ dst + " old " + pc.squareDstToWay);						
-						pc.squareDstToWay = dst;
-						pc.actualWay = this;
+						/**
+						 * Add a heuristic so that the direction of travel and the direction
+						 * of the way should more or less match if we are travelling on this way
+						 */
+						if (addDirectionalPenalty) {
+							int segDirVecX = lineP1.x-lineP2.x;
+							int segDirVecY = lineP1.y-lineP2.y;
+							float norm = (float) Math.sqrt((double)(segDirVecX*segDirVecX + segDirVecY*segDirVecY));
+							//This is a hack to use a linear approximation to keep computational requirements down
+							float pen = scalePen*(1.0f - Math.abs((segDirVecX*courseVecX + segDirVecY*courseVecY)/norm));
+							pen*=pen;
+							if (dst + pen < pc.squareDstToWay) {
+								pc.squareDstToWay = dst + pen;
+								pc.actualWay = this;
+							}
+						} else {
+							pc.squareDstToWay = dst;
+							pc.actualWay = this;
+						}
 					}
 					if (dst < pc.squareDstToRoutableWay && wayDesc.routable) {
 						pc.squareDstToRoutableWay = dst;

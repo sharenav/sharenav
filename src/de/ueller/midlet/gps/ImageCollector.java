@@ -10,6 +10,7 @@ import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.ProjFactory;
 import de.ueller.midlet.gps.data.Projection;
+import de.ueller.midlet.gps.data.Way;
 import de.ueller.midlet.gps.tile.C;
 import de.ueller.midlet.gps.tile.Images;
 import de.ueller.midlet.gps.tile.PaintContext;
@@ -139,7 +140,10 @@ public class ImageCollector implements Runnable {
 				createPC.squareDstToWay = Float.MAX_VALUE;
 				createPC.squareDstToRoutableWay = Float.MAX_VALUE;
 				createPC.target = nextSc.target;
+				createPC.course = nextSc.course;
 				// System.out.println("create " + pcCollect);
+				
+				Way.setupDirectionalPenalty(createPC, Trace.getInstance().speed, Trace.getInstance().gpsRecenter);
 
 
 				float boost=Configuration.getDetailBoostMultiplier();
