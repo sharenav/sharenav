@@ -27,6 +27,7 @@ public class C {
 	public final static byte MIN_PLACETYPE = 1; // city
 	public final static byte MAX_PLACETYPE = 5; // suburb
 	
+	// FIXME: reading the RouteNodeLink is obsolete as it is no more written by Osm2GpsMid, it should be removed on the next MAP_VERSION update
 	public final static byte NODE_MASK_ROUTENODELINK=0x1;
 	public final static byte NODE_MASK_TYPE=0x2;
 	public final static byte NODE_MASK_NAME=0x4;

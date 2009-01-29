@@ -85,6 +85,8 @@ public class QueueDataReader extends QueueReader implements Runnable {
 			for (int i=0; i< nodeCount;i++){
 				//#debug error
 				//	logger.info("read coord :"+i+"("+nodeCount+")");
+				
+				// FIXME: reading the RouteNodeLink is obsolete as it is no more written by Osm2GpsMid, it should be removed on the next MAP_VERSION update
 				flag=ds.readByte();
 				if ((flag & C.NODE_MASK_ROUTENODELINK) > 0){
 					ds.readShort();
