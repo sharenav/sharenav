@@ -314,17 +314,18 @@ public class Way extends Entity{
 				// if this is a oneway it can't be the route path as we would go against the oneway's direction
 				if (isOneway()) return;
 			}
-			int idx1;
-			int idx2 = path[from];
+
+			int idx1 = path[from];
+			int idx2;
 			// sum up the distance of the segments between searchCon1 and searchCon2
 			for (short i = from; i < to; i++) {
-				idx1 = idx2;
 				idx2 = path[i+1];
 				float dist = ProjMath.getDistance(	(t.centerLat + t.nodeLat[idx1] *  t.fpminv),
 													(t.centerLon + t.nodeLon[idx1] *  t.fpminv),
 													(t.centerLat + t.nodeLat[idx2] *  t.fpminv),
 													(t.centerLon + t.nodeLon[idx2] *  t.fpminv));
 				conWayRealDistance += dist;
+				idx1 = idx2;
 			}
 			/* check if this is a better match than a maybe previous one:
 			if the distance is closer than the already matching one
