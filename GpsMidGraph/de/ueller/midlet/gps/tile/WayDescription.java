@@ -14,5 +14,6 @@ public class WayDescription {
 	public boolean routable;
 	public boolean hideable;
 	public byte overviewMode;
+	public byte routeFlags;
 }
 
