@@ -312,11 +312,16 @@ public class Way extends Entity{
 				from = to;
 				to = containsCon1At;
 			}
+			int idx1;
+			int idx2 = path[from];
 			// sum up the distance of the segments between searchCon1 and searchCon2
 			for (short i = from; i < to; i++) {
-				float a = t.nodeLat[i] - t.nodeLat[i+1];
-				float b = t.nodeLon[i] - t.nodeLon[i+1];    
-				double dist = Math.sqrt( (double) (a * a + b * b) );
+				idx1 = idx2;
+				idx2 = path[i+1];
+				float dist = ProjMath.getDistance(	(t.centerLat + t.nodeLat[idx1] *  t.fpminv),
+													(t.centerLon + t.nodeLon[idx1] *  t.fpminv),
+													(t.centerLat + t.nodeLat[idx2] *  t.fpminv),
+													(t.centerLon + t.nodeLon[idx2] *  t.fpminv));
 				conWayRealDistance += dist;
 			}
 			/* check if this is a better match than a maybe previous one:
@@ -324,6 +329,13 @@ public class Way extends Entity{
 			this way contains a better path between the connections
 			*/
 			if (conWayRealDistance < pc.conWayDistanceToNext) {
+//				if (pc.conWayDistanceToNext != Float.MAX_VALUE) {
+//					String name1=null, name2=null;
+//					if (pc.conWayNameIdx != -1) name1=Trace.getInstance().getName(pc.conWayNameIdx);
+//					if (this.nameIdx != -1) name2=Trace.getInstance().getName(this.nameIdx);
+//					System.out.println("REPLACE " + pc.conWayDistanceToNext + "m (" + C.getWayDescription(pc.conWayType).description + " " + (name1==null?"":name1) + ")");
+//					System.out.println("WITH " + conWayRealDistance + "m (" + C.getWayDescription(this.type).description + " " + (name2==null?"":name2) + ")");
+//				}				
 				// this is currently the best path between searchCon1 and searchCon2
 				pc.conWayDistanceToNext = conWayRealDistance;
 				pc.conWayFromAt = containsCon1At;
@@ -411,11 +423,14 @@ public class Way extends Entity{
 												to = from;
 												from = c.wayToConAt;
 											}
+											
 //											String name=null, nameFrom=null, nameTo=null;
 //											if (nameIdx != -1) name=Trace.getInstance().getName(nameIdx);
 //											if (c.wayNameIdx != -1) nameFrom=Trace.getInstance().getName(c.wayNameIdx);
 //											if (c2.wayNameIdx != -1) nameTo=Trace.getInstance().getName(c2.wayNameIdx);
-//											System.out.println((name==null)?"":nameFrom + " " + (c.wayDistanceToNext) +"m from: " + from + "(" + (nameFrom==null?"":nameFrom) + ")" + " to: " + to + "(" + (nameTo==null?"":nameTo) + ")" );
+//											System.out.println(C.getWayDescription(this.type).description + " " + (name==null?"":name) + " " + Integer.toString((int)c.wayDistanceToNext) + "m " +
+//													"from: " + from + "(" + C.getWayDescription(c.wayType).description + " " + (nameFrom==null?"":nameFrom) + ") " +
+//													"to: " + to + "(" + C.getWayDescription(c2.wayType).description + " " + (nameTo==null?"":nameTo) + ")" );
 
 											for (int n = from; n < to; n++) {
 												hl[n] = true;
