@@ -311,6 +311,8 @@ public class Way extends Entity{
 				// swap direction
 				from = to;
 				to = containsCon1At;
+				// if this is a oneway it can't be the route path as we would go against the oneway's direction
+				if (isOneway()) return;
 			}
 			int idx1;
 			int idx2 = path[from];
