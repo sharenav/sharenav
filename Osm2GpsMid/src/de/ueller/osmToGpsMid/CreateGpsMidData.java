@@ -70,7 +70,10 @@ public class CreateGpsMidData {
 	public final static byte LEGEND_FLAG_NON_HIDEABLE = 0x10;
 	public final static byte LEGEND_FLAG_NON_ROUTABLE = 0x20;
 	public final static byte LEGEND_FLAG_MIN_DESCRIPTION_SCALE = 0x40;
-	
+
+	public final static byte ROUTE_FLAG_MOTORWAY = 0x01;
+	public final static byte ROUTE_FLAG_MOTORWAY_LINK = 0x02;
+	public final static byte ROUTE_FLAG_ROUNDABOUT = 0x04;
 		
 //	private final static int MAX_TILE_FILESIZE=20000;
 //	private final static int MAX_ROUTETILE_FILESIZE=5000;
@@ -230,6 +233,14 @@ public class CreateGpsMidData {
 					flags |= LEGEND_FLAG_MIN_DESCRIPTION_SCALE;
 				dsi.writeByte(way.typeNum);
 				dsi.writeByte(flags);
+				byte routeFlags=0;
+				if (way.value.equalsIgnoreCase("motorway"))
+					routeFlags |= ROUTE_FLAG_MOTORWAY;
+				if (way.value.equalsIgnoreCase("motorway_link"))
+					routeFlags |= ROUTE_FLAG_MOTORWAY_LINK;
+				if (way.value.equalsIgnoreCase("roundabout"))
+					routeFlags |= ROUTE_FLAG_ROUNDABOUT;						
+				dsi.writeByte(routeFlags);
 				dsi.writeUTF(way.description);								
 				dsi.writeInt(way.minScale);
 				dsi.writeInt(way.minTextScale);				
