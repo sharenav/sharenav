@@ -411,13 +411,12 @@ public class Way extends Entity{
 												to = from;
 												from = c.wayToConAt;
 											}
-//											String name=null;
-//											if (nameIdx != -1) {
-//												name=Trace.getInstance().getName(nameIdx);
-//												if (name!=null) {
-//													System.out.println(name + " from: " + from + " to: " + to);
-//												}	
-//											}
+//											String name=null, nameFrom=null, nameTo=null;
+//											if (nameIdx != -1) name=Trace.getInstance().getName(nameIdx);
+//											if (c.wayNameIdx != -1) nameFrom=Trace.getInstance().getName(c.wayNameIdx);
+//											if (c2.wayNameIdx != -1) nameTo=Trace.getInstance().getName(c2.wayNameIdx);
+//											System.out.println((name==null)?"":nameFrom + " " + (c.wayDistanceToNext) +"m from: " + from + "(" + (nameFrom==null?"":nameFrom) + ")" + " to: " + to + "(" + (nameTo==null?"":nameTo) + ")" );
+
 											for (int n = from; n < to; n++) {
 												hl[n] = true;
 											}
