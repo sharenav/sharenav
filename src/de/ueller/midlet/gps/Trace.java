@@ -1366,18 +1366,20 @@ Runnable , GpsMidDisplayable{
 	public void determineRoutePath() throws Exception {
 		PaintContext pc = new PaintContext(this, null);
 		connsFound=0;
+		float routeLen=0f;
 		long startTime = System.currentTimeMillis();
 		if (route != null && route.size() > 0){
 			for (int i=0; i<route.size()-1; i++){
-				searchConnection2Ways(pc, i);
+				routeLen += searchConnection2Ways(pc, i);
 			}
 			//parent.alert ("Connection2Ways", "found: " + connsFound + "/" + (route.size()-1) + " in " + (long)(System.currentTimeMillis() - startTime) + " ms", 3000);
 			//#debug debug
 			logger.debug("Connection2Ways found: " + connsFound + "/" + (route.size()-1) + " in " + (long)(System.currentTimeMillis() - startTime) + " ms");
+			receiveMessage ("Route: " + (int) routeLen + "m");
 		}
 	}
 	
-	public void searchConnection2Ways(PaintContext pc, int iConnFrom) throws Exception {		
+	public float searchConnection2Ways(PaintContext pc, int iConnFrom) throws Exception {		
 		ConnectionWithNode c;
 		c = (ConnectionWithNode) route.elementAt(iConnFrom);
 		// take a bigger angle for lon because of positions near to the pols.		
@@ -1407,7 +1409,9 @@ Runnable , GpsMidDisplayable{
 			c.wayType = pc.conWayType;
 			c.wayDistanceToNext = pc.conWayDistanceToNext;
 			connsFound++;
+			return c.wayDistanceToNext;
 		}
+		return 0f;
 	}
 	
 	
