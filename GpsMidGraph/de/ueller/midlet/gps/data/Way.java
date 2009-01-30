@@ -1264,8 +1264,8 @@ public class Way extends Entity{
 		return ((flags & WAY_AREA) > 0);
 	}
 	
-	public byte getMaxSpeed() {
-		return (byte)((flags & MaxSpeedMask) >> MaxSpeedShift);
+	public int getMaxSpeed() {
+		return ((flags & MaxSpeedMask) >> MaxSpeedShift);
 	}
 	
 /*	private float[] getFloatNodes(SingleTile t, short[] nodes, float offset) {
