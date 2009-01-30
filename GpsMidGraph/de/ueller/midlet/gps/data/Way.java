@@ -1015,7 +1015,9 @@ public class Way extends Entity{
 //			if (mode == DRAW_BORDER){
 				if (highlight == 1){
 					pc.g.setColor(255,50,50);
-				} else if (!hl[i]) {
+				} else if (hl[i]){
+					pc.g.setColor(C.ROUTE_BORDERCOLOR);
+				} else {
 					setBorderColor(pc);
 				}
 				pc.g.drawLine(l1b.x, l1b.y, l1e.x, l1e.y);
