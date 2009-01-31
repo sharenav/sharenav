@@ -14,6 +14,7 @@
 package de.ueller.midlet.gps;
 
 import de.ueller.gps.data.Configuration;
+import de.ueller.gps.tools.ImageTools;
 import de.ueller.midlet.gps.tile.C;
 
 import java.io.IOException;
@@ -80,7 +81,18 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 		if(scaleW<scaleH) {
 			scale=scaleW;
 		}
-		splash=scaleImage(splash, (int)(scale*(double) splash.getWidth()), (int)(scale* (double) splash.getHeight()) );
+    	// if we would not be able to allocate memory for
+		// at least the memory for the original and the scaled image
+		// plus 25% do not scale
+		int oldWith = splash.getWidth();
+		int newWidth =  (int)(scale* (double) splash.getWidth());
+		int newHeight = (int)(scale* (double) splash.getHeight());
+		if(ImageTools.isScaleMemAvailable(splash, newWidth , newHeight)) {
+			splash=ImageTools.scaleImage(splash, newWidth , newHeight);
+		}
+		if (splash.getWidth() != newWidth) {
+			scale = 1;
+		}
 		topStart*=scale;
 	}
 
@@ -167,54 +179,6 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 	}
 	
 	
-	// based on Public Domain code (confirmed by E-Mail)
-	// from http://willperone.net/Code/codescaling.php 
-	public Image scaleImage(Image original, int newWidth, int newHeight)
-    {        
-    	// if we would not be able to allocate memory for
-		// at least the memory for the original and the scaled image
-		// plus 25% do not scale
-		if(Runtime.getRuntime().freeMemory()<5*(original.getHeight() * original.getWidth() + newWidth*newHeight) ) {
-    		scale=1;
-    		return original;
-    	}
-        try {
-			int[] rawInput = new int[original.getHeight() * original.getWidth()];
-	        original.getRGB(rawInput, 0, original.getWidth(), 0, 0, original.getWidth(), original.getHeight());
-	        
-	        int[] rawOutput = new int[newWidth*newHeight];        
-	
-	        // YD compensates for the x loop by subtracting the width back out
-	        int YD = (original.getHeight() / newHeight) * original.getWidth() - original.getWidth(); 
-	        int YR = original.getHeight() % newHeight;
-	        int XD = original.getWidth() / newWidth;
-	        int XR = original.getWidth() % newWidth;        
-	        int outOffset= 0;
-	        int inOffset=  0;
-	        
-	        for (int y= newHeight, YE= 0; y > 0; y--) {            
-	            for (int x= newWidth, XE= 0; x > 0; x--) {
-	                rawOutput[outOffset++]= rawInput[inOffset];
-	                inOffset+=XD;
-	                XE+=XR;
-	                if (XE >= newWidth) {
-	                    XE-= newWidth;
-	                    inOffset++;
-	                }
-	            }            
-	            inOffset+= YD;
-	            YE+= YR;
-	            if (YE >= newHeight) {
-	                YE -= newHeight;     
-	                inOffset+=original.getWidth();
-	            }
-	        }               
-	        return Image.createRGBImage(rawOutput, newWidth, newHeight, false);
-        } catch (Exception e) {
-        	scale=1;
-        	return original;
-        }
-    }
 	protected void keyPressed(int keyCode) {
 		if (keyCode == KEY_STAR) {
 			boolean current = Configuration.getCfgBitState(Configuration.CFGBIT_SKIPP_SPLASHSCREEN);

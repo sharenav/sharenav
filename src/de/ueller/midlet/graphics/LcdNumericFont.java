@@ -10,6 +10,7 @@ import java.io.IOException;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
+import de.ueller.gps.tools.ImageTools;
 import de.ueller.midlet.gps.Logger;
 
 public class LcdNumericFont {
@@ -64,8 +65,8 @@ public class LcdNumericFont {
 			vert_bar_cache = vert_bar;
 			horiz_bar_cache = horiz_bar;
 			fontSize = size;
-			vert_bar = scaleImage(vert_bar_orig, 12 * size / 48, (size >> 1));
-			horiz_bar = scaleImage(horiz_bar_orig, (size >> 1), 12 * size / 48);
+			vert_bar = ImageTools.scaleImage(vert_bar_orig, 12 * size / 48, (size >> 1));
+			horiz_bar = ImageTools.scaleImage(horiz_bar_orig, (size >> 1), 12 * size / 48);
 		}
 	}
 
@@ -228,48 +229,4 @@ public class LcdNumericFont {
 							| Graphics.RIGHT);
 		}
 	}
-
-	// based on Public Domain code (confirmed by E-Mail)
-	// from http://willperone.net/Code/codescaling.php
-	// FIXME: This is a copy of the code in Splash.java
-	public Image scaleImage(Image original, int newWidth, int newHeight) {
-		try {
-			int[] rawInput = new int[original.getHeight() * original.getWidth()];
-			original.getRGB(rawInput, 0, original.getWidth(), 0, 0, original
-					.getWidth(), original.getHeight());
-
-			int[] rawOutput = new int[newWidth * newHeight];
-
-			// YD compensates for the x loop by subtracting the width back out
-			int YD = (original.getHeight() / newHeight) * original.getWidth()
-					- original.getWidth();
-			int YR = original.getHeight() % newHeight;
-			int XD = original.getWidth() / newWidth;
-			int XR = original.getWidth() % newWidth;
-			int outOffset = 0;
-			int inOffset = 0;
-
-			for (int y = newHeight, YE = 0; y > 0; y--) {
-				for (int x = newWidth, XE = 0; x > 0; x--) {
-					rawOutput[outOffset++] = rawInput[inOffset];
-					inOffset += XD;
-					XE += XR;
-					if (XE >= newWidth) {
-						XE -= newWidth;
-						inOffset++;
-					}
-				}
-				inOffset += YD;
-				YE += YR;
-				if (YE >= newHeight) {
-					YE -= newHeight;
-					inOffset += original.getWidth();
-				}
-			}
-			return Image.createRGBImage(rawOutput, newWidth, newHeight, false);
-		} catch (Exception e) {
-			return original;
-		}
-	}
-
 }
