@@ -30,13 +30,26 @@ public class RouteInstructions {
 		"hard right", "right", "half right",
 		"straight on",
 		"half left", "left", "hard left", "Target reached",
+		"enter motorway", "leave motorway",
 	};
 	private static final String[] soundDirections  = { "",
 		"HARD;RIGHT", "RIGHT", "HALF;RIGHT",
 		"STRAIGHTON",
 		"HALF;LEFT", "LEFT", "HARD;LEFT", "TARGET_REACHED",
+		"ENTER;THE;MOTORWAY", "LEAVE;THE;MOTORWAY",
 	};
 
+	private static final int RI_HARD_RIGHT = 1;
+	private static final int RI_RIGHT = 2;
+	private static final int RI_HALF_RIGHT = 3;
+	private static final int RI_STRAIGHT_ON = 4;
+	private static final int RI_HALF_LEFT = 5;
+	private static final int RI_LEFT = 6;
+	private static final int RI_HARD_LEFT = 7;
+	private static final int RI_TARGET_REACHED = 8;
+	private static final int RI_ENTER_MOTORWAY = 9;
+	private static final int RI_LEAVE_MOTORWAY = 10;
+	
 	private int connsFound = 0;
 	
 	private int sumWrongDirection=0;
@@ -92,6 +105,8 @@ public class RouteInstructions {
 			//#debug debug
 			logger.debug("Connection2Ways found: " + connsFound + "/" + (route.size()-1) + " in " + (long)(System.currentTimeMillis() - startTime) + " ms");
 			trace.receiveMessage ("Route: " + (int) routeLen + "m");
+			createRouteInstructions();
+			outputRoutePath();
 		}
 	}
 		
@@ -560,5 +575,86 @@ public class RouteInstructions {
         return Image.createRGBImage(rawOutput, w*2, h*2, true);        
     }
 
+	public void createRouteInstructions() {
+		ConnectionWithNode c;
+		ConnectionWithNode c2;
+		int lastEndBearing = 0;
+		for (int i=0; i<route.size()-1; i++){
+			c = (ConnectionWithNode) route.elementAt(i);
+
+			byte rfCurr=C.getWayDescription(c.wayType).routeFlags;
+			byte rfPrev=0;
+			if (i > 0) {
+				c2 = (ConnectionWithNode) route.elementAt(i-1);
+				rfPrev=C.getWayDescription(c2.wayType).routeFlags;
+			}			
+//			byte rfNext=0;
+//			if (i < route.size()-2) {
+//				c2 = (ConnectionWithNode) route.elementAt(i+1);
+//				rfNext=C.getWayDescription(c2.wayType).routeFlags;
+//			}
+//			
+			byte ri=0;
+			// enter motorway
+			if ( 	(rfPrev & (C.ROUTE_FLAG_MOTORWAY | C.ROUTE_FLAG_MOTORWAY_LINK)) == 0
+				&& 	(rfCurr & (C.ROUTE_FLAG_MOTORWAY | C.ROUTE_FLAG_MOTORWAY_LINK)) > 0
+			) {
+					ri = RI_ENTER_MOTORWAY;
+			}
+			// leave motorway
+			if (	(rfPrev & C.ROUTE_FLAG_MOTORWAY) > 0
+				&& 	(rfCurr & C.ROUTE_FLAG_MOTORWAY) == 0
+			) {
+					ri = RI_LEAVE_MOTORWAY;
+			}
+			// if we've got no better instruction, just use the direction
+			if (ri==0) {				
+				int turn=(c.startBearing-lastEndBearing) * 2;
+				if (turn > 180) turn -= 360;
+				if (turn < -180) turn += 360;
+				if (turn > 110) {
+					ri=RI_HARD_RIGHT;
+				} else if (turn > 70){
+					ri=RI_RIGHT;
+				} else if (turn > 20){
+					ri=RI_HALF_RIGHT;
+				} else if (turn >= -20){
+					ri=RI_STRAIGHT_ON;
+				} else if (turn >= -70){
+					ri=RI_HALF_LEFT;
+				} else if (turn >= -110){
+					ri=RI_LEFT;;
+				} else {
+					ri=RI_HARD_LEFT;
+				}
+			}
+			lastEndBearing = c.endBearing;
+			c.wayRouteInstruction = ri;
+		}
+	}
 	
+	public void outputRoutePath() {
+		String name=null;
+		int dist=0;
+		StringBuffer sb=new StringBuffer();
+		for (int i=0; i<route.size()-1; i++){
+			sb.setLength(0);
+			ConnectionWithNode c;
+			c = (ConnectionWithNode) route.elementAt(i);
+			byte ri=c.wayRouteInstruction;
+			sb.append(i + ". ");
+			sb.append(directions[ri]);
+			sb.append(" into ");
+			sb.append((name==null?"":name));
+			sb.append(" then go ");
+			sb.append(dist);
+			sb.append("m");
+			System.out.println(sb.toString());
+			name=null;
+			if (c.wayNameIdx != -1) {
+				name=trace.getName(c.wayNameIdx);
+			}
+			dist= (int) c.wayDistanceToNext;
+		}		
+	}
 }
