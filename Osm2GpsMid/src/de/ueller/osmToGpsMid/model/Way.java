@@ -24,6 +24,11 @@ public class Way extends Entity implements Comparable<Way>{
 	public static final byte WAY_FLAG_ONEWAY = 16;	
 	public static final byte WAY_FLAG_NAMEHIGH = 32;
 	public static final byte WAY_FLAG_AREA = 64;
+	public static final int WAY_FLAG_ADDITIONALFLAG = 128;
+
+	public static final byte WAY_FLAG2_ROUNDABOUT = 1;
+	public static final byte WAY_FLAG2_TUNNEL = 2;
+	public static final byte WAY_FLAG2_BRIDGE = 4;
 	
 	//Deprecated
 	//public static final byte WAY_FLAG_MULTIPATH = 4;
@@ -75,6 +80,22 @@ public class Way extends Entity implements Comparable<Way>{
 		
 		return wayDesc.routable;		
 	}
+	
+	public boolean isRoundabout() {
+		String jType = getAttribute("junction");
+		if (jType != null) {
+			return (jType.equalsIgnoreCase("roundabout"));
+		} else {
+			return false;
+		}
+	}
+	public boolean isTunnel() {
+		return (containsKey("bridge"));
+	}
+	public boolean isBridge() {
+		return (containsKey("tunnel"));
+	}
+
 	
     public byte getType(Configuration c){
     	if (type == -1) {
@@ -305,6 +326,7 @@ public class Way extends Entity implements Comparable<Way>{
 	public void write(DataOutputStream ds,Names names1,Tile t) throws IOException{		
 		Bounds b=new Bounds();
 		int flags=0;
+		int flags2=0;
 		int maxspeed=50;
 		int nameIdx = -1;
 		int isinIdx = -1;
@@ -371,8 +393,20 @@ public class Way extends Entity implements Comparable<Way>{
 			if (isExplicitArea()) {				
 				flags+=WAY_FLAG_AREA;				
 			}
+			if (isRoundabout()) {
+				flags2+=WAY_FLAG2_ROUNDABOUT;
+			}
+			if (isTunnel()) {
+				flags2+=WAY_FLAG2_TUNNEL;
+			}
+			if (isBridge()) {
+				flags2+=WAY_FLAG2_BRIDGE;
+			}
+			if (flags2 != 0) {
+				flags += WAY_FLAG_ADDITIONALFLAG; 
+			}
 			ds.writeByte(flags);
-			
+
 			b=getBounds();
 			ds.writeShort((short)(MyMath.degToRad(b.minLat - t.centerLat) * Tile.fpm));
 			ds.writeShort((short)(MyMath.degToRad(b.minLon - t.centerLon) * Tile.fpm));
@@ -390,6 +424,10 @@ public class Way extends Entity implements Comparable<Way>{
 			}
 			if ((flags & WAY_FLAG_MAXSPEED) == WAY_FLAG_MAXSPEED){
 				ds.writeByte(maxspeed);
+			}
+			// must be below maxspeed as this is a combined flag and FpsMid relies it's below maxspeed
+			if (flags2 != 0) {
+				ds.writeByte(flags2);				
 			}
 			if ((flags & WAY_FLAG_LAYER) == WAY_FLAG_LAYER){
 				ds.writeByte(layer);

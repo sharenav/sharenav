@@ -237,9 +237,7 @@ public class CreateGpsMidData {
 				if (way.value.equalsIgnoreCase("motorway"))
 					routeFlags |= ROUTE_FLAG_MOTORWAY;
 				if (way.value.equalsIgnoreCase("motorway_link"))
-					routeFlags |= ROUTE_FLAG_MOTORWAY_LINK;
-				if (way.value.equalsIgnoreCase("roundabout"))
-					routeFlags |= ROUTE_FLAG_ROUNDABOUT;						
+					routeFlags |= ROUTE_FLAG_MOTORWAY_LINK;					
 				dsi.writeByte(routeFlags);
 				dsi.writeUTF(way.description);								
 				dsi.writeInt(way.minScale);
