@@ -79,7 +79,7 @@ public class GpsMid extends MIDlet implements CommandListener{
 	
 	private OutputStreamWriter logFile;
 	
-	public NoiseMaker mNoiseMaker = null;
+	public static NoiseMaker mNoiseMaker = null;
 	
 	public static C c;
 	

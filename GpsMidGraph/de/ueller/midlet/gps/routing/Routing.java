@@ -501,7 +501,6 @@ public class Routing implements Runnable {
 			logger.info("Start Routing thread");
 			Vector solve = solve();
 			parent.setRoute(solve);
-			parent.determineRoutePath();
 		} catch (NullPointerException npe) {
 			parent.setRoute(null);
 			parent.receiveMessage(npe.getMessage());
