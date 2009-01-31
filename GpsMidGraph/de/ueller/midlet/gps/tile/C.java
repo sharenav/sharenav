@@ -22,7 +22,7 @@ public class C {
 	 * Specifies the format of the map on disk we expect to see
 	 * This constant must be in sync with Osm2GpsMid
 	 */
-	public final static short MAP_FORMAT_VERSION = 21;
+	public final static short MAP_FORMAT_VERSION = 22;
 	
 	public final static byte MIN_PLACETYPE = 1; // city
 	public final static byte MAX_PLACETYPE = 5; // suburb
@@ -43,9 +43,11 @@ public class C {
 	public final static byte LEGEND_FLAG_NON_ROUTABLE = 0x20;
 	public final static byte LEGEND_FLAG_MIN_DESCRIPTION_SCALE = 0x40;
 	
-	public final static byte ROUTE_FLAG_MOTORWAY = 0x01;
-	public final static byte ROUTE_FLAG_MOTORWAY_LINK = 0x02;
-	public final static byte ROUTE_FLAG_ROUNDABOUT = 0x04;	
+	public final static byte ROUTE_FLAG_MOTORWAY = 0x01;  // used in ConnectionWithNode AND WayDescription
+	public final static byte ROUTE_FLAG_MOTORWAY_LINK = 0x02; // used in ConnectionWithNode AND WayDescription
+	public final static byte ROUTE_FLAG_ROUNDABOUT = 0x04; // used in ConnectionWithNode
+	public final static byte ROUTE_FLAG_TUNNEL = 0x08; // used in ConnectionWithNode
+	public final static byte ROUTE_FLAG_BRIDGE = 0x10; // used in ConnectionWithNode
 	
 	/**
 	 * minimum distances to set the is_in name to the next city

@@ -36,7 +36,13 @@ public class Way extends Entity{
 //	public static final byte WAY_FLAG_MULTIPATH = 4;	
 	public static final byte WAY_FLAG_NAMEHIGH = 32;
 	public static final byte WAY_FLAG_AREA = 64;
-//	public static final byte WAY_FLAG_ISINHIGH = 64;
+//	public static final byte WAY_FLAG_ISINHIGH = 64;	
+	public static final int WAY_FLAG_ADDITIONALFLAG = 128;
+
+	public static final byte WAY_FLAG2_ROUNDABOUT = 1;
+	public static final byte WAY_FLAG2_TUNNEL = 2;
+	public static final byte WAY_FLAG2_BRIDGE = 4;
+	
 	
 	public static final byte DRAW_BORDER=1;
 	public static final byte DRAW_AREA=2;
@@ -49,6 +55,9 @@ public class Way extends Entity{
 	
 	public static final int WAY_ONEWAY=1 << ModShift;
 	public static final int WAY_AREA=2 << ModShift;
+	public static final int WAY_ROUNDABOUT=4 << ModShift;
+	public static final int WAY_TUNNEL=8 << ModShift;
+	public static final int WAY_BRIDGE=16 << ModShift;
 
 	public static final byte PAINTMODE_COUNTFITTINGCHARS = 0;
 	public static final byte PAINTMODE_DRAWCHARS = 1;
@@ -140,6 +149,7 @@ public class Way extends Entity{
 //			logger.error("worng magic after way bounds");
 //		}
 		//System.out.println("Way flags: " + f);
+
 		type = is.readByte();
 		if ((f & WAY_FLAG_NAME) == WAY_FLAG_NAME) {
 			if ((f & WAY_FLAG_NAMEHIGH) == WAY_FLAG_NAMEHIGH) {
@@ -153,6 +163,21 @@ public class Way extends Entity{
 //			logger.debug("read maxspeed");
 			flags = is.readByte();
 		}
+		
+		byte f2=0;
+		if ( (f & WAY_FLAG_ADDITIONALFLAG) > 0 ) {
+			f2 = is.readByte();
+			if ( (f2 & WAY_FLAG2_ROUNDABOUT) > 0 ) {
+				flags += WAY_ROUNDABOUT;
+			}
+			if ( (f2 & WAY_FLAG2_TUNNEL) > 0 ) {
+				flags += WAY_TUNNEL;
+			}
+			if ( (f2 & WAY_FLAG2_BRIDGE) > 0 ) {
+				flags += WAY_BRIDGE;
+			}
+		}
+		
 		layers[idx] = 0;
 		if ((f & WAY_FLAG_LAYER) == WAY_FLAG_LAYER) {
 			/**
@@ -345,6 +370,11 @@ public class Way extends Entity{
 				pc.conWayToAt = containsCon2At;
 				pc.conWayNameIdx= this.nameIdx;
 				pc.conWayType = this.type;
+				byte routeFlags = C.getWayDescription(this.type).routeFlags; 
+				if (isRoundAbout()) routeFlags += C.ROUTE_FLAG_ROUNDABOUT;
+				if (isTunnel()) routeFlags += C.ROUTE_FLAG_TUNNEL;
+				if (isBridge()) routeFlags += C.ROUTE_FLAG_BRIDGE;
+				pc.conWayRouteFlags = routeFlags;
 			}
 		}
 	}
@@ -1279,6 +1309,16 @@ public class Way extends Entity{
 	
 	public boolean isArea() {
 		return ((flags & WAY_AREA) > 0);
+	}
+
+	public boolean isRoundAbout() {
+		return ((flags & WAY_ROUNDABOUT) > 0);
+	}
+	public boolean isTunnel() {
+		return ((flags & WAY_TUNNEL) > 0);
+	}
+	public boolean isBridge() {
+		return ((flags & WAY_BRIDGE) > 0);
 	}
 	
 	public int getMaxSpeed() {
