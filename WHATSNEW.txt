@@ -12,7 +12,9 @@ GpsMid 0.4.55
          (use left / right keys during "Backlight ON" message to check out if dimming has an effect on your mobile)
        *** Navigation ***
        - Routing to POIs/waypoints is now possible - GpsMid will route you to the closest routable way
-       - highlighted route solution path
+       - highlighting the route solution path
+       - improved off-route detection
+       - added routing instructions for entering and exiting motorways and for roundabouts
        *** Tracks and Waypoints ***
        - Perform actions like export/delete on multiple selected tracks (thx mbaeurle)
        - Ability to rename tracks and waypoints
