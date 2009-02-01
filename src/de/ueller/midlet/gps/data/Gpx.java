@@ -996,7 +996,8 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 			importExportMessage = "success";
 			return true;
 		} catch (IOException e) {			
-			logger.error("IOException, can't transmit tracklog: " + e);	
+			logger.error("IOException, can't transmit tracklog: " + e);
+			importExportMessage = e.getMessage();
 		} catch (OutOfMemoryError oome) {
 			logger.fatal("Out of memory, can't transmit tracklog");
 		} catch (Exception ee) {			

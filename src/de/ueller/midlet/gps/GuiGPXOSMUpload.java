@@ -14,6 +14,7 @@
 package de.ueller.midlet.gps;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 
@@ -70,8 +71,10 @@ public class GuiGPXOSMUpload extends Form implements GpsMidDisplayable, CommandL
 		this.setCommandListener(this);
 	}
 	
-	public void upload() {
+	public void upload() throws IOException{
 		logger.info("Uploading OSM GPX");
+		int respCode;
+		String respMessage;
 		try {
 			HttpConnection connection = (HttpConnection) Connector
 			.open(url);
@@ -110,14 +113,18 @@ public class GuiGPXOSMUpload extends Form implements GpsMidDisplayable, CommandL
 			
 			
 			// HTTP Response
-			if (connection.getResponseCode() == HttpConnection.HTTP_OK) {
-				logger.info("Successfully uploaded GPX");
-				
-			} else {
-				logger.error("Failed to upload GPX (" + connection.getResponseCode() + "): " + connection.getResponseMessage());
-			}
+			respCode = connection.getResponseCode();
+			respMessage = connection.getResponseMessage();
 		} catch (Exception e) {
-			logger.exception("Failed uploading GPX", e);
+			e.printStackTrace();
+			throw new IOException("Failed uploading GPX: " + e.getMessage());
+		}
+
+		if (respCode == HttpConnection.HTTP_OK) {
+			logger.info("Successfully uploaded GPX");
+			
+		} else {
+			throw new IOException("GPX trace was not accepted (" + respCode + "): " + respMessage);
 		}
 	}
 
@@ -147,7 +154,7 @@ public class GuiGPXOSMUpload extends Form implements GpsMidDisplayable, CommandL
 		
 	}
 
-	public void closeSession() {
+	public void closeSession() throws IOException {
 		upload();
 	}
 

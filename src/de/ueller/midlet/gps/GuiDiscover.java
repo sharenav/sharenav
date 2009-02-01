@@ -36,7 +36,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private static final String[]	elements		= {
 		"Location Receiver", "Recording Rules",
 		"Display options", "Sounds & Alerts", "Routing options",
-		"GPX Receiver", "Map source", "Debug options", "Key shortcuts"};
+		"GPX Receiver", "Map source", "Debug options", "Key shortcuts", "OSM account"};
 	
 	/**
 	 * The following MENU_ITEM constatants have to be in
@@ -52,6 +52,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private static final int MENU_ITEM_MAP_SRC = 6;
 	private static final int MENU_ITEM_DEBUG_OPT = 7;
 	private static final int MENU_ITEM_KEYS_OPT = 8;
+	private static final int MENU_ITEM_OSM_OPT = 9;
 
 	private static final String[]	empty			= {};
 
@@ -76,7 +77,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 			Command.ITEM, 2);
 	private final Command			BT_MAP	= new Command("Select bluetooth device",
 			Command.ITEM, 2);
-	private final Command			OSM_UPL	= new Command("Upload to OSM", Command.ITEM, 2);
+	private final Command			OSM_URL	= new Command("Upload to OSM", Command.ITEM, 2);
 	private final Command			GPS_DISCOVER	= new Command("Discover GPS",
 			Command.ITEM, 1);
 	
@@ -105,6 +106,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	
 	private Form					menuRoutingOptions;
 	
+	private Form					menuOsmAccountOptions;
+	
 	private final GpsMid			parent;
 
 	private DiscoverGps				gps;
@@ -122,6 +125,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private final static int 		STATE_BT_GPX	= 9;
 	private final static int		STATE_DEBUG		= 10;
 	private final static int		STATE_ROUTING_OPT = 11;
+	private final static int		STATE_OSM_OPT = 12;
 	
 	private Vector urlList; 
 	private Vector friendlyName;
@@ -129,7 +133,10 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private ChoiceGroup choiceGpxRecordRuleMode; 
 	private TextField  tfGpxRecordMinimumSecs; 
 	private TextField  tfGpxRecordMinimumDistanceMeters; 
-	private TextField  tfGpxRecordAlwaysDistanceMeters; 
+	private TextField  tfGpxRecordAlwaysDistanceMeters;
+	private TextField  tfOsmUserName;
+	private TextField  tfOsmPassword;
+	private TextField  tfOsmUrl;
 	private ChoiceGroup rawLog;
 	private ChoiceGroup mapSrc;
 	private Gauge gaugeDetailBoost; 
@@ -384,6 +391,24 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 
 		menuDisplayOptions.setCommandListener(this);
 	}
+	
+	private void initOSMaccountOptions() {
+		//Prepare Debug selection menu
+		logger.info("Starting OSM account setup menu");
+		menuOsmAccountOptions = new Form("OpenStreetMap account");
+		menuOsmAccountOptions.addCommand(BACK_CMD);
+		menuOsmAccountOptions.addCommand(OK_CMD);
+		menuOsmAccountOptions.setCommandListener(this);
+		
+		tfOsmUserName = new TextField("User name:", Configuration.getOsmUsername(), 100, TextField.ANY);
+		tfOsmPassword = new TextField("Password:", Configuration.getOsmPwd(), 100, TextField.ANY | TextField.PASSWORD);
+		tfOsmUrl = new TextField("Server URL:", Configuration.getOsmUrl(), 255, TextField.URL);
+		
+		menuOsmAccountOptions.append(tfOsmUserName);
+		menuOsmAccountOptions.append(tfOsmPassword);
+		menuOsmAccountOptions.append(tfOsmUrl);
+		
+	}
 
 	public void commandAction(Command c, Item i) {
 		// forward item command action to form
@@ -465,8 +490,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				logger.error("Bluetooth is not compiled into this version");
 			//#endif
 		}
-		if (c == OSM_UPL) {
-			gpxUrl.setText("http://api06.dev.openstreetmap.org/api/0.6/gpx/create");
+		if (c == OSM_URL) {
+			gpxUrl.setText(Configuration.getOsmUrl() + "gpx/create");
 		}
 		if (c == OK_CMD){			
 			switch (state) {
@@ -558,7 +583,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 					menuGpx.addCommand(OK_CMD);
 					menuGpx.addCommand(FILE_MAP);
 					menuGpx.addCommand(BT_MAP);
-					menuGpx.addCommand(OSM_UPL);
+					menuGpx.addCommand(OSM_URL);
 
 					gpxUrl = new StringItem("Gpx Receiver Url: ","<Please select in menu>");
 					menuGpx.append(gpxUrl);
@@ -595,6 +620,15 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 					 */
 					GuiKeyShortcuts gks = new GuiKeyShortcuts(this);
 					gks.show();
+					break;
+				case MENU_ITEM_OSM_OPT:
+					/**
+					 * Display the current Keyboard mappings for the
+					 * Map screen
+					 */
+					initOSMaccountOptions();
+					GpsMid.getInstance().show(menuOsmAccountOptions);
+					state = STATE_OSM_OPT;
 					break;
 				}
 				break;
@@ -764,6 +798,13 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				Configuration.setCfgBitState(Configuration.CFGBIT_ROUTE_AUTO_RECALC, selRouting[0], true);
 				state = STATE_ROOT;
 				this.show();			
+				break;
+			case STATE_OSM_OPT:
+				Configuration.setOsmUsername(tfOsmUserName.getString());
+				Configuration.setOsmPwd(tfOsmPassword.getString());
+				Configuration.setOsmUrl(tfOsmUrl.getString());
+				state = STATE_ROOT;
+				this.show();
 				break;
 			}		
 		}

@@ -143,6 +143,7 @@ public class Configuration {
 	private static final int RECORD_ID_SPEED_TOLERANCE = 29;
 	private static final int RECORD_ID_OSM_USERNAME = 30;
 	private static final int RECORD_ID_OSM_PWD = 31;
+	private static final int RECORD_ID_OSM_URL = 32;
 	
 
 	// Gpx Recording modes
@@ -205,7 +206,8 @@ public class Configuration {
 	private static String utf8encodingstring = null;
 	
 	private static String osm_username;
-	private static String osm_pwd;	
+	private static String osm_pwd;
+	private static String osm_url;
 
 	public static void read(){
 	logger = Logger.getInstance(Configuration.class, Logger.DEBUG);
@@ -313,6 +315,11 @@ public class Configuration {
 			speedTolerance = readInt(database, RECORD_ID_SPEED_TOLERANCE);
 			osm_username = readString(database, RECORD_ID_OSM_USERNAME);
 			osm_pwd = readString(database, RECORD_ID_OSM_PWD);
+			osm_url = readString(database, RECORD_ID_OSM_URL);
+			if (osm_url == null) {
+				osm_url = "http://api.openstreetmap.org/api/0.5/";
+			}
+			
 			database.closeRecordStore();
 		} catch (Exception e) {
 			logger.exception("Problems with reading our configuration: ", e);
@@ -753,6 +760,7 @@ public class Configuration {
 	}
 
 	public static void setOsmUsername(String name) {
+		osm_username = name;
 		write(name,RECORD_ID_OSM_USERNAME);
 	}
 	
@@ -761,7 +769,17 @@ public class Configuration {
 	}
 
 	public static void setOsmPwd(String pwd) {
+		osm_pwd = pwd;
 		write(pwd,RECORD_ID_OSM_PWD);
+	}
+	
+	public static String getOsmUrl() {
+		return osm_url;
+	}
+	
+	public static void setOsmUrl(String url) {
+		osm_url = url;
+		write(url,RECORD_ID_OSM_URL);
 	}
 
 	public static void setProjTypeDefault(byte t) {
