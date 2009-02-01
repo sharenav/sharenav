@@ -500,7 +500,10 @@ public class Way extends Entity{
 				 * If two nodes are very close by, then we can simply drop one of the nodes
 				 * and draw the line between the other points. 
 				 */
-				if (highlight == 2 || ! lineP1.approximatelyEquals(lineP2)){
+				if (highlight == 2 || ! lineP1.approximatelyEquals(lineP2)){					
+					/* 
+					 * calculate closest distance to specific ways
+					 */
 					float dst = MoreMath.ptSegDistSq(lineP1.x, lineP1.y,
 							lineP2.x, lineP2.y, pc.xSize / 2, pc.ySize / 2);
 					
@@ -529,9 +532,15 @@ public class Way extends Entity{
 						pc.squareDstToRoutableWay = dst;
 						pc.nearestRoutableWay = this;
 					}
-//					if (hl[pi] && dst < pc.squareDstToRoute) {
-//						pc.squareDstToRoute = dst;					
-//					}
+					if (dst < pc.squareDstToRoutePath && hl[i1-1]) {
+						pc.squareDstToRoutePath = dst;
+						
+						Node n1 = new Node();
+						Node n2 = new Node();
+						pc.getP().inverse(0, 0, n1);
+						pc.getP().inverse( (int) Math.sqrt(dst), 0, n2);
+						pc.dstToRoutePath = (int) ProjMath.getDistance(n1, n2);
+					}				
 					x[pi] = lineP2.x;
 					y[pi++] = lineP2.y;
 					swapLineP = lineP1;

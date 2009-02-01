@@ -82,8 +82,13 @@ public class PaintContext extends ScreenContext {
 	 */
 	public float squareDstToRoutableWay;
 	/**
-	 * the actual configuration
+	 * the square of distance from center to the nearest point of the route solution path
 	 */
+	public float squareDstToRoutePath;
+	public int dstToRoutePath;
+	/**
+	 * the actual configuration
+	 */	
 	public Configuration config;
 	
 	/**public float actualNodeLat;

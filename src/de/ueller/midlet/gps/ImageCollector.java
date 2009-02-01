@@ -139,6 +139,8 @@ public class ImageCollector implements Runnable {
 //				createPC.g.drawRect(20, 20, xSize-41, ySize-41);
 				createPC.squareDstToWay = Float.MAX_VALUE;
 				createPC.squareDstToRoutableWay = Float.MAX_VALUE;
+				createPC.squareDstToRoutePath = Float.MAX_VALUE;
+				createPC.dstToRoutePath = Integer.MAX_VALUE;
 				createPC.target = nextSc.target;
 				createPC.course = nextSc.course;
 				// System.out.println("create " + pcCollect);
@@ -338,6 +340,7 @@ public class ImageCollector implements Runnable {
 		if (paintPC.nearestRoutableWay != null){
 			tr.source=paintPC.currentPos;
 		}
+		RouteInstructions.dstToRoutePath=paintPC.dstToRoutePath;
 		if(statusFontHeight==0) {
 			statusFontHeight=screenPc.g.getFont().getHeight();
 		}
