@@ -296,10 +296,10 @@ public class Way extends Entity{
 		boolean containsCon2 = false;
 		short containsCon1At = 0;
 		short containsCon2At = 0;
-		short searchCon1Lat = (short) ((pc.searchCon1Lat - t.centerLat) / t.fpminv);
-		short searchCon1Lon = (short) ((pc.searchCon1Lon - t.centerLon) / t.fpminv);
-		short searchCon2Lat = (short) ((pc.searchCon2Lat - t.centerLat) / t.fpminv);
-		short searchCon2Lon = (short) ((pc.searchCon2Lon - t.centerLon) / t.fpminv);
+		short searchCon1Lat = (short) ((pc.searchCon1Lat - t.centerLat) * t.fpm);
+		short searchCon1Lon = (short) ((pc.searchCon1Lon - t.centerLon) * t.fpm);
+		short searchCon2Lat = (short) ((pc.searchCon2Lat - t.centerLat) * t.fpm);
+		short searchCon2Lon = (short) ((pc.searchCon2Lon - t.centerLon) * t.fpm);
 		
 		
 		// check if way contains both search connections
@@ -438,15 +438,15 @@ public class Way extends Entity{
 					if (c.wayNameIdx == this.nameIdx && wayDesc.routable) {
 						if (path.length > c.wayFromConAt && path.length > c.wayToConAt) {
 							int idx = path[c.wayFromConAt];
-							short searchCon1Lat = (short) ((c.to.lat - t.centerLat) / t.fpminv);
+							short searchCon1Lat = (short) ((c.to.lat - t.centerLat) * t.fpm);
 							if ( (Math.abs(t.nodeLat[idx] - searchCon1Lat) < 2) ) {
-								short searchCon1Lon = (short) ((c.to.lon - t.centerLon) / t.fpminv);
+								short searchCon1Lon = (short) ((c.to.lon - t.centerLon) * t.fpm);
 								if ( (Math.abs(t.nodeLon[idx] - searchCon1Lon) < 2) ) {
 									idx = path[c.wayToConAt];
 									ConnectionWithNode c2 = (ConnectionWithNode) route.elementAt(i+1);
-									searchCon1Lat = (short) ((c2.to.lat - t.centerLat) / t.fpminv);
+									searchCon1Lat = (short) ((c2.to.lat - t.centerLat) * t.fpm);
 									if ( (Math.abs(t.nodeLat[idx] - searchCon1Lat) < 2) ) {
-										searchCon1Lon = (short) ((c2.to.lon - t.centerLon) / t.fpminv);
+										searchCon1Lon = (short) ((c2.to.lon - t.centerLon) * t.fpm);
 										if ( (Math.abs(t.nodeLon[idx] - searchCon1Lon) < 2) ) {
 											highlight=2;
 											short from = c.wayFromConAt;
