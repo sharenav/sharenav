@@ -307,6 +307,7 @@ public class ImageCollector implements Runnable {
 		 * therefore it should be safe to access the volatile variable actualWay 
 		 */
 		if (paintPC.actualWay != null){
+			screenPc.actualWay = paintPC.actualWay;
 			String maxspeed="";
 			if (paintPC.actualWay.getMaxSpeed() != 0){
 			    if(screenPc.trace.speed > (paintPC.actualWay.getMaxSpeed() + Configuration.getSpeedTolerance())) {
