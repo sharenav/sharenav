@@ -1188,7 +1188,7 @@ Runnable , GpsMidDisplayable{
 				showTarget(pc);
 			}
 
-			if (speeding && Configuration.getCfgBitState(Configuration.CFGBIT_SPEEDALERT_VISUAL)) {
+			if (speeding && Configuration.getCfgBitState(Configuration.CFGBIT_SPEEDALERT_SND)) {
 			    parent.mNoiseMaker.playSound("SPEED_LIMIT", (byte) 10, (byte) 10);
 			}
 
