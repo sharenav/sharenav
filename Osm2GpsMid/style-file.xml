@@ -52,17 +52,16 @@ zoomed out 21x (scale alias 1:  500km)
   <sounds>
 <!-- these sounds have internal tone sequence
      that will be used if commented out here
+-->	
 	<sound name="CONNECT">
 		<soundFile src="connect.amr"/>
 	</sound>
 	<sound name="DISCONNECT">
 		<soundFile src="disconnect.amr"/>
 	</sound>
--->
 <!-- these soundFiles are automatically determined by the midlet
       and can stay commented out as long as you don't want
       to include other sound files or formats (.mp3, .wav) for them.
-
 	<sound name="PREPARE">
 		<soundFile src="prepare.amr"/>
 	</sound>
@@ -93,6 +92,39 @@ zoomed out 21x (scale alias 1:  500km)
 	<sound name="AGAIN">
 		<soundFile src="again.amr"/>
 	</sound>
+	<sound name="TO">
+		<soundFile src="to.amr"/>
+	</sound>
+	<sound name="ENTER_MOTORWAY">
+		<soundFile src="enter_motorway.amr"/>
+	</sound>
+	<sound name="LEAVE_MOTORWAY">
+		<soundFile src="leave_motorway.amr"/>
+	</sound>
+	<sound name="RAB">
+		<soundFile src="rab.amr"/>
+	</sound>
+	<sound name="1ST">
+		<soundFile src="1ST.amr"/>
+	</sound>
+	<sound name="2ND">
+		<soundFile src="2ND.amr"/>
+	</sound>
+	<sound name="3RD">
+		<soundFile src="3RD.amr"/>
+	</sound>
+	<sound name="4TH">
+		<soundFile src="4TH.amr"/>
+	</sound>
+	<sound name="5TH">
+		<soundFile src="5TH.amr"/>
+	</sound>
+	<sound name="6TH">
+		<soundFile src="6TH.amr"/>
+	</sound>
+	<sound name="RABEXIT">
+		<soundFile src="rabexit.amr"/>
+	</sound>
 	<sound name="CHECK_DIRECTION">
 		<soundFile src="check_direction.amr"/>
 	</sound>
@@ -102,7 +134,7 @@ zoomed out 21x (scale alias 1:  500km)
 	<sound name="TARGET_REACHED">
 		<soundFile src="target_reached.amr"/>
 	</sound>
-		<sound name="IN">
+	<sound name="IN">
 		<soundFile src="in.amr"/>
 	</sound>
 	<sound name="100">
@@ -135,7 +167,7 @@ zoomed out 21x (scale alias 1:  500km)
 	<sound name="SPEED_LIMIT">
 		<soundFile src="speed_limit.amr"/>
 	</sound>
--->  
+-->
   </sounds>
   <pois>
 	<key tag="place">
@@ -512,15 +544,6 @@ zoomed out 21x (scale alias 1:  500km)
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
   				<scale scale = "23"/>
-  				<lineColor color = "00FFFFFF" />
-  				<wayWidth width="2" />
-  				<routing accessible="true" speed="30" />  				  				
-  			</Wvalue>
-  			<Wvalue name = "roundabout" priority = "9">
-  				<description desc = "roundabout"/>
-  				<namekey tag = "name"/>  				
-  				<isArea area = "false"/>
-  				<scale scale = "17"/>
   				<lineColor color = "00FFFFFF" />
   				<wayWidth width="2" />
   				<routing accessible="true" speed="30" />  				  				
