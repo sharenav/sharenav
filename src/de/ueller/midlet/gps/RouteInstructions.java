@@ -31,13 +31,17 @@ public class RouteInstructions {
 		"hard right", "right", "half right",
 		"straight on",
 		"half left", "left", "hard left", "Target reached",
-		"enter motorway", "leave motorway"
+		"enter motorway", "leave motorway",
+		"Roundabout exit #1", "Roundabout exit #2", "Roundabout exit #3",
+		"Roundabout exit #4", "Roundabout exit #5", "Roundabout exit #6"
 	};
 	private static final String[] soundDirections  = { "",
 		"HARD;RIGHT", "RIGHT", "HALF;RIGHT",
 		"STRAIGHTON",
 		"HALF;LEFT", "LEFT", "HARD;LEFT", "TARGET_REACHED",
-		"ENTER_MOTORWAY", "LEAVE_MOTORWAY"
+		"ENTER_MOTORWAY", "LEAVE_MOTORWAY",
+		"RAB;1ST;RABEXIT", "RAB;2ND;RABEXIT", "RAB;3RD;RABEXIT",
+		"RAB;4TH;RABEXIT", "RAB;5TH;RABEXIT", "RAB;6TH;RABEXIT"
 	};
 
 	private static final int RI_HARD_RIGHT = 1;
@@ -50,6 +54,12 @@ public class RouteInstructions {
 	private static final int RI_TARGET_REACHED = 8;
 	private static final int RI_ENTER_MOTORWAY = 9;
 	private static final int RI_LEAVE_MOTORWAY = 10;
+	private static final int RI_1ST_EXIT = 11;
+	private static final int RI_2ND_EXIT = 12;
+	private static final int RI_3RD_EXIT = 13;
+	private static final int RI_4TH_EXIT = 14;
+	private static final int RI_5TH_EXIT = 15;
+	private static final int RI_6TH_EXIT = 16;
 	
 	private int connsFound = 0;
 	
@@ -694,7 +704,7 @@ public class RouteInstructions {
 	
 				    	sbRouteInstruction.append(directions[a]);
 				    	if(intDistance<PASSINGDISTANCE) {
-							if (!trace.atTarget) { 
+							if (!trace.atTarget && (c.wayRouteFlags & C.ROUTE_FLAG_ROUNDABOUT)==0) { 
 								soundToPlay.append (soundDirections[a]);
 							}
 							soundMaxTimesToPlay=1;
@@ -705,8 +715,10 @@ public class RouteInstructions {
 							if (intDistance <= PREPAREDISTANCE) {
 								if (a < RI_ENTER_MOTORWAY) {
 									soundToPlay.append( (a==RI_STRAIGHT_ON ? "CONTINUE" : "PREPARE") + ";" + soundDirections[a]);
-								} else {
+								} else if (a>=RI_ENTER_MOTORWAY && a<=RI_LEAVE_MOTORWAY) {
 									soundToPlay.append("PREPARE;TO;" + soundDirections[a]);
+								} else if (a>=RI_1ST_EXIT && a<=RI_6TH_EXIT) {
+									soundToPlay.append(soundDirections[a]);
 								}
 								soundMaxTimesToPlay=1;
 								// Because of adaptive-to-speed distances for "prepare"-instructions
@@ -736,6 +748,8 @@ public class RouteInstructions {
 						if (distance <= PREPAREDISTANCE &&
 							// only if not both arrows are STRAIGHT_ON
 							!(a==RI_STRAIGHT_ON && aNearest == RI_STRAIGHT_ON) &&
+							// and it is not a round about exit instruction
+							!(aNearest>=RI_1ST_EXIT && aNearest<=RI_6TH_EXIT) &&
 							// and only as continuation of instruction
 							soundToPlay.length()!=0
 						   ) {
@@ -895,6 +909,26 @@ public class RouteInstructions {
 			) {
 				ri = RI_LEAVE_MOTORWAY;
 			}
+
+			// determine roundabout exit
+			if ( 	(rfPrev & C.ROUTE_FLAG_ROUNDABOUT) == 0
+				&& 	(rfCurr & C.ROUTE_FLAG_ROUNDABOUT) > 0
+			) {
+				ri = RI_1ST_EXIT;	
+				int i2;
+				for (i2=i+1; i2<route.size()-1 && (ri < RI_6TH_EXIT); i2++) {
+					c2 = (ConnectionWithNode) route.elementAt(i2);
+					if ( (c2.wayRouteFlags & C.ROUTE_FLAG_ROUNDABOUT) == 0 ) { 
+						break;
+					}
+					ri++;
+				}
+				for (int i3=i2-1; i3>i; i3--) {
+					c2 = (ConnectionWithNode) route.elementAt(i3);
+					c2.wayRouteInstruction=ri;					
+				}
+				i=i2-1;				
+			}
 			// if we've got no better instruction, just use the direction
 			if (ri==0) {				
 				int turn=(nextStartBearing - c.endBearing) * 2;
@@ -942,6 +976,10 @@ public class RouteInstructions {
 			sb.append(" then go ");
 			sb.append(dist);
 			sb.append("m");
+			if ( (c.wayRouteFlags & C.ROUTE_FLAG_ROUNDABOUT) > 0) { 
+				sb.append(" (in roundabout)");
+			}
+			sb.append(" Cons:" + c.to.conSize);
 			System.out.println(sb.toString());
 		}		
 	}
