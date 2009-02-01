@@ -153,7 +153,8 @@ public class RouteData {
 		Connection c=new Connection(to,dist,(short)time,bs,be,w);
 		from.connected.add(c);
 		to.connectedFrom.add(c);
-		if (! w.isOneWay()){
+		// roundabouts don't need to be explicitely tagged as oneways in OSM according to http://wiki.openstreetmap.org/wiki/Tag:junction%3Droundabout
+		if (! (w.isOneWay() || w.isRoundabout()) ){
 			Connection cr=new Connection(from,dist,(short)time,MyMath.inversBearing(be),MyMath.inversBearing(bs),w);
 			cr.from=to;
 			to.connected.add(cr);
