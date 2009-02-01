@@ -351,7 +351,8 @@ public class Routing implements Runnable {
 				parent.receiveMessage("create from Connections");
 				Way w=(Way) fromMark.e;
 				int nearestSegment=getNearestSeg(w, startNode.lat, startNode.lon, fromMark.nodeLat,fromMark.nodeLon);
-				if (! w.isOneway()){
+				// roundabouts don't need to be explicitely tagged as oneways in OSM according to http://wiki.openstreetmap.org/wiki/Tag:junction%3Droundabout
+				if (! (w.isOneway() || w.isRoundAbout()) ) {
 					
 //					parent.getRouteNodes().addElement(new RouteHelper(fromMark.nodeLat[nearestSegment],fromMark.nodeLon[nearestSegment],"oneWay sec"));
 					RouteNode rn=findPrevRouteNode(nearestSegment-1, startNode.lat, startNode.lon, fromMark.nodeLat,fromMark.nodeLon);
@@ -386,7 +387,8 @@ public class Routing implements Runnable {
 			Way w=(Way) toMark.e;
 			int nearestSeg = getNearestSeg(w,toMark.lat, toMark.lon, toMark.nodeLat, toMark.nodeLon);
 			RouteTileRet nodeTile=new RouteTileRet();
-			if (! w.isOneway()){
+			// roundabouts don't need to be explicitely tagged as oneways in OSM according to http://wiki.openstreetmap.org/wiki/Tag:junction%3Droundabout
+			if (! (w.isOneway() || w.isRoundAbout()) ){
 				RouteNode prefNode = findPrevRouteNode(nearestSeg, toMark.lat, toMark.lon, toMark.nodeLat, toMark.nodeLon);
 				// TODO: fill in bearings and cost
 				Connection newCon=new Connection(routeTo,0,(byte)0,(byte)0);
