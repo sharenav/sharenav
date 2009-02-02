@@ -127,6 +127,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 //		System.out.println("got Command " + c);
 		if (state == STATE_MAIN) {
 			if (c == OK_CMD) {			
+				if (cursor >= result.size()) return;
 				SearchResult sr = (SearchResult) result.elementAt(cursor);
 				//			System.out.println("select " + sr);
 				PositionMark positionMark = new PositionMark(sr.lat,sr.lon);
@@ -138,6 +139,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				return;
 			}
 			if (c == DISP_CMD) {			
+				if (cursor >= result.size()) return;
 				SearchResult sr = (SearchResult) result.elementAt(cursor);				
 				parent.receivePosItion(sr.lat, sr.lon, 15000f);				
 				parent.show();				
@@ -235,6 +237,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			return;
 		}
 		if (c == BOOKMARK_CMD) {
+			if (cursor >= result.size()) return;
 			SearchResult sr = (SearchResult) result.elementAt(cursor);
 			PositionMark positionMark = new PositionMark(sr.lat,sr.lon);
 			positionMark.nameIdx=sr.nameIdx;
