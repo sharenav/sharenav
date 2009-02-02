@@ -651,7 +651,7 @@ public class Way extends Entity{
 		
 		String name=null;
 		if ( Configuration.getCfgBitState(Configuration.CFGBIT_SHOWWAYPOITYPE)) {
-			name=wayDesc.description;
+			name=(this.isRoundAbout()?"rab ":"") + wayDesc.description;
 		} else {			
 			if (nameIdx != -1) {
 				name=Trace.getInstance().getName(nameIdx);
