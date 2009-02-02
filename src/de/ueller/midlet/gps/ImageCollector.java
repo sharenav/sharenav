@@ -9,6 +9,7 @@ import de.ueller.midlet.gps.data.IntPoint;
 import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.ProjFactory;
+import de.ueller.midlet.gps.data.ProjMath;
 import de.ueller.midlet.gps.data.Projection;
 import de.ueller.midlet.gps.data.Way;
 import de.ueller.midlet.gps.tile.C;
@@ -341,7 +342,13 @@ public class ImageCollector implements Runnable {
 		if (paintPC.nearestRoutableWay != null){
 			tr.source=paintPC.currentPos;
 		}
-		RouteInstructions.dstToRoutePath=paintPC.dstToRoutePath;
+		if (paintPC.squareDstToRoutePath != Float.MAX_VALUE) {
+			Node n1 = new Node();
+			Node n2 = new Node();
+			paintPC.getP().inverse(0, 0, n1);
+			paintPC.getP().inverse( (int) Math.sqrt(paintPC.squareDstToRoutePath), 0, n2);
+			RouteInstructions.dstToRoutePath = (int) ProjMath.getDistance(n1, n2);
+		}
 		if(statusFontHeight==0) {
 			statusFontHeight=screenPc.g.getFont().getHeight();
 		}

@@ -538,13 +538,7 @@ public class Way extends Entity{
 						pc.nearestRoutableWay = this;
 					}
 					if (dst < pc.squareDstToRoutePath && hl[i1-1]) {
-						pc.squareDstToRoutePath = dst;
-						
-						Node n1 = new Node();
-						Node n2 = new Node();
-						pc.getP().inverse(0, 0, n1);
-						pc.getP().inverse( (int) Math.sqrt(dst), 0, n2);
-						pc.dstToRoutePath = (int) ProjMath.getDistance(n1, n2);
+						pc.squareDstToRoutePath = dst;						
 					}				
 					x[pi] = lineP2.x;
 					y[pi++] = lineP2.y;
