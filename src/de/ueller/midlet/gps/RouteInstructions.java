@@ -682,9 +682,9 @@ public class RouteInstructions {
 						case RI_RIGHT:			pict=pc.images.IMG_RIGHT; break;
 						case RI_HALF_RIGHT:		pict=pc.images.IMG_HALFRIGHT; break;
 						case RI_STRAIGHT_ON: 	pict=pc.images.IMG_STRAIGHTON; break;
-						case RI_HARD_LEFT:		pict=pc.images.IMG_HALFLEFT; break;
+						case RI_HALF_LEFT:		pict=pc.images.IMG_HALFLEFT; break;
 						case RI_LEFT:			pict=pc.images.IMG_LEFT; break;
-						case RI_HALF_LEFT:		pict=pc.images.IMG_HARDLEFT; break;
+						case RI_HARD_LEFT:		pict=pc.images.IMG_HARDLEFT; break;
 						case RI_ENTER_MOTORWAY:	pict=pc.images.IMG_MOTORWAYENTER; break;
 						case RI_LEAVE_MOTORWAY:	pict=pc.images.IMG_MOTORWAYLEAVE; break;					
 					}
