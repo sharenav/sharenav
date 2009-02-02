@@ -272,7 +272,9 @@ public class Configuration {
 				logger.info("Default config for version 3+ set.");
 			}			
 			if(configVersionStored < 4) {				
-				cfgBits |=	1L<<CFGBIT_PLACETEXTS;
+				cfgBits |=	1L<<CFGBIT_PLACETEXTS |
+		   					1L<<CFGBIT_SPEEDALERT_VISUAL;
+
 				//#debug info
 				logger.info("Default config for version 4+ set.");
 			}			
@@ -760,7 +762,6 @@ public class Configuration {
 	}
 
 	public static void setOsmUsername(String name) {
-		osm_username = name;
 		write(name,RECORD_ID_OSM_USERNAME);
 	}
 	
