@@ -174,7 +174,7 @@ Runnable , GpsMidDisplayable{
 	// center when display was touched last time
 	private static Node	centerPointerPressedN = new Node();
 	
-	private boolean rootCalc=false;
+	public volatile boolean rootCalc=false;
 	public Tile t[] = new Tile[6];
 	public Way actualWay;
 	PositionMark source;
@@ -751,6 +751,7 @@ Runnable , GpsMidDisplayable{
 				if (Configuration.isStopAllWhileRouteing()){
   				   stopImageCollector();
 				}
+				RouteInstructions.resetOffRoute(route, center);
 				logger.info("Routing source: " + source);
 				routeNodes=new Vector();
 				routeEngine = new Routing(t,this);
@@ -1828,6 +1829,7 @@ Runnable , GpsMidDisplayable{
 	}
 
 	public void setTarget(PositionMark target) {
+		RouteInstructions.initialRecalcDone = false;
 		setRoute(null);
 		setRouteNodes(null);
 		this.target = target;
@@ -1852,6 +1854,7 @@ Runnable , GpsMidDisplayable{
 			if (route!=null) {
 				ri = new RouteInstructions(this, route, target);
 				oldRecalculationTime = System.currentTimeMillis();
+				RouteInstructions.resetOffRoute(route, center);
 			}
 			rootCalc=false;
 			routeEngine=null;

@@ -69,6 +69,12 @@ public class RouteInstructions {
 	private static boolean prepareInstructionSaid=false;
 	private static boolean checkDirectionSaid=false;
 	private static boolean autoRecalcIfRequired=false;
+	public volatile static boolean initialRecalcDone=false;
+	
+//	public static int riCounter = 0; 
+	
+	public static volatile boolean haveBeenOnRouteSinceCalculation = false;
+	public static volatile int startDstToFirstArrowAfterCalculation = 0;
 	
 	private int iPassedRouteArrow=0;
 	private static Font routeFont;
@@ -82,8 +88,9 @@ public class RouteInstructions {
 	private static Vector route;
 	private static PositionMark target;
 	
-	public volatile static int dstToRoutePath;
+	public volatile static int dstToRoutePath=1;
 
+	private	static int routeInstructionColor=0x00E6E6E6;
 	
 	private final static Logger logger = Logger.getInstance(RouteInstructions.class,Logger.DEBUG);
 
@@ -564,8 +571,6 @@ public class RouteInstructions {
 		StringBuffer soundToPlay = new StringBuffer();
 		StringBuffer sbRouteInstruction = new StringBuffer();
     	// backgound colour for standard routing instructions
-		int routeInstructionColor=0x00E6E6E6;
-		int diffArrowDist=0;
 		byte soundRepeatDelay=3;
 		byte soundMaxTimesToPlay=2;
 		float nearestLat=0.0f;
@@ -776,27 +781,7 @@ public class RouteInstructions {
 					pc.g.drawImage(pict,pc.lineP2.x,pc.lineP2.y,CENTERPOS);					
 				}
 			}
-			if (dstToRoutePath > 100) {
-				// use red background color
-				routeInstructionColor=0x00FF5402;
-				routeRecalculationRequired = true;
-			} else if (dstToRoutePath > 50) {
-				// use orange background color
-				routeInstructionColor=0x00FFCD9B;
-			}			
-			
-			/* if we just moved away from target,
-			 * and the map is gpscentered
-			 * and there's only one or no route arrow
-			 * ==> auto recalculation
-			 */
-			if (trace.movedAwayFromTarget
-				&& trace.gpsRecenter
-				&& (route != null && route.size()==2)
-				&& ProjMath.getDistance(target.lat, target.lon, center.radlat, center.radlon) > PREPAREDISTANCE
-			) {
-				routeRecalculationRequired=true;
-			}
+			routeRecalculationRequired = isOffRoute(route, center);
 			if ( routeRecalculationRequired && !trace.atTarget ) {
 				soundToPlay.setLength(0);
 				trace.autoRouteRecalculate();				
@@ -832,6 +817,76 @@ public class RouteInstructions {
 		}
 	}
 	
+	private boolean isOffRoute(Vector route, Node center) {
+		// never recalculate during route calculation
+		if (trace.rootCalc) return false;
+
+		/* if we did no initial recalculation,
+		 * the map is gpscentered
+		 * and we just moved away from target
+		 * ==> auto recalculation
+		 */
+		if (
+			!initialRecalcDone
+			&& trace.gpsRecenter
+			&& trace.movedAwayFromTarget
+		) {
+//			System.out.println("initial recalc");
+			initialRecalcDone = true;
+			return true;
+		}
+		
+//		System.out.println("Counter: " + riCounter++);
+		if (dstToRoutePath < 25) {
+			// FIXME: dstToRoutePath is 0 instead of Integer.Max_VALUE for a short time after Route Calculation
+			if (dstToRoutePath > 0) {
+		    	// green background color if onroute
+	    		routeInstructionColor=0x00B7FBBA;
+				haveBeenOnRouteSinceCalculation=true;
+				System.out.println("on route dstToRoutePath: " + dstToRoutePath);
+			}
+		}
+		ConnectionWithNode c0 = (ConnectionWithNode) route.elementAt(0);
+		// calculate distance to first arrow after calculation
+		int dstToFirstArrow = (int) (ProjMath.getDistance(center.radlat, center.radlon, c0.to.lat, c0.to.lon));
+		if ((haveBeenOnRouteSinceCalculation && dstToRoutePath >= 50) ||
+			(!haveBeenOnRouteSinceCalculation && (dstToFirstArrow - startDstToFirstArrowAfterCalculation) > 100)
+		) {
+			// use red background color
+			routeInstructionColor=0x00FF5402;
+//			System.out.println("recalc startDst: " + startDstToFirstArrowAfterCalculation);
+//			System.out.println("recalc dst1st: " + dstToFirstArrow);
+//			System.out.println("haveBeenOnRouteSinceCalculation: " + haveBeenOnRouteSinceCalculation);
+//			System.out.println("dstToRoutePath: " + dstToRoutePath);
+			if (trace.source != null) {
+				return true;
+			}
+		} else if (
+			(haveBeenOnRouteSinceCalculation && dstToRoutePath >= 25) ||
+			(!haveBeenOnRouteSinceCalculation && (dstToFirstArrow - startDstToFirstArrowAfterCalculation) > 50)
+		) {
+			// use orange background color
+			routeInstructionColor=0x00FFCD9B;
+		}		
+		return false;
+	}
+	
+	
+	public static void resetOffRoute(Vector route, Node center) {
+		haveBeenOnRouteSinceCalculation = false;
+		dstToRoutePath=Integer.MAX_VALUE;
+		if (route!=null) {
+			ConnectionWithNode c0 = (ConnectionWithNode) route.elementAt(0);
+			// calculate distance to first arrow after calculation
+			startDstToFirstArrowAfterCalculation = (int) (ProjMath.getDistance(center.radlat, center.radlon, c0.to.lat, c0.to.lon));
+		} else {
+			startDstToFirstArrowAfterCalculation=100;
+		}
+		// dark grey
+		routeInstructionColor=0x00808080;
+//		System.out.println("resetOffRoute: " + startDstToFirstArrowAfterCalculation);
+	}
+
 	
 	public static Image doubleImage(Image original)
     {        
