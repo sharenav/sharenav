@@ -356,7 +356,12 @@ public class Way extends Entity{
 			if the distance is closer than the already matching one
 			this way contains a better path between the connections
 			*/
-			if (conWayRealDistance < pc.conWayDistanceToNext) {
+			if (conWayRealDistance < pc.conWayDistanceToNext &&
+				/* check if wayDescription has the routable flag set
+				 * (there are situations where 2 ways have the same nodes, e.g. a tram and a highway)
+				*/
+				C.getWayDescription(this.type).routable 
+			) {
 //				if (pc.conWayDistanceToNext != Float.MAX_VALUE) {
 //					String name1=null, name2=null;
 //					if (pc.conWayNameIdx != -1) name1=Trace.getInstance().getName(pc.conWayNameIdx);
