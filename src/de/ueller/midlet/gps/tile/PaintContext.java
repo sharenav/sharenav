@@ -86,6 +86,8 @@ public class PaintContext extends ScreenContext {
 	 */
 	public float squareDstToRoutePath;
 	public int dstToRoutePath;
+	public int routePathConnection;
+	
 	/**
 	 * the actual configuration
 	 */	

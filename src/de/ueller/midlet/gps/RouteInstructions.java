@@ -89,6 +89,7 @@ public class RouteInstructions {
 	private static PositionMark target;
 	
 	public volatile static int dstToRoutePath=1;
+	public volatile static int routePathConnection=0;
 
 	private	static int routeInstructionColor=0x00E6E6E6;
 	
@@ -610,37 +611,9 @@ public class RouteInstructions {
 				// find nearest routing arrow (to center of screen)
 				int iNearest=0;
 				if (Configuration.getCfgBitState(Configuration.CFGBIT_ROUTING_HELP)) {
-					float minimumDistance=Float.MAX_VALUE;
-					float distance=Float.MAX_VALUE;
-					for (int i=0; i<route.size();i++){
-						c = (ConnectionWithNode) route.elementAt(i);
-						if (c!=null && c.to!=null) {
-							distance = ProjMath.getDistance(center.radlat, center.radlon, c.to.lat, c.to.lon); 
-							if (distance<minimumDistance) {
-								minimumDistance=distance;
-								iNearest=i;
-							}
-						}
-					}
-					// if nearest route arrow is closer than PASSINGDISTANCE meters we're currently passing this route arrow
-					if (minimumDistance<PASSINGDISTANCE) {
-						if (iPassedRouteArrow != iNearest) {
-							iPassedRouteArrow = iNearest;
-							// if there's i.e. a 2nd left arrow in row "left" must be repeated
-							if (!trace.atTarget) {
-								GpsMid.mNoiseMaker.resetSoundRepeatTimes();
-							}
-						}
-						// after passing an arrow all instructions, i.e. saying "in xxx metres" are allowed again 
-						resetVoiceInstructions();
-						//System.out.println("iPassedRouteArrow "+ iPassedRouteArrow);
-					} else {
-						c = (ConnectionWithNode) route.elementAt(iPassedRouteArrow);
-						// if we got away more than PASSINGDISTANCE m of the previously passed routing arrow
-						if (ProjMath.getDistance(center.radlat, center.radlon, c.to.lat, c.to.lon) >= PASSINGDISTANCE) {
-							// assume we should start to emphasize the next routing arrow now
-							iNearest=iPassedRouteArrow+1;
-						}
+					iNearest=0;
+					if (routePathConnection != -1 && routePathConnection < route.size()-1) {
+						iNearest=routePathConnection+1;
 					}
 				}
 				c = (ConnectionWithNode) route.elementAt(0);
@@ -709,6 +682,17 @@ public class RouteInstructions {
 	
 				    	sbRouteInstruction.append(directions[a]);
 				    	if(intDistance<PASSINGDISTANCE) {
+							// if nearest route arrow is closer than PASSINGDISTANCE meters we're currently passing this route arrow
+							if (iPassedRouteArrow != iNearest) {
+								iPassedRouteArrow = iNearest;
+								// if there's i.e. a 2nd left arrow in row "left" must be repeated
+								if (!trace.atTarget) {
+									GpsMid.mNoiseMaker.resetSoundRepeatTimes();
+								}
+							}
+							// after passing an arrow all instructions, i.e. saying "in xxx metres" are allowed again 
+							resetVoiceInstructions();
+
 							if (!trace.atTarget && (c.wayRouteFlags & C.ROUTE_FLAG_ROUNDABOUT)==0) { 
 								soundToPlay.append (soundDirections[a]);
 							}

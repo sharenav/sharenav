@@ -87,7 +87,7 @@ public class Way extends Entity{
 	 */
 	private static int [] x = new int[100];
 	private static int [] y = new int[100];
-	private static boolean [] hl = new boolean[100];  // route highlight
+	private static int [] hl = new int[100];  // route highlight
 	private static Font areaFont;
 	private static int areaFontHeight;
 	private static Font pathFont;
@@ -403,10 +403,10 @@ public class Way extends Entity{
 		if (x.length < path.length) {		
 			x = new int[path.length];
 			y = new int[path.length];
-			hl = new boolean[path.length];
+			hl = new int[path.length];
 		}
 		for (int i1 = 0; i1 < path.length; i1++) {
-			hl[i1] = false;
+			hl[i1] = -1;
 		}
 
 		if ((mode & Tile.OPT_PAINT) > 0) {		
@@ -480,7 +480,7 @@ public class Way extends Entity{
 												to %= (path.length - 1);
 											}
 											for (int n = from; n != to; n++) {
-												hl[n] = true;
+												hl[n] = i;
 												if (isRoundAbout() && n >= (path.length-1) )  {
 													n=-1; //  // if in roundabout at end of path continue at first node
 												}
@@ -549,8 +549,9 @@ public class Way extends Entity{
 						pc.squareDstToRoutableWay = dst;
 						pc.nearestRoutableWay = this;
 					}
-					if (dst < pc.squareDstToRoutePath && hl[i1-1]) {
+					if (dst < pc.squareDstToRoutePath && hl[i1-1] != -1) {
 						pc.squareDstToRoutePath = dst;						
+						pc.routePathConnection = hl[i1-1];
 					}				
 					x[pi] = lineP2.x;
 					y[pi++] = lineP2.y;
@@ -619,11 +620,11 @@ public class Way extends Entity{
 		}
 	}
 	
-    public static void drawOpenPolygonHl(Graphics g, int xPoints[], int yPoints[], boolean hl[], int count)
+    public static void drawOpenPolygonHl(Graphics g, int xPoints[], int yPoints[], int hl[], int count)
     {
         int defaultColor = g.getColor();
     	for(int i = 0; i < count; i++) {
-			if (hl[i]) {
+			if (hl[i]!=-1) {
 				g.setColor(C.ROUTE_COLOR);
 			} else {
 				g.setColor(defaultColor);
@@ -1048,7 +1049,7 @@ public class Way extends Entity{
 	
 	
 
-	private void draw(PaintContext pc, int w, int xPoints[], int yPoints[], boolean hl[], int count,byte highlight/*,byte mode*/) {
+	private void draw(PaintContext pc, int w, int xPoints[], int yPoints[], int hl[], int count,byte highlight/*,byte mode*/) {
 		
 		float roh1;
 		float roh2;
@@ -1071,7 +1072,7 @@ public class Way extends Entity{
 				}
 			}
 //			if (mode == DRAW_AREA){
-				if (highlight == 2 && hl[i]) {
+				if (highlight == 2 && hl[i] != -1) {
 					pc.g.setColor(C.ROUTE_COLOR);				
 				} else {
 					setColor(pc);
@@ -1082,7 +1083,7 @@ public class Way extends Entity{
 //			if (mode == DRAW_BORDER){
 				if (highlight == 1){
 					pc.g.setColor(255,50,50);
-				} else if (hl[i]){
+				} else if (highlight == 2 && hl[i] != -1){
 					pc.g.setColor(C.ROUTE_BORDERCOLOR);
 				} else {
 					setBorderColor(pc);

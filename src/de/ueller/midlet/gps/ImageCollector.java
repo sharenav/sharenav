@@ -348,6 +348,7 @@ public class ImageCollector implements Runnable {
 			paintPC.getP().inverse(0, 0, n1);
 			paintPC.getP().inverse( (int) Math.sqrt(paintPC.squareDstToRoutePath), 0, n2);
 			RouteInstructions.dstToRoutePath = (int) ProjMath.getDistance(n1, n2);
+			RouteInstructions.routePathConnection = paintPC.routePathConnection;
 		}
 		if(statusFontHeight==0) {
 			statusFontHeight=screenPc.g.getFont().getHeight();
