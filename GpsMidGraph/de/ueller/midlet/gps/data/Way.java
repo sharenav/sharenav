@@ -332,18 +332,24 @@ public class Way extends Entity{
 			float conWayRealDistance = 0;
 			short from = containsCon1At;
 			short to = containsCon2At;
-			if (from > to) {
+			if (from > to && !isRoundAbout()) {
+				// if this is a oneway but not a roundabout it can't be the route path as we would go against the oneway's direction
+				if (isOneway()) return;
 				// swap direction
 				from = to;
 				to = containsCon1At;
-				// if this is a oneway or roundabout it can't be the route path as we would go against the oneway's/roundabout's direction
-				if (isOneway() || isRoundAbout()) return;
 			}
 
 			int idx1 = path[from];
 			int idx2;
+			if (isRoundAbout()) {
+				to %= (path.length-1);
+			}
 			// sum up the distance of the segments between searchCon1 and searchCon2
-			for (short i = from; i < to; i++) {
+			for (short i = from; i != to; i++) {
+				if (isRoundAbout() && i >= (path.length-2))  {
+					i=-1; // if in roundabout at end of path continue at first node
+				}
 				idx2 = path[i+1];
 				float dist = ProjMath.getDistance(	(t.centerLat + t.nodeLat[idx1] *  t.fpminv),
 													(t.centerLon + t.nodeLon[idx1] *  t.fpminv),
@@ -456,7 +462,7 @@ public class Way extends Entity{
 											highlight=2;
 											short from = c.wayFromConAt;
 											short to = c.wayToConAt;
-											if (from > to) {
+											if (from > to  && !isRoundAbout()) {
 												// swap direction
 												to = from;
 												from = c.wayToConAt;
@@ -470,8 +476,14 @@ public class Way extends Entity{
 //													"from: " + from + "(" + C.getWayDescription(c.wayType).description + " " + (nameFrom==null?"":nameFrom) + ") " +
 //													"to: " + to + "(" + C.getWayDescription(c2.wayType).description + " " + (nameTo==null?"":nameTo) + ")" );
 
-											for (int n = from; n < to; n++) {
+											if (isRoundAbout()) {
+												to %= (path.length - 1);
+											}
+											for (int n = from; n != to; n++) {
 												hl[n] = true;
+												if (isRoundAbout() && n >= (path.length-1) )  {
+													n=-1; //  // if in roundabout at end of path continue at first node
+												}
 											}
 										}
 									}
