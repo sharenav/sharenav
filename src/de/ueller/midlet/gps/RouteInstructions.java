@@ -1082,9 +1082,8 @@ public class RouteInstructions {
 		String name=null;
 		int dist=0;
 		StringBuffer sb=new StringBuffer();
+		ConnectionWithNode c;
 		for (int i=0; i<route.size()-1; i++){
-			sb.setLength(0);
-			ConnectionWithNode c;
 			c = (ConnectionWithNode) route.elementAt(i);
 			name=null;
 			if (c.wayNameIdx != -1) {
@@ -1092,19 +1091,22 @@ public class RouteInstructions {
 			}
 			dist= (int) c.wayDistanceToNext;
 			
+			sb.setLength(0);			
 			byte ri=c.wayRouteInstruction;
-			sb.append(i + ". ");
-			sb.append(directions[ri]);
-			sb.append(" into ");
-			sb.append((name==null?"":name));
-			sb.append(" then go ");
-			sb.append(dist);
-			sb.append("m");
-			if ( (c.wayRouteFlags & C.ROUTE_FLAG_ROUNDABOUT) > 0) { 
-				sb.append(" (in roundabout)");
+			if (ri!=RI_STRAIGHT_ON_QUIET && ri!=RI_SKIPPED) {
+				sb.append(i + ". ");
+				sb.append(directions[ri]);
+				sb.append(" into ");
+				sb.append((name==null?"":name));
+				sb.append(" then go ");
+				sb.append(dist);
+				sb.append("m");
+				if ( (c.wayRouteFlags & C.ROUTE_FLAG_ROUNDABOUT) > 0) { 
+					sb.append(" (in roundabout)");
+				}
+				sb.append(" Cons:" + c.to.conSize);
+				System.out.println(sb.toString());
 			}
-			sb.append(" Cons:" + c.to.conSize);
-			System.out.println(sb.toString());
 		}		
 	}
 }
