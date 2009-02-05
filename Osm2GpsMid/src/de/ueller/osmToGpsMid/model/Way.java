@@ -90,10 +90,10 @@ public class Way extends Entity implements Comparable<Way>{
 		}
 	}
 	public boolean isTunnel() {
-		return (containsKey("bridge"));
+		return (containsKey("tunnel"));
 	}
 	public boolean isBridge() {
-		return (containsKey("tunnel"));
+		return (containsKey("bridge"));
 	}
 
 	
