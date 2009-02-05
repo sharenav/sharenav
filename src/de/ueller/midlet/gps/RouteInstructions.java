@@ -34,7 +34,7 @@ public class RouteInstructions {
 		"enter motorway", "leave motorway",
 		"Roundabout exit #1", "Roundabout exit #2", "Roundabout exit #3",
 		"Roundabout exit #4", "Roundabout exit #5", "Roundabout exit #6",
-		"qstraight on"
+		"qstraight on", "into tunnel", "out of tunnel"
 	};
 	private static final String[] soundDirections  = { "",
 		"HARD;RIGHT", "RIGHT", "HALF;RIGHT",
@@ -43,7 +43,7 @@ public class RouteInstructions {
 		"ENTER_MOTORWAY", "LEAVE_MOTORWAY",
 		"RAB;1ST;RABEXIT", "RAB;2ND;RABEXIT", "RAB;3RD;RABEXIT",
 		"RAB;4TH;RABEXIT", "RAB;5TH;RABEXIT", "RAB;6TH;RABEXIT",
-		"AGAIN;STRAIGHTON"
+		"AGAIN;STRAIGHTON","INTO_TUNNEL", "OUT_OF_TUNNEL"
 	};
 
 	private static final int RI_HARD_RIGHT = 1;
@@ -63,6 +63,8 @@ public class RouteInstructions {
 	private static final int RI_5TH_EXIT = 15;
 	private static final int RI_6TH_EXIT = 16;
 	private static final int RI_STRAIGHT_ON_QUIET = 17;
+	private static final int RI_INTO_TUNNEL = 18;
+	private static final int RI_OUT_OF_TUNNEL = 19;
 	
 	private int connsFound = 0;
 	
@@ -615,6 +617,7 @@ public class RouteInstructions {
 	
 				// find nearest routing arrow (to center of screen)
 				int iNow=0;
+				int iRealNow=0;
 				byte aNow=RI_STRAIGHT_ON_QUIET;
 				int iThen=0;
 				byte aThen=RI_STRAIGHT_ON_QUIET;
@@ -623,7 +626,8 @@ public class RouteInstructions {
 				int intDistNow=0;
 				
 				if (routePathConnection != -1 && routePathConnection < route.size()-1) {
-					iNow = idxNextInstructionArrow (routePathConnection+1);
+					iRealNow = routePathConnection+1;
+					iNow = idxNextInstructionArrow (iRealNow);
 					cNow = (ConnectionWithNode) route.elementAt(iNow);
 					aNow = cNow.wayRouteInstruction;
 			    	distNow=ProjMath.getDistance(center.radlat, center.radlon, cNow.to.lat, cNow.to.lon);
@@ -680,7 +684,8 @@ public class RouteInstructions {
 						case RI_HARD_LEFT:		pict=pc.images.IMG_HARDLEFT; break;
 						case RI_ENTER_MOTORWAY:	pict=pc.images.IMG_MOTORWAYENTER; break;
 						case RI_LEAVE_MOTORWAY:	pict=pc.images.IMG_MOTORWAYLEAVE; break;					
-											
+						case RI_INTO_TUNNEL:	pict=pc.images.IMG_TUNNEL_INTO; break;
+						case RI_OUT_OF_TUNNEL:	pict=pc.images.IMG_TUNNEL_OUT_OF; break;					
 					}
 					
 					if (trace.atTarget) {
@@ -941,6 +946,18 @@ public class RouteInstructions {
 			}
 			
 			byte ri=0;
+			// into tunnel
+			if (	(rfPrev & C.ROUTE_FLAG_TUNNEL) == 0
+				&& 	(rfCurr & C.ROUTE_FLAG_TUNNEL) > 0
+			) {
+				ri = RI_INTO_TUNNEL;
+			}
+			// out of tunnel
+			if (	(rfPrev & C.ROUTE_FLAG_TUNNEL) > 0
+				&& 	(rfCurr & C.ROUTE_FLAG_TUNNEL) == 0
+			) {
+				ri = RI_OUT_OF_TUNNEL;
+			}
 			// enter motorway
 			if ( 	(rfPrev & (C.ROUTE_FLAG_MOTORWAY | C.ROUTE_FLAG_MOTORWAY_LINK)) == 0
 				&& 	(rfCurr & (C.ROUTE_FLAG_MOTORWAY | C.ROUTE_FLAG_MOTORWAY_LINK)) > 0

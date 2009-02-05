@@ -22,6 +22,8 @@ public class Images {
 	public final Image IMG_HARDRIGHT=Image.createImage("/hardright.png");
 	public final Image IMG_MOTORWAYENTER=Image.createImage("/motorway.png");
 	public final Image IMG_MOTORWAYLEAVE=Image.createImage("/motorway_exit.png");
+	public final Image IMG_TUNNEL_INTO=Image.createImage("/tunnel.png");
+	public final Image IMG_TUNNEL_OUT_OF=Image.createImage("/tunnel_end.png");
 	public Images() throws IOException{
 		
 	}
