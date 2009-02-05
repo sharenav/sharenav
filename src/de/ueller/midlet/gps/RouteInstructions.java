@@ -641,7 +641,7 @@ public class RouteInstructions {
 				}
 
 				c = (ConnectionWithNode) route.elementAt(0);
-				for (int i=0; i<route.size();i++){
+				for (int i=1; i<route.size();i++){
 					c = (ConnectionWithNode) route.elementAt(i);
 					if (c == null){
 						logger.error("show Route got null connection");
@@ -852,7 +852,7 @@ public class RouteInstructions {
 		// calculate distance to first arrow after calculation
 		int dstToFirstArrow = (int) (ProjMath.getDistance(center.radlat, center.radlon, c0.to.lat, c0.to.lon));
 		if ((haveBeenOnRouteSinceCalculation && dstToRoutePath >= 50) ||
-			(!haveBeenOnRouteSinceCalculation && (dstToFirstArrow - startDstToFirstArrowAfterCalculation) > 100)
+			(!haveBeenOnRouteSinceCalculation && (dstToFirstArrow - startDstToFirstArrowAfterCalculation) > 50)
 		) {
 			// use red background color
 			routeInstructionColor=0x00FF5402;
@@ -865,7 +865,7 @@ public class RouteInstructions {
 			}
 		} else if (
 			(haveBeenOnRouteSinceCalculation && dstToRoutePath >= 25) ||
-			(!haveBeenOnRouteSinceCalculation && (dstToFirstArrow - startDstToFirstArrowAfterCalculation) > 50)
+			(!haveBeenOnRouteSinceCalculation && (dstToFirstArrow - startDstToFirstArrowAfterCalculation) > 25)
 		) {
 			// use orange background color
 			routeInstructionColor=0x00FFCD9B;
@@ -882,7 +882,7 @@ public class RouteInstructions {
 			// calculate distance to first arrow after calculation
 			startDstToFirstArrowAfterCalculation = (int) (ProjMath.getDistance(center.radlat, center.radlon, c0.to.lat, c0.to.lon));
 		} else {
-			startDstToFirstArrowAfterCalculation=100;
+			startDstToFirstArrowAfterCalculation=50;
 		}
 		// dark grey
 		routeInstructionColor=0x00808080;
