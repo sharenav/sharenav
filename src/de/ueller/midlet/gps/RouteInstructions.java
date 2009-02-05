@@ -65,6 +65,7 @@ public class RouteInstructions {
 	private static final int RI_STRAIGHT_ON_QUIET = 17;
 	private static final int RI_INTO_TUNNEL = 18;
 	private static final int RI_OUT_OF_TUNNEL = 19;
+	private static final int RI_SKIPPED = 99;
 	
 	private int connsFound = 0;
 	
@@ -125,7 +126,7 @@ public class RouteInstructions {
 		connsFound=0;
 		float routeLen=0f;
 		long startTime = System.currentTimeMillis();
-		if (route != null && route.size() > 0){
+		if (route != null && route.size() > 1){
 			for (int i=0; i<route.size()-1; i++){
 				routeLen += searchConnection2Ways(pc, i);
 			}
@@ -670,7 +671,7 @@ public class RouteInstructions {
 							continue;
 						}
 					}
-	
+
 					Image pict = pc.images.IMG_MARK; aPaint=0;
 					aPaint = c.wayRouteInstruction;
 					switch (aPaint) {
@@ -768,7 +769,14 @@ public class RouteInstructions {
 							//System.out.println(soundToPlay.toString());
 						}
 					}
-					pc.g.drawImage(pict,pc.lineP2.x,pc.lineP2.y,CENTERPOS);					
+					if (aPaint == RI_SKIPPED) {
+						pc.g.setColor(0x00FDDF9F);
+						pc.getP().forward(c.to.lat, c.to.lon, pc.lineP2);
+						final byte radius=6;
+						pc.g.fillArc(pc.lineP2.x-radius/2,pc.lineP2.y-radius/2,radius,radius,0,359);
+					} else {
+						pc.g.drawImage(pict,pc.lineP2.x,pc.lineP2.y,CENTERPOS);					
+					}
 				}
 			}
 			routeRecalculationRequired = isOffRoute(route, center);
@@ -928,6 +936,10 @@ public class RouteInstructions {
 		ConnectionWithNode c;
 		ConnectionWithNode c2;
 		int nextStartBearing;
+		
+		if (route.size() < 3) {
+			return;
+		}
 		for (int i=0; i<route.size()-1; i++){
 			c = (ConnectionWithNode) route.elementAt(i);
 
@@ -992,26 +1004,28 @@ public class RouteInstructions {
 			}
 			// if we've got no better instruction, just use the direction
 			if (ri==0) {				
-				int turn=(nextStartBearing - c.endBearing) * 2;
-				if (turn > 180) turn -= 360;
-				if (turn < -180) turn += 360;
-				if (turn > 110) {
-					ri=RI_HARD_RIGHT;
-				} else if (turn > 70){
-					ri=RI_RIGHT;
-				} else if (turn > 20){
-					ri=RI_HALF_RIGHT;
-				} else if (turn >= -20){
-					ri=RI_STRAIGHT_ON;
-				} else if (turn >= -70){
-					ri=RI_HALF_LEFT;
-				} else if (turn >= -110){
-					ri=RI_LEFT;;
-				} else {
-					ri=RI_HARD_LEFT;
-				}
+				ri = convertTurnToRouteInstruction( (nextStartBearing - c.endBearing) * 2 );
 			}
 			c.wayRouteInstruction = ri;
+		}
+		
+		// combine instructions that are closer than 25 m to the previous one into single instructions
+		ConnectionWithNode cPrev = (ConnectionWithNode) route.elementAt(1);
+		for (int i=2; i<route.size()-1; i++){
+			c = (ConnectionWithNode) route.elementAt(i);
+			// skip connections that are closer than 25 m to the previous one
+			if( (i<route.size()-1 && ProjMath.getDistance(c.to.lat, c.to.lon, cPrev.to.lat, cPrev.to.lon) < 25)
+				// only combine direction instructions
+				&& (cPrev.wayRouteInstruction <= RI_HARD_LEFT && c.wayRouteInstruction <= RI_HARD_LEFT)
+			)	{
+				c.wayRouteInstruction = RI_SKIPPED;
+				cPrev.wayDistanceToNext += c.wayDistanceToNext;
+				c.wayDistanceToNext = 0;
+				cPrev.wayNameIdx = c.wayNameIdx;
+				ConnectionWithNode cNext = (ConnectionWithNode) route.elementAt(i+1);
+				cPrev.wayRouteInstruction = convertTurnToRouteInstruction( (cNext.startBearing - cPrev.endBearing) * 2 );				
+			}
+			cPrev=c;
 		}
 		
 		// replace redundant straight-ons by quiet arrows and add way distance to starting arrow of the street
@@ -1034,11 +1048,34 @@ public class RouteInstructions {
 		int a;
 		for (a=i; a<route.size()-2; a++){
 			c = (ConnectionWithNode) route.elementAt(a);
-			if (c.wayRouteInstruction != RI_STRAIGHT_ON_QUIET) {
+			if (
+				c.wayRouteInstruction != RI_STRAIGHT_ON_QUIET
+			&&	c.wayRouteInstruction != RI_SKIPPED
+			) {
 				break;
 			}
 		}
 		return a;
+	}
+	
+	private byte convertTurnToRouteInstruction(int turn) {
+		if (turn > 180) turn -= 360;
+		if (turn < -180) turn += 360;
+		if (turn > 110) {
+			return RI_HARD_RIGHT;
+		} else if (turn > 70){
+			return RI_RIGHT;
+		} else if (turn > 20){
+			return RI_HALF_RIGHT;
+		} else if (turn >= -20){
+			return RI_STRAIGHT_ON;
+		} else if (turn >= -70){
+			return RI_HALF_LEFT;
+		} else if (turn >= -110){
+			return RI_LEFT;
+		} else {
+			return RI_HARD_LEFT;
+		}
 	}
 	
 	public void outputRoutePath() {
