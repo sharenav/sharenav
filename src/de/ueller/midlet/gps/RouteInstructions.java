@@ -753,28 +753,30 @@ public class RouteInstructions {
 							}							
 						}
 						
-						double distNowThen=ProjMath.getDistance(cNow.to.lat, cNow.to.lon, cThen.to.lat, cThen.to.lon);
-						// if there is a close direction arrow after the current one
-						// inform the user about its direction
-						if (distNowThen <= PREPAREDISTANCE &&
-							// only if not both arrows are STRAIGHT_ON
-							!(aNow==RI_STRAIGHT_ON && (aThen == RI_STRAIGHT_ON || aThen == RI_STRAIGHT_ON_QUIET) ) &&
-							// and it is not a round about exit instruction
-							!(aNow>=RI_1ST_EXIT && aNow<=RI_6TH_EXIT) &&
-							// and only as continuation of instruction
-							soundToPlay.length()!=0
-						   ) {
-							soundToPlay.append(";THEN;");
-							if (distNowThen > PASSINGDISTANCE) {
-								soundToPlay.append("SOON;");
+						if (cThen != null) {
+							double distNowThen=ProjMath.getDistance(cNow.to.lat, cNow.to.lon, cThen.to.lat, cThen.to.lon);
+							// if there is a close direction arrow after the current one
+							// inform the user about its direction
+							if (distNowThen <= PREPAREDISTANCE &&
+								// only if not both arrows are STRAIGHT_ON
+								!(aNow==RI_STRAIGHT_ON && (aThen == RI_STRAIGHT_ON || aThen == RI_STRAIGHT_ON_QUIET) ) &&
+								// and it is not a round about exit instruction
+								!(aNow>=RI_1ST_EXIT && aNow<=RI_6TH_EXIT) &&
+								// and only as continuation of instruction
+								soundToPlay.length()!=0
+							   ) {
+								soundToPlay.append(";THEN;");
+								if (distNowThen > PASSINGDISTANCE) {
+									soundToPlay.append("SOON;");
+								}
+								soundToPlay.append(soundDirections[aThen]);
+								// same arrow as currently nearest arrow?
+								if (aNow==aThen) {
+									soundToPlay.append(";AGAIN");							
+								}
+								
+								//System.out.println(soundToPlay.toString());
 							}
-							soundToPlay.append(soundDirections[aThen]);
-							// same arrow as currently nearest arrow?
-							if (aNow==aThen) {
-								soundToPlay.append(";AGAIN");							
-							}
-							
-							//System.out.println(soundToPlay.toString());
 						}
 					}
 					if (aPaint == RI_SKIPPED) {
