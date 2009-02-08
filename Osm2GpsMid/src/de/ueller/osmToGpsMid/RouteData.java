@@ -193,84 +193,84 @@ public class RouteData {
 	}
 	
 	public void optimise(){
-//		System.out.println("RoutNodes for optimise " + nodes.size());
-//		ArrayList<RouteNode> removeNodes=new ArrayList<RouteNode>();
-//		for (RouteNode n:nodes.values()){
-//			// find nodes that are only a point between to nodes without
-//			// any junction. This test does not cover one ways
-//			// for normal ways the second connection will removed 
-//			if (n.connected.size() == 2 && n.connectedFrom.size()==2){
-//				Connection c1=n.connected.get(0);
-//				RouteNode n1=c1.to;
-//				Connection c2=null;
-//				Connection c3=n.connected.get(1);
-//				RouteNode n2=c3.to;
-//				Connection c4=null;
-//				for (Connection ct:n.connectedFrom){
-//					if (ct.from == n2 ){
-//						c2=ct;
-//					} 
-//					if (ct.from == n1){
-//						c4=ct;
-//					}
-//				}
-//				if (c2 != null && c4 != null){
-//					if (c2.to != n){
-//						System.out.println("c2.to != n");
-//					}
-//					if (c4.to != n){
-//						System.out.println("c4.to != n");
-//					}
-//					if (c1.to != c4.from){
-//						System.out.println("c1.to != c4.from");
-//					}
-//					if (c2.from != c3.to){
-//						System.out.println("c2.from != c3.to");
-//					}
-//					c2.endBearing=c1.endBearing;
-//					c2.time += c1.time;
-//					c2.length += c1.length;
-//					c2.to=c1.to;
-//					c3.from=c1.to;
-//					c3.startBearing=MyMath.inversBearing(c1.endBearing);
-//					c3.time += c1.time;
-//					c3.length += c1.length;
-//					n1.connectedFrom.remove(c1);
-//					n1.connected.remove(c4);
-//					n1.connectedFrom.add(c2);
-//					n1.connected.add(c3);
-//					connections.remove(c1);
-//					connections.remove(c4);
-//					removeNodes.add(n);
-//				}
-//
-//			}
-//			// for one ways
-//			if (n.connected.size() == 1 && n.connectedFrom.size()==1){
-//				Connection c1=n.connected.get(0);
-//				RouteNode n1=c1.to;
-//				Connection c2=n.connectedFrom.get(0);
-//				RouteNode n2=c2.from;
-//				if (n2 != n1){
-//					c2.endBearing=c1.endBearing;
-//					c2.time += c1.time;
-//					c2.length += c1.length;
-//					c2.to=c1.to;
-//					n1.connectedFrom.remove(c1);
-//					n1.connectedFrom.add(c2);
-//					n.connected.remove(c1);
-//					n.connectedFrom.remove(c2);
-//					connections.remove(c1);
-//					removeNodes.add(n);
-//				
-//				}
-//			}
-//		}
-//		System.out.println("remove " + removeNodes.size() + " RouteNode due optimation");
-//		for (RouteNode n:removeNodes){
-//			n.node.routeNode=null;
-//			nodes.remove(n.node.id);
-//		}
+		System.out.println("RoutNodes for optimise " + nodes.size());
+		ArrayList<RouteNode> removeNodes=new ArrayList<RouteNode>();
+		for (RouteNode n:nodes.values()){
+			// find nodes that are only a point between to nodes without
+			// any junction. This test does not cover one ways
+			// for normal ways the second connection will removed 
+			if (n.connected.size() == 2 && n.connectedFrom.size()==2){
+				Connection c1=n.connected.get(0);
+				RouteNode n1=c1.to;
+				Connection c2=null;
+				Connection c3=n.connected.get(1);
+				RouteNode n2=c3.to;
+				Connection c4=null;
+				for (Connection ct:n.connectedFrom){
+					if (ct.from == n2 ){
+						c2=ct;
+					} 
+					if (ct.from == n1){
+						c4=ct;
+					}
+				}
+				if (c2 != null && c4 != null){
+					if (c2.to != n){
+						System.out.println("c2.to != n");
+					}
+					if (c4.to != n){
+						System.out.println("c4.to != n");
+					}
+					if (c1.to != c4.from){
+						System.out.println("c1.to != c4.from");
+					}
+					if (c2.from != c3.to){
+						System.out.println("c2.from != c3.to");
+					}
+					c2.endBearing=c1.endBearing;
+					c2.time += c1.time;
+					c2.length += c1.length;
+					c2.to=c1.to;
+					c3.from=c1.to;
+					c3.startBearing=MyMath.inversBearing(c1.endBearing);
+					c3.time += c1.time;
+					c3.length += c1.length;
+					n1.connectedFrom.remove(c1);
+					n1.connected.remove(c4);
+					n1.connectedFrom.add(c2);
+					n1.connected.add(c3);
+					connections.remove(c1);
+					connections.remove(c4);
+					removeNodes.add(n);
+				}
+
+			}
+			// for one ways
+			if (n.connected.size() == 1 && n.connectedFrom.size()==1){
+				Connection c1=n.connected.get(0);
+				RouteNode n1=c1.to;
+				Connection c2=n.connectedFrom.get(0);
+				RouteNode n2=c2.from;
+				if (n2 != n1){
+					c2.endBearing=c1.endBearing;
+					c2.time += c1.time;
+					c2.length += c1.length;
+					c2.to=c1.to;
+					n1.connectedFrom.remove(c1);
+					n1.connectedFrom.add(c2);
+					n.connected.remove(c1);
+					n.connectedFrom.remove(c2);
+					connections.remove(c1);
+					removeNodes.add(n);
+				
+				}
+			}
+		}
+		System.out.println("remove " + removeNodes.size() + " RouteNode due optimation");
+		for (RouteNode n:removeNodes){
+			n.node.routeNode=null;
+			nodes.remove(n.node.id);
+		}
 	}
 	
 	
@@ -282,7 +282,7 @@ public class RouteData {
 
 				try {					
 					Configuration conf=new Configuration(args);
-					FileInputStream fr = new FileInputStream("/Massenspeicher/myStreetMap0.5.osm");
+					FileInputStream fr = new FileInputStream("/Massenspeicher/test.osm");
 //					FileInputStream fr = new FileInputStream("/Massenspeicher/planet-070725.osm");
 					OxParser parser = new OxParser(fr,conf);
 					System.out.println("read Nodes " + parser.getNodes().size());
