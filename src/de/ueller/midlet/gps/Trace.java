@@ -1190,7 +1190,11 @@ Runnable , GpsMidDisplayable{
 			}
 
 			if (speeding && Configuration.getCfgBitState(Configuration.CFGBIT_SPEEDALERT_SND)) {
-			    parent.mNoiseMaker.playSound("SPEED_LIMIT", (byte) 10, (byte) 10);
+				// give speeding alert only every 10 seconds
+				if ( (System.currentTimeMillis() - lastTimeOfSpeedingSound) > 10000 ) {
+					lastTimeOfSpeedingSound = System.currentTimeMillis();
+				    parent.mNoiseMaker.playSound("SPEED_LIMIT", (byte) 10, (byte) 10);
+				}
 			}
 
 			if (currentMsg != null) {
