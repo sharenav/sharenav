@@ -726,7 +726,11 @@ public class RouteInstructions {
 							sbRouteInstruction.append(" in " + intDistNow + "m");
 						}
 						if (intDistNow>=PASSINGDISTANCE && !checkDirectionSaid) {
-							if (intDistNow <= PREPAREDISTANCE) {
+							if (
+								intDistNow <= PREPAREDISTANCE
+								// give prepare instruction only if arrow has not already been passed (this avoids possibly wrong prepare instructions after passing the arrow)
+								&& iNow!=iPassedRouteArrow
+							) {
 								if (aNow < RI_ENTER_MOTORWAY) {
 									soundToPlay.append( (aNow==RI_STRAIGHT_ON ? "CONTINUE" : "PREPARE") + ";" + soundDirections[aNow]);
 								} else if (aNow>=RI_ENTER_MOTORWAY && aNow<=RI_LEAVE_MOTORWAY) {
@@ -739,7 +743,11 @@ public class RouteInstructions {
 								// GpsMid could fall back from "prepare"-instructions to "in xxx metres" voice instructions
 								// Remembering and checking if the prepare instruction already was given since the latest passing of an arrow avoids this
 								prepareInstructionSaid = true;
-							} else if (intDistNow < 900 && intDistNow < getTellDistance(iNow) ) { //&& !prepareInstructionSaid) {
+							} else if (
+								intDistNow < 900 && intDistNow < getTellDistance(iNow)
+								// give in-xxx-meters-instruction only if arrow has not already been passed (this avoids possibly wrong in-instructions after passing the arrow)
+								&& iNow!=iPassedRouteArrow								&& iNow!=iPassedRouteArrow
+							) { //&& !prepareInstructionSaid) {
 								soundRepeatDelay=60;
 								soundToPlay.append("IN;" + Integer.toString(intDistNow / 100)+ "00;METERS;" + soundDirections[aNow]);								
 							}							
