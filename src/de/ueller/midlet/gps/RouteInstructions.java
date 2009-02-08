@@ -86,7 +86,7 @@ public class RouteInstructions {
 	private static String sLastInstruction = "";
 
 	private static Font routeFont;
-	private static int routeFontHeight;
+	public static volatile int routeFontHeight = 0;
 
 	private byte cachedPicArrow;
 	private static final int CENTERPOS = Graphics.HCENTER|Graphics.VCENTER;
@@ -541,7 +541,7 @@ public class RouteInstructions {
 		// Route instruction text output
 		if ((routeInstruction != null)) {
 			Font originalFont = pc.g.getFont();
-			if (routeFont==null) {
+			if (routeFontHeight == 0 ) {
 				routeFont=Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_MEDIUM);
 				routeFontHeight=routeFont.getHeight();
 			}
@@ -798,7 +798,7 @@ public class RouteInstructions {
 		// Route instruction text output
 		if (sbRouteInstruction.length() != 0) {
 			Font originalFont = pc.g.getFont();
-			if (routeFont==null) {
+			if (routeFontHeight == 0) {
 				routeFont=Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_MEDIUM);
 				routeFontHeight=routeFont.getHeight();
 			}

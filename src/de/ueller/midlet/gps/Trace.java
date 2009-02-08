@@ -1190,11 +1190,34 @@ Runnable , GpsMidDisplayable{
 				showTarget(pc);
 			}
 
-			if (speeding && Configuration.getCfgBitState(Configuration.CFGBIT_SPEEDALERT_SND)) {
-				// give speeding alert only every 10 seconds
-				if ( (System.currentTimeMillis() - lastTimeOfSpeedingSound) > 10000 ) {
-					lastTimeOfSpeedingSound = System.currentTimeMillis();
-					parent.mNoiseMaker.immediateSound("SPEED_LIMIT");					
+			
+			if (speeding) {
+				if (Configuration.getCfgBitState(Configuration.CFGBIT_SPEEDALERT_VISUAL)) {
+					String sSpeed = Integer.toString(actualWay.getMaxSpeed());
+					int oldColor = g.getColor();
+					Font oldFont = g.getFont();
+					Font speedingFont = Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_BOLD, Font.SIZE_LARGE);
+					int w = speedingFont.stringWidth(sSpeed);
+					int w0 = speedingFont.charWidth('0');
+					int h0 = speedingFont.getHeight();
+					w += w0 * 4;
+					g.setColor(0x00FF0000);
+					int yPos = pc.ySize - w - (h0 / 2) - imageCollector.statusFontHeight - RouteInstructions.routeFontHeight;
+					g.fillArc(0, yPos, w, w, 0, 360);
+					g.setColor(0x00FFFFFF);
+					g.fillArc(w0, yPos + w0, w - (w0 * 2), w - (w0 * 2), 0, 360);
+					g.setColor(0x00000000);
+					g.setFont(speedingFont);
+					g.drawString(sSpeed, w/2, yPos + w/2 - (h0 / 2), Graphics.TOP | Graphics.HCENTER);
+					g.setFont(oldFont);
+					g.setColor(oldColor);
+				}				
+				if (Configuration.getCfgBitState(Configuration.CFGBIT_SPEEDALERT_SND)) {
+					// give speeding alert only every 10 seconds
+					if ( (System.currentTimeMillis() - lastTimeOfSpeedingSound) > 10000 ) {
+						lastTimeOfSpeedingSound = System.currentTimeMillis();
+						parent.mNoiseMaker.immediateSound("SPEED_LIMIT");					
+					}
 				}
 			}
 
@@ -1835,6 +1858,7 @@ Runnable , GpsMidDisplayable{
 
 	public void setTarget(PositionMark target) {
 		RouteInstructions.initialRecalcDone = false;
+		RouteInstructions.routeFontHeight = 0;
 		setRoute(null);
 		setRouteNodes(null);
 		this.target = target;
