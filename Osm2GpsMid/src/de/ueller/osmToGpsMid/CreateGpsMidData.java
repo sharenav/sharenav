@@ -292,6 +292,23 @@ public class CreateGpsMidData {
 				removeSoundFile("STRAIGHTON");
 				//removeSoundFile("TARGET_REACHED");
 				removeSoundFile("THEN");
+				removeSoundFile("IN");
+				removeSoundFile("100");
+				removeSoundFile("200");
+				removeSoundFile("300");
+				removeSoundFile("400");
+				removeSoundFile("500");
+				removeSoundFile("600");
+				removeSoundFile("700");
+				removeSoundFile("800");
+				removeSoundFile("METERS");
+				removeSoundFile("RAB");
+				removeSoundFile("RABEXIT");
+				removeSoundFile("TO");
+				removeSoundFile("ENTER_MOTORWAY");
+				removeSoundFile("LEAVE_MOTORWAY");
+				removeSoundFile("INTO_TUNNEL");
+				removeSoundFile("OUT_OF_TUNNEL");
 			}
 			
 		} catch (FileNotFoundException e) {
