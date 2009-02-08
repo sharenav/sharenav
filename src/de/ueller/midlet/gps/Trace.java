@@ -214,6 +214,7 @@ Runnable , GpsMidDisplayable{
 	 * Flag if we're speeding
 	 */
 	public volatile boolean speeding=false;
+	private long lastTimeOfSpeedingSound = 0;
 
 	/**
 	 * Current course from GPS in compass degrees, 0..359.  
@@ -1193,7 +1194,7 @@ Runnable , GpsMidDisplayable{
 				// give speeding alert only every 10 seconds
 				if ( (System.currentTimeMillis() - lastTimeOfSpeedingSound) > 10000 ) {
 					lastTimeOfSpeedingSound = System.currentTimeMillis();
-				    parent.mNoiseMaker.playSound("SPEED_LIMIT", (byte) 10, (byte) 10);
+					parent.mNoiseMaker.immediateSound("SPEED_LIMIT");					
 				}
 			}
 

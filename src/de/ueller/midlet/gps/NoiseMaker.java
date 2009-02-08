@@ -151,6 +151,19 @@ public class NoiseMaker
 //#endif
 	
 
+	public void immediateSound(String name) {
+		synchronized (NoiseMaker.class) {			
+			if (playingNameIndex < playingNames.length()) {
+				playingNameIndex = 0;
+				playingNames = name + ";" + playingNames;
+				mLogger.debug("inserted sound " + name + " giving new sequence: " + playingNames);
+				return;
+			}
+		}
+		resetSoundRepeatTimes();
+		playSound (name);
+	}
+	
 	public void playSound( String names )
 	{
 		playSound(names, (byte) 0, (byte) 1 );
@@ -182,8 +195,10 @@ public class NoiseMaker
 		}		
 		//#debug debug
 		mLogger.debug("play " + names);
-		playingNameIndex = 0;
-		playingNames=names;
+		synchronized(NoiseMaker.class) {
+			playingNameIndex = 0;
+			playingNames=names;
+		}
 		if (determineNextSoundFile()) {
 			playNextSoundFile();
 		} else {
@@ -203,21 +218,23 @@ public class NoiseMaker
 
 //#if polish.api.mmapi				
 	// determine next sound name to be played from playingNames
-	private static String determineNextSoundName() {	
-		// end of names to play?
-		if (playingNameIndex>playingNames.length() ) {
-			return null;
+	private static String determineNextSoundName() {
+		synchronized (NoiseMaker.class) {
+			// end of names to play?
+			if (playingNameIndex>playingNames.length() ) {
+				return null;
+			}
+			
+			int iEnd = playingNames.indexOf(';', playingNameIndex);
+			if (iEnd == -1 ) {
+				iEnd = playingNames.length();
+			}
+			String nextSoundName = playingNames.substring(playingNameIndex, iEnd);
+			//#debug debug
+			mLogger.debug("Determined sound part: " + nextSoundName + "/" + playingNames + "/" + playingNameIndex + "/" + iEnd);
+			playingNameIndex = iEnd + 1;
+			return nextSoundName;
 		}
-		
-		int iEnd = playingNames.indexOf(';', playingNameIndex);
-		if (iEnd == -1 ) {
-			iEnd = playingNames.length();
-		}
-		String nextSoundName = playingNames.substring(playingNameIndex, iEnd);
-		//#debug debug
-		mLogger.debug("Determined sound part: " + nextSoundName + "/" + playingNames + "/" + playingNameIndex + "/" + iEnd);
-		playingNameIndex = iEnd + 1;
-		return nextSoundName;
 	}
 	
 	// determine name of next sound part
