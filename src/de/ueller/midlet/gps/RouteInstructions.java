@@ -950,7 +950,7 @@ public class RouteInstructions {
 		if (route.size() < 3) {
 			return;
 		}
-		for (int i=0; i<route.size()-1; i++){
+		for (int i=0; i<route.size(); i++){
 			c = (ConnectionWithNode) route.elementAt(i);
 
 			byte rfCurr=c.wayRouteFlags;
@@ -961,7 +961,7 @@ public class RouteInstructions {
 			}			
 			byte rfNext=0;
 			nextStartBearing = 0;
-			if (i < route.size()-2) {
+			if (i < route.size()-1) {
 				c2 = (ConnectionWithNode) route.elementAt(i+1);
 				rfNext=C.getWayDescription(c2.wayType).routeFlags;
 				nextStartBearing = c2.startBearing;
