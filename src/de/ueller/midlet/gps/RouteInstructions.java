@@ -1017,6 +1017,9 @@ public class RouteInstructions {
 			c.wayRouteInstruction = ri;
 		}
 		
+		c = (ConnectionWithNode) route.elementAt(route.size()-1);
+		c.wayRouteInstruction = RI_TARGET_REACHED;				
+		
 		// combine instructions that are closer than 25 m to the previous one into single instructions
 		ConnectionWithNode cPrev = (ConnectionWithNode) route.elementAt(1);
 		for (int i=2; i<route.size()-1; i++){
