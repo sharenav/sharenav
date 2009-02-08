@@ -739,7 +739,7 @@ public class RouteInstructions {
 								// GpsMid could fall back from "prepare"-instructions to "in xxx metres" voice instructions
 								// Remembering and checking if the prepare instruction already was given since the latest passing of an arrow avoids this
 								prepareInstructionSaid = true;
-							} else if (intDistNow < 900  && !prepareInstructionSaid) {
+							} else if (intDistNow < 900 && intDistNow < getTellDistance(iNow) ) { //&& !prepareInstructionSaid) {
 								soundRepeatDelay=60;
 								soundToPlay.append("IN;" + Integer.toString(intDistNow / 100)+ "00;METERS;" + soundDirections[aNow]);								
 							}							
@@ -1020,7 +1020,7 @@ public class RouteInstructions {
 			)	{
 				c.wayRouteInstruction = RI_SKIPPED;
 				cPrev.wayDistanceToNext += c.wayDistanceToNext;
-				c.wayDistanceToNext = 0;
+				//c.wayDistanceToNext = 0;
 				cPrev.wayNameIdx = c.wayNameIdx;
 				ConnectionWithNode cNext = (ConnectionWithNode) route.elementAt(i+1);
 				cPrev.wayRouteInstruction = convertTurnToRouteInstruction( (cNext.startBearing - cPrev.endBearing) * 2 );				
@@ -1036,12 +1036,30 @@ public class RouteInstructions {
 			while (c.wayRouteInstruction == RI_STRAIGHT_ON && c.wayNameIdx == cStart.wayNameIdx && i<route.size()-2) {
 				cStart.wayDistanceToNext += c.wayDistanceToNext;
 				c.wayRouteInstruction = RI_STRAIGHT_ON_QUIET;
-				c.wayDistanceToNext = 0;
+				// c.wayDistanceToNext = 0;
 				i++;
 				c = (ConnectionWithNode) route.elementAt(i);
 			}			
 		}
 	}
+	
+	
+	private int getTellDistance(int iConnection) {
+		ConnectionWithNode cPrev = (ConnectionWithNode) route.elementAt(iConnection -1);
+		
+		int distFromSpeed = 200;
+		int distFromPrevConn = (int) cPrev.wayDistanceToNext + 50;
+		int speed=trace.speed;
+		if (speed>100) {
+			distFromSpeed=500;							
+		} else if (speed>80) {
+			distFromSpeed=400;							
+		} else if (speed>40) {
+			distFromSpeed=300;																			
+		}
+		return Math.max(distFromSpeed, distFromPrevConn);
+	}
+	
 	
 	private int idxNextInstructionArrow(int i) {
 		ConnectionWithNode c;
