@@ -156,6 +156,9 @@ public class ImageCollector implements Runnable {
 				 */
 				createPC.hlLayers = 0;
 				
+				// highlighted path only on top if gpsCentered
+				createPC.highlightedPathOnTop = tr.gpsRecenter;
+				
 				/**
 				 * At the moment we don't really have proper layer support
 				 * in the data yet, so only split it into Area, Way and Node
@@ -178,7 +181,6 @@ public class ImageCollector implements Runnable {
 						&& layersToRender[layer] != Tile.LAYER_NODE
 					) {
 						byte relLayer = (byte)(((int)layersToRender[layer]) & 0x0000000F);
-						System.out.println ("CHECK HL LAYERS: " + createPC.hlLayers + " " + relLayer);
 						if ( (createPC.hlLayers & (1 << relLayer)) == 0) {
 							continue;
 						}

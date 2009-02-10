@@ -76,6 +76,7 @@ public class PaintContext extends ScreenContext {
 	public volatile byte conWayType;   // highlight way to node idx
 	public volatile byte conWayRouteFlags; // modifiers like motorway and motorway_link (from description) and roundabout/bridge tunnel (from way) 
 	public volatile float conWayDistanceToNext; // distance to next connection when following the route path
+	public volatile boolean highlightedPathOnTop; // when painting draw highlighted path on top
 	
 	/**
 	 * the square of distance from center to the nearest point of actualWay
@@ -90,7 +91,7 @@ public class PaintContext extends ScreenContext {
 	 */
 	public float squareDstToRoutePath;
 	public int dstToRoutePath;
-	public int routePathConnection;
+	public int routePathConnection;	
 	
 	/**
 	 * the actual configuration
