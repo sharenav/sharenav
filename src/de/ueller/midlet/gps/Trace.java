@@ -966,7 +966,11 @@ Runnable , GpsMidDisplayable{
 					}
 				}
 				// redraw immediately
-				newDataReady();
+				synchronized (this) {
+					if (imageCollector != null) {
+						imageCollector.newDataReady();
+					}
+				}
 			} else if (c == CMDS[TOGGLE_KEY_LOCK_CMD]) {
 				keyboardLocked=!keyboardLocked;
 				if(keyboardLocked) {
@@ -995,8 +999,6 @@ Runnable , GpsMidDisplayable{
 				}
 			} else if (c == CMDS[RECENTER_GPS_CMD]) {
 				gpsRecenter = true;
-				// redraw immediately
-				newDataReady();
 			} else if (c == CMDS[TACHO_CMD]) {
 				GuiTacho tacho = new GuiTacho(this);
 				tacho.show();
@@ -1847,12 +1849,8 @@ Runnable , GpsMidDisplayable{
 	}
 
 	public void newDataReady() {
-		// redraw immediately
-		synchronized (this) {
-			if (imageCollector != null) {
-				imageCollector.newDataReady();
-			}
-		}
+		if (imageCollector != null)
+			imageCollector.newDataReady();
 	}
 
 	public void show() {
