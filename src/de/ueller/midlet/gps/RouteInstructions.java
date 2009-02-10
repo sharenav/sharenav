@@ -1046,7 +1046,7 @@ public class RouteInstructions {
 		for (int i=2; i<route.size()-1; i++){
 			c = (ConnectionWithNode) route.elementAt(i);
 			cStart = (ConnectionWithNode) route.elementAt(i-1);
-			while (c.wayRouteInstruction == RI_STRAIGHT_ON && c.wayNameIdx == cStart.wayNameIdx && i<route.size()-2) {
+			while (c.wayRouteInstruction == RI_STRAIGHT_ON && i<route.size()-2) {
 				cStart.wayDistanceToNext += c.wayDistanceToNext;
 				c.wayRouteInstruction = RI_STRAIGHT_ON_QUIET;
 				// c.wayDistanceToNext = 0;
