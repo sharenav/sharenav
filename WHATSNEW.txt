@@ -13,10 +13,11 @@ GpsMid 0.4.55
        - show available key shortcuts in Setup / Key shortcuts
        *** Navigation ***
        - Routing to POIs/waypoints is now possible - GpsMid will route you to the closest routable way
-       - highlighting the route solution path
+       - highlighting the route solution path (the route solution is drawn on top if the map is synched with
+         the GPS receiver but when panning manually it will respect the layer information) 
        - improved off-route detection
        - routing instructions for entering and exiting motorways, for roundabouts and tunnels
-       - straight-on instructions only if name of street changes
+       - skip straight-on instructions
        *** Tracks and Waypoints ***
        - Perform actions like export/delete on multiple selected tracks (thx mbaeurle)
        - Ability to rename tracks and waypoints
