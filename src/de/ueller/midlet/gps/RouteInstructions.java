@@ -790,7 +790,7 @@ public class RouteInstructions {
 				}
 			}
 			routeRecalculationRequired = isOffRoute(route, center);
-			if ( routeRecalculationRequired && !trace.atTarget ) {
+			if ( routeRecalculationRequired && !trace.atTarget && trace.gpsRecenter) {
 				soundToPlay.setLength(0);
 				trace.autoRouteRecalculate();				
 			}
