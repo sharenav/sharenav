@@ -283,8 +283,12 @@ public class Way extends Entity{
 	} 
 
 
-	public void paintAsPath(PaintContext pc, SingleTile t) {
-		processPath(pc,t,Tile.OPT_PAINT);
+	public void paintAsPath(PaintContext pc, SingleTile t, byte layer) {
+		processPath(pc,t,Tile.OPT_PAINT, layer);
+	}
+
+	public void paintHighlightPath(PaintContext pc, SingleTile t, byte layer) {
+		processPath(pc,t,Tile.OPT_PAINT | Tile.OPT_HIGHLIGHT, layer);
 	}
 
 	/* check if the way contains the nodes searchCon1 and searchCon2
@@ -393,7 +397,7 @@ public class Way extends Entity{
 
 	
 	
-	public void processPath(PaintContext pc, SingleTile t, int mode) {		
+	public void processPath(PaintContext pc, SingleTile t, int mode, byte layer) {		
 		WayDescription wayDesc = C.getWayDescription(type);
 		int w = 0;
 		byte highlight=0;
@@ -460,6 +464,12 @@ public class Way extends Entity{
 									if ( (Math.abs(t.nodeLat[idx] - searchCon1Lat) < 2) ) {
 										searchCon1Lon = (short) ((c2.to.lon - t.centerLon) * t.fpm);
 										if ( (Math.abs(t.nodeLon[idx] - searchCon1Lon) < 2) ) {
+											// if we are not in highlight mode, just flag that this layer contains a path segment to hightight 
+											if ((mode & Tile.OPT_HIGHLIGHT) == 0) {
+												pc.hlLayers |= (1<<layer);
+												return;
+											}
+											
 											highlight=2;
 											short from = c.wayFromConAt;
 											short to = c.wayToConAt;
@@ -476,7 +486,6 @@ public class Way extends Entity{
 //											System.out.println(C.getWayDescription(this.type).description + " " + (name==null?"":name) + " " + Integer.toString((int)c.wayDistanceToNext) + "m " +
 //													"from: " + from + "(" + C.getWayDescription(c.wayType).description + " " + (nameFrom==null?"":nameFrom) + ") " +
 //													"to: " + to + "(" + C.getWayDescription(c2.wayType).description + " " + (nameTo==null?"":nameTo) + ")" );
-
 											for (int n = from; n != to; n++) {
 												hl[n] = i;
 												if (isRoundAbout() && n >= (path.length-1) )  {
@@ -496,6 +505,9 @@ public class Way extends Entity{
 			}		
 		}
 
+		if (highlight == 0 && (mode & Tile.OPT_HIGHLIGHT) != 0) {
+			return;
+		}		
 		
 		IntPoint lineP1 = pc.lineP1;
 		IntPoint lineP2 = pc.lineP2;

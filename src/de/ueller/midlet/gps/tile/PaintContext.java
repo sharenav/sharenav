@@ -28,6 +28,10 @@ public class PaintContext extends ScreenContext {
 	public final static byte STATE_IN_COPY=3;
 	
 	public volatile byte state=0;
+	
+	// layers containing highlighted path
+	public byte hlLayers=0;
+	
 	public Graphics g;
 	/** 
 	 * used to avoid frequent memory allocations this point have to have

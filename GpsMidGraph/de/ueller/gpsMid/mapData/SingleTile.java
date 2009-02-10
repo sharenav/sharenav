@@ -115,7 +115,8 @@ public class SingleTile extends Tile implements QueueableTile {
 
 		boolean renderArea = ((layer & Tile.LAYER_AREA) != 0);
 		boolean renderAll = ((layer & Tile.LAYER_ALL) != 0);;
-		byte relLayer = (byte)(((int)layer) & ~Tile.LAYER_AREA);
+		boolean renderHighlight = ((layer & Tile.LAYER_HIGHLIGHT) != 0);
+		byte relLayer = (byte)(((int)layer) & ~(Tile.LAYER_AREA | Tile.LAYER_HIGHLIGHT));
 		
 		
 		if (pc.getP() == null) {
@@ -252,7 +253,12 @@ public class SingleTile extends Tile implements QueueableTile {
 						if ((opt & Tile.OPT_PAINT) != 0){
 							w.setColor(pc);
 							if (!w.isArea()) {
-								w.paintAsPath(pc, this);
+								if (renderHighlight) {
+									w.paintHighlightPath(pc, this, (byte) 0);
+								} else {
+									w.paintAsPath(pc, this, relLayer);
+								}
+								
 							} else {
 								w.paintAsArea(pc, this);
 							}
@@ -262,7 +268,7 @@ public class SingleTile extends Tile implements QueueableTile {
 							}
 						} else if ((opt & Tile.OPT_FIND_CURRENT) != 0) {
 							if (!w.isArea()) {
-								w.processPath(pc, this, Tile.OPT_FIND_CURRENT);
+								w.processPath(pc, this, Tile.OPT_FIND_CURRENT, (byte) 0);
 							}
 						}
 					}

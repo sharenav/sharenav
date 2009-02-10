@@ -151,19 +151,38 @@ public class ImageCollector implements Runnable {
 
 				float boost=Configuration.getDetailBoostMultiplier();
 				
+				/*
+				 * layers containing highlighted path segments
+				 */
+				createPC.hlLayers = 0;
+				
 				/**
 				 * At the moment we don't really have proper layer support
 				 * in the data yet, so only split it into Area, Way and Node
 				 * layers
 				 */
 				byte layersToRender[] = {Tile.LAYER_AREA, 1 | Tile.LAYER_AREA , 2 | Tile.LAYER_AREA,
-						3 | Tile.LAYER_AREA, 4 | Tile.LAYER_AREA,  0, 1, 2, 3, 4, Tile.LAYER_NODE};
+						3 | Tile.LAYER_AREA, 4 | Tile.LAYER_AREA,  0, 1, 2, 3, 4,
+						0 | Tile.LAYER_HIGHLIGHT, 1 | Tile.LAYER_HIGHLIGHT,
+						2 | Tile.LAYER_HIGHLIGHT, 3 | Tile.LAYER_HIGHLIGHT,
+						Tile.LAYER_NODE};
 				
 				/**
 				 * Draw each layer seperately to enforce paint ordering.
 				 *
 				 */
 				for (byte layer = 0; layer < layersToRender.length; layer++) {
+					// render only highlight layers which actually have highlighted path segments
+					if (
+						(layersToRender[layer] & Tile.LAYER_HIGHLIGHT) > 0
+						&& layersToRender[layer] != Tile.LAYER_NODE
+					) {
+						byte relLayer = (byte)(((int)layersToRender[layer]) & 0x0000000F);
+						System.out.println ("CHECK HL LAYERS: " + createPC.hlLayers + " " + relLayer);
+						if ( (createPC.hlLayers & (1 << relLayer)) == 0) {
+							continue;
+						}
+					}
 					byte minTile = C.scaleToTile((int)(createPC.scale / boost));
 					if ((minTile >= 3) && (t[3] != null)) {
 						t[3].paint(createPC,layersToRender[layer]);
