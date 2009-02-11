@@ -999,6 +999,7 @@ Runnable , GpsMidDisplayable{
 				}
 			} else if (c == CMDS[RECENTER_GPS_CMD]) {
 				gpsRecenter = true;
+				newDataReady();
 			} else if (c == CMDS[TACHO_CMD]) {
 				GuiTacho tacho = new GuiTacho(this);
 				tacho.show();
