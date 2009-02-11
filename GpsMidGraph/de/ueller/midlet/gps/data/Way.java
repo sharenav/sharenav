@@ -62,6 +62,9 @@ public class Way extends Entity{
 	public static final byte PAINTMODE_COUNTFITTINGCHARS = 0;
 	public static final byte PAINTMODE_DRAWCHARS = 1;
 	public static final byte INDENT_PATHNAME = 2;
+
+	public static final int PATHSEG_DO_NOT_HIGHLIGHT = -1;
+	public static final int PATHSEG_DO_NOT_DRAW = -2;
 	
 	protected static final Logger logger = Logger.getInstance(Way.class,Logger.TRACE);
 
@@ -410,8 +413,14 @@ public class Way extends Entity{
 			y = new int[path.length];
 			hl = new int[path.length];
 		}
+
+		// initialize with default draw states for the path's segments
+		int	hlDefault = PATHSEG_DO_NOT_HIGHLIGHT;
+		if ( (mode & Tile.OPT_HIGHLIGHT) != 0) {
+			hlDefault = PATHSEG_DO_NOT_DRAW;
+		}
 		for (int i1 = 0; i1 < path.length; i1++) {
-			hl[i1] = -1;
+			hl[i1] = hlDefault;
 		}
 
 		if ((mode & Tile.OPT_PAINT) > 0) {		
@@ -464,10 +473,9 @@ public class Way extends Entity{
 									if ( (Math.abs(t.nodeLat[idx] - searchCon1Lat) < 2) ) {
 										searchCon1Lon = (short) ((c2.to.lon - t.centerLon) * t.fpm);
 										if ( (Math.abs(t.nodeLon[idx] - searchCon1Lon) < 2) ) {
-											// if we are not in highlight mode, just flag that this layer contains a path segment to hightight 
+											// if we are not in highlight mode, flag that this layer contains a path segment to highlight 
 											if ((mode & Tile.OPT_HIGHLIGHT) == 0) {
 												pc.hlLayers |= (1<<layer);
-												return;
 											}
 											
 											highlight=2;
@@ -562,7 +570,7 @@ public class Way extends Entity{
 						pc.squareDstToRoutableWay = dst;
 						pc.nearestRoutableWay = this;
 					}
-					if (dst < pc.squareDstToRoutePath && hl[i1-1] != -1) {
+					if (dst < pc.squareDstToRoutePath && hl[i1-1] > PATHSEG_DO_NOT_HIGHLIGHT) {
 						pc.squareDstToRoutePath = dst;						
 						pc.routePathConnection = hl[i1-1];
 					}				
@@ -637,12 +645,14 @@ public class Way extends Entity{
     {
         int defaultColor = g.getColor();
     	for(int i = 0; i < count; i++) {
-			if (hl[i]!=-1) {
-				g.setColor(C.ROUTE_COLOR);
-			} else {
-				g.setColor(defaultColor);
+			if (hl[i] != PATHSEG_DO_NOT_DRAW) {
+				if (hl[i] != PATHSEG_DO_NOT_HIGHLIGHT) {
+					g.setColor(C.ROUTE_COLOR);
+				} else {
+					g.setColor(defaultColor);
+				}
+				g.drawLine(xPoints[i], yPoints[i], xPoints[i + 1], yPoints[i + 1]);
 			}
-        	g.drawLine(xPoints[i], yPoints[i], xPoints[i + 1], yPoints[i + 1]);
 		}
     }
 
@@ -1084,26 +1094,28 @@ public class Way extends Entity{
 					l4b.set(s2);
 				}
 			}
-//			if (mode == DRAW_AREA){
-				if (highlight == 2 && hl[i] != -1) {
-					pc.g.setColor(C.ROUTE_COLOR);				
-				} else {
-					setColor(pc);
-				}
-				pc.g.fillTriangle(l2b.x, l2b.y, l1b.x, l1b.y, l1e.x, l1e.y);
-				pc.g.fillTriangle(l1e.x, l1e.y, l2e.x, l2e.y, l2b.x, l2b.y);
-//			}
-//			if (mode == DRAW_BORDER){
-				if (highlight == 1){
-					pc.g.setColor(255,50,50);
-				} else if (highlight == 2 && hl[i] != -1){
-					pc.g.setColor(C.ROUTE_BORDERCOLOR);
-				} else {
-					setBorderColor(pc);
-				}
-				pc.g.drawLine(l1b.x, l1b.y, l1e.x, l1e.y);
-				pc.g.drawLine(l2b.x, l2b.y, l2e.x, l2e.y);
-//			}
+			if (hl[i] != PATHSEG_DO_NOT_DRAW) {
+	//			if (mode == DRAW_AREA){
+					if (highlight == 2 && hl[i] != PATHSEG_DO_NOT_HIGHLIGHT) {
+						pc.g.setColor(C.ROUTE_COLOR);				
+					} else {
+						setColor(pc);
+					}
+					pc.g.fillTriangle(l2b.x, l2b.y, l1b.x, l1b.y, l1e.x, l1e.y);
+					pc.g.fillTriangle(l1e.x, l1e.y, l2e.x, l2e.y, l2b.x, l2b.y);
+	//			}
+	//			if (mode == DRAW_BORDER){
+					if (highlight == 1){
+						pc.g.setColor(255,50,50);
+					} else if (highlight == 2 && hl[i] != PATHSEG_DO_NOT_HIGHLIGHT){
+						pc.g.setColor(C.ROUTE_BORDERCOLOR);
+					} else {
+						setBorderColor(pc);
+					}
+					pc.g.drawLine(l1b.x, l1b.y, l1e.x, l1e.y);
+					pc.g.drawLine(l2b.x, l2b.y, l2e.x, l2e.y);
+	//			}
+			}
 			l1b.set(l3b);
 			l2b.set(l4b);
 			l1e.set(l3e);
