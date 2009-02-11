@@ -22,7 +22,7 @@ import de.ueller.midlet.graphics.LcdNumericFont;
 public class GuiTacho extends Canvas implements CommandListener,
 		GpsMidDisplayable, LocationUpdateListener {
 
-	private final Command EXIT_CMD = new Command("Back", Command.BACK, 5);
+	private final Command BACK_CMD = new Command("Back", Command.BACK, 5);
 	private final static Logger logger = Logger.getInstance(GuiTacho.class,
 			Logger.DEBUG);
 	private final Trace parent;
@@ -49,7 +49,7 @@ public class GuiTacho extends Canvas implements CommandListener,
 		logger.info("init Tacho");
 
 		this.parent = parent;
-		addCommand(EXIT_CMD);
+		addCommand(BACK_CMD);
 		setCommandListener(this);
 
 		lcdFont = new LcdNumericFont();
@@ -90,12 +90,11 @@ public class GuiTacho extends Canvas implements CommandListener,
 		cal.setTime(pos.date);
 		timeString.setLength(0);
 		timeString
-				.append(
-						HelperRoutines.formatInt2(cal
+				.append(HelperRoutines.formatInt2(cal
 								.get(Calendar.DAY_OF_MONTH)))
-				.append("/")
-				.append(HelperRoutines.formatInt2(cal.get(Calendar.MONTH)))
-				.append("/")
+				.append(".")
+				.append(HelperRoutines.formatInt2(cal.get(Calendar.MONTH) + 1))
+				.append(".")
 				.append(HelperRoutines.formatInt2(cal.get(Calendar.YEAR) % 100));
 		g.drawString(timeString.toString(), 3, y, Graphics.TOP | Graphics.LEFT);
 		
@@ -124,10 +123,11 @@ public class GuiTacho extends Canvas implements CommandListener,
 		
 		g.drawString("km/h", w - 1, y - 3, Graphics.BOTTOM | Graphics.RIGHT);
 
-		if (pos.speed > 10)
+		if (pos.speed > 10) {
 			lcdFont.drawInt(g, (int)(pos.speed * 3.6f), w - kmhWidth - 1, y - 5);
-		else
+		} else {
 			lcdFont.drawFloat(g, pos.speed * 3.6f, 1, w - kmhWidth - 1, y - 5);
+		}
 		g.drawLine(0, y, w, y);
 		
 		lcdFont.setFontSize(18);
@@ -135,27 +135,26 @@ public class GuiTacho extends Canvas implements CommandListener,
 		y += 28;
 		g.drawString("km", (w >> 1) - 1, y - 5, Graphics.BOTTOM
 				| Graphics.RIGHT);
-		if (odo > 10)
+		if (odo > 10) {
 			lcdFont.drawFloat(g, odo, 1, (w >> 1) - kmWidth - 2, y);
-		else
+		} else {
 			lcdFont.drawFloat(g, odo, 2, (w >> 1) - kmWidth - 2, y);
-		
+		}
 		g.drawString("km/h", w - 1, y - 5, Graphics.BOTTOM | Graphics.RIGHT);
-		if (avg_spd > 30)
+		if (avg_spd > 30) {
 			lcdFont.drawInt(g, (int)avg_spd, w - kmhWidth - 2, y);
-		else
+		} else {
 			lcdFont.drawFloat(g, avg_spd, 1, w - kmhWidth - 2, y);
+		}
 		g.drawLine(0, y, w, y);
 		g.drawLine(w >> 1, y, w >> 1, y + 32);
 		y += 28;
 		
-		g
-				.drawString("m", (w >> 1) - 1, y - 3, Graphics.BOTTOM
-						| Graphics.RIGHT);
-		lcdFont.drawInt(g, (int) pos.altitude, (w >> 1) - mWidth, y);
+		g.drawString("m", (w >> 1) - 1, y - 3, Graphics.BOTTOM | Graphics.RIGHT);
+		lcdFont.drawInt(g, (int) pos.altitude, (w >> 1) - mWidth - 2, y);
 		
 		g.drawString("m/min", w - 1, y - 3, Graphics.BOTTOM | Graphics.RIGHT);
-		lcdFont.drawFloat(g, alt_delta * 60, 1, w - mminWidth, y);
+		lcdFont.drawFloat(g, alt_delta * 60, 1, w - mminWidth - 2, y);
 		g.drawLine(0, y, w, y);
 		y += fHeight;
 		
@@ -163,11 +162,11 @@ public class GuiTacho extends Canvas implements CommandListener,
 		//cal.setTime(dur);
 		timeString.setLength(0);
 		timeString.append(
-				HelperRoutines.formatInt2((int)(duration/(1000*60*60))))
+				HelperRoutines.formatInt2((int)(duration / (1000 * 60 * 60))))
 				.append(":").append(
-						HelperRoutines.formatInt2((int)(duration/(1000*60)) % 60))
+						HelperRoutines.formatInt2((int)(duration / (1000 * 60)) % 60))
 				.append(":").append(
-						HelperRoutines.formatInt2((int)(duration/(1000)) % 60));
+						HelperRoutines.formatInt2((int)(duration / 1000) % 60));
 		g.drawString(timeString.toString(), (w >> 1) - 1, y + 3,
 				Graphics.BOTTOM | Graphics.RIGHT);
 		g.drawString(max_spd + " km/h", w - 1, y + 3, Graphics.BOTTOM
@@ -179,11 +178,10 @@ public class GuiTacho extends Canvas implements CommandListener,
 		synchronized (parent.locationUpdateListeners) {
 			parent.locationUpdateListeners.addElement(this);
 		}
-
 	}
 
 	public void commandAction(Command c, Displayable d) {
-		if (c == EXIT_CMD) {
+		if (c == BACK_CMD) {
 			synchronized (parent.locationUpdateListeners) {
 				parent.locationUpdateListeners.removeElement(this);
 			}
