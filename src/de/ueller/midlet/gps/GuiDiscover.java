@@ -28,7 +28,7 @@ import de.ueller.gps.data.Configuration;
 import de.ueller.gpsMid.mapData.SingleTile;
 import de.ueller.midlet.gps.data.Gpx;
 import de.ueller.midlet.gps.data.Projection;
-import de.ueller.gpsMid.mapData.GpxTile;
+import de.ueller.gpsMid.mapData.WaypointsTile;
 
 public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMidDisplayable, SelectionListener {
 
@@ -555,7 +555,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 					sizeOpts.setSelectedIndex(0, Configuration.getCfgBitState(Configuration.CFGBIT_POI_LABELS_LARGER));
 					sizeOpts.setSelectedIndex(1, Configuration.getCfgBitState(Configuration.CFGBIT_WPT_LABELS_LARGER));
 					SingleTile.newPOIFont();
-					GpxTile.newWptFont();
+					WaypointsTile.useNewWptFont();
 					gaugeDetailBoost.setValue(Configuration.getDetailBoostDefault());
 					// convert bits from backlight flag into selection states
 					boolean[] sellight = new boolean[6];

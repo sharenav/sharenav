@@ -1,6 +1,6 @@
 package de.ueller.midlet.gps.data;
 /*
- * GpsMid - Copyright (c) 2008 Kai Krueger apm at users dot sourceforge dot net 
+ * GpsMid - Copyright (c) 2008 Kai Krueger apmonkey at users dot sourceforge dot net 
  * See Copying
  */
 
@@ -11,7 +11,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.lang.Math;
 import java.util.Calendar;
 import java.util.Date;
@@ -29,6 +28,7 @@ import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Position;
 import de.ueller.gpsMid.mapData.GpxTile;
 import de.ueller.gpsMid.mapData.Tile;
+import de.ueller.gpsMid.mapData.WaypointsTile;
 import de.ueller.midlet.gps.CompletionListener;
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.GuiNameEnter;
@@ -91,11 +91,13 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 	private DataOutputStream dos;
 	private boolean trkRecordingSuspended;
 		
-	private GpxTile tile;
+	private GpxTile trackTile;
+	private WaypointsTile wayPtTile;
 
 
 	public Gpx() {
-		tile = new GpxTile();
+		trackTile = new GpxTile();
+		wayPtTile = new WaypointsTile();
 		reloadWpt = true;
 		processorThread = new Thread(this);
 		processorThread.setPriority(Thread.MIN_PRIORITY);
@@ -111,34 +113,34 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 			//TODO:
 		} else {
 			try {
-			tile.dropTrk();
-			openTrackDatabase();
-			DataInputStream dis1 = new DataInputStream(new ByteArrayInputStream(trackDatabase.getRecord(trk.id)));
-			trackName = dis1.readUTF();
-			recorded = dis1.readInt();
-			int trackSize = dis1.readInt();
-			byte[] trackArray = new byte[trackSize];
-			dis1.read(trackArray);
-			DataInputStream trackIS = new DataInputStream(new ByteArrayInputStream(trackArray));
-			for (int i = 0; i < recorded; i++) {
-				float lat = trackIS.readFloat();
-				float lon = trackIS.readFloat();
-				if (i == 0) {
-					Trace tr = Trace.getInstance();
-					tr.receivePosItion(lat * MoreMath.FAC_DECTORAD, lon * MoreMath.FAC_DECTORAD, tr.scale);
+				trackTile.dropTrk();
+				openTrackDatabase();
+				DataInputStream dis1 = new DataInputStream(new ByteArrayInputStream(trackDatabase.getRecord(trk.id)));
+				trackName = dis1.readUTF();
+				recorded = dis1.readInt();
+				int trackSize = dis1.readInt();
+				byte[] trackArray = new byte[trackSize];
+				dis1.read(trackArray);
+				DataInputStream trackIS = new DataInputStream(new ByteArrayInputStream(trackArray));
+				for (int i = 0; i < recorded; i++) {
+					float lat = trackIS.readFloat();
+					float lon = trackIS.readFloat();
+					if (i == 0) {
+						Trace tr = Trace.getInstance();
+						tr.receivePosItion(lat * MoreMath.FAC_DECTORAD, lon * MoreMath.FAC_DECTORAD, tr.scale);
+					}
+					trackIS.readShort(); //altitude
+					long time = trackIS.readLong();	//Time
+					trackIS.readByte(); //Speed
+					if (time > Long.MIN_VALUE + 10) { //We use some special markers in the Time to indicate 
+									//Data other than trackpoints, so ignore these.
+						trackTile.addTrkPt(lat, lon, false);
+					}
 				}
-				trackIS.readShort(); //altitude
-				long time = trackIS.readLong();	//Time
-				trackIS.readByte(); //Speed
-				if (time > Long.MIN_VALUE + 10) { //We use some special markers in the Time to indicate 
-								//Data other than trackpoints, so ignore these.
-					tile.addTrkPt(lat, lon, false);
-				}
-			}
-			dis1.close();
-			dis1 = null;
-			trackDatabase.closeRecordStore();
-			trackDatabase = null;
+				dis1.close();
+				dis1 = null;
+				trackDatabase.closeRecordStore();
+				trackDatabase = null;
 			} catch (IOException e) {
 				logger.exception("IOException displaying track", e);
 			} catch (RecordStoreNotOpenException e) {
@@ -182,11 +184,11 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		} catch (RecordStoreNotOpenException e) {
 			logger.exception("Exception storing waypoint (database not open)", e);
 		} catch (RecordStoreFullException e) {
-			logger.exception("Record store is full, could not store waypoint", e);			
+			logger.exception("Record store is full, could not store waypoint", e);
 		} catch (RecordStoreException e) {
 			logger.exception("Exception storing waypoint", e);
 		}
-		tile.addWayPt(waypt);		
+		wayPtTile.addWayPt(waypt);		
 	}
 
 	public void updateWayPt(PositionMark waypt) {
@@ -199,30 +201,31 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		} catch (RecordStoreNotOpenException e) {
 			logger.exception("Exception updating  waypoint (database not open)", e);
 		} catch (RecordStoreFullException e) {
-			logger.exception("Record store is full, could not update waypoint", e);			
+			logger.exception("Record store is full, could not update waypoint", e);
 		} catch (RecordStoreException e) {
 			logger.exception("Exception updating waypoint", e);
 		}
 	}
 		
 	public boolean existsWayPt(PositionMark newWayPt) {
-		if (tile != null) {
-			return tile.existsWayPt(newWayPt);
+		if (wayPtTile != null) {
+			return wayPtTile.existsWayPt(newWayPt);
 		}
-		return false;		
+		return false;
 	}
 		
 	
 	public void addTrkPt(Position trkpt) {
-		if (trkRecordingSuspended)
+		if (trkRecordingSuspended) {
 			return;
+		}
 		
 		//#debug debug
 		logger.debug("Adding trackpoint: " + trkpt);
 		
-		long msTime=trkpt.date.getTime();
-		float lat=trkpt.latitude*MoreMath.FAC_DECTORAD;
-		float lon=trkpt.longitude*MoreMath.FAC_DECTORAD;
+		long msTime = trkpt.date.getTime();
+		float lat = trkpt.latitude * MoreMath.FAC_DECTORAD;
+		float lon = trkpt.longitude * MoreMath.FAC_DECTORAD;
 		float distance = 0.0f;
 		boolean doRecord=false;
 
@@ -296,7 +299,7 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 				dos.writeLong(trkpt.date.getTime());
 				dos.writeByte((byte)(trkpt.speed*3.6f)); //Convert to km/h
 				recorded++;
-				tile.addTrkPt(trkpt.latitude, trkpt.longitude, false);
+				trackTile.addTrkPt(trkpt.latitude, trkpt.longitude, false);
 				if ((oldlat != 0.0f) || (oldlon != 0.0f)) {
 					trkOdo += distance;
 					long timeDelta = msTime - oldMsTime;
@@ -325,8 +328,8 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 				Trace.getInstance().dropCache();
 				logger.info("Was out of memory, but we might have recovered");
 			}catch (OutOfMemoryError oome2) {
-				logger.fatal("Out of memory, can't add trackpoint");				
-			}			
+				logger.fatal("Out of memory, can't add trackpoint");
+			}
 		} catch (IOException e) {
 			logger.exception("Could not add trackpoint", e);
 		}
@@ -365,7 +368,7 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 	
 	public void newTrk() {
 		logger.debug("Starting a new track recording");
-		tile.dropTrk();
+		trackTile.dropTrk();
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(new Date());
 		
@@ -441,7 +444,7 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		}
 		dos = null;
 		baos = null;
-		tile.dropTrk();
+		trackTile.dropTrk();
 	}
 	
 	
@@ -482,7 +485,7 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 			}
 			trackDatabase.closeRecordStore();
 			trackDatabase = null;
-			tile.dropTrk();
+			trackTile.dropTrk();
 		} catch (RecordStoreNotOpenException e) {
 			logger.exception("Exception deleting track (database not open)", e);
 		} catch (InvalidRecordIDException e) {
@@ -552,7 +555,7 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		feedbackListener = ul;
 		this.url = url;
 		sendTrk = true;
-		tile.dropTrk();
+		trackTile.dropTrk();
 		exportTracks = tracks;
 		processorThread = new Thread(this);
 		processorThread.setPriority(Thread.MIN_PRIORITY);
@@ -568,7 +571,14 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 	}
 	
 	public PositionMark [] listWayPt() {
-		return tile.listWayPt();
+		return wayPtTile.listWayPt();
+	}
+	
+	public int getNumberWaypoints() {
+		int noWpt = wayPtTile.getNumberWaypoints();
+		//#debug debug
+		logger.debug("WaypointsTile returns: No of WP = " + noWpt);
+		return noWpt;
 	}
 	
 	/**
@@ -621,8 +631,8 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 	}
 	
 	public void dropCache() {
-		tile.dropTrk();
-		tile.dropWayPt();
+		trackTile.dropTrk();
+		wayPtTile.dropWayPt();
 		System.gc();
 		if (isRecordingTrk())
 			saveTrk();		
@@ -634,8 +644,8 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 	}
 
 	public void paint(PaintContext pc, byte layer) {
-		tile.paint(pc, layer);
-		
+		trackTile.paint(pc, layer);
+		wayPtTile.paint(pc, layer);
 	}
 	
 	public boolean isRecordingTrk() {
@@ -768,7 +778,7 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 	 */
 	private void loadWaypointsFromDatabase() {		
 		try {
-			tile.dropWayPt();
+			wayPtTile.dropWayPt();
 			RecordEnumeration renum;
 			
 			logger.info("Loading waypoints into tile");
@@ -778,7 +788,7 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 				int id;			
 				id = renum.nextRecordId();			
 				PositionMark waypt = new PositionMark(id, wayptDatabase.getRecord(id));
-				tile.addWayPt(waypt);						
+				wayPtTile.addWayPt(waypt);						
 			}
 			wayptDatabase.closeRecordStore();
 			wayptDatabase = null;
@@ -790,9 +800,8 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 	}
 
 	private void openTrackDatabase() {
-		try {			
-			if (trackDatabase == null)
-			{
+		try {
+			if (trackDatabase == null) {
 				logger.info("Opening track database");
 				trackDatabase = RecordStore.openRecordStore("tracks", true);
 			}
@@ -892,7 +901,7 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 	}
 
 	private void streamWayPts (OutputStream oS) throws IOException{		
-		PositionMark[] waypts = tile.listWayPt();
+		PositionMark[] waypts = wayPtTile.listWayPt();
 		PositionMark wayPt = null;
 		
 		for (int i = 0; i < waypts.length; i++) {
@@ -1077,7 +1086,7 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		c.setTime(time);
 		return c.get(Calendar.YEAR) + "-" + formatInt2(c.get(Calendar.MONTH) + 1) + "-" +
 		formatInt2(c.get(Calendar.DAY_OF_MONTH)) + "T" + formatInt2(c.get(Calendar.HOUR_OF_DAY)) + ":" +
-		formatInt2(c.get(Calendar.MINUTE)) + ":" + formatInt2(c.get(Calendar.SECOND)) + "Z";		 
+		formatInt2(c.get(Calendar.MINUTE)) + ":" + formatInt2(c.get(Calendar.SECOND)) + "Z";
 		
 	}
 
