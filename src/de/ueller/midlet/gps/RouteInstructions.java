@@ -744,10 +744,11 @@ public class RouteInstructions {
 								// Remembering and checking if the prepare instruction already was given since the latest passing of an arrow avoids this
 								prepareInstructionSaid = true;
 							} else if (
-								intDistNow < 900 && intDistNow < getTellDistance(iNow)
+								intDistNow < 900 && intDistNow < getTellDistance(iNow, aNow)
 								// give in-xxx-meters-instruction only if arrow has not already been passed (this avoids possibly wrong in-instructions after passing the arrow)
-								&& iNow!=iPassedRouteArrow								&& iNow!=iPassedRouteArrow
-							) { //&& !prepareInstructionSaid) {
+								&& iNow!=iPassedRouteArrow
+								&& !prepareInstructionSaid
+							) {
 								soundRepeatDelay=60;
 								soundToPlay.append("IN;" + Integer.toString(intDistNow / 100)+ "00;METERS;" + soundDirections[aNow]);								
 							}							
@@ -1057,13 +1058,13 @@ public class RouteInstructions {
 	}
 	
 	
-	private int getTellDistance(int iConnection) {
+	private int getTellDistance(int iConnection, byte aNow) {
 		ConnectionWithNode cPrev = (ConnectionWithNode) route.elementAt(iConnection -1);
 		
 		int distFromSpeed = 200;
 		int distFromPrevConn = (int) cPrev.wayDistanceToNext + 50;
 		int speed=trace.speed;
-		if (speed>100) {
+		if (speed>100 || aNow == RI_INTO_TUNNEL) {
 			distFromSpeed=500;							
 		} else if (speed>80) {
 			distFromSpeed=400;							
