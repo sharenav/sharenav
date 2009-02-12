@@ -577,256 +577,259 @@ public class RouteInstructions {
 		*/
 		final int PASSINGDISTANCE=25;
 
-		StringBuffer soundToPlay = new StringBuffer();
-		StringBuffer sbRouteInstruction = new StringBuffer();
-    	// backgound colour for standard routing instructions
-		byte soundRepeatDelay=3;
-		byte soundMaxTimesToPlay=2;
-		
-
-		// this makes the distance when prepare-sound is played depending on the speed
-		int PREPAREDISTANCE=100;
-		int speed=trace.speed;
-		if (speed>100) {
-			PREPAREDISTANCE=500;							
-		} else if (speed>80) {
-			PREPAREDISTANCE=300;							
-		} else if (speed>55) {
-			PREPAREDISTANCE=200;							
-		} else if (speed>45) {
-			PREPAREDISTANCE=150;							
-		} else if (speed>35) {
-			PREPAREDISTANCE=125;													
-		}
-		
-		ConnectionWithNode c;
-		ConnectionWithNode cNow = null;
-		ConnectionWithNode cThen =null;
-		Vector routeNodes = trace.getRouteNodes();
-		// Show helper nodes for Routing
-		for (int x=0; x<routeNodes.size();x++){
-			RouteHelper n=(RouteHelper) routeNodes.elementAt(x);
-			pc.getP().forward(n.node.radlat, n.node.radlon, pc.lineP2);
-			pc.g.drawRect(pc.lineP2.x-5, pc.lineP2.y-5, 10, 10);
-			pc.g.drawString(n.name, pc.lineP2.x+7, pc.lineP2.y+5, Graphics.BOTTOM | Graphics.LEFT);
-		}
-		boolean routeRecalculationRequired=false;
-		synchronized(this) {
-			if (route != null && route.size() > 0){
-				// there's a route so no calculation required
-				routeRecalculationRequired=false;
-	
-				// find nearest routing arrow (to center of screen)
-				int iNow=0;
-				int iRealNow=0;
-				byte aNow=RI_STRAIGHT_ON_QUIET;
-				int iThen=0;
-				byte aThen=RI_STRAIGHT_ON_QUIET;
-				byte aPaint=RI_STRAIGHT_ON_QUIET;
-				double distNow=0;
-				int intDistNow=0;
-				
-				if (routePathConnection != -1 && routePathConnection < route.size()-1) {
-					iRealNow = routePathConnection+1;
-					iNow = idxNextInstructionArrow (iRealNow);
-					cNow = (ConnectionWithNode) route.elementAt(iNow);
-					aNow = cNow.wayRouteInstruction;
-			    	distNow=ProjMath.getDistance(center.radlat, center.radlon, cNow.to.lat, cNow.to.lon);
-					intDistNow=new Double(distNow).intValue();
-					iThen = idxNextInstructionArrow (iNow+1);
-					if (routePathConnection < route.size()-2) {
-						cThen = (ConnectionWithNode) route.elementAt(iThen);
-						aThen = cThen.wayRouteInstruction;
-					}
-				}
-
-				c = (ConnectionWithNode) route.elementAt(0);
-				for (int i=1; i<route.size();i++){
-					c = (ConnectionWithNode) route.elementAt(i);
-					if (c == null){
-						logger.error("show Route got null connection");
-						break;
-					}
-					if (c.to == null){
-						logger.error("show Route got connection with NULL as target");
-						break;
-					}
-					if (pc == null){
-						logger.error("show Route strange pc is null");
-						break;
-					}
-
-					// no off-screen check for current route arrow
-					if(i!=iNow) {
-						if (c.to.lat < pc.getP().getMinLat()) {
-							continue;
-						}
-						if (c.to.lon < pc.getP().getMinLon()) {
-							continue;
-						}
-						if (c.to.lat > pc.getP().getMaxLat()) {
-							continue;
-						}
-						if (c.to.lon > pc.getP().getMaxLon()) {
-							continue;
-						}
-					}
-
-					Image pict = pc.images.IMG_MARK; aPaint=0;
-					aPaint = c.wayRouteInstruction;
-					switch (aPaint) {
-						case RI_HARD_RIGHT:		pict=pc.images.IMG_HARDRIGHT; break;
-						case RI_RIGHT:			pict=pc.images.IMG_RIGHT; break;
-						case RI_HALF_RIGHT:		pict=pc.images.IMG_HALFRIGHT; break;
-						case RI_STRAIGHT_ON_QUIET:
-						case RI_STRAIGHT_ON: 	pict=pc.images.IMG_STRAIGHTON; break;
-						case RI_HALF_LEFT:		pict=pc.images.IMG_HALFLEFT; break;
-						case RI_LEFT:			pict=pc.images.IMG_LEFT; break;
-						case RI_HARD_LEFT:		pict=pc.images.IMG_HARDLEFT; break;
-						case RI_ENTER_MOTORWAY:	pict=pc.images.IMG_MOTORWAYENTER; break;
-						case RI_LEAVE_MOTORWAY:	pict=pc.images.IMG_MOTORWAYLEAVE; break;					
-						case RI_INTO_TUNNEL:	pict=pc.images.IMG_TUNNEL_INTO; break;
-						case RI_OUT_OF_TUNNEL:	pict=pc.images.IMG_TUNNEL_OUT_OF; break;					
-					}
+		try {
+			StringBuffer soundToPlay = new StringBuffer();
+			StringBuffer sbRouteInstruction = new StringBuffer();
+	    	// backgound colour for standard routing instructions
+			byte soundRepeatDelay=3;
+			byte soundMaxTimesToPlay=2;
 					
-					if (trace.atTarget) {
-						aPaint=RI_TARGET_REACHED;
+			// this makes the distance when prepare-sound is played depending on the speed
+			int PREPAREDISTANCE=100;
+			int speed=trace.speed;
+			if (speed>100) {
+				PREPAREDISTANCE=500;							
+			} else if (speed>80) {
+				PREPAREDISTANCE=300;							
+			} else if (speed>55) {
+				PREPAREDISTANCE=200;							
+			} else if (speed>45) {
+				PREPAREDISTANCE=150;							
+			} else if (speed>35) {
+				PREPAREDISTANCE=125;													
+			}
+			
+			ConnectionWithNode c;
+			ConnectionWithNode cNow = null;
+			ConnectionWithNode cThen =null;
+			Vector routeNodes = trace.getRouteNodes();
+			// Show helper nodes for Routing
+			for (int x=0; x<routeNodes.size();x++){
+				RouteHelper n=(RouteHelper) routeNodes.elementAt(x);
+				pc.getP().forward(n.node.radlat, n.node.radlon, pc.lineP2);
+				pc.g.drawRect(pc.lineP2.x-5, pc.lineP2.y-5, 10, 10);
+				pc.g.drawString(n.name, pc.lineP2.x+7, pc.lineP2.y+5, Graphics.BOTTOM | Graphics.LEFT);
+			}
+			boolean routeRecalculationRequired=false;
+			synchronized(this) {
+				if (route != null && route.size() > 0){
+					// there's a route so no calculation required
+					routeRecalculationRequired=false;
+		
+					// find nearest routing arrow (to center of screen)
+					int iNow=0;
+					int iRealNow=0;
+					byte aNow=RI_STRAIGHT_ON_QUIET;
+					int iThen=0;
+					byte aThen=RI_STRAIGHT_ON_QUIET;
+					byte aPaint=RI_STRAIGHT_ON_QUIET;
+					double distNow=0;
+					int intDistNow=0;
+					
+					if (routePathConnection != -1 && routePathConnection < route.size()-1) {
+						iRealNow = routePathConnection+1;
+						iNow = idxNextInstructionArrow (iRealNow);
+						cNow = (ConnectionWithNode) route.elementAt(iNow);
+						aNow = cNow.wayRouteInstruction;
+				    	distNow=ProjMath.getDistance(center.radlat, center.radlon, cNow.to.lat, cNow.to.lon);
+						intDistNow=new Double(distNow).intValue();
+						iThen = idxNextInstructionArrow (iNow+1);
+						if (iThen < route.size()) {
+							cThen = (ConnectionWithNode) route.elementAt(iThen);
+							aThen = cThen.wayRouteInstruction;
+						}
 					}
-					pc.getP().forward(c.to.lat, c.to.lon, pc.lineP2);
-				    // optionally scale nearest arrow
-				    if (i==iNow) {
-						if (aNow!=cachedPicArrow) {
-							cachedPicArrow=aNow;							
-							if (aNow < RI_ENTER_MOTORWAY) {
-								scaledPict=doubleImage(pict); //ImageTools.scaleImage(pict, pict.getWidth() * 3 / 2, pict.getHeight() * 3 / 2);
-							} else {
-								scaledPict=pict;
+	
+					c = (ConnectionWithNode) route.elementAt(0);
+					for (int i=1; i<route.size();i++){
+						c = (ConnectionWithNode) route.elementAt(i);
+						if (c == null){
+							logger.error("show Route got null connection");
+							break;
+						}
+						if (c.to == null){
+							logger.error("show Route got connection with NULL as target");
+							break;
+						}
+						if (pc == null){
+							logger.error("show Route strange pc is null");
+							break;
+						}
+	
+						// no off-screen check for current route arrow
+						if(i!=iNow) {
+							if (c.to.lat < pc.getP().getMinLat()) {
+								continue;
+							}
+							if (c.to.lon < pc.getP().getMinLon()) {
+								continue;
+							}
+							if (c.to.lat > pc.getP().getMaxLat()) {
+								continue;
+							}
+							if (c.to.lon > pc.getP().getMaxLon()) {
+								continue;
 							}
 						}
-						pict=scaledPict;						
-				    		
-				    	sbRouteInstruction.append(directions[aNow]);
-						// if nearest route arrow is closer than PASSINGDISTANCE meters we're currently passing this route arrow
-				    	if(distNow<PASSINGDISTANCE) {
-							if (iPassedRouteArrow != iNow) {
-								iPassedRouteArrow = iNow;
-								// if there's i.e. a 2nd left arrow in row "left" must be repeated
-								if (!trace.atTarget) {
-									sLastInstruction="";
-								}
-							}
-							// after passing an arrow all instructions, i.e. saying "in xxx metres" are allowed again 
-							resetVoiceInstructions();
-
-							if (!trace.atTarget) { 
-								soundToPlay.append (soundDirections[aNow]);
-							}
-							soundMaxTimesToPlay=1;
-						} else {
-							sbRouteInstruction.append(" in " + intDistNow + "m");
-						}
-						if (intDistNow>=PASSINGDISTANCE && !checkDirectionSaid) {
-							if (
-								intDistNow <= PREPAREDISTANCE
-								// give prepare instruction only if arrow has not already been passed (this avoids possibly wrong prepare instructions after passing the arrow)
-								&& iNow!=iPassedRouteArrow
-							) {
-								if (aNow < RI_ENTER_MOTORWAY) {
-									soundToPlay.append( (aNow==RI_STRAIGHT_ON ? "CONTINUE" : "PREPARE") + ";" + soundDirections[aNow]);
-								} else if (aNow>=RI_ENTER_MOTORWAY && aNow<=RI_LEAVE_MOTORWAY) {
-									soundToPlay.append("PREPARE;TO;" + soundDirections[aNow]);
-								} else if (aNow>=RI_1ST_EXIT && aNow<=RI_6TH_EXIT) {
-									soundToPlay.append(soundDirections[aNow]);
-								}
-								soundMaxTimesToPlay=1;
-								// Because of adaptive-to-speed distances for "prepare"-instructions
-								// GpsMid could fall back from "prepare"-instructions to "in xxx metres" voice instructions
-								// Remembering and checking if the prepare instruction already was given since the latest passing of an arrow avoids this
-								prepareInstructionSaid = true;
-							} else if (
-								intDistNow < 900 && intDistNow < getTellDistance(iNow, aNow)
-								// give in-xxx-meters-instruction only if arrow has not already been passed (this avoids possibly wrong in-instructions after passing the arrow)
-								&& iNow!=iPassedRouteArrow
-								&& !prepareInstructionSaid
-							) {
-								soundRepeatDelay=60;
-								soundToPlay.append("IN;" + Integer.toString(intDistNow / 100)+ "00;METERS;" + soundDirections[aNow]);								
-							}							
+	
+						Image pict = pc.images.IMG_MARK; aPaint=0;
+						aPaint = c.wayRouteInstruction;
+						switch (aPaint) {
+							case RI_HARD_RIGHT:		pict=pc.images.IMG_HARDRIGHT; break;
+							case RI_RIGHT:			pict=pc.images.IMG_RIGHT; break;
+							case RI_HALF_RIGHT:		pict=pc.images.IMG_HALFRIGHT; break;
+							case RI_STRAIGHT_ON_QUIET:
+							case RI_STRAIGHT_ON: 	pict=pc.images.IMG_STRAIGHTON; break;
+							case RI_HALF_LEFT:		pict=pc.images.IMG_HALFLEFT; break;
+							case RI_LEFT:			pict=pc.images.IMG_LEFT; break;
+							case RI_HARD_LEFT:		pict=pc.images.IMG_HARDLEFT; break;
+							case RI_ENTER_MOTORWAY:	pict=pc.images.IMG_MOTORWAYENTER; break;
+							case RI_LEAVE_MOTORWAY:	pict=pc.images.IMG_MOTORWAYLEAVE; break;					
+							case RI_INTO_TUNNEL:	pict=pc.images.IMG_TUNNEL_INTO; break;
+							case RI_OUT_OF_TUNNEL:	pict=pc.images.IMG_TUNNEL_OUT_OF; break;					
 						}
 						
-						if (cThen != null) {
-							double distNowThen=ProjMath.getDistance(cNow.to.lat, cNow.to.lon, cThen.to.lat, cThen.to.lon);
-							// if there is a close direction arrow after the current one
-							// inform the user about its direction
-							if (distNowThen <= PREPAREDISTANCE &&
-								// only if not both arrows are STRAIGHT_ON
-								!(aNow==RI_STRAIGHT_ON && (aThen == RI_STRAIGHT_ON || aThen == RI_STRAIGHT_ON_QUIET) ) &&
-								// and it is not a round about exit instruction
-								!(aNow>=RI_1ST_EXIT && aNow<=RI_6TH_EXIT) &&
-								// and only as continuation of instruction
-								soundToPlay.length()!=0
-							   ) {
-								soundToPlay.append(";THEN;");
-								if (distNowThen > PASSINGDISTANCE) {
-									soundToPlay.append("SOON;");
+						if (trace.atTarget) {
+							aPaint=RI_TARGET_REACHED;
+						}
+						pc.getP().forward(c.to.lat, c.to.lon, pc.lineP2);
+					    // optionally scale nearest arrow
+					    if (i==iNow) {
+							if (aNow!=cachedPicArrow) {
+								cachedPicArrow=aNow;							
+								if (aNow < RI_ENTER_MOTORWAY) {
+									scaledPict=doubleImage(pict); //ImageTools.scaleImage(pict, pict.getWidth() * 3 / 2, pict.getHeight() * 3 / 2);
+								} else {
+									scaledPict=pict;
 								}
-								soundToPlay.append(soundDirections[aThen]);
-								// same arrow as currently nearest arrow?
-								if (aNow==aThen) {
-									soundToPlay.append(";AGAIN");							
+							}
+							pict=scaledPict;						
+					    		
+					    	sbRouteInstruction.append(directions[aNow]);
+							// if nearest route arrow is closer than PASSINGDISTANCE meters we're currently passing this route arrow
+					    	if(distNow<PASSINGDISTANCE) {
+								if (iPassedRouteArrow != iNow) {
+									iPassedRouteArrow = iNow;
+									// if there's i.e. a 2nd left arrow in row "left" must be repeated
+									if (!trace.atTarget) {
+										sLastInstruction="";
+									}
 								}
-								
-								//System.out.println(soundToPlay.toString());
+								// after passing an arrow all instructions, i.e. saying "in xxx metres" are allowed again 
+								resetVoiceInstructions();
+	
+								if (!trace.atTarget) { 
+									soundToPlay.append (soundDirections[aNow]);
+								}
+								soundMaxTimesToPlay=1;
+							} else {
+								sbRouteInstruction.append(" in " + intDistNow + "m");
+							}
+							if (intDistNow>=PASSINGDISTANCE && !checkDirectionSaid) {
+								if (
+									intDistNow <= PREPAREDISTANCE
+									// give prepare instruction only if arrow has not already been passed (this avoids possibly wrong prepare instructions after passing the arrow)
+									&& iNow!=iPassedRouteArrow
+								) {
+									if (aNow < RI_ENTER_MOTORWAY) {
+										soundToPlay.append( (aNow==RI_STRAIGHT_ON ? "CONTINUE" : "PREPARE") + ";" + soundDirections[aNow]);
+									} else if (aNow>=RI_ENTER_MOTORWAY && aNow<=RI_LEAVE_MOTORWAY) {
+										soundToPlay.append("PREPARE;TO;" + soundDirections[aNow]);
+									} else if (aNow>=RI_1ST_EXIT && aNow<=RI_6TH_EXIT) {
+										soundToPlay.append(soundDirections[aNow]);
+									}
+									soundMaxTimesToPlay=1;
+									// Because of adaptive-to-speed distances for "prepare"-instructions
+									// GpsMid could fall back from "prepare"-instructions to "in xxx metres" voice instructions
+									// Remembering and checking if the prepare instruction already was given since the latest passing of an arrow avoids this
+									prepareInstructionSaid = true;
+								} else if (
+									intDistNow < 900 && intDistNow < getTellDistance(iNow, aNow)
+									// give in-xxx-meters-instruction only if arrow has not already been passed (this avoids possibly wrong in-instructions after passing the arrow)
+									&& iNow!=iPassedRouteArrow
+									&& !prepareInstructionSaid
+								) {
+									soundRepeatDelay=60;
+									soundToPlay.append("IN;" + Integer.toString(intDistNow / 100)+ "00;METERS;" + soundDirections[aNow]);								
+								}							
+							}
+							
+							if (cThen != null) {
+								double distNowThen=ProjMath.getDistance(cNow.to.lat, cNow.to.lon, cThen.to.lat, cThen.to.lon);
+								// if there is a close direction arrow after the current one
+								// inform the user about its direction
+								if (distNowThen <= PREPAREDISTANCE &&
+									// only if not both arrows are STRAIGHT_ON
+									!(aNow==RI_STRAIGHT_ON && (aThen == RI_STRAIGHT_ON || aThen == RI_STRAIGHT_ON_QUIET) ) &&
+									// and it is not a round about exit instruction
+									!(aNow>=RI_1ST_EXIT && aNow<=RI_6TH_EXIT) &&
+									// and only as continuation of instruction
+									soundToPlay.length()!=0
+								   ) {
+									soundToPlay.append(";THEN;");
+									if (distNowThen > PASSINGDISTANCE) {
+										soundToPlay.append("SOON;");
+									}
+									soundToPlay.append(soundDirections[aThen]);
+									// same arrow as currently nearest arrow?
+									if (aNow==aThen) {
+										soundToPlay.append(";AGAIN");							
+									}
+									
+									//System.out.println(soundToPlay.toString());
+								}
 							}
 						}
-					}
-					if (aPaint == RI_SKIPPED) {
-						pc.g.setColor(0x00FDDF9F);
-						pc.getP().forward(c.to.lat, c.to.lon, pc.lineP2);
-						final byte radius=6;
-						pc.g.fillArc(pc.lineP2.x-radius/2,pc.lineP2.y-radius/2,radius,radius,0,359);
-					} else {
-						pc.g.drawImage(pict,pc.lineP2.x,pc.lineP2.y,CENTERPOS);					
+						if (aPaint == RI_SKIPPED) {
+							pc.g.setColor(0x00FDDF9F);
+							pc.getP().forward(c.to.lat, c.to.lon, pc.lineP2);
+							final byte radius=6;
+							pc.g.fillArc(pc.lineP2.x-radius/2,pc.lineP2.y-radius/2,radius,radius,0,359);
+						} else {
+							pc.g.drawImage(pict,pc.lineP2.x,pc.lineP2.y,CENTERPOS);					
+						}
 					}
 				}
+				routeRecalculationRequired = isOffRoute(route, center);
+				if ( routeRecalculationRequired && !trace.atTarget && trace.gpsRecenter) {
+					soundToPlay.setLength(0);
+					trace.autoRouteRecalculate();				
+				}
 			}
-			routeRecalculationRequired = isOffRoute(route, center);
-			if ( routeRecalculationRequired && !trace.atTarget && trace.gpsRecenter) {
-				soundToPlay.setLength(0);
-				trace.autoRouteRecalculate();				
+			// Route instruction text output
+			if (sbRouteInstruction.length() != 0) {
+				Font originalFont = pc.g.getFont();
+				if (routeFontHeight == 0) {
+					routeFont=Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_MEDIUM);
+					routeFontHeight=routeFont.getHeight();
+				}
+				pc.g.setFont(routeFont);
+				pc.g.setColor(routeInstructionColor);
+				pc.g.fillRect(0,textYPos-routeFontHeight, pc.xSize, routeFontHeight);
+				pc.g.setColor(0,0,0);
+				pc.g.drawString(sbRouteInstruction.toString(),
+						pc.xSize/2,
+						textYPos,
+						Graphics.HCENTER | Graphics.BOTTOM
+				);
+				pc.g.drawString("off:" + dstToRoutePath + "m",
+						pc.xSize,
+						textYPos - routeFontHeight,
+						Graphics.RIGHT | Graphics.BOTTOM
+				);
+				
+				pc.g.setFont(originalFont);
 			}
-		}
-		// Route instruction text output
-		if (sbRouteInstruction.length() != 0) {
-			Font originalFont = pc.g.getFont();
-			if (routeFontHeight == 0) {
-				routeFont=Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_MEDIUM);
-				routeFontHeight=routeFont.getHeight();
+			// Route instruction sound output
+			if (soundToPlay.length()!=0 && Configuration.getCfgBitState(Configuration.CFGBIT_SND_ROUTINGINSTRUCTIONS)) {
+				if ( !sLastInstruction.equals( soundToPlay.toString() ) ) {
+					sLastInstruction = soundToPlay.toString();
+					GpsMid.mNoiseMaker.playSound(sLastInstruction, (byte) soundRepeatDelay, (byte) soundMaxTimesToPlay);
+					System.out.println(sLastInstruction);
+				}
 			}
-			pc.g.setFont(routeFont);
-			pc.g.setColor(routeInstructionColor);
-			pc.g.fillRect(0,textYPos-routeFontHeight, pc.xSize, routeFontHeight);
-			pc.g.setColor(0,0,0);
-			pc.g.drawString(sbRouteInstruction.toString(),
-					pc.xSize/2,
-					textYPos,
-					Graphics.HCENTER | Graphics.BOTTOM
-			);
-			pc.g.drawString("off:" + dstToRoutePath + "m",
-					pc.xSize,
-					textYPos - routeFontHeight,
-					Graphics.RIGHT | Graphics.BOTTOM
-			);
-			
-			pc.g.setFont(originalFont);
-		}
-		// Route instruction sound output
-		if (soundToPlay.length()!=0 && Configuration.getCfgBitState(Configuration.CFGBIT_SND_ROUTINGINSTRUCTIONS)) {
-			if ( !sLastInstruction.equals( soundToPlay.toString() ) ) {
-				sLastInstruction = soundToPlay.toString();
-				GpsMid.mNoiseMaker.playSound(sLastInstruction, (byte) soundRepeatDelay, (byte) soundMaxTimesToPlay);
-				System.out.println(sLastInstruction);
-			}
+		} catch (Exception e) {
+			logger.silentexception("Unhandled exception in showRoute()", e);
 		}
 	}
 	
