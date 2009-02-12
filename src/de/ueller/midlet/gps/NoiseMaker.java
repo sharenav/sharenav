@@ -49,6 +49,7 @@ public class NoiseMaker
 	private static volatile String oldPlayingNames = "";
 	private static volatile byte timesToPlay = 0;
 	private static volatile String nextSoundFile = null;
+	private static volatile String playingSoundName = "";
 	
 	public NoiseMaker()
 	{
@@ -189,6 +190,16 @@ public class NoiseMaker
 		oldMsTime = System.currentTimeMillis();
 		if (! oldPlayingNames.equals(names) ) {
 			timesToPlay = maxTimesToPlay;
+			// if we would skip a speed limit alert by the new sound chain,
+			// put the alert sound at the beginning of the new sound chain to play
+			if (playingNameIndex<playingNames.length() ) {
+				if(
+					playingSoundName.equals("SPEED_LIMIT")
+					|| playingNames.indexOf("SPEED_LIMIT", playingNameIndex) != -1
+				) {
+					names = "SPEED_LIMIT;" + names;
+				}
+			}
 			//#debug debug
 			mLogger.debug("new sound " + names + " timestoplay: " + timesToPlay + "   old sound: " + oldPlayingNames );
 			oldPlayingNames = names;
@@ -200,6 +211,7 @@ public class NoiseMaker
 			playingNames=names;
 		}
 		if (determineNextSoundFile()) {
+			playingNameIndex = 0;
 			playNextSoundFile();
 		} else {
 			playSequence(names);
@@ -233,6 +245,7 @@ public class NoiseMaker
 			//#debug debug
 			mLogger.debug("Determined sound part: " + nextSoundName + "/" + playingNames + "/" + playingNameIndex + "/" + iEnd);
 			playingNameIndex = iEnd + 1;
+			playingSoundName = nextSoundName;
 			return nextSoundName;
 		}
 	}
@@ -248,12 +261,18 @@ public class NoiseMaker
 		SoundDescription sDes = C.getSoundDescription(nextSoundName);
 		if (sDes != null) {
 			nextSoundFile = sDes.soundFile;
+			//#debug debug
+			mLogger.debug("using soundfile " + nextSoundFile + " from description for " + nextSoundName);
 		}
+		//#debug debug
+		else mLogger.debug("no description found for " + nextSoundName);
 		if (sDes == null || nextSoundFile == null) {
 			if (getToneSequence(nextSoundName) != null) {
 				return false;
 			}
-			nextSoundFile = nextSoundName.toLowerCase() + ".amr";
+			nextSoundFile = "/" + nextSoundName.toLowerCase() + ".amr";
+			//#debug debug
+			mLogger.debug("using soundname + extension as sound file: " + nextSoundFile);
 		}
 		return true;
 	}
@@ -284,6 +303,8 @@ public class NoiseMaker
 					volCtrl.setLevel(100);
 				}
 			}
+			//#debug debug
+			else mLogger.debug("RESOURCE NOT FOUND: " + soundFile);
 		} catch (Exception ex) {
 	    	mLogger.exception("Failed to create resource player for " + soundFile, ex);
 			player = null;
@@ -292,6 +313,7 @@ public class NoiseMaker
 	
 		
 	private synchronized void playNextSoundFile() {
+		determineNextSoundFile();
 		if (nextSoundFile != null) {
 			createResourcePlayer(nextSoundFile);
 			if (player != null) {
@@ -302,7 +324,6 @@ public class NoiseMaker
 				}
 			}
 		}
-		determineNextSoundFile();
 	}
 //#endif
 }
