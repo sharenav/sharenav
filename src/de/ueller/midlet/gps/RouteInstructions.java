@@ -613,6 +613,9 @@ public class RouteInstructions {
 			boolean routeRecalculationRequired=false;
 			synchronized(this) {
 				if (route != null && route.size() > 0){
+					//#debug debug
+					logger.debug("showRoute - route.size(): " + route.size() + " routePathConnection: " + routePathConnection);						
+					
 					// there's a route so no calculation required
 					routeRecalculationRequired=false;
 		
@@ -636,8 +639,11 @@ public class RouteInstructions {
 						iThen = idxNextInstructionArrow (iNow+1);
 						if (iThen < route.size()) {
 							cThen = (ConnectionWithNode) route.elementAt(iThen);
+							if (cThen==null) logger.debug("cThen is NULL connection");
 							aThen = cThen.wayRouteInstruction;
 						}
+						//#debug debug
+						logger.debug("showRoute - iRealNow: " + iRealNow + " iNow: " + iNow + " iThen: " + iThen);						
 					}
 	
 					c = (ConnectionWithNode) route.elementAt(0);
@@ -786,16 +792,23 @@ public class RouteInstructions {
 							final byte radius=6;
 							pc.g.fillArc(pc.lineP2.x-radius/2,pc.lineP2.y-radius/2,radius,radius,0,359);
 						} else {
+							//#debug debug
+							if (pict==null) logger.debug("got NULL pict");													
 							pc.g.drawImage(pict,pc.lineP2.x,pc.lineP2.y,CENTERPOS);					
 						}
 					}
 				}
 				routeRecalculationRequired = isOffRoute(route, center);
 				if ( routeRecalculationRequired && !trace.atTarget && trace.gpsRecenter) {
+					//#debug debug
+					logger.debug("off route detected");													
 					soundToPlay.setLength(0);
 					trace.autoRouteRecalculate();				
 				}
 			}
+			//#debug debug
+			logger.debug("complete route instruction: " + sbRouteInstruction.toString() + " (" + soundToPlay.toString() + ")");													
+			
 			// Route instruction text output
 			if (sbRouteInstruction.length() != 0) {
 				Font originalFont = pc.g.getFont();
@@ -863,6 +876,9 @@ public class RouteInstructions {
 			}
 		}
 		ConnectionWithNode c0 = (ConnectionWithNode) route.elementAt(0);
+		//#debug debug
+		if (c0==null) logger.debug("isOffRoute got NULL connection");
+
 		// calculate distance to first arrow after calculation
 		int dstToFirstArrow = (int) (ProjMath.getDistance(center.radlat, center.radlon, c0.to.lat, c0.to.lon));
 		if ((haveBeenOnRouteSinceCalculation && dstToRoutePath >= 50) ||
@@ -870,10 +886,13 @@ public class RouteInstructions {
 		) {
 			// use red background color
 			routeInstructionColor=0x00FF5402;
-//			System.out.println("recalc startDst: " + startDstToFirstArrowAfterCalculation);
-//			System.out.println("recalc dst1st: " + dstToFirstArrow);
-//			System.out.println("haveBeenOnRouteSinceCalculation: " + haveBeenOnRouteSinceCalculation);
-//			System.out.println("dstToRoutePath: " + dstToRoutePath);
+			//#mdebug debug
+			logger.debug("=== Off Route ===");
+			logger.debug("recalc startDst: " + startDstToFirstArrowAfterCalculation);
+			logger.debug("recalc dst1st: " + dstToFirstArrow);
+			logger.debug("haveBeenOnRouteSinceCalculation: " + haveBeenOnRouteSinceCalculation);
+			logger.debug("dstToRoutePath: " + dstToRoutePath);
+			//#enddebug
 			if (trace.source != null) {
 				return true;
 			}
@@ -1063,6 +1082,8 @@ public class RouteInstructions {
 	
 	private int getTellDistance(int iConnection, byte aNow) {
 		ConnectionWithNode cPrev = (ConnectionWithNode) route.elementAt(iConnection -1);
+		//#debug debug
+		if (cPrev==null) logger.debug("getTellDistance got NULL connection");
 		
 		int distFromSpeed = 200;
 		int distFromPrevConn = (int) cPrev.wayDistanceToNext + 50;
@@ -1083,6 +1104,8 @@ public class RouteInstructions {
 		int a;
 		for (a=i; a<route.size()-2; a++){
 			c = (ConnectionWithNode) route.elementAt(a);
+			//#debug debug
+			if (c==null) logger.debug("idxNextInstructionArrow got NULL connection");
 			if (
 				c.wayRouteInstruction != RI_STRAIGHT_ON_QUIET
 			&&	c.wayRouteInstruction != RI_SKIPPED
