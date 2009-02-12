@@ -164,6 +164,12 @@ zoomed out 21x (scale alias 1:  500km)
 	<sound name="METERS">
 		<soundFile src="meters.amr"/>
 	</sound>
+	<sound name="INTO_TUNNEL">
+		<soundFile src="into_tunnel.amr"/>
+	</sound>
+	<sound name="OUT_OF_TUNNEL">
+		<soundFile src="out_of_tunnel.amr"/>
+	</sound>
 	<sound name="SPEED_LIMIT">
 		<soundFile src="speed_limit.amr"/>
 	</sound>
