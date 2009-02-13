@@ -85,6 +85,15 @@ public class NoiseMaker
 //	   String mixing = System.getProperty("supports.mixing");
 //	   deviceSupportsMixing = (mixing != null && mixing.equals("true"));
 	   //deviceSupportsMixing = false;
+	    
+		//#mdebug debug
+    	mLogger.debug("Supported content types:");
+	    String[] contentTypes = Manager.getSupportedContentTypes(null) ;       
+	    for (int i = 0  ; i < contentTypes.length  ; i++) { 
+	    	mLogger.debug(i + ". " + contentTypes[i]);
+	    }
+  		//#enddebug
+	    
 //#endif
 	}
 
