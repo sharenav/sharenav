@@ -80,10 +80,14 @@ public class Proj2DMoveUp  implements Projection {
     	inverse(width, height, ret);
     	extendMinMax(ret);
     	
-//    	System.out.println("scaled lat=" + scaled_lat);
-//    	System.out.println("scaled_Radius=" + scaled_radius);
-//    	System.out.println("tanCtrLat=" + tanCtrLat);
-//    	System.out.println("asinh_of_tanCtrLat=" + asinh_of_tanCtrLat);
+    	//#mdebug debug
+    	logger.debug("cosRoh=" + cosRoh);
+    	logger.debug("sinRoh=" + sinRoh);
+    	logger.debug("scaled lat=" + scaled_lat);
+    	logger.debug("scaled_Radius=" + scaled_radius);
+    	logger.debug("tanCtrLat=" + tanCtrLat);
+    	logger.debug("asinh_of_tanCtrLat=" + asinh_of_tanCtrLat);
+    	//#enddebug
 	}
 	
 	private void extendMinMax(Node n) {
