@@ -175,7 +175,7 @@ public class Configuration {
 			initialiseRealScale();
 			resetConfig();
 			planet="TEST";
-			enableEditingSupport = getString("EnableEditing").equalsIgnoreCase("true");
+			
 		}
 		
 		private void initialiseRealScale() {
@@ -220,6 +220,7 @@ public class Configuration {
 			maxTileSize=Integer.parseInt(getString("maxTileSize"));
 			setStyleFileName(getString("style-file"));
 			appParam = getString("app");
+			enableEditingSupport = getString("EnableEditing").equalsIgnoreCase("true");
 			
 		}
 
@@ -574,6 +575,7 @@ public class Configuration {
 			confString += "\t Enable routing: " + useRouting + "\n";
 			confString += "\t used Style-file: " + getStyleFileName() + "\n";
 			confString += "\t Planet source: " + planet + "\n";
+			confString += "\t Enable edditing support: " + enableEditingSupport + "\n";
 			Bounds[] bounds = getBounds();
 			if (bounds != null) {
 				confString += "\t Using " + bounds.length + " bounding boxes\n";
