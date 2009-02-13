@@ -125,9 +125,17 @@ public class EditableWay extends Way implements Runnable{
 				String str;
 				InputStream inputstream = connection.openInputStream();
 				int length = (int) connection.getLength();
+				//#debug debug
+				logger.debug("Retrieving String of length: " + length);
 				if (length != -1) {
 					byte incomingData[] = new byte[length];
-					inputstream.read(incomingData);
+					int idx = 0;
+					while (idx < length) {
+						int readB = inputstream.read(incomingData,idx, length - idx);
+						//#debug debug
+						logger.debug("Read: " + readB  + " bytes");
+						idx += readB;
+					}
 					str = new String(incomingData);
 				} else {
 					ByteArrayOutputStream bytestream = new ByteArrayOutputStream();
@@ -135,13 +143,16 @@ public class EditableWay extends Way implements Runnable{
 					while ((ch = inputstream.read()) != -1) {
 						bytestream.write(ch);
 					}
+					bytestream.flush();
 					str = new String(bytestream.toByteArray());
 					bytestream.close();
 				}
-				logger.debug(str);
+				//#debug info
+				logger.info(str);
 				fullXML = str;
 				if (str != null)
 					OSMdata = new OSMdataWay(fullXML, osmID);
+					//#debug
 					logger.debug(OSMdata.toString());
 			} else {
 				logger.error("Request failed (" + connection.getResponseCode() + "): " + connection.getResponseMessage());
