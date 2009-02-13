@@ -91,11 +91,13 @@ public class NoiseMaker
 //#if polish.api.mmapi	
 	public synchronized void playerUpdate( Player player, String event, Object eventData )
 	{
+		//#debug debug
+		mLogger.debug("playerUpdate got " + event);
 		// Release resources used by player when it's finished.
 		if (event == PlayerListener.END_OF_MEDIA)
 		{
-			//System.out.println("Playing stopped");
 			player.close();
+//			NoiseMaker.player = null;
 			playNextSoundFile();
 		}
 	}
@@ -278,13 +280,19 @@ public class NoiseMaker
 	}
 	
 	private synchronized void createResourcePlayer(String soundFile) {
+		//#debug debug
+		mLogger.debug("createResourcePlayer for " + soundFile);
 		if (player!=null) {
+			//#debug debug
+			mLogger.debug("Closing old player");
 			player.close();
 			player = null;
 		}	
 		try {
 			InputStream is = getClass().getResourceAsStream(soundFile);
 			if (is != null) {
+				//#debug debug
+				mLogger.debug("Got Inputstream for " + soundFile);
 				String mediaType = null;
 				if (soundFile.toLowerCase().endsWith(".amr") ) {
 					mediaType = "audio/amr";
@@ -297,11 +305,17 @@ public class NoiseMaker
 				}
 				player = Manager.createPlayer(is, mediaType);
 				if (player!=null) {
+					//#debug debug
+					mLogger.debug("created player for " + soundFile);
 					player.realize();
+					//#debug debug
+					mLogger.debug("realized player for " + soundFile);
 					player.addPlayerListener( this );
 					VolumeControl volCtrl = (VolumeControl) player.getControl("VolumeControl");
 					volCtrl.setLevel(100);
 				}
+                //#debug debug
+                else mLogger.debug("Could NOT CREATE PLAYER for " + mediaType);
 			}
 			//#debug debug
 			else mLogger.debug("RESOURCE NOT FOUND: " + soundFile);
@@ -319,6 +333,8 @@ public class NoiseMaker
 			if (player != null) {
 				try {
 					player.start();
+					//#debug debug
+					mLogger.debug("player for " + nextSoundFile + " started");
 				} catch (Exception ex) {
 			    	mLogger.exception("Failed to play sound", ex);
 				}
