@@ -701,7 +701,7 @@ public class RouteInstructions {
 						pc.getP().forward(c.to.lat, c.to.lon, pc.lineP2);
 					    // optionally scale nearest arrow
 					    if (i==iNow) {
-							if (aNow!=cachedPicArrow) {
+							if (aNow!=cachedPicArrow || scaledPict == null) {
 								cachedPicArrow=aNow;							
 								if (aNow < RI_ENTER_MOTORWAY) {
 									scaledPict=doubleImage(pict); //ImageTools.scaleImage(pict, pict.getWidth() * 3 / 2, pict.getHeight() * 3 / 2);
