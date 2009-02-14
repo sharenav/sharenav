@@ -107,7 +107,9 @@ public class Configuration {
 	// bit 35: Sound alert for speeding
 	public final static byte CFGBIT_SPEEDALERT_SND=35;
 	// bit 36: Visual alert for speeding
-        public final static byte CFGBIT_SPEEDALERT_VISUAL=36;
+	public final static byte CFGBIT_SPEEDALERT_VISUAL=36;
+	// bit 37: Debug Option: show route bearings
+	public final static byte CFGBIT_ROUTE_BEARINGS=37;
 	
 	/**
 	 * These are the database record ids for each configuration option	 * 

@@ -800,6 +800,17 @@ public class RouteInstructions {
 								pc.g.drawImage(pict,pc.lineP2.x,pc.lineP2.y,CENTERPOS);
 							}
 						}
+						
+						// display bearings for debugging
+						if (Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_BEARINGS)) {					
+							drawBearing(pc, pc.lineP2.x,pc.lineP2.y, c.endBearing, true, 0x00FF0000);
+							byte startBearing = 0;
+							if ( i < route.size()-1 ) {
+								ConnectionWithNode cNext = (ConnectionWithNode) route.elementAt(i + 1);
+								startBearing = cNext.startBearing;
+							}
+							drawBearing(pc, pc.lineP2.x,pc.lineP2.y, startBearing, false, 0x0000FF00);
+						}
 					}
 				}
 				routeRecalculationRequired = isOffRoute(route, center);
@@ -847,6 +858,18 @@ public class RouteInstructions {
 			}
 		} catch (Exception e) {
 			logger.silentexception("Unhandled exception in showRoute()", e);
+		}
+	}
+
+	private void drawBearing(PaintContext pc, int posX, int posY, byte halfBearing, boolean isStartBearing, int color) {
+		pc.g.setColor(color);
+		float radc = (float) (halfBearing * Math.PI / 90d);
+		int dx = (int) (Math.sin(radc) * 20);
+		int dy = (int) (Math.cos(radc) * 20);
+		if (isStartBearing) {
+			pc.g.drawLine(posX, posY, posX - dx, posY + dy);
+		} else {
+			pc.g.drawLine(posX, posY, posX + dx, posY - dy);			
 		}
 	}
 	
