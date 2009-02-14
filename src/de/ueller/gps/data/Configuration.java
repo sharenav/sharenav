@@ -242,8 +242,6 @@ public class Configuration {
 				// Routing defaults
 				setStopAllWhileRouteing(true);
 				setRouteEstimationFac(7);
-				// Speed alert tolerance
-				setSpeedTolerance(0);
 				// set default location provider to JSR-179 if available
 				//#if polish.api.locationapi
 				if (getDeviceSupportsJSR179()) {
@@ -273,8 +271,10 @@ public class Configuration {
 			}			
 			if(configVersionStored < 4) {				
 				cfgBits |=	1L<<CFGBIT_PLACETEXTS |
-		   					1L<<CFGBIT_SPEEDALERT_VISUAL;
-
+							1L<<CFGBIT_SPEEDALERT_SND |
+							1L<<CFGBIT_SPEEDALERT_VISUAL;
+							// Speed alert tolerance
+							setSpeedTolerance(5);
 				//#debug info
 				logger.info("Default config for version 4+ set.");
 			}			
