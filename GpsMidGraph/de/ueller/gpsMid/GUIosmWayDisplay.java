@@ -14,6 +14,7 @@ import java.util.Hashtable;
 
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
+import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.Item;
@@ -89,6 +90,7 @@ public class GUIosmWayDisplay extends Form implements GpsMidDisplayable, Command
 			tf.addCommand(OK_CMD);
 			tf.setItemCommandListener(this);
 			this.append(tf);
+			Display.getDisplay(GpsMid.getInstance()).setCurrentItem(tf);
 			tf = new TextField("value","", 100, TextField.ANY);
 			tf.addCommand(OK_CMD);
 			tf.setItemCommandListener(this);
@@ -156,6 +158,7 @@ public class GUIosmWayDisplay extends Form implements GpsMidDisplayable, Command
 					tf.addCommand(OK_CMD);
 					tf.setItemCommandListener(this);
 					this.insert(i, tf);
+					Display.getDisplay(GpsMid.getInstance()).setCurrentItem(tf);
 				}
 			}
 		}
