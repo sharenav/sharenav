@@ -332,19 +332,7 @@ public class ImageCollector implements Runnable {
 			screenPc.actualWay = paintPC.actualWay;
 			String maxspeed="";
 			if (paintPC.actualWay.getMaxSpeed() != 0){
-			    if(screenPc.trace.speed > (paintPC.actualWay.getMaxSpeed() + Configuration.getSpeedTolerance())) {
-					if (Configuration.getCfgBitState(Configuration.CFGBIT_SPEEDALERT_VISUAL)) {
-				    	maxspeed=" SL:" + paintPC.actualWay.getMaxSpeed() + "!!";
-					} else {
-					    maxspeed=" SL:" + paintPC.actualWay.getMaxSpeed();
-					}
-					screenPc.trace.speeding=true;
-			    } else {
-					maxspeed=" SL:" + paintPC.actualWay.getMaxSpeed();
-					screenPc.trace.speeding=false;
-			    }
-			} else {
-			    screenPc.trace.speeding=false;
+				maxspeed=" SL:" + pc[nextPaint].actualWay.getMaxSpeed();
 			}
 
 			if (paintPC.actualWay.nameIdx != -1) {

@@ -213,7 +213,7 @@ Runnable , GpsMidDisplayable{
 	/** 
 	 * Flag if we're speeding
 	 */
-	public volatile boolean speeding=false;
+	private volatile boolean speeding=false;
 	private long lastTimeOfSpeedingSound = 0;
 	private long startTimeOfSpeedingSign = 0;
 	private int speedingSpeedLimit = 0;
@@ -1193,6 +1193,15 @@ Runnable , GpsMidDisplayable{
 				showTarget(pc);
 			}
 			
+			// determine if we are currently speeding
+			speeding = false;
+			int maxSpeed = 0;
+			if (actualWay != null) {
+				maxSpeed = actualWay.getMaxSpeed();
+				if (speed > maxSpeed) {
+					speeding = true;
+				}
+			}
 			if (Configuration.getCfgBitState(Configuration.CFGBIT_SPEEDALERT_VISUAL)
 				&& (
 					speeding
@@ -1202,7 +1211,7 @@ Runnable , GpsMidDisplayable{
 			) {
 				if (startTimeOfSpeedingSign == 0) {
 					startTimeOfSpeedingSign = System.currentTimeMillis();
-					speedingSpeedLimit = actualWay.getMaxSpeed();
+					speedingSpeedLimit = maxSpeed;
 				}
 				
 				String sSpeed = Integer.toString(speedingSpeedLimit);
