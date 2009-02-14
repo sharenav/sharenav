@@ -110,7 +110,7 @@ public class C {
 		appVersion = ds.readUTF();
 		bundleDate = ds.readUTF();
 		enableEdits = ds.readBoolean();
-		//#if ENABLE_EDIT
+		//#if polish.api.osm-editing
 		
 		//#else
 		if (enableEdits) {

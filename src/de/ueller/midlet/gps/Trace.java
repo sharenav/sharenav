@@ -42,7 +42,7 @@ import de.ueller.gps.sirf.SirfInput;
 import de.ueller.gps.tools.HelperRoutines;
 import de.ueller.gps.tools.intTree;
 import de.ueller.gpsMid.mapData.DictReader;
-//#if ENABLE_EDIT
+//#if polish.api.osm-editing
 import de.ueller.gpsMid.GUIosmWayDisplay;
 import de.ueller.midlet.gps.data.EditableWay;
 //#endif
@@ -321,7 +321,7 @@ Runnable , GpsMidDisplayable{
 		addCommand(CMDS[RECORDINGS_CMD]);
 		addCommand(CMDS[ROUTINGS_CMD]);
 		addCommand(CMDS[TACHO_CMD]);
-		//#if ENABLE_EDIT
+		//#if polish.api.osm-editing
 		addCommand(CMDS[RETRIEVE_XML]);
 		//#endif
 		setCommandListener(this);
@@ -1004,7 +1004,7 @@ Runnable , GpsMidDisplayable{
 				GuiTacho tacho = new GuiTacho(this);
 				tacho.show();
 			}
-			//#if ENABLE_EDIT 
+			//#if polish.api.osm-editing 
 				else if (c == CMDS[RETRIEVE_XML]) {
 					if (C.enableEdits) {
 						if ((pc.actualWay != null) && (pc.actualWay instanceof EditableWay)) {

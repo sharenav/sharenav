@@ -12,7 +12,7 @@ import de.ueller.gps.data.Configuration;
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
-//#if ENABLE_EDIT
+//#if polish.api.osm-editing
 import de.ueller.midlet.gps.data.EditableWay;
 //#endif
 import de.ueller.midlet.gps.data.Way;
@@ -69,7 +69,7 @@ public class QueueDataReader extends QueueReader implements Runnable {
 		}
 		byte[] type = new byte[iNodeCount];
 		int[] osmID;
-		//#if ENABLE_EDIT
+		//#if polish.api.osm-editing
 		if (C.enableEdits) {
 			osmID = new int[iNodeCount];
 		} else {
@@ -104,7 +104,7 @@ public class QueueDataReader extends QueueReader implements Runnable {
 				} 
 				if ((flag & C.NODE_MASK_TYPE) > 0){
 					type[i]=ds.readByte();
-					//#if ENABLE_EDIT
+					//#if polish.api.osm-editing
 					if (C.enableEdits) {
 						osmID[i] = ds.readInt();
 					}
@@ -139,7 +139,7 @@ public class QueueDataReader extends QueueReader implements Runnable {
 				byte flags=ds.readByte();
 				if (flags != 128){
 					Way w;
-					//#if ENABLE_EDIT
+					//#if polish.api.osm-editing
 					if (C.enableEdits) {
 						w = new EditableWay(ds,flags,tt,layers,i);
 					} else {

@@ -15,6 +15,16 @@ at large.
 -->
 <devices>
 
+<device supportsPolishGui="true">
+		<identifier>Generic/editing</identifier>
+		<description>This device combines the full capabilities of GpsMid including OpenStreetMap editing.
+		</description>
+		<features>isVirtual</features>
+		<capability name="JavaPlatform" value="MIDP/2.0"/>
+		<capability name="GpsMid.editing" value="true"/>
+		<capability name="JavaConfiguration" value="CLDC/1.1"/>
+		<capability name="JavaPackage" value="location-api, webservices,  btapi, obex, pdaapi, fileconnection, mmapi, wmapi, 3dapi, svg, nokia-ui, min-siemapi, osm-editing"/>
+	</device>
 	<device supportsPolishGui="true">
 		<identifier>Generic/full</identifier>
 		<description>This device combines the full capabilities of GpsMid.

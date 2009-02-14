@@ -7,6 +7,7 @@
  *
  * Copyright (C) 2008  Kai Krueger
  */
+//#if polish.api.osm-editing
 package de.ueller.midlet.gps.data;
 
 import java.io.ByteArrayOutputStream;
@@ -177,3 +178,4 @@ public class EditableWay extends Way implements Runnable{
 	}
 
 }
+//#endif

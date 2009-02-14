@@ -19,6 +19,13 @@
 		<files>min-siemapi</files>
 		<path>lib/min-siemapi.jar</path>
 	</api>
+	<api>
+		<name>OpenStreetMap-editing</name>
+		<description>Pseudo-API to (miss)use device selection to compile in OpenStreetMap editing
+		</description>
+		<names>osm-editing</names>
+		<symbol>osm-editing</symbol>
+	</api>
 
 <!--
 	You can use this block to define a new API

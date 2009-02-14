@@ -5,8 +5,9 @@
  * it under the terms of the GNU General Public License version 2 as published by
  * the Free Software Foundation.
  *
- * Copyright (C) 2008  Kai Krueger
+ * Copyright (C) 2009  Kai Krueger
  */
+//#if polish.api.osm-editing
 package de.ueller.gpsMid;
 
 import java.util.Enumeration;
@@ -180,3 +181,4 @@ public class GUIosmWayDisplay extends Form implements GpsMidDisplayable, Command
 	}
 
 }
+//#endif

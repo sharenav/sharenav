@@ -1,3 +1,14 @@
+/**
+ * This file is part of GpsMid 
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as published by
+ * the Free Software Foundation.
+ *
+ * Copyright (C) 2009  Kai Krueger
+ */
+
+//#if polish.api.osm-editing
 package de.ueller.midlet.gps.data;
 
 import java.io.ByteArrayInputStream;
@@ -141,3 +152,4 @@ public class OSMdataWay implements XmlParserContentHandler{
 		return res;
 	}
 }
+//#endif
