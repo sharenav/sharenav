@@ -91,7 +91,23 @@ public class GuiSearch extends Canvas implements CommandListener,
 	
 	private int fontSize;
 	
-	
+	/**
+	 * Record the time at which a pointer press was recorded to determine
+	 * a double click
+	 */
+	private long pressedPointerTime;
+	/**
+	 * Stores if there was already a click that might be the first click in a double click
+	 */
+	private boolean potentialDoubleClick;
+	/**
+	 * Indicates that there was a drag event since the last pointerPressed
+	 */
+	private boolean pointerDragged;
+	/**
+	 * Stores the position of the Y coordinate at which the pointer started dragging
+	 */
+	private int pointerYDragged;
 
 	
 	public GuiSearch(Trace parent) throws Exception {
@@ -287,6 +303,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 	}
 
 	public void show() {
+		potentialDoubleClick = false;
+		pointerDragged = false;
 		GpsMid.getInstance().show(this);
 		//Display.getDisplay(parent.getParent()).setCurrent(this);
 		repaint();
@@ -507,9 +525,10 @@ public class GuiSearch extends Canvas implements CommandListener,
 			positionMark.nameIdx=sr.nameIdx;
 			positionMark.displayName=parent.getName(sr.nameIdx);
 			parent.setTarget(positionMark);
+			//#debug info
+			logger.info("Search selected: " + positionMark);
 			destroy();
 			parent.show();
-			repaint(0, 0, getWidth(), getHeight());
 			return;
 		} else if (action == UP) {
 			if (cursor > 0)
@@ -563,6 +582,62 @@ public class GuiSearch extends Canvas implements CommandListener,
 			}
 		}
 		reSearch();
+	}
+	
+	public void pointerPressed(int x, int y) {
+		//#debug debug
+		logger.debug("PointerPressed: " + x + "," + y);
+		long currTime = System.currentTimeMillis();
+		if (potentialDoubleClick) {
+			if ((currTime - pressedPointerTime > 400)) {
+				potentialDoubleClick = false;
+				pressedPointerTime = currTime;
+			}
+		} else {
+			pressedPointerTime = currTime;
+		}
+		pointerYDragged = y;
+	}
+	
+	public void pointerReleased(int x, int y) {
+		//#debug debug
+		logger.debug("PointerReleased: " + x + "," + y);
+		long currTime = System.currentTimeMillis();
+		int clickIdx = (y - scrollOffset)/fontSize;
+		if (pointerDragged) {
+			pointerDragged = false;
+			potentialDoubleClick = false;
+			return;
+		}
+		if (potentialDoubleClick) {
+			if ((currTime - pressedPointerTime < 400) && (clickIdx == cursor)) {
+				//#debug debug
+				logger.debug("PointerDoublePressed");
+				keyPressed(10);
+				potentialDoubleClick = false;
+				return;
+			}
+		}
+		potentialDoubleClick = true;
+		cursor = clickIdx;
+		repaint();
+	}
+	
+	public void pointerDragged(int x, int y) {
+		//#debug debug
+		logger.debug("Pointer dragged: " + x + " " + y);
+		pointerDragged = true;
+		
+		scrollOffset += (y - pointerYDragged);
+		
+		if (scrollOffset > 0) {
+			scrollOffset = 0;
+		}
+		if (scrollOffset < -1*(result.size() - 2) *fontSize) {
+			scrollOffset = -1*(result.size() - 2) *fontSize;
+		}
+		pointerYDragged = y;
+		repaint();
 	}
 
 	private void reSearch() {
