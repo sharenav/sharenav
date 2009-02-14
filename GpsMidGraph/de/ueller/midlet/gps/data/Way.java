@@ -318,6 +318,15 @@ public class Way extends Entity{
 					&&
 				 (Math.abs(t.nodeLon[idx] - searchCon1Lon) < 2)
 				) {
+				if (
+					C.getWayDescription(this.type).routable
+					// count in roundabouts only once (search connection could match at start and end node)
+					&& !containsCon1
+					// count only if it's not a oneway ending at this connection 
+					&& !(isOneway() && i == path.length - 1)
+				) {
+					pc.conWayNumRoutableWays++;
+				}
 				containsCon1 = true;
 				containsCon1At = i;
 				// System.out.println("con1 match");

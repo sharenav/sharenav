@@ -157,6 +157,7 @@ public class RouteInstructions {
 		pc.conWayDistanceToNext = Float.MAX_VALUE;
 		pc.xSize = 100;
 		pc.ySize = 100;
+		pc.conWayNumRoutableWays = 0;
 		pc.setP(new Proj2D(new Node(pc.searchCon1Lat,pc.searchCon1Lon, true),5000,100,100));
 		for (int i=0; i<4; i++){
 			trace.t[i].walk(pc, Tile.OPT_WAIT_FOR_LOAD | Tile.OPT_CONNECTIONS2WAY);
@@ -170,6 +171,7 @@ public class RouteInstructions {
 			cFrom.wayType = pc.conWayType;
 			cFrom.wayDistanceToNext = pc.conWayDistanceToNext;
 			cFrom.wayRouteFlags = pc.conWayRouteFlags;
+			cFrom.numToRoutableWays = pc.conWayNumRoutableWays;
 			connsFound++;
 			return cFrom.wayDistanceToNext;
 		}
@@ -794,7 +796,9 @@ public class RouteInstructions {
 						} else {
 							//#debug debug
 							if (pict==null) logger.debug("got NULL pict");													
-							pc.g.drawImage(pict,pc.lineP2.x,pc.lineP2.y,CENTERPOS);					
+							if ( (c.wayRouteFlags & C.ROUTE_FLAG_INVISIBLE) == 0 ) {
+								pc.g.drawImage(pict,pc.lineP2.x,pc.lineP2.y,CENTERPOS);
+							}
 						}
 					}
 				}
@@ -1027,7 +1031,12 @@ public class RouteInstructions {
 					if ( (c2.wayRouteFlags & C.ROUTE_FLAG_ROUNDABOUT) == 0 ) { 
 						break;
 					}
-					ri++;
+					// count only exits in roundabouts
+					if (c2.numToRoutableWays > 1) {
+						ri++;						
+					} else {
+						c2.wayRouteFlags |= C.ROUTE_FLAG_INVISIBLE;
+					}
 				}
 				for (int i3=i2-1; i3>i; i3--) {
 					c2 = (ConnectionWithNode) route.elementAt(i3);
@@ -1162,7 +1171,7 @@ public class RouteInstructions {
 				if ( (c.wayRouteFlags & C.ROUTE_FLAG_ROUNDABOUT) > 0) { 
 					sb.append(" (in roundabout)");
 				}
-				sb.append(" Cons:" + c.to.conSize);
+				sb.append(" Cons:" + c.to.conSize + " numRoutableWays: " + c.numToRoutableWays);
 				System.out.println(sb.toString());
 			}
 		}		
