@@ -22,7 +22,7 @@ public class C {
 	 * Specifies the format of the map on disk we expect to see
 	 * This constant must be in sync with Osm2GpsMid
 	 */
-	public final static short MAP_FORMAT_VERSION = 22;
+	public final static short MAP_FORMAT_VERSION = 23;
 	
 	public final static byte MIN_PLACETYPE = 1; // city
 	public final static byte MAX_PLACETYPE = 5; // suburb
@@ -74,8 +74,10 @@ public class C {
 	public final static byte OM_NAME_MASK=OM_NO_NAME | OM_WITH_NAME | OM_WITH_NAMEPART;
 	
 	public static int BACKGROUND_COLOR = 0x009BFF9B;
-	public static int ROUTE_COLOR = 0x0000C0C0;  // not read from file yet
+	public static int ROUTE_COLOR = 0x0000C0C0;  //
 	public static int ROUTE_BORDERCOLOR = 0x0064FFFF;  // not read from file yet
+	public static int ROUTEPRIOR_COLOR = 0x0064FFFF;  // not read from file yet
+	public static int ROUTEPRIOR_BORDERCOLOR = 0x0064FFFF;  // not read from file yet
 	public static String appVersion;
 	public static String bundleDate;
 	public static boolean enableEdits;
@@ -121,6 +123,10 @@ public class C {
 		//#endif
 		
 		BACKGROUND_COLOR = ds.readInt();		
+		ROUTE_COLOR = ds.readInt();
+		ROUTE_BORDERCOLOR = ds.readInt();
+		ROUTEPRIOR_COLOR = ds.readInt();
+		ROUTEPRIOR_BORDERCOLOR = ds.readInt();
 		
 		readPOIdescriptions(ds);
 		readWayDescriptions(ds);
