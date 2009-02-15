@@ -151,10 +151,6 @@
           todir="${basedir}"
           name="exploded"/>
     <explode
-          file="lib/MinML2.jar"
-          todir="${basedir}"
-          name="exploded"/>
-    <explode
           file="lib/kd.jar"
           todir="${basedir}"
           name="exploded"/>
