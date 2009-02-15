@@ -7,6 +7,11 @@ package de.ueller.midlet.gps;
 
 import java.util.Vector;
 
+import javax.microedition.io.Connection;
+import javax.microedition.io.Connector;
+//#if polish.api.fileconnection
+import javax.microedition.io.file.FileConnection;
+//#endif
 import javax.microedition.lcdui.Alert;
 import javax.microedition.lcdui.Choice;
 import javax.microedition.lcdui.ChoiceGroup;
@@ -38,7 +43,10 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		"Display options", "Sounds & Alerts", "Routing options",
 		"GPX Receiver", "Map source", "Debug options", "Key shortcuts",
 		//#if polish.api.osm-editing
-		"OSM account"
+		"OSM account",
+		//#endif
+		//#if polish.api.fileconnection
+		"Save config","Load config"
 		//#endif
 		};
 	
@@ -58,6 +66,11 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private static final int MENU_ITEM_KEYS_OPT = 8;
 	//#if polish.api.osm-editing
 	private static final int MENU_ITEM_OSM_OPT = 9;
+	private static final int MENU_ITEM_SAVE_CONFIG = 10;
+	private static final int MENU_ITEM_LOAD_CONFIG = 11;
+	//#else
+	private static final int MENU_ITEM_SAVE_CONFIG = 9;
+	private static final int MENU_ITEM_LOAD_CONFIG = 10;
 	//#endif
 
 	private static final String[]	empty			= {};
@@ -138,6 +151,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	//#if polish.api.osm-editing
 	private final static int		STATE_OSM_OPT = 12;
 	//#endif
+	private final static int		STATE_LOAD_CONFIG = 13;
+	private final static int		STATE_SAVE_CONFIG = 14;
 	
 	private Vector urlList; 
 	private Vector friendlyName;
@@ -654,6 +669,18 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 					state = STATE_OSM_OPT;
 					break;
 				//#endif
+				//#if polish.api.fileconnection
+				case MENU_ITEM_SAVE_CONFIG:
+					state = STATE_SAVE_CONFIG;
+					FsDiscover fsd = new FsDiscover(this,this,null,true,"","Save configuration");
+					fsd.show();
+					break;
+				case MENU_ITEM_LOAD_CONFIG:
+					state = STATE_LOAD_CONFIG;
+					fsd = new FsDiscover(this,this,null,false,"cfg","Load configuration");
+					fsd.show();
+					break;
+				//#endif
 				}
 				break;
 			case STATE_BT_GPS: 
@@ -939,20 +966,29 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	}
 	
 	public void selectionCanceled() {
-		/**
-		 * Not yet used
-		 */
+		//#if polish.api.fileconnection
+		switch (state) {
+		case STATE_LOAD_CONFIG:
+		case STATE_SAVE_CONFIG:
+			state = STATE_ROOT;
+			break;
+		}
+		//#endif
 	}
 
 	public void selectedFile(String url) {
 		logger.info("Url selected: " + url);
-		url = url.substring(0, url.lastIndexOf('/') + 1);
+		String url_trunc = url.substring(0, url.lastIndexOf('/') + 1);
 		switch (state) {
 		case STATE_LP:
-			rawLog.set(0, url, null);
+			rawLog.set(0, url_trunc, null);
 			break;
+		case STATE_GPX:
+			gpxUrl.setText(url_trunc);
+			break;
+		//#if polish.api.fileconnection
 		case STATE_MAP:
-			mapSrc.set(1, "Filesystem: " + url, null);
+			mapSrc.set(1, "Filesystem: " + url_trunc, null);
 			mapSrc.setSelectedIndex(1, true);
 			//As the Filesystem chooser has called the show()
 			//method of this class, it currently shows the root
@@ -960,13 +996,36 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 			//menue
 			Display.getDisplay(parent).setCurrent(menuSelectMapSource);
 			break;
-		case STATE_GPX:
-			gpxUrl.setText(url);				
-			break;
 		case STATE_DEBUG:
-			url = url.substring(0, url.lastIndexOf('/') + 1);
-			debugLog.set(0, url, null);						
+			debugLog.set(0, url_trunc, null);
 			break;
-		}		
+		case STATE_SAVE_CONFIG:
+			try {
+				FileConnection con = (FileConnection)Connector.open(url_trunc + "GpsMid.cfg");
+				if (!con.exists()) {
+					con.create();
+				}
+				Configuration.serialise(con.openOutputStream());
+				con.close();
+			} catch (Exception e) {
+				logger.exception("Could not save configuration", e);
+			}
+			state = STATE_ROOT;
+			show();
+			break;
+		case STATE_LOAD_CONFIG:
+			try {
+				FileConnection con = (FileConnection)Connector.open(url);
+				Configuration.deserialise(con.openInputStream());
+				con.close();
+			} catch (Exception e) {
+				logger.exception("Could not load configuration", e);
+			}
+			state = STATE_ROOT;
+			show();
+			break;
+		//#endif
+		}
+		
 	}
 }
