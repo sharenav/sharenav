@@ -1,5 +1,15 @@
 package de.ueller.gps;
 
+/**
+ * This file is part of GpsMid 
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as published by
+ * the Free Software Foundation.
+ * Copyright (c) 2008 Kai Krueger apmonkey at users dot sourceforge dot net 
+ * See Copying
+ */
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -15,27 +25,30 @@ import de.ueller.midlet.gps.Trace;
 
 /**
  * 
- * This class shares the functionallity to read from the Bluetooth Gps receiver and handles
- * common functionality such as dealing with receiver quality and lost connections
+ * This class shares the functionality to read from the Bluetooth GPS receiver
+ * and handles common functionality such as dealing with receiver quality and
+ * lost connections
  * 
- *  The protocoll specific decoding is handled in the abstract process() function of subclasses
- *
+ * The protocol specific decoding is handled in the abstract process() function
+ * of subclasses
+ * 
  */
-public abstract class BtReceiverInput implements Runnable, LocationMsgProducer{
-	private static final Logger logger = Logger.getInstance(NmeaInput.class,Logger.TRACE);
+public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
+	private static final Logger logger = Logger.getInstance(NmeaInput.class,
+			Logger.TRACE);
 
 	protected InputStream ins;
 	private OutputStream outs;
 	protected OutputStream rawDataLogger;
-	protected Thread					processorThread;
-	protected LocationMsgReceiver	receiver;
-	protected boolean closed=false;
-	protected byte connectQuality=100;
-	protected int bytesReceived=0;
-	protected int[] connectError=new int[LocationMsgReceiver.SIRF_FAIL_COUNT];
+	protected Thread processorThread;
+	protected LocationMsgReceiver receiver;
+	protected boolean closed = false;
+	protected byte connectQuality = 100;
+	protected int bytesReceived = 0;
+	protected int[] connectError = new int[LocationMsgReceiver.SIRF_FAIL_COUNT];
 	protected String message;
-	protected int msgsReceived=1;
-	
+	protected int msgsReceived = 1;
+
 	protected class KeepAliveTimer extends TimerTask {
 		public void run() {
 			if (outs != null) {
@@ -47,135 +60,145 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer{
 					this.cancel();
 				}
 			}
-		}		
+		}
 	}
 
-	public void init(InputStream ins, OutputStream outs, LocationMsgReceiver receiver) {
+	public void init(InputStream ins, OutputStream outs,
+			LocationMsgReceiver receiver) {
 		this.ins = ins;
 		this.outs = outs;
 		this.receiver = receiver;
-		processorThread = new Thread(this,"NMEA Decoder");
+		processorThread = new Thread(this, "NMEA Decoder");
 		processorThread.setPriority(Thread.MAX_PRIORITY);
 		processorThread.start();
 		/**
-		 * There is at least one, perhaps more BT gps receivers, that
-		 * seem to kill the bluetooth connection if we don't send it
-		 * something for some reason. Perhaps due to poor powermanagment?
-		 * We don't have anything to send, so send an arbitrary 0.
+		 * There is at least one, perhaps more Bt GPS receivers, that seem to
+		 * kill the Bluetooth connection if we don't send it something for some
+		 * reason. Perhaps due to poor power management? We don't have anything
+		 * to send, so send an arbitrary 0.
 		 */
 		if (Configuration.getBtKeepAlive()) {
 			TimerTask tt = new KeepAliveTimer();
 			logger.info("Setting keep alive timer: " + tt);
 			Timer t = new Timer();
-			t.schedule(tt, 1000,1000);
+			t.schedule(tt, 1000, 1000);
 		}
 	}
 
 	abstract protected void process() throws IOException;
 
-	public void run(){
-		receiver.receiveMessage("Start Bt Gps Receiver");
-		// eat the buffer content
+	public void run() {
+		receiver.receiveMessage("Start Bt GPS receiver");
+		// Eat the buffer content
 		try {
 			try {
-				byte [] buf = new byte[512]; 
-				while (ins.available() > 0){
-					int recieved = ins.read(buf);
-					bytesReceived += recieved;
+				byte[] buf = new byte[512];
+				while (ins.available() > 0) {
+					int received = ins.read(buf);
+					bytesReceived += received;
 					if (rawDataLogger != null) {
-						rawDataLogger.write(buf, 0, recieved);					
-						rawDataLogger.flush();					
+						rawDataLogger.write(buf, 0, received);
+						rawDataLogger.flush();
 					}
 				}
-				receiver.receiveMessage("Erasing " + bytesReceived +" bytes");
-				bytesReceived=100;			
+				// #debug debug
+				logger.debug("Erased " + bytesReceived + " bytes");
+				bytesReceived = 100;
 			} catch (IOException e1) {
 				receiver.receiveMessage("Closing: " + e1.getMessage());
 				close("Closing: " + e1.getMessage());
 			}
 
-			byte timeCounter=41;
-			while (!closed){
-				logger.debug("BT receiver thread looped");
+			byte timeCounter = 41;
+			while (!closed) {
+				logger.debug("Bt receiver thread looped");
 				try {
 					timeCounter++;
-					if (timeCounter > 40){
+					if (timeCounter > 40) {
 						timeCounter = 0;
-						if(connectQuality > 100) {
-							connectQuality=100;
+						if (connectQuality > 100) {
+							connectQuality = 100;
 						}
-						if(connectQuality < 0) {
-							connectQuality=0;
+						if (connectQuality < 0) {
+							connectQuality = 0;
 						}
-						receiver.receiveStatistics(connectError,connectQuality);
-						//watchdog if no bytes received in 10 sec then exit thread
-						if (bytesReceived == 0){						
-							throw new IOException("No Data from Gps");
+						receiver
+								.receiveStatistics(connectError, connectQuality);
+						// watchdog if no bytes received in 10 sec then exit
+						// thread
+						if (bytesReceived == 0) {
+							throw new IOException("No Data from GPS");
 						} else {
-							bytesReceived=0;
+							bytesReceived = 0;
 						}
 					}
 					process();
 				} catch (IOException e) {
 					/**
-					 * The bluetooth connection seems to have died,
-					 * try and reconnect. If the reconnect was successful
-					 * the reconnect function will call the init function,
-					 * which will create a new thread. In that case we simply
-					 * exit this old thread. If the reconnect was unsuccessful
-					 * then we close the connection and give an error message.
+					 * The bluetooth connection seems to have died, try and
+					 * reconnect. If the reconnect was successful the reconnect
+					 * function will call the init function, which will create a
+					 * new thread. In that case we simply exit this old thread.
+					 * If the reconnect was unsuccessful then we close the
+					 * connection and give an error message.
 					 */
-					logger.info("Failed to read from GPS trying to reconnect: " + e.getMessage());
+					logger.info("Failed to read from GPS trying to reconnect: "
+							+ e.getMessage());
 					receiver.receiveSolution("~~");
 					if (!Trace.getInstance().autoReconnectBtConnection()) {
-						logger.info("Gps bluethooth could not reconnect");
+						logger.info("GPS bluethooth could not reconnect");
 						receiver.receiveMessage("Closing: " + e.getMessage());
 						close("Closed: " + e.getMessage());
 					} else {
-						logger.info("Gps bluetooth reconnect was successful");
+						logger.info("GPS bluetooth reconnect was successful");
 						return;
 					}
 				}
-				if (! closed)
+				if (!closed)
 					try {
 						synchronized (this) {
 							connectError[LocationMsgReceiver.SIRF_FAIL_MSG_INTERUPTED]++;
 							wait(250);
-						}				
+						}
 					} catch (InterruptedException e) {
-						//Nothing to do in this case
+						// Nothing to do in this case
 					}
 
 			}
-			if (message == null){
+			if (message == null) {
 				receiver.locationDecoderEnd();
 			} else {
 				receiver.locationDecoderEnd(message);
 			}
 		} catch (OutOfMemoryError oome) {
-			logger.fatal("GpsInput thread crashed as out of memory: " + oome.getMessage());
+			logger.fatal("GpsInput thread crashed as out of memory: "
+					+ oome.getMessage());
 			oome.printStackTrace();
 		} catch (Exception e) {
-			logger.fatal("GpsInput thread crashed unexpectedly: " + e.getMessage());
+			logger.fatal("GpsInput thread crashed unexpectedly: "
+					+ e.getMessage());
 			e.printStackTrace();
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see de.ueller.gps.nmea.LocationMsgProducer#close()
 	 */
 	public synchronized void close() {
 		disableRawLogging();
-		closed=true;
+		closed = true;
 	}
+
 	public synchronized void close(String message) {
 		disableRawLogging();
-		closed=true;
-		this.message=message;
+		closed = true;
+		this.message = message;
 	}
 
 	public void enableRawLogging(OutputStream os) {
-		rawDataLogger = os;		
+		rawDataLogger = os;
 	}
 
 	public void disableRawLogging() {
@@ -183,7 +206,7 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer{
 			try {
 				rawDataLogger.close();
 			} catch (IOException e) {
-				logger.exception("Couldn't close raw gps logger", e);
+				logger.exception("Couldn't close raw GPS logger", e);
 			}
 			rawDataLogger = null;
 		}
