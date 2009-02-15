@@ -843,6 +843,7 @@ public class Configuration {
 	}
 
 	public static void setOsmUsername(String name) {
+		osm_username = name;
 		write(name,RECORD_ID_OSM_USERNAME);
 	}
 	
