@@ -175,6 +175,29 @@ public class LegendParser extends DefaultHandler{
 				System.out.println("ERROR: Couldn't read the background color correctly, using default");
 				Configuration.getConfiguration().background_color = 0x009bFF9b;				
 			}
+		} else if (qName.equals("routeLine")) {
+			try {
+				Configuration.getConfiguration().routeColor = Integer.parseInt(atts.getValue("lineColor"),16);
+			} catch (NumberFormatException nfe){
+				System.out.println("ERROR: Couldn't read the routeColor correctly, using default");
+			}
+			try {
+				Configuration.getConfiguration().routeBorderColor = Integer.parseInt(atts.getValue("borderColor"),16);
+			} catch (NumberFormatException nfe){
+				System.out.println("ERROR: Couldn't read the routeBorderColor correctly, using default");
+			}
+		} else if (qName.equals("priorRouteLine")) {
+			try {
+				Configuration.getConfiguration().priorRouteColor = Integer.parseInt(atts.getValue("lineColor"),16);
+			} catch (NumberFormatException nfe){
+				System.out.println("ERROR: Couldn't read the priorRouteColor correctly, using default");
+			}
+			try {
+				Configuration.getConfiguration().priorRouteBorderColor = Integer.parseInt(atts.getValue("borderColor"),16);
+			} catch (NumberFormatException nfe){
+				System.out.println("ERROR: Couldn't read the priorRouteBorderColor correctly, using default");
+				Configuration.getConfiguration().priorRouteBorderColor = 0x009bFF9b;				
+			}
 		}
 		switch (readingType) {
 			case READING_POIS:

@@ -50,6 +50,9 @@ zoomed out 21x (scale alias 1:  500km)
 
 <legend>
   <background color="009BFF9B" />
+  <routeLine lineColor="0000C0C0" borderColor="0x0064FFFF"/>
+  <priorRouteLine lineColor="00007070" borderColor="00647777"/>
+  
   <sounds>
 <!-- these sounds have internal tone sequence
      that will be used if commented out here

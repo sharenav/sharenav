@@ -181,6 +181,10 @@ public class CreateGpsMidData {
 			 * Writing global info 
 			 */
 			dsi.writeInt(config.background_color);
+			dsi.writeInt(config.routeColor);
+			dsi.writeInt(config.routeBorderColor);
+			dsi.writeInt(config.priorRouteColor);
+			dsi.writeInt(config.priorRouteBorderColor);
 			/**
 			 * Writing POI legend data			 * 
 			 */
