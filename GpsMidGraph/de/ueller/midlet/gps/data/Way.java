@@ -329,6 +329,7 @@ public class Way extends Entity{
 				}
 				containsCon1 = true;
 				containsCon1At = i;
+				
 				// System.out.println("con1 match");
 				if (containsCon1 && containsCon2) break;
 			}
@@ -348,14 +349,17 @@ public class Way extends Entity{
 			float conWayRealDistance = 0;
 			short from = containsCon1At;
 			short to = containsCon2At;
+			int direction = 1;
 			if (from > to && !isRoundAbout()) {
 				// if this is a oneway but not a roundabout it can't be the route path as we would go against the oneway's direction
 				if (isOneway()) return;
 				// swap direction
 				from = to;
 				to = containsCon1At;
+				direction = -1;
 			}
-
+			
+			
 			int idx1 = path[from];
 			int idx2;
 
@@ -403,6 +407,33 @@ public class Way extends Entity{
 				if (isTunnel()) routeFlags += C.ROUTE_FLAG_TUNNEL;
 				if (isBridge()) routeFlags += C.ROUTE_FLAG_BRIDGE;
 				pc.conWayRouteFlags = routeFlags;
+				
+				// calculate bearings
+				if ( (direction==1 && containsCon1At < (path.length - 1)) 
+						||
+						(direction==-1 && containsCon1At > 0)
+					) {
+						int idxC = path[containsCon1At + direction];
+						pc.conWayStartBearing = MoreMath.bearing_start(
+							(pc.searchCon1Lat),
+							(pc.searchCon1Lon),
+							(t.centerLat + t.nodeLat[idxC] *  t.fpminv),
+							(t.centerLon + t.nodeLon[idxC] *  t.fpminv)
+						);
+				}
+
+				if ( (direction==1 && containsCon2At > 0) 
+						||
+						(direction==-1 && containsCon2At < (path.length - 1))
+				) {
+					int idxC = path[containsCon2At - direction];
+					pc.conWayEndBearing = MoreMath.bearing_start(
+						(t.centerLat + t.nodeLat[idxC] *  t.fpminv),
+						(t.centerLon + t.nodeLon[idxC] *  t.fpminv),
+						(pc.searchCon2Lat),
+						(pc.searchCon2Lon)
+					);				
+				}	
 			}
 		}
 	}

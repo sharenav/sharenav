@@ -49,6 +49,7 @@ public class C {
 	public final static byte ROUTE_FLAG_TUNNEL = 0x08; // used in ConnectionWithNode
 	public final static byte ROUTE_FLAG_BRIDGE = 0x10; // used in ConnectionWithNode
 	public final static byte ROUTE_FLAG_INVISIBLE = 0x20; // used in ConnectionWithNode
+	public final static byte ROUTE_FLAG_INCONSISTENT_BEARING = 0x40; // used in ConnectionWithNode
 	
 	/**
 	 * minimum distances to set the is_in name to the next city

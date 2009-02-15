@@ -276,7 +276,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 
 		loggings = new String[2];
 		loggings[0] = "Show route connections";
-		loggings[1] = "Show bearings at route arrows";
+		loggings[1] = "Show inconsistent bearings";
 		debugOther = new ChoiceGroup("Other:", ChoiceGroup.MULTIPLE,loggings,null);
 		debugOther.setSelectedIndex(0, Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_CONNECTIONS, true));
 		debugOther.setSelectedIndex(1, Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_BEARINGS, true));

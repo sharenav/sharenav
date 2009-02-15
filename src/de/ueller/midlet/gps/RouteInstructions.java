@@ -170,8 +170,17 @@ public class RouteInstructions {
 			cFrom.wayNameIdx = pc.conWayNameIdx;
 			cFrom.wayType = pc.conWayType;
 			cFrom.wayDistanceToNext = pc.conWayDistanceToNext;
-			cFrom.wayRouteFlags = pc.conWayRouteFlags;
+			cFrom.wayRouteFlags |= pc.conWayRouteFlags;
 			cFrom.numToRoutableWays = pc.conWayNumRoutableWays;
+			cTo.wayConStartBearing = pc.conWayStartBearing;
+			cTo.wayConEndBearing = pc.conWayEndBearing;
+			if (Math.abs(cTo.wayConEndBearing - cTo.endBearing) > 3) {
+				cFrom.wayRouteFlags |= C.ROUTE_FLAG_INCONSISTENT_BEARING;				
+			}
+			if (Math.abs(cTo.wayConStartBearing - cTo.startBearing) > 3) {
+				cTo.wayRouteFlags |= C.ROUTE_FLAG_INCONSISTENT_BEARING;				
+			}
+			
 			connsFound++;
 			return cFrom.wayDistanceToNext;
 		}
@@ -803,13 +812,30 @@ public class RouteInstructions {
 						
 						// display bearings for debugging
 						if (Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_BEARINGS)) {					
-							drawBearing(pc, pc.lineP2.x,pc.lineP2.y, c.endBearing, true, 0x00FF0000);
-							byte startBearing = 0;
+							// end bearings
+							pc.g.setStrokeStyle(Graphics.SOLID);
+							drawBearing(pc, pc.lineP2.x,pc.lineP2.y, c.endBearing, true, 0x00800000);
+							pc.g.setStrokeStyle(Graphics.DOTTED);
+							drawBearing(pc, pc.lineP2.x,pc.lineP2.y, c.wayConEndBearing, true, 0x00FF0000);							
+							byte startBearingCon = 0;
+							byte startBearingWay = 0;
 							if ( i < route.size()-1 ) {
 								ConnectionWithNode cNext = (ConnectionWithNode) route.elementAt(i + 1);
-								startBearing = cNext.startBearing;
+								startBearingCon = cNext.startBearing;
+								startBearingWay = cNext.wayConStartBearing;
 							}
-							drawBearing(pc, pc.lineP2.x,pc.lineP2.y, startBearing, false, 0x0000FF00);
+							// start bearings
+							pc.g.setStrokeStyle(Graphics.SOLID);
+							drawBearing(pc, pc.lineP2.x,pc.lineP2.y, startBearingCon, false, 0x00008000);
+							pc.g.setStrokeStyle(Graphics.DOTTED);
+							drawBearing(pc, pc.lineP2.x,pc.lineP2.y, startBearingWay, false, 0x0000FF00);
+							if ( (c.wayRouteFlags & C.ROUTE_FLAG_INCONSISTENT_BEARING) > 0) {
+								// draw red circle aroud inconsistent bearing
+								pc.g.setColor(0x00FF6600);
+								pc.g.setStrokeStyle(Graphics.SOLID);
+								final byte radius=40;
+								pc.g.drawArc(pc.lineP2.x-radius/2,pc.lineP2.y-radius/2,radius,radius,0,359);
+							}
 						}
 					}
 				}
@@ -1194,7 +1220,7 @@ public class RouteInstructions {
 				if ( (c.wayRouteFlags & C.ROUTE_FLAG_ROUNDABOUT) > 0) { 
 					sb.append(" (in roundabout)");
 				}
-				sb.append(" Cons:" + c.to.conSize + " numRoutableWays: " + c.numToRoutableWays);
+				sb.append(" Cons:" + c.to.conSize + " numRoutableWays: " + c.numToRoutableWays + " startBearing: " + c.startBearing + "/" + c.wayConStartBearing + " endBearing: "+ c.endBearing + "/" + c.wayConEndBearing);
 				System.out.println(sb.toString());
 			}
 		}		
