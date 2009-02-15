@@ -388,13 +388,6 @@ Runnable , GpsMidDisplayable{
 					}
 					receiveMessage("BT Connected");
 			}
-			if (Configuration.getCfgBitState(Configuration.CFGBIT_SND_CONNECT)) {
-				parent.mNoiseMaker.playSound("CONNECT");
-			}
-			//#debug debug
-			logger.debug("rm connect, add disconnect");
-			removeCommand(CMDS[CONNECT_GPS_CMD]);
-			addCommand(CMDS[DISCONNECT_GPS_CMD]);
 			switch (Configuration.getLocationProvider()){
 				case Configuration.LOCATIONPROVIDER_SIRF:
 					locationProducer = new SirfInput();
@@ -473,6 +466,13 @@ Runnable , GpsMidDisplayable{
 				return;
 			}
 			locationProducer.init(btGpsInputStream, btGpsOutputStream, this);
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_SND_CONNECT)) {
+				parent.mNoiseMaker.playSound("CONNECT");
+			}
+			//#debug debug
+			logger.debug("rm connect, add disconnect");
+			removeCommand(CMDS[CONNECT_GPS_CMD]);
+			addCommand(CMDS[DISCONNECT_GPS_CMD]);
 			//#debug info
 			logger.info("end startLocationPovider thread");
 			//		setTitle("lp="+Configuration.getLocationProvider() + " " + Configuration.getBtUrl());			
