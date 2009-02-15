@@ -931,6 +931,12 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		}
 		
 	}
+	
+	public void selectionCanceled() {
+		/**
+		 * Not yet used
+		 */
+	}
 
 	public void selectedFile(String url) {
 		logger.info("Url selected: " + url);

@@ -112,6 +112,12 @@ public class AudioRecorder  implements SelectionListener{
 		//#endif
 		return res;
 	}
+	
+	public void selectionCanceled() {
+		/**
+		 * Nothing to do at the moment
+		 */
+	}
 
 	public void selectedFile(String url) {
 		logger.info("Setting picture directory to " + url);

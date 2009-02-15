@@ -35,6 +35,12 @@ public class FileGpxImportSession implements GpxImportSession, SelectionListener
 		//#endif
 	}
 
+	public void selectionCanceled() {
+		/**
+		 * Nothing to do here at the moment
+		 */
+	}
+	
 	public void selectedFile(String url) {
 		try {
 			//#debug info

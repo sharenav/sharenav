@@ -607,6 +607,12 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 		//Display.getDisplay(parent.getParent()).setCurrent(this);
 	}
 
+	public void selectionCanceled() {
+		/**
+		 * Nothing to do at the moment
+		 */
+	}
+	
 	public void selectedFile(String url) {
 		logger.info("Setting picture directory to " + url);
 		Configuration.setPhotoUrl(url);
