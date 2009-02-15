@@ -1198,7 +1198,7 @@ Runnable , GpsMidDisplayable{
 			int maxSpeed = 0;
 			if (actualWay != null) {
 				maxSpeed = actualWay.getMaxSpeed();
-				if (maxSpeed != 0 && speed > maxSpeed) {
+				if (maxSpeed != 0 && speed > (maxSpeed + Configuration.getSpeedTolerance()) ) {
 					speeding = true;
 				}
 			}
