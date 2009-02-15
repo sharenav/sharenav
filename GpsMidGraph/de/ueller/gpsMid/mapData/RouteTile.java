@@ -301,18 +301,44 @@ public class RouteTile extends RouteBaseTile {
 //					c.to=nodes[nodeId - minId];
 //				}
 				c.toId=nodeId;
+				/**
+				 * The connection time and connection length can either be encoded as a int or a short
+				 * We indicate if it is a int by using the top most bit (sign bit). So if the read
+				 * short is negative, we need to read the second short and combine it into an int.
+				 * This is done, as only a small fraction of connection costs are larger than what
+				 * fits into 16 bit, so we save 16 bit on most connections.
+				 */
+				int upper = cs.readShort();
+				if (upper < 0) {
+					int lower = cs.readShort();
+					upper = -1*(((0xffff & upper) << 16) + (0xffff & lower));
+				}
+				int costTime = upper;
+				upper = cs.readShort();
+				if (upper < 0) {
+					int lower = cs.readShort();
+					upper = -1*(((0xffff & upper) << 16) + (0xffff & lower));
+				}
+				int costLength = upper;
 				if (bestTime){
-					c.cost=cs.readShort();
-					cs.readShort();
+					c.cost = costTime;
 				} else {
-					cs.readShort();
-					c.cost=cs.readShort();								
+					c.cost = costLength;
 				}
 				c.startBearing=cs.readByte();
 				c.endBearing=cs.readByte();
 				cons[i]=c;
 			}
 			connections[in]=cons;
+		}
+		/**
+		 * Check to see if everything went well with reading the tile.
+		 */
+		int endMarker = cs.readInt();
+		if (endMarker != 0xdeadbeaf) {
+			logger.error("RouteTile did not read correctly");
+			throw new IOException("Failed to read correct end of file marker. Read " + 
+					endMarker + " but expected " + 0xdeadbeaf);
 		}
 	}
 	public String toString() {
