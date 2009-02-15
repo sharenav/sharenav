@@ -31,8 +31,8 @@ import de.ueller.midlet.gps.Logger;
 public class Jsr172GpxParser extends DefaultHandler implements GpxParser {
 
 	/**
-	 * This is a wrapper for the MinML2 parser. We need this wrapper so that we
-	 * can use the same code for both the MinML2 parser and the JSR-172 parser.
+	 * This is a wrapper for the JSR172 parser. We need this wrapper so that we
+	 * can use the same code for both the QDGpx parser and the JSR-172 parser.
 	 * Although they are close to identical, they aren't completely. Hence the
 	 * need for this wrapper. We also need the wrapper to guard against missing
 	 * JSRs by calling this through the Class.forName()
