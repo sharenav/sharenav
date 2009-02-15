@@ -351,16 +351,32 @@ public class Tile {
 				nds.writeByte(n.connected.size());
 				for (Connection c : n.connected){
 					cds.writeInt(c.to.id);
-					if (c.time > Short.MAX_VALUE)
-						System.out.println("ERROR: overflow! Routing down path takes too long (" + c.time + "cs)");
-					cds.writeShort((short) c.time);
-					if (c.length > Short.MAX_VALUE)
-						System.out.println("ERROR: overflow! Routing connection (" + c.length + "m) too long: ");
-					cds.writeShort((short) c.length);
+					/**
+					 * If we can't fit the values into short,
+					 * we write an int. In order for the other
+					 * side to know if we wrote an int or a short,
+					 * we encode the length in the top most (sign) bit
+					 */
+					if (c.time > Short.MAX_VALUE) {
+						cds.writeInt(-1*c.time);
+					} else {
+						cds.writeShort((short) c.time);
+					}
+					if (c.length > Short.MAX_VALUE) {
+						cds.writeInt(-1*c.length);
+					} else {
+						cds.writeShort((short) c.length);
+					}
+					
 					cds.writeByte(c.startBearing);
 					cds.writeByte(c.endBearing);
 				}
 			}
+			/**
+			 * Write a special marker, so that we can detect if something
+			 * went wrong with decoding the variable length encoding
+			 */
+			cds.writeInt(0xdeadbeaf);
 			nds.close();
 			cds.close();
 		}
