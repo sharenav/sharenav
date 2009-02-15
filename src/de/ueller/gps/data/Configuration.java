@@ -1,8 +1,11 @@
 package de.ueller.gps.data;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Vector;
 
@@ -330,16 +333,25 @@ public class Configuration {
 		}
 	}
 	
+	private final static String sanitizeString(String s) {
+		if (s == null) {
+			return "!null!";
+		}
+		return s;
+	}
+	
+	private final static String desanitizeString(String s) {
+		if (s.equalsIgnoreCase("!null!"))
+			return null;
+		return s;
+	}
+	
 	private static void write(String s, int idx) {
 		RecordStore	database;
 		try {
 			database = RecordStore.openRecordStore("Receiver", true);
 			byte[] data;
-			if (s == null) {
-				data ="!null!".getBytes();
-			} else {
-				data=s.getBytes();
-			}
+			data = sanitizeString(s).getBytes();
 			while (database.getNumRecords() < idx){
 				database.addRecord(empty, 0, empty.length);
 			}
@@ -373,9 +385,7 @@ public class Configuration {
 			if (data == null) {
 				ret = null;
 			} else {
-				ret = new String(data);
-				if (ret.equalsIgnoreCase("!null!"))
-					ret = null;
+				ret = desanitizeString(new String(data));
 			}
 			//#debug info
 			logger.info("Read from config database " + idx + ": " + ret);
@@ -415,6 +425,75 @@ public class Configuration {
 			logger.exception("Failed to read Long from config database", e);
 			return 0;
 		}
+	}
+	
+	public static void serialise(OutputStream os) throws IOException{
+		DataOutputStream dos = new DataOutputStream(os);
+		dos.writeInt(VERSION);
+		dos.writeLong(cfgBits);
+		dos.writeUTF(sanitizeString(btUrl));
+		dos.writeInt(locationProvider);
+		dos.writeUTF(sanitizeString(gpxUrl));
+		dos.writeUTF(sanitizeString(photoUrl));
+		dos.writeUTF(sanitizeString(photoEncoding));
+		dos.writeBoolean(mapFromJar);
+		dos.writeUTF(sanitizeString(mapFileUrl));
+		dos.writeUTF(sanitizeString(rawGpsLogUrl));
+		dos.writeBoolean(rawGpsLogEnable);
+		dos.writeInt(detailBoost);
+		dos.writeInt(gpxRecordRuleMode);
+		dos.writeInt(gpxRecordMinMilliseconds); 
+		dos.writeInt(gpxRecordMinDistanceCentimeters); 
+		dos.writeInt(gpxRecordAlwaysDistanceCentimeters);
+		dos.writeUTF(sanitizeString(rawDebugLogUrl));
+		dos.writeBoolean(rawDebugLogEnable);
+		dos.writeInt(debugSeverity);
+		dos.writeInt(routeEstimationFac);
+		dos.writeBoolean(stopAllWhileRouteing);
+		dos.writeBoolean(btKeepAlive);
+		dos.writeBoolean(btAutoRecon);
+		dos.writeUTF(sanitizeString(smsRecipient));
+		dos.writeInt(speedTolerance);
+		dos.writeUTF(sanitizeString(osm_username));
+		dos.writeUTF(sanitizeString(osm_pwd));
+		dos.writeUTF(sanitizeString(osm_url));
+		dos.flush();
+	}
+	
+	public static void deserialise(InputStream is) throws IOException{
+		DataInputStream dis = new DataInputStream(is);
+		int version = dis.readInt();
+		if (version != VERSION) {
+			throw new IOException("Version of the stored config does not match with current GpsMid");
+		}
+		setCfgBits(dis.readLong(), true);
+		setBtUrl(desanitizeString(dis.readUTF()));
+		setLocationProvider(dis.readInt());
+		setGpxUrl(desanitizeString(dis.readUTF()));
+		setPhotoUrl(desanitizeString(dis.readUTF()));
+		setPhotoEncoding(desanitizeString(dis.readUTF()));
+		setBuiltinMap(dis.readBoolean());
+		setMapUrl(desanitizeString(dis.readUTF()));
+		setGpsRawLoggerUrl(desanitizeString(dis.readUTF()));
+		setGpsRawLoggerEnable(dis.readBoolean());
+		setDetailBoost(dis.readInt(), true);
+		setGpxRecordRuleMode(dis.readInt());
+		setGpxRecordMinMilliseconds(dis.readInt());
+		setGpxRecordMinDistanceCentimeters(dis.readInt());
+		setGpxRecordAlwaysDistanceCentimeters(dis.readInt());
+		setDebugRawLoggerUrl(desanitizeString(dis.readUTF()));
+		setDebugRawLoggerEnable(dis.readBoolean());
+		debugSeverity = dis.readInt();
+		write(debugSeverity, RECORD_ID_LOG_DEBUG_SEVERITY);
+		setRouteEstimationFac(dis.readInt());
+		setStopAllWhileRouteing(dis.readBoolean());
+		setBtKeepAlive(dis.readBoolean());
+		setBtAutoRecon(dis.readBoolean());
+		setSmsRecipient(desanitizeString(dis.readUTF()));
+		setSpeedTolerance(dis.readInt());
+		setOsmUsername(desanitizeString(dis.readUTF()));
+		setOsmPwd(desanitizeString(dis.readUTF()));
+		setOsmUrl(desanitizeString(dis.readUTF()));
 	}
 	
 	public static String getGpsRawLoggerUrl() {		
