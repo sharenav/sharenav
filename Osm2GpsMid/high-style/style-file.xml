@@ -243,6 +243,13 @@ zoomed out 21x (scale alias 1:  500km)
 		<scale scale="20"/>
 		<textscale scale="23"/>
 	  </value>
+	  <value name ="emergency_phone">
+		<description desc = "Emergency phone"/>
+		<image src="emergency_phone.png"/>
+		<namekey tag="name"/>
+		<scale scale="20"/>
+		<textscale scale="23"/>
+	  </value>
 	  <value name ="restaurant">
 		<description desc = "Restaurant"/>
 		<image src="restaurant.png"/>
@@ -592,6 +599,13 @@ zoomed out 21x (scale alias 1:  500km)
 	  <value name="attraction"  priority = "-10">
 		<description desc = "Tourism attraction"/>
 		<image src="attraction.png"/>
+		<namekey tag="name"/>
+		<scale scale="20"/>
+		<textscale scale="23"/>
+	  </value>
+	  <value name="information">
+		<description desc = "Information"/>
+		<image src="information.png"/>
 		<namekey tag="name"/>
 		<scale scale="20"/>
 		<textscale scale="23"/>
