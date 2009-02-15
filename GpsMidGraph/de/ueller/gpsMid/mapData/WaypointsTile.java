@@ -139,6 +139,23 @@ public class WaypointsTile extends Tile {
 		/**
 		 * Painting Waypoints
 		 */
+		if (wayPts.size() == 0)
+		{
+			return;
+		}
+		Font originalFont = pc.g.getFont();
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_WPTTEXTS))
+		{
+			pc.g.setColor(0, 0, 0);
+			if (wptFont == null) {
+				if (Configuration.getCfgBitState(Configuration.CFGBIT_WPT_LABELS_LARGER)) {
+					wptFont = originalFont;
+				} else {
+					wptFont = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_SMALL);
+				}
+			}
+			pc.g.setFont(wptFont);
+		}
 		for (int i = 0; i < wayPts.size(); i++) {
 			PositionMark waypt = (PositionMark) (wayPts.elementAt(i));
 			StringBuffer sb = new StringBuffer();
@@ -149,33 +166,23 @@ public class WaypointsTile extends Tile {
 				pc.g.drawImage(pc.images.IMG_MARK, pc.lineP2.x, pc.lineP2.y,
 						Graphics.HCENTER | Graphics.VCENTER);
 				// Draw waypoint text if enabled
-				if ((Configuration
-						.getCfgBitState(Configuration.CFGBIT_WPTTEXTS) && (waypt.displayName != null))) {
-					pc.g.setColor(0, 0, 0);
-					Font originalFont = pc.g.getFont();
-					if (wptFont == null) {
-						if (Configuration
-								.getCfgBitState(Configuration.CFGBIT_WPT_LABELS_LARGER)) {
-							wptFont = originalFont;
-						} else {
-							wptFont = Font.getFont(Font.FACE_SYSTEM,
-									Font.STYLE_BOLD, Font.SIZE_SMALL);
-						}
-					}
-					pc.g.setFont(wptFont);
-					// truncate name to maximum maxLen chars plus "..." where
-					// required
+				if (   (Configuration.getCfgBitState(Configuration.CFGBIT_WPTTEXTS) 
+					&& (waypt.displayName != null))) {
+					// truncate name to maximum maxLen chars plus "..." where required
 					sb.setLength(0);
 					sb.append(waypt.displayName);
 					if (sb.length() > maxLen) {
 						sb.setLength(maxLen);
 						sb.append("...");
 					}
-					pc.g.drawString(sb.toString(), pc.lineP2.x, pc.lineP2.y,
-							Graphics.HCENTER | Graphics.BOTTOM);
-					pc.g.setFont(originalFont);
+					pc.g.drawString(sb.toString(), pc.lineP2.x, pc.lineP2.y, 
+									Graphics.HCENTER | Graphics.BOTTOM);
 				}
 			}
+		} // for
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_WPTTEXTS))
+		{
+			pc.g.setFont(originalFont);
 		}
 	}
 
