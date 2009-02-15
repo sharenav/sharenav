@@ -351,8 +351,12 @@ public class Tile {
 				nds.writeByte(n.connected.size());
 				for (Connection c : n.connected){
 					cds.writeInt(c.to.id);
-					cds.writeShort((int) c.time);
-					cds.writeShort((int) c.length);
+					if (c.time > Short.MAX_VALUE)
+						System.out.println("ERROR: overflow! Routing down path takes too long (" + c.time + "cs)");
+					cds.writeShort((short) c.time);
+					if (c.length > Short.MAX_VALUE)
+						System.out.println("ERROR: overflow! Routing connection (" + c.length + "m) too long: ");
+					cds.writeShort((short) c.length);
 					cds.writeByte(c.startBearing);
 					cds.writeByte(c.endBearing);
 				}

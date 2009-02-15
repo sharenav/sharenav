@@ -110,9 +110,7 @@ public class RouteData {
 				if (thisIndex==lastIndex || (n.connectedLineCount != 2)){
 					RouteNode next=getRouteNode(n);
 					byte endBearing=MyMath.bearing_start(lastNode,n);
-					if (dist > Short.MAX_VALUE)
-						System.out.println("ERROR: overflow! Routing connection (" + dist + "m) too long: ");
-					addConnection(from, next,(short)dist,w,bearing,endBearing);
+					addConnection(from, next, dist, w, bearing, endBearing);
 					from=next;
 					dist=0;
 					count=1;
@@ -143,19 +141,18 @@ public class RouteData {
 	 * @param dist 
 	 * @param routeNode
 	 */
-	private void addConnection(RouteNode from, RouteNode to, short dist, Way w,byte bs, byte be) {
+	private void addConnection(RouteNode from, RouteNode to, int dist, Way w, byte bs, byte be) {
 		float speed=w.getRoutingSpeed();
 		float time=dist * 10.0f / speed;
-		if (time > Short.MAX_VALUE)
-			System.out.println("ERROR: overflow! Routing down path takes too long (" + time + ")");
+		
 		nodes.put(from.node.id, from);
 		nodes.put(to.node.id, to);
-		Connection c=new Connection(to,dist,(short)time,bs,be,w);
+		Connection c=new Connection(to,dist,(int)time,bs,be,w);
 		from.connected.add(c);
 		to.connectedFrom.add(c);
-		// roundabouts don't need to be explicitely tagged as oneways in OSM according to http://wiki.openstreetmap.org/wiki/Tag:junction%3Droundabout
+		// roundabouts don't need to be explicitly tagged as oneways in OSM according to http://wiki.openstreetmap.org/wiki/Tag:junction%3Droundabout
 		if (! (w.isOneWay() || w.isRoundabout()) ){
-			Connection cr=new Connection(from,dist,(short)time,MyMath.inversBearing(be),MyMath.inversBearing(bs),w);
+			Connection cr=new Connection(from,dist,(int)time,MyMath.inversBearing(be),MyMath.inversBearing(bs),w);
 			cr.from=to;
 			to.connected.add(cr);
 			from.connectedFrom.add(cr);

@@ -13,8 +13,8 @@ package de.ueller.osmToGpsMid.model;
  *
  */
 public class Connection {
-	public short time;
-	public short length;
+	public int time;
+	public int length;
 	public RouteNode to;
 	// only for debuging
 	public RouteNode from;
@@ -24,7 +24,7 @@ public class Connection {
 	public byte endBearing=0;
 	public short nameIdx; 
 	
-	public Connection(RouteNode to,short dist,short time,byte bs, byte be,Way w) {
+	public Connection(RouteNode to, int dist, int time, byte bs, byte be, Way w) {
 		super();
 		this.to = to;
 		length = dist;
