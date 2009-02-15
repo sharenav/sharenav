@@ -1,7 +1,7 @@
 package de.ueller.midlet.gps;
 /*
  * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net
- * 			Copyright (c) 2008 Kai Krueger apm at users dot sourceforge dot net 
+ * 			Copyright (c) 2008,2009 Kai Krueger apm at users dot sourceforge dot net 
  * See Copying
  */
 
@@ -36,7 +36,11 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private static final String[]	elements		= {
 		"Location Receiver", "Recording Rules",
 		"Display options", "Sounds & Alerts", "Routing options",
-		"GPX Receiver", "Map source", "Debug options", "Key shortcuts", "OSM account"};
+		"GPX Receiver", "Map source", "Debug options", "Key shortcuts",
+		//#if polish.api.osm-editing
+		"OSM account"
+		//#endif
+		};
 	
 	/**
 	 * The following MENU_ITEM constatants have to be in
@@ -52,7 +56,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private static final int MENU_ITEM_MAP_SRC = 6;
 	private static final int MENU_ITEM_DEBUG_OPT = 7;
 	private static final int MENU_ITEM_KEYS_OPT = 8;
+	//#if polish.api.osm-editing
 	private static final int MENU_ITEM_OSM_OPT = 9;
+	//#endif
 
 	private static final String[]	empty			= {};
 
@@ -77,7 +83,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 			Command.ITEM, 2);
 	private final Command			BT_MAP	= new Command("Select bluetooth device",
 			Command.ITEM, 2);
-	//#if api.polish.osm-editing
+	//#if polish.api.osm-editing
 	private final Command			OSM_URL	= new Command("Upload to OSM", Command.ITEM, 2);
 	//#endif
 	private final Command			GPS_DISCOVER	= new Command("Discover GPS",
@@ -108,7 +114,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	
 	private Form					menuRoutingOptions;
 	
-	//#if api.polish.osm-editing
+	//#if polish.api.osm-editing
 	private Form					menuOsmAccountOptions;
 	//#endif
 	
@@ -129,7 +135,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private final static int 		STATE_BT_GPX	= 9;
 	private final static int		STATE_DEBUG		= 10;
 	private final static int		STATE_ROUTING_OPT = 11;
-	//#if api.polish.osm-editing
+	//#if polish.api.osm-editing
 	private final static int		STATE_OSM_OPT = 12;
 	//#endif
 	
@@ -140,7 +146,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private TextField  tfGpxRecordMinimumSecs; 
 	private TextField  tfGpxRecordMinimumDistanceMeters; 
 	private TextField  tfGpxRecordAlwaysDistanceMeters;
-	//#if api.polish.osm-editing
+	//#if polish.api.osm-editing
 	private TextField  tfOsmUserName;
 	private TextField  tfOsmPassword;
 	private TextField  tfOsmUrl;
@@ -402,7 +408,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		menuDisplayOptions.setCommandListener(this);
 	}
 	
-	//#if api.polish.osm-editing
+	//#if polish.api.osm-editing
 	private void initOSMaccountOptions() {
 		//Prepare Debug selection menu
 		logger.info("Starting OSM account setup menu");
@@ -502,7 +508,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				logger.error("Bluetooth is not compiled into this version");
 			//#endif
 		}
-		//#if api.polish.osm-editing
+		//#if polish.api.osm-editing
 		if (c == OSM_URL) {
 			gpxUrl.setText(Configuration.getOsmUrl() + "gpx/create");
 		}
@@ -597,7 +603,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 					menuGpx.addCommand(OK_CMD);
 					menuGpx.addCommand(FILE_MAP);
 					menuGpx.addCommand(BT_MAP);
-					//#if api.polish.osm-editing
+					//#if polish.api.osm-editing
 					menuGpx.addCommand(OSM_URL);
 					//#endif
 
@@ -637,7 +643,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 					GuiKeyShortcuts gks = new GuiKeyShortcuts(this);
 					gks.show();
 					break;
-				//#if api.polish.osm-editing
+				//#if polish.api.osm-editing
 				case MENU_ITEM_OSM_OPT:
 					/**
 					 * Display the current Keyboard mappings for the
@@ -818,7 +824,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				state = STATE_ROOT;
 				this.show();			
 				break;
-			//#if api.polish.osm-editing
+			//#if polish.api.osm-editing
 			case STATE_OSM_OPT:
 				Configuration.setOsmUsername(tfOsmUserName.getString());
 				Configuration.setOsmPwd(tfOsmPassword.getString());
