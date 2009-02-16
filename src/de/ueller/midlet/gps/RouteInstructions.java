@@ -82,15 +82,22 @@ public class RouteInstructions {
 	public static volatile boolean haveBeenOnRouteSinceCalculation = false;
 	public static volatile int startDstToFirstArrowAfterCalculation = 0;
 	
-	private int iPassedRouteArrow=0;
+	private static int iPassedRouteArrow=0;
+	private static int iInstructionSaidArrow = -1;
+	private static int iPrepareInstructionSaidArrow = -1;
+	private static int iNamedArrow = 0;
 	private static String sLastInstruction = "";
 
 	private static Font routeFont;
-	public static volatile int routeFontHeight = 0;
+	private static int routeFontHeight = 0;
+	public static volatile int routeInstructionsHeight = 0;
 
-	private byte cachedPicArrow;
+	private static byte cachedPicArrow;
 	private static final int CENTERPOS = Graphics.HCENTER|Graphics.VCENTER;
-	private Image scaledPict = null;
+	private static Image scaledPict = null;
+
+	private static String nameNow = null;
+	private static String nameThen = null;
 
 	private static Trace trace;
 	private static Vector route;
@@ -653,6 +660,21 @@ public class RouteInstructions {
 							if (cThen==null) logger.debug("cThen is NULL connection");
 							aThen = cThen.wayRouteInstruction;
 						}
+						if (
+								iNamedArrow != iNow
+							) {
+							nameNow = null;
+							nameThen = null;
+							iNamedArrow = iNow;
+						}
+						// get name for next street
+						if (nameNow == null && cNow.wayNameIdx != -1) {
+							nameNow=trace.getName(cNow.wayNameIdx);
+						}
+						// start searching for the 2nd next street for having it in the cache when needed
+						if (nameThen == null && cThen != null && cThen.wayNameIdx != -1) {
+							String name=trace.getName(cThen.wayNameIdx);
+						}
 						//#debug debug
 						logger.debug("showRoute - iRealNow: " + iRealNow + " iNow: " + iNow + " iThen: " + iThen);						
 					}
@@ -722,31 +744,16 @@ public class RouteInstructions {
 							}
 							pict=scaledPict;						
 					    		
-					    	sbRouteInstruction.append(directions[aNow]);
-							// if nearest route arrow is closer than PASSINGDISTANCE meters we're currently passing this route arrow
-					    	if(distNow<PASSINGDISTANCE) {
-								if (iPassedRouteArrow != iNow) {
-									iPassedRouteArrow = iNow;
-									// if there's i.e. a 2nd left arrow in row "left" must be repeated
-									if (!trace.atTarget) {
-										sLastInstruction="";
-									}
-								}
-								// after passing an arrow all instructions, i.e. saying "in xxx metres" are allowed again 
-								resetVoiceInstructions();
-	
-								if (!trace.atTarget) { 
-									soundToPlay.append (soundDirections[aNow]);
-								}
-								soundMaxTimesToPlay=1;
-							} else {
-								sbRouteInstruction.append(" in " + intDistNow + "m");
-							}
-							if (intDistNow>=PASSINGDISTANCE && !checkDirectionSaid) {
+					    	sbRouteInstruction.append(directions[aNow]);					    	
+					    	
+					    	if (intDistNow>=PASSINGDISTANCE && !checkDirectionSaid) {
+								//System.out.println("iNow :" + iNow + " iPassedRA: " + iPassedRouteArrow + " prepareSaidArrow: " + iPrepareInstructionSaidArrow + " iNamedArrow: " + iNamedArrow);
 								if (
 									intDistNow <= PREPAREDISTANCE
-									// give prepare instruction only if arrow has not already been passed (this avoids possibly wrong prepare instructions after passing the arrow)
-									&& iNow!=iPassedRouteArrow
+									// give prepare instruction only if the last prepareInstruction was not already for this arrow (this avoids possibly wrong prepare instructions after passing the arrow)
+									&& iNow != iPrepareInstructionSaidArrow
+									&& iNow != iInstructionSaidArrow
+									
 								) {
 									if (aNow < RI_ENTER_MOTORWAY) {
 										soundToPlay.append( (aNow==RI_STRAIGHT_ON ? "CONTINUE" : "PREPARE") + ";" + soundDirections[aNow]);
@@ -758,17 +765,34 @@ public class RouteInstructions {
 									soundMaxTimesToPlay=1;
 									// Because of adaptive-to-speed distances for "prepare"-instructions
 									// GpsMid could fall back from "prepare"-instructions to "in xxx metres" voice instructions
-									// Remembering and checking if the prepare instruction already was given since the latest passing of an arrow avoids this
-									prepareInstructionSaid = true;
+									// Remembering and checking if the prepare instruction already was given for an arrow avoids this
+									iPrepareInstructionSaidArrow = iNow;
 								} else if (
 									intDistNow < 900 && intDistNow < getTellDistance(iNow, aNow)
-									// give in-xxx-meters-instruction only if arrow has not already been passed (this avoids possibly wrong in-instructions after passing the arrow)
-									&& iNow!=iPassedRouteArrow
-									&& !prepareInstructionSaid
+									// give in-xxx-m instruction only if the last prepareInstruction was not already for this arrow (this avoids possibly wrong in-xxx-m instructions after passing the arrow)
+									&& iNow != iPrepareInstructionSaidArrow
+									&& iNow != iInstructionSaidArrow
 								) {
 									soundRepeatDelay=60;
 									soundToPlay.append("IN;" + Integer.toString(intDistNow / 100)+ "00;METERS;" + soundDirections[aNow]);								
-								}							
+								}
+					    	}
+							// if nearest route arrow is closer than PASSINGDISTANCE meters we're currently passing this route arrow
+							if (
+								iPassedRouteArrow != iNow
+							) {
+								iPassedRouteArrow = iNow;
+								// if there's e.g. a 2nd left arrow in row "left" must be repeated
+								sLastInstruction="";
+							}
+							if (intDistNow < PASSINGDISTANCE) {
+								if (iInstructionSaidArrow != iNow) { 
+									soundToPlay.append (soundDirections[aNow]);
+							    	iInstructionSaidArrow = iNow;
+									soundMaxTimesToPlay=1;
+								}
+							} else {
+								sbRouteInstruction.append(" in " + intDistNow + "m");
 							}
 							
 							if (cThen != null) {
@@ -859,16 +883,30 @@ public class RouteInstructions {
 				}
 				pc.g.setFont(routeFont);
 				pc.g.setColor(routeInstructionColor);
-				pc.g.fillRect(0,textYPos-routeFontHeight, pc.xSize, routeFontHeight);
-				pc.g.setColor(0,0,0);
+				
+				// if we got a name for next street, we need extra height
+				if (nameNow != null) {
+					routeInstructionsHeight = routeFontHeight * 2;
+				} else {
+					routeInstructionsHeight = routeFontHeight;
+				}
+				pc.g.fillRect(0,textYPos-routeInstructionsHeight, pc.xSize, routeInstructionsHeight);
+				pc.g.setColor(0,0,0);				
 				pc.g.drawString(sbRouteInstruction.toString(),
 						pc.xSize/2,
-						textYPos,
-						Graphics.HCENTER | Graphics.BOTTOM
+						textYPos - routeInstructionsHeight,
+						Graphics.HCENTER | Graphics.TOP
 				);
+				if (nameNow != null)
+					pc.g.drawString("into " + nameNow,
+							pc.xSize/2,
+							textYPos - routeFontHeight,
+							Graphics.HCENTER | Graphics.TOP
+				);				
+								
 				pc.g.drawString("off:" + dstToRoutePath + "m",
 						pc.xSize,
-						textYPos - routeFontHeight,
+						textYPos - routeInstructionsHeight,
 						Graphics.RIGHT | Graphics.BOTTOM
 				);
 				
@@ -925,7 +963,7 @@ public class RouteInstructions {
 		    	// green background color if onroute
 	    		routeInstructionColor=0x00B7FBBA;
 				haveBeenOnRouteSinceCalculation=true;
-				System.out.println("on route dstToRoutePath: " + dstToRoutePath);
+//				System.out.println("on route dstToRoutePath: " + dstToRoutePath);
 			}
 		}
 		ConnectionWithNode c0 = (ConnectionWithNode) route.elementAt(0);
@@ -1135,6 +1173,11 @@ public class RouteInstructions {
 				c = (ConnectionWithNode) route.elementAt(i);
 			}			
 		}
+		
+		// reset arrow markers
+		iNamedArrow = -1;
+		iInstructionSaidArrow = -1;
+		iPrepareInstructionSaidArrow = -1;
 	}
 	
 	

@@ -7,7 +7,7 @@ public class ConnectionWithNode {
 	public byte endBearing=0;
 	public byte wayRouteInstruction=0;
 	public byte numToRoutableWays=0;
-	public int wayNameIdx=0; // used to vaguely identify ways that might contain a solution path for highlighting  
+	public int wayNameIdx=-1; // used to vaguely identify ways that might contain a solution path for highlighting  
 	public short wayFromConAt=0;
 	public short wayToConAt=0;
 	public byte wayType=0;

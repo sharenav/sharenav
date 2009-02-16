@@ -1223,7 +1223,7 @@ Runnable , GpsMidDisplayable{
 				int h0 = speedingFont.getHeight();
 				w += w0 * 4;
 				g.setColor(0x00FF0000);
-				int yPos = pc.ySize - w - (h0 / 2) - imageCollector.statusFontHeight - RouteInstructions.routeFontHeight;
+				int yPos = pc.ySize - w - (h0 / 2) - imageCollector.statusFontHeight - RouteInstructions.routeInstructionsHeight;
 				g.fillArc(0, yPos, w, w, 0, 360);
 				g.setColor(0x00FFFFFF);
 				g.fillArc(w0, yPos + w0, w - (w0 * 2), w - (w0 * 2), 0, 360);
@@ -1881,7 +1881,7 @@ Runnable , GpsMidDisplayable{
 
 	public void setTarget(PositionMark target) {
 		RouteInstructions.initialRecalcDone = false;
-		RouteInstructions.routeFontHeight = 0;
+		RouteInstructions.routeInstructionsHeight = 0;
 		setRoute(null);
 		setRouteNodes(null);
 		this.target = target;
