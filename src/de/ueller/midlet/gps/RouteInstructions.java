@@ -34,7 +34,7 @@ public class RouteInstructions {
 		"enter motorway", "leave motorway",
 		"Roundabout exit #1", "Roundabout exit #2", "Roundabout exit #3",
 		"Roundabout exit #4", "Roundabout exit #5", "Roundabout exit #6",
-		"qstraight on", "into tunnel", "out of tunnel"
+		"into tunnel", "out of tunnel"
 	};
 	private static final String[] soundDirections  = { "",
 		"HARD;RIGHT", "RIGHT", "HALF;RIGHT",
@@ -43,9 +43,10 @@ public class RouteInstructions {
 		"ENTER_MOTORWAY", "LEAVE_MOTORWAY",
 		"RAB;1ST;RABEXIT", "RAB;2ND;RABEXIT", "RAB;3RD;RABEXIT",
 		"RAB;4TH;RABEXIT", "RAB;5TH;RABEXIT", "RAB;6TH;RABEXIT",
-		"AGAIN;STRAIGHTON","INTO_TUNNEL", "OUT_OF_TUNNEL"
+		"INTO_TUNNEL", "OUT_OF_TUNNEL"
 	};
 
+	private static final int RI_NONE = 0;
 	private static final int RI_HARD_RIGHT = 1;
 	private static final int RI_RIGHT = 2;
 	private static final int RI_HALF_RIGHT = 3;
@@ -62,9 +63,8 @@ public class RouteInstructions {
 	private static final int RI_4TH_EXIT = 14;
 	private static final int RI_5TH_EXIT = 15;
 	private static final int RI_6TH_EXIT = 16;
-	private static final int RI_STRAIGHT_ON_QUIET = 17;
-	private static final int RI_INTO_TUNNEL = 18;
-	private static final int RI_OUT_OF_TUNNEL = 19;
+	private static final int RI_INTO_TUNNEL = 17;
+	private static final int RI_OUT_OF_TUNNEL = 18;
 	private static final int RI_SKIPPED = 99;
 	
 	private int connsFound = 0;
@@ -640,10 +640,10 @@ public class RouteInstructions {
 					// find nearest routing arrow (to center of screen)
 					int iNow=0;
 					int iRealNow=0;
-					byte aNow=RI_STRAIGHT_ON_QUIET;
+					byte aNow=RI_NONE;
 					int iThen=0;
-					byte aThen=RI_STRAIGHT_ON_QUIET;
-					byte aPaint=RI_STRAIGHT_ON_QUIET;
+					byte aThen=RI_NONE;
+					byte aPaint=RI_NONE;
 					double distNow=0;
 					int intDistNow=0;
 					
@@ -717,7 +717,6 @@ public class RouteInstructions {
 							case RI_HARD_RIGHT:		pict=pc.images.IMG_HARDRIGHT; break;
 							case RI_RIGHT:			pict=pc.images.IMG_RIGHT; break;
 							case RI_HALF_RIGHT:		pict=pc.images.IMG_HALFRIGHT; break;
-							case RI_STRAIGHT_ON_QUIET:
 							case RI_STRAIGHT_ON: 	pict=pc.images.IMG_STRAIGHTON; break;
 							case RI_HALF_LEFT:		pict=pc.images.IMG_HALFLEFT; break;
 							case RI_LEFT:			pict=pc.images.IMG_LEFT; break;
@@ -801,7 +800,7 @@ public class RouteInstructions {
 								// inform the user about its direction
 								if (distNowThen <= PREPAREDISTANCE &&
 									// only if not both arrows are STRAIGHT_ON
-									!(aNow==RI_STRAIGHT_ON && (aThen == RI_STRAIGHT_ON || aThen == RI_STRAIGHT_ON_QUIET) ) &&
+									!(aNow==RI_STRAIGHT_ON && aThen == RI_STRAIGHT_ON) &&
 									// and it is not a round about exit instruction
 									!(aNow>=RI_1ST_EXIT && aNow<=RI_6TH_EXIT) &&
 									// and only as continuation of instruction
@@ -1067,13 +1066,13 @@ public class RouteInstructions {
 		for (int i=0; i<route.size(); i++){
 			c = (ConnectionWithNode) route.elementAt(i);
 
-			byte rfCurr=c.wayRouteFlags;
-			byte rfPrev=0;
+			short rfCurr=c.wayRouteFlags;
+			short rfPrev=0;
 			if (i > 0) {
 				c2 = (ConnectionWithNode) route.elementAt(i-1);
 				rfPrev=c2.wayRouteFlags;
 			}			
-			byte rfNext=0;
+			short rfNext=0;
 			nextStartBearing = 0;
 			if (i < route.size()-1) {
 				c2 = (ConnectionWithNode) route.elementAt(i+1);
@@ -1167,7 +1166,7 @@ public class RouteInstructions {
 			cStart = (ConnectionWithNode) route.elementAt(i-1);
 			while (c.wayRouteInstruction == RI_STRAIGHT_ON && i<route.size()-2) {
 				cStart.wayDistanceToNext += c.wayDistanceToNext;
-				c.wayRouteInstruction = RI_STRAIGHT_ON_QUIET;
+				c.wayRouteFlags |= C.ROUTE_FLAG_QUIET;
 				// c.wayDistanceToNext = 0;
 				i++;
 				c = (ConnectionWithNode) route.elementAt(i);
@@ -1208,7 +1207,7 @@ public class RouteInstructions {
 			//#debug debug
 			if (c==null) logger.debug("idxNextInstructionArrow got NULL connection");
 			if (
-				c.wayRouteInstruction != RI_STRAIGHT_ON_QUIET
+				(c.wayRouteFlags & C.ROUTE_FLAG_QUIET) == 0
 			&&	c.wayRouteInstruction != RI_SKIPPED
 			) {
 				break;
@@ -1252,7 +1251,7 @@ public class RouteInstructions {
 			
 			sb.setLength(0);			
 			byte ri=c.wayRouteInstruction;
-			if (ri!=RI_STRAIGHT_ON_QUIET && ri!=RI_SKIPPED) {
+			if ((c.wayRouteFlags & C.ROUTE_FLAG_QUIET) == 0 && ri!=RI_SKIPPED) {
 				sb.append(i + ". ");
 				sb.append(directions[ri]);
 				sb.append(" into ");

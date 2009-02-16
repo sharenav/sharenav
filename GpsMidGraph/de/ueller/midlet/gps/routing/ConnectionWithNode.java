@@ -11,7 +11,7 @@ public class ConnectionWithNode {
 	public short wayFromConAt=0;
 	public short wayToConAt=0;
 	public byte wayType=0;
-	public byte wayRouteFlags=0;
+	public short wayRouteFlags=0;
 	public byte wayConEndBearing=0;
 	public byte wayConStartBearing=0;
 	public float wayDistanceToNext=Float.MAX_VALUE;
