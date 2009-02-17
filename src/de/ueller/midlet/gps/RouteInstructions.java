@@ -165,6 +165,11 @@ public class RouteInstructions {
 		pc.xSize = 100;
 		pc.ySize = 100;
 		pc.conWayNumRoutableWays = 0;
+		// clear stored nameidxs
+		pc.conWayNumNameIdxs = 0;
+		for (int i=0; i<pc.conWayNameIdxs.length; i++){
+			pc.conWayNameIdxs[i]=-2;
+		}
 		pc.setP(new Proj2D(new Node(pc.searchCon1Lat,pc.searchCon1Lon, true),5000,100,100));
 		for (int i=0; i<4; i++){
 			trace.t[i].walk(pc, Tile.OPT_WAIT_FOR_LOAD | Tile.OPT_CONNECTIONS2WAY);
@@ -186,6 +191,28 @@ public class RouteInstructions {
 			}
 			if (Math.abs(cTo.wayConStartBearing - cTo.startBearing) > 3) {
 				cTo.wayRouteFlags |= C.ROUTE_FLAG_INCONSISTENT_BEARING;				
+			}
+			// count ways with same names leading away from the connection
+			int iNumWaysWithThisNameConnected = 0;
+			int iPrevNameIdx = -2;
+			for (int i=0; i<pc.conWayNameIdxs.length; i++){
+				if (pc.conWayNameIdx == pc.conWayNameIdxs[i]) {
+					iNumWaysWithThisNameConnected++;
+				}
+			}
+
+			if (iNumWaysWithThisNameConnected > 1 && iConnFrom > 0) {
+				ConnectionWithNode cPrev = (ConnectionWithNode) route.elementAt(iConnFrom - 1); 
+				// do not count the way we come from, if its connection is at the end of the path we are on a different one 
+				if ( (cPrev.wayRouteFlags & C.ROUTE_FLAG_CON2_AT_AN_PATH_END) > 0
+						&&
+					 (cFrom.wayRouteFlags & C.ROUTE_FLAG_CON1_AT_AN_PATH_END) > 0
+				) {
+					iNumWaysWithThisNameConnected--;
+				}
+			}
+			if (iNumWaysWithThisNameConnected > 1) {
+				cFrom.wayRouteFlags |= C.ROUTE_FLAG_LEADS_TO_MULTIPLE_SAME_NAMED_WAYS;
 			}
 			
 			connsFound++;
@@ -1164,7 +1191,19 @@ public class RouteInstructions {
 		for (int i=2; i<route.size()-1; i++){
 			c = (ConnectionWithNode) route.elementAt(i);
 			cStart = (ConnectionWithNode) route.elementAt(i-1);
-			while (c.wayRouteInstruction == RI_STRAIGHT_ON && i<route.size()-2) {
+			while (
+					(c.wayRouteInstruction == RI_STRAIGHT_ON)
+					|| 
+					(
+						c.wayRouteInstruction <= RI_HARD_LEFT
+						&&
+						c.wayNameIdx == cStart.wayNameIdx
+						&&
+						c.wayType == cStart.wayType
+						&&
+						((c.wayRouteFlags & C.ROUTE_FLAG_LEADS_TO_MULTIPLE_SAME_NAMED_WAYS) == 0)
+					)
+					&& i<route.size()-2) {
 				cStart.wayDistanceToNext += c.wayDistanceToNext;
 				c.wayRouteFlags |= C.ROUTE_FLAG_QUIET;
 				// c.wayDistanceToNext = 0;
@@ -1261,6 +1300,9 @@ public class RouteInstructions {
 				sb.append("m");
 				if ( (c.wayRouteFlags & C.ROUTE_FLAG_ROUNDABOUT) > 0) { 
 					sb.append(" (in roundabout)");
+				}
+				if ( (c.wayRouteFlags & C.ROUTE_FLAG_LEADS_TO_MULTIPLE_SAME_NAMED_WAYS) > 0) { 
+					sb.append(" (multiple name matches)");
 				}
 				sb.append(" Cons:" + c.to.conSize + " numRoutableWays: " + c.numToRoutableWays + " startBearing: " + c.startBearing + "/" + c.wayConStartBearing + " endBearing: "+ c.endBearing + "/" + c.wayConEndBearing);
 				System.out.println(sb.toString());

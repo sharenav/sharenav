@@ -51,6 +51,9 @@ public class C {
 	public final static short ROUTE_FLAG_INVISIBLE = 0x20; // used in ConnectionWithNode
 	public final static short ROUTE_FLAG_INCONSISTENT_BEARING = 0x40; // used in ConnectionWithNode
 	public final static short ROUTE_FLAG_QUIET = 0x80; // used in ConnectionWithNode
+	public final static short ROUTE_FLAG_CON1_AT_AN_PATH_END = 0x100; // used in ConnectionWithNode
+	public final static short ROUTE_FLAG_CON2_AT_AN_PATH_END = 0x200; // used in ConnectionWithNode
+	public final static short ROUTE_FLAG_LEADS_TO_MULTIPLE_SAME_NAMED_WAYS = 0x400; // used in ConnectionWithNode
 	
 	/**
 	 * minimum distances to set the is_in name to the next city

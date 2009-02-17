@@ -326,6 +326,11 @@ public class Way extends Entity{
 					&& !(isOneway() && i == path.length - 1)
 				) {
 					pc.conWayNumRoutableWays++;
+					// remember nameIdx's leading away from the connection, so we can later on check if multiple ways lead to the same street name
+					if (pc.conWayNumNameIdxs < pc.conWayNameIdxs.length) {
+						pc.conWayNameIdxs[pc.conWayNumNameIdxs] = this.nameIdx;
+						pc.conWayNumNameIdxs++;
+					}
 				}
 				containsCon1 = true;
 				containsCon1At = i;
@@ -402,10 +407,20 @@ public class Way extends Entity{
 				pc.conWayToAt = containsCon2At;
 				pc.conWayNameIdx= this.nameIdx;
 				pc.conWayType = this.type;
-				byte routeFlags = C.getWayDescription(this.type).routeFlags; 
+				short routeFlags = (byte) C.getWayDescription(this.type).routeFlags; 
 				if (isRoundAbout()) routeFlags += C.ROUTE_FLAG_ROUNDABOUT;
 				if (isTunnel()) routeFlags += C.ROUTE_FLAG_TUNNEL;
 				if (isBridge()) routeFlags += C.ROUTE_FLAG_BRIDGE;
+				
+				// remember in a flag, when the way is connected at the beginning or end of an path
+				// we need this information to substract the way we come from the number of ways with same name
+				if (containsCon1At == 0 || containsCon1At == path.length-1) {
+					routeFlags += C.ROUTE_FLAG_CON1_AT_AN_PATH_END;
+				}
+				if (containsCon2At == 0 || containsCon2At == path.length-1) {
+					routeFlags += C.ROUTE_FLAG_CON2_AT_AN_PATH_END;
+				}
+				
 				pc.conWayRouteFlags = routeFlags;
 				
 				// calculate bearings
