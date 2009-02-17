@@ -113,6 +113,8 @@ public class Configuration {
 	public final static byte CFGBIT_SPEEDALERT_VISUAL=36;
 	// bit 37: Debug Option: show route bearings
 	public final static byte CFGBIT_ROUTE_BEARINGS=37;
+	// bit 38: Debug Option: hide quiet arrows
+	public final static byte CFGBIT_ROUTE_HIDE_QUIET_ARROWS=38;
 	
 	/**
 	 * These are the database record ids for each configuration option	 * 
@@ -277,6 +279,7 @@ public class Configuration {
 			if(configVersionStored < 4) {				
 				cfgBits |=	1L<<CFGBIT_PLACETEXTS |
 							1L<<CFGBIT_SPEEDALERT_SND |
+							1L<<CFGBIT_ROUTE_HIDE_QUIET_ARROWS |
 							1L<<CFGBIT_SPEEDALERT_VISUAL;
 							// Speed alert tolerance
 							setSpeedTolerance(5);

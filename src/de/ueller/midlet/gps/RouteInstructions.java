@@ -628,7 +628,8 @@ public class RouteInstructions {
 	    	// backgound colour for standard routing instructions
 			byte soundRepeatDelay=3;
 			byte soundMaxTimesToPlay=2;
-					
+			boolean drawQuietArrows = ! Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_HIDE_QUIET_ARROWS);
+			
 			// this makes the distance when prepare-sound is played depending on the speed
 			int PREPAREDISTANCE=100;
 			int speed=trace.speed;
@@ -847,19 +848,22 @@ public class RouteInstructions {
 								}
 							}
 						}
-						if (aPaint == RI_SKIPPED) {
-							pc.g.setColor(0x00FDDF9F);
-							pc.getP().forward(c.to.lat, c.to.lon, pc.lineP2);
-							final byte radius=6;
-							pc.g.fillArc(pc.lineP2.x-radius/2,pc.lineP2.y-radius/2,radius,radius,0,359);
-						} else {
-							//#debug debug
-							if (pict==null) logger.debug("got NULL pict");													
-							if ( (c.wayRouteFlags & C.ROUTE_FLAG_INVISIBLE) == 0 ) {
-								pc.g.drawImage(pict,pc.lineP2.x,pc.lineP2.y,CENTERPOS);
+					    
+					    if (drawQuietArrows || (c.wayRouteFlags & C.ROUTE_FLAG_QUIET) == 0 ) {
+						    if (aPaint == RI_SKIPPED) {
+								pc.g.setColor(0x00FDDF9F);
+								pc.getP().forward(c.to.lat, c.to.lon, pc.lineP2);
+								final byte radius=6;
+								pc.g.fillArc(pc.lineP2.x-radius/2,pc.lineP2.y-radius/2,radius,radius,0,359);
+							} else {
+								//#debug debug
+								if (pict==null) logger.debug("got NULL pict");													
+								if ( (c.wayRouteFlags & C.ROUTE_FLAG_INVISIBLE) == 0 ) {
+									pc.g.drawImage(pict,pc.lineP2.x,pc.lineP2.y,CENTERPOS);
+								}
 							}
-						}
-						
+					    }
+					    
 						// display bearings for debugging
 						if (Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_BEARINGS)) {					
 							// end bearings
@@ -1177,6 +1181,7 @@ public class RouteInstructions {
 				&& (cPrev.wayRouteInstruction <= RI_HARD_LEFT && c.wayRouteInstruction <= RI_HARD_LEFT)
 			)	{
 				c.wayRouteInstruction = RI_SKIPPED;
+				c.wayRouteFlags |= C.ROUTE_FLAG_QUIET;
 				cPrev.wayDistanceToNext += c.wayDistanceToNext;
 				//c.wayDistanceToNext = 0;
 				cPrev.wayNameIdx = c.wayNameIdx;
