@@ -1196,9 +1196,11 @@ public class RouteInstructions {
 		
 		// replace redundant straight-ons by quiet arrows and add way distance to starting arrow of the street
 		ConnectionWithNode cStart;
+		ConnectionWithNode cNext;
 		for (int i=2; i<route.size()-1; i++){
 			c = (ConnectionWithNode) route.elementAt(i);
 			cStart = (ConnectionWithNode) route.elementAt(i-1);
+			cNext = (ConnectionWithNode) route.elementAt(i+1);
 			while (
 					(c.wayRouteInstruction == RI_STRAIGHT_ON)
 					|| 
@@ -1210,13 +1212,22 @@ public class RouteInstructions {
 						c.wayType == cStart.wayType
 						&&
 						((c.wayRouteFlags & C.ROUTE_FLAG_LEADS_TO_MULTIPLE_SAME_NAMED_WAYS) == 0)
+						// the following arrow must not be a skipped arrow or the same name and type must continue
+						&& (
+							cNext.wayRouteInstruction != RI_SKIPPED
+							|| (
+								cNext.wayNameIdx == cStart.wayNameIdx
+								&& cNext.wayType == cStart.wayType
+							)	
+						)
 					)
 					&& i<route.size()-2) {
 				cStart.wayDistanceToNext += c.wayDistanceToNext;
 				c.wayRouteFlags |= C.ROUTE_FLAG_QUIET;
 				// c.wayDistanceToNext = 0;
 				i++;
-				c = (ConnectionWithNode) route.elementAt(i);
+				c = cNext;
+				cNext = (ConnectionWithNode) route.elementAt(i+1);
 			}			
 		}
 		
