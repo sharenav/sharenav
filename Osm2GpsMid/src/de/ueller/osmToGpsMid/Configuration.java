@@ -579,7 +579,7 @@ public class Configuration {
 			confString += "\t Enable routing: " + useRouting + "\n";
 			confString += "\t used Style-file: " + getStyleFileName() + "\n";
 			confString += "\t Planet source: " + planet + "\n";
-			confString += "\t Enable edditing support: " + enableEditingSupport + "\n";
+			confString += "\t Enable editing support: " + enableEditingSupport + "\n";
 			Bounds[] bounds = getBounds();
 			if (bounds != null) {
 				confString += "\t Using " + bounds.length + " bounding boxes\n";
