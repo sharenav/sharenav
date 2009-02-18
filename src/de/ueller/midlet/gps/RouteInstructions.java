@@ -1108,7 +1108,8 @@ public class RouteInstructions {
 			if (i < route.size()-1) {
 				c2 = (ConnectionWithNode) route.elementAt(i+1);
 				rfNext=C.getWayDescription(c2.wayType).routeFlags;
-				nextStartBearing = c2.startBearing;
+				// nextStartBearing = c2.startBearing;
+				nextStartBearing = c2.wayConStartBearing;
 			}
 			
 			byte ri=0;
@@ -1163,7 +1164,8 @@ public class RouteInstructions {
 			}
 			// if we've got no better instruction, just use the direction
 			if (ri==0) {				
-				ri = convertTurnToRouteInstruction( (nextStartBearing - c.endBearing) * 2 );
+				// ri = convertTurnToRouteInstruction( (nextStartBearing - c.endBearing) * 2 );
+				ri = convertTurnToRouteInstruction( (nextStartBearing - c.wayConEndBearing) * 2 );
 			}
 			c.wayRouteInstruction = ri;
 		}
@@ -1186,7 +1188,8 @@ public class RouteInstructions {
 				//c.wayDistanceToNext = 0;
 				cPrev.wayNameIdx = c.wayNameIdx;
 				ConnectionWithNode cNext = (ConnectionWithNode) route.elementAt(i+1);
-				cPrev.wayRouteInstruction = convertTurnToRouteInstruction( (cNext.startBearing - cPrev.endBearing) * 2 );				
+				// cPrev.wayRouteInstruction = convertTurnToRouteInstruction( (cNext.startBearing - cPrev.endBearing) * 2 );
+				cPrev.wayRouteInstruction = convertTurnToRouteInstruction( (cNext.wayConStartBearing - cPrev.wayConEndBearing) * 2 );				
 			}
 			cPrev=c;
 		}
