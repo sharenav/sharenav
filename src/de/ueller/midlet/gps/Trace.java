@@ -669,9 +669,17 @@ Runnable , GpsMidDisplayable{
 					}
 					backLightLevelDiff = 25;
 				} else if (c == CMDS[PAN_UP2_CMD]) {
-					panY = -2;
+					if (route!=null && Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_BROWSING)) {
+						RouteInstructions.toNextInstruction(1);
+					} else {
+						panY = -2;
+					}
 				} else if (c == CMDS[PAN_DOWN2_CMD]) {
-					panY = 2;
+					if (route!=null && Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_BROWSING)) {
+						RouteInstructions.toNextInstruction(-1);
+					} else {
+						panY = 2;
+					}
 				}
 				
 				if (backLightLevelDiff !=0  &&  System.currentTimeMillis() < (lastBackLightOnTime + 1000)) { 

@@ -17,6 +17,7 @@ import de.ueller.gps.tools.ImageTools;
 import de.ueller.gpsMid.mapData.Tile;
 import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.ProjMath;
+import de.ueller.midlet.gps.data.Projection;
 import de.ueller.midlet.gps.data.Way;
 import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.data.Proj2D;
@@ -1257,7 +1258,7 @@ public class RouteInstructions {
 	}
 	
 	
-	private int idxNextInstructionArrow(int i) {
+	private static int idxNextInstructionArrow(int i) {
 		ConnectionWithNode c;
 		int a;
 		for (a=i; a<route.size()-2; a++){
@@ -1273,7 +1274,43 @@ public class RouteInstructions {
 		}
 		return a;
 	}
-	
+
+	private static int idxPrevInstructionArrow(int i) {
+		ConnectionWithNode c;
+		int a;
+		for (a=i; a>0; a--){
+			c = (ConnectionWithNode) route.elementAt(a);
+			//#debug debug
+			if (c==null) logger.debug("idxPrevInstructionArrow got NULL connection");
+			if (
+				(c.wayRouteFlags & C.ROUTE_FLAG_QUIET) == 0
+			&&	c.wayRouteInstruction != RI_SKIPPED
+			) {
+				break;
+			}
+		}
+		return a;
+	}
+
+	public static void toNextInstruction(int direction) {
+		if (routePathConnection != -1 && routePathConnection < route.size()-1) {
+			int i;
+			i=idxNextInstructionArrow (routePathConnection+1);			
+			if (direction > 0) {
+				i = idxNextInstructionArrow (i + 1);
+			} else {
+				i = idxPrevInstructionArrow (i - 1);				
+			}
+			ConnectionWithNode c = (ConnectionWithNode) route.elementAt(i);
+			double rad=Math.toRadians((double) (c.wayConEndBearing*2));
+			trace.center.setLatLon(	c.to.lat - 0.0000025f * (float) Math.cos(rad),
+									c.to.lon - 0.0000025f * (float) Math.sin(rad),
+									true
+			);
+			trace.gpsRecenter=false;
+		}
+	}
+		
 	private byte convertTurnToRouteInstruction(int turn) {
 		if (turn > 180) turn -= 360;
 		if (turn < -180) turn += 360;

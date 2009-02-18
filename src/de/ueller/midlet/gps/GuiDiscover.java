@@ -257,10 +257,11 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		gaugeRoutingEsatimationFac=new Gauge("Speed of route calculation", true, 10, Configuration.getRouteEstimationFac());
 		menuRoutingOptions.append(gaugeRoutingEsatimationFac);
 
-		String [] routingOpts = new String[2];
-		boolean[] selRouting = new boolean[2];
+		String [] routingOpts = new String[3];
+		boolean[] selRouting = new boolean[3];
 		routingOpts[0] = "Auto Recalculation"; selRouting[0]=Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_AUTO_RECALC);
-		routingOpts[1] = "Hide quiet arrows"; selRouting[1]=Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_HIDE_QUIET_ARROWS);
+		routingOpts[1] = "Route Browsing with up/down keys"; selRouting[1]=Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_BROWSING);
+		routingOpts[2] = "Hide quiet arrows"; selRouting[2]=Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_HIDE_QUIET_ARROWS);
 		routingOptsGroup = new ChoiceGroup("Other", Choice.MULTIPLE, routingOpts ,null);
 		routingOptsGroup.setSelectedFlags(selRouting);
 		menuRoutingOptions.append(routingOptsGroup);
@@ -846,10 +847,11 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				Configuration.setRouteEstimationFac(gaugeRoutingEsatimationFac.getValue());
 				logger.debug("set stopAllWhileRounting " + stopAllWhileRouting.isSelected(1));
 				Configuration.setStopAllWhileRouteing(stopAllWhileRouting.isSelected(0));
-				boolean[] selRouting = new boolean[2];
+				boolean[] selRouting = new boolean[3];
 				routingOptsGroup.getSelectedFlags(selRouting);
 				Configuration.setCfgBitState(Configuration.CFGBIT_ROUTE_AUTO_RECALC, selRouting[0], true);
-				Configuration.setCfgBitState(Configuration.CFGBIT_ROUTE_HIDE_QUIET_ARROWS, selRouting[1], true);
+				Configuration.setCfgBitState(Configuration.CFGBIT_ROUTE_BROWSING, selRouting[1], true);
+				Configuration.setCfgBitState(Configuration.CFGBIT_ROUTE_HIDE_QUIET_ARROWS, selRouting[2], true);
 				state = STATE_ROOT;
 				this.show();			
 				break;
