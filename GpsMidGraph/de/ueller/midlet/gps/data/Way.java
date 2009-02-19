@@ -294,6 +294,17 @@ public class Way extends Entity{
 		processPath(pc,t,Tile.OPT_PAINT | Tile.OPT_HIGHLIGHT, layer);
 	}
 
+	private void changeCountNameIdx(PaintContext pc, int diff) {
+		if (nameIdx >= 0) {
+			Integer oCount = (Integer) pc.conWayNameIdxs.get(nameIdx);
+			int nCount = 0;
+			if (oCount != null) {
+				nCount = oCount.intValue();
+			}
+			pc.conWayNameIdxs.put(nameIdx, new Integer(nCount + diff) );
+		}
+	}
+
 	/* check if the way contains the nodes searchCon1 and searchCon2
 	* if it does, but we already have a matching way,
 	* only take this way if it has the shortest path from searchCon1 to searchCon2
@@ -317,7 +328,7 @@ public class Way extends Entity{
 			if ( (Math.abs(t.nodeLat[idx] - searchCon1Lat) < 2)
 					&&
 				 (Math.abs(t.nodeLon[idx] - searchCon1Lon) < 2)
-				) {
+			) {
 				if (
 					C.getWayDescription(this.type).routable
 					// count in roundabouts only once (search connection could match at start and end node)
@@ -327,9 +338,12 @@ public class Way extends Entity{
 				) {
 					pc.conWayNumRoutableWays++;
 					// remember nameIdx's leading away from the connection, so we can later on check if multiple ways lead to the same street name
-					if (pc.conWayNumNameIdxs < pc.conWayNameIdxs.length) {
-						pc.conWayNameIdxs[pc.conWayNumNameIdxs] = this.nameIdx;
-						pc.conWayNumNameIdxs++;
+					if (i == 0 || i == path.length-1) {
+						changeCountNameIdx(pc, 1);
+						//System.out.println("add 1 " + "con1At: " + i + " pathlen-1: " + (path.length-1) );
+					} else {
+						changeCountNameIdx(pc, 2);						
+						//System.out.println("add 2");
 					}
 				}
 				containsCon1 = true;
@@ -411,17 +425,11 @@ public class Way extends Entity{
 				if (isRoundAbout()) routeFlags += C.ROUTE_FLAG_ROUNDABOUT;
 				if (isTunnel()) routeFlags += C.ROUTE_FLAG_TUNNEL;
 				if (isBridge()) routeFlags += C.ROUTE_FLAG_BRIDGE;
-				
-				// remember in a flag, when the way is connected at the beginning or end of an path
-				// we need this information to substract the way we come from the number of ways with same name
-				if (containsCon1At == 0 || containsCon1At == path.length-1) {
-					routeFlags += C.ROUTE_FLAG_CON1_AT_AN_PATH_END;
-				}
-				if (containsCon2At == 0 || containsCon2At == path.length-1) {
-					routeFlags += C.ROUTE_FLAG_CON2_AT_AN_PATH_END;
-				}
-				
 				pc.conWayRouteFlags = routeFlags;
+				
+				// substract found way from turn options with same name
+				changeCountNameIdx(pc, -1);
+				//System.out.println("sub 1");
 				
 				// calculate bearings
 				if ( (direction==1 && containsCon1At < (path.length - 1)) 

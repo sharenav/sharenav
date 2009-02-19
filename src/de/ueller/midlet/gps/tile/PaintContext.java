@@ -9,6 +9,7 @@ import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
 import de.ueller.gps.data.Configuration;
+import de.ueller.gps.tools.intTree;
 import de.ueller.gpsMid.mapData.QueueDataReader;
 import de.ueller.gpsMid.mapData.QueueReader;
 import de.ueller.midlet.gps.ScreenContext;
@@ -80,7 +81,7 @@ public class PaintContext extends ScreenContext {
 	public volatile byte conWayEndBearing; // bearing at the beginning of the path leading to the next connection 
 	public volatile float conWayDistanceToNext; // distance to next connection when following the route path
 	public volatile boolean highlightedPathOnTop; // when painting draw highlighted path on top
-	public volatile int [] conWayNameIdxs = new int [6]; // used to vaguely identify ways that might contain a solution path for highlighting  
+	public volatile intTree conWayNameIdxs = new intTree(); // used to vaguely identify ways that might contain a solution path for highlighting  
 	public volatile int conWayNumNameIdxs; // used to vaguely identify ways that might contain a solution path for highlighting  
 	
 	/**

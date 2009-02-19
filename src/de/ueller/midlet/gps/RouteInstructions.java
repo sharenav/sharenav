@@ -168,9 +168,7 @@ public class RouteInstructions {
 		pc.conWayNumRoutableWays = 0;
 		// clear stored nameidxs
 		pc.conWayNumNameIdxs = 0;
-		for (int i=0; i<pc.conWayNameIdxs.length; i++){
-			pc.conWayNameIdxs[i]=-2;
-		}
+		pc.conWayNameIdxs.removeAll();
 		pc.setP(new Proj2D(new Node(pc.searchCon1Lat,pc.searchCon1Lon, true),5000,100,100));
 		for (int i=0; i<4; i++){
 			trace.t[i].walk(pc, Tile.OPT_WAIT_FOR_LOAD | Tile.OPT_CONNECTIONS2WAY);
@@ -193,28 +191,18 @@ public class RouteInstructions {
 			if (Math.abs(cTo.wayConStartBearing - cTo.startBearing) > 3) {
 				cTo.wayRouteFlags |= C.ROUTE_FLAG_INCONSISTENT_BEARING;				
 			}
-			// count ways with same names leading away from the connection
-			int iNumWaysWithThisNameConnected = 0;
-			int iPrevNameIdx = -2;
-			for (int i=0; i<pc.conWayNameIdxs.length; i++){
-				if (pc.conWayNameIdx == pc.conWayNameIdxs[i]) {
-					iNumWaysWithThisNameConnected++;
-				}
-			}
-
-			if (iNumWaysWithThisNameConnected > 1 && iConnFrom > 0) {
-				ConnectionWithNode cPrev = (ConnectionWithNode) route.elementAt(iConnFrom - 1); 
-				// do not count the way we come from, if its connection is at the end of the path we are on a different one 
-				if ( (cPrev.wayRouteFlags & C.ROUTE_FLAG_CON2_AT_AN_PATH_END) > 0
-						&&
-					 (cFrom.wayRouteFlags & C.ROUTE_FLAG_CON1_AT_AN_PATH_END) > 0
-				) {
-					iNumWaysWithThisNameConnected--;
+			// get ways with same names leading away from the connection
+			int iNumWaysWithThisNameConnected = 99;
+			if (pc.conWayNameIdx >= 0) { // only valid name idxs
+				Integer oNum = (Integer) (pc.conWayNameIdxs.get(pc.conWayNameIdx));
+				if (oNum != null) { 
+					iNumWaysWithThisNameConnected = oNum.intValue();
 				}
 			}
 			if (iNumWaysWithThisNameConnected > 1) {
 				cFrom.wayRouteFlags |= C.ROUTE_FLAG_LEADS_TO_MULTIPLE_SAME_NAMED_WAYS;
 			}
+			//System.out.println(iConnFrom + ": " + iNumWaysWithThisNameConnected);
 			
 			connsFound++;
 			return cFrom.wayDistanceToNext;
@@ -1195,24 +1183,38 @@ public class RouteInstructions {
 			cPrev=c;
 		}
 		
-		// replace redundant straight-ons by quiet arrows and add way distance to starting arrow of the street
+		// replace redundant straight-ons and direction arrow with same name by quiet arrows and add way distance to starting arrow of the street
 		ConnectionWithNode cStart;
 		ConnectionWithNode cNext;
+		int oldNameIdx = -2;
 		for (int i=2; i<route.size()-1; i++){
 			c = (ConnectionWithNode) route.elementAt(i);
 			cStart = (ConnectionWithNode) route.elementAt(i-1);
+			oldNameIdx = cStart.wayNameIdx;
 			cNext = (ConnectionWithNode) route.elementAt(i+1);
 			while (
-					(c.wayRouteInstruction == RI_STRAIGHT_ON)
+					// and straight on
+					(
+						c.wayRouteInstruction == RI_STRAIGHT_ON
+//						&& (
+//							// but name or way type must stay the same
+//							c.wayNameIdx == oldNameIdx
+//							||
+//							c.wayType == cStart.wayType
+//						)
+					)
 					|| 
+					// or named direction arrow with same name and way type as previous one but not multiple same named options
 					(
 						c.wayRouteInstruction <= RI_HARD_LEFT
 						&&
-						c.wayNameIdx == cStart.wayNameIdx
+						c.wayNameIdx > 0
+						&&
+						c.wayNameIdx == oldNameIdx
 						&&
 						c.wayType == cStart.wayType
 						&&
-						((c.wayRouteFlags & C.ROUTE_FLAG_LEADS_TO_MULTIPLE_SAME_NAMED_WAYS) == 0)
+						(c.wayRouteFlags & C.ROUTE_FLAG_LEADS_TO_MULTIPLE_SAME_NAMED_WAYS) == 0
 						// the following arrow must not be a skipped arrow or the same name and type must continue
 						&& (
 							cNext.wayRouteInstruction != RI_SKIPPED
@@ -1222,7 +1224,9 @@ public class RouteInstructions {
 							)	
 						)
 					)
-					&& i<route.size()-2) {
+					&& i<route.size()-2
+			) {
+				oldNameIdx = c.wayNameIdx;  // if we went straight on into a way with new name we continue comparing with the new name 
 				cStart.wayDistanceToNext += c.wayDistanceToNext;
 				c.wayRouteFlags |= C.ROUTE_FLAG_QUIET;
 				// c.wayDistanceToNext = 0;
