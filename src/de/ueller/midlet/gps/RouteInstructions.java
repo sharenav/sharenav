@@ -26,6 +26,7 @@ import de.ueller.midlet.gps.routing.RouteHelper;
 import de.ueller.midlet.gps.routing.RouteNode;
 import de.ueller.midlet.gps.tile.C;
 import de.ueller.midlet.gps.tile.PaintContext;
+import de.ueller.midlet.gps.tile.WayDescription;
 
 public class RouteInstructions {
 	private static final String[] directions  = { "mark",
@@ -685,8 +686,11 @@ public class RouteInstructions {
 							iNamedArrow = iNow;
 						}
 						// get name for next street
-						if (nameNow == null && cNow.wayNameIdx != -1) {
-							nameNow=trace.getName(cNow.wayNameIdx);
+						if (cNow.wayNameIdx != -1) {
+							nameNow=trace.getName(cNow.wayNameIdx);;
+						} else {
+							WayDescription wayDesc = C.getWayDescription(cNow.wayType);
+							nameNow = "(unnamed " + wayDesc.description + ")";
 						}
 						// start searching for the 2nd next street for having it in the cache when needed
 						if (nameThen == null && cThen != null && cThen.wayNameIdx != -1) {
