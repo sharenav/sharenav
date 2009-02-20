@@ -336,15 +336,16 @@ public class Way extends Entity{
 					// count only if it's not a oneway ending at this connection 
 					&& !(isOneway() && i == path.length - 1)
 				) {
-					pc.conWayNumRoutableWays++;
 					// remember nameIdx's leading away from the connection, so we can later on check if multiple ways lead to the same street name
-					if (i == 0 || i == path.length-1) {
+					changeCountNameIdx(pc, 1);						
+					//System.out.println("add 1 " + "con1At: " + i + " pathlen-1: " + (path.length-1) );
+					pc.conWayNumRoutableWays++;
+					// if we are in the middle of the way, count the way once more
+					if (i != 0 && i != path.length-1 && !isOneway()) {
+						pc.conWayNumRoutableWays++;
 						changeCountNameIdx(pc, 1);
-						//System.out.println("add 1 " + "con1At: " + i + " pathlen-1: " + (path.length-1) );
-					} else {
-						changeCountNameIdx(pc, 2);						
-						//System.out.println("add 2");
-					}
+						//System.out.println("add middle 1 " + "con1At: " + i + " pathlen-1: " + (path.length-1) );
+					}			
 				}
 				containsCon1 = true;
 				containsCon1At = i;
@@ -427,7 +428,7 @@ public class Way extends Entity{
 				if (isBridge()) routeFlags += C.ROUTE_FLAG_BRIDGE;
 				pc.conWayRouteFlags = routeFlags;
 				
-				// substract found way from turn options with same name
+				// substract way we are coming from from turn options with same name
 				changeCountNameIdx(pc, -1);
 				//System.out.println("sub 1");
 				
