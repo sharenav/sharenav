@@ -422,7 +422,7 @@ public class Way extends Entity{
 				pc.conWayToAt = containsCon2At;
 				pc.conWayNameIdx= this.nameIdx;
 				pc.conWayType = this.type;
-				short routeFlags = (byte) C.getWayDescription(this.type).routeFlags; 
+				short routeFlags = (short) C.getWayDescription(this.type).routeFlags; 
 				if (isRoundAbout()) routeFlags += C.ROUTE_FLAG_ROUNDABOUT;
 				if (isTunnel()) routeFlags += C.ROUTE_FLAG_TUNNEL;
 				if (isBridge()) routeFlags += C.ROUTE_FLAG_BRIDGE;
