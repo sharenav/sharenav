@@ -686,15 +686,10 @@ public class RouteInstructions {
 							iNamedArrow = iNow;
 						}
 						// get name for next street
-						if (cNow.wayNameIdx != -1) {
-							nameNow=trace.getName(cNow.wayNameIdx);;
-						} else {
-							WayDescription wayDesc = C.getWayDescription(cNow.wayType);
-							nameNow = "(unnamed " + wayDesc.description + ")";
-						}
+						nameNow=getInstructionName(iNow);
 						// start searching for the 2nd next street for having it in the cache when needed
-						if (nameThen == null && cThen != null && cThen.wayNameIdx != -1) {
-							String name=trace.getName(cThen.wayNameIdx);
+						if (nameThen == null) {
+							String name = getInstructionName(iThen);
 						}
 						//#debug debug
 						logger.debug("showRoute - iRealNow: " + iRealNow + " iNow: " + iNow + " iThen: " + iThen);						
@@ -1179,7 +1174,6 @@ public class RouteInstructions {
 				c.wayRouteFlags |= C.ROUTE_FLAG_QUIET;
 				cPrev.wayDistanceToNext += c.wayDistanceToNext;
 				//c.wayDistanceToNext = 0;
-				cPrev.wayNameIdx = c.wayNameIdx;
 				ConnectionWithNode cNext = (ConnectionWithNode) route.elementAt(i+1);
 				// cPrev.wayRouteInstruction = convertTurnToRouteInstruction( (cNext.startBearing - cPrev.endBearing) * 2 );
 				cPrev.wayRouteInstruction = convertTurnToRouteInstruction( (cNext.wayConStartBearing - cPrev.wayConEndBearing) * 2 );				
@@ -1304,6 +1298,40 @@ public class RouteInstructions {
 		return a;
 	}
 
+	/*
+	 * get wayname for the current instruction -
+	 * in roundabouts we have to search the first non-roundabout
+	 * and if the next one is a skipped instruction we need to use the name from the skipped instruction
+	 * as this contains the name of the way to go into
+	 */
+	 
+	private String getInstructionName(int i) {
+		if (i >= route.size()) {
+			return null;
+		}
+		ConnectionWithNode c = (ConnectionWithNode) route.elementAt(i);
+		ConnectionWithNode c2;
+		int a;
+		for (a=i; a<route.size()-2; a++){
+			c = (ConnectionWithNode) route.elementAt(a);
+			c2 = (ConnectionWithNode) route.elementAt(a+1);
+			if (
+				(c.wayRouteFlags & C.ROUTE_FLAG_ROUNDABOUT) == 0 
+				&&
+				c2.wayRouteInstruction != RI_SKIPPED
+			) {
+				break;
+			}
+		}
+		if (c.wayNameIdx != -1) {
+			return trace.getName(c.wayNameIdx);
+		} else {
+			WayDescription wayDesc = C.getWayDescription(c.wayType);
+			return "(unnamed " + wayDesc.description + ")";
+		}
+	}
+
+	
 	public static void toNextInstruction(int direction) {
 		if (routePathConnection != -1 && routePathConnection < route.size()-1) {
 			int i;
