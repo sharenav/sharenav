@@ -1210,7 +1210,11 @@ public class RouteInstructions {
 					|| 
 					// or named direction arrow with same name and way type as previous one but not multiple same named options
 					(
-						c.wayRouteInstruction <= RI_HARD_LEFT
+						(
+							c.wayRouteInstruction == RI_HALF_LEFT
+							||
+							c.wayRouteInstruction == RI_HALF_RIGHT
+						)
 						&&
 						c.wayNameIdx > 0
 						&&
