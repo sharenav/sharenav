@@ -105,9 +105,14 @@ public class GuiSearch extends Canvas implements CommandListener,
 	 */
 	private boolean pointerDragged;
 	/**
-	 * Stores the position of the Y coordinate at which the pointer started dragging
+	 * Stores the position of the Y coordinate at which the pointer started dragging since the last update 
 	 */
 	private int pointerYDragged;
+	/**
+	 * Stores the position of the initial pointerPress to identify dragging
+	 */
+	private int pointerXPressed;
+	private int pointerYPressed;
 
 	
 	public GuiSearch(Trace parent) throws Exception {
@@ -597,6 +602,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 			pressedPointerTime = currTime;
 		}
 		pointerYDragged = y;
+		pointerXPressed = x;
+		pointerYPressed = y;
 	}
 	
 	public void pointerReleased(int x, int y) {
@@ -626,6 +633,16 @@ public class GuiSearch extends Canvas implements CommandListener,
 	public void pointerDragged(int x, int y) {
 		//#debug debug
 		logger.debug("Pointer dragged: " + x + " " + y);
+		if ((Math.abs(x - pointerXPressed) < 3) && (Math.abs(y - pointerYPressed) < 3)) {
+			/**
+			 * On some devices, such as PhoneME, every pointerPressed event also causes
+			 * a pointerDragged event. We therefore need to filter out those pointerDragged
+			 * events that haven't actually moved the pointer. Chose threshold of 2 pixels
+			 */
+			//#debug debug
+			logger.debug("No real dragging, as pointer hasn't moved");
+			return;
+		}
 		pointerDragged = true;
 		
 		scrollOffset += (y - pointerYDragged);
