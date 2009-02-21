@@ -431,8 +431,11 @@ public class LegendParser extends DefaultHandler{
 					} else {
 						System.out.println("soundFile without sound in style file");						
 					}
+				} else if (qName.equals("changeFileExtensionTo")) {
+					Configuration.getConfiguration().changeSoundFileExtensionTo = atts.getValue("fileExt");
 				}
-				break;		}
+				break;
+		}
 	} // startElement
 
 	public void endElement(String namespaceURI, String localName, String qName) {		

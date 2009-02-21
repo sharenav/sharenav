@@ -2,13 +2,14 @@
 <!ELEMENT background EMPTY>
 <!ELEMENT routeLine EMPTY>
 <!ELEMENT priorRouteLine EMPTY>
-<!ELEMENT sounds (sound*)>
+<!ELEMENT sounds (changeFileExtensionTo?, sound*)>
 <!ELEMENT pois (key*)>
 <!ELEMENT ways (keyW*)>
 <!ELEMENT key (value+)>
 <!ELEMENT keyW (Wvalue+)>
 <!ELEMENT value (specialisation*, description , image? , searchIcon? , namekey , namefallback? , scale , textscale? , imageCentered?, hideable?)>
 <!ELEMENT Wvalue (specialisation*, description, namekey, namefallback?, isArea, scale, textscale?, arrowscale?, descriptionscale?, lineColor, borderColor?, lineStyle?, wayWidth?, searchIcon?, routing?, force_to?, hideable?)>
+<!ELEMENT changeFileExtensionTo EMPTY>
 <!ELEMENT sound (soundFile)>
 <!ELEMENT soundFile EMPTY>
 <!ELEMENT description EMPTY>
@@ -40,6 +41,7 @@
 <!ATTLIST value priority CDATA #IMPLIED>
 <!ATTLIST Wvalue name CDATA #REQUIRED>
 <!ATTLIST Wvalue priority CDATA #IMPLIED>
+<!ATTLIST changeToFileExtension type CDATA #REQUIRED>
 <!ATTLIST sound name CDATA #REQUIRED>
 <!ATTLIST description desc CDATA #REQUIRED>
 <!ATTLIST namekey tag CDATA #REQUIRED>
@@ -60,6 +62,7 @@
 <!ATTLIST routing speed CDATA #REQUIRED>
 <!ATTLIST force_to layer CDATA #REQUIRED>
 <!ATTLIST hideable hideable CDATA #REQUIRED>
+<!ATTLIST changeFileExtensionTo fileExt CDATA #REQUIRED>
 <!ATTLIST soundFile src CDATA #REQUIRED>
 <!ATTLIST specialisation condition CDATA "match">
 <!ATTLIST specialisation key CDATA #REQUIRED>

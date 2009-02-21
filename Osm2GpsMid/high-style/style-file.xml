@@ -54,6 +54,11 @@ zoomed out 21x (scale alias 1:  500km)
   <priorRouteLine lineColor="00007070" borderColor="00647777"/>
   
   <sounds>
+<!-- move the following line out of the comment
+     to set the file extensions of all soundFile definitions to .mp3
+	<changeFileExtensionTo fileExt=".mp3"/>
+-->		
+
 <!-- these sounds have internal tone sequence
      that will be used if commented out here
 -->	

@@ -260,9 +260,18 @@ public class CreateGpsMidData {
 			/**
 			 * Writing Sound Descriptions 
 			 */
+			String fileExt = Configuration.getConfiguration().changeSoundFileExtensionTo;
 			dsi.writeByte(Configuration.getConfiguration().getSoundDescs().size());
 			for (SoundDescription sound : Configuration.getConfiguration().getSoundDescs()) {
-				dsi.writeUTF(sound.name);								
+				dsi.writeUTF(sound.name);
+				if (fileExt.length() != 0) {
+					int i = sound.soundFile.lastIndexOf('.');
+					if (i!=-1) {
+						sound.soundFile = sound.soundFile.substring(0, i) +  fileExt;
+					} else {
+						sound.soundFile += fileExt;
+					}
+				}
 				outputMedia=copyMediaToMid(sound.soundFile, path, "sound");
 				dsi.writeUTF(outputMedia);
 			}

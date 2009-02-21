@@ -74,7 +74,8 @@ public class Configuration {
 		public int routeBorderColor = 0x0064FFFF;
 		public int priorRouteColor = 0x00007070;
 		public int priorRouteBorderColor = 0x00647777;
-				
+		public String changeSoundFileExtensionTo = "";
+		
 		private LegendParser legend;
 		
 		// array containing real scale for pseudo zoom 0..32
