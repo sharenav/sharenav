@@ -21,7 +21,7 @@ import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.tile.PaintContext;
 
 public class WaypointsTile extends Tile {
-	private final static Logger logger = Logger.getInstance(GpxTile.class,
+	private final static Logger logger = Logger.getInstance(WaypointsTile.class,
 			Logger.DEBUG);
 
 	private static Font wptFont;
@@ -156,10 +156,10 @@ public class WaypointsTile extends Tile {
 			}
 			pc.g.setFont(wptFont);
 		}
+		int maxLen = Configuration.MAX_WAYPOINTNAME_DRAWLENGTH;
+		StringBuffer sb = new StringBuffer();
 		for (int i = 0; i < wayPts.size(); i++) {
 			PositionMark waypt = (PositionMark) (wayPts.elementAt(i));
-			StringBuffer sb = new StringBuffer();
-			int maxLen = Configuration.MAX_WAYPOINTNAME_DRAWLENGTH;
 			if (pc.getP().isPlotable(waypt.lat, waypt.lon)) {
 				pc.getP().forward(waypt.lat, waypt.lon, pc.lineP2);
 				// Always draw waypoint marker
@@ -168,16 +168,20 @@ public class WaypointsTile extends Tile {
 				// Draw waypoint text if enabled
 				if (   (Configuration.getCfgBitState(Configuration.CFGBIT_WPTTEXTS) 
 					&& (waypt.displayName != null))) {
-					// truncate name to maximum maxLen chars plus "..." where required
-					sb.setLength(0);
-					sb.append(waypt.displayName);
-					if (sb.length() > maxLen) {
-						sb.setLength(maxLen);
+					if (waypt.displayName.length() > maxLen) {						
+						// Truncate name to maximum maxLen chars plus "..." where required.
+						sb.setLength(0);
+						sb.append(waypt.displayName.substring(0, maxLen));
 						sb.append("...");
+						pc.g.drawString(sb.toString(), pc.lineP2.x, pc.lineP2.y, 
+										Graphics.HCENTER | Graphics.BOTTOM);
 					}
-					pc.g.drawString(sb.toString(), pc.lineP2.x, pc.lineP2.y, 
-									Graphics.HCENTER | Graphics.BOTTOM);
-				}
+					else
+					{
+						pc.g.drawString(waypt.displayName, pc.lineP2.x, pc.lineP2.y, 
+								Graphics.HCENTER | Graphics.BOTTOM);						
+ 					}
+ 				}
 			}
 		} // for
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_WPTTEXTS))
