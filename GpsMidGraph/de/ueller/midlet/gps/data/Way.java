@@ -283,7 +283,15 @@ public class Way extends Entity{
 			return false;
 		}
 		return true; 
-	} 
+	}
+	
+	public float wayBearing(SingleTile t) {
+		
+		return (float) MoreMath.bearing_int(t.nodeLat[path[0]]*SingleTile.fpminv + t.centerLat,
+				t.nodeLon[path[0]]*SingleTile.fpminv + t.centerLon, 
+				t.nodeLat[path[path.length - 1]]*SingleTile.fpminv + t.centerLat,
+				t.nodeLon[path[path.length - 1]]*SingleTile.fpminv + t.centerLon);
+	}
 
 
 	public void paintAsPath(PaintContext pc, SingleTile t, byte layer) {
@@ -624,10 +632,12 @@ public class Way extends Entity{
 							if (dst + pen < pc.squareDstToWay) {
 								pc.squareDstToWay = dst + pen;
 								pc.actualWay = this;
+								pc.actualSingleTile = t;
 							}
 						} else {
 							pc.squareDstToWay = dst;
 							pc.actualWay = this;
+							pc.actualSingleTile = t;
 						}
 					}
 					if (dst < pc.squareDstToRoutableWay && wayDesc.routable) {

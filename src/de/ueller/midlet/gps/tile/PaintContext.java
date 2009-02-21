@@ -12,6 +12,7 @@ import de.ueller.gps.data.Configuration;
 import de.ueller.gps.tools.intTree;
 import de.ueller.gpsMid.mapData.QueueDataReader;
 import de.ueller.gpsMid.mapData.QueueReader;
+import de.ueller.gpsMid.mapData.SingleTile;
 import de.ueller.midlet.gps.ScreenContext;
 import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.data.IntPoint;
@@ -64,6 +65,7 @@ public class PaintContext extends ScreenContext {
 	 */
 	public volatile Way actualWay=null;
 	public volatile Way nearestRoutableWay=null;
+	public volatile SingleTile actualSingleTile = null;
 	
 	/* variables for searching matching route connections in ways */
 	public volatile float searchCon1Lat;

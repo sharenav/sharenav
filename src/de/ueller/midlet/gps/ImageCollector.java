@@ -330,6 +330,7 @@ public class ImageCollector implements Runnable {
 		 */
 		if (paintPC.actualWay != null){
 			screenPc.actualWay = paintPC.actualWay;
+			screenPc.actualSingleTile = paintPC.actualSingleTile;
 			String maxspeed="";
 			if (paintPC.actualWay.getMaxSpeed() != 0){
 				maxspeed=" SL:" + pc[nextPaint].actualWay.getMaxSpeed();
