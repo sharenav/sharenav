@@ -1,4 +1,4 @@
-package de.ueller.midlet.graphics;
+/*package de.ueller.midlet.graphics;
 
 import javax.microedition.lcdui.Graphics;
 
@@ -51,3 +51,4 @@ public class Street {
 
 	}
 }
+*/
