@@ -194,8 +194,8 @@ public class Way extends Entity{
 		}
 		if (((f & WAY_FLAG_AREA) == WAY_FLAG_AREA) || C.getWayDescription(type).isArea) {
 			if ((f & WAY_FLAG_AREA) == WAY_FLAG_AREA){
+				//#debug debug
 				logger.debug("Loading explicit Area: " + this);
-				System.out.println("f: " + f);
 			}
 			flags += WAY_AREA;
 		}
