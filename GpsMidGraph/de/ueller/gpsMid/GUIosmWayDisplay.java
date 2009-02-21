@@ -18,11 +18,14 @@ import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Form;
+import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.Item;
 import javax.microedition.lcdui.ItemCommandListener;
+import javax.microedition.lcdui.List;
 import javax.microedition.lcdui.StringItem;
 import javax.microedition.lcdui.TextField;
 
+import de.ueller.gpsMid.mapData.SingleTile;
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.GpsMidDisplayable;
 import de.ueller.midlet.gps.UploadListener;
@@ -36,22 +39,66 @@ public class GUIosmWayDisplay extends Form implements GpsMidDisplayable, Command
 	private final Command ADD_CMD = new Command("Add tag", Command.ITEM, 2);
 	private final Command EDIT_CMD = new Command("Edit tag", Command.ITEM, 2);
 	private final Command REMOVE_CMD = new Command("Remove tag", Command.ITEM, 3);
-	private final Command UPLOAD_CMD = new Command("Upload to OSM", Command.OK, 4);
+	private final Command REVERSE_CMD = new Command("Reverse direction", Command.ITEM, 4);
+	private final Command PRESET_CMD = new Command("Add preset", Command.ITEM, 5);
+	private final Command UPLOAD_CMD = new Command("Upload to OSM", Command.OK, 6);
+	
 	
 	private EditableWay eway;
+	private SingleTile t;
 	private OSMdataWay  osmway;
-	private GpsMidDisplayable parent; 
+	private GpsMidDisplayable parent;
+	private List presets;
 	
 	private boolean addTag;
 	
-	public GUIosmWayDisplay(EditableWay way, GpsMidDisplayable parent) {
+	public GUIosmWayDisplay(EditableWay way, SingleTile t, GpsMidDisplayable parent) {
 		super("Way " + way.osmID);
 		this.parent = parent;
 		this.eway = way;
 		addCommand(EXIT_CMD);
 		addCommand(ADD_CMD);
+		addCommand(REVERSE_CMD);
+		addCommand(PRESET_CMD);
 		addCommand(UPLOAD_CMD);
 		setCommandListener(this);
+		this.t = t;
+	}
+	
+	private Image bearingArrow() {
+		Image img = Image.createImage(16, 16);
+		
+		float wayBearing = eway.wayBearing(t);
+		if (wayBearing < 0)
+			wayBearing += 2*Math.PI;
+		System.out.println(wayBearing);
+		double x0,y0,x1,y1,x2,y2;
+		
+		x0 =  0; y0 = -6;
+		y1 = y0*Math.cos(wayBearing) - x0*Math.sin(wayBearing) + 8;
+		x1 = x0*Math.cos(wayBearing) - y0*Math.sin(wayBearing) + 8;
+		x0 =  0; y0 = 6;
+		y2 = y0*Math.cos(wayBearing) - x0*Math.sin(wayBearing) + 8;
+		x2 = x0*Math.cos(wayBearing) - y0*Math.sin(wayBearing) + 8;
+		img.getGraphics().drawLine((int)x1, (int)y1, (int)x2, (int)y2);
+		
+		x0 = -4; y0 = -2;
+		y1 = y0*Math.cos(wayBearing) - x0*Math.sin(wayBearing) + 8;
+		x1 = x0*Math.cos(wayBearing) - y0*Math.sin(wayBearing) + 8;
+		x0 =  0; y0 = -6;
+		y2 = y0*Math.cos(wayBearing) - x0*Math.sin(wayBearing) + 8;
+		x2 = x0*Math.cos(wayBearing) - y0*Math.sin(wayBearing) + 8;
+		img.getGraphics().drawLine((int)x1, (int)y1, (int)x2, (int)y2);
+		
+		x0 =  4; y0 = -2;
+		y1 = y0*Math.cos(wayBearing) - x0*Math.sin(wayBearing) + 8;
+		x1 = x0*Math.cos(wayBearing) - y0*Math.sin(wayBearing) + 8;
+		x0 =  0; y0 = -6;
+		y2 = y0*Math.cos(wayBearing) - x0*Math.sin(wayBearing) + 8;
+		x2 = x0*Math.cos(wayBearing) - y0*Math.sin(wayBearing) + 8;
+		img.getGraphics().drawLine((int)x1, (int)y1, (int)x2, (int)y2);
+		
+		return img;
 	}
 	
 	private void setupScreen() {
@@ -61,10 +108,9 @@ public class GUIosmWayDisplay extends Form implements GpsMidDisplayable, Command
 			this.append(new StringItem("No Data available","..."));
 			return;
 		}
-		this.append(new StringItem("Edited ", null));
+		this.append(new StringItem("Edited ", null)); this.append(bearingArrow());
 		this.append(new StringItem("    at:", osmway.getEditTime()));
 		this.append(new StringItem("    by: ", osmway.getEditor()));
-		
 		
 		Hashtable tags = osmway.getTags();
 		if (tags == null)
@@ -83,7 +129,11 @@ public class GUIosmWayDisplay extends Form implements GpsMidDisplayable, Command
 
 	public void commandAction(Command c, Displayable d) {
 		if (c == EXIT_CMD) {
-			parent.show();
+			if (d == this) {
+				parent.show();
+			} else {
+				show();
+			}
 		}
 		if (c == ADD_CMD) {
 			this.addTag = true;
@@ -100,6 +150,42 @@ public class GUIosmWayDisplay extends Form implements GpsMidDisplayable, Command
 		if (c == UPLOAD_CMD) {
 			parent.show();
 			eway.uploadXML(this);
+		}
+		
+		if (c == REVERSE_CMD) {
+			osmway.reverseWay();
+		}
+		
+		if (c == PRESET_CMD) {
+			presets = new List("Tagging Presets", List.IMPLICIT);
+			presets.append("maxspeed=20 mph", null);
+			presets.append("maxspeed=30 mph", null);
+			presets.append("oneway=yes", null);
+			presets.append("name=", null);
+			presets.append("ref=", null);
+			presets.append("lcn_ref=", null);
+			presets.append("foot=yes", null);
+			presets.append("bicycle=yes", null);
+			presets.append("motorcar=yes", null);
+			presets.append("access=private", null);
+			presets.append("maxweight=7.5", null);
+			presets.append("maxlength=18", null);
+			presets.append("maxwidth=3", null);
+			presets.append("maxheigt=4", null);
+			presets.addCommand(OK_CMD);
+			presets.addCommand(EXIT_CMD);
+			presets.setCommandListener(this);
+			presets.setSelectCommand(OK_CMD);
+			GpsMid.getInstance().show(presets);
+		}
+		
+		if (c == OK_CMD) {
+			String addPreset = presets.getString(presets.getSelectedIndex());
+			int split = addPreset.indexOf("=");
+			osmway.getTags().put(addPreset.substring(0,split), addPreset.substring(split + 1, addPreset.length()));
+			presets = null;
+			setupScreen();
+			show();
 		}
 		
 	}

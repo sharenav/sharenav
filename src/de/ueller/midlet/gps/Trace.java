@@ -1017,7 +1017,7 @@ Runnable , GpsMidDisplayable{
 					if (C.enableEdits) {
 						if ((pc.actualWay != null) && (pc.actualWay instanceof EditableWay)) {
 							EditableWay eway = (EditableWay)pc.actualWay;
-							GUIosmWayDisplay guiWay = new GUIosmWayDisplay(eway,this);
+							GUIosmWayDisplay guiWay = new GUIosmWayDisplay(eway, pc.actualSingleTile, this);
 							guiWay.show();
 							guiWay.refresh();
 						}
