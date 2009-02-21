@@ -111,6 +111,14 @@ public class OSMdataWay implements XmlParserContentHandler{
 		return editTime;
 	}
 	
+	public void reverseWay() {
+		Vector revNodes = new Vector();
+		for (int i = nodes.size() - 1; i >= 0; i--) {
+			revNodes.addElement(nodes.elementAt(i));
+		}
+		nodes = revNodes;
+	}
+	
 	public String toXML() {
 		String xml;
 		
