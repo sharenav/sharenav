@@ -142,7 +142,7 @@ public class RouteInstructions {
 			//parent.alert ("Connection2Ways", "found: " + connsFound + "/" + (route.size()-1) + " in " + (long)(System.currentTimeMillis() - startTime) + " ms", 3000);
 			//#debug debug
 			logger.debug("Connection2Ways found: " + connsFound + "/" + (route.size()-1) + " in " + (long)(System.currentTimeMillis() - startTime) + " ms");
-			trace.receiveMessage ("Route: " + (int) routeLen + "m");
+			trace.receiveMessage ("Route: " + (int) routeLen + "m" + (connsFound==(route.size()-1)?"":" (" + connsFound + "/" + (route.size()-1) + ")"));
 			createRouteInstructions();
 			outputRoutePath();
 		}
@@ -207,6 +207,8 @@ public class RouteInstructions {
 			
 			connsFound++;
 			return cFrom.wayDistanceToNext;
+		} else {
+			System.out.println("NO MATCH FOR: " + iConnFrom);
 		}
 		return 0f;
 	}
