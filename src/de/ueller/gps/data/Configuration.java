@@ -153,6 +153,7 @@ public class Configuration {
 	private static final int RECORD_ID_OSM_USERNAME = 30;
 	private static final int RECORD_ID_OSM_PWD = 31;
 	private static final int RECORD_ID_OSM_URL = 32;
+	private static final int RECORD_ID_MIN_ROUTELINE_WIDTH = 33;
 	
 
 	// Gpx Recording modes
@@ -217,6 +218,8 @@ public class Configuration {
 	private static String osm_username;
 	private static String osm_pwd;
 	private static String osm_url;
+
+	private static int minRouteLineWidth=0;
 
 	public static void read(){
 	logger = Logger.getInstance(Configuration.class, Logger.DEBUG);
@@ -284,6 +287,7 @@ public class Configuration {
 							1L<<CFGBIT_ROUTE_HIDE_QUIET_ARROWS |
 							1L<<CFGBIT_ROUTE_BROWSING |
 							1L<<CFGBIT_SPEEDALERT_VISUAL;
+							setMinRouteLineWidth(3);
 							// Speed alert tolerance
 							setSpeedTolerance(5);
 				//#debug info
@@ -332,6 +336,7 @@ public class Configuration {
 			if (osm_url == null) {
 				osm_url = "http://api.openstreetmap.org/api/0.5/";
 			}
+			minRouteLineWidth=readInt(database, RECORD_ID_MIN_ROUTELINE_WIDTH); 
 			
 			database.closeRecordStore();
 		} catch (Exception e) {
@@ -766,6 +771,17 @@ public class Configuration {
 		write(s, RECORD_ID_SPEED_TOLERANCE);
 		speedTolerance = s;		
 	}
+
+	public static int getMinRouteLineWidth() {
+		return minRouteLineWidth;
+	}
+
+	public static void setMinRouteLineWidth(int w) {
+		minRouteLineWidth = Math.max(w, 1);
+		write(minRouteLineWidth, RECORD_ID_MIN_ROUTELINE_WIDTH);
+	}
+	
+	
 	
 	public static InputStream getMapResource(String name) throws IOException{
 		InputStream is;
@@ -905,7 +921,7 @@ public class Configuration {
 	
 	public static boolean hasDeviceJSR120(){
 		try {
-		Class.forName("javax.wireless.messaging.MessageConnection" );
+			Class.forName("javax.wireless.messaging.MessageConnection" );
 			return true;
 		}
 		catch( Exception e ){

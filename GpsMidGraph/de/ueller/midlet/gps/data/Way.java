@@ -696,13 +696,13 @@ public class Way extends Entity{
 				highlight=1;
 				draw(pc, (w == 0) ? 1 : w, x, y, hl, pi - 1, highlight);
 			} else {
-				if (w == 0) {
+				// if render as lines and no part of the way is highlighted
+				if (w == 0 && highlight != 2) {
 					if (highlight != 2) {
 						setColor(pc);
 						PolygonGraphics.drawOpenPolygon(pc.g, x, y, pi - 1);
-					} else {
-						drawOpenPolygonHl(pc.g, x, y, hl, pi - 1);
 					}
+				// if render as streets or a part of the way is highlighted
 				} else {
 					draw(pc, w, x, y, hl, pi - 1, highlight);
 				}
@@ -714,21 +714,6 @@ public class Way extends Entity{
 			paintPathName(pc, t);
 		}
 	}
-	
-    public static void drawOpenPolygonHl(Graphics g, int xPoints[], int yPoints[], int hl[], int count)
-    {
-        int defaultColor = g.getColor();
-    	for(int i = 0; i < count; i++) {
-			if (hl[i] != PATHSEG_DO_NOT_DRAW) {
-				if (hl[i] != PATHSEG_DO_NOT_HIGHLIGHT) {
-					g.setColor(C.ROUTE_COLOR);
-				} else {
-					g.setColor(defaultColor);
-				}
-				g.drawLine(xPoints[i], yPoints[i], xPoints[i + 1], yPoints[i + 1]);
-			}
-		}
-    }
 
     public void paintPathName(PaintContext pc, SingleTile t) {
 		//boolean info=false;
@@ -1148,16 +1133,31 @@ public class Way extends Entity{
 
 	private void draw(PaintContext pc, int w, int xPoints[], int yPoints[], int hl[], int count,byte highlight/*,byte mode*/) {
 		
-		float roh1;
+		float roh1=0.0f;
 		float roh2;
 
 		int max = count ;
 		int beforeMax = max - 1;
+		int wOriginal = w;
 		if (w <1) w=1;
-		roh1 = getParLines(xPoints, yPoints, 0, w, l1b, l2b, l1e, l2e);
+		int wDraw = w;
+		int oldWDraw = 0; // setting this to 0 gets roh1 in the first step
 		for (int i = 0; i < max; i++) {
+			wDraw = w;
+			// draw route line wider
+			if (
+				highlight == 2
+				&& hl[i] >= 0
+				&& wDraw < Configuration.getMinRouteLineWidth()
+			) {
+				wDraw = Configuration.getMinRouteLineWidth();
+			}
+			// get parLine again, if width has changed (when switching between highlighted / non-highlighted parts of the way)
+			if (wDraw != oldWDraw) {
+				roh1 = getParLines(xPoints, yPoints, i, wDraw, l1b, l2b, l1e, l2e);
+			}
 			if (i < beforeMax) {
-				roh2 = getParLines(xPoints, yPoints, i + 1, w, l3b, l4b, l3e,
+				roh2 = getParLines(xPoints, yPoints, i + 1, wDraw, l3b, l4b, l3e,
 						l4e);
 				if (!MoreMath.approximately_equal(roh1, roh2, 0.5f)) {
 					intersectionPoint(l1b, l1e, l3b, l3e, s1);
@@ -1170,25 +1170,28 @@ public class Way extends Entity{
 			}
 			if (hl[i] != PATHSEG_DO_NOT_DRAW) {
 	//			if (mode == DRAW_AREA){
-					if (highlight == 2 && hl[i] != PATHSEG_DO_NOT_HIGHLIGHT) {
-						pc.g.setColor(C.ROUTE_COLOR);				
+					if (highlight == 2 && hl[i] >= 0) {
+						pc.g.setColor(C.ROUTE_COLOR);	
 					} else {
 						setColor(pc);
 					}
-					pc.g.fillTriangle(l2b.x, l2b.y, l1b.x, l1b.y, l1e.x, l1e.y);
-					pc.g.fillTriangle(l1e.x, l1e.y, l2e.x, l2e.y, l2b.x, l2b.y);
-	//			}
-	//			if (mode == DRAW_BORDER){
-					if (highlight == 1){
-						pc.g.setColor(255,50,50);
-					} else if (highlight == 2 && hl[i] != PATHSEG_DO_NOT_HIGHLIGHT){
-						pc.g.setColor(C.ROUTE_BORDERCOLOR);
+					// when this is not render as lines (for the non-highlighted part of the way) or it is a highlighted part, draw as area
+					if (wOriginal != 0 || hl[i] >= 0) {
+						pc.g.fillTriangle(l2b.x, l2b.y, l1b.x, l1b.y, l1e.x, l1e.y);
+						pc.g.fillTriangle(l1e.x, l1e.y, l2e.x, l2e.y, l2b.x, l2b.y);
+						// draw borders of way
+						if (highlight == 1){
+							pc.g.setColor(255,50,50);
+						} else if (highlight == 2 && hl[i] >= 0){
+							pc.g.setColor(C.ROUTE_BORDERCOLOR);
+						} else {
+							setBorderColor(pc);
+						}
+						pc.g.drawLine(l1b.x, l1b.y, l1e.x, l1e.y);
+						pc.g.drawLine(l2b.x, l2b.y, l2e.x, l2e.y);
 					} else {
-						setBorderColor(pc);
+						pc.g.drawLine(xPoints[i], yPoints[i], xPoints[i + 1], yPoints[i + 1]);
 					}
-					pc.g.drawLine(l1b.x, l1b.y, l1e.x, l1e.y);
-					pc.g.drawLine(l2b.x, l2b.y, l2e.x, l2e.y);
-	//			}
 			}
 			l1b.set(l3b);
 			l2b.set(l4b);

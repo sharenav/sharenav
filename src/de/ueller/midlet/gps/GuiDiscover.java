@@ -161,6 +161,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private TextField  tfGpxRecordMinimumSecs; 
 	private TextField  tfGpxRecordMinimumDistanceMeters; 
 	private TextField  tfGpxRecordAlwaysDistanceMeters;
+	private TextField  tfMinRouteLineWidth;
 	//#if polish.api.osm-editing
 	private TextField  tfOsmUserName;
 	private TextField  tfOsmPassword;
@@ -265,6 +266,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		routingOptsGroup = new ChoiceGroup("Other", Choice.MULTIPLE, routingOpts ,null);
 		routingOptsGroup.setSelectedFlags(selRouting);
 		menuRoutingOptions.append(routingOptsGroup);
+		tfMinRouteLineWidth = new TextField("Minimum width of route line", Integer.toString(Configuration.getMinRouteLineWidth()), 1, TextField.DECIMAL);
+		menuRoutingOptions.append(tfMinRouteLineWidth);
 	}
 
 	private void initDebugSetupMenu() {
@@ -852,6 +855,10 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				Configuration.setCfgBitState(Configuration.CFGBIT_ROUTE_AUTO_RECALC, selRouting[0], true);
 				Configuration.setCfgBitState(Configuration.CFGBIT_ROUTE_BROWSING, selRouting[1], true);
 				Configuration.setCfgBitState(Configuration.CFGBIT_ROUTE_HIDE_QUIET_ARROWS, selRouting[2], true);
+				String w=tfMinRouteLineWidth.getString(); 
+				Configuration.setMinRouteLineWidth( 
+						(int) (Float.parseFloat(w)) 
+				); 
 				state = STATE_ROOT;
 				this.show();			
 				break;
