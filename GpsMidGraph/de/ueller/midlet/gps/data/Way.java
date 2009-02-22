@@ -63,8 +63,12 @@ public class Way extends Entity{
 	public static final byte PAINTMODE_DRAWCHARS = 1;
 	public static final byte INDENT_PATHNAME = 2;
 
-	public static final int PATHSEG_DO_NOT_HIGHLIGHT = -1;
-	public static final int PATHSEG_DO_NOT_DRAW = -2;
+	private static final int PATHSEG_DO_NOT_HIGHLIGHT = -1;
+	private static final int PATHSEG_DO_NOT_DRAW = -2;
+	
+	private static final int HIGHLIGHT_NONE = 0;
+	private static final int HIGHLIGHT_TARGET = 1;
+	private static final int HIGHLIGHT_ROUTEPATH_CONTAINED = 2;
 	
 	protected static final Logger logger = Logger.getInstance(Way.class,Logger.TRACE);
 
@@ -475,7 +479,7 @@ public class Way extends Entity{
 	public void processPath(PaintContext pc, SingleTile t, int mode, byte layer) {		
 		WayDescription wayDesc = C.getWayDescription(type);
 		int w = 0;
-		byte highlight=0;
+		byte highlight=HIGHLIGHT_NONE;
 		
 		/**
 		 * If the static array is not large enough, increase it
@@ -550,7 +554,7 @@ public class Way extends Entity{
 												pc.hlLayers |= (1<<layer);
 											}
 											
-											highlight=2;
+											highlight = HIGHLIGHT_ROUTEPATH_CONTAINED;
 											short from = c.wayFromConAt;
 											short to = c.wayToConAt;
 											if (from > to  && !isRoundAbout()) {
@@ -585,7 +589,7 @@ public class Way extends Entity{
 			}		
 		}
 
-		if (highlight == 0 && (mode & Tile.OPT_HIGHLIGHT) != 0) {
+		if (highlight == HIGHLIGHT_NONE && (mode & Tile.OPT_HIGHLIGHT) != 0) {
 			return;
 		}		
 		
@@ -610,7 +614,7 @@ public class Way extends Entity{
 				 * If two nodes are very close by, then we can simply drop one of the nodes
 				 * and draw the line between the other points. 
 				 */
-				if (highlight == 2 || ! lineP1.approximatelyEquals(lineP2)){					
+				if (highlight == HIGHLIGHT_ROUTEPATH_CONTAINED || ! lineP1.approximatelyEquals(lineP2)){					
 					/* 
 					 * calculate closest distance to specific ways
 					 */
@@ -693,15 +697,13 @@ public class Way extends Entity{
 			}
 
 			if (pc.target != null && this.equals(pc.target.e)) {
-				highlight=1;
+				highlight=HIGHLIGHT_TARGET;
 				draw(pc, (w == 0) ? 1 : w, x, y, hl, pi - 1, highlight);
 			} else {
 				// if render as lines and no part of the way is highlighted
-				if (w == 0 && highlight != 2) {
-					if (highlight != 2) {
-						setColor(pc);
-						PolygonGraphics.drawOpenPolygon(pc.g, x, y, pi - 1);
-					}
+				if (w == 0 && highlight != HIGHLIGHT_ROUTEPATH_CONTAINED) {
+					setColor(pc);
+					PolygonGraphics.drawOpenPolygon(pc.g, x, y, pi - 1);
 				// if render as streets or a part of the way is highlighted
 				} else {
 					draw(pc, w, x, y, hl, pi - 1, highlight);
@@ -1146,7 +1148,7 @@ public class Way extends Entity{
 			wDraw = w;
 			// draw route line wider
 			if (
-				highlight == 2
+				highlight == HIGHLIGHT_ROUTEPATH_CONTAINED
 				&& hl[i] >= 0
 				&& wDraw < Configuration.getMinRouteLineWidth()
 			) {
@@ -1170,7 +1172,7 @@ public class Way extends Entity{
 			}
 			if (hl[i] != PATHSEG_DO_NOT_DRAW) {
 	//			if (mode == DRAW_AREA){
-					if (highlight == 2 && hl[i] >= 0) {
+					if (highlight == HIGHLIGHT_ROUTEPATH_CONTAINED && hl[i] >= 0) {
 						pc.g.setColor(C.ROUTE_COLOR);	
 					} else {
 						setColor(pc);
@@ -1180,9 +1182,9 @@ public class Way extends Entity{
 						pc.g.fillTriangle(l2b.x, l2b.y, l1b.x, l1b.y, l1e.x, l1e.y);
 						pc.g.fillTriangle(l1e.x, l1e.y, l2e.x, l2e.y, l2b.x, l2b.y);
 						// draw borders of way
-						if (highlight == 1){
+						if (highlight == HIGHLIGHT_TARGET){
 							pc.g.setColor(255,50,50);
-						} else if (highlight == 2 && hl[i] >= 0){
+						} else if (highlight == HIGHLIGHT_ROUTEPATH_CONTAINED && hl[i] >= 0){
 							pc.g.setColor(C.ROUTE_BORDERCOLOR);
 						} else {
 							setBorderColor(pc);
