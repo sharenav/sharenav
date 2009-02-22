@@ -16,7 +16,8 @@ GpsMid 0.4.55
        *** Routing ***
        - Routing to POIs/waypoints is now possible - GpsMid will route you to the closest routable way
        - highlighting the route solution path (the route solution is drawn on top if the map is synched with
-         the GPS receiver but when panning manually it will respect the layer information) 
+         the GPS receiver but when panning manually it will respect the layer information),
+         the minimum width of the route solution path can be specified in Setup/Routing Options 
        - improved off-route detection
        - routing instructions for entering and exiting motorways, for roundabouts and tunnels
        - browse the route instructions with up/down keys (can be deactivated in Setup)
@@ -33,6 +34,7 @@ GpsMid 0.4.55
        - Send tracks directly to Openstreetmap internet url
 		 if "upload to OSM" is specified as GPX receiver
 		 and OSM Account in Setup is specified
+	   - bug fix for file import not working on some phones (thx mbaeurle + colleague)
 	   - optimizations for waypoint label drawing (thx mbaeurle) 
        *** GPS ***
        - JSR-179: Some devices (e.g. Nokia E71 and E90) did not show the speed / rotate the map to the driving direction. 
