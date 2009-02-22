@@ -1217,7 +1217,7 @@ Runnable , GpsMidDisplayable{
 					(System.currentTimeMillis() - startTimeOfSpeedingSign) < 3000
 				)
 			) {
-				if (startTimeOfSpeedingSign == 0) {
+				if (speeding) {
 					startTimeOfSpeedingSign = System.currentTimeMillis();
 					speedingSpeedLimit = maxSpeed;
 				}
