@@ -1,4 +1,9 @@
-	package de.ueller.midlet.gps.importexport;
+package de.ueller.midlet.gps.importexport;
+
+/*
+ * GpsMid - Copyright (c) 2008 Kai Krueger apmonkey at users dot sourceforge dot net 
+ * See Copying
+ */
 
 import java.io.IOException;
 
@@ -19,7 +24,7 @@ import de.ueller.midlet.gps.UploadListener;
 
 public class FileGpxImportSession implements GpxImportSession, SelectionListener, GpsMidDisplayable {
 	
-	private final static Logger logger=Logger.getInstance(FileGpxImportSession.class,Logger.DEBUG);
+	private final static Logger logger = Logger.getInstance(FileGpxImportSession.class, Logger.DEBUG);
 	float maxDistance;
 	UploadListener feedbackListener;
 	Displayable parent;
@@ -30,7 +35,8 @@ public class FileGpxImportSession implements GpxImportSession, SelectionListener
 		feedbackListener = feedback;
 		
 		//#if polish.api.fileconnectionapi
-		FsDiscover fsd = new FsDiscover(this,this,Configuration.getGpxUrl(),false,".gpx","Load *.gpx file");
+		FsDiscover fsd = new FsDiscover(this, this, Configuration.getGpxUrl(), 
+										false, ".gpx", "Load *.gpx file");
 		fsd.show();				
 		//#endif
 	}
@@ -40,23 +46,40 @@ public class FileGpxImportSession implements GpxImportSession, SelectionListener
 		 * Nothing to do here at the moment
 		 */
 	}
-	
-	public void selectedFile(String url) {
-		try {
-			//#debug info
-			logger.info("Receiving gpx: " + url);
-			Connection c  = Connector.open(url,Connector.READ);			
-			if (c instanceof InputConnection) {
-				InputConnection inConn = ((InputConnection)c);				
-				Trace.getInstance().gpx.receiveGpx(inConn.openInputStream(), feedbackListener, maxDistance);
-				return;
+
+	public void selectedFile(final String url) {
+		/**
+		 * This method gets called from the UI thread,
+		 * so we need to perform the slow, potentially blocking,
+		 * operation of opening the input in a separate thread,
+		 * even though receiveGpx already uses its own thread
+		 * to perform the actual GPX parsing.
+		 * 
+		 * TODO: can we consolidate the two threads?
+		 */
+		Thread importThread = new Thread(new Runnable() {
+			public void run()
+			{
+				try {
+					//#debug info
+					logger.info("Receiving gpx: " + url);
+					Connection conn = Connector.open(url, Connector.READ);
+					if (conn instanceof InputConnection) {
+						InputConnection inConn = ((InputConnection)conn);
+						Trace.getInstance().gpx.receiveGpx(inConn.openInputStream(), feedbackListener, maxDistance);
+						return;
+					}
+					logger.error("Unknown url type to load from: " + url);
+				} catch (IOException e) {
+					logger.exception("Could not open GPX file for import",e);
+				} catch (SecurityException se) {
+					logger.silentexception("Gpx file import was not allowed", se);
+				}
+				
 			}
-			logger.error("Unknown url type to load from: " + url);
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} );
+		importThread.setPriority(Thread.MIN_PRIORITY);
+		importThread.start();
 	}
 
 	public void show() {
