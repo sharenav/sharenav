@@ -107,6 +107,7 @@ public class RouteInstructions {
 	
 	public volatile static int dstToRoutePath=1;
 	public volatile static int routePathConnection=0;
+	public volatile static int pathIdxInRoutePathConnection=0;
 
 	private	static int routeInstructionColor=0x00E6E6E6;
 	

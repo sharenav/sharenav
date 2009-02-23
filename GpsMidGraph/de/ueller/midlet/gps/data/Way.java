@@ -20,6 +20,7 @@ import de.ueller.gpsMid.mapData.SingleTile;
 import de.ueller.gpsMid.mapData.Tile;
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.Logger;
+import de.ueller.midlet.gps.RouteInstructions;
 import de.ueller.midlet.gps.routing.ConnectionWithNode;
 import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.tile.C;
@@ -94,7 +95,12 @@ public class Way extends Entity{
 	 */
 	private static int [] x = new int[100];
 	private static int [] y = new int[100];
-	private static int [] hl = new int[100];  // route highlight
+	/**
+	 * contains either PATHSEG_DO_NOT_HIGHLIGHT, PATHSEG_DO_NOT_DRAW
+	 * or if this way's segment is part of the route path,
+	 * the index of the corresponding ConnectionWithNode in the route 
+	 */
+	private static int [] hl = new int[100];
 	private static Font areaFont;
 	private static int areaFontHeight;
 	private static Font pathFont;
@@ -651,6 +657,7 @@ public class Way extends Entity{
 					if (dst < pc.squareDstToRoutePath && hl[i1-1] > PATHSEG_DO_NOT_HIGHLIGHT) {
 						pc.squareDstToRoutePath = dst;						
 						pc.routePathConnection = hl[i1-1];
+						pc.pathIdxInRoutePathConnection = pi;
 					}				
 					x[pi] = lineP2.x;
 					y[pi++] = lineP2.y;
@@ -1173,7 +1180,11 @@ public class Way extends Entity{
 			if (hl[i] != PATHSEG_DO_NOT_DRAW) {
 	//			if (mode == DRAW_AREA){
 					if (highlight == HIGHLIGHT_ROUTEPATH_CONTAINED && hl[i] >= 0) {
-						pc.g.setColor(C.ROUTE_COLOR);	
+						if (isCurrentRoutePath(pc, i)) {
+							pc.g.setColor(C.ROUTE_COLOR);
+						} else {
+							pc.g.setColor(C.ROUTEPRIOR_COLOR);
+						}
 					} else {
 						setColor(pc);
 					}
@@ -1185,7 +1196,11 @@ public class Way extends Entity{
 						if (highlight == HIGHLIGHT_TARGET){
 							pc.g.setColor(255,50,50);
 						} else if (highlight == HIGHLIGHT_ROUTEPATH_CONTAINED && hl[i] >= 0){
-							pc.g.setColor(C.ROUTE_BORDERCOLOR);
+							if (isCurrentRoutePath(pc, i)) {
+								pc.g.setColor(C.ROUTE_BORDERCOLOR);
+							} else {
+								pc.g.setColor(C.ROUTEPRIOR_BORDERCOLOR);								
+							}
 						} else {
 							setBorderColor(pc);
 						}
@@ -1201,6 +1216,23 @@ public class Way extends Entity{
 			l2e.set(l4e);
 		}
 
+	}
+	
+	/**
+	 * @param pc
+	 * @param i - segment idx in the way's path to check
+	 * @return true, if the current segment in the way's path is not reached yet, else false  
+	 */
+	private boolean isCurrentRoutePath(PaintContext pc, int i) {
+		if (pc.routePathConnection != hl[i]) {
+			return (pc.routePathConnection < hl[i]);
+		}
+		ConnectionWithNode c = (ConnectionWithNode) pc.trace.getRoute().elementAt(pc.routePathConnection);
+		return	(
+			(c.wayFromConAt < c.wayToConAt)
+			?pc.pathIdxInRoutePathConnection <= i 
+			:pc.pathIdxInRoutePathConnection > i+1
+		);
 	}
 
 	private IntPoint intersectionPoint(IntPoint p1, IntPoint p2, IntPoint p3,
