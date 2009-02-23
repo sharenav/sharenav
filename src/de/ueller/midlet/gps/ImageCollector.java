@@ -180,6 +180,24 @@ public class ImageCollector implements Runnable {
 						(layersToRender[layer] & Tile.LAYER_HIGHLIGHT) > 0
 						&& layersToRender[layer] != Tile.LAYER_NODE
 					) {
+						/**
+						 * as we do two passes for each way layer when gps recentered - one for the ways and one for the route line on top,
+						 * we can use in the second pass the determined route path connection / idx
+						 * to highlight the route line in the correct / prior route line color.
+						 * when not gps recentered, this info will be by one image obsolete however
+						 */ 
+						if (layersToRender[layer] == (0 | Tile.LAYER_HIGHLIGHT)) {
+							if (createPC.squareDstToRoutePath != Float.MAX_VALUE) {
+								Node n1 = new Node();
+								Node n2 = new Node();
+								createPC.getP().inverse(0, 0, n1);
+								createPC.getP().inverse( (int) Math.sqrt(createPC.squareDstToRoutePath), 0, n2);
+								RouteInstructions.dstToRoutePath = (int) ProjMath.getDistance(n1, n2);
+								RouteInstructions.routePathConnection = createPC.routePathConnection;
+								RouteInstructions.pathIdxInRoutePathConnection = createPC.pathIdxInRoutePathConnection;
+							}
+
+						}
 						byte relLayer = (byte)(((int)layersToRender[layer]) & 0x0000000F);
 						if ( (createPC.hlLayers & (1 << relLayer)) == 0) {
 							continue;
@@ -351,16 +369,6 @@ public class ImageCollector implements Runnable {
 		}
 		if (paintPC.nearestRoutableWay != null){
 			tr.source=paintPC.currentPos;
-		}
-		if (paintPC.squareDstToRoutePath != Float.MAX_VALUE) {
-			Node n1 = new Node();
-			Node n2 = new Node();
-			paintPC.getP().inverse(0, 0, n1);
-			paintPC.getP().inverse( (int) Math.sqrt(paintPC.squareDstToRoutePath), 0, n2);
-			RouteInstructions.dstToRoutePath = (int) ProjMath.getDistance(n1, n2);
-			RouteInstructions.routePathConnection = paintPC.routePathConnection;
-			RouteInstructions.lastRoutePathConnection = paintPC.routePathConnection;
-			RouteInstructions.lastPathIdxInRoutePathConnection = paintPC.pathIdxInRoutePathConnection;
 		}
 		if(statusFontHeight==0) {
 			statusFontHeight=screenPc.g.getFont().getHeight();
