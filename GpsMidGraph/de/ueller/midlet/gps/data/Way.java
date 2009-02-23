@@ -1224,14 +1224,14 @@ public class Way extends Entity{
 	 * @return true, if the current segment in the way's path is not reached yet, else false  
 	 */
 	private boolean isCurrentRoutePath(PaintContext pc, int i) {
-		if (pc.routePathConnection != hl[i]) {
-			return (pc.routePathConnection < hl[i]);
+		if (RouteInstructions.lastRoutePathConnection != hl[i]) {
+			return (RouteInstructions.lastRoutePathConnection < hl[i]);
 		}
-		ConnectionWithNode c = (ConnectionWithNode) pc.trace.getRoute().elementAt(pc.routePathConnection);
+		ConnectionWithNode c = (ConnectionWithNode) pc.trace.getRoute().elementAt(RouteInstructions.lastRoutePathConnection);
 		return	(
 			(c.wayFromConAt < c.wayToConAt)
-			?pc.pathIdxInRoutePathConnection <= i 
-			:pc.pathIdxInRoutePathConnection > i+1
+			?RouteInstructions.lastPathIdxInRoutePathConnection <= i 
+			:RouteInstructions.lastPathIdxInRoutePathConnection > i+1
 		);
 	}
 
