@@ -705,7 +705,7 @@ public class Way extends Entity{
 
 			if (pc.target != null && this.equals(pc.target.e)) {
 				highlight=HIGHLIGHT_TARGET;
-				draw(pc, (w == 0) ? 1 : w, x, y, hl, pi - 1, highlight);
+				draw(pc, t, (w == 0) ? 1 : w, x, y, hl, pi - 1, highlight);
 			} else {
 				// if render as lines and no part of the way is highlighted
 				if (w == 0 && highlight != HIGHLIGHT_ROUTEPATH_CONTAINED) {
@@ -713,7 +713,7 @@ public class Way extends Entity{
 					PolygonGraphics.drawOpenPolygon(pc.g, x, y, pi - 1);
 				// if render as streets or a part of the way is highlighted
 				} else {
-					draw(pc, w, x, y, hl, pi - 1, highlight);
+					draw(pc, t, w, x, y, hl, pi - 1, highlight);
 				}
 			}
 
@@ -1140,11 +1140,17 @@ public class Way extends Entity{
 	
 	
 
-	private void draw(PaintContext pc, int w, int xPoints[], int yPoints[], int hl[], int count,byte highlight/*,byte mode*/) {
+	private void draw(PaintContext pc, SingleTile t, int w, int xPoints[], int yPoints[], int hl[], int count,byte highlight/*,byte mode*/) {
 		
 		float roh1=0.0f;
 		float roh2;
 
+		IntPoint closestP = new IntPoint();
+		int wClosest = 0;
+		boolean dividedSeg = false;
+		boolean dividedHighlight = true;
+		int originalX = 0;
+		int originalY = 0;
 		int max = count ;
 		int beforeMax = max - 1;
 		int wOriginal = w;
@@ -1161,6 +1167,44 @@ public class Way extends Entity{
 			) {
 				wDraw = Configuration.getMinRouteLineWidth();
 			}
+			if (dividedSeg) {
+				// if this is a divided seg, draw second part of it
+				xPoints[i] = xPoints[i+1]; 
+				yPoints[i] = yPoints[i+1]; 
+				xPoints[i+1] = originalX;
+				yPoints[i+1] = originalY;
+				dividedHighlight = !dividedHighlight;
+			} else {
+				// if not turn off the highlight
+				dividedHighlight = false;
+			}
+			if (highlight == HIGHLIGHT_ROUTEPATH_CONTAINED && hl[i] >= 0
+					// if this is the closest segment of the closest connection
+					&& RouteInstructions.routePathConnection == hl[i]
+				    && i==RouteInstructions.pathIdxInRoutePathConnection - 1
+				    && !dividedSeg
+			) {
+				IntPoint centerP = new IntPoint();
+				// this is a divided seg (partly prior route line, partly current route line)
+				dividedSeg = true;
+				pc.getP().forward( (short) (SingleTile.fpm * (pc.center.radlat - t.centerLat)), (short) (SingleTile.fpm * (pc.center.radlon - t.centerLon)), centerP, t);
+				// get point dividing the seg
+				closestP = closestPointOnLine(xPoints[i], yPoints[i], xPoints[i + 1], yPoints[i + 1], centerP.x, centerP.y);
+				// remember original next point
+				originalX = xPoints[i + 1];
+				originalY = yPoints[i + 1];
+				// replace next point with closest point
+				xPoints[i + 1] = closestP.x;
+				yPoints[i + 1] = closestP.y;
+				// remember width for drawing the closest point
+				wClosest = wDraw;
+				// get direction we go on the way
+				Vector route=pc.trace.getRoute();
+				ConnectionWithNode c = (ConnectionWithNode) route.elementAt(hl[i]);
+				dividedHighlight = (c.wayFromConAt > c.wayToConAt);
+			} else {
+				dividedSeg = false;
+			}			
 			// get parLine again, if width has changed (when switching between highlighted / non-highlighted parts of the way)
 			if (wDraw != oldWDraw) {
 				roh1 = getParLines(xPoints, yPoints, i, wDraw, l1b, l2b, l1e, l2e);
@@ -1180,7 +1224,7 @@ public class Way extends Entity{
 			if (hl[i] != PATHSEG_DO_NOT_DRAW) {
 	//			if (mode == DRAW_AREA){
 					if (highlight == HIGHLIGHT_ROUTEPATH_CONTAINED && hl[i] >= 0) {
-						if (isCurrentRoutePath(pc, i)) {
+						if (isCurrentRoutePath(pc, i) || dividedHighlight) {
 							pc.g.setColor(C.ROUTE_COLOR);
 						} else {
 							pc.g.setColor(C.ROUTEPRIOR_COLOR);
@@ -1196,7 +1240,7 @@ public class Way extends Entity{
 						if (highlight == HIGHLIGHT_TARGET){
 							pc.g.setColor(255,50,50);
 						} else if (highlight == HIGHLIGHT_ROUTEPATH_CONTAINED && hl[i] >= 0){
-							if (isCurrentRoutePath(pc, i)) {
+							if (isCurrentRoutePath(pc, i) || dividedHighlight) {
 								pc.g.setColor(C.ROUTE_BORDERCOLOR);
 							} else {
 								pc.g.setColor(C.ROUTEPRIOR_BORDERCOLOR);								
@@ -1214,9 +1258,43 @@ public class Way extends Entity{
 			l2b.set(l4b);
 			l1e.set(l3e);
 			l2e.set(l4e);
+			if (dividedSeg) {
+				// if this is a divided seg, in the next step draw the second part
+				i--;
+			}
 		}
-
+		if (wClosest != 0) {
+			// if we got a closest seg, draw closest point to the center in it
+			pc.g.setColor(C.ROUTEDOT_COLOR);
+			pc.g.fillArc(closestP.x-wClosest, closestP.y-wClosest, wClosest*2, wClosest*2, 0, 360);
+			pc.g.setColor(C.ROUTEDOT_BORDERCOLOR);
+			pc.g.drawArc(closestP.x-wClosest, closestP.y-wClosest, wClosest*2, wClosest*2, 0, 360);
+		}
 	}
+	
+	/**
+	 * 
+	 * @param lineP1x - in screen coordinates
+	 * @param lineP1y - in screen coordinates
+	 * @param lineP2x - in screen coordinates
+	 * @param lineP2y - in screen coordinates
+	 * @param offPointX - point outside the line in screen coordinates
+	 * @param offPointY - point outside the line in screen coordinates
+	 * @return IntPoint - closest point on line in screen coordinates
+	 */
+	private static IntPoint closestPointOnLine(int lineP1x, int lineP1y, int lineP2x, int lineP2y, int offPointX, int offPointY) {
+		float uX = (float) (lineP2x - lineP1x);
+		float uY = (float) (lineP2y - lineP1y);
+		float  u = ( (offPointX - lineP1x) * uX + (offPointY  - lineP1y) * uY) / (uX * uX + uY * uY);
+		if (u > 1.0) {
+			return new IntPoint(lineP2x, lineP2y);
+		} else if (u <= 0.0) {
+			return new IntPoint(lineP1x, lineP1y);
+		} else {
+			return new IntPoint( (int)(lineP2x * u + lineP1x * (1.0 - u ) + 0.5), (int) (lineP2y * u + lineP1y * (1.0-u) + 0.5));
+		}
+	}
+
 	
 	/**
 	 * @param pc
