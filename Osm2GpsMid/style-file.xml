@@ -49,8 +49,9 @@ zoomed out 21x (scale alias 1:  500km)
 
 <legend>
   <background color="009BFF9B" />
-  <routeLine lineColor="0000C0C0" borderColor="0064FFFF"/>
-  <priorRouteLine lineColor="00007070" borderColor="00647777"/>
+  <routeLine interiorColor="0000C0C0" borderColor="0064FFFF"/>
+  <priorRouteLine interiorColor="00006633" borderColor="0033BFBF"/>
+  <routeDot interiorColor="00FFFF00" borderColor="00FF0000"/>
   
   <sounds>
 <!-- move the following line out of the comment

@@ -177,7 +177,7 @@ public class LegendParser extends DefaultHandler{
 			}
 		} else if (qName.equals("routeLine")) {
 			try {
-				Configuration.getConfiguration().routeColor = Integer.parseInt(atts.getValue("lineColor"),16);
+				Configuration.getConfiguration().routeColor = Integer.parseInt(atts.getValue("interiorColor"),16);
 			} catch (NumberFormatException nfe){
 				System.out.println("ERROR: Couldn't read the routeColor correctly, using default");
 			}
@@ -188,7 +188,7 @@ public class LegendParser extends DefaultHandler{
 			}
 		} else if (qName.equals("priorRouteLine")) {
 			try {
-				Configuration.getConfiguration().priorRouteColor = Integer.parseInt(atts.getValue("lineColor"),16);
+				Configuration.getConfiguration().priorRouteColor = Integer.parseInt(atts.getValue("interiorColor"),16);
 			} catch (NumberFormatException nfe){
 				System.out.println("ERROR: Couldn't read the priorRouteColor correctly, using default");
 			}
@@ -196,7 +196,17 @@ public class LegendParser extends DefaultHandler{
 				Configuration.getConfiguration().priorRouteBorderColor = Integer.parseInt(atts.getValue("borderColor"),16);
 			} catch (NumberFormatException nfe){
 				System.out.println("ERROR: Couldn't read the priorRouteBorderColor correctly, using default");
-				Configuration.getConfiguration().priorRouteBorderColor = 0x009bFF9b;				
+			}
+		} else if (qName.equals("routeDot")) {
+			try {
+				Configuration.getConfiguration().routeDotColor = Integer.parseInt(atts.getValue("interiorColor"),16);
+			} catch (NumberFormatException nfe){
+				System.out.println("ERROR: Couldn't read the RouteDotColor correctly, using default");
+			}
+			try {
+				Configuration.getConfiguration().routeDotBorderColor = Integer.parseInt(atts.getValue("borderColor"),16);
+			} catch (NumberFormatException nfe){
+				System.out.println("ERROR: Couldn't read the RouteDotBorderColor correctly, using default");
 			}
 		}
 		switch (readingType) {

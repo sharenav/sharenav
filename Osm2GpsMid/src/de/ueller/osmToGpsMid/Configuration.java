@@ -52,7 +52,7 @@ public class Configuration {
 	 * Specifies the format of the map on disk we are about to write
 	 * This constant must be in sync with GpsMid
 	 */
-	public final static short MAP_FORMAT_VERSION = 24;
+	public final static short MAP_FORMAT_VERSION = 25;
 	
 		private ResourceBundle rb;
 		private ResourceBundle vb;
@@ -74,6 +74,8 @@ public class Configuration {
 		public int routeBorderColor = 0x0064FFFF;
 		public int priorRouteColor = 0x00007070;
 		public int priorRouteBorderColor = 0x00647777;
+		public int routeDotColor = 0x0000C0C0;
+		public int routeDotBorderColor = 0x0064FFFF;
 		public String changeSoundFileExtensionTo = "";
 		
 		private LegendParser legend;

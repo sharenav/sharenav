@@ -1,7 +1,8 @@
-<!ELEMENT legend (background, routeLine?, priorRouteLine?, sounds?, pois, ways)>
+<!ELEMENT legend (background, routeLine?, priorRouteLine?, routeDot?, sounds?, pois, ways)>
 <!ELEMENT background EMPTY>
 <!ELEMENT routeLine EMPTY>
 <!ELEMENT priorRouteLine EMPTY>
+<!ELEMENT routeDot EMPTY>
 <!ELEMENT sounds (changeFileExtensionTo?, sound*)>
 <!ELEMENT pois (key*)>
 <!ELEMENT ways (keyW*)>
@@ -29,12 +30,15 @@
 <!ELEMENT routing EMPTY>
 <!ELEMENT force_to EMPTY>
 <!ELEMENT hideable EMPTY>
+<!ELEMENT interiorColor EMPTY>
 <!ELEMENT specialisation EMPTY>
 <!ATTLIST background color CDATA #REQUIRED>
-<!ATTLIST routeLine lineColor CDATA #REQUIRED>
+<!ATTLIST routeLine interiorColor CDATA #REQUIRED>
 <!ATTLIST routeLine borderColor CDATA #REQUIRED>
-<!ATTLIST priorRouteLine lineColor CDATA #REQUIRED>
+<!ATTLIST priorRouteLine interiorColor CDATA #REQUIRED>
 <!ATTLIST priorRouteLine borderColor CDATA #REQUIRED>
+<!ATTLIST routeDot interiorColor CDATA #REQUIRED>
+<!ATTLIST routeDot borderColor CDATA #REQUIRED>
 <!ATTLIST key tag CDATA #REQUIRED>
 <!ATTLIST keyW tag CDATA #REQUIRED>
 <!ATTLIST value name CDATA #REQUIRED>
