@@ -38,6 +38,7 @@ espeak -wcheck_direction.wav -z -p70 -s200 -ven+f1 -x -k5 "check Direction!"
 espeak -wroute_recalculation.wav -z -p70 -s180 -ven+f1 -x -k5 "Recalculating route"
 espeak -wspeed_limit.wav -z -p80 -s150 -ven+f1 -x -k5 "Speed over limit"
 espeak -wbear.wav -z -p80 -s150 -ven+f1 -x -k5 "bear"
+espeak -wfollow_street.wav -z -p80 -s150 -ven+f1 -x -k5 "follow the street until further notice"
 
 REM resample and increase volume of all sounds using sox from http://sox.sf.net
 FOR /F "tokens=*" %%i in ('dir /b *.wav') do (
@@ -56,11 +57,11 @@ FOR /F "tokens=*" %%i in ('dir /b *.wav') do (
 	REM *** use available amr converter ***
 	REM is Sony Ericsson (TM) AMR converter (can't find url anymore) there?
 	if exist converter.exe (
-		converter.exe wav2amr "%%i" "tempor.amr" MR475
+		converter.exe wav2amr "%%i" "tempor.amr" MR795
 	) else (
 	REM converter from http://retrocde.sf.net is there?
 		if exist code.exe (
-			code "%%i" "tempor.amr" -br 4750
+			code "%%i" "tempor.amr" -br 7950
 		)
 	)
 
