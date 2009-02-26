@@ -21,7 +21,9 @@ GpsMid 0.4.55
          the GPS receiver but when panning manually it will respect the layer information),
          the minimum width of the route solution path can be specified in Setup/Routing Options 
        - improved off-route detection
-       - routing instructions for entering and exiting motorways, for roundabouts and tunnels
+       - routing instructions for entering and exiting motorways, for roundabouts and tunnels,
+         bearing if two alternative ways lead straight on and following the street until further notice,
+         when there's no instruction for at least 1200 meters
        - browse the route instructions with up/down keys (can be deactivated in Setup)
        - display the name of the street the route instruction leads into
        - skip half turn instructions if the street name stays the same and straight-ons
