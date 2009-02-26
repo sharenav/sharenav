@@ -883,7 +883,7 @@ public class RouteInstructions {
 									if (distNowThen > PASSINGDISTANCE) {
 										soundToPlay.append("SOON;");
 									}
-									soundToPlay.append(getInstruction(cThen.wayRouteFlags, aThen));
+									soundToPlay.append(getSoundInstruction(cThen.wayRouteFlags, aThen));
 									// same arrow as currently nearest arrow?
 									if (aNow==aThen) {
 										soundToPlay.append(";AGAIN");							
