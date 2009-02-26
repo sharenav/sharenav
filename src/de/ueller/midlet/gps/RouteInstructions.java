@@ -90,8 +90,10 @@ public class RouteInstructions {
 	private static int iPassedRouteArrow=0;
 	private static int iInstructionSaidArrow = -1;
 	private static int iPrepareInstructionSaidArrow = -1;
+	private static int iFollowStreetInstructionSaidArrow = -1;
 	private static int iNamedArrow = 0;
 	private static String sLastInstruction = "";
+	private static long lastArrowChangeTime = 0;
 
 	private static Font routeFont;
 	private static int routeFontHeight = 0;
@@ -847,16 +849,35 @@ public class RouteInstructions {
 								) {
 									soundRepeatDelay=60;
 									soundToPlay.append("IN;" + Integer.toString(intDistNow / 100)+ "00;METERS;" + getSoundInstruction(cNow.wayRouteFlags, aNow));								
+								} else if (
+										// follow-street instruction
+										intDistNow > 1200
+										&& iNow != iFollowStreetInstructionSaidArrow
+										&& haveBeenOnRouteSinceCalculation
+										&& dstToRoutePath < 25
+										&& (System.currentTimeMillis() - lastArrowChangeTime) > 7000 
+								) {
+									// only tell "follow street" if we are at least 50 meters away from the previous arrow
+									// this avoids tell follow street too early if the gps signal gets inaccurate while waiting at a crossing
+									ConnectionWithNode cPassed = (ConnectionWithNode) route.elementAt(iPassedRouteArrow);
+							    	float distPassed=ProjMath.getDistance(center.radlat, center.radlon, cPassed.to.lat, cPassed.to.lon);
+									if (distPassed > 50) {
+								    	soundToPlay.append("FOLLOW_STREET");
+								    	iFollowStreetInstructionSaidArrow = iNow;
+									}
 								}
 					    	}
-							// if nearest route arrow is closer than PASSINGDISTANCE meters we're currently passing this route arrow
-							if (
+							
+					    	if (
 								iPassedRouteArrow != iNow
 							) {
 								iPassedRouteArrow = iNow;
+								iFollowStreetInstructionSaidArrow = -1;
+								lastArrowChangeTime = System.currentTimeMillis();
 								// if there's e.g. a 2nd left arrow in row "left" must be repeated
 								sLastInstruction="";
 							}
+							// if nearest route arrow is closer than PASSINGDISTANCE meters we're currently passing this route arrow
 							if (intDistNow < PASSINGDISTANCE) {
 								if (iInstructionSaidArrow != iNow) { 
 									soundToPlay.append (getSoundInstruction(cNow.wayRouteFlags, aNow));
@@ -867,7 +888,8 @@ public class RouteInstructions {
 								sbRouteInstruction.append(" in " + intDistNow + "m");
 							}
 							
-							if (cThen != null) {
+							// when we have a then instruction and this is not a follow street instruction
+							if (cThen != null && intDistNow < 900) {
 								double distNowThen=ProjMath.getDistance(cNow.to.lat, cNow.to.lon, cThen.to.lat, cThen.to.lon);
 								// if there is a close direction arrow after the current one
 								// inform the user about its direction
@@ -1332,6 +1354,7 @@ public class RouteInstructions {
 		iNamedArrow = -1;
 		iInstructionSaidArrow = -1;
 		iPrepareInstructionSaidArrow = -1;
+		iFollowStreetInstructionSaidArrow = -1;
 	}
 	
 	
