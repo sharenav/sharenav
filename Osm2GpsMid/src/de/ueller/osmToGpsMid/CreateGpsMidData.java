@@ -297,8 +297,9 @@ public class CreateGpsMidData {
 				removeSoundFile("AGAIN");
 				removeSoundFile("CHECK_DIRECTION");
 				removeSoundFile("CONTINUE");
-				removeSoundFile("HALF");
 				removeSoundFile("HARD");
+				removeSoundFile("HALF");
+				removeSoundFile("BEAR");
 				removeSoundFile("LEFT");
 				removeSoundFile("PREPARE");
 				removeSoundFile("RIGHT");
@@ -324,6 +325,7 @@ public class CreateGpsMidData {
 				removeSoundFile("LEAVE_MOTORWAY");
 				removeSoundFile("INTO_TUNNEL");
 				removeSoundFile("OUT_OF_TUNNEL");
+				removeSoundFile("FOLLOW_STREET");
 			}
 			
 		} catch (FileNotFoundException e) {

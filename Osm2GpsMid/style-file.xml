@@ -80,6 +80,9 @@ zoomed out 21x (scale alias 1:  500km)
 	<sound name="HARD">
 		<soundFile src="hard.amr"/>
 	</sound>
+	<sound name="BEAR">
+		<soundFile src="bear.amr"/>
+	</sound>
 	<sound name="LEFT">
 		<soundFile src="left.amr"/>
 	</sound>
@@ -178,6 +181,9 @@ zoomed out 21x (scale alias 1:  500km)
 	</sound>
 	<sound name="OUT_OF_TUNNEL">
 		<soundFile src="out_of_tunnel.amr"/>
+	</sound>
+	<sound name="FOLLOW_STREET">
+		<soundFile src="follow_street.amr"/>
 	</sound>
 	<sound name="SPEED_LIMIT">
 		<soundFile src="speed_limit.amr"/>
