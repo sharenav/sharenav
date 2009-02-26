@@ -5,6 +5,7 @@
 
 package de.ueller.midlet.gps.tile;
 
+import java.util.Vector;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
@@ -72,6 +73,7 @@ public class PaintContext extends ScreenContext {
 	public volatile float searchCon1Lon;
 	public volatile float searchCon2Lat;
 	public volatile float searchCon2Lon;
+	public volatile short searchConPrevWayRouteFlags; // Way route flags of previous connection
 	// results
 	public volatile int conWayNameIdx; // used to vaguely identify ways that might contain a solution path for highlighting  
 	public volatile short conWayFromAt; // highlight way from this path node #
@@ -80,10 +82,12 @@ public class PaintContext extends ScreenContext {
 	public volatile short conWayRouteFlags; // modifiers like motorway and motorway_link (from description) and roundabout/bridge tunnel (from way) 
 	public volatile byte conWayNumRoutableWays; // number of routable ways at the connection (result should always be >= 1)
 	public volatile byte conWayStartBearing; // bearing at the end of the path leading to this connection 
+	public volatile byte conWayNumMotorways; // number of possible motorway instructions this way leads to 
 	public volatile byte conWayEndBearing; // bearing at the beginning of the path leading to the next connection 
 	public volatile float conWayDistanceToNext; // distance to next connection when following the route path
 	public volatile boolean highlightedPathOnTop; // when painting draw highlighted path on top
-	public volatile intTree conWayNameIdxs = new intTree(); // used to vaguely identify ways that might contain a solution path for highlighting  
+	public volatile intTree conWayNameIdxs = new intTree(); // used to find out if the connection leads to multiple same named ways
+	public volatile Vector conWayBearings = new Vector(8); // used to find out if the connection leads straight-on to multiple routable ways for giving a bearing instruction  
 	public volatile int conWayNumNameIdxs; // used to vaguely identify ways that might contain a solution path for highlighting  
 	
 	/**

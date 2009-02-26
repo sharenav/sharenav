@@ -354,6 +354,32 @@ public class Way extends Entity{
 					// count only if it's not a oneway ending at this connection 
 					&& !(isOneway() && i == path.length - 1)
 				) {
+					// remember bearings of the ways at this connection, so we can later check out if we have multiple straight-ons requiring a bearing instruction
+					// we do this twice for each found way to add the bearings for forward and backward
+					for (int d = -1 ; d <= 1; d += 2) {
+						// do not add bearings against direction if this is a oneway
+						if (d == -1 && isOneway()) {
+							continue;
+						}
+						if ( (i + d) < path.length && (i + d) >= 0) {
+							short rfCurr = (short) C.getWayDescription(this.type).routeFlags;
+							// count bearings for entering / leaving the motorway. We don't need to give bearing instructions if there's only one motorway alternative at the connection
+							if (RouteInstructions.isEnterMotorway(pc.searchConPrevWayRouteFlags, rfCurr)
+								||
+								RouteInstructions.isLeaveMotorway(pc.searchConPrevWayRouteFlags, rfCurr)
+							) {
+								pc.conWayNumMotorways++;
+							}							
+							int idxC = path[i + d];
+							byte bearing = MoreMath.bearing_start(
+									(pc.searchCon1Lat),
+									(pc.searchCon1Lon),
+									(t.centerLat + t.nodeLat[idxC] *  t.fpminv),
+									(t.centerLon + t.nodeLon[idxC] *  t.fpminv)
+							);
+							pc.conWayBearings.addElement(new Byte(bearing) );
+						}
+					}
 					// remember nameIdx's leading away from the connection, so we can later on check if multiple ways lead to the same street name
 					changeCountNameIdx(pc, 1);						
 					//System.out.println("add 1 " + "con1At: " + i + " pathlen-1: " + (path.length-1) );
