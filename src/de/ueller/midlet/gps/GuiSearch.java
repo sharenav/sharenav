@@ -23,8 +23,10 @@ import javax.microedition.lcdui.TextField;
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.SearchResult;
 import de.ueller.gps.tools.HelperRoutines;
+import de.ueller.gpsMid.mapData.WaypointsTile;
 import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.PositionMark;
+import de.ueller.midlet.gps.data.ProjMath;
 import de.ueller.midlet.gps.names.NumberCanon;
 import de.ueller.midlet.gps.tile.SearchNames;
 
@@ -45,13 +47,18 @@ public class GuiSearch extends Canvas implements CommandListener,
 
 	//private Form form;
 
-	private final Image[] ico = { null, Image.createImage("/city.png"),
+	private final Image[] ico = {Image.createImage("/mark.png"), Image.createImage("/city.png"),
 			Image.createImage("/city.png"), Image.createImage("/street.png"),
-			Image.createImage("/parking.png") };
+			Image.createImage("/parking.png")};
 
 	private final Trace parent;
 
 	private Vector result = new Vector();
+	
+	// this array is used to get a copy of the waypoints for the favorites
+	public PositionMark[] wayPts = null;
+	public boolean showAllWayPts = false;
+	public boolean sortByDist = false;
 	
 	/**
 	 * This vector is used to buffer writes,
@@ -83,11 +90,12 @@ public class GuiSearch extends Canvas implements CommandListener,
 	private TextField fulltextSearchField;
 	
 	
-	private byte state;
+	public volatile byte state;
 	
-	private final static byte STATE_MAIN = 0;
-	private final static byte STATE_POI = 1;
-	private final static byte STATE_FULLTEXT = 2;
+	public final static byte STATE_MAIN = 0;
+	public final static byte STATE_POI = 1;
+	public final static byte STATE_FULLTEXT = 2;
+	public final static byte STATE_FAVORITES = 3;
 	
 	private int fontSize;
 	
@@ -121,7 +129,6 @@ public class GuiSearch extends Canvas implements CommandListener,
 		setCommandListener(this);
 		
 		searchThread = new SearchNames(this);
-		setTitle("Search for name");
 		addCommand(OK_CMD);
 		addCommand(DISP_CMD);
 		addCommand(DEL_CMD);
@@ -139,6 +146,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 		};
 		timer = new Timer();
 		
+		reSearch();
+
 		//#debug
 		logger.debug("GuiSearch initialisied");
 		
@@ -146,14 +155,18 @@ public class GuiSearch extends Canvas implements CommandListener,
 
 	public void commandAction(Command c, Displayable d) {
 //		System.out.println("got Command " + c);
-		if (state == STATE_MAIN) {
+		if (state == STATE_MAIN || state == STATE_FAVORITES) {
 			if (c == OK_CMD) {			
 				if (cursor >= result.size()) return;
 				SearchResult sr = (SearchResult) result.elementAt(cursor);
 				//			System.out.println("select " + sr);
 				PositionMark positionMark = new PositionMark(sr.lat,sr.lon);
-				positionMark.nameIdx=sr.nameIdx;
-				positionMark.displayName=parent.getName(sr.nameIdx);
+				if (state == STATE_FAVORITES) {
+					positionMark.displayName = wayPts[sr.nameIdx].displayName;
+				} else {
+					positionMark.nameIdx=sr.nameIdx;
+					positionMark.displayName=parent.getName(sr.nameIdx);
+				}
 				parent.setTarget(positionMark);
 				parent.show();				
 				destroy();
@@ -174,8 +187,10 @@ public class GuiSearch extends Canvas implements CommandListener,
 			}
 		} else if (state == STATE_POI) {
 			if (c == OK_CMD) {
+				setTitle();
 				GpsMid.getInstance().show(new Form("Searching..."));
-				clearList();				
+				clearList();
+				searchCanon.setLength(0);
 				Thread t = new Thread(new Runnable() {
 					public void run() {
 						try {
@@ -223,6 +238,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 			}
 			if (c == OK_CMD) {
 				clearList();
+				setTitle();
+				searchCanon.setLength(0);	
 				Thread t = new Thread(new Runnable() {
 					public void run() {
 						setTitle("searching...");
@@ -328,7 +345,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 	    if (yc < 0) {
 			gc.drawString("^", getWidth(), 0, Graphics.TOP | Graphics.RIGHT);
 		}
-		
+
+	    // insert new results from search thread 
 	    if (result2.size() > 0) {
 	    	synchronized(this) {				
 	    		for (int i = 0; i < result2.size(); i++ ) {
@@ -374,8 +392,15 @@ public class GuiSearch extends Canvas implements CommandListener,
 				}
 			}
 			if (img != null)
-				gc.drawImage(img, 0, yc, Graphics.TOP | Graphics.LEFT);
-			String name=parent.getName(sr.nameIdx);
+				gc.drawImage(img, 8, yc + fontSize / 2 - 1, Graphics.VCENTER | Graphics.HCENTER);
+			String name = null;
+			if (state != STATE_FAVORITES) {
+				name = parent.getName(sr.nameIdx);
+			} else {
+				if (wayPts.length > sr.nameIdx) {
+					name = wayPts[sr.nameIdx].displayName;
+				}
+			}
 			nameb.setLength(0);
 			if (name != null){
 				if (displayReductionLevel < 1) {
@@ -413,20 +438,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 					nameb.append(nearNameb.toString());					
 				}
 			}
-			if (sr.dist >= 0) {
-				int courseToGo;
-				courseToGo = (int) (MoreMath.bearing_int(
-						parent.center.radlat,
-						parent.center.radlon,
-						sr.lat,
-						sr.lon
-				)  * 180 / Math.PI);
-				courseToGo %= 360;
-				if (courseToGo < 0) {
-					courseToGo += 360;
-				}
-				nameb.append("  (").append(HelperRoutines.formatDistance(sr.dist)).append(" ").append(Configuration.getCompassDirection(courseToGo)).append(")");
-			}
+			appendCompassDirection(nameb, sr);
 			name=nameb.toString();
 			if (name != null) {
 				// avoid index out of bounds 
@@ -514,13 +526,25 @@ public class GuiSearch extends Canvas implements CommandListener,
 			searchCanon.insert(carret++,'0');
 		} else */
 		if (keyCode == KEY_POUND) {
-			searchCanon.insert(carret++,'1');
+			if (state == STATE_FAVORITES) {
+				sortByDist = !sortByDist;
+				reSearch();
+				return;
+			} else {
+				searchCanon.insert(carret++,'1');				
+			}
 		} else if (keyCode == KEY_STAR) {
-			displayReductionLevel++;
-			if (displayReductionLevel > 3)
-				displayReductionLevel = 0;
-			repaint(0, 0, getWidth(), getHeight());
-			return;
+			if (state == STATE_FAVORITES) {
+				showAllWayPts = !showAllWayPts;
+				reSearch();
+				return;
+			} else {
+				displayReductionLevel++;
+				if (displayReductionLevel > 3)
+					displayReductionLevel = 0;
+				repaint(0, 0, getWidth(), getHeight());
+				return;
+			}
 			// Unicode character 10 is LF
 			// so 10 should correspond to Enter key on QWERT keyboards
 		} else if (keyCode == 10 || action == FIRE) {
@@ -585,6 +609,9 @@ public class GuiSearch extends Canvas implements CommandListener,
 			if (keyCode > 0) {
 				searchCanon.insert(carret++,(char)keyCode);
 			}
+		}
+		if (searchCanon.length() > 1) {
+			state = STATE_MAIN;			
 		}
 		reSearch();
 	}
@@ -661,17 +688,65 @@ public class GuiSearch extends Canvas implements CommandListener,
 		//#debug info
 		logger.info("researching");
 		scrollOffset = 0;
-		setTitle(searchCanon.toString() + " " + carret);
-		if (searchCanon.length() >= 2) {
-			
-//			result.removeAllElements();
-			searchThread.search(NumberCanon.canonial(searchCanon.toString()));
-		} else {
-			clearList();
-		}
+		searchThread.search(NumberCanon.canonial(searchCanon.toString()));
 		repaint(0, 0, getWidth(), getHeight());
+		// title will be set by SearchName.doSearch when we need to determine first if we have favorites
+		if (searchCanon.length() > 0) { 
+			setTitle();
+		}
 	}
 
+	private void appendCompassDirection(StringBuffer sb, SearchResult sr) {
+		if (sr.dist >= 0) {
+			int courseToGo;
+			courseToGo = (int) (MoreMath.bearing_int(
+					parent.center.radlat,
+					parent.center.radlon,
+					sr.lat,
+					sr.lon
+			)  * 180 / Math.PI);
+			courseToGo %= 360;
+			if (courseToGo < 0) {
+				courseToGo += 360;
+			}
+			sb.append("  (").append(HelperRoutines.formatDistance(sr.dist)).append(" ").append(Configuration.getCompassDirection(courseToGo)).append(")");
+		}
+	}
+	
+	public void setTitle() {
+		StringBuffer sb = new StringBuffer();
+		switch (state) {
+			case STATE_MAIN:
+				if (searchCanon.length() == 0) {
+					sb.append("Search for name");
+				} else {
+					sb.append((searchCanon.toString() + " " + carret));
+				}
+				break;
+			case STATE_FAVORITES:
+				if (showAllWayPts) {
+					sb.append("Waypoints");
+				} else {
+					sb.append("Favorites");					
+				}
+				if (searchCanon.length() > 0) {
+					sb.append(" (key " + searchCanon.toString() + ")");
+				} else {
+					if (sortByDist) {
+						sb.append(" by distance");
+					} else {
+						sb.append(" by name");
+					}
+				}
+				break;
+			case STATE_POI:
+				sb.append("Nearest POIs"); break;			
+			case STATE_FULLTEXT:
+				sb.append("Fulltext Results"); break;			
+		}
+		setTitle(sb.toString());
+	}
+	
 	public synchronized void addResult(SearchResult sr){		
 		parent.getName(sr.nameIdx);
 		//#debug debug
@@ -686,9 +761,28 @@ public class GuiSearch extends Canvas implements CommandListener,
 				//timer was already scheduled.
 				//this doesn't matter
 			}
-		}			
-						
+		}
 	}
+
+	
+	// TODO: optimize sort-in algorithm, e.g. by bisectioning
+	public void insertWptSearchResultSortedByNameOrDist(PositionMark[] wpts, SearchResult srNew) {
+		srNew.dist=ProjMath.getDistance(srNew.lat, srNew.lon, parent.center.radlat, parent.center.radlon);
+		SearchResult sr = null;
+		int i = 0;
+		for (i=0; i<result2.size(); i++) {
+			sr = (SearchResult) result2.elementAt(i);
+			if (
+				!sortByDist && wpts[srNew.nameIdx].displayName.compareTo(wpts[sr.nameIdx].displayName) < 0
+				||				
+				sortByDist && srNew.dist < sr.dist
+			) {
+				break;
+			}
+		}
+		result2.insertElementAt(srNew, i);
+	}
+	
 	public void triggerRepaint(){
 		repaint(0, 0, getWidth(), getHeight());
 	}

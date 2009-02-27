@@ -18,6 +18,7 @@ import de.ueller.midlet.gps.GuiSearch;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.names.Names;
+import de.ueller.midlet.gps.names.NumberCanon;
 
 public class SearchNames implements Runnable{
 
@@ -66,11 +67,6 @@ public class SearchNames implements Runnable{
 	
 	private void doSearch(String search) throws IOException {
 		try {
-			//#debug
-			logger.info("Searching for " + search);
-			String fn=search.substring(0,2);
-			String compare=search.substring(2);
-			StringBuffer current=new StringBuffer();
 			synchronized(this) {
 				stopSearch=false;
 				if (newSearch) {
@@ -80,6 +76,52 @@ public class SearchNames implements Runnable{
 					newSearch=false;
 				}
 			}
+			
+			if (search.length() < 2) {
+				synchronized (this) {
+					//#debug
+					logger.info("Collecting waypoints");
+					// we want each time a fresh copy of the waypoint array as they might be loading in the background
+					gui.wayPts = Trace.getInstance().gpx.listWayPt();
+					final int canonLen = search.length();
+					final String cSearch = NumberCanon.canonial(search);
+					boolean inserted = false;
+					for (int i = 0; i < gui.wayPts.length; i++ ) {
+		    			if (gui.showAllWayPts || gui.wayPts[i].displayName.endsWith("*")) {
+		    				if (
+		    					canonLen == 0
+		    					||
+		    					NumberCanon.canonial(gui.wayPts[i].displayName.substring(0, 1)).equals( cSearch )
+		    				) {
+				    			SearchResult sr = new SearchResult();
+				    			sr.lat = gui.wayPts[i].lat;
+				    			sr.lon = gui.wayPts[i].lon;	    			
+				    			sr.nameIdx = i; 
+				    			gui.insertWptSearchResultSortedByNameOrDist(gui.wayPts, sr);
+				    			inserted = true;
+		    				}    					
+		    			}
+		    		}
+					if (!inserted) {
+						gui.state = GuiSearch.STATE_MAIN;
+						gui.setTitle();
+					} else {
+						gui.state = GuiSearch.STATE_FAVORITES;
+						gui.setTitle();
+						return;
+					}
+				}
+			}
+			
+			if (search.length() < 2)
+				return;
+			
+			//#debug
+			logger.info("Searching for " + search);
+			String fn=search.substring(0,2);
+			String compare=search.substring(2);
+			StringBuffer current=new StringBuffer();
+			
 			String fileName = "/s"+fn+".d";
 //			System.out.println("open " +fileName);
 			InputStream stream;
