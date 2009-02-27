@@ -174,7 +174,7 @@ Runnable , GpsMidDisplayable{
 	// center when display was touched last time
 	private static Node	centerPointerPressedN = new Node();
 	
-	public volatile boolean rootCalc=false;
+	public volatile boolean routeCalc=false;
 	public Tile t[] = new Tile[6];
 	public Way actualWay;
 	PositionMark source;
@@ -719,7 +719,7 @@ Runnable , GpsMidDisplayable{
 				parent.show();
 				return;
 			}
-			if (! rootCalc){
+			if (! routeCalc){
 			if (c == CMDS[START_RECORD_CMD]){
 				try {
 					gpx.newTrk();
@@ -759,6 +759,7 @@ Runnable , GpsMidDisplayable{
 				}
 			}
 			if (c == CMDS[ROUTE_TO_CMD]){
+				routeCalc = true; 
 				if (Configuration.isStopAllWhileRouteing()){
   				   stopImageCollector();
 				}
@@ -1916,7 +1917,7 @@ Runnable , GpsMidDisplayable{
 				oldRecalculationTime = System.currentTimeMillis();
 				RouteInstructions.resetOffRoute(route, center);
 			}
-			rootCalc=false;
+			routeCalc=false;
 			routeEngine=null;
 		}
 		try {

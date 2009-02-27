@@ -1067,7 +1067,7 @@ public class RouteInstructions {
 	
 	private boolean isOffRoute(Vector route, Node center) {
 		// never recalculate during route calculation
-		if (trace.rootCalc) return false;
+		if (trace.routeCalc) return false;
 
 		/* if we did no initial recalculation,
 		 * the map is gpscentered
