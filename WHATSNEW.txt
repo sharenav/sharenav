@@ -13,6 +13,12 @@ GpsMid 0.4.55
        - display backlight dimming for phones like Nokia E90 that support this
          (use left / right keys during "Backlight ON" message to check out if dimming has an effect on your mobile)
        - show available key shortcuts in Setup / Key shortcuts
+       - Favorites and Waypoints in the Search Dialog:
+         When there are waypoints ending with "*" they will show up as Favorites in the search dialog for quick access.
+         By pressing the "*"-key you can toggle to show all waypoints.
+         Typing a key will narrow down the favorites / waypoints list.
+         With the "#"-key you can toggle to sort the waypoints / favorites by name or distance.
+         Typing at least 2 keys will give normal name search results as before.         
        *** OSM Editing ***
        - !!!!!!!!!!!!!!!!!!!!!!!! describe here !!!!!!!!!!!!!!!!!!!!!!!!
        *** Routing ***
@@ -21,8 +27,8 @@ GpsMid 0.4.55
          the GPS receiver but when panning manually it will respect the layer information),
          the minimum width of the route solution path can be specified in Setup/Routing Options 
        - improved off-route detection
-       - routing instructions for entering and exiting motorways, for roundabouts and tunnels,
-         bearing if two alternative ways lead straight on and following the street until further notice,
+       - routing instructions for entering and exiting motorways, for roundabouts, tunnels,
+         for bearing if two alternative ways lead straight on and for following the street until further notice,
          when there's no instruction for at least 1200 meters
        - browse the route instructions with up/down keys (can be deactivated in Setup)
        - display the name of the street the route instruction leads into
