@@ -623,7 +623,7 @@ Runnable , GpsMidDisplayable{
 	}
 
 	public void autoRouteRecalculate() {
-		if ( source!= null && gpsRecenter && Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_AUTO_RECALC) ) {
+		if ( gpsRecenter && Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_AUTO_RECALC) ) {
 			if (Math.abs(System.currentTimeMillis()-oldRecalculationTime) >= 7000 ) {
 				// if map is gps-centered recalculate route
 				if (Configuration.getCfgBitState(Configuration.CFGBIT_SND_ROUTINGINSTRUCTIONS)) {
@@ -1503,9 +1503,6 @@ Runnable , GpsMidDisplayable{
 				}
 			} else if (!movedAwayFromTarget) {
 				movedAwayFromTarget=true;
-				// wait with possible route recalculation until we've got a new source
-				// as current source might still contain an old position
-				source = null;
 			}
 			if (route != null && ri!=null) {
 				int yPos=pc.ySize;
@@ -1890,6 +1887,7 @@ Runnable , GpsMidDisplayable{
 
 	public void setTarget(PositionMark target) {
 		RouteInstructions.initialRecalcDone = false;
+		RouteInstructions.icCountOffRouteDetected = 0;
 		RouteInstructions.routeInstructionsHeight = 0;
 		setRoute(null);
 		setRouteNodes(null);

@@ -55,7 +55,7 @@ public class ImageCollector implements Runnable {
 	IntPoint oldCenter=new IntPoint(0,0);
 	float oldCourse;
 	private volatile boolean needRedraw=false;
-	int createImageCount=0;
+	public static volatile int createImageCount=0;
 	private final Trace tr;
 	public int statusFontHeight=0;
 	

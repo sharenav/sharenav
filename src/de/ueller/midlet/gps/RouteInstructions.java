@@ -81,6 +81,10 @@ public class RouteInstructions {
 	private static boolean checkDirectionSaid=false;
 	private static boolean autoRecalcIfRequired=false;
 	public volatile static boolean initialRecalcDone=false;
+	/**
+	 * number of time the image collector has drawn the map when offRoute was detected
+	 */
+	public volatile static int icCountOffRouteDetected=0;
 	
 //	public static int riCounter = 0; 
 	
@@ -961,11 +965,21 @@ public class RouteInstructions {
 					}
 				}
 				routeRecalculationRequired = isOffRoute(route, center);
-				if ( routeRecalculationRequired && !trace.atTarget && trace.gpsRecenter) {
+				if ( routeRecalculationRequired && trace.gpsRecenter) {
 					//#debug debug
-					logger.debug("off route detected");													
-					soundToPlay.setLength(0);
-					trace.autoRouteRecalculate();				
+					logger.debug("off route detected");												
+					if (icCountOffRouteDetected == 0) {
+						// remember number of recalcs so we can check in RouteInstructions if the new source way must have been determined in the meanwhile
+						icCountOffRouteDetected = ImageCollector.createImageCount;
+					/*
+					 * if at least 1-2 times the map image has been collected since detecting off-route
+					 * we can be sure the source way has been updated with one at the new position
+					 */ 
+					} else if (ImageCollector.createImageCount > icCountOffRouteDetected + 1) {
+						soundToPlay.setLength(0);
+						trace.autoRouteRecalculate();
+						icCountOffRouteDetected = 0;
+					 }
 				}
 			}
 			//#debug debug
@@ -1072,14 +1086,10 @@ public class RouteInstructions {
 		/* if we did no initial recalculation,
 		 * the map is gpscentered
 		 * and we just moved away from target
-		 * ==> auto recalculation
+		 * ==> initial recalculation
 		 */
-		if (
-			!initialRecalcDone
-			&& trace.gpsRecenter
-			&& trace.movedAwayFromTarget
+		if (!initialRecalcDone && trace.gpsRecenter && trace.movedAwayFromTarget
 		) {
-//			System.out.println("initial recalc");
 			initialRecalcDone = true;
 			return true;
 		}
@@ -1112,9 +1122,7 @@ public class RouteInstructions {
 			logger.debug("haveBeenOnRouteSinceCalculation: " + haveBeenOnRouteSinceCalculation);
 			logger.debug("dstToRoutePath: " + dstToRoutePath);
 			//#enddebug
-			if (trace.source != null) {
-				return true;
-			}
+			return true;
 		} else if (
 			(haveBeenOnRouteSinceCalculation && dstToRoutePath >= 25) ||
 			(!haveBeenOnRouteSinceCalculation && (dstToFirstArrow - startDstToFirstArrowAfterCalculation) > 25)
