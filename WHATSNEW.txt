@@ -33,6 +33,9 @@ GpsMid 0.4.55
        - browse the route instructions with up/down keys (can be deactivated in Setup)
        - display the name of the street the route instruction leads into
        - skip half turn instructions if the street name stays the same and straight-ons
+       - improved recalculation detection: you can now set the target, calculate the route
+         then Start Gps. When there's a new position from the GPS the route recalculation will
+         be automatically performed
        - some wrong direction arrows are fixed
        *** Tracks and Waypoints ***
        - Perform actions like export/delete on multiple selected tracks (thx mbaeurle)
