@@ -107,6 +107,7 @@ public class SearchNames implements Runnable{
 						gui.setTitle();
 					} else {
 						gui.state = GuiSearch.STATE_FAVORITES;
+						gui.displayReductionLevel = 0;
 						gui.setTitle();
 						return;
 					}
@@ -234,6 +235,10 @@ public class SearchNames implements Runnable{
 						sr.lat=lat;
 						sr.lon=lon;
 						sr.nearBy=isInArray;
+						// when there are no nearBys we add the distance so it will be shown by the GUI
+						if (isInArray == null) {
+							gui.addDistanceToSearchResult(sr);
+						}
 						if (newSearch) {
 							if (!appendRes) {						
 								gui.clearList();

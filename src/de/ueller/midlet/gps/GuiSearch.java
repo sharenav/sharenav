@@ -80,7 +80,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 	//private boolean abortPaint = false;
 	private boolean needsPainting;
 	
-	private int displayReductionLevel = 0;
+	public int displayReductionLevel = 0;
 	
 	private TimerTask timerT;
 	private Timer timer;
@@ -430,12 +430,15 @@ public class GuiSearch extends Canvas implements CommandListener,
 			}
 			// always show last name part unreduced
 			if(reducedName!=0 && nameb.length()>=2) {
-				nameb.setLength(nameb.length()-2);
-				if(reducedName==1) {
-					nameb.append(name);
-				}
-				else {
-					nameb.append(nearNameb.toString());					
+				// only if the result is more than once reduced (for POIs) or the result has a nearby entry
+				if (displayReductionLevel > 1 || sr.nearBy != null) {
+					nameb.setLength(nameb.length()-2);
+					if(reducedName==1) {
+						nameb.append(name);
+					}
+					else {
+						nameb.append(nearNameb.toString());					
+					}
 				}
 			}
 			appendCompassDirection(nameb, sr);
@@ -713,6 +716,10 @@ public class GuiSearch extends Canvas implements CommandListener,
 		}
 	}
 	
+	public void addDistanceToSearchResult(SearchResult sr) {
+		sr.dist=ProjMath.getDistance(sr.lat, sr.lon, parent.center.radlat, parent.center.radlon);
+	}
+
 	public void setTitle() {
 		StringBuffer sb = new StringBuffer();
 		switch (state) {
@@ -767,7 +774,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 	
 	// TODO: optimize sort-in algorithm, e.g. by bisectioning
 	public void insertWptSearchResultSortedByNameOrDist(PositionMark[] wpts, SearchResult srNew) {
-		srNew.dist=ProjMath.getDistance(srNew.lat, srNew.lon, parent.center.radlat, parent.center.radlon);
+		addDistanceToSearchResult(srNew);
 		SearchResult sr = null;
 		int i = 0;
 		for (i=0; i<result2.size(); i++) {
