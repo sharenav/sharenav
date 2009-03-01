@@ -9,6 +9,7 @@ import de.ueller.gpsMid.mapData.Tile;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.data.MoreMath;
+import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.data.Way;
 
@@ -34,6 +35,18 @@ public class Routing implements Runnable {
 	private float estimateFac=1.40f;
 	private int oomCounter=0;
 	private int expanded;
+	private RouteNode sourcePathSegNodeDummyRouteNode = new RouteNode();
+	private Connection sourcePathSegNodeDummyConnection = new Connection();
+	/**
+	 * Dummy ConnectionWithNode at the path segment node of the source way to begin
+	 * This arbitrary position on the way's path will be detected as part of the route line by searchConnection2Ways 
+	 */
+	private ConnectionWithNode sourcePathSegNodeDummyConnectionNode = new ConnectionWithNode(sourcePathSegNodeDummyRouteNode, sourcePathSegNodeDummyConnection);
+	int firstNodeId1 = 0;
+	Node firstSourcePathSegNodeDummy1 = new Node();
+	int firstNodeId2 = 0;
+	Node firstSourcePathSegNodeDummy2 = new Node();
+
 	
 	public Routing(Tile[] tile,Trace parent) throws IOException {
 		this.parent = parent;
@@ -321,7 +334,7 @@ public class Routing implements Runnable {
 				// if there is no element at the from Mark, then search it from 
 				// the data.
 				parent.receiveMessage("search for start element");
-				parent.searchElement(fromMark);
+				parent.searchNextRoutableWay(fromMark);
 				if (fromMark.e == null){
 					parent.receiveMessage("No Way found for start point");
 				} 
@@ -362,7 +375,18 @@ public class Routing implements Runnable {
 						Connection initialState=new Connection(rn,0,(byte)0,(byte)0);
 						GraphNode firstNode=new GraphNode(initialState,null,0,0,(byte)0);
 						open.put(initialState.toId, firstNode);
-						nodes.addElement(firstNode);						
+						nodes.addElement(firstNode);
+						/*
+						 *  remember coordinates of this alternative for dummy route node on the path
+						 *  this will allow us to find the path segment
+						 *  including the closest source position to highlight
+						 *  when searching the ways for matching connections
+						 */
+						int firstSeg = nearestSegment;
+						if (firstSeg >= fromMark.nodeLat.length) firstSeg = fromMark.nodeLat.length - 1;	
+						firstNodeId1 = initialState.toId;
+						firstSourcePathSegNodeDummy1.radlat = fromMark.nodeLat[firstSeg];
+						firstSourcePathSegNodeDummy1.radlon = fromMark.nodeLon[firstSeg];
 					}
 				} 
 				RouteNode rn=findNextRouteNode(nearestSegment, startNode.lat, startNode.lon, fromMark.nodeLat,fromMark.nodeLon);
@@ -372,7 +396,18 @@ public class Routing implements Runnable {
 					GraphNode firstNode=new GraphNode(initialState,null,0,0,(byte)0);
 					open.put(initialState.toId, firstNode);
 					nodes.addElement(firstNode);						
-				}				
+					/*
+					 *  remember coordinates of this alternative for dummy route node on the path
+					 *  this will allow us to find the path segment
+					 *  including the closest source position to highlight
+					 *  when searching the ways for matching connections
+					 */
+					int firstSeg = nearestSegment - 1;
+					if (firstSeg < 0) firstSeg = 0;
+					firstNodeId2 = initialState.toId;
+					firstSourcePathSegNodeDummy2.radlat = fromMark.nodeLat[firstSeg];
+					firstSourcePathSegNodeDummy2.radlon = fromMark.nodeLon[firstSeg];
+				}
 			}
 
 
@@ -476,6 +511,25 @@ public class Routing implements Runnable {
 			closed.removeAll();
 			tile.cleanup(-1);
 			Vector sequence = getSequence(solution);
+			/*
+			 * fill in the coordinates of the path segment closest to the source
+			 * depending on the chosen alternative first route node in the route calculation
+			 * into a dummy connection on the path.
+			 * This will allow us to find the path segment
+			 * including the closest source position to highlight
+			 * when searching the ways for matching connections
+			 */
+			ConnectionWithNode cFirst = (ConnectionWithNode) sequence.elementAt(0);
+			if (firstNodeId1 == cFirst.to.id) {
+				sourcePathSegNodeDummyConnectionNode.to.lat=firstSourcePathSegNodeDummy1.radlat;
+				sourcePathSegNodeDummyConnectionNode.to.lon=firstSourcePathSegNodeDummy1.radlon;
+			}
+			if (firstNodeId2 == cFirst.to.id) {
+				sourcePathSegNodeDummyConnectionNode.to.lat=firstSourcePathSegNodeDummy2.radlat;
+				sourcePathSegNodeDummyConnectionNode.to.lon=firstSourcePathSegNodeDummy2.radlon;
+			}			
+			sequence.insertElementAt(sourcePathSegNodeDummyConnectionNode, 0);
+
 //			logger.info("Ready with route discovery");
 			return sequence;
 		} catch (Exception e) {
