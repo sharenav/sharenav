@@ -46,7 +46,7 @@ FOR /F "tokens=*" %%i in ('dir /b *.wav') do (
 	sox "%%i" repair.wav
 	REM increase volume of wav file by 30 dB limited to 0.05
 	REM and resample it to 8kHz with 16 bits and single channel
-        sox repair.wav -b 16 -c 1 -r 8k "%%i" vol 30dB 0.05
+        sox repair.wav -b 16 -c 1 -r 8k "%%i" vol 10dB 0.05
 	del repair.wav
 )
 
@@ -57,11 +57,11 @@ FOR /F "tokens=*" %%i in ('dir /b *.wav') do (
 	REM *** use available amr converter ***
 	REM is Sony Ericsson (TM) AMR converter (can't find url anymore) there?
 	if exist converter.exe (
-		converter.exe wav2amr "%%i" "tempor.amr" MR795
+		converter.exe wav2amr "%%i" "tempor.amr" MR475
 	) else (
 	REM converter from http://retrocde.sf.net is there?
 		if exist code.exe (
-			code "%%i" "tempor.amr" -br 7950
+			code "%%i" "tempor.amr" -br 4750
 		)
 	)
 
