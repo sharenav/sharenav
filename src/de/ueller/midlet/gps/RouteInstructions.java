@@ -1401,7 +1401,7 @@ public class RouteInstructions {
 		int speed=trace.speed;
 		if (speed>100 || aNow == RI_INTO_TUNNEL) {
 			distFromSpeed=500;							
-		} else if (speed>80) {
+		} else if (speed>80 || aNow == RI_BEAR_LEFT || aNow == RI_BEAR_RIGHT) {
 			distFromSpeed=400;							
 		} else if (speed>40) {
 			distFromSpeed=300;																			
