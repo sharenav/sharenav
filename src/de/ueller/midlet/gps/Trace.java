@@ -141,6 +141,11 @@ Runnable , GpsMidDisplayable{
 	private Position pos = new Position(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1,
 			new Date());
 
+	/**
+	 * this node contains actually RAD coordinates
+	 * although the constructor for Node(lat, lon) requires parameters in DEC format
+	 * - e. g. "new Node(49.328010f, 11.352556f)"
+	 */
 	Node center = new Node(49.328010f, 11.352556f);
 
 //	Projection projection;
