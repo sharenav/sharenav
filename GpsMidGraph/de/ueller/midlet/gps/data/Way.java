@@ -27,6 +27,13 @@ import de.ueller.midlet.gps.tile.C;
 import de.ueller.midlet.gps.tile.PaintContext;
 import de.ueller.midlet.gps.tile.WayDescription;
 
+// TODO: explain
+/* Questions:
+ * - What classes are involved for getting the necessary Way data from the Jar?
+ * - Which region is covered by a SingleTile, does it always contain all Nodes of the complete way?
+ * - Where are the way nodes combined if a tile was split in Osm2GpsMid?
+ */
+
 public class Way extends Entity{
 	
 	public static final byte WAY_FLAG_NAME = 1;
