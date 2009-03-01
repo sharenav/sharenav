@@ -570,6 +570,10 @@ public class Way extends Entity{
 					break;
 			}
 			
+			/*
+			 * check if way matches to one or more route connections,
+			 * so we can highlight the route line parts 
+			 */  
 			Vector route=pc.trace.getRoute();
 			ConnectionWithNode c;
 			if (route!=null && route.size()!=0) { 
@@ -593,7 +597,12 @@ public class Way extends Entity{
 												pc.hlLayers |= (1<<layer);
 											}
 											
+											// set way highlight flag so we can quickly determine if this way contains a route line part
 											highlight = HIGHLIGHT_ROUTEPATH_CONTAINED;
+											/*
+											 *  flag the parts of the way as to be highlighted
+											 *  by putting in the index of the corresponding connection 
+											 */
 											short from = c.wayFromConAt;
 											short to = c.wayToConAt;
 											if (from > to  && !isRoundAbout()) {
@@ -602,13 +611,6 @@ public class Way extends Entity{
 												from = c.wayToConAt;
 											}
 											
-//											String name=null, nameFrom=null, nameTo=null;
-//											if (nameIdx != -1) name=Trace.getInstance().getName(nameIdx);
-//											if (c.wayNameIdx != -1) nameFrom=Trace.getInstance().getName(c.wayNameIdx);
-//											if (c2.wayNameIdx != -1) nameTo=Trace.getInstance().getName(c2.wayNameIdx);
-//											System.out.println(C.getWayDescription(this.type).description + " " + (name==null?"":name) + " " + Integer.toString((int)c.wayDistanceToNext) + "m " +
-//													"from: " + from + "(" + C.getWayDescription(c.wayType).description + " " + (nameFrom==null?"":nameFrom) + ") " +
-//													"to: " + to + "(" + C.getWayDescription(c2.wayType).description + " " + (nameTo==null?"":nameTo) + ")" );
 											for (int n = from; n != to; n++) {
 												hl[n] = i;
 												if (isRoundAbout() && n >= (path.length-1) )  {
