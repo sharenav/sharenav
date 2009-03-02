@@ -1137,8 +1137,8 @@ public class RouteInstructions {
 	public static void resetOffRoute(Vector route, Node center) {
 		haveBeenOnRouteSinceCalculation = false;
 		dstToRoutePath=Integer.MAX_VALUE;
-		if (route!=null) {
-			ConnectionWithNode c0 = (ConnectionWithNode) route.elementAt(0);
+		if (route!=null && route.size() >= 2 ) {
+			ConnectionWithNode c0 = (ConnectionWithNode) route.elementAt(1); // don't take arrow 0 as this is our dummy connection
 			// calculate distance to first arrow after calculation
 			startDstToFirstArrowAfterCalculation = (int) (ProjMath.getDistance(center.radlat, center.radlon, c0.to.lat, c0.to.lon));
 		} else {
