@@ -112,7 +112,7 @@ public class C {
 		short mapVersion = ds.readShort();
 		if (mapVersion != MAP_FORMAT_VERSION) {
 			throw new IOException("The Map files are not the version we expected, " +
-					"please ues the correct Osm2GpsMid to recreate the map " +
+					"please use the correct Osm2GpsMid to recreate the map " +
 					"data.  Expected: " + MAP_FORMAT_VERSION + " Read: " + mapVersion);
 		}
 		
