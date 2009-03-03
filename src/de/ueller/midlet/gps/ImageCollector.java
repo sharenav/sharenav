@@ -303,11 +303,11 @@ public class ImageCollector implements Runnable {
 	/** copy the last created image to the real screen
 	 *  but with the last collected position and direction in the center
 	 */
-	public void paint(PaintContext screenPc){
+	public Node paint(PaintContext screenPc){
 		PaintContext paintPC;
 //		System.out.println("paint this: " +screenPc);
 //		System.out.println("paint image: " +pc[nextPaint]);
-		if (suspended) return;
+		if (suspended) return new Node(0,0);
 		
 //		nextSc=screenPc.cloneToScreenContext();
 		nextSc.center=screenPc.center.clone();
@@ -323,11 +323,14 @@ public class ImageCollector implements Runnable {
 		synchronized (this) {
 			if (pc[nextPaint].state != PaintContext.STATE_READY) {
 				logger.error("ImageCollector was trying to draw a non ready PaintContext " + pc[nextPaint].state);
-				return;
+				return new Node(0,0);
 			}
 			paintPC = pc[nextPaint];
 			paintPC.state = PaintContext.STATE_IN_PAINT;
 		}
+
+		// return center of the map image drawn to the caller
+		Node getDrawnCenter = paintPC.center.clone();
 
 		p.forward(paintPC.center, oldCenter);
 		screenPc.g.drawImage(img[nextPaint], 
@@ -402,6 +405,7 @@ public class ImageCollector implements Runnable {
 				//System.out.println("No need to redraw after painting");
 			}
 		}
+		return getDrawnCenter;
 	}
 	private synchronized void newCollected(){
 		while ((pc[nextPaint].state != PaintContext.STATE_READY) || (pc[nextCreate].state != PaintContext.STATE_READY)) {

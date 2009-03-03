@@ -1151,7 +1151,23 @@ Runnable , GpsMidDisplayable{
 			g.fillRect(0, 0, this.getWidth(), this.getHeight());
 			pc.g = g;
 			if (imageCollector != null){				
-				imageCollector.paint(pc);
+				/**
+				 *  When painting we receive a copy of the center coordinates
+				 *  where the imageCollector has drawn last
+				 *  as we need to base the routing instructions on the information
+				 *  determined during the way drawing (e.g. the current routePathConnection)
+				 */
+				Node drawnCenter = imageCollector.paint(pc);
+				if (route != null && ri!=null) {
+					int yPos=pc.ySize;
+					yPos-=imageCollector.statusFontHeight;
+					/*
+					 *  we need to synchronize the route instructions on the informations determined during way painting
+					 *  so we give the route instructions right after drawing the image with the map
+					 *  and use the center of the last drawn image for the route instructions
+					 */
+					ri.showRoute(pc, source, drawnCenter, yPos);
+				}
 			}
 			switch (showAddons) {
 			case 1:
@@ -1508,13 +1524,6 @@ Runnable , GpsMidDisplayable{
 				}
 			} else if (!movedAwayFromTarget) {
 				movedAwayFromTarget=true;
-			}
-			if (route != null && ri!=null) {
-				int yPos=pc.ySize;
-				if (imageCollector!=null) {
-					yPos-=imageCollector.statusFontHeight;
-				}
-				ri.showRoute(pc, source, center, yPos);
 			}
 		}
 
