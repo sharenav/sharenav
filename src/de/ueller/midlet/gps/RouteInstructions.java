@@ -1096,13 +1096,10 @@ public class RouteInstructions {
 		
 //		System.out.println("Counter: " + riCounter++);
 		if (dstToRoutePath < 25) {
-			// FIXME: dstToRoutePath is 0 instead of Integer.Max_VALUE for a short time after Route Calculation
-			if (dstToRoutePath > 0) {
-		    	// green background color if onroute
-	    		routeInstructionColor=0x00B7FBBA;
-				haveBeenOnRouteSinceCalculation=true;
-//				System.out.println("on route dstToRoutePath: " + dstToRoutePath);
-			}
+		    // green background color if onroute
+	    	routeInstructionColor=0x00B7FBBA;
+			haveBeenOnRouteSinceCalculation=true;
+//			System.out.println("on route dstToRoutePath: " + dstToRoutePath);
 		}
 		ConnectionWithNode c0 = (ConnectionWithNode) route.elementAt(0);
 		//#debug debug
