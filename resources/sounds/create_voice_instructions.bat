@@ -44,8 +44,8 @@ REM resample and increase volume of all sounds using sox from http://sox.sf.net
 FOR /F "tokens=*" %%i in ('dir /b *.wav') do (
 	REM fix wav file
 	sox "%%i" repair.wav
-	REM resample it to 8kHz with 16 bits and single channel
-        sox repair.wav -b 16 -c 1 -r 8k "%%i"
+	REM resample it to 8kHz with 16 bits and single channel, increase volume by 50 %
+        sox repair.wav -b 16 -c 1 -r 8k "%%i" vol 1.50
 	del repair.wav
 )
 
