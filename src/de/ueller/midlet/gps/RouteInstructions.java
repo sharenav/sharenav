@@ -1015,7 +1015,7 @@ public class RouteInstructions {
 							Graphics.HCENTER | Graphics.TOP
 				);				
 								
-				pc.g.drawString("off:" + dstToRoutePath + "m",
+				pc.g.drawString("off:" + (dstToRoutePath == Integer.MAX_VALUE ? "???" : "" + dstToRoutePath) + "m",
 						pc.xSize,
 						textYPos - routeInstructionsHeight,
 						Graphics.RIGHT | Graphics.BOTTOM

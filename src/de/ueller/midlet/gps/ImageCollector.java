@@ -195,7 +195,9 @@ public class ImageCollector implements Runnable {
 								RouteInstructions.dstToRoutePath = (int) ProjMath.getDistance(n1, n2);
 								RouteInstructions.routePathConnection = createPC.routePathConnection;
 								RouteInstructions.pathIdxInRoutePathConnection = createPC.pathIdxInRoutePathConnection;
-							}
+							} else {
+								RouteInstructions.dstToRoutePath = Integer.MAX_VALUE;
+							}							
 
 						}
 						byte relLayer = (byte)(((int)layersToRender[layer]) & 0x0000000F);
