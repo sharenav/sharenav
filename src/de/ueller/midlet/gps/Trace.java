@@ -1151,7 +1151,7 @@ Runnable , GpsMidDisplayable{
 			g.fillRect(0, 0, this.getWidth(), this.getHeight());
 			pc.g = g;
 			if (imageCollector != null){				
-				/**
+				/*
 				 *  When painting we receive a copy of the center coordinates
 				 *  where the imageCollector has drawn last
 				 *  as we need to base the routing instructions on the information
@@ -1159,14 +1159,30 @@ Runnable , GpsMidDisplayable{
 				 */
 				Node drawnCenter = imageCollector.paint(pc);
 				if (route != null && ri!=null) {
-					int yPos=pc.ySize;
-					yPos-=imageCollector.statusFontHeight;
+					pc.getP().forward(drawnCenter.radlat, drawnCenter.radlon, pc.lineP2);
 					/*
-					 *  we need to synchronize the route instructions on the informations determined during way painting
-					 *  so we give the route instructions right after drawing the image with the map
-					 *  and use the center of the last drawn image for the route instructions
+					 * we also need to make sure the current way for the real position
+					 * has really been detected by the imageCollector which happens when drawing the ways
+					 * So we check if we just painted an image that did not cover
+					 * the center of the display because it was too far painted off from 
+					 * the display center position and in this case we don't give route instructions
+					 * Thus e.g. after leaving a long tunnel without gps fix there will not be given an
+					 * obsolete instruction from inside the tunnel
 					 */
-					ri.showRoute(pc, source, drawnCenter, yPos);
+					int maxAllowedMapMoveOffs = Math.min(pc.xSize/2, pc.ySize/2);
+					if ( Math.abs(pc.lineP2.x - pc.xSize/2) < maxAllowedMapMoveOffs
+						 &&
+						 Math.abs(pc.lineP2.y - pc.ySize/2) < maxAllowedMapMoveOffs
+					) {
+						int yPos=pc.ySize;
+						yPos-=imageCollector.statusFontHeight;
+						/*
+						 *  we need to synchronize the route instructions on the informations determined during way painting
+						 *  so we give the route instructions right after drawing the image with the map
+						 *  and use the center of the last drawn image for the route instructions
+						 */
+						ri.showRoute(pc, source, drawnCenter, yPos);
+					}
 				}
 			}
 			switch (showAddons) {
