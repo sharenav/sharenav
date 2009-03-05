@@ -537,7 +537,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				searchCanon.insert(carret++,'1');				
 			}
 		} else if (keyCode == KEY_STAR) {
-			if (state == STATE_FAVORITES) {
+			if (state == STATE_FAVORITES || searchCanon.length() < 2 ) {
 				showAllWayPts = !showAllWayPts;
 				reSearch();
 				return;
