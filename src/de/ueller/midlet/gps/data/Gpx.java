@@ -612,6 +612,7 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 				PersistEntity trk = new PersistEntity();
 				trk.id = idx;
 				trk.displayName = trackName + " (" + noTrackPoints + ")";
+				trk.setTrackSize(noTrackPoints);
 				trks[i++] = trk;
 			}
 			logger.info("Enumerated tracks");
@@ -877,11 +878,21 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 				sb.append("</trkpt>\r\n");
 				writeUTF(oS, sb);
 			}
+			/**
+			 * Increment the progress bar every 127th trackpoint
+			 * Don't update on every point as an optimisation.
+			 */
+			if (((i & 0x7f) == 0x7f) && (feedbackListener != null)) {
+				//update the progressbar in GuiGpx
+				feedbackListener.updateProgressValue(0x7f);
+			}
 		}
 		oS.write("</trkseg>\r\n</trk>\r\n".getBytes());
 		oS.write(baos.toByteArray());
 		trackDatabase.closeRecordStore();
 		trackDatabase = null;
+		/**Update the progress bar by the remaining part*/
+		feedbackListener.updateProgressValue(recorded & 0x7f);
 	}
 	
 	private void writeUTF(OutputStream oS, StringBuffer sb) {

@@ -228,6 +228,11 @@ public class GUIosmWayDisplay extends Form implements GpsMidDisplayable, Command
 		// TODO Auto-generated method stub
 		
 	}
+	
+	public void updateProgressValue(int value) {
+		// TODO Auto-generated method stub
+		
+	}
 
 	public void commandAction(Command c, Item it) {
 		System.out.println("Command " + c + " Item " + it);
@@ -265,6 +270,8 @@ public class GUIosmWayDisplay extends Form implements GpsMidDisplayable, Command
 			setupScreen();
 		}
 	}
+
+
 
 }
 //#endif

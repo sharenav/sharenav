@@ -7,6 +7,7 @@ package de.ueller.midlet.gps;
 
 
 import javax.microedition.lcdui.Alert;
+import javax.microedition.lcdui.Gauge;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
@@ -23,8 +24,8 @@ public class GuiGpx extends List implements CommandListener,
 	
 	private final Command SEND_CMD = new Command("Export", Command.OK, 1);
 	private final Command LOAD_CMD = new Command("Import", Command.ITEM, 3);
-	private final Command DISP_CMD = new Command("Display Sel 1", Command.ITEM, 3);
-	private final Command RENAME_CMD = new Command("Rename Sel 1", Command.ITEM, 3);	
+	private final Command DISP_CMD = new Command("Display first selected", Command.ITEM, 3);
+	private final Command RENAME_CMD = new Command("Rename first selected", Command.ITEM, 3);	
 	private final Command DEL_CMD = new Command("Delete", Command.ITEM, 3);	
 	private final Command SALL_CMD = new Command("Select All", Command.ITEM, 4);
 	private final Command DSALL_CMD = new Command("Deselect All", Command.ITEM, 4);
@@ -41,6 +42,7 @@ public class GuiGpx extends List implements CommandListener,
 	private final Trace parent;
 	
 	private Alert progressDisplay;
+	private Gauge progressbar;
 	private StringBuffer sbProgress;
 	private boolean progressCloseable;
 	
@@ -86,7 +88,15 @@ public class GuiGpx extends List implements CommandListener,
 			updateProcessVector();
 			if (processTracks.size() > 0)
 			{
-				showProgressDisplay("Exporting tracks");
+				int numAllWptsInTrack = 0;
+				try{
+					for (int i = 0; i < processTracks.size(); i++){
+						numAllWptsInTrack += ((PersistEntity)processTracks.elementAt(i)).getTrackSize();
+					}
+					showProgressDisplay("Exporting tracks", numAllWptsInTrack);
+				} catch (ClassCastException e){
+					// TO-DO
+				}
 				parent.gpx.exportTracks(Configuration.getGpxUrl(), this, processTracks );
 			}
 			return;
@@ -151,11 +161,14 @@ public class GuiGpx extends List implements CommandListener,
 			}
 		}
 	}
-
+	
+	/** updates the Vector of gpxtracks that should be processed by another method**/
 	private void updateProcessVector()
-	{
+	{	
+		// find out which tracks should be exported **/
 		boolean[] boolSelected = new boolean[this.size()];
 		this.getSelectedFlags(boolSelected);
+		// create new list of tracks which need to be processed /exported 
 		processTracks.removeAllElements();
 		for (int i = 0; i < boolSelected.length; i++) {
 			if (boolSelected[i] == true) {
@@ -188,14 +201,24 @@ public class GuiGpx extends List implements CommandListener,
 	public void updateProgress(String message) {
 		addProgressText(message);
 	}
+	
+	/**
+	 * implementing the UploadListner Interface
+	 * updates the progressbar by increasing the progress by the given value
+	 */
+	public void updateProgressValue(int inc){
+		System.out.println("Prgressbar: " + progressbar.getValue());
+		progressbar.setValue(progressbar.getValue() + inc);
+	}
 
 	public void completedUpload(boolean success, String message) {
 		String alertMsg;		
 		if (uploading) {
 			if (success) {
-				alertMsg = "Finished!";
+				
+				alertMsg = "\nFinished!";
 			} else {
-				alertMsg = "GPX export failed: " + message;
+				alertMsg = "\nGPX export failed: " + message;
 			}
 		} else {
 			if (success) {
@@ -227,8 +250,11 @@ public class GuiGpx extends List implements CommandListener,
 			progressDisplay = new Alert(title);
 			progressDisplay.setCommandListener(this);
 			progressDisplay.setTimeout(Alert.FOREVER);
+			//creates a progressbar - not used in this case but it should be created when the alert is first created so it's present later
+			progressbar = new Gauge(null, false, 0, 0);
 		} else {
 			progressDisplay.setTitle(title);
+			progressDisplay.setIndicator(null);
 		}
 		// Empty string buffer for alert text.
 		sbProgress = new StringBuffer();
@@ -240,15 +266,58 @@ public class GuiGpx extends List implements CommandListener,
 			progressCloseable = false;
 		} catch (IllegalArgumentException iae) {
 			/**
-    		 * Nokia S40 phones seem to throw an exception
-    		 * if one tries to set an Alert displayable when
-    		 * the current displayable is an alert too.
-    		 * 
-    		 * Not much we can do about this, other than just
-    		 * ignore the exception and not display the new
-    		 * alert. 
-    		 */
-    		logger.info("Could not display progress alert, " + iae.getMessage());
+			 * Nokia S40 phones seem to throw an exception
+			 * if one tries to set an Alert displayable when
+			 * the current displayable is an alert too.
+			 * 
+			 * Not much we can do about this, other than just
+			 * ignore the exception and not display the new
+			 * alert. 
+			 */
+			logger.info("Could not display progress alert, " + iae.getMessage());
+		}
+	}
+	
+	/**
+	 * Show an alert window with the given title that cannot be dismissed by
+	 * the user, i.e. a modal progress dialog. This Alert Window also has a progressbar indicating the progress
+	 * 
+	 * @param title The title of the alert
+	 * @param progEndValue the maximum value for the progressbar
+	 */
+	protected void showProgressDisplay(String title, int progEndValue)
+	{
+		if (progressDisplay == null) {
+			progressDisplay = new Alert(title);
+			progressDisplay.setCommandListener(this);
+			progressDisplay.setTimeout(Alert.FOREVER);
+			//create a progressbar that gives an indication about how many waypoints have already been exported
+			progressbar = new Gauge(null, false, progEndValue, 0);
+			progressDisplay.setIndicator(progressbar);
+		} else {
+			progressDisplay.setTitle(title);
+			progressbar.setMaxValue(progEndValue);
+			progressbar.setValue(0);
+		}
+		// Empty string buffer for alert text.
+		sbProgress = new StringBuffer();
+		// At least on Sony Ericsson phones, the alert won't be shown
+		// until it contains some text, so let's put in a dummy. 
+		progressDisplay.setString(" ");		
+		try {
+			GpsMid.getInstance().show(progressDisplay);
+			progressCloseable = false;
+		} catch (IllegalArgumentException iae) {
+			/**
+			 * Nokia S40 phones seem to throw an exception
+			 * if one tries to set an Alert displayable when
+			 * the current displayable is an alert too.
+			 * 
+			 * Not much we can do about this, other than just
+			 * ignore the exception and not display the new
+			 * alert. 
+			 */
+			logger.info("Could not display progress alert, " + iae.getMessage());
 		}
 	}
 

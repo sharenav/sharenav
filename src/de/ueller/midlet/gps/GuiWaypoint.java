@@ -191,6 +191,10 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 	public void updateProgress(String message) {
 		// Only final message is supported/used at the moment.
 	}
+	
+	public void updateProgressValue(int value){
+		//TO-DO
+	}
 
 	public void completedUpload(boolean success, String message) {
 		String alertMsg;		

@@ -104,6 +104,9 @@ public class BtObexServer
 		// Not supported/used at the moment.
 	}
 
+	public void updateProgressValue(int value){
+		//TO-DO
+	}
 	
 	public synchronized void completedUpload(boolean success, String message) {
 		if (success) {
