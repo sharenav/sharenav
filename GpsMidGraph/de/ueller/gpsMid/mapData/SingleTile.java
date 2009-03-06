@@ -223,11 +223,11 @@ public class SingleTile extends Tile implements QueueableTile {
 						/**
 						 * In addition to rendering we also check for which way
 						 * corresponds to the target set in the paintcontext identified
-						 * by the name of the way and the coordiantes of a node on the way
+						 * by the name of the way and the coordinates of a node on the way
 						 */
-						if (pc.target != null ){
+						if (pc.target != null ) {
 							//							logger.debug("search target nameIdx" );
-							if (pc.target.e == null && pc.target.nameIdx == w.nameIdx){
+							if (pc.target.entity == null && pc.target.nameIdx == w.nameIdx) {
 								// 								logger.debug("search target way");
 								/**
 								 * The name of the way and the target matches, now we
@@ -243,7 +243,7 @@ public class SingleTile extends Tile implements QueueableTile {
 								for (int i1 = 0; i1 < w.path.length; i1++) {
 									short s = w.path[i1];
 									if ((Math.abs(nodeLat[s] - targetLat) < 2) && 
-											(Math.abs(nodeLon[s] - targetLon) < 2)){
+											(Math.abs(nodeLon[s] - targetLon) < 2)) {
 										//										logger.debug("found Target way");
 										pc.target.setEntity(w, w.getNodesLatLon(this, true), w.getNodesLatLon(this, false));
 									}

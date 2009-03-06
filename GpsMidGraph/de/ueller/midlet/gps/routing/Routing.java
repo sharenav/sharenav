@@ -18,13 +18,13 @@ import de.ueller.midlet.gps.data.Way;
 
 public class Routing implements Runnable {
 	private Thread processorThread;
-	public boolean bestTime=true;
+	public boolean bestTime = true;
 	private final Vector nodes = new Vector();
 	private final intTree open = new intTree();
 	private final intTree closed = new intTree();
 	private Runtime runtime = Runtime.getRuntime();
 
-	private final static Logger logger = Logger.getInstance(Routing.class,Logger.ERROR);
+	private final static Logger logger = Logger.getInstance(Routing.class, Logger.ERROR);
 	private final RouteBaseTile tile;
 	private final Tile[] tiles;
 	private RouteNode routeFrom;
@@ -32,8 +32,8 @@ public class Routing implements Runnable {
 	private final Trace parent;
 	private int bestTotal;
 	private long nextUpdate;
-	private float estimateFac=1.40f;
-	private int oomCounter=0;
+	private float estimateFac = 1.40f;
+	private int oomCounter = 0;
 	private int expanded;
 	private RouteNode sourcePathSegNodeDummyRouteNode = new RouteNode();
 	private Connection sourcePathSegNodeDummyConnection = new Connection();
@@ -52,7 +52,7 @@ public class Routing implements Runnable {
 		this.parent = parent;
 		this.tile = (RouteBaseTile) tile[4];
 		this.tiles = tile;
-		estimateFac=(Configuration.getRouteEstimationFac()/10f)+0.8f;
+		estimateFac = (Configuration.getRouteEstimationFac() / 10f) + 0.8f;
 	}
 	
 	private GraphNode search(RouteNode target) throws Exception {
@@ -315,12 +315,13 @@ public class Routing implements Runnable {
 			parent.setRoute(null);
 		}
 	}
+
 	public void solve (PositionMark fromMark,PositionMark toMark) {
 
 		logger.info("Calculating route from " + fromMark + " to " + toMark);
 
 		try {
-			if (toMark == null){
+			if (toMark == null) {
 				parent.receiveMessage("Please set target first");
 				parent.setRoute(null);
 				return;
@@ -330,24 +331,24 @@ public class Routing implements Runnable {
 			startNode.lat=fromMark.lat;
 			startNode.lon=fromMark.lon;
 
-			if (fromMark.e == null){
+			if (fromMark.entity == null) {
 				// if there is no element at the from Mark, then search it from 
 				// the data.
 				parent.receiveMessage("search for start element");
 				parent.searchNextRoutableWay(fromMark);
-				if (fromMark.e == null){
+				if (fromMark.entity == null){
 					parent.receiveMessage("No Way found for start point");
 				} 
 			}
-			if (toMark.e == null){
+			if (toMark.entity == null) {
 				// if there is no element in the to Mark, fill it from tile-data
 				parent.receiveMessage("search for target element");
 				parent.searchElement(toMark);
-				if (toMark.e == null){
+				if (toMark.entity == null) {
 					parent.receiveMessage("search for routable way close by the target");
 //					long startTime = System.currentTimeMillis();
 					parent.searchNextRoutableWay(toMark);
-					if (toMark.e == null){
+					if (toMark.entity == null) {
 						parent.receiveMessage("No Way found for target point");
 						return;
 //					} else {
@@ -358,18 +359,18 @@ public class Routing implements Runnable {
 			
 			logger.info("Calculating route from " + fromMark + " to " + toMark);
 			
-			if (fromMark.e instanceof Way){
+			if (fromMark.entity instanceof Way) {
 				// search the next route node in all accessible directions. Then create 
 				// connections that lead form the start point to the next route nodes.
 				parent.receiveMessage("create from Connections");
-				Way w=(Way) fromMark.e;
+				Way w=(Way) fromMark.entity;
 				int nearestSegment=getNearestSeg(w, startNode.lat, startNode.lon, fromMark.nodeLat,fromMark.nodeLon);
 				// roundabouts don't need to be explicitely tagged as oneways in OSM according to http://wiki.openstreetmap.org/wiki/Tag:junction%3Droundabout
 				if (! (w.isOneway() || w.isRoundAbout()) ) {
 					
 //					parent.getRouteNodes().addElement(new RouteHelper(fromMark.nodeLat[nearestSegment],fromMark.nodeLon[nearestSegment],"oneWay sec"));
 					RouteNode rn=findPrevRouteNode(nearestSegment-1, startNode.lat, startNode.lon, fromMark.nodeLat,fromMark.nodeLon);
-					if (rn != null){
+					if (rn != null) {
 //						parent.getRouteNodes().addElement(new RouteHelper(rn.lat,rn.lon,"next back"));
 						// TODO: fill in bearings and cost
 						Connection initialState=new Connection(rn,0,(byte)0,(byte)0);
@@ -383,14 +384,16 @@ public class Routing implements Runnable {
 						 *  when searching the ways for matching connections
 						 */
 						int firstSeg = nearestSegment;
-						if (firstSeg >= fromMark.nodeLat.length) firstSeg = fromMark.nodeLat.length - 1;	
+						if (firstSeg >= fromMark.nodeLat.length) {
+							firstSeg = fromMark.nodeLat.length - 1;	
+						}
 						firstNodeId1 = initialState.toId;
 						firstSourcePathSegNodeDummy1.radlat = fromMark.nodeLat[firstSeg];
 						firstSourcePathSegNodeDummy1.radlon = fromMark.nodeLon[firstSeg];
 					}
 				} 
 				RouteNode rn=findNextRouteNode(nearestSegment, startNode.lat, startNode.lon, fromMark.nodeLat,fromMark.nodeLon);
-				if (rn != null){
+				if (rn != null) {
 					// TODO: fill in bearings and cost
 					Connection initialState=new Connection(rn,0,(byte)0,(byte)0);
 					GraphNode firstNode=new GraphNode(initialState,null,0,0,(byte)0);
@@ -403,7 +406,9 @@ public class Routing implements Runnable {
 					 *  when searching the ways for matching connections
 					 */
 					int firstSeg = nearestSegment - 1;
-					if (firstSeg < 0) firstSeg = 0;
+					if (firstSeg < 0) {
+						firstSeg = 0;
+					}
 					firstNodeId2 = initialState.toId;
 					firstSourcePathSegNodeDummy2.radlat = fromMark.nodeLat[firstSeg];
 					firstSourcePathSegNodeDummy2.radlon = fromMark.nodeLon[firstSeg];
@@ -419,10 +424,10 @@ public class Routing implements Runnable {
 			routeTo.lat=toMark.lat;
 			routeTo.lon=toMark.lon;
 			parent.receiveMessage("create to Connections");
-			Way w=(Way) toMark.e;
+			Way w = (Way) toMark.entity;
 			int nearestSeg = getNearestSeg(w,toMark.lat, toMark.lon, toMark.nodeLat, toMark.nodeLon);
 			RouteTileRet nodeTile=new RouteTileRet();
-			// roundabouts don't need to be explicitely tagged as oneways in OSM according to http://wiki.openstreetmap.org/wiki/Tag:junction%3Droundabout
+			// roundabouts don't need to be explicitly tagged as oneways in OSM according to http://wiki.openstreetmap.org/wiki/Tag:junction%3Droundabout
 			if (! (w.isOneway() || w.isRoundAbout()) ){
 				RouteNode prefNode = findPrevRouteNode(nearestSeg, toMark.lat, toMark.lon, toMark.nodeLat, toMark.nodeLon);
 				// TODO: fill in bearings and cost
@@ -435,7 +440,7 @@ public class Routing implements Runnable {
 			Connection newCon=new Connection(routeTo,0,(byte)0,(byte)0);
 			tile.getRouteNode(nextNode.lat, nextNode.lon, nodeTile);
 			nodeTile.tile.addConnection(nextNode,newCon,bestTime);
-			if (routeTo != null){
+			if (routeTo != null) {
 				parent.cleanup();
 				System.gc();
 				//#debug error

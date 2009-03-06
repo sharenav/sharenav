@@ -24,6 +24,9 @@ public class C {
 	 */
 	public final static short MAP_FORMAT_VERSION = 25;
 	
+	/** The waypoint format used in the RecordStore. See PositionMark.java. */
+	public final static short WAYPT_FORMAT_VERSION = 2;
+
 	public final static byte MIN_PLACETYPE = 1; // city
 	public final static byte MAX_PLACETYPE = 5; // suburb
 	

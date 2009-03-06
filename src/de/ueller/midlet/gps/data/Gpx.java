@@ -164,7 +164,7 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 			wayptDatabase = null;
 			// TODO: add config option for whether to record waypoints
 			// in GPX track or waypoint store
-			if (isRecordingTrk()){
+			if (isRecordingTrk()) {
 				// store waypoint in GPX track
 				//#debug info
 				logger.info("Adding waypoint in GPX track: " + waypt);
@@ -292,7 +292,7 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 					doRecord=true;
 				}
 			}
-			if(doRecord) {
+			if (doRecord) {
 				dos.writeFloat(trkpt.latitude);
 				dos.writeFloat(trkpt.longitude);
 				dos.writeShort((short)trkpt.altitude);
@@ -816,11 +816,12 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		}
 	}
 
-	private void streamTracks (OutputStream oS) throws IOException, RecordStoreNotOpenException, InvalidRecordIDException, RecordStoreException{
+	private void streamTracks (OutputStream oS) throws IOException, 
+			RecordStoreNotOpenException, InvalidRecordIDException, RecordStoreException {
 		float lat, lon;
 		short ele;
 		long time;
-		Date d = new Date();
+		Date date = new Date();
 		
 		openTrackDatabase();
 		DataInputStream dis1 = new DataInputStream(new ByteArrayInputStream(trackDatabase.getRecord(currentTrk.id)));
@@ -860,7 +861,7 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 						// track to GPX
 						// Stream waypoint to a separate bytearray to write it out
 						// at the end of the track.
-						streamWayPt (baos, waypt);
+						streamWayPt(baos, waypt);
 					}
 				} catch (RecordStoreException e) {
 					logger.info("RecordStoreException (" + e.getMessage() + ") loading track embeded waypoint. Has it been deleted?");
@@ -871,8 +872,8 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 				sb.setLength(0);
 				sb.append("<trkpt lat='").append(lat).append("' lon='").append(lon).append("' >\r\n");
 				sb.append("<ele>").append(ele).append("</ele>\r\n");
-				d.setTime(time);
-				sb.append("<time>").append(formatUTC(d)).append("</time>\r\n");
+				date.setTime(time);
+				sb.append("<time>").append(formatUTC(date)).append("</time>\r\n");
 				sb.append("</trkpt>\r\n");
 				writeUTF(oS, sb);
 			}
@@ -891,16 +892,29 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		}
 	}
 	
-	private void streamWayPt (OutputStream oS, PositionMark wayPt) throws IOException{
+	private void streamWayPt (OutputStream oS, PositionMark wayPt) 
+				throws IOException {
 		StringBuffer sb = new StringBuffer(128);
-		sb.append("<wpt lat='").append(wayPt.lat*MoreMath.FAC_RADTODEC).append("' lon='").append(wayPt.lon*MoreMath.FAC_RADTODEC).append("' >\r\n");
+		//if (wayPt.lat > 90) wayPt.lat = wayPt.lat * MoreMath.FAC_DECTORAD * MoreMath.FAC_DECTORAD;
+		//if (wayPt.lon > 180) wayPt.lon = wayPt.lon * MoreMath.FAC_DECTORAD * MoreMath.FAC_DECTORAD;
+		sb.append("<wpt lat='").append(wayPt.lat * MoreMath.FAC_RADTODEC);
+		sb.append("' lon='").append(wayPt.lon * MoreMath.FAC_RADTODEC).append("'>\r\n");
 		sb.append("<name>").append(wayPt.displayName).append("</name>\r\n");
+		if (wayPt.ele != PositionMark.INVALID_ELEVATION)
+		{
+			sb.append("<ele>").append(wayPt.ele).append("</ele>\r\n");			
+		}
+		if (wayPt.timestamp.getTime() != 0)
+		{
+			sb.append("<time>").append(formatUTC(wayPt.timestamp)).append("</time>\r\n");			
+		}
+		// fix and sats are not filled yet so we don't export them either.
+		// sym and type are not exported yet but they could be mapped to strings.
 		sb.append("</wpt>\r\n");
-
 		writeUTF(oS, sb);
 	}
 
-	private void streamWayPts (OutputStream oS) throws IOException{		
+	private void streamWayPts (OutputStream oS) throws IOException {		
 		PositionMark[] waypts = wayPtTile.listWayPt();
 		PositionMark wayPt = null;
 		
@@ -955,9 +969,9 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 					tmp = Class.forName("de.ueller.midlet.gps.importexport.FileExportSession");
 				} else if (url.startsWith("comm:")) {
 					tmp = Class.forName("de.ueller.midlet.gps.importexport.CommExportSession");
-				} else if (url.startsWith("btgoep:")){
+				} else if (url.startsWith("btgoep:")) {
 					tmp = Class.forName("de.ueller.midlet.gps.importexport.ObexExportSession");
-				} else if (url.startsWith("http:")){
+				} else if (url.startsWith("http:")) {
 					tmp = Class.forName("de.ueller.midlet.gps.GuiGPXOSMUpload");
 				}
 				if (tmp != null)

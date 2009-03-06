@@ -136,6 +136,9 @@ Runnable , GpsMidDisplayable{
 
 	public String solution = "NoFix";
 	
+	/** Flag if the map is centered to the current GPS position (true)
+	 * or if the user moved the map away from this position (false).
+	 */
 	public boolean gpsRecenter = true;
 	
 	private Position pos = new Position(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1,
@@ -185,12 +188,13 @@ Runnable , GpsMidDisplayable{
 	PositionMark source;
 
 	// this is only for visual debugging of the routing engine
-	Vector routeNodes=new Vector();
+	Vector routeNodes = new Vector();
 
 	private long oldRecalculationTime;
 
-	private List recordingsMenu;
-	private List routingsMenu;
+	private List recordingsMenu = null;
+	private List routingsMenu = null;
+	private GuiWaypointSave guiWaypointSave = null;
 
 	private final static Logger logger = Logger.getInstance(Trace.class,Logger.DEBUG);
 
@@ -776,8 +780,29 @@ Runnable , GpsMidDisplayable{
 //				resume();
 			}
 			if (c == CMDS[SAVE_WAYP_CMD]) {
-				GuiWaypointSave gwps = new GuiWaypointSave(this, new PositionMark(center.radlat, center.radlon));
-				gwps.show();
+				if (guiWaypointSave == null) {
+					guiWaypointSave = new GuiWaypointSave(this);
+				}
+				if (guiWaypointSave != null) {
+					if (gpsRecenter) {
+						// TODO: Should we block waypoint saving if we have no GPS fix?
+						guiWaypointSave.setData(new PositionMark(
+								pos.latitude * MoreMath.FAC_DECTORAD, 
+								pos.longitude * MoreMath.FAC_DECTORAD, 
+								(int)pos.altitude, pos.date,	
+								/* fix */ (byte)-1, /* sats */ (byte)-1, 
+								/* sym */ (byte)-1, /* type */ (byte)-1));
+					} else {
+						// Cursor does not point to current position
+						// -> it does not make sense to add elevation and GPS fix info.
+						guiWaypointSave.setData(new PositionMark(center.radlat, 
+								center.radlon, PositionMark.INVALID_ELEVATION,
+								pos.date, /* fix */ (byte)-1, 
+								/* sats */ (byte)-1, /* sym */ (byte)-1, 
+								/* type */ (byte)-1));
+					}
+					guiWaypointSave.show();					
+				}
 			}
 			if (c == CMDS[ENTER_WAYP_CMD]) {
 				GuiWaypointEnter gwpe = new GuiWaypointEnter(this);

@@ -721,8 +721,8 @@ public class Way extends Entity{
 		swapLineP = lineP1;
 		lineP1 = null;
 		
-		if ((pc.nearestRoutableWay == this) && ((pc.currentPos == null) || (pc.currentPos.e != this))) {
-			pc.currentPos=new PositionMark(pc.center.radlat,pc.center.radlon);
+		if ((pc.nearestRoutableWay == this) && ((pc.currentPos == null) || (pc.currentPos.entity != this))) {
+			pc.currentPos = new PositionMark(pc.center.radlat, pc.center.radlon);
 			pc.currentPos.setEntity(this, getNodesLatLon(t, true), getNodesLatLon(t, false));
 		}
 		
@@ -738,8 +738,8 @@ public class Way extends Entity{
 				w = (int) (pc.ppm * wayDesc.wayWidth / 2 + 0.5);
 			}
 
-			if (pc.target != null && this.equals(pc.target.e)) {
-				highlight=HIGHLIGHT_TARGET;
+			if (pc.target != null && this.equals(pc.target.entity)) {
+				highlight = HIGHLIGHT_TARGET;
 				draw(pc, t, (w == 0) ? 1 : w, x, y, hl, pi - 1, highlight);
 			} else {
 				// if render as lines and no part of the way is highlighted
@@ -1554,8 +1554,8 @@ public class Way extends Entity{
 	public void setColor(PaintContext pc) {		
 		WayDescription wayDesc = C.getWayDescription(type);
 		pc.g.setStrokeStyle(wayDesc.lineStyle);
-		if ((pc.target != null) && (pc.target.e == this)) {
-			/*Color the target way red */			
+		if ((pc.target != null) && (pc.target.entity == this)) {
+			/* Color the target way red */			
 			pc.g.setColor(0x00ff0000);
 		} else {
 			pc.g.setColor(wayDesc.lineColor);
