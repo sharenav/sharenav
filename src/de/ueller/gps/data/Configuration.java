@@ -1,5 +1,7 @@
 package de.ueller.gps.data;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -17,6 +19,9 @@ import javax.microedition.io.file.FileConnection;
 import javax.microedition.lcdui.Command;
 import javax.microedition.rms.InvalidRecordIDException;
 import javax.microedition.rms.RecordStore;
+import javax.microedition.rms.RecordStoreException;
+import javax.microedition.rms.RecordStoreFullException;
+import javax.microedition.rms.RecordStoreNotFoundException;
 
 import de.ueller.gps.tools.BufferedReader;
 import de.ueller.gps.tools.StringTokenizer;
@@ -154,6 +159,7 @@ public class Configuration {
 	private static final int RECORD_ID_OSM_PWD = 31;
 	private static final int RECORD_ID_OSM_URL = 32;
 	private static final int RECORD_ID_MIN_ROUTELINE_WIDTH = 33;
+	private static final int RECORD_ID_KEY_SHORTCUT = 34;
 	
 
 	// Gpx Recording modes
@@ -358,22 +364,28 @@ public class Configuration {
 	}
 	
 	private static void write(String s, int idx) {
+		
+		writeBinary(sanitizeString(s).getBytes(), idx);
+		//#debug info
+		logger.info("wrote " + s + " to " + idx);
+	}
+	
+	private static void writeBinary(byte [] data, int idx) {
 		RecordStore	database;
 		try {
 			database = RecordStore.openRecordStore("Receiver", true);
-			byte[] data;
-			data = sanitizeString(s).getBytes();
 			while (database.getNumRecords() < idx){
 				database.addRecord(empty, 0, empty.length);
 			}
 			database.setRecord(idx, data,0,data.length);
 			database.closeRecordStore();
 			//#debug info
-			logger.info("wrote " + s + " to " + idx);
+			logger.info("wrote binary data to " + idx);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.exception("Could not write data (idx = " + idx + ") to recordstore", e);
 		}
 	}
+	
 	private static void write(int i,int idx){
 		write(""+i,idx);
 	}
@@ -381,30 +393,33 @@ public class Configuration {
 		write(""+i,idx);
 	}
 
-
-	private static String readString(RecordStore database,int idx){
+	private static byte [] readBinary(RecordStore database, int idx) {
 		try {
-			String ret;
 			byte[] data;
 			try {
 				data = database.getRecord(idx);
 			}
 			catch (InvalidRecordIDException irie) {
+				logger.silentexception("Failed to read recordstore entry " + idx, irie);
 				//Use defaults
 				return null;
 			}
-			if (data == null) {
-				ret = null;
-			} else {
-				ret = desanitizeString(new String(data));
-			}
-			//#debug info
-			logger.info("Read from config database " + idx + ": " + ret);
-			return ret;
+			
+			return data;
 		} catch (Exception e) {
-			logger.exception("Failed to read string from config database", e);
+			logger.exception("Failed to read binary from config database", e);
 			return null;
-		} 
+		}
+	}
+
+	private static String readString(RecordStore database,int idx){
+		byte [] data = readBinary(database, idx);
+		if (data == null)
+			return null;
+		String ret = desanitizeString(new String(data));
+		//#debug info
+		logger.info("Read from config database " + idx + ": " + ret);
+		return ret;
 	}
 	private static int readInt(RecordStore database,int idx){
 		try {
@@ -999,9 +1014,16 @@ public class Configuration {
 	}
 	
 	public static void loadKeyShortcuts(intTree gameKeys, intTree singleKeys, intTree repeatableKeys, intTree doubleKeys, intTree longKeys, intTree specialKeys, Command [] cmds) {
+		logger.info("Loading key shortcuts");
+		if (!loadKeyShortcutsDB(gameKeys, singleKeys, repeatableKeys, doubleKeys, longKeys, specialKeys, cmds)) {
+			loadDefaultKeyShortcuts(gameKeys, singleKeys, repeatableKeys, doubleKeys, longKeys, specialKeys, cmds);
+		}
+	}
+	
+	private static void loadDefaultKeyShortcuts(intTree gameKeys, intTree singleKeys, intTree repeatableKeys, intTree doubleKeys, intTree longKeys, intTree specialKeys, Command [] cmds) {
 		int keyType = 0;
-		
-		logger.info("Initialising KeyShortCuts");
+		//#debug info
+		logger.info("Initialising default key shortcuts");
 		try {
 			InputStream is = getMapResource("/keyMap.txt");
 			if (is == null)
@@ -1091,5 +1113,123 @@ public class Configuration {
 			logger.exception("Could not load key shortcuts", ioe);
 		}
 		
+	}
+	
+	private static boolean loadKeyShortcutsDB(intTree gameKeys, intTree singleKeys, intTree repeatableKeys, intTree doubleKeys, intTree longKeys, intTree specialKeys, Command [] cmds) {
+		try {
+			//#debug info
+			logger.info("Attempting to load keyboard shortcuts from record store");
+			RecordStore database = RecordStore.openRecordStore("Receiver", true);
+			if (database == null) {
+				//#debug info
+				logger.info("No database loaded at the moment");
+				return false;
+			}
+			byte [] data = readBinary(database, RECORD_ID_KEY_SHORTCUT);
+			if (data == null) {
+				logger.info("Record store did not contain key shortcut entry");
+				return false;
+			}
+			ByteArrayInputStream bais = new ByteArrayInputStream(data);
+			DataInputStream dis = new DataInputStream(bais);
+			
+			intTree keyTree;
+			for (int k = 0; k < 6; k++) {
+				keyTree = null;
+				switch (k) {
+				case 0 :
+					keyTree = gameKeys;
+					break;
+				case 1:
+					keyTree = singleKeys;
+					break;
+				case 2:
+					keyTree = repeatableKeys;
+					break;
+				case 3:
+					keyTree = doubleKeys;
+					break;
+				case 4:
+					keyTree = longKeys;
+					break;
+				case 5:
+					keyTree = specialKeys;
+					break;
+				}
+				int treeLength = dis.readShort();
+				for (int i = 0; i < treeLength; i++) {
+					int keyCode = dis.readInt();
+					int cmdCode = dis.readInt();
+					keyTree.put(keyCode, cmds[cmdCode]);
+				}
+
+				dis.readUTF();
+			}
+		return true;
+		} catch (Exception e) {
+			logger.exception("Failed to load keyshortcuts", e);
+			return false;
+		}
+	}
+	
+	public static void saveKeyShortcuts(intTree gameKeys, intTree singleKeys, intTree repeatableKeys, intTree doubleKeys, intTree longKeys, intTree specialKeys, Command [] cmds) {
+		//#debug info
+		logger.info("Saving key shortcuts");
+		
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		DataOutputStream dos = new DataOutputStream(baos);
+		
+		try {
+			intTree keyTree;
+			for (int k = 0; k < 6; k++) {
+				keyTree = null;
+				switch (k) {
+				case 0 :
+					keyTree = gameKeys;
+					break;
+				case 1:
+					keyTree = singleKeys;
+					break;
+				case 2:
+					keyTree = repeatableKeys;
+					break;
+				case 3:
+					keyTree = doubleKeys;
+					break;
+				case 4:
+					keyTree = longKeys;
+					break;
+				case 5:
+					keyTree = specialKeys;
+					break;
+				}
+				dos.writeShort(keyTree.size());
+				for (int i = 0; i < keyTree.size(); i++) {
+					int keyCode = keyTree.getKeyIdx(i);
+					int cmdCode = -1;
+					Command c = (Command)keyTree.getValueIdx(i);
+					for (int j = 0; j < cmds.length; j++) {
+						if (cmds[j] == c) {
+							cmdCode = j;
+							break;
+						}
+					}
+					if (cmdCode < 0) {
+						logger.error("Could not associate cmd number. Failed to save key shortcuts");
+						return;
+					}
+					dos.writeInt(keyCode);
+					dos.writeInt(cmdCode);
+				}
+
+				dos.writeUTF("Next key Type");
+			}
+			dos.flush();
+			baos.flush();
+			writeBinary(baos.toByteArray(), RECORD_ID_KEY_SHORTCUT);
+		
+		} catch (IOException ioe) {
+			logger.exception("Failed to save keyshortcuts", ioe);
+		}
 	}
 }
