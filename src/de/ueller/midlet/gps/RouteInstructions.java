@@ -37,7 +37,7 @@ public class RouteInstructions {
 		"enter motorway", "leave motorway",
 		"Roundabout exit #1", "Roundabout exit #2", "Roundabout exit #3",
 		"Roundabout exit #4", "Roundabout exit #5", "Roundabout exit #6",
-		"into tunnel", "out of tunnel"
+		"into tunnel", "out of tunnel", "skip"
 	};
 	private static final String[] soundDirections  = { "",
 		"HARD;RIGHT", "RIGHT", "HALF;RIGHT",
@@ -70,7 +70,7 @@ public class RouteInstructions {
 	private static final int RI_6TH_EXIT = 18;
 	private static final int RI_INTO_TUNNEL = 19;
 	private static final int RI_OUT_OF_TUNNEL = 20;
-	private static final int RI_SKIPPED = 99;
+	private static final int RI_SKIPPED = 21;
 	
 	private int connsFound = 0;
 	
@@ -135,7 +135,9 @@ public class RouteInstructions {
 			determineRoutePath();
 		} catch (Exception e) {
 			//#debug error
-			logger.error("Routing thread crashed unexpectadly with error " +  e.getMessage());
+			logger.error("RI thread crashed unexpectadly with error " +  e.getMessage());
+			//#debug			
+			e.printStackTrace();
 		}			
 	}
 	
@@ -1316,57 +1318,61 @@ public class RouteInstructions {
 			if ( (c.wayRouteFlags & C.ROUTE_FLAG_COMING_FROM_ONEWAY) > 0) {
 				maxToRoutableWays--;
 			}
-			while (
-					(
-						// while straight on
-						c.wayRouteInstruction == RI_STRAIGHT_ON
-						// or no alternatives to go to
-						||
-						(
-						 c.numToRoutableWays <= maxToRoutableWays
-						 && c.wayRouteInstruction <= RI_HARD_LEFT
-						)
-//						&& (
-//							// but name or way type must stay the same
-//							c.wayNameIdx == oldNameIdx
-//							||
-//							c.wayType == cStart.wayType
-//						)
-					)
-					|| 
-					// or named direction arrow with same name and way type as previous one but not multiple same named options
+			while (	i < route.size()-2
+					&&
 					(
 						(
-							c.wayRouteInstruction == RI_HALF_LEFT
+							// while straight on
+							c.wayRouteInstruction == RI_STRAIGHT_ON
+							// or no alternatives to go to
 							||
-							c.wayRouteInstruction == RI_HALF_RIGHT
+							(
+							 c.numToRoutableWays <= maxToRoutableWays
+							 && c.wayRouteInstruction <= RI_HARD_LEFT
+							)
+	//						&& (
+	//							// but name or way type must stay the same
+	//							c.wayNameIdx == oldNameIdx
+	//							||
+	//							c.wayType == cStart.wayType
+	//						)
 						)
-						&&
-						c.wayNameIdx > 0
-						&&
-						c.wayNameIdx == oldNameIdx
-						&&
-						c.wayType == cStart.wayType
-						&&
-						(c.wayRouteFlags & C.ROUTE_FLAG_LEADS_TO_MULTIPLE_SAME_NAMED_WAYS) == 0
-						// the following arrow must not be a skipped arrow or the same name and type must continue
-						&& (
-							cNext.wayRouteInstruction != RI_SKIPPED
-							|| (
-								cNext.wayNameIdx == cStart.wayNameIdx
-								&& cNext.wayType == cStart.wayType
-							)	
+						|| 
+						// or named direction arrow with same name and way type as previous one but not multiple same named options
+						(
+							(
+								c.wayRouteInstruction == RI_HALF_LEFT
+								||
+								c.wayRouteInstruction == RI_HALF_RIGHT
+							)
+							&&
+							c.wayNameIdx > 0
+							&&
+							c.wayNameIdx == oldNameIdx
+							&&
+							c.wayType == cStart.wayType
+							&&
+							(c.wayRouteFlags & C.ROUTE_FLAG_LEADS_TO_MULTIPLE_SAME_NAMED_WAYS) == 0
+							// the following arrow must not be a skipped arrow or the same name and type must continue
+							&& (
+								cNext.wayRouteInstruction != RI_SKIPPED
+								|| (
+									cNext.wayNameIdx == cStart.wayNameIdx
+									&& cNext.wayType == cStart.wayType
+								)	
+							)
 						)
 					)
-					&& i<route.size()-2
-			) {
+				) {
 				oldNameIdx = c.wayNameIdx;  // if we went straight on into a way with new name we continue comparing with the new name 
 				cStart.wayDistanceToNext += c.wayDistanceToNext;
 				c.wayRouteFlags |= C.ROUTE_FLAG_QUIET;
 				// c.wayDistanceToNext = 0;
 				i++;
 				c = cNext;
-				cNext = (ConnectionWithNode) route.elementAt(i+1);
+				if (i < route.size()-2) {
+					cNext = (ConnectionWithNode) route.elementAt(i+1);
+				}
 			}			
 		}
 		
@@ -1547,12 +1553,18 @@ public class RouteInstructions {
 			//if ((c.wayRouteFlags & C.ROUTE_FLAG_QUIET) == 0 && ri!=RI_SKIPPED) {
 			if (true) {
 				sb.append(i + ". ");
+				if ( (c.wayRouteFlags & C.ROUTE_FLAG_QUIET) > 0) { 
+					sb.append("(quiet) ");
+				}
 				sb.append(directions[ri]);
 				sb.append(" into ");
 				sb.append((name==null?"":name));
 				sb.append(" then go ");
 				sb.append(dist);
 				sb.append("m");
+				if ( (c.wayRouteFlags & C.ROUTE_FLAG_COMING_FROM_ONEWAY) > 0) { 
+					sb.append(" (from oneway)");
+				}
 				if ( (c.wayRouteFlags & C.ROUTE_FLAG_ROUNDABOUT) > 0) { 
 					sb.append(" (in roundabout)");
 				}
