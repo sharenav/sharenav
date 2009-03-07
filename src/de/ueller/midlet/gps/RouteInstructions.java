@@ -1306,7 +1306,7 @@ public class RouteInstructions {
 		ConnectionWithNode cStart;
 		ConnectionWithNode cNext;
 		int oldNameIdx = -2;
-		for (int i=2; i<route.size()-1; i++){
+		for (int i=1; i<route.size()-1; i++){
 			c = (ConnectionWithNode) route.elementAt(i);
 			cStart = (ConnectionWithNode) route.elementAt(i-1);
 			oldNameIdx = cStart.wayNameIdx;
