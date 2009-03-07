@@ -136,7 +136,6 @@ public class RouteInstructions {
 		} catch (Exception e) {
 			//#debug error
 			logger.error("RI thread crashed unexpectadly with error " +  e.getMessage());
-			//#debug			
 			e.printStackTrace();
 		}			
 	}
@@ -1318,7 +1317,7 @@ public class RouteInstructions {
 			if ( (c.wayRouteFlags & C.ROUTE_FLAG_COMING_FROM_ONEWAY) > 0) {
 				maxToRoutableWays--;
 			}
-			while (	i < route.size()-2
+			while (	i < route.size()-1
 					&&
 					(
 						// while straight on
@@ -1367,7 +1366,7 @@ public class RouteInstructions {
 				// c.wayDistanceToNext = 0;
 				i++;
 				c = cNext;
-				if (i < route.size()-2) {
+				if (i < route.size()-1) {
 					cNext = (ConnectionWithNode) route.elementAt(i+1);
 				}
 			}			
