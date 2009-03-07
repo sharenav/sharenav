@@ -1321,21 +1321,18 @@ public class RouteInstructions {
 			while (	i < route.size()-2
 					&&
 					(
+						// while straight on
+						c.wayRouteInstruction == RI_STRAIGHT_ON
+						||
 						(
-							// while straight on
-							c.wayRouteInstruction == RI_STRAIGHT_ON
-							// or no alternatives to go to
-							||
+							// or no alternative to go to
 							(
-							 c.numToRoutableWays <= maxToRoutableWays
-							 && c.wayRouteInstruction <= RI_HARD_LEFT
+							 	c.numToRoutableWays <= maxToRoutableWays
+								&& c.wayRouteInstruction <= RI_HARD_LEFT
+								&& ((c.wayRouteFlags & C.ROUTE_FLAG_BEAR_LEFT+C.ROUTE_FLAG_BEAR_RIGHT) == 0)
+								// and the following arrow must not be a skipped arrow
+								&& cNext.wayRouteInstruction != RI_SKIPPED
 							)
-	//						&& (
-	//							// but name or way type must stay the same
-	//							c.wayNameIdx == oldNameIdx
-	//							||
-	//							c.wayType == cStart.wayType
-	//						)
 						)
 						|| 
 						// or named direction arrow with same name and way type as previous one but not multiple same named options
@@ -1574,7 +1571,7 @@ public class RouteInstructions {
 				if ( (c.wayRouteFlags & C.ROUTE_FLAG_BEAR_LEFT) > 0) { 
 					sb.append(" (bear left)");
 				}
-				if ( (c.wayRouteFlags & C.ROUTE_FLAG_BEAR_LEFT) > 0) { 
+				if ( (c.wayRouteFlags & C.ROUTE_FLAG_BEAR_RIGHT) > 0) { 
 					sb.append(" (bear right)");
 				}
 				sb.append(" Cons:" + c.to.conSize + " numRoutableWays: " + c.numToRoutableWays + " startBearing: " + c.startBearing + "/" + c.wayConStartBearing + " endBearing: "+ c.endBearing + "/" + c.wayConEndBearing);
