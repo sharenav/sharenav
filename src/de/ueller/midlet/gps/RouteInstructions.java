@@ -122,8 +122,11 @@ public class RouteInstructions {
 	
 	private final static Logger logger = Logger.getInstance(RouteInstructions.class,Logger.DEBUG);
 
-	public RouteInstructions(Trace trace, Vector route, PositionMark target) {
+	public RouteInstructions(Trace trace) {
 		RouteInstructions.trace = trace;
+	}
+	
+	public void newRoute(Vector route, PositionMark target) {
 		RouteInstructions.route = route;
 		RouteInstructions.target = target;
 		iPassedRouteArrow=0;
@@ -139,7 +142,6 @@ public class RouteInstructions {
 			e.printStackTrace();
 		}			
 	}
-	
 	
 	public void determineRoutePath() throws Exception {
 		PaintContext pc = new PaintContext(trace, null);

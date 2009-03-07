@@ -1750,6 +1750,7 @@ Runnable , GpsMidDisplayable{
 			// don't rotate too fast
 			if (speed > 2) {
 				course = (int) ((pos.course * 3 + course) / 4)+360;
+				//course = (int) pos.course;
 				while (course > 360) course-=360;
 			}
 		}		
@@ -1966,7 +1967,10 @@ Runnable , GpsMidDisplayable{
 		synchronized(this) {
 			this.route = route;
 			if (route!=null) {
-				ri = new RouteInstructions(this, route, target);
+				if (ri==null) {
+					ri = new RouteInstructions(this);
+				}
+				ri.newRoute(route, target);
 				oldRecalculationTime = System.currentTimeMillis();
 				RouteInstructions.resetOffRoute(route, center);
 			}
