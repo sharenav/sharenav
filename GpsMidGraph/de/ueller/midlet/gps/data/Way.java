@@ -739,18 +739,16 @@ public class Way extends Entity{
 				w = (int) (pc.ppm * wayDesc.wayWidth / 2 + 0.5);
 			}
 
-			if (pc.target != null && this.equals(pc.target.entity)) {
+			if (highlight != HIGHLIGHT_ROUTEPATH_CONTAINED && pc.target != null && this.equals(pc.target.entity)) {
 				highlight = HIGHLIGHT_TARGET;
-				draw(pc, t, (w == 0) ? 1 : w, x, y, hl, pi - 1, highlight);
+			}
+			// if render as lines and no part of the way is highlighted
+			if (w == 0 && highlight == HIGHLIGHT_NONE) {
+				setColor(pc);
+				PolygonGraphics.drawOpenPolygon(pc.g, x, y, pi - 1);
+			// if render as streets or a part of the way is highlighted
 			} else {
-				// if render as lines and no part of the way is highlighted
-				if (w == 0 && highlight != HIGHLIGHT_ROUTEPATH_CONTAINED) {
-					setColor(pc);
-					PolygonGraphics.drawOpenPolygon(pc.g, x, y, pi - 1);
-				// if render as streets or a part of the way is highlighted
-				} else {
-					draw(pc, t, w, x, y, hl, pi - 1, highlight);
-				}
+				draw(pc, t, (w == 0) ? 1 : w, x, y, hl, pi - 1, highlight);
 			}
 
 			if (isOneway()) {
@@ -1214,7 +1212,7 @@ public class Way extends Entity{
 				// if not turn off the highlight
 				dividedHighlight = false;
 			}
-			if (highlight == HIGHLIGHT_ROUTEPATH_CONTAINED && hl[i] >= 0
+			if (hl[i] >= 0
 					// if this is the closest segment of the closest connection
 					&& RouteInstructions.routePathConnection == hl[i]
 				    && i==RouteInstructions.pathIdxInRoutePathConnection - 1
@@ -1259,12 +1257,14 @@ public class Way extends Entity{
 			}
 			if (hl[i] != PATHSEG_DO_NOT_DRAW) {
 	//			if (mode == DRAW_AREA){
-					if (highlight == HIGHLIGHT_ROUTEPATH_CONTAINED && hl[i] >= 0) {
+					if (hl[i] >= 0) {
 						if (isCurrentRoutePath(pc, i) || dividedHighlight) {
 							pc.g.setColor(C.ROUTE_COLOR);
 						} else {
 							pc.g.setColor(C.ROUTEPRIOR_COLOR);
 						}
+					} else if (highlight == HIGHLIGHT_TARGET) {
+						pc.g.setColor(255,50,50);						
 					} else {
 						setColor(pc);
 					}
@@ -1273,14 +1273,14 @@ public class Way extends Entity{
 						pc.g.fillTriangle(l2b.x, l2b.y, l1b.x, l1b.y, l1e.x, l1e.y);
 						pc.g.fillTriangle(l1e.x, l1e.y, l2e.x, l2e.y, l2b.x, l2b.y);
 						// draw borders of way
-						if (highlight == HIGHLIGHT_TARGET){
-							pc.g.setColor(255,50,50);
-						} else if (highlight == HIGHLIGHT_ROUTEPATH_CONTAINED && hl[i] >= 0){
+						if (hl[i] >= 0){
 							if (isCurrentRoutePath(pc, i) || dividedHighlight) {
 								pc.g.setColor(C.ROUTE_BORDERCOLOR);
 							} else {
 								pc.g.setColor(C.ROUTEPRIOR_BORDERCOLOR);								
 							}
+						} else if (highlight == HIGHLIGHT_TARGET){
+								pc.g.setColor(255,50,50);
 						} else {
 							setBorderColor(pc);
 						}
@@ -1555,12 +1555,7 @@ public class Way extends Entity{
 	public void setColor(PaintContext pc) {		
 		WayDescription wayDesc = C.getWayDescription(type);
 		pc.g.setStrokeStyle(wayDesc.lineStyle);
-		if ((pc.target != null) && (pc.target.entity == this)) {
-			/* Color the target way red */			
-			pc.g.setColor(0x00ff0000);
-		} else {
-			pc.g.setColor(wayDesc.lineColor);
-		}
+		pc.g.setColor(wayDesc.lineColor);
 	}
 
 	public int getWidth(PaintContext pc) {
