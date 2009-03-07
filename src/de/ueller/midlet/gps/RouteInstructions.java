@@ -195,7 +195,8 @@ public class RouteInstructions {
 			cFrom.wayNameIdx = pc.conWayNameIdx;
 			cFrom.wayType = pc.conWayType;
 			cFrom.wayDistanceToNext = pc.conWayDistanceToNext;
-			cFrom.wayRouteFlags |= pc.conWayRouteFlags;
+			cFrom.wayRouteFlags |=  (pc.conWayRouteFlags & ~C.ROUTE_FLAG_COMING_FROM_ONEWAY);
+			cTo.wayRouteFlags |= (pc.conWayRouteFlags & C.ROUTE_FLAG_COMING_FROM_ONEWAY);
 			pc.searchConPrevWayRouteFlags = cFrom.wayRouteFlags;
 			cFrom.numToRoutableWays = pc.conWayNumRoutableWays;
 			cTo.wayConStartBearing = pc.conWayStartBearing;
@@ -1307,10 +1308,22 @@ public class RouteInstructions {
 			cStart = (ConnectionWithNode) route.elementAt(i-1);
 			oldNameIdx = cStart.wayNameIdx;
 			cNext = (ConnectionWithNode) route.elementAt(i+1);
+			// set maximum value of connections that are allowed to be there for hiding this arrow
+			int maxToRoutableWays = 2;
+			// when we are coming from a one way arrow we must not count the way we are coming from 
+			if ( (c.wayRouteFlags & C.ROUTE_FLAG_COMING_FROM_ONEWAY) > 0) {
+				maxToRoutableWays--;
+			}
 			while (
-					// and straight on
 					(
+						// while straight on
 						c.wayRouteInstruction == RI_STRAIGHT_ON
+						// or no alternatives to go to
+						||
+						(
+						 c.numToRoutableWays <= maxToRoutableWays
+						 && c.wayRouteInstruction <= RI_HARD_LEFT
+						)
 //						&& (
 //							// but name or way type must stay the same
 //							c.wayNameIdx == oldNameIdx
@@ -1529,8 +1542,7 @@ public class RouteInstructions {
 			
 			sb.setLength(0);			
 			byte ri=c.wayRouteInstruction;
-			//if ((c.wayRouteFlags & C.ROUTE_FLAG_QUIET) == 0 && ri!=RI_SKIPPED) {
-			if (true) {
+			if ((c.wayRouteFlags & C.ROUTE_FLAG_QUIET) == 0 && ri!=RI_SKIPPED) {
 				sb.append(i + ". ");
 				sb.append(directions[ri]);
 				sb.append(" into ");

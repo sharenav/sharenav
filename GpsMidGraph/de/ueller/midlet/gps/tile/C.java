@@ -57,6 +57,7 @@ public class C {
 	public final static short ROUTE_FLAG_LEADS_TO_MULTIPLE_SAME_NAMED_WAYS = 0x100; // used in ConnectionWithNode
 	public final static short ROUTE_FLAG_BEAR_LEFT = 0x200; // used in ConnectionWithNode
 	public final static short ROUTE_FLAG_BEAR_RIGHT = 0x400; // used in ConnectionWithNode
+	public final static short ROUTE_FLAG_COMING_FROM_ONEWAY = 0x800; // used in ConnectionWithNode
 	
 	/**
 	 * minimum distances to set the is_in name to the next city

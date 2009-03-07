@@ -477,6 +477,7 @@ public class Way extends Entity{
 				if (isRoundAbout()) routeFlags += C.ROUTE_FLAG_ROUNDABOUT;
 				if (isTunnel()) routeFlags += C.ROUTE_FLAG_TUNNEL;
 				if (isBridge()) routeFlags += C.ROUTE_FLAG_BRIDGE;
+				if (isOneway()) routeFlags += C.ROUTE_FLAG_COMING_FROM_ONEWAY;
 				pc.conWayRouteFlags = routeFlags;
 				
 				// substract way we are coming from from turn options with same name
