@@ -1325,17 +1325,17 @@ public class RouteInstructions {
 						// while straight on
 						c.wayRouteInstruction == RI_STRAIGHT_ON
 						||
-						(
-							// or no alternative to go to
-							(
-							 	c.numToRoutableWays <= maxToRoutableWays
-								&& c.wayRouteInstruction <= RI_HARD_LEFT
-								&& ((c.wayRouteFlags & C.ROUTE_FLAG_BEAR_LEFT+C.ROUTE_FLAG_BEAR_RIGHT) == 0)
-								// and the following arrow must not be a skipped arrow
-								&& cNext.wayRouteInstruction != RI_SKIPPED
-							)
-						)
-						|| 
+//						(
+//							// or no alternative to go to
+//							(
+//							 	c.numToRoutableWays <= maxToRoutableWays
+//								&& c.wayRouteInstruction <= RI_HARD_LEFT
+//								&& ((c.wayRouteFlags & C.ROUTE_FLAG_BEAR_LEFT+C.ROUTE_FLAG_BEAR_RIGHT) == 0)
+//								// and the following arrow must not be a skipped arrow
+//								&& cNext.wayRouteInstruction != RI_SKIPPED
+//							)
+//						)
+//						|| 
 						// or named direction arrow with same name and way type as previous one but not multiple same named options
 						(
 							(
