@@ -80,7 +80,7 @@ public class PaintContext extends ScreenContext {
 	public volatile short conWayToAt;   // highlight way to this path node #
 	public volatile byte conWayType;   // highlight way to node idx
 	public volatile short conWayRouteFlags; // modifiers like motorway and motorway_link (from description) and roundabout/bridge tunnel (from way) 
-	public volatile byte conWayNumRoutableWays; // number of routable ways at the connection (result should always be >= 1)
+	public volatile byte conWayNumToRoutableWays; // number of routable ways at the connection (result should always be >= 1)
 	public volatile byte conWayStartBearing; // bearing at the end of the path leading to this connection 
 	public volatile byte conWayNumMotorways; // number of possible motorway instructions this way leads to 
 	public volatile byte conWayEndBearing; // bearing at the beginning of the path leading to the next connection 

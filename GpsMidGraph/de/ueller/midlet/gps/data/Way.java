@@ -390,10 +390,10 @@ public class Way extends Entity{
 					// remember nameIdx's leading away from the connection, so we can later on check if multiple ways lead to the same street name
 					changeCountNameIdx(pc, 1);						
 					//System.out.println("add 1 " + "con1At: " + i + " pathlen-1: " + (path.length-1) );
-					pc.conWayNumRoutableWays++;
+					pc.conWayNumToRoutableWays++;
 					// if we are in the middle of the way, count the way once more
 					if (i != 0 && i != path.length-1 && !isOneway()) {
-						pc.conWayNumRoutableWays++;
+						pc.conWayNumToRoutableWays++;
 						changeCountNameIdx(pc, 1);
 						//System.out.println("add middle 1 " + "con1At: " + i + " pathlen-1: " + (path.length-1) );
 					}			

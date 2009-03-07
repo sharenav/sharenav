@@ -177,7 +177,7 @@ public class RouteInstructions {
 		pc.conWayDistanceToNext = Float.MAX_VALUE;
 		pc.xSize = 100;
 		pc.ySize = 100;
-		pc.conWayNumRoutableWays = 0;
+		pc.conWayNumToRoutableWays = 0;
 		pc.conWayNumMotorways = 0;
 		// clear stored nameidxs
 		pc.conWayNumNameIdxs = 0;
@@ -198,7 +198,7 @@ public class RouteInstructions {
 			cFrom.wayRouteFlags |=  (pc.conWayRouteFlags & ~C.ROUTE_FLAG_COMING_FROM_ONEWAY);
 			cTo.wayRouteFlags |= (pc.conWayRouteFlags & C.ROUTE_FLAG_COMING_FROM_ONEWAY);
 			pc.searchConPrevWayRouteFlags = cFrom.wayRouteFlags;
-			cFrom.numToRoutableWays = pc.conWayNumRoutableWays;
+			cFrom.numToRoutableWays = pc.conWayNumToRoutableWays;
 			cTo.wayConStartBearing = pc.conWayStartBearing;
 			cTo.wayConEndBearing = pc.conWayEndBearing;
 			if (Math.abs(cTo.wayConEndBearing - cTo.endBearing) > 3) {
@@ -932,6 +932,8 @@ public class RouteInstructions {
 								if (pict==null) logger.debug("got NULL pict");													
 								if ( (c.wayRouteFlags & C.ROUTE_FLAG_INVISIBLE) == 0 ) {
 									pc.g.drawImage(pict,pc.lineP2.x,pc.lineP2.y,CENTERPOS);
+//									pc.g.setColor(0x0);
+//									pc.g.drawString("" + i, pc.lineP2.x+7, pc.lineP2.y+5, Graphics.BOTTOM | Graphics.LEFT);
 								}
 							}
 					    }
@@ -1542,7 +1544,8 @@ public class RouteInstructions {
 			
 			sb.setLength(0);			
 			byte ri=c.wayRouteInstruction;
-			if ((c.wayRouteFlags & C.ROUTE_FLAG_QUIET) == 0 && ri!=RI_SKIPPED) {
+			//if ((c.wayRouteFlags & C.ROUTE_FLAG_QUIET) == 0 && ri!=RI_SKIPPED) {
+			if (true) {
 				sb.append(i + ". ");
 				sb.append(directions[ri]);
 				sb.append(" into ");
