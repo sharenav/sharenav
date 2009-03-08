@@ -39,9 +39,11 @@ GpsMid 0.4.55
        - some wrong direction arrows are fixed
        *** Tracks and Waypoints ***
        - Perform actions like export/delete on multiple selected tracks (thx mbaeurle)
+       - Progress bar for track log export(thx black_ivory)
        - Ability to rename tracks and waypoints
        - Waypoint names can now be entered with up to 255 chars (instead of 20)
 	   - Waypoints are now automatically exported inside tracks (thx jkpj)
+	   - Also save elevation and timestamp for waypoints (thx mbaeurle)
        - When sending waypoints you are now asked for a name (Waypoints.gpx remains default filename)
        - The map is centered at the start point when displaying a track
        - Send tracks directly to Openstreetmap internet url
