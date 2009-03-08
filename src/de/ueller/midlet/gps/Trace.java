@@ -604,10 +604,6 @@ Runnable , GpsMidDisplayable{
 					return;
 				}
 				
-				if (locationProducer != null){
-					locationProducer.close();
-				}
-				
 				// shutdown();
 				pause();
 				parent.show();
@@ -1001,7 +997,7 @@ Runnable , GpsMidDisplayable{
 		
 	}
 
-	public void shutdown() {
+/*	private void shutdown() {
 		stopImageCollector();
 		if (namesThread != null) {
 			namesThread.stop();
@@ -1020,7 +1016,7 @@ Runnable , GpsMidDisplayable{
 			locationProducer.close();
 		}
 
-	}
+	}*/
 	
 	protected void sizeChanged(int w, int h) {
 		if (imageCollector != null){
@@ -1923,4 +1919,5 @@ Runnable , GpsMidDisplayable{
 	public Vector getRoute() {
 		return route;
 	}
+	
 }
