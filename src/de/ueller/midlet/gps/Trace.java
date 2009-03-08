@@ -126,10 +126,6 @@ Runnable , GpsMidDisplayable{
 
 	private final Command [] CMDS = new Command[45];
 	
-	private InputStream btGpsInputStream;
-	private OutputStream btGpsOutputStream;
-	private StreamConnection conn;
-
 	
 //	private SirfInput si;
 	private LocationMsgProducer locationProducer;
@@ -384,19 +380,6 @@ Runnable , GpsMidDisplayable{
 			}
 			running=true;
 			receiveMessage("Connect to "+Configuration.LOCATIONPROVIDER[Configuration.getLocationProvider()]);
-			//		System.out.println(Configuration.getBtUrl());
-			//		System.out.println(Configuration.getRender());
-			switch (Configuration.getLocationProvider()){
-				case Configuration.LOCATIONPROVIDER_SIRF:
-				case Configuration.LOCATIONPROVIDER_NMEA:
-					//#debug debug
-					logger.debug("Connect to "+Configuration.getBtUrl());
-					if (! openBtConnection(Configuration.getBtUrl())){
-						running=false;
-						return;
-					}
-					receiveMessage("BT Connected");
-			}
 			switch (Configuration.getLocationProvider()){
 				case Configuration.LOCATIONPROVIDER_SIRF:
 					locationProducer = new SirfInput();
@@ -474,9 +457,13 @@ Runnable , GpsMidDisplayable{
 				running  = false;
 				return;
 			}
-			locationProducer.init(btGpsInputStream, btGpsOutputStream, this);
+			if (!locationProducer.init(this)) {
+				logger.info("Failed to initialise location producer");
+				running = false;
+				return;
+			}
 			if (Configuration.getCfgBitState(Configuration.CFGBIT_SND_CONNECT)) {
-				parent.mNoiseMaker.playSound("CONNECT");
+				GpsMid.mNoiseMaker.playSound("CONNECT");
 			}
 			//#debug debug
 			logger.debug("rm connect, add disconnect");
@@ -517,7 +504,7 @@ Runnable , GpsMidDisplayable{
 				wait(200);
 			} catch (InterruptedException e) {
 			}
-		}		
+		}
 	}
 
 	public void resume(){
@@ -527,108 +514,6 @@ Runnable , GpsMidDisplayable{
 		}
 		Thread thread = new Thread(this);
 		thread.start();
-	}
-
-
-	private boolean openBtConnection(String url){
-		if (btGpsInputStream != null){
-			return true;
-		}
-		if (url == null)
-			return false;
-		try {
-			conn = (StreamConnection) Connector.open(url);
-			btGpsInputStream = conn.openInputStream();
-			/**
-			 * There is at least one, perhaps more BT gps receivers, that
-			 * seem to kill the bluetooth connection if we don't send it
-			 * something for some reason. Perhaps due to poor powermanagment?
-			 * We don't have anything to send, so send an arbitrary 0.
-			 */
-			if (Configuration.getBtKeepAlive()) {
-				btGpsOutputStream = conn.openOutputStream();								
-			}
-			
-		} catch (SecurityException se) {
-			/**
-			 * The application was not permitted to connect to bluetooth  
-			 */
-			receiveMessage("Connectiong to BT not permitted");
-			return false;
-			
-		} catch (IOException e) {
-			receiveMessage("err BT:"+e.getMessage());
-			return false;
-		}
-		return true;
-	}
-	
-	private void closeBtConnection() {
-		if (btGpsInputStream != null){
-			try {
-				btGpsInputStream.close();
-			} catch (IOException e) {
-			}
-			btGpsInputStream=null;
-		}
-		if (btGpsOutputStream != null){
-			try {
-				btGpsOutputStream.close();
-			} catch (IOException e) {
-			}
-			btGpsOutputStream=null;
-		}
-		if (conn != null){
-			try {
-				conn.close();
-			} catch (IOException e) {
-			}
-			conn=null;			
-		}		
-	}
-	
-	/**
-	 * This function tries to reconnect to the bluetooth
-	 * it retries for up to 40 seconds and blocks in the
-	 * mean time, so this function has to be called from
-	 * within a separate thread. If successful, it will
-	 * reinitialise the location producer with the new
-	 * streams.
-	 * 
-	 * @return whether the reconnect was successful
-	 */
-	public boolean autoReconnectBtConnection() {
-		if (!Configuration.getBtAutoRecon()) {
-			logger.info("Not trying to reconnect");
-			return false;
-		}
-		if (Configuration.getCfgBitState(Configuration.CFGBIT_SND_DISCONNECT)) {
-			parent.mNoiseMaker.playSound("DISCONNECT");			
-		}
-		/**
-		 * If there are still parts of the old connection
-		 * left over, close these cleanly.
-		 */
-		closeBtConnection();
-		int reconnectFailures = 0;
-		while ((reconnectFailures < 4) && (! openBtConnection(Configuration.getBtUrl()))){
-			reconnectFailures++;
-			try {
-				Thread.sleep(10000);
-			} catch (InterruptedException e) {
-				return false;
-			}
-		}
-		if (reconnectFailures < 4) {
-			if (locationProducer != null) {
-				if (Configuration.getCfgBitState(Configuration.CFGBIT_SND_CONNECT)) {
-					parent.mNoiseMaker.playSound("CONNECT");
-				}
-				locationProducer.init(btGpsInputStream, btGpsOutputStream, this);
-				return true;
-			}
-		}
-		return false;
 	}
 
 	public void autoRouteRecalculate() {
@@ -1117,27 +1002,20 @@ Runnable , GpsMidDisplayable{
 	}
 
 	public void shutdown() {
-		try {
-			stopImageCollector();
-			if (btGpsInputStream != null) {
-				btGpsInputStream.close();
-				btGpsInputStream = null;
-			}
-			if (namesThread != null) {
-				namesThread.stop();
-				namesThread = null;
-			}
-			if (dictReader != null) {
-				dictReader.shutdown();
-				dictReader = null;
-			}
-			if (tileReader != null) {
-				tileReader.shutdown();
-				tileReader = null;
-			}
-
-		} catch (IOException e) {
+		stopImageCollector();
+		if (namesThread != null) {
+			namesThread.stop();
+			namesThread = null;
 		}
+		if (dictReader != null) {
+			dictReader.shutdown();
+			dictReader = null;
+		}
+		if (tileReader != null) {
+			tileReader.shutdown();
+			tileReader = null;
+		}
+
 		if (locationProducer != null){
 			locationProducer.close();
 		}
@@ -1877,7 +1755,7 @@ Runnable , GpsMidDisplayable{
 //#debug info
 		logger.info("enter locationDecoderEnd");
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_SND_DISCONNECT)) {
-			parent.mNoiseMaker.playSound("DISCONNECT");			
+			GpsMid.mNoiseMaker.playSound("DISCONNECT");
 		}
 		if (gpx != null) {
 			/**
@@ -1892,7 +1770,6 @@ Runnable , GpsMidDisplayable{
 			return;
 		}
 		locationProducer = null;
-		closeBtConnection();
 		notify();		
 		addCommand(CMDS[CONNECT_GPS_CMD]);
 //		addCommand(START_RECORD_CMD);

@@ -16,8 +16,12 @@ import java.io.OutputStream;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javax.microedition.io.Connector;
+import javax.microedition.io.StreamConnection;
+
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.nmea.NmeaInput;
+import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.LocationMsgProducer;
 import de.ueller.midlet.gps.LocationMsgReceiver;
 import de.ueller.midlet.gps.Logger;
@@ -37,8 +41,9 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 	private static final Logger logger = Logger.getInstance(NmeaInput.class,
 			Logger.TRACE);
 
-	protected InputStream ins;
-	private OutputStream outs;
+	protected InputStream btGpsInputStream;
+	private OutputStream btGpsOutputStream;
+	private StreamConnection conn;
 	protected OutputStream rawDataLogger;
 	protected Thread processorThread;
 	protected LocationMsgReceiver receiver;
@@ -51,24 +56,33 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 
 	protected class KeepAliveTimer extends TimerTask {
 		public void run() {
-			if (outs != null) {
+			if (btGpsOutputStream != null) {
 				try {
 					logger.debug("Writing bogus keep-alive");
-					outs.write(0);
+					btGpsOutputStream.write(0);
 				} catch (IOException e) {
 					logger.info("Closing keep alive timer");
 					this.cancel();
+				} catch (IllegalArgumentException iae) {
+					logger.silentexception("KeepAliveTimer went wrong", iae);
 				}
 			}
 		}
 	}
 
-	public void init(InputStream ins, OutputStream outs,
-			LocationMsgReceiver receiver) {
-		this.ins = ins;
-		this.outs = outs;
+	public boolean init(LocationMsgReceiver receiver) {
+		
 		this.receiver = receiver;
-		processorThread = new Thread(this, "NMEA Decoder");
+		
+		//#debug info
+		logger.info("Connect to "+Configuration.getBtUrl());
+		if (! openBtConnection(Configuration.getBtUrl())){
+			receiver.locationDecoderEnd();
+			return false;
+		}
+		receiver.receiveMessage("BT Connected");
+		
+		processorThread = new Thread(this, "Bluetooth Receiver Decoder");
 		processorThread.setPriority(Thread.MAX_PRIORITY);
 		processorThread.start();
 		/**
@@ -83,6 +97,7 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 			Timer t = new Timer();
 			t.schedule(tt, 1000, 1000);
 		}
+		return true;
 	}
 
 	abstract protected void process() throws IOException;
@@ -93,8 +108,8 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 		try {
 			try {
 				byte[] buf = new byte[512];
-				while (ins.available() > 0) {
-					int received = ins.read(buf);
+				while (btGpsInputStream.available() > 0) {
+					int received = btGpsInputStream.read(buf);
 					bytesReceived += received;
 					if (rawDataLogger != null) {
 						rawDataLogger.write(buf, 0, received);
@@ -111,6 +126,7 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 
 			byte timeCounter = 41;
 			while (!closed) {
+				//#debug debug
 				logger.debug("Bt receiver thread looped");
 				try {
 					timeCounter++;
@@ -145,7 +161,7 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 					logger.info("Failed to read from GPS trying to reconnect: "
 							+ e.getMessage());
 					receiver.receiveSolution("~~");
-					if (!Trace.getInstance().autoReconnectBtConnection()) {
+					if (!autoReconnectBtConnection()) {
 						logger.info("GPS bluethooth could not reconnect");
 						receiver.receiveMessage("Closing: " + e.getMessage());
 						close("Closed: " + e.getMessage());
@@ -165,11 +181,7 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 					}
 
 			}
-			if (message == null) {
-				receiver.locationDecoderEnd();
-			} else {
-				receiver.locationDecoderEnd(message);
-			}
+			
 		} catch (OutOfMemoryError oome) {
 			logger.fatal("GpsInput thread crashed as out of memory: "
 					+ oome.getMessage());
@@ -178,6 +190,22 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 			logger.fatal("GpsInput thread crashed unexpectedly: "
 					+ e.getMessage());
 			e.printStackTrace();
+		} finally {
+			if (closed) {
+				logger.info("Finished LocationProducer thread, closing bluetooth");
+				closeBtConnection();
+				if (message == null) {
+					receiver.locationDecoderEnd();
+				} else {
+					receiver.locationDecoderEnd(message);
+				}
+			} else {
+				/**
+				 * Don't need to do anything here.
+				 * This is the case when we are auto-reconnecting
+				 * and starting up a new bluetooth processing thread
+				 */
+			}
 		}
 	}
 
@@ -186,15 +214,16 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 	 * 
 	 * @see de.ueller.gps.nmea.LocationMsgProducer#close()
 	 */
-	public synchronized void close() {
-		disableRawLogging();
+	public void close() {
+		logger.info("Location producer closing");
 		closed = true;
+		if (processorThread != null)
+			processorThread.interrupt();
 	}
 
-	public synchronized void close(String message) {
-		disableRawLogging();
-		closed = true;
+	public void close(String message) {
 		this.message = message;
+		close();
 	}
 
 	public void enableRawLogging(OutputStream os) {
@@ -215,6 +244,113 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 	public void addLocationMsgReceiver(LocationMsgReceiver receiver) {
 		// TODO Auto-generated method stub
 
+	}
+	
+	private synchronized boolean openBtConnection(String url){
+		if (btGpsInputStream != null){
+			return true;
+		}
+		if (url == null)
+			return false;
+		try {
+			logger.info("Connector.open()");
+			conn = (StreamConnection) Connector.open(url);
+			logger.info("conn.openInputStream()");
+			btGpsInputStream = conn.openInputStream();
+			/**
+			 * There is at least one, perhaps more BT gps receivers, that
+			 * seem to kill the bluetooth connection if we don't send it
+			 * something for some reason. Perhaps due to poor powermanagment?
+			 * We don't have anything to send, so send an arbitrary 0.
+			 */
+			if (Configuration.getBtKeepAlive()) {
+				btGpsOutputStream = conn.openOutputStream();
+			}
+			
+		} catch (SecurityException se) {
+			/**
+			 * The application was not permitted to connect to bluetooth  
+			 */
+			receiver.receiveMessage("Connectiong to BT not permitted");
+			return false;
+			
+		} catch (IOException e) {
+			receiver.receiveMessage("err BT:"+e.getMessage());
+			return false;
+		}
+		return true;
+	}
+	
+	private synchronized void closeBtConnection() {
+		disableRawLogging();
+		if (btGpsInputStream != null){
+			try {
+				btGpsInputStream.close();
+			} catch (IOException e) {
+			}
+			btGpsInputStream=null;
+		}
+		if (btGpsOutputStream != null){
+			try {
+				btGpsOutputStream.close();
+			} catch (IOException e) {
+			}
+			btGpsOutputStream=null;
+		}
+		if (conn != null){
+			try {
+				conn.close();
+			} catch (IOException e) {
+			}
+			conn=null;
+		}		
+	}
+	
+	/**
+	 * This function tries to reconnect to the bluetooth
+	 * it retries for up to 40 seconds and blocks in the
+	 * mean time, so this function has to be called from
+	 * within a separate thread. If successful, it will
+	 * reinitialise the location producer with the new
+	 * streams.
+	 * 
+	 * @return whether the reconnect was successful
+	 */
+	private boolean autoReconnectBtConnection() {
+		if (!Configuration.getBtAutoRecon()) {
+			logger.info("Not trying to reconnect");
+			return false;
+		}
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_SND_DISCONNECT)) {
+			GpsMid.mNoiseMaker.playSound("DISCONNECT");
+		}
+		/**
+		 * If there are still parts of the old connection
+		 * left over, close these cleanly.
+		 */
+		closeBtConnection();
+		int reconnectFailures = 0;
+		logger.info("Trying to reconnect to bluetooth");
+		while (!closed && (reconnectFailures < 4) && (! openBtConnection(Configuration.getBtUrl()))){
+			reconnectFailures++;
+			logger.info("Failed to reconnect for the " + reconnectFailures + " time");
+			try {
+				Thread.sleep(10000);
+			} catch (InterruptedException e) {
+				logger.silentexception("INTERRUPTED!", e);
+				return false;
+			}
+		}
+		if (reconnectFailures < 4 && !closed) {
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_SND_CONNECT)) {
+				GpsMid.mNoiseMaker.playSound("CONNECT");
+			}
+			init(receiver);
+			return true;
+		}
+		if (!closed)
+			logger.error("Lost connection to GPS and failed to reconnect");
+		return false;
 	}
 
 }

@@ -29,11 +29,11 @@ public class NmeaInput extends BtReceiverInput {
 	private byte [] buf1 = new byte[512]; //Buffer used to read data from GPS-receiver
 	private byte [] buf2 = new byte[128]; //Buffer used to recombine data into NMEA sentences
 	
-	public void init(InputStream ins, OutputStream outs, LocationMsgReceiver receiver) {
+	public boolean init(LocationMsgReceiver receiver) {
 		//#debug
 		logger.debug("Starting NMEA");
-		smsg=new NmeaMessage(receiver);		
-		super.init(ins, outs, receiver);
+		smsg=new NmeaMessage(receiver);
+		return super.init(receiver);
 	}
 
 	public void process() throws IOException{		
@@ -45,9 +45,9 @@ public class NmeaInput extends BtReceiverInput {
 		//Indicate if the start and or the end of a NMEA sentence has been read
 		boolean found_start = false, found_end = false; 
 
-		while ((ins.available() > 0 || p1 > 0) && ! closed) {				
+		while ((btGpsInputStream.available() > 0 || p1 > 0) && ! closed) {				
 			if (p1 == 0) {					
-				len1 = ins.read(buf1);
+				len1 = btGpsInputStream.read(buf1);
 				bytesReceived += len1;
 				if (rawDataLogger != null) {
 					rawDataLogger.write(buf1, 0, len1);						

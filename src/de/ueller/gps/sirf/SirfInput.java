@@ -31,11 +31,11 @@ public class SirfInput extends BtReceiverInput {
 	private SirfMessage smsg;
 	private int msgsReceived;
 
-	public void init(InputStream ins, OutputStream outs, LocationMsgReceiver receiver) {
+	public boolean init(LocationMsgReceiver receiver) {
 		//#debug
 		logger.debug("Starting Sirf Decoder");
 		smsg=new SirfMessage(receiver);
-		super.init(ins, outs, receiver);
+		return super.init(receiver);
 	}
 
 	/*	public void run(){
@@ -43,13 +43,13 @@ public class SirfInput extends BtReceiverInput {
 		//#debug debug
 		logger.debug("start SIRF receiver");
 //		try {
-//			receiver.receiveMessage("eat up " + ins.available() + "bytes");
+//			receiver.receiveMessage("eat up " + btGpsInputStream.available() + "bytes");
 //			//#debug debug
-//			logger.debug("addr of ins:" + ins);
-//			while (ins.available() > 1022)
-//				ins.read(smsg.readBuffer,0,1023);
-//			while (ins.available() > 0)
-//				ins.read();
+//			logger.debug("addr of btGpsInputStream:" + btGpsInputStream);
+//			while (btGpsInputStream.available() > 1022)
+//				btGpsInputStream.read(smsg.readBuffer,0,1023);
+//			while (btGpsInputStream.available() > 0)
+//				btGpsInputStream.read();
 //		} catch (IOException e1) {
 //			//#debug error
 //			logger.error(e1.getMessage());
@@ -60,7 +60,7 @@ public class SirfInput extends BtReceiverInput {
 		byte timeCounter=21;
 		while (!closed){
 			//#debug debug
-			logger.debug("addr of ins:" + ins);
+			logger.debug("addr of btGpsInputStream:" + btGpsInputStream);
 			timeCounter++;
 			if (timeCounter > 4){
 				timeCounter = 0;
@@ -99,8 +99,8 @@ public class SirfInput extends BtReceiverInput {
 	public void process() throws IOException {
 		byte[] readBuffer = smsg.readBuffer;
 		//#debug debug
-		logger.debug("loop avail :" + ins.available() );
-		while (ins.available() > 0) {
+		logger.debug("loop avail :" + btGpsInputStream.available() );
+		while (btGpsInputStream.available() > 0) {
 			long mesChecksum;
 			switch (start) {
 			case 0:
@@ -108,11 +108,11 @@ public class SirfInput extends BtReceiverInput {
 				if (closed) {
 					return;
 				}
-				if (ins.available() < 2) {
+				if (btGpsInputStream.available() < 2) {
 					break;
 				}
-				if (ins.read() == 0xA0) {
-					if (ins.read() == 0xA2) {
+				if (btGpsInputStream.read() == 0xA0) {
+					if (btGpsInputStream.read() == 0xA2) {
 						start = 2;
 						msgsReceived++;
 					} else {
@@ -128,11 +128,11 @@ public class SirfInput extends BtReceiverInput {
 					break;
 				}
 			case 2:
-				if (ins.available() < 2) {
+				if (btGpsInputStream.available() < 2) {
 					break;
 				}
-				length = ins.read() * 256;
-				length += ins.read();
+				length = btGpsInputStream.read() * 256;
+				length += btGpsInputStream.read();
 				if (length >= 1023) {
 					//#debug info
 					connectError[LocationMsgReceiver.SIRF_FAIL_MSG_TO_LONG]++;
@@ -143,10 +143,10 @@ public class SirfInput extends BtReceiverInput {
 				start = 3;
 				smsg.length = length;
 			case 3:
-				if (ins.available() <= length) {
+				if (btGpsInputStream.available() <= length) {
 					break;
 				}
-				if (ins.read(readBuffer, 0, length) != length) {
+				if (btGpsInputStream.read(readBuffer, 0, length) != length) {
 					//#debug info
 					connectError[LocationMsgReceiver.SIRF_FAIL_MSG_INTERUPTED]++;
 					connectQuality-=2;
@@ -155,11 +155,11 @@ public class SirfInput extends BtReceiverInput {
 				}
 				start = 4;
 			case 4:
-				if (ins.available() < 2) {
+				if (btGpsInputStream.available() < 2) {
 					break;
 				}
-				checksum = ins.read();
-				checksum = checksum * 256 + ins.read();
+				checksum = btGpsInputStream.read();
+				checksum = checksum * 256 + btGpsInputStream.read();
 				mesChecksum = calcChecksum(smsg);
 				if (mesChecksum != checksum) {
 					connectQuality-=10;
@@ -169,11 +169,11 @@ public class SirfInput extends BtReceiverInput {
 				}
 				start = 5;
 			case 5:
-				if (ins.available() < 2) {
+				if (btGpsInputStream.available() < 2) {
 					break;
 				}
-				if (ins.read() == 0xB0) {
-					if (ins.read() == 0xB3) {
+				if (btGpsInputStream.read() == 0xB0) {
+					if (btGpsInputStream.read() == 0xB3) {
 						connectQuality++;
 						smsg.decodeMsg(smsg);
 						start = 0;
