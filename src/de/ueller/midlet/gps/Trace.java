@@ -1621,10 +1621,16 @@ Runnable , GpsMidDisplayable{
 		collected++;
 		if (gpsRecenter) {
 			center.setLatLon(pos.latitude, pos.longitude);
-			// don't rotate too fast
 			if (speed > 2) {
-				course = (int) ((pos.course * 3 + course) / 4)+360;
-				//course = (int) pos.course;
+				/*  don't rotate too fast
+				 *  FIXME: the following line to not rotate too fast
+				 * 	is commented out because it causes the map to perform
+				 *  almost a 360 degree rotation when course and pos.course
+				 *  are on different sides of North, e.g. at 359 and 1 degrees
+				 */
+				// course = (int) ((pos.course * 3 + course) / 4)+360;
+				// use pos.course directly without rotation slow-down
+				course = (int) pos.course;
 				while (course > 360) course-=360;
 			}
 		}		
