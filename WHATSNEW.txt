@@ -24,22 +24,6 @@ GpsMid 0.4.55
 	   - Display actual raw OSM key, value tags for a selected way (requires internet access)
 	   - Upload added, deleted and changed OSM key value pairs for a selected way (requires internet access)
 	   - Upload reversed direction of a selected way (requires internet access)
-       *** Routing ***
-       - Routing to POIs/waypoints is now possible - GpsMid will route you to the closest routable way
-       - highlighting the route solution path (the route solution is drawn on top if the map is synched with
-         the GPS receiver but when panning manually it will respect the layer information),
-         the minimum width of the route solution path can be specified in Setup/Routing Options 
-       - improved off-route detection
-       - routing instructions for entering and exiting motorways, for roundabouts, tunnels,
-         for bearing if two alternative ways lead straight on and for following the street until further notice,
-         when there's no instruction for at least 1200 meters
-       - browse the route instructions with up/down keys (can be deactivated in Setup)
-       - display the name of the street the route instruction leads into
-       - skip half turn instructions if the street name stays the same and straight-ons
-       - improved recalculation detection: you can now set the target, calculate the route
-         then Start Gps. When there's a new position from the GPS the route recalculation will
-         be automatically performed
-       - some wrong direction arrows are fixed
        *** Tracks and Waypoints ***
        - Perform actions like export/delete on multiple selected tracks (thx mbaeurle)
        - Progress bar for track log export(thx black_ivory)
@@ -54,13 +38,14 @@ GpsMid 0.4.55
 		 and OSM Account in Setup is specified
 	   - bug fix for file import not working on some phones (thx mbaeurle + colleague)
 	   - optimizations for waypoint label drawing (thx mbaeurle) 
-       *** GPS ***
-       - JSR-179: Some devices (e.g. Nokia E71 and E90) did not show the speed / rotate the map to the driving direction. 
        *** Recordings ***
        - Added feature to send an SMS with the current map position (map center)
          if JSR-120 is available. It is also possible
          to save the specified recipient as default recipient,
          even when leaving the form with the Back command
+       *** GPS ***
+       - JSR-179: Some devices (e.g. Nokia E71 and E90) did not show the speed / rotate the map to the driving direction.
+       - Returning to the main screen while GpsMid is reconnecting should be possible now  
        *** Map ***
        - added "Name Check" feature to Overview/Filter Map
          This can be used to show only unnamed/named or ways/areas/POIs containing a certain string in the map
@@ -69,6 +54,22 @@ GpsMid 0.4.55
        - added POIs for beacons, towers and power objects to high-style.zip (thx mbaeurle) 
        - added POIs for emergency phones and tourist informations to normal style-file and high-style.zip (thx mbaeurle) 
        - fixed crashes when displaying route connections via Debug Options
+       *** Routing ***
+       - Routing to POIs/waypoints is now possible - GpsMid will route you to the closest routable way
+       - display the name of the street the route instruction leads into
+       - highlighting the route solution path (the route solution is drawn on top if the map is synched with
+         the GPS receiver but when panning manually it will respect the layer information),
+         the minimum width of the route solution path can be specified in Setup/Routing Options 
+       - improved off-route detection
+       - routing instructions for entering and exiting motorways, for roundabouts, tunnels,
+         for bearing if two alternative ways lead straight on and for following the street until further notice,
+         when there's no instruction for at least 1200 meters
+       - browse the route instructions with up/down keys (can be deactivated in Setup)
+       - skip half turn instructions if the street name stays the same and straight-ons
+       - improved recalculation detection: you can now set the target, calculate the route
+         then Start Gps. When there's a new position from the GPS the route recalculation will
+         be automatically performed
+       - some wrong direction arrows are fixed
        *** Midlet creation with Osm2GpsMid ***
        - Osm2GpsMid is now compiled to be compatible with Java 1.5 Runtime (for example on older Mac OSX)
        - use HTTP compression for downloading map data if the server supports it
