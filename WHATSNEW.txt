@@ -20,7 +20,10 @@ GpsMid 0.4.55
          With the "#"-key you can toggle to sort the waypoints / favorites by name or distance.
          Typing at least 2 keys will give normal name search results as before.         
        *** OSM Editing ***
-       - !!!!!!!!!!!!!!!!!!!!!!!! describe here !!!!!!!!!!!!!!!!!!!!!!!!
+       - Upload GPX traces directly to the OSM server (requires internet access on the phone)
+	   - Display actual raw OSM key, value tags for a selected way (requires internet access)
+	   - Upload added, deleted and changed OSM key value pairs for a selected way (requires internet access)
+	   - Upload reversed direction of a selected way (requires internet access)
        *** Routing ***
        - Routing to POIs/waypoints is now possible - GpsMid will route you to the closest routable way
        - highlighting the route solution path (the route solution is drawn on top if the map is synched with
