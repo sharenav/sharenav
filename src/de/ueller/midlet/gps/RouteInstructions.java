@@ -902,9 +902,7 @@ public class RouteInstructions {
 								// if there is a close direction arrow after the current one
 								// inform the user about its direction
 								if (distNowThen <= PREPAREDISTANCE &&
-									// only if not both arrows are STRAIGHT_ON
-									!(aNow==RI_STRAIGHT_ON && aThen == RI_STRAIGHT_ON) &&
-									// and it is not a round about exit instruction
+									// only if it is not a round about exit instruction
 									!(aNow>=RI_1ST_EXIT && aNow<=RI_6TH_EXIT) &&
 									// and only as continuation of instruction
 									soundToPlay.length()!=0
@@ -1429,7 +1427,7 @@ public class RouteInstructions {
 	private static int idxNextInstructionArrow(int i) {
 		ConnectionWithNode c;
 		int a;
-		for (a=i; a<route.size()-2; a++){
+		for (a=i; a<route.size()-1; a++){
 			c = (ConnectionWithNode) route.elementAt(a);
 			//#debug debug
 			if (c==null) logger.debug("idxNextInstructionArrow got NULL connection");
@@ -1446,7 +1444,7 @@ public class RouteInstructions {
 	private static int idxPrevInstructionArrow(int i) {
 		ConnectionWithNode c;
 		int a;
-		for (a=i; a>0; a--){
+		for (a=i; a>=0; a--){
 			c = (ConnectionWithNode) route.elementAt(a);
 			//#debug debug
 			if (c==null) logger.debug("idxPrevInstructionArrow got NULL connection");
