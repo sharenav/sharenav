@@ -23,8 +23,9 @@ public class Logger {
 	private static boolean infoEnabled;
 	private static boolean debugEnabled;
 	private static boolean traceEnabled;
-	public Logger(GpsMid app){		
+	public Logger(GpsMid app){
 		Logger.app=app;
+		this.source = getClassName(app.getClass());
 	}
 	public Logger(Class c){
 		this.source=getClassName(c);		
