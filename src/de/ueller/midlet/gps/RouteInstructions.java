@@ -733,10 +733,10 @@ public class RouteInstructions {
 							iNamedArrow = iNow;
 						}
 						// get name for next street
-						nameNow=getInstructionName(iNow);
+						nameNow=getInstructionWayName(iNow);
 						// start searching for the 2nd next street for having it in the cache when needed
 						if (nameThen == null) {
-							String name = getInstructionName(iThen);
+							String name = getInstructionWayName(iThen);
 						}
 						//#debug debug
 						logger.debug("showRoute - iRealNow: " + iRealNow + " iNow: " + iNow + " iThen: " + iThen);						
@@ -1465,8 +1465,9 @@ public class RouteInstructions {
 	 * as this contains the name of the way to go into
 	 */
 	 
-	private String getInstructionName(int i) {
-		if (i >= route.size()) {
+	private String getInstructionWayName(int i) {
+		// never display a way name for the final instruction
+		if (i >= route.size()-1) {
 			return null;
 		}
 		ConnectionWithNode c = (ConnectionWithNode) route.elementAt(i);
