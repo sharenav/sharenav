@@ -243,7 +243,7 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 				 * When saving tracklogs and adaptive recording is enabled,
 				 * we reduce the frequency of saved samples if the speed drops
 				 * to less than a certain amount. This should increase storage
-				 * efficiency if one doesn't need if one doesn't need to repeatedly
+				 * efficiency if one doesn't need to repeatedly
 				 * store positions if the device is not moving
 				 * 
 				 * Chose the following arbitrary sampling frequency:
@@ -836,6 +836,13 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 				
 		oS.write("<trk>\r\n<trkseg>\r\n".getBytes());						
 		StringBuffer sb = new StringBuffer(128);
+		
+		//calculate intervall for progressbar update - progressbar is updated in 2% steps
+		int progUpdtIntervall = 1;
+		if (recorded >= 50){
+			progUpdtIntervall = (int)recorded/50;
+		}
+			
 		for (int i = 1; i <= recorded; i++) {
 			lat = trackIS.readFloat(); lon = trackIS.readFloat();
 			ele = trackIS.readShort();
@@ -879,12 +886,12 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 				writeUTF(oS, sb);
 			}
 			/**
-			 * Increment the progress bar every 127th trackpoint
+			 * Increment the progress bar when progress has increased in 2%
 			 * Don't update on every point as an optimisation.
 			 */
-			if (((i & 0x7f) == 0x7f) && (feedbackListener != null)) {
+			if (((i % progUpdtIntervall) == 0) && (feedbackListener != null)) {
 				//update the progressbar in GuiGpx
-				feedbackListener.updateProgressValue(0x7f);
+				feedbackListener.updateProgressValue(progUpdtIntervall);
 			}
 		}
 		oS.write("</trkseg>\r\n</trk>\r\n".getBytes());
@@ -892,7 +899,7 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		trackDatabase.closeRecordStore();
 		trackDatabase = null;
 		/**Update the progress bar by the remaining part*/
-		feedbackListener.updateProgressValue(recorded & 0x7f);
+		feedbackListener.updateProgressValue(recorded % progUpdtIntervall);
 	}
 	
 	private void writeUTF(OutputStream oS, StringBuffer sb) {

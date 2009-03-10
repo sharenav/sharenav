@@ -103,10 +103,6 @@ public class GpxImportHandler implements XmlParserContentHandler {
 		} else if (qName.equalsIgnoreCase("trkpt")) {
 			gpx.addTrkPt(p);
 			importedTpts++;
-			if (((importedTpts & 0x7f) == 0x7f) && (ul != null)) {
-				ul.updateProgress("Imported trackpoints: " + importedTpts
-						+ "\n");
-			}
 		} else if (qName.equalsIgnoreCase("ele")) {
 			ele = false;
 		} else if (qName.equalsIgnoreCase("time")) {

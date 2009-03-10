@@ -16,7 +16,10 @@ import java.util.Vector;
 import de.ueller.gps.data.Configuration;
 import de.ueller.midlet.gps.data.PersistEntity;
 
-
+/**
+ * GuiGpx represents the track management Screen. It allows export, import, deletion, display, and renaming of GPX-tracklogs. It handles the Gui-part of track-managment. The real gpx-data is handled in the Gpx class. 
+ * 
+ */
 public class GuiGpx extends List implements CommandListener,
 		GpsMidDisplayable, UploadListener, CompletionListener {
 
@@ -46,9 +49,9 @@ public class GuiGpx extends List implements CommandListener,
 	private StringBuffer sbProgress;
 	private boolean progressCloseable;
 	
-	/* Tracks displayed to the user. */
+	/** Tracks displayed to the user. */
 	private PersistEntity [] trks;
-	/* Tracks that are processed (exported, deleted). */
+	/** Tracks that are processed (exported, deleted). */
 	private Vector processTracks;
 	
 	public GuiGpx(Trace parent) throws Exception {
@@ -190,7 +193,7 @@ public class GuiGpx extends List implements CommandListener,
 	}
 	
 	public void startProgress(String title) {
-		showProgressDisplay(title);
+		showProgressDisplay(title, Gauge.INDEFINITE);
 	}
 	
 	public void setProgress(String message) {
@@ -251,7 +254,7 @@ public class GuiGpx extends List implements CommandListener,
 			progressDisplay.setCommandListener(this);
 			progressDisplay.setTimeout(Alert.FOREVER);
 			//creates a progressbar - not used in this case but it should be created when the alert is first created so it's present later
-			progressbar = new Gauge(null, false, 0, 0);
+			progressbar = new Gauge(null, false, Gauge.INDEFINITE, Gauge.CONTINUOUS_RUNNING);
 		} else {
 			progressDisplay.setTitle(title);
 			progressDisplay.setIndicator(null);
@@ -287,17 +290,26 @@ public class GuiGpx extends List implements CommandListener,
 	 */
 	protected void showProgressDisplay(String title, int progEndValue)
 	{
+		int progrMode = 0;
+		//catch illegal argument
+		if (progEndValue < 1){
+			progEndValue = Gauge.INDEFINITE;
+			//Set mode for progressbar
+			progrMode = Gauge.CONTINUOUS_RUNNING;
+		}
+		
 		if (progressDisplay == null) {
 			progressDisplay = new Alert(title);
 			progressDisplay.setCommandListener(this);
 			progressDisplay.setTimeout(Alert.FOREVER);
 			//create a progressbar that gives an indication about how many waypoints have already been exported
-			progressbar = new Gauge(null, false, progEndValue, 0);
+			progressbar = new Gauge(null, false, progEndValue, progrMode);
 			progressDisplay.setIndicator(progressbar);
 		} else {
 			progressDisplay.setTitle(title);
 			progressbar.setMaxValue(progEndValue);
-			progressbar.setValue(0);
+			progressbar.setValue(progrMode);
+			progressDisplay.setIndicator(progressbar);
 		}
 		// Empty string buffer for alert text.
 		sbProgress = new StringBuffer();
@@ -337,6 +349,8 @@ public class GuiGpx extends List implements CommandListener,
 	 */
 	protected void finishProgressDisplay()
 	{
+		//some phones only show a progressbar that's continuous running. So we remove the bar to show that the action is completed
+		progressDisplay.setIndicator(null);
 		progressCloseable = true;
 	}
 	
