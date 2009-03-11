@@ -967,23 +967,26 @@ public class RouteInstructions {
 							}
 						}
 					}
-				}
-				routeRecalculationRequired = isOffRoute(route, center);
-				if ( routeRecalculationRequired && trace.gpsRecenter) {
-					//#debug debug
-					logger.debug("off route detected");												
-					if (icCountOffRouteDetected == 0) {
-						// remember number of recalcs so we can check in RouteInstructions if the new source way must have been determined in the meanwhile
-						icCountOffRouteDetected = ImageCollector.createImageCount;
-					/*
-					 * if at least 1-2 times the map image has been collected since detecting off-route
-					 * we can be sure the source way has been updated with one at the new position
-					 */ 
-					} else if (ImageCollector.createImageCount > icCountOffRouteDetected + 1) {
-						soundToPlay.setLength(0);
-						trace.autoRouteRecalculate();
-						icCountOffRouteDetected = 0;
-					 }
+					routeRecalculationRequired = isOffRoute(route, center);
+					if ( routeRecalculationRequired && trace.gpsRecenter) {
+						//#debug debug
+						logger.debug("off route detected");												
+						if (icCountOffRouteDetected == 0) {
+							// remember number of recalcs so we can check in RouteInstructions if the new source way must have been determined in the meanwhile
+							icCountOffRouteDetected = ImageCollector.createImageCount;
+						/*
+						 * if at least 1-2 times the map image has been collected since detecting off-route
+						 * we can be sure the source way has been updated with one at the new position
+						 */ 
+						} else if (ImageCollector.createImageCount > icCountOffRouteDetected + 1) {
+							soundToPlay.setLength(0);
+							trace.autoRouteRecalculate();
+							icCountOffRouteDetected = 0;
+						 }
+					}
+					if (aNow == RI_TARGET_REACHED) {
+						routeInstructionColor = 0x00808000;
+					}
 				}
 			}
 			//#debug debug
@@ -1437,6 +1440,9 @@ public class RouteInstructions {
 			) {
 				break;
 			}
+		}
+		if (a==route.size()) {
+			a--;
 		}
 		return a;
 	}
