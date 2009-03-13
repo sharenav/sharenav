@@ -63,7 +63,6 @@ public class WaypointsTile extends Tile {
 			}
 		} else {
 			wayPts.addElement(wayPt);
-			totalWayPts++;
 
 			if (wayPt.lat < minLat) {
 				minLat = wayPt.lat;
@@ -81,6 +80,7 @@ public class WaypointsTile extends Tile {
 				splitTile();
 			}
 		}
+		totalWayPts++;
 	}
 
 	public synchronized PositionMark[] listWayPt() {

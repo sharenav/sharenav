@@ -69,7 +69,15 @@ public class GuiWaypointSave extends Form implements CommandListener {
 	}
 	
 	public void show() {
-		GpsMid.getInstance().show(this);
-		//Display.getDisplay(parent.getParent()).setCurrent(this);
+		if (parent.gpx.getNumberWaypoints() < 255) {
+			GpsMid.getInstance().show(this);
+		}
+		else
+		{
+			// Show alert that no more waypoints can be saved 
+			// (because the J2ME List class can not display more than
+			// 255 items - at least on some phones).
+			GpsMid.getInstance().alert("Error", "No more waypoints can be saved due to a platform restriction. Hint: Export the waypoints to a file, then delete them.", Alert.FOREVER);
+		}
 	}
 }
