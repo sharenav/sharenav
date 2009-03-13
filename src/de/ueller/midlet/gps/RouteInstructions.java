@@ -979,7 +979,7 @@ public class RouteInstructions {
 					}
 					routeRecalculationRequired = isOffRoute(route, center);
 					if (trace.atTarget || (aNow == RI_TARGET_REACHED && intDistNow < PASSINGDISTANCE)) {
-						routeInstructionColor = 0x00FFFF64;
+						routeInstructionColor = 0x00808000;
 					} else if ( routeRecalculationRequired && trace.gpsRecenter) {
 						//#debug debug
 						logger.debug("off route detected");												
@@ -1002,7 +1002,7 @@ public class RouteInstructions {
 						nameNow = null;
 						sbRouteInstruction.setLength(0);
 						sbRouteInstruction.append("check direction");
-						routeInstructionColor = 0x00808000;
+						routeInstructionColor = 0x00FFFF64;
 					}
 				}
 			}
