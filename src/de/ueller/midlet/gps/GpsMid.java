@@ -79,7 +79,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 	private final List loghist = new List("Log Hist", Choice.IMPLICIT);
 	private String root;
 	// #debug
-	private Logger l;
+	private Logger log;
 
 	private OutputStreamWriter logFile;
 
@@ -107,9 +107,9 @@ public class GpsMid extends MIDlet implements CommandListener {
 	public GpsMid() {
 		String errorMsg = null;
 		instance = this;
-		System.out.println("Init GpsMid");
-		l = new Logger(this);
-		l.setLevel(Logger.INFO);
+		System.out.println("Init GpsMid");		
+		log = new Logger(this);
+		log.setLevel(Logger.INFO);
 		Configuration.read();
 
 		enableDebugFileLogging();
@@ -147,7 +147,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 		// RouteNodeTools.initRecordStore();
 		startBackLightTimer();
 		if (errorMsg != null) {
-			l.fatal(errorMsg);
+			log.fatal(errorMsg);
 		}
 	}
 
@@ -173,8 +173,6 @@ public class GpsMid extends MIDlet implements CommandListener {
 		if (trace != null) {
 			trace.pause();
 		}
-		// TODO Auto-generated method stub
-
 	}
 
 	protected void startApp() throws MIDletStateChangeException {
@@ -192,22 +190,23 @@ public class GpsMid extends MIDlet implements CommandListener {
 			trace.resume();
 			// trace.show();
 		}
+
 		//#if polish.api.contenthandler
 		try {
-			l.info("Trying to register JSR211 Content Handler");
+			log.info("Trying to register JSR211 Content Handler");
 			Class handlerClass = Class
 					.forName("de.ueller.midlet.gps.importexport.Jsr211Impl");
 			Object handlerObject = handlerClass.newInstance();
 			Jsr211ContentHandlerInterface handler = (Jsr211ContentHandlerInterface) handlerObject;
 			handler.registerContentHandler();
 		} catch (NoClassDefFoundError ncdfe) {
-			l.error("JSR211 is not available", true);
+			log.error("JSR211 is not available", true);
 		} catch (ClassNotFoundException cnfe) {
-			l.error("JSR211 is not available", true);
+			log.error("JSR211 is not available", true);
 		} catch (InstantiationException e) {
-			l.exception("ContentHandler invokation failed", e);
+			log.exception("ContentHandler invokation failed", e);
 		} catch (IllegalAccessException e) {
-			l.exception("ContentHandler invokation failed", e);
+			log.exception("ContentHandler invokation failed", e);
 		}
 		//#endif
 	}
@@ -215,7 +214,6 @@ public class GpsMid extends MIDlet implements CommandListener {
 	public void commandAction(Command c, Displayable d) {
 		if (c == EXIT_CMD) {
 			exit();
-
 			return;
 		}
 		if (c == BACK_CMD) {
@@ -236,7 +234,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 					trace.show();
 				}
 			} catch (Exception e) {
-				l.exception("Failed to display map ", e);
+				log.exception("Failed to display map ", e);
 				return;
 			}
 			break;
@@ -248,7 +246,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 				GuiSearch search = new GuiSearch(trace);
 				search.show();
 			} catch (Exception e) {
-				l.exception("Failed to display search screen ", e);
+				log.exception("Failed to display search screen ", e);
 			}
 			break;
 		case 2:
@@ -297,9 +295,9 @@ public class GpsMid extends MIDlet implements CommandListener {
 
 	public void alert(String title, String message, int timeout) {
 		//#debug info
-		l.info("Showing Alert: " + message);
-		if (Trace.getInstance() != null && Trace.getInstance().isShown()) {
-			Trace.getInstance().alert(title, message, timeout);
+		log.info("Showing Alert: " + message);
+		if ((trace != null) && (trace.isShown()) && (timeout != Alert.FOREVER)) {
+			trace.alert(title, message, timeout);
 		} else {
 			Alert alert = new Alert(title);
 			alert.setTimeout(timeout);
@@ -319,7 +317,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 				 * Not much we can do about this, other than just ignore the
 				 * exception and not display the new alert.
 				 */
-				l.info("Could not display this alert (" + message + "), "
+				log.info("Could not display this alert (" + message + "), "
 						+ iae.getMessage());
 			}
 		}
@@ -334,7 +332,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 			prevDisplayable = shouldBeDisplaying;
 			Display.getDisplay(this).setCurrent(d);
 		} catch (IllegalArgumentException iae) {
-			l.info("Could not display the new displayable " + d + ", "
+			log.info("Could not display the new displayable " + d + ", "
 					+ iae.getMessage());
 		}
 		/**
@@ -357,7 +355,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 	}
 
 	public void log(String msg) {
-		if (l != null) {
+		if (log != null) {
 			//#debug
 			System.out.println(msg);
 			/**
@@ -401,7 +399,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 							((FileConnection) debugLogConn).openOutputStream());
 				}
 			} catch (IOException e) {
-				l.exception("Couldn't connect to the debug log file", e);
+				log.exception("Couldn't connect to the debug log file", e);
 				e.printStackTrace();
 			} catch (SecurityException se) {
 				/**
@@ -437,8 +435,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 					|| Configuration
 							.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIAFLASH) || Configuration
 					.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_SIEMENS))) {
-				l
-						.error("Backlight cannot be kept on when no 'with'-method is specified in Setup");
+				log.error("Backlight cannot be kept on when no 'with'-method is specified in Setup");
 			}
 			if (lightTimer == null) {
 				lightTimer = new Thread(new Runnable() {
@@ -485,7 +482,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 													.forName("com.siemens.mp.game.Light");
 											SiemGameLight.SwitchOn();
 										} catch (Exception e) {
-											l.exception("Siemens API error: ",
+											log.exception("Siemens API error: ",
 													e);
 										}
 										//#endif
@@ -513,7 +510,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 									.error("Backlight prodding failed, API not supported: "
 											+ ncdfe.getMessage());
 						}
-					}
+					} // run()
 				});
 				lightTimer.setPriority(Thread.MIN_PRIORITY);
 				lightTimer.start();
@@ -538,13 +535,13 @@ public class GpsMid extends MIDlet implements CommandListener {
 	}
 
 	public void showBackLightLevel() {
-		if (Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON,
-				false)) {
-			alert("Backlight", "Backlight "
-					+ (backLightLevel == 100 ? "ON" : (backLightLevel + "%")),
-					750);
+		if ( Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON, 
+				false) ) {
+			alert("Backlight", "Backlight " 
+					+ (backLightLevel == 100 ? "ON" : (backLightLevel + "%")), 
+					1000);
 		} else {
-			alert("Backlight", "Backlight off", 750);
+			alert("Backlight", "Backlight off", 1000);
 		}
 		stopBackLightTimer();
 		startBackLightTimer();
@@ -585,7 +582,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 		// }
 		// }
 		// System.gc();
-		l.info("Maximum phone memory: " + maxMem);
+		log.info("Maximum phone memory: " + maxMem);
 		return maxMem;
 	}
 
@@ -599,15 +596,15 @@ public class GpsMid extends MIDlet implements CommandListener {
 		long totalMem = runt.totalMemory();
 		if (totalMem > phoneMaxMemory) {
 			phoneMaxMemory = totalMem;
-			l.info("New phoneMaxMemory: " + phoneMaxMemory);
+			log.info("New phoneMaxMemory: " + phoneMaxMemory);
 		}
 		if ((freeMem < 30000)
 				|| ((totalMem >= phoneMaxMemory) && ((float) freeMem
 						/ (float) totalMem < 0.10f))) {
-			l.trace("Memory is low, need freeing " + freeMem);
+			log.trace("Memory is low, need freeing " + freeMem);
 			return true;
 		} else {
-			l.trace("Enough memory, no need to cleanup");
+			log.trace("Enough memory, no need to cleanup");
 			return false;
 		}
 	}
