@@ -18,6 +18,7 @@ import de.ueller.gps.nmea.NmeaMessage;
 import de.ueller.gps.tools.StringTokenizer;
 import de.ueller.midlet.gps.LocationMsgProducer;
 import de.ueller.midlet.gps.LocationMsgReceiver;
+import de.ueller.midlet.gps.LocationMsgReceiverList;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
 
@@ -26,7 +27,7 @@ public class JSR179Input implements LocationListener ,LocationMsgProducer{
 
     /** location provider */
     private LocationProvider locationProvider = null;
-	private LocationMsgReceiver receiver;
+	private LocationMsgReceiverList receiver;
 	private NmeaMessage smsg;
 	Date date=new Date();
 	Position pos=new Position(0f,0f,0f,0f,0f,0,date);
@@ -40,7 +41,8 @@ public class JSR179Input implements LocationListener ,LocationMsgProducer{
 	
 	public boolean init(LocationMsgReceiver receiver) {
 		logger.info("start JSR179 LocationProvider");
-		this.receiver = receiver;
+		this.receiver = new LocationMsgReceiverList();
+		this.receiver.addReceiver(receiver);
 		createLocationProvider();
 		//We may be able to get some additional information such as the number of satellites form the NMEA string
 		smsg=new NmeaMessage(receiver);
@@ -184,6 +186,12 @@ public class JSR179Input implements LocationListener ,LocationMsgProducer{
 	}
 	public void enableRawLogging(OutputStream os) {
 		rawDataLogger = os;		
+	}
+	public void addLocationMsgReceiver(LocationMsgReceiver rec) {
+		receiver.addReceiver(rec);
+	}
+	public boolean removeLocationMsgReceiver(LocationMsgReceiver rec) {
+		return receiver.removeReceiver(rec);
 	}
 
 }

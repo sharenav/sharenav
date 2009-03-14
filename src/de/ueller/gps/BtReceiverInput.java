@@ -24,6 +24,7 @@ import de.ueller.gps.nmea.NmeaInput;
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.LocationMsgProducer;
 import de.ueller.midlet.gps.LocationMsgReceiver;
+import de.ueller.midlet.gps.LocationMsgReceiverList;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
 
@@ -46,7 +47,7 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 	private StreamConnection conn;
 	protected OutputStream rawDataLogger;
 	protected Thread processorThread;
-	protected LocationMsgReceiver receiver;
+	protected LocationMsgReceiverList receiver;
 	protected boolean closed = false;
 	protected byte connectQuality = 100;
 	protected int bytesReceived = 0;
@@ -72,7 +73,8 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 
 	public boolean init(LocationMsgReceiver receiver) {
 		
-		this.receiver = receiver;
+		this.receiver = new LocationMsgReceiverList();
+		this.receiver.addReceiver(receiver);
 		
 		//#debug info
 		logger.info("Connect to "+Configuration.getBtUrl());
@@ -241,11 +243,14 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 		}
 	}
 
-	public void addLocationMsgReceiver(LocationMsgReceiver receiver) {
-		// TODO Auto-generated method stub
-
+	public void addLocationMsgReceiver(LocationMsgReceiver rec) {
+		receiver.addReceiver(rec);
 	}
 	
+	public boolean removeLocationMsgReceiver(LocationMsgReceiver rec) {
+		return receiver.removeReceiver(rec);
+	}
+
 	private synchronized boolean openBtConnection(String url){
 		if (btGpsInputStream != null){
 			return true;
