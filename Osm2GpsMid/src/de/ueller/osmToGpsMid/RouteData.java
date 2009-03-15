@@ -57,6 +57,7 @@ public class RouteData {
 			if (! w.isAccessByCar()){
 				continue;
 			}
+			//TODO: explain what are subpaths?
 			for (SubPath s:w.getSubPaths()){
 				Node lastNode=null;
 				for (Node n:s.getNodes()){
@@ -86,6 +87,7 @@ public class RouteData {
 	/**
 	 * @param nl
 	 */
+	// TODO: explain
 	private void addConnections(List<Node> nl,Way w) {
 		RouteNode from=null;
 		int lastIndex=nl.size();
@@ -152,6 +154,8 @@ public class RouteData {
 		to.connectedFrom.add(c);
 		// roundabouts don't need to be explicitly tagged as oneways in OSM according to http://wiki.openstreetmap.org/wiki/Tag:junction%3Droundabout
 		if (! (w.isOneWay() || w.isRoundabout()) ){
+			// add connection in the other direction as well, if this is no oneWay
+			// TODO: explain Doesn't this add duplicates when addconnection() is called later on with from and to exchanged or does this not happen?
 			Connection cr=new Connection(from,dist,(int)time,MyMath.inversBearing(be),MyMath.inversBearing(bs),w);
 			cr.from=to;
 			to.connected.add(cr);
