@@ -34,6 +34,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import de.ueller.osmToGpsMid.Configuration;
 import de.ueller.osmToGpsMid.model.ConditionTuple;
+import de.ueller.osmToGpsMid.model.EntityDescription;
 import de.ueller.osmToGpsMid.model.POIdescription;
 import de.ueller.osmToGpsMid.model.SoundDescription;
 import de.ueller.osmToGpsMid.model.WayDescription;
@@ -41,17 +42,17 @@ import de.ueller.osmToGpsMid.model.WayDescription;
 public class LegendParser extends DefaultHandler{
 	public static Configuration config;
 	
-	private Hashtable<String, Hashtable<String,Set<POIdescription>>> poiMap;
-	private Hashtable<String, Hashtable<String,Set<WayDescription>>> wayMap;
-	private LongTri<POIdescription> pois;
-	private LongTri<WayDescription> ways;
+	private Hashtable<String, Hashtable<String,Set<EntityDescription>>> poiMap;
+	private Hashtable<String, Hashtable<String,Set<EntityDescription>>> wayMap;
+	private LongTri<EntityDescription> pois;
+	private LongTri<EntityDescription> ways;
 	private Vector<SoundDescription> sounds;
 	private POIdescription currentPoi;
 	private SoundDescription currentSound;
 	private WayDescription currentWay;
 	private String currentKey;
-	private Hashtable<String,Set<POIdescription>> keyValuesPoi;
-	private Hashtable<String,Set<WayDescription>> keyValuesWay;
+	private Hashtable<String,Set<EntityDescription>> keyValuesPoi;
+	private Hashtable<String,Set<EntityDescription>> keyValuesWay;
 	private final byte READING_WAYS=0;
 	private final byte READING_POIS=1;
 	private final byte READING_SOUNDS=2;
@@ -101,8 +102,8 @@ public class LegendParser extends DefaultHandler{
 
 	private void init(InputStream i) {
 		try {			
-			poiMap = new Hashtable<String, Hashtable<String,Set<POIdescription>>>();
-			pois = new LongTri<POIdescription>();
+			poiMap = new Hashtable<String, Hashtable<String,Set<EntityDescription>>>();
+			pois = new LongTri<EntityDescription>();
 			currentPoi = new POIdescription();
 			/**
 			 * Add a bogous POI description, to reserve type 0 as a special marker
@@ -113,8 +114,8 @@ public class LegendParser extends DefaultHandler{
 			currentPoi.description = "No description";
 			pois.put(currentPoi.typeNum, currentPoi);
 			
-			wayMap = new Hashtable<String, Hashtable<String,Set<WayDescription>>>();
-			ways = new LongTri<WayDescription>();
+			wayMap = new Hashtable<String, Hashtable<String,Set<EntityDescription>>>();
+			ways = new LongTri<EntityDescription>();
 			currentWay = new WayDescription();
 			/**
 			 * Add a bogous Way description, to reserve type 0 as a special marker
@@ -215,7 +216,7 @@ public class LegendParser extends DefaultHandler{
 					currentKey = atts.getValue("tag");
 					keyValuesPoi = poiMap.get(currentKey);
 					if (keyValuesPoi == null) {
-						keyValuesPoi = new Hashtable<String,Set<POIdescription>>();
+						keyValuesPoi = new Hashtable<String,Set<EntityDescription>>();
 						poiMap.put(currentKey, keyValuesPoi);
 					}
 				}
@@ -233,9 +234,9 @@ public class LegendParser extends DefaultHandler{
 							System.out.println("WARNING: Rule priority is invalid, using default");
 						}
 					}
-					Set<POIdescription> poiDescs = keyValuesPoi.get(currentPoi.value);
+					Set<EntityDescription> poiDescs = keyValuesPoi.get(currentPoi.value);
 					if (poiDescs == null)
-						poiDescs = new HashSet<POIdescription>();
+						poiDescs = new HashSet<EntityDescription>();
 					poiDescs.add(currentPoi);
 					keyValuesPoi.put(currentPoi.value, poiDescs);					
 					pois.put(currentPoi.typeNum, currentPoi);
@@ -266,12 +267,12 @@ public class LegendParser extends DefaultHandler{
 				}
 				if (qName.equals("scale")) {
 					try {
-						currentPoi.minImageScale = config.getRealScale( Integer.parseInt(atts.getValue("scale")) );
+						currentPoi.minEntityScale = config.getRealScale( Integer.parseInt(atts.getValue("scale")) );
 					} catch (NumberFormatException nfe) {
 						System.out.println("Error: scale for " +currentPoi.description + " is incorrect");
 					}
 					if (currentPoi.minTextScale == 0)
-						currentPoi.minTextScale = currentPoi.minImageScale;
+						currentPoi.minTextScale = currentPoi.minEntityScale;
 				}
 				if (qName.equals("textscale")) {
 					try {
@@ -298,7 +299,7 @@ public class LegendParser extends DefaultHandler{
 					currentKey = atts.getValue("tag");
 					keyValuesWay = wayMap.get(currentKey);
 					if (keyValuesWay == null) {
-						keyValuesWay = new Hashtable<String,Set<WayDescription>>();
+						keyValuesWay = new Hashtable<String,Set<EntityDescription>>();
 						wayMap.put(currentKey, keyValuesWay);
 					}
 				}
@@ -308,9 +309,9 @@ public class LegendParser extends DefaultHandler{
 					currentWay.key = currentKey;
 					currentWay.value = atts.getValue("name");
 					currentWay.hideable = true;
-					Set<WayDescription> wayDescs = keyValuesWay.get(currentWay.value);
+					Set<EntityDescription> wayDescs = keyValuesWay.get(currentWay.value);
 					if (wayDescs == null)
-						wayDescs = new HashSet<WayDescription>();
+						wayDescs = new HashSet<EntityDescription>();
 					wayDescs.add(currentWay);
 					keyValuesWay.put(currentWay.value, wayDescs);
 					String rulePrio = atts.getValue("priority");
@@ -349,12 +350,13 @@ public class LegendParser extends DefaultHandler{
 				}
 				if (qName.equals("scale")) {
 					try {
-						currentWay.minScale = config.getRealScale( Integer.parseInt(atts.getValue("scale")) );				
+						currentWay.minEntityScale = config.getRealScale( Integer.parseInt(atts.getValue("scale")) );
 					} catch (NumberFormatException nfe) {
 						System.out.println("Error: scale for " +currentWay.description + " is incorrect");
 					}
 					if (currentWay.minTextScale == 0)
-							currentWay.minTextScale = currentWay.minScale;			}
+							currentWay.minTextScale = currentWay.minEntityScale;
+				}
 	
 				if (qName.equals("textscale")) {
 					try {
@@ -458,27 +460,27 @@ public class LegendParser extends DefaultHandler{
 		System.out.println("Error: " + e);
 		throw e;	
 	}
-	public Hashtable<String, Hashtable<String,Set<POIdescription>>> getPOIlegend() {
+	public Hashtable<String, Hashtable<String,Set<EntityDescription>>> getPOIlegend() {
 		return poiMap;
 	}
 	
 	public POIdescription getPOIDesc(byte type) {
-		return pois.get(type);
+		return (POIdescription)pois.get(type);
 	}
 	
-	public Collection<POIdescription> getPOIDescs() {
+	public Collection<EntityDescription> getPOIDescs() {
 		return pois.values();
 	}
 	
-	public Hashtable<String, Hashtable<String,Set<WayDescription>>> getWayLegend() {
+	public Hashtable<String, Hashtable<String,Set<EntityDescription>>> getWayLegend() {
 		return wayMap;
 	}
 	
 	public WayDescription getWayDesc(byte type) {
-		return ways.get(type);
+		return (WayDescription)ways.get(type);
 	}
 	
-	public Collection<WayDescription> getWayDescs() {
+	public Collection<EntityDescription> getWayDescs() {
 		return ways.values();
 	}
 	public Vector<SoundDescription> getSoundDescs() {

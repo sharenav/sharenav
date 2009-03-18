@@ -108,60 +108,15 @@ public class Way extends Entity implements Comparable<Way>{
 	}   
     
 	private byte calcType(Configuration c){
-		//System.out.println("Calculating type for " + toString());
-		if (c != null) {			
-			Hashtable<String, Hashtable<String,Set<WayDescription>>> legend = c.getWayLegend();
-			if (legend != null) {				
-				Set<String> tags = getTags();
-				if (tags != null) {
-					byte currentPrio = Byte.MIN_VALUE;
-					for (String s: tags) {						
-						Hashtable<String,Set<WayDescription>> keyValues = legend.get(s);
-						//System.out.println("Calculating type for " + toString() + " " + s + " " + keyValues);
-						if (keyValues != null) {
-							//System.out.println("found key index for " + s);
-							Set<WayDescription> ways = keyValues.get(getAttribute(s));
-							if (ways == null) {
-								ways = keyValues.get("*");
-							}
-							if (ways != null) {
-								for (WayDescription way : ways) {
-									if ((way != null) && (way.rulePriority > currentPrio)) {
-										boolean failedSpecialisations = false;
-										if (way.specialisation != null) {
-											boolean failedSpec = false;
-											for (ConditionTuple ct : way.specialisation) {
-												//System.out.println("Testing specialisation " + ct + " on " + this);
-												failedSpec = !ct.exclude;
-												for (String ss : tags) {
-													if ( (ss.equalsIgnoreCase(ct.key)) &&
-														 (
-															getAttribute(ss).equalsIgnoreCase(ct.value) ||
-															ct.value.equals("*")
-														 )
-													) {													
-														failedSpec = ct.exclude;
-													}
-												}
-												if (failedSpec) 
-													failedSpecialisations = true;
-											}									
-										}
-										if (!failedSpecialisations) {
-											currentPrio = way.rulePriority;
-											type = way.typeNum;
-											way.noWaysOfType++;
-										}
-									}
-								}
-							}
-						}
-					}
-					return type;
-				}			
-			}
+		WayDescription way = (WayDescription)super.calcType(c.getWayLegend());
+		
+		if (way == null) {
+			type = -1;
+		} else {
+			type = way.typeNum;
+			way.noWaysOfType++;
 		}
-		return -1;		
+		return type;
 	}
 	
 	public String getName() {
@@ -196,7 +151,7 @@ public class Way extends Entity implements Comparable<Way>{
 			//System.out.println("unknown type for node " + toString());
 			return 3;
 		}
-		int maxScale = c.getWayDesc(type).minScale;		
+		int maxScale = c.getWayDesc(type).minEntityScale;
 		if (maxScale < 45000)
 			return 3;
 		if (maxScale < 180000)

@@ -88,61 +88,19 @@ public class Node extends Entity{
 			if (type == -1) {
 				type = calcType(c);
 			}
-			return type;			
+			return type;
 		}
 	
 
 	}
-	private byte calcType(Configuration c){		
-		if (c != null) {
-			Hashtable<String, Hashtable<String,Set<POIdescription>>> legend = c.getPOIlegend();
-			if (legend != null) {				
-				Set<String> tags = getTags();
-				if (tags != null) {
-					byte currentPrio = Byte.MIN_VALUE;
-					for (String s: tags) {						
-						Hashtable<String,Set<POIdescription>> keyValues = legend.get(s);
-						if (keyValues != null) {							
-							Set<POIdescription> pois = keyValues.get(getAttribute(s));
-							if (pois == null) {
-								pois = keyValues.get("*");
-							}
-							if (pois != null) {
-								for (POIdescription poi : pois) {
-									if ((poi != null) && (poi.rulePriority > currentPrio)) {
-										boolean failedSpecialisations = false;
-										if (poi.specialisation != null) {
-											boolean failedSpec = false;
-											for (ConditionTuple ct : poi.specialisation) {										
-												failedSpec = !ct.exclude;
-												for (String ss : tags) {
-													if ( (ss.equalsIgnoreCase(ct.key)) &&
-														 (
-															getAttribute(ss).equalsIgnoreCase(ct.value) ||
-															ct.value.equals("*")
-														 )
-														) {		
-														failedSpec = ct.exclude;
-													}
-												}
-												if (failedSpec) 
-													failedSpecialisations = true;
-											}																		
-										}
-										if (!failedSpecialisations) {
-											currentPrio = poi.rulePriority;
-											type = poi.typeNum;
-										}
-									}
-								}
-							}
-						}
-					}
-					return type;
-				}			
-			}
+	private byte calcType(Configuration c){
+		EntityDescription poi = super.calcType(c.getPOIlegend());
+		if (poi == null) {
+			type = -1;
+		} else {
+			type = poi.typeNum;
 		}
-		return -1;		
+		return type;
 	}
 	
 	public byte getZoomlevel(Configuration c){
@@ -150,7 +108,7 @@ public class Node extends Entity{
 			//System.out.println("unknown type for node " + toString());
 			return 3;
 		}
-		int maxScale = c.getpoiDesc(type).minImageScale;		
+		int maxScale = c.getpoiDesc(type).minEntityScale;
 		if (maxScale < 45000)
 			return 3;
 		if (maxScale < 180000)

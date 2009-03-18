@@ -38,6 +38,7 @@ import java.net.URL;
 import org.apache.tools.bzip2.CBZip2InputStream;
 
 import de.ueller.osmToGpsMid.model.Bounds;
+import de.ueller.osmToGpsMid.model.EntityDescription;
 import de.ueller.osmToGpsMid.model.SoundDescription;
 import de.ueller.osmToGpsMid.model.POIdescription;
 import de.ueller.osmToGpsMid.model.WayDescription;
@@ -491,11 +492,11 @@ public class Configuration {
 			return maxRouteTileSize;
 		}
 
-		public Hashtable<String, Hashtable<String,Set<POIdescription>>> getPOIlegend() {
+		public Hashtable<String, Hashtable<String,Set<EntityDescription>>> getPOIlegend() {
 			return legend.getPOIlegend();
 		}
 		
-		public Hashtable<String, Hashtable<String,Set<WayDescription>>> getWayLegend() {
+		public Hashtable<String, Hashtable<String,Set<EntityDescription>>> getWayLegend() {
 			return legend.getWayLegend();
 		}
 		
@@ -511,10 +512,10 @@ public class Configuration {
 			return legend.getWayDesc(t);
 		}
 		
-		public Collection<POIdescription> getPOIDescs() {
+		public Collection<EntityDescription> getPOIDescs() {
 			return legend.getPOIDescs();
 		}
-		public Collection<WayDescription> getWayDescs() {
+		public Collection<EntityDescription> getWayDescs() {
 			return legend.getWayDescs();
 		}
 		public Vector<SoundDescription> getSoundDescs() {

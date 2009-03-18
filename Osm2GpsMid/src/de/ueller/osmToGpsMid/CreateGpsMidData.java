@@ -33,6 +33,7 @@ import java.util.TreeSet;
 
 import de.ueller.osmToGpsMid.model.Bounds;
 import de.ueller.osmToGpsMid.model.Connection;
+import de.ueller.osmToGpsMid.model.EntityDescription;
 import de.ueller.osmToGpsMid.model.MapName;
 import de.ueller.osmToGpsMid.model.SoundDescription;
 import de.ueller.osmToGpsMid.model.Node;
@@ -191,13 +192,14 @@ public class CreateGpsMidData {
 			 * Writing POI legend data			 * 
 			 */
 			dsi.writeByte(config.getPOIDescs().size());
-			for (POIdescription poi : config.getPOIDescs()) {
+			for (EntityDescription entity : config.getPOIDescs()) {
+				POIdescription poi = (POIdescription) entity; 
 				byte flags = 0;
 				if (poi.image != null && !poi.image.equals(""))
 					flags |= LEGEND_FLAG_IMAGE;
 				if (poi.searchIcon != null)
 					flags |= LEGEND_FLAG_SEARCH_IMAGE;
-				if (poi.minImageScale != poi.minTextScale)
+				if (poi.minEntityScale != poi.minTextScale)
 					flags |= LEGEND_FLAG_MIN_IMAGE_SCALE;
 				if (poi.textColor != 0)
 					flags |= LEGEND_FLAG_TEXT_COLOR;				
@@ -207,7 +209,7 @@ public class CreateGpsMidData {
 				dsi.writeByte(flags);
 				dsi.writeUTF(poi.description);
 				dsi.writeBoolean(poi.imageCenteredOnNode);
-				dsi.writeInt(poi.minImageScale);
+				dsi.writeInt(poi.minEntityScale);
 				if ((flags & LEGEND_FLAG_IMAGE) > 0) {
 					outputMedia=copyMediaToMid(poi.image, path, "png");
 					dsi.writeUTF(outputMedia);
@@ -227,7 +229,8 @@ public class CreateGpsMidData {
 			 * Writing Way legend data 
 			 */
 			dsi.writeByte(Configuration.getConfiguration().getWayDescs().size());
-			for (WayDescription way : Configuration.getConfiguration().getWayDescs()) {
+			for (EntityDescription entity : Configuration.getConfiguration().getWayDescs()) {
+				WayDescription way = (WayDescription) entity;
 				byte flags = 0;
 				if (!way.hideable)
 					flags |= LEGEND_FLAG_NON_HIDEABLE;				
@@ -246,7 +249,7 @@ public class CreateGpsMidData {
 					routeFlags |= ROUTE_FLAG_MOTORWAY_LINK;					
 				dsi.writeByte(routeFlags);
 				dsi.writeUTF(way.description);								
-				dsi.writeInt(way.minScale);
+				dsi.writeInt(way.minEntityScale);
 				dsi.writeInt(way.minTextScale);				
 				dsi.writeBoolean(way.isArea);
 				dsi.writeInt(way.lineColor);
