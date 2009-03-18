@@ -79,21 +79,20 @@ public class Node extends Entity{
 	}
 
 	public byte getType(Configuration c){
-		if (c != null){
-			if (type == -1) {
-				type = calcType(c);
-			}
+		if (type != -1) {
 			return type;
 		} else {
-			if (type == -1) {
-				type = calcType(c);
-			}
-			return type;
+			type = calcType(c);
 		}
-	
-
+		return type;
 	}
+	
 	private byte calcType(Configuration c){
+		if (type != -1)
+			return type;
+		if (c == null) 
+			return -1;
+		
 		EntityDescription poi = super.calcType(c.getPOIlegend());
 		if (poi == null) {
 			type = -1;
@@ -133,6 +132,30 @@ public class Node extends Entity{
 			}
 		}
 		return Constants.NAME_AMENITY;
+	}
+	
+	/**
+	 * wayToPOItransfer is used to transfer properties of a way
+	 * onto a Node. This is used to represent area POIs.
+	 * @param w The way from which to transfer the properties
+	 * @param poi The type of POI to which it gets transfered. 
+	 * @return if it was successful
+	 */
+	public boolean wayToPOItransfer(Way w, POIdescription poi) {
+		if (type != -1) {
+			System.out.println("WARNING: Node already has a type, can't assign way-poi type");
+			return false;
+		}
+		type = poi.typeNum;
+		String value = w.getAttribute(poi.nameKey);
+		if (value != null) {
+			setAttribute(poi.nameKey, value);
+		}
+		value = w.getAttribute(poi.nameFallbackKey);
+		if (value != null) {
+			setAttribute(poi.nameFallbackKey, value);
+		}
+		return true;
 	}
 
 

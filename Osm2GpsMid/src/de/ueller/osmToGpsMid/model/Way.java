@@ -116,6 +116,23 @@ public class Way extends Entity implements Comparable<Way>{
 			type = way.typeNum;
 			way.noWaysOfType++;
 		}
+		
+		/** Check to see if the way corresponds to any of the POI types
+		 *  If it does, then we insert a POI node to reflect this, as otherwise
+		 *  the nearest POI search or other POI features don't work on ways
+		 *  
+		 */
+		POIdescription poi = (POIdescription)super.calcType(c.getPOIlegend());
+		if (poi != null) {
+			if (isValid()) {
+				/**
+				 * TODO: Come up with a sane solution to find out where to place
+				 * the node to represent the area POI
+				 */
+				Node n = path.getSubPaths().getFirst().get(0);
+				n.wayToPOItransfer(this, poi);
+			}
+		}
 		return type;
 	}
 	
