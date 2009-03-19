@@ -27,8 +27,8 @@ public class GuiMapFeatures extends Form implements CommandListener {
 	private	boolean[] selModes = new boolean[3];
 
 	private ChoiceGroup otherGroup;
-	private	String [] other = new String[2];
-	private	boolean[] selOther = new boolean[2];
+	private	String [] other = new String[3];
+	private	boolean[] selOther = new boolean[3];
 	
 	
 	private Gauge gaugeDetailBoost; 
@@ -60,26 +60,27 @@ public class GuiMapFeatures extends Form implements CommandListener {
 			
 			altInfos[0] = "Lat/lon"; 			selAltInfos[0]=Configuration.getCfgBitState(Configuration.CFGBIT_SHOWLATLON);
 			altInfos[1] = "Type information"; 	selAltInfos[1]=Configuration.getCfgBitState(Configuration.CFGBIT_SHOWWAYPOITYPE);
-			altInfosGroup = new ChoiceGroup("Alternative Info", Choice.MULTIPLE, altInfos ,null);
+			altInfosGroup = new ChoiceGroup("Alternative info", Choice.MULTIPLE, altInfos ,null);
 			altInfosGroup.setSelectedFlags(selAltInfos);
 			append(altInfosGroup);
 
-			rotation[0] = "North Up";
-			rotation[1] = "to Driving Direction";
-			rotationGroup = new ChoiceGroup("Map Rotation", Choice.EXCLUSIVE, rotation ,null);
+			rotation[0] = "North up";
+			rotation[1] = "to driving direction";
+			rotationGroup = new ChoiceGroup("Map rotation", Choice.EXCLUSIVE, rotation ,null);
 			rotationGroup.setSelectedIndex((int) ProjFactory.getProj(), true);
 			append(rotationGroup);			
 			
-			modes[0] = "Full Screen"; 			selModes[0]=Configuration.getCfgBitState(Configuration.CFGBIT_FULLSCREEN);
+			modes[0] = "Full screen"; 			selModes[0]=Configuration.getCfgBitState(Configuration.CFGBIT_FULLSCREEN);
 			modes[1] = "Render as streets"; 	selModes[1]=Configuration.getCfgBitState(Configuration.CFGBIT_STREETRENDERMODE);
 			modes[2] = "Routing help"; 	selModes[2]=Configuration.getCfgBitState(Configuration.CFGBIT_ROUTING_HELP);
 			modesGroup = new ChoiceGroup("Mode", Choice.MULTIPLE, modes ,null);
 			modesGroup.setSelectedFlags(selModes);			
 			append(modesGroup);
 
-			other[0] = "Show Point of Compass in rotated map";	selOther[0]=Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_POINT_OF_COMPASS);
-			other[1] = "Save map position on exit for next start";	selOther[1]=Configuration.getCfgBitState(Configuration.CFGBIT_AUTOSAVE_MAPPOS);
-			otherGroup = new ChoiceGroup("Other", Choice.MULTIPLE, other ,null);
+			other[0] = "Show point of compass in rotated map";	selOther[0]=Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_POINT_OF_COMPASS);
+			other[1] = "Show scale bar";	selOther[1]=Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_SCALE_BAR);
+			other[2] = "Save map position on exit for next start";	selOther[2]=Configuration.getCfgBitState(Configuration.CFGBIT_AUTOSAVE_MAPPOS);
+			otherGroup = new ChoiceGroup("Other", Choice.MULTIPLE, other, null);
 			otherGroup.setSelectedFlags(selOther);			
 			append(otherGroup);
 			
@@ -102,15 +103,9 @@ public class GuiMapFeatures extends Form implements CommandListener {
 	
 
 	public void commandAction(Command c, Displayable d) {
-
-//		if (c == CMD_CANCEL) {			
-//			parent.show();
-//			return;
-//		}
-
 		if (c == CMD_APPLY || c == CMD_SAVE) {			
 			// determine if changes should be written to recordstore
-			boolean setAsDefault=(c==CMD_SAVE);
+			boolean setAsDefault = (c == CMD_SAVE);
 			
 			// convert boolean array with selection states for renderOpts
 			// to one flag with corresponding bits set
@@ -140,8 +135,9 @@ public class GuiMapFeatures extends Form implements CommandListener {
 			Configuration.setCfgBitState(Configuration.CFGBIT_ROUTING_HELP, selModes[2], setAsDefault);
 			
 			otherGroup.getSelectedFlags(selOther);
-			Configuration.setCfgBitState(Configuration.CFGBIT_AUTOSAVE_MAPPOS, selOther[0], setAsDefault);
-			Configuration.setCfgBitState(Configuration.CFGBIT_SHOW_POINT_OF_COMPASS, selOther[1], setAsDefault);
+			Configuration.setCfgBitState(Configuration.CFGBIT_SHOW_POINT_OF_COMPASS, selOther[0], setAsDefault);
+			Configuration.setCfgBitState(Configuration.CFGBIT_SHOW_SCALE_BAR, selOther[1], setAsDefault);
+			Configuration.setCfgBitState(Configuration.CFGBIT_AUTOSAVE_MAPPOS, selOther[2], setAsDefault);
 			
 			Configuration.setDetailBoost(gaugeDetailBoost.getValue(), setAsDefault); 
 

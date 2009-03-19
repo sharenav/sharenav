@@ -12,17 +12,16 @@ import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
-import javax.microedition.lcdui.Canvas;
 
 import de.ueller.gps.data.Position;
 import de.ueller.gps.tools.HelperRoutines;
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.graphics.LcdNumericFont;
 
-public class GuiTacho extends Canvas implements CommandListener,
+public class GuiTacho extends KeyCommandCanvas implements CommandListener,
 		GpsMidDisplayable, LocationUpdateListener {
 
-	private final Command BACK_CMD = new Command("Back", Command.BACK, 5);
+	private final Command NEXT_CMD = new Command("Next", Command.SCREEN, 5);
 	private final static Logger logger = Logger.getInstance(GuiTacho.class,
 			Logger.DEBUG);
 	private final Trace parent;
@@ -44,13 +43,15 @@ public class GuiTacho extends Canvas implements CommandListener,
 	private int kmWidth = -1;
 	private int fHeight = -1;
 
-	public GuiTacho(Trace parent) throws Exception {
+	public GuiTacho(Trace parent) {
 		// #debug
-		logger.info("init Tacho");
+		logger.info("Init GuiTacho");
 
 		this.parent = parent;
-		addCommand(BACK_CMD);
+		addCommand(NEXT_CMD);
 		setCommandListener(this);
+		// TODO: Get the key for this from the configuration.
+		singleKeyPressCommand.put(KEY_NUM7, NEXT_CMD);
 
 		lcdFont = new LcdNumericFont();
 
@@ -181,11 +182,11 @@ public class GuiTacho extends Canvas implements CommandListener,
 	}
 
 	public void commandAction(Command c, Displayable d) {
-		if (c == BACK_CMD) {
+		if (c == NEXT_CMD) {
 			synchronized (parent.locationUpdateListeners) {
 				parent.locationUpdateListeners.removeElement(this);
 			}
-			parent.show();
+			parent.showNextDataScreen(Trace.DATASCREEN_TACHO);
 		}
 	}
 

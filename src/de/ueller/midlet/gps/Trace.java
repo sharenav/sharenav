@@ -107,7 +107,7 @@ Runnable , GpsMidDisplayable{
 	private static final int TOGGLE_RECORDING_CMD = 28;
 	private static final int TOGGLE_RECORDING_SUSP_CMD = 29;
 	private static final int RECENTER_GPS_CMD = 30;
-	private static final int TACHO_CMD = 31;
+	private static final int DATASCREEN_CMD = 31;
 	private static final int OVERVIEW_MAP_CMD = 32;
 	private static final int RETRIEVE_XML = 33;
 	private static final int PAN_LEFT25_CMD = 34;
@@ -125,7 +125,11 @@ Runnable , GpsMidDisplayable{
 	//#endif
 
 	private final Command [] CMDS = new Command[45];
-	
+
+	public static final int DATASCREEN_NONE = 0;
+	public static final int DATASCREEN_TACHO = 1;
+	public static final int DATASCREEN_TRIP = 2;
+	public static final int DATASCREEN_SATS = 3;
 	
 //	private SirfInput si;
 	private LocationMsgProducer locationProducer;
@@ -190,6 +194,8 @@ Runnable , GpsMidDisplayable{
 
 	private List recordingsMenu = null;
 	private List routingsMenu = null;
+	private GuiTacho guiTacho = null;
+	private GuiTrip guiTrip = null;
 	private GuiWaypointSave guiWaypointSave = null;
 
 	private final static Logger logger = Logger.getInstance(Trace.class,Logger.DEBUG);
@@ -218,7 +224,7 @@ Runnable , GpsMidDisplayable{
 	/** 
 	 * Flag if we're speeding
 	 */
-	private volatile boolean speeding=false;
+	private volatile boolean speeding = false;
 	private long lastTimeOfSpeedingSound = 0;
 	private long startTimeOfSpeedingSign = 0;
 	private int speedingSpeedLimit = 0;
@@ -226,10 +232,10 @@ Runnable , GpsMidDisplayable{
 	/**
 	 * Current course from GPS in compass degrees, 0..359.  
 	 */
-	private int course=0;
+	private int course = 0;
 
-	public boolean atTarget=false;
-	public boolean movedAwayFromTarget=true;
+	public boolean atTarget = false;
+	public boolean movedAwayFromTarget = true;
 
 	private Names namesThread;
 
@@ -241,17 +247,17 @@ Runnable , GpsMidDisplayable{
 
 	private Runtime runtime = Runtime.getRuntime();
 
-	private PositionMark target;
-	private Vector route=null;
-	private RouteInstructions ri=null;
+	private PositionMark target = null;
+	private Vector route = null;
+	private RouteInstructions ri = null;
 	
-	private boolean running=false;
-	private static final int CENTERPOS = Graphics.HCENTER|Graphics.VCENTER;
+	private boolean running = false;
+	private static final int CENTERPOS = Graphics.HCENTER | Graphics.VCENTER;
 
 	public Gpx gpx;
 	private AudioRecorder audioRec;
 	
-	private static Trace traceInstance=null;
+	private static Trace traceInstance = null;
 
 	private Routing	routeEngine;
 
@@ -260,7 +266,7 @@ Runnable , GpsMidDisplayable{
 	private static int smallBoldFontHeight;
 	*/
 	
-	private boolean manualRotationMode=false;
+	private boolean manualRotationMode = false;
 	
 	public Vector locationUpdateListeners;
 	
@@ -302,7 +308,7 @@ Runnable , GpsMidDisplayable{
 		CMDS[TOGGLE_RECORDING_CMD] = new Command("(De)Activate recording",Command.ITEM, 100);
 		CMDS[TOGGLE_RECORDING_SUSP_CMD] = new Command("Suspend recording",Command.ITEM, 100);
 		CMDS[RECENTER_GPS_CMD] = new Command("Recenter on GPS",Command.ITEM, 100);
-		CMDS[TACHO_CMD] = new Command("Tacho",Command.ITEM, 100);
+		CMDS[DATASCREEN_CMD] = new Command("Tacho",Command.ITEM, 100);
 		CMDS[OVERVIEW_MAP_CMD] = new Command("Overview/Filter Map",Command.ITEM, 200);
 		CMDS[RETRIEVE_XML] = new Command("Retrieve XML",Command.ITEM, 200);
 		CMDS[PAN_LEFT25_CMD] = new Command("left 25%",Command.ITEM, 100);
@@ -325,7 +331,7 @@ Runnable , GpsMidDisplayable{
 		addCommand(CMDS[MAPFEATURES_CMD]);
 		addCommand(CMDS[RECORDINGS_CMD]);
 		addCommand(CMDS[ROUTINGS_CMD]);
-		addCommand(CMDS[TACHO_CMD]);
+		addCommand(CMDS[DATASCREEN_CMD]);
 		//#if polish.api.osm-editing
 		addCommand(CMDS[RETRIEVE_XML]);
 		//#endif
@@ -370,11 +376,11 @@ Runnable , GpsMidDisplayable{
 
 			//#debug info
 			logger.info("start thread init locationprovider");
-			if (locationProducer != null){
+			if (locationProducer != null) {
 				receiveMessage("Location provider already running");
 				return;
 			}
-			if (Configuration.getLocationProvider() == Configuration.LOCATIONPROVIDER_NONE){
+			if (Configuration.getLocationProvider() == Configuration.LOCATIONPROVIDER_NONE) {
 				receiveMessage("No location provider");
 				return;
 			}
@@ -920,9 +926,8 @@ Runnable , GpsMidDisplayable{
 			} else if (c == CMDS[RECENTER_GPS_CMD]) {
 				gpsRecenter = true;
 				newDataReady();
-			} else if (c == CMDS[TACHO_CMD]) {
-				GuiTacho tacho = new GuiTacho(this);
-				tacho.show();
+			} else if (c == CMDS[DATASCREEN_CMD]) {
+				showNextDataScreen(DATASCREEN_NONE);
 			}
 			//#if polish.api.osm-editing 
 				else if (c == CMDS[RETRIEVE_XML]) {
@@ -1086,23 +1091,19 @@ Runnable , GpsMidDisplayable{
 			}
 			switch (showAddons) {
 			case 1:
-				showScale(pc);				
-				break;
-			case 2:
-				yc = showSpeed(g, yc, la);
-				yc = showDistanceToTarget(g, yc, la);
-				break;
-			case 3:
 				showSatelite(g);
 				break;
-			case 4:
+			case 2:
 				yc = showConnectStatistics(g, yc, la);
 				break;
-			case 5:
+			case 3:
 				yc = showMemory(g, yc, la);
 				break;
 			default:
 				showAddons = 0;
+				if (Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_SCALE_BAR)) {
+					showScale(pc);				
+				}
 				if (ProjFactory.getProj() == ProjFactory.MOVE_UP
 					&& Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_POINT_OF_COMPASS)
 				) {
@@ -1450,7 +1451,7 @@ Runnable , GpsMidDisplayable{
 	 * inefficient. There must be a better way
 	 * than this.
 	 * 
-	 * @param pc
+	 * @param pc Paint context for drawing
 	 */
 	public void showScale(PaintContext pc) {
 		Node n1 = new Node();
@@ -1491,6 +1492,11 @@ Runnable , GpsMidDisplayable{
 		}
 	}
 
+	/**
+	 * Draws the position square, the movement line and the center cross.
+	 * 
+	 * @param g Graphics context for drawing
+	 */
 	public void showMovement(Graphics g) {
 		g.setColor(0, 0, 0);
 		int centerX = getWidth() / 2;
@@ -1510,8 +1516,48 @@ Runnable , GpsMidDisplayable{
 		int py = posY - (int) (Math.cos(radc) * 20);
 		g.drawRect(posX - 2, posY - 2, 4, 4);
 		g.drawLine(posX, posY, px, py);
-		g.drawLine(centerX-2, centerY - 2, centerX + 2, centerY + 2);
-		g.drawLine(centerX-2, centerY + 2, centerX + 2, centerY - 2);
+		g.drawLine(centerX - 2, centerY - 2, centerX + 2, centerY + 2);
+		g.drawLine(centerX - 2, centerY + 2, centerX + 2, centerY - 2);
+	}
+	
+	/**
+	 * Show next screen in the sequence of data screens
+	 * (tacho, trip, satellites).
+	 * @param currentScreen Data screen currently shown, use the DATASCREEN_XXX
+	 *    constants from this class. Use DATASCREEN_NONE if none of them
+	 *    is on screen i.e. the first one should be shown.
+	 */
+	public void showNextDataScreen(int currentScreen) {
+		switch (currentScreen)
+		{
+			case DATASCREEN_TACHO:
+				// Tacho is followed by Trip.
+				if (guiTrip == null) {
+					guiTrip = new GuiTrip(this);
+				}
+				if (guiTrip != null) {
+					guiTrip.show();
+				}
+				break;
+			case DATASCREEN_TRIP:
+				// TODO: Trip is followed by Satellites.
+				this.show();
+				break;
+			case DATASCREEN_SATS:
+				// After satellites, go back to map.
+				this.show();
+				break;
+			case DATASCREEN_NONE:
+			default:
+				// Tacho is first data screen
+				if (guiTacho == null) {
+					guiTacho = new GuiTacho(this);
+				}
+				if (guiTacho != null) {
+					guiTacho.show();
+				}
+				break;
+		}
 	}
 
 	public int showMemory(Graphics g, int yc, int la) {
@@ -1550,41 +1596,6 @@ Runnable , GpsMidDisplayable{
 				Graphics.TOP | Graphics.LEFT );
 		return (yc);
 
-	}
-
-	public int showSpeed(Graphics g, int yc, int la) {
-		g.setColor(0, 0, 0);
-		g.drawString("speed : " + speed, 0, yc, Graphics.TOP | Graphics.LEFT);
-		yc += la;
-		g.drawString("course  : " + course, 0, yc, Graphics.TOP
-						| Graphics.LEFT);
-		yc += la;
-		g.drawString("height  : " + pos.altitude, 0, yc, Graphics.TOP
-				| Graphics.LEFT);
-		yc += la;
-		return yc;
-	}
-
-	public int showDistanceToTarget(Graphics g, int yc, int la) {
-		g.setColor(0, 0, 0);
-		String text;
-		if (target == null) {
-			text = "Distance: N/A";
-		} else {
-			
-			float distance = ProjMath.getDistance(target.lat, target.lon, center.radlat, center.radlon); 
-			if (distance > 10000) {
-				text = "Distance: " + Integer.toString((int)(distance/1000.0f)) + "km";
-			} else if (distance > 1000) {
-				text = "Distance: " + Float.toString(((int)(distance/100.0f))/10.0f) + "km";
-			} else {
-				text = "Distance: " + Integer.toString((int)distance) + "m";
-			}
-			
-		}
-		g.drawString(text , 0, yc, Graphics.TOP | Graphics.LEFT);
-		yc += la;
-		return yc;
 	}
 
 	private void updatePosition() {

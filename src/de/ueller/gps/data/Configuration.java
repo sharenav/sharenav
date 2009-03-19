@@ -122,11 +122,13 @@ public class Configuration {
 	public final static byte CFGBIT_ROUTE_HIDE_QUIET_ARROWS=38;
 	// bit 39: in route mode up/down keys are for route browsing
 	public final static byte CFGBIT_ROUTE_BROWSING=39;
+	// bit 40: show scale bar on map
+	public final static byte CFGBIT_SHOW_SCALE_BAR = 40;
 	
 	/**
-	 * These are the database record ids for each configuration option	 * 
+	 * These are the database record ids for each configuration option
 	 */
-	private static final int  RECORD_ID_BT_URL = 1;
+	private static final int RECORD_ID_BT_URL = 1;
 	private static final int RECORD_ID_LOCATION_PROVIDER  = 2;
 	private static final int RECORD_ID_CFGBITS  = 3;
 	private static final int RECORD_ID_GPX_URL = 4;
@@ -164,9 +166,9 @@ public class Configuration {
 
 	// Gpx Recording modes
 	// GpsMid determines adaptive if a trackpoint is written
-	public final static int GPX_RECORD_ADAPTIVE=0;	
+	public final static int GPX_RECORD_ADAPTIVE = 0;
 	// User specified options define if a trackpoint is written
-	public final static int GPX_RECORD_MINIMUM_SECS_DIST=1;	
+	public final static int GPX_RECORD_MINIMUM_SECS_DIST = 1;
 	
 	public static int KEYCODE_CAMERA_COVER_OPEN = -34;
 	public static int KEYCODE_CAMERA_COVER_CLOSE = -35;
