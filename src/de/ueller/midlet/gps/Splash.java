@@ -34,81 +34,81 @@ public class Splash extends Canvas implements CommandListener,Runnable{
     private final Command BACK_CMD = new Command("Accept", Command.OK, 2);
     private final Command EXIT_CMD = new Command("Decline", Command.EXIT, 1);
 	private final GpsMid main;
-	String[] txt={"Disclaimer:",
-			      " No warranty, no liability.",
-			      " Don't handle while driving!",
-				  "Copyright:",
-				  " Harald Mueller",
-				  " Kai Krueger",
-				  " S. Hochmuth",
-	              "Application:",
-	              " licensed by GPL2",
-	              " http://www.gnu.org/",
-	              "Map data:",
-	              " from OpenStreetMap",
-	              " licensed by CC 2.0",
-	              " http://creativecommons.org/",
-	  "Thanks for source parts to:",
-	  " Nikolay Klimchuk",
-	  " Simon Turner",
-	  " Will Perone",
-      "Artwork:",
-      " Tobias Mueller"};
+	String[] txt = {
+		"Disclaimer:",
+		" No warranty, no liability.",
+		" Don't handle while driving!",
+		"Copyright:",
+		" Harald Mueller",
+		" Kai Krueger",
+		" S. Hochmuth",
+	    "Application:",
+	    " licensed under GPL2",
+	    " http://www.gnu.org/",
+	    "Map data:",
+	    " from OpenStreetMap",
+	    " licensed under CC 2.0",
+	    " http://creativecommons.org/",
+	    "Thanks for source parts to:",
+	    " Nikolay Klimchuk",
+	    " Simon Turner",
+	    "Artwork:",
+		" Tobias Mueller",
+		"Press '*' to skip this",
+		"screen at startup."};
 	private Font f;
-	int top=0;
+	int top = 0;
 	private Thread processorThread;
-	private boolean shutdown=false;
+	private boolean shutdown = false;
 	private int ssize;
-	private int topStart=106;
+	private int topStart = 106;
 	private int space;
-	private double scale=1;
+	private double scale = 1;
 	private String strVersion; 
 
 
-	public Splash(GpsMid main){
-	this.main = main;
-	try {
-		splash=Image.createImage("/Gps-splash.png");
-
-	} catch (IOException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
-	if(splash.getWidth()<getWidth() ) {
-		double scaleW=(double) getWidth()/ (double) splash.getWidth();
-		double scaleH=(double) getHeight()/(double) splash.getHeight();
-		scale=scaleH;
-		if(scaleW<scaleH) {
-			scale=scaleW;
+	public Splash(GpsMid main) {
+		this.main = main;
+		try {
+			splash = Image.createImage("/Gps-splash.png");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-    	// if we would not be able to allocate memory for
-		// at least the memory for the original and the scaled image
-		// plus 25% do not scale
-		int oldWith = splash.getWidth();
-		int newWidth =  (int)(scale* (double) splash.getWidth());
-		int newHeight = (int)(scale* (double) splash.getHeight());
-		if(ImageTools.isScaleMemAvailable(splash, newWidth , newHeight)) {
-			splash=ImageTools.scaleImage(splash, newWidth , newHeight);
+		if (splash.getWidth() < getWidth() ) {
+			double scaleW = (double) getWidth() / (double) splash.getWidth();
+			double scaleH = (double) getHeight() / (double) splash.getHeight();
+			scale = scaleH;
+			if (scaleW < scaleH) {
+				scale = scaleW;
+			}
+	    	// if we would not be able to allocate memory for
+			// at least the memory for the original and the scaled image
+			// plus 25% do not scale
+			int oldWith = splash.getWidth();
+			int newWidth =  (int)(scale* (double) splash.getWidth());
+			int newHeight = (int)(scale* (double) splash.getHeight());
+			if (ImageTools.isScaleMemAvailable(splash, newWidth, newHeight)) {
+				splash = ImageTools.scaleImage(splash, newWidth, newHeight);
+			}
+			if (splash.getWidth() != newWidth) {
+				scale = 1;
+			}
+			topStart *= scale;
 		}
-		if (splash.getWidth() != newWidth) {
-			scale = 1;
-		}
-		topStart*=scale;
-	}
-
-	f=Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_ITALIC, Font.SIZE_SMALL);
-	space=getHeight()-topStart;
-	ssize=f.getHeight()*txt.length+space;
-	top=-space;
-	strVersion = "V" + main.c.getAppVersion() + " (" + main.c.getBundleDate() + ")";
-	show();
-	addCommand(BACK_CMD);
-	addCommand(EXIT_CMD);
-	setCommandListener(this);
-	processorThread = new Thread(this,"Splash");
-	processorThread.setPriority(Thread.MIN_PRIORITY);
-	processorThread.start();
-
+	
+		f = Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_ITALIC, Font.SIZE_SMALL);
+		space = getHeight() - topStart;
+		ssize = f.getHeight() * txt.length + space;
+		top = -space;
+		strVersion = "V" + main.c.getAppVersion() + " (" + main.c.getBundleDate() + ")";
+		show();
+		addCommand(BACK_CMD);
+		addCommand(EXIT_CMD);
+		setCommandListener(this);
+		processorThread = new Thread(this, "Splash");
+		processorThread.setPriority(Thread.MIN_PRIORITY);
+		processorThread.start();
 	}
 
 	protected void paint(Graphics g) {
@@ -116,79 +116,77 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 		g.setColor(150, 200, 250);
 		g.setFont(f);
 		g.fillRect(0, 0, getWidth(), getHeight());
-		int sp=f.getHeight();
-		int x = (int) (5*scale+ (getWidth()-splash.getWidth())/2);
+		int sp = f.getHeight();
+		int x = (int) (5 * scale + (getWidth() - splash.getWidth()) / 2);
 		
-		g.drawImage(splash,getWidth()/2, 0,Graphics.HCENTER|Graphics.TOP);
+		g.drawImage(splash, getWidth() / 2, 0, Graphics.HCENTER | Graphics.TOP);
 
 		g.setColor(0xFFFF99);
-		g.drawString(strVersion, (getWidth() + splash.getWidth())/2 - 2 , 2, Graphics.TOP|Graphics.RIGHT);		
+		g.drawString(strVersion, (getWidth() + splash.getWidth()) / 2 - 2 , 2, 
+					 Graphics.TOP | Graphics.RIGHT);		
 		
 		g.setColor(255, 40, 40);
-		int startLine=top/sp;
-		int yc= topStart-top % sp;
-		g.setClip(0,topStart, getWidth(), getHeight()-topStart);
-		boolean visible=false;
-		for (int i=startLine; i< txt.length;i++){
+		int startLine = top / sp;
+		int yc = topStart - top % sp;
+		g.setClip(0, topStart, getWidth(), getHeight() - topStart);
+		boolean visible = false;
+		for (int i = startLine; i < txt.length; i++){
 			visible=true;
 			if (i >= 0){
-				int w=f.stringWidth(txt[i]);
+				int w = f.stringWidth(txt[i]);
 				g.drawString(txt[i], x, yc, 0);
 			}
-			yc+=sp;
+			yc += sp;
 			if (! visible){
-				top=-space;
+				top = -space;
 			}
 		}
-		
 	}
 
 	public void commandAction(Command c, Displayable d) {
         if (c == BACK_CMD) {
-        	shutdown=true;
+        	shutdown = true;
         	main.show();
         	return;
         }
         if (c == EXIT_CMD) {
-        	shutdown=true;
+        	shutdown = true;
         	Configuration.setCfgBitState(Configuration.CFGBIT_SKIPP_SPLASHSCREEN, false, true);
         	main.exit();
         	return;
         }
 	}
+
 	public void show(){
 		GpsMid.getInstance().show(this);
-		//Display.getDisplay(main).setCurrent(this);
 	}
 
 	public void run() {
 		while (! shutdown){
-		synchronized (this) {
-			try {
-				wait(40);
-			} catch (InterruptedException e) {
-
+			synchronized (this) {
+				try {
+					wait(40);
+				} catch (InterruptedException e) {
+	
+				}
+				top++;
+				if (top > (ssize)){
+					top = -space;
+				}
+				repaint();
 			}
-			top++;
-			if (top > (ssize)){
-				top=-space;
-			}
-			repaint();
-		}
 		}
 	}
-	
-	
+
 	protected void keyPressed(int keyCode) {
 		if (keyCode == KEY_STAR) {
 			boolean current = Configuration.getCfgBitState(Configuration.CFGBIT_SKIPP_SPLASHSCREEN);
 			Configuration.setCfgBitState(Configuration.CFGBIT_SKIPP_SPLASHSCREEN, !current, true);
 			if (current) {
-				main.alert("Splash", "Showing splash screen on startup", 500);
+				main.alert("Splash", "Showing splash screen on startup", 3000);
 			} else {
-				main.alert("Splash", "Not showing splash screen again...", 500);
+				main.alert("Splash", "Not showing splash screen again...", 3000);
 			}
-				
 		}
 	}
 }
