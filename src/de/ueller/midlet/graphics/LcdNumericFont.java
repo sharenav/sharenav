@@ -48,8 +48,9 @@ public class LcdNumericFont {
 	}
 
 	public void setFontSize(int size) {
-		if (fontSize == size)
+		if (fontSize == size) {
 			return;
+		}
 		if (size == fontSize_cache) {
 			int tmpSize = fontSize;
 			fontSize = fontSize_cache;
@@ -72,7 +73,7 @@ public class LcdNumericFont {
 
 	/**
 	 * Draw an integer to the graphics canvas in the LCD font
-	 * @param g
+	 * @param g Graphics context for drawing
 	 * @param i integer to draw
 	 * @param x x-coordinate of the bottom right corner
 	 * @param y y-coordinate of the bottom right corner
@@ -83,7 +84,7 @@ public class LcdNumericFont {
 
 	/**
 	 * Draw an integer to the graphics canvas in the LCD font
-	 * @param g
+	 * @param g Graphics context for drawing
 	 * @param i integer to draw
 	 * @param minDigit left fill with 0 up to minDigit digits
 	 * @param x x-coordinate of the bottom right corner
@@ -92,8 +93,9 @@ public class LcdNumericFont {
 	public void drawInt(Graphics g, int i, int minDigit, int x, int y) {
 		boolean negative = (i < 0);
 		int digitPos = 0;
-		if (negative)
+		if (negative) {
 			i *= -1;
+		}
 		int digit = i % 10;
 		drawDigit(g, (byte) digit, x, y);
 		digitPos++;
@@ -104,23 +106,25 @@ public class LcdNumericFont {
 			digitPos++;
 			i /= 10;
 		}
-		if (negative)
+		if (negative) {
 			drawDigit(g, (byte) -1, x - digitPos * fontSize, y);
+			}
 	}
 
 	/**
 	 * Draw a floating point number to the graphics canvas in the LCD font
-	 * @param g
+	 * @param g Graphics context for drawing
 	 * @param f number to draw
 	 * @param decimalPlaces number of decimal places to show
-	 * @param x
-	 * @param y
+	 * @param x x-coordinate of the bottom right corner
+	 * @param y y-coordinate of the bottom right corner
 	 */
 	public void drawFloat(Graphics g, float f, int decimalPlaces, int x, int y) {
 		logger.info("Drawing float " + f);
 		int multi = 1;
-		for (int i = 0; i < decimalPlaces; i++)
+		for (int i = 0; i < decimalPlaces; i++) {
 			multi *= 10;
+		}
 		int frac = ((int) (f * multi)) % multi;
 		drawInt(g, (frac < 0) ? -1 * frac : frac, decimalPlaces, x, y);
 		g.fillRect(x - (fontSize * decimalPlaces + (fontSize >> 3)), y
@@ -128,6 +132,21 @@ public class LcdNumericFont {
 		drawInt(g, (int) f, x - (fontSize * decimalPlaces + (fontSize >> 2)), y);
 	}
 
+	/**
+	 * Draw a dash for every decimal place to indicate that the number is 
+	 * invalid / not available.
+	 * @param g Graphics context for drawing
+	 * @param decimalPlaces number of decimal places to show
+	 * @param x x-coordinate of the bottom right corner
+	 * @param y y-coordinate of the bottom right corner
+	 */
+	public void drawInvalid(Graphics g, int decimalPlaces, int x, int y) {
+		for (int i = 0; i < decimalPlaces; i++) {
+			drawDigit(g, (byte) -1, x, y);
+			x -= fontSize;
+		}
+	}
+	
 	private void drawDigit(Graphics g, byte digit, int x, int y) {
 		switch (digit) {
 		case -1: {
