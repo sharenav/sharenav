@@ -33,6 +33,7 @@ import javax.microedition.midlet.MIDlet;
 
 
 
+import de.ueller.gps.SECellID;
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Position;
 import de.ueller.gps.data.Satelit;
@@ -369,6 +370,7 @@ Runnable , GpsMidDisplayable{
 	// start the LocationProvider in background
 	public void run() {
 		try {
+			
 			if (running){
 				receiveMessage("GPS starter already running");
 				return;
@@ -385,13 +387,17 @@ Runnable , GpsMidDisplayable{
 				return;
 			}
 			running=true;
-			receiveMessage("Connect to "+Configuration.LOCATIONPROVIDER[Configuration.getLocationProvider()]);
-			switch (Configuration.getLocationProvider()){
+			int locprov = Configuration.getLocationProvider();
+			receiveMessage("Connect to "+Configuration.LOCATIONPROVIDER[locprov]);
+			switch (locprov){
 				case Configuration.LOCATIONPROVIDER_SIRF:
 					locationProducer = new SirfInput();
 					break;
 				case Configuration.LOCATIONPROVIDER_NMEA:
 					locationProducer = new NmeaInput();
+					break;
+				case Configuration.LOCATIONPROVIDER_SECELL:
+					locationProducer = new SECellID();
 					break;
 				case Configuration.LOCATIONPROVIDER_JSR179:
 					//#if polish.api.locationapi

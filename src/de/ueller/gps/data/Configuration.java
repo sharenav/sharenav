@@ -43,6 +43,7 @@ public class Configuration {
 	public final static int LOCATIONPROVIDER_SIRF=1; 
 	public final static int LOCATIONPROVIDER_NMEA=2; 
 	public final static int LOCATIONPROVIDER_JSR179=3;
+	public final static int LOCATIONPROVIDER_SECELL=4;
 	
 	// bit 0: render as street
 	public final static byte CFGBIT_STREETRENDERMODE=0;
@@ -179,7 +180,7 @@ public class Configuration {
 	public static final int MAX_TRACKNAME_LENGTH = 50;
 	public static final int MAX_WAYPOINTS_NAME_LENGTH = 50;
 	
-	public final static String[] LOCATIONPROVIDER={"None","Bluetooth (Sirf)","Bluetooth (NMEA)","Internal (JSR179)"};
+	public final static String[] LOCATIONPROVIDER={"None","Bluetooth (Sirf)","Bluetooth (NMEA)","Internal (JSR179)", "Cell-ID (OpenCellId.org)"};
 	
 	private static final String[] compassDirections  =
 	{ "N", "NNE", "NE", "NEE", "E", "SEE", "SE", "SSE",
