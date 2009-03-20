@@ -1095,6 +1095,45 @@ Runnable , GpsMidDisplayable{
 					}
 				}
 			}
+			
+			/*
+			 *  beginning of voice instructions started from overlay code (besides showRoute above)
+			 */
+			// determine if we are at the target
+			if (target != null) {
+				float distance = ProjMath.getDistance(target.lat, target.lon, center.radlat, center.radlon);
+				atTarget = (distance < 25);
+				if (atTarget) {
+					if (movedAwayFromTarget && Configuration.getCfgBitState(Configuration.CFGBIT_SND_TARGETREACHED)) {
+						parent.mNoiseMaker.playSound("TARGET_REACHED", (byte) 7, (byte) 1);
+					}
+				} else if (!movedAwayFromTarget) {
+					movedAwayFromTarget=true;
+				}
+			}
+			// determine if we are currently speeding
+			speeding = false;
+			int maxSpeed = 0;
+			if (actualWay != null) {
+				maxSpeed = actualWay.getMaxSpeed();
+				if (maxSpeed != 0 && speed > (maxSpeed + Configuration.getSpeedTolerance()) ) {
+					speeding = true;
+				}
+			}
+			if (speeding && Configuration.getCfgBitState(Configuration.CFGBIT_SPEEDALERT_SND)) {
+				// give speeding alert only every 10 seconds
+				if ( (System.currentTimeMillis() - lastTimeOfSpeedingSound) > 10000 ) {
+					lastTimeOfSpeedingSound = System.currentTimeMillis();
+					parent.mNoiseMaker.immediateSound("SPEED_LIMIT");					
+				}
+			}
+			/*
+			 *  end of voice instructions started from overlay code
+			 */
+			
+			/*
+			 * the final part of the overlay should not give any voice instructions
+			 */			
 			switch (showAddons) {
 			case 1:
 				showSatelite(g);
@@ -1144,57 +1183,8 @@ Runnable , GpsMidDisplayable{
 			if (pc != null){
 				showTarget(pc);
 			}
-			
-			// determine if we are currently speeding
-			speeding = false;
-			int maxSpeed = 0;
-			if (actualWay != null) {
-				maxSpeed = actualWay.getMaxSpeed();
-				if (maxSpeed != 0 && speed > (maxSpeed + Configuration.getSpeedTolerance()) ) {
-					speeding = true;
-				}
-			}
-			if (Configuration.getCfgBitState(Configuration.CFGBIT_SPEEDALERT_VISUAL)
-				&& (
-					speeding
-					||
-					(System.currentTimeMillis() - startTimeOfSpeedingSign) < 3000
-				)
-			) {
-				if (speeding) {
-					startTimeOfSpeedingSign = System.currentTimeMillis();
-					speedingSpeedLimit = maxSpeed;
-				}
-				
-				String sSpeed = Integer.toString(speedingSpeedLimit);
-				int oldColor = g.getColor();
-				Font oldFont = g.getFont();
-				Font speedingFont = Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_BOLD, Font.SIZE_LARGE);
-				int w = speedingFont.stringWidth(sSpeed);
-				int w0 = speedingFont.charWidth('0');
-				int h0 = speedingFont.getHeight();
-				w += w0 * 4;
-				g.setColor(0x00FF0000);
-				int yPos = pc.ySize - w - (h0 / 2) - imageCollector.statusFontHeight - RouteInstructions.routeInstructionsHeight;
-				g.fillArc(0, yPos, w, w, 0, 360);
-				g.setColor(0x00FFFFFF);
-				g.fillArc(w0, yPos + w0, w - (w0 * 2), w - (w0 * 2), 0, 360);
-				g.setColor(0x00000000);
-				g.setFont(speedingFont);
-				g.drawString(sSpeed, w/2, yPos + w/2 - (h0 / 2), Graphics.TOP | Graphics.HCENTER);
-				g.setFont(oldFont);
-				g.setColor(oldColor);
-			} else {
-				startTimeOfSpeedingSign = 0;
-			}
-			
-			if (speeding && Configuration.getCfgBitState(Configuration.CFGBIT_SPEEDALERT_SND)) {
-				// give speeding alert only every 10 seconds
-				if ( (System.currentTimeMillis() - lastTimeOfSpeedingSound) > 10000 ) {
-					lastTimeOfSpeedingSound = System.currentTimeMillis();
-					parent.mNoiseMaker.immediateSound("SPEED_LIMIT");					
-				}
-			}
+
+			showSpeedingSign(g, maxSpeed);
 
 			if (currentMsg != null) {
 				if (compassRectHeight == 0) {
@@ -1299,6 +1289,42 @@ Runnable , GpsMidDisplayable{
 			
 		} catch (Exception e) {
 			logger.silentexception("Unhandled exception in the paint code", e);
+		}
+	}
+
+	private void showSpeedingSign(Graphics g, int maxSpeed) {
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_SPEEDALERT_VISUAL)
+			&& (
+				speeding
+				||
+				(System.currentTimeMillis() - startTimeOfSpeedingSign) < 3000
+			)
+		) {
+			if (speeding) {
+				startTimeOfSpeedingSign = System.currentTimeMillis();
+				speedingSpeedLimit = maxSpeed;
+			}
+			
+			String sSpeed = Integer.toString(speedingSpeedLimit);
+			int oldColor = g.getColor();
+			Font oldFont = g.getFont();
+			Font speedingFont = Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_BOLD, Font.SIZE_LARGE);
+			int w = speedingFont.stringWidth(sSpeed);
+			int w0 = speedingFont.charWidth('0');
+			int h0 = speedingFont.getHeight();
+			w += w0 * 4;
+			g.setColor(0x00FF0000);
+			int yPos = pc.ySize - w - (h0 / 2) - imageCollector.statusFontHeight - RouteInstructions.routeInstructionsHeight;
+			g.fillArc(0, yPos, w, w, 0, 360);
+			g.setColor(0x00FFFFFF);
+			g.fillArc(w0, yPos + w0, w - (w0 * 2), w - (w0 * 2), 0, 360);
+			g.setColor(0x00000000);
+			g.setFont(speedingFont);
+			g.drawString(sSpeed, w/2, yPos + w/2 - (h0 / 2), Graphics.TOP | Graphics.HCENTER);
+			g.setFont(oldFont);
+			g.setColor(oldColor);
+		} else {
+			startTimeOfSpeedingSign = 0;
 		}
 	}
 
@@ -1438,17 +1464,7 @@ Runnable , GpsMidDisplayable{
 			pc.g.setColor(255,50,50);
 			pc.g.setStrokeStyle(Graphics.DOTTED);
 			pc.g.drawLine(pc.lineP2.x,pc.lineP2.y,pc.xSize/2,pc.ySize/2);
-			float distance = ProjMath.getDistance(target.lat, target.lon, center.radlat, center.radlon);
-			atTarget = (distance < 25);
-			if (atTarget) {
-				if (movedAwayFromTarget && Configuration.getCfgBitState(Configuration.CFGBIT_SND_TARGETREACHED)) {
-					parent.mNoiseMaker.playSound("TARGET_REACHED", (byte) 7, (byte) 1);
-				}
-			} else if (!movedAwayFromTarget) {
-				movedAwayFromTarget=true;
-			}
 		}
-
 	}
 
 	/**
@@ -1879,8 +1895,6 @@ Runnable , GpsMidDisplayable{
 				// imageCollector thread starts up suspended,
 				// so we need to resume it
 				imageCollector.resume();
-			} else {
-//				resume();
 			}
 			repaint();
 		} catch (Exception e) {
