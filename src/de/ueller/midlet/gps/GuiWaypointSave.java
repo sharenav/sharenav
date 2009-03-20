@@ -14,10 +14,12 @@ import javax.microedition.lcdui.TextField;
 import de.ueller.gps.data.Configuration;
 import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.data.Proj2DMoveUp;
-
+import javax.microedition.lcdui.Choice;
+import javax.microedition.lcdui.ChoiceGroup;
 
 public class GuiWaypointSave extends Form implements CommandListener {
 	private TextField fldName;
+	private ChoiceGroup cg;
 	private static final Command saveCmd = new Command("Save", Command.OK, 1);
 	private static final Command backCmd = new Command("Back", Command.BACK, 2);
 	private Trace parent;
@@ -38,12 +40,16 @@ public class GuiWaypointSave extends Form implements CommandListener {
 
 	private void jbInit() throws Exception {
 		fldName = new TextField("Name:", "", Configuration.MAX_WAYPOINTNAME_LENGTH, TextField.ANY);
+		cg = new ChoiceGroup("Settings", Choice.MULTIPLE);
+		cg.append("Recenter to GPS after saving",null);
+		
 		// Set up this Displayable to listen to command events
 		setCommandListener(this);
 		// add the commands
 		addCommand(backCmd);
 		addCommand(saveCmd);
 		this.append(fldName);
+		this.append(cg);
 	}
 	
 	public void setData(PositionMark pos)
@@ -59,7 +65,13 @@ public class GuiWaypointSave extends Form implements CommandListener {
 			logger.info("Saving waypoint with name: " + name);
 			waypt.displayName = name;
 			parent.gpx.addWayPt(waypt);
-			parent.show();
+
+			// Recenter GPS after saving a Waypoint if this option is selected
+			if (cg.isSelected(0)) {
+				parent.gpsRecenter = true;
+				parent.newDataReady();
+			}
+			parent.show();				
 			return;
 		}
 		else if (cmd == backCmd) {
