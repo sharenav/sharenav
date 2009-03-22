@@ -162,7 +162,8 @@ Runnable , GpsMidDisplayable{
 	
 	private String currentAlertTitle;
 	private String currentAlertMessage;
-	private volatile int currentAlertsOpenCount; 
+	private volatile int currentAlertsOpenCount;
+	private volatile int setAlertTimeout = 0;
 
 	private long lastBackLightOnTime = 0;
 	
@@ -1287,6 +1288,22 @@ Runnable , GpsMidDisplayable{
 						y += (fontHeight * 3 / 2); 
 					}
 				} // end for
+				if (setAlertTimeout != 0) {
+					TimerTask timerT;
+					Timer tm = new Timer();	    
+					timerT = new TimerTask() {
+						public synchronized void run() {
+							currentAlertsOpenCount--;
+							if (currentAlertsOpenCount == 0) {
+								//#debug debug
+								logger.debug("clearing alert");
+								repaint();
+							}
+						}			
+					};
+					tm.schedule(timerT, setAlertTimeout);
+					setAlertTimeout = 0;
+				}
 			}
 			
 		} catch (Exception e) {
@@ -1698,20 +1715,8 @@ Runnable , GpsMidDisplayable{
 		currentAlertTitle = title;
 		currentAlertMessage = message;
 		currentAlertsOpenCount++;
+		setAlertTimeout = timeout;
 		repaint();
-		TimerTask timerT;
-		Timer tm = new Timer();	    
-		timerT = new TimerTask() {
-			public synchronized void run() {
-				currentAlertsOpenCount--;
-				if (currentAlertsOpenCount == 0) {
-					//#debug debug
-					logger.debug("clearing alert");
-					repaint();
-				}
-			}			
-		};
-		tm.schedule(timerT, timeout);
 	}
 
 	
