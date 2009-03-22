@@ -595,7 +595,6 @@ Runnable , GpsMidDisplayable{
 					parent.addToBackLightLevel(backLightLevelDiff);
 					parent.showBackLightLevel();
 				} else {
-					imageCollector.getCurrentProjection().pan(center, panX, panY);
 					if (courseDiff == 360) {
 						course = 0; //N
 					} else {
@@ -605,7 +604,10 @@ Runnable , GpsMidDisplayable{
 							course += 360;
 						}
 					}
-					gpsRecenter = false;
+					if (panX != 0 || panY != 0) {
+						gpsRecenter = false;
+					}
+					imageCollector.getCurrentProjection().pan(center, panX, panY);
 				}
 				return;
 			}
