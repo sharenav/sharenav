@@ -81,10 +81,10 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 		//#debug info
 		logger.info("Connect to "+Configuration.getBtUrl());
 		if (! openBtConnection(Configuration.getBtUrl())){
-			receiver.locationDecoderEnd();
+			this.receiver.locationDecoderEnd();
 			return false;
 		}
-		receiver.receiveMessage("BT Connected");
+		this.receiver.receiveMessage("BT Connected");
 		
 		processorThread = new Thread(this, "Bluetooth Receiver Decoder");
 		processorThread.setPriority(Thread.MAX_PRIORITY);
