@@ -58,6 +58,7 @@ import de.ueller.midlet.gps.data.IntPoint;
 import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.PositionMark;
+import de.ueller.midlet.gps.data.SECellLocLogger;
 import de.ueller.midlet.gps.data.Way;
 import de.ueller.midlet.gps.names.Names;
 import de.ueller.midlet.gps.routing.ConnectionWithNode;
@@ -455,6 +456,17 @@ Runnable , GpsMidDisplayable{
 						if (!fileCon.exists())
 							fileCon.create();
 						locationProducer.enableRawLogging(((FileConnection)logCon).openOutputStream());
+						
+						/**
+						 * Help out the OpenCellId.org project by gathering and logging
+						 * data of cell ids together with current Gps location. This information
+						 * can then be uploaded to their web site to determine the position of the
+						 * cell towers. It currently only works for SE phones
+						 */
+						SECellLocLogger secl = new SECellLocLogger();
+						if (secl.init()) {
+							locationProducer.addLocationMsgReceiver(secl);
+						}
 					} else {
 						logger.info("Trying to perform raw logging of NMEA on anything else than filesystem is currently not supported");
 					}
