@@ -228,11 +228,9 @@ public class GpsMid extends MIDlet implements CommandListener {
 			try {
 				if (trace == null) {
 					trace = new Trace(this);
-					trace.show();
-				} else {
-					trace.resume();
-					trace.show();
 				}
+				trace.resume();
+				trace.show();
 			} catch (Exception e) {
 				log.exception("Failed to display map ", e);
 				return;
