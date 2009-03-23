@@ -129,7 +129,11 @@ public final class ProjMath {
 		float lon2 = n2.radlon;
 		return getDistance(lat1, lon1, lat2, lon2);
 	}
-	
+	/**
+	 * Calculates the great circle distance between two coordinates
+	 * and returns the result in meters. Latitude and Longitude mus
+	 * be in radians.
+	 */
 	public static float getDistance(float lat1, float lon1, float lat2, float lon2) {
 		// Taken from http://williams.best.vwh.net/avform.htm
 		float d=2*MoreMath.asin((float)Math.sqrt((MoreMath.pow((float)Math.sin((lat1-lat2)/2),2.0f) + 

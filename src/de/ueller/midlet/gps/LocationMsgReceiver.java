@@ -17,6 +17,13 @@ public interface LocationMsgReceiver {
 	public static final byte SIRF_FAIL_NO_END_SIGN2=6;
 	public static final byte SIRF_FAIL_COUNT=7;
 	
+	/**
+	 * Send a position update notification
+	 * The pos object may be reused in subsequent
+	 * calls, so you need to clone it if you
+	 * need a persistent state for later
+	 * @param pos
+	 */
 	public void receivePosItion(Position pos);
 	public void receiveStatelit(Satelit[] sat);
 	public void receiveMessage(String s);
