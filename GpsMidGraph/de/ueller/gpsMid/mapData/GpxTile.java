@@ -35,6 +35,8 @@ public class GpxTile extends Tile {
 
 	// Dimension at which this tile was split: true = lat, false = lon.
 	boolean splitDimension;
+	/** track is loaded from recordstore (true) or recording from gps (false) */
+	private boolean loadedTrack = false;
 	
 	
 	public GpxTile() {
@@ -43,6 +45,18 @@ public class GpxTile extends Tile {
 		noTrkPts = 0;
 		t1 = null;
 		t2 = null;
+	}
+	/**
+	 * creates a GpxTile which holds the currently recording track, or a combination of all loaded tracks depending on the argument
+	 * @param loaded Describes if the track is loaded from recordstore (true) or currently recording from GPS (false)
+	 */
+	public GpxTile(boolean loaded){
+		trkPtLat = new float[10];
+		trkPtLon = new float[10];
+		noTrkPts = 0;
+		t1 = null;
+		t2 = null;
+		loadedTrack = loaded;
 	}
 
 	public synchronized void addTrkPt(float lat, float lon, boolean rad) {
@@ -116,16 +130,26 @@ public class GpxTile extends Tile {
 		}
 	}
 
+	/**
+	 * Painting Tracklogs
+	 * @param pc
+	 */
 	private void paintLocal(PaintContext pc) {
-		/**
-		 * Painting Tracklogs
-		 */			
-		for (int i = 0; i < noTrkPts; i++) {
-			if (pc.getP().isPlotable(trkPtLat[i], trkPtLon[i])) {
-				pc.getP().forward(trkPtLat[i], trkPtLon[i], pc.lineP2);
-				pc.g.drawImage(pc.images.IMG_MARK, pc.lineP2.x, pc.lineP2.y, Graphics.HCENTER | Graphics.VCENTER);					
+		if(loadedTrack){
+			for (int i = 0; i < noTrkPts; i++) {
+				if (pc.getP().isPlotable(trkPtLat[i], trkPtLon[i])) {
+					pc.getP().forward(trkPtLat[i], trkPtLon[i], pc.lineP2);
+					pc.g.drawImage(pc.images.IMG_MARK_DISP, pc.lineP2.x, pc.lineP2.y, Graphics.HCENTER | Graphics.VCENTER);					
+				}
 			}
-		}
+		} else {
+			for (int i = 0; i < noTrkPts; i++) {
+				if (pc.getP().isPlotable(trkPtLat[i], trkPtLon[i])) {
+					pc.getP().forward(trkPtLat[i], trkPtLon[i], pc.lineP2);
+					pc.g.drawImage(pc.images.IMG_MARK, pc.lineP2.x, pc.lineP2.y, Graphics.HCENTER | Graphics.VCENTER);					
+				}
+			}
+		}		
 	}
 	
 	private void extendTile() {
@@ -165,8 +189,8 @@ public class GpxTile extends Tile {
 		}
 		//#debug debug
 		logger.debug("Splitting GpxTile (" + splitDimension + ") "  + splitCoord);
-		t1 = new GpxTile();
-		t2 = new GpxTile();
+		t1 = new GpxTile(loadedTrack);
+		t2 = new GpxTile(loadedTrack);
 		for (int i = 0; i < noTrkPts; i++) {
 			if (t1t2TrackPoint(trkPtLat[i], trkPtLon[i]))
 				t1.addTrkPt(trkPtLat[i], trkPtLon[i],true);

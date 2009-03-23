@@ -27,8 +27,8 @@ public class GuiGpx extends List implements CommandListener,
 	
 	private final Command SEND_CMD = new Command("Export", Command.OK, 1);
 	private final Command LOAD_CMD = new Command("Import", Command.ITEM, 3);
-	private final Command DISP_CMD = new Command("Display first selected", Command.ITEM, 3);
-	private final Command RENAME_CMD = new Command("Rename first selected", Command.ITEM, 3);	
+	private final Command DISP_CMD = new Command("Display", "Display selected tracks", Command.ITEM, 3);
+	private final Command RENAME_CMD = new Command("Rename", "Rename first selected", Command.ITEM, 3);	
 	private final Command DEL_CMD = new Command("Delete", Command.ITEM, 3);	
 	private final Command SALL_CMD = new Command("Select All", Command.ITEM, 4);
 	private final Command DSALL_CMD = new Command("Deselect All", Command.ITEM, 4);
@@ -111,9 +111,10 @@ public class GuiGpx extends List implements CommandListener,
 			return;
 		}
 		if (c == DISP_CMD) {
-			idx = getFirstSelectedIndex();
-			if (idx >= 0) {
-				parent.gpx.displayTrk(trks[idx]);
+			updateProcessVector();
+			if (processTracks.size() > 0)
+			{
+				parent.gpx.displayTrk(processTracks);
 				parent.show();
 			}
 			return;
