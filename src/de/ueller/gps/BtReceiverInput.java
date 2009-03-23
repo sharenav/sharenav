@@ -54,6 +54,10 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 	protected int[] connectError = new int[LocationMsgReceiver.SIRF_FAIL_COUNT];
 	protected String message;
 	protected int msgsReceived = 1;
+	
+	public BtReceiverInput() {
+		this.receiver = new LocationMsgReceiverList();
+	}
 
 	protected class KeepAliveTimer extends TimerTask {
 		public void run() {
@@ -72,8 +76,6 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 	}
 
 	public boolean init(LocationMsgReceiver receiver) {
-		
-		this.receiver = new LocationMsgReceiverList();
 		this.receiver.addReceiver(receiver);
 		
 		//#debug info

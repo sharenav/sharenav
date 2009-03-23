@@ -32,7 +32,7 @@ public class NmeaInput extends BtReceiverInput {
 	public boolean init(LocationMsgReceiver receiver) {
 		//#debug
 		logger.debug("Starting NMEA");
-		smsg=new NmeaMessage(receiver);
+		smsg=new NmeaMessage(this.receiver);
 		return super.init(receiver);
 	}
 

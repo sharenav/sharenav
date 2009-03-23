@@ -34,7 +34,7 @@ public class SirfInput extends BtReceiverInput {
 	public boolean init(LocationMsgReceiver receiver) {
 		//#debug
 		logger.debug("Starting Sirf Decoder");
-		smsg=new SirfMessage(receiver);
+		smsg=new SirfMessage(this.receiver);
 		return super.init(receiver);
 	}
 

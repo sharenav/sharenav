@@ -50,15 +50,14 @@ public class JSR179Input implements LocationListener, LocationMsgProducer {
 
 	private OutputStream rawDataLogger;
 
-	/*
-	 * public JSR179Input(){
-	 * 
-	 * }
-	 */
+	
+	public JSR179Input(){
+		this.receiver = new LocationMsgReceiverList();
+	}
+
 
 	public boolean init(LocationMsgReceiver receiver) {
 		logger.info("start JSR179 LocationProvider");
-		this.receiver = new LocationMsgReceiverList();
 		this.receiver.addReceiver(receiver);
 		createLocationProvider();
 		// We may be able to get some additional information such as the number
