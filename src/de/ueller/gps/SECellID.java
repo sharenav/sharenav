@@ -186,6 +186,7 @@ public class SECellID implements LocationMsgProducer {
 									logStr = "Cell-id: " + cellid + "  mcc: " + mcc + "  mnc: " + mnc
 									+ "  lac: " + lac + " --> " + lat + " | " + lon;
 									rawDataLogger.write(logStr.getBytes());
+									rawDataLogger.write("\n".getBytes());
 									rawDataLogger.flush();
 								}
 
