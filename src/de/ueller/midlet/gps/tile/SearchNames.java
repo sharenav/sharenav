@@ -271,7 +271,6 @@ public class SearchNames implements Runnable{
 	 * search for a canonicalised name and return a list of results through callbacks
 	 * This call blocks until the search has finished.
 	 * @param search
-	 * @param append
 	 */
 	public synchronized void appendSearchBlocking(String search) {
 		logger.info("search for  " + search);
