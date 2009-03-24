@@ -119,15 +119,11 @@ public class PaintContext extends ScreenContext {
 	public float squareDstToRoutePath;
 	/** distance (from the map center) to the nearest point on the route line */
 	public int dstToRoutePath;
-	/** the index in the route vector where the nearest route line determined during painting leads to */ 
+	/** the index in the route vector where the nearest route line part determined during painting leads to */ 
 	public int routePathConnection;
-	/** the index of the path segment (of the way) where the nearest point on the way route line is on */
+	/** the index of the path segment (of the way) where the nearest point on the route line is on */
 	public int pathIdxInRoutePathConnection;
 	
-	/**
-	 * the actual configuration
-	 */	
-	public Configuration config;
 	
 	/**public float actualNodeLat;
 	public float actualNodeLon;**/
