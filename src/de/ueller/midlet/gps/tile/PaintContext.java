@@ -20,8 +20,9 @@ import de.ueller.midlet.gps.data.IntPoint;
 import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.data.Way;
 
-
+//TODO: explain - short overview what the PaintContext does - it seems like it has nothing to do with painting but routing - perhaps the name should be changed
 public class PaintContext extends ScreenContext {
+	
 	public final static byte DRAW_AREAS_NO=0;
 	public final static byte DRAW_AREAS_OUTLINE=1;
 	public final static byte DRAW_AREAS_FILL=2;
@@ -32,24 +33,24 @@ public class PaintContext extends ScreenContext {
 	
 	public volatile byte state=0;
 	
-	// layers containing highlighted path
+	/** layers containing highlighted path */
 	public byte hlLayers=0;
 	
 	public Graphics g;
 	/** 
-	 * used to avoid frequent memory allocations this point have to have
+	 * used to avoid frequent memory allocations. this point have to have
 	 * a valid object after method exit 
 	 */
 	public IntPoint swapLineP=new IntPoint(0,0);
 	/** 
-	 * used to avoid frequent memory allocations this point have to have
+	 * used to avoid frequent memory allocations. this point have to have
 	 * null after method exit. Point will used as startpoint of a line to
 	 * indicate the fact that there is no startpoint at the begin of painting,
 	 * this points to null 
 	 */
 	public IntPoint lineP1=null;
 	/** 
-	 * used to avoid frequent memory allocations this point have to have
+	 * used to avoid frequent memory allocations. this point have to have
 	 * a valid Object after method exit. Point will used as end point of a line.
 	 * the calculation go directly to the literals inside the object.
 	 */
@@ -60,7 +61,6 @@ public class PaintContext extends ScreenContext {
 	public C c;
 
 	/**
-	 * 
 	 * the the paint-process will store Street which is nearest to the center
 	 * of projection. 
 	 */
@@ -75,35 +75,49 @@ public class PaintContext extends ScreenContext {
 	public volatile float searchCon2Lon;
 	public volatile short searchConPrevWayRouteFlags; // Way route flags of previous connection
 	// results
-	public volatile int conWayNameIdx; // used to vaguely identify ways that might contain a solution path for highlighting  
-	public volatile short conWayFromAt; // highlight way from this path node #
-	public volatile short conWayToAt;   // highlight way to this path node #
-	public volatile byte conWayType;   // highlight way to node idx
-	public volatile short conWayRouteFlags; // modifiers like motorway and motorway_link (from description) and roundabout/bridge tunnel (from way) 
-	public volatile byte conWayNumToRoutableWays; // number of routable ways at the connection (result should always be >= 1)
-	public volatile byte conWayStartBearing; // bearing at the end of the path leading to this connection 
-	public volatile byte conWayNumMotorways; // number of possible motorway instructions this way leads to 
-	public volatile byte conWayEndBearing; // bearing at the beginning of the path leading to the next connection 
-	public volatile float conWayDistanceToNext; // distance to next connection when following the route path
-	public volatile boolean highlightedPathOnTop; // when painting draw highlighted path on top
-	public volatile intTree conWayNameIdxs = new intTree(); // used to find out if the connection leads to multiple same named ways
-	public volatile Vector conWayBearings = new Vector(8); // used to find out if the connection leads straight-on to multiple routable ways for giving a bearing instruction  
-	public volatile int conWayNumNameIdxs; // used to vaguely identify ways that might contain a solution path for highlighting  
+	/** used to vaguely identify ways that might contain a solution path for highlighting */
+	public volatile int conWayNameIdx;
+	/** highlight way from this path node # */
+	public volatile short conWayFromAt;
+	/** highlight way to this path node # */
+	public volatile short conWayToAt;
+	/** highlight way to node idx */
+	public volatile byte conWayType;
+	/** modifiers like motorway and motorway_link (from description) and roundabout/bridge tunnel (from way) */
+	public volatile short conWayRouteFlags;
+	/** number of routable ways at the connection (result should always be >= 1)*/
+	public volatile byte conWayNumToRoutableWays;
+	/** bearing at the end of the path leading to this connection */
+	public volatile byte conWayStartBearing;
+	//TODO: explain what are "motorway instructions" in this context? is there a better word for it
+	/** number of possible motorway instructions this way leads to */
+	public volatile byte conWayNumMotorways;
+	/** bearing at the beginning of the path leading to the next connection */
+	public volatile byte conWayEndBearing;
+	//TODO: explain - which measuring unit
+	/** distance to next connection when following the route path */
+	public volatile float conWayDistanceToNext;
+	/** when painting draw highlighted path on top */
+	public volatile boolean highlightedPathOnTop;
+	/** used to find out if the connection leads to multiple same named ways*/
+	public volatile intTree conWayNameIdxs = new intTree();
+	/** used to find out if the connection leads straight-on to multiple routable ways for giving a bearing instruction*/  
+	public volatile Vector conWayBearings = new Vector(8);
+	/** used to vaguely identify ways that might contain a solution path for highlighting*/
+	public volatile int conWayNumNameIdxs;  
 	
-	/**
-	 * the square of distance from center to the nearest point of actualWay
-	 */
+	/** the square of distance from center to the nearest point of actualWay */
 	public float squareDstToWay;
-	/**
-	 * the square of distance from center to the nearest point of nearestRoutableWay
-	 */
+	/** the square of distance from center to the nearest point of nearestRoutableWay */
 	public float squareDstToRoutableWay;
-	/**
-	 * the square of distance from center to the nearest point of the route solution path
-	 */
+	//TODO: explain - what is the route solution path
+	/** the square of distance from center to the nearest point of the route solution path */
 	public float squareDstToRoutePath;
+//	TODO: explain
 	public int dstToRoutePath;
-	public int routePathConnection;	
+//	TODO: explain
+	public int routePathConnection;
+//	TODO: explain
 	public int pathIdxInRoutePathConnection;
 	
 	/**
@@ -114,6 +128,10 @@ public class PaintContext extends ScreenContext {
 	/**public float actualNodeLat;
 	public float actualNodeLon;**/
 	
+	/**
+	 * @param tr Reference to the main Trace screen
+	 * @param i Reference to the Images class
+	 */
 	public PaintContext(Trace tr,Images i) throws Exception{
 		super();
 		images=i;
