@@ -228,6 +228,13 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		
 	}
 	
+	/**
+	 * removes all loaded tracks from the screen
+	 */
+	public void undispLoadedTracks(){
+		loadedTracksTile.dropTrk();
+	}
+	
 	public void addWayPt(PositionMark waypt) {
 		byte[] buf = waypt.toByte();
 		try {
@@ -718,9 +725,15 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		return false;
 	}
 
+	/**
+	 * renders the GPX on the screen
+	 */
 	public void paint(PaintContext pc, byte layer) {
-		trackTile.paint(pc, layer);
+		//rendering the tracks in reverse order...
+		//loaded tracks on the bottom
 		loadedTracksTile.paint(pc, layer);
+		//then the other layers ontop
+		trackTile.paint(pc, layer);		
 		wayPtTile.paint(pc, layer);
 	}
 	

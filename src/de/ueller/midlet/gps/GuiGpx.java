@@ -28,6 +28,7 @@ public class GuiGpx extends List implements CommandListener,
 	private final Command SEND_CMD = new Command("Export", Command.OK, 1);
 	private final Command LOAD_CMD = new Command("Import", Command.ITEM, 3);
 	private final Command DISP_CMD = new Command("Display", "Display selected tracks", Command.ITEM, 3);
+	private final Command UNDISP_CMD = new Command("Undisplay", "Undisplay loaded tracks", Command.ITEM, 3);
 	private final Command RENAME_CMD = new Command("Rename", "Rename first selected", Command.ITEM, 3);	
 	private final Command DEL_CMD = new Command("Delete", Command.ITEM, 3);	
 	private final Command SALL_CMD = new Command("Select All", Command.ITEM, 4);
@@ -65,6 +66,7 @@ public class GuiGpx extends List implements CommandListener,
 		addCommand(SEND_CMD);
 		addCommand(LOAD_CMD);
 		addCommand(DISP_CMD);
+		addCommand(UNDISP_CMD);
 		addCommand(RENAME_CMD);		
 		addCommand(DEL_CMD);
 		addCommand(SALL_CMD);
@@ -117,6 +119,11 @@ public class GuiGpx extends List implements CommandListener,
 				parent.gpx.displayTrk(processTracks);
 				parent.show();
 			}
+			return;
+		}
+		if (c == UNDISP_CMD) {
+			parent.gpx.undispLoadedTracks();
+			parent.show();
 			return;
 		}
 		if (c == RENAME_CMD) {
