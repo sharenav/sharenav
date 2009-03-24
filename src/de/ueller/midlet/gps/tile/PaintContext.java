@@ -21,6 +21,13 @@ import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.data.Way;
 
 //TODO: explain - short overview what the PaintContext does - it seems like it has nothing to do with painting but routing - perhaps the name should be changed
+/*
+ * For routing:
+ * In the Way class the route connections of the route solution path (route line)
+ * are matched against the ways around the calculated route connections (in connections2WayMatch())
+ * For this purpose the PaintContext contains some variable passed on to the Way Class and also for passing back
+ * the results for each connection by/to RouteInstructions.searchConnection2Ways() 
+ */
 public class PaintContext extends ScreenContext {
 	
 	public final static byte DRAW_AREAS_NO=0;
@@ -89,13 +96,11 @@ public class PaintContext extends ScreenContext {
 	public volatile byte conWayNumToRoutableWays;
 	/** bearing at the end of the path leading to this connection */
 	public volatile byte conWayStartBearing;
-	//TODO: explain what are "motorway instructions" in this context? is there a better word for it
-	/** number of possible motorway instructions this way leads to */
+	/** number of possible motorway instructions (enter / leave motorway) this way leads to */
 	public volatile byte conWayNumMotorways;
 	/** bearing at the beginning of the path leading to the next connection */
 	public volatile byte conWayEndBearing;
-	//TODO: explain - which measuring unit
-	/** distance to next connection when following the route path */
+	/** distance to next connection in meters when following the route path */
 	public volatile float conWayDistanceToNext;
 	/** when painting draw highlighted path on top */
 	public volatile boolean highlightedPathOnTop;
@@ -110,14 +115,13 @@ public class PaintContext extends ScreenContext {
 	public float squareDstToWay;
 	/** the square of distance from center to the nearest point of nearestRoutableWay */
 	public float squareDstToRoutableWay;
-	//TODO: explain - what is the route solution path
-	/** the square of distance from center to the nearest point of the route solution path */
+	/** the square of distance from center to the nearest point of the route solution path (=route line)*/
 	public float squareDstToRoutePath;
-//	TODO: explain
+	/** distance (from the map center) to the nearest point on the route line */
 	public int dstToRoutePath;
-//	TODO: explain
+	/** the index in the route vector where the nearest route line determined during painting leads to */ 
 	public int routePathConnection;
-//	TODO: explain
+	/** the index of the path segment (of the way) where the nearest point on the way route line is on */
 	public int pathIdxInRoutePathConnection;
 	
 	/**
