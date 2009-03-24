@@ -65,6 +65,7 @@ public class SearchNames implements Runnable{
 	    }		
 	}
 	
+	//TODO: explain
 	private void doSearch(String search) throws IOException {
 		try {
 			synchronized(this) {
@@ -112,10 +113,13 @@ public class SearchNames implements Runnable{
 						return;
 					}
 				}
+				return;
 			}
 			
-			if (search.length() < 2)
-				return;
+			
+			/* moved the return up to end of the last identical test
+			 * if (search.length() < 2)
+				return;*/
 			
 			//#debug
 			logger.info("Searching for " + search);
@@ -285,6 +289,10 @@ public class SearchNames implements Runnable{
 		}
 	}
 
+	/**
+	 * search for a String and create a new search Thread if necessary
+	 * @param search
+	 */
 	public synchronized void search(String search){
 		//#debug
 		logger.info("search for  " + search);
