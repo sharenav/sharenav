@@ -61,6 +61,19 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 	 * Read tracks from the GPX recordStore and display the names in the list on screen.
 	 */
 	private void initWaypoints() {
+		int count = this.size();
+		if (count != 0) {
+			/*
+			 *  Workaround: on some SE phones the selection state of list  elements must be explicitely cleared
+			 *  before re-adding list elements - otherwise they stay selected 
+			 */
+			boolean[] boolSelected = new boolean[count];
+			for (int i = 0; i < count; i++) {
+				boolSelected[i] = false;
+			}
+			this.setSelectedFlags(boolSelected);
+		}
+
 		this.deleteAll();		
 		waypoints = parent.gpx.listWayPt();
 		for (int i = 0; i < waypoints.length; i++) {
