@@ -344,7 +344,7 @@ public class Way extends Entity{
 		short searchCon2Lat = (short) ((pc.searchCon2Lat - t.centerLat) * t.fpm);
 		short searchCon2Lon = (short) ((pc.searchCon2Lon - t.centerLon) * t.fpm);
 		
-		
+		boolean isCircleway = isCircleway(t);
 		// check if way contains both search connections
 		// System.out.println("search path nodes: " + path.length);
 		for (short i = 0; i < path.length; i++) {
@@ -359,7 +359,7 @@ public class Way extends Entity{
 					// count in roundabouts only once (search connection could match at start and end node)
 					&& !containsCon1
 					// count only if it's not a oneway ending at this connection 
-					&& !(isOneway() && i == path.length - 1)
+					&& !(isOneway() && (i == path.length - 1 && !isCircleway) )
 				) {
 					// remember bearings of the ways at this connection, so we can later check out if we have multiple straight-ons requiring a bearing instruction
 					// we do this twice for each found way to add the bearings for forward and backward
@@ -421,22 +421,20 @@ public class Way extends Entity{
 			short from = containsCon1At;
 			short to = containsCon2At;
 			int direction = 1;
-			if (from > to && !isRoundAbout()) {
-				// if this is a oneway but not a roundabout it can't be the route path as we would go against the oneway's direction
+			if (from > to && !(isRoundAbout() || isCircleway) ) {
+				// if this is a oneway but not a roundabout or circleway it can't be the route path as we would go against the oneway's direction
 				if (isOneway()) return;
 				// swap direction
 				from = to;
 				to = containsCon1At;
 				direction = -1;
 			}
-			
-			
 			int idx1 = path[from];
 			int idx2;
 
 			// sum up the distance of the segments between searchCon1 and searchCon2
 			for (short i = from; i != to; i++) {
-				if (isRoundAbout() && i >= (path.length-2))  {
+				if ( (isRoundAbout() || isCircleway) && i >= (path.length-2))  {
 					i=-1; // if in roundabout at end of path continue at first node
 					if (to == (path.length-1) ) {
 						break;
@@ -606,7 +604,8 @@ public class Way extends Entity{
 											 */
 											short from = c.wayFromConAt;
 											short to = c.wayToConAt;
-											if (from > to  && !isRoundAbout()) {
+											boolean isCircleway = isCircleway(t);
+											if (from > to  && !(isRoundAbout() || isCircleway) ) {
 												// swap direction
 												to = from;
 												from = c.wayToConAt;
@@ -614,7 +613,7 @@ public class Way extends Entity{
 											
 											for (int n = from; n != to; n++) {
 												hl[n] = i;
-												if (isRoundAbout() && n >= (path.length-1) )  {
+												if ( ( isRoundAbout() || isCircleway ) && n >= (path.length-1) )  {
 													n=-1; //  // if in roundabout at end of path continue at first node
 													if (to == (path.length-1) ) {
 														break;
@@ -1571,6 +1570,15 @@ public class Way extends Entity{
 	
 	public boolean isOneway(){
 		return ((flags & WAY_ONEWAY) == WAY_ONEWAY);
+	}
+	
+	
+	/**
+	 * Checks if the way is a cirlceway (a closed way - with the same node at the start and the end)
+	 * @return true if this way is a circleway  
+	 */
+	public boolean isCircleway(SingleTile t) {
+		return (path[0] == path[path.length - 1]);
 	}
 	
 	public boolean isArea() {
