@@ -888,6 +888,7 @@ Runnable , GpsMidDisplayable{
 				}
 			} else if (c == CMDS[TOGGLE_OVERLAY_CMD]) {
 				showAddons++;
+				repaint();
 			} else if (c == CMDS[TOGGLE_BACKLIGHT_CMD]) {
 //				 toggle Backlight
 				Configuration.setCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON,
