@@ -1579,6 +1579,8 @@ public class RouteInstructions {
 									true
 			);
 			trace.gpsRecenter=false;
+			// allow to output same instruction again
+			GpsMid.mNoiseMaker.resetSoundRepeatTimes();
 		}
 	}
 		
