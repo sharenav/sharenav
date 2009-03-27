@@ -118,4 +118,38 @@ public class HelperRoutines {
 	}
 	
 
+	
+	/**
+	 * ReplacesALL Replaces every occurance of searchString with replacementString in text
+	 * 
+	 * @param text
+	 * @param searchString
+	 * @param replacementString
+	 * @return
+	 */
+
+	public static String replaceAll(String text, String searchString, String replacementString){
+		StringBuffer sBuffer = new StringBuffer();
+		int pos = 0;
+		while((pos = text.indexOf(searchString)) != -1) {
+			sBuffer.append(text.substring(0, pos) + replacementString);
+			text = text.substring(pos + searchString.length());
+		}
+		sBuffer.append(text);
+		return sBuffer.toString();
+	}
+	
+	/**
+	 * Replaces control caracters to be XML-safe
+	 * 
+	 * @param toxml
+	 * @return
+	 */
+	public static String utf2xml(String toxml) {		
+		toxml = HelperRoutines.replaceAll(toxml,"&", "&amp;" );
+		toxml = HelperRoutines.replaceAll(toxml,"<", "&lt;"  );
+		toxml = HelperRoutines.replaceAll(toxml,">", "&gt;"  );
+		toxml = HelperRoutines.replaceAll(toxml,"\"", "&quot;");
+		return toxml;
+	}
 }
