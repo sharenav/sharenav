@@ -32,6 +32,7 @@ GpsMid 0.4.55
        - Waypoint names can now be entered with up to 255 chars (instead of 20)
 	   - Waypoints are now automatically exported inside tracks (thx jkpj)
 	   - Also save elevation and timestamp for waypoints (thx mbaeurle)
+	   - Allow to change waypoint elevation when saving a new waypoint (thx pos_ei_don_) 
 	   - Option to recenter to GPS after saving a waypoint - taht's helpful for qwert-phones (thx pos_ei_don_)
        - When sending waypoints you are now asked for a name (Waypoints.gpx remains default filename)
        - The map is centered at the start point when displaying a track
@@ -39,17 +40,18 @@ GpsMid 0.4.55
 		 if "upload to OSM" is specified as GPX receiver
 		 and OSM Account in Setup is specified
 	   - bug fix for file import not working on some phones (thx mbaeurle + colleague)
+	   - correctly export waypoints with names containing &, <, > or " (thx pos_ei_don_)
 	   - optimizations for waypoint label drawing (thx mbaeurle) 
        *** Recordings ***
        - Added feature to send an SMS with the current map position (map center)
          if JSR-120 is available. It is also possible
          to save the specified recipient as default recipient,
          even when leaving the form with the Back command
-       *** GPS and location producers ***
+       *** GPS and other location producers ***
        - JSR-179: Some devices (e.g. Nokia E71 and E90) did not show the speed / rotate the map to the driving direction.
        - Returning to the main screen while GpsMid is reconnecting should be possible now
        - Support for retrieving the estimated position from the cell-id on SE phones via internet access to opencellid.org
-       - Log cell-id positions for uploading to opencellid.org
+       - Log Cell-ID positions for uploading to OpenCellId.org
          to a directory in the log folder specified in the location receiver setup
        - Code supports now multiple LocationMsgReceivers for one LocationMsgProducer (thx black_ivory)
        *** Map ***
