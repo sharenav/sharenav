@@ -292,17 +292,18 @@ public class Configuration {
 				//#debug info
 				logger.info("Default config for version 3+ set.");
 			}			
-			if(configVersionStored < 4) {				
+			if(configVersionStored < 5) {				
 				cfgBits |=	1L<<CFGBIT_PLACETEXTS |
 							1L<<CFGBIT_SPEEDALERT_SND |
 							1L<<CFGBIT_ROUTE_HIDE_QUIET_ARROWS |
 							1L<<CFGBIT_ROUTE_BROWSING |
+							1L<<CFGBIT_SHOW_SCALE_BAR |
 							1L<<CFGBIT_SPEEDALERT_VISUAL;
 							setMinRouteLineWidth(3);
 							// Speed alert tolerance
 							setSpeedTolerance(5);
 				//#debug info
-				logger.info("Default config for version 4+ set.");
+				logger.info("Default config for version 5+ set.");
 			}			
 			setCfgBits(cfgBits, true);
 			// remember for which version the default values were stored
