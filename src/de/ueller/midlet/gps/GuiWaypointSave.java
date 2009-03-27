@@ -16,20 +16,23 @@ import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.data.Proj2DMoveUp;
 import javax.microedition.lcdui.Choice;
 import javax.microedition.lcdui.ChoiceGroup;
+import javax.microedition.lcdui.Spacer;
+
 
 public class GuiWaypointSave extends Form implements CommandListener {
-	private TextField fldName;
+	private TextField fldName,fldEle;
 	private ChoiceGroup cg;
 	private static final Command saveCmd = new Command("Save", Command.OK, 1);
 	private static final Command backCmd = new Command("Back", Command.BACK, 2);
+	
 	private Trace parent;
-	private String name;
+	private String name,ele;
 	private PositionMark waypt;
 	
 	protected static final Logger logger = Logger.getInstance(GuiWaypointSave.class,Logger.TRACE);
 
 	public GuiWaypointSave(Trace tr) {
-		super("Enter Waypoint name");
+		super("Save Waypoint");
 		this.parent = tr;
 		try {
 			jbInit();
@@ -40,6 +43,7 @@ public class GuiWaypointSave extends Form implements CommandListener {
 
 	private void jbInit() throws Exception {
 		fldName = new TextField("Name:", "", Configuration.MAX_WAYPOINTNAME_LENGTH, TextField.ANY);
+		fldEle = new TextField("Altitude (in m):", "", 5, TextField.NUMERIC);
 		cg = new ChoiceGroup("Settings", Choice.MULTIPLE);
 		cg.append("Recenter to GPS after saving",null);
 		
@@ -49,6 +53,8 @@ public class GuiWaypointSave extends Form implements CommandListener {
 		addCommand(backCmd);
 		addCommand(saveCmd);
 		this.append(fldName);
+		this.append("Optional data");
+		this.append(fldEle);		
 		this.append(cg);
 	}
 	
@@ -57,13 +63,30 @@ public class GuiWaypointSave extends Form implements CommandListener {
 		this.waypt = pos;
 		this.name = "";
 		fldName.setString(name);
+		
+		//only set default altitude if gps.ele is valid. 
+		if (waypt.ele != PositionMark.INVALID_ELEVATION) {
+			fldEle.setString(String.valueOf(waypt.ele));
+		} else {
+			fldEle.setString("");			
+		}
+		
 	}
 
 	public void commandAction(Command cmd, Displayable displayable) {
 		if (cmd == saveCmd) {
 			name = fldName.getString();
-			logger.info("Saving waypoint with name: " + name);
+			ele  = fldEle.getString();
+			logger.info("Saving waypoint with name: " + name + " ele: " + ele);
 			waypt.displayName = name;
+			
+			try {
+				//use the value from textfield, if not "" 
+				waypt.ele = Integer.parseInt(ele);
+			} catch (NumberFormatException e) {
+				waypt.ele = PositionMark.INVALID_ELEVATION;
+			}
+		            
 			parent.gpx.addWayPt(waypt);
 
 			// Recenter GPS after saving a Waypoint if this option is selected
