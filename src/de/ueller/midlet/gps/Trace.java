@@ -445,30 +445,33 @@ Runnable , GpsMidDisplayable{
 
 			String url = Configuration.getGpsRawLoggerUrl();
 			//logger.error("Raw logging url: " + url);
-			if (Configuration.getGpsRawLoggerEnable() && (url != null)) {
+			if (url != null) {
 				try {
-					logger.info("Raw Location logging to: " + url);
-					url += "rawGpsLog" + HelperRoutines.formatSimpleDateNow() + ".txt";
-
-					javax.microedition.io.Connection logCon = Connector.open(url);				
-					if (logCon instanceof FileConnection) {
-						FileConnection fileCon = (FileConnection)logCon;
-						if (!fileCon.exists())
-							fileCon.create();
-						locationProducer.enableRawLogging(((FileConnection)logCon).openOutputStream());
+					if (Configuration.getGpsRawLoggerEnable()) { 
+						logger.info("Raw Location logging to: " + url);
+						url += "rawGpsLog" + HelperRoutines.formatSimpleDateNow() + ".txt";
+						javax.microedition.io.Connection logCon = Connector.open(url);				
+						if (logCon instanceof FileConnection) {
+							FileConnection fileCon = (FileConnection)logCon;
+							if (!fileCon.exists())
+								fileCon.create();
+							locationProducer.enableRawLogging(((FileConnection)logCon).openOutputStream());
+						} else {
+							logger.info("Raw logging of NMEA is only to filesystem supported");
+						}
+					}
 						
-						/**
-						 * Help out the OpenCellId.org project by gathering and logging
-						 * data of cell ids together with current Gps location. This information
-						 * can then be uploaded to their web site to determine the position of the
-						 * cell towers. It currently only works for SE phones
-						 */
+					/**
+					 * Help out the OpenCellId.org project by gathering and logging
+					 * data of cell ids together with current Gps location. This information
+					 * can then be uploaded to their web site to determine the position of the
+					 * cell towers. It currently only works for SE phones
+					 */
+					if (Configuration.getCfgBitState(Configuration.CFGBIT_CELLID_LOGGING)) { 
 						SECellLocLogger secl = new SECellLocLogger();
 						if (secl.init()) {
 							locationProducer.addLocationMsgReceiver(secl);
 						}
-					} else {
-						logger.info("Trying to perform raw logging of NMEA on anything else than filesystem is currently not supported");
 					}
 				} catch (IOException ioe) {
 					logger.exception("Couldn't open file for raw logging of Gps data",ioe);

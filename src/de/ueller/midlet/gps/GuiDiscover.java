@@ -49,7 +49,10 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		"Save config","Load config"
 		//#endif
 		};
-	
+
+	private static final String LABEL_SELECT_LOGDIR_FIRST = "Please select first the log directory for:";
+	private static final String LOG_TO = "Log To: ";
+
 	/**
 	 * The following MENU_ITEM constatants have to be in
 	 * sync with the position in the elements array of the
@@ -167,7 +170,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private TextField  tfOsmPassword;
 	private TextField  tfOsmUrl;
 	//#endif
-	private ChoiceGroup rawLog;
+	private ChoiceGroup rawLogCG;
 	private ChoiceGroup mapSrc;
 	private Gauge gaugeDetailBoost; 
 	private ChoiceGroup rotationGroup;
@@ -183,7 +186,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private ChoiceGroup btAutoRecon;
 	  
 	private String gpsUrlStr;
-	
+	private String rawLogDir;
+
 	private Gauge gaugeRoutingEsatimationFac; 
 	private ChoiceGroup stopAllWhileRouting;
 	private ChoiceGroup routingOptsGroup;
@@ -325,15 +329,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		gpsUrl.setDefaultCommand(GPS_DISCOVER);
 		gpsUrl.setItemCommandListener(this);
 		locProv=new ChoiceGroup("input from:",Choice.EXCLUSIVE,Configuration.LOCATIONPROVIDER,new Image[Configuration.LOCATIONPROVIDER.length]);
-		String [] loggings = new String[1];      
-		loggings[0] = Configuration.getGpsRawLoggerUrl(); 
-		if (loggings[0] == null) { 
-			loggings[0] = "Please select to destination first"; 
-		} 
-		boolean [] selraw = new boolean[1]; 
-		selraw[0] = Configuration.getGpsRawLoggerEnable(); 
 
-		rawLog = new ChoiceGroup("Raw gps logging to:", ChoiceGroup.MULTIPLE);
+		final String[] logCategories={"Cell-IDs for OpenCellID.org", "Raw Gps Data"};
+		rawLogCG = new ChoiceGroup(LABEL_SELECT_LOGDIR_FIRST, ChoiceGroup.MULTIPLE, logCategories, new Image[2]);
 
 		String [] btka = new String[1];
 		btka[0] = "Send keep alives"; 
@@ -347,7 +345,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		menuSelectLocProv.append(btKeepAlive);
 		menuSelectLocProv.append(btAutoRecon);
 		menuSelectLocProv.append(locProv);
-		menuSelectLocProv.append(rawLog);
+		menuSelectLocProv.append(rawLogCG);
 
 		menuSelectLocProv.setCommandListener(this);
 	}
@@ -477,8 +475,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 			String title="Select Directory";
 			switch (state) {
 				case STATE_LP:
-					title="Raw Log Directory";
-					initialDir=rawLog.getString(0);
+					title="Raw GPS/CellID Log Directory";
+					initialDir = (rawLogDir == null) ? "" : rawLogDir; 
 					break;			
 				case STATE_MAP:
 					title="Map Directory";					 
@@ -546,17 +544,19 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 					
 					String logUrl=Configuration.getGpsRawLoggerUrl();		
 					if ( logUrl == null) {
-						logUrl= "Please select to destination first";
+						logUrl= LABEL_SELECT_LOGDIR_FIRST;
+					} else {
+						logUrl = LOG_TO + logUrl;
 					}
-					boolean [] selraw = new boolean[1];
-					selraw[0] = Configuration.getGpsRawLoggerEnable();
-					rawLog.deleteAll();
-					rawLog.append(logUrl, null);
-					rawLog.setSelectedFlags(selraw);
-					selraw[0] = Configuration.getBtKeepAlive();
-					btKeepAlive.setSelectedFlags(selraw);
-					selraw[0] = Configuration.getBtAutoRecon();
-					btAutoRecon.setSelectedFlags(selraw);
+					rawLogCG.setLabel(logUrl);
+
+					boolean [] selLog = new boolean[2]; 
+					selLog[0] = Configuration.getCfgBitState(Configuration.CFGBIT_CELLID_LOGGING);
+					selLog[1] = Configuration.getGpsRawLoggerEnable();
+					rawLogCG.setSelectedFlags(selLog);
+
+					btKeepAlive.setSelectedIndex(0, Configuration.getBtKeepAlive());
+					btAutoRecon.setSelectedIndex(0, Configuration.getBtAutoRecon());
 					Display.getDisplay(parent).setCurrentItem(gpsUrl);
 					//Display.getDisplay(parent).setCurrent(menuSelectLocProv);
 					state = STATE_LP;
@@ -741,16 +741,12 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 			case STATE_LP:				
 				Configuration.setBtUrl(gpsUrlStr); 
 				Configuration.setLocationProvider(locProv.getSelectedIndex()); 
-				boolean [] selraw = new boolean[1];
-				rawLog.getSelectedFlags(selraw);
-				// check if url is valid, i.e. not "Please select..."  
-				if (rawLog.getString(0).indexOf(":")!=-1) { 
-					Configuration.setGpsRawLoggerUrl(rawLog.getString(0)); 
-					Configuration.setGpsRawLoggerEnable(selraw[0]);
-				} else {
-					Configuration.setGpsRawLoggerUrl(null); 
-					Configuration.setGpsRawLoggerEnable(false);					
-				}
+				boolean [] selraw = new boolean[2];
+				rawLogCG.getSelectedFlags(selraw);
+				Configuration.setGpsRawLoggerUrl(rawLogDir);
+				Configuration.setCfgBitState(Configuration.CFGBIT_CELLID_LOGGING, selraw[0], true);
+				Configuration.setGpsRawLoggerEnable(selraw[1]);
+
 				btKeepAlive.getSelectedFlags(selraw);
 				Configuration.setBtKeepAlive(selraw[0]);
 				btAutoRecon.getSelectedFlags(selraw);
@@ -992,7 +988,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		String url_trunc = url.substring(0, url.lastIndexOf('/') + 1);
 		switch (state) {
 		case STATE_LP:
-			rawLog.set(0, url_trunc, null);
+			rawLogCG.setLabel(LOG_TO + url_trunc);
+			rawLogDir = url_trunc;
 			break;
 		case STATE_GPX:
 			gpxUrl.setText(url_trunc);

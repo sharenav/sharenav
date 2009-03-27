@@ -125,6 +125,8 @@ public class Configuration {
 	public final static byte CFGBIT_ROUTE_BROWSING=39;
 	// bit 40: show scale bar on map
 	public final static byte CFGBIT_SHOW_SCALE_BAR = 40;
+	// bit 41: log cell-ids to directory
+	public final static byte CFGBIT_CELLID_LOGGING = 41;
 	
 	/**
 	 * These are the database record ids for each configuration option
