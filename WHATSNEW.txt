@@ -2,7 +2,8 @@ GpsMid 0.4.55
        *** Usability ***
        - support for touchscreen devices (works also with mouse in MicroEmulator):
          - touch and drag to pan around the map
-         - touch and drag to scroll in search results
+         - touch controls for zooming in and out
+         - touch and drag to scroll and select in search results
        - support for QWERT keyboards in the Search dialog
        - new keyboard shortcuts for QWERT keyboards in the map screen and some changes to numeric keyboard shortcuts
          (see http://gpsmid.wiki.sourceforge.net/Keyboard_Layout)
