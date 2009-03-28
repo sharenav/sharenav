@@ -42,6 +42,7 @@ import de.ueller.gps.nmea.NmeaInput;
 import de.ueller.gps.sirf.SirfInput;
 import de.ueller.gps.tools.HelperRoutines;
 import de.ueller.gps.tools.intTree;
+import de.ueller.gps.tools.Shape;
 import de.ueller.gpsMid.mapData.DictReader;
 //#if polish.api.osm-editing
 import de.ueller.gpsMid.GUIosmWayDisplay;
@@ -179,11 +180,14 @@ Runnable , GpsMidDisplayable{
 	private int compassRectHeight = 0;
 	
 	
-	// position display was touched last time
+	/** x position display was touched last time */
 	private static int touchX = 0;
+	/** y position display was touched last time */
 	private static int touchY = 0;
-	// center when display was touched last time
+	/** center when display was touched last time */
 	private static Node	centerPointerPressedN = new Node();
+	/** indicates whether this is a touch button or drag action*/
+	private static boolean pointerDragAction = false;
 	
 	public volatile boolean routeCalc=false;
 	public Tile t[] = new Tile[6];
@@ -271,6 +275,9 @@ Runnable , GpsMidDisplayable{
 	
 	private boolean manualRotationMode = false;
 	
+	private Shape shapeZoomIn = null;
+	private Shape shapeZoomOut = null;
+
 	public Vector locationUpdateListeners;
 	
 	public Trace(GpsMid parent) throws Exception {
@@ -1204,6 +1211,10 @@ Runnable , GpsMidDisplayable{
 			}
 
 			showSpeedingSign(g, maxSpeed);
+			
+			if (hasPointerEvents()) {
+				showZoomButtons(pc);
+			}
 
 			if (currentMsg != null) {
 				if (compassRectHeight == 0) {
@@ -1502,6 +1513,18 @@ Runnable , GpsMidDisplayable{
 		}
 	}
 
+	public void showZoomButtons(PaintContext pc){
+		if (shapeZoomIn == null) {		
+			shapeZoomIn = new Shape('+');
+			shapeZoomOut = new Shape('-');
+		}		
+		pc.g.setColor(0);
+		pc.g.setStrokeStyle(Graphics.SOLID);
+		shapeZoomIn.drawShape(pc, pc.xSize - 3, pc.ySize / 2);
+		// draw zoom-out control below zoom-in control
+		shapeZoomOut.drawShape(pc, pc.xSize - 3, shapeZoomIn.getMaxY());
+	}
+	
 	/**
 	 * Draws a map scale onto screen.
 	 * This calculation is currently horribly
@@ -1747,6 +1770,20 @@ Runnable , GpsMidDisplayable{
 	}
 
 	protected void pointerPressed(int x, int y) {
+		pointerDragAction = true;
+		// check for touchable buttons
+		if (shapeZoomIn.isInRectangleAroundPolygon(x, y)) {
+			commandAction(CMDS[ZOOM_IN_CMD], (Displayable) null);
+			repaint();
+			pointerDragAction = false;
+		}
+		if (shapeZoomOut.isInRectangleAroundPolygon(x, y)) {
+			commandAction(CMDS[ZOOM_OUT_CMD], (Displayable) null);
+			repaint();
+			pointerDragAction = false;
+		}
+		
+		// remember positions for dragging
 		// remember position the pointer was pressed
 		this.touchX = x;
 		this.touchY = y;
@@ -1755,7 +1792,9 @@ Runnable , GpsMidDisplayable{
 	}
 	
 	protected void pointerReleased(int x, int y) {
-		pointerDragged(x , y);
+		if (pointerDragAction) {
+			pointerDragged(x , y);
+		}
 	}
 	
 	protected void pointerDragged (int x, int y) {
