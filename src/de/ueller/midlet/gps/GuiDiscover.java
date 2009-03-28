@@ -542,11 +542,12 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 					int selIdx = Configuration.getLocationProvider();
 					locProv.setSelectedIndex(selIdx, true);
 					
-					String logUrl=Configuration.getGpsRawLoggerUrl();		
-					if ( logUrl == null) {
+					String logUrl;
+					rawLogDir = Configuration.getGpsRawLoggerUrl();		
+					if (rawLogDir == null) {
 						logUrl= LABEL_SELECT_LOGDIR_FIRST;
 					} else {
-						logUrl = LOG_TO + logUrl;
+						logUrl = LOG_TO + rawLogDir;
 					}
 					rawLogCG.setLabel(logUrl);
 
