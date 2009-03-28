@@ -824,8 +824,9 @@ public class RouteInstructions {
 							aPaint=RI_TARGET_REACHED;
 						}
 						pc.getP().forward(c.to.lat, c.to.lon, pc.lineP2);
-					    // optionally scale nearest arrow
-					    if (i==iNow) {
+						// handle current arrow
+						if (i == iNow && aNow != RI_NONE) {
+						    // scale nearest arrow
 							if (aNow!=cachedPicArrow || scaledPict == null) {
 								cachedPicArrow=aNow;							
 								if (aNow < RI_ENTER_MOTORWAY) {
