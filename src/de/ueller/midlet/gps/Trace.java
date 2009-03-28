@@ -1559,6 +1559,8 @@ Runnable , GpsMidDisplayable{
 		//Calculate how many pixels this distance is apart
 		scalePx = (int)(35.0f*scale/d);
 		
+		// TODO: explain What is the maximum width of the scale bar?
+		
 		//Draw the scale bar
 		pc.g.setColor(0x00000000);
 		pc.g.drawLine(10,10, 10 + scalePx, 10);
