@@ -14,7 +14,12 @@ import de.ueller.gpsMid.mapData.SingleTile;
 
 public interface Projection {
 	
-	public static final float PLANET_RADIUS=6378137.0f;
+	/**
+	 * Average earth radius of the WGS84 geoid.
+	 * The old value used (6378137.0f) is the equatorial radius.  
+	 */
+	public static final float PLANET_RADIUS = 6371000.8f;
+
 	public static final int DEFAULT_PIXEL_PER_METER = 3272;
 	
     /**

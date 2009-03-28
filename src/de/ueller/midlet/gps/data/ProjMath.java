@@ -74,7 +74,7 @@ public final class ProjMath {
     private ProjMath() {}
 
     /**
-     * rounds the quantity away from 0.
+     * Rounds the quantity away from 0.
      * 
      * @param x in value
      * @return double
@@ -104,7 +104,7 @@ public final class ProjMath {
     }
 
     /**
-     * Calculate the shortest arc distance between two lons.
+     * Calculates the shortest arc distance between two lons.
      * 
      * @param lon1 radians
      * @param lon2 radians
@@ -117,11 +117,15 @@ public final class ProjMath {
     }
 
 	/**
-	 * Calculate the distance between two nodes along the great circle
+	 * Calculates the distance between two nodes along the great circle.
+	 * @param n1 Reference to first node
+	 * @param n2 Reference to second node
+	 * @return Distance in meters, 0 if any of the two references is null
 	 */
 	public static float getDistance(Node n1, Node n2) {
-		if (n1 == null || n2 == null)
+		if (n1 == null || n2 == null) {
 			return 0.0f;
+		}
 		
 		float lat1 = n1.radlat;
 		float lon1 = n1.radlon;
@@ -129,10 +133,14 @@ public final class ProjMath {
 		float lon2 = n2.radlon;
 		return getDistance(lat1, lon1, lat2, lon2);
 	}
+	
 	/**
-	 * Calculates the great circle distance between two coordinates
-	 * and returns the result in meters. Latitude and Longitude mus
-	 * be in radians.
+	 * Calculates the great circle distance between two nodes.
+	 * @param lat1 Latitude of first point in radians
+	 * @param lon1 Longitude of first point in radians
+	 * @param lat2 Latitude of second point in radians
+	 * @param lon2 Longitude of second point in radians
+	 * @return Angular distance in radians
 	 */
 	public static float getDistance(float lat1, float lon1, float lat2, float lon2) {
 		// Taken from http://williams.best.vwh.net/avform.htm
@@ -140,16 +148,16 @@ public final class ProjMath {
 												  Math.cos(lat1)*Math.cos(lat2)*MoreMath.pow((float)Math.sin((lon1-lon2)/2),2.0f))));
 
 		//taken from ITM Project Korbel
-		d *= 3437.7387; //radians to nautical miles
-		d *= 1.150779; //nautical miles to land miles
-		d *= 1.609; //land miles to kilometers
-		d *= 1000; //kilometers to meters    
-
-		return d;
+		//d *= 3437.7387; //radians to nautical miles
+		//d *= 1.150779; //nautical miles to land miles
+		//d *= 1.609; //land miles to kilometers
+		//d *= 1000; //kilometers to meters  
+		// Pretty complicated way to do this as this is simply the earth radius...
+		return d * Projection.PLANET_RADIUS;
 	}
 
-    /**
-     * Convert between decimal degrees and scoords.
+	/**
+     * Converts between decimal degrees and scoords.
      * 
      * @param deg degrees
      * @return long scoords
@@ -160,7 +168,7 @@ public final class ProjMath {
     }
 
     /**
-     * Convert between decimal degrees and scoords.
+     * Converts between decimal degrees and scoords.
      * 
      * @param sc scoords
      * @return double decimal degrees
@@ -170,7 +178,7 @@ public final class ProjMath {
     }
 
     /**
-     * Convert radians to degrees.
+     * Converts radians to degrees.
      * 
      * @param rad radians
      * @return double decimal degrees
@@ -180,7 +188,7 @@ public final class ProjMath {
     }
 
     /**
-     * Convert radians to degrees.
+     * Converts radians to degrees.
      * 
      * @param rad radians
      * @return float decimal degrees
@@ -190,7 +198,7 @@ public final class ProjMath {
     }
 
     /**
-     * Convert degrees to radians.
+     * Converts degrees to radians.
      * 
      * @param deg degrees
      * @return double radians
@@ -200,7 +208,7 @@ public final class ProjMath {
     }
 
     /**
-     * Convert degrees to radians.
+     * Converts degrees to radians.
      * 
      * @param deg degrees
      * @return float radians
@@ -210,7 +218,7 @@ public final class ProjMath {
     }
 
     /**
-     * Generate a hashCode value for a lat/lon pair.
+     * Generates a hashCode value for a lat/lon pair.
      * 
      * @param lat latitude
      * @param lon longitude
@@ -384,7 +392,7 @@ public final class ProjMath {
     }
 
     /**
-     * Calculate the geocentric latitude given a geographic latitude.
+     * Calculates the geocentric latitude given a geographic latitude.
      * According to John Synder: <br>
      * "The geographic or geodetic latitude is the angle which a line
      * perpendicular to the surface of the ellipsoid at the given
@@ -407,7 +415,7 @@ public final class ProjMath {
     }
 
     /**
-     * Calculate the geographic latitude given a geocentric latitude.
+     * Calculates the geographic latitude given a geocentric latitude.
      * Translated from Ken Anderson's lisp code <i>Freeing the Essence
      * of Computation </i>
      * 
