@@ -123,11 +123,12 @@ Runnable , GpsMidDisplayable{
 	private static final int PAN_DOWN2_CMD = 41;
 	private static final int REFRESH_CMD = 42;
 	private static final int SEARCH_CMD = 43;
+	private static final int TOGGLE_AUDIO_REC = 44;
 	//#if polish.api.wmapi
-	private static final int SEND_MESSAGE_CMD = 44;
+	private static final int SEND_MESSAGE_CMD = 45;
 	//#endif
 
-	private final Command [] CMDS = new Command[45];
+	private final Command [] CMDS = new Command[46];
 
 	public static final int DATASCREEN_NONE = 0;
 	public static final int DATASCREEN_TACHO = 1;
@@ -329,6 +330,7 @@ Runnable , GpsMidDisplayable{
 		CMDS[PAN_RIGHT2_CMD] = new Command("right 2",Command.ITEM, 100);
 		CMDS[PAN_UP2_CMD] = new Command("up 2",Command.ITEM, 100);
 		CMDS[PAN_DOWN2_CMD] = new Command("down 2",Command.ITEM, 100);
+		CMDS[TOGGLE_AUDIO_REC] = new Command("Audio recording",Command.ITEM, 100);
 		//#if polish.api.wmapi
 		CMDS[SEND_MESSAGE_CMD] = new Command("Send SMS (map pos)",Command.ITEM, 200);
 		//#endif
@@ -838,11 +840,7 @@ Runnable , GpsMidDisplayable{
 			            }
 			            case 4: {
 			            	show();
-			            	if (audioRec.isRecording()) {
-			            		audioRec.stopRecord();
-			            	} else {
-			            		audioRec.startRecorder();
-			            	}			            	
+			            	commandAction(CMDS[TOGGLE_AUDIO_REC], null);
 			            	break;
 			            }
 			          //#endif
@@ -889,6 +887,13 @@ Runnable , GpsMidDisplayable{
 					logger.exception("Your phone does not support the necessary JSRs to use the camera", cnfe);
 				}
 				
+			}
+			if (c == CMDS[TOGGLE_AUDIO_REC]) {
+				if (audioRec.isRecording()) {
+					audioRec.stopRecord();
+				} else {
+					audioRec.startRecorder();
+				}
 			}
 			//#endif
 			if (c == CMDS[CLEARTARGET_CMD]) {
