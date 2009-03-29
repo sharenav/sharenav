@@ -160,7 +160,9 @@ Runnable , GpsMidDisplayable{
 	private final GpsMid parent;
 
 	private String lastMsg;
-	private String currentMsg;
+	private String currentTitleMsg;
+	private volatile int currentTitleMsgOpenCount = 0;
+	private volatile int setTitleMsgTimeout = 0;
 	private Calendar lastMsgTime = Calendar.getInstance();
 	
 	private String currentAlertTitle;
@@ -1233,26 +1235,39 @@ Runnable , GpsMidDisplayable{
 				showZoomButtons(pc);
 			}
 
-			if (currentMsg != null) {
+			if (currentTitleMsgOpenCount != 0) {
 				if (compassRectHeight == 0) {
 					compassRectHeight = g.getFont().getHeight()-2;
 				}
 				g.setColor(255,255,255);
 				g.fillRect(0,0, getWidth(), compassRectHeight + 2);
 				g.setColor(0,0,0);
-				if (g.getFont().stringWidth(currentMsg) < getWidth()) {
-					g.drawString(currentMsg, 
+				if (g.getFont().stringWidth(currentTitleMsg) < getWidth()) {
+					g.drawString(currentTitleMsg, 
 							getWidth()/2, 0, Graphics.TOP|Graphics.HCENTER);
 				} else {
-					g.drawString(currentMsg, 
+					g.drawString(currentTitleMsg, 
 							0, 0, Graphics.TOP|Graphics.LEFT);					
 				}
 				
-				if (System.currentTimeMillis() 
-						> (lastMsgTime.getTime().getTime() + 5000)) {			
-					logger.info("Setting title back to null");
-					lastMsg = currentMsg;
-					currentMsg = null;
+				// setTitleMsgTimeOut can be changed in receiveMessage()
+				synchronized (this) {
+					if (setTitleMsgTimeout != 0) {
+						TimerTask timerT;
+						Timer tm = new Timer();	    
+						timerT = new TimerTask() {
+							public synchronized void run() {
+								currentTitleMsgOpenCount--;
+								if (currentTitleMsgOpenCount == 0) {
+									//#debug debug
+									logger.debug("clearing title");
+									repaint();
+								}
+							}			
+						};
+						tm.schedule(timerT, setTitleMsgTimeout);
+						setTitleMsgTimeout = 0;
+					}
 				}
 			}
 			
@@ -1762,8 +1777,18 @@ Runnable , GpsMidDisplayable{
 	public synchronized void receiveMessage(String s) {
 //		#debug info
 		logger.info("Setting title: " + s);
-		currentMsg = s;
-		lastMsgTime.setTime( new Date( System.currentTimeMillis() ) );
+		currentTitleMsg = s;
+		synchronized (this) {
+			/*
+			 *  only increase the number of current title messages
+			 *  if the timer already has been set in the display code
+			 */
+			if (setTitleMsgTimeout == 0) {
+				currentTitleMsgOpenCount++;
+			}
+			setTitleMsgTimeout = 2500;
+		}
+		lastMsgTime.setTime( new Date( System.currentTimeMillis() ) );		
 		repaint();
 	}
 
