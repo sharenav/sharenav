@@ -53,7 +53,7 @@ public class AudioRecorder  implements SelectionListener{
 			if (basedirectory == null) {
 				logger.error("Don't know where to save the recording, please specify a directory and try again");
 				//#if polish.api.fileConnection				
-				new FsDiscover(Trace.getInstance(),this,basedirectory,true,null,"Directory to store photos and audio");
+				new FsDiscover(Trace.getInstance(),this,basedirectory,true,null,"Media Store Directory");
 				//#endif
 				record = null;
 				return false;

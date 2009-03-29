@@ -385,7 +385,7 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 		}
 		if (c == STORE_CMD) {
 			//#if polish.api.fileConnection
-			new FsDiscover(this,this,basedirectory,true,null,"Directory to store photos");
+			new FsDiscover(this,this,basedirectory,true,null,"Media Store Directory");
 			//#endif
 		}
 		if (c == SETUP_CMD) {
