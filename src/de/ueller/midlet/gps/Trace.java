@@ -760,36 +760,36 @@ Runnable , GpsMidDisplayable{
 			}
 			//#endif
 			if (c == CMDS[RECORDINGS_CMD]) {
-				int noElements = 4;
+				int noElements = 3;
 				//#if polish.api.mmapi
-				noElements = 6;
+				noElements += 2;
 				//#endif
+				//#if polish.api.wmapi
+				noElements++;
+				//#endif
+				int idx = 0;
 				String[] elements = new String[noElements];
 				if (gpx.isRecordingTrk()) {
-					elements[0] = "Stop Gpx tracklog";
+					elements[idx++] = "Stop Gpx tracklog";
 				} else {
-					elements[0] = "Start Gpx tracklog";
+					elements[idx++] = "Start Gpx tracklog";
 				}
-				elements[1] = "Add waypoint";
-				elements[2] = "Enter waypoint";
+				
+				elements[idx++] = "Add waypoint";
+				elements[idx++] = "Enter waypoint";
 				//#if polish.api.mmapi
-				elements[3] = "Take pictures";
+				elements[idx++] = "Take pictures";
 				if (audioRec.isRecording()) {
-					elements[4] = "Stop audio recording";
+					elements[idx++] = "Stop audio recording";
 				} else {
-					elements[4] = "Start audio recording";					
-					//#if polish.api.wmapi
-					if (Configuration.hasDeviceJSR120()) {
-						elements[5] = "Send SMS (map pos)";									
-					}
-					//#endif
-				}				
-				//#else
-					//#if polish.api.wmapi
-					if (Configuration.hasDeviceJSR120()) {
-						elements[3] = "Send SMS (map pos)";									
-					}
-					//#endif
+					elements[idx++] = "Start audio recording";
+					
+				}
+				//#endif
+				//#if polish.api.wmapi
+				if (Configuration.hasDeviceJSR120()) {
+					elements[idx++] = "Send SMS (map pos)";
+				}
 				//#endif
 				
 				recordingsMenu = new List("Recordings...",Choice.IMPLICIT,elements,null);
