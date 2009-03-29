@@ -4,9 +4,13 @@ package de.ueller.midlet.gps;
  * See Copying
  */
 
-//#if polish.api.mmapi
+//#if polish.api.fileConnection
 import java.io.IOException;
-
+import javax.microedition.io.Connection;
+import javax.microedition.io.Connector;
+import javax.microedition.io.file.FileConnection;
+//#endif
+//#if polish.api.mmapi
 import javax.microedition.media.Manager;
 import javax.microedition.media.MediaException;
 import javax.microedition.media.Player;
@@ -61,6 +65,14 @@ public class AudioRecorder  implements SelectionListener{
 			String fileSubPart = "GpsMid-" + HelperRoutines.formatSimpleDateSecondNow();
 			String fileName = basedirectory + fileSubPart +".amr";
 			logger.info("Saving audio stream to " + fileName);
+			// Some JVMs seem to require the file to already exist before they can record to it
+			//#if polish.api.fileConnection
+			Connection c = Connector.open( fileName, Connector.READ_WRITE);
+			FileConnection fc = (FileConnection) c;
+			if (!fc.exists()) {
+				fc.create();
+			}
+			//#endif
 			record.setRecordLocation(fileName);
 			record.startRecord();
 			mPlayer.start();
