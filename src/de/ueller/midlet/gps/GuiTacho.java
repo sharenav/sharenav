@@ -21,6 +21,7 @@ import de.ueller.midlet.graphics.LcdNumericFont;
 public class GuiTacho extends KeyCommandCanvas implements CommandListener,
 		GpsMidDisplayable, LocationUpdateListener {
 
+	private final Command BACK_CMD = new Command("Back", Command.BACK, 5);
 	private final Command NEXT_CMD = new Command("Next", Command.SCREEN, 5);
 	private final static Logger logger = Logger.getInstance(GuiTacho.class,
 			Logger.DEBUG);
@@ -48,6 +49,7 @@ public class GuiTacho extends KeyCommandCanvas implements CommandListener,
 		logger.info("Init GuiTacho");
 
 		this.parent = parent;
+		addCommand(BACK_CMD);
 		addCommand(NEXT_CMD);
 		setCommandListener(this);
 		// TODO: Get the key for this from the configuration.
@@ -182,7 +184,12 @@ public class GuiTacho extends KeyCommandCanvas implements CommandListener,
 	}
 
 	public void commandAction(Command c, Displayable d) {
-		if (c == NEXT_CMD) {
+		if (c == BACK_CMD) {
+			synchronized (parent.locationUpdateListeners) {
+				parent.locationUpdateListeners.removeElement(this);
+			}
+			parent.show();			
+		} else if (c == NEXT_CMD) {
 			synchronized (parent.locationUpdateListeners) {
 				parent.locationUpdateListeners.removeElement(this);
 			}

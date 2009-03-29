@@ -21,6 +21,7 @@ import net.fatehi.SunCalc;
 public class GuiTrip extends KeyCommandCanvas implements CommandListener,
 		GpsMidDisplayable, LocationUpdateListener {
 
+	private final Command BACK_CMD = new Command("Back", Command.BACK, 5);
 	private final Command NEXT_CMD = new Command("Next", Command.SCREEN, 5);
 	private final static Logger mLogger = Logger.getInstance(GuiTrip.class,
 			Logger.DEBUG);
@@ -38,6 +39,7 @@ public class GuiTrip extends KeyCommandCanvas implements CommandListener,
 		mLogger.info("Init GuiTrip");
 
 		this.mParent = parent;
+		addCommand(BACK_CMD);
 		addCommand(NEXT_CMD);
 		setCommandListener(this);
 		// TODO: Get the key for this from the configuration.
@@ -84,31 +86,37 @@ public class GuiTrip extends KeyCommandCanvas implements CommandListener,
 			mLcdFont.drawInvalid(g, 4, w - mKmWidth -1, y - 6);
 			g.drawString("km", w - 1, y - 3, Graphics.BOTTOM | Graphics.RIGHT);
 		} else {
+			float[] result = ProjMath.calcDistanceAndCourse(mParent.center.radlat, 
+					mParent.center.radlon, mParent.getTarget().lat, 
+					mParent.getTarget().lon);
 			// Heading (result[1])
-			// TODO: Will be added soon.
-			mLcdFont.drawInvalid(g, 3, w, y - 6);
-
+			int relHeading = (int)(result[1] - pos.course + 0.5);
+			if (relHeading < 0)
+			{
+				relHeading += 360;
+			}
+			mLcdFont.drawInt(g, relHeading, w, y - 6);
+			g.drawLine(0, y, w, y);
+		
 			// Distance (result[0])
 			y += 48;
-			float dist = ProjMath.getDistance(mParent.getTarget().lat, 
-				mParent.getTarget().lon, mParent.center.radlat, mParent.center.radlon);
-			if (dist > 10000) {
-				mLcdFont.drawInt(g, (int)((dist / 1000.0f) + 0.5), 
+			if (result[0] > 10000) {
+				mLcdFont.drawInt(g, (int)((result[0] / 1000.0f) + 0.5), 
 						w - mKmWidth -1, y - 6);
 				g.drawString("km", w - 1, y - 3, Graphics.BOTTOM | Graphics.RIGHT);
-			} else if (dist > 1000) {
-				mLcdFont.drawFloat(g, (int)(((dist / 100.0f) + 0.5) / 
+			} else if (result[0] > 1000) {
+				mLcdFont.drawFloat(g, (int)(((result[0] / 100.0f) + 0.5) / 
 						10.0f), 1, w - mKmWidth - 1, y - 6);
 				g.drawString("km", w - 1, y - 3, Graphics.BOTTOM | Graphics.RIGHT);
 			} else {
 				// Using width of "km" to avoid jumping of number between m and km ranges.
-				mLcdFont.drawInt(g, (int)(dist + 0.5), 
+				mLcdFont.drawInt(g, (int)(result[0] + 0.5), 
 						w - mKmWidth - 1, y - 6);
 				g.drawString("m", w - 1, y - 3, Graphics.BOTTOM | Graphics.RIGHT);
 			}
 		}
 		g.drawLine(0, y, w, y);
-				
+
 		// Calculate sunrise and sunset times only once.
 		// Should the user move very far (many km) without leaving the screen,
 		// the values will be slightly wrong so this needs to be improved in the future.
@@ -156,7 +164,14 @@ public class GuiTrip extends KeyCommandCanvas implements CommandListener,
 	}
 
 	public void commandAction(Command c, Displayable d) {
-		if (c == NEXT_CMD) {
+		if (c == BACK_CMD) {
+			synchronized (mParent.locationUpdateListeners) {
+				mParent.locationUpdateListeners.removeElement(this);
+			}
+			// Force recalculation next time the screen is entered.
+			mSunCalc = null;
+			mParent.show();
+		} else if (c == NEXT_CMD) {
 			synchronized (mParent.locationUpdateListeners) {
 				mParent.locationUpdateListeners.removeElement(this);
 			}

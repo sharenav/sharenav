@@ -142,12 +142,25 @@ public final class ProjMath {
 	 * @param lon2 Longitude of second point in radians
 	 * @return Angular distance in radians
 	 */
-	public static float getDistance(float lat1, float lon1, float lat2, float lon2) {
+	public static float calcDistance(float lat1, float lon1, float lat2, float lon2) {
 		// Taken from http://williams.best.vwh.net/avform.htm
 		double p1 = Math.sin((lat1 - lat2) / 2);
 		double p2 = Math.sin((lon1 - lon2) / 2);
 		float d = 2 * MoreMath.asin((float)Math.sqrt(p1 * p1
 						+ Math.cos(lat1) * Math.cos(lat2) * p2 * p2));
+		return d;
+	}
+
+	/**
+	 * Calculates the great circle distance between two nodes.
+	 * @param lat1 Latitude of first point in radians
+	 * @param lon1 Longitude of first point in radians
+	 * @param lat2 Latitude of second point in radians
+	 * @param lon2 Longitude of second point in radians
+	 * @return Distance in meters
+	 */
+	public static float getDistance(float lat1, float lon1, float lat2, float lon2) {
+		float d = calcDistance(lat1, lon1, lat2, lon2);
 		//taken from ITM Project Korbel
 		//d *= 3437.7387; //radians to nautical miles
 		//d *= 1.150779; //nautical miles to land miles
@@ -155,6 +168,48 @@ public final class ProjMath {
 		//d *= 1000; //kilometers to meters  
 		// Pretty complicated way to do this as this is simply the earth radius...
 		return d * Projection.PLANET_RADIUS;
+	}
+
+	/**
+	 * Calculates the great circle distance and course between two nodes.
+	 * @param lat1 Latitude of first point in radians
+	 * @param lon1 Longitude of first point in radians
+	 * @param lat2 Latitude of second point in radians
+	 * @param lon2 Longitude of second point in radians
+	 * @return Float array, with the distance in meters at [0]
+	 * 		and the course in degrees at [1]
+	 */
+	public static float[] calcDistanceAndCourse(float lat1, float lon1, float lat2, 
+			float lon2) {
+		float fDist = calcDistance(lat1, lon1, lat2, lon2);
+		float fCourse;
+		
+		// Also taken from http://williams.best.vwh.net/avform.htm
+		// The original formula checks for (cos(lat1) < Float.MIN_VALUE) but I think 
+		// it's worth to save a cosine.
+		if (lat1 > (MoreMath.HALF_PI - 0.0001)) {
+			// At the north pole, all points are south.
+			fCourse = (float)Math.PI;
+		} else if (lat1 < -(MoreMath.HALF_PI - 0.0001)) {
+			// And at the south pole, all points are north.
+			fCourse = 0;
+		} else {
+			float tc = MoreMath.acos((float)((Math.sin(lat2) - 
+				Math.sin(lat1) * Math.cos(fDist)) /	(Math.sin(fDist) * Math.cos(lat1))));
+			tc = (int)(tc * MoreMath.FAC_RADTODEC + 0.5);
+			// The original formula has sin(lon2 - lon1) but that's if western
+			// longitudes are positive (mentioned at the beginning of the page).
+			if (Math.sin(lon1 - lon2) < 0) {
+			    fCourse = tc;
+			} else {
+			    fCourse = 360 - tc; 
+			}
+		}
+		fDist *= Projection.PLANET_RADIUS;
+		float[] result = new float[2];
+		result[0] = fDist;
+		result[1] = fCourse;
+		return result;
 	}
 
 	/**
