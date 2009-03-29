@@ -280,11 +280,11 @@ Runnable , GpsMidDisplayable{
 
 	public Vector locationUpdateListeners;
 	
-	public Trace(GpsMid parent) throws Exception {
+	public Trace() throws Exception {
 		//#debug
 		logger.info("init Trace");
 		
-		this.parent = parent;
+		this.parent = GpsMid.getInstance();
 		
 		CMDS[EXIT_CMD] = new Command("Back", Command.BACK, 2);
 		CMDS[REFRESH_CMD] = new Command("Refresh", Command.ITEM, 4);
@@ -372,7 +372,19 @@ Runnable , GpsMidDisplayable{
 		traceInstance = this;
 	}
 	
+	/**
+	 * Returns the instance of the map screen. If non exists yet,
+	 * start a new instance.
+	 * @return
+	 */
 	public static Trace getInstance() {
+		if (traceInstance == null) {
+			try {
+				traceInstance = new Trace();
+			} catch (Exception e) {
+				logger.exception("Failed to initialise Map screen", e);
+			}
+		}
 		return traceInstance;
 	}
 

@@ -227,7 +227,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 		case 0:
 			try {
 				if (trace == null) {
-					trace = new Trace(this);
+					trace = trace.getInstance();
 				}
 				trace.resume();
 				trace.show();
@@ -239,7 +239,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 		case 1:
 			try {
 				if (trace == null) {
-					trace = new Trace(this);
+					trace = Trace.getInstance();
 				}
 				GuiSearch search = new GuiSearch(trace);
 				search.show();
