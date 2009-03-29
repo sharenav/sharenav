@@ -167,7 +167,7 @@ Runnable , GpsMidDisplayable{
 	
 	private String currentAlertTitle;
 	private String currentAlertMessage;
-	private volatile int currentAlertsOpenCount;
+	private volatile int currentAlertsOpenCount = 0;
 	private volatile int setAlertTimeout = 0;
 
 	private long lastBackLightOnTime = 0;
@@ -1347,24 +1347,26 @@ Runnable , GpsMidDisplayable{
 						y += (fontHeight * 3 / 2); 
 					}
 				} // end for
-				if (setAlertTimeout != 0) {
-					TimerTask timerT;
-					Timer tm = new Timer();	    
-					timerT = new TimerTask() {
-						public synchronized void run() {
-							currentAlertsOpenCount--;
-							if (currentAlertsOpenCount == 0) {
-								//#debug debug
-								logger.debug("clearing alert");
-								repaint();
-							}
-						}			
-					};
-					tm.schedule(timerT, setAlertTimeout);
-					setAlertTimeout = 0;
+				// setAlertTimeOut can be changed in receiveMessage()
+				synchronized (this) {
+					if (setAlertTimeout != 0) {
+						TimerTask timerT;
+						Timer tm = new Timer();	    
+						timerT = new TimerTask() {
+							public synchronized void run() {
+								currentAlertsOpenCount--;
+								if (currentAlertsOpenCount == 0) {
+									//#debug debug
+									logger.debug("clearing alert");
+									repaint();
+								}
+							}			
+						};
+						tm.schedule(timerT, setAlertTimeout);
+						setAlertTimeout = 0;
+					}
 				}
 			}
-			
 		} catch (Exception e) {
 			logger.silentexception("Unhandled exception in the paint code", e);
 		}
@@ -1797,8 +1799,16 @@ Runnable , GpsMidDisplayable{
 		logger.info("Showing trace alert: " + title + ": " + message);
 		currentAlertTitle = title;
 		currentAlertMessage = message;
-		currentAlertsOpenCount++;
-		setAlertTimeout = timeout;
+		synchronized (this) {
+			/*
+			 *  only increase the number of current open alerts
+			 *  if the timer already has been set in the display code
+			 */
+			if (setAlertTimeout == 0) {
+				currentAlertsOpenCount++;
+			}
+			setAlertTimeout = timeout;
+		}
 		repaint();
 	}
 
