@@ -144,9 +144,10 @@ public final class ProjMath {
 	 */
 	public static float getDistance(float lat1, float lon1, float lat2, float lon2) {
 		// Taken from http://williams.best.vwh.net/avform.htm
-		float d=2*MoreMath.asin((float)Math.sqrt((MoreMath.pow((float)Math.sin((lat1-lat2)/2),2.0f) + 
-												  Math.cos(lat1)*Math.cos(lat2)*MoreMath.pow((float)Math.sin((lon1-lon2)/2),2.0f))));
-
+		double p1 = Math.sin((lat1 - lat2) / 2);
+		double p2 = Math.sin((lon1 - lon2) / 2);
+		float d = 2 * MoreMath.asin((float)Math.sqrt(p1 * p1
+						+ Math.cos(lat1) * Math.cos(lat2) * p2 * p2));
 		//taken from ITM Project Korbel
 		//d *= 3437.7387; //radians to nautical miles
 		//d *= 1.150779; //nautical miles to land miles
