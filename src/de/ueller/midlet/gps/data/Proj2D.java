@@ -56,7 +56,7 @@ public class Proj2D implements Projection {
     private float maxLon=-Float.MAX_VALUE;
 	private IntPoint	panP=new IntPoint();
 	
-	protected static final Logger logger = Logger.getInstance(Proj2D.class,Logger.TRACE);
+	protected static final Logger logger = Logger.getInstance(Proj2D.class,Logger.INFO);
 
 
 	public Proj2D(Node center, float scale, int width, int height) {

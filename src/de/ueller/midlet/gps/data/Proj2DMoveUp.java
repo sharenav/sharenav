@@ -37,7 +37,7 @@ public class Proj2DMoveUp  implements Projection {
 
 	private IntPoint	panP=new IntPoint();
 
-	protected static final Logger logger = Logger.getInstance(Proj2DMoveUp.class,Logger.TRACE);
+	protected static final Logger logger = Logger.getInstance(Proj2DMoveUp.class,Logger.INFO);
 
 	public Proj2DMoveUp(Node center, int upDir, float scale, int width, int height) {
         this.upDir = ProjMath.degToRad(upDir);
