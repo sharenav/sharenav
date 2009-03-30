@@ -732,8 +732,12 @@ public class RouteInstructions {
 						iThen = idxNextInstructionArrow (iNow+1);
 						if (iThen < route.size()) {
 							cThen = (ConnectionWithNode) route.elementAt(iThen);
-							if (cThen==null) logger.debug("cThen is NULL connection");
-							aThen = cThen.wayRouteInstruction;
+							if (cThen==null) {
+								//#debug debug
+								logger.debug("cThen is NULL connection");
+							} else {
+								aThen = cThen.wayRouteInstruction;
+							}
 						}
 						if (
 								iNamedArrow != iNow
