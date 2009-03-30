@@ -363,6 +363,7 @@ public class Routing implements Runnable {
 					parent.searchNextRoutableWay(toMark);
 					if (toMark.entity == null) {
 						parent.receiveMessage("No Way found for target point");
+						parent.setRoute(null);
 						return;
 //					} else {
 //						parent.alert("Routing", "Source Way found in " + (long)(System.currentTimeMillis() - startTime), 3000);
