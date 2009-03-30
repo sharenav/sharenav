@@ -102,7 +102,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 	 */
 	private long phoneMaxMemory;
 
-	private Trace trace = null;
+	private volatile Trace trace = null;
 
 	public GpsMid() {
 		String errorMsg = null;
@@ -535,11 +535,11 @@ public class GpsMid extends MIDlet implements CommandListener {
 	public void showBackLightLevel() {
 		if ( Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON, 
 				false) ) {
-			alert("Backlight", "Backlight " 
+			trace.alert("Backlight", "Backlight " 
 					+ (backLightLevel == 100 ? "ON" : (backLightLevel + "%")), 
 					1000);
 		} else {
-			alert("Backlight", "Backlight off", 1000);
+			trace.alert("Backlight", "Backlight off", 1000);
 		}
 		stopBackLightTimer();
 		startBackLightTimer();

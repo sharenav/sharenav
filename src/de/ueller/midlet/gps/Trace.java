@@ -653,7 +653,7 @@ Runnable , GpsMidDisplayable{
 			if (c == CMDS[EXIT_CMD]) {
 				// FIXME: This is a workaround. It would be better if recording would not be stopped when returning to map
 				if (gpx.isRecordingTrk()) {
-					parent.alert("Record Mode", "Please stop recording before returning to the main screen." , 2000);
+					alert("Record Mode", "Please stop recording before returning to the main screen." , 2000);
 					return;
 				}
 				
@@ -676,7 +676,7 @@ Runnable , GpsMidDisplayable{
 			}
 			if (c == CMDS[MANAGE_TRACKS_CMD]){
 				if (gpx.isRecordingTrk()) {
-					parent.alert("Record Mode", "You need to stop recording before managing tracks." , 2000);
+					alert("Record Mode", "You need to stop recording before managing tracks." , 2000);
 					return;
 				}
 
@@ -911,9 +911,9 @@ Runnable , GpsMidDisplayable{
 			} else if (c == CMDS[MANUAL_ROTATION_MODE_CMD]) {
 				manualRotationMode = !manualRotationMode;
 				if (manualRotationMode) {
-					parent.alert("Manual Rotation", "Change course with left/right keys" , 750);
+					alert("Manual Rotation", "Change course with left/right keys" , 750);
 				} else {
-					parent.alert("Manual Rotation", "Off" , 500);
+					alert("Manual Rotation", "Off" , 500);
 				}
 			} else if (c == CMDS[TOGGLE_OVERLAY_CMD]) {
 				showAddons++;
@@ -932,14 +932,14 @@ Runnable , GpsMidDisplayable{
 			} else if (c == CMDS[TOGGLE_MAP_PROJ_CMD]) {
 				if (ProjFactory.getProj() == ProjFactory.NORTH_UP ) {
 					ProjFactory.setProj(ProjFactory.MOVE_UP);
-					parent.alert("Map Rotation", "Rotate to Driving Direction" , 500);
+					alert("Map Rotation", "Rotate to Driving Direction" , 500);
 				} else {
 					if (manualRotationMode) {
 						course = 0;
-						parent.alert("Manual Rotation", "to North" , 500);
+						alert("Manual Rotation", "to North" , 500);
 					} else {
 						ProjFactory.setProj(ProjFactory.NORTH_UP);					
-						parent.alert("Map Rotation", "NORTH UP" , 500);
+						alert("Map Rotation", "NORTH UP" , 500);
 					}
 				}
 				// redraw immediately
@@ -954,23 +954,23 @@ Runnable , GpsMidDisplayable{
 					// show alert that keys are locked
 					keyPressed(0);
 				} else {
-					parent.alert("GpsMid", "Keys unlocked",750);					
+					alert("GpsMid", "Keys unlocked",750);					
 				}
 			} else if (c == CMDS[TOGGLE_RECORDING_CMD]) {
 				if ( gpx.isRecordingTrk() ) {
-					parent.alert("Gps track recording", "Stopping to record" , 750);                                        
+					alert("Gps track recording", "Stopping to record" , 750);                                        
 					commandAction(CMDS[STOP_RECORD_CMD],(Displayable) null);
 				} else {
-					parent.alert("Gps track recording", "Starting to record" , 750);
+					alert("Gps track recording", "Starting to record" , 750);
 					commandAction(CMDS[START_RECORD_CMD],(Displayable) null);
 				}
 			} else if (c == CMDS[TOGGLE_RECORDING_SUSP_CMD]) {
 				if (gpx.isRecordingTrk()) {
 					if ( gpx.isRecordingTrkSuspended() ) {
-						parent.alert("Gps track recording", "Resuming recording" , 750);
+						alert("Gps track recording", "Resuming recording" , 750);
 						gpx.resumTrk();
 					} else {
-						parent.alert("Gps track recording", "Suspending recording" , 750);
+						alert("Gps track recording", "Suspending recording" , 750);
 						gpx.suspendTrk();
 					}
 				}
@@ -990,7 +990,7 @@ Runnable , GpsMidDisplayable{
 							guiWay.refresh();
 						}
 					} else {
-						parent.alert("Editing", "Editing support was not enabled in Osm2GpsMid", 2000);
+						alert("Editing", "Editing support was not enabled in Osm2GpsMid", 2000);
 					}
 			}
 			//#endif
