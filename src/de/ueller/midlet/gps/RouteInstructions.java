@@ -333,8 +333,8 @@ public class RouteInstructions {
 						aNow = cNow.wayRouteInstruction;
 				    	distNow=ProjMath.getDistance(center.radlat, center.radlon, cNow.to.lat, cNow.to.lon);
 						intDistNow=new Double(distNow).intValue();
-						iThen = idxNextInstructionArrow (iNow+1);
-						if (iThen < route.size()) {
+						if (iNow < route.size() - 1) {
+							iThen = idxNextInstructionArrow (iNow+1);
 							cThen = (ConnectionWithNode) route.elementAt(iThen);
 							if (cThen==null) {
 								//#debug debug
@@ -353,7 +353,7 @@ public class RouteInstructions {
 						// get name for next street
 						nameNow=getInstructionWayName(iNow);
 						// start searching for the 2nd next street for having it in the cache when needed
-						if (nameThen == null) {
+						if (nameThen == null && iThen != 0) {
 							String name = getInstructionWayName(iThen);
 						}
 						//#debug debug
