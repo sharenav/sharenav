@@ -12,6 +12,7 @@ import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.data.Way;
+import de.ueller.midlet.gps.tile.C;
 
 
 
@@ -353,6 +354,12 @@ public class Routing implements Runnable {
 					parent.receiveMessage("No Way found for start point");
 				} 
 			}
+
+			// if the target way is not routable, e.g. an area, remove it as target entity and thus search for a routable way nearby the target node
+			if (toMark.entity != null && !C.getWayDescription(toMark.entity.type).routable) {
+				toMark.entity = null;
+			}
+
 			if (toMark.entity == null) {
 				// if there is no element in the to Mark, fill it from tile-data
 				parent.receiveMessage("search for target element");
