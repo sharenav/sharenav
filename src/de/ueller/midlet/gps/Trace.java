@@ -159,11 +159,11 @@ Runnable , GpsMidDisplayable{
 
 	private final GpsMid parent;
 
-	private String lastMsg;
+	private String lastTitleMsg;
 	private String currentTitleMsg;
 	private volatile int currentTitleMsgOpenCount = 0;
 	private volatile int setTitleMsgTimeout = 0;
-	private Calendar lastMsgTime = Calendar.getInstance();
+	private Calendar lastTitleMsgTime = Calendar.getInstance();
 	
 	private String currentAlertTitle;
 	private String currentAlertMessage;
@@ -1258,6 +1258,7 @@ Runnable , GpsMidDisplayable{
 						timerT = new TimerTask() {
 							public synchronized void run() {
 								currentTitleMsgOpenCount--;
+								lastTitleMsg = currentTitleMsg;
 								if (currentTitleMsgOpenCount == 0) {
 									//#debug debug
 									logger.debug("clearing title");
@@ -1703,12 +1704,12 @@ Runnable , GpsMidDisplayable{
 				+ dictReader.getRequestQueueSize() + " Map: " + ImageCollector.icDuration + " ms", 0, yc, Graphics.TOP
 				| Graphics.LEFT);
 		yc += la;
-		g.drawString("LastMsg: " + lastMsg, 0, yc, Graphics.TOP
+		g.drawString("LastMsg: " + lastTitleMsg, 0, yc, Graphics.TOP
 				| Graphics.LEFT);
 		yc += la;
-		g.drawString( "at " + lastMsgTime.get(Calendar.HOUR_OF_DAY) + ":"  
-				+ HelperRoutines.formatInt2(lastMsgTime.get(Calendar.MINUTE)) + ":"  
-				+ HelperRoutines.formatInt2(lastMsgTime.get(Calendar.SECOND)), 0, yc,  
+		g.drawString( "at " + lastTitleMsgTime.get(Calendar.HOUR_OF_DAY) + ":"  
+				+ HelperRoutines.formatInt2(lastTitleMsgTime.get(Calendar.MINUTE)) + ":"  
+				+ HelperRoutines.formatInt2(lastTitleMsgTime.get(Calendar.SECOND)), 0, yc,  
 				Graphics.TOP | Graphics.LEFT );
 		return (yc);
 
@@ -1788,9 +1789,9 @@ Runnable , GpsMidDisplayable{
 			if (setTitleMsgTimeout == 0) {
 				currentTitleMsgOpenCount++;
 			}
-			setTitleMsgTimeout = 2500;
+			setTitleMsgTimeout = 3000;
 		}
-		lastMsgTime.setTime( new Date( System.currentTimeMillis() ) );		
+		lastTitleMsgTime.setTime( new Date( System.currentTimeMillis() ) );		
 		repaint();
 	}
 
