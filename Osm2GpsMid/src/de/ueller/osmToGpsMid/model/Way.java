@@ -123,7 +123,7 @@ public class Way extends Entity implements Comparable<Way>{
 		 *  
 		 */
 		POIdescription poi = (POIdescription)super.calcType(c.getPOIlegend());
-		if (poi != null) {
+		if (poi != null && poi.createPOIsForAreas) {
 			if (isValid()) {
 				/**
 				 * TODO: Come up with a sane solution to find out where to place

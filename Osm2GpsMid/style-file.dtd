@@ -8,7 +8,7 @@
 <!ELEMENT ways (keyW*)>
 <!ELEMENT key (value+)>
 <!ELEMENT keyW (Wvalue+)>
-<!ELEMENT value (specialisation*, description , image? , searchIcon? , namekey , namefallback? , scale , textscale? , imageCentered?, hideable?)>
+<!ELEMENT value (specialisation*, description , image? , searchIcon? , namekey , namefallback? , AreaPOI?, scale , textscale? , imageCentered?, hideable?)>
 <!ELEMENT Wvalue (specialisation*, description, namekey, namefallback?, isArea, scale, textscale?, arrowscale?, descriptionscale?, lineColor, borderColor?, lineStyle?, wayWidth?, searchIcon?, routing?, force_to?, hideable?)>
 <!ELEMENT changeFileExtensionTo EMPTY>
 <!ELEMENT sound (soundFile)>
@@ -30,6 +30,7 @@
 <!ELEMENT routing EMPTY>
 <!ELEMENT force_to EMPTY>
 <!ELEMENT hideable EMPTY>
+<!ELEMENT AreaPOI EMPTY>
 <!ELEMENT interiorColor EMPTY>
 <!ELEMENT specialisation EMPTY>
 <!ATTLIST background color CDATA #REQUIRED>
@@ -66,6 +67,7 @@
 <!ATTLIST routing speed CDATA #REQUIRED>
 <!ATTLIST force_to layer CDATA #REQUIRED>
 <!ATTLIST hideable hideable CDATA #REQUIRED>
+<!ATTLIST AreaPOI createForAreas CDATA #REQUIRED>
 <!ATTLIST changeFileExtensionTo fileExt CDATA #REQUIRED>
 <!ATTLIST soundFile src CDATA #REQUIRED>
 <!ATTLIST specialisation condition CDATA "match">

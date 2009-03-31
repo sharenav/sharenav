@@ -256,6 +256,9 @@ public class LegendParser extends DefaultHandler{
 					}
 					currentPoi.specialisation.add(ct);
 				}
+				if (qName.equals("AreaPOI")) {
+					currentPoi.createPOIsForAreas = atts.getValue("createForAreas").equalsIgnoreCase("true");
+				}
 				if (qName.equals("description")) {
 					currentPoi.description = atts.getValue("desc");
 				}
