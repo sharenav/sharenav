@@ -60,8 +60,9 @@ GpsMid 0.4.55
          This can be used to show only unnamed/named or ways/areas/POIs containing a certain string in the map
        - Place labels (city, town, village, hamlet, suburb) can now be hidden using the Map Features dialog 
        - double press of 9 / single press of U-key toggles manual rotation mode (use left / right to rotate)
-       - added POIs for beacons, towers and power objects (thx mbaeurle) and optician to high-style.zip 
-       - added POIs for emergency phones and tourist informations to normal style-file and high-style.zip (thx mbaeurle) 
+       - added POIs for beacons, towers and power objects (thx mbaeurle) and bench, cafe, optician to high-style.zip 
+       - added POIs for emergency phones and tourist informations to normal style-file and high-style.zip (thx mbaeurle)
+       - when you give POIs the tag <AreaPOI createForAreas="true"/> this POI will also be shown for matching Areas
        - fixed crashes when displaying route connections via Debug Options
        *** Routing ***
        - Routing to POIs/waypoints is now possible - GpsMid will route you to the closest routable way
