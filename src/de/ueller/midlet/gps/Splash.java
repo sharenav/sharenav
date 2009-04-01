@@ -45,7 +45,7 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 		" Harald Mueller",
 		" Kai Krueger",
 		" S. Hochmuth",
-		" Markus Baeurle",
+		" Markus Bäurle",
 		"Application:",
 		" licensed under GPL2",
 		" http://www.gnu.org/",
