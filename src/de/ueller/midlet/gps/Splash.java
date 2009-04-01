@@ -45,20 +45,22 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 		" Harald Mueller",
 		" Kai Krueger",
 		" S. Hochmuth",
-	    "Application:",
-	    " licensed under GPL2",
-	    " http://www.gnu.org/",
-	    "Map data:",
-	    " from OpenStreetMap",
-	    " licensed under CC 2.0",
-	    " http://creativecommons.org/",
-	    "Thanks for source parts to:",
-	    " Nikolay Klimchuk",
-	    " Simon Turner",
-	    "Artwork:",
+		" Markus Baeurle",
+		"Application:",
+		" licensed under GPL2",
+		" http://www.gnu.org/",
+		"Map data:",
+		" from OpenStreetMap",
+		" licensed under CC 2.0",
+		" http://creativecommons.org/",
+		"Thanks for source parts to:",
+		" Nikolay Klimchuk",
+		" Simon Turner",
+		" Sualeh Fatehi",
+		"Artwork:",
 		" Tobias Mueller",
 		"Press '*' to skip this",
-		"screen at startup."};
+		"screen at startup." };
 	private Font f;
 	int top = 0;
 	private Thread processorThread;
@@ -88,7 +90,6 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 	    	// if we would not be able to allocate memory for
 			// at least the memory for the original and the scaled image
 			// plus 25% do not scale
-			int oldWith = splash.getWidth();
 			int newWidth =  (int)(scale* (double) splash.getWidth());
 			int newHeight = (int)(scale* (double) splash.getHeight());
 			if (ImageTools.isScaleMemAvailable(splash, newWidth, newHeight)) {
@@ -104,7 +105,7 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 		space = getHeight() - topStart;
 		ssize = f.getHeight() * txt.length + space;
 		top = -space;
-		strVersion = "V" + main.c.getAppVersion() + " (" + main.c.getBundleDate() + ")";
+		strVersion = "V" + C.getAppVersion() + " (" + C.getBundleDate() + ")";
 		show();
 		addCommand(BACK_CMD);
 		addCommand(EXIT_CMD);
@@ -133,10 +134,9 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 		int yc = topStart - top % sp;
 		g.setClip(0, topStart, getWidth(), getHeight() - topStart);
 		boolean visible = false;
-		for (int i = startLine; i < txt.length; i++){
+		for (int i = startLine; i < txt.length; i++) {
 			visible=true;
-			if (i >= 0){
-				int w = f.stringWidth(txt[i]);
+			if (i >= 0) {
 				g.drawString(txt[i], x, yc, 0);
 			}
 			yc += sp;
@@ -173,7 +173,7 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 	
 				}
 				top++;
-				if (top > (ssize)){
+				if (top > (ssize)) {
 					top = -space;
 				}
 				repaint();
