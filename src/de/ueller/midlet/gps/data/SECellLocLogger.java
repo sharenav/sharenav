@@ -25,10 +25,12 @@ import javax.microedition.io.Connector;
 import javax.microedition.io.file.FileConnection;
 //#endif
 
+import javax.microedition.lcdui.Alert;
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Position;
 import de.ueller.gps.data.Satelit;
 import de.ueller.gps.tools.HelperRoutines;
+import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.LocationMsgReceiver;
 import de.ueller.midlet.gps.Logger;
 
@@ -57,8 +59,7 @@ public class SECellLocLogger implements LocationMsgReceiver {
 		//#if polish.api.fileconnection
 		try {
 			//#debug info
-			logger
-					.info("Attempting to enable cell-id logging for OpenCellId.org");
+			logger.info("Attempting to enable cell-id logging for OpenCellId.org");
 
 			prevPos = null;
 			valid = false;
@@ -80,8 +81,7 @@ public class SECellLocLogger implements LocationMsgReceiver {
 					wr = new OutputStreamWriter(fileCon.openOutputStream());
 					wr.write("lat,lon,mcc,mnc,lac,cellid,\n");
 				} else {
-					logger
-							.info("Trying to perform cell-id logging on anything else than filesystem is currently not supported");
+					logger.info("Trying to perform cell-id logging on anything else than filesystem is currently not supported");
 					return false;
 				}
 				//#debug info
@@ -89,12 +89,17 @@ public class SECellLocLogger implements LocationMsgReceiver {
 				return true;
 			} else {
 				//#debug info
-				logger
-						.info("Cell-id properties were empty, this is only supported on newer Sony Ericsson phones");
+				logger.info("Cell-ID properties were empty, this is only supported on newer Sony Ericsson phones.");
+				GpsMid.getInstance().alert("Cell logging", 
+					"Cell-ID properties were empty, this is only supported on newer Sony Ericsson phones.",
+					Alert.FOREVER);
 			}
 		} catch (Exception e) {
 			logger.silentexception(
-					"Logging of cell-ids is not supported on this phone", e);
+				"Logging of Cell-IDs is not supported on this phone.", e);
+			GpsMid.getInstance().alert("Cell logging", 
+				"Logging of Cell-IDs is not supported on this phone.", 
+				Alert.FOREVER);
 		}
 		//#endif
 		//#debug info
@@ -178,10 +183,9 @@ public class SECellLocLogger implements LocationMsgReceiver {
 							+ "," + mnc + "," + lac + "," + cellid + "\n");
 					wr.flush();
 				} catch (NumberFormatException nfe) {
-					logger
-							.silentexception(
-									"Invalid number format, so could not convert cell-id data",
-									nfe);
+					logger.silentexception(
+						"Invalid number format, so could not convert cell-id data",
+						nfe);
 				}
 			}
 		} catch (Exception e) {
