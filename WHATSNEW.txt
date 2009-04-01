@@ -1,25 +1,21 @@
 GpsMid 0.4.55
        *** Usability ***
-       - support for touchscreen devices (works also with mouse in MicroEmulator):
+       - Support for touchscreen devices (works also with mouse in MicroEmulator):
          - touch and drag to pan around the map
          - touch controls for zooming in and out
          - touch and drag to scroll and select in search results
-       - support for QWERT keyboards in the Search dialog
-       - new keyboard shortcuts for QWERT keyboards in the map screen and some changes to numeric keyboard shortcuts
+       - Support for QWERT keyboards in the Search dialog
+       - New keyboard shortcuts for QWERT keyboards in the map screen and some changes to numeric keyboard shortcuts
          (see http://gpsmid.wiki.sourceforge.net/Keyboard_Layout)
-       - new custom alert boxes for the map screen cover the map only partially when displayed
+       - Show available key shortcuts in Setup / Key shortcuts
+       - New custom alert boxes for the map screen cover the map only partially when displayed
        - Setup Dialog speed improved
        - Results from "Search / Nearest POI" include the compass direction now
-       - added backlight method for Siemens mobiles to Generic-Full (thx beni123)
-       - display backlight dimming for phones like Nokia E90 that support this
+       - Added backlight method for Siemens mobiles to Generic-Full (thx beni123)
+       - Display backlight dimming for phones like Nokia E90 that support this
          (use left / right keys during "Backlight ON" message to check out if dimming has an effect on your mobile)
-       - show available key shortcuts in Setup / Key shortcuts
-       - Favorites and Waypoints in the Search Dialog:
-         When there are waypoints ending with "*" they will show up as Favorites in the search dialog for quick access.
-         By pressing the "*"-key you can toggle to show all waypoints.
-         Typing a key will narrow down the favorites / waypoints list.
-         With the "#"-key you can toggle to sort the waypoints / favorites by name or distance.
-         Typing at least 2 keys will give normal name search results as before.         
+       - Splash screen will not be shown at startup if you press * in this screen.
+       - Alert boxes for exceptions no longer have a timeout.
        *** OSM Editing ***
        - Upload GPX traces directly to the OSM server (requires internet access on the phone)
 	   - Display actual raw OSM key, value tags for a selected way (requires internet access)
@@ -32,17 +28,23 @@ GpsMid 0.4.55
        - Ability to rename tracks and waypoints
        - Waypoint names can now be entered with up to 255 chars (instead of 20)
 	   - Waypoints are now automatically exported inside tracks (thx jkpj)
-	   - Also save elevation and timestamp for waypoints (thx mbaeurle)
+	   - Elevation and timestamp now saved for waypoints (thx mbaeurle)
 	   - Allow to change waypoint elevation when saving a new waypoint (thx pos_ei_don_) 
-	   - Option to recenter to GPS after saving a waypoint - taht's helpful for qwert-phones (thx pos_ei_don_)
+	   - Option to recenter to GPS after saving a waypoint - that's helpful for qwert-phones (thx pos_ei_don_)
        - When sending waypoints you are now asked for a name (Waypoints.gpx remains default filename)
        - The map is centered at the start point when displaying a track
        - Send tracks directly to Openstreetmap internet url
 		 if "upload to OSM" is specified as GPX receiver
 		 and OSM Account in Setup is specified
-	   - bug fix for file import not working on some phones (thx mbaeurle + colleague)
-	   - correctly export waypoints with names containing &, <, > or " (thx pos_ei_don_)
-	   - optimizations for waypoint label drawing (thx mbaeurle) 
+       - Favorites and Waypoints in the Search Dialog:
+         When there are waypoints ending with "*" they will show up as Favorites in the search dialog for quick access.
+         By pressing the "*"-key you can toggle to show all waypoints.
+         Typing a key will narrow down the favorites / waypoints list.
+         With the "#"-key you can toggle to sort the waypoints / favorites by name or distance.
+         Typing at least 2 keys will give normal name search results as before.         
+	   - Bug fix for file import not working on some phones (thx mbaeurle + colleague)
+	   - Correctly export waypoints with names containing &, <, > or " (thx pos_ei_don_)
+	   - Optimizations for waypoint label drawing (thx mbaeurle) 
        *** Recordings ***
        - Added feature to send an SMS with the current map position (map center)
          if JSR-120 is available. It is also possible
@@ -54,39 +56,44 @@ GpsMid 0.4.55
        - Support for retrieving the estimated position from the cell-id on SE phones via internet access to opencellid.org
        - Log Cell-ID positions for uploading to OpenCellId.org
          to a directory in the log folder specified in the location receiver setup
-       - Code supports now multiple LocationMsgReceivers for one LocationMsgProducer (thx black_ivory)
+       - Code now supports multiple LocationMsgReceivers for one LocationMsgProducer (thx black_ivory)
        *** Map ***
-       - added "Name Check" feature to Overview/Filter Map
-         This can be used to show only unnamed/named or ways/areas/POIs containing a certain string in the map
+       - Added "Name Check" feature to Overview/Filter Map,
+         this can be used to show only unnamed/named or ways/areas/POIs containing a certain string in the map
        - Place labels (city, town, village, hamlet, suburb) can now be hidden using the Map Features dialog 
-       - double press of 9 / single press of U-key toggles manual rotation mode (use left / right to rotate)
-       - added POIs for beacons, towers and power objects (thx mbaeurle) and bench, cafe, optician to high-style.zip 
-       - added POIs for emergency phones and tourist informations to normal style-file and high-style.zip (thx mbaeurle)
-       - when you give POIs the tag <AreaPOI createForAreas="true"/> this POI will also be shown for matching Areas
-       - fixed crashes when displaying route connections via Debug Options
+       - Double press of 9 / single press of U-key toggles manual rotation mode (use left / right to rotate)
+       - Added POIs for beacons, towers and power objects (thx mbaeurle) and bench, cafe, optician to high-style.zip 
+       - Added POIs for emergency phones and tourist informations to normal style-file and high-style.zip (thx mbaeurle)
+       - When you give POIs the tag <AreaPOI createForAreas="true"/> this POI will also be shown for matching Areas
+       - Fixed crashes when displaying route connections via Debug Options
        *** Routing ***
        - Routing to POIs/waypoints is now possible - GpsMid will route you to the closest routable way
-       - display the name of the street the route instruction leads into
-       - highlighting the route solution path (the route solution is drawn on top if the map is synched with
+       - Display the name of the street the route instruction leads into
+       - Highlighting the route solution path (the route solution is drawn on top if the map is synched with
          the GPS receiver but when panning manually it will respect the layer information),
          the minimum width of the route solution path can be specified in Setup/Routing Options 
-       - improved off-route detection
-       - routing instructions for entering and exiting motorways, for roundabouts, tunnels,
+       - Improved off-route detection
+       - Routing instructions for entering and exiting motorways, for roundabouts, tunnels,
          for bearing if two alternative ways lead straight on and for following the street until further notice,
          when there's no instruction for at least 1200 meters
-       - browse the route instructions with up/down keys (can be deactivated in Setup)
-       - skip half turn instructions if the street name stays the same and straight-ons
-       - improved recalculation detection: you can now set the target, calculate the route
+       - Browse the route instructions with up/down keys (can be deactivated in Setup)
+       - Skip half turn instructions if the street name stays the same and straight-ons
+       - Improved recalculation detection: you can now set the target, calculate the route
          then Start Gps. When there's a new position from the GPS the route recalculation will
          be automatically performed
-       - some wrong direction arrows are fixed
+       - Some wrong direction arrows are fixed
        *** Midlet creation with Osm2GpsMid ***
        - Osm2GpsMid is now compiled to be compatible with Java 1.5 Runtime (for example on older Mac OSX)
-       - use HTTP compression for downloading map data if the server supports it
+       - Use HTTP compression for downloading map data if the server supports it
        *** Others ***
-       - speed limit alert - configurable in Setup / Sounds & Alerts (thx jkpj)
-       - more documentation in the source code (thx black_ivory)
-       - many more small improvements and bugfixes
+       - Speed limit alert - configurable in Setup / Sounds & Alerts (thx jkpj)
+       - Tacho and Trip screen (opened by the 7 key or menu entry) which show
+         information such as speed, altitude, distance and time traveled,
+         course, heading and distance to destination, ...
+       - Sunrise and sunset times are shown in the Trip screen (thx Sualeh Fatehi
+         for the calculation class)  
+       - More documentation in the source code (thx black_ivory)
+       - Many more small improvements and bugfixes
        
 GpsMid 0.4.51
        *** Navigation ***
@@ -114,7 +121,7 @@ GpsMid 0.4.51
        *** Tracks and Waypoints ***
        - increased robustness of track and waypoint storage (thx mbaeurle)
        - Enter new waypoints by coordinates using Recordings.../Enter waypoint (thx mbaeurle)
-         (i.e. 48° 30' 45" or 48° 30.75' or 48.5125° and leave the other fields empty)
+         (i.e. 48ï¿½ 30' 45" or 48ï¿½ 30.75' or 48.5125ï¿½ and leave the other fields empty)
        - Exporting and importing waypoints always use UTF-8 now (thx bilboq)
        - Existing waypoints.gpx files are now correctly overwritten (thx bilboq)
        - "Export all" command for GPX tracklogs
