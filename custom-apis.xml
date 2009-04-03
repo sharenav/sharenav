@@ -26,6 +26,20 @@
 		<names>osm-editing</names>
 		<symbol>osm-editing</symbol>
 	</api>
+	<api>
+		<name>Debugging</name>
+		<description>Pseudo-API to (miss)use device selection to compile in debugging
+		</description>
+		<names>debug-enable</names>
+		<symbol>debug-enable</symbol>
+	</api>
+	<api>
+		<name>No-Obfuscation</name>
+		<description>Pseudo-API to (miss)use device selection to compile without obfuscation
+		</description>
+		<names>noobfuscation</names>
+		<symbol>noobfuscation</symbol>
+	</api>
 
 <!--
 	You can use this block to define a new API

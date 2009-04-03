@@ -113,6 +113,8 @@
 		<deviceRequirements unless="test">
 			<or>
 				<requirement name="Identifier" value="Generic/editing" />
+                                <requirement name="Identifier" value="Generic/debug" />
+                                <requirement name="Identifier" value="Generic/blackberry" />
 				<requirement name="Identifier" value="Generic/full" />
 				<requirement name="Identifier" value="Generic/minimal" />
 				<requirement name="Identifier" value="Generic/full-nolocation" />
@@ -195,7 +197,7 @@
 			</resources>
 			
 			<!-- obfuscator settings: do not obfuscate when the test-property is true -->
-			<obfuscator name="ProGuard" useDefaultPackage="false" unless="logging || polish.blackberry" >
+			<obfuscator name="ProGuard" useDefaultPackage="false" unless="logging || polish.blackberry || polish.api.noobfuscation" >
 				<!--
 				You can set additional parameters here, e.g.:
 				<parameter name="optimize" value="false" />
@@ -218,7 +220,7 @@
 			</obfuscator>
 			
 			<!-- debug settings: only include debug setting when the test-property is true -->
-			<debug if="logging" showLogOnError="true" verbose="true" level="debug">
+			<debug if="logging || polish.api.debug-enabled" showLogOnError="true" verbose="true" level="debug">
 				
 				<!--filter pattern="de.ueller.gps.sirf.*" level="debug" / -->
 				<!--filter pattern="de.ueller.midlet.gps.Trace" level="debug" / -->
