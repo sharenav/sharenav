@@ -19,6 +19,7 @@ import javax.microedition.io.StreamConnection;
 //#if polish.api.fileconnection
 import javax.microedition.io.file.FileConnection;
 //#endif
+import javax.microedition.lcdui.Alert;
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Choice;
 import javax.microedition.lcdui.Command;
@@ -461,11 +462,11 @@ Runnable , GpsMidDisplayable{
 					break;
 
 			}
+			
 			//#if polish.api.fileconnection	
 			/**
 			 * Allow for logging the raw data coming from the gps
 			 */
-
 			String url = Configuration.getGpsRawLoggerUrl();
 			//logger.error("Raw logging url: " + url);
 			if (url != null) {
@@ -653,7 +654,7 @@ Runnable , GpsMidDisplayable{
 			if (c == CMDS[EXIT_CMD]) {
 				// FIXME: This is a workaround. It would be better if recording would not be stopped when returning to map
 				if (gpx.isRecordingTrk()) {
-					alert("Record Mode", "Please stop recording before returning to the main screen." , 2000);
+					alert("Record Mode", "Please stop recording before returning to the main screen." , 5000);
 					return;
 				}
 				
@@ -662,21 +663,21 @@ Runnable , GpsMidDisplayable{
 				parent.show();
 				return;
 			}
-			if (! routeCalc){
-			if (c == CMDS[START_RECORD_CMD]){
+			if (! routeCalc) {
+			if (c == CMDS[START_RECORD_CMD]) {
 				try {
 					gpx.newTrk();
 				} catch (RuntimeException e) {
 					receiveMessage(e.getMessage());
 				}
 			}
-			if (c == CMDS[STOP_RECORD_CMD]){
+			if (c == CMDS[STOP_RECORD_CMD]) {
 				gpx.saveTrk();
 				addCommand(CMDS[MANAGE_TRACKS_CMD]);
 			}
-			if (c == CMDS[MANAGE_TRACKS_CMD]){
+			if (c == CMDS[MANAGE_TRACKS_CMD]) {
 				if (gpx.isRecordingTrk()) {
-					alert("Record Mode", "You need to stop recording before managing tracks." , 2000);
+					alert("Record Mode", "You need to stop recording before managing tracks." , 5000);
 					return;
 				}
 
@@ -686,8 +687,8 @@ Runnable , GpsMidDisplayable{
 			if (c == CMDS[REFRESH_CMD]) {
 				repaint();
 			}
-			if (c == CMDS[CONNECT_GPS_CMD]){
-				if (locationProducer == null){
+			if (c == CMDS[CONNECT_GPS_CMD]) {
+				if (locationProducer == null) {
 					Thread thread = new Thread(this);
 					thread.start();
 				}
@@ -696,14 +697,14 @@ Runnable , GpsMidDisplayable{
 				GuiSearch search = new GuiSearch(this);
 				search.show();
 			}
-			if (c == CMDS[DISCONNECT_GPS_CMD]){
+			if (c == CMDS[DISCONNECT_GPS_CMD]) {
 				if (locationProducer != null){
 					locationProducer.close();
 				}
 			}
-			if (c == CMDS[ROUTE_TO_CMD]){
+			if (c == CMDS[ROUTE_TO_CMD]) {
 				routeCalc = true; 
-				if (Configuration.isStopAllWhileRouteing()){
+				if (Configuration.isStopAllWhileRouteing()) {
   				   stopImageCollector();
 				}
 				RouteInstructions.resetOffRoute(route, center);
@@ -764,53 +765,64 @@ Runnable , GpsMidDisplayable{
 			}
 			//#endif
 			if (c == CMDS[RECORDINGS_CMD]) {
-				int noElements = 3;
-				//#if polish.api.mmapi
-				noElements += 2;
-				//#endif
-				//#if polish.api.wmapi
-				noElements++;
-				//#endif
-				int idx = 0;
-				String[] elements = new String[noElements];
-				if (gpx.isRecordingTrk()) {
-					elements[idx++] = "Stop Gpx tracklog";
-				} else {
-					elements[idx++] = "Start Gpx tracklog";
-				}
-				
-				elements[idx++] = "Add waypoint";
-				elements[idx++] = "Enter waypoint";
-				//#if polish.api.mmapi
-				elements[idx++] = "Take pictures";
-				if (audioRec.isRecording()) {
-					elements[idx++] = "Stop audio recording";
-				} else {
-					elements[idx++] = "Start audio recording";
+				if (recordingsMenu == null) {
+					int noElements = 3;
+					//#if polish.api.mmapi
+					noElements += 2;
+					//#endif
+					//#if polish.api.wmapi
+					noElements++;
+					//#endif
+					int idx = 0;
+					String[] elements = new String[noElements];
+					if (gpx.isRecordingTrk()) {
+						elements[idx++] = "Stop Gpx tracklog";
+					} else {
+						elements[idx++] = "Start Gpx tracklog";
+					}
 					
+					elements[idx++] = "Add waypoint";
+					elements[idx++] = "Enter waypoint";
+					//#if polish.api.mmapi
+					elements[idx++] = "Take pictures";
+					if (audioRec.isRecording()) {
+						elements[idx++] = "Stop audio recording";
+					} else {
+						elements[idx++] = "Start audio recording";
+						
+					}
+					//#endif
+					//#if polish.api.wmapi
+					if (Configuration.hasDeviceJSR120()) {
+						elements[idx++] = "Send SMS (map pos)";
+					}
+					//#endif
+					
+					recordingsMenu = new List("Recordings...",Choice.IMPLICIT,elements,null);
+					recordingsMenu.addCommand(CMDS[OK_CMD]);
+					recordingsMenu.addCommand(CMDS[BACK_CMD]);
+					recordingsMenu.setSelectCommand(CMDS[OK_CMD]);
+					parent.show(recordingsMenu);
+					recordingsMenu.setCommandListener(this);				
 				}
-				//#endif
-				//#if polish.api.wmapi
-				if (Configuration.hasDeviceJSR120()) {
-					elements[idx++] = "Send SMS (map pos)";
+				if (recordingsMenu != null) {
+					recordingsMenu.setSelectedIndex(0, true);
+					parent.show(recordingsMenu);
 				}
-				//#endif
-				
-				recordingsMenu = new List("Recordings...",Choice.IMPLICIT,elements,null);
-				recordingsMenu.addCommand(CMDS[OK_CMD]);
-				recordingsMenu.addCommand(CMDS[BACK_CMD]);
-				recordingsMenu.setSelectCommand(CMDS[OK_CMD]);
-				parent.show(recordingsMenu);
-				recordingsMenu.setCommandListener(this);				
 			}
 			if (c == CMDS[ROUTINGS_CMD]) {
-				String[] elements = {"Calculate route", "Set target" , "Clear target"};					
-				routingsMenu = new List("Routing..",Choice.IMPLICIT,elements,null);
-				routingsMenu.addCommand(CMDS[OK_CMD]);
-				routingsMenu.addCommand(CMDS[BACK_CMD]);
-				routingsMenu.setSelectCommand(CMDS[OK_CMD]);
-				parent.show(routingsMenu);
-				routingsMenu.setCommandListener(this);				
+				if (routingsMenu == null) {
+					String[] elements = {"Calculate route", "Set target" , "Clear target"};					
+					routingsMenu = new List("Routing..", Choice.IMPLICIT, elements, null);
+					routingsMenu.addCommand(CMDS[OK_CMD]);
+					routingsMenu.addCommand(CMDS[BACK_CMD]);
+					routingsMenu.setSelectCommand(CMDS[OK_CMD]);
+					routingsMenu.setCommandListener(this);				
+				}
+				if (routingsMenu != null) {
+					routingsMenu.setSelectedIndex(0, true);
+					parent.show(routingsMenu);
+				}
 			}
 			if (c == CMDS[BACK_CMD]) {
 				show();
@@ -911,9 +923,9 @@ Runnable , GpsMidDisplayable{
 			} else if (c == CMDS[MANUAL_ROTATION_MODE_CMD]) {
 				manualRotationMode = !manualRotationMode;
 				if (manualRotationMode) {
-					alert("Manual Rotation", "Change course with left/right keys" , 750);
+					alert("Manual Rotation", "Change course with left/right keys", 3000);
 				} else {
-					alert("Manual Rotation", "Off" , 500);
+					alert("Manual Rotation", "Off", 1000);
 				}
 			} else if (c == CMDS[TOGGLE_OVERLAY_CMD]) {
 				showAddons++;
@@ -932,14 +944,14 @@ Runnable , GpsMidDisplayable{
 			} else if (c == CMDS[TOGGLE_MAP_PROJ_CMD]) {
 				if (ProjFactory.getProj() == ProjFactory.NORTH_UP ) {
 					ProjFactory.setProj(ProjFactory.MOVE_UP);
-					alert("Map Rotation", "Rotate to Driving Direction" , 500);
+					alert("Map Rotation", "Driving Direction", 750);
 				} else {
 					if (manualRotationMode) {
 						course = 0;
-						alert("Manual Rotation", "to North" , 500);
+						alert("Manual Rotation", "to North", 750);
 					} else {
 						ProjFactory.setProj(ProjFactory.NORTH_UP);					
-						alert("Map Rotation", "NORTH UP" , 500);
+						alert("Map Rotation", "NORTH UP", 750);
 					}
 				}
 				// redraw immediately
@@ -949,28 +961,28 @@ Runnable , GpsMidDisplayable{
 					}
 				}
 			} else if (c == CMDS[TOGGLE_KEY_LOCK_CMD]) {
-				keyboardLocked=!keyboardLocked;
-				if(keyboardLocked) {
+				keyboardLocked = !keyboardLocked;
+				if (keyboardLocked) {
 					// show alert that keys are locked
 					keyPressed(0);
 				} else {
-					alert("GpsMid", "Keys unlocked",750);					
+					alert("GpsMid", "Keys unlocked", 1000);					
 				}
 			} else if (c == CMDS[TOGGLE_RECORDING_CMD]) {
 				if ( gpx.isRecordingTrk() ) {
-					alert("Gps track recording", "Stopping to record" , 750);                                        
+					alert("Gps track recording", "Stopping to record", 2000);
 					commandAction(CMDS[STOP_RECORD_CMD],(Displayable) null);
 				} else {
-					alert("Gps track recording", "Starting to record" , 750);
+					alert("Gps track recording", "Starting to record", 2000);
 					commandAction(CMDS[START_RECORD_CMD],(Displayable) null);
 				}
 			} else if (c == CMDS[TOGGLE_RECORDING_SUSP_CMD]) {
 				if (gpx.isRecordingTrk()) {
 					if ( gpx.isRecordingTrkSuspended() ) {
-						alert("Gps track recording", "Resuming recording" , 750);
+						alert("Gps track recording", "Resuming recording", 2000);
 						gpx.resumTrk();
 					} else {
-						alert("Gps track recording", "Suspending recording" , 750);
+						alert("Gps track recording", "Suspending recording", 2000);
 						gpx.suspendTrk();
 					}
 				}
@@ -990,7 +1002,7 @@ Runnable , GpsMidDisplayable{
 							guiWay.refresh();
 						}
 					} else {
-						alert("Editing", "Editing support was not enabled in Osm2GpsMid", 2000);
+						parent.alert("Editing", "Editing support was not enabled in Osm2GpsMid", Alert.FOREVER);
 					}
 			}
 			//#endif
@@ -1013,7 +1025,7 @@ Runnable , GpsMidDisplayable{
 		Images i;
 		i = new Images();
 		pc = new PaintContext(this, i);
-		pc.c = parent.c;
+		pc.c = GpsMid.c;
 		int w = (this.getWidth() * 125) / 100;
 		int h = (this.getHeight() * 125) / 100;
 		imageCollector = new ImageCollector(t, w, h, this,
@@ -1150,7 +1162,7 @@ Runnable , GpsMidDisplayable{
 				atTarget = (distance < 25);
 				if (atTarget) {
 					if (movedAwayFromTarget && Configuration.getCfgBitState(Configuration.CFGBIT_SND_TARGETREACHED)) {
-						parent.mNoiseMaker.playSound("TARGET_REACHED", (byte) 7, (byte) 1);
+						GpsMid.mNoiseMaker.playSound("TARGET_REACHED", (byte) 7, (byte) 1);
 					}
 				} else if (!movedAwayFromTarget) {
 					movedAwayFromTarget=true;
@@ -1169,7 +1181,7 @@ Runnable , GpsMidDisplayable{
 				// give speeding alert only every 10 seconds
 				if ( (System.currentTimeMillis() - lastTimeOfSpeedingSound) > 10000 ) {
 					lastTimeOfSpeedingSound = System.currentTimeMillis();
-					parent.mNoiseMaker.immediateSound("SPEED_LIMIT");					
+					GpsMid.mNoiseMaker.immediateSound("SPEED_LIMIT");					
 				}
 			}
 			/*
@@ -1184,10 +1196,10 @@ Runnable , GpsMidDisplayable{
 				showSatelite(g);
 				break;
 			case 2:
-				yc = showConnectStatistics(g, yc, la);
+				yc = showMemory(g, yc, la);
 				break;
 			case 3:
-				yc = showMemory(g, yc, la);
+				yc = showConnectStatistics(g, yc, la);
 				break;
 			default:
 				showAddons = 0;
@@ -1203,9 +1215,10 @@ Runnable , GpsMidDisplayable{
 			showMovement(g);
 			g.setColor(0, 0, 0);
 			if (locationProducer != null){
-				if (gpx.isRecordingTrk()) {// we are recording tracklogs
-					if(fontHeight==0) {
-						fontHeight=g.getFont().getHeight();
+				if (gpx.isRecordingTrk()) {
+					// we are recording tracklogs
+					if (fontHeight == 0) {
+						fontHeight = g.getFont().getHeight();
 					}
 					if (gpx.isRecordingTrkSuspended()) {
 						g.setColor(0, 0, 255);
@@ -1213,16 +1226,14 @@ Runnable , GpsMidDisplayable{
 						g.setColor(255, 0, 0);
 					}
 					
-					g.drawString(gpx.recorded+"r", getWidth() - 1, 1+fontHeight, Graphics.TOP
-							| Graphics.RIGHT);
+					g.drawString(gpx.recorded + "r", getWidth() - 1, 1 + fontHeight, 
+							Graphics.TOP | Graphics.RIGHT);
 					g.setColor(0);
 				}
 					
-				g.drawString(solution, getWidth() - 1, 1, Graphics.TOP
-							| Graphics.RIGHT);
+				g.drawString(solution, getWidth() - 1, 1, Graphics.TOP | Graphics.RIGHT);
 			} else {
-				g.drawString("Off", getWidth() - 1, 1, Graphics.TOP
-						| Graphics.RIGHT);
+				g.drawString("Off", getWidth() - 1, 1, Graphics.TOP | Graphics.RIGHT);
 				
 			}
 			if (pc != null){
@@ -1620,8 +1631,9 @@ Runnable , GpsMidDisplayable{
 		int centerY = getHeight() / 2;
 		int posX, posY;
 		if (!gpsRecenter) {
-			IntPoint p1 = new IntPoint(0,0);				
-			pc.getP().forward((float)(pos.latitude/360.0*2*Math.PI), (float)(pos.longitude/360.0*2*Math.PI),p1);
+			IntPoint p1 = new IntPoint(0, 0);				
+			pc.getP().forward((float)(pos.latitude / 360.0 * 2 * Math.PI), 
+							  (float)(pos.longitude / 360.0 * 2 * Math.PI), p1);
 			posX = p1.getX();
 			posY = p1.getY();		
 		} else {
@@ -1736,8 +1748,9 @@ Runnable , GpsMidDisplayable{
 	}
 	
 	public synchronized void receivePosItion(float lat, float lon, float scale) {
-		logger.debug("Now displaying: " + (lat*MoreMath.FAC_RADTODEC) + "|" + (lon*MoreMath.FAC_RADTODEC));
-		center.setLatLon(lat, lon,true);
+		logger.debug("Now displaying: " + (lat * MoreMath.FAC_RADTODEC) + " | " + 	
+			     (lon * MoreMath.FAC_RADTODEC));
+		center.setLatLon(lat, lon, true);
 		this.scale = scale;
 		updatePosition();
 	}
@@ -1759,11 +1772,13 @@ Runnable , GpsMidDisplayable{
 				// course = (int) ((pos.course * 3 + course) / 4)+360;
 				// use pos.course directly without rotation slow-down
 				course = (int) pos.course;
-				while (course > 360) course-=360;
+				while (course > 360) {
+					course -= 360;
+				}
 			}
 		}		
 		speed = (int) (pos.speed * 3.6f);		
-		if (gpx.isRecordingTrk()){
+		if (gpx.isRecordingTrk()) {
 			try {
 				gpx.addTrkPt(pos);				
 			} catch (Exception e) {
@@ -1840,8 +1855,8 @@ Runnable , GpsMidDisplayable{
 		
 		// remember positions for dragging
 		// remember position the pointer was pressed
-		this.touchX = x;
-		this.touchY = y;
+		Trace.touchX = x;
+		Trace.touchY = y;
 		// remember center when the pointer was pressed
 		centerPointerPressedN = center.clone();
 	}
@@ -1855,8 +1870,8 @@ Runnable , GpsMidDisplayable{
 	protected void pointerDragged (int x, int y) {
 		if (imageCollector != null) {
 			// difference between where the pointer was pressed and is currently dragged
-			int diffX = this.touchX - x;
-			int diffY = this.touchY - y;
+			int diffX = Trace.touchX - x;
+			int diffY = Trace.touchY - y;
 			
 			IntPoint centerPointerPressedP = new IntPoint();
 			imageCollector.getCurrentProjection().forward(centerPointerPressedN, centerPointerPressedP);
