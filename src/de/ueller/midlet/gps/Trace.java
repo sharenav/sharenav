@@ -996,7 +996,7 @@ Runnable , GpsMidDisplayable{
 			}
 			//#endif
 			} else {
-				logger.error(" currently in route Caclulation");
+				alert("Error", "currently in route calculation", 1000);
 			}
 		} catch (RuntimeException e) {
 			// TODO Auto-generated catch block
