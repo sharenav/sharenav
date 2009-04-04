@@ -157,7 +157,7 @@ public class SECellLocLogger implements LocationMsgReceiver {
 		// Nothing to do
 	}
 
-	public void receivePosItion(Position pos) {
+	public void receivePosition(Position pos) {
 		//#if polish.api.fileconnection
 		int cellid;
 		short mcc;
@@ -235,7 +235,7 @@ public class SECellLocLogger implements LocationMsgReceiver {
 		}
 	}
 
-	public void receiveStatelit(Satelit[] sat) {
+	public void receiveSatellites(Satelit[] sats) {
 		// Nothing to do
 	}
 

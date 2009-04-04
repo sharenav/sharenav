@@ -28,7 +28,9 @@ import de.ueller.gps.data.Satelit;
  * 
  */
 public class LocationMsgReceiverList implements LocationMsgReceiver {
-	private final static Logger logger=Logger.getInstance(LocationMsgReceiverList.class,Logger.DEBUG);
+	private final static Logger logger = 
+		Logger.getInstance(LocationMsgReceiverList.class, Logger.DEBUG);
+
 	/**
 	 * Vector of all the LocationMsgReceivers
 	 */
@@ -56,48 +58,48 @@ public class LocationMsgReceiverList implements LocationMsgReceiver {
 		}
 	}
 
-	public void receiveMessage(String s) {
+	public void receiveMessage(String msg) {
 		Enumeration en = receivers.elements();
 		LocationMsgReceiver receiver;
 		while (en.hasMoreElements()) {
 			receiver = (LocationMsgReceiver) en.nextElement();
-			receiver.receiveMessage(s);
+			receiver.receiveMessage(msg);
 		}
 	}
 
-	public void receivePosItion(Position pos) {
+	public void receivePosition(Position pos) {
 		Enumeration en = receivers.elements();
 		LocationMsgReceiver receiver;
 		while (en.hasMoreElements()) {
 			receiver = (LocationMsgReceiver) en.nextElement();
-			receiver.receivePosItion(pos);
+			receiver.receivePosition(pos);
 		}
 	}
 
-	public void receiveSolution(String s) {
+	public void receiveSolution(String solution) {
 		Enumeration en = receivers.elements();
 		LocationMsgReceiver receiver;
 		while (en.hasMoreElements()) {
 			receiver = (LocationMsgReceiver) en.nextElement();
-			receiver.receiveSolution(s);
+			receiver.receiveSolution(solution);
 		}
 	}
 
-	public void receiveStatelit(Satelit[] sat) {
+	public void receiveSatellites(Satelit[] sats) {
 		Enumeration en = receivers.elements();
 		LocationMsgReceiver receiver;
 		while (en.hasMoreElements()) {
 			receiver = (LocationMsgReceiver) en.nextElement();
-			receiver.receiveStatelit(sat);
+			receiver.receiveSatellites(sats);
 		}
 	}
 
-	public void receiveStatistics(int[] statRecord, byte qualtity) {
+	public void receiveStatistics(int[] statRecord, byte quality) {
 		Enumeration en = receivers.elements();
 		LocationMsgReceiver receiver;
 		while (en.hasMoreElements()) {
 			receiver = (LocationMsgReceiver) en.nextElement();
-			receiver.receiveStatistics(statRecord, qualtity);
+			receiver.receiveStatistics(statRecord, quality);
 		}
 	}
 

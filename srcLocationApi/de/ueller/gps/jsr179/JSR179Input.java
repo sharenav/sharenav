@@ -116,7 +116,7 @@ public class JSR179Input implements LocationListener, LocationMsgProducer {
 		pos.course = location.getCourse();
 		pos.speed = location.getSpeed();
 		pos.date.setTime(location.getTimestamp());
-		receiver.receivePosItion(pos);
+		receiver.receivePosition(pos);
 		String nmeaString = location
 				.getExtraInfo("application/X-jsr179-location-nmea");
 		// String nmeaString =

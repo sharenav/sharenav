@@ -110,13 +110,13 @@ public class SirfMessage {
 	}
 
 	private String decodeMeasuredTrackerDataOut() {
-		int anz=getByte(7);
-		Satelit s[]=new Satelit[anz];
-		for (int l = 0; l < anz; l++){
-			s[l]=decode1sMeasuredTrackerDataOut(8+l*15);			
+		int anz = getByte(7);
+		Satelit sats[] = new Satelit[anz];
+		for (int l = 0; l < anz; l++) {
+			sats[l] = decode1sMeasuredTrackerDataOut(8 + l * 15);
 		}
 //		pcs.firePropertyChange("SatelitData",null,s);
-		receiver.receiveStatelit(s);
+		receiver.receiveSatellites(sats);
 		return null;
 
 	}
@@ -178,8 +178,10 @@ public class SirfMessage {
 //		cal.set(Calendar.MINUTE, min);
 //		cal.set(Calendar.SECOND, (int) second);
 
-		Position p = new Position((float) lat, (float) lon, (float) altMSL, (float) sog, (float) course, valid, date/*cal.getTime()*/);
-		receiver.receivePosItion(p);
+		// TODO: Is HDOP available here as well?
+		Position p = new Position((float) lat, (float) lon, (float) altMSL, (float) sog, 
+								(float) course, valid, date/*cal.getTime()*/);
+		receiver.receivePosition(p);
 		pold = p;
 		return null;
 //		return message("" + day + "." + month + "." + year + " " + hour + ":" + min + ":" + second + " Lat=" + lat + " lon=" + lon + " h=" + altMSL + " sog=" + sog);
@@ -213,7 +215,7 @@ public class SirfMessage {
 			case 7: msg="DR"; break;
 
 		}
-		String ret= ((dgps)?"DGPS " : "" )+ msg;
+		String ret= ((dgps) ? "DGPS " : "" ) + msg;
 		receiver.receiveSolution(ret);
 //		receiver.receiveSatInUse(getByte(28));
 		return null;

@@ -48,38 +48,32 @@ try {
 		
 	}
 
-	public void receivePosItion(Position pos) {
+	public void receivePosition(Position pos) {
 		System.out.println("pos " + pos.latitude + " " + pos.longitude);
 	}
 
 	public void receiveSolution(String s) {
 		// TODO Auto-generated method stub
-		
 	}
 
-	public void receiveStatelit(Satelit[] sat) {
-		System.out.println("got statelite");
-		
+	public void receiveSatellites(Satelit[] sats) {
+		System.out.println("got satellites");
 	}
 
 	public void receiveStatistics(int[] statRecord, byte qualtity) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	public void sirfDecoderEnd() {
 		// TODO Auto-generated method stub
-		
 	}
 
 	public void locationDecoderEnd() {
 		// TODO Auto-generated method stub
-		
 	}
 
 	public void locationDecoderEnd(String msg) {
 		// TODO Auto-generated method stub
-		
 	}
 
 }

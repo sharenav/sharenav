@@ -1,7 +1,7 @@
 package de.ueller.midlet.gps;
 /*
  * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net
- * 			Copyright (c) 2008 Kai Krueger apm at users dot sourceforge dot net 
+ * 			Copyright (c) 2008 Kai Krueger apmonkey at users dot sourceforge dot net 
  * See Copying
  */
 import java.util.Timer;
@@ -175,7 +175,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			if (c == DISP_CMD) {			
 				if (cursor >= result.size()) return;
 				SearchResult sr = (SearchResult) result.elementAt(cursor);				
-				parent.receivePosItion(sr.lat, sr.lon, 15000f);				
+				parent.receivePosition(sr.lat, sr.lon, 15000f);				
 				parent.show();				
 				destroy();
 				return;
@@ -195,9 +195,9 @@ public class GuiSearch extends Canvas implements CommandListener,
 					public void run() {
 						try {
 							byte poiType = (byte)poiSelectionCG.getSelectedIndex();
-							int maxScale = Trace.getInstance().pc.c.getNodeMaxScale(poiType);
+							int maxScale = parent.pc.c.getNodeMaxScale(poiType);
 							
-							Vector res = parent.t[Trace.getInstance().pc.c.scaleToTile(maxScale)].getNearestPoi(poiType, 
+							Vector res = parent.t[parent.pc.c.scaleToTile(maxScale)].getNearestPoi(poiType, 
 									parent.center.radlat, parent.center.radlon, 
 									Float.parseFloat(poiSelectionMaxDistance.getString())*1000.0f);						
 							for (int i = 0; i < res.size(); i++) {

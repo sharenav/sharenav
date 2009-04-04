@@ -1747,7 +1747,7 @@ Runnable , GpsMidDisplayable{
 		}
 	}
 	
-	public synchronized void receivePosItion(float lat, float lon, float scale) {
+	public synchronized void receivePosition(float lat, float lon, float scale) {
 		logger.debug("Now displaying: " + (lat * MoreMath.FAC_RADTODEC) + " | " + 	
 			     (lon * MoreMath.FAC_RADTODEC));
 		center.setLatLon(lat, lon, true);
@@ -1755,7 +1755,7 @@ Runnable , GpsMidDisplayable{
 		updatePosition();
 	}
 
-	public synchronized void receivePosItion(Position pos) {
+	public synchronized void receivePosition(Position pos) {
 		//#debug info
 		logger.info("New position: " + pos);
 		this.pos = pos;
@@ -1830,9 +1830,8 @@ Runnable , GpsMidDisplayable{
 
 	
 	
-	public void receiveStatelit(Satelit[] sat) {
+	public void receiveSatellites(Satelit[] sat) {
 		this.sat = sat;
-
 	}
 
 	public MIDlet getParent() {

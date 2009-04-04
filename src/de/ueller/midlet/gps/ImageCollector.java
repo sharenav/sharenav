@@ -20,7 +20,7 @@ import de.ueller.midlet.gps.tile.WayDescription;
 
 /*
  * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net
- * 			Copyright (c) 2008 Kai Krueger apm at users dot sourceforge dot net 
+ * 			Copyright (c) 2008 Kai Krueger apmonkey at users dot sourceforge dot net 
  * See Copying
  * 
  * this class collects all visible object to a off line image for later painting .
@@ -146,7 +146,7 @@ public class ImageCollector implements Runnable {
 				createPC.course = nextSc.course;
 				// System.out.println("create " + pcCollect);
 				
-				Way.setupDirectionalPenalty(createPC, Trace.getInstance().speed, Trace.getInstance().gpsRecenter);
+				Way.setupDirectionalPenalty(createPC, tr.speed, tr.gpsRecenter);
 
 
 				float boost=Configuration.getDetailBoostMultiplier();
@@ -171,7 +171,7 @@ public class ImageCollector implements Runnable {
 						Tile.LAYER_NODE};
 				
 				/**
-				 * Draw each layer seperately to enforce paint ordering:
+				 * Draw each layer separately to enforce paint ordering:
 				 *
 				 * Go through the entire tile tree multiple times
 				 * to get the drawing order correct.
@@ -279,7 +279,7 @@ public class ImageCollector implements Runnable {
 		   logger.fatal("ImageCollector thread crashed with out of memory: " + oome.getMessage() + recoverZoomedIn);
 		} catch (Exception e) {
 			crash++;
-			logger.exception("ImageCollector thread crashed unexpectadly with error ", e);
+			logger.exception("ImageCollector thread crashed unexpectedly with error ", e);
 		}
 		if(crash>=MAXCRASHES) {
 		   logger.fatal("ImageCollector crashed too often. Aborting.");
@@ -351,7 +351,7 @@ public class ImageCollector implements Runnable {
 		screenPc.g.drawImage(img[nextPaint], 
 				oldCenter.x, oldCenter.y,
 				Graphics.VCENTER|Graphics.HCENTER); 
-		//Test if the new center is in the midle of the screen, in which 
+		//Test if the new center is in the middle of the screen, in which 
 		//case we don't need to redraw, as nothing has changed. 
 		if (oldCenter.x != nextSc.xSize/2 || oldCenter.y != nextSc.ySize/2 || paintPC.course != nextSc.course ) { 
 			//The center of the screen has moved, so need 
@@ -436,7 +436,7 @@ public class ImageCollector implements Runnable {
 
 	/**
 	 * inform the ImagecColloctor, that new vector-Data is available
-	 * and its tim to create a new Image
+	 * and its time to create a new Image
 	 */
 	public synchronized void newDataReady() {
 		needRedraw=true;

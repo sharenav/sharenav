@@ -136,7 +136,8 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 					float lon = trackIS.readFloat();
 					if (i == 0) {
 						Trace tr = Trace.getInstance();
-						tr.receivePosItion(lat * MoreMath.FAC_DECTORAD, lon * MoreMath.FAC_DECTORAD, tr.scale);
+						tr.receivePosition(lat * MoreMath.FAC_DECTORAD, 
+								lon * MoreMath.FAC_DECTORAD, tr.scale);
 					}
 					trackIS.readShort(); //altitude
 					long time = trackIS.readLong();	//Time
@@ -189,7 +190,8 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 						//center map on track start
 						if (i == 0 && j == 0) {
 							Trace tr = Trace.getInstance();
-							tr.receivePosItion(lat * MoreMath.FAC_DECTORAD, lon * MoreMath.FAC_DECTORAD, tr.scale);
+							tr.receivePosition(lat * MoreMath.FAC_DECTORAD, 
+									lon * MoreMath.FAC_DECTORAD, tr.scale);
 						}
 						trackIS.readShort(); //altitude
 						long time = trackIS.readLong();	//Time

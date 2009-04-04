@@ -1,6 +1,6 @@
 package de.ueller.midlet.gps;
 /*
- * GpsMid - Copyright (c) 2008 Kai Krueger apm at users dot sourceforge dot net 
+ * GpsMid - Copyright (c) 2008 Kai Krueger apmonkey at users dot sourceforge dot net 
  * See Copying
  */
 
@@ -178,12 +178,12 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 			} else if (idx > -1) {
 				parent.setTarget(waypoints[idx]);				
 			} else {
-				IntPoint intPoint1 = new IntPoint(10,10);
-				IntPoint intPoint2 = new IntPoint(getWidth() - 10,getHeight() - 10);				
-				Node n1 = new Node(n*MoreMath.FAC_RADTODEC,w*MoreMath.FAC_RADTODEC);
-				Node n2 = new Node(s*MoreMath.FAC_RADTODEC,e*MoreMath.FAC_RADTODEC);			
-				float scale = parent.pc.getP().getScale(n1, n2, intPoint1, intPoint2);				
-				parent.receivePosItion((n-s)/2 + s, (e-w)/2 + w, scale*1.2f);				
+				IntPoint intPoint1 = new IntPoint(10, 10);
+				IntPoint intPoint2 = new IntPoint(getWidth() - 10, getHeight() - 10);
+				Node n1 = new Node(n * MoreMath.FAC_RADTODEC, w * MoreMath.FAC_RADTODEC);
+				Node n2 = new Node(s * MoreMath.FAC_RADTODEC, e * MoreMath.FAC_RADTODEC);
+				float scale = parent.pc.getP().getScale(n1, n2, intPoint1, intPoint2);
+				parent.receivePosition((n-s) / 2 + s, (e-w) / 2 + w, scale * 1.2f);
 			}
 			parent.show();
 			return;
@@ -250,7 +250,5 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 		}
 		show();
 	}
-	
+
 }
-
-

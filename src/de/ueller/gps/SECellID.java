@@ -36,14 +36,14 @@ import de.ueller.midlet.gps.Logger;
 
 /**
  * 
- * This location provider tries to use the Cell-ID of the currently
+ * This location provider tries to use the cell-id of the currently
  * connected cell to retrieve a very rough estimate of position. This
- * estimate can be off by upto the range of kilometers. In order to
- * map the cell id to a location we use OpenCellID.org, that uses
- * crowd sourceing to determine the locations. As such, many cell-ids
+ * estimate can be off by up to the range of kilometers. In order to
+ * map the cell-id to a location we use OpenCellID.org, that uses
+ * crowd sourcing to determine the locations. As such, many cell-ids
  * may not yet be in their database.
  * 
- * This LocationProvider can only retrieve cell ids for Sony Ericsson phones
+ * This LocationProvider can only retrieve cell-ids for Sony Ericsson phones
  *
  */
 public class SECellID implements LocationMsgProducer {
@@ -63,20 +63,20 @@ public class SECellID implements LocationMsgProducer {
 		}
 	}
 
-	public class RetrivePosition extends TimerTask {
-		private boolean retreaving;
+	public class RetrievePosition extends TimerTask {
+		private boolean retrieving;
 		
 		
-		private CellIdLoc retreaveFromOpenCellId(CellIdLoc cellLoc) {
+		private CellIdLoc retrieveFromOpenCellId(CellIdLoc cellLoc) {
 			CellIdLoc loc = null;
-			if (retreaving) {
-				logger.info("Still retreaving previous ID");
+			if (retrieving) {
+				logger.info("Still retrieving previous ID");
 				return null;
 			}
-			retreaving = true;
+			retrieving = true;
 			
 			/**
-			 * Connect to the internet and retrieve location information
+			 * Connect to the Internet and retrieve location information
 			 * for the current cell-id from OpenCellId.org
 			 */
 			try {
@@ -93,8 +93,7 @@ public class SECellID implements LocationMsgProducer {
 				// HTTP Response
 				if (connection.getResponseCode() == HttpConnection.HTTP_OK) {
 					String str;
-					InputStream inputstream = connection
-							.openInputStream();
+					InputStream inputstream = connection.openInputStream();
 					int length = (int) connection.getLength();
 					//#debug debug
 					logger.debug("Retrieving String of length: "
@@ -121,7 +120,7 @@ public class SECellID implements LocationMsgProducer {
 						bytestream.close();
 					}
 					//#debug debug
-					logger.debug("Cell-ID retreaval: " + str);
+					logger.debug("Cell-ID retrieval: " + str);
 					
 					if (str != null) {
 						String[] pos = StringTokenizer.getArray(str,
@@ -135,7 +134,7 @@ public class SECellID implements LocationMsgProducer {
 						loc.lat = lat;	loc.lon = lon;
 						if (cellPos == null) {
 							logger.error("Cellpos == null");
-							retreaving = false;
+							retrieving = false;
 							return null;
 						}
 						
@@ -155,7 +154,7 @@ public class SECellID implements LocationMsgProducer {
 			} catch (Exception e) {
 				logger.exception("fdsafds",e);
 			}
-			retreaving = false;
+			retrieving = false;
 			return loc;
 		}
 
@@ -186,9 +185,9 @@ public class SECellID implements LocationMsgProducer {
 					logger.debug("Found a valid cached cell: " + loc);
 				} else {
 					//#debug debug
-					logger.debug("Cellid not cached, retrieving Cellid: "
+					logger.debug("Cellid not cached, retrieving cell-id: "
 							+ cellLoc);
-					loc = retreaveFromOpenCellId(cellLoc);
+					loc = retrieveFromOpenCellId(cellLoc);
 					
 					if (loc != null) {
 						cellPos.put(loc.cellID, loc);
@@ -209,7 +208,7 @@ public class SECellID implements LocationMsgProducer {
 					//#debug info
 					logger.info("Obtained a position from " + loc);
 					receiver.receiveSolution("Cell");
-					receiver.receivePosItion(new Position(loc.lat, loc.lon, 0, 0, 0, 0,
+					receiver.receivePosition(new Position(loc.lat, loc.lon, 0, 0, 0, 0,
 							new Date()));
 				} else {
 					receiver.receiveSolution("NoFix");
@@ -230,7 +229,7 @@ public class SECellID implements LocationMsgProducer {
 	protected LocationMsgReceiverList receiver;
 	protected boolean closed = false;
 	private String message;
-	private RetrivePosition rp;
+	private RetrievePosition rp;
 
 	private intTree cellPos;
 
@@ -241,12 +240,12 @@ public class SECellID implements LocationMsgProducer {
 			cellPos = new intTree();
 			if (obtainCurrentCellId() == null) {
 				//#debug info
-				logger.info("No valid Cell-id, closing down");
+				logger.info("No valid cell-id, closing down");
 				return false;
 			}
 			closed = false;
 			Timer t = new Timer();
-			rp = new RetrivePosition();
+			rp = new RetrievePosition();
 			t.schedule(rp, 1000, 5000);
 			return true;
 		} catch (SecurityException se) {
@@ -261,7 +260,7 @@ public class SECellID implements LocationMsgProducer {
 	private CellIdLoc obtainCurrentCellId() throws Exception {
 		CellIdLoc cell = new CellIdLoc();
 		//#debug debug
-		logger.debug("Tring to retreave Cell-id");
+		logger.debug("Tring to retrieve cell-id");
 
 		String cellidS = System
 		.getProperty("com.sonyericsson.net.cellid");
@@ -289,7 +288,7 @@ public class SECellID implements LocationMsgProducer {
 		}
 
 		//#debug debug
-		logger.debug("Got Cellid: " + cell);
+		logger.debug("Got cell-id: " + cell);
 		return cell;
 	}
 

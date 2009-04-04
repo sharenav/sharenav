@@ -83,18 +83,16 @@ public class Jsr211Impl implements Jsr211ContentHandlerInterface,
 		if (invoc != null) {
 			Trace trace = Trace.getInstance();
 			if (trace != null) {
-				logger
-						.error(
-								"Failed to handle content handler invocation as trace was null",
-								true);
+				logger.error(
+					"Failed to handle content handler invocation as trace was null",
+					 true);
 			}
 			// args should be 2 coordinates and one name
 			String[] coords = invoc.getArgs();
 			if (coords.length != 3) {
-				logger
-						.error(
-								"Received an invalid content handler invocation. Incorrect number of arguments",
-								true);
+				logger.error(
+					"Received an invalid content handler invocation. Incorrect number of arguments",
+					true);
 				return;
 			}
 			String lat = coords[0];
@@ -108,11 +106,10 @@ public class Jsr211Impl implements Jsr211ContentHandlerInterface,
 				PositionMark pm = new PositionMark(latf, lonf);
 				pm.displayName = name;
 				trace.gpx.addWayPt(pm);
-				trace.receivePosItion(latf, lonf, 1500);
+				trace.receivePosition(latf, lonf, 1500);
 				trace.show();
 			} catch (NumberFormatException nfe) {
-				logger
-						.error("Content handler invocation contained invalid coordinates ("
+				logger.error("Content handler invocation contained invalid coordinates ("
 								+ lat + "|" + lon + ")");
 			}
 		}

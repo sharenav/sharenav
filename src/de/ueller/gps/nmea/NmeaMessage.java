@@ -71,7 +71,7 @@ public class NmeaMessage {
 	private int mAllSatellites;
 	private int qual;
 	private boolean lastMsgGSV=false;
-	private Satelit satelit[]=new Satelit[12];
+	private Satelit satellites[] = new Satelit[12];
 	private Position pos = new Position(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1,
 			new Date());
 	private Calendar cal = Calendar.getInstance();
@@ -89,13 +89,13 @@ public class NmeaMessage {
 	public void decodeMessage(String nmea_sentence) {
 		
         Vector param = StringTokenizer.getVector(nmea_sentence, spChar);
-		String sentence=(String)param.elementAt(0);
+		String sentence = (String)param.elementAt(0);
 		try {
 //			receiver.receiveMessage("got "+buffer.toString() );
 			if (lastMsgGSV && ! "GSV".equals(sentence)){
-	            receiver.receiveStatelit(satelit);
+	            receiver.receiveSatellites(satellites);
 	            //satelit=new Satelit[12];
-	            lastMsgGSV=false;
+	            lastMsgGSV = false;
 			}
 			if ("GGA".equals(sentence)){
 				// time
@@ -106,14 +106,14 @@ public class NmeaMessage {
 				cal.set(Calendar.HOUR_OF_DAY, (time_tmp / 10000) % 100);
 				
 				// lat
-				float lat=getLat((String)param.elementAt(2));
+				float lat = getLat((String)param.elementAt(2));
 				if ("S".equals((String)param.elementAt(3))){
-					lat= -lat;
+					lat = -lat;
 				}
 				// lon
-				float lon=getLon((String)param.elementAt(4));
+				float lon = getLon((String)param.elementAt(4));
 				if ("W".equals((String)param.elementAt(5))){
-					lon=-lon;
+					lon = -lon;
 				}
 				// quality
 				qual = getIntegerToken((String)param.elementAt(6));
@@ -124,7 +124,7 @@ public class NmeaMessage {
 				// Relative accuracy of horizontal position
 				
 				// meters above mean sea level
-				alt=getFloatToken((String)param.elementAt(9));
+				alt = getFloatToken((String)param.elementAt(9));
 				// Height of geoid above WGS84 ellipsoid				
 			} else if ("RMC".equals(sentence)){
 				/* RMC encodes the recomended minimum information */
@@ -142,8 +142,9 @@ public class NmeaMessage {
 					receiver.receiveSolution("NoFix");
 					return;
 				}
-				if (valSolution.equalsIgnoreCase("A") && this.qual == 0) this.qual = 1;
-				
+				if (valSolution.equalsIgnoreCase("A") && this.qual == 0) {
+					this.qual = 1;
+				}
 				//Latitude
 				float lat=getLat((String)param.elementAt(3));
 				if ("S".equals((String)param.elementAt(4))){
@@ -167,7 +168,7 @@ public class NmeaMessage {
 			    //Magnetic Variation
 				pos.latitude = lat; pos.longitude = lon; pos.altitude = alt; pos.speed = speed; pos.course = head;
 				pos.pdop = pdop; pos.mode = 0; pos.date = cal.getTime();
-				receiver.receivePosItion(pos);
+				receiver.receivePosition(pos);
 				if (this.qual > 1) {
 					receiver.receiveSolution("D" + mAllSatellites + "S");
 				} else {
@@ -193,10 +194,10 @@ public class NmeaMessage {
 				 */
 				for (int j = 0; j < 12; j++) {
 					/**
-					 * Resetting all the satelits to non locked
+					 * Resetting all the satellites to non locked
 					 */
-					if ((satelit[j] != null)) {
-						satelit[j].isLocked(false);						
+					if ((satellites[j] != null)) {
+						satellites[j].isLocked(false);						
 					}
 				}
 				for (int i = 0; i < 12; i++) {
@@ -205,8 +206,8 @@ public class NmeaMessage {
 						//#debug debug
 						logger.debug("Satelit " + prn + " is part of fix");
 						for (int j = 0; j < 12; j++) {
-							if ((satelit[j] != null) && (satelit[j].id == prn)) {
-								satelit[j].isLocked(true);				
+							if ((satellites[j] != null) && (satellites[j].id == prn)) {
+								satellites[j].isLocked(true);				
 							}
 						}
 					}
@@ -229,20 +230,20 @@ public class NmeaMessage {
 	            j=(getIntegerToken((String)param.elementAt(2))-1)*4;
 	            int noSatInView =(getIntegerToken((String)param.elementAt(3)));	            
 	            for (int i=4; i < param.size() && j < 12; i+=4, j++) {
-	            	if (satelit[j]==null){
-	            		satelit[j]=new Satelit();
+	            	if (satellites[j]==null){
+	            		satellites[j]=new Satelit();
 	            	}
-	                satelit[j].id=getIntegerToken((String)param.elementAt(i));
-	                satelit[j].elev=getIntegerToken((String)param.elementAt(i+1));
-	                satelit[j].azimut=getIntegerToken((String)param.elementAt(i+2));
-	                satelit[j].snr=getIntegerToken((String)param.elementAt(i+3));	                
+	            	satellites[j].id=getIntegerToken((String)param.elementAt(i));
+	            	satellites[j].elev=getIntegerToken((String)param.elementAt(i+1));
+	            	satellites[j].azimut=getIntegerToken((String)param.elementAt(i+2));
+	            	satellites[j].snr=getIntegerToken((String)param.elementAt(i+3));	                
 	            }
 	            lastMsgGSV=true;
 	            for (int i = noSatInView; i < 12; i++) {
-	            	satelit[i] = null;
+	            	satellites[i] = null;
 	            }
 	            if (getIntegerToken((String)param.elementAt(2)) == getIntegerToken((String)param.elementAt(1))) {
-	            	receiver.receiveStatelit(satelit);	            	
+	            	receiver.receiveSatellites(satellites);	            	
 		            lastMsgGSV=false;
 	            }
 			}
