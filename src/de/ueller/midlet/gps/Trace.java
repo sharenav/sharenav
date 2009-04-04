@@ -27,7 +27,6 @@ import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
-import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.List;
 import javax.microedition.lcdui.game.GameCanvas;
 import javax.microedition.midlet.MIDlet;
@@ -207,6 +206,7 @@ Runnable , GpsMidDisplayable{
 	private List routingsMenu = null;
 	private GuiTacho guiTacho = null;
 	private GuiTrip guiTrip = null;
+	private GuiSatellites guiSatellites = null;
 	private GuiWaypointSave guiWaypointSave = null;
 
 	private final static Logger logger = Logger.getInstance(Trace.class,Logger.DEBUG);
@@ -222,10 +222,6 @@ Runnable , GpsMidDisplayable{
 	private byte btquality;
 
 	private int[] statRecord;
-
-	private Satelit[] sat;
-
-	private Image satelit;
 
 	/** 
 	 * Current speed from GPS in km/h. 
@@ -356,13 +352,6 @@ Runnable , GpsMidDisplayable{
 				repeatableKeyPressCommand, doubleKeyPressCommand, longKeyPressCommand, 
 				nonReleasableKeyPressCommand, CMDS);
 		
-		try {
-			satelit = Image.createImage("/satelit.png");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
 		try {
 			startup();
 		} catch (Exception e) {
@@ -1193,12 +1182,9 @@ Runnable , GpsMidDisplayable{
 			 */			
 			switch (showAddons) {
 			case 1:
-				showSatelite(g);
-				break;
-			case 2:
 				yc = showMemory(g, yc, la);
 				break;
-			case 3:
+			case 2:
 				yc = showConnectStatistics(g, yc, la);
 				break;
 			default:
@@ -1230,7 +1216,7 @@ Runnable , GpsMidDisplayable{
 							Graphics.TOP | Graphics.RIGHT);
 					g.setColor(0);
 				}
-					
+
 				g.drawString(solution, getWidth() - 1, 1, Graphics.TOP | Graphics.RIGHT);
 			} else {
 				g.drawString("Off", getWidth() - 1, 1, Graphics.TOP | Graphics.RIGHT);
@@ -1508,42 +1494,6 @@ Runnable , GpsMidDisplayable{
 		return yc;
 	}
 
-	private void showSatelite(Graphics g) {
-		int centerX = getWidth() / 2;
-		int centerY = getHeight() / 2;
-		int dia = Math.min(getWidth(), getHeight()) - 6;
-		int r = dia / 2;
-		g.setColor(255, 50, 50);
-		g.drawArc(centerX - r, centerY - r, dia, dia, 0, 360);
-		if (sat == null) return;
-		for (byte i = 0; i < sat.length; i++) {			
-			Satelit s = sat[i];
-			if (s == null)
-				continue; //This array may be sparsely filled.
-			if (s.id != 0) {
-				double el = s.elev / 180d * Math.PI;
-				double az = s.azimut / 180 * Math.PI;
-				double sr = r * Math.cos(el);
-				if (s.isLocked())
-					g.setColor(0, 255, 0);
-				else
-					g.setColor(255, 0, 0);
-				
-				int px = centerX + (int) (Math.sin(az) * sr);
-				int py = centerY - (int) (Math.cos(az) * sr);
-				// g.drawString(""+s.id, px, py,
-				// Graphics.BASELINE|Graphics.HCENTER);
-				g.drawImage(satelit, px, py, Graphics.HCENTER
-						| Graphics.VCENTER);
-				py += 9;
-				// draw a bar under image that indicates green/red status and
-				// signal strength
-				g.fillRect(px - 9, py, (int)(s.snr*18.0/100.0), 2);				
-			}
-		}
-		// g.drawImage(satelit, 5, 5, 0);
-	}
-
 	public void showTarget(PaintContext pc){
 		if (target != null){
 			pc.getP().forward(target.lat, target.lon, pc.lineP2);
@@ -1669,11 +1619,16 @@ Runnable , GpsMidDisplayable{
 				}
 				break;
 			case DATASCREEN_TRIP:
-				// TODO: Trip is followed by Satellites.
-				this.show();
+				// Trip is followed by Satellites.
+				if (guiSatellites == null) {
+					guiSatellites = new GuiSatellites(this, locationProducer);
+				}
+				if (guiSatellites != null) {
+					guiSatellites.show();
+				}
 				break;
 			case DATASCREEN_SATS:
-				// After satellites, go back to map.
+				// After Satellites, go back to map.
 				this.show();
 				break;
 			case DATASCREEN_NONE:
@@ -1810,6 +1765,10 @@ Runnable , GpsMidDisplayable{
 		repaint();
 	}
 
+	public void receiveSatellites(Satelit[] sats) {
+		// Not interested
+	}
+
 	public synchronized void alert(String title, String message, int timeout) {
 //		#debug info
 		logger.info("Showing trace alert: " + title + ": " + message);
@@ -1826,12 +1785,6 @@ Runnable , GpsMidDisplayable{
 			setAlertTimeout = timeout;
 		}
 		repaint();
-	}
-
-	
-	
-	public void receiveSatellites(Satelit[] sat) {
-		this.sat = sat;
 	}
 
 	public MIDlet getParent() {
