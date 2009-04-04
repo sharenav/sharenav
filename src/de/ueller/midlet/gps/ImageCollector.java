@@ -171,8 +171,21 @@ public class ImageCollector implements Runnable {
 						Tile.LAYER_NODE};
 				
 				/**
-				 * Draw each layer seperately to enforce paint ordering.
+				 * Draw each layer seperately to enforce paint ordering:
 				 *
+				 * Go through the entire tile tree multiple times
+				 * to get the drawing order correct.
+				 * 
+				 * The first 5 layers correspond to drawing areas with the osm
+				 * layer tag of  (< -1, -1, 0, 1, >1),
+				 * then next 5 layers are drawing streets with
+				 * osm layer tag (< -1, -1, 0, 1, >1).
+				 * 
+				 * Then we draw the highlighted streets
+				 * and finally we draw the POI layer.
+				 * 
+				 * So e. g. layer 7 corresponds to all streets that
+				 * have no osm layer tag or layer=0.
 				 */
 				for (byte layer = 0; layer < layersToRender.length; layer++) {
 					// render only highlight layers which actually have highlighted path segments
