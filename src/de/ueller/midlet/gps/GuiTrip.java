@@ -14,6 +14,7 @@ import javax.microedition.lcdui.Graphics;
 
 import de.ueller.gps.data.Position;
 import de.ueller.midlet.gps.GpsMid;
+import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.ProjMath;
 import de.ueller.midlet.graphics.LcdNumericFont;
 import net.fatehi.SunCalc;
@@ -117,18 +118,25 @@ public class GuiTrip extends KeyCommandCanvas implements CommandListener,
 		}
 		g.drawLine(0, y, w, y);
 
-		// Calculate sunrise and sunset times only once.
-		// Should the user move very far (many km) without leaving the screen,
-		// the values will be slightly wrong so this needs to be improved in the future.
-		// (Recalculation at a regular interval.)
-		// On the other hand this can't justify to recalculate them every second.
-		if (   (mSunCalc == null)
-			&& ((pos.latitude != 0) || (pos.longitude != 0))
-		   )
-		{
-			mSunCalc = new SunCalc();
-			mSunCalc.setLatitude( pos.latitude );
-			mSunCalc.setLongitude( pos.longitude );
+		// Calculate sunrise and sunset times at the first time
+		// or when the map position changed more than 10 km
+		if ((mSunCalc == null) ||
+			( 	mSunCalc != null
+				&&
+				Math.abs(
+						ProjMath.getDistance(	mParent.center.radlat,
+												mParent.center.radlon,
+												mSunCalc.getLatitude() * MoreMath.FAC_DECTORAD,
+												mSunCalc.getLongitude() * MoreMath.FAC_DECTORAD
+						)
+				) > 10000
+			)
+		) {
+			if (mSunCalc == null) {
+				mSunCalc = new SunCalc();
+			}
+			mSunCalc.setLatitude(mParent.center.radlat * MoreMath.FAC_RADTODEC);
+			mSunCalc.setLongitude(mParent.center.radlon * MoreMath.FAC_RADTODEC);
 			Calendar nowCal = Calendar.getInstance();
 			mSunCalc.setYear( nowCal.get( Calendar.YEAR ) );
 			mSunCalc.setMonth( nowCal.get( Calendar.MONTH ) + 1 );

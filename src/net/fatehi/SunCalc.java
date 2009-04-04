@@ -58,8 +58,8 @@ public class SunCalc
     //******************
 
 
-    private double _latitude = 0;        // Latitude in degrees, North positive
-    private double _longitude = 0;       // Longitude in degrees, East positive
+    private float _latitude = 0;        // Latitude in degrees, North positive
+    private float _longitude = 0;       // Longitude in degrees, East positive
     private double _tzOffset = 0;        // Timezone offset from GMT, in hours
     private int _year = 0;               // Four digit year
     private int _month = 0;              // Month, 1 to 12
@@ -124,14 +124,14 @@ public class SunCalc
   /**
     * Latitude in degrees, North positive.
     */
-    public double getLatitude()  {
+    public float getLatitude()  {
         return _latitude;
     }
 
   /**
     * Latitude in degrees, North positive.
     */
-    public void setLatitude(double latitude)  {
+    public void setLatitude(float latitude)  {
 
         if (Math.abs(latitude) > 90)  {
             throw new IllegalArgumentException("Out of range");
@@ -143,14 +143,14 @@ public class SunCalc
   /**
     * Longitude in degrees, East positive.
     */
-    public double getLongitude()  {
+    public float getLongitude()  {
         return _longitude;
     }
 
   /**
     * Longitude in degrees, East positive.
     */
-    public void setLongitude(double longitude)  {
+    public void setLongitude(float longitude)  {
 
         if (Math.abs(longitude) > 180)  {
             throw new IllegalArgumentException("Out of range");
@@ -303,8 +303,8 @@ public class SunCalc
     private double sinAltitude(double hour)
     {
 
-        double latitide = _latitude;
-        double longitude = _longitude;
+        float latitide = _latitude;
+        float longitude = _longitude;
         double TZOffset = _tzOffset;
 
         double tau;
@@ -727,7 +727,7 @@ public class SunCalc
     //******************  Test ******************
     //******************
 
-
+    /*
     public static void main(String[] args)
     {
 
@@ -735,8 +735,8 @@ public class SunCalc
         double ephemeris[];
 
         // Geneva, Switzerland
-        objSunCalc.setLatitude(46.2);
-        objSunCalc.setLongitude(6.15);
+        objSunCalc.setLatitude(46.2f);
+        objSunCalc.setLongitude(6.15f);
         objSunCalc.setTimeZoneOffset(1);
         // Nov 28, 2001
         objSunCalc.setYear(2001);
@@ -747,7 +747,8 @@ public class SunCalc
         System.out.println(objSunCalc);
 
     } // end main()
-
+	*/
+    
 } // end SunCalc
 
 // </pre>
