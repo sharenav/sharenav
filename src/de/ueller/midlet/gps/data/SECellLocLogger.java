@@ -51,7 +51,12 @@ public class SECellLocLogger implements LocationMsgReceiver {
 
 	private Position prevPos;
 
+	//#if polish.api.fileconnection
+	private FileConnection logCon;
 	private Writer wr;
+	//#endif
+	
+	private int noSamples;
 
 	private boolean valid;
 
@@ -63,6 +68,8 @@ public class SECellLocLogger implements LocationMsgReceiver {
 
 			prevPos = null;
 			valid = false;
+			noSamples = 0;
+			
 			String url = Configuration.getGpsRawLoggerUrl();
 			url += "cellIDLog" + HelperRoutines.formatSimpleDateNow() + ".txt";
 
@@ -70,23 +77,38 @@ public class SECellLocLogger implements LocationMsgReceiver {
 			String mccS = System.getProperty("com.sonyericsson.net.cmcc");
 			String mncS = System.getProperty("com.sonyericsson.net.cmnc");
 			String lacS = System.getProperty("com.sonyericsson.net.lac");
+			
+			//cellidS = "2627"; mccS = "234"; mncS = "33"; lacS = "133";
 
 			if (((cellidS != null) && (mccS != null) && (mncS != null))) {
-				Connection logCon = Connector.open(url);
-				if (logCon instanceof FileConnection) {
-					FileConnection fileCon = (FileConnection) logCon;
-					if (!fileCon.exists()) {
-						fileCon.create();
+				try {
+					Connection con = Connector.open(url);
+					if (con instanceof FileConnection) {
+						logCon = (FileConnection) con;
+						if (!logCon.exists()) {
+							logCon.create();
+						}
+						wr = new OutputStreamWriter(logCon.openOutputStream());
+						wr.write("lat,lon,mcc,mnc,lac,cellid,\n");
+					} else {
+						logger.info("Trying to perform cell-id logging on anything else than filesystem is currently not supported");
+						return false;
 					}
-					wr = new OutputStreamWriter(fileCon.openOutputStream());
-					wr.write("lat,lon,mcc,mnc,lac,cellid,\n");
-				} else {
-					logger.info("Trying to perform cell-id logging on anything else than filesystem is currently not supported");
+					//#debug info
+					logger.info("Enabling cell-id logging");
+					return true;
+				} catch (SecurityException se) {
+					logger.exception(
+							"Logging of Cell-IDs is not permitted on this phone.", se);
 					return false;
+				} catch (IOException ioe) {
+					logger.exception(
+							"Failed to write Cell-ID log file.", ioe);
+					if ((logCon != null) && (logCon.exists())) {
+						logCon.delete();
+					}
+						
 				}
-				//#debug info
-				logger.info("Enabling cell-id logging");
-				return true;
 			} else {
 				//#debug info
 				logger.info("Cell-ID properties were empty, this is only supported on newer Sony Ericsson phones.");
@@ -113,15 +135,22 @@ public class SECellLocLogger implements LocationMsgReceiver {
 
 	public void locationDecoderEnd(String msg) {
 		logger.info("Closing Cell-id logger with msg: " + msg);
+		//#if polish.api.fileconnection
 		try {
 			if (wr != null) {
 				wr.flush();
 				wr.close();
 				wr = null;
 			}
+			if (noSamples == 0) {
+				//#debug info
+				logger.info("No Cell-IDs recorded, deleting empty log file");
+				logCon.delete();
+			}
 		} catch (IOException ioe) {
 			logger.exception("Failed to close cell-id logger", ioe);
 		}
+		//#endif
 	}
 
 	public void receiveMessage(String s) {
@@ -168,6 +197,8 @@ public class SECellLocLogger implements LocationMsgReceiver {
 			String mccS = System.getProperty("com.sonyericsson.net.cmcc");
 			String mncS = System.getProperty("com.sonyericsson.net.cmnc");
 			String lacS = System.getProperty("com.sonyericsson.net.lac");
+			
+			//cellidS = "2627"; mccS = "234"; mncS = "33"; lacS = "133";
 
 			if (cellidS != null) {
 				try {
@@ -182,6 +213,7 @@ public class SECellLocLogger implements LocationMsgReceiver {
 					wr.write(pos.latitude + "," + pos.longitude + "," + mcc
 							+ "," + mnc + "," + lac + "," + cellid + "\n");
 					wr.flush();
+					noSamples++;
 				} catch (NumberFormatException nfe) {
 					logger.silentexception(
 						"Invalid number format, so could not convert cell-id data",
