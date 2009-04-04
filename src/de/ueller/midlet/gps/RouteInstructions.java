@@ -461,7 +461,7 @@ public class RouteInstructions {
 									} else if (aNow>=RI_ENTER_MOTORWAY && aNow<=RI_LEAVE_MOTORWAY) {
 										soundToPlay.append("PREPARE;TO;" + getSoundInstruction(cNow.wayRouteFlags, aNow));
 									} else if (aNow>=RI_1ST_EXIT && aNow<=RI_6TH_EXIT) {
-										soundToPlay.append(getInstruction(cNow.wayRouteFlags, aNow));
+										soundToPlay.append(getSoundInstruction(cNow.wayRouteFlags, aNow));
 									}
 									soundMaxTimesToPlay=1;
 									// Because of adaptive-to-speed distances for "prepare"-instructions
