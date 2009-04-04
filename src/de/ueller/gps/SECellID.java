@@ -37,13 +37,13 @@ import de.ueller.midlet.gps.Logger;
 /**
  * 
  * This location provider tries to use the Cell-ID of the currently
- * connected cell to retrieve a very rough extimate of position. This
+ * connected cell to retrieve a very rough estimate of position. This
  * estimate can be off by upto the range of kilometers. In order to
  * map the cell id to a location we use OpenCellID.org, that uses
- * crowd sourcing to determine the locations. As such, many cell-ids
+ * crowd sourceing to determine the locations. As such, many cell-ids
  * may not yet be in their database.
  * 
- * This LocationProvider can only retrieve cell ids for Sony Ericson phones
+ * This LocationProvider can only retrieve cell ids for Sony Ericsson phones
  *
  */
 public class SECellID implements LocationMsgProducer {
@@ -55,176 +55,165 @@ public class SECellID implements LocationMsgProducer {
 		public short lac;
 		public float lat;
 		public float lon;
+		
+		public String toString() {
+			String s = "Cell (id=" + cellID + " mcc=" + mcc + " mnc=" + mnc +
+			" lac=" + lac + "  coord=" + lat + "|" + lon +")";
+			return s;
+		}
 	}
 
 	public class RetrivePosition extends TimerTask {
 		private boolean retreaving;
-
-		public void run() {
-			int cellid;
-			short mcc;
-			byte mnc;
-			short lac;
+		
+		
+		private CellIdLoc retreaveFromOpenCellId(CellIdLoc cellLoc) {
+			CellIdLoc loc = null;
+			if (retreaving) {
+				logger.info("Still retreaving previous ID");
+				return null;
+			}
+			retreaving = true;
+			
+			/**
+			 * Connect to the internet and retrieve location information
+			 * for the current cell-id from OpenCellId.org
+			 */
 			try {
-				//#debug debug
-				logger.debug("Tring to retreave Cell-id");
-				
-				String cellidS = System
-						.getProperty("com.sonyericsson.net.cellid");
-				String mccS = System.getProperty("com.sonyericsson.net.cmcc");
-				String mncS = System.getProperty("com.sonyericsson.net.cmnc");
-				String lacS = System.getProperty("com.sonyericsson.net.lac");
-				
-				cellid = Integer.parseInt(cellidS, 16);
-				mcc = (short) Integer.parseInt(mccS);
-				mnc = (byte) Integer.parseInt(mncS);
-				lac = (short) Integer.parseInt(lacS, 16);
-				
-				//#debug debug
-				logger.debug("Got Cellid: " + cellid + "  mcc: " + mcc
-						+ "  mnc: " + mnc + "  lac: " + lac);
-
-				/**
-				 * Check if we have the cell ID already cached
-				 */
-				CellIdLoc loc = (CellIdLoc) cellPos.get(cellid);
-				if ((loc != null) && (loc.lac == lac) && (loc.mcc == mcc)
-						&& (loc.mnc == mnc)) {
-					
-					float lat = loc.lat;
-					float lon = loc.lon;
-					if (rawDataLogger != null) {
-						String logStr = "Cell-id: " + cellid + "  mcc: " + mcc + "  mnc: " + mnc
-						+ "  lac: " + lac + " --> " + lat + " | " + lon;
-						rawDataLogger.write(logStr.getBytes());
-						rawDataLogger.flush();
-					}
-					if ((lat != 0.0) && (lon != 0.0)) {
-						receiver.receiveSolution("Cell");
-								receiver.receivePosItion(new Position(lat, lon, 0, 0, 0, 0,
-										new Date()));
-					} else {
-						receiver.receiveSolution("NoFix");
-					}
-				} else {
+				String url = "http://www.opencellid.org/cell/get?mcc="
+						+ cellLoc.mcc + "&mnc=" + cellLoc.mnc + "&cellid=" + cellLoc.cellID
+						+ "&lac=" + cellLoc.lac + "&fmt=txt";
+				logger.info("HTTP get " + url);
+				HttpConnection connection = (HttpConnection) Connector
+						.open(url);
+				connection.setRequestMethod(HttpConnection.GET);
+				connection.setRequestProperty("Content-Type",
+						"//text plain");
+				connection.setRequestProperty("Connection", "close");
+				// HTTP Response
+				if (connection.getResponseCode() == HttpConnection.HTTP_OK) {
+					String str;
+					InputStream inputstream = connection
+							.openInputStream();
+					int length = (int) connection.getLength();
 					//#debug debug
-					logger.debug("Cellid not cached, retrieving Cellid: "
-							+ cellid + "  mcc: " + mcc + "  mnc: " + mnc
-							+ "  lac: " + lac);
-					
-					if (retreaving) {
-						logger.info("Still retreaving previous ID");
-						return;
-					}
-					retreaving = true;
-					
-					/**
-					 * Connect to the internet and retrieve location information
-					 * for the current cell-id from OpenCellId.org
-					 */
-					try {
-						String url = "http://www.opencellid.org/cell/get?mcc="
-								+ mcc + "&mnc=" + mnc + "&cellid=" + cellid
-								+ "&lac=" + lac + "&fmt=txt";
-						logger.info("HTTP get " + url);
-						HttpConnection connection = (HttpConnection) Connector
-								.open(url);
-						connection.setRequestMethod(HttpConnection.GET);
-						connection.setRequestProperty("Content-Type",
-								"//text plain");
-						connection.setRequestProperty("Connection", "close");
-						// HTTP Response
-						if (connection.getResponseCode() == HttpConnection.HTTP_OK) {
-							String str;
-							InputStream inputstream = connection
-									.openInputStream();
-							int length = (int) connection.getLength();
-							// #debug debug
-							logger.debug("Retrieving String of length: "
-									+ length);
-							if (length != -1) {
-								byte incomingData[] = new byte[length];
-								int idx = 0;
-								while (idx < length) {
-									int readB = inputstream.read(incomingData,
-											idx, length - idx);
-									// #debug debug
-									logger.debug("Read: " + readB + " bytes");
-									idx += readB;
-								}
-								str = new String(incomingData);
-							} else {
-								ByteArrayOutputStream bytestream = new ByteArrayOutputStream();
-								int ch;
-								while ((ch = inputstream.read()) != -1) {
-									bytestream.write(ch);
-								}
-								bytestream.flush();
-								str = new String(bytestream.toByteArray());
-								bytestream.close();
-							}
-							// #debug info
-							logger.info(str);
-							
-							if (str != null) {
-								String[] pos = StringTokenizer.getArray(str,
-										",");
-								float lat = Float.parseFloat(pos[0]);
-								float lon = Float.parseFloat(pos[1]);
-								int accuracy = Integer.parseInt(pos[2]);
-								loc = new CellIdLoc();
-								loc.cellID = cellid;
-								loc.mcc = mcc;	loc.mnc = mnc;	loc.lac = lac;
-								loc.lat = lat;	loc.lon = lon;
-								if (cellPos == null)
-									logger.error("Cellpos == null");
-								cellPos.put(cellid, loc);
-
-								if (rawDataLogger != null) {
-									String logStr = "Received new cell-pos: " + str;
-									rawDataLogger.write(logStr.getBytes());
-									logStr = "Cell-id: " + cellid + "  mcc: " + mcc + "  mnc: " + mnc
-									+ "  lac: " + lac + " --> " + lat + " | " + lon;
-									rawDataLogger.write(logStr.getBytes());
-									rawDataLogger.write("\n".getBytes());
-									rawDataLogger.flush();
-								}
-
-								if ((lat != 0.0) && (lon != 0.0)) {
-									if (receiver == null) {
-										logger.error("ReceiverList == null");
-									}
-									receiver.receiveSolution("Cell");
-											receiver.receivePosItion(new Position(lat, lon, 0, 0, 0, 0,
-													new Date()));
-								} else {
-									receiver.receiveSolution("NoFix");
-								}
-							}
-
-						} else {
-							logger.error("Request failed ("
-									+ connection.getResponseCode() + "): "
-									+ connection.getResponseMessage());
-							receiver.receiveSolution("NoFix");
+					logger.debug("Retrieving String of length: "
+							+ length);
+					if (length != -1) {
+						byte incomingData[] = new byte[length];
+						int idx = 0;
+						while (idx < length) {
+							int readB = inputstream.read(incomingData,
+									idx, length - idx);
+							//#debug trace
+							logger.debug("Read: " + readB + " bytes");
+							idx += readB;
 						}
-					} catch (IOException ioe) {
-						logger.error("Failed to retrieve CellID: "
-								+ ioe.getMessage(), true);
-					} catch (SecurityException se) {
-						logger
-								.error(
-										"Failed to retrieve CellID. J2me dissallowed it",
-										true);
-					} finally {
-						retreaving = false;
+						str = new String(incomingData);
+					} else {
+						ByteArrayOutputStream bytestream = new ByteArrayOutputStream();
+						int ch;
+						while ((ch = inputstream.read()) != -1) {
+							bytestream.write(ch);
+						}
+						bytestream.flush();
+						str = new String(bytestream.toByteArray());
+						bytestream.close();
 					}
+					//#debug debug
+					logger.debug("Cell-ID retreaval: " + str);
+					
+					if (str != null) {
+						String[] pos = StringTokenizer.getArray(str,
+								",");
+						float lat = Float.parseFloat(pos[0]);
+						float lon = Float.parseFloat(pos[1]);
+						int accuracy = Integer.parseInt(pos[2]);
+						loc = new CellIdLoc();
+						loc.cellID = cellLoc.cellID;
+						loc.mcc = cellLoc.mcc;	loc.mnc = cellLoc.mnc;	loc.lac = cellLoc.lac;
+						loc.lat = lat;	loc.lon = lon;
+						if (cellPos == null) {
+							logger.error("Cellpos == null");
+							retreaving = false;
+							return null;
+						}
+						
+					}
+
+				} else {
+					logger.error("Request failed ("
+							+ connection.getResponseCode() + "): "
+							+ connection.getResponseMessage());
+					receiver.receiveSolution("NoFix");
 				}
 			} catch (SecurityException se) {
 				logger.silentexception(
 						"Do not have permission to retrieve cell-id", se);
 				this.cancel();
 				close("Cell-id: Not permitted");
+			} catch (Exception e) {
+				logger.exception("fdsafds",e);
+			}
+			retreaving = false;
+			return loc;
+		}
+
+		public void run() {
+			CellIdLoc cellLoc = null;
+			try {
+				if (closed) {
+					this.cancel();
+					return;
+				}
+
+				cellLoc = obtainCurrentCellId();
+				if (cellLoc == null) {
+					//#debug info
+					logger.info("No valid cell-id available");
+					receiver.receiveSolution("NoFix");
+					return;
+				}
+
+				/**
+				 * Check if we have the cell ID already cached
+				 */
+				CellIdLoc loc = (CellIdLoc) cellPos.get(cellLoc.cellID);
+				logger.info("Got loc from intTree: " + loc);
+				if ((loc != null) && (loc.lac == cellLoc.lac) && (loc.mcc == cellLoc.mcc)
+						&& (loc.mnc == cellLoc.mnc)) {
+					//#debug debug
+					logger.debug("Found a valid cached cell: " + loc);
+				} else {
+					//#debug debug
+					logger.debug("Cellid not cached, retrieving Cellid: "
+							+ cellLoc);
+					loc = retreaveFromOpenCellId(cellLoc);
+					
+					if (loc != null) {
+						cellPos.put(loc.cellID, loc);
+					} else {
+						logger.error("Failed to get cell-id");
+					}
+				}
+				if (rawDataLogger != null) {
+					String logStr = "Cell-id: " + loc.cellID + "  mcc: " + loc.mcc + "  mnc: " + loc.mnc
+					+ "  lac: " + loc.lac + " --> " + loc.lat + " | " + loc.lon;
+					rawDataLogger.write(logStr.getBytes());
+					rawDataLogger.flush();
+				}
+				if ((loc.lat != 0.0) && (loc.lon != 0.0)) {
+					if (receiver == null) {
+						logger.error("ReceiverList == null");
+					}
+					//#debug info
+					logger.info("Obtained a position from " + loc);
+					receiver.receiveSolution("Cell");
+					receiver.receivePosItion(new Position(loc.lat, loc.lon, 0, 0, 0, 0,
+							new Date()));
+				} else {
+					receiver.receiveSolution("NoFix");
+				} 
 			} catch (Exception e) {
 				logger.silentexception("Could not retrieve cell-id", e);
 				this.cancel();
@@ -250,16 +239,15 @@ public class SECellID implements LocationMsgProducer {
 			this.receiver = new LocationMsgReceiverList();
 			this.receiver.addReceiver(receiver);
 			cellPos = new intTree();
-			String cellid = System.getProperty("com.sonyericsson.net.cellid");
-			String mcc = System.getProperty("com.sonyericsson.net.cmcc");
-			String mnc = System.getProperty("com.sonyericsson.net.cmnc");
-			String lac = System.getProperty("com.sonyericsson.net.lac");
-			if ((cellid == null) || (mcc == null) || (mnc == null)) {
-				//return false;
+			if (obtainCurrentCellId() == null) {
+				//#debug info
+				logger.info("No valid Cell-id, closing down");
+				return false;
 			}
+			closed = false;
 			Timer t = new Timer();
 			rp = new RetrivePosition();
-			t.schedule(rp, 100, 5000);
+			t.schedule(rp, 1000, 5000);
 			return true;
 		} catch (SecurityException se) {
 			logger.silentexception(
@@ -269,6 +257,42 @@ public class SECellID implements LocationMsgProducer {
 		}
 		return false;
 	}
+	
+	private CellIdLoc obtainCurrentCellId() throws Exception {
+		CellIdLoc cell = new CellIdLoc();
+		//#debug debug
+		logger.debug("Tring to retreave Cell-id");
+
+		String cellidS = System
+		.getProperty("com.sonyericsson.net.cellid");
+		String mccS = System.getProperty("com.sonyericsson.net.cmcc");
+		String mncS = System.getProperty("com.sonyericsson.net.cmnc");
+		String lacS = System.getProperty("com.sonyericsson.net.lac");
+
+		//cellidS = "2627"; mccS = "234"; mncS = "33"; lacS = "133";
+
+
+		if ((cellidS == null) || (mccS == null) || (mncS == null) || (lacS == null)) {
+			//#debug debug
+			logger.debug("No valid cell-id");
+			return null;
+		}
+		try {
+			cell.cellID = Integer.parseInt(cellidS, 16);
+			cell.mcc = (short) Integer.parseInt(mccS);
+			cell.mnc = (byte) Integer.parseInt(mncS);
+			cell.lac = (short) Integer.parseInt(lacS, 16);
+		} catch (NumberFormatException nfe) {
+			logger.silentexception("Failed to parse cell-id (cellid: " + cellidS +
+					" mcc: " + mccS + " mnc: " + mncS + " lac: " + lacS, nfe);
+			return null;
+		}
+
+		//#debug debug
+		logger.debug("Got Cellid: " + cell);
+		return cell;
+	}
+
 
 	public void close() {
 		logger.info("Location producer closing");
