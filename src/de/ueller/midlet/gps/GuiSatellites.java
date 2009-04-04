@@ -110,12 +110,16 @@ public class GuiSatellites extends KeyCommandCanvas implements CommandListener,
 
 	public void show() {
 		GpsMid.getInstance().show(this);
-		mLocationProducer.addLocationMsgReceiver(this);
+		if (mLocationProducer != null) {
+			mLocationProducer.addLocationMsgReceiver(this);
+		}
 	}
 
 	public void commandAction(Command c, Displayable d) {
 		if (c == BACK_CMD) {
-			mLocationProducer.removeLocationMsgReceiver(this);
+			if (mLocationProducer != null) {
+				mLocationProducer.removeLocationMsgReceiver(this);
+			}
 			mParent.show();
 		}
 	}
