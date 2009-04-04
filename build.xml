@@ -113,7 +113,7 @@
 		<deviceRequirements unless="test">
 			<or>
 				<requirement name="Identifier" value="Generic/editing" />
-                                <requirement name="Identifier" value="Generic/blackberry" />
+				<requirement name="Identifier" value="Generic/blackberry" />
 				<requirement name="Identifier" value="Generic/full" />
 				<requirement name="Identifier" value="Generic/minimal" />
 				<requirement name="Identifier" value="Generic/full-nolocation" />
