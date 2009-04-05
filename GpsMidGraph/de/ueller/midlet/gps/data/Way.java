@@ -514,8 +514,9 @@ public class Way extends Entity{
 
 	
 	
-	public void processPath(PaintContext pc, SingleTile t, int mode, byte layer) {		
+	public void processPath(PaintContext pc, SingleTile t, int mode, byte layer) {
 		WayDescription wayDesc = C.getWayDescription(type);
+		/** width of the way to be painted */
 		int w = 0;
 		byte highlight=HIGHLIGHT_NONE;
 		
@@ -537,8 +538,8 @@ public class Way extends Entity{
 			hl[i1] = hlDefault;
 		}
 
-		if ((mode & Tile.OPT_PAINT) > 0) {		
-			byte om = C.getWayOverviewMode(type);    
+		if ((mode & Tile.OPT_PAINT) > 0) {
+			byte om = C.getWayOverviewMode(type);
 
 			switch (om & C.OM_MODE_MASK) {
 			case C.OM_SHOWNORMAL: 
@@ -559,6 +560,10 @@ public class Way extends Entity{
 					if (nameIdx == -1) return;
 					String name = pc.trace.getName(nameIdx);
 					if (name == null) return;
+					/**
+					 * The overview filter mode allows you to restrict showing ways if their name
+					 * does not match a substring. So check if this condition is fulfilled.
+					 */
 					if (name.toUpperCase().indexOf(C.get0Poi1Area2WayNamePart((byte) 2).toUpperCase()) == -1) return;
 					break;
 				case C.OM_WITH_NAME: 
@@ -569,7 +574,7 @@ public class Way extends Entity{
 					break;
 			}
 			
-			/*
+			/**
 			 * check if way matches to one or more route connections,
 			 * so we can highlight the route line parts 
 			 */  
@@ -630,33 +635,46 @@ public class Way extends Entity{
 			}		
 		}
 
+		/**
+		 * If this way is not to be highlighted but we are in highlight mode,
+		 * skip the rest of the processing of this way
+		 */
 		if (highlight == HIGHLIGHT_NONE && (mode & Tile.OPT_HIGHLIGHT) != 0) {
 			return;
-		}		
-		
+		}
+		/**
+		 * We go through the way segment by segment
+		 * (a segment is a line between two consecutive points on the path).
+		 * lineP1 is first node of the segment, lineP2 is the second.
+		 */
 		IntPoint lineP1 = pc.lineP1;
 		IntPoint lineP2 = pc.lineP2;
 		IntPoint swapLineP = pc.swapLineP;
 		Projection p = pc.getP();
 		
-		int pi=0;		
+		int pi=0;
 		
 		for (int i1 = 0; i1 < path.length; i1++) {
 			int idx = path[i1];
 			p.forward(t.nodeLat[idx], t.nodeLon[idx], lineP2,t);
+			
 			if (lineP1 == null) {
+				/**
+				 * This is the first segment of the path, so we don't have a lineP1 yet
+				 */
 				lineP1 = lineP2;
-				lineP2 = swapLineP;	
+				lineP2 = swapLineP;
 				x[pi] = lineP1.x;
-				y[pi++] = lineP1.y;				
+				y[pi++] = lineP1.y;
 			} else {
 				/**
-				 * We save some rendering time, by doing a line simplifation on the fly.
+				 * We save some rendering time, by doing a line simplification on the fly.
 				 * If two nodes are very close by, then we can simply drop one of the nodes
-				 * and draw the line between the other points. 
+				 * and draw the line between the other points. If the way is highlighted,
+				 * we can't do any simplification, as we need to compare the point numbers.
 				 */
-				if (highlight == HIGHLIGHT_ROUTEPATH_CONTAINED || ! lineP1.approximatelyEquals(lineP2)){					
-					/* 
+				if (highlight == HIGHLIGHT_ROUTEPATH_CONTAINED || ! lineP1.approximatelyEquals(lineP2)){
+					/**
 					 * calculate closest distance to specific ways
 					 */
 					float dst = MoreMath.ptSegDistSq(lineP1.x, lineP1.y,
@@ -689,11 +707,11 @@ public class Way extends Entity{
 						pc.squareDstToRoutableWay = dst;
 						pc.nearestRoutableWay = this;
 					}
-					if (dst < pc.squareDstToRoutePath && hl[i1-1] > PATHSEG_DO_NOT_HIGHLIGHT) {
-						pc.squareDstToRoutePath = dst;						
+					if ((hl[i1-1] > PATHSEG_DO_NOT_HIGHLIGHT) && (dst < pc.squareDstToRoutePath)) {
+						pc.squareDstToRoutePath = dst;
 						pc.routePathConnection = hl[i1-1];
 						pc.pathIdxInRoutePathConnection = pi;
-					}				
+					}
 					x[pi] = lineP2.x;
 					y[pi++] = lineP2.y;
 					swapLineP = lineP1;
@@ -721,6 +739,10 @@ public class Way extends Entity{
 		swapLineP = lineP1;
 		lineP1 = null;
 		
+		/**
+		 * TODO: Can we remove this call and do it the same way as with actualWay and introduce a
+		 * pc.nearestRoutableWaySingleTile and only calculate the entity and position mark when we need them?
+		 */
 		if ((pc.nearestRoutableWay == this) && ((pc.currentPos == null) || (pc.currentPos.entity != this))) {
 			pc.currentPos = new PositionMark(pc.center.radlat, pc.center.radlon);
 			pc.currentPos.setEntity(this, getNodesLatLon(t, true), getNodesLatLon(t, false));
