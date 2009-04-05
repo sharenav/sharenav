@@ -261,6 +261,7 @@ public class SECellID implements LocationMsgProducer {
 			if (obtainCurrentCellId() == null) {
 				//#debug info
 				logger.info("No valid cell-id, closing down");
+				this.receiver.locationDecoderEnd("No valid cell-id");
 				return false;
 			}
 			closed = false;
@@ -298,6 +299,7 @@ public class SECellID implements LocationMsgProducer {
 						if (dis.readByte() != CELLDB_VERSION) {
 							logger.error("Wrong version of CellDb, expected " + CELLDB_VERSION);
 							db.closeRecordStore();
+							this.receiver.locationDecoderEnd();
 							return false;
 						}
 						
@@ -332,6 +334,7 @@ public class SECellID implements LocationMsgProducer {
 		} catch (Exception e) {
 			logger.silentexception("Could not retrieve cell-id", e);
 		}
+		this.receiver.locationDecoderEnd("Can't use Cell-id for location");
 		return false;
 	}
 	
