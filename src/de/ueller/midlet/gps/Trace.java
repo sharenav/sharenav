@@ -643,7 +643,7 @@ Runnable , GpsMidDisplayable{
 			if (c == CMDS[EXIT_CMD]) {
 				// FIXME: This is a workaround. It would be better if recording would not be stopped when returning to map
 				if (gpx.isRecordingTrk()) {
-					alert("Record Mode", "Please stop recording before returning to the main screen." , 5000);
+					alert("Record Mode", "Please stop recording before returning to the main screen." , 2500);
 					return;
 				}
 				
@@ -666,7 +666,7 @@ Runnable , GpsMidDisplayable{
 			}
 			if (c == CMDS[MANAGE_TRACKS_CMD]) {
 				if (gpx.isRecordingTrk()) {
-					alert("Record Mode", "You need to stop recording before managing tracks." , 5000);
+					alert("Record Mode", "You need to stop recording before managing tracks." , 2500);
 					return;
 				}
 
@@ -912,9 +912,9 @@ Runnable , GpsMidDisplayable{
 			} else if (c == CMDS[MANUAL_ROTATION_MODE_CMD]) {
 				manualRotationMode = !manualRotationMode;
 				if (manualRotationMode) {
-					alert("Manual Rotation", "Change course with left/right keys", 3000);
+					alert("Manual Rotation", "Change course with left/right keys", 1250);
 				} else {
-					alert("Manual Rotation", "Off", 1000);
+					alert("Manual Rotation", "Off", 750);
 				}
 			} else if (c == CMDS[TOGGLE_OVERLAY_CMD]) {
 				showAddons++;
@@ -959,19 +959,19 @@ Runnable , GpsMidDisplayable{
 				}
 			} else if (c == CMDS[TOGGLE_RECORDING_CMD]) {
 				if ( gpx.isRecordingTrk() ) {
-					alert("Gps track recording", "Stopping to record", 2000);
+					alert("Gps track recording", "Stopping to record", 1250);
 					commandAction(CMDS[STOP_RECORD_CMD],(Displayable) null);
 				} else {
-					alert("Gps track recording", "Starting to record", 2000);
+					alert("Gps track recording", "Starting to record", 1250);
 					commandAction(CMDS[START_RECORD_CMD],(Displayable) null);
 				}
 			} else if (c == CMDS[TOGGLE_RECORDING_SUSP_CMD]) {
 				if (gpx.isRecordingTrk()) {
 					if ( gpx.isRecordingTrkSuspended() ) {
-						alert("Gps track recording", "Resuming recording", 2000);
+						alert("Gps track recording", "Resuming recording", 1000);
 						gpx.resumTrk();
 					} else {
-						alert("Gps track recording", "Suspending recording", 2000);
+						alert("Gps track recording", "Suspending recording", 1000);
 						gpx.suspendTrk();
 					}
 				}
