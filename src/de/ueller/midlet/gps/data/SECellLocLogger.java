@@ -59,6 +59,7 @@ public class SECellLocLogger implements LocationMsgReceiver {
 	private int noSamples;
 
 	private boolean valid;
+	private static boolean cellIDLogging = false;
 
 	public boolean init() {
 		//#if polish.api.fileconnection
@@ -69,6 +70,7 @@ public class SECellLocLogger implements LocationMsgReceiver {
 			prevPos = null;
 			valid = false;
 			noSamples = 0;
+			cellIDLogging = false;
 			
 			String url = Configuration.getGpsRawLoggerUrl();
 			url += "cellIDLog" + HelperRoutines.formatSimpleDateNow() + ".txt";
@@ -96,6 +98,7 @@ public class SECellLocLogger implements LocationMsgReceiver {
 					}
 					//#debug info
 					logger.info("Enabling cell-id logging");
+					cellIDLogging = true;
 					return true;
 				} catch (SecurityException se) {
 					logger.exception(
@@ -131,6 +134,7 @@ public class SECellLocLogger implements LocationMsgReceiver {
 
 	public void locationDecoderEnd() {
 		locationDecoderEnd("Closing");
+		cellIDLogging = false;
 	}
 
 	public void locationDecoderEnd(String msg) {
@@ -151,6 +155,7 @@ public class SECellLocLogger implements LocationMsgReceiver {
 			logger.exception("Failed to close cell-id logger", ioe);
 		}
 		//#endif
+		cellIDLogging = false;
 	}
 
 	public void receiveMessage(String s) {
@@ -247,5 +252,9 @@ public class SECellLocLogger implements LocationMsgReceiver {
 
 	public void receiveStatistics(int[] statRecord, byte qualtity) {
 		// Nothing to do
+	}
+	
+	public static boolean isCellIDLogging() {
+		return cellIDLogging;
 	}
 }

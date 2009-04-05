@@ -1203,30 +1203,39 @@ Runnable , GpsMidDisplayable{
 			if (fontHeight == 0) {
 				fontHeight = g.getFont().getHeight();
 			}
-			int yText = 1 + fontHeight;
+			int yText = 1;
 			int rightText = getWidth() - 1;
+
+			// show gpx track recording status
 			if (locationProducer != null){
+				g.drawString(solution, rightText, yText, Graphics.TOP | Graphics.RIGHT);
 				if (gpx.isRecordingTrk()) {
 					// we are recording tracklogs
-
+					yText += fontHeight;
 					if (gpx.isRecordingTrkSuspended()) {
 						g.setColor(0x000000FF); // blue
 					} else {
 						g.setColor(0x00FF0000); // red
 					}
-					
 					g.drawString(gpx.recorded + "r", rightText, yText, 
 							Graphics.TOP | Graphics.RIGHT);
-					yText += fontHeight;
 					g.setColor(0);
 				}
-
-				g.drawString(solution, rightText, 1, Graphics.TOP | Graphics.RIGHT);
 			} else {
-				g.drawString("Off", rightText, 1, Graphics.TOP | Graphics.RIGHT);
-				
+				g.drawString("Off", rightText, yText, Graphics.TOP | Graphics.RIGHT);				
 			}
+
+			// show if we are logging cellIDs 
+			if (SECellLocLogger.isCellIDLogging()) {
+				yText += fontHeight;
+				g.setColor(0x00FFFF96); // yellow
+				g.drawString("cellIDs", rightText, yText, Graphics.TOP | Graphics.RIGHT);				
+				g.setColor(0);
+			}
+
+			// show audio recording status
 			if (audioRec.isRecording()) {
+				yText += fontHeight;
 				g.setColor(0x00FF0000); // red 
 				g.drawString("AudioRec", rightText, yText, Graphics.TOP | Graphics.RIGHT);				
 				g.setColor(0);
