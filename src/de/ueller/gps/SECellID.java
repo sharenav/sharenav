@@ -239,10 +239,13 @@ public class SECellID implements LocationMsgProducer {
 	private int dblacidx;
 	
 	private static boolean retrieving;
+	
+	public SECellID() {
+		this.receiver = new LocationMsgReceiverList();
+	}
 
 	public boolean init(LocationMsgReceiver receiver) {
 		try {
-			this.receiver = new LocationMsgReceiverList();
 			this.receiver.addReceiver(receiver);
 			cellPos = new intTree();
 			lacidx = new intTree();
