@@ -227,8 +227,14 @@ public class SECellLocLogger implements LocationMsgReceiver {
 	}
 
 	public void receiveSolution(String s) {
+		/**
+		 * Check the solution against a bunch of cases, for
+		 * which we know that we won't get a valid fix and
+		 * ignore the position updates we get from there.
+		 */
 		if ((s.equalsIgnoreCase("off")) && (s.equalsIgnoreCase("NoFix"))
-				&& (s.equalsIgnoreCase("cell")) && (s.equalsIgnoreCase("0S"))) {
+				&& (s.equalsIgnoreCase("cell")) && (s.equalsIgnoreCase("0S"))
+				&& (s.equalsIgnoreCase("~~"))) {
 			valid = false;
 		} else {
 			valid = true;
