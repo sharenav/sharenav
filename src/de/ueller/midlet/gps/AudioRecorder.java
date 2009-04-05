@@ -44,7 +44,7 @@ public class AudioRecorder  implements SelectionListener{
 			logger.info("Starting audio recording");
 			mPlayer = Manager.createPlayer("capture://audio");
 			if (mPlayer == null) {
-				logger.error("Couldn't initialize camera player");
+				logger.error("Couldn't initialize audio recorder");
 				return false;
 			}
 			mPlayer.realize();			
@@ -135,7 +135,7 @@ public class AudioRecorder  implements SelectionListener{
 	}
 
 	public void selectedFile(String url) {
-		logger.info("Setting picture directory to " + url);
+		logger.info("Setting media store to " + url);
 		Configuration.setPhotoUrl(url);
 		basedirectory = url;
 	}
