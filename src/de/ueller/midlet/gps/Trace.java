@@ -1280,103 +1280,107 @@ Runnable , GpsMidDisplayable{
 			}
 			
 			if (currentAlertsOpenCount > 0) {
-				Font font = g.getFont();
-				// request same font in bold for title
-				Font titleFont = Font.getFont(font.getFace(), Font.STYLE_BOLD, font.getSize());
-				int fontHeight = font.getHeight();
-				int y = titleFont.getHeight() + 2 + fontHeight; // add alert title height plus extra space of one line for calculation of alertHeight
-				int extraWidth = font.charWidth('W'); // extra width for alert
-				int alertWidth = titleFont.stringWidth(currentAlertTitle); // alert is at least as wide as alert title
-				int maxWidth = getWidth() - extraWidth; // width each alert message line must fit in
-				for (int i = 0; i<=1; i++) { // two passes: 1st pass calculates placement and necessary size of alert, 2nd pass actually does the drawing
-					int nextSpaceAt = 0;
-					int prevSpaceAt = 0;
-					int start = 0;
-					// word wrap
-					do {
-						int width = 0;
-						// add word by word until string part is too wide for screen
-						while (width < maxWidth && nextSpaceAt <= currentAlertMessage.length() ) {
-							prevSpaceAt = nextSpaceAt;
-							nextSpaceAt = currentAlertMessage.indexOf(' ', nextSpaceAt);
-							if (nextSpaceAt == -1) {
-								nextSpaceAt = currentAlertMessage.length();
-							}
-							width = font.substringWidth(currentAlertMessage, start, nextSpaceAt - start);
-							nextSpaceAt++;
-						}
-						nextSpaceAt--;
-						// reduce line word by word or if not possible char by char until the remaining string part fits to display width
-						while (width > maxWidth) {
-							if (prevSpaceAt > start && nextSpaceAt > prevSpaceAt) {
-								nextSpaceAt = prevSpaceAt;
-							} else {
-								nextSpaceAt--;
-							}
-							width = font.substringWidth(currentAlertMessage, start, nextSpaceAt - start);
-						}
-						// determine maximum alert width
-						if (alertWidth < width ) { 
-							alertWidth = width; 
-						}
-						// during the second pass draw the message text lines
-						if (i==1) {
-							g.drawSubstring(currentAlertMessage, start, nextSpaceAt - start,
-									getWidth()/2, y, Graphics.TOP|Graphics.HCENTER);
-						}
-						y += fontHeight;
-						start = nextSpaceAt;
-					} while (nextSpaceAt < currentAlertMessage.length() );
-					
-					// at the end of the first pass draw the alert box and the alert title
-					if (i==0) {
-						alertWidth += extraWidth;
-						int alertHeight = y;
-						int alertTop = (getHeight() - alertHeight) /2;
-						//alertHeight += fontHeight/2;
-						int alertLeft = (getWidth() - alertWidth) / 2;
-						// alert background color
-						g.setColor(222, 222, 222);
-						g.fillRect(alertLeft, alertTop , alertWidth, alertHeight);
-						// background color for alert title
-						pc.g.setColor(255, 255, 255); 
-						g.fillRect(alertLeft, alertTop , alertWidth, fontHeight + 3);
-						// alert border
-						g.setColor(0, 0, 0);
-						g.setStrokeStyle(Graphics.SOLID);
-						g.drawRect(alertLeft, alertTop, alertWidth, fontHeight + 3); // title border
-						g.drawRect(alertLeft, alertTop, alertWidth, alertHeight); // alert border
-						// draw alert title
-						y = alertTop + 2; // output position of alert title
-						g.setFont(titleFont);
-						g.drawString(currentAlertTitle, getWidth()/2, y , Graphics.TOP|Graphics.HCENTER);
-						g.setFont(font);
-						// output alert message 1.5 lines below alert title in the next pass
-						y += (fontHeight * 3 / 2); 
-					}
-				} // end for
-				// setAlertTimeOut can be changed in receiveMessage()
-				synchronized (this) {
-					if (setAlertTimeout != 0) {
-						TimerTask timerT;
-						Timer tm = new Timer();	    
-						timerT = new TimerTask() {
-							public synchronized void run() {
-								currentAlertsOpenCount--;
-								if (currentAlertsOpenCount == 0) {
-									//#debug debug
-									logger.debug("clearing alert");
-									repaint();
-								}
-							}			
-						};
-						tm.schedule(timerT, setAlertTimeout);
-						setAlertTimeout = 0;
-					}
-				}
+				showCurrentAlert(g);
 			}
 		} catch (Exception e) {
 			logger.silentexception("Unhandled exception in the paint code", e);
+		}
+	}
+
+	private void showCurrentAlert(Graphics g) {
+		Font font = g.getFont();
+		// request same font in bold for title
+		Font titleFont = Font.getFont(font.getFace(), Font.STYLE_BOLD, font.getSize());
+		int fontHeight = font.getHeight();
+		int y = titleFont.getHeight() + 2 + fontHeight; // add alert title height plus extra space of one line for calculation of alertHeight
+		int extraWidth = font.charWidth('W'); // extra width for alert
+		int alertWidth = titleFont.stringWidth(currentAlertTitle); // alert is at least as wide as alert title
+		int maxWidth = getWidth() - extraWidth; // width each alert message line must fit in
+		for (int i = 0; i<=1; i++) { // two passes: 1st pass calculates placement and necessary size of alert, 2nd pass actually does the drawing
+			int nextSpaceAt = 0;
+			int prevSpaceAt = 0;
+			int start = 0;
+			// word wrap
+			do {
+				int width = 0;
+				// add word by word until string part is too wide for screen
+				while (width < maxWidth && nextSpaceAt <= currentAlertMessage.length() ) {
+					prevSpaceAt = nextSpaceAt;
+					nextSpaceAt = currentAlertMessage.indexOf(' ', nextSpaceAt);
+					if (nextSpaceAt == -1) {
+						nextSpaceAt = currentAlertMessage.length();
+					}
+					width = font.substringWidth(currentAlertMessage, start, nextSpaceAt - start);
+					nextSpaceAt++;
+				}
+				nextSpaceAt--;
+				// reduce line word by word or if not possible char by char until the remaining string part fits to display width
+				while (width > maxWidth) {
+					if (prevSpaceAt > start && nextSpaceAt > prevSpaceAt) {
+						nextSpaceAt = prevSpaceAt;
+					} else {
+						nextSpaceAt--;
+					}
+					width = font.substringWidth(currentAlertMessage, start, nextSpaceAt - start);
+				}
+				// determine maximum alert width
+				if (alertWidth < width ) { 
+					alertWidth = width; 
+				}
+				// during the second pass draw the message text lines
+				if (i==1) {
+					g.drawSubstring(currentAlertMessage, start, nextSpaceAt - start,
+							getWidth()/2, y, Graphics.TOP|Graphics.HCENTER);
+				}
+				y += fontHeight;
+				start = nextSpaceAt;
+			} while (nextSpaceAt < currentAlertMessage.length() );
+			
+			// at the end of the first pass draw the alert box and the alert title
+			if (i==0) {
+				alertWidth += extraWidth;
+				int alertHeight = y;
+				int alertTop = (getHeight() - alertHeight) /2;
+				//alertHeight += fontHeight/2;
+				int alertLeft = (getWidth() - alertWidth) / 2;
+				// alert background color
+				g.setColor(222, 222, 222);
+				g.fillRect(alertLeft, alertTop , alertWidth, alertHeight);
+				// background color for alert title
+				pc.g.setColor(255, 255, 255); 
+				g.fillRect(alertLeft, alertTop , alertWidth, fontHeight + 3);
+				// alert border
+				g.setColor(0, 0, 0);
+				g.setStrokeStyle(Graphics.SOLID);
+				g.drawRect(alertLeft, alertTop, alertWidth, fontHeight + 3); // title border
+				g.drawRect(alertLeft, alertTop, alertWidth, alertHeight); // alert border
+				// draw alert title
+				y = alertTop + 2; // output position of alert title
+				g.setFont(titleFont);
+				g.drawString(currentAlertTitle, getWidth()/2, y , Graphics.TOP|Graphics.HCENTER);
+				g.setFont(font);
+				// output alert message 1.5 lines below alert title in the next pass
+				y += (fontHeight * 3 / 2); 
+			}
+		} // end for
+		// setAlertTimeOut can be changed in receiveMessage()
+		synchronized (this) {
+			if (setAlertTimeout != 0) {
+				TimerTask timerT;
+				Timer tm = new Timer();	    
+				timerT = new TimerTask() {
+					public synchronized void run() {
+						currentAlertsOpenCount--;
+						if (currentAlertsOpenCount == 0) {
+							//#debug debug
+							logger.debug("clearing alert");
+							repaint();
+						}
+					}			
+				};
+				tm.schedule(timerT, setAlertTimeout);
+				setAlertTimeout = 0;
+			}
 		}
 	}
 
