@@ -1199,29 +1199,39 @@ Runnable , GpsMidDisplayable{
 				}
 			}
 			showMovement(g);
-			g.setColor(0, 0, 0);
+			g.setColor(0);
+			if (fontHeight == 0) {
+				fontHeight = g.getFont().getHeight();
+			}
+			int yText = 1 + fontHeight;
+			int rightText = getWidth() - 1;
 			if (locationProducer != null){
 				if (gpx.isRecordingTrk()) {
 					// we are recording tracklogs
-					if (fontHeight == 0) {
-						fontHeight = g.getFont().getHeight();
-					}
+
 					if (gpx.isRecordingTrkSuspended()) {
-						g.setColor(0, 0, 255);
+						g.setColor(0x000000FF); // blue
 					} else {
-						g.setColor(255, 0, 0);
+						g.setColor(0x00FF0000); // red
 					}
 					
-					g.drawString(gpx.recorded + "r", getWidth() - 1, 1 + fontHeight, 
+					g.drawString(gpx.recorded + "r", rightText, yText, 
 							Graphics.TOP | Graphics.RIGHT);
+					yText += fontHeight;
 					g.setColor(0);
 				}
 
-				g.drawString(solution, getWidth() - 1, 1, Graphics.TOP | Graphics.RIGHT);
+				g.drawString(solution, rightText, 1, Graphics.TOP | Graphics.RIGHT);
 			} else {
-				g.drawString("Off", getWidth() - 1, 1, Graphics.TOP | Graphics.RIGHT);
+				g.drawString("Off", rightText, 1, Graphics.TOP | Graphics.RIGHT);
 				
 			}
+			if (audioRec.isRecording()) {
+				g.setColor(0x00FF0000); // red 
+				g.drawString("AudioRec", rightText, yText, Graphics.TOP | Graphics.RIGHT);				
+				g.setColor(0);
+			}
+			
 			if (pc != null){
 				showTarget(pc);
 			}
