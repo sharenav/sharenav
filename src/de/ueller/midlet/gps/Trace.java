@@ -1908,7 +1908,7 @@ Runnable , GpsMidDisplayable{
 
 	public void receiveSolution(String s) {
 		solution = s;
-
+		repaint();
 	}
 
 	public String getName(int idx) {
