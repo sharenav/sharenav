@@ -69,7 +69,7 @@ public class SECellID implements LocationMsgProducer {
 		public int cellID;
 		public short mcc;
 		public short mnc;
-		public short lac;
+		public int lac;
 		public float lat;
 		public float lon;
 		
@@ -81,7 +81,7 @@ public class SECellID implements LocationMsgProducer {
 		public CellIdLoc (DataInputStream dis) throws IOException {
 			mcc = (short)dis.readShort();
 			mnc = (short)dis.readShort();
-			lac = (short)dis.readInt();
+			lac = dis.readInt();
 			cellID = dis.readInt();
 			lat = dis.readFloat();
 			lon = dis.readFloat();
@@ -113,7 +113,7 @@ public class SECellID implements LocationMsgProducer {
 	public class LacIdxEntry {
 		public short mcc;
 		public short mnc;
-		public short lac;
+		public int lac;
 		public int	 recordId;
 		
 		public LacIdxEntry() {
@@ -123,7 +123,7 @@ public class SECellID implements LocationMsgProducer {
 		public LacIdxEntry (DataInputStream dis) throws IOException {
 			mcc = (short)dis.readShort();
 			mnc = (short)dis.readShort();
-			lac = (short)dis.readInt();
+			lac = dis.readInt();
 			recordId = dis.readInt();
 		}
 		
@@ -134,11 +134,16 @@ public class SECellID implements LocationMsgProducer {
 			dos.writeInt(recordId);
 		}
 		
-		public int hashCode(short mcc, short mnc, short lac) {
-			return lac + mnc << 16 + mcc << 24;
+		public int hashCode(short mcc, short mnc, int lac) {
+			return lac + (mnc << 16) + (mcc << 23);
 		}
 		public int hashCode() {
 			return hashCode(mcc,mnc,lac);
+		}
+		
+		public String toString() {
+			return "LacIdxEntry (mcc=" + mcc + ", mnc=" + mnc + ", lac=" + lac 
+			+ " -> " + recordId + " |" + hashCode() + "|)";
 		}
 	}
 
@@ -190,6 +195,9 @@ public class SECellID implements LocationMsgProducer {
 							cellPos.put(loc.cellID, loc);
 							if ((loc.lat != 0.0) || (loc.lon != 0.0)) {
 								storeCellIDtoRecordStore(loc);
+							} else {
+								//#debug debug
+								logger.debug("Not storing cell, as it has no valid coordinates");
 							}
 						} else {
 							logger.error("Failed to get cell-id");
@@ -267,6 +275,7 @@ public class SECellID implements LocationMsgProducer {
 				dos.writeByte(CELLDB_LACIDX);
 				dos.writeByte(CELLDB_VERSION);
 				dos.writeInt(0);
+				dos.writeInt(0xbeafdead);
 				dos.flush();
 				dblacidx = db.addRecord(baos.toByteArray(), 0, baos.size());
 			} else {
@@ -296,10 +305,15 @@ public class SECellID implements LocationMsgProducer {
 						//#debug info
 						logger.info("Found valid lacidx with " + size + " entries");
 						for (int i = 0; i < size; i++) {
+							//#debug debug
+							logger.debug("Reading lac entry " + i + " of " + size);
 							LacIdxEntry idxEntry = new LacIdxEntry(dis);
 							lacidx.put(idxEntry.hashCode(), idxEntry);
 							//#debug debug
 							logger.debug("Adding index entry for " + idxEntry);
+						}
+						if (dis.readInt() != 0xbeafdead) {
+							logger.error("Persistent cell-id index is corrupt");
 						}
 						indexFound = true;
 					}
@@ -321,6 +335,7 @@ public class SECellID implements LocationMsgProducer {
 		return false;
 	}
 	
+	
 	private CellIdLoc obtainCurrentCellId() throws Exception {
 		CellIdLoc cell = new CellIdLoc();
 		//#debug debug
@@ -337,7 +352,7 @@ public class SECellID implements LocationMsgProducer {
 		 * by generating one of 7 random cell-ids 
 		 *
 		Random r = new Random();
-		int rr = r.nextInt(4) + 1;
+		int rr = r.nextInt(16) + 1;
 		System.out.println("RR: " +rr);
 		switch (rr) {
 		case 1:
@@ -358,7 +373,39 @@ public class SECellID implements LocationMsgProducer {
 		case 6:
 			cellidS = "2629"; mccS = "234"; mncS = "33"; lacS = "135";
 			break;
+		case 7:
+			cellidS = "2649"; mccS = "234"; mncS = "33"; lacS = "136";
+			break;
+		case 8:
+			cellidS = "2659"; mccS = "234"; mncS = "33"; lacS = "137";
+			break;
+		case 9:
+			cellidS = "B1D1"; mccS = "310"; mncS = "260"; lacS = "B455";
+			break;
+		case 10:
+			cellidS = "79D9"; mccS = "310"; mncS = "260"; lacS = "4D";
+			break;
+		
+		case 11:
+			cellidS = "3E92FFF"; mccS = "284"; mncS = "3"; lacS = "3E9";
+			break;
+		case 12:
+			cellidS = "1B0"; mccS = "250"; mncS = "20"; lacS = "666D";
+			break;
+		case 13:
+			cellidS = "23EC45A"; mccS = "234"; mncS = "10"; lacS = "958C";
+			break;
+		case 14:
+			cellidS = "8589A"; mccS = "234"; mncS = "10"; lacS = "8139";
+			break;
+		case 15:
+			cellidS = "85A67"; mccS = "234"; mncS = "10"; lacS = "8139";
+			break;
+		case 16:
+			cellidS = "151E"; mccS = "724"; mncS = "5"; lacS = "552";
+			break;
 		}
+		
 		*/
 		if ((cellidS == null) || (mccS == null) || (mncS == null) || (lacS == null)) {
 			//#debug debug
@@ -369,7 +416,7 @@ public class SECellID implements LocationMsgProducer {
 			cell.cellID = Integer.parseInt(cellidS, 16);
 			cell.mcc = (short) Integer.parseInt(mccS);
 			cell.mnc = (short) Integer.parseInt(mncS);
-			cell.lac = (short) Integer.parseInt(lacS, 16);
+			cell.lac = Integer.parseInt(lacS, 16);
 		} catch (NumberFormatException nfe) {
 			logger.silentexception("Failed to parse cell-id (cellid: " + cellidS +
 					" mcc: " + mccS + " mnc: " + mncS + " lac: " + lacS, nfe);
@@ -503,15 +550,18 @@ public class SECellID implements LocationMsgProducer {
 				 * record store db into the cache;
 				 */
 				byte [] buf = db.getRecord(idx.recordId);
-				ByteArrayInputStream bais = new ByteArrayInputStream(buf);
-				if (bais.read() == CELLDB_LACLIST) {
+				DataInputStream dis = new DataInputStream(new ByteArrayInputStream(buf));
+				if (dis.readByte() == CELLDB_LACLIST) {
 					
-					int size = bais.read();
+					int size = dis.readInt();
 					for (int i = 0; i < size; i++) {
-						CellIdLoc tmpCell = new CellIdLoc(new DataInputStream(bais));
+						CellIdLoc tmpCell = new CellIdLoc(dis);
 						//#debug debug
-						logger.debug("Adding " + tmpCell + " from persistent store to cache");
+						logger.debug("Adding " + tmpCell + " to cache from persistent store " + idx);
 						cellPos.put(tmpCell.cellID, tmpCell);
+					}
+					if (dis.readInt() != 0xdeadbeaf) {
+						logger.error("Persisten Cell-id cache is corrupt");
 					}
 				} else {
 					logger.error("Persisten Cell-id cache is corrupt");
@@ -550,9 +600,10 @@ public class SECellID implements LocationMsgProducer {
 				 */
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				DataOutputStream dos = new DataOutputStream(baos);
-				dos.write(CELLDB_LACLIST);
-				dos.write(1); //Size
+				dos.writeByte(CELLDB_LACLIST);
+				dos.writeInt(1); //Size
 				cell.serialise(dos);
+				dos.writeInt(0xdeadbeaf);
 				dos.flush();
 				idx.recordId = db.addRecord(baos.toByteArray(), 0, baos.size());
 				dos.close();
@@ -567,23 +618,30 @@ public class SECellID implements LocationMsgProducer {
 				DataInputStream dis = new DataInputStream(new ByteArrayInputStream(buf));
 				baos = new ByteArrayOutputStream();
 				dos = new DataOutputStream(baos);
-				if (dis.read() == CELLDB_LACIDX) {
-					if (dis.read() != CELLDB_VERSION) {
+				if (dis.readByte() == CELLDB_LACIDX) {
+					if (dis.readByte() != CELLDB_VERSION) {
 						logger.error("Wrong version of CellDb, expected " + CELLDB_VERSION);
 						db.closeRecordStore();
 						return;
 					}
-					dos.write(CELLDB_LACIDX);
-					dos.write(CELLDB_VERSION);
-					int size = dis.read();
-					dos.write(size + 1);
+					dos.writeByte(CELLDB_LACIDX);
+					dos.writeByte(CELLDB_VERSION);
+					int size = dis.readInt();
+					dos.writeInt(size + 1);
 					for (int i = 0; i < size; i++) {
 						LacIdxEntry lie = new LacIdxEntry(dis);
 						lie.serialize(dos);
 					}
+					if (dis.readInt() != 0xbeafdead) {
+						logger.error("Persistent cell-id index is corrupt");
+					}
 					idx.serialize(dos);
+					dos.writeInt(0xbeafdead);
+					dos.flush();
 					db.setRecord(dblacidx, baos.toByteArray(), 0, baos.size());
 
+				} else {
+					logger.error("Corrupted read of Cell-id db");
 				}
 				db.closeRecordStore();
 			} else {
@@ -591,19 +649,26 @@ public class SECellID implements LocationMsgProducer {
 				 * There is already a cell in this area, so add it to the
 				 * correct entry.
 				 */
+				//#debug debug
+				logger.debug("Adding " + cell + " to " + idx);
 				byte [] buf = db.getRecord(idx.recordId);
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				DataOutputStream dos = new DataOutputStream(baos);
 				DataInputStream dis = new DataInputStream( new ByteArrayInputStream(buf));
-				if (dis.read() == CELLDB_LACLIST) {
-					baos.write(CELLDB_LACLIST);
-					int size = dis.read();
-					baos.write(size + 1);
+				if (dis.readByte() == CELLDB_LACLIST) {
+					dos.writeByte(CELLDB_LACLIST);
+					int size = dis.readInt();
+					dos.writeInt(size + 1);
 					for (int i = 0; i < size; i++) {
 						CellIdLoc tmpCell = new CellIdLoc(dis);
 						tmpCell.serialise(dos);
 					}
+					if (dis.readInt() != 0xdeadbeaf) {
+						logger.error("Persistent Cellid-cache is corrupt");
+					}
 					cell.serialise(dos);
+					dos.writeInt(0xdeadbeaf);
+					dos.flush();
 					db.setRecord(idx.recordId, baos.toByteArray(), 0, baos.size());
 					//#debug debug
 					logger.debug("Added Cell to area list");
