@@ -553,7 +553,7 @@ Runnable , GpsMidDisplayable{
 		if (imageCollector != null) {
 			imageCollector.resume();
 		}
-		Thread thread = new Thread(this);
+		Thread thread = new Thread(this,"LocationProducer init");
 		thread.start();
 	}
 
@@ -678,7 +678,7 @@ Runnable , GpsMidDisplayable{
 			}
 			if (c == CMDS[CONNECT_GPS_CMD]) {
 				if (locationProducer == null) {
-					Thread thread = new Thread(this);
+					Thread thread = new Thread(this,"LocationProducer init");
 					thread.start();
 				}
 			}
