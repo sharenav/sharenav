@@ -671,7 +671,8 @@ public class Way extends Entity{
 				 * We save some rendering time, by doing a line simplification on the fly.
 				 * If two nodes are very close by, then we can simply drop one of the nodes
 				 * and draw the line between the other points. If the way is highlighted,
-				 * we can't do any simplification, as we need to compare the point numbers.
+				 * we can't do any simplification, as we need to determine the index of the segment 
+				 * that is closest to the center (= map center) of the PaintContext
 				 */
 				if (highlight == HIGHLIGHT_ROUTEPATH_CONTAINED || ! lineP1.approximatelyEquals(lineP2)){
 					/**
