@@ -190,6 +190,15 @@ public class Way extends Entity implements Comparable<Way>{
 			try {
 				boolean mph = false;
 				String maxSpeedAttr = getAttribute("maxspeed");
+				if (maxSpeedAttr.equalsIgnoreCase("variable") ||
+						maxSpeedAttr.equalsIgnoreCase("default") ||
+						maxSpeedAttr.equalsIgnoreCase("no")) {
+					/**
+					 * We can't really do anything sensible with these,
+					 * so ignore them
+					 */
+					return maxSpeed;
+				}
 				if (maxSpeedAttr.toLowerCase().endsWith("mph")) {
 					mph = true;
 					maxSpeedAttr = maxSpeedAttr.substring(0, maxSpeedAttr.length() - 3).trim();
