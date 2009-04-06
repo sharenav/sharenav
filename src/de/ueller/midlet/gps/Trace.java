@@ -770,7 +770,7 @@ Runnable , GpsMidDisplayable{
 						elements[idx++] = "Start Gpx tracklog";
 					}
 					
-					elements[idx++] = "Add waypoint";
+					elements[idx++] = "Save waypoint";
 					elements[idx++] = "Enter waypoint";
 					//#if polish.api.mmapi
 					elements[idx++] = "Take pictures";
