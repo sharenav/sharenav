@@ -47,7 +47,7 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 	private StreamConnection conn;
 	protected OutputStream rawDataLogger;
 	protected Thread processorThread;
-	protected LocationMsgReceiverList receiver;
+	protected LocationMsgReceiverList receiverList;
 	protected boolean closed = false;
 	protected byte connectQuality = 100;
 	protected int bytesReceived = 0;
@@ -56,7 +56,7 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 	protected int msgsReceived = 1;
 	
 	public BtReceiverInput() {
-		this.receiver = new LocationMsgReceiverList();
+		this.receiverList = new LocationMsgReceiverList();
 	}
 
 	protected class KeepAliveTimer extends TimerTask {
@@ -76,15 +76,15 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 	}
 
 	public boolean init(LocationMsgReceiver receiver) {
-		this.receiver.addReceiver(receiver);
+		this.receiverList.addReceiver(receiver);
 		
 		//#debug info
 		logger.info("Connect to "+Configuration.getBtUrl());
 		if (! openBtConnection(Configuration.getBtUrl())){
-			this.receiver.locationDecoderEnd();
+			this.receiverList.locationDecoderEnd();
 			return false;
 		}
-		this.receiver.receiveMessage("BT Connected");
+		this.receiverList.receiveMessage("BT Connected");
 		
 		processorThread = new Thread(this, "Bluetooth Receiver Decoder");
 		processorThread.setPriority(Thread.MAX_PRIORITY);
@@ -107,7 +107,7 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 	abstract protected void process() throws IOException;
 
 	public void run() {
-		receiver.receiveMessage("Start Bt GPS receiver");
+		receiverList.receiveMessage("Start Bt GPS receiver");
 		// Eat the buffer content
 		try {
 			try {
@@ -124,7 +124,7 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 				logger.debug("Erased " + bytesReceived + " bytes");
 				bytesReceived = 100;
 			} catch (IOException e1) {
-				receiver.receiveMessage("Closing: " + e1.getMessage());
+				receiverList.receiveMessage("Closing: " + e1.getMessage());
 				close("Closing: " + e1.getMessage());
 			}
 
@@ -142,8 +142,7 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 						if (connectQuality < 0) {
 							connectQuality = 0;
 						}
-						receiver
-								.receiveStatistics(connectError, connectQuality);
+						receiverList.receiveStatistics(connectError, connectQuality);
 						// watchdog if no bytes received in 10 sec then exit
 						// thread
 						if (bytesReceived == 0) {
@@ -164,10 +163,10 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 					 */
 					logger.info("Failed to read from GPS trying to reconnect: "
 							+ e.getMessage());
-					receiver.receiveSolution("~~");
+					receiverList.receiveSolution("~~");
 					if (!autoReconnectBtConnection()) {
 						logger.info("GPS bluethooth could not reconnect");
-						receiver.receiveMessage("Closing: " + e.getMessage());
+						receiverList.receiveMessage("Closing: " + e.getMessage());
 						close("Closed: " + e.getMessage());
 					} else {
 						logger.info("GPS bluetooth reconnect was successful");
@@ -199,9 +198,9 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 				logger.info("Finished LocationProducer thread, closing bluetooth");
 				closeBtConnection();
 				if (message == null) {
-					receiver.locationDecoderEnd();
+					receiverList.locationDecoderEnd();
 				} else {
-					receiver.locationDecoderEnd(message);
+					receiverList.locationDecoderEnd(message);
 				}
 			} else {
 				/**
@@ -245,12 +244,12 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 		}
 	}
 
-	public void addLocationMsgReceiver(LocationMsgReceiver rec) {
-		receiver.addReceiver(rec);
+	public void addLocationMsgReceiver(LocationMsgReceiver receiver) {
+		receiverList.addReceiver(receiver);
 	}
 	
-	public boolean removeLocationMsgReceiver(LocationMsgReceiver rec) {
-		return receiver.removeReceiver(rec);
+	public boolean removeLocationMsgReceiver(LocationMsgReceiver receiver) {
+		return receiverList.removeReceiver(receiver);
 	}
 
 	private synchronized boolean openBtConnection(String url){
@@ -278,11 +277,11 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 			/**
 			 * The application was not permitted to connect to bluetooth  
 			 */
-			receiver.receiveMessage("Connectiong to BT not permitted");
+			receiverList.receiveMessage("Connecting to BT not permitted");
 			return false;
 			
 		} catch (IOException e) {
-			receiver.receiveMessage("err BT:"+e.getMessage());
+			receiverList.receiveMessage("err BT:"+e.getMessage());
 			return false;
 		}
 		return true;
@@ -352,7 +351,7 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 			if (Configuration.getCfgBitState(Configuration.CFGBIT_SND_CONNECT)) {
 				GpsMid.mNoiseMaker.playSound("CONNECT");
 			}
-			init(receiver);
+			init(receiverList);
 			return true;
 		}
 		if (!closed)

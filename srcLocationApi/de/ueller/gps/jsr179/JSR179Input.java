@@ -43,7 +43,7 @@ public class JSR179Input implements LocationListener, LocationMsgProducer {
 
 	/** location provider */
 	private LocationProvider locationProvider = null;
-	private LocationMsgReceiverList receiver;
+	private LocationMsgReceiverList receiverList;
 	private NmeaMessage smsg;
 	Date date = new Date();
 	Position pos = new Position(0f, 0f, 0f, 0f, 0f, 0, date);
@@ -52,13 +52,13 @@ public class JSR179Input implements LocationListener, LocationMsgProducer {
 
 	
 	public JSR179Input(){
-		this.receiver = new LocationMsgReceiverList();
+		this.receiverList = new LocationMsgReceiverList();
 	}
 
 
 	public boolean init(LocationMsgReceiver receiver) {
 		logger.info("start JSR179 LocationProvider");
-		this.receiver.addReceiver(receiver);
+		this.receiverList.addReceiver(receiver);
 		createLocationProvider();
 		// We may be able to get some additional information such as the number
 		// of satellites form the NMEA string
@@ -98,7 +98,7 @@ public class JSR179Input implements LocationListener, LocationMsgProducer {
 			if (locationProvider != null) {
 				updateSolution(locationProvider.getState());
 			} else {
-				receiver.locationDecoderEnd("no JSR179 Provider");
+				receiverList.locationDecoderEnd("no JSR179 Provider");
 				//#debug
 				logger.error("Cannot create LocationProvider for criteria.");
 			}
@@ -116,7 +116,7 @@ public class JSR179Input implements LocationListener, LocationMsgProducer {
 		pos.course = location.getCourse();
 		pos.speed = location.getSpeed();
 		pos.date.setTime(location.getTimestamp());
-		receiver.receivePosition(pos);
+		receiverList.receivePosition(pos);
 		String nmeaString = location
 				.getExtraInfo("application/X-jsr179-location-nmea");
 		// String nmeaString =
@@ -174,7 +174,7 @@ public class JSR179Input implements LocationListener, LocationMsgProducer {
 			}
 		}
 		locationProvider = null;
-		receiver.locationDecoderEnd();
+		receiverList.locationDecoderEnd();
 		//#debug
 		logger.trace("exit close()");
 	}
@@ -182,20 +182,20 @@ public class JSR179Input implements LocationListener, LocationMsgProducer {
 	private void updateSolution(int state) {
 		if (state == LocationProvider.AVAILABLE) {
 			locationProvider.setLocationListener(this, 1, -1, -1);
-			if (receiver != null)
-				receiver.receiveSolution("On");
+			if (receiverList != null)
+				receiverList.receiveSolution("On");
 		}
 		if (state == LocationProvider.OUT_OF_SERVICE) {
 			locationProvider.setLocationListener(this, 0, -1, -1);
-			if (receiver != null) {
-				receiver.receiveSolution("Off");
-				receiver.receiveMessage("provider stopped");
+			if (receiverList != null) {
+				receiverList.receiveSolution("Off");
+				receiverList.receiveMessage("provider stopped");
 			}
 		}
 		if (state == LocationProvider.TEMPORARILY_UNAVAILABLE) {
 			locationProvider.setLocationListener(this, 0, -1, -1);
-			if (receiver != null)
-				receiver.receiveSolution("0");
+			if (receiverList != null)
+				receiverList.receiveSolution("0");
 		}
 	}
 
@@ -214,12 +214,12 @@ public class JSR179Input implements LocationListener, LocationMsgProducer {
 		rawDataLogger = os;
 	}
 
-	public void addLocationMsgReceiver(LocationMsgReceiver rec) {
-		receiver.addReceiver(rec);
+	public void addLocationMsgReceiver(LocationMsgReceiver receiver) {
+		receiverList.addReceiver(receiver);
 	}
 
-	public boolean removeLocationMsgReceiver(LocationMsgReceiver rec) {
-		return receiver.removeReceiver(rec);
+	public boolean removeLocationMsgReceiver(LocationMsgReceiver receiver) {
+		return receiverList.removeReceiver(receiver);
 	}
 
 }

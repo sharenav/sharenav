@@ -175,7 +175,7 @@ public class SECellID implements LocationMsgProducer {
 					 */
 					//#debug debug
 					logger.debug("No valid cell-id available");
-					receiver.receiveSolution("~~");
+					receiverList.receiveSolution("~~");
 					return;
 				}
 
@@ -212,16 +212,16 @@ public class SECellID implements LocationMsgProducer {
 					rawDataLogger.flush();
 				}
 				if ((loc.lat != 0.0) && (loc.lon != 0.0)) {
-					if (receiver == null) {
+					if (receiverList == null) {
 						logger.error("ReceiverList == null");
 					}
 					//#debug info
 					logger.info("Obtained a position from " + loc);
-					receiver.receiveSolution("Cell");
-					receiver.receivePosition(new Position(loc.lat, loc.lon, 0, 0, 0, 0,
+					receiverList.receiveSolution("Cell");
+					receiverList.receivePosition(new Position(loc.lat, loc.lon, 0, 0, 0, 0,
 							new Date()));
 				} else {
-					receiver.receiveSolution("NoFix");
+					receiverList.receiveSolution("NoFix");
 				} 
 			} catch (Exception e) {
 				logger.silentexception("Could not retrieve cell-id", e);
@@ -236,7 +236,7 @@ public class SECellID implements LocationMsgProducer {
 
 	protected OutputStream rawDataLogger;
 	protected Thread processorThread;
-	protected LocationMsgReceiverList receiver;
+	protected LocationMsgReceiverList receiverList;
 	protected boolean closed = false;
 	private String message;
 	private RetrievePosition rp;
@@ -249,19 +249,19 @@ public class SECellID implements LocationMsgProducer {
 	private static boolean retrieving;
 	
 	public SECellID() {
-		this.receiver = new LocationMsgReceiverList();
+		this.receiverList = new LocationMsgReceiverList();
 	}
 
 	public boolean init(LocationMsgReceiver receiver) {
 		try {
-			this.receiver.addReceiver(receiver);
+			this.receiverList.addReceiver(receiver);
 			cellPos = new intTree();
 			lacidx = new intTree();
 			
 			if (obtainCurrentCellId() == null) {
 				//#debug info
 				logger.info("No valid cell-id, closing down");
-				this.receiver.locationDecoderEnd("No valid cell-id");
+				this.receiverList.locationDecoderEnd("No valid cell-id");
 				return false;
 			}
 			closed = false;
@@ -299,7 +299,7 @@ public class SECellID implements LocationMsgProducer {
 						if (dis.readByte() != CELLDB_VERSION) {
 							logger.error("Wrong version of CellDb, expected " + CELLDB_VERSION);
 							db.closeRecordStore();
-							this.receiver.locationDecoderEnd();
+							this.receiverList.locationDecoderEnd();
 							return false;
 						}
 						
@@ -334,7 +334,7 @@ public class SECellID implements LocationMsgProducer {
 		} catch (Exception e) {
 			logger.silentexception("Could not retrieve cell-id", e);
 		}
-		this.receiver.locationDecoderEnd("Can't use Cell-id for location");
+		this.receiverList.locationDecoderEnd("Can't use Cell-id for location");
 		return false;
 	}
 	
@@ -521,7 +521,7 @@ public class SECellID implements LocationMsgProducer {
 				logger.error("Request failed ("
 						+ connection.getResponseCode() + "): "
 						+ connection.getResponseMessage());
-				receiver.receiveSolution("NoFix");
+				receiverList.receiveSolution("NoFix");
 			}
 		} catch (SecurityException se) {
 			logger.silentexception(
@@ -691,7 +691,7 @@ public class SECellID implements LocationMsgProducer {
 		closed = true;
 		if (processorThread != null)
 			processorThread.interrupt();
-		receiver.locationDecoderEnd();
+		receiverList.locationDecoderEnd();
 	}
 
 	public void close(String message) {
@@ -714,12 +714,12 @@ public class SECellID implements LocationMsgProducer {
 		}
 	}
 
-	public void addLocationMsgReceiver(LocationMsgReceiver rec) {
-		receiver.addReceiver(rec);
+	public void addLocationMsgReceiver(LocationMsgReceiver receiver) {
+		receiverList.addReceiver(receiver);
 	}
 
-	public boolean removeLocationMsgReceiver(LocationMsgReceiver rec) {
-		return receiver.removeReceiver(rec);
+	public boolean removeLocationMsgReceiver(LocationMsgReceiver receiver) {
+		return receiverList.removeReceiver(receiver);
 	}
 
 }

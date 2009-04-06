@@ -34,14 +34,14 @@ public class LocationMsgReceiverList implements LocationMsgReceiver {
 	/**
 	 * Vector of all the LocationMsgReceivers
 	 */
-	private Vector receivers;
+	private Vector receiverList;
 
 	public LocationMsgReceiverList() {
-		receivers = new Vector(2);
+		receiverList = new Vector(2);
 	}
 
 	public void locationDecoderEnd() {
-		Enumeration en = receivers.elements();
+		Enumeration en = receiverList.elements();
 		LocationMsgReceiver receiver;
 		while (en.hasMoreElements()) {
 			receiver = (LocationMsgReceiver) en.nextElement();
@@ -50,7 +50,7 @@ public class LocationMsgReceiverList implements LocationMsgReceiver {
 	}
 
 	public void locationDecoderEnd(String msg) {
-		Enumeration en = receivers.elements();
+		Enumeration en = receiverList.elements();
 		LocationMsgReceiver receiver;
 		while (en.hasMoreElements()) {
 			receiver = (LocationMsgReceiver) en.nextElement();
@@ -59,7 +59,7 @@ public class LocationMsgReceiverList implements LocationMsgReceiver {
 	}
 
 	public void receiveMessage(String msg) {
-		Enumeration en = receivers.elements();
+		Enumeration en = receiverList.elements();
 		LocationMsgReceiver receiver;
 		while (en.hasMoreElements()) {
 			receiver = (LocationMsgReceiver) en.nextElement();
@@ -68,7 +68,7 @@ public class LocationMsgReceiverList implements LocationMsgReceiver {
 	}
 
 	public void receivePosition(Position pos) {
-		Enumeration en = receivers.elements();
+		Enumeration en = receiverList.elements();
 		LocationMsgReceiver receiver;
 		while (en.hasMoreElements()) {
 			receiver = (LocationMsgReceiver) en.nextElement();
@@ -77,7 +77,7 @@ public class LocationMsgReceiverList implements LocationMsgReceiver {
 	}
 
 	public void receiveSolution(String solution) {
-		Enumeration en = receivers.elements();
+		Enumeration en = receiverList.elements();
 		LocationMsgReceiver receiver;
 		while (en.hasMoreElements()) {
 			receiver = (LocationMsgReceiver) en.nextElement();
@@ -86,7 +86,7 @@ public class LocationMsgReceiverList implements LocationMsgReceiver {
 	}
 
 	public void receiveSatellites(Satelit[] sats) {
-		Enumeration en = receivers.elements();
+		Enumeration en = receiverList.elements();
 		LocationMsgReceiver receiver;
 		while (en.hasMoreElements()) {
 			receiver = (LocationMsgReceiver) en.nextElement();
@@ -95,7 +95,7 @@ public class LocationMsgReceiverList implements LocationMsgReceiver {
 	}
 
 	public void receiveStatistics(int[] statRecord, byte quality) {
-		Enumeration en = receivers.elements();
+		Enumeration en = receiverList.elements();
 		LocationMsgReceiver receiver;
 		while (en.hasMoreElements()) {
 			receiver = (LocationMsgReceiver) en.nextElement();
@@ -109,10 +109,10 @@ public class LocationMsgReceiverList implements LocationMsgReceiver {
 	 * @param rec
 	 *            LocationMsgReceiver to add
 	 */
-	public void addReceiver(LocationMsgReceiver rec) {
+	public void addReceiver(LocationMsgReceiver receiver) {
 		//#debug info
-		logger.info("Adding a location receiver to the list (" + rec + ")");
-		receivers.addElement(rec);
+		logger.info("Adding a location receiver to the list (" + receiver + ")");
+		receiverList.addElement(receiver);
 	}
 
 	/**
@@ -121,10 +121,10 @@ public class LocationMsgReceiverList implements LocationMsgReceiver {
 	 * @param rec
 	 *            LocationMsgReceiver to be removed
 	 */
-	public boolean removeReceiver(LocationMsgReceiver rec) {
+	public boolean removeReceiver(LocationMsgReceiver receiver) {
 		//#debug info
-		logger.info("Removing location receiver from the list (" + rec + ")");
+		logger.info("Removing location receiver from the list (" + receiver + ")");
 		// should be safe to remove the first occurrence
-		return receivers.removeElement(rec);
+		return receiverList.removeElement(receiver);
 	}
 }
