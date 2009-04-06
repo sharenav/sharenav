@@ -76,6 +76,8 @@ public class GuiSatellites extends KeyCommandCanvas implements CommandListener,
 		g.setColor(255, 50, 50);
 		g.drawArc(centerX - r, centerY - r, dia, dia, 0, 360);
 		if (mSatellites == null) {
+			g.setColor(0, 0, 0);
+			g.drawString("Satellites n/a", centerX, centerY - g.getFont().getHeight() / 2, Graphics.TOP|Graphics.HCENTER);
 			return;
 		}
 		for (byte i = 0; i < mSatellites.length; i++) {			
