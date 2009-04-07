@@ -280,7 +280,7 @@ Runnable , GpsMidDisplayable{
 
 	public Vector locationUpdateListeners;
 	
-	public Trace() throws Exception {
+	private Trace() throws Exception {
 		//#debug
 		logger.info("init Trace");
 		
@@ -371,7 +371,7 @@ Runnable , GpsMidDisplayable{
 	 * start a new instance.
 	 * @return
 	 */
-	public static Trace getInstance() {
+	public static synchronized Trace getInstance() {
 		if (traceInstance == null) {
 			try {
 				traceInstance = new Trace();
