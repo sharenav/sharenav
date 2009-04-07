@@ -76,7 +76,8 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 	}
 
 	public boolean init(LocationMsgReceiver receiver) {
-		this.receiverList.addReceiver(receiver);
+		if (receiver != null)
+			this.receiverList.addReceiver(receiver);
 		
 		//#debug info
 		logger.info("Connect to "+Configuration.getBtUrl());
@@ -351,7 +352,7 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 			if (Configuration.getCfgBitState(Configuration.CFGBIT_SND_CONNECT)) {
 				GpsMid.mNoiseMaker.playSound("CONNECT");
 			}
-			init(receiverList);
+			init(null);
 			return true;
 		}
 		if (!closed)
