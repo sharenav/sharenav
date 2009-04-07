@@ -540,11 +540,17 @@ Runnable , GpsMidDisplayable{
 		} else {
 			return;
 		}
-		while (locationProducer != null){
+		int polling = 0;
+		while ((locationProducer != null) && (polling < 7)){
+			polling++;
 			try {
 				wait(200);
 			} catch (InterruptedException e) {
+				break;
 			}
+		}
+		if (locationProducer != null) {
+			logger.error("LocationProducer took too long to close, giving up");
 		}
 	}
 
