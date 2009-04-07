@@ -30,7 +30,7 @@ public class GuiSetupSound extends Form implements CommandListener {
 
 	// commands
 	private static final Command CMD_SAVE = new Command("Ok", Command.ITEM, 2);
-	private static final Command CMD_CANCEL = new Command("Cancel", Command.CANCEL, 3);
+	private static final Command CMD_CANCEL = new Command("Cancel", Command.BACK, 3);
 	
 	// other
 	private GuiDiscover parent;
