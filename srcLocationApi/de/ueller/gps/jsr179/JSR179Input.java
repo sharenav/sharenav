@@ -62,7 +62,7 @@ public class JSR179Input implements LocationListener, LocationMsgProducer {
 		createLocationProvider();
 		// We may be able to get some additional information such as the number
 		// of satellites form the NMEA string
-		smsg = new NmeaMessage(receiver);
+		smsg = new NmeaMessage(receiverList);
 		return true;
 	}
 
