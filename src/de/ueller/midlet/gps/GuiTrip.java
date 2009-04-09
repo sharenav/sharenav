@@ -6,6 +6,8 @@ package de.ueller.midlet.gps;
  */
 
 import java.util.Calendar;
+import java.util.TimeZone;
+
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
@@ -122,15 +124,11 @@ public class GuiTrip extends KeyCommandCanvas implements CommandListener,
 		// or when the map position changed more than 10 km
 		if ((mSunCalc == null) ||
 			( 	mSunCalc != null
-				&&
-				Math.abs(
-						ProjMath.getDistance(	mParent.center.radlat,
-												mParent.center.radlon,
-												mSunCalc.getLatitude() * MoreMath.FAC_DECTORAD,
-												mSunCalc.getLongitude() * MoreMath.FAC_DECTORAD
-						)
-				) > 10000
-			)
+			 &&	Math.abs(ProjMath.getDistance(mParent.center.radlat,
+											  mParent.center.radlon,
+											  mSunCalc.getLatitude() * MoreMath.FAC_DECTORAD,
+											  mSunCalc.getLongitude() * MoreMath.FAC_DECTORAD
+				) ) > 10000)
 		) {
 			if (mSunCalc == null) {
 				mSunCalc = new SunCalc();
@@ -141,7 +139,12 @@ public class GuiTrip extends KeyCommandCanvas implements CommandListener,
 			mSunCalc.setYear( nowCal.get( Calendar.YEAR ) );
 			mSunCalc.setMonth( nowCal.get( Calendar.MONTH ) + 1 );
 			mSunCalc.setDay( nowCal.get( Calendar.DAY_OF_MONTH ) );
-			mSunCalc.setTimeZoneOffset( nowCal.getTimeZone().getRawOffset() / 3600000 );
+			// Sigh. Can this stuff be more complicated to use? I say no.
+			int tzone = nowCal.getTimeZone().getOffset(/*era=AD*/ 1, 
+					nowCal.get(Calendar.YEAR), nowCal.get(Calendar.MONTH), 
+					nowCal.get(Calendar.DAY_OF_MONTH),
+					nowCal.get(Calendar.DAY_OF_WEEK), /*ms in day*/ 0);
+			mSunCalc.setTimeZoneOffset( tzone / 3600000 );
 			mSunRiseset = mSunCalc.calcRiseSet( SunCalc.SUNRISE_SUNSET );
 			mLogger.info("SunCalc result: " + mSunCalc.toString());
 		}
