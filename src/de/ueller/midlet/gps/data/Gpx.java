@@ -1015,6 +1015,7 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		{
 			sb.append("<ele>").append(wayPt.ele).append("</ele>\r\n");			
 		}
+		// TODO: explain When will timeMillis of a wayPt be 0 ?
 		if (wayPt.timeMillis != 0)
 		{
 			dateStreamWayPt.setTime(wayPt.timeMillis);
