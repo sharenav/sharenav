@@ -33,7 +33,7 @@ public class GpxImportHandler implements XmlParserContentHandler {
 			GpxImportHandler.class, Logger.DEBUG);
 
 	private PositionMark wayPt;
-	private Position p = new Position(0, 0, 0, 0, 0, 0, new Date());
+	private Position p = new Position(0, 0, 0, 0, 0, 0, System.currentTimeMillis());
 	private boolean name = false;
 	private boolean ele = false;
 	private boolean time = false;

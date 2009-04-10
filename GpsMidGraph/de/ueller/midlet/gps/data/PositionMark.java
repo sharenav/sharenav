@@ -31,8 +31,8 @@ public class PositionMark extends PersistEntity {
 	public float lon;
 	/** Elevation above mean sea level in meters */
 	public int ele;
-	/** Timestamp when this position mark was created. */
-	public Date timestamp;
+	/** currentTimeMillis() when this position mark was created. */
+	public long timeMillis;
 	/** The type of GPS fix when this position mark was created. */
 	public byte fix;
 	/** The number of satellites in use when this position mark was created. */
@@ -50,19 +50,19 @@ public class PositionMark extends PersistEntity {
 		this.lat = lat;
 		this.lon = lon;
 		this.ele = INVALID_ELEVATION;
-		this.timestamp = new Date();
+		this.timeMillis = System.currentTimeMillis();
 		this.fix = -1;
 		this.sats = -1;
 		this.sym = -1;
 		this.type = -1;
 	}
 
-	public PositionMark(float lat, float lon, int ele, Date timestamp,
+	public PositionMark(float lat, float lon, int ele, long timeMillis,
 						byte fix, byte sats, byte sym, byte type) {
 		this.lat = lat;
 		this.lon = lon;
 		this.ele = ele;
-		this.timestamp = timestamp;
+		this.timeMillis = timeMillis;
 		this.fix = fix;
 		this.sats = sats;
 		this.sym = sym;
@@ -79,7 +79,7 @@ public class PositionMark extends PersistEntity {
 			lat = ds.readFloat();
 			lon = ds.readFloat();
 			ele = ds.readInt();
-			timestamp = new Date(ds.readLong());
+			timeMillis = ds.readLong();
 			fix = ds.readByte();
 			sats = ds.readByte();
 			sym = ds.readByte();
@@ -96,7 +96,7 @@ public class PositionMark extends PersistEntity {
 				// zl was never used.
 				int dummy = ds.readByte();
 				ele = INVALID_ELEVATION;
-				timestamp = new Date();
+				timeMillis = System.currentTimeMillis();
 				fix = -1;
 				sats = -1;
 				sym = -1;
@@ -130,7 +130,7 @@ public class PositionMark extends PersistEntity {
 			ds.writeFloat(lat);
 			ds.writeFloat(lon);
 			ds.writeInt(ele);
-			ds.writeLong(timestamp.getTime());
+			ds.writeLong(timeMillis);
 			ds.writeByte(fix);
 			ds.writeByte(sats);
 			ds.writeByte(sym);

@@ -26,7 +26,6 @@ public class SirfMessage {
 	Position				pold;
 
 	public int				length		= 0;
-	Date date=new Date();
 
 	private final LocationMsgReceiver	receiver;
 	//#debug
@@ -180,7 +179,7 @@ public class SirfMessage {
 
 		// TODO: Is HDOP available here as well?
 		Position p = new Position((float) lat, (float) lon, (float) altMSL, (float) sog, 
-								(float) course, valid, date/*cal.getTime()*/);
+								(float) course, valid, System.currentTimeMillis());
 		receiver.receivePosition(p);
 		pold = p;
 		return null;

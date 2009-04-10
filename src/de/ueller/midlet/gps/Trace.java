@@ -146,7 +146,7 @@ Runnable , GpsMidDisplayable{
 	public boolean gpsRecenter = true;
 	
 	private Position pos = new Position(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1,
-			new Date());
+			System.currentTimeMillis());
 
 	/**
 	 * this node contains actually RAD coordinates
@@ -719,7 +719,7 @@ Runnable , GpsMidDisplayable{
 						guiWaypointSave.setData(new PositionMark(
 								pos.latitude * MoreMath.FAC_DECTORAD, 
 								pos.longitude * MoreMath.FAC_DECTORAD, 
-								(int)pos.altitude, pos.date,	
+								(int)pos.altitude, pos.timeMillis,	
 								/* fix */ (byte)-1, /* sats */ (byte)-1, 
 								/* sym */ (byte)-1, /* type */ (byte)-1));
 					} else {
@@ -727,7 +727,7 @@ Runnable , GpsMidDisplayable{
 						// -> it does not make sense to add elevation and GPS fix info.
 						guiWaypointSave.setData(new PositionMark(center.radlat, 
 								center.radlon, PositionMark.INVALID_ELEVATION,
-								pos.date, /* fix */ (byte)-1, 
+								pos.timeMillis, /* fix */ (byte)-1, 
 								/* sats */ (byte)-1, /* sym */ (byte)-1, 
 								/* type */ (byte)-1));
 					}

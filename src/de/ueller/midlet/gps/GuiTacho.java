@@ -6,6 +6,7 @@ package de.ueller.midlet.gps;
  */
 
 import java.util.Calendar;
+import java.util.Date;
 
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
@@ -29,6 +30,7 @@ public class GuiTacho extends KeyCommandCanvas implements CommandListener,
 	private LcdNumericFont lcdFont;
 
 	private Calendar cal = Calendar.getInstance();
+	private Date date = new Date();
 	private StringBuffer timeString;
 
 	private float alt_delta = 0.0f;
@@ -90,7 +92,9 @@ public class GuiTacho extends KeyCommandCanvas implements CommandListener,
 		g.setColor(0);
 		int y = 0;
 		
-		cal.setTime(pos.date);
+		date.setTime(pos.timeMillis);	// set Date to milliSecs since 01-Jan-1970
+		cal.setTime(date);				// set Calendar to Date
+		
 		timeString.setLength(0);
 		timeString
 				.append(HelperRoutines.formatInt2(cal

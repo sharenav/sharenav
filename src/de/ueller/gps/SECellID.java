@@ -219,7 +219,7 @@ public class SECellID implements LocationMsgProducer {
 					logger.info("Obtained a position from " + loc);
 					receiverList.receiveSolution("Cell");
 					receiverList.receivePosition(new Position(loc.lat, loc.lon, 0, 0, 0, 0,
-							new Date()));
+							System.currentTimeMillis()));
 				} else {
 					receiverList.receiveSolution("NoFix");
 				} 

@@ -45,8 +45,7 @@ public class JSR179Input implements LocationListener, LocationMsgProducer {
 	private LocationProvider locationProvider = null;
 	private LocationMsgReceiverList receiverList;
 	private NmeaMessage smsg;
-	Date date = new Date();
-	Position pos = new Position(0f, 0f, 0f, 0f, 0f, 0, date);
+	Position pos = new Position(0f, 0f, 0f, 0f, 0f, 0, System.currentTimeMillis());
 
 	private OutputStream rawDataLogger;
 
@@ -115,7 +114,7 @@ public class JSR179Input implements LocationListener, LocationMsgProducer {
 		pos.altitude = (float) coordinates.getAltitude();
 		pos.course = location.getCourse();
 		pos.speed = location.getSpeed();
-		pos.date.setTime(location.getTimestamp());
+		pos.timeMillis = location.getTimestamp();
 		receiverList.receivePosition(pos);
 		String nmeaString = location
 				.getExtraInfo("application/X-jsr179-location-nmea");

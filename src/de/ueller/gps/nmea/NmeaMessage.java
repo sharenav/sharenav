@@ -72,8 +72,9 @@ public class NmeaMessage {
 	private int qual;
 	private boolean lastMsgGSV=false;
 	private Satelit satellites[] = new Satelit[12];
+	public Date dateDecode = new Date();
 	private Position pos = new Position(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1,
-			new Date());
+			System.currentTimeMillis());
 	private Calendar cal = Calendar.getInstance();
 	public NmeaMessage(LocationMsgReceiver receiver) {
 		this.receiver = receiver;
@@ -167,7 +168,11 @@ public class NmeaMessage {
 				cal.set(Calendar.DAY_OF_MONTH, (date_tmp / 10000) % 100);				
 			    //Magnetic Variation
 				pos.latitude = lat; pos.longitude = lon; pos.altitude = alt; pos.speed = speed; pos.course = head;
-				pos.pdop = pdop; pos.mode = 0; pos.date = cal.getTime();
+				pos.pdop = pdop; pos.mode = 0;
+				
+				dateDecode = cal.getTime();				// get Date from Calendar
+				pos.timeMillis = dateDecode.getTime();	// get milliSecs since 01-Jan-1970 from Date
+				
 				receiver.receivePosition(pos);
 				if (this.qual > 1) {
 					receiver.receiveSolution("D" + mAllSatellites + "S");

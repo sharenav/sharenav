@@ -35,7 +35,8 @@ public class Position {
 	public float course;
 	public float pdop = 0.0f;
 	public int mode = -1;
-	public Date date;
+	/** currentTimeMillis() of this position. */
+	public long timeMillis;
 
 	public Position(Position pos) {
 		this.latitude = pos.latitude;
@@ -44,18 +45,18 @@ public class Position {
 		this.speed = pos.speed;
 		this.course = pos.course;
 		this.mode = pos.mode;
-		this.date = pos.date;
+		this.timeMillis = pos.timeMillis;
 	}
 
 	public Position(float latitude, float longitude, float altitude,
-			float speed, float course, int mode, Date date) {
+			float speed, float course, int mode, long timeMillis) {
 		this.latitude = latitude;
 		this.longitude = longitude;
 		this.altitude = altitude;
 		this.speed = speed;
 		this.course = course;
 		this.mode = mode;
-		this.date = date;
+		this.timeMillis = timeMillis;
 	}
 
 	public Position(String latitude, String longitude, String altitude,

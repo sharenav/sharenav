@@ -68,6 +68,8 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 	private String url = null;
 	private String waypointsSaveFileName = null;
 	
+	private Date dateStreamWayPt = new Date();
+	
 	private boolean sendWpt;
 	private boolean sendTrk;
 	private boolean reloadWpt;
@@ -307,7 +309,7 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		//#debug debug
 		logger.debug("Adding trackpoint: " + trkpt);
 		
-		long msTime = trkpt.date.getTime();
+		long msTime = trkpt.timeMillis;
 		float lat = trkpt.latitude * MoreMath.FAC_DECTORAD;
 		float lon = trkpt.longitude * MoreMath.FAC_DECTORAD;
 		float distance = 0.0f;
@@ -380,7 +382,7 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 				dos.writeFloat(trkpt.latitude);
 				dos.writeFloat(trkpt.longitude);
 				dos.writeShort((short)trkpt.altitude);
-				dos.writeLong(trkpt.date.getTime());
+				dos.writeLong(trkpt.timeMillis);
 				dos.writeByte((byte)(trkpt.speed*3.6f)); //Convert to km/h
 				recorded++;
 				trackTile.addTrkPt(trkpt.latitude, trkpt.longitude, false);
@@ -1013,9 +1015,10 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		{
 			sb.append("<ele>").append(wayPt.ele).append("</ele>\r\n");			
 		}
-		if (wayPt.timestamp.getTime() != 0)
+		if (wayPt.timeMillis != 0)
 		{
-			sb.append("<time>").append(formatUTC(wayPt.timestamp)).append("</time>\r\n");			
+			dateStreamWayPt.setTime(wayPt.timeMillis);
+			sb.append("<time>").append(formatUTC(dateStreamWayPt)).append("</time>\r\n");			
 		}
 		// fix and sats are not filled yet so we don't export them either.
 		// sym and type are not exported yet but they could be mapped to strings.
