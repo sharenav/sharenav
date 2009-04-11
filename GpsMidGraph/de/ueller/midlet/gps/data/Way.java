@@ -702,7 +702,7 @@ public class Way extends Entity{
 								pc.actualSingleTile = t;
 						}
 						// if this routable way is closer including penalty than the old one set it as new actualRoutableWay
-						if (dst < pc.squareDstToActualRoutableWay + pen && wayDesc.routable) {
+						if (dst + pen < pc.squareDstToActualRoutableWay && wayDesc.routable) {
 							pc.squareDstToActualRoutableWay = dst + pen;
 							pc.actualRoutableWay = this;							
 						}
