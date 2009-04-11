@@ -355,11 +355,17 @@ public class ImageCollector implements Runnable {
 
 		String name = null;
 		Way wayForName = null;
-		// show closest routable way name if map is geprecentered
-		if (paintPC.trace.gpsRecenter) {
+		/** used to check for pixel distances because checking for meters from converted pixels
+		 *  requires to be exactly on the pixel when zoomed out far
+		 */
+		final int SQUARE_MAXPIXELS = 5 * 5;
+		// show closest routable way name if map is gpsrecentered and we are closer than SQUARE_MAXPIXELS or 50 m (including penalty) to it
+		if (paintPC.trace.gpsRecenter &&
+			(paintPC.squareDstToWay < SQUARE_MAXPIXELS || paintPC.getDstFromSquareDst(paintPC.squareDstToActualRoutableWay) < 50)
+		) {
 			wayForName = paintPC.actualRoutableWay;
-		} else {
-			// else show closest way name
+		// else show closest way name if it's no more than SQUARE_MAXPIXELS or 200 m away
+		} else if (paintPC.squareDstToWay < SQUARE_MAXPIXELS || paintPC.getDstFromSquareDst(paintPC.squareDstToWay) < 200) {
 			wayForName = paintPC.actualWay;
 		}
 		/*
@@ -388,8 +394,13 @@ public class ImageCollector implements Runnable {
 				name = name + maxspeed;
 			}
 		}
-		// use the nearest (including penalty) routable way for the the speed limit detection
-		tr.actualSpeedLimitWay = paintPC.actualRoutableWay;
+		// use the nearest routable way for the the speed limit detection if it's closer than 50 m or SQUARE_MAXPIXELS including penalty
+		if (paintPC.squareDstToActualRoutableWay < SQUARE_MAXPIXELS || paintPC.getDstFromSquareDst(paintPC.squareDstToActualRoutableWay) < 50) {
+			tr.actualSpeedLimitWay = paintPC.actualRoutableWay;
+		} else {
+			tr.actualSpeedLimitWay = null;			
+		}
+
 		if (paintPC.nearestRoutableWay != null){
 			tr.source=paintPC.currentPos;
 		}
