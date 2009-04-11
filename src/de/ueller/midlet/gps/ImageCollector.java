@@ -140,7 +140,7 @@ public class ImageCollector implements Runnable {
 //				createPC.g.drawRect(20, 20, xSize-41, ySize-41);
 				createPC.squareDstToWay = Float.MAX_VALUE;
 				createPC.squareDstToActualRoutableWay = Float.MAX_VALUE;
-				createPC.squareDstToRoutableWay = Float.MAX_VALUE;
+				createPC.squareDstWithPenToRoutePath = Float.MAX_VALUE;
 				createPC.squareDstToRoutePath = Float.MAX_VALUE;
 				createPC.target = nextSc.target;
 				createPC.course = nextSc.course;
@@ -400,7 +400,7 @@ public class ImageCollector implements Runnable {
 			tr.actualSpeedLimitWay = null;			
 		}
 
-		if (paintPC.nearestRoutableWay != null){
+		if (paintPC.actualRoutableWay != null){
 			tr.source=paintPC.currentPos;
 		}
 		if(statusFontHeight==0) {

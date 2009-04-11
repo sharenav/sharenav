@@ -1477,14 +1477,14 @@ Runnable , GpsMidDisplayable{
 		Node nru=new Node(pm.lat + 0.0001f,pm.lon + 0.0005f,true);
 		pc.searchLD=nld;
 		pc.searchRU=nru;
-		pc.squareDstToRoutableWay = Float.MAX_VALUE;
+		pc.squareDstToActualRoutableWay = Float.MAX_VALUE;
 		pc.xSize = 100;
 		pc.ySize = 100;
 		pc.setP(new Proj2D(new Node(pm.lat,pm.lon, true),5000,100,100));
 		for (int i=0; i<4; i++){
 			t[i].walk(pc, Tile.OPT_WAIT_FOR_LOAD | Tile.OPT_FIND_CURRENT);
 		}
-		Way w = pc.nearestRoutableWay;
+		Way w = pc.actualRoutableWay;
 		pm.setEntity(w, pc.currentPos.nodeLat, pc.currentPos.nodeLon);
 	}
 	
