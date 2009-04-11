@@ -201,18 +201,11 @@ public class ImageCollector implements Runnable {
 						 * when not gps recentered, this info will be by one image obsolete however
 						 */ 
 						if (layersToRender[layer] == (0 | Tile.LAYER_HIGHLIGHT)) {
-							if (createPC.squareDstToRoutePath != Float.MAX_VALUE) {
-								Node n1 = new Node();
-								Node n2 = new Node();
-								createPC.getP().inverse(0, 0, n1);
-								createPC.getP().inverse( (int) Math.sqrt(createPC.squareDstToRoutePath), 0, n2);
-								RouteInstructions.dstToRoutePath = (int) ProjMath.getDistance(n1, n2);
+							RouteInstructions.dstToRoutePath = createPC.getDstFromSquareDst(createPC.squareDstToRoutePath);
+							if (RouteInstructions.dstToRoutePath != Integer.MAX_VALUE) {
 								RouteInstructions.routePathConnection = createPC.routePathConnection;
 								RouteInstructions.pathIdxInRoutePathConnection = createPC.pathIdxInRoutePathConnection;
-							} else {
-								RouteInstructions.dstToRoutePath = Integer.MAX_VALUE;
-							}							
-
+							}
 						}
 						byte relLayer = (byte)(((int)layersToRender[layer]) & 0x0000000F);
 						if ( (createPC.hlLayers & (1 << relLayer)) == 0) {

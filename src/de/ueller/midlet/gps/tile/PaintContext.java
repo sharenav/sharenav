@@ -17,7 +17,9 @@ import de.ueller.gpsMid.mapData.SingleTile;
 import de.ueller.midlet.gps.ScreenContext;
 import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.data.IntPoint;
+import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.PositionMark;
+import de.ueller.midlet.gps.data.ProjMath;
 import de.ueller.midlet.gps.data.Way;
 
 //TODO: explain - short overview what the PaintContext does - it seems like it has nothing to do with painting but routing - perhaps the name should be changed
@@ -143,6 +145,22 @@ public class PaintContext extends ScreenContext {
 		trace=tr;
 		state=STATE_READY;
 		// TODO Auto-generated constructor stub
+	}
+	
+	/**
+	 * @param squareDst - square of distance in this PaintContext
+	 * @return distance in meters 
+	 */
+	public int getDstFromSquareDst(float squareDst) {
+		if (squareDst != Float.MAX_VALUE) {
+			Node n1 = new Node();
+			Node n2 = new Node();
+			getP().inverse(0, 0, n1);
+			getP().inverse( (int) Math.sqrt(squareDst), 0, n2);
+			return (int) ProjMath.getDistance(n1, n2);
+		} else {
+			return Integer.MAX_VALUE;
+		}
 	}
 	
 //	public String boundToString(){
