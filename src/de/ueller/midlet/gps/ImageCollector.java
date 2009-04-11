@@ -142,7 +142,6 @@ public class ImageCollector implements Runnable {
 				createPC.squareDstToActualRoutableWay = Float.MAX_VALUE;
 				createPC.squareDstToRoutableWay = Float.MAX_VALUE;
 				createPC.squareDstToRoutePath = Float.MAX_VALUE;
-				createPC.dstToRoutePath = Integer.MAX_VALUE;
 				createPC.target = nextSc.target;
 				createPC.course = nextSc.course;
 				// System.out.println("create " + pcCollect);
