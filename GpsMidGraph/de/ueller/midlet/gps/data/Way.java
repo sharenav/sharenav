@@ -681,7 +681,8 @@ public class Way extends Entity{
 					float dst = MoreMath.ptSegDistSq(lineP1.x, lineP1.y,
 							lineP2.x, lineP2.y, pc.xSize / 2, pc.ySize / 2);
 					
-					if (dst < pc.squareDstToWay) {
+					if (dst < pc.squareDstToWay || dst < pc.squareDstToActualRoutableWay) { 
+						float pen = 0;
 						/**
 						 * Add a heuristic so that the direction of travel and the direction
 						 * of the way should more or less match if we are travelling on this way
@@ -691,17 +692,19 @@ public class Way extends Entity{
 							int segDirVecY = lineP1.y-lineP2.y;
 							float norm = (float) Math.sqrt((double)(segDirVecX*segDirVecX + segDirVecY*segDirVecY));
 							//This is a hack to use a linear approximation to keep computational requirements down
-							float pen = scalePen*(1.0f - Math.abs((segDirVecX*courseVecX + segDirVecY*courseVecY)/norm));
+							pen = scalePen*(1.0f - Math.abs((segDirVecX*courseVecX + segDirVecY*courseVecY)/norm));
 							pen*=pen;
-							if (dst + pen < pc.squareDstToWay) {
+						}
+						// if this way is closer including penalty than the old one set it as new actualWay
+						if (dst + pen < pc.squareDstToWay) {
 								pc.squareDstToWay = dst + pen;
 								pc.actualWay = this;
 								pc.actualSingleTile = t;
-							}
-						} else {
-							pc.squareDstToWay = dst;
-							pc.actualWay = this;
-							pc.actualSingleTile = t;
+						}
+						// if this routable way is closer including penalty than the old one set it as new actualRoutableWay
+						if (dst < pc.squareDstToActualRoutableWay + pen && wayDesc.routable) {
+							pc.squareDstToActualRoutableWay = dst + pen;
+							pc.actualRoutableWay = this;							
 						}
 					}
 					if (dst < pc.squareDstToRoutableWay && wayDesc.routable) {

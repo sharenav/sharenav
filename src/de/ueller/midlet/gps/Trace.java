@@ -194,7 +194,7 @@ Runnable , GpsMidDisplayable{
 	
 	public volatile boolean routeCalc=false;
 	public Tile t[] = new Tile[6];
-	public Way actualWay;
+	public Way actualSpeedLimitWay;
 	PositionMark source;
 
 	// this is only for visual debugging of the routing engine
@@ -1166,8 +1166,8 @@ Runnable , GpsMidDisplayable{
 			// determine if we are currently speeding
 			speeding = false;
 			int maxSpeed = 0;
-			if (actualWay != null) {
-				maxSpeed = actualWay.getMaxSpeed();
+			if (actualSpeedLimitWay != null) {
+				maxSpeed = actualSpeedLimitWay.getMaxSpeed();
 				if (maxSpeed != 0 && speed > (maxSpeed + Configuration.getSpeedTolerance()) ) {
 					speeding = true;
 				}

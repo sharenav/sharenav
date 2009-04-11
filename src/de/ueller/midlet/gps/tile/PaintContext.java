@@ -72,6 +72,9 @@ public class PaintContext extends ScreenContext {
 	 * of projection. 
 	 */
 	public volatile Way actualWay=null;
+	/** nearest routable way taking penalty into account */ 
+	public volatile Way actualRoutableWay=null;
+	/** nearest routable way */ 
 	public volatile Way nearestRoutableWay=null;
 	public volatile SingleTile actualSingleTile = null;
 	
@@ -113,6 +116,8 @@ public class PaintContext extends ScreenContext {
 	
 	/** the square of distance from center to the nearest point of actualWay */
 	public float squareDstToWay;
+	/** the square of distance from center to the nearest point of actualRoutableWay */
+	public float squareDstToActualRoutableWay;
 	/** the square of distance from center to the nearest point of nearestRoutableWay */
 	public float squareDstToRoutableWay;
 	/** the square of distance from center to the nearest point of the route solution path (=route line)*/

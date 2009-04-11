@@ -139,6 +139,7 @@ public class ImageCollector implements Runnable {
 //				createPC.g.drawRect(0, 0, xSize-1, ySize-1);
 //				createPC.g.drawRect(20, 20, xSize-41, ySize-41);
 				createPC.squareDstToWay = Float.MAX_VALUE;
+				createPC.squareDstToActualRoutableWay = Float.MAX_VALUE;
 				createPC.squareDstToRoutableWay = Float.MAX_VALUE;
 				createPC.squareDstToRoutePath = Float.MAX_VALUE;
 				createPC.dstToRoutePath = Integer.MAX_VALUE;
@@ -360,6 +361,14 @@ public class ImageCollector implements Runnable {
 		} 
 
 		String name = null;
+		Way wayForName = null;
+		// show closest routable way name if map is geprecentered
+		if (paintPC.trace.gpsRecenter) {
+			wayForName = paintPC.actualRoutableWay;
+		} else {
+			// else show closest way name
+			wayForName = paintPC.actualWay;
+		}
 		/*
 		 * As we are double buffering pc, nothing should be writing to paintPC
 		 * therefore it should be safe to access the volatile variable actualWay 
@@ -367,15 +376,17 @@ public class ImageCollector implements Runnable {
 		if (paintPC.actualWay != null){
 			screenPc.actualWay = paintPC.actualWay;
 			screenPc.actualSingleTile = paintPC.actualSingleTile;
+		}
+		if (wayForName != null){		
 			String maxspeed="";
-			if (paintPC.actualWay.getMaxSpeed() != 0){
-				maxspeed=" SL:" + pc[nextPaint].actualWay.getMaxSpeed();
+			if (wayForName.getMaxSpeed() != 0){
+				maxspeed=" SL:" + wayForName.getMaxSpeed();
 			}
 
-			if (paintPC.actualWay.nameIdx != -1) {
-				name=screenPc.trace.getName(paintPC.actualWay.nameIdx);
+			if (wayForName.nameIdx != -1) {
+				name=screenPc.trace.getName(wayForName.nameIdx);
 			} else {
-				WayDescription wayDesc = C.getWayDescription(paintPC.actualWay.type);
+				WayDescription wayDesc = C.getWayDescription(wayForName.type);
 				name = "(unnamed " + wayDesc.description + ")";
 			}
 			if (name == null){
@@ -383,8 +394,9 @@ public class ImageCollector implements Runnable {
 			} else {
 				name = name + maxspeed;
 			}
-			tr.actualWay = pc[nextPaint].actualWay;
 		}
+		// use the nearest (including penalty) routable way for the the speed limit detection
+		tr.actualSpeedLimitWay = paintPC.actualRoutableWay;
 		if (paintPC.nearestRoutableWay != null){
 			tr.source=paintPC.currentPos;
 		}
