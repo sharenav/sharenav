@@ -18,11 +18,9 @@ public class Connection {
 	public RouteNode to;
 	// only for debuging
 	public RouteNode from;
-	public int used=0;
 	public boolean oneWay=false;
 	public byte startBearing=0;
 	public byte endBearing=0;
-	public short nameIdx; 
 	
 	public Connection(RouteNode to, int dist, int time, byte bs, byte be, Way w) {
 		super();
@@ -31,7 +29,6 @@ public class Connection {
 		this.time = time;
 		startBearing=bs;
 		endBearing=be;
-//		nameIdx=w.getName();
 	}
 	public String printTurn(Connection last) {
 		long cost;
