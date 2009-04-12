@@ -58,6 +58,10 @@ GpsMid 0.4.55
          to a directory in the log folder specified in the location receiver setup
        - Code now supports multiple LocationMsgReceivers for one LocationMsgProducer (thx black_ivory)
        *** Map ***
+       - Show name of closest routable way in status bar: If the closest routable way is not too far away
+         when the map is centered to GPS show its label instead of any way's label (this avoids that
+         you see e.g. names of rivers or city borders when the GPS signal is not exact enough)
+       - Stop showing closest way name in status bar if you are too far away       
        - Added "Name Check" feature to Overview/Filter Map,
          this can be used to show only unnamed/named or ways/areas/POIs containing a certain string in the map
        - Place labels (city, town, village, hamlet, suburb) can now be hidden using the Map Features dialog 
