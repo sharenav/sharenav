@@ -64,4 +64,13 @@ public class Bounds   implements Cloneable{
 		public String toString(){
 			return "[Bound ("+minLat+","+minLon+") ("+ maxLat+","+maxLon+") lat="+(int)((maxLat-minLat)*Tile.fpm)+" lon="+(int)(MyMath.degToRad(maxLon-minLon)*Tile.fpm)+"]";
 		}
+
+		public String toPropertyString(int regionNr){
+			return	"region." + regionNr + ".lat.min = " + minLat + "\r\n" +
+					"region." + regionNr + ".lon.min = " + minLon + "\r\n" +
+					"region." + regionNr + ".lat.max = " + maxLat + "\r\n" +
+					"region." + regionNr + ".lon.max = " + maxLon + "\r\n";
+		}
+
+
 }
