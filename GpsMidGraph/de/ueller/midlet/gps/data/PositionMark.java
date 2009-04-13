@@ -15,7 +15,7 @@ import java.util.Date;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.tile.C;
 
-
+/** TODO: Explain: Difference between PositionMark and Position */
 public class PositionMark extends PersistEntity {
 	private final static Logger logger = Logger.getInstance(PositionMark.class, Logger.DEBUG);
 	

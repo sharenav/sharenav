@@ -66,7 +66,12 @@ public class NmeaMessage {
 	protected static final Logger logger = Logger.getInstance(NmeaMessage.class,Logger.TRACE);
 	public StringBuffer buffer=new StringBuffer(80);
 	private static String spChar=",";
-	private float head,speed,alt,pdop;
+
+	/** head holds track course(angle) in DEC */
+	private float head;
+	/** speed in m/s (converted from knots) */
+	private float speed;
+	private float alt,pdop;
 	private final LocationMsgReceiver receiver;
 	private int mAllSatellites;
 	private int qual;

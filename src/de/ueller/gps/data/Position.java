@@ -19,6 +19,7 @@ import java.util.Date;
 
 import de.ueller.midlet.gps.Logger;
 
+/** TODO: Explain: Difference between PositionMark and Position */
 public class Position {
 	private static final Logger logger = Logger.getInstance(
 			Position.class, Logger.TRACE);
@@ -32,6 +33,12 @@ public class Position {
 	 * Speed over ground in m/s
 	 */
 	public float speed;
+	/**
+	 * Course in DEC (360°)
+	 * Normally filled with Info direcly from NMEA-Head
+	 * TODO: Explain: source of this value: calculated course between actual 
+	 * and last point or course while saving actual point??
+	 */
 	public float course;
 	public float pdop = 0.0f;
 	public int mode = -1;
