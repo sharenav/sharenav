@@ -679,9 +679,9 @@ public class Way extends Entity{
 					 * calculate closest distance to specific ways
 					 */
 					float dst = MoreMath.ptSegDistSq(lineP1.x, lineP1.y,
-							lineP2.x, lineP2.y, pc.xSize / 2, pc.ySize / 2);
+							lineP2.x, lineP2.y, pc.xSize / 2, pc.ySize / 2);					
 					
-					if (dst < pc.squareDstToWay || dst < pc.squareDstToActualRoutableWay) { 
+					if (dst < pc.squareDstToWay || dst < pc.squareDstToActualRoutableWay || dst < pc.squareDstToRoutePath) { 
 						float pen = 0;
 						/**
 						 * Add a heuristic so that the direction of travel and the direction
@@ -695,26 +695,27 @@ public class Way extends Entity{
 							pen = scalePen*(1.0f - Math.abs((segDirVecX*courseVecX + segDirVecY*courseVecY)/norm));
 							pen*=pen;
 						}
+						float dstWithPen = dst + pen;
 						// if this way is closer including penalty than the old one set it as new actualWay
-						if (dst + pen < pc.squareDstToWay) {
+						if (dstWithPen < pc.squareDstToWay) {
 								pc.squareDstToWay = dst + pen;
 								pc.actualWay = this;
 								pc.actualSingleTile = t;
 						}
-						// if this routable way is closer including penalty than the old one set it as new actualRoutableWay
-						if (dst + pen < pc.squareDstToActualRoutableWay && wayDesc.routable) {
-							pc.squareDstToActualRoutableWay = dst + pen;
-							pc.actualRoutableWay = this;							
+						if (wayDesc.routable) {
+							// if this routable way is closer including penalty than the old one set it as new actualRoutableWay
+							if (dstWithPen < pc.squareDstToActualRoutableWay && wayDesc.routable) {
+								pc.squareDstToActualRoutableWay = dst + pen;
+								pc.actualRoutableWay = this;
+							}
+							// if this is a highlighted path seg and it's closer than the old one including penalty set it as new one 
+							if ((hl[i1-1] > PATHSEG_DO_NOT_HIGHLIGHT) && (dstWithPen < pc.squareDstWithPenToRoutePath)) {
+								pc.squareDstWithPenToRoutePath = dst + pen;
+								pc.squareDstToRoutePath = dst;
+								pc.routePathConnection = hl[i1-1];
+								pc.pathIdxInRoutePathConnection = pi;
+							}
 						}
-					}
-					if (dst < pc.squareDstToRoutableWay && wayDesc.routable) {
-						pc.squareDstToRoutableWay = dst;
-						pc.nearestRoutableWay = this;
-					}
-					if ((hl[i1-1] > PATHSEG_DO_NOT_HIGHLIGHT) && (dst < pc.squareDstToRoutePath)) {
-						pc.squareDstToRoutePath = dst;
-						pc.routePathConnection = hl[i1-1];
-						pc.pathIdxInRoutePathConnection = pi;
 					}
 					x[pi] = lineP2.x;
 					y[pi++] = lineP2.y;
@@ -745,9 +746,9 @@ public class Way extends Entity{
 		
 		/**
 		 * TODO: Can we remove this call and do it the same way as with actualWay and introduce a
-		 * pc.nearestRoutableWaySingleTile and only calculate the entity and position mark when we need them?
+		 * pc.actualRoutableWaySingleTile and only calculate the entity and position mark when we need them?
 		 */
-		if ((pc.nearestRoutableWay == this) && ((pc.currentPos == null) || (pc.currentPos.entity != this))) {
+		if ((pc.actualRoutableWay == this) && ((pc.currentPos == null) || (pc.currentPos.entity != this))) {
 			pc.currentPos = new PositionMark(pc.center.radlat, pc.center.radlon);
 			pc.currentPos.setEntity(this, getNodesLatLon(t, true), getNodesLatLon(t, false));
 		}
