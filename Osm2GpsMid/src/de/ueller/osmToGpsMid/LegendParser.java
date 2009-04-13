@@ -320,6 +320,11 @@ public class LegendParser extends DefaultHandler{
 					currentWay.key = currentKey;
 					currentWay.value = atts.getValue("name");
 					currentWay.hideable = true;
+					/*
+					 *  assign a small default speed for the case that the way becomes accessible for routing by a RouteAccessRestriction
+					 *  but the way description itself in the style file contains no routing information 
+					 */ 
+					currentWay.typicalSpeed = 5; 
 					Set<EntityDescription> wayDescs = keyValuesWay.get(currentWay.value);
 					if (wayDescs == null)
 						wayDescs = new HashSet<EntityDescription>();
@@ -470,7 +475,8 @@ public class LegendParser extends DefaultHandler{
 							new RouteAccessRestriction(
 									currentRestrictionFor,
 									atts.getValue("restrictionKey"),
-									atts.getValue("restrictionValues") + "|"
+									atts.getValue("restrictionValues") + "|",
+									Configuration.attrToBoolean(atts.getValue("restrictionPermit")) > 0
 							)
 					);
 				}

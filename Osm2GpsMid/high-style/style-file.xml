@@ -813,7 +813,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<lineColor color = "00809BC0" />
   				<wayWidth width="8" />
   				<routing with="motorcar" accessible="true" speed="120" />  	
-  				<routing with="bicycle" accessible="false" speed="0" />  	
+  				<routing with="bicycle" accessible="false" speed="5" />  	
   			</Wvalue>
   			<Wvalue name = "motorway_link" priority = "10">
   				<description desc = "motorway link"/>
@@ -824,7 +824,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<lineColor color = "00809BC0" />
   				<wayWidth width="8" />
   				<routing with="motorcar" accessible="true" speed="60" />  	
-  				<routing with="bicycle" accessible="false" speed="0" />
+  				<routing with="bicycle" accessible="false" speed="5" />
   			</Wvalue>
   			<Wvalue name = "trunk" priority = "10">
   				<description desc = "trunk"/>
@@ -835,7 +835,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<lineColor color = "007FC97F" />
   				<wayWidth width="6" />
   				<routing with="motorcar" accessible="true" speed="100" />
-  				<routing with="bicycle" accessible="false" speed="0" />
+  				<routing with="bicycle" accessible="false" speed="5" />
   			</Wvalue>
   			<Wvalue name = "trunk_link" priority = "10">
   				<description desc = "trunk link"/>
@@ -846,7 +846,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<lineColor color = "007FC97F" />
   				<wayWidth width="6" />
   				<routing with="motorcar" accessible="true" speed="60" />
-  				<routing with="bicycle" accessible="false" speed="0" />
+  				<routing with="bicycle" accessible="false" speed="5" />
   			</Wvalue>
   			<Wvalue name = "primary" priority = "10">
   				<description desc = "primary"/>
@@ -934,8 +934,8 @@ zoomed out 21x (scale alias 1:  500km)
   				<lineColor color = "00EFEAA0" />
   				<lineStyle dashed = "true" />
   				<wayWidth width="3" />
-  				<routing with="motorcar" accessible="no" speed="0" />  	
-  				<routing with="bicycle" accessible="true" speed="12" />
+  				<routing with="motorcar" accessible="no" speed="5" />  	
+  				<routing with="bicycle" accessible="true" speed="10" />
   			</Wvalue>
   			<Wvalue name = "service" priority = "9">
   				<description desc = "service"/>
@@ -955,7 +955,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<lineColor color = "007777FF" />
   				<lineStyle dashed = "true" />
   				<wayWidth width="2" />
-  				<routing with="motorcar" accessible="false" speed="0" />
+  				<routing with="motorcar" accessible="false" speed="5" />
 				<routing with="bicycle" accessible="true" speed="15" />
   			</Wvalue>
   			<Wvalue name = "footway" priority = "7">
@@ -966,8 +966,17 @@ zoomed out 21x (scale alias 1:  500km)
   				<lineColor color = "00FFFFFF" />
   				<lineStyle dashed = "false" />
   				<wayWidth width="2" />
-  				<routing with="motorcar" accessible="false" speed="0" />  	
+				<routing with="motorcar" accessible="false" speed="5" />  	
 				<routing with="bicycle" accessible="true" speed="12" />
+  			</Wvalue>
+  			<Wvalue name = "path" priority = "7">
+  				<description desc = "path"/>
+  				<namekey tag = "name"/>  				
+  				<isArea area = "false"/>
+  				<scale scale = "20"/>
+  				<lineColor color = "00FFFFFF" />
+  				<lineStyle dashed = "false" />
+  				<wayWidth width="2" />
   			</Wvalue>
   			<Wvalue name = "pedestrian" priority = "6">
   				<description desc = "pedestrian zone"/>
@@ -977,8 +986,8 @@ zoomed out 21x (scale alias 1:  500km)
   				<lineColor color = "00CCCCCC" />
   				<lineStyle dashed = "false" />
   				<wayWidth width="3" />
-  				<routing with="motorcar" accessible="false" speed="0" />  	
-				<routing with="bicycle" accessible="true" speed="1" />
+  				<routing with="motorcar" accessible="false" speed="5" />  	
+				<routing with="bicycle" accessible="true" speed="5" />
   			</Wvalue>
   			<Wvalue name = "bridleway" priority = "5">
   				<description desc = "bridleway"/>
@@ -988,8 +997,8 @@ zoomed out 21x (scale alias 1:  500km)
   				<lineColor color = "00FF00FF" />
   				<lineStyle dashed = "true" />
   				<wayWidth width="2" />
-  				<routing with="motorcar" accessible="false" speed="0" />  	
-				<routing with="bicycle" accessible="false" speed="0" />
+  				<routing with="motorcar" accessible="false" speed="5" />  	
+				<routing with="bicycle" accessible="false" speed="5" />
   			</Wvalue>
   			<Wvalue name = "*" priority = "4">
   				<description desc = "other highway"/>
@@ -998,6 +1007,9 @@ zoomed out 21x (scale alias 1:  500km)
   				<isArea area = "false"/>
   				<scale scale = "19"/>
   				<lineColor color = "00FFAAAA" />  	  				
+  				<!-- other highways only become accessible when explicitely permitted via additional tags in RouteAccessRestrictions -->
+				<routing with="motorcar" accessible="false" speed="5" />  	
+				<routing with="bicycle" accessible="false" speed="5" />
   			</Wvalue>
   		</keyW>
   		<keyW tag = "railway">
@@ -1587,14 +1599,19 @@ zoomed out 21x (scale alias 1:  500km)
 	</ways>
 	<!--
 	Osm2GpsMid will check ways for route access restrictions specified for the entry "useRouting" in the properties file
-	e.g. useRouting = "motorcar" or useRouting = "bicycle"	
+	e.g. useRouting = "motorcar" or useRouting = "bicycle".
+	If restrictionPermit is missing or false, ways having tags matching the restrictionKey and restrictionValues are accessible for routing.
+	If restrictionPermit is true, ways having tags matching the restrictionKey and restrictionValues are accessible for routing.
 	-->
 	<routeAccessRestrictions for = "motorcar">
+		<routeAccessRestriction restrictionKey = "motorcar" restrictionValues = "yes|designated" restrictionPermit = "true"/>
 		<routeAccessRestriction restrictionKey = "motorcar" restrictionValues = "no|private"/>
 		<routeAccessRestriction restrictionKey = "access" restrictionValues = "no|private"/>
 		<routeAccessRestriction restrictionKey = "vehicle" restrictionValues = "no|private"/>
 	</routeAccessRestrictions>
 	<routeAccessRestrictions for = "bicycle">		
+		<routeAccessRestriction restrictionKey = "bicycle" restrictionValues = "yes|designated" restrictionPermit = "true"/>
+		<routeAccessRestriction restrictionKey = "cycleway" restrictionValues = "track" restrictionPermit = "true"/>
 		<routeAccessRestriction restrictionKey = "bicycle" restrictionValues = "no|private"/>
 		<routeAccessRestriction restrictionKey = "access" restrictionValues = "no|private"/>
 		<routeAccessRestriction restrictionKey = "vehicle" restrictionValues = "no|private"/>

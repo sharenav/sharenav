@@ -74,12 +74,16 @@ public class Way extends Entity implements Comparable<Way>{
 		if (config == null) {
 			config = Configuration.getConfiguration();
 		}
-		if (isRestrictedFor(config.useRouting)) {
-			return false;
-		}
 		WayDescription wayDesc = config.getWayDesc(getType());
 		if (wayDesc == null) {
 			return false;
+		}
+		// the check for permission must be after the check if wayDesc is null otherwise we could route along a way we have no description how to render, etc.
+		switch (isAccessPermittedOrForbiddenFor(config.useRouting)) {
+			case 1:
+				return true;
+			case -1:
+				return false;
 		}
 		return wayDesc.routable;
 	}
@@ -87,9 +91,9 @@ public class Way extends Entity implements Comparable<Way>{
 	/**
 	 * check way tags for routeAccessRestriction from style-file
 	 * @param forWhat: e.g. motorcar or bicycle
-	 * @return if restricted
+	 * @return -1 if restricted, 1 if permitten, 0 if neither
 	 */
-	public boolean isRestrictedFor(String forWhat){
+	public int isAccessPermittedOrForbiddenFor(String forWhat){
 		if (Way.RouteAccessRestrictions == null) {
 			Way.RouteAccessRestrictions = config.getRouteAccessRestrictions();
 		}
@@ -97,10 +101,14 @@ public class Way extends Entity implements Comparable<Way>{
 		for (RouteAccessRestriction rAccess: Way.RouteAccessRestrictions) {		
 			value = getAttribute(rAccess.key);
 			if (value != null && forWhat.equalsIgnoreCase(rAccess.restrictionFor) && rAccess.values.indexOf(value) != -1) {
-				return true;
+				if (rAccess.permitted) {
+					return 1;
+				} else {
+					return -1;
+				}
 			}			
 		}
-		return false;
+		return 0;
 	}
 	
 	public boolean isRoundabout() {

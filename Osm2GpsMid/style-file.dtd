@@ -82,3 +82,4 @@
 <!ATTLIST specialisation value CDATA #REQUIRED>
 <!ATTLIST routeAccessRestriction restrictionKey CDATA #REQUIRED>
 <!ATTLIST routeAccessRestriction restrictionValues CDATA #REQUIRED>
+<!ATTLIST routeAccessRestriction restrictionPermit CDATA #IMPLIED>
