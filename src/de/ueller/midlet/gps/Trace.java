@@ -665,14 +665,17 @@ Runnable , GpsMidDisplayable{
 			if (c == CMDS[START_RECORD_CMD]) {
 				try {
 					gpx.newTrk();
+					alert("Gps track recording", "Starting to record", 1250);
 				} catch (RuntimeException e) {
 					receiveMessage(e.getMessage());
 				}
+				recordingsMenu = null; // refresh recordings menu
 				return;
 			}
 			if (c == CMDS[STOP_RECORD_CMD]) {
 				gpx.saveTrk();
-				addCommand(CMDS[MANAGE_TRACKS_CMD]);
+				alert("Gps track recording", "Stopping to record", 1250);
+				recordingsMenu = null; // refresh recordings menu
 				return;
 			}
 			if (c == CMDS[MANAGE_TRACKS_CMD]) {
@@ -840,11 +843,11 @@ Runnable , GpsMidDisplayable{
 				if (d == recordingsMenu) {
 					 switch (recordingsMenu.getSelectedIndex()) {
 			            case 0: {
-			            	if (!gpx.isRecordingTrk()){			    				
-			    					gpx.newTrk();
-			    			} else {			    			
-			    				gpx.saveTrk();			    				
-			    			}
+		    				if ( gpx.isRecordingTrk() ) {
+		    					commandAction(CMDS[STOP_RECORD_CMD],(Displayable) null);
+		    				} else {
+		    					commandAction(CMDS[START_RECORD_CMD],(Displayable) null);
+		    				}
 			            	show();
 			            	break;
 			            }
@@ -922,6 +925,7 @@ Runnable , GpsMidDisplayable{
 				} else {
 					audioRec.startRecorder();
 				}
+				recordingsMenu = null; // refresh recordings menu
 				return;
 			}
 			//#endif
@@ -1034,10 +1038,8 @@ Runnable , GpsMidDisplayable{
 			}
 			if (c == CMDS[TOGGLE_RECORDING_CMD]) {
 				if ( gpx.isRecordingTrk() ) {
-					alert("Gps track recording", "Stopping to record", 1250);
 					commandAction(CMDS[STOP_RECORD_CMD],(Displayable) null);
 				} else {
-					alert("Gps track recording", "Starting to record", 1250);
 					commandAction(CMDS[START_RECORD_CMD],(Displayable) null);
 				}
 				return;
