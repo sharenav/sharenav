@@ -508,7 +508,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<lineColor color = "007FC97F" />
   				<wayWidth width="6" />
   				<routing with="motorcar" accessible="true" speed="80" />
-  				<routing with="bicycle" accessible="false" speed="0" />
+  				<routing with="bicycle" accessible="true" speed="10" />
   			</Wvalue>
   			<Wvalue name = "primary_link" priority = "10">
   				<description desc = "primary link"/>
@@ -519,7 +519,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<lineColor color = "007FC97F" />
   				<wayWidth width="6" />
   				<routing with="motorcar" accessible="true" speed="60" />
-  				<routing with="bicycle" accessible="false" speed="0" />
+  				<routing with="bicycle" accessible="true" speed="10" />
   			</Wvalue>
   			<Wvalue name = "secondary" priority = "10">
   				<description desc = "secondary"/>
