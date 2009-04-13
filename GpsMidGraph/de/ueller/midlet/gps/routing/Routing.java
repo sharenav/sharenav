@@ -33,6 +33,7 @@ public class Routing implements Runnable {
 	private final Trace parent;
 	private int bestTotal;
 	private long nextUpdate;
+	private static volatile boolean stopRouting = false;
 	private float estimateFac = 1.40f;
 	private int oomCounter = 0;
 	private int expanded;
@@ -81,7 +82,9 @@ public class Routing implements Runnable {
 				continue;
 			}
 			if (!(currentNode.total == bestTotal)) {
-				setBest(currentNode.total,currentNode.costs);
+				if (setBest(currentNode.total,currentNode.costs)) {
+					break; // cancel route calculation 1/2
+				}
 			} 
 			if (currentNode.state.toId == target.id) 
 				return currentNode;
@@ -180,16 +183,27 @@ public class Routing implements Runnable {
 			closed.put(currentNode.state.toId, currentNode);
 			nodes.removeElementAt(0);
 			addToNodes(children); // update nodes
-		} 
-		parent.receiveMessage("no Solution found");
+		}
+		if (!Routing.stopRouting) {
+			parent.receiveMessage("no Solution found");
+		}
 		return null;
 
 	}
 	
-	private void setBest(int total,int actual) {
+	/**
+	 * Update title bar during routing
+	 * @param total
+	 * @param actual
+	 * @return true if routing is canceled
+	 */
+	private boolean setBest(int total,int actual) {
 		bestTotal=total;
 		long now=System.currentTimeMillis();
 		if (now > nextUpdate){
+		if (Routing.stopRouting) {
+			return true;
+		}
 		if (bestTime){
 			parent.receiveMessage("" + (bestTotal/600) 
 					+ "min " + (100*actual/total)
@@ -203,6 +217,7 @@ public class Routing implements Runnable {
 		}
 		nextUpdate=now + 1000;
 		}
+		return false;
 	}
 
 	private void addToNodes(Vector children) {
@@ -553,15 +568,18 @@ public class Routing implements Runnable {
 	private final Vector solve () {
 		try {
 			GraphNode solution=search(routeTo);
+			nodes.removeAllElements();
+			open.removeAll();
+			closed.removeAll();
+			tile.cleanup(-1);
+			if (solution == null) {
+				return null; // cancel route calculation 2/2
+			}
 			if (bestTime){
 				parent.receiveMessage("Route found: " + (bestTotal/600) + "min");
 			} else {
 				parent.receiveMessage("Route found: " + (bestTotal/1000f) + "km");
 			}
-			nodes.removeAllElements();
-			open.removeAll();
-			closed.removeAll();
-			tile.cleanup(-1);
 			Vector sequence = getSequence(solution);
 			/*
 			 * fill in the coordinates of the path segment closest to the source
@@ -621,6 +639,7 @@ public class Routing implements Runnable {
 		try {
 			//#debug error
 			logger.info("Start Routing thread");
+			Routing.stopRouting = false;
 			Vector solve = solve();
 			parent.setRoute(solve);
 		} catch (NullPointerException npe) {
@@ -644,6 +663,8 @@ public class Routing implements Runnable {
 		
 	} 
 
-
+	public static void cancelRouting() {
+		Routing.stopRouting = true;
+	}
 
 }

@@ -954,15 +954,18 @@ Runnable , GpsMidDisplayable{
 				return;
 			}
 			if (c == CMDS[ROUTING_STOP_CMD]) {
-				if (!routeCalc) {
+				if (routeCalc) {
+					Routing.cancelRouting();
+					alert("Route Calculation", "Cancelled", 1000);
+				} else {
 					alert("Routing", "Stopped", 1000);
-					endRouting();
-					routingsMenu = null; // refresh routingsMenu
-					// redraw immediately
-					synchronized (this) {
-						if (imageCollector != null) {
-							imageCollector.newDataReady();
-						}
+				}
+				endRouting();
+				routingsMenu = null; // refresh routingsMenu
+				// redraw immediately
+				synchronized (this) {
+					if (imageCollector != null) {
+						imageCollector.newDataReady();
 					}
 				}
 				routingsMenu = null; // refresh routingsMenu
