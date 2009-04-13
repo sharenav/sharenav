@@ -658,17 +658,18 @@ Runnable , GpsMidDisplayable{
 				parent.show();
 				return;
 			}
-			if (! routeCalc) {
 			if (c == CMDS[START_RECORD_CMD]) {
 				try {
 					gpx.newTrk();
 				} catch (RuntimeException e) {
 					receiveMessage(e.getMessage());
 				}
+				return;
 			}
 			if (c == CMDS[STOP_RECORD_CMD]) {
 				gpx.saveTrk();
 				addCommand(CMDS[MANAGE_TRACKS_CMD]);
+				return;
 			}
 			if (c == CMDS[MANAGE_TRACKS_CMD]) {
 				if (gpx.isRecordingTrk()) {
@@ -678,85 +679,58 @@ Runnable , GpsMidDisplayable{
 
 			    GuiGpx gpx = new GuiGpx(this);
 			    gpx.show();
+				return;			    
 			}
 			if (c == CMDS[REFRESH_CMD]) {
 				repaint();
+				return;
 			}
 			if (c == CMDS[CONNECT_GPS_CMD]) {
 				if (locationProducer == null) {
 					Thread thread = new Thread(this,"LocationProducer init");
 					thread.start();
 				}
+				return;
 			}
 			if (c == CMDS[SEARCH_CMD]){
 				GuiSearch search = new GuiSearch(this);
 				search.show();
+				return;
 			}
 			if (c == CMDS[DISCONNECT_GPS_CMD]) {
 				if (locationProducer != null){
 					locationProducer.close();
 				}
-			}
-			if (c == CMDS[ROUTE_TO_CMD]) {
-				routeCalc = true; 
-				if (Configuration.isStopAllWhileRouteing()) {
-  				   stopImageCollector();
-				}
-				RouteInstructions.resetOffRoute(route, center);
-				logger.info("Routing source: " + source);
-				routeNodes=new Vector();
-				routeEngine = new Routing(t,this);
-				routeEngine.solve(source, target);
-//				resume();
-			}
-			if (c == CMDS[SAVE_WAYP_CMD]) {
-				if (guiWaypointSave == null) {
-					guiWaypointSave = new GuiWaypointSave(this);
-				}
-				if (guiWaypointSave != null) {
-					if (gpsRecenter) {
-						// TODO: Should we block waypoint saving if we have no GPS fix?
-						guiWaypointSave.setData(new PositionMark(
-								pos.latitude * MoreMath.FAC_DECTORAD, 
-								pos.longitude * MoreMath.FAC_DECTORAD, 
-								(int)pos.altitude, pos.timeMillis,	
-								/* fix */ (byte)-1, /* sats */ (byte)-1, 
-								/* sym */ (byte)-1, /* type */ (byte)-1));
-					} else {
-						// Cursor does not point to current position
-						// -> it does not make sense to add elevation and GPS fix info.
-						guiWaypointSave.setData(new PositionMark(center.radlat, 
-								center.radlon, PositionMark.INVALID_ELEVATION,
-								pos.timeMillis, /* fix */ (byte)-1, 
-								/* sats */ (byte)-1, /* sym */ (byte)-1, 
-								/* type */ (byte)-1));
-					}
-					guiWaypointSave.show();					
-				}
+				return;
 			}
 			if (c == CMDS[ENTER_WAYP_CMD]) {
 				GuiWaypointEnter gwpe = new GuiWaypointEnter(this);
 				gwpe.show();
+				return;
 			}
 			if (c == CMDS[MAN_WAYP_CMD]) {
 				GuiWaypoint gwp = new GuiWaypoint(this);
 				gwp.show();
+				return;
 			}
 			if (c == CMDS[MAPFEATURES_CMD]) {
 				GuiMapFeatures gmf = new GuiMapFeatures(this);
 				gmf.show();
 				repaint();
+				return;
 			}
 			if (c == CMDS[OVERVIEW_MAP_CMD]) {
 				GuiOverviewElements ovEl = new GuiOverviewElements(this);
 				ovEl.show();
 				repaint();
+				return;
 			}
 			//#if polish.api.wmapi
 			if (c == CMDS[SEND_MESSAGE_CMD]) {
 				GuiSendMessage sendMsg = new GuiSendMessage(this);
 				sendMsg.show();
 				repaint();
+				return;
 			}
 			//#endif
 			if (c == CMDS[RECORDINGS_CMD]) {
@@ -804,6 +778,7 @@ Runnable , GpsMidDisplayable{
 					recordingsMenu.setSelectedIndex(0, true);
 					parent.show(recordingsMenu);
 				}
+				return;
 			}
 			if (c == CMDS[ROUTINGS_CMD]) {
 				if (routingsMenu == null) {
@@ -818,9 +793,37 @@ Runnable , GpsMidDisplayable{
 					routingsMenu.setSelectedIndex(0, true);
 					parent.show(routingsMenu);
 				}
+				return;
+			}
+			if (c == CMDS[SAVE_WAYP_CMD]) {
+				if (guiWaypointSave == null) {
+					guiWaypointSave = new GuiWaypointSave(this);
+				}
+				if (guiWaypointSave != null) {
+					if (gpsRecenter) {
+						// TODO: Should we block waypoint saving if we have no GPS fix?
+						guiWaypointSave.setData(new PositionMark(
+								pos.latitude * MoreMath.FAC_DECTORAD, 
+								pos.longitude * MoreMath.FAC_DECTORAD, 
+								(int)pos.altitude, pos.timeMillis,	
+								/* fix */ (byte)-1, /* sats */ (byte)-1, 
+								/* sym */ (byte)-1, /* type */ (byte)-1));
+					} else {
+						// Cursor does not point to current position
+						// -> it does not make sense to add elevation and GPS fix info.
+						guiWaypointSave.setData(new PositionMark(center.radlat, 
+								center.radlon, PositionMark.INVALID_ELEVATION,
+								pos.timeMillis, /* fix */ (byte)-1, 
+								/* sats */ (byte)-1, /* sym */ (byte)-1, 
+								/* type */ (byte)-1));
+					}
+					guiWaypointSave.show();					
+				}
+				return;
 			}
 			if (c == CMDS[BACK_CMD]) {
 				show();
+				return;
 			}
 			if (c == CMDS[OK_CMD]) {
 				if (d == recordingsMenu) {
@@ -883,6 +886,7 @@ Runnable , GpsMidDisplayable{
 					}			            	
 					}
 				}
+				return;
 			}
 			//#if polish.api.mmapi
 			if (c == CMDS[CAMERA_CMD]){
@@ -895,7 +899,7 @@ Runnable , GpsMidDisplayable{
 				} catch (ClassNotFoundException cnfe) {
 					logger.exception("Your phone does not support the necessary JSRs to use the camera", cnfe);
 				}
-				
+				return;				
 			}
 			if (c == CMDS[TOGGLE_AUDIO_REC]) {
 				if (audioRec.isRecording()) {
@@ -903,40 +907,62 @@ Runnable , GpsMidDisplayable{
 				} else {
 					audioRec.startRecorder();
 				}
+				return;
 			}
 			//#endif
-			if (c == CMDS[CLEARTARGET_CMD]) {
-				setTarget(null);
-			} else if (c == CMDS[SETTARGET_CMD]) {
-				if (source != null) {
-					setTarget(source);
+			if (c == CMDS[ROUTE_TO_CMD]) {
+				if (! routeCalc) {
+					routeCalc = true; 
+					if (Configuration.isStopAllWhileRouteing()) {
+	  				   stopImageCollector();
+					}
+					RouteInstructions.resetOffRoute(route, center);
+					logger.info("Routing source: " + source);
+					routeNodes=new Vector();
+					routeEngine = new Routing(t,this);
+					routeEngine.solve(source, target);
+//					resume();
 				}
-			} else if (c == CMDS[ZOOM_IN_CMD]) {
+				return;
+			}
+			if (c == CMDS[ZOOM_IN_CMD]) {
 				scale = scale / 1.5f;
-			} else if (c == CMDS[ZOOM_OUT_CMD]) {
+				return;
+			}
+			if (c == CMDS[ZOOM_OUT_CMD]) {
 				scale = scale * 1.5f;
-			} else if (c == CMDS[MANUAL_ROTATION_MODE_CMD]) {
+				return;
+			}
+			if (c == CMDS[MANUAL_ROTATION_MODE_CMD]) {
 				manualRotationMode = !manualRotationMode;
 				if (manualRotationMode) {
 					alert("Manual Rotation", "Change course with left/right keys", 1250);
 				} else {
 					alert("Manual Rotation", "Off", 750);
 				}
-			} else if (c == CMDS[TOGGLE_OVERLAY_CMD]) {
+				return;
+			}
+			if (c == CMDS[TOGGLE_OVERLAY_CMD]) {
 				showAddons++;
 				repaint();
-			} else if (c == CMDS[TOGGLE_BACKLIGHT_CMD]) {
-//				 toggle Backlight
+				return;
+			}
+			if (c == CMDS[TOGGLE_BACKLIGHT_CMD]) {
+//				toggle Backlight
 				Configuration.setCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON,
 									!(Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON)),
 									false);
 				lastBackLightOnTime = System.currentTimeMillis(); 
 				parent.showBackLightLevel();
-			} else if (c == CMDS[TOGGLE_FULLSCREEN_CMD]) {
+				return;
+			}
+			if (c == CMDS[TOGGLE_FULLSCREEN_CMD]) {
 				boolean fullScreen = !Configuration.getCfgBitState(Configuration.CFGBIT_FULLSCREEN);
 				Configuration.setCfgBitState(Configuration.CFGBIT_FULLSCREEN, fullScreen, false);
 				setFullScreenMode(fullScreen);
-			} else if (c == CMDS[TOGGLE_MAP_PROJ_CMD]) {
+				return;
+			}
+			if (c == CMDS[TOGGLE_MAP_PROJ_CMD]) {
 				if (ProjFactory.getProj() == ProjFactory.NORTH_UP ) {
 					ProjFactory.setProj(ProjFactory.MOVE_UP);
 					alert("Map Rotation", "Driving Direction", 750);
@@ -955,7 +981,9 @@ Runnable , GpsMidDisplayable{
 						imageCollector.newDataReady();
 					}
 				}
-			} else if (c == CMDS[TOGGLE_KEY_LOCK_CMD]) {
+				return;
+			}
+			if (c == CMDS[TOGGLE_KEY_LOCK_CMD]) {
 				keyboardLocked = !keyboardLocked;
 				if (keyboardLocked) {
 					// show alert that keys are locked
@@ -963,7 +991,9 @@ Runnable , GpsMidDisplayable{
 				} else {
 					alert("GpsMid", "Keys unlocked", 1000);					
 				}
-			} else if (c == CMDS[TOGGLE_RECORDING_CMD]) {
+				return;
+			}
+			if (c == CMDS[TOGGLE_RECORDING_CMD]) {
 				if ( gpx.isRecordingTrk() ) {
 					alert("Gps track recording", "Stopping to record", 1250);
 					commandAction(CMDS[STOP_RECORD_CMD],(Displayable) null);
@@ -971,7 +1001,9 @@ Runnable , GpsMidDisplayable{
 					alert("Gps track recording", "Starting to record", 1250);
 					commandAction(CMDS[START_RECORD_CMD],(Displayable) null);
 				}
-			} else if (c == CMDS[TOGGLE_RECORDING_SUSP_CMD]) {
+				return;
+			}
+			if (c == CMDS[TOGGLE_RECORDING_SUSP_CMD]) {
 				if (gpx.isRecordingTrk()) {
 					if ( gpx.isRecordingTrkSuspended() ) {
 						alert("Gps track recording", "Resuming recording", 1000);
@@ -981,14 +1013,20 @@ Runnable , GpsMidDisplayable{
 						gpx.suspendTrk();
 					}
 				}
-			} else if (c == CMDS[RECENTER_GPS_CMD]) {
+				return;
+			}
+			if (c == CMDS[RECENTER_GPS_CMD]) {
 				gpsRecenter = true;
 				newDataReady();
-			} else if (c == CMDS[DATASCREEN_CMD]) {
-				showNextDataScreen(DATASCREEN_NONE);
+				return;
 			}
-			//#if polish.api.osm-editing 
-				else if (c == CMDS[RETRIEVE_XML]) {
+			if (c == CMDS[DATASCREEN_CMD]) {
+				showNextDataScreen(DATASCREEN_NONE);
+				return;
+			}
+			if (! routeCalc) {
+				//#if polish.api.osm-editing 
+				if (c == CMDS[RETRIEVE_XML]) {
 					if (C.enableEdits) {
 						if ((pc.actualWay != null) && (pc.actualWay instanceof EditableWay)) {
 							EditableWay eway = (EditableWay)pc.actualWay;
@@ -999,8 +1037,18 @@ Runnable , GpsMidDisplayable{
 					} else {
 						parent.alert("Editing", "Editing support was not enabled in Osm2GpsMid", Alert.FOREVER);
 					}
-			}
-			//#endif
+				}
+				//#endif
+				if (c == CMDS[SETTARGET_CMD]) {
+					if (source != null) {
+						setTarget(source);
+					}
+					return;
+				}
+				if (c == CMDS[CLEARTARGET_CMD]) {
+					setTarget(null);
+					return;
+				}
 			} else {
 				alert("Error", "currently in route calculation", 1000);
 			}
