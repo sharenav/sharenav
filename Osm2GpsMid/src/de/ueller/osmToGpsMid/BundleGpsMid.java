@@ -54,14 +54,21 @@ public class BundleGpsMid {
 			} else
 				c=new Configuration(args);
 			System.out.println(c.toString());
-            System.out.println("Route access restrictions in " + c.getStyleFileName() + ":");
+
+			System.out.println("Route access restrictions in " + c.getStyleFileName() + " for " + c.useRouting + ":");
+        	int routeAccessRestrictionCount = 0;
             if (c.getRouteAccessRestrictions().size() > 0) {
             	for (RouteAccessRestriction r: c.getRouteAccessRestrictions()) {
-            		System.out.println(" " + r.toString());
+            		if (r.restrictionFor.equalsIgnoreCase(c.useRouting)) {
+	            		routeAccessRestrictionCount++;
+	            		System.out.println(" " + r.toString());
+            		}
             	}
-            } else {
-        		System.out.println("Warning: No access restrictions in " + c.getStyleFileName());            	
             }
+            if (routeAccessRestrictionCount == 0) {
+        		System.out.println("Warning: No access restrictions in " + c.getStyleFileName() + " for " + c.useRouting);            	
+            }
+			System.out.println("");
 			String tmpDir = c.getTempDir();
 			System.out.println("unpack Application to " + tmpDir);
 			expand(c, tmpDir);
