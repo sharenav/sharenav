@@ -421,16 +421,22 @@ public class LegendParser extends DefaultHandler{
 					currentWay.lineStyleDashed = atts.getValue("dashed").equalsIgnoreCase("true");				
 				}
 				if (qName.equals("routing")) {
-					currentWay.routable = atts.getValue("accessible").equalsIgnoreCase("true");
-					String typicalSpeed = atts.getValue("speed");
-					if (typicalSpeed != null) {
-						try {
-							currentWay.typicalSpeed = Integer.parseInt(typicalSpeed);
-						} catch (NumberFormatException nfe) {
-							System.out.println("Invalid speed for " + currentWay.description);
+					// only use routing rules for the with-parameter specified in .properties, e.g. useRouting=motorcar
+					if (atts.getValue("with").equalsIgnoreCase(config.useRouting)) {
+						currentWay.routable = atts.getValue("accessible").equalsIgnoreCase("true");
+						String typicalSpeed = atts.getValue("speed");
+						if (typicalSpeed != null) {
+							try {
+								currentWay.typicalSpeed = Integer.parseInt(typicalSpeed);
+							} catch (NumberFormatException nfe) {
+								System.out.println("Invalid speed for " + currentWay.description);
+							}
+						} else {
+							System.out.println("Warning: no typical speed for " + currentWay.description + ". Using 5 km/h." );
+							currentWay.typicalSpeed = 5;
 						}
-					} else
-						currentWay.typicalSpeed = 50;								
+						//System.out.println(currentWay.description + " with " + atts.getValue("with") + ": " + atts.getValue("accessible") +  " typicalSpeed: " + typicalSpeed + "km/h");
+					}
 				}
 				if (qName.equals("force_to")) {
 					try {

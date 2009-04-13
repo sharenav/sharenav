@@ -463,7 +463,8 @@ zoomed out 21x (scale alias 1:  500km)
   				<scale scale = "5"/>
   				<lineColor color = "00809BC0" />
   				<wayWidth width="8" />
-  				<routing accessible="true" speed="120" />  				  				
+  				<routing with="motorcar" accessible="true" speed="120" />  	
+  				<routing with="bicycle" accessible="false" speed="0" />
   			</Wvalue>
   			<Wvalue name = "motorway_link" priority = "10">
   				<description desc = "motorway link"/>
@@ -473,7 +474,8 @@ zoomed out 21x (scale alias 1:  500km)
   				<scale scale = "20"/>
   				<lineColor color = "00809BC0" />
   				<wayWidth width="8" />
-  				<routing accessible="true" speed="120" />  				  				
+  				<routing with="motorcar" accessible="true" speed="60" />  	
+  				<routing with="bicycle" accessible="false" speed="0" />
   			</Wvalue>
   			<Wvalue name = "trunk" priority = "10">
   				<description desc = "trunk"/>
@@ -483,7 +485,8 @@ zoomed out 21x (scale alias 1:  500km)
   				<scale scale = "7"/>
   				<lineColor color = "007FC97F" />
   				<wayWidth width="6" />
-  				<routing accessible="true" speed="100" />  				  				
+  				<routing with="motorcar" accessible="true" speed="100" />
+  				<routing with="bicycle" accessible="false" speed="0" />
   			</Wvalue>
   			<Wvalue name = "trunk_link" priority = "10">
   				<description desc = "trunk link"/>
@@ -493,7 +496,8 @@ zoomed out 21x (scale alias 1:  500km)
   				<scale scale = "20"/>
   				<lineColor color = "007FC97F" />
   				<wayWidth width="6" />
-  				<routing accessible="true" speed="100" />  				  				
+  				<routing with="motorcar" accessible="true" speed="60" />
+  				<routing with="bicycle" accessible="false" speed="0" />
   			</Wvalue>
   			<Wvalue name = "primary" priority = "10">
   				<description desc = "primary"/>
@@ -503,7 +507,8 @@ zoomed out 21x (scale alias 1:  500km)
   				<scale scale = "10"/>
   				<lineColor color = "007FC97F" />
   				<wayWidth width="6" />
-  				<routing accessible="true" speed="80" />  				  				
+  				<routing with="motorcar" accessible="true" speed="80" />
+  				<routing with="bicycle" accessible="false" speed="0" />
   			</Wvalue>
   			<Wvalue name = "primary_link" priority = "10">
   				<description desc = "primary link"/>
@@ -513,7 +518,8 @@ zoomed out 21x (scale alias 1:  500km)
   				<scale scale = "20"/>
   				<lineColor color = "007FC97F" />
   				<wayWidth width="6" />
-  				<routing accessible="true" speed="80" />  				  				
+  				<routing with="motorcar" accessible="true" speed="60" />
+  				<routing with="bicycle" accessible="false" speed="0" />
   			</Wvalue>
   			<Wvalue name = "secondary" priority = "10">
   				<description desc = "secondary"/>
@@ -523,7 +529,8 @@ zoomed out 21x (scale alias 1:  500km)
   				<scale scale = "15"/>
   				<lineColor color = "00FDBF6F" />
   				<wayWidth width="5" />
-  				<routing accessible="true" speed="80" />  				  				
+  				<routing with="motorcar" accessible="true" speed="80" />
+  				<routing with="bicycle" accessible="true" speed="10" />
   			</Wvalue>
   			<Wvalue name = "tertiary" priority = "10">
   				<description desc = "tertiary"/>
@@ -533,7 +540,8 @@ zoomed out 21x (scale alias 1:  500km)
   				<scale scale = "17"/>
   				<lineColor color = "00FFFFFF" />
   				<wayWidth width="4" />
-  				<routing accessible="true" speed="50" />  				  				
+  				<routing with="motorcar" accessible="true" speed="50" />
+  				<routing with="bicycle" accessible="true" speed="15" />
   			</Wvalue>
   			<Wvalue name = "unclassified" priority = "9">  					        
   				<description desc = "small road"/>
@@ -543,7 +551,8 @@ zoomed out 21x (scale alias 1:  500km)
   				<scale scale = "19"/>
   				<lineColor color = "00FFFFFF" />
   				<wayWidth width="4" />
-  				<routing accessible="true" speed="50" />  				  				
+  				<routing with="motorcar" accessible="true" speed="50" /> 
+  				<routing with="bicycle" accessible="true" speed="15" />
   			</Wvalue>  			
   			<Wvalue name = "residential" priority = "10">
   				<description desc = "residential"/>
@@ -553,7 +562,8 @@ zoomed out 21x (scale alias 1:  500km)
   				<scale scale = "21"/>
   				<lineColor color = "00B4B4B4" />
   				<wayWidth width="3" />
-  				<routing accessible="true" speed="30" />  				  				
+  				<routing with="motorcar" accessible="true" speed="30" />
+  				<routing with="bicycle" accessible="true" speed="15" />			  				
   			</Wvalue>
   			<Wvalue name = "living_street" priority = "9">
   				<description desc = "living street"/>
@@ -563,7 +573,8 @@ zoomed out 21x (scale alias 1:  500km)
   				<scale scale = "22"/>
   				<lineColor color = "00B4B4FF" />
   				<wayWidth width="2" />
-  				<routing accessible="true" speed="5" />  				  				
+  				<routing with="motorcar" accessible="true" speed="5" />
+  				<routing with="bicycle" accessible="true" speed="12" />
   			</Wvalue>
 			<Wvalue name = "track" priority = "9">
   				<description desc = "track"/>
@@ -573,7 +584,8 @@ zoomed out 21x (scale alias 1:  500km)
   				<lineColor color = "00EFEAA0" />
   				<lineStyle dashed = "true" />
   				<wayWidth width="3" />
-  				<routing accessible="no" speed="10" />  				  				
+  				<routing with="motorcar" accessible="no" speed="0" />
+  				<routing with="bicycle" accessible="true" speed="12" />				  				
   			</Wvalue>
   			<Wvalue name = "service" priority = "9">
   				<description desc = "service"/>
@@ -582,8 +594,9 @@ zoomed out 21x (scale alias 1:  500km)
   				<scale scale = "23"/>
   				<lineColor color = "00FFFFFF" />
   				<wayWidth width="2" />
-  				<routing accessible="true" speed="30" />  				  				
-  			</Wvalue>
+  				<routing with="motorcar" accessible="true" speed="30" />
+				<routing with="bicycle" accessible="true" speed="12" />
+			</Wvalue>
   			<Wvalue name = "bridleway">
   				<description desc = "bridleway"/>
   				<namekey tag = "name"/>  				
@@ -592,7 +605,8 @@ zoomed out 21x (scale alias 1:  500km)
   				<lineColor color = "00FF00FF" />
   				<lineStyle dashed = "true" />
   				<wayWidth width="2" />
-  				<routing accessible="false" speed="30" />  				  				
+  				<routing with="motorcar" accessible="false" speed="0" />  	
+				<routing with="bicycle" accessible="false" speed="0" />
   			</Wvalue>
   			<Wvalue name = "cycleway">
   				<description desc = "cycleway"/>
@@ -602,7 +616,8 @@ zoomed out 21x (scale alias 1:  500km)
   				<lineColor color = "007777FF" />
   				<lineStyle dashed = "true" />
   				<wayWidth width="2" />
-  				<routing accessible="false" speed="20" />  				  				
+  				<routing with="motorcar" accessible="false" speed="0" />
+				<routing with="bicycle" accessible="true" speed="15" />
   			</Wvalue>
   			<Wvalue name = "footway" priority = "7">
   				<description desc = "footway"/>
@@ -612,7 +627,8 @@ zoomed out 21x (scale alias 1:  500km)
   				<lineColor color = "00FFFFFF" />
   				<lineStyle dashed = "false" />
   				<wayWidth width="2" />
-  				<routing accessible="false" speed="3" />  				  				
+  				<routing with="motorcar" accessible="false" speed="0" />  	
+				<routing with="bicycle" accessible="true" speed="12" />
   			</Wvalue>
   			<Wvalue name = "pedestrian" priority = "6">
   				<description desc = "pedestrian zone"/>
@@ -622,7 +638,8 @@ zoomed out 21x (scale alias 1:  500km)
   				<lineColor color = "00CCCCCC" />
   				<lineStyle dashed = "false" />
   				<wayWidth width="3" />
-  				<routing accessible="false" speed="3" />  				  				
+  				<routing with="motorcar" accessible="false" speed="0" />  	
+				<routing with="bicycle" accessible="true" speed="1" />
   			</Wvalue>  			
   		</keyW>
   		<keyW tag = "railway">

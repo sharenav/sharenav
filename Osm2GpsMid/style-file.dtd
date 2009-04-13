@@ -10,7 +10,7 @@
 <!ELEMENT key (value+)>
 <!ELEMENT keyW (Wvalue+)>
 <!ELEMENT value (specialisation*, description , image? , searchIcon? , namekey , namefallback? , AreaPOI?, scale , textscale? , imageCentered?, hideable?)>
-<!ELEMENT Wvalue (specialisation*, description, namekey, namefallback?, isArea, scale, textscale?, arrowscale?, descriptionscale?, lineColor, borderColor?, lineStyle?, wayWidth?, searchIcon?, routing?, force_to?, hideable?)>
+<!ELEMENT Wvalue (specialisation*, description, namekey, namefallback?, isArea, scale, textscale?, arrowscale?, descriptionscale?, lineColor, borderColor?, lineStyle?, wayWidth?, searchIcon?, routing*, force_to?, hideable?)>
 <!ELEMENT routeAccessRestriction EMPTY>
 <!ELEMENT changeFileExtensionTo EMPTY>
 <!ELEMENT sound (soundFile)>
@@ -69,6 +69,7 @@
 <!ATTLIST borderColor color CDATA #REQUIRED>
 <!ATTLIST lineStyle dashed CDATA #REQUIRED>
 <!ATTLIST wayWidth width CDATA #REQUIRED>
+<!ATTLIST routing with CDATA #REQUIRED>
 <!ATTLIST routing accessible CDATA #REQUIRED>
 <!ATTLIST routing speed CDATA #REQUIRED>
 <!ATTLIST force_to layer CDATA #REQUIRED>

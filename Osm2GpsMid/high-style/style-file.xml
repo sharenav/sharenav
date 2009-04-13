@@ -812,7 +812,8 @@ zoomed out 21x (scale alias 1:  500km)
   				<scale scale = "3"/>
   				<lineColor color = "00809BC0" />
   				<wayWidth width="8" />
-  				<routing accessible="true" speed="120" />  				  				
+  				<routing with="motorcar" accessible="true" speed="120" />  	
+  				<routing with="bicycle" accessible="false" speed="0" />  	
   			</Wvalue>
   			<Wvalue name = "motorway_link" priority = "10">
   				<description desc = "motorway link"/>
@@ -822,7 +823,8 @@ zoomed out 21x (scale alias 1:  500km)
   				<scale scale = "14"/>
   				<lineColor color = "00809BC0" />
   				<wayWidth width="8" />
-  				<routing accessible="true" speed="60" />  				  				
+  				<routing with="motorcar" accessible="true" speed="60" />  	
+  				<routing with="bicycle" accessible="false" speed="0" />
   			</Wvalue>
   			<Wvalue name = "trunk" priority = "10">
   				<description desc = "trunk"/>
@@ -832,7 +834,8 @@ zoomed out 21x (scale alias 1:  500km)
   				<scale scale = "14"/>
   				<lineColor color = "007FC97F" />
   				<wayWidth width="6" />
-  				<routing accessible="true" speed="100" />  				  				
+  				<routing with="motorcar" accessible="true" speed="100" />
+  				<routing with="bicycle" accessible="false" speed="0" />
   			</Wvalue>
   			<Wvalue name = "trunk_link" priority = "10">
   				<description desc = "trunk link"/>
@@ -842,7 +845,8 @@ zoomed out 21x (scale alias 1:  500km)
   				<scale scale = "14"/>
   				<lineColor color = "007FC97F" />
   				<wayWidth width="6" />
-  				<routing accessible="true" speed="60" />  				  				
+  				<routing with="motorcar" accessible="true" speed="60" />
+  				<routing with="bicycle" accessible="false" speed="0" />
   			</Wvalue>
   			<Wvalue name = "primary" priority = "10">
   				<description desc = "primary"/>
@@ -852,7 +856,8 @@ zoomed out 21x (scale alias 1:  500km)
   				<scale scale = "15"/>
   				<lineColor color = "007FC97F" />
   				<wayWidth width="6" />
-  				<routing accessible="true" speed="80" />  				  				
+  				<routing with="motorcar" accessible="true" speed="80" />
+  				<routing with="bicycle" accessible="false" speed="0" />
   			</Wvalue>
   			<Wvalue name = "primary_link" priority = "10">
   				<description desc = "primary link"/>
@@ -862,7 +867,8 @@ zoomed out 21x (scale alias 1:  500km)
   				<scale scale = "15"/>
   				<lineColor color = "007FC97F" />
   				<wayWidth width="6" />
-  				<routing accessible="true" speed="60" />  				  				
+  				<routing with="motorcar" accessible="true" speed="60" />
+  				<routing with="bicycle" accessible="false" speed="0" />
   			</Wvalue>
   			<Wvalue name = "secondary" priority = "10">
   				<description desc = "secondary"/>
@@ -872,7 +878,8 @@ zoomed out 21x (scale alias 1:  500km)
   				<scale scale = "18"/>
   				<lineColor color = "00FDBF6F" />
   				<wayWidth width="5" />
-  				<routing accessible="true" speed="80" />  				  				
+  				<routing with="motorcar" accessible="true" speed="80" />
+  				<routing with="bicycle" accessible="true" speed="10" />
   			</Wvalue>
   			<Wvalue name = "tertiary" priority = "10">
   				<description desc = "tertiary"/>
@@ -882,7 +889,8 @@ zoomed out 21x (scale alias 1:  500km)
   				<scale scale = "19"/>
   				<lineColor color = "00FFFFFF" />
   				<wayWidth width="4" />
-  				<routing accessible="true" speed="50" />  				  				
+  				<routing with="motorcar" accessible="true" speed="50" />
+  				<routing with="bicycle" accessible="true" speed="15" />
   			</Wvalue>
   			<Wvalue name = "unclassified" priority = "9">  					        
   				<description desc = "small road"/>
@@ -892,7 +900,8 @@ zoomed out 21x (scale alias 1:  500km)
   				<scale scale = "20"/>
   				<lineColor color = "00FFFFFF" />
   				<wayWidth width="4" />
-  				<routing accessible="true" speed="50" />  				  				
+  				<routing with="motorcar" accessible="true" speed="50" />
+  				<routing with="bicycle" accessible="true" speed="15" />
   			</Wvalue>  			
   			<Wvalue name = "residential" priority = "10">
   				<description desc = "residential"/>
@@ -903,7 +912,8 @@ zoomed out 21x (scale alias 1:  500km)
   				<textscale scale = "23"/>
   				<lineColor color = "00B4B4B4" />
   				<wayWidth width="3" />
-  				<routing accessible="true" speed="30" />  				  				
+  				<routing with="motorcar" accessible="true" speed="30" />  	
+  				<routing with="bicycle" accessible="true" speed="15" />
   			</Wvalue>
   			<Wvalue name = "living_street" priority = "9">
   				<description desc = "living street"/>
@@ -913,7 +923,8 @@ zoomed out 21x (scale alias 1:  500km)
   				<scale scale = "20"/>
   				<lineColor color = "00B4B4FF" />
   				<wayWidth width="2" />
-  				<routing accessible="true" speed="5" />  				  				
+  				<routing with="motorcar" accessible="true" speed="5" />
+  				<routing with="bicycle" accessible="true" speed="12" />
   			</Wvalue>
 			<Wvalue name = "track" priority = "9">
   				<description desc = "track"/>
@@ -923,7 +934,8 @@ zoomed out 21x (scale alias 1:  500km)
   				<lineColor color = "00EFEAA0" />
   				<lineStyle dashed = "true" />
   				<wayWidth width="3" />
-  				<routing accessible="no" speed="10" />  				  				
+  				<routing with="motorcar" accessible="no" speed="0" />  	
+  				<routing with="bicycle" accessible="true" speed="12" />
   			</Wvalue>
   			<Wvalue name = "service" priority = "9">
   				<description desc = "service"/>
@@ -932,7 +944,8 @@ zoomed out 21x (scale alias 1:  500km)
   				<scale scale = "20"/>
   				<lineColor color = "00FFFFFF" />
   				<wayWidth width="2" />
-  				<routing accessible="true" speed="30" />  				  				
+  				<routing with="motorcar" accessible="true" speed="30" />
+				<routing with="bicycle" accessible="true" speed="12" />
   			</Wvalue>
   			<Wvalue name = "cycleway" priority = "8">
   				<description desc = "cycleway"/>
@@ -942,7 +955,8 @@ zoomed out 21x (scale alias 1:  500km)
   				<lineColor color = "007777FF" />
   				<lineStyle dashed = "true" />
   				<wayWidth width="2" />
-  				<routing accessible="false" speed="20" />  				  				
+  				<routing with="motorcar" accessible="false" speed="0" />
+				<routing with="bicycle" accessible="true" speed="15" />
   			</Wvalue>
   			<Wvalue name = "footway" priority = "7">
   				<description desc = "footway"/>
@@ -952,7 +966,8 @@ zoomed out 21x (scale alias 1:  500km)
   				<lineColor color = "00FFFFFF" />
   				<lineStyle dashed = "false" />
   				<wayWidth width="2" />
-  				<routing accessible="false" speed="3" />  				  				
+  				<routing with="motorcar" accessible="false" speed="0" />  	
+				<routing with="bicycle" accessible="true" speed="12" />
   			</Wvalue>
   			<Wvalue name = "pedestrian" priority = "6">
   				<description desc = "pedestrian zone"/>
@@ -962,7 +977,8 @@ zoomed out 21x (scale alias 1:  500km)
   				<lineColor color = "00CCCCCC" />
   				<lineStyle dashed = "false" />
   				<wayWidth width="3" />
-  				<routing accessible="false" speed="3" />  				  				
+  				<routing with="motorcar" accessible="false" speed="0" />  	
+				<routing with="bicycle" accessible="true" speed="1" />
   			</Wvalue>
   			<Wvalue name = "bridleway" priority = "5">
   				<description desc = "bridleway"/>
@@ -972,7 +988,8 @@ zoomed out 21x (scale alias 1:  500km)
   				<lineColor color = "00FF00FF" />
   				<lineStyle dashed = "true" />
   				<wayWidth width="2" />
-  				<routing accessible="false" speed="30" />  				  				
+  				<routing with="motorcar" accessible="false" speed="0" />  	
+				<routing with="bicycle" accessible="false" speed="0" />
   			</Wvalue>
   			<Wvalue name = "*" priority = "4">
   				<description desc = "other highway"/>
@@ -991,7 +1008,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<scale scale = "20"/>
   				<lineColor color = "00FFFFFF" />
   				<lineStyle dashed = "true" />
-  				<wayWidth width="1" />  				  				  				
+  				<wayWidth width="1" />  	  				
   			</Wvalue>
   			<Wvalue name = "tram">
   				<description desc = "tram"/>
@@ -1000,7 +1017,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<scale scale = "20"/>
   				<lineColor color = "00007000" />
   				<lineStyle dashed = "true" />
-  				<wayWidth width="1" />  				  				  				
+  				<wayWidth width="1" />  	  				
   			</Wvalue>
   			<Wvalue name = "subway">
   				<description desc = "tube"/>
@@ -1009,7 +1026,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<scale scale = "20"/>
   				<lineColor color = "00FF8000" />
   				<lineStyle dashed = "true" />
-  				<wayWidth width="1" />  				  				  				
+  				<wayWidth width="1" />  	  				
   			</Wvalue>
   			<Wvalue name = "light_rail">
   				<description desc = "light rail"/>
@@ -1018,7 +1035,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<scale scale = "20"/>
   				<lineColor color = "00009000"/>
   				<lineStyle dashed = "true" />
-  				<wayWidth width="1" />  				  				  				
+  				<wayWidth width="1" />  	  				
   			</Wvalue>
   			<Wvalue name = "*">
   				<description desc = "other railway"/>
@@ -1026,7 +1043,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<namefallback tag = "*"/>  				
   				<isArea area = "false"/>
   				<scale scale = "19"/>
-  				<lineColor color = "00FF55FF" />  				  				  				
+  				<lineColor color = "00FF55FF" />  	  				
   				<lineStyle dashed = "true" />
   			</Wvalue>
   		</keyW>
@@ -1037,7 +1054,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<namefallback tag = "*"/>  				
   				<isArea area = "false"/>
   				<scale scale = "19"/>
-  				<lineColor color = "00800080" />  				  				  				
+  				<lineColor color = "00800080" />  	  				
   			</Wvalue>
   		</keyW>
 <!--
@@ -1125,7 +1142,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<namefallback tag = "*"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
-  				<lineColor color = "00FF55FF" />  				  				  				
+  				<lineColor color = "00FF55FF" />  	  				
   			</Wvalue>
   		</keyW>
   		<keyW tag = "amenity">
@@ -1197,7 +1214,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
-  				<lineColor color = "00141414" /> 				  				
+  				<lineColor color = "00141414" /> 	
   			</Wvalue>  			
   			<Wvalue name = "*">
   				<description desc = "Other amenity"/>
@@ -1205,7 +1222,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<namefallback tag = "*"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
-  				<lineColor color = "00FF55FF" />  				  				  				
+  				<lineColor color = "00FF55FF" />  	  				
   			</Wvalue>
   		</keyW>
   		<keyW tag = "waterway">
@@ -1215,7 +1232,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<isArea area = "false"/>
   				<scale scale = "17"/>
   				<lineColor color = "000000F0" />
-  				<wayWidth width="10" />  				  				  				
+  				<wayWidth width="10" />  	  				
   			</Wvalue>
   			<Wvalue name = "canal">
   				<description desc = "canal"/>
@@ -1223,7 +1240,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<isArea area = "false"/>
   				<scale scale = "19"/>
   				<lineColor color = "000000E0" />
-  				<wayWidth width="6" />  				  				  				
+  				<wayWidth width="6" />  	  				
   			</Wvalue>
   			<Wvalue name = "stream">
   				<description desc = "stream"/>
@@ -1231,7 +1248,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<isArea area = "false"/>
   				<scale scale = "19"/>
   				<lineColor color = "000000D0" />
-  				<wayWidth width="3" />  				  				  				
+  				<wayWidth width="3" />  	  				
   			</Wvalue>
   			<Wvalue name = "*">
   				<description desc = "other waterway"/>
@@ -1239,7 +1256,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<namefallback tag = "*"/>  				
   				<isArea area = "false"/>
   				<scale scale = "19"/>
-  				<lineColor color = "005555FF" />  				  				  				
+  				<lineColor color = "005555FF" />  	  				
   			</Wvalue>
   		</keyW>
 		<keyW tag = "aeroway">
@@ -1249,7 +1266,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<isArea area = "true"/>
   				<scale scale = "17"/>
   				<lineColor color = "00BDBD86" />
-  				<wayWidth width="16" />  				  				  				
+  				<wayWidth width="16" />  	  				
   			</Wvalue>
   			<Wvalue name = "apron">
   				<description desc = "Aeroway apron"/>
@@ -1257,7 +1274,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<isArea area = "true"/>
   				<scale scale = "17"/>
   				<lineColor color = "00AAAAAA" />
-  				<wayWidth width="16" />  				  				  				
+  				<wayWidth width="16" />  	  				
   			</Wvalue>
   			<Wvalue name = "runway">
   				<description desc = "aeroway runway"/>
@@ -1265,7 +1282,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<isArea area = "false"/>
   				<scale scale = "17"/>
   				<lineColor color = "00AAAAAA" />
-  				<wayWidth width="16" />  				  				  				
+  				<wayWidth width="16" />  	  				
   			</Wvalue>
   			<Wvalue name = "taxiway">
   				<description desc = "aeroway taxiway"/>
@@ -1273,7 +1290,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<isArea area = "false"/>
   				<scale scale = "17"/>
   				<lineColor color = "00AAAAAA" />
-  				<wayWidth width="8" />  				  				  				
+  				<wayWidth width="8" />  	  				
   			</Wvalue>
   			<Wvalue name = "*">
   				<description desc = "other aeroway"/>
@@ -1282,7 +1299,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<isArea area = "false"/>
   				<scale scale = "17"/>
   				<lineColor color = "00FFBBBB" />
-  				<wayWidth width="8" />  				  				  				
+  				<wayWidth width="8" />  	  				
   			</Wvalue>
   		</keyW>
   		<keyW tag = "landuse">
@@ -1291,7 +1308,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
-  				<lineColor color = "00196618" />  				  				  				
+  				<lineColor color = "00196618" />  	  				
 				<force_to layer = "-2"/>
   			</Wvalue>
   			<Wvalue name = "farm">
@@ -1307,7 +1324,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
-  				<lineColor color = "004B4B4B" />  				  				  				
+  				<lineColor color = "004B4B4B" />  	  				
 				<force_to layer = "-2"/>
   			</Wvalue>
   			<Wvalue name = "basin">
@@ -1315,14 +1332,14 @@ zoomed out 21x (scale alias 1:  500km)
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
-  				<lineColor color = "000A0ACD" />  				  				
+  				<lineColor color = "000A0ACD" />  	
   			</Wvalue>
   			<Wvalue name = "reservoir">
   				<description desc = "Reservoir"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
-  				<lineColor color = "001E1EEB" />  				  				  				
+  				<lineColor color = "001E1EEB" />  	  				
 				<force_to layer = "-2"/>
   			</Wvalue>
   			<Wvalue name = "allotments">
@@ -1330,7 +1347,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
-  				<lineColor color = "0099BE00" />  				  				  				
+  				<lineColor color = "0099BE00" />  	  				
 				<force_to layer = "-2"/>
   			</Wvalue>
   			<Wvalue name = "residential">
@@ -1338,7 +1355,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
-  				<lineColor color = "00D2D2D2" />  				  				
+  				<lineColor color = "00D2D2D2" />  	
 				<force_to layer = "-2"/>
   			</Wvalue>
   			<Wvalue name = "retail">
@@ -1362,7 +1379,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
-  				<lineColor color = "00A3A316" />		  				  				
+  				<lineColor color = "00A3A316" />		  	
 				<force_to layer = "-2"/>
   			</Wvalue>
   			<Wvalue name = "brownfield">
@@ -1370,7 +1387,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
-  				<lineColor color = "004B4B0B" />			  				
+  				<lineColor color = "004B4B0B" />
 				<force_to layer = "-2"/>
   			</Wvalue>
   			<Wvalue name = "greenfield">
@@ -1378,7 +1395,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
-  				<lineColor color = "00A7A784" />		  				  				
+  				<lineColor color = "00A7A784" />		  	
 				<force_to layer = "-2"/>
   			</Wvalue>
   			<Wvalue name = "construction">
@@ -1386,7 +1403,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
-  				<lineColor color = "00A54D0C" />			  				
+  				<lineColor color = "00A54D0C" />
 				<force_to layer = "-2"/>
   			</Wvalue>
   			<Wvalue name = "cemetery">
@@ -1394,7 +1411,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
-  				<lineColor color = "00141414" /> 				  				
+  				<lineColor color = "00141414" /> 	
 				<force_to layer = "-2"/>
   			</Wvalue>
 			<Wvalue name = "village_green">
@@ -1434,7 +1451,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<namefallback tag = "*"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
-  				<lineColor color = "0033CC33" />  				  				  				
+  				<lineColor color = "0033CC33" />  	  				
 				<force_to layer = "-2"/>
   			</Wvalue>
    		</keyW>
@@ -1451,7 +1468,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
-  				<lineColor color = "00196618" />  				  				  				
+  				<lineColor color = "00196618" />  	  				
 				<force_to layer = "-2"/>
 			</Wvalue>  			
   			<Wvalue name = "coastline">
@@ -1459,7 +1476,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
   				<scale scale = "6"/>
-  				<lineColor color = "00005555" />  				  				  				
+  				<lineColor color = "00005555" />  	  				
   				<wayWidth width="10" />
 				<force_to layer = "-2"/>
 			</Wvalue>  			
@@ -1468,7 +1485,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
-  				<lineColor color = "00FFFF9F" />  				  				  				
+  				<lineColor color = "00FFFF9F" />  	  				
 				<force_to layer = "-2"/>
 			</Wvalue>
   			<Wvalue name = "glacier">
@@ -1476,35 +1493,35 @@ zoomed out 21x (scale alias 1:  500km)
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
-  				<lineColor color = "00FFFFFF" />  				  				  				
+  				<lineColor color = "00FFFFFF" />  	  				
 			</Wvalue>  			
   			<Wvalue name = "cliff">
   				<description desc = "Cliff"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
-  				<lineColor color = "00BDBDBD" />  				  				  				
+  				<lineColor color = "00BDBDBD" />  	  				
 			</Wvalue>  			
   			<Wvalue name = "scree">
   				<description desc = "Scree"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
-  				<lineColor color = "00A0A0A0" />  				  				  				
+  				<lineColor color = "00A0A0A0" />  	  				
 			</Wvalue>  			
   			<Wvalue name = "mud">
   				<description desc = "Mud"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
-  				<lineColor color = "00804000" />  				  				  				
+  				<lineColor color = "00804000" />  	  				
 			</Wvalue>  			
   			<Wvalue name = "cave_entrance">
   				<description desc = "Cave entrance"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
-  				<lineColor color = "006C6C6C" />  				  				  				
+  				<lineColor color = "006C6C6C" />  	  				
 			</Wvalue>
 			<Wvalue name = "*">
   				<description desc = "Other natural"/>
@@ -1512,7 +1529,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<namefallback tag = "*"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
-  				<lineColor color = "0055FF55" />  				  				  				
+  				<lineColor color = "0055FF55" />  	  				
   			</Wvalue>
 			</keyW>  		
   		<keyW tag = "building">
