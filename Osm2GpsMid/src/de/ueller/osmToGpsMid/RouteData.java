@@ -54,7 +54,7 @@ public class RouteData {
 		}
 		// count all connections for all nodes
 		for (Way w:parser.getWays()){
-			if (! w.isAccessByCar()){
+			if (! w.isAccessForRouting()){
 				continue;
 			}
 			//TODO: explain what are subpaths?
@@ -74,7 +74,7 @@ public class RouteData {
 		}
 		 
 		for (Way w:parser.getWays()){
-			if (! w.isAccessByCar()){
+			if (! w.isAccessForRouting()){
 				continue;
 			}
 			for (SubPath s:w.getSubPaths()){

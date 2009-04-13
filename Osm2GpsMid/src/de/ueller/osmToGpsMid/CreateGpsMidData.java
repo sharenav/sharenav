@@ -129,7 +129,7 @@ public class CreateGpsMidData {
 			exportMapToMid(i);
 		}
 		System.out.println("export RouteTiles");
-		if (configuration.useRouting) {
+		if (Configuration.attrToBoolean(configuration.useRouting) >= 0) {
 			exportMapToMid(ROUTEZOOMLEVEL);
 		}
 //		for (int x=1;x<12;x++){
@@ -295,7 +295,7 @@ public class CreateGpsMidData {
 			dsi.close();
 			foi.close();
 			
-			if (! Configuration.getConfiguration().useRouting) {
+			if (Configuration.attrToBoolean(configuration.useRouting) < 0) {
 				System.out.println("Routing disabled - removing routing sound files from midlet:");
 				removeSoundFile("AGAIN");
 				removeSoundFile("CHECK_DIRECTION");

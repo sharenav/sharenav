@@ -34,6 +34,7 @@ import java.util.zip.ZipOutputStream;
 import org.apache.tools.bzip2.CBZip2InputStream;
 
 import de.ueller.osmToGpsMid.model.Relation;
+import de.ueller.osmToGpsMid.model.RouteAccessRestriction;
 
 
 
@@ -53,6 +54,14 @@ public class BundleGpsMid {
 			} else
 				c=new Configuration(args);
 			System.out.println(c.toString());
+            System.out.println("Route access restrictions in " + c.getStyleFileName() + ":");
+            if (c.getRouteAccessRestrictions().size() > 0) {
+            	for (RouteAccessRestriction r: c.getRouteAccessRestrictions()) {
+            		System.out.println(" " + r.toString());
+            	}
+            } else {
+        		System.out.println("Warning: No access restrictions in " + c.getStyleFileName());            	
+            }
 			String tmpDir = c.getTempDir();
 			System.out.println("unpack Application to " + tmpDir);
 			expand(c, tmpDir);
@@ -89,7 +98,7 @@ public class BundleGpsMid {
 			System.out.println("reorder Ways");
 			new CleanUpData(parser,c);
 
-			if (c.useRouting){
+			if (Configuration.attrToBoolean(c.useRouting) >= 0 ){
 				RouteData rd=new RouteData(parser,target.getCanonicalPath());
 				System.out.println("create Route Data");
 				rd.create();

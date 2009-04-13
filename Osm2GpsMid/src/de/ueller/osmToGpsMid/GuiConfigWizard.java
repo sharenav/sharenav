@@ -285,7 +285,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 				jcbStyle.addItem(styleFile);
 			jcbStyle.setSelectedItem(styleFile);
 		}
-		jcbRouting.setSelected(config.useRouting);
+		jcbRouting.setSelected(Configuration.attrToBoolean(config.useRouting) >= 0);
 		jcbPhone.setSelectedItem(config.getString("app"));
 		jtfName.setText(config.getString("midlet.name"));
 	}
@@ -465,7 +465,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			}
 			fw.write("\r\n");
 			fw.write("#route ability can be disabled to save space in the midlet\r\n");
-			fw.write("useRouting = " + (config.useRouting == true ? "true":"false") + "\r\n");
+			fw.write("useRouting = " + (Configuration.attrToBoolean(config.useRouting) >= 0 ? "motorcar":"false") + "\r\n");
 			fw.write("\r\n");
 			fw.write("#Style-file containing which way, area and POI types to include n the midlet\r\n");
 			fw.write("style-file = " + config.getStyleFileName() + "\r\n");
@@ -524,7 +524,10 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		}
 		
 		if ("enable Routing".equalsIgnoreCase(e.getActionCommand())) {
-			config.setRouting(((JCheckBox)e.getSource()).isSelected());
+			// TODO: expose different vehicles for routeing in GuiConfigWizard instead of always assuming motorcar
+			if ( ((JCheckBox)e.getSource()).isSelected() ) {
+				config.setRouting("motorcar");
+			}
 		}
 		
 		//if (e.getSource() == jtfName) {

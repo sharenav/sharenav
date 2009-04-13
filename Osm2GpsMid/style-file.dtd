@@ -1,4 +1,4 @@
-<!ELEMENT legend (background, routeLine?, priorRouteLine?, routeDot?, sounds?, pois, ways)>
+<!ELEMENT legend (background, routeLine?, priorRouteLine?, routeDot?, sounds?, pois, ways, routeAccessRestrictions*)>
 <!ELEMENT background EMPTY>
 <!ELEMENT routeLine EMPTY>
 <!ELEMENT priorRouteLine EMPTY>
@@ -6,13 +6,18 @@
 <!ELEMENT sounds (changeFileExtensionTo?, sound*)>
 <!ELEMENT pois (key*)>
 <!ELEMENT ways (keyW*)>
+<!ELEMENT routeAccessRestrictions (routeAccessRestriction*)>
 <!ELEMENT key (value+)>
 <!ELEMENT keyW (Wvalue+)>
 <!ELEMENT value (specialisation*, description , image? , searchIcon? , namekey , namefallback? , AreaPOI?, scale , textscale? , imageCentered?, hideable?)>
 <!ELEMENT Wvalue (specialisation*, description, namekey, namefallback?, isArea, scale, textscale?, arrowscale?, descriptionscale?, lineColor, borderColor?, lineStyle?, wayWidth?, searchIcon?, routing?, force_to?, hideable?)>
+<!ELEMENT routeAccessRestriction EMPTY>
 <!ELEMENT changeFileExtensionTo EMPTY>
 <!ELEMENT sound (soundFile)>
 <!ELEMENT soundFile EMPTY>
+<!ELEMENT restrictionFor EMPTY>
+<!ELEMENT restrictionKey EMPTY>
+<!ELEMENT restrictionValues EMPTY>
 <!ELEMENT description EMPTY>
 <!ELEMENT image EMPTY>
 <!ELEMENT searchIcon EMPTY>
@@ -48,6 +53,7 @@
 <!ATTLIST Wvalue priority CDATA #IMPLIED>
 <!ATTLIST changeToFileExtension type CDATA #REQUIRED>
 <!ATTLIST sound name CDATA #REQUIRED>
+<!ATTLIST routeAccessRestrictions for CDATA #REQUIRED>
 <!ATTLIST description desc CDATA #REQUIRED>
 <!ATTLIST namekey tag CDATA #REQUIRED>
 <!ATTLIST namefallback tag CDATA #REQUIRED>
@@ -73,3 +79,5 @@
 <!ATTLIST specialisation condition CDATA "match">
 <!ATTLIST specialisation key CDATA #REQUIRED>
 <!ATTLIST specialisation value CDATA #REQUIRED>
+<!ATTLIST routeAccessRestriction restrictionKey CDATA #REQUIRED>
+<!ATTLIST routeAccessRestriction restrictionValues CDATA #REQUIRED>

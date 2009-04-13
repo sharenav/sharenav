@@ -39,6 +39,7 @@ import org.apache.tools.bzip2.CBZip2InputStream;
 
 import de.ueller.osmToGpsMid.model.Bounds;
 import de.ueller.osmToGpsMid.model.EntityDescription;
+import de.ueller.osmToGpsMid.model.RouteAccessRestriction;
 import de.ueller.osmToGpsMid.model.SoundDescription;
 import de.ueller.osmToGpsMid.model.POIdescription;
 import de.ueller.osmToGpsMid.model.WayDescription;
@@ -63,7 +64,10 @@ public class Configuration {
 		private String bundleName;
 		private String midletName;
 		private String appParam;
-		public boolean useRouting=false;
+		/**
+		 * defines which routing options from the style-file get used 
+		 */
+		public String useRouting = "motorcar";
 		public boolean enableEditingSupport=false;
 		public int maxTileSize=20000;
 		public int maxRouteTileSize=3000;
@@ -223,7 +227,10 @@ public class Configuration {
 			System.out.println("Loading prop file");
 			rb= new PropertyResourceBundle(propIS);
 			vb=new PropertyResourceBundle(getClass().getResourceAsStream("/version.properties"));
-			useRouting=use("useRouting");
+			useRouting=getString("useRouting");
+			if (useRouting == null || attrToBoolean(useRouting) > 0) {
+				useRouting = "motorcar";
+			}
 			maxRouteTileSize=Integer.parseInt(getString("routing.maxTileSize"));
 			maxTileSize=Integer.parseInt(getString("maxTileSize"));
 			setStyleFileName(getString("style-file"));
@@ -468,7 +475,7 @@ public class Configuration {
 			bounds = tmp;
 		}
 		
-		public void setRouting(boolean routing) {
+		public void setRouting(String routing) {
 			useRouting = routing;
 		}
 
@@ -520,6 +527,9 @@ public class Configuration {
 		}
 		public Vector<SoundDescription> getSoundDescs() {
 			return legend.getSoundDescs();
+		}
+		public Vector<RouteAccessRestriction> getRouteAccessRestrictions() {
+			return legend.getRouteAccessRestrictions();
 		}
 		
 		public SoundDescription getSoundDescription(String Name) {			

@@ -37,6 +37,7 @@ import de.ueller.osmToGpsMid.model.ConditionTuple;
 import de.ueller.osmToGpsMid.model.EntityDescription;
 import de.ueller.osmToGpsMid.model.POIdescription;
 import de.ueller.osmToGpsMid.model.SoundDescription;
+import de.ueller.osmToGpsMid.model.RouteAccessRestriction;;
 import de.ueller.osmToGpsMid.model.WayDescription;
 
 public class LegendParser extends DefaultHandler{
@@ -47,8 +48,10 @@ public class LegendParser extends DefaultHandler{
 	private LongTri<EntityDescription> pois;
 	private LongTri<EntityDescription> ways;
 	private Vector<SoundDescription> sounds;
+	private Vector<RouteAccessRestriction> routeAccessRestrictions;
 	private POIdescription currentPoi;
 	private SoundDescription currentSound;
+	private String currentRestrictionFor;
 	private WayDescription currentWay;
 	private String currentKey;
 	private Hashtable<String,Set<EntityDescription>> keyValuesPoi;
@@ -56,6 +59,7 @@ public class LegendParser extends DefaultHandler{
 	private final byte READING_WAYS=0;
 	private final byte READING_POIS=1;
 	private final byte READING_SOUNDS=2;
+	private final byte READING_ROUTEACCESSRESTRICTIONS=3;
 	private byte readingType = READING_WAYS;
 	
 	private byte poiIdx = 0;
@@ -127,6 +131,7 @@ public class LegendParser extends DefaultHandler{
 			ways.put(currentWay.typeNum, currentWay);
 			
 			sounds = new Vector<SoundDescription>();		
+			routeAccessRestrictions = new Vector<RouteAccessRestriction>();
 			
 			SAXParserFactory factory = SAXParserFactory.newInstance();
 			factory.setValidating(true);
@@ -169,6 +174,9 @@ public class LegendParser extends DefaultHandler{
 			readingType=READING_WAYS;			
 		} else if (qName.equals("sounds")) {
 			readingType=READING_SOUNDS;			
+		} else if (qName.equals("routeAccessRestrictions")) {
+			readingType=READING_ROUTEACCESSRESTRICTIONS;
+			currentRestrictionFor = atts.getValue("for");
 		} else if (qName.equals("background")) {
 			try {
 				Configuration.getConfiguration().background_color = Integer.parseInt(atts.getValue("color"),16);
@@ -450,6 +458,17 @@ public class LegendParser extends DefaultHandler{
 					Configuration.getConfiguration().changeSoundFileExtensionTo = atts.getValue("fileExt");
 				}
 				break;
+			case READING_ROUTEACCESSRESTRICTIONS:
+				if (qName.equals("routeAccessRestriction")) {
+					routeAccessRestrictions.addElement(
+							new RouteAccessRestriction(
+									currentRestrictionFor,
+									atts.getValue("restrictionKey"),
+									atts.getValue("restrictionValues") + "|"
+							)
+					);
+				}
+				break;
 		}
 	} // startElement
 
@@ -488,6 +507,9 @@ public class LegendParser extends DefaultHandler{
 	}
 	public Vector<SoundDescription> getSoundDescs() {
 		return sounds;
+	}
+	public Vector<RouteAccessRestriction> getRouteAccessRestrictions() {
+		return routeAccessRestrictions;
 	}
 
 	

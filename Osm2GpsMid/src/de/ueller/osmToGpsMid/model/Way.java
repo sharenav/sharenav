@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.Vector;
 
 import de.ueller.osmToGpsMid.Configuration;
 import de.ueller.osmToGpsMid.Constants;
@@ -36,6 +37,8 @@ public class Way extends Entity implements Comparable<Way>{
 	
 	public Path path=null;
 	Bounds bound=null;
+	
+	public static Vector<RouteAccessRestriction> RouteAccessRestrictions = null;
 	
 	public static Configuration config;
 /**
@@ -66,19 +69,38 @@ public class Way extends Entity implements Comparable<Way>{
 	public boolean isHighway(){
 		return (getAttribute("highway") != null);
 	}
-	public String getMotorcar(){
-		return (getAttribute("motorcar"));
-	}
-	public boolean isAccessByCar(){
-		if (Configuration.attrToBoolean(getAttribute("motorcar")) < 0) return false;
-		if (Configuration.attrToBoolean(getAttribute("access")) < 0) return false;
-		if (config == null)
+
+	public boolean isAccessForRouting(){
+		if (config == null) {
 			config = Configuration.getConfiguration();
-		WayDescription wayDesc = config.getWayDesc(getType());
-		if (wayDesc == null)
+		}
+		if (isRestrictedFor(config.useRouting)) {
 			return false;
-		
-		return wayDesc.routable;		
+		}
+		WayDescription wayDesc = config.getWayDesc(getType());
+		if (wayDesc == null) {
+			return false;
+		}
+		return wayDesc.routable;
+	}
+	
+	/**
+	 * check way tags for routeAccessRestriction from style-file
+	 * @param forWhat: e.g. motorcar or bicycle
+	 * @return if restricted
+	 */
+	public boolean isRestrictedFor(String forWhat){
+		if (Way.RouteAccessRestrictions == null) {
+			Way.RouteAccessRestrictions = config.getRouteAccessRestrictions();
+		}
+		String value;
+		for (RouteAccessRestriction rAccess: Way.RouteAccessRestrictions) {		
+			value = getAttribute(rAccess.key);
+			if (value != null && forWhat.equalsIgnoreCase(rAccess.restrictionFor) && rAccess.values.indexOf(value) != -1) {
+				return true;
+			}			
+		}
+		return false;
 	}
 	
 	public boolean isRoundabout() {

@@ -904,4 +904,18 @@ zoomed out 21x (scale alias 1:  500km)
 			</Wvalue>  			
   		</keyW>  		
 	</ways>
-</legend> 
+	<!--
+	Osm2GpsMid will check ways for route access restrictions specified for the entry "useRouting" in the properties file
+	e.g. useRouting = "motorcar" or useRouting = "bicycle"	
+	-->
+	<routeAccessRestrictions for = "motorcar">
+		<routeAccessRestriction restrictionKey = "motorcar" restrictionValues = "no|private"/>
+		<routeAccessRestriction restrictionKey = "access" restrictionValues = "no|private"/>
+		<routeAccessRestriction restrictionKey = "vehicle" restrictionValues = "no|private"/>
+	</routeAccessRestrictions>
+	<routeAccessRestrictions for = "bicycle">		
+		<routeAccessRestriction restrictionKey = "bicycle" restrictionValues = "no|private"/>
+		<routeAccessRestriction restrictionKey = "access" restrictionValues = "no|private"/>
+		<routeAccessRestriction restrictionKey = "vehicle" restrictionValues = "no|private"/>
+	</routeAccessRestrictions>
+</legend>
