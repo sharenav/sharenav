@@ -90,7 +90,7 @@ Runnable , GpsMidDisplayable{
 	private static final int SAVE_WAYP_CMD = 7;
 	private static final int ENTER_WAYP_CMD = 8;
 	private static final int MAN_WAYP_CMD = 9;
-	private static final int ROUTE_TO_CMD = 10;
+	private static final int ROUTING_TOGGLE_CMD = 10;
 	private static final int CAMERA_CMD = 11;
 	private static final int CLEARTARGET_CMD = 12;
 	private static final int SETTARGET_CMD = 13;
@@ -124,11 +124,13 @@ Runnable , GpsMidDisplayable{
 	private static final int REFRESH_CMD = 42;
 	private static final int SEARCH_CMD = 43;
 	private static final int TOGGLE_AUDIO_REC = 44;
-	//#if polish.api.wmapi
-	private static final int SEND_MESSAGE_CMD = 45;
+	private static final int ROUTING_START_CMD = 45;
+	private static final int ROUTING_STOP_CMD = 46;
+//#if polish.api.wmapi
+	private static final int SEND_MESSAGE_CMD = 47;
 	//#endif
 
-	private final Command [] CMDS = new Command[46];
+	private final Command [] CMDS = new Command[48];
 
 	public static final int DATASCREEN_NONE = 0;
 	public static final int DATASCREEN_TACHO = 1;
@@ -298,7 +300,7 @@ Runnable , GpsMidDisplayable{
 		CMDS[SAVE_WAYP_CMD] = new Command("Save waypoint",Command.ITEM, 7);
 		CMDS[ENTER_WAYP_CMD] = new Command("Enter waypoint",Command.ITEM, 7);
 		CMDS[MAN_WAYP_CMD] = new Command("Manage waypoints",Command.ITEM, 7);
-		CMDS[ROUTE_TO_CMD] = new Command("Route",Command.ITEM, 3);
+		CMDS[ROUTING_TOGGLE_CMD] = new Command("Toggle Routing",Command.ITEM, 3);
 		CMDS[CAMERA_CMD] = new Command("Camera",Command.ITEM, 9);
 		CMDS[CLEARTARGET_CMD] = new Command("Clear Target",Command.ITEM, 10);
 		CMDS[SETTARGET_CMD] = new Command("As Target",Command.ITEM, 11);
@@ -330,6 +332,8 @@ Runnable , GpsMidDisplayable{
 		CMDS[PAN_UP2_CMD] = new Command("up 2",Command.ITEM, 100);
 		CMDS[PAN_DOWN2_CMD] = new Command("down 2",Command.ITEM, 100);
 		CMDS[TOGGLE_AUDIO_REC] = new Command("Audio recording",Command.ITEM, 100);
+		CMDS[ROUTING_START_CMD] = new Command("Calculate Route",Command.ITEM, 100);
+		CMDS[ROUTING_STOP_CMD] = new Command("Stop routing",Command.ITEM, 100);
 		//#if polish.api.wmapi
 		CMDS[SEND_MESSAGE_CMD] = new Command("Send SMS (map pos)",Command.ITEM, 200);
 		//#endif
@@ -570,7 +574,7 @@ Runnable , GpsMidDisplayable{
 				if (Configuration.getCfgBitState(Configuration.CFGBIT_SND_ROUTINGINSTRUCTIONS)) {
 					GpsMid.mNoiseMaker.playSound("ROUTE_RECALCULATION", (byte) 5, (byte) 1 );
 				}
-				commandAction(CMDS[ROUTE_TO_CMD],(Displayable) null);
+				commandAction(CMDS[ROUTING_START_CMD],(Displayable) null);
 			}
 		}
 	}
@@ -782,7 +786,14 @@ Runnable , GpsMidDisplayable{
 			}
 			if (c == CMDS[ROUTINGS_CMD]) {
 				if (routingsMenu == null) {
-					String[] elements = {"Calculate route", "Set target" , "Clear target"};					
+					String[] elements = new String[3];
+					if (routeCalc || route != null) {
+						elements[0] = "Stop routing";
+					} else {
+						elements[0] = "Calculate route";
+					}
+					elements[1] = "Set target";
+					elements[2] = "Clear target";
 					routingsMenu = new List("Routing..", Choice.IMPLICIT, elements, null);
 					routingsMenu.addCommand(CMDS[OK_CMD]);
 					routingsMenu.addCommand(CMDS[BACK_CMD]);
@@ -873,7 +884,11 @@ Runnable , GpsMidDisplayable{
 					show();
 					switch (routingsMenu.getSelectedIndex()) {
 					case 0: {			            	
-						commandAction(CMDS[ROUTE_TO_CMD], null);
+						if (routeCalc || route != null) {
+							commandAction(CMDS[ROUTING_STOP_CMD], null);
+						} else {
+							commandAction(CMDS[ROUTING_START_CMD], null);							
+						}
 						break;
 					}
 					case 1: {
@@ -910,7 +925,15 @@ Runnable , GpsMidDisplayable{
 				return;
 			}
 			//#endif
-			if (c == CMDS[ROUTE_TO_CMD]) {
+			if (c == CMDS[ROUTING_TOGGLE_CMD]) {
+				if (routeCalc || route != null) {
+					commandAction(CMDS[ROUTING_STOP_CMD],(Displayable) null);
+				} else { 
+					commandAction(CMDS[ROUTING_START_CMD],(Displayable) null);
+				}
+				return;
+			}
+			if (c == CMDS[ROUTING_START_CMD]) {
 				if (! routeCalc) {
 					routeCalc = true; 
 					if (Configuration.isStopAllWhileRouteing()) {
@@ -923,6 +946,22 @@ Runnable , GpsMidDisplayable{
 					routeEngine.solve(source, target);
 //					resume();
 				}
+				routingsMenu = null; // refresh routingsMenu
+				return;
+			}
+			if (c == CMDS[ROUTING_STOP_CMD]) {
+				if (!routeCalc) {
+					alert("Routing", "Stopped", 1000);
+					endRouting();
+					routingsMenu = null; // refresh routingsMenu
+					// redraw immediately
+					synchronized (this) {
+						if (imageCollector != null) {
+							imageCollector.newDataReady();
+						}
+					}
+				}
+				routingsMenu = null; // refresh routingsMenu
 				return;
 			}
 			if (c == CMDS[ZOOM_IN_CMD]) {
@@ -2015,11 +2054,7 @@ Runnable , GpsMidDisplayable{
 	}
 
 	public void setTarget(PositionMark target) {
-		RouteInstructions.initialRecalcDone = false;
-		RouteInstructions.icCountOffRouteDetected = 0;
-		RouteInstructions.routeInstructionsHeight = 0;
-		setRoute(null);
-		setRouteNodes(null);
+		endRouting();
 		this.target = target;
 		pc.target = target;
 		if(target!=null) {
@@ -2032,6 +2067,14 @@ Runnable , GpsMidDisplayable{
 		repaint();
 	}
 
+	public void endRouting() {
+		RouteInstructions.initialRecalcDone = false;
+		RouteInstructions.icCountOffRouteDetected = 0;
+		RouteInstructions.routeInstructionsHeight = 0;
+		setRoute(null);
+		setRouteNodes(null);
+	}
+	
 	/**
 	 * This is the callback routine if RouteCalculation is ready
 	 * @param route
