@@ -85,9 +85,16 @@ GpsMid 0.4.55
        - Improved recalculation detection: you can now set the target, calculate the route
          then Start Gps. When there's a new position from the GPS the route recalculation will
          be automatically performed
+       - see also section below for creating midlets with bicycle routing
        - Some wrong direction arrows are fixed
        *** Midlet creation with Osm2GpsMid ***
        - Osm2GpsMid is now compiled to be compatible with Java 1.5 Runtime (for example on older Mac OSX)
+       - RouteAccessRestrictions are now specified in the style-file instead of hardcoded into Osm2GpsMid
+         and can be specified for separate vehicles
+       - Each way can contain multiple routing entries (e.g. one for motorcar and one for bicycle)
+       - Only the routing entries and RouteAccessRestrictions for the useRouting-parameter in the properties files
+         are packed by Osm2GpsMid into the midlet, specify either "useRouting=motorcar" or "useRouting=bicycle"
+         in you properties file
        - Use HTTP compression for downloading map data if the server supports it
        *** Others ***
        - Speed limit alert - configurable in Setup / Sounds & Alerts (thx jkpj)
