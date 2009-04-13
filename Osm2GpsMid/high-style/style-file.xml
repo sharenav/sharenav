@@ -300,6 +300,14 @@ zoomed out 21x (scale alias 1:  500km)
 		<scale scale="20"/>
 		<textscale scale="23"/>
 	  </value>
+	  <value name ="ice_cream">
+		<description desc = "Ice Cream"/>
+		<image src="icecream.png"/>
+		<namekey tag="name"/>
+		<AreaPOI createForAreas="true"/>
+		<scale scale="20"/>
+		<textscale scale="23"/>
+	  </value>
 	  <value name ="atm">
 		<description desc = "Cash machine"/>
 		<image src="atm.png"/>
