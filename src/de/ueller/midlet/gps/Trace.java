@@ -956,9 +956,9 @@ Runnable , GpsMidDisplayable{
 			if (c == CMDS[ROUTING_STOP_CMD]) {
 				if (routeCalc) {
 					Routing.cancelRouting();
-					alert("Route Calculation", "Cancelled", 1000);
+					alert("Route Calculation", "Cancelled", 1500);
 				} else {
-					alert("Routing", "Stopped", 1000);
+					alert("Routing", "Off", 750);
 				}
 				endRouting();
 				routingsMenu = null; // refresh routingsMenu
