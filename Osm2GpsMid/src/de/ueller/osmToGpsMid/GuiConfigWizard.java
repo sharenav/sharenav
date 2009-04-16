@@ -417,6 +417,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			String propName = chooser.getSelectedFile().getAbsolutePath();
 			try {
+				System.out.println("Loading properties specified by GUI: " + propName);
 				config.loadPropFile(new FileInputStream(propName));
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -545,6 +546,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 						.equalsIgnoreCase(CUSTOM_PROP)){
 				} else {
 					try {
+						System.out.println("Loading built in properties (" + chosenProperty +")");
 						InputStream is = getClass().getResourceAsStream("/"+chosenProperty+".properties");
 						if (is == null) {
 							System.out.println("Something went wrong");

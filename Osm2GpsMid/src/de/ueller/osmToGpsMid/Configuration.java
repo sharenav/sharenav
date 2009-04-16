@@ -154,6 +154,7 @@ public class Configuration {
 				InputStream cf;
 				if (propFile != null) {
 					try {
+						System.out.println("Loading properties: " + propFile);
 						if (propFile.endsWith(".properties")) {
 							cf = new FileInputStream(propFile);
 						} else {
@@ -168,6 +169,7 @@ public class Configuration {
 					}
 				} else {
 					//No .properties file was specified, so use the default one
+					System.out.println("Loading built in default properties (version.properties)");
 					cf = getClass().getResourceAsStream("/version.properties");
 				}
 				loadPropFile(cf);
@@ -213,6 +215,7 @@ public class Configuration {
 		
 		public void resetConfig() {
 			try {
+				System.out.println("Loading built in default properties (version.properties)");
 				loadPropFile(getClass().getResourceAsStream("/version.properties"));
 				bounds = null;
 			} catch (IOException e) {
@@ -224,7 +227,6 @@ public class Configuration {
 		public void loadPropFile(InputStream propIS) throws IOException {
 			if (propIS == null)
 				throw new IOException("Invalid properties file");
-			System.out.println("Loading prop file");
 			rb= new PropertyResourceBundle(propIS);
 			vb=new PropertyResourceBundle(getClass().getResourceAsStream("/version.properties"));
 			useRouting=getString("useRouting");
