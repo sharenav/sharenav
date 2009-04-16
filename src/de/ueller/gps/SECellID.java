@@ -269,6 +269,56 @@ public class SECellID implements LocationMsgProducer {
 			//#debug info
 			logger.info("Opening persistent Cell-id database");
 			RecordStore db = RecordStore.openRecordStore(CELLDB_NAME, true);
+			if (db.getNumRecords() > 0){
+				/**
+				 * Find the record store entry containing the index
+				 * mapping (mcc, mnc, lac) to a recordstore entry with the
+				 * list of corresponding cells
+				 */
+				try {
+					boolean indexFound = false;
+					RecordEnumeration re = db.enumerateRecords(null, null, false);
+					while (!indexFound) {
+						if (!re.hasNextElement()) {
+							throw new IOException("Failed to find index for Cell-id database");
+						}
+						dblacidx = re.nextRecordId();
+						byte [] buf = db.getRecord(dblacidx);
+						DataInputStream dis = new DataInputStream(new ByteArrayInputStream(buf));
+						if (dis.readByte() == CELLDB_LACIDX) {
+							if (dis.readByte() != CELLDB_VERSION) {
+								throw new IOException("Wrong version of CellDb, expected " + CELLDB_VERSION);
+
+							}
+
+							int size = dis.readInt();
+							//#debug info
+							logger.info("Found valid lacidx with " + size + " entries");
+							for (int i = 0; i < size; i++) {
+								//#debug debug
+								logger.debug("Reading lac entry " + i + " of " + size);
+								LacIdxEntry idxEntry = new LacIdxEntry(dis);
+								lacidx.put(idxEntry.hashCode(), idxEntry);
+								//#debug debug
+								logger.debug("Adding index entry for " + idxEntry);
+							}
+							if (dis.readInt() != 0xbeafdead) {
+								throw new IOException("Persistent cell-id index is corrupt");
+							}
+							indexFound = true;
+						} else {
+							//ignore other types of record entries, as we are currently only interested
+							//in the index entry
+						}
+					}
+				} catch (IOException ioe) {
+					logger.exception("Could not read persistent cell-id cache. Dropping to recover", ioe);
+					db.closeRecordStore();
+					RecordStore.deleteRecordStore(CELLDB_NAME);
+					db = RecordStore.openRecordStore(CELLDB_NAME, true);
+				}
+				
+			}
 			if (db.getNumRecords() == 0) {
 				logger.info("Persisten Cell-id database is empty, initialising it");
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -279,48 +329,6 @@ public class SECellID implements LocationMsgProducer {
 				dos.writeInt(0xbeafdead);
 				dos.flush();
 				dblacidx = db.addRecord(baos.toByteArray(), 0, baos.size());
-			} else {
-				/**
-				 * Find the record store entry containing the index
-				 * mapping (mcc, mnc, lac) to a recordstore entry with the
-				 * list of corresponding cells
-				 */
-				boolean indexFound = false;
-				RecordEnumeration re = db.enumerateRecords(null, null, false);
-				while (!indexFound) {
-					if (!re.hasNextElement()) {
-						logger.error("Failed to find index for Cell-id database");
-						dblacidx = -1;
-					}
-					dblacidx = re.nextRecordId();
-					byte [] buf = db.getRecord(dblacidx);
-					DataInputStream dis = new DataInputStream(new ByteArrayInputStream(buf));
-					if (dis.readByte() == CELLDB_LACIDX) {
-						if (dis.readByte() != CELLDB_VERSION) {
-							logger.error("Wrong version of CellDb, expected " + CELLDB_VERSION);
-							db.closeRecordStore();
-							this.receiverList.locationDecoderEnd();
-							return false;
-						}
-						
-						int size = dis.readInt();
-						//#debug info
-						logger.info("Found valid lacidx with " + size + " entries");
-						for (int i = 0; i < size; i++) {
-							//#debug debug
-							logger.debug("Reading lac entry " + i + " of " + size);
-							LacIdxEntry idxEntry = new LacIdxEntry(dis);
-							lacidx.put(idxEntry.hashCode(), idxEntry);
-							//#debug debug
-							logger.debug("Adding index entry for " + idxEntry);
-						}
-						if (dis.readInt() != 0xbeafdead) {
-							logger.error("Persistent cell-id index is corrupt");
-						}
-						indexFound = true;
-					}
-				}
-				
 			}
 			db.closeRecordStore();
 			
