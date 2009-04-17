@@ -103,13 +103,13 @@ public class GuiTrip extends KeyCommandCanvas implements CommandListener,
 		
 			// Distance (result[0])
 			y += 48;
-			if (result[0] > 10000) {
+			if (result[0] > 100000) {
 				mLcdFont.drawInt(g, (int)((result[0] / 1000.0f) + 0.5), 
 						w - mKmWidth -1, y - 6);
 				g.drawString("km", w - 1, y - 3, Graphics.BOTTOM | Graphics.RIGHT);
 			} else if (result[0] > 1000) {
-				mLcdFont.drawFloat(g, (int)(((result[0] / 100.0f) + 0.5) / 
-						10.0f), 1, w - mKmWidth - 1, y - 6);
+				mLcdFont.drawFloat(g, (int)((result[0] / 100.0f) + 0.5) / 
+						10.0f, 1, w - mKmWidth - 1, y - 6);
 				g.drawString("km", w - 1, y - 3, Graphics.BOTTOM | Graphics.RIGHT);
 			} else {
 				// Using width of "km" to avoid jumping of number between m and km ranges.
