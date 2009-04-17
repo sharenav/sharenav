@@ -48,7 +48,8 @@ zoomed out 21x (scale alias 1:  500km)
 -->
 
 <legend>
-  <background color="009BFF9B" />
+  <version release="0.5"/>
+  <background color="009BFF9B"/>
   <routeLine interiorColor="0000C0C0" borderColor="0064FFFF"/>
   <priorRouteLine interiorColor="00006633" borderColor="0033BFBF"/>
   <routeDot interiorColor="00FFFF00" borderColor="00FF0000"/>

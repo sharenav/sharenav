@@ -1,4 +1,5 @@
-<!ELEMENT legend (background, routeLine?, priorRouteLine?, routeDot?, sounds?, pois, ways, routeAccessRestrictions*)>
+<!ELEMENT legend (version, background, routeLine?, priorRouteLine?, routeDot?, sounds?, pois, ways, routeAccessRestrictions*)>
+<!ELEMENT version EMPTY>
 <!ELEMENT background EMPTY>
 <!ELEMENT routeLine EMPTY>
 <!ELEMENT priorRouteLine EMPTY>
@@ -38,6 +39,7 @@
 <!ELEMENT AreaPOI EMPTY>
 <!ELEMENT interiorColor EMPTY>
 <!ELEMENT specialisation EMPTY>
+<!ATTLIST version release CDATA #REQUIRED>
 <!ATTLIST background color CDATA #REQUIRED>
 <!ATTLIST routeLine interiorColor CDATA #REQUIRED>
 <!ATTLIST routeLine borderColor CDATA #REQUIRED>
