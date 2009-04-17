@@ -272,9 +272,9 @@ public class Configuration {
 		}
 		public  String getString(String key) {
 			try {
-				return rb.getString(key);
+				return rb.getString(key).trim();
 			} catch (MissingResourceException e) {
-				return vb.getString(key);
+				return vb.getString(key).trim();
 			}
 		}
 		public float getFloat(String key){
