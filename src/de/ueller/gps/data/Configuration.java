@@ -37,7 +37,12 @@ public class Configuration {
 	
 	private static Logger logger;
 	
-	public final static int VERSION=4;
+	/** VERSION of the Configuration
+	 *  If in the recordstore (configVersionStored) is a lower version than this,
+	 *  the default values for the features added between configVersionStored
+	 *  and VERSION will be set, before the version in the recordstore is increased to VERSION
+	 */
+	public final static int VERSION=5;
 
 	public final static int LOCATIONPROVIDER_NONE=0;
 	public final static int LOCATIONPROVIDER_SIRF=1; 
@@ -274,6 +279,12 @@ public class Configuration {
 				//#debug info
 				logger.info("Default config for version 0.4.0+ set.");
 			}
+			
+			/** 
+			 *  If in the recordstore (configVersionStored) is a lower version than VERSION of the Configuration,
+			 *  the default values for the features added between configVersionStored
+			 *  and VERSION will be set, before the version in the recordstore is increased to VERSION
+			 */
 			int configVersionStored = readInt(database, RECORD_ID_CONFIG_VERSION);
 			// default values for config version 3
 			if(configVersionStored < 3) {				
