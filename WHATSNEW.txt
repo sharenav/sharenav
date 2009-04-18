@@ -95,6 +95,9 @@ GpsMid 0.4.55
        - Only the routing entries and RouteAccessRestrictions for the useRouting-parameter in the properties files
          are packed by Osm2GpsMid into the midlet, specify either "useRouting=motorcar" or "useRouting=bicycle"
          in you properties file
+       - The Osm2GpsMid Wizard writes out the selected regions and chosen parameters
+         on exit to a file called "last.properties" in the current directory even when cancelled.
+         This is a new way to easily get the necessary region parameters.
        - Use HTTP compression for downloading map data if the server supports it
        *** Others ***
        - Speed limit alert - configurable in Setup / Sounds & Alerts (thx jkpj)
