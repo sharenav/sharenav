@@ -314,6 +314,9 @@ public class Configuration {
 			return getClass().getResourceAsStream("/"+baseName
 			+"-"+getVersion()
 			+".jar");
+		}		
+		public String getAppParam(){
+			return appParam;
 		}
 		public String getJarFileName(){
 			return appParam
