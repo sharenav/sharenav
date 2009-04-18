@@ -66,7 +66,7 @@ GpsMid 0.4.55
          this can be used to show only unnamed/named or ways/areas/POIs containing a certain string in the map
        - Place labels (city, town, village, hamlet, suburb) can now be hidden using the Map Features dialog 
        - Double press of 9 / single press of U-key toggles manual rotation mode (use left / right to rotate)
-       - Added POIs for beacons, towers and power objects (thx mbaeurle) and bench, cafe, optician to high-style.zip 
+       - Added POIs for beacons, towers and power objects (thx mbaeurle) and bench, cafe (thx pos_eid_on_), optician to high-style.zip 
        - Added POIs for emergency phones and tourist informations to normal style-file and high-style.zip (thx mbaeurle)
        - When you give POIs the tag <AreaPOI createForAreas="true"/> this POI will also be shown for matching Areas
        - Fixed crashes when displaying route connections via Debug Options
@@ -85,8 +85,8 @@ GpsMid 0.4.55
        - Improved recalculation detection: you can now set the target, calculate the route
          then Start Gps. When there's a new position from the GPS the route recalculation will
          be automatically performed
-       - see also section below for creating midlets with bicycle routing
        - Some wrong direction arrows are fixed
+       - See also next section for creating midlets with bicycle routing
        *** Midlet creation with Osm2GpsMid ***
        - Osm2GpsMid is now compiled to be compatible with Java 1.5 Runtime (for example on older Mac OSX)
        - RouteAccessRestrictions are now specified in the style-file instead of hardcoded into Osm2GpsMid
@@ -96,7 +96,7 @@ GpsMid 0.4.55
          are packed by Osm2GpsMid into the midlet, specify either "useRouting=motorcar" or "useRouting=bicycle"
          in you properties file
        - The Osm2GpsMid Wizard writes out the selected regions and chosen parameters
-         on exit to a file called "last.properties" in the current directory even when cancelled.
+         on exit to a file called "last.properties" in the current directory even when canceled.
          This is a new way to easily get the necessary region parameters.
        - Use HTTP compression for downloading map data if the server supports it
        *** Others ***
@@ -106,7 +106,7 @@ GpsMid 0.4.55
          course, heading and distance to destination, ...
        - Sunrise and sunset times are shown in the Trip screen (thx Sualeh Fatehi
          for the calculation class)  
-       - More documentation in the source code (thx black_ivory)
+       - More documentation in the source code (thx black_ivory and pos_ei_don_)
        - Many more small improvements and bugfixes
        
 GpsMid 0.4.51
