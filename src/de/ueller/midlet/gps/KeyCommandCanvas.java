@@ -1,6 +1,6 @@
 /*
  * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net
- * 			Copyright (c) 2008 Kai Krueger apm at users dot sourceforge dot net 
+ * 			Copyright (c) 2008 Kai Krueger apmonkey at users dot sourceforge dot net 
  * See Copying
  */
 package de.ueller.midlet.gps;
@@ -176,24 +176,24 @@ public abstract class KeyCommandCanvas extends Canvas implements
 		repaint();
 	}
 
-	private int getGameActionIfNotOverloaded(int keyCode) { 	 
-        // speed up repeatedly asked keyCode by returning remembered gameAction 	 
-        if (lastGameKeyCode == keyCode) { 	 
-                return lastGameAction; 	 
-        } else if  ( 	 
-                repeatableKeyPressCommand.get(keyCode) != null || 	 
-                singleKeyPressCommand.get(keyCode) != null || 	 
-                longKeyPressCommand.get(keyCode) != null || 	 
-                doubleKeyPressCommand.get(keyCode) != null ||
-                nonReleasableKeyPressCommand.get(keyCode) != null
-         ) { 	 
-                // filter out game keys that are used for other commands 	 
-                lastGameAction=0; 	 
-        } else { 	 
-                lastGameAction = this.getGameAction(keyCode); 	 
-        } 	 
-        lastGameKeyCode = keyCode; 	 
-        return lastGameAction; 	 
+	private int getGameActionIfNotOverloaded(int keyCode) {
+		// speed up repeatedly asked keyCode by returning remembered gameAction 	 
+		if (lastGameKeyCode == keyCode) {
+			return lastGameAction;
+		} else if  (
+				repeatableKeyPressCommand.get(keyCode) != null ||
+				singleKeyPressCommand.get(keyCode) != null ||
+				longKeyPressCommand.get(keyCode) != null ||
+				doubleKeyPressCommand.get(keyCode) != null ||
+				nonReleasableKeyPressCommand.get(keyCode) != null
+		 ) {
+			// filter out game keys that are used for other commands
+			lastGameAction = 0;
+		} else {
+			lastGameAction = this.getGameAction(keyCode);
+		}
+		lastGameKeyCode = keyCode;
+		return lastGameAction;
 	}
 
 }
