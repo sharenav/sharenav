@@ -187,11 +187,13 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 			}
 			
 		} catch (OutOfMemoryError oome) {
-			logger.fatal("GpsInput thread crashed as out of memory: "
+			closed = true;
+			logger.fatal("BtReceiverInput thread ran out of memory: "
 					+ oome.getMessage());
 			oome.printStackTrace();
 		} catch (Exception e) {
-			logger.fatal("GpsInput thread crashed unexpectedly: "
+			closed = true;
+			logger.fatal("BtReceiverInput thread crashed unexpectedly: "
 					+ e.getMessage());
 			e.printStackTrace();
 		} finally {
