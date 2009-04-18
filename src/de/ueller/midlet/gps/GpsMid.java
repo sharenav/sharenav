@@ -152,8 +152,9 @@ public class GpsMid extends MIDlet implements CommandListener {
 	}
 
 	protected void destroyApp(boolean arg0) throws MIDletStateChangeException {
-		// remember last position
 		if (trace != null) {
+			trace.shutdown();
+			// remember last position
 			if (Configuration
 					.getCfgBitState(Configuration.CFGBIT_AUTOSAVE_MAPPOS)) {
 				// use current display center on next startup
@@ -178,17 +179,8 @@ public class GpsMid extends MIDlet implements CommandListener {
 	protected void startApp() throws MIDletStateChangeException {
 		//#debug
 		System.out.println("Start GpsMid");
-		if (trace == null) {
-			try {
-				// trace = new Trace(this);
-				// trace.show();
-			} catch (Exception e) {
-				trace = null;
-				e.printStackTrace();
-			}
-		} else {
+		if (trace != null) {
 			trace.resume();
-			// trace.show();
 		}
 
 		//#if polish.api.contenthandler

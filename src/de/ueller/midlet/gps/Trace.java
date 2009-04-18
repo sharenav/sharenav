@@ -657,7 +657,6 @@ Runnable , GpsMidDisplayable{
 					return;
 				}
 				
-				// shutdown();
 				pause();
 				parent.show();
 				return;
@@ -1152,7 +1151,10 @@ Runnable , GpsMidDisplayable{
 		
 	}
 
-/*	private void shutdown() {
+	public void shutdown() {
+		if (gpx != null) {
+			gpx.saveTrk();
+		}
 		stopImageCollector();
 		if (namesThread != null) {
 			namesThread.stop();
@@ -1166,12 +1168,11 @@ Runnable , GpsMidDisplayable{
 			tileReader.shutdown();
 			tileReader = null;
 		}
-
 		if (locationProducer != null){
 			locationProducer.close();
 		}
 
-	}*/
+	}
 	
 	protected void sizeChanged(int w, int h) {
 		if (imageCollector != null){
