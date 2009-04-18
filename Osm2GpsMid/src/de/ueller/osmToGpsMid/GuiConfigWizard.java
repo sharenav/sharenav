@@ -465,8 +465,8 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 				}
 			}
 			fw.write("\r\n");
-			fw.write("#To choose a different device type specific build use the property app\r\n");
-			fw.write("#Default is a generic distribution for most phones (except BlackBerry)\r\n");
+			fw.write("#To choose a different device type specific build use the app property.\r\n");
+			fw.write("#GpsMid-Generic-full should work for most phones (except BlackBerry)\r\n");
 			String app = config.getAppParam(); 
 			fw.write("app = " + app + "\r\n");
 
@@ -478,7 +478,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 				}
 			}
 			fw.write("\r\n");
-			fw.write("#route ability can be disabled to save space in the midlet by setting to false\r\n");
+			fw.write("#Route ability can be disabled to save space in the midlet by setting to false\r\n");
 			fw.write("#or set to one defined in the style-file, e.g. motorcar or bicycle\r\n");
 			fw.write("useRouting = " + (Configuration.attrToBoolean(config.useRouting) >= 0 ? "motorcar":"false") + "\r\n");
 			fw.write("\r\n");
