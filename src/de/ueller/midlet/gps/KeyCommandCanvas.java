@@ -195,5 +195,49 @@ public abstract class KeyCommandCanvas extends Canvas implements
 		lastGameKeyCode = keyCode;
 		return lastGameAction;
 	}
+	
+	/**
+	 * Returns all single press key codes for the specified command. 
+	 * @param comm The command for which the key codes are wanted.
+	 * @return IntTree containing the key codes and the command.
+	 */
+	public intTree getSingleKeyPressesForCommand(Command comm) {
+		intTree keys = new intTree();
+		for (int i = 0; i < singleKeyPressCommand.size(); i++) {
+			if (singleKeyPressCommand.getValueIdx(i) == comm) {
+				keys.put(singleKeyPressCommand.getKeyIdx(i), comm);
+			}
+		}
+		return keys;
+	}
 
+	/**
+	 * Returns all double press key codes for the specified command. 
+	 * @param comm The command for which the key codes are wanted.
+	 * @return IntTree containing the key codes and the command.
+	 */
+	public intTree getDoubleKeyPressesForCommand(Command comm) {
+		intTree keys = new intTree();
+		for (int i = 0; i < doubleKeyPressCommand.size(); i++) {
+			if (doubleKeyPressCommand.getValueIdx(i) == comm) {
+				keys.put(doubleKeyPressCommand.getKeyIdx(i), comm);
+			}
+		}
+		return keys;
+	}
+
+	/**
+	 * Returns all long press key codes for the specified command. 
+	 * @param comm The command for which the key codes are wanted.
+	 * @return IntTree containing the key codes and the command.
+	 */
+	public intTree getLongKeyPressesForCommand(Command comm) {
+		intTree keys = new intTree();
+		for (int i = 0; i < longKeyPressCommand.size(); i++) {
+			if (longKeyPressCommand.getValueIdx(i) == comm) {
+				keys.put(longKeyPressCommand.getKeyIdx(i), comm);
+			}
+		}
+		return keys;
+	}
 }

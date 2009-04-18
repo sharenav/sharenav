@@ -286,7 +286,7 @@ Runnable , GpsMidDisplayable{
 	private Trace() throws Exception {
 		//#debug
 		logger.info("init Trace");
-		
+
 		this.parent = GpsMid.getInstance();
 		
 		CMDS[EXIT_CMD] = new Command("Back", Command.BACK, 2);
@@ -1954,6 +1954,16 @@ Runnable , GpsMidDisplayable{
 			imageCollector.newDataReady();
 			gpsRecenter = false;			
 		}
+	}
+	
+	/**
+	 * Returns the command used to go to the data screens.
+	 * Needed by the data screens so they can find the key codes used for this
+	 * as they have to use them too. 
+	 * @return Command 
+	 */
+	public Command getDataScreenCommand() {
+		return CMDS[DATASCREEN_CMD];
 	}
 	
 	public Tile getDict(byte zl) {

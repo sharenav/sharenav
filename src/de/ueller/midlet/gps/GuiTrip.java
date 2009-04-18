@@ -15,6 +15,7 @@ import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 
 import de.ueller.gps.data.Position;
+import de.ueller.gps.tools.intTree;
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.ProjMath;
@@ -45,8 +46,26 @@ public class GuiTrip extends KeyCommandCanvas implements CommandListener,
 		addCommand(BACK_CMD);
 		addCommand(NEXT_CMD);
 		setCommandListener(this);
-		// TODO: Get the key for this from the configuration.
-		singleKeyPressCommand.put(KEY_NUM7, NEXT_CMD);
+
+		// We want to use the same keys (plural!) to go to the next screen
+		// as the map (Trace) screen.
+		// NOTE: I don't think repeatable, game or nonReleasable keys will
+		// ever be used for this, but if they are this needs to be extended!
+		intTree singleKeys = mParent.getSingleKeyPressesForCommand(
+				mParent.getDataScreenCommand());
+		for (int i = 0; i < singleKeys.size(); i++) {
+			singleKeyPressCommand.put(singleKeys.getKeyIdx(i), NEXT_CMD);
+		}
+		intTree doubleKeys = mParent.getDoubleKeyPressesForCommand(
+				mParent.getDataScreenCommand());
+		for (int i = 0; i < doubleKeys.size(); i++) {
+			doubleKeyPressCommand.put(doubleKeys.getKeyIdx(i), NEXT_CMD);
+		}
+		intTree longKeys = mParent.getLongKeyPressesForCommand(
+				mParent.getDataScreenCommand());
+		for (int i = 0; i < longKeys.size(); i++) {
+			longKeyPressCommand.put(longKeys.getKeyIdx(i), NEXT_CMD);
+		}
 
 		mLcdFont = new LcdNumericFont();
 		mSunCalc = null;
