@@ -146,8 +146,9 @@ Runnable , GpsMidDisplayable{
 	 * or if the user moved the map away from this position (false).
 	 */
 	public boolean gpsRecenter = true;
-	
-	private Position pos = new Position(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1,
+
+	private Position pos = new Position(0.0f, 0.0f, 
+			(float)PositionMark.INVALID_ELEVATION, 0.0f, 0.0f, 1,
 			System.currentTimeMillis());
 
 	/**
@@ -814,11 +815,11 @@ Runnable , GpsMidDisplayable{
 				}
 				if (guiWaypointSave != null) {
 					if (gpsRecenter) {
-						// TODO: Should we block waypoint saving if we have no GPS fix?
-						guiWaypointSave.setData(new PositionMark(
-								pos.latitude * MoreMath.FAC_DECTORAD, 
-								pos.longitude * MoreMath.FAC_DECTORAD, 
-								(int)pos.altitude, pos.timeMillis,	
+						// TODO: If we lose the fix the old position and height
+						// will be used silently -> we should inform the user
+						// here that we have no fix - he may not know what's going on.
+						guiWaypointSave.setData(new PositionMark(center.radlat,
+								center.radlon, (int)pos.altitude, pos.timeMillis,
 								/* fix */ (byte)-1, /* sats */ (byte)-1, 
 								/* sym */ (byte)-1, /* type */ (byte)-1));
 					} else {
