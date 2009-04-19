@@ -241,7 +241,7 @@ public class Way extends Entity implements Comparable<Way>{
 					maxSpeed *= 1.609; //Convert to km/h
 				}
 			} catch (NumberFormatException e) {
-				System.out.println("Invalid MaxSpeed for Way + " + toString() +": " + getAttribute("maxspeed"));
+				System.out.println("Unhandled MaxSpeed for Way + " + toString() +": " + getAttribute("maxspeed"));
 			}
 		}
 		return maxSpeed;
