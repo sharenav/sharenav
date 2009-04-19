@@ -345,7 +345,7 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 		logger.info("Pressed key code " + keyCode + " in Camera GUI");
 		
 		if ((getGameAction(keyCode) == FIRE) || (keyCode == Configuration.KEYCODE_CAMERA_CAPTURE)) {
-			takePicture();
+			commandAction(CAPTURE_CMD, (Displayable) null);
 		}
 		if (keyCode == Configuration.KEYCODE_CAMERA_COVER_CLOSE) {
 			//#if polish.api.mmapi
