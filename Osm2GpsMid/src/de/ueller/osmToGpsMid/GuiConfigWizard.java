@@ -219,7 +219,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		gbc.gridy = 3;
 		add(jbOk, gbc);
 
-		JButton jbCancel = new JButton("Cancel");
+		JButton jbCancel = new JButton("Close");
 		jbCancel.setActionCommand("Cancel-click");
 		jbCancel.addActionListener(this);
 		gbc.fill = GridBagConstraints.BOTH;
