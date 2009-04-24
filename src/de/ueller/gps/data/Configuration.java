@@ -357,7 +357,7 @@ public class Configuration {
 			osm_pwd = readString(database, RECORD_ID_OSM_PWD);
 			osm_url = readString(database, RECORD_ID_OSM_URL);
 			if (osm_url == null) {
-				osm_url = "http://mysql.dev.openstreetmap.org/api/0.6/";
+				osm_url = "http://api.openstreetmap.org/api/0.6/";
 			}
 			minRouteLineWidth=readInt(database, RECORD_ID_MIN_ROUTELINE_WIDTH); 
 			
