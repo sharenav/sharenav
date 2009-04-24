@@ -28,11 +28,15 @@ import javax.microedition.lcdui.TextField;
 import de.ueller.gpsMid.mapData.SingleTile;
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.GpsMidDisplayable;
+import de.ueller.midlet.gps.GuiOSMChangeset;
+import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.UploadListener;
 import de.ueller.midlet.gps.data.EditableWay;
 import de.ueller.midlet.gps.data.OSMdataWay;
 
 public class GUIosmWayDisplay extends Form implements GpsMidDisplayable, CommandListener, UploadListener, ItemCommandListener {
+	
+	private final static Logger logger = Logger.getInstance(GUIosmWayDisplay.class,Logger.DEBUG);
 
 	private final Command EXIT_CMD = new Command("Back", Command.BACK, 1);
 	private final Command OK_CMD = new Command("OK", Command.OK, 1);
@@ -42,6 +46,8 @@ public class GUIosmWayDisplay extends Form implements GpsMidDisplayable, Command
 	private final Command REVERSE_CMD = new Command("Reverse direction", Command.ITEM, 4);
 	private final Command PRESET_CMD = new Command("Add preset", Command.ITEM, 5);
 	private final Command UPLOAD_CMD = new Command("Upload to OSM", Command.OK, 6);
+	private final Command CREATE_CHANGE_CMD = new Command("Create changeset", Command.OK, 6);
+	private final Command CLOSE_CHANGE_CMD = new Command("Close changeset", Command.OK, 6);
 	
 	
 	private EditableWay eway;
@@ -49,6 +55,8 @@ public class GUIosmWayDisplay extends Form implements GpsMidDisplayable, Command
 	private OSMdataWay  osmway;
 	private GpsMidDisplayable parent;
 	private List presets;
+	private static GuiOSMChangeset changesetGui;
+	private boolean createChangeset; 
 	
 	private boolean addTag;
 	
@@ -61,6 +69,8 @@ public class GUIosmWayDisplay extends Form implements GpsMidDisplayable, Command
 		addCommand(REVERSE_CMD);
 		addCommand(PRESET_CMD);
 		addCommand(UPLOAD_CMD);
+		addCommand(CREATE_CHANGE_CMD);
+		addCommand(CLOSE_CHANGE_CMD);
 		setCommandListener(this);
 		this.t = t;
 	}
@@ -110,7 +120,7 @@ public class GUIosmWayDisplay extends Form implements GpsMidDisplayable, Command
 		}
 		this.append(new StringItem("Edited ", null)); this.append(bearingArrow());
 		this.append(new StringItem("    at:", osmway.getEditTime()));
-		this.append(new StringItem("    by: ", osmway.getEditor()));
+		this.append(new StringItem("    ver:", osmway.getVersion()));
 		
 		Hashtable tags = osmway.getTags();
 		if (tags == null)
@@ -149,7 +159,14 @@ public class GUIosmWayDisplay extends Form implements GpsMidDisplayable, Command
 		}
 		if (c == UPLOAD_CMD) {
 			parent.show();
-			eway.uploadXML(this);
+			if (changesetGui == null) {
+				createChangeset = true;
+				changesetGui = new GuiOSMChangeset(parent,this);
+				changesetGui.show();
+			} else {
+				createChangeset = false;
+				eway.uploadXML(changesetGui.getChangesetID(),this);
+			}
 		}
 		
 		if (c == REVERSE_CMD) {
@@ -177,6 +194,20 @@ public class GUIosmWayDisplay extends Form implements GpsMidDisplayable, Command
 			presets.setCommandListener(this);
 			presets.setSelectCommand(OK_CMD);
 			GpsMid.getInstance().show(presets);
+		}
+		
+		if (c == CREATE_CHANGE_CMD) {
+			changesetGui = new GuiOSMChangeset(this,this);
+			changesetGui.show();
+		}
+		
+		if (c == CLOSE_CHANGE_CMD) {
+			if (changesetGui == null) {
+				logger.error("No changeset is currently open");
+			} else {
+				changesetGui.closeChangeset();
+				changesetGui = null;
+			}
 		}
 		
 		if (c == OK_CMD) {
@@ -215,8 +246,13 @@ public class GUIosmWayDisplay extends Form implements GpsMidDisplayable, Command
 
 	public void completedUpload(boolean success, String message) {
 		if (success) {
-			osmway = eway.getOSMdata();
-			setupScreen();
+			if (createChangeset) {
+				createChangeset = false;
+				eway.uploadXML(changesetGui.getChangesetID(),this);
+			} else {
+				osmway = eway.getOSMdata();
+				setupScreen();
+			}
 		} else {
 			
 		}

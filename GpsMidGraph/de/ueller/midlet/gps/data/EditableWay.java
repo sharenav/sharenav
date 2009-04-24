@@ -32,6 +32,7 @@ public class EditableWay extends Way implements Runnable{
 	private UploadListener ul;
 	private boolean upload;
 	public int osmID;
+	private int commitChangesetID;
 	private OSMdataWay OSMdata;
 	
 	public EditableWay(DataInputStream is, byte f, Tile t, byte[] layers, int idx) throws IOException {
@@ -48,30 +49,35 @@ public class EditableWay extends Way implements Runnable{
 		t.start();
 	}
 	
-	public void uploadXML(UploadListener ul) {
+	public void uploadXML(int commitChangesetID, UploadListener ul) {
 		upload = true;
 		this.ul = ul;
+		this.commitChangesetID = commitChangesetID;
 		Thread t = new Thread(this);
 		t.start();
 	}
 
 	public void run() {
 		if (upload) {
-			upload();
+			upload(commitChangesetID);
 		} else {
 			download();
 		}
 	}
 	
-	private void upload() {
+	private void upload(int commitChangesetID) {
+		//#debug debug
 		logger.debug("Uploading XML for " + this);
 		int respCode = 0;
 		String respMessage = null;
 		boolean success = false;
 		try {
-			String fullXML = OSMdata.toXML();
+			String fullXML = OSMdata.toXML(commitChangesetID);
 			String url = Configuration.getOsmUrl() + "way/" + osmID + "?_method=put";
+			//#debug info
 			logger.info("HTTP POST: " + url);
+			//#debug debug
+			logger.debug("data:\n" + fullXML);
 			HttpConnection connection = (HttpConnection) Connector
 			.open(url);
 			connection.setRequestMethod(HttpConnection.POST);
@@ -100,6 +106,7 @@ public class EditableWay extends Way implements Runnable{
 			logger.exception("Failed to upload way", e);
 		}
 		if (respCode == HttpConnection.HTTP_OK) {
+			//#debug info
 			logger.info("Successfully uploaded way");
 			success = true;
 			
@@ -111,10 +118,12 @@ public class EditableWay extends Way implements Runnable{
 	}
 	
 	private void download() {
+		//#debug debug
 		logger.debug("Retrieving XML for " + this);
 		try {
 			String fullXML = null;
 			String url = Configuration.getOsmUrl() + "way/" + osmID;
+			//#debug info
 			logger.info("HTTP get " + url);
 			HttpConnection connection = (HttpConnection) Connector
 					.open(url);

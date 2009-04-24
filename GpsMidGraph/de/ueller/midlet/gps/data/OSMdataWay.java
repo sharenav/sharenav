@@ -27,6 +27,8 @@ public class OSMdataWay implements XmlParserContentHandler{
 	
 	private String fullXML;
 	private int osmID;
+	private int version;
+	private int changesetID;
 	
 	private String editTime;
 	private String editBy;
@@ -75,6 +77,8 @@ public class OSMdataWay implements XmlParserContentHandler{
 					ignoring = false;
 					editBy = (String)atts.get("user");
 					editTime = (String)atts.get("timestamp");
+					version = Integer.parseInt((String)atts.get("version"));
+					changesetID = Integer.parseInt((String)atts.get("changeset"));
 				} else {
 					ignoring = true;
 				}
@@ -103,6 +107,10 @@ public class OSMdataWay implements XmlParserContentHandler{
 		return tags;
 	}
 	
+	public String getVersion() {
+		return Integer.toString(version);
+	}
+	
 	public String getEditor() {
 		return editBy;
 	}
@@ -119,12 +127,13 @@ public class OSMdataWay implements XmlParserContentHandler{
 		nodes = revNodes;
 	}
 	
-	public String toXML() {
+	public String toXML(int commitChangesetID) {
 		String xml;
 		
 		xml  = "<?xml version='1.0' encoding='utf-8'?>\r\n";
-		xml += "<osm version='0.5' generator='GpsMid'>\r\n";
-		xml += "<way id='" + osmID + "'>\r\n";
+		xml += "<osm version='0.6' generator='GpsMid'>\r\n";
+		xml += "<way id='" + osmID + "' version='" + version + 
+				"' changeset='" + commitChangesetID + "'>\r\n";
 		for (int i = 0; i < nodes.size(); i++) {
 			xml += "<nd ref='" + nodes.elementAt(i) + "' />\r\n";
 		}
@@ -132,7 +141,7 @@ public class OSMdataWay implements XmlParserContentHandler{
 		while (enKey.hasMoreElements()) {
 			String key = (String)enKey.nextElement();
 			if (key.equalsIgnoreCase("created_by")) {
-				xml += "<tag k='created_by' v='GpsMid' />\r\n";
+				//Drop created_by tag, as it has moved into changesets
 			} else {
 				xml += "<tag k='" + key + "' v='" + tags.get(key) + "' />\r\n";
 			}
@@ -147,6 +156,7 @@ public class OSMdataWay implements XmlParserContentHandler{
 		String res;
 		res = "\nOSM way " + osmID + "\n";
 		res += "     last edited by " + editBy + " at " + editTime + "\n";
+		res += "     version " + version + " in changeset " + changesetID + "\n";
 		res += " Tags:\n";
 		Enumeration enKey = tags.keys();
 		while (enKey.hasMoreElements()) {
