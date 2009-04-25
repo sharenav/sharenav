@@ -23,8 +23,8 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 
 	private final static Logger logger=Logger.getInstance(GuiWaypoint.class,Logger.DEBUG);
 	
-	private final Command SEND_ALL_CMD = new Command("Send All", Command.ITEM, 1);	
-	private final Command LOAD_CMD = new Command("Load Gpx", Command.ITEM, 2);
+	private final Command EXPORT_ALL_CMD = new Command("Export All", Command.ITEM, 1);	
+	private final Command IMPORT_CMD = new Command("Import", Command.ITEM, 2);
 	private final Command SEND_CMD = new Command("Send", Command.ITEM, 4);
 	private final Command RENAME_CMD = new Command("Rename", Command.ITEM, 2);	
 	private final Command DEL_CMD = new Command("Delete", Command.ITEM, 2);	
@@ -46,8 +46,8 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 		initWaypoints();
 		
 		//addCommand(SEND_CMD);
-		addCommand(SEND_ALL_CMD);
-		addCommand(LOAD_CMD);
+		addCommand(EXPORT_ALL_CMD);
+		addCommand(IMPORT_CMD);
 		addCommand(RENAME_CMD);		
 		addCommand(DEL_CMD);		
 		addCommand(SALL_CMD);		
@@ -133,13 +133,13 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 			return;
 		}
 		
-		if (c == SEND_ALL_CMD) {
+		if (c == EXPORT_ALL_CMD) {
 			uploading = true;
 			parent.gpx.sendWayPt(Configuration.getGpxUrl(), this);			
 			return;
 			
 		}
-		if (c == LOAD_CMD) {
+		if (c == IMPORT_CMD) {
 			uploading = false;
 			GuiGpxLoad ggl = new GuiGpxLoad(this, this, true);
 			ggl.show();
