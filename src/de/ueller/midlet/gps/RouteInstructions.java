@@ -615,6 +615,20 @@ public class RouteInstructions {
 					}
 				}
 			}
+
+			// when routing was started at the target but the map has not been moved away from the target yet, give no voice instruction 
+			if (trace.atTarget && ! trace.movedAwayFromTarget) {
+				soundToPlay.setLength(0);
+				// tell why there are no route instructions given yet
+//				nameNow = null;
+//				sbRouteInstruction.setLength(0);
+//				if (!trace.gpsRecenter) {
+//					sbRouteInstruction.append("Not Gps-Centered");
+//				} else {
+//					sbRouteInstruction.append("Routing waits for GPS");
+//				}
+//				routeInstructionColor = C.ROUTE_COLOR;				
+			}
 						
 			//#debug debug
 			logger.debug("complete route instruction: " + sbRouteInstruction.toString() + " (" + soundToPlay.toString() + ")");													
