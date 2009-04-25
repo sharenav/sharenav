@@ -248,9 +248,8 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 			waypt.id = id;
 			wayptDatabase.closeRecordStore();
 			wayptDatabase = null;
-			// TODO: add config option for whether to record waypoints
-			// in GPX track or waypoint store
-			if (isRecordingTrk()) {
+			if (   isRecordingTrk()
+				&& Configuration.getCfgBitState(Configuration.CFGBIT_WPTS_IN_TRACK)) {
 				// store waypoint in GPX track
 				//#debug info
 				logger.info("Adding waypoint in GPX track: " + waypt);

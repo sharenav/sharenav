@@ -128,10 +128,13 @@ public class Configuration {
 	public final static byte CFGBIT_ROUTE_HIDE_QUIET_ARROWS=38;
 	// bit 39: in route mode up/down keys are for route browsing
 	public final static byte CFGBIT_ROUTE_BROWSING=39;
-	// bit 40: show scale bar on map
+	/** bit 40: Show scale bar on map */
 	public final static byte CFGBIT_SHOW_SCALE_BAR = 40;
-	// bit 41: log cell-ids to directory
+	/** bit 41: Log cell-ids to directory */
 	public final static byte CFGBIT_CELLID_LOGGING = 41;
+	/** bit 42: Flag whether to also put waypoints in GPX track */
+	public final static byte CFGBIT_WPTS_IN_TRACK = 42;
+
 	
 	/**
 	 * These are the database record ids for each configuration option

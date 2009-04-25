@@ -160,7 +160,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private Vector urlList; 
 	private Vector friendlyName;
 	private ChoiceGroup locProv;
-	private ChoiceGroup choiceGpxRecordRuleMode; 
+	private ChoiceGroup choiceGpxRecordRuleMode;
+	private ChoiceGroup choiceWptInTrack;
 	private TextField  tfGpxRecordMinimumSecs; 
 	private TextField  tfGpxRecordMinimumDistanceMeters; 
 	private TextField  tfGpxRecordAlwaysDistanceMeters;
@@ -237,12 +238,20 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 
 		tfGpxRecordMinimumSecs =new TextField("Minimum seconds between trackpoints (0=disabled)","0",3,TextField.DECIMAL);
 		tfGpxRecordMinimumDistanceMeters = new TextField("Minimum meters between trackpoints (0=disabled)","0",3,TextField.DECIMAL);				
-		tfGpxRecordAlwaysDistanceMeters = new TextField("Always record when exceeding these meters between trackpoints (0=disabled)","0",3,TextField.DECIMAL);				
+		tfGpxRecordAlwaysDistanceMeters = new TextField("Always record when exceeding these meters between trackpoints (0=disabled)","0",3,TextField.DECIMAL);
+		
+		String [] wptFlag = new String[1];
+		wptFlag[0] = "Also put waypoints in track";
+		choiceWptInTrack = new ChoiceGroup("Waypoints in track", Choice.MULTIPLE, 
+				wptFlag, null);
+		choiceWptInTrack.setSelectedIndex(0, Configuration.getCfgBitState(
+				Configuration.CFGBIT_WPTS_IN_TRACK, true));
 
 		menuRecordingOptions.append(choiceGpxRecordRuleMode);
 		menuRecordingOptions.append(tfGpxRecordMinimumSecs);
 		menuRecordingOptions.append(tfGpxRecordMinimumDistanceMeters);
 		menuRecordingOptions.append(tfGpxRecordAlwaysDistanceMeters);
+		menuRecordingOptions.append(choiceWptInTrack);
 	}
 
 	private void initRoutingOptions() {
@@ -734,7 +743,12 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				rule=tfGpxRecordAlwaysDistanceMeters.getString(); 
 				Configuration.setGpxRecordAlwaysDistanceCentimeters( 
 						rule.length()==0 ? 0 :(int) (100 * Float.parseFloat(rule)) 
-				); 
+				);
+				// Save "waypoints in track" flag to config
+				boolean [] selWptInTrack = new boolean[1];
+				choiceWptInTrack.getSelectedFlags(selWptInTrack);
+				Configuration.setCfgBitState(Configuration.CFGBIT_WPTS_IN_TRACK, 
+						selWptInTrack[0], true);
 
 				state = STATE_ROOT;
 				show();
