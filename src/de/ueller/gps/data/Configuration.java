@@ -686,14 +686,14 @@ public class Configuration {
 	}
 	
 	
-	public static void setCfgBitState(byte bit, boolean state, boolean setAsDefault) {
+	public static void setCfgBitState(byte bit, boolean state, boolean savePermanent) {
 		// set bit
 		Configuration.cfgBits|= (1L<<bit);
 		if (!state) {
 			// clear bit
 			Configuration.cfgBits^= (1L<<bit);
 		}
-		if (setAsDefault) {
+		if (savePermanent) {
 			Configuration.cfgBitsDefault|= (1L<<bit);
 			if (!state) {
 				// clear bit
@@ -703,9 +703,9 @@ public class Configuration {
 		}	
 	}	
 	
-	private static void setCfgBits(long cfgBits, boolean setAsDefault) {
+	private static void setCfgBits(long cfgBits, boolean savePermanent) {
 		Configuration.cfgBits = cfgBits;
-		if (setAsDefault) {
+		if (savePermanent) {
 			Configuration.cfgBitsDefault = cfgBits;
 			write(cfgBitsDefault, RECORD_ID_CFGBITS);
 		}
@@ -715,10 +715,10 @@ public class Configuration {
 		return detailBoost;
 	}
 
-	public static void setDetailBoost(int detailBoost, boolean setAsDefault) {
+	public static void setDetailBoost(int detailBoost, boolean savePermanent) {
 		Configuration.detailBoost = detailBoost;
 		calculateDetailBoostMultiplier();
-		if (setAsDefault) {
+		if (savePermanent) {
 			Configuration.detailBoostDefault = detailBoost;
 			write(detailBoost, RECORD_ID_DETAIL_BOOST);		
 		}
