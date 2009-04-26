@@ -745,10 +745,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 						rule.length()==0 ? 0 :(int) (100 * Float.parseFloat(rule)) 
 				);
 				// Save "waypoints in track" flag to config
-				boolean [] selWptInTrack = new boolean[1];
-				choiceWptInTrack.getSelectedFlags(selWptInTrack);
 				Configuration.setCfgBitState(Configuration.CFGBIT_WPTS_IN_TRACK, 
-						selWptInTrack[0], true);
+						choiceWptInTrack.isSelected(0), true);
 
 				state = STATE_ROOT;
 				show();
