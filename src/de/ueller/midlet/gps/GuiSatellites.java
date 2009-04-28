@@ -80,7 +80,7 @@ public class GuiSatellites extends KeyCommandCanvas implements CommandListener,
 			g.drawString("Satellites n/a", centerX, centerY - g.getFont().getHeight() / 2, Graphics.TOP|Graphics.HCENTER);
 			return;
 		}
-		for (byte i = 0; i < mSatellites.length; i++) {			
+		for (byte i = 0; i < mSatellites.length; i++) {
 			Satelit s = mSatellites[i];
 			if (s == null) {
 				continue; //This array may be sparsely filled.
@@ -107,7 +107,9 @@ public class GuiSatellites extends KeyCommandCanvas implements CommandListener,
 			}
 		}
 		g.setColor(0, 0, 0);
-		g.drawString(mSolution, w - 1, 1, Graphics.TOP | Graphics.RIGHT);
+		if (mSolution != null) {
+			g.drawString(mSolution, w - 1, 1, Graphics.TOP | Graphics.RIGHT);
+		}
 	}
 
 	public void show() {
