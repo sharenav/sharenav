@@ -58,10 +58,11 @@ public class JSR179Input implements LocationListener, LocationMsgProducer {
 	public boolean init(LocationMsgReceiver receiver) {
 		logger.info("start JSR179 LocationProvider");
 		this.receiverList.addReceiver(receiver);
-		createLocationProvider();
 		// We may be able to get some additional information such as the number
 		// of satellites form the NMEA string
 		smsg = new NmeaMessage(receiverList);
+		createLocationProvider();
+		
 		return true;
 	}
 
@@ -107,7 +108,14 @@ public class JSR179Input implements LocationListener, LocationMsgProducer {
 	}
 
 	public void locationUpdated(LocationProvider provider, Location location) {
-		logger.trace("enter locationUpdated(provider,location)");
+		//#debug info
+		logger.info("updateLocation: " + location);
+		if (location == null) {
+			return;
+		}
+		//#debug debug
+		logger.debug("received Location: " + location.getLocationMethod());
+		
 		Coordinates coordinates = location.getQualifiedCoordinates();
 		pos.latitude = (float) coordinates.getLatitude();
 		pos.longitude = (float) coordinates.getLongitude();
@@ -118,10 +126,12 @@ public class JSR179Input implements LocationListener, LocationMsgProducer {
 		receiverList.receivePosition(pos);
 		String nmeaString = location
 				.getExtraInfo("application/X-jsr179-location-nmea");
-		// String nmeaString =
-		// "$GPGSA,A,3,32,23,31,11,20,,,,,,,,2.8,2.6,1.0*3D\r\n$GPGSV,3,1,10,20,71,071,38,23,60,168,41,17,42,251,25,11,36,148,37*73\r\n$GPGSV,3,2,10,04,29,300,16,13,26,197,,31,21,054,47,32,10,074,38*70\r\n$GPGSV,3,3,10,12,04,339,17,05,01,353,15*75\r\n"
+		//nmeaString =
+		//	 "$GPGSA,A,3,32,23,31,11,20,,,,,,,,2.8,2.6,1.0*3D$GPGSV,3,1,10,20,71,071,38,23,60,168,41,17,42,251,25,11,36,148,37*73$GPGSV,3,2,10,04,29,300,16,13,26,197,,31,21,054,47,32,10,074,38*70$GPGSV,3,3,10,12,04,339,17,05,01,353,15*75";
 		// ;
+		//#debug info
 		logger.info("Using extra NMEA info in JSR179: " + nmeaString);
+		
 		if (nmeaString != null) {
 			if (rawDataLogger != null) {
 				try {
@@ -131,19 +141,27 @@ public class JSR179Input implements LocationListener, LocationMsgProducer {
 					logger.exception("Could not write raw GPS log", ioe);
 				}
 			}
-			Vector messages = StringTokenizer.getVector(nmeaString, "\n");
+			Vector messages = StringTokenizer.getVector(nmeaString, "$");
 			if (messages != null) {
 				for (int i = 0; i < messages.size(); i++) {
 					String nmeaMessage = (String) messages.elementAt(i);
+					if (nmeaMessage == null) {
+						continue;
+					}
 					if (nmeaMessage.startsWith("$")) {
 						// Cut off $GP from the start
 						nmeaMessage = nmeaMessage.substring(3);
+					} else if (nmeaMessage.startsWith("GP")) {
+						// Cut off GP from the start
+						nmeaMessage = nmeaMessage.substring(2);
 					}
 					int starIdx = nmeaMessage.indexOf("*");
 					if (starIdx > 0) {
 						// remove the checksum
 						nmeaMessage = nmeaMessage.substring(0, starIdx);
 					}
+					//#debug info
+					logger.info("Decoding: " + nmeaMessage);
 					if ((nmeaMessage != null) && (nmeaMessage.length() > 5))
 						smsg.decodeMessage(nmeaMessage);
 				}
@@ -153,9 +171,9 @@ public class JSR179Input implements LocationListener, LocationMsgProducer {
 		// logger.trace("exit locationUpdated(provider,location)");
 	}
 
-	public void providerStateChanged(LocationProvider arg0, int state) {
-		logger.trace("enter providerStateChanged(locationProvider," + state
-				+ "");
+	public void providerStateChanged(LocationProvider lprov, int state) {
+		//#debug info
+		logger.info("providerStateChanged(" + lprov + "," + state + ")");
 		updateSolution(state);
 	}
 
@@ -179,10 +197,13 @@ public class JSR179Input implements LocationListener, LocationMsgProducer {
 	}
 
 	private void updateSolution(int state) {
+		logger.info("Update Solution");
 		if (state == LocationProvider.AVAILABLE) {
 			locationProvider.setLocationListener(this, 1, -1, -1);
-			if (receiverList != null)
+			if (receiverList != null) {
 				receiverList.receiveSolution("On");
+			}
+			
 		}
 		if (state == LocationProvider.OUT_OF_SERVICE) {
 			locationProvider.setLocationListener(this, 0, -1, -1);
@@ -193,9 +214,11 @@ public class JSR179Input implements LocationListener, LocationMsgProducer {
 		}
 		if (state == LocationProvider.TEMPORARILY_UNAVAILABLE) {
 			locationProvider.setLocationListener(this, 0, -1, -1);
-			if (receiverList != null)
-				receiverList.receiveSolution("0");
+			if (receiverList != null) {
+				receiverList.receiveSolution("NoFix");
+			}
 		}
+		locationUpdated(locationProvider, LocationProvider.getLastKnownLocation());
 	}
 
 	public void disableRawLogging() {
