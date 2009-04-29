@@ -52,12 +52,13 @@ GpsMid 0.4.55
          even when leaving the form with the Back command
        *** GPS and other location producers ***
        - JSR-179: Some devices (e.g. Nokia E71 and E90) did not show the speed / rotate the map to the driving direction.
+       - JSR-179: More devices (e.g. some Nokia S60 phones) show satellites now 
        - Returning to the main screen while GpsMid is reconnecting should be possible now
        - Support for retrieving the estimated position from the cell-id on SE phones via internet access to opencellid.org
        - Log Cell-ID positions for uploading to OpenCellId.org
          to a directory in the log folder specified in the location receiver setup
        - Code now supports multiple LocationMsgReceivers for one LocationMsgProducer (thx black_ivory)
-       *** Map ***
+       *** Map Screen ***
        - Show name of closest routable way in status bar: If the closest routable way is not too far away
          when the map is centered to GPS show its label instead of any way's label (this avoids that
          you see e.g. names of rivers or city borders when the GPS signal is not exact enough)
@@ -66,10 +67,14 @@ GpsMid 0.4.55
          this can be used to show only unnamed/named or ways/areas/POIs containing a certain string in the map
        - Place labels (city, town, village, hamlet, suburb) can now be hidden using the Map Features dialog 
        - Double press of 9 / single press of U-key toggles manual rotation mode (use left / right to rotate)
+       - Fixed crashes when displaying route connections via Debug Options
+       - When you give POIs the tag <AreaPOI createForAreas="true"/> this POI will also be shown for matching Areas
+       *** Map Elements ***
        - Added POIs for beacons, towers and power objects (thx mbaeurle) and bench, cafe (thx pos_eid_on_), optician to high-style.zip 
        - Added POIs for emergency phones and tourist informations to normal style-file and high-style.zip (thx mbaeurle)
-       - When you give POIs the tag <AreaPOI createForAreas="true"/> this POI will also be shown for matching Areas
-       - Fixed crashes when displaying route connections via Debug Options
+       - Different colors and names for different track grades in high-style.zip - thx Petr Dlouhý
+       - Paths are now dark grey in high-style.zip - thx Petr Dlouhý
+       - Fuel stations show now (preferably) the operator name - thx Petr Dlouhý
        *** Routing ***
        - Routing to POIs/waypoints is now possible - GpsMid will route you to the closest routable way
        - Display the name of the street the route instruction leads into
