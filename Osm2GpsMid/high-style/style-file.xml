@@ -361,7 +361,8 @@ zoomed out 21x (scale alias 1:  500km)
 	  <value name ="fuel">
 		<description desc = "Refueling station"/>
 		<image src="fuel.png"/>
-		<namekey tag="name"/>
+		<namekey tag="operator"/>
+		<namefallback tag="name"/>
 		<scale scale="20"/>
 		<textscale scale="23"/>		
 	  </value>
@@ -928,6 +929,66 @@ zoomed out 21x (scale alias 1:  500km)
   				<routing with="bicycle" accessible="true" speed="12" />
   			</Wvalue>
 			<Wvalue name = "track" priority = "9">
+  				<specialisation key="tracktype" value="grade1"/>
+  				<description desc = "grade1 track"/>
+  				<namekey tag = "name"/>  				
+  				<isArea area = "false"/>
+  				<scale scale = "20"/>
+  				<lineColor color = "0057520D" />
+  				<lineStyle dashed = "true" />
+  				<wayWidth width="3" />
+  				<routing with="motorcar" accessible="no" speed="5" />  	
+  				<routing with="bicycle" accessible="true" speed="10" />
+  			</Wvalue>
+			<Wvalue name = "track" priority = "9">
+  				<specialisation key="tracktype" value="grade2"/>
+  				<description desc = "grade2 track"/>
+  				<namekey tag = "name"/>  				
+  				<isArea area = "false"/>
+  				<scale scale = "20"/>
+  				<lineColor color = "008C8515" />
+  				<lineStyle dashed = "true" />
+  				<wayWidth width="3" />
+  				<routing with="motorcar" accessible="no" speed="5" />  	
+  				<routing with="bicycle" accessible="true" speed="10" />
+  			</Wvalue>
+			<Wvalue name = "track" priority = "9">
+  				<specialisation key="tracktype" value="grade3"/>
+  				<description desc = "grade3 track"/>
+  				<namekey tag = "name"/>  				
+  				<isArea area = "false"/>
+  				<scale scale = "20"/>
+  				<lineColor color = "00BEB41D" />
+  				<lineStyle dashed = "true" />
+  				<wayWidth width="3" />
+  				<routing with="motorcar" accessible="no" speed="5" />  	
+  				<routing with="bicycle" accessible="true" speed="10" />
+  			</Wvalue>
+			<Wvalue name = "track" priority = "9">
+  				<specialisation key="tracktype" value="grade4"/>
+  				<description desc = "grade4 track"/>
+  				<namekey tag = "name"/>  				
+  				<isArea area = "false"/>
+  				<scale scale = "20"/>
+  				<lineColor color = "00E0D538" />
+  				<lineStyle dashed = "true" />
+  				<wayWidth width="3" />
+  				<routing with="motorcar" accessible="no" speed="5" />  	
+  				<routing with="bicycle" accessible="true" speed="10" />
+  			</Wvalue>
+			<Wvalue name = "track" priority = "9">
+  				<specialisation key="tracktype" value="grade5"/>
+  				<description desc = "grade5 track"/>
+  				<namekey tag = "name"/>  				
+  				<isArea area = "false"/>
+  				<scale scale = "20"/>
+  				<lineColor color = "00E8E06C" />
+  				<lineStyle dashed = "true" />
+  				<wayWidth width="3" />
+  				<routing with="motorcar" accessible="no" speed="5" />  	
+  				<routing with="bicycle" accessible="true" speed="10" />
+  			</Wvalue>
+			<Wvalue name = "track" priority = "5">
   				<description desc = "track"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
@@ -975,7 +1036,7 @@ zoomed out 21x (scale alias 1:  500km)
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
   				<scale scale = "20"/>
-  				<lineColor color = "00FFFFFF" />
+  				<lineColor color = "00808080" />
   				<lineStyle dashed = "false" />
   				<wayWidth width="2" />
   			</Wvalue>

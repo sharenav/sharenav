@@ -318,7 +318,8 @@ zoomed out 21x (scale alias 1:  500km)
 	  <value name ="fuel">
 		<description desc = "Refueling station"/>
 		<image src="fuel.png"/>
-		<namekey tag="name"/>
+		<namekey tag="operator"/>
+		<namefallback tag="name"/>
 		<scale scale="23"/>
 		<textscale scale="26"/>		
 	  </value>
