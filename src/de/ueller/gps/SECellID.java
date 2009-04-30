@@ -59,6 +59,9 @@ public class SECellID implements LocationMsgProducer {
 	private static final byte CELLDB_VERSION = 1;
 	
 	private static final String CELLDB_NAME = "GpsMid-CellIds";
+	
+	private static final int CELLMETHOD_SE = 1;
+	private static final int CELLMETHOD_S60FP2 = 2;
 
 	/**
 	 * 
@@ -248,6 +251,8 @@ public class SECellID implements LocationMsgProducer {
 	
 	private static boolean retrieving;
 	
+	private int cellRetrievelMethod = -1;
+	
 	public SECellID() {
 		this.receiverList = new LocationMsgReceiverList();
 	}
@@ -348,15 +353,59 @@ public class SECellID implements LocationMsgProducer {
 	
 	
 	private CellIdLoc obtainCurrentCellId() throws Exception {
+		String cellidS = null;
+		String mccS = null;
+		String mncS = null;
+		String lacS = null;
 		CellIdLoc cell = new CellIdLoc();
+		
 		//#debug debug
 		logger.debug("Tring to retrieve cell-id");
 
-		String cellidS = System
-		.getProperty("com.sonyericsson.net.cellid");
-		String mccS = System.getProperty("com.sonyericsson.net.cmcc");
-		String mncS = System.getProperty("com.sonyericsson.net.cmnc");
-		String lacS = System.getProperty("com.sonyericsson.net.lac");
+		if ((cellRetrievelMethod == CELLMETHOD_SE) || (cellRetrievelMethod < 0)) {
+			cellidS = System.getProperty("com.sonyericsson.net.cellid");
+			mccS = System.getProperty("com.sonyericsson.net.cmcc");
+			mncS = System.getProperty("com.sonyericsson.net.cmnc");
+			lacS = System.getProperty("com.sonyericsson.net.lac");
+		}
+		if ((cellRetrievelMethod < 0) && (cellidS != null) && (cellidS.length() > 1)) {
+			cellRetrievelMethod = CELLMETHOD_SE;
+			//#debug info
+			logger.info("Using Sony Ericsson properties to retrieve cellid");
+		}
+		if ((cellRetrievelMethod == CELLMETHOD_S60FP2) || (cellRetrievelMethod < 0)) {
+			cellidS = System.getProperty("com.nokia.mid.cellid");
+			/**
+			 * The documentation claims that the country code is returned as
+			 * two letter iso country code, but at least my phone Nokia 6220 seems
+			 * to return the mcc instead, so assume this gives the mcc for the moment. 
+			 */
+			mccS = System.getProperty("com.nokia.mid.countrycode");
+			mncS = System.getProperty("com.nokia.mid.networkid");
+			if (mncS.indexOf(" ") > 0) {
+				mncS = mncS.substring(0, mncS.indexOf(" "));
+			}
+			//System.getProperty("com.nokia.mid.networksignal");
+			/*
+			 * Lac is not currently supported for S60 devices
+			 * The com.nokia.mid.lac comes from S40 devices.
+			 * We include this here for the moment, in the hope
+			 * that future software updates will include this into
+			 * S60 as well.
+			 * 
+			 * The LAC is needed to uniquely identify cells, but openCellID
+			 * seems to do a lookup ignoring LAC at first and only using it
+			 * if there are no results. So for retreaving Cells, not having
+			 * the LAC looks ok, but we won't be able to submit new cells
+			 * with out the LAC
+			 */
+			lacS = System.getProperty("com.nokia.mid.lac");
+		}
+		if ((cellRetrievelMethod < 0) && (cellidS != null) && (cellidS.length() > 1)) {
+			cellRetrievelMethod = CELLMETHOD_S60FP2;
+			//#debug info
+			logger.info("Using S60 properties to retrieve cellid");
+		}
 
 		/*
 		 * This code is used for debugging cell-id data on the emulator
@@ -418,16 +467,29 @@ public class SECellID implements LocationMsgProducer {
 		}
 		
 		*/
-		if ((cellidS == null) || (mccS == null) || (mncS == null) || (lacS == null)) {
+		/**
+		 * We don't check the lac, as this may well be null on some phones
+		 * that support cellid, but not lac. This is not ideal,
+		 * but we can probably cope without
+		 */
+		if ((cellidS == null) || (mccS == null) || (mncS == null)) {
 			//#debug debug
 			logger.debug("No valid cell-id");
 			return null;
 		}
 		try {
-			cell.cellID = Integer.parseInt(cellidS, 16);
+			if (cellRetrievelMethod == CELLMETHOD_SE) {
+				cell.cellID = Integer.parseInt(cellidS, 16);
+			} else {
+				cell.cellID = Integer.parseInt(cellidS);
+			}
 			cell.mcc = (short) Integer.parseInt(mccS);
 			cell.mnc = (short) Integer.parseInt(mncS);
-			cell.lac = Integer.parseInt(lacS, 16);
+			if ((lacS != null) && (lacS.length() > 0)) {
+				cell.lac = Integer.parseInt(lacS, 16);
+			} else {
+				cell.lac = 0;
+			}
 		} catch (NumberFormatException nfe) {
 			logger.silentexception("Failed to parse cell-id (cellid: " + cellidS +
 					" mcc: " + mccS + " mnc: " + mncS + " lac: " + lacS, nfe);
