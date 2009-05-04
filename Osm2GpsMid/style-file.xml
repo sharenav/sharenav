@@ -454,6 +454,15 @@ zoomed out 21x (scale alias 1:  500km)
 		<textscale scale="26"/>
 	  </value>	
 	</key>
+	<key tag="aeroway">
+		<value name="aerodrome">
+			<description desc = "Airport"/>
+			<image src="aerodrome.png"/>
+			<namekey tag="name"/>
+			<scale scale="18"/>
+			<textscale scale = "23"/>
+		</value>
+	</key>
   </pois>
   <ways>
   		<keyW tag = "highway">
