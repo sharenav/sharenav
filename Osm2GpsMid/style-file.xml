@@ -404,13 +404,23 @@ zoomed out 21x (scale alias 1:  500km)
 	  </value>
 	</key>
 	<key tag="highway">
-	   <value name="bus_stop">
+	  <value name="bus_stop">
 		<description desc = "Bus stop"/>
 		<image src="bus.png"/>		
 		<namekey tag="name"/>
 		<scale scale="22"/>
 		<textscale scale="26"/>
 		<imageCentered value="true"/>
+	  </value>
+	  <value name="motorway_junction">
+		<description desc = "Motorway junction"/>
+		<image src="motorway_junction.png"/>		
+		<namekey tag="ref"/>
+  		<namefallback tag = "name"/>
+		<scale scale="17"/>
+		<textscale scale="23"/>
+		<imageCentered value="true"/>
+		<hideable hideable="false"/>
 	  </value>
 	</key>
 	<key tag="railway">
@@ -453,6 +463,16 @@ zoomed out 21x (scale alias 1:  500km)
 		<scale scale="23"/>
 		<textscale scale="26"/>
 	  </value>	
+	</key>
+	<key tag="natural">
+	  <value name="peak">
+		<description desc = "Peak"/>
+		<image src="peak.png"/>
+		<namekey tag="name"/>
+		<namefallback tag = "ele"/>
+		<scale scale="16"/>
+		<textscale scale="20"/>
+	  </value>
 	</key>
 	<key tag="aeroway">
 		<value name="aerodrome">
