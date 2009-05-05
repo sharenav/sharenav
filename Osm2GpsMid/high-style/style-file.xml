@@ -581,7 +581,7 @@ zoomed out 21x (scale alias 1:  500km)
 			<image src="motorway_junction.png"/>		
 			<namekey tag="ref"/>
   			<namefallback tag = "name"/>
-			<scale scale="20"/>
+			<scale scale="17"/>
 			<textscale scale="23"/>
 			<imageCentered value="true"/>
 			<hideable hideable="false"/>
