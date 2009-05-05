@@ -576,6 +576,16 @@ zoomed out 21x (scale alias 1:  500km)
 		<textscale scale="23"/>
 		<imageCentered value="true"/>
 	  </value>
+	   <value name="motorway_junction">
+			<description desc = "Motorway junction"/>
+			<image src="motorway_junction.png"/>		
+			<namekey tag="ref"/>
+  			<namefallback tag = "name"/>
+			<scale scale="20"/>
+			<textscale scale="23"/>
+			<imageCentered value="true"/>
+			<hideable hideable="false"/>
+	  </value>
 	</key>
 	<key tag="railway">
 	   <value name="station">
@@ -710,6 +720,14 @@ zoomed out 21x (scale alias 1:  500km)
 		<image src="beach.png"/>
 		<namekey tag="name"/>
 		<scale scale="18"/>
+		<textscale scale="20"/>
+	  </value>
+	  <value name="peak">
+		<description desc = "Peak"/>
+		<image src="peak.png"/>
+		<namekey tag="name"/>
+		<namefallback tag = "ele"/>
+		<scale scale="16"/>
 		<textscale scale="20"/>
 	  </value>
 	</key>	
