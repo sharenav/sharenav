@@ -98,15 +98,15 @@ public class JSR179Input implements LocationListener, LocationMsgProducer {
 					logger.info("LocationProvider criteria not fitting: " + i);
 					locationProvider = null;
 				} catch (Exception e) {
-					logger.info("unexpected exception");
+					logger.exception("unexpected exception while probing LocationProvider criteria.",e);
 				}
 			}
 			if (locationProvider != null) {
 				updateSolution(locationProvider.getState());
 			} else {
 				receiverList.locationDecoderEnd("no JSR179 Provider");
-				//#debug
-				logger.error("Cannot create LocationProvider for criteria.");
+				//#debug info
+				logger.info("Cannot create LocationProvider for criteria.");
 			}
 		}
 		//#debug
