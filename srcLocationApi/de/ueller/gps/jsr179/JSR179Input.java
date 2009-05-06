@@ -90,8 +90,10 @@ public class JSR179Input implements LocationListener, LocationMsgProducer {
 						criteria.setAltitudeRequired(true);
 					}
 					locationProvider = LocationProvider.getInstance(criteria);
-					logger.info(locationProvider.toString());
-					break; // we are using this criteria
+					if (locationProvider != null) {
+						logger.info("Chosen location provider:" + locationProvider);
+						break; // we are using this criteria
+					}
 				} catch (LocationException le) {
 					logger.info("LocationProvider criteria not fitting: " + i);
 					locationProvider = null;
