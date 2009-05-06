@@ -19,7 +19,6 @@ package de.ueller.gps.jsr179;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Date;
 import java.util.Vector;
 
 import javax.microedition.location.Coordinates;
@@ -76,16 +75,19 @@ public class JSR179Input implements LocationListener, LocationMsgProducer {
 		if (locationProvider == null) {
 			// try out different locationprovider criteria combinations, the
 			// ones with maximum features first
-			for (int i = 0; i <= 2; i++) {
+			for (int i = 0; i <= 3; i++) {
 				try {
 					Criteria criteria = new Criteria();
 					switch (i) {
 					case 0:
-						criteria.setAltitudeRequired(true); // also require the
-															// criteria below
+						criteria.setAltitudeRequired(true);
+						criteria.setSpeedAndCourseRequired(true);
+						break;
 					case 1:
 						criteria.setSpeedAndCourseRequired(true);
 						break;
+					case 2:
+						criteria.setAltitudeRequired(true);
 					}
 					locationProvider = LocationProvider.getInstance(criteria);
 					logger.info(locationProvider.toString());
@@ -93,6 +95,8 @@ public class JSR179Input implements LocationListener, LocationMsgProducer {
 				} catch (LocationException le) {
 					logger.info("LocationProvider criteria not fitting: " + i);
 					locationProvider = null;
+				} catch (Exception e) {
+					logger.info("unexpected exception");
 				}
 			}
 			if (locationProvider != null) {
