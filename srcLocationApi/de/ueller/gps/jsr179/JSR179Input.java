@@ -210,14 +210,21 @@ public class JSR179Input implements LocationListener, LocationMsgProducer {
 			
 		}
 		if (state == LocationProvider.OUT_OF_SERVICE) {
-			locationProvider.setLocationListener(this, 0, -1, -1);
+			locationProvider.setLocationListener(this, 1, -1, -1);
 			if (receiverList != null) {
 				receiverList.receiveSolution("Off");
 				receiverList.receiveMessage("provider stopped");
 			}
 		}
 		if (state == LocationProvider.TEMPORARILY_UNAVAILABLE) {
-			locationProvider.setLocationListener(this, 0, -1, -1);
+			/**
+			 * Even though the receiver is temporarily un-available,
+			 * we still need to receive updates periodically, as some
+			 * implementations will otherwise not reacquire the GPS signal.
+			 * So setting setLocationListener to 0 interval, which should have given
+			 * you all the status changes, does not work.
+			 */
+			locationProvider.setLocationListener(this, 1, -1, -1);
 			if (receiverList != null) {
 				receiverList.receiveSolution("NoFix");
 			}
