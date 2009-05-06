@@ -1660,9 +1660,10 @@ Runnable , GpsMidDisplayable{
 		int scalePx;
 		
 		//Calculate the lat and lon coordinates of two
-		//points that are 35 pixels apart
+		//points that are 1/7th of the screen width apart
+		int basePx = (getWidth() / 7);
 		pc.getP().inverse(10, 10, n1);
-		pc.getP().inverse(45, 10, n2);
+		pc.getP().inverse(10 + basePx, 10, n2);
 		
 		//Calculate the distance between them in meters
 		float d = ProjMath.getDistance(n1, n2);
@@ -1676,9 +1677,9 @@ Runnable , GpsMidDisplayable{
 			scale = 10*MoreMath.pow(10,ordMag);
 		}
 		//Calculate how many pixels this distance is apart
-		scalePx = (int)(35.0f*scale/d);
-		
-		// TODO: explain What is the maximum width of the scale bar?
+		//The scale/d factor should be between 1 and 2.5
+		//due to rounding
+		scalePx = (int)(((float)basePx)*scale/d);
 		
 		//Draw the scale bar
 		pc.g.setColor(0x00000000);
