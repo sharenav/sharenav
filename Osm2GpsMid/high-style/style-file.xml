@@ -13,38 +13,38 @@ assumptions in the code for calculating is_in relations for the search
 dialog.
 -->
 
-<!-- scale levels (m and km are values shown on 176x220 mobile display): 
-zoomed in 10x (scale alias 31: 5m)
-zoomed in 9x (scale alias 30: 5m)
-zoomed in 7x (scale alias 29: 10m)
-zoomed in 6x (scale alias 28: 10m)
-zoomed in 5x (scale alias 27: 25m)
-zoomed in 4x (scale alias 26: 25m)
-zoomed in 3x (scale alias 25: 50m)
-zoomed in 2x (scale alias 24: 50m)
-zoomed in 1x (scale alias 23: 100m)
-startup scale  (scale alias 22: 250m)
-zoomed out 1x (scale alias 21: 250m)
-zoomed out 2x (scale alias 20: 250m)
-zoomed out 3x (scale alias 19: 500m)
-zoomed out 4x (scale alias 18: 1000m)
-zoomed out 5x (scale alias 17: 1000m)
-zoomed out 6x (scale alias 16: 2km)
-zoomed out 7x (scale alias 15: 2km)
-zoomed out 8x (scale alias 14: 5km)
-zoomed out 9x (scale alias 13: 5km)
-zoomed out 10x (scale alias 12: 10km)
-zoomed out 11x (scale alias 11: 10km)
-zoomed out 12x (scale alias 10: 25km)
-zoomed out 13x (scale alias 9: 25km)
-zoomed out 14x (scale alias 8: 50km)
-zoomed out 15x (scale alias 7: 50km)
-zoomed out 16x (scale alias 6: 100km)
-zoomed out 17x (scale alias 5: 250km)
-zoomed out 18x (scale alias 4: 250km)
-zoomed out 19x (scale alias 3: 250km)
-zoomed out 20x (scale alias 2: 500km)
-zoomed out 21x (scale alias 1:  500km)
+<!-- available scale aliases for the scale parameter: 
+scale alias 31: zoomed in 9x
+scale alias 30: zoomed in 8x
+scale alias 29: zoomed in 7x
+scale alias 28: zoomed in 6x
+scale alias 27: zoomed in 5x
+scale alias 26: zoomed in 4x
+scale alias 25: zoomed in 3x
+scale alias 24: zoomed in 2x
+scale alias 23: zoomed in 1x
+scale alias 22: startup zoom level of GpsMid
+scale alias 21: zoomed out 1x
+scale alias 20: zoomed out 2x
+scale alias 19: zoomed out 3x
+scale alias 18: zoomed out 4x
+scale alias 17: zoomed out 5x
+scale alias 16: zoomed out 6x
+scale alias 15: zoomed out 7x
+scale alias 14: zoomed out 8x
+scale alias 13: zoomed out 9x
+scale alias 12: zoomed out 10x
+scale alias 11: zoomed out 11x
+scale alias 10: zoomed out 12x
+scale alias 9: zoomed out 13x
+scale alias 8: zoomed out 14x
+scale alias 7: zoomed out 15x
+scale alias 6: zoomed out 16x
+scale alias 5: zoomed out 17x
+scale alias 4: zoomed out 18x
+scale alias 3: zoomed out 19x
+scale alias 2: zoomed out 20x
+scale alias 1: zoomed out 21x
 -->
 
 
