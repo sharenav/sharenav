@@ -2,7 +2,7 @@
  * SirfDecoder
  * 
  * takes an InputStream and interpret layer 3 and layer 4. Than make
- * callbacks to the receiver witch ahas to implement SirfMsgReceiver 
+ * callbacks to the receiver witch has to implement SirfMsgReceiver 
  *
  * @version $Revision$$ ($Name$)
  * @autor Harald Mueller james22 at users dot sourceforge dot net
