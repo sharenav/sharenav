@@ -165,9 +165,9 @@ public class SECellLocLogger implements LocationMsgReceiver {
 	public void receivePosition(Position pos) {
 		//#if polish.api.fileconnection
 		int cellid;
-		short mcc;
-		byte mnc;
-		short lac;
+		int mcc;
+		int mnc;
+		int lac;
 
 		//#debug trace
 		logger.trace("Received position update: " + pos);
@@ -208,9 +208,9 @@ public class SECellLocLogger implements LocationMsgReceiver {
 			if (cellidS != null) {
 				try {
 					cellid = Integer.parseInt(cellidS, 16);
-					mcc = (short) Integer.parseInt(mccS);
-					mnc = (byte) Integer.parseInt(mncS);
-					lac = (short) Integer.parseInt(lacS, 16);
+					mcc = Integer.parseInt(mccS);
+					mnc = Integer.parseInt(mncS);
+					lac = Integer.parseInt(lacS, 16);
 					//#debug debug
 					logger.debug("Cellid: " + cellid + "  mcc: " + mcc
 							+ "  mnc: " + mnc + "  lac: " + lac + " -> "
