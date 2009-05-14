@@ -292,9 +292,9 @@ Runnable , GpsMidDisplayable{
 		CMDS[EXIT_CMD] = new Command("Back", Command.BACK, 2);
 		CMDS[REFRESH_CMD] = new Command("Refresh", Command.ITEM, 4);
 		CMDS[SEARCH_CMD] = new Command("Search", Command.OK, 1);
-		CMDS[CONNECT_GPS_CMD] = new Command("Start Gps",Command.ITEM, 2);
+		CMDS[CONNECT_GPS_CMD] = new Command("Start GPS",Command.ITEM, 2);
 		 
-		CMDS[DISCONNECT_GPS_CMD] = new Command("Stop Gps",Command.ITEM, 2);
+		CMDS[DISCONNECT_GPS_CMD] = new Command("Stop GPS",Command.ITEM, 2);
 		CMDS[START_RECORD_CMD] = new Command("Start record",Command.ITEM, 4);
 		CMDS[STOP_RECORD_CMD] = new Command("Stop record",Command.ITEM, 4);
 		CMDS[MANAGE_TRACKS_CMD] = new Command("Manage tracks",Command.ITEM, 5);
