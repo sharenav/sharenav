@@ -82,6 +82,8 @@ public class Way extends Entity{
 
 	private int flags=0;
 
+	/** indicate by which route modes this way can be used (motorcar, bicycle, etc.) */
+	private byte wayRouteModes = 0;
 
 	public short[] path;
 	public short minLat;
@@ -171,6 +173,8 @@ public class Way extends Entity{
 		//System.out.println("Way flags: " + f);
 
 		type = is.readByte();
+		wayRouteModes = is.readByte();	
+		
 		if ((f & WAY_FLAG_NAME) == WAY_FLAG_NAME) {
 			if ((f & WAY_FLAG_NAMEHIGH) == WAY_FLAG_NAMEHIGH) {
 				nameIdx = is.readInt();
@@ -243,6 +247,11 @@ public class Way extends Entity{
 //			if (is.readByte() != 0x59 ){
 //				logger.error("wrong magic code after path");
 //			}			
+	}
+	
+	
+	public boolean isRoutableWay() {
+		return (wayRouteModes & 0x01) != 0;
 	}
 	
 	/**
@@ -355,7 +364,7 @@ public class Way extends Entity{
 				 (Math.abs(t.nodeLon[idx] - searchCon1Lon) < 2)
 			) {
 				if (
-					C.getWayDescription(this.type).routable
+					this.isRoutableWay()
 					// count in roundabouts only once (search connection could match at start and end node)
 					&& !containsCon1
 					// count only if it's not a oneway ending at this connection 
@@ -453,10 +462,10 @@ public class Way extends Entity{
 			this way contains a better path between the connections
 			*/
 			if (conWayRealDistance < pc.conWayDistanceToNext &&
-				/* check if wayDescription has the routable flag set
+				/* check if way is routable
 				 * (there are situations where 2 ways have the same nodes, e.g. a tram and a highway)
 				*/
-				C.getWayDescription(this.type).routable 
+				this.isRoutableWay() 
 			) {
 //				if (pc.conWayDistanceToNext != Float.MAX_VALUE) {
 //					String name1=null, name2=null;
@@ -583,7 +592,7 @@ public class Way extends Entity{
 			if (route!=null && route.size()!=0) { 
 				for (int i=0; i<route.size()-1; i++){
 					c = (ConnectionWithNode) route.elementAt(i);
-					if (c.wayNameIdx == this.nameIdx && wayDesc.routable) {
+					if (c.wayNameIdx == this.nameIdx && this.isRoutableWay()) {
 						if (path.length > c.wayFromConAt && path.length > c.wayToConAt) {
 							int idx = path[c.wayFromConAt];
 							short searchCon1Lat = (short) ((c.to.lat - t.centerLat) * t.fpm);
@@ -702,9 +711,9 @@ public class Way extends Entity{
 								pc.actualWay = this;
 								pc.actualSingleTile = t;
 						}
-						if (wayDesc.routable) {
+						if (this.isRoutableWay()) {
 							// if this routable way is closer including penalty than the old one set it as new actualRoutableWay
-							if (dstWithPen < pc.squareDstToActualRoutableWay && wayDesc.routable) {
+							if (dstWithPen < pc.squareDstToActualRoutableWay) {
 								pc.squareDstToActualRoutableWay = dst + pen;
 								pc.actualRoutableWay = this;
 							}

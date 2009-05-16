@@ -22,7 +22,7 @@ public class C {
 	 * Specifies the format of the map on disk we expect to see
 	 * This constant must be in sync with Osm2GpsMid
 	 */
-	public final static short MAP_FORMAT_VERSION = 25;
+	public final static short MAP_FORMAT_VERSION = 26;
 	
 	/** The waypoint format used in the RecordStore. See PositionMark.java. */
 	public final static short WAYPT_FORMAT_VERSION = 2;
@@ -43,7 +43,7 @@ public class C {
 	public final static byte LEGEND_FLAG_MIN_ONEWAY_ARROW_SCALE = LEGEND_FLAG_MIN_IMAGE_SCALE;
 	public final static byte LEGEND_FLAG_TEXT_COLOR = 0x08;
 	public final static byte LEGEND_FLAG_NON_HIDEABLE = 0x10;
-	public final static byte LEGEND_FLAG_NON_ROUTABLE = 0x20;
+	// public final static byte LEGEND_FLAG_NON_ROUTABLE = 0x20;
 	public final static byte LEGEND_FLAG_MIN_DESCRIPTION_SCALE = 0x40;
 	
 	public final static short ROUTE_FLAG_MOTORWAY = 0x01;  // used in ConnectionWithNode AND WayDescription
@@ -209,7 +209,6 @@ public class C {
 				logger.error("Read legend had troubles");
 			byte flags = ds.readByte();
 			ways[i].hideable = ((flags & LEGEND_FLAG_NON_HIDEABLE) == 0);
-			ways[i].routable = ((flags & LEGEND_FLAG_NON_ROUTABLE) == 0);
 			ways[i].routeFlags = ds.readByte();			
 			ways[i].description = ds.readUTF();			
 			ways[i].maxScale = ds.readInt();
