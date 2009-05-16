@@ -371,9 +371,9 @@ public class Routing implements Runnable {
 			}
 
 			// if the target way is not routable, e.g. an area, remove it as target entity and thus search for a routable way nearby the target node
-//			if (toMark.entity != null || !(toMark.entity instanceof Way) || !((Way) toMark.entity).isRoutableWay()) {
-//				toMark.entity = null;
-//			}
+			if (toMark.entity != null || !(toMark.entity instanceof Way) || !((Way) toMark.entity).isRoutableWay()) {
+				toMark.entity = null;
+			}
 
 			if (toMark.entity == null) {
 				// if there is no element in the to Mark, fill it from tile-data
