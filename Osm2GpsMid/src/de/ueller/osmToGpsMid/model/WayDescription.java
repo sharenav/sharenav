@@ -7,6 +7,7 @@
  */
 package de.ueller.osmToGpsMid.model;
 
+import de.ueller.osmToGpsMid.Configuration;
 import java.util.List;
 
 
@@ -18,8 +19,10 @@ public class WayDescription extends EntityDescription{
 	public int		boardedColor;
 	public boolean	isArea;
 	public int		wayWidth;
-	public boolean  routable;
-	public int		typicalSpeed;
+	/** Route Modes (motorcar, bicycle, etc.) supported by this WayDescription (1 bit per route mode) */
+	public byte		wayDescRouteModes;
+	/** typical speed of this WayDescription for up to 8 route modes */
+	public int		typicalSpeed[] = new int[8];
 	public int		noWaysOfType;
 	public byte		forceToLayer;
 	
@@ -28,8 +31,10 @@ public class WayDescription extends EntityDescription{
 		boardedColor = 0;
 		isArea = false;
 		wayWidth = 2;
-		routable = false;
-		typicalSpeed = 60;
+		wayDescRouteModes = 0;
+		for (int i = 0; i < Configuration.routeModeCount; i++) {
+			typicalSpeed[i] = 5;
+		}
 		rulePriority = 0;
 	}
 	

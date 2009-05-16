@@ -54,7 +54,8 @@ public class RouteData {
 		}
 		// count all connections for all nodes
 		for (Way w:parser.getWays()){
-			if (! w.isAccessForRouting()){
+			w.determineWayRouteModes();
+			if (! w.isAccessForRouting(0)){ // TODO: multiple route modes per midlet
 				continue;
 			}
 			//TODO: explain what are subpaths?
@@ -74,7 +75,7 @@ public class RouteData {
 		}
 		 
 		for (Way w:parser.getWays()){
-			if (! w.isAccessForRouting()){
+			if (! w.isAccessForRouting(0)){ // TODO: multiple route modes per midlet
 				continue;
 			}
 			for (SubPath s:w.getSubPaths()){
@@ -144,7 +145,7 @@ public class RouteData {
 	 * @param routeNode
 	 */
 	private void addConnection(RouteNode from, RouteNode to, int dist, Way w, byte bs, byte be) {
-		float speed=w.getRoutingSpeed();
+		float speed=w.getRoutingSpeed(0); // TODO: multiple route modes per midlet
 		float time=dist * 10.0f / speed;
 		
 		nodes.put(from.node.id, from);

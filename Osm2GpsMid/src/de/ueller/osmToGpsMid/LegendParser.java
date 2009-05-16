@@ -324,7 +324,9 @@ public class LegendParser extends DefaultHandler{
 					 *  assign a small default speed for the case that the way becomes accessible for routing by a RouteAccessRestriction
 					 *  but the way description itself in the style file contains no routing information 
 					 */ 
-					currentWay.typicalSpeed = 5; 
+					for (int i = 0; i < config.routeModeCount; i++) {
+						currentWay.typicalSpeed[i] = 5;
+					}
 					Set<EntityDescription> wayDescs = keyValuesWay.get(currentWay.value);
 					if (wayDescs == null)
 						wayDescs = new HashSet<EntityDescription>();
@@ -427,18 +429,21 @@ public class LegendParser extends DefaultHandler{
 				}
 				if (qName.equals("routing")) {
 					// only use routing rules for the with-parameter specified in .properties, e.g. useRouting=motorcar
-					if (atts.getValue("with").equalsIgnoreCase(config.useRouting)) {
-						currentWay.routable = atts.getValue("accessible").equalsIgnoreCase("true");
+					int routeModeNr = config.getRouteModeNr(atts.getValue("with"));
+					if (routeModeNr >= 0) {
+						if (atts.getValue("accessible").equalsIgnoreCase("true")) {
+							currentWay.wayDescRouteModes |= 1<<routeModeNr;
+						}
 						String typicalSpeed = atts.getValue("speed");
 						if (typicalSpeed != null) {
 							try {
-								currentWay.typicalSpeed = Integer.parseInt(typicalSpeed);
+								currentWay.typicalSpeed[routeModeNr] = Integer.parseInt(typicalSpeed);
 							} catch (NumberFormatException nfe) {
 								System.out.println("Invalid speed for " + currentWay.description);
 							}
 						} else {
 							System.out.println("Warning: no typical speed for " + currentWay.description + ". Using 5 km/h." );
-							currentWay.typicalSpeed = 5;
+							currentWay.typicalSpeed[routeModeNr] = 5;
 						}
 						//System.out.println(currentWay.description + " with " + atts.getValue("with") + ": " + atts.getValue("accessible") +  " typicalSpeed: " + typicalSpeed + "km/h");
 					}

@@ -69,7 +69,7 @@ public class CreateGpsMidData {
 	public final static byte LEGEND_FLAG_MIN_ONEWAY_ARROW_SCALE = LEGEND_FLAG_MIN_IMAGE_SCALE;
 	public final static byte LEGEND_FLAG_TEXT_COLOR = 0x08;
 	public final static byte LEGEND_FLAG_NON_HIDEABLE = 0x10;
-	public final static byte LEGEND_FLAG_NON_ROUTABLE = 0x20;
+	// public final static byte LEGEND_FLAG_NON_ROUTABLE = 0x20; routable flag has been  moved to Way
 	public final static byte LEGEND_FLAG_MIN_DESCRIPTION_SCALE = 0x40;
 
 	public final static byte ROUTE_FLAG_MOTORWAY = 0x01;
@@ -234,8 +234,6 @@ public class CreateGpsMidData {
 				byte flags = 0;
 				if (!way.hideable)
 					flags |= LEGEND_FLAG_NON_HIDEABLE;				
-				if (!way.routable)
-					flags |= LEGEND_FLAG_NON_ROUTABLE;				
 				if (way.minOnewayArrowScale != 0)
 					flags |= LEGEND_FLAG_MIN_ONEWAY_ARROW_SCALE;
 				if (way.minDescriptionScale != 0)

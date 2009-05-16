@@ -54,7 +54,7 @@ public class Configuration {
 	 * Specifies the format of the map on disk we are about to write
 	 * This constant must be in sync with GpsMid
 	 */
-	public final static short MAP_FORMAT_VERSION = 25;
+	public final static short MAP_FORMAT_VERSION = 26;
 	
 		private ResourceBundle rb;
 		private ResourceBundle vb;
@@ -87,6 +87,10 @@ public class Configuration {
 		
 		// array containing real scale for pseudo zoom 0..32
 		private static float realScale [] = new float[33]; 
+		
+		/** currently only one route mode per midlet is supported */
+		public static int routeModeCount = 1;  // TODO: multiple route modes per midlet
+		public String routeMode [] = new String[8];
 		
 		private static Configuration conf;
 
@@ -233,6 +237,8 @@ public class Configuration {
 			if (useRouting == null || attrToBoolean(useRouting) > 0) {
 				useRouting = "motorcar";
 			}
+			routeMode[0] = new String(useRouting); // TODO: multiple route modes per midlet
+			
 			maxRouteTileSize=Integer.parseInt(getString("routing.maxTileSize"));
 			maxTileSize=Integer.parseInt(getString("maxTileSize"));
 			setStyleFileName(getString("style-file"));
@@ -241,6 +247,15 @@ public class Configuration {
 			
 		}
 
+		public int getRouteModeNr(String transportMode) {
+			for (int i=0; i<routeModeCount; i++) {
+				if (routeMode[i].equalsIgnoreCase(transportMode)) {
+					return i;
+				}
+			}
+			return -1;
+		}
+		
 		public void setPlanetName(String p) {
 			planet = p;
 		}

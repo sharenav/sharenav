@@ -38,6 +38,9 @@ public class Way extends Entity implements Comparable<Way>{
 	public Path path=null;
 	Bounds bound=null;
 	
+	/** route modes for which this way can be used (motorcar, bicycle, etc.) */
+	public byte wayRouteModes = 0;
+	
 	public static Vector<RouteAccessRestriction> RouteAccessRestrictions = null;
 	
 	public static Configuration config;
@@ -70,22 +73,36 @@ public class Way extends Entity implements Comparable<Way>{
 		return (getAttribute("highway") != null);
 	}
 
-	public boolean isAccessForRouting(){
+	public void determineWayRouteModes() {
 		if (config == null) {
 			config = Configuration.getConfiguration();
 		}
-		WayDescription wayDesc = config.getWayDesc(getType());
+		
+		// check if wayDesc is null otherwise we could route along a way we have no description how to render, etc.
+		WayDescription wayDesc = config.getWayDesc(type);
 		if (wayDesc == null) {
-			return false;
+			return;
 		}
-		// the check for permission must be after the check if wayDesc is null otherwise we could route along a way we have no description how to render, etc.
-		switch (isAccessPermittedOrForbiddenFor(config.useRouting)) {
-			case 1:
-				return true;
-			case -1:
-				return false;
+		
+		// for each way the default route accessibility comes from its way description
+		wayRouteModes = wayDesc.wayDescRouteModes;
+		
+		// modify the way's route accessibility according to the route access restriction for each routeMode
+		for (int i = 0; i < config.routeModeCount; i++) {
+			switch (isAccessPermittedOrForbiddenFor(config.routeMode[i])) {
+				case 1:
+					wayRouteModes |= 1<<i;
+					break;
+				case -1:
+					wayRouteModes &= ~(1<<i);
+					break;
+			}	
 		}
-		return wayDesc.routable;
+	}
+	
+	
+	public boolean isAccessForRouting(int routeModeNr){
+		return (wayRouteModes & (1 << routeModeNr)) != 0; 
 	}
 	
 	/**
@@ -251,11 +268,11 @@ public class Way extends Entity implements Comparable<Way>{
      * get or estimate speed in m/s for routing purposes
      * @return
      */
-	public float getRoutingSpeed(){
+	public float getRoutingSpeed(int routeModeNr){
 		if (config == null)
 			config = Configuration.getConfiguration();
 		float maxSpeed = getMaxSpeed();
-		float typicalSpeed = config.getWayDesc(type).typicalSpeed;
+		float typicalSpeed = config.getWayDesc(type).typicalSpeed[routeModeNr];
 		if (maxSpeed <= 0)
 			maxSpeed = 60.0f; //Default case;
 		if (typicalSpeed != 0)
@@ -426,6 +443,9 @@ public class Way extends Entity implements Comparable<Way>{
 			
 //			ds.writeByte(0x58);
 			ds.writeByte(type);
+			
+			ds.writeByte(wayRouteModes);
+			
 			if ((flags & WAY_FLAG_NAME) == WAY_FLAG_NAME){
 				if ((flags & WAY_FLAG_NAMEHIGH) == WAY_FLAG_NAMEHIGH){
 					ds.writeInt(nameIdx);
