@@ -164,6 +164,17 @@ public class GpsMid extends MIDlet implements CommandListener {
 				Configuration.setStartupPos(new Node(0.0f, 0.0f));
 			}
 		}
+		if (logFile != null) {
+			//#debug info
+			log.info("Shutting down logfile");
+			try {
+				logFile.flush();
+				logFile.close();
+			} catch (IOException ioe) {
+				System.out.println("Couldn't close log file");
+			}
+			logFile = null;
+		}
 		//#debug
 		System.out.println("destroy GpsMid");
 	}
