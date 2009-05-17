@@ -39,6 +39,7 @@ import de.ueller.midlet.gps.LocationMsgProducer;
 import de.ueller.midlet.gps.LocationMsgReceiver;
 import de.ueller.midlet.gps.LocationMsgReceiverList;
 import de.ueller.midlet.gps.Logger;
+import de.ueller.midlet.gps.data.GSMCell;
 
 /**
  * 
@@ -63,48 +64,7 @@ public class SECellID implements LocationMsgProducer {
 	private static final int CELLMETHOD_SE = 1;
 	private static final int CELLMETHOD_S60FP2 = 2;
 
-	/**
-	 * 
-	 * This object contains the location and information of a single cell tower
-	 *
-	 */
-	public class CellIdLoc {
-		public int cellID;
-		public short mcc;
-		public short mnc;
-		public int lac;
-		public float lat;
-		public float lon;
-		
-		public CellIdLoc () {
-			/**
-			 * Default constructor;
-			 */
-		}
-		public CellIdLoc (DataInputStream dis) throws IOException {
-			mcc = (short)dis.readShort();
-			mnc = (short)dis.readShort();
-			lac = dis.readInt();
-			cellID = dis.readInt();
-			lat = dis.readFloat();
-			lon = dis.readFloat();
-		}
-		
-		public String toString() {
-			String s = "Cell (id=" + cellID + " mcc=" + mcc + " mnc=" + mnc +
-			" lac=" + lac + "  coord=" + lat + "|" + lon +")";
-			return s;
-		}
-		
-		public void serialise(DataOutputStream dos) throws IOException{
-			dos.writeShort(mcc);
-			dos.writeShort(mnc);
-			dos.writeInt(lac);
-			dos.writeInt(cellID);
-			dos.writeFloat(lat);
-			dos.writeFloat(lon);
-		}
-	}
+	
 
 	/**
 	 * This object is an index entry to list in which
@@ -160,7 +120,7 @@ public class SECellID implements LocationMsgProducer {
 		
 
 		public void run() {
-			CellIdLoc cellLoc = null;
+			GSMCell cellLoc = null;
 			try {
 				if (closed) {
 					this.cancel();
@@ -185,7 +145,7 @@ public class SECellID implements LocationMsgProducer {
 				/**
 				 * Check if we have the cell ID already cached
 				 */
-				CellIdLoc loc = retrieveFromCache(cellLoc);
+				GSMCell loc = retrieveFromCache(cellLoc);
 				if (loc == null) {
 					//#debug debug
 					logger.debug(cellLoc + " was not in cache, retrieving from persistent cache");
@@ -352,12 +312,12 @@ public class SECellID implements LocationMsgProducer {
 	}
 	
 	
-	private CellIdLoc obtainCurrentCellId() throws Exception {
+	private GSMCell obtainCurrentCellId() throws Exception {
 		String cellidS = null;
 		String mccS = null;
 		String mncS = null;
 		String lacS = null;
-		CellIdLoc cell = new CellIdLoc();
+		GSMCell cell = new GSMCell();
 		
 		//#debug debug
 		logger.debug("Tring to retrieve cell-id");
@@ -500,8 +460,8 @@ public class SECellID implements LocationMsgProducer {
 		return cell;
 	}
 	
-	private CellIdLoc retrieveFromCache(CellIdLoc cell) {
-		CellIdLoc loc = (CellIdLoc) cellPos.get(cell.cellID);
+	private GSMCell retrieveFromCache(GSMCell cell) {
+		GSMCell loc = (GSMCell) cellPos.get(cell.cellID);
 		if ((loc != null) && (loc.lac == cell.lac) && (loc.mcc == cell.mcc)
 				&& (loc.mnc == cell.mnc)) {
 			//#debug debug
@@ -513,9 +473,9 @@ public class SECellID implements LocationMsgProducer {
 	}
 
 	
-	private CellIdLoc retrieveFromOpenCellId(CellIdLoc cellLoc) {
+	private GSMCell retrieveFromOpenCellId(GSMCell cellLoc) {
 		
-		CellIdLoc loc = null;
+		GSMCell loc = null;
 		if (retrieving) {
 			logger.info("Still retrieving previous ID");
 			return null;
@@ -575,7 +535,7 @@ public class SECellID implements LocationMsgProducer {
 					float lat = Float.parseFloat(pos[0]);
 					float lon = Float.parseFloat(pos[1]);
 					int accuracy = Integer.parseInt(pos[2]);
-					loc = new CellIdLoc();
+					loc = new GSMCell();
 					loc.cellID = cellLoc.cellID;
 					loc.mcc = cellLoc.mcc;	loc.mnc = cellLoc.mnc;	loc.lac = cellLoc.lac;
 					loc.lat = lat;	loc.lon = lon;
@@ -608,7 +568,7 @@ public class SECellID implements LocationMsgProducer {
 	}
 
 	
-	private CellIdLoc retrieveFromPersistentCache(CellIdLoc cell) {
+	private GSMCell retrieveFromPersistentCache(GSMCell cell) {
 		//#debug info
 		logger.info("Looking for " + cell + " in persistent cache");
 		try {
@@ -628,7 +588,7 @@ public class SECellID implements LocationMsgProducer {
 					
 					int size = dis.readInt();
 					for (int i = 0; i < size; i++) {
-						CellIdLoc tmpCell = new CellIdLoc(dis);
+						GSMCell tmpCell = new GSMCell(dis);
 						//#debug debug
 						logger.debug("Adding " + tmpCell + " to cache from persistent store " + idx);
 						cellPos.put(tmpCell.cellID, tmpCell);
@@ -652,7 +612,7 @@ public class SECellID implements LocationMsgProducer {
 		return null;
 	}
 	
-	private void storeCellIDtoRecordStore(CellIdLoc cell) {
+	private void storeCellIDtoRecordStore(GSMCell cell) {
 		try {
 			//#debug info
 			logger.info("Storing " + cell + " in persitent cell cache");
@@ -733,7 +693,7 @@ public class SECellID implements LocationMsgProducer {
 					int size = dis.readInt();
 					dos.writeInt(size + 1);
 					for (int i = 0; i < size; i++) {
-						CellIdLoc tmpCell = new CellIdLoc(dis);
+						GSMCell tmpCell = new GSMCell(dis);
 						tmpCell.serialise(dos);
 					}
 					if (dis.readInt() != 0xdeadbeaf) {
