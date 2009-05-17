@@ -190,9 +190,9 @@ public class DiscoverGps
 						commport[i]);
 				}
 			} catch (RuntimeException re) {
-				logger.error("Comm ports are not supported on this device: " + re.getMessage());
+				logger.silentexception("Comm ports are not supported on this device", re);
 			} catch (Exception e) {
-				logger.error("Comm ports are not supported on this device: " + e.getMessage());
+				logger.silentexception("Comm ports are not supported on this device",e);
 			}
 			
 //			System.out.println("Start Thread Discover Gps");
