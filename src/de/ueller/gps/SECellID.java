@@ -39,6 +39,7 @@ import de.ueller.midlet.gps.LocationMsgProducer;
 import de.ueller.midlet.gps.LocationMsgReceiver;
 import de.ueller.midlet.gps.LocationMsgReceiverList;
 import de.ueller.midlet.gps.Logger;
+import de.ueller.midlet.gps.data.CellIdProvider;
 import de.ueller.midlet.gps.data.GSMCell;
 
 /**
@@ -61,8 +62,7 @@ public class SECellID implements LocationMsgProducer {
 	
 	private static final String CELLDB_NAME = "GpsMid-CellIds";
 	
-	private static final int CELLMETHOD_SE = 1;
-	private static final int CELLMETHOD_S60FP2 = 2;
+	private CellIdProvider cellProvider;
 
 	
 
@@ -127,8 +127,8 @@ public class SECellID implements LocationMsgProducer {
 					return;
 				}
 
-				cellLoc = obtainCurrentCellId();
-				if (cellLoc == null) {
+				cellLoc = cellProvider.obtainCurrentCellId();
+				if ((cellLoc == null) || (cellLoc.mcc == 0)) {
 					/**
 					 * This can either be the case because
 					 * we currently don't have cell coverage,
@@ -211,7 +211,7 @@ public class SECellID implements LocationMsgProducer {
 	
 	private static boolean retrieving;
 	
-	private int cellRetrievelMethod = -1;
+	
 	
 	public SECellID() {
 		this.receiverList = new LocationMsgReceiverList();
@@ -223,7 +223,9 @@ public class SECellID implements LocationMsgProducer {
 			cellPos = new intTree();
 			lacidx = new intTree();
 			
-			if (obtainCurrentCellId() == null) {
+			cellProvider = CellIdProvider.getInstance();
+			
+			if (cellProvider.obtainCurrentCellId() == null) {
 				//#debug info
 				logger.info("No valid cell-id, closing down");
 				this.receiverList.locationDecoderEnd("No valid cell-id");
@@ -312,153 +314,7 @@ public class SECellID implements LocationMsgProducer {
 	}
 	
 	
-	private GSMCell obtainCurrentCellId() throws Exception {
-		String cellidS = null;
-		String mccS = null;
-		String mncS = null;
-		String lacS = null;
-		GSMCell cell = new GSMCell();
-		
-		//#debug debug
-		logger.debug("Tring to retrieve cell-id");
-
-		if ((cellRetrievelMethod == CELLMETHOD_SE) || (cellRetrievelMethod < 0)) {
-			cellidS = System.getProperty("com.sonyericsson.net.cellid");
-			mccS = System.getProperty("com.sonyericsson.net.cmcc");
-			mncS = System.getProperty("com.sonyericsson.net.cmnc");
-			lacS = System.getProperty("com.sonyericsson.net.lac");
-		}
-		if ((cellRetrievelMethod < 0) && (cellidS != null) && (cellidS.length() > 1)) {
-			cellRetrievelMethod = CELLMETHOD_SE;
-			//#debug info
-			logger.info("Using Sony Ericsson properties to retrieve cellid");
-		}
-		if ((cellRetrievelMethod == CELLMETHOD_S60FP2) || (cellRetrievelMethod < 0)) {
-			cellidS = System.getProperty("com.nokia.mid.cellid");
-			/**
-			 * The documentation claims that the country code is returned as
-			 * two letter iso country code, but at least my phone Nokia 6220 seems
-			 * to return the mcc instead, so assume this gives the mcc for the moment. 
-			 */
-			mccS = System.getProperty("com.nokia.mid.countrycode");
-			mncS = System.getProperty("com.nokia.mid.networkid");
-			if (mncS.indexOf(" ") > 0) {
-				mncS = mncS.substring(0, mncS.indexOf(" "));
-			}
-			//System.getProperty("com.nokia.mid.networksignal");
-			/*
-			 * Lac is not currently supported for S60 devices
-			 * The com.nokia.mid.lac comes from S40 devices.
-			 * We include this here for the moment, in the hope
-			 * that future software updates will include this into
-			 * S60 as well.
-			 * 
-			 * The LAC is needed to uniquely identify cells, but openCellID
-			 * seems to do a lookup ignoring LAC at first and only using it
-			 * if there are no results. So for retreaving Cells, not having
-			 * the LAC looks ok, but we won't be able to submit new cells
-			 * with out the LAC
-			 */
-			lacS = System.getProperty("com.nokia.mid.lac");
-		}
-		if ((cellRetrievelMethod < 0) && (cellidS != null) && (cellidS.length() > 1)) {
-			cellRetrievelMethod = CELLMETHOD_S60FP2;
-			//#debug info
-			logger.info("Using S60 properties to retrieve cellid");
-		}
-
-		/*
-		 * This code is used for debugging cell-id data on the emulator
-		 * by generating one of 7 random cell-ids 
-		 *
-		Random r = new Random();
-		int rr = r.nextInt(16) + 1;
-		System.out.println("RR: " +rr);
-		switch (rr) {
-		case 1:
-			cellidS = "2627"; mccS = "234"; mncS = "33"; lacS = "133";
-			break;
-		case 2:
-			cellidS = "2628"; mccS = "234"; mncS = "33"; lacS = "133";
-			break;
-		case 3:
-			cellidS = "2629"; mccS = "234"; mncS = "33"; lacS = "133";
-			break;
-		case 4:
-			cellidS = "2620"; mccS = "234"; mncS = "33"; lacS = "134";
-			break;
-		case 5:
-			cellidS = "2619"; mccS = "234"; mncS = "33"; lacS = "134";
-			break;
-		case 6:
-			cellidS = "2629"; mccS = "234"; mncS = "33"; lacS = "135";
-			break;
-		case 7:
-			cellidS = "2649"; mccS = "234"; mncS = "33"; lacS = "136";
-			break;
-		case 8:
-			cellidS = "2659"; mccS = "234"; mncS = "33"; lacS = "137";
-			break;
-		case 9:
-			cellidS = "B1D1"; mccS = "310"; mncS = "260"; lacS = "B455";
-			break;
-		case 10:
-			cellidS = "79D9"; mccS = "310"; mncS = "260"; lacS = "4D";
-			break;
-		
-		case 11:
-			cellidS = "3E92FFF"; mccS = "284"; mncS = "3"; lacS = "3E9";
-			break;
-		case 12:
-			cellidS = "1B0"; mccS = "250"; mncS = "20"; lacS = "666D";
-			break;
-		case 13:
-			cellidS = "23EC45A"; mccS = "234"; mncS = "10"; lacS = "958C";
-			break;
-		case 14:
-			cellidS = "8589A"; mccS = "234"; mncS = "10"; lacS = "8139";
-			break;
-		case 15:
-			cellidS = "85A67"; mccS = "234"; mncS = "10"; lacS = "8139";
-			break;
-		case 16:
-			cellidS = "151E"; mccS = "724"; mncS = "5"; lacS = "552";
-			break;
-		}
-		
-		*/
-		/**
-		 * We don't check the lac, as this may well be null on some phones
-		 * that support cellid, but not lac. This is not ideal,
-		 * but we can probably cope without
-		 */
-		if ((cellidS == null) || (mccS == null) || (mncS == null)) {
-			//#debug debug
-			logger.debug("No valid cell-id");
-			return null;
-		}
-		try {
-			if (cellRetrievelMethod == CELLMETHOD_SE) {
-				cell.cellID = Integer.parseInt(cellidS, 16);
-			} else {
-				cell.cellID = Integer.parseInt(cellidS);
-			}
-			cell.mcc = (short) Integer.parseInt(mccS);
-			cell.mnc = (short) Integer.parseInt(mncS);
-			if ((lacS != null) && (lacS.length() > 0)) {
-				cell.lac = Integer.parseInt(lacS, 16);
-			} else {
-				cell.lac = 0;
-			}
-		} catch (NumberFormatException nfe) {
-			logger.silentexception("Failed to parse cell-id (cellid: " + cellidS +
-					" mcc: " + mccS + " mnc: " + mncS + " lac: " + lacS, nfe);
-			return null;
-		}
-		//#debug debug
-		logger.debug("Got cell-id: " + cell);
-		return cell;
-	}
+	
 	
 	private GSMCell retrieveFromCache(GSMCell cell) {
 		GSMCell loc = (GSMCell) cellPos.get(cell.cellID);

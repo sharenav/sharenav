@@ -60,6 +60,7 @@ public class SECellLocLogger implements LocationMsgReceiver {
 
 	private boolean valid;
 	private static boolean cellIDLogging = false;
+	private CellIdProvider cellProvider;
 
 	public boolean init() {
 		//#if polish.api.fileconnection
@@ -74,15 +75,10 @@ public class SECellLocLogger implements LocationMsgReceiver {
 			
 			String url = Configuration.getGpsRawLoggerUrl();
 			url += "cellIDLog" + HelperRoutines.formatSimpleDateNow() + ".txt";
-
-			String cellidS = System.getProperty("com.sonyericsson.net.cellid");
-			String mccS = System.getProperty("com.sonyericsson.net.cmcc");
-			String mncS = System.getProperty("com.sonyericsson.net.cmnc");
-			String lacS = System.getProperty("com.sonyericsson.net.lac");
 			
-			//cellidS = "2627"; mccS = "234"; mncS = "33"; lacS = "133";
+			cellProvider = CellIdProvider.getInstance();
 
-			if (((cellidS != null) && (mccS != null) && (mncS != null))) {
+			if (cellProvider.obtainCurrentCellId() != null) {
 				try {
 					Connection con = Connector.open(url);
 					if (con instanceof FileConnection) {
@@ -116,7 +112,7 @@ public class SECellLocLogger implements LocationMsgReceiver {
 				//#debug info
 				logger.info("Cell-ID properties were empty, this is only supported on newer Sony Ericsson phones.");
 				GpsMid.getInstance().alert("Cell logging", 
-					"Cell-ID properties were empty, this is only supported on newer Sony Ericsson phones.",
+					"Cell-ID properties were empty, this is only supported on some phones.",
 					Alert.FOREVER);
 			}
 		} catch (Exception e) {
@@ -164,10 +160,6 @@ public class SECellLocLogger implements LocationMsgReceiver {
 
 	public void receivePosition(Position pos) {
 		//#if polish.api.fileconnection
-		int cellid;
-		int mcc;
-		int mnc;
-		int lac;
 
 		//#debug trace
 		logger.trace("Received position update: " + pos);
@@ -198,32 +190,17 @@ public class SECellLocLogger implements LocationMsgReceiver {
 
 		try {
 
-			String cellidS = System.getProperty("com.sonyericsson.net.cellid");
-			String mccS = System.getProperty("com.sonyericsson.net.cmcc");
-			String mncS = System.getProperty("com.sonyericsson.net.cmnc");
-			String lacS = System.getProperty("com.sonyericsson.net.lac");
-			
-			//cellidS = "2627"; mccS = "234"; mncS = "33"; lacS = "133";
+			GSMCell cell = cellProvider.obtainCurrentCellId();
 
-			if (cellidS != null) {
-				try {
-					cellid = Integer.parseInt(cellidS, 16);
-					mcc = Integer.parseInt(mccS);
-					mnc = Integer.parseInt(mncS);
-					lac = Integer.parseInt(lacS, 16);
-					//#debug debug
-					logger.debug("Cellid: " + cellid + "  mcc: " + mcc
-							+ "  mnc: " + mnc + "  lac: " + lac + " -> "
-							+ pos.latitude + "," + pos.longitude);
-					wr.write(pos.latitude + "," + pos.longitude + "," + mcc
-							+ "," + mnc + "," + lac + "," + cellid + "\n");
-					wr.flush();
-					noSamples++;
-				} catch (NumberFormatException nfe) {
-					logger.silentexception(
-						"Invalid number format, so could not convert cell-id data",
-						nfe);
-				}
+			if ((cell != null) && (cell.mcc > 0) && (cell.mnc > 0) && (cell.lac > 0) && (cell.cellID > 0)){
+				//#debug debug
+				logger.debug("Cellid: " + cell.cellID + "  mcc: " + cell.mcc
+						+ "  mnc: " + cell.mnc + "  lac: " + cell.lac + " -> "
+						+ pos.latitude + "," + pos.longitude);
+				wr.write(pos.latitude + "," + pos.longitude + "," + cell.mcc
+						+ "," + cell.mnc + "," + cell.lac + "," + cell.cellID + "\n");
+				wr.flush();
+				noSamples++;
 			}
 		} catch (Exception e) {
 			logger.silentexception("Failed to retrieve Cell-id for logging", e);
