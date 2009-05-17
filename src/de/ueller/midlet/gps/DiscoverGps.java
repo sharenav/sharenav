@@ -372,13 +372,25 @@ public class DiscoverGps
 					friendlyName(servRecord[i].getHostDevice()));
 		}
 	}
+	
 	private String friendlyName(RemoteDevice rd){
+		String address = rd.getBluetoothAddress();
+		String name = null;
 		try {
-			return rd.getFriendlyName(true);
-		} catch (IOException e) {
-			return rd.getBluetoothAddress();
+			name = rd.getFriendlyName(false);
+		} catch (IOException ioe) {}
+		// On Nokia 6230 the bluetooth stack is buggy and so it could be
+		// that getFriendlyName() fails. In this case we show at least
+		// the bluetooth address in the device list instead of a friendly name
+		if (name == null || name.trim().length() == 0) {
+			try {
+				name = rd.getFriendlyName(true);
+			} catch (IOException ioe) {}
+			if (name == null || name.trim().length() == 0) {
+				name = address;
+			}
 		}
-
+		return name;
 	}
 	
 	public void serviceSearchCompleted(int transID, int respCode) {		
