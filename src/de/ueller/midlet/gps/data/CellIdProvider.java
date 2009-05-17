@@ -15,11 +15,22 @@
  */
 package de.ueller.midlet.gps.data;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Random;
+
+import javax.microedition.io.ConnectionNotFoundException;
+import javax.microedition.io.Connector;
+import javax.microedition.io.SocketConnection;
 
 import de.ueller.midlet.gps.Logger;
 
 public class CellIdProvider {
+	final int PROTO_REQ_CELLID = 6574723;
+	
 	private static final int CELLMETHOD_NONE = 0;
 	private static final int CELLMETHOD_SE = 1;
 	private static final int CELLMETHOD_S60FP2 = 2;
@@ -33,22 +44,28 @@ public class CellIdProvider {
 	
 	private int cellRetrievelMethod = -1;
 	
-	
-	
+	SocketConnection clientSock = null;
+	DataInputStream clientIS = null;
+	DataOutputStream clientOS = null;
 	
 	private CellIdProvider() {
-		//#debug debug
-		logger.debug("Trying to find a suitable cell id provider");
+		//#debug info
+		logger.info("Trying to find a suitable cell id provider");
 		try {
 			//#debug info
 			logger.info("Trying to see if Sony-Ericcson method is available");
 			GSMCell cell = obtainSECell();
 			if (cell != null) {
 				cellRetrievelMethod = CELLMETHOD_SE;
+				//#debug info
 				logger.info("   Yes, the Sony-Ericcsson method works");
 				return;
+			} else {
+				//#debug info
+				logger.info("   No, need to use a different method");
 			}
 		} catch (Exception e) {
+			logger.silentexception("Retrieving CellID as a Sony-Ericsson failed", e);
 			//Nothing to do here, just fall through to the next method
 		}
 		try {
@@ -59,8 +76,11 @@ public class CellIdProvider {
 				cellRetrievelMethod = CELLMETHOD_SOCKET;
 				logger.info("   Yes, there is a server running and we can get a cell from it");
 				return;
+			} else {
+				logger.info("   No, need to use a different method");
 			}
 		} catch (Exception e) {
+			logger.silentexception("Could not connect to socket", e);
 			//Nothing to do here, just fall through to the next method
 		}
 		
@@ -71,13 +91,15 @@ public class CellIdProvider {
 			if (cell != null) {
 				cellRetrievelMethod = CELLMETHOD_S60FP2;
 				logger.info("   Yes, the S60 3rd FP2 method works");
+			} else {
+				logger.info("   No, need to use a different method");
 			}
 		} catch (Exception e) {
-			//Nothing to do here, just fall through to the next method
+			logger.silentexception("Retrieving CellID as a Nokia S60 3rd FP2 failed", e);
 		}
 		cellRetrievelMethod = CELLMETHOD_NONE;
 		//#debug info
-		logger.info("No method of retrieving CellID is valid, can't use CellID");
+		logger.error("No method of retrieving CellID is valid, can't use CellID");
 		
 	}
 	
@@ -177,8 +199,77 @@ public class CellIdProvider {
 	}
 	
 	private GSMCell obtainSocketCell() {
+		if (clientSock == null) {
+			try {
+				logger.info("Connecting to socket://localhost:59721");
+				clientSock = (SocketConnection) Connector.open("socket://localhost:59721");
+				clientSock.setSocketOption(SocketConnection.KEEPALIVE, 0);
+				clientOS = new DataOutputStream(clientSock.openOutputStream());
+				clientIS = new DataInputStream(clientSock.openInputStream());
+				logger.info("Connected to socket");
+				
+				
+			} catch (SecurityException se) {
+				logger.exception("Sorry, you declined to try and connect to a local helper deamon", se);
+				clientSock = null;
+				return null;
+			} catch (ConnectionNotFoundException cnfe) {
+				//This is quite common, so silenty ignore this;
+				logger.exception("Could not open a connection to local helper deamon", cnfe);
+				return null;
+			} catch (IOException ioe) {
+				logger.exception("Failed to open connection to a local helper deamon", ioe);
+				clientSock = null;
+				return null;
+			}
+		}
 		
-		/* NOT IMPLEMENTED YET */
+		try {
+			byte [] buf = new byte[4096];
+			logger.info("Requesting next CellID");
+			int noAvail = clientIS.available();
+			while (noAvail > 0) {
+				if (noAvail > 4096) {
+					noAvail = 4096;
+				}
+				//#debug debug
+				logger.debug("Emptying Buffer of length " + noAvail);
+				clientIS.read(buf,0,noAvail);
+				noAvail = clientIS.available();
+			}
+			clientOS.writeInt(PROTO_REQ_CELLID);
+			clientOS.flush();
+			//debug trace
+			logger.trace("Wrote Cell request");
+			GSMCell cell = new GSMCell();
+			if (clientIS.available() < 18) {
+				//#debug debug
+				logger.debug("Not Enough Data wait 50");
+				Thread.sleep(50);
+			}
+			if (clientIS.available() < 18) {
+				//#debug debug
+				logger.debug("Not Enough Data wait 500");
+				Thread.sleep(500);
+			}
+			if (clientIS.available() > 17) {
+				//#debug debug
+				logger.debug("Reading");
+				cell.mcc = (short)clientIS.readInt();
+				cell.mnc = (short)clientIS.readInt();
+				cell.lac = clientIS.readInt();
+				cell.cellID = clientIS.readInt();
+				short signal = clientIS.readShort();
+				logger.info("Read Cell: " + cell);
+				return cell;
+			}
+			logger.info("Not enough data available from socket, can't retrieve Cell: " + clientIS.available());
+		} catch (IOException ioe) {
+			logger.exception("Failed to read cell", ioe);
+			return null;
+		} catch (InterruptedException ie) {
+			return null;
+		}
 		return null;
 	}
 	
@@ -271,10 +362,12 @@ public class CellIdProvider {
 	public GSMCell obtainCurrentCellId() throws Exception {
 		
 		GSMCell cell = null;
-		//#debug debug
-		logger.debug("Tring to retrieve cell-id");
+		//#debug info
+		logger.info("Tring to retrieve cell-id");
 		
 		if (cellRetrievelMethod ==  CELLMETHOD_NONE) {
+			//#debug info
+			logger.info("Can't retrieve CellID, as there is no valid method available");
 			return null;
 		}
 
@@ -290,6 +383,7 @@ public class CellIdProvider {
 		if (cellRetrievelMethod == CELLMETHOD_DEBUG) {
 			cell = obtainDebugCell();
 		}
+		//#debug debug
 		logger.debug("Retrieved " + cell);
 		return cell;
 	}
