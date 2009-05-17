@@ -105,6 +105,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private final Command			GPS_DISCOVER	= new Command("Discover GPS",
 			Command.ITEM, 1);
 	
+	private final Command			MANUAL_URL_CMD	= new Command("Enter URL",
+			Command.ITEM, 1);
+	
 	
 	/** A menu list instance */
 	private final List				menu			= new List("Setup",
@@ -129,6 +132,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private Form					menuRecordingOptions;
 	
 	private Form					menuRoutingOptions;
+	
+	private Form					menuURLEnter;
 	
 	//#if polish.api.osm-editing
 	private Form					menuOsmAccountOptions;
@@ -156,6 +161,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	//#endif
 	private final static int		STATE_LOAD_CONFIG = 13;
 	private final static int		STATE_SAVE_CONFIG = 14;
+	private final static int		STATE_URL_ENTER_GPS = 15;
+	private final static int		STATE_URL_ENTER_GPX = 16;
 	
 	private Vector urlList; 
 	private Vector friendlyName;
@@ -166,6 +173,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private TextField  tfGpxRecordMinimumDistanceMeters; 
 	private TextField  tfGpxRecordAlwaysDistanceMeters;
 	private TextField  tfMinRouteLineWidth;
+	private TextField  tfURL;
 	//#if polish.api.osm-editing
 	private TextField  tfOsmUserName;
 	private TextField  tfOsmPassword;
@@ -219,6 +227,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		menuBT = new List("Devices", Choice.IMPLICIT, empty, null);
 		menuBT.addCommand(OK_CMD);
 		menuBT.addCommand(BACK_CMD);
+		menuBT.addCommand(MANUAL_URL_CMD);
 		menuBT.setSelectCommand(OK_CMD);
 		menuBT.setCommandListener(this);
 		menuBT.setTitle("Search Service");
@@ -472,6 +481,10 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				state=STATE_GPX;
 			} else if (state==STATE_BT_GPS) {
 				state=STATE_LP;
+			} else if (state==STATE_URL_ENTER_GPS) {
+				state=STATE_LP;
+			} else if (state==STATE_URL_ENTER_GPX) {
+				state=STATE_GPX;
 			} else {
 				state = STATE_ROOT;
 			}
@@ -513,6 +526,20 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 			//#else
 			//logger.error("Files system support is not compiled into this version");
 			//#endif	
+		}
+		if (c == MANUAL_URL_CMD) {
+			menuURLEnter = new Form("Enter connection url");
+			tfURL = new TextField("URL", gpsUrlStr, 256, TextField.ANY);
+			menuURLEnter.addCommand(OK_CMD);
+			menuURLEnter.addCommand(BACK_CMD);
+			menuURLEnter.setCommandListener(this);
+			menuURLEnter.append(tfURL);
+			GpsMid.getInstance().show(menuURLEnter);
+			if (state == STATE_BT_GPS) {
+				state = STATE_URL_ENTER_GPS;
+			} else {
+				state = STATE_BT_GPX;
+			}
 		}
 		if (c == GPS_DISCOVER || c == BT_MAP) {
 			//#if polish.api.btapi
@@ -880,6 +907,17 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				this.show();
 				break;
 			//#endif
+			case STATE_URL_ENTER_GPS:
+				gpsUrlStr = tfURL.getString();
+				state = STATE_LP;
+				show();
+				break;
+			
+			case STATE_URL_ENTER_GPX:
+				gpsUrlStr =tfURL.getString();
+				state = STATE_GPX;
+				show();
+				break;
 			}
 		}
 	}
