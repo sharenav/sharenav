@@ -522,7 +522,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 							"The resulting midlet includes the specified map data and can be uploaded to J2ME ready mobiles for offline navigation.\n" +
 							"\n" +
 							"Usage:\n" +
-							"1. Specify which region the world you want to include in your midlet. \n" +
+							"1. Specify which region of the world you want to include in your midlet. \n" +
 							" This can either be done by dragging over an area on the world map with the right mouse button\n" +
 							" or by specifying a .properties file that already contains the area you want.\n" +
 							" If you want to set all the parameters using this wizard, please leave the .properties file on custom.\n" +
