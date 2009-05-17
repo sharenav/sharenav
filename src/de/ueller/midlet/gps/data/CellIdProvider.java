@@ -201,8 +201,8 @@ public class CellIdProvider {
 	private GSMCell obtainSocketCell() {
 		if (clientSock == null) {
 			try {
-				logger.info("Connecting to socket://localhost:59721");
-				clientSock = (SocketConnection) Connector.open("socket://localhost:59721");
+				logger.info("Connecting to socket://127.0.0.1:59721");
+				clientSock = (SocketConnection) Connector.open("socket://127.0.0.1:59721");
 				clientSock.setSocketOption(SocketConnection.KEEPALIVE, 0);
 				clientOS = new DataOutputStream(clientSock.openOutputStream());
 				clientIS = new DataInputStream(clientSock.openInputStream());
@@ -216,10 +216,19 @@ public class CellIdProvider {
 			} catch (ConnectionNotFoundException cnfe) {
 				//This is quite common, so silenty ignore this;
 				logger.exception("Could not open a connection to local helper deamon", cnfe);
+				clientSock = null;
 				return null;
 			} catch (IOException ioe) {
 				logger.exception("Failed to open connection to a local helper deamon", ioe);
 				clientSock = null;
+				if (cellRetrievelMethod == CELLMETHOD_SOCKET) {
+					/*
+					 * The local helper deamon seems to have died.
+					 * No point in trying to continue trying,
+					 * as otherwise we will get an exception every time
+					 */
+					cellRetrievelMethod = CELLMETHOD_NONE;
+				}
 				return null;
 			}
 		}
@@ -265,7 +274,8 @@ public class CellIdProvider {
 			}
 			logger.info("Not enough data available from socket, can't retrieve Cell: " + clientIS.available());
 		} catch (IOException ioe) {
-			logger.exception("Failed to read cell", ioe);
+			logger.silentexception("Failed to read cell", ioe);
+			clientSock = null;
 			return null;
 		} catch (InterruptedException ie) {
 			return null;
