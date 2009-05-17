@@ -181,19 +181,7 @@ public class DiscoverGps
 		try {
 			guiBusy = new GuiBusy();
 			guiBusy.show();
-			//Probe Commports:
-			try {
-				String commports = System.getProperty("microedition.commports");			
-				String[] commport = StringTokenizer.getArray(commports, ",");
-				for (int i = 0; i < commport.length; i++) {				
-					parent.addDevice("comm:" + commport[i] + ";baudrate=19200",
-						commport[i]);
-				}
-			} catch (RuntimeException re) {
-				logger.silentexception("Comm ports are not supported on this device", re);
-			} catch (Exception e) {
-				logger.silentexception("Comm ports are not supported on this device",e);
-			}
+			
 			
 //			System.out.println("Start Thread Discover Gps");
 			// initialize bluetooth first
@@ -230,6 +218,19 @@ public class DiscoverGps
 		} catch (RuntimeException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		//Probe Commports:
+		try {
+			String commports = System.getProperty("microedition.commports");
+			String[] commport = StringTokenizer.getArray(commports, ",");
+			for (int i = 0; i < commport.length; i++) {				
+				parent.addDevice("comm:" + commport[i] + ";baudrate=19200",
+					commport[i]);
+			}
+		} catch (RuntimeException re) {
+			logger.silentexception("Comm ports are not supported on this device", re);
+		} catch (Exception e) {
+			logger.silentexception("Comm ports are not supported on this device",e);
 		}
 		parent.show();
 		parent.addDevice("Thread end");
