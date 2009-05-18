@@ -175,6 +175,8 @@ Runnable , GpsMidDisplayable{
 
 	private long lastBackLightOnTime = 0;
 	
+	private long lastPanTime = 0;
+	
 	private long collected = 0;
 
 	public PaintContext pc;
@@ -646,6 +648,7 @@ Runnable , GpsMidDisplayable{
 					}
 					if (panX != 0 || panY != 0) {
 						gpsRecenter = false;
+						lastPanTime = System.currentTimeMillis();
 					}
 					imageCollector.getCurrentProjection().pan(center, panX, panY);
 				}
@@ -1839,6 +1842,11 @@ Runnable , GpsMidDisplayable{
 		logger.info("New position: " + pos);
 		this.pos = pos;
 		collected++;
+		if (Configuration.getAutoRecenterToGpsMilliSecs() !=0 &&
+			System.currentTimeMillis() > lastPanTime + Configuration.getAutoRecenterToGpsMilliSecs()
+		) {
+			gpsRecenter = true;
+		}
 		if (gpsRecenter) {
 			center.setLatLon(pos.latitude, pos.longitude);
 			if (speed > 2) {
@@ -1953,7 +1961,8 @@ Runnable , GpsMidDisplayable{
 			imageCollector.getCurrentProjection().forward(centerPointerPressedN, centerPointerPressedP);
 			imageCollector.getCurrentProjection().inverse(centerPointerPressedP.x + diffX, centerPointerPressedP.y + diffY, center);
 			imageCollector.newDataReady();
-			gpsRecenter = false;			
+			gpsRecenter = false;
+			lastPanTime = System.currentTimeMillis();
 		}
 	}
 	

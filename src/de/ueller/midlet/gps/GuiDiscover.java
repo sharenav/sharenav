@@ -184,8 +184,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private Gauge gaugeDetailBoost; 
 	private ChoiceGroup rotationGroup;
 	private ChoiceGroup renderOpts;
-	private ChoiceGroup sizeOpts;
+	private TextField	tfAutoRecenterToGpsSecs;
 	private ChoiceGroup backlightOpts;
+	private ChoiceGroup sizeOpts;
 	private ChoiceGroup debugLog;
 	private ChoiceGroup debugSeverity;
 	private ChoiceGroup debugOther;
@@ -409,6 +410,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		// gaugeDetailBoost = new Gauge("Scale Detail Level", true, 3, 0);
 		gaugeDetailBoost = new Gauge("Increase Detail of lower Zoom Levels", true, 3, 0);
 		menuDisplayOptions.append(gaugeDetailBoost);
+
+		tfAutoRecenterToGpsSecs = new TextField("Auto-Recenter To GPS after these seconds (0=disabled)", Integer.toString(Configuration.getAutoRecenterToGpsMilliSecs() / 1000), 2, TextField.DECIMAL);
+		menuDisplayOptions.append(tfAutoRecenterToGpsSecs);
 
 		String [] backlights;
 		byte i = 3;
@@ -817,6 +821,11 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				Configuration.setCfgBitState(Configuration.CFGBIT_POI_LABELS_LARGER, sizeOpts.isSelected(0), true);
 				Configuration.setCfgBitState(Configuration.CFGBIT_WPT_LABELS_LARGER, sizeOpts.isSelected(1), true);
 				Configuration.setDetailBoost(gaugeDetailBoost.getValue(), true); 
+				
+				String secs=tfAutoRecenterToGpsSecs.getString(); 
+				Configuration.setAutoRecenterToGpsMilliSecs( 
+						(int) (Float.parseFloat(secs)) * 1000
+				); 
 				
 				// convert boolean array with selection states for backlight
 				// to one flag with corresponding bits set

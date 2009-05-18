@@ -42,7 +42,7 @@ public class Configuration {
 	 *  the default values for the features added between configVersionStored
 	 *  and VERSION will be set, before the version in the recordstore is increased to VERSION
 	 */
-	public final static int VERSION=5;
+	public final static int VERSION = 6;
 
 	public final static int LOCATIONPROVIDER_NONE=0;
 	public final static int LOCATIONPROVIDER_SIRF=1; 
@@ -173,7 +173,7 @@ public class Configuration {
 	private static final int RECORD_ID_OSM_URL = 32;
 	private static final int RECORD_ID_MIN_ROUTELINE_WIDTH = 33;
 	private static final int RECORD_ID_KEY_SHORTCUT = 34;
-	
+	private static final int RECORD_ID_AUTO_RECENTER_TO_GPS_MILLISECS = 35;
 
 	// Gpx Recording modes
 	// GpsMid determines adaptive if a trackpoint is written
@@ -239,6 +239,7 @@ public class Configuration {
 	private static String osm_url;
 
 	private static int minRouteLineWidth=0;
+	private static int autoRecenterToGpsMilliSecs=10;
 
 	public static void read(){
 	logger = Logger.getInstance(Configuration.class, Logger.DEBUG);
@@ -319,6 +320,10 @@ public class Configuration {
 				//#debug info
 				logger.info("Default config for version 5+ set.");
 			}			
+			if(configVersionStored < 6) {
+				setAutoRecenterToGpsMilliSecs(10000);
+			}
+
 			setCfgBits(cfgBits, true);
 			// remember for which version the default values were stored
 			write(VERSION, RECORD_ID_CONFIG_VERSION);
@@ -363,6 +368,7 @@ public class Configuration {
 				osm_url = "http://api.openstreetmap.org/api/0.6/";
 			}
 			minRouteLineWidth=readInt(database, RECORD_ID_MIN_ROUTELINE_WIDTH); 
+			autoRecenterToGpsMilliSecs=readInt(database, RECORD_ID_AUTO_RECENTER_TO_GPS_MILLISECS);
 			
 			database.closeRecordStore();
 		} catch (Exception e) {
@@ -816,8 +822,15 @@ public class Configuration {
 		write(minRouteLineWidth, RECORD_ID_MIN_ROUTELINE_WIDTH);
 	}
 	
-	
-	
+	public static int getAutoRecenterToGpsMilliSecs() {
+		return autoRecenterToGpsMilliSecs;
+	}
+
+	public static void setAutoRecenterToGpsMilliSecs(int ms) {
+		autoRecenterToGpsMilliSecs = ms;
+		write(autoRecenterToGpsMilliSecs, RECORD_ID_AUTO_RECENTER_TO_GPS_MILLISECS);
+	}
+		
 	public static InputStream getMapResource(String name) throws IOException{
 		InputStream is;
 		if (mapFromJar) {
