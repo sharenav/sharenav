@@ -1937,6 +1937,16 @@ Runnable , GpsMidDisplayable{
 			pointerDragAction = false;
 		}
 		
+		// recenter to GPS by touching the mid of the screen
+		int centerX = getWidth() / 2;
+		int centerY = getHeight() / 2;
+		int maxDist = (getHeight() * 6) / 100; // trigger maximum 6% away from mid screen
+		if (Math.abs(x - centerX) <= maxDist && Math.abs(y - centerY) <= maxDist) {
+			commandAction(CMDS[RECENTER_GPS_CMD], (Displayable) null);
+			repaint();
+			pointerDragAction = false;			
+		}
+
 		// remember positions for dragging
 		// remember position the pointer was pressed
 		Trace.touchX = x;
