@@ -57,6 +57,7 @@ public class SECellLocLogger implements LocationMsgReceiver {
 	//#endif
 	
 	private int noSamples;
+	private int noValid;
 
 	private boolean valid;
 	private static boolean cellIDLogging = false;
@@ -71,6 +72,7 @@ public class SECellLocLogger implements LocationMsgReceiver {
 			prevPos = null;
 			valid = false;
 			noSamples = 0;
+			noValid = -5;
 			cellIDLogging = false;
 			
 			String url = Configuration.getGpsRawLoggerUrl();
@@ -169,6 +171,21 @@ public class SECellLocLogger implements LocationMsgReceiver {
 			logger.debug("Currently no valid fix, so skipping CellID logging");
 			return;
 		}
+		noValid++;
+		if (noValid < 6) {
+			/*
+			 * We throw away the first 5 samples after
+			 * the GPS has become valid again. This is as
+			 * the first samples are often still lower quality.
+			 * Either has the lock hasn't fully been established,
+			 * or as the first sample might be "the last known position"
+			 * which can be completely off from where we (and the cell) are
+			 * at the moment. This hopefully reduces the chance of saving
+			 * bogus cell positions. At a sampling rate of 1 Hz, this should
+			 * only be 5 seconds 
+			 */
+			return;
+		}
 
 		if (prevPos != null) {
 			float dist = ProjMath.getDistance(pos.latitude
@@ -218,6 +235,7 @@ public class SECellLocLogger implements LocationMsgReceiver {
 				&& (s.equalsIgnoreCase("cell")) && (s.equalsIgnoreCase("0S"))
 				&& (s.equalsIgnoreCase("~~"))) {
 			valid = false;
+			noValid = 0;
 		} else {
 			valid = true;
 		}
