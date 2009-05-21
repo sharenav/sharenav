@@ -91,6 +91,7 @@ public class CellIdProvider {
 			if (cell != null) {
 				cellRetrievelMethod = CELLMETHOD_S60FP2;
 				logger.info("   Yes, the S60 3rd FP2 method works");
+				return;
 			} else {
 				logger.info("   No, need to use a different method");
 			}
@@ -214,8 +215,8 @@ public class CellIdProvider {
 				clientSock = null;
 				return null;
 			} catch (ConnectionNotFoundException cnfe) {
-				//This is quite common, so silenty ignore this;
-				logger.exception("Could not open a connection to local helper deamon", cnfe);
+				//This is quite common, so silently ignore this;
+				logger.silentexception("Could not open a connection to local helper deamon", cnfe);
 				clientSock = null;
 				return null;
 			} catch (IOException ioe) {
@@ -223,7 +224,7 @@ public class CellIdProvider {
 				clientSock = null;
 				if (cellRetrievelMethod == CELLMETHOD_SOCKET) {
 					/*
-					 * The local helper deamon seems to have died.
+					 * The local helper daemon seems to have died.
 					 * No point in trying to continue trying,
 					 * as otherwise we will get an exception every time
 					 */
