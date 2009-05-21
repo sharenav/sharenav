@@ -38,6 +38,7 @@ import de.ueller.osmToGpsMid.model.EntityDescription;
 import de.ueller.osmToGpsMid.model.POIdescription;
 import de.ueller.osmToGpsMid.model.SoundDescription;
 import de.ueller.osmToGpsMid.model.RouteAccessRestriction;;
+import de.ueller.osmToGpsMid.model.TravelModes;
 import de.ueller.osmToGpsMid.model.WayDescription;
 
 public class LegendParser extends DefaultHandler{
@@ -324,7 +325,7 @@ public class LegendParser extends DefaultHandler{
 					 *  assign a small default speed for the case that the way becomes accessible for routing by a RouteAccessRestriction
 					 *  but the way description itself in the style file contains no routing information 
 					 */ 
-					for (int i = 0; i < config.routeModeCount; i++) {
+					for (int i = 0; i < TravelModes.travelModeCount; i++) {
 						currentWay.typicalSpeed[i] = 5;
 					}
 					Set<EntityDescription> wayDescs = keyValuesWay.get(currentWay.value);
@@ -429,21 +430,21 @@ public class LegendParser extends DefaultHandler{
 				}
 				if (qName.equals("routing")) {
 					// only use routing rules for the with-parameter specified in .properties, e.g. useRouting=motorcar
-					int routeModeNr = config.getRouteModeNr(atts.getValue("with"));
-					if (routeModeNr >= 0) {
+					int travelModeNr = TravelModes.getTravelModeNrByName(atts.getValue("with"));
+					if (travelModeNr >= 0) {
 						if (atts.getValue("accessible").equalsIgnoreCase("true")) {
-							currentWay.wayDescRouteModes |= 1<<routeModeNr;
+							currentWay.wayDescTravelModes |= 1<<travelModeNr;
 						}
 						String typicalSpeed = atts.getValue("speed");
 						if (typicalSpeed != null) {
 							try {
-								currentWay.typicalSpeed[routeModeNr] = Integer.parseInt(typicalSpeed);
+								currentWay.typicalSpeed[travelModeNr] = Integer.parseInt(typicalSpeed);
 							} catch (NumberFormatException nfe) {
 								System.out.println("Invalid speed for " + currentWay.description);
 							}
 						} else {
 							System.out.println("Warning: no typical speed for " + currentWay.description + ". Using 5 km/h." );
-							currentWay.typicalSpeed[routeModeNr] = 5;
+							currentWay.typicalSpeed[travelModeNr] = 5;
 						}
 						//System.out.println(currentWay.description + " with " + atts.getValue("with") + ": " + atts.getValue("accessible") +  " typicalSpeed: " + typicalSpeed + "km/h");
 					}

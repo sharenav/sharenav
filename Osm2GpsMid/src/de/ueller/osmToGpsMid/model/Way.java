@@ -85,11 +85,11 @@ public class Way extends Entity implements Comparable<Way>{
 		}
 		
 		// for each way the default route accessibility comes from its way description
-		wayRouteModes = wayDesc.wayDescRouteModes;
+		wayRouteModes = wayDesc.wayDescTravelModes;
 		
 		// modify the way's route accessibility according to the route access restriction for each routeMode
-		for (int i = 0; i < config.routeModeCount; i++) {
-			switch (isAccessPermittedOrForbiddenFor(config.routeMode[i])) {
+		for (int i = 0; i < TravelModes.travelModeCount; i++) {
+			switch (isAccessPermittedOrForbiddenFor(TravelModes.travelModes[i].getName())) {
 				case 1:
 					wayRouteModes |= 1<<i;
 					break;

@@ -35,6 +35,7 @@ import org.apache.tools.bzip2.CBZip2InputStream;
 
 import de.ueller.osmToGpsMid.model.Relation;
 import de.ueller.osmToGpsMid.model.RouteAccessRestriction;
+import de.ueller.osmToGpsMid.model.TravelModes;
 
 
 
@@ -55,19 +56,21 @@ public class BundleGpsMid {
 				c=new Configuration(args);
 			System.out.println(c.toString());
 
-			System.out.println("Route access restrictions in " + c.getStyleFileName() + " for " + c.useRouting + ":");
-        	int routeAccessRestrictionCount = 0;
-            if (c.getRouteAccessRestrictions().size() > 0) {
-            	for (RouteAccessRestriction r: c.getRouteAccessRestrictions()) {
-            		if (r.restrictionFor.equalsIgnoreCase(c.useRouting)) {
-	            		routeAccessRestrictionCount++;
-	            		System.out.println(" " + r.toString());
-            		}
-            	}
-            }
-            if (routeAccessRestrictionCount == 0) {
-        		System.out.println("Warning: No access restrictions in " + c.getStyleFileName() + " for " + c.useRouting);            	
-            }
+			for (int i=0; i < TravelModes.travelModeCount; i++) {				
+				System.out.println("Route access restrictions in " + c.getStyleFileName() + " for " + TravelModes.travelModes[i].getName() + ":");
+	        	int routeAccessRestrictionCount = 0;
+	            if (c.getRouteAccessRestrictions().size() > 0) {
+	            	for (RouteAccessRestriction r: c.getRouteAccessRestrictions()) {
+	            		if (r.restrictionFor.equalsIgnoreCase(TravelModes.travelModes[i].getName())) {
+		            		routeAccessRestrictionCount++;
+		            		System.out.println(" " + r.toString());
+	            		}
+	            	}
+	            }
+	            if (routeAccessRestrictionCount == 0) {
+	        		System.out.println("Warning: No access restrictions in " + c.getStyleFileName() + " for " + TravelModes.travelModes[i].getName());            	
+	            }
+			}
 			System.out.println("");
 			String tmpDir = c.getTempDir();
 			System.out.println("unpack Application to " + tmpDir);
