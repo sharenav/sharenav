@@ -75,8 +75,17 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 		}
 
 		this.deleteAll();		
+
 		waypoints = parent.gpx.listWayPt();
-		for (int i = 0; i < waypoints.length; i++) {
+		
+		// save total waypoints
+		int count_waypoints = waypoints.length;
+		
+		// Limit display of Waypoints to 255 because some Phones can only display 255 listitems
+		if (count_waypoints > 255) {
+			count_waypoints = 255;    
+		}
+		for (int i = 0; i < count_waypoints; i++) {
 			if ((waypoints[i].displayName == null) || (waypoints[i].displayName.equals(""))) {
 				this.append("(unnamed)",null);
 			} else {
@@ -230,8 +239,15 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 	}
 
 	public void show() {
-		GpsMid.getInstance().show(this);
-		//Display.getDisplay(parent.getParent()).setCurrent(this);
+			GpsMid.getInstance().show(this);
+
+			// Show Alert to inform the user right before showing the waypoints
+			// (because the J2ME List class can not display more than 255
+			// 255 items - at least on some phones).
+			// Todo: Some Phones doesn't have this 255 Items-Limit so we may improve the code here
+			if (waypoints.length > 255) {
+				GpsMid.getInstance().alert("Info", "Due to a platform restriction we display only the first 255 of " + waypoints.length + " waypoints. Hint: Export some waypoints to a file and delete them to show the remaining waypoints.", Alert.FOREVER);
+			}
 	}
 
 	public void uploadAborted() {
