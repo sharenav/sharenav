@@ -11,17 +11,27 @@
 
 package de.ueller.osmToGpsMid.model;
 
+import java.util.Vector;
+
 public class TravelMode {
 	/**
 	 * e. g. motorway, bicycle, etc.
 	 */
 	private	String	travelModeName;	
-	
+	private Vector<RouteAccessRestriction> routeAccessRestrictions;
+
 	public TravelMode(String name) {
 		travelModeName = name;
+		routeAccessRestrictions = new Vector<RouteAccessRestriction>();
 	}
 	
 	public String getName() {
 		return travelModeName;
 	}	
+
+	public Vector<RouteAccessRestriction> getRouteAccessRestrictions() {
+		return routeAccessRestrictions;
+	}	
+
+
 }

@@ -37,7 +37,8 @@ import de.ueller.osmToGpsMid.model.ConditionTuple;
 import de.ueller.osmToGpsMid.model.EntityDescription;
 import de.ueller.osmToGpsMid.model.POIdescription;
 import de.ueller.osmToGpsMid.model.SoundDescription;
-import de.ueller.osmToGpsMid.model.RouteAccessRestriction;;
+import de.ueller.osmToGpsMid.model.RouteAccessRestriction;
+import de.ueller.osmToGpsMid.model.TravelMode;
 import de.ueller.osmToGpsMid.model.TravelModes;
 import de.ueller.osmToGpsMid.model.WayDescription;
 
@@ -49,7 +50,6 @@ public class LegendParser extends DefaultHandler{
 	private LongTri<EntityDescription> pois;
 	private LongTri<EntityDescription> ways;
 	private Vector<SoundDescription> sounds;
-	private Vector<RouteAccessRestriction> routeAccessRestrictions;
 	private POIdescription currentPoi;
 	private SoundDescription currentSound;
 	private String currentRestrictionFor;
@@ -132,7 +132,6 @@ public class LegendParser extends DefaultHandler{
 			ways.put(currentWay.typeNum, currentWay);
 			
 			sounds = new Vector<SoundDescription>();		
-			routeAccessRestrictions = new Vector<RouteAccessRestriction>();
 			
 			SAXParserFactory factory = SAXParserFactory.newInstance();
 			factory.setValidating(true);
@@ -477,14 +476,16 @@ public class LegendParser extends DefaultHandler{
 				break;
 			case READING_ROUTEACCESSRESTRICTIONS:
 				if (qName.equals("routeAccessRestriction")) {
-					routeAccessRestrictions.addElement(
+					TravelMode tm = TravelModes.getTravelMode(currentRestrictionFor);
+					if (tm != null) {
+						tm.getRouteAccessRestrictions().addElement(
 							new RouteAccessRestriction(
-									currentRestrictionFor,
 									atts.getValue("restrictionKey"),
 									atts.getValue("restrictionValues") + "|",
 									Configuration.attrToBoolean(atts.getValue("restrictionPermit")) > 0
 							)
-					);
+						);
+					}
 				}
 				break;
 		}
@@ -526,12 +527,7 @@ public class LegendParser extends DefaultHandler{
 	public Vector<SoundDescription> getSoundDescs() {
 		return sounds;
 	}
-	public Vector<RouteAccessRestriction> getRouteAccessRestrictions() {
-		return routeAccessRestrictions;
-	}
-
-	
-	
+		
 	public void warning(SAXParseException e) throws SAXException {
         System.out.println("Warning: " + e.getMessage()); 
         

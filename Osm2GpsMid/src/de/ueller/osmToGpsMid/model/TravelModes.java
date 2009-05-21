@@ -23,6 +23,21 @@ public class TravelModes {
 		}
 	}
 	
+
+	public static TravelMode getTravelMode(String modeName) {
+		for (int i=0; i < travelModeCount; i++) {
+			if (travelModes[i].getName().equalsIgnoreCase(modeName)) {
+				return travelModes[i];
+			}
+		}
+		return null;
+	}
+
+	public static TravelMode getTravelMode(int modeNr) {
+		return travelModes[modeNr];
+	}
+	
+	
 	public static int getTravelModeNrByName(String modeName) {
 		for (int i=0; i < travelModeCount; i++) {
 			if (travelModes[i].getName().equalsIgnoreCase(modeName)) {
@@ -31,7 +46,6 @@ public class TravelModes {
 		}
 		return -1;
 	}
-
 	
 	private static void add(String modeName) {
 		travelModes[travelModeCount]= new TravelMode(modeName);

@@ -39,10 +39,8 @@ import org.apache.tools.bzip2.CBZip2InputStream;
 
 import de.ueller.osmToGpsMid.model.Bounds;
 import de.ueller.osmToGpsMid.model.EntityDescription;
-import de.ueller.osmToGpsMid.model.RouteAccessRestriction;
 import de.ueller.osmToGpsMid.model.SoundDescription;
 import de.ueller.osmToGpsMid.model.POIdescription;
-import de.ueller.osmToGpsMid.model.TravelMode;
 import de.ueller.osmToGpsMid.model.TravelModes;
 import de.ueller.osmToGpsMid.model.WayDescription;
 
@@ -538,10 +536,7 @@ public class Configuration {
 		public Vector<SoundDescription> getSoundDescs() {
 			return legend.getSoundDescs();
 		}
-		public Vector<RouteAccessRestriction> getRouteAccessRestrictions() {
-			return legend.getRouteAccessRestrictions();
-		}
-		
+
 		public SoundDescription getSoundDescription(String Name) {			
 			for (SoundDescription sound : getSoundDescs()) {
 				if (sound.name.equals(Name)) {

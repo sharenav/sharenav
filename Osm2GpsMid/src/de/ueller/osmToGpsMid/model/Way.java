@@ -39,9 +39,7 @@ public class Way extends Entity implements Comparable<Way>{
 	Bounds bound=null;
 	
 	/** route modes for which this way can be used (motorcar, bicycle, etc.) */
-	public byte wayRouteModes = 0;
-	
-	public static Vector<RouteAccessRestriction> RouteAccessRestrictions = null;
+	public byte wayTravelModes = 0;
 	
 	public static Configuration config;
 /**
@@ -85,39 +83,36 @@ public class Way extends Entity implements Comparable<Way>{
 		}
 		
 		// for each way the default route accessibility comes from its way description
-		wayRouteModes = wayDesc.wayDescTravelModes;
+		wayTravelModes = wayDesc.wayDescTravelModes;
 		
 		// modify the way's route accessibility according to the route access restriction for each routeMode
 		for (int i = 0; i < TravelModes.travelModeCount; i++) {
-			switch (isAccessPermittedOrForbiddenFor(TravelModes.travelModes[i].getName())) {
+			switch (isAccessPermittedOrForbiddenFor(i)) {
 				case 1:
-					wayRouteModes |= 1<<i;
+					wayTravelModes |= 1<<i;
 					break;
 				case -1:
-					wayRouteModes &= ~(1<<i);
+					wayTravelModes &= ~(1<<i);
 					break;
 			}	
 		}
 	}
 	
 	
-	public boolean isAccessForRouting(int routeModeNr){
-		return (wayRouteModes & (1 << routeModeNr)) != 0; 
+	public boolean isAccessForRouting(int travelModeNr){
+		return (wayTravelModes & (1 << travelModeNr)) != 0; 
 	}
 	
 	/**
 	 * check way tags for routeAccessRestriction from style-file
-	 * @param forWhat: e.g. motorcar or bicycle
+	 * @param travelModeNr: e.g. for motorcar or bicycle
 	 * @return -1 if restricted, 1 if permitten, 0 if neither
 	 */
-	public int isAccessPermittedOrForbiddenFor(String forWhat){
-		if (Way.RouteAccessRestrictions == null) {
-			Way.RouteAccessRestrictions = config.getRouteAccessRestrictions();
-		}
+	public int isAccessPermittedOrForbiddenFor(int travelModeNr){
 		String value;
-		for (RouteAccessRestriction rAccess: Way.RouteAccessRestrictions) {		
+		for (RouteAccessRestriction rAccess: TravelModes.getTravelMode(travelModeNr).getRouteAccessRestrictions()) {		
 			value = getAttribute(rAccess.key);
-			if (value != null && forWhat.equalsIgnoreCase(rAccess.restrictionFor) && rAccess.values.indexOf(value) != -1) {
+			if (value != null && rAccess.values.indexOf(value) != -1) {
 				if (rAccess.permitted) {
 					return 1;
 				} else {
@@ -444,7 +439,7 @@ public class Way extends Entity implements Comparable<Way>{
 //			ds.writeByte(0x58);
 			ds.writeByte(type);
 			
-			ds.writeByte(wayRouteModes);
+			ds.writeByte(wayTravelModes);
 			
 			if ((flags & WAY_FLAG_NAME) == WAY_FLAG_NAME){
 				if ((flags & WAY_FLAG_NAMEHIGH) == WAY_FLAG_NAMEHIGH){

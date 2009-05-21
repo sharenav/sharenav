@@ -59,12 +59,10 @@ public class BundleGpsMid {
 			for (int i=0; i < TravelModes.travelModeCount; i++) {				
 				System.out.println("Route access restrictions in " + c.getStyleFileName() + " for " + TravelModes.travelModes[i].getName() + ":");
 	        	int routeAccessRestrictionCount = 0;
-	            if (c.getRouteAccessRestrictions().size() > 0) {
-	            	for (RouteAccessRestriction r: c.getRouteAccessRestrictions()) {
-	            		if (r.restrictionFor.equalsIgnoreCase(TravelModes.travelModes[i].getName())) {
-		            		routeAccessRestrictionCount++;
-		            		System.out.println(" " + r.toString());
-	            		}
+	            if (TravelModes.getTravelMode(i).getRouteAccessRestrictions().size() > 0) {
+	            	for (RouteAccessRestriction r: TravelModes.getTravelMode(i).getRouteAccessRestrictions()) {
+	            		routeAccessRestrictionCount++;
+	            		System.out.println(" " + r.toString());
 	            	}
 	            }
 	            if (routeAccessRestrictionCount == 0) {
