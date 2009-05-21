@@ -114,7 +114,11 @@ public class EditableWay extends Way implements Runnable{
 			success = false;
 			logger.error("Way was not uploaded (" + respCode + "): " + respMessage);
 		}
-		ul.completedUpload(success, "Uploaded XML for way " + osmID);
+		if (ul != null) {
+			ul.completedUpload(success, "Uploaded XML for way " + osmID);
+		} else {
+			logger.info("UL shouldn't have been null");
+		}
 	}
 	
 	private void download() {
@@ -172,7 +176,9 @@ public class EditableWay extends Way implements Runnable{
 		} catch (SecurityException se) {
 			logger.error("Failed to retrieve Way. J2me dissallowed it", true);
 		}
-		ul.completedUpload(OSMdata != null, "Retrieved XML for way " + osmID);
+		if (ul != null) {
+			ul.completedUpload(OSMdata != null, "Retrieved XML for way " + osmID);
+		}
 	}
 	
 	public OSMdataWay getOSMdata() {

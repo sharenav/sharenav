@@ -250,8 +250,10 @@ public class GUIosmWayDisplay extends Form implements GpsMidDisplayable, Command
 				createChangeset = false;
 				eway.uploadXML(changesetGui.getChangesetID(),this);
 			} else {
-				osmway = eway.getOSMdata();
-				setupScreen();
+				if (GpsMid.getInstance().shouldBeShown() == this) {
+					osmway = eway.getOSMdata();
+					setupScreen();
+				}
 			}
 		} else {
 			
