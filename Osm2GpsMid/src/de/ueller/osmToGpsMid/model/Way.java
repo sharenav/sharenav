@@ -38,7 +38,7 @@ public class Way extends Entity implements Comparable<Way>{
 	public Path path=null;
 	Bounds bound=null;
 	
-	/** route modes for which this way can be used (motorcar, bicycle, etc.) */
+	/** travel modes for which this way can be used (motorcar, bicycle, etc.) */
 	public byte wayTravelModes = 0;
 	
 	public static Configuration config;
@@ -102,6 +102,11 @@ public class Way extends Entity implements Comparable<Way>{
 	public boolean isAccessForRouting(int travelModeNr){
 		return (wayTravelModes & (1 << travelModeNr)) != 0; 
 	}
+
+	public boolean isAccessForAnyRouting(){
+		return wayTravelModes != 0; 
+	}
+	
 	
 	/**
 	 * check way tags for routeAccessRestriction from style-file

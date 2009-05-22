@@ -29,6 +29,7 @@ import de.ueller.osmToGpsMid.model.Connection;
 import de.ueller.osmToGpsMid.model.Node;
 import de.ueller.osmToGpsMid.model.RouteNode;
 import de.ueller.osmToGpsMid.model.SubPath;
+import de.ueller.osmToGpsMid.model.TravelModes;
 import de.ueller.osmToGpsMid.model.Way;
 
 /**
@@ -55,7 +56,7 @@ public class RouteData {
 		// count all connections for all nodes
 		for (Way w:parser.getWays()){
 			w.determineWayRouteModes();
-			if (! w.isAccessForRouting(0)){ // TODO: multiple route modes per midlet
+			if (! w.isAccessForAnyRouting()){
 				continue;
 			}
 			//TODO: explain what are subpaths?
@@ -75,7 +76,7 @@ public class RouteData {
 		}
 		 
 		for (Way w:parser.getWays()){
-			if (! w.isAccessForRouting(0)){ // TODO: multiple route modes per midlet
+			if (!w.isAccessForAnyRouting()){
 				continue;
 			}
 			for (SubPath s:w.getSubPaths()){
@@ -145,19 +146,29 @@ public class RouteData {
 	 * @param routeNode
 	 */
 	private void addConnection(RouteNode from, RouteNode to, int dist, Way w, byte bs, byte be) {
-		float speed=w.getRoutingSpeed(0); // TODO: multiple route modes per midlet
-		float time=dist * 10.0f / speed;
+		
+		// create an array of routing times with an entry for each travel mode
+		int times[] = new int[TravelModes.travelModeCount];
+		for (int i=0; i<TravelModes.travelModeCount; i++) {
+			if (w.isAccessForRouting(i)) {
+				float speed=w.getRoutingSpeed(i);
+				float time=dist * 10.0f / speed;
+				times[i] = (int)time;
+			} else {
+				times[i] = 0;				
+			}
+		}
 		
 		nodes.put(from.node.id, from);
 		nodes.put(to.node.id, to);
-		Connection c=new Connection(to,dist,(int)time,bs,be,w);
+		Connection c=new Connection(to,dist,times,bs,be,w);
 		from.connected.add(c);
 		to.connectedFrom.add(c);
 		// roundabouts don't need to be explicitly tagged as oneways in OSM according to http://wiki.openstreetmap.org/wiki/Tag:junction%3Droundabout
 		if (! (w.isOneWay() || w.isRoundabout()) ){
 			// add connection in the other direction as well, if this is no oneWay
 			// TODO: explain Doesn't this add duplicates when addconnection() is called later on with from and to exchanged or does this not happen?
-			Connection cr=new Connection(from,dist,(int)time,MyMath.inversBearing(be),MyMath.inversBearing(bs),w);
+			Connection cr=new Connection(from,dist,times,MyMath.inversBearing(be),MyMath.inversBearing(bs),w);
 			cr.from=to;
 			to.connected.add(cr);
 			from.connectedFrom.add(cr);
@@ -362,7 +373,8 @@ public class RouteData {
 		fo.write("  <nd ref='"+c.from.node.renumberdId+"'/>\n");
 		fo.write("  <nd ref='"+c.to.node.renumberdId+"'/>\n");
 		fo.write("  <tag k='name' v='laenge="+c.length+"' />\n");
-		fo.write("  <tag k='time' v='"+c.time+"' />\n");
+		System.out.println("RouteData.exportResultOSM(): only first route mode");
+		fo.write("  <tag k='time' v='"+c.times[0]+"' />\n");
 		fo.write("  <tag k='bs' v='"+c.startBearing*2+"' />\n");
 		fo.write("  <tag k='be' v='"+c.endBearing*2+"' />\n");
 		fo.write("</way>\n");
@@ -446,7 +458,8 @@ public class RouteData {
 			DataOutputStream connStream = new DataOutputStream(new FileOutputStream(canonicalPath+"/"+rde.node.renumberdId+".d"));
 			for (Connection c : rde.connected){
 				connStream.writeInt(c.to.node.renumberdId);
-				connStream.writeShort((int) c.time);
+				System.out.println("RouteData.write(): only first route mode");
+				connStream.writeShort((int) c.times[0]); // only first route mode
 				connStream.writeShort((int) c.length);
 				connStream.writeByte(c.startBearing);
 				connStream.writeByte(c.endBearing);

@@ -91,8 +91,10 @@ public class AStar2 {
 				nodeSuccessor.used++;
 				int dTurn=currentNode.fromBearing-nodeSuccessor.startBearing;
 				long turnCost=getTurnCost(dTurn);
-				if (bestTime)
-					successorCost = currentNode.costs + nodeSuccessor.time+turnCost;
+				if (bestTime) {
+					System.out.println("AStar2.search(): only first route mode");
+					successorCost = currentNode.costs + nodeSuccessor.times[0]+turnCost;
+				}
 				else 
 					successorCost = currentNode.costs + nodeSuccessor.length+turnCost;
 				Node openNode = null;
@@ -250,7 +252,10 @@ public class AStar2 {
 	public final Vector<Connection> solve (RouteNode start,RouteNode target) {
 		long totalDist = MyMath.dist(start.node, target.node,1.2);
 		long estimateSpeed=0;
-		Connection initialState=new Connection(start,(short)0,(short)0,(byte)0,(byte)0,null);
+		System.out.println("AStar2.solve(): only first route mode");
+		int times[] = new int[1];
+		times[0]=0;
+		Connection initialState=new Connection(start,(short)0,times,(byte)0,(byte)0,null);
 		Node solution;
 		Node firstNode;
 		long estimation;

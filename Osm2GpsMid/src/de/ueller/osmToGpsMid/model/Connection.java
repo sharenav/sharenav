@@ -13,7 +13,8 @@ package de.ueller.osmToGpsMid.model;
  *
  */
 public class Connection {
-	public int time;
+	/** contains one entry for each available travel mode for the way */
+	public int times[];
 	public int length;
 	public RouteNode to;
 	// only for debuging
@@ -21,12 +22,14 @@ public class Connection {
 	public int used=0;
 	public byte startBearing=0;
 	public byte endBearing=0;
+	public byte wayTravelModes=0;
 	
-	public Connection(RouteNode to, int dist, int time, byte bs, byte be, Way w) {
+	public Connection(RouteNode to, int dist, int times[], byte bs, byte be, Way w) {
 		super();
 		this.to = to;
 		length = dist;
-		this.time = time;
+		this.times = times;
+		wayTravelModes = w.wayTravelModes;
 		startBearing=bs;
 		endBearing=be;
 	}

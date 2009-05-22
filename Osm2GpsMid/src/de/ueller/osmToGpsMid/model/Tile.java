@@ -351,16 +351,26 @@ public class Tile {
 				nds.writeByte(n.connected.size());
 				for (Connection c : n.connected){
 					cds.writeInt(c.to.id);
-					/**
-					 * If we can't fit the values into short,
-					 * we write an int. In order for the other
-					 * side to know if we wrote an int or a short,
-					 * we encode the length in the top most (sign) bit
-					 */
-					if (c.time > Short.MAX_VALUE) {
-						cds.writeInt(-1*c.time);
-					} else {
-						cds.writeShort((short) c.time);
+					// only write out wayTravelModes flag if the midlet has multiple travel modes
+					if (TravelModes.travelModeCount > 1) { 
+						cds.writeByte(c.wayTravelModes);
+					}
+					for (int i=0; i<TravelModes.travelModeCount; i++) {
+						// only store times for available travel modes of the connection
+						if ( (c.wayTravelModes & (1<<i)) !=0 ) {
+							/**
+							 * If we can't fit the values into short,
+							 * we write an int. In order for the other
+							 * side to know if we wrote an int or a short,
+							 * we encode the length in the top most (sign) bit
+							 */
+							int time = c.times[i];
+							if (time > Short.MAX_VALUE) {
+								cds.writeInt(-1*time);
+							} else {
+								cds.writeShort((short) time);
+							}
+						}
 					}
 					if (c.length > Short.MAX_VALUE) {
 						cds.writeInt(-1*c.length);

@@ -166,7 +166,10 @@ public class AStar {
 	}
 	// {{{ public final Vector solve (State initialState) 
 	public final Vector<Connection> solve (RouteNode start,RouteNode target) {
-		Connection initialState=new Connection(start,(short)0,(short)0,(byte)0,(byte)0,null);
+		System.out.println("AStar.solve(): only first route mode");
+		int times[] = new int[1];
+		times[0]=0;
+		Connection initialState=new Connection(start,(short)0,times,(byte)0,(byte)0,null);
 		Node solution;
 		Node firstNode;
 		long estimation;

@@ -43,6 +43,7 @@ import de.ueller.osmToGpsMid.model.RouteNode;
 import de.ueller.osmToGpsMid.model.Sequence;
 import de.ueller.osmToGpsMid.model.SubPath;
 import de.ueller.osmToGpsMid.model.Tile;
+import de.ueller.osmToGpsMid.model.TravelModes;
 import de.ueller.osmToGpsMid.model.Way;
 import de.ueller.osmToGpsMid.model.name.Names;
 
@@ -188,6 +189,12 @@ public class CreateGpsMidData {
 			dsi.writeInt(config.priorRouteBorderColor);
 			dsi.writeInt(config.routeDotColor);
 			dsi.writeInt(config.routeDotBorderColor);
+			
+			dsi.writeByte(TravelModes.travelModeCount);
+			for (int i=0; i<TravelModes.travelModeCount; i++) {
+				dsi.writeUTF(TravelModes.getTravelMode(i).getName());
+			}
+			
 			/**
 			 * Writing POI legend data			 * 
 			 */
@@ -819,6 +826,7 @@ public class CreateGpsMidData {
 		
 		nds.writeShort(interestNodes.size());		
 		for (Node n : interestNodes) {
+			// FIXME: Removing the call to write RouteNode() delays route calculation start but calculates route correct. Is there a way to optimise it away?
 			writeRouteNode(n,nds,cds);
 				if (n.routeNode != null){
 					t.addRouteNode(n.routeNode);
@@ -918,8 +926,32 @@ public class CreateGpsMidData {
 		nds.writeByte(n.routeNode.connected.size());
 		for (Connection c : n.routeNode.connected){
 			cds.writeInt(c.to.node.renumberdId);
-			cds.writeShort((int) c.time);
-			cds.writeShort((int) c.length);
+			// only write out wayTravelModes flag if the midlet has multiple travel modes
+			if (TravelModes.travelModeCount > 1) { 
+				cds.writeByte(c.wayTravelModes);
+			}
+			for (int i=0; i<TravelModes.travelModeCount; i++) {
+				// only store times for available travel modes of the connection
+				if ( (c.wayTravelModes & (1<<i)) !=0 ) {
+					/**
+					 * If we can't fit the values into short,
+					 * we write an int. In order for the other
+					 * side to know if we wrote an int or a short,
+					 * we encode the length in the top most (sign) bit
+					 */
+					int time = c.times[i];
+					if (time > Short.MAX_VALUE) {
+						cds.writeInt(-1*time);
+					} else {
+						cds.writeShort((short) time);
+					}
+				}
+			}
+			if (c.length > Short.MAX_VALUE) {
+				cds.writeInt(-1*c.length);
+			} else {
+				cds.writeShort((short) c.length);
+			}
 			cds.writeByte(c.startBearing);
 			cds.writeByte(c.endBearing);
 		}
