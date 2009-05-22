@@ -148,6 +148,12 @@ public class C {
 			midletTravelModes[i] = ds.readUTF();
 		}
 		
+		// If we do not have the travel mode stored defined in the record store in the midlet data, use the first one 
+		if (Configuration.getTravelMode() > C.getTravelModes().length-1) {
+			Configuration.setTravelMode(0);
+		}
+		
+		
 		readPOIdescriptions(ds);
 		readWayDescriptions(ds);
 		readSoundDescriptions(ds);

@@ -374,10 +374,6 @@ public class Configuration {
 			minRouteLineWidth=readInt(database, RECORD_ID_MIN_ROUTELINE_WIDTH); 
 			autoRecenterToGpsMilliSecs=readInt(database, RECORD_ID_AUTO_RECENTER_TO_GPS_MILLISECS);
 			currentTravelMode=readInt(database, RECORD_ID_ROUTE_TRAVEL_MODE);
-			// If we do not have the travel mode stored defined in the record store in the midlet data, use the first one 
-			if (currentTravelMode > C.getTravelModes().length-1) {
-				currentTravelMode = 0;
-			}
 			currentTravelMask=1<<currentTravelMode;
 			
 			database.closeRecordStore();
