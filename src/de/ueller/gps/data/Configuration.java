@@ -174,6 +174,7 @@ public class Configuration {
 	private static final int RECORD_ID_MIN_ROUTELINE_WIDTH = 33;
 	private static final int RECORD_ID_KEY_SHORTCUT = 34;
 	private static final int RECORD_ID_AUTO_RECENTER_TO_GPS_MILLISECS = 35;
+	private static final int RECORD_ID_ROUTE_TRAVEL_MODE = 36;
 
 	// Gpx Recording modes
 	// GpsMid determines adaptive if a trackpoint is written
@@ -240,6 +241,8 @@ public class Configuration {
 
 	private static int minRouteLineWidth=0;
 	private static int autoRecenterToGpsMilliSecs=10;
+	private static int currentTravelMode=0;
+	private static int currentTravelMask=0;
 
 	public static void read(){
 	logger = Logger.getInstance(Configuration.class, Logger.DEBUG);
@@ -369,6 +372,8 @@ public class Configuration {
 			}
 			minRouteLineWidth=readInt(database, RECORD_ID_MIN_ROUTELINE_WIDTH); 
 			autoRecenterToGpsMilliSecs=readInt(database, RECORD_ID_AUTO_RECENTER_TO_GPS_MILLISECS);
+			currentTravelMode=readInt(database, RECORD_ID_ROUTE_TRAVEL_MODE);
+			currentTravelMask=1<<currentTravelMode;
 			
 			database.closeRecordStore();
 		} catch (Exception e) {
@@ -871,6 +876,23 @@ public class Configuration {
 		Configuration.routeEstimationFac = routeEstimationFac;
 	}
 
+	
+	public static int getTravelMode() {
+		return currentTravelMode;
+	}	
+
+	public static int getTravelMask() {
+		return currentTravelMask;
+	}	
+	
+	public static void setTravelMode(int travelModeNr) {
+		write(travelModeNr,RECORD_ID_ROUTE_TRAVEL_MODE);
+		Configuration.currentTravelMode = travelModeNr;
+		Configuration.currentTravelMask = 1<<travelModeNr;		
+	}	
+
+	
+	
 	public static boolean isStopAllWhileRouteing() {
 		return stopAllWhileRouteing;
 	}

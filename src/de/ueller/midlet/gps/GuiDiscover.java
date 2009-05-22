@@ -33,6 +33,7 @@ import de.ueller.gps.data.Configuration;
 import de.ueller.gpsMid.mapData.SingleTile;
 import de.ueller.midlet.gps.data.Gpx;
 import de.ueller.midlet.gps.data.Projection;
+import de.ueller.midlet.gps.tile.C;
 import de.ueller.gpsMid.mapData.WaypointsTile;
 
 public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMidDisplayable, SelectionListener {
@@ -201,6 +202,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private Gauge gaugeRoutingEsatimationFac; 
 	private ChoiceGroup stopAllWhileRouting;
 	private ChoiceGroup routingOptsGroup;
+	private ChoiceGroup routingTravelModesGroup;
 
 	private final static Logger logger=Logger.getInstance(GuiDiscover.class,Logger.DEBUG);
 	
@@ -272,6 +274,10 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		menuRoutingOptions.addCommand(OK_CMD);
 		menuRoutingOptions.setCommandListener(this);
 
+		routingTravelModesGroup = new ChoiceGroup("Routing for:", Choice.EXCLUSIVE, C.getTravelModes() ,null);
+		routingTravelModesGroup.setSelectedIndex(Configuration.getTravelMode(), true);
+		menuRoutingOptions.append(routingTravelModesGroup);
+		
 		String [] routingBack = new String[2];
 		routingBack[0] = "No";
 		routingBack[1] = "Yes";
@@ -892,6 +898,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				break;
 
 			case STATE_ROUTING_OPT:
+				Configuration.setTravelMode(routingTravelModesGroup.getSelectedIndex());
 				Configuration.setRouteEstimationFac(gaugeRoutingEsatimationFac.getValue());
 				logger.debug("set stopAllWhileRounting " + stopAllWhileRouting.isSelected(1));
 				Configuration.setStopAllWhileRouteing(stopAllWhileRouting.isSelected(0));

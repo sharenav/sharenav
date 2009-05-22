@@ -251,7 +251,7 @@ public class Way extends Entity{
 	
 	
 	public boolean isRoutableWay() {
-		return (wayRouteModes & 0x01) != 0;
+		return (wayRouteModes & Configuration.getTravelMask()) != 0;
 	}
 	
 	/**

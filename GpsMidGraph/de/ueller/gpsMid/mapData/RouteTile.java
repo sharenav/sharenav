@@ -8,6 +8,7 @@ import javax.microedition.lcdui.Graphics;
 import de.ueller.gps.data.Configuration;
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.Logger;
+import de.ueller.midlet.gps.tile.C;
 import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.routing.Connection;
@@ -285,12 +286,16 @@ public class RouteTile extends RouteBaseTile {
 	 * @throws IOException
 	 */
 	private void loadConnections(boolean bestTime) throws IOException {
+		int numTravelModes= C.getTravelModes().length;
+		int currentTravelMode = Configuration.getTravelMode();			
+			
 		connections = new Connection[nodes.length][];
 		//#debug debug
 		logger.debug("getConnections in file " + "/c" + fileId + ".d");
 		DataInputStream cs=new DataInputStream(Configuration.getMapResource("/c" + fileId + ".d"));
 		for (int in=0; in<nodes.length;in++){
 			RouteNode n=nodes[in];
+			int conSizeTravelMode=0;
 			Connection[] cons=new Connection[n.conSize];
 			for (int i = 0; i<n.conSize;i++){
 				Connection c=new Connection();
@@ -301,6 +306,11 @@ public class RouteTile extends RouteBaseTile {
 //					c.to=nodes[nodeId - minId];
 //				}
 				c.toId=nodeId;
+				if (numTravelModes > 1) {
+					c.travelModes=cs.readByte();
+				} else {
+					c.travelModes=0x01;
+				}
 				/**
 				 * The connection time and connection length can either be encoded as a int or a short
 				 * We indicate if it is a int by using the top most bit (sign bit). So if the read
@@ -308,13 +318,23 @@ public class RouteTile extends RouteBaseTile {
 				 * This is done, as only a small fraction of connection costs are larger than what
 				 * fits into 16 bit, so we save 16 bit on most connections.
 				 */
-				int upper = cs.readShort();
-				if (upper < 0) {
-					int lower = cs.readShort();
-					upper = -1*(((0xffff & upper) << 16) + (0xffff & lower));
-				}
-				int costTime = upper;
-				upper = cs.readShort();
+				
+				int costTime = 0;
+				for (int i2=0;i2<numTravelModes;i2++) { // read connection times			
+					if ( (c.travelModes & (1 << i2)) != 0) {
+						int upper = cs.readShort();
+						if (upper < 0) {
+							int lower = cs.readShort();
+							upper = -1*(((0xffff & upper) << 16) + (0xffff & lower));
+						}
+						if (i2==currentTravelMode) {
+							costTime = upper;
+							conSizeTravelMode++;
+						}
+					}
+				}	
+				
+				int upper = cs.readShort(); // read connection length
 				if (upper < 0) {
 					int lower = cs.readShort();
 					upper = -1*(((0xffff & upper) << 16) + (0xffff & lower));
@@ -329,7 +349,18 @@ public class RouteTile extends RouteBaseTile {
 				c.endBearing=cs.readByte();
 				cons[i]=c;
 			}
-			connections[in]=cons;
+			
+			// copy the used connections to a new array that will get used
+			// TODO: therefore try to optimise this with a static array for cons
+			Connection[] cons2=new Connection[conSizeTravelMode];
+			int i2=0;
+			for (int i = 0; i<n.conSize;i++){
+				if ( (cons[i].travelModes & (1 << currentTravelMode)) != 0) {
+					cons2[i2] = cons[i];
+					i2++;
+				}
+			}
+			connections[in]=cons2;
 		}
 		/**
 		 * Check to see if everything went well with reading the tile.

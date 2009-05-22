@@ -22,7 +22,7 @@ public class C {
 	 * Specifies the format of the map on disk we expect to see
 	 * This constant must be in sync with Osm2GpsMid
 	 */
-	public final static short MAP_FORMAT_VERSION = 26;
+	public final static short MAP_FORMAT_VERSION = 27;
 	
 	/** The waypoint format used in the RecordStore. See PositionMark.java. */
 	public final static short WAYPT_FORMAT_VERSION = 2;
@@ -98,6 +98,8 @@ public class C {
 	
 	private static String namePartRequired[] = new String[3];
 	
+	private static String midletTravelModes[];	
+	
 	private final static Logger logger=Logger.getInstance(C.class,Logger.TRACE);
 	
 	public C() throws IOException {
@@ -139,6 +141,12 @@ public class C {
 		ROUTEPRIOR_BORDERCOLOR = ds.readInt();
 		ROUTEDOT_COLOR = ds.readInt();
 		ROUTEDOT_BORDERCOLOR = ds.readInt();
+		
+		int count = ds.readByte();
+		midletTravelModes = new String[count];
+		for (int i=0; i<count;i++) {
+			midletTravelModes[i] = ds.readUTF();
+		}
 		
 		readPOIdescriptions(ds);
 		readWayDescriptions(ds);
@@ -320,6 +328,10 @@ public class C {
 		for (byte i = 1; i < getMaxWayType(); i++) {
 			ways[i].overviewMode = OM_SHOWNORMAL;
 		}
+	}
+
+	public static String [] getTravelModes() {
+		return midletTravelModes;
 	}
 	
 	public static final byte getMaxWayType() {
