@@ -6,7 +6,9 @@ import java.io.IOException;
 import de.ueller.gpsMid.mapData.QueueReader;
 import de.ueller.gpsMid.mapData.RouteBaseTile;
 import de.ueller.gpsMid.mapData.RouteTile;
+import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.Logger;
+
 
 public class RouteNode {
 	public float lat;
@@ -61,7 +63,7 @@ public class RouteNode {
 //	}
 	
 	public String toString(){
-		return "RouteNode(" + id +") " + lat + "/" + lon + " "; 
+		return "RouteNode(" + id +") RAD:" + lat + "/" + lon + " DEG: " + MoreMath.FAC_RADTODEC * lat + "/" + MoreMath.FAC_RADTODEC * lon + ")"; 
 	}
 
 }
