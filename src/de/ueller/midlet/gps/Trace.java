@@ -745,13 +745,17 @@ Runnable , GpsMidDisplayable{
 			//#endif
 			if (c == CMDS[RECORDINGS_CMD]) {
 				if (recordingsMenu == null) {
+					boolean hasJSR120 = Configuration.hasDeviceJSR120();
 					int noElements = 3;
 					//#if polish.api.mmapi
 					noElements += 2;
 					//#endif
 					//#if polish.api.wmapi
-					noElements++;
+					if (hasJSR120) {
+						noElements++;
+					}
 					//#endif
+					
 					int idx = 0;
 					String[] elements = new String[noElements];
 					if (gpx.isRecordingTrk()) {
@@ -772,7 +776,7 @@ Runnable , GpsMidDisplayable{
 					}
 					//#endif
 					//#if polish.api.wmapi
-					if (Configuration.hasDeviceJSR120()) {
+					if (hasJSR120) {
 						elements[idx++] = "Send SMS (map pos)";
 					}
 					//#endif
