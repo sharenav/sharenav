@@ -234,9 +234,14 @@ public class RouteTile extends RouteBaseTile {
 				// due the shorts in map data we don't match exactly
 				if (MoreMath.approximately_equal(n.lat,lat,0.0000005f) &&
 					MoreMath.approximately_equal(n.lon,lon,0.0000005f)){
+					Connection cons[] = this.getConnections(n.id, this, true);					
 					//#debug debug
-					logger.debug("aprox equal matches");
-					return n;
+					logger.debug("aprox equal matches...");
+					if (cons.length > 0) {
+						//#debug debug
+						logger.debug("...and has connections in current travel mode");
+						return n;
+					}
 				}
 			}
 			lastUse=0;
