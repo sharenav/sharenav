@@ -923,6 +923,15 @@ scale alias 1: zoomed out 21x
 				<force_to layer = "-2"/>
 			</Wvalue>
   		</keyW>
+		<keyW tag = "place">
+			<Wvalue name = "island" priority = "10">
+				<description desc = "Island"/>
+				<namekey tag = "name"/>                 
+				<isArea area = "true"/>
+				<scale scale = "12"/>
+				<lineColor color = "009BFF9B" />  <!-- same as map background -->
+			</Wvalue>
+		</keyW>
   		<keyW tag = "building">
   			<Wvalue name = "yes">
 				<!-- if * is specified as value for a specialisation key,
