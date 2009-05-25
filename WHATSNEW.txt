@@ -7,6 +7,7 @@ GpsMid 0.5.09
        *** GPS and other location producers ***
        - Add a possibility to manually enter a connection URL, e.g. "comm:COM0;baudrate=115200"
        - CellId provider for S60FP2 usable with the python helper app (providing cellid via a local socket) 
+       - CellId can now be used to position one self without the need to connect to the internet
        *** Map Screen ***
        - In Setup / Display Options there's now a textfield for specifying how many seconds after
        	 the last manual panning of the map it will be automatically recentered to the GPS position

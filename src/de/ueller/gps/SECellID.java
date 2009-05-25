@@ -32,6 +32,7 @@ import javax.microedition.io.HttpConnection;
 import javax.microedition.rms.RecordEnumeration;
 import javax.microedition.rms.RecordStore;
 
+import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Position;
 import de.ueller.gps.tools.StringTokenizer;
 import de.ueller.gps.tools.intTree;
@@ -148,24 +149,32 @@ public class SECellID implements LocationMsgProducer {
 				GSMCell loc = retrieveFromCache(cellLoc);
 				if (loc == null) {
 					//#debug debug
-					logger.debug(cellLoc + " was not in cache, retrieving from persistent cache");
-					loc = retrieveFromPersistentCache(cellLoc);
+					logger.debug(cellLoc + " was not in cache, retrieving from FS cache");
+					loc = retrieveFromFS(cellLoc);
 					if (loc == null) {
-						//#debug info
-						logger.info(cellLoc + " was not in persistent cache, retrieving from OpenCellId.org");
-						loc = retrieveFromOpenCellId(cellLoc);
-						if (loc != null) {
-							cellPos.put(loc.cellID, loc);
-							if ((loc.lat != 0.0) || (loc.lon != 0.0)) {
-								storeCellIDtoRecordStore(loc);
+						//#debug debug
+						logger.debug(cellLoc + " was not in FS cache, retrieving from persistent cache");
+
+						loc = retrieveFromPersistentCache(cellLoc);
+						if (loc == null) {
+							//#debug info
+							logger.info(cellLoc + " was not in persistent cache, retrieving from OpenCellId.org");
+							loc = retrieveFromOpenCellId(cellLoc);
+							if (loc != null) {
+								cellPos.put(loc.cellID, loc);
+								if ((loc.lat != 0.0) || (loc.lon != 0.0)) {
+									storeCellIDtoRecordStore(loc);
+								} else {
+									//#debug debug
+									logger.debug("Not storing cell, as it has no valid coordinates");
+								}
 							} else {
-								//#debug debug
-								logger.debug("Not storing cell, as it has no valid coordinates");
+								logger.error("Failed to get cell-id");
+								return;
 							}
-						} else {
-							logger.error("Failed to get cell-id");
-							return;
 						}
+					} else {
+						cellPos.put(loc.cellID, loc);
 					}
 				}
 				if (rawDataLogger != null) {
@@ -423,6 +432,64 @@ public class SECellID implements LocationMsgProducer {
 		return loc;
 	}
 
+	private GSMCell retrieveFromFS(GSMCell cellLoc) {
+		GSMCell ret;
+		String filename = "/c" + cellLoc.mcc + cellLoc.mnc + cellLoc.lac + ".id";
+		InputStream is ;
+		try {
+			is = Configuration.getMapResource(filename);
+			if (is == null) {
+				throw new IOException("Could not find file " + filename);
+			}
+		} catch (IOException ioe) {
+			try {
+				/**
+				 * In order to reduce the number of cells, we combine all the lacs that
+				 * have less than 20 cells in them into a single file
+				 */
+				filename = "/c" + cellLoc.mcc + cellLoc.mnc +".id";
+				is = Configuration.getMapResource(filename);
+				if (is == null) {
+					throw new IOException("Could not find file " + filename + " either");
+				}
+			} catch (IOException ioe2) {
+				//#debug debug
+				logger.debug("Could not find Operator CellID file");
+				return null;
+			}
+		}
+		try {
+			if (is != null) {
+				DataInputStream dis = new DataInputStream(is);
+				int noCellsRead = 0;
+				while (dis.available() > 0) {
+					noCellsRead++;
+					int cellLAC = dis.readInt();
+					int cellID = dis.readInt();
+					float lat = dis.readFloat();
+					float lon = dis.readFloat();
+					if ((cellLAC == cellLoc.lac) && (cellID == cellLoc.cellID)) {
+						ret = new GSMCell();
+						ret.mcc = cellLoc.mcc;
+						ret.mnc = cellLoc.mnc;
+						ret.lac = cellLoc.lac;
+						ret.cellID = cellID;
+						ret.lat = lat;
+						ret.lon = lon;
+						//#debug debug
+						logger.debug("Found Cell in FS cache " + ret);
+						return ret;
+						
+					}
+				}
+				//#debug debug
+				logger.debug("Read " + noCellsRead + " Cells, but not the one we are looking for");
+			}
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
+		}
+		return null;
+	}
 	
 	private GSMCell retrieveFromPersistentCache(GSMCell cell) {
 		//#debug info
