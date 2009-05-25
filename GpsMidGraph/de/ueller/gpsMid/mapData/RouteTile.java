@@ -355,17 +355,23 @@ public class RouteTile extends RouteBaseTile {
 				cons[i]=c;
 			}
 			
-			// copy the used connections to a new array that will get used
-			// TODO: therefore try to optimise this with a static array for cons
-			Connection[] cons2=new Connection[conSizeTravelMode];
-			int i2=0;
-			for (int i = 0; i<n.conSize;i++){
-				if ( (cons[i].travelModes & (1 << currentTravelMode)) != 0) {
-					cons2[i2] = cons[i];
-					i2++;
+			
+			if (conSizeTravelMode == n.conSize) {
+				connections[in]=cons;
+			} else {
+				// if not all connections are uses, copy only the used connections to a new array that will get used
+				// TODO: therefore try to optimise this with a static array for cons
+				Connection[] cons2=new Connection[conSizeTravelMode];
+				int i2=0;
+				for (int i = 0; i<n.conSize;i++){
+					if ( (cons[i].travelModes & (1 << currentTravelMode)) != 0) {
+						cons2[i2] = cons[i];
+						i2++;
+					}
 				}
+				connections[in]=cons2;
 			}
-			connections[in]=cons2;
+				
 		}
 		/**
 		 * Check to see if everything went well with reading the tile.
