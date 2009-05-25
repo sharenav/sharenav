@@ -75,6 +75,7 @@
 		<entry key="maxTileSize" value="20000"/>
    		<entry key="style-file" value="style-file.xml"/>
    		<entry key="EnableEditing" value="false"/>
+   		<entry key="useCellID" value="false"/>
    	</propertyfile>
    </target>
 

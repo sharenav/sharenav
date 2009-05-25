@@ -74,7 +74,8 @@ public class BundleGpsMid {
 			System.out.println("unpack Application to " + tmpDir);
 			expand(c, tmpDir);
 			File target=new File(tmpDir);
-			createPath(target);				
+			createPath(target);
+			
 			fr= c.getPlanetSteam();
 			OxParser parser = new OxParser(fr,c);
 			System.out.println("read Nodes " + parser.getNodes().size());
@@ -124,6 +125,12 @@ public class BundleGpsMid {
 			cd.exportMapToMid();
 			//Drop parser to conserve Memory
 			parser=null;
+			
+			if (!c.getString("useCellID").equalsIgnoreCase("false")) {
+				CellDB cellDB = new CellDB();
+				cellDB.parseCellDB();
+			}
+			
 			pack(c);
 
 			//Cleanup after us again. The .jar and .jad file are in the main directory,

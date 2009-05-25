@@ -60,6 +60,7 @@ public class Configuration {
 		private ResourceBundle vb;
 		private String tmp=null;
 		private String planet;
+		private String cell;
 		private String propFile;
 		private String bundleName;
 		private String midletName;
@@ -129,15 +130,23 @@ public class Configuration {
 							System.exit(1);
 						}
 					}
+					if (arg.startsWith("--cellID=")) {
+						//Filename for a list of GSM cellIDs with their coordinates.
+						//This file can be obtained from http://myapp.fr/cellsIdData/ (OpenCellID.org)
+						cell = arg.substring(9);
+					}
 					if (arg.startsWith("--help")) {
-						System.err.println("Usage: Osm2GpsMid [--bounds=left,bottom,right,top] planet.osm.bz2 [location]");
+						System.err.println("Usage: Osm2GpsMid [--bounds=left,bottom,right,top] [--cellID=filename] planet.osm.bz2 [location]");
 						System.err.println("  \"--bounds=\" specifies the set of bounds to use in GpsMid ");
 						System.err.println("       Can be left out to use the regions specified in location.properties");
 						System.err.println("       or if you want to create a GpsMid for the whole region");
 						System.err.println("       contained in the.osm(.bz2) file");
+						System.err.println("  \"--cellID=\" specifies the file from which to load cellIDs for cell based positioning");
+						System.err.println("       The data comes from OpenCellId.org and the file can be found at http://myapp.fr/cellsIdData/");
 						System.err.println("  planet.osm.bz2: points to a (compressed) .osm file");
 						System.err.println("       By specifying osmXapi, the data can be fetched straight from the server (only works for small areas)");
 						System.err.println("  location: points to a .properties file specifying additional parameters");
+						System.exit(0);
 					}
 					
 				} else if (planet == null) {
@@ -415,6 +424,27 @@ public class Configuration {
 			}
 			return fr;
 		}
+		
+		public InputStream getCellStream() throws IOException {
+			InputStream fr = null;
+			
+			System.out.println("Opening cellID file: " + cell);
+			if (cell == null) {
+				throw new IOException("No file for CellIDs was specified");
+			}
+			
+			fr= new FileInputStream(cell);
+			if (cell.endsWith(".bz2") || cell.endsWith(".gz")){
+				if (cell.endsWith(".bz2")) {
+					fr.read();
+					fr.read();
+					fr = new CBZip2InputStream(fr);
+				} else if (cell.endsWith(".gz")) {
+					fr = new GZIPInputStream(new BufferedInputStream(fr));
+				}
+			}
+			return fr;
+		}
 
 		public InputStream getCharMapStream() throws IOException{
 			InputStream cmis = null;
@@ -598,6 +628,8 @@ public class Configuration {
 			confString += "\t Enable routing: " + useRouting + "\n";
 			confString += "\t used Style-file: " + getStyleFileName() + "\n";
 			confString += "\t Planet source: " + planet + "\n";
+			confString += "\t include CellID data: " + getString("useCellID") + "\n";
+			confString += "\t CellID source: " + cell + "\n";
 			confString += "\t Enable editing support: " + enableEditingSupport + "\n";
 			Bounds[] bounds = getBounds();
 			if (bounds != null) {
