@@ -118,6 +118,7 @@ public class CleanUpData {
 				rm++;
 			}
 		}
+		substitute();
 		System.out.println("remove " + rm + " dupLicate Nodes");
 	}
 
