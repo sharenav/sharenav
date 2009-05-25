@@ -112,29 +112,32 @@ public class GUIosmWayDisplay extends Form implements GpsMidDisplayable, Command
 	}
 	
 	private void setupScreen() {
-		this.deleteAll();
-		addTag = false;
-		if (osmway == null) {
-			this.append(new StringItem("No Data available","..."));
-			return;
+		try {
+			this.deleteAll();
+			addTag = false;
+			if (osmway == null) {
+				this.append(new StringItem("No Data available","..."));
+				return;
+			}
+			this.append(new StringItem("Edited ", null)); this.append(bearingArrow());
+			this.append(new StringItem("    at:", osmway.getEditTime()));
+			this.append(new StringItem("    ver:", osmway.getVersion()));
+
+			Hashtable tags = osmway.getTags();
+			if (tags == null)
+				return;
+			Enumeration keysEn = tags.keys();
+			while (keysEn.hasMoreElements()) {
+				String key = (String)keysEn.nextElement();
+				Item i = new StringItem(key, (String)tags.get(key));
+				i.addCommand(EDIT_CMD);
+				i.addCommand(REMOVE_CMD);
+				i.setItemCommandListener(this);
+				this.append(i);
+			}
+		} catch (Exception e) { 
+			logger.exception("Initialising way tag screen failed: " , e);
 		}
-		this.append(new StringItem("Edited ", null)); this.append(bearingArrow());
-		this.append(new StringItem("    at:", osmway.getEditTime()));
-		this.append(new StringItem("    ver:", osmway.getVersion()));
-		
-		Hashtable tags = osmway.getTags();
-		if (tags == null)
-			return;
-		Enumeration keysEn = tags.keys();
-		while (keysEn.hasMoreElements()) {
-			String key = (String)keysEn.nextElement();
-			Item i = new StringItem(key, (String)tags.get(key));
-			i.addCommand(EDIT_CMD);
-			i.addCommand(REMOVE_CMD);
-			i.setItemCommandListener(this);
-			this.append(i);
-		}
-		
 	}
 
 	public void commandAction(Command c, Displayable d) {
@@ -273,7 +276,8 @@ public class GUIosmWayDisplay extends Form implements GpsMidDisplayable, Command
 	}
 
 	public void commandAction(Command c, Item it) {
-		System.out.println("Command " + c + " Item " + it);
+		//#debug info
+		logger.info("Command " + c + " Item " + it);
 		Hashtable tags = osmway.getTags();
 		if (c == REMOVE_CMD) {
 			tags.remove(((StringItem)it).getLabel());
