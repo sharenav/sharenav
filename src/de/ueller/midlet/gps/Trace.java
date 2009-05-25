@@ -1333,9 +1333,14 @@ Runnable , GpsMidDisplayable{
 			}
 
 			// show if we are logging cellIDs 
-			if (SECellLocLogger.isCellIDLogging()) {
+			if (SECellLocLogger.isCellIDLogging() > 0) {
 				yText += fontHeight;
-				g.setColor(0x00FFFF96); // yellow
+				if (SECellLocLogger.isCellIDLogging() == 2) {
+					g.setColor(0x00FFFF96); // yellow
+				} else {
+					//Attempting to log, but currently no valid info available
+					g.setColor(0x00FF5656); // red
+				}
 				g.drawString("cellIDs", rightText, yText, Graphics.TOP | Graphics.RIGHT);				
 				g.setColor(0);
 			}

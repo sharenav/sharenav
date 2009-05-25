@@ -61,6 +61,7 @@ public class SECellLocLogger implements LocationMsgReceiver {
 
 	private boolean valid;
 	private static boolean cellIDLogging = false;
+	private static boolean loggingSuccess = false;
 	private CellIdProvider cellProvider;
 
 	public boolean init() {
@@ -169,6 +170,7 @@ public class SECellLocLogger implements LocationMsgReceiver {
 		if (!valid) {
 			//#debug debug
 			logger.debug("Currently no valid fix, so skipping CellID logging");
+			loggingSuccess = false;
 			return;
 		}
 		noValid++;
@@ -184,6 +186,7 @@ public class SECellLocLogger implements LocationMsgReceiver {
 			 * bogus cell positions. At a sampling rate of 1 Hz, this should
 			 * only be 5 seconds 
 			 */
+			loggingSuccess = false;
 			return;
 		}
 
@@ -217,7 +220,10 @@ public class SECellLocLogger implements LocationMsgReceiver {
 				wr.write(pos.latitude + "," + pos.longitude + "," + cell.mcc
 						+ "," + cell.mnc + "," + cell.lac + "," + cell.cellID + "\n");
 				wr.flush();
+				loggingSuccess = true;
 				noSamples++;
+			} else {
+				loggingSuccess = false;
 			}
 		} catch (Exception e) {
 			logger.silentexception("Failed to retrieve Cell-id for logging", e);
@@ -249,7 +255,14 @@ public class SECellLocLogger implements LocationMsgReceiver {
 		// Nothing to do
 	}
 	
-	public static boolean isCellIDLogging() {
-		return cellIDLogging;
+	public static int isCellIDLogging() {
+		if (!cellIDLogging) {
+			return 0;
+		}
+		if (loggingSuccess) {
+			return 2;
+		} else {
+			return 1;
+		}
 	}
 }
