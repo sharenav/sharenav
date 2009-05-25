@@ -667,7 +667,7 @@ Runnable , GpsMidDisplayable{
 			}
 			if (c == CMDS[START_RECORD_CMD]) {
 				try {
-					gpx.newTrk();
+					gpx.newTrk(false);
 					alert("Gps track recording", "Starting to record", 1250);
 				} catch (RuntimeException e) {
 					receiveMessage(e.getMessage());
@@ -676,7 +676,7 @@ Runnable , GpsMidDisplayable{
 				return;
 			}
 			if (c == CMDS[STOP_RECORD_CMD]) {
-				gpx.saveTrk();
+				gpx.saveTrk(false);
 				alert("Gps track recording", "Stopping to record", 1250);
 				recordingsMenu = null; // refresh recordings menu
 				return;
@@ -852,10 +852,15 @@ Runnable , GpsMidDisplayable{
 			            case 0: {
 		    				if ( gpx.isRecordingTrk() ) {
 		    					commandAction(CMDS[STOP_RECORD_CMD],(Displayable) null);
+								if (! Configuration.getCfgBitState(Configuration.CFGBIT_GPX_ASK_TRACKNAME_STOP)) {
+							    	show();
+								}
 		    				} else {
 		    					commandAction(CMDS[START_RECORD_CMD],(Displayable) null);
+								if (! Configuration.getCfgBitState(Configuration.CFGBIT_GPX_ASK_TRACKNAME_START)) {
+							    	show();
+								}
 		    				}
-			            	show();
 			            	break;
 			            }
 			            case 1: {
@@ -1161,7 +1166,7 @@ Runnable , GpsMidDisplayable{
 
 	public void shutdown() {
 		if (gpx != null) {
-			gpx.saveTrk();
+			gpx.saveTrk(true);
 		}
 		stopImageCollector();
 		if (namesThread != null) {
@@ -2042,7 +2047,7 @@ Runnable , GpsMidDisplayable{
 			/**
 			 * Close and Save the gpx recording, to ensure we don't loose data
 			 */
-			gpx.saveTrk();
+			gpx.saveTrk(true);
 		}
 		removeCommand(CMDS[DISCONNECT_GPS_CMD]);
 		if (locationProducer == null){

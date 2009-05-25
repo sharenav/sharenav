@@ -135,6 +135,10 @@ public class Configuration {
 	public final static byte CFGBIT_CELLID_LOGGING = 41;
 	/** bit 42: Flag whether to also put waypoints in GPX track */
 	public final static byte CFGBIT_WPTS_IN_TRACK = 42;
+	/** bit 43: Ask for GPX track name when starting recording */
+	public final static byte CFGBIT_GPX_ASK_TRACKNAME_START=43;
+	/** bit 44: Ask for GPX track name when starting recording */
+	public final static byte CFGBIT_GPX_ASK_TRACKNAME_STOP=44;
 
 	
 	/**

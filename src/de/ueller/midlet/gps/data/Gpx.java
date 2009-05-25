@@ -73,10 +73,13 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 	private boolean sendWpt;
 	private boolean sendTrk;
 	private boolean reloadWpt;
+	private boolean getGpxNameStart = false;
+	private boolean getGpxNameStop = false;
 	
 	private boolean applyRecordingRules = true;
 	
 	private String trackName;
+	private String origTrackName;
 	private Vector exportTracks;
 	private PersistEntity currentTrk;
 	
@@ -451,19 +454,7 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		processorThread.start();
 	}
 	
-	public void newTrk() {
-		logger.debug("Starting a new track recording");
-		trackTile.dropTrk();
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(new Date());
-		
-		//Construct a track name from the current time
-		StringBuffer trkName = new StringBuffer();
-		trkName.append(cal.get(Calendar.YEAR)).append("-").append(formatInt2(cal.get(Calendar.MONTH) + 1));
-		trkName.append("-").append(formatInt2(cal.get(Calendar.DAY_OF_MONTH))).append("_");
-		trkName.append(formatInt2(cal.get(Calendar.HOUR_OF_DAY))).append("-").append(formatInt2(cal.get(Calendar.MINUTE)));
-		trackName = trkName	.toString();
-		
+	public void doNewTrk() {
 		baos = new ByteArrayOutputStream();
 		dos = new DataOutputStream(baos);
 		trackDatabaseRecordId = -1;
@@ -473,6 +464,39 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		trkTimeTot = 0;
 		recorded = 0;
 		trkRecordingSuspended = false;
+		origTrackName = new String(trackName);
+	}
+	public void newTrk(boolean dontaskname) {
+		newTrk(null, dontaskname);
+	}
+	public void newTrk(String newTrackName, boolean dontaskname) {
+		logger.debug("Starting a new track recording");
+		trackTile.dropTrk();
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(new Date());
+		
+		//Construct a track name from the current time
+		if (newTrackName == null) {
+			StringBuffer trkName = new StringBuffer();
+			trkName.append(cal.get(Calendar.YEAR)).append("-").append(formatInt2(cal.get(Calendar.MONTH) + 1));
+			trkName.append("-").append(formatInt2(cal.get(Calendar.DAY_OF_MONTH))).append("_");
+			trkName.append(formatInt2(cal.get(Calendar.HOUR_OF_DAY))).append("-").append(formatInt2(cal.get(Calendar.MINUTE)));
+			trackName = trkName	.toString();
+		} else {
+			// TODO: what to do if track with this name exists?
+			// TODO: Limit to Configuration.MAX_TRACKNAME_LENGTH
+			trackName = new String(newTrackName);
+		}
+		origTrackName = new String(trackName);
+		
+		if ((!dontaskname) && Configuration.getCfgBitState(Configuration.CFGBIT_GPX_ASK_TRACKNAME_START)) {
+			getGpxNameStart = true;
+			GuiNameEnter gne = new GuiNameEnter(this, "Starting recording", trackName, Configuration.MAX_TRACKNAME_LENGTH);
+			doNewTrk();
+			gne.show();
+		} else {
+			doNewTrk();
+		}
 	}
 	
 	private void storeTrk() {
@@ -514,13 +538,7 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		
 	}
 
-	public void saveTrk() {
-		if (dos == null) {
-			logger.debug("Not recording, so no track to save");
-			return;
-		}
-		//#debug debug
-		logger.debug("closing track with " + recorded + " points");
+	private void doSaveTrk() {
 		storeTrk();
 		try {
 			dos.close();
@@ -530,6 +548,21 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		dos = null;
 		baos = null;
 		trackTile.dropTrk();
+	}
+	public void saveTrk(boolean dontAskName) {
+		if (dos == null) {
+			logger.debug("Not recording, so no track to save");
+			return;
+		}
+		//#debug debug
+		logger.debug("closing track with " + recorded + " points");
+		if ((!dontAskName) && Configuration.getCfgBitState(Configuration.CFGBIT_GPX_ASK_TRACKNAME_STOP)) {
+			getGpxNameStop = true;
+			GuiNameEnter gne = new GuiNameEnter(this, "Stopping recording", trackName, Configuration.MAX_TRACKNAME_LENGTH);
+			gne.show();
+		} else {
+			doSaveTrk();
+		}
 	}
 	
 	
@@ -721,7 +754,7 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		wayPtTile.dropWayPt();
 		System.gc();
 		if (isRecordingTrk())
-			saveTrk();		
+			saveTrk(true);		
 	}
 	
 	public boolean cleanup(int level) {
@@ -1222,7 +1255,29 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 	}
 	
 	public void actionCompleted(String strResult) {
-		waypointsSaveFileName = strResult;
+		Trace tr = Trace.getInstance();
+		if (getGpxNameStart || getGpxNameStop) {
+			trackName = strResult;
+			if (getGpxNameStart) {
+				getGpxNameStart = false;
+				if (trackName != null) {
+					origTrackName = new String(trackName);
+				} else {
+					trackName = new String(origTrackName);
+				}
+			}
+			if (getGpxNameStop) {
+				getGpxNameStop = false;
+				if (trackName == null) {
+					trackName = origTrackName;
+				}
+				doSaveTrk();
+			}
+			tr.show();
+			return;
+		} else {
+			waypointsSaveFileName = strResult;
+		}
 		GpsMid.getInstance().showPreviousDisplayable();
 
 		processorThread = new Thread(this);

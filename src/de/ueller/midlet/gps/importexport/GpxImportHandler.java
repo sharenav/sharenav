@@ -97,7 +97,7 @@ public class GpxImportHandler implements XmlParserContentHandler {
 		} else if (qName.equalsIgnoreCase("desc")) {
 			name = false;
 		} else if (qName.equalsIgnoreCase("trk")) {
-			gpx.saveTrk();
+			gpx.saveTrk(false);
 		} else if (qName.equalsIgnoreCase("trkseg")) {
 
 		} else if (qName.equalsIgnoreCase("trkpt")) {
@@ -153,7 +153,7 @@ public class GpxImportHandler implements XmlParserContentHandler {
 		} else if (qName.equalsIgnoreCase("desc")) {
 			name = true;
 		} else if (qName.equalsIgnoreCase("trk")) {
-			gpx.newTrk();
+			gpx.newTrk(false);
 		} else if (qName.equalsIgnoreCase("trkseg")) {
 
 		} else if (qName.equalsIgnoreCase("trkpt")) {

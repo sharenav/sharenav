@@ -1,9 +1,6 @@
 GpsMid 0.5.09
        *** Usability ***
        *** OSM Editing ***
-       *** Tracks and Waypoints ***
-       - allow to save more than 255 waypoints again (thx pos_ei_don)
-       *** Recordings ***
        *** GPS and other location producers ***
        - Add a possibility to manually enter a connection URL, e.g. "comm:COM0;baudrate=115200"
        - CellId provider for S60FP2 usable with the python helper app (providing cellid via a local socket) 
@@ -11,11 +8,13 @@ GpsMid 0.5.09
        *** Map Screen ***
        - In Setup / Display Options there's now a textfield for specifying how many seconds after
        	 the last manual panning of the map it will be automatically recentered to the GPS position
-       *** Recordings ***
+       *** Recordings, Tracks and Waypoints ***
+       - Allow to save more than 255 waypoints again (thx pos_ei_don)
+       - Ask for track name at start/end of track recording - configurable in Setup / Recording Rules (thx jkjp)
        *** Map Elements ***
        *** Routing ***
        - Permissive Routing Restriction are now possible
-         (e.g. bicycle routing for an abandoned aeroway=runway if bicycle=true is set 
+         (e.g. bicycle routing for an abandoned aeroway=runway if bicycle=true is set
        *** Midlet creation with Osm2GpsMid ***
        *** Others ***
 

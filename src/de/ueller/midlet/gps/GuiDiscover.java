@@ -202,6 +202,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private Gauge gaugeRoutingEsatimationFac; 
 	private ChoiceGroup stopAllWhileRouting;
 	private ChoiceGroup routingOptsGroup;
+	private ChoiceGroup gpxOptsGroup;
 	private ChoiceGroup routingTravelModesGroup;
 
 	private final static Logger logger=Logger.getInstance(GuiDiscover.class,Logger.DEBUG);
@@ -258,11 +259,21 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				wptFlag, null);
 		choiceWptInTrack.setSelectedIndex(0, Configuration.getCfgBitState(
 				Configuration.CFGBIT_WPTS_IN_TRACK, true));
+		String [] gpxNameOpts = new String[2];
+		boolean[] selGpxName = new boolean[2];
+		gpxNameOpts[0] = "Ask track name at start of recording";
+		gpxNameOpts[1] = "Ask track name at end of recording";
+		selGpxName[0]=Configuration.getCfgBitState(Configuration.CFGBIT_GPX_ASK_TRACKNAME_START);
+		selGpxName[1]=Configuration.getCfgBitState(Configuration.CFGBIT_GPX_ASK_TRACKNAME_STOP);
+		
+		gpxOptsGroup = new ChoiceGroup("Track Naming", Choice.MULTIPLE, gpxNameOpts ,null);
+		gpxOptsGroup.setSelectedFlags(selGpxName);
 
 		menuRecordingOptions.append(choiceGpxRecordRuleMode);
 		menuRecordingOptions.append(tfGpxRecordMinimumSecs);
 		menuRecordingOptions.append(tfGpxRecordMinimumDistanceMeters);
 		menuRecordingOptions.append(tfGpxRecordAlwaysDistanceMeters);
+		menuRecordingOptions.append(gpxOptsGroup);
 		menuRecordingOptions.append(choiceWptInTrack);
 	}
 
@@ -784,6 +795,12 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				// Save "waypoints in track" flag to config
 				Configuration.setCfgBitState(Configuration.CFGBIT_WPTS_IN_TRACK, 
 						choiceWptInTrack.isSelected(0), true);
+
+				boolean[] selGpxName = new boolean[2];
+				gpxOptsGroup.getSelectedFlags(selGpxName);
+				Configuration.setCfgBitState(Configuration.CFGBIT_GPX_ASK_TRACKNAME_START, selGpxName[0], true);
+				Configuration.setCfgBitState(Configuration.CFGBIT_GPX_ASK_TRACKNAME_STOP, selGpxName[1], true);
+
 
 				state = STATE_ROOT;
 				show();
