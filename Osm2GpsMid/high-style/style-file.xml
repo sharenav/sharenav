@@ -1008,7 +1008,7 @@ scale alias 1: zoomed out 21x
   				<wayWidth width="3" />
   				<routing with="motorcar" accessible="no" speed="5" />  	
   				<routing with="bicycle" accessible="true" speed="8" />
-  				<routing with="foot" accessible="true" speed="q" />  	
+  				<routing with="foot" accessible="true" speed="2" />  	
   			</Wvalue>
 			<Wvalue name = "track" priority = "9">
   				<specialisation key="tracktype" value="grade5"/>
@@ -1021,7 +1021,7 @@ scale alias 1: zoomed out 21x
   				<wayWidth width="3" />
   				<routing with="motorcar" accessible="no" speed="5" />  	
   				<routing with="bicycle" accessible="true" speed="8" />
-  				<routing with="foot" accessible="true" speed="q" />  	
+  				<routing with="foot" accessible="true" speed="2" />  	
   			</Wvalue>
 			<Wvalue name = "track" priority = "5">
   				<description desc = "track"/>
