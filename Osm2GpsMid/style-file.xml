@@ -431,6 +431,7 @@ scale alias 1: zoomed out 21x
 		<scale scale="19"/>
 		<textscale scale="24"/>
 		<imageCentered value="true"/>
+		<hideable hideable="false"/>
 	  </value>
 	  <value name="tram_stop">
 		<description desc = "Tram station"/>
@@ -678,26 +679,25 @@ scale alias 1: zoomed out 21x
   				<description desc = "mainline rail"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
-  				<scale scale = "10"/>
-  				<lineColor color = "00FFFFFF" />
-  				<lineStyle dashed = "true" />
-  				<wayWidth width="1" />  				  				  				
+  				<scale scale = "12"/>
+  				<lineColor color = "00000000" />
+  				<wayWidth width="2" /> 
   			</Wvalue>
   			<Wvalue name = "tram">
-  				<description desc = "tram"/>
-  				<namekey tag = "name"/>  				
+   				<description desc = "tram"/>
+ 				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
-  				<scale scale = "15"/>
-  				<lineColor color = "00CCCCCC" />
+  				<scale scale = "18"/>
+  				<lineColor color = "00000070" />
   				<lineStyle dashed = "true" />
-  				<wayWidth width="1" />  				  				  				
+  				<wayWidth width="1" />	
   			</Wvalue>
   			<Wvalue name = "subway">
   				<description desc = "tube"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
-  				<scale scale = "17"/>
-  				<lineColor color = "00CCCCCC" />
+  				<scale scale = "16"/>
+  				<lineColor color = "00FFA000" />
   				<lineStyle dashed = "true" />
   				<wayWidth width="1" />  				  				  				
   			</Wvalue>
@@ -705,10 +705,19 @@ scale alias 1: zoomed out 21x
   				<description desc = "light rail"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
-  				<scale scale = "17"/>
-  				<lineColor color = "00CCCCCC" />
+  				<scale scale = "19"/>
+  				<lineColor color = "00222222"/>
   				<lineStyle dashed = "true" />
   				<wayWidth width="1" />  				  				  				
+  			</Wvalue>
+  			<Wvalue name = "*">
+  				<description desc = "other railway"/>
+  				<namekey tag = "name"/>  				
+  				<namefallback tag = "*"/>  				
+  				<isArea area = "false"/>
+  				<scale scale = "19"/>
+  				<lineColor color = "00FF55FF" />  				  				  				
+  				<lineStyle dashed = "true" />
   			</Wvalue>
   		</keyW>
 		<keyW tag = "leisure">
