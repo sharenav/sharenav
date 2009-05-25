@@ -15,9 +15,11 @@ import java.util.Vector;
 
 public class TravelMode {
 	/**
-	 * e. g. motorway, bicycle, etc.
+	 * e. g. motorcar, bicycle, etc.
 	 */
 	private	String	travelModeName;	
+	public short maxPrepareMeters;
+	public short maxInMeters;
 	private Vector<RouteAccessRestriction> routeAccessRestrictions;
 
 	public TravelMode(String name) {

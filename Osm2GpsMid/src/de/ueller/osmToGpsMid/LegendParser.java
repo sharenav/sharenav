@@ -52,7 +52,7 @@ public class LegendParser extends DefaultHandler{
 	private Vector<SoundDescription> sounds;
 	private POIdescription currentPoi;
 	private SoundDescription currentSound;
-	private String currentRestrictionFor;
+	private TravelMode currentTravelMode;
 	private WayDescription currentWay;
 	private String currentKey;
 	private Hashtable<String,Set<EntityDescription>> keyValuesPoi;
@@ -60,7 +60,7 @@ public class LegendParser extends DefaultHandler{
 	private final byte READING_WAYS=0;
 	private final byte READING_POIS=1;
 	private final byte READING_SOUNDS=2;
-	private final byte READING_ROUTEACCESSRESTRICTIONS=3;
+	private final byte READING_ROUTEMODES=3;
 	private byte readingType = READING_WAYS;
 	
 	private byte poiIdx = 0;
@@ -174,9 +174,8 @@ public class LegendParser extends DefaultHandler{
 			readingType=READING_WAYS;			
 		} else if (qName.equals("sounds")) {
 			readingType=READING_SOUNDS;			
-		} else if (qName.equals("routeAccessRestrictions")) {
-			readingType=READING_ROUTEACCESSRESTRICTIONS;
-			currentRestrictionFor = atts.getValue("for");
+		} else if (qName.equals("routeModes")) {
+			readingType=READING_ROUTEMODES;
 		} else if (qName.equals("background")) {
 			try {
 				Configuration.getConfiguration().background_color = Integer.parseInt(atts.getValue("color"),16);
@@ -474,11 +473,38 @@ public class LegendParser extends DefaultHandler{
 					Configuration.getConfiguration().changeSoundFileExtensionTo = atts.getValue("fileExt");
 				}
 				break;
-			case READING_ROUTEACCESSRESTRICTIONS:
+			case READING_ROUTEMODES:
+				if (qName.equals("routeMode")) {
+					currentTravelMode = TravelModes.getTravelMode(atts.getValue("modeName"));
+					if (currentTravelMode!=null) {
+						String maxPrepareMeters = atts.getValue("maxPrepareMeters");
+						if (maxPrepareMeters != null) {
+							try {
+								currentTravelMode.maxPrepareMeters = (short) Integer.parseInt(maxPrepareMeters);
+							} catch (NumberFormatException nfe) {
+								System.out.println("Invalid maxPrepareMeters for " + currentTravelMode.getName());
+							}
+						} else {
+							System.out.println("Warning: no maxPrepareMeters  for " + currentTravelMode.getName() + ". Using 500m." );
+							currentTravelMode.maxPrepareMeters = 500;
+						}
+						String maxInMeters = atts.getValue("maxInMeters");
+						if (maxInMeters != null) {
+							try {
+								currentTravelMode.maxInMeters = (short) Integer.parseInt(maxInMeters);
+							} catch (NumberFormatException nfe) {
+								System.out.println("Invalid maxInMeters for " + currentTravelMode.getName());
+							}
+						} else {
+							System.out.println("Warning: no maxInMeters  for " + currentTravelMode.getName() + ". Using 899m." );
+							currentTravelMode.maxInMeters = 899;
+						}
+					}
+				}
+					
 				if (qName.equals("routeAccessRestriction")) {
-					TravelMode tm = TravelModes.getTravelMode(currentRestrictionFor);
-					if (tm != null) {
-						tm.getRouteAccessRestrictions().addElement(
+					if (currentTravelMode != null) {
+						currentTravelMode.getRouteAccessRestrictions().addElement(
 							new RouteAccessRestriction(
 									atts.getValue("restrictionKey"),
 									atts.getValue("restrictionValues") + "|",
