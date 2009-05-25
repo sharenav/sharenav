@@ -471,7 +471,7 @@ public class RouteInstructions {
 									// Remembering and checking if the prepare instruction already was given for an arrow avoids this
 									iPrepareInstructionSaidArrow = iNow;
 								} else if (
-									intDistNow < 900 && intDistNow < getTellDistance(iNow, aNow)
+									intDistNow >=100 && intDistNow < 900 && intDistNow < getTellDistance(iNow, aNow)
 									// give in-xxx-m instruction only if the last prepareInstruction was not already for this arrow (this avoids possibly wrong in-xxx-m instructions after passing the arrow)
 									&& iNow != iPrepareInstructionSaidArrow
 									&& iNow != iInstructionSaidArrow
