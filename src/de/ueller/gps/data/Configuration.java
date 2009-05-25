@@ -32,6 +32,7 @@ import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.ProjFactory;
+import de.ueller.midlet.gps.routing.TravelMode;
 import de.ueller.midlet.gps.tile.C;
 
 public class Configuration {
@@ -246,7 +247,7 @@ public class Configuration {
 
 	private static int minRouteLineWidth=0;
 	private static int autoRecenterToGpsMilliSecs=10;
-	private static int currentTravelMode=0;
+	private static int currentTravelModeNr=0;
 	private static int currentTravelMask=0;
 
 	public static void read(){
@@ -376,8 +377,8 @@ public class Configuration {
 			}
 			minRouteLineWidth=readInt(database, RECORD_ID_MIN_ROUTELINE_WIDTH); 
 			autoRecenterToGpsMilliSecs=readInt(database, RECORD_ID_AUTO_RECENTER_TO_GPS_MILLISECS);
-			currentTravelMode=readInt(database, RECORD_ID_ROUTE_TRAVEL_MODE);
-			currentTravelMask=1<<currentTravelMode;
+			currentTravelModeNr=readInt(database, RECORD_ID_ROUTE_TRAVEL_MODE);
+			currentTravelMask=1<<currentTravelModeNr;
 			
 			database.closeRecordStore();
 		} catch (Exception e) {
@@ -880,9 +881,13 @@ public class Configuration {
 		Configuration.routeEstimationFac = routeEstimationFac;
 	}
 
+
+	public static TravelMode getTravelMode() {
+		return C.getTravelModes()[currentTravelModeNr];
+	}	
 	
-	public static int getTravelMode() {
-		return currentTravelMode;
+	public static int getTravelModeNr() {
+		return currentTravelModeNr;
 	}	
 
 	public static int getTravelMask() {
@@ -891,7 +896,7 @@ public class Configuration {
 	
 	public static void setTravelMode(int travelModeNr) {
 		write(travelModeNr,RECORD_ID_ROUTE_TRAVEL_MODE);
-		Configuration.currentTravelMode = travelModeNr;
+		Configuration.currentTravelModeNr = travelModeNr;
 		Configuration.currentTravelMask = 1<<travelModeNr;		
 	}	
 

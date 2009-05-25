@@ -24,6 +24,7 @@ import de.ueller.midlet.gps.data.Proj2D;
 import de.ueller.midlet.gps.routing.ConnectionWithNode;
 import de.ueller.midlet.gps.routing.RouteHelper;
 import de.ueller.midlet.gps.routing.RouteNode;
+import de.ueller.midlet.gps.routing.TravelMode;
 import de.ueller.midlet.gps.tile.C;
 import de.ueller.midlet.gps.tile.PaintContext;
 import de.ueller.midlet.gps.tile.WayDescription;
@@ -454,6 +455,7 @@ public class RouteInstructions {
 									// give prepare instruction only if the last prepareInstruction was not already for this arrow (this avoids possibly wrong prepare instructions after passing the arrow)
 									&& iNow != iPrepareInstructionSaidArrow
 									&& iNow != iInstructionSaidArrow
+									&& intDistNow <= Configuration.getTravelMode().maxPrepareMeters
 									
 								) {
 									if (aNow < RI_ENTER_MOTORWAY) {
@@ -473,6 +475,7 @@ public class RouteInstructions {
 									// give in-xxx-m instruction only if the last prepareInstruction was not already for this arrow (this avoids possibly wrong in-xxx-m instructions after passing the arrow)
 									&& iNow != iPrepareInstructionSaidArrow
 									&& iNow != iInstructionSaidArrow
+									&& intDistNow <= Configuration.getTravelMode().maxInMeters
 								) {
 									soundRepeatDelay=60;
 									soundToPlay.append("IN;" + Integer.toString(intDistNow / 100)+ "00;METERS;" + getSoundInstruction(cNow.wayRouteFlags, aNow));								

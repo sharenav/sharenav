@@ -292,7 +292,7 @@ public class RouteTile extends RouteBaseTile {
 	 */
 	private void loadConnections(boolean bestTime) throws IOException {
 		int numTravelModes= C.getTravelModes().length;
-		int currentTravelMode = Configuration.getTravelMode();			
+		int currentTravelMode = Configuration.getTravelModeNr();			
 			
 		connections = new Connection[nodes.length][];
 		//#debug debug

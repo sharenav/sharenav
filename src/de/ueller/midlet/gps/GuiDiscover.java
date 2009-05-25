@@ -285,8 +285,12 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		menuRoutingOptions.addCommand(OK_CMD);
 		menuRoutingOptions.setCommandListener(this);
 
-		routingTravelModesGroup = new ChoiceGroup("Routing for:", Choice.EXCLUSIVE, C.getTravelModes() ,null);
-		routingTravelModesGroup.setSelectedIndex(Configuration.getTravelMode(), true);
+		String travelModes[] = new String[C.getTravelModes().length];
+		for (int i=0; i<travelModes.length; i++) {
+			travelModes[i]=C.getTravelModes()[i].travelModeName;
+		}
+		routingTravelModesGroup = new ChoiceGroup("Routing for:", Choice.EXCLUSIVE, travelModes, null);
+		routingTravelModesGroup.setSelectedIndex(Configuration.getTravelModeNr(), true);
 		menuRoutingOptions.append(routingTravelModesGroup);
 		
 		String [] routingBack = new String[2];

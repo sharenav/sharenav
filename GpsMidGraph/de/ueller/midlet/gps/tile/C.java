@@ -16,13 +16,14 @@ import de.ueller.gps.data.Configuration;
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.names.Names;
+import de.ueller.midlet.gps.routing.TravelMode;
 
 public class C {
 	/**
 	 * Specifies the format of the map on disk we expect to see
 	 * This constant must be in sync with Osm2GpsMid
 	 */
-	public final static short MAP_FORMAT_VERSION = 27;
+	public final static short MAP_FORMAT_VERSION = 28;
 	
 	/** The waypoint format used in the RecordStore. See PositionMark.java. */
 	public final static short WAYPT_FORMAT_VERSION = 2;
@@ -98,7 +99,7 @@ public class C {
 	
 	private static String namePartRequired[] = new String[3];
 	
-	private static String midletTravelModes[];	
+	private static TravelMode midletTravelModes[];	
 	
 	private final static Logger logger=Logger.getInstance(C.class,Logger.TRACE);
 	
@@ -143,13 +144,16 @@ public class C {
 		ROUTEDOT_BORDERCOLOR = ds.readInt();
 		
 		int count = ds.readByte();
-		midletTravelModes = new String[count];
+		midletTravelModes = new TravelMode[count];
 		for (int i=0; i<count;i++) {
-			midletTravelModes[i] = ds.readUTF();
+			midletTravelModes[i] = new TravelMode();
+			midletTravelModes[i].travelModeName = ds.readUTF();
+			midletTravelModes[i].maxPrepareMeters = ds.readShort();
+			midletTravelModes[i].maxInMeters = ds.readShort();
 		}
 		
 		// If we do not have the travel mode stored defined in the record store in the midlet data, use the first one 
-		if (Configuration.getTravelMode() > C.getTravelModes().length-1) {
+		if (Configuration.getTravelModeNr() > C.getTravelModes().length-1) {
 			Configuration.setTravelMode(0);
 		}
 		
@@ -336,7 +340,7 @@ public class C {
 		}
 	}
 
-	public static String [] getTravelModes() {
+	public static TravelMode [] getTravelModes() {
 		return midletTravelModes;
 	}
 	
