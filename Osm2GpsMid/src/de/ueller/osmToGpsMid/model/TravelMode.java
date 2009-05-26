@@ -20,6 +20,10 @@ public class TravelMode {
 	private	String	travelModeName;	
 	public short maxPrepareMeters;
 	public short maxInMeters;
+	public long numRouteNodes=0;
+	public long numConnections=0;
+	public long numOneWayConnections=0;
+	
 	private Vector<RouteAccessRestriction> routeAccessRestrictions;
 
 	public TravelMode(String name) {
@@ -35,5 +39,7 @@ public class TravelMode {
 		return routeAccessRestrictions;
 	}	
 
-
+	public String toString() {
+		return " " + travelModeName + ": " + numRouteNodes + " nodes / " + numConnections + " dual connections / " + numOneWayConnections + " oneway connections";
+	}
 }

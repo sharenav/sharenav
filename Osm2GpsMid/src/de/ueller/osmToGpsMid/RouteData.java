@@ -151,6 +151,8 @@ public class RouteData {
 		int times[] = new int[TravelModes.travelModeCount];
 		for (int i=0; i<TravelModes.travelModeCount; i++) {
 			if (w.isAccessForRouting(i)) {
+				TravelModes.getTravelMode(i).numConnections++;
+				TravelModes.getTravelMode(i).numOneWayConnections++;
 				float speed=w.getRoutingSpeed(i);
 				float time=dist * 10.0f / speed;
 				times[i] = (int)time;
@@ -173,6 +175,11 @@ public class RouteData {
 			to.connected.add(cr);
 			from.connectedFrom.add(cr);
 			connections.add(cr);
+			for (int i=0; i<TravelModes.travelModeCount; i++) {
+				if (w.isAccessForRouting(i)) {
+					TravelModes.getTravelMode(i).numOneWayConnections--;
+				}
+			}
 		}
 		// need only for debugging not for live
 		c.from=from;

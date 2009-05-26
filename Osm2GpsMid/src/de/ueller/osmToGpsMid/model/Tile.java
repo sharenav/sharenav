@@ -349,7 +349,9 @@ public class Tile {
 				nds.writeFloat(MyMath.degToRad(n.node.lon));
 				//nds.writeInt(cds.size());
 				nds.writeByte(n.connected.size());
+				byte routeNodeWayFlags = 0;
 				for (Connection c : n.connected){
+					routeNodeWayFlags |= c.wayTravelModes;
 					cds.writeInt(c.to.id);
 					// only write out wayTravelModes flag if the midlet has multiple travel modes
 					if (TravelModes.travelModeCount > 1) { 
@@ -380,6 +382,12 @@ public class Tile {
 					
 					cds.writeByte(c.startBearing);
 					cds.writeByte(c.endBearing);
+				}
+				// count in which travel modes route node is used
+				for (int i=0; i < TravelModes.travelModeCount; i++) {
+					if ( (routeNodeWayFlags & (1<<i)) !=0) {
+						TravelModes.getTravelMode(i).numRouteNodes++;
+					}
 				}
 			}
 			/**
