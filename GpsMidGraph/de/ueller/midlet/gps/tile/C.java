@@ -23,7 +23,7 @@ public class C {
 	 * Specifies the format of the map on disk we expect to see
 	 * This constant must be in sync with Osm2GpsMid
 	 */
-	public final static short MAP_FORMAT_VERSION = 28;
+	public final static short MAP_FORMAT_VERSION = 29;
 	
 	/** The waypoint format used in the RecordStore. See PositionMark.java. */
 	public final static short WAYPT_FORMAT_VERSION = 2;
@@ -143,6 +143,9 @@ public class C {
 		ROUTEDOT_COLOR = ds.readInt();
 		ROUTEDOT_BORDERCOLOR = ds.readInt();
 		
+		/**
+		 * Read Travel Modes
+		 */
 		int count = ds.readByte();
 		midletTravelModes = new TravelMode[count];
 		for (int i=0; i<count;i++) {
@@ -150,6 +153,7 @@ public class C {
 			midletTravelModes[i].travelModeName = ds.readUTF();
 			midletTravelModes[i].maxPrepareMeters = ds.readShort();
 			midletTravelModes[i].maxInMeters = ds.readShort();
+			midletTravelModes[i].againstOneWayMode = ds.readByte();
 		}
 		
 		// If we do not have the travel mode stored defined in the record store in the midlet data, use the first one 

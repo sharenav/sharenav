@@ -18,7 +18,12 @@ public class TravelMode {
 	public String	travelModeName;	
 	public short maxPrepareMeters;
 	public short maxInMeters;
+	public byte againstOneWayMode = 0;
+	
+	public final static byte AGAINST_ALL_ONEWAYS = 1;
+	public final static byte BICYLE_OPPOSITE_EXCEPTIONS = 2;	
 
+	
 	public TravelMode() {
 		
 	}

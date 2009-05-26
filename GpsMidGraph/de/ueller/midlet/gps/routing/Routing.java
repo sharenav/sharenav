@@ -402,7 +402,7 @@ public class Routing implements Runnable {
 				Way w=(Way) fromMark.entity;
 				int nearestSegment=getNearestSeg(w, startNode.lat, startNode.lon, fromMark.nodeLat,fromMark.nodeLon);
 				// roundabouts don't need to be explicitely tagged as oneways in OSM according to http://wiki.openstreetmap.org/wiki/Tag:junction%3Droundabout
-				if (! (w.isOneway() || w.isRoundAbout()) ) {
+				if (! w.isOneDirectionOnly() ) { // if no against oneway rule applies
 					
 //					parent.getRouteNodes().addElement(new RouteHelper(fromMark.nodeLat[nearestSegment],fromMark.nodeLon[nearestSegment],"oneWay sec"));
 					RouteNode rn=findPrevRouteNode(nearestSegment-1, startNode.lat, startNode.lon, fromMark.nodeLat,fromMark.nodeLon);
@@ -464,7 +464,7 @@ public class Routing implements Runnable {
 			int nearestSeg = getNearestSeg(w,toMark.lat, toMark.lon, toMark.nodeLat, toMark.nodeLon);
 			RouteTileRet nodeTile=new RouteTileRet();
 			// roundabouts don't need to be explicitly tagged as oneways in OSM according to http://wiki.openstreetmap.org/wiki/Tag:junction%3Droundabout
-			if (! (w.isOneway() || w.isRoundAbout()) ){
+			if (! w.isOneDirectionOnly() ){ // if no against oneway rule applies
 				RouteNode nextNode = findNextRouteNode(nearestSeg, toMark.lat, toMark.lon, toMark.nodeLat, toMark.nodeLon);
 				// TODO: fill in bearings and cost
 				Connection newCon=new Connection(routeTo,0,(byte)0,(byte)0);

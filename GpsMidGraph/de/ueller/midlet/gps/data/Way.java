@@ -367,14 +367,14 @@ public class Way extends Entity{
 					this.isRoutableWay()
 					// count in roundabouts only once (search connection could match at start and end node)
 					&& !containsCon1
-					// count only if it's not a oneway ending at this connection 
-					&& !(isOneway() && (i == path.length - 1 && !isCircleway) )
+					// count only if it's not a oneway ending at this connection (and no against oneway rule applies)
+					&& !(isOneDirectionOnly() && (i == path.length - 1 && !isCircleway) )
 				) {
 					// remember bearings of the ways at this connection, so we can later check out if we have multiple straight-ons requiring a bearing instruction
 					// we do this twice for each found way to add the bearings for forward and backward
 					for (int d = -1 ; d <= 1; d += 2) {
-						// do not add bearings against direction if this is a oneway
-						if (d == -1 && isOneway()) {
+						// do not add bearings against direction if this is a oneway (and no against oneway rule applies)
+						if (d == -1 && isOneDirectionOnly()) {
 							continue;
 						}
 						if ( (i + d) < path.length && (i + d) >= 0) {
@@ -400,8 +400,8 @@ public class Way extends Entity{
 					changeCountNameIdx(pc, 1);						
 					//System.out.println("add 1 " + "con1At: " + i + " pathlen-1: " + (path.length-1) );
 					pc.conWayNumToRoutableWays++;
-					// if we are in the middle of the way, count the way once more
-					if (i != 0 && i != path.length-1 && !isOneway()) {
+					// if we are in the middle of the way, count the way once more (if no against oneway rule applies)
+					if (i != 0 && i != path.length-1 && !isOneDirectionOnly()) {
 						pc.conWayNumToRoutableWays++;
 						changeCountNameIdx(pc, 1);
 						//System.out.println("add middle 1 " + "con1At: " + i + " pathlen-1: " + (path.length-1) );
@@ -431,8 +431,8 @@ public class Way extends Entity{
 			short to = containsCon2At;
 			int direction = 1;
 			if (from > to && !(isRoundAbout() || isCircleway) ) {
-				// if this is a oneway but not a roundabout or circleway it can't be the route path as we would go against the oneway's direction
-				if (isOneway()) return;
+				// if this is a oneway but not a roundabout or circleway it can't be the route path as we would go against the oneway's direction (if no against oneway rule applies)
+				if (isOneDirectionOnly()) return;
 				// swap direction
 				from = to;
 				to = containsCon1At;
@@ -1605,7 +1605,7 @@ public class Way extends Entity{
 	}
 	
 	public boolean isOneway(){
-		return ((flags & WAY_ONEWAY) == WAY_ONEWAY);
+		return (flags & WAY_ONEWAY) != 0;
 	}
 	
 	
@@ -1624,6 +1624,12 @@ public class Way extends Entity{
 	public boolean isRoundAbout() {
 		return ((flags & WAY_ROUNDABOUT) > 0);
 	}
+	
+	public boolean isOneDirectionOnly() {
+		return (flags & (WAY_ONEWAY + WAY_ROUNDABOUT)) != 0 && (Configuration.getTravelMode().againstOneWayMode == 0);
+	}
+	
+	
 	public boolean isTunnel() {
 		return ((flags & WAY_TUNNEL) > 0);
 	}
