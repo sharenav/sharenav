@@ -499,6 +499,18 @@ public class LegendParser extends DefaultHandler{
 							System.out.println("Warning: no maxInMeters  for " + currentTravelMode.getName() + ". Using 899m." );
 							currentTravelMode.maxInMeters = 899;
 						}
+						String againstAllOneWays = atts.getValue("againstAllOneWays");
+						if (againstAllOneWays != null) {
+							if (againstAllOneWays.equalsIgnoreCase("true")) {
+								currentTravelMode.againstOneWayMode |= TravelMode.AGAINST_ALL_ONEWAYS;
+							}
+						}
+						String bicycleOppositeExceptions = atts.getValue("bicycleOppositeExceptions");
+						if (bicycleOppositeExceptions != null) {
+							if (bicycleOppositeExceptions.equalsIgnoreCase("true")) {
+								currentTravelMode.againstOneWayMode |= TravelMode.BICYLE_OPPOSITE_EXCEPTIONS;
+							}
+						}
 					}
 				}
 					

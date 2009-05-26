@@ -35,6 +35,7 @@ import org.apache.tools.bzip2.CBZip2InputStream;
 
 import de.ueller.osmToGpsMid.model.Relation;
 import de.ueller.osmToGpsMid.model.RouteAccessRestriction;
+import de.ueller.osmToGpsMid.model.TravelMode;
 import de.ueller.osmToGpsMid.model.TravelModes;
 
 
@@ -56,17 +57,25 @@ public class BundleGpsMid {
 				c=new Configuration(args);
 			System.out.println(c.toString());
 
+			TravelMode tm=null;
 			for (int i=0; i < TravelModes.travelModeCount; i++) {				
-				System.out.println("Route access restrictions in " + c.getStyleFileName() + " for " + TravelModes.travelModes[i].getName() + ":");
+				tm = TravelModes.travelModes[i];
+				System.out.println("Route rules in " + c.getStyleFileName() + " for " + tm.getName() + ":");
+				if ( (tm.againstOneWayMode & TravelMode.AGAINST_ALL_ONEWAYS) > 0) {
+					System.out.println(" Going against all accessible oneways is allowed");					
+				}
+				if ( (tm.againstOneWayMode & TravelMode.BICYLE_OPPOSITE_EXCEPTIONS) > 0) {
+					System.out.println(" Opposite direction exceptions for bicycles get applied");					
+				}
 	        	int routeAccessRestrictionCount = 0;
 	            if (TravelModes.getTravelMode(i).getRouteAccessRestrictions().size() > 0) {
-	            	for (RouteAccessRestriction r: TravelModes.getTravelMode(i).getRouteAccessRestrictions()) {
+	            	for (RouteAccessRestriction r: tm.getRouteAccessRestrictions()) {
 	            		routeAccessRestrictionCount++;
 	            		System.out.println(" " + r.toString());
 	            	}
 	            }
 	            if (routeAccessRestrictionCount == 0) {
-	        		System.out.println("Warning: No access restrictions in " + c.getStyleFileName() + " for " + TravelModes.travelModes[i].getName());            	
+	        		System.out.println("Warning: No access restrictions in " + c.getStyleFileName() + " for " + tm.getName());            	
 	            }
 			}
 			System.out.println("");

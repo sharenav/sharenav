@@ -347,6 +347,15 @@ public class Way extends Entity implements Comparable<Way>{
 		return Configuration.attrToBoolean(getAttribute("oneway")) > 0;
 	}
 	
+	/** check if cycleway=opposite or cycleway=opposite_track or cycleway=opposite_lane is set */
+	public boolean isOppositeDirectionForBicycleAllowed() {
+		String s = getAttribute("cycleway");
+		if ( s == null ) {
+			return false;
+		}
+		return "|opposite|opposite_track|opposite_lane|".indexOf("|" + s.toLowerCase() + "|") >= 0;
+	}
+	
 	public boolean isExplicitArea() {
 		return Configuration.attrToBoolean(getAttribute("area")) > 0;
 	}

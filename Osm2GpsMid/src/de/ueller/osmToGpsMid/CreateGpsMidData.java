@@ -139,7 +139,6 @@ public class CreateGpsMidData {
 //		}
 //		System.exit(2);
 		sl.createSearchList(path);
-		System.out.println("Routing:");
 		for (int i=0; i<TravelModes.travelModeCount; i++) {
 			System.out.println(TravelModes.getTravelMode(i).toString());			
 		}
@@ -194,11 +193,15 @@ public class CreateGpsMidData {
 			dsi.writeInt(config.routeDotColor);
 			dsi.writeInt(config.routeDotBorderColor);
 			
+			/**
+			 * Write Travel Modes
+			 */
 			dsi.writeByte(TravelModes.travelModeCount);
 			for (int i=0; i<TravelModes.travelModeCount; i++) {
 				dsi.writeUTF(TravelModes.getTravelMode(i).getName());
 				dsi.writeShort(TravelModes.getTravelMode(i).maxPrepareMeters);
 				dsi.writeShort(TravelModes.getTravelMode(i).maxInMeters);
+				dsi.writeByte(TravelModes.getTravelMode(i).againstOneWayMode);
 			}
 			
 			/**

@@ -1736,14 +1736,14 @@ scale alias 1: zoomed out 21x
 			<routeAccessRestriction restrictionKey = "access" restrictionValues = "no|private"/>
 			<routeAccessRestriction restrictionKey = "vehicle" restrictionValues = "no|private"/>
 		</routeMode>
-		<routeMode modeName = "bicycle" maxPrepareMeters="75" maxInMeters="299">
+		<routeMode modeName = "bicycle" maxPrepareMeters="75" maxInMeters="299" bicycleOppositeExceptions = "true">
 			<routeAccessRestriction restrictionKey = "bicycle" restrictionValues = "yes|designated" restrictionPermit = "true"/>
 			<routeAccessRestriction restrictionKey = "cycleway" restrictionValues = "track" restrictionPermit = "true"/>
 			<routeAccessRestriction restrictionKey = "bicycle" restrictionValues = "no|private"/>
 			<routeAccessRestriction restrictionKey = "access" restrictionValues = "no|private"/>
 			<routeAccessRestriction restrictionKey = "vehicle" restrictionValues = "no|private"/>
 		</routeMode>
-		<routeMode modeName = "foot" maxPrepareMeters="50" maxInMeters="125">
+		<routeMode modeName = "foot" maxPrepareMeters="50" maxInMeters="125" againstAllOneWays = "true">
 			<routeAccessRestriction restrictionKey = "foot" restrictionValues = "yes|designated" restrictionPermit = "true"/>
 			<routeAccessRestriction restrictionKey = "foot" restrictionValues = "no|private"/>
 			<routeAccessRestriction restrictionKey = "access" restrictionValues = "no|private"/>

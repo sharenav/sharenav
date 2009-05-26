@@ -29,6 +29,7 @@ import de.ueller.osmToGpsMid.model.Connection;
 import de.ueller.osmToGpsMid.model.Node;
 import de.ueller.osmToGpsMid.model.RouteNode;
 import de.ueller.osmToGpsMid.model.SubPath;
+import de.ueller.osmToGpsMid.model.TravelMode;
 import de.ueller.osmToGpsMid.model.TravelModes;
 import de.ueller.osmToGpsMid.model.Way;
 
@@ -147,15 +148,30 @@ public class RouteData {
 	 */
 	private void addConnection(RouteNode from, RouteNode to, int dist, Way w, byte bs, byte be) {
 		
+		byte againstDirectionTravelModes = 0;
 		// create an array of routing times with an entry for each travel mode
 		int times[] = new int[TravelModes.travelModeCount];
 		for (int i=0; i<TravelModes.travelModeCount; i++) {
 			if (w.isAccessForRouting(i)) {
-				TravelModes.getTravelMode(i).numConnections++;
-				TravelModes.getTravelMode(i).numOneWayConnections++;
+				TravelMode tm = TravelModes.getTravelMode(i);
+				tm.numOneWayConnections++;
 				float speed=w.getRoutingSpeed(i);
 				float time=dist * 10.0f / speed;
 				times[i] = (int)time;
+
+				boolean bicycleOppositeDirection = (tm.againstOneWayMode & TravelMode.BICYLE_OPPOSITE_EXCEPTIONS) > 0 && w.isOppositeDirectionForBicycleAllowed();				
+				// you can go against the direction of the way if it's not a oneway or an against direction rule applies
+				if (! (w.isOneWay() || w.isRoundabout())
+					||
+					(tm.againstOneWayMode & TravelMode.AGAINST_ALL_ONEWAYS) > 0
+					||
+					bicycleOppositeDirection
+				) {
+					againstDirectionTravelModes |= (1<<i);
+					if (bicycleOppositeDirection) {
+						tm.numBicycleOppositeConnections++;
+					}
+				}
 			} else {
 				times[i] = 0;				
 			}
@@ -167,7 +183,7 @@ public class RouteData {
 		from.connected.add(c);
 		to.connectedFrom.add(c);
 		// roundabouts don't need to be explicitly tagged as oneways in OSM according to http://wiki.openstreetmap.org/wiki/Tag:junction%3Droundabout
-		if (! (w.isOneWay() || w.isRoundabout()) ){
+		if (againstDirectionTravelModes != 0 ){
 			// add connection in the other direction as well, if this is no oneWay
 			// TODO: explain Doesn't this add duplicates when addconnection() is called later on with from and to exchanged or does this not happen?
 			Connection cr=new Connection(from,dist,times,MyMath.inversBearing(be),MyMath.inversBearing(bs),w);
@@ -175,9 +191,15 @@ public class RouteData {
 			to.connected.add(cr);
 			from.connectedFrom.add(cr);
 			connections.add(cr);
+
+			// flag connections useable for travel modes you can go against the ways direction
+			cr.wayTravelModes = againstDirectionTravelModes;
+
 			for (int i=0; i<TravelModes.travelModeCount; i++) {
-				if (w.isAccessForRouting(i)) {
-					TravelModes.getTravelMode(i).numOneWayConnections--;
+				if ( (againstDirectionTravelModes & (1<<i)) != 0 ) {
+					TravelMode tm = TravelModes.getTravelMode(i);
+					tm.numDualConnections++;
+					tm.numOneWayConnections--;
 				}
 			}
 		}
