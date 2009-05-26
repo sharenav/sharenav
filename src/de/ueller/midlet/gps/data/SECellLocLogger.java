@@ -139,6 +139,7 @@ public class SECellLocLogger implements LocationMsgReceiver {
 	public void locationDecoderEnd(String msg) {
 		logger.info("Closing Cell-id logger with msg: " + msg);
 		//#if polish.api.fileconnection
+		
 		try {
 			if (wr != null) {
 				wr.flush();
@@ -150,6 +151,11 @@ public class SECellLocLogger implements LocationMsgReceiver {
 				logger.info("No Cell-IDs recorded, deleting empty log file");
 				logCon.delete();
 			}
+			//			else {
+			    //			    if (Configuration.getCfgBitState(Configuration.CFGBIT_CELLID_ALWAYS) ||
+			    //				Configuration.getCfgBitState(Configuration.CFGBIT_CELLID_CONFIRM))
+			    //				OpencellidUpload(GpsMid.getInstance(), null );
+			//			}
 		} catch (IOException ioe) {
 			logger.exception("Failed to close cell-id logger", ioe);
 		}

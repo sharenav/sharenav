@@ -36,6 +36,10 @@ import de.ueller.midlet.gps.data.Projection;
 import de.ueller.midlet.gps.tile.C;
 import de.ueller.gpsMid.mapData.WaypointsTile;
 
+//#if polish.api.opencellid
+import de.ueller.gps.SECellID;
+//#endif
+
 public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMidDisplayable, SelectionListener {
 
 	/** A menu list instance */
@@ -45,6 +49,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		"GPX Receiver", "Map source", "Debug options", "Key shortcuts",
 		//#if polish.api.osm-editing
 		"OSM account",
+		//#endif
+		//#if polish.api.opencellid
+		"Opencellid",
 		//#endif
 		//#if polish.api.fileconnection
 		"Save config","Load config"
@@ -70,11 +77,23 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private static final int MENU_ITEM_KEYS_OPT = 8;
 	//#if polish.api.osm-editing
 	private static final int MENU_ITEM_OSM_OPT = 9;
+	//#if polish.api.opencellid
+	private static final int MENU_ITEM_OPENCELLID_OPT = 10;
+	private static final int MENU_ITEM_SAVE_CONFIG = 11;
+	private static final int MENU_ITEM_LOAD_CONFIG = 12;
+	//#else
+	private static final int MENU_ITEM_SAVE_CONFIG = 10;
+	private static final int MENU_ITEM_LOAD_CONFIG = 11;
+	//#endif
+	//#else
+	//#if polish.api.opencellid
+	private static final int MENU_ITEM_OPENCELLID_OPT = 9;
 	private static final int MENU_ITEM_SAVE_CONFIG = 10;
 	private static final int MENU_ITEM_LOAD_CONFIG = 11;
 	//#else
 	private static final int MENU_ITEM_SAVE_CONFIG = 9;
 	private static final int MENU_ITEM_LOAD_CONFIG = 10;
+	//#endif
 	//#endif
 
 	private static final String[]	empty			= {};
@@ -85,6 +104,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 
 	private final Command			BACK_CMD		= new Command("Cancel",
 															Command.BACK, 2);
+
 
 	/** Soft button for discovering BT. */
 	private final Command			OK_CMD			= new Command("Ok",
@@ -103,6 +123,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	//#if polish.api.osm-editing
 	private final Command			OSM_URL	= new Command("Upload to OSM", Command.ITEM, 2);
 	//#endif
+	//#if polish.api.opencellid
+	private final Command			OPENCELLID_APIKEY	= new Command("Opencellid apikey", Command.ITEM, 1);
+	//#endif
 	private final Command			GPS_DISCOVER	= new Command("Discover GPS",
 			Command.ITEM, 1);
 	
@@ -110,6 +133,10 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 			Command.ITEM, 1);
 	
 	
+	/** Soft button for cache reset. */
+	private final Command			CELLID_CACHE_RESET_CMD		= new Command("Reset cellid cache",
+															Command.OK, 2);
+
 	/** A menu list instance */
 	private final List				menu			= new List("Setup",
 															Choice.IMPLICIT, elements,
@@ -140,6 +167,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private Form					menuOsmAccountOptions;
 	//#endif
 	
+	private Form					menuOpencellidOptions;
+
 	private final GpsMid			parent;
 
 	private DiscoverGps				gps;
@@ -160,16 +189,18 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	//#if polish.api.osm-editing
 	private final static int		STATE_OSM_OPT = 12;
 	//#endif
-	private final static int		STATE_LOAD_CONFIG = 13;
-	private final static int		STATE_SAVE_CONFIG = 14;
-	private final static int		STATE_URL_ENTER_GPS = 15;
-	private final static int		STATE_URL_ENTER_GPX = 16;
+	private final static int		STATE_OPENCELLID_OPT = 13;
+	private final static int		STATE_LOAD_CONFIG = 14;
+	private final static int		STATE_SAVE_CONFIG = 15;
+	private final static int		STATE_URL_ENTER_GPS = 16;
+	private final static int		STATE_URL_ENTER_GPX = 17;
 	
 	private Vector urlList; 
 	private Vector friendlyName;
 	private ChoiceGroup locProv;
 	private ChoiceGroup choiceGpxRecordRuleMode;
 	private ChoiceGroup choiceWptInTrack;
+	private ChoiceGroup choiceWptInWpstore;
 	private TextField  tfGpxRecordMinimumSecs; 
 	private TextField  tfGpxRecordMinimumDistanceMeters; 
 	private TextField  tfGpxRecordAlwaysDistanceMeters;
@@ -180,6 +211,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private TextField  tfOsmPassword;
 	private TextField  tfOsmUrl;
 	//#endif
+	private TextField  tfOpencellidApikey;
 	private ChoiceGroup rawLogCG;
 	private ChoiceGroup mapSrc;
 	private Gauge gaugeDetailBoost; 
@@ -203,6 +235,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private ChoiceGroup stopAllWhileRouting;
 	private ChoiceGroup routingOptsGroup;
 	private ChoiceGroup gpxOptsGroup;
+	private ChoiceGroup cellidOptsGroup;
 	private ChoiceGroup routingTravelModesGroup;
 
 	private final static Logger logger=Logger.getInstance(GuiDiscover.class,Logger.DEBUG);
@@ -489,6 +522,40 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	}
 	//#endif
 
+	//#if polish.api.opencellid
+	private void initOpencellidOptions() {
+		//Prepare Debug selection menu
+		logger.info("Starting Opencellid apikey setup menu");
+		menuOpencellidOptions = new Form("Opencellid");
+		menuOpencellidOptions.addCommand(BACK_CMD);
+		menuOpencellidOptions.addCommand(OK_CMD);
+		menuOpencellidOptions.addCommand(CELLID_CACHE_RESET_CMD);
+		menuOpencellidOptions.setCommandListener(this);
+		//tfOpencellidApikey = new TextField("apikey:", Configuration.getOpencellidApikey(), 100, TextField.ANY);
+		
+		//menuOpencellidOptions.append(tfOpencellidApikey);
+
+		String [] cellidOpts = new String[2];
+		boolean[] opencellidFlags = new boolean[2];
+
+		cellidOpts[0] = "Don't use online cellid lookups";
+		cellidOpts[1] = "Use only online cellid lookups";
+		//cellidOpts[2] = "Upload log always";
+		//cellidOpts[3] = "Confirmation before log upload";
+		//cellidOpts[4] = "Fallback to cellid when no fix";
+		
+		cellidOptsGroup = new ChoiceGroup("Cellid options", Choice.MULTIPLE, cellidOpts, null);
+		opencellidFlags[0] = Configuration.getCfgBitState(Configuration.CFGBIT_CELLID_OFFLINEONLY);
+		opencellidFlags[1] = Configuration.getCfgBitState(Configuration.CFGBIT_CELLID_ONLINEONLY);
+		//opencellidFlags[2] = Configuration.getCfgBitState(Configuration.CFGBIT_CELLID_ALWAYS);
+		//opencellidFlags[3] = Configuration.getCfgBitState(Configuration.CFGBIT_CELLID_CONFIRM);
+		//opencellidFlags[4] = Configuration.getCfgBitState(Configuration.CFGBIT_CELLID_FALLBACK);
+
+		cellidOptsGroup.setSelectedFlags(opencellidFlags);
+		menuOpencellidOptions.append(cellidOptsGroup);
+	}
+	//#endif
+
 	public void commandAction(Command c, Item i) {
 		// forward item command action to form
 		commandAction(c, (Displayable) null);
@@ -736,6 +803,16 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 					state = STATE_OSM_OPT;
 					break;
 				//#endif
+				//#if polish.api.opencellid
+				case MENU_ITEM_OPENCELLID_OPT:
+					/**
+					 * Opencellid Apikey
+					 */
+					initOpencellidOptions();
+					GpsMid.getInstance().show(menuOpencellidOptions);
+					state = STATE_OPENCELLID_OPT;
+					break;
+				//#endif
 				//#if polish.api.fileconnection
 				case MENU_ITEM_SAVE_CONFIG:
 					state = STATE_SAVE_CONFIG;
@@ -944,6 +1021,30 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				this.show();
 				break;
 			//#endif
+			case STATE_OPENCELLID_OPT:
+				//Configuration.setOpencellidApikey(tfOpencellidApikey.getString());
+				boolean[] opencellidFlags = new boolean[2];
+				String label = c.getLabel();
+				cellidOptsGroup.getSelectedFlags(opencellidFlags);
+
+				Configuration.setCfgBitState(Configuration.CFGBIT_CELLID_OFFLINEONLY,
+							     opencellidFlags[0], true);
+				Configuration.setCfgBitState(Configuration.CFGBIT_CELLID_ONLINEONLY,
+							     opencellidFlags[1], true);
+				//Configuration.setCfgBitState(Configuration.CFGBIT_CELLID_ALWAYS,
+				//			     opencellidFlags[2], true);
+				//Configuration.setCfgBitState(Configuration.CFGBIT_CELLID_CONFIRM,
+				//			     opencellidFlags[3], true);
+				//Configuration.setCfgBitState(Configuration.CFGBIT_CELLID_FALLBACK,
+				//			     opencellidFlags[4], true);
+				if (label.equals("Reset cellid cache")) {
+					// reset cellid cache
+					SECellID.deleteCellIDRecordStore();
+				}
+
+				state = STATE_ROOT;
+				this.show();
+				break;
 			case STATE_URL_ENTER_GPS:
 				gpsUrlStr = tfURL.getString();
 				state = STATE_LP;

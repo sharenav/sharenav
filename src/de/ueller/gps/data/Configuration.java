@@ -130,17 +130,28 @@ public class Configuration {
 	public final static byte CFGBIT_ROUTE_HIDE_QUIET_ARROWS=38;
 	// bit 39: in route mode up/down keys are for route browsing
 	public final static byte CFGBIT_ROUTE_BROWSING=39;
-	/** bit 40: Show scale bar on map */
+	// bit 40: Show scale bar on map
 	public final static byte CFGBIT_SHOW_SCALE_BAR = 40;
-	/** bit 41: Log cell-ids to directory */
+	// bit 41: Log cell-ids to directory
 	public final static byte CFGBIT_CELLID_LOGGING = 41;
-	/** bit 42: Flag whether to also put waypoints in GPX track */
+	// bit 42: Flag whether to also put waypoints in GPX track
 	public final static byte CFGBIT_WPTS_IN_TRACK = 42;
-	/** bit 43: Ask for GPX track name when starting recording */
+	// bit 43: Ask for GPX track name when starting recording
 	public final static byte CFGBIT_GPX_ASK_TRACKNAME_START=43;
-	/** bit 44: Ask for GPX track name when starting recording */
+	// bit 44: Ask for GPX track name when starting recording
 	public final static byte CFGBIT_GPX_ASK_TRACKNAME_STOP=44;
-
+	// bit 45: Flag whether to always upload cellid log to opencellid
+	public final static byte CFGBIT_CELLID_ALWAYS = 45;
+	// bit 46: Flag whether to upload cellid log to opencellid after confirm
+	public final static byte CFGBIT_CELLID_CONFIRM = 46;
+	// bit 47: Flag whether to fall back to cellid location when GPS fix not available
+	public final static byte CFGBIT_CELLID_FALLBACK = 47;
+	// bit 48: Flag whether to cache cellid locations
+	public final static byte CFGBIT_CELLID_OFFLINEONLY = 48;
+	// bit 49: Flag whether to cache cellid locations
+	public final static byte CFGBIT_CELLID_ONLINEONLY = 49;
+	// bit 50: Flag whether to also put waypoints in waypoint store when recording GPX
+	public final static byte CFGBIT_WPTS_IN_WPSTORE = 50;
 	
 	/**
 	 * These are the database record ids for each configuration option
@@ -181,6 +192,7 @@ public class Configuration {
 	private static final int RECORD_ID_KEY_SHORTCUT = 34;
 	private static final int RECORD_ID_AUTO_RECENTER_TO_GPS_MILLISECS = 35;
 	private static final int RECORD_ID_ROUTE_TRAVEL_MODE = 36;
+	private static final int RECORD_ID_OPENCELLID_APIKEY = 37;
 
 	// Gpx Recording modes
 	// GpsMid determines adaptive if a trackpoint is written
@@ -244,6 +256,8 @@ public class Configuration {
 	private static String osm_username;
 	private static String osm_pwd;
 	private static String osm_url;
+
+	private static String opencellid_apikey;
 
 	private static int minRouteLineWidth=0;
 	private static int autoRecenterToGpsMilliSecs=10;
@@ -375,6 +389,9 @@ public class Configuration {
 			if (osm_url == null) {
 				osm_url = "http://api.openstreetmap.org/api/0.6/";
 			}
+
+			opencellid_apikey = readString(database, RECORD_ID_OPENCELLID_APIKEY);
+
 			minRouteLineWidth=readInt(database, RECORD_ID_MIN_ROUTELINE_WIDTH); 
 			autoRecenterToGpsMilliSecs=readInt(database, RECORD_ID_AUTO_RECENTER_TO_GPS_MILLISECS);
 			currentTravelModeNr=readInt(database, RECORD_ID_ROUTE_TRAVEL_MODE);
@@ -519,6 +536,7 @@ public class Configuration {
 		dos.writeUTF(sanitizeString(osm_username));
 		dos.writeUTF(sanitizeString(osm_pwd));
 		dos.writeUTF(sanitizeString(osm_url));
+		dos.writeUTF(sanitizeString(opencellid_apikey));
 		dos.flush();
 	}
 	
@@ -556,6 +574,7 @@ public class Configuration {
 		setOsmUsername(desanitizeString(dis.readUTF()));
 		setOsmPwd(desanitizeString(dis.readUTF()));
 		setOsmUrl(desanitizeString(dis.readUTF()));
+		setOpencellidApikey(desanitizeString(dis.readUTF()));
 	}
 	
 	public static String getGpsRawLoggerUrl() {		
@@ -964,6 +983,15 @@ public class Configuration {
 	public static void setOsmUrl(String url) {
 		osm_url = url;
 		write(url,RECORD_ID_OSM_URL);
+	}
+
+	public static String getOpencellidApikey() {
+		return opencellid_apikey;
+	}
+
+	public static void setOpencellidApikey(String name) {
+		opencellid_apikey = name;
+		write(name,RECORD_ID_OPENCELLID_APIKEY);
 	}
 
 	public static void setProjTypeDefault(byte t) {

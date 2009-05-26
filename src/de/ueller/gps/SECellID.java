@@ -42,6 +42,7 @@ import de.ueller.midlet.gps.LocationMsgReceiverList;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.data.CellIdProvider;
 import de.ueller.midlet.gps.data.GSMCell;
+import de.ueller.gps.data.Configuration;
 
 /**
  * 
@@ -121,6 +122,7 @@ public class SECellID implements LocationMsgProducer {
 		
 
 		public void run() {
+		        GSMCell loc;
 			GSMCell cellLoc = null;
 			try {
 				if (closed) {
@@ -146,20 +148,30 @@ public class SECellID implements LocationMsgProducer {
 				/**
 				 * Check if we have the cell ID already cached
 				 */
-				GSMCell loc = retrieveFromCache(cellLoc);
+				loc = retrieveFromCache(cellLoc);
 				if (loc == null) {
 					//#debug debug
 					logger.debug(cellLoc + " was not in cache, retrieving from FS cache");
-					loc = retrieveFromFS(cellLoc);
+					if (Configuration.getCfgBitState(Configuration.CFGBIT_CELLID_ONLINEONLY)) {
+					    loc = null;
+					} else {
+					    loc = retrieveFromFS(cellLoc);
+					}
 					if (loc == null) {
 						//#debug debug
 						logger.debug(cellLoc + " was not in FS cache, retrieving from persistent cache");
 
-						loc = retrieveFromPersistentCache(cellLoc);
+						if (Configuration.getCfgBitState(Configuration.CFGBIT_CELLID_ONLINEONLY)) {
+						    loc = null;
+						} else {
+						    loc = retrieveFromPersistentCache(cellLoc);
+						}
 						if (loc == null) {
 							//#debug info
 							logger.info(cellLoc + " was not in persistent cache, retrieving from OpenCellId.org");
-							loc = retrieveFromOpenCellId(cellLoc);
+							if (! Configuration.getCfgBitState(Configuration.CFGBIT_CELLID_OFFLINEONLY)) {
+								loc = retrieveFromOpenCellId(cellLoc);
+							}
 							if (loc != null) {
 								cellPos.put(loc.cellID, loc);
 								if ((loc.lat != 0.0) || (loc.lon != 0.0)) {
@@ -224,6 +236,16 @@ public class SECellID implements LocationMsgProducer {
 	
 	public SECellID() {
 		this.receiverList = new LocationMsgReceiverList();
+	}
+
+	public static void deleteCellIDRecordStore() {
+		try {
+			//#debug info
+			logger.info("deleting cellID recordstore to clear cell cache");
+			RecordStore.deleteRecordStore(CELLDB_NAME);
+		} catch (Exception e) {
+			logger.exception("Failed to delete cell-id to clear persistent cache", e);
+		}
 	}
 
 	public boolean init(LocationMsgReceiver receiver) {
@@ -538,7 +560,7 @@ public class SECellID implements LocationMsgProducer {
 	private void storeCellIDtoRecordStore(GSMCell cell) {
 		try {
 			//#debug info
-			logger.info("Storing " + cell + " in persitent cell cache");
+			logger.info("Storing " + cell + " in persistent cell cache");
 			RecordStore db = RecordStore.openRecordStore(CELLDB_NAME, false);
 			LacIdxEntry idx = new LacIdxEntry();
 			idx = (LacIdxEntry) lacidx.get(idx.hashCode(cell.mcc, cell.mnc, cell.lac));
