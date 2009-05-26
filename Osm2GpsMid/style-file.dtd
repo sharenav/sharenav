@@ -85,7 +85,6 @@
 <!ATTLIST routeMode modeName CDATA #REQUIRED>
 <!ATTLIST routeMode maxPrepareMeters CDATA #REQUIRED>
 <!ATTLIST routeMode maxInMeters CDATA #REQUIRED>
-<!ATTLIST routeMode modeName CDATA #REQUIRED>
 <!ATTLIST routeAccessRestriction restrictionKey CDATA #REQUIRED>
 <!ATTLIST routeAccessRestriction restrictionValues CDATA #REQUIRED>
 <!ATTLIST routeAccessRestriction restrictionPermit CDATA #IMPLIED>
