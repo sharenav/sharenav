@@ -1632,11 +1632,15 @@ public class Way extends Entity{
 	
 	public boolean isOneDirectionOnly() {
 		return (flags & (WAY_ONEWAY + WAY_ROUNDABOUT)) != 0
-		&& (
-				(Configuration.getTravelMode().againstOneWayMode & TravelMode.AGAINST_ALL_ONEWAYS) > 0
-				||
-				(Configuration.getTravelMode().againstOneWayMode & TravelMode.BICYLE_OPPOSITE_EXCEPTIONS) > 0				
-		);
+				&& !(
+						(Configuration.getTravelMode().againstOneWayMode & TravelMode.AGAINST_ALL_ONEWAYS) > 0
+						||
+						(
+							(Configuration.getTravelMode().againstOneWayMode & TravelMode.BICYLE_OPPOSITE_EXCEPTIONS) > 0
+							&& (flags & WAY_CYCLE_OPPOSITE) != 0
+						)				
+				)
+		;
 	}
 	
 	
