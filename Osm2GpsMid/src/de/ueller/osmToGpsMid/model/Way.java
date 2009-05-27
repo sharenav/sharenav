@@ -30,6 +30,7 @@ public class Way extends Entity implements Comparable<Way>{
 	public static final byte WAY_FLAG2_ROUNDABOUT = 1;
 	public static final byte WAY_FLAG2_TUNNEL = 2;
 	public static final byte WAY_FLAG2_BRIDGE = 4;
+	public static final byte WAY_FLAG2_CYCLE_OPPOSITE = 8;
 	
 	//Deprecated
 	//public static final byte WAY_FLAG_MULTIPATH = 4;
@@ -438,6 +439,9 @@ public class Way extends Entity implements Comparable<Way>{
 			}
 			if (isBridge()) {
 				flags2+=WAY_FLAG2_BRIDGE;
+			}
+			if (isOppositeDirectionForBicycleAllowed()) {
+				flags2+=WAY_FLAG2_CYCLE_OPPOSITE;				
 			}
 			if (flags2 != 0) {
 				flags += WAY_FLAG_ADDITIONALFLAG; 
