@@ -22,6 +22,7 @@ import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.RouteInstructions;
 import de.ueller.midlet.gps.routing.ConnectionWithNode;
+import de.ueller.midlet.gps.routing.TravelMode;
 import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.tile.C;
 import de.ueller.midlet.gps.tile.PaintContext;
@@ -50,7 +51,7 @@ public class Way extends Entity{
 	public static final byte WAY_FLAG2_ROUNDABOUT = 1;
 	public static final byte WAY_FLAG2_TUNNEL = 2;
 	public static final byte WAY_FLAG2_BRIDGE = 4;
-	
+	public static final byte WAY_FLAG2_CYCLE_OPPOSITE = 8;
 	
 	public static final byte DRAW_BORDER=1;
 	public static final byte DRAW_AREA=2;
@@ -66,6 +67,7 @@ public class Way extends Entity{
 	public static final int WAY_ROUNDABOUT=4 << ModShift;
 	public static final int WAY_TUNNEL=8 << ModShift;
 	public static final int WAY_BRIDGE=16 << ModShift;
+	public static final int WAY_CYCLE_OPPOSITE=32 << ModShift;
 
 	public static final byte PAINTMODE_COUNTFITTINGCHARS = 0;
 	public static final byte PAINTMODE_DRAWCHARS = 1;
@@ -199,6 +201,9 @@ public class Way extends Entity{
 			}
 			if ( (f2 & WAY_FLAG2_BRIDGE) > 0 ) {
 				flags += WAY_BRIDGE;
+			}
+			if ( (f2 & WAY_FLAG2_CYCLE_OPPOSITE) > 0 ) {
+				flags += WAY_CYCLE_OPPOSITE;
 			}
 		}
 		
@@ -1626,7 +1631,12 @@ public class Way extends Entity{
 	}
 	
 	public boolean isOneDirectionOnly() {
-		return (flags & (WAY_ONEWAY + WAY_ROUNDABOUT)) != 0 && (Configuration.getTravelMode().againstOneWayMode == 0);
+		return (flags & (WAY_ONEWAY + WAY_ROUNDABOUT)) != 0
+		&& (
+				(Configuration.getTravelMode().againstOneWayMode & TravelMode.AGAINST_ALL_ONEWAYS) > 0
+				||
+				(Configuration.getTravelMode().againstOneWayMode & TravelMode.BICYLE_OPPOSITE_EXCEPTIONS) > 0				
+		);
 	}
 	
 	
