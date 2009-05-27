@@ -27,6 +27,13 @@
 		<symbol>osm-editing</symbol>
 	</api>
 	<api>
+		<name>Online-services</name>
+		<description>Pseudo-API to (miss)use device selection to compile in Online services
+		</description>
+		<names>online</names>
+		<symbol>online</symbol>
+	</api>
+	<api>
 		<name>Debugging</name>
 		<description>Pseudo-API to (miss)use device selection to compile in debugging
 		</description>
