@@ -36,9 +36,7 @@ import de.ueller.midlet.gps.data.Projection;
 import de.ueller.midlet.gps.tile.C;
 import de.ueller.gpsMid.mapData.WaypointsTile;
 
-//#if polish.api.opencellid
 import de.ueller.gps.SECellID;
-//#endif
 
 public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMidDisplayable, SelectionListener {
 
@@ -47,11 +45,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		"Location Receiver", "Recording Rules",
 		"Display options", "Sounds & Alerts", "Routing options",
 		"GPX Receiver", "Map source", "Debug options", "Key shortcuts",
+		"Opencellid",
 		//#if polish.api.osm-editing
 		"OSM account",
-		//#endif
-		//#if polish.api.opencellid
-		"Opencellid",
 		//#endif
 		//#if polish.api.fileconnection
 		"Save config","Load config"
@@ -75,25 +71,14 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private static final int MENU_ITEM_MAP_SRC = 6;
 	private static final int MENU_ITEM_DEBUG_OPT = 7;
 	private static final int MENU_ITEM_KEYS_OPT = 8;
+	private static final int MENU_ITEM_OPENCELLID_OPT = 9;
 	//#if polish.api.osm-editing
-	private static final int MENU_ITEM_OSM_OPT = 9;
-	//#if polish.api.opencellid
-	private static final int MENU_ITEM_OPENCELLID_OPT = 10;
+	private static final int MENU_ITEM_OSM_OPT = 10;
 	private static final int MENU_ITEM_SAVE_CONFIG = 11;
 	private static final int MENU_ITEM_LOAD_CONFIG = 12;
 	//#else
 	private static final int MENU_ITEM_SAVE_CONFIG = 10;
 	private static final int MENU_ITEM_LOAD_CONFIG = 11;
-	//#endif
-	//#else
-	//#if polish.api.opencellid
-	private static final int MENU_ITEM_OPENCELLID_OPT = 9;
-	private static final int MENU_ITEM_SAVE_CONFIG = 10;
-	private static final int MENU_ITEM_LOAD_CONFIG = 11;
-	//#else
-	private static final int MENU_ITEM_SAVE_CONFIG = 9;
-	private static final int MENU_ITEM_LOAD_CONFIG = 10;
-	//#endif
 	//#endif
 
 	private static final String[]	empty			= {};
@@ -123,7 +108,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	//#if polish.api.osm-editing
 	private final Command			OSM_URL	= new Command("Upload to OSM", Command.ITEM, 2);
 	//#endif
-	//#if polish.api.opencellid
+	//#if polish.api.online
 	private final Command			OPENCELLID_APIKEY	= new Command("Opencellid apikey", Command.ITEM, 1);
 	//#endif
 	private final Command			GPS_DISCOVER	= new Command("Discover GPS",
@@ -522,7 +507,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	}
 	//#endif
 
-	//#if polish.api.opencellid
 	private void initOpencellidOptions() {
 		//Prepare Debug selection menu
 		logger.info("Starting Opencellid apikey setup menu");
@@ -554,7 +538,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		cellidOptsGroup.setSelectedFlags(opencellidFlags);
 		menuOpencellidOptions.append(cellidOptsGroup);
 	}
-	//#endif
 
 	public void commandAction(Command c, Item i) {
 		// forward item command action to form
@@ -657,6 +640,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		//#if polish.api.osm-editing
 		if (c == OSM_URL) {
 			gpxUrl.setText(Configuration.getOsmUrl() + "gpx/create");
+		}
+		if (c == CELLID_CACHE_RESET_CMD) {
+			SECellID.deleteCellIDRecordStore();
 		}
 		//#endif
 		if (c == OK_CMD){			
@@ -803,7 +789,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 					state = STATE_OSM_OPT;
 					break;
 				//#endif
-				//#if polish.api.opencellid
 				case MENU_ITEM_OPENCELLID_OPT:
 					/**
 					 * Opencellid Apikey
@@ -812,7 +797,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 					GpsMid.getInstance().show(menuOpencellidOptions);
 					state = STATE_OPENCELLID_OPT;
 					break;
-				//#endif
 				//#if polish.api.fileconnection
 				case MENU_ITEM_SAVE_CONFIG:
 					state = STATE_SAVE_CONFIG;
@@ -1024,7 +1008,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 			case STATE_OPENCELLID_OPT:
 				//Configuration.setOpencellidApikey(tfOpencellidApikey.getString());
 				boolean[] opencellidFlags = new boolean[2];
-				String label = c.getLabel();
 				cellidOptsGroup.getSelectedFlags(opencellidFlags);
 
 				Configuration.setCfgBitState(Configuration.CFGBIT_CELLID_OFFLINEONLY,
@@ -1037,13 +1020,15 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				//			     opencellidFlags[3], true);
 				//Configuration.setCfgBitState(Configuration.CFGBIT_CELLID_FALLBACK,
 				//			     opencellidFlags[4], true);
-				if (label.equals("Reset cellid cache")) {
-					// reset cellid cache
-					SECellID.deleteCellIDRecordStore();
-				}
-
 				state = STATE_ROOT;
 				this.show();
+				//#if polish.api.online
+				//#else
+				if (opencellidFlags[1]) {
+					logger.error("Online access is not compiled into this midlet");
+				}
+				//#endif
+
 				break;
 			case STATE_URL_ENTER_GPS:
 				gpsUrlStr = tfURL.getString();

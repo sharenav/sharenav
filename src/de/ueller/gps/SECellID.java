@@ -167,11 +167,13 @@ public class SECellID implements LocationMsgProducer {
 						    loc = retrieveFromPersistentCache(cellLoc);
 						}
 						if (loc == null) {
+							//#if polish.api.online
 							//#debug info
 							logger.info(cellLoc + " was not in persistent cache, retrieving from OpenCellId.org");
 							if (! Configuration.getCfgBitState(Configuration.CFGBIT_CELLID_OFFLINEONLY)) {
 								loc = retrieveFromOpenCellId(cellLoc);
 							}
+							//#endif
 							if (loc != null) {
 								cellPos.put(loc.cellID, loc);
 								if ((loc.lat != 0.0) || (loc.lon != 0.0)) {
@@ -181,7 +183,9 @@ public class SECellID implements LocationMsgProducer {
 									logger.debug("Not storing cell, as it has no valid coordinates");
 								}
 							} else {
-								logger.error("Failed to get cell-id");
+								//#debug info
+								logger.info("Cell is unknown, can't calculate a location based on it");
+								receiverList.receiveSolution("NoFix");
 								return;
 							}
 						}
@@ -359,7 +363,7 @@ public class SECellID implements LocationMsgProducer {
 		}
 	}
 
-	
+	//#if polish.api.online
 	private GSMCell retrieveFromOpenCellId(GSMCell cellLoc) {
 		
 		GSMCell loc = null;
@@ -453,6 +457,7 @@ public class SECellID implements LocationMsgProducer {
 		retrieving = false;
 		return loc;
 	}
+	//#endif
 
 	private GSMCell retrieveFromFS(GSMCell cellLoc) {
 		GSMCell ret;
