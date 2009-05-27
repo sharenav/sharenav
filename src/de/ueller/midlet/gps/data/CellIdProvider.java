@@ -48,6 +48,8 @@ public class CellIdProvider {
 	DataInputStream clientIS = null;
 	DataOutputStream clientOS = null;
 	
+	GSMCell cachedCell = null;
+	
 	private CellIdProvider() {
 		//#debug info
 		logger.info("Trying to find a suitable cell id provider");
@@ -370,9 +372,12 @@ public class CellIdProvider {
 		return cell;
 	}
 	
+	public GSMCell obtainCachedCellID() {
+		return cachedCell;
+	}
+	
 	public GSMCell obtainCurrentCellId() throws Exception {
 		
-		GSMCell cell = null;
 		//#debug info
 		logger.info("Tring to retrieve cell-id");
 		
@@ -383,20 +388,20 @@ public class CellIdProvider {
 		}
 
 		if (cellRetrievelMethod == CELLMETHOD_SE) {
-			cell =  obtainSECell();
+			cachedCell =  obtainSECell();
 		}
 		if (cellRetrievelMethod == CELLMETHOD_S60FP2) {
-			cell = obtainS60FP2Cell();
+			cachedCell = obtainS60FP2Cell();
 		}
 		if (cellRetrievelMethod == CELLMETHOD_SOCKET) {
-			cell = obtainSocketCell();
+			cachedCell = obtainSocketCell();
 		}
 		if (cellRetrievelMethod == CELLMETHOD_DEBUG) {
-			cell = obtainDebugCell();
+			cachedCell = obtainDebugCell();
 		}
 		//#debug debug
-		logger.debug("Retrieved " + cell);
-		return cell;
+		logger.debug("Retrieved " + cachedCell);
+		return cachedCell;
 	}
 
 }

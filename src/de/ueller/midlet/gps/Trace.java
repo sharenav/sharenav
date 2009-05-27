@@ -51,6 +51,8 @@ import de.ueller.midlet.gps.data.EditableWay;
 import de.ueller.gpsMid.mapData.QueueDataReader;
 import de.ueller.gpsMid.mapData.QueueDictReader;
 import de.ueller.gpsMid.mapData.Tile;
+import de.ueller.midlet.gps.data.CellIdProvider;
+import de.ueller.midlet.gps.data.GSMCell;
 import de.ueller.midlet.gps.data.Proj2D;
 import de.ueller.midlet.gps.data.ProjFactory;
 import de.ueller.midlet.gps.data.ProjMath;
@@ -1613,6 +1615,22 @@ Runnable , GpsMidDisplayable{
 	}
 	
 	private int showConnectStatistics(Graphics g, int yc, int la) {
+		GSMCell cell = CellIdProvider.getInstance().obtainCachedCellID();
+		if (cell == null) {
+			g.drawString("No Cell ID available", 0, yc, Graphics.TOP
+					| Graphics.LEFT);
+			yc += la;
+		} else {
+			g.drawString("Cell: MCC=" + cell.mcc + " MNC=" + cell.mnc, 0, yc, Graphics.TOP
+					| Graphics.LEFT);
+			yc += la;
+			g.drawString("LAC=" + cell.lac, 0, yc, Graphics.TOP
+					| Graphics.LEFT);
+			yc += la;
+			g.drawString("cellID=" + cell.cellID, 0, yc, Graphics.TOP
+					| Graphics.LEFT);
+			yc += la;
+		}
 		if (statRecord == null) {
 			g.drawString("No stats yet", 0, yc, Graphics.TOP
 					| Graphics.LEFT);
