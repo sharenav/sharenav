@@ -13,6 +13,7 @@ import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
 
+import de.ueller.gps.tools.CustomMenu;
 import de.ueller.gps.tools.intTree;
 
 public abstract class KeyCommandCanvas extends Canvas implements
@@ -34,6 +35,8 @@ public abstract class KeyCommandCanvas extends Canvas implements
 	protected intTree gameKeyCommand = new intTree();
 	protected intTree nonReleasableKeyPressCommand = new intTree();
 
+	protected CustomMenu customMenu = null;
+	
 	/*
 	 * Explicitly make this function static, as otherwise some jvm implementations
 	 * can't find the commandAction method in the inherited object.
@@ -45,6 +48,14 @@ public abstract class KeyCommandCanvas extends Canvas implements
 
 	protected void keyPressed(int keyCode) {
 		logger.debug("keyPressed " + keyCode);
+		if (customMenu != null) {
+			if (customMenu.keyAction(keyCode)) {
+				logger.debug("customMenu action performed for key " + keyCode);
+				repaint();
+				ignoreKeyCode = keyCode;
+				return;
+			}
+		}
 		ignoreKeyCode = 0;
 		pressedKeyCode = keyCode;
 		pressedKeyTime = System.currentTimeMillis();
@@ -195,6 +206,7 @@ public abstract class KeyCommandCanvas extends Canvas implements
 		lastGameKeyCode = keyCode;
 		return lastGameAction;
 	}
+
 	
 	/**
 	 * Returns all single press key codes for the specified command. 

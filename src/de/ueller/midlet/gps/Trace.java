@@ -41,6 +41,7 @@ import de.ueller.gps.data.Satelit;
 import de.ueller.gps.nmea.NmeaInput;
 import de.ueller.gps.sirf.SirfInput;
 import de.ueller.gps.tools.HelperRoutines;
+import de.ueller.gps.tools.CustomMenu;
 import de.ueller.gps.tools.intTree;
 import de.ueller.gps.tools.Shape;
 import de.ueller.gpsMid.mapData.DictReader;
@@ -129,11 +130,12 @@ Runnable , GpsMidDisplayable{
 	private static final int ROUTING_START_CMD = 45;
 	private static final int ROUTING_STOP_CMD = 46;
 	private static final int ONLINE_INFO_CMD = 47;
+	private static final int ROUTING_START_WITH_MODE_SELECT_CMD = 48;
 //#if polish.api.wmapi
-	private static final int SEND_MESSAGE_CMD = 48;
+	private static final int SEND_MESSAGE_CMD = 49;
 	//#endif
 
-	private final Command [] CMDS = new Command[49];
+	private final Command [] CMDS = new Command[50];
 
 	public static final int DATASCREEN_NONE = 0;
 	public static final int DATASCREEN_TACHO = 1;
@@ -341,6 +343,7 @@ Runnable , GpsMidDisplayable{
 		CMDS[ROUTING_START_CMD] = new Command("Calculate Route",Command.ITEM, 100);
 		CMDS[ROUTING_STOP_CMD] = new Command("Stop routing",Command.ITEM, 100);
 		CMDS[ONLINE_INFO_CMD] = new Command("Online Info",Command.ITEM, 100);
+		CMDS[ROUTING_START_WITH_MODE_SELECT_CMD] = new Command("Calculate Route...",Command.ITEM, 100);
 		//#if polish.api.wmapi
 		CMDS[SEND_MESSAGE_CMD] = new Command("Send SMS (map pos)",Command.ITEM, 200);
 		//#endif
@@ -596,6 +599,31 @@ Runnable , GpsMidDisplayable{
 				keyPressed(0);
 				return;
 			}
+			
+			if (customMenu != null) {
+				// giving the command that opened the custom menu again will select the current entry in the custom menu
+				if (c == CMDS[customMenu.getCommandID()]
+				              ||
+				    // pressing the OK command will also select the current entry
+				    c.getCommandType() == Command.OK
+				              ||
+					// in case of ROUTING_START_WITH_MODE_SELECT_CMD the ROUTING_TOGGLE_CMD might have opened the custom menu
+					(customMenu.getCommandID() == ROUTING_START_WITH_MODE_SELECT_CMD && c == CMDS[ROUTING_TOGGLE_CMD])
+				) {
+					customMenuSelect();
+					return;
+				}
+			    if (c.getCommandType() == Command.BACK) {
+			    	if (customMenu.getCommandID() == ROUTING_START_WITH_MODE_SELECT_CMD) {
+			    		Configuration.setTravelMode(customMenu.getSelectedEntry());
+				    }
+			    	customMenu = null;
+			    	return;
+			    }
+				alert("Menu", "Waiting for menu", 1000);
+				return;
+			}
+			
 			if ((c == CMDS[PAN_LEFT25_CMD]) || (c == CMDS[PAN_RIGHT25_CMD]) || (c == CMDS[PAN_UP25_CMD]) || (c == CMDS[PAN_DOWN25_CMD])
 					|| (c == CMDS[PAN_LEFT2_CMD]) || (c == CMDS[PAN_RIGHT2_CMD]) || (c == CMDS[PAN_UP2_CMD]) || (c == CMDS[PAN_DOWN2_CMD])) {
 				int panX = 0; int panY = 0;
@@ -916,7 +944,7 @@ Runnable , GpsMidDisplayable{
 						if (routeCalc || route != null) {
 							commandAction(CMDS[ROUTING_STOP_CMD], null);
 						} else {
-							commandAction(CMDS[ROUTING_START_CMD], null);							
+							commandAction(CMDS[ROUTING_START_WITH_MODE_SELECT_CMD], null);							
 						}
 						break;
 					}
@@ -959,10 +987,26 @@ Runnable , GpsMidDisplayable{
 				if (routeCalc || route != null) {
 					commandAction(CMDS[ROUTING_STOP_CMD],(Displayable) null);
 				} else { 
+					commandAction(CMDS[ROUTING_START_WITH_MODE_SELECT_CMD],(Displayable) null);
+				}
+				return;
+			}
+
+			if (c == CMDS[ROUTING_START_WITH_MODE_SELECT_CMD]) {
+				if (C.getTravelModes().length > 1) {
+					String travelModes[] = new String[C.getTravelModes().length];
+					for (int i=0; i<travelModes.length; i++) {
+						travelModes[i]=C.getTravelModes()[i].travelModeName;
+					}
+					customMenu = new CustomMenu(this, "Route Mode", travelModes, ROUTING_START_WITH_MODE_SELECT_CMD);
+					customMenu.setSelectedEntry(Configuration.getTravelModeNr());
+				}
+				else {
 					commandAction(CMDS[ROUTING_START_CMD],(Displayable) null);
 				}
 				return;
 			}
+			
 			if (c == CMDS[ROUTING_START_CMD]) {
 				if (! routeCalc) {
 					routeCalc = true; 
@@ -1419,6 +1463,9 @@ Runnable , GpsMidDisplayable{
 				}
 			}
 			
+			if (customMenu != null) {
+				customMenu.paint(g);
+			}
 			if (currentAlertsOpenCount > 0) {
 				showCurrentAlert(g);
 			}
@@ -1427,6 +1474,16 @@ Runnable , GpsMidDisplayable{
 		}
 	}
 
+	public void customMenuSelect() {
+		if (customMenu != null) {
+			if (customMenu.getCommandID() == ROUTING_START_WITH_MODE_SELECT_CMD) {
+				Configuration.setTravelMode(customMenu.getSelectedEntry());
+				customMenu = null;
+				commandAction(CMDS[ROUTING_START_CMD], null);
+			}
+		}
+	}
+	
 	private void showCurrentAlert(Graphics g) {
 		Font font = g.getFont();
 		// request same font in bold for title
@@ -1975,11 +2032,16 @@ Runnable , GpsMidDisplayable{
 			repaint();
 			pointerDragAction = false;
 		}
+		if (customMenu != null && customMenu.pointerPressed(x, y)) {
+			repaint();
+			pointerDragAction = false;
+			return;
+		}		
 		if (shapeZoomOut.isInRectangleAroundPolygon(x, y)) {
 			commandAction(CMDS[ZOOM_OUT_CMD], (Displayable) null);
 			repaint();
 			pointerDragAction = false;
-		}
+		}		
 		
 		// recenter to GPS by touching the mid of the screen
 		int centerX = getWidth() / 2;
@@ -2006,7 +2068,7 @@ Runnable , GpsMidDisplayable{
 	}
 	
 	protected void pointerDragged (int x, int y) {
-		if (imageCollector != null) {
+		if (pointerDragAction && imageCollector != null) {
 			// difference between where the pointer was pressed and is currently dragged
 			int diffX = Trace.touchX - x;
 			int diffY = Trace.touchY - y;

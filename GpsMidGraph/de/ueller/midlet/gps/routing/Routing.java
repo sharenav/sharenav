@@ -360,15 +360,12 @@ public class Routing implements Runnable {
 			startNode.lat=fromMark.lat;
 			startNode.lon=fromMark.lon;
 
-			if (fromMark.entity == null) {
-				// if there is no element at the from Mark, then search it from 
-				// the data.
-				parent.receiveMessage("search for start element");
-				parent.searchNextRoutableWay(fromMark);
-				if (fromMark.entity == null){
-					parent.receiveMessage("No Way found for start point");
-				} 
-			}
+			// always search a way for the from position as the travel mode might have changed
+			parent.receiveMessage("search for start element");
+			parent.searchNextRoutableWay(fromMark);
+			if (fromMark.entity == null){
+				parent.receiveMessage("No Way found for start point");
+			} 
 
 			// if the target way is not routable, e.g. an area, remove it as target entity and thus search for a routable way nearby the target node
 			if (toMark.entity != null || !(toMark.entity instanceof Way) || !((Way) toMark.entity).isRoutableWay()) {
