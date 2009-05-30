@@ -618,6 +618,7 @@ Runnable , GpsMidDisplayable{
 			    		Configuration.setTravelMode(customMenu.getSelectedEntry());
 				    }
 			    	customMenu = null;
+			    	repaint();
 			    	return;
 			    }
 				alert("Menu", "Waiting for menu", 1000);
