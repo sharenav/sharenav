@@ -128,11 +128,12 @@ Runnable , GpsMidDisplayable{
 	private static final int TOGGLE_AUDIO_REC = 44;
 	private static final int ROUTING_START_CMD = 45;
 	private static final int ROUTING_STOP_CMD = 46;
+	private static final int ONLINE_INFO_CMD = 47;
 //#if polish.api.wmapi
-	private static final int SEND_MESSAGE_CMD = 47;
+	private static final int SEND_MESSAGE_CMD = 48;
 	//#endif
 
-	private final Command [] CMDS = new Command[48];
+	private final Command [] CMDS = new Command[49];
 
 	public static final int DATASCREEN_NONE = 0;
 	public static final int DATASCREEN_TACHO = 1;
@@ -339,6 +340,7 @@ Runnable , GpsMidDisplayable{
 		CMDS[TOGGLE_AUDIO_REC] = new Command("Audio recording",Command.ITEM, 100);
 		CMDS[ROUTING_START_CMD] = new Command("Calculate Route",Command.ITEM, 100);
 		CMDS[ROUTING_STOP_CMD] = new Command("Stop routing",Command.ITEM, 100);
+		CMDS[ONLINE_INFO_CMD] = new Command("Online Info",Command.ITEM, 100);
 		//#if polish.api.wmapi
 		CMDS[SEND_MESSAGE_CMD] = new Command("Send SMS (map pos)",Command.ITEM, 200);
 		//#endif
@@ -352,8 +354,11 @@ Runnable , GpsMidDisplayable{
 		addCommand(CMDS[RECORDINGS_CMD]);
 		addCommand(CMDS[ROUTINGS_CMD]);
 		addCommand(CMDS[DATASCREEN_CMD]);
+		//#if polish.api.online
+		addCommand(CMDS[ONLINE_INFO_CMD]);
 		//#if polish.api.osm-editing
 		addCommand(CMDS[RETRIEVE_XML]);
+		//#endif
 		//#endif
 		setCommandListener(this);
 		
@@ -844,6 +849,13 @@ Runnable , GpsMidDisplayable{
 				}
 				return;
 			}
+			//#if polish.api.online
+			if (c == CMDS[ONLINE_INFO_CMD]) {
+				Position oPos = new Position(center.radlat,center.radlon,0.0f,0.0f,0.0f,0,0);
+				GuiWebInfo gWeb = new GuiWebInfo(this, oPos);
+				gWeb.show();
+			}
+			//#endif
 			if (c == CMDS[BACK_CMD]) {
 				show();
 				return;
