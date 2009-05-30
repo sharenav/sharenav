@@ -14,6 +14,7 @@ import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 
+import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Position;
 import de.ueller.gps.tools.intTree;
 import de.ueller.midlet.gps.GpsMid;
@@ -187,6 +188,7 @@ public class GuiTrip extends KeyCommandCanvas implements CommandListener,
 	}
 
 	public void show() {
+		setFullScreenMode(Configuration.getCfgBitState(Configuration.CFGBIT_FULLSCREEN));
 		GpsMid.getInstance().show(this);
 		synchronized (mParent.locationUpdateListeners) {
 			mParent.locationUpdateListeners.addElement(this);

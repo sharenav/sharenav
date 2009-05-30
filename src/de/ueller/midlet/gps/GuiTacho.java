@@ -14,6 +14,7 @@ import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 
+import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Position;
 import de.ueller.gps.tools.HelperRoutines;
 import de.ueller.gps.tools.intTree;
@@ -200,6 +201,7 @@ public class GuiTacho extends KeyCommandCanvas implements CommandListener,
 	}
 
 	public void show() {
+		setFullScreenMode(Configuration.getCfgBitState(Configuration.CFGBIT_FULLSCREEN));
 		GpsMid.getInstance().show(this);
 		synchronized (parent.locationUpdateListeners) {
 			parent.locationUpdateListeners.addElement(this);

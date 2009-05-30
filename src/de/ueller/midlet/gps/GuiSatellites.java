@@ -14,6 +14,7 @@ import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
+import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Position;
 import de.ueller.gps.data.Satelit;
 import de.ueller.midlet.gps.GpsMid;
@@ -113,6 +114,7 @@ public class GuiSatellites extends KeyCommandCanvas implements CommandListener,
 	}
 
 	public void show() {
+		setFullScreenMode(Configuration.getCfgBitState(Configuration.CFGBIT_FULLSCREEN));
 		GpsMid.getInstance().show(this);
 		if (mLocationProducer != null) {
 			mLocationProducer.addLocationMsgReceiver(this);
