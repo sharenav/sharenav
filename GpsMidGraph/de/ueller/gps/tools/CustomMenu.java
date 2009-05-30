@@ -50,13 +50,13 @@ public class CustomMenu {
 		int menuLeft = (trace.getWidth() - menuWidth) / 2; 
 		int menuTop = (trace.getHeight() - menuHeight) / 2; 
 		// background color
-		g.setColor(0x80E0E0E0); 
+		g.setColor(0x00E0E0E0); 
 		g.fillRect(menuLeft, menuTop, menuWidth, menuHeight);
 		// color for title
-		g.setColor(0x80FFFFFF); 
+		g.setColor(0x00FFFFFF); 
 		g.fillRect(menuLeft, menuTop, menuWidth, fontHeight + 3);
 		// border
-		g.setColor(0, 0, 0);
+		g.setColor(0);
 		g.setStrokeStyle(Graphics.SOLID);
 		g.drawRect(menuLeft, menuTop, menuWidth, fontHeight + 3); // title border
 		g.drawRect(menuLeft, menuTop, menuWidth, menuHeight); // menu border
@@ -73,9 +73,9 @@ public class CustomMenu {
 		entriesHeight = fontHeight;
 		for (int i = 0; i < this.menuEntries.length; i++) {
 			if (i == this.selectedEntry) {
-				g.setColor(255, 255, 255); 
+				g.setColor(0x00FFFFFF); 
 				g.fillRect(entriesLeft, y, menuWidth - 2, fontHeight);				
-				g.setColor(0, 0, 0);
+				g.setColor(0);
 			}
 			g.drawString(menuEntries[i], menuLeft + extraWidth / 2, y , Graphics.TOP|Graphics.LEFT);	
 			y += entriesHeight;
