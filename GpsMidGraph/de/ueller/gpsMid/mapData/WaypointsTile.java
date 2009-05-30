@@ -254,8 +254,9 @@ public class WaypointsTile extends Tile {
 		} else {
 			for (int i = 0; i < wayPts.size(); i++) {
 				PositionMark waypt = (PositionMark) (wayPts.elementAt(i));
-				if (newWayPt.lat == waypt.lat && newWayPt.lon == waypt.lon
-						&& newWayPt.displayName.equals(waypt.displayName)) {
+				if (newWayPt.displayName.equals(waypt.displayName) &&
+					MoreMath.approximately_equal(waypt.lat,newWayPt.lat,0.0000005f) &&
+					MoreMath.approximately_equal(waypt.lon,newWayPt.lon,0.0000005f) ) {
 					return true;
 				}
 			}
