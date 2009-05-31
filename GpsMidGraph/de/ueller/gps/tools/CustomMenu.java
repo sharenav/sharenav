@@ -5,6 +5,8 @@
 
 package de.ueller.gps.tools;
 
+import de.ueller.gps.data.Configuration;
+import de.ueller.midlet.gps.CompletionListener;
 import de.ueller.midlet.gps.Trace;
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Font;
@@ -18,14 +20,16 @@ public class CustomMenu {
 	private int selectedEntry = 0;
 	private int commandID = 0;
 	private Trace trace;
-
+	private CompletionListener compListener;
+	
 	private int entriesTop = 0;
 	private int entriesLeft = 0;
 	private int entriesRight = 0;
 	private int entriesHeight = 0;
 
-	public CustomMenu(Trace trace, String title, String menuEntries[], int commandID) {
+	public CustomMenu(Trace trace, CompletionListener compListener, String title, String menuEntries[], int commandID) {
 		this.trace = trace;
+		this.compListener = compListener;
 		this.title = title;
 		this.menuEntries = menuEntries;
 		this.commandID = commandID;
@@ -110,7 +114,7 @@ public class CustomMenu {
 		int action = trace.getGameAction(keyCode);
 		if (action != 0) {
 			if (action == Canvas.FIRE) {
-				trace.customMenuSelect();
+				customMenuSelect(true);
 				return true;
 			} else if (action ==  Canvas.UP) {
 				decreaseSelectedEntry();
@@ -130,10 +134,14 @@ public class CustomMenu {
 		int selection = (y - entriesTop) / entriesHeight;
 		if (selection <= menuEntries.length) {
 			selectedEntry = selection;
-			trace.customMenuSelect();
+			customMenuSelect(true);
 			return true;
 		}
 		return false;
+	}
+	
+	public void customMenuSelect(boolean performAction) {
+		this.compListener.actionCompleted("OK");
 	}
 	
 }

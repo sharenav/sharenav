@@ -82,7 +82,7 @@ import de.ueller.midlet.gps.GpsMidDisplayable;
  * 
  */
 public class Trace extends KeyCommandCanvas implements LocationMsgReceiver,
-Runnable , GpsMidDisplayable{
+Runnable , GpsMidDisplayable, CompletionListener {
 	/** Soft button for exiting the map screen */
 	private static final int EXIT_CMD = 1;
 	private static final int CONNECT_GPS_CMD = 2;
@@ -299,8 +299,7 @@ Runnable , GpsMidDisplayable{
 		CMDS[EXIT_CMD] = new Command("Back", Command.BACK, 2);
 		CMDS[REFRESH_CMD] = new Command("Refresh", Command.ITEM, 4);
 		CMDS[SEARCH_CMD] = new Command("Search", Command.OK, 1);
-		CMDS[CONNECT_GPS_CMD] = new Command("Start GPS",Command.ITEM, 2);
-		 
+		CMDS[CONNECT_GPS_CMD] = new Command("Start GPS",Command.ITEM, 2);		 
 		CMDS[DISCONNECT_GPS_CMD] = new Command("Stop GPS",Command.ITEM, 2);
 		CMDS[START_RECORD_CMD] = new Command("Start record",Command.ITEM, 4);
 		CMDS[STOP_RECORD_CMD] = new Command("Stop record",Command.ITEM, 4);
@@ -348,22 +347,7 @@ Runnable , GpsMidDisplayable{
 		CMDS[SEND_MESSAGE_CMD] = new Command("Send SMS (map pos)",Command.ITEM, 200);
 		//#endif
 
-		addCommand(CMDS[EXIT_CMD]);
-		addCommand(CMDS[SEARCH_CMD]);
-		addCommand(CMDS[CONNECT_GPS_CMD]);
-		addCommand(CMDS[MANAGE_TRACKS_CMD]);
-		addCommand(CMDS[MAN_WAYP_CMD]);
-		addCommand(CMDS[MAPFEATURES_CMD]);
-		addCommand(CMDS[RECORDINGS_CMD]);
-		addCommand(CMDS[ROUTINGS_CMD]);
-		addCommand(CMDS[DATASCREEN_CMD]);
-		//#if polish.api.online
-		addCommand(CMDS[ONLINE_INFO_CMD]);
-		//#if polish.api.osm-editing
-		addCommand(CMDS[RETRIEVE_XML]);
-		//#endif
-		//#endif
-		setCommandListener(this);
+		addAllCommands();
 		
 		Configuration.loadKeyShortcuts(gameKeyCommand, singleKeyPressCommand, 
 				repeatableKeyPressCommand, doubleKeyPressCommand, longKeyPressCommand, 
@@ -591,6 +575,57 @@ Runnable , GpsMidDisplayable{
 			}
 		}
 	}
+
+	
+	public void addAllCommands() {
+		addCommand(CMDS[EXIT_CMD]);
+		addCommand(CMDS[SEARCH_CMD]);
+		if (locationProducer == null || solution.equalsIgnoreCase("Off")) {
+			addCommand(CMDS[CONNECT_GPS_CMD]);
+		} else {
+			addCommand(CMDS[DISCONNECT_GPS_CMD]);
+		}
+		addCommand(CMDS[MANAGE_TRACKS_CMD]);
+		addCommand(CMDS[MAN_WAYP_CMD]);
+		addCommand(CMDS[MAPFEATURES_CMD]);
+		addCommand(CMDS[RECORDINGS_CMD]);
+		addCommand(CMDS[ROUTINGS_CMD]);
+		addCommand(CMDS[DATASCREEN_CMD]);
+		//#if polish.api.online
+		addCommand(CMDS[ONLINE_INFO_CMD]);
+		//#if polish.api.osm-editing
+		addCommand(CMDS[RETRIEVE_XML]);
+		//#endif
+		//#endif
+		setCommandListener(this);
+	}
+	
+	public void removeAllCommands() {
+		setCommandListener(null);
+		/* Although j2me documentation tells removeCommand for a non-attached command is allowed
+		 * this would crash MicroEmulator. Thus we only remove the commands attached.
+		 */
+		removeCommand(CMDS[EXIT_CMD]);
+		removeCommand(CMDS[SEARCH_CMD]);
+		if (locationProducer == null || solution.equalsIgnoreCase("Off")) {
+			removeCommand(CMDS[CONNECT_GPS_CMD]);
+		} else {
+			removeCommand(CMDS[DISCONNECT_GPS_CMD]);
+		}
+		removeCommand(CMDS[MANAGE_TRACKS_CMD]);
+		removeCommand(CMDS[MAN_WAYP_CMD]);
+		removeCommand(CMDS[MAPFEATURES_CMD]);
+		removeCommand(CMDS[RECORDINGS_CMD]);
+		removeCommand(CMDS[ROUTINGS_CMD]);
+		removeCommand(CMDS[DATASCREEN_CMD]);
+		//#if polish.api.online
+		removeCommand(CMDS[ONLINE_INFO_CMD]);
+		//#if polish.api.osm-editing
+		removeCommand(CMDS[RETRIEVE_XML]);
+		//#endif
+		//#endif
+	}
+	
 	
 	public void commandAction(Command c, Displayable d) {
 		try {
@@ -610,7 +645,7 @@ Runnable , GpsMidDisplayable{
 					// in case of ROUTING_START_WITH_MODE_SELECT_CMD the ROUTING_TOGGLE_CMD might have opened the custom menu
 					(customMenu.getCommandID() == ROUTING_START_WITH_MODE_SELECT_CMD && c == CMDS[ROUTING_TOGGLE_CMD])
 				) {
-					customMenuSelect();
+					customMenu.customMenuSelect(true);
 					return;
 				}
 			    if (c.getCommandType() == Command.BACK) {
@@ -999,7 +1034,17 @@ Runnable , GpsMidDisplayable{
 					for (int i=0; i<travelModes.length; i++) {
 						travelModes[i]=C.getTravelModes()[i].travelModeName;
 					}
-					customMenu = new CustomMenu(this, "Route Mode", travelModes, ROUTING_START_WITH_MODE_SELECT_CMD);
+					/*
+					 * Nasty workaround for SE mobiles when using a custom menu in full screen mode:
+					 * SE mobiles cannot handle the fire button in full screen mode when commands are attached to the displayable -
+					 * instead they will turn on a bar offering the available commands and also stop the map drawing
+					 * (probably via hide notify). Therefore in full screen mode we remove all commands
+					 * before creating the custom menu and add them again when the custom menu is closed.
+					 */
+					if (Configuration.getCfgBitState(Configuration.CFGBIT_FULLSCREEN)) {
+						removeAllCommands();
+					}
+					customMenu = new CustomMenu(this, this, "Route Mode", travelModes, ROUTING_START_WITH_MODE_SELECT_CMD);
 					customMenu.setSelectedEntry(Configuration.getTravelModeNr());
 				}
 				else {
@@ -1475,15 +1520,6 @@ Runnable , GpsMidDisplayable{
 		}
 	}
 
-	public void customMenuSelect() {
-		if (customMenu != null) {
-			if (customMenu.getCommandID() == ROUTING_START_WITH_MODE_SELECT_CMD) {
-				Configuration.setTravelMode(customMenu.getSelectedEntry());
-				customMenu = null;
-				commandAction(CMDS[ROUTING_START_CMD], null);
-			}
-		}
-	}
 	
 	private void showCurrentAlert(Graphics g) {
 		Font font = g.getFont();
@@ -2305,4 +2341,16 @@ Runnable , GpsMidDisplayable{
 		return route;
 	}
 	
+	public void actionCompleted(String strResult) {
+		if (strResult.equalsIgnoreCase("Ok")) {
+			if (customMenu.getCommandID() == ROUTING_START_WITH_MODE_SELECT_CMD) {
+				Configuration.setTravelMode(customMenu.getSelectedEntry());
+				customMenu = null;
+				commandAction(CMDS[ROUTING_START_CMD], null);
+			}
+		}
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_FULLSCREEN)) {
+			addAllCommands();
+		}
+	}
 }
