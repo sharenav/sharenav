@@ -1968,8 +1968,14 @@ Runnable , GpsMidDisplayable, CompletionListener {
 	}
 	
 	public synchronized void receivePosition(float lat, float lon, float scale) {
+		//#debug debug
 		logger.debug("Now displaying: " + (lat * MoreMath.FAC_RADTODEC) + " | " + 	
 			     (lon * MoreMath.FAC_RADTODEC));
+		//We are explicitly setting the map to this position, so we probably don't
+		//want it to be recentered on the GPS immediately.
+		gpsRecenter = false;
+		lastPanTime = System.currentTimeMillis();
+		
 		center.setLatLon(lat, lon, true);
 		this.scale = scale;
 		updatePosition();
@@ -2238,13 +2244,15 @@ Runnable , GpsMidDisplayable, CompletionListener {
 		this.target = target;
 		pc.target = target;
 		if(target!=null) {
+			//We are explicitly setting the map to this position, so we probably don't
+			//want it to be recentered on the GPS immediately.
+			gpsRecenter = false;
+			lastPanTime = System.currentTimeMillis();
+			
 			center.setLatLon(target.lat, target.lon,true);
-			pc.center = center.clone();
-			pc.scale = scale;
-			pc.course = course;
+			updatePosition();
 		}
 		movedAwayFromTarget=false;
-		repaint();
 	}
 
 	public void endRouting() {
