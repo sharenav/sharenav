@@ -21,6 +21,7 @@ public class TravelMode {
 	public short maxPrepareMeters;
 	public short maxInMeters;
 	public long numRouteNodes=0;
+	public long numAreaCrossConnections=0;
 	public long numDualConnections=0;
 	public long numOneWayConnections=0;
 	public long numBicycleOppositeConnections=0;
@@ -45,7 +46,10 @@ public class TravelMode {
 	}	
 
 	public String toString() {
-		return " " + travelModeName + ": " + numRouteNodes + " nodes / " + numDualConnections + " dual connections" + (numBicycleOppositeConnections!=0?" (" + numBicycleOppositeConnections + " opposite connections for bicycles)":"")
-			+ " / " + numOneWayConnections + " oneway connections";
+		return " " + travelModeName + ": " + numRouteNodes + " nodes - connections: " +
+				numDualConnections + " dual (" + 
+				+ numAreaCrossConnections + " crossarea" +
+				(numBicycleOppositeConnections!=0?" / " + numBicycleOppositeConnections + " opposite for bicycles":"") +
+				") / " + numOneWayConnections + " oneway";
 	}
 }

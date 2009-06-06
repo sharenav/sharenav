@@ -154,6 +154,9 @@ public class RouteData {
 		for (int i=0; i<TravelModes.travelModeCount; i++) {
 			if (w.isAccessForRouting(i)) {
 				TravelMode tm = TravelModes.getTravelMode(i);
+				if (w.isExplicitArea()) {
+					tm.numAreaCrossConnections++;
+				}
 				tm.numOneWayConnections++;
 				float speed=w.getRoutingSpeed(i);
 				float time=dist * 10.0f / speed;
