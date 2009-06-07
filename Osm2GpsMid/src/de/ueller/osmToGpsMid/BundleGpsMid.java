@@ -55,8 +55,11 @@ public class BundleGpsMid {
 			if (args.length == 0) {
 				GuiConfigWizard gcw = new GuiConfigWizard();
 				c = gcw.startWizard();
-			} else
+			} else {
 				c=new Configuration(args);
+			}
+			
+			validateConfig(c);
 			System.out.println(c.toString());
 			startTime = Calendar.getInstance();
 
@@ -392,6 +395,14 @@ public class BundleGpsMid {
 			}
 		}
 		return( path.delete() );
+	}
+	
+	static private void validateConfig(Configuration config) {
+		if ((config.enableEditingSupport) && !(config.getAppParam().equalsIgnoreCase("GpsMid-Generic-editing"))) {
+			System.out.println("ERROR: You are creating a map with editing support, but use a app version that does not support editing\n"
+					+ "     please fix your .properties file");
+			System.exit(1);
+		}
 	}
 
 
