@@ -526,6 +526,52 @@ public class Way extends Entity{
 		}
 	}
 
+	/**
+	 *  check if the area contains the nodes searchCon1 and searchCon2
+	 **/
+	public void connections2AreaMatch(PaintContext pc, SingleTile t) {
+		boolean containsCon1 = false;
+		boolean containsCon2 = false;
+		short searchCon1Lat = (short) ((pc.searchCon1Lat - t.centerLat) * t.fpm);
+		short searchCon1Lon = (short) ((pc.searchCon1Lon - t.centerLon) * t.fpm);
+		short searchCon2Lat = (short) ((pc.searchCon2Lat - t.centerLat) * t.fpm);
+		short searchCon2Lon = (short) ((pc.searchCon2Lon - t.centerLon) * t.fpm);
+		
+		// check if area way contains both search connections
+//		System.out.println("search area nodes: " + path.length);
+		for (short i = 0; i < path.length; i++) {
+			int idx = path[i];
+			// System.out.println("lat:" + t.nodeLat[idx] + "/" + searchCon1Lat);
+			if ( (Math.abs(t.nodeLat[idx] - searchCon1Lat) < 2)
+					&&
+				 (Math.abs(t.nodeLon[idx] - searchCon1Lon) < 2)
+			) {
+				containsCon1 = true;
+				
+//				System.out.println("con1 match");
+				if (containsCon1 && containsCon2) break;
+			}
+			if ( (Math.abs(t.nodeLat[idx] - searchCon2Lat) < 2)
+					&&
+				 (Math.abs(t.nodeLon[idx] - searchCon2Lon) < 2)
+				) {
+				containsCon2 = true;
+//				System.out.println("con2 match");
+				if (containsCon1 && containsCon2) break;
+			}   
+		}
+	  
+		// we've got a match
+		if (containsCon1 && containsCon2) {
+			pc.conWayDistanceToNext = 0; // must be filled in later
+			pc.conWayNameIdx= this.nameIdx;
+			pc.conWayType = this.type;
+			short routeFlags = (short) C.getWayDescription(this.type).routeFlags; 
+			routeFlags |= C.ROUTE_FLAG_AREA;
+			pc.conWayRouteFlags = routeFlags;				
+		}
+	}
+
 	
 	
 	public void processPath(PaintContext pc, SingleTile t, int mode, byte layer) {

@@ -32,7 +32,8 @@ public abstract class Tile {
 	public static final int OPT_FIND_TARGET = 4;
 	public static final int OPT_FIND_CURRENT= 8;
 	public static final int OPT_CONNECTIONS2WAY= 16;
-	public static final int OPT_HIGHLIGHT = 32;
+	public static final int OPT_CONNECTIONS2AREA= 32;
+	public static final int OPT_HIGHLIGHT = 64;
 	
 	public static final byte LAYER_AREA = (byte)0x80; //10000000 binary
 	public static final byte LAYER_ALL = (byte)0x40; //01000000 binary

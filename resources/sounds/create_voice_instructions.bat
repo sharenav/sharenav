@@ -39,6 +39,8 @@ espeak -a200 -wroute_recalculation.wav -z -p70 -s180 -ven+f1 -x -k5 "Recalculati
 espeak -a200 -wspeed_limit.wav -z -p80 -s150 -ven+f1 -x -k5 "Speed over limit"
 espeak -a200 -wbear.wav -z -p80 -s150 -ven+f1 -x -k5 "bear"
 espeak -a200 -wfollow_street.wav -z -p80 -s150 -ven+f1 -x -k5 "follow the street until further notice"
+espeak -a200 -warea_cross.wav -z -p80 -s150 -ven+f1 -x -k5 "cross the area"
+espeak -a200 -warea_crossed.wav -z -p80 -s150 -ven+f1 -x -k5 "leave the area"
 
 REM resample and increase volume of all sounds using sox from http://sox.sf.net
 FOR /F "tokens=*" %%i in ('dir /b *.wav') do (

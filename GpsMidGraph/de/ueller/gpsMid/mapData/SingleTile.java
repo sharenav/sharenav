@@ -113,8 +113,8 @@ public class SingleTile extends Tile implements QueueableTile {
 	
 	private synchronized void walk(PaintContext pc,int opt, byte layer) {
 
-		boolean renderArea = ((layer & Tile.LAYER_AREA) != 0);
-		boolean renderAll = ((layer & Tile.LAYER_ALL) != 0);;
+		boolean renderArea = ((layer & Tile.LAYER_AREA) != 0) || ((opt & Tile.OPT_CONNECTIONS2AREA) != 0);
+		boolean renderAll = ((layer & Tile.LAYER_ALL) != 0);
 		boolean renderHighlight = ((layer & Tile.LAYER_HIGHLIGHT) != 0);
 		byte relLayer = (byte)(((int)layer) & ~(Tile.LAYER_AREA | Tile.LAYER_HIGHLIGHT));
 		
@@ -270,6 +270,10 @@ public class SingleTile extends Tile implements QueueableTile {
 						} else if ((opt & Tile.OPT_CONNECTIONS2WAY) != 0) {
 							if (!w.isArea()) {
 								w.connections2WayMatch(pc, this);
+							}
+						} else if ((opt & Tile.OPT_CONNECTIONS2AREA) != 0) {
+							if (w.isArea()) {
+								w.connections2AreaMatch(pc, this);
 							}
 						} else if ((opt & Tile.OPT_FIND_CURRENT) != 0) {
 							if (!w.isArea()) {

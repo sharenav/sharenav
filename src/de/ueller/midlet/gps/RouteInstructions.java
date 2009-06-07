@@ -15,12 +15,15 @@ import javax.microedition.lcdui.Graphics;
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.tools.ImageTools;
 import de.ueller.gpsMid.mapData.Tile;
+import de.ueller.midlet.gps.data.IntPoint;
+import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.ProjMath;
 import de.ueller.midlet.gps.data.Projection;
 import de.ueller.midlet.gps.data.Way;
 import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.data.Proj2D;
+import de.ueller.midlet.gps.routing.Connection;
 import de.ueller.midlet.gps.routing.ConnectionWithNode;
 import de.ueller.midlet.gps.routing.RouteHelper;
 import de.ueller.midlet.gps.routing.RouteNode;
@@ -36,6 +39,7 @@ public class RouteInstructions {
 		"half left", "left", "hard left",
 		"Target reached",
 		"enter motorway", "leave motorway",
+		"cross area", "leave area",
 		"Roundabout exit #1", "Roundabout exit #2", "Roundabout exit #3",
 		"Roundabout exit #4", "Roundabout exit #5", "Roundabout exit #6",
 		"into tunnel", "out of tunnel", "skip"
@@ -45,6 +49,7 @@ public class RouteInstructions {
 		"BEAR;RIGHT", "STRAIGHTON", "BEAR;LEFT",
 		"HALF;LEFT", "LEFT", "HARD;LEFT", "TARGET_REACHED",
 		"ENTER_MOTORWAY", "LEAVE_MOTORWAY",
+		"AREA_CROSS", "AREA_CROSSED",
 		"RAB;1ST;RABEXIT", "RAB;2ND;RABEXIT", "RAB;3RD;RABEXIT",
 		"RAB;4TH;RABEXIT", "RAB;5TH;RABEXIT", "RAB;6TH;RABEXIT",
 		"INTO_TUNNEL", "OUT_OF_TUNNEL"
@@ -63,15 +68,17 @@ public class RouteInstructions {
 	private static final int RI_TARGET_REACHED = 10;
 	private static final int RI_ENTER_MOTORWAY = 11;
 	private static final int RI_LEAVE_MOTORWAY = 12;
-	private static final int RI_1ST_EXIT = 13;
-	private static final int RI_2ND_EXIT = 14;
-	private static final int RI_3RD_EXIT = 15;
-	private static final int RI_4TH_EXIT = 16;
-	private static final int RI_5TH_EXIT = 17;
-	private static final int RI_6TH_EXIT = 18;
-	private static final int RI_INTO_TUNNEL = 19;
-	private static final int RI_OUT_OF_TUNNEL = 20;
-	private static final int RI_SKIPPED = 21;
+	private static final int RI_AREA_CROSS = 13;
+	private static final int RI_AREA_CROSSED = 14;
+	private static final int RI_1ST_EXIT = 15;
+	private static final int RI_2ND_EXIT = 16;
+	private static final int RI_3RD_EXIT = 17;
+	private static final int RI_4TH_EXIT = 18;
+	private static final int RI_5TH_EXIT = 19;
+	private static final int RI_6TH_EXIT = 20;
+	private static final int RI_INTO_TUNNEL = 21;
+	private static final int RI_OUT_OF_TUNNEL = 22;
+	private static final int RI_SKIPPED = 23;
 	
 	private int connsFound = 0;
 	
@@ -256,7 +263,26 @@ public class RouteInstructions {
 			connsFound++;
 			return cFrom.wayDistanceToNext;
 		} else {
-			System.out.println("NO MATCH FOR: " + iConnFrom);
+			// if we had no way match, look for an area match
+//			System.out.println("search AREA MATCH FOR: " + iConnFrom);
+			for (int i=0; i<4; i++){
+				trace.t[i].walk(pc, Tile.OPT_WAIT_FOR_LOAD | Tile.OPT_CONNECTIONS2AREA);
+			}
+			// if we've got an area match
+			if (pc.conWayDistanceToNext != Float.MAX_VALUE ) {
+				cFrom = (ConnectionWithNode) route.elementAt(iConnFrom);
+				cFrom.wayFromConAt = pc.conWayFromAt;
+				cFrom.wayToConAt = pc.conWayToAt;
+				cFrom.wayNameIdx = pc.conWayNameIdx;
+				cFrom.wayType = pc.conWayType;
+				cFrom.wayDistanceToNext = pc.conWayDistanceToNext;
+				cFrom.wayRouteFlags |= C.ROUTE_FLAG_AREA;				
+				System.out.println("AREA MATCH FOR: " + iConnFrom);
+				connsFound++;
+				return cFrom.wayDistanceToNext;
+			} else {
+				System.out.println("NO MATCH FOR: " + iConnFrom);
+			}
 		}
 		return 0f;
 	}
@@ -273,7 +299,9 @@ public class RouteInstructions {
 			next arrow for routing assistance
 		*/
 		final int PASSINGDISTANCE=25;
-
+		Node areaStart = new Node();
+		int iAreaStart = 0;
+		
 		try {
 			StringBuffer soundToPlay = new StringBuffer();
 			StringBuffer sbRouteInstruction = new StringBuffer();
@@ -326,6 +354,39 @@ public class RouteInstructions {
 					byte aPaint=RI_NONE;
 					double distNow=0;
 					int intDistNow=0;
+
+					for (int i=1; i<route.size();i++){
+						c = (ConnectionWithNode) route.elementAt(i);
+						if (c == null){
+							logger.error("show Route got null connection");
+							break;
+						}
+						if (c.to == null){
+							logger.error("show Route got connection with NULL as target");
+							break;
+						}
+						if (pc == null){
+							logger.error("show Route strange pc is null");
+							break;
+						}
+						if (c.wayRouteInstruction == RI_AREA_CROSS) {
+							areaStart.setLatLon(c.to.lat, c.to.lon, true);
+						}
+						if (c.wayRouteInstruction == RI_AREA_CROSSED) {
+							IntPoint lineP1 = new IntPoint();
+							IntPoint lineP2 = new IntPoint();							
+							pc.getP().forward(areaStart.radlat, areaStart.radlon, lineP1);
+							pc.getP().forward(c.to.lat, c.to.lon, lineP2);
+							int dst = pc.getDstFromSquareDst( MoreMath.ptSegDistSq(lineP1.x, lineP1.y,
+									lineP2.x, lineP2.y, pc.xSize / 2, pc.ySize / 2));		
+//							System.out.println("Area dst:" + dst  + " way: " + dstToRoutePath);
+							if (dst < dstToRoutePath) {
+								routePathConnection = i - 1;
+								dstToRoutePath = dst;
+//								System.out.println("Area is closest");
+							}							
+						}
+					}
 					
 					if (routePathConnection != -1 && routePathConnection < route.size()-1) {
 						iRealNow = routePathConnection+1;
@@ -359,23 +420,28 @@ public class RouteInstructions {
 						}
 						//#debug debug
 						logger.debug("showRoute - iRealNow: " + iRealNow + " iNow: " + iNow + " iThen: " + iThen);						
-					}
-	
+					}					
+					
 					for (int i=1; i<route.size();i++){
-						c = (ConnectionWithNode) route.elementAt(i);
-						if (c == null){
-							logger.error("show Route got null connection");
-							break;
+						c = (ConnectionWithNode) route.elementAt(i);						
+
+						if (c.wayRouteInstruction == RI_AREA_CROSS) {
+							areaStart.setLatLon(c.to.lat, c.to.lon, true);
 						}
-						if (c.to == null){
-							logger.error("show Route got connection with NULL as target");
-							break;
+						if (c.wayRouteInstruction == RI_AREA_CROSSED) {
+							IntPoint lineP1 = new IntPoint();
+							IntPoint lineP2 = new IntPoint();							
+							pc.getP().forward(areaStart.radlat, areaStart.radlon, lineP1);
+							pc.getP().forward(c.to.lat, c.to.lon, lineP2);
+							pc.g.setStrokeStyle(Graphics.SOLID);
+							if (iNow > i) {
+								pc.g.setColor(C.ROUTEPRIOR_COLOR);														
+							} else {
+								pc.g.setColor(C.ROUTE_COLOR);
+							}
+					    	pc.g.drawLine(lineP1.x, lineP1.y, lineP2.x, lineP2.y);
 						}
-						if (pc == null){
-							logger.error("show Route strange pc is null");
-							break;
-						}
-	
+
 						// no off-screen check for current route arrow
 						if(i!=iNow) {
 							if (c.to.lat < pc.getP().getMinLat()) {
@@ -461,6 +527,8 @@ public class RouteInstructions {
 									if (aNow < RI_ENTER_MOTORWAY) {
 										soundToPlay.append( (aNow==RI_STRAIGHT_ON ? "CONTINUE" : "PREPARE") + ";" + soundDirections[aNow]);
 									} else if (aNow>=RI_ENTER_MOTORWAY && aNow<=RI_LEAVE_MOTORWAY) {
+										soundToPlay.append("PREPARE;TO;" + getSoundInstruction(cNow.wayRouteFlags, aNow));
+									} else if (aNow==RI_AREA_CROSS || aNow==RI_AREA_CROSSED) {
 										soundToPlay.append("PREPARE;TO;" + getSoundInstruction(cNow.wayRouteFlags, aNow));
 									} else if (aNow>=RI_1ST_EXIT && aNow<=RI_6TH_EXIT) {
 										soundToPlay.append(getSoundInstruction(cNow.wayRouteFlags, aNow));
@@ -890,6 +958,7 @@ public class RouteInstructions {
 		ConnectionWithNode c;
 		ConnectionWithNode c2;
 		int nextStartBearing;
+		int iAreaStart = 0;
 		
 		if (route.size() < 3) {
 			return;
@@ -932,6 +1001,18 @@ public class RouteInstructions {
 			// leave motorway
 			if ( isLeaveMotorway(rfPrev, rfCurr) ) {
 				ri = RI_LEAVE_MOTORWAY;
+			}
+			// area start
+			if ( isAreaStart(rfPrev, rfCurr) ) {
+				ri = RI_AREA_CROSS;
+				iAreaStart = i;
+			}
+			// areaEnd
+			if ( isAreaEnd(rfPrev, rfCurr) ) {
+				ri = RI_AREA_CROSSED;
+				// calculate distance for area crossing as the crow flies
+				ConnectionWithNode cAreaStart = (ConnectionWithNode) route.elementAt(iAreaStart);
+				cAreaStart.wayDistanceToNext = ProjMath.getDistance(cAreaStart.to.lat, cAreaStart.to.lon, c.to.lat, c.to.lon);
 			}
 
 			// determine roundabout exit
@@ -1096,6 +1177,32 @@ public class RouteInstructions {
 					&& 	(rfCurr & C.ROUTE_FLAG_MOTORWAY) == 0
 		);
 	}
+
+	/**
+	 * 
+	 * @param rfPrev - routeFlag of previous connection
+	 * @param rfCurr - routeFlag of current connection
+	 * @return
+	 */
+	public static boolean isAreaStart(short rfPrev, short rfCurr) {
+		return (	(rfPrev & C.ROUTE_FLAG_AREA) == 0
+					&& 	(rfCurr & C.ROUTE_FLAG_AREA) > 0
+		);
+	}
+	
+	/**
+	 * 
+	 * @param rfPrev - routeFlag of previous connection
+	 * @param rfCurr - routeFlag of current connection
+	 * @return
+	 */
+	public static boolean isAreaEnd(short rfPrev, short rfCurr) {
+		return (	(rfPrev & C.ROUTE_FLAG_AREA) > 0
+					&& 	(rfCurr & C.ROUTE_FLAG_AREA) == 0
+		);
+	}
+
+	
 	
 	
 	private int getTellDistance(int iConnection, byte aNow) {
