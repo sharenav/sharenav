@@ -88,6 +88,11 @@ public class CellDB {
 		try {
 			BufferedReader r = new BufferedReader(new InputStreamReader(conf
 					.getCellStream()));
+			if (r == null) { 
+				System.out.println("WARNING: could not find cellID file, NOT including cell ids");
+				return;
+			}
+			
 			while (r.ready()) {
 				String line = r.readLine();
 				String[] cellString = line.split(",");
@@ -186,8 +191,7 @@ public class CellDB {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("WARNING: Could not find CellID file, NOT including cell ids");
 		}
 	}
 
