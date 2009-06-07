@@ -371,8 +371,7 @@ public class RouteInstructions {
 						}
 						if (c.wayRouteInstruction == RI_AREA_CROSS) {
 							areaStart.setLatLon(c.to.lat, c.to.lon, true);
-						}
-						if (c.wayRouteInstruction == RI_AREA_CROSSED) {
+						} else if (c.wayRouteInstruction == RI_AREA_CROSSED) {
 							IntPoint lineP1 = new IntPoint();
 							IntPoint lineP2 = new IntPoint();							
 							pc.getP().forward(areaStart.radlat, areaStart.radlon, lineP1);
@@ -427,8 +426,8 @@ public class RouteInstructions {
 
 						if (c.wayRouteInstruction == RI_AREA_CROSS) {
 							areaStart.setLatLon(c.to.lat, c.to.lon, true);
-						}
-						if (c.wayRouteInstruction == RI_AREA_CROSSED) {
+						} else if (c.wayRouteInstruction == RI_AREA_CROSSED) {
+							// draw line for crossing area
 							IntPoint lineP1 = new IntPoint();
 							IntPoint lineP2 = new IntPoint();							
 							pc.getP().forward(areaStart.radlat, areaStart.radlon, lineP1);
@@ -436,10 +435,23 @@ public class RouteInstructions {
 							pc.g.setStrokeStyle(Graphics.SOLID);
 							if (iNow > i) {
 								pc.g.setColor(C.ROUTEPRIOR_COLOR);														
-							} else {
+							} else if (iNow < i) {
 								pc.g.setColor(C.ROUTE_COLOR);
 							}
-					    	pc.g.drawLine(lineP1.x, lineP1.y, lineP2.x, lineP2.y);
+							if (iNow != i) {
+								// we are currently not crossing the area, so we simply draw a line in the given color
+						    	pc.g.drawLine(lineP1.x, lineP1.y, lineP2.x, lineP2.y);
+							} else {
+								// we are currently crossing the area, so we need to divide the line and draw a route dot onto it
+								IntPoint centerP = new IntPoint();
+								pc.getP().forward(center.radlat, center.radlon, centerP);
+								IntPoint closestP = MoreMath.closestPointOnLine(lineP1.x, lineP1.y, lineP2.x, lineP2.y, centerP.x, centerP.y);
+								pc.g.setColor(C.ROUTEPRIOR_COLOR);														
+						    	pc.g.drawLine(lineP1.x, lineP1.y, closestP.x, closestP.y);
+								pc.g.setColor(C.ROUTE_COLOR);														
+						    	pc.g.drawLine(closestP.x, closestP.y, lineP2.x, lineP2.y);
+						    	drawRouteDot(pc.g, closestP, Configuration.getMinRouteLineWidth());
+							}
 						}
 
 						// no off-screen check for current route arrow
