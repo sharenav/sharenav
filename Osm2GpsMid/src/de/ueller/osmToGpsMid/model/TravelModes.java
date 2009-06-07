@@ -18,6 +18,7 @@ public class TravelModes {
 	
 	public static void stringToTravelModes(String modes) {
 		travelModes = new TravelMode[MAXTRAVELMODES];
+		travelModeCount = 0;
 		String s[] = modes.split("[;,]", MAXTRAVELMODES);
 		for (int i=0; i < s.length; i++ ) {
 			add(s[i].trim());
