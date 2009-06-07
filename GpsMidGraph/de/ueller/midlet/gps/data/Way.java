@@ -1387,10 +1387,7 @@ public class Way extends Entity{
 		}
 		if (wClosest != 0) {
 			// if we got a closest seg, draw closest point to the center in it
-			pc.g.setColor(C.ROUTEDOT_COLOR);
-			pc.g.fillArc(closestP.x-wClosest, closestP.y-wClosest, wClosest*2, wClosest*2, 0, 360);
-			pc.g.setColor(C.ROUTEDOT_BORDERCOLOR);
-			pc.g.drawArc(closestP.x-wClosest, closestP.y-wClosest, wClosest*2, wClosest*2, 0, 360);
+			RouteInstructions.drawRouteDot(pc.g, closestP, wClosest);
 		}
 	}
 

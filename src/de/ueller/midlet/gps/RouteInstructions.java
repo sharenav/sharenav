@@ -785,6 +785,13 @@ public class RouteInstructions {
 		return sb.toString();
 	}
 
+	public static void drawRouteDot(Graphics g, IntPoint p, int radius) {
+		g.setColor(C.ROUTEDOT_COLOR);
+		g.fillArc(p.x-radius, p.y-radius, radius*2, radius*2, 0, 360);
+		g.setColor(C.ROUTEDOT_BORDERCOLOR);
+		g.drawArc(p.x-radius, p.y-radius, radius*2, radius*2, 0, 360);
+	}
+	
 	
 	private void drawBearing(PaintContext pc, int posX, int posY, byte halfBearing, boolean isStartBearing, int color) {
 		pc.g.setColor(color);
