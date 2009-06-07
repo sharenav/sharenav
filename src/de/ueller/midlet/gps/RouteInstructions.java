@@ -336,7 +336,9 @@ public class RouteInstructions {
 				pc.g.drawRect(pc.lineP2.x-5, pc.lineP2.y-5, 10, 10);
 				pc.g.drawString(n.name, pc.lineP2.x+7, pc.lineP2.y+5, Graphics.BOTTOM | Graphics.LEFT);
 			}
+
 			boolean routeRecalculationRequired=false;
+			float remainingDistance = 0;
 			synchronized(this) {
 				if (route != null && route.size() > 0){
 					//#debug debug
@@ -390,6 +392,13 @@ public class RouteInstructions {
 						iNow = idxNextInstructionArrow (iRealNow);
 						cNow = (ConnectionWithNode) route.elementAt(iNow);
 						aNow = cNow.wayRouteInstruction;
+						/* TODO: we are cheating a bit here as we add the distance to the next visible route connection as the crow flies
+							We should rather take the distances of full segs to the current route node plus the distance of the divided seg from Way.processPath()
+						*/
+				    	ConnectionWithNode cRealNow = (ConnectionWithNode) route.elementAt(iRealNow);
+				    	double distRealNow=ProjMath.getDistance(center.radlat, center.radlon, cRealNow.to.lat, cRealNow.to.lon);
+				    	remainingDistance += distRealNow;
+
 				    	distNow=ProjMath.getDistance(center.radlat, center.radlon, cNow.to.lat, cNow.to.lon);
 						intDistNow=new Double(distNow).intValue();
 						if (iNow < route.size() - 1) {
@@ -421,7 +430,13 @@ public class RouteInstructions {
 					
 					for (int i=1; i<route.size();i++){
 						c = (ConnectionWithNode) route.elementAt(i);						
-
+						
+						// calculate distance to target
+						if (i >= iRealNow && c.wayDistanceToNext != Float.MAX_VALUE) {
+							remainingDistance += c.wayDistanceToNext;
+						}
+						
+						// draw cross area instruction
 						if (c.wayRouteInstruction == RI_AREA_CROSS) {
 							areaStart.setLatLon(c.to.lat, c.to.lon, true);
 						} else if (c.wayRouteInstruction == RI_AREA_CROSSED) {
@@ -749,6 +764,13 @@ public class RouteInstructions {
 						textYPos - routeInstructionsHeight,
 						Graphics.RIGHT | Graphics.BOTTOM
 				);
+
+				pc.g.drawString("d:" + (int) remainingDistance + "m",
+						0,
+						textYPos - routeInstructionsHeight,
+						Graphics.LEFT | Graphics.BOTTOM
+				);
+
 				
 				pc.g.setFont(originalFont);
 			}
@@ -1084,8 +1106,6 @@ public class RouteInstructions {
 			)	{
 				c.wayRouteInstruction = RI_SKIPPED;
 				c.wayRouteFlags |= C.ROUTE_FLAG_QUIET;
-				cPrev.wayDistanceToNext += c.wayDistanceToNext;
-				//c.wayDistanceToNext = 0;
 				ConnectionWithNode cNext = (ConnectionWithNode) route.elementAt(i+1);
 				// cPrev.wayRouteInstruction = convertTurnToRouteInstruction( (cNext.startBearing - cPrev.endBearing) * 2 );
 				cPrev.wayRouteInstruction = convertTurnToRouteInstruction( (cNext.wayConStartBearing - cPrev.wayConEndBearing) * 2 );				
@@ -1152,9 +1172,7 @@ public class RouteInstructions {
 					)
 				) {
 				oldNameIdx = c.wayNameIdx;  // if we went straight on into a way with new name we continue comparing with the new name 
-				cStart.wayDistanceToNext += c.wayDistanceToNext;
 				c.wayRouteFlags |= C.ROUTE_FLAG_QUIET;
-				// c.wayDistanceToNext = 0;
 				i++;
 				c = cNext;
 				if (i < route.size()-1) {
