@@ -1309,7 +1309,7 @@ public class Way extends Entity{
 				dividedSeg = true;
 				pc.getP().forward( (short) (SingleTile.fpm * (pc.center.radlat - t.centerLat)), (short) (SingleTile.fpm * (pc.center.radlon - t.centerLon)), centerP, t);
 				// get point dividing the seg
-				closestP = closestPointOnLine(xPoints[i], yPoints[i], xPoints[i + 1], yPoints[i + 1], centerP.x, centerP.y);
+				closestP = MoreMath.closestPointOnLine(xPoints[i], yPoints[i], xPoints[i + 1], yPoints[i + 1], centerP.x, centerP.y);
 				// remember original next point
 				originalX = xPoints[i + 1];
 				originalY = yPoints[i + 1];
@@ -1391,29 +1391,6 @@ public class Way extends Entity{
 			pc.g.fillArc(closestP.x-wClosest, closestP.y-wClosest, wClosest*2, wClosest*2, 0, 360);
 			pc.g.setColor(C.ROUTEDOT_BORDERCOLOR);
 			pc.g.drawArc(closestP.x-wClosest, closestP.y-wClosest, wClosest*2, wClosest*2, 0, 360);
-		}
-	}
-	
-	/**
-	 * 
-	 * @param lineP1x - in screen coordinates
-	 * @param lineP1y - in screen coordinates
-	 * @param lineP2x - in screen coordinates
-	 * @param lineP2y - in screen coordinates
-	 * @param offPointX - point outside the line in screen coordinates
-	 * @param offPointY - point outside the line in screen coordinates
-	 * @return IntPoint - closest point on line in screen coordinates
-	 */
-	private static IntPoint closestPointOnLine(int lineP1x, int lineP1y, int lineP2x, int lineP2y, int offPointX, int offPointY) {
-		float uX = (float) (lineP2x - lineP1x);
-		float uY = (float) (lineP2y - lineP1y);
-		float  u = ( (offPointX - lineP1x) * uX + (offPointY  - lineP1y) * uY) / (uX * uX + uY * uY);
-		if (u > 1.0) {
-			return new IntPoint(lineP2x, lineP2y);
-		} else if (u <= 0.0) {
-			return new IntPoint(lineP1x, lineP1y);
-		} else {
-			return new IntPoint( (int)(lineP2x * u + lineP1x * (1.0 - u ) + 0.5), (int) (lineP2y * u + lineP1y * (1.0-u) + 0.5));
 		}
 	}
 

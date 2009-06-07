@@ -812,4 +812,28 @@ public class MoreMath {
 				toLon);
 		return (byte) (Math.toDegrees(b)/2);
 	}
+
+	/**
+	 * 
+	 * @param lineP1x - in screen coordinates
+	 * @param lineP1y - in screen coordinates
+	 * @param lineP2x - in screen coordinates
+	 * @param lineP2y - in screen coordinates
+	 * @param offPointX - point outside the line in screen coordinates
+	 * @param offPointY - point outside the line in screen coordinates
+	 * @return IntPoint - closest point on line in screen coordinates
+	 */
+	public static IntPoint closestPointOnLine(int lineP1x, int lineP1y, int lineP2x, int lineP2y, int offPointX, int offPointY) {
+		float uX = (float) (lineP2x - lineP1x);
+		float uY = (float) (lineP2y - lineP1y);
+		float  u = ( (offPointX - lineP1x) * uX + (offPointY  - lineP1y) * uY) / (uX * uX + uY * uY);
+		if (u > 1.0) {
+			return new IntPoint(lineP2x, lineP2y);
+		} else if (u <= 0.0) {
+			return new IntPoint(lineP1x, lineP1y);
+		} else {
+			return new IntPoint( (int)(lineP2x * u + lineP1x * (1.0 - u ) + 0.5), (int) (lineP2y * u + lineP1y * (1.0-u) + 0.5));
+		}
+	}
+
 }
