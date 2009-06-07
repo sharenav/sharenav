@@ -14,10 +14,11 @@ package de.ueller.osmToGpsMid.model;
 public class TravelModes {
 	public static TravelMode travelModes[];
 	public static int travelModeCount = 0;
+	public static final int MAXTRAVELMODES = 7;
 	
 	public static void stringToTravelModes(String modes) {
-		travelModes = new TravelMode[8];
-		String s[] = modes.split("[;,]", 8);
+		travelModes = new TravelMode[MAXTRAVELMODES];
+		String s[] = modes.split("[;,]", MAXTRAVELMODES);
 		for (int i=0; i < s.length; i++ ) {
 			add(s[i].trim());
 		}
