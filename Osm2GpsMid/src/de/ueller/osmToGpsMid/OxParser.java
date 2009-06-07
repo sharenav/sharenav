@@ -61,12 +61,24 @@ public class OxParser extends DefaultHandler{
 		} catch (IOException e) {
 			System.out.println("IOException: " + e);
 			e.printStackTrace();
+			/* The planet file is presumably corrupt. So there is no point in continuing,
+			 * as it will most likely generate incorrect map data.
+			 */
+			System.exit(10);
 		} catch (SAXException e) {
 			System.out.println("SAXException: " + e);
 			e.printStackTrace();
+			/* The planet file is presumably corrupt. So there is no point in continuing,
+			 * as it will most likely generate incorrect map data.
+			 */
+			System.exit(10);
 		} catch (Exception e) {
 			System.out.println("Other Exception: " + e);
 			e.printStackTrace();
+			/* The planet file is presumably corrupt. So there is no point in continuing,
+			 * as it will most likely generate incorrect map data.
+			 */
+			System.exit(10);
 		}
 	}
 
