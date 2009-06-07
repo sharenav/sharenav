@@ -19,6 +19,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Map.Entry;
@@ -42,6 +43,7 @@ import de.ueller.osmToGpsMid.model.TravelModes;
 
 public class BundleGpsMid {
 	static boolean  compressed=true;
+	static Calendar startTime;
 	/**
 	 * @param args
 	 */
@@ -56,6 +58,7 @@ public class BundleGpsMid {
 			} else
 				c=new Configuration(args);
 			System.out.println(c.toString());
+			startTime = Calendar.getInstance();
 
 			TravelMode tm=null;
 			for (int i=0; i < TravelModes.travelModeCount; i++) {				
@@ -149,6 +152,7 @@ public class BundleGpsMid {
 				System.out.println("Cleaning up temporary directory " + tmpBaseDir);
 				deleteDirectory(tmpBaseDir);
 			}
+			
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -279,6 +283,11 @@ public class BundleGpsMid {
 		packDir(zf, src,"");
 		zf.close();
 		writeJADfile(c, n.length());
+		Calendar endTime = Calendar.getInstance();
+		Calendar duration = Calendar.getInstance();
+		duration.setTimeInMillis(endTime.getTimeInMillis() - startTime.getTimeInMillis());
+		System.out.println(n.getName() + " created successfully with " + (n.length() / 1024 / 1024) + " Mb in " +
+				(duration.get(Calendar.HOUR) - 1) + ":" + duration.get(Calendar.MINUTE) + ":" + duration.get(Calendar.SECOND));
 	}
 	
 	private static void packDir(ZipOutputStream os, File d,String path) throws IOException{
