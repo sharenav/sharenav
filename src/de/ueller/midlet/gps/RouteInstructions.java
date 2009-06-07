@@ -345,16 +345,6 @@ public class RouteInstructions {
 					// there's a route so no calculation required
 					routeRecalculationRequired=false;
 		
-					// find nearest routing arrow (to center of screen)
-					int iNow=0;
-					int iRealNow=0;
-					byte aNow=RI_NONE;
-					int iThen=0;
-					byte aThen=RI_NONE;
-					byte aPaint=RI_NONE;
-					double distNow=0;
-					int intDistNow=0;
-
 					for (int i=1; i<route.size();i++){
 						c = (ConnectionWithNode) route.elementAt(i);
 						if (c == null){
@@ -387,6 +377,14 @@ public class RouteInstructions {
 						}
 					}
 					
+					int iNow=0;
+					int iRealNow=0;
+					byte aNow=RI_NONE;
+					int iThen=0;
+					byte aThen=RI_NONE;
+					byte aPaint=RI_NONE;
+					double distNow=0;
+					int intDistNow=0;
 					if (routePathConnection != -1 && routePathConnection < route.size()-1) {
 						iRealNow = routePathConnection+1;
 						iNow = idxNextInstructionArrow (iRealNow);
