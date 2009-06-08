@@ -85,7 +85,7 @@ public class GuiOSMChangeset extends Form implements GpsMidDisplayable,
 		try {
 			String fullXML = toXML();
 			String url = Configuration.getOsmUrl()
-					+ "changeset/create?_method=put";
+					+ "changeset/create";
 			//#debug info
 			logger.info("HTTP POST: " + url);
 			//#debug debug
@@ -94,6 +94,7 @@ public class GuiOSMChangeset extends Form implements GpsMidDisplayable,
 			connection.setRequestMethod(HttpConnection.POST);
 			connection.setRequestProperty("Connection", "close");
 			connection.setRequestProperty("User-Agent", "GpsMid");
+			connection.setRequestProperty("X_HTTP_METHOD_OVERRIDE", "PUT");
 
 			connection.setRequestProperty("Authorization", "Basic "
 					+ Base64.encode(Configuration.getOsmUsername() + ":"

@@ -73,7 +73,7 @@ public class EditableWay extends Way implements Runnable{
 		boolean success = false;
 		try {
 			String fullXML = OSMdata.toXML(commitChangesetID);
-			String url = Configuration.getOsmUrl() + "way/" + osmID + "?_method=put";
+			String url = Configuration.getOsmUrl() + "way/" + osmID;
 			//#debug info
 			logger.info("HTTP POST: " + url);
 			//#debug debug
@@ -83,6 +83,7 @@ public class EditableWay extends Way implements Runnable{
 			connection.setRequestMethod(HttpConnection.POST);
 			connection.setRequestProperty("Connection", "close");
 			connection.setRequestProperty("User-Agent", "GpsMid");
+			connection.setRequestProperty("X_HTTP_METHOD_OVERRIDE", "PUT");
 			
 			
 			connection.setRequestProperty("Authorization", "Basic " + Base64.encode(Configuration.getOsmUsername() +":" + Configuration.getOsmPwd()));
