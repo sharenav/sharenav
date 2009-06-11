@@ -1977,6 +1977,8 @@ Runnable , GpsMidDisplayable, CompletionListener {
 		}
 		
 		// check for touchable buttons
+//		#debug debug
+		logger.debug("Touch button: " + tl.getElementIdAtPointer(x, y) + " x: " + x + " y: " + y);
 		switch (tl.getElementIdAtPointer(x, y)) {
 			case TraceLayout.ZOOM_IN:
 				commandAction(CMDS[ZOOM_IN_CMD], (Displayable) null);
@@ -1991,6 +1993,10 @@ Runnable , GpsMidDisplayable, CompletionListener {
 			case TraceLayout.RECENTER_GPS:
 				commandAction(CMDS[RECENTER_GPS_CMD], (Displayable) null);
 				repaint();
+				pointerDragAction = false;
+				break;
+			case TraceLayout.SCALEBAR:
+				commandAction(CMDS[MAPFEATURES_CMD], (Displayable) null);
 				pointerDragAction = false;
 				break;
 		}

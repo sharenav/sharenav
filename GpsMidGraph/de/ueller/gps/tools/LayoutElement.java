@@ -72,7 +72,8 @@ public class LayoutElement {
 	public boolean usedAsRelative = false;
 	protected boolean textIsValid = false;
 	protected boolean oldTextIsValid = false;
-
+	protected boolean isOnScreen = false;
+	
 	/** make the element width a percentage of the LayoutManager width or font height*/
 	private int widthPercent = 100;
 	/** make the element high a percentage of the font height*/
@@ -134,7 +135,7 @@ public class LayoutElement {
 			this.flags |= FLAG_BACKGROUND_SCREENPERCENT_WIDTH;
 			widthPercent = 100;
 			//#debug debug
-			logger.debug("percent width " + widthPercent); 
+			logger.trace("percent width " + widthPercent); 
 		}
 	}
 
@@ -150,7 +151,7 @@ public class LayoutElement {
 		if ( (flags & FLAG_BACKGROUND_SCREENPERCENT_WIDTH) > 0 ) {
 			width = ((lm.maxX - lm.minX) * widthPercent) / 100;
 			//#debug debug
-			logger.debug("percent width " + width); 
+			logger.trace("percent width " + width); 
 		} else if ( (flags & FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH) > 0 ) {
 			width = (fontHeight * widthPercent) / 100;
 		}
@@ -162,7 +163,7 @@ public class LayoutElement {
 
 		
 		//#debug debug
-		logger.debug("width:" + width); 
+		logger.trace("width:" + width); 
 		// check how many characters we can draw if the available width is limited
 		while (textWidth > width) {
 			numDrawChars--;
@@ -191,11 +192,8 @@ public class LayoutElement {
 			textLeft = left + (width - textWidth) / 2;
 		}
 		
-		right = left + textWidth;		
+		right = left + width;		
 		
-		if ( (flags & (FLAG_BACKGROUND_SCREENPERCENT_WIDTH | FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH)) > 0 ) {
-			right = left + width;
-		}
 		
 		if ( (flags & FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT) > 0 ) {
 			height = (int) ((float) (fontHeight * heightPercent) / 100);
@@ -367,37 +365,41 @@ public class LayoutElement {
 		if (specialElementID != 0 && textIsValid) {			
 			g.setFont(font);
 			lm.drawSpecialElement(g, specialElementID, text, left, top);
+			isOnScreen = true;
 		} else if (numDrawChars > 0 && textIsValid ) {
 			if ( (flags & FLAG_BACKGROUND_BOX) > 0 ) {
 				g.setColor(bgColor);
-				//#debug debug
-				logger.debug("draw box at " + left + "," + top + " size: " + (right-left) + "/" + (bottom - top));
+				//#debug trace
+				logger.trace("draw box at " + left + "," + top + " size: " + (right-left) + "/" + (bottom - top));
 				g.fillRect(left, top, right-left, bottom - top);
 			}
 			if ( (flags & FLAG_BACKGROUND_BORDER) > 0 ) {
 				g.setColor(bgColor);
-				//#debug debug
-				logger.debug("draw border at " + left + "," + top + " size: " + (right-left) + "/" + (bottom - top));
+				//#debug trace
+				logger.trace("draw border at " + left + "," + top + " size: " + (right-left) + "/" + (bottom - top));
 				g.setStrokeStyle(Graphics.SOLID);
 				g.drawRect(left, top, right-left, bottom - top);
 			}			
 			if (font != null) {
 				g.setColor(fgColor);
 				g.setFont(font);
-				//#debug debug
-				logger.debug("draw " + text + " at " + textLeft + "," + top );
+				//#debug trace
+				logger.trace("draw " + text + " at " + textLeft + "," + top );
 				
 				g.drawSubstring(text, 0, numDrawChars, textLeft, textTop, Graphics.TOP|Graphics.LEFT);
+				isOnScreen = true;
 			} else {
 				//#debug debug
 				logger.debug("no font for element");			
 			}
+		} else {
+			isOnScreen = false;
 		}
 		oldTextIsValid = textIsValid;
 		textIsValid = false; // text is invalid after drawing until it is set with setText() again
 	}				
 
 	public boolean isInElement(int x, int y) {
-		return (x > left && x < right && y > top && y < bottom);
+		return (isOnScreen && x > left && x < right && y > top && y < bottom);
 	}	
 }
