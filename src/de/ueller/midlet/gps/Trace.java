@@ -295,7 +295,6 @@ Runnable , GpsMidDisplayable, CompletionListener {
 		logger.info("init Trace");
 
 		this.parent = GpsMid.getInstance();
-		this.tl = new TraceLayout(0,0, getWidth(), getHeight());
 		
 		CMDS[EXIT_CMD] = new Command("Back", Command.BACK, 2);
 		CMDS[REFRESH_CMD] = new Command("Refresh", Command.ITEM, 4);
@@ -1266,7 +1265,7 @@ Runnable , GpsMidDisplayable, CompletionListener {
 		this.audioRec = new AudioRecorder();
 		setDict(gpx, (byte)5);
 		startImageCollector();
-		
+		this.tl = new TraceLayout(pc, 0, 0, getWidth(), getHeight());
 	}
 
 	public void shutdown() {
@@ -1292,9 +1291,7 @@ Runnable , GpsMidDisplayable, CompletionListener {
 
 	}
 	
-	protected void sizeChanged(int w, int h) {
-		tl = new TraceLayout(0, 0, w, h);
-		
+	protected void sizeChanged(int w, int h) {	
 		if (imageCollector != null){
 			logger.info("Size of Canvas changed to " + w + "|" + h);
 			stopImageCollector();
@@ -1310,6 +1307,8 @@ Runnable , GpsMidDisplayable, CompletionListener {
 			 */
 			updatePosition();
 		}
+
+		tl = new TraceLayout(pc, 0, 0, w, h);
 	}
 
 
@@ -1408,7 +1407,7 @@ Runnable , GpsMidDisplayable, CompletionListener {
 			default:
 				showAddons = 0;
 				if (Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_SCALE_BAR)) {
-					showScale(pc);				
+					tl.ele[TraceLayout.SCALEBAR].setText(" ");
 				}
 
 				setPointOfTheCompass();
@@ -1762,55 +1761,6 @@ Runnable , GpsMidDisplayable, CompletionListener {
 		shapeZoomOut.drawShape(pc, pc.xSize - 3, shapeZoomIn.getMaxY());
 	}
 	
-	/**
-	 * Draws a map scale onto screen.
-	 * This calculation is currently horribly
-	 * inefficient. There must be a better way
-	 * than this.
-	 * 
-	 * @param pc Paint context for drawing
-	 */
-	public void showScale(PaintContext pc) {
-		Node n1 = new Node();
-		Node n2 = new Node();
-		
-		float scale;
-		int scalePx;
-		
-		//Calculate the lat and lon coordinates of two
-		//points that are 1/7th of the screen width apart
-		int basePx = (getWidth() / 7);
-		pc.getP().inverse(10, 10, n1);
-		pc.getP().inverse(10 + basePx, 10, n2);
-		
-		//Calculate the distance between them in meters
-		float d = ProjMath.getDistance(n1, n2);
-		//round this distance up to the nearest 5 or 10
-		int ordMag = (int)(MoreMath.log(d)/MoreMath.log(10.0f));
-		if (d < 2.5*MoreMath.pow(10,ordMag)) {
-			scale = 2.5f*MoreMath.pow(10,ordMag);
-		} else if (d < 5*MoreMath.pow(10,ordMag)) {
-			scale = 5*MoreMath.pow(10,ordMag);
-		} else {
-			scale = 10*MoreMath.pow(10,ordMag);
-		}
-		//Calculate how many pixels this distance is apart
-		//The scale/d factor should be between 1 and 2.5
-		//due to rounding
-		scalePx = (int)(((float)basePx)*scale/d);
-		
-		//Draw the scale bar
-		pc.g.setColor(0x00000000);
-		pc.g.drawLine(10,10, 10 + scalePx, 10);
-		pc.g.drawLine(10,11, 10 + scalePx, 11); //double line width
-		pc.g.drawLine(10, 8, 10, 13);
-		pc.g.drawLine(10 + scalePx, 8, 10 + scalePx, 13);
-		if (scale > 1000) {
-			pc.g.drawString(Integer.toString((int)(scale/1000.0f)) + "km", 10 + scalePx/2 ,12, Graphics.HCENTER | Graphics.TOP);
-		} else {
-			pc.g.drawString(Integer.toString((int)scale) + "m", 10 + scalePx/2 ,12, Graphics.HCENTER | Graphics.TOP);
-		}
-	}
 
 	/**
 	 * Draws the position square, the movement line and the center cross.

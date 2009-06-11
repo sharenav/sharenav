@@ -56,6 +56,15 @@ public class LayoutManager {
 		}
 	}
 	
+	public void recalcPositions() {
+		for (int i=0; i<ele.length; i++){
+			//#debug debug
+			logger.trace("calc positions for element " + i);
+			ele[i].calcPosition();
+		}
+		recalcPositionsRequired = false;
+	}
+	
 	/**
 	 * paints the LayoutElements
 	 */
@@ -71,13 +80,9 @@ public class LayoutManager {
 		}
 		
 		if (recalcPositionsRequired) {
-			for (int i=0; i<ele.length; i++){
-				//#debug debug
-				logger.trace("calc positions for element " + i);
-				ele[i].calcPosition();
-			}
-			recalcPositionsRequired = false;
+			recalcPositions();
 		}
+		
 		int oldColor = g.getColor();
 		Font oldFont = g.getFont();
 		for (int i=0; i<ele.length; i++){
@@ -88,5 +93,19 @@ public class LayoutManager {
 		g.setFont(oldFont);
 		g.setColor(oldColor);
 	}				
+	
+	
+	protected void drawSpecialElement(Graphics g, byte id, int left, int top) {
+		System.out.println("drawSpecialElement not overridden!");
+	}
+	
+	protected int getSpecialElementWidth(byte id) {
+		System.out.println("getSpecialElementWidth not overridden!");
+		return 0;
+	}
+	protected int getSpecialElementHeight(byte id, int fontHeight) {
+		System.out.println("getSpecialElementHeight not overridden!");
+		return 0;
+	}
 	
 }

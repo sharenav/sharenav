@@ -29,35 +29,40 @@ public class LayoutElement {
 	public static final int FLAG_VALIGN_BOTTOM = (1<<5);
 	/** center element between minY and maxY of the LayoutManager area */
 	public static final int FLAG_VALIGN_CENTER = (1<<6);
-	/** position element above the other element that has to be set with setRelative() */
+	/** position element above the other element that has to be set with setVRelative() */
 	public static final int FLAG_VALIGN_ABOVE_RELATIVE = (1<<7);
-	/** position element below the other element that has to be set with setRelative() */
+	/** position element below the other element that has to be set with setVRelative() */
 	public static final int FLAG_VALIGN_BELOW_RELATIVE = (1<<8);
+	/** position element left to the other element that has to be set with setHRelative() */
+	public static final int FLAG_HALIGN_LEFTTO_RELATIVE = (1<<9);
+	/** position element right to the other element that has to be set with setHRelative() */
+	public static final int FLAG_HALIGN_RIGHTTO_RELATIVE = (1<<10);
 	/** when this element becomes a relative reserve space for this element even if text is empty */
-	public static final int FLAG_RESERVE_SPACE = (1<<9);
+	public static final int FLAG_RESERVE_SPACE = (1<<11);
 	
 	/** draw a border as background */
-	public static final int FLAG_BACKGROUND_BORDER = (1<<10);
+	public static final int FLAG_BACKGROUND_BORDER = (1<<12);
 	/** draw a box below as background */
-	public static final int FLAG_BACKGROUND_BOX = (1<<11);
+	public static final int FLAG_BACKGROUND_BOX = (1<<13);
 	/** make the background as wide as the LayoutManager area */
-	public static final int FLAG_BACKGROUND_FULL_WIDTH = (1<<12);
+	public static final int FLAG_BACKGROUND_FULL_WIDTH = (1<<14);
 	/** make the background as wide as a percentage of the LayoutManager area.
 		Specify with setWidthPercent();
 	*/
-	public static final int FLAG_BACKGROUND_SCREENPERCENT_WIDTH = (1<<13);
+	public static final int FLAG_BACKGROUND_SCREENPERCENT_WIDTH = (1<<15);
 
-	public static final int FLAG_FONT_SMALL = (1<<14);
-	public static final int FLAG_FONT_MEDIUM = (1<<15);
-	public static final int FLAG_FONT_LARGE = (1<<16);
-	public static final int FLAG_FONT_BOLD = (1<<17);
+	public static final int FLAG_FONT_SMALL = (1<<16);
+	public static final int FLAG_FONT_MEDIUM = (1<<17);
+	public static final int FLAG_FONT_LARGE = (1<<18);
+	public static final int FLAG_FONT_BOLD = (1<<19);
 
 	
 	protected LayoutManager lm = null;
 	private int flags = 0;
 	
-	private LayoutElement relativeTo = null;
-	protected boolean usedAsRelative = false;
+	private LayoutElement vRelativeTo = null;
+	private LayoutElement hRelativeTo = null;
+	public boolean usedAsRelative = false;
 	protected boolean textIsValid = false;
 	protected boolean oldTextIsValid = false;
 
@@ -84,10 +89,15 @@ public class LayoutElement {
 	private int left = 0;
 	/** additional offset to be added to left and textLeft */
 	private int addOffsX = 0;
+	/** additional offset to be added to top */
+	private int addOffsY = 0;
 	public int top = 0;
 	private int right = 0;
 	private int bottom = 0;
-
+	
+	private byte specialElementID;
+	
+	
 	public LayoutElement(LayoutManager lm) {
 		this.lm = lm;
 	}
@@ -132,6 +142,12 @@ public class LayoutElement {
 			//#debug debug
 			logger.debug("percent width " + width); 
 		}
+
+		if (specialElementID != 0) {			
+			width = lm.getSpecialElementWidth(specialElementID);
+			height = lm.getSpecialElementHeight(specialElementID, fontHeight);
+		}
+
 		
 		//#debug debug
 		logger.debug("width:" + width); 
@@ -150,6 +166,18 @@ public class LayoutElement {
 		} else if ( (flags & FLAG_HALIGN_CENTER) > 0 ) {
 			textLeft = lm.minX + ( lm.maxX - lm.minX - textWidth ) / 2;
 			left = lm.minX + ( lm.maxX - lm.minX - width ) / 2;
+		} else if ( (flags & FLAG_HALIGN_LEFTTO_RELATIVE) > 0 ) {
+			if ( vRelativeTo.textIsValid || (vRelativeTo.flags & FLAG_RESERVE_SPACE) > 0 ) {
+				left = hRelativeTo.right;
+			} else {
+				left = hRelativeTo.left;
+			}
+		} else if ( (flags & FLAG_HALIGN_RIGHTTO_RELATIVE) > 0 ) {
+			if ( hRelativeTo.textIsValid || (hRelativeTo.flags & FLAG_RESERVE_SPACE) > 0 ) {
+				left = hRelativeTo.right + width;
+			} else {
+				left = hRelativeTo.right;
+			}
 		}
 		
 		left += addOffsX;
@@ -168,21 +196,21 @@ public class LayoutElement {
 			top = lm.minY + (lm.maxY - lm.minY - height) / 2;
 		} else if ( (flags & FLAG_VALIGN_TOP_SCREENHEIGHT_PERCENT) > 0 ) {
 			top = lm.minY + ((lm.maxY - lm.minY) * topPercent) / 100;;
-		}
-		
-		if ( (flags & FLAG_VALIGN_BELOW_RELATIVE) > 0 ) {
-			if ( relativeTo.textIsValid || (relativeTo.flags & FLAG_RESERVE_SPACE) > 0 ) {
-				top = relativeTo.bottom;
+		} else if ( (flags & FLAG_VALIGN_BELOW_RELATIVE) > 0 ) {
+			if ( vRelativeTo.textIsValid || (vRelativeTo.flags & FLAG_RESERVE_SPACE) > 0 ) {
+				top = vRelativeTo.bottom;
 			} else {
-				top = relativeTo.top;
+				top = vRelativeTo.top;
 			}
 		} else if ( (flags & FLAG_VALIGN_ABOVE_RELATIVE) > 0 ) {
-			if ( relativeTo.textIsValid || (relativeTo.flags & FLAG_RESERVE_SPACE) > 0 ) {
-				top = relativeTo.top - height;
+			if ( vRelativeTo.textIsValid || (vRelativeTo.flags & FLAG_RESERVE_SPACE) > 0 ) {
+				top = vRelativeTo.top - height;
 			} else {
-				top = relativeTo.top;
+				top = vRelativeTo.top;
 			}
 		}
+		
+		top += addOffsY;
 		bottom = top + height;
 	}
 		
@@ -200,15 +228,28 @@ public class LayoutElement {
 	
 	
 	/**
-		Set position relative to this relative element's position and size
+		Set vertical relative to this relative element's position and height
 		combine with FLAG_VALIGN_ABOVE_RELATIVE or FLAG_VALIGN_BELOW_RELATIVE for the relative direction
 	*/
-	public void setRelative(int eleID) {
-		relativeTo = lm.ele[eleID];
-		relativeTo.usedAsRelative = true;
+	public void setVRelative(int eleID) {
+		vRelativeTo = lm.ele[eleID];
+		vRelativeTo.usedAsRelative = true;
 		lm.recalcPositionsRequired = true;
-		if (relativeTo.flags == 0) {
-			logger.error("Warning: Tried to use uninitialiesed element " + eleID + " as relative");
+		if (vRelativeTo.flags == 0) {
+			logger.error("Warning: Tried to use uninitialised element " + eleID + " as vRelative");
+		}
+	}
+
+	/**
+	Set horizontal relative to this relative element's position and width
+	combine with FLAG_VALIGN_LEFTTO_RELATIVE or FLAG_RIGHTTO_RELATIVE for the relative direction
+	*/
+	public void setHRelative(int eleID) {
+		hRelativeTo = lm.ele[eleID];
+		hRelativeTo.usedAsRelative = true;
+		lm.recalcPositionsRequired = true;
+		if (hRelativeTo.flags == 0) {
+			logger.error("Warning: Tried to use uninitialised element " + eleID + " as hRelative");
 		}
 	}
 
@@ -234,6 +275,14 @@ public class LayoutElement {
 		addOffsX = offsX;
 	}
 	
+	public void setAdditionalOffsY(int offsY) {
+		addOffsY = offsY;
+	}
+
+	public void setSpecialElementID(byte id) {
+		specialElementID = id;
+	}
+
 	
 	public String getValidationError() {
 		if (flags == 0) {
@@ -245,8 +294,8 @@ public class LayoutElement {
 		if ( (flags & (FLAG_VALIGN_BOTTOM | FLAG_VALIGN_CENTER | FLAG_VALIGN_TOP | FLAG_VALIGN_TOP_SCREENHEIGHT_PERCENT |FLAG_VALIGN_ABOVE_RELATIVE | FLAG_VALIGN_BELOW_RELATIVE)) == 0) {
 			return "vertical position flag missing";
 		}
-		if (relativeTo == null && (flags & (FLAG_VALIGN_ABOVE_RELATIVE | FLAG_VALIGN_BELOW_RELATIVE)) > 0) {
-			return "relativeTo parameter missing";
+		if (vRelativeTo == null && (flags & (FLAG_VALIGN_ABOVE_RELATIVE | FLAG_VALIGN_BELOW_RELATIVE)) > 0) {
+			return "vRelativeTo parameter missing";
 		}
 		if ( (flags & (FLAG_FONT_SMALL | FLAG_FONT_MEDIUM | FLAG_FONT_LARGE)) == 0) {
 			return "font size missing";
@@ -256,7 +305,10 @@ public class LayoutElement {
 
 	
 	public void paint(Graphics g) {
-		if (numDrawChars > 0 && textIsValid ) {
+		if (specialElementID != 0 && textIsValid) {			
+			g.setFont(font);
+			lm.drawSpecialElement(g, specialElementID, left, top);
+		} else if (numDrawChars > 0 && textIsValid ) {
 			if ( (flags & FLAG_BACKGROUND_BOX) > 0 ) {
 				g.setColor(bgColor);
 				//#debug debug
