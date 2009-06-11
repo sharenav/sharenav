@@ -141,7 +141,7 @@ public class BundleGpsMid {
 			//Drop parser to conserve Memory
 			parser=null;
 			
-			if (!c.getString("useCellID").equalsIgnoreCase("false")) {
+			if (!c.getCellOperator().equalsIgnoreCase("false")) {
 				CellDB cellDB = new CellDB();
 				cellDB.parseCellDB();
 			}

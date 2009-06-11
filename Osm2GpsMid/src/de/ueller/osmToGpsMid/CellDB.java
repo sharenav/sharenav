@@ -17,6 +17,7 @@ package de.ueller.osmToGpsMid;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -60,7 +61,7 @@ public class CellDB {
 		 * file will only contain cells from country code 234 (UK) and operator
 		 * 10 (O2)
 		 */
-		String cellConf = conf.getString("useCellID");
+		String cellConf = conf.getCellOperator();
 		if (!cellConf.equalsIgnoreCase("true")) {
 			String[] cellConfSplit = cellConf.split(",");
 			try {
@@ -92,9 +93,17 @@ public class CellDB {
 				System.out.println("WARNING: could not find cellID file, NOT including cell ids");
 				return;
 			}
-			
-			while (r.ready()) {
-				String line = r.readLine();
+			while (true) {
+				String line = null;
+				try {
+					line = r.readLine();
+					if (line == null) {
+						break;
+					}
+				} catch (EOFException eof) {
+					break;
+				}
+				
 				String[] cellString = line.split(",");
 				if (cellString == null || cellString.length != 12) {
 					System.out.println("Invalid line in cellID file "
@@ -192,6 +201,7 @@ public class CellDB {
 			e.printStackTrace();
 		} catch (IOException e) {
 			System.out.println("WARNING: Could not find CellID file, NOT including cell ids");
+			e.printStackTrace();
 		}
 	}
 

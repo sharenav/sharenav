@@ -60,7 +60,8 @@ public class Configuration {
 		private ResourceBundle vb;
 		private String tmp=null;
 		private String planet;
-		private String cell;
+		private String cellSource;
+		private String cellOperator;
 		private String propFile;
 		private String bundleName;
 		private String midletName;
@@ -133,7 +134,7 @@ public class Configuration {
 					if (arg.startsWith("--cellID=")) {
 						//Filename for a list of GSM cellIDs with their coordinates.
 						//This file can be obtained from http://myapp.fr/cellsIdData/ (OpenCellID.org)
-						cell = arg.substring(9);
+						cellSource = arg.substring(9);
 					}
 					if (arg.startsWith("--help")) {
 						System.err.println("Usage: Osm2GpsMid [--bounds=left,bottom,right,top] [--cellID=filename] planet.osm.bz2 [location]");
@@ -249,6 +250,7 @@ public class Configuration {
 			setStyleFileName(getString("style-file"));
 			appParam = getString("app");
 			enableEditingSupport = getString("EnableEditing").equalsIgnoreCase("true");
+			cellOperator = getString("useCellID");
 			
 		}
 
@@ -428,22 +430,49 @@ public class Configuration {
 		public InputStream getCellStream() throws IOException {
 			InputStream fr = null;
 			
-			System.out.println("Opening cellID file: " + cell);
-			if (cell == null) {
+			System.out.println("Opening cellID file: " + cellSource);
+			if (cellSource == null) {
 				throw new IOException("No file for CellIDs was specified");
 			}
 			
-			fr= new FileInputStream(cell);
-			if (cell.endsWith(".bz2") || cell.endsWith(".gz")){
-				if (cell.endsWith(".bz2")) {
-					fr.read();
-					fr.read();
-					fr = new CBZip2InputStream(fr);
-				} else if (cell.endsWith(".gz")) {
-					fr = new GZIPInputStream(new BufferedInputStream(fr));
+			if (cellSource.startsWith("http://")) {
+				System.out.println("Downloading cellid db from Opencellid.org, may take a while");
+				URL url = new URL(cellSource);
+				HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+				conn.setRequestProperty("User-Agent", "Osm2GpsMid");
+				conn.connect();
+				InputStream cellStream;
+				cellStream = new GZIPInputStream(new BufferedInputStream(conn.getInputStream()));
+				fr = new TeeInputStream(cellStream,new FileOutputStream(new File(getTempDir() + "CellDB.txt")));
+			} else {
+				fr= new FileInputStream(cellSource);
+				if (cellSource.endsWith(".bz2") || cellSource.endsWith(".gz")){
+					if (cellSource.endsWith(".bz2")) {
+						fr.read();
+						fr.read();
+						fr = new CBZip2InputStream(fr);
+					} else if (cellSource.endsWith(".gz")) {
+						fr = new GZIPInputStream(new BufferedInputStream(fr));
+					}
 				}
 			}
 			return fr;
+		}
+		
+		public String getCellOperator() {
+			if (cellOperator != null) {
+				return cellOperator;
+			} else {
+				return getString("useCellID");
+			}
+		}
+		
+		public void setCellOperator(String cellOp) {
+			cellOperator = cellOp;
+		}
+		
+		public void setCellSource(String src) {
+			cellSource = src;
 		}
 
 		public InputStream getCharMapStream() throws IOException{
@@ -628,8 +657,8 @@ public class Configuration {
 			confString += "\t Enable routing: " + useRouting + "\n";
 			confString += "\t used Style-file: " + getStyleFileName() + "\n";
 			confString += "\t Planet source: " + planet + "\n";
-			confString += "\t include CellID data: " + getString("useCellID") + "\n";
-			confString += "\t CellID source: " + cell + "\n";
+			confString += "\t include CellID data: " + getCellOperator() + "\n";
+			confString += "\t CellID source: " + cellSource + "\n";
 			confString += "\t Enable editing support: " + enableEditingSupport + "\n";
 			Bounds[] bounds = getBounds();
 			if (bounds != null) {

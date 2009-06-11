@@ -57,13 +57,20 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	JComboBox jcbPlanet;
 	JComboBox jcbPhone;
 	JComboBox jcbStyle;
-	JCheckBox  jcbRouting;
+	JTextField jtfRouting;
 	JTextField jtfName;
+	JCheckBox jcbEditing;
+	JComboBox jcbCellSource;
 	
 	private static final String XAPI_SRC = "osmXapi";
 	private static final String ROMA_SRC = "ROMA";
 	private static final String FILE_SRC = "load .osm.bz2 File";
+	private static final String CELL_SRC_NONE = "include no Cell IDs";
+	private static final String CELL_SRC_FILE = "load cell ID file";
+	private static final String CELL_SRC_DLOAD = "download cell ID db";
+	private static final String JCB_EDITING = "Enable online OSM editing support";
 	String [] planetFiles = {XAPI_SRC, ROMA_SRC, FILE_SRC};
+	String [] cellidFiles = {CELL_SRC_NONE, CELL_SRC_FILE, CELL_SRC_DLOAD};
 	
 	private static final String LOAD_PROP = "load .properties file";
 	private static final String CUSTOM_PROP = "custom properties";
@@ -97,7 +104,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		map = new JMapViewer();
 		SelectionMapController mapController = new SelectionMapController(map,this);
 		map.setSize(600, 400);
-		gbc.gridwidth = 6;
+		gbc.gridwidth = 9;
 		gbc.weighty = 1;
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.gridx = 0;
@@ -174,13 +181,18 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		gbc.weighty = 0;
 		add(jpOptions, gbc);
 		
-		jcbRouting = new JCheckBox("enable Routing");
-		jcbRouting.addActionListener(this);
-		gbc.fill = GridBagConstraints.HORIZONTAL;
+		JLabel jlRouting = new JLabel("Routing modes:");
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 		gbc.gridwidth = 1;
-		jpOptions.add(jcbRouting, gbc);
+		jpOptions.add(jlRouting, gbc);
+		jtfRouting = new JTextField();
+		jtfRouting.setText("motorcar, bicycle");
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.gridx = 1;
+		gbc.gridy = 0;
+		gbc.gridwidth = 1;
+		jpOptions.add(jtfRouting, gbc);
 		
 		JLabel jlName = new JLabel("Midlet name:");
 		gbc.gridx = 0;
@@ -208,11 +220,34 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		gbc.gridwidth = 1;
 		jpOptions.add(jcbPhone, gbc);
 		
+		JPanel jpOptions2 = new JPanel(new GridBagLayout());
+		gbc.gridx = 6;
+		gbc.gridy = 1;
+		gbc.gridwidth = 3;
+		gbc.weighty = 0;
+		add(jpOptions2, gbc);
+		
+		jcbEditing = new JCheckBox(JCB_EDITING);
+		jcbEditing.addActionListener(this);
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		gbc.weighty = 0;
+		jpOptions2.add(jcbEditing,gbc);
+		
+		jcbCellSource = new JComboBox(cellidFiles);
+		jcbCellSource.addActionListener(this);
+		jcbCellSource.setToolTipText("Select a source of the Cell ID db for cell based location");
+		gbc.gridx = 0;
+		gbc.gridy = 1;
+		gbc.weighty = 0;
+		jpOptions2.add(jcbCellSource,gbc);
+		
+		
 
 		JButton jbOk = new JButton("Create GpsMid midlet");
 		jbOk.setActionCommand("OK-click");
 		jbOk.addActionListener(this);
-		gbc.gridwidth = 2;
+		gbc.gridwidth = 3;
 		gbc.weighty = 0;
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.gridx = 0;
@@ -223,9 +258,9 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		jbCancel.setActionCommand("Cancel-click");
 		jbCancel.addActionListener(this);
 		gbc.fill = GridBagConstraints.BOTH;
-		gbc.gridwidth = 2;
+		gbc.gridwidth = 3;
 		gbc.weighty = 0;
-		gbc.gridx = 2;
+		gbc.gridx = 3;
 		gbc.gridy = 3;
 		add(jbCancel, gbc);
 		
@@ -233,9 +268,9 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		jbHelp.setActionCommand("Help-click");
 		jbHelp.addActionListener(this);
 		gbc.fill = GridBagConstraints.BOTH;
-		gbc.gridwidth = 2;
+		gbc.gridwidth = 3;
 		gbc.weighty = 0;
-		gbc.gridx = 4;
+		gbc.gridx = 6;
 		gbc.gridy = 3;
 		add(jbHelp, gbc);
 
@@ -285,7 +320,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 				jcbStyle.addItem(styleFile);
 			jcbStyle.setSelectedItem(styleFile);
 		}
-		jcbRouting.setSelected(Configuration.attrToBoolean(config.useRouting) >= 0);
+		jtfRouting.setText(config.useRouting);
 		jcbPhone.setSelectedItem(config.getString("app"));
 		jtfName.setText(config.getString("midlet.name"));
 	}
@@ -425,6 +460,34 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		}
 
 	}
+	
+	private void askCellFile() {
+		JFileChooser chooser = new JFileChooser(System.getProperty("user.dir"));
+		FileFilter ff = new FileFilter() {
+			@Override
+			public boolean accept(File f) {
+				if (f.isDirectory()
+						|| f.getAbsolutePath().endsWith(".txt.gz"))
+					return true;
+
+				return false;
+			}
+
+			@Override
+			public String getDescription() {
+				return ".txt.gz files";
+			}
+
+		};
+		chooser.setFileFilter(ff);
+		int returnVal = chooser.showOpenDialog(null);
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			String cellSource = chooser.getSelectedFile().getAbsolutePath();
+			System.out.println("Setting CellID source: " + cellSource);
+			config.setCellSource(cellSource);
+		}
+
+	}
 
 	/*
 	 * Simply do nothing while the the dialog is still open. This is used to
@@ -545,8 +608,13 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			}
 		}
 		
+		if (JCB_EDITING.equalsIgnoreCase(e.getActionCommand())) {
+				config.enableEditingSupport = ((JCheckBox)e.getSource()).isSelected();
+		}
+		
 		//if (e.getSource() == jtfName) {
 			config.setMidletName(jtfName.getText());
+			config.setRouting(jtfRouting.getText());
 		//}
 		if ("comboBoxChanged".equalsIgnoreCase(e.getActionCommand())) {
 			if (e.getSource() == jcbProperties) {
@@ -604,6 +672,19 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			}
 			if (e.getSource() == jcbPhone) {
 				config.setCodeBase((String)jcbPhone.getSelectedItem());
+			}
+			if (e.getSource() == jcbCellSource) {
+				
+				String chosenProperty = (String) jcbCellSource.getSelectedItem();
+				if (CELL_SRC_NONE.equalsIgnoreCase(chosenProperty)) {
+					config.setCellOperator("false");
+				} else if (CELL_SRC_DLOAD.equalsIgnoreCase(chosenProperty)) {
+					config.setCellOperator("true");
+					config.setCellSource("http://myapp.fr/cellsIdData/cells.txt.gz");
+				} else if (CELL_SRC_FILE.equalsIgnoreCase(chosenProperty)) {
+					config.setCellOperator("true");
+					askCellFile();
+				}
 			}
 		}
 
