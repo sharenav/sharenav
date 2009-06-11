@@ -20,41 +20,48 @@ public class LayoutElement {
 	public static final int FLAG_HALIGN_RIGHT = (1<<1);
 	/** center element between minX and maxX of the LayoutManager area */
 	public static final int FLAG_HALIGN_CENTER = (1<<2);
+	/** center element between minX and maxX of the LayoutManager area */
+	public static final int FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND = (1<<3);
 	
 	/** align element at minY of the LayoutManager area */
-	public static final int FLAG_VALIGN_TOP = (1<<3);
+	public static final int FLAG_VALIGN_TOP = (1<<4);
 	/** align element at percentage of  the LayoutManager area height that has to be set with setTopPercent() */
-	public static final int FLAG_VALIGN_TOP_SCREENHEIGHT_PERCENT = (1<<4);
+	public static final int FLAG_VALIGN_TOP_SCREENHEIGHT_PERCENT = (1<<5);
 	/** align element at maxY of the LayoutManager area */
-	public static final int FLAG_VALIGN_BOTTOM = (1<<5);
+	public static final int FLAG_VALIGN_BOTTOM = (1<<6);
 	/** center element between minY and maxY of the LayoutManager area */
-	public static final int FLAG_VALIGN_CENTER = (1<<6);
+	public static final int FLAG_VALIGN_CENTER = (1<<7);
 	/** position element above the other element that has to be set with setVRelative() */
-	public static final int FLAG_VALIGN_ABOVE_RELATIVE = (1<<7);
+	public static final int FLAG_VALIGN_ABOVE_RELATIVE = (1<<8);
 	/** position element below the other element that has to be set with setVRelative() */
-	public static final int FLAG_VALIGN_BELOW_RELATIVE = (1<<8);
+	public static final int FLAG_VALIGN_BELOW_RELATIVE = (1<<9);
+	/** position element on same vertical position as the other element that has to be set with setVRelative() */
+	public static final int FLAG_VALIGN_WITH_RELATIVE = (1<<10);
 	/** position element left to the other element that has to be set with setHRelative() */
-	public static final int FLAG_HALIGN_LEFTTO_RELATIVE = (1<<9);
+	public static final int FLAG_HALIGN_LEFTTO_RELATIVE = (1<<11);
 	/** position element right to the other element that has to be set with setHRelative() */
-	public static final int FLAG_HALIGN_RIGHTTO_RELATIVE = (1<<10);
+	public static final int FLAG_HALIGN_RIGHTTO_RELATIVE = (1<<12);
 	/** when this element becomes a relative reserve space for this element even if text is empty */
-	public static final int FLAG_RESERVE_SPACE = (1<<11);
+	public static final int FLAG_RESERVE_SPACE = (1<<13);
 	
 	/** draw a border as background */
-	public static final int FLAG_BACKGROUND_BORDER = (1<<12);
+	public static final int FLAG_BACKGROUND_BORDER = (1<<14);
 	/** draw a box below as background */
-	public static final int FLAG_BACKGROUND_BOX = (1<<13);
+	public static final int FLAG_BACKGROUND_BOX = (1<<15);
 	/** make the background as wide as the LayoutManager area */
-	public static final int FLAG_BACKGROUND_FULL_WIDTH = (1<<14);
+	public static final int FLAG_BACKGROUND_FULL_WIDTH = (1<<16);
 	/** make the background as wide as a percentage of the LayoutManager area.
 		Specify with setWidthPercent();
 	*/
-	public static final int FLAG_BACKGROUND_SCREENPERCENT_WIDTH = (1<<15);
+	public static final int FLAG_BACKGROUND_SCREENPERCENT_WIDTH = (1<<17);
 
-	public static final int FLAG_FONT_SMALL = (1<<16);
-	public static final int FLAG_FONT_MEDIUM = (1<<17);
-	public static final int FLAG_FONT_LARGE = (1<<18);
-	public static final int FLAG_FONT_BOLD = (1<<19);
+	public static final int FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH = (1<<18);
+	public static final int FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT = (1<<19);
+
+	public static final int FLAG_FONT_SMALL = (1<<20);
+	public static final int FLAG_FONT_MEDIUM = (1<<21);
+	public static final int FLAG_FONT_LARGE = (1<<22);
+	public static final int FLAG_FONT_BOLD = (1<<23);
 
 	
 	protected LayoutManager lm = null;
@@ -66,8 +73,10 @@ public class LayoutElement {
 	protected boolean textIsValid = false;
 	protected boolean oldTextIsValid = false;
 
-	/** make the element width a percentage of the LayoutManager width */
+	/** make the element width a percentage of the LayoutManager width or font height*/
 	private int widthPercent = 100;
+	/** make the element high a percentage of the font height*/
+	private int heightPercent = 100;
 	/** position the element at a percentage of the LayoutManager height */
 	private int topPercent = 100;
 	private Font font = null;
@@ -78,7 +87,7 @@ public class LayoutElement {
 	
 	private int textWidth = 0;
 	/** number of chars fitting (if a width flag is set) */
-	private int numDrawChars = 0;
+	private short numDrawChars = 0;
 	
 	private int width = 0;
 
@@ -91,6 +100,7 @@ public class LayoutElement {
 	private int addOffsX = 0;
 	/** additional offset to be added to top */
 	private int addOffsY = 0;
+	public int textTop = 0;
 	public int top = 0;
 	private int right = 0;
 	private int bottom = 0;
@@ -141,6 +151,8 @@ public class LayoutElement {
 			width = ((lm.maxX - lm.minX) * widthPercent) / 100;
 			//#debug debug
 			logger.debug("percent width " + width); 
+		} else if ( (flags & FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH) > 0 ) {
+			width = (fontHeight * widthPercent) / 100;
 		}
 
 		if (specialElementID != 0) {			
@@ -174,12 +186,21 @@ public class LayoutElement {
 		
 		left += addOffsX;
 		textLeft += addOffsX;
+
+		if ( (flags & FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND) > 0 ) {
+			textLeft = left + (width - textWidth) / 2;
+		}
+		
 		right = left + textWidth;		
 		
-		if ( (flags & FLAG_BACKGROUND_SCREENPERCENT_WIDTH) > 0 ) {
+		if ( (flags & (FLAG_BACKGROUND_SCREENPERCENT_WIDTH | FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH)) > 0 ) {
 			right = left + width;
 		}
 		
+		if ( (flags & FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT) > 0 ) {
+			height = (int) ((float) (fontHeight * heightPercent) / 100);
+		}
+
 		if ( (flags & FLAG_VALIGN_TOP) > 0 ) {
 			top = lm.minY;
 		} else if ( (flags & FLAG_VALIGN_BOTTOM) > 0 ) {
@@ -192,10 +213,17 @@ public class LayoutElement {
 			top = getAboveOrBelowNextVisibleRelative(false);
 		} else if ( (flags & FLAG_VALIGN_ABOVE_RELATIVE) > 0 ) {
 			top = getAboveOrBelowNextVisibleRelative(true);
+		} else if ( (flags & FLAG_VALIGN_WITH_RELATIVE) > 0 ) {
+			top = vRelativeTo.top;
 		}
 		
+		//System.out.println("Height for " + text + ": " + height + "/" + fontHeight);
 		top += addOffsY;
+		textTop = top;
 		bottom = top + height;
+		if ( (flags & FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT) > 0 ) {
+			textTop = top +  (height - fontHeight) / 2;
+		}
 	}
 
 	private int getAboveOrBelowNextVisibleRelative(boolean getAbove) {
@@ -243,7 +271,7 @@ public class LayoutElement {
 		if (! text.equalsIgnoreCase(this.text) ) {
 			this.text = text; 
 			textWidth = font.stringWidth(text);
-			numDrawChars = text.length();
+			numDrawChars = (short) text.length();
 			lm.recalcPositionsRequired = true;
 		}
 		oldTextIsValid = textIsValid;
@@ -281,6 +309,11 @@ public class LayoutElement {
 		lm.recalcPositionsRequired = true;
 	}
 
+	public void setHeightPercent(int p) {
+		heightPercent = p;
+		lm.recalcPositionsRequired = true;
+	}
+
 	public void setTopPercent(int p) {
 		topPercent = p;
 		lm.recalcPositionsRequired = true;
@@ -311,14 +344,17 @@ public class LayoutElement {
 		if (flags == 0) {
 			return "not initialised";
 		}
-		if ( (flags & (FLAG_HALIGN_LEFT | FLAG_HALIGN_CENTER | FLAG_HALIGN_RIGHT)) == 0) {
+		if ( (flags & (FLAG_HALIGN_LEFT | FLAG_HALIGN_CENTER | FLAG_HALIGN_RIGHT | FLAG_HALIGN_LEFTTO_RELATIVE | FLAG_HALIGN_RIGHTTO_RELATIVE)) == 0) {
 			return "horizontal position flag missing";
 		}
-		if ( (flags & (FLAG_VALIGN_BOTTOM | FLAG_VALIGN_CENTER | FLAG_VALIGN_TOP | FLAG_VALIGN_TOP_SCREENHEIGHT_PERCENT |FLAG_VALIGN_ABOVE_RELATIVE | FLAG_VALIGN_BELOW_RELATIVE)) == 0) {
+		if ( (flags & (FLAG_VALIGN_BOTTOM | FLAG_VALIGN_CENTER | FLAG_VALIGN_TOP | FLAG_VALIGN_TOP_SCREENHEIGHT_PERCENT |FLAG_VALIGN_ABOVE_RELATIVE | FLAG_VALIGN_BELOW_RELATIVE | FLAG_VALIGN_WITH_RELATIVE)) == 0) {
 			return "vertical position flag missing";
 		}
 		if (vRelativeTo == null && (flags & (FLAG_VALIGN_ABOVE_RELATIVE | FLAG_VALIGN_BELOW_RELATIVE)) > 0) {
 			return "vRelativeTo parameter missing";
+		}
+		if (hRelativeTo == null && (flags & (FLAG_HALIGN_LEFTTO_RELATIVE | FLAG_HALIGN_RIGHTTO_RELATIVE )) > 0) {
+			return "hRelativeTo parameter missing";
 		}
 		if ( (flags & (FLAG_FONT_SMALL | FLAG_FONT_MEDIUM | FLAG_FONT_LARGE)) == 0) {
 			return "font size missing";
@@ -351,7 +387,7 @@ public class LayoutElement {
 				//#debug debug
 				logger.debug("draw " + text + " at " + textLeft + "," + top );
 				
-				g.drawSubstring(text, 0, numDrawChars, textLeft, top, Graphics.TOP|Graphics.LEFT);
+				g.drawSubstring(text, 0, numDrawChars, textLeft, textTop, Graphics.TOP|Graphics.LEFT);
 			} else {
 				//#debug debug
 				logger.debug("no font for element");			
@@ -360,5 +396,8 @@ public class LayoutElement {
 		oldTextIsValid = textIsValid;
 		textIsValid = false; // text is invalid after drawing until it is set with setText() again
 	}				
-	
+
+	public boolean isInElement(int x, int y) {
+		return (x > left && x < right && y > top && y < bottom);
+	}	
 }

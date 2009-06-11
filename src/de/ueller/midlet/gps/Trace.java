@@ -44,7 +44,6 @@ import de.ueller.gps.tools.HelperRoutines;
 import de.ueller.gps.tools.CustomMenu;
 import de.ueller.gps.tools.LayoutElement;
 import de.ueller.gps.tools.intTree;
-import de.ueller.gps.tools.Shape;
 import de.ueller.gpsMid.mapData.DictReader;
 //#if polish.api.osm-editing
 import de.ueller.gpsMid.GUIosmWayDisplay;
@@ -284,9 +283,6 @@ Runnable , GpsMidDisplayable, CompletionListener {
 	
 	private boolean manualRotationMode = false;
 	
-	private Shape shapeZoomIn = null;
-	private Shape shapeZoomOut = null;
-
 	public Vector locationUpdateListeners;
 	
 	private Trace() throws Exception {
@@ -1462,7 +1458,9 @@ Runnable , GpsMidDisplayable, CompletionListener {
 			setSpeedingSign(maxSpeed);
 			
 			if (hasPointerEvents()) {
-				showZoomButtons(pc);
+				tl.ele[TraceLayout.ZOOM_IN].setText("+");
+				tl.ele[TraceLayout.ZOOM_OUT].setText("-");
+				tl.ele[TraceLayout.RECENTER_GPS].setText("|");
 			}
 
 			e = tl.ele[TraceLayout.TITLEBAR];
@@ -1734,18 +1732,6 @@ Runnable , GpsMidDisplayable, CompletionListener {
 		}
 	}
 
-	public void showZoomButtons(PaintContext pc){
-		if (shapeZoomIn == null) {		
-			shapeZoomIn = new Shape('+');
-			shapeZoomOut = new Shape('-');
-		}		
-		pc.g.setColor(0);
-		pc.g.setStrokeStyle(Graphics.SOLID);
-		shapeZoomIn.drawShape(pc, pc.xSize - 3, pc.ySize / 2);
-		// draw zoom-out control below zoom-in control
-		shapeZoomOut.drawShape(pc, pc.xSize - 3, shapeZoomIn.getMaxY());
-	}
-	
 
 	/**
 	 * Draws the position square, the movement line and the center cross.
@@ -1981,33 +1967,34 @@ Runnable , GpsMidDisplayable, CompletionListener {
 
 	protected void pointerPressed(int x, int y) {
 		pointerDragAction = true;
-		// check for touchable buttons
-		if (shapeZoomIn.isInRectangleAroundPolygon(x, y)) {
-			commandAction(CMDS[ZOOM_IN_CMD], (Displayable) null);
-			repaint();
-			pointerDragAction = false;
-		}
+
 		if (customMenu != null && customMenu.pointerPressed(x, y)) {
 			repaint();
-			pointerDragAction = false;
-			return;
 		}		
-		if (shapeZoomOut.isInRectangleAroundPolygon(x, y)) {
-			commandAction(CMDS[ZOOM_OUT_CMD], (Displayable) null);
-			repaint();
+		if (customMenu != null) {
 			pointerDragAction = false;
-		}		
-		
-		// recenter to GPS by touching the mid of the screen
-		int centerX = getWidth() / 2;
-		int centerY = getHeight() / 2;
-		int maxDist = (getHeight() * 6) / 100; // trigger maximum 6% away from mid screen
-		if (Math.abs(x - centerX) <= maxDist && Math.abs(y - centerY) <= maxDist) {
-			commandAction(CMDS[RECENTER_GPS_CMD], (Displayable) null);
-			repaint();
-			pointerDragAction = false;			
+			return;			
 		}
-
+		
+		// check for touchable buttons
+		switch (tl.getElementIdAtPointer(x, y)) {
+			case TraceLayout.ZOOM_IN:
+				commandAction(CMDS[ZOOM_IN_CMD], (Displayable) null);
+				repaint();
+				pointerDragAction = false;
+				break;
+			case TraceLayout.ZOOM_OUT:
+				commandAction(CMDS[ZOOM_OUT_CMD], (Displayable) null);
+				repaint();
+				pointerDragAction = false;
+				break;
+			case TraceLayout.RECENTER_GPS:
+				commandAction(CMDS[RECENTER_GPS_CMD], (Displayable) null);
+				repaint();
+				pointerDragAction = false;
+				break;
+		}
+		
 		// remember positions for dragging
 		// remember position the pointer was pressed
 		Trace.touchX = x;

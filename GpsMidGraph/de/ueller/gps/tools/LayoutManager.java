@@ -108,4 +108,13 @@ public class LayoutManager {
 		return 0;
 	}
 	
+	public int getElementIdAtPointer(int x, int y) {
+		for (int i=0; i<ele.length; i++){
+			if (ele[i].isInElement(x, y)) {
+				return i;
+			}
+		}
+		return -1;
+	}
+	
 }

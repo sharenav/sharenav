@@ -16,6 +16,7 @@ import de.ueller.midlet.gps.tile.PaintContext;
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 
+
 public class TraceLayout extends LayoutManager {
 	public static final int TITLEBAR = 0;
 	public static final int POINT_OF_COMPASS = 1;
@@ -31,16 +32,16 @@ public class TraceLayout extends LayoutManager {
 	public static final int SCALEBAR = 11;
 	public static final int SPEEDING_SIGN = 12;
 	public static final int SPEED_CURRENT = 13;
-	public static final int ELE_COUNT = 14;
+	public static final int ZOOM_IN = 14;
+	public static final int ZOOM_OUT = 15;
+	public static final int RECENTER_GPS = 16;
+	public static final int ELE_COUNT = 17;
 
 	// special element ids
 	public static final byte SE_SCALEBAR = 1;
 	public static final byte SE_SPEEDING_SIGN = 2;
-	public static final byte SE_ZOOM_IN = 3;
-	public static final byte SE_ZOOM_OUT = 4;
 	
 	public boolean usingVerticalLayout = false;
-	private PaintContext pc = null;
 	
 	// variables for scale bar
 	private int scalePx = 0;
@@ -163,17 +164,52 @@ public class TraceLayout extends LayoutManager {
 				LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |
 				LayoutElement.FLAG_FONT_MEDIUM |
 				LayoutElement.FLAG_BACKGROUND_BOX
-			);
+		);
 		e.setBackgroundColor(C.BACKGROUND_COLOR);
 		e.setVRelative(ROUTE_DISTANCE);		
 		
 		e = ele[SPEEDING_SIGN]; e.init(
 				LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |
 				LayoutElement.FLAG_FONT_LARGE
-			);
+		);
 		e.setSpecialElementID(SE_SPEEDING_SIGN);
 		e.setAdditionalOffsY(-5);
 		e.setVRelative(SPEED_CURRENT);	
+
+		e = ele[RECENTER_GPS]; e.init(
+				LayoutElement.FLAG_HALIGN_RIGHT | LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND | LayoutElement.FLAG_VALIGN_CENTER |
+				LayoutElement.FLAG_FONT_LARGE |
+				LayoutElement.FLAG_BACKGROUND_BORDER |
+				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH | LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT
+		);
+		e.setWidthPercent(50);
+		e.setHeightPercent(300);
+		e.setBackgroundColor(0x00000000);
+		
+		e = ele[ZOOM_IN]; e.init(
+				LayoutElement.FLAG_HALIGN_LEFTTO_RELATIVE  | LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND | LayoutElement.FLAG_VALIGN_WITH_RELATIVE |
+				LayoutElement.FLAG_FONT_LARGE |
+				LayoutElement.FLAG_BACKGROUND_BORDER |
+				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH | LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT
+		);
+		e.setWidthPercent(150);
+		e.setHeightPercent(150);
+		e.setBackgroundColor(0x00000000);
+		e.setHRelative(RECENTER_GPS);
+		e.setVRelative(RECENTER_GPS);	
+		
+		e = ele[ZOOM_OUT]; e.init(
+				LayoutElement.FLAG_HALIGN_LEFTTO_RELATIVE | LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
+				LayoutElement.FLAG_FONT_LARGE |
+				LayoutElement.FLAG_BACKGROUND_BORDER |
+				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH | LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT
+		);
+		e.setWidthPercent(150);
+		e.setHeightPercent(150);
+		e.setHRelative(RECENTER_GPS);
+		e.setVRelative(ZOOM_IN);
+		e.setBackgroundColor(0x00000000);
+		
 	}
 
 	/*
@@ -187,10 +223,11 @@ public class TraceLayout extends LayoutManager {
 	protected void drawSpecialElement(Graphics g, byte id, String text, int left, int top) {
 		switch(id) {
 			case SE_SCALEBAR:
-				showScale(pc, g, left, top);
+				showScale(g, left, top);
 				break;		
 			case SE_SPEEDING_SIGN:
 				showSpeedingSign(g, text, left, top);
+				break;		
 		}
 	}
 	
@@ -203,6 +240,7 @@ public class TraceLayout extends LayoutManager {
 		}
 		return 0;
 	}
+	
 	protected int getSpecialElementHeight(byte id, int fontHeight) {
 		switch(id) {
 			case SE_SCALEBAR:
@@ -214,7 +252,6 @@ public class TraceLayout extends LayoutManager {
 	}
 	
 	
-	
 	/**
 	 * Draws a map scale onto screen.
 	 * This calculation is currently horribly
@@ -223,7 +260,7 @@ public class TraceLayout extends LayoutManager {
 	 * 
 	 * @param pc Paint context for drawing
 	 */
-	public void showScale(PaintContext pc, Graphics g, int left, int top) {
+	public void showScale(Graphics g, int left, int top) {
 		//Draw the scale bar
 		g.setColor(0x00000000);
 		g.setStrokeStyle(Graphics.SOLID);
