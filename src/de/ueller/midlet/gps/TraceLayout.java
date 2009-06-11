@@ -10,6 +10,7 @@ import de.ueller.gps.tools.LayoutManager;
 import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.ProjMath;
+import de.ueller.midlet.gps.tile.C;
 import de.ueller.midlet.gps.tile.PaintContext;
 
 import javax.microedition.lcdui.Font;
@@ -29,7 +30,8 @@ public class TraceLayout extends LayoutManager {
 	public static final int ROUTE_DISTANCE = 10;
 	public static final int SCALEBAR = 11;
 	public static final int SPEEDING_SIGN = 12;
-	public static final int ELE_COUNT = 13;
+	public static final int SPEED_CURRENT = 13;
+	public static final int ELE_COUNT = 14;
 
 	// special element ids
 	public static final byte SE_SCALEBAR = 1;
@@ -158,13 +160,21 @@ public class TraceLayout extends LayoutManager {
 		e.setBackgroundColor(0x00B0B030);
 		e.setVRelative(ROUTE_INSTRUCTION);		
 
+		e = ele[SPEED_CURRENT]; e.init(
+				LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |
+				LayoutElement.FLAG_FONT_MEDIUM |
+				LayoutElement.FLAG_BACKGROUND_BOX
+			);
+		e.setBackgroundColor(C.BACKGROUND_COLOR);
+		e.setVRelative(ROUTE_DISTANCE);		
+		
 		e = ele[SPEEDING_SIGN]; e.init(
 				LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |
-				LayoutElement.FLAG_FONT_MEDIUM
+				LayoutElement.FLAG_FONT_LARGE
 			);
 		e.setSpecialElementID(SE_SPEEDING_SIGN);
 		e.setAdditionalOffsY(-5);
-		e.setVRelative(ROUTE_DISTANCE);		
+		e.setVRelative(SPEED_CURRENT);	
 	}
 
 	/*

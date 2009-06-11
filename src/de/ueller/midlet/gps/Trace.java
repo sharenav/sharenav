@@ -1454,6 +1454,10 @@ Runnable , GpsMidDisplayable, CompletionListener {
 				showTarget(pc);
 			}
 
+			if (speed > 0) {
+				tl.ele[TraceLayout.SPEED_CURRENT].setText(" " + Integer.toString(speed) + " km/h");
+			}
+			
 			setSpeedingSign(maxSpeed);
 			
 			if (hasPointerEvents()) {
@@ -1598,7 +1602,7 @@ Runnable , GpsMidDisplayable, CompletionListener {
 	}
 
 	private void setSpeedingSign(int maxSpeed) {
-		//speeding = true;
+//		speeding = true;
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_SPEEDALERT_VISUAL)
 				&& (
 					speeding
