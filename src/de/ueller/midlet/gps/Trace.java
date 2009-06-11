@@ -1264,7 +1264,7 @@ Runnable , GpsMidDisplayable, CompletionListener {
 		this.audioRec = new AudioRecorder();
 		setDict(gpx, (byte)5);
 		startImageCollector();
-		this.tl = new TraceLayout(pc, 0, 0, getWidth(), getHeight());
+		this.tl = new TraceLayout(0, 0, getWidth(), getHeight());
 	}
 
 	public void shutdown() {
@@ -1307,7 +1307,7 @@ Runnable , GpsMidDisplayable, CompletionListener {
 			updatePosition();
 		}
 
-		tl = new TraceLayout(pc, 0, 0, w, h);
+		tl = new TraceLayout(0, 0, w, h);
 	}
 
 
@@ -1406,6 +1406,7 @@ Runnable , GpsMidDisplayable, CompletionListener {
 			default:
 				showAddons = 0;
 				if (Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_SCALE_BAR)) {
+					tl.calcScaleBarWidth(pc);
 					tl.ele[TraceLayout.SCALEBAR].setText(" ");
 				}
 

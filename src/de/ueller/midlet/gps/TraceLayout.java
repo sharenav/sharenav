@@ -52,10 +52,9 @@ public class TraceLayout extends LayoutManager {
 	private int speedingSignWidth = 0;
 	private String sOldSpeed = "";
 	
-	public TraceLayout(PaintContext pc, int minX, int minY, int maxX, int maxY) {
+	public TraceLayout(int minX, int minY, int maxX, int maxY) {
 		super(ELE_COUNT, minX, minY, maxX, maxY);
 		
-		this.pc = pc;
 		if ( maxX - minX < (maxY - minY) * 2 ) {
 			createHorizontalLayout();
 			usingVerticalLayout = false;
@@ -198,7 +197,7 @@ public class TraceLayout extends LayoutManager {
 	protected int getSpecialElementWidth(byte id, String text, Font font) {
 		switch(id) {
 		case SE_SCALEBAR:
-			return getScaleBarWidth(); 
+			return scalePx;
 		case SE_SPEEDING_SIGN:
 			return getSpeedingSignWidth(font, text); 
 		}
@@ -241,7 +240,7 @@ public class TraceLayout extends LayoutManager {
 		
 	}
 	
-	private int getScaleBarWidth() {
+	public void calcScaleBarWidth(PaintContext pc) {
 		Node n1 = new Node();
 		Node n2 = new Node();
 		
@@ -266,7 +265,6 @@ public class TraceLayout extends LayoutManager {
 		//The scale/d factor should be between 1 and 2.5
 		//due to rounding
 		scalePx = (int)(((float)basePx)*scale/d);
-		return scalePx;
 	}
 	
 	
