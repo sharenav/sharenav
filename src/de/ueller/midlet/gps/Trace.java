@@ -42,6 +42,7 @@ import de.ueller.gps.nmea.NmeaInput;
 import de.ueller.gps.sirf.SirfInput;
 import de.ueller.gps.tools.HelperRoutines;
 import de.ueller.gps.tools.CustomMenu;
+import de.ueller.gps.tools.LayoutElement;
 import de.ueller.gps.tools.intTree;
 import de.ueller.gps.tools.Shape;
 import de.ueller.gpsMid.mapData.DictReader;
@@ -166,6 +167,8 @@ Runnable , GpsMidDisplayable, CompletionListener {
 //	Projection projection;
 
 	private final GpsMid parent;
+	
+	public static TraceLayout tl = null; 
 
 	private String lastTitleMsg;
 	private String currentTitleMsg;
@@ -189,9 +192,6 @@ Runnable , GpsMidDisplayable, CompletionListener {
 	public float scale = 15000f;
 	
 	int showAddons = 0;
-	private int fontHeight = 0;
-	private int compassRectHeight = 0;
-	
 	
 	/** x position display was touched last time */
 	private static int touchX = 0;
@@ -295,6 +295,7 @@ Runnable , GpsMidDisplayable, CompletionListener {
 		logger.info("init Trace");
 
 		this.parent = GpsMid.getInstance();
+		this.tl = new TraceLayout(0,0, getWidth(), getHeight());
 		
 		CMDS[EXIT_CMD] = new Command("Back", Command.BACK, 2);
 		CMDS[REFRESH_CMD] = new Command("Refresh", Command.ITEM, 4);
@@ -1292,6 +1293,8 @@ Runnable , GpsMidDisplayable, CompletionListener {
 	}
 	
 	protected void sizeChanged(int w, int h) {
+		tl = new TraceLayout(0, 0, w, h);
+		
 		if (imageCollector != null){
 			logger.info("Size of Canvas changed to " + w + "|" + h);
 			stopImageCollector();
@@ -1346,14 +1349,12 @@ Runnable , GpsMidDisplayable, CompletionListener {
 						 &&
 						 Math.abs(pc.lineP2.y - pc.ySize/2) < maxAllowedMapMoveOffs
 					) {
-						int yPos=pc.ySize;
-						yPos-=imageCollector.statusFontHeight;
 						/*
 						 *  we need to synchronize the route instructions on the informations determined during way painting
 						 *  so we give the route instructions right after drawing the image with the map
 						 *  and use the center of the last drawn image for the route instructions
 						 */
-						ri.showRoute(pc, source, drawnCenter, yPos);
+						ri.showRoute(pc, source, drawnCenter);
 					}
 				}
 			}
@@ -1395,7 +1396,8 @@ Runnable , GpsMidDisplayable, CompletionListener {
 			
 			/*
 			 * the final part of the overlay should not give any voice instructions
-			 */			
+			 */
+			g.setColor(0);
 			switch (showAddons) {
 			case 1:
 				yc = showMemory(g, yc, la);
@@ -1408,58 +1410,46 @@ Runnable , GpsMidDisplayable, CompletionListener {
 				if (Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_SCALE_BAR)) {
 					showScale(pc);				
 				}
-				if (ProjFactory.getProj() == ProjFactory.MOVE_UP
-					&& Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_POINT_OF_COMPASS)
-				) {
-					showPointOfTheCompass(pc);
-				}
+
+				setPointOfTheCompass();
 			}
 			showMovement(g);
-			g.setColor(0);
-			if (fontHeight == 0) {
-				fontHeight = g.getFont().getHeight();
-			}
-			int yText = 1;
-			int rightText = getWidth() - 1;
 
 			// show gpx track recording status
+			LayoutElement eSolution=tl.ele[TraceLayout.SOLUTION];
+			LayoutElement eRecorded=tl.ele[TraceLayout.RECORDED_COUNT];
 			if (locationProducer != null){
-				g.drawString(solution, rightText, yText, Graphics.TOP | Graphics.RIGHT);
+				eSolution.setText(solution);
 				if (gpx.isRecordingTrk()) {
 					// we are recording tracklogs
-					yText += fontHeight;
 					if (gpx.isRecordingTrkSuspended()) {
-						g.setColor(0x000000FF); // blue
+						eRecorded.setColor(0x000000FF); // blue
 					} else {
-						g.setColor(0x00FF0000); // red
+						eRecorded.setColor(0x00FF0000); // red
 					}
-					g.drawString(gpx.recorded + "r", rightText, yText, 
-							Graphics.TOP | Graphics.RIGHT);
-					g.setColor(0);
+					eRecorded.setText(gpx.recorded + "r"); 
 				}
 			} else {
-				g.drawString("Off", rightText, yText, Graphics.TOP | Graphics.RIGHT);				
+				eSolution.setText("Off");
 			}
 
+			LayoutElement e = tl.ele[TraceLayout.CELLID];
 			// show if we are logging cellIDs 
 			if (SECellLocLogger.isCellIDLogging() > 0) {
-				yText += fontHeight;
 				if (SECellLocLogger.isCellIDLogging() == 2) {
-					g.setColor(0x00FFFF96); // yellow
+					e.setColor(0x00FFFF96); // yellow
 				} else {
 					//Attempting to log, but currently no valid info available
-					g.setColor(0x00FF5656); // red
+					e.setColor(0x00FF5656); // red
 				}
-				g.drawString("cellIDs", rightText, yText, Graphics.TOP | Graphics.RIGHT);				
-				g.setColor(0);
+				e.setText("cellIDs");
 			}
 
 			// show audio recording status
+			e = tl.ele[TraceLayout.AUDIOREC];
 			if (audioRec.isRecording()) {
-				yText += fontHeight;
-				g.setColor(0x00FF0000); // red 
-				g.drawString("AudioRec", rightText, yText, Graphics.TOP | Graphics.RIGHT);				
-				g.setColor(0);
+				e.setColor(0x00FF0000); // red 
+				e.setText("AudioRec");				
 			}
 			
 			if (pc != null){
@@ -1472,21 +1462,10 @@ Runnable , GpsMidDisplayable, CompletionListener {
 				showZoomButtons(pc);
 			}
 
+			e = tl.ele[TraceLayout.TITLEBAR];
 			if (currentTitleMsgOpenCount != 0) {
-				if (compassRectHeight == 0) {
-					compassRectHeight = g.getFont().getHeight()-2;
-				}
-				g.setColor(255,255,255);
-				g.fillRect(0,0, getWidth(), compassRectHeight + 2);
-				g.setColor(0,0,0);
-				if (g.getFont().stringWidth(currentTitleMsg) < getWidth()) {
-					g.drawString(currentTitleMsg, 
-							getWidth()/2, 0, Graphics.TOP|Graphics.HCENTER);
-				} else {
-					g.drawString(currentTitleMsg, 
-							0, 0, Graphics.TOP|Graphics.LEFT);					
-				}
-				
+				e.setText(currentTitleMsg); 
+
 				// setTitleMsgTimeOut can be changed in receiveMessage()
 				synchronized (this) {
 					if (setTitleMsgTimeout != 0) {
@@ -1508,6 +1487,8 @@ Runnable , GpsMidDisplayable, CompletionListener {
 					}
 				}
 			}
+			
+			tl.paint(g);
 			
 			if (customMenu != null) {
 				customMenu.paint(g);
@@ -1640,7 +1621,7 @@ Runnable , GpsMidDisplayable, CompletionListener {
 			int h0 = speedingFont.getHeight();
 			w += w0 * 4;
 			g.setColor(0x00FF0000);
-			int yPos = pc.ySize - w - (h0 / 2) - imageCollector.statusFontHeight - RouteInstructions.routeInstructionsHeight;
+			int yPos = tl.ele[TraceLayout.ROUTE_DISTANCE].top - w - (h0 / 2);
 			g.fillArc(0, yPos, w, w, 0, 360);
 			g.setColor(0x00FFFFFF);
 			g.fillArc(w0, yPos + w0, w - (w0 * 2), w - (w0 * 2), 0, 360);
@@ -1707,17 +1688,13 @@ Runnable , GpsMidDisplayable, CompletionListener {
 		pm.setEntity(w, pc.currentPos.nodeLat, pc.currentPos.nodeLon);
 	}
 	
-	private void showPointOfTheCompass(PaintContext pc) {
-		if (compassRectHeight == 0) {
-			compassRectHeight = pc.g.getFont().getHeight()-2;
+	private void setPointOfTheCompass() {
+		String c = "";
+		if (ProjFactory.getProj() == ProjFactory.MOVE_UP
+				&& Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_POINT_OF_COMPASS)) {
+			c = Configuration.getCompassDirection(course);
 		}
-		String c = Configuration.getCompassDirection(course);
-		int compassRectWidth = pc.g.getFont().stringWidth(c);
-		pc.g.setColor(255, 255, 150); 
-		pc.g.fillRect(getWidth()/2 - compassRectWidth / 2 , 0,
-					  compassRectWidth, compassRectHeight);
-		pc.g.setColor(0, 0, 0); 
-		pc.g.drawString(c, getWidth()/2,  0 , Graphics.HCENTER | Graphics.TOP);
+		tl.ele[TraceLayout.POINT_OF_COMPASS].setText(c);
 	}
 	
 	private int showConnectStatistics(Graphics g, int yc, int la) {

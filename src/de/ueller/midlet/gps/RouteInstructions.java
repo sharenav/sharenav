@@ -14,6 +14,7 @@ import javax.microedition.lcdui.Graphics;
 
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.tools.ImageTools;
+import de.ueller.gps.tools.LayoutElement;
 import de.ueller.gpsMid.mapData.Tile;
 import de.ueller.midlet.gps.data.IntPoint;
 import de.ueller.midlet.gps.data.MoreMath;
@@ -289,7 +290,7 @@ public class RouteInstructions {
 
 	
 
-	public void showRoute(PaintContext pc, PositionMark source, Node center, int textYPos) {
+	public void showRoute(PaintContext pc, PositionMark source, Node center) {
 		/*	PASSINGDISTANCE is the distance when a routing arrow
 			is considered to match to the current position.
 			We currently can't adjust this value according to the speed
@@ -684,7 +685,7 @@ public class RouteInstructions {
 					}
 					routeRecalculationRequired = isOffRoute(route, center);
 					if (trace.atTarget || (aNow == RI_TARGET_REACHED && intDistNow < PASSINGDISTANCE)) {
-						routeInstructionColor = 0x00808000;
+						routeInstructionColor = 0x00B0B030;
 					} else if ( routeRecalculationRequired && trace.gpsRecenter) {
 						//#debug debug
 						logger.debug("off route detected");												
@@ -730,49 +731,20 @@ public class RouteInstructions {
 			logger.debug("complete route instruction: " + sbRouteInstruction.toString() + " (" + soundToPlay.toString() + ")");													
 			
 			// Route instruction text output
+			LayoutElement e = Trace.tl.ele[TraceLayout.ROUTE_INSTRUCTION];
 			if (sbRouteInstruction.length() != 0) {
-				Font originalFont = pc.g.getFont();
-				if (routeFontHeight == 0) {
-					routeFont=Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_MEDIUM);
-					routeFontHeight=routeFont.getHeight();
-				}
-				pc.g.setFont(routeFont);
-				pc.g.setColor(routeInstructionColor);
-				
-				// if we got a name for next street, we need extra height
+				e.setBackgroundColor(routeInstructionColor);				
+				e.setText(sbRouteInstruction.toString());
+
+				e = Trace.tl.ele[TraceLayout.ROUTE_INTO];
+				e.setBackgroundColor(routeInstructionColor);				
 				if (nameNow != null) {
-					routeInstructionsHeight = routeFontHeight * 2;
-				} else {
-					routeInstructionsHeight = routeFontHeight;
-				}
-				pc.g.fillRect(0,textYPos-routeInstructionsHeight, pc.xSize, routeInstructionsHeight);
-				pc.g.setColor(0,0,0);				
-				pc.g.drawString(sbRouteInstruction.toString(),
-						pc.xSize/2,
-						textYPos - routeInstructionsHeight,
-						Graphics.HCENTER | Graphics.TOP
-				);
-				if (nameNow != null)
-					pc.g.drawString("into " + nameNow,
-							pc.xSize/2,
-							textYPos - routeFontHeight,
-							Graphics.HCENTER | Graphics.TOP
-				);				
-								
-				pc.g.drawString("off:" + (dstToRoutePath == Integer.MAX_VALUE ? "???" : "" + dstToRoutePath) + "m",
-						pc.xSize,
-						textYPos - routeInstructionsHeight,
-						Graphics.RIGHT | Graphics.BOTTOM
-				);
-
-				pc.g.drawString("d:" + (int) remainingDistance + "m",
-						0,
-						textYPos - routeInstructionsHeight,
-						Graphics.LEFT | Graphics.BOTTOM
-				);
-
-				
-				pc.g.setFont(originalFont);
+					e.setText("into " + nameNow);
+				}				
+				e = Trace.tl.ele[TraceLayout.ROUTE_OFFROUTE];
+				e.setText("off:" + (dstToRoutePath == Integer.MAX_VALUE ? "???" : "" + dstToRoutePath) + "m");
+				e = Trace.tl.ele[TraceLayout.ROUTE_DISTANCE];
+				e.setText("dst:" + (int) remainingDistance + "m");
 			}
 			// Route instruction sound output
 			if (soundToPlay.length()!=0 && Configuration.getCfgBitState(Configuration.CFGBIT_SND_ROUTINGINSTRUCTIONS)) {

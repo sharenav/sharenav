@@ -4,6 +4,7 @@ import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
 import de.ueller.gps.data.Configuration;
+import de.ueller.gps.tools.LayoutElement;
 import de.ueller.gpsMid.mapData.Tile;
 import de.ueller.midlet.gps.data.IntPoint;
 import de.ueller.midlet.gps.data.MoreMath;
@@ -57,7 +58,6 @@ public class ImageCollector implements Runnable {
 	private volatile boolean needRedraw=false;
 	public static volatile int createImageCount=0;
 	private final Trace tr;
-	public int statusFontHeight=0;
 	
 	public ImageCollector(Tile[] t,int x,int y,Trace tr, Images i, C c) {
 		super();
@@ -403,22 +403,18 @@ public class ImageCollector implements Runnable {
 		if (paintPC.actualRoutableWay != null){
 			tr.source=paintPC.currentPos;
 		}
-		if(statusFontHeight==0) {
-			statusFontHeight=screenPc.g.getFont().getHeight();
-		}
 		boolean showLatLon=Configuration.getCfgBitState(Configuration.CFGBIT_SHOWLATLON);
-		if ( showLatLon || name!=null) {
-			screenPc.g.setColor(255,255,255);
-			screenPc.g.fillRect(0,screenPc.ySize-statusFontHeight, screenPc.xSize, statusFontHeight);
-			screenPc.g.setColor(0,0,0);
-		}
+		
+		LayoutElement e = Trace.tl.ele[TraceLayout.WAYNAME];
 		if (showLatLon) {
-			screenPc.g.drawString("lat: " + Float.toString(paintPC.center.radlat*MoreMath.FAC_RADTODEC),5,screenPc.ySize, Graphics.LEFT | Graphics.BOTTOM);
-			screenPc.g.drawString("lon: " + Float.toString(paintPC.center.radlon*MoreMath.FAC_RADTODEC),screenPc.xSize/2 + 5,screenPc.ySize, Graphics.LEFT | Graphics.BOTTOM);
+			e.setText("lat: " + Float.toString(paintPC.center.radlat*MoreMath.FAC_RADTODEC) +
+					  " lon: " + Float.toString(paintPC.center.radlon*MoreMath.FAC_RADTODEC)
+			);
 		} else {
-			if (name != null){
-				screenPc.g.drawString(name,
-					screenPc.xSize/2, screenPc.ySize, Graphics.BOTTOM|Graphics.HCENTER);
+			if (name != null && name.length() > 0){
+				e.setText(name);
+			} else {
+				e.setText(" "); 
 			}
 		}
 		
