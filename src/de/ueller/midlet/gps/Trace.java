@@ -1981,12 +1981,20 @@ Runnable , GpsMidDisplayable, CompletionListener {
 		logger.debug("Touch button: " + tl.getElementIdAtPointer(x, y) + " x: " + x + " y: " + y);
 		switch (tl.getElementIdAtPointer(x, y)) {
 			case TraceLayout.ZOOM_IN:
-				commandAction(CMDS[ZOOM_IN_CMD], (Displayable) null);
+				if (manualRotationMode) {
+					commandAction(CMDS[PAN_LEFT2_CMD], (Displayable) null);
+				} else {
+					commandAction(CMDS[ZOOM_IN_CMD], (Displayable) null);
+				}
 				repaint();
 				pointerDragAction = false;
 				break;
 			case TraceLayout.ZOOM_OUT:
-				commandAction(CMDS[ZOOM_OUT_CMD], (Displayable) null);
+				if (manualRotationMode) {
+					commandAction(CMDS[PAN_RIGHT2_CMD], (Displayable) null);
+				} else {
+					commandAction(CMDS[ZOOM_OUT_CMD], (Displayable) null);
+				}
 				repaint();
 				pointerDragAction = false;
 				break;
@@ -2001,6 +2009,11 @@ Runnable , GpsMidDisplayable, CompletionListener {
 				break;
 			case TraceLayout.WAYNAME:
 				commandAction(CMDS[ROUTING_TOGGLE_CMD], (Displayable) null);
+				repaint();
+				pointerDragAction = false;
+				break;
+			case TraceLayout.POINT_OF_COMPASS:
+				commandAction(CMDS[MANUAL_ROTATION_MODE_CMD], (Displayable) null);
 				repaint();
 				pointerDragAction = false;
 				break;
