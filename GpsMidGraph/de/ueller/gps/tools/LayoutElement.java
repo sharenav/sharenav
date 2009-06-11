@@ -144,7 +144,7 @@ public class LayoutElement {
 		}
 
 		if (specialElementID != 0) {			
-			width = lm.getSpecialElementWidth(specialElementID);
+			width = lm.getSpecialElementWidth(specialElementID, text, font);
 			height = lm.getSpecialElementHeight(specialElementID, fontHeight);
 		}
 
@@ -167,17 +167,9 @@ public class LayoutElement {
 			textLeft = lm.minX + ( lm.maxX - lm.minX - textWidth ) / 2;
 			left = lm.minX + ( lm.maxX - lm.minX - width ) / 2;
 		} else if ( (flags & FLAG_HALIGN_LEFTTO_RELATIVE) > 0 ) {
-			if ( vRelativeTo.textIsValid || (vRelativeTo.flags & FLAG_RESERVE_SPACE) > 0 ) {
-				left = hRelativeTo.right;
-			} else {
-				left = hRelativeTo.left;
-			}
+			left = getLeftToOrRightToNextVisibleRelative(true);
 		} else if ( (flags & FLAG_HALIGN_RIGHTTO_RELATIVE) > 0 ) {
-			if ( hRelativeTo.textIsValid || (hRelativeTo.flags & FLAG_RESERVE_SPACE) > 0 ) {
-				left = hRelativeTo.right + width;
-			} else {
-				left = hRelativeTo.right;
-			}
+			left = getLeftToOrRightToNextVisibleRelative(false);
 		}
 		
 		left += addOffsX;
@@ -197,23 +189,56 @@ public class LayoutElement {
 		} else if ( (flags & FLAG_VALIGN_TOP_SCREENHEIGHT_PERCENT) > 0 ) {
 			top = lm.minY + ((lm.maxY - lm.minY) * topPercent) / 100;;
 		} else if ( (flags & FLAG_VALIGN_BELOW_RELATIVE) > 0 ) {
-			if ( vRelativeTo.textIsValid || (vRelativeTo.flags & FLAG_RESERVE_SPACE) > 0 ) {
-				top = vRelativeTo.bottom;
-			} else {
-				top = vRelativeTo.top;
-			}
+			top = getAboveOrBelowNextVisibleRelative(false);
 		} else if ( (flags & FLAG_VALIGN_ABOVE_RELATIVE) > 0 ) {
-			if ( vRelativeTo.textIsValid || (vRelativeTo.flags & FLAG_RESERVE_SPACE) > 0 ) {
-				top = vRelativeTo.top - height;
-			} else {
-				top = vRelativeTo.top;
-			}
+			top = getAboveOrBelowNextVisibleRelative(true);
 		}
 		
 		top += addOffsY;
 		bottom = top + height;
 	}
-		
+
+	private int getAboveOrBelowNextVisibleRelative(boolean getAbove) {
+		LayoutElement eRelative = vRelativeTo;
+		int newTop = 0;
+		while (eRelative != null) {
+			if ( eRelative.textIsValid || (eRelative.flags & FLAG_RESERVE_SPACE) > 0 ) {
+				if (getAbove) {
+					newTop = eRelative.top - height;
+				} else {
+					newTop = eRelative.bottom;
+				}
+				break;
+			} else {
+				newTop = eRelative.top;
+			}
+			eRelative = eRelative.vRelativeTo;
+		}
+		return newTop;
+	}
+
+	private int getLeftToOrRightToNextVisibleRelative(boolean getLeft) {
+		LayoutElement eRelative = hRelativeTo;
+		int newLeft = 0;
+		while (eRelative != null) {
+			if ( eRelative.textIsValid || (eRelative.flags & FLAG_RESERVE_SPACE) > 0 ) {
+				if (getLeft) {
+					newLeft = eRelative.left - width;
+				} else {
+					newLeft = eRelative.right;
+				}
+				break;
+			} else {
+				newLeft = eRelative.left;
+			}
+			eRelative = eRelative.hRelativeTo;
+		}
+		return newLeft;
+	}
+
+	
+	
+	
 	public void setText(String text) {
 		if (! text.equalsIgnoreCase(this.text) ) {
 			this.text = text; 
@@ -224,8 +249,6 @@ public class LayoutElement {
 		oldTextIsValid = textIsValid;
 		textIsValid = numDrawChars!=0;
 	}
-	
-	
 	
 	/**
 		Set vertical relative to this relative element's position and height
@@ -307,7 +330,7 @@ public class LayoutElement {
 	public void paint(Graphics g) {
 		if (specialElementID != 0 && textIsValid) {			
 			g.setFont(font);
-			lm.drawSpecialElement(g, specialElementID, left, top);
+			lm.drawSpecialElement(g, specialElementID, text, left, top);
 		} else if (numDrawChars > 0 && textIsValid ) {
 			if ( (flags & FLAG_BACKGROUND_BOX) > 0 ) {
 				g.setColor(bgColor);

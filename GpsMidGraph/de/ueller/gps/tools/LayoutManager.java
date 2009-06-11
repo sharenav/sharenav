@@ -95,11 +95,11 @@ public class LayoutManager {
 	}				
 	
 	
-	protected void drawSpecialElement(Graphics g, byte id, int left, int top) {
+	protected void drawSpecialElement(Graphics g, byte id, String text, int left, int top) {
 		System.out.println("drawSpecialElement not overridden!");
 	}
 	
-	protected int getSpecialElementWidth(byte id) {
+	protected int getSpecialElementWidth(byte id, String text, Font font) {
 		System.out.println("getSpecialElementWidth not overridden!");
 		return 0;
 	}

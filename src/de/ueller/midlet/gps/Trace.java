@@ -244,7 +244,6 @@ Runnable , GpsMidDisplayable, CompletionListener {
 	private volatile boolean speeding = false;
 	private long lastTimeOfSpeedingSound = 0;
 	private long startTimeOfSpeedingSign = 0;
-	private int speedingSpeedLimit = 0;
 	
 	/**
 	 * Current course from GPS in compass degrees, 0..359.  
@@ -1455,7 +1454,7 @@ Runnable , GpsMidDisplayable, CompletionListener {
 				showTarget(pc);
 			}
 
-			showSpeedingSign(g, maxSpeed);
+			setSpeedingSign(maxSpeed);
 			
 			if (hasPointerEvents()) {
 				showZoomButtons(pc);
@@ -1598,40 +1597,21 @@ Runnable , GpsMidDisplayable, CompletionListener {
 		}
 	}
 
-	private void showSpeedingSign(Graphics g, int maxSpeed) {
+	private void setSpeedingSign(int maxSpeed) {
+		//speeding = true;
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_SPEEDALERT_VISUAL)
-			&& (
-				speeding
-				||
-				(System.currentTimeMillis() - startTimeOfSpeedingSign) < 3000
-			)
-		) {
-			if (speeding) {
+				&& (
+					speeding
+					||
+					(System.currentTimeMillis() - startTimeOfSpeedingSign) < 3000
+				)
+			) {
 				startTimeOfSpeedingSign = System.currentTimeMillis();
-				speedingSpeedLimit = maxSpeed;
+
+				tl.ele[TraceLayout.SPEEDING_SIGN].setText(Integer.toString(maxSpeed));
+			} else {
+				startTimeOfSpeedingSign = 0;
 			}
-			
-			String sSpeed = Integer.toString(speedingSpeedLimit);
-			int oldColor = g.getColor();
-			Font oldFont = g.getFont();
-			Font speedingFont = Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_BOLD, Font.SIZE_LARGE);
-			int w = speedingFont.stringWidth(sSpeed);
-			int w0 = speedingFont.charWidth('0');
-			int h0 = speedingFont.getHeight();
-			w += w0 * 4;
-			g.setColor(0x00FF0000);
-			int yPos = tl.ele[TraceLayout.ROUTE_DISTANCE].top - w - (h0 / 2);
-			g.fillArc(0, yPos, w, w, 0, 360);
-			g.setColor(0x00FFFFFF);
-			g.fillArc(w0, yPos + w0, w - (w0 * 2), w - (w0 * 2), 0, 360);
-			g.setColor(0x00000000);
-			g.setFont(speedingFont);
-			g.drawString(sSpeed, w/2, yPos + w/2 - (h0 / 2), Graphics.TOP | Graphics.HCENTER);
-			g.setFont(oldFont);
-			g.setColor(oldColor);
-		} else {
-			startTimeOfSpeedingSign = 0;
-		}
 	}
 
 	/**
