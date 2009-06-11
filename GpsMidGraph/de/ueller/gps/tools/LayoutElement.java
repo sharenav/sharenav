@@ -342,7 +342,8 @@ public class LayoutElement {
 				g.setColor(bgColor);
 				//#debug debug
 				logger.debug("draw border at " + left + "," + top + " size: " + (right-left) + "/" + (bottom - top));
-				g.fillRect(left, top, right-left, bottom - top);
+				g.setStrokeStyle(Graphics.SOLID);
+				g.drawRect(left, top, right-left, bottom - top);
 			}			
 			if (font != null) {
 				g.setColor(fgColor);

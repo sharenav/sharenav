@@ -227,6 +227,7 @@ public class TraceLayout extends LayoutManager {
 	public void showScale(PaintContext pc, Graphics g, int left, int top) {
 		//Draw the scale bar
 		g.setColor(0x00000000);
+		g.setStrokeStyle(Graphics.SOLID);
 		int right = left + scalePx;
 		g.drawLine(left, top + 2, right, top + 2);
 		g.drawLine(left, top + 3, right, top + 3); //double line width
