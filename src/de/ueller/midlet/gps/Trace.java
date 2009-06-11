@@ -1093,7 +1093,11 @@ Runnable , GpsMidDisplayable, CompletionListener {
 			if (c == CMDS[MANUAL_ROTATION_MODE_CMD]) {
 				manualRotationMode = !manualRotationMode;
 				if (manualRotationMode) {
-					alert("Manual Rotation", "Change course with left/right keys", 1250);
+					if (hasPointerEvents()) {
+						alert("Manual Rotation", "Change course with zoom buttons", 1250);
+					} else {
+						alert("Manual Rotation", "Change course with left/right keys", 1250);
+					}
 				} else {
 					alert("Manual Rotation", "Off", 750);
 				}
