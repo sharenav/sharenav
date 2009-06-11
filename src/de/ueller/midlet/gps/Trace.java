@@ -1999,6 +1999,11 @@ Runnable , GpsMidDisplayable, CompletionListener {
 				commandAction(CMDS[MAPFEATURES_CMD], (Displayable) null);
 				pointerDragAction = false;
 				break;
+			case TraceLayout.WAYNAME:
+				commandAction(CMDS[ROUTING_TOGGLE_CMD], (Displayable) null);
+				repaint();
+				pointerDragAction = false;
+				break;
 		}
 		
 		// remember positions for dragging
