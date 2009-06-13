@@ -1607,18 +1607,21 @@ Runnable , GpsMidDisplayable, CompletionListener {
 	private void setSpeedingSign(int maxSpeed) {
 //		speeding = true;
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_SPEEDALERT_VISUAL)
-				&& (
-					speeding
-					||
-					(System.currentTimeMillis() - startTimeOfSpeedingSign) < 3000
-				)
-			) {
+			&&
+			(
+				speeding
+				||
+				(System.currentTimeMillis() - startTimeOfSpeedingSign) < 3000
+			)
+		) {
+			if (speeding) {
 				startTimeOfSpeedingSign = System.currentTimeMillis();
-
-				tl.ele[TraceLayout.SPEEDING_SIGN].setText(Integer.toString(maxSpeed));
-			} else {
-				startTimeOfSpeedingSign = 0;
 			}
+
+			tl.ele[TraceLayout.SPEEDING_SIGN].setText(Integer.toString(maxSpeed));
+		} else {
+			startTimeOfSpeedingSign = 0;
+		}
 	}
 
 	/**
