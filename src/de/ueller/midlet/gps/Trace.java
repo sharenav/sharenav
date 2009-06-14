@@ -243,7 +243,8 @@ Runnable , GpsMidDisplayable, CompletionListener {
 	private volatile boolean speeding = false;
 	private long lastTimeOfSpeedingSound = 0;
 	private long startTimeOfSpeedingSign = 0;
-	
+	private int speedingSpeedLimit = 0;
+
 	/**
 	 * Current course from GPS in compass degrees, 0..359.  
 	 */
@@ -1615,10 +1616,11 @@ Runnable , GpsMidDisplayable, CompletionListener {
 			)
 		) {
 			if (speeding) {
+				speedingSpeedLimit = maxSpeed;
 				startTimeOfSpeedingSign = System.currentTimeMillis();
 			}
 
-			tl.ele[TraceLayout.SPEEDING_SIGN].setText(Integer.toString(maxSpeed));
+			tl.ele[TraceLayout.SPEEDING_SIGN].setText(Integer.toString(speedingSpeedLimit));
 		} else {
 			startTimeOfSpeedingSign = 0;
 		}
