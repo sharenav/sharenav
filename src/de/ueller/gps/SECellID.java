@@ -34,12 +34,16 @@ import javax.microedition.rms.RecordStore;
 
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Position;
+//#if polish.api.online
+import de.ueller.gps.tools.HTTPhelper;
+//#endif
 import de.ueller.gps.tools.StringTokenizer;
 import de.ueller.gps.tools.intTree;
 import de.ueller.midlet.gps.LocationMsgProducer;
 import de.ueller.midlet.gps.LocationMsgReceiver;
 import de.ueller.midlet.gps.LocationMsgReceiverList;
 import de.ueller.midlet.gps.Logger;
+import de.ueller.midlet.gps.UploadListener;
 import de.ueller.midlet.gps.data.CellIdProvider;
 import de.ueller.midlet.gps.data.GSMCell;
 import de.ueller.gps.data.Configuration;
@@ -56,7 +60,7 @@ import de.ueller.gps.data.Configuration;
  * This LocationProvider can only retrieve cell-ids for Sony Ericsson phones
  *
  */
-public class SECellID implements LocationMsgProducer {
+public class SECellID implements LocationMsgProducer, UploadListener {
 	
 	private static final byte CELLDB_LACIDX = 1;
 	private static final byte CELLDB_LACLIST = 2;
@@ -235,6 +239,7 @@ public class SECellID implements LocationMsgProducer {
 	private int dblacidx;
 	
 	private static boolean retrieving;
+	private static boolean retrieved;
 	
 	
 	
@@ -364,7 +369,7 @@ public class SECellID implements LocationMsgProducer {
 	}
 
 	//#if polish.api.online
-	private GSMCell retrieveFromOpenCellId(GSMCell cellLoc) {
+	private synchronized GSMCell retrieveFromOpenCellId(GSMCell cellLoc) {
 		
 		GSMCell loc = null;
 		if (retrieving) {
@@ -372,88 +377,51 @@ public class SECellID implements LocationMsgProducer {
 			return null;
 		}
 		retrieving = true;
+		retrieved = false;
 		
 		/**
 		 * Connect to the Internet and retrieve location information
 		 * for the current cell-id from OpenCellId.org
 		 */
+		String url = "http://www.opencellid.org/cell/get?mcc="
+			+ cellLoc.mcc + "&mnc=" + cellLoc.mnc + "&cellid=" + cellLoc.cellID
+			+ "&lac=" + cellLoc.lac + "&fmt=txt";
+		HTTPhelper http = new HTTPhelper();
+		http.getURL(url, this);
+		
 		try {
-			String url = "http://www.opencellid.org/cell/get?mcc="
-					+ cellLoc.mcc + "&mnc=" + cellLoc.mnc + "&cellid=" + cellLoc.cellID
-					+ "&lac=" + cellLoc.lac + "&fmt=txt";
-			logger.info("HTTP get " + url);
-			HttpConnection connection = (HttpConnection) Connector
-					.open(url);
-			connection.setRequestMethod(HttpConnection.GET);
-			connection.setRequestProperty("Content-Type",
-					"//text plain");
-			connection.setRequestProperty("Connection", "close");
-			// HTTP Response
-			if (connection.getResponseCode() == HttpConnection.HTTP_OK) {
-				String str;
-				InputStream inputstream = connection.openInputStream();
-				int length = (int) connection.getLength();
-				//#debug debug
-				logger.debug("Retrieving String of length: "
-						+ length);
-				if (length != -1) {
-					byte incomingData[] = new byte[length];
-					int idx = 0;
-					while (idx < length) {
-						int readB = inputstream.read(incomingData,
-								idx, length - idx);
-						//#debug trace
-						logger.debug("Read: " + readB + " bytes");
-						idx += readB;
-					}
-					str = new String(incomingData);
-				} else {
-					ByteArrayOutputStream bytestream = new ByteArrayOutputStream();
-					int ch;
-					while ((ch = inputstream.read()) != -1) {
-						bytestream.write(ch);
-					}
-					bytestream.flush();
-					str = new String(bytestream.toByteArray());
-					bytestream.close();
-				}
-				//#debug debug
-				logger.debug("Cell-ID retrieval: " + str);
-				
-				if (str != null) {
-					String[] pos = StringTokenizer.getArray(str,
-							",");
-					float lat = Float.parseFloat(pos[0]);
-					float lon = Float.parseFloat(pos[1]);
-					int accuracy = Integer.parseInt(pos[2]);
-					loc = new GSMCell();
-					loc.cellID = cellLoc.cellID;
-					loc.mcc = cellLoc.mcc;	loc.mnc = cellLoc.mnc;	loc.lac = cellLoc.lac;
-					loc.lat = lat;	loc.lon = lon;
-					if (cellPos == null) {
-						logger.error("Cellpos == null");
-						retrieving = false;
-						return null;
-					}
-					
-				}
-
-			} else {
-				logger.error("Request failed ("
-						+ connection.getResponseCode() + "): "
-						+ connection.getResponseMessage());
-				receiverList.receiveSolution("NoFix");
+			if (!retrieved) {
+				wait();
 			}
-		} catch (SecurityException se) {
-			logger.silentexception(
-					"Do not have permission to retrieve cell-id", se);
-			rp.cancel();
-			close("Cell-id: Not permitted");
-		} catch (Exception e) {
-			rp.cancel();
-			logger.silentexception("Something went wrong while contacting Opencellid.org",e);
-			close("No connection to opencellid.org");
+		} catch (InterruptedException ie) {
+			retrieving = false;
+			return loc;
 		}
+		
+		String str = http.getData();
+		if (str == null) {
+			retrieving = false;
+			return loc;
+		}
+
+		//#debug debug
+		logger.debug("Cell-ID retrieval: " + str);
+				
+		
+		String[] pos = StringTokenizer.getArray(str,",");
+		float lat = Float.parseFloat(pos[0]);
+		float lon = Float.parseFloat(pos[1]);
+		int accuracy = Integer.parseInt(pos[2]);
+		loc = new GSMCell();
+		loc.cellID = cellLoc.cellID;
+		loc.mcc = cellLoc.mcc;	loc.mnc = cellLoc.mnc;	loc.lac = cellLoc.lac;
+		loc.lat = lat;	loc.lon = lon;
+		if (cellPos == null) {
+			logger.error("Cellpos == null");
+			retrieving = false;
+			return null;
+		}
+
 		retrieving = false;
 		return loc;
 	}
@@ -700,6 +668,37 @@ public class SECellID implements LocationMsgProducer {
 
 	public boolean removeLocationMsgReceiver(LocationMsgReceiver receiver) {
 		return receiverList.removeReceiver(receiver);
+	}
+
+	public synchronized void completedUpload(boolean success, String message) {
+		logger.info("Download of cellid completed!");
+		retrieved = true;
+		notifyAll();
+	}
+
+	public void setProgress(String message) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void startProgress(String title) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void updateProgress(String message) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void updateProgressValue(int increment) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void uploadAborted() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
