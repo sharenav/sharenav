@@ -707,7 +707,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 					parent.center.radlon,
 					sr.lat,
 					sr.lon
-			)  * 180 / Math.PI);
+			)  * MoreMath.FAC_RADTODEC);
 			courseToGo %= 360;
 			if (courseToGo < 0) {
 				courseToGo += 360;

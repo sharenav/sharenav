@@ -1752,15 +1752,15 @@ Runnable , GpsMidDisplayable, CompletionListener {
 		int posX, posY;
 		if (!gpsRecenter) {
 			IntPoint p1 = new IntPoint(0, 0);				
-			pc.getP().forward((float)(pos.latitude / 360.0 * 2 * Math.PI), 
-							  (float)(pos.longitude / 360.0 * 2 * Math.PI), p1);
+			pc.getP().forward((pos.latitude * MoreMath.FAC_DECTORAD), 
+							  (pos.longitude * MoreMath.FAC_DECTORAD), p1);
 			posX = p1.getX();
 			posY = p1.getY();		
 		} else {
 			posX = centerX;
 			posY = centerY;
 		}
-		float radc = (float) (course * Math.PI / 180d);
+		float radc = (float) (course * MoreMath.FAC_DECTORAD);
 		int px = posX + (int) (Math.sin(radc) * 20);
 		int py = posY - (int) (Math.cos(radc) * 20);
 		g.drawRect(posX - 2, posY - 2, 4, 4);
