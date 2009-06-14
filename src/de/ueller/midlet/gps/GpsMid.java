@@ -600,11 +600,24 @@ public class GpsMid extends MIDlet implements CommandListener {
 			log.info("New phoneMaxMemory: " + phoneMaxMemory);
 		}
 		if ((freeMem < 30000)
-				|| ((totalMem >= phoneMaxMemory) && ((float) freeMem
-						/ (float) totalMem < 0.10f))) {
-			log.trace("Memory is low, need freeing " + freeMem);
-			return true;
+				|| ((totalMem >= phoneMaxMemory) && (((float) freeMem
+						/ (float) totalMem) < 0.10f))) {
+			//#debug trace
+			log.trace("Memory is low, trying GC");
+			System.gc();
+			freeMem = runt.freeMemory();
+			if ((freeMem < 30000)
+				|| ((totalMem >= phoneMaxMemory) && (((float) freeMem
+						/ (float) totalMem) < 0.10f))) {
+				//#debug trace
+				log.trace("Memory is low, need freeing " + freeMem);
+				return true;
+			}
+			//#debug trace
+			log.trace("Enough memory after GC, no need to cleanup");
+			return false;
 		} else {
+			//#debug trace
 			log.trace("Enough memory, no need to cleanup");
 			return false;
 		}
