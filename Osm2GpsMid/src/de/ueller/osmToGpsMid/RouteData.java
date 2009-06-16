@@ -96,7 +96,7 @@ public class RouteData {
 		int numTurnRestrictions = 0;
 		for (RouteNode n: nodes.values()){
 			TurnRestriction turn = (TurnRestriction) parser.getTurnRestrictionHashMap().get(new Long(n.node.id));
-			if (turn!=null) {
+			while (turn!=null) {
 				Way restrictionFromWay = parser.getWayHashMap().get(turn.fromWayRef);
 				// skip if restrictionFromWay is not in available wayData				
 				if (restrictionFromWay == null) {
@@ -133,6 +133,8 @@ public class RouteData {
 				if (numFromConnections == 1 && numToConnections == 1) {
 					numTurnRestrictions++;
 				}
+				
+				turn = turn.nextTurnRestrictionAtThisNode;
 			}
 		}
 		System.out.println(numTurnRestrictions + " turn restrictions valid");
