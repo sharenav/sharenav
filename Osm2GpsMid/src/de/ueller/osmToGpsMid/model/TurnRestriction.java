@@ -18,11 +18,11 @@ import de.ueller.osmToGpsMid.model.Relation;
 public class TurnRestriction {
 	public long fromWayRef;
 	public long toWayRef;
-	public int viaRouteNodeId;
+	public RouteNode viaRouteNode;
 	public float viaLat;
 	public float viaLon;
-	public int fromRouteNodeId;
-	public int toRouteNodeId;
+	public RouteNode fromRouteNode;
+	public RouteNode toRouteNode;
 	public byte flags = 0;
 	public byte affectedTravelModes = 0x01; // TODO: make configurable for which travel modes the turn restriction applies
 	public String restrictionType; // stored only for debugging
@@ -50,6 +50,10 @@ public class TurnRestriction {
 
 	public String toString(HashMap<Long,Way> wayHashMap) {
 		return restrictionType + " from " + getWayNameFromRefId(wayHashMap, fromWayRef) + " into " + getWayNameFromRefId(wayHashMap, toWayRef);  
+	}
+	
+	public boolean isComplete() {
+		return viaRouteNode!=null && fromRouteNode!=null && toRouteNode!=null;
 	}
 
 	public String getWayNameFromRefId(HashMap<Long,Way> wayHashMap, long wayRef) {

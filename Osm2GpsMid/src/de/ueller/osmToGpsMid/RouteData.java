@@ -108,14 +108,14 @@ public class RouteData {
 					continue;
 				}
 				
-				turn.viaRouteNodeId = n.id;
+				turn.viaRouteNode = n;
 				turn.viaLat = n.node.lat;
 				turn.viaLon = n.node.lon;				
 				//System.out.println(turn.toString(parser.getWayHashMap()));
 				int numFromConnections = 0;
 				for (Connection c:n.connectedFrom) {
 					if (restrictionFromWay.containsNode(c.from.node)) {
-						turn.fromRouteNodeId = c.from.id;
+						turn.fromRouteNode = c.from;
 						numFromConnections++;
 					}
 				}
@@ -125,7 +125,7 @@ public class RouteData {
 				int numToConnections = 0;
 				for (Connection c:n.connected) {
 					if (restrictionToWay.containsNode(c.to.node)) {
-						turn.toRouteNodeId = c.to.id;
+						turn.toRouteNode = c.to;
 						numToConnections++;
 					}
 				}

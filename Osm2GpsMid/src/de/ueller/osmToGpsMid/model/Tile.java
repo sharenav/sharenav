@@ -356,9 +356,11 @@ public class Tile {
 				hasTurnRestriction=false;
 				turnWrite = turnRestrictions.get(n.node.id);
 				while (turnWrite != null) {
-					countTurnRestrictions++;
+					if (turnWrite.isComplete()) {
+						countTurnRestrictions++;
+						hasTurnRestriction=true;
+					}
 					turnWrite = turnWrite.nextTurnRestrictionAtThisNode;
-					hasTurnRestriction=true;
 				}
 				if (hasTurnRestriction) {
 					nds.writeByte(n.connected.size() | 0x80); // write indicator that this route node has turn restrictions attached
@@ -418,11 +420,16 @@ public class Tile {
 			for (RouteNode n : routeNodes){
 				turnWrite = turnRestrictions.get(n.node.id);
 				while (turnWrite != null) {
-					nds.writeInt(turnWrite.viaRouteNodeId);
-					nds.writeInt(turnWrite.fromRouteNodeId);
-					nds.writeInt(turnWrite.toRouteNodeId);
-					nds.writeByte(turnWrite.affectedTravelModes);
-					nds.writeByte(turnWrite.flags);
+					if (turnWrite.isComplete()) {					
+						nds.writeInt(turnWrite.viaRouteNode.id);
+						if (turnWrite.viaRouteNode.id != n.id) {
+							System.out.println("RouteNode ID mismatch for turn restrictions");
+						}
+						nds.writeInt(turnWrite.fromRouteNode.id);
+						nds.writeInt(turnWrite.toRouteNode.id);
+						nds.writeByte(turnWrite.affectedTravelModes);
+						nds.writeByte(turnWrite.flags);
+					}
 					turnWrite = turnWrite.nextTurnRestrictionAtThisNode;
 				}
 			}			
