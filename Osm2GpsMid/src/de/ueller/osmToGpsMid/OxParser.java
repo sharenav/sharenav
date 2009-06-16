@@ -20,6 +20,7 @@ import de.ueller.osmToGpsMid.model.Entity;
 import de.ueller.osmToGpsMid.model.Member;
 import de.ueller.osmToGpsMid.model.Node;
 import de.ueller.osmToGpsMid.model.Relation;
+import de.ueller.osmToGpsMid.model.TurnRestriction;;
 import de.ueller.osmToGpsMid.model.Way;
 
 public class OxParser extends DefaultHandler{
@@ -34,8 +35,9 @@ public class OxParser extends DefaultHandler{
 	private HashMap<Long,Node> nodes = new HashMap<Long,Node>(80000,0.60f);
 	private HashMap<Long,Way> ways = new HashMap<Long,Way>();
 	private HashMap<Long,Relation> relations = new HashMap<Long,Relation>();
+	private HashMap<Long,TurnRestriction> turnRestrictions = new HashMap<Long,TurnRestriction>();
 	private Hashtable<String, String> tagsCache = new Hashtable<String,String>();
-	private int nodeTot,nodeIns,segTot,segIns,wayTot,wayIns,ele, relTot, relPart, relIns;
+	private int nodeTot,nodeIns,segTot,segIns,wayTot,wayIns,ele, relTot, relPart, relIns, turnRestrictionTot;
 	private Bounds[] bounds=null;
 	private Configuration configuration;
 	/**
@@ -264,15 +266,23 @@ public class OxParser extends DefaultHandler{
 			current = null;
 		} else if (qName.equals("relation")) {
 			relTot++;
+			long viaNodeRef = 0;
 			Relation r=(Relation) current;
 			if (r.isValid()) {				
 				if (!r.isPartial()) {
-					relIns++;										
+					relIns++;
+					viaNodeRef = r.getViaNodeRef(); 
 				} else {
 					relPart++;
 				}
-				relations.put(new Long(r.id),r);
-			}
+				if (viaNodeRef != 0) {
+					turnRestrictions.put(new Long(viaNodeRef), new TurnRestriction(r) );
+					turnRestrictionTot++;
+				}
+				else {
+					relations.put(new Long(r.id),r);
+				}
+			}			
 			
 			current=null;
 		}
@@ -323,6 +333,15 @@ public class OxParser extends DefaultHandler{
 	public Collection<Relation> getRelations() {
 		return relations.values();
 	}
+
+	public HashMap<Long,TurnRestriction> getTurnRestrictionHashMap() {
+		return turnRestrictions;
+	}
+
+	public HashMap<Long,Way> getWayHashMap() {
+		return ways;
+	}
+
 	
 	public void removeNode(long id) {
 		nodes.remove(new Long(id));

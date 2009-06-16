@@ -15,7 +15,7 @@ import java.util.LinkedList;
  *
  */
 public class Relation extends Entity {
-	private LinkedList<Member> members=new LinkedList<Member>();
+	protected LinkedList<Member> members=new LinkedList<Member>();
 	private boolean partialMembers = false; //Set if not all members of the realtion are available
 	
 	public Relation(long id) {
@@ -56,7 +56,9 @@ public class Relation extends Entity {
 					for (Member m : members) {
 						switch (m.getRole()) {
 						case Member.ROLE_FROM: {
-							role_from++;
+							if (m.getType() == Member.TYPE_WAY) {
+								role_from++;
+							}
 							break;
 						}
 						case Member.ROLE_VIA: {
@@ -64,7 +66,9 @@ public class Relation extends Entity {
 							break;
 						}
 						case Member.ROLE_TO: {
-							role_to++;
+							if (m.getType() == Member.TYPE_WAY) {
+								role_to++;
+							}
 							break;
 						}
 						}						 
@@ -75,6 +79,16 @@ public class Relation extends Entity {
 					if (role_from > 1) {System.out.println("Too many \"from\" in restriction " + toString());return false;}
 					if (role_via > 1) {System.out.println("Too many \"via\" in restriction " + toString());return false;}
 					if (role_to > 1) {System.out.println("Too many \"to\" in restriction " + toString());return false;}
+
+					String restrictionType = getAttribute("restriction");
+					if (restrictionType == null) {
+						System.out.println("No restriction type given in restriction " + toString());return false;						
+					}
+					restrictionType.toLowerCase();					
+					if (! (restrictionType.startsWith("only_") || restrictionType.startsWith("no_"))) {
+						System.out.println("Neither a no_ nor an only_ restriction " + toString());return false;
+					}
+
 				}
 				return !isPartial();
 			} else {
@@ -85,6 +99,28 @@ public class Relation extends Entity {
 		}
 	}
 
+	
+	public long getViaNodeRef() {
+		long ref = 0;
+		if (members.size() > 0) {
+			String type = getAttribute("type");
+			if (type != null) {
+				if (type.equalsIgnoreCase("restriction")) {
+					for (Member m : members) {
+						if (m.getRole() == Member.ROLE_VIA) {
+							if (m.getType() == Member.TYPE_NODE) {
+								ref = m.getRef();
+							} else {
+								System.out.println("Turn restrictions: Can only handle ROLE_VIA nodes. Restriction: " + toString());
+							}
+						}
+					}
+				}
+			}	
+		}
+		return ref;
+	}
+	
 	public void setPartial() {
 		partialMembers = true;
 	}

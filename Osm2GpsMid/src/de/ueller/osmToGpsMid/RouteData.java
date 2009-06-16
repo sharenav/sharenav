@@ -27,10 +27,12 @@ import java.util.logging.Logger;
 
 import de.ueller.osmToGpsMid.model.Connection;
 import de.ueller.osmToGpsMid.model.Node;
+import de.ueller.osmToGpsMid.model.Relation;
 import de.ueller.osmToGpsMid.model.RouteNode;
 import de.ueller.osmToGpsMid.model.SubPath;
 import de.ueller.osmToGpsMid.model.TravelMode;
 import de.ueller.osmToGpsMid.model.TravelModes;
+import de.ueller.osmToGpsMid.model.TurnRestriction;
 import de.ueller.osmToGpsMid.model.Way;
 
 /**
@@ -85,7 +87,57 @@ public class RouteData {
 			}
 		}
 		createIds();
+		calculateTurnRestrictions();
 	}
+
+	
+	private void calculateTurnRestrictions() {
+		System.out.println("calculating turn restrictions");
+		int numTurnRestrictions = 0;
+		for (RouteNode n: nodes.values()){
+			TurnRestriction turn = (TurnRestriction) parser.getTurnRestrictionHashMap().get(new Long(n.node.id));
+			if (turn!=null) {
+				Way restrictionFromWay = parser.getWayHashMap().get(turn.fromWayRef);
+				// skip if restrictionFromWay is not in available wayData				
+				if (restrictionFromWay == null) {
+					continue;
+				}
+				// skip if restrictionToWay is not in available wayData				
+				Way restrictionToWay = parser.getWayHashMap().get(turn.toWayRef);
+				if (restrictionToWay == null) {
+					continue;
+				}
+				
+				turn.viaRouteNodeId = n.id;
+				//System.out.println(turn.toString(parser.getWayHashMap()));
+				int numFromConnections = 0;
+				for (Connection c:n.connectedFrom) {
+					if (restrictionFromWay.containsNode(c.from.node)) {
+						turn.fromRouteNodeId = c.from.id;
+						numFromConnections++;
+					}
+				}
+				if (numFromConnections != 1) {
+					System.out.println("Warning: " + numFromConnections + " from_connections matched for: " + turn.toString(parser.getWayHashMap()));
+				}
+				int numToConnections = 0;
+				for (Connection c:n.connected) {
+					if (restrictionToWay.containsNode(c.to.node)) {
+						turn.toRouteNodeId = c.to.id;
+						numToConnections++;
+					}
+				}
+				if (numToConnections != 1) {
+					System.out.println("Warning: " + numToConnections + " to_connections matched for: "  + turn.toString(parser.getWayHashMap()));
+				}
+				if (numFromConnections == 1 && numToConnections == 1) {
+					numTurnRestrictions++;
+				}
+			}
+		}
+		System.out.println(numTurnRestrictions + " turn restrictions valid");
+	}
+
 
 	/**
 	 * @param nl
@@ -148,7 +200,8 @@ public class RouteData {
 	 */
 	private void addConnection(RouteNode from, RouteNode to, int dist, Way w, byte bs, byte be) {
 		
-		byte againstDirectionTravelModes = 0;
+		byte againstDirectionTravelModes = 0;		
+		
 		// create an array of routing times with an entry for each travel mode
 		int times[] = new int[TravelModes.travelModeCount];
 		for (int i=0; i<TravelModes.travelModeCount; i++) {

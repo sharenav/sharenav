@@ -509,6 +509,17 @@ public class Way extends Entity implements Comparable<Way>{
 		path.add(n);
 	}
 	
+	public boolean containsNode(Node nSearch) {
+		for (SubPath s:path.getSubPaths()) {
+			for (Node n:s.getNodes()) {
+				if (nSearch.id == n.id) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
 	public void startNextSegment(){
 		if (path == null){
 			path=new Path();
