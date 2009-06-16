@@ -19,6 +19,8 @@ public class TurnRestriction {
 	public long fromWayRef;
 	public long toWayRef;
 	public int viaRouteNodeId;
+	public float viaLat;
+	public float viaLon;
 	public int fromRouteNodeId;
 	public int toRouteNodeId;
 	public byte flags = 0;

@@ -109,6 +109,8 @@ public class RouteData {
 				}
 				
 				turn.viaRouteNodeId = n.id;
+				turn.viaLat = n.node.lat;
+				turn.viaLon = n.node.lon;				
 				//System.out.println(turn.toString(parser.getWayHashMap()));
 				int numFromConnections = 0;
 				for (Connection c:n.connectedFrom) {
