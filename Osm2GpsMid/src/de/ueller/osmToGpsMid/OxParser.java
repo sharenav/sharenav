@@ -276,10 +276,10 @@ public class OxParser extends DefaultHandler{
 					relPart++;
 				}
 				if (viaNodeRef != 0) {
-					TurnRestriction existingTurn = (TurnRestriction) turnRestrictions.get(new Long(viaNodeRef));
-					if (existingTurn == null) {
+					if (! turnRestrictions.containsKey(new Long(viaNodeRef))) {
 						turnRestrictions.put(new Long(viaNodeRef), new TurnRestriction(r) );
 					} else {
+						TurnRestriction existingTurn = (TurnRestriction) turnRestrictions.get(new Long(viaNodeRef));
 						existingTurn.nextTurnRestrictionAtThisNode = new TurnRestriction(r);
 						// System.out.println("Multiple turn restrictions at " + r.toString()); 
 					}
