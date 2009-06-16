@@ -38,6 +38,7 @@ import de.ueller.osmToGpsMid.model.MapName;
 import de.ueller.osmToGpsMid.model.SoundDescription;
 import de.ueller.osmToGpsMid.model.Node;
 import de.ueller.osmToGpsMid.model.POIdescription;
+import de.ueller.osmToGpsMid.model.TurnRestriction;
 import de.ueller.osmToGpsMid.model.WayDescription;
 import de.ueller.osmToGpsMid.model.RouteNode;
 import de.ueller.osmToGpsMid.model.Sequence;
@@ -46,6 +47,7 @@ import de.ueller.osmToGpsMid.model.Tile;
 import de.ueller.osmToGpsMid.model.TravelModes;
 import de.ueller.osmToGpsMid.model.Way;
 import de.ueller.osmToGpsMid.model.name.Names;
+
 
 
 
@@ -509,7 +511,7 @@ public class CreateGpsMidData {
 				Sequence rnSeq=new Sequence();
 				tile[zl].renumberRouteNode(rnSeq);
 				tile[zl].calcHiLo();
-				tile[zl].writeConnections(path);
+				tile[zl].writeConnections(path, parser.getTurnRestrictionHashMap());
 		        tile[zl].type=Tile.TYPE_ROUTECONTAINER;
 			} 
 			Sequence s=new Sequence();
@@ -817,6 +819,8 @@ public class CreateGpsMidData {
 		return nodes;
 	}
 
+	
+	
 	/**
 	 * Create the data-content for a route-tile. Containing a list of nodes and a list
 	 * of connections from each node.
@@ -835,7 +839,6 @@ public class CreateGpsMidData {
 		
 		nds.writeShort(interestNodes.size());		
 		for (Node n : interestNodes) {
-			// FIXME: Removing the call to write RouteNode() delays route calculation start but calculates route correct. Is there a way to optimise it away?
 			writeRouteNode(n,nds,cds);
 				if (n.routeNode != null){
 					t.addRouteNode(n.routeNode);

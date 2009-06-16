@@ -328,13 +328,13 @@ public class Tile {
 	 * @param path
 	 * @throws IOException 
 	 */
-	public void writeConnections(String path) throws IOException {
+	public void writeConnections(String path, HashMap<Long,TurnRestriction> turnRestrictions) throws IOException {
 		if (t1 != null){
-			t1.writeConnections(path);
+			t1.writeConnections(path, turnRestrictions);
 //			System.out.println("resolve T1 with " + idxMin + " to "+ idxMax);
 		}
 		if (t2 != null) {
-			t2.writeConnections(path);
+			t2.writeConnections(path, turnRestrictions);
 //			System.out.println("resolve T2 with " + idxMin + " to "+ idxMax);
 		}
 		if (routeNodes != null){
@@ -395,6 +395,32 @@ public class Tile {
 			 * went wrong with decoding the variable length encoding
 			 */
 			cds.writeInt(0xdeadbeaf);
+
+			// count how many turn restrictions we will write for this tile
+			short count=0;
+			TurnRestriction turnWrite=null;
+			for (RouteNode n : routeNodes){
+				turnWrite = turnRestrictions.get(n.node.id);
+				while (turnWrite != null) {
+					count++;
+					turnWrite = turnWrite.nextTurnRestrictionAtThisNode;
+				}
+			}
+			
+			// attach turn restrictions at the end of the node data
+			nds.writeShort(count);		
+			for (RouteNode n : routeNodes){
+				turnWrite = turnRestrictions.get(n.node.id);
+				while (turnWrite != null) {
+					nds.writeInt(turnWrite.viaRouteNodeId);
+					nds.writeInt(turnWrite.fromRouteNodeId);
+					nds.writeInt(turnWrite.toRouteNodeId);
+					nds.writeByte(turnWrite.affectedTravelModes);
+					nds.writeByte(turnWrite.flags);
+					turnWrite = turnWrite.nextTurnRestrictionAtThisNode;
+				}
+			}			
+			
 			nds.close();
 			cds.close();
 		}
