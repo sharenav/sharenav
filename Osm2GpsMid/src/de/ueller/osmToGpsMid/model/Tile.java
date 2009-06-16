@@ -344,11 +344,28 @@ public class Tile {
 			FileOutputStream fo = new FileOutputStream(path+"/t"+zl+fid+".d");
 			DataOutputStream nds = new DataOutputStream(new BufferedOutputStream(fo));
 			nds.writeShort(routeNodes.size());
+			// count how many turn restrictions we will write for this tile
+			short countTurnRestrictions=0;
+			TurnRestriction turnWrite=null;
+			boolean hasTurnRestriction=false;
 			for (RouteNode n : routeNodes){
 				nds.writeFloat(MyMath.degToRad(n.node.lat));
 				nds.writeFloat(MyMath.degToRad(n.node.lon));
 				//nds.writeInt(cds.size());
-				nds.writeByte(n.connected.size());
+
+				hasTurnRestriction=false;
+				turnWrite = turnRestrictions.get(n.node.id);
+				while (turnWrite != null) {
+					countTurnRestrictions++;
+					turnWrite = turnWrite.nextTurnRestrictionAtThisNode;
+					hasTurnRestriction=true;
+				}
+				if (hasTurnRestriction) {
+					nds.writeByte(n.connected.size() | 0x80); // write indicator that this route node has turn restrictions attached
+				} else {
+					nds.writeByte(n.connected.size());					
+				}
+
 				byte routeNodeWayFlags = 0;
 				for (Connection c : n.connected){
 					routeNodeWayFlags |= c.wayTravelModes;
@@ -395,20 +412,9 @@ public class Tile {
 			 * went wrong with decoding the variable length encoding
 			 */
 			cds.writeInt(0xdeadbeaf);
-
-			// count how many turn restrictions we will write for this tile
-			short count=0;
-			TurnRestriction turnWrite=null;
-			for (RouteNode n : routeNodes){
-				turnWrite = turnRestrictions.get(n.node.id);
-				while (turnWrite != null) {
-					count++;
-					turnWrite = turnWrite.nextTurnRestrictionAtThisNode;
-				}
-			}
 			
 			// attach turn restrictions at the end of the node data
-			nds.writeShort(count);		
+			nds.writeShort(countTurnRestrictions);		
 			for (RouteNode n : routeNodes){
 				turnWrite = turnRestrictions.get(n.node.id);
 				while (turnWrite != null) {
