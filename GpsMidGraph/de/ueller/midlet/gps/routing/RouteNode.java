@@ -14,7 +14,7 @@ public class RouteNode {
 	public float lat;
 	public float lon;
 //	public int conFp;
-	public byte conSize;
+	private byte conSize;
 	public int id;
 //	public short fid;
 	//#debug error
@@ -61,6 +61,20 @@ public class RouteNode {
 //		}
 //		return cons;
 //	}
+	
+	public void setConSize(byte size) {
+		this.conSize=size;
+	}	
+	
+	public byte getConSize() {
+		return (byte) ((int) conSize & 0x7F);
+	}
+	
+	public boolean hasTurnRestrictions() {
+		return (conSize & 0x80) > 0;
+	}
+
+	
 	
 	public String toString(){
 		return "RouteNode(" + id +") RAD:" + lat + "/" + lon + " DEG: " + MoreMath.FAC_RADTODEC * lat + "/" + MoreMath.FAC_RADTODEC * lon + ")"; 

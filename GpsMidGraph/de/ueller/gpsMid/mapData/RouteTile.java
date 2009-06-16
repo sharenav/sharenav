@@ -182,7 +182,7 @@ public class RouteTile extends RouteBaseTile {
 			n.lon=ts.readFloat();
 //			n.conFp=ts.readInt();
 //			ts.readInt();
-			n.conSize=ts.readByte();
+			n.setConSize(ts.readByte());
 //			n.fid=fileId;
 			n.id=i+minId;
 			nodes[i]=n;
@@ -322,8 +322,9 @@ public class RouteTile extends RouteBaseTile {
 		for (int in=0; in<nodes.length;in++){
 			RouteNode n=nodes[in];
 			int conSizeTravelMode=0;
-			Connection[] cons=new Connection[n.conSize];
-			for (int i = 0; i<n.conSize;i++){
+			int conSize=n.getConSize();
+			Connection[] cons=new Connection[conSize];
+			for (int i = 0; i<conSize;i++){
 				Connection c=new Connection();
 				int nodeId = cs.readInt();
 				// fill in TargetNode but only if in the same Tile
@@ -377,14 +378,14 @@ public class RouteTile extends RouteBaseTile {
 			}
 			
 			
-			if (conSizeTravelMode == n.conSize) {
+			if (conSizeTravelMode == conSize) {
 				connections[in]=cons;
 			} else {
 				// if not all connections are uses, copy only the used connections to a new array that will get used
 				// TODO: therefore try to optimise this with a static array for cons
 				Connection[] cons2=new Connection[conSizeTravelMode];
 				int i2=0;
-				for (int i = 0; i<n.conSize;i++){
+				for (int i = 0; i<conSize;i++){
 					if ( (cons[i].travelModes & (1 << currentTravelMode)) != 0) {
 						cons2[i2] = cons[i];
 						i2++;

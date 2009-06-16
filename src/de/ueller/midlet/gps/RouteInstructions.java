@@ -1386,7 +1386,7 @@ public class RouteInstructions {
 				if ( (c.wayRouteFlags & C.ROUTE_FLAG_BEAR_RIGHT) > 0) { 
 					sb.append(" (bear right)");
 				}
-				sb.append(" Cons:" + c.to.conSize + " numRoutableWays: " + c.numToRoutableWays + " startBearing: " + c.startBearing + "/" + c.wayConStartBearing + " endBearing: "+ c.endBearing + "/" + c.wayConEndBearing);
+				sb.append(" Cons:" + c.to.getConSize() + " numRoutableWays: " + c.numToRoutableWays + " startBearing: " + c.startBearing + "/" + c.wayConStartBearing + " endBearing: "+ c.endBearing + "/" + c.wayConEndBearing);
 				System.out.println(sb.toString());
 			}
 		}		

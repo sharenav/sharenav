@@ -453,7 +453,7 @@ public class Routing implements Runnable {
 			
 			routeTo=new RouteNode();
 			routeTo.id=Integer.MAX_VALUE;
-			routeTo.conSize=0;
+			routeTo.setConSize((byte) 0);
 			routeTo.lat=toMark.lat;
 			routeTo.lon=toMark.lon;
 			parent.receiveMessage("create to Connections");
