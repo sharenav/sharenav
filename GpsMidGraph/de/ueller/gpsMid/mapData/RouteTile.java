@@ -14,11 +14,13 @@ import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.routing.Connection;
 import de.ueller.midlet.gps.routing.RouteNode;
 import de.ueller.midlet.gps.routing.RouteTileRet;
+import de.ueller.midlet.gps.routing.TurnRestriction;
 import de.ueller.midlet.gps.tile.PaintContext;
 
 public class RouteTile extends RouteBaseTile {
 
 	RouteNode[] nodes=null;
+	TurnRestriction[] turns=null;
 	Connection[][] connections=null;
 
 	private final static Logger logger=Logger.getInstance(RouteTile.class,Logger.INFO);
@@ -185,9 +187,28 @@ public class RouteTile extends RouteBaseTile {
 			n.id=i+minId;
 			nodes[i]=n;
 		}
+				
+		loadTurnRestrictions(ts);
+		
 		ts.close();
 	}
 	
+	private void loadTurnRestrictions(DataInputStream ts) throws IOException {
+		short count = ts.readShort();
+		turns = new TurnRestriction[count];
+		for (short i = 0; i < count; i++) {
+			TurnRestriction turn = new TurnRestriction();
+			turn.viaRouteNodeId = ts.readInt();
+			turn.fromRouteNodeId = ts.readInt();
+			turn.toRouteNodeId = ts.readInt();
+			turn.affectedTravelModes = ts.readByte();
+			turn.flags = ts.readByte();
+			turns[i] = turn;
+		}
+		if (count > 0) {
+			System.out.println(count + " turn restrictions loaded");
+		}
+	}
 
 	public RouteNode getRouteNode(RouteNode best, float lat, float lon) {
 		if (contain(lat,lon,0.03f)){
