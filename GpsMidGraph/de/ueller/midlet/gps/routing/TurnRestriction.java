@@ -20,13 +20,20 @@ public class TurnRestriction {
 	public byte affectedTravelModes = 0x01; // TODO: make configurable for which travel modes the turn restriction applies
 	public TurnRestriction nextTurnRestrictionAtThisNode = null;
 	
-	public final static byte IS_ONLY_TYPE_RESTRICTION = 1;
+	public final static byte IS_ONLY_TYPE_RESTRICTION = 0x40;
+
+	private static final String[] restrictionNames  =
+	{ "?", "no_left_turn", "no_right_turn", "no_straight_on", "no_u_turn", "only_left_turn", "only_right_turn", "only_straight_on" };
 
 	public TurnRestriction() {
 	}	
 	
 	public boolean isOnlyTypeRestriction() {
 		return (flags & IS_ONLY_TYPE_RESTRICTION) > 0;
+	}
+
+	public String getRestrictionType() {
+		return restrictionNames[flags & 0x7];
 	}
 	
 }

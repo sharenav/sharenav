@@ -145,16 +145,18 @@ public class RouteTile extends RouteBaseTile {
 						}
 					}
 					if (showTurnRestrictions && nodes[i].hasTurnRestrictions()) {
-						pc.g.setColor(255, 0, 0);
+						pc.g.setColor(0xD00000);
 						pc.g.fillRect(pc.swapLineP.x-3, pc.swapLineP.y-2, 7, 7); //Draw node
 						TurnRestriction turnRestriction = getTurnRestrictions(nodes[i].id);
+						pc.g.setColor(0);
+						pc.g.drawString(turnRestriction.getRestrictionType(), pc.swapLineP.x, pc.swapLineP.y, Graphics.TOP | Graphics.HCENTER);
 						while (turnRestriction != null) {
 							RouteNode from = getRouteNode(turnRestriction.fromRouteNodeId);
 							if (from != null) {
 								if (turnRestriction.isOnlyTypeRestriction()) {
 									pc.g.setColor(0x00008000); // dark green
 								} else {
-									pc.g.setColor(0x00FF0000); // dark red						
+									pc.g.setColor(0x00800000); // dark red						
 								}
 								pc.getP().forward(from.lat, from.lon, pc.lineP2);
 								pc.g.drawLine(pc.swapLineP.x, pc.swapLineP.y, pc.lineP2.x, pc.lineP2.y);
