@@ -13,6 +13,7 @@ import de.ueller.midlet.gps.data.Way;
 import de.ueller.midlet.gps.routing.Connection;
 import de.ueller.midlet.gps.routing.RouteNode;
 import de.ueller.midlet.gps.routing.RouteTileRet;
+import de.ueller.midlet.gps.routing.TurnRestriction;
 import de.ueller.midlet.gps.tile.PaintContext;
 
 
@@ -160,6 +161,30 @@ public class RouteContainerTile extends RouteBaseTile {
 		}
 		return ret;
 	}
+	
+	public TurnRestriction getTurnRestrictions(int rnId) {
+		if (minId <= rnId && maxId >= rnId){
+			TurnRestriction turn=null;
+			if (t1 != null){
+				//#debug error
+//				logger.debug("tr: search left for " + id);
+				turn = t1.getTurnRestrictions(rnId);
+			}
+			if (turn==null && t2 != null){
+				//#debug error
+//				logger.debug("tr: search right for " + id);
+				turn = t2.getTurnRestrictions(rnId);
+			}
+			return turn;
+		} else {
+			//#debug error
+//			logger.debug("" + id + " not in tile (tr)");
+		  return null;
+		}
+	}
+	
+	
+	
 	public RouteNode getRouteNode(float lat,float lon,RouteTileRet retTile){
 		RouteNode ret=null;
 		if (contain(lat, lon,0.03f)){

@@ -39,6 +39,7 @@ public class Routing implements Runnable {
 	private int expanded;
 	private RouteNode sourcePathSegNodeDummyRouteNode = new RouteNode();
 	private Connection sourcePathSegNodeDummyConnection = new Connection();
+	private int currentTravelMask = 0;
 	/**
 	 * Dummy ConnectionWithNode at the path segment node of the source way to begin
 	 * This arbitrary position on the way's path will be detected as part of the route line by searchConnection2Ways 
@@ -68,6 +69,7 @@ public class Routing implements Runnable {
 		this.tile = (RouteBaseTile) tile[4];
 		this.tiles = tile;
 		estimateFac = (Configuration.getRouteEstimationFac() / 10f) + 0.8f;
+		currentTravelMask = Configuration.getTravelMask();
 	}
 	
 	private GraphNode search(RouteNode target) throws Exception {
@@ -137,7 +139,35 @@ public class Routing implements Runnable {
 			if (successor == null){
 				successor=new Connection[0];
 			}
-
+			
+			// check for turn restrictions
+			boolean turnRestricted []= new boolean[successor.length];
+			if (tile.lastNodeHadTurnRestrictions) {
+				TurnRestriction turnRestriction = tile.getTurnRestrictions(currentNode.state.toId);
+				if (turnRestriction != null && (turnRestriction.affectedTravelModes & currentTravelMask)>0 ){
+					for (int cl=0;cl < successor.length;cl++){
+						int prevId = -1;
+						if (currentNode.parent != null) { // TODO: make turn restrictions work at the first route node
+							prevId = currentNode.parent.state.toId;
+						}
+						Connection nodeSuccessor=successor[cl];
+						if (turnRestriction.fromRouteNodeId == prevId && turnRestriction.toRouteNodeId == nodeSuccessor.toId) {
+							if ( (turnRestriction.flags & TurnRestriction.IS_ONLY_TYPE_RESTRICTION) == 0) {
+								System.out.println("NO_ turn restriction match");
+								turnRestricted[cl]=true;
+							} else {
+								System.out.println("ONLY_ turn restriction match");
+								for (int cl2=0;cl2 < successor.length;cl2++){
+									if (cl2 != cl) {
+										turnRestricted[cl2]=true;										
+									}
+								}
+							}
+						}
+					}
+				}
+			}	// end of check for turn restrictions
+			
 			for (int cl=0;cl < successor.length;cl++){
 				Connection nodeSuccessor=successor[cl];
 				int dTurn=currentNode.fromBearing-nodeSuccessor.startBearing;
@@ -172,6 +202,9 @@ public class Routing implements Runnable {
 					int estimation;
 					GraphNode newNode;
 					estimation = estimate(currentNode.state,nodeSuccessor, target);
+					if (turnRestricted[cl]) {
+						estimation += 10000000; // make turning at a turn restriction very expensive
+					}
 					newNode = new GraphNode(nodeSuccessor, currentNode, successorCost, estimation, currentNode.fromBearing);
 					open.put(nodeSuccessor.toId, newNode);
 //					parent.getRouteNodes().addElement(new RouteHelper(newNode.state.to.lat,newNode.state.to.lon,"t"+expanded));

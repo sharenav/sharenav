@@ -205,9 +205,9 @@ public class RouteTile extends RouteBaseTile {
 			turn.flags = ts.readByte();
 			turns[i] = turn;
 		}
-		if (count > 0) {
-			System.out.println(count + " turn restrictions loaded");
-		}
+//		if (count > 0) {
+//			System.out.println(count + " turn restrictions loaded");
+//		}
 	}
 
 	public RouteNode getRouteNode(RouteNode best, float lat, float lon) {
@@ -270,6 +270,33 @@ public class RouteTile extends RouteBaseTile {
 		return null;
 	}
 
+	public TurnRestriction getTurnRestrictions(int rnId) {
+		if (minId <= rnId && maxId >= rnId){
+			//#debug debug
+			logger.debug("getTurnRestricition for RouteNode("+rnId+")");
+			lastUse=0;
+			if (nodes == null){
+				try {
+					loadNodes();
+				} catch (IOException e) {
+					e.printStackTrace();
+					return null;
+				}
+			}
+			//#debug debug
+			if (turns != null) {
+				for (int i=0; i<turns.length; i++) {
+					if (turns[i].viaRouteNodeId == rnId) {
+						return turns[i];
+					}
+				}
+			}
+			return null;			
+		} else 
+			return null;
+	}
+	
+	
 
 	/* (non-Javadoc)
 	 * @see de.ueller.gpsMid.mapData.RouteBaseTile#getRouteNode(float, float, de.ueller.midlet.gps.routing.RouteTileRet)
@@ -296,6 +323,7 @@ public class RouteTile extends RouteBaseTile {
 				if (connections == null){
 					loadConnections(bestTime);
 				}
+				tile.lastNodeHadTurnRestrictions = nodes[id-minId].hasTurnRestrictions();
 				return connections[id-minId];
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

@@ -5,6 +5,7 @@ import de.ueller.midlet.gps.data.Way;
 import de.ueller.midlet.gps.routing.Connection;
 import de.ueller.midlet.gps.routing.RouteNode;
 import de.ueller.midlet.gps.routing.RouteTileRet;
+import de.ueller.midlet.gps.routing.TurnRestriction;
 import de.ueller.midlet.gps.tile.PaintContext;
 
 public abstract class RouteBaseTile extends Tile {
@@ -13,6 +14,7 @@ public abstract class RouteBaseTile extends Tile {
 
 	protected int minId;
 	protected int maxId;
+	public boolean lastNodeHadTurnRestrictions = false;
 
 	public abstract RouteNode getRouteNode(int id);
 	/**
@@ -31,6 +33,7 @@ public abstract class RouteBaseTile extends Tile {
 	 * @return
 	 */
 	public abstract RouteNode getRouteNode(float lat, float lon);
+	public abstract TurnRestriction getTurnRestrictions(int rnId);
 	public abstract Connection[] getConnections(int id,RouteBaseTile tile,boolean bestTime);
 //	public abstract void printMinMax
 	private final static float epsilon=0.0001f;

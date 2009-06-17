@@ -10,6 +10,7 @@ import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.routing.Connection;
 import de.ueller.midlet.gps.routing.RouteNode;
 import de.ueller.midlet.gps.routing.RouteTileRet;
+import de.ueller.midlet.gps.routing.TurnRestriction;
 import de.ueller.midlet.gps.tile.PaintContext;
 import de.ueller.midlet.gps.tile.QueueableTile;
 
@@ -178,6 +179,21 @@ public class RouteFileTile extends RouteBaseTile {
 		return null;
 	}
 
+	public TurnRestriction getTurnRestrictions(int rnId) {
+		if (minId <= rnId && maxId >= rnId){
+			if (tile==null){
+				try {
+					loadTile();
+				} catch (IOException e) {
+					e.printStackTrace();
+					return null;
+				}
+			}
+			return tile.getTurnRestrictions(rnId);
+		}
+		return null;
+	}
+	
 	public RouteNode getRouteNode(float lat,float lon,RouteTileRet retTile){
 		RouteNode ret=null;
 		if (contain(lat,lon)){
