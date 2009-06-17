@@ -71,6 +71,11 @@ public class RouteTile extends RouteBaseTile {
 			return;
 		}
 		if (contain(pc)){
+			boolean showConnections = Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_CONNECTIONS);
+			// show route cost only if Alternative Info/Type Information in Map Features is activated
+			boolean showCost = Configuration.getCfgBitState(Configuration.CFGBIT_SHOWWAYPOITYPE);			
+			boolean showTurnRestrictions = Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_TURN_RESTRICTIONS);
+			
 //			drawBounds(pc, 255, 255, 255);
 			if (nodes == null){
 				try {
@@ -80,7 +85,7 @@ public class RouteTile extends RouteBaseTile {
 					return;
 				}
 			}
-			if (connections == null){
+			if (showConnections && connections == null){
 				try {
 					loadConnections(true);
 				} catch (IOException e) {
@@ -88,64 +93,94 @@ public class RouteTile extends RouteBaseTile {
 					return;
 				}
 			}
-
-			// show route cost only if Alternative Info/Type Information in Map Features is activated
-			boolean showCost = Configuration.getCfgBitState(Configuration.CFGBIT_SHOWWAYPOITYPE);			
 			
 			for (int i=0; i< nodes.length;i++){
 				if (pc.getP().isPlotable(nodes[i].lat, nodes[i].lon)){
 					pc.getP().forward(nodes[i].lat, nodes[i].lon, pc.swapLineP);
-					if (nodes[i].hasTurnRestrictions()) {
-						pc.g.setColor(255, 0, 0);
-						pc.g.fillRect(pc.swapLineP.x-3, pc.swapLineP.y-2, 7, 7); //Draw node
-					} else {
+					if (showConnections) {
 						pc.g.drawRect(pc.swapLineP.x-2, pc.swapLineP.y-2, 5, 5); //Draw node
-					}
-					for (int ii=0; ii< connections[i].length;ii++){
-						Connection c=connections[i][ii];
-						Connection [] reverseCons = null;
-						RouteNode rnt=getRouteNode(c.toId);
-						
-						if (rnt == null){
-							RouteBaseTile dict = (RouteBaseTile) Trace.getInstance().getDict((byte)4);
-							rnt=dict.getRouteNode(c.toId);
-							if (rnt != null) {
-								reverseCons = dict.getConnections(rnt.id,dict,true);
+						for (int ii=0; ii< connections[i].length;ii++){
+							Connection c=connections[i][ii];
+							Connection [] reverseCons = null;
+							RouteNode rnt=getRouteNode(c.toId);						
+							if (rnt == null){
+								RouteBaseTile dict = (RouteBaseTile) Trace.getInstance().getDict((byte)4);
+								rnt=dict.getRouteNode(c.toId);
+								if (rnt != null) {
+									reverseCons = dict.getConnections(rnt.id,dict,true);
+								} else {
+									pc.g.setColor(255, 70, 70);
+									final byte radius = 10;
+									pc.g.fillArc(pc.swapLineP.x-radius/2,pc.swapLineP.y-radius/2,radius,radius,0,359);
+								}
 							} else {
-								//FIXME: We couldn't get a ReverseConnection, can this cause problems in other routing code
-								pc.g.setColor(255, 70, 70);
-								final byte radius = 10;
-								pc.g.fillArc(pc.swapLineP.x-radius/2,pc.swapLineP.y-radius/2,radius,radius,0,359);
+								reverseCons = getConnections(rnt.id, this, true);
 							}
-						} else {
-							reverseCons = getConnections(rnt.id, this, true);
-						}
-						if (rnt == null){
-							//#debug info
-							logger.info("Routenode not found");
-						} else {
-							/**
-							 * Try and determine if the connection is a one way connection
-							 */
-							boolean oneway = true; 
-							for (int iii = 0;iii < reverseCons.length; iii ++) {
-								Connection c2=reverseCons[iii];
-								if (c2.toId - minId == i) {
-									oneway = false;
+							if (rnt == null){
+								//#debug info
+								logger.info("Routenode not found");
+							} else {
+								/**
+								 * Try and determine if the connection is a one way connection
+								 */
+								boolean oneway = true; 
+								for (int iii = 0;iii < reverseCons.length; iii ++) {
+									Connection c2=reverseCons[iii];
+									if (c2.toId - minId == i) {
+										oneway = false;
+									}
+								}
+								if (oneway) {
+									pc.g.setColor(255, 100, 100);
+								} else {
+									pc.g.setColor(0, 100, 255);
+								}
+								pc.getP().forward(rnt.lat, rnt.lon, pc.lineP2);
+								pc.g.drawLine(pc.swapLineP.x, pc.swapLineP.y, pc.lineP2.x, pc.lineP2.y);
+								pc.g.setColor(0, 0, 0);
+								if (showCost) {
+									pc.g.drawString(Integer.toString(c.cost), (pc.swapLineP.x + pc.lineP2.x) / 2, (pc.swapLineP.y + pc.lineP2.y) / 2, Graphics.TOP | Graphics.RIGHT);
 								}
 							}
-							if (oneway) {
-								pc.g.setColor(255, 100, 100);
-							} else {
-								pc.g.setColor(0, 100, 255);
-							}
-							pc.getP().forward(rnt.lat, rnt.lon, pc.lineP2);
-							pc.g.drawLine(pc.swapLineP.x, pc.swapLineP.y, pc.lineP2.x, pc.lineP2.y);
-							pc.g.setColor(0, 0, 0);
-							if (showCost) {
-								pc.g.drawString(Integer.toString(c.cost), (pc.swapLineP.x + pc.lineP2.x) / 2, (pc.swapLineP.y + pc.lineP2.y) / 2, Graphics.TOP | Graphics.RIGHT);
-							}
 						}
+					}
+					if (showTurnRestrictions && nodes[i].hasTurnRestrictions()) {
+						pc.g.setColor(255, 0, 0);
+						pc.g.fillRect(pc.swapLineP.x-3, pc.swapLineP.y-2, 7, 7); //Draw node
+						TurnRestriction turnRestriction = getTurnRestrictions(nodes[i].id);
+						while (turnRestriction != null) {
+							RouteNode from = getRouteNode(turnRestriction.fromRouteNodeId);
+							if (from != null) {
+								if (turnRestriction.isOnlyTypeRestriction()) {
+									pc.g.setColor(0x00008000); // dark green
+								} else {
+									pc.g.setColor(0x00FF0000); // dark red						
+								}
+								pc.getP().forward(from.lat, from.lon, pc.lineP2);
+								pc.g.drawLine(pc.swapLineP.x, pc.swapLineP.y, pc.lineP2.x, pc.lineP2.y);
+							}
+							//#mdebug debug
+							else {
+								logger.debug("from not found");
+							}
+							//#enddebug
+							RouteNode to = getRouteNode(turnRestriction.toRouteNodeId);
+							if (to != null) {
+								if (turnRestriction.isOnlyTypeRestriction()) {
+									pc.g.setColor(0x0000FF00); // light green
+								} else {
+									pc.g.setColor(0x00FF0000); // light red						
+								}
+								pc.getP().forward(to.lat, to.lon, pc.lineP2);
+								pc.g.drawLine(pc.swapLineP.x, pc.swapLineP.y, pc.lineP2.x, pc.lineP2.y);									
+							}
+							//#mdebug debug
+							else {								
+								logger.debug("to not found");
+							}
+							//#enddebug
+							turnRestriction = turnRestriction.nextTurnRestrictionAtThisNode;
+						}							
 					}
 				}
 			}

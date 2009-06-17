@@ -362,12 +362,14 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		debugSeverity.setSelectedFlags(selDebug);
 		menuDebug.append(debugSeverity);
 
-		loggings = new String[2];
+		loggings = new String[3];
 		loggings[0] = "Show route connections";
-		loggings[1] = "Show inconsistent bearings";
+		loggings[1] = "Show turn restrictions";
+		loggings[2] = "Show inconsistent bearings";
 		debugOther = new ChoiceGroup("Other:", ChoiceGroup.MULTIPLE,loggings,null);
 		debugOther.setSelectedIndex(0, Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_CONNECTIONS, true));
-		debugOther.setSelectedIndex(1, Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_BEARINGS, true));
+		debugOther.setSelectedIndex(1, Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_TURN_RESTRICTIONS, true));
+		debugOther.setSelectedIndex(2, Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_BEARINGS, true));
 		menuDebug.append(debugOther);
 
 	}
@@ -945,7 +947,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				Configuration.setDebugSeverityDebug(selDebug[1]);
 				Configuration.setDebugSeverityTrace(selDebug[2]);
 				Configuration.setCfgBitState(Configuration.CFGBIT_ROUTE_CONNECTIONS, debugOther.isSelected(0), true);
-				Configuration.setCfgBitState(Configuration.CFGBIT_ROUTE_BEARINGS, debugOther.isSelected(1), true);
+				Configuration.setCfgBitState(Configuration.CFGBIT_SHOW_TURN_RESTRICTIONS, debugOther.isSelected(1), true);
+				Configuration.setCfgBitState(Configuration.CFGBIT_ROUTE_BEARINGS, debugOther.isSelected(2), true);
 				Logger.setGlobalLevel();
 				state = STATE_ROOT;
 				this.show();

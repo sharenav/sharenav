@@ -25,4 +25,8 @@ public class TurnRestriction {
 	public TurnRestriction() {
 	}	
 	
+	public boolean isOnlyTypeRestriction() {
+		return (flags & IS_ONLY_TYPE_RESTRICTION) > 0;
+	}
+	
 }

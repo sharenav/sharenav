@@ -236,7 +236,7 @@ public class ImageCollector implements Runnable {
 					/**
 					 * Drawing debuginfo for routing
 					 */
-					if (t[4] != null && Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_CONNECTIONS)) {
+					if (t[4] != null && (Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_CONNECTIONS) || Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_TURN_RESTRICTIONS))) {
 						t[4].paint(createPC, layersToRender[layer]);
 					}
 					if (suspended) {
