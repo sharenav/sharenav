@@ -203,6 +203,9 @@ public class RouteTile extends RouteBaseTile {
 			turn.toRouteNodeId = ts.readInt();
 			turn.affectedTravelModes = ts.readByte();
 			turn.flags = ts.readByte();
+			if (i > 0 && turn.viaRouteNodeId == turns[i-1].viaRouteNodeId) {
+				turns[i-1].nextTurnRestrictionAtThisNode = turn;
+			}
 			turns[i] = turn;
 		}
 //		if (count > 0) {

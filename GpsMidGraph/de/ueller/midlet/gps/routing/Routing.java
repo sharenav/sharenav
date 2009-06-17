@@ -144,27 +144,30 @@ public class Routing implements Runnable {
 			boolean turnRestricted []= new boolean[successor.length];
 			if (tile.lastNodeHadTurnRestrictions) {
 				TurnRestriction turnRestriction = tile.getTurnRestrictions(currentNode.state.toId);
-				if (turnRestriction != null && (turnRestriction.affectedTravelModes & currentTravelMask)>0 ){
-					for (int cl=0;cl < successor.length;cl++){
-						int prevId = -1;
-						if (currentNode.parent != null) { // TODO: make turn restrictions work at the first route node
-							prevId = currentNode.parent.state.toId;
-						}
-						Connection nodeSuccessor=successor[cl];
-						if (turnRestriction.fromRouteNodeId == prevId && turnRestriction.toRouteNodeId == nodeSuccessor.toId) {
-							if ( (turnRestriction.flags & TurnRestriction.IS_ONLY_TYPE_RESTRICTION) == 0) {
-								System.out.println("NO_ turn restriction match");
-								turnRestricted[cl]=true;
-							} else {
-								System.out.println("ONLY_ turn restriction match");
-								for (int cl2=0;cl2 < successor.length;cl2++){
-									if (cl2 != cl) {
-										turnRestricted[cl2]=true;										
+				while (turnRestriction != null) { // loop through all turn restrictions at this route node
+					if ( (turnRestriction.affectedTravelModes & currentTravelMask) > 0 ){
+						for (int cl=0;cl < successor.length;cl++){
+							int prevId = -1;
+							if (currentNode.parent != null) { // TODO: make turn restrictions work at the first route node
+								prevId = currentNode.parent.state.toId;
+							}
+							Connection nodeSuccessor=successor[cl];
+							if (turnRestriction.fromRouteNodeId == prevId && turnRestriction.toRouteNodeId == nodeSuccessor.toId) {
+								if ( (turnRestriction.flags & TurnRestriction.IS_ONLY_TYPE_RESTRICTION) == 0) {
+									System.out.println("NO_ turn restriction match");
+									turnRestricted[cl]=true;
+								} else {
+									System.out.println("ONLY_ turn restriction match");
+									for (int cl2=0;cl2 < successor.length;cl2++){
+										if (cl2 != cl) {
+											turnRestricted[cl2]=true;										
+										}
 									}
 								}
 							}
 						}
 					}
+					turnRestriction = turnRestriction.nextTurnRestrictionAtThisNode;
 				}
 			}	// end of check for turn restrictions
 			
