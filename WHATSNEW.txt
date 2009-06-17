@@ -1,6 +1,10 @@
 GpsMid 0.5.09
        *** Usability ***
-       - Touch screen support: Recenter to GPS by pointing to the center of the screen
+       - Touch screen support:
+        - Recenter to GPS button
+        - (De)activate manual rotation mode by pointing the point of compass (use zoom buttons to rotate in manual rotation mode)
+        - Start/stop routing by pointing the status bar showing the current way name
+        - Show Map Features by pointing to the scale bar
        *** OSM Editing ***
        *** GPS and other location producers ***
        - Add a possibility to manually enter a connection URL, e.g. "comm:COM0;baudrate=115200"
@@ -9,20 +13,30 @@ GpsMid 0.5.09
        *** Map Screen ***
        - In Setup / Display Options there's now a textfield for specifying how many seconds after
        	 the last manual panning of the map it will be automatically recentered to the GPS position
+       - Better handling of appearing and disappearing text items on the map screen
+       - show speed when driving
        *** Recordings, Tracks and Waypoints ***
        - Allow to save more than 255 waypoints again (thx pos_ei_don)
        - Ask for track name at start/end of track recording - configurable in Setup / Recording Rules (thx jkjp)
        *** Map Elements ***
+       - Improved visibility of railways based on GeoCache style - thx GoemonGps/billi25
+       - Add place=island as a workaround for land underwater - thx pos_ei_don_
        *** Routing ***
        - Multiple Route Modes can be bundled for a single midlet with a setting in the .properties file,
          e.g. useRouting = motorcar, bicycle, foot
-       - foot routing has been added (only available in high-style)
-       - you are now asked which route mode to use on start of routing
-       - cross area routing (e.g. for foot routing through pedestrian zones)
+       - Foot routing (only available in high-style and if specified in useRouting)
+       - You are now asked which route mode to use on start of routing
+       - Cross area routing (e.g. for foot routing through pedestrian zones)
        - Permissive Routing Restriction are now possible
          (e.g. bicycle routing for an abandoned aeroway=runway if bicycle=true is set
+       - Support for turn restrictions (only for restrictions where the type of the VIA_ROLE is node)
+       - Show remaining route distance to target in map screen
        *** Midlet creation with Osm2GpsMid ***
+       *** Osm2GpsMid GUI ***
+       - Loading .properties files works again
+       - New options to include cell-ids and to type in midlet route modes
        *** Others ***
+       - Many more small improvements and bugfixes
 
 GpsMid 0.5.0
        *** Usability ***
