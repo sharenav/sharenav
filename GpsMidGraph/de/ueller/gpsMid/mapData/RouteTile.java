@@ -148,9 +148,10 @@ public class RouteTile extends RouteBaseTile {
 						pc.g.setColor(0xD00000);
 						pc.g.fillRect(pc.swapLineP.x-3, pc.swapLineP.y-2, 7, 7); //Draw node
 						TurnRestriction turnRestriction = getTurnRestrictions(nodes[i].id);
-						pc.g.setColor(0);
-						pc.g.drawString(turnRestriction.getRestrictionType(), pc.swapLineP.x, pc.swapLineP.y, Graphics.TOP | Graphics.HCENTER);
+						int drawOffs = 0;
 						while (turnRestriction != null) {
+							pc.g.setColor(0);
+							pc.g.drawString(turnRestriction.getRestrictionType(), pc.swapLineP.x, pc.swapLineP.y + drawOffs * pc.g.getFont().getHeight(), Graphics.TOP | Graphics.HCENTER);
 							RouteNode from = getRouteNode(turnRestriction.fromRouteNodeId);
 							if (from != null) {
 								if (turnRestriction.isOnlyTypeRestriction()) {
@@ -159,7 +160,7 @@ public class RouteTile extends RouteBaseTile {
 									pc.g.setColor(0x00800000); // dark red						
 								}
 								pc.getP().forward(from.lat, from.lon, pc.lineP2);
-								pc.g.drawLine(pc.swapLineP.x, pc.swapLineP.y, pc.lineP2.x, pc.lineP2.y);
+								pc.g.drawLine(pc.swapLineP.x, pc.swapLineP.y + drawOffs, pc.lineP2.x, pc.lineP2.y + drawOffs);
 							}
 							//#mdebug debug
 							else {
@@ -174,8 +175,9 @@ public class RouteTile extends RouteBaseTile {
 									pc.g.setColor(0x00FF0000); // light red						
 								}
 								pc.getP().forward(to.lat, to.lon, pc.lineP2);
-								pc.g.drawLine(pc.swapLineP.x, pc.swapLineP.y, pc.lineP2.x, pc.lineP2.y);									
+								pc.g.drawLine(pc.swapLineP.x, pc.swapLineP.y + drawOffs, pc.lineP2.x, pc.lineP2.y + drawOffs);									
 							}
+							drawOffs++;
 							//#mdebug debug
 							else {								
 								logger.debug("to not found");
