@@ -44,6 +44,7 @@ public class TurnRestriction {
 			switch (m.getRole()) {
 				case Member.ROLE_FROM: {							
 					fromWayRef = m.getRef();
+					break;
 				}
 				case Member.ROLE_TO: {
 					toWayRef = m.getRef();
