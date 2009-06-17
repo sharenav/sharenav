@@ -328,7 +328,6 @@ public class RouteTile extends RouteBaseTile {
 					return null;
 				}
 			}
-			//#debug debug
 			if (turns != null) {
 				for (int i=0; i<turns.length; i++) {
 					if (turns[i].viaRouteNodeId == rnId) {
