@@ -33,7 +33,7 @@ public class OxParser extends DefaultHandler{
 	 * Key: Long   Value: Node
 	 */
 	private HashMap<Long,Node> nodes = new HashMap<Long,Node>(80000,0.60f);
-	private static HashMap<Long,Way> ways = new HashMap<Long,Way>();
+	private static HashMap<Long,Way> ways = new HashMap<Long,Way>(); // must be static only to be able to call getWayHashMap() from Tile for debugging
 	private HashMap<Long,Relation> relations = new HashMap<Long,Relation>();
 	private HashMap<Long,TurnRestriction> turnRestrictions = new HashMap<Long,TurnRestriction>();
 	private Hashtable<String, String> tagsCache = new Hashtable<String,String>();

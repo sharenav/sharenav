@@ -431,7 +431,7 @@ public class Tile {
 						nds.writeByte(turnWrite.affectedTravelModes);
 						nds.writeByte(turnWrite.flags);
 					}
-					System.out.println(turnWrite.toString(OxParser.getWayHashMap()));
+					// System.out.println(turnWrite.toString(OxParser.getWayHashMap()));
 					turnWrite = turnWrite.nextTurnRestrictionAtThisNode;
 				}
 			}			
