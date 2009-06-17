@@ -206,14 +206,13 @@ public class Routing implements Runnable {
 					int estimation;
 					GraphNode newNode;
 					estimation = estimate(currentNode.state,nodeSuccessor, target);
-					if (turnRestricted[cl]) {
-						estimation += 10000000; // make turning at a turn restriction very expensive
+					if (!turnRestricted[cl]) {
+						newNode = new GraphNode(nodeSuccessor, currentNode, successorCost, estimation, currentNode.fromBearing);
+						open.put(nodeSuccessor.toId, newNode);
+	//					parent.getRouteNodes().addElement(new RouteHelper(newNode.state.to.lat,newNode.state.to.lon,"t"+expanded));
+	//					evaluated++;
+						children.addElement(newNode);
 					}
-					newNode = new GraphNode(nodeSuccessor, currentNode, successorCost, estimation, currentNode.fromBearing);
-					open.put(nodeSuccessor.toId, newNode);
-//					parent.getRouteNodes().addElement(new RouteHelper(newNode.state.to.lat,newNode.state.to.lon,"t"+expanded));
-//					evaluated++;
-					children.addElement(newNode);
 				}
 			}
 			open.remove(currentNode.state.toId);
