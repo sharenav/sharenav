@@ -1070,6 +1070,18 @@ scale alias 1: zoomed out 21x
 				<routing with="bicycle" accessible="true" speed="12" />
   				<routing with="foot" accessible="true" speed="4" />
   			</Wvalue>
+  			<Wvalue name = "steps" priority = "10">
+  				<description desc = "steps"/>
+  				<namekey tag = "name"/>  				
+  				<isArea area = "false"/>
+  				<scale scale = "20"/>
+  				<lineColor color = "00FFBBBB" />
+  				<lineStyle dashed = "false" />
+  				<wayWidth width="2" />
+				<routing with="motorcar" accessible="false" speed="1" />  	
+				<routing with="bicycle" accessible="false" speed="1" />
+  				<routing with="foot" accessible="true" speed="1" />
+  			</Wvalue>
   			<Wvalue name = "path" priority = "7">
   				<description desc = "path"/>
   				<namekey tag = "name"/>  				
@@ -1738,7 +1750,7 @@ scale alias 1: zoomed out 21x
 	If restrictionPermit is missing or false, ways having tags matching the restrictionKey and restrictionValues become inaccessible for routing.
 	-->
 	<routeModes>
-		<routeMode modeName = "motorcar" maxPrepareMeters="500" maxInMeters="899">
+		<routeMode modeName = "motorcar" maxPrepareMeters="500" maxInMeters="899" applyTurnRestrictions = "true">
 			<routeAccessRestriction restrictionKey = "motorcar" restrictionValues = "yes|designated" restrictionPermit = "true"/>
 			<routeAccessRestriction restrictionKey = "motorcar" restrictionValues = "no|private"/>
 			<routeAccessRestriction restrictionKey = "access" restrictionValues = "no|private"/>
