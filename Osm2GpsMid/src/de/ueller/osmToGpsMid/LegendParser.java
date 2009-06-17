@@ -499,7 +499,7 @@ public class LegendParser extends DefaultHandler{
 							System.out.println("Warning: no maxInMeters  for " + currentTravelMode.getName() + ". Using 899m." );
 							currentTravelMode.maxInMeters = 899;
 						}
-						String applyTurnRestrictions = atts.getValue("againstAllOneWays");
+						String applyTurnRestrictions = atts.getValue("applyTurnRestrictions");
 						if (applyTurnRestrictions != null) {
 							if (applyTurnRestrictions.equalsIgnoreCase("true")) {
 								TravelModes.applyTurnRestrictionsTravelModes |= (1<<TravelModes.getTravelModeNrByName(atts.getValue("modeName")));
