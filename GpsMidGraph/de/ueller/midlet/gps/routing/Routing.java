@@ -153,11 +153,12 @@ public class Routing implements Runnable {
 							}
 							Connection nodeSuccessor=successor[cl];
 							if (turnRestriction.fromRouteNodeId == prevId && turnRestriction.toRouteNodeId == nodeSuccessor.toId) {
-								if ( (turnRestriction.flags & TurnRestriction.IS_ONLY_TYPE_RESTRICTION) == 0) {
+								if (! turnRestriction.isOnlyTypeRestriction()) {
 									System.out.println("NO_ turn restriction match");
 									turnRestricted[cl]=true;
 								} else {
 									System.out.println("ONLY_ turn restriction match");
+									// disable all other connections
 									for (int cl2=0;cl2 < successor.length;cl2++){
 										if (cl2 != cl) {
 											turnRestricted[cl2]=true;										
