@@ -15,6 +15,7 @@ public class TravelModes {
 	public static TravelMode travelModes[];
 	public static int travelModeCount = 0;
 	public static final int MAXTRAVELMODES = 7;
+	public static byte applyTurnRestrictionsTravelModes = 0;
 	
 	public static void stringToTravelModes(String modes) {
 		travelModes = new TravelMode[MAXTRAVELMODES];

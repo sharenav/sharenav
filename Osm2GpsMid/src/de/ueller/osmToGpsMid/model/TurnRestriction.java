@@ -24,7 +24,8 @@ public class TurnRestriction {
 	public RouteNode fromRouteNode;
 	public RouteNode toRouteNode;
 	public byte flags = 0;
-	public byte affectedTravelModes = 0x01; // TODO: make configurable for which travel modes the turn restriction applies
+	/** for which travel modes the turn restriction applies */
+	public byte affectedTravelModes = 0;
 	public String restrictionType; // stored only for debugging
 	public TurnRestriction nextTurnRestrictionAtThisNode = null;
 	

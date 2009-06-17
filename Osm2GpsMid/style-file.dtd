@@ -85,6 +85,7 @@
 <!ATTLIST routeMode modeName CDATA #REQUIRED>
 <!ATTLIST routeMode maxPrepareMeters CDATA #REQUIRED>
 <!ATTLIST routeMode maxInMeters CDATA #REQUIRED>
+<!ATTLIST routeMode applyTurnRestrictions CDATA #IMPLIED>
 <!ATTLIST routeMode againstAllOneWays CDATA #IMPLIED>
 <!ATTLIST routeMode bicycleOppositeExceptions CDATA #IMPLIED>
 <!ATTLIST routeAccessRestriction restrictionKey CDATA #REQUIRED>

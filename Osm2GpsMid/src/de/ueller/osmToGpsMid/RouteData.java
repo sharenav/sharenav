@@ -110,7 +110,8 @@ public class RouteData {
 				
 				turn.viaRouteNode = n;
 				turn.viaLat = n.node.lat;
-				turn.viaLon = n.node.lon;				
+				turn.viaLon = n.node.lon;
+				turn.affectedTravelModes = TravelModes.applyTurnRestrictionsTravelModes;
 				//System.out.println(turn.toString(parser.getWayHashMap()));
 				int numFromConnections = 0;
 				for (Connection c:n.connectedFrom) {
