@@ -95,7 +95,12 @@ public class RouteTile extends RouteBaseTile {
 			for (int i=0; i< nodes.length;i++){
 				if (pc.getP().isPlotable(nodes[i].lat, nodes[i].lon)){
 					pc.getP().forward(nodes[i].lat, nodes[i].lon, pc.swapLineP);
-					pc.g.drawRect(pc.swapLineP.x-2, pc.swapLineP.y-2, 5, 5); //Draw node
+					if (nodes[i].hasTurnRestrictions()) {
+						pc.g.setColor(255, 0, 0);
+						pc.g.fillRect(pc.swapLineP.x-3, pc.swapLineP.y-2, 7, 7); //Draw node
+					} else {
+						pc.g.drawRect(pc.swapLineP.x-2, pc.swapLineP.y-2, 5, 5); //Draw node
+					}
 					for (int ii=0; ii< connections[i].length;ii++){
 						Connection c=connections[i][ii];
 						Connection [] reverseCons = null;
