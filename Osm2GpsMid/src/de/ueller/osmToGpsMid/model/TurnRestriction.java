@@ -29,8 +29,16 @@ public class TurnRestriction {
 	public String restrictionType; // stored only for debugging
 	public TurnRestriction nextTurnRestrictionAtThisNode = null;
 	
-	public final static byte IS_ONLY_TYPE_RESTRICTION = 1;
+	public final static byte NO_LEFT_TURN = 0x01;
+	public final static byte NO_RIGHT_TURN = 0x02;
+	public final static byte NO_STRAIGHT_ON = 0x03;
+	public final static byte NO_U_TURN = 0x04;
+	public final static byte ONLY_LEFT_TURN = 0x05;
+	public final static byte ONLY_RIGHT_TURN = 0x06;
+	public final static byte ONLY_STRAIGHT_ON = 0x07;
+	public final static byte IS_ONLY_TYPE_RESTRICTION = 0x40;
 
+	
 	public TurnRestriction(Relation relation) {
 		for (Member m : relation.members) {
 			switch (m.getRole()) {
@@ -47,6 +55,22 @@ public class TurnRestriction {
 		if (restrictionType.startsWith("only_")) {
 			flags |= IS_ONLY_TYPE_RESTRICTION;
 		}
+		if (restrictionType.equalsIgnoreCase("no_left_turn")) {
+			flags += NO_LEFT_TURN;
+		} else if (restrictionType.equalsIgnoreCase("no_right_turn")) {
+			flags += NO_RIGHT_TURN;
+		} else if (restrictionType.equalsIgnoreCase("no_straight_on")) {
+			flags += NO_STRAIGHT_ON;
+		} else if (restrictionType.equalsIgnoreCase("no_u_turn")) {
+			flags += NO_U_TURN;
+		} else if (restrictionType.equalsIgnoreCase("only_left_turn")) {
+			flags += ONLY_LEFT_TURN;
+		} else if (restrictionType.equalsIgnoreCase("only_right_turn")) {
+			flags += ONLY_RIGHT_TURN;
+		} else if (restrictionType.equalsIgnoreCase("only_straight_on")) {
+			flags += ONLY_STRAIGHT_ON;
+		}
+		
 	}	
 
 	public String toString(HashMap<Long,Way> wayHashMap) {
