@@ -74,7 +74,7 @@ public class TurnRestriction {
 	}	
 
 	public String toString(HashMap<Long,Way> wayHashMap) {
-		return restrictionType + " from " + getWayNameFromRefId(wayHashMap, fromWayRef) + " into " + getWayNameFromRefId(wayHashMap, toWayRef);  
+		return restrictionType + " from " + getWayNameFromRefId(wayHashMap, fromWayRef) + " (" + fromWayRef + ") into " + getWayNameFromRefId(wayHashMap, toWayRef) + " (" + toWayRef + ")";  
 	}
 	
 	public boolean isComplete() {
@@ -83,7 +83,7 @@ public class TurnRestriction {
 
 	public String getWayNameFromRefId(HashMap<Long,Way> wayHashMap, long wayRef) {
 		String name = "?";
-		Way w = wayHashMap.get(wayRef);
+		Way w = wayHashMap.get(new Long(wayRef));
 		if (w != null) {
 			String s = w.getName();
 			if (s != null) {

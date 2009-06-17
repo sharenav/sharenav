@@ -97,13 +97,13 @@ public class RouteData {
 		for (RouteNode n: nodes.values()){
 			TurnRestriction turn = (TurnRestriction) parser.getTurnRestrictionHashMap().get(new Long(n.node.id));
 			while (turn!=null) {
-				Way restrictionFromWay = parser.getWayHashMap().get(turn.fromWayRef);
+				Way restrictionFromWay = parser.getWayHashMap().get(new Long(turn.fromWayRef));
 				// skip if restrictionFromWay is not in available wayData				
 				if (restrictionFromWay == null) {
 					continue;
 				}
 				// skip if restrictionToWay is not in available wayData				
-				Way restrictionToWay = parser.getWayHashMap().get(turn.toWayRef);
+				Way restrictionToWay = parser.getWayHashMap().get(new Long(turn.toWayRef));
 				if (restrictionToWay == null) {
 					continue;
 				}

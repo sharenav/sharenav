@@ -13,6 +13,7 @@ import java.util.LinkedList;
 import de.ueller.osmToGpsMid.Configuration;
 import de.ueller.osmToGpsMid.CreateGpsMidData;
 import de.ueller.osmToGpsMid.MyMath;
+import de.ueller.osmToGpsMid.OxParser;
 
 
 public class Tile {
@@ -430,6 +431,7 @@ public class Tile {
 						nds.writeByte(turnWrite.affectedTravelModes);
 						nds.writeByte(turnWrite.flags);
 					}
+					System.out.println(turnWrite.toString(OxParser.getWayHashMap()));
 					turnWrite = turnWrite.nextTurnRestrictionAtThisNode;
 				}
 			}			
