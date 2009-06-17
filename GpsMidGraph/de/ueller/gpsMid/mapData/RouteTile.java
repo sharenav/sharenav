@@ -63,11 +63,11 @@ public class RouteTile extends RouteBaseTile {
 	}
 
 	/**
-	 * Only for debuging pruposes to show the routeNode and their connections
-	 * This debugging can be activated by uncommenting the call to tile[4].paint in ImageCollector
+	 * Only for debugging purposes to show the routeNode and their connections / turn restrictions
+	 * This debugging can be activated by setting the corresponding Setup / Debug Options
 	 */
 	public void paint(PaintContext pc, byte layer) {
-		if (pc == null && layer != Tile.LAYER_NODE){ //Which layer should this be at?
+		if (pc == null){ // ignore layer as this is always called with layer 0
 			return;
 		}
 		if (contain(pc)){

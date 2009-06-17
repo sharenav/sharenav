@@ -233,17 +233,17 @@ public class ImageCollector implements Runnable {
 					if (t[5] != null) {
 						t[5].paint(createPC, layersToRender[layer]);
 					}
-					/**
-					 * Drawing debuginfo for routing
-					 */
-					if (t[4] != null && (Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_CONNECTIONS) || Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_TURN_RESTRICTIONS))) {
-						t[4].paint(createPC, layersToRender[layer]);
-					}
 					if (suspended) {
 						// Don't continue rendering if suspended
 						createPC.state = PaintContext.STATE_READY;
 						break;
 					}
+				}
+				/**
+				 * Drawing debuginfo for routing
+				 */
+				if (!suspended && t[4] != null && (Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_CONNECTIONS) || Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_TURN_RESTRICTIONS))) {
+					t[4].paint(createPC, (byte) 0);
 				}
 
 				icDuration = System.currentTimeMillis() - startTime;
