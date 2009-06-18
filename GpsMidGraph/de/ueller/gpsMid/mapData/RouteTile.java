@@ -94,11 +94,12 @@ public class RouteTile extends RouteBaseTile {
 				}
 			}
 			
+			Graphics g = pc.g;
 			for (int i=0; i< nodes.length;i++){
 				if (pc.getP().isPlotable(nodes[i].lat, nodes[i].lon)){
 					pc.getP().forward(nodes[i].lat, nodes[i].lon, pc.swapLineP);
 					if (showConnections) {
-						pc.g.drawRect(pc.swapLineP.x-2, pc.swapLineP.y-2, 5, 5); //Draw node
+						g.drawRect(pc.swapLineP.x-2, pc.swapLineP.y-2, 5, 5); //Draw node
 						for (int ii=0; ii< connections[i].length;ii++){
 							Connection c=connections[i][ii];
 							Connection [] reverseCons = null;
@@ -109,9 +110,9 @@ public class RouteTile extends RouteBaseTile {
 								if (rnt != null) {
 									reverseCons = dict.getConnections(rnt.id,dict,true);
 								} else {
-									pc.g.setColor(255, 70, 70);
+									g.setColor(255, 70, 70);
 									final byte radius = 10;
-									pc.g.fillArc(pc.swapLineP.x-radius/2,pc.swapLineP.y-radius/2,radius,radius,0,359);
+									g.fillArc(pc.swapLineP.x-radius/2,pc.swapLineP.y-radius/2,radius,radius,0,359);
 								}
 							} else {
 								reverseCons = getConnections(rnt.id, this, true);
@@ -131,37 +132,38 @@ public class RouteTile extends RouteBaseTile {
 									}
 								}
 								if (oneway) {
-									pc.g.setColor(255, 100, 100);
+									g.setColor(255, 100, 100);
 								} else {
-									pc.g.setColor(0, 100, 255);
+									g.setColor(0, 100, 255);
 								}
 								pc.getP().forward(rnt.lat, rnt.lon, pc.lineP2);
-								pc.g.drawLine(pc.swapLineP.x, pc.swapLineP.y, pc.lineP2.x, pc.lineP2.y);
-								pc.g.setColor(0, 0, 0);
+								g.drawLine(pc.swapLineP.x, pc.swapLineP.y, pc.lineP2.x, pc.lineP2.y);
+								g.setColor(0, 0, 0);
 								if (showCost) {
-									pc.g.drawString(Integer.toString(c.cost), (pc.swapLineP.x + pc.lineP2.x) / 2, (pc.swapLineP.y + pc.lineP2.y) / 2, Graphics.TOP | Graphics.RIGHT);
+									g.drawString(Integer.toString(c.cost), (pc.swapLineP.x + pc.lineP2.x) / 2, (pc.swapLineP.y + pc.lineP2.y) / 2, Graphics.TOP | Graphics.RIGHT);
 								}
 							}
 						}
 					}
 					if (showTurnRestrictions && nodes[i].hasTurnRestrictions()) {
-						pc.g.setColor(0xD00000);
-						pc.g.fillRect(pc.swapLineP.x-3, pc.swapLineP.y-2, 7, 7); //Draw node
+						g.setColor(0xD00000);
+						g.fillRect(pc.swapLineP.x-3, pc.swapLineP.y-2, 7, 7); //Draw node
 						TurnRestriction turnRestriction = getTurnRestrictions(nodes[i].id);
 						int drawOffs = 0;
 						RouteBaseTile dict = (RouteBaseTile) Trace.getInstance().getDict((byte)4);
 						while (turnRestriction != null) {
-							pc.g.setColor(0);
-							pc.g.drawString(turnRestriction.getRestrictionType(), pc.swapLineP.x, pc.swapLineP.y + drawOffs * pc.g.getFont().getHeight(), Graphics.TOP | Graphics.HCENTER);
+							g.setColor(0);
+							g.drawString(turnRestriction.getRestrictionType(), pc.swapLineP.x, pc.swapLineP.y + drawOffs * pc.g.getFont().getHeight(), Graphics.TOP | Graphics.HCENTER);
 							RouteNode from = dict.getRouteNode(turnRestriction.fromRouteNodeId);
 							if (from != null) {
 								if (turnRestriction.isOnlyTypeRestriction()) {
-									pc.g.setColor(0x00008000); // dark green
+									g.setColor(0x00008000); // dark green
 								} else {
-									pc.g.setColor(0x00800000); // dark red						
+									g.setColor(0x00800000); // dark red						
 								}
 								pc.getP().forward(from.lat, from.lon, pc.lineP2);
-								pc.g.drawLine(pc.swapLineP.x, pc.swapLineP.y + drawOffs, pc.lineP2.x, pc.lineP2.y + drawOffs);
+								
+								g.drawLine(pc.swapLineP.x, pc.swapLineP.y + drawOffs, pc.lineP2.x, pc.lineP2.y + drawOffs);
 							}
 							//#mdebug debug
 							else {
@@ -171,12 +173,12 @@ public class RouteTile extends RouteBaseTile {
 							RouteNode to = dict.getRouteNode(turnRestriction.toRouteNodeId);
 							if (to != null) {
 								if (turnRestriction.isOnlyTypeRestriction()) {
-									pc.g.setColor(0x0000FF00); // light green
+									g.setColor(0x0000FF00); // light green
 								} else {
-									pc.g.setColor(0x00FF0000); // light red						
+									g.setColor(0x00FF0000); // light red						
 								}
 								pc.getP().forward(to.lat, to.lon, pc.lineP2);
-								pc.g.drawLine(pc.swapLineP.x, pc.swapLineP.y + drawOffs, pc.lineP2.x, pc.lineP2.y + drawOffs);									
+								g.drawLine(pc.swapLineP.x, pc.swapLineP.y + drawOffs, pc.lineP2.x, pc.lineP2.y + drawOffs);									
 							}
 							//#mdebug debug
 							else {								
