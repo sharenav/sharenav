@@ -49,7 +49,8 @@ public class Routing implements Runnable {
 	Node firstSourcePathSegNodeDummy1 = new Node();
 	int firstNodeId2 = 0;
 	Node firstSourcePathSegNodeDummy2 = new Node();
-
+	int beforeFirstId = -1;
+	
 	/**
 	 * alternatives of path segments closest to the target
 	 * One of these arbitrary positions on the way's path will be after the route calculation
@@ -147,9 +148,11 @@ public class Routing implements Runnable {
 				while (turnRestriction != null) { // loop through all turn restrictions at this route node
 					if ( (turnRestriction.affectedTravelModes & currentTravelMask) > 0 ){
 						for (int cl=0;cl < successor.length;cl++){
-							int prevId = -1;
+							int prevId = 0;
 							if (currentNode.parent != null) { // TODO: make turn restrictions work at the first route node
 								prevId = currentNode.parent.state.toId;
+							} else {
+								prevId = beforeFirstId;
 							}
 							Connection nodeSuccessor=successor[cl];
 							if (turnRestriction.fromRouteNodeId == prevId && turnRestriction.toRouteNodeId == nodeSuccessor.toId) {
@@ -436,11 +439,11 @@ public class Routing implements Runnable {
 				Way w=(Way) fromMark.entity;
 				int nearestSegment=getNearestSeg(w, startNode.lat, startNode.lon, fromMark.nodeLat,fromMark.nodeLon);
 				// roundabouts don't need to be explicitely tagged as oneways in OSM according to http://wiki.openstreetmap.org/wiki/Tag:junction%3Droundabout
-				if (! w.isOneDirectionOnly() ) { // if no against oneway rule applies
 					
-//					parent.getRouteNodes().addElement(new RouteHelper(fromMark.nodeLat[nearestSegment],fromMark.nodeLon[nearestSegment],"oneWay sec"));
-					RouteNode rn=findPrevRouteNode(nearestSegment-1, startNode.lat, startNode.lon, fromMark.nodeLat,fromMark.nodeLon);
-					if (rn != null) {
+//				parent.getRouteNodes().addElement(new RouteHelper(fromMark.nodeLat[nearestSegment],fromMark.nodeLon[nearestSegment],"oneWay sec"));
+				RouteNode rn=findPrevRouteNode(nearestSegment-1, startNode.lat, startNode.lon, fromMark.nodeLat,fromMark.nodeLon);
+				if (rn != null) {
+					if (! w.isOneDirectionOnly() ) { // if no against oneway rule applies
 //						parent.getRouteNodes().addElement(new RouteHelper(rn.lat,rn.lon,"next back"));
 						// TODO: fill in bearings and cost
 						Connection initialState=new Connection(rn,0,(byte)0,(byte)0);
@@ -457,12 +460,14 @@ public class Routing implements Runnable {
 						if (firstSeg >= fromMark.nodeLat.length) {
 							firstSeg = fromMark.nodeLat.length - 1;	
 						}
-						firstNodeId1 = initialState.toId;
+						firstNodeId1 = rn.id;
 						firstSourcePathSegNodeDummy1.radlat = fromMark.nodeLat[firstSeg];
 						firstSourcePathSegNodeDummy1.radlon = fromMark.nodeLon[firstSeg];
+					} else {
+						beforeFirstId = rn.id;
 					}
 				} 
-				RouteNode rn=findNextRouteNode(nearestSegment, startNode.lat, startNode.lon, fromMark.nodeLat,fromMark.nodeLon);
+				rn=findNextRouteNode(nearestSegment, startNode.lat, startNode.lon, fromMark.nodeLat,fromMark.nodeLon);
 				if (rn != null) {
 					// TODO: fill in bearings and cost
 					Connection initialState=new Connection(rn,0,(byte)0,(byte)0);
@@ -479,7 +484,7 @@ public class Routing implements Runnable {
 					if (firstSeg < 0) {
 						firstSeg = 0;
 					}
-					firstNodeId2 = initialState.toId;
+					firstNodeId2 = rn.id;
 					firstSourcePathSegNodeDummy2.radlat = fromMark.nodeLat[firstSeg];
 					firstSourcePathSegNodeDummy2.radlon = fromMark.nodeLon[firstSeg];
 				}
