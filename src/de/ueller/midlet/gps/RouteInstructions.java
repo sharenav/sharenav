@@ -37,7 +37,7 @@ public class RouteInstructions {
 	private static final String[] directions  = { "mark",
 		"hard right", "right", "half right",
 		"bear right", "straight on", "bear left",
-		"half left", "left", "hard left",
+		"half left", "left", "hard left", "u-turn",
 		"Target reached",
 		"enter motorway", "leave motorway",
 		"cross area", "leave area",
@@ -48,7 +48,8 @@ public class RouteInstructions {
 	private static final String[] soundDirections  = { "",
 		"HARD;RIGHT", "RIGHT", "HALF;RIGHT",
 		"BEAR;RIGHT", "STRAIGHTON", "BEAR;LEFT",
-		"HALF;LEFT", "LEFT", "HARD;LEFT", "TARGET_REACHED",
+		"HALF;LEFT", "LEFT", "HARD;LEFT", "UTURN",
+		"TARGET_REACHED",
 		"ENTER_MOTORWAY", "LEAVE_MOTORWAY",
 		"AREA_CROSS", "AREA_CROSSED",
 		"RAB;1ST;RABEXIT", "RAB;2ND;RABEXIT", "RAB;3RD;RABEXIT",
@@ -66,20 +67,21 @@ public class RouteInstructions {
 	private static final int RI_HALF_LEFT = 7;
 	private static final int RI_LEFT = 8;
 	private static final int RI_HARD_LEFT = 9;
-	private static final int RI_TARGET_REACHED = 10;
-	private static final int RI_ENTER_MOTORWAY = 11;
-	private static final int RI_LEAVE_MOTORWAY = 12;
-	private static final int RI_AREA_CROSS = 13;
-	private static final int RI_AREA_CROSSED = 14;
-	private static final int RI_1ST_EXIT = 15;
-	private static final int RI_2ND_EXIT = 16;
-	private static final int RI_3RD_EXIT = 17;
-	private static final int RI_4TH_EXIT = 18;
-	private static final int RI_5TH_EXIT = 19;
-	private static final int RI_6TH_EXIT = 20;
-	private static final int RI_INTO_TUNNEL = 21;
-	private static final int RI_OUT_OF_TUNNEL = 22;
-	private static final int RI_SKIPPED = 23;
+	private static final int RI_UTURN = 10;
+	private static final int RI_TARGET_REACHED = 11;
+	private static final int RI_ENTER_MOTORWAY = 12;
+	private static final int RI_LEAVE_MOTORWAY = 13;
+	private static final int RI_AREA_CROSS = 14;
+	private static final int RI_AREA_CROSSED = 15;
+	private static final int RI_1ST_EXIT = 16;
+	private static final int RI_2ND_EXIT = 17;
+	private static final int RI_3RD_EXIT = 18;
+	private static final int RI_4TH_EXIT = 19;
+	private static final int RI_5TH_EXIT = 20;
+	private static final int RI_6TH_EXIT = 21;
+	private static final int RI_INTO_TUNNEL = 22;
+	private static final int RI_OUT_OF_TUNNEL = 23;
+	private static final int RI_SKIPPED = 24;
 	
 	private int connsFound = 0;
 	
@@ -496,6 +498,7 @@ public class RouteInstructions {
 							case RI_HALF_LEFT:		pict=pc.images.IMG_HALFLEFT; break;
 							case RI_LEFT:			pict=pc.images.IMG_LEFT; break;
 							case RI_HARD_LEFT:		pict=pc.images.IMG_HARDLEFT; break;
+							case RI_UTURN:			pict=pc.images.IMG_UTURN; break;
 //							case RI_BEAR_LEFT:
 //							case RI_BEAR_RIGHT:		pict=pc.images.IMG_STRAIGHTON;
 //													if (
@@ -1327,7 +1330,9 @@ public class RouteInstructions {
 	private byte convertTurnToRouteInstruction(int turn) {
 		if (turn > 180) turn -= 360;
 		if (turn < -180) turn += 360;
-		if (turn > 110) {
+		if (turn > 160) {
+			return RI_UTURN;
+		} else if (turn > 110) {
 			return RI_HARD_RIGHT;
 		} else if (turn > 70){
 			return RI_RIGHT;
@@ -1339,8 +1344,10 @@ public class RouteInstructions {
 			return RI_HALF_LEFT;
 		} else if (turn >= -110){
 			return RI_LEFT;
-		} else {
+		} else if (turn >= -160){
 			return RI_HARD_LEFT;
+		} else {
+			return RI_UTURN;
 		}
 	}
 	

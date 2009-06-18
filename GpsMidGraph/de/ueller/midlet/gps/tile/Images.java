@@ -21,6 +21,7 @@ public class Images {
 	public final Image IMG_HALFRIGHT=Image.createImage("/halfright.png");
 	public final Image IMG_HARDLEFT=Image.createImage("/hardleft.png");
 	public final Image IMG_HARDRIGHT=Image.createImage("/hardright.png");
+	public final Image IMG_UTURN=Image.createImage("/uturn.png");
 	public final Image IMG_MOTORWAYENTER=Image.createImage("/motorway.png");
 	public final Image IMG_MOTORWAYLEAVE=Image.createImage("/motorway_exit.png");
 	public final Image IMG_TUNNEL_INTO=Image.createImage("/tunnel.png");

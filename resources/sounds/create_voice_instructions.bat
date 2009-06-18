@@ -41,6 +41,7 @@ espeak -a200 -wbear.wav -z -p80 -s150 -ven+f1 -x -k5 "bear"
 espeak -a200 -wfollow_street.wav -z -p80 -s150 -ven+f1 -x -k5 "follow the street until further notice"
 espeak -a200 -warea_cross.wav -z -p80 -s150 -ven+f1 -x -k5 "cross the area"
 espeak -a200 -warea_crossed.wav -z -p80 -s150 -ven+f1 -x -k5 "leave the area"
+espeak -a200 -wuturn.wav -z -p80 -s100 -ven+f1 -x -k5 "u-turn"
 
 REM resample and increase volume of all sounds using sox from http://sox.sf.net
 FOR /F "tokens=*" %%i in ('dir /b *.wav') do (
