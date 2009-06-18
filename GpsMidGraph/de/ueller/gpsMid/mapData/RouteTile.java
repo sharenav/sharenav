@@ -153,7 +153,7 @@ public class RouteTile extends RouteBaseTile {
 						RouteBaseTile dict = (RouteBaseTile) Trace.getInstance().getDict((byte)4);
 						while (turnRestriction != null) {
 							g.setColor(0);
-							g.drawString(turnRestriction.getRestrictionType(), pc.swapLineP.x, pc.swapLineP.y + drawOffs * pc.g.getFont().getHeight(), Graphics.TOP | Graphics.HCENTER);
+							g.drawString(turnRestriction.getRestrictionType(), pc.swapLineP.x, pc.swapLineP.y + drawOffs * g.getFont().getHeight(), Graphics.TOP | Graphics.HCENTER);
 							RouteNode from = dict.getRouteNode(turnRestriction.fromRouteNodeId);
 							if (from != null) {
 								if (turnRestriction.isOnlyTypeRestriction()) {
@@ -162,7 +162,7 @@ public class RouteTile extends RouteBaseTile {
 									g.setColor(0x00800000); // dark red						
 								}
 								pc.getP().forward(from.lat, from.lon, pc.lineP2);
-								
+								g.setStrokeStyle(Graphics.DOTTED);
 								g.drawLine(pc.swapLineP.x, pc.swapLineP.y + drawOffs, pc.lineP2.x, pc.lineP2.y + drawOffs);
 							}
 							//#mdebug debug
@@ -178,6 +178,7 @@ public class RouteTile extends RouteBaseTile {
 									g.setColor(0x00FF0000); // light red						
 								}
 								pc.getP().forward(to.lat, to.lon, pc.lineP2);
+								g.setStrokeStyle(Graphics.SOLID);
 								g.drawLine(pc.swapLineP.x, pc.swapLineP.y + drawOffs, pc.lineP2.x, pc.lineP2.y + drawOffs);									
 							}
 							//#mdebug debug
