@@ -173,6 +173,9 @@ public class Routing implements Runnable {
 			}	// end of check for turn restrictions
 			
 			for (int cl=0;cl < successor.length;cl++){
+				if (turnRestricted[cl]) {
+					continue;
+				}
 				Connection nodeSuccessor=successor[cl];
 				int dTurn=currentNode.fromBearing-nodeSuccessor.startBearing;
 				int turnCost=getTurnCost(dTurn);
@@ -206,13 +209,11 @@ public class Routing implements Runnable {
 					int estimation;
 					GraphNode newNode;
 					estimation = estimate(currentNode.state,nodeSuccessor, target);
-					if (!turnRestricted[cl]) {
-						newNode = new GraphNode(nodeSuccessor, currentNode, successorCost, estimation, currentNode.fromBearing);
-						open.put(nodeSuccessor.toId, newNode);
-	//					parent.getRouteNodes().addElement(new RouteHelper(newNode.state.to.lat,newNode.state.to.lon,"t"+expanded));
-	//					evaluated++;
-						children.addElement(newNode);
-					}
+					newNode = new GraphNode(nodeSuccessor, currentNode, successorCost, estimation, currentNode.fromBearing);
+					open.put(nodeSuccessor.toId, newNode);
+//					parent.getRouteNodes().addElement(new RouteHelper(newNode.state.to.lat,newNode.state.to.lon,"t"+expanded));
+//					evaluated++;
+					children.addElement(newNode);
 				}
 			}
 			open.remove(currentNode.state.toId);
