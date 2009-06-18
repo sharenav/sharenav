@@ -22,15 +22,16 @@ GpsMid 0.5.09
        - Improved visibility of railways based on GeoCache style - thx GoemonGps/billi25
        - Add place=island as a workaround for land underwater - thx pos_ei_don_
        *** Routing ***
+       - Foot routing (only available in high-style and if specified in useRouting)
        - Multiple Route Modes can be bundled for a single midlet with a setting in the .properties file,
          e.g. useRouting = motorcar, bicycle, foot
-       - Foot routing (only available in high-style and if specified in useRouting)
-       - You are now asked which route mode to use on start of routing
+       - GpsMid asks which route mode to use on start of routing
+       - Show remaining route distance to target in map screen
+       - Support for turn restrictions (only for restrictions where the type of the VIA_ROLE is node)
+       - U-turn instruction
        - Cross area routing (e.g. for foot routing through pedestrian zones)
        - Permissive Routing Restriction are now possible
          (e.g. bicycle routing for an abandoned aeroway=runway if bicycle=true is set
-       - Support for turn restrictions (only for restrictions where the type of the VIA_ROLE is node)
-       - Show remaining route distance to target in map screen
        *** Midlet creation with Osm2GpsMid ***
        *** Osm2GpsMid GUI ***
        - Loading .properties files works again
