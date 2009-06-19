@@ -100,7 +100,7 @@ public class Relation extends Entity {
 	}
 
 	
-	public long getViaNodeRef() {
+	public long getViaNodeOrWayRef() {
 		long ref = 0;
 		if (members.size() > 0) {
 			String type = getAttribute("type");
@@ -108,10 +108,10 @@ public class Relation extends Entity {
 				if (type.equalsIgnoreCase("restriction")) {
 					for (Member m : members) {
 						if (m.getRole() == Member.ROLE_VIA) {
-							if (m.getType() == Member.TYPE_NODE) {
+							if (m.getType() == Member.TYPE_NODE || m.getType() == Member.TYPE_WAY) {
 								ref = m.getRef();
 							} else {
-								System.out.println("Turn restrictions: Can only handle ROLE_VIA nodes. Restriction: " + toString());
+								System.out.println("Turn restrictions: Can only handle ROLE_VIA node and way types. Restriction: " + toString());
 							}
 						}
 					}
@@ -119,6 +119,19 @@ public class Relation extends Entity {
 			}	
 		}
 		return ref;
+	}
+	
+	public boolean isViaWay() {
+		if (members.size() > 0) {
+			for (Member m : members) {
+				if (m.getRole() == Member.ROLE_VIA) {
+					if (m.getType() == Member.TYPE_WAY) {
+						return true;
+					}
+				}
+			}	
+		}
+		return false;
 	}
 	
 	public void setPartial() {

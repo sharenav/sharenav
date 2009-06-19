@@ -37,7 +37,7 @@ public class OxParser extends DefaultHandler{
 	private HashMap<Long,Relation> relations = new HashMap<Long,Relation>();
 	private HashMap<Long,TurnRestriction> turnRestrictions = new HashMap<Long,TurnRestriction>();
 	private Hashtable<String, String> tagsCache = new Hashtable<String,String>();
-	private int nodeTot,nodeIns,segTot,segIns,wayTot,wayIns,ele, relTot, relPart, relIns, turnRestrictionTot;
+	private int nodeTot,nodeIns,segTot,segIns,wayTot,wayIns,ele, relTot, relPart, relIns;
 	private Bounds[] bounds=null;
 	private Configuration configuration;
 	/**
@@ -266,24 +266,37 @@ public class OxParser extends DefaultHandler{
 			current = null;
 		} else if (qName.equals("relation")) {
 			relTot++;
-			long viaNodeRef = 0;
+			/** Store way and node refs temporarily in the same HashMap.
+			 *  Way refs must be resolved later to nodes when we actually know all the ways
+			 */
+			long viaNodeOrWayRef = 0;
 			Relation r=(Relation) current;
 			if (r.isValid()) {				
 				if (!r.isPartial()) {
 					relIns++;
-					viaNodeRef = r.getViaNodeRef(); 
+					viaNodeOrWayRef = r.getViaNodeOrWayRef(); 
 				} else {
 					relPart++;
 				}
-				if (viaNodeRef != 0) {
-					if (! turnRestrictions.containsKey(new Long(viaNodeRef))) {
-						turnRestrictions.put(new Long(viaNodeRef), new TurnRestriction(r) );
+				if (viaNodeOrWayRef != 0) {
+					TurnRestriction turnRestriction = new TurnRestriction(r);
+					if (! turnRestrictions.containsKey(new Long(viaNodeOrWayRef))) {
+						turnRestrictions.put(new Long(viaNodeOrWayRef), turnRestriction);
 					} else {
-						TurnRestriction existingTurn = (TurnRestriction) turnRestrictions.get(new Long(viaNodeRef));
-						existingTurn.nextTurnRestrictionAtThisNode = new TurnRestriction(r);
+						turnRestriction = (TurnRestriction) turnRestrictions.get(new Long(viaNodeOrWayRef));
+						turnRestriction.nextTurnRestrictionAtThisNode = new TurnRestriction(r);
 						// System.out.println("Multiple turn restrictions at " + r.toString()); 
 					}
-					turnRestrictionTot++;
+					// add a flag to the turn restriction if it's a way, so we know this must be resolved later
+					if (r.isViaWay()) {
+						turnRestriction.flags |= TurnRestriction.VIA_TYPE_IS_WAY;
+					}
+					/*  Store the ref to the via way or node.
+					 *  This is until the via way ref is resolved to a route node
+					 *  the same as the HashMap's key, but we don't get this value when iterating through the HashMap's values,
+					 *  so we store it here as well.
+					 */
+					turnRestriction.viaNodeOrWayRef = viaNodeOrWayRef;
 				}
 				else {
 					relations.put(new Long(r.id),r);

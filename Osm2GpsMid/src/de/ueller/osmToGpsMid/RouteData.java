@@ -97,6 +97,11 @@ public class RouteData {
 		for (RouteNode n: nodes.values()){
 			TurnRestriction turn = (TurnRestriction) parser.getTurnRestrictionHashMap().get(new Long(n.node.id));
 			while (turn!=null) {
+				if (turn.isViaTypeWay()) {
+					System.out.println("Turn Restrictions for VIA_TYPE WAY are not implemented yet");
+					turn = turn.nextTurnRestrictionAtThisNode;
+					continue;
+				}
 				Way restrictionFromWay = parser.getWayHashMap().get(new Long(turn.fromWayRef));
 				// skip if restrictionFromWay is not in available wayData				
 				if (restrictionFromWay == null) {
