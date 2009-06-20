@@ -147,27 +147,57 @@ public class Routing implements Runnable {
 				TurnRestriction turnRestriction = tile.getTurnRestrictions(currentNode.state.toId);
 				while (turnRestriction != null) { // loop through all turn restrictions at this route node
 					if ( (turnRestriction.affectedTravelModes & currentTravelMask) > 0 ){
+						GraphNode parentNode;
 						for (int cl=0;cl < successor.length;cl++){
-							int prevId = 0;
-							if (currentNode.parent != null) { // TODO: make turn restrictions work at the first route node
-								prevId = currentNode.parent.state.toId;
-							} else {
-								prevId = beforeFirstId;
-							}
 							Connection nodeSuccessor=successor[cl];
-							if (turnRestriction.fromRouteNodeId == prevId && turnRestriction.toRouteNodeId == nodeSuccessor.toId) {
-								if (! turnRestriction.isOnlyTypeRestriction()) {
-									System.out.println("NO_ turn restriction match");
-									turnRestricted[cl]=true;
-								} else {
-									System.out.println("ONLY_ turn restriction match");
-									// disable all other connections
-									for (int cl2=0;cl2 < successor.length;cl2++){
-										if (cl2 != cl) {
-											turnRestricted[cl2]=true;										
+							if (turnRestriction.toRouteNodeId == nodeSuccessor.toId) {
+								//#debug debug
+								logger.debug("to node matches");
+								int numAdditionalViaNodes = 0; // default to no additional via nodes for via members of node type
+								if (turnRestriction.isViaTypeWay()) {
+									// set additional number of via Nodes on via members of way type
+									numAdditionalViaNodes = turnRestriction.extraViaNodes.length;
+									//#debug debug
+									logger.debug(numAdditionalViaNodes + " additional nodes on via member to examine");
+								}
+								parentNode = currentNode;
+								do {
+									int prevId = -1;
+									parentNode = parentNode.parent;
+									if (parentNode != null) {
+										prevId = parentNode.state.toId;
+									} else {
+										prevId = beforeFirstId; // if we have no parent node take the id determined on start of the route calculation
+									}
+									if (numAdditionalViaNodes == 0) { // when we already examined all via Nodes of a via Way or there were none
+										// check if the route node id of the way before the via member matches
+										if (turnRestriction.fromRouteNodeId == prevId) {
+											if (! turnRestriction.isOnlyTypeRestriction()) {
+												//#debug debug
+												logger.debug("NO_ turn restriction match");
+												turnRestricted[cl]=true;
+											} else {
+												//#debug debug
+												logger.debug("ONLY_ turn restriction match");
+												// disable all other connections
+												for (int cl2=0;cl2 < successor.length;cl2++){
+													if (cl2 != cl) {
+														turnRestricted[cl2]=true;										
+													}
+												}
+											}
+										}
+										parentNode = null; // the check is complete, so exit the loop
+									} else {
+										numAdditionalViaNodes--;
+										if (turnRestriction.extraViaNodes[numAdditionalViaNodes] == prevId ) {
+											//#debug debug
+											logger.debug("additional via node match" + numAdditionalViaNodes);
+										} else {
+											parentNode = null; // one of the additional via Nodes did not match, so exit the loop
 										}
 									}
-								}
+								} while (parentNode != null);
 							}
 						}
 					}

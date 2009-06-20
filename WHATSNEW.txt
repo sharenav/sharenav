@@ -15,6 +15,7 @@ GpsMid 0.5.09
        	 the last manual panning of the map it will be automatically recentered to the GPS position
        - Better handling of appearing and disappearing text items on the map screen
        - show speed when driving
+       - Turn restrictions included in the midlet can be displayed in the map with Setup/Debug Options
        *** Recordings, Tracks and Waypoints ***
        - Allow to save more than 255 waypoints again (thx pos_ei_don)
        - Ask for track name at start/end of track recording - configurable in Setup / Recording Rules (thx jkjp)
@@ -27,7 +28,7 @@ GpsMid 0.5.09
          e.g. useRouting = motorcar, bicycle, foot
        - GpsMid asks which route mode to use on start of routing
        - Show remaining route distance to target in map screen
-       - Support for turn restrictions (only for restrictions where the type of the VIA_ROLE is node)
+       - Check for turn restrictions during route calculation
        - U-turn instruction
        - Cross area routing (e.g. for foot routing through pedestrian zones)
        - Permissive Routing Restriction are now possible
