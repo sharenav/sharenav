@@ -32,10 +32,11 @@ import javax.microedition.lcdui.TextField;
 
 import de.enough.polish.util.base64.Base64;
 import de.ueller.gps.data.Configuration;
+import de.ueller.gps.tools.HTTPhelper;
 import de.ueller.midlet.gps.tile.C;
 
 public class GuiOSMChangeset extends Form implements GpsMidDisplayable,
-		Runnable, CommandListener {
+		Runnable, CommandListener, UploadListener {
 
 	private final static Logger logger = Logger.getInstance(
 			GuiOSMChangeset.class, Logger.DEBUG);
@@ -47,6 +48,8 @@ public class GuiOSMChangeset extends Form implements GpsMidDisplayable,
 	private GpsMidDisplayable parent;
 	private String comment;
 	private TextField commentField;
+	
+	private HTTPhelper http;
 
 	private int changesetID;
 
@@ -78,109 +81,19 @@ public class GuiOSMChangeset extends Form implements GpsMidDisplayable,
 	}
 
 	private void uploadCreate() {
+		if (http == null) { 
+			http = new HTTPhelper();
+		}
 		//#debug debug
 		logger.debug("Uploading XML for " + this);
-		int respCode = 0;
-		String respMessage = null;
-		try {
-			String fullXML = toXML();
-			String url = Configuration.getOsmUrl()
-					+ "changeset/create";
-			//#debug info
-			logger.info("HTTP POST: " + url);
-			//#debug debug
-			logger.debug("data:\n" + fullXML);
-			HttpConnection connection = (HttpConnection) Connector.open(url);
-			connection.setRequestMethod(HttpConnection.POST);
-			connection.setRequestProperty("Connection", "close");
-			connection.setRequestProperty("User-Agent", "GpsMid");
-			connection.setRequestProperty("X_HTTP_METHOD_OVERRIDE", "PUT");
-
-			connection.setRequestProperty("Authorization", "Basic "
-					+ Base64.encode(Configuration.getOsmUsername() + ":"
-							+ Configuration.getOsmPwd()));
-
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			OutputStreamWriter osw = new OutputStreamWriter(baos);
-
-			osw.write(fullXML);
-			osw.flush();
-			connection.setRequestProperty("Content-Length", Integer
-					.toString(baos.toByteArray().length));
-			OutputStream os = connection.openOutputStream();
-			os.write(baos.toByteArray());
-			os.flush();
-
-			// HTTP Response
-			respCode = connection.getResponseCode();
-			respMessage = connection.getResponseMessage();
-
-			if (respCode == HttpConnection.HTTP_OK) {
-				//#debug debug
-				logger.debug("Uploaded successfully, reading response");
-				InputStreamReader isr = new InputStreamReader(connection
-						.openInputStream());
-				char[] buf = new char[16];
-				int noRead = isr.read(buf);
-				String changeID = new String(buf, 0, noRead);
-				//#debug debug
-				logger.debug("Retrieved changeset-id: " + changeID);
-				changesetID = Integer.parseInt(changeID);
-				//#debug info
-				logger.info("Successfully created Changeset " + changesetID);
-				ul.completedUpload(true, "Successfully created Changeset "
-						+ changesetID);
-			} else {
-				logger.error("Changeset was not created (" + respCode + "): "
-						+ respMessage);
-				ul.completedUpload(false, "Failed to save changeset");
-			}
-		} catch (Exception e) {
-			logger.exception("Failed to upload way", e);
-		}
-	}
-
-	private void uploadClose() {
-		//#debug debug
-		logger.debug("Closing " + this);
-		int respCode = 0;
-		String respMessage = null;
-		try {
-			String url = Configuration.getOsmUrl() + "changeset/" + changesetID
-					+ "/close?_method=put";
-			//#debug info
-			logger.info("HTTP POST: " + url);
-			HttpConnection connection = (HttpConnection) Connector.open(url);
-			connection.setRequestMethod(HttpConnection.POST);
-			connection.setRequestProperty("Connection", "close");
-			connection.setRequestProperty("User-Agent", "GpsMid");
-
-			connection.setRequestProperty("Authorization", "Basic "
-					+ Base64.encode(Configuration.getOsmUsername() + ":"
-							+ Configuration.getOsmPwd()));
-
-			// HTTP Response
-			respCode = connection.getResponseCode();
-			respMessage = connection.getResponseMessage();
-
-			if (respCode == HttpConnection.HTTP_OK) {
-				//#debug debug
-				logger.debug("Uploaded successfully, reading response");
-				ul.completedUpload(true, "Successfully closed Changeset "
-						+ changesetID);
-			} else {
-				logger.error("Changeset was not created (" + respCode + "): "
-						+ respMessage);
-				ul.completedUpload(false, "Failed to close changeset");
-			}
-		} catch (Exception e) {
-			logger.exception("Failed to upload way", e);
-		}
+		String fullXML = toXML();
+		String url = Configuration.getOsmUrl()
+				+ "changeset/create";
+		http.uploadData(url, fullXML, true, this, Configuration.getOsmUsername(),Configuration.getOsmPwd());
 	}
 
 	public void run() {
 		if (closing) {
-			uploadClose();
 		} else {
 			uploadCreate();
 		}
@@ -203,13 +116,63 @@ public class GuiOSMChangeset extends Form implements GpsMidDisplayable,
 	}
 
 	public void closeChangeset() {
-		closing = true;
-		Thread t = new Thread(this);
-		t.start();
+		if (http == null) { 
+			http = new HTTPhelper();
+		}
+		String url = Configuration.getOsmUrl() + "changeset/" + changesetID
+		+ "/close";
+		http.uploadData(url, "", true, ul, Configuration.getOsmUsername(), Configuration.getOsmPwd());
 	}
 
 	public int getChangesetID() {
 		return changesetID;
+	}
+
+	public void completedUpload(boolean success, String message) {
+		if (success) {
+			String changeID = http.getData();
+			//#debug debug
+			logger.debug("Retrieved changeset-id: " + changeID);
+			try {
+				changesetID = Integer.parseInt(changeID);
+			} catch (NumberFormatException nfe) {
+				logger.exception("Returned changesetID was non numerical", nfe);
+				ul.completedUpload(false, "No valid changeset ID was returned");
+				return;
+			}
+			//#debug info
+			logger.info("Successfully created Changeset " + changesetID);
+			ul.completedUpload(true, "Successfully created Changeset "
+					+ changesetID);
+		} else {
+			logger.error("Failed to created Changeset " + message);
+			ul.completedUpload(false, message);
+		}
+	}
+
+	public void setProgress(String message) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void startProgress(String title) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void updateProgress(String message) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void updateProgressValue(int increment) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void uploadAborted() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

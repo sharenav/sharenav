@@ -10,178 +10,57 @@
 //#if polish.api.osm-editing
 package de.ueller.midlet.gps.data;
 
-import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.util.Hashtable;
-
-import javax.microedition.io.Connector;
-import javax.microedition.io.HttpConnection;
-
-import de.enough.polish.util.base64.Base64;
 import de.ueller.gps.data.Configuration;
+//#if polish.api.online
+import de.ueller.gps.tools.HTTPhelper;
+//#endif
 import de.ueller.gpsMid.mapData.Tile;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.UploadListener;
 
-public class EditableWay extends Way implements Runnable{
+public class EditableWay extends Way implements UploadListener {
 	private final static Logger logger = Logger.getInstance(EditableWay.class,Logger.DEBUG);
 	private UploadListener ul;
-	private boolean upload;
 	public int osmID;
-	private int commitChangesetID;
 	private OSMdataWay OSMdata;
+	//#if polish.api.online
+	private HTTPhelper http = null;
+	//#endif
 	
 	public EditableWay(DataInputStream is, byte f, Tile t, byte[] layers, int idx) throws IOException {
 		super(is, f, t, layers, idx);
 		osmID = is.readInt();
 		OSMdata = null;
-		upload = false;
 	}
 	
 	public void loadXML(UploadListener ul) {
-		upload = false;
+		//#if polish.api.online
+		//#debug debug
+		logger.debug("Retrieving XML for " + this);
 		this.ul = ul;
-		Thread t = new Thread(this);
-		t.start();
+		String url = Configuration.getOsmUrl() + "way/" + osmID;
+		if (http == null) { 
+			http = new HTTPhelper();
+		}
+		http.getURL(url, this);
+		//#endif
 	}
 	
 	public void uploadXML(int commitChangesetID, UploadListener ul) {
-		upload = true;
 		this.ul = ul;
-		this.commitChangesetID = commitChangesetID;
-		Thread t = new Thread(this);
-		t.start();
-	}
-
-	public void run() {
-		if (upload) {
-			upload(commitChangesetID);
-		} else {
-			download();
-		}
-	}
-	
-	private void upload(int commitChangesetID) {
 		//#debug debug
 		logger.debug("Uploading XML for " + this);
-		int respCode = 0;
-		String respMessage = null;
-		boolean success = false;
-		try {
-			String fullXML = OSMdata.toXML(commitChangesetID);
-			String url = Configuration.getOsmUrl() + "way/" + osmID;
-			//#debug info
-			logger.info("HTTP POST: " + url);
-			//#debug debug
-			logger.debug("data:\n" + fullXML);
-			HttpConnection connection = (HttpConnection) Connector
-			.open(url);
-			connection.setRequestMethod(HttpConnection.POST);
-			connection.setRequestProperty("Connection", "close");
-			connection.setRequestProperty("User-Agent", "GpsMid");
-			connection.setRequestProperty("X_HTTP_METHOD_OVERRIDE", "PUT");
-			
-			
-			connection.setRequestProperty("Authorization", "Basic " + Base64.encode(Configuration.getOsmUsername() +":" + Configuration.getOsmPwd()));
-			
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			OutputStreamWriter osw = new OutputStreamWriter(baos);
-			
-			
-			osw.write(fullXML);
-			osw.flush();
-			connection.setRequestProperty("Content-Length", Integer.toString(baos.toByteArray().length));
-			OutputStream os = connection.openOutputStream();
-			os.write(baos.toByteArray());
-			os.flush();
-			
-			
-			// HTTP Response
-			respCode = connection.getResponseCode();
-			respMessage = connection.getResponseMessage();
-		} catch (Exception e) {
-			logger.exception("Failed to upload way", e);
+		String fullXML = OSMdata.toXML(commitChangesetID);
+		String url = Configuration.getOsmUrl() + "way/" + osmID;
+		if (http == null) { 
+			http = new HTTPhelper();
 		}
-		if (respCode == HttpConnection.HTTP_OK) {
-			//#debug info
-			logger.info("Successfully uploaded way");
-			success = true;
-			
-		} else {
-			success = false;
-			logger.error("Way was not uploaded (" + respCode + "): " + respMessage);
-		}
-		if (ul != null) {
-			ul.completedUpload(success, "Uploaded XML for way " + osmID);
-		} else {
-			logger.info("UL shouldn't have been null");
-		}
+		http.uploadData(url, fullXML, true, ul, Configuration.getOsmUsername(), Configuration.getOsmPwd());
 	}
 	
-	private void download() {
-		//#debug debug
-		logger.debug("Retrieving XML for " + this);
-		try {
-			String fullXML = null;
-			String url = Configuration.getOsmUrl() + "way/" + osmID;
-			//#debug info
-			logger.info("HTTP get " + url);
-			HttpConnection connection = (HttpConnection) Connector
-					.open(url);
-			connection.setRequestMethod(HttpConnection.GET);
-			connection.setRequestProperty("Content-Type", "//text plain");
-			connection.setRequestProperty("Connection", "close");
-			// HTTP Response
-			if (connection.getResponseCode() == HttpConnection.HTTP_OK) {
-				String str;
-				InputStream inputstream = connection.openInputStream();
-				int length = (int) connection.getLength();
-				//#debug debug
-				logger.debug("Retrieving String of length: " + length);
-				if (length != -1) {
-					byte incomingData[] = new byte[length];
-					int idx = 0;
-					while (idx < length) {
-						int readB = inputstream.read(incomingData,idx, length - idx);
-						//#debug debug
-						logger.debug("Read: " + readB  + " bytes");
-						idx += readB;
-					}
-					str = new String(incomingData);
-				} else {
-					ByteArrayOutputStream bytestream = new ByteArrayOutputStream();
-					int ch;
-					while ((ch = inputstream.read()) != -1) {
-						bytestream.write(ch);
-					}
-					bytestream.flush();
-					str = new String(bytestream.toByteArray());
-					bytestream.close();
-				}
-				//#debug info
-				logger.info(str);
-				fullXML = str;
-				if (str != null)
-					OSMdata = new OSMdataWay(fullXML, osmID);
-					//#debug
-					logger.debug(OSMdata.toString());
-			} else {
-				logger.error("Request failed (" + connection.getResponseCode() + "): " + connection.getResponseMessage());
-			}
-		} catch (IOException ioe) {
-			logger.error("Failed to retrieve Way: " + ioe.getMessage(), true);
-		} catch (SecurityException se) {
-			logger.error("Failed to retrieve Way. J2me dissallowed it", true);
-		}
-		if (ul != null) {
-			ul.completedUpload(OSMdata != null, "Retrieved XML for way " + osmID);
-		}
-	}
-	
+
 	public OSMdataWay getOSMdata() {
 		return OSMdata;
 	}
@@ -191,6 +70,40 @@ public class EditableWay extends Way implements Runnable{
 			OSMdata.getXML();
 		}
 		return null;
+	}
+
+	public void completedUpload(boolean success, String message) {
+		//#if polish.api.online
+		if (success) {
+			
+			String fullXML = http.getData();
+			OSMdata = new OSMdataWay(fullXML, osmID);
+			//#debug
+			logger.debug(OSMdata.toString());
+			if (ul != null) {
+				ul.completedUpload(true, "Retrieved XML for way " + osmID);
+			}
+		} else {
+			if (ul != null) {
+				ul.completedUpload(false, "Retrieved XML for way " + osmID);
+			}
+		}
+		//#endif
+	} 
+	
+	public void setProgress(String message) {
+	}
+
+	public void startProgress(String title) {
+	}
+
+	public void updateProgress(String message) {
+	}
+
+	public void updateProgressValue(int increment) {
+	}
+
+	public void uploadAborted() {
 	}
 
 }
