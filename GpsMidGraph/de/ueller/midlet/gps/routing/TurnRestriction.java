@@ -19,8 +19,11 @@ public class TurnRestriction {
 	public byte flags = 0;
 	/** for which travel modes the turn restriction applies */
 	public byte affectedTravelModes = 0;
+	/** the route nodes on the via member if isViaTypeWay() */
+	public int [] extraViaNodes = null;
 	public TurnRestriction nextTurnRestrictionAtThisNode = null;
 	
+	public final static byte VIA_TYPE_IS_WAY = 0x20;
 	public final static byte IS_ONLY_TYPE_RESTRICTION = 0x40;
 
 	private static final String[] restrictionNames  =
@@ -33,6 +36,10 @@ public class TurnRestriction {
 		return (flags & IS_ONLY_TYPE_RESTRICTION) > 0;
 	}
 
+	public boolean isViaTypeWay() {
+		return (flags & VIA_TYPE_IS_WAY) > 0;
+	}
+	
 	public String getRestrictionType() {
 		return restrictionNames[flags & 0x7];
 	}

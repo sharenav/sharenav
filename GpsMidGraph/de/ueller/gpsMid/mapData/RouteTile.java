@@ -147,29 +147,13 @@ public class RouteTile extends RouteBaseTile {
 					}
 					if (showTurnRestrictions && nodes[i].hasTurnRestrictions()) {
 						g.setColor(0xD00000);
-						g.fillRect(pc.swapLineP.x-3, pc.swapLineP.y-2, 7, 7); //Draw node
+						g.fillRect(pc.swapLineP.x-3, pc.swapLineP.y-2, 7, 7); //Draw viaTo node
 						TurnRestriction turnRestriction = getTurnRestrictions(nodes[i].id);
 						int drawOffs = 0;
 						RouteBaseTile dict = (RouteBaseTile) Trace.getInstance().getDict((byte)4);
 						while (turnRestriction != null) {
 							g.setColor(0);
 							g.drawString(turnRestriction.getRestrictionType(), pc.swapLineP.x, pc.swapLineP.y + drawOffs * g.getFont().getHeight(), Graphics.TOP | Graphics.HCENTER);
-							RouteNode from = dict.getRouteNode(turnRestriction.fromRouteNodeId);
-							if (from != null) {
-								if (turnRestriction.isOnlyTypeRestriction()) {
-									g.setColor(0x00008000); // dark green
-								} else {
-									g.setColor(0x00800000); // dark red						
-								}
-								pc.getP().forward(from.lat, from.lon, pc.lineP2);
-								g.setStrokeStyle(Graphics.DOTTED);
-								g.drawLine(pc.swapLineP.x, pc.swapLineP.y + drawOffs, pc.lineP2.x, pc.lineP2.y + drawOffs);
-							}
-							//#mdebug debug
-							else {
-								logger.debug("from not found");
-							}
-							//#enddebug
 							RouteNode to = dict.getRouteNode(turnRestriction.toRouteNodeId);
 							if (to != null) {
 								if (turnRestriction.isOnlyTypeRestriction()) {
@@ -184,6 +168,41 @@ public class RouteTile extends RouteBaseTile {
 							//#mdebug debug
 							else {								
 								logger.debug("to not found");
+							}
+							//#enddebug
+
+							// draw the viaFrom nodes if this turnRestriction has a viaWay, in the end the coordinates of the real viaFrom node will be in swapLineP
+							if (turnRestriction.isViaTypeWay()) {
+								for (int a = turnRestriction.extraViaNodes.length-1; a >= 0; a--) { // count backwards so in the end the coordinates of the real viaFrom will be in swapLineP
+									RouteNode viaFrom = dict.getRouteNode(turnRestriction.extraViaNodes[a]);
+									if (viaFrom != null) {
+										pc.getP().forward(viaFrom.lat, viaFrom.lon, pc.swapLineP);														
+										g.setStrokeStyle(Graphics.SOLID);
+										if (a == 0) {
+											g.setColor(0x0000D0); // draw the real viaFrom node in blue
+											g.fillRect(pc.swapLineP.x-3, pc.swapLineP.y-2, 7, 7); //Draw node
+										} else {
+											g.setColor(0xFFFFFF); // draw the other nodes in white
+											g.drawRect(pc.swapLineP.x-3, pc.swapLineP.y-2, 7, 7); //Draw node											
+										}
+									}
+								}
+							}
+							
+							RouteNode from = dict.getRouteNode(turnRestriction.fromRouteNodeId);
+							if (from != null) {
+								if (turnRestriction.isOnlyTypeRestriction()) {
+									g.setColor(0x00008000); // dark green
+								} else {
+									g.setColor(0x00800000); // dark red						
+								}
+								pc.getP().forward(from.lat, from.lon, pc.lineP2);
+								g.setStrokeStyle(Graphics.DOTTED);
+								g.drawLine(pc.swapLineP.x, pc.swapLineP.y + drawOffs, pc.lineP2.x, pc.lineP2.y + drawOffs);
+							}
+							//#mdebug debug
+							else {
+								logger.debug("from not found");
 							}
 							//#enddebug
 							turnRestriction = turnRestriction.nextTurnRestrictionAtThisNode;
@@ -254,6 +273,15 @@ public class RouteTile extends RouteBaseTile {
 			if (i > 0 && turn.viaRouteNodeId == turns[i-1].viaRouteNodeId) {
 				turns[i-1].nextTurnRestrictionAtThisNode = turn;
 			}
+			if (turn.isViaTypeWay()) {
+				int count2 = MoreMath.signedToInt(ts.readByte());
+				int [] addViaNodes = new int[count2];
+				for (int a=0; a < count2; a++) {
+					addViaNodes[a] = ts.readInt();
+				}
+				turn.extraViaNodes = addViaNodes;
+			}
+			
 			turns[i] = turn;
 		}
 //		if (count > 0) {
