@@ -520,6 +520,18 @@ public class Way extends Entity implements Comparable<Way>{
 		return false;
 	}
 	
+	public ArrayList<RouteNode> getAllRouteNodesOnTheWay() {
+		ArrayList<RouteNode> returnNodes = new ArrayList<RouteNode>();
+		for (SubPath s:path.getSubPaths()) {
+			for (Node n:s.getNodes()) {
+				if (n.routeNode != null) {
+					returnNodes.add(n.routeNode);
+				}
+			}
+		}
+		return returnNodes;
+	}
+	
 	public void startNextSegment(){
 		if (path == null){
 			path=new Path();

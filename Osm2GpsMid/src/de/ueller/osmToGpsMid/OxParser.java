@@ -2,6 +2,7 @@ package de.ueller.osmToGpsMid;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -16,6 +17,7 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import de.ueller.osmToGpsMid.model.Bounds;
+import de.ueller.osmToGpsMid.model.Connection;
 import de.ueller.osmToGpsMid.model.Entity;
 import de.ueller.osmToGpsMid.model.Member;
 import de.ueller.osmToGpsMid.model.Node;
@@ -36,6 +38,7 @@ public class OxParser extends DefaultHandler{
 	private static HashMap<Long,Way> ways = new HashMap<Long,Way>(); // must be static only to be able to call getWayHashMap() from Tile for debugging
 	private HashMap<Long,Relation> relations = new HashMap<Long,Relation>();
 	private HashMap<Long,TurnRestriction> turnRestrictions = new HashMap<Long,TurnRestriction>();
+	private ArrayList<TurnRestriction> turnRestrictionsWithViaWays = new ArrayList<TurnRestriction>();
 	private Hashtable<String, String> tagsCache = new Hashtable<String,String>();
 	private int nodeTot,nodeIns,segTot,segIns,wayTot,wayIns,ele, relTot, relPart, relIns;
 	private Bounds[] bounds=null;
@@ -266,7 +269,7 @@ public class OxParser extends DefaultHandler{
 			current = null;
 		} else if (qName.equals("relation")) {
 			relTot++;
-			/** Store way and node refs temporarily in the same HashMap.
+			/** Store way and node refs temporarily in the same variable
 			 *  Way refs must be resolved later to nodes when we actually know all the ways
 			 */
 			long viaNodeOrWayRef = 0;
@@ -280,23 +283,22 @@ public class OxParser extends DefaultHandler{
 				}
 				if (viaNodeOrWayRef != 0) {
 					TurnRestriction turnRestriction = new TurnRestriction(r);
-					if (! turnRestrictions.containsKey(new Long(viaNodeOrWayRef))) {
-						turnRestrictions.put(new Long(viaNodeOrWayRef), turnRestriction);
-					} else {
-						turnRestriction = (TurnRestriction) turnRestrictions.get(new Long(viaNodeOrWayRef));
-						turnRestriction.nextTurnRestrictionAtThisNode = new TurnRestriction(r);
-						// System.out.println("Multiple turn restrictions at " + r.toString()); 
-					}
-					// add a flag to the turn restriction if it's a way, so we know this must be resolved later
 					if (r.isViaWay()) {
+						//  Store the ref to the via way
+						turnRestriction.viaWayRef = viaNodeOrWayRef;
+						// add a flag to the turn restriction if it's a way
 						turnRestriction.flags |= TurnRestriction.VIA_TYPE_IS_WAY;
+						// add restrictions with viaWays into an ArrayList to be resolved later
+						turnRestrictionsWithViaWays.add(turnRestriction);
+					} else {
+						if (! turnRestrictions.containsKey(new Long(viaNodeOrWayRef))) {
+							turnRestrictions.put(new Long(viaNodeOrWayRef), turnRestriction);
+						} else {
+							turnRestriction = (TurnRestriction) turnRestrictions.get(new Long(viaNodeOrWayRef));
+							turnRestriction.nextTurnRestrictionAtThisNode = new TurnRestriction(r);
+							// System.out.println("Multiple turn restrictions at " + r.toString()); 
+						}						
 					}
-					/*  Store the ref to the via way or node.
-					 *  This is until the via way ref is resolved to a route node
-					 *  the same as the HashMap's key, but we don't get this value when iterating through the HashMap's values,
-					 *  so we store it here as well.
-					 */
-					turnRestriction.viaNodeOrWayRef = viaNodeOrWayRef;
 				}
 				else {
 					relations.put(new Long(r.id),r);
@@ -355,6 +357,10 @@ public class OxParser extends DefaultHandler{
 
 	public HashMap<Long,TurnRestriction> getTurnRestrictionHashMap() {
 		return turnRestrictions;
+	}
+
+	public ArrayList<TurnRestriction> getTurnRestrictionsWithViaWays() {
+		return turnRestrictionsWithViaWays;
 	}
 
 	public static HashMap<Long,Way> getWayHashMap() {

@@ -92,16 +92,82 @@ public class RouteData {
 
 	
 	private void calculateTurnRestrictions() {
+		/*
+		 * Resolve viaWays to route nodes
+		 */
+		int numViaWaysResolved = 0;
+		System.out.println("Resolving " + parser.getTurnRestrictionsWithViaWays().size() + " viaWays for turn restrictions");
+		for (TurnRestriction turn: parser.getTurnRestrictionsWithViaWays()) {
+			Way restrictionFromWay = parser.getWayHashMap().get(new Long(turn.fromWayRef));
+			// skip if restrictionFromWay is not in available wayData				
+			if (restrictionFromWay == null) {
+				continue;
+			}
+			// skip if restrictionToWay is not in available wayData				
+			Way restrictionToWay = parser.getWayHashMap().get(new Long(turn.toWayRef));
+			if (restrictionToWay == null) {
+				continue;
+			}
+			// skip if restrictionViaWay is not in available wayData				
+			Way restrictionViaWay = parser.getWayHashMap().get(new Long(turn.viaWayRef));
+			if (restrictionViaWay == null) {
+				continue;
+			}
+			
+			ArrayList<RouteNode> viaWayRouteNodes = restrictionViaWay.getAllRouteNodesOnTheWay();
+			// System.out.println(viaWayRouteNodes.size() + " contained route nodes");
+			turn.additionalViaRouteNodes = new RouteNode[viaWayRouteNodes.size() - 1];
+			// the direction to fill in the remaining viaRouteNodes into the array so the result is ordered with route nodes from the fromWay to the toWay exclusively
+			int direction = 1;
+			int startEntry = 1;
+			for (RouteNode n:viaWayRouteNodes) {
+				if (restrictionToWay.containsNode(n.node)) { // this is where viaWay and toWay are connected, so use this as via node
+					turn.viaRouteNode = n;
+//					System.out.println("Resolved viaWay x toWay to node " + n.node.id);
+				}
+				if (restrictionFromWay.containsNode(n.node)) { // this is where viaWay and fromWay are connected
+					turn.additionalViaRouteNodes[0] = n; // and becomes the first entry in the additionalViaRouteNode array
+					if (turn.viaRouteNode != null) {
+						direction = -1;
+						startEntry = turn.additionalViaRouteNodes.length - 1;
+					}
+//					System.out.println("Resolved viaWay x fromWay to node " + n.node.id);
+				}
+			}
+			if (viaWayRouteNodes.size() >= 2) {
+				//  fill in the remaining viaRouteNodes into the array so the result is ordered with route nodes from the fromWay to the toWay exclusively
+				for (RouteNode n:viaWayRouteNodes) {
+					if (n.id != turn.viaRouteNode.id && n.id != turn.additionalViaRouteNodes[0].id) {
+						turn.additionalViaRouteNodes[startEntry] = n; // and becomes the first additionalViaRouteNode
+						startEntry += direction;
+					}
+				}
+				System.out.println("viaRouteNodes on viaWay " + restrictionViaWay.id + ":");
+				for (RouteNode n:turn.additionalViaRouteNodes) {
+					System.out.println(n.node.id);					
+				}
+				System.out.println(turn.viaRouteNode.node.id);									
+			}
+			
+			if (viaWayRouteNodes.size() >= 2 && turn.viaRouteNode != null && turn.additionalViaRouteNodes[0] != null) {
+				parser.getTurnRestrictionHashMap().put(new Long(turn.viaRouteNode.node.id), turn);
+				numViaWaysResolved++;
+			} else {
+				System.out.println("Could not resolve route nodes for viaWay " + restrictionViaWay.id);				
+			}
+		}
+		System.out.println(numViaWaysResolved + " viaWays resolved");
+
+		parser.getTurnRestrictionsWithViaWays().clear();
+		
+		/*
+		 * calculate turn restrictions
+		 */		
 		System.out.println("calculating turn restrictions");
 		int numTurnRestrictions = 0;
 		for (RouteNode n: nodes.values()){
 			TurnRestriction turn = (TurnRestriction) parser.getTurnRestrictionHashMap().get(new Long(n.node.id));
 			while (turn!=null) {
-				if (turn.isViaTypeWay()) {
-					System.out.println("Turn Restrictions for VIA_TYPE WAY are not implemented yet");
-					turn = turn.nextTurnRestrictionAtThisNode;
-					continue;
-				}
 				Way restrictionFromWay = parser.getWayHashMap().get(new Long(turn.fromWayRef));
 				// skip if restrictionFromWay is not in available wayData				
 				if (restrictionFromWay == null) {
@@ -113,13 +179,19 @@ public class RouteData {
 					continue;
 				}
 				
-				turn.viaRouteNode = n;
 				turn.viaLat = n.node.lat;
 				turn.viaLon = n.node.lon;
 				turn.affectedTravelModes = TravelModes.applyTurnRestrictionsTravelModes;
+
+				// search the from way for the RouteNode connected to the viaWay
+				RouteNode nViaFrom = n;
+				if (turn.isViaTypeWay()) {
+					nViaFrom = turn.additionalViaRouteNodes[0];
+				}
+
 				//System.out.println(turn.toString(parser.getWayHashMap()));
 				int numFromConnections = 0;
-				for (Connection c:n.connectedFrom) {
+				for (Connection c:nViaFrom.connectedFrom) {
 					if (restrictionFromWay.containsNode(c.from.node)) {
 						turn.fromRouteNode = c.from;
 						numFromConnections++;
@@ -127,6 +199,11 @@ public class RouteData {
 				}
 				if (numFromConnections != 1) {
 					System.out.println("Warning: " + numFromConnections + " from_connections matched for: " + turn.toString(parser.getWayHashMap()));
+					for (Connection c:nViaFrom.connectedFrom) {
+						if (restrictionFromWay.containsNode(c.from.node)) {
+							System.out.println("RouteNode: " + c.from.id + " Node: " + c.from.node.id);
+						}
+					}
 				}
 				int numToConnections = 0;
 				for (Connection c:n.connected) {
@@ -137,6 +214,11 @@ public class RouteData {
 				}
 				if (numToConnections != 1) {
 					System.out.println("Warning: " + numToConnections + " to_connections matched for: "  + turn.toString(parser.getWayHashMap()));
+					for (Connection c:n.connected) {
+						if (restrictionToWay.containsNode(c.to.node)) {
+							System.out.println("RouteNode: " + c.to.id + " Node: " + c.to.node.id);
+						}
+					}
 				}
 				if (numFromConnections == 1 && numToConnections == 1) {
 					numTurnRestrictions++;

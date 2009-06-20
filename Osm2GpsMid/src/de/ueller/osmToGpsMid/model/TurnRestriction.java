@@ -18,15 +18,11 @@ import de.ueller.osmToGpsMid.model.Relation;
 public class TurnRestriction {
 	public long fromWayRef;
 	public long toWayRef;
-	/** The ref to the via way or node.
-	 *  This is until the way ref is resolved to a route node
-	 *  the same as the HashMap's key, but we don't get this value when iterating through the HashMap's values,
-	 *  so we store it here as well.
-	 */  
-	public long viaNodeOrWayRef;
+	/** The ref to the via way if VIA_TYPE_IS_WAY flag is set */  
+	public long viaWayRef;
 	/** the viaRouteNode is directly leading to the toWay */
 	public RouteNode viaRouteNode;
-	/** the additional Route Nodes on the via way if the via role is a way */	
+	/** the additional Route Nodes on the via way if the via role is a way - the first entry is the one leading from the fromWay to the viaWay */	
 	public RouteNode additionalViaRouteNodes[] = null;
 	public float viaLat;
 	public float viaLon;
