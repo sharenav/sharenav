@@ -191,32 +191,46 @@ public class RouteData {
 
 				//System.out.println(turn.toString(parser.getWayHashMap()));
 				int numFromConnections = 0;
+				long lastId = -1;
 				for (Connection c:nViaFrom.connectedFrom) {
-					if (restrictionFromWay.containsNode(c.from.node)) {
+					if (restrictionFromWay.containsNode(c.from.node) && c.from.id != lastId) { // TODO: Strange: there are sometimes multiple connections connecting to the same node, filter those out by checking lastId 
 						turn.fromRouteNode = c.from;
 						numFromConnections++;
+						lastId = c.from.id;
 					}
 				}
 				if (numFromConnections != 1) {
 					System.out.println("Warning: " + numFromConnections + " from_connections matched for: " + turn.toString(parser.getWayHashMap()));
+					if (numFromConnections == 0) {
+						System.out.println("Reason may be way tagged with access=no");						
+					} else {
+						System.out.println("Reason may be fromWay not split at via member");												
+					}
 					for (Connection c:nViaFrom.connectedFrom) {
 						if (restrictionFromWay.containsNode(c.from.node)) {
-							System.out.println("RouteNode: " + c.from.id + " Node: " + c.from.node.id);
+							System.out.println("Node: " + c.from.node.id);
 						}
 					}
 				}
 				int numToConnections = 0;
+				lastId = -1;
 				for (Connection c:n.connected) {
-					if (restrictionToWay.containsNode(c.to.node)) {
+					if (restrictionToWay.containsNode(c.to.node) && c.to.id != lastId) { // TODO: Strange: there are sometimes multiple connections connecting to the same node, filter those out by checking lastId
 						turn.toRouteNode = c.to;
 						numToConnections++;
+						lastId = c.to.id;
 					}
 				}
 				if (numToConnections != 1) {
 					System.out.println("Warning: " + numToConnections + " to_connections matched for: "  + turn.toString(parser.getWayHashMap()));
+					if (numToConnections == 0) {
+						System.out.println("Reason may be way tagged with access=no");						
+					} else {
+						System.out.println("Reason may be toWay not split at via member");												
+					}
 					for (Connection c:n.connected) {
 						if (restrictionToWay.containsNode(c.to.node)) {
-							System.out.println("RouteNode: " + c.to.id + " Node: " + c.to.node.id);
+							System.out.println("Node: " + c.to.node.id);
 						}
 					}
 				}
