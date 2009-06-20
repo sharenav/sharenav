@@ -179,6 +179,7 @@ public class RouteData {
 					continue;
 				}
 				
+				turn.viaRouteNode = n;
 				turn.viaLat = n.node.lat;
 				turn.viaLon = n.node.lon;
 				turn.affectedTravelModes = TravelModes.applyTurnRestrictionsTravelModes;
