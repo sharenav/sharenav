@@ -423,13 +423,19 @@ public class Tile {
 				while (turnWrite != null) {
 					if (turnWrite.isComplete()) {					
 						nds.writeInt(turnWrite.viaRouteNode.id);
-						if (turnWrite.viaRouteNode.id != n.id) {
+						if (turnWrite.viaRouteNode.id != n.id) { // just a prevention against renumbered RouteNodes
 							System.out.println("RouteNode ID mismatch for turn restrictions");
 						}
 						nds.writeInt(turnWrite.fromRouteNode.id);
 						nds.writeInt(turnWrite.toRouteNode.id);
 						nds.writeByte(turnWrite.affectedTravelModes);
 						nds.writeByte(turnWrite.flags);
+						if (turnWrite.isViaTypeWay()) {
+							nds.writeByte(turnWrite.additionalViaRouteNodes.length);
+							for (RouteNode rn:turnWrite.additionalViaRouteNodes) {
+								nds.writeInt(rn.id);
+							}
+						}
 					}
 					// System.out.println(turnWrite.toString(OxParser.getWayHashMap()));
 					turnWrite = turnWrite.nextTurnRestrictionAtThisNode;
