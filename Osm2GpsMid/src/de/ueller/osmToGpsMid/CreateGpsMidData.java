@@ -250,17 +250,14 @@ public class CreateGpsMidData {
 							}
 						}
 					}
-					System.out.println(poi.description + " has " + noKVpairs + " OSM tags");
 					dsi.writeShort(noKVpairs);
 					dsi.writeUTF(poi.key);
 					dsi.writeUTF(poi.value);
-					System.out.println("   " + poi.key + "=" + poi.value);
 					if (poi.specialisation != null) {
 						for (ConditionTuple ct : poi.specialisation) {
 							if (!ct.exclude) {
 								dsi.writeUTF(ct.key);
 								dsi.writeUTF(ct.value);
-								System.out.println("   " + ct.key + "=" + ct.value);
 							}
 						}
 					}
