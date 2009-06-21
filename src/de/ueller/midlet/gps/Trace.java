@@ -1770,11 +1770,13 @@ Runnable , GpsMidDisplayable, CompletionListener {
 			posX = centerX;
 			posY = centerY;
 		}
+		pc.g.drawImage(pc.images.IMG_POS_BG,posX,posY,CENTERPOS);
 		float radc = (float) (course * MoreMath.FAC_DECTORAD);
 		int px = posX + (int) (Math.sin(radc) * 20);
 		int py = posY - (int) (Math.cos(radc) * 20);
 		g.drawRect(posX - 2, posY - 2, 4, 4);
 		g.drawLine(posX, posY, px, py);
+		
 		g.drawLine(centerX - 2, centerY - 2, centerX + 2, centerY + 2);
 		g.drawLine(centerX - 2, centerY + 2, centerX + 2, centerY - 2);
 	}
