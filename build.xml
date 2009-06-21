@@ -221,7 +221,7 @@
 			
 			<!-- debug settings: only include debug setting when the test-property is true -->
 			<debug if="logging" showLogOnError="true" verbose="true" level="debug">
-				
+				<filter pattern="de.enough.*" level="error" />
 				<!--filter pattern="de.ueller.gps.sirf.*" level="debug" / -->
 				<!--filter pattern="de.ueller.midlet.gps.Trace" level="debug" / -->
 				<!--<filter pattern="de.ueller.midlet.gps.tile.SearchNames" level="debug" />-->
