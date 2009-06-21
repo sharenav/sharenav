@@ -132,10 +132,13 @@ public class RouteInstructions {
 
 	private	static int routeInstructionColor=0x00E6E6E6;
 	
+	public static float maxScaleLevelForRouteInstructionSymbols = 0;
+	
 	private final static Logger logger = Logger.getInstance(RouteInstructions.class,Logger.DEBUG);
 
 	public RouteInstructions(Trace trace) {
 		RouteInstructions.trace = trace;
+		RouteInstructions.maxScaleLevelForRouteInstructionSymbols = 15000f * 1.5f * 1.5f * 1.5f;
 	}
 	
 	public void newRoute(Vector route, PositionMark target) {
@@ -304,6 +307,7 @@ public class RouteInstructions {
 		final int PASSINGDISTANCE=25;
 		Node areaStart = new Node();
 		int iAreaStart = 0;
+		boolean drawRouteInstructionSymbols = (pc.scale <= RouteInstructions.maxScaleLevelForRouteInstructionSymbols);
 		
 		try {
 			StringBuffer soundToPlay = new StringBuffer();
@@ -641,7 +645,7 @@ public class RouteInstructions {
 							}
 						}
 					    
-					    if (drawQuietArrows || (c.wayRouteFlags & C.ROUTE_FLAG_QUIET) == 0 ) {
+					    if (drawRouteInstructionSymbols && (drawQuietArrows || (c.wayRouteFlags & C.ROUTE_FLAG_QUIET) == 0) ) {
 						    if (aPaint == RI_SKIPPED) {
 								pc.g.setColor(0x00FDDF9F);
 								pc.getP().forward(c.to.lat, c.to.lon, pc.lineP2);
