@@ -154,9 +154,12 @@ public class LegendParser extends DefaultHandler{
 		} catch (SAXException e) {
 			System.out.println("ERROR: SAXException: " + e);			
 			System.exit(1);
-		} catch (Exception e) {
-			System.out.println("ERROR: Other Exception: " + e);			
+		} catch (javax.xml.parsers.ParserConfigurationException e) {
+			System.out.println("ERROR: ParserConfigurationException: " + e);			
 			System.exit(1);
+//		} catch (Exception e) {
+//			System.out.println("ERROR: Other Exception: " + e);			
+//			System.exit(1);
 		}
 	}
 
@@ -423,8 +426,19 @@ public class LegendParser extends DefaultHandler{
 						System.out.println("Error: wayWidth for " +currentWay.description + " is incorrect");
 					}
 				}
-				if (qName.equals("lineStyle")) {				
-					currentWay.lineStyleDashed = atts.getValue("dashed").equalsIgnoreCase("true");				
+				if (qName.equals("lineStyle")) {
+					if (isAttributeActivated(atts, "dashed")) {
+						currentWay.lineStyle |= WayDescription.LINESTYLE_DOTTED;
+					}
+					if (isAttributeActivated(atts, "rail")) {
+						currentWay.lineStyle |= WayDescription.LINESTYLE_RAIL;
+					}
+					if (isAttributeActivated(atts, "steps")) {
+						currentWay.lineStyle |= WayDescription.LINESTYLE_STEPS;
+					}
+					if (isAttributeActivated(atts, "powerLine")) {
+						currentWay.lineStyle |= WayDescription.LINESTYLE_POWERLINE;
+					}
 				}
 				if (qName.equals("routing")) {
 					// only use routing rules for the with-parameter specified in .properties, e.g. useRouting=motorcar
@@ -534,6 +548,18 @@ public class LegendParser extends DefaultHandler{
 				break;
 		}
 	} // startElement
+
+	/**
+	 * @param string
+	 * @return
+	 */
+	private boolean isAttributeActivated(Attributes atts, String string) {
+		String value = atts.getValue(string);
+		if (value != null) {
+			return (value.equalsIgnoreCase("true"));
+		}
+		return false;
+	}
 
 	public void endElement(String namespaceURI, String localName, String qName) {		
 //		if (qName.equals("pois")) {

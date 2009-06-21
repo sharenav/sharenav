@@ -15,7 +15,7 @@ public class WayDescription extends EntityDescription{
 	public int		minOnewayArrowScale;
 	public int		minDescriptionScale;
 	public int		lineColor;
-	public boolean	lineStyleDashed; //
+	public int		lineStyle;
 	public int		boardedColor;
 	public boolean	isArea;
 	public int		wayWidth;
@@ -26,8 +26,15 @@ public class WayDescription extends EntityDescription{
 	public int		noWaysOfType;
 	public byte		forceToLayer;
 	
+	// line styles
+	public final static int LINESTYLE_SOLID = 0x00;  // same as Graphics.SOLID
+	public final static int LINESTYLE_DOTTED = 0x01; // same as Graphics.DOTTED;
+	public final static int LINESTYLE_RAIL = 0x02;
+	public final static int LINESTYLE_STEPS = 0x04;
+	public final static int LINESTYLE_POWERLINE = 0x08;
+	
 	public WayDescription() {
-		lineStyleDashed = false; //TODO: This needs to be corrected to Graphics.SOLID
+		lineStyle = LINESTYLE_SOLID;
 		boardedColor = 0;
 		isArea = false;
 		wayWidth = 2;

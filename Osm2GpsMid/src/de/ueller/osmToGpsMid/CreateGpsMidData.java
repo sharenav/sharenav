@@ -297,7 +297,7 @@ public class CreateGpsMidData {
 				dsi.writeInt(way.lineColor);
 				dsi.writeInt(way.boardedColor);
 				dsi.writeByte(way.wayWidth);
-				dsi.writeBoolean(way.lineStyleDashed);
+				dsi.writeInt(way.lineStyle);
 				if ((flags & LEGEND_FLAG_MIN_ONEWAY_ARROW_SCALE) > 0)
 					dsi.writeInt(way.minOnewayArrowScale);
 				if ((flags & LEGEND_FLAG_MIN_DESCRIPTION_SCALE) > 0)
