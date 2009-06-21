@@ -1614,7 +1614,7 @@ public class Way extends Entity{
 	
 	public void setColor(PaintContext pc) {		
 		WayDescription wayDesc = C.getWayDescription(type);
-		pc.g.setStrokeStyle(wayDesc.lineStyle);
+		pc.g.setStrokeStyle(wayDesc.getGraphicsLineStyle());
 		pc.g.setColor(wayDesc.lineColor);
 	}
 

@@ -23,7 +23,7 @@ public class C {
 	 * Specifies the format of the map on disk we expect to see
 	 * This constant must be in sync with Osm2GpsMid
 	 */
-	public final static short MAP_FORMAT_VERSION = 32;
+	public final static short MAP_FORMAT_VERSION = 33;
 	
 	/** The waypoint format used in the RecordStore. See PositionMark.java. */
 	public final static short WAYPT_FORMAT_VERSION = 2;
@@ -252,11 +252,7 @@ public class C {
 			ways[i].boardedColor = ds.readInt();
 			ways[i].wayWidth = ds.readByte();
 			ways[i].overviewMode = OM_SHOWNORMAL;
-			boolean lineStyle = ds.readBoolean();
-			if (lineStyle)
-				ways[i].lineStyle = Graphics.DOTTED;
-			else
-				ways[i].lineStyle = Graphics.SOLID;
+			ways[i].lineStyle = ds.readInt();
 			if ((flags & LEGEND_FLAG_MIN_ONEWAY_ARROW_SCALE) > 0)
 				ways[i].maxOnewayArrowScale = ds.readInt();
 			else
