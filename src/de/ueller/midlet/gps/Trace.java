@@ -131,11 +131,12 @@ Runnable , GpsMidDisplayable, CompletionListener {
 	private static final int ROUTING_STOP_CMD = 46;
 	private static final int ONLINE_INFO_CMD = 47;
 	private static final int ROUTING_START_WITH_MODE_SELECT_CMD = 48;
+	private static final int RETRIEVE_NODE = 49;
 //#if polish.api.wmapi
-	private static final int SEND_MESSAGE_CMD = 49;
+	private static final int SEND_MESSAGE_CMD = 50;
 	//#endif
 
-	private final Command [] CMDS = new Command[50];
+	private final Command [] CMDS = new Command[51];
 
 	public static final int DATASCREEN_NONE = 0;
 	public static final int DATASCREEN_TACHO = 1;
@@ -339,6 +340,7 @@ Runnable , GpsMidDisplayable, CompletionListener {
 		CMDS[ROUTING_STOP_CMD] = new Command("Stop routing",Command.ITEM, 100);
 		CMDS[ONLINE_INFO_CMD] = new Command("Online Info",Command.ITEM, 100);
 		CMDS[ROUTING_START_WITH_MODE_SELECT_CMD] = new Command("Calculate Route...",Command.ITEM, 100);
+		CMDS[RETRIEVE_NODE] = new Command("Retrieve Node...",Command.ITEM, 100);
 		//#if polish.api.wmapi
 		CMDS[SEND_MESSAGE_CMD] = new Command("Send SMS (map pos)",Command.ITEM, 200);
 		//#endif
@@ -591,6 +593,7 @@ Runnable , GpsMidDisplayable, CompletionListener {
 		addCommand(CMDS[ONLINE_INFO_CMD]);
 		//#if polish.api.osm-editing
 		addCommand(CMDS[RETRIEVE_XML]);
+		addCommand(CMDS[RETRIEVE_NODE]);
 		//#endif
 		//#endif
 		setCommandListener(this);
@@ -1197,6 +1200,11 @@ Runnable , GpsMidDisplayable, CompletionListener {
 					} else {
 						parent.alert("Editing", "Editing support was not enabled in Osm2GpsMid", Alert.FOREVER);
 					}
+				}
+				if (c == CMDS[RETRIEVE_NODE]) {
+					GuiOSMPOIDisplay guiNode = new GuiOSMPOIDisplay(-1,null,center.radlat,center.radlon,this);
+					guiNode.show();
+					guiNode.refresh();
 				}
 				//#endif
 				if (c == CMDS[SETTARGET_CMD]) {

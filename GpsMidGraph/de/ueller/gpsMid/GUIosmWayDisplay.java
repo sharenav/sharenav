@@ -29,50 +29,32 @@ import de.ueller.gpsMid.mapData.SingleTile;
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.GpsMidDisplayable;
 import de.ueller.midlet.gps.GuiOSMChangeset;
+import de.ueller.midlet.gps.GuiOSMEntityDisplay;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.UploadListener;
 import de.ueller.midlet.gps.data.EditableWay;
 import de.ueller.midlet.gps.data.OSMdataWay;
 
-public class GUIosmWayDisplay extends Form implements GpsMidDisplayable, CommandListener, UploadListener, ItemCommandListener {
+public class GUIosmWayDisplay extends GuiOSMEntityDisplay implements GpsMidDisplayable, CommandListener, UploadListener, ItemCommandListener {
 	
 	private final static Logger logger = Logger.getInstance(GUIosmWayDisplay.class,Logger.DEBUG);
 
-	private final Command EXIT_CMD = new Command("Back", Command.BACK, 1);
-	private final Command OK_CMD = new Command("OK", Command.OK, 1);
-	private final Command ADD_CMD = new Command("Add tag", Command.ITEM, 2);
-	private final Command EDIT_CMD = new Command("Edit tag", Command.ITEM, 2);
-	private final Command REMOVE_CMD = new Command("Remove tag", Command.ITEM, 3);
 	private final Command REVERSE_CMD = new Command("Reverse direction", Command.ITEM, 4);
 	private final Command PRESET_CMD = new Command("Add preset", Command.ITEM, 5);
-	private final Command UPLOAD_CMD = new Command("Upload to OSM", Command.OK, 6);
-	private final Command CREATE_CHANGE_CMD = new Command("Create changeset", Command.OK, 6);
-	private final Command CLOSE_CHANGE_CMD = new Command("Close changeset", Command.OK, 6);
+	
 	
 	
 	private EditableWay eway;
 	private SingleTile t;
-	private OSMdataWay  osmway;
-	private GpsMidDisplayable parent;
 	private List presets;
-	private static GuiOSMChangeset changesetGui;
-	private boolean createChangeset; 
-	
-	private boolean addTag;
 	
 	public GUIosmWayDisplay(EditableWay way, SingleTile t, GpsMidDisplayable parent) {
-		super("Way " + way.osmID);
-		this.parent = parent;
+		super("Way " + way.osmID, parent);
 		this.eway = way;
-		addCommand(EXIT_CMD);
-		addCommand(ADD_CMD);
 		addCommand(REVERSE_CMD);
 		addCommand(PRESET_CMD);
-		addCommand(UPLOAD_CMD);
-		addCommand(CREATE_CHANGE_CMD);
-		addCommand(CLOSE_CHANGE_CMD);
-		setCommandListener(this);
 		this.t = t;
+		typeImage = bearingArrow();
 	}
 	
 	private Image bearingArrow() {
@@ -111,55 +93,10 @@ public class GUIosmWayDisplay extends Form implements GpsMidDisplayable, Command
 		return img;
 	}
 	
-	private void setupScreen() {
-		try {
-			this.deleteAll();
-			addTag = false;
-			if (osmway == null) {
-				this.append(new StringItem("No Data available","..."));
-				return;
-			}
-			this.append(new StringItem("Edited ", null)); this.append(bearingArrow());
-			this.append(new StringItem("    at:", osmway.getEditTime()));
-			this.append(new StringItem("    ver:", osmway.getVersion()));
-
-			Hashtable tags = osmway.getTags();
-			if (tags == null)
-				return;
-			Enumeration keysEn = tags.keys();
-			while (keysEn.hasMoreElements()) {
-				String key = (String)keysEn.nextElement();
-				Item i = new StringItem(key, (String)tags.get(key));
-				i.addCommand(EDIT_CMD);
-				i.addCommand(REMOVE_CMD);
-				i.setItemCommandListener(this);
-				this.append(i);
-			}
-		} catch (Exception e) { 
-			logger.exception("Initialising way tag screen failed: " , e);
-		}
-	}
 
 	public void commandAction(Command c, Displayable d) {
-		if (c == EXIT_CMD) {
-			if (d == this) {
-				parent.show();
-			} else {
-				show();
-			}
-		}
-		if (c == ADD_CMD) {
-			this.addTag = true;
-			TextField tf = new TextField("key","", 100, TextField.ANY);
-			tf.addCommand(OK_CMD);
-			tf.setItemCommandListener(this);
-			this.append(tf);
-			Display.getDisplay(GpsMid.getInstance()).setCurrentItem(tf);
-			tf = new TextField("value","", 100, TextField.ANY);
-			tf.addCommand(OK_CMD);
-			tf.setItemCommandListener(this);
-			this.append(tf);
-		}
+		super.commandAction(c, d);
+
 		if (c == UPLOAD_CMD) {
 			parent.show();
 			if (changesetGui == null) {
@@ -173,7 +110,9 @@ public class GUIosmWayDisplay extends Form implements GpsMidDisplayable, Command
 		}
 		
 		if (c == REVERSE_CMD) {
-			osmway.reverseWay();
+			if (osmentity instanceof OSMdataWay) {
+				((OSMdataWay)osmentity).reverseWay();
+			}
 		}
 		
 		if (c == PRESET_CMD) {
@@ -198,25 +137,11 @@ public class GUIosmWayDisplay extends Form implements GpsMidDisplayable, Command
 			presets.setSelectCommand(OK_CMD);
 			GpsMid.getInstance().show(presets);
 		}
-		
-		if (c == CREATE_CHANGE_CMD) {
-			changesetGui = new GuiOSMChangeset(this,this);
-			changesetGui.show();
-		}
-		
-		if (c == CLOSE_CHANGE_CMD) {
-			if (changesetGui == null) {
-				logger.error("No changeset is currently open");
-			} else {
-				changesetGui.closeChangeset();
-				changesetGui = null;
-			}
-		}
-		
+
 		if (c == OK_CMD) {
 			String addPreset = presets.getString(presets.getSelectedIndex());
 			int split = addPreset.indexOf("=");
-			osmway.getTags().put(addPreset.substring(0,split), addPreset.substring(split + 1, addPreset.length()));
+			osmentity.getTags().put(addPreset.substring(0,split), addPreset.substring(split + 1, addPreset.length()));
 			presets = null;
 			setupScreen();
 			show();
@@ -228,25 +153,6 @@ public class GUIosmWayDisplay extends Form implements GpsMidDisplayable, Command
 		eway.loadXML(this);
 	}
 
-	public void show() {
-		GpsMid.getInstance().show(this);
-	}
-
-	public void startProgress(String title) {
-		// Not supported/used at the moment.
-	}
-	
-	public void setProgress(String message) {
-		// Not supported/used at the moment.
-		
-	}
-	
-	public void updateProgress(String message)
-	{
-		// Not supported/used at the moment.
-
-	}
-
 	public void completedUpload(boolean success, String message) {
 		if (success) {
 			if (createChangeset) {
@@ -254,7 +160,7 @@ public class GUIosmWayDisplay extends Form implements GpsMidDisplayable, Command
 				eway.uploadXML(changesetGui.getChangesetID(),this);
 			} else {
 				if (GpsMid.getInstance().shouldBeShown() == this) {
-					osmway = eway.getOSMdata();
+					osmentity = eway.getOSMdata();
 					setupScreen();
 				}
 			}
@@ -262,58 +168,6 @@ public class GUIosmWayDisplay extends Form implements GpsMidDisplayable, Command
 			
 		}
 	}
-	
-	
-
-	public void uploadAborted() {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	public void updateProgressValue(int value) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void commandAction(Command c, Item it) {
-		//#debug info
-		logger.info("Command " + c + " Item " + it);
-		Hashtable tags = osmway.getTags();
-		if (c == REMOVE_CMD) {
-			tags.remove(((StringItem)it).getLabel());
-			setupScreen();
-		}
-		if (c == EDIT_CMD) {
-			for (int i = 0; i < this.size(); i++) {
-				if (this.get(i) == it) {
-					StringItem si = (StringItem)it;
-					this.delete(i);
-					TextField tf = new TextField(it.getLabel(),si.getText(),100, TextField.ANY);
-					tf.addCommand(OK_CMD);
-					tf.setItemCommandListener(this);
-					this.insert(i, tf);
-					Display.getDisplay(GpsMid.getInstance()).setCurrentItem(tf);
-				}
-			}
-		}
-		
-		if (c == OK_CMD) {
-			if (addTag) {
-				tags.put(((TextField)this.get(this.size() - 2)).getString(), ((TextField)this.get(this.size() - 1)).getString());
-			} else {
-				for (int i = 0; i < this.size(); i++) {
-					if (this.get(i) == it) {
-						TextField tf = (TextField)it;
-						tags.put(it.getLabel(), tf.getString());
-					}
-				}
-			}
-			addTag = false;
-			setupScreen();
-		}
-	}
-
-
 
 }
 //#endif

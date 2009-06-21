@@ -15,29 +15,31 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Vector;
 
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.importexport.QDGpxParser;
 import de.ueller.midlet.gps.importexport.XmlParserContentHandler;
 
-public class OSMdataWay extends OSMdataEntity implements XmlParserContentHandler{
+public class OSMdataNode extends OSMdataEntity implements XmlParserContentHandler{
 	private final static Logger logger = Logger.getInstance(
-			OSMdataWay.class, Logger.DEBUG);
+			OSMdataNode.class, Logger.DEBUG);
 	
-	private Vector nodes;
+	private float lat;
+	private float lon;
 
-	public OSMdataWay(String fullXML, int osmID) {
+	public OSMdataNode(String fullXML, int osmID) {
 		super(fullXML, osmID);
-		
+	}
+	
+	public OSMdataNode(int osmID, float lat, float lon) {
+		super(osmID);
+		this.lat = lat;
+		this.lon = lon;
 	}
 	
 	protected void parseXML() {
-		nodes = new Vector();
-		tags = new Hashtable();
-		
 		QDGpxParser parser = new QDGpxParser();
-		logger.debug("Starting Way XML parsing with QDXML");
+		logger.debug("Starting Node XML parsing with QDXML");
 		InputStream in = new ByteArrayInputStream(fullXML.getBytes());
 		parser.parse(in, this);
 	}
@@ -56,7 +58,7 @@ public class OSMdataWay extends OSMdataEntity implements XmlParserContentHandler
 
 	public void startElement(String namespaceURI, String localName,
 			String name, Hashtable atts) {
-		if (name.equalsIgnoreCase("way")) {
+		if (name.equalsIgnoreCase("node")) {
 			try {
 				int id = Integer.parseInt((String)atts.get("id"));
 				if (id == osmID) {
@@ -65,6 +67,8 @@ public class OSMdataWay extends OSMdataEntity implements XmlParserContentHandler
 					editTime = (String)atts.get("timestamp");
 					version = Integer.parseInt((String)atts.get("version"));
 					changesetID = Integer.parseInt((String)atts.get("changeset"));
+					lat = Float.parseFloat((String)atts.get("lat"));
+					lon = Float.parseFloat((String)atts.get("lon"));
 				} else {
 					ignoring = true;
 				}
@@ -75,38 +79,20 @@ public class OSMdataWay extends OSMdataEntity implements XmlParserContentHandler
 		if (ignoring) {
 			return;
 		}
-		if (name.equalsIgnoreCase("nd")) {
-			try {
-				String tmp = (String)atts.get("ref");
-				long nd_ref = Long.parseLong(tmp);
-				nodes.addElement(new Long(nd_ref));
-			} catch (NumberFormatException nfe) {
-				logger.exception("Failed to parse osm id", nfe);
-			}
-		}
+
 		if (name.equalsIgnoreCase("tag")) {
 			tags.put(atts.get("k"), atts.get("v"));
 		}
 	}
 
-	public void reverseWay() {
-		Vector revNodes = new Vector();
-		for (int i = nodes.size() - 1; i >= 0; i--) {
-			revNodes.addElement(nodes.elementAt(i));
-		}
-		nodes = revNodes;
-	}
-	
 	public String toXML(int commitChangesetID) {
 		String xml;
 		
 		xml  = "<?xml version='1.0' encoding='utf-8'?>\r\n";
 		xml += "<osm version='0.6' generator='GpsMid'>\r\n";
-		xml += "<way id='" + osmID + "' version='" + version + 
+		xml += "<node id='" + osmID + "' lat='" + lat * MoreMath.FAC_RADTODEC + 
+				"' lon='" + lon * MoreMath.FAC_RADTODEC + "' version='" + version + 
 				"' changeset='" + commitChangesetID + "'>\r\n";
-		for (int i = 0; i < nodes.size(); i++) {
-			xml += "<nd ref='" + nodes.elementAt(i) + "' />\r\n";
-		}
 		Enumeration enKey = tags.keys();
 		while (enKey.hasMoreElements()) {
 			String key = (String)enKey.nextElement();
@@ -116,7 +102,7 @@ public class OSMdataWay extends OSMdataEntity implements XmlParserContentHandler
 				xml += "<tag k='" + key + "' v='" + tags.get(key) + "' />\r\n";
 			}
 		}
-		xml += "</way>\r\n";
+		xml += "</node>\r\n";
 		xml += "</osm>\r\n";
 		
 		return xml;
@@ -124,7 +110,7 @@ public class OSMdataWay extends OSMdataEntity implements XmlParserContentHandler
 	
 	public String toString() {
 		String res;
-		res = "\nOSM way " + osmID + "\n";
+		res = "\nOSM node " + osmID + "\n";
 		res += "     last edited by " + editBy + " at " + editTime + "\n";
 		res += "     version " + version + " in changeset " + changesetID + "\n";
 		res += " Tags:\n";
@@ -132,10 +118,6 @@ public class OSMdataWay extends OSMdataEntity implements XmlParserContentHandler
 		while (enKey.hasMoreElements()) {
 			String key = (String)enKey.nextElement();
 			res += "   " + key + " = " + tags.get(key) + "\n";
-		}
-		res += " Nodes:\n";
-		for (int i = 0; i < nodes.size(); i++) {
-			res += "   ref=" + nodes.elementAt(i) + "\n";
 		}
 		return res;
 	}
