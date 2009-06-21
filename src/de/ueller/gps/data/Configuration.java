@@ -195,7 +195,8 @@ public class Configuration {
 	private static final int RECORD_ID_AUTO_RECENTER_TO_GPS_MILLISECS = 35;
 	private static final int RECORD_ID_ROUTE_TRAVEL_MODE = 36;
 	private static final int RECORD_ID_OPENCELLID_APIKEY = 37;
-
+	private static final int RECORD_ID_PHONE_ALL_TIME_MAX_MEMORY = 38;
+	
 	// Gpx Recording modes
 	// GpsMid determines adaptive if a trackpoint is written
 	public final static int GPX_RECORD_ADAPTIVE = 0;
@@ -261,6 +262,8 @@ public class Configuration {
 
 	private static String opencellid_apikey;
 
+	private static long phoneAllTimeMaxMemory = 0;
+	
 	private static int minRouteLineWidth=0;
 	private static int autoRecenterToGpsMilliSecs=10;
 	private static int currentTravelModeNr=0;
@@ -398,6 +401,7 @@ public class Configuration {
 			autoRecenterToGpsMilliSecs=readInt(database, RECORD_ID_AUTO_RECENTER_TO_GPS_MILLISECS);
 			currentTravelModeNr=readInt(database, RECORD_ID_ROUTE_TRAVEL_MODE);
 			currentTravelMask=1<<currentTravelModeNr;
+			phoneAllTimeMaxMemory = readLong(database, RECORD_ID_PHONE_ALL_TIME_MAX_MEMORY);
 			
 			database.closeRecordStore();
 		} catch (Exception e) {
@@ -708,7 +712,13 @@ public class Configuration {
 	public static void setGpxRecordAlwaysDistanceCentimeters(int gpxRecordAlwaysDistanceCentimeters) {
 		Configuration.gpxRecordAlwaysDistanceCentimeters = gpxRecordAlwaysDistanceCentimeters;
 			write(gpxRecordAlwaysDistanceCentimeters, RECORD_ID_GPX_FILTER_ALWAYS_DIST);
-	}	
+	}
+	
+	public static void setPhoneAllTimeMaxMemory(long i) {
+		phoneAllTimeMaxMemory = i;
+		write(i, RECORD_ID_PHONE_ALL_TIME_MAX_MEMORY);
+	}
+	
 
 	public static boolean getCfgBitState(byte bit,boolean getDefault) {
 		if (getDefault) {
@@ -1086,7 +1096,11 @@ public class Configuration {
 	public static String getCompassDirection(int course) {
 		return compassDirections[(int) ((float) ((course%360 + 11.25f) / 22.5f)) ];
 	}
-	
+
+	public static long getPhoneAllTimeMaxMemory() {
+		return phoneAllTimeMaxMemory;
+	}
+
 	public static String getUtf8Encoding() {
 		final String[] encodings  = { "UTF-8", "UTF8", "utf-8", "utf8", "" };
 		

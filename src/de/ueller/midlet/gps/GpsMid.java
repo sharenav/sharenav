@@ -584,6 +584,10 @@ public class GpsMid extends MIDlet implements CommandListener {
 		// }
 		// System.gc();
 		log.info("Maximum phone memory: " + maxMem);
+		if (maxMem < Configuration.getPhoneAllTimeMaxMemory()) {
+			maxMem = Configuration.getPhoneAllTimeMaxMemory();
+			log.info("Using all time maximum phone memory from Configuration: " + maxMem);
+		}
 		return maxMem;
 	}
 
@@ -597,6 +601,12 @@ public class GpsMid extends MIDlet implements CommandListener {
 		long totalMem = runt.totalMemory();
 		if (totalMem > phoneMaxMemory) {
 			phoneMaxMemory = totalMem;
+			if (phoneMaxMemory > Configuration.getPhoneAllTimeMaxMemory()) {
+				Configuration.setPhoneAllTimeMaxMemory(phoneMaxMemory);
+				if (trace != null) {
+					trace.receiveMessage("Inc maxMem: " + phoneMaxMemory);
+				}
+			}
 			log.info("New phoneMaxMemory: " + phoneMaxMemory);
 		}
 		if ((freeMem < 30000)
@@ -611,6 +621,9 @@ public class GpsMid extends MIDlet implements CommandListener {
 						/ (float) totalMem) < 0.10f))) {
 				//#debug trace
 				log.trace("Memory is low, need freeing " + freeMem);
+				if (trace != null) {
+					trace.receiveMessage("Freeing mem");
+				}
 				return true;
 			}
 			//#debug trace
