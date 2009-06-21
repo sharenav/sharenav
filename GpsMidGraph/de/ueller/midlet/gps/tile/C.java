@@ -23,7 +23,7 @@ public class C {
 	 * Specifies the format of the map on disk we expect to see
 	 * This constant must be in sync with Osm2GpsMid
 	 */
-	public final static short MAP_FORMAT_VERSION = 31;
+	public final static short MAP_FORMAT_VERSION = 32;
 	
 	/** The waypoint format used in the RecordStore. See PositionMark.java. */
 	public final static short WAYPT_FORMAT_VERSION = 2;
@@ -220,6 +220,17 @@ public class C {
 			if ((flags & LEGEND_FLAG_TEXT_COLOR) > 0)			
 				pois[i].textColor = ds.readInt();
 			pois[i].overviewMode=OM_SHOWNORMAL;
+			//#if polish.api.osm-editing
+			if (enableEdits) {
+				int noKVpairs = ds.readShort();
+				pois[i].osmTags = new String[noKVpairs*2];
+				System.out.println("OSM KV for " + pois[i].description);
+				for (int j = 0; j < noKVpairs*2; j++) {
+					pois[i].osmTags[j] =  ds.readUTF();
+					System.out.println("  " + pois[i].osmTags[j]);
+				}
+			}
+			//#endif
 		}
 	}
 	
@@ -254,7 +265,18 @@ public class C {
 			if ((flags & LEGEND_FLAG_MIN_DESCRIPTION_SCALE) > 0)
 				ways[i].maxDescriptionScale = ds.readInt();
 			else
-				ways[i].maxDescriptionScale = 15000; 
+				ways[i].maxDescriptionScale = 15000;
+			//#if polish.api.osm-editing
+			if (enableEdits) {
+				int noKVpairs = ds.readShort();
+				ways[i].osmTags = new String[noKVpairs*2];
+				System.out.println("OSM KV for " + ways[i].description);
+				for (int j = 0; j < noKVpairs*2; j++) {
+					ways[i].osmTags[j] = ds.readUTF();
+					System.out.println("  " + ways[i].osmTags[j]);
+				}
+			}
+			//#endif
 		}
 	}	
 	

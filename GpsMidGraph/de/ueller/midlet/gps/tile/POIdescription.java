@@ -1,5 +1,6 @@
 package de.ueller.midlet.gps.tile;
 
+
 import javax.microedition.lcdui.Image;
 
 public class POIdescription {
@@ -12,5 +13,8 @@ public class POIdescription {
 	public int		maxImageScale;
 	public boolean	hideable;
 	public byte		overviewMode;
+	//#if polish.api.osm-editing
+	public String[]	osmTags;
+	//#endif
 }
 

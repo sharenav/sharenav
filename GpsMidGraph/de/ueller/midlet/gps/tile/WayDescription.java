@@ -14,5 +14,8 @@ public class WayDescription {
 	public boolean hideable;
 	public byte overviewMode;
 	public byte routeFlags;
+	//#if polish.api.osm-editing
+	public String[]	osmTags;
+	//#endif
 }
 
