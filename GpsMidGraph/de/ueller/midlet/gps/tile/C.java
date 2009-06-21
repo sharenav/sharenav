@@ -224,10 +224,8 @@ public class C {
 			if (enableEdits) {
 				int noKVpairs = ds.readShort();
 				pois[i].osmTags = new String[noKVpairs*2];
-				System.out.println("OSM KV for " + pois[i].description);
 				for (int j = 0; j < noKVpairs*2; j++) {
 					pois[i].osmTags[j] =  ds.readUTF();
-					System.out.println("  " + pois[i].osmTags[j]);
 				}
 			}
 			//#endif
@@ -266,10 +264,8 @@ public class C {
 			if (enableEdits) {
 				int noKVpairs = ds.readShort();
 				ways[i].osmTags = new String[noKVpairs*2];
-				System.out.println("OSM KV for " + ways[i].description);
 				for (int j = 0; j < noKVpairs*2; j++) {
 					ways[i].osmTags[j] = ds.readUTF();
-					System.out.println("  " + ways[i].osmTags[j]);
 				}
 			}
 			//#endif
