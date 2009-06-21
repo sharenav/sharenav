@@ -230,6 +230,47 @@ public class HTTPhelper implements Runnable{
 	public String getData() {
 		return data;
 	}
+	
+	/**
+	 * Escape the necessary characters to form a valid XML string
+	 * These are ' & < > "
+	 * @param xml
+	 * @return
+	 */
+	public static String escapeXML(String xml) {
+		
+		int idx = xml.indexOf('&');
+		while (idx >= 0) {
+			xml = xml.substring(0,idx ) + "&amp;" + xml.substring(idx + 1);
+			idx = xml.indexOf('&', idx + 1);
+		}
+		
+		idx = xml.indexOf('\'');
+		while (idx >= 0) {
+			xml = xml.substring(0,idx) + "&apos;" + xml.substring(idx + 1);
+			idx = xml.indexOf('\'');
+		}
+		
+		idx = xml.indexOf('"');
+		while (idx >= 0) {
+			xml = xml.substring(0,idx) + "&quot;" + xml.substring(idx + 1);
+			idx = xml.indexOf('"');
+		}
+		
+		idx = xml.indexOf('<');
+		while (idx >= 0) {
+			xml = xml.substring(0,idx) + "&lt;" + xml.substring(idx + 1);
+			idx = xml.indexOf('<');
+		}
+		
+		idx = xml.indexOf('>');
+		while (idx >= 0) {
+			xml = xml.substring(0,idx) + "&gt;" + xml.substring(idx + 1);
+			idx = xml.indexOf('>');
+		}
+		
+		return xml;
+	}
 
 
 }

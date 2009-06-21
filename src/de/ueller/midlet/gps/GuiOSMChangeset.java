@@ -75,7 +75,7 @@ public class GuiOSMChangeset extends Form implements GpsMidDisplayable,
 		xml.append("<osm>\n<changeset>\n");
 		xml.append("<tag k=\"created_by\" v=\"GpsMid_"
 				+ C.getAppVersion() + "\"/>\n");
-		xml.append("<tag k=\"comment\" v=\"" + comment + "\" />\n");
+		xml.append("<tag k=\"comment\" v=\"" + HTTPhelper.escapeXML(comment) + "\" />\n");
 		xml.append("</changeset>\n</osm>\n");
 		return xml.toString();
 	}
