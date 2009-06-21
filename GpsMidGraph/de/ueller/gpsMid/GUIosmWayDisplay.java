@@ -100,11 +100,11 @@ public class GUIosmWayDisplay extends GuiOSMEntityDisplay implements GpsMidDispl
 		if (c == UPLOAD_CMD) {
 			parent.show();
 			if (changesetGui == null) {
-				createChangeset = true;
+				loadState = LOAD_STATE_CHANGESET;
 				changesetGui = new GuiOSMChangeset(parent,this);
 				changesetGui.show();
 			} else {
-				createChangeset = false;
+				loadState = LOAD_STATE_UPLOAD;
 				eway.uploadXML(changesetGui.getChangesetID(),this);
 			}
 		}
@@ -155,8 +155,8 @@ public class GUIosmWayDisplay extends GuiOSMEntityDisplay implements GpsMidDispl
 
 	public void completedUpload(boolean success, String message) {
 		if (success) {
-			if (createChangeset) {
-				createChangeset = false;
+			if (loadState == LOAD_STATE_CHANGESET) {
+				loadState = LOAD_STATE_UPLOAD;
 				eway.uploadXML(changesetGui.getChangesetID(),this);
 			} else {
 				if (GpsMid.getInstance().shouldBeShown() == this) {

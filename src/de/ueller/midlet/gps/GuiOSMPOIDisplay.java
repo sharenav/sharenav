@@ -29,11 +29,14 @@ import de.ueller.midlet.gps.tile.POIdescription;
 public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay {
 	
 	private final static Logger logger = Logger.getInstance(GuiOSMPOIDisplay.class,Logger.DEBUG);
+	private final static int LOAD_POI_STATE_NONE = 0;
+	private final static int LOAD_POI_STATE_LOAD = 1;
+	private final static int LOAD_POI_STATE_UPLOAD = 2;
 	
 	private int nodeID;
 	private HTTPhelper http;
 	
-	private boolean loadPOIxml;
+	private int loadPOIxmlState;
 	
 	private Form poiTypeForm;
 	private ChoiceGroup poiSelectionCG;
@@ -42,7 +45,7 @@ public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay {
 	public GuiOSMPOIDisplay(int nodeID, SingleTile t, float lat, float lon, GpsMidDisplayable parent) {
 		super("Node", parent);
 		this.nodeID = nodeID;
-		loadPOIxml = false;
+		loadPOIxmlState = LOAD_POI_STATE_NONE;
 		if (nodeID < 0) {
 			osmentity = new OSMdataNode(nodeID, lat, lon);
 			showPoiTypeForm = true;
@@ -75,7 +78,7 @@ public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay {
 			if (http == null) { 
 				http = new HTTPhelper();
 			}
-			loadPOIxml = true;
+			loadPOIxmlState = LOAD_POI_STATE_LOAD;
 			http.getURL(url, this);
 		}
 		
@@ -94,6 +97,7 @@ public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay {
 		if (http == null) { 
 			http = new HTTPhelper();
 		}
+		loadPOIxmlState = LOAD_POI_STATE_UPLOAD;
 		http.uploadData(url, fullXML, true, this, Configuration.getOsmUsername(), Configuration.getOsmPwd());
 	}
 	
@@ -103,11 +107,11 @@ public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay {
 		if (c == UPLOAD_CMD) {
 			parent.show();
 			if (changesetGui == null) {
-				createChangeset = true;
+				loadState = LOAD_STATE_CHANGESET;
 				changesetGui = new GuiOSMChangeset(parent,this);
 				changesetGui.show();
 			} else {
-				createChangeset = false;
+				loadState = LOAD_STATE_UPLOAD;
 				uploadXML();
 			}
 		}
@@ -139,22 +143,26 @@ public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay {
 	
 	public void completedUpload(boolean success, String message) {
 		if (success) {
-			if (createChangeset) {
-				createChangeset = false;
-				uploadXML();
-			} else if (loadPOIxml) {
+			switch (loadState) {
+			case LOAD_STATE_LOAD: {
 				osmentity = new OSMdataNode(http.getData(), nodeID);
 				setupScreen();
-				loadPOIxml = false;
-			} else {
-				if (GpsMid.getInstance().shouldBeShown() == this) {
-					
-					//osmway = eway.getOSMdata();
-					//setupScreen();
-				}
+				loadState = LOAD_STATE_NONE;
+				break;
+			}
+			case LOAD_STATE_UPLOAD: {
+				GpsMid.getInstance().alert("Adding POI", "Poi was successfully added to OpenStreetMap", 1000);
+				loadState = LOAD_POI_STATE_NONE;
+				break;
+			}
+			case LOAD_STATE_CHANGESET: {
+				loadState = LOAD_STATE_UPLOAD;
+				uploadXML();
+				break;
+			}
 			}
 		} else {
-			
+			logger.error("Server operation failed: " + message);
 		}
 	}
 

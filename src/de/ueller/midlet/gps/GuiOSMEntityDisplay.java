@@ -44,10 +44,15 @@ public abstract class GuiOSMEntityDisplay extends Form implements GpsMidDisplaya
 	protected final Command CREATE_CHANGE_CMD = new Command("Create changeset", Command.OK, 6);
 	protected final Command CLOSE_CHANGE_CMD = new Command("Close changeset", Command.OK, 6);
 	
+	protected final static int LOAD_STATE_NONE = 0;
+	protected final static int LOAD_STATE_LOAD = 1;
+	protected final static int LOAD_STATE_UPLOAD = 2;
+	protected final static int LOAD_STATE_CHANGESET = 3;
+	
 	
 	protected GpsMidDisplayable parent;
 	protected static GuiOSMChangeset changesetGui;
-	protected boolean createChangeset;
+	protected int loadState;
 	
 	protected OSMdataEntity osmentity;
 	protected Image typeImage;
@@ -75,10 +80,12 @@ public abstract class GuiOSMEntityDisplay extends Form implements GpsMidDisplaya
 				this.append(new StringItem("No Data available","..."));
 				return;
 			}
-			this.append(new StringItem("Edited ", null));
-			this.append(new StringItem("    at:", osmentity.getEditTime()));
-			this.append(new StringItem("    by:", osmentity.getEditor()));
-			this.append(new StringItem("    ver:", osmentity.getVersion()));
+			if (osmentity.getVersion() > 0) {
+				this.append(new StringItem("Edited ", null));
+				this.append(new StringItem("    at:", osmentity.getEditTime()));
+				this.append(new StringItem("    by:", osmentity.getEditor()));
+				this.append(new StringItem("    ver:", Integer.toString(osmentity.getVersion())));
+			}
 
 			Hashtable tags = osmentity.getTags();
 			if (tags == null)
@@ -153,22 +160,7 @@ public abstract class GuiOSMEntityDisplay extends Form implements GpsMidDisplaya
 
 	}
 
-	public void completedUpload(boolean success, String message) {
-		if (success) {
-			if (createChangeset) {
-				createChangeset = false;
-				//eway.uploadXML(changesetGui.getChangesetID(),this);
-			} else {
-				if (GpsMid.getInstance().shouldBeShown() == this) {
-					//osmway = eway.getOSMdata();
-					//setupScreen();
-				}
-			}
-		} else {
-			
-		}
-	}
-	
+	public abstract void completedUpload(boolean success, String message);
 	
 
 	public void uploadAborted() {

@@ -52,8 +52,8 @@ public abstract class OSMdataEntity {
 		return tags;
 	}
 	
-	public String getVersion() {
-		return Integer.toString(version);
+	public int getVersion() {
+		return version;
 	}
 	
 	public String getEditor() {

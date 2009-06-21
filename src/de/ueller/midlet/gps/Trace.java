@@ -340,7 +340,7 @@ Runnable , GpsMidDisplayable, CompletionListener {
 		CMDS[ROUTING_STOP_CMD] = new Command("Stop routing",Command.ITEM, 100);
 		CMDS[ONLINE_INFO_CMD] = new Command("Online Info",Command.ITEM, 100);
 		CMDS[ROUTING_START_WITH_MODE_SELECT_CMD] = new Command("Calculate Route...",Command.ITEM, 100);
-		CMDS[RETRIEVE_NODE] = new Command("Retrieve Node...",Command.ITEM, 100);
+		CMDS[RETRIEVE_NODE] = new Command("Add POI to OSM...",Command.ITEM, 100);
 		//#if polish.api.wmapi
 		CMDS[SEND_MESSAGE_CMD] = new Command("Send SMS (map pos)",Command.ITEM, 200);
 		//#endif
