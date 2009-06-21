@@ -2229,6 +2229,8 @@ Runnable , GpsMidDisplayable, CompletionListener {
 				// imageCollector thread starts up suspended,
 				// so we need to resume it
 				imageCollector.resume();
+			} else if (imageCollector != null) {
+				imageCollector.newDataReady();
 			}
 			repaint();
 		} catch (Exception e) {
