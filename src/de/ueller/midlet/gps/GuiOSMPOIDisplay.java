@@ -10,8 +10,10 @@
 //#if polish.api.osm-editing
 package de.ueller.midlet.gps;
 
+import javax.microedition.lcdui.ChoiceGroup;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.Displayable;
+import javax.microedition.lcdui.Form;
 
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.tools.HTTPhelper;
@@ -21,6 +23,8 @@ import de.ueller.midlet.gps.GpsMidDisplayable;
 import de.ueller.midlet.gps.GuiOSMChangeset;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.data.OSMdataNode;
+import de.ueller.midlet.gps.tile.C;
+import de.ueller.midlet.gps.tile.POIdescription;
 
 public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay {
 	
@@ -31,14 +35,35 @@ public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay {
 	
 	private boolean loadPOIxml;
 	
+	private Form poiTypeForm;
+	private ChoiceGroup poiSelectionCG;
+	private boolean showPoiTypeForm;
+	
 	public GuiOSMPOIDisplay(int nodeID, SingleTile t, float lat, float lon, GpsMidDisplayable parent) {
 		super("Node", parent);
 		this.nodeID = nodeID;
 		loadPOIxml = false;
 		if (nodeID < 0) {
 			osmentity = new OSMdataNode(nodeID, lat, lon);
+			showPoiTypeForm = true;
+			setupPoiTypeForm();
+		} else {
+			showPoiTypeForm = false;
+			setupScreen();
 		}
-		setupScreen();
+		
+	}
+	
+	private void setupPoiTypeForm() {
+		poiTypeForm = new Form("POI type");
+		poiSelectionCG = new ChoiceGroup("Select type to add: ", ChoiceGroup.EXCLUSIVE);
+		for (byte i = 0; i < C.getMaxType(); i++) {				
+			poiSelectionCG.append(C.getNodeTypeDesc(i), C.getNodeSearchImage(i));
+		}
+		poiTypeForm.append(poiSelectionCG);
+		poiTypeForm.addCommand(BACK_CMD);
+		poiTypeForm.addCommand(OK_CMD);
+		poiTypeForm.setCommandListener(this);
 	}
 	
 	public void refresh() {
@@ -86,8 +111,31 @@ public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay {
 				uploadXML();
 			}
 		}
+		
+		if (c == OK_CMD) {
+			byte poiType = (byte)poiSelectionCG.getSelectedIndex();
+			String [] tags = C.getNodeOsmTags(poiType);
+			for (int i = 0; i < tags.length/2; i++) {
+				osmentity.getTags().put(tags[i*2], tags[i*2 + 1]);
+			}
+			showPoiTypeForm = false;
+			setupScreen();
+			show();
+		}
+		
+		//Normal BACK_CMD is handled in the super class
+		if ((c == BACK_CMD) && (showPoiTypeForm)) {
+			parent.show();
+		}
 	}
 
+	public void show() {
+		if (showPoiTypeForm) {
+			GpsMid.getInstance().show(poiTypeForm);
+		} else {
+			GpsMid.getInstance().show(this);
+		}
+	}
 	
 	public void completedUpload(boolean success, String message) {
 		if (success) {

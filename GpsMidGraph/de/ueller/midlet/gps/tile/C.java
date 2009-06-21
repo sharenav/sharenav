@@ -285,6 +285,11 @@ public class C {
 		}
 	}
 	
+	//#if polish.api.osm-editing
+	public static final String[] getNodeOsmTags(byte type) {
+		return pois[type].osmTags;
+	}
+	//#endif
 	
 	public static final int getNodeTextColor(byte type) {
 		return pois[type].textColor;

@@ -35,7 +35,7 @@ public abstract class GuiOSMEntityDisplay extends Form implements GpsMidDisplaya
 	
 	private final static Logger logger = Logger.getInstance(GuiOSMEntityDisplay.class,Logger.DEBUG);
 
-	protected final Command EXIT_CMD = new Command("Back", Command.BACK, 1);
+	protected final Command BACK_CMD = new Command("Back", Command.BACK, 1);
 	protected final Command OK_CMD = new Command("OK", Command.OK, 1);
 	protected final Command ADD_CMD = new Command("Add tag", Command.ITEM, 2);
 	protected final Command EDIT_CMD = new Command("Edit tag", Command.ITEM, 2);
@@ -57,7 +57,7 @@ public abstract class GuiOSMEntityDisplay extends Form implements GpsMidDisplaya
 	public GuiOSMEntityDisplay(String title, GpsMidDisplayable parent) {
 		super(title);
 		this.parent = parent;
-		addCommand(EXIT_CMD);
+		addCommand(BACK_CMD);
 		addCommand(ADD_CMD);
 		addCommand(UPLOAD_CMD);
 		addCommand(CREATE_CHANGE_CMD);
@@ -98,7 +98,7 @@ public abstract class GuiOSMEntityDisplay extends Form implements GpsMidDisplaya
 	}
 
 	public void commandAction(Command c, Displayable d) {
-		if (c == EXIT_CMD) {
+		if (c == BACK_CMD) {
 			if (d == this) {
 				parent.show();
 			} else {

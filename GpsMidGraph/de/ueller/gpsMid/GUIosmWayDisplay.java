@@ -132,7 +132,7 @@ public class GUIosmWayDisplay extends GuiOSMEntityDisplay implements GpsMidDispl
 			presets.append("maxwidth=3", null);
 			presets.append("maxheigt=4", null);
 			presets.addCommand(OK_CMD);
-			presets.addCommand(EXIT_CMD);
+			presets.addCommand(BACK_CMD);
 			presets.setCommandListener(this);
 			presets.setSelectCommand(OK_CMD);
 			GpsMid.getInstance().show(presets);
