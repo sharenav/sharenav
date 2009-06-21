@@ -369,6 +369,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 					logFile
 							.write(System.currentTimeMillis() + " " + msg
 									+ "\n");
+					logFile.flush();
 				} catch (IOException e) {
 					// Nothing much we can do here, we are
 					// already in the debugging routines.
@@ -389,6 +390,10 @@ public class GpsMid extends MIDlet implements CommandListener {
 		String url = Configuration.getDebugRawLoggerUrl();
 		if (Configuration.getDebugRawLoggerEnable() && url != null) {
 			try {
+				if (logFile != null) {
+					logFile.close();
+					logFile = null;
+				}
 				url = url + "GpsMid_log_"
 						+ HelperRoutines.formatSimpleDateNow() + ".txt";
 				Connection debugLogConn = Connector.open(url);
