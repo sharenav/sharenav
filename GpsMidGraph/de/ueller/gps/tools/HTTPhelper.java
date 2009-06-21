@@ -166,13 +166,13 @@ public class HTTPhelper implements Runnable{
 			logger.exception("Failed to upload data to " + url + ": ", e);
 			success = false;
 		}
-		
+		busy = false;
 		if (ul != null) {
 			ul.completedUpload(success, "Uploaded data to "+  url);
 		} else {
 			logger.info("UL shouldn't have been null");
 		};
-		busy = false;
+		
 	}
 	
 	private void download() {
