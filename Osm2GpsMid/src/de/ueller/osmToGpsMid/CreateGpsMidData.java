@@ -32,6 +32,7 @@ import java.util.Stack;
 import java.util.TreeSet;
 
 import de.ueller.osmToGpsMid.model.Bounds;
+import de.ueller.osmToGpsMid.model.ConditionTuple;
 import de.ueller.osmToGpsMid.model.Connection;
 import de.ueller.osmToGpsMid.model.EntityDescription;
 import de.ueller.osmToGpsMid.model.MapName;
@@ -240,6 +241,31 @@ public class CreateGpsMidData {
 					dsi.writeInt(poi.minTextScale);
 				if ((flags & LEGEND_FLAG_TEXT_COLOR) > 0)
 					dsi.writeInt(poi.textColor);
+				if (config.enableEditingSupport) {
+					int noKVpairs = 1;
+					if (poi.specialisation != null) {
+						for (ConditionTuple ct : poi.specialisation) {
+							if (!ct.exclude) {
+								noKVpairs++;
+							}
+						}
+					}
+					System.out.println(poi.description + " has " + noKVpairs + " OSM tags");
+					dsi.writeShort(noKVpairs);
+					dsi.writeUTF(poi.key);
+					dsi.writeUTF(poi.value);
+					System.out.println("   " + poi.key + "=" + poi.value);
+					if (poi.specialisation != null) {
+						for (ConditionTuple ct : poi.specialisation) {
+							if (!ct.exclude) {
+								dsi.writeUTF(ct.key);
+								dsi.writeUTF(ct.value);
+								System.out.println("   " + ct.key + "=" + ct.value);
+							}
+						}
+					}
+					
+				}
 				// System.out.println(poi);
 	
 			}
@@ -276,6 +302,28 @@ public class CreateGpsMidData {
 					dsi.writeInt(way.minOnewayArrowScale);
 				if ((flags & LEGEND_FLAG_MIN_DESCRIPTION_SCALE) > 0)
 					dsi.writeInt(way.minDescriptionScale);
+				if (config.enableEditingSupport) {
+					int noKVpairs = 1;
+					if (way.specialisation != null) {
+						for (ConditionTuple ct : way.specialisation) {
+							if (!ct.exclude) {
+								noKVpairs++;
+							}
+						}
+					}
+					dsi.writeShort(noKVpairs);
+					dsi.writeUTF(way.key);
+					dsi.writeUTF(way.value);
+					if (way.specialisation != null) {
+						for (ConditionTuple ct : way.specialisation) {
+							if (!ct.exclude) {
+								dsi.writeUTF(ct.key);
+								dsi.writeUTF(ct.value);
+							}
+						}
+					}
+					
+				}
 				// System.out.println(way);
 			}
 			/**
