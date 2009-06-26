@@ -1028,11 +1028,8 @@ Runnable , GpsMidDisplayable, CompletionListener {
 			}
 
 			if (c == CMDS[ROUTING_START_WITH_MODE_SELECT_CMD]) {
-				if (C.getTravelModes().length > 1) {
-					String travelModes[] = new String[C.getTravelModes().length];
-					for (int i=0; i<travelModes.length; i++) {
-						travelModes[i]=C.getTravelModes()[i].travelModeName;
-					}
+				String menuEntries[] = buildRouteModeMenuEntries();
+				if (menuEntries.length > 1) {
 					/*
 					 * Nasty workaround for SE mobiles when using a custom menu in full screen mode:
 					 * SE mobiles cannot handle the fire button in full screen mode when commands are attached to the displayable -
@@ -1043,7 +1040,7 @@ Runnable , GpsMidDisplayable, CompletionListener {
 					if (Configuration.getCfgBitState(Configuration.CFGBIT_FULLSCREEN)) {
 						removeAllCommands();
 					}
-					customMenu = new CustomMenu(this, this, "Route Mode", travelModes, ROUTING_START_WITH_MODE_SELECT_CMD);
+					customMenu = new CustomMenu(this, this, "Route Mode", menuEntries, ROUTING_START_WITH_MODE_SELECT_CMD);
 					customMenu.setSelectedEntry(Configuration.getTravelModeNr());
 				}
 				else {
@@ -2293,12 +2290,39 @@ Runnable , GpsMidDisplayable, CompletionListener {
 		return route;
 	}
 	
+	private String[] buildRouteModeMenuEntries() {
+		boolean askForTurnRestrictions = false;
+		int numTravelModes = C.getTravelModes().length;
+		int numMenuEntries = numTravelModes;
+		for (int i=0; i<numTravelModes; i++) {
+			if (C.getTravelModes()[i].isWithTurnRestrictions()) {
+				askForTurnRestrictions = true;
+			}					
+		}
+		if (askForTurnRestrictions) {
+			numMenuEntries++;
+		}
+		String travelModes[] = new String[numMenuEntries];
+		for (int i=0; i<numTravelModes; i++) {
+			travelModes[i]=C.getTravelModes()[i].travelModeName;
+		}
+		if (askForTurnRestrictions) {
+			travelModes[numTravelModes] = "TurnRestr.: " + (Configuration.getCfgBitState(Configuration.CFGBIT_USE_TURN_RESTRICTIONS_FOR_ROUTE_CALCULATION)?" On":"Off");
+		}
+		return travelModes;
+	}
+	
 	public void actionCompleted(String strResult) {
 		if (strResult.equalsIgnoreCase("Ok")) {
 			if (customMenu.getCommandID() == ROUTING_START_WITH_MODE_SELECT_CMD) {
-				Configuration.setTravelMode(customMenu.getSelectedEntry());
-				customMenu = null;
-				commandAction(CMDS[ROUTING_START_CMD], null);
+				if (customMenu.getSelectedEntry() == C.getTravelModes().length) {
+					Configuration.toggleCfgBitState(Configuration.CFGBIT_USE_TURN_RESTRICTIONS_FOR_ROUTE_CALCULATION, true);
+					customMenu.setMenuEntries(buildRouteModeMenuEntries());
+				} else {
+					Configuration.setTravelMode(customMenu.getSelectedEntry());
+					customMenu = null;
+					commandAction(CMDS[ROUTING_START_CMD], null);
+				}
 			}
 		}
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_FULLSCREEN)) {

@@ -35,6 +35,10 @@ public class CustomMenu {
 		this.commandID = commandID;
 	}
 	
+	public void setMenuEntries(String menuEntries[]) {
+		this.menuEntries = menuEntries;
+	}
+	
 	public void paint(Graphics g) {
 		Font font = g.getFont();
 		// request same font in bold for title
@@ -132,7 +136,7 @@ public class CustomMenu {
 			return false;
 		}
 		int selection = (y - entriesTop) / entriesHeight;
-		if (selection <= menuEntries.length) {
+		if (selection <= menuEntries.length-1) {
 			selectedEntry = selection;
 			customMenuSelect(true);
 			return true;

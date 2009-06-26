@@ -154,6 +154,8 @@ public class Configuration {
 	public final static byte CFGBIT_WPTS_IN_WPSTORE = 50;
 	// bit 51: Flag whether to show turn restrictions for debugging
 	public final static byte CFGBIT_SHOW_TURN_RESTRICTIONS = 51;
+	// bit 52: Flag whether turn restrictions should be used for route calculation
+	public final static byte CFGBIT_USE_TURN_RESTRICTIONS_FOR_ROUTE_CALCULATION = 52;
 	
 	/**
 	 * These are the database record ids for each configuration option
@@ -732,6 +734,10 @@ public class Configuration {
 		return getCfgBitState(bit, false);			
 	}
 	
+	
+	public static void toggleCfgBitState(byte bit, boolean savePermanent) {
+		setCfgBitState(bit, !getCfgBitState(bit), savePermanent);
+	}
 	
 	public static void setCfgBitState(byte bit, boolean state, boolean savePermanent) {
 		// set bit

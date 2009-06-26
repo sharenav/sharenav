@@ -78,6 +78,11 @@ public class Routing implements Runnable {
 		int successorCost;
 		Vector children = new Vector();
 		expanded=0;
+		
+		boolean checkForTurnRestrictions =
+			Configuration.getCfgBitState(Configuration.CFGBIT_USE_TURN_RESTRICTIONS_FOR_ROUTE_CALCULATION) &&
+			Configuration.getTravelMode().isWithTurnRestrictions();
+		
 		while (!(nodes.isEmpty())) {
 			currentNode = (GraphNode) nodes.firstElement();
 			if(closed.get(currentNode.state.toId) != null) { // to avoid having to remove
@@ -143,7 +148,7 @@ public class Routing implements Runnable {
 			
 			// check for turn restrictions
 			boolean turnRestricted []= new boolean[successor.length];
-			if (tile.lastNodeHadTurnRestrictions) {
+			if (checkForTurnRestrictions && tile.lastNodeHadTurnRestrictions) {
 				TurnRestriction turnRestriction = tile.getTurnRestrictions(currentNode.state.toId);
 				while (turnRestriction != null) { // loop through all turn restrictions at this route node
 					if ( (turnRestriction.affectedTravelModes & currentTravelMask) > 0 ){
