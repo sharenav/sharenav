@@ -543,7 +543,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			fw.write("\r\n");
 			fw.write("#Route ability can be disabled to save space in the midlet by setting to false\r\n");
 			fw.write("#or set to one defined in the style-file, e.g. motorcar or bicycle\r\n");
-			fw.write("useRouting = " + (Configuration.attrToBoolean(config.useRouting) >= 0 ? "motorcar":"false") + "\r\n");
+			fw.write("useRouting = " + config.useRouting + "\r\n");
 			fw.write("\r\n");
 			fw.write("#Style-file containing which way, area and POI types to include n the midlet\r\n");
 			fw.write("style-file = " + config.getStyleFileName() + "\r\n");
@@ -563,6 +563,8 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if ("OK-click".equalsIgnoreCase(e.getActionCommand())) {
+			config.setMidletName(jtfName.getText());
+			config.setRouting(jtfRouting.getText());
 			System.out.println("Configuration wizard has finished");
 
 			dialogFinished = true;
@@ -612,10 +614,6 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 				config.enableEditingSupport = ((JCheckBox)e.getSource()).isSelected();
 		}
 		
-		//if (e.getSource() == jtfName) {
-			config.setMidletName(jtfName.getText());
-			config.setRouting(jtfRouting.getText());
-		//}
 		if ("comboBoxChanged".equalsIgnoreCase(e.getActionCommand())) {
 			if (e.getSource() == jcbProperties) {
 				

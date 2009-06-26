@@ -86,6 +86,7 @@ public class Configuration {
 		public String changeSoundFileExtensionTo = "";
 		
 		private LegendParser legend;
+		private InputStream legendInputStream;
 		
 		// array containing real scale for pseudo zoom 0..32
 		private static float realScale [] = new float[33]; 
@@ -239,12 +240,7 @@ public class Configuration {
 				throw new IOException("Invalid properties file");
 			rb= new PropertyResourceBundle(propIS);
 			vb=new PropertyResourceBundle(getClass().getResourceAsStream("/version.properties"));
-			useRouting=getString("useRouting");
-			if (useRouting == null || attrToBoolean(useRouting) > 0) {
-				useRouting = "motorcar";
-			}
-			TravelModes.stringToTravelModes(useRouting);
-			
+			setRouting(getString("useRouting"));
 			maxRouteTileSize=Integer.parseInt(getString("routing.maxTileSize"));
 			maxTileSize=Integer.parseInt(getString("maxTileSize"));
 			setStyleFileName(getString("style-file"));
@@ -268,15 +264,17 @@ public class Configuration {
 		
 		public void setStyleFileName(String name) {
 			styleFile = name;
-			InputStream is;
 			try {
-				is = new FileInputStream(styleFile);
+				legendInputStream = new FileInputStream(styleFile);
 			} catch (IOException e) {
 				styleFile = "/style-file.xml";
 				System.out.println("Warning: Style file (" + styleFile + ") not found. Using internal one!"); 
-				is = getClass().getResourceAsStream(styleFile);
+				legendInputStream = getClass().getResourceAsStream(styleFile);
 			}
-			legend = new LegendParser(is);
+		}
+		
+		public void parseLegend() {			
+			legend = new LegendParser(legendInputStream);
 		}
 		
 		public boolean use(String key){
@@ -543,7 +541,13 @@ public class Configuration {
 		}
 		
 		public void setRouting(String routing) {
-			useRouting = routing;
+			if (routing == null || attrToBoolean(routing) > 0) {
+				useRouting = "motorcar";
+			} else if (attrToBoolean(routing) < 0) {
+				useRouting = "false";
+			} else {
+				useRouting = routing;
+			}
 		}
 
 		/**

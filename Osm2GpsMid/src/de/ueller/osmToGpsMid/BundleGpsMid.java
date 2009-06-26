@@ -61,6 +61,11 @@ public class BundleGpsMid {
 			
 			validateConfig(c);
 			System.out.println(c.toString());
+
+			// the legend must be parsed after the configuration to apply parameters to the travel modes specified in useRouting
+			TravelModes.stringToTravelModes(c.useRouting);
+			c.parseLegend();
+			
 			startTime = Calendar.getInstance();
 
 			TravelMode tm=null;
