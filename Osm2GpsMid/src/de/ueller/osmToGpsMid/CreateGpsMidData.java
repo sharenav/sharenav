@@ -204,7 +204,7 @@ public class CreateGpsMidData {
 				dsi.writeUTF(TravelModes.getTravelMode(i).getName());
 				dsi.writeShort(TravelModes.getTravelMode(i).maxPrepareMeters);
 				dsi.writeShort(TravelModes.getTravelMode(i).maxInMeters);
-				dsi.writeByte(TravelModes.getTravelMode(i).againstOneWayMode);
+				dsi.writeByte(TravelModes.getTravelMode(i).travelModeFlags);
 			}
 			
 			/**

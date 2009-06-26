@@ -25,10 +25,11 @@ public class TravelMode {
 	public long numDualConnections=0;
 	public long numOneWayConnections=0;
 	public long numBicycleOppositeConnections=0;
-	public byte againstOneWayMode = 0;
+	public byte travelModeFlags = 0;
 	
 	public final static byte AGAINST_ALL_ONEWAYS = 1;
 	public final static byte BICYLE_OPPOSITE_EXCEPTIONS = 2;	
+	public final static byte WITH_TURN_RESTRICTIONS = 4;
 	
 	private Vector<RouteAccessRestriction> routeAccessRestrictions;
 

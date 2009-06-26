@@ -67,10 +67,10 @@ public class BundleGpsMid {
 			for (int i=0; i < TravelModes.travelModeCount; i++) {				
 				tm = TravelModes.travelModes[i];
 				System.out.println("Route rules in " + c.getStyleFileName() + " for " + tm.getName() + ":");
-				if ( (tm.againstOneWayMode & TravelMode.AGAINST_ALL_ONEWAYS) > 0) {
+				if ( (tm.travelModeFlags & TravelMode.AGAINST_ALL_ONEWAYS) > 0) {
 					System.out.println(" Going against all accessible oneways is allowed");					
 				}
-				if ( (tm.againstOneWayMode & TravelMode.BICYLE_OPPOSITE_EXCEPTIONS) > 0) {
+				if ( (tm.travelModeFlags & TravelMode.BICYLE_OPPOSITE_EXCEPTIONS) > 0) {
 					System.out.println(" Opposite direction exceptions for bicycles get applied");					
 				}
 	        	int routeAccessRestrictionCount = 0;

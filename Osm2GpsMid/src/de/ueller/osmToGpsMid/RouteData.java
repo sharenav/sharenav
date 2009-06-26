@@ -327,11 +327,11 @@ public class RouteData {
 				float time=dist * 10.0f / speed;
 				times[i] = (int)time;
 
-				boolean bicycleOppositeDirection = (tm.againstOneWayMode & TravelMode.BICYLE_OPPOSITE_EXCEPTIONS) > 0 && w.isOppositeDirectionForBicycleAllowed();				
+				boolean bicycleOppositeDirection = (tm.travelModeFlags & TravelMode.BICYLE_OPPOSITE_EXCEPTIONS) > 0 && w.isOppositeDirectionForBicycleAllowed();				
 				// you can go against the direction of the way if it's not a oneway or an against direction rule applies
 				if (! (w.isOneWay() || w.isRoundabout())
 					||
-					(tm.againstOneWayMode & TravelMode.AGAINST_ALL_ONEWAYS) > 0
+					(tm.travelModeFlags & TravelMode.AGAINST_ALL_ONEWAYS) > 0
 					||
 					bicycleOppositeDirection
 				) {

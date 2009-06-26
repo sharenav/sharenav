@@ -517,18 +517,19 @@ public class LegendParser extends DefaultHandler{
 						if (applyTurnRestrictions != null) {
 							if (applyTurnRestrictions.equalsIgnoreCase("true")) {
 								TravelModes.applyTurnRestrictionsTravelModes |= (1<<TravelModes.getTravelModeNrByName(atts.getValue("modeName")));
+								currentTravelMode.travelModeFlags |= TravelMode.WITH_TURN_RESTRICTIONS;
 							}
 						}
 						String againstAllOneWays = atts.getValue("againstAllOneWays");
 						if (againstAllOneWays != null) {
 							if (againstAllOneWays.equalsIgnoreCase("true")) {
-								currentTravelMode.againstOneWayMode |= TravelMode.AGAINST_ALL_ONEWAYS;
+								currentTravelMode.travelModeFlags |= TravelMode.AGAINST_ALL_ONEWAYS;
 							}
 						}
 						String bicycleOppositeExceptions = atts.getValue("bicycleOppositeExceptions");
 						if (bicycleOppositeExceptions != null) {
 							if (bicycleOppositeExceptions.equalsIgnoreCase("true")) {
-								currentTravelMode.againstOneWayMode |= TravelMode.BICYLE_OPPOSITE_EXCEPTIONS;
+								currentTravelMode.travelModeFlags |= TravelMode.BICYLE_OPPOSITE_EXCEPTIONS;
 							}
 						}
 					}
