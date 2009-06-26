@@ -147,6 +147,7 @@ public class RouteData {
 							System.out.println("Node: " + c.from.node.id);
 						}
 					}
+					System.out.println("URL to via node: " + n.node.toUrl());					
 				}
 				int numToConnections = 0;
 				lastId = -1;
@@ -170,6 +171,7 @@ public class RouteData {
 							System.out.println("Node: " + c.to.node.id);
 						}
 					}
+					System.out.println("URL to via node: " + n.node.toUrl());					
 				}
 				if (numFromConnections == 1 && numToConnections == 1) {
 					numTurnRestrictions++;

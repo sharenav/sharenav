@@ -119,6 +119,11 @@ public class Node extends Entity{
 	public String toString(){
 		return "node (" + lat + "|" + lon + ") " + ((getPlace() != null)?("(" + getPlace() + ") "):"") + " id=" + id + " name="+getName() + ((nearBy == null)?"":(" by " + nearBy.getName()));
 	}
+
+	public String toUrl(){
+		return "http://www.openstreetmap.org/browse/node/" + id;
+	}
+	
 	/**
 	 * @return
 	 */
