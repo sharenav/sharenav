@@ -135,11 +135,12 @@ public class RouteData {
 					}
 				}
 				if (numFromConnections != 1) {
-					System.out.println("Warning: " + numFromConnections + " from_connections matched for: " + turn.toString(parser.getWayHashMap()));
+					System.out.println("Invalid turn restriction: " + numFromConnections + " from_connections matched for: " + turn.toString(parser.getWayHashMap()));
 					if (numFromConnections == 0) {
 						System.out.println("Reason may be way tagged with access=no");						
 					} else {
 						System.out.println("Reason may be fromWay not split at via member");												
+						turn.fromRouteNode = null; // make the turn restriction incomplete so it won't get passed to GpsMid 
 					}
 					for (Connection c:nViaFrom.connectedFrom) {
 						if (restrictionFromWay.containsNode(c.from.node)) {
@@ -157,11 +158,12 @@ public class RouteData {
 					}
 				}
 				if (numToConnections != 1) {
-					System.out.println("Warning: " + numToConnections + " to_connections matched for: "  + turn.toString(parser.getWayHashMap()));
+					System.out.println("Invalid turn restriction: " + numToConnections + " to_connections matched for: "  + turn.toString(parser.getWayHashMap()));
 					if (numToConnections == 0) {
 						System.out.println("Reason may be way tagged with access=no");						
 					} else {
 						System.out.println("Reason may be toWay not split at via member");												
+						turn.toRouteNode = null; // make the turn restriction incomplete so it won't get passed to GpsMid 
 					}
 					for (Connection c:n.connected) {
 						if (restrictionToWay.containsNode(c.to.node)) {
