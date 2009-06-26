@@ -154,7 +154,7 @@ public class C {
 			midletTravelModes[i].travelModeName = ds.readUTF();
 			midletTravelModes[i].maxPrepareMeters = ds.readShort();
 			midletTravelModes[i].maxInMeters = ds.readShort();
-			midletTravelModes[i].againstOneWayMode = ds.readByte();
+			midletTravelModes[i].travelModeFlags = ds.readByte();
 		}
 		
 		// If we do not have the travel mode stored defined in the record store in the midlet data, use the first one 
