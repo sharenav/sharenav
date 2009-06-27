@@ -645,6 +645,7 @@ Runnable , GpsMidDisplayable, CompletionListener {
 					(customMenu.getCommandID() == ROUTING_START_WITH_MODE_SELECT_CMD && c == CMDS[ROUTING_TOGGLE_CMD])
 				) {
 					customMenu.customMenuSelect(true);
+			    	repaint();
 					return;
 				}
 			    if (c.getCommandType() == Command.BACK) {
