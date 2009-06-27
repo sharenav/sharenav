@@ -1381,7 +1381,7 @@ Runnable , GpsMidDisplayable, CompletionListener {
 			// determine if we are currently speeding
 			speeding = false;
 			int maxSpeed = 0;
-			if (actualSpeedLimitWay != null) {
+			if (gpsRecenter && actualSpeedLimitWay != null) { // only detect speeding when gpsRecentered and there is a current way
 				maxSpeed = actualSpeedLimitWay.getMaxSpeed();
 				if (maxSpeed != 0 && speed > (maxSpeed + Configuration.getSpeedTolerance()) ) {
 					speeding = true;
