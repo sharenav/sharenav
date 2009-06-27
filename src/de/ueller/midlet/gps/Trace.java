@@ -2313,11 +2313,13 @@ Runnable , GpsMidDisplayable, CompletionListener {
 	}
 	
 	public void actionCompleted(String strResult) {
+		boolean reAddCommands = true;
 		if (strResult.equalsIgnoreCase("Ok")) {
 			if (customMenu.getCommandID() == ROUTING_START_WITH_MODE_SELECT_CMD) {
 				if (customMenu.getSelectedEntry() == C.getTravelModes().length) {
 					Configuration.toggleCfgBitState(Configuration.CFGBIT_USE_TURN_RESTRICTIONS_FOR_ROUTE_CALCULATION, true);
 					customMenu.setMenuEntries(buildRouteModeMenuEntries());
+					reAddCommands = false;
 				} else {
 					Configuration.setTravelMode(customMenu.getSelectedEntry());
 					customMenu = null;
@@ -2325,7 +2327,7 @@ Runnable , GpsMidDisplayable, CompletionListener {
 				}
 			}
 		}
-		if (Configuration.getCfgBitState(Configuration.CFGBIT_FULLSCREEN)) {
+		if (reAddCommands && Configuration.getCfgBitState(Configuration.CFGBIT_FULLSCREEN)) {
 			addAllCommands();
 		}
 	}
