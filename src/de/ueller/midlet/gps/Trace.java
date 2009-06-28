@@ -1025,6 +1025,7 @@ Runnable , GpsMidDisplayable, CompletionListener {
 			}
 
 			if (c == CMDS[ROUTING_START_WITH_MODE_SELECT_CMD]) {
+				gpsRecenter = true;
 				String menuEntries[] = buildRouteModeMenuEntries();
 				if (menuEntries.length > 1) {
 					/*
