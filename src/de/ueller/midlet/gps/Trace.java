@@ -43,7 +43,6 @@ import de.ueller.gps.sirf.SirfInput;
 import de.ueller.gps.tools.HelperRoutines;
 import de.ueller.gps.tools.CustomMenu;
 import de.ueller.gps.tools.LayoutElement;
-import de.ueller.gps.tools.intTree;
 import de.ueller.gpsMid.mapData.DictReader;
 //#if polish.api.osm-editing
 import de.ueller.gpsMid.GUIosmWayDisplay;
@@ -65,15 +64,12 @@ import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.data.SECellLocLogger;
 import de.ueller.midlet.gps.data.Way;
 import de.ueller.midlet.gps.names.Names;
-import de.ueller.midlet.gps.routing.ConnectionWithNode;
-import de.ueller.midlet.gps.routing.RouteHelper;
 import de.ueller.midlet.gps.routing.RouteNode;
 import de.ueller.midlet.gps.routing.Routing;
 import de.ueller.midlet.gps.tile.C;
 import de.ueller.midlet.gps.GuiMapFeatures;
 import de.ueller.midlet.gps.tile.Images;
 import de.ueller.midlet.gps.tile.PaintContext;
-import de.ueller.midlet.gps.tile.WayDescription;
 import de.ueller.midlet.gps.GpsMidDisplayable;
 
 /** 
