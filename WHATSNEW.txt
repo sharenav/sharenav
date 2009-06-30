@@ -11,9 +11,10 @@ GpsMid 0.5.09
        - CellId provider for S60FP2 usable with the python helper app (providing cellid via a local socket) 
        - CellId can now be used to position one self without the need to connect to the internet
        *** Map Screen ***
+       - Improved painting of waysegments to draw them connected (thx pos_ei_don_) 
        - In Setup / Display Options there's now a textfield for specifying how many seconds after
        	 the last manual panning of the map it will be automatically recentered to the GPS position
-       - Better handling of appearing and disappearing text items on the map screen
+       - Better handling of appearing and disappearing text items (title bar, route instructions, etc.) on the map screen
        - show speed when driving
        - Turn restrictions included in the midlet can be displayed in the map with Setup/Debug Options
        *** Recordings, Tracks and Waypoints ***
@@ -28,7 +29,7 @@ GpsMid 0.5.09
          e.g. useRouting = motorcar, bicycle, foot
        - GpsMid asks which route mode to use on start of routing
        - Show remaining route distance to target in map screen
-       - Check for turn restrictions during route calculation
+       - Check for turn restrictions during route calculation (experimental, leads in some cases to no route solution)
        - U-turn instruction
        - Cross area routing (e.g. for foot routing through pedestrian zones)
        - Permissive Routing Restriction are now possible

@@ -120,25 +120,30 @@ public class Way extends Entity{
 	private static int pathFontBaseLinePos;
 	
 	
-
+	/** Point Line 1 begin; note: Line 1 and Line 2 form a waysegment (read as Line1Begin) */
 	static final IntPoint l1b = new IntPoint();
+	/** Point Line 1 begin; note: Line 1 and Line 2 form a waysegment (read as Line1End) */
 	static final IntPoint l1e = new IntPoint();
+	/** Point Line 2 begin; note: Line 1 and Line 2 form a waysegment (read as Line2Begin) */
 	static final IntPoint l2b = new IntPoint();
+	/** Point Line 2 begin; note: Line 1 and Line 2 form a waysegment (read as Line2End) */
 	static final IntPoint l2e = new IntPoint();
+	/** Point Line 3 begin; note: Line 3 and Line 4 form a waysegment (read as Line3Begin) */
 	static final IntPoint l3b = new IntPoint();
+	/** Point Line 3 begin; note: Line 3 and Line 4 form a waysegment (read as Line3End) */
 	static final IntPoint l3e = new IntPoint();
+	/** Point Line 4 begin; note: Line 3 and Line 4 form a waysegment (read as Line4Begin) */
 	static final IntPoint l4b = new IntPoint();
+	/** Point Line 5 begin; note: Line 3 and Line 4 form a waysegment (read as Line4End) */
 	static final IntPoint l4e = new IntPoint();
-	static final IntPoint s1 = new IntPoint();
-	static final IntPoint s2 = new IntPoint();
 	
-	/**
-	 * Enables or disables the match travelling direction for actual way calculation heuristic 
-	 */
+	/** stores the intersection-point of the inner turn	 */
+	static final IntPoint intersecP = new IntPoint();
+	
+	/** Enables or disables the match travelling direction for actual way calculation heuristic */
 	private static boolean addDirectionalPenalty = false;
-	/**
-	 * Sets the scale of the directional penalty dependent on the projection used.
-	 */
+	
+	/** Sets the scale of the directional penalty dependent on the projection used.	 */
 	private static float scalePen = 0;
 	/*
 	 * Precalculated normalised vector for the direction of current travel,
@@ -1219,6 +1224,18 @@ public class Way extends Entity{
     	);
     }
     
+   	/** Calculates the turn 2 vectors make (left, right, straight) 
+   	 * @return s<0 for right turn, s>0 for left turn. 0 for straight
+   	 */
+    public int getVectorTurn(int ax, int ay, int bx, int by, int cx, int cy) {
+  	   //    	 	s<0      C is left of AB
+  	   //         	s>0      C is right of AB
+  	   //         	s=0      C is on AB
+     
+     	    return (ay-cy)*(bx-ax)-(ax-cx)*(by-ay);
+     }    
+    
+   //Todo: Describe, what the returning float is.
 	private float getParLines(int xPoints[], int yPoints[], int i, int w,
 			IntPoint p1, IntPoint p2, IntPoint p3, IntPoint p4) {
 		int i1 = i + 1;
@@ -1262,9 +1279,6 @@ public class Way extends Entity{
 
 	private void draw(PaintContext pc, SingleTile t, int w, int xPoints[], int yPoints[], int hl[], int count,byte highlight/*,byte mode*/) {
 		
-		float roh1=0.0f;
-		float roh2;
-
 		IntPoint closestP = new IntPoint();
 		int wClosest = 0;
 		boolean dividedSeg = false;
@@ -1272,11 +1286,13 @@ public class Way extends Entity{
 		int originalX = 0;
 		int originalY = 0;
 		int max = count ;
-		int beforeMax = max - 1;
 		int wOriginal = w;
 		if (w <1) w=1;
 		int wDraw = w;
-		int oldWDraw = 0; // setting this to 0 gets roh1 in the first step
+		int turn = 0;
+
+		
+
 		for (int i = 0; i < max; i++) {
 			wDraw = w;
 			// draw route line wider
@@ -1325,66 +1341,88 @@ public class Way extends Entity{
 			} else {
 				dividedSeg = false;
 			}			
-			// get parLine again, if width has changed (when switching between highlighted / non-highlighted parts of the way)
-			if (wDraw != oldWDraw) {
-				roh1 = getParLines(xPoints, yPoints, i, wDraw, l1b, l2b, l1e, l2e);
-			}
-			if (i < beforeMax) {
-				roh2 = getParLines(xPoints, yPoints, i + 1, wDraw, l3b, l4b, l3e,
-						l4e);
-				if (!MoreMath.approximately_equal(roh1, roh2, 0.5f)) {
-					intersectionPoint(l1b, l1e, l3b, l3e, s1);
-					intersectionPoint(l2b, l2e, l4b, l4e, s2);
-					l1e.set(s1);
-					l2e.set(s2);
-					l3b.set(s1);
-					l4b.set(s2);
-				}
-			}
+
+			// Get the fourouter points of the wDraw-wide waysegment
+			getParLines(xPoints, yPoints, i , wDraw, l1b, l2b, l1e, l2e);
+
+			
 			if (hl[i] != PATHSEG_DO_NOT_DRAW) {
 	//			if (mode == DRAW_AREA){
-					if (hl[i] >= 0) {
-						if (isCurrentRoutePath(pc, i) || dividedHighlight) {
-							pc.g.setColor(C.ROUTE_COLOR);
-						} else {
-							pc.g.setColor(C.ROUTEPRIOR_COLOR);
-						}
-					} else if (highlight == HIGHLIGHT_TARGET) {
-						pc.g.setColor(255,50,50);						
-					} else {
-						setColor(pc);
-					}
+				
+				WayDescription wayDesc = C.getWayDescription(type);
+				setColor(pc,wayDesc,(hl[i] >= 0), (isCurrentRoutePath(pc, i)|| dividedHighlight), (highlight == HIGHLIGHT_TARGET));
+						
 					// when this is not render as lines (for the non-highlighted part of the way) or it is a highlighted part, draw as area
 					if (wOriginal != 0 || hl[i] >= 0) {
 						pc.g.fillTriangle(l2b.x, l2b.y, l1b.x, l1b.y, l1e.x, l1e.y);
 						pc.g.fillTriangle(l1e.x, l1e.y, l2e.x, l2e.y, l2b.x, l2b.y);
-						// draw borders of way
-						if (hl[i] >= 0){
-							if (isCurrentRoutePath(pc, i) || dividedHighlight) {
-								pc.g.setColor(C.ROUTE_BORDERCOLOR);
-							} else {
-								pc.g.setColor(C.ROUTEPRIOR_BORDERCOLOR);								
-							}
-						} else if (highlight == HIGHLIGHT_TARGET){
-								pc.g.setColor(255,50,50);
-						} else {
-							setBorderColor(pc);
+
+						if (i==0){  // if this is the first segment, draw the lines
+							setBorderColor(pc,wayDesc,(hl[i] >= 0), (isCurrentRoutePath(pc, i)|| dividedHighlight), (highlight == HIGHLIGHT_TARGET));
+							pc.g.drawLine(l2b.x, l2b.y, l2e.x, l2e.y);
+							pc.g.drawLine(l1b.x, l1b.y, l1e.x, l1e.y);
 						}
-						pc.g.drawLine(l1b.x, l1b.y, l1e.x, l1e.y);
-						pc.g.drawLine(l2b.x, l2b.y, l2e.x, l2e.y);
-					} else {
-						pc.g.drawLine(xPoints[i], yPoints[i], xPoints[i + 1], yPoints[i + 1]);
-					}
+
+						
+						// Now look at the turns(corners) of the waysegment and fill them if nessesary.
+						// We always look back to the turn between current and previous waysegment.
+						if (i>0){  // as we look back, there is no turn at the first segment
+							
+							turn = getVectorTurn(xPoints[i-1],yPoints[i-1], xPoints[i],yPoints[i],xPoints[i+1],yPoints[i+1] );
+							if (turn < 0 ){												// turn right
+								intersectionPoint(l4b,l4e,l2b,l2e,intersecP,1);
+								
+								setColor(pc,wayDesc,(hl[i] >= 0), (isCurrentRoutePath(pc, i)|| dividedHighlight), (highlight == HIGHLIGHT_TARGET));
+								pc.g.fillTriangle(xPoints[i], yPoints[i] , l3e.x, l3e.y, l1b.x,l1b.y);  // Fills the gap of the corner with a small triangle								        	
+ 
+								setBorderColor(pc,wayDesc,(hl[i] >= 0), (isCurrentRoutePath(pc, i)|| dividedHighlight), (highlight == HIGHLIGHT_TARGET));
+								if (highlight == HIGHLIGHT_NONE){
+									pc.g.drawLine(intersecP.x, intersecP.y, l2e.x, l2e.y); 	//paint the inner turn border to the intersection point between old and current waysegment 
+								}else{
+									pc.g.drawLine(l2b.x, l2b.y, l2e.x, l2e.y);  			//painting full border of the inner turn while routing
+								}
+								pc.g.drawLine(l1b.x, l1b.y, l1e.x, l1e.y);					// paint the full outer turn border
+								pc.g.drawLine(l1b.x, l1b.y, l3e.x, l3e.y); 					// paint the border of the corner turn-triangle
+							}
+							else if (turn > 0 ){															// turn left
+								intersectionPoint(l3b,l3e,l1b,l1e,intersecP,1);
+								setColor(pc,wayDesc,(hl[i] >= 0), (isCurrentRoutePath(pc, i)|| dividedHighlight), (highlight == HIGHLIGHT_TARGET));
+
+								pc.g.fillTriangle(xPoints[i], yPoints[i] , l4e.x, l4e.y, l2b.x,l2b.y);  // Fills the gap of the corner with a small triangle
+								setBorderColor(pc,wayDesc,(hl[i] >= 0), (isCurrentRoutePath(pc, i)|| dividedHighlight), (highlight == HIGHLIGHT_TARGET));
+								if (highlight == HIGHLIGHT_NONE){ 							//see coments above
+									pc.g.drawLine(intersecP.x, intersecP.y, l1e.x, l1e.y);
+								} else{
+									pc.g.drawLine(l1b.x, l1b.y, l1e.x, l1e.y);
+								}
+								pc.g.drawLine(l2b.x, l2b.y, l2e.x, l2e.y);
+								pc.g.drawLine(l2b.x, l2b.y, l4e.x, l4e.y); //corner
+							}
+							else{ //no turn, way is straight
+								setBorderColor(pc,wayDesc,(hl[i] >= 0), (isCurrentRoutePath(pc, i)|| dividedHighlight), (highlight == HIGHLIGHT_TARGET));
+								pc.g.drawLine(l2b.x, l2b.y, l2e.x, l2e.y);
+								pc.g.drawLine(l1b.x, l1b.y, l1e.x, l1e.y);					// paint the full outer turn border
+							}
+						}
+						} else {
+							// Draw streets as lines or polygons (like areas)
+							setColor(pc,wayDesc,(hl[i] >= 0), (isCurrentRoutePath(pc, i)|| dividedHighlight), (highlight == HIGHLIGHT_TARGET));
+							pc.g.drawLine(xPoints[i], yPoints[i], xPoints[i + 1], yPoints[i + 1]);
+						}
 			}
-			l1b.set(l3b);
-			l2b.set(l4b);
-			l1e.set(l3e);
-			l2e.set(l4e);
+			
+			l3b.set(l1b);  //Save the way-corners for the next loop to fill segment-gaps
+			l4b.set(l2b);
+			l3e.set(l1e);
+			l4e.set(l2e);
 			if (dividedSeg) {
 				// if this is a divided seg, in the next step draw the second part
 				i--;
 			}
+			
+			
 		}
+		//now as we painted all ways, do the things we should only do once
 		if (wClosest != 0) {
 			// if we got a closest seg, draw closest point to the center in it
 			RouteInstructions.drawRouteDot(pc.g, closestP, wClosest);
@@ -1408,9 +1446,37 @@ public class Way extends Entity{
 			:RouteInstructions.pathIdxInRoutePathConnection > i+1
 		);
 	}
+	
+	private void intersectionPoint(IntPoint p1, IntPoint p2, IntPoint p3,
+								   IntPoint p4, IntPoint ret, int aprox) {
 
-	private IntPoint intersectionPoint(IntPoint p1, IntPoint p2, IntPoint p3,
+		if (p2.approximatelyEquals(p3, aprox)){
+			// as p2 and p3 are (approx) equal, the intersectionpoint is infinite
+			ret.x = p3.x; //  returning p3 as this is the best solution
+			ret.y = p3.y;
+		}
+		else {
+			intersectionPointCalc(p1, p2,p3,p4,ret);
+		}
+	}
+
+
+	private void intersectionPoint(IntPoint p1, IntPoint p2, IntPoint p3,
+								   IntPoint p4, IntPoint ret) {
+
+		if (p2.equals(p3)){
+			// as p2 and p3 are (approx) equal, the intersectionpoint is infinite
+			ret.x = p3.x; //  returning p3 as this is the best solution
+			ret.y = p3.y;
+		}
+		else {
+			intersectionPointCalc(p1, p2,p3,p4,ret);
+		}
+	}
+
+	private void intersectionPointCalc(IntPoint p1, IntPoint p2, IntPoint p3,
 			IntPoint p4, IntPoint ret) {
+		
 		int dx1 = p2.x - p1.x;
 		int dx2 = p4.x - p3.x;
 		int dx3 = p1.x - p3.x;
@@ -1431,9 +1497,9 @@ public class Way extends Entity{
 				ret.y = p4.y;
 			}
 		}
-		return ret;
 	}
 
+	
 /*	private boolean getLineLineIntersection(IntPoint p1, IntPoint p2,
 			IntPoint p3, IntPoint p4, IntPoint ret) {
 
@@ -1611,7 +1677,22 @@ public class Way extends Entity{
 		}		
 	}
 	
-	
+	public void setColor(PaintContext pc,WayDescription wayDesc,boolean routing,boolean isCurrentRoutePath, boolean highlight) {
+		
+		if (routing) {
+			// set the way(area)-color
+			if (isCurrentRoutePath) {
+				pc.g.setColor(C.ROUTE_COLOR);			// set this color if way is part of current route
+			} else {
+				pc.g.setColor(C.ROUTEPRIOR_COLOR);		// set this color if way was part of current route
+			}
+		} else if (highlight) {		// way is highlighted as target for routing
+			pc.g.setColor(255,50,50);						
+		} else { 										// use color from style.xml
+			pc.g.setStrokeStyle(wayDesc.getGraphicsLineStyle());
+			pc.g.setColor(wayDesc.lineColor);
+		}
+	}
 	public void setColor(PaintContext pc) {		
 		WayDescription wayDesc = C.getWayDescription(type);
 		pc.g.setStrokeStyle(wayDesc.getGraphicsLineStyle());
@@ -1621,6 +1702,25 @@ public class Way extends Entity{
 	public int getWidth(PaintContext pc) {
 		WayDescription wayDesc = C.getWayDescription(type);
 		return wayDesc.wayWidth;
+	}
+
+	/**
+	 * Advanced setting of the BorderColor
+	 */
+	public void setBorderColor(PaintContext pc,WayDescription wayDesc, boolean routing,boolean dividedHighlight, boolean highlight) {
+		
+		if (routing){
+			if (dividedHighlight) {
+				pc.g.setColor(C.ROUTE_BORDERCOLOR);
+			} else {
+				pc.g.setColor(C.ROUTEPRIOR_BORDERCOLOR);								
+			}
+		} else if (highlight){
+				pc.g.setColor(255,50,50);
+		} else {
+			pc.g.setStrokeStyle(Graphics.SOLID);
+			pc.g.setColor(wayDesc.boardedColor);
+		}
 	}
 
 	public void setBorderColor(PaintContext pc) {
