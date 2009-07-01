@@ -60,7 +60,7 @@ public class LayoutManager {
 		for (int i=0; i<ele.length; i++){
 			//#debug debug
 			logger.trace("calc positions for element " + i);
-			ele[i].calcPosition();
+			ele[i].calcSizeAndPosition();
 		}
 		recalcPositionsRequired = false;
 	}

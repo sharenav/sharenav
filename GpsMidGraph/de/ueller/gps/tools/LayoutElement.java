@@ -139,9 +139,14 @@ public class LayoutElement {
 		}
 	}
 
+
+	protected void calcSizeAndPosition() {
+		calcSize();
+		calcPosition();
+	}
+
 	
-	
-	protected void calcPosition() {
+	protected void calcSize() {
 		if ( textIsValid ) {
 			width = textWidth;
 		} else {
@@ -155,13 +160,6 @@ public class LayoutElement {
 		} else if ( (flags & FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH) > 0 ) {
 			width = (fontHeight * widthPercent) / 100;
 		}
-
-		if (specialElementID != 0) {			
-			width = lm.getSpecialElementWidth(specialElementID, text, font);
-			height = lm.getSpecialElementHeight(specialElementID, fontHeight);
-		}
-
-		
 		//#debug debug
 		logger.trace("width:" + width); 
 		// check how many characters we can draw if the available width is limited
@@ -169,7 +167,14 @@ public class LayoutElement {
 			numDrawChars--;
 			textWidth = font.substringWidth(text, 0, numDrawChars);
 		}
-				
+
+		if (specialElementID != 0) {			
+			width = lm.getSpecialElementWidth(specialElementID, text, font);
+			height = lm.getSpecialElementHeight(specialElementID, fontHeight);
+		}
+	}
+	
+	protected void calcPosition() {
 		if ( (flags & FLAG_HALIGN_LEFT) > 0 ) {
 			textLeft = lm.minX;
 			left = lm.minX;
@@ -223,7 +228,7 @@ public class LayoutElement {
 			textTop = top +  (height - fontHeight) / 2;
 		}
 	}
-
+	
 	private int getAboveOrBelowNextVisibleRelative(boolean getAbove) {
 		LayoutElement eRelative = vRelativeTo;
 		int newTop = 0;
