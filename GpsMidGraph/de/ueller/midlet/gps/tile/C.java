@@ -6,6 +6,7 @@ import java.io.InputStream;
 
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
+
 /*
  * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net 
  * See Copying
@@ -192,7 +193,7 @@ public class C {
 				String imageName = ds.readUTF();
 				//System.out.println("trying to open image " + imageName);
 				try {
-					pois[i].image = Image.createImage(imageName);
+					pois[i].image = Image.createImage(Configuration.getMapResource(imageName));
 				} catch (IOException e) {
 					//#debug info
 					logger.info("could not open POI image " + imageName + " for " + pois[i].description);
@@ -203,7 +204,7 @@ public class C {
 				String imageName = ds.readUTF();
 				logger.debug("trying to open search image " + imageName);
 				try {
-					pois[i].searchIcon = Image.createImage(imageName);
+					pois[i].searchIcon = Image.createImage(Configuration.getMapResource(imageName));
 				} catch (IOException e) {
 					//#debug info
 					logger.info("could not open POI image " + imageName + " for " + pois[i].description);
