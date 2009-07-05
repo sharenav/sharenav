@@ -24,9 +24,9 @@ import javax.microedition.lcdui.Graphics;
 public class TraceIconMenu extends IconMenuTabs implements IconMenuPageInterface {
 
 	/** contains the iconMenu for each page */
-	private IconMenu[] iconMenuPage = new IconMenu[3];
+	private IconMenu[] iconMenuPage = new IconMenu[4];
 	/** active element on each page */
-	private static int eleNr[] = new int[3];
+	private static int eleNr[] = new int[4];
 
 	private CompletionListener compListener;
 	private int minX;
@@ -65,8 +65,16 @@ public class TraceIconMenu extends IconMenuTabs implements IconMenuPageInterface
 	{	Trace.ROUTING_TOGGLE_CMD,	Trace.SETTARGET_CMD,	Trace.CLEARTARGET_CMD
 	};
 
-	private static final String[] tabLabels = {" Main ", " Recordings ", " Route "};
-	private static final String[] tabLabelsSmall = {" Main ", " Rec ", " Route "};
+	private static final String[][] iconsOsm  =
+	{ 	{"motorway", "Edit Way"},	{"unknown", "Add POI"}
+	};
+	private static final int[] iconActionsOsm  =
+	{	Trace.RETRIEVE_XML,	Trace.RETRIEVE_NODE
+	};
+
+	
+	private static final String[] tabLabels = {" Main ", " Recordings ", " Route ", " Osm "};
+	private static final String[] tabLabelsSmall = {" Main ", " Rec ", " Route ", " Osm "};
 	
 	public TraceIconMenu(CompletionListener compListener, int minX, int minY, int maxX, int maxY) {
 		super((maxX - minX) < 176 ? tabLabelsSmall : tabLabels, minX, minY, maxX, maxY);
@@ -87,13 +95,16 @@ public class TraceIconMenu extends IconMenuTabs implements IconMenuPageInterface
 		if (iconMenuPage[tabNr] == null) {
 			switch(tabNr) {
 				case 0:
-					iconMenuPage[tabNr] = new IconMenu(this.compListener, this, iconsMain, iconActionsMain, eleNr[0], 3, 4, minX, iconPageTop, maxX, maxY);
+					iconMenuPage[tabNr] = new IconMenu(this.compListener, this, iconsMain, iconActionsMain, eleNr[tabNr], 3, 4, minX, iconPageTop, maxX, maxY);
 					break;
 				case 1:
-					iconMenuPage[tabNr] = new IconMenu(this.compListener, this, iconsRecording, iconActionsRecording, eleNr[1], 3, 4, minX, iconPageTop, maxX, maxY);
+					iconMenuPage[tabNr] = new IconMenu(this.compListener, this, iconsRecording, iconActionsRecording, eleNr[tabNr], 3, 4, minX, iconPageTop, maxX, maxY);
 					break;
 				case 2:
-					iconMenuPage[tabNr] = new IconMenu(this.compListener, this, iconsRouting, iconActionsRouting, eleNr[2], 3, 4, minX, iconPageTop, maxX, maxY);
+					iconMenuPage[tabNr] = new IconMenu(this.compListener, this, iconsRouting, iconActionsRouting, eleNr[tabNr], 3, 4, minX, iconPageTop, maxX, maxY);
+					break;
+				case 3:
+					iconMenuPage[tabNr] = new IconMenu(this.compListener, this, iconsOsm, iconActionsOsm, eleNr[tabNr], 3, 4, minX, iconPageTop, maxX, maxY);
 					break;
 			}
 		}
