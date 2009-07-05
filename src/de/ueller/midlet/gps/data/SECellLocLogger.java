@@ -208,11 +208,7 @@ public class SECellLocLogger implements LocationMsgReceiver {
 				return;
 			}
 		}
-		/**
-		 * We need to clone the prevPos, as the pos object gets reused for each
-		 * new position
-		 */
-		prevPos = new Position(pos);
+		
 
 		try {
 
@@ -228,6 +224,11 @@ public class SECellLocLogger implements LocationMsgReceiver {
 				wr.flush();
 				loggingSuccess = true;
 				noSamples++;
+				/**
+				 * We need to clone the prevPos, as the pos object gets reused for each
+				 * new position
+				 */
+				prevPos = new Position(pos);
 			} else {
 				loggingSuccess = false;
 			}
