@@ -87,13 +87,13 @@ public class TraceIconMenu extends IconMenuTabs implements IconMenuPageInterface
 		if (iconMenuPage[tabNr] == null) {
 			switch(tabNr) {
 				case 0:
-					iconMenuPage[0] = new IconMenu(this.compListener, this, iconsMain, iconActionsMain, eleNr[0], 3, 4, minX, iconPageTop, maxX, maxY);
+					iconMenuPage[tabNr] = new IconMenu(this.compListener, this, iconsMain, iconActionsMain, eleNr[0], 3, 4, minX, iconPageTop, maxX, maxY);
 					break;
 				case 1:
-					iconMenuPage[1] = new IconMenu(this.compListener, this, iconsRecording, iconActionsRecording, eleNr[1], 3, 4, minX, iconPageTop, maxX, maxY);
+					iconMenuPage[tabNr] = new IconMenu(this.compListener, this, iconsRecording, iconActionsRecording, eleNr[1], 3, 4, minX, iconPageTop, maxX, maxY);
 					break;
 				case 2:
-					iconMenuPage[2] = new IconMenu(this.compListener, this, iconsRouting, iconActionsRouting, eleNr[2], 3, 4, minX, iconPageTop, maxX, maxY);
+					iconMenuPage[tabNr] = new IconMenu(this.compListener, this, iconsRouting, iconActionsRouting, eleNr[2], 3, 4, minX, iconPageTop, maxX, maxY);
 					break;
 			}
 		}
@@ -121,22 +121,18 @@ public class TraceIconMenu extends IconMenuTabs implements IconMenuPageInterface
 		}
 	}
 	
-	/**
-	 * return: always 0 (must return an int because it overrides IconMenuTabs.pointerPressed() )
-	 */
-	public int pointerPressed(int x, int y) {
+	public void pointerPressed(int x, int y) {
 		eleNr[tabNr] = iconMenuPage[tabNr].rememberEleId;
 		// if an icon was clicked on the active page hide the page
 		if (iconMenuPage[tabNr].pointerPressed(x, y)) {
 			visible = false;
 		} else {
-			// if a tab has been clicked show its IconPage
-			int chosenTab = super.pointerPressed(x, y);
-			if (chosenTab >= 0) {
-				showIconPage(chosenTab);
+			int oldTabNr = tabNr;
+			super.pointerPressed(x, y);
+			if (tabNr != oldTabNr) {
+				showIconPage(tabNr);
 			}
 		}
-		return 0;
 	}
 	
 	public void paint(Graphics g) {

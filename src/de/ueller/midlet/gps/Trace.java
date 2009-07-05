@@ -2064,8 +2064,11 @@ Runnable , GpsMidDisplayable, CompletionListener {
 	protected void pointerPressed(int x, int y) {
 		pointerDragAction = true;
 
-		if (iconMenu != null && iconMenu.visible && iconMenu.pointerPressed(x, y) >= 0) {
+		if (iconMenu != null && iconMenu.visible) {
+			iconMenu.pointerPressed(x, y);
+			pointerDragAction = false;
 			repaint();
+			return;
 		}		
 		if (customMenu != null && customMenu.pointerPressed(x, y)) {
 			repaint();
