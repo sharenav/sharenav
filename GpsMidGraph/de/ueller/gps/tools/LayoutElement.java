@@ -198,8 +198,8 @@ public class LayoutElement {
 			textLeft = lm.minX;
 			left = lm.minX;
 		} else if ( (flags & FLAG_HALIGN_RIGHT) > 0 ) {
-			textLeft =  lm.maxX - textWidth;
-			left = lm.maxX - width;
+			textLeft =  lm.maxX - textWidth - 1;
+			left = lm.maxX - width - 1;
 		} else if ( (flags & FLAG_HALIGN_CENTER) > 0 ) {
 			textLeft = lm.minX + ( lm.maxX - lm.minX - textWidth ) / 2;
 			left = lm.minX + ( lm.maxX - lm.minX - width ) / 2;
