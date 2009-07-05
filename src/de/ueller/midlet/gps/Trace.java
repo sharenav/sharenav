@@ -131,9 +131,7 @@ Runnable , GpsMidDisplayable, CompletionListener {
 	protected static final int ICON_MENU = 50;
 	protected static final int ABOUT_CMD = 51;
 	protected static final int SETUP_CMD = 52;
-//#if polish.api.wmapi
 	protected static final int SEND_MESSAGE_CMD = 53;
-	//#endif
 
 	private final Command [] CMDS = new Command[54];
 
