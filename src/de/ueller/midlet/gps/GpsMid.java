@@ -606,11 +606,13 @@ public class GpsMid extends MIDlet implements CommandListener {
 		long totalMem = runt.totalMemory();
 		if (totalMem > phoneMaxMemory) {
 			phoneMaxMemory = totalMem;
-			if (phoneMaxMemory > Configuration.getPhoneAllTimeMaxMemory()) {
-				Configuration.setPhoneAllTimeMaxMemory(phoneMaxMemory);
+			if (phoneMaxMemory > Configuration.getPhoneAllTimeMaxMemory() + 100000) {
 				if (trace != null) {
 					trace.receiveMessage("Inc maxMem: " + phoneMaxMemory);
 				}
+			}
+			if (phoneMaxMemory > Configuration.getPhoneAllTimeMaxMemory()) {
+				Configuration.setPhoneAllTimeMaxMemory(phoneMaxMemory);
 			}
 			log.info("New phoneMaxMemory: " + phoneMaxMemory);
 		}
