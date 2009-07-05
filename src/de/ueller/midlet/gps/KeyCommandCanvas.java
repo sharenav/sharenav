@@ -36,6 +36,7 @@ public abstract class KeyCommandCanvas extends Canvas implements
 	protected intTree nonReleasableKeyPressCommand = new intTree();
 
 	protected CustomMenu customMenu = null;
+	protected TraceIconMenu iconMenu = null;
 	
 	/*
 	 * Explicitly make this function static, as otherwise some jvm implementations
@@ -48,6 +49,15 @@ public abstract class KeyCommandCanvas extends Canvas implements
 
 	protected void keyPressed(int keyCode) {
 		logger.debug("keyPressed " + keyCode);
+		// when an icon menu is attached and visible, forward the key to it
+		if (iconMenu != null && iconMenu.visible) {
+			iconMenu.keyAction(keyCode);
+			logger.debug("key forwarded to iconMenu " + keyCode);
+			repaint();
+			ignoreKeyCode = keyCode;
+			return;
+		}
+		
 		if (customMenu != null) {
 			if (customMenu.keyAction(keyCode)) {
 				logger.debug("customMenu action performed for key " + keyCode);
@@ -88,6 +98,12 @@ public abstract class KeyCommandCanvas extends Canvas implements
 	protected void keyRepeated(int keyCode) {
 		// strange seem to be working in emulator only with this debug line
 		logger.debug("keyRepeated " + keyCode);
+		// when an icon menu is attached and visible, simply repeat the key
+		if (iconMenu != null && iconMenu.visible) {
+			keyPressed(keyCode);
+			return;
+		}
+		
 		// Scrolling should work with repeated keys the same
 		// as pressing the key multiple times
 		if (keyCode == ignoreKeyCode) {

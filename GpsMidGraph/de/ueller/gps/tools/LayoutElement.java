@@ -5,8 +5,10 @@
 
 package de.ueller.gps.tools;
 
+import java.io.IOException;
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
+import javax.microedition.lcdui.Image;
 
 import de.ueller.midlet.gps.Logger;
 
@@ -62,6 +64,9 @@ public class LayoutElement {
 	public static final int FLAG_FONT_MEDIUM = (1<<21);
 	public static final int FLAG_FONT_LARGE = (1<<22);
 	public static final int FLAG_FONT_BOLD = (1<<23);
+	public static final int FLAG_HALIGN_LEFT_SCREENWIDTH_PERCENT = (1<<24);
+	public static final int FLAG_SCALE_IMAGE_TO_ELEMENT_WIDTH_OR_HEIGHT_KEEPRATIO = (1<<25);
+	public static final int FLAG_BACKGROUND_SCREENPERCENT_HEIGHT = (1<<26);
 
 	
 	protected LayoutManager lm = null;
@@ -76,15 +81,18 @@ public class LayoutElement {
 	
 	/** make the element width a percentage of the LayoutManager width or font height*/
 	private int widthPercent = 100;
-	/** make the element high a percentage of the font height*/
+	/** make the element high a percentage of the font height or of the LayoutManager height */
 	private int heightPercent = 100;
 	/** position the element at a percentage of the LayoutManager height */
 	private int topPercent = 100;
+	/** position the element at a percentage of the LayoutManager width */
+	private int leftPercent = 100;
 	private Font font = null;
 	private int fontHeight = 0;
 	private int height = 0;
 	
 	private String text = "";
+	private Image image = null;
 	
 	private int textWidth = 0;
 	/** number of chars fitting (if a width flag is set) */
@@ -96,15 +104,15 @@ public class LayoutElement {
 	private int fgColor = 0x00000000;
 
 	private int textLeft = 0;
-	private int left = 0;
+	public int left = 0;
 	/** additional offset to be added to left and textLeft */
 	private int addOffsX = 0;
 	/** additional offset to be added to top */
 	private int addOffsY = 0;
 	public int textTop = 0;
 	public int top = 0;
-	private int right = 0;
-	private int bottom = 0;
+	public int right = 0;
+	public int bottom = 0;
 	
 	private byte specialElementID;
 	
@@ -146,7 +154,7 @@ public class LayoutElement {
 	}
 
 	
-	protected void calcSize() {
+	protected void calcSize() {		
 		if ( textIsValid ) {
 			width = textWidth;
 		} else {
@@ -156,8 +164,12 @@ public class LayoutElement {
 		if ( (flags & FLAG_BACKGROUND_SCREENPERCENT_WIDTH) > 0 ) {
 			width = ((lm.maxX - lm.minX) * widthPercent) / 100;
 			//#debug debug
-			logger.trace("percent width " + width); 
-		} else if ( (flags & FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH) > 0 ) {
+			logger.trace("percent width " + width);
+		}
+		if ( (flags & FLAG_BACKGROUND_SCREENPERCENT_HEIGHT) > 0 ) {
+			height = ((lm.maxY - lm.minY) * heightPercent) / 100;
+		}
+		if ( (flags & FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH) > 0 ) {
 			width = (fontHeight * widthPercent) / 100;
 		}
 		//#debug debug
@@ -172,6 +184,11 @@ public class LayoutElement {
 			width = lm.getSpecialElementWidth(specialElementID, text, font);
 			height = lm.getSpecialElementHeight(specialElementID, fontHeight);
 		}
+		
+		if (image != null) {
+			width = image.getWidth();
+			height = image.getHeight();
+		}
 	}
 	
 	protected void calcPosition() {
@@ -184,10 +201,15 @@ public class LayoutElement {
 		} else if ( (flags & FLAG_HALIGN_CENTER) > 0 ) {
 			textLeft = lm.minX + ( lm.maxX - lm.minX - textWidth ) / 2;
 			left = lm.minX + ( lm.maxX - lm.minX - width ) / 2;
+		} else if ( (flags & FLAG_HALIGN_LEFT_SCREENWIDTH_PERCENT) > 0 ) {
+			left = lm.minX + ((lm.maxX - lm.minX) * leftPercent) / 100 - width / 2;			
+			textLeft = left + (width - textWidth) / 2;
 		} else if ( (flags & FLAG_HALIGN_LEFTTO_RELATIVE) > 0 ) {
 			left = getLeftToOrRightToNextVisibleRelative(true);
+			textLeft = left + (width - textWidth) / 2;
 		} else if ( (flags & FLAG_HALIGN_RIGHTTO_RELATIVE) > 0 ) {
 			left = getLeftToOrRightToNextVisibleRelative(false);
+			textLeft = left + (width - textWidth) / 2;
 		}
 		
 		left += addOffsX;
@@ -211,7 +233,7 @@ public class LayoutElement {
 		} else if ( (flags & FLAG_VALIGN_CENTER) > 0 ) {
 			top = lm.minY + (lm.maxY - lm.minY - height) / 2;
 		} else if ( (flags & FLAG_VALIGN_TOP_SCREENHEIGHT_PERCENT) > 0 ) {
-			top = lm.minY + ((lm.maxY - lm.minY) * topPercent) / 100;;
+			top = lm.minY + ((lm.maxY - lm.minY) * topPercent) / 100 - height / 2;
 		} else if ( (flags & FLAG_VALIGN_BELOW_RELATIVE) > 0 ) {
 			top = getAboveOrBelowNextVisibleRelative(false);
 		} else if ( (flags & FLAG_VALIGN_ABOVE_RELATIVE) > 0 ) {
@@ -226,6 +248,9 @@ public class LayoutElement {
 		bottom = top + height;
 		if ( (flags & FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT) > 0 ) {
 			textTop = top +  (height - fontHeight) / 2;
+		}
+		if (image != null) {
+			textTop = bottom + 1;
 		}
 	}
 	
@@ -269,6 +294,35 @@ public class LayoutElement {
 
 	
 	
+	public void setImage(String imageName) {
+		try {
+			Image orgImage = Image.createImage("/" + imageName + ".png");
+			if ( (flags & FLAG_SCALE_IMAGE_TO_ELEMENT_WIDTH_OR_HEIGHT_KEEPRATIO) > 0) {
+				image = null;
+				calcSize(); // behaves different if image is null
+				if (text.length() > 0) {
+					width -= ((width * fontHeight + 1) / height);
+					height -= fontHeight;
+				}
+				int newWidth = width;
+				int newHeight = height;
+				int heightRelativeToWidth = (orgImage.getHeight() * width) / orgImage.getWidth();
+				int widthRelativeToHeight = (orgImage.getWidth() * height) / orgImage.getHeight();
+//				System.out.println("calced Width/Height " + width + " " + height);
+				if (width > widthRelativeToHeight) {
+					width = widthRelativeToHeight;
+				} else if (height > heightRelativeToWidth) {
+					height = heightRelativeToWidth;
+				}
+//				System.out.println("actual Width/Height " + width + " " + height);
+				
+				orgImage = ImageTools.scaleImage(orgImage, width, height);
+			}
+			image = orgImage;
+		} catch (IOException ioe) {
+			logger.exception("Failed to load icon " + imageName, ioe);
+		}
+	}
 	
 	public void setText(String text) {
 		if (! text.equalsIgnoreCase(this.text) ) {
@@ -294,6 +348,14 @@ public class LayoutElement {
 		}
 	}
 
+	public void setFlag(int flag) {
+		flags |= flag;
+	}
+	public void clearFlag(int flag) {
+		flags &= ~flag;
+	}
+	
+	
 	/**
 	Set horizontal relative to this relative element's position and width
 	combine with FLAG_VALIGN_LEFTTO_RELATIVE or FLAG_RIGHTTO_RELATIVE for the relative direction
@@ -321,6 +383,12 @@ public class LayoutElement {
 		topPercent = p;
 		lm.recalcPositionsRequired = true;
 	}
+
+	public void setLeftPercent(int p) {
+		leftPercent = p;
+		lm.recalcPositionsRequired = true;
+	}
+
 	
 	public void setColor(int color) {
 		fgColor = color;
@@ -342,12 +410,16 @@ public class LayoutElement {
 		specialElementID = id;
 	}
 
-	
+
+	public int getFontHeight() {
+		return fontHeight;
+	}
+		
 	public String getValidationError() {
 		if (flags == 0) {
 			return "not initialised";
 		}
-		if ( (flags & (FLAG_HALIGN_LEFT | FLAG_HALIGN_CENTER | FLAG_HALIGN_RIGHT | FLAG_HALIGN_LEFTTO_RELATIVE | FLAG_HALIGN_RIGHTTO_RELATIVE)) == 0) {
+		if ( (flags & (FLAG_HALIGN_LEFT | FLAG_HALIGN_CENTER | FLAG_HALIGN_RIGHT | FLAG_HALIGN_LEFTTO_RELATIVE | FLAG_HALIGN_LEFT_SCREENWIDTH_PERCENT | FLAG_HALIGN_RIGHTTO_RELATIVE)) == 0) {
 			return "horizontal position flag missing";
 		}
 		if ( (flags & (FLAG_VALIGN_BOTTOM | FLAG_VALIGN_CENTER | FLAG_VALIGN_TOP | FLAG_VALIGN_TOP_SCREENHEIGHT_PERCENT |FLAG_VALIGN_ABOVE_RELATIVE | FLAG_VALIGN_BELOW_RELATIVE | FLAG_VALIGN_WITH_RELATIVE)) == 0) {
@@ -371,7 +443,7 @@ public class LayoutElement {
 			g.setFont(font);
 			lm.drawSpecialElement(g, specialElementID, text, left, top);
 			isOnScreen = true;
-		} else if (numDrawChars > 0 && textIsValid ) {
+		} else if ( (numDrawChars > 0 && textIsValid) || image != null) {
 			if ( (flags & FLAG_BACKGROUND_BOX) > 0 ) {
 				g.setColor(bgColor);
 				//#debug trace
@@ -385,6 +457,9 @@ public class LayoutElement {
 				g.setStrokeStyle(Graphics.SOLID);
 				g.drawRect(left, top, right-left, bottom - top);
 			}			
+			if (image != null) {
+				g.drawImage(image, left, top, Graphics.TOP|Graphics.LEFT);
+			}
 			if (font != null) {
 				g.setColor(fgColor);
 				g.setFont(font);

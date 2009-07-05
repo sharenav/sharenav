@@ -205,6 +205,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private TextField	tfAutoRecenterToGpsSecs;
 	private ChoiceGroup backlightOpts;
 	private ChoiceGroup sizeOpts;
+	private ChoiceGroup guiOpts;
 	private ChoiceGroup debugLog;
 	private ChoiceGroup debugSeverity;
 	private ChoiceGroup debugOther;
@@ -486,6 +487,11 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		sizeOpts = new ChoiceGroup("Size Options:", Choice.MULTIPLE, sizes ,null);
 		menuDisplayOptions.append(sizeOpts);
 
+		String [] guis = new String[1];
+		guis[0] = "use icon menu";
+		guiOpts = new ChoiceGroup("Gui:", Choice.MULTIPLE, guis ,null);
+		menuDisplayOptions.append(guiOpts);
+		
 		menuDisplayOptions.setCommandListener(this);
 	}
 	
@@ -711,6 +717,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 					renderOpts.setSelectedIndex( Configuration.getCfgBitState(Configuration.CFGBIT_STREETRENDERMODE)?1:0, true);
 					sizeOpts.setSelectedIndex(0, Configuration.getCfgBitState(Configuration.CFGBIT_POI_LABELS_LARGER));
 					sizeOpts.setSelectedIndex(1, Configuration.getCfgBitState(Configuration.CFGBIT_WPT_LABELS_LARGER));
+					guiOpts.setSelectedIndex(0, Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS, true));
 					SingleTile.newPOIFont();
 					WaypointsTile.useNewWptFont();
 					gaugeDetailBoost.setValue(Configuration.getDetailBoostDefault());
@@ -910,6 +917,11 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 						true); 
 				Configuration.setCfgBitState(Configuration.CFGBIT_POI_LABELS_LARGER, sizeOpts.isSelected(0), true);
 				Configuration.setCfgBitState(Configuration.CFGBIT_WPT_LABELS_LARGER, sizeOpts.isSelected(1), true);
+				if (guiOpts.isSelected(0) != Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS)) {
+					Trace.getInstance().removeAllCommands();
+					Configuration.setCfgBitState(Configuration.CFGBIT_ICONMENUS, guiOpts.isSelected(0), true);
+					Trace.getInstance().addAllCommands();					
+				}
 				Configuration.setDetailBoost(gaugeDetailBoost.getValue(), true); 
 				
 				String secs=tfAutoRecenterToGpsSecs.getString(); 

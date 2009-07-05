@@ -156,6 +156,8 @@ public class Configuration {
 	public final static byte CFGBIT_SHOW_TURN_RESTRICTIONS = 51;
 	// bit 52: Flag whether turn restrictions should be used for route calculation
 	public final static byte CFGBIT_USE_TURN_RESTRICTIONS_FOR_ROUTE_CALCULATION = 52;
+	// bit 53: Flag whether iconMenus should be used
+	public final static byte CFGBIT_ICONMENUS = 53;
 	
 	/**
 	 * These are the database record ids for each configuration option

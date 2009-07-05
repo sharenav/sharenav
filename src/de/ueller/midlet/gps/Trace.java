@@ -80,59 +80,62 @@ import de.ueller.midlet.gps.GpsMidDisplayable;
 public class Trace extends KeyCommandCanvas implements LocationMsgReceiver,
 Runnable , GpsMidDisplayable, CompletionListener {
 	/** Soft button for exiting the map screen */
-	private static final int EXIT_CMD = 1;
-	private static final int CONNECT_GPS_CMD = 2;
-	private static final int DISCONNECT_GPS_CMD = 3;
-	private static final int START_RECORD_CMD = 4;
-	private static final int STOP_RECORD_CMD = 5;
-	private static final int MANAGE_TRACKS_CMD = 6;
-	private static final int SAVE_WAYP_CMD = 7;
-	private static final int ENTER_WAYP_CMD = 8;
-	private static final int MAN_WAYP_CMD = 9;
-	private static final int ROUTING_TOGGLE_CMD = 10;
-	private static final int CAMERA_CMD = 11;
-	private static final int CLEARTARGET_CMD = 12;
-	private static final int SETTARGET_CMD = 13;
-	private static final int MAPFEATURES_CMD = 14;
-	private static final int RECORDINGS_CMD = 16;
-	private static final int ROUTINGS_CMD = 17;
-	private static final int OK_CMD =18;
-	private static final int BACK_CMD = 19;
-	private static final int ZOOM_IN_CMD = 20;
-	private static final int ZOOM_OUT_CMD = 21;
-	private static final int MANUAL_ROTATION_MODE_CMD = 22;
-	private static final int TOGGLE_OVERLAY_CMD = 23;
-	private static final int TOGGLE_BACKLIGHT_CMD = 24;
-	private static final int TOGGLE_FULLSCREEN_CMD = 25;
-	private static final int TOGGLE_MAP_PROJ_CMD = 26;
-	private static final int TOGGLE_KEY_LOCK_CMD = 27;
-	private static final int TOGGLE_RECORDING_CMD = 28;
-	private static final int TOGGLE_RECORDING_SUSP_CMD = 29;
-	private static final int RECENTER_GPS_CMD = 30;
-	private static final int DATASCREEN_CMD = 31;
-	private static final int OVERVIEW_MAP_CMD = 32;
-	private static final int RETRIEVE_XML = 33;
-	private static final int PAN_LEFT25_CMD = 34;
-	private static final int PAN_RIGHT25_CMD = 35;
-	private static final int PAN_UP25_CMD = 36;
-	private static final int PAN_DOWN25_CMD = 37;
-	private static final int PAN_LEFT2_CMD = 38;
-	private static final int PAN_RIGHT2_CMD = 39;
-	private static final int PAN_UP2_CMD = 40;
-	private static final int PAN_DOWN2_CMD = 41;
-	private static final int REFRESH_CMD = 42;
-	private static final int SEARCH_CMD = 43;
-	private static final int TOGGLE_AUDIO_REC = 44;
-	private static final int ROUTING_START_CMD = 45;
-	private static final int ROUTING_STOP_CMD = 46;
-	private static final int ONLINE_INFO_CMD = 47;
-	private static final int ROUTING_START_WITH_MODE_SELECT_CMD = 48;
-	private static final int RETRIEVE_NODE = 49;
+	protected static final int EXIT_CMD = 1;
+	protected static final int CONNECT_GPS_CMD = 2;
+	protected static final int DISCONNECT_GPS_CMD = 3;
+	protected static final int START_RECORD_CMD = 4;
+	protected static final int STOP_RECORD_CMD = 5;
+	protected static final int MANAGE_TRACKS_CMD = 6;
+	protected static final int SAVE_WAYP_CMD = 7;
+	protected static final int ENTER_WAYP_CMD = 8;
+	protected static final int MAN_WAYP_CMD = 9;
+	protected static final int ROUTING_TOGGLE_CMD = 10;
+	protected static final int CAMERA_CMD = 11;
+	protected static final int CLEARTARGET_CMD = 12;
+	protected static final int SETTARGET_CMD = 13;
+	protected static final int MAPFEATURES_CMD = 14;
+	protected static final int RECORDINGS_CMD = 16;
+	protected static final int ROUTINGS_CMD = 17;
+	protected static final int OK_CMD =18;
+	protected static final int BACK_CMD = 19;
+	protected static final int ZOOM_IN_CMD = 20;
+	protected static final int ZOOM_OUT_CMD = 21;
+	protected static final int MANUAL_ROTATION_MODE_CMD = 22;
+	protected static final int TOGGLE_OVERLAY_CMD = 23;
+	protected static final int TOGGLE_BACKLIGHT_CMD = 24;
+	protected static final int TOGGLE_FULLSCREEN_CMD = 25;
+	protected static final int TOGGLE_MAP_PROJ_CMD = 26;
+	protected static final int TOGGLE_KEY_LOCK_CMD = 27;
+	protected static final int TOGGLE_RECORDING_CMD = 28;
+	protected static final int TOGGLE_RECORDING_SUSP_CMD = 29;
+	protected static final int RECENTER_GPS_CMD = 30;
+	protected static final int DATASCREEN_CMD = 31;
+	protected static final int OVERVIEW_MAP_CMD = 32;
+	protected static final int RETRIEVE_XML = 33;
+	protected static final int PAN_LEFT25_CMD = 34;
+	protected static final int PAN_RIGHT25_CMD = 35;
+	protected static final int PAN_UP25_CMD = 36;
+	protected static final int PAN_DOWN25_CMD = 37;
+	protected static final int PAN_LEFT2_CMD = 38;
+	protected static final int PAN_RIGHT2_CMD = 39;
+	protected static final int PAN_UP2_CMD = 40;
+	protected static final int PAN_DOWN2_CMD = 41;
+	protected static final int REFRESH_CMD = 42;
+	protected static final int SEARCH_CMD = 43;
+	protected static final int TOGGLE_AUDIO_REC = 44;
+	protected static final int ROUTING_START_CMD = 45;
+	protected static final int ROUTING_STOP_CMD = 46;
+	protected static final int ONLINE_INFO_CMD = 47;
+	protected static final int ROUTING_START_WITH_MODE_SELECT_CMD = 48;
+	protected static final int RETRIEVE_NODE = 49;
+	protected static final int ICON_MENU = 50;
+	protected static final int ABOUT_CMD = 51;
+	protected static final int SETUP_CMD = 52;
 //#if polish.api.wmapi
-	private static final int SEND_MESSAGE_CMD = 50;
+	protected static final int SEND_MESSAGE_CMD = 53;
 	//#endif
 
-	private final Command [] CMDS = new Command[51];
+	private final Command [] CMDS = new Command[54];
 
 	public static final int DATASCREEN_NONE = 0;
 	public static final int DATASCREEN_TACHO = 1;
@@ -261,14 +264,14 @@ Runnable , GpsMidDisplayable, CompletionListener {
 	private Runtime runtime = Runtime.getRuntime();
 
 	private PositionMark target = null;
-	private Vector route = null;
+	public Vector route = null;
 	private RouteInstructions ri = null;
 	
 	private boolean running = false;
 	private static final int CENTERPOS = Graphics.HCENTER | Graphics.VCENTER;
 
 	public Gpx gpx;
-	private AudioRecorder audioRec;
+	public AudioRecorder audioRec;
 	
 	private static Trace traceInstance = null;
 
@@ -337,6 +340,9 @@ Runnable , GpsMidDisplayable, CompletionListener {
 		CMDS[ONLINE_INFO_CMD] = new Command("Online Info",Command.ITEM, 100);
 		CMDS[ROUTING_START_WITH_MODE_SELECT_CMD] = new Command("Calculate Route...",Command.ITEM, 100);
 		CMDS[RETRIEVE_NODE] = new Command("Add POI to OSM...",Command.ITEM, 100);
+		CMDS[ICON_MENU] = new Command("Menu",Command.OK, 100);
+		CMDS[SETUP_CMD] = new Command("Setup",Command.OK, 100);
+		CMDS[ABOUT_CMD] = new Command("About",Command.OK, 100);
 		//#if polish.api.wmapi
 		CMDS[SEND_MESSAGE_CMD] = new Command("Send SMS (map pos)",Command.ITEM, 200);
 		//#endif
@@ -525,6 +531,20 @@ Runnable , GpsMidDisplayable, CompletionListener {
 		running = false;
 	}
 	
+	// add the command only if icon menus are not used
+	public void addCommand(Command c) {
+		if (!Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS)) {
+			super.addCommand(c);
+		}
+	}
+
+	// remove the command only if icon menus are not used
+	public void removeCommand(Command c) {
+		if (!Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS)) {
+			super.removeCommand(c);
+		}
+	}
+
 	public synchronized void pause(){
 		logger.debug("Pausing application");
 		if (imageCollector != null) {
@@ -571,13 +591,17 @@ Runnable , GpsMidDisplayable, CompletionListener {
 	}
 
 	
+	public boolean isGpsConnected() {
+		return locationProducer != null && !solution.equalsIgnoreCase("Off");
+	}
+	
 	public void addAllCommands() {
 		addCommand(CMDS[EXIT_CMD]);
 		addCommand(CMDS[SEARCH_CMD]);
-		if (locationProducer == null || solution.equalsIgnoreCase("Off")) {
-			addCommand(CMDS[CONNECT_GPS_CMD]);
-		} else {
+		if (isGpsConnected()) {
 			addCommand(CMDS[DISCONNECT_GPS_CMD]);
+		} else {
+			addCommand(CMDS[CONNECT_GPS_CMD]);
 		}
 		addCommand(CMDS[MANAGE_TRACKS_CMD]);
 		addCommand(CMDS[MAN_WAYP_CMD]);
@@ -592,20 +616,25 @@ Runnable , GpsMidDisplayable, CompletionListener {
 		addCommand(CMDS[RETRIEVE_NODE]);
 		//#endif
 		//#endif
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS)) {
+			if (!Configuration.getCfgBitState(Configuration.CFGBIT_FULLSCREEN)) {
+				super.addCommand(CMDS[ICON_MENU]);
+			}
+		}
 		setCommandListener(this);
 	}
 	
 	public void removeAllCommands() {
-		setCommandListener(null);
+		//setCommandListener(null);
 		/* Although j2me documentation tells removeCommand for a non-attached command is allowed
 		 * this would crash MicroEmulator. Thus we only remove the commands attached.
 		 */
 		removeCommand(CMDS[EXIT_CMD]);
 		removeCommand(CMDS[SEARCH_CMD]);
-		if (locationProducer == null || solution.equalsIgnoreCase("Off")) {
-			removeCommand(CMDS[CONNECT_GPS_CMD]);
-		} else {
+		if (isGpsConnected()) {
 			removeCommand(CMDS[DISCONNECT_GPS_CMD]);
+		} else {
+			removeCommand(CMDS[CONNECT_GPS_CMD]);
 		}
 		removeCommand(CMDS[MANAGE_TRACKS_CMD]);
 		removeCommand(CMDS[MAN_WAYP_CMD]);
@@ -619,7 +648,29 @@ Runnable , GpsMidDisplayable, CompletionListener {
 		removeCommand(CMDS[RETRIEVE_XML]);
 		//#endif
 		//#endif
+		
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS)) {
+			if (!Configuration.getCfgBitState(Configuration.CFGBIT_FULLSCREEN)) {
+				super.removeCommand(CMDS[ICON_MENU]);
+			}
+		}
 	}
+	
+	/** sets the Canvas to fullScreen or windowed mode
+	 * when icon menus are active the Menu command gets removed
+	 * so the Canvas will not unhide the menu bar first when pressing fire (e.g. on SE mobiles)
+	*/
+	public void setFullScreenMode(boolean fullScreen) {
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS)) {
+			if (fullScreen) {
+				super.removeCommand(CMDS[ICON_MENU]);
+			} else {
+				super.addCommand(CMDS[ICON_MENU]);
+			}
+		}
+		super.setFullScreenMode(fullScreen);
+	}
+
 	
 	
 	public void commandAction(Command c, Displayable d) {
@@ -917,6 +968,10 @@ Runnable , GpsMidDisplayable, CompletionListener {
 			}
 			//#endif
 			if (c == CMDS[BACK_CMD]) {
+				if (iconMenu != null && iconMenu.visible) {
+					super.removeCommand(CMDS[BACK_CMD]);
+					iconMenu.visible=false;
+				}
 				show();
 				return;
 			}
@@ -1182,6 +1237,27 @@ Runnable , GpsMidDisplayable, CompletionListener {
 				showNextDataScreen(DATASCREEN_NONE);
 				return;
 			}
+
+			if (c == CMDS[ICON_MENU] && Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS)) {
+				if (iconMenu == null) {
+					iconMenu = new TraceIconMenu(this, 0, 0, getWidth(), getHeight());
+				}
+				iconMenu.visible = true;
+				removeAllCommands();
+				super.addCommand(CMDS[BACK_CMD]);
+				repaint();
+				return;
+			}
+			if (c == CMDS[SETUP_CMD]) {
+				new GuiDiscover(parent);
+				return;
+			}
+			if (c == CMDS[ABOUT_CMD]) {
+				new Splash(parent);
+				return;
+			}
+
+			
 			if (! routeCalc) {
 				//#if polish.api.osm-editing 
 				if (c == CMDS[RETRIEVE_XML]) {
@@ -1312,12 +1388,20 @@ Runnable , GpsMidDisplayable, CompletionListener {
 		}
 
 		tl = new TraceLayout(0, 0, w, h);
+		if (iconMenu != null) {
+			iconMenu = new TraceIconMenu(this, 0, 0, w, h);
+		}
 	}
 
 
 	protected void paint(Graphics g) {
 		//#debug debug
 		logger.debug("Drawing Map screen");
+		if (iconMenu != null && iconMenu.visible) {
+			iconMenu.paint(g);
+			return;
+		}
+		
 		
 		try {
 			int yc = 1;
@@ -1982,10 +2066,13 @@ Runnable , GpsMidDisplayable, CompletionListener {
 	protected void pointerPressed(int x, int y) {
 		pointerDragAction = true;
 
+		if (iconMenu != null && iconMenu.visible && iconMenu.pointerPressed(x, y) >= 0) {
+			repaint();
+		}		
 		if (customMenu != null && customMenu.pointerPressed(x, y)) {
 			repaint();
 		}		
-		if (customMenu != null) {
+		if (customMenu != null || (iconMenu != null && iconMenu.visible) ) {
 			pointerDragAction = false;
 			return;			
 		}
@@ -2022,7 +2109,7 @@ Runnable , GpsMidDisplayable, CompletionListener {
 				pointerDragAction = false;
 				break;
 			case TraceLayout.WAYNAME:
-				commandAction(CMDS[ROUTING_TOGGLE_CMD], (Displayable) null);
+				commandAction(CMDS[ICON_MENU], (Displayable) null);
 				repaint();
 				pointerDragAction = false;
 				break;
@@ -2312,16 +2399,40 @@ Runnable , GpsMidDisplayable, CompletionListener {
 	
 	public void actionCompleted(String strResult) {
 		boolean reAddCommands = true;
-		if (strResult.equalsIgnoreCase("Ok")) {
-			if (customMenu.getCommandID() == ROUTING_START_WITH_MODE_SELECT_CMD) {
-				if (customMenu.getSelectedEntry() == C.getTravelModes().length) {
-					Configuration.toggleCfgBitState(Configuration.CFGBIT_USE_TURN_RESTRICTIONS_FOR_ROUTE_CALCULATION, true);
-					customMenu.setMenuEntries(buildRouteModeMenuEntries());
-					reAddCommands = false;
+		// handle command received from icon menu
+		if (iconMenu != null && iconMenu.visible) {
+			if (strResult.length()!=0) {
+				// when we are low on memory do not cache the icon menu (including scaled images)
+				if (GpsMid.getInstance().needsFreeingMemory()) {
+					iconMenu = null;
 				} else {
-					Configuration.setTravelMode(customMenu.getSelectedEntry());
-					customMenu = null;
-					commandAction(CMDS[ROUTING_START_CMD], null);
+					iconMenu.visible = false;
+				}
+				// remove the back command that has been attached
+				super.removeCommand(CMDS[BACK_CMD]);
+				// readd the normal commands
+				addAllCommands();
+				reAddCommands = false;
+				int commandId = Integer.parseInt(strResult);
+				// if it was the Back command do nothing as we are already back on the map screen, else call the commandAction
+				if (commandId != BACK_CMD) {
+					commandAction(CMDS[commandId], null);
+				}
+			}
+		}
+		// handle command received from custom menu
+		if (customMenu!=null) {
+			if (strResult.equalsIgnoreCase("Ok")) {
+				if (customMenu.getCommandID() == ROUTING_START_WITH_MODE_SELECT_CMD) {
+					if (customMenu.getSelectedEntry() == C.getTravelModes().length) {
+						Configuration.toggleCfgBitState(Configuration.CFGBIT_USE_TURN_RESTRICTIONS_FOR_ROUTE_CALCULATION, true);
+						customMenu.setMenuEntries(buildRouteModeMenuEntries());
+						reAddCommands = false;
+					} else {
+						Configuration.setTravelMode(customMenu.getSelectedEntry());
+						customMenu = null;
+						commandAction(CMDS[ROUTING_START_CMD], null);
+					}
 				}
 			}
 		}
