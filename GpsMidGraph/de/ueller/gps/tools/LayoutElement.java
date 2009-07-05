@@ -67,6 +67,7 @@ public class LayoutElement {
 	public static final int FLAG_HALIGN_LEFT_SCREENWIDTH_PERCENT = (1<<24);
 	public static final int FLAG_SCALE_IMAGE_TO_ELEMENT_WIDTH_OR_HEIGHT_KEEPRATIO = (1<<25);
 	public static final int FLAG_BACKGROUND_SCREENPERCENT_HEIGHT = (1<<26);
+	public static final int FLAG_IMAGE_WAS_GREYED = (1<<27);
 
 	
 	protected LayoutManager lm = null;
@@ -92,6 +93,7 @@ public class LayoutElement {
 	private int height = 0;
 	
 	private String text = "";
+	private String imageName;
 	private Image image = null;
 	
 	private int textWidth = 0;
@@ -295,6 +297,7 @@ public class LayoutElement {
 	
 	
 	public void setImage(String imageName) {
+		this.imageName = imageName;
 		try {
 			Image orgImage = Image.createImage("/" + imageName + ".png");
 			if ( (flags & FLAG_SCALE_IMAGE_TO_ELEMENT_WIDTH_OR_HEIGHT_KEEPRATIO) > 0) {
@@ -326,6 +329,14 @@ public class LayoutElement {
 			image = orgImage;
 		} catch (IOException ioe) {
 			logger.exception("Failed to load icon " + imageName, ioe);
+		}
+	}
+	
+	public void showImageGreyOrColored(boolean showGrey) {
+		if (showGrey && (flags & FLAG_IMAGE_WAS_GREYED) == 0) {
+			image = ImageTools.getGreyImage(image);
+		} else if (!showGrey && (flags & FLAG_IMAGE_WAS_GREYED) > 0) {
+			setImage(imageName);
 		}
 	}
 	

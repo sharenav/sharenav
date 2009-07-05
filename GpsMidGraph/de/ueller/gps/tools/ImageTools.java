@@ -8,6 +8,25 @@ import javax.microedition.lcdui.Image;
 
 public class ImageTools  {
 
+	public static Image getGreyImage(Image original) {
+        try {
+			int[] rawInput = new int[original.getHeight() * original.getWidth()];
+	        original.getRGB(rawInput, 0, original.getWidth(), 0, 0, original.getWidth(), original.getHeight());
+	        
+            for (int i = 0; i < rawInput.length; i++) {
+                int rgb = rawInput[i];
+                int red   = (rgb >> 16) & 0xff;
+                int green = (rgb >>  8) & 0xff;
+                int blue  =  rgb        & 0xff;
+                int grey = (((red * 30) / 100) + ((green * 59) / 100) + ((blue * 11) / 100)) & 0xff;
+                rawInput[i] = (grey << 16) | (grey << 8) | grey;
+            } 
+	        return Image.createRGBImage(rawInput, original.getWidth(), original.getWidth(), false);
+        } catch (Exception e) {
+        	return original;
+        }
+	}
+	
 	
 	// based on Public Domain code (confirmed by E-Mail)
 	// from http://willperone.net/Code/codescaling.php 
@@ -15,8 +34,7 @@ public class ImageTools  {
     {        
         try {
 			int[] rawInput = new int[original.getHeight() * original.getWidth()];
-	        original.getRGB(rawInput, 0, original.getWidth(), 0, 0, original.getWidth(), original.getHeight());
-	        
+	        original.getRGB(rawInput, 0, original.getWidth(), 0, 0, original.getWidth(), original.getHeight());	        	        
 	        int[] rawOutput = new int[newWidth*newHeight];        
 	
 	        // YD compensates for the x loop by subtracting the width back out

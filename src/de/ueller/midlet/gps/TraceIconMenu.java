@@ -96,6 +96,9 @@ public class TraceIconMenu extends IconMenuTabs implements IconMenuPageInterface
 			switch(tabNr) {
 				case 0:
 					iconMenuPage[tabNr] = new IconMenu(this.compListener, this, iconsMain, iconActionsMain, eleNr[tabNr], 3, 4, minX, iconPageTop, maxX, maxY);
+					//#if not polish.api.online
+					iconMenuPage[tabNr].ele[5].showImageGreyOrColored(true);
+					//#endif
 					break;
 				case 1:
 					iconMenuPage[tabNr] = new IconMenu(this.compListener, this, iconsRecording, iconActionsRecording, eleNr[tabNr], 3, 4, minX, iconPageTop, maxX, maxY);
@@ -105,6 +108,12 @@ public class TraceIconMenu extends IconMenuTabs implements IconMenuPageInterface
 					break;
 				case 3:
 					iconMenuPage[tabNr] = new IconMenu(this.compListener, this, iconsOsm, iconActionsOsm, eleNr[tabNr], 3, 4, minX, iconPageTop, maxX, maxY);
+					//#if not polish.api.online
+					//#if not polish.api.osm-editing
+					iconMenuPage[tabNr].ele[0].showImageGreyOrColored(true);
+					iconMenuPage[tabNr].ele[1].showImageGreyOrColored(true);
+					//#endif
+					//#endif
 					break;
 			}
 		}
