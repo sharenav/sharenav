@@ -271,7 +271,7 @@ Runnable , GpsMidDisplayable, CompletionListener {
 	public Gpx gpx;
 	public AudioRecorder audioRec;
 	
-	private static Trace traceInstance = null;
+	private static volatile Trace traceInstance = null;
 
 	private Routing	routeEngine;
 
