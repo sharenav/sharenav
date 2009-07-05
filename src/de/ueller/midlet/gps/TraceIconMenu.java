@@ -82,17 +82,18 @@ public class TraceIconMenu extends IconMenuTabs implements IconMenuPageInterface
 	}
 	
 	private void showIconPage(int tabNr) {
+		int iconPageTop = minY + pageTabs.ele[0].getFontHeight() + 6;
 		// create the iconPage only if it is not cached
 		if (iconMenuPage[tabNr] == null) {
 			switch(tabNr) {
 				case 0:
-					iconMenuPage[0] = new IconMenu(this.compListener, this, iconsMain, iconActionsMain, eleNr[0], 3, 4, minX, minY + pageTabs.ele[2].getFontHeight() + 1, maxX, maxY);
+					iconMenuPage[0] = new IconMenu(this.compListener, this, iconsMain, iconActionsMain, eleNr[0], 3, 4, minX, iconPageTop, maxX, maxY);
 					break;
 				case 1:
-					iconMenuPage[1] = new IconMenu(this.compListener, this, iconsRecording, iconActionsRecording, eleNr[1], 3, 4, minX, minY + pageTabs.ele[2].getFontHeight() + 1, maxX, maxY);
+					iconMenuPage[1] = new IconMenu(this.compListener, this, iconsRecording, iconActionsRecording, eleNr[1], 3, 4, minX, iconPageTop, maxX, maxY);
 					break;
 				case 2:
-					iconMenuPage[2] = new IconMenu(this.compListener, this, iconsRouting, iconActionsRouting, eleNr[2], 3, 4, minX, minY + pageTabs.ele[2].getFontHeight() + 1, maxX, maxY);
+					iconMenuPage[2] = new IconMenu(this.compListener, this, iconsRouting, iconActionsRouting, eleNr[2], 3, 4, minX, iconPageTop, maxX, maxY);
 					break;
 			}
 		}

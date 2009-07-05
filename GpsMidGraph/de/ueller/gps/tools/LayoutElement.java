@@ -301,8 +301,13 @@ public class LayoutElement {
 				image = null;
 				calcSize(); // behaves different if image is null
 				if (text.length() > 0) {
-					width -= ((width * fontHeight + 1) / height);
+					width -= ((width * fontHeight) / height);
 					height -= fontHeight;
+					calcPosition();
+					// also adjust the top of the element
+					top -= (fontHeight) / 2;
+					// and do not recalculate its position if it's in percent of screen height
+					clearFlag(FLAG_VALIGN_TOP_SCREENHEIGHT_PERCENT);
 				}
 				int newWidth = width;
 				int newHeight = height;
