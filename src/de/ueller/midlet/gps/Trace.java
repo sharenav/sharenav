@@ -644,6 +644,7 @@ Runnable , GpsMidDisplayable, CompletionListener {
 		removeCommand(CMDS[ONLINE_INFO_CMD]);
 		//#if polish.api.osm-editing
 		removeCommand(CMDS[RETRIEVE_XML]);
+		removeCommand(CMDS[RETRIEVE_NODE]);
 		//#endif
 		//#endif
 		
@@ -1271,9 +1272,13 @@ Runnable , GpsMidDisplayable, CompletionListener {
 					}
 				}
 				if (c == CMDS[RETRIEVE_NODE]) {
-					GuiOSMPOIDisplay guiNode = new GuiOSMPOIDisplay(-1,null,center.radlat,center.radlon,this);
-					guiNode.show();
-					guiNode.refresh();
+					if (C.enableEdits) {
+						GuiOSMPOIDisplay guiNode = new GuiOSMPOIDisplay(-1,null,center.radlat,center.radlon,this);
+						guiNode.show();
+						guiNode.refresh();
+					} else {
+						logger.error("Edditing is not enabled in this map");
+					}
 				}
 				//#endif
 				if (c == CMDS[SETTARGET_CMD]) {
