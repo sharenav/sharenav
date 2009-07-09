@@ -10,10 +10,13 @@
 //#if polish.api.osm-editing
 package de.ueller.midlet.gps;
 
+import java.util.Vector;
+
 import javax.microedition.lcdui.ChoiceGroup;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Form;
+import javax.microedition.lcdui.Image;
 
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.tools.HTTPhelper;
@@ -22,11 +25,48 @@ import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.GpsMidDisplayable;
 import de.ueller.midlet.gps.GuiOSMChangeset;
 import de.ueller.midlet.gps.Logger;
+import de.ueller.midlet.gps.data.KeySelectMenuItem;
 import de.ueller.midlet.gps.data.OSMdataNode;
+import de.ueller.midlet.gps.names.NumberCanon;
 import de.ueller.midlet.gps.tile.C;
 import de.ueller.midlet.gps.tile.POIdescription;
 
-public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay {
+public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay implements KeySelectMenuListener{
+	
+	class POITSelectMenuItem implements KeySelectMenuItem {
+		private Image img;
+		private String  name;
+		private byte idx;
+		private String canon;
+		
+		public POITSelectMenuItem(Image img, String name, byte idx) {
+			this.img = img;
+			this.name = name;
+			this.idx = idx;
+			this.canon = NumberCanon.canonial(name);
+		}
+
+		public Image getImage() {
+			return img;
+		}
+
+		public String getName() {
+			return name;
+		}
+		
+		public String getCanon() {
+			return canon;
+		}
+		
+		public byte getIdx() {
+			return idx;
+		}
+		
+		public String toString() {
+			return name + " [" + canon + "] (" + idx +")";
+		}
+		
+	}
 	
 	private final static Logger logger = Logger.getInstance(GuiOSMPOIDisplay.class,Logger.DEBUG);
 	private final static int LOAD_POI_STATE_NONE = 0;
@@ -38,13 +78,17 @@ public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay {
 	
 	private int loadPOIxmlState;
 	
-	private Form poiTypeForm;
+	private KeySelectMenu poiTypeForm;
 	private ChoiceGroup poiSelectionCG;
 	private boolean showPoiTypeForm;
+	private boolean showParent;
+	private Vector  poiTypes;
 	
 	public GuiOSMPOIDisplay(int nodeID, SingleTile t, float lat, float lon, GpsMidDisplayable parent) {
 		super("Node", parent);
 		this.nodeID = nodeID;
+		poiTypes = null;
+		showParent = false;
 		loadPOIxmlState = LOAD_POI_STATE_NONE;
 		if (nodeID < 0) {
 			osmentity = new OSMdataNode(nodeID, lat, lon);
@@ -58,15 +102,13 @@ public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay {
 	}
 	
 	private void setupPoiTypeForm() {
-		poiTypeForm = new Form("POI type");
-		poiSelectionCG = new ChoiceGroup("Select type to add: ", ChoiceGroup.EXCLUSIVE);
-		for (byte i = 0; i < C.getMaxType(); i++) {				
-			poiSelectionCG.append(C.getNodeTypeDesc(i), C.getNodeSearchImage(i));
+		try { 
+			poiTypeForm = new KeySelectMenu(this, this);
+			resetMenu();
+			poiTypeForm.show();
+		} catch (Exception e) {
+			logger.exception("POI type form invalid", e);
 		}
-		poiTypeForm.append(poiSelectionCG);
-		poiTypeForm.addCommand(BACK_CMD);
-		poiTypeForm.addCommand(OK_CMD);
-		poiTypeForm.setCommandListener(this);
 	}
 	
 	public void refresh() {
@@ -134,9 +176,16 @@ public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay {
 	}
 
 	public void show() {
+		if (showParent) {
+			parent.show();
+			showParent = false;
+			return;
+		}
 		if (showPoiTypeForm) {
-			GpsMid.getInstance().show(poiTypeForm);
+			poiTypeForm.show();
+			showParent = true;
 		} else {
+			setupScreen();
 			GpsMid.getInstance().show(this);
 		}
 	}
@@ -164,6 +213,50 @@ public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay {
 		} else {
 			logger.error("Server operation failed: " + message);
 		}
+	}
+
+	public void cancel() {
+		showPoiTypeForm = false;
+	}
+
+	public void itemSelected(KeySelectMenuItem item) {
+		POITSelectMenuItem poiType = (POITSelectMenuItem)item;
+		String [] tags = C.getNodeOsmTags(poiType.getIdx());
+		System.out.println("poiType: " + poiType + "  tags " + tags + " ed: " + osmentity);
+		if ((tags != null) && (osmentity != null)) {
+			for (int i = 0; i < tags.length/2; i++) {
+				osmentity.getTags().put(tags[i*2], tags[i*2 + 1]);
+			}
+		}
+		showPoiTypeForm = false;
+		showParent = false;
+		
+	}
+
+	public void resetMenu() {
+		logger.info("Resetting menu");
+		poiTypeForm.removeAll();
+		if (poiTypes == null) {
+			poiTypes = new Vector();
+			for (byte i = 1; i < C.getMaxType(); i++) {
+				KeySelectMenuItem menuItem = new POITSelectMenuItem(C.getNodeSearchImage(i),C.getNodeTypeDesc(i),i);
+				poiTypes.addElement(menuItem);
+			}
+		}
+		poiTypeForm.addResult(poiTypes);
+	}
+
+	public void searchString(String searchString) {
+		poiTypeForm.removeAll();
+		Vector vec = new Vector();
+		for (byte i = 0; i < poiTypes.size(); i++) {
+			POITSelectMenuItem poiType = (POITSelectMenuItem)poiTypes.elementAt(i); 
+			if (poiType.getCanon().startsWith(searchString)) {
+				logger.info(poiType + " matches searchString " + searchString);
+				vec.addElement(poiType);
+			}
+		}
+		poiTypeForm.addResult(vec);
 	}
 
 }
