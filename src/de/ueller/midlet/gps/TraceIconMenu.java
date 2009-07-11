@@ -5,177 +5,92 @@
 
 package de.ueller.midlet.gps;
 import de.ueller.gps.data.Configuration;
+import de.ueller.gps.tools.IconActionPerformer;
+import de.ueller.gps.tools.IconMenuWithPagesGUI;
+import de.ueller.gps.tools.IconMenuPage;
 import de.ueller.gps.tools.LayoutElement;
-import de.ueller.gps.tools.LayoutManager;
-import de.ueller.gps.tools.IconMenu;
-import de.ueller.gps.tools.IconMenuPageInterface;
-import de.ueller.gps.tools.IconMenuTabs;
-import de.ueller.midlet.gps.data.MoreMath;
-import de.ueller.midlet.gps.data.Node;
-import de.ueller.midlet.gps.data.ProjMath;
-import de.ueller.midlet.gps.tile.C;
-import de.ueller.midlet.gps.tile.PaintContext;
 
-import javax.microedition.lcdui.Canvas;
-import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 
 
-public class TraceIconMenu extends IconMenuTabs implements IconMenuPageInterface {
+public class TraceIconMenu extends IconMenuWithPagesGUI {
 
-	/** contains the iconMenu for each page */
-	private IconMenu[] iconMenuPage = new IconMenu[4];
-	/** active element on each page */
-	private static int eleNr[] = new int[4];
-
-	private CompletionListener compListener;
-	private int minX;
-	private int maxX;
-	private int minY;
-	private int maxY;
+	LayoutElement iconToggleGps; 
+	LayoutElement iconToggleTrackRec; 
+	LayoutElement iconToggleAudioRec; 
+	LayoutElement iconToggleRoute; 
+	LayoutElement iconOnlineInfo; 
+	LayoutElement iconAddPOI; 
+	LayoutElement iconEditWay; 
 	
+	public TraceIconMenu(GpsMidDisplayable parent, IconActionPerformer actionPerformer) {
+		super(parent, actionPerformer);
 	
-	private static final String[][] iconsMain  =
-	{ 	{"satelit", "Start Gps"},	{"cinema", "Search"},	{"museum", "Map Features"},
-		{"taxi", "Setup"},			{"fuel", "Tacho"},		{"left", "Online"},
-		{"recycling", "Back"},		{"GpsMid", "About"}, {"tunnel_end", "Exit"}
-	};
-	private static final int[] iconActionsMain  =
-	{	Trace.CONNECT_GPS_CMD,	Trace.SEARCH_CMD,		Trace.MAPFEATURES_CMD,
-		Trace.SETUP_CMD,		Trace.DATASCREEN_CMD,	Trace.ONLINE_INFO_CMD,
-		Trace.BACK_CMD,			Trace.ABOUT_CMD,		Trace.EXIT_CMD
-	};
+		IconMenuPage mp;
+		// Main
+		mp = createAndAddMenuPage(" Main ", 3, 4);
+		iconToggleGps =		mp.createAndAddIcon("Start GPS", "satelit", Trace.CONNECT_GPS_CMD);
+							mp.createAndAddIcon("Search", "cinema", Trace.SEARCH_CMD);
+							mp.createAndAddIcon("Map Features", "museum", Trace.MAPFEATURES_CMD);
 
-	private static final String[][] iconsRecording =
-	{ 	{"restaurant", "Tracks"},	{"mark", "Waypoints"},	{"target", "Save Wpt"},
-		{"target", "Rec Track"},	{"museum", "TakePic"},	{"pub", "AudioRec"},
-		{"telephone", "Send SMS"},	{"target", "Enter Wpt"}
-	};
-	private static final int[] iconActionsRecording  =
-	{	Trace.MANAGE_TRACKS_CMD,	Trace.MAN_WAYP_CMD,		Trace.SAVE_WAYP_CMD,
-		Trace.START_RECORD_CMD,		Trace.CAMERA_CMD,		Trace.TOGGLE_AUDIO_REC,
-		Trace.SEND_MESSAGE_CMD,		Trace.ENTER_WAYP_CMD
-	};
+							mp.createAndAddIcon("Setup", "taxi", Trace.SETUP_CMD);
+							mp.createAndAddIcon("Tacho", "fuel", Trace.DATASCREEN_CMD);
+		iconOnlineInfo =	mp.createAndAddIcon("Online", "left", Trace.ONLINE_INFO_CMD);
 
-	
-	private static final String[][] iconsRouting  =
-	{ 	{"motorway", "Calculate"},	{"target", "Set target"},	{"parking", "Clear Target"}
-	};
-	private static final int[] iconActionsRouting  =
-	{	Trace.ROUTING_TOGGLE_CMD,	Trace.SETTARGET_CMD,	Trace.CLEARTARGET_CMD
-	};
+							mp.createAndAddIcon("Back", "recycling", Trace.BACK_CMD);
+							mp.createAndAddIcon("About", "GpsMid", Trace.ABOUT_CMD);
+							mp.createAndAddIcon("Exit", "tunnel_end", Trace.EXIT_CMD);
 
-	private static final String[][] iconsOsm  =
-	{ 	{"motorway", "Edit Way"},	{"unknown", "Add POI"}
-	};
-	private static final int[] iconActionsOsm  =
-	{	Trace.RETRIEVE_XML,	Trace.RETRIEVE_NODE
-	};
+		// Recordings
+		mp = createAndAddMenuPage(this.getWidth() >= 176 ?" Recordings ":" Rec ", 3, 4);
+							mp.createAndAddIcon("Tracks", "restaurant", Trace.MANAGE_TRACKS_CMD);
+							mp.createAndAddIcon("Waypoints", "mark", Trace.MAN_WAYP_CMD);
+							mp.createAndAddIcon("Save Wpt", "target", Trace.SAVE_WAYP_CMD);
 
-	
-	private static final String[] tabLabels = {" Main ", " Recordings ", " Route ", " Osm "};
-	private static final String[] tabLabelsSmall = {" Main ", " Rec ", " Route ", " Osm "};
-	
-	public TraceIconMenu(CompletionListener compListener, int minX, int minY, int maxX, int maxY) {
-		super((maxX - minX) < 176 ? tabLabelsSmall : tabLabels, minX, minY, maxX, maxY);
+		iconToggleTrackRec=	mp.createAndAddIcon("Rec Track", "target", Trace.START_RECORD_CMD);
+							mp.createAndAddIcon("TakePic", "museum", Trace.CAMERA_CMD);
+		iconToggleAudioRec=	mp.createAndAddIcon("AudioRec", "pub", Trace.TOGGLE_AUDIO_REC);
 		
-		this.compListener = compListener;
-		this.minX = minX;
-		this.minY = minY;
-		this.maxX = maxX;
-		this.maxY = maxY;
-				
-		showIconPage(tabNr);
-		//validate();		
-	}
-	
-	private void showIconPage(int tabNr) {
-		int iconPageTop = minY + pageTabs.ele[0].getFontHeight() + 6;
-		// create the iconPage only if it is not cached
-		if (iconMenuPage[tabNr] == null) {
-			switch(tabNr) {
-				case 0:
-					iconMenuPage[tabNr] = new IconMenu(this.compListener, this, iconsMain, iconActionsMain, eleNr[tabNr], 3, 4, minX, iconPageTop, maxX, maxY);
-					//#if not polish.api.online
-					iconMenuPage[tabNr].ele[5].showImageGreyOrColored(true);
-					//#endif
-					break;
-				case 1:
-					iconMenuPage[tabNr] = new IconMenu(this.compListener, this, iconsRecording, iconActionsRecording, eleNr[tabNr], 3, 4, minX, iconPageTop, maxX, maxY);
-					break;
-				case 2:
-					iconMenuPage[tabNr] = new IconMenu(this.compListener, this, iconsRouting, iconActionsRouting, eleNr[tabNr], 3, 4, minX, iconPageTop, maxX, maxY);
-					break;
-				case 3:
-					iconMenuPage[tabNr] = new IconMenu(this.compListener, this, iconsOsm, iconActionsOsm, eleNr[tabNr], 3, 4, minX, iconPageTop, maxX, maxY);
-					//#if not polish.api.online
-					//#if not polish.api.osm-editing
-					iconMenuPage[tabNr].ele[0].showImageGreyOrColored(true);
-					iconMenuPage[tabNr].ele[1].showImageGreyOrColored(true);
-					//#endif
-					//#endif
-					break;
-			}
-		}
-		iconMenuPage[tabNr].rememberEleId = eleNr[tabNr];
-		setActiveTab(tabNr);
-	}
-	
-	public void iconMenuPageAction(int impAction) {
-		super.iconMenuPageAction(impAction);
-		switch (impAction) {
-			case IMP_ACTION_PREV_TAB:
-			case IMP_ACTION_NEXT_TAB:
-				showIconPage(tabNr);
-				break;
-		}
-	}
+							mp.createAndAddIcon("Send SMS", "telephone", Trace.SEND_MESSAGE_CMD);
+							mp.createAndAddIcon("Enter Wpt", "target", Trace.ENTER_WAYP_CMD);
+		
+		// Route
+		mp = createAndAddMenuPage(" Route ", 3, 4);
+		iconToggleRoute=	mp.createAndAddIcon("Calculate", "motorway", Trace.ROUTING_TOGGLE_CMD);
+							mp.createAndAddIcon("Set target", "target", Trace.SETTARGET_CMD);
+							mp.createAndAddIcon("Clear target", "parking", Trace.CLEARTARGET_CMD);
 
-	public void keyAction(int keyCode) {
-		if (inTabRow) {
-			super.keyAction(keyCode);
-			showIconPage(tabNr);
-		} else {
-			eleNr[tabNr] = iconMenuPage[tabNr].rememberEleId;
-			iconMenuPage[tabNr].keyAction(keyCode); 
-		}
-	}
-	
-	public void pointerPressed(int x, int y) {
-		eleNr[tabNr] = iconMenuPage[tabNr].rememberEleId;
-		// if an icon was clicked on the active page hide the page
-		if (iconMenuPage[tabNr].pointerPressed(x, y)) {
-			visible = false;
-		} else {
-			int oldTabNr = tabNr;
-			super.pointerPressed(x, y);
-			if (tabNr != oldTabNr) {
-				showIconPage(tabNr);
-			}
-		}
+		// Osm
+		mp = createAndAddMenuPage(" Osm ", 3, 4);
+		iconEditWay =		mp.createAndAddIcon("Edit way", "motorway", Trace.RETRIEVE_XML);
+		iconAddPOI =		mp.createAndAddIcon("Add POI", "unknown", Trace.RETRIEVE_NODE);
+
+		//#if not polish.api.online
+		iconOnlineInfo.makeImageGreyed();
+		iconAddPOI.makeImageGreyed();
+		iconEditWay.makeImageGreyed();
+		//#endif
+
+		//#if not polish.api.osm-editing
+		iconEditWay.makeImageGreyed();
+		//#endif
 	}
 	
 	public void paint(Graphics g) {
-		IconMenu im = iconMenuPage[tabNr];
 		Trace trace = Trace.getInstance();
-		// for commands that can be toggled, fill in the appropriate text and/or actionId
-		switch(tabNr) {
-			case 0:
-				im.ele[0].setText( trace.isGpsConnected() ? "Stop GPS" : "Start GPS");
-				im.setIconAction(0, trace.isGpsConnected() ? Trace.DISCONNECT_GPS_CMD : Trace.CONNECT_GPS_CMD);
-				break;
-			case 1:
-				im.ele[3].setText( trace.gpx.isRecordingTrk() ? "Stop Rec" : "Rec Track");
-				im.setIconAction(3, trace.gpx.isRecordingTrk() ? Trace.STOP_RECORD_CMD : Trace.START_RECORD_CMD);
-				im.ele[5].setText( trace.audioRec.isRecording() ? "Stop AudioRec" : "AudioRec");
-				break;
-			case 2:
-				im.ele[0].setText( (trace.route != null || trace.routeCalc) ? "Stop Route" : "Calculate");				
-				break;
-		}
+		// for commands that can be toggled, fill in the current text and/or corresponding actionId before painting
+		iconToggleGps.setText( trace.isGpsConnected() ? "Stop GPS" : "Start GPS");
+		iconToggleGps.setActionID( trace.isGpsConnected() ? Trace.DISCONNECT_GPS_CMD : Trace.CONNECT_GPS_CMD);
 		
-		iconMenuPage[tabNr].paint(g, !inTabRow);
+		iconToggleTrackRec.setText( trace.gpx.isRecordingTrk() ? "Stop Rec" : "Rec Track");
+		iconToggleTrackRec.setActionID( trace.gpx.isRecordingTrk() ? Trace.STOP_RECORD_CMD : Trace.START_RECORD_CMD);
+		
+		iconToggleAudioRec.setText( trace.audioRec.isRecording() ? "Stop AudioRec" : "AudioRec");
+		
+		iconToggleRoute.setText( (trace.route != null || trace.routeCalc) ? "Stop Route" : "Calculate");				
+
 		super.paint(g);
 	}
+	
 	
 }

@@ -42,6 +42,7 @@ import de.ueller.gps.nmea.NmeaInput;
 import de.ueller.gps.sirf.SirfInput;
 import de.ueller.gps.tools.HelperRoutines;
 import de.ueller.gps.tools.CustomMenu;
+import de.ueller.gps.tools.IconActionPerformer;
 import de.ueller.gps.tools.LayoutElement;
 import de.ueller.gpsMid.mapData.DictReader;
 //#if polish.api.osm-editing
@@ -78,7 +79,7 @@ import de.ueller.midlet.gps.GpsMidDisplayable;
  * 
  */
 public class Trace extends KeyCommandCanvas implements LocationMsgReceiver,
-Runnable , GpsMidDisplayable, CompletionListener {
+Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	/** Soft button for exiting the map screen */
 	protected static final int EXIT_CMD = 1;
 	protected static final int CONNECT_GPS_CMD = 2;
@@ -215,7 +216,8 @@ Runnable , GpsMidDisplayable, CompletionListener {
 	private GuiTrip guiTrip = null;
 	private GuiSatellites guiSatellites = null;
 	private GuiWaypointSave guiWaypointSave = null;
-
+	private TraceIconMenu traceIconMenu = null;
+	
 	private final static Logger logger = Logger.getInstance(Trace.class,Logger.DEBUG);
 
 //#mdebug info
@@ -967,10 +969,6 @@ Runnable , GpsMidDisplayable, CompletionListener {
 			}
 			//#endif
 			if (c == CMDS[BACK_CMD]) {
-				if (iconMenu != null && iconMenu.visible) {
-					super.removeCommand(CMDS[BACK_CMD]);
-					iconMenu.visible=false;
-				}
 				show();
 				return;
 			}
@@ -1238,13 +1236,10 @@ Runnable , GpsMidDisplayable, CompletionListener {
 			}
 
 			if (c == CMDS[ICON_MENU] && Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS)) {
-				if (iconMenu == null) {
-					iconMenu = new TraceIconMenu(this, 0, 0, getWidth(), getHeight());
+				if (traceIconMenu == null) {
+					traceIconMenu = new TraceIconMenu(this, this);
 				}
-				iconMenu.visible = true;
-				removeAllCommands();
-				super.addCommand(CMDS[BACK_CMD]);
-				repaint();
+				traceIconMenu.show();
 				return;
 			}
 			if (c == CMDS[SETUP_CMD]) {
@@ -1277,7 +1272,7 @@ Runnable , GpsMidDisplayable, CompletionListener {
 						guiNode.show();
 						guiNode.refresh();
 					} else {
-						logger.error("Edditing is not enabled in this map");
+						logger.error("Editing is not enabled in this map");
 					}
 				}
 				//#endif
@@ -1391,20 +1386,12 @@ Runnable , GpsMidDisplayable, CompletionListener {
 		}
 
 		tl = new TraceLayout(0, 0, w, h);
-		if (iconMenu != null) {
-			iconMenu = new TraceIconMenu(this, 0, 0, w, h);
-		}
 	}
 
 
 	protected void paint(Graphics g) {
 		//#debug debug
 		logger.debug("Drawing Map screen");
-		if (iconMenu != null && iconMenu.visible) {
-			iconMenu.paint(g);
-			return;
-		}
-		
 		
 		try {
 			int yc = 1;
@@ -2069,61 +2056,29 @@ Runnable , GpsMidDisplayable, CompletionListener {
 	protected void pointerPressed(int x, int y) {
 		pointerDragAction = true;
 
-		if (iconMenu != null && iconMenu.visible) {
-			iconMenu.pointerPressed(x, y);
-			pointerDragAction = false;
-			repaint();
-			return;
-		}		
 		if (customMenu != null && customMenu.pointerPressed(x, y)) {
 			repaint();
 		}		
-		if (customMenu != null || (iconMenu != null && iconMenu.visible) ) {
+		if (customMenu != null) {
 			pointerDragAction = false;
 			return;			
 		}
 		
 		// check for touchable buttons
 //		#debug debug
-		logger.debug("Touch button: " + tl.getElementIdAtPointer(x, y) + " x: " + x + " y: " + y);
-		switch (tl.getElementIdAtPointer(x, y)) {
-			case TraceLayout.ZOOM_IN:
-				if (manualRotationMode) {
-					commandAction(CMDS[PAN_LEFT2_CMD], (Displayable) null);
-				} else {
-					commandAction(CMDS[ZOOM_IN_CMD], (Displayable) null);
+		logger.debug("Touch button: " + tl.getActionIdAtPointer(x, y) + " x: " + x + " y: " + y);
+		int actionId = tl.getActionIdAtPointer(x, y);
+		if (actionId > 0) {		
+			if (manualRotationMode) {
+				if (actionId == ZOOM_IN_CMD) {
+					actionId = PAN_LEFT2_CMD;
+				} else if (actionId == ZOOM_OUT_CMD) {
+					actionId = PAN_RIGHT2_CMD;						
 				}
-				repaint();
-				pointerDragAction = false;
-				break;
-			case TraceLayout.ZOOM_OUT:
-				if (manualRotationMode) {
-					commandAction(CMDS[PAN_RIGHT2_CMD], (Displayable) null);
-				} else {
-					commandAction(CMDS[ZOOM_OUT_CMD], (Displayable) null);
-				}
-				repaint();
-				pointerDragAction = false;
-				break;
-			case TraceLayout.RECENTER_GPS:
-				commandAction(CMDS[RECENTER_GPS_CMD], (Displayable) null);
-				repaint();
-				pointerDragAction = false;
-				break;
-			case TraceLayout.SCALEBAR:
-				commandAction(CMDS[MAPFEATURES_CMD], (Displayable) null);
-				pointerDragAction = false;
-				break;
-			case TraceLayout.WAYNAME:
-				commandAction(CMDS[ICON_MENU], (Displayable) null);
-				repaint();
-				pointerDragAction = false;
-				break;
-			case TraceLayout.POINT_OF_COMPASS:
-				commandAction(CMDS[MANUAL_ROTATION_MODE_CMD], (Displayable) null);
-				repaint();
-				pointerDragAction = false;
-				break;
+			}
+			commandAction(CMDS[actionId], (Displayable) null);
+			repaint();
+			pointerDragAction = false;
 		}
 		
 		// remember positions for dragging
@@ -2405,27 +2360,7 @@ Runnable , GpsMidDisplayable, CompletionListener {
 	
 	public void actionCompleted(String strResult) {
 		boolean reAddCommands = true;
-		// handle command received from icon menu
-		if (iconMenu != null && iconMenu.visible) {
-			if (strResult.length()!=0) {
-				// when we are low on memory do not cache the icon menu (including scaled images)
-				if (GpsMid.getInstance().needsFreeingMemory()) {
-					iconMenu = null;
-				} else {
-					iconMenu.visible = false;
-				}
-				// remove the back command that has been attached
-				super.removeCommand(CMDS[BACK_CMD]);
-				// readd the normal commands
-				addAllCommands();
-				reAddCommands = false;
-				int commandId = Integer.parseInt(strResult);
-				// if it was the Back command do nothing as we are already back on the map screen, else call the commandAction
-				if (commandId != BACK_CMD) {
-					commandAction(CMDS[commandId], null);
-				}
-			}
-		}
+
 		// handle command received from custom menu
 		if (customMenu!=null) {
 			if (strResult.equalsIgnoreCase("Ok")) {
@@ -2446,4 +2381,19 @@ Runnable , GpsMidDisplayable, CompletionListener {
 			addAllCommands();
 		}
 	}
+
+	// interface for received actions from the IconMenu GUI
+	public void performIconAction(int actionId) {
+		// when we are low on memory do not cache the icon menu (including scaled images)
+		if (GpsMid.getInstance().needsFreeingMemory()) {
+			//#debug info
+			logger.info("low mem: Freeing traceIconMenu");
+			traceIconMenu = null;
+		}
+		if (actionId != BACK_CMD) {
+			commandAction(CMDS[actionId], null);
+		}
+	}
+
+
 }

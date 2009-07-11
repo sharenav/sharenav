@@ -15,13 +15,14 @@ public class ImageTools  {
 	        
             for (int i = 0; i < rawInput.length; i++) {
                 int rgb = rawInput[i];
+                int alphaMask = rgb & 0xff000000;
                 int red   = (rgb >> 16) & 0xff;
                 int green = (rgb >>  8) & 0xff;
                 int blue  =  rgb        & 0xff;
                 int grey = (((red * 30) / 100) + ((green * 59) / 100) + ((blue * 11) / 100)) & 0xff;
-                rawInput[i] = (grey << 16) | (grey << 8) | grey;
+                rawInput[i] = alphaMask | (grey << 16) | (grey << 8) | grey;
             } 
-	        return Image.createRGBImage(rawInput, original.getWidth(), original.getWidth(), false);
+	        return Image.createRGBImage(rawInput, original.getWidth(), original.getWidth(), true);
         } catch (Exception e) {
         	return original;
         }
@@ -62,7 +63,7 @@ public class ImageTools  {
 	                inOffset+=original.getWidth();
 	            }
 	        }               
-	        return Image.createRGBImage(rawOutput, newWidth, newHeight, false);
+	        return Image.createRGBImage(rawOutput, newWidth, newHeight, true);
         } catch (Exception e) {
         	return original;
         }

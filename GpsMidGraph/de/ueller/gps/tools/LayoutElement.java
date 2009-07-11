@@ -67,7 +67,7 @@ public class LayoutElement {
 	public static final int FLAG_HALIGN_LEFT_SCREENWIDTH_PERCENT = (1<<24);
 	public static final int FLAG_SCALE_IMAGE_TO_ELEMENT_WIDTH_OR_HEIGHT_KEEPRATIO = (1<<25);
 	public static final int FLAG_BACKGROUND_SCREENPERCENT_HEIGHT = (1<<26);
-	public static final int FLAG_IMAGE_WAS_GREYED = (1<<27);
+	public static final int FLAG_IMAGE_GREY = (1<<27);
 
 	
 	protected LayoutManager lm = null;
@@ -118,6 +118,8 @@ public class LayoutElement {
 	
 	private byte specialElementID;
 	
+	public int actionID = -1;
+
 	
 	public LayoutElement(LayoutManager lm) {
 		this.lm = lm;
@@ -294,9 +296,19 @@ public class LayoutElement {
 		return newLeft;
 	}
 
-	
-	
-	public void setImage(String imageName) {
+	public void setImageNameOnly(String imageName) {
+		this.imageName = imageName;
+		this.image = null;
+	}
+
+	public void loadImage() {
+		if (image == null) {
+			setAndLoadImage(imageName);
+			calcSizeAndPosition();
+		}
+	}
+
+	public void setAndLoadImage(String imageName) {
 		this.imageName = imageName;
 		try {
 			Image orgImage = Image.createImage("/" + imageName + ".png");
@@ -324,6 +336,9 @@ public class LayoutElement {
 				}
 //				System.out.println("actual Width/Height " + width + " " + height);
 				
+				if ( (flags & FLAG_IMAGE_GREY) > 0 ) {
+					orgImage = ImageTools.getGreyImage(orgImage);
+				}
 				orgImage = ImageTools.scaleImage(orgImage, width, height);
 			}
 			image = orgImage;
@@ -332,16 +347,36 @@ public class LayoutElement {
 		}
 	}
 	
-	public void showImageGreyOrColored(boolean showGrey) {
-		if (showGrey && (flags & FLAG_IMAGE_WAS_GREYED) == 0) {
-			image = ImageTools.getGreyImage(image);
-		} else if (!showGrey && (flags & FLAG_IMAGE_WAS_GREYED) > 0) {
-			setImage(imageName);
+	public void makeImageGreyed() {
+		setFlag(FLAG_IMAGE_GREY);
+		if (image != null) {
+			//#debug debug
+			logger.debug("Reload image greyed");
+			image = null;
+			loadImage();
+		}
+	}
+
+	public void makeImageColored() {
+		clearFlag(FLAG_IMAGE_GREY);
+		if (image != null) {
+			//#debug debug
+			logger.debug("Reload image colored");
+			image = null;
+			loadImage();
 		}
 	}
 	
+	public void setTextValid() {
+		setText(text);
+	}
+	
+	public void setTextInvalid() {
+		textIsValid = false;
+	}
+
 	public void setText(String text) {
-		if (! text.equalsIgnoreCase(this.text) ) {
+		if (!textIsValid || !text.equalsIgnoreCase(this.text) ) {
 			this.text = text; 
 			textWidth = font.stringWidth(text);
 			numDrawChars = (short) text.length();
@@ -355,12 +390,12 @@ public class LayoutElement {
 		Set vertical relative to this relative element's position and height
 		combine with FLAG_VALIGN_ABOVE_RELATIVE or FLAG_VALIGN_BELOW_RELATIVE for the relative direction
 	*/
-	public void setVRelative(int eleID) {
-		vRelativeTo = lm.ele[eleID];
+	public void setVRelative(LayoutElement e) {
+		vRelativeTo = e;
 		vRelativeTo.usedAsRelative = true;
 		lm.recalcPositionsRequired = true;
 		if (vRelativeTo.flags == 0) {
-			logger.error("Warning: Tried to use uninitialised element " + eleID + " as vRelative");
+			logger.error("Warning: Tried to use uninitialised element " + e + " as vRelative");
 		}
 	}
 
@@ -376,12 +411,12 @@ public class LayoutElement {
 	Set horizontal relative to this relative element's position and width
 	combine with FLAG_VALIGN_LEFTTO_RELATIVE or FLAG_RIGHTTO_RELATIVE for the relative direction
 	*/
-	public void setHRelative(int eleID) {
-		hRelativeTo = lm.ele[eleID];
+	public void setHRelative(LayoutElement e) {
+		hRelativeTo = e;
 		hRelativeTo.usedAsRelative = true;
 		lm.recalcPositionsRequired = true;
 		if (hRelativeTo.flags == 0) {
-			logger.error("Warning: Tried to use uninitialised element " + eleID + " as hRelative");
+			logger.error("Warning: Tried to use uninitialised element " + e + " as hRelative");
 		}
 	}
 
@@ -426,6 +461,9 @@ public class LayoutElement {
 		specialElementID = id;
 	}
 
+	public void setActionID(int id) {
+		actionID = id;
+	}
 
 	public int getFontHeight() {
 		return fontHeight;

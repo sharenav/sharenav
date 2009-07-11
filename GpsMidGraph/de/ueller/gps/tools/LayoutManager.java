@@ -15,16 +15,15 @@ import de.ueller.midlet.gps.RouteInstructions;
 import java.util.Vector;
 
 
-public class LayoutManager {
+public class LayoutManager extends Vector {
 	private final static Logger logger = Logger.getInstance(LayoutManager.class,Logger.DEBUG);
 	
-	public LayoutElement ele[];
 	protected int minX;
 	protected int minY;
 	protected int maxX;
 	protected int maxY;
 	protected volatile boolean recalcPositionsRequired = true;
-
+	
 	/**
 	 * @param numElements - number of LayoutElements in this layout manager 
 	 * @param minX - layout area left
@@ -32,69 +31,43 @@ public class LayoutManager {
 	 * @param maxX - layout area right
 	 * @param maxY - layout area bottom
 	 */
-	public LayoutManager(int numElements, int minX, int minY, int maxX, int maxY) {
-		ele = new LayoutElement[numElements];
-		for (int i=0; i<ele.length; i++){
-			ele[i] = new LayoutElement(this);
-		}
-		
+	public LayoutManager(int minX, int minY, int maxX, int maxY) {	
 		this.minX = minX;
 		this.minY = minY;
 		this.maxX = maxX;
 		this.maxY = maxY;
 	}
 
+	public LayoutElement createAndAddElement(int initialFlags) {
+		LayoutElement e = new LayoutElement(this);
+		addElement(e, initialFlags);
+		return e;
+	}
+	public void addElement(LayoutElement e, int initialFlags) {
+		e.init(initialFlags);
+		addElement(e);
+	}
 
-	/**
-	 * checks and outputs errors in the LayoutElements
-	 */
+	public void addElement(LayoutElement e) {
+		super.addElement(e);
+		recalcPositionsRequired = true;
+	}
+
+	
 	public void validate() {
-		for (int i=0; i<ele.length; i++){
-			if (ele[i].getValidationError() != null) {
-				logger.error("Element " + i + ": " + ele[i].getValidationError());
+		LayoutElement e;
+		for (int i=0; i<this.size(); i++){
+			e = (LayoutElement) this.elementAt(i);
+			if (e.getValidationError() != null) {
+				logger.error("Element " + i + ": " + e.getValidationError());
 			}
 		}
 	}
 	
-	public void recalcPositions() {
-		for (int i=0; i<ele.length; i++){
-			//#debug debug
-			logger.trace("calc positions for element " + i);
-			ele[i].calcSizeAndPosition();
-		}
-		recalcPositionsRequired = false;
+	public LayoutElement getElementAt(int i) {
+		return (LayoutElement) this.elementAt(i);
 	}
-	
-	/**
-	 * paints the LayoutElements
-	 */
-	public void paint(Graphics g) {
-		if (!recalcPositionsRequired) {
-			// if an element that has been visible before has not been set, the positions of all elements must be recalculated
-			for (int i=0; i<ele.length; i++){
-				if (ele[i].textIsValid != ele[i].oldTextIsValid) {
-					recalcPositionsRequired = true;
-					break;
-				}
-			}
-		}
-		
-		if (recalcPositionsRequired) {
-			recalcPositions();
-		}
-		
-		int oldColor = g.getColor();
-		Font oldFont = g.getFont();
-		for (int i=0; i<ele.length; i++){
-			//#debug debug
-			logger.trace("paint element " + i);
-			ele[i].paint(g);
-		}
-		g.setFont(oldFont);
-		g.setColor(oldColor);
-	}				
-	
-	
+
 	protected void drawSpecialElement(Graphics g, byte id, String text, int left, int top) {
 		System.out.println("drawSpecialElement not overridden!");
 	}
@@ -108,11 +81,65 @@ public class LayoutManager {
 		return 0;
 	}
 	
+	public void recalcPositions() {
+		LayoutElement e;
+		for (int i=0; i<this.size(); i++){
+			e = (LayoutElement) this.elementAt(i);
+			//#debug debug
+			logger.trace("calc positions for element " + i);
+			e.calcSizeAndPosition();
+		}
+		recalcPositionsRequired = false;
+	}
+	
+	/**
+	 * paints the LayoutElements
+	 */
+	public void paint(Graphics g) {
+		LayoutElement e;
+		if (!recalcPositionsRequired) {
+			// if an element that has been visible before has not been set, the positions of all elements must be recalculated
+			for (int i=0; i<this.size(); i++){
+				e = (LayoutElement) this.elementAt(i);
+				if (e.textIsValid != e.oldTextIsValid) {
+					recalcPositionsRequired = true;
+					break;
+				}
+			}
+		}
+		
+		if (recalcPositionsRequired) {
+			recalcPositions();
+		}
+		
+		int oldColor = g.getColor();
+		Font oldFont = g.getFont();
+		for (int i = 0; i < this.size(); i++){
+			e = (LayoutElement) this.elementAt(i);
+			//#debug debug
+			logger.trace("paint element " + i);
+			e.paint(g);
+		}
+		g.setFont(oldFont);
+		g.setColor(oldColor);
+	}				
+	
+
 	public int getElementIdAtPointer(int x, int y) {
-		for (int i=0; i<ele.length; i++){
-			if (ele[i].isInElement(x, y)) {
+		LayoutElement e;
+		for (int i = 0; i < this.size(); i++){
+			e = getElementAt(i);
+			if (e.isInElement(x, y)) {
 				return i;
 			}
+		}
+		return -1;	
+	}
+	
+	public int getActionIdAtPointer(int x, int y) {
+		int i = getElementIdAtPointer(x, y);
+		if (i != -1) {
+			return this.getElementAt(i).actionID;
 		}
 		return -1;
 	}

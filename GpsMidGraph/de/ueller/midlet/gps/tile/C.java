@@ -90,6 +90,15 @@ public class C {
 	public static int ROUTEPRIOR_BORDERCOLOR = 0;
 	public static int ROUTEDOT_COLOR = 0;
 	public static int ROUTEDOT_BORDERCOLOR = 0;
+
+	public static int ICONMENU_BGCOLOR = 0;
+	public static int ICONMENU_TABBUTTON_BORDERCOLOR = 0x00707070;
+	public static int ICONMENU_TABBUTTON_INACTIVE_TEXTCOLOR = 0x00808080;
+	public static int ICONMENU_TABBUTTON_TEXTCOLOR = 0x00FFFFFF;
+	public static int ICONMENU_TABBUTTON_HIGHLIGHT_TEXTCOLOR = 0x00FFFF00;
+	public static int ICONMENU_ICON_TEXTCOLOR = 0x00FFFFFF;
+	public static int ICONMENU_ICON_HIGHLIGHT_BORDERCOLOR = 0x00FFFF00;
+
 	public static String appVersion;
 	public static String bundleDate;
 	public static boolean enableEdits;
