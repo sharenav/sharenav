@@ -557,7 +557,11 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 
 		if (c == EXIT_CMD) {
 			destroy();
-			parent.show();
+        	if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS)) {
+        		Trace.getInstance().show();
+        	} else {
+        		parent.show();
+        	}
 			return;
 		}
 		if (c == BACK_CMD) {
