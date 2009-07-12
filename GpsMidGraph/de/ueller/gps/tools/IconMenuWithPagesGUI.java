@@ -49,6 +49,8 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 	private LayoutElement ePrevTab;
 	/** " > " button */
 	private LayoutElement eNextTab;
+	/** status bar */
+	private LayoutElement eStatusBar;
 
 	/** the tab label buttons */
 	private LayoutManager tabButtonManager;
@@ -73,7 +75,7 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 	}
 
 	public IconMenuPage createAndAddMenuPage(String pageTitle, int numCols, int numRows) {
-		IconMenuPage imp = new IconMenuPage( pageTitle, actionPerformer, numCols, numRows, minX, minY + eNextTab.bottom + 6, maxX, maxY);
+		IconMenuPage imp = new IconMenuPage( pageTitle, actionPerformer, numCols, numRows, minX, minY + eNextTab.bottom + 6, maxX, eStatusBar.top - 5);
 		iconMenuPages.addElement(imp);
 		recreateTabButtonsRequired = true;		
 		return imp;
@@ -98,6 +100,15 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 		eNextTab.setBackgroundColor(C.COLORS[C.COLOR_ICONMENU_TABBUTTON_BORDER]);
 		eNextTab.setColor(C.COLORS[C.COLOR_ICONMENU_TABBUTTON_TEXT]);
 		eNextTab.setText( " > ");
+		eStatusBar = tabDirectionButtonManager.createAndAddElement(
+				LayoutElement.FLAG_HALIGN_CENTER | LayoutElement.FLAG_VALIGN_BOTTOM |
+				LayoutElement.FLAG_BACKGROUND_BOX | LayoutElement.FLAG_BACKGROUND_FULL_WIDTH |
+				LayoutElement.FLAG_FONT_SMALL
+		);
+		eStatusBar.setColor(C.COLORS[C.COLOR_ICONMENU_TABBUTTON_TEXT]);
+		eStatusBar.setBackgroundColor(C.COLORS[C.COLOR_ICONMENU_TABBUTTON_BORDER]);
+		eStatusBar.setText(" ");
+		
 		tabDirectionButtonManager.recalcPositions();
 	}
 
@@ -150,11 +161,12 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 
 	
 	protected void sizeChanged(int w, int h) {
-		recreateTabButtonsRequired = true;
+		this.maxY = h;
+		createTabPrevNextButtons();
 		IconMenuPage imp = null;
 		for (int i=0; i < iconMenuPages.size(); i++) {
 			imp = (IconMenuPage) iconMenuPages.elementAt(i);
-			imp.maxY = h;
+			imp.maxY = eStatusBar.top - 5;
 			imp.unloadIcons();
 			imp.loadIcons();
 			imp.recalcPositions();
@@ -367,6 +379,10 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 		g.fillRect(eNextTab.left, eNextTab.top, eNextTab.right, eNextTab.bottom);
 		ePrevTab.setTextValid();
 		eNextTab.setTextValid();
+		
+		if (!inTabRow) {
+			eStatusBar.setText(getActiveMenuPage().getElementAt(getActiveMenuPage().rememberEleId).getText());
+		}
 		tabDirectionButtonManager.paint(g);
 		
 		getActiveMenuPage().paint(g, !inTabRow);

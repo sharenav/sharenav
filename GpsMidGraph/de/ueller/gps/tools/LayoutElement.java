@@ -390,6 +390,10 @@ public class LayoutElement {
 		textIsValid = numDrawChars!=0;
 	}
 	
+	public String getText() {
+		return text;
+	}
+	
 	/**
 		Set vertical relative to this relative element's position and height
 		combine with FLAG_VALIGN_ABOVE_RELATIVE or FLAG_VALIGN_BELOW_RELATIVE for the relative direction
