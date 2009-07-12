@@ -776,12 +776,16 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			if (c == CMDS[EXIT_CMD]) {
 				// FIXME: This is a workaround. It would be better if recording would not be stopped when returning to map
 				if (gpx.isRecordingTrk()) {
-					alert("Record Mode", "Please stop recording before returning to the main screen." , 2500);
+					alert("Record Mode", "Please stop recording before exit." , 2500);
 					return;
 				}
 				
 				pause();
-				parent.show();
+				if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS)) {
+					parent.exit();
+				} else {
+					parent.show();					
+				}
 				return;
 			}
 			if (c == CMDS[START_RECORD_CMD]) {

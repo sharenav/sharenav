@@ -127,8 +127,8 @@ public class GpsMid extends MIDlet implements CommandListener {
 					+ e.getMessage();
 		}
 
-		phoneMaxMemory = determinPhoneMaxMemory();
-
+		phoneMaxMemory = determinPhoneMaxMemory();		
+		
 		menu.addCommand(EXIT_CMD);
 		menu.addCommand(OK_CMD);
 		menu.setCommandListener(this);
@@ -149,6 +149,15 @@ public class GpsMid extends MIDlet implements CommandListener {
 		if (errorMsg != null) {
 			log.fatal(errorMsg);
 		}
+		
+		if (Configuration
+				.getCfgBitState(Configuration.CFGBIT_ICONMENUS)) {
+			if (trace == null) {
+				trace = trace.getInstance();
+			}
+			trace.resume();
+			trace.show();
+		}		
 	}
 
 	protected void destroyApp(boolean arg0) throws MIDletStateChangeException {
