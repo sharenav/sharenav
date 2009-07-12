@@ -234,6 +234,8 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 					nextTab();
 				} else if (action ==  Canvas.DOWN) {
 					inTabRow = false;
+				} else {
+					action = 0; // no game key action
 				}
 			} else {
 				if (action ==  Canvas.FIRE) {
@@ -254,10 +256,20 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 					if (!getActiveMenuPage().changeSelectedColRow(0, -1)) {
 						inTabRow = true;
 					}
+				} else {
+					action = 0; // no game key action
 				}
 			}
-			repaint();
 		}
+		// if it was no game key or no handled game key action
+		if( action == 0) {
+			if (keyCode == KEY_NUM1) {
+				prevTab();
+			} else if (keyCode == KEY_NUM3) {
+				nextTab();
+			}
+		}
+		repaint();
 	}
 
 	protected void keyRepeated(int keyCode) {
