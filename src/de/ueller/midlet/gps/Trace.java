@@ -1398,7 +1398,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			int la = 18;
 			getPC();
 			// cleans the screen
-			g.setColor(C.BACKGROUND_COLOR);
+			g.setColor(C.COLORS[C.COLOR_MAP_BACKGROUND]);
 			g.fillRect(0, 0, this.getWidth(), this.getHeight());
 			pc.g = g;
 			if (imageCollector != null){				
@@ -1896,7 +1896,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	}
 
 	public int showMemory(Graphics g, int yc, int la) {
-		g.setColor(0, 0, 0);
+		g.setColor(0);
 		g.drawString("Freemem: " + runtime.freeMemory(), 0, yc, Graphics.TOP
 				| Graphics.LEFT);
 		yc += la;

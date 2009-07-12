@@ -276,7 +276,7 @@ public class GuiOverviewElements extends Form implements CommandListener, ItemSt
     {        
         Image img = Image.createImage(16,16);
         Graphics g = img.getGraphics();
-        g.setColor(parent.pc.c.BACKGROUND_COLOR);
+        g.setColor(C.COLORS[C.COLOR_MAP_BACKGROUND]);
         g.fillRect(0, 0, 16, 16);
         g.setColor(w.lineColor);
         if (w.wayWidth == 1 || !Configuration.getCfgBitState(Configuration.CFGBIT_STREETRENDERMODE)) {

@@ -87,16 +87,16 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 				LayoutElement.FLAG_BACKGROUND_BORDER |
 				LayoutElement.FLAG_FONT_SMALL
 		);					
-		ePrevTab.setBackgroundColor(C.ICONMENU_TABBUTTON_BORDERCOLOR);
-		ePrevTab.setColor(C.ICONMENU_TABBUTTON_TEXTCOLOR);
+		ePrevTab.setBackgroundColor(C.COLORS[C.COLOR_ICONMENU_TABBUTTON_BORDER]);
+		ePrevTab.setColor(C.COLORS[C.COLOR_ICONMENU_TABBUTTON_TEXT]);
 		ePrevTab.setText( " < ");
 		eNextTab = tabDirectionButtonManager.createAndAddElement(
 				LayoutElement.FLAG_HALIGN_RIGHT | LayoutElement.FLAG_VALIGN_TOP |
 				LayoutElement.FLAG_BACKGROUND_BORDER |
 				LayoutElement.FLAG_FONT_SMALL
 		);
-		eNextTab.setBackgroundColor(C.ICONMENU_TABBUTTON_BORDERCOLOR);
-		eNextTab.setColor(C.ICONMENU_TABBUTTON_TEXTCOLOR);
+		eNextTab.setBackgroundColor(C.COLORS[C.COLOR_ICONMENU_TABBUTTON_BORDER]);
+		eNextTab.setColor(C.COLORS[C.COLOR_ICONMENU_TABBUTTON_TEXT]);
 		eNextTab.setText( " > ");
 		tabDirectionButtonManager.recalcPositions();
 	}
@@ -124,8 +124,8 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 				);
 				e.setHRelative(tabButtonManager.getElementAt(tabButtonManager.size() - 2));
 			}
-			e.setBackgroundColor(C.ICONMENU_TABBUTTON_BORDERCOLOR);
-			e.setColor(C.ICONMENU_TABBUTTON_TEXTCOLOR);
+			e.setBackgroundColor(C.COLORS[C.COLOR_ICONMENU_TABBUTTON_BORDER]);
+			e.setColor(C.COLORS[C.COLOR_ICONMENU_TABBUTTON_TEXT]);
 			e.setText(imp.title);
 		}
 		setActiveTab(tabNr);
@@ -300,7 +300,7 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 		//#debug debug
 		logger.debug("Painting Icon Menu");
 		// clean the Canvas
-		g.setColor(C.ICONMENU_BGCOLOR);
+		g.setColor(C.COLORS[C.COLOR_ICONMENU_BACKGROUND]);
 		g.fillRect(0, 0, getWidth(), getHeight());
 
 		if (recreateTabButtonsRequired) {
@@ -313,9 +313,9 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 			for (int i=0; i < tabButtonManager.size(); i++) {
 				e = tabButtonManager.getElementAt(i);
 				if (inTabRow && i == tabNr) {
-					e.setColor(C.ICONMENU_TABBUTTON_HIGHLIGHT_TEXTCOLOR); // when in tab button row draw the current tab button in yellow text
+					e.setColor(C.COLORS[C.COLOR_ICONMENU_TABBUTTON_TEXT_HIGHLIGHT]); // when in tab button row draw the current tab button in yellow text
 				} else {
-					e.setColor(C.ICONMENU_TABBUTTON_TEXTCOLOR); // else draw it in white text				
+					e.setColor(C.COLORS[C.COLOR_ICONMENU_TABBUTTON_TEXT]); // else draw it in white text				
 				}
 				if ( i >= leftMostTabNr) {
 					// set the button text, so the LayoutManager knows it has to be drawn
@@ -341,14 +341,14 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 		// draw the direction buttons
 		// set flags for directions buttons
 		if (tabNr == 0) {
-			ePrevTab.setColor(C.ICONMENU_TABBUTTON_INACTIVE_TEXTCOLOR); // grey
+			ePrevTab.setColor(C.COLORS[C.COLOR_ICONMENU_TABBUTTON_TEXT_INACTIVE]); // grey
 		} else {
-			ePrevTab.setColor(C.ICONMENU_TABBUTTON_TEXTCOLOR); // white										
+			ePrevTab.setColor(C.COLORS[C.COLOR_ICONMENU_TABBUTTON_TEXT]); // white										
 		}
 		if (tabNr == tabButtonManager.size() - 1) {
-			eNextTab.setColor(C.ICONMENU_TABBUTTON_INACTIVE_TEXTCOLOR); // grey
+			eNextTab.setColor(C.COLORS[C.COLOR_ICONMENU_TABBUTTON_TEXT_INACTIVE]); // grey
 		} else {
-			eNextTab.setColor(C.ICONMENU_TABBUTTON_TEXTCOLOR); // white
+			eNextTab.setColor(C.COLORS[C.COLOR_ICONMENU_TABBUTTON_TEXT]); // white
 		}
 		// clear the area of the right button as it might have been overdrawn by a tab button
 		g.setColor(0);

@@ -454,9 +454,9 @@ public class RouteInstructions {
 							pc.getP().forward(c.to.lat, c.to.lon, lineP2);
 							pc.g.setStrokeStyle(Graphics.SOLID);
 							if (iNow > i) {
-								pc.g.setColor(C.ROUTEPRIOR_COLOR);														
+								pc.g.setColor(C.COLORS[C.COLOR_ROUTE_PRIOR_ROUTELINE]);														
 							} else if (iNow < i) {
-								pc.g.setColor(C.ROUTE_COLOR);
+								pc.g.setColor(C.COLORS[C.COLOR_ROUTE_ROUTELINE]);														
 							}
 							if (iNow != i) {
 								// we are currently not crossing the area, so we simply draw a line in the given color
@@ -466,9 +466,9 @@ public class RouteInstructions {
 								IntPoint centerP = new IntPoint();
 								pc.getP().forward(center.radlat, center.radlon, centerP);
 								IntPoint closestP = MoreMath.closestPointOnLine(lineP1.x, lineP1.y, lineP2.x, lineP2.y, centerP.x, centerP.y);
-								pc.g.setColor(C.ROUTEPRIOR_COLOR);														
+								pc.g.setColor(C.COLORS[C.COLOR_ROUTE_PRIOR_ROUTELINE]);														
 						    	pc.g.drawLine(lineP1.x, lineP1.y, closestP.x, closestP.y);
-								pc.g.setColor(C.ROUTE_COLOR);														
+								pc.g.setColor(C.COLORS[C.COLOR_ROUTE_ROUTELINE]);														
 						    	pc.g.drawLine(closestP.x, closestP.y, lineP2.x, lineP2.y);
 						    	drawRouteDot(pc.g, closestP, Configuration.getMinRouteLineWidth());
 							}
@@ -797,9 +797,9 @@ public class RouteInstructions {
 	}
 
 	public static void drawRouteDot(Graphics g, IntPoint p, int radius) {
-		g.setColor(C.ROUTEDOT_COLOR);
+		g.setColor(C.COLORS[C.COLOR_ROUTE_ROUTEDOT]);
 		g.fillArc(p.x-radius, p.y-radius, radius*2, radius*2, 0, 360);
-		g.setColor(C.ROUTEDOT_BORDERCOLOR);
+		g.setColor(C.COLORS[C.COLOR_ROUTE_ROUTEDOT_BORDER]);
 		g.drawArc(p.x-radius, p.y-radius, radius*2, radius*2, 0, 360);
 	}
 	

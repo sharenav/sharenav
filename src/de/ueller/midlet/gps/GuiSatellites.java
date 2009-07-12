@@ -67,7 +67,7 @@ public class GuiSatellites extends KeyCommandCanvas implements CommandListener,
 		int w = getWidth();
 		
 		// Clear the screen to the map background colour.
-		g.setColor(C.BACKGROUND_COLOR);
+		g.setColor(C.COLORS[C.COLOR_MAP_BACKGROUND]);
 		g.fillRect(0, 0, w, h);
 
 		int centerX = getWidth() / 2;

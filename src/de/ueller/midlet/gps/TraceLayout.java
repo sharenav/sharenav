@@ -174,7 +174,7 @@ public class TraceLayout extends LayoutManager {
 				LayoutElement.FLAG_FONT_MEDIUM |
 				LayoutElement.FLAG_BACKGROUND_BOX
 		);
-		e.setBackgroundColor(C.BACKGROUND_COLOR);
+		e.setBackgroundColor(C.COLORS[C.COLOR_MAP_BACKGROUND]);
 		e.setVRelative(ele[ROUTE_DISTANCE]);		
 		
 		e = ele[SPEEDING_SIGN]; addElement(e, 

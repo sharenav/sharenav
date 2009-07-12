@@ -1682,9 +1682,9 @@ public class Way extends Entity{
 		if (routing) {
 			// set the way(area)-color
 			if (isCurrentRoutePath) {
-				pc.g.setColor(C.ROUTE_COLOR);			// set this color if way is part of current route
+				pc.g.setColor(C.COLORS[C.COLOR_ROUTE_ROUTELINE]);			// set this color if way is part of current route
 			} else {
-				pc.g.setColor(C.ROUTEPRIOR_COLOR);		// set this color if way was part of current route
+				pc.g.setColor(C.COLORS[C.COLOR_ROUTE_PRIOR_ROUTELINE]);		// set this color if way was part of current route
 			}
 		} else if (highlight) {		// way is highlighted as target for routing
 			pc.g.setColor(255,50,50);						
@@ -1711,9 +1711,9 @@ public class Way extends Entity{
 		
 		if (routing){
 			if (dividedHighlight) {
-				pc.g.setColor(C.ROUTE_BORDERCOLOR);
+				pc.g.setColor(C.COLORS[C.COLOR_ROUTE_ROUTELINE_BORDER]);
 			} else {
-				pc.g.setColor(C.ROUTEPRIOR_BORDERCOLOR);								
+				pc.g.setColor(C.COLORS[C.COLOR_ROUTE_PRIOR_ROUTELINE_BORDER]);
 			}
 		} else if (highlight){
 				pc.g.setColor(255,50,50);

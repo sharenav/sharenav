@@ -24,7 +24,7 @@ public class C {
 	 * Specifies the format of the map on disk we expect to see
 	 * This constant must be in sync with Osm2GpsMid
 	 */
-	public final static short MAP_FORMAT_VERSION = 33;
+	public final static short MAP_FORMAT_VERSION = 34;
 	
 	/** The waypoint format used in the RecordStore. See PositionMark.java. */
 	public final static short WAYPT_FORMAT_VERSION = 2;
@@ -83,21 +83,22 @@ public class C {
 	public final static byte OM_WITH_NAMEPART=32;
 	public final static byte OM_NAME_MASK=OM_NO_NAME | OM_WITH_NAME | OM_WITH_NAMEPART;
 	
-	public static int BACKGROUND_COLOR = 0x009BFF9B;
-	public static int ROUTE_COLOR = 0x0000C0C0;  //
-	public static int ROUTE_BORDERCOLOR = 0;
-	public static int ROUTEPRIOR_COLOR = 0;
-	public static int ROUTEPRIOR_BORDERCOLOR = 0;
-	public static int ROUTEDOT_COLOR = 0;
-	public static int ROUTEDOT_BORDERCOLOR = 0;
-
-	public static int ICONMENU_BGCOLOR = 0;
-	public static int ICONMENU_TABBUTTON_BORDERCOLOR = 0x00707070;
-	public static int ICONMENU_TABBUTTON_INACTIVE_TEXTCOLOR = 0x00808080;
-	public static int ICONMENU_TABBUTTON_TEXTCOLOR = 0x00FFFFFF;
-	public static int ICONMENU_TABBUTTON_HIGHLIGHT_TEXTCOLOR = 0x00FFFF00;
-	public static int ICONMENU_ICON_TEXTCOLOR = 0x00FFFFFF;
-	public static int ICONMENU_ICON_HIGHLIGHT_BORDERCOLOR = 0x00FFFF00;
+	public final static int COLOR_MAP_BACKGROUND = 0;
+	public final static int COLOR_ROUTE_ROUTELINE = 1;
+	public final static int COLOR_ROUTE_ROUTELINE_BORDER = 2;
+	public final static int COLOR_ROUTE_PRIOR_ROUTELINE = 3;
+	public final static int COLOR_ROUTE_PRIOR_ROUTELINE_BORDER = 4;
+	public final static int COLOR_ROUTE_ROUTEDOT = 5;
+	public final static int COLOR_ROUTE_ROUTEDOT_BORDER = 6;
+	public final static int COLOR_ICONMENU_BACKGROUND = 7;
+	public final static int COLOR_ICONMENU_TABBUTTON_BORDER = 8;
+	public final static int COLOR_ICONMENU_TABBUTTON_TEXT = 9;
+	public final static int COLOR_ICONMENU_TABBUTTON_TEXT_HIGHLIGHT = 10;
+	public final static int COLOR_ICONMENU_TABBUTTON_TEXT_INACTIVE = 11;
+	public final static int COLOR_ICONMENU_ICON_TEXT = 12;
+	public final static int COLOR_ICONMENU_ICON_BORDER_HIGHLIGHT = 13;
+	public final static int COLOR_COUNT = 14;
+	public static int COLORS[] = new int[COLOR_COUNT];
 
 	public static String appVersion;
 	public static String bundleDate;
@@ -145,18 +146,19 @@ public class C {
 		}
 		//#endif
 		
-		BACKGROUND_COLOR = ds.readInt();		
-		ROUTE_COLOR = ds.readInt();
-		ROUTE_BORDERCOLOR = ds.readInt();
-		ROUTEPRIOR_COLOR = ds.readInt();
-		ROUTEPRIOR_BORDERCOLOR = ds.readInt();
-		ROUTEDOT_COLOR = ds.readInt();
-		ROUTEDOT_BORDERCOLOR = ds.readInt();
+		// read colors
+		int count = (int) ds.readShort();
+		if (count != COLOR_COUNT) {
+			throw new IOException("Map file contains " + count + "colors but midlet's COLOR_COUNT is " + COLOR_COUNT);
+		}
+		for (int i=0; i<COLOR_COUNT; i++) {
+			COLORS[i] = ds.readInt();
+		}
 		
 		/**
 		 * Read Travel Modes
 		 */
-		int count = ds.readByte();
+		count = (int) ds.readByte();
 		midletTravelModes = new TravelMode[count];
 		for (int i=0; i<count;i++) {
 			midletTravelModes[i] = new TravelMode();
