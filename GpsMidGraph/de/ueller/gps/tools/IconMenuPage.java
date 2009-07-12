@@ -96,12 +96,20 @@ public class IconMenuPage extends LayoutManager {
 		for (int i=0; i<this.size(); i++){
 			e = (LayoutElement) this.elementAt(i);
 			e.loadImage();
+			// recalculate icon positions
+			e.setFlag(LayoutElement.FLAG_VALIGN_TOP_SCREENHEIGHT_PERCENT);
 		}
 	}
 	
-	/**
-	 * @return: IconMenuPageInterface.IMP_ACTION_*
-	 */
+	/** unload all icons for this icon page, e. g. for handling size changes */
+	protected void unloadIcons() {
+		LayoutElement e;
+		for (int i=0; i<this.size(); i++){
+			e = (LayoutElement) this.elementAt(i);
+			e.unloadImage();
+		}
+	}
+	
 	protected boolean changeSelectedXY(int offsX, int offsY) {
 		if (currentX + offsX < 0) { // left boundary
 			return false;

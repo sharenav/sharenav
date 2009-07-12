@@ -298,6 +298,10 @@ public class LayoutElement {
 
 	public void setImageNameOnly(String imageName) {
 		this.imageName = imageName;
+		unloadImage();
+	}
+
+	public void unloadImage() {
 		this.image = null;
 	}
 

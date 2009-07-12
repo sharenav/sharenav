@@ -16,12 +16,12 @@ import javax.microedition.lcdui.Graphics;
 
 import java.util.Vector;
 
+import de.ueller.gps.data.Configuration;
 import de.ueller.gps.tools.IconActionPerformer;
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.GpsMidDisplayable;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.tile.C;
-import de.ueller.midlet.gps.Trace;
 import de.ueller.gps.tools.IconMenuPage;
 
 
@@ -69,8 +69,7 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 		createTabPrevNextButtons();
 		tabButtonManager = new LayoutManager(ePrevTab.right, minY, eNextTab.left, maxY);
 		setCommandListener(this);
-		addCommand(OK_CMD);
-		addCommand(BACK_CMD);	
+		addCommands();
 	}
 
 	public IconMenuPage createAndAddMenuPage(String pageTitle, int numCols, int numRows) {
@@ -135,7 +134,32 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 
 	public void show() {
 		GpsMid.getInstance().show(this);
+		setFullScreenMode(Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN));
 		repaint();
+	}
+	
+	/** adds the commands to this Displayable but no Ok command in full screen mode - press fire there */
+	private void addCommands() {
+		removeCommand(OK_CMD);
+		removeCommand(BACK_CMD);
+		if (! Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN)) {
+			addCommand(OK_CMD);
+		}
+		addCommand(BACK_CMD);
+	}
+
+	
+	protected void sizeChanged(int w, int h) {
+		recreateTabButtonsRequired = true;
+		IconMenuPage imb = null;
+		for (int i=0; i < iconMenuPages.size(); i++) {
+			imb = (IconMenuPage) iconMenuPages.elementAt(i);
+			imb.maxY = h;
+			imb.unloadIcons();
+			imb.loadIcons();
+			imb.recalcPositions();
+		}
+		addCommands();
 	}
 	
 	

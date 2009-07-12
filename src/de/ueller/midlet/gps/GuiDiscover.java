@@ -487,8 +487,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		sizeOpts = new ChoiceGroup("Size Options:", Choice.MULTIPLE, sizes ,null);
 		menuDisplayOptions.append(sizeOpts);
 
-		String [] guis = new String[1];
+		String [] guis = new String[2];
 		guis[0] = "use icon menu";
+		guis[1] = "fullscreen icon menu";
 		guiOpts = new ChoiceGroup("Gui:", Choice.MULTIPLE, guis ,null);
 		menuDisplayOptions.append(guiOpts);
 		
@@ -718,6 +719,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 					sizeOpts.setSelectedIndex(0, Configuration.getCfgBitState(Configuration.CFGBIT_POI_LABELS_LARGER));
 					sizeOpts.setSelectedIndex(1, Configuration.getCfgBitState(Configuration.CFGBIT_WPT_LABELS_LARGER));
 					guiOpts.setSelectedIndex(0, Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS, true));
+					guiOpts.setSelectedIndex(1, Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN, true));
 					SingleTile.newPOIFont();
 					WaypointsTile.useNewWptFont();
 					gaugeDetailBoost.setValue(Configuration.getDetailBoostDefault());
@@ -922,6 +924,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 					Configuration.setCfgBitState(Configuration.CFGBIT_ICONMENUS, guiOpts.isSelected(0), true);
 					Trace.getInstance().addAllCommands();					
 				}
+				Configuration.setCfgBitState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN, guiOpts.isSelected(1), true);
 				Configuration.setDetailBoost(gaugeDetailBoost.getValue(), true); 
 				
 				String secs=tfAutoRecenterToGpsSecs.getString(); 
