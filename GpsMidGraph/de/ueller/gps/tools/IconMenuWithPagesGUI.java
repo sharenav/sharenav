@@ -73,10 +73,10 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 	}
 
 	public IconMenuPage createAndAddMenuPage(String pageTitle, int numCols, int numRows) {
-		IconMenuPage imb = new IconMenuPage( pageTitle, actionPerformer, numCols, numRows, minX, minY + eNextTab.bottom + 6, maxX, maxY);
-		iconMenuPages.addElement(imb);
+		IconMenuPage imp = new IconMenuPage( pageTitle, actionPerformer, numCols, numRows, minX, minY + eNextTab.bottom + 6, maxX, maxY);
+		iconMenuPages.addElement(imp);
 		recreateTabButtonsRequired = true;		
-		return imb;
+		return imp;
 	}
 	
 	/** create a layout manager with the direction buttons */
@@ -106,9 +106,9 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 	private void recreateTabButtons() {
 		tabButtonManager.removeAllElements();
 		LayoutElement e = null;
-		IconMenuPage imb = null;
+		IconMenuPage imp = null;
 		for (int i=0; i < iconMenuPages.size(); i++) {
-			imb = (IconMenuPage) iconMenuPages.elementAt(i);
+			imp = (IconMenuPage) iconMenuPages.elementAt(i);
 			if (tabButtonManager.size() == 0) {
 				e = tabButtonManager.createAndAddElement(
 						LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_TOP |
@@ -126,7 +126,7 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 			}
 			e.setBackgroundColor(C.ICONMENU_TABBUTTON_BORDERCOLOR);
 			e.setColor(C.ICONMENU_TABBUTTON_TEXTCOLOR);
-			e.setText(imb.title);
+			e.setText(imp.title);
 		}
 		setActiveTab(tabNr);
 	}
@@ -151,13 +151,13 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 	
 	protected void sizeChanged(int w, int h) {
 		recreateTabButtonsRequired = true;
-		IconMenuPage imb = null;
+		IconMenuPage imp = null;
 		for (int i=0; i < iconMenuPages.size(); i++) {
-			imb = (IconMenuPage) iconMenuPages.elementAt(i);
-			imb.maxY = h;
-			imb.unloadIcons();
-			imb.loadIcons();
-			imb.recalcPositions();
+			imp = (IconMenuPage) iconMenuPages.elementAt(i);
+			imp.maxY = h;
+			imp.unloadIcons();
+			imp.loadIcons();
+			imp.recalcPositions();
 		}
 		addCommands();
 	}
@@ -241,17 +241,17 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 					performIconAction(getActiveMenuPage().getActiveEleActionId());				
 					return;
 				} else if (action ==  Canvas.LEFT) {
-					if (!getActiveMenuPage().changeSelectedXY(-1, 0)) {
+					if (!getActiveMenuPage().changeSelectedColRow(-1, 0)) {
 						prevTab();
 					}
 				} else if (action ==  Canvas.RIGHT) {
-					if (!getActiveMenuPage().changeSelectedXY(1, 0) ) {
+					if (!getActiveMenuPage().changeSelectedColRow(1, 0) ) {
 						nextTab();
 					}
 				} else if (action ==  Canvas.DOWN) {
-					getActiveMenuPage().changeSelectedXY(0, 1);
+					getActiveMenuPage().changeSelectedColRow(0, 1);
 				} else if (action ==  Canvas.UP) {
-					if (!getActiveMenuPage().changeSelectedXY(0, -1)) {
+					if (!getActiveMenuPage().changeSelectedColRow(0, -1)) {
 						inTabRow = true;
 					}
 				}

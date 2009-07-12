@@ -20,8 +20,8 @@ public class IconMenuPage extends LayoutManager {
 	protected int numCols;
 	protected int numRows;
 	
-	protected int currentX;
-	protected int currentY;
+	protected int currentCol;
+	protected int currentRow;
 	
 	private IconActionPerformer actionPerformer;
 	
@@ -40,8 +40,8 @@ public class IconMenuPage extends LayoutManager {
 		this.numRows = numRows;
 		this.actionPerformer = actionPerformer;
 		this.rememberEleId = 0;
-		this.currentY = rememberEleId / numCols;
-		this.currentX = rememberEleId % numCols;
+		this.currentRow = rememberEleId / numCols;
+		this.currentCol = rememberEleId % numCols;
 		// divide the available region into a grid making the the number of icon columns and rows fit
 		gridHor = 100 / numCols;
 		gridVer = 100 / numRows;
@@ -110,32 +110,32 @@ public class IconMenuPage extends LayoutManager {
 		}
 	}
 	
-	protected boolean changeSelectedXY(int offsX, int offsY) {
-		if (currentX + offsX < 0) { // left boundary
+	protected boolean changeSelectedColRow(int offsCol, int offsRow) {
+		if (currentCol + offsCol < 0) { // left boundary
 			return false;
 		}
-		if (currentX + offsX >= numCols) { // right boundary
+		if (currentCol + offsCol >= numCols) { // right boundary
 			return false;
 		}
-		if (getEleId(currentX + offsX, currentY) < this.size()) {
-			currentX += offsX;
+		if (getEleId(currentCol + offsCol, currentRow) < this.size()) {
+			currentCol += offsCol;
 		} else { // after last element coming from left
 			return false;
 		}
 		
-		if (currentY + offsY < 0) { // bottom boundary
+		if (currentRow + offsRow < 0) { // bottom boundary
 			return false;
 		}
 //		if (currentY + offsY >= numRows) { // Bottom boundary coming from top
 //			return false;
 //		}
-		if (getEleId(currentX, currentY + offsY) < this.size()) {
-			currentY += offsY;
+		if (getEleId(currentCol, currentRow + offsRow) < this.size()) {
+			currentRow += offsRow;
 		}
 //		else {  // after last element coming from above
 //			return false;
 //		}
-		rememberEleId = getEleId(currentX, currentY);
+		rememberEleId = getEleId(currentCol, currentRow);
 		return true;
 	}
 	
@@ -155,7 +155,7 @@ public class IconMenuPage extends LayoutManager {
 		LayoutElement e;
 		// draw to boxes under the still to be drawn active icon to create a border
 		if (showCursor) {
-			e = (LayoutElement) this.elementAt(getEleId(currentX, currentY));		
+			e = (LayoutElement) this.elementAt(getEleId(currentCol, currentRow));		
 			g.setColor(C.ICONMENU_ICON_HIGHLIGHT_BORDERCOLOR);
 			g.fillRect(e.left - 2, e.top - 2, e.right - e.left + 4, e.bottom - e.top + 4);
 			g.setColor(C.ICONMENU_BGCOLOR);
