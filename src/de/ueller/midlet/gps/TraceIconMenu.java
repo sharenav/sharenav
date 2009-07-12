@@ -19,6 +19,7 @@ public class TraceIconMenu extends IconMenuWithPagesGUI {
 	LayoutElement iconToggleTrackRec; 
 	LayoutElement iconToggleAudioRec; 
 	LayoutElement iconToggleRoute; 
+	LayoutElement iconToggleRotate; 
 	LayoutElement iconOnlineInfo; 
 	LayoutElement iconAddPOI; 
 	LayoutElement iconEditWay; 
@@ -31,13 +32,16 @@ public class TraceIconMenu extends IconMenuWithPagesGUI {
 		mp = createAndAddMenuPage(" Main ", 3, 4);
 		iconToggleGps =		mp.createAndAddIcon("Start GPS", "satelit", Trace.CONNECT_GPS_CMD);
 							mp.createAndAddIcon("Search", "cinema", Trace.SEARCH_CMD);
-							mp.createAndAddIcon("Map Features", "museum", Trace.MAPFEATURES_CMD);
+							mp.createAndAddIcon("Overview", "city", Trace.OVERVIEW_MAP_CMD);
 
 							mp.createAndAddIcon("Setup", "taxi", Trace.SETUP_CMD);
-							mp.createAndAddIcon("Tacho", "fuel", Trace.DATASCREEN_CMD);
-		iconOnlineInfo =	mp.createAndAddIcon("Online", "left", Trace.ONLINE_INFO_CMD);
+							mp.createAndAddIcon("Map Features", "museum", Trace.MAPFEATURES_CMD);
+		iconToggleRotate =	mp.createAndAddIcon("Manual on", "uturn", Trace.MANUAL_ROTATION_MODE_CMD);
 
+							mp.createAndAddIcon("Tacho", "fuel", Trace.DATASCREEN_CMD);
+		iconOnlineInfo =	mp.createAndAddIcon("Online", "left", Trace.ONLINE_INFO_CMD);					
 							mp.createAndAddIcon("Back", "recycling", Trace.BACK_CMD);
+
 							mp.createAndAddIcon("About", "GpsMid", Trace.ABOUT_CMD);
 							mp.createAndAddIcon("Exit", "tunnel_end", Trace.EXIT_CMD);
 
@@ -81,6 +85,8 @@ public class TraceIconMenu extends IconMenuWithPagesGUI {
 		// for commands that can be toggled, fill in the current text and/or corresponding actionId before painting
 		iconToggleGps.setText( trace.isGpsConnected() ? "Stop GPS" : "Start GPS");
 		iconToggleGps.setActionID( trace.isGpsConnected() ? Trace.DISCONNECT_GPS_CMD : Trace.CONNECT_GPS_CMD);
+
+		iconToggleRotate.setText( trace.manualRotationMode ? "Manual Off" : "Manual On");				
 		
 		iconToggleTrackRec.setText( trace.gpx.isRecordingTrk() ? "Stop Rec" : "Rec Track");
 		iconToggleTrackRec.setActionID( trace.gpx.isRecordingTrk() ? Trace.STOP_RECORD_CMD : Trace.START_RECORD_CMD);

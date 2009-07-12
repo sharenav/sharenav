@@ -282,7 +282,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	private static int smallBoldFontHeight;
 	*/
 	
-	private boolean manualRotationMode = false;
+	public boolean manualRotationMode = false;
 	
 	public Vector locationUpdateListeners;
 	
