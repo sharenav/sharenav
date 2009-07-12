@@ -186,16 +186,12 @@ public class CreateGpsMidData {
 			 */
 			dsi.writeBoolean(config.enableEditingSupport);
 			/**
-			 * Writing global info 
+			 * Writing colors 
 			 */
-			dsi.writeInt(config.background_color);
-			dsi.writeInt(config.routeColor);
-			dsi.writeInt(config.routeBorderColor);
-			dsi.writeInt(config.priorRouteColor);
-			dsi.writeInt(config.priorRouteBorderColor);
-			dsi.writeInt(config.routeDotColor);
-			dsi.writeInt(config.routeDotBorderColor);
-			
+			dsi.writeShort((short) Configuration.COLOR_COUNT);
+			for (int i=0; i < Configuration.COLOR_COUNT; i++) {
+				dsi.writeInt(Configuration.COLORS[i]);
+			}
 			/**
 			 * Write Travel Modes
 			 */

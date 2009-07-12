@@ -52,6 +52,7 @@ public class LegendParser extends DefaultHandler{
 	private Vector<SoundDescription> sounds;
 	private POIdescription currentPoi;
 	private SoundDescription currentSound;
+	private SoundDescription currentColor;
 	private TravelMode currentTravelMode;
 	private WayDescription currentWay;
 	private String currentKey;
@@ -61,6 +62,7 @@ public class LegendParser extends DefaultHandler{
 	private final byte READING_POIS=1;
 	private final byte READING_SOUNDS=2;
 	private final byte READING_ROUTEMODES=3;
+	private final byte READING_COLORS=4;
 	private byte readingType = READING_WAYS;
 	
 	private byte poiIdx = 0;
@@ -175,50 +177,12 @@ public class LegendParser extends DefaultHandler{
 			readingType=READING_POIS;			
 		} else if (qName.equals("ways")) {
 			readingType=READING_WAYS;			
+		} else if (qName.equals("colors")) {
+			readingType=READING_COLORS;			
 		} else if (qName.equals("sounds")) {
 			readingType=READING_SOUNDS;			
 		} else if (qName.equals("routeModes")) {
 			readingType=READING_ROUTEMODES;
-		} else if (qName.equals("background")) {
-			try {
-				Configuration.getConfiguration().background_color = Integer.parseInt(atts.getValue("color"),16);
-			} catch (NumberFormatException nfe){
-				System.out.println("ERROR: Couldn't read the background color correctly, using default");
-				Configuration.getConfiguration().background_color = 0x009bFF9b;				
-			}
-		} else if (qName.equals("routeLine")) {
-			try {
-				Configuration.getConfiguration().routeColor = Integer.parseInt(atts.getValue("interiorColor"),16);
-			} catch (NumberFormatException nfe){
-				System.out.println("ERROR: Couldn't read the routeColor correctly, using default");
-			}
-			try {
-				Configuration.getConfiguration().routeBorderColor = Integer.parseInt(atts.getValue("borderColor"),16);
-			} catch (NumberFormatException nfe){
-				System.out.println("ERROR: Couldn't read the routeBorderColor correctly, using default");
-			}
-		} else if (qName.equals("priorRouteLine")) {
-			try {
-				Configuration.getConfiguration().priorRouteColor = Integer.parseInt(atts.getValue("interiorColor"),16);
-			} catch (NumberFormatException nfe){
-				System.out.println("ERROR: Couldn't read the priorRouteColor correctly, using default");
-			}
-			try {
-				Configuration.getConfiguration().priorRouteBorderColor = Integer.parseInt(atts.getValue("borderColor"),16);
-			} catch (NumberFormatException nfe){
-				System.out.println("ERROR: Couldn't read the priorRouteBorderColor correctly, using default");
-			}
-		} else if (qName.equals("routeDot")) {
-			try {
-				Configuration.getConfiguration().routeDotColor = Integer.parseInt(atts.getValue("interiorColor"),16);
-			} catch (NumberFormatException nfe){
-				System.out.println("ERROR: Couldn't read the RouteDotColor correctly, using default");
-			}
-			try {
-				Configuration.getConfiguration().routeDotBorderColor = Integer.parseInt(atts.getValue("borderColor"),16);
-			} catch (NumberFormatException nfe){
-				System.out.println("ERROR: Couldn't read the RouteDotBorderColor correctly, using default");
-			}
 		}
 		switch (readingType) {
 			case READING_POIS:
@@ -477,6 +441,38 @@ public class LegendParser extends DefaultHandler{
 					currentSound = new SoundDescription();
 					currentSound.name = atts.getValue("name");
 					sounds.addElement(currentSound);
+				} else if (qName.equals("soundFile")) {
+					if (currentSound!=null) {
+						currentSound.soundFile  = atts.getValue("src");
+					} else {
+						System.out.println("soundFile without sound in style file");						
+					}
+				} else if (qName.equals("changeFileExtensionTo")) {
+					Configuration.getConfiguration().changeSoundFileExtensionTo = atts.getValue("fileExt");
+				}
+				break;
+			case READING_COLORS:
+				if (qName.equals("color")) {				
+					currentColor = new SoundDescription();
+					String colorName = atts.getValue("of");
+					boolean colorFound = false;
+					for (int i=0; i<Configuration.COLORNAMES.length; i++) {
+						if (Configuration.COLORNAMES[i].equalsIgnoreCase(colorName)) {
+							int rgb = 0;
+							try {
+								rgb = Integer.parseInt(atts.getValue("is"),16);
+							} catch (NumberFormatException nfe){
+								System.out.println("Error: color of " + colorName + " is invalid. Must be a hex coded ARGB value");
+							}
+							Configuration.COLORS[i] = rgb;
+							colorFound = true;
+							break;
+						}
+					}
+					if (!colorFound) {
+						System.out.println("Error: style file contains non-existent colorName: " + colorName);												
+					}
+					break;
 				} else if (qName.equals("soundFile")) {
 					if (currentSound!=null) {
 						currentSound.soundFile  = atts.getValue("src");

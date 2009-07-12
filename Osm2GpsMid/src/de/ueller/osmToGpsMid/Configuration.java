@@ -54,7 +54,42 @@ public class Configuration {
 	 * Specifies the format of the map on disk we are about to write
 	 * This constant must be in sync with GpsMid
 	 */
-	public final static short MAP_FORMAT_VERSION = 33;
+	public final static short MAP_FORMAT_VERSION = 34;
+
+	public final static int COLOR_MAP_BACKGROUND = 0;
+	public final static int COLOR_ROUTE_ROUTELINE = 1;
+	public final static int COLOR_ROUTE_ROUTELINE_BORDER = 2;
+	public final static int COLOR_ROUTE_PRIOR_ROUTELINE = 3;
+	public final static int COLOR_ROUTE_PRIOR_ROUTELINE_BORDER = 4;
+	public final static int COLOR_ROUTE_ROUTEDOT = 5;
+	public final static int COLOR_ROUTE_ROUTEDOT_BORDER = 6;
+	public final static int COLOR_ICONMENU_BACKGROUND = 7;
+	public final static int COLOR_ICONMENU_TABBUTTON_BORDER = 8;
+	public final static int COLOR_ICONMENU_TABBUTTON_TEXT = 9;
+	public final static int COLOR_ICONMENU_TABBUTTON_TEXT_HIGHLIGHT = 10;
+	public final static int COLOR_ICONMENU_TABBUTTON_TEXT_INACTIVE = 11;
+	public final static int COLOR_ICONMENU_ICON_TEXT = 12;
+	public final static int COLOR_ICONMENU_ICON_BORDER_HIGHLIGHT = 13;
+	public final static int COLOR_COUNT = 14;
+
+	public final static String COLORNAMES[] =
+			{"map_background",
+			 "routeLine",
+			 "routeLine_border",
+			 "priorRouteLine",
+			 "priorRouteLine_border",
+			 "routeDot",
+			 "routeDot_border",
+			 "iconMenu_background",
+			 "iconMenu_tabbutton_border",
+			 "iconMenu_tabbutton_text",
+			 "iconMenu_tabbutton_text_highlight",
+			 "iconMenu_tabbutton_text_inactive",
+			 "iconMenu_icon_text",
+			 "iconMenu_icon_border_highlight"
+			};
+			 		
+	public static int COLORS[] = new int[COLOR_COUNT];
 	
 		private ResourceBundle rb;
 		private ResourceBundle vb;
@@ -76,13 +111,6 @@ public class Configuration {
 		public String styleFile;
 		private Bounds[] bounds;
 		
-		public int background_color;
-		public int routeColor = 0x0000C0C0;
-		public int routeBorderColor = 0x0064FFFF;
-		public int priorRouteColor = 0x00007070;
-		public int priorRouteBorderColor = 0x00647777;
-		public int routeDotColor = 0x0000C0C0;
-		public int routeDotBorderColor = 0x0064FFFF;
 		public String changeSoundFileExtensionTo = "";
 		
 		private LegendParser legend;
@@ -97,6 +125,10 @@ public class Configuration {
 //				.getBundle(BUNDLE_NAME);
 
 		public Configuration(String [] args) {
+			
+			if (COLOR_COUNT != COLORNAMES.length) {
+				System.out.println("WARNING: COLORNAMES.length (" + COLORNAMES.length + ") does not match COLOR_COUNT (" + COLOR_COUNT + ")");				
+			}
 			
 			//Set singleton
 			conf = this;

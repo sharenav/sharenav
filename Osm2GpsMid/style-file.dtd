@@ -1,9 +1,7 @@
-<!ELEMENT legend (version, background, routeLine?, priorRouteLine?, routeDot?, sounds?, pois, ways, routeModes*)>
+<!ELEMENT legend (version, colors, sounds?, pois, ways, routeModes*)>
 <!ELEMENT version EMPTY>
-<!ELEMENT background EMPTY>
-<!ELEMENT routeLine EMPTY>
-<!ELEMENT priorRouteLine EMPTY>
-<!ELEMENT routeDot EMPTY>
+<!ELEMENT colors (color*)>
+<!ELEMENT color EMPTY>
 <!ELEMENT sounds (changeFileExtensionTo?, sound*)>
 <!ELEMENT pois (key*)>
 <!ELEMENT ways (keyW*)>
@@ -37,16 +35,8 @@
 <!ELEMENT force_to EMPTY>
 <!ELEMENT hideable EMPTY>
 <!ELEMENT AreaPOI EMPTY>
-<!ELEMENT interiorColor EMPTY>
 <!ELEMENT specialisation EMPTY>
 <!ATTLIST version release CDATA #REQUIRED>
-<!ATTLIST background color CDATA #REQUIRED>
-<!ATTLIST routeLine interiorColor CDATA #REQUIRED>
-<!ATTLIST routeLine borderColor CDATA #REQUIRED>
-<!ATTLIST priorRouteLine interiorColor CDATA #REQUIRED>
-<!ATTLIST priorRouteLine borderColor CDATA #REQUIRED>
-<!ATTLIST routeDot interiorColor CDATA #REQUIRED>
-<!ATTLIST routeDot borderColor CDATA #REQUIRED>
 <!ATTLIST key tag CDATA #REQUIRED>
 <!ATTLIST keyW tag CDATA #REQUIRED>
 <!ATTLIST value name CDATA #REQUIRED>
@@ -54,6 +44,8 @@
 <!ATTLIST Wvalue name CDATA #REQUIRED>
 <!ATTLIST Wvalue priority CDATA #IMPLIED>
 <!ATTLIST changeToFileExtension type CDATA #REQUIRED>
+<!ATTLIST color of CDATA #REQUIRED>
+<!ATTLIST color is CDATA #REQUIRED>
 <!ATTLIST sound name CDATA #REQUIRED>
 <!ATTLIST routeAccessRestrictions for CDATA #REQUIRED>
 <!ATTLIST description desc CDATA #REQUIRED>

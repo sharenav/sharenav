@@ -50,10 +50,25 @@ scale alias 1: zoomed out 21x
 
 <legend>
   <version release="0.5.09"/>
-  <background color="009BFF9B"/>
-  <routeLine interiorColor="0000C0C0" borderColor="0064FFFF"/>
-  <priorRouteLine interiorColor="00006633" borderColor="0033BFBF"/>
-  <routeDot interiorColor="00FFFF00" borderColor="00FF0000"/>
+  <colors>
+	<!-- Map -->
+	<color of="map_background" is="009BFF9B"/>
+	<!-- Routing -->
+	<color of="routeLine" is="0000C0C0"/>
+	<color of="routeLine_border" is="0064FFFF"/>
+	<color of="priorRouteLine" is="00006633"/>
+	<color of="priorRouteLine_border" is="0033BFBF"/>
+	<color of="routeDot" is="00FFFF00"/>
+	<color of="routeDot_border" is="00FF0000"/>
+	<!-- Icon Menu -->
+	<color of="iconMenu_background" is="00000000"/>	
+	<color of="iconMenu_tabButton_border" is="00707070"/>	
+	<color of="iconMenu_tabButton_text" is="00FFFFFF"/>	
+	<color of="iconMenu_tabButton_text_highlight" is="00FFFF00"/>	
+	<color of="iconMenu_tabButton_text_inactive" is="00808080"/>	
+	<color of="iconMenu_icon_text" is="00FFFFFF"/>	
+	<color of="iconMenu_icon_border_highlight" is="00FFFF00"/>	
+  </colors>
   
   <sounds>
 <!-- move the following line out of the comment
