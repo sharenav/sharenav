@@ -178,11 +178,7 @@ public class LayoutElement {
 		}
 		//#debug debug
 		logger.trace("width:" + width); 
-		// check how many characters we can draw if the available width is limited
-		while (textWidth > width) {
-			numDrawChars--;
-			textWidth = font.substringWidth(text, 0, numDrawChars);
-		}
+		shortenTextToWidth();
 
 		if (specialElementID != 0) {			
 			width = lm.getSpecialElementWidth(specialElementID, text, font);
@@ -192,6 +188,18 @@ public class LayoutElement {
 		if (image != null) {
 			width = image.getWidth();
 			height = image.getHeight();
+		}
+	}
+
+	private void shortenTextToWidth() {
+		int realWidth = width;
+		if ( (flags & FLAG_BACKGROUND_SCREENPERCENT_WIDTH) > 0 ) {
+			realWidth = ((lm.maxX - lm.minX) * widthPercent) / 100;
+		}
+		// check how many characters we can draw if the available width is limited
+		while (textWidth > realWidth) {
+			numDrawChars--;
+			textWidth = font.substringWidth(text, 0, numDrawChars);
 		}
 	}
 	
@@ -385,6 +393,9 @@ public class LayoutElement {
 			textWidth = font.stringWidth(text);
 			numDrawChars = (short) text.length();
 			lm.recalcPositionsRequired = true;
+			if (image != null) {
+				shortenTextToWidth();
+			}
 		}
 		oldTextIsValid = textIsValid;
 		textIsValid = numDrawChars!=0;
