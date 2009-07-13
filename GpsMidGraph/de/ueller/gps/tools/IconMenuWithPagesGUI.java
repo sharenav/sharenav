@@ -222,6 +222,7 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 		if (c == OK_CMD) {
 			if (inTabRow) {
 				inTabRow = false;
+				repaint();
 			} else {
 				parent.show();
 				performIconAction(getActiveMenuPage().getActiveEleActionId());				
@@ -238,10 +239,12 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 		logger.debug("got key " + keyCode);
 		int action = getGameAction(keyCode);
 		if (action != 0) {
-			if (inTabRow) {
-				if (action ==  Canvas.FIRE) {
-					inTabRow = false;
-				} else if (action ==  Canvas.LEFT) {
+			// handle the fire button same as the Ok button
+			if (action ==  Canvas.FIRE) {
+				commandAction(OK_CMD, (Displayable) null);
+				return;
+			} else if (inTabRow) {
+				if (action ==  Canvas.LEFT) {
 						prevTab();
 				} else if (action ==  Canvas.RIGHT) {
 					nextTab();
@@ -251,11 +254,7 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 					action = 0; // no game key action
 				}
 			} else {
-				if (action ==  Canvas.FIRE) {
-					parent.show();
-					performIconAction(getActiveMenuPage().getActiveEleActionId());				
-					return;
-				} else if (action ==  Canvas.LEFT) {
+				if (action ==  Canvas.LEFT) {
 					if (!getActiveMenuPage().changeSelectedColRow(-1, 0)) {
 						prevTab();
 					}
