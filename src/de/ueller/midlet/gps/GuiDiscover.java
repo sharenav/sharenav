@@ -456,7 +456,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		gaugeDetailBoost = new Gauge("Increase Detail of lower Zoom Levels", true, 3, 0);
 		menuDisplayOptions.append(gaugeDetailBoost);
 
-		tfAutoRecenterToGpsSecs = new TextField("Auto-Recenter To GPS after these seconds (0=disabled)", Integer.toString(Configuration.getAutoRecenterToGpsMilliSecs() / 1000), 2, TextField.DECIMAL);
+		tfAutoRecenterToGpsSecs = new TextField("Auto-Recenter To GPS after no user action for these seconds (0=disabled)", Integer.toString(Configuration.getAutoRecenterToGpsMilliSecs() / 1000), 2, TextField.DECIMAL);
 		menuDisplayOptions.append(tfAutoRecenterToGpsSecs);
 
 		String [] backlights;

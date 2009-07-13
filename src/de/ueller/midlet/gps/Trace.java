@@ -181,7 +181,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 
 	private long lastBackLightOnTime = 0;
 	
-	private long lastPanTime = 0;
+	private static long lastUserActionTime = 0;
 	
 	private long collected = 0;
 
@@ -675,6 +675,8 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	
 	
 	public void commandAction(Command c, Displayable d) {
+		updateLastUserActionTime();
+
 		try {
 			if((keyboardLocked) && (d != null)) {
 				// show alert in keypressed() that keyboard is locked
@@ -767,7 +769,6 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					}
 					if (panX != 0 || panY != 0) {
 						gpsRecenter = false;
-						lastPanTime = System.currentTimeMillis();
 					}
 					imageCollector.getCurrentProjection().pan(center, panX, panY);
 				}
@@ -1964,20 +1965,25 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		//We are explicitly setting the map to this position, so we probably don't
 		//want it to be recentered on the GPS immediately.
 		gpsRecenter = false;
-		lastPanTime = System.currentTimeMillis();
 		
 		center.setLatLon(lat, lon, true);
 		this.scale = scale;
 		updatePosition();
 	}
 
+	public static void updateLastUserActionTime() {
+		lastUserActionTime = System.currentTimeMillis();
+	}
+	
+	
 	public synchronized void receivePosition(Position pos) {
 		//#debug info
 		logger.info("New position: " + pos);
 		this.pos = pos;
 		collected++;
 		if (Configuration.getAutoRecenterToGpsMilliSecs() !=0 &&
-			System.currentTimeMillis() > lastPanTime + Configuration.getAutoRecenterToGpsMilliSecs()
+			System.currentTimeMillis() > lastUserActionTime + Configuration.getAutoRecenterToGpsMilliSecs()
+			&& isShown()
 		) {
 			gpsRecenter = true;
 		}
@@ -2058,6 +2064,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	}
 
 	protected void pointerPressed(int x, int y) {
+		updateLastUserActionTime();
 		pointerDragAction = true;
 
 		if (customMenu != null && customMenu.pointerPressed(x, y)) {
@@ -2100,6 +2107,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	}
 	
 	protected void pointerDragged (int x, int y) {
+		updateLastUserActionTime();
 		if (pointerDragAction && imageCollector != null) {
 			// difference between where the pointer was pressed and is currently dragged
 			int diffX = Trace.touchX - x;
@@ -2110,7 +2118,6 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			imageCollector.getCurrentProjection().inverse(centerPointerPressedP.x + diffX, centerPointerPressedP.y + diffY, center);
 			imageCollector.newDataReady();
 			gpsRecenter = false;
-			lastPanTime = System.currentTimeMillis();
 		}
 	}
 	
@@ -2236,7 +2243,6 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			//We are explicitly setting the map to this position, so we probably don't
 			//want it to be recentered on the GPS immediately.
 			gpsRecenter = false;
-			lastPanTime = System.currentTimeMillis();
 			
 			center.setLatLon(target.lat, target.lon,true);
 			updatePosition();
@@ -2388,6 +2394,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 
 	// interface for received actions from the IconMenu GUI
 	public void performIconAction(int actionId) {
+		updateLastUserActionTime();
 		// when we are low on memory do not cache the icon menu (including scaled images)
 		if (GpsMid.getInstance().needsFreeingMemory()) {
 			//#debug info
