@@ -73,14 +73,13 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	protected static final int MENU_ITEM_DEBUG_OPT = 7;
 	protected static final int MENU_ITEM_KEYS_OPT = 8;
 	protected static final int MENU_ITEM_OPENCELLID_OPT = 9;
-	protected static final int MENU_ITEM_BACK = 10;
 	//#if polish.api.osm-editing
-	protected static final int MENU_ITEM_OSM_OPT = 11;
-	protected static final int MENU_ITEM_SAVE_CONFIG = 12;
-	protected static final int MENU_ITEM_LOAD_CONFIG = 13;
-	//#else
+	protected static final int MENU_ITEM_OSM_OPT = 10;
 	protected static final int MENU_ITEM_SAVE_CONFIG = 11;
 	protected static final int MENU_ITEM_LOAD_CONFIG = 12;
+	//#else
+	protected static final int MENU_ITEM_SAVE_CONFIG = 10;
+	protected static final int MENU_ITEM_LOAD_CONFIG = 11;
 	//#endif
 
 	private static final String[]	empty			= {};
@@ -1251,7 +1250,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	
 	// interface for received actions from the IconMenu GUI
 	public void performIconAction(int actionId) {
-		if (actionId == MENU_ITEM_BACK) {
+		if (actionId == IconActionPerformer.BACK_ACTIONID) {
 			setupIconMenu = null;
 			System.gc();
 			commandAction(EXIT_CMD, (Displayable) null);

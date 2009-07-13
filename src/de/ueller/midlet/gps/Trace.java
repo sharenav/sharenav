@@ -2394,7 +2394,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			logger.info("low mem: Freeing traceIconMenu");
 			traceIconMenu = null;
 		}
-		if (actionId != BACK_CMD) {
+		if (actionId != IconActionPerformer.BACK_ACTIONID) {
 			commandAction(CMDS[actionId], null);
 		}
 	}

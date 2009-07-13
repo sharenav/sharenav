@@ -228,6 +228,7 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 			}
 		} else if (c == BACK_CMD) {
 			parent.show();
+			performIconAction(IconActionPerformer.BACK_ACTIONID);				
 		}
 	}
 	

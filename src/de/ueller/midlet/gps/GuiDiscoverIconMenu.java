@@ -25,7 +25,7 @@ public class GuiDiscoverIconMenu extends IconMenuWithPagesGUI {
 
 			mp.createAndAddIcon("Routing", "motorway", GuiDiscover.MENU_ITEM_ROUTING_OPT);
 			mp.createAndAddIcon("Export", "railstation", GuiDiscover.MENU_ITEM_GPX_DEVICE);
-			mp.createAndAddIcon("Back", "recycling", GuiDiscover.MENU_ITEM_BACK);
+			mp.createAndAddIcon("Back", "recycling", IconActionPerformer.BACK_ACTIONID);
 			
 		// Advanced
 		mp = createAndAddMenuPage(" Advanced ", 3, 3);

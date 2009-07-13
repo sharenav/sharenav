@@ -39,7 +39,7 @@ public class TraceIconMenu extends IconMenuWithPagesGUI {
 		
 		iconOnlineInfo =	mp.createAndAddIcon("Online", "left", Trace.ONLINE_INFO_CMD);		
 							mp.createAndAddIcon("About", "GpsMid", Trace.ABOUT_CMD);
-							mp.createAndAddIcon("Back", "recycling", Trace.BACK_CMD);
+							mp.createAndAddIcon("Back", "recycling", IconActionPerformer.BACK_ACTIONID);
 
 							mp.createAndAddIcon("Exit", "tunnel_end", Trace.EXIT_CMD);
 
