@@ -23,8 +23,8 @@ public class GuiMapFeatures extends Form implements CommandListener {
 	private	String [] rotation = new String[2];
 	
 	private ChoiceGroup modesGroup;
-	private	String [] modes = new String[3];
-	private	boolean[] selModes = new boolean[3];
+	private	String [] modes = new String[2];
+	private	boolean[] selModes = new boolean[2];
 
 	private ChoiceGroup otherGroup;
 	private	String [] other = new String[3];
@@ -72,7 +72,6 @@ public class GuiMapFeatures extends Form implements CommandListener {
 			
 			modes[0] = "Full screen"; 			selModes[0]=Configuration.getCfgBitState(Configuration.CFGBIT_FULLSCREEN);
 			modes[1] = "Render as streets"; 	selModes[1]=Configuration.getCfgBitState(Configuration.CFGBIT_STREETRENDERMODE);
-			modes[2] = "Routing help"; 	selModes[2]=Configuration.getCfgBitState(Configuration.CFGBIT_ROUTING_HELP);
 			modesGroup = new ChoiceGroup("Mode", Choice.MULTIPLE, modes ,null);
 			modesGroup.setSelectedFlags(selModes);			
 			append(modesGroup);
@@ -132,7 +131,6 @@ public class GuiMapFeatures extends Form implements CommandListener {
 			modesGroup.getSelectedFlags(selModes);
 			Configuration.setCfgBitState(Configuration.CFGBIT_FULLSCREEN, selModes[0], setAsDefault);
 			Configuration.setCfgBitState(Configuration.CFGBIT_STREETRENDERMODE, selModes[1], setAsDefault);
-			Configuration.setCfgBitState(Configuration.CFGBIT_ROUTING_HELP, selModes[2], setAsDefault);
 			
 			otherGroup.getSelectedFlags(selOther);
 			Configuration.setCfgBitState(Configuration.CFGBIT_SHOW_POINT_OF_COMPASS, selOther[0], setAsDefault);

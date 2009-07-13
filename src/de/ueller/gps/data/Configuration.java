@@ -82,8 +82,8 @@ public class Configuration {
 	public final static byte CFGBIT_BACKLIGHT_NOKIA=13;	
 	// bit 14: backlight method NOKIA/FLASH
 	public final static byte CFGBIT_BACKLIGHT_NOKIAFLASH=14;	
-	// bit 15: large nearest routing arrow
-	public final static byte CFGBIT_ROUTING_HELP=15;	
+//	// bit 15: large nearest routing arrow
+//	public final static byte CFGBIT_ROUTING_HELP=15;	
 	// bit 16: save map position on exit
 	public final static byte CFGBIT_AUTOSAVE_MAPPOS=16;	
 	// bit 17: Sound on Connect
@@ -296,7 +296,6 @@ public class Configuration {
 				   		// 1L<<CFGBIT_WAYTEXTS | // way texts are still experimental
 				   		1L<<CFGBIT_ONEWAY_ARROWS |
 				   		1L<<CFGBIT_POIS |
-				   		1L<<CFGBIT_ROUTING_HELP |
 				   		1L<<CFGBIT_AUTOSAVE_MAPPOS |
 				   		1L<<CFGBIT_BACKLIGHT_MAPONLY |
 				   		getDefaultDeviceBacklightMethodMask();
