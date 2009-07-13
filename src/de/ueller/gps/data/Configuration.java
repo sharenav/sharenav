@@ -82,8 +82,8 @@ public class Configuration {
 	public final static byte CFGBIT_BACKLIGHT_NOKIA=13;	
 	// bit 14: backlight method NOKIA/FLASH
 	public final static byte CFGBIT_BACKLIGHT_NOKIAFLASH=14;	
-//	// bit 15: large nearest routing arrow
-//	public final static byte CFGBIT_ROUTING_HELP=15;	
+	// bit 15: backlight only on while GPS is started
+	public final static byte CFGBIT_BACKLIGHT_ONLY_WHILE_GPS_STARTED=15;	
 	// bit 16: save map position on exit
 	public final static byte CFGBIT_AUTOSAVE_MAPPOS=16;	
 	// bit 17: Sound on Connect
@@ -354,6 +354,7 @@ public class Configuration {
 			}			
 			if(configVersionStored < 6) {
 				setAutoRecenterToGpsMilliSecs(30000);
+				cfgBits |=	1L<<CFGBIT_BACKLIGHT_ONLY_WHILE_GPS_STARTED;
 			}
 
 			setCfgBits(cfgBits, true);

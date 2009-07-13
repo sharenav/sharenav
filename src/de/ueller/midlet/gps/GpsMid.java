@@ -145,7 +145,6 @@ public class GpsMid extends MIDlet implements CommandListener {
 		}
 
 		// RouteNodeTools.initRecordStore();
-		startBackLightTimer();
 		if (errorMsg != null) {
 			log.fatal(errorMsg);
 		}
@@ -158,6 +157,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 			trace.resume();
 			trace.show();
 		}		
+		startBackLightTimer();
 	}
 
 	protected void destroyApp(boolean arg0) throws MIDletStateChangeException {
@@ -458,15 +458,16 @@ public class GpsMid extends MIDlet implements CommandListener {
 							GpsMid.class, Logger.DEBUG);
 
 					public void run() {
+						Trace trace = Trace.getInstance();
 						try {
 							boolean notInterupted = true;
 							while (notInterupted) {
-								// only when map is displayed or
-								// option "only when map is displayed" is off
-								if ((Trace.getInstance() != null && Trace
-										.getInstance().isShown())
-										|| !Configuration
-												.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_MAPONLY)) {
+								if (trace != null
+									// only when map is displayed or option "only when map is displayed" is off
+									&& (trace.isShown() || !Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_MAPONLY)) 
+									// only when GPS is connected or option "only with GPS" is off
+									&& (trace.isGpsConnected() || ! Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ONLY_WHILE_GPS_STARTED))
+								) {
 									// Method to keep the backlight on
 									// some MIDP2 phones
 									if (Configuration
@@ -553,7 +554,8 @@ public class GpsMid extends MIDlet implements CommandListener {
 		if ( Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON, 
 				false) ) {
 			trace.alert("Backlight", "Backlight " 
-					+ (backLightLevel == 100 ? "ON" : (backLightLevel + "%")), 
+					+ (backLightLevel == 100 ? "ON" : (backLightLevel + "%"))
+					+ (Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ONLY_WHILE_GPS_STARTED) ? " while GPS started" : ""),
 					1000);
 		} else {
 			trace.alert("Backlight", "Backlight off", 1000);
