@@ -30,6 +30,7 @@ import javax.microedition.lcdui.TextField;
 
 
 import de.ueller.gps.data.Configuration;
+import de.ueller.gps.tools.IconActionPerformer;
 import de.ueller.gpsMid.mapData.SingleTile;
 import de.ueller.midlet.gps.data.Gpx;
 import de.ueller.midlet.gps.data.Projection;
@@ -38,7 +39,7 @@ import de.ueller.gpsMid.mapData.WaypointsTile;
 
 import de.ueller.gps.SECellID;
 
-public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMidDisplayable, SelectionListener {
+public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMidDisplayable, SelectionListener, IconActionPerformer {
 
 	/** A menu list instance */
 	private static final String[]	elements		= {
@@ -62,23 +63,24 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	 * sync with the position in the elements array of the
 	 * main menu
 	 */
-	private static final int MENU_ITEM_LOCATION = 0;
-	private static final int MENU_ITEM_GPX_FILTER = 1;	
-	private static final int MENU_ITEM_DISP_OPT = 2;
-	private static final int MENU_ITEM_SOUNDS_OPT = 3;
-	private static final int MENU_ITEM_ROUTING_OPT = 4;
-	private static final int MENU_ITEM_GPX_DEVICE = 5;
-	private static final int MENU_ITEM_MAP_SRC = 6;
-	private static final int MENU_ITEM_DEBUG_OPT = 7;
-	private static final int MENU_ITEM_KEYS_OPT = 8;
-	private static final int MENU_ITEM_OPENCELLID_OPT = 9;
+	protected static final int MENU_ITEM_LOCATION = 0;
+	protected static final int MENU_ITEM_GPX_FILTER = 1;	
+	protected static final int MENU_ITEM_DISP_OPT = 2;
+	protected static final int MENU_ITEM_SOUNDS_OPT = 3;
+	protected static final int MENU_ITEM_ROUTING_OPT = 4;
+	protected static final int MENU_ITEM_GPX_DEVICE = 5;
+	protected static final int MENU_ITEM_MAP_SRC = 6;
+	protected static final int MENU_ITEM_DEBUG_OPT = 7;
+	protected static final int MENU_ITEM_KEYS_OPT = 8;
+	protected static final int MENU_ITEM_OPENCELLID_OPT = 9;
+	protected static final int MENU_ITEM_BACK = 10;
 	//#if polish.api.osm-editing
-	private static final int MENU_ITEM_OSM_OPT = 10;
-	private static final int MENU_ITEM_SAVE_CONFIG = 11;
-	private static final int MENU_ITEM_LOAD_CONFIG = 12;
+	protected static final int MENU_ITEM_OSM_OPT = 11;
+	protected static final int MENU_ITEM_SAVE_CONFIG = 12;
+	protected static final int MENU_ITEM_LOAD_CONFIG = 13;
 	//#else
-	private static final int MENU_ITEM_SAVE_CONFIG = 10;
-	private static final int MENU_ITEM_LOAD_CONFIG = 11;
+	protected static final int MENU_ITEM_SAVE_CONFIG = 11;
+	protected static final int MENU_ITEM_LOAD_CONFIG = 12;
 	//#endif
 
 	private static final String[]	empty			= {};
@@ -225,6 +227,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private ChoiceGroup routingTravelModesGroup;
 
 	private final static Logger logger=Logger.getInstance(GuiDiscover.class,Logger.DEBUG);
+
+	private GuiDiscoverIconMenu setupIconMenu = null;
 	
 	public GuiDiscover(GpsMid parent) {
 		this.parent = parent;
@@ -661,170 +665,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		if (c == OK_CMD){			
 			switch (state) {
 			case STATE_ROOT:
-				switch (menu.getSelectedIndex()) {
-				case MENU_ITEM_LOCATION: // Location Receiver
-					initLocationSetupMenu();
-					gpsUrlStr=Configuration.getBtUrl();
-					gpsUrl.setText(gpsUrlStr==null?"<Discover>":"<Discovered>");
-					int selIdx = Configuration.getLocationProvider();
-					locProv.setSelectedIndex(selIdx, true);
-					
-					String logUrl;
-					rawLogDir = Configuration.getGpsRawLoggerUrl();		
-					if (rawLogDir == null) {
-						logUrl= LABEL_SELECT_LOGDIR_FIRST;
-					} else {
-						logUrl = LOG_TO + rawLogDir;
-					}
-					rawLogCG.setLabel(logUrl);
-
-					boolean [] selLog = new boolean[2]; 
-					selLog[0] = Configuration.getCfgBitState(Configuration.CFGBIT_CELLID_LOGGING);
-					selLog[1] = Configuration.getGpsRawLoggerEnable();
-					rawLogCG.setSelectedFlags(selLog);
-
-					btKeepAlive.setSelectedIndex(0, Configuration.getBtKeepAlive());
-					btAutoRecon.setSelectedIndex(0, Configuration.getBtAutoRecon());
-					Display.getDisplay(parent).setCurrentItem(gpsUrl);
-					//Display.getDisplay(parent).setCurrent(menuSelectLocProv);
-					state = STATE_LP;
-					break;
-				case MENU_ITEM_GPX_FILTER: // Recording Rules
-					initRecordingSetupMenu();
-					choiceGpxRecordRuleMode.setSelectedIndex(Configuration.getGpxRecordRuleMode(), true);
-					/*
-					 * minimum seconds between trackpoints
-					 */
-					tfGpxRecordMinimumSecs.setString(
-						getCleanFloatString( (float)(Configuration.getGpxRecordMinMilliseconds())/1000,3 )
-					);				
-
-					/*
-					 * minimum meters between trackpoints
-					 */
-					tfGpxRecordMinimumDistanceMeters.setString(				
-						getCleanFloatString( (float)(Configuration.getGpxRecordMinDistanceCentimeters())/100,3 )
-					);				
-
-					/*
-					 * meters between trackpoints that will always create a new trackpoint
-					 */
-					tfGpxRecordAlwaysDistanceMeters.setString( 
-						getCleanFloatString( (float)(Configuration.getGpxRecordAlwaysDistanceCentimeters())/100,3 )
-					);				
-
-					GpsMid.getInstance().show(menuRecordingOptions);
-					state = STATE_RECORDING_OPTIONS;
-					break;
-				case MENU_ITEM_DISP_OPT: // Display Options
-					initDisplay();
-					rotationGroup.setSelectedIndex(Configuration.getProjDefault(), true);
-					renderOpts.setSelectedIndex( Configuration.getCfgBitState(Configuration.CFGBIT_STREETRENDERMODE)?1:0, true);
-					sizeOpts.setSelectedIndex(0, Configuration.getCfgBitState(Configuration.CFGBIT_POI_LABELS_LARGER));
-					sizeOpts.setSelectedIndex(1, Configuration.getCfgBitState(Configuration.CFGBIT_WPT_LABELS_LARGER));
-					guiOpts.setSelectedIndex(0, Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS, true));
-					guiOpts.setSelectedIndex(1, Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN, true));
-					SingleTile.newPOIFont();
-					WaypointsTile.useNewWptFont();
-					gaugeDetailBoost.setValue(Configuration.getDetailBoostDefault());
-					// convert bits from backlight flag into selection states
-					boolean[] sellight = new boolean[6];
-					sellight[0]=Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON, true);
-					sellight[1]=Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_MAPONLY, true);
-					sellight[2]=Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_MIDP2, true);
-					byte i = 3;
-					//#if polish.api.nokia-ui
-						sellight[i++]=Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIA, true);
-						sellight[i++]=Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIAFLASH, true);
-					//#endif	
-					//#if polish.api.min-siemapi
-						sellight[i++]=Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_SIEMENS, true);
-					//#endif
-
-					backlightOpts.setSelectedFlags(sellight);
-					
-					GpsMid.getInstance().show(menuDisplayOptions);
-					state = STATE_DISPOPT;
-					break;
-				case MENU_ITEM_GPX_DEVICE: // GPX Receiver
-					//Prepare Gpx receiver selection menu
-					menuGpx = new Form("Gpx Receiver");
-					menuGpx.addCommand(BACK_CMD);
-					menuGpx.addCommand(OK_CMD);
-					menuGpx.addCommand(FILE_MAP);
-					menuGpx.addCommand(BT_MAP);
-					//#if polish.api.osm-editing
-					menuGpx.addCommand(OSM_URL);
-					//#endif
-
-					gpxUrl = new StringItem("Gpx Receiver Url: ","<Please select in menu>");
-					menuGpx.append(gpxUrl);
-					menuGpx.setCommandListener(this);
-					gpxUrl.setText(Configuration.getGpxUrl()==null?"<Please select in menu>":Configuration.getGpxUrl());
-					GpsMid.getInstance().show(menuGpx);
-					state = STATE_GPX;
-					break;
-				case MENU_ITEM_MAP_SRC: // Map Source 
-					initMapSource();
-					mapSrc.setSelectedIndex(Configuration.usingBuiltinMap()?0:1, true); 
-					mapSrc.set(1, "Filesystem: " + ( (Configuration.getMapUrl()==null)?"<Please select map directory first>":Configuration.getMapUrl() ), null);
-					GpsMid.getInstance().show(menuSelectMapSource);
-					state = STATE_MAP;
-					break;			
-				case MENU_ITEM_DEBUG_OPT:
-					initDebugSetupMenu();
-					GpsMid.getInstance().show(menuDebug);
-					state = STATE_DEBUG;
-					break;
-				case MENU_ITEM_ROUTING_OPT:
-					initRoutingOptions();
-					GpsMid.getInstance().show(menuRoutingOptions);
-					state = STATE_ROUTING_OPT;
-					break;
-				case MENU_ITEM_SOUNDS_OPT:
-					GuiSetupSound gs = new GuiSetupSound(this);
-					gs.show();
-					break;
-				case MENU_ITEM_KEYS_OPT:
-					/**
-					 * Display the current Keyboard mappings for the
-					 * Map screen
-					 */
-					GuiKeyShortcuts gks = new GuiKeyShortcuts(this);
-					gks.show();
-					break;
-				//#if polish.api.osm-editing
-				case MENU_ITEM_OSM_OPT:
-					/**
-					 * Display the current Keyboard mappings for the
-					 * Map screen
-					 */
-					initOSMaccountOptions();
-					GpsMid.getInstance().show(menuOsmAccountOptions);
-					state = STATE_OSM_OPT;
-					break;
-				//#endif
-				case MENU_ITEM_OPENCELLID_OPT:
-					/**
-					 * Opencellid Apikey
-					 */
-					initOpencellidOptions();
-					GpsMid.getInstance().show(menuOpencellidOptions);
-					state = STATE_OPENCELLID_OPT;
-					break;
-				//#if polish.api.fileconnection
-				case MENU_ITEM_SAVE_CONFIG:
-					state = STATE_SAVE_CONFIG;
-					FsDiscover fsd = new FsDiscover(this,this,null,true,"","Save configuration");
-					fsd.show();
-					break;
-				case MENU_ITEM_LOAD_CONFIG:
-					state = STATE_LOAD_CONFIG;
-					fsd = new FsDiscover(this,this,null,false,"cfg","Load configuration");
-					fsd.show();
-					break;
-				//#endif
-				}
+				showSetupDialog(menu.getSelectedIndex());
 				break;
 			case STATE_BT_GPS: 
 				// remember discovered BT URL and put status in form 
@@ -1067,6 +908,174 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		}
 	}
 
+	private void showSetupDialog(int menuNr) {
+		switch (menuNr) {
+			case MENU_ITEM_LOCATION: // Location Receiver
+				initLocationSetupMenu();
+				gpsUrlStr=Configuration.getBtUrl();
+				gpsUrl.setText(gpsUrlStr==null?"<Discover>":"<Discovered>");
+				int selIdx = Configuration.getLocationProvider();
+				locProv.setSelectedIndex(selIdx, true);
+				
+				String logUrl;
+				rawLogDir = Configuration.getGpsRawLoggerUrl();		
+				if (rawLogDir == null) {
+					logUrl= LABEL_SELECT_LOGDIR_FIRST;
+				} else {
+					logUrl = LOG_TO + rawLogDir;
+				}
+				rawLogCG.setLabel(logUrl);
+		
+				boolean [] selLog = new boolean[2]; 
+				selLog[0] = Configuration.getCfgBitState(Configuration.CFGBIT_CELLID_LOGGING);
+				selLog[1] = Configuration.getGpsRawLoggerEnable();
+				rawLogCG.setSelectedFlags(selLog);
+		
+				btKeepAlive.setSelectedIndex(0, Configuration.getBtKeepAlive());
+				btAutoRecon.setSelectedIndex(0, Configuration.getBtAutoRecon());
+				Display.getDisplay(parent).setCurrentItem(gpsUrl);
+				//Display.getDisplay(parent).setCurrent(menuSelectLocProv);
+				state = STATE_LP;
+				break;
+			case MENU_ITEM_GPX_FILTER: // Recording Rules
+				initRecordingSetupMenu();
+				choiceGpxRecordRuleMode.setSelectedIndex(Configuration.getGpxRecordRuleMode(), true);
+				/*
+				 * minimum seconds between trackpoints
+				 */
+				tfGpxRecordMinimumSecs.setString(
+					getCleanFloatString( (float)(Configuration.getGpxRecordMinMilliseconds())/1000,3 )
+				);				
+		
+				/*
+				 * minimum meters between trackpoints
+				 */
+				tfGpxRecordMinimumDistanceMeters.setString(				
+					getCleanFloatString( (float)(Configuration.getGpxRecordMinDistanceCentimeters())/100,3 )
+				);				
+		
+				/*
+				 * meters between trackpoints that will always create a new trackpoint
+				 */
+				tfGpxRecordAlwaysDistanceMeters.setString( 
+					getCleanFloatString( (float)(Configuration.getGpxRecordAlwaysDistanceCentimeters())/100,3 )
+				);				
+		
+				GpsMid.getInstance().show(menuRecordingOptions);
+				state = STATE_RECORDING_OPTIONS;
+				break;
+			case MENU_ITEM_DISP_OPT: // Display Options
+				initDisplay();
+				rotationGroup.setSelectedIndex(Configuration.getProjDefault(), true);
+				renderOpts.setSelectedIndex( Configuration.getCfgBitState(Configuration.CFGBIT_STREETRENDERMODE)?1:0, true);
+				sizeOpts.setSelectedIndex(0, Configuration.getCfgBitState(Configuration.CFGBIT_POI_LABELS_LARGER));
+				sizeOpts.setSelectedIndex(1, Configuration.getCfgBitState(Configuration.CFGBIT_WPT_LABELS_LARGER));
+				guiOpts.setSelectedIndex(0, Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS, true));
+				guiOpts.setSelectedIndex(1, Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN, true));
+				SingleTile.newPOIFont();
+				WaypointsTile.useNewWptFont();
+				gaugeDetailBoost.setValue(Configuration.getDetailBoostDefault());
+				// convert bits from backlight flag into selection states
+				boolean[] sellight = new boolean[6];
+				sellight[0]=Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON, true);
+				sellight[1]=Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_MAPONLY, true);
+				sellight[2]=Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_MIDP2, true);
+				byte i = 3;
+				//#if polish.api.nokia-ui
+					sellight[i++]=Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIA, true);
+					sellight[i++]=Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIAFLASH, true);
+				//#endif	
+				//#if polish.api.min-siemapi
+					sellight[i++]=Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_SIEMENS, true);
+				//#endif
+		
+				backlightOpts.setSelectedFlags(sellight);
+				
+				GpsMid.getInstance().show(menuDisplayOptions);
+				state = STATE_DISPOPT;
+				break;
+			case MENU_ITEM_GPX_DEVICE: // GPX Receiver
+				//Prepare Gpx receiver selection menu
+				menuGpx = new Form("Gpx Receiver");
+				menuGpx.addCommand(BACK_CMD);
+				menuGpx.addCommand(OK_CMD);
+				menuGpx.addCommand(FILE_MAP);
+				menuGpx.addCommand(BT_MAP);
+				//#if polish.api.osm-editing
+				menuGpx.addCommand(OSM_URL);
+				//#endif
+		
+				gpxUrl = new StringItem("Gpx Receiver Url: ","<Please select in menu>");
+				menuGpx.append(gpxUrl);
+				menuGpx.setCommandListener(this);
+				gpxUrl.setText(Configuration.getGpxUrl()==null?"<Please select in menu>":Configuration.getGpxUrl());
+				GpsMid.getInstance().show(menuGpx);
+				state = STATE_GPX;
+				break;
+			case MENU_ITEM_MAP_SRC: // Map Source 
+				initMapSource();
+				mapSrc.setSelectedIndex(Configuration.usingBuiltinMap()?0:1, true); 
+				mapSrc.set(1, "Filesystem: " + ( (Configuration.getMapUrl()==null)?"<Please select map directory first>":Configuration.getMapUrl() ), null);
+				GpsMid.getInstance().show(menuSelectMapSource);
+				state = STATE_MAP;
+				break;			
+			case MENU_ITEM_DEBUG_OPT:
+				initDebugSetupMenu();
+				GpsMid.getInstance().show(menuDebug);
+				state = STATE_DEBUG;
+				break;
+			case MENU_ITEM_ROUTING_OPT:
+				initRoutingOptions();
+				GpsMid.getInstance().show(menuRoutingOptions);
+				state = STATE_ROUTING_OPT;
+				break;
+			case MENU_ITEM_SOUNDS_OPT:
+				GuiSetupSound gs = new GuiSetupSound(this);
+				gs.show();
+				break;
+			case MENU_ITEM_KEYS_OPT:
+				/**
+				 * Display the current Keyboard mappings for the
+				 * Map screen
+				 */
+				GuiKeyShortcuts gks = new GuiKeyShortcuts(this);
+				gks.show();
+				break;
+			//#if polish.api.osm-editing
+			case MENU_ITEM_OSM_OPT:
+				/**
+				 * Display the current Keyboard mappings for the
+				 * Map screen
+				 */
+				initOSMaccountOptions();
+				GpsMid.getInstance().show(menuOsmAccountOptions);
+				state = STATE_OSM_OPT;
+				break;
+			//#endif
+			case MENU_ITEM_OPENCELLID_OPT:
+				/**
+				 * Opencellid Apikey
+				 */
+				initOpencellidOptions();
+				GpsMid.getInstance().show(menuOpencellidOptions);
+				state = STATE_OPENCELLID_OPT;
+				break;
+			//#if polish.api.fileconnection
+			case MENU_ITEM_SAVE_CONFIG:
+				state = STATE_SAVE_CONFIG;
+				FsDiscover fsd = new FsDiscover(this,this,null,true,"","Save configuration");
+				fsd.show();
+				break;
+			case MENU_ITEM_LOAD_CONFIG:
+				state = STATE_LOAD_CONFIG;
+				fsd = new FsDiscover(this,this,null,false,"cfg","Load configuration");
+				fsd.show();
+				break;
+			//#endif
+		}
+	}
+	
+	
 	// converts float f to string and
 	// cuts off unnecessary trailing chars and digits 
 	private String getCleanFloatString(float f, int maxlen) {
@@ -1106,7 +1115,14 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	public void show() {
 		switch (state) {
 			case STATE_ROOT:
-				GpsMid.getInstance().show(menu);
+				if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS)) {
+					if (setupIconMenu == null) {
+						setupIconMenu = new GuiDiscoverIconMenu(this, this);
+					}
+					setupIconMenu.show();
+				} else {
+					GpsMid.getInstance().show(menu);
+				}
 				break;
 			case STATE_LP:
 				GpsMid.getInstance().show(menuSelectLocProv);
@@ -1231,5 +1247,16 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		//#endif
 		}
 		
+	}
+	
+	// interface for received actions from the IconMenu GUI
+	public void performIconAction(int actionId) {
+		if (actionId == MENU_ITEM_BACK) {
+			setupIconMenu = null;
+			System.gc();
+			commandAction(EXIT_CMD, (Displayable) null);
+		} else {
+			showSetupDialog(actionId);
+		}
 	}
 }
