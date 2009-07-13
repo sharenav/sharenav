@@ -24,20 +24,20 @@ public class GuiDiscoverIconMenu extends IconMenuWithPagesGUI {
 			mp.createAndAddIcon("Sounds & Alerts", "pub", GuiDiscover.MENU_ITEM_SOUNDS_OPT);
 
 			mp.createAndAddIcon("Routing", "motorway", GuiDiscover.MENU_ITEM_ROUTING_OPT);
+			mp.createAndAddIcon("Recording Rules", "restaurant", GuiDiscover.MENU_ITEM_GPX_FILTER);
 			mp.createAndAddIcon("Export", "railstation", GuiDiscover.MENU_ITEM_GPX_DEVICE);
+
 			mp.createAndAddIcon("Back", "recycling", IconActionPerformer.BACK_ACTIONID);
 			
 		// Advanced
 		mp = createAndAddMenuPage(" Advanced ", 3, 3);
-			mp.createAndAddIcon("Recording Rules", "restaurant", GuiDiscover.MENU_ITEM_GPX_FILTER);
 			mp.createAndAddIcon("Map Source", "city", GuiDiscover.MENU_ITEM_MAP_SRC);
 			mp.createAndAddIcon("OpenCellID", "satelitred", GuiDiscover.MENU_ITEM_OPENCELLID_OPT);
+			mp.createAndAddIcon("Debug", "unknown", GuiDiscover.MENU_ITEM_DEBUG_OPT);
 
 			mp.createAndAddIcon("Keys", "peak", GuiDiscover.MENU_ITEM_KEYS_OPT);
 			mp.createAndAddIcon("Load Config", "mark", GuiDiscover.MENU_ITEM_LOAD_CONFIG);
-			mp.createAndAddIcon("Save Config", "target", GuiDiscover.MENU_ITEM_SAVE_CONFIG);
-			
-			mp.createAndAddIcon("Debug", "unknown", GuiDiscover.MENU_ITEM_DEBUG_OPT);
+			mp.createAndAddIcon("Save Config", "target", GuiDiscover.MENU_ITEM_SAVE_CONFIG);			
 	}
 
 }
