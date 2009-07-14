@@ -984,8 +984,8 @@ public class Configuration {
 
 	public static void setStartupPos(Node pos) {
 		//System.out.println("Save Map startup lat/lon: " + startupPos.radlat*MoreMath.FAC_RADTODEC + "/" + startupPos.radlon*MoreMath.FAC_RADTODEC);
-		write(Double.toString(pos.radlat),RECORD_ID_STARTUP_RADLAT);
-		write(Double.toString(pos.radlon),RECORD_ID_STARTUP_RADLON);
+		write(Float.toString(pos.radlat),RECORD_ID_STARTUP_RADLAT);
+		write(Float.toString(pos.radlon),RECORD_ID_STARTUP_RADLON);
 	}
 	
 	public static String getOsmUsername() {
