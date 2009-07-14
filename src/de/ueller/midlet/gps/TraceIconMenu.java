@@ -33,10 +33,10 @@ public class TraceIconMenu extends IconMenuWithPagesGUI {
 		mp = createAndAddMenuPage(" Main ", 3, 4);
 		iconToggleGps =		mp.createAndAddIcon("Start GPS", "satelit", Trace.CONNECT_GPS_CMD);
 							mp.createAndAddIcon("Search", "cinema", Trace.SEARCH_CMD);
-							mp.createAndAddIcon("Tacho", "fuel", Trace.DATASCREEN_CMD);
+							mp.createAndAddIcon("Map Features", "museum", Trace.MAPFEATURES_CMD);
 
 							mp.createAndAddIcon("Setup", "taxi", Trace.SETUP_CMD);
-							mp.createAndAddIcon("Map Features", "museum", Trace.MAPFEATURES_CMD);
+							mp.createAndAddIcon("Tacho", "fuel", Trace.DATASCREEN_CMD);
 							mp.createAndAddIcon("Overview/Filter Map", "city", Trace.OVERVIEW_MAP_CMD);
 		
 		iconOnlineInfo =	mp.createAndAddIcon("Online", "left", Trace.ONLINE_INFO_CMD);		
