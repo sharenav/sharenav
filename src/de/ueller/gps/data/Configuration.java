@@ -375,7 +375,7 @@ public class Configuration {
 			if (getDeviceSupportsJSR179()) {
 				setLocationProvider(LOCATIONPROVIDER_JSR179);
 			}
-			//#endif				
+			//#endif
 			//#debug info
 			logger.info("Default config for version 0.4.0+ set.");
 		}
@@ -418,6 +418,10 @@ public class Configuration {
 			setAutoRecenterToGpsMilliSecs(30000);
 			cfgBits |=	1L<<CFGBIT_BACKLIGHT_ONLY_WHILE_GPS_STARTED;
 			logger.info("Default config for version 6+ set.");
+//			if (getPhoneModel().startsWith("MicroEmulator")) {
+//				cfgBits |= 	1L<<CFGBIT_ICONMENUS |
+//							1L<<CFGBIT_ICONMENUS_FULLSCREEN;
+//			}
 		}
 
 		setCfgBits(cfgBits, true);
