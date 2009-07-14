@@ -48,6 +48,7 @@ import de.ueller.osmToGpsMid.model.Tile;
 import de.ueller.osmToGpsMid.model.TravelModes;
 import de.ueller.osmToGpsMid.model.Way;
 import de.ueller.osmToGpsMid.model.name.Names;
+import de.ueller.osmToGpsMid.tools.FileTools;
 
 
 
@@ -337,6 +338,10 @@ public class CreateGpsMidData {
 				outputMedia=copyMediaToMid(sound.soundFile, path, "sound");
 				dsi.writeUTF(outputMedia);
 			}
+
+			// show summary for copied icon files
+			System.out.println("Icon inclusion summary:");
+			System.out.println(FileTools.copyDir("icon", path, true, true) + " internal icons replaced from " + "icon" + System.getProperty("file.separator") + " containing " + FileTools.countFiles("icon") + " files");
 
 			// show summary for copied media files
 			if (sbCopiedMedias.length()!=0) {
