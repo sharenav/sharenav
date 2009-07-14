@@ -35,7 +35,7 @@ public class TraceIconMenu extends IconMenuWithPagesGUI {
 
 							mp.createAndAddIcon("Setup", "taxi", Trace.SETUP_CMD);
 							mp.createAndAddIcon("Map Features", "museum", Trace.MAPFEATURES_CMD);
-							mp.createAndAddIcon("Overview", "city", Trace.OVERVIEW_MAP_CMD);
+							mp.createAndAddIcon("Overview/Filter Map", "city", Trace.OVERVIEW_MAP_CMD);
 		
 		iconOnlineInfo =	mp.createAndAddIcon("Online", "left", Trace.ONLINE_INFO_CMD);		
 							mp.createAndAddIcon("About", "GpsMid", Trace.ABOUT_CMD);
@@ -45,16 +45,17 @@ public class TraceIconMenu extends IconMenuWithPagesGUI {
 
 		// Recordings
 		mp = createAndAddMenuPage(this.getWidth() >= 176 ?" Recordings ":" Rec ", 3, 4);
+		iconToggleTrackRec=	mp.createAndAddIcon("Rec Track", "target", Trace.START_RECORD_CMD);
+							mp.createAndAddIcon("Save Wpt", "target", Trace.SAVE_WAYP_CMD);
+							mp.createAndAddIcon("Enter Wpt", "target", Trace.ENTER_WAYP_CMD);
+
 							mp.createAndAddIcon("Tracks", "restaurant", Trace.MANAGE_TRACKS_CMD);
 							mp.createAndAddIcon("Waypoints", "mark", Trace.MAN_WAYP_CMD);
-							mp.createAndAddIcon("Save Wpt", "target", Trace.SAVE_WAYP_CMD);
 
-		iconToggleTrackRec=	mp.createAndAddIcon("Rec Track", "target", Trace.START_RECORD_CMD);
-							mp.createAndAddIcon("TakePic", "museum", Trace.CAMERA_CMD);
-		iconToggleAudioRec=	mp.createAndAddIcon("AudioRec", "pub", Trace.TOGGLE_AUDIO_REC);
+							mp.createAndAddIcon("Photo", "museum", Trace.CAMERA_CMD);
+		iconToggleAudioRec=	mp.createAndAddIcon("Voice", "pub", Trace.TOGGLE_AUDIO_REC);
 		
 							mp.createAndAddIcon("Send SMS", "telephone", Trace.SEND_MESSAGE_CMD);
-							mp.createAndAddIcon("Enter Wpt", "target", Trace.ENTER_WAYP_CMD);
 		
 		// Route
 		mp = createAndAddMenuPage(" Route ", 3, 4);
@@ -87,7 +88,7 @@ public class TraceIconMenu extends IconMenuWithPagesGUI {
 		iconToggleTrackRec.setText( trace.gpx.isRecordingTrk() ? "Stop Rec" : "Rec Track");
 		iconToggleTrackRec.setActionID( trace.gpx.isRecordingTrk() ? Trace.STOP_RECORD_CMD : Trace.START_RECORD_CMD);
 		
-		iconToggleAudioRec.setText( trace.audioRec.isRecording() ? "Stop AudioRec" : "AudioRec");
+		iconToggleAudioRec.setText( trace.audioRec.isRecording() ? "Stop VoiceRec" : "Voice");
 		
 		iconToggleRoute.setText( (trace.route != null || trace.routeCalc) ? "Stop Route" : "Calculate");				
 
