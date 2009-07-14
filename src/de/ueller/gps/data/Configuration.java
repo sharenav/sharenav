@@ -54,8 +54,8 @@ public class Configuration {
 	
 	// bit 0: render as street
 	public final static byte CFGBIT_STREETRENDERMODE=0;
-	// bit 1 have default values been once applied?
-	public final static byte CFGBIT_DEFAULTVALUESAPPLIED=1;
+//	// bit 1 have default values been once applied?
+//	public final static byte CFGBIT_DEFAULTVALUESAPPLIED=1;
 	// bit 2: show POITEXT
 	public final static byte CFGBIT_POITEXTS=2;
 	// bit 3: show WAYTEXT
@@ -283,86 +283,11 @@ public class Configuration {
 		try {			
 			database = RecordStore.openRecordStore("Receiver", true);
 			if (database == null) {
-				//#debug info
-				logger.info("No database loaded at the moment");
+				//#debug debug
+				System.out.println("Could not open config"); // Logger won't work if config is not read yet
 				return;
 			}	
 			cfgBits=readLong(database, RECORD_ID_CFGBITS);
-			// set initial values if record store does not exist yet
-			if( ! getCfgBitState(CFGBIT_DEFAULTVALUESAPPLIED) ) {
-				cfgBits=1L<<CFGBIT_DEFAULTVALUESAPPLIED | 
-				   		1L<<CFGBIT_STREETRENDERMODE |
-				   		1L<<CFGBIT_POITEXTS |
-				   		1L<<CFGBIT_AREATEXTS |
-				   		1L<<CFGBIT_WPTTEXTS |
-				   		// 1L<<CFGBIT_WAYTEXTS | // way texts are still experimental
-				   		1L<<CFGBIT_ONEWAY_ARROWS |
-				   		1L<<CFGBIT_POIS |
-				   		1L<<CFGBIT_AUTOSAVE_MAPPOS |
-				   		1L<<CFGBIT_BACKLIGHT_MAPONLY |
-				   		getDefaultDeviceBacklightMethodMask();
-				// Record Rule Default
-				setGpxRecordRuleMode(GPX_RECORD_MINIMUM_SECS_DIST);
-				setGpxRecordMinMilliseconds(1000);				
-				setGpxRecordMinDistanceCentimeters(300);
-				setGpxRecordAlwaysDistanceCentimeters(500);
-				// Routing defaults
-				setStopAllWhileRouteing(true);
-				setRouteEstimationFac(7);
-				// set default location provider to JSR-179 if available
-				//#if polish.api.locationapi
-				if (getDeviceSupportsJSR179()) {
-					setLocationProvider(LOCATIONPROVIDER_JSR179);
-				}
-				//#endif				
-				//#debug info
-				logger.info("Default config for version 0.4.0+ set.");
-			}
-			
-			/** 
-			 *  If in the recordstore (configVersionStored) is a lower version than VERSION of the Configuration,
-			 *  the default values for the features added between configVersionStored
-			 *  and VERSION will be set, before the version in the recordstore is increased to VERSION
-			 */
-			int configVersionStored = readInt(database, RECORD_ID_CONFIG_VERSION);
-			// default values for config version 3
-			if(configVersionStored < 3) {				
-				cfgBits |=	1L<<CFGBIT_SND_CONNECT |
-					   		1L<<CFGBIT_SND_DISCONNECT |
-					   		1L<<CFGBIT_SND_ROUTINGINSTRUCTIONS |
-					   		1L<<CFGBIT_SND_TARGETREACHED |
-					   		1L<<CFGBIT_SHOW_POINT_OF_COMPASS |
-					   		1L<<CFGBIT_AREAS |
-					   		1L<<CFGBIT_ROUTE_AUTO_RECALC;
-
-				// Auto-reconnect GPS
-				setBtAutoRecon(true);
-				// make MOVE_UP map the default
-				setProjTypeDefault(ProjFactory.MOVE_UP);
-				//#debug info
-				logger.info("Default config for version 3+ set.");
-			}			
-			if(configVersionStored < 5) {				
-				cfgBits |=	1L<<CFGBIT_PLACETEXTS |
-							1L<<CFGBIT_SPEEDALERT_SND |
-							1L<<CFGBIT_ROUTE_HIDE_QUIET_ARROWS |
-							1L<<CFGBIT_SHOW_SCALE_BAR |
-							1L<<CFGBIT_SPEEDALERT_VISUAL;
-							setMinRouteLineWidth(3);
-							// Speed alert tolerance
-							setSpeedTolerance(5);
-				//#debug info
-				logger.info("Default config for version 5+ set.");
-			}			
-			if(configVersionStored < 6) {
-				setAutoRecenterToGpsMilliSecs(30000);
-				cfgBits |=	1L<<CFGBIT_BACKLIGHT_ONLY_WHILE_GPS_STARTED;
-			}
-
-			setCfgBits(cfgBits, true);
-			// remember for which version the default values were stored
-			write(VERSION, RECORD_ID_CONFIG_VERSION);
-			
 			btUrl=readString(database, RECORD_ID_BT_URL);
 			locationProvider=readInt(database, RECORD_ID_LOCATION_PROVIDER);
 			gpxUrl=readString(database, RECORD_ID_GPX_URL);
@@ -410,6 +335,13 @@ public class Configuration {
 			currentTravelModeNr=readInt(database, RECORD_ID_ROUTE_TRAVEL_MODE);
 			currentTravelMask=1<<currentTravelModeNr;
 			phoneAllTimeMaxMemory = readLong(database, RECORD_ID_PHONE_ALL_TIME_MAX_MEMORY);
+
+			int configVersionStored = readInt(database, RECORD_ID_CONFIG_VERSION);
+			//#debug info
+			logger.info("Config version stored: " + configVersionStored);
+			applyDefaultValues(configVersionStored);
+			// remember for which version the default values were stored
+			write(VERSION, RECORD_ID_CONFIG_VERSION);
 			
 			database.closeRecordStore();
 		} catch (Exception e) {
@@ -417,6 +349,80 @@ public class Configuration {
 		}
 	}
 	
+	private static void applyDefaultValues(int configVersionStored) {
+		// set initial values if record store does not exist yet
+		if( configVersionStored < 1 ) {
+			cfgBits=1L<<CFGBIT_STREETRENDERMODE |
+			   		1L<<CFGBIT_POITEXTS |
+			   		1L<<CFGBIT_AREATEXTS |
+			   		1L<<CFGBIT_WPTTEXTS |
+			   		// 1L<<CFGBIT_WAYTEXTS | // way texts are still experimental
+			   		1L<<CFGBIT_ONEWAY_ARROWS |
+			   		1L<<CFGBIT_POIS |
+			   		1L<<CFGBIT_AUTOSAVE_MAPPOS |
+			   		1L<<CFGBIT_BACKLIGHT_MAPONLY |
+			   		getDefaultDeviceBacklightMethodMask();
+			// Record Rule Default
+			setGpxRecordRuleMode(GPX_RECORD_MINIMUM_SECS_DIST);
+			setGpxRecordMinMilliseconds(1000);				
+			setGpxRecordMinDistanceCentimeters(300);
+			setGpxRecordAlwaysDistanceCentimeters(500);
+			// Routing defaults
+			setStopAllWhileRouteing(true);
+			setRouteEstimationFac(7);
+			// set default location provider to JSR-179 if available
+			//#if polish.api.locationapi
+			if (getDeviceSupportsJSR179()) {
+				setLocationProvider(LOCATIONPROVIDER_JSR179);
+			}
+			//#endif				
+			//#debug info
+			logger.info("Default config for version 0.4.0+ set.");
+		}
+		
+		/** 
+		 *  If in the recordstore (configVersionStored) is a lower version than VERSION of the Configuration,
+		 *  the default values for the features added between configVersionStored
+		 *  and VERSION will be set, before the version in the recordstore is increased to VERSION
+		 */
+		// default values for config version 3
+		if(configVersionStored < 3) {				
+			cfgBits |=	1L<<CFGBIT_SND_CONNECT |
+				   		1L<<CFGBIT_SND_DISCONNECT |
+				   		1L<<CFGBIT_SND_ROUTINGINSTRUCTIONS |
+				   		1L<<CFGBIT_SND_TARGETREACHED |
+				   		1L<<CFGBIT_SHOW_POINT_OF_COMPASS |
+				   		1L<<CFGBIT_AREAS |
+				   		1L<<CFGBIT_ROUTE_AUTO_RECALC;
+
+			// Auto-reconnect GPS
+			setBtAutoRecon(true);
+			// make MOVE_UP map the default
+			setProjTypeDefault(ProjFactory.MOVE_UP);
+			//#debug info
+			logger.info("Default config for version 3+ set.");
+		}			
+		if(configVersionStored < 5) {				
+			cfgBits |=	1L<<CFGBIT_PLACETEXTS |
+						1L<<CFGBIT_SPEEDALERT_SND |
+						1L<<CFGBIT_ROUTE_HIDE_QUIET_ARROWS |
+						1L<<CFGBIT_SHOW_SCALE_BAR |
+						1L<<CFGBIT_SPEEDALERT_VISUAL;
+						setMinRouteLineWidth(3);
+						// Speed alert tolerance
+						setSpeedTolerance(5);
+			//#debug info
+			logger.info("Default config for version 5+ set.");
+		}			
+		if(configVersionStored < 6) {
+			setAutoRecenterToGpsMilliSecs(30000);
+			cfgBits |=	1L<<CFGBIT_BACKLIGHT_ONLY_WHILE_GPS_STARTED;
+			logger.info("Default config for version 6+ set.");
+		}
+
+		setCfgBits(cfgBits, true);
+	}
+
 	private final static String sanitizeString(String s) {
 		if (s == null) {
 			return "!null!";
