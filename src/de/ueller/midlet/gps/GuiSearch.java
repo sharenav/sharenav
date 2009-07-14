@@ -31,7 +31,7 @@ import de.ueller.midlet.gps.names.NumberCanon;
 import de.ueller.midlet.gps.tile.SearchNames;
 
 public class GuiSearch extends Canvas implements CommandListener,
-		GpsMidDisplayable {
+		GpsMidDisplayable, CompletionListener {
 
 	private final static Logger logger = Logger.getInstance(GuiSearch.class,Logger.DEBUG);
 
@@ -642,6 +642,15 @@ public class GuiSearch extends Canvas implements CommandListener,
 		pointerYDragged = y;
 		pointerXPressed = x;
 		pointerYPressed = y;
+
+		/** if clicking above or below the search results show a text field to enter the search string */
+		int clickIdx = (y - scrollOffset)/fontSize;
+		if ( (state == STATE_MAIN || state == STATE_FAVORITES)
+			&& (clickIdx < 0 || clickIdx >= result.size() || ((clickIdx + 1) * fontSize + scrollOffset) > getHeight())
+		) {
+			GuiNameEnter gne = new GuiNameEnter(this, "Search for names starting with:", searchCanon.toString(), 20);
+			gne.show();
+		}
 	}
 	
 	public void pointerReleased(int x, int y) {
@@ -665,6 +674,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		}
 		potentialDoubleClick = true;
 		cursor = clickIdx;
+		
 		repaint();
 	}
 	
@@ -807,5 +817,16 @@ public class GuiSearch extends Canvas implements CommandListener,
 		result2.removeAllElements();
 		scrollOffset = 0;
 	}
-		
+	public void actionCompleted(String strResult) {
+		if (strResult != null) {		
+			searchCanon.setLength(0);
+			searchCanon.append(strResult);
+			carret = searchCanon.length();
+			if (carret > 1) {
+				state = STATE_MAIN;			
+			}
+			reSearch();
+		}
+		show();
+	}		
 }
