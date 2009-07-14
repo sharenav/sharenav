@@ -1066,43 +1066,43 @@ public class Configuration {
 		}
 	}
 	
+	private static String getPhoneModel() {
+		try {
+			return System.getProperty("microedition.platform");
+		} catch (RuntimeException re) {
+			/**
+			 * Some phones throw exceptions if trying to access properties that don't
+			 * exist, so we have to catch these and just ignore them.
+			 */
+		} catch (Exception e) {
+			/**
+			 * See above 
+			 */
+		}
+		return "";
+	}
+	
 	private static long getDefaultDeviceBacklightMethodMask() {
 		// a list of return codes for microedition.platform can be found at:
 		// http://www.club-java.com/TastePhone/J2ME/MIDP_Benchmark.jsp
 
 		//#if polish.api.nokia-ui || polish.api.min-siemapi
-			String phoneModel = null;
-			try {
-				phoneModel = System.getProperty("microedition.platform");
-			} catch (RuntimeException re) {
-				/**
-				 * Some phones throw exceptions if trying to access properties that don't
-				 * exist, so we have to catch these and just ignore them.
-				 */
-				return 0;
-			} catch (Exception e) {
-				/**
-				 * See above 
-				 */
-				return 0;
-			}
-			if (phoneModel != null) {
-				// determine default backlight method for devices from the wiki
-				if (phoneModel.startsWith("Nokia") ||
-					phoneModel.startsWith("SonyEricssonC") ||
-					phoneModel.startsWith("SonyEricssonK550")
-				) {
-					return 1L<<CFGBIT_BACKLIGHT_NOKIA;			
-				} else if (phoneModel.startsWith("SonyEricssonK750") ||
-					phoneModel.startsWith("SonyEricssonW800")
-				) {
-					return 1L<<CFGBIT_BACKLIGHT_NOKIAFLASH;
-				} else if (phoneModel.endsWith("(NSG)") || 
-				    phoneModel.startsWith("SIE")
-				) {
-					return 1<<CFGBIT_BACKLIGHT_SIEMENS;
-		        } 			
-			}
+			String phoneModel = getPhoneModel();
+			// determine default backlight method for devices from the wiki
+			if (phoneModel.startsWith("Nokia") ||
+				phoneModel.startsWith("SonyEricssonC") ||
+				phoneModel.startsWith("SonyEricssonK550")
+			) {
+				return 1L<<CFGBIT_BACKLIGHT_NOKIA;			
+			} else if (phoneModel.startsWith("SonyEricssonK750") ||
+				phoneModel.startsWith("SonyEricssonW800")
+			) {
+				return 1L<<CFGBIT_BACKLIGHT_NOKIAFLASH;
+			} else if (phoneModel.endsWith("(NSG)") || 
+			    phoneModel.startsWith("SIE")
+			) {
+				return 1<<CFGBIT_BACKLIGHT_SIEMENS;
+	        } 			
 		//#endif
 		return 0;
 	}
