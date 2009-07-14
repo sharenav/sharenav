@@ -135,22 +135,22 @@ scale alias 1: zoomed out 21x
 		<soundFile src="rab.amr"/>
 	</sound>
 	<sound name="1ST">
-		<soundFile src="1ST.amr"/>
+		<soundFile src="1st.amr"/>
 	</sound>
 	<sound name="2ND">
-		<soundFile src="2ND.amr"/>
+		<soundFile src="2nd.amr"/>
 	</sound>
 	<sound name="3RD">
-		<soundFile src="3RD.amr"/>
+		<soundFile src="3rd.amr"/>
 	</sound>
 	<sound name="4TH">
-		<soundFile src="4TH.amr"/>
+		<soundFile src="4th.amr"/>
 	</sound>
 	<sound name="5TH">
-		<soundFile src="5TH.amr"/>
+		<soundFile src="5th.amr"/>
 	</sound>
 	<sound name="6TH">
-		<soundFile src="6TH.amr"/>
+		<soundFile src="6th.amr"/>
 	</sound>
 	<sound name="RABEXIT">
 		<soundFile src="rabexit.amr"/>
