@@ -2392,6 +2392,12 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		}
 	}
 
+	
+	// recreate the icon menu to reflect changes in the setup or save memory
+	public void resetIconMenu() {
+		traceIconMenu = null;
+	}
+	
 	// interface for received actions from the IconMenu GUI
 	public void performIconAction(int actionId) {
 		updateLastUserActionTime();
@@ -2399,7 +2405,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		if (GpsMid.getInstance().needsFreeingMemory()) {
 			//#debug info
 			logger.info("low mem: Freeing traceIconMenu");
-			traceIconMenu = null;
+			resetIconMenu();
 		}
 		if (actionId != IconActionPerformer.BACK_ACTIONID) {
 			commandAction(CMDS[actionId], null);

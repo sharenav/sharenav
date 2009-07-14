@@ -160,6 +160,8 @@ public class Configuration {
 	public final static byte CFGBIT_ICONMENUS = 53;
 	// bit 54: Flag whether iconMenus should be fullscreen
 	public final static byte CFGBIT_ICONMENUS_FULLSCREEN = 54;
+	// bit 55: Flag whether iconMenus should be optimized for routing
+	public final static byte CFGBIT_ICONMENUS_ROUTING_OPTIMIZED = 55;
 	
 	/**
 	 * These are the database record ids for each configuration option

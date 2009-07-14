@@ -491,9 +491,10 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		sizeOpts = new ChoiceGroup("Size Options:", Choice.MULTIPLE, sizes ,null);
 		menuDisplayOptions.append(sizeOpts);
 
-		String [] guis = new String[2];
+		String [] guis = new String[3];
 		guis[0] = "use icon menu";
 		guis[1] = "fullscreen icon menu";
+		guis[2] = "optimise for Routing";
 		guiOpts = new ChoiceGroup("Gui:", Choice.MULTIPLE, guis ,null);
 		menuDisplayOptions.append(guiOpts);
 		
@@ -764,12 +765,15 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 						true); 
 				Configuration.setCfgBitState(Configuration.CFGBIT_POI_LABELS_LARGER, sizeOpts.isSelected(0), true);
 				Configuration.setCfgBitState(Configuration.CFGBIT_WPT_LABELS_LARGER, sizeOpts.isSelected(1), true);
+				Trace trace = Trace.getInstance();
 				if (guiOpts.isSelected(0) != Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS)) {
-					Trace.getInstance().removeAllCommands();
+					trace.removeAllCommands();
 					Configuration.setCfgBitState(Configuration.CFGBIT_ICONMENUS, guiOpts.isSelected(0), true);
-					Trace.getInstance().addAllCommands();					
+					trace.addAllCommands();					
 				}
 				Configuration.setCfgBitState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN, guiOpts.isSelected(1), true);
+				Configuration.setCfgBitState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED, guiOpts.isSelected(2), true);
+				trace.resetIconMenu();
 				Configuration.setDetailBoost(gaugeDetailBoost.getValue(), true); 
 				
 				String secs=tfAutoRecenterToGpsSecs.getString(); 
@@ -973,6 +977,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				sizeOpts.setSelectedIndex(1, Configuration.getCfgBitState(Configuration.CFGBIT_WPT_LABELS_LARGER));
 				guiOpts.setSelectedIndex(0, Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS, true));
 				guiOpts.setSelectedIndex(1, Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN, true));
+				guiOpts.setSelectedIndex(2, Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED, true));
 				SingleTile.newPOIFont();
 				WaypointsTile.useNewWptFont();
 				gaugeDetailBoost.setValue(Configuration.getDetailBoostDefault());

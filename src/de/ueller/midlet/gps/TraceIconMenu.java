@@ -21,7 +21,9 @@ public class TraceIconMenu extends IconMenuWithPagesGUI {
 	LayoutElement iconToggleRoute; 
 	LayoutElement iconOnlineInfo; 
 	LayoutElement iconAddPOI; 
-	LayoutElement iconEditWay; 
+	LayoutElement iconEditWay;
+	
+	private boolean optimizedForRouting = false;
 	
 	public TraceIconMenu(GpsMidDisplayable parent, IconActionPerformer actionPerformer) {
 		super(parent, actionPerformer);
@@ -43,26 +45,14 @@ public class TraceIconMenu extends IconMenuWithPagesGUI {
 
 							mp.createAndAddIcon("Exit", "tunnel_end", Trace.EXIT_CMD);
 
-		// Recordings
-		mp = createAndAddMenuPage(this.getWidth() >= 176 ?" Recordings ":" Rec ", 3, 4);
-		iconToggleTrackRec=	mp.createAndAddIcon("Rec Track", "target", Trace.START_RECORD_CMD);
-							mp.createAndAddIcon("Save Wpt", "target", Trace.SAVE_WAYP_CMD);
-							mp.createAndAddIcon("Enter Wpt", "target", Trace.ENTER_WAYP_CMD);
-
-							mp.createAndAddIcon("Tracks", "restaurant", Trace.MANAGE_TRACKS_CMD);
-							mp.createAndAddIcon("Waypoints", "mark", Trace.MAN_WAYP_CMD);
-
-							mp.createAndAddIcon("Photo", "museum", Trace.CAMERA_CMD);
-		iconToggleAudioRec=	mp.createAndAddIcon("Voice", "pub", Trace.TOGGLE_AUDIO_REC);
-		
-							mp.createAndAddIcon("Send SMS", "telephone", Trace.SEND_MESSAGE_CMD);
-		
-		// Route
-		mp = createAndAddMenuPage(" Route ", 3, 4);
-		iconToggleRoute=	mp.createAndAddIcon("Calculate", "motorway", Trace.ROUTING_TOGGLE_CMD);
-							mp.createAndAddIcon("Set target", "target", Trace.SETTARGET_CMD);
-							mp.createAndAddIcon("Clear target", "parking", Trace.CLEARTARGET_CMD);
-
+		// determine preferred ordering
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED)) {
+			createAndAddRoutingMenu();
+			createAndAddRecordingMenu();
+		} else {
+			createAndAddRecordingMenu();			
+			createAndAddRoutingMenu();
+		}
 		// Osm
 		mp = createAndAddMenuPage(" Osm ", 3, 4);
 		iconEditWay =		mp.createAndAddIcon("Edit way", "motorway", Trace.RETRIEVE_XML);
@@ -79,6 +69,35 @@ public class TraceIconMenu extends IconMenuWithPagesGUI {
 		//#endif
 	}
 	
+	
+	private void createAndAddRecordingMenu() {
+		IconMenuPage mp;
+		// Recordings
+		mp = createAndAddMenuPage(this.getWidth() >= 176 ?" Recordings ":" Rec ", 3, 4);
+		iconToggleTrackRec=	mp.createAndAddIcon("Rec Track", "target", Trace.START_RECORD_CMD);
+							mp.createAndAddIcon("Save Wpt", "target", Trace.SAVE_WAYP_CMD);
+							mp.createAndAddIcon("Enter Wpt", "target", Trace.ENTER_WAYP_CMD);
+
+							mp.createAndAddIcon("Tracks", "restaurant", Trace.MANAGE_TRACKS_CMD);
+							mp.createAndAddIcon("Waypoints", "mark", Trace.MAN_WAYP_CMD);
+
+							mp.createAndAddIcon("Photo", "museum", Trace.CAMERA_CMD);
+		iconToggleAudioRec=	mp.createAndAddIcon("Voice", "pub", Trace.TOGGLE_AUDIO_REC);
+		
+							mp.createAndAddIcon("Send SMS", "telephone", Trace.SEND_MESSAGE_CMD);		
+	}
+
+
+	private void createAndAddRoutingMenu() {
+		IconMenuPage mp;
+		// Route
+		mp = createAndAddMenuPage(" Route ", 3, 4);
+		iconToggleRoute=	mp.createAndAddIcon("Calculate", "motorway", Trace.ROUTING_TOGGLE_CMD);
+							mp.createAndAddIcon("Set target", "target", Trace.SETTARGET_CMD);
+							mp.createAndAddIcon("Clear target", "parking", Trace.CLEARTARGET_CMD);		
+	}
+
+
 	public void paint(Graphics g) {
 		Trace trace = Trace.getInstance();
 		// for commands that can be toggled, fill in the current text and/or corresponding actionId before painting
