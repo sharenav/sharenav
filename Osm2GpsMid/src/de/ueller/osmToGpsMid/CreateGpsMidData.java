@@ -13,6 +13,8 @@
 package de.ueller.osmToGpsMid;
 
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -438,14 +440,44 @@ public class CreateGpsMidData {
 			if (! (new File(mediaPath).exists())) {
 				// check if file exists in current directory + "/png"
 				if (! (new File(additionalSrcPath+"/"+mediaPath).exists())) {
-					// if not check if we can use the internal image file
-					if (!(new File(path + outputMediaName).exists())) {	
-						// append media name if first media or " ,"+media name for the following ones
-						sbCopiedMedias.append( (sbCopiedMedias.length()==0)?mediaPath:", " + mediaPath);				
-						sbCopiedMedias.append("(ERROR: file not found)");
-						mediaInclusionErrors++;
+					// if not check if we can use the version included in Osm2GpsMid.jar
+					if (CreateGpsMidData.class.getResource("/media/" + mediaPath) == null) {
+						// if not check if we can use the internal image file
+						if (!(new File(path + outputMediaName).exists())) {	
+							// append media name if first media or " ,"+media name for the following ones
+							sbCopiedMedias.append( (sbCopiedMedias.length()==0)?mediaPath:", " + mediaPath);				
+							sbCopiedMedias.append("(ERROR: file not found)");
+							mediaInclusionErrors++;
+						}
+						return outputMediaName;
+					} else {
+						/**
+						 * Copy the file from Osm2GpsMid.jar to the destination directory
+						 */
+						try {
+							BufferedInputStream bis = new BufferedInputStream(
+									CreateGpsMidData.class.getResourceAsStream("/media/"
+													+ mediaPath));
+							BufferedOutputStream bos = new BufferedOutputStream(
+									new FileOutputStream(destDir + outputMediaName));
+							byte[] buf = new byte[4096];
+							while (bis.available() > 0) {
+								int len = bis.read(buf);
+								bos.write(buf, 0, len);
+							}
+							bos.flush();
+							bos.close();
+							bis.close();
+
+						} catch (IOException ioe) {
+							ioe.printStackTrace();
+							sbCopiedMedias.append((sbCopiedMedias.length() == 0) ? mediaPath
+											: ", " + mediaPath);
+							sbCopiedMedias.append("(ERROR: file not found)");
+							mediaInclusionErrors++;
+						}
+						return outputMediaName;
 					}
-					return outputMediaName;
 				}
 				else {
 					// otherwise use from additional directory

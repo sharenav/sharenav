@@ -94,7 +94,9 @@
 			<include name="GpsMid*.jar"/>
    			<include name="GpsMid*.zip"/>
 		</fileset>
-   		<fileset dir="${resources.dir}"/>
+   		<fileset dir="${resources.dir}">
+   			<include name="*.jar" />
+   		</fileset>	
    	</delete>	
    </target>
 
@@ -131,7 +133,9 @@
 		</fileset>
         <fileset dir="${resources.dir}">
      		<include name="*.jar" />
+        	<include name="*.xml" />
      		<include name="version.properties" />
+        	<include name="**/*.png" />
 		</fileset>
      	 <fileset dir="${properties.dir}">
      		<include name="**/*.properties" />
@@ -139,7 +143,6 @@
      	 </fileset>
 	 <fileset file="style-file.xml" />
    	 <fileset file="style-file.dtd" />
-   	 <fileset file="high-style.zip" />
       </jar>
    </target>
 

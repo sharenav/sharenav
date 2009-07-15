@@ -299,8 +299,13 @@ public class Configuration {
 			try {
 				legendInputStream = new FileInputStream(styleFile);
 			} catch (IOException e) {
-				styleFile = "/style-file.xml";
-				System.out.println("Warning: Style file (" + styleFile + ") not found. Using internal one!"); 
+				System.out.println("Trying internal styleFile " + styleFile);
+				if (getClass().getResource("/"+styleFile) != null) {
+					styleFile = "/"+styleFile;
+				} else {
+					System.out.println("Warning: Style file (" + styleFile + ") not found. Using default one!");
+					styleFile = "/style-file.xml";
+				}
 				legendInputStream = getClass().getResourceAsStream(styleFile);
 			}
 		}
