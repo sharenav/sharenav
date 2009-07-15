@@ -648,7 +648,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		if ( (state == STATE_MAIN || state == STATE_FAVORITES)
 			&& (clickIdx < 0 || clickIdx >= result.size() || ((clickIdx + 1) * fontSize + scrollOffset) > getHeight())
 		) {
-			GuiNameEnter gne = new GuiNameEnter(this, "Search for names starting with:", searchCanon.toString(), 20);
+			GuiNameEnter gne = new GuiNameEnter(this, null, "Search for names starting with:", searchCanon.toString(), 20);
 			gne.show();
 		}
 	}

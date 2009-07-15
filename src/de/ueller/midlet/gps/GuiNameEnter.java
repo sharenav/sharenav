@@ -25,9 +25,18 @@ public class GuiNameEnter extends Form implements CommandListener {
 
 	public GuiNameEnter(CompletionListener compListener, String title, String defaultName, int maxLen) {
 		super(title);
+		createForm(compListener, "Name:", defaultName, maxLen);
+	}
+
+	public GuiNameEnter(CompletionListener compListener, String title, String prompt, String defaultName, int maxLen) {
+		super(title);
+		createForm(compListener, prompt, defaultName, maxLen);
+	}
+
+	private void createForm(CompletionListener compListener, String prompt, String defaultName, int maxLen) {
 		this.compListener = compListener;
 
-		fldName = new TextField("Name:", defaultName, maxLen, TextField.ANY);
+		fldName = new TextField(prompt, defaultName, maxLen, TextField.ANY);
 		
 		try {
 			// Set up this Displayable to listen to command events
@@ -38,9 +47,12 @@ public class GuiNameEnter extends Form implements CommandListener {
 			this.append(fldName);
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
+		}				
 	}
 
+	
+	
+	
 	public void commandAction(Command cmd, Displayable displayable) {
 		CompletionListener compListener=null;
 		if (cmd == saveCmd) {
