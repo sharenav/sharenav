@@ -37,6 +37,9 @@ public class Tile {
 	public Collection<Node> nodes=new ArrayList<Node>();
 	int idxMin=Integer.MAX_VALUE;
 	int idxMax=0;
+	
+	private static int minConnectionId = 0;
+	
 	public static final byte TYPE_MAP = 1;
 	public static final byte TYPE_CONTAINER = 2;
 	public static final byte TYPE_FILETILE = 4;
@@ -345,6 +348,8 @@ public class Tile {
 			FileOutputStream fo = new FileOutputStream(path+"/t"+zl+fid+".d");
 			DataOutputStream nds = new DataOutputStream(new BufferedOutputStream(fo));
 			nds.writeShort(routeNodes.size());
+			cds.writeInt(minConnectionId);
+
 			// count how many turn restrictions we will write for this tile
 			short countTurnRestrictions=0;
 			TurnRestriction turnWrite=null;
@@ -371,6 +376,7 @@ public class Tile {
 
 				byte routeNodeWayFlags = 0;
 				for (Connection c : n.connected){
+					minConnectionId ++;
 					routeNodeWayFlags |= c.wayTravelModes;
 					cds.writeInt(c.to.id);
 					// only write out wayTravelModes flag if the midlet has multiple travel modes
