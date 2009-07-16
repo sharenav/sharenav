@@ -85,9 +85,16 @@ public class Routing implements Runnable {
 		
 		while (!(nodes.isEmpty())) {
 			currentNode = (GraphNode) nodes.firstElement();
-			if(closed.get(currentNode.state.toId) != null) { // to avoid having to remove
-				nodes.removeElementAt(0);// improved nodes from nodes
-				continue;
+			if (checkForTurnRestrictions) {
+				if(closed.get(currentNode.state.connectionId) != null) { // to avoid having to remove
+					nodes.removeElementAt(0);// improved nodes from nodes
+					continue;
+				}
+			} else {
+				if(closed.get(currentNode.state.toId) != null) { // to avoid having to remove
+					nodes.removeElementAt(0);// improved nodes from nodes
+					continue;
+				}
 			}
 			if (!(currentNode.total == bestTotal)) {
 				if (setBest(currentNode.total,currentNode.costs)) {
@@ -215,26 +222,48 @@ public class Routing implements Runnable {
 					continue;
 				}
 				Connection nodeSuccessor=successor[cl];
+				// do not try a u-turn back to the route node we are coming from
+				if (currentNode.parent != null && nodeSuccessor.toId == currentNode.parent.state.toId) {
+					continue;
+				}
+
 				int dTurn=currentNode.fromBearing-nodeSuccessor.startBearing;
 				int turnCost=getTurnCost(dTurn);
 				successorCost = currentNode.costs + nodeSuccessor.cost+turnCost;
 				GraphNode openNode = null;
 				GraphNode theNode = null;
-				GraphNode closedNode =  (GraphNode) closed.get(nodeSuccessor.toId);
-				if (closedNode == null) {
-					openNode = (GraphNode) open.get(nodeSuccessor.toId);
+				GraphNode closedNode;
+				if (checkForTurnRestrictions) {
+					closedNode =  (GraphNode) closed.get(nodeSuccessor.connectionId);
+					if (closedNode == null) {
+						openNode = (GraphNode) open.get(nodeSuccessor.connectionId);
+					}
+				} else {
+					closedNode =  (GraphNode) closed.get(nodeSuccessor.toId);
+					if (closedNode == null) {
+						openNode = (GraphNode) open.get(nodeSuccessor.toId);
+					}
 				}
 				theNode = (openNode != null) ? openNode : closedNode;
 				// in open or closed				
 				if (theNode != null) {
 					if (successorCost < theNode.costs) {
 						if (closedNode != null) {
-							open.put(nodeSuccessor.toId, theNode);
-							closed.remove(nodeSuccessor.toId);
+							if (checkForTurnRestrictions) {
+								open.put(nodeSuccessor.connectionId, theNode);
+								closed.remove(nodeSuccessor.connectionId);
+							} else {
+								open.put(nodeSuccessor.toId, theNode);
+								closed.remove(nodeSuccessor.toId);
+							}
 						} else {
 							int dist = theNode.distance;
 							theNode = new GraphNode(nodeSuccessor, currentNode, successorCost, dist, currentNode.fromBearing);
-							open.put(nodeSuccessor.toId, theNode); 
+							if (checkForTurnRestrictions) {
+								open.put(nodeSuccessor.connectionId, theNode); 
+							} else {
+								open.put(nodeSuccessor.toId, theNode);
+							}
 						} 
 						theNode.costs = successorCost;
 						theNode.total = theNode.costs + theNode.distance;
@@ -248,14 +277,23 @@ public class Routing implements Runnable {
 					GraphNode newNode;
 					estimation = estimate(currentNode.state,nodeSuccessor, target);
 					newNode = new GraphNode(nodeSuccessor, currentNode, successorCost, estimation, currentNode.fromBearing);
-					open.put(nodeSuccessor.toId, newNode);
+					if (checkForTurnRestrictions) {
+						open.put(nodeSuccessor.connectionId, newNode);
+					} else {
+						open.put(nodeSuccessor.toId, newNode);
+					}
 //					parent.getRouteNodes().addElement(new RouteHelper(newNode.state.to.lat,newNode.state.to.lon,"t"+expanded));
 //					evaluated++;
 					children.addElement(newNode);
 				}
 			}
-			open.remove(currentNode.state.toId);
-			closed.put(currentNode.state.toId, currentNode);
+			if (checkForTurnRestrictions) {
+				open.remove(currentNode.state.connectionId);
+				closed.put(currentNode.state.connectionId, currentNode);
+			} else {
+				open.remove(currentNode.state.toId);
+				closed.put(currentNode.state.toId, currentNode);
+			}
 			nodes.removeElementAt(0);
 			addToNodes(children); // update nodes
 		}
@@ -481,7 +519,7 @@ public class Routing implements Runnable {
 					if (! w.isOneDirectionOnly() ) { // if no against oneway rule applies
 //						parent.getRouteNodes().addElement(new RouteHelper(rn.lat,rn.lon,"next back"));
 						// TODO: fill in bearings and cost
-						Connection initialState=new Connection(rn,0,(byte)0,(byte)0);
+						Connection initialState=new Connection(rn,0,(byte)0,(byte)0, -1);
 						GraphNode firstNode=new GraphNode(initialState,null,0,0,(byte)0);
 						open.put(initialState.toId, firstNode);
 						nodes.addElement(firstNode);
@@ -505,7 +543,7 @@ public class Routing implements Runnable {
 				rn=findNextRouteNode(nearestSegment, startNode.lat, startNode.lon, fromMark.nodeLat,fromMark.nodeLon);
 				if (rn != null) {
 					// TODO: fill in bearings and cost
-					Connection initialState=new Connection(rn,0,(byte)0,(byte)0);
+					Connection initialState=new Connection(rn,0,(byte)0,(byte)0, -2);
 					GraphNode firstNode=new GraphNode(initialState,null,0,0,(byte)0);
 					open.put(initialState.toId, firstNode);
 					nodes.addElement(firstNode);						
@@ -541,7 +579,7 @@ public class Routing implements Runnable {
 			if (! w.isOneDirectionOnly() ){ // if no against oneway rule applies
 				RouteNode nextNode = findNextRouteNode(nearestSeg, toMark.lat, toMark.lon, toMark.nodeLat, toMark.nodeLon);
 				// TODO: fill in bearings and cost
-				Connection newCon=new Connection(routeTo,0,(byte)0,(byte)0);
+				Connection newCon=new Connection(routeTo,0,(byte)0,(byte)0, -3);
 				tile.getRouteNode(nextNode.lat, nextNode.lon, nodeTile);
 				nodeTile.tile.addConnection(nextNode,newCon,bestTime);
 				/*
@@ -560,7 +598,7 @@ public class Routing implements Runnable {
 			}
 			RouteNode prefNode = findPrevRouteNode(nearestSeg - 1, toMark.lat, toMark.lon, toMark.nodeLat, toMark.nodeLon);
 			// TODO: fill in bearings and cost
-			Connection newCon=new Connection(routeTo,0,(byte)0,(byte)0);
+			Connection newCon=new Connection(routeTo,0,(byte)0,(byte)0, -4);
 			tile.getRouteNode(prefNode.lat, prefNode.lon, nodeTile);
 			nodeTile.tile.addConnection(prefNode,newCon,bestTime);
 			/*

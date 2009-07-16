@@ -425,6 +425,9 @@ public class RouteTile extends RouteBaseTile {
 		//#debug debug
 		logger.debug("getConnections in file " + "/c" + fileId + ".d");
 		DataInputStream cs=new DataInputStream(Configuration.getMapResource("/c" + fileId + ".d"));
+
+		int minConnectionId = cs.readInt();
+		
 		for (int in=0; in<nodes.length;in++){
 			RouteNode n=nodes[in];
 			int conSizeTravelMode=0;
@@ -432,6 +435,7 @@ public class RouteTile extends RouteBaseTile {
 			Connection[] cons=new Connection[conSize];
 			for (int i = 0; i<conSize;i++){
 				Connection c=new Connection();
+				c.connectionId = minConnectionId++;
 				int nodeId = cs.readInt();
 				// fill in TargetNode but only if in the same Tile
 				// don't store this costs a lot of memory this can taken from the cache if needed 
