@@ -1110,6 +1110,9 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					if (Configuration.isStopAllWhileRouteing()) {
 	  				   stopImageCollector();
 					}
+					// uncache the icon menu before routing
+					uncacheIconMenu();
+					
 					RouteInstructions.resetOffRoute(route, center);
 					logger.info("Routing source: " + source);
 					routeNodes=new Vector();
@@ -2394,18 +2397,18 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 
 	
 	// recreate the icon menu to reflect changes in the setup or save memory
-	public void resetIconMenu() {
+	public void uncacheIconMenu() {
 		traceIconMenu = null;
 	}
 	
 	// interface for received actions from the IconMenu GUI
 	public void performIconAction(int actionId) {
 		updateLastUserActionTime();
-		// when we are low on memory do not cache the icon menu (including scaled images)
-		if (GpsMid.getInstance().needsFreeingMemory()) {
+		// when we are low on memory or during route calculation do not cache the icon menu (including scaled images)
+		if (routeCalc || GpsMid.getInstance().needsFreeingMemory()) {
 			//#debug info
-			logger.info("low mem: Freeing traceIconMenu");
-			resetIconMenu();
+			logger.info("low mem: Uncaching traceIconMenu");
+			uncacheIconMenu();
 		}
 		if (actionId != IconActionPerformer.BACK_ACTIONID) {
 			commandAction(CMDS[actionId], null);
