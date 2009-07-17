@@ -39,14 +39,18 @@ public class IconMenuPage extends LayoutManager {
 		this.numCols = numCols;
 		this.numRows = numRows;
 		this.actionPerformer = actionPerformer;
-		this.rememberEleId = 0;
-		this.currentRow = rememberEleId / numCols;
-		this.currentCol = rememberEleId % numCols;
+		setCursor(rememberEleId);
 		// divide the available region into a grid making the the number of icon columns and rows fit
 		gridHor = 100 / numCols;
 		gridVer = 100 / numRows;
 	}
 
+	public void setCursor(int eleId) {
+		this.currentRow = eleId / numCols;
+		this.currentCol = eleId % numCols;
+		rememberEleId = eleId;
+	}
+	
 	public LayoutElement createAndAddIcon(String label, String imageName, int actionId) {
 		LayoutElement e = createIcon(label, imageName, actionId);
 		return e;

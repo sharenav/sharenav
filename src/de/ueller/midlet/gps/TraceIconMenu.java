@@ -23,6 +23,10 @@ public class TraceIconMenu extends IconMenuWithPagesGUI {
 	LayoutElement iconAddPOI; 
 	LayoutElement iconEditWay;
 	
+	private static int rememberedEleId = 0;
+	private static int rememberedTabNr = 0;
+	
+	
 	private boolean optimizedForRouting = false;
 	
 	public TraceIconMenu(GpsMidDisplayable parent, IconActionPerformer actionPerformer) {
@@ -67,8 +71,9 @@ public class TraceIconMenu extends IconMenuWithPagesGUI {
 		//#if not polish.api.osm-editing
 		iconEditWay.makeImageGreyed();
 		//#endif
+		
+		setActiveTabAndCursor(rememberedTabNr, rememberedEleId);
 	}
-	
 	
 	private void createAndAddRecordingMenu() {
 		IconMenuPage mp;
@@ -97,8 +102,15 @@ public class TraceIconMenu extends IconMenuWithPagesGUI {
 							mp.createAndAddIcon("Clear target", "i_cleartarget", Trace.CLEARTARGET_CMD);		
 	}
 
+	private void rememberActiveTabAndEleNr() {
+		rememberedTabNr = tabNr;
+		rememberedEleId = getActiveMenuPage().rememberEleId;
+	}
+	
 
 	public void paint(Graphics g) {
+		rememberActiveTabAndEleNr();
+		
 		Trace trace = Trace.getInstance();
 		// for commands that can be toggled, fill in the current text and/or corresponding actionId before painting
 		iconToggleGps.setText( trace.isGpsConnected() ? "Stop GPS" : "Start GPS");

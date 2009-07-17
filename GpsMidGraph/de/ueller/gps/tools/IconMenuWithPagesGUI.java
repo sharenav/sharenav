@@ -40,7 +40,7 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 	private int maxX;
 	private int minY;
 	private int maxY;
-	private int tabNr = 0;
+	public int tabNr = 0;
 	private int leftMostTabNr = 0;
 	private boolean inTabRow = false;
 	/** LayoutManager for the prev / next direction buttons */
@@ -191,6 +191,11 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 		this.tabNr = tabNr;
 	}
 	
+	public void setActiveTabAndCursor(int tabNr, int eleId) {
+		setActiveTab(tabNr);
+		getActiveMenuPage().setCursor(eleId);	
+	}
+	
 	public void nextTab() {
 		if (tabNr < tabButtonManager.size() - 1) {
 			tabNr++;
@@ -214,7 +219,7 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 		setActiveTab(tabNr);
 	}
 	
-	private IconMenuPage getActiveMenuPage() {
+	public IconMenuPage getActiveMenuPage() {
 		 return (IconMenuPage) iconMenuPages.elementAt(tabNr);
 	}
 	
