@@ -773,7 +773,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				}
 				Configuration.setCfgBitState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN, guiOpts.isSelected(1), true);
 				Configuration.setCfgBitState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED, guiOpts.isSelected(2), true);
-				trace.resetIconMenu();
+				trace.uncacheIconMenu();
 				Configuration.setDetailBoost(gaugeDetailBoost.getValue(), true); 
 				
 				String secs=tfAutoRecenterToGpsSecs.getString(); 
