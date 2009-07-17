@@ -216,7 +216,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	private GuiTrip guiTrip = null;
 	private GuiSatellites guiSatellites = null;
 	private GuiWaypointSave guiWaypointSave = null;
-	private TraceIconMenu traceIconMenu = null;
+	private static TraceIconMenu traceIconMenu = null;
 	
 	private final static Logger logger = Logger.getInstance(Trace.class,Logger.DEBUG);
 
@@ -1110,9 +1110,6 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					if (Configuration.isStopAllWhileRouteing()) {
 	  				   stopImageCollector();
 					}
-					// uncache the icon menu before routing
-					uncacheIconMenu();
-					
 					RouteInstructions.resetOffRoute(route, center);
 					logger.info("Routing source: " + source);
 					routeNodes=new Vector();
@@ -2397,7 +2394,12 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 
 	
 	// recreate the icon menu to reflect changes in the setup or save memory
-	public void uncacheIconMenu() {
+	public static void uncacheIconMenu() {
+		//#mdebug trace
+		if (traceIconMenu != null) {
+			log.trace("uncaching TraceIconMenu");
+		}
+		//#enddebug
 		traceIconMenu = null;
 	}
 	

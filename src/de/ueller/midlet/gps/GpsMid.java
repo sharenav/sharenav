@@ -613,7 +613,6 @@ public class GpsMid extends MIDlet implements CommandListener {
 
 	public boolean needsFreeingMemory() {
 		Runtime runt = Runtime.getRuntime();
-		long freeMem = runt.freeMemory();
 		long totalMem = runt.totalMemory();
 		if (totalMem > phoneMaxMemory) {
 			phoneMaxMemory = totalMem;
@@ -627,30 +626,35 @@ public class GpsMid extends MIDlet implements CommandListener {
 			}
 			log.info("New phoneMaxMemory: " + phoneMaxMemory);
 		}
-		if ((freeMem < 30000)
-				|| ((totalMem >= phoneMaxMemory) && (((float) freeMem
-						/ (float) totalMem) < 0.10f))) {
-			//#debug trace
-			log.trace("Memory is low, trying GC");
-			System.gc();
+		long freeMem = 0;
+		for (int i=0; i < 3; i++) {
 			freeMem = runt.freeMemory();
 			if ((freeMem < 30000)
 				|| ((totalMem >= phoneMaxMemory) && (((float) freeMem
 						/ (float) totalMem) < 0.10f))) {
-				//#debug trace
-				log.trace("Memory is low, need freeing " + freeMem);
-				if (trace != null) {
-					trace.receiveMessage("Freeing mem");
+				switch(i) {
+					case 0:
+						//#debug trace
+						log.trace("Memory is low, trying GC");
+						break;
+					case 1:
+						//#debug trace
+						log.trace("Memory is low, freeing traceIconMenu");
+						Trace.uncacheIconMenu();
+						break;
+					case 2:
+						//#debug trace
+						log.trace("Memory is low, need freeing " + freeMem);
+						if (trace != null) {
+							trace.receiveMessage("Freeing mem");
+						}
+						return true;						
 				}
-				return true;
+				System.gc();
 			}
-			//#debug trace
-			log.trace("Enough memory after GC, no need to cleanup");
-			return false;
-		} else {
-			//#debug trace
-			log.trace("Enough memory, no need to cleanup");
-			return false;
 		}
+		//#debug trace
+		log.trace("Enough memory");
+		return false;
 	}
 }
