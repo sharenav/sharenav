@@ -293,9 +293,9 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 		keyPressed(keyCode);
 	}
 	
-	protected void pointerPressed(int x, int y) {
+	protected void pointerReleased(int x, int y) {
 		//#debug debug
-		logger.debug("pointer pressed at " + x + " " + y);
+		logger.debug("pointer released at " + x + " " + y);
 		int directionId = tabDirectionButtonManager.getElementIdAtPointer(x, y);
 		if (directionId == 0) {
 			prevTab();
