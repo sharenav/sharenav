@@ -53,7 +53,7 @@ import de.ueller.midlet.gps.tile.C;
 
 public class GpsMid extends MIDlet implements CommandListener {
 	/** */
-	private static GpsMid instance;
+	private volatile static GpsMid instance;
 	/** A menu list instance */
 	private static final String[] elements = { "Map", "Search", "Setup",
 			"About", "Log" };
@@ -102,7 +102,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 	 */
 	private long phoneMaxMemory;
 
-	private volatile Trace trace = null;
+	private static volatile Trace trace = null;
 
 	public GpsMid() {
 		String errorMsg = null;
@@ -139,27 +139,30 @@ public class GpsMid extends MIDlet implements CommandListener {
 		//
 		if (Configuration
 				.getCfgBitState(Configuration.CFGBIT_SKIPP_SPLASHSCREEN)) {
-			this.show();
+			showMainMenuScreen();
 		} else {
 			new Splash(this);
 		}
-
 		// RouteNodeTools.initRecordStore();
 		if (errorMsg != null) {
 			log.fatal(errorMsg);
 		}
 		
-		if (Configuration
-				.getCfgBitState(Configuration.CFGBIT_ICONMENUS)) {
-			if (trace == null) {
-				trace = trace.getInstance();
-			}
-			trace.resume();
-			trace.show();
-		}		
 		startBackLightTimer();
 	}
 
+	public static void showMainMenuScreen() {
+		if (trace == null) {
+			trace = trace.getInstance();
+		}
+		if (Configuration
+				.getCfgBitState(Configuration.CFGBIT_ICONMENUS)) {
+			trace.show();
+		} else {
+			GpsMid.getInstance().show();
+		}
+	}
+	
 	protected void destroyApp(boolean arg0) throws MIDletStateChangeException {
 		if (trace != null) {
 			trace.shutdown();
@@ -199,9 +202,9 @@ public class GpsMid extends MIDlet implements CommandListener {
 	protected void startApp() throws MIDletStateChangeException {
 		//#debug
 		System.out.println("Start GpsMid");
-		if (trace != null) {
-			trace.resume();
-		}
+//		if (trace != null) {
+//			trace.resume();
+//		}
 
 		//#if polish.api.contenthandler
 		try {
