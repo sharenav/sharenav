@@ -2397,7 +2397,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	public static void uncacheIconMenu() {
 		//#mdebug trace
 		if (traceIconMenu != null) {
-			log.trace("uncaching TraceIconMenu");
+			logger.trace("uncaching TraceIconMenu");
 		}
 		//#enddebug
 		traceIconMenu = null;
