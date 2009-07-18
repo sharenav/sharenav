@@ -157,7 +157,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 		}
 		if (Configuration
 				.getCfgBitState(Configuration.CFGBIT_ICONMENUS)) {
-			trace.show();
+			trace.showIconMenu();
 		} else {
 			GpsMid.getInstance().show();
 		}

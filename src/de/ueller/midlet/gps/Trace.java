@@ -1241,10 +1241,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			}
 
 			if (c == CMDS[ICON_MENU] && Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS)) {
-				if (traceIconMenu == null) {
-					traceIconMenu = new TraceIconMenu(this, this);
-				}
-				traceIconMenu.show();
+				showIconMenu();
 				return;
 			}
 			if (c == CMDS[SETUP_CMD]) {
@@ -2224,6 +2221,13 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		GpsMid.getInstance().show(this);
 		setFullScreenMode(Configuration.getCfgBitState(Configuration.CFGBIT_FULLSCREEN));
 		repaint();
+	}
+	
+	public void showIconMenu() {
+		if (traceIconMenu == null) {
+			traceIconMenu = new TraceIconMenu(this, this);
+		}
+		traceIconMenu.show();
 	}
 
 	public void locationDecoderEnd(String msg) {
