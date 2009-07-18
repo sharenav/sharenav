@@ -34,8 +34,9 @@ public class CellIdProvider {
 	private static final int CELLMETHOD_NONE = 0;
 	private static final int CELLMETHOD_SE = 1;
 	private static final int CELLMETHOD_S60FP2 = 2;
-	private static final int CELLMETHOD_SOCKET = 3;
-	private static final int CELLMETHOD_DEBUG = 4;
+	private static final int CELLMETHOD_MOTO = 3;
+	private static final int CELLMETHOD_SOCKET = 4;
+	private static final int CELLMETHOD_DEBUG = 5;
 	
 	private static CellIdProvider singelton;
 	
@@ -68,6 +69,24 @@ public class CellIdProvider {
 			}
 		} catch (Exception e) {
 			logger.silentexception("Retrieving CellID as a Sony-Ericsson failed", e);
+			//Nothing to do here, just fall through to the next method
+		}
+		try {
+			//#debug info
+			logger.info("Trying to see if Motorola method is available");
+			GSMCell cell = obtainMotoCell();
+			if (cell != null) {
+				logger.error("Motorola CellID is experimental and may be wrong. Please check data before uploading");
+				cellRetrievelMethod = CELLMETHOD_MOTO;
+				//#debug info
+				logger.info("   Yes, the Motorola method works");
+				return;
+			} else {
+				//#debug info
+				logger.info("   No, need to use a different method");
+			}
+		} catch (Exception e) {
+			logger.silentexception("Retrieving CellID as a Motorola failed", e);
 			//Nothing to do here, just fall through to the next method
 		}
 		try {
@@ -192,6 +211,53 @@ public class CellIdProvider {
 				//#debug info
 				logger.info("This Nokia device supports LAC! Please report this to GpsMid so that we can correctly use the LAC");
 			}
+		} catch (NumberFormatException nfe) {
+			logger.silentexception("Failed to parse cell-id (cellid: " + cellidS +
+					" mcc: " + mccS + " mnc: " + mncS + " lac: " + lacS, nfe);
+			return null;
+		}
+		
+		return cell;
+	}
+	
+	private GSMCell obtainMotoCell() {
+		String cellidS = null;
+		String mccS = null;
+		String mncS = null;
+		String lacS = null;
+		String imsi = null;
+		GSMCell cell = new GSMCell();
+		cellidS = System.getProperty("CellID");
+		lacS = System.getProperty("LocAreaCode");
+		
+		/*
+		 * This method of getting MNC and MCC seems
+		 * highly problematic, as it will produce
+		 * broken data when abroad or otherwise
+		 * roaming outside the home network.
+		 * I hope this won't cause corrupt data
+		 * 
+		 * Also, it seems that not all networks use
+		 * the same format for the imsi. Some have
+		 * a two digit mnc and some a three digit mnc
+		 * So this method will fail in some countries.
+		 */
+		imsi  = System.getProperty("IMSI");
+		if (imsi != null) {
+			mccS  = imsi.substring(0,3);
+			mncS  = imsi.substring(3,5);
+		}
+		if ((cellidS == null) || (mccS == null) || (mncS == null)) {
+			//#debug debug
+			logger.debug("No valid cell-id");
+			return null;
+		}
+		
+		try {
+			cell.cellID = Integer.parseInt(cellidS);
+			cell.mcc = (short) Integer.parseInt(mccS);
+			cell.mnc = (short) Integer.parseInt(mncS);
+			cell.lac = Integer.parseInt(lacS);
 		} catch (NumberFormatException nfe) {
 			logger.silentexception("Failed to parse cell-id (cellid: " + cellidS +
 					" mcc: " + mccS + " mnc: " + mncS + " lac: " + lacS, nfe);
@@ -389,6 +455,9 @@ public class CellIdProvider {
 
 		if (cellRetrievelMethod == CELLMETHOD_SE) {
 			cachedCell =  obtainSECell();
+		}
+		if (cellRetrievelMethod == CELLMETHOD_MOTO) {
+			cachedCell =  obtainMotoCell();
 		}
 		if (cellRetrievelMethod == CELLMETHOD_S60FP2) {
 			cachedCell = obtainS60FP2Cell();
