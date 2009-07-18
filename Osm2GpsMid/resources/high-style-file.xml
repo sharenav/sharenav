@@ -961,16 +961,6 @@ scale alias 1: zoomed out 21x
   				<routing with="bicycle" accessible="true" speed="15" />
   				<routing with="foot" accessible="true" speed="4" />  	
   			</Wvalue>
-	        <Wvalue name = "road" priority = "10">
-  				<description desc = "Yahoo! traced road"/>
-  				<namekey tag = "name"/>  				
-  				<isArea area = "false"/>
-  				<scale scale = "20"/>
-  				<textscale scale = "23"/>
-  				<lineColor color = "00B4B4B4" />
-  				<wayWidth width="3" />
-  				<routing accessible="true" speed="30" />  				  				
-  			</Wvalue>
   			<Wvalue name = "living_street" priority = "9">
   				<description desc = "living street"/>
   				<namekey tag = "name"/>
@@ -1060,16 +1050,6 @@ scale alias 1: zoomed out 21x
   				<routing with="bicycle" accessible="true" speed="10" />
   				<routing with="foot" accessible="true" speed="3" />  	
   			</Wvalue>
-	        <Wvalue name = "path" priority = "9">
-  				<description desc = "Path"/>
-  				<namekey tag = "name"/>  				
-  				<isArea area = "false"/>
-  				<scale scale = "20"/>
-  				<lineColor color = "00EFEAA0" />
-  				<lineStyle dashed = "true" />
-  				<wayWidth width="2" />
-  				<routing accessible="no" speed="10" />  				  				
-  			</Wvalue>
   			<Wvalue name = "service" priority = "9">
   				<description desc = "service"/>
   				<namekey tag = "name"/>  				
@@ -1128,16 +1108,6 @@ scale alias 1: zoomed out 21x
 				<routing with="motorcar" accessible="false" speed="5" />  	
 				<routing with="bicycle" accessible="false" speed="8" />
   				<routing with="foot" accessible="true" speed="3" />  	
-  			</Wvalue>
-	        <Wvalue name = "steps" priority = "7">
-  				<description desc = "Steps"/>
-  				<namekey tag = "name"/>  				
-  				<isArea area = "false"/>
-  				<scale scale = "20"/>
-  				<lineColor color = "00FFFFFF" />
-  				<lineStyle dashed = "false" />
-  				<wayWidth width="2" />
-  				<routing accessible="false" speed="3" />  				  				
   			</Wvalue>
   			<Wvalue name = "pedestrian" priority = "6">
   				<description desc = "pedestrian zone"/>
@@ -1795,20 +1765,20 @@ scale alias 1: zoomed out 21x
 	If restrictionPermit is missing or false, ways having tags matching the restrictionKey and restrictionValues become inaccessible for routing.
 	-->
 	<routeModes>
-		<routeMode modeName = "motorcar" maxPrepareMeters="500" maxInMeters="899" applyTurnRestrictions = "true">
+		<routeMode modeName = "motorcar" maxPrepareMeters="500" maxInMeters="899" maxEstimationSpeed="100" applyTurnRestrictions = "true">
 			<routeAccessRestriction restrictionKey = "motorcar" restrictionValues = "yes|designated" restrictionPermit = "true"/>
 			<routeAccessRestriction restrictionKey = "motorcar" restrictionValues = "no|private"/>
 			<routeAccessRestriction restrictionKey = "access" restrictionValues = "no|private"/>
 			<routeAccessRestriction restrictionKey = "vehicle" restrictionValues = "no|private"/>
 		</routeMode>
-		<routeMode modeName = "bicycle" maxPrepareMeters="75" maxInMeters="299" bicycleOppositeExceptions = "true">
+		<routeMode modeName = "bicycle" maxPrepareMeters="75" maxInMeters="299" maxEstimationSpeed="20" bicycleOppositeExceptions = "true">
 			<routeAccessRestriction restrictionKey = "bicycle" restrictionValues = "yes|designated" restrictionPermit = "true"/>
 			<routeAccessRestriction restrictionKey = "cycleway" restrictionValues = "track" restrictionPermit = "true"/>
 			<routeAccessRestriction restrictionKey = "bicycle" restrictionValues = "no|private"/>
 			<routeAccessRestriction restrictionKey = "access" restrictionValues = "no|private"/>
 			<routeAccessRestriction restrictionKey = "vehicle" restrictionValues = "no|private"/>
 		</routeMode>
-		<routeMode modeName = "foot" maxPrepareMeters="50" maxInMeters="125" againstAllOneWays = "true">
+		<routeMode modeName = "foot" maxPrepareMeters="50" maxInMeters="125" maxEstimationSpeed="4" againstAllOneWays = "true">
 			<routeAccessRestriction restrictionKey = "foot" restrictionValues = "yes|designated" restrictionPermit = "true"/>
 			<routeAccessRestriction restrictionKey = "foot" restrictionValues = "no|private"/>
 			<routeAccessRestriction restrictionKey = "access" restrictionValues = "no|private"/>

@@ -203,6 +203,7 @@ public class CreateGpsMidData {
 				dsi.writeUTF(TravelModes.getTravelMode(i).getName());
 				dsi.writeShort(TravelModes.getTravelMode(i).maxPrepareMeters);
 				dsi.writeShort(TravelModes.getTravelMode(i).maxInMeters);
+				dsi.writeShort(TravelModes.getTravelMode(i).maxEstimationSpeed);
 				dsi.writeByte(TravelModes.getTravelMode(i).travelModeFlags);
 			}
 			

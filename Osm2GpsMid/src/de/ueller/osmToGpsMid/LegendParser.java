@@ -509,6 +509,18 @@ public class LegendParser extends DefaultHandler{
 							System.out.println("Warning: no maxInMeters  for " + currentTravelMode.getName() + ". Using 899m." );
 							currentTravelMode.maxInMeters = 899;
 						}
+						String maxEstimationSpeed = atts.getValue("maxEstimationSpeed");
+						if (maxEstimationSpeed != null) {
+							try {
+								currentTravelMode.maxEstimationSpeed = (short) Integer.parseInt(maxEstimationSpeed);
+							} catch (NumberFormatException nfe) {
+								System.out.println("Invalid maxEstimationSpeed for " + currentTravelMode.getName());
+							}
+						} else {
+							System.out.println("Warning: no maxEstimationSpeed  for " + currentTravelMode.getName() + ". Using 150km/h." );
+							currentTravelMode.maxEstimationSpeed = 150;
+						}						
+						
 						String applyTurnRestrictions = atts.getValue("applyTurnRestrictions");
 						if (applyTurnRestrictions != null) {
 							if (applyTurnRestrictions.equalsIgnoreCase("true")) {

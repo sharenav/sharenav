@@ -20,6 +20,8 @@ public class TravelMode {
 	private	String	travelModeName;	
 	public short maxPrepareMeters;
 	public short maxInMeters;
+	/** maximum speed in km/h estimated by the route calculation */
+	public short maxEstimationSpeed = 0;
 	public long numRouteNodes=0;
 	public long numAreaCrossConnections=0;
 	public long numDualConnections=0;

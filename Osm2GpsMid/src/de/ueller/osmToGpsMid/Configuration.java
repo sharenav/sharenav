@@ -54,7 +54,7 @@ public class Configuration {
 	 * Specifies the format of the map on disk we are about to write
 	 * This constant must be in sync with GpsMid
 	 */
-	public final static short MAP_FORMAT_VERSION = 35;
+	public final static short MAP_FORMAT_VERSION = 36;
 
 	public final static int COLOR_MAP_BACKGROUND = 0;
 	public final static int COLOR_ROUTE_ROUTELINE = 1;
