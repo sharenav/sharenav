@@ -24,7 +24,7 @@ public class C {
 	 * Specifies the format of the map on disk we expect to see
 	 * This constant must be in sync with Osm2GpsMid
 	 */
-	public final static short MAP_FORMAT_VERSION = 35;
+	public final static short MAP_FORMAT_VERSION = 36;
 	
 	/** The waypoint format used in the RecordStore. See PositionMark.java. */
 	public final static short WAYPT_FORMAT_VERSION = 2;
@@ -165,6 +165,7 @@ public class C {
 			midletTravelModes[i].travelModeName = ds.readUTF();
 			midletTravelModes[i].maxPrepareMeters = ds.readShort();
 			midletTravelModes[i].maxInMeters = ds.readShort();
+			midletTravelModes[i].maxEstimationSpeed = ds.readShort();
 			midletTravelModes[i].travelModeFlags = ds.readByte();
 		}
 		

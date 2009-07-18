@@ -35,6 +35,9 @@ public class Routing implements Runnable {
 	private long nextUpdate;
 	private static volatile boolean stopRouting = false;
 	private float estimateFac = 1.40f;
+	/** maximum speed estimated in m/s */
+	private int maxEstimationSpeed;
+
 	private int oomCounter = 0;
 	private int expanded;
 	private RouteNode sourcePathSegNodeDummyRouteNode = new RouteNode();
@@ -70,6 +73,10 @@ public class Routing implements Runnable {
 		this.tile = (RouteBaseTile) tile[4];
 		this.tiles = tile;
 		estimateFac = (Configuration.getRouteEstimationFac() / 10f) + 0.8f;
+		maxEstimationSpeed = (int) ( (Configuration.getTravelMode().maxEstimationSpeed * 10) / 36);
+		if (maxEstimationSpeed == 0) {
+			maxEstimationSpeed = 1; // avoid division by zero
+		}
 		currentTravelMask = Configuration.getTravelMask();
 	}
 	
@@ -394,6 +401,13 @@ public class Routing implements Runnable {
 		}
 		int dist = MoreMath.dist(toNode.lat,toNode.lon,target.lat,target.lon);
 		if (bestTime) {
+//			if (true) {
+//				return (int) (((dist)+turnCost)*estimateFac);
+//			}
+			// if max estimated speed is smaller than 50 Km/h (14 m/s) use this for estimation 
+			if (maxEstimationSpeed < 14) {
+				   return (int) (((dist/ maxEstimationSpeed * 10)+turnCost)*estimateFac);				
+			}
 			if (dist > 100000){
 				   // estimate 100 Km/h (28 m/s) as average speed 
 				   return (int) (((dist/2.8f)+turnCost)*estimateFac);

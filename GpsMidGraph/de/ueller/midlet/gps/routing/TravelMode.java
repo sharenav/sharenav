@@ -18,6 +18,7 @@ public class TravelMode {
 	public String	travelModeName;	
 	public short maxPrepareMeters;
 	public short maxInMeters;
+	public short maxEstimationSpeed;
 	public byte travelModeFlags = 0;
 	
 	public final static byte AGAINST_ALL_ONEWAYS = 1;
