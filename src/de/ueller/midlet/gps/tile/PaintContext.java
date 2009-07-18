@@ -89,6 +89,8 @@ public class PaintContext extends ScreenContext {
 	public volatile int conWayNameIdx;
 	/** highlight way from this path node # */
 	public volatile short conWayFromAt;
+	/** a way id of the Way between the from and to-RouteNodes */
+	public volatile int conWayCombinedFileAndWayNr;
 	/** highlight way to this path node # */
 	public volatile short conWayToAt;
 	/** highlight way to node idx */

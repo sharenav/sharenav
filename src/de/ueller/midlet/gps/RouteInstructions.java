@@ -14,6 +14,7 @@ import javax.microedition.lcdui.Graphics;
 
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.tools.ImageTools;
+import de.ueller.gps.tools.intTree;
 import de.ueller.gps.tools.LayoutElement;
 import de.ueller.gpsMid.mapData.Tile;
 import de.ueller.midlet.gps.data.IntPoint;
@@ -118,6 +119,9 @@ public class RouteInstructions {
 
 	private static Trace trace;
 	private static Vector route;
+	public static intTree routeLineTree;
+	public static Boolean trueObject = new Boolean(true);
+	
 	private static PositionMark target;
 	
 	public volatile static int dstToRoutePath=1;
@@ -142,6 +146,7 @@ public class RouteInstructions {
 	}
 	
 	public void newRoute(Vector route, PositionMark target) {
+		RouteInstructions.routeLineTree = new intTree();
 		RouteInstructions.route = route;
 		RouteInstructions.target = target;
 		iPassedRouteArrow=0;
@@ -267,7 +272,6 @@ public class RouteInstructions {
 			//System.out.println(iConnFrom + ": " + iNumWaysWithThisNameConnected);
 			
 			connsFound++;
-			return cFrom.wayDistanceToNext;
 		} else {
 			// if we had no way match, look for an area match
 //			System.out.println("search AREA MATCH FOR: " + iConnFrom);
@@ -285,15 +289,23 @@ public class RouteInstructions {
 				cFrom.wayRouteFlags |= C.ROUTE_FLAG_AREA;				
 				System.out.println("AREA MATCH FOR: " + iConnFrom);
 				connsFound++;
-				return cFrom.wayDistanceToNext;
 			} else {
 				System.out.println("NO MATCH FOR: " + iConnFrom);
+				return 0f;
 			}
 		}
-		return 0f;
+		routeLineTree.put(pc.conWayCombinedFileAndWayNr, trueObject);
+		return cFrom.wayDistanceToNext;
 	}
 
-	
+	public static boolean isWayNrUsedByRouteLine(int wayNr) {
+		if (routeLineTree != null) {
+			if (routeLineTree.get(wayNr) != null) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	public void showRoute(PaintContext pc, PositionMark source, Node center) {
 		/*	PASSINGDISTANCE is the distance when a routing arrow

@@ -93,6 +93,8 @@ public class Way extends Entity{
 	public short maxLat;
 	public short maxLon;
 	
+	public short wayNrInFile = 0;
+	
 	/**
 	 * This is a buffer for the drawing routines
 	 * so that we don't have to allocate new
@@ -258,7 +260,6 @@ public class Way extends Entity{
 //				logger.error("wrong magic code after path");
 //			}			
 	}
-	
 	
 	public boolean isRoutableWay() {
 		return (wayRouteModes & Configuration.getTravelMask()) != 0;
@@ -486,6 +487,7 @@ public class Way extends Entity{
 //				}				
 				// this is currently the best path between searchCon1 and searchCon2
 				pc.conWayDistanceToNext = conWayRealDistance;
+				pc.conWayCombinedFileAndWayNr = getWayId(t);
 				pc.conWayFromAt = containsCon1At;
 				pc.conWayToAt = containsCon2At;
 				pc.conWayNameIdx= this.nameIdx;
@@ -529,6 +531,10 @@ public class Way extends Entity{
 				}	
 			}
 		}
+	}
+
+	private int getWayId(SingleTile t) {
+		return (t.fileId << 16) + wayNrInFile;
 	}
 
 	/**
@@ -643,50 +649,52 @@ public class Way extends Entity{
 			 * check if way matches to one or more route connections,
 			 * so we can highlight the route line parts 
 			 */  
-			Vector route=pc.trace.getRoute();
-			ConnectionWithNode c;
-			if (route!=null && route.size()!=0) { 
-				for (int i=0; i<route.size()-1; i++){
-					c = (ConnectionWithNode) route.elementAt(i);
-					if (c.wayNameIdx == this.nameIdx && this.isRoutableWay()) {
-						if (path.length > c.wayFromConAt && path.length > c.wayToConAt) {
-							int idx = path[c.wayFromConAt];
-							short searchCon1Lat = (short) ((c.to.lat - t.centerLat) * t.fpm);
-							if ( (Math.abs(t.nodeLat[idx] - searchCon1Lat) < 2) ) {
-								short searchCon1Lon = (short) ((c.to.lon - t.centerLon) * t.fpm);
-								if ( (Math.abs(t.nodeLon[idx] - searchCon1Lon) < 2) ) {
-									idx = path[c.wayToConAt];
-									ConnectionWithNode c2 = (ConnectionWithNode) route.elementAt(i+1);
-									searchCon1Lat = (short) ((c2.to.lat - t.centerLat) * t.fpm);
-									if ( (Math.abs(t.nodeLat[idx] - searchCon1Lat) < 2) ) {
-										searchCon1Lon = (short) ((c2.to.lon - t.centerLon) * t.fpm);
-										if ( (Math.abs(t.nodeLon[idx] - searchCon1Lon) < 2) ) {
-											// if we are not in highlight mode, flag that this layer contains a path segment to highlight 
-											if ((mode & Tile.OPT_HIGHLIGHT) == 0) {
-												pc.hlLayers |= (1<<layer);
-											}
-											
-											// set way highlight flag so we can quickly determine if this way contains a route line part
-											highlight = HIGHLIGHT_ROUTEPATH_CONTAINED;
-											/*
-											 *  flag the parts of the way as to be highlighted
-											 *  by putting in the index of the corresponding connection 
-											 */
-											short from = c.wayFromConAt;
-											short to = c.wayToConAt;
-											boolean isCircleway = isCircleway(t);
-											if (from > to  && !(isRoundAbout() || isCircleway) ) {
-												// swap direction
-												to = from;
-												from = c.wayToConAt;
-											}
-											
-											for (int n = from; n != to; n++) {
-												hl[n] = i;
-												if ( ( isRoundAbout() || isCircleway ) && n >= (path.length-1) )  {
-													n=-1; //  // if in roundabout at end of path continue at first node
-													if (to == (path.length-1) ) {
-														break;
+			if (RouteInstructions.isWayNrUsedByRouteLine(getWayId(t)) ) {
+				Vector route=pc.trace.getRoute();
+				ConnectionWithNode c;
+				if (route!=null && route.size()!=0) { 
+					for (int i=0; i<route.size()-1; i++){
+						c = (ConnectionWithNode) route.elementAt(i);
+						if (c.wayNameIdx == this.nameIdx) {
+							if (path.length > c.wayFromConAt && path.length > c.wayToConAt) {
+								int idx = path[c.wayFromConAt];
+								short searchCon1Lat = (short) ((c.to.lat - t.centerLat) * t.fpm);
+								if ( (Math.abs(t.nodeLat[idx] - searchCon1Lat) < 2) ) {
+									short searchCon1Lon = (short) ((c.to.lon - t.centerLon) * t.fpm);
+									if ( (Math.abs(t.nodeLon[idx] - searchCon1Lon) < 2) ) {
+										idx = path[c.wayToConAt];
+										ConnectionWithNode c2 = (ConnectionWithNode) route.elementAt(i+1);
+										searchCon1Lat = (short) ((c2.to.lat - t.centerLat) * t.fpm);
+										if ( (Math.abs(t.nodeLat[idx] - searchCon1Lat) < 2) ) {
+											searchCon1Lon = (short) ((c2.to.lon - t.centerLon) * t.fpm);
+											if ( (Math.abs(t.nodeLon[idx] - searchCon1Lon) < 2) ) {
+												// if we are not in highlight mode, flag that this layer contains a path segment to highlight 
+												if ((mode & Tile.OPT_HIGHLIGHT) == 0) {
+													pc.hlLayers |= (1<<layer);
+												}
+												
+												// set way highlight flag so we can quickly determine if this way contains a route line part
+												highlight = HIGHLIGHT_ROUTEPATH_CONTAINED;
+												/*
+												 *  flag the parts of the way as to be highlighted
+												 *  by putting in the index of the corresponding connection 
+												 */
+												short from = c.wayFromConAt;
+												short to = c.wayToConAt;
+												boolean isCircleway = isCircleway(t);
+												if (from > to  && !(isRoundAbout() || isCircleway) ) {
+													// swap direction
+													to = from;
+													from = c.wayToConAt;
+												}
+												
+												for (int n = from; n != to; n++) {
+													hl[n] = i;
+													if ( ( isRoundAbout() || isCircleway ) && n >= (path.length-1) )  {
+														n=-1; //  // if in roundabout at end of path continue at first node
+														if (to == (path.length-1) ) {
+															break;
+														}
 													}
 												}
 											}
@@ -695,9 +703,9 @@ public class Way extends Entity{
 								}
 							}
 						}
-					}
-				}				
-			}		
+					}				
+				}
+			}
 		}
 
 		/**

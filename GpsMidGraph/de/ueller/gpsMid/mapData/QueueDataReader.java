@@ -143,6 +143,7 @@ public class QueueDataReader extends QueueReader implements Runnable {
 					}
 					//#else
 					w=new Way(ds,flags,tt, layers, i);
+					w.wayNrInFile = (short) i;
 					//#endif
 					tmpWays[i]=w;
 					/**
