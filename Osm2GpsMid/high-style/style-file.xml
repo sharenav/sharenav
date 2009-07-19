@@ -898,7 +898,7 @@ scale alias 1: zoomed out 21x
   				<wayWidth width="6" />
   				<routing with="motorcar" accessible="true" speed="80" />
   				<routing with="bicycle" accessible="true" speed="10" />
-  				<routing with="foot" accessible="true" speed="2" />  	
+  				<routing with="foot" accessible="true" speed="4" />  	
   			</Wvalue>
   			<Wvalue name = "primary_link" priority = "10">
   				<description desc = "primary link"/>
@@ -910,7 +910,7 @@ scale alias 1: zoomed out 21x
   				<wayWidth width="6" />
   				<routing with="motorcar" accessible="true" speed="60" />
   				<routing with="bicycle" accessible="true" speed="10" />
-  				<routing with="foot" accessible="true" speed="2" />  	
+  				<routing with="foot" accessible="true" speed="4" />  	
   			</Wvalue>
   			<Wvalue name = "secondary" priority = "10">
   				<description desc = "secondary"/>
@@ -922,7 +922,7 @@ scale alias 1: zoomed out 21x
   				<wayWidth width="5" />
   				<routing with="motorcar" accessible="true" speed="80" />
   				<routing with="bicycle" accessible="true" speed="10" />
-  				<routing with="foot" accessible="true" speed="3" />  	
+  				<routing with="foot" accessible="true" speed="4" />  	
   			</Wvalue>
   			<Wvalue name = "tertiary" priority = "10">
   				<description desc = "tertiary"/>
@@ -946,7 +946,7 @@ scale alias 1: zoomed out 21x
   				<wayWidth width="4" />
   				<routing with="motorcar" accessible="true" speed="50" />
   				<routing with="bicycle" accessible="true" speed="15" />
-  				<routing with="foot" accessible="true" speed="3" />  	
+  				<routing with="foot" accessible="true" speed="4" />  	
   			</Wvalue>  			
   			<Wvalue name = "residential" priority = "10">
   				<description desc = "residential"/>
@@ -1023,7 +1023,7 @@ scale alias 1: zoomed out 21x
   				<wayWidth width="3" />
   				<routing with="motorcar" accessible="no" speed="5" />  	
   				<routing with="bicycle" accessible="true" speed="8" />
-  				<routing with="foot" accessible="true" speed="2" />  	
+  				<routing with="foot" accessible="true" speed="3" />  	
   			</Wvalue>
 			<Wvalue name = "track" priority = "9">
   				<specialisation key="tracktype" value="grade5"/>
@@ -1036,7 +1036,7 @@ scale alias 1: zoomed out 21x
   				<wayWidth width="3" />
   				<routing with="motorcar" accessible="no" speed="5" />  	
   				<routing with="bicycle" accessible="true" speed="8" />
-  				<routing with="foot" accessible="true" speed="2" />  	
+  				<routing with="foot" accessible="true" speed="3" />  	
   			</Wvalue>
 			<Wvalue name = "track" priority = "5">
   				<description desc = "track"/>
@@ -1071,7 +1071,7 @@ scale alias 1: zoomed out 21x
   				<wayWidth width="2" />
   				<routing with="motorcar" accessible="false" speed="5" />
 				<routing with="bicycle" accessible="true" speed="15" />
-  				<routing with="foot" accessible="false" speed="3" />  	
+  				<routing with="foot" accessible="false" speed="4" />  	
   			</Wvalue>
   			<Wvalue name = "footway" priority = "7">
   				<description desc = "footway"/>
@@ -1431,6 +1431,7 @@ scale alias 1: zoomed out 21x
 <!-- define routing speeds for abandoned aprons -->	
 				<routing with="motorcar" accessible="false" speed="30" />  	
 				<routing with="bicycle" accessible="false" speed="15" />				
+  			  	<routing with="foot" accessible="false" speed="4" />  	
   			</Wvalue>
   			<Wvalue name = "runway">
   				<description desc = "aeroway runway"/>
@@ -1442,7 +1443,7 @@ scale alias 1: zoomed out 21x
 <!-- define routing speeds for abandoned runways -->	
 				<routing with="motorcar" accessible="false" speed="30" />  	
 				<routing with="bicycle" accessible="false" speed="17" />				
-  			  	<routing with="foot" accessible="true" speed="4" />  	
+  			  	<routing with="foot" accessible="false" speed="4" />  	
 			</Wvalue>
   			<Wvalue name = "taxiway">
   				<description desc = "aeroway taxiway"/>
@@ -1454,7 +1455,7 @@ scale alias 1: zoomed out 21x
 <!-- define routing speeds for abandoned taxiways -->	
 				<routing with="motorcar" accessible="false" speed="30" />  	
 				<routing with="bicycle" accessible="false" speed="15" />				
-  			  	<routing with="foot" accessible="true" speed="4" />  	
+  			  	<routing with="foot" accessible="false" speed="4" />  	
   			</Wvalue>
   			<Wvalue name = "*">
   				<description desc = "other aeroway"/>
