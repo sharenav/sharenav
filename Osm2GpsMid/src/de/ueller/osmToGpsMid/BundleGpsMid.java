@@ -124,6 +124,10 @@ public class BundleGpsMid {
 
 			}
 
+			System.out.println("split long ways " + parser.getWays().size());
+			new SplitLongWays(parser);
+			System.out.println("splited long ways to " + parser.getWays().size());
+			
 			System.out.println("reorder Ways");
 			new CleanUpData(parser,c);
 
@@ -138,9 +142,7 @@ public class BundleGpsMid {
 			//				rd.write(target.getCanonicalPath());
 			//				cd.setRouteData(rd);
 			cd.setConfiguration(c);
-			System.out.println("split long ways " + parser.getWays().size());
-			new SplitLongWays(parser);
-			System.out.println("splited long ways to " + parser.getWays().size());
+
 			new CalcNearBy(parser);
 			cd.exportMapToMid();
 			//Drop parser to conserve Memory
