@@ -299,12 +299,7 @@ public class RouteInstructions {
 	}
 
 	public static boolean isWayIdUsedByRouteLine(int wayId) {
-		if (routeLineTree != null) {
-			if (routeLineTree.get(wayId) != null) {
-				return true;
-			}
-		}
-		return false;
+		return (routeLineTree != null && routeLineTree.get(wayId) != null);
 	}
 
 	public void showRoute(PaintContext pc, PositionMark source, Node center) {
