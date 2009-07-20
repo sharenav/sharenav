@@ -298,9 +298,9 @@ public class RouteInstructions {
 		return cFrom.wayDistanceToNext;
 	}
 
-	public static boolean isWayNrUsedByRouteLine(int wayNr) {
+	public static boolean isWayIdUsedByRouteLine(int wayId) {
 		if (routeLineTree != null) {
-			if (routeLineTree.get(wayNr) != null) {
+			if (routeLineTree.get(wayId) != null) {
 				return true;
 			}
 		}

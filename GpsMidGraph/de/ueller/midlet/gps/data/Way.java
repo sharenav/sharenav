@@ -649,7 +649,7 @@ public class Way extends Entity{
 			 * check if way matches to one or more route connections,
 			 * so we can highlight the route line parts 
 			 */  
-			if (RouteInstructions.isWayNrUsedByRouteLine(getWayId(t)) ) {
+			if (RouteInstructions.isWayIdUsedByRouteLine(getWayId(t)) ) {
 				Vector route=pc.trace.getRoute();
 				ConnectionWithNode c;
 				if (route!=null && route.size()!=0) { 
