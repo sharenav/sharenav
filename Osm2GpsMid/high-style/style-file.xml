@@ -799,16 +799,17 @@ scale alias 1: zoomed out 21x
 			<scale scale="20"/>
 			<textscale scale="23"/>
 		</value>
-		<value name ="power_wind">
-			<description desc = "Power wind"/>
+	</key>
+	<key tag = "power">
+		<value name ="generator">
+			<specialisation key="power_source" value="wind"/>
+			<description desc = "Wind generator"/>
 			<image src="power_wind.png"/>
 			<namekey tag="name"/>
 			<scale scale="20"/>
 			<textscale scale="23"/>
-		</value>	
-	</key>
+		</value>
 <!--
-	<key tag = "power">
 		<value name = "tower">
 			<description desc = "Power tower"/>
 			<image src="power_tower.png"/>
@@ -816,8 +817,8 @@ scale alias 1: zoomed out 21x
 			<scale scale="20"/>
 			<textscale scale="23"/>
 		</value>
-	</key>
 -->
+	</key>
 	<key tag="aeroway">
 	  <value name ="aerodrome">
 		<description desc = "Aerodrome"/>
