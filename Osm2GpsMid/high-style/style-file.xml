@@ -374,7 +374,7 @@ scale alias 1: zoomed out 21x
 		<textscale scale="23"/>
 	  </value>
 	  <value name ="fuel">
-		<description desc = "Refueling station"/>
+		<description desc = "Fuel station"/>
 		<image src="fuel.png"/>
 		<namekey tag="operator"/>
 		<namefallback tag="name"/>
@@ -412,6 +412,13 @@ scale alias 1: zoomed out 21x
 	  <value name ="bench">
 		<description desc = "Park bench"/>
 		<image src="bench.png"/>
+		<namekey tag="name"/>
+		<scale scale="20"/>
+		<textscale scale="23"/>
+	  </value>
+	  <value name ="shelter">
+		<description desc = "Shelter"/>
+		<image src="shelter.png"/>
 		<namekey tag="name"/>
 		<scale scale="20"/>
 		<textscale scale="23"/>
@@ -671,6 +678,13 @@ scale alias 1: zoomed out 21x
 	  <value name="attraction"  priority = "-10">
 		<description desc = "Tourism attraction"/>
 		<image src="attraction.png"/>
+		<namekey tag="name"/>
+		<scale scale="20"/>
+		<textscale scale="23"/>
+	  </value>
+	  <value name="viewpoint">
+		<description desc = "View point"/>
+		<image src="viewpoint.png"/>
 		<namekey tag="name"/>
 		<scale scale="20"/>
 		<textscale scale="23"/>
