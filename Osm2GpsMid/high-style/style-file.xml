@@ -259,10 +259,31 @@ scale alias 1: zoomed out 21x
 		<namekey tag="name"/>
 		<scale scale="20"/>
 		<textscale scale="23"/>
-	  </value>	
+	  </value>
+	  <value name ="college">
+		<description desc = "College"/>
+		<image src="college.png"/>
+		<namekey tag="name"/>
+		<scale scale="20"/>
+		<textscale scale="23"/>
+	  </value>
+	  <value name ="kindergarten">
+		<description desc = "Kindergarden"/>
+		<image src="kindergarten.png"/>
+		<namekey tag="name"/>
+		<scale scale="20"/>
+		<textscale scale="23"/>
+	  </value>
 	  <value name ="school">
 		<description desc = "School"/>
 		<image src="school.png"/>
+		<namekey tag="name"/>
+		<scale scale="20"/>
+		<textscale scale="23"/>
+	  </value>
+	  <value name ="university">
+		<description desc = "University"/>
+		<image src="college.png"/>
 		<namekey tag="name"/>
 		<scale scale="20"/>
 		<textscale scale="23"/>
