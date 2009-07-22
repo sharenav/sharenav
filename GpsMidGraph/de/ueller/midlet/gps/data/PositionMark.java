@@ -12,8 +12,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Date;
 
+import de.ueller.gps.data.Legend;
 import de.ueller.midlet.gps.Logger;
-import de.ueller.midlet.gps.tile.C;
 
 /** TODO: Explain: Difference between PositionMark and Position */
 public class PositionMark extends PersistEntity {
@@ -121,7 +121,7 @@ public class PositionMark extends PersistEntity {
 		ByteArrayOutputStream bs = new ByteArrayOutputStream();
 		DataOutputStream ds = new DataOutputStream(bs);
 		try {
-			ds.writeShort(C.WAYPT_FORMAT_VERSION);
+			ds.writeShort(Legend.WAYPT_FORMAT_VERSION);
 			if (displayName == null) {
 				ds.writeUTF("");
 			} else {

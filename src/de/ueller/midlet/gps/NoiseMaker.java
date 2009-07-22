@@ -6,8 +6,8 @@
 
 package de.ueller.midlet.gps;
 
+import de.ueller.gps.data.Legend;
 import de.ueller.midlet.gps.data.Proj2DMoveUp;
-import de.ueller.midlet.gps.tile.C;
 import de.ueller.midlet.gps.tile.SoundDescription;
 
 import java.io.InputStream;
@@ -269,7 +269,7 @@ public class NoiseMaker
 			return false;
 		}
 		
-		SoundDescription sDes = C.getSoundDescription(nextSoundName);
+		SoundDescription sDes = Legend.getSoundDescription(nextSoundName);
 		if (sDes != null) {
 			nextSoundFile = sDes.soundFile;
 			//#debug debug

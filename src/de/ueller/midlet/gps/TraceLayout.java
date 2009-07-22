@@ -4,13 +4,13 @@
  */
 
 package de.ueller.midlet.gps;
+import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.tools.LayoutElement;
 import de.ueller.gps.tools.LayoutManager;
 import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.ProjMath;
-import de.ueller.midlet.gps.tile.C;
 import de.ueller.midlet.gps.tile.PaintContext;
 
 import javax.microedition.lcdui.Font;
@@ -174,7 +174,7 @@ public class TraceLayout extends LayoutManager {
 				LayoutElement.FLAG_FONT_MEDIUM |
 				LayoutElement.FLAG_BACKGROUND_BOX
 		);
-		e.setBackgroundColor(C.COLORS[C.COLOR_MAP_BACKGROUND]);
+		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_MAP_BACKGROUND]);
 		e.setVRelative(ele[ROUTE_DISTANCE]);		
 		
 		e = ele[SPEEDING_SIGN]; addElement(e, 

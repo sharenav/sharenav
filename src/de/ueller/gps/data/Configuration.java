@@ -33,7 +33,6 @@ import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.ProjFactory;
 import de.ueller.midlet.gps.routing.TravelMode;
-import de.ueller.midlet.gps.tile.C;
 
 public class Configuration {
 	
@@ -936,7 +935,7 @@ public class Configuration {
 
 
 	public static TravelMode getTravelMode() {
-		return C.getTravelModes()[currentTravelModeNr];
+		return Legend.getTravelModes()[currentTravelModeNr];
 	}	
 	
 	public static int getTravelModeNr() {

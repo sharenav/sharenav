@@ -15,6 +15,7 @@ import javax.microedition.lcdui.Graphics;
 
 import net.sourceforge.jmicropolygon.PolygonGraphics;
 import de.enough.polish.util.DrawUtil;
+import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.Configuration;
 import de.ueller.gpsMid.mapData.SingleTile;
 import de.ueller.gpsMid.mapData.Tile;
@@ -24,7 +25,6 @@ import de.ueller.midlet.gps.RouteInstructions;
 import de.ueller.midlet.gps.routing.ConnectionWithNode;
 import de.ueller.midlet.gps.routing.TravelMode;
 import de.ueller.midlet.gps.Trace;
-import de.ueller.midlet.gps.tile.C;
 import de.ueller.midlet.gps.tile.PaintContext;
 import de.ueller.midlet.gps.tile.WayDescription;
 
@@ -225,7 +225,7 @@ public class Way extends Entity{
 		if ((f & WAY_FLAG_ONEWAY) == WAY_FLAG_ONEWAY) {
 			flags += WAY_ONEWAY;
 		}
-		if (((f & WAY_FLAG_AREA) == WAY_FLAG_AREA) || C.getWayDescription(type).isArea) {
+		if (((f & WAY_FLAG_AREA) == WAY_FLAG_AREA) || Legend.getWayDescription(type).isArea) {
 			if ((f & WAY_FLAG_AREA) == WAY_FLAG_AREA){
 				//#debug debug
 				logger.debug("Loading explicit Area: " + this);
@@ -389,7 +389,7 @@ public class Way extends Entity{
 							continue;
 						}
 						if ( (i + d) < path.length && (i + d) >= 0) {
-							short rfCurr = (short) C.getWayDescription(this.type).routeFlags;
+							short rfCurr = (short) Legend.getWayDescription(this.type).routeFlags;
 							// count bearings for entering / leaving the motorway. We don't need to give bearing instructions if there's only one motorway alternative at the connection
 							if (RouteInstructions.isEnterMotorway(pc.searchConPrevWayRouteFlags, rfCurr)
 								||
@@ -482,8 +482,8 @@ public class Way extends Entity{
 //					String name1=null, name2=null;
 //					if (pc.conWayNameIdx != -1) name1=Trace.getInstance().getName(pc.conWayNameIdx);
 //					if (this.nameIdx != -1) name2=Trace.getInstance().getName(this.nameIdx);
-//					System.out.println("REPLACE " + pc.conWayDistanceToNext + "m (" + C.getWayDescription(pc.conWayType).description + " " + (name1==null?"":name1) + ")");
-//					System.out.println("WITH " + conWayRealDistance + "m (" + C.getWayDescription(this.type).description + " " + (name2==null?"":name2) + ")");
+//					System.out.println("REPLACE " + pc.conWayDistanceToNext + "m (" + Legend.getWayDescription(pc.conWayType).description + " " + (name1==null?"":name1) + ")");
+//					System.out.println("WITH " + conWayRealDistance + "m (" + Legend.getWayDescription(this.type).description + " " + (name2==null?"":name2) + ")");
 //				}				
 				// this is currently the best path between searchCon1 and searchCon2
 				pc.conWayDistanceToNext = conWayRealDistance;
@@ -492,11 +492,11 @@ public class Way extends Entity{
 				pc.conWayToAt = containsCon2At;
 				pc.conWayNameIdx= this.nameIdx;
 				pc.conWayType = this.type;
-				short routeFlags = (short) C.getWayDescription(this.type).routeFlags; 
-				if (isRoundAbout()) routeFlags += C.ROUTE_FLAG_ROUNDABOUT;
-				if (isTunnel()) routeFlags += C.ROUTE_FLAG_TUNNEL;
-				if (isBridge()) routeFlags += C.ROUTE_FLAG_BRIDGE;
-				if (isOneway()) routeFlags += C.ROUTE_FLAG_COMING_FROM_ONEWAY;
+				short routeFlags = (short) Legend.getWayDescription(this.type).routeFlags; 
+				if (isRoundAbout()) routeFlags += Legend.ROUTE_FLAG_ROUNDABOUT;
+				if (isTunnel()) routeFlags += Legend.ROUTE_FLAG_TUNNEL;
+				if (isBridge()) routeFlags += Legend.ROUTE_FLAG_BRIDGE;
+				if (isOneway()) routeFlags += Legend.ROUTE_FLAG_COMING_FROM_ONEWAY;
 				pc.conWayRouteFlags = routeFlags;
 				
 				// substract way we are coming from from turn options with same name
@@ -577,8 +577,8 @@ public class Way extends Entity{
 			pc.conWayDistanceToNext = 0; // must be filled in later
 			pc.conWayNameIdx= this.nameIdx;
 			pc.conWayType = this.type;
-			short routeFlags = (short) C.getWayDescription(this.type).routeFlags; 
-			routeFlags |= C.ROUTE_FLAG_AREA;
+			short routeFlags = (short) Legend.getWayDescription(this.type).routeFlags; 
+			routeFlags |= Legend.ROUTE_FLAG_AREA;
 			pc.conWayRouteFlags = routeFlags;				
 		}
 	}
@@ -586,7 +586,7 @@ public class Way extends Entity{
 	
 	
 	public void processPath(PaintContext pc, SingleTile t, int mode, byte layer) {
-		WayDescription wayDesc = C.getWayDescription(type);
+		WayDescription wayDesc = Legend.getWayDescription(type);
 		/** width of the way to be painted */
 		int w = 0;
 		byte highlight=HIGHLIGHT_NONE;
@@ -610,24 +610,24 @@ public class Way extends Entity{
 		}
 
 		if ((mode & Tile.OPT_PAINT) > 0) {
-			byte om = C.getWayOverviewMode(type);
+			byte om = Legend.getWayOverviewMode(type);
 
-			switch (om & C.OM_MODE_MASK) {
-			case C.OM_SHOWNORMAL: 
+			switch (om & Legend.OM_MODE_MASK) {
+			case Legend.OM_SHOWNORMAL: 
 				// if not in Overview Mode check for scale
 				if (pc.scale > wayDesc.maxScale * Configuration.getDetailBoostMultiplier()) {			
 					return;
 				}
 				break;
-			case C.OM_HIDE: 
+			case Legend.OM_HIDE: 
 				if (wayDesc.hideable) {
 					return;
 				}
 				break;
 			}
 	
-			switch (om & C.OM_NAME_MASK) {
-				case C.OM_WITH_NAMEPART: 
+			switch (om & Legend.OM_NAME_MASK) {
+				case Legend.OM_WITH_NAMEPART: 
 					if (nameIdx == -1) return;
 					String name = pc.trace.getName(nameIdx);
 					if (name == null) return;
@@ -635,12 +635,12 @@ public class Way extends Entity{
 					 * The overview filter mode allows you to restrict showing ways if their name
 					 * does not match a substring. So check if this condition is fulfilled.
 					 */
-					if (name.toUpperCase().indexOf(C.get0Poi1Area2WayNamePart((byte) 2).toUpperCase()) == -1) return;
+					if (name.toUpperCase().indexOf(Legend.get0Poi1Area2WayNamePart((byte) 2).toUpperCase()) == -1) return;
 					break;
-				case C.OM_WITH_NAME: 
+				case Legend.OM_WITH_NAME: 
 					if (nameIdx == -1) return;
 					break;
-				case C.OM_NO_NAME: 
+				case Legend.OM_NO_NAME: 
 					if (nameIdx != -1) return;
 					break;
 			}
@@ -861,7 +861,7 @@ public class Way extends Entity{
 		//boolean info=false;
     	
     	// exit if not zoomed in enough
-    	WayDescription wayDesc = C.getWayDescription(type);
+    	WayDescription wayDesc = Legend.getWayDescription(type);
 		if (pc.scale > wayDesc.maxTextScale * Configuration.getDetailBoostMultiplier() ) {			
 			return;
 		}	
@@ -1092,7 +1092,7 @@ public class Way extends Entity{
 
     public void paintPathOnewayArrows(PaintContext pc, SingleTile t) {
     	// exit if not zoomed in enough
-    	WayDescription wayDesc = C.getWayDescription(type);
+    	WayDescription wayDesc = Legend.getWayDescription(type);
 		if (pc.scale > wayDesc.maxOnewayArrowScale /* * pc.config.getDetailBoostMultiplier() */ ) {			
 			return;
 		}	
@@ -1236,9 +1236,9 @@ public class Way extends Entity{
    	 * @return s<0 for right turn, s>0 for left turn. 0 for straight
    	 */
     public int getVectorTurn(int ax, int ay, int bx, int by, int cx, int cy) {
-  	   //    	 	s<0      C is left of AB
-  	   //         	s>0      C is right of AB
-  	   //         	s=0      C is on AB
+  	   //    	 	s<0      Legend is left of AB
+  	   //         	s>0      Legend is right of AB
+  	   //         	s=0      Legend is on AB
      
      	    return (ay-cy)*(bx-ax)-(ax-cx)*(by-ay);
      }    
@@ -1357,7 +1357,7 @@ public class Way extends Entity{
 			if (hl[i] != PATHSEG_DO_NOT_DRAW) {
 	//			if (mode == DRAW_AREA){
 				
-				WayDescription wayDesc = C.getWayDescription(type);
+				WayDescription wayDesc = Legend.getWayDescription(type);
 				setColor(pc,wayDesc,(hl[i] >= 0), (isCurrentRoutePath(pc, i)|| dividedHighlight), (highlight == HIGHLIGHT_TARGET));
 						
 					// when this is not render as lines (for the non-highlighted part of the way) or it is a highlighted part, draw as area
@@ -1533,11 +1533,11 @@ public class Way extends Entity{
 	} */
 
 	public void paintAsArea(PaintContext pc, SingleTile t) {
-		WayDescription wayDesc = C.getWayDescription(type);
+		WayDescription wayDesc = Legend.getWayDescription(type);
 		
-		byte om = C.getWayOverviewMode(type);
-		switch (om & C.OM_MODE_MASK) {
-			case C.OM_SHOWNORMAL: 
+		byte om = Legend.getWayOverviewMode(type);
+		switch (om & Legend.OM_MODE_MASK) {
+			case Legend.OM_SHOWNORMAL: 
 				// if not in Overview Mode check for scale
 				if (pc.scale > wayDesc.maxScale * Configuration.getDetailBoostMultiplier()) {			
 					return;
@@ -1546,23 +1546,23 @@ public class Way extends Entity{
 					return;
 				}
 				break;
-			case C.OM_HIDE: 
+			case Legend.OM_HIDE: 
 				if (wayDesc.hideable) {
 					return;
 				}
 				break;
 		}
-		switch (om & C.OM_NAME_MASK) {
-			case C.OM_WITH_NAMEPART: 
+		switch (om & Legend.OM_NAME_MASK) {
+			case Legend.OM_WITH_NAMEPART: 
 				if (nameIdx == -1) return;
 				String name = pc.trace.getName(nameIdx);
 				if (name == null) return;
-				if (name.toUpperCase().indexOf(C.get0Poi1Area2WayNamePart((byte) 1).toUpperCase()) == -1) return;
+				if (name.toUpperCase().indexOf(Legend.get0Poi1Area2WayNamePart((byte) 1).toUpperCase()) == -1) return;
 				break;
-			case C.OM_WITH_NAME: 
+			case Legend.OM_WITH_NAME: 
 				if (nameIdx == -1) return;
 				break;
-			case C.OM_NO_NAME: 
+			case Legend.OM_NO_NAME: 
 				if (nameIdx != -1) return;
 				break;
 		}
@@ -1594,7 +1594,7 @@ public class Way extends Entity{
 	}
 
 	public void paintAreaName(PaintContext pc, SingleTile t) {
-		WayDescription wayDesc = C.getWayDescription(type);
+		WayDescription wayDesc = Legend.getWayDescription(type);
 		if (pc.scale > wayDesc.maxTextScale * Configuration.getDetailBoostMultiplier() ) {			
 			return;
 		}		
@@ -1690,9 +1690,9 @@ public class Way extends Entity{
 		if (routing) {
 			// set the way(area)-color
 			if (isCurrentRoutePath) {
-				pc.g.setColor(C.COLORS[C.COLOR_ROUTE_ROUTELINE]);			// set this color if way is part of current route
+				pc.g.setColor(Legend.COLORS[Legend.COLOR_ROUTE_ROUTELINE]);			// set this color if way is part of current route
 			} else {
-				pc.g.setColor(C.COLORS[C.COLOR_ROUTE_PRIOR_ROUTELINE]);		// set this color if way was part of current route
+				pc.g.setColor(Legend.COLORS[Legend.COLOR_ROUTE_PRIOR_ROUTELINE]);		// set this color if way was part of current route
 			}
 		} else if (highlight) {		// way is highlighted as target for routing
 			pc.g.setColor(255,50,50);						
@@ -1702,13 +1702,13 @@ public class Way extends Entity{
 		}
 	}
 	public void setColor(PaintContext pc) {		
-		WayDescription wayDesc = C.getWayDescription(type);
+		WayDescription wayDesc = Legend.getWayDescription(type);
 		pc.g.setStrokeStyle(wayDesc.getGraphicsLineStyle());
 		pc.g.setColor(wayDesc.lineColor);
 	}
 
 	public int getWidth(PaintContext pc) {
-		WayDescription wayDesc = C.getWayDescription(type);
+		WayDescription wayDesc = Legend.getWayDescription(type);
 		return wayDesc.wayWidth;
 	}
 
@@ -1719,9 +1719,9 @@ public class Way extends Entity{
 		
 		if (routing){
 			if (dividedHighlight) {
-				pc.g.setColor(C.COLORS[C.COLOR_ROUTE_ROUTELINE_BORDER]);
+				pc.g.setColor(Legend.COLORS[Legend.COLOR_ROUTE_ROUTELINE_BORDER]);
 			} else {
-				pc.g.setColor(C.COLORS[C.COLOR_ROUTE_PRIOR_ROUTELINE_BORDER]);
+				pc.g.setColor(Legend.COLORS[Legend.COLOR_ROUTE_PRIOR_ROUTELINE_BORDER]);
 			}
 		} else if (highlight){
 				pc.g.setColor(255,50,50);
@@ -1733,7 +1733,7 @@ public class Way extends Entity{
 
 	public void setBorderColor(PaintContext pc) {
 		pc.g.setStrokeStyle(Graphics.SOLID);
-		WayDescription wayDesc = C.getWayDescription(type);
+		WayDescription wayDesc = Legend.getWayDescription(type);
 		pc.g.setColor(wayDesc.boardedColor);
 	}
 	
@@ -1812,6 +1812,6 @@ public class Way extends Entity{
 	}
 	
 	public String toString() {
-		return "Way " + Trace.getInstance().getName(nameIdx) + " type: " +  C.getWayDescription(type).description;
+		return "Way " + Trace.getInstance().getName(nameIdx) + " type: " +  Legend.getWayDescription(type).description;
 	}
 }

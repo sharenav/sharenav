@@ -16,12 +16,12 @@ import javax.microedition.lcdui.Graphics;
 
 import java.util.Vector;
 
+import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.tools.IconActionPerformer;
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.GpsMidDisplayable;
 import de.ueller.midlet.gps.Logger;
-import de.ueller.midlet.gps.tile.C;
 import de.ueller.gps.tools.IconMenuPage;
 
 
@@ -89,24 +89,24 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 				LayoutElement.FLAG_BACKGROUND_BORDER |
 				LayoutElement.FLAG_FONT_SMALL
 		);					
-		ePrevTab.setBackgroundColor(C.COLORS[C.COLOR_ICONMENU_TABBUTTON_BORDER]);
-		ePrevTab.setColor(C.COLORS[C.COLOR_ICONMENU_TABBUTTON_TEXT]);
+		ePrevTab.setBackgroundColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_BORDER]);
+		ePrevTab.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_TEXT]);
 		ePrevTab.setText( " < ");
 		eNextTab = tabDirectionButtonManager.createAndAddElement(
 				LayoutElement.FLAG_HALIGN_RIGHT | LayoutElement.FLAG_VALIGN_TOP |
 				LayoutElement.FLAG_BACKGROUND_BORDER |
 				LayoutElement.FLAG_FONT_SMALL
 		);
-		eNextTab.setBackgroundColor(C.COLORS[C.COLOR_ICONMENU_TABBUTTON_BORDER]);
-		eNextTab.setColor(C.COLORS[C.COLOR_ICONMENU_TABBUTTON_TEXT]);
+		eNextTab.setBackgroundColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_BORDER]);
+		eNextTab.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_TEXT]);
 		eNextTab.setText( " > ");
 		eStatusBar = tabDirectionButtonManager.createAndAddElement(
 				LayoutElement.FLAG_HALIGN_CENTER | LayoutElement.FLAG_VALIGN_BOTTOM |
 				LayoutElement.FLAG_BACKGROUND_BOX | LayoutElement.FLAG_BACKGROUND_FULL_WIDTH |
 				LayoutElement.FLAG_FONT_SMALL
 		);
-		eStatusBar.setColor(C.COLORS[C.COLOR_ICONMENU_TABBUTTON_TEXT]);
-		eStatusBar.setBackgroundColor(C.COLORS[C.COLOR_ICONMENU_TABBUTTON_BORDER]);
+		eStatusBar.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_TEXT]);
+		eStatusBar.setBackgroundColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_BORDER]);
 		eStatusBar.setText(" ");
 		
 		tabDirectionButtonManager.recalcPositions();
@@ -135,8 +135,8 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 				);
 				e.setHRelative(tabButtonManager.getElementAt(tabButtonManager.size() - 2));
 			}
-			e.setBackgroundColor(C.COLORS[C.COLOR_ICONMENU_TABBUTTON_BORDER]);
-			e.setColor(C.COLORS[C.COLOR_ICONMENU_TABBUTTON_TEXT]);
+			e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_BORDER]);
+			e.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_TEXT]);
 			e.setText(imp.title);
 		}
 		setActiveTab(tabNr);
@@ -329,7 +329,7 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 		//#debug debug
 		logger.debug("Painting Icon Menu");
 		// clean the Canvas
-		g.setColor(C.COLORS[C.COLOR_ICONMENU_BACKGROUND]);
+		g.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_BACKGROUND]);
 		g.fillRect(0, 0, getWidth(), getHeight());
 
 		if (recreateTabButtonsRequired) {
@@ -342,9 +342,9 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 			for (int i=0; i < tabButtonManager.size(); i++) {
 				e = tabButtonManager.getElementAt(i);
 				if (inTabRow && i == tabNr) {
-					e.setColor(C.COLORS[C.COLOR_ICONMENU_TABBUTTON_TEXT_HIGHLIGHT]); // when in tab button row draw the current tab button in yellow text
+					e.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_TEXT_HIGHLIGHT]); // when in tab button row draw the current tab button in yellow text
 				} else {
-					e.setColor(C.COLORS[C.COLOR_ICONMENU_TABBUTTON_TEXT]); // else draw it in white text				
+					e.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_TEXT]); // else draw it in white text				
 				}
 				if ( i >= leftMostTabNr) {
 					// set the button text, so the LayoutManager knows it has to be drawn
@@ -370,14 +370,14 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 		// draw the direction buttons
 		// set flags for directions buttons
 		if (tabNr == 0) {
-			ePrevTab.setColor(C.COLORS[C.COLOR_ICONMENU_TABBUTTON_TEXT_INACTIVE]); // grey
+			ePrevTab.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_TEXT_INACTIVE]); // grey
 		} else {
-			ePrevTab.setColor(C.COLORS[C.COLOR_ICONMENU_TABBUTTON_TEXT]); // white										
+			ePrevTab.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_TEXT]); // white										
 		}
 		if (tabNr == tabButtonManager.size() - 1) {
-			eNextTab.setColor(C.COLORS[C.COLOR_ICONMENU_TABBUTTON_TEXT_INACTIVE]); // grey
+			eNextTab.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_TEXT_INACTIVE]); // grey
 		} else {
-			eNextTab.setColor(C.COLORS[C.COLOR_ICONMENU_TABBUTTON_TEXT]); // white
+			eNextTab.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_TEXT]); // white
 		}
 		// clear the area of the right button as it might have been overdrawn by a tab button
 		g.setColor(0);

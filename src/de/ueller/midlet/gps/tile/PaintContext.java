@@ -7,18 +7,14 @@ package de.ueller.midlet.gps.tile;
 
 import java.util.Vector;
 import javax.microedition.lcdui.Graphics;
-import javax.microedition.lcdui.Image;
 
-import de.ueller.gps.data.Configuration;
+import de.ueller.gps.data.Legend;
 import de.ueller.gps.tools.intTree;
-import de.ueller.gpsMid.mapData.QueueDataReader;
-import de.ueller.gpsMid.mapData.QueueReader;
 import de.ueller.gpsMid.mapData.SingleTile;
 import de.ueller.midlet.gps.ScreenContext;
 import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.data.IntPoint;
 import de.ueller.midlet.gps.data.Node;
-import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.data.ProjMath;
 import de.ueller.midlet.gps.data.Way;
 
@@ -67,7 +63,7 @@ public class PaintContext extends ScreenContext {
 	public Images images;
 	public byte drawAreas=DRAW_AREAS_NO;
 	public boolean showTileOutline=false;
-	public C c;
+	public Legend legend;
 
 	/**
 	 * the the paint-process will store Street which is nearest to the center

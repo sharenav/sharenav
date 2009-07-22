@@ -5,10 +5,10 @@ import java.io.IOException;
 
 import javax.microedition.lcdui.Graphics;
 
+import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.Configuration;
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.Logger;
-import de.ueller.midlet.gps.tile.C;
 import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.routing.Connection;
@@ -418,7 +418,7 @@ public class RouteTile extends RouteBaseTile {
 	 * @throws IOException
 	 */
 	private void loadConnections(boolean bestTime) throws IOException {
-		int numTravelModes= C.getTravelModes().length;
+		int numTravelModes= Legend.getTravelModes().length;
 		int currentTravelMode = Configuration.getTravelModeNr();			
 			
 		connections = new Connection[nodes.length][];

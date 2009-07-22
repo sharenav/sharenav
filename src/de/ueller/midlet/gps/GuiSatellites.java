@@ -14,11 +14,11 @@ import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
+import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Position;
 import de.ueller.gps.data.Satelit;
 import de.ueller.midlet.gps.GpsMid;
-import de.ueller.midlet.gps.tile.C;
 
 public class GuiSatellites extends KeyCommandCanvas implements CommandListener,
 		GpsMidDisplayable, LocationMsgReceiver  {
@@ -67,7 +67,7 @@ public class GuiSatellites extends KeyCommandCanvas implements CommandListener,
 		int w = getWidth();
 		
 		// Clear the screen to the map background colour.
-		g.setColor(C.COLORS[C.COLOR_MAP_BACKGROUND]);
+		g.setColor(Legend.COLORS[Legend.COLOR_MAP_BACKGROUND]);
 		g.fillRect(0, 0, w, h);
 
 		int centerX = getWidth() / 2;

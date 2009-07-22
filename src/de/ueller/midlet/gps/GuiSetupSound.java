@@ -5,11 +5,8 @@ package de.ueller.midlet.gps;
  */
 
 import javax.microedition.lcdui.*;
-import java.io.InputStream;
-
 import de.ueller.gps.data.Configuration;
-import de.ueller.midlet.gps.tile.C;
-import de.ueller.midlet.gps.tile.SoundDescription;
+
 
 public class GuiSetupSound extends Form implements CommandListener {
 	private final Form	menuSetupSound = new Form("Sounds & Alerts");

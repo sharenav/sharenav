@@ -4,11 +4,11 @@
  */
 
 package de.ueller.gps.tools;
+import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.tools.LayoutElement;
 import de.ueller.gps.tools.LayoutManager;
 import de.ueller.gps.tools.IconActionPerformer;
-import de.ueller.midlet.gps.tile.C;
 import de.ueller.midlet.gps.Trace;
 
 import javax.microedition.lcdui.Graphics;
@@ -66,7 +66,7 @@ public class IconMenuPage extends LayoutManager {
 		);
 //		System.out.println("eleNr:" + eleNr + " x:" + (eleNr % numCols) + "y:" + (eleNr / numCols));
 		setIconPositionAndSize(eleNr, e);
-		e.setColor(C.COLORS[C.COLOR_ICONMENU_ICON_TEXT]);
+		e.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_ICON_TEXT]);
 		e.setActionID(actionId);
 		e.setText(label);
 		e.setImageNameOnly(imageName);
@@ -160,9 +160,9 @@ public class IconMenuPage extends LayoutManager {
 		// draw to boxes under the still to be drawn active icon to create a border
 		if (showCursor) {
 			e = (LayoutElement) this.elementAt(getEleId(currentCol, currentRow));		
-			g.setColor(C.COLORS[C.COLOR_ICONMENU_ICON_BORDER_HIGHLIGHT]);
+			g.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_ICON_BORDER_HIGHLIGHT]);
 			g.fillRect(e.left - 2, e.top - 2, e.right - e.left + 4, e.bottom - e.top + 4);
-			g.setColor(C.COLORS[C.COLOR_ICONMENU_BACKGROUND]);
+			g.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_BACKGROUND]);
 			g.fillRect(e.left, e.top, e.right - e.left, e.bottom - e.top);
 		}
 		// draw all icons

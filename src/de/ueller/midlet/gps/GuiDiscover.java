@@ -29,12 +29,12 @@ import javax.microedition.lcdui.ItemCommandListener;
 import javax.microedition.lcdui.TextField;
 
 
+import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.tools.IconActionPerformer;
 import de.ueller.gpsMid.mapData.SingleTile;
 import de.ueller.midlet.gps.data.Gpx;
 import de.ueller.midlet.gps.data.Projection;
-import de.ueller.midlet.gps.tile.C;
 import de.ueller.gpsMid.mapData.WaypointsTile;
 
 import de.ueller.gps.SECellID;
@@ -307,9 +307,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		menuRoutingOptions.addCommand(OK_CMD);
 		menuRoutingOptions.setCommandListener(this);
 
-		String travelModes[] = new String[C.getTravelModes().length];
+		String travelModes[] = new String[Legend.getTravelModes().length];
 		for (int i=0; i<travelModes.length; i++) {
-			travelModes[i]=C.getTravelModes()[i].travelModeName;
+			travelModes[i]=Legend.getTravelModes()[i].travelModeName;
 		}
 		routingTravelModesGroup = new ChoiceGroup("Routing for:", Choice.EXCLUSIVE, travelModes, null);
 		routingTravelModesGroup.setSelectedIndex(Configuration.getTravelModeNr(), true);

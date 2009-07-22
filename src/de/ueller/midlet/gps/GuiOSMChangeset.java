@@ -31,9 +31,9 @@ import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.TextField;
 
 import de.enough.polish.util.base64.Base64;
+import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.tools.HTTPhelper;
-import de.ueller.midlet.gps.tile.C;
 
 public class GuiOSMChangeset extends Form implements GpsMidDisplayable,
 		Runnable, CommandListener, UploadListener {
@@ -74,7 +74,7 @@ public class GuiOSMChangeset extends Form implements GpsMidDisplayable,
 		StringBuffer xml = new StringBuffer();
 		xml.append("<osm>\n<changeset>\n");
 		xml.append("<tag k=\"created_by\" v=\"GpsMid_"
-				+ C.getAppVersion() + "\"/>\n");
+				+ Legend.getAppVersion() + "\"/>\n");
 		xml.append("<tag k=\"comment\" v=\"" + HTTPhelper.escapeXML(comment) + "\" />\n");
 		xml.append("</changeset>\n</osm>\n");
 		return xml.toString();

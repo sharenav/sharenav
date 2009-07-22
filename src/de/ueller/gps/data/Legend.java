@@ -1,4 +1,4 @@
-package de.ueller.midlet.gps.tile;
+package de.ueller.gps.data;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -13,13 +13,15 @@ import javax.microedition.lcdui.Image;
  */
 
 //import de.ueller.gpsMid.mapData.QueueReader;
-import de.ueller.gps.data.Configuration;
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.names.Names;
 import de.ueller.midlet.gps.routing.TravelMode;
+import de.ueller.midlet.gps.tile.POIdescription;
+import de.ueller.midlet.gps.tile.SoundDescription;
+import de.ueller.midlet.gps.tile.WayDescription;
 
-public class C {
+public class Legend {
 	/**
 	 * Specifies the format of the map on disk we expect to see
 	 * This constant must be in sync with Osm2GpsMid
@@ -112,9 +114,9 @@ public class C {
 	
 	private static TravelMode midletTravelModes[];	
 	
-	private final static Logger logger=Logger.getInstance(C.class,Logger.TRACE);
+	private final static Logger logger=Logger.getInstance(Legend.class,Logger.TRACE);
 	
-	public C() throws IOException {
+	public Legend() throws IOException {
 		InputStream is = Configuration.getMapResource("/legend.dat");
 		
 		if (is == null) {
@@ -170,7 +172,7 @@ public class C {
 		}
 		
 		// If we do not have the travel mode stored defined in the record store in the midlet data, use the first one 
-		if (Configuration.getTravelModeNr() > C.getTravelModes().length-1) {
+		if (Configuration.getTravelModeNr() > Legend.getTravelModes().length-1) {
 			Configuration.setTravelMode(0);
 		}
 		

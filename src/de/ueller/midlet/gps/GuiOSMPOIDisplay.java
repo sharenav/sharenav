@@ -5,7 +5,7 @@
  * it under the terms of the GNU General Public License version 2 as published by
  * the Free Software Foundation.
  *
- * Copyright (C) 2009  Kai Krueger
+ * Copyright (c) 2009  Kai Krueger
  */
 //#if polish.api.osm-editing
 package de.ueller.midlet.gps;
@@ -18,6 +18,7 @@ import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.Image;
 
+import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.tools.HTTPhelper;
 import de.ueller.gpsMid.mapData.SingleTile;
@@ -28,7 +29,6 @@ import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.data.KeySelectMenuItem;
 import de.ueller.midlet.gps.data.OSMdataNode;
 import de.ueller.midlet.gps.names.NumberCanon;
-import de.ueller.midlet.gps.tile.C;
 import de.ueller.midlet.gps.tile.POIdescription;
 
 public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay implements KeySelectMenuListener{
@@ -160,7 +160,7 @@ public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay implements KeySelectMe
 		
 		if (c == OK_CMD) {
 			byte poiType = (byte)poiSelectionCG.getSelectedIndex();
-			String [] tags = C.getNodeOsmTags(poiType);
+			String [] tags = Legend.getNodeOsmTags(poiType);
 			for (int i = 0; i < tags.length/2; i++) {
 				osmentity.getTags().put(tags[i*2], tags[i*2 + 1]);
 			}
@@ -221,7 +221,7 @@ public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay implements KeySelectMe
 
 	public void itemSelected(KeySelectMenuItem item) {
 		POITSelectMenuItem poiType = (POITSelectMenuItem)item;
-		String [] tags = C.getNodeOsmTags(poiType.getIdx());
+		String [] tags = Legend.getNodeOsmTags(poiType.getIdx());
 		System.out.println("poiType: " + poiType + "  tags " + tags + " ed: " + osmentity);
 		if ((tags != null) && (osmentity != null)) {
 			for (int i = 0; i < tags.length/2; i++) {
@@ -238,8 +238,8 @@ public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay implements KeySelectMe
 		poiTypeForm.removeAll();
 		if (poiTypes == null) {
 			poiTypes = new Vector();
-			for (byte i = 1; i < C.getMaxType(); i++) {
-				KeySelectMenuItem menuItem = new POITSelectMenuItem(C.getNodeSearchImage(i),C.getNodeTypeDesc(i),i);
+			for (byte i = 1; i < Legend.getMaxType(); i++) {
+				KeySelectMenuItem menuItem = new POITSelectMenuItem(Legend.getNodeSearchImage(i),Legend.getNodeTypeDesc(i),i);
 				poiTypes.addElement(menuItem);
 			}
 		}

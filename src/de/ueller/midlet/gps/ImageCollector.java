@@ -3,6 +3,7 @@ package de.ueller.midlet.gps;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
+import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.tools.LayoutElement;
 import de.ueller.gpsMid.mapData.Tile;
@@ -13,7 +14,6 @@ import de.ueller.midlet.gps.data.ProjFactory;
 import de.ueller.midlet.gps.data.ProjMath;
 import de.ueller.midlet.gps.data.Projection;
 import de.ueller.midlet.gps.data.Way;
-import de.ueller.midlet.gps.tile.C;
 import de.ueller.midlet.gps.tile.Images;
 import de.ueller.midlet.gps.tile.PaintContext;
 import de.ueller.midlet.gps.tile.WayDescription;
@@ -59,7 +59,7 @@ public class ImageCollector implements Runnable {
 	public static volatile int createImageCount=0;
 	private final Trace tr;
 	
-	public ImageCollector(Tile[] t,int x,int y,Trace tr, Images i, C c) {
+	public ImageCollector(Tile[] t,int x,int y,Trace tr, Images i, Legend legend) {
 		super();
 		this.t=t;
 		this.tr = tr;
@@ -70,10 +70,10 @@ public class ImageCollector implements Runnable {
 		try {
 			Node n=new Node(2f,0f);
 			pc[0]=new PaintContext(tr, i);
-			pc[0].c = c;
+			pc[0].legend = legend;
 			pc[0].setP(ProjFactory.getInstance(n, 0, 1500, xSize, ySize));
 			pc[1]=new PaintContext(tr, i);
-			pc[1].c = c;
+			pc[1].legend = legend;
 			pc[1].setP(ProjFactory.getInstance(n, 0, 1500, xSize, ySize));
 
 		} catch (Exception e) {
@@ -133,7 +133,7 @@ public class ImageCollector implements Runnable {
 				// pcCollect.dataReader=nextSc.dataReader;
 				// cleans the screen
 				createPC.g = img[nextCreate].getGraphics();
-				createPC.g.setColor(C.COLORS[C.COLOR_MAP_BACKGROUND]);
+				createPC.g.setColor(Legend.COLORS[Legend.COLOR_MAP_BACKGROUND]);
 				createPC.g.fillRect(0, 0, xSize, ySize);
 //				createPC.g.setColor(0x00FF0000);
 //				createPC.g.drawRect(0, 0, xSize-1, ySize-1);
@@ -211,7 +211,7 @@ public class ImageCollector implements Runnable {
 							continue;
 						}
 					}
-					byte minTile = C.scaleToTile((int)(createPC.scale / boost));
+					byte minTile = Legend.scaleToTile((int)(createPC.scale / boost));
 					if ((minTile >= 3) && (t[3] != null)) {
 						t[3].paint(createPC,layersToRender[layer]);
 						Thread.yield();
@@ -384,7 +384,7 @@ public class ImageCollector implements Runnable {
 			if (wayForName.nameIdx != -1) {
 				name=screenPc.trace.getName(wayForName.nameIdx);
 			} else {
-				WayDescription wayDesc = C.getWayDescription(wayForName.type);
+				WayDescription wayDesc = Legend.getWayDescription(wayForName.type);
 				name = "(unnamed " + wayDesc.description + ")";
 			}
 			if (name == null){

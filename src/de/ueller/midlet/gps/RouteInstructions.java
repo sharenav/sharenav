@@ -12,6 +12,7 @@ import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.Graphics;
 
+import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.tools.ImageTools;
 import de.ueller.gps.tools.intTree;
@@ -30,7 +31,6 @@ import de.ueller.midlet.gps.routing.ConnectionWithNode;
 import de.ueller.midlet.gps.routing.RouteHelper;
 import de.ueller.midlet.gps.routing.RouteNode;
 import de.ueller.midlet.gps.routing.TravelMode;
-import de.ueller.midlet.gps.tile.C;
 import de.ueller.midlet.gps.tile.PaintContext;
 import de.ueller.midlet.gps.tile.WayDescription;
 
@@ -219,17 +219,17 @@ public class RouteInstructions {
 			cFrom.wayNameIdx = pc.conWayNameIdx;
 			cFrom.wayType = pc.conWayType;
 			cFrom.wayDistanceToNext = pc.conWayDistanceToNext;
-			cFrom.wayRouteFlags |=  (pc.conWayRouteFlags & ~C.ROUTE_FLAG_COMING_FROM_ONEWAY);
-			cTo.wayRouteFlags |= (pc.conWayRouteFlags & C.ROUTE_FLAG_COMING_FROM_ONEWAY);
+			cFrom.wayRouteFlags |=  (pc.conWayRouteFlags & ~Legend.ROUTE_FLAG_COMING_FROM_ONEWAY);
+			cTo.wayRouteFlags |= (pc.conWayRouteFlags & Legend.ROUTE_FLAG_COMING_FROM_ONEWAY);
 			pc.searchConPrevWayRouteFlags = cFrom.wayRouteFlags;
 			cFrom.numToRoutableWays = pc.conWayNumToRoutableWays;
 			cTo.wayConStartBearing = pc.conWayStartBearing;
 			cTo.wayConEndBearing = pc.conWayEndBearing;
 			if (Math.abs(cTo.wayConEndBearing - cTo.endBearing) > 3) {
-				cFrom.wayRouteFlags |= C.ROUTE_FLAG_INCONSISTENT_BEARING;				
+				cFrom.wayRouteFlags |= Legend.ROUTE_FLAG_INCONSISTENT_BEARING;				
 			}
 			if (Math.abs(cTo.wayConStartBearing - cTo.startBearing) > 3) {
-				cTo.wayRouteFlags |= C.ROUTE_FLAG_INCONSISTENT_BEARING;				
+				cTo.wayRouteFlags |= Legend.ROUTE_FLAG_INCONSISTENT_BEARING;				
 			}
 			
 //			System.out.println(iConnFrom + ": " + cTo.wayConStartBearing);
@@ -250,9 +250,9 @@ public class RouteInstructions {
 					) {
 						int iBearing = (int) (bearing) + 180;
 						if ((int) (cTo.wayConStartBearing) + 180 < iBearing) {
-							cFrom.wayRouteFlags |= C.ROUTE_FLAG_BEAR_LEFT;
+							cFrom.wayRouteFlags |= Legend.ROUTE_FLAG_BEAR_LEFT;
 						} else {
-							cFrom.wayRouteFlags |= C.ROUTE_FLAG_BEAR_RIGHT;							
+							cFrom.wayRouteFlags |= Legend.ROUTE_FLAG_BEAR_RIGHT;							
 						}
 					}
 				}				
@@ -267,7 +267,7 @@ public class RouteInstructions {
 				}
 			}
 			if (iNumWaysWithThisNameConnected > 1) {
-				cFrom.wayRouteFlags |= C.ROUTE_FLAG_LEADS_TO_MULTIPLE_SAME_NAMED_WAYS;
+				cFrom.wayRouteFlags |= Legend.ROUTE_FLAG_LEADS_TO_MULTIPLE_SAME_NAMED_WAYS;
 			}
 			//System.out.println(iConnFrom + ": " + iNumWaysWithThisNameConnected);
 			
@@ -286,7 +286,7 @@ public class RouteInstructions {
 				cFrom.wayNameIdx = pc.conWayNameIdx;
 				cFrom.wayType = pc.conWayType;
 				cFrom.wayDistanceToNext = pc.conWayDistanceToNext;
-				cFrom.wayRouteFlags |= C.ROUTE_FLAG_AREA;				
+				cFrom.wayRouteFlags |= Legend.ROUTE_FLAG_AREA;				
 				System.out.println("AREA MATCH FOR: " + iConnFrom);
 				connsFound++;
 			} else {
@@ -461,9 +461,9 @@ public class RouteInstructions {
 							pc.getP().forward(c.to.lat, c.to.lon, lineP2);
 							pc.g.setStrokeStyle(Graphics.SOLID);
 							if (iNow > i) {
-								pc.g.setColor(C.COLORS[C.COLOR_ROUTE_PRIOR_ROUTELINE]);														
+								pc.g.setColor(Legend.COLORS[Legend.COLOR_ROUTE_PRIOR_ROUTELINE]);														
 							} else if (iNow < i) {
-								pc.g.setColor(C.COLORS[C.COLOR_ROUTE_ROUTELINE]);														
+								pc.g.setColor(Legend.COLORS[Legend.COLOR_ROUTE_ROUTELINE]);														
 							}
 							if (iNow != i) {
 								// we are currently not crossing the area, so we simply draw a line in the given color
@@ -473,9 +473,9 @@ public class RouteInstructions {
 								IntPoint centerP = new IntPoint();
 								pc.getP().forward(center.radlat, center.radlon, centerP);
 								IntPoint closestP = MoreMath.closestPointOnLine(lineP1.x, lineP1.y, lineP2.x, lineP2.y, centerP.x, centerP.y);
-								pc.g.setColor(C.COLORS[C.COLOR_ROUTE_PRIOR_ROUTELINE]);														
+								pc.g.setColor(Legend.COLORS[Legend.COLOR_ROUTE_PRIOR_ROUTELINE]);														
 						    	pc.g.drawLine(lineP1.x, lineP1.y, closestP.x, closestP.y);
-								pc.g.setColor(C.COLORS[C.COLOR_ROUTE_ROUTELINE]);														
+								pc.g.setColor(Legend.COLORS[Legend.COLOR_ROUTE_ROUTELINE]);														
 						    	pc.g.drawLine(closestP.x, closestP.y, lineP2.x, lineP2.y);
 						    	drawRouteDot(pc.g, closestP, Configuration.getMinRouteLineWidth());
 							}
@@ -513,7 +513,7 @@ public class RouteInstructions {
 //							case RI_BEAR_LEFT:
 //							case RI_BEAR_RIGHT:		pict=pc.images.IMG_STRAIGHTON;
 //													if (
-//														(c.wayRouteFlags & (C.ROUTE_FLAG_BEAR_LEFT + C.ROUTE_FLAG_BEAR_RIGHT)) > 0
+//														(c.wayRouteFlags & (Legend.ROUTE_FLAG_BEAR_LEFT + Legend.ROUTE_FLAG_BEAR_RIGHT)) > 0
 //														&& i < route.size()-1
 //													) {
 //														ConnectionWithNode cNext = (ConnectionWithNode) route.elementAt(i+1);  
@@ -521,7 +521,7 @@ public class RouteInstructions {
 //														if (turn > 180) turn -= 360;
 //														if (turn < -180) turn += 360;
 //														if (Math.abs(turn) > 5) {
-//															if ( (c.wayRouteFlags & C.ROUTE_FLAG_BEAR_LEFT) > 0) {
+//															if ( (c.wayRouteFlags & Legend.ROUTE_FLAG_BEAR_LEFT) > 0) {
 //																pict=pc.images.IMG_HALFLEFT;
 //															} else {
 //																pict=pc.images.IMG_HALFRIGHT;
@@ -652,7 +652,7 @@ public class RouteInstructions {
 							}
 						}
 					    
-					    if (drawRouteInstructionSymbols && (drawQuietArrows || (c.wayRouteFlags & C.ROUTE_FLAG_QUIET) == 0) ) {
+					    if (drawRouteInstructionSymbols && (drawQuietArrows || (c.wayRouteFlags & Legend.ROUTE_FLAG_QUIET) == 0) ) {
 						    if (aPaint == RI_SKIPPED) {
 								pc.g.setColor(0x00FDDF9F);
 								pc.getP().forward(c.to.lat, c.to.lon, pc.lineP2);
@@ -661,7 +661,7 @@ public class RouteInstructions {
 							} else {
 								//#debug debug
 								if (pict==null) logger.debug("got NULL pict");													
-								if ( (c.wayRouteFlags & C.ROUTE_FLAG_INVISIBLE) == 0 ) {
+								if ( (c.wayRouteFlags & Legend.ROUTE_FLAG_INVISIBLE) == 0 ) {
 									pc.g.drawImage(pict,pc.lineP2.x,pc.lineP2.y,CENTERPOS);
 //									pc.g.setColor(0x0);
 //									pc.g.drawString("" + i, pc.lineP2.x+7, pc.lineP2.y+5, Graphics.BOTTOM | Graphics.LEFT);
@@ -688,7 +688,7 @@ public class RouteInstructions {
 							drawBearing(pc, pc.lineP2.x,pc.lineP2.y, startBearingCon, false, 0x00008000);
 							pc.g.setStrokeStyle(Graphics.DOTTED);
 							drawBearing(pc, pc.lineP2.x,pc.lineP2.y, startBearingWay, false, 0x0000FF00);
-							if ( (c.wayRouteFlags & C.ROUTE_FLAG_INCONSISTENT_BEARING) > 0) {
+							if ( (c.wayRouteFlags & Legend.ROUTE_FLAG_INCONSISTENT_BEARING) > 0) {
 								// draw red circle aroud inconsistent bearing
 								pc.g.setColor(0x00FF6600);
 								pc.g.setStrokeStyle(Graphics.SOLID);
@@ -738,7 +738,7 @@ public class RouteInstructions {
 //				} else {
 //					sbRouteInstruction.append("Routing waits for GPS");
 //				}
-//				routeInstructionColor = C.ROUTE_COLOR;				
+//				routeInstructionColor = Legend.ROUTE_COLOR;				
 			}
 						
 			//#debug debug
@@ -777,10 +777,10 @@ public class RouteInstructions {
 		StringBuffer sb = new StringBuffer();
 		// prefix motorway instructions
 		if (aNow == RI_ENTER_MOTORWAY || aNow == RI_LEAVE_MOTORWAY) {
-			if ( (routeFlags & C.ROUTE_FLAG_BEAR_LEFT) > 0) {
+			if ( (routeFlags & Legend.ROUTE_FLAG_BEAR_LEFT) > 0) {
 				sb.append("BEAR;LEFT;TO;");
 			}
-			if ( (routeFlags & C.ROUTE_FLAG_BEAR_RIGHT) > 0) {
+			if ( (routeFlags & Legend.ROUTE_FLAG_BEAR_RIGHT) > 0) {
 				sb.append("BEAR;RIGHT;TO;");
 			}
 		}
@@ -792,10 +792,10 @@ public class RouteInstructions {
 		StringBuffer sb = new StringBuffer();
 		// prefix motorway instructions
 		if (aNow == RI_ENTER_MOTORWAY || aNow == RI_LEAVE_MOTORWAY) {
-			if ( (routeFlags & C.ROUTE_FLAG_BEAR_LEFT) > 0) {
+			if ( (routeFlags & Legend.ROUTE_FLAG_BEAR_LEFT) > 0) {
 				sb.append("b.left ");
 			}
-			if ( (routeFlags & C.ROUTE_FLAG_BEAR_RIGHT) > 0) {
+			if ( (routeFlags & Legend.ROUTE_FLAG_BEAR_RIGHT) > 0) {
 				sb.append("b.right ");
 			}
 		}
@@ -804,9 +804,9 @@ public class RouteInstructions {
 	}
 
 	public static void drawRouteDot(Graphics g, IntPoint p, int radius) {
-		g.setColor(C.COLORS[C.COLOR_ROUTE_ROUTEDOT]);
+		g.setColor(Legend.COLORS[Legend.COLOR_ROUTE_ROUTEDOT]);
 		g.fillArc(p.x-radius, p.y-radius, radius*2, radius*2, 0, 360);
-		g.setColor(C.COLORS[C.COLOR_ROUTE_ROUTEDOT_BORDER]);
+		g.setColor(Legend.COLORS[Legend.COLOR_ROUTE_ROUTEDOT_BORDER]);
 		g.drawArc(p.x-radius, p.y-radius, radius*2, radius*2, 0, 360);
 	}
 	
@@ -1001,21 +1001,21 @@ public class RouteInstructions {
 			nextStartBearing = 0;
 			if (i < route.size()-1) {
 				c2 = (ConnectionWithNode) route.elementAt(i+1);
-				rfNext=C.getWayDescription(c2.wayType).routeFlags;
+				rfNext=Legend.getWayDescription(c2.wayType).routeFlags;
 				// nextStartBearing = c2.startBearing;
 				nextStartBearing = c2.wayConStartBearing;
 			}
 			
 			byte ri=0;
 			// into tunnel
-			if (	(rfPrev & C.ROUTE_FLAG_TUNNEL) == 0
-				&& 	(rfCurr & C.ROUTE_FLAG_TUNNEL) > 0
+			if (	(rfPrev & Legend.ROUTE_FLAG_TUNNEL) == 0
+				&& 	(rfCurr & Legend.ROUTE_FLAG_TUNNEL) > 0
 			) {
 				ri = RI_INTO_TUNNEL;
 			}
 			// out of tunnel
-			if (	(rfPrev & C.ROUTE_FLAG_TUNNEL) > 0
-				&& 	(rfCurr & C.ROUTE_FLAG_TUNNEL) == 0
+			if (	(rfPrev & Legend.ROUTE_FLAG_TUNNEL) > 0
+				&& 	(rfCurr & Legend.ROUTE_FLAG_TUNNEL) == 0
 			) {
 				ri = RI_OUT_OF_TUNNEL;
 			}
@@ -1041,21 +1041,21 @@ public class RouteInstructions {
 			}
 
 			// determine roundabout exit
-			if ( 	(rfPrev & C.ROUTE_FLAG_ROUNDABOUT) == 0
-				&& 	(rfCurr & C.ROUTE_FLAG_ROUNDABOUT) > 0
+			if ( 	(rfPrev & Legend.ROUTE_FLAG_ROUNDABOUT) == 0
+				&& 	(rfCurr & Legend.ROUTE_FLAG_ROUNDABOUT) > 0
 			) {
 				ri = RI_1ST_EXIT;	
 				int i2;
 				for (i2=i+1; i2<route.size()-1 && (ri < RI_6TH_EXIT); i2++) {
 					c2 = (ConnectionWithNode) route.elementAt(i2);
-					if ( (c2.wayRouteFlags & C.ROUTE_FLAG_ROUNDABOUT) == 0 ) { 
+					if ( (c2.wayRouteFlags & Legend.ROUTE_FLAG_ROUNDABOUT) == 0 ) { 
 						break;
 					}
 					// count only exits in roundabouts
 					if (c2.numToRoutableWays > 1) {
 						ri++;						
 					} else {
-						c2.wayRouteFlags |= C.ROUTE_FLAG_INVISIBLE;
+						c2.wayRouteFlags |= Legend.ROUTE_FLAG_INVISIBLE;
 					}
 				}
 				for (int i3=i2-1; i3>i; i3--) {
@@ -1068,10 +1068,10 @@ public class RouteInstructions {
 			if (ri==0) {				
 				// ri = convertTurnToRouteInstruction( (nextStartBearing - c.endBearing) * 2 );
 				ri = convertTurnToRouteInstruction( (nextStartBearing - c.wayConEndBearing) * 2 );
-				if ( (c.wayRouteFlags & C.ROUTE_FLAG_BEAR_LEFT) > 0 ) {
+				if ( (c.wayRouteFlags & Legend.ROUTE_FLAG_BEAR_LEFT) > 0 ) {
 					ri = RI_BEAR_LEFT;
 				}
-				if ( (c.wayRouteFlags & C.ROUTE_FLAG_BEAR_RIGHT) > 0 ) {
+				if ( (c.wayRouteFlags & Legend.ROUTE_FLAG_BEAR_RIGHT) > 0 ) {
 					ri = RI_BEAR_RIGHT;
 				}
 			}
@@ -1091,7 +1091,7 @@ public class RouteInstructions {
 				&& (cPrev.wayRouteInstruction <= RI_HARD_LEFT && c.wayRouteInstruction <= RI_HARD_LEFT)
 			)	{
 				c.wayRouteInstruction = RI_SKIPPED;
-				c.wayRouteFlags |= C.ROUTE_FLAG_QUIET;
+				c.wayRouteFlags |= Legend.ROUTE_FLAG_QUIET;
 				ConnectionWithNode cNext = (ConnectionWithNode) route.elementAt(i+1);
 				// cPrev.wayRouteInstruction = convertTurnToRouteInstruction( (cNext.startBearing - cPrev.endBearing) * 2 );
 				cPrev.wayRouteInstruction = convertTurnToRouteInstruction( (cNext.wayConStartBearing - cPrev.wayConEndBearing) * 2 );				
@@ -1111,7 +1111,7 @@ public class RouteInstructions {
 			// set maximum value of connections that are allowed to be there for hiding this arrow
 			int maxToRoutableWays = 2;
 			// when we are coming from a one way arrow we must not count the way we are coming from 
-			if ( (c.wayRouteFlags & C.ROUTE_FLAG_COMING_FROM_ONEWAY) > 0) {
+			if ( (c.wayRouteFlags & Legend.ROUTE_FLAG_COMING_FROM_ONEWAY) > 0) {
 				maxToRoutableWays--;
 			}
 			while (	i < route.size()-1
@@ -1125,7 +1125,7 @@ public class RouteInstructions {
 //							(
 //							 	c.numToRoutableWays <= maxToRoutableWays
 //								&& c.wayRouteInstruction <= RI_HARD_LEFT
-//								&& ((c.wayRouteFlags & C.ROUTE_FLAG_BEAR_LEFT+C.ROUTE_FLAG_BEAR_RIGHT) == 0)
+//								&& ((c.wayRouteFlags & Legend.ROUTE_FLAG_BEAR_LEFT+Legend.ROUTE_FLAG_BEAR_RIGHT) == 0)
 //								// and the following arrow must not be a skipped arrow
 //								&& cNext.wayRouteInstruction != RI_SKIPPED
 //							)
@@ -1145,7 +1145,7 @@ public class RouteInstructions {
 							&&
 							c.wayType == cStart.wayType
 							&&
-							(c.wayRouteFlags & C.ROUTE_FLAG_LEADS_TO_MULTIPLE_SAME_NAMED_WAYS) == 0
+							(c.wayRouteFlags & Legend.ROUTE_FLAG_LEADS_TO_MULTIPLE_SAME_NAMED_WAYS) == 0
 							// the following arrow must not be a skipped arrow or the same name and type must continue
 							&& (
 								cNext.wayRouteInstruction != RI_SKIPPED
@@ -1158,7 +1158,7 @@ public class RouteInstructions {
 					)
 				) {
 				oldNameIdx = c.wayNameIdx;  // if we went straight on into a way with new name we continue comparing with the new name 
-				c.wayRouteFlags |= C.ROUTE_FLAG_QUIET;
+				c.wayRouteFlags |= Legend.ROUTE_FLAG_QUIET;
 				i++;
 				c = cNext;
 				if (i < route.size()-1) {
@@ -1182,8 +1182,8 @@ public class RouteInstructions {
 	 * @return
 	 */
 	public static boolean isEnterMotorway(short rfPrev, short rfCurr) {
-		return (	(rfPrev & (C.ROUTE_FLAG_MOTORWAY | C.ROUTE_FLAG_MOTORWAY_LINK)) == 0
-					&& 	(rfCurr & (C.ROUTE_FLAG_MOTORWAY | C.ROUTE_FLAG_MOTORWAY_LINK)) > 0
+		return (	(rfPrev & (Legend.ROUTE_FLAG_MOTORWAY | Legend.ROUTE_FLAG_MOTORWAY_LINK)) == 0
+					&& 	(rfCurr & (Legend.ROUTE_FLAG_MOTORWAY | Legend.ROUTE_FLAG_MOTORWAY_LINK)) > 0
 		);
 	}
 	
@@ -1194,8 +1194,8 @@ public class RouteInstructions {
 	 * @return
 	 */
 	public static boolean isLeaveMotorway(short rfPrev, short rfCurr) {
-		return (	(rfPrev & C.ROUTE_FLAG_MOTORWAY) > 0
-					&& 	(rfCurr & C.ROUTE_FLAG_MOTORWAY) == 0
+		return (	(rfPrev & Legend.ROUTE_FLAG_MOTORWAY) > 0
+					&& 	(rfCurr & Legend.ROUTE_FLAG_MOTORWAY) == 0
 		);
 	}
 
@@ -1206,8 +1206,8 @@ public class RouteInstructions {
 	 * @return
 	 */
 	public static boolean isAreaStart(short rfPrev, short rfCurr) {
-		return (	(rfPrev & C.ROUTE_FLAG_AREA) == 0
-					&& 	(rfCurr & C.ROUTE_FLAG_AREA) > 0
+		return (	(rfPrev & Legend.ROUTE_FLAG_AREA) == 0
+					&& 	(rfCurr & Legend.ROUTE_FLAG_AREA) > 0
 		);
 	}
 	
@@ -1218,8 +1218,8 @@ public class RouteInstructions {
 	 * @return
 	 */
 	public static boolean isAreaEnd(short rfPrev, short rfCurr) {
-		return (	(rfPrev & C.ROUTE_FLAG_AREA) > 0
-					&& 	(rfCurr & C.ROUTE_FLAG_AREA) == 0
+		return (	(rfPrev & Legend.ROUTE_FLAG_AREA) > 0
+					&& 	(rfCurr & Legend.ROUTE_FLAG_AREA) == 0
 		);
 	}
 
@@ -1253,7 +1253,7 @@ public class RouteInstructions {
 			//#debug debug
 			if (c==null) logger.debug("idxNextInstructionArrow got NULL connection");
 			if (
-				(c.wayRouteFlags & C.ROUTE_FLAG_QUIET) == 0
+				(c.wayRouteFlags & Legend.ROUTE_FLAG_QUIET) == 0
 			&&	c.wayRouteInstruction != RI_SKIPPED
 			) {
 				break;
@@ -1273,7 +1273,7 @@ public class RouteInstructions {
 			//#debug debug
 			if (c==null) logger.debug("idxPrevInstructionArrow got NULL connection");
 			if (
-				(c.wayRouteFlags & C.ROUTE_FLAG_QUIET) == 0
+				(c.wayRouteFlags & Legend.ROUTE_FLAG_QUIET) == 0
 			&&	c.wayRouteInstruction != RI_SKIPPED
 			) {
 				break;
@@ -1301,7 +1301,7 @@ public class RouteInstructions {
 			c = (ConnectionWithNode) route.elementAt(a);
 			c2 = (ConnectionWithNode) route.elementAt(a+1);
 			if (
-				(c.wayRouteFlags & C.ROUTE_FLAG_ROUNDABOUT) == 0 
+				(c.wayRouteFlags & Legend.ROUTE_FLAG_ROUNDABOUT) == 0 
 				&&
 				c2.wayRouteInstruction != RI_SKIPPED
 			) {
@@ -1311,7 +1311,7 @@ public class RouteInstructions {
 		if (c.wayNameIdx != -1) {
 			return trace.getName(c.wayNameIdx);
 		} else {
-			WayDescription wayDesc = C.getWayDescription(c.wayType);
+			WayDescription wayDesc = Legend.getWayDescription(c.wayType);
 			return "(unnamed " + wayDesc.description + ")";
 		}
 	}
@@ -1377,10 +1377,10 @@ public class RouteInstructions {
 			
 			sb.setLength(0);			
 			byte ri=c.wayRouteInstruction;
-			//if ((c.wayRouteFlags & C.ROUTE_FLAG_QUIET) == 0 && ri!=RI_SKIPPED) {
+			//if ((c.wayRouteFlags & Legend.ROUTE_FLAG_QUIET) == 0 && ri!=RI_SKIPPED) {
 			if (true) {
 				sb.append(i + ". ");
-				if ( (c.wayRouteFlags & C.ROUTE_FLAG_QUIET) > 0) { 
+				if ( (c.wayRouteFlags & Legend.ROUTE_FLAG_QUIET) > 0) { 
 					sb.append("(quiet) ");
 				}
 				sb.append(directions[ri]);
@@ -1389,19 +1389,19 @@ public class RouteInstructions {
 				sb.append(" then go ");
 				sb.append(dist);
 				sb.append("m");
-				if ( (c.wayRouteFlags & C.ROUTE_FLAG_COMING_FROM_ONEWAY) > 0) { 
+				if ( (c.wayRouteFlags & Legend.ROUTE_FLAG_COMING_FROM_ONEWAY) > 0) { 
 					sb.append(" (from oneway)");
 				}
-				if ( (c.wayRouteFlags & C.ROUTE_FLAG_ROUNDABOUT) > 0) { 
+				if ( (c.wayRouteFlags & Legend.ROUTE_FLAG_ROUNDABOUT) > 0) { 
 					sb.append(" (in roundabout)");
 				}
-				if ( (c.wayRouteFlags & C.ROUTE_FLAG_LEADS_TO_MULTIPLE_SAME_NAMED_WAYS) > 0) { 
+				if ( (c.wayRouteFlags & Legend.ROUTE_FLAG_LEADS_TO_MULTIPLE_SAME_NAMED_WAYS) > 0) { 
 					sb.append(" (multiple name matches)");
 				}
-				if ( (c.wayRouteFlags & C.ROUTE_FLAG_BEAR_LEFT) > 0) { 
+				if ( (c.wayRouteFlags & Legend.ROUTE_FLAG_BEAR_LEFT) > 0) { 
 					sb.append(" (bear left)");
 				}
-				if ( (c.wayRouteFlags & C.ROUTE_FLAG_BEAR_RIGHT) > 0) { 
+				if ( (c.wayRouteFlags & Legend.ROUTE_FLAG_BEAR_RIGHT) > 0) { 
 					sb.append(" (bear right)");
 				}
 				sb.append(" Cons:" + c.to.getConSize() + " numRoutableWays: " + c.numToRoutableWays + " startBearing: " + c.startBearing + "/" + c.wayConStartBearing + " endBearing: "+ c.endBearing + "/" + c.wayConEndBearing);

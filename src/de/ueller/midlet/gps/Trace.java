@@ -34,6 +34,7 @@ import javax.microedition.midlet.MIDlet;
 
 
 import de.ueller.gps.SECellID;
+import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Position;
 import de.ueller.gps.data.Satelit;
@@ -67,7 +68,6 @@ import de.ueller.midlet.gps.data.Way;
 import de.ueller.midlet.gps.names.Names;
 import de.ueller.midlet.gps.routing.RouteNode;
 import de.ueller.midlet.gps.routing.Routing;
-import de.ueller.midlet.gps.tile.C;
 import de.ueller.midlet.gps.GuiMapFeatures;
 import de.ueller.midlet.gps.tile.Images;
 import de.ueller.midlet.gps.tile.PaintContext;
@@ -1257,7 +1257,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			if (! routeCalc) {
 				//#if polish.api.osm-editing 
 				if (c == CMDS[RETRIEVE_XML]) {
-					if (C.enableEdits) {
+					if (Legend.enableEdits) {
 						if ((pc.actualWay != null) && (pc.actualWay instanceof EditableWay)) {
 							EditableWay eway = (EditableWay)pc.actualWay;
 							GUIosmWayDisplay guiWay = new GUIosmWayDisplay(eway, pc.actualSingleTile, this);
@@ -1269,7 +1269,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					}
 				}
 				if (c == CMDS[RETRIEVE_NODE]) {
-					if (C.enableEdits) {
+					if (Legend.enableEdits) {
 						GuiOSMPOIDisplay guiNode = new GuiOSMPOIDisplay(-1,null,center.radlat,center.radlon,this);
 						guiNode.show();
 						guiNode.refresh();
@@ -1307,11 +1307,10 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		Images i;
 		i = new Images();
 		pc = new PaintContext(this, i);
-		pc.c = GpsMid.c;
+		pc.legend = GpsMid.legend;
 		int w = (this.getWidth() * 125) / 100;
 		int h = (this.getHeight() * 125) / 100;
-		imageCollector = new ImageCollector(t, w, h, this,
-				i, pc.c);
+		imageCollector = new ImageCollector(t, w, h, this, i, pc.legend);
 //		projection = ProjFactory.getInstance(center,course, scale, getWidth(), getHeight());
 //		pc.setP(projection);
 		pc.center = center.clone();
@@ -1400,7 +1399,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			int la = 18;
 			getPC();
 			// cleans the screen
-			g.setColor(C.COLORS[C.COLOR_MAP_BACKGROUND]);
+			g.setColor(Legend.COLORS[Legend.COLOR_MAP_BACKGROUND]);
 			g.fillRect(0, 0, this.getWidth(), this.getHeight());
 			pc.g = g;
 			if (imageCollector != null){				
@@ -2353,10 +2352,10 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	
 	private String[] buildRouteModeMenuEntries() {
 		boolean askForTurnRestrictions = false;
-		int numTravelModes = C.getTravelModes().length;
+		int numTravelModes = Legend.getTravelModes().length;
 		int numMenuEntries = numTravelModes;
 		for (int i=0; i<numTravelModes; i++) {
-			if (C.getTravelModes()[i].isWithTurnRestrictions()) {
+			if (Legend.getTravelModes()[i].isWithTurnRestrictions()) {
 				askForTurnRestrictions = true;
 			}					
 		}
@@ -2365,7 +2364,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		}
 		String travelModes[] = new String[numMenuEntries];
 		for (int i=0; i<numTravelModes; i++) {
-			travelModes[i]=C.getTravelModes()[i].travelModeName;
+			travelModes[i]=Legend.getTravelModes()[i].travelModeName;
 		}
 		if (askForTurnRestrictions) {
 			travelModes[numTravelModes] = "TurnRestr.: " + (Configuration.getCfgBitState(Configuration.CFGBIT_USE_TURN_RESTRICTIONS_FOR_ROUTE_CALCULATION)?" On":"Off");
@@ -2380,7 +2379,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		if (customMenu!=null) {
 			if (strResult.equalsIgnoreCase("Ok")) {
 				if (customMenu.getCommandID() == ROUTING_START_WITH_MODE_SELECT_CMD) {
-					if (customMenu.getSelectedEntry() == C.getTravelModes().length) {
+					if (customMenu.getSelectedEntry() == Legend.getTravelModes().length) {
 						Configuration.toggleCfgBitState(Configuration.CFGBIT_USE_TURN_RESTRICTIONS_FOR_ROUTE_CALCULATION, true);
 						customMenu.setMenuEntries(buildRouteModeMenuEntries());
 						reAddCommands = false;

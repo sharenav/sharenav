@@ -203,9 +203,9 @@ public class GuiSearch extends Canvas implements CommandListener,
 					public void run() {
 						try {
 							byte poiType = (byte)poiSelectionCG.getSelectedIndex();
-							int maxScale = parent.pc.c.getNodeMaxScale(poiType);
+							int maxScale = parent.pc.legend.getNodeMaxScale(poiType);
 							
-							Vector res = parent.t[parent.pc.c.scaleToTile(maxScale)].getNearestPoi(poiType, 
+							Vector res = parent.t[parent.pc.legend.scaleToTile(maxScale)].getNearestPoi(poiType, 
 									parent.center.radlat, parent.center.radlon, 
 									Float.parseFloat(poiSelectionMaxDistance.getString())*1000.0f);						
 							for (int i = 0; i < res.size(); i++) {
@@ -303,8 +303,9 @@ public class GuiSearch extends Canvas implements CommandListener,
 			Form poiSelectionForm = new Form("POI selection");
 			poiSelectionCG = new ChoiceGroup("search for type: ", ChoiceGroup.EXCLUSIVE);
 			poiSelectionMaxDistance = new TextField("Maximum search distance", "10", 5, TextField.DECIMAL);
-			for (byte i = 0; i < parent.pc.c.getMaxType(); i++) {				
-				poiSelectionCG.append(parent.pc.c.getNodeTypeDesc(i), parent.pc.c.getNodeSearchImage(i));
+			for (byte i = 0; i < parent.pc.legend.getMaxType(); i++) {				
+				poiSelectionCG.append(parent.pc.legend.getNodeTypeDesc(i), 
+						parent.pc.legend.getNodeSearchImage(i));
 			}
 			poiSelectionForm.append(poiSelectionMaxDistance);
 			poiSelectionForm.append(poiSelectionCG);
@@ -390,7 +391,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			SearchResult sr=(SearchResult) result.elementAt(i);
 			Image img;
 			if (sr.type < 0) {
-				img = parent.pc.c.getNodeSearchImage((byte)(sr.type*-1));
+				img = parent.pc.legend.getNodeSearchImage((byte)(sr.type*-1));
 			} else {
 				if (sr.type < ico.length)
 					img = ico[sr.type];

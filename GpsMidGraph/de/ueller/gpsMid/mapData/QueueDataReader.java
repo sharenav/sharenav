@@ -8,6 +8,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.Configuration;
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.Logger;
@@ -16,7 +17,6 @@ import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.data.EditableWay;
 //#endif
 import de.ueller.midlet.gps.data.Way;
-import de.ueller.midlet.gps.tile.C;
 
 
 public class QueueDataReader extends QueueReader implements Runnable {
@@ -70,7 +70,7 @@ public class QueueDataReader extends QueueReader implements Runnable {
 		byte[] type = new byte[iNodeCount];
 		int[] osmID;
 		//#if polish.api.osm-editing
-		if (C.enableEdits) {
+		if (Legend.enableEdits) {
 			osmID = new int[iNodeCount];
 		} else {
 			osmID = null;
@@ -91,17 +91,17 @@ public class QueueDataReader extends QueueReader implements Runnable {
 				radlat[i] = ds.readShort();
 				radlon[i] = ds.readShort();
 				
-				if ((flag & C.NODE_MASK_NAME) > 0){
-					if ((flag & C.NODE_MASK_NAMEHIGH) > 0) {
+				if ((flag & Legend.NODE_MASK_NAME) > 0){
+					if ((flag & Legend.NODE_MASK_NAMEHIGH) > 0) {
 						nameIdx[i]=ds.readInt();
 					} else {
 						nameIdx[i]=ds.readShort();
 					}
 				} 
-				if ((flag & C.NODE_MASK_TYPE) > 0){
+				if ((flag & Legend.NODE_MASK_TYPE) > 0){
 					type[i]=ds.readByte();
 					//#if polish.api.osm-editing
-					if (C.enableEdits) {
+					if (Legend.enableEdits) {
 						osmID[i] = ds.readInt();
 					}
 					//#endif
@@ -136,7 +136,7 @@ public class QueueDataReader extends QueueReader implements Runnable {
 				if (flags != 128){
 					Way w;
 					//#if polish.api.osm-editing
-					if (C.enableEdits) {
+					if (Legend.enableEdits) {
 						w = new EditableWay(ds,flags,tt,layers,i);
 					} else {
 						w = new Way(ds,flags,tt,layers,i);

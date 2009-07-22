@@ -13,9 +13,9 @@
  */
 package de.ueller.midlet.gps;
 
+import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.tools.ImageTools;
-import de.ueller.midlet.gps.tile.C;
 
 import java.io.IOException;
 
@@ -105,7 +105,7 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 		space = getHeight() - topStart;
 		ssize = f.getHeight() * txt.length + space;
 		top = -space;
-		strVersion = "V" + C.getAppVersion() + " (" + C.getBundleDate() + ")";
+		strVersion = "V" + Legend.getAppVersion() + " (" + Legend.getBundleDate() + ")";
 		show();
 		addCommand(BACK_CMD);
 		addCommand(EXIT_CMD);

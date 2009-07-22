@@ -46,10 +46,10 @@ import de.ueller.midlet.gps.importexport.Jsr211ContentHandlerInterface;
 import de.ueller.midlet.gps.importexport.SiemGameLight;
 //#endif
 
+import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.tools.HelperRoutines;
 import de.ueller.midlet.gps.data.Node;
-import de.ueller.midlet.gps.tile.C;
 
 public class GpsMid extends MIDlet implements CommandListener {
 	/** */
@@ -85,7 +85,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 
 	public static NoiseMaker mNoiseMaker = null;
 
-	public static C c;
+	public static Legend legend;
 
 	/**
 	 * This Thread is used to periodically prod the display to keep the
@@ -120,7 +120,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 		// read in legend.dat to have i.e. bundle date already accessable from
 		// the splash screen
 		try {
-			c = new C();
+			legend = new Legend();
 		} catch (Exception e) {
 			e.printStackTrace();
 			errorMsg = "Failed to load basic configuration! Check your map data source: "

@@ -13,13 +13,13 @@ import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
+import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.SearchResult;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.data.ProjMath;
 import de.ueller.midlet.gps.data.Way;
-import de.ueller.midlet.gps.tile.C;
 import de.ueller.midlet.gps.tile.POIdescription;
 import de.ueller.midlet.gps.tile.PaintContext;
 import de.ueller.midlet.gps.tile.QueueableTile;
@@ -333,52 +333,52 @@ public class SingleTile extends Tile implements QueueableTile {
 	public void paintNode(PaintContext pc, int i) {
 		Image img = null;
 		byte t=type[i];
-		boolean hideable = C.isNodeHideable(t);
+		boolean hideable = Legend.isNodeHideable(t);
 		
-		byte om = C.getNodeOverviewMode(t);
-		switch (om & C.OM_MODE_MASK) {
-			case C.OM_SHOWNORMAL: 
+		byte om = Legend.getNodeOverviewMode(t);
+		switch (om & Legend.OM_MODE_MASK) {
+			case Legend.OM_SHOWNORMAL: 
 				// if not in Overview Mode check for scale
-				if (pc.scale > C.getNodeMaxScale(t)) {
+				if (pc.scale > Legend.getNodeMaxScale(t)) {
 					return;
 				}
 				// disabling POIs does not disable PLACE TEXTs (city, suburb, etc.) 
-				if (! (t >= C.MIN_PLACETYPE && t <= C.MAX_PLACETYPE)) {
+				if (! (t >= Legend.MIN_PLACETYPE && t <= Legend.MAX_PLACETYPE)) {
 					if (hideable & !Configuration.getCfgBitState(Configuration.CFGBIT_POIS)) {
 						return;
 					}
 				}
 				break;
-			case C.OM_HIDE: 				
+			case Legend.OM_HIDE: 				
 				if (hideable) {
 					return;
 				}
 				break;
 		}
-		switch (om & C.OM_NAME_MASK) {
-			case C.OM_WITH_NAMEPART: 
+		switch (om & Legend.OM_NAME_MASK) {
+			case Legend.OM_WITH_NAMEPART: 
 				if (nameIdx[i] == -1) return;
 				String name = pc.trace.getName(nameIdx[i]);
 				if (name == null) return;
-				if (name.toUpperCase().indexOf(C.get0Poi1Area2WayNamePart((byte) 0).toUpperCase()) == -1) return;
+				if (name.toUpperCase().indexOf(Legend.get0Poi1Area2WayNamePart((byte) 0).toUpperCase()) == -1) return;
 				break;
-			case C.OM_WITH_NAME: 
+			case Legend.OM_WITH_NAME: 
 				if (nameIdx[i] == -1) return;
 				break;
-			case C.OM_NO_NAME: 
+			case Legend.OM_NO_NAME: 
 				if (nameIdx[i] != -1) return;
 				break;
 		}
 	
-		pc.g.setColor(C.getNodeTextColor(t));
-		img = C.getNodeImage(t);
+		pc.g.setColor(Legend.getNodeTextColor(t));
+		img = Legend.getNodeImage(t);
 		// logger.debug("calc pos "+pc);
 		
 		pc.getP().forward(nodeLat[i], nodeLon[i], pc.swapLineP, this);
 		
 		if (img != null ) {
 			// logger.debug("draw img " + img);
-			if (nameIdx[i] == -1 || C.isNodeImageCentered(t) || pc.scale > C.getNodeMaxTextScale(t)) {
+			if (nameIdx[i] == -1 || Legend.isNodeImageCentered(t) || pc.scale > Legend.getNodeMaxTextScale(t)) {
 				pc.g.drawImage(img, pc.swapLineP.x, pc.swapLineP.y,
 						Graphics.VCENTER | Graphics.HCENTER);
 			} else {
@@ -386,12 +386,12 @@ public class SingleTile extends Tile implements QueueableTile {
 						Graphics.BOTTOM | Graphics.HCENTER);
 			}
 		}
-		if (pc.scale > C.getNodeMaxTextScale(t)) {
+		if (pc.scale > Legend.getNodeMaxTextScale(t)) {
 			return;
 		}
 		
 		// PLACE TEXTS (from city to suburb)
-		if (t >= C.MIN_PLACETYPE && t <= C.MAX_PLACETYPE) {
+		if (t >= Legend.MIN_PLACETYPE && t <= Legend.MAX_PLACETYPE) {
 			if (!Configuration.getCfgBitState(Configuration.CFGBIT_PLACETEXTS)) {
 				return;
 			}
@@ -406,7 +406,7 @@ public class SingleTile extends Tile implements QueueableTile {
 		// logger.debug("draw txt " + );
 		String name;
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_SHOWWAYPOITYPE)) {
-			name = pc.c.getNodeTypeDesc(t);
+			name = pc.legend.getNodeTypeDesc(t);
 		}
 		else {
 			name = pc.trace.getName(nameIdx[i]);
@@ -426,7 +426,7 @@ public class SingleTile extends Tile implements QueueableTile {
 				pc.g.drawString(name, pc.swapLineP.x, pc.swapLineP.y,
 						Graphics.BASELINE | Graphics.HCENTER);
 			} else {
-				if (C.isNodeImageCentered(t)){
+				if (Legend.isNodeImageCentered(t)){
 					pc.g.drawString(name, pc.swapLineP.x, pc.swapLineP.y+8,
 							Graphics.TOP | Graphics.HCENTER);						
 				} else {

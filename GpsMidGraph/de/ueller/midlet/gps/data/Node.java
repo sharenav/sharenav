@@ -10,7 +10,7 @@ import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
 //import de.ueller.midlet.gps.Logger;
-import de.ueller.midlet.gps.tile.C;
+import de.ueller.gps.data.Legend;
 import de.ueller.midlet.gps.tile.PaintContext;
 
 
@@ -186,16 +186,16 @@ public class Node extends Entity {
     	case 6:
     		pc.g.setColor(0, 0, 0);
     		break;
-    	case C.NODE_AMENITY_PARKING:
+    	case Legend.NODE_AMENITY_PARKING:
     		img=pc.images.IMG_PARKING;
     		break;
-    	case C.NODE_AMENITY_TELEPHONE:
+    	case Legend.NODE_AMENITY_TELEPHONE:
     		img=pc.images.IMG_TELEPHONE;
     		break;
-    	case C.NODE_AMENITY_SCHOOL:
+    	case Legend.NODE_AMENITY_SCHOOL:
     		img=pc.images.IMG_SCHOOL;
     		break;
-    	case C.NODE_AMENITY_FUEL:
+    	case Legend.NODE_AMENITY_FUEL:
     		img=pc.images.IMG_FUEL;
     		break;
 

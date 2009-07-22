@@ -2,6 +2,7 @@ package de.ueller.midlet.gps.routing;
 import java.io.IOException;
 import java.util.Vector;
 
+import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.tools.intTree;
 import de.ueller.gpsMid.mapData.RouteBaseTile;
@@ -12,7 +13,6 @@ import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.data.Way;
-import de.ueller.midlet.gps.tile.C;
 
 
 
