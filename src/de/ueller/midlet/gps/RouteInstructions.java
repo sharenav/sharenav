@@ -699,7 +699,7 @@ public class RouteInstructions {
 					}
 					routeRecalculationRequired = isOffRoute(route, center);
 					if (trace.atTarget || (aNow == RI_TARGET_REACHED && intDistNow < PASSINGDISTANCE)) {
-						routeInstructionColor = 0x00B0B030;
+						routeInstructionColor = Legend.COLORS[Legend.COLOR_RI_AT_TARGET];
 					} else if ( routeRecalculationRequired && trace.gpsRecenter) {
 						//#debug debug
 						logger.debug("off route detected");												
@@ -722,7 +722,8 @@ public class RouteInstructions {
 						nameNow = null;
 						sbRouteInstruction.setLength(0);
 						sbRouteInstruction.append("check direction");
-						routeInstructionColor = 0x00FFFF64;
+						routeInstructionColor = Legend.COLORS[Legend.COLOR_RI_CHECK_DIRECTION];
+;
 					}
 				}
 			}
@@ -748,10 +749,12 @@ public class RouteInstructions {
 			LayoutElement e = Trace.tl.ele[TraceLayout.ROUTE_INSTRUCTION];
 			if (sbRouteInstruction.length() != 0) {
 				e.setBackgroundColor(routeInstructionColor);				
+				e.setColor(Legend.COLORS[Legend.COLOR_RI_TEXT]);				
 				e.setText(sbRouteInstruction.toString());
 
 				e = Trace.tl.ele[TraceLayout.ROUTE_INTO];
 				e.setBackgroundColor(routeInstructionColor);				
+				e.setColor(Legend.COLORS[Legend.COLOR_RI_TEXT]);				
 				if (nameNow != null) {
 					e.setText("into " + nameNow);
 				}				
@@ -841,7 +844,7 @@ public class RouteInstructions {
 //		System.out.println("Counter: " + riCounter++);
 		if (dstToRoutePath < 25) {
 		    // green background color if onroute
-	    	routeInstructionColor=0x00B7FBBA;
+	    	routeInstructionColor=Legend.COLORS[Legend.COLOR_RI_ON_ROUTE];
 			haveBeenOnRouteSinceCalculation=true;
 //			System.out.println("on route dstToRoutePath: " + dstToRoutePath);
 		}
@@ -855,7 +858,7 @@ public class RouteInstructions {
 			(!haveBeenOnRouteSinceCalculation && (dstToFirstArrow - startDstToFirstArrowAfterCalculation) > 50)
 		) {
 			// use red background color
-			routeInstructionColor=0x00FF5402;
+			routeInstructionColor=Legend.COLORS[Legend.COLOR_RI_OFF_ROUTE_FULL];
 			//#mdebug debug
 			logger.debug("=== Off Route ===");
 			logger.debug("recalc startDst: " + startDstToFirstArrowAfterCalculation);
@@ -869,7 +872,7 @@ public class RouteInstructions {
 			(!haveBeenOnRouteSinceCalculation && (dstToFirstArrow - startDstToFirstArrowAfterCalculation) > 25)
 		) {
 			// use orange background color
-			routeInstructionColor=0x00FFCD9B;
+			routeInstructionColor=Legend.COLORS[Legend.COLOR_RI_OFF_ROUTE_SLIGHT];
 		}		
 		return false;
 	}
@@ -932,7 +935,7 @@ public class RouteInstructions {
 			startDstToFirstArrowAfterCalculation=50;
 		}
 		// dark grey
-		routeInstructionColor=0x00808080;
+		routeInstructionColor=Legend.COLORS[Legend.COLOR_RI_NOT_AT_ROUTE_LINE_YET];
 //		System.out.println("resetOffRoute: " + startDstToFirstArrowAfterCalculation);
 	}
 

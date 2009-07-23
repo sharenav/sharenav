@@ -12,6 +12,7 @@ import java.util.Vector;
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 
+import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.tools.HelperRoutines;
 import de.ueller.midlet.gps.Logger;
@@ -146,7 +147,7 @@ public class WaypointsTile extends Tile {
 		Font originalFont = pc.g.getFont();
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_WPTTEXTS))
 		{
-			pc.g.setColor(0, 0, 0);
+			pc.g.setColor(Legend.COLORS[Legend.COLOR_WAYPOINT_TEXT]);
 			if (wptFont == null) {
 				if (Configuration.getCfgBitState(Configuration.CFGBIT_WPT_LABELS_LARGER)) {
 					wptFont = originalFont;

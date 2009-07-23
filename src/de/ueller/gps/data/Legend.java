@@ -26,7 +26,7 @@ public class Legend {
 	 * Specifies the format of the map on disk we expect to see
 	 * This constant must be in sync with Osm2GpsMid
 	 */
-	public final static short MAP_FORMAT_VERSION = 36;
+	public final static short MAP_FORMAT_VERSION = 37;
 	
 	/** The waypoint format used in the RecordStore. See PositionMark.java. */
 	public final static short WAYPT_FORMAT_VERSION = 2;
@@ -86,20 +86,62 @@ public class Legend {
 	public final static byte OM_NAME_MASK=OM_NO_NAME | OM_WITH_NAME | OM_WITH_NAMEPART;
 	
 	public final static int COLOR_MAP_BACKGROUND = 0;
-	public final static int COLOR_ROUTE_ROUTELINE = 1;
-	public final static int COLOR_ROUTE_ROUTELINE_BORDER = 2;
-	public final static int COLOR_ROUTE_PRIOR_ROUTELINE = 3;
-	public final static int COLOR_ROUTE_PRIOR_ROUTELINE_BORDER = 4;
-	public final static int COLOR_ROUTE_ROUTEDOT = 5;
-	public final static int COLOR_ROUTE_ROUTEDOT_BORDER = 6;
-	public final static int COLOR_ICONMENU_BACKGROUND = 7;
-	public final static int COLOR_ICONMENU_TABBUTTON_BORDER = 8;
-	public final static int COLOR_ICONMENU_TABBUTTON_TEXT = 9;
-	public final static int COLOR_ICONMENU_TABBUTTON_TEXT_HIGHLIGHT = 10;
-	public final static int COLOR_ICONMENU_TABBUTTON_TEXT_INACTIVE = 11;
-	public final static int COLOR_ICONMENU_ICON_TEXT = 12;
-	public final static int COLOR_ICONMENU_ICON_BORDER_HIGHLIGHT = 13;
-	public final static int COLOR_COUNT = 14;
+	public final static int COLOR_MAP_TEXT = 1;
+	public final static int COLOR_TITLEBAR_BACKGROUND = 2;
+	public final static int COLOR_TITLEBAR_TEXT = 3;
+	public final static int COLOR_WAYNAME_BACKGROUND = 4;
+	public final static int COLOR_WAYNAME_TEXT = 5;
+	public final static int COLOR_WAYPOINT_TEXT = 6;
+	public final static int COLOR_RECORDING_SUSPENDED_TEXT = 7;
+	public final static int COLOR_RECORDING_ON_TEXT = 8;
+	public final static int COLOR_CELLID_LOG_ON_TEXT = 9;
+	public final static int COLOR_CELLID_LOG_ON_ATTEMPTING_TEXT = 10;
+	public final static int COLOR_AUDIOREC_TEXT = 11;	
+	public final static int COLOR_TARGET_TEXT = 12;	
+	public final static int COLOR_TARGET_LINE = 13;	
+	public final static int COLOR_MAP_CURSOR = 14;	
+	public final static int COLOR_MAP_POSINDICATOR = 15;	
+	public final static int COLOR_SCALEBAR = 16;	
+	public final static int COLOR_ZOOM_BUTTON = 17;	
+	public final static int COLOR_ZOOM_BUTTON_TEXT = 18;	
+	public final static int COLOR_COMPASS_DIRECTION_BACKGROUND = 19;	
+	public final static int COLOR_COMPASS_DIRECTION_TEXT = 20;	
+	public final static int COLOR_RI_AT_TARGET = 21;
+	public final static int COLOR_RI_ON_ROUTE = 22;
+	public final static int COLOR_RI_OFF_ROUTE_SLIGHT = 23;
+	public final static int COLOR_RI_OFF_ROUTE_FULL = 24;
+	public final static int COLOR_RI_NOT_AT_ROUTE_LINE_YET = 25;
+	public final static int COLOR_RI_CHECK_DIRECTION = 26;
+	public final static int COLOR_RI_TEXT = 27;
+	public final static int COLOR_RI_DISTANCE_BACKGROUND = 28;
+	public final static int COLOR_RI_DISTANCE_TEXT = 29;
+	public final static int COLOR_RI_OFF_DISTANCE_TEXT = 30;
+	public final static int COLOR_ROUTE_ROUTELINE = 31;
+	public final static int COLOR_ROUTE_ROUTELINE_BORDER = 32;
+	public final static int COLOR_ROUTE_PRIOR_ROUTELINE = 33;
+	public final static int COLOR_ROUTE_PRIOR_ROUTELINE_BORDER = 34;
+	public final static int COLOR_ROUTE_ROUTEDOT = 35;
+	public final static int COLOR_ROUTE_ROUTEDOT_BORDER = 36;
+	public final static int COLOR_ICONMENU_BACKGROUND = 37;
+	public final static int COLOR_ICONMENU_TABBUTTON_BORDER = 38;
+	public final static int COLOR_ICONMENU_TABBUTTON_TEXT = 39;
+	public final static int COLOR_ICONMENU_TABBUTTON_TEXT_HIGHLIGHT = 40;
+	public final static int COLOR_ICONMENU_TABBUTTON_TEXT_INACTIVE = 41;
+	public final static int COLOR_ICONMENU_ICON_TEXT = 42;
+	public final static int COLOR_ICONMENU_ICON_BORDER_HIGHLIGHT = 43;
+	public final static int COLOR_ALERT_BACKGROUND = 44;
+	public final static int COLOR_ALERT_BORDER = 45;
+	public final static int COLOR_ALERT_TITLE_BACKGROUND = 46;
+	public final static int COLOR_ALERT_TEXT = 47;
+	public final static int COLOR_CUSTOMMENU_BACKGROUND = 48;
+	public final static int COLOR_CUSTOMMENU_BORDER = 49;
+	public final static int COLOR_CUSTOMMENU_TITLE_BACKGROUND = 50;
+	public final static int COLOR_CUSTOMMENU_TEXT = 51;
+	public final static int COLOR_CUSTOMMENU_HIGHLIGHT_BACKGROUND = 52;
+	public final static int COLOR_TACHO_BACKGROUND = 53;
+	public final static int COLOR_TACHO_TEXT = 54;
+	public final static int COLOR_COUNT = 55;
+
 	public static int COLORS[] = new int[COLOR_COUNT];
 
 	public static String appVersion;

@@ -100,13 +100,14 @@ public class TraceLayout extends LayoutManager {
 			LayoutElement.FLAG_BACKGROUND_BOX
 		);	
 		e.setVRelative(ele[TITLEBAR]);
-		e.setBackgroundColor(0x00FFFF96);
+		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_COMPASS_DIRECTION_BACKGROUND]);
 		e.setActionID(Trace.MANUAL_ROTATION_MODE_CMD);
 	
 		e = ele[SOLUTION]; addElement(e, 
 			LayoutElement.FLAG_HALIGN_RIGHT | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
 			LayoutElement.FLAG_FONT_MEDIUM
 		);	
+		e.setColor(Legend.COLORS[Legend.COLOR_MAP_TEXT]);
 		e.setAdditionalOffsX(-1);
 		e.setVRelative(ele[TITLEBAR]);
 	
@@ -137,6 +138,8 @@ public class TraceLayout extends LayoutManager {
 			LayoutElement.FLAG_BACKGROUND_BOX | LayoutElement.FLAG_BACKGROUND_FULL_WIDTH |
 			LayoutElement.FLAG_RESERVE_SPACE
 		);
+		e.setColor(Legend.COLORS[Legend.COLOR_WAYNAME_TEXT]);
+		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_WAYNAME_BACKGROUND]);
 		e.setActionID(Trace.ICON_MENU);
 		
 		e = ele[ROUTE_INTO]; addElement(e, 
@@ -145,20 +148,19 @@ public class TraceLayout extends LayoutManager {
 			LayoutElement.FLAG_BACKGROUND_BOX | LayoutElement.FLAG_BACKGROUND_FULL_WIDTH
 		);
 		e.setVRelative(ele[WAYNAME]);
-		e.setBackgroundColor(0x00008000);
 	
 		e = ele[ROUTE_INSTRUCTION]; addElement(e, 
 			LayoutElement.FLAG_HALIGN_CENTER | LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |
 			LayoutElement.FLAG_FONT_MEDIUM | LayoutElement.FLAG_FONT_BOLD |  
 			LayoutElement.FLAG_BACKGROUND_BOX | LayoutElement.FLAG_BACKGROUND_FULL_WIDTH
 		);
-		e.setBackgroundColor(0x00008000);
 		e.setVRelative(ele[ROUTE_INTO]);		
 	
 		e = ele[ROUTE_OFFROUTE]; addElement(e, 
 			LayoutElement.FLAG_HALIGN_RIGHT | LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |
 			LayoutElement.FLAG_FONT_SMALL  
 		);
+		e.setColor(Legend.COLORS[Legend.COLOR_RI_OFF_DISTANCE_TEXT]);
 		e.setVRelative(ele[ROUTE_INSTRUCTION]);		
 	
 		e = ele[ROUTE_DISTANCE]; addElement(e, 
@@ -166,7 +168,8 @@ public class TraceLayout extends LayoutManager {
 			LayoutElement.FLAG_FONT_MEDIUM |
 			LayoutElement.FLAG_BACKGROUND_BOX
 		);
-		e.setBackgroundColor(0x00B0B030);
+		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_RI_DISTANCE_BACKGROUND]);
+		e.setColor(Legend.COLORS[Legend.COLOR_RI_DISTANCE_TEXT]);
 		e.setVRelative(ele[ROUTE_INSTRUCTION]);		
 
 		e = ele[SPEED_CURRENT]; addElement(e, 
@@ -193,7 +196,8 @@ public class TraceLayout extends LayoutManager {
 		);
 		e.setWidthPercent(50);
 		e.setHeightPercent(300);
-		e.setBackgroundColor(0x00000000);
+		e.setColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON_TEXT]);
+		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON]);
 		e.setActionID(Trace.RECENTER_GPS_CMD);
 		
 		e = ele[ZOOM_IN]; addElement(e, 
@@ -204,7 +208,8 @@ public class TraceLayout extends LayoutManager {
 		);
 		e.setWidthPercent(150);
 		e.setHeightPercent(150);
-		e.setBackgroundColor(0x00000000);
+		e.setColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON_TEXT]);
+		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON]);
 		e.setHRelative(ele[RECENTER_GPS]);
 		e.setVRelative(ele[RECENTER_GPS]);	
 		e.setActionID(Trace.ZOOM_IN_CMD);
@@ -219,7 +224,8 @@ public class TraceLayout extends LayoutManager {
 		e.setHeightPercent(150);
 		e.setHRelative(ele[RECENTER_GPS]);
 		e.setVRelative(ele[ZOOM_IN]);
-		e.setBackgroundColor(0x00000000);
+		e.setColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON_TEXT]);
+		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON]);
 		e.setActionID(Trace.ZOOM_OUT_CMD);
 		
 	}
@@ -274,7 +280,7 @@ public class TraceLayout extends LayoutManager {
 	 */
 	public void showScale(Graphics g, int left, int top) {
 		//Draw the scale bar
-		g.setColor(0x00000000);
+		g.setColor(Legend.COLORS[Legend.COLOR_SCALEBAR]);
 		g.setStrokeStyle(Graphics.SOLID);
 		int right = left + scalePx;
 		g.drawLine(left, top + 2, right, top + 2);

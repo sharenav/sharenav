@@ -1474,7 +1474,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			/*
 			 * the final part of the overlay should not give any voice instructions
 			 */
-			g.setColor(0);
+			g.setColor(Legend.COLOR_MAP_TEXT);
 			switch (showAddons) {
 			case 1:
 				yc = showMemory(g, yc, la);
@@ -1501,9 +1501,9 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				if (gpx.isRecordingTrk()) {
 					// we are recording tracklogs
 					if (gpx.isRecordingTrkSuspended()) {
-						eRecorded.setColor(0x000000FF); // blue
+						eRecorded.setColor(Legend.COLORS[Legend.COLOR_RECORDING_SUSPENDED_TEXT]); // blue
 					} else {
-						eRecorded.setColor(0x00FF0000); // red
+						eRecorded.setColor(Legend.COLORS[Legend.COLOR_RECORDING_ON_TEXT]); // red
 					}
 					eRecorded.setText(gpx.recorded + "r"); 
 				}
@@ -1515,10 +1515,10 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			// show if we are logging cellIDs 
 			if (SECellLocLogger.isCellIDLogging() > 0) {
 				if (SECellLocLogger.isCellIDLogging() == 2) {
-					e.setColor(0x00FFFF96); // yellow
+					e.setColor(Legend.COLORS[Legend.COLOR_CELLID_LOG_ON_TEXT]); // yellow
 				} else {
 					//Attempting to log, but currently no valid info available
-					e.setColor(0x00FF5656); // red
+					e.setColor(Legend.COLORS[Legend.COLOR_CELLID_LOG_ON_ATTEMPTING_TEXT]); // red
 				}
 				e.setText("cellIDs");
 			}
@@ -1526,7 +1526,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			// show audio recording status
 			e = tl.ele[TraceLayout.AUDIOREC];
 			if (audioRec.isRecording()) {
-				e.setColor(0x00FF0000); // red 
+				e.setColor(Legend.COLORS[Legend.COLOR_AUDIOREC_TEXT]); // red 
 				e.setText("AudioRec");				
 			}
 			
@@ -1643,19 +1643,20 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				//alertHeight += fontHeight/2;
 				int alertLeft = (getWidth() - alertWidth) / 2;
 				// alert background color
-				g.setColor(222, 222, 222);
+				g.setColor(Legend.COLORS[Legend.COLOR_ALERT_BACKGROUND]);
 				g.fillRect(alertLeft, alertTop , alertWidth, alertHeight);
 				// background color for alert title
-				pc.g.setColor(255, 255, 255); 
+				g.setColor(Legend.COLORS[Legend.COLOR_ALERT_TITLE_BACKGROUND]);
 				g.fillRect(alertLeft, alertTop , alertWidth, fontHeight + 3);
 				// alert border
-				g.setColor(0, 0, 0);
+				g.setColor(Legend.COLORS[Legend.COLOR_ALERT_BORDER]);
 				g.setStrokeStyle(Graphics.SOLID);
 				g.drawRect(alertLeft, alertTop, alertWidth, fontHeight + 3); // title border
 				g.drawRect(alertLeft, alertTop, alertWidth, alertHeight); // alert border
 				// draw alert title
 				y = alertTop + 2; // output position of alert title
 				g.setFont(titleFont);
+				g.setColor(Legend.COLORS[Legend.COLOR_ALERT_TEXT]);
 				g.drawString(currentAlertTitle, getWidth()/2, y , Graphics.TOP|Graphics.HCENTER);
 				g.setFont(font);
 				// output alert message 1.5 lines below alert title in the next pass
@@ -1767,6 +1768,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	}
 	
 	private int showConnectStatistics(Graphics g, int yc, int la) {
+		g.setColor(Legend.COLORS[Legend.COLOR_MAP_TEXT]);
 		GSMCell cell = CellIdProvider.getInstance().obtainCachedCellID();
 		if (cell == null) {
 			g.drawString("No Cell ID available", 0, yc, Graphics.TOP
@@ -1788,7 +1790,6 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					| Graphics.LEFT);
 			return yc+la;
 		}
-		g.setColor(0, 0, 0);
 		//#mdebug info
 		for (byte i = 0; i < LocationMsgReceiver.SIRF_FAIL_COUNT; i++) {
 			g.drawString(statMsg[i] + statRecord[i], 0, yc, Graphics.TOP
@@ -1809,11 +1810,11 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			pc.getP().forward(target.lat, target.lon, pc.lineP2);
 //			System.out.println(target.toString());
 			pc.g.drawImage(pc.images.IMG_TARGET,pc.lineP2.x,pc.lineP2.y,CENTERPOS);
-			pc.g.setColor(0,0,0);
+			pc.g.setColor(Legend.COLORS[Legend.COLOR_TARGET_TEXT]);
 			if (target.displayName != null)
 				pc.g.drawString(target.displayName, pc.lineP2.x, pc.lineP2.y+8,
 					Graphics.TOP | Graphics.HCENTER);
-			pc.g.setColor(255,50,50);
+			pc.g.setColor(Legend.COLORS[Legend.COLOR_TARGET_LINE]);
 			pc.g.setStrokeStyle(Graphics.DOTTED);
 			pc.g.drawLine(pc.lineP2.x,pc.lineP2.y,pc.xSize/2,pc.ySize/2);
 		}
@@ -1826,7 +1827,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	 * @param g Graphics context for drawing
 	 */
 	public void showMovement(Graphics g) {
-		g.setColor(0, 0, 0);
+		g.setColor(Legend.COLORS[Legend.COLOR_MAP_CURSOR]);
 		int centerX = getWidth() / 2;
 		int centerY = getHeight() / 2;
 		int posX, posY;
@@ -1841,6 +1842,8 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			posY = centerY;
 		}
 		pc.g.drawImage(pc.images.IMG_POS_BG,posX,posY,CENTERPOS);
+
+		g.setColor(Legend.COLORS[Legend.COLOR_MAP_POSINDICATOR]);
 		float radc = (float) (course * MoreMath.FAC_DECTORAD);
 		int px = posX + (int) (Math.sin(radc) * 20);
 		int py = posY - (int) (Math.cos(radc) * 20);

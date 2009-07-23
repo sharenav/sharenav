@@ -14,6 +14,7 @@ import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 
+import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Position;
 import de.ueller.gps.tools.HelperRoutines;
@@ -106,10 +107,10 @@ public class GuiTacho extends KeyCommandCanvas implements CommandListener,
 		int h = getHeight();
 		int w = getWidth();
 		
-		g.setColor(0x00ffffff);
+		g.setColor(Legend.COLORS[Legend.COLOR_TACHO_BACKGROUND]);
 		g.fillRect(0, 0, w, h);
 
-		g.setColor(0);
+		g.setColor(Legend.COLORS[Legend.COLOR_TACHO_TEXT]);
 		int y = 0;
 		
 		date.setTime(pos.timeMillis);	// set Date to milliSecs since 01-Jan-1970

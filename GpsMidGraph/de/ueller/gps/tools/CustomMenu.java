@@ -5,6 +5,7 @@
 
 package de.ueller.gps.tools;
 
+import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.Configuration;
 import de.ueller.midlet.gps.CompletionListener;
 import de.ueller.midlet.gps.Trace;
@@ -58,13 +59,13 @@ public class CustomMenu {
 		int menuLeft = (trace.getWidth() - menuWidth) / 2; 
 		int menuTop = (trace.getHeight() - menuHeight) / 2; 
 		// background color
-		g.setColor(0x00E0E0E0); 
+		g.setColor(Legend.COLORS[Legend.COLOR_CUSTOMMENU_BACKGROUND]); 
 		g.fillRect(menuLeft, menuTop, menuWidth, menuHeight);
 		// color for title
-		g.setColor(0x00FFFFFF); 
+		g.setColor(Legend.COLORS[Legend.COLOR_CUSTOMMENU_TITLE_BACKGROUND]); 
 		g.fillRect(menuLeft, menuTop, menuWidth, fontHeight + 3);
 		// border
-		g.setColor(0);
+		g.setColor(Legend.COLORS[Legend.COLOR_CUSTOMMENU_BORDER]);
 		g.setStrokeStyle(Graphics.SOLID);
 		g.drawRect(menuLeft, menuTop, menuWidth, fontHeight + 3); // title border
 		g.drawRect(menuLeft, menuTop, menuWidth, menuHeight); // menu border
@@ -81,9 +82,9 @@ public class CustomMenu {
 		entriesHeight = fontHeight;
 		for (int i = 0; i < this.menuEntries.length; i++) {
 			if (i == this.selectedEntry) {
-				g.setColor(0x00FFFFFF); 
+				g.setColor(Legend.COLORS[Legend.COLOR_CUSTOMMENU_HIGHLIGHT_BACKGROUND]); 
 				g.fillRect(entriesLeft, y, menuWidth - 2, fontHeight);				
-				g.setColor(0);
+				g.setColor(Legend.COLORS[Legend.COLOR_CUSTOMMENU_TEXT]);
 			}
 			g.drawString(menuEntries[i], menuLeft + extraWidth / 2, y , Graphics.TOP|Graphics.LEFT);	
 			y += entriesHeight;
