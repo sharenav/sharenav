@@ -148,7 +148,7 @@ public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay implements KeySelectMe
 
 		if (c == UPLOAD_CMD) {
 			parent.show();
-			if (changesetGui == null) {
+			if ((changesetGui == null) || (changesetGui.getChangesetID() < 0)) {
 				loadState = LOAD_STATE_CHANGESET;
 				changesetGui = new GuiOSMChangeset(parent,this);
 				changesetGui.show();

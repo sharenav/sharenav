@@ -57,6 +57,7 @@ public class GuiOSMChangeset extends Form implements GpsMidDisplayable,
 
 	public GuiOSMChangeset(GpsMidDisplayable parent, UploadListener ul) {
 		super("Changeset");
+		changesetID = -1;
 		this.ul = ul;
 		this.parent = parent;
 		commentField = new TextField("Comment", "", 255, TextField.ANY);
@@ -122,6 +123,7 @@ public class GuiOSMChangeset extends Form implements GpsMidDisplayable,
 		String url = Configuration.getOsmUrl() + "changeset/" + changesetID
 		+ "/close";
 		http.uploadData(url, "", true, ul, Configuration.getOsmUsername(), Configuration.getOsmPwd());
+		changesetID = -1;
 	}
 
 	public int getChangesetID() {
@@ -136,6 +138,7 @@ public class GuiOSMChangeset extends Form implements GpsMidDisplayable,
 			try {
 				changesetID = Integer.parseInt(changeID);
 			} catch (NumberFormatException nfe) {
+				changesetID = -1;
 				logger.exception("Returned changesetID was non numerical", nfe);
 				ul.completedUpload(false, "No valid changeset ID was returned");
 				return;
@@ -145,6 +148,7 @@ public class GuiOSMChangeset extends Form implements GpsMidDisplayable,
 			ul.completedUpload(true, "Successfully created Changeset "
 					+ changesetID);
 		} else {
+			changesetID = -1;
 			logger.error("Failed to created Changeset " + message);
 			ul.completedUpload(false, message);
 		}

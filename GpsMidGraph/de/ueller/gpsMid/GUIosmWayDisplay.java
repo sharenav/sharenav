@@ -99,7 +99,7 @@ public class GUIosmWayDisplay extends GuiOSMEntityDisplay implements GpsMidDispl
 
 		if (c == UPLOAD_CMD) {
 			parent.show();
-			if (changesetGui == null) {
+			if ((changesetGui == null) || changesetGui.getChangesetID() < 0) {
 				loadState = LOAD_STATE_CHANGESET;
 				changesetGui = new GuiOSMChangeset(parent,this);
 				changesetGui.show();
