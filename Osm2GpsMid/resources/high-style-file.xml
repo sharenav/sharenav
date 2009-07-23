@@ -51,9 +51,39 @@ scale alias 1: zoomed out 21x
 <legend>
   <version release="0.5.09"/>
   <colors>
-	<!-- Map -->
+	<!-- Map Screen -->
 	<color of="map_background" is="009BFF9B"/>
+	<color of="map_text" is="00000000"/>
+	<color of="titleBar_background" is="00FFFFFF"/>
+	<color of="titleBar_text" is="00000000"/>
+	<color of="wayName_background" is="00FFFFFF"/>
+	<color of="wayName_text" is="00000000"/>
+	<color of="wayPoint_text" is="00000000"/>	
+	<color of="recording_suspended_text" is="000000FF"/>
+	<color of="recording_on_text" is="00FF0000"/>
+	<color of="cellid_log_on_text" is="00FFFF96"/>
+	<color of="cellid_log_on_attempting_text" is="00FF5656"/>
+	<color of="audioRec_text" is="00FF0000"/>
+	<color of="target_text" is="00000000"/>
+	<color of="target_line" is="00FF3232"/>
+	<color of="map_cursor" is="00000000"/>
+	<color of="map_posindicator" is="00000000"/>
+	<color of="scalebar" is="00000000"/>
+	<color of="zoom_button" is="00000000"/>
+	<color of="zoom_text" is="00000000"/>
+	<color of="compass_direction_background" is="00FFFF96"/>
+	<color of="compass_direction_text" is="00000000"/>
 	<!-- Routing -->
+	<color of="ri_at_target" is="00B0B030"/>	
+	<color of="ri_on_route" is="00B7FBBA"/>	
+	<color of="ri_off_route_slight" is="00FFCD9B"/>	
+	<color of="ri_off_route_full" is="00FF5402"/>	
+	<color of="ri_not_at_route_line_yet" is="00000000"/>
+	<color of="ri_check_direction" is="00FFFF64"/>
+	<color of="ri_text" is="00000000"/>
+	<color of="ri_distance_background" is="00B0B030"/>
+	<color of="ri_distance_text" is="00000000"/>
+	<color of="ri_off_distance_text" is="00000000"/>
 	<color of="routeLine" is="0000C0C0"/>
 	<color of="routeLine_border" is="0064FFFF"/>
 	<color of="priorRouteLine" is="00006633"/>
@@ -67,7 +97,21 @@ scale alias 1: zoomed out 21x
 	<color of="iconMenu_tabButton_text_highlight" is="00FFFF00"/>	
 	<color of="iconMenu_tabButton_text_inactive" is="00808080"/>	
 	<color of="iconMenu_icon_text" is="00FFFFFF"/>	
-	<color of="iconMenu_icon_border_highlight" is="00FFFF00"/>	
+	<color of="iconMenu_icon_border_highlight" is="00FFFF00"/>
+	<!-- alert -->
+	<color of="alert_background" is="00DEDEDE"/>	
+	<color of="alert_border" is="00000000"/>	
+	<color of="alert_title_background" is="00FFFFFF"/>	
+	<color of="alert_text" is="00000000"/>	
+	<!-- customMenu -->
+	<color of="customMenu_background" is="00E0E0E0"/>	
+	<color of="customMenu_border" is="00000000"/>	
+	<color of="customMenu_title_background" is="00FFFFFF"/>	
+	<color of="customMenu_text" is="00000000"/>	
+	<color of="customMenu_highlight_background" is="00FFFFFF"/>	
+	<!-- other screens -->
+	<color of="tacho_background" is="00FFFFFF"/>	
+	<color of="tacho_text" is="00000000"/>	
   </colors>
   
   <sounds>
@@ -259,10 +303,31 @@ scale alias 1: zoomed out 21x
 		<namekey tag="name"/>
 		<scale scale="20"/>
 		<textscale scale="23"/>
-	  </value>	
+	  </value>
+	  <value name ="college">
+		<description desc = "College"/>
+		<image src="college.png"/>
+		<namekey tag="name"/>
+		<scale scale="20"/>
+		<textscale scale="23"/>
+	  </value>
+	  <value name ="kindergarten">
+		<description desc = "Kindergarden"/>
+		<image src="kindergarten.png"/>
+		<namekey tag="name"/>
+		<scale scale="20"/>
+		<textscale scale="23"/>
+	  </value>
 	  <value name ="school">
 		<description desc = "School"/>
 		<image src="school.png"/>
+		<namekey tag="name"/>
+		<scale scale="20"/>
+		<textscale scale="23"/>
+	  </value>
+	  <value name ="university">
+		<description desc = "University"/>
+		<image src="college.png"/>
 		<namekey tag="name"/>
 		<scale scale="20"/>
 		<textscale scale="23"/>
@@ -374,7 +439,7 @@ scale alias 1: zoomed out 21x
 		<textscale scale="23"/>
 	  </value>
 	  <value name ="fuel">
-		<description desc = "Refueling station"/>
+		<description desc = "Fuel station"/>
 		<image src="fuel.png"/>
 		<namekey tag="operator"/>
 		<namefallback tag="name"/>
@@ -412,6 +477,13 @@ scale alias 1: zoomed out 21x
 	  <value name ="bench">
 		<description desc = "Park bench"/>
 		<image src="bench.png"/>
+		<namekey tag="name"/>
+		<scale scale="20"/>
+		<textscale scale="23"/>
+	  </value>
+	  <value name ="shelter">
+		<description desc = "Shelter"/>
+		<image src="shelter.png"/>
 		<namekey tag="name"/>
 		<scale scale="20"/>
 		<textscale scale="23"/>
@@ -675,6 +747,13 @@ scale alias 1: zoomed out 21x
 		<scale scale="20"/>
 		<textscale scale="23"/>
 	  </value>
+	  <value name="viewpoint">
+		<description desc = "View point"/>
+		<image src="viewpoint.png"/>
+		<namekey tag="name"/>
+		<scale scale="20"/>
+		<textscale scale="23"/>
+	  </value>
 	  <value name="information">
 		<description desc = "Information"/>
 		<image src="information.png"/>
@@ -785,16 +864,17 @@ scale alias 1: zoomed out 21x
 			<scale scale="20"/>
 			<textscale scale="23"/>
 		</value>
-		<value name ="power_wind">
-			<description desc = "Power wind"/>
+	</key>
+	<key tag = "power">
+		<value name ="generator">
+			<specialisation key="power_source" value="wind"/>
+			<description desc = "Wind generator"/>
 			<image src="power_wind.png"/>
 			<namekey tag="name"/>
 			<scale scale="20"/>
 			<textscale scale="23"/>
-		</value>	
-	</key>
+		</value>
 <!--
-	<key tag = "power">
 		<value name = "tower">
 			<description desc = "Power tower"/>
 			<image src="power_tower.png"/>
@@ -802,8 +882,8 @@ scale alias 1: zoomed out 21x
 			<scale scale="20"/>
 			<textscale scale="23"/>
 		</value>
-	</key>
 -->
+	</key>
 	<key tag="aeroway">
 	  <value name ="aerodrome">
 		<description desc = "Aerodrome"/>
@@ -981,7 +1061,7 @@ scale alias 1: zoomed out 21x
   				<scale scale = "20"/>
   				<lineColor color = "0057520D" />
   				<lineStyle dashed = "true" />
-  				<wayWidth width="3" />
+  				<wayWidth width="2" />
   				<routing with="motorcar" accessible="no" speed="5" />  	
   				<routing with="bicycle" accessible="true" speed="10" />
   				<routing with="foot" accessible="true" speed="4" />  	
@@ -994,7 +1074,7 @@ scale alias 1: zoomed out 21x
   				<scale scale = "20"/>
   				<lineColor color = "008C8515" />
   				<lineStyle dashed = "true" />
-  				<wayWidth width="3" />
+  				<wayWidth width="2" />
   				<routing with="motorcar" accessible="no" speed="5" />  	
   				<routing with="bicycle" accessible="true" speed="10" />
   				<routing with="foot" accessible="true" speed="4" />  	
@@ -1007,7 +1087,7 @@ scale alias 1: zoomed out 21x
   				<scale scale = "20"/>
   				<lineColor color = "00BEB41D" />
   				<lineStyle dashed = "true" />
-  				<wayWidth width="3" />
+  				<wayWidth width="2" />
   				<routing with="motorcar" accessible="no" speed="5" />  	
   				<routing with="bicycle" accessible="true" speed="10" />
   				<routing with="foot" accessible="true" speed="3" />  	
@@ -1020,7 +1100,7 @@ scale alias 1: zoomed out 21x
   				<scale scale = "20"/>
   				<lineColor color = "00E0D538" />
   				<lineStyle dashed = "true" />
-  				<wayWidth width="3" />
+  				<wayWidth width="2" />
   				<routing with="motorcar" accessible="no" speed="5" />  	
   				<routing with="bicycle" accessible="true" speed="8" />
   				<routing with="foot" accessible="true" speed="3" />  	
@@ -1033,7 +1113,7 @@ scale alias 1: zoomed out 21x
   				<scale scale = "20"/>
   				<lineColor color = "00E8E06C" />
   				<lineStyle dashed = "true" />
-  				<wayWidth width="3" />
+  				<wayWidth width="2" />
   				<routing with="motorcar" accessible="no" speed="5" />  	
   				<routing with="bicycle" accessible="true" speed="8" />
   				<routing with="foot" accessible="true" speed="3" />  	
@@ -1045,7 +1125,7 @@ scale alias 1: zoomed out 21x
   				<scale scale = "20"/>
   				<lineColor color = "00EFEAA0" />
   				<lineStyle dashed = "true" />
-  				<wayWidth width="3" />
+  				<wayWidth width="2" />
   				<routing with="motorcar" accessible="no" speed="5" />  	
   				<routing with="bicycle" accessible="true" speed="10" />
   				<routing with="foot" accessible="true" speed="3" />  	
@@ -1706,34 +1786,35 @@ scale alias 1: zoomed out 21x
   				<lineColor color = "0055FF55" />  	  				
   			</Wvalue>
 		</keyW>
-  		<keyW tag = "building">
-  			<Wvalue name = "yes">
+		<keyW tag = "building">
+			<Wvalue name = "yes">
 				<!-- if * is specified as value for a specialisation key,
 				this will match only if the specialisation key exists:
 				 so only named buildings would be included
 				<specialisation key="name" value="*"/>
 				 -->
-  				<description desc = "Building"/>
-  				<namekey tag = "name"/>  				
-  				<isArea area = "true"/>
-  				<scale scale = "20"/>
-  				<textscale scale = "21"/>
+				<description desc = "Building"/>
+				<namekey tag = "name"/>
+				<namefallback tag = "addr:housenumber"/>
+				<isArea area = "true"/>
+				<scale scale = "20"/>
+				<textscale scale = "21"/>
 				<!-- scale level when area descriptions
-  				     will start to show, default is 23
-  				 -->
-  				<descriptionscale scale = "27"/>
-  				<lineColor color = "00CC0000" />
-			</Wvalue>  			
-  			<Wvalue name = "*">
-  				<description desc = "Other building"/>
-  				<namekey tag = "name"/>  				
-  				<namefallback tag = "*"/>  				
-  				<isArea area = "true"/>
-  				<scale scale = "20"/>
-  				<textscale scale = "21"/>
-  				<lineColor color = "00EE0000" />
-			</Wvalue>  			
-  		</keyW>  		
+				     will start to show, default is 23
+				 -->
+				<descriptionscale scale = "27"/>
+				<lineColor color = "00CC0000" />
+			</Wvalue>
+			<Wvalue name = "*">
+				<description desc = "Other building"/>
+				<namekey tag = "name"/>
+				<namefallback tag = "*"/>
+				<isArea area = "true"/>
+				<scale scale = "20"/>
+				<textscale scale = "21"/>
+				<lineColor color = "00EE0000" />
+			</Wvalue>
+		</keyW>
 		<keyW tag = "boundary">
   			<Wvalue name = "administrative" priority = "1">
   				<specialisation key="admin_level" value="2"/>

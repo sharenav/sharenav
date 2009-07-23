@@ -51,9 +51,39 @@ scale alias 1: zoomed out 21x
 <legend>
   <version release="0.5.09"/>
   <colors>
-	<!-- Map -->
+	<!-- Map Screen -->
 	<color of="map_background" is="009BFF9B"/>
+	<color of="map_text" is="00000000"/>
+	<color of="titleBar_background" is="00FFFFFF"/>
+	<color of="titleBar_text" is="00000000"/>
+	<color of="wayName_background" is="00FFFFFF"/>
+	<color of="wayName_text" is="00000000"/>
+	<color of="wayPoint_text" is="00000000"/>	
+	<color of="recording_suspended_text" is="000000FF"/>
+	<color of="recording_on_text" is="00FF0000"/>
+	<color of="cellid_log_on_text" is="00FFFF96"/>
+	<color of="cellid_log_on_attempting_text" is="00FF5656"/>
+	<color of="audioRec_text" is="00FF0000"/>
+	<color of="target_text" is="00000000"/>
+	<color of="target_line" is="00FF3232"/>
+	<color of="map_cursor" is="00000000"/>
+	<color of="map_posindicator" is="00000000"/>
+	<color of="scalebar" is="00000000"/>
+	<color of="zoom_button" is="00000000"/>
+	<color of="zoom_text" is="00000000"/>
+	<color of="compass_direction_background" is="00FFFF96"/>
+	<color of="compass_direction_text" is="00000000"/>
 	<!-- Routing -->
+	<color of="ri_at_target" is="00B0B030"/>	
+	<color of="ri_on_route" is="00B7FBBA"/>	
+	<color of="ri_off_route_slight" is="00FFCD9B"/>	
+	<color of="ri_off_route_full" is="00FF5402"/>	
+	<color of="ri_not_at_route_line_yet" is="00000000"/>
+	<color of="ri_check_direction" is="00FFFF64"/>
+	<color of="ri_text" is="00000000"/>
+	<color of="ri_distance_background" is="00B0B030"/>
+	<color of="ri_distance_text" is="00000000"/>
+	<color of="ri_off_distance_text" is="00000000"/>
 	<color of="routeLine" is="0000C0C0"/>
 	<color of="routeLine_border" is="0064FFFF"/>
 	<color of="priorRouteLine" is="00006633"/>
@@ -67,7 +97,21 @@ scale alias 1: zoomed out 21x
 	<color of="iconMenu_tabButton_text_highlight" is="00FFFF00"/>	
 	<color of="iconMenu_tabButton_text_inactive" is="00808080"/>	
 	<color of="iconMenu_icon_text" is="00FFFFFF"/>	
-	<color of="iconMenu_icon_border_highlight" is="00FFFF00"/>	
+	<color of="iconMenu_icon_border_highlight" is="00FFFF00"/>
+	<!-- alert -->
+	<color of="alert_background" is="00DEDEDE"/>	
+	<color of="alert_border" is="00000000"/>	
+	<color of="alert_title_background" is="00FFFFFF"/>	
+	<color of="alert_text" is="00000000"/>	
+	<!-- customMenu -->
+	<color of="customMenu_background" is="00E0E0E0"/>	
+	<color of="customMenu_border" is="00000000"/>	
+	<color of="customMenu_title_background" is="00FFFFFF"/>	
+	<color of="customMenu_text" is="00000000"/>	
+	<color of="customMenu_highlight_background" is="00FFFFFF"/>	
+	<!-- other screens -->
+	<color of="tacho_background" is="00FFFFFF"/>	
+	<color of="tacho_text" is="00000000"/>	
   </colors>
   
   <sounds>
