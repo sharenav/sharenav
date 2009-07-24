@@ -56,7 +56,7 @@ scale alias 1: zoomed out 21x
 	<color of="map_text" is="00000000"/>
 	<color of="speed_background" is="009BFF9B"/>
 	<color of="speed_text" is="00000000"/>
-	<color of="titleBar_background" is="00FFFFFF" isAtNight="00000000"/>
+	<color of="titleBar_background" is="00FFFFFF" isAtNight="0000A000"/>
 	<color of="titleBar_text" is="00000000" isAtNight="00000000"/>
 	<color of="wayName_background" is="00FFFFFF" isAtNight="00000000"/>
 	<color of="wayName_text" is="00000000" isAtNight="0000A000"/>
