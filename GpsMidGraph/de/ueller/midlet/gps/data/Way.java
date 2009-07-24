@@ -909,7 +909,6 @@ public class Way extends Entity{
 		StringBuffer sbName= new StringBuffer();
   	
 		pc.g.setFont(pathFont);
-		pc.g.setColor(0,0,0);
 
 		IntPoint posChar = new IntPoint();
 		char letter=' ';
@@ -1021,9 +1020,9 @@ public class Way extends Entity{
 								 (int)posChar_y <= maxCharScreenY									
 							) {
 								if (abbreviated) {
-									pc.g.setColor(100,100,100);
+									pc.g.setColor(Legend.COLORS[Legend.COLOR_WAY_LABEL_TEXT_ABBREVIATED]);
 								} else {
-									pc.g.setColor(0,0,0);
+									pc.g.setColor(Legend.COLORS[Legend.COLOR_WAY_LABEL_TEXT]);
 								}
 								pc.g.drawChar(
 									letter,
@@ -1163,10 +1162,10 @@ public class Way extends Entity{
 				if (sumTooSmallLen > completeLen) {
 					sumTooSmallLen = 0;
 					// special color for not completely fitting arrows
-					pc.g.setColor(80,80,80);
+					pc.g.setColor(Legend.COLORS[Legend.COLOR_ONEWAY_ARROW_NON_FITTING]);
 				} else {
 					// normal color
-					pc.g.setColor(50,50,50);
+					pc.g.setColor(Legend.COLORS[Legend.COLOR_ONEWAY_ARROW]);
 				}
 				if (distance!=0) {
 					slope_x = ((double)lineP2.x-(double)lineP1.x)/distance;
@@ -1665,7 +1664,7 @@ public class Way extends Entity{
 		} while (w>(maxX-minX) && i>1);
 		// is area wide enough to draw at least a dot into it?
 		if ((maxX-minX)>=3 ) {
-			pc.g.setColor(0,0,0);
+			pc.g.setColor(Legend.COLORS[Legend.COLOR_AREA_LABEL_TEXT]);
 			// if at least two chars have fit or name is a fitting single char, draw name
 			if (i>1 || (i==name.length() && w<=(maxX-minX))  ) {
 				pc.g.setFont(areaFont);
