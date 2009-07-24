@@ -1343,7 +1343,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		this.audioRec = new AudioRecorder();
 		setDict(gpx, (byte)5);
 		startImageCollector();
-		this.tl = new TraceLayout(0, 0, getWidth(), getHeight());
+		recreateTraceLayout();
 	}
 
 	public void shutdown() {
@@ -2230,6 +2230,10 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			traceIconMenu = new TraceIconMenu(this, this);
 		}
 		traceIconMenu.show();
+	}
+
+	public void recreateTraceLayout() {
+		sizeChanged(getWidth(), getHeight());
 	}
 
 	public void locationDecoderEnd(String msg) {

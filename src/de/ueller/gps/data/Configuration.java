@@ -161,6 +161,8 @@ public class Configuration {
 	public final static byte CFGBIT_ICONMENUS_FULLSCREEN = 54;
 	// bit 55: Flag whether iconMenus should be optimized for routing
 	public final static byte CFGBIT_ICONMENUS_ROUTING_OPTIMIZED = 55;
+	// bit 56: Flag whether night style should be applied
+	public final static byte CFGBIT_NIGHT_MODE = 56;
 	
 	/**
 	 * These are the database record ids for each configuration option

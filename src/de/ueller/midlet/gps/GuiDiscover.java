@@ -202,6 +202,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private ChoiceGroup mapSrc;
 	private Gauge gaugeDetailBoost; 
 	private ChoiceGroup rotationGroup;
+	private ChoiceGroup nightModeGroup;
 	private ChoiceGroup renderOpts;
 	private TextField	tfAutoRecenterToGpsSecs;
 	private ChoiceGroup backlightOpts;
@@ -438,6 +439,12 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 
 		menuDisplayOptions.addCommand(BACK_CMD);
 		menuDisplayOptions.addCommand(OK_CMD);
+
+		String [] nightMode = new String[2];
+		nightMode[0] = "Day Mode";
+		nightMode[1] = "Night Mode";
+		nightModeGroup = new ChoiceGroup("Colors", Choice.EXCLUSIVE, nightMode ,null);
+		menuDisplayOptions.append(nightModeGroup);
 
 		String [] rotation = new String[2];
 		rotation[0] = "North Up";
@@ -759,13 +766,23 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				logger.fatal("Need to restart GpsMid, otherwise map is in an inconsistant state");
 				break;			
 			case STATE_DISPOPT:
+				Configuration.setCfgBitState(Configuration.CFGBIT_NIGHT_MODE,
+						(nightModeGroup.getSelectedIndex()==1),
+						true);
+				try {
+					Legend.readLegend();
+				} catch (Exception e) {
+					logger.fatal("Failed to reread legend");					
+				}
+				Trace trace = Trace.getInstance();
+				trace.recreateTraceLayout();
+
 				Configuration.setProjTypeDefault( (byte) rotationGroup.getSelectedIndex() );
 				Configuration.setCfgBitState(Configuration.CFGBIT_STREETRENDERMODE,
 						(renderOpts.getSelectedIndex()==1),
 						true); 
 				Configuration.setCfgBitState(Configuration.CFGBIT_POI_LABELS_LARGER, sizeOpts.isSelected(0), true);
 				Configuration.setCfgBitState(Configuration.CFGBIT_WPT_LABELS_LARGER, sizeOpts.isSelected(1), true);
-				Trace trace = Trace.getInstance();
 				if (guiOpts.isSelected(0) != Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS)) {
 					trace.removeAllCommands();
 					Configuration.setCfgBitState(Configuration.CFGBIT_ICONMENUS, guiOpts.isSelected(0), true);
@@ -971,6 +988,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				break;
 			case MENU_ITEM_DISP_OPT: // Display Options
 				initDisplay();
+				nightModeGroup.setSelectedIndex( Configuration.getCfgBitState(Configuration.CFGBIT_NIGHT_MODE)?1:0, true);
 				rotationGroup.setSelectedIndex(Configuration.getProjDefault(), true);
 				renderOpts.setSelectedIndex( Configuration.getCfgBitState(Configuration.CFGBIT_STREETRENDERMODE)?1:0, true);
 				sizeOpts.setSelectedIndex(0, Configuration.getCfgBitState(Configuration.CFGBIT_POI_LABELS_LARGER));

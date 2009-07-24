@@ -26,7 +26,7 @@ public class Legend {
 	 * Specifies the format of the map on disk we expect to see
 	 * This constant must be in sync with Osm2GpsMid
 	 */
-	public final static short MAP_FORMAT_VERSION = 38;
+	public final static short MAP_FORMAT_VERSION = 39;
 	
 	/** The waypoint format used in the RecordStore. See PositionMark.java. */
 	public final static short WAYPT_FORMAT_VERSION = 2;
@@ -167,13 +167,21 @@ public class Legend {
 	private final static Logger logger=Logger.getInstance(Legend.class,Logger.TRACE);
 	
 	public Legend() throws IOException {
+		readLegend();
+		
+		namePartRequired[0] = "";
+		namePartRequired[1] = "";
+		namePartRequired[2] = "";
+	}
+
+	public static void readLegend() throws IOException {
 		InputStream is = Configuration.getMapResource("/legend.dat");
 		
 		if (is == null) {
 			logger.error("Failed to open the legend file");
 			return;			
 		}
-
+	
 		DataInputStream ds = new DataInputStream(is);
 		
 		/**
@@ -204,7 +212,7 @@ public class Legend {
 			throw new IOException("Map file contains " + count + "colors but midlet's COLOR_COUNT is " + COLOR_COUNT);
 		}
 		for (int i=0; i<COLOR_COUNT; i++) {
-			COLORS[i] = ds.readInt();
+			COLORS[i] = readDayOrNightColor(ds);
 		}
 		
 		/**
@@ -234,13 +242,9 @@ public class Legend {
 		//System.out.println(getSoundDescription("CONNECT").soundFile);
 				
 		ds.close();
-		
-		namePartRequired[0] = "";
-		namePartRequired[1] = "";
-		namePartRequired[2] = "";
 	}
 	
-	private void readPOIdescriptions(DataInputStream ds) throws IOException {		
+	private static void readPOIdescriptions(DataInputStream ds) throws IOException {		
 		Image generic = Image.createImage("/unknown.png");
 		pois = new POIdescription[ds.readByte()];
 		for (int i = 0; i < pois.length; i++) {
@@ -298,8 +302,20 @@ public class Legend {
 			//#endif
 		}
 	}
+
+	private static int readDayOrNightColor(DataInputStream ds) throws IOException {
+		int color = ds.readInt();
+		int colorNight = color;
+		if ( (color & 0x01000000) > 0) {
+			colorNight = ds.readInt();
+		}
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_NIGHT_MODE)) {
+			color = colorNight;
+		}
+		return color & 0x00FFFFFF;
+	}
 	
-	private void readWayDescriptions(DataInputStream ds) throws IOException {		
+	private static void readWayDescriptions(DataInputStream ds) throws IOException {		
 		Image generic = Image.createImage("/unknown.png");
 		ways = new WayDescription[ds.readByte()];		
 		for (int i = 0; i < ways.length; i++) {
@@ -313,8 +329,8 @@ public class Legend {
 			ways[i].maxScale = ds.readInt();
 			ways[i].maxTextScale = ds.readInt();
 			ways[i].isArea = ds.readBoolean();
-			ways[i].lineColor = ds.readInt();
-			ways[i].boardedColor = ds.readInt();
+			ways[i].lineColor = readDayOrNightColor(ds);
+			ways[i].boardedColor = readDayOrNightColor(ds);
 			ways[i].wayWidth = ds.readByte();
 			ways[i].overviewMode = OM_SHOWNORMAL;
 			ways[i].lineStyle = ds.readInt();
@@ -339,7 +355,7 @@ public class Legend {
 		}
 	}	
 	
-	private void readSoundDescriptions(DataInputStream ds) throws IOException {		
+	private static void readSoundDescriptions(DataInputStream ds) throws IOException {		
 		sounds = new SoundDescription[ds.readByte()];
 		for (int i = 0; i < sounds.length; i++) {
 			sounds[i] = new SoundDescription();
