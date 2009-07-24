@@ -82,7 +82,9 @@ public class TraceLayout extends LayoutManager {
 			LayoutElement.FLAG_HALIGN_CENTER | LayoutElement.FLAG_VALIGN_TOP |
 			LayoutElement.FLAG_FONT_MEDIUM |
 			LayoutElement.FLAG_BACKGROUND_BOX | LayoutElement.FLAG_BACKGROUND_FULL_WIDTH
-		);	
+		);
+		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_TITLEBAR_BACKGROUND]);
+		e.setColor(Legend.COLORS[Legend.COLOR_TITLEBAR_TEXT]);
 		
 		e = ele[SCALEBAR]; addElement(e, 
 				LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
