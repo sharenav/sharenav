@@ -193,7 +193,12 @@ public class CreateGpsMidData {
 			 */
 			dsi.writeShort((short) Configuration.COLOR_COUNT);
 			for (int i=0; i < Configuration.COLOR_COUNT; i++) {
-				dsi.writeInt(Configuration.COLORS[i]);
+				if (Configuration.COLORS_AT_NIGHT[i] != -1) {
+					dsi.writeInt(0x01000000 | Configuration.COLORS[i]);
+					dsi.writeInt(Configuration.COLORS_AT_NIGHT[i]);
+				} else {
+					dsi.writeInt(Configuration.COLORS[i]);
+				}
 			}
 			/**
 			 * Write Travel Modes
@@ -291,8 +296,18 @@ public class CreateGpsMidData {
 				dsi.writeInt(way.minEntityScale);
 				dsi.writeInt(way.minTextScale);				
 				dsi.writeBoolean(way.isArea);
-				dsi.writeInt(way.lineColor);
-				dsi.writeInt(way.boardedColor);
+				if (way.lineColorAtNight != -1) {
+					dsi.writeInt(0x01000000 | way.lineColor);
+					dsi.writeInt(way.lineColorAtNight);
+				} else {
+					dsi.writeInt(way.lineColor);
+				}
+				if (way.boardedColorAtNight != -1) {
+					dsi.writeInt(0x01000000 | way.boardedColor);
+					dsi.writeInt(way.boardedColorAtNight);
+				} else {
+					dsi.writeInt(way.boardedColor);					
+				}
 				dsi.writeByte(way.wayWidth);
 				dsi.writeInt(way.lineStyle);
 				if ((flags & LEGEND_FLAG_MIN_ONEWAY_ARROW_SCALE) > 0)

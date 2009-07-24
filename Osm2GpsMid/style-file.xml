@@ -49,15 +49,25 @@ scale alias 1: zoomed out 21x
 
 <legend>
   <version release="0.5"/>
+<legend>
+  <version release="0.5.09"/>
   <colors>
 	<!-- Map Screen -->
-	<color of="map_background" is="009BFF9B"/>
+	<color of="map_background" is="009BFF9B" isAtNight="006BC06B"/>
 	<color of="map_text" is="00000000"/>
-	<color of="titleBar_background" is="00FFFFFF"/>
-	<color of="titleBar_text" is="00000000"/>
-	<color of="wayName_background" is="00FFFFFF"/>
-	<color of="wayName_text" is="00000000"/>
-	<color of="wayPoint_text" is="00000000"/>	
+	<color of="speed_background" is="009BFF9B"/>
+	<color of="speed_text" is="00000000"/>
+	<color of="titleBar_background" is="00FFFFFF" isAtNight="00000000"/>
+	<color of="titleBar_text" is="00000000" isAtNight="00000000"/>
+	<color of="wayName_background" is="00FFFFFF" isAtNight="00000000"/>
+	<color of="wayName_text" is="00000000" isAtNight="0000A000"/>
+	<color of="area_label_text" is="00000000"/>	
+	<color of="way_label_text" is="00000000"/>	
+	<color of="way_label_text_abbreviated" is="00646464"/>	
+	<color of="poi_label_text" is="00000000"/>	
+	<color of="wayPoint_label_text" is="00000000"/>	
+	<color of="oneway_arrow" is="00323232"/>	
+	<color of="oneway_arrow_non_fitting" is="00505050"/>	
 	<color of="recording_suspended_text" is="000000FF"/>
 	<color of="recording_on_text" is="00FF0000"/>
 	<color of="cellid_log_on_text" is="00FFFF96"/>
@@ -77,7 +87,7 @@ scale alias 1: zoomed out 21x
 	<color of="ri_on_route" is="00B7FBBA"/>	
 	<color of="ri_off_route_slight" is="00FFCD9B"/>	
 	<color of="ri_off_route_full" is="00FF5402"/>	
-	<color of="ri_not_at_route_line_yet" is="00000000"/>
+	<color of="ri_not_at_route_line_yet" is="00808080"/>
 	<color of="ri_check_direction" is="00FFFF64"/>
 	<color of="ri_text" is="00000000"/>
 	<color of="ri_distance_background" is="00B0B030"/>

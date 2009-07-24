@@ -54,7 +54,7 @@ public class Configuration {
 	 * Specifies the format of the map on disk we are about to write
 	 * This constant must be in sync with GpsMid
 	 */
-	public final static short MAP_FORMAT_VERSION = 38;
+	public final static short MAP_FORMAT_VERSION = 39;
 
 	public final static int COLOR_MAP_BACKGROUND = 0;
 	public final static int COLOR_MAP_TEXT = 1;
@@ -190,6 +190,7 @@ public class Configuration {
 			};
 			 		
 	public static int COLORS[] = new int[COLOR_COUNT];
+	public static int COLORS_AT_NIGHT[] = new int[COLOR_COUNT];
 	
 		private ResourceBundle rb;
 		private ResourceBundle vb;
@@ -228,6 +229,9 @@ public class Configuration {
 			
 			if (COLOR_COUNT != COLORNAMES.length) {
 				System.out.println("WARNING: COLORNAMES.length (" + COLORNAMES.length + ") does not match COLOR_COUNT (" + COLOR_COUNT + ")");				
+			}
+			for (int i=0; i<COLOR_COUNT; i++) {
+				COLORS_AT_NIGHT[i] = -1; // preset that no night color is specified
 			}
 			
 			//Set singleton

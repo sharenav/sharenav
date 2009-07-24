@@ -52,14 +52,14 @@ scale alias 1: zoomed out 21x
   <version release="0.5.09"/>
   <colors>
 	<!-- Map Screen -->
-	<color of="map_background" is="009BFF9B"/>
+	<color of="map_background" is="009BFF9B" isAtNight="006BC06B"/>
 	<color of="map_text" is="00000000"/>
 	<color of="speed_background" is="009BFF9B"/>
 	<color of="speed_text" is="00000000"/>
-	<color of="titleBar_background" is="00FFFFFF"/>
-	<color of="titleBar_text" is="00000000"/>
-	<color of="wayName_background" is="00FFFFFF"/>
-	<color of="wayName_text" is="00000000"/>
+	<color of="titleBar_background" is="00FFFFFF" isAtNight="00000000"/>
+	<color of="titleBar_text" is="00000000" isAtNight="00000000"/>
+	<color of="wayName_background" is="00FFFFFF" isAtNight="00000000"/>
+	<color of="wayName_text" is="00000000" isAtNight="0000A000"/>
 	<color of="area_label_text" is="00000000"/>	
 	<color of="way_label_text" is="00000000"/>	
 	<color of="way_label_text_abbreviated" is="00646464"/>	
@@ -1166,7 +1166,7 @@ scale alias 1: zoomed out 21x
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
   				<scale scale = "20"/>
-  				<lineColor color = "00FFFFFF" />
+  				<lineColor color = "00FFFFFF" colorAtNight = "00FF0000"/>
   				<lineStyle dashed = "false" />
   				<wayWidth width="2" />
 				<routing with="motorcar" accessible="false" speed="5" />  	

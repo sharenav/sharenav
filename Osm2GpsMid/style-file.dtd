@@ -10,7 +10,7 @@
 <!ELEMENT key (value+)>
 <!ELEMENT keyW (Wvalue+)>
 <!ELEMENT value (specialisation*, description , image? , searchIcon? , namekey , namefallback? , AreaPOI?, scale , textscale? , imageCentered?, hideable?)>
-<!ELEMENT Wvalue (specialisation*, description, namekey, namefallback?, isArea, scale, textscale?, arrowscale?, descriptionscale?, lineColor, borderColor?, lineStyle?, wayWidth?, searchIcon?, routing*, force_to?, hideable?)>
+<!ELEMENT Wvalue (specialisation*, description, namekey, namefallback?, isArea, scale, textscale?, arrowscale?, descriptionscale?, lineColor, lineColorAtNight?, borderColor?, borderColorAtNight?, lineStyle?, wayWidth?, searchIcon?, routing*, force_to?, hideable?)>
 <!ELEMENT routeAccessRestriction EMPTY>
 <!ELEMENT changeFileExtensionTo EMPTY>
 <!ELEMENT sound (soundFile)>
@@ -46,6 +46,7 @@
 <!ATTLIST changeToFileExtension type CDATA #REQUIRED>
 <!ATTLIST color of CDATA #REQUIRED>
 <!ATTLIST color is CDATA #REQUIRED>
+<!ATTLIST color isAtNight CDATA #IMPLIED>
 <!ATTLIST sound name CDATA #REQUIRED>
 <!ATTLIST routeAccessRestrictions for CDATA #REQUIRED>
 <!ATTLIST description desc CDATA #REQUIRED>
@@ -60,7 +61,9 @@
 <!ATTLIST imageCentered value CDATA #REQUIRED>
 <!ATTLIST isArea area CDATA #REQUIRED>
 <!ATTLIST lineColor color CDATA #REQUIRED>
+<!ATTLIST lineColor colorAtNight CDATA #IMPLIED>
 <!ATTLIST borderColor color CDATA #REQUIRED>
+<!ATTLIST borderColor colorAtNight CDATA #IMPLIED>
 <!ATTLIST lineStyle dashed CDATA #REQUIRED>
 <!ATTLIST wayWidth width CDATA #REQUIRED>
 <!ATTLIST routing with CDATA #REQUIRED>

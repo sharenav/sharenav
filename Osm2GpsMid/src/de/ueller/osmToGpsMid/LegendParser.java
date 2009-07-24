@@ -375,12 +375,28 @@ public class LegendParser extends DefaultHandler{
 					} catch (NumberFormatException nfe){
 						System.out.println("Error: lineColor for " + currentWay.description + " is incorrect. Must be a hex coded ARGB value");
 					}
+					String nightColor = atts.getValue("colorAtNight");
+					if (nightColor != null) {
+						try {
+							currentWay.lineColorAtNight = Integer.parseInt(nightColor, 16);										
+						} catch (NumberFormatException nfe){
+							System.out.println("Error: lineColor colorAtNight for " + currentWay.description + " is incorrect. Must be a hex coded ARGB value");
+						}
+					}
 				}
 				if (qName.equals("borderColor")) {
 					try {
 						currentWay.boardedColor = Integer.parseInt(atts.getValue("color"),16);				
 					} catch (NumberFormatException nfe){
 						System.out.println("Error: borderColor for " + currentWay.description + " is incorrect. Must be a hex coded ARGB value");
+					}
+					String nightColor = atts.getValue("colorAtNight");
+					if (nightColor != null) {
+						try {
+							currentWay.boardedColorAtNight = Integer.parseInt(nightColor, 16);										
+						} catch (NumberFormatException nfe){
+							System.out.println("Error: borderColor colorAtNight for " + currentWay.description + " is incorrect. Must be a hex coded ARGB value");
+						}
 					}
 				}
 				if (qName.equals("wayWidth")) {
@@ -465,6 +481,15 @@ public class LegendParser extends DefaultHandler{
 								System.out.println("Error: color of " + colorName + " is invalid. Must be a hex coded ARGB value");
 							}
 							Configuration.COLORS[i] = rgb;
+							String nightColor = atts.getValue("isAtNight");
+							if (nightColor != null) {
+								try {
+									rgb = Integer.parseInt(nightColor,16);
+									Configuration.COLORS_AT_NIGHT[i] = rgb;
+								} catch (NumberFormatException nfe){
+									System.out.println("Error: color isAtNight of " + colorName + " is invalid. Must be a hex coded ARGB value");
+								}				
+							}
 							colorFound = true;
 							break;
 						}

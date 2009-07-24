@@ -15,8 +15,10 @@ public class WayDescription extends EntityDescription{
 	public int		minOnewayArrowScale;
 	public int		minDescriptionScale;
 	public int		lineColor;
+	public int		lineColorAtNight = -1;
 	public int		lineStyle;
 	public int		boardedColor;
+	public int		boardedColorAtNight = -1;
 	public boolean	isArea;
 	public int		wayWidth;
 	/** Travel Modes (motorcar, bicycle, etc.) supported by this WayDescription (1 bit per travel mode) */
