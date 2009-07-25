@@ -338,11 +338,11 @@ public class TraceLayout extends LayoutManager {
 	}
 	
 	private void showSpeedingSign(Graphics g, String sMaxSpeed, int left, int top) {
-		g.setColor(0x00FF0000);
+		g.setColor(Legend.COLORS[Legend.COLOR_SPEEDING_SIGN_BORDER]);
 		g.fillArc(left, top, speedingSignWidth, speedingSignWidth, 0, 360);
-		g.setColor(0x00FFFFFF);
+		g.setColor(Legend.COLORS[Legend.COLOR_SPEEDING_SIGN_INNER]);
 		g.fillArc(left + char0Width, top + char0Width, speedingSignWidth - (char0Width * 2), speedingSignWidth - (char0Width * 2), 0, 360);
-		g.setColor(0x00000000);
+		g.setColor(Legend.COLORS[Legend.COLOR_SPEEDING_SIGN_TEXT]);
 		g.drawString(sMaxSpeed, left + speedingSignWidth/2, top + speedingSignWidth/2 - (char0Height / 2), Graphics.TOP | Graphics.HCENTER);
 	}
 	
