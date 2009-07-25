@@ -394,6 +394,10 @@ public class LayoutElement {
 			numDrawChars = (short) text.length();
 			lm.recalcPositionsRequired = true;
 			if (image != null) {
+				// recalc available width without image
+				unloadImage();
+				calcSize();
+				// make text fit to available width
 				shortenTextToWidth();
 			}
 		}
