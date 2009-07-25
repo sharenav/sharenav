@@ -2233,7 +2233,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	}
 
 	public void recreateTraceLayout() {
-		sizeChanged(getWidth(), getHeight());
+		tl = new TraceLayout(0, 0, getWidth(), getHeight());
 	}
 
 	public void locationDecoderEnd(String msg) {
