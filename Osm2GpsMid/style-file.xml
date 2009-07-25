@@ -48,8 +48,6 @@ scale alias 1: zoomed out 21x
 -->
 
 <legend>
-  <version release="0.5"/>
-<legend>
   <version release="0.5.09"/>
   <colors>
 	<!-- Map Screen -->
@@ -82,6 +80,9 @@ scale alias 1: zoomed out 21x
 	<color of="zoom_text" is="00000000"/>
 	<color of="compass_direction_background" is="00FFFF96"/>
 	<color of="compass_direction_text" is="00000000"/>
+	<color of="speeding_sign_border" is="00FF0000"/>
+	<color of="speeding_sign_inner" is="00FFFFFF"/>
+	<color of="speeding_sign_text" is="00000000"/>
 	<!-- Routing -->
 	<color of="ri_at_target" is="00B0B030"/>	
 	<color of="ri_on_route" is="00B7FBBA"/>	
@@ -122,7 +123,7 @@ scale alias 1: zoomed out 21x
 	<color of="tacho_background" is="00FFFFFF"/>	
 	<color of="tacho_text" is="00000000"/>	
   </colors>
-    
+      
   <sounds>
 <!-- move the following line out of the comment
 	 to set the file extensions of all soundFile definitions to .mp3

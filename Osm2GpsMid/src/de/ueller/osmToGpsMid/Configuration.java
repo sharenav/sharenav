@@ -54,7 +54,7 @@ public class Configuration {
 	 * Specifies the format of the map on disk we are about to write
 	 * This constant must be in sync with GpsMid
 	 */
-	public final static short MAP_FORMAT_VERSION = 39;
+	public final static short MAP_FORMAT_VERSION = 40;
 
 	public final static int COLOR_MAP_BACKGROUND = 0;
 	public final static int COLOR_MAP_TEXT = 1;
@@ -85,41 +85,44 @@ public class Configuration {
 	public final static int COLOR_ZOOM_BUTTON_TEXT = 26;	
 	public final static int COLOR_COMPASS_DIRECTION_BACKGROUND = 27;	
 	public final static int COLOR_COMPASS_DIRECTION_TEXT = 28;	
-	public final static int COLOR_RI_AT_TARGET = 29;
-	public final static int COLOR_RI_ON_ROUTE = 30;
-	public final static int COLOR_RI_OFF_ROUTE_SLIGHT = 31;
-	public final static int COLOR_RI_OFF_ROUTE_FULL = 32;
-	public final static int COLOR_RI_NOT_AT_ROUTE_LINE_YET = 33;
-	public final static int COLOR_RI_CHECK_DIRECTION = 34;
-	public final static int COLOR_RI_TEXT = 35;
-	public final static int COLOR_RI_DISTANCE_BACKGROUND = 36;
-	public final static int COLOR_RI_DISTANCE_TEXT = 37;
-	public final static int COLOR_RI_OFF_DISTANCE_TEXT = 38;
-	public final static int COLOR_ROUTE_ROUTELINE = 39;
-	public final static int COLOR_ROUTE_ROUTELINE_BORDER = 40;
-	public final static int COLOR_ROUTE_PRIOR_ROUTELINE = 41;
-	public final static int COLOR_ROUTE_PRIOR_ROUTELINE_BORDER = 42;
-	public final static int COLOR_ROUTE_ROUTEDOT = 43;
-	public final static int COLOR_ROUTE_ROUTEDOT_BORDER = 44;
-	public final static int COLOR_ICONMENU_BACKGROUND = 45;
-	public final static int COLOR_ICONMENU_TABBUTTON_BORDER = 46;
-	public final static int COLOR_ICONMENU_TABBUTTON_TEXT = 47;
-	public final static int COLOR_ICONMENU_TABBUTTON_TEXT_HIGHLIGHT = 48;
-	public final static int COLOR_ICONMENU_TABBUTTON_TEXT_INACTIVE = 49;
-	public final static int COLOR_ICONMENU_ICON_TEXT = 50;
-	public final static int COLOR_ICONMENU_ICON_BORDER_HIGHLIGHT = 51;
-	public final static int COLOR_ALERT_BACKGROUND = 52;
-	public final static int COLOR_ALERT_BORDER = 53;
-	public final static int COLOR_ALERT_TITLE_BACKGROUND = 54;
-	public final static int COLOR_ALERT_TEXT = 55;
-	public final static int COLOR_CUSTOMMENU_BACKGROUND = 56;
-	public final static int COLOR_CUSTOMMENU_BORDER = 57;
-	public final static int COLOR_CUSTOMMENU_TITLE_BACKGROUND = 58;
-	public final static int COLOR_CUSTOMMENU_TEXT = 59;
-	public final static int COLOR_CUSTOMMENU_HIGHLIGHT_BACKGROUND = 60;
-	public final static int COLOR_TACHO_BACKGROUND = 61;
-	public final static int COLOR_TACHO_TEXT = 62;
-	public final static int COLOR_COUNT = 63;
+	public final static int COLOR_SPEEDING_SIGN_BORDER = 29;	
+	public final static int COLOR_SPEEDING_SIGN_INNER = 30;	
+	public final static int COLOR_SPEEDING_SIGN_TEXT = 31;	
+	public final static int COLOR_RI_AT_TARGET = 32;
+	public final static int COLOR_RI_ON_ROUTE = 33;
+	public final static int COLOR_RI_OFF_ROUTE_SLIGHT = 34;
+	public final static int COLOR_RI_OFF_ROUTE_FULL = 35;
+	public final static int COLOR_RI_NOT_AT_ROUTE_LINE_YET = 36;
+	public final static int COLOR_RI_CHECK_DIRECTION = 37;
+	public final static int COLOR_RI_TEXT = 38;
+	public final static int COLOR_RI_DISTANCE_BACKGROUND = 39;
+	public final static int COLOR_RI_DISTANCE_TEXT = 40;
+	public final static int COLOR_RI_OFF_DISTANCE_TEXT = 41;
+	public final static int COLOR_ROUTE_ROUTELINE = 42;
+	public final static int COLOR_ROUTE_ROUTELINE_BORDER = 43;
+	public final static int COLOR_ROUTE_PRIOR_ROUTELINE = 44;
+	public final static int COLOR_ROUTE_PRIOR_ROUTELINE_BORDER = 45;
+	public final static int COLOR_ROUTE_ROUTEDOT = 46;
+	public final static int COLOR_ROUTE_ROUTEDOT_BORDER = 47;
+	public final static int COLOR_ICONMENU_BACKGROUND = 48;
+	public final static int COLOR_ICONMENU_TABBUTTON_BORDER = 49;
+	public final static int COLOR_ICONMENU_TABBUTTON_TEXT = 50;
+	public final static int COLOR_ICONMENU_TABBUTTON_TEXT_HIGHLIGHT = 51;
+	public final static int COLOR_ICONMENU_TABBUTTON_TEXT_INACTIVE = 52;
+	public final static int COLOR_ICONMENU_ICON_TEXT = 53;
+	public final static int COLOR_ICONMENU_ICON_BORDER_HIGHLIGHT = 54;
+	public final static int COLOR_ALERT_BACKGROUND = 55;
+	public final static int COLOR_ALERT_BORDER = 56;
+	public final static int COLOR_ALERT_TITLE_BACKGROUND = 57;
+	public final static int COLOR_ALERT_TEXT = 58;
+	public final static int COLOR_CUSTOMMENU_BACKGROUND = 59;
+	public final static int COLOR_CUSTOMMENU_BORDER = 60;
+	public final static int COLOR_CUSTOMMENU_TITLE_BACKGROUND = 61;
+	public final static int COLOR_CUSTOMMENU_TEXT = 62;
+	public final static int COLOR_CUSTOMMENU_HIGHLIGHT_BACKGROUND = 63;
+	public final static int COLOR_TACHO_BACKGROUND = 64;
+	public final static int COLOR_TACHO_TEXT = 65;
+	public final static int COLOR_COUNT = 66;
 
 
 
@@ -153,6 +156,9 @@ public class Configuration {
 			 "zoom_text",
 			 "compass_direction_background",
 			 "compass_direction_text",
+			 "speeding_sign_border",
+			 "speeding_sign_inner",
+			 "speeding_sign_text",
 			 "ri_at_target",
 			 "ri_on_route",
 			 "ri_off_route_slight",
