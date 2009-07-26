@@ -336,8 +336,7 @@ public class LayoutElement {
 					// and do not recalculate its position if it's in percent of screen height
 					clearFlag(FLAG_VALIGN_TOP_SCREENHEIGHT_PERCENT);
 				}
-				int newWidth = width;
-				int newHeight = height;
+
 				int heightRelativeToWidth = (orgImage.getHeight() * width) / orgImage.getWidth();
 				int widthRelativeToHeight = (orgImage.getWidth() * height) / orgImage.getHeight();
 //				System.out.println("calced Width/Height " + width + " " + height);
@@ -394,11 +393,13 @@ public class LayoutElement {
 			numDrawChars = (short) text.length();
 			lm.recalcPositionsRequired = true;
 			if (image != null) {
-				// recalc available width without image
+				//TODO: there should be evaluated a better way to change the label of icons
+				Image orgImage = image;
+				// recalc available width and shorten text to available width (without image)
 				unloadImage();
 				calcSize();
-				// make text fit to available width
-				shortenTextToWidth();
+				setFlag(LayoutElement.FLAG_SCALE_IMAGE_TO_ELEMENT_WIDTH_OR_HEIGHT_KEEPRATIO);
+				image = orgImage;
 			}
 		}
 		oldTextIsValid = textIsValid;
