@@ -75,11 +75,12 @@ public class Routing implements Runnable {
 		this.tile = (RouteBaseTile) tile[4];
 		this.tiles = tile;
 		estimateFac = (Configuration.getRouteEstimationFac() / 10f) + 0.8f;
-		roadRun = (Configuration.getRouteEstimationFac() == 10);
 		maxEstimationSpeed = (int) ( (Configuration.getTravelMode().maxEstimationSpeed * 10) / 36);
 		if (maxEstimationSpeed == 0) {
 			maxEstimationSpeed = 1; // avoid division by zero
 		}
+		// activate roadRun mode only if estimationFac is set to maximum and travel mode's maxEstimationSpeed >= 14 m/s (50 km/h), i.e. for motorized vehicles
+		roadRun = (Configuration.getRouteEstimationFac() == 10) && maxEstimationSpeed >= 14;
 		currentTravelMask = Configuration.getTravelMask();
 	}
 	
