@@ -655,6 +655,10 @@ public class GuiSearch extends Canvas implements CommandListener,
 	}
 	
 	public void pointerReleased(int x, int y) {
+		// avoid division by zero when releasing pointer before screen is drawn
+		if (fontSize == 0) {
+			return;
+		}
 		//#debug debug
 		logger.debug("PointerReleased: " + x + "," + y);
 		long currTime = System.currentTimeMillis();
