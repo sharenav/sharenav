@@ -17,8 +17,9 @@ import de.ueller.gps.data.Configuration;
 import de.ueller.midlet.gps.data.PersistEntity;
 
 /**
- * GuiGpx represents the track management Screen. It allows export, import, deletion, display, and renaming of GPX-tracklogs. It handles the Gui-part of track-managment. The real gpx-data is handled in the Gpx class. 
- * 
+ * GuiGpx represents the track management screen. It allows export, import, 
+ * deletion, display and renaming of GPX tracklogs. It handles the GUI part of
+ * track management. The real GPX data is handled in the GPX class.
  */
 public class GuiGpx extends List implements CommandListener,
 		GpsMidDisplayable, UploadListener, CompletionListener {
@@ -179,9 +180,8 @@ public class GuiGpx extends List implements CommandListener,
 		}
 	}
 	
-	/** updates the Vector of gpxtracks that should be processed by another method**/
-	private void updateProcessVector()
-	{	
+	/** Updates the Vector of GPX tracks that should be processed by another method. */
+	private void updateProcessVector() {	
 		// find out which tracks should be exported **/
 		boolean[] boolSelected = new boolean[this.size()];
 		this.getSelectedFlags(boolSelected);
@@ -220,11 +220,11 @@ public class GuiGpx extends List implements CommandListener,
 	}
 	
 	/**
-	 * implementing the UploadListner Interface
-	 * updates the progressbar by increasing the progress by the given value
+	 * Implementing the UploadListener interface.
+	 * Updates the progress bar by increasing the progress by the given value.
 	 */
-	public void updateProgressValue(int inc){
-		System.out.println("Prgressbar: " + progressbar.getValue());
+	public void updateProgressValue(int inc) {
+		//System.out.println("Progressbar: " + progressbar.getValue());
 		progressbar.setValue(progressbar.getValue() + inc);
 	}
 
@@ -261,8 +261,7 @@ public class GuiGpx extends List implements CommandListener,
 	 * the user, i.e. a modal progress dialog.
 	 * @param title The title of the alert
 	 */
-	protected void showProgressDisplay(String title)
-	{
+	protected void showProgressDisplay(String title) {
 		if (progressDisplay == null) {
 			progressDisplay = new Alert(title);
 			progressDisplay.setCommandListener(this);
@@ -297,13 +296,13 @@ public class GuiGpx extends List implements CommandListener,
 	
 	/**
 	 * Show an alert window with the given title that cannot be dismissed by
-	 * the user, i.e. a modal progress dialog. This Alert Window also has a progressbar indicating the progress
+	 * the user, i.e. a modal progress dialog. This Alert Window also has a 
+	 * progress bar indicating the progress.
 	 * 
 	 * @param title The title of the alert
-	 * @param progEndValue the maximum value for the progressbar
+	 * @param progEndValue the maximum value for the progress bar
 	 */
-	protected void showProgressDisplay(String title, int progEndValue)
-	{
+	protected void showProgressDisplay(String title, int progEndValue) {
 		int progrMode = 0;
 		//catch illegal argument
 		if (progEndValue < 1){
@@ -350,8 +349,7 @@ public class GuiGpx extends List implements CommandListener,
 	/* Add text to the progress alert window.
 	 * @param text Text to be added
 	 */
-	protected void addProgressText(String text)
-	{
+	protected void addProgressText(String text)	{
 		if (sbProgress != null && progressDisplay != null) {
 			sbProgress.append(text);
 			progressDisplay.setString(sbProgress.toString());
@@ -361,8 +359,7 @@ public class GuiGpx extends List implements CommandListener,
 	/* After this method was called, the user can dismiss the 
 	 * alert window (which has no timeout).
 	 */
-	protected void finishProgressDisplay()
-	{
+	protected void finishProgressDisplay() {
 		//some phones only show a progressbar that's continuous running. So we remove the bar to show that the action is completed
 		progressDisplay.setIndicator(null);
 		progressCloseable = true;
