@@ -15,7 +15,7 @@ at large.
 -->
 <devices>
 
-<device supportsPolishGui="true">
+	<device supportsPolishGui="true">
 		<identifier>Generic/editing</identifier>
 		<description>This device combines the full capabilities of GpsMid including OpenStreetMap editing.
 		</description>
@@ -23,19 +23,19 @@ at large.
 		<capability name="JavaPlatform" value="MIDP/2.0"/>
 		<capability name="GpsMid.editing" value="true"/>
 		<capability name="JavaConfiguration" value="CLDC/1.1"/>
-		<capability name="JavaPackage" value="location-api, webservices,  btapi, obex, pdaapi, fileconnection, mmapi, wmapi, 3dapi, svg, nokia-ui, min-siemapi, osm-editing, online"/>
+		<capability name="JavaPackage" value="location-api, webservices, btapi, obex, pdaapi, fileconnection, mmapi, wmapi, 3dapi, svg, nokia-ui, min-siemapi, osm-editing, online"/>
 	</device>
-<device supportsPolishGui="true">
+	<device supportsPolishGui="true">
 		<identifier>Generic/debug</identifier>
-		<description>This device combines the full capabilities of GpsMid but enables debugging.
+		<description>This device combines the full capabilities of GpsMid and enables debugging.
 		</description>
 		<features>isVirtual</features>
 		<capability name="JavaPlatform" value="MIDP/2.0"/>
 		<capability name="GpsMid.editing" value="true"/>
 		<capability name="JavaConfiguration" value="CLDC/1.1"/>
-		<capability name="JavaPackage" value="location-api, webservices,  btapi, obex, pdaapi, fileconnection, mmapi, wmapi, 3dapi, svg, nokia-ui, min-siemapi, osm-editing, online, debug-enabled, noobfuscation"/>
+		<capability name="JavaPackage" value="location-api, webservices, btapi, obex, pdaapi, fileconnection, mmapi, wmapi, 3dapi, svg, nokia-ui, min-siemapi, osm-editing, online, debug-enabled, noobfuscation"/>
 	</device>
-<device supportsPolishGui="true">
+	<device supportsPolishGui="true">
 		<identifier>Generic/blackberry</identifier>
 		<description>This device combines the full capabilities of GpsMid but disables obfuscation.
 		</description>
@@ -43,7 +43,7 @@ at large.
 		<capability name="JavaPlatform" value="MIDP/2.0"/>
 		<capability name="GpsMid.editing" value="true"/>
 		<capability name="JavaConfiguration" value="CLDC/1.1"/>
-		<capability name="JavaPackage" value="location-api, webservices,  btapi, obex, pdaapi, fileconnection, mmapi, wmapi, 3dapi, svg, nokia-ui, min-siemapi, osm-editing, online, noobfuscation"/>
+		<capability name="JavaPackage" value="location-api, webservices, btapi, obex, pdaapi, fileconnection, mmapi, wmapi, 3dapi, svg, nokia-ui, min-siemapi, osm-editing, online, noobfuscation"/>
 	</device>
 	<device supportsPolishGui="true">
 		<identifier>Generic/full</identifier>
@@ -52,17 +52,16 @@ at large.
 		<features>isVirtual</features>
 		<capability name="JavaPlatform" value="MIDP/2.0"/>
 		<capability name="JavaConfiguration" value="CLDC/1.1"/>
-		<capability name="JavaPackage" value="location-api, webservices,  btapi, obex, pdaapi, fileconnection, mmapi, wmapi, 3dapi, svg, nokia-ui, min-siemapi"/>
+		<capability name="JavaPackage" value="location-api, webservices, btapi, obex, pdaapi, fileconnection, mmapi, wmapi, 3dapi, svg, nokia-ui, min-siemapi"/>
 	</device>
-	
 	<device supportsPolishGui="true">
 		<identifier>Generic/full-nolocation</identifier>
-		<description>This device combines the full capabilities of GpsMid, except for jsr-179 (location-api)
+		<description>This device combines the full capabilities of GpsMid, except for JSR-179 (location-api)
 		</description>
 		<features>isVirtual</features>
 		<capability name="JavaPlatform" value="MIDP/2.0"/>
 		<capability name="JavaConfiguration" value="CLDC/1.1"/>
-		<capability name="JavaPackage" value="location, webservices,  btapi, obex, pdaapi, fileconnection, mmapi, wmapi, 3dapi, svg, nokia-ui"/>
+		<capability name="JavaPackage" value="webservices, btapi, obex, pdaapi, fileconnection, mmapi, wmapi, 3dapi, svg, nokia-ui"/>
 	</device>
 	<device supportsPolishGui="true">
 		<identifier>Generic/minimal</identifier>
@@ -73,10 +72,9 @@ at large.
 		<capability name="JavaConfiguration" value="CLDC/1.1"/>
 		<capability name="JavaPackage" value=""/>
 	</device>
-	
 	<device supportsPolishGui="true">
 		<identifier>Generic/minimal-bt</identifier>
-		<description>This device is includes bluetoot, but otherwise is minimal, 
+		<description>This device includes bluetooth, but otherwise is minimal. 
 		</description>
 		<features>isVirtual</features>
 		<capability name="JavaPlatform" value="MIDP/2.0"/>
@@ -85,22 +83,20 @@ at large.
 	</device>
 	<device supportsPolishGui="true">
 		<identifier>Generic/no-obex</identifier>
-		<description>This device contins bluetooth and fileaccess, but no obex capabilities, such as many Nokia devices. 
+		<description>This device contains bluetooth and file access, but no OBEX capabilities, such as many Nokia devices. 
 		</description>
 		<features>isVirtual</features>
 		<capability name="JavaPlatform" value="MIDP/2.0"/>
 		<capability name="JavaConfiguration" value="CLDC/1.1"/>
 		<capability name="JavaPackage" value="btapi, pdaapi, fileconnection"/>
 	</device>
-	
 	<device supportsPolishGui="true">
 		<identifier>Generic/no-xml</identifier>
-		<description>For those devices that don't have jsr-172 (webservices). And therefore no build in XML parser  
+		<description>For those devices that don't have jsr-172 (webservices) and therefore no built in XML parser.  
 		</description>
 		<features>isVirtual</features>
 		<capability name="JavaPlatform" value="MIDP/2.0"/>
 		<capability name="JavaConfiguration" value="CLDC/1.1"/>
 		<capability name="JavaPackage" value="btapi, obex, pdaapi, fileconnection"/>
 	</device>
-	
 </devices>
