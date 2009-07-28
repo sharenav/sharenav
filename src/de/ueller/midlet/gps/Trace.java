@@ -1096,7 +1096,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					if (Configuration.getCfgBitState(Configuration.CFGBIT_FULLSCREEN)) {
 						removeAllCommands();
 					}
-					customMenu = new CustomMenu(this, this, "Route Mode", menuEntries, ROUTING_START_WITH_MODE_SELECT_CMD);
+					customMenu = new CustomMenu(this, this, "Route to target", menuEntries, ROUTING_START_WITH_MODE_SELECT_CMD);
 					customMenu.setSelectedEntry(Configuration.getTravelModeNr());
 				}
 				else {
@@ -2374,7 +2374,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	private String[] buildRouteModeMenuEntries() {
 		boolean askForTurnRestrictions = false;
 		int numTravelModes = Legend.getTravelModes().length;
-		int numMenuEntries = numTravelModes;
+		int numMenuEntries = numTravelModes + 1;
 		for (int i=0; i<numTravelModes; i++) {
 			if (Legend.getTravelModes()[i].isWithTurnRestrictions()) {
 				askForTurnRestrictions = true;
@@ -2384,12 +2384,14 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			numMenuEntries++;
 		}
 		String travelModes[] = new String[numMenuEntries];
-		for (int i=0; i<numTravelModes; i++) {
+		int i = 0;
+		for (; i<numTravelModes; i++) {
 			travelModes[i]=Legend.getTravelModes()[i].travelModeName;
 		}
 		if (askForTurnRestrictions) {
-			travelModes[numTravelModes] = "TurnRestr.: " + (Configuration.getCfgBitState(Configuration.CFGBIT_USE_TURN_RESTRICTIONS_FOR_ROUTE_CALCULATION)?" On":"Off");
+			travelModes[i++] = "TurnRestr.: " + (Configuration.getCfgBitState(Configuration.CFGBIT_USE_TURN_RESTRICTIONS_FOR_ROUTE_CALCULATION)?"On":"Off");
 		}
+		travelModes[i++] = "CalcType: " + (Configuration.getCfgBitState(Configuration.CFGBIT_TURBO_ROUTE_CALC)?"Turbo":"Deep");
 		return travelModes;
 	}
 	
@@ -2400,8 +2402,12 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		if (customMenu!=null) {
 			if (strResult.equalsIgnoreCase("Ok")) {
 				if (customMenu.getCommandID() == ROUTING_START_WITH_MODE_SELECT_CMD) {
-					if (customMenu.getSelectedEntry() == Legend.getTravelModes().length) {
-						Configuration.toggleCfgBitState(Configuration.CFGBIT_USE_TURN_RESTRICTIONS_FOR_ROUTE_CALCULATION, true);
+					if (customMenu.getSelectedEntry() >= Legend.getTravelModes().length) {
+						if (customMenu.getSelectedEntry() == customMenu.getLength() - 1) {
+							Configuration.toggleCfgBitState(Configuration.CFGBIT_TURBO_ROUTE_CALC, true);
+						} else if (customMenu.getSelectedEntry() == Legend.getTravelModes().length) {
+							Configuration.toggleCfgBitState(Configuration.CFGBIT_USE_TURN_RESTRICTIONS_FOR_ROUTE_CALCULATION, true);
+						}
 						customMenu.setMenuEntries(buildRouteModeMenuEntries());
 						reAddCommands = false;
 					} else {

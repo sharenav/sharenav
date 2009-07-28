@@ -144,6 +144,10 @@ public class CustomMenu {
 		}
 		return false;
 	}
+
+	public int getLength() {
+		return menuEntries.length;
+	}
 	
 	public void customMenuSelect(boolean performAction) {
 		this.compListener.actionCompleted("OK");

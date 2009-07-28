@@ -163,6 +163,8 @@ public class Configuration {
 	public final static byte CFGBIT_ICONMENUS_ROUTING_OPTIMIZED = 55;
 	// bit 56: Flag whether night style should be applied
 	public final static byte CFGBIT_NIGHT_MODE = 56;
+	// bit 57: Flag whether turbo route calc should be used
+	public final static byte CFGBIT_TURBO_ROUTE_CALC = 57;
 	
 	/**
 	 * These are the database record ids for each configuration option

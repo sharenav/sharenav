@@ -79,8 +79,17 @@ public class Routing implements Runnable {
 		if (maxEstimationSpeed == 0) {
 			maxEstimationSpeed = 1; // avoid division by zero
 		}
-		// activate roadRun mode only if estimationFac is set to maximum and travel mode's maxEstimationSpeed >= 14 m/s (50 km/h), i.e. for motorized vehicles
-		roadRun = (Configuration.getRouteEstimationFac() == 10) && maxEstimationSpeed >= 14;
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_TURBO_ROUTE_CALC) ) {
+			// activate turbo route calculation
+			if (maxEstimationSpeed >= 14) {
+				// set roadRun mode if travel mode's maxEstimationSpeed >= 14 m/s (50 km/h), i.e. for motorized vehicles
+				roadRun = true;
+			} else {
+				// for non-motorized vehicles simply set highest estimateFac
+				roadRun = false;
+				estimateFac = 1.8f;
+			}
+		}
 		currentTravelMask = Configuration.getTravelMask();
 	}
 	
