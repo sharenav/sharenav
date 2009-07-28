@@ -37,8 +37,8 @@ public class Routing implements Runnable {
 	private float estimateFac = 1.40f;
 	/** maximum speed estimated in m/s */
 	private int maxEstimationSpeed;
-	/** use maximum route calulation speed */
-	private boolean roadRun;
+	/** use maximum route calulation speed instead of deep search */
+	private boolean roadRun = false;
 
 	private int oomCounter = 0;
 	private int expanded;
