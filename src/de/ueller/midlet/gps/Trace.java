@@ -63,6 +63,7 @@ import de.ueller.midlet.gps.data.IntPoint;
 import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.PositionMark;
+import de.ueller.midlet.gps.data.Projection;
 import de.ueller.midlet.gps.data.SECellLocLogger;
 import de.ueller.midlet.gps.data.Way;
 import de.ueller.midlet.gps.names.Names;
@@ -1743,17 +1744,30 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	public void searchNextRoutableWay(PositionMark pm) throws Exception{
 		PaintContext pc = new PaintContext(this, null);
 		// take a bigger angle for lon because of positions near to the pols.
-		Node nld=new Node(pm.lat - 0.0001f,pm.lon - 0.0005f,true);
-		Node nru=new Node(pm.lat + 0.0001f,pm.lon + 0.0005f,true);
-		pc.searchLD=nld;
-		pc.searchRU=nru;
+//		Node nld=new Node(pm.lat - 0.0001f,pm.lon - 0.0005f,true);
+//		Node nru=new Node(pm.lat + 0.0001f,pm.lon + 0.0005f,true);
+//		pc.searchLD=nld;
+//		pc.searchRU=nru;
 		pc.squareDstToActualRoutableWay = Float.MAX_VALUE;
 		pc.xSize = 100;
 		pc.ySize = 100;
-		pc.setP(new Proj2D(new Node(pm.lat,pm.lon, true),5000,100,100));
-		for (int i=0; i<4; i++){
-			t[i].walk(pc, Tile.OPT_WAIT_FOR_LOAD | Tile.OPT_FIND_CURRENT);
-		}
+		// retry searching an expanding region at the position mark 
+		Projection p;
+		do {
+			p = new Proj2D(new Node(pm.lat,pm.lon, true),5000,pc.xSize,pc.ySize);
+			pc.setP(p);
+			for (int i=0; i<4; i++){
+				t[i].walk(pc, Tile.OPT_WAIT_FOR_LOAD | Tile.OPT_FIND_CURRENT);
+			}
+			// stop the search when a routable way is found
+			if (pc.actualRoutableWay != null) {
+				break;
+			}
+			// expand the region that gets searched for a routable way
+			pc.xSize += 100;
+			pc.ySize += 100;
+			// System.out.println(pc.xSize);
+		} while(MoreMath.dist(p.getMinLat(), p.getMinLon(), p.getMinLat(), p.getMaxLon()) < 500); // until we searched at least 500 m edge length
 		Way w = pc.actualRoutableWay;
 		pm.setEntity(w, pc.currentPos.nodeLat, pc.currentPos.nodeLon);
 	}
