@@ -41,7 +41,6 @@ public class GuiGpx extends List implements CommandListener,
 	 * the operations that need it!
 	 */
 	private int idx;
-	private String sCount;
 	
 	private final Trace parent;
 	
@@ -142,14 +141,8 @@ public class GuiGpx extends List implements CommandListener,
 		if (c == RENAME_CMD) {
 			idx = getFirstSelectedIndex();
 			if (idx >= 0) {
-				sCount = "";
-				String sNameOnly = trks[idx].displayName;
-				int iCountPos = sNameOnly.lastIndexOf('(');
-				if (iCountPos > 0 && sNameOnly.lastIndexOf(' ') == (iCountPos - 1) ) {
-					sCount = sNameOnly.substring(iCountPos - 1);
-					sNameOnly = sNameOnly.substring(0, iCountPos - 1);
-				}
-				GuiNameEnter gne = new GuiNameEnter(this, "Rename Track", sNameOnly, Configuration.MAX_TRACKNAME_LENGTH);
+				GuiNameEnter gne = new GuiNameEnter(this, "Rename Track", 
+						trks[idx].displayName, Configuration.MAX_TRACKNAME_LENGTH);
 				gne.show();
 			}
 			return;
@@ -381,7 +374,7 @@ public class GuiGpx extends List implements CommandListener,
 			trks[idx].displayName = strResult;
 			parent.gpx.updateTrackName(trks[idx]);
 			// change item in list
-			set(idx, strResult + sCount, null);
+			set(idx, strResult, null);
 		}
 		show();
 	}
