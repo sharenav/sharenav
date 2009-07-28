@@ -433,7 +433,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 							 */				
 						}
 						if (jsr179Version != null && jsr179Version.length() > 0) {
-							Class jsr179Class = Class.forName("de.ueller.gps.jsr179.JSR179Input");
+							Class jsr179Class = Class.forName("de.ueller.gps.location.JSR179Input");
 							locationProducer = (LocationMsgProducer) jsr179Class.newInstance();
 						}
 					} catch (ClassNotFoundException cnfe) {

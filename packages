@@ -1,6 +1,7 @@
 # from src
 de.ueller.gps
 de.ueller.gps.data
+de.ueller.gps.location
 de.ueller.gps.nmea
 de.ueller.gps.sirf
 de.ueller.gps.tools
@@ -23,9 +24,6 @@ de.ueller.midlet.gps.data
 de.ueller.midlet.gps.names
 de.ueller.midlet.gps.routing
 de.ueller.midlet.gps.tile
-
-# from srcLocationApi
-de.ueller.gps.jsr179
 
 # from src-lib/min-siemapi
 com.siemens.mp.games
