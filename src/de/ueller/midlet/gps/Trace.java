@@ -700,7 +700,9 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					return;
 				}
 			    if (c.getCommandType() == Command.BACK) {
-			    	if (customMenu.getCommandID() == ROUTING_START_WITH_MODE_SELECT_CMD) {
+			    	if (customMenu.getCommandID() == ROUTING_START_WITH_MODE_SELECT_CMD
+			    		&& customMenu.getSelectedEntry() < Legend.getTravelModes().length
+			    	) {
 			    		Configuration.setTravelMode(customMenu.getSelectedEntry());
 				    }
 			    	customMenu = null;
