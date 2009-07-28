@@ -1,9 +1,10 @@
 package de.ueller.midlet.gps;
 /*
- * GpsMid - Copyright (c) 2008 Kai Krueger apm at users dot sourceforge dot net 
+ * GpsMid - Copyright (c) 2008 Kai Krueger apmonkey at users dot sourceforge dot net 
  * See Copying
  */
 
+import javax.microedition.lcdui.Alert;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Choice;
@@ -16,7 +17,8 @@ import de.ueller.midlet.gps.importexport.GpxImportSession;
 public class GuiGpxLoad extends Form implements CommandListener,
 		GpsMidDisplayable {
 
-	private final static Logger logger=Logger.getInstance(GuiGpxLoad.class,Logger.DEBUG);
+	private final static Logger logger = 
+		Logger.getInstance(GuiGpxLoad.class, Logger.DEBUG);
 	
 	private final Command IMPORT_CMD = new Command("Import", Command.OK, 1);
 	private final Command BACK_CMD = new Command("Back", Command.BACK, 5);
@@ -38,26 +40,27 @@ public class GuiGpxLoad extends Form implements CommandListener,
 	    super(null);
 	    this.parent = parent;
 		this.feedbackListener = ul;
-		this.getWpts=getWpts;
+		this.getWpts = getWpts;
 		
-		maxDistance=0;
+		maxDistance = 0;
 
 		menuLoadGpx.addCommand(BACK_CMD);
 		menuLoadGpx.addCommand(IMPORT_CMD);
-		choiceFrom=new ChoiceGroup("Load Gpx",Choice.EXCLUSIVE);
+		choiceFrom = new ChoiceGroup("Load Gpx", Choice.EXCLUSIVE);
 		//#if polish.api.fileconnectionapi
-		choiceFrom.append(LOADFROMFILE,null);
+		choiceFrom.append(LOADFROMFILE, null);
 		//#endif
 		//#if polish.api.obex
-		choiceFrom.append(LOADFROMBT,null);
+		choiceFrom.append(LOADFROMBT, null);
 		//#endif
 		//this.append(LOADFROMCOMM,null); //Not tested properly, so leave it out		
 		if (choiceFrom.size() == 0) {
-			choiceFrom.append("No method for loading available",null);
+			choiceFrom.append("No method for loading available", null);
 		}
 		menuLoadGpx.append(choiceFrom);
 		if (getWpts) {
-			tfMaxDist = new TextField("max. distance in km to current map position (0=no limit)","0",3,TextField.DECIMAL);
+			tfMaxDist = new TextField("Max. distance in km to current map position (0 = no limit)",
+					"0", 3, TextField.DECIMAL);
 			menuLoadGpx.append(tfMaxDist);
 		}
 		menuLoadGpx.setCommandListener(this);		
@@ -70,17 +73,17 @@ public class GuiGpxLoad extends Form implements CommandListener,
 			parent.show();
 		}
 		if (c == IMPORT_CMD) {
-			maxDistance=0;
-			if (getWpts && tfMaxDist.getString().length()!=0) {
+			maxDistance = 0;
+			if (getWpts && tfMaxDist.getString().length() != 0) {
 				try {
-					maxDistance=Float.parseFloat(tfMaxDist.getString());
+					maxDistance = Float.parseFloat(tfMaxDist.getString());
 				} catch (NumberFormatException nfe) {
 					//#debug info
 					logger.info("Couldn't convert the distance into a float");
 					maxDistance = 0.0f;
 				}
-				if (maxDistance<0) {
-					maxDistance=0;
+				if (maxDistance < 0) {
+					maxDistance = 0;
 				}
 			}
 			String choice = choiceFrom.getString(choiceFrom.getSelectedIndex());
@@ -97,7 +100,7 @@ public class GuiGpxLoad extends Form implements CommandListener,
 				 * is not available on this phone. 
 				 */
 				/**
-				 * The Class.forName and the instantition of the class must be separate
+				 * The Class.forName and the instantiation of the class must be separate
 				 * statements, as otherwise this confuses the proguard obfuscator when
 				 * rewriting the flattened renamed classes.
 				 */
@@ -109,17 +112,21 @@ public class GuiGpxLoad extends Form implements CommandListener,
 				} else if(choice.equalsIgnoreCase(LOADFROMFILE)) {
 					tmp = Class.forName("de.ueller.midlet.gps.importexport.FileGpxImportSession");					
 				}
-				if (tmp != null)
+				if (tmp != null) {
 					importSession = (GpxImportSession)(tmp.newInstance());
+				}
 			} catch (ClassNotFoundException cnfe) {
-				logger.error("The type of Gpx import you have selected is not supported by your phone");
+				GpsMid.getInstance().alert("Error", "The type of GPX import you have selected is not supported by your phone.", Alert.FOREVER);
+				logger.error("The type of GPX import you have selected is not supported by your phone.");
 			} catch (Exception e) {
-				logger.exception("Could not start the import server", e);
+				GpsMid.getInstance().alert("Error", "Could not start the import server.", Alert.FOREVER);
+				logger.exception("Could not start the import server.", e);
 			} 
 			if (importSession != null) {
 				importSession.initImportServer(feedbackListener, maxDistance, menuLoadGpx);
 			} else {
-				logger.error("The type of Gpx import you have selected is not supported by your phone");
+				GpsMid.getInstance().alert("Error", "The type of GPX import you have selected is not supported by your phone.", Alert.FOREVER);
+				logger.error("The type of GPX import you have selected is not supported by your phone.");
 			}
 		}
 	}
@@ -128,6 +135,4 @@ public class GuiGpxLoad extends Form implements CommandListener,
 		GpsMid.getInstance().show(menuLoadGpx);
 		//Display.getDisplay(GpsMid.getInstance()).setCurrent(menuLoadGpx);
 	}
-
-	
 }
