@@ -27,13 +27,15 @@ public class CustomMenu {
 	private int entriesLeft = 0;
 	private int entriesRight = 0;
 	private int entriesHeight = 0;
+	private int divideAfterEntryNr = 0;
 
-	public CustomMenu(Trace trace, CompletionListener compListener, String title, String menuEntries[], int commandID) {
+	public CustomMenu(Trace trace, CompletionListener compListener, String title, String menuEntries[], int commandID, int divideAfterEntryNr) {
 		this.trace = trace;
 		this.compListener = compListener;
 		this.title = title;
 		this.menuEntries = menuEntries;
 		this.commandID = commandID;
+		this.divideAfterEntryNr = divideAfterEntryNr;
 	}
 	
 	public void setMenuEntries(String menuEntries[]) {
@@ -55,7 +57,7 @@ public class CustomMenu {
 			}
 		}
 		menuWidth += extraWidth;
-		int menuHeight=titleFont.getHeight() + (menuEntries.length + 1)* font.getHeight();
+		int menuHeight=titleFont.getHeight() + menuEntries.length * font.getHeight() + font.getHeight() / 2 + 2;
 		int menuLeft = (trace.getWidth() - menuWidth) / 2; 
 		int menuTop = (trace.getHeight() - menuHeight) / 2; 
 		// background color
@@ -69,13 +71,14 @@ public class CustomMenu {
 		g.setStrokeStyle(Graphics.SOLID);
 		g.drawRect(menuLeft, menuTop, menuWidth, fontHeight + 3); // title border
 		g.drawRect(menuLeft, menuTop, menuWidth, menuHeight); // menu border
+		g.setColor(Legend.COLORS[Legend.COLOR_CUSTOMMENU_TEXT]);
 
 		y = menuTop + 2;
 		g.setFont(titleFont);
 		g.drawString(this.title, trace.getWidth()/2, y , Graphics.TOP|Graphics.HCENTER);
 		g.setFont(font);
-		// output entries 1.5 lines below title
-		y += (fontHeight * 3 / 2); 
+		// output entries 1.25 lines below title
+		y += (fontHeight * 5 / 4); 
 		entriesTop = y;
 		entriesLeft = menuLeft + 1;
 		entriesRight = entriesLeft + menuWidth;
@@ -84,10 +87,18 @@ public class CustomMenu {
 			if (i == this.selectedEntry) {
 				g.setColor(Legend.COLORS[Legend.COLOR_CUSTOMMENU_HIGHLIGHT_BACKGROUND]); 
 				g.fillRect(entriesLeft, y, menuWidth - 2, fontHeight);				
-				g.setColor(Legend.COLORS[Legend.COLOR_CUSTOMMENU_TEXT]);
 			}
+			g.setColor(Legend.COLORS[Legend.COLOR_CUSTOMMENU_TEXT]);
 			g.drawString(menuEntries[i], menuLeft + extraWidth / 2, y , Graphics.TOP|Graphics.LEFT);	
 			y += entriesHeight;
+			if (i == divideAfterEntryNr) {
+				y++;
+				g.setColor(Legend.COLORS[Legend.COLOR_CUSTOMMENU_BORDER]);
+				g.setStrokeStyle(Graphics.DOTTED);
+				g.drawLine(menuLeft, y, menuLeft + menuWidth, y);
+				g.setStrokeStyle(Graphics.SOLID);
+				y += 2;
+			}
 		}
 	}				
 	
@@ -136,7 +147,11 @@ public class CustomMenu {
 		if (x < entriesLeft || x > entriesRight || y < entriesTop) {
 			return false;
 		}
-		int selection = (y - entriesTop) / entriesHeight;
+		y -= entriesTop;
+		if (divideAfterEntryNr >= 0 && y > entriesHeight * divideAfterEntryNr) {
+			y -= 3;
+		}
+		int selection = y / entriesHeight;
 		if (selection <= menuEntries.length-1) {
 			selectedEntry = selection;
 			customMenuSelect(true);

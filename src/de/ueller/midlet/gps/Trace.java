@@ -1096,7 +1096,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					if (Configuration.getCfgBitState(Configuration.CFGBIT_FULLSCREEN)) {
 						removeAllCommands();
 					}
-					customMenu = new CustomMenu(this, this, "Route to target", menuEntries, ROUTING_START_WITH_MODE_SELECT_CMD);
+					customMenu = new CustomMenu(this, this, "Route to target", menuEntries, ROUTING_START_WITH_MODE_SELECT_CMD, Legend.getTravelModes().length - 1);
 					customMenu.setSelectedEntry(Configuration.getTravelModeNr());
 				}
 				else {

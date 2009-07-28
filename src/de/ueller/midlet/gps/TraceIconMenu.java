@@ -79,7 +79,7 @@ public class TraceIconMenu extends IconMenuWithPagesGUI {
 		IconMenuPage mp;
 		// Recordings
 		mp = createAndAddMenuPage(this.getWidth() >= 176 ?" Recordings ":" Rec ", 3, 4);
-		iconToggleTrackRec=	mp.createAndAddIcon("Rec Track", "i_rectrack", Trace.START_RECORD_CMD);
+		iconToggleTrackRec=	mp.createAndAddIcon("Record Track", "i_rectrack", Trace.START_RECORD_CMD);
 							mp.createAndAddIcon("Save Wpt", "i_savewpt", Trace.SAVE_WAYP_CMD);
 							mp.createAndAddIcon("Enter Wpt", "i_enterwpt", Trace.ENTER_WAYP_CMD);
 
@@ -115,8 +115,8 @@ public class TraceIconMenu extends IconMenuWithPagesGUI {
 		// for commands that can be toggled, fill in the current text and/or corresponding actionId before painting
 		iconToggleGps.setText( trace.isGpsConnected() ? "Stop GPS" : "Start GPS");
 		iconToggleGps.setActionID( trace.isGpsConnected() ? Trace.DISCONNECT_GPS_CMD : Trace.CONNECT_GPS_CMD);
-
-		iconToggleTrackRec.setText( trace.gpx.isRecordingTrk() ? "Stop Rec" : "Rec Track");
+		
+		iconToggleTrackRec.setText( trace.gpx.isRecordingTrk() ? "Stop Rec" : "Record Track");
 		iconToggleTrackRec.setActionID( trace.gpx.isRecordingTrk() ? Trace.STOP_RECORD_CMD : Trace.START_RECORD_CMD);
 		
 		iconToggleAudioRec.setText( trace.audioRec.isRecording() ? "Stop VoiceRec" : "Voice");
