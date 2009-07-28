@@ -112,13 +112,11 @@
 		</deviceRequirements>
 		<deviceRequirements unless="test">
 			<or>
-				<!--
 				<requirement name="Identifier" value="Generic/editing" />
 				<requirement name="Identifier" value="Generic/blackberry" />
 				<requirement name="Identifier" value="Generic/full" />
 				<requirement name="Identifier" value="Generic/minimal" />
 				<requirement name="Identifier" value="Generic/full-nolocation" />
-				-->
 				<requirement name="Identifier" value="Generic/multi" />
 				<requirement name="Identifier" value="Generic/minimal-bt" />
 				<requirement name="Identifier" value="Generic/no-obex" />
