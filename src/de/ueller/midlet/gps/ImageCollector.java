@@ -358,13 +358,21 @@ public class ImageCollector implements Runnable {
 		 *  requires to be exactly on the pixel when zoomed out far
 		 */
 		final int SQUARE_MAXPIXELS = 5 * 5;
-		// show closest routable way name if map is gpsrecentered and we are closer than SQUARE_MAXPIXELS or 50 m (including penalty) to it
-		if (paintPC.trace.gpsRecenter &&
-			(paintPC.squareDstToWay < SQUARE_MAXPIXELS || paintPC.getDstFromSquareDst(paintPC.squareDstToActualRoutableWay) < 50)
-		) {
-			wayForName = paintPC.actualRoutableWay;
-		// else show closest way name if it's no more than SQUARE_MAXPIXELS or 200 m away
-		} else if (paintPC.squareDstToWay < SQUARE_MAXPIXELS || paintPC.getDstFromSquareDst(paintPC.squareDstToWay) < 200) {
+		if (paintPC.trace.gpsRecenter) {
+			// Show closest routable way name if map is gpscentered and we are closer 
+			// than SQUARE_MAXPIXELS or 30 m (including penalty) to it.
+			// If the routable way is too far away, we try the closest way.
+			if (paintPC.squareDstToActualRoutableWay < SQUARE_MAXPIXELS 
+				|| paintPC.getDstFromSquareDst(paintPC.squareDstToActualRoutableWay) < 30
+			) {
+				wayForName = paintPC.actualRoutableWay;
+			} else if (paintPC.squareDstToWay < SQUARE_MAXPIXELS
+					|| paintPC.getDstFromSquareDst(paintPC.squareDstToWay) < 30
+			) {
+				wayForName = paintPC.actualWay;
+			}
+		} else if (paintPC.squareDstToWay < SQUARE_MAXPIXELS) {
+			// If not gpscentered show closest way name if it's no more than SQUARE_MAXPIXELS away.
 			wayForName = paintPC.actualWay;
 		}
 		/*
