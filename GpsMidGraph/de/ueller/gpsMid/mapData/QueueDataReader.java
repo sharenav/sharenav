@@ -10,7 +10,6 @@ import java.io.InputStream;
 
 import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.Configuration;
-import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
 //#if polish.api.osm-editing
@@ -21,10 +20,12 @@ import de.ueller.midlet.gps.data.Way;
 
 public class QueueDataReader extends QueueReader implements Runnable {
     //#debug error
-	private final static Logger logger=Logger.getInstance(QueueDataReader.class,Logger.ERROR);
+	private final static Logger logger = 
+		Logger.getInstance(QueueDataReader.class, Logger.TRACE);
 
 	private final Trace trace;
-	public QueueDataReader(Trace trace){
+
+	public QueueDataReader(Trace trace) {
 		super("DataReader");
 		this.trace = trace;
 		
@@ -32,37 +33,37 @@ public class QueueDataReader extends QueueReader implements Runnable {
 		
 	public void readData(Tile t, Object notifyReady) throws IOException{
 		logger.info("Reading tile: " + t);
-		SingleTile tt=(SingleTile) t;
-		InputStream is=Configuration.getMapResource("/t"+tt.zl+tt.fileId+".d");
-		if (is == null){
+		SingleTile tt = (SingleTile) t;
+		InputStream is = Configuration.getMapResource("/t" + tt.zl + tt.fileId + ".d");
+		if (is == null) {
 		    //#debug error
-				logger.error("file inputStream"+"/t"+tt.zl+tt.fileId+".d"+" not found" );
-			tt.state=0;
+			logger.error("File inputStream/t" + tt.zl + tt.fileId + ".d not found");
+			tt.state = 0;
 			return;
 		}
 //		logger.info("open DataInputStream");
-		DataInputStream ds=new DataInputStream(is);
-		if (ds == null){
+		DataInputStream ds = new DataInputStream(is);
+		if (ds == null) {
 //			logger.error("file DataImputStream "+url+" not found" );
 			tt.state=0;
 			return;
 		}
 //		end open data from JAR
 //		logger.info("read Magic code");
-		if (ds.readByte()!=0x54){
+		if (ds.readByte()!=0x54) {
 //			logger.error("not a MapMid-file");
-			throwError( "not a MapMid-file", tt);
+			throwError( "Not a MapMid-file", tt);
 		}
 		tt.centerLat = ds.readFloat();
 		tt.centerLon = ds.readFloat();
 		//#debug debug
-		logger.debug("Center coordinates of tile: " + tt.centerLat + "/" + tt.centerLon);
+		logger.debug("Center coordinate of tile: " + tt.centerLat + "/" + tt.centerLon);
 		int nodeCount=ds.readShort();
 		short[] radlat = new short[nodeCount];
 		short[] radlon = new short[nodeCount];
 		int iNodeCount=ds.readShort();
 		//#debug trace
-		logger.trace("nodes total :"+nodeCount + "  interestNode :" + iNodeCount);
+		logger.trace("nodes total: " + nodeCount + " interestNode: " + iNodeCount);
 		int[] nameIdx=new int[iNodeCount];
 		for (int i = 0; i < iNodeCount; i++) {
 			nameIdx[i] = -1;
@@ -113,11 +114,11 @@ public class QueueDataReader extends QueueReader implements Runnable {
 			tt.nodeLon=radlon;
 			tt.type=type;
 		} catch (RuntimeException e) {
-			throwError(e, "reading Nodes", tt);
+			throwError(e, "reading nodes", tt);
 		}
 		logger.info("read nodes");
 		if (ds.readByte()!=0x55){			
-			logger.error("Reading Nodes whent wrong / Start of Ways not found");
+			logger.error("Reading nodes went wrong / start of ways not found");
 			throwError("Nodes not OK", tt);
 		}
 		int wayCount=ds.readByte();
@@ -176,7 +177,7 @@ public class QueueDataReader extends QueueReader implements Runnable {
 				}
 			}			
 		} catch (RuntimeException e) {			
-			throwError(e,"Ways(last ok index " + lastread + " out of " + wayCount +")",tt);
+			throwError(e, "Ways (last ok index " + lastread + " out of " + wayCount +")", tt);
 		}
 		if (ds.readByte() != 0x56){
 			throwError("Ways not OK, failed to read final magic value", tt);
@@ -198,14 +199,17 @@ public class QueueDataReader extends QueueReader implements Runnable {
 //		}
 
 	}
+
 	private void throwError(String string, SingleTile tt) throws IOException {
 		throw new IOException("MapMid-file corrupt: " + string + " zl=" + tt.zl + " fid=" + tt.fileId);
 		
 	}
+
 	private void throwError(RuntimeException e, String string, SingleTile tt) throws IOException {
 		e.printStackTrace();
-		throw new IOException("MapMid-file corrupt: " + string + " Problem was in: zl=" + tt.zl + " fid=" + tt.fileId + " :" + e.getMessage());
+		throw new IOException("MapMid-file corrupt: " + string + " Problem was in: zl=" + tt.zl + " fid=" + tt.fileId + ": " + e.getMessage());
 	}
+
 	public String toString(){
 		int loop;
 		StringBuffer ret=new StringBuffer();
