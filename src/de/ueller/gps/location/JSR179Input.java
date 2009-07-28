@@ -21,13 +21,14 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Vector;
 
+//#if polish.api.locationapi
 import javax.microedition.location.Coordinates;
 import javax.microedition.location.Criteria;
 import javax.microedition.location.Location;
 import javax.microedition.location.LocationException;
 import javax.microedition.location.LocationListener;
 import javax.microedition.location.LocationProvider;
-
+//#endif
 import de.ueller.gps.data.Position;
 import de.ueller.gps.nmea.NmeaMessage;
 import de.ueller.gps.tools.StringTokenizer;
@@ -36,11 +37,20 @@ import de.ueller.midlet.gps.LocationMsgReceiver;
 import de.ueller.midlet.gps.LocationMsgReceiverList;
 import de.ueller.midlet.gps.Logger;
 
-public class JSR179Input implements LocationListener, LocationMsgProducer {
+/**
+ * This class implements a location producer which uses the JSR-179 API
+ * to get the device's current position.
+ * This API is supported by most phones with an internal GPS receiver.
+ */
+public class JSR179Input 
+		//#if polish.api.locationapi
+		implements LocationListener, LocationMsgProducer
+		//#endif
+{
 	private final static Logger logger = Logger.getInstance(JSR179Input.class,
 			Logger.TRACE);
 
-	/** location provider */
+	//#if polish.api.locationapi
 	private LocationProvider locationProvider = null;
 	private LocationMsgReceiverList receiverList;
 	private NmeaMessage smsg;
@@ -49,7 +59,7 @@ public class JSR179Input implements LocationListener, LocationMsgProducer {
 	private OutputStream rawDataLogger;
 
 	
-	public JSR179Input(){
+	public JSR179Input() {
 		this.receiverList = new LocationMsgReceiverList();
 	}
 
@@ -256,5 +266,5 @@ public class JSR179Input implements LocationListener, LocationMsgProducer {
 	public boolean removeLocationMsgReceiver(LocationMsgReceiver receiver) {
 		return receiverList.removeReceiver(receiver);
 	}
-
+	//#endif
 }
