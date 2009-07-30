@@ -151,7 +151,7 @@ public class CalcNearBy {
 				//latlonKey[0] = n.lat;
 				//latlonKey[1] = n.lon;
 				if (n.getName() == null || n.getName().trim().length() == 0) {
-					System.out.println("STRANG: place with out name, skipping: " + n);
+					System.out.println("STRANGE: place without name, skipping: " + n);
 					continue;
 				}
 				try {
