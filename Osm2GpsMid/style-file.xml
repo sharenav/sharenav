@@ -640,7 +640,7 @@ scale alias 1: zoomed out 21x
   				<namefallback tag = "ref"/>
   				<isArea area = "false"/>
   				<scale scale = "17"/>
-  				<lineColor color = "00FFFFFF" />
+  				<lineColor color = "00FFFF60" />
   				<wayWidth width="4" />
   				<routing with="motorcar" accessible="true" speed="50" />
   				<routing with="bicycle" accessible="true" speed="15" />
