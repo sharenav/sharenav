@@ -147,6 +147,15 @@ public class LegendParser extends DefaultHandler{
             	System.out.println("ERROR: your style file is not valid. Please correct the file and try Osm2GpsMid again");
             	System.exit(1);
             }
+            System.out.println("Style-file: You have " + (poiIdx -1) +" POI types defined and " + (wayIdx - 1) + " way types");
+            if (poiIdx > 126) {
+            	System.out.println("ERROR: your style file contains too many POI types, we currently only support 126. Sorry");
+            	System.exit(1);
+            }
+            if (wayIdx > 126) {
+            	System.out.println("ERROR: your style file contains too many way types, we currently only support 126. Sorry");
+            	System.exit(1);
+            }
 		} catch (FileNotFoundException fnfe) {
 			System.out.println("ERROR, could not find necessary file: " + fnfe.getMessage());
 			System.exit(1);
@@ -194,7 +203,7 @@ public class LegendParser extends DefaultHandler{
 						poiMap.put(currentKey, keyValuesPoi);
 					}
 				}
-				if (qName.equals("value")) {				
+				if (qName.equals("value")) {
 					currentPoi = new POIdescription();
 					currentPoi.typeNum = poiIdx++;
 					currentPoi.key = currentKey;
