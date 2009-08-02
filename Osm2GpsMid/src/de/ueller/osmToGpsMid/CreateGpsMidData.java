@@ -135,9 +135,11 @@ public class CreateGpsMidData {
 			System.out.println("export Tiles for zoomlevel " + i);
 			exportMapToMid(i);
 		}
-		System.out.println("export RouteTiles");
 		if (Configuration.attrToBoolean(configuration.useRouting) >= 0) {
+			System.out.println("export RouteTiles");
 			exportMapToMid(ROUTEZOOMLEVEL);
+		} else {
+			System.out.println("no RouteTiles to export");
 		}
 //		for (int x=1;x<12;x++){
 //			System.out.print("\n" + x + " :");
@@ -145,8 +147,12 @@ public class CreateGpsMidData {
 //		}
 //		System.exit(2);
 		sl.createSearchList(path);
-		for (int i=0; i<TravelModes.travelModeCount; i++) {
-			System.out.println(TravelModes.getTravelMode(i).toString());			
+		
+		// output statistics for travel modes
+		if (Configuration.attrToBoolean(configuration.useRouting) >= 0) {
+			for (int i=0; i<TravelModes.travelModeCount; i++) {
+				System.out.println(TravelModes.getTravelMode(i).toString());			
+			}
 		}
 		System.out.println("Total Ways:"+totalWaysWritten 
 				         + " Seg:"+totalSegsWritten
@@ -389,6 +395,7 @@ public class CreateGpsMidData {
 				removeSoundFile("ROUTE_RECALCULATION");
 				removeSoundFile("SOON");
 				removeSoundFile("STRAIGHTON");
+				removeSoundFile("UTURN");
 				//removeSoundFile("TARGET_REACHED");
 				removeSoundFile("THEN");
 				removeSoundFile("IN");
@@ -411,7 +418,6 @@ public class CreateGpsMidData {
 				removeSoundFile("FOLLOW_STREET");
 				removeSoundFile("AREA_CROSS");
 				removeSoundFile("AREA_CROSSED");
-				removeSoundFile("UTURN");
 			}
 			
 		} catch (FileNotFoundException e) {

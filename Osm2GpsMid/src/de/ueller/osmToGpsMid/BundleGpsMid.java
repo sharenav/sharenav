@@ -69,27 +69,29 @@ public class BundleGpsMid {
 			startTime = Calendar.getInstance();
 
 			TravelMode tm=null;
-			for (int i=0; i < TravelModes.travelModeCount; i++) {				
-				tm = TravelModes.travelModes[i];
-				System.out.println("Route rules in " + c.getStyleFileName() + " for " + tm.getName() + ":");
-				if ( (tm.travelModeFlags & TravelMode.AGAINST_ALL_ONEWAYS) > 0) {
-					System.out.println(" Going against all accessible oneways is allowed");					
+			if (Configuration.attrToBoolean(c.useRouting) >= 0) {
+				for (int i=0; i < TravelModes.travelModeCount; i++) {				
+					tm = TravelModes.travelModes[i];
+					System.out.println("Route rules in " + c.getStyleFileName() + " for " + tm.getName() + ":");
+					if ( (tm.travelModeFlags & TravelMode.AGAINST_ALL_ONEWAYS) > 0) {
+						System.out.println(" Going against all accessible oneways is allowed");					
+					}
+					if ( (tm.travelModeFlags & TravelMode.BICYLE_OPPOSITE_EXCEPTIONS) > 0) {
+						System.out.println(" Opposite direction exceptions for bicycles get applied");					
+					}
+		        	int routeAccessRestrictionCount = 0;
+		            if (TravelModes.getTravelMode(i).getRouteAccessRestrictions().size() > 0) {
+		            	for (RouteAccessRestriction r: tm.getRouteAccessRestrictions()) {
+		            		routeAccessRestrictionCount++;
+		            		System.out.println(" " + r.toString());
+		            	}
+		            }
+		            if (routeAccessRestrictionCount == 0) {
+		        		System.out.println("Warning: No access restrictions in " + c.getStyleFileName() + " for " + tm.getName());            	
+		            }
 				}
-				if ( (tm.travelModeFlags & TravelMode.BICYLE_OPPOSITE_EXCEPTIONS) > 0) {
-					System.out.println(" Opposite direction exceptions for bicycles get applied");					
-				}
-	        	int routeAccessRestrictionCount = 0;
-	            if (TravelModes.getTravelMode(i).getRouteAccessRestrictions().size() > 0) {
-	            	for (RouteAccessRestriction r: tm.getRouteAccessRestrictions()) {
-	            		routeAccessRestrictionCount++;
-	            		System.out.println(" " + r.toString());
-	            	}
-	            }
-	            if (routeAccessRestrictionCount == 0) {
-	        		System.out.println("Warning: No access restrictions in " + c.getStyleFileName() + " for " + tm.getName());            	
-	            }
+				System.out.println("");
 			}
-			System.out.println("");
 			String tmpDir = c.getTempDir();
 			System.out.println("unpack Application to " + tmpDir);
 			expand(c, tmpDir);
