@@ -231,17 +231,11 @@ public class Configuration {
 //		private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
 //				.getBundle(BUNDLE_NAME);
 
-		public Configuration(String [] args) {
-			
-			if (COLOR_COUNT != COLORNAMES.length) {
-				System.out.println("WARNING: COLORNAMES.length (" + COLORNAMES.length + ") does not match COLOR_COUNT (" + COLOR_COUNT + ")");				
-			}
-			for (int i=0; i<COLOR_COUNT; i++) {
-				COLORS_AT_NIGHT[i] = -1; // preset that no night color is specified
-			}
-			
+		public Configuration(String [] args) {		
 			//Set singleton
 			conf = this;
+			
+			resetColors();
 			
 			for (String arg : args) {
 				if (arg.startsWith("--")) {
@@ -339,10 +333,21 @@ public class Configuration {
 		public Configuration() {
 			//Set singleton
 			conf = this;
+			resetColors();
 			initialiseRealScale();
 			resetConfig();
 			planet="TEST";
 			
+		}
+		
+		private void resetColors() {
+			if (COLOR_COUNT != COLORNAMES.length) {
+				System.out.println("WARNING: COLORNAMES.length (" + COLORNAMES.length + ") does not match COLOR_COUNT (" + COLOR_COUNT + ")");				
+			}
+			for (int i=0; i<COLOR_COUNT; i++) {
+				COLORS[i] = 0xFFFFFFFF; 			// mark that color is not specified
+				COLORS_AT_NIGHT[i] = 0xFFFFFFFF;	// preset that no night color is specified
+			}
 		}
 		
 		private void initialiseRealScale() {

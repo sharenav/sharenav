@@ -156,6 +156,19 @@ public class LegendParser extends DefaultHandler{
             	System.out.println("ERROR: your style file contains too many way types, we currently only support 126. Sorry");
             	System.exit(1);
             }
+            
+            // check if all colors are defined in the style-file
+            boolean colorsComplete = true;
+			for (int n=0; n<Configuration.COLOR_COUNT; n++) {
+				if (Configuration.COLORS[n] == 0xFFFFFFFF) {
+					colorsComplete = false;
+					System.out.println("ERROR: your style-file contains no color for \"" + Configuration.COLORNAMES[n] + "\"");
+				}
+			}
+			if (!colorsComplete) {
+            	System.exit(1);				
+			}
+            
 		} catch (FileNotFoundException fnfe) {
 			System.out.println("ERROR, could not find necessary file: " + fnfe.getMessage());
 			System.exit(1);
