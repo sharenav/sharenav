@@ -409,6 +409,9 @@ public class CreateGpsMidData {
 				removeSoundFile("INTO_TUNNEL");
 				removeSoundFile("OUT_OF_TUNNEL");
 				removeSoundFile("FOLLOW_STREET");
+				removeSoundFile("AREA_CROSS");
+				removeSoundFile("AREA_CROSSED");
+				removeSoundFile("UTURN");
 			}
 			
 		} catch (FileNotFoundException e) {
