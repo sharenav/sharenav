@@ -168,6 +168,9 @@ scale alias 1: zoomed out 21x
 	<sound name="STRAIGHTON">
 		<soundFile src="straighton.amr"/>
 	</sound>
+	<sound name="UTURN">
+		<soundFile src="uturn.amr"/>
+	</sound>
 	<sound name="THEN">
 		<soundFile src="then.amr"/>
 	</sound>
@@ -257,6 +260,15 @@ scale alias 1: zoomed out 21x
 	</sound>
 	<sound name="FOLLOW_STREET">
 		<soundFile src="follow_street.amr"/>
+	</sound>
+	<sound name="UTURN">
+		<soundFile src="uturn.amr"/>
+	</sound>
+	<sound name="AREA_CROSS">
+		<soundFile src="area_cross.amr"/>
+	</sound>
+	<sound name="AREA_CROSSED">
+		<soundFile src="area_crossed.amr"/>
 	</sound>
 	<sound name="SPEED_LIMIT">
 		<soundFile src="speed_limit.amr"/>

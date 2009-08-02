@@ -168,6 +168,9 @@ scale alias 1: zoomed out 21x
 	<sound name="STRAIGHTON">
 		<soundFile src="straighton.amr"/>
 	</sound>
+	<sound name="UTURN">
+		<soundFile src="uturn.amr"/>
+	</sound>
 	<sound name="THEN">
 		<soundFile src="then.amr"/>
 	</sound>
@@ -257,6 +260,15 @@ scale alias 1: zoomed out 21x
 	</sound>
 	<sound name="FOLLOW_STREET">
 		<soundFile src="follow_street.amr"/>
+	</sound>
+	<sound name="UTURN">
+		<soundFile src="uturn.amr"/>
+	</sound>
+	<sound name="AREA_CROSS">
+		<soundFile src="area_cross.amr"/>
+	</sound>
+	<sound name="AREA_CROSSED">
+		<soundFile src="area_crossed.amr"/>
 	</sound>
 	<sound name="SPEED_LIMIT">
 		<soundFile src="speed_limit.amr"/>
@@ -1062,7 +1074,7 @@ scale alias 1: zoomed out 21x
   				<namefallback tag = "ref"/>
   				<isArea area = "false"/>
   				<scale scale = "15"/>
-  				<lineColor color = "007FC97F" />
+  				<lineColor color = "00FF7375" />
   				<wayWidth width="6" />
   				<routing with="motorcar" accessible="true" speed="80" />
   				<routing with="bicycle" accessible="true" speed="10" />
@@ -1074,7 +1086,7 @@ scale alias 1: zoomed out 21x
   				<namefallback tag = "ref"/>
   				<isArea area = "false"/>
   				<scale scale = "15"/>
-  				<lineColor color = "007FC97F" />
+  				<lineColor color = "00FF7375" />
   				<wayWidth width="6" />
   				<routing with="motorcar" accessible="true" speed="60" />
   				<routing with="bicycle" accessible="true" speed="10" />
@@ -1098,7 +1110,7 @@ scale alias 1: zoomed out 21x
 				<namefallback tag = "ref"/>
   				<isArea area = "false"/>
   				<scale scale = "19"/>
-  				<lineColor color = "00FFFFFF" />
+  				<lineColor color = "00FFFF60" />
   				<wayWidth width="4" />
   				<routing with="motorcar" accessible="true" speed="50" />
   				<routing with="bicycle" accessible="true" speed="15" />

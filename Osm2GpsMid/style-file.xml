@@ -143,6 +143,7 @@ scale alias 1: zoomed out 21x
 <!-- these soundFiles are automatically determined by the midlet
       and can stay commented out as long as you don't want
       to include other sound files or formats (.mp3, .wav) for them.
+-->
 	<sound name="PREPARE">
 		<soundFile src="prepare.amr"/>
 	</sound>
@@ -166,6 +167,9 @@ scale alias 1: zoomed out 21x
 	</sound>
 	<sound name="STRAIGHTON">
 		<soundFile src="straighton.amr"/>
+	</sound>
+	<sound name="UTURN">
+		<soundFile src="uturn.amr"/>
 	</sound>
 	<sound name="THEN">
 		<soundFile src="then.amr"/>
@@ -256,6 +260,15 @@ scale alias 1: zoomed out 21x
 	</sound>
 	<sound name="FOLLOW_STREET">
 		<soundFile src="follow_street.amr"/>
+	</sound>
+	<sound name="UTURN">
+		<soundFile src="uturn.amr"/>
+	</sound>
+	<sound name="AREA_CROSS">
+		<soundFile src="area_cross.amr"/>
+	</sound>
+	<sound name="AREA_CROSSED">
+		<soundFile src="area_crossed.amr"/>
 	</sound>
 	<sound name="SPEED_LIMIT">
 		<soundFile src="speed_limit.amr"/>
