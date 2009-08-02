@@ -87,7 +87,7 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 		addCommand(SETUP_CMD);
 		setCommandListener(this);
 		setUpCamera();
-		
+		setFullScreenMode(Configuration.getCfgBitState(Configuration.CFGBIT_FULLSCREEN));
 	}
 
 	/*
@@ -204,6 +204,7 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 		try {
 			int idx = 0; 
 			byte [] photo = video.getSnapshot(Configuration.getPhotoEncoding());
+			repaint();
 			if (Configuration.getCfgBitState(Configuration.CFGBIT_ADD_EXIF)) {
 				photo = addExifEncoding(photo);
 			}
@@ -219,6 +220,7 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 			OutputStream fos = fc.openOutputStream();
 			fos.write(photo, 0, photo.length);
 			fos.close();
+			video.setVisible(true);
 		} catch (MediaException e) {
 			logger.exception("Couldn't take picture", e);
 		} catch (IOException e) {
@@ -336,9 +338,20 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 		}
 	}
 
-	protected void paint(Graphics arg0) {
-		//Don't have to do anything here, as the video Player will
-		//do the painting for us.
+	protected void paint(Graphics g) {
+		//It looks like it is necessary to do something
+		//in this method, otherwise the video display gets
+		//confused after taking a picture. So display a simple
+		//"Progress Display"
+		g.fillRect(0, 0, this.getWidth(), this.getHeight());
+		g.setColor(0);
+		g.fillRect(0, 0, getWidth(), getHeight());
+		g.setColor(255,0,0);
+		g.drawRect(5, 5, getWidth() - 10, getHeight() - 10);
+		g.drawRect(6, 6, getWidth() - 12, getHeight() - 12);
+		g.drawRect(7, 7, getWidth() - 14, getHeight() - 14);
+		g.setColor(0,255,0);
+		g.drawString("Saving photo...", getWidth()/2, getHeight()/2, Graphics.BASELINE | Graphics.HCENTER);
 	}
 
 	public void keyPressed(int keyCode) {
