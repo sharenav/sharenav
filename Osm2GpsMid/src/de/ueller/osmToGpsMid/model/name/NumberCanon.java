@@ -76,6 +76,8 @@ public class NumberCanon {
 				readChars = isr.read(buf);
 
 			}
+			isr.close();
+			is.close();
 			/* Bubble sort */
 			boolean changed = true;
 			char tmp;
