@@ -27,6 +27,11 @@ public class Relation extends Entity {
 	public void add(Member m) {
 		members.add(m);		
 	}
+	
+	public String toUrl() {
+		return "http://www.openstreetmap.org/browse/relation/" + id;
+	}
+	
 	public String toString(){
 		StringBuffer ret=new StringBuffer("Relation (" + id + ") [");
 		for (String key : getTags()) {
@@ -73,20 +78,20 @@ public class Relation extends Entity {
 						}
 						}						 
 					}
-					if (role_from == 0) {System.out.println("Missing from in restriction " + toString()); return false;}
-					if (role_via == 0) {System.out.println("Missing via in restriction " + toString());return false;}
-					if (role_to == 0) {System.out.println("Missing to in restriction " + toString());return false;}
-					if (role_from > 1) {System.out.println("Too many \"from\" in restriction " + toString());return false;}
-					if (role_via > 1) {System.out.println("Too many \"via\" in restriction " + toString());return false;}
-					if (role_to > 1) {System.out.println("Too many \"to\" in restriction " + toString());return false;}
+					if (role_from == 0) {System.out.println(toUrl() + ": Missing from in restriction " + toString()); return false;}
+					if (role_via == 0) {System.out.println(toUrl() + ": Missing via in restriction " + toString());return false;}
+					if (role_to == 0) {System.out.println(toUrl() + ": Missing to in restriction " + toString());return false;}
+					if (role_from > 1) {System.out.println(toUrl() + ": Too many \"from\" in restriction " + toString());return false;}
+					if (role_via > 1) {System.out.println(toUrl() + ": Too many \"via\" in restriction " + toString());return false;}
+					if (role_to > 1) {System.out.println(toUrl() + ": Too many \"to\" in restriction " + toString());return false;}
 
 					String restrictionType = getAttribute("restriction");
 					if (restrictionType == null) {
-						System.out.println("No restriction type given in restriction " + toString());return false;						
+						System.out.println(toUrl() + ": No restriction type given in restriction " + toString());return false;						
 					}
 					restrictionType.toLowerCase();					
 					if (! (restrictionType.startsWith("only_") || restrictionType.startsWith("no_"))) {
-						System.out.println("Neither a no_ nor an only_ restriction " + toString());return false;
+						System.out.println(toUrl() + ": Neither a no_ nor an only_ restriction " + toString());return false;
 					}
 
 				}
@@ -111,7 +116,7 @@ public class Relation extends Entity {
 							if (m.getType() == Member.TYPE_NODE || m.getType() == Member.TYPE_WAY) {
 								ref = m.getRef();
 							} else {
-								System.out.println("Turn restrictions: Can only handle ROLE_VIA node and way types. Restriction: " + toString());
+								System.out.println(toUrl() + ": Turn restrictions: Can only handle ROLE_VIA node and way types. Restriction: " + toString());
 							}
 						}
 					}
