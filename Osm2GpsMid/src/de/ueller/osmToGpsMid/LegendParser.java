@@ -52,7 +52,6 @@ public class LegendParser extends DefaultHandler{
 	private Vector<SoundDescription> sounds;
 	private POIdescription currentPoi;
 	private SoundDescription currentSound;
-	private SoundDescription currentColor;
 	private TravelMode currentTravelMode;
 	private WayDescription currentWay;
 	private String currentKey;
@@ -491,7 +490,6 @@ public class LegendParser extends DefaultHandler{
 				break;
 			case READING_COLORS:
 				if (qName.equals("color")) {				
-					currentColor = new SoundDescription();
 					String colorName = atts.getValue("of");
 					boolean colorFound = false;
 					for (int i=0; i<Configuration.COLORNAMES.length; i++) {
