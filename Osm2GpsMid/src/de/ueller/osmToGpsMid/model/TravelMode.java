@@ -28,6 +28,8 @@ public class TravelMode {
 	public long numOneWayConnections=0;
 	public long numBicycleOppositeConnections=0;
 	public byte travelModeFlags = 0;
+	// is this travelMode specified in the style-file?
+	public boolean routeModeDefined = false;
 	
 	public final static byte AGAINST_ALL_ONEWAYS = 1;
 	public final static byte BICYLE_OPPOSITE_EXCEPTIONS = 2;	

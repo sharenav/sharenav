@@ -167,6 +167,17 @@ public class LegendParser extends DefaultHandler{
 			if (!colorsComplete) {
             	System.exit(1);				
 			}
+			
+			// check if all routeModes specified with useRouting are also defined in the style-file
+			if (Configuration.attrToBoolean(config.useRouting) >= 0) {
+				for (int n=0; n < TravelModes.travelModeCount; n++) {				
+					if (! TravelModes.travelModes[n].routeModeDefined) {
+						System.out.println("ERROR: useRouting=" + config.useRouting + " is specified in your .properties file but in your style-file there's no routeMode called " + TravelModes.travelModes[n].getName());
+		            	System.exit(1);										
+					}
+				}
+			}
+			
             
 		} catch (FileNotFoundException fnfe) {
 			System.out.println("ERROR, could not find necessary file: " + fnfe.getMessage());
@@ -532,6 +543,7 @@ public class LegendParser extends DefaultHandler{
 				if (qName.equals("routeMode")) {
 					currentTravelMode = TravelModes.getTravelMode(atts.getValue("modeName"));
 					if (currentTravelMode!=null) {
+						currentTravelMode.routeModeDefined = true;
 						String maxPrepareMeters = atts.getValue("maxPrepareMeters");
 						if (maxPrepareMeters != null) {
 							try {
