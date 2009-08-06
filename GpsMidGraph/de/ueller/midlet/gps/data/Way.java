@@ -850,9 +850,6 @@ public class Way extends Entity{
 				draw(pc, t, (w == 0) ? 1 : w, x, y, hl, pi - 1, highlight);
 			}
 
-			if (isOneway()) {
-				paintPathOnewayArrows(pc, t);
-			}
 			paintPathName(pc, t);
 		}
 	}
@@ -1089,19 +1086,18 @@ public class Way extends Entity{
 		pc.g.setFont(originalFont);
     }
 
-    public void paintPathOnewayArrows(PaintContext pc, SingleTile t) {
+    public void paintPathOnewayArrows(int count, WayDescription wayDesc, PaintContext pc) {
     	// exit if not zoomed in enough
-    	WayDescription wayDesc = Legend.getWayDescription(type);
 		if (pc.scale > wayDesc.maxOnewayArrowScale /* * pc.config.getDetailBoostMultiplier() */ ) {			
 			return;
 		}	
-
+		// Exit if user configured to not display OnewayArrows
 		if ( !Configuration.getCfgBitState(Configuration.CFGBIT_ONEWAY_ARROWS)) {
 			return;
 		}
 		
 		// calculate on-screen-width of the way
-		double w = (int)(pc.ppm*wayDesc.wayWidth + 1);
+		float w = (int)(pc.ppm*wayDesc.wayWidth + 1);
 		 
 		// if arrow would get too small do not draw
 		if(w<3) {
@@ -1128,35 +1124,20 @@ public class Way extends Entity{
 		int maxArrowScreenX = minArrowScreenX + pc.g.getClipWidth() + completeLen;
 		int maxArrowScreenY = minArrowScreenY + pc.g.getClipHeight() + completeLen;
 				
-		Projection p = pc.getP();
-		
-		double posArrow_x = 0;
-    	double posArrow_y = 0;    	
-    	double slope_x=0;
-    	double slope_y=0;
+		float posArrow_x = 0;
+		float posArrow_y = 0;
+		float slope_x=0;
+		float slope_y=0;
     	
-//    	int delta=0;
-//    	double nextDeltaSub=0;
+    	// cache i+1 to i2
+    	int i2= 0; 
     	
-    	IntPoint lineP1 = pc.lineP1;
-    	IntPoint lineP2 = pc.lineP2;
-    	IntPoint swapLineP = pc.swapLineP;
-    	
-		// draw arrow in each segment of path
-		for (int i1 = 0; i1 < path.length; i1++) {
-			// get the next line point coordinates into lineP2
-			int idx = this.path[i1];
-			// forward() is in Mercator.java
-			p.forward(t.nodeLat[idx], t.nodeLon[idx], lineP2, t);
-			// if we got only one line point, get a second one 
-			if (lineP1 == null) {
-				lineP1 = lineP2;
-				lineP2 = swapLineP;
-				continue;
-			}
+    	// draw arrow in each segment of path
+		for (int i = 0; i < count; i++) {
+			i2=i+1;
 			// calculate the slope of the new line 
-			double distance = Math.sqrt( ((double)lineP2.y-(double)lineP1.y)*((double)lineP2.y-(double)lineP1.y) +
-					((double)lineP2.x-(double)lineP1.x)*((double)lineP2.x-(double)lineP1.x) );
+			float distance = (float) Math.sqrt( (y[i2]-y[i])*(y[i2]-y[i]) +
+												(x[i2]-x[i])*(x[i2]-x[i]) );
 
 			if (distance > completeLen || sumTooSmallLen > completeLen) {
 				if (sumTooSmallLen > completeLen) {
@@ -1168,15 +1149,13 @@ public class Way extends Entity{
 					pc.g.setColor(Legend.COLORS[Legend.COLOR_ONEWAY_ARROW]);
 				}
 				if (distance!=0) {
-					slope_x = ((double)lineP2.x-(double)lineP1.x)/distance;
-					slope_y = ((double)lineP2.y-(double)lineP1.y)/distance;
-				} else {
-					//logger.debug("ZERO distance in path segment " + i1 + "/" + path.length + " of " + name);
-					break;
-				}
+					slope_x = (x[i2]-x[i])/distance;
+					slope_y = (y[i2]-y[i])/distance;
+				} 
+				
 				// new arrow position is middle of way segment
-				posArrow_x = lineP1.x + slope_x * (distance-completeLen)/2;
-				posArrow_y = lineP1.y + slope_y * (distance-completeLen)/2;				
+				posArrow_x = x[i] + slope_x * (distance-completeLen)/2;
+				posArrow_y = y[i] + slope_y * (distance-completeLen)/2;				
 				
 				// draw arrow only if it's at least partly on-screen
 				if ( (int)posArrow_x >= minArrowScreenX &&
@@ -1202,17 +1181,12 @@ public class Way extends Entity{
 //
 //				// how much would we start to draw the next arrow over the end point
 //				if (slope_x != 0) {
-//					nextDeltaSub=(lineP2.x-posArrow_x) / slope_x;
+//					nextDeltaSub=(x[i1+1]-posArrow_x) / slope_x;
 //				}
 			} else {
 				sumTooSmallLen += distance;
 			}		
-				
-			// continue in next path segment
-			swapLineP = lineP1;
-			lineP1 = lineP2;
-			lineP2 = swapLineP;	
-		} // end segment for-loop		
+		} // End For: continue in next path segment, if there is any
     }
     
     private void drawArrow( PaintContext pc,
@@ -1292,15 +1266,15 @@ public class Way extends Entity{
 		boolean dividedHighlight = true;
 		int originalX = 0;
 		int originalY = 0;
-		int max = count ;
 		int wOriginal = w;
 		if (w <1) w=1;
 		int wDraw = w;
 		int turn = 0;
 
 		
+		WayDescription wayDesc = Legend.getWayDescription(type);
 
-		for (int i = 0; i < max; i++) {
+		for (int i = 0; i < count; i++) {
 			wDraw = w;
 			// draw route line wider
 			if (
@@ -1356,7 +1330,6 @@ public class Way extends Entity{
 			if (hl[i] != PATHSEG_DO_NOT_DRAW) {
 	//			if (mode == DRAW_AREA){
 				
-				WayDescription wayDesc = Legend.getWayDescription(type);
 				setColor(pc,wayDesc,(hl[i] >= 0), (isCurrentRoutePath(pc, i)|| dividedHighlight), (highlight == HIGHLIGHT_TARGET));
 						
 					// when this is not render as lines (for the non-highlighted part of the way) or it is a highlighted part, draw as area
@@ -1412,7 +1385,7 @@ public class Way extends Entity{
 							}
 						}
 						} else {
-							// Draw streets as lines or polygons (like areas)
+							// Draw streets as lines (only 1px wide) 
 							setColor(pc,wayDesc,(hl[i] >= 0), (isCurrentRoutePath(pc, i)|| dividedHighlight), (highlight == HIGHLIGHT_TARGET));
 							pc.g.drawLine(xPoints[i], yPoints[i], xPoints[i + 1], yPoints[i + 1]);
 						}
@@ -1428,6 +1401,13 @@ public class Way extends Entity{
 			}
 			
 			
+		} 
+		
+		if (isOneway()){
+			// Loop through all waysegments for painting the OnewayArrows as overlay
+			// Todo: Maybe, we can integrate this one day in the main loop. Currently, we have troubles
+			// with "not completely fitting arrows" getting overpainted by the next waysegment. 
+			paintPathOnewayArrows(count, wayDesc, pc);
 		}
 		//now as we painted all ways, do the things we should only do once
 		if (wClosest != 0) {
