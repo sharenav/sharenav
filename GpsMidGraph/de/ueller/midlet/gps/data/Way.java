@@ -845,6 +845,12 @@ public class Way extends Entity{
 			if (w == 0 && highlight == HIGHLIGHT_NONE) {
 				setColor(pc);
 				PolygonGraphics.drawOpenPolygon(pc.g, x, y, pi - 1);
+                if (isOneway()){
+                    // Loop through all waysegments for painting the OnewayArrows as overlay
+                    // TODO: Maybe, we can integrate this one day in the main loop. Currently, we have troubles
+                    // with "not completely fitting arrows" getting overpainted by the next waysegment.
+                    paintPathOnewayArrows(pi - 1, wayDesc, pc);
+                }
 			// if render as streets or a part of the way is highlighted
 			} else {
 				draw(pc, t, (w == 0) ? 1 : w, x, y, hl, pi - 1, highlight);
