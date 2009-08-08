@@ -324,8 +324,8 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		CMDS[TOGGLE_RECORDING_CMD] = new Command("(De)Activate recording",Command.ITEM, 100);
 		CMDS[TOGGLE_RECORDING_SUSP_CMD] = new Command("Suspend recording",Command.ITEM, 100);
 		CMDS[RECENTER_GPS_CMD] = new Command("Recenter on GPS",Command.ITEM, 100);
-		CMDS[DATASCREEN_CMD] = new Command("Tacho",Command.ITEM, 100);
-		CMDS[OVERVIEW_MAP_CMD] = new Command("Overview/Filter Map",Command.ITEM, 200);
+		CMDS[DATASCREEN_CMD] = new Command("Tacho", Command.ITEM, 15);
+		CMDS[OVERVIEW_MAP_CMD] = new Command("Overview/Filter Map", Command.ITEM, 20);
 		CMDS[RETRIEVE_XML] = new Command("Retrieve XML",Command.ITEM, 200);
 		CMDS[PAN_LEFT25_CMD] = new Command("left 25%",Command.ITEM, 100);
 		CMDS[PAN_RIGHT25_CMD] = new Command("right 25%",Command.ITEM, 100);
@@ -384,11 +384,13 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		return traceInstance;
 	}
 
-	// start the LocationProvider in background
+	/**
+	 * Starts the LocationProvider in the background
+	 */
 	public void run() {
 		try {
 			
-			if (running){
+			if (running) {
 				receiveMessage("GPS starter already running");
 				return;
 			}
@@ -405,7 +407,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			}
 			running=true;
 			int locprov = Configuration.getLocationProvider();
-			receiveMessage("Connect to "+Configuration.LOCATIONPROVIDER[locprov]);
+			receiveMessage("Connect to " + Configuration.LOCATIONPROVIDER[locprov]);
 			switch (locprov){
 				case Configuration.LOCATIONPROVIDER_SIRF:
 					locationProducer = new SirfInput();
@@ -444,7 +446,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					}
 					//#else
 					// keep eclipse happy 
-					if (true){
+					if (true) {
 						logger.error("JSR179 is not compiled in this version of GpsMid");
 						running = false;
 						return;
@@ -782,7 +784,8 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				return;
 			}
 			if (c == CMDS[EXIT_CMD]) {
-				// FIXME: This is a workaround. It would be better if recording would not be stopped when returning to map
+				// FIXME: This is a workaround. It would be better if recording 
+				// would not be stopped when leaving the map.
 				if (gpx.isRecordingTrk()) {
 					alert("Record Mode", "Please stop recording before exit." , 2500);
 					return;
@@ -814,9 +817,9 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					return;
 				}
 
-			    GuiGpx gpx = new GuiGpx(this);
-			    gpx.show();
-				return;			    
+			    GuiGpx guiGpx = new GuiGpx(this);
+			    guiGpx.show();
+			    return;
 			}
 			if (c == CMDS[REFRESH_CMD]) {
 				repaint();
@@ -830,8 +833,8 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				return;
 			}
 			if (c == CMDS[SEARCH_CMD]){
-				GuiSearch search = new GuiSearch(this);
-				search.show();
+				GuiSearch guiSearch = new GuiSearch(this);
+				guiSearch.show();
 				return;
 			}
 			if (c == CMDS[DISCONNECT_GPS_CMD]) {
@@ -1294,12 +1297,8 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			} else {
 				alert("Error", "currently in route calculation", 1000);
 			}
-		} catch (RuntimeException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+ 			logger.exception("In Trace.commandAction", e);
 		}
 
 	}
@@ -1321,6 +1320,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		pc.xSize = this.getWidth();
 		pc.ySize = this.getHeight();
 	}
+
 	private void stopImageCollector(){
 		//#debug info
 		logger.info("Stopping ImageCollector");
@@ -2317,8 +2317,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			}
 			repaint();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.exception("In Trace.setRoute", e);
 		}
 	}
 	
@@ -2358,14 +2357,16 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	}
 	
 	protected void hideNotify() {
-		logger.info("Hide notify has been called, screen will nolonger be updated");
+		//#debug debug
+		logger.debug("Hide notify has been called, screen will no longer be updated");
 		if (imageCollector != null) {
 			imageCollector.suspend();
 		}
 	}
 	
 	protected void showNotify() {
-		logger.info("Show notify has been called, screen will be updated again");
+		//#debug debug
+		logger.debug("Show notify has been called, screen will be updated again");
 		if (imageCollector != null) {
 			imageCollector.resume();
 			imageCollector.newDataReady();
