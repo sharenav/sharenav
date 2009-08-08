@@ -1336,8 +1336,10 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 //		logger.info("reading Data ...");
 		namesThread = new Names();
 		new DictReader(this);
-//		Thread thread = new Thread(this);
-//		thread.start();
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_AUTO_START_GPS)) {
+			Thread thread = new Thread(this);
+			thread.start();
+		}
 //		logger.info("Create queueDataReader");
 		tileReader = new QueueDataReader(this);
 //		logger.info("create imageCollector");
@@ -1537,7 +1539,8 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				showTarget(pc);
 			}
 
-			if (speed > 0) {
+			if (speed > 0 && 
+					Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_SPEED_IN_MAP)) {
 				tl.ele[TraceLayout.SPEED_CURRENT].setText(" " + Integer.toString(speed) + " km/h");
 			}
 			

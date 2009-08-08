@@ -43,7 +43,7 @@ public class Configuration {
 	 *  the default values for the features added between configVersionStored
 	 *  and VERSION will be set, before the version in the recordstore is increased to VERSION
 	 */
-	public final static int VERSION = 6;
+	public final static int VERSION = 7;
 
 	public final static int LOCATIONPROVIDER_NONE=0;
 	public final static int LOCATIONPROVIDER_SIRF=1; 
@@ -165,6 +165,10 @@ public class Configuration {
 	public final static byte CFGBIT_NIGHT_MODE = 56;
 	// bit 57: Flag whether turbo route calc should be used
 	public final static byte CFGBIT_TURBO_ROUTE_CALC = 57;
+	// bit 58: Flag whether speed should be displayed in map screen
+	public final static byte CFGBIT_SHOW_SPEED_IN_MAP = 58;
+	// bit 59: Flag whether to start GPS reception when entering map
+	public final static byte CFGBIT_AUTO_START_GPS = 59;
 	
 	/**
 	 * These are the database record ids for each configuration option
@@ -425,6 +429,10 @@ public class Configuration {
 //				cfgBits |= 	1L<<CFGBIT_ICONMENUS |
 //							1L<<CFGBIT_ICONMENUS_FULLSCREEN;
 //			}
+		}
+		if (configVersionStored < 7) {
+			cfgBits |=	1L << CFGBIT_SHOW_SPEED_IN_MAP |
+						1L << CFGBIT_AUTO_START_GPS;
 		}
 
 		setCfgBits(cfgBits, true);

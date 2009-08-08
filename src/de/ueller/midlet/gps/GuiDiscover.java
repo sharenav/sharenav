@@ -59,9 +59,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private static final String LOG_TO = "Log To: ";
 
 	/**
-	 * The following MENU_ITEM constatants have to be in
-	 * sync with the position in the elements array of the
-	 * main menu
+	 * The following MENU_ITEM constants have to be in sync
+	 * with the position in the elements array of the main menu.
 	 */
 	protected static final int MENU_ITEM_LOCATION = 0;
 	protected static final int MENU_ITEM_GPX_FILTER = 1;	
@@ -213,6 +212,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private ChoiceGroup debugOther;
 	private StringItem  gpxUrl;
 	private StringItem  gpsUrl;
+	private ChoiceGroup autoConnect;
 	private ChoiceGroup btKeepAlive;
 	private ChoiceGroup btAutoRecon;
 	  
@@ -398,12 +398,16 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		final String[] logCategories={"Cell-IDs for OpenCellID.org", "Raw Gps Data"};
 		rawLogCG = new ChoiceGroup(LABEL_SELECT_LOGDIR_FIRST, ChoiceGroup.MULTIPLE, logCategories, new Image[2]);
 
+		String [] aconn = new String[1];
+		aconn[0] = "Start GPS at startup";
+		autoConnect = new ChoiceGroup("GPS start",ChoiceGroup.MULTIPLE, aconn, null);
+
 		String [] btka = new String[1];
-		btka[0] = "Send keep alives"; 
+		btka[0] = "Send keep alives";
 		btKeepAlive = new ChoiceGroup("BT keep alive",ChoiceGroup.MULTIPLE, btka, null);
 
 		String [] btar = new String[1];
-		btar[0] = "Auto reconnect GPS"; 
+		btar[0] = "Auto reconnect GPS";
 		btAutoRecon = new ChoiceGroup("BT reconnect",ChoiceGroup.MULTIPLE, btar, null);
 
 		menuSelectLocProv.append(gpsUrl);
@@ -463,7 +467,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		gaugeDetailBoost = new Gauge("Increase Detail of lower Zoom Levels", true, 3, 0);
 		menuDisplayOptions.append(gaugeDetailBoost);
 
-		tfAutoRecenterToGpsSecs = new TextField("Auto-Recenter To GPS after no user action for these seconds (0=disabled)", Integer.toString(Configuration.getAutoRecenterToGpsMilliSecs() / 1000), 2, TextField.DECIMAL);
+		tfAutoRecenterToGpsSecs = new TextField("Auto-recenter to GPS after no user action for these seconds (0=disabled)", 
+				Integer.toString(Configuration.getAutoRecenterToGpsMilliSecs() / 1000), 
+				2, TextField.DECIMAL);
 		menuDisplayOptions.append(tfAutoRecenterToGpsSecs);
 
 		String [] backlights;
@@ -476,7 +482,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		//#endif
 		backlights = new String[i];
 
-		backlights[0] = "Keep Backlight On";
+		backlights[0] = "Keep backlight on";
 		backlights[1] = "only while GPS started";
 		backlights[2] = "only in map screen";
 		backlights[3] = "with MIDP2.0";
@@ -498,11 +504,12 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		sizeOpts = new ChoiceGroup("Size Options:", Choice.MULTIPLE, sizes ,null);
 		menuDisplayOptions.append(sizeOpts);
 
-		String [] guis = new String[3];
+		String [] guis = new String[4];
 		guis[0] = "use icon menu";
 		guis[1] = "fullscreen icon menu";
-		guis[2] = "optimise for Routing";
-		guiOpts = new ChoiceGroup("Gui:", Choice.MULTIPLE, guis ,null);
+		guis[2] = "optimise for routing";
+		guis[3] = "display speed in map";
+		guiOpts = new ChoiceGroup("GUI:", Choice.MULTIPLE, guis ,null);
 		menuDisplayOptions.append(guiOpts);
 		
 		menuDisplayOptions.setCommandListener(this);
@@ -743,6 +750,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				Configuration.setCfgBitState(Configuration.CFGBIT_CELLID_LOGGING, selraw[0], true);
 				Configuration.setGpsRawLoggerEnable(selraw[1]);
 
+				autoConnect.getSelectedFlags(selraw);
+				Configuration.setCfgBitState(Configuration.CFGBIT_AUTO_START_GPS, selraw[0], true);
 				btKeepAlive.getSelectedFlags(selraw);
 				Configuration.setBtKeepAlive(selraw[0]);
 				btAutoRecon.getSelectedFlags(selraw);
@@ -790,6 +799,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				}
 				Configuration.setCfgBitState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN, guiOpts.isSelected(1), true);
 				Configuration.setCfgBitState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED, guiOpts.isSelected(2), true);
+				Configuration.setCfgBitState(Configuration.CFGBIT_SHOW_SPEED_IN_MAP, guiOpts.isSelected(3), true);
 				trace.uncacheIconMenu();
 				Configuration.setDetailBoost(gaugeDetailBoost.getValue(), true); 
 				
@@ -952,7 +962,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				selLog[0] = Configuration.getCfgBitState(Configuration.CFGBIT_CELLID_LOGGING);
 				selLog[1] = Configuration.getGpsRawLoggerEnable();
 				rawLogCG.setSelectedFlags(selLog);
-		
+
+				autoConnect.setSelectedIndex(0, Configuration.getCfgBitState(Configuration.CFGBIT_AUTO_START_GPS));
 				btKeepAlive.setSelectedIndex(0, Configuration.getBtKeepAlive());
 				btAutoRecon.setSelectedIndex(0, Configuration.getBtAutoRecon());
 				Display.getDisplay(parent).setCurrentItem(gpsUrl);
@@ -996,6 +1007,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				guiOpts.setSelectedIndex(0, Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS, true));
 				guiOpts.setSelectedIndex(1, Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN, true));
 				guiOpts.setSelectedIndex(2, Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED, true));
+				guiOpts.setSelectedIndex(3, Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_SPEED_IN_MAP, true));
 				SingleTile.newPOIFont();
 				WaypointsTile.useNewWptFont();
 				gaugeDetailBoost.setValue(Configuration.getDetailBoostDefault());
