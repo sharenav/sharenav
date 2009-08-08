@@ -411,6 +411,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		btAutoRecon = new ChoiceGroup("BT reconnect",ChoiceGroup.MULTIPLE, btar, null);
 
 		menuSelectLocProv.append(gpsUrl);
+		menuSelectLocProv.append(autoConnect);
 		menuSelectLocProv.append(btKeepAlive);
 		menuSelectLocProv.append(btAutoRecon);
 		menuSelectLocProv.append(locProv);
@@ -576,11 +577,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 
 		if (c == EXIT_CMD) {
 			destroy();
-        	if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS)) {
-        		Trace.getInstance().show();
-        	} else {
-        		parent.show();
-        	}
+       		Trace.getInstance().show();
 			return;
 		}
 		if (c == BACK_CMD) {

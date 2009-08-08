@@ -149,7 +149,7 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 	public void commandAction(Command c, Displayable d) {
         if (c == BACK_CMD) {
         	shutdown = true;
-        	GpsMid.showMainMenuScreen();
+        	GpsMid.showMapScreen();
         	return;
         }
         if (c == EXIT_CMD) {

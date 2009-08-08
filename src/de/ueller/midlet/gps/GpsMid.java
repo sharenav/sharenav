@@ -17,13 +17,11 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 
 import javax.microedition.lcdui.Alert;
-import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Choice;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
-import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.List;
 import javax.microedition.midlet.MIDlet;
 import javax.microedition.midlet.MIDletStateChangeException;
@@ -51,8 +49,11 @@ import de.ueller.gps.data.Configuration;
 import de.ueller.gps.tools.HelperRoutines;
 import de.ueller.midlet.gps.data.Node;
 
+/**
+ * Central class of GpsMid which implements the MIDlet interface.
+ */
 public class GpsMid extends MIDlet implements CommandListener {
-	/** */
+	/** Class variable with the Singleton reference. */
 	private volatile static GpsMid instance;
 	/** A menu list instance */
 	private static final String[] elements = { "Map", "Search", "Setup",
@@ -77,7 +78,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 	// private boolean isInit=false;
 
 	private final List loghist = new List("Log Hist", Choice.IMPLICIT);
-	private String root;
+
 	// #debug
 	private Logger log;
 
@@ -136,31 +137,16 @@ public class GpsMid extends MIDlet implements CommandListener {
 		loghist.addCommand(CLEAR_DEBUG_CMD);
 		loghist.setCommandListener(this);
 
-		//
-		if (Configuration
-				.getCfgBitState(Configuration.CFGBIT_SKIPP_SPLASHSCREEN)) {
-			showMainMenuScreen();
-		} else {
-			new Splash(this);
-		}
-		// RouteNodeTools.initRecordStore();
 		if (errorMsg != null) {
 			log.fatal(errorMsg);
 		}
-		
-		startBackLightTimer();
 	}
 
-	public static void showMainMenuScreen() {
+	public static void showMapScreen() {
 		if (trace == null) {
-			trace = trace.getInstance();
+			trace = Trace.getInstance();
 		}
-		if (Configuration
-				.getCfgBitState(Configuration.CFGBIT_ICONMENUS)) {
-			trace.showIconMenu();
-		} else {
-			GpsMid.getInstance().show();
-		}
+		trace.show();
 	}
 	
 	protected void destroyApp(boolean arg0) throws MIDletStateChangeException {
@@ -224,6 +210,15 @@ public class GpsMid extends MIDlet implements CommandListener {
 			log.exception("ContentHandler invokation failed", e);
 		}
 		//#endif
+
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_SKIPP_SPLASHSCREEN)) {
+			showMapScreen();
+		} else {
+			new Splash(this);
+		}
+
+		// RouteNodeTools.initRecordStore();
+		startBackLightTimer();
 	}
 
 	public void commandAction(Command c, Displayable d) {
@@ -242,7 +237,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 		case 0:
 			try {
 				if (trace == null) {
-					trace = trace.getInstance();
+					trace = Trace.getInstance();
 				}
 				trace.resume();
 				trace.show();

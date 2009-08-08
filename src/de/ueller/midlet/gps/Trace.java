@@ -293,7 +293,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 
 		this.parent = GpsMid.getInstance();
 		
-		CMDS[EXIT_CMD] = new Command("Back", Command.BACK, 2);
+		CMDS[EXIT_CMD] = new Command("Exit", Command.EXIT, 2);
 		CMDS[REFRESH_CMD] = new Command("Refresh", Command.ITEM, 4);
 		CMDS[SEARCH_CMD] = new Command("Search", Command.OK, 1);
 		CMDS[CONNECT_GPS_CMD] = new Command("Start GPS",Command.ITEM, 2);		 
@@ -342,10 +342,10 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		CMDS[ROUTING_START_WITH_MODE_SELECT_CMD] = new Command("Calculate Route...",Command.ITEM, 100);
 		CMDS[RETRIEVE_NODE] = new Command("Add POI to OSM...",Command.ITEM, 100);
 		CMDS[ICON_MENU] = new Command("Menu",Command.OK, 100);
-		CMDS[SETUP_CMD] = new Command("Setup",Command.OK, 100);
-		CMDS[ABOUT_CMD] = new Command("About",Command.OK, 100);
+		CMDS[SETUP_CMD] = new Command("Setup", Command.ITEM, 25);
+		CMDS[ABOUT_CMD] = new Command("About", Command.ITEM, 30);
 		//#if polish.api.wmapi
-		CMDS[SEND_MESSAGE_CMD] = new Command("Send SMS (map pos)",Command.ITEM, 200);
+		CMDS[SEND_MESSAGE_CMD] = new Command("Send SMS (map pos)",Command.ITEM, 20);
 		//#endif
 
 		addAllCommands();
@@ -606,10 +606,11 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		}
 		addCommand(CMDS[MANAGE_TRACKS_CMD]);
 		addCommand(CMDS[MAN_WAYP_CMD]);
-		addCommand(CMDS[MAPFEATURES_CMD]);
-		addCommand(CMDS[RECORDINGS_CMD]);
 		addCommand(CMDS[ROUTINGS_CMD]);
+		addCommand(CMDS[RECORDINGS_CMD]);
+		addCommand(CMDS[MAPFEATURES_CMD]);
 		addCommand(CMDS[DATASCREEN_CMD]);
+		addCommand(CMDS[OVERVIEW_MAP_CMD]);
 		//#if polish.api.online
 		addCommand(CMDS[ONLINE_INFO_CMD]);
 		//#if polish.api.osm-editing
@@ -617,8 +618,11 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		addCommand(CMDS[RETRIEVE_NODE]);
 		//#endif
 		//#endif
+		addCommand(CMDS[SETUP_CMD]);
+		addCommand(CMDS[ABOUT_CMD]);
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS)) {
 			if (!Configuration.getCfgBitState(Configuration.CFGBIT_FULLSCREEN)) {
+				super.addCommand(CMDS[SEARCH_CMD]);
 				super.addCommand(CMDS[ICON_MENU]);
 			}
 		}
@@ -785,11 +789,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				}
 				
 				pause();
-				if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS)) {
-					parent.exit();
-				} else {
-					parent.show();					
-				}
+				parent.exit();
 				return;
 			}
 			if (c == CMDS[START_RECORD_CMD]) {
