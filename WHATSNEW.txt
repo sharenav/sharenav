@@ -1,10 +1,14 @@
 GpsMid 0.5.09
        *** Usability ***
+       - Icon menus (activateable in Setup / Display Options)
+       - Specify in Setup/Display Options to keep backlight on only while GPS is started
+       - Many more midlet colors are specifiable in the style-file now (including colors for night mode)
        - Touch screen support:
+        - Click on street name status bar to show icon menu
         - Recenter to GPS button
         - (De)activate manual rotation mode by pointing the point of compass (use zoom buttons to rotate in manual rotation mode)
-        - Start/stop routing by pointing the status bar showing the current way name
         - Show Map Features by pointing to the scale bar
+        - In the Search screen clicking below or above the search results to get a standard input field
        *** OSM Editing ***
        *** GPS and other location producers ***
        - Add a possibility to manually enter a connection URL, e.g. "comm:COM0;baudrate=115200"
@@ -12,8 +16,9 @@ GpsMid 0.5.09
        - CellId can now be used to position one self without the need to connect to the internet
        *** Map Screen ***
        - Improved painting of waysegments to draw them connected (thx pos_ei_don_) 
+       - Faster painting of oneway arrows (thx pos_ei_don_)
        - In Setup / Display Options there's now a textfield for specifying how many seconds after
-       	 the last manual panning of the map it will be automatically recentered to the GPS position
+       	 the last user interaction the map will be automatically recentered to the GPS position
        - Better handling of appearing and disappearing text items (title bar, route instructions, etc.) on the map screen
        - show speed when driving
        - Turn restrictions included in the midlet can be displayed in the map with Setup/Debug Options
@@ -29,11 +34,14 @@ GpsMid 0.5.09
          e.g. useRouting = motorcar, bicycle, foot
        - GpsMid asks which route mode to use on start of routing
        - Show remaining route distance to target in map screen
-       - Check for turn restrictions during route calculation (experimental, leads in some cases to no route solution)
+       - Check for turn restrictions for motorcar during route calculation (can be turned off as it needs more memory and is slower)
+       - Turbo or Deep Route Calculation Mode (selectable when when routing)
        - U-turn instruction
        - Cross area routing (e.g. for foot routing through pedestrian zones)
        - Permissive Routing Restriction are now possible
          (e.g. bicycle routing for an abandoned aeroway=runway if bicycle=true is set
+       - Much faster route calculation for bicycles (thx to apmonkey for the hint)
+       - Faster detection of the highlighted ways during rendering
        *** Midlet creation with Osm2GpsMid ***
        *** Osm2GpsMid GUI ***
        - Loading .properties files works again
