@@ -154,6 +154,8 @@ public class Way extends Entity{
 	private static float courseVecX = 0;
 	private static float courseVecY = 0;
 	
+	private static WaySegment waySegment = new WaySegment();
+
 
 //	private final static Logger logger = Logger.getInstance(Way.class,
 //			Logger.TRACE);
@@ -1329,7 +1331,7 @@ public class Way extends Entity{
 				dividedSeg = false;
 			}			
 
-			// Get the fourouter points of the wDraw-wide waysegment
+			// Get the four outer points of the wDraw-wide waysegment
 			getParLines(xPoints, yPoints, i , wDraw, l1b, l2b, l1e, l2e);
 
 			
@@ -1338,63 +1340,69 @@ public class Way extends Entity{
 				
 				setColor(pc,wayDesc,(hl[i] >= 0), (isCurrentRoutePath(pc, i)|| dividedHighlight), (highlight == HIGHLIGHT_TARGET));
 						
-					// when this is not render as lines (for the non-highlighted part of the way) or it is a highlighted part, draw as area
-					if (wOriginal != 0 || hl[i] >= 0) {
-						pc.g.fillTriangle(l2b.x, l2b.y, l1b.x, l1b.y, l1e.x, l1e.y);
-						pc.g.fillTriangle(l1e.x, l1e.y, l2e.x, l2e.y, l2b.x, l2b.y);
+				// when this is not render as lines (for the non-highlighted part of the way) or it is a highlighted part, draw as area
+				if (wOriginal != 0 || hl[i] >= 0) {
+					pc.g.fillTriangle(l2b.x, l2b.y, l1b.x, l1b.y, l1e.x, l1e.y);
+					pc.g.fillTriangle(l1e.x, l1e.y, l2e.x, l2e.y, l2b.x, l2b.y);
 
-						if (i==0){  // if this is the first segment, draw the lines
-							setBorderColor(pc,wayDesc,(hl[i] >= 0), (isCurrentRoutePath(pc, i)|| dividedHighlight), (highlight == HIGHLIGHT_TARGET));
-							pc.g.drawLine(l2b.x, l2b.y, l2e.x, l2e.y);
-							pc.g.drawLine(l1b.x, l1b.y, l1e.x, l1e.y);
-						}
+					if (i==0) {  // if this is the first segment, draw the lines
+						setBorderColor(pc,wayDesc,(hl[i] >= 0), (isCurrentRoutePath(pc, i)|| dividedHighlight), (highlight == HIGHLIGHT_TARGET));
+						pc.g.drawLine(l2b.x, l2b.y, l2e.x, l2e.y);
+						pc.g.drawLine(l1b.x, l1b.y, l1e.x, l1e.y);
+					}
 
+					
+					// Now look at the turns(corners) of the waysegment and fill them if nessesary.
+					// We always look back to the turn between current and previous waysegment.
+					if (i>0) {  // as we look back, there is no turn at the first segment
 						
-						// Now look at the turns(corners) of the waysegment and fill them if nessesary.
-						// We always look back to the turn between current and previous waysegment.
-						if (i>0){  // as we look back, there is no turn at the first segment
+						turn = getVectorTurn(xPoints[i-1],yPoints[i-1], xPoints[i],yPoints[i],xPoints[i+1],yPoints[i+1] );
+						if (turn < 0 ){												// turn right
+							intersectionPoint(l4b,l4e,l2b,l2e,intersecP,1);
 							
-							turn = getVectorTurn(xPoints[i-1],yPoints[i-1], xPoints[i],yPoints[i],xPoints[i+1],yPoints[i+1] );
-							if (turn < 0 ){												// turn right
-								intersectionPoint(l4b,l4e,l2b,l2e,intersecP,1);
-								
-								setColor(pc,wayDesc,(hl[i] >= 0), (isCurrentRoutePath(pc, i)|| dividedHighlight), (highlight == HIGHLIGHT_TARGET));
-								pc.g.fillTriangle(xPoints[i], yPoints[i] , l3e.x, l3e.y, l1b.x,l1b.y);  // Fills the gap of the corner with a small triangle								        	
+							setColor(pc,wayDesc,(hl[i] >= 0), (isCurrentRoutePath(pc, i)|| dividedHighlight), (highlight == HIGHLIGHT_TARGET));
+							pc.g.fillTriangle(xPoints[i], yPoints[i] , l3e.x, l3e.y, l1b.x,l1b.y);  // Fills the gap of the corner with a small triangle								        	
  
 								setBorderColor(pc,wayDesc,(hl[i] >= 0), (isCurrentRoutePath(pc, i)|| dividedHighlight), (highlight == HIGHLIGHT_TARGET));
 								if (highlight == HIGHLIGHT_NONE){
 									pc.g.drawLine(intersecP.x, intersecP.y, l2e.x, l2e.y); 	//paint the inner turn border to the intersection point between old and current waysegment 
-								}else{
-									pc.g.drawLine(l2b.x, l2b.y, l2e.x, l2e.y);  			//painting full border of the inner turn while routing
-								}
-								pc.g.drawLine(l1b.x, l1b.y, l1e.x, l1e.y);					// paint the full outer turn border
-								pc.g.drawLine(l1b.x, l1b.y, l3e.x, l3e.y); 					// paint the border of the corner turn-triangle
+							}else{
+								pc.g.drawLine(l2b.x, l2b.y, l2e.x, l2e.y);  			//painting full border of the inner turn while routing
 							}
-							else if (turn > 0 ){															// turn left
-								intersectionPoint(l3b,l3e,l1b,l1e,intersecP,1);
-								setColor(pc,wayDesc,(hl[i] >= 0), (isCurrentRoutePath(pc, i)|| dividedHighlight), (highlight == HIGHLIGHT_TARGET));
-
-								pc.g.fillTriangle(xPoints[i], yPoints[i] , l4e.x, l4e.y, l2b.x,l2b.y);  // Fills the gap of the corner with a small triangle
-								setBorderColor(pc,wayDesc,(hl[i] >= 0), (isCurrentRoutePath(pc, i)|| dividedHighlight), (highlight == HIGHLIGHT_TARGET));
-								if (highlight == HIGHLIGHT_NONE){ 							//see coments above
-									pc.g.drawLine(intersecP.x, intersecP.y, l1e.x, l1e.y);
-								} else{
-									pc.g.drawLine(l1b.x, l1b.y, l1e.x, l1e.y);
-								}
-								pc.g.drawLine(l2b.x, l2b.y, l2e.x, l2e.y);
-								pc.g.drawLine(l2b.x, l2b.y, l4e.x, l4e.y); //corner
-							}
-							else{ //no turn, way is straight
-								setBorderColor(pc,wayDesc,(hl[i] >= 0), (isCurrentRoutePath(pc, i)|| dividedHighlight), (highlight == HIGHLIGHT_TARGET));
-								pc.g.drawLine(l2b.x, l2b.y, l2e.x, l2e.y);
-								pc.g.drawLine(l1b.x, l1b.y, l1e.x, l1e.y);					// paint the full outer turn border
-							}
+							pc.g.drawLine(l1b.x, l1b.y, l1e.x, l1e.y);					// paint the full outer turn border
+							pc.g.drawLine(l1b.x, l1b.y, l3e.x, l3e.y); 					// paint the border of the corner turn-triangle
 						}
-						} else {
-							// Draw streets as lines (only 1px wide) 
+						else if (turn > 0 ){															// turn left
+							intersectionPoint(l3b,l3e,l1b,l1e,intersecP,1);
 							setColor(pc,wayDesc,(hl[i] >= 0), (isCurrentRoutePath(pc, i)|| dividedHighlight), (highlight == HIGHLIGHT_TARGET));
-							pc.g.drawLine(xPoints[i], yPoints[i], xPoints[i + 1], yPoints[i + 1]);
+
+							pc.g.fillTriangle(xPoints[i], yPoints[i] , l4e.x, l4e.y, l2b.x,l2b.y);  // Fills the gap of the corner with a small triangle
+							setBorderColor(pc,wayDesc,(hl[i] >= 0), (isCurrentRoutePath(pc, i)|| dividedHighlight), (highlight == HIGHLIGHT_TARGET));
+							if (highlight == HIGHLIGHT_NONE){ 							//see coments above
+								pc.g.drawLine(intersecP.x, intersecP.y, l1e.x, l1e.y);
+							} else{
+								pc.g.drawLine(l1b.x, l1b.y, l1e.x, l1e.y);
+							}
+							pc.g.drawLine(l2b.x, l2b.y, l2e.x, l2e.y);
+							pc.g.drawLine(l2b.x, l2b.y, l4e.x, l4e.y); //corner
 						}
+						else { //no turn, way is straight
+							setBorderColor(pc,wayDesc,(hl[i] >= 0), (isCurrentRoutePath(pc, i)|| dividedHighlight), (highlight == HIGHLIGHT_TARGET));
+							pc.g.drawLine(l2b.x, l2b.y, l2e.x, l2e.y);
+							pc.g.drawLine(l1b.x, l1b.y, l1e.x, l1e.y);					// paint the full outer turn border
+						}
+					}
+				} else {
+					// Draw streets as lines (only 1px wide) 
+					setColor(pc,wayDesc,(hl[i] >= 0), (isCurrentRoutePath(pc, i)|| dividedHighlight), (highlight == HIGHLIGHT_TARGET));
+					pc.g.drawLine(xPoints[i], yPoints[i], xPoints[i + 1], yPoints[i + 1]);
+				}
+				if (isBridge()){
+					waySegment.drawBridge(pc,xPoints,yPoints,i,count-1,w,l1b,l1e,l2b,l2e);
+				}
+				if (isTunnel()){
+					waySegment.drawTunnel(pc,xPoints,yPoints,i,count-1,w,l1b,l1e,l2b,l2e);
+				}
 			}
 			
 			l3b.set(l1b);  //Save the way-corners for the next loop to fill segment-gaps

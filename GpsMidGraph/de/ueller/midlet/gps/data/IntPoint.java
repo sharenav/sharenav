@@ -16,9 +16,68 @@ public class IntPoint {
 	public IntPoint() {
 	}
 	
-	public void set(IntPoint other){
+	public IntPoint set(IntPoint other){
 		x=other.x;
 		y=other.y;
+		return this;
+	}
+
+	public IntPoint set(int x1, int y1){
+		x=x1;
+		y=y1;
+		return this;
+	}
+
+	/** Returns x+other.x,y + other.y 
+	 * @param other the vector which gets added
+	 * @return
+	 */
+	public IntPoint vectorAdd(IntPoint other){
+		return new IntPoint(this.x + other.x,this.y + other.y);
+	}
+	public IntPoint add(IntPoint other){
+		x=this.x + other.x;
+		y=this.y + other.y;
+		return this;
+	}
+	
+	/** Returns a new IntPoint. The given IntPoint gets rotated (90°) and added to the current IntPoint.
+	 * @param other
+	 * @return
+	 */
+	public IntPoint vectorAddRotate90(IntPoint other){
+		return new IntPoint(this.x + other.y,
+							this.y - other.x );
+	}
+	
+	/** Returns a new IntPoint with the value (current IntPoint - given Intpoint)
+	 * This doesn't change the value of the current IntPoint xy values
+	 * @param other IntPoint. The Point which gets substracted
+	 * @return
+	 */
+	public IntPoint vectorSubstract(IntPoint other){
+			return new IntPoint(this.x - other.x,this.y - other.y);	
+	}
+
+	/**
+	 * Returns x,y from current IntPoint multiplied the parameter
+	 * @param multi
+	 * @return
+	 */
+	public IntPoint vectorMultiply(float multi){
+		return  new IntPoint((int)(this.x * multi), (int) (this.y * multi));
+	}
+
+	/**
+	 * adds the given IntPoint multiplied by factor to the object
+	 * @param other
+	 * @param factor
+	 * @return return the new IntPoint in needed
+	 */
+	public IntPoint add(IntPoint other,float factor){
+		x=(int)(this.x + other.x * factor);
+		y=(int)(this.y + other.y * factor);
+		return this;
 	}
 
 	public int getX() {
