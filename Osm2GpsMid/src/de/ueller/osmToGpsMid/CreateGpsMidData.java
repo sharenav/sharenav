@@ -1045,10 +1045,8 @@ public class CreateGpsMidData {
 		nds.writeByte(n.routeNode.connected.size());
 		for (Connection c : n.routeNode.connected){
 			cds.writeInt(c.to.node.renumberdId);
-			// only write out wayTravelModes flag if the midlet has multiple travel modes
-			if (TravelModes.travelModeCount > 1) { 
-				cds.writeByte(c.wayTravelModes);
-			}
+			// write out wayTravelModes flag
+			cds.writeByte(c.wayTravelModes);
 			for (int i=0; i<TravelModes.travelModeCount; i++) {
 				// only store times for available travel modes of the connection
 				if ( (c.wayTravelModes & (1<<i)) !=0 ) {
