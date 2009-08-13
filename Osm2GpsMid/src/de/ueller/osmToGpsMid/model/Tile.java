@@ -379,10 +379,8 @@ public class Tile {
 					minConnectionId ++;
 					routeNodeWayFlags |= c.wayTravelModes;
 					cds.writeInt(c.to.id);
-					// only write out wayTravelModes flag if the midlet has multiple travel modes
-					if (TravelModes.travelModeCount > 1) { 
-						cds.writeByte(c.wayTravelModes);
-					}
+					// write out wayTravelModes flag
+					cds.writeByte(c.wayTravelModes);
 					for (int i=0; i<TravelModes.travelModeCount; i++) {
 						// only store times for available travel modes of the connection
 						if ( (c.wayTravelModes & (1<<i)) !=0 ) {
