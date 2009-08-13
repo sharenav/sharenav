@@ -103,7 +103,7 @@ public class Way extends Entity implements Comparable<Way>{
 			wayTravelModes |= Connection.CONNTYPE_MOTORWAY;
 			TravelModes.numMotorwayConnections++;
 		}
-		if (";motorway;motorway_link;trunk;trunk_link;primary;primary_link;secondary;secondary_link;tertiary".indexOf(wayValue) >= 0) {
+		if (";motorway;motorway_link;trunk;trunk_link;primary;primary_link;secondary;tertiary;".indexOf(wayValue) >= 0) {
 			wayTravelModes |= Connection.CONNTYPE_MAINSTREET_NET;
 			TravelModes.numMainStreetNetConnections++;
 		}
