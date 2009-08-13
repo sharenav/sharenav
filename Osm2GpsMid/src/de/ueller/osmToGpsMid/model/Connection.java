@@ -24,6 +24,10 @@ public class Connection {
 	public byte endBearing=0;
 	public byte wayTravelModes=0;
 	
+	
+	public static final int CONNTYPE_MOTORWAY = 64;
+	public static final int CONNTYPE_MAINSTREET_NET = 32;
+	
 	public Connection(RouteNode to, int dist, int times[], byte bs, byte be, Way w) {
 		super();
 		this.to = to;

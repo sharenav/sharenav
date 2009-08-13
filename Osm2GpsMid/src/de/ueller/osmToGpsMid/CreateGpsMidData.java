@@ -153,7 +153,8 @@ public class CreateGpsMidData {
 			for (int i=0; i<TravelModes.travelModeCount; i++) {
 				System.out.println(TravelModes.getTravelMode(i).toString());			
 			}
-		}
+		}		
+		System.out.println("Motorway connections: " + TravelModes.numMotorwayConnections + " MainStreet_Net connections: " + TravelModes.numMainStreetNetConnections);			
 		System.out.println("Total Ways:"+totalWaysWritten 
 				         + " Seg:"+totalSegsWritten
 				         + " Pkt:"+totalNodesWritten
