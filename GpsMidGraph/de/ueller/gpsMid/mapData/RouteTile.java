@@ -443,11 +443,7 @@ public class RouteTile extends RouteBaseTile {
 //					c.to=nodes[nodeId - minId];
 //				}
 				c.toId=nodeId;
-				if (numTravelModes > 1) {
-					c.travelModes=cs.readByte();
-				} else {
-					c.travelModes=0x01;
-				}
+				c.travelModes=cs.readByte();
 				/**
 				 * The connection time and connection length can either be encoded as a int or a short
 				 * We indicate if it is a int by using the top most bit (sign bit). So if the read
