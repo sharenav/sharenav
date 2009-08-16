@@ -1101,6 +1101,18 @@ scale alias 1: zoomed out 21x
   				<routing with="bicycle" accessible="true" speed="10" />
   				<routing with="foot" accessible="true" speed="4" />  	
   			</Wvalue>
+			<Wvalue name = "secondary_link" priority = "10">
+  				<description desc = "secondary link"/>
+  				<namekey tag = "name"/>
+				<namefallback tag = "ref"/>
+  				<isArea area = "false"/>
+  				<scale scale = "18"/>
+  				<lineColor color = "00FDBF6F" />
+  				<wayWidth width="5" />
+  				<routing with="motorcar" accessible="true" speed="60" />
+  				<routing with="bicycle" accessible="true" speed="10" />
+  				<routing with="foot" accessible="true" speed="4" />  	
+  			</Wvalue>
   			<Wvalue name = "tertiary" priority = "10">
   				<description desc = "tertiary"/>
   				<namekey tag = "name"/>  				
@@ -1963,4 +1975,10 @@ scale alias 1: zoomed out 21x
 			<routeAccessRestriction restrictionKey = "access" restrictionValues = "no|private"/>
 		</routeMode>
 	</routeModes>
+	<maxSpeedTemplates>
+		<maxSpeedTemplate name="AT:urban" maxspeed="50" />
+		<maxSpeedTemplate name="AT:land" maxspeed="100" />
+		<maxSpeedTemplate name="ortsgebiet" maxspeed="50" />
+		<maxSpeedTemplate name="walk" maxspeed="7" />
+	</maxSpeedTemplates>
 </legend>
