@@ -246,9 +246,10 @@ public class Way extends Entity implements Comparable<Way>{
 	public float getMaxSpeed() {
 		float maxSpeed = -1.0f;
 		if (containsKey("maxspeed")){
+			String maxSpeedAttr = getAttribute("maxspeed");
 			try {
 				boolean mph = false;
-				String maxSpeedAttr = getAttribute("maxspeed");
+				
 				if (maxSpeedAttr.equalsIgnoreCase("variable") ||
 						maxSpeedAttr.equalsIgnoreCase("default") ||
 						maxSpeedAttr.equalsIgnoreCase("signals") ||
@@ -263,16 +264,24 @@ public class Way extends Entity implements Comparable<Way>{
 				if (maxSpeedAttr.toLowerCase().endsWith("mph")) {
 					mph = true;
 					maxSpeedAttr = maxSpeedAttr.substring(0, maxSpeedAttr.length() - 3).trim();
-				}
-				if (maxSpeedAttr.toLowerCase().endsWith("km/h")) {
+				} else if (maxSpeedAttr.toLowerCase().endsWith("km/h")) {
 					maxSpeedAttr = maxSpeedAttr.substring(0, maxSpeedAttr.length() - 4).trim();
-				}
+				} else if (maxSpeedAttr.toLowerCase().endsWith("kmh")) {
+					maxSpeedAttr = maxSpeedAttr.substring(0, maxSpeedAttr.length() - 3).trim();
+				} else if (maxSpeedAttr.toLowerCase().endsWith("kph")) {
+					maxSpeedAttr = maxSpeedAttr.substring(0, maxSpeedAttr.length() - 3).trim();
+				} 
 				maxSpeed=(Float.parseFloat(maxSpeedAttr));
 				if (mph) {
 					maxSpeed *= 1.609; //Convert to km/h
 				}
 			} catch (NumberFormatException e) {
-				System.out.println("Unhandled MaxSpeed for Way + " + toString() +": " + getAttribute("maxspeed"));
+				int maxs = config.getMaxspeedTemplate(maxSpeedAttr);
+				if (maxs < 0) {
+					System.out.println("Unhandled MaxSpeed for Way + " + toString() +": " + getAttribute("maxspeed"));
+				} else {
+					maxSpeed = maxs;
+				}
 			}
 		}
 		return maxSpeed;

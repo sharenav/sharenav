@@ -1072,4 +1072,10 @@ scale alias 1: zoomed out 21x
 			<routeAccessRestriction restrictionKey = "vehicle" restrictionValues = "no|private"/>
 		</routeMode>
 	</routeModes>
+	<maxSpeedTemplates>
+		<maxSpeedTemplate name="AT:urban" maxspeed="50" />
+		<maxSpeedTemplate name="AT:land" maxspeed="100" />
+		<maxSpeedTemplate name="ortsgebiet" maxspeed="50" />
+		<maxSpeedTemplate name="walk" maxspeed="7" />
+	</maxSpeedTemplates>
 </legend>

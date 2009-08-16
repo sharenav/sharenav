@@ -1,4 +1,4 @@
-<!ELEMENT legend (version, colors, sounds?, pois, ways, routeModes*)>
+<!ELEMENT legend (version, colors, sounds?, pois, ways, routeModes*, maxSpeedTemplates?)>
 <!ELEMENT version EMPTY>
 <!ELEMENT colors (color*)>
 <!ELEMENT color EMPTY>
@@ -7,6 +7,7 @@
 <!ELEMENT ways (keyW*)>
 <!ELEMENT routeModes (routeMode*)>
 <!ELEMENT routeMode (routeAccessRestriction*)>
+<!ELEMENT maxSpeedTemplates (maxSpeedTemplate*)>
 <!ELEMENT key (value+)>
 <!ELEMENT keyW (Wvalue+)>
 <!ELEMENT value (specialisation*, description , image? , searchIcon? , namekey , namefallback? , AreaPOI?, scale , textscale? , imageCentered?, hideable?)>
@@ -36,6 +37,7 @@
 <!ELEMENT hideable EMPTY>
 <!ELEMENT AreaPOI EMPTY>
 <!ELEMENT specialisation EMPTY>
+<!ELEMENT maxSpeedTemplate EMPTY>
 <!ATTLIST version release CDATA #REQUIRED>
 <!ATTLIST key tag CDATA #REQUIRED>
 <!ATTLIST keyW tag CDATA #REQUIRED>
@@ -87,3 +89,5 @@
 <!ATTLIST routeAccessRestriction restrictionKey CDATA #REQUIRED>
 <!ATTLIST routeAccessRestriction restrictionValues CDATA #REQUIRED>
 <!ATTLIST routeAccessRestriction restrictionPermit CDATA #IMPLIED>
+<!ATTLIST maxSpeedTemplate name CDATA #REQUIRED>
+<!ATTLIST maxSpeedTemplate maxspeed CDATA #REQUIRED>

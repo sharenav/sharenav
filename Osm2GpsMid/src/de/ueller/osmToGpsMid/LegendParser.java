@@ -58,11 +58,13 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 	private String currentKey;
 	private Hashtable<String,Set<EntityDescription>> keyValuesPoi;
 	private Hashtable<String,Set<EntityDescription>> keyValuesWay;
+	private Hashtable<String,Integer> maxSpeedTemplates;
 	private final byte READING_WAYS=0;
 	private final byte READING_POIS=1;
 	private final byte READING_SOUNDS=2;
 	private final byte READING_ROUTEMODES=3;
 	private final byte READING_COLORS=4;
+	private final byte READING_MAXSPEED=5;
 	private byte readingType = READING_WAYS;
 	
 	private byte poiIdx = 0;
@@ -112,6 +114,7 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 			poiMap = new Hashtable<String, Hashtable<String,Set<EntityDescription>>>();
 			pois = new LongTri<EntityDescription>();
 			currentPoi = new POIdescription();
+			maxSpeedTemplates = new Hashtable<String, Integer>();
 			/**
 			 * Add a bogous POI description, to reserve type 0 as a special marker
 			 */
@@ -217,6 +220,8 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 			readingType=READING_SOUNDS;			
 		} else if (qName.equals("routeModes")) {
 			readingType=READING_ROUTEMODES;
+		} else if (qName.equals("maxSpeedTemplates")) {
+			readingType=READING_MAXSPEED;
 		}
 		switch (readingType) {
 			case READING_POIS:
@@ -614,6 +619,17 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 					}
 				}
 				break;
+			case READING_MAXSPEED:
+				if (qName.equals("maxSpeedTemplate")) {
+					try {
+						maxSpeedTemplates.put(atts.getValue("name"), new Integer(Integer.parseInt(atts.getValue("maxspeed"))));
+					} catch (NumberFormatException nfe) {
+						System.out.println("Maxspeed in template " + atts.getValue("name") + 
+								" must be integer, but was " + atts.getValue("maxspeed"));
+						nonValidStyleFile = true;
+					}
+				}
+				break;
 		}
 	} // startElement
 
@@ -664,6 +680,10 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 	}
 	public Vector<SoundDescription> getSoundDescs() {
 		return sounds;
+	}
+	
+	public Hashtable<String, Integer> getMaxspeedTemplates() {
+		return maxSpeedTemplates;
 	}
 		
 	public void warning(SAXParseException e) throws SAXException {

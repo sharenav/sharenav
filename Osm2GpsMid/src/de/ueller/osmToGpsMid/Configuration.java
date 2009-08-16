@@ -761,7 +761,14 @@ public class Configuration {
 			return null;
 		}
 		
-		
+		public int getMaxspeedTemplate(String template) {
+			Integer maxspeed = legend.getMaxspeedTemplates().get(template);
+			if (maxspeed == null) {
+				return -1;
+			} else {
+				return maxspeed.intValue();
+			}
+		}
 		
 		
 		/*
