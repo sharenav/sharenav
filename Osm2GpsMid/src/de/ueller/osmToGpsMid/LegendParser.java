@@ -26,6 +26,7 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.EntityResolver;
+import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -42,7 +43,7 @@ import de.ueller.osmToGpsMid.model.TravelMode;
 import de.ueller.osmToGpsMid.model.TravelModes;
 import de.ueller.osmToGpsMid.model.WayDescription;
 
-public class LegendParser extends DefaultHandler{
+public class LegendParser extends DefaultHandler implements ErrorHandler {
 	public static Configuration config;
 	
 	private Hashtable<String, Hashtable<String,Set<EntityDescription>>> poiMap;
@@ -141,6 +142,7 @@ public class LegendParser extends DefaultHandler{
             XMLReader xmlReader = factory.newSAXParser().getXMLReader();
             xmlReader.setEntityResolver(new DTDresolver());            
             xmlReader.setContentHandler(this);
+            xmlReader.setErrorHandler(this);
             xmlReader.parse(new InputSource(i));            
             if (nonValidStyleFile) {
             	System.out.println("ERROR: your style file is not valid. Please correct the file and try Osm2GpsMid again");
