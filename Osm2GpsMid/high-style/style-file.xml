@@ -1978,7 +1978,11 @@ scale alias 1: zoomed out 21x
 	<maxSpeedTemplates>
 		<maxSpeedTemplate name="AT:urban" maxspeed="50" />
 		<maxSpeedTemplate name="AT:land" maxspeed="100" />
-		<maxSpeedTemplate name="ortsgebiet" maxspeed="50" />
+		<maxSpeedTemplate name="DE:urban" maxspeed="50" />
+		<maxSpeedTemplate name="FI:urban" maxspeed="50" />
+		<maxSpeedTemplate name="nsl" maxspeed="97" />
+		<maxSpeedTemplate name="national" maxspeed="97" />
+		<maxSpeedTemplate name="Ortsgebiet" maxspeed="50" />
 		<maxSpeedTemplate name="walk" maxspeed="7" />
 	</maxSpeedTemplates>
 </legend>
