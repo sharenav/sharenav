@@ -74,6 +74,9 @@ public class FileTools {
     	if (onlyReplaceExisting && !dest.exists()) {
     		return 0;
     	}
+    	if (dest.exists()) {
+    		dest.delete();
+    	}
         try {        	
         	BufferedInputStream in = new BufferedInputStream(new FileInputStream(source));
 	    	BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(dest, true));
