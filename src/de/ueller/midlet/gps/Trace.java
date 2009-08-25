@@ -597,7 +597,10 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	public boolean isGpsConnected() {
 		return locationProducer != null && !solution.equalsIgnoreCase("Off");
 	}
-	
+
+	/**
+	 * Adds all commands for a normal menu.
+	 */
 	public void addAllCommands() {
 		addCommand(CMDS[EXIT_CMD]);
 		addCommand(CMDS[SEARCH_CMD]);
@@ -624,16 +627,18 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		addCommand(CMDS[ABOUT_CMD]);
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS)) {
 			if (!Configuration.getCfgBitState(Configuration.CFGBIT_FULLSCREEN)) {
-				super.addCommand(CMDS[SEARCH_CMD]);
 				super.addCommand(CMDS[ICON_MENU]);
 			}
 		}
 		setCommandListener(this);
 	}
 	
+	/**
+	 * This method must remove all commands that were added by addAllCommands().
+	 */
 	public void removeAllCommands() {
 		//setCommandListener(null);
-		/* Although j2me documentation tells removeCommand for a non-attached command is allowed
+		/* Although j2me documentation says removeCommand for a non-attached command is allowed
 		 * this would crash MicroEmulator. Thus we only remove the commands attached.
 		 */
 		removeCommand(CMDS[EXIT_CMD]);
@@ -649,6 +654,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		removeCommand(CMDS[RECORDINGS_CMD]);
 		removeCommand(CMDS[ROUTINGS_CMD]);
 		removeCommand(CMDS[DATASCREEN_CMD]);
+		removeCommand(CMDS[OVERVIEW_MAP_CMD]);
 		//#if polish.api.online
 		removeCommand(CMDS[ONLINE_INFO_CMD]);
 		//#if polish.api.osm-editing
@@ -656,6 +662,8 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		removeCommand(CMDS[RETRIEVE_NODE]);
 		//#endif
 		//#endif
+		removeCommand(CMDS[SETUP_CMD]);
+		removeCommand(CMDS[ABOUT_CMD]);
 		
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS)) {
 			if (!Configuration.getCfgBitState(Configuration.CFGBIT_FULLSCREEN)) {
@@ -663,8 +671,8 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			}
 		}
 	}
-	
-	/** sets the Canvas to fullScreen or windowed mode
+
+	/** Sets the Canvas to fullScreen or windowed mode
 	 * when icon menus are active the Menu command gets removed
 	 * so the Canvas will not unhide the menu bar first when pressing fire (e.g. on SE mobiles)
 	*/
