@@ -96,6 +96,7 @@ public class GuiGpx extends List implements CommandListener,
 		for (int i = 0; i < trks.length; i++) {
 			this.append(trks[i].displayName, null);
 		}
+		this.setTitle("GPX tracklogs (" + trks.length + ")");
 	}
 	
 	public void commandAction(Command c, Displayable d) {

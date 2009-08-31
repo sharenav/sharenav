@@ -92,6 +92,7 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 				this.append(waypoints[i].displayName,null);
 			}
 		}
+		this.setTitle("Waypoints (" + count_waypoints + ")");
 	}
 
 	public void commandAction(Command c, Displayable d) {
