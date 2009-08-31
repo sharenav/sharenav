@@ -23,25 +23,24 @@ import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
 
-import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.data.MapName;
 import de.ueller.midlet.gps.tile.StringEntry;
 
 public class Names implements Runnable {
 //	#debug
-	private final static Logger logger=Logger.getInstance(Names.class,Logger.TRACE);
+	private final static Logger logger = Logger.getInstance(Names.class, Logger.TRACE);
 	private intTree queue2 = new intTree();	
 	private intTree addQueue2 = new intTree();
-	private int[] startIndexes=null;
-	boolean shutdown=false;
-	boolean cleanup=false;
-	private intTree   stringCache = new intTree();
+	private int[] startIndexes = null;
+	boolean shutdown = false;
+	boolean cleanup = false;
+	private intTree stringCache = new intTree();
 	private Thread processorThread;
-	boolean isReady=false;
+	boolean isReady = false;
 
 	public Names() {
 		super();
-		processorThread = new Thread(this,"Names");
+		processorThread = new Thread(this, "Names");
 		processorThread.setPriority(Thread.MIN_PRIORITY);
 		processorThread.start();
 	}
@@ -49,7 +48,7 @@ public class Names implements Runnable {
 	public void run() {
 		try {
 			readIndex();
-			while (! shutdown){
+			while (! shutdown) {
 				logger.debug("Names resolver thread looped");
 				synchronized (this) {
 					try {
@@ -74,36 +73,35 @@ public class Names implements Runnable {
 					}
 					readData(queue2);
 				}
-				if (cleanup){
+				if (cleanup) {
 					cleanupStringCache();
 				}
 			}
 		} catch (Exception e) {
-			logger.fatal("Names thread crashed unexpectadly with error " +  e.getMessage() + " at " +e.toString());
+			logger.fatal("Names thread crashed unexpectedly with error " +  e.getMessage() + " at " +e.toString());
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 	}
-	
-	public void stop(){
-		shutdown=true;
+
+	public void stop() {
+		shutdown = true;
 	}
-	
-	public synchronized void cleanup(){
-		cleanup=true;
+
+	public synchronized void cleanup() {
+		cleanup = true;
 		notify();
 	}
 
-	
 	private void readIndex() throws IOException {
 		InputStream is = Configuration.getMapResource("/names-idx.dat");
 //		logger.info("read names-idx");
 		DataInputStream ds = new DataInputStream(is);
 
 		int[] nameIdxs = new int[255];
-		short count=0;
-		nameIdxs[count++]=0;
+		short count = 0;
+		nameIdxs[count++] = 0;
 		while (true) {
 			try {
 				nameIdxs[count++] = ds.readInt();
@@ -119,12 +117,12 @@ public class Names implements Runnable {
 		}
 		count--;
 		startIndexes = new int[count];
-		System.arraycopy(nameIdxs,0, startIndexes, 0, count);		
-		isReady=true;
+		System.arraycopy(nameIdxs, 0, startIndexes, 0, count);		
+		isReady = true;
 	}
 	
-	public synchronized boolean isReady(){
-		while (!isReady){
+	public synchronized boolean isReady() {
+		while (!isReady) {
 			try {
 				wait(2000);
 			} catch (InterruptedException e) {
@@ -132,13 +130,14 @@ public class Names implements Runnable {
 		}
 		return true;
 	}
-	public String getFirstWord(int fid){
+
+	public String getFirstWord(int fid) {
 		try {
 //			System.out.println("readFirstWord: /names-" + fid + ".dat");
 			InputStream is = Configuration.getMapResource("/names-" + fid + ".dat");
 			DataInputStream ds = new DataInputStream(is);
 			ds.readByte();
-			String firstWord=ds.readUTF();
+			String firstWord = ds.readUTF();
 			ds.close();
 			return firstWord;
 		} catch (IOException e) {
@@ -148,57 +147,57 @@ public class Names implements Runnable {
 		return ("");
 	}
 
-	private void readData(intTree queue) throws IOException{
+	private void readData(intTree queue) throws IOException {
 		int idx = queue.popFirstKey();
-		int fid=0;
-		InputStream is=null;
-		int count=0;
-		int actIdx=0;
+		int fid = 0;
+		InputStream is = null;
+		int count = 0;
+		int actIdx = 0;
 
-		while (idx != -1){
+		while (idx != -1) {
 			//#debug debug
 			logger.debug("Looking up name " + idx);
 			/* Lookup in which names file the entry is contained */
-			for (int i=fid;i < startIndexes.length;i++){
-				if (startIndexes[i] > idx){
-					is=Configuration.getMapResource("/names-" + fid + ".dat");
-					count=startIndexes[i]-startIndexes[fid];
-					actIdx=startIndexes[fid];
+			for (int i = fid; i < startIndexes.length; i++) {
+				if (startIndexes[i] > idx) {
+					is = Configuration.getMapResource("/names-" + fid + ".dat");
+					count = startIndexes[i] - startIndexes[fid];
+					actIdx = startIndexes[fid];
 					break;
 				}
-				fid=i;
+				fid = i;
 			}
-			if (is==null){
+			if (is == null) {
 //				logger.error("no inputstream found");
 				break;
 			}
-			DataInputStream ds=new DataInputStream(is);
+			DataInputStream ds = new DataInputStream(is);
 
-			int pos=0;
-			StringBuffer name=new StringBuffer();
+			int pos = 0;
+			StringBuffer name = new StringBuffer();
 			StringEntry bufferSe = new StringEntry(null);
 			//Search through all names in the the given file
 			//as we can only read linearly in this file 
-			files:for (int l=0;l<count;l++){
-				pos = readNextWord(ds, pos, name,bufferSe);
+			files:for (int l = 0; l < count; l++) {
+				pos = readNextWord(ds, pos, name, bufferSe);
 				//logger.info("test Name '" + name + "' at idx:" + actIdx);
-				if (actIdx == idx){
-					StringEntry se=(StringEntry) stringCache.get(idx);
+				if (actIdx == idx) {
+					StringEntry se = (StringEntry) stringCache.get(idx);
 					if (se == null) {
 						/*
 						 * We might have dropped the cache in between for low memory,
-						 * in this case just readd the entry now
+						 * in this case just read the entry now.
 						 */
 						se = new StringEntry(null);
 						stringCache.put(idx, se);
-						se.count=4;
+						se.count = 4;
 					}
-					se.name=name.toString();
+					se.name = name.toString();
 					
-					if (queue.size() != 0){
-						idx=queue.popFirstKey();
+					if (queue.size() != 0) {
+						idx = queue.popFirstKey();
 					} else {
-						idx=-1;
+						idx = -1;
 						break files;
 					}
 				}
@@ -208,34 +207,37 @@ public class Names implements Runnable {
 		}
 	}
 
-	private int readNextWord(DataInputStream ds, int pos, StringBuffer name,StringEntry se) throws IOException {
+	private int readNextWord(DataInputStream ds, int pos, StringBuffer name, StringEntry se) throws IOException {
 		int delta;
 		try { 
-			delta=ds.readByte();
+			delta = ds.readByte();
 		} catch (EOFException eofe) {
 			name.setLength(0);
 			return -1;
 		}
-		pos+=delta;
-		if (pos < 0) return pos;
+		pos += delta;
+		if (pos < 0) {
+			return pos;
+		}
 		name.setLength(pos);
 		name.append(ds.readUTF());
 		return pos;		
 	}
 
 	
-	public synchronized String getName(int idx){
-		if (idx < 0)
-			return null;		
-		StringEntry ret=(StringEntry) stringCache.get(idx);
+	public synchronized String getName(int idx) {
+		if (idx < 0) {
+			return null;
+		}
+		StringEntry ret = (StringEntry) stringCache.get(idx);
 		if (ret != null) {
-			ret.count=4;
+			ret.count = 4;
 			return ret.name;
 		}
 		StringEntry newEntry = new StringEntry(null);
 		stringCache.put(idx, newEntry);
-		newEntry.count=4;
-		addQueue2.put(idx,null);
+		newEntry.count = 4;
+		addQueue2.put(idx, null);
 		notify();
 		return null;
 	}
@@ -252,21 +254,21 @@ public class Names implements Runnable {
 		Vector hits = new Vector();
 		int count;		
 		try {
-			for (int fid = 0; fid < (startIndexes.length - 1);fid++) {
-				InputStream is=Configuration.getMapResource("/names-" + fid + ".dat");
-				count=startIndexes[fid + 1]-startIndexes[fid];				
-				if (is==null){
+			for (int fid = 0; fid < (startIndexes.length - 1); fid++) {
+				InputStream is = Configuration.getMapResource("/names-" + fid + ".dat");
+				count = startIndexes[fid + 1] - startIndexes[fid];				
+				if (is == null) {
 					break;
 				}
-				DataInputStream ds=new DataInputStream(is);
+				DataInputStream ds = new DataInputStream(is);
 
-				int pos=0;
-				StringBuffer name=new StringBuffer();
+				int pos = 0;
+				StringBuffer name = new StringBuffer();
 				StringEntry bufferSe = new StringEntry(null);
 				//Search through all names in the the given file
 				//as we can only read linearly in this file 
-				for (int l=0;l<count;l++){
-					pos = readNextWord(ds, pos, name,bufferSe);
+				for (int l = 0; l < count; l++) {
+					pos = readNextWord(ds, pos, name, bufferSe);
 					String fullName = name.toString().toLowerCase();
 					if (fullName.indexOf(snippet) > -1) {
 						//#debug debug
@@ -284,25 +286,26 @@ public class Names implements Runnable {
 		return hits;
 	}
 	
-	private void cleanupStringCache(){
+	private void cleanupStringCache() {
 		//#debug info
 		logger.info("cleanup namesCache " + stringCache.size());
 		boolean needsFreeing = GpsMid.getInstance().needsFreeingMemory();
 		
 		for (int i = 0; i < stringCache.capacity(); i++) {
 			StringEntry ce = (StringEntry) stringCache.getValueIdx(i);
-			if (ce == null)
+			if (ce == null) {
 				continue;
-			if ((ce.count <= 0) && (needsFreeing)){				
+			}
+			if ((ce.count <= 0) && (needsFreeing)) {				
 				stringCache.remove(stringCache.getKeyIdx(i));
 			} else {
 				ce.count--;
 			}
 		}
-		cleanup=false;
+		cleanup = false;
 	}
 
-	public int getNameCount(){
+	public int getNameCount() {
 		return stringCache.size();
 	}
 	
@@ -329,48 +332,49 @@ public class Names implements Runnable {
 /*	
  * This function is currently unused. Might reintroduce it later
  * 
- * public Short[] search(String s) throws IOException{	
-		StringBuffer name=new StringBuffer();
+ * public Short[] search(String s) throws IOException {	
+		StringBuffer name = new StringBuffer();
 		InputStream is;
 		DataInputStream ds;
-		int pos=0;
-		Short[] posibilities=new Short[20];
-		int filledPosi=0;
+		int pos = 0;
+		Short[] posibilities = new Short[20];
+		int filledPosi = 0;
 		// suche file durch alle files
-		char firstChar=s.charAt(0);
-		StringEntry se=new StringEntry(null);
-		for (int l1=0;(l1 < startIndexes.length && filledPosi<20);l1++){
-//			if (firstChar > startWords[l1+1].charAt(0))
+		char firstChar = s.charAt(0);
+		StringEntry se = new StringEntry(null);
+		for (int l1 = 0; (l1 < startIndexes.length && filledPosi<20); l1++) {
+//			if (firstChar > startWords[l1 + 1].charAt(0))
 //				continue;
-			short idx=startIndexes[l1];
-			pos=0;
+			short idx = startIndexes[l1];
+			pos = 0;
 			is = QueueReader.openFile("/names-" + l1 + ".dat");
-			ds= new DataInputStream(is);
-			pos = readNextWord(ds, pos, name,se);
+			ds = new DataInputStream(is);
+			pos = readNextWord(ds, pos, name, se);
 			do {
-//				if (name.toString().startsWith("Ezel")){
+//				if (name.toString().startsWith("Ezel")) {
 //					System.out.println(name.toString());	
 //				}
-				if (s.startsWith(name.toString())){
+				if (s.startsWith(name.toString())) {
 //					System.out.println(name.toString());	
 					Short idxS = new Short(idx);
-					se.name=name.toString();
+					se.name = name.toString();
 					addToCache(se, idxS);
 					getName(se.isIn);
-					posibilities[filledPosi++]=idxS;
-					se=new StringEntry(null);
-					if (filledPosi >= 20)
+					posibilities[filledPosi++] = idxS;
+					se = new StringEntry(null);
+					if (filledPosi >= 20) {
 						return posibilities;
+					}
 				}	
-				pos = readNextWord(ds, pos, name,se);
+				pos = readNextWord(ds, pos, name, se);
 			} while (pos >= 0);
 		}
 		return posibilities;
 	}
 	
-	private void addToCache(StringEntry se, Short key){
+	private void addToCache(StringEntry se, Short key) {
 		stringCache.put(key, se);
-		se.count=4;
+		se.count = 4;
 	}
  */	
 
