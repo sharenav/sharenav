@@ -684,7 +684,9 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		this.url = url;
 		feedbackListener = ul;
 		sendWpt = true;
-		GuiNameEnter gne = new GuiNameEnter(this, "Send as (without .gpx)", "Waypoints", Configuration.MAX_WAYPOINTS_NAME_LENGTH);
+		GuiNameEnter gne = new GuiNameEnter(this, "Send as (without .gpx)", 
+				"Waypoints-" + HelperRoutines.formatSimpleDateNow(), 
+				Configuration.MAX_WAYPOINTS_NAME_LENGTH);
 		gne.show();
 	}
 	
@@ -1129,14 +1131,14 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 					}
 					
 			} catch (ClassNotFoundException cnfe) {
-				importExportMessage = "Your phone does not support this form of exporting, pleas choose a different one";
+				importExportMessage = "Your phone does not support this form of exporting, please choose a different one";
 				session = null;
 				return false;
 			} catch (ClassCastException cce) {
 				logger.exception("Could not cast the class", cce);				
 			}
 			if (session == null) {
-				importExportMessage = "Your phone does not support this form of exporting, pleas choose a different one";
+				importExportMessage = "Your phone does not support this form of exporting, please choose a different one";
 				return false;
 			}
 			oS = session.openSession(url, name);
@@ -1167,9 +1169,11 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 			logger.error("IOException, can't transmit tracklog: " + e);
 			importExportMessage = e.getMessage();
 		} catch (OutOfMemoryError oome) {
-			logger.fatal("Out of memory, can't transmit tracklog");
+			importExportMessage = "Out of memory, can't transmit tracklog";
+			logger.fatal(importExportMessage);
 		} catch (Exception ee) {			
 			logger.error("Error while sending tracklogs: " + ee);
+			importExportMessage = ee.getMessage();
 		}
 		return false;
 	}
