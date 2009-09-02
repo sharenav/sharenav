@@ -410,6 +410,9 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 				oldlat=lat;
 				oldlon=lon;
 				oldheight = trkpt.altitude;
+				if ((recorded & 0xff) == 0xff) {
+					storeTrk();
+				}
 			}
 		} catch (OutOfMemoryError oome) {
 			try {				
