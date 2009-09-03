@@ -1549,7 +1549,11 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 
 			if (speed > 0 && 
 					Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_SPEED_IN_MAP)) {
-				tl.ele[TraceLayout.SPEED_CURRENT].setText(" " + Integer.toString(speed) + " km/h");
+				if (Configuration.getCfgBitState(Configuration.CFGBIT_METRIC)) {
+					tl.ele[TraceLayout.SPEED_CURRENT].setText(" " + Integer.toString(speed) + " km/h");
+				} else {
+					tl.ele[TraceLayout.SPEED_CURRENT].setText(" " + Integer.toString((int)(speed / 1.609344f)) + " mph");
+				}
 			}
 			
 			setSpeedingSign(maxSpeed);
@@ -1712,8 +1716,11 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				speedingSpeedLimit = maxSpeed;
 				startTimeOfSpeedingSign = System.currentTimeMillis();
 			}
-
-			tl.ele[TraceLayout.SPEEDING_SIGN].setText(Integer.toString(speedingSpeedLimit));
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_METRIC)) {
+				tl.ele[TraceLayout.SPEEDING_SIGN].setText(Integer.toString(speedingSpeedLimit));
+			} else {
+				tl.ele[TraceLayout.SPEEDING_SIGN].setText(Integer.toString((int)(speedingSpeedLimit / 1.609344f)));
+			}
 		} else {
 			startTimeOfSpeedingSign = 0;
 		}

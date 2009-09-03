@@ -43,10 +43,12 @@ public class GuiTacho extends KeyCommandCanvas implements CommandListener,
 	private float max_spd = 0.0f;
 
 	private int kmhWidth = -1;
+	private int mphWidth = -1;
 	//private int msWidth = -1;
 	private int mminWidth = -1;
 	private int mWidth = -1;
 	private int kmWidth = -1;
+	private int miWidth = -1;
 	private int fHeight = -1;
 
 	public GuiTacho(Trace parent) {
@@ -92,7 +94,9 @@ public class GuiTacho extends KeyCommandCanvas implements CommandListener,
 			 */
 			Font f = g.getFont();
 			kmhWidth = f.stringWidth("km/h");
+			mphWidth = f.stringWidth("mph");
 			kmWidth = f.stringWidth("km");
+			miWidth = f.stringWidth("mi");
 			mminWidth = f.stringWidth("m/min");
 			mWidth = f.stringWidth("m");
 			fHeight = f.getHeight();
@@ -149,30 +153,58 @@ public class GuiTacho extends KeyCommandCanvas implements CommandListener,
 		y += 64;
 		lcdFont.setFontSize(48);
 		
-		g.drawString("km/h", w - 1, y - 3, Graphics.BOTTOM | Graphics.RIGHT);
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_METRIC)) {
+			g.drawString("km/h", w - 1, y - 3, Graphics.BOTTOM | Graphics.RIGHT);
 
-		if (pos.speed > 10) {
-			lcdFont.drawInt(g, (int)(pos.speed * 3.6f), w - kmhWidth - 1, y - 5);
+			if (pos.speed > 10) {
+				lcdFont.drawInt(g, (int)(pos.speed * 3.6f), w - kmhWidth - 1, y - 5);
+			} else {
+				lcdFont.drawFloat(g, pos.speed * 3.6f, 1, w - kmhWidth - 1, y - 5);
+			}
 		} else {
-			lcdFont.drawFloat(g, pos.speed * 3.6f, 1, w - kmhWidth - 1, y - 5);
+			g.drawString("mph", w - 1, y - 3, Graphics.BOTTOM | Graphics.RIGHT);
+
+			if (pos.speed > 10) {
+				lcdFont.drawInt(g, (int)(pos.speed * 2.237f), w - kmhWidth - 1, y - 5);
+			} else {
+				lcdFont.drawFloat(g, pos.speed * 2.237f, 1, w - kmhWidth - 1, y - 5);
+			}
 		}
+		
+		
 		g.drawLine(0, y, w, y);
 		
 		lcdFont.setFontSize(18);
 		g.drawLine(w >> 1, y, w >> 1, y + 32);
 		y += 28;
-		g.drawString("km", (w >> 1) - 1, y - 5, Graphics.BOTTOM
-				| Graphics.RIGHT);
-		if (odo > 10) {
-			lcdFont.drawFloat(g, odo, 1, (w >> 1) - kmWidth - 2, y);
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_METRIC)) {
+			g.drawString("km", (w >> 1) - 1, y - 5, Graphics.BOTTOM
+					| Graphics.RIGHT);
+			if (odo > 10) {
+				lcdFont.drawFloat(g, odo, 1, (w >> 1) - kmWidth - 2, y);
+			} else {
+				lcdFont.drawFloat(g, odo, 2, (w >> 1) - kmWidth - 2, y);
+			}
+			g.drawString("km/h", w - 1, y - 5, Graphics.BOTTOM | Graphics.RIGHT);
+			if (avg_spd > 30) {
+				lcdFont.drawInt(g, (int)avg_spd, w - kmhWidth - 2, y);
+			} else {
+				lcdFont.drawFloat(g, avg_spd, 1, w - kmhWidth - 2, y);
+			}
 		} else {
-			lcdFont.drawFloat(g, odo, 2, (w >> 1) - kmWidth - 2, y);
-		}
-		g.drawString("km/h", w - 1, y - 5, Graphics.BOTTOM | Graphics.RIGHT);
-		if (avg_spd > 30) {
-			lcdFont.drawInt(g, (int)avg_spd, w - kmhWidth - 2, y);
-		} else {
-			lcdFont.drawFloat(g, avg_spd, 1, w - kmhWidth - 2, y);
+			g.drawString("mi", (w >> 1) - 1, y - 5, Graphics.BOTTOM
+					| Graphics.RIGHT);
+			if (odo > 10) {
+				lcdFont.drawFloat(g, (odo / 1.609344f), 1, (w >> 1) - miWidth - 2, y);
+			} else {
+				lcdFont.drawFloat(g, (odo / 1.609344f), 2, (w >> 1) - miWidth - 2, y);
+			}
+			g.drawString("mph", w - 1, y - 5, Graphics.BOTTOM | Graphics.RIGHT);
+			if (avg_spd > 30) {
+				lcdFont.drawInt(g, (int)(avg_spd / 1.609344f), w - mphWidth - 2, y);
+			} else {
+				lcdFont.drawFloat(g, (avg_spd / 1.609344f), 1, w - mphWidth - 2, y);
+			}
 		}
 		g.drawLine(0, y, w, y);
 		g.drawLine(w >> 1, y, w >> 1, y + 32);
@@ -197,8 +229,13 @@ public class GuiTacho extends KeyCommandCanvas implements CommandListener,
 						HelperRoutines.formatInt2((int)(duration / 1000) % 60));
 		g.drawString(timeString.toString(), (w >> 1) - 1, y + 3,
 				Graphics.BOTTOM | Graphics.RIGHT);
-		g.drawString(max_spd + " km/h", w - 1, y + 3, Graphics.BOTTOM
-				| Graphics.RIGHT);
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_METRIC)) {
+			g.drawString(max_spd + " km/h", w - 1, y + 3, Graphics.BOTTOM
+					| Graphics.RIGHT);
+		} else {
+			g.drawString((max_spd / 1.609334f) + " mph", w - 1, y + 3, Graphics.BOTTOM
+					| Graphics.RIGHT);
+		}
 	}
 
 	public void show() {

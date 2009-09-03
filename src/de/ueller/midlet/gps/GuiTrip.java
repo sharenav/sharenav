@@ -38,6 +38,7 @@ public class GuiTrip extends KeyCommandCanvas implements CommandListener,
 	double[] mSunRiseset;
 
 	private int mKmWidth = -1;
+	private int mMiWidth = -1;
 	private int mfontHeight = -1;
 
 	public GuiTrip(Trace parent) {
@@ -82,6 +83,7 @@ public class GuiTrip extends KeyCommandCanvas implements CommandListener,
 			 */
 			Font f = g.getFont();
 			mKmWidth = f.stringWidth("km");
+			mMiWidth = f.stringWidth("mi");
 			mfontHeight = f.getHeight();
 		}
 		Position pos = mParent.getCurrentPosition();
@@ -108,7 +110,11 @@ public class GuiTrip extends KeyCommandCanvas implements CommandListener,
 			mLcdFont.drawInvalid(g, 3, w, y - 6);
 			y += 48;
 			mLcdFont.drawInvalid(g, 4, w - mKmWidth -1, y - 6);
-			g.drawString("km", w - 1, y - 3, Graphics.BOTTOM | Graphics.RIGHT);
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_METRIC)) {
+				g.drawString("km", w - 1, y - 3, Graphics.BOTTOM | Graphics.RIGHT);
+			} else {
+				g.drawString("mi", w - 1, y - 3, Graphics.BOTTOM | Graphics.RIGHT);
+			}
 		} else {
 			float[] result = ProjMath.calcDistanceAndCourse(mParent.center.radlat, 
 					mParent.center.radlon, mParent.getTarget().lat, 
@@ -124,19 +130,36 @@ public class GuiTrip extends KeyCommandCanvas implements CommandListener,
 		
 			// Distance (result[0])
 			y += 48;
-			if (result[0] > 100000) {
-				mLcdFont.drawInt(g, (int)((result[0] / 1000.0f) + 0.5), 
-						w - mKmWidth -1, y - 6);
-				g.drawString("km", w - 1, y - 3, Graphics.BOTTOM | Graphics.RIGHT);
-			} else if (result[0] > 1000) {
-				mLcdFont.drawFloat(g, (int)((result[0] / 100.0f) + 0.5) / 
-						10.0f, 1, w - mKmWidth - 1, y - 6);
-				g.drawString("km", w - 1, y - 3, Graphics.BOTTOM | Graphics.RIGHT);
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_METRIC)) {
+				if (result[0] > 100000) {
+					mLcdFont.drawInt(g, (int)((result[0] / 1000.0f) + 0.5), 
+							w - mKmWidth -1, y - 6);
+					g.drawString("km", w - 1, y - 3, Graphics.BOTTOM | Graphics.RIGHT);
+				} else if (result[0] > 1000) {
+					mLcdFont.drawFloat(g, (int)((result[0] / 100.0f) + 0.5) / 
+							10.0f, 1, w - mKmWidth - 1, y - 6);
+					g.drawString("km", w - 1, y - 3, Graphics.BOTTOM | Graphics.RIGHT);
+				} else {
+					// Using width of "km" to avoid jumping of number between m and km ranges.
+					mLcdFont.drawInt(g, (int)(result[0] + 0.5), 
+							w - mKmWidth - 1, y - 6);
+					g.drawString("m", w - 1, y - 3, Graphics.BOTTOM | Graphics.RIGHT);
+				}
 			} else {
-				// Using width of "km" to avoid jumping of number between m and km ranges.
-				mLcdFont.drawInt(g, (int)(result[0] + 0.5), 
-						w - mKmWidth - 1, y - 6);
-				g.drawString("m", w - 1, y - 3, Graphics.BOTTOM | Graphics.RIGHT);
+				if (result[0] > 160934) {
+					mLcdFont.drawInt(g, (int)((result[0] / 1609.3f) + 0.5), 
+							w - mMiWidth -1, y - 6);
+					g.drawString("mi", w - 1, y - 3, Graphics.BOTTOM | Graphics.RIGHT);
+				} else if (result[0] > 1609) {
+					mLcdFont.drawFloat(g, (int)((result[0] / 160.9f) + 0.5) / 
+							10.0f, 1, w - mMiWidth - 1, y - 6);
+					g.drawString("mi", w - 1, y - 3, Graphics.BOTTOM | Graphics.RIGHT);
+				} else {
+					// Using width of "km" to avoid jumping of number between m and km ranges.
+					mLcdFont.drawInt(g, (int)(result[0] + 0.5), 
+							w - mMiWidth - 1, y - 6);
+					g.drawString("m", w - 1, y - 3, Graphics.BOTTOM | Graphics.RIGHT);
+				}
 			}
 		}
 		g.drawLine(0, y, w, y);

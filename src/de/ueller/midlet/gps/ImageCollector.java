@@ -396,7 +396,15 @@ public class ImageCollector implements Runnable {
 		if (wayForName != null) {		
 			String maxspeed = "";
 			if (wayForName.getMaxSpeed() != 0) {
-				maxspeed=" SL:" + wayForName.getMaxSpeed();
+				if (Configuration.getCfgBitState(Configuration.CFGBIT_METRIC)) {
+					maxspeed=" SL:" + wayForName.getMaxSpeed();
+				} else {
+					//Round up at this point, as the the previouse two conversions
+					//were rounded down already. (Seems to work better for speed limits of
+					//20mph and 30mph)
+					maxspeed=" SL:" + ((int)(wayForName.getMaxSpeed() / 1.609344f) + 1);
+				}
+				
 			}
 
 			if (wayForName.nameIdx != -1) {

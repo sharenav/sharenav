@@ -46,7 +46,7 @@ public class Configuration {
 	 *  the default values for the features added between configVersionStored
 	 *  and VERSION will be set, before the version in the recordstore is increased to VERSION.
 	 */
-	public final static int VERSION = 7;
+	public final static int VERSION = 8;
 
 	public final static int LOCATIONPROVIDER_NONE = 0;
 	public final static int LOCATIONPROVIDER_SIRF = 1;
@@ -172,6 +172,8 @@ public class Configuration {
 	public final static byte CFGBIT_SHOW_SPEED_IN_MAP = 58;
 	// bit 59: Flag whether to start GPS reception when entering map
 	public final static byte CFGBIT_AUTO_START_GPS = 59;
+	// bit 60: Flag whether to display in metric or imperial units
+	public final static byte CFGBIT_METRIC = 60;
 	
 	/**
 	 * These are the database record ids for each configuration option
@@ -434,6 +436,10 @@ public class Configuration {
 		if (configVersionStored < 7) {
 			cfgBits |=	1L << CFGBIT_SHOW_SPEED_IN_MAP |
 						1L << CFGBIT_AUTO_START_GPS;
+		}
+		
+		if (configVersionStored < 8) {
+			cfgBits |=	1L << CFGBIT_METRIC;
 		}
 
 		setCfgBits(cfgBits, true);

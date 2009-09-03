@@ -203,6 +203,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private ChoiceGroup rotationGroup;
 	private ChoiceGroup nightModeGroup;
 	private ChoiceGroup renderOpts;
+	private ChoiceGroup metricUnits;
 	private TextField	tfAutoRecenterToGpsSecs;
 	private ChoiceGroup backlightOpts;
 	private ChoiceGroup sizeOpts;
@@ -467,6 +468,11 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		// gaugeDetailBoost = new Gauge("Scale Detail Level", true, 3, 0);
 		gaugeDetailBoost = new Gauge("Increase Detail of lower Zoom Levels", true, 3, 0);
 		menuDisplayOptions.append(gaugeDetailBoost);
+		
+		String [] metricUnit = new String[1];
+		metricUnit[0] = "metric units";
+		metricUnits = new ChoiceGroup("Units", Choice.MULTIPLE, metricUnit ,null);
+		menuDisplayOptions.append(metricUnits);
 
 		tfAutoRecenterToGpsSecs = new TextField("Auto-recenter to GPS after no user action for these seconds (0=disabled)", 
 				Integer.toString(Configuration.getAutoRecenterToGpsMilliSecs() / 1000), 
@@ -797,6 +803,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				Configuration.setCfgBitState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN, guiOpts.isSelected(1), true);
 				Configuration.setCfgBitState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED, guiOpts.isSelected(2), true);
 				Configuration.setCfgBitState(Configuration.CFGBIT_SHOW_SPEED_IN_MAP, guiOpts.isSelected(3), true);
+				
 				trace.uncacheIconMenu();
 				Configuration.setDetailBoost(gaugeDetailBoost.getValue(), true); 
 				
@@ -817,6 +824,11 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				Configuration.setCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIA , sellight[4], true);
 				Configuration.setCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIAFLASH , sellight[5], true);
 				Configuration.setCfgBitState(Configuration.CFGBIT_BACKLIGHT_SIEMENS , sellight[6], true);
+				
+				sellight = new boolean[1];
+				metricUnits.getSelectedFlags(sellight);
+				Configuration.setCfgBitState(Configuration.CFGBIT_METRIC, sellight[0], true);
+				
 				state = STATE_ROOT;
 				show();
 
@@ -1005,6 +1017,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				guiOpts.setSelectedIndex(1, Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN, true));
 				guiOpts.setSelectedIndex(2, Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED, true));
 				guiOpts.setSelectedIndex(3, Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_SPEED_IN_MAP, true));
+				metricUnits.setSelectedIndex(0, Configuration.getCfgBitState(Configuration.CFGBIT_METRIC));
 				SingleTile.newPOIFont();
 				WaypointsTile.useNewWptFont();
 				gaugeDetailBoost.setValue(Configuration.getDetailBoostDefault());
