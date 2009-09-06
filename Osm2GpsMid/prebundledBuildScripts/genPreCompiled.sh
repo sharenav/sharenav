@@ -32,6 +32,24 @@ mkfifo /tmp/italy.osm
 
 cd /unsafe/krueger/Osm2GpsMid
 
+c=australia
+rm /tmp/$c.osm
+mkfifo /tmp/$c.osm
+bzcat $c.osm.bz2 > /tmp/$c.osm & java -mx5000M -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /tmp/$c.osm Belarus
+scp GpsMidAu-Australia-0.5.09.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/prebuild/ &
+
+c=sweden
+rm /tmp/$c.osm
+mkfifo /tmp/$c.osm
+bzcat $c.osm.bz2 > /tmp/$c.osm & java -mx5000M -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /tmp/$c.osm Sweden
+scp GpsMidSe-Sweden-0.5.09.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/prebuild/ &
+
+c=japan
+rm /tmp/$c.osm
+mkfifo /tmp/$c.osm
+bzcat $c.osm.bz2 > /tmp/$c.osm & java -mx5000M -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /tmp/$c.osm Japan
+scp GpsMidJp-Japan-0.5.09.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/prebuild/ &
+
 c=belarus
 rm /tmp/$c.osm
 mkfifo /tmp/$c.osm
@@ -367,6 +385,8 @@ bzcat  germany.osm.bz2 > /tmp/germany.osm & java -mx3000M -jar Osm2GpsMid-CVS.ja
 scp GpsMun-Munich-0.5.09.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/prebuild/ &
 bzcat  germany.osm.bz2 > /tmp/germany.osm & java -mx3000M -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /tmp/germany.osm hamburg
 scp GpsMidHH-Hamburg-0.5.09.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/prebuild/ &
+bzcat  germany.osm.bz2 > /tmp/germany.osm & java -mx5500M -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /tmp/germany.osm Bayern
+scp GpsMidBay-Bayern-0.5.09.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/prebuild/ &
 bzcat  austria.osm.bz2 > /tmp/austria.osm & java -mx3000M -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /tmp/austria.osm Wien
 scp GpsMidW-Wien-0.5.09.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/prebuild/ &
 bzcat  france.osm.bz2 > /tmp/france.osm & java -mx3000M -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /tmp/france.osm Paris
