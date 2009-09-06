@@ -35,7 +35,7 @@ cd /unsafe/krueger/Osm2GpsMid
 c=australia
 rm /tmp/$c.osm
 mkfifo /tmp/$c.osm
-bzcat $c.osm.bz2 > /tmp/$c.osm & java -mx5000M -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /tmp/$c.osm Belarus
+bzcat $c.osm.bz2 > /tmp/$c.osm & java -mx5000M -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /tmp/$c.osm Australia
 scp GpsMidAu-Australia-0.5.09.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/prebuild/ &
 
 c=sweden
