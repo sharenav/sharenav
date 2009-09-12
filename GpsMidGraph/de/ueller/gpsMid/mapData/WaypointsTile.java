@@ -164,7 +164,7 @@ public class WaypointsTile extends Tile {
 			if (pc.getP().isPlotable(waypt.lat, waypt.lon)) {
 				pc.getP().forward(waypt.lat, waypt.lon, pc.lineP2);
 				// Always draw waypoint marker
-				pc.g.drawImage(pc.images.IMG_MARK, pc.lineP2.x, pc.lineP2.y,
+				pc.g.drawImage(pc.images.IMG_WAYPT, pc.lineP2.x, pc.lineP2.y,
 						Graphics.HCENTER | Graphics.VCENTER);
 				// Draw waypoint text if enabled
 				if (   (Configuration.getCfgBitState(Configuration.CFGBIT_WPTTEXTS) 

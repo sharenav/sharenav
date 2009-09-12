@@ -7,6 +7,7 @@ import javax.microedition.lcdui.Image;
 public class Images {
 	public final Image IMG_MARK = Image.createImage("/mark.png");
 	public final Image IMG_MARK_DISP = Image.createImage("/mark_display.png");
+	public final Image IMG_WAYPT = Image.createImage("/waypoint.png");
 	public final Image IMG_POS_BG = Image.createImage("/posbg.png");
 	/*public final Image IMG_PARKING=Image.createImage("/parking.png");
 	public final Image IMG_FUEL=Image.createImage("/fuel.png");
