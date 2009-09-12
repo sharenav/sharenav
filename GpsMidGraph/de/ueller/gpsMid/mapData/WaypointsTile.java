@@ -64,22 +64,22 @@ public class WaypointsTile extends Tile {
 			}
 		} else {
 			wayPts.addElement(wayPt);
-
-			if (wayPt.lat < minLat) {
-				minLat = wayPt.lat;
-			}
-			if (wayPt.lat > maxLat) {
-				maxLat = wayPt.lat;
-			}
-			if (wayPt.lon < minLon) {
-				minLon = wayPt.lon;
-			}
-			if (wayPt.lon > maxLon) {
-				maxLon = wayPt.lon;
-			}
+			
 			if (wayPts.size() > 90) {
 				splitTile();
 			}
+		}
+		if (wayPt.lat < minLat) {
+			minLat = wayPt.lat;
+		}
+		if (wayPt.lat > maxLat) {
+			maxLat = wayPt.lat;
+		}
+		if (wayPt.lon < minLon) {
+			minLon = wayPt.lon;
+		}
+		if (wayPt.lon > maxLon) {
+			maxLon = wayPt.lon;
 		}
 		totalWayPts++;
 	}
