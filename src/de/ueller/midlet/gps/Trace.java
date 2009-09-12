@@ -1293,9 +1293,8 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				}
 				//#endif
 				if (c == CMDS[SETTARGET_CMD]) {
-					if (source != null) {
-						setTarget(source);
-					}
+					PositionMark pm1 = new PositionMark(center.radlat, center.radlon);
+					setTarget(pm1);
 					return;
 				}
 				if (c == CMDS[CLEARTARGET_CMD]) {
