@@ -151,10 +151,12 @@ public class NoiseMaker
 		        Player player = Manager.createPlayer(Manager.TONE_DEVICE_LOCATOR);
 		        player.addPlayerListener( this );
 		        player.realize(); 
-		    	ToneControl toneCtrl = (ToneControl)player.getControl( "ToneControl" ); 
-		        toneCtrl.setSequence( sequence ); 
-				playingNames = name;
-		        player.start();
+		    	ToneControl toneCtrl = (ToneControl)player.getControl( "ToneControl" );
+		    	if (toneCtrl != null) {
+		    		toneCtrl.setSequence( sequence ); 
+		    		playingNames = name;
+		    		player.start();
+		    	}
 	    	}
 	    } catch (Exception ex) {		
 	    	mLogger.exception("Failed to play sound", ex);
@@ -321,7 +323,9 @@ public class NoiseMaker
 					mLogger.debug("realized player for " + soundFile);
 					player.addPlayerListener( this );
 					VolumeControl volCtrl = (VolumeControl) player.getControl("VolumeControl");
-					volCtrl.setLevel(100);
+					if (volCtrl != null) {
+						volCtrl.setLevel(100);
+					}
 				}
                 //#debug debug
                 else mLogger.debug("Could NOT CREATE PLAYER for " + mediaType);
