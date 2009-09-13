@@ -32,11 +32,18 @@ mkfifo /tmp/italy.osm
 
 cd /unsafe/krueger/Osm2GpsMid
 
+c=poland
+rm /tmp/$c.osm
+mkfifo /tmp/$c.osm
+bzcat $c.osm.bz2 > /tmp/$c.osm & java -mx5000M -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /tmp/$c.osm Poland
+scp GpsMidPl-Poland-0.5.09.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/prebuild/ &
+
 c=australia
 rm /tmp/$c.osm
 mkfifo /tmp/$c.osm
 bzcat $c.osm.bz2 > /tmp/$c.osm & java -mx5000M -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /tmp/$c.osm Australia
 scp GpsMidAu-Australia-0.5.09.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/prebuild/ &
+
 
 c=sweden
 rm /tmp/$c.osm

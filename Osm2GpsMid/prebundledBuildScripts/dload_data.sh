@@ -4,6 +4,7 @@ wget http://gpsmid.sourceforge.net/prebuild/Osm2GpsMid-CVS.jar -O /unsafe/kruege
 wget http://myapp.fr/cellsIdData/cells.txt.gz -O /unsafe/krueger/Osm2GpsMid/cells.txt.gz
 
 wget http://download.geofabrik.de/osm/europe/austria.osm.bz2 -O /unsafe/krueger/Osm2GpsMid/austria.osm.bz2
+wget http://download.geofabrik.de/osm/europe/poland.osm.bz2 -O /unsafe/krueger/Osm2GpsMid/poland.osm.bz2
 wget http://download.geofabrik.de/osm/europe/albania.osm.bz2 -O /unsafe/krueger/Osm2GpsMid/albania.osm.bz2
 wget http://download.geofabrik.de/osm/europe/croatia.osm.bz2 -O /unsafe/krueger/Osm2GpsMid/croatia.osm.bz2
 wget http://download.geofabrik.de/osm/europe/bosnia-herzegovina.osm.bz2 -O /unsafe/krueger/Osm2GpsMid/bosnia.osm.bz2
