@@ -267,11 +267,11 @@ mkfifo /tmp/$c.osm
 bzcat $c.osm.bz2 > /tmp/$c.osm & java -mx2000M -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /tmp/$c.osm South_Africa
 scp GpsMidZa-SouthAfrica-0.5.09.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/prebuild/ &
 
-c=rusia
+c=russia
 rm /tmp/$c.osm
 mkfifo /tmp/$c.osm
 bzcat $c.osm.bz2 > /tmp/$c.osm & java -mx3000M -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /tmp/$c.osm moscow
-scp GpsMidMos-Moskow-0.5.09.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/prebuild/ &
+scp GpsMidMos-Moscow-0.5.09.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/prebuild/ &
 
 c=denmark
 rm /tmp/$c.osm
