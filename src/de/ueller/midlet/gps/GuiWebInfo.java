@@ -29,6 +29,7 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 		mPos = pos;
 		this.append("Wikipedia", null);
 		this.append("Weather", null);
+		this.append("GeoHack", null);
 		this.addCommand(BACK_CMD);
 		this.setCommandListener(this);
 		this.setSelectCommand(SELECT_CMD);
@@ -57,6 +58,33 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 						+ "%2C"
 						+ (mPos.longitude * MoreMath.FAC_RADTODEC);
 			}
+			if (site.equalsIgnoreCase("GeoHack")) {
+				int deglat, minlat;
+				float deglatf, seclat;
+				int deglon, minlon;
+				float deglonf, seclon;
+				deglatf = Math.abs((mPos.latitude * MoreMath.FAC_RADTODEC));
+				deglat = (int)deglatf;
+				minlat = (int) ((deglatf - deglat) * 60);
+				seclat = ((deglatf - deglat-minlat/60)*60);
+				deglonf = Math.abs((mPos.longitude * MoreMath.FAC_RADTODEC));
+				deglon = (int)deglonf;
+				minlon = (int) ((deglonf - deglon) * 60);
+				seclon = ((deglonf - deglon-minlon/60)*60);
+				url = "http://stable.toolserver.org/geohack/geohack.php?params="
+						+ deglat
+						+ "_"
+						+ minlat
+						+ "_"
+						+ seclat
+						+ ((mPos.latitude < 0)?"_S_":"_N_")
+						+ deglon
+						+ "_"
+						+ minlon
+						+ "_"
+						+ seclon
+						+ ((mPos.longitude < 0)?"_W_":"_E_");
+			}
 			try {
 				if (url != null) {
 					// #debug info
@@ -64,7 +92,7 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 					GpsMid.getInstance().platformRequest(url);
 				}
 			} catch (Exception e) {
-				mLogger.exception("Could not load Wikipedia", e);
+				mLogger.exception("Could not open url " + url, e);
 			}
 			mParent.show();
 		}
