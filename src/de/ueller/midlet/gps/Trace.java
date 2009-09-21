@@ -325,7 +325,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		CMDS[TOGGLE_RECORDING_CMD] = new Command("(De)Activate recording",Command.ITEM, 100);
 		CMDS[TOGGLE_RECORDING_SUSP_CMD] = new Command("Suspend recording",Command.ITEM, 100);
 		CMDS[RECENTER_GPS_CMD] = new Command("Recenter on GPS",Command.ITEM, 100);
-		CMDS[SHOW_TARGET_CMD] = new Command("Show destination",Command.ITEM, 100);
+		CMDS[SHOW_TARGET_CMD] = new Command("Show target",Command.ITEM, 100);
 		CMDS[DATASCREEN_CMD] = new Command("Tacho", Command.ITEM, 15);
 		CMDS[OVERVIEW_MAP_CMD] = new Command("Overview/Filter Map", Command.ITEM, 20);
 		CMDS[RETRIEVE_XML] = new Command("Retrieve XML",Command.ITEM, 200);
@@ -942,9 +942,9 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					} else {
 						elements[0] = "Calculate route";
 					}
-					elements[1] = "Set destination";
-					elements[2] = "Show destination";
-					elements[3] = "Clear destination";
+					elements[1] = "Set target";
+					elements[2] = "Show target";
+					elements[3] = "Clear target";
 					routingsMenu = new List("Routing..", Choice.IMPLICIT, elements, null);
 					routingsMenu.addCommand(CMDS[OK_CMD]);
 					routingsMenu.addCommand(CMDS[BACK_CMD]);
@@ -1116,7 +1116,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					if (Configuration.getCfgBitState(Configuration.CFGBIT_FULLSCREEN)) {
 						removeAllCommands();
 					}
-					customMenu = new CustomMenu(this, this, "Route to destination", menuEntries, ROUTING_START_WITH_MODE_SELECT_CMD, Legend.getTravelModes().length - 1);
+					customMenu = new CustomMenu(this, this, "Route to target", menuEntries, ROUTING_START_WITH_MODE_SELECT_CMD, Legend.getTravelModes().length - 1);
 					customMenu.setSelectedEntry(Configuration.getTravelModeNr());
 				}
 				else {
