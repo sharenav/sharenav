@@ -977,6 +977,18 @@ scale alias 1: zoomed out 21x
 		</value>
 -->
 	</key>
+<!--
+	<key tag="addr:housenumber">
+	  <value name ="*">
+		<description desc = "House number"/>
+		<image src="mark.png"/>
+		<namekey tag="addr:housenumber"/>
+		<scale scale="14"/>
+		<textscale scale="20"/>
+		<hideable hideable="false"/>
+	  </value>	
+	</key>
+-->
 	<key tag="aeroway">
 	  <value name ="aerodrome">
 		<description desc = "Aerodrome"/>
