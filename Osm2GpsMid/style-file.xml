@@ -759,6 +759,18 @@ scale alias 1: zoomed out 21x
 				<routing with="bicycle" accessible="true" speed="12" />
 				<routing with="foot" accessible="true" speed="6" />
   			</Wvalue>
+  			<Wvalue name = "steps" priority = "10">
+				<description desc = "steps"/>
+				<namekey tag = "name"/>  				
+				<isArea area = "false"/>
+  				<scale scale = "21"/>
+				<lineColor color = "00FFBBBB" />
+				<lineStyle dashed = "false" />
+				<wayWidth width="2" />
+				<routing with="motorcar" accessible="false" speed="1" />  	
+				<routing with="bicycle" accessible="false" speed="1" />
+				<routing with="foot" accessible="true" speed="1" />
+  			</Wvalue>  			
   			<Wvalue name = "pedestrian" priority = "6">
   				<description desc = "pedestrian zone"/>
   				<namekey tag = "name"/>  				
