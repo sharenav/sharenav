@@ -1578,6 +1578,13 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				}
 			}
 			
+			if (route == null && target != null) {				
+				e = Trace.tl.ele[TraceLayout.ROUTE_DISTANCE];
+				double distLine=ProjMath.getDistance(center.radlat, center.radlon, target.lat, target.lon);
+				e.setText("air:" + (int) distLine + "m");
+			}
+			
+			
 			setSpeedingSign(maxSpeed);
 			
 			if (hasPointerEvents()) {
