@@ -99,6 +99,7 @@ public class TraceIconMenu extends IconMenuWithPagesGUI {
 		mp = createAndAddMenuPage(" Route ", 3, 4);
 		iconToggleRoute=	mp.createAndAddIcon("Calculate", "i_calc", Trace.ROUTING_TOGGLE_CMD);
 							mp.createAndAddIcon("Set target", "i_settarget", Trace.SETTARGET_CMD);
+							mp.createAndAddIcon("Show target", "i_showtarget", Trace.SHOW_TARGET_CMD);		
 							mp.createAndAddIcon("Clear target", "i_cleartarget", Trace.CLEARTARGET_CMD);		
 	}
 
