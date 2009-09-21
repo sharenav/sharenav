@@ -180,7 +180,7 @@ public class Configuration {
 	 */
 	private static final int RECORD_ID_BT_URL = 1;
 	private static final int RECORD_ID_LOCATION_PROVIDER = 2;
-	private static final int RECORD_ID_CFGBITS = 3;
+	private static final int RECORD_ID_CFGBITS_0_TO_63 = 3;
 	private static final int RECORD_ID_GPX_URL = 4;
 	private static final int RECORD_ID_MAP_FROM_JAR = 5;
 	private static final int RECORD_ID_MAP_FILE_URL = 6;
@@ -216,6 +216,7 @@ public class Configuration {
 	private static final int RECORD_ID_ROUTE_TRAVEL_MODE = 36;
 	private static final int RECORD_ID_OPENCELLID_APIKEY = 37;
 	private static final int RECORD_ID_PHONE_ALL_TIME_MAX_MEMORY = 38;
+	private static final int RECORD_ID_CFGBITS_64_TO_127 = 39;
 	
 	// Gpx Recording modes
 	// GpsMid determines adaptive if a trackpoint is written
@@ -253,8 +254,10 @@ public class Configuration {
 	private static int gpxRecordMinMilliseconds;
 	private static int gpxRecordMinDistanceCentimeters;
 	private static int gpxRecordAlwaysDistanceCentimeters;
-	private static long cfgBits = 0;
-	private static long cfgBitsDefault = 0;
+	private static long cfgBits_0_to_63 = 0;
+	private static long cfgBitsDefault_0_to_63 = 0;
+	private static long cfgBits_64_to_127 = 0;
+	private static long cfgBitsDefault_64_to_127 = 0;
 	private static int detailBoost = 0;
 	private static int detailBoostDefault = 0;
 	private static float detailBoostMultiplier;
@@ -300,7 +303,8 @@ public class Configuration {
 				System.out.println("Could not open config"); // Logger won't work if config is not read yet
 				return;
 			}	
-			cfgBits = readLong(database, RECORD_ID_CFGBITS);
+			cfgBits_0_to_63 = readLong(database, RECORD_ID_CFGBITS_0_TO_63);
+			cfgBits_64_to_127 = readLong(database, RECORD_ID_CFGBITS_64_TO_127);
 			btUrl = readString(database, RECORD_ID_BT_URL);
 			locationProvider = readInt(database, RECORD_ID_LOCATION_PROVIDER);
 			gpxUrl = readString(database, RECORD_ID_GPX_URL);
@@ -369,7 +373,7 @@ public class Configuration {
 	 */
 	private static void applyDefaultValues(int configVersionStored) {
 		if (configVersionStored < 1) {
-			cfgBits =	1L << CFGBIT_STREETRENDERMODE |
+			cfgBits_0_to_63 =	1L << CFGBIT_STREETRENDERMODE |
 			   			1L << CFGBIT_POITEXTS |
 			   			1L << CFGBIT_AREATEXTS |
 			   			1L << CFGBIT_WPTTEXTS |
@@ -397,7 +401,7 @@ public class Configuration {
 			logger.info("Default config for version 0.4.0+ set.");
 		}
 		if (configVersionStored < 3) {
-			cfgBits |=	1L << CFGBIT_SND_CONNECT |
+			cfgBits_0_to_63 |=	1L << CFGBIT_SND_CONNECT |
 				   		1L << CFGBIT_SND_DISCONNECT |
 				   		1L << CFGBIT_SND_ROUTINGINSTRUCTIONS |
 				   		1L << CFGBIT_SND_TARGETREACHED |
@@ -413,7 +417,7 @@ public class Configuration {
 			logger.info("Default config for version 3+ set.");
 		}
 		if (configVersionStored < 5) {
-			cfgBits |=	1L << CFGBIT_PLACETEXTS |
+			cfgBits_0_to_63 |=	1L << CFGBIT_PLACETEXTS |
 						1L << CFGBIT_SPEEDALERT_SND |
 						1L << CFGBIT_ROUTE_HIDE_QUIET_ARROWS |
 						1L << CFGBIT_SHOW_SCALE_BAR |
@@ -426,7 +430,7 @@ public class Configuration {
 		}
 		if (configVersionStored < 6) {
 			setAutoRecenterToGpsMilliSecs(30000);
-			cfgBits |=	1L << CFGBIT_BACKLIGHT_ONLY_WHILE_GPS_STARTED;
+			cfgBits_0_to_63 |=	1L << CFGBIT_BACKLIGHT_ONLY_WHILE_GPS_STARTED;
 			logger.info("Default config for version 6+ set.");
 //			if (getPhoneModel().startsWith("MicroEmulator")) {
 //				cfgBits |= 	1L<<CFGBIT_ICONMENUS |
@@ -434,15 +438,15 @@ public class Configuration {
 //			}
 		}
 		if (configVersionStored < 7) {
-			cfgBits |=	1L << CFGBIT_SHOW_SPEED_IN_MAP |
+			cfgBits_0_to_63 |=	1L << CFGBIT_SHOW_SPEED_IN_MAP |
 						1L << CFGBIT_AUTO_START_GPS;
 		}
 		
 		if (configVersionStored < 8) {
-			cfgBits |=	1L << CFGBIT_METRIC;
+			cfgBits_0_to_63 |=	1L << CFGBIT_METRIC;
 		}
 
-		setCfgBits(cfgBits, true);
+		setCfgBits(cfgBits_0_to_63, cfgBits_64_to_127);
 	}
 
 	private final static String sanitizeString(String s) {
@@ -553,7 +557,8 @@ public class Configuration {
 	public static void serialise(OutputStream os) throws IOException {
 		DataOutputStream dos = new DataOutputStream(os);
 		dos.writeInt(VERSION);
-		dos.writeLong(cfgBits);
+		dos.writeLong(cfgBits_0_to_63);
+		dos.writeLong(cfgBits_64_to_127);
 		dos.writeUTF(sanitizeString(btUrl));
 		dos.writeInt(locationProvider);
 		dos.writeUTF(sanitizeString(gpxUrl));
@@ -590,7 +595,7 @@ public class Configuration {
 		if (version != VERSION) {
 			throw new IOException("Version of the stored config does not match with current GpsMid");
 		}
-		setCfgBits(dis.readLong(), true);
+		setCfgBits(dis.readLong(), dis.readLong());
 		setBtUrl(desanitizeString(dis.readUTF()));
 		setLocationProvider(dis.readInt());
 		setGpxUrl(desanitizeString(dis.readUTF()));
@@ -761,10 +766,18 @@ public class Configuration {
 	
 
 	public static boolean getCfgBitState(byte bit, boolean getDefault) {
-		if (getDefault) {
-			return ((cfgBitsDefault & (1L << bit)) != 0);			
+		if (bit < 64) {
+			if (getDefault) {
+				return ((cfgBitsDefault_0_to_63 & (1L << bit)) != 0);			
+			} else {
+				return ((cfgBits_0_to_63 & (1L << bit)) != 0);
+			}
 		} else {
-			return ((cfgBits & (1L << bit)) != 0);
+			if (getDefault) {
+				return ((cfgBitsDefault_64_to_127 & (1L << (bit - 64) )) != 0);			
+			} else {
+				return ((cfgBits_64_to_127 & (1L << (bit - 64) )) != 0);
+			}
 		}
 	}
 
@@ -778,28 +791,48 @@ public class Configuration {
 	}
 	
 	public static void setCfgBitState(byte bit, boolean state, boolean savePermanent) {
-		// set bit
-		Configuration.cfgBits |= (1L << bit);
-		if (!state) {
-			// clear bit
-			Configuration.cfgBits ^= (1L << bit);
-		}
-		if (savePermanent) {
-			Configuration.cfgBitsDefault |= (1L << bit);
+		if (bit < 64) {
+			// set bit
+			Configuration.cfgBits_0_to_63 |= (1L << bit);
 			if (!state) {
 				// clear bit
-				Configuration.cfgBitsDefault ^= (1L << bit);
+				Configuration.cfgBits_0_to_63 ^= (1L << bit);
+			}
+			if (savePermanent) {
+				Configuration.cfgBitsDefault_0_to_63 |= (1L << bit);
+				if (!state) {
+					// clear bit
+					Configuration.cfgBitsDefault_0_to_63 ^= (1L << bit);
+				}			
+				write(cfgBitsDefault_0_to_63, RECORD_ID_CFGBITS_0_TO_63);
+			}
+		} else {
+			bit -= 64;
+			// set bit
+			Configuration.cfgBits_64_to_127|= (1L << bit);
+			if (!state) {
+				// clear bit
+				Configuration.cfgBits_64_to_127 ^= (1L << bit);
+			}
+			if (savePermanent) {
+				Configuration.cfgBitsDefault_64_to_127 |= (1L << bit);
+				if (!state) {
+					// clear bit
+					Configuration.cfgBitsDefault_64_to_127 ^= (1L << bit);
+				}			
+				write(cfgBitsDefault_64_to_127, RECORD_ID_CFGBITS_64_TO_127);
 			}			
-			write(cfgBitsDefault, RECORD_ID_CFGBITS);
-		}	
+		}
 	}	
 	
-	private static void setCfgBits(long cfgBits, boolean savePermanent) {
-		Configuration.cfgBits = cfgBits;
-		if (savePermanent) {
-			Configuration.cfgBitsDefault = cfgBits;
-			write(cfgBitsDefault, RECORD_ID_CFGBITS);
-		}
+	private static void setCfgBits(long cfgBits_0_to_63, long cfgBits_64_to_127) {
+		Configuration.cfgBits_0_to_63 = cfgBits_0_to_63;		
+		Configuration.cfgBitsDefault_0_to_63 = cfgBits_0_to_63;
+		write(cfgBitsDefault_0_to_63, RECORD_ID_CFGBITS_0_TO_63);
+		
+		Configuration.cfgBits_64_to_127 = cfgBits_64_to_127;
+		Configuration.cfgBitsDefault_64_to_127 = cfgBits_64_to_127;
+		write(cfgBitsDefault_64_to_127, RECORD_ID_CFGBITS_64_TO_127);
 	}
 	
 	public static int getDetailBoost() {
