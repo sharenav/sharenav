@@ -299,6 +299,10 @@ public class CreateGpsMidData {
 				if (way.value.equalsIgnoreCase("motorway_link"))
 					routeFlags |= ROUTE_FLAG_MOTORWAY_LINK;					
 				dsi.writeByte(routeFlags);
+				// write out typicalSpeed for every routeMode 
+				for (int i=0; i < TravelModes.travelModeCount; i++) {
+					dsi.writeShort((short) way.typicalSpeed[i]);
+				}
 				dsi.writeUTF(way.description);								
 				dsi.writeInt(way.minEntityScale);
 				dsi.writeInt(way.minTextScale);				
