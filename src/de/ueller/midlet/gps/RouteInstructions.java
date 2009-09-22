@@ -769,9 +769,9 @@ public class RouteInstructions {
 				e.setText("rt:" + (int) remainingDistance + "m");
 				e = Trace.tl.ele[TraceLayout.ROUTE_DURATION];
 				if (remainingDuration >= 600) {
-					e.setText("rem:" + remainingDuration / 600 + "min");
+					e.setText(remainingDuration / 600 + "min");
 				} else {					
-					e.setText("rem:" + remainingDuration / 10 + "s");
+					e.setText(remainingDuration / 10 + "s");
 				}
 
 			}
