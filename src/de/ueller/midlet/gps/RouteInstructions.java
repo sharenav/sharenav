@@ -219,6 +219,7 @@ public class RouteInstructions {
 			cFrom.wayNameIdx = pc.conWayNameIdx;
 			cFrom.wayType = pc.conWayType;
 			cFrom.wayDistanceToNext = pc.conWayDistanceToNext;
+			cFrom.wayDurationToNext = pc.conWayDurationToNext;
 			cFrom.wayRouteFlags |=  (pc.conWayRouteFlags & ~Legend.ROUTE_FLAG_COMING_FROM_ONEWAY);
 			cTo.wayRouteFlags |= (pc.conWayRouteFlags & Legend.ROUTE_FLAG_COMING_FROM_ONEWAY);
 			pc.searchConPrevWayRouteFlags = cFrom.wayRouteFlags;
@@ -353,6 +354,7 @@ public class RouteInstructions {
 
 			boolean routeRecalculationRequired=false;
 			float remainingDistance = 0;
+			int remainingDuration = 0;
 			synchronized(this) {
 				if (route != null && route.size() > 0){
 					//#debug debug
@@ -412,6 +414,8 @@ public class RouteInstructions {
 				    	ConnectionWithNode cRealNow = (ConnectionWithNode) route.elementAt(iRealNow);
 				    	double distRealNow=ProjMath.getDistance(center.radlat, center.radlon, cRealNow.to.lat, cRealNow.to.lon);
 				    	remainingDistance += distRealNow;
+				    	ConnectionWithNode cToRealNow = (ConnectionWithNode) route.elementAt(routePathConnection);
+				    	remainingDuration += (distRealNow * cToRealNow.wayDurationToNext / cToRealNow.wayDistanceToNext); 
 
 				    	distNow=ProjMath.getDistance(center.radlat, center.radlon, cNow.to.lat, cNow.to.lon);
 						intDistNow=new Double(distNow).intValue();
@@ -445,9 +449,10 @@ public class RouteInstructions {
 					for (int i=1; i<route.size();i++){
 						c = (ConnectionWithNode) route.elementAt(i);						
 						
-						// calculate distance to target
+						// calculate distance and duration to target
 						if (i >= iRealNow && c.wayDistanceToNext != Float.MAX_VALUE) {
 							remainingDistance += c.wayDistanceToNext;
+							remainingDuration += c.wayDurationToNext;
 						}
 						
 						// draw cross area instruction
@@ -762,6 +767,12 @@ public class RouteInstructions {
 				e.setText("off:" + (dstToRoutePath == Integer.MAX_VALUE ? "???" : "" + dstToRoutePath) + "m");
 				e = Trace.tl.ele[TraceLayout.ROUTE_DISTANCE];
 				e.setText("rt:" + (int) remainingDistance + "m");
+				e = Trace.tl.ele[TraceLayout.ROUTE_DURATION];
+				if (remainingDuration >= 600) {
+					e.setText("rem:" + remainingDuration / 600 + "min");
+				} else {					
+					e.setText("rem:" + remainingDuration / 10 + "s");
+				}
 
 			}
 			// Route instruction sound output

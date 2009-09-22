@@ -15,6 +15,8 @@ public class ConnectionWithNode {
 	public byte wayConEndBearing=0;
 	public byte wayConStartBearing=0;
 	public float wayDistanceToNext=Float.MAX_VALUE;
+	/** time in 1/10 secs to next connection */
+	public float wayDurationToNext=0;
 	
 	public ConnectionWithNode(RouteNode n,Connection c){
 		this.to=n;

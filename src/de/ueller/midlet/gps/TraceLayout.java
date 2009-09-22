@@ -29,14 +29,15 @@ public class TraceLayout extends LayoutManager {
 	public static final int ROUTE_INSTRUCTION = 8;
 	public static final int ROUTE_OFFROUTE = 9;
 	public static final int ROUTE_DISTANCE = 10;
-	public static final int SCALEBAR = 11;
-	public static final int SPEEDING_SIGN = 12;
-	public static final int SPEED_CURRENT = 13;
-	public static final int ZOOM_IN = 14;
-	public static final int ZOOM_OUT = 15;
-	public static final int RECENTER_GPS = 16;
-	public static final int SHOW_TARGET = 17;
-	public static final int ELE_COUNT = 18;
+	public static final int ROUTE_DURATION = 11;
+	public static final int SCALEBAR = 12;
+	public static final int SPEEDING_SIGN = 13;
+	public static final int SPEED_CURRENT = 14;
+	public static final int ZOOM_IN = 15;
+	public static final int ZOOM_OUT = 16;
+	public static final int RECENTER_GPS = 17;
+	public static final int SHOW_TARGET = 18;
+	public static final int ELE_COUNT = 19;
 
 	// special element ids
 	public static final byte SE_SCALEBAR = 1;
@@ -160,7 +161,7 @@ public class TraceLayout extends LayoutManager {
 		e.setVRelative(ele[ROUTE_INTO]);		
 	
 		e = ele[ROUTE_OFFROUTE]; addElement(e, 
-			LayoutElement.FLAG_HALIGN_RIGHT | LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |
+			LayoutElement.FLAG_HALIGN_CENTER | LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |
 			LayoutElement.FLAG_FONT_SMALL  
 		);
 		e.setColor(Legend.COLORS[Legend.COLOR_RI_OFF_DISTANCE_TEXT]);
@@ -175,6 +176,15 @@ public class TraceLayout extends LayoutManager {
 		e.setColor(Legend.COLORS[Legend.COLOR_RI_DISTANCE_TEXT]);
 		e.setVRelative(ele[ROUTE_INSTRUCTION]);		
 
+		e = ele[ROUTE_DURATION]; addElement(e, 
+				LayoutElement.FLAG_HALIGN_RIGHT| LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |
+				LayoutElement.FLAG_FONT_MEDIUM |
+				LayoutElement.FLAG_BACKGROUND_BOX
+			);
+			e.setBackgroundColor(Legend.COLORS[Legend.COLOR_RI_DISTANCE_BACKGROUND]);
+			e.setColor(Legend.COLORS[Legend.COLOR_RI_DISTANCE_TEXT]);
+			e.setVRelative(ele[ROUTE_INSTRUCTION]);		
+		
 		e = ele[SPEED_CURRENT]; addElement(e, 
 				LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |
 				LayoutElement.FLAG_FONT_MEDIUM |

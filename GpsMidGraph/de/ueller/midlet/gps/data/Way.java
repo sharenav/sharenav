@@ -439,7 +439,9 @@ public class Way extends Entity{
 	  
 		// we've got a match
 		if (containsCon1 && containsCon2) {
+			WayDescription wayDesc = Legend.getWayDescription(this.type);
 			float conWayRealDistance = 0;
+			float conWayDuration = 0;
 			short from = containsCon1At;
 			short to = containsCon2At;
 			int direction = 1;
@@ -470,6 +472,12 @@ public class Way extends Entity{
 				conWayRealDistance += dist;
 				idx1 = idx2;
 			}
+
+			float routeSpeed = getRoutingSpeed(wayDesc, Configuration.getTravelModeNr());
+			if (routeSpeed!=0) {
+				conWayDuration += conWayRealDistance * 10 / routeSpeed;
+			}
+			
 			/* check if this is a better match than a maybe previous one:
 			if the distance is closer than the already matching one
 			this way contains a better path between the connections
@@ -489,12 +497,13 @@ public class Way extends Entity{
 //				}				
 				// this is currently the best path between searchCon1 and searchCon2
 				pc.conWayDistanceToNext = conWayRealDistance;
+				pc.conWayDurationToNext = conWayDuration;
 				pc.conWayCombinedFileAndWayNr = getWayId(t);
 				pc.conWayFromAt = containsCon1At;
 				pc.conWayToAt = containsCon2At;
 				pc.conWayNameIdx= this.nameIdx;
 				pc.conWayType = this.type;
-				short routeFlags = (short) Legend.getWayDescription(this.type).routeFlags; 
+				short routeFlags = (short) wayDesc.routeFlags; 
 				if (isRoundAbout()) routeFlags += Legend.ROUTE_FLAG_ROUNDABOUT;
 				if (isTunnel()) routeFlags += Legend.ROUTE_FLAG_TUNNEL;
 				if (isBridge()) routeFlags += Legend.ROUTE_FLAG_BRIDGE;
@@ -1775,6 +1784,23 @@ public class Way extends Entity{
 	public int getMaxSpeed() {
 		return ((flags & MaxSpeedMask) >> MaxSpeedShift);
 	}
+	
+    /**
+     * get or estimate speed in m/s for routing purposes
+     * (this should return equivalent values to the equivalent of this function in Osm2GpsMid)
+     * @return
+     */
+	public float getRoutingSpeed(WayDescription wayDesc, int routeModeNr){
+		float maxSpeed = getMaxSpeed();
+		float typicalSpeed = wayDesc.typicalSpeed[routeModeNr];
+		if (maxSpeed <= 0)
+			maxSpeed = 60.0f; //Default case;
+		if (typicalSpeed != 0)
+			if (typicalSpeed < maxSpeed)
+				maxSpeed = typicalSpeed;
+		return maxSpeed / 3.6f;
+	}
+	
 	
 /*	private float[] getFloatNodes(SingleTile t, short[] nodes, float offset) {
 	    float [] res = new float[nodes.length];
