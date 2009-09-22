@@ -441,7 +441,7 @@ public class Way extends Entity{
 		if (containsCon1 && containsCon2) {
 			WayDescription wayDesc = Legend.getWayDescription(this.type);
 			float conWayRealDistance = 0;
-			float conWayDuration = 0;
+			int conWayDuration = 0;
 			short from = containsCon1At;
 			short to = containsCon2At;
 			int direction = 1;
