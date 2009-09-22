@@ -26,7 +26,7 @@ public class Legend {
 	 * Specifies the format of the map on disk we expect to see
 	 * This constant must be in sync with Osm2GpsMid
 	 */
-	public final static short MAP_FORMAT_VERSION = 41;
+	public final static short MAP_FORMAT_VERSION = 42;
 	
 	/** The waypoint format used in the RecordStore. See PositionMark.java. */
 	public final static short WAYPT_FORMAT_VERSION = 2;
@@ -329,7 +329,11 @@ public class Legend {
 			byte flags = ds.readByte();
 			ways[i].hideable = ((flags & LEGEND_FLAG_NON_HIDEABLE) == 0);
 			ways[i].routeFlags = ds.readByte();			
-			ways[i].description = ds.readUTF();			
+			ways[i].typicalSpeed = new short[midletTravelModes.length];
+			for (int j = 0; j < midletTravelModes.length; j++) {
+				ways[i].typicalSpeed[j] = ds.readShort();
+			}
+			ways[i].description = ds.readUTF();
 			ways[i].maxScale = ds.readInt();
 			ways[i].maxTextScale = ds.readInt();
 			ways[i].isArea = ds.readBoolean();
