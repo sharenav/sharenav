@@ -161,7 +161,7 @@ public class TraceLayout extends LayoutManager {
 		e.setVRelative(ele[ROUTE_INTO]);		
 	
 		e = ele[ROUTE_OFFROUTE]; addElement(e, 
-			LayoutElement.FLAG_HALIGN_CENTER | LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |
+			LayoutElement.FLAG_HALIGN_RIGHT | LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |
 			LayoutElement.FLAG_FONT_SMALL  
 		);
 		e.setColor(Legend.COLORS[Legend.COLOR_RI_OFF_DISTANCE_TEXT]);
@@ -174,16 +174,7 @@ public class TraceLayout extends LayoutManager {
 		);
 		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_RI_DISTANCE_BACKGROUND]);
 		e.setColor(Legend.COLORS[Legend.COLOR_RI_DISTANCE_TEXT]);
-		e.setVRelative(ele[ROUTE_INSTRUCTION]);		
-
-		e = ele[ROUTE_DURATION]; addElement(e, 
-				LayoutElement.FLAG_HALIGN_RIGHT| LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |
-				LayoutElement.FLAG_FONT_MEDIUM |
-				LayoutElement.FLAG_BACKGROUND_BOX
-			);
-			e.setBackgroundColor(Legend.COLORS[Legend.COLOR_RI_DISTANCE_BACKGROUND]);
-			e.setColor(Legend.COLORS[Legend.COLOR_RI_DISTANCE_TEXT]);
-			e.setVRelative(ele[ROUTE_INSTRUCTION]);		
+		e.setVRelative(ele[ROUTE_INSTRUCTION]);			
 		
 		e = ele[SPEED_CURRENT]; addElement(e, 
 				LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |

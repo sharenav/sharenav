@@ -766,14 +766,8 @@ public class RouteInstructions {
 				e = Trace.tl.ele[TraceLayout.ROUTE_OFFROUTE];
 				e.setText("off:" + (dstToRoutePath == Integer.MAX_VALUE ? "???" : "" + dstToRoutePath) + "m");
 				e = Trace.tl.ele[TraceLayout.ROUTE_DISTANCE];
-				e.setText("rt:" + (int) remainingDistance + "m");
+				e.setText((int) remainingDistance + "m" + " " + ((remainingDuration >= 600)?remainingDuration / 600 + "min": remainingDuration / 10 + "s"));
 				e = Trace.tl.ele[TraceLayout.ROUTE_DURATION];
-				if (remainingDuration >= 600) {
-					e.setText(remainingDuration / 600 + "min");
-				} else {					
-					e.setText(remainingDuration / 10 + "s");
-				}
-
 			}
 			// Route instruction sound output
 			if (soundToPlay.length()!=0 && Configuration.getCfgBitState(Configuration.CFGBIT_SND_ROUTINGINSTRUCTIONS)) {
