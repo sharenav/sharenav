@@ -33,41 +33,43 @@ public class LayoutElement {
 	public static final int FLAG_VALIGN_BOTTOM = (1<<6);
 	/** center element between minY and maxY of the LayoutManager area */
 	public static final int FLAG_VALIGN_CENTER = (1<<7);
+	/** center top of element between minY and maxY of the LayoutManager area */
+	public static final int FLAG_VALIGN_CENTER_AT_TOP_OF_ELEMENT = (1<<8);
 	/** position element above the other element that has to be set with setVRelative() */
-	public static final int FLAG_VALIGN_ABOVE_RELATIVE = (1<<8);
+	public static final int FLAG_VALIGN_ABOVE_RELATIVE = (1<<9);
 	/** position element below the other element that has to be set with setVRelative() */
-	public static final int FLAG_VALIGN_BELOW_RELATIVE = (1<<9);
+	public static final int FLAG_VALIGN_BELOW_RELATIVE = (1<<10);
 	/** position element on same vertical position as the other element that has to be set with setVRelative() */
-	public static final int FLAG_VALIGN_WITH_RELATIVE = (1<<10);
+	public static final int FLAG_VALIGN_WITH_RELATIVE = (1<<11);
 	/** position element left to the other element that has to be set with setHRelative() */
-	public static final int FLAG_HALIGN_LEFTTO_RELATIVE = (1<<11);
+	public static final int FLAG_HALIGN_LEFTTO_RELATIVE = (1<<12);
 	/** position element right to the other element that has to be set with setHRelative() */
-	public static final int FLAG_HALIGN_RIGHTTO_RELATIVE = (1<<12);
+	public static final int FLAG_HALIGN_RIGHTTO_RELATIVE = (1<<13);
 	/** when this element becomes a relative reserve space for this element even if text is empty */
-	public static final int FLAG_RESERVE_SPACE = (1<<13);
+	public static final int FLAG_RESERVE_SPACE = (1<<14);
 	
 	/** draw a border as background */
-	public static final int FLAG_BACKGROUND_BORDER = (1<<14);
+	public static final int FLAG_BACKGROUND_BORDER = (1<<15);
 	/** draw a box below as background */
-	public static final int FLAG_BACKGROUND_BOX = (1<<15);
+	public static final int FLAG_BACKGROUND_BOX = (1<<16);
 	/** make the background as wide as the LayoutManager area */
-	public static final int FLAG_BACKGROUND_FULL_WIDTH = (1<<16);
+	public static final int FLAG_BACKGROUND_FULL_WIDTH = (1<<17);
 	/** make the background as wide as a percentage of the LayoutManager area.
 		Specify with setWidthPercent();
 	*/
-	public static final int FLAG_BACKGROUND_SCREENPERCENT_WIDTH = (1<<17);
+	public static final int FLAG_BACKGROUND_SCREENPERCENT_WIDTH = (1<<18);
 
-	public static final int FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH = (1<<18);
-	public static final int FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT = (1<<19);
+	public static final int FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH = (1<<19);
+	public static final int FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT = (1<<20);
 
-	public static final int FLAG_FONT_SMALL = (1<<20);
-	public static final int FLAG_FONT_MEDIUM = (1<<21);
-	public static final int FLAG_FONT_LARGE = (1<<22);
-	public static final int FLAG_FONT_BOLD = (1<<23);
-	public static final int FLAG_HALIGN_LEFT_SCREENWIDTH_PERCENT = (1<<24);
-	public static final int FLAG_SCALE_IMAGE_TO_ELEMENT_WIDTH_OR_HEIGHT_KEEPRATIO = (1<<25);
-	public static final int FLAG_BACKGROUND_SCREENPERCENT_HEIGHT = (1<<26);
-	public static final int FLAG_IMAGE_GREY = (1<<27);
+	public static final int FLAG_FONT_SMALL = (1<<21);
+	public static final int FLAG_FONT_MEDIUM = (1<<22);
+	public static final int FLAG_FONT_LARGE = (1<<24);
+	public static final int FLAG_FONT_BOLD = (1<<24);
+	public static final int FLAG_HALIGN_LEFT_SCREENWIDTH_PERCENT = (1<<25);
+	public static final int FLAG_SCALE_IMAGE_TO_ELEMENT_WIDTH_OR_HEIGHT_KEEPRATIO = (1<<26);
+	public static final int FLAG_BACKGROUND_SCREENPERCENT_HEIGHT = (1<<27);
+	public static final int FLAG_IMAGE_GREY = (1<<28);
 
 	
 	protected LayoutManager lm = null;
@@ -244,6 +246,8 @@ public class LayoutElement {
 			top = lm.maxY - height;
 		} else if ( (flags & FLAG_VALIGN_CENTER) > 0 ) {
 			top = lm.minY + (lm.maxY - lm.minY - height) / 2;
+		} else if ( (flags & FLAG_VALIGN_CENTER_AT_TOP_OF_ELEMENT) > 0 ) {
+			top = lm.minY + (lm.maxY - lm.minY) / 2;
 		} else if ( (flags & FLAG_VALIGN_TOP_SCREENHEIGHT_PERCENT) > 0 ) {
 			top = lm.minY + ((lm.maxY - lm.minY) * topPercent) / 100 - height / 2;
 		} else if ( (flags & FLAG_VALIGN_BELOW_RELATIVE) > 0 ) {
@@ -500,7 +504,7 @@ public class LayoutElement {
 		if ( (flags & (FLAG_HALIGN_LEFT | FLAG_HALIGN_CENTER | FLAG_HALIGN_RIGHT | FLAG_HALIGN_LEFTTO_RELATIVE | FLAG_HALIGN_LEFT_SCREENWIDTH_PERCENT | FLAG_HALIGN_RIGHTTO_RELATIVE)) == 0) {
 			return "horizontal position flag missing";
 		}
-		if ( (flags & (FLAG_VALIGN_BOTTOM | FLAG_VALIGN_CENTER | FLAG_VALIGN_TOP | FLAG_VALIGN_TOP_SCREENHEIGHT_PERCENT |FLAG_VALIGN_ABOVE_RELATIVE | FLAG_VALIGN_BELOW_RELATIVE | FLAG_VALIGN_WITH_RELATIVE)) == 0) {
+		if ( (flags & (FLAG_VALIGN_BOTTOM | FLAG_VALIGN_CENTER |FLAG_VALIGN_CENTER_AT_TOP_OF_ELEMENT | FLAG_VALIGN_TOP | FLAG_VALIGN_TOP_SCREENHEIGHT_PERCENT |FLAG_VALIGN_ABOVE_RELATIVE | FLAG_VALIGN_BELOW_RELATIVE | FLAG_VALIGN_WITH_RELATIVE)) == 0) {
 			return "vertical position flag missing";
 		}
 		if (vRelativeTo == null && (flags & (FLAG_VALIGN_ABOVE_RELATIVE | FLAG_VALIGN_BELOW_RELATIVE)) > 0) {

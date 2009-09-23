@@ -193,46 +193,33 @@ public class TraceLayout extends LayoutManager {
 		e.setAdditionalOffsY(-5);
 		e.setVRelative(ele[SPEED_CURRENT]);	
 
-		e = ele[ZOOM_IN]; addElement(e, 
-				LayoutElement.FLAG_HALIGN_RIGHT | LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND | LayoutElement.FLAG_VALIGN_CENTER |
-				LayoutElement.FLAG_FONT_LARGE |
-				LayoutElement.FLAG_BACKGROUND_BORDER |
-				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH | LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT
-		);
-		e.setWidthPercent(150);
-		e.setHeightPercent(150);
-		e.setColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON_TEXT]);
-		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON]);
-		e.setActionID(Trace.ZOOM_IN_CMD);
-		
 		e = ele[ZOOM_OUT]; addElement(e, 
-				LayoutElement.FLAG_HALIGN_RIGHT | LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
+				LayoutElement.FLAG_HALIGN_RIGHT | LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND | LayoutElement.FLAG_VALIGN_CENTER_AT_TOP_OF_ELEMENT |
 				LayoutElement.FLAG_FONT_LARGE |
 				LayoutElement.FLAG_BACKGROUND_BORDER |
 				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH | LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT
 		);
 		e.setWidthPercent(150);
 		e.setHeightPercent(150);
-		e.setVRelative(ele[ZOOM_IN]);
 		e.setColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON_TEXT]);
 		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON]);
 		e.setActionID(Trace.ZOOM_OUT_CMD);
 		
-		e = ele[RECENTER_GPS]; addElement(e, 
-				LayoutElement.FLAG_HALIGN_LEFTTO_RELATIVE  | LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND | LayoutElement.FLAG_VALIGN_CENTER |
+		e = ele[ZOOM_IN]; addElement(e, 
+				LayoutElement.FLAG_HALIGN_RIGHT | LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND | LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |
 				LayoutElement.FLAG_FONT_LARGE |
 				LayoutElement.FLAG_BACKGROUND_BORDER |
 				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH | LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT
 		);
-		e.setWidthPercent(90);
+		e.setWidthPercent(150);
 		e.setHeightPercent(150);
-		e.setHRelative(ele[ZOOM_IN]);
+		e.setVRelative(ele[ZOOM_OUT]);
 		e.setColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON_TEXT]);
 		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON]);
-		e.setActionID(Trace.RECENTER_GPS_CMD);
+		e.setActionID(Trace.ZOOM_IN_CMD);
 
 		e = ele[SHOW_TARGET]; addElement(e, 
-				LayoutElement.FLAG_HALIGN_LEFTTO_RELATIVE  | LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
+				LayoutElement.FLAG_HALIGN_LEFTTO_RELATIVE | LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND | LayoutElement.FLAG_VALIGN_CENTER_AT_TOP_OF_ELEMENT |
 				LayoutElement.FLAG_FONT_LARGE |
 				LayoutElement.FLAG_BACKGROUND_BORDER |
 				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH | LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT
@@ -240,10 +227,24 @@ public class TraceLayout extends LayoutManager {
 		e.setWidthPercent(90);
 		e.setHeightPercent(150);
 		e.setHRelative(ele[ZOOM_OUT]);
-		e.setVRelative(ele[RECENTER_GPS]);
 		e.setColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON_TEXT]);
 		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON]);
 		e.setActionID(Trace.SHOW_TARGET_CMD);
+		
+		e = ele[RECENTER_GPS]; addElement(e, 
+				LayoutElement.FLAG_HALIGN_LEFTTO_RELATIVE | LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND | LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |
+				LayoutElement.FLAG_FONT_LARGE |
+				LayoutElement.FLAG_BACKGROUND_BORDER |
+				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH | LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT
+		);
+		e.setWidthPercent(90);
+		e.setHeightPercent(150);
+		e.setHRelative(ele[ZOOM_IN]);
+		e.setVRelative(ele[SHOW_TARGET]);
+		e.setColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON_TEXT]);
+		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON]);
+		e.setActionID(Trace.RECENTER_GPS_CMD);
+
 	}
 
 	/*
