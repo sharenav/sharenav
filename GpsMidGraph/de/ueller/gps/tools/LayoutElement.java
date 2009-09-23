@@ -65,11 +65,11 @@ public class LayoutElement {
 	public static final int FLAG_FONT_SMALL = (1<<21);
 	public static final int FLAG_FONT_MEDIUM = (1<<22);
 	public static final int FLAG_FONT_LARGE = (1<<24);
-	public static final int FLAG_FONT_BOLD = (1<<24);
-	public static final int FLAG_HALIGN_LEFT_SCREENWIDTH_PERCENT = (1<<25);
-	public static final int FLAG_SCALE_IMAGE_TO_ELEMENT_WIDTH_OR_HEIGHT_KEEPRATIO = (1<<26);
-	public static final int FLAG_BACKGROUND_SCREENPERCENT_HEIGHT = (1<<27);
-	public static final int FLAG_IMAGE_GREY = (1<<28);
+	public static final int FLAG_FONT_BOLD = (1<<25);
+	public static final int FLAG_HALIGN_LEFT_SCREENWIDTH_PERCENT = (1<<26);
+	public static final int FLAG_SCALE_IMAGE_TO_ELEMENT_WIDTH_OR_HEIGHT_KEEPRATIO = (1<<27);
+	public static final int FLAG_BACKGROUND_SCREENPERCENT_HEIGHT = (1<<28);
+	public static final int FLAG_IMAGE_GREY = (1<<29);
 
 	
 	protected LayoutManager lm = null;
