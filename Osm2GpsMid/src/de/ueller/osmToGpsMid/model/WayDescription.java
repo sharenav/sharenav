@@ -23,8 +23,8 @@ public class WayDescription extends EntityDescription{
 	public int		wayWidth;
 	/** Travel Modes (motorcar, bicycle, etc.) supported by this WayDescription (1 bit per travel mode) */
 	public byte		wayDescTravelModes;
-	/** typical speed of this WayDescription for up to 8 travel modes */
-	public int		typicalSpeed[] = new int[8];
+	/** typical speed of this WayDescription for up to MAXTRAVELMODES travel modes */
+	public int		typicalSpeed[] = new int[TravelModes.MAXTRAVELMODES];
 	public int		noWaysOfType;
 	public byte		forceToLayer;
 	
