@@ -21,7 +21,7 @@ public class Way extends Entity implements Comparable<Way>{
 	public static final byte WAY_FLAG_NAME = 1;
 	public static final byte WAY_FLAG_MAXSPEED = 2;
 	public static final byte WAY_FLAG_LAYER = 4;
-	public static final byte WAY_FLAG_LONGWAY = 8;
+	public static final byte WAY_FLAG_RESERVED_FLAG = 8;
 	public static final byte WAY_FLAG_ONEWAY = 16;	
 	public static final byte WAY_FLAG_NAMEHIGH = 32;
 	public static final byte WAY_FLAG_AREA = 64;
@@ -31,6 +31,8 @@ public class Way extends Entity implements Comparable<Way>{
 	public static final byte WAY_FLAG2_TUNNEL = 2;
 	public static final byte WAY_FLAG2_BRIDGE = 4;
 	public static final byte WAY_FLAG2_CYCLE_OPPOSITE = 8;
+	/** TODO: Is this really in use??? */
+	public static final byte WAY_FLAG2_LONGWAY = 16;
 	
 	//Deprecated
 	//public static final byte WAY_FLAG_MULTIPATH = 4;
@@ -444,9 +446,6 @@ public class Way extends Entity implements Comparable<Way>{
 //				flags+=WAY_FLAG_MULTIPATH;
 				System.err.println("MULTIPATH");
 			}
-			if (longWays ){
-				flags+=WAY_FLAG_LONGWAY;
-			}
 			if (isOneWay()){
 				flags+=WAY_FLAG_ONEWAY;
 			}
@@ -464,6 +463,9 @@ public class Way extends Entity implements Comparable<Way>{
 			}
 			if (isOppositeDirectionForBicycleAllowed()) {
 				flags2+=WAY_FLAG2_CYCLE_OPPOSITE;				
+			}
+			if (longWays ){
+				flags2+=WAY_FLAG2_LONGWAY;
 			}
 			if (flags2 != 0) {
 				flags += WAY_FLAG_ADDITIONALFLAG; 
