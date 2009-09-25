@@ -325,6 +325,9 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 					currentWay.key = currentKey;
 					currentWay.value = atts.getValue("name");
 					currentWay.hideable = true;
+					if (currentKey.equalsIgnoreCase("building")) {
+						currentWay.wayDescFlags |= WayDescription.WDFLAG_BUILDING;
+					}
 					/*
 					 *  assign a small default speed for the case that the way becomes accessible for routing by a RouteAccessRestriction
 					 *  but the way description itself in the style file contains no routing information 
