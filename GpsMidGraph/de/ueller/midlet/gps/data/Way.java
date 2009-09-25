@@ -40,7 +40,7 @@ public class Way extends Entity{
 	public static final byte WAY_FLAG_NAME = 1;
 	public static final byte WAY_FLAG_MAXSPEED = 2;
 	public static final byte WAY_FLAG_LAYER = 4;
-	public static final byte WAY_FLAG_LONGWAY = 8;
+	public static final byte WAY_FLAG_RESERVED_FLAG = 8;
 	public static final byte WAY_FLAG_ONEWAY = 16;	
 //	public static final byte WAY_FLAG_MULTIPATH = 4;	
 	public static final byte WAY_FLAG_NAMEHIGH = 32;
@@ -52,6 +52,7 @@ public class Way extends Entity{
 	public static final byte WAY_FLAG2_TUNNEL = 2;
 	public static final byte WAY_FLAG2_BRIDGE = 4;
 	public static final byte WAY_FLAG2_CYCLE_OPPOSITE = 8;
+	public static final byte WAY_FLAG2_LONGWAY = 16;
 	
 	public static final byte DRAW_BORDER=1;
 	public static final byte DRAW_AREA=2;
@@ -236,7 +237,7 @@ public class Way extends Entity{
 		}
 
 		boolean longWays=false;
-		if ((f & 8) == 8) {
+		if ((f2 & WAY_FLAG2_LONGWAY) > 0) {
 			longWays=true;
 		}
 
