@@ -25,6 +25,7 @@ public class WayDescription {
 	public final static int WDFLAG_LINESTYLE_RAIL = 0x02;
 	public final static int WDFLAG_LINESTYLE_STEPS = 0x04;
 	public final static int WDFLAG_LINESTYLE_POWERLINE = 0x08;
+	public final static int WDFLAG_BUILDING = 0x10;
 	
 	public int getGraphicsLineStyle() {
 		return wayDescFlags & 0x01;
@@ -41,5 +42,10 @@ public class WayDescription {
 	public boolean isLineStylePowerLine() {
 		return (wayDescFlags & WDFLAG_LINESTYLE_POWERLINE) > 0;
 	}
+
+	public boolean isBuilding() {
+		return (wayDescFlags & WDFLAG_BUILDING) > 0;
+	}
+	
 }
 

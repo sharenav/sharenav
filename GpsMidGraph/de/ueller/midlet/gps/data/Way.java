@@ -1545,8 +1545,16 @@ public class Way extends Entity{
 				if (pc.scale > wayDesc.maxScale * Configuration.getDetailBoostMultiplier()) {			
 					return;
 				}
-				if (wayDesc.hideable && !Configuration.getCfgBitState(Configuration.CFGBIT_AREAS)) {
-					return;
+				// building areas
+				if (wayDesc.isBuilding()) {
+					if (!Configuration.getCfgBitState(Configuration.CFGBIT_BUILDINGS)) {
+						return;
+					}
+				// non-building areas
+				} else {
+					if(wayDesc.hideable && !Configuration.getCfgBitState(Configuration.CFGBIT_AREAS)) {
+						return;
+					}
 				}
 				break;
 			case Legend.OM_HIDE: 
@@ -1602,8 +1610,16 @@ public class Way extends Entity{
 			return;
 		}		
 		
-		if (wayDesc.hideable && !Configuration.getCfgBitState(Configuration.CFGBIT_AREATEXTS)) {
-			return;
+		// building areas
+		if (wayDesc.isBuilding()) {
+			if (!Configuration.getCfgBitState(Configuration.CFGBIT_BUILDING_LABELS)) {
+				return;
+			}
+		// non-building areas
+		} else {
+			if(wayDesc.hideable && !Configuration.getCfgBitState(Configuration.CFGBIT_AREATEXTS)) {
+				return;
+			}
 		}
 
 		String name=null;

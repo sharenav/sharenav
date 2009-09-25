@@ -12,8 +12,8 @@ import de.ueller.midlet.gps.data.ProjFactory;
 public class GuiMapFeatures extends Form implements CommandListener {
 	// Groups
 	private ChoiceGroup elemsGroup;
-	private	String [] elems = new String[8];
-	private boolean[] selElems = new boolean[8];
+	private	String [] elems = new String[10];
+	private boolean[] selElems = new boolean[10];
 
 	private ChoiceGroup altInfosGroup;
 	private	String [] altInfos = new String[2];
@@ -52,8 +52,10 @@ public class GuiMapFeatures extends Form implements CommandListener {
 			elems[3] = "Oneway arrows"; 		selElems[3]=Configuration.getCfgBitState(Configuration.CFGBIT_ONEWAY_ARROWS);
 			elems[4] = "Areas"; 				selElems[4]=Configuration.getCfgBitState(Configuration.CFGBIT_AREAS);
 			elems[5] = "Area labels"; 			selElems[5]=Configuration.getCfgBitState(Configuration.CFGBIT_AREATEXTS);
-			elems[6] = "Waypoint labels"; 		selElems[6]=Configuration.getCfgBitState(Configuration.CFGBIT_WPTTEXTS);
-			elems[7] = "Place labels (cities, etc.)";	selElems[7]=Configuration.getCfgBitState(Configuration.CFGBIT_PLACETEXTS);
+			elems[6] = "Buildings"; 			selElems[6]=Configuration.getCfgBitState(Configuration.CFGBIT_BUILDINGS);
+			elems[7] = "Building labels"; 		selElems[7]=Configuration.getCfgBitState(Configuration.CFGBIT_BUILDING_LABELS);
+			elems[8] = "Waypoint labels"; 		selElems[8]=Configuration.getCfgBitState(Configuration.CFGBIT_WPTTEXTS);
+			elems[9] = "Place labels (cities, etc.)";	selElems[9]=Configuration.getCfgBitState(Configuration.CFGBIT_PLACETEXTS);
 			elemsGroup = new ChoiceGroup("Elements", Choice.MULTIPLE, elems ,null);
 			elemsGroup.setSelectedFlags(selElems);
 			append(elemsGroup);
@@ -113,8 +115,10 @@ public class GuiMapFeatures extends Form implements CommandListener {
 	        Configuration.setCfgBitState(Configuration.CFGBIT_ONEWAY_ARROWS, selElems[3], setAsDefault);
 	        Configuration.setCfgBitState(Configuration.CFGBIT_AREAS, selElems[4], setAsDefault);
 	        Configuration.setCfgBitState(Configuration.CFGBIT_AREATEXTS, selElems[5], setAsDefault);
-	        Configuration.setCfgBitState(Configuration.CFGBIT_WPTTEXTS, selElems[6], setAsDefault);
-	        Configuration.setCfgBitState(Configuration.CFGBIT_PLACETEXTS, selElems[7], setAsDefault);
+	        Configuration.setCfgBitState(Configuration.CFGBIT_BUILDINGS, selElems[6], setAsDefault);
+	        Configuration.setCfgBitState(Configuration.CFGBIT_BUILDING_LABELS, selElems[7], setAsDefault);
+	        Configuration.setCfgBitState(Configuration.CFGBIT_WPTTEXTS, selElems[8], setAsDefault);
+	        Configuration.setCfgBitState(Configuration.CFGBIT_PLACETEXTS, selElems[9], setAsDefault);
 
 			altInfosGroup.getSelectedFlags(selAltInfos);
 			Configuration.setCfgBitState(Configuration.CFGBIT_SHOWLATLON, selAltInfos[0], setAsDefault);
