@@ -282,7 +282,7 @@ public class GuiOverviewElements extends Form implements CommandListener, ItemSt
         g.fillRect(0, 0, 16, 16);
         g.setColor(w.lineColor);
         if (w.wayWidth == 1 || !Configuration.getCfgBitState(Configuration.CFGBIT_STREETRENDERMODE)) {
-        	g.setStrokeStyle(w.lineStyle);
+        	g.setStrokeStyle(w.getGraphicsLineStyle());
         	g.drawLine(0, 8, 15, 8);
         } else {
         	g.fillRect(0, (16-w.wayWidth)/2, 16, w.wayWidth);

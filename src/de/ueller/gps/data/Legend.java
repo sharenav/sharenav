@@ -341,7 +341,7 @@ public class Legend {
 			ways[i].boardedColor = readDayOrNightColor(ds);
 			ways[i].wayWidth = ds.readByte();
 			ways[i].overviewMode = OM_SHOWNORMAL;
-			ways[i].lineStyle = ds.readInt();
+			ways[i].wayDescFlags = ds.readInt();
 			if ((flags & LEGEND_FLAG_MIN_ONEWAY_ARROW_SCALE) > 0)
 				ways[i].maxOnewayArrowScale = ds.readInt();
 			else
