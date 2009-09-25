@@ -208,6 +208,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private ChoiceGroup backlightOpts;
 	private ChoiceGroup sizeOpts;
 	private ChoiceGroup guiOpts;
+	private ChoiceGroup mapInfoOpts;
 	private ChoiceGroup debugLog;
 	private ChoiceGroup debugSeverity;
 	private ChoiceGroup debugOther;
@@ -223,6 +224,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private Gauge gaugeRoutingEsatimationFac; 
 	private ChoiceGroup stopAllWhileRouting;
 	private ChoiceGroup routingOptsGroup;
+	private ChoiceGroup routingShowOptsGroup;
 	private ChoiceGroup gpxOptsGroup;
 	private ChoiceGroup cellidOptsGroup;
 	private ChoiceGroup routingTravelModesGroup;
@@ -326,6 +328,17 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		gaugeRoutingEsatimationFac=new Gauge("Speed of route calculation", true, 10, Configuration.getRouteEstimationFac());
 		menuRoutingOptions.append(gaugeRoutingEsatimationFac);
 
+		String [] routingShowOpts = new String[2];
+		boolean[] selRoutingShow = new boolean[2];
+		routingShowOpts[0] = "Estimated duration"; selRoutingShow[0]=Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_ROUTE_DURATION_IN_MAP);
+		routingShowOpts[1] = "Offset to route line"; selRoutingShow[1]=Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_OFF_ROUTE_DISTANCE_IN_MAP);
+		routingShowOptsGroup = new ChoiceGroup("Infos in Map Screen", Choice.MULTIPLE, routingShowOpts ,null);
+		routingShowOptsGroup.setSelectedFlags(selRoutingShow);
+		menuRoutingOptions.append(routingShowOptsGroup);
+
+		tfMinRouteLineWidth = new TextField("Minimum width of route line", Integer.toString(Configuration.getMinRouteLineWidth()), 1, TextField.DECIMAL);
+		menuRoutingOptions.append(tfMinRouteLineWidth);
+		
 		String [] routingOpts = new String[3];
 		boolean[] selRouting = new boolean[3];
 		routingOpts[0] = "Auto Recalculation"; selRouting[0]=Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_AUTO_RECALC);
@@ -334,8 +347,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		routingOptsGroup = new ChoiceGroup("Other", Choice.MULTIPLE, routingOpts ,null);
 		routingOptsGroup.setSelectedFlags(selRouting);
 		menuRoutingOptions.append(routingOptsGroup);
-		tfMinRouteLineWidth = new TextField("Minimum width of route line", Integer.toString(Configuration.getMinRouteLineWidth()), 1, TextField.DECIMAL);
-		menuRoutingOptions.append(tfMinRouteLineWidth);
 	}
 
 	private void initDebugSetupMenu() {
@@ -511,11 +522,18 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		sizeOpts = new ChoiceGroup("Size Options:", Choice.MULTIPLE, sizes ,null);
 		menuDisplayOptions.append(sizeOpts);
 
-		String [] guis = new String[4];
+		String [] mapInfos = new String[4];
+		mapInfos[0] = "Point of compass in rotated map";
+		mapInfos[1] = "Scale bar";
+		mapInfos[2] = "Speed when driving";
+		mapInfos[3] = "Air distance to target when not routing";
+		mapInfoOpts = new ChoiceGroup("Infos in Map Screen:", Choice.MULTIPLE, mapInfos ,null);
+		menuDisplayOptions.append(mapInfoOpts);
+		
+		String [] guis = new String[3];
 		guis[0] = "use icon menu";
 		guis[1] = "fullscreen icon menu";
 		guis[2] = "optimise for routing";
-		guis[3] = "display speed in map";
 		guiOpts = new ChoiceGroup("GUI:", Choice.MULTIPLE, guis ,null);
 		menuDisplayOptions.append(guiOpts);
 		
@@ -802,7 +820,11 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				}
 				Configuration.setCfgBitState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN, guiOpts.isSelected(1), true);
 				Configuration.setCfgBitState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED, guiOpts.isSelected(2), true);
-				Configuration.setCfgBitState(Configuration.CFGBIT_SHOW_SPEED_IN_MAP, guiOpts.isSelected(3), true);
+				
+				Configuration.setCfgBitState(Configuration.CFGBIT_SHOW_POINT_OF_COMPASS, mapInfoOpts.isSelected(0), true);
+				Configuration.setCfgBitState(Configuration.CFGBIT_SHOW_SCALE_BAR, mapInfoOpts.isSelected(1), true);
+				Configuration.setCfgBitState(Configuration.CFGBIT_SHOW_SPEED_IN_MAP, mapInfoOpts.isSelected(2), true);
+				Configuration.setCfgBitState(Configuration.CFGBIT_SHOW_AIR_DISTANCE_IN_MAP, mapInfoOpts.isSelected(3), true);
 				
 				trace.uncacheIconMenu();
 				Configuration.setDetailBoost(gaugeDetailBoost.getValue(), true); 
@@ -888,15 +910,21 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				Configuration.setRouteEstimationFac(gaugeRoutingEsatimationFac.getValue());
 				logger.debug("set stopAllWhileRounting " + stopAllWhileRouting.isSelected(1));
 				Configuration.setStopAllWhileRouteing(stopAllWhileRouting.isSelected(0));
+
+				boolean[] selShowRouting = new boolean[2];
+				routingShowOptsGroup.getSelectedFlags(selShowRouting);
+				Configuration.setCfgBitState(Configuration.CFGBIT_SHOW_ROUTE_DURATION_IN_MAP, selShowRouting[0], true);
+				Configuration.setCfgBitState(Configuration.CFGBIT_SHOW_OFF_ROUTE_DISTANCE_IN_MAP, selShowRouting[1], true);
+				String w=tfMinRouteLineWidth.getString(); 
+				Configuration.setMinRouteLineWidth( 
+						(int) (Float.parseFloat(w)) 
+				); 
+				
 				boolean[] selRouting = new boolean[3];
 				routingOptsGroup.getSelectedFlags(selRouting);
 				Configuration.setCfgBitState(Configuration.CFGBIT_ROUTE_AUTO_RECALC, selRouting[0], true);
 				Configuration.setCfgBitState(Configuration.CFGBIT_ROUTE_BROWSING, selRouting[1], true);
 				Configuration.setCfgBitState(Configuration.CFGBIT_ROUTE_HIDE_QUIET_ARROWS, selRouting[2], true);
-				String w=tfMinRouteLineWidth.getString(); 
-				Configuration.setMinRouteLineWidth( 
-						(int) (Float.parseFloat(w)) 
-				); 
 				state = STATE_ROOT;
 				this.show();			
 				break;
@@ -1013,10 +1041,13 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				renderOpts.setSelectedIndex( Configuration.getCfgBitState(Configuration.CFGBIT_STREETRENDERMODE)?1:0, true);
 				sizeOpts.setSelectedIndex(0, Configuration.getCfgBitState(Configuration.CFGBIT_POI_LABELS_LARGER));
 				sizeOpts.setSelectedIndex(1, Configuration.getCfgBitState(Configuration.CFGBIT_WPT_LABELS_LARGER));
+				mapInfoOpts.setSelectedIndex(0, Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_POINT_OF_COMPASS, true));				
+				mapInfoOpts.setSelectedIndex(1, Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_SCALE_BAR, true));				
+				mapInfoOpts.setSelectedIndex(2, Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_SPEED_IN_MAP, true));				
+				mapInfoOpts.setSelectedIndex(3, Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_AIR_DISTANCE_IN_MAP, true));				
 				guiOpts.setSelectedIndex(0, Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS, true));
 				guiOpts.setSelectedIndex(1, Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN, true));
 				guiOpts.setSelectedIndex(2, Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED, true));
-				guiOpts.setSelectedIndex(3, Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_SPEED_IN_MAP, true));
 				metricUnits.setSelectedIndex(0, Configuration.getCfgBitState(Configuration.CFGBIT_METRIC));
 				SingleTile.newPOIFont();
 				WaypointsTile.useNewWptFont();

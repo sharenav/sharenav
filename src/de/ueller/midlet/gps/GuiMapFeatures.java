@@ -27,8 +27,8 @@ public class GuiMapFeatures extends Form implements CommandListener {
 	private	boolean[] selModes = new boolean[2];
 
 	private ChoiceGroup otherGroup;
-	private	String [] other = new String[3];
-	private	boolean[] selOther = new boolean[3];
+	private	String [] other = new String[1];
+	private	boolean[] selOther = new boolean[1];
 	
 	
 	private Gauge gaugeDetailBoost; 
@@ -76,9 +76,7 @@ public class GuiMapFeatures extends Form implements CommandListener {
 			modesGroup.setSelectedFlags(selModes);			
 			append(modesGroup);
 
-			other[0] = "Show point of compass in rotated map";	selOther[0]=Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_POINT_OF_COMPASS);
-			other[1] = "Show scale bar";	selOther[1]=Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_SCALE_BAR);
-			other[2] = "Save map position on exit for next start";	selOther[2]=Configuration.getCfgBitState(Configuration.CFGBIT_AUTOSAVE_MAPPOS);
+			other[0] = "Save map position on exit for next start";	selOther[0]=Configuration.getCfgBitState(Configuration.CFGBIT_AUTOSAVE_MAPPOS);
 			otherGroup = new ChoiceGroup("Other", Choice.MULTIPLE, other, null);
 			otherGroup.setSelectedFlags(selOther);			
 			append(otherGroup);
@@ -133,9 +131,7 @@ public class GuiMapFeatures extends Form implements CommandListener {
 			Configuration.setCfgBitState(Configuration.CFGBIT_STREETRENDERMODE, selModes[1], setAsDefault);
 			
 			otherGroup.getSelectedFlags(selOther);
-			Configuration.setCfgBitState(Configuration.CFGBIT_SHOW_POINT_OF_COMPASS, selOther[0], setAsDefault);
-			Configuration.setCfgBitState(Configuration.CFGBIT_SHOW_SCALE_BAR, selOther[1], setAsDefault);
-			Configuration.setCfgBitState(Configuration.CFGBIT_AUTOSAVE_MAPPOS, selOther[2], setAsDefault);
+			Configuration.setCfgBitState(Configuration.CFGBIT_AUTOSAVE_MAPPOS, selOther[0], setAsDefault);
 			
 			Configuration.setDetailBoost(gaugeDetailBoost.getValue(), setAsDefault); 
 

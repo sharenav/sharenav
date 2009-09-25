@@ -46,7 +46,7 @@ public class Configuration {
 	 *  the default values for the features added between configVersionStored
 	 *  and VERSION will be set, before the version in the recordstore is increased to VERSION.
 	 */
-	public final static int VERSION = 8;
+	public final static int VERSION = 9;
 
 	public final static int LOCATIONPROVIDER_NONE = 0;
 	public final static int LOCATIONPROVIDER_SIRF = 1;
@@ -174,6 +174,12 @@ public class Configuration {
 	public final static byte CFGBIT_AUTO_START_GPS = 59;
 	// bit 60: Flag whether to display in metric or imperial units
 	public final static byte CFGBIT_METRIC = 60;
+	// bit 61: Flag whether air-line distance to target should be displayed in map screen
+	public final static byte CFGBIT_SHOW_AIR_DISTANCE_IN_MAP = 61;
+	// bit 62: Flag whether offset to route should be displayed in map screen
+	public final static byte CFGBIT_SHOW_OFF_ROUTE_DISTANCE_IN_MAP = 62;
+	// bit 63: Flag whether route duration should be displayed in map screen
+	public final static byte CFGBIT_SHOW_ROUTE_DURATION_IN_MAP = 63;
 	
 	/**
 	 * These are the database record ids for each configuration option
@@ -442,8 +448,11 @@ public class Configuration {
 						1L << CFGBIT_AUTO_START_GPS;
 		}
 		
-		if (configVersionStored < 8) {
-			cfgBits_0_to_63 |=	1L << CFGBIT_METRIC;
+		if (configVersionStored < 9) {
+			cfgBits_0_to_63 |=	1L << CFGBIT_METRIC |
+								1L << CFGBIT_SHOW_ROUTE_DURATION_IN_MAP |
+								1L << CFGBIT_SHOW_OFF_ROUTE_DISTANCE_IN_MAP |
+								1L << CFGBIT_SHOW_AIR_DISTANCE_IN_MAP;
 		}
 
 		setCfgBits(cfgBits_0_to_63, cfgBits_64_to_127);

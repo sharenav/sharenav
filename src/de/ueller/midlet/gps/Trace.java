@@ -1578,7 +1578,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				}
 			}
 			
-			if (route == null && target != null) {				
+			if (route == null && target != null && Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_AIR_DISTANCE_IN_MAP)) {				
 				e = Trace.tl.ele[TraceLayout.ROUTE_DISTANCE];
 				double distLine=ProjMath.getDistance(center.radlat, center.radlon, target.lat, target.lon);
 				e.setText("air:" + (int) distLine + "m");
