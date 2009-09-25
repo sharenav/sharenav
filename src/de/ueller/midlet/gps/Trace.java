@@ -240,6 +240,11 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	public volatile int speed;
 
 	/** 
+	 * Current altitude from GPS in m. 
+	 */
+	public volatile int altitude;
+	
+	/** 
 	 * Flag if we're speeding
 	 */
 	private volatile boolean speeding = false;
@@ -1578,6 +1583,16 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				}
 			}
 			
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_ALTITUDE_IN_MAP)
+					&&
+				locationProducer != null
+					&&
+				";off;nofix;cell;0s;~~;".indexOf(";" + solution.toLowerCase() + ";") == -1
+			) {
+				tl.ele[TraceLayout.ALTITUDE].setText(Integer.toString(altitude) + "m");				
+			}
+
+			
 			if (route == null && target != null && Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_AIR_DISTANCE_IN_MAP)) {				
 				e = Trace.tl.ele[TraceLayout.ROUTE_DISTANCE];
 				double distLine=ProjMath.getDistance(center.radlat, center.radlon, target.lat, target.lon);
@@ -2067,7 +2082,8 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				}
 			}
 		}		
-		speed = (int) (pos.speed * 3.6f);		
+		speed = (int) (pos.speed * 3.6f);
+		altitude = (int) (pos.altitude);
 		if (gpx.isRecordingTrk()) {
 			try {
 				gpx.addTrkPt(pos);				

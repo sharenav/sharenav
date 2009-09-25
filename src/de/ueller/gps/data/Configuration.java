@@ -180,6 +180,8 @@ public class Configuration {
 	public final static byte CFGBIT_SHOW_OFF_ROUTE_DISTANCE_IN_MAP = 62;
 	// bit 63: Flag whether route duration should be displayed in map screen
 	public final static byte CFGBIT_SHOW_ROUTE_DURATION_IN_MAP = 63;
+	// bit 64: Flag whether altitude should be displayed in map screen
+	public final static byte CFGBIT_SHOW_ALTITUDE_IN_MAP = 64;
 	
 	/**
 	 * These are the database record ids for each configuration option
@@ -453,6 +455,8 @@ public class Configuration {
 								1L << CFGBIT_SHOW_ROUTE_DURATION_IN_MAP |
 								1L << CFGBIT_SHOW_OFF_ROUTE_DISTANCE_IN_MAP |
 								1L << CFGBIT_SHOW_AIR_DISTANCE_IN_MAP;
+
+			cfgBits_64_to_127 |=	1L << CFGBIT_SHOW_ALTITUDE_IN_MAP;
 		}
 
 		setCfgBits(cfgBits_0_to_63, cfgBits_64_to_127);

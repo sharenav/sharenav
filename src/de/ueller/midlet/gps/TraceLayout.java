@@ -37,7 +37,8 @@ public class TraceLayout extends LayoutManager {
 	public static final int ZOOM_OUT = 16;
 	public static final int RECENTER_GPS = 17;
 	public static final int SHOW_TARGET = 18;
-	public static final int ELE_COUNT = 19;
+	public static final int ALTITUDE = 19;
+	public static final int ELE_COUNT = 20;
 
 	// special element ids
 	public static final byte SE_SCALEBAR = 1;
@@ -110,11 +111,20 @@ public class TraceLayout extends LayoutManager {
 		e = ele[SOLUTION]; addElement(e, 
 			LayoutElement.FLAG_HALIGN_RIGHT | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
 			LayoutElement.FLAG_FONT_MEDIUM
-		);	
+		);
 		e.setColor(Legend.COLORS[Legend.COLOR_MAP_TEXT]);
 		e.setAdditionalOffsX(-1);
 		e.setVRelative(ele[TITLEBAR]);
-	
+
+		e = ele[ALTITUDE]; addElement(e, 
+				LayoutElement.FLAG_HALIGN_LEFTTO_RELATIVE | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
+				LayoutElement.FLAG_FONT_SMALL
+			);
+			e.setColor(Legend.COLORS[Legend.COLOR_MAP_TEXT]);
+			e.setAdditionalOffsX(-8);
+			e.setHRelative(ele[SOLUTION]);		
+			e.setVRelative(ele[TITLEBAR]);		
+		
 		e = ele[RECORDED_COUNT]; addElement(e, 
 				LayoutElement.FLAG_HALIGN_RIGHT | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
 				LayoutElement.FLAG_FONT_MEDIUM

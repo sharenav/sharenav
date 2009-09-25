@@ -522,11 +522,12 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		sizeOpts = new ChoiceGroup("Size Options:", Choice.MULTIPLE, sizes ,null);
 		menuDisplayOptions.append(sizeOpts);
 
-		String [] mapInfos = new String[4];
+		String [] mapInfos = new String[5];
 		mapInfos[0] = "Point of compass in rotated map";
 		mapInfos[1] = "Scale bar";
 		mapInfos[2] = "Speed when driving";
-		mapInfos[3] = "Air distance to target when not routing";
+		mapInfos[3] = "Altitude from GPS";
+		mapInfos[4] = "Air distance to target when not routing";
 		mapInfoOpts = new ChoiceGroup("Infos in Map Screen:", Choice.MULTIPLE, mapInfos ,null);
 		menuDisplayOptions.append(mapInfoOpts);
 		
@@ -824,7 +825,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				Configuration.setCfgBitState(Configuration.CFGBIT_SHOW_POINT_OF_COMPASS, mapInfoOpts.isSelected(0), true);
 				Configuration.setCfgBitState(Configuration.CFGBIT_SHOW_SCALE_BAR, mapInfoOpts.isSelected(1), true);
 				Configuration.setCfgBitState(Configuration.CFGBIT_SHOW_SPEED_IN_MAP, mapInfoOpts.isSelected(2), true);
-				Configuration.setCfgBitState(Configuration.CFGBIT_SHOW_AIR_DISTANCE_IN_MAP, mapInfoOpts.isSelected(3), true);
+				Configuration.setCfgBitState(Configuration.CFGBIT_SHOW_ALTITUDE_IN_MAP, mapInfoOpts.isSelected(3), true);
+				Configuration.setCfgBitState(Configuration.CFGBIT_SHOW_AIR_DISTANCE_IN_MAP, mapInfoOpts.isSelected(4), true);
 				
 				trace.uncacheIconMenu();
 				Configuration.setDetailBoost(gaugeDetailBoost.getValue(), true); 
@@ -1044,7 +1046,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				mapInfoOpts.setSelectedIndex(0, Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_POINT_OF_COMPASS, true));				
 				mapInfoOpts.setSelectedIndex(1, Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_SCALE_BAR, true));				
 				mapInfoOpts.setSelectedIndex(2, Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_SPEED_IN_MAP, true));				
-				mapInfoOpts.setSelectedIndex(3, Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_AIR_DISTANCE_IN_MAP, true));				
+				mapInfoOpts.setSelectedIndex(3, Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_ALTITUDE_IN_MAP, true));				
+				mapInfoOpts.setSelectedIndex(4, Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_AIR_DISTANCE_IN_MAP, true));				
 				guiOpts.setSelectedIndex(0, Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS, true));
 				guiOpts.setSelectedIndex(1, Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN, true));
 				guiOpts.setSelectedIndex(2, Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED, true));
