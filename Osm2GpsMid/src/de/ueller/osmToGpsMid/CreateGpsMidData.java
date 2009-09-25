@@ -320,7 +320,7 @@ public class CreateGpsMidData {
 					dsi.writeInt(way.boardedColor);					
 				}
 				dsi.writeByte(way.wayWidth);
-				dsi.writeInt(way.lineStyle);
+				dsi.writeInt(way.wayDescFlags);
 				if ((flags & LEGEND_FLAG_MIN_ONEWAY_ARROW_SCALE) > 0)
 					dsi.writeInt(way.minOnewayArrowScale);
 				if ((flags & LEGEND_FLAG_MIN_DESCRIPTION_SCALE) > 0)

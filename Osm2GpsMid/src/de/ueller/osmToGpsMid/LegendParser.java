@@ -447,16 +447,16 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 				}
 				if (qName.equals("lineStyle")) {
 					if (isAttributeActivated(atts, "dashed")) {
-						currentWay.lineStyle |= WayDescription.LINESTYLE_DOTTED;
+						currentWay.wayDescFlags |= WayDescription.WDFLAG_LINESTYLE_DOTTED;
 					}
 					if (isAttributeActivated(atts, "rail")) {
-						currentWay.lineStyle |= WayDescription.LINESTYLE_RAIL;
+						currentWay.wayDescFlags |= WayDescription.WDFLAG_LINESTYLE_RAIL;
 					}
 					if (isAttributeActivated(atts, "steps")) {
-						currentWay.lineStyle |= WayDescription.LINESTYLE_STEPS;
+						currentWay.wayDescFlags |= WayDescription.WDFLAG_LINESTYLE_STEPS;
 					}
 					if (isAttributeActivated(atts, "powerLine")) {
-						currentWay.lineStyle |= WayDescription.LINESTYLE_POWERLINE;
+						currentWay.wayDescFlags |= WayDescription.WDFLAG_LINESTYLE_POWERLINE;
 					}
 				}
 				if (qName.equals("routing")) {

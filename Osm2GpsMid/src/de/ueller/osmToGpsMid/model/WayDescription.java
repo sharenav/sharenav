@@ -16,7 +16,7 @@ public class WayDescription extends EntityDescription{
 	public int		minDescriptionScale;
 	public int		lineColor;
 	public int		lineColorAtNight = -1;
-	public int		lineStyle;
+	public int		wayDescFlags;
 	public int		boardedColor;
 	public int		boardedColorAtNight = -1;
 	public boolean	isArea;
@@ -29,14 +29,14 @@ public class WayDescription extends EntityDescription{
 	public byte		forceToLayer;
 	
 	// line styles
-	public final static int LINESTYLE_SOLID = 0x00;  // same as Graphics.SOLID
-	public final static int LINESTYLE_DOTTED = 0x01; // same as Graphics.DOTTED;
-	public final static int LINESTYLE_RAIL = 0x02;
-	public final static int LINESTYLE_STEPS = 0x04;
-	public final static int LINESTYLE_POWERLINE = 0x08;
+	public final static int WDFLAG_LINESTYLE_SOLID = 0x00;  // same as Graphics.SOLID
+	public final static int WDFLAG_LINESTYLE_DOTTED = 0x01; // same as Graphics.DOTTED;
+	public final static int WDFLAG_LINESTYLE_RAIL = 0x02;
+	public final static int WDFLAG_LINESTYLE_STEPS = 0x04;
+	public final static int WDFLAG_LINESTYLE_POWERLINE = 0x08;
 	
 	public WayDescription() {
-		lineStyle = LINESTYLE_SOLID;
+		wayDescFlags = WDFLAG_LINESTYLE_SOLID;
 		boardedColor = 0;
 		isArea = false;
 		wayWidth = 2;
