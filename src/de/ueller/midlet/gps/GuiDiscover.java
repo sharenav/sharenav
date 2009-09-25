@@ -283,14 +283,14 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		wptFlag[0] = "Also put waypoints in track";
 		choiceWptInTrack = new ChoiceGroup("Waypoints in track", Choice.MULTIPLE, 
 				wptFlag, null);
-		choiceWptInTrack.setSelectedIndex(0, Configuration.getCfgBitState(
-				Configuration.CFGBIT_WPTS_IN_TRACK, true));
+		choiceWptInTrack.setSelectedIndex(0, Configuration.getCfgBitSavedState(
+				Configuration.CFGBIT_WPTS_IN_TRACK));
 		String [] gpxNameOpts = new String[2];
 		boolean[] selGpxName = new boolean[2];
 		gpxNameOpts[0] = "Ask track name at start of recording";
 		gpxNameOpts[1] = "Ask track name at end of recording";
-		selGpxName[0]=Configuration.getCfgBitState(Configuration.CFGBIT_GPX_ASK_TRACKNAME_START);
-		selGpxName[1]=Configuration.getCfgBitState(Configuration.CFGBIT_GPX_ASK_TRACKNAME_STOP);
+		selGpxName[0]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_GPX_ASK_TRACKNAME_START);
+		selGpxName[1]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_GPX_ASK_TRACKNAME_STOP);
 		
 		gpxOptsGroup = new ChoiceGroup("Track Naming", Choice.MULTIPLE, gpxNameOpts ,null);
 		gpxOptsGroup.setSelectedFlags(selGpxName);
@@ -330,8 +330,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 
 		String [] routingShowOpts = new String[2];
 		boolean[] selRoutingShow = new boolean[2];
-		routingShowOpts[0] = "Estimated duration"; selRoutingShow[0]=Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_ROUTE_DURATION_IN_MAP);
-		routingShowOpts[1] = "Offset to route line"; selRoutingShow[1]=Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_OFF_ROUTE_DISTANCE_IN_MAP);
+		routingShowOpts[0] = "Estimated duration"; selRoutingShow[0]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_ROUTE_DURATION_IN_MAP);
+		routingShowOpts[1] = "Offset to route line"; selRoutingShow[1]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_OFF_ROUTE_DISTANCE_IN_MAP);
 		routingShowOptsGroup = new ChoiceGroup("Infos in Map Screen", Choice.MULTIPLE, routingShowOpts ,null);
 		routingShowOptsGroup.setSelectedFlags(selRoutingShow);
 		menuRoutingOptions.append(routingShowOptsGroup);
@@ -341,9 +341,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		
 		String [] routingOpts = new String[3];
 		boolean[] selRouting = new boolean[3];
-		routingOpts[0] = "Auto Recalculation"; selRouting[0]=Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_AUTO_RECALC);
-		routingOpts[1] = "Route Browsing with up/down keys"; selRouting[1]=Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_BROWSING);
-		routingOpts[2] = "Hide quiet arrows"; selRouting[2]=Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_HIDE_QUIET_ARROWS);
+		routingOpts[0] = "Auto Recalculation"; selRouting[0]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_ROUTE_AUTO_RECALC);
+		routingOpts[1] = "Route Browsing with up/down keys"; selRouting[1]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_ROUTE_BROWSING);
+		routingOpts[2] = "Hide quiet arrows"; selRouting[2]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_ROUTE_HIDE_QUIET_ARROWS);
 		routingOptsGroup = new ChoiceGroup("Other", Choice.MULTIPLE, routingOpts ,null);
 		routingOptsGroup.setSelectedFlags(selRouting);
 		menuRoutingOptions.append(routingOptsGroup);
@@ -384,9 +384,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		loggings[1] = "Show turn restrictions";
 		loggings[2] = "Show inconsistent bearings";
 		debugOther = new ChoiceGroup("Other:", ChoiceGroup.MULTIPLE,loggings,null);
-		debugOther.setSelectedIndex(0, Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_CONNECTIONS, true));
-		debugOther.setSelectedIndex(1, Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_TURN_RESTRICTIONS, true));
-		debugOther.setSelectedIndex(2, Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_BEARINGS, true));
+		debugOther.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ROUTE_CONNECTIONS));
+		debugOther.setSelectedIndex(1, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_TURN_RESTRICTIONS));
+		debugOther.setSelectedIndex(2, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ROUTE_BEARINGS));
 		menuDebug.append(debugOther);
 
 	}
@@ -583,11 +583,11 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		//cellidOpts[4] = "Fallback to cellid when no fix";
 		
 		cellidOptsGroup = new ChoiceGroup("Cellid options", Choice.MULTIPLE, cellidOpts, null);
-		opencellidFlags[0] = Configuration.getCfgBitState(Configuration.CFGBIT_CELLID_OFFLINEONLY);
-		opencellidFlags[1] = Configuration.getCfgBitState(Configuration.CFGBIT_CELLID_ONLINEONLY);
-		//opencellidFlags[2] = Configuration.getCfgBitState(Configuration.CFGBIT_CELLID_ALWAYS);
-		//opencellidFlags[3] = Configuration.getCfgBitState(Configuration.CFGBIT_CELLID_CONFIRM);
-		//opencellidFlags[4] = Configuration.getCfgBitState(Configuration.CFGBIT_CELLID_FALLBACK);
+		opencellidFlags[0] = Configuration.getCfgBitSavedState(Configuration.CFGBIT_CELLID_OFFLINEONLY);
+		opencellidFlags[1] = Configuration.getCfgBitSavedState(Configuration.CFGBIT_CELLID_ONLINEONLY);
+		//opencellidFlags[2] = Configuration.getCfgBitSavedState(Configuration.CFGBIT_CELLID_ALWAYS);
+		//opencellidFlags[3] = Configuration.getCfgBitSavedState(Configuration.CFGBIT_CELLID_CONFIRM);
+		//opencellidFlags[4] = Configuration.getCfgBitSavedState(Configuration.CFGBIT_CELLID_FALLBACK);
 
 		cellidOptsGroup.setSelectedFlags(opencellidFlags);
 		menuOpencellidOptions.append(cellidOptsGroup);
@@ -751,13 +751,13 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 						rule.length()==0 ? 0 :(int) (100 * Float.parseFloat(rule)) 
 				);
 				// Save "waypoints in track" flag to config
-				Configuration.setCfgBitState(Configuration.CFGBIT_WPTS_IN_TRACK, 
-						choiceWptInTrack.isSelected(0), true);
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_WPTS_IN_TRACK, 
+						choiceWptInTrack.isSelected(0));
 
 				boolean[] selGpxName = new boolean[2];
 				gpxOptsGroup.getSelectedFlags(selGpxName);
-				Configuration.setCfgBitState(Configuration.CFGBIT_GPX_ASK_TRACKNAME_START, selGpxName[0], true);
-				Configuration.setCfgBitState(Configuration.CFGBIT_GPX_ASK_TRACKNAME_STOP, selGpxName[1], true);
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_GPX_ASK_TRACKNAME_START, selGpxName[0]);
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_GPX_ASK_TRACKNAME_STOP, selGpxName[1]);
 
 
 				state = STATE_ROOT;
@@ -769,11 +769,11 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				boolean [] selraw = new boolean[2];
 				rawLogCG.getSelectedFlags(selraw);
 				Configuration.setGpsRawLoggerUrl(rawLogDir);
-				Configuration.setCfgBitState(Configuration.CFGBIT_CELLID_LOGGING, selraw[0], true);
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_CELLID_LOGGING, selraw[0]);
 				Configuration.setGpsRawLoggerEnable(selraw[1]);
 
 				autoConnect.getSelectedFlags(selraw);
-				Configuration.setCfgBitState(Configuration.CFGBIT_AUTO_START_GPS, selraw[0], true);
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_AUTO_START_GPS, selraw[0]);
 				btKeepAlive.getSelectedFlags(selraw);
 				Configuration.setBtKeepAlive(selraw[0]);
 				btAutoRecon.getSelectedFlags(selraw);
@@ -797,9 +797,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				logger.fatal("Need to restart GpsMid, otherwise map is in an inconsistant state");
 				break;			
 			case STATE_DISPOPT:
-				Configuration.setCfgBitState(Configuration.CFGBIT_NIGHT_MODE,
-						(nightModeGroup.getSelectedIndex()==1),
-						true);
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_NIGHT_MODE,
+						(nightModeGroup.getSelectedIndex()==1)
+				);
 				try {
 					Legend.readLegend();
 				} catch (Exception e) {
@@ -809,24 +809,24 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				trace.recreateTraceLayout();
 
 				Configuration.setProjTypeDefault( (byte) rotationGroup.getSelectedIndex() );
-				Configuration.setCfgBitState(Configuration.CFGBIT_STREETRENDERMODE,
-						(renderOpts.getSelectedIndex()==1),
-						true); 
-				Configuration.setCfgBitState(Configuration.CFGBIT_POI_LABELS_LARGER, sizeOpts.isSelected(0), true);
-				Configuration.setCfgBitState(Configuration.CFGBIT_WPT_LABELS_LARGER, sizeOpts.isSelected(1), true);
-				if (guiOpts.isSelected(0) != Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS)) {
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_STREETRENDERMODE,
+						(renderOpts.getSelectedIndex()==1)
+				); 
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_POI_LABELS_LARGER, sizeOpts.isSelected(0));
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_WPT_LABELS_LARGER, sizeOpts.isSelected(1));
+				if (guiOpts.isSelected(0) != Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS)) {
 					trace.removeAllCommands();
-					Configuration.setCfgBitState(Configuration.CFGBIT_ICONMENUS, guiOpts.isSelected(0), true);
+					Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS, guiOpts.isSelected(0));
 					trace.addAllCommands();					
 				}
-				Configuration.setCfgBitState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN, guiOpts.isSelected(1), true);
-				Configuration.setCfgBitState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED, guiOpts.isSelected(2), true);
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN, guiOpts.isSelected(1));
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED, guiOpts.isSelected(2));
 				
-				Configuration.setCfgBitState(Configuration.CFGBIT_SHOW_POINT_OF_COMPASS, mapInfoOpts.isSelected(0), true);
-				Configuration.setCfgBitState(Configuration.CFGBIT_SHOW_SCALE_BAR, mapInfoOpts.isSelected(1), true);
-				Configuration.setCfgBitState(Configuration.CFGBIT_SHOW_SPEED_IN_MAP, mapInfoOpts.isSelected(2), true);
-				Configuration.setCfgBitState(Configuration.CFGBIT_SHOW_ALTITUDE_IN_MAP, mapInfoOpts.isSelected(3), true);
-				Configuration.setCfgBitState(Configuration.CFGBIT_SHOW_AIR_DISTANCE_IN_MAP, mapInfoOpts.isSelected(4), true);
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_POINT_OF_COMPASS, mapInfoOpts.isSelected(0));
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_SCALE_BAR, mapInfoOpts.isSelected(1));
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_SPEED_IN_MAP, mapInfoOpts.isSelected(2));
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_ALTITUDE_IN_MAP, mapInfoOpts.isSelected(3));
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_AIR_DISTANCE_IN_MAP, mapInfoOpts.isSelected(4));
 				
 				trace.uncacheIconMenu();
 				Configuration.setDetailBoost(gaugeDetailBoost.getValue(), true); 
@@ -841,17 +841,17 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				boolean[] sellight = new boolean[7];
 				backlightOpts.getSelectedFlags( sellight );
 	            // save selected values to record store
-				Configuration.setCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON, sellight[0], true);
-				Configuration.setCfgBitState(Configuration.CFGBIT_BACKLIGHT_ONLY_WHILE_GPS_STARTED, sellight[1], true);
-				Configuration.setCfgBitState(Configuration.CFGBIT_BACKLIGHT_MAPONLY, sellight[2], true);
-				Configuration.setCfgBitState(Configuration.CFGBIT_BACKLIGHT_MIDP2, sellight[3], true);
-				Configuration.setCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIA , sellight[4], true);
-				Configuration.setCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIAFLASH , sellight[5], true);
-				Configuration.setCfgBitState(Configuration.CFGBIT_BACKLIGHT_SIEMENS , sellight[6], true);
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_ON, sellight[0]);
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_ONLY_WHILE_GPS_STARTED, sellight[1]);
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_MAPONLY, sellight[2]);
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_MIDP2, sellight[3]);
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_NOKIA , sellight[4]);
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_NOKIAFLASH , sellight[5]);
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_SIEMENS , sellight[6]);
 				
 				sellight = new boolean[1];
 				metricUnits.getSelectedFlags(sellight);
-				Configuration.setCfgBitState(Configuration.CFGBIT_METRIC, sellight[0], true);
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_METRIC, sellight[0]);
 				
 				state = STATE_ROOT;
 				show();
@@ -871,9 +871,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				Configuration.setDebugSeverityInfo(selDebug[0]);
 				Configuration.setDebugSeverityDebug(selDebug[1]);
 				Configuration.setDebugSeverityTrace(selDebug[2]);
-				Configuration.setCfgBitState(Configuration.CFGBIT_ROUTE_CONNECTIONS, debugOther.isSelected(0), true);
-				Configuration.setCfgBitState(Configuration.CFGBIT_SHOW_TURN_RESTRICTIONS, debugOther.isSelected(1), true);
-				Configuration.setCfgBitState(Configuration.CFGBIT_ROUTE_BEARINGS, debugOther.isSelected(2), true);
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ROUTE_CONNECTIONS, debugOther.isSelected(0));
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_TURN_RESTRICTIONS, debugOther.isSelected(1));
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ROUTE_BEARINGS, debugOther.isSelected(2));
 				Logger.setGlobalLevel();
 				state = STATE_ROOT;
 				this.show();
@@ -915,8 +915,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 
 				boolean[] selShowRouting = new boolean[2];
 				routingShowOptsGroup.getSelectedFlags(selShowRouting);
-				Configuration.setCfgBitState(Configuration.CFGBIT_SHOW_ROUTE_DURATION_IN_MAP, selShowRouting[0], true);
-				Configuration.setCfgBitState(Configuration.CFGBIT_SHOW_OFF_ROUTE_DISTANCE_IN_MAP, selShowRouting[1], true);
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_ROUTE_DURATION_IN_MAP, selShowRouting[0]);
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_OFF_ROUTE_DISTANCE_IN_MAP, selShowRouting[1]);
 				String w=tfMinRouteLineWidth.getString(); 
 				Configuration.setMinRouteLineWidth( 
 						(int) (Float.parseFloat(w)) 
@@ -924,9 +924,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				
 				boolean[] selRouting = new boolean[3];
 				routingOptsGroup.getSelectedFlags(selRouting);
-				Configuration.setCfgBitState(Configuration.CFGBIT_ROUTE_AUTO_RECALC, selRouting[0], true);
-				Configuration.setCfgBitState(Configuration.CFGBIT_ROUTE_BROWSING, selRouting[1], true);
-				Configuration.setCfgBitState(Configuration.CFGBIT_ROUTE_HIDE_QUIET_ARROWS, selRouting[2], true);
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ROUTE_AUTO_RECALC, selRouting[0]);
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ROUTE_BROWSING, selRouting[1]);
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ROUTE_HIDE_QUIET_ARROWS, selRouting[2]);
 				state = STATE_ROOT;
 				this.show();			
 				break;
@@ -944,16 +944,16 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				boolean[] opencellidFlags = new boolean[2];
 				cellidOptsGroup.getSelectedFlags(opencellidFlags);
 
-				Configuration.setCfgBitState(Configuration.CFGBIT_CELLID_OFFLINEONLY,
-							     opencellidFlags[0], true);
-				Configuration.setCfgBitState(Configuration.CFGBIT_CELLID_ONLINEONLY,
-							     opencellidFlags[1], true);
-				//Configuration.setCfgBitState(Configuration.CFGBIT_CELLID_ALWAYS,
-				//			     opencellidFlags[2], true);
-				//Configuration.setCfgBitState(Configuration.CFGBIT_CELLID_CONFIRM,
-				//			     opencellidFlags[3], true);
-				//Configuration.setCfgBitState(Configuration.CFGBIT_CELLID_FALLBACK,
-				//			     opencellidFlags[4], true);
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_CELLID_OFFLINEONLY,
+							     opencellidFlags[0]);
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_CELLID_ONLINEONLY,
+							     opencellidFlags[1]);
+				//Configuration.setCfgBitSavedState(Configuration.CFGBIT_CELLID_ALWAYS,
+				//			     opencellidFlags[2]);
+				//Configuration.setCfgBitSavedState(Configuration.CFGBIT_CELLID_CONFIRM,
+				//			     opencellidFlags[3]);
+				//Configuration.setCfgBitSavedState(Configuration.CFGBIT_CELLID_FALLBACK,
+				//			     opencellidFlags[4]);
 				state = STATE_ROOT;
 				this.show();
 				//#if polish.api.online
@@ -998,11 +998,11 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				rawLogCG.setLabel(logUrl);
 		
 				boolean [] selLog = new boolean[2]; 
-				selLog[0] = Configuration.getCfgBitState(Configuration.CFGBIT_CELLID_LOGGING);
+				selLog[0] = Configuration.getCfgBitSavedState(Configuration.CFGBIT_CELLID_LOGGING);
 				selLog[1] = Configuration.getGpsRawLoggerEnable();
 				rawLogCG.setSelectedFlags(selLog);
 
-				autoConnect.setSelectedIndex(0, Configuration.getCfgBitState(Configuration.CFGBIT_AUTO_START_GPS));
+				autoConnect.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_AUTO_START_GPS));
 				btKeepAlive.setSelectedIndex(0, Configuration.getBtKeepAlive());
 				btAutoRecon.setSelectedIndex(0, Configuration.getBtAutoRecon());
 				Display.getDisplay(parent).setCurrentItem(gpsUrl);
@@ -1038,36 +1038,36 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				break;
 			case MENU_ITEM_DISP_OPT: // Display Options
 				initDisplay();
-				nightModeGroup.setSelectedIndex( Configuration.getCfgBitState(Configuration.CFGBIT_NIGHT_MODE)?1:0, true);
+				nightModeGroup.setSelectedIndex( Configuration.getCfgBitSavedState(Configuration.CFGBIT_NIGHT_MODE)?1:0, true);
 				rotationGroup.setSelectedIndex(Configuration.getProjDefault(), true);
-				renderOpts.setSelectedIndex( Configuration.getCfgBitState(Configuration.CFGBIT_STREETRENDERMODE)?1:0, true);
-				sizeOpts.setSelectedIndex(0, Configuration.getCfgBitState(Configuration.CFGBIT_POI_LABELS_LARGER));
-				sizeOpts.setSelectedIndex(1, Configuration.getCfgBitState(Configuration.CFGBIT_WPT_LABELS_LARGER));
-				mapInfoOpts.setSelectedIndex(0, Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_POINT_OF_COMPASS, true));				
-				mapInfoOpts.setSelectedIndex(1, Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_SCALE_BAR, true));				
-				mapInfoOpts.setSelectedIndex(2, Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_SPEED_IN_MAP, true));				
-				mapInfoOpts.setSelectedIndex(3, Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_ALTITUDE_IN_MAP, true));				
-				mapInfoOpts.setSelectedIndex(4, Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_AIR_DISTANCE_IN_MAP, true));				
-				guiOpts.setSelectedIndex(0, Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS, true));
-				guiOpts.setSelectedIndex(1, Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN, true));
-				guiOpts.setSelectedIndex(2, Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED, true));
-				metricUnits.setSelectedIndex(0, Configuration.getCfgBitState(Configuration.CFGBIT_METRIC));
+				renderOpts.setSelectedIndex( Configuration.getCfgBitSavedState(Configuration.CFGBIT_STREETRENDERMODE)?1:0, true);
+				sizeOpts.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_POI_LABELS_LARGER));
+				sizeOpts.setSelectedIndex(1, Configuration.getCfgBitSavedState(Configuration.CFGBIT_WPT_LABELS_LARGER));
+				mapInfoOpts.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_POINT_OF_COMPASS));				
+				mapInfoOpts.setSelectedIndex(1, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_SCALE_BAR));				
+				mapInfoOpts.setSelectedIndex(2, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_SPEED_IN_MAP));				
+				mapInfoOpts.setSelectedIndex(3, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_ALTITUDE_IN_MAP));				
+				mapInfoOpts.setSelectedIndex(4, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_AIR_DISTANCE_IN_MAP));				
+				guiOpts.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS));
+				guiOpts.setSelectedIndex(1, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN));
+				guiOpts.setSelectedIndex(2, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED));
+				metricUnits.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_METRIC));
 				SingleTile.newPOIFont();
 				WaypointsTile.useNewWptFont();
 				gaugeDetailBoost.setValue(Configuration.getDetailBoostDefault());
 				// convert bits from backlight flag into selection states
 				boolean[] sellight = new boolean[7];
-				sellight[0]=Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON, true);
-				sellight[1]=Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ONLY_WHILE_GPS_STARTED, true);
-				sellight[2]=Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_MAPONLY, true);
-				sellight[3]=Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_MIDP2, true);
+				sellight[0]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_ON);
+				sellight[1]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_ONLY_WHILE_GPS_STARTED);
+				sellight[2]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_MAPONLY);
+				sellight[3]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_MIDP2);
 				byte i = 4;
 				//#if polish.api.nokia-ui
-					sellight[i++]=Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIA, true);
-					sellight[i++]=Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIAFLASH, true);
+					sellight[i++]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_NOKIA);
+					sellight[i++]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_NOKIAFLASH);
 				//#endif	
 				//#if polish.api.min-siemapi
-					sellight[i++]=Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_SIEMENS, true);
+					sellight[i++]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_SIEMENS);
 				//#endif
 		
 				backlightOpts.setSelectedFlags(sellight);
@@ -1196,7 +1196,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	public void show() {
 		switch (state) {
 			case STATE_ROOT:
-				if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS)) {
+				if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS)) {
 					if (setupIconMenu == null) {
 						setupIconMenu = new GuiDiscoverIconMenu(this, this);
 					}

@@ -798,6 +798,10 @@ public class Configuration {
 		return getCfgBitState(bit, false);			
 	}
 	
+	public static boolean getCfgBitSavedState(byte bit) {
+		return getCfgBitState(bit, true);			
+	}
+
 	
 	public static void toggleCfgBitState(byte bit, boolean savePermanent) {
 		setCfgBitState(bit, !getCfgBitState(bit), savePermanent);
@@ -837,6 +841,10 @@ public class Configuration {
 			}			
 		}
 	}	
+
+	public static void setCfgBitSavedState(byte bit, boolean state) {
+		setCfgBitState(bit, state, true);
+	}
 	
 	private static void setCfgBits(long cfgBits_0_to_63, long cfgBits_64_to_127) {
 		Configuration.cfgBits_0_to_63 = cfgBits_0_to_63;		
