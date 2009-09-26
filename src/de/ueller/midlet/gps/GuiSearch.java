@@ -47,7 +47,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 
 	//private Form form;
 
-	private final Image[] ico = {Image.createImage("/mark.png"), Image.createImage("/city.png"),
+	private final Image[] ico = {Image.createImage("/waypoint.png"), Image.createImage("/city.png"),
 			Image.createImage("/city.png"), Image.createImage("/street.png"),
 			Image.createImage("/parking.png")};
 
