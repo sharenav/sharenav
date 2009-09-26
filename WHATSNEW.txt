@@ -18,6 +18,7 @@ GpsMid 0.5.09
        *** Map Screen ***
        - Improved painting of waysegments to draw them connected (thx pos_ei_don_) 
        - Faster painting of oneway arrows (thx pos_ei_don_)
+       - Special rendering of ways that are bridges or tunnels (thx pos_ei_don_) 
        - In Setup / Display Options there's now a textfield for specifying how many seconds after
        	 the last user interaction the map will be automatically recentered to the GPS position
        - Better handling of appearing and disappearing text items (title bar, route instructions, etc.) on the map screen
@@ -43,13 +44,13 @@ GpsMid 0.5.09
        - Improved visibility of railways based on GeoCache style - thx GoemonGps/billi25
        - Add place=island as a workaround for land underwater - thx pos_ei_don_
        *** Routing ***
-       - Foot routing (only available in high-style and if specified in useRouting)
+       - Foot routing (if bundled into the midlet, see below)
        - Multiple Route Modes can be bundled for a single midlet with a setting in the .properties file,
          e.g. useRouting = motorcar, bicycle, foot
        - GpsMid asks which route mode to use on start of routing
        - Show remaining route distance to target in map screen
        - Check for turn restrictions for motorcar during route calculation (can be turned off as it needs more memory and is slower)
-       - Turbo or Deep Route Calculation Mode (selectable when when routing)
+       - Turbo or Deep Route Calculation Mode (selectable when routing)
        - U-turn instruction
        - Cross area routing (e.g. for foot routing through pedestrian zones)
        - Permissive Routing Restriction are now possible
@@ -61,7 +62,8 @@ GpsMid 0.5.09
        - Support for GeoHack in "Online Info" (thx jkpj)
        *** Osm2GpsMid GUI ***
        - Loading .properties files works again
-       - New options to include cell-ids and to type in midlet route modes
+       - New option to include cell-ids
+       - New option to specify midlet route modes
        *** Others ***
        - Don't cause an NPE if getControl doesn't return a VolumeControl as needed for phoneME (thx jkpj)
        - Many more small improvements and bugfixes
