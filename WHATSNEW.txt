@@ -1,6 +1,6 @@
 GpsMid 0.5.09
        *** Usability ***
-       - Icon menus (activateable in Setup / Display Options)
+       - Icon menus are available as an alternative user interface (activateable in Setup / Display Options)
        - Specify in Setup/Display Options to keep backlight on only while GPS is started
        - Many more midlet colors are specifiable in the style-file now (including colors for night mode)
        - Touch screen support:
@@ -9,7 +9,8 @@ GpsMid 0.5.09
         - (De)activate manual rotation mode by pointing the point of compass (use zoom buttons to rotate in manual rotation mode)
         - Show Map Features by pointing to the scale bar
         - In the Search screen clicking below or above the search results to get a standard input field
-       *** OSM Editing ***
+        - Display speed and distances in miles if configured in Setup
+        - Show target and move center to GPS to the left (thx jkjp)
        *** GPS and other location producers ***
        - Add a possibility to manually enter a connection URL, e.g. "comm:COM0;baudrate=115200"
        - CellId provider for S60FP2 usable with the python helper app (providing cellid via a local socket) 
@@ -20,11 +21,24 @@ GpsMid 0.5.09
        - In Setup / Display Options there's now a textfield for specifying how many seconds after
        	 the last user interaction the map will be automatically recentered to the GPS position
        - Better handling of appearing and disappearing text items (title bar, route instructions, etc.) on the map screen
-       - show speed when driving
+       - optionally show speed when driving
+       - optionally show altitude from GPS
+       - when there is no route calculated but a target is set, show air distance
+         instead of remaining route distance in the map screen
        - Turn restrictions included in the midlet can be displayed in the map with Setup/Debug Options
+       - Max distance for displaying way name while scrolling is now calculated differently.
+         A minimum of 10 meters is used for high zoom levels
+       - Buildings and building labels can now be hidden using the Map Features dialog      
        *** Recordings, Tracks and Waypoints ***
        - Allow to save more than 255 waypoints again (thx pos_ei_don)
        - Ask for track name at start/end of track recording - configurable in Setup / Recording Rules (thx jkjp)
+       - Numbers of tracks and waypoints displayed in the title of the respective lists (thx Petr Dlouhý)
+       - Current date added to name of waypoints file. (thx Petr Dlouhý)
+       - Better error message when GPX export fails, fixed typos. (thx Petr Dlouhý)
+       - Fix for the bug that waypoints were sometimes no longer drawn. (thx Petr Dlouhý)
+       - Using a different icon for waypoints than for the points of a track. (thx Petr Dlouhý)
+       - Fix for bug 2737256: Cursor position moved before "Set as target" (thx Petr Dlouhý)
+       - auto save the gpx track every 256 points, not only at the end of the recording
        *** Map Elements ***
        - Improved visibility of railways based on GeoCache style - thx GoemonGps/billi25
        - Add place=island as a workaround for land underwater - thx pos_ei_don_
@@ -42,11 +56,14 @@ GpsMid 0.5.09
          (e.g. bicycle routing for an abandoned aeroway=runway if bicycle=true is set
        - Much faster route calculation for bicycles (thx to apmonkey for the hint)
        - Faster detection of the highlighted ways during rendering
-       *** Midlet creation with Osm2GpsMid ***
+       - optionally show remaining route duration (based on ways' typical/max speeds) in map screen. 
+       *** OSM Editing and other only with Internet Connection available features ***
+       - Support for GeoHack in "Online Info" (thx jkpj)
        *** Osm2GpsMid GUI ***
        - Loading .properties files works again
        - New options to include cell-ids and to type in midlet route modes
        *** Others ***
+       - Don't cause an NPE if getControl doesn't return a VolumeControl as needed for phoneME (thx jkpj)
        - Many more small improvements and bugfixes
 
 GpsMid 0.5.0
