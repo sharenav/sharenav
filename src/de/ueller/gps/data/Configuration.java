@@ -188,6 +188,8 @@ public class Configuration {
 	public final static byte CFGBIT_BUILDING_LABELS = 66;
 	// bit 67: Flag if current time is shown on map
 	public final static byte CFGBIT_SHOW_CLOCK_IN_MAP = 67;
+	// bit 68: Flag if ETA is shown on map
+	public final static byte CFGBIT_SHOW_ETA_IN_MAP = 68;
 	
 	/**
 	 * These are the database record ids for each configuration option
@@ -463,6 +465,7 @@ public class Configuration {
 								1L << CFGBIT_SHOW_AIR_DISTANCE_IN_MAP;
 
 			cfgBits_64_to_127 |=	1L << CFGBIT_SHOW_ALTITUDE_IN_MAP |
+									1L << CFGBIT_SHOW_ETA_IN_MAP |
 									1L << CFGBIT_BUILDINGS |
 									1L << CFGBIT_BUILDING_LABELS;
 									

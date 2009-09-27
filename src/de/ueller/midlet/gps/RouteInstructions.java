@@ -6,6 +6,8 @@
 package de.ueller.midlet.gps;
 
 import java.io.InputStream;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Vector;
 
 import javax.microedition.lcdui.Font;
@@ -14,6 +16,7 @@ import javax.microedition.lcdui.Graphics;
 
 import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.Configuration;
+import de.ueller.gps.tools.HelperRoutines;
 import de.ueller.gps.tools.ImageTools;
 import de.ueller.gps.tools.intTree;
 import de.ueller.gps.tools.LayoutElement;
@@ -776,6 +779,16 @@ public class RouteInstructions {
 						)
 						 );
 				e = Trace.tl.ele[TraceLayout.ROUTE_DURATION];
+				
+				if (Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_ETA_IN_MAP)) {
+
+					Calendar currentTime = Calendar.getInstance();
+					currentTime.setTime( new Date( System.currentTimeMillis() + remainingDuration * 100) );		
+
+					Trace.tl.ele[TraceLayout.ETA].setText(
+						currentTime.get(Calendar.HOUR_OF_DAY) + ":"  
+						+ HelperRoutines.formatInt2(currentTime.get(Calendar.MINUTE)));
+				}
 			}
 			// Route instruction sound output
 			if (soundToPlay.length()!=0 && Configuration.getCfgBitState(Configuration.CFGBIT_SND_ROUTINGINSTRUCTIONS)) {

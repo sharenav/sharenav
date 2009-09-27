@@ -328,10 +328,11 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		gaugeRoutingEsatimationFac=new Gauge("Speed of route calculation", true, 10, Configuration.getRouteEstimationFac());
 		menuRoutingOptions.append(gaugeRoutingEsatimationFac);
 
-		String [] routingShowOpts = new String[2];
-		boolean[] selRoutingShow = new boolean[2];
+		String [] routingShowOpts = new String[3];
+		boolean[] selRoutingShow = new boolean[3];
 		routingShowOpts[0] = "Estimated duration"; selRoutingShow[0]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_ROUTE_DURATION_IN_MAP);
-		routingShowOpts[1] = "Offset to route line"; selRoutingShow[1]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_OFF_ROUTE_DISTANCE_IN_MAP);
+		routingShowOpts[1] = "ETA"; selRoutingShow[1]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_ETA_IN_MAP);
+		routingShowOpts[2] = "Offset to route line"; selRoutingShow[2]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_OFF_ROUTE_DISTANCE_IN_MAP);
 		routingShowOptsGroup = new ChoiceGroup("Infos in Map Screen", Choice.MULTIPLE, routingShowOpts ,null);
 		routingShowOptsGroup.setSelectedFlags(selRoutingShow);
 		menuRoutingOptions.append(routingShowOptsGroup);
@@ -915,10 +916,11 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				logger.debug("set stopAllWhileRounting " + stopAllWhileRouting.isSelected(1));
 				Configuration.setStopAllWhileRouteing(stopAllWhileRouting.isSelected(0));
 
-				boolean[] selShowRouting = new boolean[2];
+				boolean[] selShowRouting = new boolean[3];
 				routingShowOptsGroup.getSelectedFlags(selShowRouting);
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_ROUTE_DURATION_IN_MAP, selShowRouting[0]);
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_OFF_ROUTE_DISTANCE_IN_MAP, selShowRouting[1]);
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_ETA_IN_MAP, selShowRouting[1]);
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_OFF_ROUTE_DISTANCE_IN_MAP, selShowRouting[2]);
 				String w=tfMinRouteLineWidth.getString(); 
 				Configuration.setMinRouteLineWidth( 
 						(int) (Float.parseFloat(w)) 
