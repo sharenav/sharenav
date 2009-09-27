@@ -38,7 +38,8 @@ public class TraceLayout extends LayoutManager {
 	public static final int RECENTER_GPS = 17;
 	public static final int SHOW_TARGET = 18;
 	public static final int ALTITUDE = 19;
-	public static final int ELE_COUNT = 20;
+	public static final int CURRENT_TIME = 20;
+	public static final int ELE_COUNT = 21;
 
 	// special element ids
 	public static final byte SE_SCALEBAR = 1;
@@ -169,14 +170,7 @@ public class TraceLayout extends LayoutManager {
 			LayoutElement.FLAG_BACKGROUND_BOX | LayoutElement.FLAG_BACKGROUND_FULL_WIDTH
 		);
 		e.setVRelative(ele[ROUTE_INTO]);		
-	
-		e = ele[ROUTE_OFFROUTE]; addElement(e, 
-			LayoutElement.FLAG_HALIGN_RIGHT | LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |
-			LayoutElement.FLAG_FONT_SMALL  
-		);
-		e.setColor(Legend.COLORS[Legend.COLOR_RI_OFF_DISTANCE_TEXT]);
-		e.setVRelative(ele[ROUTE_INSTRUCTION]);		
-	
+		
 		e = ele[ROUTE_DISTANCE]; addElement(e, 
 			LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |
 			LayoutElement.FLAG_FONT_MEDIUM |
@@ -194,6 +188,22 @@ public class TraceLayout extends LayoutManager {
 		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_SPEED_BACKGROUND]);
 		e.setColor(Legend.COLORS[Legend.COLOR_SPEED_TEXT]);
 		e.setVRelative(ele[ROUTE_DISTANCE]);		
+		
+		e = ele[ROUTE_OFFROUTE]; addElement(e, 
+				LayoutElement.FLAG_HALIGN_RIGHT | LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |
+				LayoutElement.FLAG_FONT_SMALL  
+			);
+		e.setColor(Legend.COLORS[Legend.COLOR_RI_OFF_DISTANCE_TEXT]);
+		e.setVRelative(ele[ROUTE_INSTRUCTION]);		
+
+		e = ele[CURRENT_TIME]; addElement(e, 
+				LayoutElement.FLAG_HALIGN_RIGHT | LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |
+				LayoutElement.FLAG_FONT_MEDIUM |
+				LayoutElement.FLAG_BACKGROUND_BOX
+		);
+		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_CLOCK_BACKGROUND]);
+		e.setColor(Legend.COLORS[Legend.COLOR_CLOCK_TEXT]);
+		e.setVRelative(ele[ROUTE_OFFROUTE]);		
 		
 		e = ele[SPEEDING_SIGN]; addElement(e, 
 				LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |

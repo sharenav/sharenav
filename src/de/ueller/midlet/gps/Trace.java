@@ -175,6 +175,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	private volatile int currentTitleMsgOpenCount = 0;
 	private volatile int setTitleMsgTimeout = 0;
 	private Calendar lastTitleMsgTime = Calendar.getInstance();
+	private Calendar currentTime = Calendar.getInstance();
 	
 	private String currentAlertTitle;
 	private String currentAlertMessage;
@@ -1599,6 +1600,14 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				e.setText("air:" + (int) distLine + "m");
 			}
 			
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_CLOCK_IN_MAP)) {
+
+				currentTime.setTime( new Date( System.currentTimeMillis() ) );		
+
+				tl.ele[TraceLayout.CURRENT_TIME].setText(
+					currentTime.get(Calendar.HOUR_OF_DAY) + ":"  
+					+ HelperRoutines.formatInt2(currentTime.get(Calendar.MINUTE)));
+			}
 			
 			setSpeedingSign(maxSpeed);
 			

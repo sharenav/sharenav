@@ -522,12 +522,13 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		sizeOpts = new ChoiceGroup("Size Options:", Choice.MULTIPLE, sizes ,null);
 		menuDisplayOptions.append(sizeOpts);
 
-		String [] mapInfos = new String[5];
+		String [] mapInfos = new String[6];
 		mapInfos[0] = "Point of compass in rotated map";
 		mapInfos[1] = "Scale bar";
 		mapInfos[2] = "Speed when driving";
 		mapInfos[3] = "Altitude from GPS";
 		mapInfos[4] = "Air distance to target when not routing";
+		mapInfos[5] = "Clock with current time";
 		mapInfoOpts = new ChoiceGroup("Infos in Map Screen:", Choice.MULTIPLE, mapInfos ,null);
 		menuDisplayOptions.append(mapInfoOpts);
 		
@@ -827,6 +828,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_SPEED_IN_MAP, mapInfoOpts.isSelected(2));
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_ALTITUDE_IN_MAP, mapInfoOpts.isSelected(3));
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_AIR_DISTANCE_IN_MAP, mapInfoOpts.isSelected(4));
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_CLOCK_IN_MAP, mapInfoOpts.isSelected(5));
 				
 				trace.uncacheIconMenu();
 				Configuration.setDetailBoost(gaugeDetailBoost.getValue(), true); 
@@ -1048,6 +1050,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				mapInfoOpts.setSelectedIndex(2, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_SPEED_IN_MAP));				
 				mapInfoOpts.setSelectedIndex(3, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_ALTITUDE_IN_MAP));				
 				mapInfoOpts.setSelectedIndex(4, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_AIR_DISTANCE_IN_MAP));				
+				mapInfoOpts.setSelectedIndex(5, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_CLOCK_IN_MAP));				
 				guiOpts.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS));
 				guiOpts.setSelectedIndex(1, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN));
 				guiOpts.setSelectedIndex(2, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED));

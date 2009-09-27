@@ -186,6 +186,8 @@ public class Configuration {
 	public final static byte CFGBIT_BUILDINGS = 65;
 	// bit 66: Flag whether to show building labels in map
 	public final static byte CFGBIT_BUILDING_LABELS = 66;
+	// bit 67: Flag if current time is shown on map
+	public final static byte CFGBIT_SHOW_CLOCK_IN_MAP = 67;
 	
 	/**
 	 * These are the database record ids for each configuration option
