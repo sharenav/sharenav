@@ -38,8 +38,8 @@ public class TraceLayout extends LayoutManager {
 	public static final int RECENTER_GPS = 17;
 	public static final int SHOW_TARGET = 18;
 	public static final int ALTITUDE = 19;
-	public static final int ETA = 20;
-	public static final int CURRENT_TIME = 21;
+	public static final int CURRENT_TIME = 20;
+	public static final int ETA = 21;
 	public static final int ELE_COUNT = 22;
 
 	// special element ids
@@ -190,22 +190,6 @@ public class TraceLayout extends LayoutManager {
 		e.setColor(Legend.COLORS[Legend.COLOR_SPEED_TEXT]);
 		e.setVRelative(ele[ROUTE_DISTANCE]);		
 		
-		e = ele[ROUTE_OFFROUTE]; addElement(e, 
-				LayoutElement.FLAG_HALIGN_RIGHT | LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |
-				LayoutElement.FLAG_FONT_SMALL  
-			);
-		e.setColor(Legend.COLORS[Legend.COLOR_RI_OFF_DISTANCE_TEXT]);
-		e.setVRelative(ele[ROUTE_INSTRUCTION]);		
-
-		e = ele[ETA]; addElement(e, 
-				LayoutElement.FLAG_HALIGN_RIGHT | LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |
-				LayoutElement.FLAG_FONT_MEDIUM |
-				LayoutElement.FLAG_BACKGROUND_BOX
-		);
-		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_RI_ETA_BACKGROUND]);
-		e.setColor(Legend.COLORS[Legend.COLOR_RI_ETA_TEXT]);
-		e.setVRelative(ele[ROUTE_OFFROUTE]);	
-		
 		e = ele[CURRENT_TIME]; addElement(e, 
 				LayoutElement.FLAG_HALIGN_RIGHT | LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |
 				LayoutElement.FLAG_FONT_MEDIUM |
@@ -213,7 +197,26 @@ public class TraceLayout extends LayoutManager {
 		);
 		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_CLOCK_BACKGROUND]);
 		e.setColor(Legend.COLORS[Legend.COLOR_CLOCK_TEXT]);
-		e.setVRelative(ele[ETA]);		
+		e.setAdditionalOffsX(1); // FIXME: This should not be necessary to be exactly right aligned on the display
+		e.setVRelative(ele[ROUTE_INSTRUCTION]);		
+
+		e = ele[ETA]; addElement(e, 
+				LayoutElement.FLAG_HALIGN_LEFTTO_RELATIVE | LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |
+				LayoutElement.FLAG_FONT_MEDIUM |
+				LayoutElement.FLAG_BACKGROUND_BOX
+		);
+		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_RI_ETA_BACKGROUND]);
+		e.setColor(Legend.COLORS[Legend.COLOR_RI_ETA_TEXT]);
+		e.setVRelative(ele[ROUTE_INSTRUCTION]);	
+		e.setHRelative(ele[CURRENT_TIME]);	
+		e.setAdditionalOffsX(-2);
+		
+		e = ele[ROUTE_OFFROUTE]; addElement(e, 
+				LayoutElement.FLAG_HALIGN_RIGHT | LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |
+				LayoutElement.FLAG_FONT_SMALL  
+			);
+		e.setColor(Legend.COLORS[Legend.COLOR_RI_OFF_DISTANCE_TEXT]);
+		e.setVRelative(ele[CURRENT_TIME]);		
 		
 		e = ele[SPEEDING_SIGN]; addElement(e, 
 				LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |
