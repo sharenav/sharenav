@@ -293,15 +293,13 @@ public class LayoutElement {
 		LayoutElement eRelative = hRelativeTo;
 		int newLeft = 0;
 		while (eRelative != null) {
-			if ( eRelative.textIsValid || (eRelative.flags & FLAG_RESERVE_SPACE) > 0 ) {
-				if (getLeft) {
-					newLeft = eRelative.left - width;
-				} else {
-					newLeft = eRelative.right;
-				}
-				break;
+			if (getLeft) {
+				newLeft = eRelative.left - width;
 			} else {
-				newLeft = eRelative.left;
+				newLeft = eRelative.right;
+			}
+			if ( eRelative.textIsValid || (eRelative.flags & FLAG_RESERVE_SPACE) > 0 ) {
+				break;
 			}
 			eRelative = eRelative.hRelativeTo;
 		}
