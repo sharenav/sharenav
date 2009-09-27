@@ -54,7 +54,7 @@ public class Configuration {
 	 * Specifies the format of the map on disk we are about to write
 	 * This constant must be in sync with GpsMid
 	 */
-	public final static short MAP_FORMAT_VERSION = 43;
+	public final static short MAP_FORMAT_VERSION = 45;
 
 	public final static int COLOR_MAP_BACKGROUND = 0;
 	public final static int COLOR_MAP_TEXT = 1;
@@ -97,32 +97,36 @@ public class Configuration {
 	public final static int COLOR_RI_TEXT = 38;
 	public final static int COLOR_RI_DISTANCE_BACKGROUND = 39;
 	public final static int COLOR_RI_DISTANCE_TEXT = 40;
-	public final static int COLOR_RI_OFF_DISTANCE_TEXT = 41;
-	public final static int COLOR_ROUTE_ROUTELINE = 42;
-	public final static int COLOR_ROUTE_ROUTELINE_BORDER = 43;
-	public final static int COLOR_ROUTE_PRIOR_ROUTELINE = 44;
-	public final static int COLOR_ROUTE_PRIOR_ROUTELINE_BORDER = 45;
-	public final static int COLOR_ROUTE_ROUTEDOT = 46;
-	public final static int COLOR_ROUTE_ROUTEDOT_BORDER = 47;
-	public final static int COLOR_ICONMENU_BACKGROUND = 48;
-	public final static int COLOR_ICONMENU_TABBUTTON_BORDER = 49;
-	public final static int COLOR_ICONMENU_TABBUTTON_TEXT = 50;
-	public final static int COLOR_ICONMENU_TABBUTTON_TEXT_HIGHLIGHT = 51;
-	public final static int COLOR_ICONMENU_TABBUTTON_TEXT_INACTIVE = 52;
-	public final static int COLOR_ICONMENU_ICON_TEXT = 53;
-	public final static int COLOR_ICONMENU_ICON_BORDER_HIGHLIGHT = 54;
-	public final static int COLOR_ALERT_BACKGROUND = 55;
-	public final static int COLOR_ALERT_BORDER = 56;
-	public final static int COLOR_ALERT_TITLE_BACKGROUND = 57;
-	public final static int COLOR_ALERT_TEXT = 58;
-	public final static int COLOR_CUSTOMMENU_BACKGROUND = 59;
-	public final static int COLOR_CUSTOMMENU_BORDER = 60;
-	public final static int COLOR_CUSTOMMENU_TITLE_BACKGROUND = 61;
-	public final static int COLOR_CUSTOMMENU_TEXT = 62;
-	public final static int COLOR_CUSTOMMENU_HIGHLIGHT_BACKGROUND = 63;
-	public final static int COLOR_TACHO_BACKGROUND = 64;
-	public final static int COLOR_TACHO_TEXT = 65;
-	public final static int COLOR_COUNT = 66;
+	public final static int COLOR_RI_ETA_BACKGROUND = 41;
+	public final static int COLOR_RI_ETA_TEXT = 42;
+	public final static int COLOR_RI_OFF_DISTANCE_TEXT = 43;
+	public final static int COLOR_ROUTE_ROUTELINE = 44;
+	public final static int COLOR_ROUTE_ROUTELINE_BORDER = 45;
+	public final static int COLOR_ROUTE_PRIOR_ROUTELINE = 46;
+	public final static int COLOR_ROUTE_PRIOR_ROUTELINE_BORDER = 47;
+	public final static int COLOR_ROUTE_ROUTEDOT = 48;
+	public final static int COLOR_ROUTE_ROUTEDOT_BORDER = 49;
+	public final static int COLOR_ICONMENU_BACKGROUND = 50;
+	public final static int COLOR_ICONMENU_TABBUTTON_BORDER = 51;
+	public final static int COLOR_ICONMENU_TABBUTTON_TEXT = 52;
+	public final static int COLOR_ICONMENU_TABBUTTON_TEXT_HIGHLIGHT = 53;
+	public final static int COLOR_ICONMENU_TABBUTTON_TEXT_INACTIVE = 54;
+	public final static int COLOR_ICONMENU_ICON_TEXT = 55;
+	public final static int COLOR_ICONMENU_ICON_BORDER_HIGHLIGHT = 56;
+	public final static int COLOR_ALERT_BACKGROUND = 57;
+	public final static int COLOR_ALERT_BORDER = 58;
+	public final static int COLOR_ALERT_TITLE_BACKGROUND = 59;
+	public final static int COLOR_ALERT_TEXT = 60;
+	public final static int COLOR_CUSTOMMENU_BACKGROUND = 61;
+	public final static int COLOR_CUSTOMMENU_BORDER = 62;
+	public final static int COLOR_CUSTOMMENU_TITLE_BACKGROUND = 63;
+	public final static int COLOR_CUSTOMMENU_TEXT = 64;
+	public final static int COLOR_CUSTOMMENU_HIGHLIGHT_BACKGROUND = 65;
+	public final static int COLOR_TACHO_BACKGROUND = 66;
+	public final static int COLOR_TACHO_TEXT = 67;
+	public final static int COLOR_CLOCK_BACKGROUND = 68;
+	public final static int COLOR_CLOCK_TEXT = 69;
+	public final static int COLOR_COUNT = 70;
 
 
 
@@ -168,6 +172,8 @@ public class Configuration {
 			 "ri_text",
 			 "ri_distance_background",
 			 "ri_distance_text",
+			 "ri_eta_background",
+			 "ri_eta_text",
 			 "ri_off_distance_text",
 			 "routeLine",
 			 "routeLine_border",
@@ -192,7 +198,9 @@ public class Configuration {
 			 "customMenu_text",
 			 "customMenu_highlight_background",
 			 "tacho_background",
-			 "tacho_text"
+			 "tacho_text",
+			 "clock_background",
+			 "clock_text"
 			};
 			 		
 	public static int COLORS[] = new int[COLOR_COUNT];
