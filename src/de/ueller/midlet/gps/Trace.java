@@ -1600,7 +1600,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				e.setText("air:" + (int) distLine + "m");
 			}
 			
-			if (Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_ETA_IN_MAP)) {
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_CLOCK_IN_MAP)) {
 
 				currentTime.setTime( new Date( System.currentTimeMillis() ) );		
 
