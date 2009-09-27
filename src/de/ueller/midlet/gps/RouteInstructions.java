@@ -784,10 +784,12 @@ public class RouteInstructions {
 
 					Calendar currentTime = Calendar.getInstance();
 					currentTime.setTime( new Date( System.currentTimeMillis() + remainingDuration * 100) );		
-
-					Trace.tl.ele[TraceLayout.ETA].setText(
+					e = Trace.tl.ele[TraceLayout.ETA];
+					e.setText(
 						currentTime.get(Calendar.HOUR_OF_DAY) + ":"  
 						+ HelperRoutines.formatInt2(currentTime.get(Calendar.MINUTE)));
+					// if ETA is visible, position OFFROUTE above ETA will work
+					Trace.tl.ele[TraceLayout.ROUTE_OFFROUTE].setVRelative(e);
 				}
 			}
 			// Route instruction sound output

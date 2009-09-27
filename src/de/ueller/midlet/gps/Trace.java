@@ -1603,10 +1603,12 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			if (Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_CLOCK_IN_MAP)) {
 
 				currentTime.setTime( new Date( System.currentTimeMillis() ) );		
-
-				tl.ele[TraceLayout.CURRENT_TIME].setText(
+				e = tl.ele[TraceLayout.CURRENT_TIME];
+				e.setText(
 					currentTime.get(Calendar.HOUR_OF_DAY) + ":"  
 					+ HelperRoutines.formatInt2(currentTime.get(Calendar.MINUTE)));
+				// if current time is visible, positioning OFFROUTE above current time will work
+				tl.ele[TraceLayout.ROUTE_OFFROUTE].setVRelative(e);
 			}
 			
 			setSpeedingSign(maxSpeed);
