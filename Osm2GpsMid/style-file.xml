@@ -83,6 +83,8 @@ scale alias 1: zoomed out 21x
 	<color of="speeding_sign_border" is="00FF0000"/>
 	<color of="speeding_sign_inner" is="00FFFFFF"/>
 	<color of="speeding_sign_text" is="00000000"/>
+	<color of="clock_background" is="009BFF9B"/>
+	<color of="clock_text" is="00000000"/>
 	<!-- Routing -->
 	<color of="ri_at_target" is="00B0B030"/>	
 	<color of="ri_on_route" is="00B7FBBA"/>	
