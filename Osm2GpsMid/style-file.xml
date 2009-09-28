@@ -95,8 +95,8 @@ scale alias 1: zoomed out 21x
 	<color of="ri_text" is="00000000"/>
 	<color of="ri_distance_background" is="00B0B030"/>
 	<color of="ri_distance_text" is="00000000"/>
-	<color of="eta_background" is="00B0B030"/>
-	<color of="eta_text" is="00000000"/>
+	<color of="ri_eta_background" is="00B0B030"/>
+	<color of="ri_eta_text" is="00000000"/>
 	<color of="ri_off_distance_text" is="00000000"/>
 	<color of="routeLine" is="0000C0C0"/>
 	<color of="routeLine_border" is="0064FFFF"/>
