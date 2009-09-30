@@ -22,6 +22,9 @@ import de.ueller.gps.tools.intTree;
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.graphics.LcdNumericFont;
 
+/** 
+ * Implements the "Tacho" screen which displays numbers such as speed, height etc.
+ */
 public class GuiTacho extends KeyCommandCanvas implements CommandListener,
 		GpsMidDisplayable, LocationUpdateListener {
 
@@ -144,7 +147,7 @@ public class GuiTacho extends KeyCommandCanvas implements CommandListener,
 						HelperRoutines.formatInt2(cal.get(Calendar.SECOND)));
 		g.drawString(timeString.toString(), 3, y, Graphics.TOP | Graphics.LEFT);
 		
-		g.drawString("DOP: " + pos.pdop, (w >> 1) + 3, y, Graphics.TOP
+		g.drawString("PDOP: " + pos.pdop, (w >> 1) + 3, y, Graphics.TOP
 				| Graphics.LEFT);
 
 		y += fHeight;
