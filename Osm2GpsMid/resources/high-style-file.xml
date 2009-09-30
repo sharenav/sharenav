@@ -1159,10 +1159,10 @@ scale alias 1: zoomed out 21x
   				<namefallback tag = "ref"/>
   				<isArea area = "false"/>
   				<scale scale = "20"/>
-  				<lineColor color = "00FFFFFF" />
+  				<lineColor color = "00FFAAAA" />
   				<wayWidth width="4" />
-  				<routing with="motorcar" accessible="true" speed="30" />
-  				<routing with="bicycle" accessible="true" speed="15" />
+  				<routing with="motorcar" accessible="false" speed="30" />
+  				<routing with="bicycle" accessible="false" speed="15" />
   				<routing with="foot" accessible="true" speed="4" />  	
   			</Wvalue>  			
   			<Wvalue name = "residential" priority = "10">
