@@ -22,7 +22,7 @@ public class Connection {
 	public int used=0;
 	public byte startBearing=0;
 	public byte endBearing=0;
-	public byte wayTravelModes=0;
+	public byte connTravelModes=0;
 	
 	
 	public static final int CONNTYPE_MOTORWAY = 64;
@@ -33,7 +33,7 @@ public class Connection {
 		this.to = to;
 		length = dist;
 		this.times = times;
-		wayTravelModes = w.wayTravelModes;
+		connTravelModes = w.wayTravelModes;
 		startBearing=bs;
 		endBearing=be;
 	}

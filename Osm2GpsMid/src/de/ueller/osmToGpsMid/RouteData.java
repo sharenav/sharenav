@@ -365,7 +365,7 @@ public class RouteData {
 			connections.add(cr);
 
 			// flag connections useable for travel modes you can go against the ways direction
-			cr.wayTravelModes = againstDirectionTravelModes;
+			cr.connTravelModes = againstDirectionTravelModes;
 
 			for (int i=0; i<TravelModes.travelModeCount; i++) {
 				if ( (againstDirectionTravelModes & (1<<i)) != 0 ) {
