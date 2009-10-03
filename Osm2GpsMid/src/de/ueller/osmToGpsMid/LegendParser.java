@@ -595,6 +595,14 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 								currentTravelMode.travelModeFlags |= TravelMode.WITH_TURN_RESTRICTIONS;
 							}
 						}
+
+						String mainStreetNet = atts.getValue("mainStreetNet");
+						if (mainStreetNet != null) {
+							if (mainStreetNet.equalsIgnoreCase("true")) {
+								currentTravelMode.travelModeFlags |= TravelMode.MAINSTREET_NET_FOR_LARGE_ROUTES;
+							}
+						}
+						
 						String againstAllOneWays = atts.getValue("againstAllOneWays");
 						if (againstAllOneWays != null) {
 							if (againstAllOneWays.equalsIgnoreCase("true")) {
