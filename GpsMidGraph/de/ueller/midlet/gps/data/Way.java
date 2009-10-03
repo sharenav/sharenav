@@ -53,6 +53,7 @@ public class Way extends Entity{
 	public static final byte WAY_FLAG2_BRIDGE = 4;
 	public static final byte WAY_FLAG2_CYCLE_OPPOSITE = 8;
 	public static final byte WAY_FLAG2_LONGWAY = 16;
+	public static final byte WAY_FLAG2_MAXSPEED_WINTER = 32;
 	
 	public static final byte DRAW_BORDER=1;
 	public static final byte DRAW_AREA=2;
@@ -84,6 +85,7 @@ public class Way extends Entity{
 	protected static final Logger logger = Logger.getInstance(Way.class,Logger.TRACE);
 
 	private int flags=0;
+	private int flagswinter=0;
 
 	/** indicate by which route modes this way can be used (motorcar, bicycle, etc.) */
 	private byte wayRouteModes = 0;
@@ -217,6 +219,10 @@ public class Way extends Entity{
 			}
 		}
 		
+		if ((f2 & WAY_FLAG2_MAXSPEED_WINTER) == WAY_FLAG2_MAXSPEED_WINTER) {
+			flagswinter = is.readByte();
+		}
+
 		layers[idx] = 0;
 		if ((f & WAY_FLAG_LAYER) == WAY_FLAG_LAYER) {
 			/**
@@ -1801,6 +1807,11 @@ public class Way extends Entity{
 	public int getMaxSpeed() {
 		return ((flags & MaxSpeedMask) >> MaxSpeedShift);
 	}
+	
+	public int getMaxSpeedWinter() {
+		return ((flagswinter & MaxSpeedMask) >> MaxSpeedShift);
+	}
+
 	
     /**
      * get or estimate speed in m/s for routing purposes

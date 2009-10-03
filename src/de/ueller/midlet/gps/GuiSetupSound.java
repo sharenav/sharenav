@@ -20,8 +20,8 @@ public class GuiSetupSound extends Form implements CommandListener {
 	private	boolean[] selSndRouting = new boolean[2];
 
 	private ChoiceGroup spdAlertGroup=null;
-	private	String [] spdAlert = new String[2];
-	private	boolean[] selSpdAlert = new boolean[2];
+	private	String [] spdAlert = new String[3];
+	private	boolean[] selSpdAlert = new boolean[3];
 
         private TextField spdAlertTolerance=null;
 
@@ -53,6 +53,8 @@ public class GuiSetupSound extends Form implements CommandListener {
 			selSpdAlert[0]=Configuration.getCfgBitState(Configuration.CFGBIT_SPEEDALERT_SND);
 			spdAlert[1] = "Visual Speeding Alert";
 			selSpdAlert[1]=Configuration.getCfgBitState(Configuration.CFGBIT_SPEEDALERT_VISUAL);
+			spdAlert[2] = "Winter Limits Active";
+			selSpdAlert[2]=Configuration.getCfgBitState(Configuration.CFGBIT_MAXSPEED_WINTER);
 			spdAlertGroup = new ChoiceGroup("Speeding Alert", Choice.MULTIPLE, spdAlert ,null);
 			spdAlertGroup.setSelectedFlags(selSpdAlert);
 			append(spdAlertGroup);
@@ -96,6 +98,7 @@ public class GuiSetupSound extends Form implements CommandListener {
 			spdAlertGroup.getSelectedFlags(selSpdAlert);
 			Configuration.setCfgBitState(Configuration.CFGBIT_SPEEDALERT_SND, selSpdAlert[0], true);
 			Configuration.setCfgBitState(Configuration.CFGBIT_SPEEDALERT_VISUAL, selSpdAlert[1], true);
+			Configuration.setCfgBitState(Configuration.CFGBIT_MAXSPEED_WINTER, selSpdAlert[2], true);
 
 			parent.show();
 			return;
