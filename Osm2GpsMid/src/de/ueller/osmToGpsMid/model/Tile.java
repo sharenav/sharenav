@@ -253,10 +253,22 @@ public class Tile {
 			}
 		}
 		if (type == TYPE_ROUTEDATA){
-			if (routeNodes != null){
-				for (RouteNode rn: routeNodes){
-					rn.id=rnSeq.get();
-					rnSeq.inc();
+			boolean isOnMainStreetNet = false;
+			for (int writeStreetNets = 0; writeStreetNets <=1; writeStreetNets++) {
+				for (RouteNode rn : routeNodes){
+					isOnMainStreetNet = rn.isOnMainStreetNet();
+					if (writeStreetNets == 0 && isOnMainStreetNet
+						||
+						writeStreetNets > 0 && !isOnMainStreetNet
+					) { 
+						rn.id=rnSeq.get();
+//						if (isOnMainStreetNet) {
+//							System.out.println("main" + rn.id);
+//						} else {
+//							System.out.println("norm" + rn.id);							
+//						}
+						rnSeq.inc();
+					}
 				}
 			}
 		}
@@ -354,66 +366,75 @@ public class Tile {
 			short countTurnRestrictions=0;
 			TurnRestriction turnWrite=null;
 			boolean hasTurnRestriction=false;
-			for (RouteNode n : routeNodes){
-				nds.writeFloat(MyMath.degToRad(n.node.lat));
-				nds.writeFloat(MyMath.degToRad(n.node.lon));
-				//nds.writeInt(cds.size());
-
-				hasTurnRestriction=false;
-				turnWrite = turnRestrictions.get(n.node.id);
-				while (turnWrite != null) {
-					if (turnWrite.isComplete()) {
-						countTurnRestrictions++;
-						hasTurnRestriction=true;
-					}
-					turnWrite = turnWrite.nextTurnRestrictionAtThisNode;
-				}
-				if (hasTurnRestriction) {
-					nds.writeByte(n.connected.size() | 0x80); // write indicator that this route node has turn restrictions attached
-				} else {
-					nds.writeByte(n.connected.size());					
-				}
-
-				byte routeNodeWayFlags = 0;
-				for (Connection c : n.connected){
-					minConnectionId ++;
-					routeNodeWayFlags |= c.connTravelModes;
-					cds.writeInt(c.to.id);
-					// write out wayTravelModes flag
-					cds.writeByte(c.connTravelModes);
-					for (int i=0; i<TravelModes.travelModeCount; i++) {
-						// only store times for available travel modes of the connection
-						if ( (c.connTravelModes & (1<<i)) !=0 ) {
-							/**
-							 * If we can't fit the values into short,
-							 * we write an int. In order for the other
-							 * side to know if we wrote an int or a short,
-							 * we encode the length in the top most (sign) bit
-							 */
-							int time = c.times[i];
-							if (time > Short.MAX_VALUE) {
-								cds.writeInt(-1*time);
+			boolean isOnMainStreetNet = false;
+			for (int writeStreetNets = 0; writeStreetNets <=1; writeStreetNets++) {
+				for (RouteNode n : routeNodes){
+					isOnMainStreetNet = n.isOnMainStreetNet();
+					if (writeStreetNets == 0 && isOnMainStreetNet
+						||
+						writeStreetNets > 0 && !isOnMainStreetNet
+					) { 
+						nds.writeFloat(MyMath.degToRad(n.node.lat));
+						nds.writeFloat(MyMath.degToRad(n.node.lon));
+						//nds.writeInt(cds.size());
+		
+						hasTurnRestriction=false;
+						turnWrite = turnRestrictions.get(n.node.id);
+						while (turnWrite != null) {
+							if (turnWrite.isComplete()) {
+								countTurnRestrictions++;
+								hasTurnRestriction=true;
+							}
+							turnWrite = turnWrite.nextTurnRestrictionAtThisNode;
+						}
+						if (hasTurnRestriction) {
+							nds.writeByte(n.connected.size() | 0x80); // write indicator that this route node has turn restrictions attached
+						} else {
+							nds.writeByte(n.connected.size());					
+						}
+		
+						byte routeNodeWayFlags = 0;
+						for (Connection c : n.connected){
+							minConnectionId ++;
+							routeNodeWayFlags |= c.connTravelModes;
+							cds.writeInt(c.to.id);
+							// write out wayTravelModes flag
+							cds.writeByte(c.connTravelModes);
+							for (int i=0; i<TravelModes.travelModeCount; i++) {
+								// only store times for available travel modes of the connection
+								if ( (c.connTravelModes & (1<<i)) !=0 ) {
+									/**
+									 * If we can't fit the values into short,
+									 * we write an int. In order for the other
+									 * side to know if we wrote an int or a short,
+									 * we encode the length in the top most (sign) bit
+									 */
+									int time = c.times[i];
+									if (time > Short.MAX_VALUE) {
+										cds.writeInt(-1*time);
+									} else {
+										cds.writeShort((short) time);
+									}
+								}
+							}
+							if (c.length > Short.MAX_VALUE) {
+								cds.writeInt(-1*c.length);
 							} else {
-								cds.writeShort((short) time);
+								cds.writeShort((short) c.length);
+							}
+							
+							cds.writeByte(c.startBearing);
+							cds.writeByte(c.endBearing);
+						}
+						// count in which travel modes route node is used
+						for (int i=0; i < TravelModes.travelModeCount; i++) {
+							if ( (routeNodeWayFlags & (1<<i)) !=0) {
+								TravelModes.getTravelMode(i).numRouteNodes++;
 							}
 						}
-					}
-					if (c.length > Short.MAX_VALUE) {
-						cds.writeInt(-1*c.length);
-					} else {
-						cds.writeShort((short) c.length);
-					}
-					
-					cds.writeByte(c.startBearing);
-					cds.writeByte(c.endBearing);
-				}
-				// count in which travel modes route node is used
-				for (int i=0; i < TravelModes.travelModeCount; i++) {
-					if ( (routeNodeWayFlags & (1<<i)) !=0) {
-						TravelModes.getTravelMode(i).numRouteNodes++;
-					}
-				}
-			}
+					} // end of street net condition
+				} // end of routeNodes loop
+			} // end of writeStreetNets loop
 			/**
 			 * Write a special marker, so that we can detect if something
 			 * went wrong with decoding the variable length encoding
@@ -422,29 +443,37 @@ public class Tile {
 			
 			// attach turn restrictions at the end of the node data
 			nds.writeShort(countTurnRestrictions);		
-			for (RouteNode n : routeNodes){
-				turnWrite = turnRestrictions.get(n.node.id);
-				while (turnWrite != null) {
-					if (turnWrite.isComplete()) {					
-						nds.writeInt(turnWrite.viaRouteNode.id);
-						if (turnWrite.viaRouteNode.id != n.id) { // just a prevention against renumbered RouteNodes
-							System.out.println("RouteNode ID mismatch for turn restrictions");
-						}
-						nds.writeInt(turnWrite.fromRouteNode.id);
-						nds.writeInt(turnWrite.toRouteNode.id);
-						nds.writeByte(turnWrite.affectedTravelModes);
-						nds.writeByte(turnWrite.flags);
-						if (turnWrite.isViaTypeWay()) {
-							nds.writeByte(turnWrite.additionalViaRouteNodes.length);
-							for (RouteNode rn:turnWrite.additionalViaRouteNodes) {
-								nds.writeInt(rn.id);
+			for (int writeStreetNets = 0; writeStreetNets <=1; writeStreetNets++) {
+				for (RouteNode n : routeNodes){
+					isOnMainStreetNet = n.isOnMainStreetNet();
+					if (writeStreetNets == 0 && isOnMainStreetNet
+						||
+						writeStreetNets > 0 && !isOnMainStreetNet
+					) { 
+						turnWrite = turnRestrictions.get(n.node.id);
+						while (turnWrite != null) {
+							if (turnWrite.isComplete()) {					
+								nds.writeInt(turnWrite.viaRouteNode.id);
+								if (turnWrite.viaRouteNode.id != n.id) { // just a prevention against renumbered RouteNodes
+									System.out.println("RouteNode ID mismatch for turn restrictions");
+								}
+								nds.writeInt(turnWrite.fromRouteNode.id);
+								nds.writeInt(turnWrite.toRouteNode.id);
+								nds.writeByte(turnWrite.affectedTravelModes);
+								nds.writeByte(turnWrite.flags);
+								if (turnWrite.isViaTypeWay()) {
+									nds.writeByte(turnWrite.additionalViaRouteNodes.length);
+									for (RouteNode rn:turnWrite.additionalViaRouteNodes) {
+										nds.writeInt(rn.id);
+									}
+								}
 							}
+							// System.out.println(turnWrite.toString(OxParser.getWayHashMap()));
+							turnWrite = turnWrite.nextTurnRestrictionAtThisNode;
 						}
-					}
-					// System.out.println(turnWrite.toString(OxParser.getWayHashMap()));
-					turnWrite = turnWrite.nextTurnRestrictionAtThisNode;
-				}
-			}			
+					} // end of street net condition
+				} // end of routeNodes loop
+			} // end of writeStreetNets loop
 			
 			nds.close();
 			cds.close();

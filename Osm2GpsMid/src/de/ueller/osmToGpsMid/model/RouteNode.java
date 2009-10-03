@@ -28,4 +28,19 @@ public class RouteNode {
 	public String toString(){
 		return ("RouteNode id=" + id+"(" + node.renumberdId + ")");
 	}
+	
+	public boolean isOnMainStreetNet() {
+		for (Connection c: connected) {
+			if ( (c.connTravelModes & Connection.CONNTYPE_MAINSTREET_NET) > 0) {
+				return true;
+			}
+		}
+		for (Connection c: connectedFrom) {
+			if ( (c.connTravelModes & Connection.CONNTYPE_MAINSTREET_NET) > 0) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 }
