@@ -443,7 +443,7 @@ public class RouteTile extends RouteBaseTile {
 //					c.to=nodes[nodeId - minId];
 //				}
 				c.toId=nodeId;
-				c.travelModes=cs.readByte();
+				c.connTravelModes=cs.readByte();
 				/**
 				 * The connection time and connection length can either be encoded as a int or a short
 				 * We indicate if it is a int by using the top most bit (sign bit). So if the read
@@ -454,7 +454,7 @@ public class RouteTile extends RouteBaseTile {
 				
 				int costTime = 0;
 				for (int i2=0;i2<numTravelModes;i2++) { // read connection times			
-					if ( (c.travelModes & (1 << i2)) != 0) {
+					if ( (c.connTravelModes & (1 << i2)) != 0) {
 						int upper = cs.readShort();
 						if (upper < 0) {
 							int lower = cs.readShort();
@@ -492,7 +492,7 @@ public class RouteTile extends RouteBaseTile {
 				Connection[] cons2=new Connection[conSizeTravelMode];
 				int i2=0;
 				for (int i = 0; i<conSize;i++){
-					if ( (cons[i].travelModes & (1 << currentTravelMode)) != 0) {
+					if ( (cons[i].connTravelModes & (1 << currentTravelMode)) != 0) {
 						cons2[i2] = cons[i];
 						i2++;
 					}

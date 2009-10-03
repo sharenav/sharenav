@@ -11,7 +11,7 @@ public class Connection {
 //	public RouteNode to=null;
 	public byte startBearing=0;
 	public byte endBearing=0;
-	public byte travelModes=0;
+	public byte connTravelModes=0;
 	
 	public Connection(){
 	}
