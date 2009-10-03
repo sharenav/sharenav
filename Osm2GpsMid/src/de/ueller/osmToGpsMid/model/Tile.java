@@ -255,6 +255,7 @@ public class Tile {
 		}
 		if (type == TYPE_ROUTEDATA){
 			boolean isOnMainStreetNet = false;
+			// renumber the mainStreetNet routeNodes in the first loop, in the second loop the remaining ones
 			for (int writeStreetNets = 0; writeStreetNets <=1; writeStreetNets++) {
 				for (RouteNode rn : routeNodes){
 					isOnMainStreetNet = rn.isOnMainStreetNet();
@@ -376,6 +377,7 @@ public class Tile {
 			boolean isOnMainStreetNet = false;
 
 			// count how many turn restrictions we will write for this tile
+			// turn restrictions at mainStreetNet routeNodes are counted in the first loop, in the second loop the remaining ones
 			for (int writeStreetNets = 0; writeStreetNets <=1; writeStreetNets++) {
 				for (RouteNode n : routeNodes){
 					isOnMainStreetNet = n.isOnMainStreetNet();
@@ -396,18 +398,8 @@ public class Tile {
 				nds.writeShort(countTurnRestrictions[writeStreetNets]);
 			}
 
-			
-			for (int writeStreetNets = 0; writeStreetNets <=1; writeStreetNets++) {
-				for (RouteNode n : routeNodes){
-					turnWrite = turnRestrictions.get(n.node.id);
-					while (turnWrite != null) {
-						if (turnWrite.isComplete()) {
-							countTurnRestrictions[writeStreetNets]++;
-						}
-						turnWrite = turnWrite.nextTurnRestrictionAtThisNode;
-					}
-				}
-								
+			// write mainStreetNet routeNodes / turn restrictions in the first loop, in the second loop the remaining ones
+			for (int writeStreetNets = 0; writeStreetNets <=1; writeStreetNets++) {								
 				for (RouteNode n : routeNodes){
 					isOnMainStreetNet = n.isOnMainStreetNet();
 					if (writeStreetNets == 0 && isOnMainStreetNet
