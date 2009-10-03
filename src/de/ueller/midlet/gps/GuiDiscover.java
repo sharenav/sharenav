@@ -189,6 +189,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private TextField  tfGpxRecordMinimumSecs; 
 	private TextField  tfGpxRecordMinimumDistanceMeters; 
 	private TextField  tfGpxRecordAlwaysDistanceMeters;
+	private TextField  tfMainStreetNetDistanceKm;
 	private TextField  tfMinRouteLineWidth;
 	private TextField  tfURL;
 	//#if polish.api.osm-editing
@@ -327,7 +328,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		menuRoutingOptions.append(stopAllWhileRouting);
 		gaugeRoutingEsatimationFac=new Gauge("Speed of route calculation", true, 10, Configuration.getRouteEstimationFac());
 		menuRoutingOptions.append(gaugeRoutingEsatimationFac);
-
+		tfMainStreetNetDistanceKm = new TextField("Distance in km to main street net (used for large route distances):", Integer.toString(Configuration.getMainStreetDistanceKm()), 5, TextField.DECIMAL);
+		menuRoutingOptions.append(tfMainStreetNetDistanceKm);
+		
 		String [] routingShowOpts = new String[3];
 		boolean[] selRoutingShow = new boolean[3];
 		routingShowOpts[0] = "Estimated duration"; selRoutingShow[0]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_ROUTE_DURATION_IN_MAP);
@@ -925,6 +928,10 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				Configuration.setMinRouteLineWidth( 
 						(int) (Float.parseFloat(w)) 
 				); 
+				String km=tfMainStreetNetDistanceKm.getString(); 
+				Configuration.setMainStreetDistanceKm(
+						(int) (Float.parseFloat(km)) 
+				);
 				
 				boolean[] selRouting = new boolean[3];
 				routingOptsGroup.getSelectedFlags(selRouting);

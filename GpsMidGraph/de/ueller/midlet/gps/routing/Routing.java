@@ -12,6 +12,7 @@ import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.PositionMark;
+import de.ueller.midlet.gps.data.Projection;
 import de.ueller.midlet.gps.data.Way;
 
 
@@ -39,7 +40,8 @@ public class Routing implements Runnable {
 	private int maxEstimationSpeed;
 	/** use maximum route calulation speed instead of deep search */
 	private boolean roadRun = false;
-
+	
+	/** when true, the RouteTile will only load and return mainStreetNet RouteNodes, Connections and TurnRestrictions */ 
 	public static boolean onlyMainStreetNet = false;
 	
 	private int oomCounter = 0;
@@ -105,6 +107,18 @@ public class Routing implements Runnable {
 			Configuration.getCfgBitState(Configuration.CFGBIT_USE_TURN_RESTRICTIONS_FOR_ROUTE_CALCULATION) &&
 			Configuration.getTravelMode().isWithTurnRestrictions();
 		
+		
+		// set a mainStreetNetDistance that is unreachable to indicate the mainStreetNet is disabled
+		int mainStreetNetDistanceMeters = 40000000;
+		int maxTimesToReduceMainStreetNet = 0;
+		if (Configuration.getTravelMode().useMainStreetNetForLargeRoutes()) {
+			mainStreetNetDistanceMeters = Configuration.getMainStreetDistanceKm() * 1000;
+			maxTimesToReduceMainStreetNet = 4;
+//			System.out.println("use main street net");
+		}
+		
+		for (int noSolutionRetries = 0; noSolutionRetries <= maxTimesToReduceMainStreetNet; noSolutionRetries++) {
+		int mainStreetConsExamined = 0;
 		while (!(nodes.isEmpty())) {
 			currentNode = (GraphNode) nodes.firstElement();
 			if (checkForTurnRestrictions) {
@@ -239,6 +253,28 @@ public class Routing implements Runnable {
 				}
 			}	// end of check for turn restrictions
 			
+			// MainStreet Net Distance Check - this will turn on the MainStreetNet mode if we are far away enough from routeStart and routeTarget
+			Routing.onlyMainStreetNet = false;
+			for (int cl=0;cl < successor.length;cl++){
+				if ( successor[cl].isMainStreetNet() ) {
+					// count how many mainStreetNet connections have already been examined
+					mainStreetConsExamined++;
+				} else {
+					// use only mainstreet net if at least mainStreetNetDistanceMeters away from start and target points and already enough main street connections have been examined
+					if (mainStreetConsExamined > 20
+						&& MoreMath.dist(tile.lastRouteNode.lat,tile.lastRouteNode.lon,target.lat,target.lon) > mainStreetNetDistanceMeters
+						&& MoreMath.dist(tile.lastRouteNode.lat,tile.lastRouteNode.lon,routeFrom.lat,routeFrom.lon) > mainStreetNetDistanceMeters
+					) {
+						// System.out.println(mainStreetConsExamined + " mainStreetConsExamined " + MoreMath.dist(tile.lastRouteNode.lat,tile.lastRouteNode.lon,target.lat,target.lon));
+						// do not examine non-mainStreetNet connections
+						turnRestricted[cl] = true;
+						// turn on mainStreetNetMode
+						Routing.onlyMainStreetNet = true;
+					}
+				}
+			} 
+			
+			
 			for (int cl=0;cl < successor.length;cl++){
 				if (turnRestricted[cl]) {
 					continue;
@@ -319,6 +355,18 @@ public class Routing implements Runnable {
 			nodes.removeElementAt(0);
 			addToNodes(children); // update nodes
 		}
+		if (Routing.stopRouting) {
+			break;
+		} else {
+			if (mainStreetNetDistanceMeters < 40000000) {
+				// when using the mainStreetNet has given no solution retry with less mainStreetNet by increasing the estimated distance to the mainstreetNet
+				mainStreetNetDistanceMeters *= 2;
+				parent.receiveMessage("retry less mainStreetNet");
+			} else {
+				break; // when no mainstreetnet mode is active no retries are required
+			}
+		}
+		} // end noSolutionRetries loop
 		if (!Routing.stopRouting) {
 			parent.receiveMessage("no Solution found");
 		}
@@ -423,14 +471,14 @@ public class Routing implements Runnable {
 			if (maxEstimationSpeed < 14) {
 				   return (int) (((dist/ maxEstimationSpeed * 10)+turnCost)*estimateFac);				
 			}
-			if (dist > 100000){
-				   // estimate 100 Km/h (28 m/s) as average speed 
-				   return (int) (((dist/2.8f)+turnCost)*estimateFac);
-				}
-			if (dist > 50000){
-				   // estimate 80 Km/h (22 m/s) as average speed 
-				   return (int) (((dist/2.2f)+turnCost)*estimateFac);
-				}
+//			if (dist > 100000){
+//				   // estimate 100 Km/h (28 m/s) as average speed 
+//				   return (int) (((dist/2.8f)+turnCost)*estimateFac);
+//				}
+//			if (dist > 50000){
+//				   // estimate 80 Km/h (22 m/s) as average speed 
+//				   return (int) (((dist/2.2f)+turnCost)*estimateFac);
+//				}
 			if (dist > 10000){
 				   // estimate 60 Km/h (17 m/s) as average speed 
 				   return (int) (((dist/1.7f)+turnCost)*estimateFac);
@@ -458,6 +506,8 @@ public class Routing implements Runnable {
 	} 
 
 	public void solve (float fromLat,float fromLon,float toLat,float toLon) {
+		// when we search the start/target routeNode, we must be able to access all routeNodes, not only the mainStreetNet one's
+		Routing.onlyMainStreetNet = false;
 
 		try {
 			// search ways new  
@@ -491,6 +541,9 @@ public class Routing implements Runnable {
 
 		logger.info("Calculating route from " + fromMark + " to " + toMark);
 
+		// when we search the closest routeNode, we must be able to access all routeNodes, not only the mainStreetNet one's
+		Routing.onlyMainStreetNet = false;
+		
 		try {
 			if (toMark == null) {
 				parent.receiveMessage("Please set target first");
@@ -545,6 +598,7 @@ public class Routing implements Runnable {
 //				parent.getRouteNodes().addElement(new RouteHelper(fromMark.nodeLat[nearestSegment],fromMark.nodeLon[nearestSegment],"oneWay sec"));
 				RouteNode rn=findPrevRouteNode(nearestSegment-1, startNode.lat, startNode.lon, fromMark.nodeLat,fromMark.nodeLon);
 				if (rn != null) {
+					routeFrom = rn;
 					if (! w.isOneDirectionOnly() ) { // if no against oneway rule applies
 //						parent.getRouteNodes().addElement(new RouteHelper(rn.lat,rn.lon,"next back"));
 						// TODO: fill in bearings and cost
@@ -571,6 +625,7 @@ public class Routing implements Runnable {
 				} 
 				rn=findNextRouteNode(nearestSegment, startNode.lat, startNode.lon, fromMark.nodeLat,fromMark.nodeLon);
 				if (rn != null) {
+					routeFrom = rn;
 					// TODO: fill in bearings and cost
 					Connection initialState=new Connection(rn,0,(byte)0,(byte)0, -2);
 					GraphNode firstNode=new GraphNode(initialState,null,0,0,(byte)0);
@@ -721,6 +776,8 @@ public class Routing implements Runnable {
 			} else {
 				parent.receiveMessage("Route found: " + (bestTotal/1000f) + "km");
 			}
+			// when finally we get the sequence we must be able to access all route nodes, not only the mainstreet net's
+			Routing.onlyMainStreetNet = false;
 			Vector sequence = getSequence(solution);
 			/*
 			 * fill in the coordinates of the path segment closest to the source

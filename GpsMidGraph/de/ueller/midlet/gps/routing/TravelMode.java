@@ -24,7 +24,7 @@ public class TravelMode {
 	public final static byte AGAINST_ALL_ONEWAYS = 1;
 	public final static byte BICYLE_OPPOSITE_EXCEPTIONS = 2;	
 	public final static byte WITH_TURN_RESTRICTIONS = 4;	
-
+	public final static byte MAINSTREET_NET_FOR_LARGE_ROUTES = 8;
 	
 	public TravelMode() {
 		
@@ -33,6 +33,11 @@ public class TravelMode {
 	public boolean isWithTurnRestrictions() {
 		return (travelModeFlags & WITH_TURN_RESTRICTIONS) > 0;
 	}
+	
+	public boolean useMainStreetNetForLargeRoutes() {
+		return (travelModeFlags & MAINSTREET_NET_FOR_LARGE_ROUTES) > 0;
+	}
+	
 	
 	public String getName() {
 		return travelModeName;

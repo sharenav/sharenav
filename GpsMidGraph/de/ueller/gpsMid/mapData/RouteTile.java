@@ -230,7 +230,7 @@ public class RouteTile extends RouteBaseTile {
 			lastUse=0;
 			if (loadNodesRequired()){
 				try {
-					loadNodes(Routing.onlyMainStreetNet);					
+					loadNodes(Routing.onlyMainStreetNet);
 				} catch (IOException e) {
 					e.printStackTrace();
 					return null;
@@ -245,7 +245,7 @@ public class RouteTile extends RouteBaseTile {
 
 
 	private void loadNodes(boolean onlyMainStreetNet) throws IOException {
-		// if we reread the nodes and turn restrictions, the connections must be reread as well because it might be another net
+		// when we (re)read the nodes and turn restrictions, the connections must be reread as well because the normal streetNet might be included now as well
 		connections = null;
 		
 		DataInputStream ts=new DataInputStream(Configuration.getMapResource("/t4" + fileId + ".d"));
@@ -258,7 +258,7 @@ public class RouteTile extends RouteBaseTile {
 		int maxReadStreetNets = 1;
 		int totalRouteNodesToLoad = numMainStreetRouteNodes + numNormalStreetRouteNodes;
 		int totalTurnRestrictionsToLoad = numMainStreetTurnRestrictions + numNormalStreetTurnRestrictions;
-		if (Routing.onlyMainStreetNet) {
+		if (onlyMainStreetNet) {
 			maxReadStreetNets = 0;
 			totalRouteNodesToLoad = numMainStreetRouteNodes;
 			totalTurnRestrictionsToLoad = numMainStreetTurnRestrictions;
@@ -437,6 +437,7 @@ public class RouteTile extends RouteBaseTile {
 					loadConnections(bestTime);
 				}
 				tile.lastNodeHadTurnRestrictions = nodes[id-minId].hasTurnRestrictions();
+				tile.lastRouteNode = nodes[id-minId];
 				return connections[id-minId];
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -495,7 +496,10 @@ public class RouteTile extends RouteBaseTile {
 							int lower = cs.readShort();
 							upper = -1*(((0xffff & upper) << 16) + (0xffff & lower));
 						}
-						if (i2==currentTravelMode) {
+						// count only connections for the current travel mode and for the loaded streetNet
+						if (i2==currentTravelMode
+							&& (!onlyMainStreetNetLoaded || onlyMainStreetNetLoaded && c.isMainStreetNet())
+						) {
 							costTime = upper;
 							conSizeTravelMode++;
 						}
@@ -522,12 +526,15 @@ public class RouteTile extends RouteBaseTile {
 			if (conSizeTravelMode == conSize) {
 				connections[in]=cons;
 			} else {
-				// if not all connections are uses, copy only the used connections to a new array that will get used
+				// if not all connections are used, copy only the used connections to a new array that will get used
 				// TODO: therefore try to optimise this with a static array for cons
 				Connection[] cons2=new Connection[conSizeTravelMode];
 				int i2=0;
 				for (int i = 0; i<conSize;i++){
-					if ( (cons[i].connTravelModes & (1 << currentTravelMode)) != 0) {
+					// copy only connections for the current travel mode and for the loaded streetNet
+					if ( (cons[i].connTravelModes
+						& (1 << currentTravelMode)) != 0  && (!onlyMainStreetNetLoaded || onlyMainStreetNetLoaded && cons[i].isMainStreetNet())
+					) {
 						cons2[i2] = cons[i];
 						i2++;
 					}
@@ -536,14 +543,17 @@ public class RouteTile extends RouteBaseTile {
 			}
 				
 		}
-		/**
-		 * Check to see if everything went well with reading the tile.
-		 */
-		int endMarker = cs.readInt();
-		if (endMarker != 0xdeadbeaf) {
-			logger.error("RouteTile did not read correctly");
-			throw new IOException("Failed to read correct end of file marker. Read " + 
-					endMarker + " but expected " + 0xdeadbeaf);
+		
+		if (!onlyMainStreetNetLoaded) {
+			/**
+			 * Check to see if everything went well with reading the tile.
+			 */
+			int endMarker = cs.readInt();
+			if (endMarker != 0xdeadbeaf) {
+				logger.error("RouteTile did not read correctly");
+				throw new IOException("Failed to read correct end of file marker. Read " + 
+						endMarker + " but expected " + 0xdeadbeaf);
+			}
 		}
 	}
 	public String toString() {

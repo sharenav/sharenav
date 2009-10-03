@@ -46,7 +46,7 @@ public class Configuration {
 	 *  the default values for the features added between configVersionStored
 	 *  and VERSION will be set, before the version in the recordstore is increased to VERSION.
 	 */
-	public final static int VERSION = 9;
+	public final static int VERSION = 10;
 
 	public final static int LOCATIONPROVIDER_NONE = 0;
 	public final static int LOCATIONPROVIDER_SIRF = 1;
@@ -233,7 +233,8 @@ public class Configuration {
 	private static final int RECORD_ID_OPENCELLID_APIKEY = 37;
 	private static final int RECORD_ID_PHONE_ALL_TIME_MAX_MEMORY = 38;
 	private static final int RECORD_ID_CFGBITS_64_TO_127 = 39;
-	
+	private static final int RECORD_ID_MAINSTREET_NET_DISTANCE_KM = 40;
+
 	// Gpx Recording modes
 	// GpsMid determines adaptive if a trackpoint is written
 	public final static int GPX_RECORD_ADAPTIVE = 0;
@@ -305,6 +306,7 @@ public class Configuration {
 	private static long phoneAllTimeMaxMemory = 0;
 	
 	private static int minRouteLineWidth = 0;
+	private static int mainStreetDistanceKm = 0;
 	private static int autoRecenterToGpsMilliSecs = 10;
 	private static int currentTravelModeNr = 0;
 	private static int currentTravelMask = 0;
@@ -364,6 +366,7 @@ public class Configuration {
 			opencellid_apikey = readString(database, RECORD_ID_OPENCELLID_APIKEY);
 
 			minRouteLineWidth = readInt(database, RECORD_ID_MIN_ROUTELINE_WIDTH); 
+			mainStreetDistanceKm = readInt(database, RECORD_ID_MAINSTREET_NET_DISTANCE_KM); 
 			autoRecenterToGpsMilliSecs = readInt(database, RECORD_ID_AUTO_RECENTER_TO_GPS_MILLISECS);
 			currentTravelModeNr = readInt(database, RECORD_ID_ROUTE_TRAVEL_MODE);
 			currentTravelMask = 1 << currentTravelModeNr;
@@ -471,6 +474,10 @@ public class Configuration {
 									
 		}
 
+		if (configVersionStored < 10) {
+			setMainStreetDistanceKm(3);
+		}
+		
 		setCfgBits(cfgBits_0_to_63, cfgBits_64_to_127);
 	}
 
@@ -968,10 +975,21 @@ public class Configuration {
 		return minRouteLineWidth;
 	}
 
+	public static int getMainStreetDistanceKm() {
+		return mainStreetDistanceKm;
+	}
+	
+	
 	public static void setMinRouteLineWidth(int w) {
 		minRouteLineWidth = Math.max(w, 1);
 		write(minRouteLineWidth, RECORD_ID_MIN_ROUTELINE_WIDTH);
 	}
+
+	public static void setMainStreetDistanceKm(int km) {
+		mainStreetDistanceKm = km;
+		write(mainStreetDistanceKm, RECORD_ID_MAINSTREET_NET_DISTANCE_KM);
+	}
+
 	
 	public static int getAutoRecenterToGpsMilliSecs() {
 		return autoRecenterToGpsMilliSecs;
