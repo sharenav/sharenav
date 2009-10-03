@@ -40,6 +40,8 @@ public class Routing implements Runnable {
 	/** use maximum route calulation speed instead of deep search */
 	private boolean roadRun = false;
 
+	public static boolean onlyMainStreetNet = false;
+	
 	private int oomCounter = 0;
 	private int expanded;
 	private RouteNode sourcePathSegNodeDummyRouteNode = new RouteNode();
