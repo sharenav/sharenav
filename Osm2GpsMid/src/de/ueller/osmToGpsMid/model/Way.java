@@ -33,6 +33,8 @@ public class Way extends Entity implements Comparable<Way>{
 	public static final byte WAY_FLAG2_CYCLE_OPPOSITE = 8;
 	/** TODO: Is this really in use??? */
 	public static final byte WAY_FLAG2_LONGWAY = 16;
+	public static final byte WAY_FLAG2_MAXSPEED_WINTER = 32;
+
 	
 	//Deprecated
 	//public static final byte WAY_FLAG_MULTIPATH = 4;
@@ -289,6 +291,55 @@ public class Way extends Entity implements Comparable<Way>{
 		return maxSpeed;
 	}
 	
+	/**
+     * Returns the winter maximum speed in km/h if explicitly set for this way,
+     * if not, it returns -1.0
+     * @return
+     */
+	public float getMaxSpeedWinter() {
+		float maxSpeed = -1.0f;
+		if (containsKey("maxspeed:seasonal:winter")){
+			String maxSpeedAttr = getAttribute("maxspeed:seasonal:winter");
+			try {
+				boolean mph = false;
+				
+				if (maxSpeedAttr.equalsIgnoreCase("variable") ||
+						maxSpeedAttr.equalsIgnoreCase("default") ||
+						maxSpeedAttr.equalsIgnoreCase("signals") ||
+						maxSpeedAttr.equalsIgnoreCase("none") ||
+						maxSpeedAttr.equalsIgnoreCase("no")) {
+					/**
+					 * We can't really do anything sensible with these,
+					 * so ignore them
+					 */
+					return maxSpeed;
+				}
+				if (maxSpeedAttr.toLowerCase().endsWith("mph")) {
+					mph = true;
+					maxSpeedAttr = maxSpeedAttr.substring(0, maxSpeedAttr.length() - 3).trim();
+				} else if (maxSpeedAttr.toLowerCase().endsWith("km/h")) {
+					maxSpeedAttr = maxSpeedAttr.substring(0, maxSpeedAttr.length() - 4).trim();
+				} else if (maxSpeedAttr.toLowerCase().endsWith("kmh")) {
+					maxSpeedAttr = maxSpeedAttr.substring(0, maxSpeedAttr.length() - 3).trim();
+				} else if (maxSpeedAttr.toLowerCase().endsWith("kph")) {
+					maxSpeedAttr = maxSpeedAttr.substring(0, maxSpeedAttr.length() - 3).trim();
+				} 
+				maxSpeed=(Float.parseFloat(maxSpeedAttr));
+				if (mph) {
+					maxSpeed *= 1.609; //Convert to km/h
+				}
+			} catch (NumberFormatException e) {
+				int maxs = config.getMaxspeedTemplate(maxSpeedAttr);
+				if (maxs < 0) {
+					System.out.println("Unhandled MaxSpeedWinter for Way + " + toString() +": " + getAttribute("maxspeed"));
+				} else {
+					maxSpeed = maxs;
+				}
+			}
+		}
+		return maxSpeed;
+	}
+	
     /**
      * get or estimate speed in m/s for routing purposes
      * @return
@@ -390,6 +441,7 @@ public class Way extends Entity implements Comparable<Way>{
 		int flags=0;
 		int flags2=0;
 		int maxspeed=50;
+		int maxspeedwinter=50;
 		int nameIdx = -1;
 		int isinIdx = -1;
 		byte layer = 0;
@@ -407,6 +459,13 @@ public class Way extends Entity implements Comparable<Way>{
 			}
 		}
 		maxspeed = (int)getMaxSpeed();
+		maxspeedwinter = (int)getMaxSpeedWinter();
+		if (maxspeedwinter > 0) {
+			flags2 += WAY_FLAG2_MAXSPEED_WINTER;
+		}
+		else {
+			maxspeedwinter = 0;
+		}
 		if (maxspeed > 0){
 			flags+=WAY_FLAG_MAXSPEED;
 		}
@@ -496,6 +555,9 @@ public class Way extends Entity implements Comparable<Way>{
 			// must be below maxspeed as this is a combined flag and FpsMid relies it's below maxspeed
 			if (flags2 != 0) {
 				ds.writeByte(flags2);				
+			}
+			if ((flags2 & WAY_FLAG2_MAXSPEED_WINTER) == WAY_FLAG2_MAXSPEED_WINTER){
+				ds.writeByte(maxspeedwinter);
 			}
 			if ((flags & WAY_FLAG_LAYER) == WAY_FLAG_LAYER){
 				ds.writeByte(layer);
