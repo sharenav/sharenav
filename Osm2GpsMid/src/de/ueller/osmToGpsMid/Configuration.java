@@ -702,7 +702,7 @@ public class Configuration {
 		
 		public void setRouting(String routing) {
 			if (routing == null || attrToBoolean(routing) > 0) {
-				useRouting = "motorcar";
+				useRouting = "motorcar, bicycle, foot";
 			} else if (attrToBoolean(routing) < 0) {
 				useRouting = "false";
 			} else {
