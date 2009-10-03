@@ -79,7 +79,7 @@ public class RouteTile extends RouteBaseTile {
 //			drawBounds(pc, 255, 255, 255);
 			if (nodes == null){
 				try {
-					loadNodes();
+					loadNodes(false);
 				} catch (IOException e) {
 					logger.exception("Failed to load routing nodes", e);
 					return;
@@ -223,7 +223,7 @@ public class RouteTile extends RouteBaseTile {
 			lastUse=0;
 			if (nodes == null){
 				try {
-					loadNodes();
+					loadNodes(false);
 				} catch (IOException e) {
 					e.printStackTrace();
 					return null;
@@ -237,32 +237,55 @@ public class RouteTile extends RouteBaseTile {
 	}
 
 
-	private void loadNodes() throws IOException {
+	private void loadNodes(boolean onlyMainStreetNet) throws IOException {
 		DataInputStream ts=new DataInputStream(Configuration.getMapResource("/t4" + fileId + ".d"));
-		short count = ts.readShort();
-		//#debug debug
-		logger.debug("load nodes "+count+" ("+minId+"/"+maxId+") in Tile t4" + fileId + ".d");
-		nodes = new RouteNode[count];
-		for (short i = 0; i< count ; i++){
-			RouteNode n = new RouteNode();
-			n.lat=ts.readFloat();
-			n.lon=ts.readFloat();
-//			n.conFp=ts.readInt();
-//			ts.readInt();
-			n.setConSize(ts.readByte());
-//			n.fid=fileId;
-			n.id=i+minId;
-			nodes[i]=n;
-		}
-				
-		loadTurnRestrictions(ts);
+		short numMainStreetRouteNodes = ts.readShort();
+		short numNormalStreetRouteNodes = ts.readShort();
+
+		short numMainStreetTurnRestrictions = ts.readShort();
+		short numNormalStreetTurnRestrictions = ts.readShort();
 		
+		int maxReadStreetNets = 1;
+		int totalRouteNodesToLoad = numMainStreetRouteNodes + numNormalStreetRouteNodes;
+		int totalTurnRestrictionsToLoad = numMainStreetTurnRestrictions + numNormalStreetTurnRestrictions;
+		if (onlyMainStreetNet) {
+			maxReadStreetNets = 0;
+			totalRouteNodesToLoad = numMainStreetRouteNodes;
+			totalTurnRestrictionsToLoad = numMainStreetTurnRestrictions;
+		}
+		
+		short idx = 0;
+		short idxTurn = 0;
+		short count = numMainStreetRouteNodes;
+		short countTurnRestrictions = numMainStreetTurnRestrictions;
+		//#debug debug		
+		logger.debug("load nodes "+count+" ("+minId+"/"+maxId+") in Tile t4" + fileId + ".d");
+		nodes = new RouteNode[totalRouteNodesToLoad];
+		turns = new TurnRestriction[totalTurnRestrictionsToLoad];
+		for (int readStreetNets = 0; readStreetNets <= maxReadStreetNets; readStreetNets++) {
+			for (short i = 0; i< count ; i++){
+				RouteNode n = new RouteNode();
+				n.lat=ts.readFloat();
+				n.lon=ts.readFloat();
+	//			n.conFp=ts.readInt();
+	//			ts.readInt();
+				n.setConSize(ts.readByte());
+	//			n.fid=fileId;
+				n.id = idx + minId;
+				nodes[idx++]=n;
+			}
+					
+			loadTurnRestrictions(ts, idxTurn, countTurnRestrictions);
+			// in the next loop read in the normalStreetNet routeNodes
+			count = numNormalStreetRouteNodes;
+			countTurnRestrictions = numNormalStreetTurnRestrictions;
+			idxTurn = numMainStreetTurnRestrictions;
+		}
+	
 		ts.close();
 	}
 	
-	private void loadTurnRestrictions(DataInputStream ts) throws IOException {
-		short count = ts.readShort();
-		turns = new TurnRestriction[count];
+	private void loadTurnRestrictions(DataInputStream ts, short idxTurn, short count) throws IOException {
 		for (short i = 0; i < count; i++) {
 			TurnRestriction turn = new TurnRestriction();
 			turn.viaRouteNodeId = ts.readInt();
@@ -270,8 +293,8 @@ public class RouteTile extends RouteBaseTile {
 			turn.toRouteNodeId = ts.readInt();
 			turn.affectedTravelModes = ts.readByte();
 			turn.flags = ts.readByte();
-			if (i > 0 && turn.viaRouteNodeId == turns[i-1].viaRouteNodeId) {
-				turns[i-1].nextTurnRestrictionAtThisNode = turn;
+			if (idxTurn > 0 && turn.viaRouteNodeId == turns[idxTurn-1].viaRouteNodeId) {
+				turns[idxTurn-1].nextTurnRestrictionAtThisNode = turn;
 			}
 			if (turn.isViaTypeWay()) {
 				int count2 = MoreMath.signedToInt(ts.readByte());
@@ -282,7 +305,7 @@ public class RouteTile extends RouteBaseTile {
 				turn.extraViaNodes = addViaNodes;
 			}
 			
-			turns[i] = turn;
+			turns[idxTurn++] = turn;
 		}
 //		if (count > 0) {
 //			System.out.println(count + " turn restrictions loaded");
@@ -293,7 +316,7 @@ public class RouteTile extends RouteBaseTile {
 		if (contain(lat,lon,0.03f)){
 			if (nodes == null){
 				try {
-					loadNodes();
+					loadNodes(false);
 				} catch (IOException e) {
 					e.printStackTrace();
 					return null;
@@ -320,7 +343,7 @@ public class RouteTile extends RouteBaseTile {
 		if (contain(lat,lon)){
 			if (nodes == null){
 				try {
-					loadNodes();
+					loadNodes(false);
 				} catch (IOException e) {
 					e.printStackTrace();
 					return null;
@@ -356,7 +379,7 @@ public class RouteTile extends RouteBaseTile {
 			lastUse=0;
 			if (nodes == null){
 				try {
-					loadNodes();
+					loadNodes(false);
 				} catch (IOException e) {
 					e.printStackTrace();
 					return null;
@@ -396,7 +419,7 @@ public class RouteTile extends RouteBaseTile {
 			lastUse=0;
 			try {
 				if (nodes == null){
-					loadNodes();
+					loadNodes(false);
 				}
 				if (connections == null){
 					loadConnections(bestTime);
