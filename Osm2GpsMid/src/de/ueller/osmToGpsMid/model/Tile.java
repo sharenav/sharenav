@@ -377,13 +377,13 @@ public class Tile {
 				byte routeNodeWayFlags = 0;
 				for (Connection c : n.connected){
 					minConnectionId ++;
-					routeNodeWayFlags |= c.wayTravelModes;
+					routeNodeWayFlags |= c.connTravelModes;
 					cds.writeInt(c.to.id);
 					// write out wayTravelModes flag
-					cds.writeByte(c.wayTravelModes);
+					cds.writeByte(c.connTravelModes);
 					for (int i=0; i<TravelModes.travelModeCount; i++) {
 						// only store times for available travel modes of the connection
-						if ( (c.wayTravelModes & (1<<i)) !=0 ) {
+						if ( (c.connTravelModes & (1<<i)) !=0 ) {
 							/**
 							 * If we can't fit the values into short,
 							 * we write an int. In order for the other
