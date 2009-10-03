@@ -542,7 +542,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			}
 			fw.write("\r\n");
 			fw.write("#Route ability can be disabled to save space in the midlet by setting to false\r\n");
-			fw.write("#or set to one defined in the style-file, e.g. motorcar or bicycle\r\n");
+			fw.write("#or set to one or more defined in the style-file, e.g. motorcar, bicycle\r\n");
 			fw.write("useRouting = " + config.useRouting + "\r\n");
 			fw.write("\r\n");
 			fw.write("#Style-file containing which way, area and POI types to include n the midlet\r\n");
