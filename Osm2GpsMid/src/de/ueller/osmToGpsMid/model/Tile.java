@@ -37,6 +37,7 @@ public class Tile {
 	public Collection<Node> nodes=new ArrayList<Node>();
 	int idxMin=Integer.MAX_VALUE;
 	int idxMax=0;
+	short numMainStreetRouteNodes = 0;
 	
 	private static int minConnectionId = 0;
 	
@@ -268,6 +269,9 @@ public class Tile {
 //							System.out.println("norm" + rn.id);							
 //						}
 						rnSeq.inc();
+						if (isOnMainStreetNet) {
+							numMainStreetRouteNodes++;
+						}
 					}
 				}
 			}
@@ -359,15 +363,51 @@ public class Tile {
 			DataOutputStream cds = new DataOutputStream(new BufferedOutputStream(cfo));
 			FileOutputStream fo = new FileOutputStream(path+"/t"+zl+fid+".d");
 			DataOutputStream nds = new DataOutputStream(new BufferedOutputStream(fo));
-			nds.writeShort(routeNodes.size());
+			// write out the number of mainStreetNet RouteNodes
+			nds.writeShort(numMainStreetRouteNodes);
+			// write out the number of normalStreetNet RouteNodes
+			nds.writeShort(routeNodes.size() - numMainStreetRouteNodes);
+
 			cds.writeInt(minConnectionId);
 
-			// count how many turn restrictions we will write for this tile
-			short countTurnRestrictions=0;
+			short countTurnRestrictions[] = new short[2];
 			TurnRestriction turnWrite=null;
 			boolean hasTurnRestriction=false;
 			boolean isOnMainStreetNet = false;
+
+			// count how many turn restrictions we will write for this tile
 			for (int writeStreetNets = 0; writeStreetNets <=1; writeStreetNets++) {
+				for (RouteNode n : routeNodes){
+					isOnMainStreetNet = n.isOnMainStreetNet();
+					if (writeStreetNets == 0 && isOnMainStreetNet
+						||
+						writeStreetNets > 0 && !isOnMainStreetNet
+					) { 
+						turnWrite = turnRestrictions.get(n.node.id);
+						while (turnWrite != null) {
+							if (turnWrite.isComplete()) {
+								countTurnRestrictions[writeStreetNets]++;
+							}
+							turnWrite = turnWrite.nextTurnRestrictionAtThisNode;
+						}
+					}
+				}
+				// write counter how many turn restrictions are in this tile in mainstreet/normalNet
+				nds.writeShort(countTurnRestrictions[writeStreetNets]);
+			}
+
+			
+			for (int writeStreetNets = 0; writeStreetNets <=1; writeStreetNets++) {
+				for (RouteNode n : routeNodes){
+					turnWrite = turnRestrictions.get(n.node.id);
+					while (turnWrite != null) {
+						if (turnWrite.isComplete()) {
+							countTurnRestrictions[writeStreetNets]++;
+						}
+						turnWrite = turnWrite.nextTurnRestrictionAtThisNode;
+					}
+				}
+								
 				for (RouteNode n : routeNodes){
 					isOnMainStreetNet = n.isOnMainStreetNet();
 					if (writeStreetNets == 0 && isOnMainStreetNet
@@ -382,7 +422,7 @@ public class Tile {
 						turnWrite = turnRestrictions.get(n.node.id);
 						while (turnWrite != null) {
 							if (turnWrite.isComplete()) {
-								countTurnRestrictions++;
+								countTurnRestrictions[writeStreetNets]++;
 								hasTurnRestriction=true;
 							}
 							turnWrite = turnWrite.nextTurnRestrictionAtThisNode;
@@ -434,16 +474,8 @@ public class Tile {
 						}
 					} // end of street net condition
 				} // end of routeNodes loop
-			} // end of writeStreetNets loop
-			/**
-			 * Write a special marker, so that we can detect if something
-			 * went wrong with decoding the variable length encoding
-			 */
-			cds.writeInt(0xdeadbeaf);
-			
-			// attach turn restrictions at the end of the node data
-			nds.writeShort(countTurnRestrictions);		
-			for (int writeStreetNets = 0; writeStreetNets <=1; writeStreetNets++) {
+								
+				// attach turn restrictions at the end of the mainstreet / normal street node data
 				for (RouteNode n : routeNodes){
 					isOnMainStreetNet = n.isOnMainStreetNet();
 					if (writeStreetNets == 0 && isOnMainStreetNet
@@ -471,9 +503,14 @@ public class Tile {
 							// System.out.println(turnWrite.toString(OxParser.getWayHashMap()));
 							turnWrite = turnWrite.nextTurnRestrictionAtThisNode;
 						}
-					} // end of street net condition
-				} // end of routeNodes loop
+					} // end of street net condition for turn restrictions
+				} // end of routeNodes loop for turn restrictions								
 			} // end of writeStreetNets loop
+			/**
+			 * Write a special marker, so that we can detect if something
+			 * went wrong with decoding the variable length encoding
+			 */
+			cds.writeInt(0xdeadbeaf);			
 			
 			nds.close();
 			cds.close();
