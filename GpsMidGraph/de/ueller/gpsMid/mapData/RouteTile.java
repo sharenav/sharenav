@@ -136,12 +136,23 @@ public class RouteTile extends RouteBaseTile {
 									Connection c2=reverseCons[iii];
 									if (c2.toId - minId == i) {
 										oneway = false;
+//										if (c.isMainStreetNet() != c2.isMainStreetNet()) {
+//											System.out.println("WARNING: Con and ReverseCon in different street nets at " + rnt.toString());
+//										}
 									}
 								}
 								if (oneway) {
-									g.setColor(255, 100, 100);
+									if (c.isMainStreetNet()) {
+										g.setColor(255, 200, 200);
+									} else {
+										g.setColor(255, 50, 50);										
+									}
 								} else {
-									g.setColor(0, 100, 255);
+									if (c.isMainStreetNet()) {
+										g.setColor(100, 200, 255);
+									} else {
+										g.setColor(0, 50, 200);
+									}
 								}
 								pc.getP().forward(rnt.lat, rnt.lon, pc.lineP2);
 								g.drawLine(pc.swapLineP.x, pc.swapLineP.y, pc.lineP2.x, pc.lineP2.y);
