@@ -253,24 +253,26 @@ public class Routing implements Runnable {
 				}
 			}	// end of check for turn restrictions
 			
+			// use only mainstreet net if at least mainStreetNetDistanceMeters away from start and target points and already enough main street connections have been examined
 			// MainStreet Net Distance Check - this will turn on the MainStreetNet mode if we are far away enough from routeStart and routeTarget
-			Routing.onlyMainStreetNet = false;
+			if (mainStreetConsExamined > 20
+				&& MoreMath.dist(tile.lastRouteNode.lat,tile.lastRouteNode.lon,target.lat,target.lon) > mainStreetNetDistanceMeters
+				&& MoreMath.dist(tile.lastRouteNode.lat,tile.lastRouteNode.lon,routeFrom.lat,routeFrom.lon) > mainStreetNetDistanceMeters
+			) {
+				// System.out.println(mainStreetConsExamined + " mainStreetConsExamined " + MoreMath.dist(tile.lastRouteNode.lat,tile.lastRouteNode.lon,target.lat,target.lon));
+				// turn on mainStreetNetMode
+				Routing.onlyMainStreetNet = true;
+			} else {
+				Routing.onlyMainStreetNet = false;
+			}
+
 			for (int cl=0;cl < successor.length;cl++){
 				if ( successor[cl].isMainStreetNet() ) {
 					// count how many mainStreetNet connections have already been examined
 					mainStreetConsExamined++;
-				} else {
-					// use only mainstreet net if at least mainStreetNetDistanceMeters away from start and target points and already enough main street connections have been examined
-					if (mainStreetConsExamined > 20
-						&& MoreMath.dist(tile.lastRouteNode.lat,tile.lastRouteNode.lon,target.lat,target.lon) > mainStreetNetDistanceMeters
-						&& MoreMath.dist(tile.lastRouteNode.lat,tile.lastRouteNode.lon,routeFrom.lat,routeFrom.lon) > mainStreetNetDistanceMeters
-					) {
-						// System.out.println(mainStreetConsExamined + " mainStreetConsExamined " + MoreMath.dist(tile.lastRouteNode.lat,tile.lastRouteNode.lon,target.lat,target.lon));
-						// do not examine non-mainStreetNet connections
-						turnRestricted[cl] = true;
-						// turn on mainStreetNetMode
-						Routing.onlyMainStreetNet = true;
-					}
+				} else if (Routing.onlyMainStreetNet) {
+				// do not examine non-mainStreetNet connections
+					turnRestricted[cl] = true;
 				}
 			} 
 			
