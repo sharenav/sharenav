@@ -28,11 +28,13 @@ import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
+import de.enough.polish.util.Locale;
+
 public class Splash extends Canvas implements CommandListener,Runnable{
 	private Image splash;
     /** Soft button to go back from about screen. */
-    private final Command BACK_CMD = new Command("Accept", Command.OK, 2);
-    private final Command EXIT_CMD = new Command("Decline", Command.EXIT, 1);
+    private final Command BACK_CMD = new Command(Locale.get("splash.Accept"), Command.OK, 2);
+    private final Command EXIT_CMD = new Command(Locale.get("splash.Deny"), Command.EXIT, 1);
 	private final GpsMid main;
 	String[] txt = {
 		"Disclaimer:",
@@ -186,9 +188,9 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 			boolean current = Configuration.getCfgBitState(Configuration.CFGBIT_SKIPP_SPLASHSCREEN);
 			Configuration.setCfgBitState(Configuration.CFGBIT_SKIPP_SPLASHSCREEN, !current, true);
 			if (current) {
-				main.alert("Splash", "Showing splash screen on startup", 3000);
+				main.alert("Splash", Locale.get("splash.ShowSplash"), 3000);
 			} else {
-				main.alert("Splash", "Not showing splash screen again...", 3000);
+				main.alert("Splash", Locale.get("splash.HideSplash"), 3000);
 			}
 		}
 	}

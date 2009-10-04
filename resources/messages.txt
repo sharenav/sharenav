@@ -1,0 +1,4 @@
+splash.Accept=Accept
+splash.Deny=Deny
+splash.ShowSplash=Showing splash screen on startup
+splash.HideSplash=Not showing splash screen again...

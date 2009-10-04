@@ -192,8 +192,11 @@
 				-->
 				<!-- add the localization element for created localized
 				     versions of your application: -->
-				<localization locales="en_US" unless="test" />
-				<localization locales="en_US" if="test" />
+				<localization  unless="test">
+					<locale name="de" />
+					<locale name="en" />
+				</localization>
+				<localization locales="en" if="test" />
 			</resources>
 			
 			<!-- obfuscator settings: do not obfuscate when the test-property is true -->

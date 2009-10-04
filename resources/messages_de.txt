@@ -1,0 +1,4 @@
+splash.Accept=Akzeptieren
+splash.Deny=Ablehnen
+splash.ShowSplash=Zeige Startbildschirm beim naechsten Start
+splash.HideSplash=Startbildschirm wird nicht mehr gezeigt
