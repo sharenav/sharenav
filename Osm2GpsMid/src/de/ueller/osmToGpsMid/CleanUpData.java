@@ -13,7 +13,6 @@ package de.ueller.osmToGpsMid;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.TreeMap;
 
 import de.ueller.osmToGpsMid.model.Node;
 import de.ueller.osmToGpsMid.model.SubPath;
@@ -42,7 +41,6 @@ public class CleanUpData {
 		System.out.println("after cleanup Nodes " + parser.getNodes().size());
 		System.out.println("after cleanup Ways  " + parser.getWays().size());
 		System.out.println("after cleanup Relations  " + parser.getRelations().size());
-//		System.exit(1);
 	}
 	
 	/**
@@ -50,19 +48,20 @@ public class CleanUpData {
 	 */
 	private void removeDupNodes() {
 		int progressCounter = 0;
-		int noNodes = parser.getNodes().size()/20;
+		int noNodes = parser.getNodes().size() / 20;
 		KDTree kd = new KDTree(3);
 		double [] latlonKey; 
-		double [] lowk = new double[3];
-		double [] uppk = new double[3];		
-		for (Node n:parser.getNodes()){
+		//double [] lowk = new double[3];
+		//double [] uppk = new double[3];		
+		for (Node n:parser.getNodes()) {
 			
 			progressCounter++;
 			if (noNodes > 0 && progressCounter % noNodes == 0) {
-				System.out.println("Processed " + progressCounter + " out of " + noNodes*20 + " Nodes");
+				System.out.println("Processed " + progressCounter + " out of " 
+						+ noNodes * 20 + " nodes");
 			}
 			
-			n.used=true;			
+			n.used = true;			
 			latlonKey = MyMath.latlon2XYZ(n);			
 			
 			/*lowk[0] = latlonKey[0] - 10.0;
@@ -95,7 +94,7 @@ public class CleanUpData {
 				try {
 					n.used = false;
 					Node rn = (Node)kd.search(latlonKey);
-					if (n.getType(conf) != rn.getType(conf)){
+					if (n.getType(conf) != rn.getType(conf)) {
 						System.err.println("Warn " + n + " / " + rn);
 						//Shouldn't substitute in this case;
 						n.used = true;						
@@ -103,31 +102,30 @@ public class CleanUpData {
 						replaceNodes.put(n, rn);
 					}					
 				} catch (KeySizeException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			}			
 		}
 		
-		Iterator<Node> it=parser.getNodes().iterator();
-		int rm=0;
-		while (it.hasNext()){
-			Node n=it.next();
-			if (! n.used){
+		Iterator<Node> it = parser.getNodes().iterator();
+		int rm = 0;
+		while (it.hasNext()) {
+			Node n = it.next();
+			if (n.used == false) {
 				it.remove();
 				rm++;
 			}
 		}
 		substitute();
-		System.out.println("remove " + rm + " dupLicate Nodes");
+		System.out.println("Removed " + rm + " duplicate nodes");
 	}
 
 	/**
-	 * @param no
-	 * @param n
+	 * Replaces all duplicate nodes in the ways which use them.
+	 * Uses the replaceNodes HashMap for this.
 	 */
 	private boolean substitute() {		
-		for (Way w:parser.getWays()){
+		for (Way w:parser.getWays()) {
 			w.replace(replaceNodes);
 		}
 		return true;
@@ -137,29 +135,29 @@ public class CleanUpData {
 	 * 
 	 */
 	private void removeUnusedNodes() {
-		for (Node n:parser.getNodes()){
-			if (n.getType(conf) < 0 ){
-				n.used=false;
+		for (Node n:parser.getNodes()) {
+			if (n.getType(conf) < 0 ) {
+				n.used = false;
 			} else {
-				n.used=true;
+				n.used = true;
 			}
 		}
 
 		for (Way w:parser.getWays()){
-			for (SubPath s:w.getSubPaths()){
-				for (Node n:s.getNodes()){
-					n.used=true;
+			for (SubPath s:w.getSubPaths()) {
+				for (Node n:s.getNodes()) {
+					n.used = true;
 				}
 			}
 		}
-		ArrayList<Node> rmNodes=new ArrayList<Node>();
-		for (Node n:parser.getNodes()){
-			if (! n.used){
+		ArrayList<Node> rmNodes = new ArrayList<Node>();
+		for (Node n:parser.getNodes()) {
+			if (n.used == false) {
 				rmNodes.add(n);
 			}
 		}
-		System.out.println("remove " + rmNodes.size() + " unused Nodes");
-	    for (Node n:rmNodes){
+		System.out.println("Removed " + rmNodes.size() + " unused nodes");
+	    for (Node n:rmNodes) {
 	    	parser.removeNode(n.id);
 	    }		
 	}
