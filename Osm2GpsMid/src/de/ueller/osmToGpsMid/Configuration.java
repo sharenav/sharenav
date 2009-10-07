@@ -312,11 +312,11 @@ public class Configuration {
 						if (propFile.endsWith(".properties")) {
 							cf = new FileInputStream(propFile);
 						} else {
-							cf = new FileInputStream(propFile+".properties");
+							cf = new FileInputStream(propFile + ".properties");
 						}
 					} catch (FileNotFoundException e) {
-						System.out.println(propFile + ".properties not found, try bundled version");
-						cf=getClass().getResourceAsStream("/"+propFile+".properties");
+						System.out.println(propFile + ".properties not found, trying bundled version");
+						cf = getClass().getResourceAsStream("/" + propFile + ".properties");
 						if (cf == null){
 							throw new IOException(propFile + " is not a valid region");
 						}
@@ -343,7 +343,7 @@ public class Configuration {
 			resetColors();
 			initialiseRealScale();
 			resetConfig();
-			planet="TEST";
+			planet = "TEST";
 			
 		}
 		
@@ -351,7 +351,7 @@ public class Configuration {
 			if (COLOR_COUNT != COLORNAMES.length) {
 				System.out.println("WARNING: COLORNAMES.length (" + COLORNAMES.length + ") does not match COLOR_COUNT (" + COLOR_COUNT + ")");				
 			}
-			for (int i=0; i<COLOR_COUNT; i++) {
+			for (int i = 0; i < COLOR_COUNT; i++) {
 				COLORS[i] = 0xFFFFFFFF; 			// mark that color is not specified
 				COLORS_AT_NIGHT[i] = 0xFFFFFFFF;	// preset that no night color is specified
 			}
@@ -360,20 +360,20 @@ public class Configuration {
 		private void initialiseRealScale() {
 			// precalculate real scale levels for pseudo zoom levels
 			// pseudo zoom level 0 equals to scale 0
-			realScale[0]=0;
+			realScale[0] = 0;
 			// startup pseudo zoom level 23
-			realScale[23]=15000;
+			realScale[23] = 15000;
 			// pseudo zoom level 0..21
-			for(int i=22;i>0;i--) {
-				realScale[i]=realScale[i+1]*1.5f;
+			for(int i = 22; i > 0; i--) {
+				realScale[i] = realScale[i + 1] * 1.5f;
 			}
 			// pseudo zoom level 23..32
-			for(int i=24;i<realScale.length;i++) {
-				realScale[i]=realScale[i-1]/1.5f;
+			for(int i = 24; i < realScale.length; i++) {
+				realScale[i] = realScale[i - 1] / 1.5f;
 			}
 			// subtract 100 to avoid wrong bounds due to rounding errors
-			for(int i=1;i<realScale.length;i++) {
-				realScale[i]-=100;
+			for(int i = 1; i < realScale.length; i++) {
+				realScale[i] -= 100;
 				//System.out.println("Pseudo Zoom Level: " + i + " Real Scale: " + realScale[i]);
 			}
 		}
@@ -390,13 +390,14 @@ public class Configuration {
 		}
 		
 		public void loadPropFile(InputStream propIS) throws IOException {
-			if (propIS == null)
+			if (propIS == null) {
 				throw new IOException("Invalid properties file");
-			rb= new PropertyResourceBundle(propIS);
-			vb=new PropertyResourceBundle(getClass().getResourceAsStream("/version.properties"));
+			}
+			rb = new PropertyResourceBundle(propIS);
+			vb = new PropertyResourceBundle(getClass().getResourceAsStream("/version.properties"));
 			setRouting(getString("useRouting"));
-			maxRouteTileSize=Integer.parseInt(getString("routing.maxTileSize"));
-			maxTileSize=Integer.parseInt(getString("maxTileSize"));
+			maxRouteTileSize = Integer.parseInt(getString("routing.maxTileSize"));
+			maxTileSize = Integer.parseInt(getString("maxTileSize"));
 			setStyleFileName(getString("style-file"));
 			appParam = getString("app");
 			enableEditingSupport = getString("EnableEditing").equalsIgnoreCase("true");
@@ -422,8 +423,8 @@ public class Configuration {
 				legendInputStream = new FileInputStream(styleFile);
 			} catch (IOException e) {
 				System.out.println("Trying internal styleFile " + styleFile);
-				if (getClass().getResource("/"+styleFile) != null) {
-					styleFile = "/"+styleFile;
+				if (getClass().getResource("/" + styleFile) != null) {
+					styleFile = "/" + styleFile;
 				} else {
 					System.out.println("Warning: Style file (" + styleFile + ") not found. Using default one!");
 					styleFile = "/style-file.xml";
@@ -567,7 +568,7 @@ public class Configuration {
 			} else {
 				System.out.println("Opening planet file: " + planet);
 				
-				fr= new FileInputStream(planet);
+				fr = new FileInputStream(planet);
 				if (planet.endsWith(".bz2") || planet.endsWith(".gz")){
 					if (planet.endsWith(".bz2")) {
 						fr.read();
@@ -578,10 +579,10 @@ public class Configuration {
 					}
 					/*int availableProcessors = Runtime.getRuntime().availableProcessors();
 					if (availableProcessors > 1){
-						System.out.println("found " + availableProcessors + " CPU's: uncompress in seperate thread");
+						System.out.println("Found " + availableProcessors + " CPU's: uncompress in seperate thread");
 						fr = new ThreadBufferedInputStream(fr);				
 					} else {						
-						System.out.println("only one CPU: uncompress in same thread");						
+						System.out.println("Only one CPU: uncompress in same thread");						
 					}*/
 				}
 				/**
@@ -616,7 +617,7 @@ public class Configuration {
 				cellStream = new GZIPInputStream(new BufferedInputStream(conn.getInputStream()));
 				fr = new TeeInputStream(cellStream,new FileOutputStream(new File(getTempDir() + "CellDB.txt")));
 			} else {
-				fr= new FileInputStream(cellSource);
+				fr = new FileInputStream(cellSource);
 				if (cellSource.endsWith(".bz2") || cellSource.endsWith(".gz")){
 					if (cellSource.endsWith(".bz2")) {
 						fr.read();
@@ -678,14 +679,14 @@ public class Configuration {
 			}
 			
 			if (i > 0) {
-				System.out.println("found " + i + " bounds");
-				Bounds[] ret=new Bounds[i];
-				for (int l=0;l < i;l++){
-					ret[l]=new Bounds();
-					ret[l].extend(getFloat("region."+(l+1)+".lat.min"),
-							getFloat("region."+(l+1)+".lon.min"));
-					ret[l].extend(getFloat("region."+(l+1)+".lat.max"),
-							getFloat("region."+(l+1)+".lon.max"));
+				System.out.println("Found " + i + " bounds");
+				Bounds[] ret = new Bounds[i];
+				for (int l = 0; l < i; l++){
+					ret[l] = new Bounds();
+					ret[l].extend(getFloat("region." + (l + 1) + ".lat.min"),
+							getFloat("region." + (l + 1) + ".lon.min"));
+					ret[l].extend(getFloat("region." + (l + 1) + ".lat.max"),
+							getFloat("region." + (l + 1) + ".lon.max"));
 				}
 				return ret;				
 			} else {
