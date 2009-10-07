@@ -335,7 +335,9 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			while (jes.hasMoreElements()) {
 				String entryName = jes.nextElement().getName();
 				if ((entryName.startsWith("GpsMid-")) && (entryName.endsWith(".jar"))) {
-					res.add(entryName.substring(0, entryName.lastIndexOf("-")));
+					if (!res.contains(entryName.substring(0, entryName.lastIndexOf("-")))) {
+						res.add(entryName.substring(0, entryName.lastIndexOf("-")));
+					}
 				}
 
 			}

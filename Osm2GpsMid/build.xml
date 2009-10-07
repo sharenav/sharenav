@@ -1,5 +1,5 @@
 <project name="Osm2GpsMid"
-         default="deploy"
+         default="deploy_int"
          basedir=".">
 
 
@@ -58,11 +58,15 @@
 	<tstamp>
 		<format property="TODAY_DE" pattern="yyyy-MM-dd HH:mm z" locale="de,DE"/>
 	</tstamp>
+   	<echo message="Lang: ${local_lang}"/>
    	<copy todir="resources">
    		<fileset dir="../GpsMid/dist">
-   			<include name="*.jar"/>
+   			
+   			<include name="*_${local_lang}.jar" if="local_lang" />
+   			<include name="*.jar" unless="local_lang" />
    		</fileset>
    	</copy>
+
    	<propertyfile file="${resources.dir}/version.properties">
    		<entry key="app" value="${app}"/>
    		<entry key="version" value="${version}"/>
@@ -76,6 +80,7 @@
    		<entry key="style-file" value="style-file.xml"/>
    		<entry key="EnableEditing" value="false"/>
    		<entry key="useCellID" value="false"/>
+   		<entry key="lang" value="${local_lang}"/>
    	</propertyfile>
    </target>
 
@@ -115,7 +120,7 @@
 	</target>
 	
    	<target name="deploy" depends="explode,compile">
-      <jar jarfile="${dist.dir}/${ant.project.name}-${version}.jar">
+      <jar jarfile="${dist.dir}/${ant.project.name}-${version}_${local_lang2}.jar">
 		<manifest>
     		<attribute name="Built-By" value="${user.name}"/>
 			<attribute name="Main-Class" value="de.ueller.osmToGpsMid.BundleGpsMid"/>
@@ -145,6 +150,39 @@
    	 <fileset file="style-file.dtd" />
       </jar>
    </target>
+	
+	<target name="deploy_int">
+		<delete file="${resources.dir}/version.properties" failonerror="false"/>
+		<delete failonerror="false">
+		    <fileset dir="${resources.dir}">
+		        <include name="*.jar" />
+		    </fileset>  
+		</delete>
+		<antcall target="deploy">
+			<param name="local_lang2" value="multi"/>
+		</antcall>
+        <delete file="${resources.dir}/version.properties" failonerror="false"/>
+        <delete failonerror="false">
+            <fileset dir="${resources.dir}">
+                <include name="*.jar" />
+            </fileset>  
+        </delete>
+		<antcall target="deploy">
+			<param name="local_lang2" value="de"/>
+			<param name="local_lang" value="de"/>
+		</antcall>
+        <delete file="${resources.dir}/version.properties" failonerror="false"/>
+        <delete failonerror="false">
+            <fileset dir="${resources.dir}">
+                <include name="*.jar" />
+            </fileset>  
+        </delete>
+
+		<antcall target="deploy">
+			<param name="local_lang2" value="en"/>
+			<param name="local_lang" value="en"/>
+		</antcall>
+	</target>
 
    <target name="explode" depends="prepare">
       <taskdef  classname="org.jboss.portal.common.ant.Explode"

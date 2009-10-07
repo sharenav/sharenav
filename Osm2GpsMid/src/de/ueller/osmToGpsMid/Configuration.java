@@ -482,10 +482,19 @@ public class Configuration {
 			String baseName = appParam;
 			if ("false".equals(baseName)){
 				return null;
-			}			
-			return getClass().getResourceAsStream("/"+baseName
-			+"-"+getVersion()
-			+".jar");
+			}
+			InputStream is = getClass().getResourceAsStream("/"+baseName
+					+"-"+getVersion()
+					+".jar");
+			if (is == null) {
+				String lang = getLang();
+				System.out.println("Using lang=" + lang);
+				is = getClass().getResourceAsStream("/"+baseName
+						+"-"+getVersion()
+						+ "_" + getLang()
+						+".jar");
+			}
+			return is;
 		}		
 		public String getAppParam(){
 			return appParam;
@@ -715,6 +724,16 @@ public class Configuration {
 		 */
 		public String getVersion() {
 			return vb.getString("version");
+		}
+		
+		public String getLang() {
+			String lang = getString("lang");
+			if (lang.equalsIgnoreCase("${local_lang}")) {
+				//This is an ugly hack, as the ant build script
+				//doesn't support if when defining local_lang
+				return "en";
+			}
+			return lang; 
 		}
 
 		public String getBundleDate() {
