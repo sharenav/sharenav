@@ -156,7 +156,7 @@ public class CleanUpData {
 				rmNodes.add(n);
 			}
 		}
-		System.out.println("Removed " + rmNodes.size() + " unused nodes");
+		System.out.println("Removing " + rmNodes.size() + " unused nodes");
 	    for (Node n:rmNodes) {
 	    	parser.removeNode(n.id);
 	    }		
