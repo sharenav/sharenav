@@ -10,7 +10,6 @@
  */
 package de.ueller.osmToGpsMid;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,13 +25,10 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.CRC32;
-import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
-
-import org.apache.tools.bzip2.CBZip2InputStream;
 
 import de.ueller.osmToGpsMid.model.Relation;
 import de.ueller.osmToGpsMid.model.RouteAccessRestriction;
@@ -40,10 +36,15 @@ import de.ueller.osmToGpsMid.model.TravelMode;
 import de.ueller.osmToGpsMid.model.TravelModes;
 
 
-
+/**
+ * This is the main class of Osm2GpsMid.
+ * It triggers all the steps necessary to create a GpsMid JAR file
+ * ready for downloading to the mobile phone.
+ */
 public class BundleGpsMid {
-	static boolean  compressed=true;
+	static boolean compressed = true;
 	static Calendar startTime;
+
 	/**
 	 * @param args
 	 */
@@ -56,7 +57,7 @@ public class BundleGpsMid {
 				GuiConfigWizard gcw = new GuiConfigWizard();
 				c = gcw.startWizard();
 			} else {
-				c=new Configuration(args);
+				c = new Configuration(args);
 			}
 			
 			validateConfig(c);
@@ -68,9 +69,9 @@ public class BundleGpsMid {
 			
 			startTime = Calendar.getInstance();
 
-			TravelMode tm=null;
+			TravelMode tm = null;
 			if (Configuration.attrToBoolean(c.useRouting) >= 0) {
-				for (int i=0; i < TravelModes.travelModeCount; i++) {				
+				for (int i = 0; i < TravelModes.travelModeCount; i++) {				
 					tm = TravelModes.travelModes[i];
 					System.out.println("Route rules in " + c.getStyleFileName() + " for " + tm.getName() + ":");
 					if ( (tm.travelModeFlags & TravelMode.AGAINST_ALL_ONEWAYS) > 0) {
@@ -95,10 +96,10 @@ public class BundleGpsMid {
 			String tmpDir = c.getTempDir();
 			System.out.println("unpack Application to " + tmpDir);
 			expand(c, tmpDir);
-			File target=new File(tmpDir);
+			File target = new File(tmpDir);
 			createPath(target);
 			
-			fr= c.getPlanetSteam();
+			fr = c.getPlanetSteam();
 			OxParser parser = new OxParser(fr,c);
 			System.out.println("read Nodes " + parser.getNodes().size());
 			System.out.println("read Ways  " + parser.getWays().size());
@@ -140,7 +141,7 @@ public class BundleGpsMid {
 				System.out.println("optimize Route Date");
 				rd.optimise();
 			}
-			CreateGpsMidData cd=new CreateGpsMidData(parser,target.getCanonicalPath());
+			CreateGpsMidData cd = new CreateGpsMidData(parser,target.getCanonicalPath());
 			//				rd.write(target.getCanonicalPath());
 			//				cd.setRouteData(rd);
 			cd.setConfiguration(c);
@@ -148,7 +149,7 @@ public class BundleGpsMid {
 			new CalcNearBy(parser);
 			cd.exportMapToMid();
 			//Drop parser to conserve Memory
-			parser=null;
+			parser = null;
 			
 			if (!c.getCellOperator().equalsIgnoreCase("false")) {
 				CellDB cellDB = new CellDB();
@@ -180,18 +181,18 @@ public class BundleGpsMid {
 			System.out.println("Check the app parameter in the properties file for misspellings");
 			System.exit(1);
 		}
-		File file=new File(c.getTempBaseDir()+"/"+c.getJarFileName());
+		File file = new File(c.getTempBaseDir() + "/" + c.getJarFileName());
 		writeFile(appStream, file.getAbsolutePath());
 		
-		ZipFile zf=new ZipFile(file.getCanonicalFile());
-		for (Enumeration<? extends ZipEntry> e=zf.entries();e.hasMoreElements();) {
-			ZipEntry ze=e.nextElement();
-			if (ze.isDirectory()){
-//				System.out.println("dir  "+ze.getName());
+		ZipFile zf = new ZipFile(file.getCanonicalFile());
+		for (Enumeration<? extends ZipEntry> e = zf.entries(); e.hasMoreElements();) {
+			ZipEntry ze = e.nextElement();
+			if (ze.isDirectory()) {
+//				System.out.println("dir  " + ze.getName());
 			} else {
-//				System.out.println("file "+ze.getName());
+//				System.out.println("file " + ze.getName());
 				InputStream stream = zf.getInputStream(ze);
-				writeFile(stream,tmpDir+"/"+ze.getName());
+				writeFile(stream, tmpDir + "/" + ze.getName());
 			}
 		}
 	}
@@ -205,11 +206,11 @@ public class BundleGpsMid {
 	private static void rewriteManifestFile(Configuration c) {
 		String tmpDir = c.getTempDir();
 		try {
-			File manifest=new File(tmpDir+"/META-INF/MANIFEST.MF");
-			File manifest2=new File(tmpDir+"/META-INF/MANIFEST.tmp");
+			File manifest = new File(tmpDir + "/META-INF/MANIFEST.MF");
+			File manifest2 = new File(tmpDir + "/META-INF/MANIFEST.tmp");
 
-			BufferedReader fr=new BufferedReader(new FileReader(manifest));
-			FileWriter fw=new FileWriter(manifest2);
+			BufferedReader fr = new BufferedReader(new FileReader(manifest));
+			FileWriter fw = new FileWriter(manifest2);
 			String line;
 			Pattern p1 = Pattern.compile("MIDlet-(\\d):\\s(.*),(.*),(.*)");			
 			while (true) {
@@ -220,7 +221,8 @@ public class BundleGpsMid {
 
 				Matcher m1 = p1.matcher(line);				
 				if (m1.matches()) {					
-					fw.write("MIDlet-" + m1.group(1) + ": " + c.getMidletName() + "," + m1.group(3) + "," + m1.group(4) + "\n");
+					fw.write("MIDlet-" + m1.group(1) + ": " + c.getMidletName() 
+							+ "," + m1.group(3) + "," + m1.group(4) + "\n");
 				} else if (line.startsWith("MIDlet-Name: ")) {
 					fw.write("MIDlet-Name: " + c.getMidletName() + "\n");
 				} else {
@@ -239,16 +241,14 @@ public class BundleGpsMid {
 
 	}
 
-	private static void writeJADfile(Configuration c,  long jarLength) throws IOException{
+	private static void writeJADfile(Configuration c,  long jarLength) throws IOException {
 		String tmpDir = c.getTempDir();
-		File manifest=new File(tmpDir+"/META-INF/MANIFEST.MF");
-		BufferedReader fr=new BufferedReader(new FileReader(manifest));
-		File jad=new File(c.getMidletName()+"-" 
-				+ c.getName() 
-				+ "-" + c.getVersion()
-				+ ".jad");
-		FileWriter fw=new FileWriter(jad);
-		
+		File manifest = new File(tmpDir + "/META-INF/MANIFEST.MF");
+		BufferedReader fr = new BufferedReader(new FileReader(manifest));
+		File jad = new File(c.getMidletName() + "-" + c.getName() 
+				+ "-" + c.getVersion() + ".jad");
+		FileWriter fw = new FileWriter(jad);
+
 		/**
 		 * Copy over the information from the manifest file, to the jad file
 		 * by this we use the information generated by the build process
@@ -258,8 +258,9 @@ public class BundleGpsMid {
 			String line;
 			while (true) {
 				line = fr.readLine();
-				if (line == null)
+				if (line == null) {
 					break;
+				}
 				if (line.startsWith("MIDlet") || line.startsWith("MicroEdition")) {
 					fw.write(line + "\n");					
 				}
@@ -270,29 +271,27 @@ public class BundleGpsMid {
 		/**
 		 * Add some additional fields to the jad file, that aren't present in the manifest file
 		 */
-		fw.write("MIDlet-Jar-Size: "+jarLength+"\n");
-		fw.write("MIDlet-Jar-URL: "+c.getMidletName()+"-"+c.getName()+"-"+c.getVersion()+".jar\n");
+		fw.write("MIDlet-Jar-Size: " + jarLength + "\n");
+		fw.write("MIDlet-Jar-URL: " + c.getMidletName() + "-" + c.getName() + "-" + c.getVersion() + ".jar\n");
 		fw.close();
 		fr.close();
 	}
 
-	private static void pack(Configuration c) throws ZipException, IOException{
+	private static void pack(Configuration c) throws ZipException, IOException {
 		rewriteManifestFile(c);
-		File n=new File(c.getMidletName()+"-" 
-				+ c.getName() 
-				+ "-" + c.getVersion()
-				+ ".jar");
-		FileOutputStream fo=new FileOutputStream(n);
-		ZipOutputStream zf=new ZipOutputStream(fo);
+		File n = new File(c.getMidletName() + "-" + c.getName() 
+				+ "-" + c.getVersion() + ".jar");
+		FileOutputStream fo = new FileOutputStream(n);
+		ZipOutputStream zf = new ZipOutputStream(fo);
 		zf.setLevel(9);
-		if (!compressed){
+		if (compressed == false) {
 			zf.setMethod(ZipOutputStream.STORED);
 		}
-		File src=new File(c.getTempDir());
-		if (! src.isDirectory() ){
+		File src = new File(c.getTempDir());
+		if (src.isDirectory() == false) {
 			throw new Error("TempDir is not a directory");
 		}
-		packDir(zf, src,"");
+		packDir(zf, src, "");
 		zf.close();
 		writeJADfile(c, n.length());
 		Calendar endTime = Calendar.getInstance();
@@ -302,44 +301,44 @@ public class BundleGpsMid {
 				(duration.get(Calendar.HOUR) - 1) + ":" + duration.get(Calendar.MINUTE) + ":" + duration.get(Calendar.SECOND));
 	}
 	
-	private static void packDir(ZipOutputStream os, File d,String path) throws IOException{
+	private static void packDir(ZipOutputStream os, File d,String path) throws IOException {
 		File[] files = d.listFiles();
-		for (int i=0; i<files.length;i++){
-			if (files[i].isDirectory()){
-				if (path.length() > 0){
+		for (int i = 0; i < files.length; i++) {
+			if (files[i].isDirectory()) {
+				if (path.length() > 0) {
 					packDir(os, files[i],path + "/" + files[i].getName());
 				} else {
 					packDir(os, files[i],files[i].getName());					
 				}
 			} else {
 //				System.out.println();
-				ZipEntry ze=null;
-				if (path.length() > 0){
-				   ze = new ZipEntry(path+"/"+files[i].getName());
+				ZipEntry ze = null;
+				if (path.length() > 0) {
+				   ze = new ZipEntry(path + "/" + files[i].getName());
 				} else {
 				   ze = new ZipEntry(files[i].getName());				
 				}
 				int ch;
-				int count=0;
+				int count = 0;
 				//byte buffer to read in larger chunks
 				byte[] bb = new byte[4096];
-				FileInputStream stream=new FileInputStream(files[i]);
-				if (!compressed){
-					CRC32 crc=new CRC32();
-					count=0;
-					while ((ch=stream.read(bb)) != -1){
-						crc.update(bb,0,ch);
+				FileInputStream stream = new FileInputStream(files[i]);
+				if (!compressed) {
+					CRC32 crc = new CRC32();
+					count = 0;
+					while ((ch = stream.read(bb)) != -1) {
+						crc.update(bb, 0, ch);
 					}
 					ze.setCrc(crc.getValue());
 					ze.setSize(files[i].length());
 				}
 //				ze.
 				os.putNextEntry(ze);
-				count=0;
+				count = 0;
 				stream.close();
-				stream=new FileInputStream(files[i]);
-				while ((ch=stream.read(bb)) != -1){
-					os.write(bb,0,ch);
+				stream = new FileInputStream(files[i]);
+				while ((ch = stream.read(bb)) != -1) {
+					os.write(bb, 0, ch);
 					count += ch;
 				}
 				stream.close();
@@ -354,18 +353,18 @@ public class BundleGpsMid {
 	 * @param string
 	 */
 	private static void writeFile(InputStream stream, String name) {
-		File f=new File(name);
+		File f = new File(name);
 		try {
-			if (! f.canWrite()){
+			if (! f.canWrite()) {
 				createPath(f.getParentFile());
 			}
-			FileOutputStream fo=new FileOutputStream(name);
+			FileOutputStream fo = new FileOutputStream(name);
 			int ch;
-			int count=0;
+			int count = 0;
 			byte[] bb = new byte[4096];
-			while ((ch=stream.read(bb)) != -1){
-				fo.write(bb,0,ch);
-				count+=ch;
+			while ((ch = stream.read(bb)) != -1) {
+				fo.write(bb, 0, ch);
+				count += ch;
 			}
 			fo.close();
 //			System.out.println("wrote " + name + " byte:" + count);
@@ -392,10 +391,10 @@ public class BundleGpsMid {
 	 * @return
 	 */
 	static private boolean deleteDirectory(File path) {
-		if( path.exists() ) {
+		if (path.exists()) {
 			File[] files = path.listFiles();
-			for(int i=0; i<files.length; i++) {
-				if(files[i].isDirectory()) {
+			for (int i = 0; i < files.length; i++) {
+				if (files[i].isDirectory()) {
 					deleteDirectory(files[i]);
 				}
 				else {

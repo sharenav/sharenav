@@ -1,3 +1,12 @@
+/**
+ * This file is part of OSM2GpsMid 
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as published by
+ * the Free Software Foundation.
+ *
+ * Copyright (C) 2007 Harald Mueller
+ */
 package de.ueller.osmToGpsMid;
 
 import java.io.IOException;
@@ -17,15 +26,14 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import de.ueller.osmToGpsMid.model.Bounds;
-import de.ueller.osmToGpsMid.model.Connection;
 import de.ueller.osmToGpsMid.model.Entity;
 import de.ueller.osmToGpsMid.model.Member;
 import de.ueller.osmToGpsMid.model.Node;
 import de.ueller.osmToGpsMid.model.Relation;
-import de.ueller.osmToGpsMid.model.TurnRestriction;;
+import de.ueller.osmToGpsMid.model.TurnRestriction;
 import de.ueller.osmToGpsMid.model.Way;
 
-public class OxParser extends DefaultHandler{
+public class OxParser extends DefaultHandler {
 	/**
 	 * The current processed primitive
 	 */
@@ -34,24 +42,41 @@ public class OxParser extends DefaultHandler{
 	 * Maps id to already read nodes.
 	 * Key: Long   Value: Node
 	 */
-	private HashMap<Long,Node> nodes = new HashMap<Long,Node>(80000,0.60f);
-	private static HashMap<Long,Way> ways = new HashMap<Long,Way>(); // must be static only to be able to call getWayHashMap() from Tile for debugging
-	private HashMap<Long,Relation> relations = new HashMap<Long,Relation>();
-	private HashMap<Long,TurnRestriction> turnRestrictions = new HashMap<Long,TurnRestriction>();
+	private HashMap<Long, Node> nodes = new HashMap<Long, Node>(80000, 0.60f);
+	private static HashMap<Long, Way> ways = new HashMap<Long, Way>(); // must be static only to be able to call getWayHashMap() from Tile for debugging
+	private HashMap<Long, Relation> relations = new HashMap<Long, Relation>();
+	private HashMap<Long,TurnRestriction> turnRestrictions = new HashMap<Long, TurnRestriction>();
 	private ArrayList<TurnRestriction> turnRestrictionsWithViaWays = new ArrayList<TurnRestriction>();
-	private Hashtable<String, String> tagsCache = new Hashtable<String,String>();
-	private int nodeTot,nodeIns,segTot,segIns,wayTot,wayIns,ele, relTot, relPart, relIns;
-	private Bounds[] bounds=null;
+	private Hashtable<String, String> tagsCache = new Hashtable<String, String>();
+	private int nodeTot, nodeIns;
+	private int wayTot, wayIns;
+	private int ele;
+	private int relTot, relPart, relIns;
+	private Bounds[] bounds = null;
 	private Configuration configuration;
 	/**
 	 * Keep track of ways that get split, as at the time of splitting
-	 * not all tags have been added. So need to add them to all duplicates
+	 * not all tags have been added. So need to add them to all duplicates.
 	 */
-	private LinkedList<Way> dupplicateWays;
+	private LinkedList<Way> duplicateWays;
 
+	/**
+	 * @param i InputStream from which planet file is read
+	 */
 	public OxParser(InputStream i) {
 		System.out.println("OSM XML parser started...");
-		configuration=new Configuration();
+		configuration = new Configuration();
+		init(i);
+	}
+
+	/**
+	 * @param i InputStream from which planet file is read
+	 * @param c Configuration which supplies the bounds
+	 */
+	public OxParser(InputStream i, Configuration c) {
+		this.configuration = c;
+		this.bounds = c.getBounds();
+		System.out.println("OSM XML parser with bounds started...");
 		init(i);
 	}
 
@@ -61,7 +86,7 @@ public class OxParser extends DefaultHandler{
 			// Parse the input
 			factory.setValidating(false);
             SAXParser saxParser = factory.newSAXParser();
-            saxParser.parse( i, this);
+            saxParser.parse(i, this);
 			//parse(new InputStreamReader(new BufferedInputStream(i,10240), "UTF-8"));
 		} catch (IOException e) {
 			System.out.println("IOException: " + e);
@@ -87,17 +112,6 @@ public class OxParser extends DefaultHandler{
 		}
 	}
 
-	/**
-	 * @param i
-	 * @param bounds
-	 */
-	public OxParser(InputStream i, Configuration c) {
-		this.configuration = c;
-		this.bounds = c.getBounds();
-		System.out.println("OSM XML parser with bounds started...");
-		init(i);
-	}
-
 	public void startDocument() {
 		System.out.println("Start of Document");
 	}
@@ -117,19 +131,17 @@ public class OxParser extends DefaultHandler{
 			current = new Node(node_lat, node_lon, id);
 			
 		}
-
 		if (qName.equals("way")) {
 			long id = Long.parseLong(atts.getValue("id"));
 			current = new Way(id);
-			((Way)current).used=true;
+			((Way)current).used = true;
 		}
-		
 		if (qName.equals("nd")) {
 			if (current instanceof Way) {
 				Way way = ((Way)current);
 				long ref = Long.parseLong(atts.getValue("ref"));
 				Node node = nodes.get(new Long(ref));
-				if (node != null){
+				if (node != null) {
 					way.add(node);
 				} else {
 					// Node for this Way is missing, problem in OS or simply out of Bounding Box
@@ -137,22 +149,22 @@ public class OxParser extends DefaultHandler{
 					// missing at the start, in the middle or at the end
 					// we simply add the current way and start a new one with shared attributes.
 					// degenerate ways are not added, so don't care about this here.
-					if (way.path != null){
+					if (way.path != null) {
 						/**
 						 * Attributes might not be fully known yet, so keep
 						 * track of which ways are duplicates and clone
 						 * the tags once the XML for this way is fully parsed
 						 */
-						if (dupplicateWays == null)
-							dupplicateWays = new LinkedList<Way>();
-						dupplicateWays.add(way);
+						if (duplicateWays == null) {
+							duplicateWays = new LinkedList<Way>();
+						}
+						duplicateWays.add(way);
 						current = new Way(way);
 					}
 				}
 			}
 		}
-		
-		if(qName.equals("tag")) {
+		if (qName.equals("tag")) {
 			if (current != null) {				
 				String key = atts.getValue("k");
 				String val = atts.getValue("v");
@@ -164,9 +176,9 @@ public class OxParser extends DefaultHandler{
 				 * we can reuse the String objects thereby saving a significant
 				 * amount of memory.
 				 */
-				if (key != null && val != null ){
+				if (key != null && val != null) {
 					/**
-					 * Filter out common tags that are definately not used such as created_by
+					 * Filter out common tags that are definitely not used such as created_by
 					 * If this is the only tag on a Node, we end up saving creating a Hashtable
 					 * object to store the tags, saving some memory.
 					 */
@@ -190,8 +202,8 @@ public class OxParser extends DefaultHandler{
 		}
 		if (qName.equals("member")) {
 			if (current instanceof Relation) {
-				Relation r=(Relation)current;
-				Member m=new Member(atts.getValue("type"),atts.getValue("ref"),atts.getValue("role"));
+				Relation r = (Relation)current;
+				Member m = new Member(atts.getValue("type"), atts.getValue("ref"), atts.getValue("role"));
 				switch(m.getType()) {
 				case Member.TYPE_NODE: {
 					if (!nodes.containsKey(new Long(m.getRef()))) {
@@ -234,37 +246,36 @@ public class OxParser extends DefaultHandler{
 			System.out.println("node "+ nodeTot+"/"+nodeIns + "  way "+ wayTot+"/"+wayIns + " relations " + relTot + "/" +relPart + "/" + relIns);
 		}
 		if (qName.equals("node")) {
-			Node n=(Node) current;
-			boolean inBound=false;
+			Node n = (Node) current;
+			boolean inBound = false;
 			nodeTot++;
-			if (bounds != null && bounds.length != 0){
-				for (int i=0;i<bounds.length;i++){
-					if (bounds[i].isIn(n.lat, n.lon)){
-						inBound=true;
+			if (bounds != null && bounds.length != 0) {
+				for (int i = 0; i < bounds.length; i++) {
+					if (bounds[i].isIn(n.lat, n.lon)) {
+						inBound = true;
 						break;
 					}
 				}
 			} else {
-				inBound=true;
+				inBound = true;
 			}
 
-			if (inBound){
+			if (inBound) {
 				nodes.put(new Long(current.id), (Node) current);
 				nodeIns++;
 			}
 			current = null;
 		} else if (qName.equals("way")) {
 			wayTot++;
-			Way w= (Way) current;
-			if (dupplicateWays != null) {
-				for (Way ww : dupplicateWays) {
+			Way w = (Way) current;
+			if (duplicateWays != null) {
+				for (Way ww : duplicateWays) {
 					ww.cloneTags(w);
 					addWay(ww);
 				}
-				dupplicateWays = null;
+				duplicateWays = null;
 			}
 			addWay(w);
-			
 
 			current = null;
 		} else if (qName.equals("relation")) {
@@ -305,7 +316,7 @@ public class OxParser extends DefaultHandler{
 				}
 			}			
 			
-			current=null;
+			current = null;
 		}
 	} // endElement
 
@@ -313,15 +324,15 @@ public class OxParser extends DefaultHandler{
 	 * @param w
 	 */
 	public void addWay(Way w) {
-		byte t=w.getType(configuration);
+		byte t = w.getType(configuration);
 		/**
 		 * We seem to have a bit of a mess with respect to type -1 and 0.
 		 * Both are used to indicate invalid type it seems.
 		 */
-		if (w.isValid() && t > 0){
+		if (w.isValid() && t > 0) {
 			if (ways.get(new Long(w.id)) != null) {
 				/**
-				 * This way is already in datastrorage.
+				 * This way is already in data storage.
 				 * This results from splitting a single
 				 * osm way into severals GpsMid ways.
 				 * We can simply invent an id in this
@@ -329,9 +340,9 @@ public class OxParser extends DefaultHandler{
 				 * for anything other than checking if
 				 * an id is valid for use in relations
 				 */				
-				ways.put(new Long(-1*wayIns),w);
+				ways.put(new Long(-1 * wayIns), w);
 			} else {
-				ways.put(new Long(w.id),w);
+				ways.put(new Long(w.id), w);
 			}
 			wayIns++;
 		}

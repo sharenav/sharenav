@@ -41,7 +41,6 @@ import de.ueller.osmToGpsMid.model.Bounds;
 import de.ueller.osmToGpsMid.model.EntityDescription;
 import de.ueller.osmToGpsMid.model.SoundDescription;
 import de.ueller.osmToGpsMid.model.POIdescription;
-import de.ueller.osmToGpsMid.model.TravelModes;
 import de.ueller.osmToGpsMid.model.WayDescription;
 
 /**
@@ -208,7 +207,7 @@ public class Configuration {
 	
 		private ResourceBundle rb;
 		private ResourceBundle vb;
-		private String tmp=null;
+		private String tmp = null;
 		private String planet;
 		private String cellSource;
 		private String cellOperator;
@@ -217,12 +216,12 @@ public class Configuration {
 		private String midletName;
 		private String appParam;
 		/**
-		 * defines which routing options from the style-file get used 
+		 * Defines which routing options from the style-file get used 
 		 */
 		public String useRouting = "motorcar";
-		public boolean enableEditingSupport=false;
-		public int maxTileSize=20000;
-		public int maxRouteTileSize=3000;
+		public boolean enableEditingSupport = false;
+		public int maxTileSize = 20000;
+		public int maxRouteTileSize = 3000;
 		public String styleFile;
 		private Bounds[] bounds;
 		
@@ -437,11 +436,12 @@ public class Configuration {
 			legend = new LegendParser(legendInputStream);
 		}
 		
-		public boolean use(String key){
-			if ("true".equalsIgnoreCase(getString(key))){
+		public boolean use(String key) {
+			if ("true".equalsIgnoreCase(getString(key))) {
 				return true;
 			} else return false;
 		}
+
 		public  String getString(String key) {
 			try {
 				return rb.getString(key).trim();
@@ -449,25 +449,27 @@ public class Configuration {
 				return vb.getString(key).trim();
 			}
 		}
-		public float getFloat(String key){
+
+		public float getFloat(String key) {
 			return Float.parseFloat(getString(key));
 		}
-		public String getName(){
+
+		public String getName() {
 			if (bundleName != null) {
 				return bundleName;
 			}
 			return getString("bundle.name");
 		}
 		
-		public void setName(String name){
+		public void setName(String name) {
 			bundleName = name;
 		}
 		
-		public void setMidletName(String name){
+		public void setMidletName(String name) {
 			midletName = name;
 		}
 				
-		public String getMidletName(){
+		public String getMidletName() {
 			if (midletName != null) {
 				return midletName;
 			}
@@ -478,52 +480,54 @@ public class Configuration {
 			appParam = app;
 		}
 		
-		public InputStream getJarFile(){
+		public InputStream getJarFile() {
 			String baseName = appParam;
-			if ("false".equals(baseName)){
+			if ("false".equals(baseName)) {
 				return null;
 			}
-			InputStream is = getClass().getResourceAsStream("/"+baseName
-					+"-"+getVersion()
-					+".jar");
+			InputStream is = getClass().getResourceAsStream("/" + baseName
+					+ "-" + getVersion() + ".jar");
 			if (is == null) {
 				String lang = getLang();
 				System.out.println("Using lang=" + lang);
-				is = getClass().getResourceAsStream("/"+baseName
-						+"-"+getVersion()
-						+ "_" + getLang()
-						+".jar");
+				is = getClass().getResourceAsStream("/" + baseName
+						+ "-" + getVersion() + "_" + getLang() + ".jar");
 			}
 			return is;
 		}		
-		public String getAppParam(){
+
+		public String getAppParam() {
 			return appParam;
 		}
-		public String getJarFileName(){
-			return appParam
-			+"-"+getVersion()
-			+".jar";
+
+		public String getJarFileName() {
+			return appParam	+ "-" + getVersion() + ".jar";
 		}
-		public String getTempDir(){
-			return getTempBaseDir()+"/"+"map";
+
+		public String getTempDir() {
+			return getTempBaseDir() + "/" + "map";
 		}
-		public String getTempBaseDir(){
-			if (tmp==null){
-				tmp="temp"+ Math.abs(new Random(System.currentTimeMillis()).nextLong());
+
+		public String getTempBaseDir() {
+			if (tmp == null) {
+				tmp = "temp" + Math.abs(new Random(System.currentTimeMillis()).nextLong());
 			}
 			return tmp;
 //			return getString("tmp.dir");
 		}
 		
 		public boolean cleanupTmpDirAfterUse() {
-			if ("true".equalsIgnoreCase(getString("keepTemporaryFiles"))){
+			if ("true".equalsIgnoreCase(getString("keepTemporaryFiles"))) {
 				return false;
-			} else return true;
+			} else {
+				return true;
+			}
 		}
 		
-		public File getPlanet(){
+		public File getPlanet() {
 			return new File(planet);
 		}
+
 		public InputStream getPlanetSteam() throws IOException {
 			InputStream fr = null;
 			if (planet.equalsIgnoreCase("osmxapi") || planet.equalsIgnoreCase("ROMA")) {
@@ -659,21 +663,21 @@ public class Configuration {
 			return cmis;
 		}
 
-		public Bounds[] getBounds(){
-			if (bounds != null)
+		public Bounds[] getBounds() {
+			if (bounds != null) {
 				return bounds;
-			int i;
-			i=0;
+			}
+			int i = 0;
 			try {
-				while (i<10000){
-					getFloat("region."+(i+1)+".lat.min");
+				while (i < 10000) {
+					getFloat("region." + (i + 1) + ".lat.min");
 					i++;
 				}
 			} catch (RuntimeException e) {
 				;
 			}
 			
-			if (i>0) {
+			if (i > 0) {
 				System.out.println("found " + i + " bounds");
 				Bounds[] ret=new Bounds[i];
 				for (int l=0;l < i;l++){
@@ -688,8 +692,8 @@ public class Configuration {
 				System.out.println("Warning: No bounds were given - using [-180,-90,180,90]");
 				System.out.println("This will try to create a GpsMid for the whole region");
 				System.out.println("contained in " + planet);
-				Bounds[] ret=new Bounds[1];
-				ret[0]=new Bounds();
+				Bounds[] ret = new Bounds[1];
+				ret[0] = new Bounds();
 				ret[0].extend(-90.0, -180.0);
 				ret[0].extend(90.0, 180.0);
 				return ret;	
@@ -772,9 +776,11 @@ public class Configuration {
 		public Collection<EntityDescription> getPOIDescs() {
 			return legend.getPOIDescs();
 		}
+
 		public Collection<EntityDescription> getWayDescs() {
 			return legend.getWayDescs();
 		}
+
 		public Vector<SoundDescription> getSoundDescs() {
 			return legend.getSoundDescs();
 		}
@@ -799,17 +805,16 @@ public class Configuration {
 		
 		
 		/*
-		 * returns the real scale level
+		 * Returns the real scale level
 		 * 
-		 * for scale 0..32 a pseudo zoom level is assumed
-		 * and it is converted to a real scale level
+		 * For scale 0..32 a pseudo zoom level is assumed
+		 * and it is converted to a real scale level.
 		 */  
 
 		public int getRealScale(int scale) {
-			if (scale<realScale.length) {
+			if (scale < realScale.length) {
 				return (int) realScale[scale];
-			}
-			else {
+			} else {
 				return scale;
 			}
 		}
