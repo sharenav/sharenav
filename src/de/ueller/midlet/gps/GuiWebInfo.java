@@ -27,7 +27,8 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 		super("Info on the web", List.IMPLICIT);
 		mParent = parent;
 		mPos = pos;
-		this.append("Wikipedia", null);
+		this.append("Wikipedia (RSS)", null);
+		this.append("Wikipedia (Web)", null);
 		this.append("Weather", null);
 		this.append("GeoHack", null);
 		this.addCommand(BACK_CMD);
@@ -47,9 +48,14 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 		if (c == SELECT_CMD) {
 			String site = getString(getSelectedIndex());
 			String url = null;
-			if (site.equalsIgnoreCase("Wikipedia")) {
+			if (site.equalsIgnoreCase("Wikipedia (RSS)")) {
 				url = "http://ws.geonames.org/findNearbyWikipediaRSS?lat="
 						+ mPos.latitude * MoreMath.FAC_RADTODEC + "&lng="
+						+ mPos.longitude * MoreMath.FAC_RADTODEC;
+			}
+			if (site.equalsIgnoreCase("Wikipedia (Web)")) {
+				url = "http://www.rss2html.com/public/rss2html.php?TEMPLATE=template-1-2-1.htm&XMLFILE=http://ws.geonames.org/findNearbyWikipediaRSS?lat="
+						+ mPos.latitude * MoreMath.FAC_RADTODEC + "%26lng="
 						+ mPos.longitude * MoreMath.FAC_RADTODEC;
 			}
 			if (site.equalsIgnoreCase("Weather")) {
