@@ -1,8 +1,13 @@
+/**
+ * This file is part of OSM2GpsMid 
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as published by
+ * the Free Software Foundation.
+ *
+ * Copyright (C) 2007 Harald Mueller
+ */
 package de.ueller.osmToGpsMid.model;
-
-import java.util.Hashtable;
-import java.util.Set;
-
 
 import de.ueller.osmToGpsMid.Configuration;
 import de.ueller.osmToGpsMid.Constants;
@@ -24,15 +29,14 @@ public class Node extends Entity{
 	/**
 	 * type of this Node
 	 */
-	private byte type=-1;
-	//public byte noConfType=-1;
-	public boolean used=false;
-	public byte connectedLineCount=0;
+	private byte type = -1;
+	//public byte noConfType = -1;
+	public boolean used = false;
+	public byte connectedLineCount = 0;
 //	private Set<Way> connectedWays = new HashSet<Way>();
 	public RouteNode routeNode;
 	
-	public Node(){
-		
+	public Node() {
 	}
 	
 	public Node(float node_lat, float node_lon, long id) {
@@ -46,7 +50,7 @@ public class Node extends Entity{
 			if (desc != null) {
 				String name = getAttribute(desc.nameKey);
 				String nameFallback=null;
-				if(desc.nameFallbackKey!= null && desc.nameFallbackKey.equals("*") ) {
+				if (desc.nameFallbackKey!= null && desc.nameFallbackKey.equals("*") ) {
 					nameFallback = getAttribute(desc.key);
 				} else {
 					nameFallback = getAttribute(desc.nameFallbackKey);
@@ -57,16 +61,18 @@ public class Node extends Entity{
 					name = nameFallback;
 				}
 				//System.out.println("New style name: " + name);
-				return name!=null ? name.trim() : "";
+				return (name != null ? name.trim() : "");
 			}
 		}
 		return null;
 	}
 	
-	public String getPlace(){
+	public String getPlace() {
 		String place = (getAttribute("place"));
 //		System.out.println("Read place for id="+id+" as=" + place);
-		if (place != null) return place.trim();
+		if (place != null) {
+			return place.trim();
+		}
 		return null;
 	}
 	public boolean isPlace() {
@@ -87,12 +93,13 @@ public class Node extends Entity{
 		return type;
 	}
 	
-	private byte calcType(Configuration c){
-		if (type != -1)
+	private byte calcType(Configuration c) {
+		if (type != -1) {
 			return type;
-		if (c == null) 
+		}
+		if (c == null) { 
 			return -1;
-		
+		}
 		EntityDescription poi = super.calcType(c.getPOIlegend());
 		if (poi == null) {
 			type = -1;
@@ -102,25 +109,30 @@ public class Node extends Entity{
 		return type;
 	}
 	
-	public byte getZoomlevel(Configuration c){
+	public byte getZoomlevel(Configuration c) {
 		if (type == -1) {
 			//System.out.println("unknown type for node " + toString());
 			return 3;
 		}
 		int maxScale = c.getpoiDesc(type).minEntityScale;
-		if (maxScale < 45000)
+		if (maxScale < 45000) {
 			return 3;
-		if (maxScale < 180000)
+		} else if (maxScale < 180000) {
 			return 2;
-		if (maxScale < 900000)
+		} else if (maxScale < 900000) {
 			return 1;
+		}
 		return 0;
 	}
-	public String toString(){
-		return "node (" + lat + "|" + lon + ") " + ((getPlace() != null)?("(" + getPlace() + ") "):"") + " id=" + id + " name="+getName() + ((nearBy == null)?"":(" by " + nearBy.getName()));
+
+	public String toString() {
+		return "id=" + id + " (" + lat + "|" + lon + ") " 
+			+ ((getPlace() != null) ? ("(" + getPlace() + ") ") : "") 
+			+ "name=" + getName() 
+			+ ((nearBy == null) ? "" : (" near " + nearBy.getName()));
 	}
 
-	public String toUrl(){
+	public String toUrl() {
 		return "http://www.openstreetmap.org/browse/node/" + id;
 	}
 	
@@ -129,8 +141,8 @@ public class Node extends Entity{
 	 */
 	public byte getNameType() {
 		String t = getPlace();
-		if (t != null){
-			if ("suburb".equals(t)){
+		if (t != null) {
+			if ("suburb".equals(t)) {
 				return (Constants.NAME_SUBURB);
 			} else {
 			    return (Constants.NAME_CITY);
@@ -149,6 +161,7 @@ public class Node extends Entity{
 	public boolean wayToPOItransfer(Way w, POIdescription poi) {
 		if (type != -1) {
 			System.out.println("WARNING: Node already has a type, can't assign way-poi type");
+			System.out.println("  " + toString());
 			return false;
 		}
 		type = poi.typeNum;
