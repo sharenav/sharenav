@@ -6,7 +6,6 @@
  * the Free Software Foundation.
  *
  * Copyright (C) 2008  Kai Krueger
- * 
  */
 package de.ueller.osmToGpsMid;
 
@@ -30,8 +29,8 @@ public class ThreadBufferedInputStream extends InputStream implements Runnable {
 	public ThreadBufferedInputStream(InputStream in) {
 		is = in;
 		buffer = new byte[2][];
-		buffer[0] = new byte[1024*1024];
-		buffer[1] = new byte[1024*1024];
+		buffer[0] = new byte[1024 * 1024];
+		buffer[1] = new byte[1024 * 1024];
 		writeSwappReady = false;
 		readSwappReady = false;
 		bufferReadIdx = 0;
@@ -52,11 +51,13 @@ public class ThreadBufferedInputStream extends InputStream implements Runnable {
 	public int read() throws IOException {
 		if (readLength <= readIdx ) {
 			synchronized (this) {
-				if (eof)
+				if (eof) {
 					return -1;
+				}
 				readSwappReady = true;
-				if (writeSwappReady)
-					swappBuffers();
+				if (writeSwappReady) {
+					swapBuffers();
+				}
 				else {
 					try {
 						wait();						
@@ -74,12 +75,13 @@ public class ThreadBufferedInputStream extends InputStream implements Runnable {
 	public int read(byte[] buf) {
 		if (readLength <= readIdx ) {
 			synchronized (this) {
-				if (eof)
+				if (eof) {
 					return -1;
+				}
 				readSwappReady = true;				
-				if (writeSwappReady)
-					swappBuffers();
-				else {
+				if (writeSwappReady) {
+					swapBuffers();
+				} else {
 					try {
 						wait();						
 					} catch (InterruptedException e) {
@@ -102,8 +104,9 @@ public class ThreadBufferedInputStream extends InputStream implements Runnable {
 		if (readLength <= readIdx ) {
 			synchronized (this) {
 				readSwappReady = true;
-				if (eof)
+				if (eof) {
 					return -1;
+				}
 				if (writeSwappReady)
 					swappBuffers();
 				else {
@@ -135,21 +138,22 @@ public class ThreadBufferedInputStream extends InputStream implements Runnable {
 				noRead = is.read(buffer[bufferWriteIdx],writeIdx,buffer[bufferWriteIdx].length - writeIdx);
 				if (noRead == -1) {
 					eofIn = true;					
-					System.out.println("finished reading is");					
+					//System.out.println("finished reading is");					
 				}
 			} catch (IOException e) {
 				System.out.println("Something went horribly wrong " + e.getMessage());
 				System.exit(2);
 			}
 			
-			if (!eofIn)
-				writeIdx += noRead;  
+			if (!eofIn) {
+				writeIdx += noRead;
+			}
 			if (buffer[bufferWriteIdx].length <= writeIdx || eofIn) {
 				synchronized (this) {
 					writeSwappReady = true;
-					if (readSwappReady)
-						swappBuffers();
-					else {
+					if (readSwappReady) {
+						swapBuffers();
+					} else {
 						try {
 							wait();
 						} catch (InterruptedException e) {
@@ -162,7 +166,7 @@ public class ThreadBufferedInputStream extends InputStream implements Runnable {
 		}		
 	}
 	
-	private void swappBuffers () {
+	private void swapBuffers () {
 		readLength = writeIdx;
 		readSwappReady = false;
 		writeSwappReady = false;
@@ -172,8 +176,9 @@ public class ThreadBufferedInputStream extends InputStream implements Runnable {
 		bufferReadIdx = bufferWriteIdx;
 		bufferWriteIdx = tmp;
 		
-		if (eofIn)
+		if (eofIn) {
 			eof = true;
+		}
 		notifyAll();
 	}
 
