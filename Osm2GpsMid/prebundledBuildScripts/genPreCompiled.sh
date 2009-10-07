@@ -1,5 +1,7 @@
 #!/bin/sh
 
+ulimit -Sv 8000000
+
 rm /tmp/great_b.osm
 mkfifo /tmp/great_b.osm
 rm /tmp/germany.osm
@@ -175,8 +177,20 @@ scp GpsMidRome-Rome-0.5.09.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/prebuild/
 c=italy
 rm /tmp/$c.osm
 mkfifo /tmp/$c.osm
-bzcat $c.osm.bz2 > /tmp/$c.osm & java -mx5200M -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /tmp/$c.osm NorthItaly
-scp GpsMidNit-NorthItaly-0.5.09.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/prebuild/ &
+bzcat $c.osm.bz2 > /tmp/$c.osm & java -mx6200M -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /tmp/$c.osm SouthItaly
+scp GpsMidSIt-SouthItaly-0.5.09.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/prebuild/ &
+
+c=italy
+rm /tmp/$c.osm
+mkfifo /tmp/$c.osm
+bzcat $c.osm.bz2 > /tmp/$c.osm & java -mx6800M -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /tmp/$c.osm NorthItaly
+scp GpsMidNIt-NorthItaly-0.5.09.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/prebuild/ &
+
+c=italy
+rm /tmp/$c.osm
+mkfifo /tmp/$c.osm
+bzcat $c.osm.bz2 > /tmp/$c.osm & java -mx6200M -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /tmp/$c.osm CentralItaly
+scp GpsMidCIt-CentralItaly-0.5.09.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/prebuild/ &
 
 c=ethiopia
 rm /tmp/$c.osm
@@ -416,9 +430,9 @@ bzcat  philippines.osm.bz2 > /tmp/philippines.osm & java -mx3000M -jar Osm2GpsMi
 scp GpsMidPh-Philippines-0.5.09.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/prebuild/ &
 
 
-bzcat  germany.osm.bz2 > /tmp/germany.osm & java -mx1000M -jar Osm2GpsMid-CVS.jar /tmp/germany.osm Munic-demo
+bzcat  germany.osm.bz2 > /tmp/germany.osm & java -mx4000M -jar Osm2GpsMid-CVS.jar /tmp/germany.osm Munic-demo
 scp GpsMidDemo-Munic-demo-0.5.09.jar gpsmidW:/home/groups/g/gp/gpsmid/htdocs/GpsMunicDemo-munic-demo-CVS.jar &
 
-#bzcat  germany.osm.bz2 > /tmp/germany.osm & java -mx1000M -jar Osm2GpsMid-0.4.51.jar /tmp/germany.osm Munic-demo
-#scp GpsMidDemo-Munic-demo-0.4.51.jar gpsmidW:/home/groups/g/gp/gpsmid/htdocs/ &
+bzcat  germany.osm.bz2 > /tmp/germany.osm & java -mx4000M -jar Osm2GpsMid-0.5.00.jar /tmp/germany.osm Munic-demo
+scp GpsMidDemo-Munic-demo-0.5.00.jar gpsmidW:/home/groups/g/gp/gpsmid/htdocs/ &
 
