@@ -108,7 +108,7 @@ public class ThreadBufferedInputStream extends InputStream implements Runnable {
 					return -1;
 				}
 				if (writeSwappReady)
-					swappBuffers();
+					swapBuffers();
 				else {
 					try {
 						wait();
