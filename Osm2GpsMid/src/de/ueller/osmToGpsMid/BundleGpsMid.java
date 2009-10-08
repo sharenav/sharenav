@@ -94,16 +94,13 @@ public class BundleGpsMid {
 				System.out.println("");
 			}
 			String tmpDir = c.getTempDir();
-			System.out.println("unpack Application to " + tmpDir);
+			System.out.println("Unpacking application to " + tmpDir);
 			expand(c, tmpDir);
 			File target = new File(tmpDir);
 			createPath(target);
 			
 			fr = c.getPlanetSteam();
 			OxParser parser = new OxParser(fr,c);
-			System.out.println("read Nodes " + parser.getNodes().size());
-			System.out.println("read Ways  " + parser.getWays().size());
-			System.out.println("read Relations  " + parser.getRelations().size());
 
 			/**
 			 * Display some stats about the type of relations we currently aren't handling
@@ -127,18 +124,19 @@ public class BundleGpsMid {
 
 			}
 
-			System.out.println("split long ways " + parser.getWays().size());
+			int numWays = parser.getWays().size();
 			new SplitLongWays(parser);
-			System.out.println("splited long ways to " + parser.getWays().size());
+			System.out.println("Splitting long ways increased ways from " 
+					+ numWays + " to " + parser.getWays().size());
 			
-			System.out.println("reorder Ways");
+			System.out.println("Removing unused nodes");
 			new CleanUpData(parser,c);
 
-			if (Configuration.attrToBoolean(c.useRouting) >= 0 ){
-				RouteData rd=new RouteData(parser,target.getCanonicalPath());
-				System.out.println("create Route Data");
+			if (Configuration.attrToBoolean(c.useRouting) >= 0 ) {
+				RouteData rd = new RouteData(parser,target.getCanonicalPath());
+				System.out.println("Creating route data");
 				rd.create();
-				System.out.println("optimize Route Date");
+				System.out.println("Optimizing route data");
 				rd.optimise();
 			}
 			CreateGpsMidData cd = new CreateGpsMidData(parser,target.getCanonicalPath());
@@ -174,8 +172,8 @@ public class BundleGpsMid {
 	}
 
 	private static void expand(Configuration c, String tmpDir) throws ZipException, IOException {
-		System.out.println("prepare " + c.getJarFileName());
-		InputStream appStream=c.getJarFile();
+		System.out.println("Preparing " + c.getJarFileName());
+		InputStream appStream = c.getJarFile();
 		if (appStream == null) {
 			System.out.println("ERROR: Couldn't find the jar file for " + c.getJarFileName());
 			System.out.println("Check the app parameter in the properties file for misspellings");
@@ -342,7 +340,7 @@ public class BundleGpsMid {
 					count += ch;
 				}
 				stream.close();
-//				System.out.println("wrote " + path + "/" + files[i].getName() + " byte:" + count);
+//				System.out.println("Wrote " + path + "/" + files[i].getName() + " byte:" + count);
 
 			}
 		}
@@ -367,10 +365,10 @@ public class BundleGpsMid {
 				count += ch;
 			}
 			fo.close();
-//			System.out.println("wrote " + name + " byte:" + count);
+//			System.out.println("Wrote " + name + " byte:" + count);
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new Error("fail to write " + name + " err:" + e.getMessage());
+			throw new Error("Failed to write " + name + " err:" + e.getMessage());
 		}
 	}
 

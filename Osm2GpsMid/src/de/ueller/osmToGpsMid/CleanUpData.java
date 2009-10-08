@@ -38,9 +38,10 @@ public class CleanUpData {
 		removeDupNodes();
 		removeUnusedNodes();
 		parser.resize();
-		System.out.println("after cleanup Nodes " + parser.getNodes().size());
-		System.out.println("after cleanup Ways  " + parser.getWays().size());
-		System.out.println("after cleanup Relations  " + parser.getRelations().size());
+		System.out.println("Remaining after cleanup:");
+		System.out.println("  Nodes: " + parser.getNodes().size());
+		System.out.println("  Ways: " + parser.getWays().size());
+		System.out.println("  Relations: " + parser.getRelations().size());
 	}
 	
 	/**
@@ -48,59 +49,45 @@ public class CleanUpData {
 	 */
 	private void removeDupNodes() {
 		int progressCounter = 0;
+		int duplicates = 0;
 		int noNodes = parser.getNodes().size() / 20;
-		KDTree kd = new KDTree(3);
-		double [] latlonKey; 
-		//double [] lowk = new double[3];
-		//double [] uppk = new double[3];		
+		KDTree kd = new KDTree(2);
+		double [] latlonKey = new double[2];
+		
+		System.out.println("PLEASE HELP and fix reported duplicates in OpenStreetMap");
+
+		long startTime = System.currentTimeMillis();
+		
 		for (Node n:parser.getNodes()) {
 			
 			progressCounter++;
 			if (noNodes > 0 && progressCounter % noNodes == 0) {
-				System.out.println("Processed " + progressCounter + " out of " 
-						+ noNodes * 20 + " nodes");
+				System.out.println("Processed " + progressCounter + " of " 
+						+ noNodes * 20 + " nodes, " + duplicates + " duplicates found");
 			}
 			
-			n.used = true;			
-			latlonKey = MyMath.latlon2XYZ(n);			
+			n.used = true;
+			//latlonKey = MyMath.latlon2XYZ(n);
+			latlonKey[0] = n.lat;
+			latlonKey[1] = n.lon;
 			
-			/*lowk[0] = latlonKey[0] - 10.0;
-			lowk[1] = latlonKey[1] - 10.0;
-			lowk[2] = latlonKey[2] - 10.0;			
-			
-			uppk[0] = latlonKey[0] + 10.0;
-			uppk[1] = latlonKey[1] + 10.0;
-			uppk[2] = latlonKey[2] + 10.0;
-						
 			try {
-				
-				Object[] neighbours = kd.range(lowk, uppk);
-				if (neighbours.length == 1) {
-					n.used = false;
-					if (!substitute(n, (Node)neighbours[0]))
-						kd.insert(latlonKey, n);
-				} else if (neighbours.length > 1) {
-					n.used = false;
-					if (!substitute(n,(Node)kd.nearest(latlonKey))) 
-						kd.insert(latlonKey, n);
-				} else {*/
-			try {
-					kd.insert(latlonKey, n);					
-				//}				
+				kd.insert(latlonKey, n);					
 			} catch (KeySizeException e) {				
 				e.printStackTrace();
-			}  catch (KeyDuplicateException e) {				
-				//System.out.println("Key Duplication");				
+			}  catch (KeyDuplicateException e) {
+				duplicates++;
 				try {
 					n.used = false;
 					Node rn = (Node)kd.search(latlonKey);
 					if (n.getType(conf) != rn.getType(conf)) {
-						System.err.println("Warn " + n + " / " + rn);
-						//Shouldn't substitute in this case;
-						n.used = true;						
+						System.out.println("Differing duplicate nodes: " + n + " / " + rn);
+						System.out.println("  Detail URL: " + n.toUrl());
+						// Shouldn't substitute in this case;
+						n.used = true;
 					} else {
 						replaceNodes.put(n, rn);
-					}					
+					}
 				} catch (KeySizeException e1) {
 					e1.printStackTrace();
 				}
@@ -117,7 +104,9 @@ public class CleanUpData {
 			}
 		}
 		substitute();
-		System.out.println("Removed " + rm + " duplicate nodes");
+		long time = (System.currentTimeMillis() - startTime);
+		System.out.println("Removed " + rm + " duplicate nodes, took "
+				+ time + " ms");
 	}
 
 	/**
@@ -135,6 +124,8 @@ public class CleanUpData {
 	 * 
 	 */
 	private void removeUnusedNodes() {
+		long startTime = System.currentTimeMillis();
+
 		for (Node n:parser.getNodes()) {
 			if (n.getType(conf) < 0 ) {
 				n.used = false;
@@ -156,9 +147,11 @@ public class CleanUpData {
 				rmNodes.add(n);
 			}
 		}
-		System.out.println("Removing " + rmNodes.size() + " unused nodes");
 	    for (Node n:rmNodes) {
 	    	parser.removeNode(n.id);
-	    }		
+	    }
+	    long time = (System.currentTimeMillis() - startTime);
+		System.out.println("Removed " + rmNodes.size() + " unused nodes, took " 
+				+ time + " ms");
 	}
 }

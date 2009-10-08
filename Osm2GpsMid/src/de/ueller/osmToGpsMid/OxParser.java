@@ -59,6 +59,7 @@ public class OxParser extends DefaultHandler {
 	 * not all tags have been added. So need to add them to all duplicates.
 	 */
 	private LinkedList<Way> duplicateWays;
+	private long startTime;
 
 	/**
 	 * @param i InputStream from which planet file is read
@@ -82,6 +83,7 @@ public class OxParser extends DefaultHandler {
 
 	private void init(InputStream i) {
 		try {
+			startTime = System.currentTimeMillis();
 			SAXParserFactory factory = SAXParserFactory.newInstance();
 			// Parse the input
 			factory.setValidating(false);
@@ -114,11 +116,16 @@ public class OxParser extends DefaultHandler {
 
 	public void startDocument() {
 		System.out.println("Start of Document");
+		System.out.println("Nodes read/used, Ways read/used, Relations read/partial/used");
 	}
 
 	public void endDocument() {
-		System.out.println("node "+ nodeTot+"/"+nodeIns + "  way "+ wayTot+"/"+wayIns + " relations " + relTot + "/" +relPart + "/" + relIns);	
-		System.out.println("End of Document");
+	    long time = (System.currentTimeMillis() - startTime) / 1000;
+
+		System.out.println("Nodes " + nodeTot + "/" + nodeIns + 
+				", Ways "+ wayTot + "/" + wayIns + 
+				", Relations " + relTot + "/" + relPart + "/" + relIns);
+		System.out.println("End of document, reading took " + time + " seconds");
 	}
 
 	public void startElement(String namespaceURI, String localName, String qName, Attributes atts) {		
@@ -193,7 +200,7 @@ public class OxParser extends DefaultHandler {
 					}
 				}				
 			} else {
-				System.out.println("tag at unexepted position " + current);
+				System.out.println("Tag at unexpected position " + current);
 			}
 		}
 		if (qName.equals("relation")) {
@@ -241,9 +248,11 @@ public class OxParser extends DefaultHandler {
 	public void endElement(String namespaceURI, String localName, String qName) {		
 //		System.out.println("end  " + localName + " " + qName);
 		ele++;
-		if (ele > 1000000){
-			ele=0;
-			System.out.println("node "+ nodeTot+"/"+nodeIns + "  way "+ wayTot+"/"+wayIns + " relations " + relTot + "/" +relPart + "/" + relIns);
+		if (ele > 1000000) {
+			ele = 0;
+			System.out.println("Nodes " + nodeTot + "/" + nodeIns + 
+					", Ways "+ wayTot + "/" + wayIns + 
+					", Relations " + relTot + "/" + relPart + "/" + relIns);
 		}
 		if (qName.equals("node")) {
 			Node n = (Node) current;
@@ -265,7 +274,8 @@ public class OxParser extends DefaultHandler {
 				nodeIns++;
 			}
 			current = null;
-		} else if (qName.equals("way")) {
+		} 
+		if (qName.equals("way")) {
 			wayTot++;
 			Way w = (Way) current;
 			if (duplicateWays != null) {
@@ -278,7 +288,8 @@ public class OxParser extends DefaultHandler {
 			addWay(w);
 
 			current = null;
-		} else if (qName.equals("relation")) {
+		} 
+		if (qName.equals("relation")) {
 			relTot++;
 			/** Store way and node refs temporarily in the same variable
 			 *  Way refs must be resolved later to nodes when we actually know all the ways
@@ -374,7 +385,7 @@ public class OxParser extends DefaultHandler {
 		return turnRestrictionsWithViaWays;
 	}
 
-	public static HashMap<Long,Way> getWayHashMap() {
+	public HashMap<Long,Way> getWayHashMap() {
 		return ways;
 	}
 
@@ -388,9 +399,10 @@ public class OxParser extends DefaultHandler {
 	 */
 	public void resize() {
 		System.gc();
-		System.out.println(Runtime.getRuntime().freeMemory());
+		System.out.println("Free memory: " + Runtime.getRuntime().freeMemory());
+		System.out.println("Resizing nodes HashMap");
 		nodes=new HashMap<Long, Node>(nodes);
 		System.gc();
-		System.out.println(Runtime.getRuntime().freeMemory());
+		System.out.println("Free memory: " + Runtime.getRuntime().freeMemory());
 	}
 }

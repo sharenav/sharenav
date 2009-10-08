@@ -88,14 +88,14 @@ public class RouteData {
 		calculateTurnRestrictions();
 	}
 
-	
+
 	/**
 	 * calculate turn restrictions
 	 */		
 	private void calculateTurnRestrictions() {
 		resolveViaWays();
 		
-		System.out.println("calculating turn restrictions");
+		System.out.println("Calculating turn restrictions");
 		int numTurnRestrictions = 0;
 		for (RouteNode n: nodes.values()) {
 			TurnRestriction turn = (TurnRestriction) parser.getTurnRestrictionHashMap().get(new Long(n.node.id));
@@ -126,7 +126,8 @@ public class RouteData {
 				int numFromConnections = 0;
 				long lastId = -1;
 				for (Connection c:nViaFrom.connectedFrom) {
-					if (restrictionFromWay.containsNode(c.from.node) && c.from.id != lastId) { // TODO: Strange: there are sometimes multiple connections connecting to the same node, filter those out by checking lastId 
+					if (restrictionFromWay.containsNode(c.from.node) && c.from.id != lastId) { 
+						// TODO: Strange: there are sometimes multiple connections connecting to the same node, filter those out by checking lastId 
 						turn.fromRouteNode = c.from;
 						numFromConnections++;
 						lastId = c.from.id;
@@ -150,7 +151,8 @@ public class RouteData {
 				int numToConnections = 0;
 				lastId = -1;
 				for (Connection c:n.connected) {
-					if (restrictionToWay.containsNode(c.to.node) && c.to.id != lastId) { // TODO: Strange: there are sometimes multiple connections connecting to the same node, filter those out by checking lastId
+					if (restrictionToWay.containsNode(c.to.node) && c.to.id != lastId) { 
+						// TODO: Strange: there are sometimes multiple connections connecting to the same node, filter those out by checking lastId
 						turn.toRouteNode = c.to;
 						numToConnections++;
 						lastId = c.to.id;
@@ -534,8 +536,6 @@ public class RouteData {
 					exportResultOSM(fo, rd, null);
 				} catch (FileNotFoundException e) {
 					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
 				}
 	}
 
@@ -548,7 +548,7 @@ public class RouteData {
 			Vector<Connection> solve) {
 		fo.write("<?xml version='1.0' encoding='UTF-8'?>\n");
 		fo.write("<osm version='0.5' generator='JOSM'>\n");
-		int rid = 1;
+
 		for (RouteNode r:rd.nodes.values()) {
 			fo.write("<node id='" + r.node.renumberdId);
 			fo.write("' timestamp='2007-02-15 10:32:17' visible='true' lat='" +  r.node.lat);
@@ -583,9 +583,9 @@ public class RouteData {
 	}
 		
 		
-		RouteNode last = null;
-		Connection lastCon = null;
-		int lb = 0;
+//		RouteNode last = null;
+//		Connection lastCon = null;
+//		int lb = 0;
 //		if (solve != null) {
 //		for (Connection c:solve) {
 //			if (last == null) {
@@ -625,7 +625,6 @@ public class RouteData {
 		for (Node n: nodes2) {
 			if (nodes.containsKey(n.id)) {
 				RouteNode rn = nodes.get(n.id);
-				
 			}
 		}
 	}

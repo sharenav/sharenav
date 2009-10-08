@@ -143,7 +143,7 @@ public class CalcNearBy {
 
 	private KDTree getNearByElements() {
 		
-		System.out.println("create nearBy candidates");
+		System.out.println("Creating nearBy candidates");
 		KDTree kd = new KDTree(3);
 		//double [] latlonKey = new double[2]; 
 		for (Node n : parser.getNodes()) {
@@ -152,6 +152,7 @@ public class CalcNearBy {
 				//latlonKey[1] = n.lon;
 				if (n.getName() == null || n.getName().trim().length() == 0) {
 					System.out.println("STRANGE: place without name, skipping: " + n);
+					System.out.println("  Please fix in OSM: " + n.toUrl());
 					continue;
 				}
 				try {
@@ -162,7 +163,7 @@ public class CalcNearBy {
 					e.printStackTrace();
 				} catch (KeyDuplicateException e) {
 					System.out.println("KeyDuplication at " + n);
-					
+					System.out.println("  Please fix in OSM: " + n.toUrl());					
 				}				
 			}
 		}
