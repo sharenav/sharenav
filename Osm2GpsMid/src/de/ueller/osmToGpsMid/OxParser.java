@@ -272,6 +272,9 @@ public class OxParser extends DefaultHandler {
 			if (inBound) {
 				nodes.put(new Long(current.id), (Node) current);
 				nodeIns++;
+				if (current.getAttribute("highway") != null && current.getAttribute("highway").equalsIgnoreCase("traffic_signals")) {
+					n.markAsTrafficLights();
+				}
 			}
 			current = null;
 		} 

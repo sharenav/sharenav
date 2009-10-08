@@ -32,9 +32,14 @@ public class Node extends Entity{
 	private byte type = -1;
 	//public byte noConfType = -1;
 	public boolean used = false;
-	public byte connectedLineCount = 0;
+	private byte connectedLineCount = 0;
 //	private Set<Way> connectedWays = new HashSet<Way>();
 	public RouteNode routeNode;
+	
+	// the upper flags of connectedLineCount are used to indicate special informations about the node
+	public static final int CONMASK_CONNECTEDLINECOUNT = 63;
+	public static final int CONFLAG_TRAFFICLIGHTS = 64;
+	
 	
 	public Node() {
 	}
@@ -93,6 +98,35 @@ public class Node extends Entity{
 		return type;
 	}
 	
+	public byte getConnectedLineCount(){
+		return (byte) (connectedLineCount & CONMASK_CONNECTEDLINECOUNT);
+	}
+
+	private void setConnectedLineCount(byte count){
+		connectedLineCount &= CONFLAG_TRAFFICLIGHTS;
+		connectedLineCount |= count;
+	}
+
+	public void resetConnectedLineCount(){
+		connectedLineCount &= CONFLAG_TRAFFICLIGHTS;
+	}
+	
+	public void incConnectedLineCount(){
+		setConnectedLineCount((byte) (getConnectedLineCount() + 1));
+	}
+
+	public void decConnectedLineCount(){
+		setConnectedLineCount((byte) (getConnectedLineCount() -1));
+	}
+
+	public void markAsTrafficLights(){
+		connectedLineCount |= CONFLAG_TRAFFICLIGHTS;
+	}
+
+	public boolean isTrafficLights(){
+		return (connectedLineCount & CONFLAG_TRAFFICLIGHTS) > 0;
+	}
+
 	private byte calcType(Configuration c) {
 		if (type != -1) {
 			return type;

@@ -52,7 +52,7 @@ public class RouteData {
 	public void create() {
 		// reset connectedLineCount for each Node to 0
 		for (Node n:parser.getNodes()) {
-			n.connectedLineCount = 0;
+			n.resetConnectedLineCount();
 		}
 		// count all connections for all nodes
 		for (Way w:parser.getWays()) {
@@ -64,14 +64,14 @@ public class RouteData {
 			for (SubPath s:w.getSubPaths()) {
 				Node lastNode = null;
 				for (Node n:s.getNodes()) {
-					n.connectedLineCount++;
+					n.incConnectedLineCount();
 					if (lastNode != null) {
-						n.connectedLineCount++;
+						n.incConnectedLineCount();
 					}
 					lastNode = n;
 				}
 				if (lastNode != null) {
-					lastNode.connectedLineCount--;
+					lastNode.decConnectedLineCount();
 				}
 			}
 		}
@@ -280,7 +280,7 @@ public class RouteData {
 				if (count == 2) {
 					bearing = MyMath.bearing_start(lastNode, n);
 				}
-				if (thisIndex == lastIndex || (n.connectedLineCount != 2)) {
+				if (thisIndex == lastIndex || (n.getConnectedLineCount() != 2)) {
 					RouteNode next = getRouteNode(n);
 					byte endBearing = MyMath.bearing_start(lastNode, n);
 					addConnection(from, next, dist, w, bearing, endBearing);
@@ -553,7 +553,7 @@ public class RouteData {
 			fo.write("<node id='" + r.node.renumberdId);
 			fo.write("' timestamp='2007-02-15 10:32:17' visible='true' lat='" +  r.node.lat);
 			fo.write("' lon='" + r.node.lon + "'>\n");
-			fo.write("  <tag k='connectCount' v='" + r.node.connectedLineCount + "'/>\n");
+			fo.write("  <tag k='connectCount' v='" + r.node.getConnectedLineCount() + "'/>\n");
 			fo.write("  <tag k='connectTo' v='");
 			for (Connection c:r.connected) {
 				fo.write("," + c.to.node.renumberdId);
