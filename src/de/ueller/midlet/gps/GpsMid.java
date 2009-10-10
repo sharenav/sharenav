@@ -146,7 +146,13 @@ public class GpsMid extends MIDlet implements CommandListener {
 		if (trace == null) {
 			trace = Trace.getInstance();
 		}
-		trace.show();
+		if (!Configuration.getCfgBitState(Configuration.CFGBIT_INITIAL_SETUP_DONE)) {
+			GuiSetupGui gsg = new GuiSetupGui(trace);
+			gsg.show();
+			Configuration.setCfgBitSavedState(Configuration.CFGBIT_INITIAL_SETUP_DONE, true);
+		} else {
+			trace.show();
+		}
 	}
 	
 	protected void destroyApp(boolean arg0) throws MIDletStateChangeException {

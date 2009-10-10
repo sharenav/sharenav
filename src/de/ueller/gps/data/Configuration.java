@@ -197,6 +197,8 @@ public class Configuration {
 	/** bit 71: Flag whether display size specific defaults are set
 	(we need a canvas to determine display size, so we can't determine appropriate defaults in Configuration) */
 	public final static byte CFGBIT_DISPLAYSIZE_SPECIFIC_DEFAULTS_DONE = 71;
+	/** bit 72: Flag whether initial Setup Forms were shown to the user */
+	public final static byte CFGBIT_INITIAL_SETUP_DONE = 72;
 	
 	/**
 	 * These are the database record ids for each configuration option
