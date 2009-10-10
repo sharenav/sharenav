@@ -9,7 +9,6 @@ import de.ueller.gps.data.Configuration;
 
 
 public class GuiSetupSound extends Form implements CommandListener {
-	private final Form	menuSetupSound = new Form("Sounds & Alerts");
 	// Groups
 	private ChoiceGroup sndGpsGroup;
 	private	String [] sndGps = new String[2];
