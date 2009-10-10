@@ -136,7 +136,7 @@ public class RouteData {
 				if (numFromConnections != 1) {
 					System.out.println("Invalid turn restriction: " + numFromConnections + " from_connections matched for: " + turn.toString(parser.getWayHashMap()));
 					if (numFromConnections == 0) {
-						System.out.println("  Reason may be: way tagged with access=no");						
+						System.out.println("  Reason may be: way tagged with access=no or from/to swapped on oneways");						
 					} else {
 						System.out.println("  Reason may be: fromWay not split at via member");												
 						turn.fromRouteNode = null; // make the turn restriction incomplete so it won't get passed to GpsMid 
@@ -161,7 +161,7 @@ public class RouteData {
 				if (numToConnections != 1) {
 					System.out.println("Invalid turn restriction: " + numToConnections + " to_connections matched for: "  + turn.toString(parser.getWayHashMap()));
 					if (numToConnections == 0) {
-						System.out.println("  Reason may be: way tagged with access=no");						
+						System.out.println("  Reason may be: way tagged with access=no or from/to swapped on oneways");						
 					} else {
 						System.out.println("  Reason may be: toWay not split at via member");												
 						turn.toRouteNode = null; // make the turn restriction incomplete so it won't get passed to GpsMid 
