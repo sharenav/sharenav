@@ -473,22 +473,24 @@ public class Routing implements Runnable {
 			if (maxEstimationSpeed < 14) {
 				   return (int) (((dist/ maxEstimationSpeed * 10)+turnCost)*estimateFac);				
 			}
-//			if (dist > 100000){
-//				   // estimate 100 Km/h (28 m/s) as average speed 
-//				   return (int) (((dist/2.8f)+turnCost)*estimateFac);
+			if (Routing.onlyMainStreetNet) {
+//				if (dist > 100000){
+//					// estimate 100 Km/h (28 m/s) as average speed 
+//					return (int) (((dist/2.8f)+turnCost)*estimateFac);
 //				}
-//			if (dist > 50000){
+//				if (dist > 50000){
 //				   // estimate 80 Km/h (22 m/s) as average speed 
-//				   return (int) (((dist/2.2f)+turnCost)*estimateFac);
+//					return (int) (((dist/2.2f)+turnCost)*estimateFac);
 //				}
-			if (dist > 10000){
-				   // estimate 60 Km/h (17 m/s) as average speed 
-				   return (int) (((dist/1.7f)+turnCost)*estimateFac);
+				if (dist > 10000){
+					// estimate 60 Km/h (17 m/s) as average speed 
+					return (int) (((dist/1.7f)+turnCost)*estimateFac);
 				}
+			}
 			if (dist > 5000){
-				   // estimate 45 Km/h (12 m/s) as average speed 
-				   return (int) (((dist/1.2f)+turnCost)*estimateFac);
-				}
+				// estimate 45 Km/h (12 m/s) as average speed 
+				return (int) (((dist/1.2f)+turnCost)*estimateFac);
+			}
 			// estimate 30 Km/h (8 m/s) as average speed 
 			return (int) (((dist/2.2f)+turnCost)*estimateFac);
 		} else {
