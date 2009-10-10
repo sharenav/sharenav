@@ -80,8 +80,10 @@ public class TurnRestriction {
 		
 	}	
 
-	public String toString(HashMap<Long,Way> wayHashMap) {
-		return restrictionType + " from " + getWayNameFromRefId(wayHashMap, fromWayRef) + " (" + fromWayRef + ") into " + getWayNameFromRefId(wayHashMap, toWayRef) + " (" + toWayRef + ")";  
+	public String toString(HashMap<Long, Way> wayHashMap) {
+		return restrictionType + " from '" + getWayNameFromRefId(wayHashMap, fromWayRef) + 
+		"' (" + fromWayRef + ") into '" + getWayNameFromRefId(wayHashMap, toWayRef) + 
+		"' (" + toWayRef + ")";  
 	}
 
 	public boolean isViaTypeWay() {
@@ -89,7 +91,7 @@ public class TurnRestriction {
 	}
 	
 	public boolean isComplete() {
-		return viaRouteNode!=null && fromRouteNode!=null && toRouteNode!=null;
+		return (viaRouteNode != null && fromRouteNode != null && toRouteNode != null);
 	}
 
 	public String getWayNameFromRefId(HashMap<Long,Way> wayHashMap, long wayRef) {
@@ -103,5 +105,4 @@ public class TurnRestriction {
 		}
 		return name;
 	}
-	
 }

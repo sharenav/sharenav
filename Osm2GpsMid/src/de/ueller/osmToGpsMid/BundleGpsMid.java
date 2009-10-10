@@ -300,7 +300,7 @@ public class BundleGpsMid {
 		Calendar endTime = Calendar.getInstance();
 		Calendar duration = Calendar.getInstance();
 		duration.setTimeInMillis(endTime.getTimeInMillis() - startTime.getTimeInMillis());
-		System.out.println(n.getName() + " created successfully with " + (n.length() / 1024 / 1024) + " Mb in " +
+		System.out.println(n.getName() + " created successfully with " + (n.length() / 1024 / 1024) + " MiB in " +
 				(duration.get(Calendar.HOUR) - 1) + ":" + duration.get(Calendar.MINUTE) + ":" + duration.get(Calendar.SECOND));
 	}
 	

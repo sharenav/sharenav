@@ -283,7 +283,7 @@ public class Way extends Entity implements Comparable<Way> {
 			} catch (NumberFormatException e) {
 				int maxs = config.getMaxspeedTemplate(maxSpeedAttr);
 				if (maxs < 0) {
-					System.out.println("Unhandled MaxSpeed for Way + " + toString() +": " + getAttribute("maxspeed"));
+					System.out.println("Unhandled maxspeed for way " + toString());
 				} else {
 					maxSpeed = maxs;
 				}
@@ -332,7 +332,7 @@ public class Way extends Entity implements Comparable<Way> {
 			} catch (NumberFormatException e) {
 				int maxs = config.getMaxspeedTemplate(maxSpeedAttr);
 				if (maxs < 0) {
-					System.out.println("Unhandled MaxSpeedWinter for Way + " + toString() +": " + getAttribute("maxspeed"));
+					System.out.println("Unhandled maxspeedwinter for way + " + toString() +": " + getAttribute("maxspeed"));
 				} else {
 					maxSpeed = maxs;
 				}
@@ -387,7 +387,9 @@ public class Way extends Entity implements Comparable<Way> {
 	}
 
 	public String toString() {
-		String res = "Way(" + id + ") " + getName()  + ((nearBy == null)?"":(" by " + nearBy)) + " type=" + getType() + "[";
+		String res = "id=" + id + 
+			((nearBy == null) ? "" : (" near " + nearBy)) + 
+			" type=" + getType() + " [";
 		Set<String> tags = getTags();
 		if (tags != null) {
 			for (String key : tags) {

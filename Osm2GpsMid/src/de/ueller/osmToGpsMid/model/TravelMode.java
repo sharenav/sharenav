@@ -22,13 +22,13 @@ public class TravelMode {
 	public short maxInMeters;
 	/** maximum speed in km/h estimated by the route calculation */
 	public short maxEstimationSpeed = 0;
-	public long numRouteNodes=0;
-	public long numAreaCrossConnections=0;
-	public long numDualConnections=0;
-	public long numOneWayConnections=0;
-	public long numBicycleOppositeConnections=0;
+	public long numRouteNodes = 0;
+	public long numAreaCrossConnections = 0;
+	public long numDualConnections = 0;
+	public long numOneWayConnections = 0;
+	public long numBicycleOppositeConnections = 0;
 	public byte travelModeFlags = 0;
-	// is this travelMode specified in the style-file?
+	/** Flag if this travelMode is specified in the style-file */
 	public boolean routeModeDefined = false;
 	
 	public final static byte AGAINST_ALL_ONEWAYS = 1;
@@ -52,10 +52,11 @@ public class TravelMode {
 	}	
 
 	public String toString() {
-		return " " + travelModeName + ": " + numRouteNodes + " nodes - connections: " +
+		return "  " + travelModeName + ": nodes: " + numRouteNodes + ", connections: " +
 				numDualConnections + " dual (" + 
-				+ numAreaCrossConnections + " crossarea" +
-				(numBicycleOppositeConnections!=0?" / " + numBicycleOppositeConnections + " opposite for bicycles":"") +
+				numAreaCrossConnections + " crossarea" +
+				(numBicycleOppositeConnections != 0 ? (" / " + 
+						numBicycleOppositeConnections + " opposite for bicycles") : "") +
 				") / " + numOneWayConnections + " oneway";
 	}
 }

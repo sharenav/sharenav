@@ -118,7 +118,7 @@ public class CreateGpsMidData {
 			for (File f : files) {
 				if (f.getName().endsWith(".d") || f.getName().endsWith(".dat")){
 					if (! f.delete()){
-						System.out.println("failed to delete file " + f.getName());
+						System.out.println("ERROR: Failed to delete file " + f.getName());
 					}
 				}
 			}
@@ -132,14 +132,14 @@ public class CreateGpsMidData {
 		SearchList sl=new SearchList(names1);
 		sl.createNameList(path);
 		for (int i=0;i<=3;i++){
-			System.out.println("export Tiles for zoomlevel " + i);
+			System.out.println("Exporting tiles for zoomlevel " + i);
 			exportMapToMid(i);
 		}
 		if (Configuration.attrToBoolean(configuration.useRouting) >= 0) {
-			System.out.println("export RouteTiles");
+			System.out.println("Exporting route tiles");
 			exportMapToMid(ROUTEZOOMLEVEL);
 		} else {
-			System.out.println("no RouteTiles to export");
+			System.out.println("No route tiles to export");
 		}
 //		for (int x=1;x<12;x++){
 //			System.out.print("\n" + x + " :");
@@ -148,17 +148,18 @@ public class CreateGpsMidData {
 //		System.exit(2);
 		sl.createSearchList(path);
 		
-		// output statistics for travel modes
+		// Output statistics for travel modes
 		if (Configuration.attrToBoolean(configuration.useRouting) >= 0) {
 			for (int i=0; i<TravelModes.travelModeCount; i++) {
 				System.out.println(TravelModes.getTravelMode(i).toString());			
 			}
 		}		
-		System.out.println("Motorway connections: " + TravelModes.numMotorwayConnections + " MainStreet_Net connections: " + TravelModes.numMainStreetNetConnections);			
-		System.out.println("Total Ways:"+totalWaysWritten 
-				         + " Seg:"+totalSegsWritten
-				         + " Pkt:"+totalNodesWritten
-				         + " POI:"+totalPOIsWritten);
+		System.out.println("Motorway connections: " + TravelModes.numMotorwayConnections + 
+				", MainStreet_Net connections: " + TravelModes.numMainStreetNetConnections);			
+		System.out.println("Total ways: "+ totalWaysWritten 
+				         + ", segments: " + totalSegsWritten
+				         + ", nodes: " + totalNodesWritten
+				         + ", POI: " + totalPOIsWritten);
 	}
 	
 
@@ -170,7 +171,8 @@ public class CreateGpsMidData {
 		for (Node n : parser.getNodes()) {
 			na.addName(n);
 		}
-		System.out.println("found " + na.getNames().size() + " names " + na.getCanons().size() + " canon");
+		System.out.println("Found " + na.getNames().size() + " names, " + 
+				na.getCanons().size() + " canon");
 		na.calcNameIndex();
 		return (na);
 	}
@@ -370,15 +372,19 @@ public class CreateGpsMidData {
 
 			// show summary for copied icon files
 			System.out.println("Icon inclusion summary:");
-			System.out.println(FileTools.copyDir("icon", path, true, true) + " internal icons replaced from " + "icon" + System.getProperty("file.separator") + " containing " + FileTools.countFiles("icon") + " files");
+			System.out.println("  " + FileTools.copyDir("icon", path, true, true) + 
+					" internal icons replaced from " + "icon" + 
+					System.getProperty("file.separator") + " containing " + 
+					FileTools.countFiles("icon") + " files");
 
 			// show summary for copied media files
 			if (sbCopiedMedias.length()!=0) {
 				System.out.println("External media inclusion summary:");
-				System.out.println(sbCopiedMedias.toString());
+				System.out.println("  " + sbCopiedMedias.toString());
 				if (mediaInclusionErrors!=0) {					
 					System.out.println("");
-					System.out.println("Warning: " + mediaInclusionErrors + " media files could NOT be included - see details above");
+					System.out.println("  WARNING: " + mediaInclusionErrors + 
+							" media files could NOT be included - see details above");
 					System.out.println("");
 				}
 			}
@@ -623,7 +629,7 @@ public class CreateGpsMidData {
 					}
 				}
 				long time = (System.currentTimeMillis() - startTime);
-				System.out.println("Marked " + Tile.numTrafficSignalRouteNodes + " route nodes from "
+				System.out.println("  Marked " + Tile.numTrafficSignalRouteNodes + " route nodes from "
 						+ parser.trafficSignalCount + " traffic signals, took " 
 						+ time + " ms");
 
@@ -662,7 +668,7 @@ public class CreateGpsMidData {
 		byte [] out=new byte[1];
 		expTiles.push(new TileTuple(t,tileBound));
 		byte [] connOut;
-		System.out.println("Exporting Tiles");
+		//System.out.println("Exporting Tiles");
 		while (!expTiles.isEmpty()) {			
 			TileTuple tt = expTiles.pop();
 			unsplittableTile = false;
@@ -707,14 +713,14 @@ public class CreateGpsMidData {
 				/**
 				 * If the number of nodes and ways in the new tile is the same, and the bound
 				 * has already been shrunk to less than 0.001°, then give up and declare it a
-				 * unsplittable Tile and just live with the fact that this tile is to big.
-				 * Otherwise we can get into an endless loop of trying to split up this tile
+				 * unsplittable tile and just live with the fact that this tile is too big.
+				 * Otherwise we can get into an endless loop of trying to split up this tile.
 				 */
 				if ((t.nodes.size() == nodes.size()) && (t.ways.size() == ways.size()) && (tileBound.maxLat - tileBound.minLat < 0.001)) {
-					System.out.println("WARNING: could not reduce tile size for tile " + t);
-					System.out.println("t.ways " + t.ways.size() + " t.nodes " + t.nodes.size());
+					System.out.println("WARNING: Could not reduce tile size for tile " + t);
+					System.out.println("  t.ways=" + t.ways.size() + ", t.nodes=" + t.nodes.size());
 					for (Way w : t.ways) {
-						System.out.println("Way: " + w);						
+						System.out.println("  Way: " + w);						
 					}
 					
 					unsplittableTile = true;										
@@ -732,10 +738,10 @@ public class CreateGpsMidData {
 			}
 			
 			if (unsplittableTile && tooLarge) {
-				System.out.println("Error: Tile is unsplittable, but too large. Can't deal with this!");
+				System.out.println("WARNING: Tile is unsplittable, but too large. Can't deal with this!");
 			}
 
-			// split tile if more then 255 Ways or binary content > MAX_TILE_FILESIZE but not if only one Way
+			// Split tile if more then 255 Ways or binary content > MAX_TILE_FILESIZE but not if only one Way
 			if ((!unsplittableTile) && ((ways.size() > 255 || (out.length > maxSize && ways.size() != 1) || tooLarge))){
 				//System.out.println("create Subtiles size="+out.length+" ways=" + ways.size());
 				t.bounds=realBound.clone();
@@ -782,8 +788,8 @@ public class CreateGpsMidData {
 					}
 
 				} else {
-					//Write as emty box
-					t.type=Tile.TYPE_EMPTY;
+					//Write as empty box
+					t.type = Tile.TYPE_EMPTY;
 				}
 			}
 		}
@@ -802,7 +808,8 @@ public class CreateGpsMidData {
 	 */
 	private void writeRouteTile(Tile t, Bounds tileBound, Bounds realBound,
 			Collection<Node> nodes, byte[] out) {
-		//System.out.println("Write renderTile "+t.zl+":"+t.fid + " nodes:"+nodes.size());
+		//System.out.println("Writing render tile " + t.zl + ":" + t.fid + 
+		//	" nodes:" + nodes.size());
 		t.type=Tile.TYPE_MAP;
 		t.bounds=tileBound.clone();
 		t.type=Tile.TYPE_ROUTEDATA;
@@ -823,14 +830,15 @@ public class CreateGpsMidData {
 	private void writeRenderTile(Tile t, Bounds tileBound, Bounds realBound,
 			 Collection<Node> nodes, byte[] out)
 			throws FileNotFoundException, IOException {
-		//System.out.println("Write routeTile "+t.zl+":"+t.fid+ " ways:"+t.ways.size() + " nodes:"+nodes.size());
-		totalNodesWritten+=nodes.size();
-		totalWaysWritten+=t.ways.size();
+		//System.out.println("Writing route tile " + t.zl + ":" + t.fid + 
+		//	" ways:" + t.ways.size() + " nodes:" + nodes.size());
+		totalNodesWritten += nodes.size();
+		totalWaysWritten += t.ways.size();
 		
 		//TODO: Is this safe to comment out??
 		//Collections.sort(t.ways);
 		for (Way w: t.ways){
-			totalSegsWritten+=w.getLineCount();
+			totalSegsWritten += w.getLineCount();
 		}
 		if (t.zl != ROUTEZOOMLEVEL) {
 			for (Node n : nodes) {
@@ -842,7 +850,7 @@ public class CreateGpsMidData {
 		t.type=Tile.TYPE_MAP;
 		// RouteTiles will be written later because of renumbering
 		if (t.zl != ROUTEZOOMLEVEL) {
-			t.bounds=realBound.clone();
+			t.bounds = realBound.clone();
 			FileOutputStream fo = new FileOutputStream(path + "/t" + t.zl
 					+ t.fid + ".d");
 			DataOutputStream tds = new DataOutputStream(fo);
@@ -851,7 +859,7 @@ public class CreateGpsMidData {
 			// mark nodes as written to MidStorage 
 			for (Node n : nodes) { 
 				if (n.fid != 0) {
-					System.out.println("DATA DUPPLICATION: This node has been written already! " + n);
+					System.out.println("DATA DUPLICATION: This node has been written already! " + n);
 				}
 				n.fid = t.fid; 
 			}
@@ -873,8 +881,9 @@ public class CreateGpsMidData {
 	
 	private LinkedList<Way> getWaysInBound(Collection<Way> parentWays,int zl,Bounds targetTile,Bounds realBound){
 		LinkedList<Way> ways = new LinkedList<Way>();
-//		System.out.println("search for ways mostly in " + targetTile + " from " + parentWays.size() + " ways");
-		// collect all way that are in this rectangle
+//		System.out.println("Searching for ways mostly in " + targetTile + " from " + 
+//			parentWays.size() + " ways");
+		// Collect all ways that are in this rectangle
 		for (Way w1 : parentWays) {
 			byte type=w1.getType();
 			if (type < 1) continue;
@@ -891,8 +900,9 @@ public class CreateGpsMidData {
 	}
 	private LinkedList<Way> addWaysCompleteInBound(LinkedList<Way> ways,Collection<Way> parentWays,int zl,Bounds targetTile){
 		// collect all way that are in this rectangle
-//		System.out.println("search for ways total in " + targetTile + " from " + parentWays.size() + " ways");
-		//This is bit of a hack. We should probably propagate the TreeSet through out,
+//		System.out.println("Searching for ways total in " + targetTile + 
+//			" from " + parentWays.size() + " ways");
+		//This is a bit of a hack. We should probably propagate the TreeSet through out,
 		//But that needs more effort and time than I currently have. And this way we get
 		//rid of a O(n^2) bottle neck
 		TreeSet<Way> waysTS = new TreeSet<Way>(ways);
@@ -1035,8 +1045,9 @@ public class CreateGpsMidData {
 			//still hit the case when a node is written twice.
 			//Warn about this fact to fix this correctly at a
 			//later stage
-			if (n.fid != 0) 
-				System.out.println("Writing interest node twice? " + n); 
+			if (n.fid != 0) {
+				System.out.println("WARNING: Writing interest node twice, " + n);
+			}
 			writeNode(n,ds,INODE,t);
 		}
 		for (Node n : wayNodes.values()) {
@@ -1117,10 +1128,10 @@ public class CreateGpsMidData {
 		double tmpLat = (MyMath.degToRad(n.lat - t.centerLat)) * Tile.fpm;
 		double tmpLon = (MyMath.degToRad(n.lon - t.centerLon)) * Tile.fpm;
 		if ((tmpLat > Short.MAX_VALUE) || (tmpLat < Short.MIN_VALUE)) {
-			System.out.println("Numeric Over flow of Latitude for node: " + n.id);
+			System.out.println("Numeric overflow of latitude for node: " + n.id);
 		}
 		if ((tmpLon > Short.MAX_VALUE) || (tmpLon < Short.MIN_VALUE)) {
-			System.out.println("Numeric Over flow of Longitude for node: " + n.id);
+			System.out.println("Numeric overflow of longitude for node: " + n.id);
 		}
 		ds.writeShort((short)tmpLat);
 		ds.writeShort((short)tmpLon);
@@ -1138,7 +1149,7 @@ public class CreateGpsMidData {
 			ds.writeByte(n.getType(configuration));
 			if (configuration.enableEditingSupport) {
 				if (n.id > Integer.MAX_VALUE) {
-					System.out.println("WARNING: Osm-ID won't fit in 32-bit for way " + n);
+					System.out.println("WARNING: OSM-ID won't fit in 32 bits for way " + n);
 					ds.writeInt(-1);
 				} else
 					ds.writeInt((int)n.id);

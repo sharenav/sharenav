@@ -136,17 +136,17 @@ public class RouteData {
 				if (numFromConnections != 1) {
 					System.out.println("Invalid turn restriction: " + numFromConnections + " from_connections matched for: " + turn.toString(parser.getWayHashMap()));
 					if (numFromConnections == 0) {
-						System.out.println("Reason may be way tagged with access=no");						
+						System.out.println("  Reason may be: way tagged with access=no");						
 					} else {
-						System.out.println("Reason may be fromWay not split at via member");												
+						System.out.println("  Reason may be: fromWay not split at via member");												
 						turn.fromRouteNode = null; // make the turn restriction incomplete so it won't get passed to GpsMid 
 					}
 					for (Connection c:nViaFrom.connectedFrom) {
 						if (restrictionFromWay.containsNode(c.from.node)) {
-							System.out.println("Node: " + c.from.node.id);
+							System.out.println("  FromNode: " + c.from.node.id);
 						}
 					}
-					System.out.println("URL to via node: " + n.node.toUrl());					
+					System.out.println("  URL for via node: " + n.node.toUrl());					
 				}
 				int numToConnections = 0;
 				lastId = -1;
@@ -161,17 +161,17 @@ public class RouteData {
 				if (numToConnections != 1) {
 					System.out.println("Invalid turn restriction: " + numToConnections + " to_connections matched for: "  + turn.toString(parser.getWayHashMap()));
 					if (numToConnections == 0) {
-						System.out.println("Reason may be way tagged with access=no");						
+						System.out.println("  Reason may be: way tagged with access=no");						
 					} else {
-						System.out.println("Reason may be toWay not split at via member");												
+						System.out.println("  Reason may be: toWay not split at via member");												
 						turn.toRouteNode = null; // make the turn restriction incomplete so it won't get passed to GpsMid 
 					}
 					for (Connection c:n.connected) {
 						if (restrictionToWay.containsNode(c.to.node)) {
-							System.out.println("Node: " + c.to.node.id);
+							System.out.println("  ToNode: " + c.to.node.id);
 						}
 					}
-					System.out.println("URL to via node: " + n.node.toUrl());					
+					System.out.println("  URL for via node: " + n.node.toUrl());					
 				}
 				if (numFromConnections == 1 && numToConnections == 1) {
 					numTurnRestrictions++;
@@ -235,9 +235,9 @@ public class RouteData {
 						startEntry += direction;
 					}
 				}
-				System.out.println("viaRouteNodes on viaWay " + restrictionViaWay.id + ":");
+				System.out.println("  viaRouteNodes on viaWay " + restrictionViaWay.id + ":");
 				for (RouteNode n:turn.additionalViaRouteNodes) {
-					System.out.println(n.node.id);					
+					System.out.println("  " + n.node.id);					
 				}
 				System.out.println(turn.viaRouteNode.node.id);									
 			}
@@ -246,10 +246,10 @@ public class RouteData {
 				parser.getTurnRestrictionHashMap().put(new Long(turn.viaRouteNode.node.id), turn);
 				numViaWaysResolved++;
 			} else {
-				System.out.println("Could not resolve route nodes for viaWay " + restrictionViaWay.id);				
+				System.out.println("  Could not resolve route nodes for viaWay " + restrictionViaWay.id);				
 			}
 		}
-		System.out.println(numViaWaysResolved + " viaWays resolved");
+		System.out.println("  " + numViaWaysResolved + " viaWays resolved");
 
 		parser.getTurnRestrictionsWithViaWays().clear();		
 	}
@@ -501,8 +501,8 @@ public class RouteData {
 					FileInputStream fr = new FileInputStream("/Massenspeicher/myStreetMap0.5.osm");
 //					FileInputStream fr = new FileInputStream("/Massenspeicher/planet-070725.osm");
 					OxParser parser = new OxParser(fr, conf);
-					System.out.println("Read Nodes " + parser.getNodes().size());
-					System.out.println("Read Ways  " + parser.getNodes().size());
+					System.out.println("Read nodes " + parser.getNodes().size());
+					System.out.println("Read ways  " + parser.getNodes().size());
 					new CleanUpData(parser, conf);
 					RouteData rd = new RouteData(parser, "");
 
