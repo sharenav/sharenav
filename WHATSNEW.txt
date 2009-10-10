@@ -1,6 +1,7 @@
 GpsMid 0.5.09
        *** Usability ***
        - Icon menus are available as an alternative user interface (activateable in Setup / Display Options)
+       - use numeric keys to directly access icons in icon menu - this can be activated in Setup (thx Petr Dlouhý) 
        - Specify in Setup/Display Options to keep backlight on only while GPS is started
        - Many more midlet colors are specifiable in the style-file now (including colors for night mode)
        - Touch screen support:
@@ -51,15 +52,22 @@ GpsMid 0.5.09
        - Show remaining route distance to target in map screen
        - Check for turn restrictions for motorcar during route calculation (can be turned off as it needs more memory and is slower)
        - Turbo or Deep Route Calculation Mode (selectable when routing)
+       - Speed up for long distance routes for motorcars
+         by using only the main street net (motorway, trunk, primary, seconday, tertiary)
+         in the middle of the route
+         (specify distance from start and target where main street net calculation starts in Routing Options)
        - U-turn instruction
        - Cross area routing (e.g. for foot routing through pedestrian zones)
        - Permissive Routing Restriction are now possible
          (e.g. bicycle routing for an abandoned aeroway=runway if bicycle=true is set
        - Much faster route calculation for bicycles (thx to apmonkey for the hint)
        - Faster detection of the highlighted ways during rendering
-       - optionally show remaining route duration (based on ways' typical/max speeds) in map screen. 
+       - optionally show remaining route duration / ETA in map screen
+         (based on ways' typical/max speeds/number of traffic lights) 
        *** OSM Editing and other only with Internet Connection available features ***
        - Support for GeoHack in "Online Info" (thx jkpj)
+       *** Midlet creation with Osm2GpsMid ***
+       - improved output, e.g. OSM links to errors to fix and duration for some creation steps
        *** Osm2GpsMid GUI ***
        - Loading .properties files works again
        - New option to include cell-ids
