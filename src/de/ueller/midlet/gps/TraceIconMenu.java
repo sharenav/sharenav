@@ -34,20 +34,20 @@ public class TraceIconMenu extends IconMenuWithPagesGUI {
 	
 		IconMenuPage mp;
 		// Main
-		mp = createAndAddMenuPage(" Main ", 3, 4);
-		iconToggleGps =		mp.createAndAddIcon("Start GPS", "i_gps", Trace.CONNECT_GPS_CMD);
-							mp.createAndAddIcon("Search", "i_search", Trace.SEARCH_CMD);
-							mp.createAndAddIcon("Map Features", "i_mapfeat", Trace.MAPFEATURES_CMD);
+		mp = createAndAddMenuPage(" Main "/*i:MainTop*/, 3, 4);
+		iconToggleGps =		mp.createAndAddIcon("Start GPS"/*i:StartGPS*/, "i_gps", Trace.CONNECT_GPS_CMD);
+							mp.createAndAddIcon("Search"/*i:Search*/, "i_search", Trace.SEARCH_CMD);
+							mp.createAndAddIcon("Map Features"/*i:MapFeature*/, "i_mapfeat", Trace.MAPFEATURES_CMD);
 
-							mp.createAndAddIcon("Setup", "i_setup", Trace.SETUP_CMD);
-							mp.createAndAddIcon("Tacho", "i_tacho", Trace.DATASCREEN_CMD);
-							mp.createAndAddIcon("Overview/Filter Map", "i_overview", Trace.OVERVIEW_MAP_CMD);
+							mp.createAndAddIcon("Setup"/*i:Setup*/, "i_setup", Trace.SETUP_CMD);
+							mp.createAndAddIcon("Tacho"/*i:Tacho*/, "i_tacho", Trace.DATASCREEN_CMD);
+							mp.createAndAddIcon("Overview/Filter Map"/*i:Overview*/, "i_overview", Trace.OVERVIEW_MAP_CMD);
 		
-		iconOnlineInfo =	mp.createAndAddIcon("Online", "i_online", Trace.ONLINE_INFO_CMD);		
-							mp.createAndAddIcon("About", "i_about", Trace.ABOUT_CMD);
-							mp.createAndAddIcon("Back", "i_back", IconActionPerformer.BACK_ACTIONID);
+		iconOnlineInfo =	mp.createAndAddIcon("Online"/*i:Online*/, "i_online", Trace.ONLINE_INFO_CMD);		
+							mp.createAndAddIcon("About"/*i:About*/, "i_about", Trace.ABOUT_CMD);
+							mp.createAndAddIcon("Back"/*i:Back*/, "i_back", IconActionPerformer.BACK_ACTIONID);
 
-							mp.createAndAddIcon("Exit", "i_exit", Trace.EXIT_CMD);
+							mp.createAndAddIcon("Exit"/*i:Exit*/, "i_exit", Trace.EXIT_CMD);
 
 		// determine preferred ordering
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED)) {
@@ -58,9 +58,9 @@ public class TraceIconMenu extends IconMenuWithPagesGUI {
 			createAndAddRoutingMenu();
 		}
 		// Osm
-		mp = createAndAddMenuPage(" Osm ", 3, 4);
-		iconEditWay =		mp.createAndAddIcon("Edit way", "i_editway", Trace.RETRIEVE_XML);
-		iconAddPOI =		mp.createAndAddIcon("Add POI", "i_addpoi", Trace.RETRIEVE_NODE);
+		mp = createAndAddMenuPage(" Osm "/*i:OsmTop*/, 3, 4);
+		iconEditWay =		mp.createAndAddIcon("Edit way"/*i:EditWay*/, "i_editway", Trace.RETRIEVE_XML);
+		iconAddPOI =		mp.createAndAddIcon("Add POI"/*i:AddPOI*/, "i_addpoi", Trace.RETRIEVE_NODE);
 
 		//#if not polish.api.online
 		iconOnlineInfo.makeImageGreyed();
@@ -78,29 +78,29 @@ public class TraceIconMenu extends IconMenuWithPagesGUI {
 	private void createAndAddRecordingMenu() {
 		IconMenuPage mp;
 		// Recordings
-		mp = createAndAddMenuPage(this.getWidth() >= 176 ?" Recordings ":" Rec ", 3, 4);
+		mp = createAndAddMenuPage(this.getWidth() >= 176 ?" Recordings "/*i:RecordTop*/:" Rec "/*i:RecTop*/, 3, 4);
 		iconToggleTrackRec=	mp.createAndAddIcon("Record Track", "i_rectrack", Trace.START_RECORD_CMD);
-							mp.createAndAddIcon("Save Wpt", "i_savewpt", Trace.SAVE_WAYP_CMD);
-							mp.createAndAddIcon("Enter Wpt", "i_enterwpt", Trace.ENTER_WAYP_CMD);
+							mp.createAndAddIcon("Save Wpt"/*i:SaveWpt*/, "i_savewpt", Trace.SAVE_WAYP_CMD);
+							mp.createAndAddIcon("Enter Wpt"/*i:EnterWpt*/, "i_enterwpt", Trace.ENTER_WAYP_CMD);
 
-							mp.createAndAddIcon("Tracks", "i_tracks", Trace.MANAGE_TRACKS_CMD);
-							mp.createAndAddIcon("Waypoints", "i_wpts", Trace.MAN_WAYP_CMD);
+							mp.createAndAddIcon("Tracks"/*i:Tracks*/, "i_tracks", Trace.MANAGE_TRACKS_CMD);
+							mp.createAndAddIcon("Waypoints"/*i:Waypoints*/, "i_wpts", Trace.MAN_WAYP_CMD);
 
-							mp.createAndAddIcon("Photo", "i_photo", Trace.CAMERA_CMD);
-		iconToggleAudioRec=	mp.createAndAddIcon("Voice", "i_micro", Trace.TOGGLE_AUDIO_REC);
+							mp.createAndAddIcon("Photo"/*i:Photo*/, "i_photo", Trace.CAMERA_CMD);
+							iconToggleAudioRec=	mp.createAndAddIcon("Voice"/*i:Voice*/, "i_micro", Trace.TOGGLE_AUDIO_REC);
 		
-							mp.createAndAddIcon("Send SMS", "i_sendsms", Trace.SEND_MESSAGE_CMD);		
+							mp.createAndAddIcon("Send SMS"/*i:SendSMS*/, "i_sendsms", Trace.SEND_MESSAGE_CMD);		
 	}
 
 
 	private void createAndAddRoutingMenu() {
 		IconMenuPage mp;
 		// Route
-		mp = createAndAddMenuPage(" Route ", 3, 4);
-		iconToggleRoute=	mp.createAndAddIcon("Calculate", "i_calc", Trace.ROUTING_TOGGLE_CMD);
-							mp.createAndAddIcon("Set target", "i_settarget", Trace.SETTARGET_CMD);
-							mp.createAndAddIcon("Show target", "i_showtarget", Trace.SHOW_TARGET_CMD);		
-							mp.createAndAddIcon("Clear target", "i_cleartarget", Trace.CLEARTARGET_CMD);		
+		mp = createAndAddMenuPage(" Route "/*i:RoutePage*/, 3, 4);
+		iconToggleRoute=	mp.createAndAddIcon("Calculate"/*i:Calc*/, "i_calc", Trace.ROUTING_TOGGLE_CMD);
+							mp.createAndAddIcon("Set target"/*i:SetTarget*/, "i_settarget", Trace.SETTARGET_CMD);
+							mp.createAndAddIcon("Show target"/*i:ShowTarget*/, "i_showtarget", Trace.SHOW_TARGET_CMD);		
+							mp.createAndAddIcon("Clear target"/*i:ClearTarget*/, "i_cleartarget", Trace.CLEARTARGET_CMD);		
 	}
 
 	private void rememberActiveTabAndEleNr() {
@@ -114,15 +114,15 @@ public class TraceIconMenu extends IconMenuWithPagesGUI {
 		
 		Trace trace = Trace.getInstance();
 		// for commands that can be toggled, fill in the current text and/or corresponding actionId before painting
-		iconToggleGps.setText( trace.isGpsConnected() ? "Stop GPS" : "Start GPS");
+		iconToggleGps.setText( trace.isGpsConnected() ? "Stop GPS"/*i:StopGPS*/ : "Start GPS"/*i:StartGPS*/);
 		iconToggleGps.setActionID( trace.isGpsConnected() ? Trace.DISCONNECT_GPS_CMD : Trace.CONNECT_GPS_CMD);
 		
-		iconToggleTrackRec.setText( trace.gpx.isRecordingTrk() ? "Stop Rec" : "Record Track");
+		iconToggleTrackRec.setText( trace.gpx.isRecordingTrk() ? "Stop Rec"/*i:StopRec*/ : "Record Track"/*i:RecordTrack*/);
 		iconToggleTrackRec.setActionID( trace.gpx.isRecordingTrk() ? Trace.STOP_RECORD_CMD : Trace.START_RECORD_CMD);
 		
-		iconToggleAudioRec.setText( trace.audioRec.isRecording() ? "Stop VoiceRec" : "Voice");
+		iconToggleAudioRec.setText( trace.audioRec.isRecording() ? "Stop VoiceRec"/*i:StopVoice*/ : "Voice"/*i:Voice*/);
 		
-		iconToggleRoute.setText( (trace.route != null || trace.routeCalc) ? "Stop Route" : "Calculate");				
+		iconToggleRoute.setText( (trace.route != null || trace.routeCalc) ? "Stop Route"/*i:StopRoute*/ : "Calculate"/*i:Calc*/);				
 
 		super.paint(g);
 	}
