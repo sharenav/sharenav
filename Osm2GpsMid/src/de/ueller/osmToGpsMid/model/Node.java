@@ -37,8 +37,9 @@ public class Node extends Entity{
 	public RouteNode routeNode;
 	
 	// the upper flags of connectedLineCount are used to indicate special informations about the node
-	public static final int CONMASK_CONNECTEDLINECOUNT = 63;
-	public static final int CONFLAG_TRAFFICLIGHTS = 64;
+	public static final int CLC_MASK_CONNECTEDLINECOUNT = 31;
+	public static final int CLC_FLAG_TRAFFICSIGNALS = 64;
+	public static final int CLC_FLAG_TRAFFICSIGNALS_ROUTENODE = 32;
 	
 	
 	public Node() {
@@ -99,16 +100,16 @@ public class Node extends Entity{
 	}
 	
 	public byte getConnectedLineCount(){
-		return (byte) (connectedLineCount & CONMASK_CONNECTEDLINECOUNT);
+		return (byte) (connectedLineCount & CLC_MASK_CONNECTEDLINECOUNT);
 	}
 
 	private void setConnectedLineCount(byte count){
-		connectedLineCount &= CONFLAG_TRAFFICLIGHTS;
+		connectedLineCount &= ~CLC_MASK_CONNECTEDLINECOUNT;
 		connectedLineCount |= count;
 	}
 
 	public void resetConnectedLineCount(){
-		connectedLineCount &= CONFLAG_TRAFFICLIGHTS;
+		connectedLineCount &= ~CLC_MASK_CONNECTEDLINECOUNT;
 	}
 	
 	public void incConnectedLineCount(){
@@ -119,14 +120,22 @@ public class Node extends Entity{
 		setConnectedLineCount((byte) (getConnectedLineCount() -1));
 	}
 
-	public void markAsTrafficLights(){
-		connectedLineCount |= CONFLAG_TRAFFICLIGHTS;
+	public void markAsTrafficSignals(){
+		connectedLineCount |= CLC_FLAG_TRAFFICSIGNALS;
 	}
 
-	public boolean isTrafficLights(){
-		return (connectedLineCount & CONFLAG_TRAFFICLIGHTS) > 0;
+	public boolean isTrafficSignals(){
+		return (connectedLineCount & CLC_FLAG_TRAFFICSIGNALS) > 0;
 	}
 
+	public void markAsTrafficSignalsRouteNode(){
+		connectedLineCount |= CLC_FLAG_TRAFFICSIGNALS_ROUTENODE;
+	}
+
+	public boolean isTrafficSignalsRouteNode(){
+		return (connectedLineCount & CLC_FLAG_TRAFFICSIGNALS_ROUTENODE) > 0;
+	}	
+	
 	private byte calcType(Configuration c) {
 		if (type != -1) {
 			return type;

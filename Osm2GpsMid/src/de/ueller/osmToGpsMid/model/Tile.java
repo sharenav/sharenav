@@ -38,6 +38,7 @@ public class Tile {
 	int idxMin=Integer.MAX_VALUE;
 	int idxMax=0;
 	short numMainStreetRouteNodes = 0;
+	public static int numTrafficSignalRouteNodes = 0;
 	
 	private static int minConnectionId = 0;
 	
@@ -278,6 +279,26 @@ public class Tile {
 			}
 		}
 	}
+
+	public void markTrafficSignalsRouteNodes(Node n) {
+		if (type == TYPE_ROUTECONTAINER){
+			if (t1 != null){
+				t1.markTrafficSignalsRouteNodes(n);
+			}
+			if (t2 != null) {
+				t2.markTrafficSignalsRouteNodes(n);
+			}
+		} else if (type == TYPE_ROUTEDATA && bounds.isInOrAlmostIn(n.lat, n.lon)){
+			for (RouteNode rn : routeNodes){
+				if (MyMath.dist(n, rn.node) < 25)  {
+					rn.node.markAsTrafficSignalsRouteNode();
+					numTrafficSignalRouteNodes++;
+					// System.out.println(MyMath.dist(n, rn.node) + "Traffic Light " + n.toUrl() + " at " + rn.node.toUrl()); 
+				}
+			}
+		}
+	}
+
 	
 	/**
 	 * for Debugging the correct sequence of RouteNodes
@@ -375,6 +396,7 @@ public class Tile {
 			TurnRestriction turnWrite=null;
 			boolean hasTurnRestriction=false;
 			boolean isOnMainStreetNet = false;
+			int connected2 = 0;
 
 			// count how many turn restrictions we will write for this tile
 			// turn restrictions at mainStreetNet routeNodes are counted in the first loop, in the second loop the remaining ones
@@ -419,11 +441,14 @@ public class Tile {
 							}
 							turnWrite = turnWrite.nextTurnRestrictionAtThisNode;
 						}
+						connected2 = n.connected.size();
 						if (hasTurnRestriction) {
-							nds.writeByte(n.connected.size() | 0x80); // write indicator that this route node has turn restrictions attached
-						} else {
-							nds.writeByte(n.connected.size());					
+							connected2 |= RouteNode.CS_FLAG_HASTURNRESTRICTIONS; // write indicator that this route node has turn restrictions attached
 						}
+						if (n.node.isTrafficSignalsRouteNode()) {
+							connected2 |= RouteNode.CS_FLAG_TRAFFICSIGNALS_ROUTENODE; // write indicator that this route node is at traffic lights
+						}
+						nds.writeByte((byte) connected2);					
 		
 						byte routeNodeWayFlags = 0;
 						for (Connection c : n.connected){

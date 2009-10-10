@@ -675,4 +675,17 @@ public class RouteData {
 		indexStream.close();
 	}
 
+	/** Remember traffic signals nodes in own array so they can be removed by CleanupData
+	 * (traffic signals nodes must not be marked as used because otherwise they are written to the midlet) 
+	 */
+	public void rememberDelayingNodes() {
+		parser.delayingNodes = new Node[parser.trafficSignalCount];
+		int i = 0;
+		for (Node n:parser.getNodes()) {
+			if (n.isTrafficSignals()) {
+				parser.delayingNodes[i++] = n;
+			}
+		}
+	}
+
 }

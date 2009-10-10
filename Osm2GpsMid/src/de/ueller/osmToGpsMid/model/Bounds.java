@@ -49,6 +49,15 @@ public class Bounds   implements Cloneable{
 			if (lon > maxLon ) return false;
 			return true;
 		}
+		
+		public boolean isInOrAlmostIn(float lat,float lon){
+			if (lat < minLat - 0.005) return false;
+			if (lon < minLon - 0.005) return false;
+			if (lat > maxLat + 0.005) return false;
+			if (lon > maxLon + 0.005) return false;
+			return true;
+		}
+		
 		public boolean isIn(double lat,double lon){
 			return isIn((float)lat,(float) lon);
 		}

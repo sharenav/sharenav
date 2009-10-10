@@ -30,6 +30,7 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
+import de.ueller.osmToGpsMid.model.Node;
 import de.ueller.osmToGpsMid.model.Relation;
 import de.ueller.osmToGpsMid.model.RouteAccessRestriction;
 import de.ueller.osmToGpsMid.model.TravelMode;
@@ -129,11 +130,17 @@ public class BundleGpsMid {
 			System.out.println("Splitting long ways increased ways from " 
 					+ numWays + " to " + parser.getWays().size());
 			
+			RouteData rd = null;
+			if (Configuration.attrToBoolean(c.useRouting) >= 0 ) {
+				rd = new RouteData(parser,target.getCanonicalPath());
+				System.out.println("Remembering " + parser.trafficSignalCount + " traffic signal nodes");
+				rd.rememberDelayingNodes();
+			}
+			
 			System.out.println("Removing unused nodes");
 			new CleanUpData(parser,c);
 
 			if (Configuration.attrToBoolean(c.useRouting) >= 0 ) {
-				RouteData rd = new RouteData(parser,target.getCanonicalPath());
 				System.out.println("Creating route data");
 				rd.create();
 				System.out.println("Optimizing route data");

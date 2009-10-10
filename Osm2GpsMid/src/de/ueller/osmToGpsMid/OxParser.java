@@ -50,6 +50,9 @@ public class OxParser extends DefaultHandler {
 	private Hashtable<String, String> tagsCache = new Hashtable<String, String>();
 	private int nodeTot, nodeIns;
 	private int wayTot, wayIns;
+	/** Nodes that delay routing if close to a routeNode, e.g. traffic signals */
+	public Node[] delayingNodes;
+	public int trafficSignalCount = 0;
 	private int ele;
 	private int relTot, relPart, relIns;
 	private Bounds[] bounds = null;
@@ -273,7 +276,8 @@ public class OxParser extends DefaultHandler {
 				nodes.put(new Long(current.id), (Node) current);
 				nodeIns++;
 				if (current.getAttribute("highway") != null && current.getAttribute("highway").equalsIgnoreCase("traffic_signals")) {
-					n.markAsTrafficLights();
+					n.markAsTrafficSignals();
+					trafficSignalCount++;
 				}
 			}
 			current = null;
@@ -382,6 +386,10 @@ public class OxParser extends DefaultHandler {
 
 	public HashMap<Long,TurnRestriction> getTurnRestrictionHashMap() {
 		return turnRestrictions;
+	}
+
+	public Node[] getDelayingNodes() {
+		return delayingNodes;
 	}
 
 	public ArrayList<TurnRestriction> getTurnRestrictionsWithViaWays() {

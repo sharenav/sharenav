@@ -616,6 +616,17 @@ public class CreateGpsMidData {
 			}
 			tile[zl].recalcBounds();			
 			if (zl == ROUTEZOOMLEVEL){
+				long startTime = System.currentTimeMillis();
+				for (Node n : parser.getDelayingNodes()) {
+					if (n.isTrafficSignals()) {
+						tile[zl].markTrafficSignalsRouteNodes(n);
+					}
+				}
+				long time = (System.currentTimeMillis() - startTime);
+				System.out.println("Marked " + Tile.numTrafficSignalRouteNodes + " route nodes from "
+						+ parser.trafficSignalCount + " traffic signals, took " 
+						+ time + " ms");
+
 				Sequence rnSeq=new Sequence();
 				tile[zl].renumberRouteNode(rnSeq);
 				tile[zl].calcHiLo();
