@@ -208,16 +208,16 @@ public class Configuration {
 		private ResourceBundle rb;
 		private ResourceBundle vb;
 		private String tmp = null;
+		/** Name of the OSM XML file */
 		private String planet;
 		private String cellSource;
 		private String cellOperator;
 		private String propFile;
-		private String bundleName;
+		/** Name to be used for the generated Midlet (as it will be shown on the phone). */
 		private String midletName;
+		/** Name of the base Midlet (e.g. GpsMid-Generic-multi) to be used. */
 		private String appParam;
-		/**
-		 * Defines which routing options from the style-file get used 
-		 */
+		/** Defines which routing options from the style-file get used. */
 		public String useRouting = "motorcar";
 		public boolean enableEditingSupport = false;
 		public int maxTileSize = 20000;
@@ -422,7 +422,7 @@ public class Configuration {
 			try {
 				legendInputStream = new FileInputStream(styleFile);
 			} catch (IOException e) {
-				System.out.println("Trying internal styleFile " + styleFile);
+				//System.out.println("Trying internal styleFile " + styleFile);
 				if (getClass().getResource("/" + styleFile) != null) {
 					styleFile = "/" + styleFile;
 				} else {
@@ -455,21 +455,16 @@ public class Configuration {
 			return Float.parseFloat(getString(key));
 		}
 
-		public String getName() {
-			if (bundleName != null) {
-				return bundleName;
-			}
-			return getString("bundle.name");
-		}
-		
-		public void setName(String name) {
-			bundleName = name;
-		}
-		
+		/** Allows to set the Midlet name.
+		 * @param name Name to be set
+		 */
 		public void setMidletName(String name) {
 			midletName = name;
 		}
-				
+		
+		/** Returns the name of the Midlet (as it will be shown on the phone).
+		 * @return Name
+		 */
 		public String getMidletName() {
 			if (midletName != null) {
 				return midletName;
@@ -477,6 +472,16 @@ public class Configuration {
 			return getString("midlet.name");
 		}
 		
+		/** Returns the name for the Midlet files (JAR and JAD) without extension.
+		 * @return File name
+		 */
+		public String getMidletFileName() {
+			return getMidletName() + "-" + getVersion();
+		}
+		
+		/** Allows to set the name of the base Midlet (e.g. GpsMid-Generic-multi).
+		 * @param app Name of the base Midlet
+		 */
 		public void setCodeBase (String app) {
 			appParam = app;
 		}
@@ -495,12 +500,18 @@ public class Configuration {
 						+ "-" + getVersion() + "_" + getLang() + ".jar");
 			}
 			return is;
-		}		
+		}
 
+		/** Returns the name of the base Midlet (e.g. GpsMid-Generic-multi).
+		 * @return Name of the base Midlet
+		 */
 		public String getAppParam() {
 			return appParam;
 		}
 
+		/** Returns the JAR file name of base Midlet.
+		 * @return JAR file name
+		 */
 		public String getJarFileName() {
 			return appParam	+ "-" + getVersion() + ".jar";
 		}
@@ -677,9 +688,9 @@ public class Configuration {
 			} catch (RuntimeException e) {
 				;
 			}
-			
+
 			if (i > 0) {
-				System.out.println("Found " + i + " bounds");
+				//System.out.println("Found " + i + " bounds");
 				Bounds[] ret = new Bounds[i];
 				for (int l = 0; l < i; l++){
 					ret[l] = new Bounds();
@@ -690,9 +701,9 @@ public class Configuration {
 				}
 				return ret;				
 			} else {
-				System.out.println("Warning: No bounds were given - using [-180,-90,180,90]");
-				System.out.println("This will try to create a GpsMid for the whole region");
-				System.out.println("contained in " + planet);
+				System.out.println("Note: No bounds were given - using [-180, -90, 180, 90]");
+				System.out.println("  This will create a GpsMid for the whole region");
+				System.out.println("  contained in " + planet);
 				Bounds[] ret = new Bounds[1];
 				ret[0] = new Bounds();
 				ret[0].extend(-90.0, -180.0);
@@ -846,24 +857,23 @@ public class Configuration {
 		
 		public String toString() {
 			String confString = "Osm2GpsMid configuration:\n";
-			confString += "\t Bundle name: " + getName() + "\n";
-			confString += "\t Midlet name: " + getMidletName() + "\n";
-			confString += "\t Code base: " + appParam + "\n";
-			confString += "\t Keeping map files after .jar creation: " + !cleanupTmpDirAfterUse() + "\n";
-			confString += "\t Enable routing: " + useRouting + "\n";
-			confString += "\t used Style-file: " + getStyleFileName() + "\n";
-			confString += "\t Planet source: " + planet + "\n";
-			confString += "\t include CellID data: " + getCellOperator() + "\n";
-			confString += "\t CellID source: " + cellSource + "\n";
-			confString += "\t Enable editing support: " + enableEditingSupport + "\n";
+			confString += "  Midlet name: " + getMidletName() + "\n";
+			confString += "  Code base: " + appParam + "\n";
+			confString += "  Keeping map files after .jar creation: " + !cleanupTmpDirAfterUse() + "\n";
+			confString += "  Enable routing: " + useRouting + "\n";
+			confString += "  Style-file: " + getStyleFileName() + "\n";
+			confString += "  Planet source: " + planet + "\n";
+			confString += "  Included CellID data: " + getCellOperator() + "\n";
+			confString += "  CellID source: " + cellSource + "\n";
+			confString += "  Enable editing support: " + enableEditingSupport + "\n";
 			Bounds[] bounds = getBounds();
 			if (bounds != null) {
-				confString += "\t Using " + bounds.length + " bounding boxes\n";
+				confString += "  Using " + bounds.length + " bounding boxes\n";
 				for (Bounds b : bounds) {
-					confString += "\t\t" + b + "\n";
+					confString += "    " + b + "\n";
 				}
 			} else {
-				confString += "\t Using the complete osm file\n";
+				confString += "  Using the complete osm file\n";
 			}
 			
 			return confString;
