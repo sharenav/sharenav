@@ -358,6 +358,7 @@ public class RouteInstructions {
 			boolean routeRecalculationRequired=false;
 			float remainingDistance = 0;
 			int remainingDuration = 0;
+			float lastTrafficSignalsDistance = -200;
 			synchronized(this) {
 				if (route != null && route.size() > 0){
 					//#debug debug
@@ -456,6 +457,12 @@ public class RouteInstructions {
 						if (i >= iRealNow && c.wayDistanceToNext != Float.MAX_VALUE) {
 							remainingDistance += c.wayDistanceToNext;
 							remainingDuration += c.wayDurationToNext;
+					    	// add 20 secs delay for traffic lights that are at least 200 meters away from the previous one
+					    	if (c.to.isAtTrafficSignals() && remainingDistance - lastTrafficSignalsDistance > 200) {
+					    		lastTrafficSignalsDistance = remainingDistance;
+					    		remainingDuration += 200;
+					    		// System.out.println("Traffic Light at " + remainingDistance);
+					    	}
 						}
 						
 						// draw cross area instruction

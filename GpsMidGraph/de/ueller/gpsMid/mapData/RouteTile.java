@@ -107,6 +107,12 @@ public class RouteTile extends RouteBaseTile {
 					pc.getP().forward(nodes[i].lat, nodes[i].lon, pc.swapLineP);
 					if (showConnections) {
 						g.drawRect(pc.swapLineP.x-2, pc.swapLineP.y-2, 5, 5); //Draw node
+						if (nodes[i].isAtTrafficSignals()) {
+							g.setColor(0x00FF0000);
+							g.drawRect(pc.swapLineP.x-3, pc.swapLineP.y-3, 7, 7); // mark traffic lights
+							g.setColor(0x0000FF00);
+							g.drawRect(pc.swapLineP.x-1, pc.swapLineP.y-1, 3, 3); // mark traffic lights
+						}
 						for (int ii=0; ii< connections[i].length;ii++){
 							Connection c=connections[i][ii];
 							Connection [] reverseCons = null;

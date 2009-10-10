@@ -20,6 +20,12 @@ public class RouteNode {
 	//#debug error
 	private final static Logger logger=Logger.getInstance(RouteNode.class,Logger.TRACE);
 
+	// the upper flags of consize are used to indicate special informations about the node
+	public static final int CS_MASK_CONNECTEDLINECOUNT = 0x3F;
+	public static final int CS_FLAG_HASTURNRESTRICTIONS = 0x80;
+	public static final int CS_FLAG_TRAFFICSIGNALS_ROUTENODE = 0x40;
+
+	
 //	/** 
 //	 * get one Connection from the file to save memory. But this is slow.
 //	 * there is another version that takes all connections from one Tile
@@ -67,13 +73,16 @@ public class RouteNode {
 	}	
 	
 	public byte getConSize() {
-		return (byte) ((int) conSize & 0x7F);
+		return (byte) ((int) conSize & CS_MASK_CONNECTEDLINECOUNT);
 	}
 	
 	public boolean hasTurnRestrictions() {
-		return (conSize & 0x80) > 0;
+		return (conSize & CS_FLAG_HASTURNRESTRICTIONS) > 0;
 	}
 
+	public boolean isAtTrafficSignals() {
+		return (conSize & CS_FLAG_TRAFFICSIGNALS_ROUTENODE) > 0;
+	}
 	
 	
 	public String toString(){
