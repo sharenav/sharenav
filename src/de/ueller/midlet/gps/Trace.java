@@ -297,7 +297,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	private Trace() throws Exception {
 		//#debug
 		logger.info("init Trace");
-
+		
 		this.parent = GpsMid.getInstance();
 		
 		CMDS[EXIT_CMD] = new Command("Exit", Command.EXIT, 2);
@@ -361,6 +361,14 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		Configuration.loadKeyShortcuts(gameKeyCommand, singleKeyPressCommand, 
 				repeatableKeyPressCommand, doubleKeyPressCommand, longKeyPressCommand, 
 				nonReleasableKeyPressCommand, CMDS);
+
+		if (!Configuration.getCfgBitState(Configuration.CFGBIT_DISPLAYSIZE_SPECIFIC_DEFAULTS_DONE)) {
+			// if the map display is wide enough, show the clock in the map screen by default
+			if (getWidth() > 219) {
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_CLOCK_IN_MAP, true);
+			}
+			Configuration.setCfgBitSavedState(Configuration.CFGBIT_DISPLAYSIZE_SPECIFIC_DEFAULTS_DONE, true);
+		}
 		
 		try {
 			startup();
