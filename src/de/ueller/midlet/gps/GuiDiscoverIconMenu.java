@@ -31,10 +31,11 @@ public class GuiDiscoverIconMenu extends IconMenuWithPagesGUI {
 			
 		// Advanced
 		mp = createAndAddMenuPage(" Advanced ", 3, 3);
+			mp.createAndAddIcon("Gui", "is_gui", GuiDiscover.MENU_ITEM_GUI_OPT);
 			mp.createAndAddIcon("Map Source", "is_map", GuiDiscover.MENU_ITEM_MAP_SRC);
-			mp.createAndAddIcon("OpenCellID", "is_cellid", GuiDiscover.MENU_ITEM_OPENCELLID_OPT);
 			mp.createAndAddIcon("Debug", "is_debug", GuiDiscover.MENU_ITEM_DEBUG_OPT);
 
+			mp.createAndAddIcon("OpenCellID", "is_cellid", GuiDiscover.MENU_ITEM_OPENCELLID_OPT);
 			mp.createAndAddIcon("Keys", "is_keys", GuiDiscover.MENU_ITEM_KEYS_OPT);
 			mp.createAndAddIcon("Load Config", "is_load", GuiDiscover.MENU_ITEM_LOAD_CONFIG);
 			mp.createAndAddIcon("Save Config", "is_save", GuiDiscover.MENU_ITEM_SAVE_CONFIG);			

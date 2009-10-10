@@ -45,7 +45,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private static final String[]	elements		= {
 		"Location Receiver", "Recording Rules",
 		"Display options", "Sounds & Alerts", "Routing options",
-		"GPX Receiver", "Map source", "Debug options", "Key shortcuts",
+		"GPX Receiver", "GUI Options", "Map source", "Debug options", "Key shortcuts",
 		"Opencellid",
 		//#if polish.api.osm-editing
 		"OSM account",
@@ -68,17 +68,18 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	protected static final int MENU_ITEM_SOUNDS_OPT = 3;
 	protected static final int MENU_ITEM_ROUTING_OPT = 4;
 	protected static final int MENU_ITEM_GPX_DEVICE = 5;
-	protected static final int MENU_ITEM_MAP_SRC = 6;
-	protected static final int MENU_ITEM_DEBUG_OPT = 7;
-	protected static final int MENU_ITEM_KEYS_OPT = 8;
-	protected static final int MENU_ITEM_OPENCELLID_OPT = 9;
+	protected static final int MENU_ITEM_GUI_OPT = 6;
+	protected static final int MENU_ITEM_MAP_SRC = 7;
+	protected static final int MENU_ITEM_DEBUG_OPT = 8;
+	protected static final int MENU_ITEM_KEYS_OPT = 9;
+	protected static final int MENU_ITEM_OPENCELLID_OPT = 10;
 	//#if polish.api.osm-editing
-	protected static final int MENU_ITEM_OSM_OPT = 10;
+	protected static final int MENU_ITEM_OSM_OPT = 11;
+	protected static final int MENU_ITEM_SAVE_CONFIG = 12;
+	protected static final int MENU_ITEM_LOAD_CONFIG = 13;
+	//#else
 	protected static final int MENU_ITEM_SAVE_CONFIG = 11;
 	protected static final int MENU_ITEM_LOAD_CONFIG = 12;
-	//#else
-	protected static final int MENU_ITEM_SAVE_CONFIG = 10;
-	protected static final int MENU_ITEM_LOAD_CONFIG = 11;
 	//#endif
 
 	private static final String[]	empty			= {};
@@ -208,7 +209,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private TextField	tfAutoRecenterToGpsSecs;
 	private ChoiceGroup backlightOpts;
 	private ChoiceGroup sizeOpts;
-	private ChoiceGroup guiOpts;
 	private ChoiceGroup mapInfoOpts;
 	private ChoiceGroup debugLog;
 	private ChoiceGroup debugSeverity;
@@ -535,15 +535,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		mapInfos[5] = "Clock with current time";
 		mapInfoOpts = new ChoiceGroup("Infos in Map Screen:", Choice.MULTIPLE, mapInfos ,null);
 		menuDisplayOptions.append(mapInfoOpts);
-		
-		String [] guis = new String[4];
-		guis[0] = "use icon menu";
-		guis[1] = "fullscreen icon menu";
-		guis[2] = "icons mapped on keys";
-		guis[3] = "optimise for routing";
-		guiOpts = new ChoiceGroup("GUI:", Choice.MULTIPLE, guis ,null);
-		menuDisplayOptions.append(guiOpts);
-		
+				
 		menuDisplayOptions.setCommandListener(this);
 	}
 	
@@ -820,14 +812,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				); 
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_POI_LABELS_LARGER, sizeOpts.isSelected(0));
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_WPT_LABELS_LARGER, sizeOpts.isSelected(1));
-				if (guiOpts.isSelected(0) != Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS)) {
-					trace.removeAllCommands();
-					Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS, guiOpts.isSelected(0));
-					trace.addAllCommands();					
-				}
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN, guiOpts.isSelected(1));
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_MAPPED_ICONS, guiOpts.isSelected(2));
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED, guiOpts.isSelected(3));
 				
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_POINT_OF_COMPASS, mapInfoOpts.isSelected(0));
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_SCALE_BAR, mapInfoOpts.isSelected(1));
@@ -836,7 +820,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_AIR_DISTANCE_IN_MAP, mapInfoOpts.isSelected(4));
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_CLOCK_IN_MAP, mapInfoOpts.isSelected(5));
 				
-				trace.uncacheIconMenu();
 				Configuration.setDetailBoost(gaugeDetailBoost.getValue(), true); 
 				
 				String secs=tfAutoRecenterToGpsSecs.getString(); 
@@ -1062,10 +1045,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				mapInfoOpts.setSelectedIndex(3, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_ALTITUDE_IN_MAP));				
 				mapInfoOpts.setSelectedIndex(4, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_AIR_DISTANCE_IN_MAP));				
 				mapInfoOpts.setSelectedIndex(5, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_CLOCK_IN_MAP));				
-				guiOpts.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS));
-				guiOpts.setSelectedIndex(1, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN));
-				guiOpts.setSelectedIndex(2, Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_MAPPED_ICONS));
-				guiOpts.setSelectedIndex(3, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED));
 				metricUnits.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_METRIC));
 				SingleTile.newPOIFont();
 				WaypointsTile.useNewWptFont();
@@ -1128,6 +1107,10 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 			case MENU_ITEM_SOUNDS_OPT:
 				GuiSetupSound gs = new GuiSetupSound(this);
 				gs.show();
+				break;
+			case MENU_ITEM_GUI_OPT:
+				GuiSetupGui gsg = new GuiSetupGui(this);
+				gsg.show();
 				break;
 			case MENU_ITEM_KEYS_OPT:
 				/**
