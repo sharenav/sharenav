@@ -13,21 +13,24 @@ import de.ueller.osmToGpsMid.Configuration;
 import de.ueller.osmToGpsMid.Constants;
 
 
-public class Node extends Entity{
+public class Node extends Entity {
 	/**
-	 * the position in target array of nodes
+	 * The position in the target array of nodes
 	 */
 	public int renumberdId;
+
 	/**
-	 * Latitude of this node
+	 * Latitude (in degrees) of this node
 	 */
 	public float lat;
+	
 	/**
-	 * Longitude of this node;
+	 * Longitude (in degrees) of this node;
 	 */
 	public float lon;
+	
 	/**
-	 * type of this Node
+	 * Type of this Node
 	 */
 	private byte type = -1;
 	//public byte noConfType = -1;
@@ -55,7 +58,7 @@ public class Node extends Entity{
 			POIdescription desc = Configuration.getConfiguration().getpoiDesc(type);
 			if (desc != null) {
 				String name = getAttribute(desc.nameKey);
-				String nameFallback=null;
+				String nameFallback = null;
 				if (desc.nameFallbackKey!= null && desc.nameFallbackKey.equals("*") ) {
 					nameFallback = getAttribute(desc.key);
 				} else {
@@ -75,7 +78,7 @@ public class Node extends Entity{
 	
 	public String getPlace() {
 		String place = (getAttribute("place"));
-//		System.out.println("Read place for id="+id+" as=" + place);
+//		System.out.println("Read place for id=" + id + " as=" + place);
 		if (place != null) {
 			return place.trim();
 		}
@@ -90,7 +93,7 @@ public class Node extends Entity{
 		return false;
 	}
 
-	public byte getType(Configuration c){
+	public byte getType(Configuration c) {
 		if (type != -1) {
 			return type;
 		} else {
@@ -98,42 +101,42 @@ public class Node extends Entity{
 		}
 		return type;
 	}
-	
-	public byte getConnectedLineCount(){
-		return (byte) (connectedLineCount & CLC_MASK_CONNECTEDLINECOUNT);
+
+	public byte getConnectedLineCount() {
+		return (byte)(connectedLineCount & CLC_MASK_CONNECTEDLINECOUNT);
 	}
 
-	private void setConnectedLineCount(byte count){
+	private void setConnectedLineCount(byte count) {
 		connectedLineCount &= ~CLC_MASK_CONNECTEDLINECOUNT;
 		connectedLineCount |= count;
 	}
 
-	public void resetConnectedLineCount(){
+	public void resetConnectedLineCount() {
 		connectedLineCount &= ~CLC_MASK_CONNECTEDLINECOUNT;
 	}
 	
-	public void incConnectedLineCount(){
+	public void incConnectedLineCount() {
 		setConnectedLineCount((byte) (getConnectedLineCount() + 1));
 	}
 
-	public void decConnectedLineCount(){
+	public void decConnectedLineCount() {
 		setConnectedLineCount((byte) (getConnectedLineCount() -1));
 	}
 
-	public void markAsTrafficSignals(){
+	public void markAsTrafficSignals() {
 		connectedLineCount |= CLC_FLAG_TRAFFICSIGNALS;
 	}
 
-	public boolean isTrafficSignals(){
-		return (connectedLineCount & CLC_FLAG_TRAFFICSIGNALS) > 0;
+	public boolean isTrafficSignals() {
+		return ((connectedLineCount & CLC_FLAG_TRAFFICSIGNALS) > 0);
 	}
 
-	public void markAsTrafficSignalsRouteNode(){
+	public void markAsTrafficSignalsRouteNode() {
 		connectedLineCount |= CLC_FLAG_TRAFFICSIGNALS_ROUTENODE;
 	}
 
-	public boolean isTrafficSignalsRouteNode(){
-		return (connectedLineCount & CLC_FLAG_TRAFFICSIGNALS_ROUTENODE) > 0;
+	public boolean isTrafficSignalsRouteNode() {
+		return ((connectedLineCount & CLC_FLAG_TRAFFICSIGNALS_ROUTENODE) > 0);
 	}	
 	
 	private byte calcType(Configuration c) {
