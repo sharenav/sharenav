@@ -628,6 +628,8 @@ public class CreateGpsMidData {
 						tile[zl].markTrafficSignalsRouteNodes(n);
 					}
 				}
+				parser.freeUpDelayingNodes();
+				
 				long time = (System.currentTimeMillis() - startTime);
 				System.out.println("  Marked " + Tile.numTrafficSignalRouteNodes + " route nodes from "
 						+ parser.trafficSignalCount + " traffic signals, took " 

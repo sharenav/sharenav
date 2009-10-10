@@ -51,7 +51,7 @@ public class OxParser extends DefaultHandler {
 	private int nodeTot, nodeIns;
 	private int wayTot, wayIns;
 	/** Nodes that delay routing if close to a routeNode, e.g. traffic signals */
-	public Node[] delayingNodes;
+	private Node[] delayingNodes;
 	public int trafficSignalCount = 0;
 	private int ele;
 	private int relTot, relPart, relIns;
@@ -392,6 +392,15 @@ public class OxParser extends DefaultHandler {
 		return delayingNodes;
 	}
 
+	public void freeUpDelayingNodes() {
+		delayingNodes = null;
+	}
+
+	public void setDelayingNodes(Node[] nodes) {
+		delayingNodes = nodes;
+	}
+	
+	
 	public ArrayList<TurnRestriction> getTurnRestrictionsWithViaWays() {
 		return turnRestrictionsWithViaWays;
 	}

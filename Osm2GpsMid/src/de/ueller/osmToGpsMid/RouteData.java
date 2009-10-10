@@ -679,13 +679,14 @@ public class RouteData {
 	 * (traffic signals nodes must not be marked as used because otherwise they are written to the midlet) 
 	 */
 	public void rememberDelayingNodes() {
-		parser.delayingNodes = new Node[parser.trafficSignalCount];
+		Node[] delayingNodes = new Node[parser.trafficSignalCount];
 		int i = 0;
 		for (Node n:parser.getNodes()) {
 			if (n.isTrafficSignals()) {
-				parser.delayingNodes[i++] = n;
+				delayingNodes[i++] = n;
 			}
 		}
+		parser.setDelayingNodes(delayingNodes);
 	}
 
 }
