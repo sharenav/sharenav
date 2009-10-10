@@ -192,6 +192,8 @@ public class Configuration {
 	public final static byte CFGBIT_SHOW_ETA_IN_MAP = 68;
 	// bit 69: Flag if seasonal (winter) speed limits are applied
 	public final static byte CFGBIT_MAXSPEED_WINTER = 69;
+	// bit 70: Flag whether iconMenus should have icons mapped on keys
+	public final static byte CFGBIT_ICONMENUS_MAPPED_ICONS = 70;
 	
 	/**
 	 * These are the database record ids for each configuration option

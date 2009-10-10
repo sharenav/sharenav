@@ -243,6 +243,27 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 		//#debug debug
 		logger.debug("got key " + keyCode);
 		int action = getGameAction(keyCode);
+		logger.debug("got action key " + action);
+		
+		//Icons directly mapped on keys mode
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_MAPPED_ICONS)) {
+			int iconFromKeyCode = -1;
+			if (keyCode == KEY_NUM0) {
+				iconFromKeyCode = 10;
+			} else if (keyCode == KEY_STAR) {
+				iconFromKeyCode = 9;
+			} else if (keyCode == KEY_POUND) {
+				iconFromKeyCode = 11;
+			} else if (keyCode <= KEY_NUM9 && keyCode >= KEY_NUM1) {
+				iconFromKeyCode = keyCode - KEY_NUM1;
+			}
+			if (iconFromKeyCode >= 0 && iconFromKeyCode < getActiveMenuPage().size()) {
+				parent.show();
+				performIconAction(getActiveMenuPage().getElementAt(iconFromKeyCode).actionID);				
+				return;
+			}
+		}
+
 		if (action != 0) {
 			// handle the fire button same as the Ok button
 			if (action ==  Canvas.FIRE) {

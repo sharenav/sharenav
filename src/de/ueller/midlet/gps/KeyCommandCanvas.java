@@ -135,7 +135,11 @@ public abstract class KeyCommandCanvas extends Canvas implements
 		// strange seem to be working in emulator only with this debug line
 		logger.debug("keyReleased " + keyCode + " ignoreKeyCode: "
 				+ ignoreKeyCode + " prevRelCode: " + releasedKeyCode);
-		if (keyCode == ignoreKeyCode) {
+		if (keyCode == ignoreKeyCode
+			||
+			// key must actually have been pressed in this Canvas and not in another one, e.g. in icon menu
+			keyCode != pressedKeyCode
+		) {
 			ignoreKeyCode = 0;
 			return;
 		}

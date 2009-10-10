@@ -536,10 +536,11 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		mapInfoOpts = new ChoiceGroup("Infos in Map Screen:", Choice.MULTIPLE, mapInfos ,null);
 		menuDisplayOptions.append(mapInfoOpts);
 		
-		String [] guis = new String[3];
+		String [] guis = new String[4];
 		guis[0] = "use icon menu";
 		guis[1] = "fullscreen icon menu";
-		guis[2] = "optimise for routing";
+		guis[2] = "icons mapped on keys";
+		guis[3] = "optimise for routing";
 		guiOpts = new ChoiceGroup("GUI:", Choice.MULTIPLE, guis ,null);
 		menuDisplayOptions.append(guiOpts);
 		
@@ -825,7 +826,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 					trace.addAllCommands();					
 				}
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN, guiOpts.isSelected(1));
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED, guiOpts.isSelected(2));
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_MAPPED_ICONS, guiOpts.isSelected(2));
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED, guiOpts.isSelected(3));
 				
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_POINT_OF_COMPASS, mapInfoOpts.isSelected(0));
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_SCALE_BAR, mapInfoOpts.isSelected(1));
@@ -1062,7 +1064,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				mapInfoOpts.setSelectedIndex(5, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_CLOCK_IN_MAP));				
 				guiOpts.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS));
 				guiOpts.setSelectedIndex(1, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN));
-				guiOpts.setSelectedIndex(2, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED));
+				guiOpts.setSelectedIndex(2, Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_MAPPED_ICONS));
+				guiOpts.setSelectedIndex(3, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED));
 				metricUnits.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_METRIC));
 				SingleTile.newPOIFont();
 				WaypointsTile.useNewWptFont();
