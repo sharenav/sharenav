@@ -631,8 +631,8 @@ public class CreateGpsMidData {
 				parser.freeUpDelayingNodes();
 				
 				long time = (System.currentTimeMillis() - startTime);
-				System.out.println("  Marked " + Tile.numTrafficSignalRouteNodes + " route nodes from "
-						+ parser.trafficSignalCount + " traffic signals, took " 
+				System.out.println("  Applied " + parser.trafficSignalCount + " traffic signals to "
+						+ Tile.numTrafficSignalRouteNodes + " route nodes, took "
 						+ time + " ms");
 
 				Sequence rnSeq=new Sequence();
