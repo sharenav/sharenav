@@ -58,6 +58,9 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 	
 	/** the tab Pages with the icons */
 	private Vector iconMenuPages = new Vector();
+
+	protected static long pressedKeyTime = 0;
+	protected static int pressedKeyCode = 0;
 	
 	public IconMenuWithPagesGUI(GpsMidDisplayable parent, IconActionPerformer actionPerformer) {
 		// create Canvas
@@ -176,6 +179,9 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 	
 	
 	public void setActiveTab(int tabNr) {
+		if(tabNr >= iconMenuPages.size()) {
+			return;
+		}
 		// clear the FLAG_BACKGROUND_BOX for all other tab buttons except the current one, where it needs to get set 
 		for (int i=0; i < tabButtonManager.size(); i++) {
 			if (i == tabNr) {
@@ -189,6 +195,9 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 		//#debug debug
 		logger.debug("set tab " + tabNr);
 		this.tabNr = tabNr;
+		if (tabNr < leftMostTabNr) {
+			leftMostTabNr = tabNr;
+		}
 	}
 	
 	public void setActiveTabAndCursor(int tabNr, int eleId) {
@@ -209,9 +218,6 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 	public void prevTab() {
 		if (tabNr > 0) {
 			tabNr--;
-			if (tabNr < leftMostTabNr) {
-				leftMostTabNr = tabNr;
-			}
 			//#debug debug
 			logger.debug("prev tab " + tabNr);
 		}
@@ -246,22 +252,11 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 		logger.debug("got action key " + action);
 		
 		//Icons directly mapped on keys mode
-		if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_MAPPED_ICONS)) {
-			int iconFromKeyCode = -1;
-			if (keyCode == KEY_NUM0) {
-				iconFromKeyCode = 10;
-			} else if (keyCode == KEY_STAR) {
-				iconFromKeyCode = 9;
-			} else if (keyCode == KEY_POUND) {
-				iconFromKeyCode = 11;
-			} else if (keyCode <= KEY_NUM9 && keyCode >= KEY_NUM1) {
-				iconFromKeyCode = keyCode - KEY_NUM1;
-			}
-			if (iconFromKeyCode >= 0 && iconFromKeyCode < getActiveMenuPage().size()) {
-				parent.show();
-				performIconAction(getActiveMenuPage().getElementAt(iconFromKeyCode).actionID);				
-				return;
-			}
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_MAPPED_ICONS)
+			&& (keyCode == KEY_STAR || keyCode == KEY_POUND || keyCode <= KEY_NUM9 && keyCode >= KEY_NUM0)) {
+			pressedKeyTime = System.currentTimeMillis();
+			pressedKeyCode = keyCode;
+			return;
 		}
 
 		if (action != 0) {
@@ -299,19 +294,51 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 				}
 			}
 		}
-		// if it was no game key or no handled game key action
-		if( action == 0) {
-			if (keyCode == KEY_NUM1) {
-				prevTab();
-			} else if (keyCode == KEY_NUM3) {
-				nextTab();
-			}
-		}
+//		// if it was no game key or no handled game key action
+//		if( action == 0) {
+//			if (keyCode == KEY_NUM1) {
+//				prevTab();
+//			} else if (keyCode == KEY_NUM3) {
+//				nextTab();
+//			}
+//		}
 		repaint();
 	}
 
 	protected void keyRepeated(int keyCode) {
-		keyPressed(keyCode);
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_MAPPED_ICONS)
+			&& (keyCode == KEY_STAR || keyCode == KEY_POUND || keyCode <= KEY_NUM9 && keyCode >= KEY_NUM0)) {
+			if ((System.currentTimeMillis() - pressedKeyTime) >= 1000 && pressedKeyCode == keyCode)
+				keyReleased(keyCode);
+			} else {
+				keyPressed(keyCode);
+			}
+		}
+		
+	protected void keyReleased(int keyCode) {
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_MAPPED_ICONS)) {
+			int iconFromKeyCode = -1;
+			if (keyCode == KEY_NUM0) {
+				iconFromKeyCode = 10;
+			} else if (keyCode == KEY_STAR) {
+				iconFromKeyCode = 9;
+			} else if (keyCode == KEY_POUND) {
+				iconFromKeyCode = 11;
+			} else if (keyCode <= KEY_NUM9 && keyCode >= KEY_NUM1) {
+				iconFromKeyCode = keyCode - KEY_NUM1;
+			}
+			if (iconFromKeyCode >= 0) {
+				if ((System.currentTimeMillis() - pressedKeyTime) >= 1000 && pressedKeyCode == keyCode) {
+						setActiveTab(iconFromKeyCode);
+						repaint();
+				} else {
+					if(iconFromKeyCode < getActiveMenuPage().size()){
+						parent.show();
+						performIconAction(getActiveMenuPage().getElementAt(iconFromKeyCode).actionID);
+					}
+				}
+			}
+		}
 	}
 	
 	protected void pointerReleased(int x, int y) {
