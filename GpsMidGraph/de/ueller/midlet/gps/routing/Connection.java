@@ -35,6 +35,10 @@ public class Connection {
 		return (connTravelModes & CONNTYPE_MAINSTREET_NET) > 0;
 	}
 	
+	public boolean isMotorwayConnection() {
+		return (connTravelModes & CONNTYPE_MOTORWAY) > 0;
+	}
+
 	public String toString(){
 		return "connection to " + toId; 
 	}
