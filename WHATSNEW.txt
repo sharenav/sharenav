@@ -1,7 +1,8 @@
 GpsMid 0.5.09
        *** Usability ***
        - Icon menus are available as an alternative user interface (activateable in Setup / Display Options)
-       - use numeric keys to directly access icons in icon menu - this can be activated in Setup (thx Petr Dlouhý) 
+       - use numeric keys to directly access icons in icon menu and use long presses of numeric keys
+         to directly access the tabs of the icon menu - this can be activated in Setup (thx Petr Dlouhý) 
        - Specify in Setup/Display Options to keep backlight on only while GPS is started
        - Many more midlet colors are specifiable in the style-file now (including colors for night mode)
        - Touch screen support:
