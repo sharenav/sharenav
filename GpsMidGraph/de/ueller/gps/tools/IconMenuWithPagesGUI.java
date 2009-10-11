@@ -158,8 +158,13 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 		removeCommand(BACK_CMD);
 		if (! Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN)) {
 			addCommand(OK_CMD);
+			addCommand(BACK_CMD);
+		} else {
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_BACK_CMD)) {
+				addCommand(BACK_CMD);
+			}
 		}
-		addCommand(BACK_CMD);
+		
 	}
 
 	

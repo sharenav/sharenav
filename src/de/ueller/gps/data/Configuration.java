@@ -46,7 +46,7 @@ public class Configuration {
 	 *  the default values for the features added between configVersionStored
 	 *  and VERSION will be set, before the version in the recordstore is increased to VERSION.
 	 */
-	public final static int VERSION = 10;
+	public final static int VERSION = 11;
 
 	public final static int LOCATIONPROVIDER_NONE = 0;
 	public final static int LOCATIONPROVIDER_SIRF = 1;
@@ -199,6 +199,8 @@ public class Configuration {
 	public final static byte CFGBIT_DISPLAYSIZE_SPECIFIC_DEFAULTS_DONE = 71;
 	/** bit 72: Flag whether initial Setup Forms were shown to the user */
 	public final static byte CFGBIT_INITIAL_SETUP_DONE = 72;
+	/** bit 73: Flag whether to add a Back command in fullscreen menu */
+	public final static byte CFGBIT_ICONMENUS_BACK_CMD = 73;
 	
 	/**
 	 * These are the database record ids for each configuration option
@@ -489,6 +491,13 @@ public class Configuration {
 
 		if (configVersionStored < 10) {
 			setMainStreetDistanceKm(3);
+		}
+		
+		if (configVersionStored < 11) {
+			if (getDefaultIconMenuBackCmdSupport()) {
+				cfgBits_64_to_127 |=	1L << CFGBIT_ICONMENUS_BACK_CMD;
+			}
+			
 		}
 		
 		setCfgBits(cfgBits_0_to_63, cfgBits_64_to_127);
@@ -1228,6 +1237,18 @@ public class Configuration {
         } 			
 		//#endif
 		return 0;
+	}
+	
+	private static boolean getDefaultIconMenuBackCmdSupport() {
+		String phoneModel = getPhoneModel();
+		// Nokia phones don't handle the fire button correctly
+		// when there is a command specified and they are in
+		// fullscreen mode
+		if (phoneModel.startsWith("Nokia")) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 	
 	public static String getValidFileName(String fileName) {
