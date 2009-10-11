@@ -35,6 +35,9 @@ public class GuiDiscoverIconMenu extends IconMenuWithPagesGUI {
 			mp.createAndAddIcon("Map Source"/*i:MapSource*/, "is_map", GuiDiscover.MENU_ITEM_MAP_SRC);
 			mp.createAndAddIcon("Debug"/*i:Debug*/, "is_debug", GuiDiscover.MENU_ITEM_DEBUG_OPT);
 
+			//#if polish.api.osm-editing
+			mp.createAndAddIcon("OSM Account"/*i:OSMAccount*/, "is_osmacc", GuiDiscover.MENU_ITEM_OSM_OPT);
+			//#endif
 			mp.createAndAddIcon("OpenCellID"/*i:OpenCellID*/, "is_cellid", GuiDiscover.MENU_ITEM_OPENCELLID_OPT);
 			mp.createAndAddIcon("Keys"/*i:Keys*/, "is_keys", GuiDiscover.MENU_ITEM_KEYS_OPT);
 			mp.createAndAddIcon("Load Config"/*i:LoadConfig*/, "is_load", GuiDiscover.MENU_ITEM_LOAD_CONFIG);
