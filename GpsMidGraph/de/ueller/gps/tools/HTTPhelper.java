@@ -25,6 +25,7 @@ import javax.microedition.io.Connector;
 import javax.microedition.io.HttpConnection;
 
 import de.enough.polish.util.base64.Base64;
+import de.ueller.gps.data.Configuration;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.UploadListener;
 
@@ -108,7 +109,7 @@ public class HTTPhelper implements Runnable{
 			}
 			
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			OutputStreamWriter osw = new OutputStreamWriter(baos);
+			OutputStreamWriter osw = new OutputStreamWriter(baos,Configuration.getUtf8Encoding());
 			
 			
 			osw.write(data);
@@ -200,7 +201,7 @@ public class HTTPhelper implements Runnable{
 						logger.debug("Read: " + readB  + " bytes");
 						idx += readB;
 					}
-					data = new String(incomingData);
+					data = new String(incomingData,Configuration.getUtf8Encoding());
 				} else {
 					ByteArrayOutputStream bytestream = new ByteArrayOutputStream();
 					int ch;
@@ -208,7 +209,7 @@ public class HTTPhelper implements Runnable{
 						bytestream.write(ch);
 					}
 					bytestream.flush();
-					data = new String(bytestream.toByteArray());
+					data = new String(bytestream.toByteArray(),Configuration.getUtf8Encoding());
 					bytestream.close();
 				}
 				//#debug info
@@ -234,6 +235,9 @@ public class HTTPhelper implements Runnable{
 	/**
 	 * Escape the necessary characters to form a valid XML string
 	 * These are ' & < > "
+	 * 
+	 * FIXME: This seems to be a duplicate of the function HelperRoutines.utf2xml()
+	 * 
 	 * @param xml
 	 * @return
 	 */
