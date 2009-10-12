@@ -375,7 +375,8 @@ scale alias 1: zoomed out 21x
 	  <value name ="atm">
 		<description desc = "Cash machine"/>
 		<image src="atm.png"/>
-		<namekey tag="name"/>
+		<namekey tag="operator"/>
+		<namefallback tag="name"/>
 		<scale scale="25"/>
 		<textscale scale="26"/>
 	  </value>

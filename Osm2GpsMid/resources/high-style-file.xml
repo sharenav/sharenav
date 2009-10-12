@@ -429,7 +429,8 @@ scale alias 1: zoomed out 21x
 	  <value name ="atm">
 		<description desc = "Cash machine"/>
 		<image src="atm.png"/>
-		<namekey tag="name"/>
+		<namekey tag="operator"/>
+		<namefallback tag="name"/>
 		<AreaPOI createForAreas="true"/>
 		<scale scale="20"/>
 		<textscale scale="23"/>
@@ -1990,13 +1991,13 @@ scale alias 1: zoomed out 21x
 			<routeAccessRestriction restrictionKey = "access" restrictionValues = "no|private"/>
 			<routeAccessRestriction restrictionKey = "vehicle" restrictionValues = "no|private"/>
 		</routeMode>
-		<routeMode modeName = "bicycle" maxPrepareMeters="75" maxInMeters="299" maxEstimationSpeed="20" bicycleOppositeExceptions = "true">
-			<routeAccessRestriction restrictionKey = "bicycle" restrictionValues = "yes|designated" restrictionPermit = "true"/>
-			<routeAccessRestriction restrictionKey = "cycleway" restrictionValues = "track" restrictionPermit = "true"/>
-			<routeAccessRestriction restrictionKey = "bicycle" restrictionValues = "no|private"/>
-			<routeAccessRestriction restrictionKey = "access" restrictionValues = "no|private"/>
-			<routeAccessRestriction restrictionKey = "vehicle" restrictionValues = "no|private"/>
-		</routeMode>
+			<routeMode modeName = "bicycle" maxPrepareMeters="75" maxInMeters="299" maxEstimationSpeed="20" bicycleOppositeExceptions = "true">
+				<routeAccessRestriction restrictionKey = "bicycle" restrictionValues = "yes|designated" restrictionPermit = "true"/>
+				<routeAccessRestriction restrictionKey = "cycleway" restrictionValues = "track" restrictionPermit = "true"/>
+				<routeAccessRestriction restrictionKey = "bicycle" restrictionValues = "no|private"/>
+				<routeAccessRestriction restrictionKey = "access" restrictionValues = "no|private"/>
+				<routeAccessRestriction restrictionKey = "vehicle" restrictionValues = "no|private"/>
+			</routeMode>
 		<routeMode modeName = "foot" maxPrepareMeters="50" maxInMeters="125" maxEstimationSpeed="4" againstAllOneWays = "true">
 			<routeAccessRestriction restrictionKey = "foot" restrictionValues = "yes|designated" restrictionPermit = "true"/>
 			<routeAccessRestriction restrictionKey = "foot" restrictionValues = "no|private"/>
