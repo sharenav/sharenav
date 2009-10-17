@@ -192,7 +192,9 @@ public class OxParser extends DefaultHandler {
 					 * If this is the only tag on a Node, we end up saving creating a Hashtable
 					 * object to store the tags, saving some memory.
 					 */
-					if (!key.equalsIgnoreCase("created_by") && !key.equalsIgnoreCase("converted_by")) {
+					if (!key.equalsIgnoreCase("created_by") && !key.equalsIgnoreCase("converted_by") &&
+							!key.equalsIgnoreCase("source") && !key.startsWith("tiger") && 
+							!key.equalsIgnoreCase("attribution") && !key.equalsIgnoreCase("note")) {
 						if (!tagsCache.containsKey(key)) {
 							tagsCache.put(key, key);
 						}
