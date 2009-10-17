@@ -217,6 +217,8 @@ public class Configuration {
 		private String midletName;
 		/** Name of the base Midlet (e.g. GpsMid-Generic-multi) to be used. */
 		private String appParam;
+		/** full name of the jar file of the base midlet */
+		private String appJarFileName = null;
 		/** Defines which routing options from the style-file get used. */
 		public String useRouting = "motorcar";
 		public boolean enableEditingSupport = false;
@@ -454,6 +456,10 @@ public class Configuration {
 		public float getFloat(String key) {
 			return Float.parseFloat(getString(key));
 		}
+		
+		public String getName() {
+			return getString("bundle.name");
+		}
 
 		/** Allows to set the Midlet name.
 		 * @param name Name to be set
@@ -476,7 +482,7 @@ public class Configuration {
 		 * @return File name
 		 */
 		public String getMidletFileName() {
-			return getMidletName() + "-" + getVersion();
+			return getMidletName() + "-" + getName() + "-" + getVersion();
 		}
 		
 		/** Allows to set the name of the base Midlet (e.g. GpsMid-Generic-multi).
@@ -491,14 +497,14 @@ public class Configuration {
 			if ("false".equals(baseName)) {
 				return null;
 			}
-			InputStream is = getClass().getResourceAsStream("/" + baseName
-					+ "-" + getVersion() + ".jar");
+			baseName = "/" + appParam + "-" + getVersion() + ".jar";
+			InputStream is = getClass().getResourceAsStream(baseName);
 			if (is == null) {
-				String lang = getLang();
-				System.out.println("Using lang=" + lang);
-				is = getClass().getResourceAsStream("/" + baseName
-						+ "-" + getVersion() + "_" + getLang() + ".jar");
+				baseName = "/" + appParam + "-" + getVersion() +"_" + getLang() +  ".jar";
+				System.out.println("Using lang=" + getLang());
+				is = getClass().getResourceAsStream(baseName);
 			}
+			appJarFileName = baseName;
 			return is;
 		}
 
@@ -513,7 +519,10 @@ public class Configuration {
 		 * @return JAR file name
 		 */
 		public String getJarFileName() {
-			return appParam	+ "-" + getVersion() + ".jar";
+			if (appJarFileName == null) {
+				getJarFile();
+			}
+			return appJarFileName;
 		}
 
 		public String getTempDir() {
