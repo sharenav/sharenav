@@ -126,7 +126,7 @@ public class CreateGpsMidData {
 	}
 	
 
-	public void exportMapToMid(){
+	public void exportMapToMid() {
 		names1=getNames1();
 		exportLegend(path);
 		SearchList sl=new SearchList(names1);
@@ -655,8 +655,9 @@ public class CreateGpsMidData {
 		}
 	}
 	
-	private void exportTile(Tile t,Sequence tileSeq,Bounds tileBound, Sequence routeNodeSeq) throws IOException{
-		Bounds realBound=new Bounds();
+	private void exportTile(Tile t, Sequence tileSeq, Bounds tileBound, 
+			Sequence routeNodeSeq) throws IOException {
+		Bounds realBound = new Bounds();
 		LinkedList<Way> ways;
 		Collection<Node> nodes;
 		int maxSize;
@@ -727,8 +728,8 @@ public class CreateGpsMidData {
 					
 					unsplittableTile = true;										
 				}
-				t.nodes=nodes;
-				t.ways=ways;
+				t.nodes = nodes;
+				t.ways = ways;
 			} else {
 				// Route Nodes
 				maxSize=configuration.getMaxRouteTileSize();
@@ -867,32 +868,38 @@ public class CreateGpsMidData {
 			}
 			// mark ways as written to MidStorage
 			for (Iterator<Way> wi = t.ways.iterator(); wi.hasNext();) {
-				Way w1=wi.next();
-				w1.used=true;
-				w1.fid=t.fid;
+				Way w1 = wi.next();
+				w1.used = true;
+				w1.fid = t.fid;
 			}
 		} else {
-			t.bounds=tileBound.clone();
-			t.type=Tile.TYPE_ROUTEDATA;
+			t.bounds = tileBound.clone();
+			t.type = Tile.TYPE_ROUTEDATA;
 			for (RouteNode n:t.getRouteNodes()){
-				n.node.used=true;
+				n.node.used = true;
 			}
 		}
 	}
-	
-	
-	private LinkedList<Way> getWaysInBound(Collection<Way> parentWays,int zl,Bounds targetTile,Bounds realBound){
+
+	private LinkedList<Way> getWaysInBound(Collection<Way> parentWays, int zl, 
+			Bounds targetTile, Bounds realBound) {
 		LinkedList<Way> ways = new LinkedList<Way>();
 //		System.out.println("Searching for ways mostly in " + targetTile + " from " + 
 //			parentWays.size() + " ways");
 		// Collect all ways that are in this rectangle
 		for (Way w1 : parentWays) {
-			byte type=w1.getType();
-			if (type < 1) continue;
-			if (w1.getZoomlevel(configuration) != zl) continue;
-			if (w1.used) continue;
-			Bounds wayBound=w1.getBounds();
-			if (targetTile.isMostlyIn(wayBound)){
+			byte type = w1.getType();
+			if (type < 1) {
+				continue;
+			}
+			if (w1.getZoomlevel(configuration) != zl) {
+				continue;
+			}
+			if (w1.used) {
+				continue;
+			}
+			Bounds wayBound = w1.getBounds();
+			if (targetTile.isMostlyIn(wayBound)) {
 				realBound.extend(wayBound);
 				ways.add(w1);
 			}
@@ -900,6 +907,7 @@ public class CreateGpsMidData {
 //		System.out.println("getWaysInBound found " + ways.size() + " ways");
 		return ways;
 	}
+
 	private LinkedList<Way> addWaysCompleteInBound(LinkedList<Way> ways,Collection<Way> parentWays,int zl,Bounds targetTile){
 		// collect all way that are in this rectangle
 //		System.out.println("Searching for ways total in " + targetTile + 
@@ -910,12 +918,20 @@ public class CreateGpsMidData {
 		TreeSet<Way> waysTS = new TreeSet<Way>(ways);
 		for (Way w1 : parentWays) {
 			byte type=w1.getType();
-			if (type == 0) continue;
-			if (w1.getZoomlevel(configuration) != zl) continue;
-			if (w1.used) continue;
-			if (waysTS.contains(w1)) continue;
-			Bounds wayBound=w1.getBounds();
-			if (targetTile.isCompleteIn(wayBound)){
+			if (type == 0) {
+				continue;
+			}
+			if (w1.getZoomlevel(configuration) != zl) {
+				continue;
+			}
+			if (w1.used) {
+				continue;
+			}
+			if (waysTS.contains(w1)) {
+				continue;
+			}
+			Bounds wayBound = w1.getBounds();
+			if (targetTile.isCompleteIn(wayBound)) {
 				waysTS.add(w1);
 				ways.add(w1);
 			}
@@ -939,6 +955,7 @@ public class CreateGpsMidData {
 //		System.out.println("getNodesInBound found " + nodes.size() + " nodes");
 		return nodes;
 	}
+
 	public Collection<Node> getRouteNodesInBound(Collection<Node> parentNodes,Bounds targetBound,Bounds realBound){
 		Collection<Node> nodes = new LinkedList<Node>();
 		for (Node node : parentNodes){
@@ -954,15 +971,13 @@ public class CreateGpsMidData {
 		return nodes;
 	}
 
-	
-	
 	/**
-	 * Create the data-content for a route-tile. Containing a list of nodes and a list
+	 * Create the data-content for a route-tile, containing a list of nodes and a list
 	 * of connections from each node.
-	 * @param interestNodes list of all Nodes that should included in this tile
-	 * @param t the Tile that holds the meta-data
+	 * @param interestNodes list of all Nodes that should be included in this tile
+	 * @param t the tile that holds the meta-data
 	 * @return in array[0][] the file-format for all nodes and in array[1][] the
-	 * file-format for all connections whithin this tile.
+	 * file-format for all connections within this tile.
 	 * @throws IOException
 	 */
 	public byte[][] createMidContent(Collection<Node> interestNodes, Tile t) throws IOException{
@@ -975,10 +990,9 @@ public class CreateGpsMidData {
 		nds.writeShort(interestNodes.size());		
 		for (Node n : interestNodes) {
 			writeRouteNode(n,nds,cds);
-				if (n.routeNode != null){
+				if (n.routeNode != null) {
 					t.addRouteNode(n.routeNode);
 				}
-
 		}
 
 		nds.writeByte(0x56); // magic number
@@ -992,13 +1006,13 @@ public class CreateGpsMidData {
 
 	/**
 	 * Create the Data-content for a SingleTile in memory. This will later directly 
-	 * written on Disk if the byte array is not to big otherwise this tile will
-	 * splitted in smaller tiles. 
-	 * @param ways a Collection of ways that are chosen to be in this tile.
-	 * @param interestNodes all additional Nodes like places, parking and so on 
-	 * @param t the Tile, holds the metadata for this area.
+	 * be written to disk if the byte array is not too big, otherwise this tile will
+	 * be split in smaller tiles. 
+	 * @param ways A collection of ways that are chosen to be in this tile.
+	 * @param interestNodes all additional nodes like places, parking and so on 
+	 * @param t the tile, holds the metadata for this area.
 	 * @return a byte array that represents a file content. This could be written
-	 * directly ond disk.
+	 * directly to disk.
 	 * @throws IOException
 	 */
 	public byte[] createMidContent(Collection<Way> ways,Collection<Node> interestNodes, Tile t) throws IOException{
@@ -1029,9 +1043,9 @@ public class CreateGpsMidData {
 			}
 		}
 
-		// create a byte arrayStream which holds the Singeltile-Data
+		// Create a byte arrayStream which holds the Singletile-Data,
 		// this is created in memory and written later if file is 
-		// not to big.
+		// not too big.
 		ByteArrayOutputStream fo = new ByteArrayOutputStream();
 		DataOutputStream ds = new DataOutputStream(fo);
 		ds.writeByte(0x54); // Magic number
@@ -1147,18 +1161,17 @@ public class CreateGpsMidData {
 			}
 					
 		}
-		if ((flags & Constants.NODE_MASK_TYPE) > 0){
+		if ((flags & Constants.NODE_MASK_TYPE) > 0) {
 			ds.writeByte(n.getType(configuration));
 			if (configuration.enableEditingSupport) {
 				if (n.id > Integer.MAX_VALUE) {
 					System.out.println("WARNING: OSM-ID won't fit in 32 bits for way " + n);
 					ds.writeInt(-1);
-				} else
+				} else {
 					ds.writeInt((int)n.id);
+				}
 			}
 		}
-		
-
 	}
 
 
