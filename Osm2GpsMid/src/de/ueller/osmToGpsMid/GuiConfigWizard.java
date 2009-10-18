@@ -62,22 +62,22 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	JCheckBox jcbEditing;
 	JComboBox jcbCellSource;
 	
-	private static final String XAPI_SRC = "osmXapi";
+	private static final String XAPI_SRC = "OsmXapi";
 	private static final String ROMA_SRC = "ROMA";
-	private static final String FILE_SRC = "load .osm.bz2 File";
-	private static final String CELL_SRC_NONE = "include no Cell IDs";
-	private static final String CELL_SRC_FILE = "load cell ID file";
-	private static final String CELL_SRC_DLOAD = "download cell ID db";
+	private static final String FILE_SRC = "Load .osm.bz2 File";
+	private static final String CELL_SRC_NONE = "Include no Cell IDs";
+	private static final String CELL_SRC_FILE = "Load cell ID file";
+	private static final String CELL_SRC_DLOAD = "Download cell ID DB";
 	private static final String JCB_EDITING = "Enable online OSM editing support";
 	String [] planetFiles = {XAPI_SRC, ROMA_SRC, FILE_SRC};
 	String [] cellidFiles = {CELL_SRC_NONE, CELL_SRC_FILE, CELL_SRC_DLOAD};
 	
-	private static final String LOAD_PROP = "load .properties file";
-	private static final String CUSTOM_PROP = "custom properties";
+	private static final String LOAD_PROP = "Load .properties file";
+	private static final String CUSTOM_PROP = "Custom properties";
 	String [] propertiesList = {LOAD_PROP, CUSTOM_PROP};
 	
 	private static final String DEFAULT_STYLE = "Default style file";
-	private static final String LOAD_STYLE = "load custom style file";
+	private static final String LOAD_STYLE = "Load custom style file";
 	JMapViewer map;
 
 	boolean dialogFinished = false;
@@ -130,7 +130,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 
 		jcbPlanet = new JComboBox(planetFiles);
 		jcbPlanet.addActionListener(this);
-		jcbPlanet.setToolTipText("Select the .osm file to use in conversion. ROMA and osmXapi are online servers and should only be used for small areas");
+		jcbPlanet.setToolTipText("Select the .osm file to use in conversion. ROMA and OsmXapi are online servers and should only be used for small areas.");
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.weightx = 1;
 		gbc.gridx = 1;
@@ -149,7 +149,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		jcbStyle.addItem(DEFAULT_STYLE);
 		jcbStyle.addItem(LOAD_STYLE);
 		jcbStyle.addActionListener(this);
-		jcbStyle.setToolTipText("Select the style file to determin which features  of the raw data get included in the midlet");
+		jcbStyle.setToolTipText("Select the style file to determine which features of the raw data get included in the midlet");
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.weightx = 1;
 		gbc.gridx = 1;
@@ -212,7 +212,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		jpOptions.add(jlPhone, gbc);
 		
 		jcbPhone = new JComboBox(enumerateAppParam().toArray());
-		jcbPhone.setToolTipText("Select the compilation version that contains the features supported by your phone. Generic-full should work well in most cases");
+		jcbPhone.setToolTipText("Select the compilation version that contains the features supported by your phone. Generic-full should work well in most cases.");
 		jcbPhone.addActionListener(this);
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.gridx = 1;
@@ -236,14 +236,14 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		
 		jcbCellSource = new JComboBox(cellidFiles);
 		jcbCellSource.addActionListener(this);
-		jcbCellSource.setToolTipText("Select a source of the Cell ID db for cell based location");
+		jcbCellSource.setToolTipText("Select a source of the Cell ID db for cell based location.");
 		gbc.gridx = 0;
 		gbc.gridy = 1;
 		gbc.weighty = 0;
 		jpOptions2.add(jcbCellSource, gbc);
 
 		JButton jbOk = new JButton("Create GpsMid midlet");
-		jbOk.setActionCommand("OK-click");
+		jbOk.setActionCommand("Create-click");
 		jbOk.addActionListener(this);
 		gbc.gridwidth = 3;
 		gbc.weighty = 0;
@@ -253,7 +253,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		add(jbOk, gbc);
 
 		JButton jbCancel = new JButton("Close");
-		jbCancel.setActionCommand("Cancel-click");
+		jbCancel.setActionCommand("Close-click");
 		jbCancel.addActionListener(this);
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.gridwidth = 3;
@@ -379,9 +379,9 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			public boolean accept(File f) {
 				if (f.isDirectory() || f.getAbsolutePath().endsWith(".osm")
 						|| f.getAbsolutePath().endsWith(".osm.bz2")
-						|| f.getAbsolutePath().endsWith(".osm.gz"))
+						|| f.getAbsolutePath().endsWith(".osm.gz")) {
 					return true;
-
+				}
 				return false;
 			}
 
@@ -408,8 +408,9 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		FileFilter ff = new FileFilter() {
 			@Override
 			public boolean accept(File f) {
-				if (f.isDirectory() || f.getAbsolutePath().endsWith(".xml"))
+				if (f.isDirectory() || f.getAbsolutePath().endsWith(".xml")) {
 					return true;
+				}
 				return false;
 			}
 
@@ -435,10 +436,9 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		FileFilter ff = new FileFilter() {
 			@Override
 			public boolean accept(File f) {
-				if (f.isDirectory()
-						|| f.getAbsolutePath().endsWith(".properties"))
+				if (f.isDirectory()	|| f.getAbsolutePath().endsWith(".properties")) {
 					return true;
-
+				}
 				return false;
 			}
 
@@ -467,10 +467,9 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		FileFilter ff = new FileFilter() {
 			@Override
 			public boolean accept(File f) {
-				if (f.isDirectory()
-						|| f.getAbsolutePath().endsWith(".txt.gz"))
+				if (f.isDirectory() || f.getAbsolutePath().endsWith(".txt.gz")) {
 					return true;
-
+				}
 				return false;
 			}
 
@@ -561,26 +560,26 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	 * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	public void actionPerformed(ActionEvent e) {
-		if ("OK-click".equalsIgnoreCase(e.getActionCommand())) {
+		if ("Create-click".equalsIgnoreCase(e.getActionCommand())) {
 			config.setMidletName(jtfName.getText());
 			config.setRouting(jtfRouting.getText());
-			System.out.println("Configuration wizard has finished");
+			System.out.println("Create Midlet clicked");
 
 			dialogFinished = true;
 			setVisible(false);
 			dispose();
 			writeProperties("last.properties");
 		}
-		if ("Cancel-click".equalsIgnoreCase(e.getActionCommand())) {
+		if ("Close-click".equalsIgnoreCase(e.getActionCommand())) {
 			writeProperties("last.properties");
 			System.exit(0);
 		}
 		
-		if ("help-click".equalsIgnoreCase(e.getActionCommand())) {
+		if ("Help-click".equalsIgnoreCase(e.getActionCommand())) {
 			JOptionPane.showMessageDialog(
 					this,   "Welcome to the Osm2GpsMid Wizard!\n\n" +
-							"Osm2GpsMid and GpsMid are licensed by GPL2 (http://www.gnu.org/)\n" + 
-							"OpenStreetMap Data is licensed by CC 2.0 (http://www.creativecommons.org/)\n" +
+							"Osm2GpsMid and GpsMid are licensed under GPL2 (http://www.gnu.org/)\n" + 
+							"OpenStreetMap Data is licensed under CC 2.0 (http://www.creativecommons.org/)\n" +
 							"\n" + 
 							"Osm2GpsMid is a conversion program to package map data from OpenStreetMap into a 'midlet' called GpsMid.\n" +
 							"The resulting midlet includes the specified map data and can be uploaded to J2ME ready mobiles for offline navigation.\n" +
@@ -592,14 +591,16 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 							" If you want to set all the parameters using this wizard, please leave the .properties file on custom.\n" +
 							"2. Specify a source for the OpenStreetMap data. Currently three sources are directly supported:\n" +
 							" a) ROMA: This is the Read Only Map Api and downloads data directly from the API server (only for small regions like towns)\n" +
-							" b) osmXapi: This is an alternative server and very similar to ROMA (only for small regions like towns)\n" +
-							" c) load from file: Use a .osm or .osm.bz2 file previously downloaded to your computer (recommended)\n" +
+							" b) OsmXapi: This is an alternative server and very similar to ROMA (only for small regions like towns)\n" +
+							" c) Load from file: Use a .osm or .osm.bz2 file previously downloaded to your computer (recommended)\n" +
 							"    Country level extracts in .osm.bz2 file format are available\n" +
 							"    i.e. at http://download.geofabrik.de/osm/ and http://downloads.cloudmade.com/\n" +
 							"3. Press 'Create GpsMid midlet'\n" +
 							"\n" +
+							"Your changes in the wizard are written to last.properties so you can use this as\n" +
+							"a starting point for your .properties file.\n" +
+							"\n" +
 							"For more information please visit http://gpsmid.sourceforge.net/ and http://gpsmid.wiki.sourceforge.net/");
-			
 		}
 		
 		if ("enable Routing".equalsIgnoreCase(e.getActionCommand())) {
@@ -643,8 +644,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			if (e.getSource() == jcbPlanet) {
 				
 				String chosenProperty = (String) jcbPlanet.getSelectedItem();
-				if (chosenProperty
-						.equalsIgnoreCase(FILE_SRC)) {
+				if (chosenProperty.equalsIgnoreCase(FILE_SRC)) {
 					askOsmFile();
 					//resetPropertiesSelectors();
 				} else {
@@ -654,8 +654,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			}
 			if (e.getSource() == jcbStyle) {
 				String chosenProperty = (String) jcbStyle.getSelectedItem();
-				if (chosenProperty
-						.equalsIgnoreCase(LOAD_STYLE)) {
+				if (chosenProperty.equalsIgnoreCase(LOAD_STYLE)) {
 					askStyleFile();
 					//resetPropertiesSelectors();
 				} else  if(chosenProperty
