@@ -487,12 +487,9 @@ public class Routing implements Runnable {
 					return (int) (((dist/1.7f)+turnCost)*estimateFac);
 				}
 			}
-			if (dist > 5000){
-				// estimate 45 Km/h (12 m/s) as average speed 
-				return (int) (((dist/1.2f)+turnCost)*estimateFac);
-			}
-			// estimate 30 Km/h (8 m/s) as average speed 
-			return (int) (((dist/2.2f)+turnCost)*estimateFac);
+
+			// estimate 45 Km/h (12 m/s) as average speed 
+			return (int) (((dist/1.2f)+turnCost)*estimateFac);
 		} else {
 			return (int) ((dist*1.1f + turnCost)*estimateFac);
 		}
