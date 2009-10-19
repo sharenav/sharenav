@@ -19,16 +19,16 @@ import de.ueller.osmToGpsMid.model.Bounds;
 
 /**
  * This code is adapted from the DefaultMapController of the
- * org.openstreetmap.gui.jmapviewer package
- * 
+ * org.openstreetmap.gui.jmapviewer package.
+ * It implements map moving by dragging with the left
+ * mouse button, region marking by dragging with the right mouse button,
+ * region selecting with double click and zooming by mouse wheel.
  */
 public class SelectionMapController extends JMapController implements
 		MouseListener, MouseMotionListener, MouseWheelListener {
 
 	private static final int MOUSE_BUTTONS_MASK = MouseEvent.BUTTON3_DOWN_MASK
 			| MouseEvent.BUTTON1_DOWN_MASK | MouseEvent.BUTTON2_DOWN_MASK;
-
-	
 
 	private Point lastDragPoint;
 	private Point2D.Double startSelPoint;
@@ -40,7 +40,6 @@ public class SelectionMapController extends JMapController implements
 	private boolean movementEnabled = true;
 
 	private boolean wheelZoomEnabled = true;
-	private boolean doubleClickZoomEnabled = true;
 	private SelectionListener selListener;
 	
 	public SelectionMapController(JMapViewer map, SelectionListener selListener) {
@@ -64,32 +63,33 @@ public class SelectionMapController extends JMapController implements
 
 		if (isSelecting) {
 			if (((e.getModifiersEx() & MOUSE_BUTTONS_MASK) == MouseEvent.BUTTON3_DOWN_MASK) ||
-					((((e.getModifiersEx() & MOUSE_BUTTONS_MASK) == MouseEvent.BUTTON1_DOWN_MASK)) && ((e.getModifiersEx() & MouseEvent.CTRL_DOWN_MASK) > 0))){
-				Point p = e.getPoint();
+					((((e.getModifiersEx() & MOUSE_BUTTONS_MASK) == MouseEvent.BUTTON1_DOWN_MASK)) 
+							&& ((e.getModifiersEx() & MouseEvent.CTRL_DOWN_MASK) > 0))) {
 
 				Point2D.Double endSelPoint = map.getPosition(e.getPoint());
 				selRegion.setRectanlge(startSelPoint.x, startSelPoint.y,
 						endSelPoint.x, endSelPoint.y);
 				map.repaint();
-
 			}
 		}
 	}
 
 	public void mouseClicked(MouseEvent e) {
-		if (doubleClickZoomEnabled && e.getClickCount() == 2
-				&& e.getButton() == MouseEvent.BUTTON1)
-			map.zoomIn(e.getPoint());
+		if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
+			Point2D.Double clickPoint = map.getPosition(e.getPoint());
+			selListener.pointDoubleClicked((float)clickPoint.x, (float)clickPoint.y);
+		}
 	}
 
 	public void mousePressed(MouseEvent e) {
 
 		if ((e.getButton() == MouseEvent.BUTTON3) || 
-				((e.getButton() == MouseEvent.BUTTON1) && ((e.getModifiersEx() & MouseEvent.CTRL_DOWN_MASK) > 0))) {
+				((e.getButton() == MouseEvent.BUTTON1) 
+						&& ((e.getModifiersEx() & MouseEvent.CTRL_DOWN_MASK) > 0))) {
 			isSelecting = true;
 			startSelPoint = map.getPosition(e.getPoint());
-			selRegion = new MapMarkerRectangle(Color.BLACK, new Color(0x9fafafaf, true),startSelPoint.y,
-					startSelPoint.x, startSelPoint.y, startSelPoint.x);
+			selRegion = new MapMarkerRectangle(Color.BLACK, new Color(0x9fafafaf, true), 
+					startSelPoint.y, startSelPoint.x, startSelPoint.y, startSelPoint.x);
 			map.addMapMarkerArea(selRegion);
 
 		} else if (e.getButton() == MouseEvent.BUTTON1) {
@@ -104,14 +104,13 @@ public class SelectionMapController extends JMapController implements
 		isMoving = false;
 		if (isSelecting) {
 			isSelecting = false;
-			Point p = e.getPoint();
 			Point2D.Double endSelPoint = map.getPosition(e.getPoint());
 			Bounds bound = new Bounds();
 			bound.maxLat = Math.max((float)startSelPoint.x,(float)endSelPoint.x);
-			bound.maxLon = Math.max((float)startSelPoint.y,(float)endSelPoint.y);;
+			bound.maxLon = Math.max((float)startSelPoint.y,(float)endSelPoint.y);
 			bound.minLat = Math.min((float)startSelPoint.x,(float)endSelPoint.x);
-			bound.minLon = Math.min((float)startSelPoint.y,(float)endSelPoint.y);;
-			selListener.regionSelected(bound);
+			bound.minLon = Math.min((float)startSelPoint.y,(float)endSelPoint.y);
+			selListener.regionMarked(bound);
 
 			map.removeMapMarkerArea(selRegion);
 		}
@@ -142,14 +141,6 @@ public class SelectionMapController extends JMapController implements
 
 	public void setWheelZoomEnabled(boolean wheelZoomEnabled) {
 		this.wheelZoomEnabled = wheelZoomEnabled;
-	}
-
-	public boolean isDoubleClickZoomEnabled() {
-		return doubleClickZoomEnabled;
-	}
-
-	public void setDoubleClickZoomEnabled(boolean doubleClickZoomEnabled) {
-		this.doubleClickZoomEnabled = doubleClickZoomEnabled;
 	}
 
 	public void mouseEntered(MouseEvent e) {

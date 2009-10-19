@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Vector;
 
 import de.ueller.osmToGpsMid.model.Bounds;
 
@@ -46,14 +47,13 @@ public class CellDB {
 	}
 
 	public void parseCellDB() {
-		Bounds[] bounds;
 		HashMap<Long, ArrayList<Cell>> cells = new HashMap<Long, ArrayList<Cell>>();
 		int noInvalid = 0;
 		int noValid = 0;
 		int mcc = 0;
 		int mnc = 0;
 		Configuration conf = Configuration.getConfiguration();
-		bounds = conf.getBounds();
+		Vector<Bounds> bounds = conf.getBounds();
 
 		/*
 		 * Determine if we should filter the cellIDs according to a country code

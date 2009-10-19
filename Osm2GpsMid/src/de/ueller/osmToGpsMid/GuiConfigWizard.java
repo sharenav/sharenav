@@ -296,7 +296,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	
 	private void addMapMarkers() {	
 		map.setMapMarkerAreaList(new LinkedList<MapMarkerArea>());
-		Bounds [] bounds = config.getBounds();
+		Vector<Bounds> bounds = config.getBounds();
 		for (Bounds b : bounds) {
 			MapMarkerRectangle boundMarker = new MapMarkerRectangle(Color.BLACK, 
 					new Color(0x2fffffaf, true), b.maxLat, b.maxLon, b.minLat, b.minLon);
@@ -518,7 +518,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			fw.write("\r\n");
 			fw.write("# You can have up to 9 regions.\r\n");
 			fw.write("# Ways and POIs in any of the regions will be written to the bundle.\r\n");
-			Bounds[] bounds = config.getBounds();
+			Vector<Bounds> bounds = config.getBounds();
 			if (bounds != null) {
 				int i = 1;
 				for (Bounds b : bounds) {
@@ -588,7 +588,8 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 							"1. Specify which region of the world you want to include in your midlet. \n" +
 							" This can either be done by dragging over an area on the world map with the right mouse button\n" +
 							" or by specifying a .properties file that already contains the area you want.\n" +
-							" If you want to set all the parameters using this wizard, please leave the .properties file on custom.\n" +
+							" You can delete boxes by double-clicking on them.\n" +
+							" If you want to set all the parameters using this wizard, please leave 'Properties template' on 'Custom'.\n" +
 							"2. Specify a source for the OpenStreetMap data. Currently three sources are directly supported:\n" +
 							" a) ROMA: This is the Read Only Map Api and downloads data directly from the API server (only for small regions like towns)\n" +
 							" b) OsmXapi: This is an alternative server and very similar to ROMA (only for small regions like towns)\n" +
@@ -686,11 +687,28 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	}
 
 	/* (non-Javadoc)
-	 * @see de.ueller.osmToGpsMid.SelectionListener#regionSelected(de.ueller.osmToGpsMid.model.Bounds)
+	 * @see de.ueller.osmToGpsMid.SelectionListener#regionMarked(de.ueller.osmToGpsMid.model.Bounds)
 	 */
-	public void regionSelected(Bounds bound) {
+	public void regionMarked(Bounds bound) {
 		config.addBounds(bound);
 		addMapMarkers();
+	}
+
+	/* (non-Javadoc)
+	 * @see de.ueller.osmToGpsMid.SelectionListener#pointDoubleClicked(float, float)
+	 */
+	public void pointDoubleClicked(float lat, float lon) {
+		System.out.println("Double click at lat=" + lat + "|lon=" + lon);
+		Vector<Bounds> bounds = config.getBounds();
+		for (int i = 0; i < bounds.size(); i++) {
+			if (bounds.elementAt(i).isIn(lat, lon)) {
+				System.out.println("  Deleting box " + i + " " + 
+						bounds.elementAt(i).toString());
+				config.removeBoundsAt(i);
+				addMapMarkers();
+				break;
+			}
+		}
 	}
 
 }

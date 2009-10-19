@@ -127,8 +127,6 @@ public class Configuration {
 	public final static int COLOR_CLOCK_TEXT = 69;
 	public final static int COLOR_COUNT = 70;
 
-
-
 	public final static String COLORNAMES[] =
 			{"map_background",
 			 "map_text",
@@ -201,7 +199,7 @@ public class Configuration {
 			 "clock_background",
 			 "clock_text"
 			};
-			 		
+
 	public static int COLORS[] = new int[COLOR_COUNT];
 	public static int COLORS_AT_NIGHT[] = new int[COLOR_COUNT];
 	
@@ -225,7 +223,8 @@ public class Configuration {
 		public int maxTileSize = 20000;
 		public int maxRouteTileSize = 3000;
 		public String styleFile;
-		private Bounds[] bounds;
+		/** Bounding boxes, read from properties and/or drawn by the user on the map. */
+		private Vector<Bounds> bounds;
 		
 		public String changeSoundFileExtensionTo = "";
 		
@@ -237,14 +236,15 @@ public class Configuration {
 
 		private static Configuration conf;
 
-//		private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
-//				.getBundle(BUNDLE_NAME);
+//		private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 
 		public Configuration(String [] args) {		
 			//Set singleton
 			conf = this;
 			
 			resetColors();
+			
+			bounds = new Vector<Bounds>(9);
 			
 			for (String arg : args) {
 				if (arg.startsWith("--")) {
@@ -253,13 +253,6 @@ public class Configuration {
 						System.out.println("Found bound: " + bound);
 						String [] boundValues = bound.split(",");
 						if (boundValues.length == 4) {
-							if (bounds == null) {
-								bounds = new Bounds[1];
-							} else {
-								Bounds [] tmp = new Bounds[bounds.length + 1];
-								System.arraycopy(bounds, 0, tmp, 0, bounds.length);
-								bounds = tmp;
-							}
 							Bounds b = new Bounds();
 							try {								
 								b.minLon = Float.parseFloat(boundValues[0]);
@@ -271,7 +264,7 @@ public class Configuration {
 								nfe.printStackTrace();
 								System.exit(1);
 							}
-							bounds[bounds.length - 1] = b;
+							bounds.add(b);
 						} else {
 							System.out.println("ERROR: Invalid bounds parameter, should be specified as --bounds=left,bottom,right,top");
 							System.exit(1);
@@ -302,8 +295,7 @@ public class Configuration {
 					propFile = arg;
 				}
 			}
-			
-			
+
 			initialiseRealScale();
 			
 			try {
@@ -343,10 +335,10 @@ public class Configuration {
 			//Set singleton
 			conf = this;
 			resetColors();
+			bounds = new Vector<Bounds>(9);
 			initialiseRealScale();
 			resetConfig();
 			planet = "TEST";
-			
 		}
 		
 		private void resetColors() {
@@ -382,18 +374,17 @@ public class Configuration {
 		
 		public void resetConfig() {
 			try {
-				System.out.println("Loading built in default properties (version.properties)");
+				System.out.println("Loading built in defaults (version.properties)");
 				loadPropFile(getClass().getResourceAsStream("/version.properties"));
-				bounds = null;
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+				System.exit(1);
 			}
 		}
 		
 		public void loadPropFile(InputStream propIS) throws IOException {
 			if (propIS == null) {
-				throw new IOException("Invalid properties file");
+				throw new IOException("version.properties not found!");
 			}
 			rb = new PropertyResourceBundle(propIS);
 			vb = new PropertyResourceBundle(getClass().getResourceAsStream("/version.properties"));
@@ -404,10 +395,9 @@ public class Configuration {
 			appParam = getString("app");
 			enableEditingSupport = getString("EnableEditing").equalsIgnoreCase("true");
 			cellOperator = getString("useCellID");
-			
+			readBounds();
 		}
 
-		
 		public void setPlanetName(String p) {
 			planet = p;
 		}
@@ -424,7 +414,7 @@ public class Configuration {
 			try {
 				legendInputStream = new FileInputStream(styleFile);
 			} catch (IOException e) {
-				//System.out.println("Trying internal styleFile " + styleFile);
+				System.out.println("'" + styleFile + "' not found, searching in JAR");
 				if (getClass().getResource("/" + styleFile) != null) {
 					styleFile = "/" + styleFile;
 				} else {
@@ -552,12 +542,11 @@ public class Configuration {
 		public InputStream getPlanetSteam() throws IOException {
 			InputStream fr = null;
 			if (planet.equalsIgnoreCase("osmxapi") || planet.equalsIgnoreCase("ROMA")) {
-				Bounds[] bounds = getBounds();
-				if (bounds.length > 1) {
+				if (bounds.size() > 1) {
 					System.out.println("Can't deal with multiple bounds when requesting from a Server yet");
 					throw new IOException("Can't handle specified bounds with online data");
 				}
-				Bounds bound = bounds[0];
+				Bounds bound = bounds.elementAt(0);
 				URL url = null;
 				if (planet.equalsIgnoreCase("osmxapi")) {
 					url = new URL("http://osmxapi.informationfreeway.org/api/0.6/*[bbox=" + 
@@ -684,13 +673,15 @@ public class Configuration {
 			return cmis;
 		}
 
-		public Bounds[] getBounds() {
-			if (bounds != null) {
-				return bounds;
-			}
+		public Vector<Bounds> getBounds() {
+			return bounds;
+		}
+
+		public void readBounds() {
+			bounds.removeAllElements();
 			int i = 0;
 			try {
-				while (i < 10000) {
+				while (i < 9) {
 					getFloat("region." + (i + 1) + ".lat.min");
 					i++;
 				}
@@ -699,39 +690,32 @@ public class Configuration {
 			}
 
 			if (i > 0) {
-				//System.out.println("Found " + i + " bounds");
-				Bounds[] ret = new Bounds[i];
-				for (int l = 0; l < i; l++){
-					ret[l] = new Bounds();
-					ret[l].extend(getFloat("region." + (l + 1) + ".lat.min"),
+				System.out.println("Found " + i + " bounds");
+				for (int l = 0; l < i; l++) {
+					Bounds bound = new Bounds();
+					bound.extend(getFloat("region." + (l + 1) + ".lat.min"),
 							getFloat("region." + (l + 1) + ".lon.min"));
-					ret[l].extend(getFloat("region." + (l + 1) + ".lat.max"),
+					bound.extend(getFloat("region." + (l + 1) + ".lat.max"),
 							getFloat("region." + (l + 1) + ".lon.max"));
+					bounds.add(bound);
 				}
-				return ret;				
 			} else {
 				System.out.println("Note: No bounds were given - using [-180, -90, 180, 90]");
 				System.out.println("  This will create a GpsMid for the whole region");
 				System.out.println("  contained in " + planet);
-				Bounds[] ret = new Bounds[1];
-				ret[0] = new Bounds();
-				ret[0].extend(-90.0, -180.0);
-				ret[0].extend(90.0, 180.0);
-				return ret;	
+				Bounds bound = new Bounds();
+				bound.extend(-90.0, -180.0);
+				bound.extend(90.0, 180.0);
+				bounds.add(bound);
 			}
 		}
 		
 		public void addBounds(Bounds bound) {
-			Bounds [] tmp;
-			if (bounds == null) {
-				tmp = new Bounds[1];
-				tmp[0] = bound;
-			} else {
-				tmp = new Bounds[bounds.length + 1];
-				System.arraycopy(bounds, 0, tmp, 0, bounds.length);
-				tmp[bounds.length] = bound;
-			}
-			bounds = tmp;
+			bounds.add(bound);
+		}
+		
+		public void removeBoundsAt(int i) {
+			bounds.removeElementAt(i);
 		}
 		
 		public void setRouting(String routing) {
@@ -875,9 +859,8 @@ public class Configuration {
 			confString += "  Included CellID data: " + getCellOperator() + "\n";
 			confString += "  CellID source: " + cellSource + "\n";
 			confString += "  Enable editing support: " + enableEditingSupport + "\n";
-			Bounds[] bounds = getBounds();
-			if (bounds != null) {
-				confString += "  Using " + bounds.length + " bounding boxes\n";
+			if (bounds.size() > 0) {
+				confString += "  Using " + bounds.size() + " bounding boxes\n";
 				for (Bounds b : bounds) {
 					confString += "    " + b + "\n";
 				}

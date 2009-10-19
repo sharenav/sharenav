@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedList;
+import java.util.Vector;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -55,7 +56,7 @@ public class OxParser extends DefaultHandler {
 	public int trafficSignalCount = 0;
 	private int ele;
 	private int relTot, relPart, relIns;
-	private Bounds[] bounds = null;
+	private Vector<Bounds> bounds = null;
 	private Configuration configuration;
 	/**
 	 * Keep track of ways that get split, as at the time of splitting
@@ -263,9 +264,9 @@ public class OxParser extends DefaultHandler {
 			Node n = (Node) current;
 			boolean inBound = false;
 			nodeTot++;
-			if (bounds != null && bounds.length != 0) {
-				for (int i = 0; i < bounds.length; i++) {
-					if (bounds[i].isIn(n.lat, n.lon)) {
+			if (bounds != null && bounds.size() != 0) {
+				for (Bounds b : bounds) {
+					if (b.isIn(n.lat, n.lon)) {
 						inBound = true;
 						break;
 					}
