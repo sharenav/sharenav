@@ -87,7 +87,6 @@
 	    <!-- Have a look at the <jad>-section for setting specialised attributes.
 	         You can also define localized attributes in the resources/messages.txt files -->
 		<info
-			license="GPL"
 			name="GpsMid"
 			version="0.5.09"
 			description=""
@@ -149,8 +148,6 @@
 				<!-- this are the render and data classes without reference
 				     to any J2Me Classes ( for usage in J2Se enviroment ) -->
 				<source dir="GpsMidGraph"/>
-				<!--  include customization specific source folders: -->
-				<source dir="srcLocationApi" if="polish.api.locationapi"/>
 			</sources>
 		    
 			<!-- midlets definition -->
