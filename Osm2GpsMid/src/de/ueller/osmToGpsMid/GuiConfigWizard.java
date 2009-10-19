@@ -19,7 +19,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,7 +42,6 @@ import javax.swing.filechooser.FileFilter;
 
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.MapMarkerRectangle;
-import org.openstreetmap.gui.jmapviewer.MapMarkerDot;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarkerArea;
 
 import de.ueller.osmToGpsMid.model.Bounds;
@@ -690,8 +688,14 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	 * @see de.ueller.osmToGpsMid.SelectionListener#regionMarked(de.ueller.osmToGpsMid.model.Bounds)
 	 */
 	public void regionMarked(Bounds bound) {
-		config.addBounds(bound);
-		addMapMarkers();
+		if (config.getBounds().size() < Configuration.MAX_BOUND_BOXES)
+		{
+			config.addBounds(bound);
+			addMapMarkers();
+		} else {
+			JOptionPane.showMessageDialog(this, "You cannot create more than " +
+					Configuration.MAX_BOUND_BOXES + " bounding boxes.");
+		}
 	}
 
 	/* (non-Javadoc)

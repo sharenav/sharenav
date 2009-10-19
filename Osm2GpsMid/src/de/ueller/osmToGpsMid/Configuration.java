@@ -203,6 +203,9 @@ public class Configuration {
 	public static int COLORS[] = new int[COLOR_COUNT];
 	public static int COLORS_AT_NIGHT[] = new int[COLOR_COUNT];
 	
+	/** Maximum allowed number of bounding boxes */
+	public static final int MAX_BOUND_BOXES = 9;
+	
 		private ResourceBundle rb;
 		private ResourceBundle vb;
 		private String tmp = null;
@@ -231,9 +234,10 @@ public class Configuration {
 		private LegendParser legend;
 		private InputStream legendInputStream;
 		
-		// array containing real scale for pseudo zoom 0..32
+		/** Array containing real scale for pseudo zoom 0..32 */
 		private static float realScale [] = new float[33]; 
 
+		/** Singleton reference */
 		private static Configuration conf;
 
 //		private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
@@ -244,7 +248,7 @@ public class Configuration {
 			
 			resetColors();
 			
-			bounds = new Vector<Bounds>(9);
+			bounds = new Vector<Bounds>(MAX_BOUND_BOXES);
 			
 			for (String arg : args) {
 				if (arg.startsWith("--")) {
@@ -321,6 +325,7 @@ public class Configuration {
 					cf = getClass().getResourceAsStream("/version.properties");
 				}
 				loadPropFile(cf);
+				readBounds();
 			} catch (IOException e) {
 				System.out.println("Could not load the configuration properly for conversion");
 				e.printStackTrace();
@@ -335,7 +340,7 @@ public class Configuration {
 			//Set singleton
 			conf = this;
 			resetColors();
-			bounds = new Vector<Bounds>(9);
+			bounds = new Vector<Bounds>(MAX_BOUND_BOXES);
 			initialiseRealScale();
 			resetConfig();
 			planet = "TEST";
@@ -376,6 +381,7 @@ public class Configuration {
 			try {
 				System.out.println("Loading built in defaults (version.properties)");
 				loadPropFile(getClass().getResourceAsStream("/version.properties"));
+				bounds.removeAllElements();
 			} catch (IOException e) {
 				e.printStackTrace();
 				System.exit(1);
@@ -384,7 +390,7 @@ public class Configuration {
 		
 		public void loadPropFile(InputStream propIS) throws IOException {
 			if (propIS == null) {
-				throw new IOException("version.properties not found!");
+				throw new IOException("Properties file not found!");
 			}
 			rb = new PropertyResourceBundle(propIS);
 			vb = new PropertyResourceBundle(getClass().getResourceAsStream("/version.properties"));
@@ -395,12 +401,12 @@ public class Configuration {
 			appParam = getString("app");
 			enableEditingSupport = getString("EnableEditing").equalsIgnoreCase("true");
 			cellOperator = getString("useCellID");
-			readBounds();
 		}
 
 		public void setPlanetName(String p) {
 			planet = p;
 		}
+
 		public void setPropFileName(String p) {
 			propFile = p;
 		}
@@ -673,15 +679,23 @@ public class Configuration {
 			return cmis;
 		}
 
+		/** Returns the bounds that were retrieved from the current properties file.
+		 * @return Vector of bounds
+		 */
 		public Vector<Bounds> getBounds() {
 			return bounds;
 		}
 
+		/** Reads bounds from the current properties file (defined by 'rb')
+		 * or, theoretically from version.properties, but this doesn't contain any
+		 * bounds, and puts them in the vector 'bounds'.
+		 * The limit of MAX_BOUND_BOXES is considered.
+		 */
 		public void readBounds() {
 			bounds.removeAllElements();
 			int i = 0;
 			try {
-				while (i < 9) {
+				while (i < MAX_BOUND_BOXES) {
 					getFloat("region." + (i + 1) + ".lat.min");
 					i++;
 				}
@@ -729,7 +743,8 @@ public class Configuration {
 		}
 
 		/**
-		 * @return
+		 * Returns the application version as specified in version.properties.
+		 * @return Version
 		 */
 		public String getVersion() {
 			return vb.getString("version");
