@@ -790,7 +790,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					lastBackLightOnTime = System.currentTimeMillis();
 					parent.addToBackLightLevel(backLightLevelDiff);
 					parent.showBackLightLevel();
-				} else {
+				} else if (imageCollector != null) {
 					if (courseDiff == 360) {
 						course = 0; //N
 					} else {
