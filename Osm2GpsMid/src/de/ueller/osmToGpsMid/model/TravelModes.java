@@ -14,11 +14,12 @@ package de.ueller.osmToGpsMid.model;
 public class TravelModes {
 	public static TravelMode travelModes[];
 	public static int travelModeCount = 0;
-	public static final int MAXTRAVELMODES = 5; // bit 5 is used for CONNTYPE_MAINSTREET_NET, bit 6 fot CONNTYPE_MOTORWAY 
+	public static final int MAXTRAVELMODES = 5; // bit 5 is used for CONNTYPE_TRUNK_OR_PRIMARY, bit 6 for CONNTYPE_MOTORWAY, bit 7 for CONNTYPE_MAINSTREET_NET 
 	public static byte applyTurnRestrictionsTravelModes = 0;
 	
 	public static long numMotorwayConnections=0;
 	public static long numMainStreetNetConnections=0;
+	public static long numTrunkOrPrimaryConnections=0;
 	
 	public static void stringToTravelModes(String modes) {
 		travelModes = new TravelMode[MAXTRAVELMODES];

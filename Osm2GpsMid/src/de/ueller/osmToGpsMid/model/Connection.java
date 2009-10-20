@@ -24,9 +24,10 @@ public class Connection {
 	public byte endBearing=0;
 	public byte connTravelModes=0;
 	
-	
+	// the upper bits of connTravelModes are used to indicate special informations about the connection rather than which travelModes are allowed
+	public static final int CONNTYPE_MAINSTREET_NET = 128;
 	public static final int CONNTYPE_MOTORWAY = 64;
-	public static final int CONNTYPE_MAINSTREET_NET = 32;
+	public static final int CONNTYPE_TRUNK_OR_PRIMARY = 32;
 	
 	public Connection(RouteNode to, int dist, int times[], byte bs, byte be, Way w) {
 		super();
