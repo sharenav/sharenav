@@ -1,5 +1,6 @@
 package de.ueller.midlet.gps.routing;
 import java.io.IOException;
+import java.lang.Math;
 import java.util.Vector;
 
 import de.ueller.gps.data.Legend;
@@ -14,6 +15,7 @@ import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.data.Projection;
 import de.ueller.midlet.gps.data.Way;
+import de.ueller.midlet.gps.names.NumberCanon;
 
 
 
@@ -43,6 +45,12 @@ public class Routing implements Runnable {
 	
 	/** when true, the RouteTile will only load and return mainStreetNet RouteNodes, Connections and TurnRestrictions */ 
 	public static boolean onlyMainStreetNet = false;
+	public int motorwayConsExamined = 0;
+	public int motorwayEntrancesExamined = 0;
+	
+	public boolean tryFindMotorway = false;
+	public boolean boostMotorways = false;
+	public boolean boostTrunksAndPrimarys = false;	
 	
 	private int oomCounter = 0;
 	private int expanded;
@@ -107,6 +115,9 @@ public class Routing implements Runnable {
 			Configuration.getCfgBitState(Configuration.CFGBIT_USE_TURN_RESTRICTIONS_FOR_ROUTE_CALCULATION) &&
 			Configuration.getTravelMode().isWithTurnRestrictions();
 		
+		tryFindMotorway = Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_TRY_FIND_MOTORWAY);
+		boostMotorways = Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_BOOST_MOTORWAYS);
+		boostTrunksAndPrimarys = Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_BOOST_TRUNKS_PRIMARYS);
 		
 		// set a mainStreetNetDistance that is unreachable to indicate the mainStreetNet is disabled
 		int mainStreetNetDistanceMeters = 40000000;
@@ -119,6 +130,7 @@ public class Routing implements Runnable {
 		
 		for (int noSolutionRetries = 0; noSolutionRetries <= maxTimesToReduceMainStreetNet; noSolutionRetries++) {
 		int mainStreetConsExamined = 0;
+		motorwayConsExamined = 0;
 		while (!(nodes.isEmpty())) {
 			currentNode = (GraphNode) nodes.firstElement();
 			if (checkForTurnRestrictions) {
@@ -270,6 +282,9 @@ public class Routing implements Runnable {
 				if ( successor[cl].isMainStreetNet() ) {
 					// count how many mainStreetNet connections have already been examined
 					mainStreetConsExamined++;
+					if (successor[cl].isMotorwayConnection()) {
+						motorwayConsExamined++;
+					}
 				} else if (Routing.onlyMainStreetNet) {
 				// do not examine non-mainStreetNet connections
 					turnRestricted[cl] = true;
@@ -473,7 +488,39 @@ public class Routing implements Runnable {
 			if (maxEstimationSpeed < 14) {
 				   return (int) (((dist/ maxEstimationSpeed * 10)+turnCost)*estimateFac);				
 			}
+
+			// if we are on the motorway search it very far
+			if (boostMotorways && to.isMotorwayConnection()) {
+				if (!from.isMotorwayConnection()) {
+					motorwayEntrancesExamined++;					
+					System.out.println("Motorway entrance");
+				}
+				if (from.isMotorwayConnection()) {
+					if (motorwayEntrancesExamined < 2) {
+						/* estimate 80 Km/h (22 m/s) as average speed if we are on the motorway and only 1 motorway entrance has been examined yet
+						 * This gives the 2nd entrance in the opposite direction also a chance to get examined
+						 */
+						return (int) (((dist/2.2f)+turnCost)*estimateFac);
+					}
+				}
+				// estimate 120 Km/h (36 m/s) as average speed to enter the motorway or on the motorway if at least 2 entrances where examined 
+				return (int) (((dist/3.6f))*estimateFac);
+			}
+
+			
+			// if the air distance is more than 20km try to find a motorway that is at maximum 20 km or half of the distance to route start away from the route start 
+			if (tryFindMotorway && motorwayConsExamined < 10 && dist > 20000 && MoreMath.dist(toNode.lat,toNode.lon,routeFrom.lat,routeFrom.lon) < Math.max(dist / 2, 20000)){
+				// estimate 80 Km/h (22 m/s) as average speed 
+				return (int) (((dist/2.2f)+turnCost)*estimateFac);				
+			}
+			
+			
 			if (Routing.onlyMainStreetNet) {
+				// if we are on a trunk or primary search it far
+				if (boostTrunksAndPrimarys && to.isTrunkOrPrimaryConnection()) {
+				   // estimate 80 Km/h (22 m/s) as average speed 
+					return (int) (((dist/2.2f)+turnCost)*estimateFac);
+				}
 //				if (dist > 100000){
 //					// estimate 100 Km/h (28 m/s) as average speed 
 //					return (int) (((dist/2.8f)+turnCost)*estimateFac);
@@ -482,14 +529,15 @@ public class Routing implements Runnable {
 //				   // estimate 80 Km/h (22 m/s) as average speed 
 //					return (int) (((dist/2.2f)+turnCost)*estimateFac);
 //				}
+
 				if (dist > 10000){
 					// estimate 60 Km/h (17 m/s) as average speed 
 					return (int) (((dist/1.7f)+turnCost)*estimateFac);
 				}
 			}
 
-			// estimate 45 Km/h (12 m/s) as average speed 
-			return (int) (((dist/1.2f)+turnCost)*estimateFac);
+			// estimate 50 Km/h (14 m/s) as average speed 
+			return (int) (((dist/1.7f)+turnCost)*estimateFac);
 		} else {
 			return (int) ((dist*1.1f + turnCost)*estimateFac);
 		}

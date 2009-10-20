@@ -225,6 +225,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private Gauge gaugeRoutingEsatimationFac; 
 	private ChoiceGroup stopAllWhileRouting;
 	private ChoiceGroup routingOptsGroup;
+	private ChoiceGroup routingStrategyOptsGroup;
 	private ChoiceGroup routingShowOptsGroup;
 	private ChoiceGroup gpxOptsGroup;
 	private ChoiceGroup cellidOptsGroup;
@@ -330,6 +331,15 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		menuRoutingOptions.append(gaugeRoutingEsatimationFac);
 		tfMainStreetNetDistanceKm = new TextField("Distance in km to main street net (used for large route distances):", Integer.toString(Configuration.getMainStreetDistanceKm()), 5, TextField.DECIMAL);
 		menuRoutingOptions.append(tfMainStreetNetDistanceKm);
+		
+		String [] routingStrategyOpts = new String[3];
+		boolean[] selRoutingStrategy = new boolean[3];
+		routingStrategyOpts[0] = "Look for motorways"; selRoutingStrategy[0]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_ROUTE_TRY_FIND_MOTORWAY);
+		routingStrategyOpts[1] = "Boost motorways"; selRoutingStrategy[1]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_ROUTE_BOOST_MOTORWAYS);
+		routingStrategyOpts[2] = "Boost trunks & primarys"; selRoutingStrategy[2]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_ROUTE_BOOST_TRUNKS_PRIMARYS);
+		routingStrategyOptsGroup = new ChoiceGroup("Calculation Strategies", Choice.MULTIPLE, routingStrategyOpts ,null);
+		routingStrategyOptsGroup.setSelectedFlags(selRoutingStrategy);
+		menuRoutingOptions.append(routingStrategyOptsGroup);
 		
 		String [] routingShowOpts = new String[3];
 		boolean[] selRoutingShow = new boolean[3];
@@ -904,6 +914,12 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				logger.debug("set stopAllWhileRounting " + stopAllWhileRouting.isSelected(1));
 				Configuration.setStopAllWhileRouteing(stopAllWhileRouting.isSelected(0));
 
+				boolean[] selStrategyRouting = new boolean[3];
+				routingStrategyOptsGroup.getSelectedFlags(selStrategyRouting);
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ROUTE_TRY_FIND_MOTORWAY, selStrategyRouting[0]);
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ROUTE_BOOST_MOTORWAYS, selStrategyRouting[1]);
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ROUTE_BOOST_TRUNKS_PRIMARYS, selStrategyRouting[2]);
+				
 				boolean[] selShowRouting = new boolean[3];
 				routingShowOptsGroup.getSelectedFlags(selShowRouting);
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_ROUTE_DURATION_IN_MAP, selShowRouting[0]);

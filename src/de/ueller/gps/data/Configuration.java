@@ -46,7 +46,7 @@ public class Configuration {
 	 *  the default values for the features added between configVersionStored
 	 *  and VERSION will be set, before the version in the recordstore is increased to VERSION.
 	 */
-	public final static int VERSION = 11;
+	public final static int VERSION = 12;
 
 	public final static int LOCATIONPROVIDER_NONE = 0;
 	public final static int LOCATIONPROVIDER_SIRF = 1;
@@ -201,6 +201,12 @@ public class Configuration {
 	public final static byte CFGBIT_INITIAL_SETUP_DONE = 72;
 	/** bit 73: Flag whether to add a Back command in fullscreen menu */
 	public final static byte CFGBIT_ICONMENUS_BACK_CMD = 73;
+	/** bit 74: Flag whether the route algorithm should try to find a motorway within 20 km */
+	public final static byte CFGBIT_ROUTE_TRY_FIND_MOTORWAY = 74;
+	/** bit 75: Flag whether the route algorithm deeply examines motorways */
+	public final static byte CFGBIT_ROUTE_BOOST_MOTORWAYS = 75;
+	/** bit 75: Flag whether the route algorithm deeply examines trunks and primarys */
+	public final static byte CFGBIT_ROUTE_BOOST_TRUNKS_PRIMARYS = 76;
 	
 	/**
 	 * These are the database record ids for each configuration option
@@ -496,6 +502,15 @@ public class Configuration {
 		if (configVersionStored < 11) {
 			if (getDefaultIconMenuBackCmdSupport()) {
 				cfgBits_64_to_127 |=	1L << CFGBIT_ICONMENUS_BACK_CMD;
+			}
+			
+		}
+
+		if (configVersionStored < 12) {
+			if (getDefaultIconMenuBackCmdSupport()) {
+				cfgBits_64_to_127 |=	1L << CFGBIT_ROUTE_TRY_FIND_MOTORWAY |
+										1L << CFGBIT_ROUTE_BOOST_MOTORWAYS |
+										1L << CFGBIT_ROUTE_BOOST_TRUNKS_PRIMARYS;
 			}
 			
 		}
