@@ -103,20 +103,22 @@ public class Way extends Entity implements Comparable<Way> {
 			}	
 		}
 		
-		String wayValue = ";" + wayDesc.value.toLowerCase() + ";"; 
-		if (";motorway;motorway_link;".indexOf(wayValue) >= 0) {
-			wayTravelModes |= Connection.CONNTYPE_MOTORWAY;
-			TravelModes.numMotorwayConnections++;
+		// Mark mainstreet net connections
+		if (isAccessForAnyRouting()) {
+			String wayValue = ";" + wayDesc.value.toLowerCase() + ";"; 
+			if (";motorway;motorway_link;".indexOf(wayValue) >= 0) {
+				wayTravelModes |= Connection.CONNTYPE_MOTORWAY;
+				TravelModes.numMotorwayConnections++;
+			}
+			if (";trunk;trunk_link;primary;primary_link;".indexOf(wayValue) >= 0) {
+				wayTravelModes |= Connection.CONNTYPE_TRUNK_OR_PRIMARY;
+				TravelModes.numTrunkOrPrimaryConnections++;
+			}
+			if (";motorway;motorway_link;trunk;trunk_link;primary;primary_link;secondary;secondary_link;tertiary;".indexOf(wayValue) >= 0) {
+				wayTravelModes |= Connection.CONNTYPE_MAINSTREET_NET;
+				TravelModes.numMainStreetNetConnections++;
+			}
 		}
-		if (";trunk;trunk_link;primary;primary_link;".indexOf(wayValue) >= 0) {
-			wayTravelModes |= Connection.CONNTYPE_TRUNK_OR_PRIMARY;
-			TravelModes.numTrunkOrPrimaryConnections++;
-		}
-		if (";motorway;motorway_link;trunk;trunk_link;primary;primary_link;secondary;secondary_link;tertiary;".indexOf(wayValue) >= 0) {
-			wayTravelModes |= Connection.CONNTYPE_MAINSTREET_NET;
-			TravelModes.numMainStreetNetConnections++;
-		}
-		
 	}
 
 	public boolean isAccessForRouting(int travelModeNr) {
