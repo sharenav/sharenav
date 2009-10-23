@@ -94,7 +94,8 @@ public class DictReader  implements Runnable {
 		default:
 			break;
 		}
-
+		ds.close();
+		
 		t.setDict(dict,zl);
 	}
 

@@ -100,6 +100,7 @@ public class RouteFileTile extends RouteBaseTile {
 			DataInputStream ds=new DataInputStream(is);
 			if (ds == null){
 //				logger.error("file DataImputStream "+url+" not found" );
+				is.close();
 				throw new IOException("DataStream not open for /d"+zl+fileId+".d" );
 			}
 //			end open data from JAR
@@ -127,7 +128,9 @@ public class RouteFileTile extends RouteBaseTile {
 			default:
 				break;
 			}
-	    	
+
+			ds.close();
+			
 	    	tile=dict;
 			lastUse=0;
 			//#debug debug

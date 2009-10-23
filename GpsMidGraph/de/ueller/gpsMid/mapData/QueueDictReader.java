@@ -35,6 +35,7 @@ public class QueueDictReader extends QueueReader implements Runnable {
 		DataInputStream ds=new DataInputStream(is);
 		if (ds == null){
 //			logger.error("file DataImputStream "+url+" not found" );
+			is.close();
 			throw new IOException("DataStream not open for /d"+tt.zl+tt.fileId+".d" );
 		}
 //		end open data from JAR
@@ -62,7 +63,9 @@ public class QueueDictReader extends QueueReader implements Runnable {
 		default:
 			break;
 		}
-    	
+
+		ds.close();
+
     	tt.tile=dict;
 		tt.inLoad=false;
 		tt.lastUse=0;

@@ -46,6 +46,7 @@ public class QueueDataReader extends QueueReader implements Runnable {
 		if (ds == null) {
 //			logger.error("file DataImputStream "+url+" not found" );
 			tt.state=0;
+			is.close();
 			return;
 		}
 //		end open data from JAR
