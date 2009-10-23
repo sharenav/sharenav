@@ -176,8 +176,10 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 			imp = (IconMenuPage) iconMenuPages.elementAt(i);
 			imp.maxY = eStatusBar.top - 5;
 			imp.unloadIcons();
-			imp.loadIcons();
-			imp.recalcPositions();
+			if (tabNr == i) {
+				imp.loadIcons();
+				imp.recalcPositions();
+			}
 		}
 		addCommands();
 	}
