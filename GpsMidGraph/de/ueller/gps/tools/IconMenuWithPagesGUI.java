@@ -147,8 +147,8 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 	
 
 	public void show() {
-		GpsMid.getInstance().show(this);
 		setFullScreenMode(Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN));
+		GpsMid.getInstance().show(this);
 		repaint();
 	}
 	
@@ -198,7 +198,7 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 			}
 		}
 		// load all icons for the new icon page 
-		getActiveMenuPage().loadIcons();		
+		getActiveMenuPage().loadIcons();
 		//#debug debug
 		logger.debug("set tab " + tabNr);
 		this.tabNr = tabNr;
