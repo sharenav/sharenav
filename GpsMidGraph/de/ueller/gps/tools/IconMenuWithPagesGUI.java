@@ -65,6 +65,7 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 	public IconMenuWithPagesGUI(GpsMidDisplayable parent, IconActionPerformer actionPerformer) {
 		// create Canvas
 		super();
+		setFullScreenMode(Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN));
 		this.parent = parent;
 		this.actionPerformer = actionPerformer;
 		this.minX = 0;
