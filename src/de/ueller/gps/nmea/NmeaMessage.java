@@ -4,12 +4,23 @@ package de.ueller.gps.nmea;
  * 			Copyright (c) 2008 Kai Krueger apm at users dot sourceforge dot net 
  * See Copying
  */
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Vector;
+
+import de.ueller.gps.data.Position;
+import de.ueller.gps.data.Satelit;
+import de.ueller.gps.tools.StringTokenizer;
+import de.ueller.midlet.gps.LocationMsgReceiver;
+import de.ueller.midlet.gps.Logger;
+
 /**
+ * This class takes NMEA0183 compliant sentences and extracts information from them:
+ * <pre>
  * Geographic Location in Lat/Lon
  *  field #:  0   1      2  3       4
  * sentence: GLL,####.##,N,#####.##,W
- *1, Lat (deg, min, hundredths); 2, North or South; 3, Lon; 4, West 
- *or East.
+ *1, Lat (deg, min, hundredths); 2, North or South; 3, Lon; 4, West or East.
  * 
  *Geographic Location in Time Differences
  *  field #:  0   1       2       3       4       5
@@ -24,8 +35,7 @@ package de.ueller.gps.nmea;
  *Vector Track and Speed Over Ground (SOG)
  *  field #:  0   1  2  3  4  5   6  7   8
  * sentence: VTG,###,T,###,M,##.#,N,##.#,K
- *1-2,  brg,  True; 3-4, brg, Mag; 5-6, speed, kNots;  7-8,  speed, 
- *Kilometers/hr.
+ *1-2,  brg,  True; 3-4, brg, Mag; 5-6, speed, kNots;  7-8,  speed, Kilometers/hr.
  * 
  *Cross Track Error
  *  field #:  0  1 2  3   4 5
@@ -49,38 +59,46 @@ package de.ueller.gps.nmea;
  * 
  *BWR:  Bearing  to Waypoint, Rhumbline, BPI: Bearing to  Point  of 
  *Interest, all follow data field format of BWC.
- *
+ *</pre>
  */
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Vector;
-
-import de.ueller.gps.data.Position;
-import de.ueller.gps.data.Satelit;
-import de.ueller.gps.tools.StringTokenizer;
-import de.ueller.gpsMid.mapData.QueueReader;
-import de.ueller.midlet.gps.LocationMsgReceiver;
-import de.ueller.midlet.gps.Logger;
-
 public class NmeaMessage {
-	protected static final Logger logger = Logger.getInstance(NmeaMessage.class,Logger.TRACE);
-	public StringBuffer buffer=new StringBuffer(80);
-	private static String spChar=",";
+	/** Logger class for error messages */
+	protected static final Logger logger = Logger.getInstance(NmeaMessage.class, Logger.TRACE);
+	
+	/** Buffer holding the current NMEA sentence (without the leading "GP" which
+	 * identifies the source to be a GPS receiver */
+	public StringBuffer buffer = new StringBuffer(80);
+	
+	/** The character which separates the fields of the NMEA sentence */
+	private static String spChar = ",";
 
-	/** head holds track course(angle) in DEC */
+	/** The current heading in degrees */
 	private float head;
-	/** speed in m/s (converted from knots) */
+	/** Speed in m/s (converted from knots) */
 	private float speed;
-	private float alt,pdop;
+	/** Altitude above mean sea level in meters */
+	private float alt;
+	/** Positional dilution of precision */
+	private float pdop;
+	/** This will receive the information extracted from NMEA. */ 
 	private final LocationMsgReceiver receiver;
+	/** The number of satellites received (field 6 from message GGA) */
 	private int mAllSatellites;
+	/** Quality of data, 0 = no fix, 1 = GPS, 2 = DGPS */
 	private int qual;
-	private boolean lastMsgGSV=false;
+	/** Flag if last received message was GSV */
+	private boolean lastMsgGSV = false;
+	/** Array with information about the satellites */ 
 	private Satelit satellites[] = new Satelit[12];
+	/** The last received GPS time and date */
 	public Date dateDecode = new Date();
+	/** The last received position */
 	private Position pos = new Position(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1,
 			System.currentTimeMillis());
+	/** Needed to turn GPS time and date into timeMillis */
 	private Calendar cal = Calendar.getInstance();
+
+
 	public NmeaMessage(LocationMsgReceiver receiver) {
 		this.receiver = receiver;
 	}
@@ -92,18 +110,23 @@ public class NmeaMessage {
 	public void decodeMessage() {
 		decodeMessage(buffer.toString());
 	}
+
+	/** This method does the actual decoding work. It puts the data into
+	 * member variables and forwards it to the LocationMsgReceiver.
+	 * 
+	 * @param nmea_sentence The NMEA sentence to be decoded
+	 */
 	public void decodeMessage(String nmea_sentence) {
 		
         Vector param = StringTokenizer.getVector(nmea_sentence, spChar);
 		String sentence = (String)param.elementAt(0);
 		try {
-//			receiver.receiveMessage("got "+buffer.toString() );
-			if (lastMsgGSV && ! "GSV".equals(sentence)){
+//			receiver.receiveMessage("got " + buffer.toString() );
+			if (lastMsgGSV && ! "GSV".equals(sentence)) {
 	            receiver.receiveSatellites(satellites);
-	            //satelit=new Satelit[12];
 	            lastMsgGSV = false;
 			}
-			if ("GGA".equals(sentence)){
+			if ("GGA".equals(sentence)) {
 				// time
 				// Time of when fix was taken in UTC
 				int time_tmp = (int)getFloatToken((String)param.elementAt(1));
@@ -113,12 +136,12 @@ public class NmeaMessage {
 				
 				// lat
 				float lat = getLat((String)param.elementAt(2));
-				if ("S".equals((String)param.elementAt(3))){
+				if ("S".equals((String)param.elementAt(3))) {
 					lat = -lat;
 				}
 				// lon
 				float lon = getLon((String)param.elementAt(4));
-				if ("W".equals((String)param.elementAt(5))){
+				if ("W".equals((String)param.elementAt(5))) {
 					lon = -lon;
 				}
 				// quality
@@ -132,7 +155,7 @@ public class NmeaMessage {
 				// meters above mean sea level
 				alt = getFloatToken((String)param.elementAt(9));
 				// Height of geoid above WGS84 ellipsoid				
-			} else if ("RMC".equals(sentence)){
+			} else if ("RMC".equals(sentence)) {
 				/* RMC encodes the recomended minimum information */
 				 
 				// Time of when fix was taken in UTC
@@ -141,7 +164,7 @@ public class NmeaMessage {
 				cal.set(Calendar.MINUTE, (time_tmp / 100) % 100);
 				cal.set(Calendar.HOUR_OF_DAY, (time_tmp / 10000) % 100);
 				
-				//Status A=active or V=Void.
+				// Status A=active or V=Void.
 				String valSolution = (String)param.elementAt(2);
 				if (valSolution.equals("V")) {
 					this.qual = 0;
@@ -151,29 +174,32 @@ public class NmeaMessage {
 				if (valSolution.equalsIgnoreCase("A") && this.qual == 0) {
 					this.qual = 1;
 				}
-				//Latitude
-				float lat=getLat((String)param.elementAt(3));
-				if ("S".equals((String)param.elementAt(4))){
-					lat= -lat;
+				// Latitude
+				float lat = getLat((String)param.elementAt(3));
+				if ("S".equals((String)param.elementAt(4))) {
+					lat =  -lat;
 				}
-				//Longitude
-				float lon=getLon((String)param.elementAt(5));
-				if ("W".equals((String)param.elementAt(6))){
-					lon=-lon;
+				// Longitude
+				float lon = getLon((String)param.elementAt(5));
+				if ("W".equals((String)param.elementAt(6))) {
+					lon = -lon;
 				}				
-				//Speed over the ground in knots
-				//GpsMid uses m/s				
-				speed=getFloatToken((String)param.elementAt(7))*0.5144444f;
-			    //Track angle in degrees
-				head=getFloatToken((String)param.elementAt(8));
-				//Date
+				// Speed over the ground in knots, but GpsMid uses m/s				
+				speed = getFloatToken((String)param.elementAt(7)) * 0.5144444f;
+			    // Heading in degrees
+				head = getFloatToken((String)param.elementAt(8));
+				// Date
 				int date_tmp = getIntegerToken((String)param.elementAt(9));				
 				cal.set(Calendar.YEAR, 2000 + date_tmp % 100);
 				cal.set(Calendar.MONTH, ((date_tmp / 100) % 100) - 1);
 				cal.set(Calendar.DAY_OF_MONTH, (date_tmp / 10000) % 100);				
-			    //Magnetic Variation
-				pos.latitude = lat; pos.longitude = lon; pos.altitude = alt; pos.speed = speed; pos.course = head;
-				pos.pdop = pdop; pos.mode = 0;
+			    // Magnetic Variation is not used
+				pos.latitude = lat; 
+				pos.longitude = lon; 
+				pos.altitude = alt; 
+				pos.speed = speed; 
+				pos.course = head;
+				pos.pdop = pdop;
 				
 				dateDecode = cal.getTime();				// get Date from Calendar
 				pos.timeMillis = dateDecode.getTime();	// get milliSecs since 01-Jan-1970 from Date
@@ -184,11 +210,11 @@ public class NmeaMessage {
 				} else {
 					receiver.receiveSolution(mAllSatellites + "S");
 				}
-			} else if ("VTG".equals(sentence)){
-				head=getFloatToken((String)param.elementAt(1));
+			} else if ("VTG".equals(sentence)) {
+				head = getFloatToken((String)param.elementAt(1));
 				//Convert from knots to m/s
-				speed=getFloatToken((String)param.elementAt(7))*0.5144444f;
-			} else if ("GSA".equals(sentence)){
+				speed = getFloatToken((String)param.elementAt(7)) * 0.5144444f;
+			} else if ("GSA".equals(sentence)) {
 				//#debug trace
 				logger.trace("Decoding GSA");
 				/**
@@ -237,57 +263,60 @@ public class NmeaMessage {
 				 */				
 	            int j;
 	            // Calculate which satellites are in this message (message number * 4) 
-	            j=(getIntegerToken((String)param.elementAt(2))-1)*4;
+	            j = (getIntegerToken((String)param.elementAt(2)) - 1) * 4;
 	            int noSatInView =(getIntegerToken((String)param.elementAt(3)));	            
-	            for (int i=4; i < param.size() && j < 12; i+=4, j++) {
-	            	if (satellites[j]==null){
-	            		satellites[j]=new Satelit();
+	            for (int i = 4; i < param.size() && j < 12; i += 4, j++) {
+	            	if (satellites[j] == null) {
+	            		satellites[j] = new Satelit();
 	            	}
-	            	satellites[j].id=getIntegerToken((String)param.elementAt(i));
-	            	satellites[j].elev=getIntegerToken((String)param.elementAt(i+1));
-	            	satellites[j].azimut=getIntegerToken((String)param.elementAt(i+2));
-	            	satellites[j].snr=getIntegerToken((String)param.elementAt(i+3));	                
+	            	satellites[j].id = getIntegerToken((String)param.elementAt(i));
+	            	satellites[j].elev = getIntegerToken((String)param.elementAt(i + 1));
+	            	satellites[j].azimut = getIntegerToken((String)param.elementAt(i + 2));
+	            	satellites[j].snr = getIntegerToken((String)param.elementAt(i + 3));	                
 	            }
-	            lastMsgGSV=true;
+	            lastMsgGSV = true;
 	            for (int i = noSatInView; i < 12; i++) {
 	            	satellites[i] = null;
 	            }
 	            if (getIntegerToken((String)param.elementAt(2)) == getIntegerToken((String)param.elementAt(1))) {
 	            	receiver.receiveSatellites(satellites);	            	
-		            lastMsgGSV=false;
+		            lastMsgGSV = false;
 	            }
 			}
 		} catch (RuntimeException e) {
-			logger.exception("Error while decoding "+sentence, e);
+			logger.exception("Error while decoding " + sentence, e);
 		}
-		
 	}
 
-	private int getIntegerToken(String s){
-		if (s==null || s.length()==0)
+	private int getIntegerToken(String s) {
+		if (s == null || s.length() == 0) {
 			return 0;
+		}
 		return Integer.parseInt(s);
 	}
 
-	private float getFloatToken(String s){
-		if (s==null || s.length()==0)
+	private float getFloatToken(String s) {
+		if (s == null || s.length() == 0) {
 			return 0;
+		}
 		return Float.parseFloat(s);
 	}
 
-	private float getLat(String s){
-		if (s.length() < 2)
+	private float getLat(String s) {
+		if (s.length() < 2) {
 			return 0.0f;
-		int lat=Integer.parseInt(s.substring(0,2));
-		float latf=Float.parseFloat(s.substring(2));
-		return lat+latf/60;
+		}
+		int lat = Integer.parseInt(s.substring(0, 2));
+		float latf = Float.parseFloat(s.substring(2));
+		return (lat + (latf / 60));
 	}
 
-	private float getLon(String s){
-		if (s.length() < 3)
+	private float getLon(String s) {
+		if (s.length() < 3) {
 			return 0.0f;
-		int lon=Integer.parseInt(s.substring(0,3));
-		float lonf=Float.parseFloat(s.substring(3));
-		return lon+lonf/60;
+		}
+		int lon = Integer.parseInt(s.substring(0, 3));
+		float lonf = Float.parseFloat(s.substring(3));
+		return (lon + (lonf / 60));
 	}	
 }
