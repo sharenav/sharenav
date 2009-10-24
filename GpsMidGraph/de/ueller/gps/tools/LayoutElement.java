@@ -188,8 +188,14 @@ public class LayoutElement {
 		}
 		
 		if (image != null) {
-			width = image.getWidth();
-			height = image.getHeight();
+			Image im = image;
+			IconMenuPage imp = (IconMenuPage) lm;
+			if (imp.bgImage != null) {
+				// the width of this element is the width of the icon background image
+				im = imp.bgImage;
+			}
+			width = im.getWidth();
+			height = im.getHeight();
 		}
 	}
 
@@ -538,7 +544,13 @@ public class LayoutElement {
 				g.drawRect(left, top, right-left, bottom - top);
 			}			
 			if (image != null) {
-				g.drawImage(image, left, top, Graphics.TOP|Graphics.LEFT);
+				IconMenuPage imp = (IconMenuPage) lm;
+				if (imp.bgImage != null) {
+					g.drawImage(imp.bgImage, left, top, Graphics.TOP|Graphics.LEFT);
+					g.drawImage(image, left + (imp.bgImage.getWidth() - image.getWidth()) / 2, top + (imp.bgImage.getHeight() - image.getHeight()) / 2, Graphics.TOP|Graphics.LEFT);
+				} else {
+					g.drawImage(image, left, top, Graphics.TOP|Graphics.LEFT);
+				}
 			}
 			if (font != null) {
 				g.setColor(fgColor);

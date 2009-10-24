@@ -9,13 +9,17 @@ import de.ueller.gps.data.Configuration;
 import de.ueller.gps.tools.LayoutElement;
 import de.ueller.gps.tools.LayoutManager;
 import de.ueller.gps.tools.IconActionPerformer;
+import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
 
+import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
+import javax.microedition.lcdui.Image;
 
 import java.util.Vector;
 
 public class IconMenuPage extends LayoutManager { 
+	private final static Logger logger = Logger.getInstance(LayoutManager.class,Logger.DEBUG);
 
 	protected int numCols;
 	protected int numRows;
@@ -26,6 +30,9 @@ public class IconMenuPage extends LayoutManager {
 	private IconActionPerformer actionPerformer;
 	
 	public String title;
+	
+	/** background image for icons on this page */
+	public Image bgImage = null;
 	
 	/** active ele */
 	public int rememberEleId = 0;
@@ -43,6 +50,30 @@ public class IconMenuPage extends LayoutManager {
 		// divide the available region into a grid making the the number of icon columns and rows fit
 		gridHor = 100 / numCols;
 		gridVer = 100 / numRows;
+
+		// load icon background image
+		try {
+			bgImage = Image.createImage("/i_bg.png");
+			Font font = Font.getFont(Font.FACE_PROPORTIONAL, 0 , Font.SIZE_SMALL);
+			int fontHeight = font.getHeight();
+			int width = (maxX - minX) / numCols * 7 / 8;
+			int height = (maxY - minY) / numRows * 7 / 8 - fontHeight;
+			
+			width -= ((width * fontHeight) / height);
+			
+			int bgHeightRelativeToWidth = (bgImage.getHeight() * width) / bgImage.getWidth() + 5;
+			int bgWidthRelativeToHeight = (bgImage.getWidth() * height) / bgImage.getHeight() + 5;
+			int edgeLen = bgWidthRelativeToHeight;
+			if (edgeLen > bgHeightRelativeToWidth) {
+				edgeLen = bgHeightRelativeToWidth;
+			}
+			bgImage = ImageTools.scaleImage(bgImage, edgeLen , edgeLen);
+			//#debug debug
+			logger.debug("bgImage loaded and scaled to " + edgeLen + "x" + edgeLen);
+		} catch (Exception ec) {
+			//#debug debug
+			logger.debug("EXCEPTION loading bgImage");
+		}
 	}
 
 	public void setCursor(int eleId) {
@@ -112,6 +143,7 @@ public class IconMenuPage extends LayoutManager {
 			e = (LayoutElement) this.elementAt(i);
 			e.unloadImage();
 		}
+		this.bgImage = null;
 	}
 	
 	protected boolean changeSelectedColRow(int offsCol, int offsRow) {
