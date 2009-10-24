@@ -44,10 +44,10 @@ import de.ueller.gps.tools.HelperRoutines;
 /**
  * Handles pretty much everything that has to do with tracks and waypoints:
  * <ul>
- * <li>Recording/adding</ul>
- * <li>Deleting, renaming</ul>
+ * <li>Recording/adding</li>
+ * <li>Deleting, renaming</li>
  * <li>Storing in RecordStores</li>
- * <li>EXporting and importing in GPX format</li>
+ * <li>Exporting and importing in GPX format</li>
  * </ul>
  */
 public class Gpx extends Tile implements Runnable, CompletionListener {
@@ -58,7 +58,7 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 	private static float oldlon;
 	private static float oldheight;
 	
-	private final static Logger logger = Logger.getInstance(Gpx.class,Logger.DEBUG);
+	private final static Logger logger = Logger.getInstance(Gpx.class, Logger.DEBUG);
 	
 	private RecordStore trackDatabase = null;
 	private RecordStore wayptDatabase = null;
@@ -377,7 +377,7 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 				 */
 				if ( (trkpt.speed > 2.222f) || ((trkpt.speed > 1.111f) && (delay > 0 )) || 
 						((trkpt.speed > 0.556) && delay > 3 ) || (delay > 10)) {
-					doRecord=true;
+					doRecord = true;
 					distance = ProjMath.getDistance(lat, lon, oldlat, oldlon);
 					delay = 0;
 				} else {
@@ -886,7 +886,10 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 	 */
 	public void dropCache() {
 		trackTile.dropTrk();
-		wayPtTile.dropWayPt();
+		// Can't drop waypoints. The only way to get them back is to restart GpsMid.
+		// So if we do this we might as well quit the app altogether.
+		// Plus it shocks the user as he will think they were deleted.
+		//wayPtTile.dropWayPt();
 		System.gc();
 		if (isRecordingTrk()) {
 			saveTrk(true);
