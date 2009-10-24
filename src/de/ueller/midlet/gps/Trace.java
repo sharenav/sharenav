@@ -1257,7 +1257,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				if (gpx.isRecordingTrk()) {
 					if ( gpx.isRecordingTrkSuspended() ) {
 						alert("Gps track recording", "Resuming recording", 1000);
-						gpx.resumTrk();
+						gpx.resumeTrk();
 					} else {
 						alert("Gps track recording", "Suspending recording", 1000);
 						gpx.suspendTrk();
@@ -1542,11 +1542,12 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			}
 			showMovement(g);
 
-			// show gpx track recording status
-			LayoutElement eSolution=tl.ele[TraceLayout.SOLUTION];
-			LayoutElement eRecorded=tl.ele[TraceLayout.RECORDED_COUNT];
-			if (locationProducer != null){
+			// Show gpx track recording status
+			LayoutElement eSolution = tl.ele[TraceLayout.SOLUTION];
+			LayoutElement eRecorded = tl.ele[TraceLayout.RECORDED_COUNT];
+			if (locationProducer != null) {
 				eSolution.setText(solution);
+
 				if (gpx.isRecordingTrk()) {
 					// we are recording tracklogs
 					if (gpx.isRecordingTrkSuspended()) {
@@ -1554,7 +1555,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					} else {
 						eRecorded.setColor(Legend.COLORS[Legend.COLOR_RECORDING_ON_TEXT]); // red
 					}
-					eRecorded.setText(gpx.recorded + "r"); 
+					eRecorded.setText(gpx.getTrkPointCount() + "r"); 
 				}
 			} else {
 				eSolution.setText("Off");
@@ -2298,8 +2299,9 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	}
 
 	public String getName(int idx) {
-		if (idx < 0)
+		if (idx < 0) {
 			return null;
+		}
 		return namesThread.getName(idx);
 	}
 	

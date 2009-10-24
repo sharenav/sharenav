@@ -41,11 +41,18 @@ import de.ueller.midlet.gps.importexport.GpxParser;
 import de.ueller.midlet.gps.tile.PaintContext;
 import de.ueller.gps.tools.HelperRoutines;
 
+/**
+ * Handles pretty much everything that has to do with tracks and waypoints:
+ * <ul>
+ * <li>Recording/adding</ul>
+ * <li>Deleting, renaming</ul>
+ * <li>Storing in RecordStores</li>
+ * <li>EXporting and importing in GPX format</li>
+ * </ul>
+ */
 public class Gpx extends Tile implements Runnable, CompletionListener {
-	private float maxDistance;
 	
-	
-	// statics for user-defined rules for record trackpoint
+	// statics for user-defined rules for track recording
 	private static long oldMsTime;
 	private static float oldlat;
 	private static float oldlon;
@@ -56,7 +63,8 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 	private RecordStore trackDatabase = null;
 	private RecordStore wayptDatabase = null;
 	private int trackDatabaseRecordId = -1;
-	public int recorded = 0;
+	/** Counts how many track points were recorded so far. */
+	private int mTrkRecorded = 0;
 	public int delay = 0;
 	
 	private float trkOdo;
@@ -77,6 +85,7 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 	private boolean getGpxNameStop = false;
 	
 	private boolean applyRecordingRules = true;
+	private float maxDistance;
 	
 	private String trackName;
 	private String origTrackName;
@@ -87,23 +96,31 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 	
 	private String importExportMessage;
 	
-	/**
-	 * Variables used for transmitting GPX data:
-	 */
+	/** Stream used for importing GPX data */
+	private InputStream mImportStream;
+
+	/** Primary stream used to hold the track points that are recorded. */
+	private DataOutputStream mTrkOutStream;
+
+	/** The stream dos forwards his data to this stream. */
+	private ByteArrayOutputStream mTrkByteOutStream;
 	
-	private InputStream in;
-	
-	private ByteArrayOutputStream baos;
-	private DataOutputStream dos;
+	/** Flag whether track recording is currently suspended. */
 	private boolean trkRecordingSuspended;
 	
-	/** holds the track that is currently recorded */
+	/** Holds the track that is currently recorded. */
 	private GpxTile trackTile;
-	/** holds tracks that are loaded to be displayed but not altered by recording more trackpoints*/
+
+	/** Holds tracks that are loaded to be displayed but not altered by recording more trackpoints. */
 	private GpxTile	loadedTracksTile;
+
+	/** Holds all waypoints to display them on the map. */
 	private WaypointsTile wayPtTile;
 
-
+	/** Default constructor of this class.
+	 * It creates new tiles for waypoints, the recording track and loaded tracks.
+	 * It also triggers loading of the waypoints from the RecordStore. 
+	 */
 	public Gpx() {
 		trackTile = new GpxTile();
 		loadedTracksTile = new GpxTile(true);
@@ -119,8 +136,8 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 	}
 	
 	/**
-	 * loads one given track and displays it on the map-screen
-	 * @param trk
+	 * Loads one given track and displays it on the map-screen
+	 * @param trk The track to be displayed
 	 */
 	public void displayTrk(PersistEntity trk) {
 		if (trk == null) {
@@ -131,12 +148,12 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 				openTrackDatabase();
 				DataInputStream dis1 = new DataInputStream(new ByteArrayInputStream(trackDatabase.getRecord(trk.id)));
 				trackName = dis1.readUTF();
-				recorded = dis1.readInt();
+				mTrkRecorded = dis1.readInt();
 				int trackSize = dis1.readInt();
 				byte[] trackArray = new byte[trackSize];
 				dis1.read(trackArray);
 				DataInputStream trackIS = new DataInputStream(new ByteArrayInputStream(trackArray));
-				for (int i = 0; i < recorded; i++) {
+				for (int i = 0; i < mTrkRecorded; i++) {
 					float lat = trackIS.readFloat();
 					float lon = trackIS.readFloat();
 					if (i == 0) {
@@ -166,11 +183,10 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 				logger.exception("Exception displaying track", e);
 			}
 		}
-		
 	}
 	
 	/**
-	 * loads the given tracks to display them on the map-screen
+	 * Loads the given tracks to display them on the map-screen
 	 * @param trks Vector of tracks to be displayed
 	 */
 	public void displayTrk(Vector trks) {
@@ -180,16 +196,16 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 			try {
 				loadedTracksTile.dropTrk();
 				openTrackDatabase();
-				for(int j=0; j< trks.size(); j++){
+				for (int j = 0; j< trks.size(); j++) {
 					PersistEntity track = (PersistEntity)trks.elementAt(j);
 					DataInputStream dis1 = new DataInputStream(new ByteArrayInputStream(trackDatabase.getRecord(track.id)));
 					trackName = dis1.readUTF();
-					recorded = dis1.readInt();
+					mTrkRecorded = dis1.readInt();
 					int trackSize = dis1.readInt();
 					byte[] trackArray = new byte[trackSize];
 					dis1.read(trackArray);
 					DataInputStream trackIS = new DataInputStream(new ByteArrayInputStream(trackArray));
-					for (int i = 0; i < recorded; i++) {
+					for (int i = 0; i < mTrkRecorded; i++) {
 						float lat = trackIS.readFloat();
 						float lon = trackIS.readFloat();
 						//center map on track start
@@ -213,7 +229,7 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 				trackDatabase.closeRecordStore();
 				trackDatabase = null;
 				
-			} catch (OutOfMemoryError oome){
+			} catch (OutOfMemoryError oome) {
 				loadedTracksTile.dropTrk();
 				try {
 					trackDatabase.closeRecordStore();
@@ -237,12 +253,17 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 	}
 	
 	/**
-	 * removes all loaded tracks from the screen
+	 * Removes all loaded tracks from the screen
 	 */
-	public void undispLoadedTracks(){
+	public void undispLoadedTracks() {
 		loadedTracksTile.dropTrk();
 	}
 	
+	/** Adds a waypoint to the RecordStore.
+	 * Will also write a marker with the ID of this waypoint to the recording track
+	 * if this is enabled in the configuration (CFGBIT_WPTS_IN_TRACK).
+	 * @param waypt The waypoint to add
+	 */
 	public void addWayPt(PositionMark waypt) {
 		byte[] buf = waypt.toByte();
 		try {
@@ -259,12 +280,12 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 				/**
 				 * Add a marker to the recording for the waypoint
 				 */
-				dos.writeFloat(0.0f);
-				dos.writeFloat(0.0f);
-				dos.writeShort(id);
-				dos.writeLong(Long.MIN_VALUE + 1);
-				dos.writeByte(0);
-				recorded++;
+				mTrkOutStream.writeFloat(0.0f);
+				mTrkOutStream.writeFloat(0.0f);
+				mTrkOutStream.writeShort(id);
+				mTrkOutStream.writeLong(Long.MIN_VALUE + 1);
+				mTrkOutStream.writeByte(0);
+				mTrkRecorded++;
 			}
 			
 		} catch (IOException ioe) {
@@ -279,6 +300,10 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		wayPtTile.addWayPt(waypt);		
 	}
 
+	/** Updates a waypoint in the RecordStore. That is, the waypoint's ID is
+	 * searched and its data is replaced.  
+	 * @param waypt New "version" of the waypoint
+	 */
 	public void updateWayPt(PositionMark waypt) {
 		byte[] buf = waypt.toByte();
 		try {
@@ -294,15 +319,25 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 			logger.exception("Exception updating waypoint", e);
 		}
 	}
-		
-	public boolean existsWayPt(PositionMark newWayPt) {
+	
+	/** Checks if a waypoint exists in the waypoint tile(s).
+	 * 
+	 * @param wayPt Waypoint to search
+	 * @return True if exists, false if it doesn't
+	 */
+	public boolean existsWayPt(PositionMark wayPt) {
 		if (wayPtTile != null) {
-			return wayPtTile.existsWayPt(newWayPt);
+			return wayPtTile.existsWayPt(wayPt);
 		}
 		return false;
 	}
 		
-	
+	/** Adds a trackpoint to the track's output stream and the trackTile.
+	 * This is only done if the recording rules apply and recording is not suspended.
+	 * Will also update the odometer data (max speed, distance travelled etc etc)
+	 * 
+	 * @param trkpt Trackpoint to be added
+	 */
 	public void addTrkPt(Position trkpt) {
 		if (trkRecordingSuspended) {
 			return;
@@ -320,12 +355,12 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		try {
 			// always record when i.e. receiving or loading tracklogs
 			// or when starting to record
-			if (!applyRecordingRules || recorded==0) {
+			if (!applyRecordingRules || mTrkRecorded==0) {
 				doRecord=true;
 				distance = ProjMath.getDistance(lat, lon, oldlat, oldlon);
 			}
 			// check which record rules to apply
-			else if (Configuration.getGpxRecordRuleMode()==Configuration.GPX_RECORD_ADAPTIVE) {
+			else if (Configuration.getGpxRecordRuleMode() == Configuration.GPX_RECORD_ADAPTIVE) {
 				/** adaptive recording
 				 * 
 				 * When saving tracklogs and adaptive recording is enabled,
@@ -350,8 +385,8 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 				}			
 			} else {
 				/*
-				 user-specified recording rules
-				*/
+				 * User-specified recording rules
+				 */
 				distance = ProjMath.getDistance(lat, lon, oldlat, oldlon);
 				if ( 
 						// is not always record distance not set
@@ -377,17 +412,20 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 							)
 						)
 				) {
-					doRecord=true;
+					doRecord = true;
 				}
 			}
 			if (doRecord) {
-				dos.writeFloat(trkpt.latitude);
-				dos.writeFloat(trkpt.longitude);
-				dos.writeShort((short)trkpt.altitude);
-				dos.writeLong(trkpt.timeMillis);
-				dos.writeByte((byte)(trkpt.speed*3.6f)); //Convert to km/h
-				recorded++;
+				// Add point to the recording track's stream
+				mTrkOutStream.writeFloat(trkpt.latitude);
+				mTrkOutStream.writeFloat(trkpt.longitude);
+				mTrkOutStream.writeShort((short)trkpt.altitude);
+				mTrkOutStream.writeLong(trkpt.timeMillis);
+				mTrkOutStream.writeByte((byte)(trkpt.speed * 3.6f)); //Convert to km/h
+				mTrkRecorded++;
+				// Add point to the recording track's tile
 				trackTile.addTrkPt(trkpt.latitude, trkpt.longitude, false);
+				// Update odometer data (max speed, distance travelled etc etc)
 				if ((oldlat != 0.0f) || (oldlon != 0.0f)) {
 					trkOdo += distance;
 					long timeDelta = msTime - oldMsTime;
@@ -398,19 +436,27 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 					} else {
 						//TODO: This formula is not consistent and needs improvement!!
 						float alpha = (300000 - timeDelta) / 300000.0f;
-//						System.out.println("trkVertSpeed: " + trkVertSpd + " timeDelta: " + timeDelta + " Alpha: " + alpha + " deltaV " + deltaV + " instVertSpeed: " + (deltaV / timeDelta * 1000.0f));
-						trkVertSpd = trkVertSpd * alpha + (1 - alpha) * (deltaV / timeDelta * 1000.0f);
-						
+//						System.out.println("trkVertSpeed: " + trkVertSpd + 
+//								" timeDelta: " + timeDelta + " Alpha: " + alpha + 
+//								" deltaV " + deltaV + " instVertSpeed: " + 
+//								(deltaV / timeDelta * 1000.0f));
+						trkVertSpd = (trkVertSpd * alpha) + ((1 - alpha) * 
+								(deltaV / timeDelta * 1000.0f));
 					}
 					
-					if (trkVmax < trkpt.speed)
+					if (trkVmax < trkpt.speed) {
 						trkVmax = trkpt.speed;
+					}
 				}
-				oldMsTime=msTime;
-				oldlat=lat;
-				oldlon=lon;
+				oldMsTime = msTime;
+				oldlat = lat;
+				oldlon = lon;
 				oldheight = trkpt.altitude;
-				if ((recorded & 0xff) == 0xff) {
+				// Write track to the RecordStore every 255 points to reduce the
+				// data loss in case the application crashes.
+				// TODO: This is done synchronously. Couldn't this be a problem if
+				// this operation is very slow (device busy, many points to write)?
+				if ((mTrkRecorded & 0xff) == 0xff) {
 					storeTrk();
 				}
 			}
@@ -425,11 +471,14 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 			logger.exception("Could not add trackpoint", e);
 		}
 	}
-	
-	public void deleteWayPt(PositionMark waypt) {
-		deleteWayPt(waypt, null);
-	}
 
+	/** Deletes one waypoint from the RecordStore. 
+	 * TODO: This needs to be changed to take a vector of points as the RecordStore
+	 * is opened and closed for every single operation.
+	 * 
+	 * @param waypt Waypoint to be deleted
+	 * @param ul Listener for progress updates
+	 */
 	public void deleteWayPt(PositionMark waypt, UploadListener ul) {
 		this.feedbackListener = ul;
 		try {
@@ -446,9 +495,13 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		}
 	}
 
+	/** Signals to reload the waypoints.
+	 */
 	public void reloadWayPts() {
 		if (processorThread != null && processorThread.isAlive()) {
 			/* Already reloading, nothing to do */
+			/* TODO: This is not correct, the thread may be busy with another operation
+			 * and then the reload will not be done. */
 			return;
 		}
 		reloadWpt = true;
@@ -457,21 +510,36 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		processorThread.start();
 	}
 	
+	/** Starts the recording of a new track.
+	 */
 	public void doNewTrk() {
-		baos = new ByteArrayOutputStream();
-		dos = new DataOutputStream(baos);
+		mTrkByteOutStream = new ByteArrayOutputStream();
+		mTrkOutStream = new DataOutputStream(mTrkByteOutStream);
 		trackDatabaseRecordId = -1;
 		trkOdo = 0.0f;
 		trkVmax = 0.0f;
 		trkVertSpd = 0.0f;
 		trkTimeTot = 0;
-		recorded = 0;
+		mTrkRecorded = 0;
 		trkRecordingSuspended = false;
 		origTrackName = new String(trackName);
 	}
+
+	/** Starts the recording of a new track. An intermediate step may be to ask
+	 * the user for the name of the track.
+	 * @param dontAskName If true, the user will not be asked for the track name,
+	 *   no matter what the configuration says.
+	 */
 	public void newTrk(boolean dontaskname) {
 		newTrk(null, dontaskname);
 	}
+
+	/** Starts the recording of a new track. An intermediate step may be to ask
+	 * the user for the name of the track.
+	 * @param newTrackName Name of track
+	 * @param dontAskName If true, the user will not be asked for the track name,
+	 *   no matter what the configuration says.
+	 */
 	public void newTrk(String newTrackName, boolean dontaskname) {
 		logger.debug("Starting a new track recording");
 		trackTile.dropTrk();
@@ -481,6 +549,7 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		//Construct a track name from the current time
 		if (newTrackName == null) {
 			StringBuffer trkName = new StringBuffer();
+			// TODO: Should we change the format?
 			trkName.append(cal.get(Calendar.YEAR)).append("-").append(formatInt2(cal.get(Calendar.MONTH) + 1));
 			trkName.append("-").append(formatInt2(cal.get(Calendar.DAY_OF_MONTH))).append("_");
 			trkName.append(formatInt2(cal.get(Calendar.HOUR_OF_DAY))).append("-").append(formatInt2(cal.get(Calendar.MINUTE)));
@@ -502,27 +571,32 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		}
 	}
 	
+	/** Actually writes the track that was written into mTrkByteOutStream
+	 * to the RecordStore for tracks.
+	 */
 	private void storeTrk() {
 		try {
-			if (dos == null) {
+			if (mTrkOutStream == null) {
 				logger.debug("Not recording, so no track to save");
 				return;
 			}
-			dos.flush();
+			mTrkOutStream.flush();
 			//#debug debug
-			logger.debug("storing track with " + recorded + " points");
+			logger.debug("storing track with " + mTrkRecorded + " points");
 			ByteArrayOutputStream baosDb = new ByteArrayOutputStream();
 			DataOutputStream dosDb = new DataOutputStream(baosDb);
 			dosDb.writeUTF(trackName);
-			dosDb.writeInt(recorded);
-			dosDb.writeInt(baos.size());
-			dosDb.write(baos.toByteArray());
+			dosDb.writeInt(mTrkRecorded);
+			dosDb.writeInt(mTrkByteOutStream.size());
+			// This is the actual writing of the points' data
+			dosDb.write(mTrkByteOutStream.toByteArray());
 			dosDb.flush();
 			openTrackDatabase();
-			if (trackDatabaseRecordId < 0)
+			// The stream in which the points were written is now saved to the RecordStore
+			if (trackDatabaseRecordId < 0) {
 				trackDatabaseRecordId = trackDatabase.addRecord(baosDb.toByteArray(), 0, baosDb.size());
-			else {
-				trackDatabase.setRecord(trackDatabaseRecordId,baosDb.toByteArray(), 0, baosDb.size());
+			} else {
+				trackDatabase.setRecord(trackDatabaseRecordId, baosDb.toByteArray(), 0, baosDb.size());
 			}
 			trackDatabase.closeRecordStore();
 			trackDatabase = null;
@@ -538,27 +612,37 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		} catch (OutOfMemoryError oome) {
 			logger.fatal("Out of memory, can't save tracklog");
 		}
-		
 	}
 
+	/** Triggers the saving of the track to the RecordStore (storeTrk()).
+	 * Afterwards, no matter if the save was successful(!), clears the streams
+	 * where the track points were stored and the trackTile which displayed them.
+	 */
 	private void doSaveTrk() {
 		storeTrk();
 		try {
-			dos.close();
+			mTrkOutStream.close();
+			mTrkByteOutStream.close();
 		} catch (IOException e) {
 			logger.exception("Failed to close trackrecording", e);
 		}
-		dos = null;
-		baos = null;
+		mTrkOutStream = null;
+		mTrkByteOutStream = null;
 		trackTile.dropTrk();
 	}
+
+	/** Starts the saving of the track. An intermediate step may be to ask
+	 * the user for the name of the track.
+	 * @param dontAskName If true, the user will not be asked for the track name,
+	 *   no matter what the configuration says.
+	 */
 	public void saveTrk(boolean dontAskName) {
-		if (dos == null) {
+		if (mTrkOutStream == null) {
 			logger.debug("Not recording, so no track to save");
 			return;
 		}
 		//#debug debug
-		logger.debug("closing track with " + recorded + " points");
+		logger.debug("Closing track with " + mTrkRecorded + " points");
 		if ((!dontAskName) && Configuration.getCfgBitState(Configuration.CFGBIT_GPX_ASK_TRACKNAME_STOP)) {
 			getGpxNameStop = true;
 			GuiNameEnter gne = new GuiNameEnter(this, "Stopping recording", trackName, Configuration.MAX_TRACKNAME_LENGTH);
@@ -568,22 +652,24 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		}
 	}
 	
-	
+	/** Suspends track recording. No more points will be recorded until
+	 * resumeTrk() is called. The track will be written to the RecordStore
+	 * to reduce the track loss if the application should crash later.
+	 */
 	public void suspendTrk() {
 		trkRecordingSuspended = true;
 		try {
-			if(dos != null) {
+			if (mTrkOutStream != null) {
 				/**
-				 * Add a marker to the recording to be able to
-				 * break up the GPX file into separate track segments
-				 * after each suspend
+				 * Add a marker to the recording to be able to break up
+				 * the GPX file into separate track segments after each suspend.
 				 */
-				dos.writeFloat(0.0f);
-				dos.writeFloat(0.0f);
-				dos.writeShort(0);
-				dos.writeLong(Long.MIN_VALUE);
-				dos.writeByte(0);
-				recorded++;
+				mTrkOutStream.writeFloat(0.0f);
+				mTrkOutStream.writeFloat(0.0f);
+				mTrkOutStream.writeShort(0);
+				mTrkOutStream.writeLong(Long.MIN_VALUE);
+				mTrkOutStream.writeByte(0);
+				mTrkRecorded++;
 				oldlat = 0.0f;
 				oldlon = 0.0f;
 				storeTrk();
@@ -593,10 +679,16 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		}
 	}
 	
-	public void resumTrk() {
+	/** Must be called after suspendTrk() to resume track recording.
+	 */
+	public void resumeTrk() {
 		trkRecordingSuspended = false;
 	}
 	
+	/** Deletes the specified tracks from the RecordStore.
+	 * 
+	 * @param tracks Vector of tracks to delete
+	 */
 	public void deleteTracks(Vector tracks) {
 		try {
 			openTrackDatabase();
@@ -616,11 +708,17 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		}		
 	}
 	
+	/** Changes the name of a track.
+	 * The ID of the track is searched in the RecordStore and its name is replaced.
+	 * 
+	 * @param trk The track to rename
+	 */
 	public void updateTrackName(PersistEntity trk) {
 		String action = " reading for updating trackname";
 		try {
 			openTrackDatabase();
-			DataInputStream dis1 = new DataInputStream(new ByteArrayInputStream(trackDatabase.getRecord(trk.id)));
+			DataInputStream dis1 = new DataInputStream(new ByteArrayInputStream(
+					trackDatabase.getRecord(trk.id)));
 			String trackName = dis1.readUTF();
 			int recorded = dis1.readInt();
 			int trackSize = dis1.readInt();
@@ -655,12 +753,18 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		}
 	}
 	
-	public void receiveGpx(InputStream in, UploadListener ul, float maxDistance) {
-		this.maxDistance=maxDistance;
-		this.in = in;
-		this.feedbackListener = ul;
+	/** Starts the receiving of a GPX. 
+	 * 
+	 * @param ins Stream from which to read the GPX data
+	 * @param ul Listener for progress information
+	 * @param maxDist Maximum distance (in kilometers) for filtering waypoints
+	 */
+	public void receiveGpx(InputStream ins, UploadListener ul, float maxDist) {
+		maxDistance = maxDist;
+		mImportStream = ins;
+		feedbackListener = ul;
 		
-		if (in == null) {
+		if (mImportStream == null) {
 			logger.error("Could not open input stream to gpx file");
 		}
 		if ((processorThread != null) && (processorThread.isAlive())) {
@@ -671,6 +775,12 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		processorThread.start();
 	}
 	
+	/** Starts the export of tracks in GPX format.
+	 * 
+	 * @param url URL to export the tracks to
+	 * @param ul Listener for progress information
+	 * @param tracks Vector of tracks to export
+	 */
 	public void exportTracks(String url, UploadListener ul, Vector tracks) {
 		logger.debug("Exporting tracks to " + url);
 		feedbackListener = ul;
@@ -683,6 +793,13 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		processorThread.start();
 	}
 
+	/** Starts the export of all waypoints in GPX format.
+	 * First, the user is asked for the name of the object which will contain
+	 * the waypoints.
+	 * 
+	 * @param url URL to export the waypoints to
+	 * @param ul Listener for progress information
+	 */
 	public void sendWayPt(String url, UploadListener ul) {
 		this.url = url;
 		feedbackListener = ul;
@@ -693,10 +810,20 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		gne.show();
 	}
 	
+	/** Returns a list of all waypoints.
+	 * TODO: There is a piece of random in how the waypoints are distributed
+	 * between the tiles. So this list has no specific order.
+	 * 
+	 * @return Array of waypoints
+	 */
 	public PositionMark [] listWayPt() {
 		return wayPtTile.listWayPt();
 	}
 	
+	/** Returns the number of waypoints.
+	 * 
+	 * @return Number of waypoints
+	 */
 	public int getNumberWaypoints() {
 		int noWpt = wayPtTile.getNumberWaypoints();
 		//#debug debug
@@ -754,35 +881,65 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		return null;
 	}
 	
+	/** Called when an out of memory condition is detected.
+	 * Will stop track recording and save the track in the RecordStore.
+	 */
 	public void dropCache() {
 		trackTile.dropTrk();
 		wayPtTile.dropWayPt();
 		System.gc();
-		if (isRecordingTrk())
-			saveTrk(true);		
+		if (isRecordingTrk()) {
+			saveTrk(true);
+		}
 	}
-	
+
+	/** Currently without function. 
+	 * TODO: Should it do anything?
+	 * @see Tile.cleanup() 
+	 */
 	public boolean cleanup(int level) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
+	/** Currently without function. 
+	 * TODO: Should it do anything?
+	 * @see Tile.walk()
+	 */
+	public void walk(PaintContext pc, int opt) {
+	}
+
 	/**
-	 * renders the GPX on the screen
+	 * Renders the waypoints, the recording track and the loaded tracks on the screen.
 	 */
 	public void paint(PaintContext pc, byte layer) {
-		//rendering the tracks in reverse order...
-		//loaded tracks on the bottom
+		// Rendering the tracks in reverse order...
+		// Loaded tracks on the bottom,
 		loadedTracksTile.paint(pc, layer);
-		//then the other layers ontop
+		// then the other layers on top.
 		trackTile.paint(pc, layer);		
 		wayPtTile.paint(pc, layer);
 	}
 	
-	public boolean isRecordingTrk() {
-		return (dos != null);
+	/** Returns how many track points have been recorded so far.
+	 * 
+	 * @return Number of track points
+	 */
+	public int getTrkPointCount() {
+		return mTrkRecorded;
 	}
 	
+	/** Returns whether a track is currently recorded.
+	 * 
+	 * @return True if recording is on, false if not.
+	 */
+	public boolean isRecordingTrk() {
+		return (mTrkOutStream != null);
+	}
+	
+	/** Returns whether track recording is currently suspended
+	 * 
+	 * @return True if recording is suspended, false if not.
+	 */
 	public boolean isRecordingTrkSuspended() {
 		return trkRecordingSuspended;
 	}
@@ -822,8 +979,10 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		return trkVertSpd;
 	}
 	
-	
-	
+	/** Worker thread which will perform one of several tasks.
+	 * Which task is determined by the flags reloadWpt, sendTrk, sendWpt and
+	 * whether mImportStream is null or not.   
+	 */
 	public void run() {
 		logger.info("GPX processing thread started");
 		try {
@@ -833,7 +992,7 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 					/**
 					 * Sleep for a while to limit the number of reloads happening
 					 */
-					Thread.sleep(300);
+					Thread.sleep(500);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -868,10 +1027,10 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 				sendWpt = false;
 			} else if (sendWpt) {
 				success = sendGpx();
-			} else if (in != null) {
+			} else if (mImportStream != null) {
 				success = receiveGpx();
 			} else {
-				logger.error("Did not know whether to send or receive");
+				logger.error("Did not know what to do in Gpx.run()");
 			}
 			if (feedbackListener != null) {
 				feedbackListener.completedUpload(success, importExportMessage);
@@ -887,6 +1046,8 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		}
 	}
 
+	/** Convenience method to open the waypoint RecordStore.
+	 */
 	private void openWayPtDatabase() {
 		try {
 			if (wayptDatabase == null)
@@ -905,7 +1066,7 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 	}
 
 	/**
-	 * Read waypoints from the RecordStore and put them in a tile for displaying.
+	 * Read waypoints from the RecordStore and put them in the wayPtTile for displaying.
 	 */
 	private void loadWaypointsFromDatabase() {		
 		try {
@@ -930,6 +1091,8 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		}
 	}
 
+	/** Convenience method to open the tracks RecordStore.
+	 */
 	private void openTrackDatabase() {
 		try {
 			if (trackDatabase == null) {
@@ -947,6 +1110,10 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		}
 	}
 
+	/** Actually writes the track points of the current track in GPX format.
+	 * 
+	 * @param oS The stream to which the track points are written
+	 */
 	private void streamTracks (OutputStream oS) throws IOException, 
 			RecordStoreNotOpenException, InvalidRecordIDException, RecordStoreException {
 		float lat, lon;
@@ -955,9 +1122,10 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		Date date = new Date();
 		
 		openTrackDatabase();
-		DataInputStream dis1 = new DataInputStream(new ByteArrayInputStream(trackDatabase.getRecord(currentTrk.id)));
+		DataInputStream dis1 = new DataInputStream(new ByteArrayInputStream(
+				trackDatabase.getRecord(currentTrk.id)));
 		trackName = dis1.readUTF();
-		recorded = dis1.readInt();
+		mTrkRecorded = dis1.readInt();
 		int trackSize = dis1.readInt();
 		byte[] trackArray = new byte[trackSize];
 		dis1.read(trackArray);
@@ -967,13 +1135,13 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		oS.write("<trk>\r\n<trkseg>\r\n".getBytes());						
 		StringBuffer sb = new StringBuffer(128);
 		
-		//calculate intervall for progressbar update - progressbar is updated in 2% steps
+		// Calculate interval for progressbar update - progressbar is updated in 2% steps
 		int progUpdtIntervall = 1;
-		if (recorded >= 50){
-			progUpdtIntervall = (int)recorded/50;
+		if (mTrkRecorded >= 50) {
+			progUpdtIntervall = (int)mTrkRecorded / 50;
 		}
 			
-		for (int i = 1; i <= recorded; i++) {
+		for (int i = 1; i <= mTrkRecorded; i++) {
 			lat = trackIS.readFloat(); lon = trackIS.readFloat();
 			ele = trackIS.readShort();
 			time = trackIS.readLong();
@@ -1028,10 +1196,15 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		oS.write(baos.toByteArray());
 		trackDatabase.closeRecordStore();
 		trackDatabase = null;
-		/**Update the progress bar by the remaining part*/
-		feedbackListener.updateProgressValue(recorded % progUpdtIntervall);
+		/** Update the progress bar by the remaining part */
+		feedbackListener.updateProgressValue(mTrkRecorded % progUpdtIntervall);
 	}
 	
+	/** Writes a string in UTF-8
+	 * 
+	 * @param oS The stream to which to write the string
+	 * @param sb StringBuffer with the string
+	 */
 	private void writeUTF(OutputStream oS, StringBuffer sb) {
 		try {
 			oS.write(sb.toString().getBytes(Configuration.getUtf8Encoding()));
@@ -1040,6 +1213,11 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		}
 	}
 	
+	/** Writes one waypoint in GPX format.
+	 * 
+	 * @param oS The stream to which the waypoints are written
+	 * @param wayPt The waypoint to write
+	 */
 	private void streamWayPt (OutputStream oS, PositionMark wayPt) 
 				throws IOException {
 		StringBuffer sb = new StringBuffer(128);
@@ -1064,6 +1242,10 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		writeUTF(oS, sb);
 	}
 
+	/** Actually writes the waypoints from wayPtTile in GPX format.
+	 * 
+	 * @param oS The stream to which the waypoints are written
+	 */
 	private void streamWayPts (OutputStream oS) throws IOException {		
 		PositionMark[] waypts = wayPtTile.listWayPt();
 		PositionMark wayPt = null;
@@ -1074,6 +1256,10 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		}
 	}
 	
+	/** This method exports a track or waypoints in GPX format.
+	 * 
+	 * @return True if successful, false if not. Details can be found in the string importExportMessage.
+	 */
 	private boolean sendGpx() {
 		try {
 			String name = null;
@@ -1098,7 +1284,7 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 				return false;
 			}
 			
-			OutputStream oS = null;
+			OutputStream outStream = null;
 			ExportSession session = null;
 			try {
 				/**
@@ -1144,27 +1330,26 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 				importExportMessage = "Your phone does not support this form of exporting, please choose a different one";
 				return false;
 			}
-			oS = session.openSession(url, name);
-			if (oS == null) {
+			outStream = session.openSession(url, name);
+			if (outStream == null) {
 				importExportMessage = "Could not obtain a valid connection to " + url;
 				return false;
 			}
-			oS.write("<?xml version='1.0' encoding='UTF-8'?>\r\n".getBytes());
-			oS.write("<gpx version='1.1' creator='GPSMID' xmlns='http://www.topografix.com/GPX/1/1'>\r\n".getBytes());
+			outStream.write("<?xml version='1.0' encoding='UTF-8'?>\r\n".getBytes());
+			outStream.write("<gpx version='1.1' creator='GPSMID' xmlns='http://www.topografix.com/GPX/1/1'>\r\n".getBytes());
 			
 			if (sendWpt)
 			{
-				streamWayPts(oS);
+				streamWayPts(outStream);
 			}
 			if (sendTrk)
 			{
-				streamTracks(oS);
+				streamTracks(outStream);
 			}
-			
-			oS.write("</gpx>\r\n\r\n".getBytes());
-						
-			oS.flush();
-			oS.close();
+			outStream.write("</gpx>\r\n".getBytes());
+
+			outStream.flush();
+			outStream.close();
 			session.closeSession();
 			importExportMessage = "success";
 			return true;
@@ -1181,6 +1366,10 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		return false;
 	}
 	
+	/** Reads GPX data from mInputStream. 
+	 * 
+	 * @return True if reading was successful, false if not
+	 */
 	private boolean receiveGpx() {		
 		try {
 			boolean success;
@@ -1188,17 +1377,13 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 			Class parserClass;
 			Object parserObject;
 			GpxParser parser;
-			GpxImportHandler gpxH = new GpxImportHandler(maxDistance, this, feedbackListener);
+			GpxImportHandler importHandler = new GpxImportHandler(maxDistance, this, feedbackListener);
 			try {
 				jsr172Version = System.getProperty("xml.jaxp.subset.version");
-			} catch (RuntimeException re) {
+			} catch (Exception e) {
 				/**
 				 * Some phones throw exceptions if trying to access properties that don't
 				 * exist, so we have to catch these and just ignore them.
-				 */
-			} catch (Exception e) {
-				/**
-				 * See above 
 				 */
 			}
 			if ((jsr172Version != null) &&  (jsr172Version.length() > 0)) {
@@ -1212,31 +1397,30 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 			parser = (GpxParser) parserObject;
 			
 			applyRecordingRules = false;
-			success = parser.parse(in, gpxH);
+			success = parser.parse(mImportStream, importHandler);
 			applyRecordingRules = true;
-			in.close();
-			importExportMessage = gpxH.getMessage();
+			mImportStream.close();
+			importExportMessage = importHandler.getMessage();
 			
 			return success;
 		} catch (ClassNotFoundException cnfe) {
 			importExportMessage = "Your phone does not support XML parsing";
 		} catch (Exception e) {
-			importExportMessage = "Something went wrong while importing GPX, " + e;
+			importExportMessage = "Something went wrong while importing GPX: " + e;
 		}
 		return false;
 	}
 	
 	/**
 	 * Formats an integer to 2 digits, as used for example in time.
-	 * I.e. a 0 gets printed as 00. 
+	 * I.e. 3 gets printed as 03. 
 	 **/
 	private static final String formatInt2(int n) {
 		if (n < 10) {
 			return "0" + n;
 		} else {
 			return Integer.toString(n);
-		}
-			
+		}	
 	}
 
 	/**
@@ -1247,8 +1431,9 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 	private static final String formatUTC(Date time) {
 		// This function needs optimising. It has a too high object churn.
 		Calendar c = null;
-		if (c == null)
+		if (c == null) {
 			c = Calendar.getInstance();
+		}
 		c.setTime(time);
 		return c.get(Calendar.YEAR) + "-" + formatInt2(c.get(Calendar.MONTH) + 1) + "-" +
 		formatInt2(c.get(Calendar.DAY_OF_MONTH)) + "T" + formatInt2(c.get(Calendar.HOUR_OF_DAY)) + ":" +
@@ -1256,11 +1441,11 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		
 	}
 
-	public void walk(PaintContext pc, int opt) {
-		// TODO Auto-generated method stub
-		
-	}
-	
+	/** Called when the user has entered a name.
+	 * Will continue with the actual operation, i.e. saving the track or the waypoints.
+	 * @see CompletionListener.actionCompleted()
+	 * @param strResult The name entered
+	 */
 	public void actionCompleted(String strResult) {
 		Trace tr = Trace.getInstance();
 		if (getGpxNameStart || getGpxNameStop) {
