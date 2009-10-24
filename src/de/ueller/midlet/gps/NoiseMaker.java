@@ -13,7 +13,6 @@ import de.ueller.midlet.gps.tile.SoundDescription;
 import java.io.InputStream;
 //#if polish.api.mmapi	
 import javax.microedition.media.Manager;
-import javax.microedition.media.MediaException;
 import javax.microedition.media.Player;
 import javax.microedition.media.PlayerListener;
 import javax.microedition.media.control.ToneControl;
@@ -36,20 +35,20 @@ public class NoiseMaker
 	
 	private final static Logger mLogger = Logger.getInstance(NoiseMaker.class, Logger.DEBUG);
 	
-	private static volatile String playingNames = "";
-	private static volatile int playingNameIndex=0;
+	private static volatile String mPlayingNames = "";
+	private static volatile int mPlayingNameIndex=0;
 
 //#if polish.api.mmapi			
-	private static volatile Player player = null; 
+	private static volatile Player mPlayer = null; 
 	private static byte[] mConnOpenedSequence;	
 	private static byte[] mConnLostSequence;
 //#endif			
 	
-	private static volatile long oldMsTime = 0;
-	private static volatile String oldPlayingNames = "";
-	private static volatile byte timesToPlay = 0;
-	private static volatile String nextSoundFile = null;
-	private static volatile String playingSoundName = "";
+	private static volatile long mOldMsTime = 0;
+	private static volatile String mOldPlayingNames = "";
+	private static volatile byte mTimesToPlay = 0;
+	private static volatile String mNextSoundFile = null;
+	private static volatile String mPlayingSoundName = "";
 	
 	public NoiseMaker()
 	{
@@ -105,36 +104,35 @@ public class NoiseMaker
 		// Release resources used by player when it's finished.
 		if (event == PlayerListener.END_OF_MEDIA)
 		{
-			player.close();
-//			NoiseMaker.player = null;
+			mPlayer.close();
 			playNextSoundFile();
 		}
 	}
 	
 	private static byte [] getToneSequence( String name ) {
     	byte sequence[] = null;
-		if(name.equals("CONNECT")) {
+		if (name.equals("CONNECT")) {
 			/**
 			 * Sound for the situation that the connection to the
 			 * GPS device has been (re)established.
 			 */
-			sequence= mConnOpenedSequence;	
+			sequence = mConnOpenedSequence;	
 		} else if (name.equals("DISCONNECT")) {
 			/**
 			 * Sound for the situation that the connection to the
-			 * GPS device has been (re)established.
+			 * GPS device has been lost.
 			 */
-			sequence= mConnLostSequence;				
+			sequence = mConnLostSequence;				
 		} else if (name.equals("FIX")) {
 			/**
 			 * Sound for the situation that a valid position was received
 			 */
-			//sequence= mPosFixSequence;				
+			//sequence = mPosFixSequence;				
 		} else if (name.equals("NOFIX")) {
 			/**
 			 * Sound for the situation that the position has become unknown.
 			 */
-			//sequence= mNoFixSequence;				
+			//sequence = mNoFixSequence;				
 		}
 		return sequence;
 	}
@@ -154,7 +152,7 @@ public class NoiseMaker
 		    	ToneControl toneCtrl = (ToneControl)player.getControl( "ToneControl" );
 		    	if (toneCtrl != null) {
 		    		toneCtrl.setSequence( sequence ); 
-		    		playingNames = name;
+		    		mPlayingNames = name;
 		    		player.start();
 		    	}
 	    	}
@@ -167,10 +165,11 @@ public class NoiseMaker
 
 	public void immediateSound(String name) {
 		synchronized (NoiseMaker.class) {			
-			if (playingNameIndex < playingNames.length()) {
-				playingNameIndex = 0;
-				playingNames = name + ";" + playingNames;
-				mLogger.debug("inserted sound " + name + " giving new sequence: " + playingNames);
+			if (mPlayingNameIndex < mPlayingNames.length()) {
+				mPlayingNameIndex = 0;
+				mPlayingNames = name + ";" + mPlayingNames;
+				mLogger.debug("inserted sound " + name + 
+						" giving new sequence: " + mPlayingNames);
 				return;
 			}
 		}
@@ -192,52 +191,53 @@ public class NoiseMaker
 		
 		// do not repeat same sound before minSecsBeforeRepeat
 		long msTime = System.currentTimeMillis();			
-		if (oldPlayingNames.equals(names) &&
-				(Math.abs(msTime-oldMsTime) < 1000L * minSecsBeforeRepeat
-			  || timesToPlay <= 0 )
+		if (mOldPlayingNames.equals(names) &&
+				(Math.abs(msTime - mOldMsTime) < 1000L * minSecsBeforeRepeat
+			  || mTimesToPlay <= 0 )
 		) {
 			return;
 		}
 		//#debug debug
-		mLogger.debug(msTime-oldMsTime + " " + names + oldPlayingNames + timesToPlay);
-		oldMsTime = System.currentTimeMillis();
-		if (! oldPlayingNames.equals(names) ) {
-			timesToPlay = maxTimesToPlay;
+		mLogger.debug(msTime - mOldMsTime + " " + names + mOldPlayingNames + mTimesToPlay);
+		mOldMsTime = System.currentTimeMillis();
+		if (! mOldPlayingNames.equals(names) ) {
+			mTimesToPlay = maxTimesToPlay;
 			// if we would skip a speed limit alert by the new sound chain,
 			// put the alert sound at the beginning of the new sound chain to play
-			if (playingNameIndex<playingNames.length() ) {
+			if (mPlayingNameIndex < mPlayingNames.length() ) {
 				if(
-					playingSoundName.equals("SPEED_LIMIT")
-					|| playingNames.indexOf("SPEED_LIMIT", playingNameIndex) != -1
+					mPlayingSoundName.equals("SPEED_LIMIT")
+					|| mPlayingNames.indexOf("SPEED_LIMIT", mPlayingNameIndex) != -1
 				) {
 					names = "SPEED_LIMIT;" + names;
 				}
 			}
 			//#debug debug
-			mLogger.debug("new sound " + names + " timestoplay: " + timesToPlay + "   old sound: " + oldPlayingNames );
-			oldPlayingNames = names;
+			mLogger.debug("new sound " + names + " timestoplay: " + mTimesToPlay + 
+					"   old sound: " + mOldPlayingNames );
+			mOldPlayingNames = names;
 		}		
 		//#debug debug
 		mLogger.debug("play " + names);
 		synchronized(NoiseMaker.class) {
-			playingNameIndex = 0;
-			playingNames=names;
+			mPlayingNameIndex = 0;
+			mPlayingNames=names;
 		}
 		if (determineNextSoundFile()) {
-			playingNameIndex = 0;
+			mPlayingNameIndex = 0;
 			playNextSoundFile();
 		} else {
 			playSequence(names);
 		}
-		timesToPlay--;
+		mTimesToPlay--;
 		//#debug debug
-		mLogger.debug("timestoplay--:" + timesToPlay );
+		mLogger.debug("mTimesToPlay--:" + mTimesToPlay );
 //#endif
 	}
 	
 	// allow to play same sound again
 	public static void resetSoundRepeatTimes() {
-		oldPlayingNames = "";
+		mOldPlayingNames = "";
 		mLogger.debug("reset sound repeat");
 	}
 
@@ -246,19 +246,20 @@ public class NoiseMaker
 	private static String determineNextSoundName() {
 		synchronized (NoiseMaker.class) {
 			// end of names to play?
-			if (playingNameIndex>playingNames.length() ) {
+			if (mPlayingNameIndex > mPlayingNames.length() ) {
 				return null;
 			}
 			
-			int iEnd = playingNames.indexOf(';', playingNameIndex);
+			int iEnd = mPlayingNames.indexOf(';', mPlayingNameIndex);
 			if (iEnd == -1 ) {
-				iEnd = playingNames.length();
+				iEnd = mPlayingNames.length();
 			}
-			String nextSoundName = playingNames.substring(playingNameIndex, iEnd);
+			String nextSoundName = mPlayingNames.substring(mPlayingNameIndex, iEnd);
 			//#debug debug
-			mLogger.debug("Determined sound part: " + nextSoundName + "/" + playingNames + "/" + playingNameIndex + "/" + iEnd);
-			playingNameIndex = iEnd + 1;
-			playingSoundName = nextSoundName;
+			mLogger.debug("Determined sound part: " + nextSoundName + "/" + 
+					mPlayingNames + "/" + mPlayingNameIndex + "/" + iEnd);
+			mPlayingNameIndex = iEnd + 1;
+			mPlayingSoundName = nextSoundName;
 			return nextSoundName;
 		}
 	}
@@ -267,25 +268,26 @@ public class NoiseMaker
 	private static boolean determineNextSoundFile() {
 		String nextSoundName = determineNextSoundName();
 		if (nextSoundName == null) {
-			nextSoundFile = null;
+			mNextSoundFile = null;
 			return false;
 		}
 		
 		SoundDescription sDes = Legend.getSoundDescription(nextSoundName);
 		if (sDes != null) {
-			nextSoundFile = sDes.soundFile;
+			mNextSoundFile = sDes.soundFile;
 			//#debug debug
-			mLogger.debug("using soundfile " + nextSoundFile + " from description for " + nextSoundName);
+			mLogger.debug("using soundfile " + mNextSoundFile + " from description for " +
+					nextSoundName);
 		}
 		//#debug debug
 		else mLogger.debug("no description found for " + nextSoundName);
-		if (sDes == null || nextSoundFile == null) {
+		if (sDes == null || mNextSoundFile == null) {
 			if (getToneSequence(nextSoundName) != null) {
 				return false;
 			}
-			nextSoundFile = "/" + nextSoundName.toLowerCase() + ".amr";
+			mNextSoundFile = "/" + nextSoundName.toLowerCase() + ".amr";
 			//#debug debug
-			mLogger.debug("using soundname + extension as sound file: " + nextSoundFile);
+			mLogger.debug("using soundname + extension as sound file: " + mNextSoundFile);
 		}
 		return true;
 	}
@@ -293,11 +295,11 @@ public class NoiseMaker
 	private synchronized void createResourcePlayer(String soundFile) {
 		//#debug debug
 		mLogger.debug("createResourcePlayer for " + soundFile);
-		if (player!=null) {
+		if (mPlayer != null) {
 			//#debug debug
 			mLogger.debug("Closing old player");
-			player.close();
-			player = null;
+			mPlayer.close();
+			mPlayer = null;
 		}	
 		try {
 			InputStream is = getClass().getResourceAsStream(soundFile);
@@ -314,15 +316,15 @@ public class NoiseMaker
 				} else if (soundFile.toLowerCase().endsWith(".ogg") ) {
 	            	mediaType = "audio/x-ogg";
 				}
-				player = Manager.createPlayer(is, mediaType);
-				if (player!=null) {
+				mPlayer = Manager.createPlayer(is, mediaType);
+				if (mPlayer!=null) {
 					//#debug debug
 					mLogger.debug("created player for " + soundFile);
-					player.realize();
+					mPlayer.realize();
 					//#debug debug
 					mLogger.debug("realized player for " + soundFile);
-					player.addPlayerListener( this );
-					VolumeControl volCtrl = (VolumeControl) player.getControl("VolumeControl");
+					mPlayer.addPlayerListener( this );
+					VolumeControl volCtrl = (VolumeControl) mPlayer.getControl("VolumeControl");
 					if (volCtrl != null) {
 						volCtrl.setLevel(100);
 					}
@@ -334,20 +336,20 @@ public class NoiseMaker
 			else mLogger.debug("RESOURCE NOT FOUND: " + soundFile);
 		} catch (Exception ex) {
 	    	mLogger.exception("Failed to create resource player for " + soundFile, ex);
-			player = null;
+			mPlayer = null;
 		}
 	}
 	
 		
 	private synchronized void playNextSoundFile() {
 		determineNextSoundFile();
-		if (nextSoundFile != null) {
-			createResourcePlayer(nextSoundFile);
-			if (player != null) {
+		if (mNextSoundFile != null) {
+			createResourcePlayer(mNextSoundFile);
+			if (mPlayer != null) {
 				try {
-					player.start();
+					mPlayer.start();
 					//#debug debug
-					mLogger.debug("player for " + nextSoundFile + " started");
+					mLogger.debug("player for " + mNextSoundFile + " started");
 				} catch (Exception ex) {
 			    	mLogger.exception("Failed to play sound", ex);
 				}
