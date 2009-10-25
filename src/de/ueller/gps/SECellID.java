@@ -515,7 +515,7 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 						logger.error("Persisten Cell-id cache is corrupt"/*i:ErCellcacheCorrupt*/);
 					}
 				} else {
-					logger.error("Persisten Cell-id cache is corrupt"/*ErCellcacheCorrupt2);
+					logger.error("Persisten Cell-id cache is corrupt"/*i:ErCellcacheCorrupt2*/);
 				}
 			}
 			db.closeRecordStore();
