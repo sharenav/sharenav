@@ -85,7 +85,7 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 			this.receiverList.locationDecoderEnd();
 			return false;
 		}
-		this.receiverList.receiveMessage("BT Connected");
+		this.receiverList.receiveMessage("BT Connected"/*i:BTconnected*/);
 		
 		processorThread = new Thread(this, "Bluetooth Receiver Decoder");
 		processorThread.setPriority(Thread.MAX_PRIORITY);
@@ -108,7 +108,7 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 	abstract protected void process() throws IOException;
 
 	public void run() {
-		receiverList.receiveMessage("Start Bt GPS receiver");
+		receiverList.receiveMessage("Start Bt GPS receiver"/*i:StartBTreceiver*/);
 		// Eat the buffer content
 		try {
 			try {
@@ -125,8 +125,8 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 				logger.debug("Erased " + bytesReceived + " bytes");
 				bytesReceived = 100;
 			} catch (IOException e1) {
-				receiverList.receiveMessage("Closing: " + e1.getMessage());
-				close("Closing: " + e1.getMessage());
+				receiverList.receiveMessage("Closing: "/*i:BTClosing*/ + e1.getMessage());
+				close("Closing: "/*i:BTClosing2*/ + e1.getMessage());
 			}
 
 			byte timeCounter = 41;
@@ -147,7 +147,7 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 						// watchdog if no bytes received in 10 sec then exit
 						// thread
 						if (bytesReceived == 0) {
-							throw new IOException("No Data from GPS");
+							throw new IOException("No Data from GPS"/*i:BTNoData*/);
 						} else {
 							bytesReceived = 0;
 						}
@@ -168,7 +168,7 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 					if (!autoReconnectBtConnection()) {
 						logger.info("GPS bluethooth could not reconnect");
 						receiverList.receiveMessage("Closing: " + e.getMessage());
-						close("Closed: " + e.getMessage());
+						close("Closed: "/*i:BTAutoClose*/ + e.getMessage());
 					} else {
 						logger.info("GPS bluetooth reconnect was successful");
 						return;
@@ -188,12 +188,12 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 			
 		} catch (OutOfMemoryError oome) {
 			closed = true;
-			logger.fatal("BtReceiverInput thread ran out of memory: "
+			logger.fatal("BtReceiverInput thread ran out of memory: "/*i:ExOOM*/
 					+ oome.getMessage());
 			oome.printStackTrace();
 		} catch (Exception e) {
 			closed = true;
-			logger.fatal("BtReceiverInput thread crashed unexpectedly: "
+			logger.fatal("BtReceiverInput thread crashed unexpectedly: "/*i:ExCrashUnexp*/
 					+ e.getMessage());
 			e.printStackTrace();
 		} finally {
@@ -241,7 +241,7 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 			try {
 				rawDataLogger.close();
 			} catch (IOException e) {
-				logger.exception("Couldn't close raw GPS logger", e);
+				logger.exception("Couldn't close raw GPS logger"/*i:ExCloserawGPS*/, e);
 			}
 			rawDataLogger = null;
 		}
@@ -280,11 +280,11 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 			/**
 			 * The application was not permitted to connect to bluetooth  
 			 */
-			receiverList.receiveMessage("Connecting to BT not permitted");
+			receiverList.receiveMessage("Connecting to BT not permitted"/*i:AlBTConnectNotPermit*/);
 			return false;
 			
 		} catch (IOException e) {
-			receiverList.receiveMessage("err BT:"+e.getMessage());
+			receiverList.receiveMessage("err BT:"/*i:AlErr*/+e.getMessage());
 			return false;
 		}
 		return true;
@@ -358,7 +358,7 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 			return true;
 		}
 		if (!closed)
-			logger.error("Lost connection to GPS and failed to reconnect");
+			logger.error("Lost connection to GPS and failed to reconnect"/*i:ErLostConnection*/);
 		return false;
 	}
 
