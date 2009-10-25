@@ -25,6 +25,8 @@ import javax.microedition.lcdui.Command;
 import javax.microedition.rms.InvalidRecordIDException;
 import javax.microedition.rms.RecordStore;
 
+import net.sourceforge.util.zip.ZipFile;
+
 import de.ueller.gps.tools.BufferedReader;
 import de.ueller.gps.tools.StringTokenizer;
 import de.ueller.gps.tools.intTree;
@@ -308,6 +310,7 @@ public class Configuration {
 	
 	private static boolean mapFromJar;
 	private static String mapFileUrl;
+	private static ZipFile mapZipFile;
 
 	private static String smsRecipient; 
 	private static int speedTolerance = 0; 
@@ -1038,26 +1041,34 @@ public class Configuration {
 	}
 		
 	public static InputStream getMapResource(String name) throws IOException {
-		InputStream is;
+		InputStream is = null;
 		if (mapFromJar) {
 			is = QueueReader.class.getResourceAsStream(name);			
-		} else {			
+		} else {
 			//#if polish.api.fileconnection
-			if (mapFileUrl.endsWith("/")) {
-				mapFileUrl = mapFileUrl.substring(0, mapFileUrl.length() - 1);
+			
+			try { 
+				if (mapFileUrl.endsWith("/")) { 
+					// directory mode 
+					name = mapFileUrl + name.substring(1);
+					//#debug info
+					logger.info("Opening file from filesystem: " + name);
+					FileConnection fc = (FileConnection) Connector.open(name, Connector.READ); 
+					is = fc.openInputStream(); 
+				} 
+				else { 
+					// zipfile mode 
+					if (mapZipFile == null) 
+						mapZipFile = new ZipFile(mapFileUrl, -1);
+					//#debug info
+					logger.info("Opening file from zip-file: " + name);
+					is = mapZipFile.getInputStream(mapZipFile.getEntry(name.substring(1))); 
+				} 
+			} catch (Exception e) { 
+				//#debug info 
+				logger.info("Failed to open: " + name); 
+				throw new IOException(e.getMessage());
 			}
-			String url = mapFileUrl + name;
-			//#debug info
-			logger.info("Opening file: " + url);
-			Connection session = Connector.open(url, Connector.READ);
-			FileConnection fileCon = (FileConnection) session;			
-			if (fileCon == null) {
-				//#debug info
-				logger.info("Couldn't open url: " + url);
-				throw new IOException("Couldn't open url " + url);				
-			}
-
-			is = fileCon.openInputStream();				
 			//#else
 			//This should never happen.
 			is = null;
@@ -1181,6 +1192,27 @@ public class Configuration {
 		return projTypeDefault;
 	}
 	
+	public static boolean getDeviceSupportsJSR135() {
+		//#if polish.api.mmapi
+		String jsr135Version = null;
+		try {
+			jsr135Version = System.getProperty("video.snapshot.encodings");
+		} catch (RuntimeException re) {
+			/**
+			 * Some phones throw exceptions if trying to access properties that don't
+			 * exist, so we have to catch these and just ignore them.
+			 */
+		} catch (Exception e) {
+			/**
+			 * See above 
+			 */				
+		}
+		if (jsr135Version != null && jsr135Version.length() > 0) {
+			return true;
+		}
+		//#endif
+		return false;
+	}
 	public static boolean getDeviceSupportsJSR179() {
 		//#if polish.api.locationapi
 		String jsr179Version = null;

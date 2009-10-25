@@ -172,8 +172,8 @@ public class FsDiscover
 				// Then we assume it must be an
 				// Ok selection
 				url = (String) urlList.elementAt(list.getSelectedIndex());
-				parent.show();
 				sl.selectedFile(url);
+				parent.show();
 				return true;
 			}
 
@@ -187,16 +187,16 @@ public class FsDiscover
 				//#debug debug
 				logger.debug("found file: " + fileName);
 				// add files too if not choosedir
-				if (!chooseDir || fileName.endsWith("/")) {
-					// for files check also if suffix matches
-					if (chooseDir
-							|| fileName.endsWith("/")
-							|| (suffix.length() > 0 && fileName.toLowerCase()
-									.endsWith(suffix.toLowerCase()))) {
-						// System.out.println("Adding " + fileName);
-						list.append(fileName, null);
-						urlList.addElement(url + fileName);
-					}
+				if (fileName.endsWith("/") ||
+						!chooseDir &&
+						( suffix == null ||	fileName.toLowerCase()
+								.endsWith(suffix.toLowerCase())
+						)
+					)
+				{
+					// System.out.println("Adding " + fileName);
+					list.append(fileName, null);
+					urlList.addElement(url + fileName);
 				}
 			}
 			fc.close();

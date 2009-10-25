@@ -638,7 +638,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 					initialDir = (rawLogDir == null) ? "" : rawLogDir; 
 					break;			
 				case STATE_MAP:
-					title="Map Directory";					 
+					title="Map ZipFile or Directory";					 
 					// get initialDir from form 
 					String url=mapSrc.getString(1); 
 					// skip "Filesystem: " 
@@ -658,7 +658,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 			if(initialDir!=null && !initialDir.toLowerCase().startsWith("file:///")) { 
 				initialDir=null; 
 			} 
-			FsDiscover fsd = new FsDiscover(this,this,initialDir,true,"",title);
+			FsDiscover fsd = new FsDiscover(this,this,initialDir,(state==STATE_MAP)?false:true,"",title);
 			fsd.show();						
 			//#else
 			//logger.error("Files system support is not compiled into this version");
@@ -801,8 +801,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				} 
 				Configuration.setMapUrl(url); 
 				state = STATE_ROOT;
-				this.show();
-				logger.fatal("Need to restart GpsMid, otherwise map is in an inconsistant state");
+				show();
+				logger.fatal("Need to restart GpsMid, otherwise map is in an inconsistant state"+url+Configuration.getMapUrl());
 				break;			
 			case STATE_DISPOPT:
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_NIGHT_MODE,
@@ -1104,9 +1104,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				state = STATE_GPX;
 				break;
 			case MENU_ITEM_MAP_SRC: // Map Source 
-				initMapSource();
-				mapSrc.setSelectedIndex(Configuration.usingBuiltinMap()?0:1, true); 
+				initMapSource(); 
 				mapSrc.set(1, "Filesystem: " + ( (Configuration.getMapUrl()==null)?"<Please select map directory first>":Configuration.getMapUrl() ), null);
+				mapSrc.setSelectedIndex(Configuration.usingBuiltinMap()?0:1, true);
 				GpsMid.getInstance().show(menuSelectMapSource);
 				state = STATE_MAP;
 				break;			
@@ -1303,7 +1303,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 			break;
 		//#if polish.api.fileconnection
 		case STATE_MAP:
-			mapSrc.set(1, "Filesystem: " + url_trunc, null);
+			mapSrc.set(1, "Filesystem: " + url, null);
 			mapSrc.setSelectedIndex(1, true);
 			//As the Filesystem chooser has called the show()
 			//method of this class, it currently shows the root
