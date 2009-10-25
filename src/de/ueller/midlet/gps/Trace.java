@@ -2387,17 +2387,17 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	public void setRoute(Vector route) {
 		synchronized(this) {
 			this.route = route;
-			if (route!=null) {
-				if (ri==null) {
-					ri = new RouteInstructions(this);
-				}
-				ri.newRoute(route, target);
-				oldRecalculationTime = System.currentTimeMillis();
-				RouteInstructions.resetOffRoute(route, center);
-			}
-			routeCalc=false;
-			routeEngine=null;
 		}
+		if (this.route!=null) {
+			if (ri==null) {
+				ri = new RouteInstructions(this);
+			}
+			ri.newRoute(this.route, target);
+			oldRecalculationTime = System.currentTimeMillis();
+			RouteInstructions.resetOffRoute(this.route, center);
+		}
+		routeCalc=false;
+		routeEngine=null;
 		try {
 			if ((Configuration.isStopAllWhileRouteing())&&(imageCollector == null)){
 				startImageCollector();
