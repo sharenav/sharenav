@@ -1399,20 +1399,30 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		if (gpx != null) {
 			gpx.saveTrk(true);
 		}
+		//#debug debug
+		logger.debug("Shutdown: stopImageCollector");
 		stopImageCollector();
 		if (namesThread != null) {
+			//#debug debug
+			logger.debug("Shutdown: namesThread");
 			namesThread.stop();
 			namesThread = null;
 		}
 		if (dictReader != null) {
+			//#debug debug
+			logger.debug("Shutdown: dictReader");
 			dictReader.shutdown();
 			dictReader = null;
 		}
 		if (tileReader != null) {
+			//#debug debug
+			logger.debug("Shutdown: tileReader");
 			tileReader.shutdown();
 			tileReader = null;
 		}
 		if (locationProducer != null){
+			//#debug debug
+			logger.debug("Shutdown: locationProducer");
 			locationProducer.close();
 		}
 
