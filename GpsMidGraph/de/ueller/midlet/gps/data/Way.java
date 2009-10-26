@@ -22,6 +22,7 @@ import de.ueller.gpsMid.mapData.Tile;
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.RouteInstructions;
+import de.ueller.midlet.gps.RouteLineProducer;
 import de.ueller.midlet.gps.routing.ConnectionWithNode;
 import de.ueller.midlet.gps.routing.TravelMode;
 import de.ueller.midlet.gps.Trace;
@@ -667,7 +668,7 @@ public class Way extends Entity{
 			 * check if way matches to one or more route connections,
 			 * so we can highlight the route line parts 
 			 */  
-			if (RouteInstructions.isWayIdUsedByRouteLine(getWayId(t)) ) {
+			if (RouteLineProducer.isWayIdUsedByRouteLine(getWayId(t)) ) {
 				Vector route=pc.trace.getRoute();
 				ConnectionWithNode c;
 				if (route!=null && route.size()!=0) { 

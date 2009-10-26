@@ -2375,7 +2375,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		RouteInstructions.initialRecalcDone = false;
 		RouteInstructions.icCountOffRouteDetected = 0;
 		RouteInstructions.routeInstructionsHeight = 0;
-		RouteInstructions.routeLineTree = null;
+		RouteLineProducer.routeLineTree = null;
 		setRoute(null);
 		setRouteNodes(null);
 	}
