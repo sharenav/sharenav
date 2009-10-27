@@ -115,6 +115,8 @@ public class RouteInstructions {
 	private static final int CENTERPOS = Graphics.HCENTER|Graphics.VCENTER;
 	private static Image scaledPict = null;
 
+	private RouteLineProducer rlp;
+	
 	private static String nameNow = null;
 	private static String nameThen = null;
 
@@ -154,7 +156,8 @@ public class RouteInstructions {
 		againstDirectionDetectedTime = 0;
 		GpsMid.mNoiseMaker.resetSoundRepeatTimes();		
 		try {
-			RouteLineProducer.determineRoutePath(trace, route);
+			rlp = new RouteLineProducer();
+			rlp.determineRoutePath(trace, route);
 			createRouteInstructions();
 			outputRoutePath();
 		} catch (Exception e) {
@@ -226,7 +229,7 @@ public class RouteInstructions {
 					// there's a route so no calculation required
 					routeRecalculationRequired=false;
 		
-					for (int i=1; i<route.size();i++){
+					for (int i=1; i<RouteLineProducer.maxRouteElement;i++){
 						c = (ConnectionWithNode) route.elementAt(i);
 						if (c == null){
 							logger.error("show Route got null connection");
@@ -637,25 +640,28 @@ public class RouteInstructions {
 					e.setText("off:" + (dstToRoutePath == Integer.MAX_VALUE ? "???" : "" + dstToRoutePath) + "m");
 				}
 				e = Trace.tl.ele[TraceLayout.ROUTE_DISTANCE];
-				e.setText(" " + (int) remainingDistance + "m" +
-						(
-						 Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_ROUTE_DURATION_IN_MAP)?
-						 " " + ((remainingDuration >= 600)?remainingDuration / 600 + "min": remainingDuration / 10 + "s")
-						 :""
-						)
-						 );
-				e = Trace.tl.ele[TraceLayout.ROUTE_DURATION];
-				
-				if (Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_ETA_IN_MAP)) {
-
-					Calendar currentTime = Calendar.getInstance();
-					currentTime.setTime( new Date( System.currentTimeMillis() + remainingDuration * 100) );		
-					e = Trace.tl.ele[TraceLayout.ETA];
-					e.setText(
-						currentTime.get(Calendar.HOUR_OF_DAY) + ":"  
-						+ HelperRoutines.formatInt2(currentTime.get(Calendar.MINUTE)));
-					// if ETA is visible, position OFFROUTE above ETA will work
-					Trace.tl.ele[TraceLayout.ROUTE_OFFROUTE].setVRelative(e);
+				if (RouteLineProducer.isRunning()) {
+					e.setText(">" + (int) remainingDistance + "m");
+				} else {
+					e.setText(" " + (int) remainingDistance + "m" +
+							(
+							 Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_ROUTE_DURATION_IN_MAP)?
+							 " " + ((remainingDuration >= 600)?remainingDuration / 600 + "min": remainingDuration / 10 + "s")
+							 :""
+							)
+							 );
+					
+					if (Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_ETA_IN_MAP)) {
+	
+						Calendar currentTime = Calendar.getInstance();
+						currentTime.setTime( new Date( System.currentTimeMillis() + remainingDuration * 100) );		
+						e = Trace.tl.ele[TraceLayout.ETA];
+						e.setText(
+							currentTime.get(Calendar.HOUR_OF_DAY) + ":"  
+							+ HelperRoutines.formatInt2(currentTime.get(Calendar.MINUTE)));
+						// if ETA is visible, position OFFROUTE above ETA will work
+						Trace.tl.ele[TraceLayout.ROUTE_OFFROUTE].setVRelative(e);
+					}
 				}
 			}
 			// Route instruction sound output
@@ -882,23 +888,25 @@ public class RouteInstructions {
 		ConnectionWithNode c2;
 		int nextStartBearing;
 		int iAreaStart = 0;
-		
+		int iInstructionStart = 0;
+
 		if (route.size() < 3) {
 			return;
 		}
 		for (int i=0; i<route.size(); i++){
-			c = (ConnectionWithNode) route.elementAt(i);
+			iInstructionStart = i;
+			c = getRouteElement(i);
 
 			short rfCurr=c.wayRouteFlags;
 			short rfPrev=0;
 			if (i > 0) {
-				c2 = (ConnectionWithNode) route.elementAt(i-1);
+				c2 = getRouteElement(i-1);
 				rfPrev=c2.wayRouteFlags;
 			}			
 			short rfNext=0;
 			nextStartBearing = 0;
 			if (i < route.size()-1) {
-				c2 = (ConnectionWithNode) route.elementAt(i+1);
+				c2 = getRouteElement(i+1);
 				rfNext=Legend.getWayDescription(c2.wayType).routeFlags;
 				// nextStartBearing = c2.startBearing;
 				nextStartBearing = c2.wayConStartBearing;
@@ -934,7 +942,7 @@ public class RouteInstructions {
 			if ( isAreaEnd(rfPrev, rfCurr) ) {
 				ri = RI_AREA_CROSSED;
 				// calculate distance for area crossing as the crow flies
-				ConnectionWithNode cAreaStart = (ConnectionWithNode) route.elementAt(iAreaStart);
+				ConnectionWithNode cAreaStart = getRouteElement(iAreaStart);
 				cAreaStart.wayDistanceToNext = ProjMath.getDistance(cAreaStart.to.lat, cAreaStart.to.lon, c.to.lat, c.to.lon);
 			}
 
@@ -945,7 +953,7 @@ public class RouteInstructions {
 				ri = RI_1ST_EXIT;	
 				int i2;
 				for (i2=i+1; i2<route.size()-1 && (ri < RI_6TH_EXIT); i2++) {
-					c2 = (ConnectionWithNode) route.elementAt(i2);
+					c2 = getRouteElement(i2);
 					if ( (c2.wayRouteFlags & Legend.ROUTE_FLAG_ROUNDABOUT) == 0 ) { 
 						break;
 					}
@@ -957,7 +965,7 @@ public class RouteInstructions {
 					}
 				}
 				for (int i3=i2-1; i3>i; i3--) {
-					c2 = (ConnectionWithNode) route.elementAt(i3);
+					c2 = getRouteElement(i3);
 					c2.wayRouteInstruction=ri;					
 				}
 				i=i2-1;				
@@ -974,34 +982,70 @@ public class RouteInstructions {
 				}
 			}
 			c.wayRouteInstruction = ri;
+			combineCloseInstructions(iInstructionStart, i);
+			makeArrowsQuiet(iInstructionStart, i);
 		}
+		// combine
+		combineCloseInstructions(iInstructionStart, route.size()-2);
+		makeArrowsQuiet(iInstructionStart, route.size()-2);
 		
-		c = (ConnectionWithNode) route.elementAt(route.size()-1);
+		c = getRouteElement(route.size()-1);
 		c.wayRouteInstruction = RI_TARGET_REACHED;				
 		
-		// combine instructions that are closer than 25 m to the previous one into single instructions
-		ConnectionWithNode cPrev = (ConnectionWithNode) route.elementAt(1);
-		for (int i=2; i<route.size()-1; i++){
+		// reset arrow markers
+		iNamedArrow = -1;
+		iInstructionSaidArrow = -1;
+		iPrepareInstructionSaidArrow = -1;
+		iFollowStreetInstructionSaidArrow = -1;
+	}
+	
+	private ConnectionWithNode getRouteElement(int i) {
+		if (i <= RouteLineProducer.maxRouteElement) {
+			return (ConnectionWithNode) route.elementAt(i);
+		}
+		rlp.waitForRouteLine(i);
+		return (ConnectionWithNode) route.elementAt(i);
+	}
+	
+
+	/** combine instructions that are closer than 25 m to the previous one into single instructions */
+	private void combineCloseInstructions(int iInstructionStart, int iInstructionCurrent) {
+		if (iInstructionStart < 2) {
+			return;
+		}		
+		ConnectionWithNode c;
+		ConnectionWithNode cPrev = (ConnectionWithNode) route.elementAt(iInstructionStart-1);
+		for (int i = iInstructionStart; i <= iInstructionCurrent; i++){
 			c = (ConnectionWithNode) route.elementAt(i);
 			// skip connections that are closer than 25 m to the previous one
 			if( (i<route.size()-1 && ProjMath.getDistance(c.to.lat, c.to.lon, cPrev.to.lat, cPrev.to.lon) < 25)
-				// only combine direction instructions
-				&& (cPrev.wayRouteInstruction <= RI_HARD_LEFT && c.wayRouteInstruction <= RI_HARD_LEFT)
+			// only combine direction instructions
+			&& (cPrev.wayRouteInstruction <= RI_HARD_LEFT && c.wayRouteInstruction <= RI_HARD_LEFT)
 			)	{
 				c.wayRouteInstruction = RI_SKIPPED;
 				c.wayRouteFlags |= Legend.ROUTE_FLAG_QUIET;
 				ConnectionWithNode cNext = (ConnectionWithNode) route.elementAt(i+1);
 				// cPrev.wayRouteInstruction = convertTurnToRouteInstruction( (cNext.startBearing - cPrev.endBearing) * 2 );
-				cPrev.wayRouteInstruction = convertTurnToRouteInstruction( (cNext.wayConStartBearing - cPrev.wayConEndBearing) * 2 );				
+				cPrev.wayRouteInstruction = convertTurnToRouteInstruction( (cNext.wayConStartBearing - cPrev.wayConEndBearing) * 2 );
 			}
 			cPrev=c;
 		}
-		
+	}
+	
+	/**
+	 *  replace redundant straight-ons and direction arrow with same name by quiet arrows
+	 *  and add way distance to starting arrow of the street
+	 */
+	private void makeArrowsQuiet(int iInstructionStart, int iInstructionCurrent) {
+		if (iInstructionStart < 2) {
+			return;
+		}
 		// replace redundant straight-ons and direction arrow with same name by quiet arrows and add way distance to starting arrow of the street
 		ConnectionWithNode cStart;
+		ConnectionWithNode c;
 		ConnectionWithNode cNext;
 		int oldNameIdx = -2;
-		for (int i=1; i<route.size()-1; i++){
+		for (int i = iInstructionStart - 1; i < iInstructionCurrent; i++){
 			c = (ConnectionWithNode) route.elementAt(i);
 			cStart = (ConnectionWithNode) route.elementAt(i-1);
 			oldNameIdx = cStart.wayNameIdx;
@@ -1012,23 +1056,12 @@ public class RouteInstructions {
 			if ( (c.wayRouteFlags & Legend.ROUTE_FLAG_COMING_FROM_ONEWAY) > 0) {
 				maxToRoutableWays--;
 			}
-			while (	i < route.size()-1
+			while (	i < iInstructionCurrent
 					&&
 					(
 						// while straight on
 						c.wayRouteInstruction == RI_STRAIGHT_ON
 						||
-//						(
-//							// or no alternative to go to
-//							(
-//							 	c.numToRoutableWays <= maxToRoutableWays
-//								&& c.wayRouteInstruction <= RI_HARD_LEFT
-//								&& ((c.wayRouteFlags & Legend.ROUTE_FLAG_BEAR_LEFT+Legend.ROUTE_FLAG_BEAR_RIGHT) == 0)
-//								// and the following arrow must not be a skipped arrow
-//								&& cNext.wayRouteInstruction != RI_SKIPPED
-//							)
-//						)
-//						|| 
 						// or named direction arrow with same name and way type as previous one but not multiple same named options
 						(
 							(
@@ -1059,17 +1092,11 @@ public class RouteInstructions {
 				c.wayRouteFlags |= Legend.ROUTE_FLAG_QUIET;
 				i++;
 				c = cNext;
-				if (i < route.size()-1) {
+				if (i < iInstructionCurrent) {
 					cNext = (ConnectionWithNode) route.elementAt(i+1);
 				}
 			}			
 		}
-		
-		// reset arrow markers
-		iNamedArrow = -1;
-		iInstructionSaidArrow = -1;
-		iPrepareInstructionSaidArrow = -1;
-		iFollowStreetInstructionSaidArrow = -1;
 	}
 	
 	

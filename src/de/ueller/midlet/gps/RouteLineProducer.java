@@ -17,43 +17,81 @@ import de.ueller.midlet.gps.routing.ConnectionWithNode;
 import de.ueller.midlet.gps.tile.PaintContext;
 
 
-public class RouteLineProducer {
+public class RouteLineProducer implements Runnable {
+	private final static Logger logger = Logger.getInstance(RouteLineProducer.class,Logger.DEBUG);
+
+	private static volatile boolean running = false;
+	private static volatile boolean abort = false;
+
+	/** the index of the route element until which the route line is produced and thus we can give route instructions for */
+	public static volatile int maxRouteElement;
+
+	private static Trace trace;
+	public static Vector route;
+	
 	public static intTree routeLineTree;
 	public final static Boolean trueObject = new Boolean(true);
-	private static int connsFound = 0;
-	private static Trace trace;
-
 	
-	public static void determineRoutePath(Trace trace, Vector route) throws Exception {
-		RouteLineProducer.routeLineTree = new intTree();
+	private static int connsFound = 0;
+	public static volatile int notifyWhenAtElement = Integer.MAX_VALUE;
+
+
+	public void determineRoutePath(Trace trace, Vector route) throws Exception {
+		RouteLineProducer.maxRouteElement = 0;
+		routeLineTree = new intTree();
 		RouteLineProducer.trace = trace;
-		PaintContext pc = new PaintContext(trace, null);
-		connsFound=0;
-		float routeLen=0f;
-		long startTime = System.currentTimeMillis();
-		pc.searchConPrevWayRouteFlags = 0;
-		if (route != null && route.size() > 1){
-//			LayoutElement e = trace.tl.ele[TraceLayout.ROUTE_DISTANCE];
-			for (int i=0; i<route.size()-1; i++){
-				//#debug debug
-				logger.debug("determineRoutePath " + i + "/" + (route.size() - 2) );
-				routeLen += searchConnection2Ways(pc, route, i);
-//				e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ROUTE_ROUTELINE]);
-//				e.setText("" + (int) routeLen + "m");
-//				e.paint(trace.pc.g);
-//				if (i % 10 == 0) {
-//					trace.repaint();
-//				}
-			}
-//			e.setBackgroundColor(Legend.COLORS[Legend.COLOR_RI_DISTANCE_BACKGROUND]);
-			//parent.alert ("Connection2Ways", "found: " + connsFound + "/" + (route.size()-1) + " in " + (long)(System.currentTimeMillis() - startTime) + " ms", 3000);
-			//#debug debug
-			logger.debug("Connection2Ways found: " + connsFound + "/" + (route.size()-1) + " in " + (long)(System.currentTimeMillis() - startTime) + " ms");
-			trace.receiveMessage ("Route: " + (int) routeLen + "m" + (connsFound==(route.size()-1)?"":" (" + connsFound + "/" + (route.size()-1) + ")"));
-		}
+		RouteLineProducer.route = route;		
+		new Thread(this, "RouteLineProducer").start();
 	}
+	
+	public void run() {
+		// wait for any previous RouteLineProducer to complete (i.e. when previous routing was cancelled by the user)
+		while(RouteLineProducer.running) {
+			try {
+				Thread.sleep(500);
+			} catch(InterruptedException e) {
+				;
+			}
+		}
+		RouteLineProducer.abort = false;
+		RouteLineProducer.running = true;
 		
-	public static float searchConnection2Ways(PaintContext pc, Vector route, int iConnFrom) throws Exception {		
+		try {
+			PaintContext pc = new PaintContext(trace, null);
+			connsFound=0;
+			float routeLen=0f;
+			long startTime = System.currentTimeMillis();
+			pc.searchConPrevWayRouteFlags = 0;
+			if (route != null && route.size() > 1){
+	//			LayoutElement e = trace.tl.ele[TraceLayout.ROUTE_DISTANCE];
+				for (int i=0; i<route.size()-1 && !RouteLineProducer.abort; i++){
+					//#debug debug
+					logger.debug("determineRoutePath " + i + "/" + (route.size() - 2) );
+					routeLen += searchConnection2Ways(pc, i);
+					RouteLineProducer.maxRouteElement = i;
+					// when route line is produced until notifyWhenAtElement, wake up getRouteElement()
+					if (i >= notifyWhenAtElement) {
+						synchronized (this) {
+							//#debug debug
+							logger.debug("notifying " + i );
+							notifyWhenAtElement = Integer.MAX_VALUE;
+							notify();
+						}
+					}
+				}
+				maxRouteElement = route.size();
+				//#debug debug
+				logger.debug("Connection2Ways found: " + connsFound + "/" + (route.size()-1) + " in " + (long)(System.currentTimeMillis() - startTime) + " ms");
+				trace.receiveMessage ("Route: " + (int) routeLen + "m" + (connsFound==(route.size()-1)?"":" (" + connsFound + "/" + (route.size()-1) + ")"));
+			}
+		} catch (Exception e) {
+			;
+		}
+		RouteLineProducer.running = false;
+	}
+
+			
+	public static float searchConnection2Ways(PaintContext pc, int iConnFrom) throws Exception {		
 		ConnectionWithNode cFrom;
 		ConnectionWithNode cTo;
 		cFrom = (ConnectionWithNode) route.elementAt(iConnFrom);
@@ -174,5 +212,35 @@ public class RouteLineProducer {
 		return (routeLineTree != null && routeLineTree.get(wayId) != null);
 	}
 
-}
+	/** abort the current route line production */
+	public static void abort() {
+		if (RouteLineProducer.running) {
+			RouteLineProducer.abort = true;
+		}
+	}
+	
+	/** returns if a route line is currently produced */
+	public static boolean isRunning() {
+		return RouteLineProducer.running;
+	}
+	
+	/** wait until route line is produced up to route element at index i */
+	public void waitForRouteLine(int i) {
+		//#debug debug
+		logger.debug("waitForRouteLine:" + i + ", maxRouteElement: " + maxRouteElement);
+		while (i >= maxRouteElement) {
+			synchronized (this) {
+				try {
+					notifyWhenAtElement = i;
+					wait(5000);
+					//#debug debug
+					logger.debug(" routeLineWait timed out waiting for: " + i + " maxRouteElement: " + maxRouteElement);
+				} catch(InterruptedException e) {
+					//#debug debug
+					logger.debug(" routeLineWait notified " + i);
+				}
+			}
+		}
+	}
 
+}

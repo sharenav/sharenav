@@ -9,6 +9,7 @@ import de.ueller.gps.tools.intTree;
 import de.ueller.gpsMid.mapData.RouteBaseTile;
 import de.ueller.gpsMid.mapData.Tile;
 import de.ueller.midlet.gps.Logger;
+import de.ueller.midlet.gps.RouteLineProducer;
 import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.Node;
@@ -912,6 +913,7 @@ public class Routing implements Runnable {
 
 	public static void cancelRouting() {
 		Routing.stopRouting = true;
+		RouteLineProducer.abort();
 	}
 
 }

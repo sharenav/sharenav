@@ -1612,6 +1612,8 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				tl.ele[TraceLayout.ALTITUDE].setText(Integer.toString(altitude) + "m");				
 			}
 
+			// use routeLine Color for distance while route line is produced  
+			Trace.tl.ele[TraceLayout.ROUTE_DISTANCE].setBackgroundColor(Legend.COLORS[RouteLineProducer.isRunning()?Legend.COLOR_ROUTE_ROUTELINE:Legend.COLOR_RI_DISTANCE_BACKGROUND]);
 			
 			if (route == null && target != null && Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_AIR_DISTANCE_IN_MAP)) {				
 				e = Trace.tl.ele[TraceLayout.ROUTE_DISTANCE];
