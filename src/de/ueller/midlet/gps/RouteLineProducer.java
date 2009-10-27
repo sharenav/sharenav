@@ -41,7 +41,9 @@ public class RouteLineProducer implements Runnable {
 		routeLineTree = new intTree();
 		RouteLineProducer.trace = trace;
 		RouteLineProducer.route = route;		
-		new Thread(this, "RouteLineProducer").start();
+		Thread producerThread = new Thread(this, "RouteLineProducer");
+		producerThread.setPriority(Thread.MIN_PRIORITY);
+		producerThread.start();
 	}
 	
 	public void run() {
