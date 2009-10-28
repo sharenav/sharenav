@@ -2401,7 +2401,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		routeCalc=false;
 		routeEngine=null;
 		try {
-			if ((Configuration.isStopAllWhileRouteing())&&(imageCollector == null)){
+			if (imageCollector == null) {
 				startImageCollector();
 				// imageCollector thread starts up suspended,
 				// so we need to resume it
