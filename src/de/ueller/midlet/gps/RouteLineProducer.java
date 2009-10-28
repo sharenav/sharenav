@@ -20,7 +20,6 @@ import de.ueller.midlet.gps.tile.PaintContext;
 public class RouteLineProducer implements Runnable {
 	private final static Logger logger = Logger.getInstance(RouteLineProducer.class,Logger.DEBUG);
 
-	private static volatile boolean running = false;
 	private static volatile boolean abort = false;
 
 	/** the index of the route element until which the route line is produced and thus we can give route instructions for */
@@ -34,30 +33,22 @@ public class RouteLineProducer implements Runnable {
 	
 	private static int connsFound = 0;
 	public static volatile int notifyWhenAtElement = Integer.MAX_VALUE;
-
+	private static volatile Thread producerThread = null;
+	
 
 	public void determineRoutePath(Trace trace, Vector route) throws Exception {
+		// terminate any previous RouteLineProducers
+		abort();
 		RouteLineProducer.maxRouteElement = 0;
 		routeLineTree = new intTree();
 		RouteLineProducer.trace = trace;
 		RouteLineProducer.route = route;		
-		Thread producerThread = new Thread(this, "RouteLineProducer");
+		producerThread = new Thread(this, "RouteLineProducer");
 		producerThread.setPriority(Thread.MIN_PRIORITY);
 		producerThread.start();
 	}
 	
-	public void run() {
-		// wait for any previous RouteLineProducer to complete (i.e. when previous routing was cancelled by the user)
-		while(RouteLineProducer.running) {
-			try {
-				Thread.sleep(500);
-			} catch(InterruptedException e) {
-				;
-			}
-		}
-		RouteLineProducer.abort = false;
-		RouteLineProducer.running = true;
-		
+	public void run() {	
 		try {
 			PaintContext pc = new PaintContext(trace, null);
 			connsFound=0;
@@ -81,15 +72,27 @@ public class RouteLineProducer implements Runnable {
 						}
 					}
 				}
-				maxRouteElement = route.size();
-				//#debug debug
-				logger.debug("Connection2Ways found: " + connsFound + "/" + (route.size()-1) + " in " + (long)(System.currentTimeMillis() - startTime) + " ms");
-				trace.receiveMessage ("Route: " + (int) routeLen + "m" + (connsFound==(route.size()-1)?"":" (" + connsFound + "/" + (route.size()-1) + ")"));
+				if (!RouteLineProducer.abort) {
+					maxRouteElement = route.size();
+					//#debug debug
+					logger.debug("Connection2Ways found: " + connsFound + "/" + (route.size()-1) + " in " + (long)(System.currentTimeMillis() - startTime) + " ms");
+					trace.receiveMessage ("Route: " + (int) routeLen + "m" + (connsFound==(route.size()-1)?"":" (" + connsFound + "/" + (route.size()-1) + ")"));
+				}
+				//#mdebug debug
+				else {
+					logger.debug("EouteLineProducer aborted at " + connsFound + "/" + (route.size()-1));					
+				}
+				//#enddebug
 			}
 		} catch (Exception e) {
-			;
+			//#debug error
+			logger.error("RouteLineProducer crashed with " +  e.getMessage());
+			e.printStackTrace();
 		}
-		RouteLineProducer.running = false;
+		producerThread = null;
+		synchronized (this) {
+			notifyAll();
+		}
 	}
 
 			
@@ -205,7 +208,9 @@ public class RouteLineProducer implements Runnable {
 				return 0f;
 			}
 		}
-		routeLineTree.put(pc.conWayCombinedFileAndWayNr, trueObject);
+		if (!RouteLineProducer.abort) {
+			routeLineTree.put(pc.conWayCombinedFileAndWayNr, trueObject);
+		}
 		return cFrom.wayDistanceToNext;
 	}	
 
@@ -214,16 +219,29 @@ public class RouteLineProducer implements Runnable {
 		return (routeLineTree != null && routeLineTree.get(wayId) != null);
 	}
 
+	public static boolean isRouteLineProduced() {
+		return (route != null && maxRouteElement == route.size());
+	}
+	
+	
 	/** abort the current route line production */
-	public static void abort() {
-		if (RouteLineProducer.running) {
-			RouteLineProducer.abort = true;
+	
+	public synchronized void abort() {
+		RouteLineProducer.abort = true;
+		notifyAll();
+		try {
+			while ((producerThread != null) && (producerThread.isAlive())) {
+				wait(1000);
+			}
+		} catch (InterruptedException e) {
+			//Nothing to do
 		}
+		RouteLineProducer.abort = false;
 	}
 	
 	/** returns if a route line is currently produced */
 	public static boolean isRunning() {
-		return RouteLineProducer.running;
+		return (producerThread != null); 
 	}
 	
 	/** wait until route line is produced up to route element at index i */

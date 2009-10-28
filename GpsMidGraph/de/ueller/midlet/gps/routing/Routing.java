@@ -9,6 +9,7 @@ import de.ueller.gps.tools.intTree;
 import de.ueller.gpsMid.mapData.RouteBaseTile;
 import de.ueller.gpsMid.mapData.Tile;
 import de.ueller.midlet.gps.Logger;
+import de.ueller.midlet.gps.RouteInstructions;
 import de.ueller.midlet.gps.RouteLineProducer;
 import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.data.MoreMath;
@@ -884,10 +885,12 @@ public class Routing implements Runnable {
 	}
 
 	public void run() {
+		RouteInstructions.abortRouteLineProduction();
+		Routing.stopRouting = false;
+		
 		try {
 			//#debug error
 			logger.info("Start Routing thread");
-			Routing.stopRouting = false;
 			Vector solve = solve();
 			parent.setRoute(solve);
 		} catch (NullPointerException npe) {
@@ -911,9 +914,9 @@ public class Routing implements Runnable {
 		
 	} 
 
-	public static void cancelRouting() {
+	public void cancelRouting() {
 		Routing.stopRouting = true;
-		RouteLineProducer.abort();
+		RouteInstructions.abortRouteLineProduction();
 	}
 
 }

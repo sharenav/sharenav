@@ -115,7 +115,7 @@ public class RouteInstructions {
 	private static final int CENTERPOS = Graphics.HCENTER|Graphics.VCENTER;
 	private static Image scaledPict = null;
 
-	private RouteLineProducer rlp;
+	private static volatile RouteLineProducer rlp;
 	
 	private static String nameNow = null;
 	private static String nameThen = null;
@@ -156,7 +156,9 @@ public class RouteInstructions {
 		againstDirectionDetectedTime = 0;
 		GpsMid.mNoiseMaker.resetSoundRepeatTimes();		
 		try {
-			rlp = new RouteLineProducer();
+			if (rlp == null) {
+				rlp = new RouteLineProducer();
+			}
 			rlp.determineRoutePath(trace, route);
 			createRouteInstructions();
 			outputRoutePath();
@@ -641,8 +643,11 @@ public class RouteInstructions {
 				}
 				e = Trace.tl.ele[TraceLayout.ROUTE_DISTANCE];
 				if (RouteLineProducer.isRunning()) {
+					// use routeLine Color for distance while route line is produced
+					e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ROUTE_ROUTELINE]);
 					e.setText(">" + (int) remainingDistance + "m");
-				} else {
+				} else if (RouteLineProducer.isRouteLineProduced()) {
+					e.setBackgroundColor(Legend.COLORS[Legend.COLOR_RI_DISTANCE_BACKGROUND]);
 					e.setText(" " + (int) remainingDistance + "m" +
 							(
 							 Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_ROUTE_DURATION_IN_MAP)?
@@ -729,7 +734,9 @@ public class RouteInstructions {
 	
 	private boolean isOffRoute(Vector route, Node center) {
 		// never recalculate during route calculation
-		if (trace.routeCalc) return false;
+		if (trace.routeCalc && !RouteLineProducer.isRunning()) {
+			return false;
+		}
 
 		/* if we did no initial recalculation,
 		 * the map is gpscentered
@@ -1334,4 +1341,12 @@ public class RouteInstructions {
 			}
 		}		
 	}
+
+	public static void abortRouteLineProduction() {
+		if (rlp != null) {
+			rlp.abort();
+		}
+	}
+
+
 }

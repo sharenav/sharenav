@@ -600,10 +600,12 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	public void autoRouteRecalculate() {
 		if ( gpsRecenter && Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_AUTO_RECALC) ) {
 			if (Math.abs(System.currentTimeMillis()-oldRecalculationTime) >= 7000 ) {
-				// if map is gps-centered recalculate route
 				if (Configuration.getCfgBitState(Configuration.CFGBIT_SND_ROUTINGINSTRUCTIONS)) {
 					GpsMid.mNoiseMaker.playSound("ROUTE_RECALCULATION", (byte) 5, (byte) 1 );
 				}
+				//#debug debug
+				logger.debug("autoRouteRecalculate");
+				// recalculate route
 				commandAction(CMDS[ROUTING_START_CMD],(Displayable) null);
 			}
 		}
@@ -1140,7 +1142,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			}
 			
 			if (c == CMDS[ROUTING_START_CMD]) {
-				if (! routeCalc) {
+				if (! routeCalc || RouteLineProducer.isRunning()) {
 					routeCalc = true; 
 					if (Configuration.isStopAllWhileRouteing()) {
 	  				   stopImageCollector();
@@ -1157,7 +1159,9 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			}
 			if (c == CMDS[ROUTING_STOP_CMD]) {
 				if (routeCalc) {
-					Routing.cancelRouting();
+					if (routeEngine != null) {
+						routeEngine.cancelRouting();
+					}
 					alert("Route Calculation", "Cancelled", 1500);
 				} else {
 					alert("Routing", "Off", 750);
@@ -1612,11 +1616,9 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				tl.ele[TraceLayout.ALTITUDE].setText(Integer.toString(altitude) + "m");				
 			}
 
-			// use routeLine Color for distance while route line is produced  
-			Trace.tl.ele[TraceLayout.ROUTE_DISTANCE].setBackgroundColor(Legend.COLORS[RouteLineProducer.isRunning()?Legend.COLOR_ROUTE_ROUTELINE:Legend.COLOR_RI_DISTANCE_BACKGROUND]);
-			
-			if (route == null && target != null && Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_AIR_DISTANCE_IN_MAP)) {				
+			if (target != null && (route == null || (!RouteLineProducer.isRouteLineProduced() && !RouteLineProducer.isRunning()) ) && Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_AIR_DISTANCE_IN_MAP)) {				
 				e = Trace.tl.ele[TraceLayout.ROUTE_DISTANCE];
+				e.setBackgroundColor(Legend.COLORS[Legend.COLOR_RI_DISTANCE_BACKGROUND]);
 				double distLine=ProjMath.getDistance(center.radlat, center.radlon, target.lat, target.lon);
 				e.setText("air:" + (int) distLine + "m");
 			}
@@ -2377,7 +2379,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		RouteInstructions.initialRecalcDone = false;
 		RouteInstructions.icCountOffRouteDetected = 0;
 		RouteInstructions.routeInstructionsHeight = 0;
-		RouteLineProducer.routeLineTree = null;
+		RouteInstructions.abortRouteLineProduction();
 		setRoute(null);
 		setRouteNodes(null);
 	}
@@ -2396,7 +2398,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			}
 			ri.newRoute(this.route, target);
 			oldRecalculationTime = System.currentTimeMillis();
-			RouteInstructions.resetOffRoute(this.route, center);
+			//RouteInstructions.resetOffRoute(this.route, center);
 		}
 		routeCalc=false;
 		routeEngine=null;
