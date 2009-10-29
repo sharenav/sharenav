@@ -80,7 +80,7 @@ public class RouteLineProducer implements Runnable {
 				}
 				//#mdebug debug
 				else {
-					logger.debug("EouteLineProducer aborted at " + connsFound + "/" + (route.size()-1));					
+					logger.debug("RouteLineProducer aborted at " + connsFound + "/" + (route.size()-1));					
 				}
 				//#enddebug
 			}
