@@ -314,7 +314,7 @@ public class RouteInstructions {
 						logger.debug("showRoute - iRealNow: " + iRealNow + " iNow: " + iNow + " iThen: " + iThen);						
 					}					
 					
-					for (int i=1; i<route.size();i++){
+					for (int i=1; i<RouteLineProducer.maxRouteElement;i++){
 						c = (ConnectionWithNode) route.elementAt(i);						
 						
 						// calculate distance and duration to target
