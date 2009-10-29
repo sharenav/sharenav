@@ -2393,6 +2393,9 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			this.route = route;
 		}
 		if (this.route!=null) {
+			// reset off-route as soon as first route connection is known
+			RouteInstructions.resetOffRoute(this.route, center);
+
 			if (ri==null) {
 				ri = new RouteInstructions(this);
 			}
@@ -2402,7 +2405,6 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			}
 			ri.newRoute(this.route, target);
 			oldRecalculationTime = System.currentTimeMillis();
-			//RouteInstructions.resetOffRoute(this.route, center);
 		}
 		// show map always after route calculation 
 		resumeImageCollectorAfterRouteCalc();
