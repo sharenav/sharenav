@@ -48,7 +48,7 @@ public class Configuration {
 	 *  the default values for the features added between configVersionStored
 	 *  and VERSION will be set, before the version in the recordstore is increased to VERSION.
 	 */
-	public final static int VERSION = 12;
+	public final static int VERSION = 13;
 
 	public final static int LOCATIONPROVIDER_NONE = 0;
 	public final static int LOCATIONPROVIDER_SIRF = 1;
@@ -231,7 +231,7 @@ public class Configuration {
 	private static final int RECORD_ID_GPX_FILTER_ALWAYS_DIST = 16;
 	private static final int RECORD_ID_LOG_DEBUG_SEVERITY = 17;
 	private static final int RECORD_ID_ROUTE_ESTIMATION_FAC = 18;
-	private static final int RECORD_ID_STOP_ALL_WHILE_ROUTING = 19;
+	private static final int RECORD_ID_CONTINUE_MAP_WHILE_ROUTING = 19;
 	private static final int RECORD_ID_BT_KEEPALIVE = 20;
 	private static final int RECORD_ID_STARTUP_RADLAT = 21;
 	private static final int RECORD_ID_STARTUP_RADLON = 22;
@@ -302,7 +302,15 @@ public class Configuration {
 	private static String photoEncoding;
 	private static int debugSeverity;
 	private static int routeEstimationFac = 6;
-	private static boolean stopAllWhileRouteing = false;
+	
+	// values for continueMapWhileRouteing
+	public static final int continueMap_Not = 0;
+	public static final int continueMap_At_Route_Line_Creation = 1;
+	public static final int continueMap_Always = 2;
+		
+	/** 0 = do not continue map, 1 = continue map only during route line production, 2 = continue map all the time */
+	private static int continueMapWhileRouteing = continueMap_At_Route_Line_Creation;
+
 	private static boolean btKeepAlive = false;
 	private static boolean btAutoRecon = false;
 	private static Node startupPos = new Node(0.0f, 0.0f);
@@ -363,7 +371,7 @@ public class Configuration {
 			rawDebugLogEnable = (readInt(database,  RECORD_ID_LOG_DEBUG_ENABLE) !=0);
 			debugSeverity = readInt(database, RECORD_ID_LOG_DEBUG_SEVERITY);
 			routeEstimationFac = readInt(database, RECORD_ID_ROUTE_ESTIMATION_FAC);
-			stopAllWhileRouteing = readInt(database, RECORD_ID_STOP_ALL_WHILE_ROUTING) !=0;
+			continueMapWhileRouteing = readInt(database, RECORD_ID_CONTINUE_MAP_WHILE_ROUTING);
 			btKeepAlive = (readInt(database, RECORD_ID_BT_KEEPALIVE) !=0);
 			btAutoRecon = (readInt(database, RECORD_ID_GPS_RECONNECT) !=0);
 			String s = readString(database, RECORD_ID_STARTUP_RADLAT);
@@ -428,7 +436,7 @@ public class Configuration {
 			setGpxRecordMinDistanceCentimeters(300);
 			setGpxRecordAlwaysDistanceCentimeters(500);
 			// Routing defaults
-			setStopAllWhileRouteing(true);
+			setContinueMapWhileRouteing(continueMap_At_Route_Line_Creation);
 			setRouteEstimationFac(7);
 			// set default location provider to JSR-179 if available
 			//#if polish.api.locationapi
@@ -516,6 +524,19 @@ public class Configuration {
 										1L << CFGBIT_ROUTE_BOOST_TRUNKS_PRIMARYS;
 			}
 			
+		}
+
+		if (configVersionStored < 13) {
+			// migrate boolean stopAllWhileRouteing to int continueMapWhileRouteing
+			if (continueMapWhileRouteing == 0) {
+				continueMapWhileRouteing = continueMap_Always;
+			} else {
+				continueMapWhileRouteing = continueMap_At_Route_Line_Creation;
+			}
+		}
+
+		if (configVersionStored < 14) {
+			;
 		}
 		
 		setCfgBits(cfgBits_0_to_63, cfgBits_64_to_127);
@@ -649,7 +670,7 @@ public class Configuration {
 		dos.writeBoolean(rawDebugLogEnable);
 		dos.writeInt(debugSeverity);
 		dos.writeInt(routeEstimationFac);
-		dos.writeBoolean(stopAllWhileRouteing);
+		dos.writeInt(continueMapWhileRouteing);
 		dos.writeBoolean(btKeepAlive);
 		dos.writeBoolean(btAutoRecon);
 		dos.writeUTF(sanitizeString(smsRecipient));
@@ -687,7 +708,7 @@ public class Configuration {
 		debugSeverity = dis.readInt();
 		write(debugSeverity, RECORD_ID_LOG_DEBUG_SEVERITY);
 		setRouteEstimationFac(dis.readInt());
-		setStopAllWhileRouteing(dis.readBoolean());
+		setContinueMapWhileRouteing(dis.readInt());
 		setBtKeepAlive(dis.readBoolean());
 		setBtAutoRecon(dis.readBoolean());
 		setSmsRecipient(desanitizeString(dis.readUTF()));
@@ -1109,13 +1130,13 @@ public class Configuration {
 
 	
 	
-	public static boolean isStopAllWhileRouteing() {
-		return stopAllWhileRouteing;
+	public static int getContinueMapWhileRouteing() {
+		return continueMapWhileRouteing;
 	}
 
-	public static void setStopAllWhileRouteing(boolean stopAllWhileRouteing) {
-		write(stopAllWhileRouteing ? 1 : 0, RECORD_ID_STOP_ALL_WHILE_ROUTING);
-		Configuration.stopAllWhileRouteing = stopAllWhileRouteing;
+	public static void setContinueMapWhileRouteing(int continueMapWhileRouteing) {
+		write(continueMapWhileRouteing, RECORD_ID_CONTINUE_MAP_WHILE_ROUTING);
+		Configuration.continueMapWhileRouteing = continueMapWhileRouteing;
 	}
 	
 	public static boolean getBtKeepAlive() {

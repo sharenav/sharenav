@@ -223,7 +223,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private String rawLogDir;
 
 	private Gauge gaugeRoutingEsatimationFac; 
-	private ChoiceGroup stopAllWhileRouting;
+	private ChoiceGroup continueMapWhileRouteing;
 	private ChoiceGroup routingOptsGroup;
 	private ChoiceGroup routingStrategyOptsGroup;
 	private ChoiceGroup routingShowOptsGroup;
@@ -321,12 +321,13 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		routingTravelModesGroup.setSelectedIndex(Configuration.getTravelModeNr(), true);
 		menuRoutingOptions.append(routingTravelModesGroup);
 		
-		String [] routingBack = new String[2];
+		String [] routingBack = new String[3];
 		routingBack[0] = "No";
-		routingBack[1] = "Yes";
-		stopAllWhileRouting = new ChoiceGroup("Continue Map while calculation:", Choice.EXCLUSIVE, routingBack ,null);
-		stopAllWhileRouting.setSelectedIndex(Configuration.isStopAllWhileRouteing()?0:1,true);
-		menuRoutingOptions.append(stopAllWhileRouting);
+		routingBack[1] = "At route line creation";
+		routingBack[2] = "Yes";
+		continueMapWhileRouteing = new ChoiceGroup("Continue Map while calculation:", Choice.EXCLUSIVE, routingBack ,null);
+		continueMapWhileRouteing.setSelectedIndex(Configuration.getContinueMapWhileRouteing(),true);
+		menuRoutingOptions.append(continueMapWhileRouteing);
 		gaugeRoutingEsatimationFac=new Gauge("Speed of route calculation", true, 10, Configuration.getRouteEstimationFac());
 		menuRoutingOptions.append(gaugeRoutingEsatimationFac);
 		tfMainStreetNetDistanceKm = new TextField("Distance in km to main street net (used for large route distances):", Integer.toString(Configuration.getMainStreetDistanceKm()), 5, TextField.DECIMAL);
@@ -911,8 +912,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 			case STATE_ROUTING_OPT:
 				Configuration.setTravelMode(routingTravelModesGroup.getSelectedIndex());
 				Configuration.setRouteEstimationFac(gaugeRoutingEsatimationFac.getValue());
-				logger.debug("set stopAllWhileRounting " + stopAllWhileRouting.isSelected(1));
-				Configuration.setStopAllWhileRouteing(stopAllWhileRouting.isSelected(0));
+				logger.debug("set continueMapWhileRouteing " + continueMapWhileRouteing.getSelectedIndex());
+				Configuration.setContinueMapWhileRouteing(continueMapWhileRouteing.getSelectedIndex());
 
 				boolean[] selStrategyRouting = new boolean[3];
 				routingStrategyOptsGroup.getSelectedFlags(selStrategyRouting);

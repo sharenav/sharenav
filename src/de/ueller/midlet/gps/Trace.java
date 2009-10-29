@@ -1144,7 +1144,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			if (c == CMDS[ROUTING_START_CMD]) {
 				if (! routeCalc || RouteLineProducer.isRunning()) {
 					routeCalc = true; 
-					if (Configuration.isStopAllWhileRouteing()) {
+					if (Configuration.getContinueMapWhileRouteing() != Configuration.continueMap_Always ) {
 	  				   stopImageCollector();
 					}
 					RouteInstructions.resetOffRoute(route, center);
@@ -2396,12 +2396,21 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			if (ri==null) {
 				ri = new RouteInstructions(this);
 			}
+			// show map during route line production 
+			if (Configuration.getContinueMapWhileRouteing() == Configuration.continueMap_At_Route_Line_Creation) {
+				resumeImageCollectorAfterRouteCalc();
+			}
 			ri.newRoute(this.route, target);
 			oldRecalculationTime = System.currentTimeMillis();
 			//RouteInstructions.resetOffRoute(this.route, center);
 		}
+		// show map always after route calculation 
+		resumeImageCollectorAfterRouteCalc();
 		routeCalc=false;
 		routeEngine=null;
+	}
+
+	private void resumeImageCollectorAfterRouteCalc() {
 		try {
 			if (imageCollector == null) {
 				startImageCollector();
@@ -2413,7 +2422,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			}
 			repaint();
 		} catch (Exception e) {
-			logger.exception("In Trace.setRoute", e);
+			logger.exception("In Trace.resumeImageCollector", e);
 		}
 	}
 	
