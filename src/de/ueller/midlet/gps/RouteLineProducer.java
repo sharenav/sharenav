@@ -77,12 +77,11 @@ public class RouteLineProducer implements Runnable {
 					//#debug debug
 					logger.debug("Connection2Ways found: " + connsFound + "/" + (route.size()-1) + " in " + (long)(System.currentTimeMillis() - startTime) + " ms");
 					trace.receiveMessage ("Route: " + (int) routeLen + "m" + (connsFound==(route.size()-1)?"":" (" + connsFound + "/" + (route.size()-1) + ")"));
-				}
-				//#mdebug debug
-				else {
+				} else {
+					//#debug debug
 					logger.debug("RouteLineProducer aborted at " + connsFound + "/" + (route.size()-1));					
+					maxRouteElement = 0;
 				}
-				//#enddebug
 			}
 		} catch (Exception e) {
 			//#debug error
@@ -248,7 +247,7 @@ public class RouteLineProducer implements Runnable {
 	public void waitForRouteLine(int i) {
 		//#debug debug
 		logger.debug("waitForRouteLine:" + i + ", maxRouteElement: " + maxRouteElement);
-		while (i >= maxRouteElement) {
+		while (i >= maxRouteElement && !RouteLineProducer.abort) {
 			synchronized (this) {
 				try {
 					notifyWhenAtElement = i;
