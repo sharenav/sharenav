@@ -6,7 +6,10 @@ package de.ueller.gps.tools;
 
 import javax.microedition.lcdui.Image;
 
+import de.ueller.midlet.gps.Logger;
+
 public class ImageTools  {
+	private final static Logger logger = Logger.getInstance(ImageTools.class,Logger.DEBUG);
 
 	public static Image getGreyImage(Image original) {
         try {
@@ -22,8 +25,9 @@ public class ImageTools  {
                 int grey = (((red * 30) / 100) + ((green * 59) / 100) + ((blue * 11) / 100)) & 0xff;
                 rawInput[i] = alphaMask | (grey << 16) | (grey << 8) | grey;
             } 
-	        return Image.createRGBImage(rawInput, original.getWidth(), original.getWidth(), true);
+	        return Image.createRGBImage(rawInput, original.getWidth(), original.getHeight(), true);
         } catch (Exception e) {
+        	logger.exception("Exception greying image", e);
         	return original;
         }
 	}
@@ -65,6 +69,7 @@ public class ImageTools  {
 	        }               
 	        return Image.createRGBImage(rawOutput, newWidth, newHeight, true);
         } catch (Exception e) {
+        	logger.exception("Exception scaling image", e);
         	return original;
         }
     }
