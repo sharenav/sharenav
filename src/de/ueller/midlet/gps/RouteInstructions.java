@@ -1028,6 +1028,7 @@ public class RouteInstructions {
 			if( (i<route.size()-1 && ProjMath.getDistance(c.to.lat, c.to.lon, cPrev.to.lat, cPrev.to.lon) < 25)
 			// only combine direction instructions
 			&& (cPrev.wayRouteInstruction <= RI_HARD_LEFT && c.wayRouteInstruction <= RI_HARD_LEFT)
+			&& (c.wayRouteFlags & (Legend.ROUTE_FLAG_BEAR_LEFT | Legend.ROUTE_FLAG_BEAR_RIGHT)) == 0
 			)	{
 				c.wayRouteInstruction = RI_SKIPPED;
 				c.wayRouteFlags |= Legend.ROUTE_FLAG_QUIET;
