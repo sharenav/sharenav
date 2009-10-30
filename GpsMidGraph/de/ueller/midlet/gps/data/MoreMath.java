@@ -827,7 +827,7 @@ public class MoreMath {
 		float uX = (float) (lineP2x - lineP1x);
 		float uY = (float) (lineP2y - lineP1y);
 		float  u = ( (offPointX - lineP1x) * uX + (offPointY  - lineP1y) * uY) / (uX * uX + uY * uY);
-		if (u > 1.0) {
+		if (u > 1.0 || (lineP1x == lineP2x && lineP1y == lineP2y) ) {
 			return new IntPoint(lineP2x, lineP2y);
 		} else if (u <= 0.0) {
 			return new IntPoint(lineP1x, lineP1y);
