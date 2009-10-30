@@ -824,10 +824,14 @@ public class MoreMath {
 	 * @return IntPoint - closest point on line in screen coordinates
 	 */
 	public static IntPoint closestPointOnLine(int lineP1x, int lineP1y, int lineP2x, int lineP2y, int offPointX, int offPointY) {
+		// avoid division by zero if lineP1 and lineP2 are at the same screen coordinates
+		if (lineP1x == lineP2x && lineP1y == lineP2y) {
+			return new IntPoint(lineP1x, lineP1y);
+		}
 		float uX = (float) (lineP2x - lineP1x);
 		float uY = (float) (lineP2y - lineP1y);
 		float  u = ( (offPointX - lineP1x) * uX + (offPointY  - lineP1y) * uY) / (uX * uX + uY * uY);
-		if (u > 1.0 || (lineP1x == lineP2x && lineP1y == lineP2y) ) {
+		if (u > 1.0) {
 			return new IntPoint(lineP2x, lineP2y);
 		} else if (u <= 0.0) {
 			return new IntPoint(lineP1x, lineP1y);
