@@ -520,8 +520,8 @@ public class Routing implements Runnable {
 			if (Routing.onlyMainStreetNet) {
 				// if we are on a trunk or primary search it far
 				if (boostTrunksAndPrimarys && to.isTrunkOrPrimaryConnection()) {
-				   // estimate 80 Km/h (22 m/s) as average speed 
-					return (int) (((dist/2.2f)+turnCost)*estimateFac);
+				   // estimate 65 Km/h (18 m/s) as average speed 
+					return (int) (((dist/1.8f)+turnCost)*estimateFac);
 				}
 //				if (dist > 100000){
 //					// estimate 100 Km/h (28 m/s) as average speed 
