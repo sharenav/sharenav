@@ -999,13 +999,15 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				}
 				return;
 			}
-			//#if polish.api.online
 			if (c == CMDS[ONLINE_INFO_CMD]) {
-				Position oPos = new Position(center.radlat,center.radlon,0.0f,0.0f,0.0f,0,0);
-				GuiWebInfo gWeb = new GuiWebInfo(this, oPos);
-				gWeb.show();
+				//#if polish.api.online
+					Position oPos = new Position(center.radlat,center.radlon,0.0f,0.0f,0.0f,0,0);
+					GuiWebInfo gWeb = new GuiWebInfo(this, oPos);
+					gWeb.show();
+				//#else
+					alert("Midlet has no online capabilites", "set app=GpsMid-Generic-editing in .properties file and recreate GpsMid with Osm2GpsMid", 7000);
+				//#endif
 			}
-			//#endif
 			if (c == CMDS[BACK_CMD]) {
 				show();
 				return;
@@ -1332,6 +1334,8 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 						logger.error("Editing is not enabled in this map");
 					}
 				}
+				//#else
+					alert("Midlet has no online capabilites", "set app=GpsMid-Generic-editing and editing=true in .properties file and recreate GpsMid with Osm2GpsMid", 7000);
 				//#endif
 				if (c == CMDS[SETTARGET_CMD]) {
 					PositionMark pm1 = new PositionMark(center.radlat, center.radlon);
