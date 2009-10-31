@@ -560,6 +560,9 @@ public class GuiSearch extends Canvas implements CommandListener,
 			// Unicode character 10 is LF
 			// so 10 should correspond to Enter key on QWERT keyboards
 		} else if (keyCode == 10 || action == FIRE) {
+			if (!isCursorValid()) {
+				return;
+			}
 			SearchResult sr = (SearchResult) result.elementAt(cursor);
 //			System.out.println("select " + sr);
 			PositionMark positionMark = new PositionMark(sr.lat,sr.lon);
