@@ -25,6 +25,9 @@ public class OSMdataNode extends OSMdataEntity implements XmlParserContentHandle
 	private final static Logger logger = Logger.getInstance(
 			OSMdataNode.class, Logger.DEBUG);
 	
+	/**
+	 * latitude and longitude of the OSM data node in radians
+	 */
 	private float lat;
 	private float lon;
 
@@ -32,10 +35,24 @@ public class OSMdataNode extends OSMdataEntity implements XmlParserContentHandle
 		super(fullXML, osmID);
 	}
 	
+	/**
+	 * 
+	 * @param osmID OSM id of the node, negative if it is a new node
+	 * @param lat latitude in radians
+	 * @param lon longitude in radians
+	 */
 	public OSMdataNode(int osmID, float lat, float lon) {
 		super(osmID);
 		this.lat = lat;
 		this.lon = lon;
+	}
+	
+	public float getLat() {
+		return lat;
+	}
+	
+	public float getLon() {
+		return lon;
 	}
 	
 	protected void parseXML() {

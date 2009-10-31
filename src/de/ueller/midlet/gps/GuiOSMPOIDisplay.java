@@ -27,7 +27,9 @@ import de.ueller.midlet.gps.GpsMidDisplayable;
 import de.ueller.midlet.gps.GuiOSMChangeset;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.data.KeySelectMenuItem;
+import de.ueller.midlet.gps.data.OSMdataEntity;
 import de.ueller.midlet.gps.data.OSMdataNode;
+import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.names.NumberCanon;
 import de.ueller.midlet.gps.tile.POIdescription;
 
@@ -83,6 +85,7 @@ public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay implements KeySelectMe
 	private boolean showPoiTypeForm;
 	private boolean showParent;
 	private Vector  poiTypes;
+	private byte poiType;
 	
 	public GuiOSMPOIDisplay(int nodeID, SingleTile t, float lat, float lon, GpsMidDisplayable parent) {
 		super("Node", parent);
@@ -159,7 +162,7 @@ public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay implements KeySelectMe
 		}
 		
 		if (c == OK_CMD) {
-			byte poiType = (byte)poiSelectionCG.getSelectedIndex();
+			poiType = (byte)poiSelectionCG.getSelectedIndex();
 			String [] tags = Legend.getNodeOsmTags(poiType);
 			for (int i = 0; i < tags.length/2; i++) {
 				osmentity.getTags().put(tags[i*2], tags[i*2 + 1]);
@@ -201,6 +204,15 @@ public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay implements KeySelectMe
 			}
 			case LOAD_STATE_UPLOAD: {
 				GpsMid.getInstance().alert("Adding POI", "Poi was successfully added to OpenStreetMap", 1000);
+				
+				if (osmentity instanceof OSMdataEntity) {
+					logger.info("Adding Waypoint to mark where POI was uploaded to OSM");
+					OSMdataNode poi = (OSMdataNode)osmentity;
+					PositionMark waypt = new PositionMark(poi.getLat(), poi.getLon());
+					waypt.displayName = "POI: " + Legend.getNodeTypeDesc(poiType);
+					Trace.getInstance().gpx.addWayPt(waypt);
+				}
+
 				loadState = LOAD_POI_STATE_NONE;
 				break;
 			}
@@ -220,9 +232,10 @@ public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay implements KeySelectMe
 	}
 
 	public void itemSelected(KeySelectMenuItem item) {
-		POITSelectMenuItem poiType = (POITSelectMenuItem)item;
-		String [] tags = Legend.getNodeOsmTags(poiType.getIdx());
-		System.out.println("poiType: " + poiType + "  tags " + tags + " ed: " + osmentity);
+		POITSelectMenuItem poiTypeIt = (POITSelectMenuItem)item;
+		poiType = poiTypeIt.getIdx();
+		String [] tags = Legend.getNodeOsmTags(poiType);
+		System.out.println("poiType: " + poiTypeIt + "  tags " + tags + " ed: " + osmentity);
 		if ((tags != null) && (osmentity != null)) {
 			for (int i = 0; i < tags.length/2; i++) {
 				osmentity.getTags().put(tags[i*2], tags[i*2 + 1]);

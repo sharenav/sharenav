@@ -298,6 +298,7 @@ public class KeySelectMenu extends Canvas implements
 		// so 10 should correspond to Enter key on QWERT keyboards
 		if (keyCode == 10 || action == FIRE) {
 			commandAction(OK_CMD, null);
+			return;
 		} else if (action == UP) {
 			if (cursor > 0)
 				cursor--;
