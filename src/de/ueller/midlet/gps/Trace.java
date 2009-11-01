@@ -1335,7 +1335,9 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					}
 				}
 				//#else
+				if (c == CMDS[RETRIEVE_XML] || c == CMDS[RETRIEVE_NODE]) { 
 					alert("Midlet has no online capabilites", "set app=GpsMid-Generic-editing and editing=true in .properties file and recreate GpsMid with Osm2GpsMid", 7000);
+				}
 				//#endif
 				if (c == CMDS[SETTARGET_CMD]) {
 					PositionMark pm1 = new PositionMark(center.radlat, center.radlon);
