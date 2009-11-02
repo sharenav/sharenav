@@ -650,6 +650,7 @@ public class Routing implements Runnable {
 				RouteNode rn=findPrevRouteNode(nearestSegment-1, startNode.lat, startNode.lon, fromMark.nodeLat,fromMark.nodeLon);
 				if (rn != null) {
 					routeFrom = rn;
+					firstNodeId1 = rn.id; // must be before the oneDirection check as this routeNode might be the source node for connection/duration determination
 					if (! w.isOneDirectionOnly() ) { // if no against oneway rule applies
 //						parent.getRouteNodes().addElement(new RouteHelper(rn.lat,rn.lon,"next back"));
 						// TODO: fill in bearings and cost
@@ -667,7 +668,6 @@ public class Routing implements Runnable {
 						if (firstSeg >= fromMark.nodeLat.length) {
 							firstSeg = fromMark.nodeLat.length - 1;	
 						}
-						firstNodeId1 = rn.id;
 						firstSourcePathSegNodeDummy1.radlat = fromMark.nodeLat[firstSeg];
 						firstSourcePathSegNodeDummy1.radlon = fromMark.nodeLon[firstSeg];
 					} else {
@@ -677,6 +677,7 @@ public class Routing implements Runnable {
 				rn=findNextRouteNode(nearestSegment, startNode.lat, startNode.lon, fromMark.nodeLat,fromMark.nodeLon);
 				if (rn != null) {
 					routeFrom = rn;
+					firstNodeId2 = rn.id;
 					// TODO: fill in bearings and cost
 					Connection initialState=new Connection(rn,0,(byte)0,(byte)0, -2);
 					GraphNode firstNode=new GraphNode(initialState,null,0,0,(byte)0);
@@ -692,7 +693,6 @@ public class Routing implements Runnable {
 					if (firstSeg < 0) {
 						firstSeg = 0;
 					}
-					firstNodeId2 = rn.id;
 					firstSourcePathSegNodeDummy2.radlat = fromMark.nodeLat[firstSeg];
 					firstSourcePathSegNodeDummy2.radlon = fromMark.nodeLon[firstSeg];
 				}
@@ -711,25 +711,27 @@ public class Routing implements Runnable {
 			int nearestSeg = getNearestSeg(w,toMark.lat, toMark.lon, toMark.nodeLat, toMark.nodeLon);
 			RouteTileRet nodeTile=new RouteTileRet();
 			// roundabouts don't need to be explicitly tagged as oneways in OSM according to http://wiki.openstreetmap.org/wiki/Tag:junction%3Droundabout
-			if (! w.isOneDirectionOnly() ){ // if no against oneway rule applies
-				RouteNode nextNode = findNextRouteNode(nearestSeg, toMark.lat, toMark.lon, toMark.nodeLat, toMark.nodeLon);
-				// TODO: fill in bearings and cost
-				Connection newCon=new Connection(routeTo,0,(byte)0,(byte)0, -3);
-				tile.getRouteNode(nextNode.lat, nextNode.lon, nodeTile);
-				nodeTile.tile.addConnection(nextNode,newCon,bestTime);
-				/*
-				 *  remember coordinates of this alternative for dummy route node on the path
-				 *  this will allow to find the path segment
-				 *  including the closest dest position to highlight / on route
-				 *  when searching the ways for matching connections
-				 */
-				int finalSeg = nearestSeg - 1;
-				if (finalSeg < 0) {
-					finalSeg = 0;
+			RouteNode nextNode = findNextRouteNode(nearestSeg, toMark.lat, toMark.lon, toMark.nodeLat, toMark.nodeLon);
+			if (nextNode != null) {
+				finalNodeId2 = nextNode.id; // must be before the oneDirection check as this routeNode might be the destination node for connection/duration determination
+				if (! w.isOneDirectionOnly() ){ // if no against oneway rule applies
+					// TODO: fill in bearings and cost
+					Connection newCon=new Connection(routeTo,0,(byte)0,(byte)0, -3);
+					tile.getRouteNode(nextNode.lat, nextNode.lon, nodeTile);
+					nodeTile.tile.addConnection(nextNode,newCon,bestTime);
+					/*
+					 *  remember coordinates of this alternative for dummy route node on the path
+					 *  this will allow to find the path segment
+					 *  including the closest dest position to highlight / on route
+					 *  when searching the ways for matching connections
+					 */
+					int finalSeg = nearestSeg - 1;
+					if (finalSeg < 0) {
+						finalSeg = 0;
+					}
+					finalDestPathSegNodeDummy2.radlat = toMark.nodeLat[finalSeg];
+					finalDestPathSegNodeDummy2.radlon = toMark.nodeLon[finalSeg];
 				}
-				finalNodeId2 = nextNode.id;
-				finalDestPathSegNodeDummy2.radlat = toMark.nodeLat[finalSeg];
-				finalDestPathSegNodeDummy2.radlon = toMark.nodeLon[finalSeg];
 			}
 			RouteNode prefNode = findPrevRouteNode(nearestSeg - 1, toMark.lat, toMark.lon, toMark.nodeLat, toMark.nodeLon);
 			// TODO: fill in bearings and cost
@@ -830,6 +832,19 @@ public class Routing implements Runnable {
 			// when finally we get the sequence we must be able to access all route nodes, not only the mainstreet net's
 			Routing.onlyMainStreetNet = false;
 			Vector sequence = getSequence(solution);
+
+			// move connection durations so that they represent the time to travel to the next node, rather than to the current node
+			ConnectionWithNode c;
+			ConnectionWithNode cPrev = (ConnectionWithNode) sequence.elementAt(0);
+			for (int i = 0; i < sequence.size(); i++) {
+				c = (ConnectionWithNode) sequence.elementAt(i);
+				cPrev.durationFSecsToNext = c.durationFSecsToNext;
+				cPrev = c;
+				if (i == sequence.size() - 1) {
+					c.durationFSecsToNext = 5555;
+				}
+			}
+
 			/*
 			 * fill in the coordinates of the path segment closest to the source
 			 * depending on the chosen alternative first route node in the route calculation
@@ -839,15 +854,21 @@ public class Routing implements Runnable {
 			 * when searching the ways for matching connections
 			 */
 			ConnectionWithNode cFirst = (ConnectionWithNode) sequence.firstElement();
+			ConnectionWithNode cSecond = (ConnectionWithNode) sequence.elementAt(1);
+
 			if (firstNodeId1 == cFirst.to.id) {
 				sourcePathSegNodeDummyConnectionNode.to.lat=firstSourcePathSegNodeDummy1.radlat;
 				sourcePathSegNodeDummyConnectionNode.to.lon=firstSourcePathSegNodeDummy1.radlon;
+				sourcePathSegNodeDummyConnectionNode.to.id = firstNodeId2;  //remember id to be able to determine the connection with its duration
 			}
 			if (firstNodeId2 == cFirst.to.id) {
 				sourcePathSegNodeDummyConnectionNode.to.lat=firstSourcePathSegNodeDummy2.radlat;
 				sourcePathSegNodeDummyConnectionNode.to.lon=firstSourcePathSegNodeDummy2.radlon;
-			}			
+				sourcePathSegNodeDummyConnectionNode.to.id = firstNodeId1;  //remember id to be able to determine the connection with its duration
+			}
+
 			sequence.insertElementAt(sourcePathSegNodeDummyConnectionNode, 0);
+			sourcePathSegNodeDummyConnectionNode.durationFSecsToNext = getConnectionDurationFSecsForRouteNodes(sourcePathSegNodeDummyConnectionNode.to.id, cFirst.to.id);
 			
 			/**
 			 * same for the final connection (which is initially at the target)
@@ -857,12 +878,15 @@ public class Routing implements Runnable {
 			if (finalNodeId1 == cBeforeFinal.to.id) {
 				cFinal.to.lat = finalDestPathSegNodeDummy1.radlat;
 				cFinal.to.lon = finalDestPathSegNodeDummy1.radlon;
+				cFinal.to.id= finalNodeId2; //remember id to be able to determine the connection with its duration
 			}
 			if (finalNodeId2 == cBeforeFinal.to.id) {
 				cFinal.to.lat = finalDestPathSegNodeDummy2.radlat;
 				cFinal.to.lon = finalDestPathSegNodeDummy2.radlon;
+				cFinal.to.id = finalNodeId1; //remember id to be able to determine the connection with its duration
 			}
-			
+			cBeforeFinal.durationFSecsToNext = getConnectionDurationFSecsForRouteNodes(cBeforeFinal.to.id, cFinal.to.id);
+	
 //			logger.info("Ready with route discovery");
 			return sequence;
 		} catch (Exception e) {
@@ -884,6 +908,20 @@ public class Routing implements Runnable {
 		return result; 
 	}
 
+	private short getConnectionDurationFSecsForRouteNodes(int rnFromId, int rnToId) {
+		Connection successor[] = tile.getConnections(rnFromId,tile,bestTime);
+		if (successor != null) {
+			for (int cl=0;cl < successor.length;cl++){
+				Connection nodeSuccessor=successor[cl];
+				if (nodeSuccessor.toId == rnToId) {
+					System.out.println("CONNECTION FOUND: " + nodeSuccessor.durationFSecs / 5 );
+					return nodeSuccessor.durationFSecs;
+				}
+			}
+		}
+		return 0;
+	}
+	
 	public void run() {
 		RouteInstructions.abortRouteLineProduction();
 		Routing.stopRouting = false;

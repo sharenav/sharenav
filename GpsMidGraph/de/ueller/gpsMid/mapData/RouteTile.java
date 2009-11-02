@@ -536,6 +536,7 @@ public class RouteTile extends RouteBaseTile {
 				} else {
 					c.cost = costLength;
 				}
+				c.setDurationFSecsFromTSecs(costTime);
 				c.startBearing=cs.readByte();
 				c.endBearing=cs.readByte();
 				cons[i]=c;

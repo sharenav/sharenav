@@ -131,7 +131,6 @@ public class RouteLineProducer implements Runnable {
 			cFrom.wayNameIdx = pc.conWayNameIdx;
 			cFrom.wayType = pc.conWayType;
 			cFrom.wayDistanceToNext = pc.conWayDistanceToNext;
-			cFrom.wayDurationToNext = pc.conWayDurationToNext;
 			cFrom.wayRouteFlags |=  (pc.conWayRouteFlags & ~Legend.ROUTE_FLAG_COMING_FROM_ONEWAY);
 			cTo.wayRouteFlags |= (pc.conWayRouteFlags & Legend.ROUTE_FLAG_COMING_FROM_ONEWAY);
 			pc.searchConPrevWayRouteFlags = cFrom.wayRouteFlags;

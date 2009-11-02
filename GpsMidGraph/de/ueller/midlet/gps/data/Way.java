@@ -480,11 +480,6 @@ public class Way extends Entity{
 				conWayRealDistance += dist;
 				idx1 = idx2;
 			}
-
-			float routeSpeed = getRoutingSpeed(wayDesc, Configuration.getTravelModeNr());
-			if (routeSpeed!=0) {
-				conWayDuration += conWayRealDistance * 10 / routeSpeed;
-			}
 			
 			/* check if this is a better match than a maybe previous one:
 			if the distance is closer than the already matching one
@@ -505,7 +500,6 @@ public class Way extends Entity{
 //				}				
 				// this is currently the best path between searchCon1 and searchCon2
 				pc.conWayDistanceToNext = conWayRealDistance;
-				pc.conWayDurationToNext = conWayDuration;
 				pc.conWayCombinedFileAndWayNr = getWayId(t);
 				pc.conWayFromAt = containsCon1At;
 				pc.conWayToAt = containsCon2At;

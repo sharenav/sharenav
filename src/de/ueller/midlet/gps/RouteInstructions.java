@@ -221,7 +221,8 @@ public class RouteInstructions {
 
 			boolean routeRecalculationRequired=false;
 			float remainingDistance = 0;
-			int remainingDuration = 0;
+			/** remaining duration in 1/5 seconds */
+			int remainingDurationFSecs = 0;
 			float lastTrafficSignalsDistance = -200;
 			synchronized(this) {
 				if (route != null && route.size() > 0){
@@ -283,7 +284,7 @@ public class RouteInstructions {
 				    	double distRealNow=ProjMath.getDistance(center.radlat, center.radlon, cRealNow.to.lat, cRealNow.to.lon);
 				    	remainingDistance += distRealNow;
 				    	ConnectionWithNode cToRealNow = (ConnectionWithNode) route.elementAt(routePathConnection);
-				    	remainingDuration += (distRealNow * cToRealNow.wayDurationToNext / cToRealNow.wayDistanceToNext); 
+				    	remainingDurationFSecs += (distRealNow * cToRealNow.durationFSecsToNext / cToRealNow.wayDistanceToNext); 
 
 				    	distNow=ProjMath.getDistance(center.radlat, center.radlon, cNow.to.lat, cNow.to.lon);
 						intDistNow=new Double(distNow).intValue();
@@ -320,11 +321,11 @@ public class RouteInstructions {
 						// calculate distance and duration to target
 						if (i >= iRealNow && c.wayDistanceToNext != Float.MAX_VALUE) {
 							remainingDistance += c.wayDistanceToNext;
-							remainingDuration += c.wayDurationToNext;
-					    	// add 20 secs delay for traffic lights that are at least 200 meters away from the previous one
+							remainingDurationFSecs += c.durationFSecsToNext;
+					    	// add 20 secs ( 100 x 1/5th second) delay for traffic lights that are at least 200 meters away from the previous one
 					    	if (c.to.isAtTrafficSignals() && remainingDistance - lastTrafficSignalsDistance > 200) {
 					    		lastTrafficSignalsDistance = remainingDistance;
-					    		remainingDuration += 200;
+					    		remainingDurationFSecs += 100;
 					    		// System.out.println("Traffic Light at " + remainingDistance);
 					    	}
 						}
@@ -651,7 +652,7 @@ public class RouteInstructions {
 					e.setText(" " + (int) remainingDistance + "m" +
 							(
 							 Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_ROUTE_DURATION_IN_MAP)?
-							 " " + ((remainingDuration >= 600)?remainingDuration / 600 + "min": remainingDuration / 10 + "s")
+							 " " + ((remainingDurationFSecs >= 300)?remainingDurationFSecs / 300 + "min": remainingDurationFSecs / 5 + "s")
 							 :""
 							)
 							 );
@@ -659,7 +660,7 @@ public class RouteInstructions {
 					if (Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_ETA_IN_MAP)) {
 	
 						Calendar currentTime = Calendar.getInstance();
-						currentTime.setTime( new Date( System.currentTimeMillis() + remainingDuration * 100) );		
+						currentTime.setTime( new Date( System.currentTimeMillis() + remainingDurationFSecs * 200) );		
 						e = Trace.tl.ele[TraceLayout.ETA];
 						e.setText(
 							currentTime.get(Calendar.HOUR_OF_DAY) + ":"  
@@ -1341,6 +1342,7 @@ public class RouteInstructions {
 					sb.append(" (bear right)");
 				}
 				sb.append(" Cons:" + c.to.getConSize() + " numRoutableWays: " + c.numToRoutableWays + " startBearing: " + c.startBearing + "/" + c.wayConStartBearing + " endBearing: "+ c.endBearing + "/" + c.wayConEndBearing);
+				sb.append(" Duration: " + c.durationFSecsToNext / 5);
 				System.out.println(sb.toString());
 			}
 		}		

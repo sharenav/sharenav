@@ -1,10 +1,17 @@
 package de.ueller.midlet.gps.routing;
 
+import de.ueller.midlet.gps.Logger;
+
 public class Connection {
+	//#debug debug
+	private final static Logger logger = Logger.getInstance(Connection.class, Logger.ERROR);
+
 	/**
 	 * represent time in s or length in m depending on the search mode
 	 */
 	public int cost;
+	/** duration in 1/5 secs (this allows more than 100 mins per connection which hopefully is enough */
+	public short durationFSecs;
 //	public Integer toId=null;
 	public int toId=-1;
 	public int connectionId=-1;
@@ -31,7 +38,20 @@ public class Connection {
 		this.endBearing=be;
 	}
 
-
+	
+	/**
+	 * @param durationTSecs: duration in 1/10 secs
+	 */
+	public void setDurationFSecsFromTSecs(int durationTSecs) {
+		durationTSecs /= 2;
+		if (durationTSecs > 32767) {
+			//#debug debug
+			logger.debug("connection duration too long: " + durationTSecs);
+			durationTSecs = 32767;			
+		}
+		this.durationFSecs = (short) durationTSecs;
+	}
+	
 	public boolean isMainStreetNet() {
 		return (connTravelModes & CONNTYPE_MAINSTREET_NET) > 0;
 	}

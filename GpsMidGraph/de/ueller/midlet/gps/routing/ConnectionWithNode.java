@@ -2,6 +2,8 @@ package de.ueller.midlet.gps.routing;
 
 public class ConnectionWithNode {
 	public int cost;
+	/** time in 1/5 secs to the next node */
+	public short durationFSecsToNext=0;
 	public RouteNode to=null;
 	public byte startBearing=0;
 	public byte endBearing=0;
@@ -15,12 +17,11 @@ public class ConnectionWithNode {
 	public byte wayConEndBearing=0;
 	public byte wayConStartBearing=0;
 	public float wayDistanceToNext=Float.MAX_VALUE;
-	/** time in 1/10 secs to next connection */
-	public int wayDurationToNext=0;
 	
 	public ConnectionWithNode(RouteNode n,Connection c){
 		this.to=n;
 		this.cost=c.cost;
+		this.durationFSecsToNext = c.durationFSecs;
 		this.startBearing=c.startBearing;
 		this.endBearing=c.endBearing;
 
