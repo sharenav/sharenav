@@ -1062,17 +1062,14 @@ public class RouteInstructions {
 			cStart = (ConnectionWithNode) route.elementAt(i-1);
 			oldNameIdx = cStart.wayNameIdx;
 			cNext = (ConnectionWithNode) route.elementAt(i+1);
-			// set maximum value of connections that are allowed to be there for hiding this arrow
-			int maxToRoutableWays = 2;
-			// when we are coming from a one way arrow we must not count the way we are coming from 
-			if ( (c.wayRouteFlags & Legend.ROUTE_FLAG_COMING_FROM_ONEWAY) > 0) {
-				maxToRoutableWays--;
-			}
 			while (	i < iInstructionCurrent
 					&&
 					(
 						// while straight on
 						c.wayRouteInstruction == RI_STRAIGHT_ON
+						||
+						// or no alternative way to go to (and this is a direction instruction)
+						(c.numToRoutableWays == 1 && c.wayRouteInstruction >= RI_HARD_RIGHT && c.wayRouteInstruction <= RI_HARD_LEFT)
 						||
 						// or named direction arrow with same name and way type as previous one but not multiple same named options
 						(
@@ -1326,8 +1323,8 @@ public class RouteInstructions {
 				sb.append(" then go ");
 				sb.append(dist);
 				sb.append("m");
-				if ( (c.wayRouteFlags & Legend.ROUTE_FLAG_COMING_FROM_ONEWAY) > 0) { 
-					sb.append(" (from oneway)");
+				if ( (c.wayRouteFlags & Legend.ROUTE_FLAG_ONEDIRECTION_ONLY) > 0) { 
+					sb.append(" (onedirection_only)");
 				}
 				if ( (c.wayRouteFlags & Legend.ROUTE_FLAG_ROUNDABOUT) > 0) { 
 					sb.append(" (in roundabout)");

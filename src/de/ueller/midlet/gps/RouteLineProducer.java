@@ -131,10 +131,14 @@ public class RouteLineProducer implements Runnable {
 			cFrom.wayNameIdx = pc.conWayNameIdx;
 			cFrom.wayType = pc.conWayType;
 			cFrom.wayDistanceToNext = pc.conWayDistanceToNext;
-			cFrom.wayRouteFlags |=  (pc.conWayRouteFlags & ~Legend.ROUTE_FLAG_COMING_FROM_ONEWAY);
-			cTo.wayRouteFlags |= (pc.conWayRouteFlags & Legend.ROUTE_FLAG_COMING_FROM_ONEWAY);
-			pc.searchConPrevWayRouteFlags = cFrom.wayRouteFlags;
+			cFrom.wayRouteFlags = pc.conWayRouteFlags;
 			cFrom.numToRoutableWays = pc.conWayNumToRoutableWays;
+			if ( (pc.searchConPrevWayRouteFlags & Legend.ROUTE_FLAG_ONEDIRECTION_ONLY) == 0) {
+				/* if we are NOT coming from a oneway substract the way we are coming from as a way we can route to
+				 * (for oneways the way we are coming from has not been counted anyway)
+				 */
+				cFrom.numToRoutableWays--;
+			}
 			cTo.wayConStartBearing = pc.conWayStartBearing;
 			cTo.wayConEndBearing = pc.conWayEndBearing;
 			if (Math.abs(cTo.wayConEndBearing - cTo.endBearing) > 3) {
@@ -183,6 +187,7 @@ public class RouteLineProducer implements Runnable {
 			}
 			//System.out.println(iConnFrom + ": " + iNumWaysWithThisNameConnected);
 			
+			pc.searchConPrevWayRouteFlags = cFrom.wayRouteFlags;
 			connsFound++;
 		} else {
 			// if we had no way match, look for an area match
