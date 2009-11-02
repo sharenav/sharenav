@@ -1807,23 +1807,7 @@ public class Way extends Entity{
 		return ((flagswinter & MaxSpeedMask) >> MaxSpeedShift);
 	}
 
-	
-    /**
-     * get or estimate speed in m/s for routing purposes
-     * (this should return equivalent values to the equivalent of this function in Osm2GpsMid)
-     * @return
-     */
-	public float getRoutingSpeed(WayDescription wayDesc, int routeModeNr){
-		float maxSpeed = getMaxSpeed();
-		float typicalSpeed = wayDesc.typicalSpeed[routeModeNr];
-		if (maxSpeed <= 0)
-			maxSpeed = 60.0f; //Default case;
-		if (typicalSpeed != 0)
-			if (typicalSpeed < maxSpeed)
-				maxSpeed = typicalSpeed;
-		return maxSpeed / 3.6f;
-	}
-	
+
 	
 /*	private float[] getFloatNodes(SingleTile t, short[] nodes, float offset) {
 	    float [] res = new float[nodes.length];
