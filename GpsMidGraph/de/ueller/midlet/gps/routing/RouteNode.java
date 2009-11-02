@@ -14,7 +14,7 @@ public class RouteNode {
 	public float lat;
 	public float lon;
 //	public int conFp;
-	private byte conSize;
+	private byte conSizeAndFlags;
 	public int id;
 //	public short fid;
 	//#debug error
@@ -68,20 +68,20 @@ public class RouteNode {
 //		return cons;
 //	}
 	
-	public void setConSize(byte size) {
-		this.conSize=size;
+	public void setConSizeWithFlags(byte sizeAndFlags) {
+		this.conSizeAndFlags=sizeAndFlags;
 	}	
-	
+
 	public byte getConSize() {
-		return (byte) ((int) conSize & CS_MASK_CONNECTEDLINECOUNT);
+		return (byte) ((int) conSizeAndFlags & CS_MASK_CONNECTEDLINECOUNT);
 	}
 	
 	public boolean hasTurnRestrictions() {
-		return (conSize & CS_FLAG_HASTURNRESTRICTIONS) > 0;
+		return (conSizeAndFlags & CS_FLAG_HASTURNRESTRICTIONS) > 0;
 	}
 
 	public boolean isAtTrafficSignals() {
-		return (conSize & CS_FLAG_TRAFFICSIGNALS_ROUTENODE) > 0;
+		return (conSizeAndFlags & CS_FLAG_TRAFFICSIGNALS_ROUTENODE) > 0;
 	}
 	
 	

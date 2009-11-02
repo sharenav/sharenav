@@ -300,7 +300,7 @@ public class RouteTile extends RouteBaseTile {
 				n.lon=ts.readFloat();
 	//			n.conFp=ts.readInt();
 	//			ts.readInt();
-				n.setConSize(ts.readByte());
+				n.setConSizeWithFlags(ts.readByte());
 	//			n.fid=fileId;
 				n.id = idx + minId;
 				nodes[idx++]=n;
