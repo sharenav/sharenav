@@ -1068,8 +1068,18 @@ public class RouteInstructions {
 						// while straight on
 						c.wayRouteInstruction == RI_STRAIGHT_ON
 						||
-						// or no alternative way to go to (and this is a direction instruction)
-						(c.numToRoutableWays == 1 && c.wayRouteInstruction >= RI_HARD_RIGHT && c.wayRouteInstruction <= RI_HARD_LEFT)
+						/* or no alternative way to go to (and this is a direction instruction)
+						 * but the next instruction must not be a skipped one
+						*/
+						(
+							c.numToRoutableWays == 1
+							&&
+							cNext.wayRouteInstruction != RI_SKIPPED
+							&&
+							c.wayRouteInstruction <= RI_HARD_LEFT
+							&&
+							c.wayRouteInstruction >= RI_HARD_RIGHT
+						)
 						||
 						// or named direction arrow with same name and way type as previous one but not multiple same named options
 						(
