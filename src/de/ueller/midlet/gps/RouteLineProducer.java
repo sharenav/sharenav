@@ -22,8 +22,8 @@ public class RouteLineProducer implements Runnable {
 
 	private static volatile boolean abort = false;
 
-	/** the index of the route element until which the route line is produced and thus we can give route instructions for */
-	public static volatile int maxRouteElement;
+	/** the index of the route element until which the route line is produced and thus we can determine route instructions for */
+	public static volatile int maxRouteElementDone;
 
 	private static Trace trace;
 	public static Vector route;
@@ -39,7 +39,7 @@ public class RouteLineProducer implements Runnable {
 	public void determineRoutePath(Trace trace, Vector route) throws Exception {
 		// terminate any previous RouteLineProducers
 		abort();
-		RouteLineProducer.maxRouteElement = 0;
+		RouteLineProducer.maxRouteElementDone = 0;
 		routeLineTree = new intTree();
 		RouteLineProducer.trace = trace;
 		RouteLineProducer.route = route;		
@@ -61,7 +61,7 @@ public class RouteLineProducer implements Runnable {
 					//#debug debug
 					logger.debug("determineRoutePath " + i + "/" + (route.size() - 2) );
 					routeLen += searchConnection2Ways(pc, i);
-					RouteLineProducer.maxRouteElement = i;
+					RouteLineProducer.maxRouteElementDone = i;
 					// when route line is produced until notifyWhenAtElement, wake up getRouteElement()
 					if (i >= notifyWhenAtElement) {
 						synchronized (this) {
@@ -73,14 +73,14 @@ public class RouteLineProducer implements Runnable {
 					}
 				}
 				if (!RouteLineProducer.abort) {
-					maxRouteElement = route.size();
+					maxRouteElementDone = route.size();
 					//#debug debug
 					logger.debug("Connection2Ways found: " + connsFound + "/" + (route.size()-1) + " in " + (long)(System.currentTimeMillis() - startTime) + " ms");
 					trace.receiveMessage ("Route: " + (int) routeLen + "m" + (connsFound==(route.size()-1)?"":" (" + connsFound + "/" + (route.size()-1) + ")"));
 				} else {
 					//#debug debug
 					logger.debug("RouteLineProducer aborted at " + connsFound + "/" + (route.size()-1));					
-					maxRouteElement = 0;
+					maxRouteElementDone = 0;
 				}
 			}
 		} catch (Exception e) {
@@ -223,7 +223,7 @@ public class RouteLineProducer implements Runnable {
 	}
 
 	public static boolean isRouteLineProduced() {
-		return (route != null && maxRouteElement == route.size());
+		return (route != null && maxRouteElementDone == route.size());
 	}
 	
 	
@@ -250,14 +250,14 @@ public class RouteLineProducer implements Runnable {
 	/** wait until route line is produced up to route element at index i */
 	public void waitForRouteLine(int i) {
 		//#debug debug
-		logger.debug("waitForRouteLine:" + i + ", maxRouteElement: " + maxRouteElement);
-		while (i >= maxRouteElement && !RouteLineProducer.abort) {
+		logger.debug("waitForRouteLine:" + i + ", maxRouteElement: " + maxRouteElementDone);
+		while (i >= maxRouteElementDone && !RouteLineProducer.abort) {
 			synchronized (this) {
 				try {
 					notifyWhenAtElement = i;
 					wait(5000);
 					//#debug debug
-					logger.debug(" routeLineWait timed out waiting for: " + i + " maxRouteElement: " + maxRouteElement);
+					logger.debug(" routeLineWait timed out waiting for: " + i + " maxRouteElement: " + maxRouteElementDone);
 				} catch(InterruptedException e) {
 					//#debug debug
 					logger.debug(" routeLineWait notified " + i);

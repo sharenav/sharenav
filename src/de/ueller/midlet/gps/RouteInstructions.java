@@ -106,6 +106,9 @@ public class RouteInstructions {
 	private static int iNamedArrow = 0;
 	private static String sLastInstruction = "";
 	private static long lastArrowChangeTime = 0;
+	
+	/** the index of the route element until which the route instructions are fully determined */
+	private static volatile int maxDeterminedRouteInstruction = 0;
 
 	private static Font routeFont;
 	private static int routeFontHeight = 0;
@@ -232,7 +235,7 @@ public class RouteInstructions {
 					// there's a route so no calculation required
 					routeRecalculationRequired=false;
 		
-					for (int i=1; i<RouteLineProducer.maxRouteElement;i++){
+					for (int i = 1; i < maxDeterminedRouteInstruction; i++){
 						c = (ConnectionWithNode) route.elementAt(i);
 						if (c == null){
 							logger.error("show Route got null connection");
@@ -315,7 +318,7 @@ public class RouteInstructions {
 						logger.debug("showRoute - iRealNow: " + iRealNow + " iNow: " + iNow + " iThen: " + iThen);						
 					}					
 					
-					for (int i=1; i<RouteLineProducer.maxRouteElement;i++){
+					for (int i = 1; i < maxDeterminedRouteInstruction; i++){
 						c = (ConnectionWithNode) route.elementAt(i);						
 						
 						// calculate distance and duration to target
@@ -897,7 +900,8 @@ public class RouteInstructions {
 		int nextStartBearing;
 		int iAreaStart = 0;
 		int iInstructionStart = 0;
-
+		maxDeterminedRouteInstruction = 0;
+		
 		if (route.size() < 3) {
 			return;
 		}
@@ -992,6 +996,7 @@ public class RouteInstructions {
 			c.wayRouteInstruction = ri;
 			combineCloseInstructions(iInstructionStart, i);
 			makeArrowsQuiet(iInstructionStart, i);
+			maxDeterminedRouteInstruction = i - 1;
 		}
 		// combine
 		combineCloseInstructions(iInstructionStart, route.size()-2);
@@ -999,6 +1004,7 @@ public class RouteInstructions {
 		
 		c = getRouteElement(route.size()-1);
 		c.wayRouteInstruction = RI_TARGET_REACHED;				
+		maxDeterminedRouteInstruction = route.size();
 		
 		// reset arrow markers
 		iNamedArrow = -1;
@@ -1008,7 +1014,7 @@ public class RouteInstructions {
 	}
 	
 	private ConnectionWithNode getRouteElement(int i) {
-		if (i <= RouteLineProducer.maxRouteElement) {
+		if (i <= RouteLineProducer.maxRouteElementDone) {
 			return (ConnectionWithNode) route.elementAt(i);
 		}
 		rlp.waitForRouteLine(i);
