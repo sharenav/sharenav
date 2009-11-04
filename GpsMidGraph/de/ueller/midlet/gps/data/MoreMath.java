@@ -81,6 +81,25 @@ public class MoreMath {
 
 	final static public transient float		FLOAT_LOGFDIV2	= -0.6931471805599453094f;
 
+	/**
+	 * Average earth radius of the WGS84 geoid in meters.
+	 * 
+	 * This is also used as fixed point multiplier to convert
+	 * latitude / longitude from radians to fixpoint representation.
+	 * With this multiplier, one should get a resolution of 1m at the equator.
+	 * 
+	 * This constant has to be in synchrony with the value in Osm2GpsMid.
+	 * 
+	 * The old value used here was 6378140 and 6378159.81 for SingleTile."fpm".
+	 */
+	public static final double PLANET_RADIUS_D = 6371000.8d;
+	public static final float PLANET_RADIUS = 6371000.8f;
+	
+	/**
+	 * 1 / PLANET_RADIUS, this saves a floating point division.
+	 */
+	public static final float PLANET_RADIUS_INV = 1 / PLANET_RADIUS;
+
 	// cannot construct
 	private MoreMath() {}
 
@@ -711,6 +730,7 @@ public class MoreMath {
 //		logger.info("exit _log" + f);
 		return f;
 	}
+
 	static private float _log(float x) {
 //		logger.info("enter _log " + x);
 		if (!(x > 0f)) {
@@ -774,19 +794,18 @@ public class MoreMath {
 			return f;
 		}
 	}
-	public final static float ALT_NN=637814000f;
-	public final static double ALT_NND=6378140d;
+
     final public static int dist(float lat1, float lon1,
     		float lat2, float lon2) {
 //    	float c=acos((float) (Math.sin(lat1)*Math.sin(lat2) +
 //    			 Math.cos(lat1)*Math.cos(lat2) *
 //    			 Math.cos(lon2-lon1)));
 //    	return (int)(ALT_NN*c+0.5f);
-    double latSin = Math.sin((lat2-lat1)/2d);
-	double longSin = Math.sin((lon2-lon1)/2d);
-	double a = (latSin * latSin) + (Math.cos(lat1)*Math.cos(lat2)*longSin*longSin);
-	double c=2d * atan2(Math.sqrt(a),Math.sqrt(1d-a));
-	return (int) (ALT_NND*c+0.5d);
+    	double latSin = Math.sin((lat2-lat1)/2d);
+    	double longSin = Math.sin((lon2-lon1)/2d);
+    	double a = (latSin * latSin) + (Math.cos(lat1)*Math.cos(lat2)*longSin*longSin);
+    	double c = 2d * atan2(Math.sqrt(a),Math.sqrt(1d-a));
+    	return (int)(PLANET_RADIUS_D * (c + 0.5d));
     }
 
     final public static double bearing_int(double lat1, double lon1,
@@ -796,7 +815,6 @@ public class MoreMath {
     	double x=Math.cos(lat1)*Math.sin(lat2)-Math.sin(lat1)*Math.cos(lat2)*Math.cos(dLon);
     	return atan2(y,x);
     }        
-
 
 	/**
 	 * calculate the start bearing in 1/2 degree so result 90 indicates 180 degree. 

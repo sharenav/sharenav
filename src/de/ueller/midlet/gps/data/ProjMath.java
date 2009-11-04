@@ -167,7 +167,7 @@ public final class ProjMath {
 		//d *= 1.609; //land miles to kilometers
 		//d *= 1000; //kilometers to meters  
 		// Pretty complicated way to do this as this is simply the earth radius...
-		return d * Projection.PLANET_RADIUS;
+		return d * MoreMath.PLANET_RADIUS;
 	}
 
 	/**
@@ -205,7 +205,7 @@ public final class ProjMath {
 			    fCourse = 360 - tc; 
 			}
 		}
-		fDist *= Projection.PLANET_RADIUS;
+		fDist *= MoreMath.PLANET_RADIUS;
 		float[] result = new float[2];
 		result[0] = fDist;
 		result[1] = fCourse;

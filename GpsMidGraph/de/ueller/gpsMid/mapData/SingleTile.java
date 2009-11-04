@@ -18,6 +18,7 @@ import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.SearchResult;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
+import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.ProjMath;
 import de.ueller.midlet.gps.data.Way;
 import de.ueller.midlet.gps.tile.POIdescription;
@@ -33,20 +34,6 @@ public class SingleTile extends Tile implements QueueableTile {
 	public static final byte STATE_LOADREADY = 2;
 
 	private static final byte STATE_CLEANUP = 3;
-
-	/**
-	 * fpm is the fixed point multiplier used to convert
-	 * latitude / logitude from radians to fixpoint representation
-	 * 
-	 * With this multiplier, one should get a resolution
-	 * of 1m at the equator.
-	 * 
-	 * 6378159.81 = circumference of the earth in meters / 2 pi. 
-	 * 
-	 * This constant has to be in synchrony with the value in Osm2GpsMid
-	 */	
-	public static final float fpm = 6378159.81f;
-    public static final float fpminv = 1/fpm; //Saves a floatingpoint devision
 
     
 	// Node[] nodes;
@@ -149,13 +136,12 @@ public class SingleTile extends Tile implements QueueableTile {
 			
 			
 			/**
-			 * Calculate pc coordinates in terms of relative single tile coordinates
+			 * Calculate paint context coordinates in terms of relative single tile coordinates
 			 */
-			
-			float pcLDlatF = ((pc.getP().getMinLat() - this.centerLat) * SingleTile.fpm);
-			float pcLDlonF = ((pc.getP().getMinLon() - this.centerLon) * SingleTile.fpm);
-			float pcRUlatF = ((pc.getP().getMaxLat() - this.centerLat) * SingleTile.fpm);
-			float pcRUlonF = ((pc.getP().getMaxLon() - this.centerLon) * SingleTile.fpm);
+			float pcLDlatF = ((pc.getP().getMinLat() - this.centerLat) * MoreMath.PLANET_RADIUS);
+			float pcLDlonF = ((pc.getP().getMinLon() - this.centerLon) * MoreMath.PLANET_RADIUS);
+			float pcRUlatF = ((pc.getP().getMaxLat() - this.centerLat) * MoreMath.PLANET_RADIUS);
+			float pcRUlonF = ((pc.getP().getMaxLon() - this.centerLon) * MoreMath.PLANET_RADIUS);
 			short pcLDlat;
 			short pcLDlon;
 			short pcRUlat;
@@ -238,8 +224,8 @@ public class SingleTile extends Tile implements QueueableTile {
 								 * To prevent rounding issues, test for approximate
 								 * equality
 								 */
-								short targetLat = (short)((pc.target.lat - centerLat)*fpm);
-								short targetLon = (short)((pc.target.lon - centerLon)*fpm);
+								short targetLat = (short)((pc.target.lat - centerLat) * MoreMath.PLANET_RADIUS);
+								short targetLon = (short)((pc.target.lon - centerLon) * MoreMath.PLANET_RADIUS);
 								for (int i1 = 0; i1 < w.path.length; i1++) {
 									short s = w.path[i1];
 									if ((Math.abs(nodeLat[s] - targetLat) < 2) && 
@@ -479,7 +465,7 @@ public class SingleTile extends Tile implements QueueableTile {
 	   /**
 	    * Try again and see if it has been loaded by now
 	    * If not, then give up and skip this tile in order
-	    * not to slow down surch too much
+	    * not to slow down search too much
 	    */
 	   if (!isDataReady()) {		   
 		   return new Vector();
@@ -488,8 +474,8 @@ public class SingleTile extends Tile implements QueueableTile {
 	   for (int i = 0; i < type.length; i++) {
 		   if (type[i] == searchType) {
 			   SearchResult sr = new SearchResult();
-			   sr.lat = nodeLat[i]*fpminv + centerLat;
-			   sr.lon = nodeLon[i]*fpminv + centerLon;
+			   sr.lat = nodeLat[i] * MoreMath.PLANET_RADIUS_INV + centerLat;
+			   sr.lon = nodeLon[i] * MoreMath.PLANET_RADIUS_INV + centerLon;
 			   sr.nameIdx = nameIdx[i];
 			   sr.type = (byte)(-1 * searchType); //It is a node. They have the top bit set to distinguish them from ways in search results
 			   sr.dist = ProjMath.getDistance(sr.lat, sr.lon, lat, lon);

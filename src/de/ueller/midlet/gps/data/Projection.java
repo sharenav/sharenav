@@ -1,24 +1,14 @@
+/*
+ * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net 
+ * See COPYING
+ */
+
 package de.ueller.midlet.gps.data;
 
 import de.ueller.gpsMid.mapData.SingleTile;
 
-/*
- * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net 
- * See Copying
- */
-
-
-
-
-
 
 public interface Projection {
-	
-	/**
-	 * Average earth radius of the WGS84 geoid.
-	 * The old value used (6378137.0f) is the equatorial radius.  
-	 */
-	public static final float PLANET_RADIUS = 6371000.8f;
 
 	public static final int DEFAULT_PIXEL_PER_METER = 3272;
 	
@@ -35,8 +25,6 @@ public interface Projection {
      * @return String projID
      */
     public String getProjectionID();
-
-
 
     /**
      * Checks if a Node is plot-able.
@@ -96,9 +84,6 @@ public interface Projection {
      */
     public IntPoint forward(short lat, short lon, IntPoint pt, SingleTile t);
 
-
-
-
     /**
      * Inverse project x,y coordinates into a Node.
      * 
@@ -109,8 +94,6 @@ public interface Projection {
      * @see Proj#inverse(IntPoint)
      */
     public Node inverse(int x, int y, Node llpt);
-
-
 
     /**
      * Given a couple of IntPoints representing a bounding box, find out

@@ -52,7 +52,7 @@ public class Proj2DMoveUp  implements Projection {
     }
 
 	public void computeParameters(){
-		planetPixelRadius = PLANET_RADIUS * pixelsPerMeter;
+		planetPixelRadius = MoreMath.PLANET_RADIUS * pixelsPerMeter;
 		scaled_radius = planetPixelRadius / scale;
         planetPixelCircumference = MoreMath.TWO_PI * planetPixelRadius;
         // do some precomputation of stuff
@@ -152,10 +152,10 @@ public class Proj2DMoveUp  implements Projection {
 	//     two thread are using this 
 	public IntPoint forward(short lat, short lon, IntPoint p, SingleTile t) {
     	if (t != tileCache) {
-    		ctrLonRel = (int)((ctrLon - t.centerLon)*SingleTile.fpm);
-    		ctrLatRel = (int)((ctrLat - t.centerLat)*SingleTile.fpm);
-    		scaled_radius_rel = (scaled_radius*SingleTile.fpminv);
-    		scaled_lat_rel = (scaled_lat*SingleTile.fpminv);    		
+    		ctrLonRel = (int)((ctrLon - t.centerLon) * MoreMath.PLANET_RADIUS);
+    		ctrLatRel = (int)((ctrLat - t.centerLat) * MoreMath.PLANET_RADIUS);
+    		scaled_radius_rel = (scaled_radius * MoreMath.PLANET_RADIUS_INV);
+    		scaled_lat_rel = (scaled_lat * MoreMath.PLANET_RADIUS_INV);
     		tileCache = t;    		
     	}         
     	float px=scaled_radius_rel * (lon - ctrLonRel);        
