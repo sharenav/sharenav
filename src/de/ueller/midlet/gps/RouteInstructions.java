@@ -1061,11 +1061,13 @@ public class RouteInstructions {
 		// replace redundant straight-ons and direction arrow with same name by quiet arrows and add way distance to starting arrow of the street
 		ConnectionWithNode cStart;
 		ConnectionWithNode c;
+		ConnectionWithNode cPrev;
 		ConnectionWithNode cNext;
 		int oldNameIdx = -2;
 		for (int i = iInstructionStart - 1; i < iInstructionCurrent; i++){
 			c = (ConnectionWithNode) route.elementAt(i);
 			cStart = (ConnectionWithNode) route.elementAt(i-1);
+			cPrev = cStart;
 			oldNameIdx = cStart.wayNameIdx;
 			cNext = (ConnectionWithNode) route.elementAt(i+1);
 			while (	i < iInstructionCurrent
@@ -1085,6 +1087,8 @@ public class RouteInstructions {
 							c.wayRouteInstruction <= RI_HARD_LEFT
 							&&
 							c.wayRouteInstruction >= RI_HARD_RIGHT
+							&&
+							(cPrev.wayRouteInstruction != RI_SKIPPED || cPrev.numToRoutableWays == 1)
 						)
 						||
 						// or named direction arrow with same name and way type as previous one but not multiple same named options
@@ -1116,6 +1120,7 @@ public class RouteInstructions {
 				oldNameIdx = c.wayNameIdx;  // if we went straight on into a way with new name we continue comparing with the new name 
 				c.wayRouteFlags |= Legend.ROUTE_FLAG_QUIET;
 				i++;
+				cPrev = c;
 				c = cNext;
 				if (i < iInstructionCurrent) {
 					cNext = (ConnectionWithNode) route.elementAt(i+1);
