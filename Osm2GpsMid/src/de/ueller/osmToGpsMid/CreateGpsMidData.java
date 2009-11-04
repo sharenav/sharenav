@@ -697,10 +697,12 @@ public class CreateGpsMidData {
 				}				
 				
 				if (ways.size() <= 255){
-					t.bounds=realBound.clone();
-					if ((MyMath.degToRad(t.bounds.maxLat - t.bounds.minLat) > (Short.MAX_VALUE - Short.MIN_VALUE - 2000)/Tile.fpm) ||
-						(MyMath.degToRad(t.bounds.maxLon - t.bounds.minLon) > (Short.MAX_VALUE - Short.MIN_VALUE - 2000)/Tile.fpm)) {
-							//System.out.println("Tile spacially to large (" + ((Short.MAX_VALUE - Short.MIN_VALUE - 2000)/Tile.fpm) + ": " + t.bounds);
+					t.bounds = realBound.clone();
+					if ((MyMath.degToRad(t.bounds.maxLat - t.bounds.minLat) > 
+							(Short.MAX_VALUE - Short.MIN_VALUE - 2000) / MyMath.PLANET_RADIUS) ||
+						(MyMath.degToRad(t.bounds.maxLon - t.bounds.minLon) > 
+							(Short.MAX_VALUE - Short.MIN_VALUE - 2000) / MyMath.PLANET_RADIUS)) {
+							//System.out.println("Tile spacially too large (" + ((Short.MAX_VALUE - Short.MIN_VALUE - 2000)/Tile.fpm) + ": " + t.bounds);
 							tooLarge = true;
 							
 					} else {
@@ -1135,10 +1137,10 @@ public class CreateGpsMidData {
 		 * Convert coordinates to relative fixpoint (integer) coordinates
 		 * The reference point is the center of the tile.
 		 * With 16bit shorts, this should allow for tile sizes of
-		 * about 65km in width and with 1m accuracy at the equator.  
+		 * about 65 km in width and with 1 m accuracy at the equator.  
 		 */
-		double tmpLat = (MyMath.degToRad(n.lat - t.centerLat)) * Tile.fpm;
-		double tmpLon = (MyMath.degToRad(n.lon - t.centerLon)) * Tile.fpm;
+		double tmpLat = (MyMath.degToRad(n.lat - t.centerLat)) * MyMath.PLANET_RADIUS;
+		double tmpLon = (MyMath.degToRad(n.lon - t.centerLon)) * MyMath.PLANET_RADIUS;
 		if ((tmpLat > Short.MAX_VALUE) || (tmpLat < Short.MIN_VALUE)) {
 			System.out.println("Numeric overflow of latitude for node: " + n.id);
 		}

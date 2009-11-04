@@ -358,8 +358,8 @@ public class RouteData {
 		if (againstDirectionTravelModes != 0 ) {
 			// add connection in the other direction as well, if this is no oneWay
 			// TODO: explain Doesn't this add duplicates when addconnection() is called later on with from and to exchanged or does this not happen?
-			Connection cr = new Connection(from, dist, times, MyMath.inversBearing(be),
-					MyMath.inversBearing(bs), w);
+			Connection cr = new Connection(from, dist, times, MyMath.inverseBearing(be),
+					MyMath.inverseBearing(bs), w);
 			cr.from = to;
 			to.connected.add(cr);
 			from.connectedFrom.add(cr);

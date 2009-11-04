@@ -547,10 +547,10 @@ public class Way extends Entity implements Comparable<Way> {
 			ds.writeByte(flags);
 
 			b = getBounds();
-			ds.writeShort((short)(MyMath.degToRad(b.minLat - t.centerLat) * Tile.fpm));
-			ds.writeShort((short)(MyMath.degToRad(b.minLon - t.centerLon) * Tile.fpm));
-			ds.writeShort((short)(MyMath.degToRad(b.maxLat - t.centerLat) * Tile.fpm));
-			ds.writeShort((short)(MyMath.degToRad(b.maxLon - t.centerLon) * Tile.fpm));
+			ds.writeShort((short)(MyMath.degToRad(b.minLat - t.centerLat) * MyMath.PLANET_RADIUS));
+			ds.writeShort((short)(MyMath.degToRad(b.minLon - t.centerLon) * MyMath.PLANET_RADIUS));
+			ds.writeShort((short)(MyMath.degToRad(b.maxLat - t.centerLat) * MyMath.PLANET_RADIUS));
+			ds.writeShort((short)(MyMath.degToRad(b.maxLon - t.centerLon) * MyMath.PLANET_RADIUS));
 			
 //			ds.writeByte(0x58);
 			ds.writeByte(type);

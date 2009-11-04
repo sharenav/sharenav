@@ -92,8 +92,11 @@ public class Bounds implements Cloneable {
 			return b;
 		}
 
-		public String toString(){
-			return "[Bound ("+minLat+","+minLon+") ("+ maxLat+","+maxLon+") lat="+(int)((maxLat-minLat)*Tile.fpm)+" lon="+(int)(MyMath.degToRad(maxLon-minLon)*Tile.fpm)+"]";
+		public String toString() {
+			return ("[Bound (" + minLat + "|" + minLon+")(" + maxLat + "|" + maxLon +
+				") fixptlatspan=" + (int)(MyMath.degToRad(maxLat - minLat) * MyMath.PLANET_RADIUS) + 
+				" fixptlonspan=" + (int)(MyMath.degToRad(maxLon - minLon) * MyMath.PLANET_RADIUS) + 
+				"]");
 		}
 
 		public String toPropertyString(int regionNr) {
@@ -102,6 +105,5 @@ public class Bounds implements Cloneable {
 					"region." + regionNr + ".lat.max = " + maxLat + "\r\n" +
 					"region." + regionNr + ".lon.max = " + maxLon + "\r\n";
 		}
-
 
 }

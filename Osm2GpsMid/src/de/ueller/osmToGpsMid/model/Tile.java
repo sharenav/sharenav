@@ -1,8 +1,19 @@
+/**
+ * This file is part of OSM2GpsMid 
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as published by
+ * the Free Software Foundation.
+ *
+ * Copyright (C) 2007  Harald Mueller
+ * Copyright (C) 2007  Kai Krueger
+ * 
+ */
+
 package de.ueller.osmToGpsMid.model;
 
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,21 +21,18 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import de.ueller.osmToGpsMid.Configuration;
 import de.ueller.osmToGpsMid.CreateGpsMidData;
 import de.ueller.osmToGpsMid.MyMath;
-import de.ueller.osmToGpsMid.OxParser;
 
 
 public class Tile {
-	
-//	float minLat,maxLat,minLon,maxLon;
-	public Bounds bounds=new Bounds();
+
+	public Bounds bounds = new Bounds();
+
 	/**
 	 * Center coordinates of the tile in deg
-	 * This is used as a reference point
-	 * for the relative coordinates stored
-	 * in the file
+	 * This is used as a reference point for the relative coordinates 
+	 * stored in the file.
 	 */
 	public float centerLat, centerLon;
 	public Tile t1=null;
@@ -50,18 +58,6 @@ public class Tile {
 	public static final byte TYPE_ROUTECONTAINER = 6;
 	public static final byte TYPE_ROUTEFILE = 7;
 	public static final float RTEpsilon = 0.012f;
-	/**
-	 * fpm is the fixed point multiplier used to convert
-	 * latitude / logitude from radians to fixpoint representation
-	 * 
-	 * With this multiplier, one should get a resolution
-	 * of 1m at the equator.
-	 * 
-	 * 6378159.81 = circumference of the earth in meters / 2 pi. 
-	 * 
-	 * This constant has to be in synchrony with the value in GpsMid
-	 */	
-	public static final double fpm = 6378159.81;
 	
 
 	public Tile() {
