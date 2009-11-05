@@ -151,21 +151,36 @@ public class RouteLineProducer implements Runnable {
 //			System.out.println(iConnFrom + ": " + cTo.wayConStartBearing);
 			// check if we need a bearing instruction at this connection
 			for (int b = 0; b < pc.conWayBearings.size(); b++) {
-				Byte oBearing = (Byte) pc.conWayBearings.elementAt(b);
-				byte bearing = oBearing.byteValue();
+				Byte oBearingAlternative = (Byte) pc.conWayBearings.elementAt(b);
+				byte bearingAlternative = oBearingAlternative.byteValue();
 //				System.out.println(bearing);
 				
-				if (cTo.wayConStartBearing != bearing) {					
-					byte riReal = RouteInstructions.convertTurnToRouteInstruction( (cTo.wayConStartBearing - cFrom.wayConEndBearing) * 2 );
-					byte riCheck = RouteInstructions.convertTurnToRouteInstruction( (bearing - cFrom.wayConEndBearing) * 2 );
+				if (cTo.wayConStartBearing != bearingAlternative) {					
+					byte riRoute = RouteInstructions.convertTurnToRouteInstruction( (cTo.wayConStartBearing - cFrom.wayConEndBearing) * 2 );
+					byte riCheck = RouteInstructions.convertTurnToRouteInstruction( (bearingAlternative - cFrom.wayConEndBearing) * 2 );
 					// if we got a second straight-on way at the connection, we need to tell the bearing
 					if (
-						(riReal == RouteInstructions.RI_STRAIGHT_ON && riCheck == RouteInstructions.RI_STRAIGHT_ON)
+						(riRoute == RouteInstructions.RI_STRAIGHT_ON && riCheck == RouteInstructions.RI_STRAIGHT_ON)
 						// if there's exactly one alternative to leave/enter the motorway don't add the bearing
 						&& pc.conWayNumMotorways != 1
 					) {
-						int iBearing = (int) (bearing) + 180;
-						if ((int) (cTo.wayConStartBearing) + 180 < iBearing) {
+						int iBearingAlternative = (int) (bearingAlternative) * 2;
+						if (iBearingAlternative < 0) iBearingAlternative += 360;
+
+						int iBearingRoute = (int) (cTo.wayConStartBearing) * 2;
+						if (iBearingRoute < 0) iBearingRoute += 360;
+
+						//System.out.println("" + iBearingRoute + " " + iBearingAlternative);
+
+						// if the bearing difference is more than 180 degrees, the angle in the other direction is smaller,
+						// so simply swap signs of the bearings to make the later comparison give the opposite result 
+						if (Math.abs(iBearingRoute - iBearingAlternative) > 180) {
+							iBearingAlternative = -iBearingAlternative;
+							iBearingRoute = -iBearingRoute;
+							//System.out.println("changed signs: " + iBearingRoute + " " + iBearingAlternative);
+						}
+						
+						if (iBearingRoute < iBearingAlternative) {
 							cFrom.wayRouteFlags |= Legend.ROUTE_FLAG_BEAR_LEFT;
 						} else {
 							cFrom.wayRouteFlags |= Legend.ROUTE_FLAG_BEAR_RIGHT;							
