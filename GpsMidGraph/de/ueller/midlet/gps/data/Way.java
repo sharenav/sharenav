@@ -473,10 +473,10 @@ public class Way extends Entity{
 				}
 				idx2 = path[i+1];
 				float dist = ProjMath.getDistance(
-						(t.centerLat + t.nodeLat[idx1] * MoreMath.PLANET_RADIUS),
-						(t.centerLon + t.nodeLon[idx1] * MoreMath.PLANET_RADIUS),
-						(t.centerLat + t.nodeLat[idx2] * MoreMath.PLANET_RADIUS),
-						(t.centerLon + t.nodeLon[idx2] * MoreMath.PLANET_RADIUS));
+						(t.centerLat + t.nodeLat[idx1] * MoreMath.PLANET_RADIUS_INV),
+						(t.centerLon + t.nodeLon[idx1] * MoreMath.PLANET_RADIUS_INV),
+						(t.centerLat + t.nodeLat[idx2] * MoreMath.PLANET_RADIUS_INV),
+						(t.centerLon + t.nodeLon[idx2] * MoreMath.PLANET_RADIUS_INV));
 				conWayRealDistance += dist;
 				idx1 = idx2;
 			}
