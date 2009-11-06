@@ -717,6 +717,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		//#debug info
 		logger.info("researching");
 		scrollOffset = 0;
+		//FIXME: in rare cases there occurs an NPE in the following line
 		searchThread.search(NumberCanon.canonial(searchCanon.toString()));
 		repaint(0, 0, getWidth(), getHeight());
 		// title will be set by SearchName.doSearch when we need to determine first if we have favorites
