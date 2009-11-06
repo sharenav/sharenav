@@ -242,7 +242,8 @@ public class GuiTacho extends KeyCommandCanvas implements CommandListener,
 	}
 
 	public void show() {
-		setFullScreenMode(Configuration.getCfgBitState(Configuration.CFGBIT_FULLSCREEN));
+		// if device has a touch screen never use fullscreen mode as we have no Next-Button
+		setFullScreenMode(!hasPointerEvents() && Configuration.getCfgBitState(Configuration.CFGBIT_FULLSCREEN));
 		GpsMid.getInstance().show(this);
 		synchronized (parent.locationUpdateListeners) {
 			parent.locationUpdateListeners.addElement(this);
