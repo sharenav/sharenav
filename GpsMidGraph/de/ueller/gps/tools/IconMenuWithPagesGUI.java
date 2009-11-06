@@ -72,7 +72,8 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 		this.minY = 0;
 		this.maxX = getWidth();
 		this.maxY = getHeight();
-		recreateTabButtons();
+		createTabPrevNextButtons();
+		tabButtonManager = new LayoutManager(ePrevTab.right, minY, eNextTab.left, maxY);
 		setCommandListener(this);
 		addCommands();
 	}
@@ -84,13 +85,20 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 		return imp;
 	}
 	
+	private int getFontFlag() {
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_BIG_TAB_BUTTONS)) {
+			return LayoutElement.FLAG_FONT_LARGE;
+		}
+		return LayoutElement.FLAG_FONT_SMALL;
+	}
+	
 	/** create a layout manager with the direction buttons */
-	private void createTabPrevNextButtons(int fontFlag) {
+	private void createTabPrevNextButtons() {
 		tabDirectionButtonManager = new LayoutManager(minX, minY, maxX, maxY);
 		ePrevTab = tabDirectionButtonManager.createAndAddElement(
 				LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_TOP |
 				LayoutElement.FLAG_BACKGROUND_BORDER |
-				fontFlag
+				getFontFlag()
 		);					
 		ePrevTab.setBackgroundColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_BORDER]);
 		ePrevTab.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_TEXT]);
@@ -98,7 +106,7 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 		eNextTab = tabDirectionButtonManager.createAndAddElement(
 				LayoutElement.FLAG_HALIGN_RIGHT | LayoutElement.FLAG_VALIGN_TOP |
 				LayoutElement.FLAG_BACKGROUND_BORDER |
-				fontFlag
+				getFontFlag()
 		);
 		eNextTab.setBackgroundColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_BORDER]);
 		eNextTab.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_TEXT]);
@@ -106,7 +114,7 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 		eStatusBar = tabDirectionButtonManager.createAndAddElement(
 				LayoutElement.FLAG_HALIGN_CENTER | LayoutElement.FLAG_VALIGN_BOTTOM |
 				LayoutElement.FLAG_BACKGROUND_BOX | LayoutElement.FLAG_BACKGROUND_FULL_WIDTH |
-				fontFlag
+				getFontFlag()
 		);
 		eStatusBar.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_TEXT]);
 		eStatusBar.setBackgroundColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_BORDER]);
@@ -118,28 +126,10 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 	
 	/** recreates the tab buttons for all the iconMenuPages */
 	private void recreateTabButtons() {
-		int fontFlag = LayoutElement.FLAG_FONT_SMALL;
-		if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_BIG_TAB_BUTTONS)) {
-			fontFlag = LayoutElement.FLAG_FONT_LARGE;
-		}
-		// when the font has changed recreate the tab buttons
-		if (ePrevTab == null || (ePrevTab.getFlags() & fontFlag) == 0) {
-			createTabPrevNextButtons(fontFlag);
-			tabButtonManager = null;
-		}
-		
-		// when there are no tabs yet, we're done
-		if (iconMenuPages.size() == 0) {
-			return;
-		}
-		
-		// create a tab button manager if not already done or if it was deleted by font change
-		if (tabButtonManager == null) {
-			tabButtonManager = new LayoutManager(ePrevTab.right, minY, eNextTab.left, maxY);
-			reloadAll();
-		}
-		
+		createTabPrevNextButtons();
 		tabButtonManager.removeAllElements();
+		tabButtonManager.minX = ePrevTab.right;
+		tabButtonManager.maxX = eNextTab.left;
 		LayoutElement e = null;
 		IconMenuPage imp = null;
 		for (int i=0; i < iconMenuPages.size(); i++) {
@@ -148,14 +138,14 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 				e = tabButtonManager.createAndAddElement(
 						LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_TOP |
 						LayoutElement.FLAG_BACKGROUND_BORDER | 
-						fontFlag
+						getFontFlag()
 				);
 			// all the other tab buttons are positioned rightto-relative to the previous one
 			} else {
 				e = tabButtonManager.createAndAddElement(
 						LayoutElement.FLAG_HALIGN_RIGHTTO_RELATIVE | LayoutElement.FLAG_VALIGN_TOP |
 						LayoutElement.FLAG_BACKGROUND_BORDER |
-						fontFlag
+						getFontFlag()
 				);
 				e.setHRelative(tabButtonManager.getElementAt(tabButtonManager.size() - 2));
 			}
@@ -191,13 +181,7 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 	
 	protected void sizeChanged(int w, int h) {
 		this.maxY = h;
-		reloadAll();
-		addCommands();
-	}
-	
-	private void reloadAll() {
-		// System.out.println("Reload all");
-		recreateTabButtons();
+		createTabPrevNextButtons();
 		IconMenuPage imp = null;
 		for (int i=0; i < iconMenuPages.size(); i++) {
 			imp = (IconMenuPage) iconMenuPages.elementAt(i);
@@ -209,11 +193,12 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 				imp.recalcPositions();
 			}
 		}
+		addCommands();
 	}
 	
 	
 	public void setActiveTab(int tabNr) {
-		if(tabNr >= iconMenuPages.size() || tabButtonManager == null) {
+		if(tabNr >= iconMenuPages.size()) {
 			return;
 		}
 		// clear the FLAG_BACKGROUND_BOX for all other tab buttons except the current one, where it needs to get set 
