@@ -62,6 +62,7 @@ public class Legend {
 	public final static short ROUTE_FLAG_BEAR_RIGHT = 0x400; // used in ConnectionWithNode
 	public final static short ROUTE_FLAG_ONEDIRECTION_ONLY = 0x800; // used in ConnectionWithNode
 	public final static short ROUTE_FLAG_AREA = 0x1000; // used in ConnectionWithNode
+	public final static short ROUTE_FLAG_VERY_SMALL_DISTANCE = 0x2000; // used in ConnectionWithNode
 	
 	/**
 	 * minimum distances to set the is_in name to the next city

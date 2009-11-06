@@ -1031,6 +1031,12 @@ public class RouteInstructions {
 		ConnectionWithNode cPrev = (ConnectionWithNode) route.elementAt(iInstructionStart-1);
 		for (int i = iInstructionStart; i <= iInstructionCurrent; i++){
 			c = (ConnectionWithNode) route.elementAt(i);
+			if( (c.wayDistanceToNext < 3)) {
+				c.wayRouteInstruction = RI_SKIPPED;
+				c.wayRouteFlags |= Legend.ROUTE_FLAG_VERY_SMALL_DISTANCE;
+				cPrev=c;
+				continue;
+			}
 			// skip connections that are closer than 25 m to the previous one
 			if( (i<route.size()-1 && ProjMath.getDistance(c.to.lat, c.to.lon, cPrev.to.lat, cPrev.to.lon) < 25)
 			// only combine direction instructions
@@ -1337,6 +1343,9 @@ public class RouteInstructions {
 				sb.append(i + ". ");
 				if ( (c.wayRouteFlags & Legend.ROUTE_FLAG_QUIET) > 0) { 
 					sb.append("(quiet) ");
+				}
+				if ( (c.wayRouteFlags & Legend.ROUTE_FLAG_VERY_SMALL_DISTANCE) > 0) { 
+					sb.append("(small distance) ");
 				}
 				sb.append(directions[ri]);
 				sb.append(" into ");
