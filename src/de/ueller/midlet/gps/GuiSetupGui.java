@@ -22,16 +22,18 @@ public class GuiSetupGui extends Form implements CommandListener {
 		super("GUI Options");
 		this.parent = parent;
 		try {
-			String [] guis = new String[4];
+			String [] guis = new String[5];
 			guis[0] = "use icon menu";
 			guis[1] = "fullscreen icon menu";
-			guis[2] = "icons mapped on keys";
-			guis[3] = "optimise for routing";
+			guis[2] = "large tab buttons";
+			guis[3] = "icons mapped on keys";
+			guis[4] = "optimise for routing";
 			guiOpts = new ChoiceGroup("Icon Menu:", Choice.MULTIPLE, guis ,null);
 			guiOpts.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS));
 			guiOpts.setSelectedIndex(1, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN));
-			guiOpts.setSelectedIndex(2, Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_MAPPED_ICONS));
-			guiOpts.setSelectedIndex(3, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED));
+			guiOpts.setSelectedIndex(2, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_BIG_TAB_BUTTONS));
+			guiOpts.setSelectedIndex(3, Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_MAPPED_ICONS));
+			guiOpts.setSelectedIndex(4, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED));
 			append(guiOpts);
 
 			addCommand(CMD_SAVE);
@@ -62,8 +64,9 @@ public class GuiSetupGui extends Form implements CommandListener {
 				trace.addAllCommands();					
 			}
 			Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN, guiOpts.isSelected(1));
-			Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_MAPPED_ICONS, guiOpts.isSelected(2));
-			Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED, guiOpts.isSelected(3));
+			Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_BIG_TAB_BUTTONS, guiOpts.isSelected(2));
+			Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_MAPPED_ICONS, guiOpts.isSelected(3));
+			Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED, guiOpts.isSelected(4));
 			Trace.uncacheIconMenu();
 			parent.show();
 			return;

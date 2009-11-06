@@ -209,6 +209,8 @@ public class Configuration {
 	public final static byte CFGBIT_ROUTE_BOOST_MOTORWAYS = 75;
 	/** bit 75: Flag whether the route algorithm deeply examines trunks and primarys */
 	public final static byte CFGBIT_ROUTE_BOOST_TRUNKS_PRIMARYS = 76;
+	/** bit 76: Flag whether iconMenus should have bigger tabs */
+	public final static byte CFGBIT_ICONMENUS_BIG_TAB_BUTTONS = 77;
 	
 	/**
 	 * These are the database record ids for each configuration option
