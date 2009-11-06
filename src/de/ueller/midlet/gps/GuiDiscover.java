@@ -806,16 +806,18 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				logger.fatal("Need to restart GpsMid, otherwise map is in an inconsistant state"+url+Configuration.getMapUrl());
 				break;			
 			case STATE_DISPOPT:
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_NIGHT_MODE,
-						(nightModeGroup.getSelectedIndex()==1)
-				);
-				try {
-					Legend.readLegend();
-				} catch (Exception e) {
-					logger.fatal("Failed to reread legend");					
+				boolean nightMode = (nightModeGroup.getSelectedIndex()==1);
+				
+				if (nightMode != Configuration.getCfgBitState(Configuration.CFGBIT_NIGHT_MODE) ) {				
+					Configuration.setCfgBitSavedState(Configuration.CFGBIT_NIGHT_MODE, nightMode);
+					try {
+						Legend.readLegend();
+					} catch (Exception e) {
+						logger.fatal("Failed to reread legend");					
+					}
+					Trace trace = Trace.getInstance();
+					trace.recreateTraceLayout();
 				}
-				Trace trace = Trace.getInstance();
-				trace.recreateTraceLayout();
 
 				Configuration.setProjTypeDefault( (byte) rotationGroup.getSelectedIndex() );
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_STREETRENDERMODE,
