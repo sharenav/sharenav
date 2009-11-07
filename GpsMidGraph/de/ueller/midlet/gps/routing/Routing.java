@@ -556,37 +556,6 @@ public class Routing implements Runnable {
 		return tile.getRouteNode(id);
 	} 
 
-	public void solve (float fromLat,float fromLon,float toLat,float toLon) {
-		// when we search the start/target routeNode, we must be able to access all routeNodes, not only the mainStreetNet one's
-		Routing.onlyMainStreetNet = false;
-
-		try {
-			// search ways new  
-//			for (int i=0; i< 4;i++){
-//				tiles[i].
-//			}
-			// end search ways new
-			routeFrom = tile.getRouteNode(null,fromLat,fromLon);
-			
-			if (routeFrom == null){
-				parent.receiveMessage("No startpoint found");
-			} 
-			routeTo = tile.getRouteNode(null,toLat,toLon);
-			if (routeTo == null){
-				parent.receiveMessage("No targetpoint found");
-			} 
-			if (routeFrom != null && routeTo != null){
-				processorThread = new Thread(this,"Routing");
-				processorThread.setPriority(Thread.NORM_PRIORITY);
-				processorThread.start();
-			} else {
-				parent.setRoute(null);
-			}
-		} catch (Exception e) {
-			parent.receiveMessage("Routing Ex " + e.getMessage());
-			parent.setRoute(null);
-		}
-	}
 
 	public void solve (PositionMark fromMark,PositionMark toMark) {
 
