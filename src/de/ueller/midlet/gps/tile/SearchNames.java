@@ -88,20 +88,22 @@ public class SearchNames implements Runnable {
 					final String cSearch = NumberCanon.canonial(search);
 					boolean inserted = false;
 					for (int i = 0; i < gui.wayPts.length; i++ ) {
-		    			if (gui.showAllWayPts || gui.wayPts[i].displayName.endsWith("*")) {
-		    				if (
-		    					canonLen == 0
-		    					||
-		    					NumberCanon.canonial(gui.wayPts[i].displayName.substring(0, 1)).equals( cSearch )
-		    				) {
-				    			SearchResult sr = new SearchResult();
-				    			sr.lat = gui.wayPts[i].lat;
-				    			sr.lon = gui.wayPts[i].lon;	    			
-				    			sr.nameIdx = i; 
-				    			gui.insertWptSearchResultSortedByNameOrDist(gui.wayPts, sr);
-				    			inserted = true;
-		    				}    					
-		    			}
+						if (gui.wayPts[i].displayName.length() > 0) {
+							if (gui.showAllWayPts || gui.wayPts[i].displayName.endsWith("*")) {
+			    				if (
+			    					canonLen == 0
+			    					||
+			    					NumberCanon.canonial(gui.wayPts[i].displayName.substring(0, 1)).equals( cSearch )
+			    				) {
+					    			SearchResult sr = new SearchResult();
+					    			sr.lat = gui.wayPts[i].lat;
+					    			sr.lon = gui.wayPts[i].lon;	    			
+					    			sr.nameIdx = i; 
+					    			gui.insertWptSearchResultSortedByNameOrDist(gui.wayPts, sr);
+					    			inserted = true;
+			    				}
+			    			}
+						}
 		    		}
 					if (!inserted) {
 						gui.state = GuiSearch.STATE_MAIN;
