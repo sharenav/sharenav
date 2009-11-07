@@ -439,9 +439,6 @@ public class ImageCollector implements Runnable {
 			tr.actualSpeedLimitWay = null;			
 		}
 
-		if (paintPC.actualRoutableWay != null) {
-			tr.source = paintPC.currentPos;
-		}
 		boolean showLatLon = Configuration.getCfgBitState(Configuration.CFGBIT_SHOWLATLON);
 		
 		LayoutElement e = Trace.tl.ele[TraceLayout.WAYNAME];

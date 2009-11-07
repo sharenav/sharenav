@@ -206,7 +206,6 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	public volatile boolean routeCalc=false;
 	public Tile t[] = new Tile[6];
 	public Way actualSpeedLimitWay;
-	PositionMark source;
 
 	// this is only for visual debugging of the routing engine
 	Vector routeNodes = new Vector();
