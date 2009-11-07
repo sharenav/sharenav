@@ -1150,10 +1150,12 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	  				   stopImageCollector();
 					}
 					RouteInstructions.resetOffRoute(route, center);
-					logger.info("Routing source: " + source);
+					// center of the map is the route source
+					PositionMark routeSource = new PositionMark(center.radlat, center.radlon);
+					logger.info("Routing source: " + routeSource);
 					routeNodes=new Vector();
 					routeEngine = new Routing(t,this);
-					routeEngine.solve(source, target);
+					routeEngine.solve(routeSource, target);
 //					resume();
 				}
 				routingsMenu = null; // refresh routingsMenu
@@ -1500,7 +1502,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 						 *  so we give the route instructions right after drawing the image with the map
 						 *  and use the center of the last drawn image for the route instructions
 						 */
-						ri.showRoute(pc, source, drawnCenter);
+						ri.showRoute(pc, drawnCenter);
 					}
 				}
 			}

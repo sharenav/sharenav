@@ -173,7 +173,7 @@ public class RouteInstructions {
 	}
 	
 
-	public void showRoute(PaintContext pc, PositionMark source, Node center) {
+	public void showRoute(PaintContext pc, Node center) {
 		/*	PASSINGDISTANCE is the distance when a routing arrow
 			is considered to match to the current position.
 			We currently can't adjust this value according to the speed
