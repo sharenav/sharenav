@@ -11,6 +11,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.Integer;
 import java.lang.Math;
 import java.util.Calendar;
 import java.util.Date;
@@ -28,8 +29,6 @@ import de.ueller.gps.data.Position;
 import de.ueller.gpsMid.mapData.GpxTile;
 import de.ueller.gpsMid.mapData.Tile;
 import de.ueller.gpsMid.mapData.WaypointsTile;
-import de.ueller.midlet.gps.CompletionListener;
-import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.GuiNameEnter;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
@@ -38,6 +37,7 @@ import de.ueller.midlet.gps.importexport.ExportSession;
 import de.ueller.midlet.gps.importexport.GpxImportHandler;
 import de.ueller.midlet.gps.importexport.GpxParser;
 import de.ueller.midlet.gps.tile.PaintContext;
+import de.ueller.midlet.screens.InputListener;
 import de.ueller.gps.tools.HelperRoutines;
 
 
@@ -51,7 +51,7 @@ import de.ueller.gps.tools.HelperRoutines;
  * <li>Exporting and Importing in GPX format.</li>
  * </ul>
  */
-public class Gpx extends Tile implements Runnable, CompletionListener {
+public class Gpx extends Tile implements Runnable, InputListener {
 	
 	// statics for user-defined rules for track recording
 	private static long oldMsTime;
@@ -79,19 +79,52 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 	
 	private Date dateStreamWayPt = new Date();
 	
-	private boolean sendWpt;
-	private boolean sendTrk;
-	private boolean reloadWpt;
-	private boolean getGpxNameStart = false;
-	private boolean getGpxNameStop = false;
+	/** Value for mJobState: No job */
+	private static final int JOB_IDLE = 0;
+	/** Value for mJobState: Reloading waypoints */
+	private static final int JOB_RELOAD_WPTS = 1;
+	/** Value for mJobState: Exporting tracks to GPX */
+	private static final int JOB_EXPORT_TRKS = 2;
+	/** Value for mJobState: Exporting waypoints to GPX */
+	private static final int JOB_EXPORT_WPTS = 3;
+	/** Value for mJobState: Importing GPX data */
+	private static final int JOB_IMPORT_GPX = 4;
+	/** Value for mJobState: Deleting tracks */
+	private static final int JOB_DELETE_TRKS = 5;
+	/** Value for mJobState: Deleting waypoints */
+	private static final int JOB_DELETE_WPTS = 6;
+	/** Value for mJobState: Saving track to RecordStore */
+	private static final int JOB_SAVE_TRK = 7;
+	
+	/** State of job processing in run(). */
+	private int mJobState;
+	
+	/** Flag whether user is currently being asked for name of track at start of recording. */
+	private boolean mEnteringGpxNameStart = false;
+
+	/** Flag whether user is currently being asked for name of track at end of recording. */
+	private boolean mEnteringGpxNameStop = false;
 	
 	private boolean applyRecordingRules = true;
 	private float maxDistance;
 	
+	/** Actual name of the track to be saved */
 	private String trackName;
+
+	/** Original name of the track to be saved */
 	private String origTrackName;
+
+	/** Vector of tracks to be exported */
 	private Vector exportTracks;
+
+	/** Vector of tracks to be deleted */
+	private Vector mTrksToDelete;
+
+	/** Track that is currently being exported */
 	private PersistEntity currentTrk;
+	
+	/** Vector of way point IDs to be deleted */
+	private Vector mWayPtIdsToDelete;
 	
 	private UploadListener feedbackListener;
 	
@@ -126,10 +159,7 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		trackTile = new GpxTile();
 		loadedTracksTile = new GpxTile(true);
 		wayPtTile = new WaypointsTile();
-		reloadWpt = true;
-		processorThread = new Thread(this);
-		processorThread.setPriority(Thread.MIN_PRIORITY);
-		processorThread.start();		
+		reloadWayPts();
 	}
 	
 	public void displayWaypoints(boolean displayWpt) {
@@ -473,26 +503,46 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		}
 	}
 
-	/** Deletes one waypoint from the RecordStore. 
-	 * TODO: This needs to be changed to take a vector of points as the RecordStore
-	 * is opened and closed for every single operation.
+	/** Triggers deletion of waypoints from the RecordStore.
 	 * 
-	 * @param waypt Waypoint to be deleted
+	 * @param wayptIds Vector of waypoint IDs to be deleted
 	 * @param ul Listener for progress updates
 	 */
-	public void deleteWayPt(PositionMark waypt, UploadListener ul) {
-		this.feedbackListener = ul;
+	public void deleteWayPts(Vector wayptIds, UploadListener ul) {
+		mWayPtIdsToDelete = wayptIds;
+		feedbackListener = ul;
+		startProcessorThread(JOB_DELETE_WPTS);
+	}
+
+	/** Actually deletes waypoints from the RecordStore.
+	 * Uses the IDs in mWayPtIdsToDelete for this
+	 */
+	public boolean doDeleteWayPts() {
 		try {
 			openWayPtDatabase();
-			wayptDatabase.deleteRecord(waypt.id);
+			for (int i = 0; i < mWayPtIdsToDelete.size(); i++) {
+				wayptDatabase.deleteRecord(((Integer)mWayPtIdsToDelete.elementAt(i)).intValue());
+			}
 			wayptDatabase.closeRecordStore();
 			wayptDatabase = null;
+			mWayPtIdsToDelete = null;
+			importExportMessage = "Success!";
+			return true;
 		} catch (RecordStoreNotOpenException e) {
 			logger.exception("Exception deleting waypoint (database not open)", e);
+			importExportMessage = "Exception deleting waypoint (database not open): " +
+				e.getMessage();
+			return false;
 		} catch (InvalidRecordIDException e) {
 			logger.exception("Exception deleting waypoint (ID invalid)", e);
+			importExportMessage = "Exception deleting waypoint (ID invalid): " +
+				e.getMessage();
+			return false;
 		} catch (RecordStoreException e) {
 			logger.exception("Exception deleting waypoint", e);
+			importExportMessage = "Exception deleting waypoint: " +
+				e.getMessage();
+			return false;
 		}
 	}
 
@@ -500,15 +550,13 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 	 */
 	public void reloadWayPts() {
 		if (processorThread != null && processorThread.isAlive()) {
+			logger.info("ProcessorThread busy, not triggering JOB_RELOAD_WPTS");
 			/* Already reloading, nothing to do */
-			/* TODO: This is not correct, the thread may be busy with another operation
-			 * and then the reload will not be done. */
+			/* TODO: This is not correct, the thread might be busy with another 
+			 * operation and then the reload will not be done. */
 			return;
 		}
-		reloadWpt = true;
-		processorThread = new Thread(this);
-		processorThread.setPriority(Thread.MIN_PRIORITY);
-		processorThread.start();
+		startProcessorThread(JOB_RELOAD_WPTS);
 	}
 	
 	/** Starts the recording of a new track.
@@ -563,7 +611,7 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		origTrackName = new String(trackName);
 		
 		if ((!dontAskName) && Configuration.getCfgBitState(Configuration.CFGBIT_GPX_ASK_TRACKNAME_START)) {
-			getGpxNameStart = true;
+			mEnteringGpxNameStart = true;
 			GuiNameEnter gne = new GuiNameEnter(this, "Starting recording", trackName, Configuration.MAX_TRACKNAME_LENGTH);
 			doNewTrk();
 			gne.show();
@@ -619,9 +667,11 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 	 * Afterwards, no matter if the save was successful(!), clears the streams
 	 * where the track points were stored and the trackTile which displayed them.
 	 */
-	private void doSaveTrk() {
+	public boolean doSaveTrk() {
 		storeTrk();
 		try {
+			//#debug debug
+			logger.debug("Closing track with " + mTrkRecorded + " points");
 			mTrkOutStream.close();
 			mTrkByteOutStream.close();
 		} catch (IOException e) {
@@ -630,6 +680,7 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		mTrkOutStream = null;
 		mTrkByteOutStream = null;
 		trackTile.dropTrk();
+		return true;
 	}
 
 	/** Starts the saving of the track. An intermediate step may be to ask
@@ -642,14 +693,12 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 			logger.debug("Not recording, so no track to save");
 			return;
 		}
-		//#debug debug
-		logger.debug("Closing track with " + mTrkRecorded + " points");
 		if ((!dontAskName) && Configuration.getCfgBitState(Configuration.CFGBIT_GPX_ASK_TRACKNAME_STOP)) {
-			getGpxNameStop = true;
+			mEnteringGpxNameStop = true;
 			GuiNameEnter gne = new GuiNameEnter(this, "Stopping recording", trackName, Configuration.MAX_TRACKNAME_LENGTH);
 			gne.show();
 		} else {
-			doSaveTrk();
+			startProcessorThread(JOB_SAVE_TRK);
 		}
 	}
 	
@@ -685,27 +734,47 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 	public void resumeTrk() {
 		trkRecordingSuspended = false;
 	}
-	
-	/** Deletes the specified tracks from the RecordStore.
+
+	/** Triggers deleting of the specified tracks from the RecordStore.
 	 * 
 	 * @param tracks Vector of tracks to delete
 	 */
-	public void deleteTracks(Vector tracks) {
+	public void deleteTracks(Vector tracks, UploadListener ul) {
+		mTrksToDelete = tracks;
+		feedbackListener = ul;
+		startProcessorThread(JOB_DELETE_TRKS);
+	}
+
+	/** Actually deletes the tracks in mTrksToDelete from the RecordStore.
+	 */
+	private boolean doDeleteTracks() {
 		try {
 			openTrackDatabase();
-			for (int i = 0; i < tracks.size(); i++)
+			for (int i = 0; i < mTrksToDelete.size(); i++)
 			{
-				trackDatabase.deleteRecord(((PersistEntity)tracks.elementAt(i)).id);
+				trackDatabase.deleteRecord(((PersistEntity)mTrksToDelete.elementAt(i)).id);
 			}
 			trackDatabase.closeRecordStore();
 			trackDatabase = null;
 			trackTile.dropTrk();
+			mTrksToDelete = null;
+			importExportMessage = "Finished!";
+			return true;
 		} catch (RecordStoreNotOpenException e) {
 			logger.exception("Exception deleting track (database not open)", e);
+			importExportMessage = "Exception deleting track (database not open): " +
+				e.getMessage();
+			return false;
 		} catch (InvalidRecordIDException e) {
 			logger.exception("Exception deleting track (ID invalid)", e);
+			importExportMessage = "Exception deleting track (ID invalid): " +
+				e.getMessage();
+			return false;
 		} catch (RecordStoreException e) {
 			logger.exception("Exception deleting track", e);
+			importExportMessage = "Exception deleting track: " +
+				e.getMessage();
+			return false;
 		}		
 	}
 	
@@ -762,19 +831,16 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 	 * @param maxDist Maximum distance (in kilometers) for filtering waypoints
 	 */
 	public void receiveGpx(InputStream ins, UploadListener ul, float maxDist) {
-		maxDistance = maxDist;
-		mImportStream = ins;
-		feedbackListener = ul;
-		
-		if (mImportStream == null) {
+		if (ins == null) {
 			logger.error("Could not open input stream to gpx file");
 		}
 		if ((processorThread != null) && (processorThread.isAlive())) {
 			logger.error("Still processing another gpx file");
 		}
-		processorThread = new Thread(this);
-		processorThread.setPriority(Thread.MIN_PRIORITY);
-		processorThread.start();
+		maxDistance = maxDist;
+		mImportStream = ins;
+		feedbackListener = ul;
+		startProcessorThread(JOB_IMPORT_GPX);
 	}
 	
 	/** Starts the export of tracks in GPX format.
@@ -787,12 +853,9 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		logger.debug("Exporting tracks to " + url);
 		feedbackListener = ul;
 		this.url = url;
-		sendTrk = true;
 		trackTile.dropTrk();
 		exportTracks = tracks;
-		processorThread = new Thread(this);
-		processorThread.setPriority(Thread.MIN_PRIORITY);
-		processorThread.start();
+		startProcessorThread(JOB_EXPORT_TRKS);
 	}
 
 	/** Starts the export of all waypoints in GPX format.
@@ -802,14 +865,11 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 	 * @param url URL to export the waypoints to
 	 * @param ul Listener for progress information
 	 */
-	public void sendWayPt(String url, UploadListener ul) {
+	public void exportWayPts(String url, String filename, UploadListener ul) {
 		this.url = url;
 		feedbackListener = ul;
-		sendWpt = true;
-		GuiNameEnter gne = new GuiNameEnter(this, "Send as (without .gpx)", 
-				"Waypoints-" + HelperRoutines.formatSimpleDateNow(), 
-				Configuration.MAX_WAYPOINTS_NAME_LENGTH);
-		gne.show();
+		waypointsSaveFileName = filename;
+		startProcessorThread(JOB_EXPORT_WPTS);
 	}
 	
 	/** Returns a list of all waypoints.
@@ -831,6 +891,13 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		//#debug debug
 		logger.debug("WaypointsTile returns: No of WP = " + noWpt);
 		return noWpt;
+	}
+	
+	/** Returns whether waypoints are being loaded
+	 * @return True if still loading
+	 */
+	public boolean isLoadingWaypoints() {
+		return (mJobState == JOB_RELOAD_WPTS);
 	}
 	
 	/**
@@ -982,71 +1049,87 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		return trkVertSpd;
 	}
 	
-	/** Worker thread which will perform one of several tasks.
-	 * Which task is determined by the flags reloadWpt, sendTrk, sendWpt and
-	 * whether mImportStream is null or not.   
+	/** Start processor thread with the specified job.
+	 * @param job Job to perform, use JOB_XX for this.
+	 */
+	private void startProcessorThread(int job) {
+		if (mJobState == JOB_IDLE) {
+    		if (job > JOB_IDLE && job <= JOB_SAVE_TRK) {
+    			mJobState = job;
+    			processorThread = new Thread(this, "GpxProcessor");
+    			processorThread.setPriority(Thread.MIN_PRIORITY);
+    			processorThread.start();
+    		} else {
+    			logger.error("Bad parameter job=" + job + " of Gpx.startProcessorThread()");
+    		}
+		} else {
+			logger.error("Gpx.startProcessorThread(): Not idle, can't start processorThread!");
+			// TODO: Should pass this on (return true/false) to let the user know.
+		}
+	}
+	
+	/** Processor thread which will perform one of several jobs.
+	 * Which job is determined by mJobState.
 	 */
 	public void run() {
 		logger.info("GPX processing thread started");
 		try {
 			boolean success = false;
-			if (reloadWpt) {
-				try {
-					/**
-					 * Sleep for a while to limit the number of reloads happening
-					 */
-					Thread.sleep(500);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+			if (mJobState == JOB_RELOAD_WPTS) {
 				loadWaypointsFromDatabase();
-				reloadWpt = false;
 				if (feedbackListener != null) {
 					feedbackListener.uploadAborted();
 					feedbackListener = null;
 				}
-				return;
-			} else if (sendTrk) {
+			} else if (mJobState == JOB_EXPORT_TRKS) {
+				// Export GPX tracks
 				for (int i = 0; i < exportTracks.size(); i++) {
 					currentTrk = (PersistEntity)exportTracks.elementAt(i);
 					if (feedbackListener != null) {
 						feedbackListener.updateProgress("Exporting " + currentTrk.displayName + "\n");
 					}
 					success = sendGpx();
-					if (!success) {
+					if (success == false) {
 						logger.error("Failed to export track " + currentTrk);
-						if (feedbackListener != null) {
-							feedbackListener.completedUpload(success, importExportMessage);
-						}
-						return;
 					}
 				}
-				if (feedbackListener != null) {
-					feedbackListener.completedUpload(true, importExportMessage);
-				}
-				feedbackListener = null;
-				sendTrk = false;
-				sendWpt = false;
-			} else if (sendWpt) {
+			} else if (mJobState == JOB_EXPORT_WPTS) {
+				// Export GPX waypoints
 				success = sendGpx();
-			} else if (mImportStream != null) {
-				success = receiveGpx();
+			} else if (mJobState == JOB_IMPORT_GPX) {
+				// Import GPX
+				if (mImportStream != null) {
+					success = doReceiveGpx();
+					mImportStream = null;
+				} else {
+					logger.error("GPX import requested but InputStream was null");
+				}
+			} else if (mJobState == JOB_DELETE_TRKS) {
+				success = doDeleteTracks();
+			} else if (mJobState == JOB_DELETE_WPTS) {
+				success = doDeleteWayPts();
+				loadWaypointsFromDatabase();
+			} else if (mJobState == JOB_SAVE_TRK) {
+				success = doSaveTrk();
 			} else {
 				logger.error("Did not know what to do in Gpx.run()");
+				importExportMessage = "Did not know what to do.";
+				success = false;
 			}
+			// Must be called *before* changing the job state, else somebody might
+			// trigger (in the context of this thread btw) another action = thread 
+			// before this one has completely finished. 
 			if (feedbackListener != null) {
 				feedbackListener.completedUpload(success, importExportMessage);
+				feedbackListener = null;
 			}
-			feedbackListener = null;
-			sendTrk = false;
-			sendWpt = false;
 		} catch (Exception e) {
-			logger.exception("An error occured in processing GPX", e);
+			logger.exception("An error occured during GPX job", e);
 		} catch (OutOfMemoryError oome) {
 			Trace.getInstance().dropCache();
-			logger.error("Out of memory processing GPX, trying to recover");
+			logger.error("Out of memory during GPX job, trying to recover");
 		}
+		mJobState = JOB_IDLE;
 	}
 
 	/** Convenience method to open the waypoint RecordStore.
@@ -1269,14 +1352,14 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 			
 			logger.trace("Starting to send a GPX file, about to open a connection to" + url);
 			
-			if (sendTrk) 
+			if (mJobState == JOB_EXPORT_TRKS) 
 			{
 				name = Configuration.getValidFileName(currentTrk.displayName);
-			}
-			else if (sendWpt)
+			} 
+			else if (mJobState == JOB_EXPORT_WPTS) 
 			{
 				if (waypointsSaveFileName == null) {
-					importExportMessage = "Waypoints sending aborted";
+					importExportMessage = "No filename, way points sending aborted";
 					return false;
 				}
 				name = Configuration.getValidFileName(waypointsSaveFileName);
@@ -1341,11 +1424,11 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 			outStream.write("<?xml version='1.0' encoding='UTF-8'?>\r\n".getBytes());
 			outStream.write("<gpx version='1.1' creator='GPSMID' xmlns='http://www.topografix.com/GPX/1/1'>\r\n".getBytes());
 			
-			if (sendWpt)
+			if (mJobState == JOB_EXPORT_WPTS)
 			{
 				streamWayPts(outStream);
 			}
-			if (sendTrk)
+			else if (mJobState == JOB_EXPORT_TRKS)
 			{
 				streamTracks(outStream);
 			}
@@ -1373,8 +1456,9 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 	 * 
 	 * @return True if reading was successful, false if not
 	 */
-	private boolean receiveGpx() {		
+	private boolean doReceiveGpx() {		
 		try {
+			// Determine parser that can be used on this system
 			boolean success;
 			String jsr172Version = null;
 			Class parserClass;
@@ -1399,12 +1483,15 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 			parserObject = parserClass.newInstance();
 			parser = (GpxParser) parserObject;
 			
+			// Trigger parsing of GPX data
+			// As addTrkPt() is used for importing tracks, recording rules have 
+			// to be disabled temporarily.
 			applyRecordingRules = false;
 			success = parser.parse(mImportStream, importHandler);
 			applyRecordingRules = true;
+			
 			mImportStream.close();
 			importExportMessage = importHandler.getMessage();
-			
 			return success;
 		} catch (ClassNotFoundException cnfe) {
 			importExportMessage = "Your phone does not support XML parsing";
@@ -1446,37 +1533,28 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 
 	/** Called when the user has entered a name.
 	 * Will continue with the actual operation, i.e. saving the track or the waypoints.
-	 * @see CompletionListener.actionCompleted()
 	 * @param strResult The name entered
 	 */
-	public void actionCompleted(String strResult) {
-		Trace tr = Trace.getInstance();
-		if (getGpxNameStart || getGpxNameStop) {
+	public void inputCompleted(String strResult) {
+		if (mEnteringGpxNameStart || mEnteringGpxNameStop) {
 			trackName = strResult;
-			if (getGpxNameStart) {
-				getGpxNameStart = false;
+			if (mEnteringGpxNameStart) {
+				mEnteringGpxNameStart = false;
 				if (trackName != null) {
 					origTrackName = new String(trackName);
 				} else {
 					trackName = new String(origTrackName);
 				}
 			}
-			if (getGpxNameStop) {
-				getGpxNameStop = false;
+			if (mEnteringGpxNameStop) {
+				mEnteringGpxNameStop = false;
 				if (trackName == null) {
 					trackName = origTrackName;
 				}
-				doSaveTrk();
+				startProcessorThread(JOB_SAVE_TRK);
 			}
-			tr.show();
+			Trace.getInstance().show();
 			return;
-		} else {
-			waypointsSaveFileName = strResult;
 		}
-		GpsMid.getInstance().showPreviousDisplayable();
-
-		processorThread = new Thread(this);
-		processorThread.setPriority(Thread.MIN_PRIORITY);
-		processorThread.start();
 	}
 }

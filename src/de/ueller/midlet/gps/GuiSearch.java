@@ -1,9 +1,11 @@
-package de.ueller.midlet.gps;
 /*
  * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net
  * 			Copyright (c) 2008 Kai Krueger apmonkey at users dot sourceforge dot net 
- * See Copying
+ * See COPYING
  */
+
+package de.ueller.midlet.gps;
+
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
@@ -29,9 +31,11 @@ import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.data.ProjMath;
 import de.ueller.midlet.gps.names.NumberCanon;
 import de.ueller.midlet.gps.tile.SearchNames;
+import de.ueller.midlet.screens.InputListener;
+
 
 public class GuiSearch extends Canvas implements CommandListener,
-		GpsMidDisplayable, CompletionListener {
+		GpsMidDisplayable, InputListener {
 
 	private final static Logger logger = Logger.getInstance(GuiSearch.class,Logger.DEBUG);
 
@@ -826,7 +830,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 		result2.removeAllElements();
 		scrollOffset = 0;
 	}
-	public void actionCompleted(String strResult) {
+
+	public void inputCompleted(String strResult) {
 		if (strResult != null) {		
 			searchCanon.setLength(0);
 			searchCanon.append(strResult);

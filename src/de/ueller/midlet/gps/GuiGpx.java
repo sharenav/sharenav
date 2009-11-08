@@ -1,13 +1,11 @@
-package de.ueller.midlet.gps;
 /*
  * GpsMid - Copyright (c) 2008 Kai Krueger apm at users dot sourceforge dot net 
  *          Copyright (c) 2008 mbaeurle at users dot sourceforge dot net
- * See Copying
+ * See COPYING
  */
 
+package de.ueller.midlet.gps;
 
-import javax.microedition.lcdui.Alert;
-import javax.microedition.lcdui.Gauge;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
@@ -15,6 +13,8 @@ import javax.microedition.lcdui.List;
 import java.util.Vector;
 import de.ueller.gps.data.Configuration;
 import de.ueller.midlet.gps.data.PersistEntity;
+import de.ueller.midlet.screens.InputListener;
+import de.ueller.midlet.screens.ProgressDisplay;
 
 /**
  * GuiGpx represents the track management screen. It allows export, import, 
@@ -22,7 +22,7 @@ import de.ueller.midlet.gps.data.PersistEntity;
  * track management. The real GPX data is handled in the GPX class.
  */
 public class GuiGpx extends List implements CommandListener,
-		GpsMidDisplayable, UploadListener, CompletionListener {
+		GpsMidDisplayable, UploadListener, InputListener, CompletionListener {
 
 	private final static Logger logger = Logger.getInstance(GuiGpx.class, Logger.DEBUG);
 	
@@ -36,28 +36,40 @@ public class GuiGpx extends List implements CommandListener,
 	private final Command DSALL_CMD = new Command("Deselect All", Command.ITEM, 4);
 	private final Command BACK_CMD = new Command("Back", Command.BACK, 5);
 
-	private boolean uploading;
+	/** Value for mJob: No job */
+	private static final int JOB_IDLE = 0;
+	/** Value for mJob: Exporting tracks to GPX */
+	private static final int JOB_EXPORT_TRKS = 1;
+	/** Value for mJobState: Importing GPX data */
+	private static final int JOB_IMPORT_GPX = 2;
+	/** Value for mJobState: Deleting tracks */
+	private static final int JOB_DELETE_TRKS = 3;
 	
-	/* Index of first selected track in list. NOTE: This is only updated by 
+	/** Information which job is running. */
+	private int mJob;
+	
+	/** Index of first selected track in list. NOTE: This is only updated by 
 	 * the operations that need it!
 	 */
 	private int idx;
 	
+	/** Reference to the Trace class, needed to access the Gpx class and 
+	 * to switch back to the map. */ 
 	private final Trace parent;
 	
-	private Alert progressDisplay;
-	private Gauge progressbar;
-	private StringBuffer sbProgress;
-	private boolean progressCloseable;
-	
+	/** Alert to display the progress of the operations. */
+	private ProgressDisplay progress;
+
 	/** Tracks displayed to the user. */
 	private PersistEntity [] trks;
+
 	/** Tracks that are processed (exported, deleted). */
 	private Vector processTracks;
 	
 	public GuiGpx(Trace parent) throws Exception {
 		super("GPX tracklogs", List.MULTIPLE);
 		this.parent = parent;
+		progress = new ProgressDisplay(this);
 		processTracks = new Vector();
 
 		setCommandListener(this);
@@ -80,9 +92,9 @@ public class GuiGpx extends List implements CommandListener,
 	private void initTracks() {
 		int count = this.size();
 		if (count != 0) {
-			/*
-			 *  Workaround: on some SE phones the selection state of list  elements must be explicitely cleared
-			 *  before re-adding list elements - otherwise they stay selected 
+			/* Workaround: On some SE phones the selection state of list elements 
+			 * must be explicitely cleared before re-adding list elements - 
+			 * otherwise they stay selected. 
 			 */
 			boolean[] boolSelected = new boolean[count];
 			for (int i = 0; i < count; i++) {
@@ -103,33 +115,31 @@ public class GuiGpx extends List implements CommandListener,
 		//#debug debug
 		logger.debug("got Command " + c.getLabel());
 		if (c == SEND_CMD) {
-			uploading = true;
 			updateProcessVector();
-			if (processTracks.size() > 0)
-			{
-				int numAllWptsInTrack = 0;
-				try{
+			if (processTracks.size() > 0) {
+				mJob = JOB_EXPORT_TRKS;
+				int numAllPtsInTrack = 0;
+				try {
 					for (int i = 0; i < processTracks.size(); i++){
-						numAllWptsInTrack += ((PersistEntity)processTracks.elementAt(i)).getTrackSize();
+						numAllPtsInTrack += ((PersistEntity)processTracks.elementAt(i)).getTrackSize();
 					}
-					showProgressDisplay("Exporting tracks", numAllWptsInTrack);
-				} catch (ClassCastException e){
-					// TO-DO
+					progress.showProgressDisplay("Exporting tracks", numAllPtsInTrack);
+				} catch (ClassCastException cce) {
+					logger.exception("ClassCastException in commandAction", cce);
 				}
 				parent.gpx.exportTracks(Configuration.getGpxUrl(), this, processTracks );
 			}
 			return;
 		}
 		if (c == LOAD_CMD) {
-			uploading = false;
+			mJob = JOB_IMPORT_GPX;
 			GuiGpxLoad ggl = new GuiGpxLoad(this, this, false);
 			ggl.show();
 			return;
 		}
 		if (c == DISP_CMD) {
 			updateProcessVector();
-			if (processTracks.size() > 0)
-			{
+			if (processTracks.size() > 0) {
 				parent.gpx.displayTrk(processTracks);
 				parent.show();
 			}
@@ -153,12 +163,10 @@ public class GuiGpx extends List implements CommandListener,
 			updateProcessVector();
 			if (processTracks.size() > 0)
 			{
-				showProgressDisplay("Deleting tracks");
-				addProgressText("Deleting " + processTracks.size() + " tracks.\n");
-				parent.gpx.deleteTracks(processTracks);
-				addProgressText("Finished!");
-				finishProgressDisplay();
-				initTracks();
+				mJob = JOB_DELETE_TRKS;
+				progress.showProgressDisplay("Deleting tracks");
+				progress.addProgressText("Deleting " + processTracks.size() + " track(s).\n");
+				parent.gpx.deleteTracks(processTracks, this);
 			}
 			return;
 		}
@@ -174,11 +182,6 @@ public class GuiGpx extends List implements CommandListener,
 			parent.show();
 			return;
 		}
-		if (c == Alert.DISMISS_COMMAND) {
-			if (progressCloseable) {
-				show();
-			}
-		}
 	}
 	
 	/** Updates the Vector of GPX tracks that should be processed by another method. */
@@ -186,7 +189,7 @@ public class GuiGpx extends List implements CommandListener,
 		// find out which tracks should be exported **/
 		boolean[] boolSelected = new boolean[this.size()];
 		this.getSelectedFlags(boolSelected);
-		// create new list of tracks which need to be processed /exported 
+		// create new list of tracks which need to be processed / exported 
 		processTracks.removeAllElements();
 		for (int i = 0; i < boolSelected.length; i++) {
 			if (boolSelected[i] == true) {
@@ -208,16 +211,15 @@ public class GuiGpx extends List implements CommandListener,
 	}
 	
 	public void startProgress(String title) {
-		showProgressDisplay(title, Gauge.INDEFINITE);
+		progress.showProgressDisplay(title);
 	}
 	
 	public void setProgress(String message) {
 		// Not supported/used at the moment.
-		
 	}
 	
 	public void updateProgress(String message) {
-		addProgressText(message);
+		progress.addProgressText(message);
 	}
 	
 	/**
@@ -225,148 +227,54 @@ public class GuiGpx extends List implements CommandListener,
 	 * Updates the progress bar by increasing the progress by the given value.
 	 */
 	public void updateProgressValue(int inc) {
-		//System.out.println("Progressbar: " + progressbar.getValue());
-		progressbar.setValue(progressbar.getValue() + inc);
+		progress.updateProgressValue(inc);
 	}
 
 	public void completedUpload(boolean success, String message) {
 		String alertMsg;		
-		if (uploading) {
+		if (mJob == JOB_EXPORT_TRKS) {
 			if (success) {
-				
-				alertMsg = "\nFinished!";
+				alertMsg = "Finished!";
 			} else {
-				alertMsg = "\nGPX export failed: " + message;
+				alertMsg = "GPX export failed: " + message;
 			}
-		} else {
+		} else if (mJob == JOB_IMPORT_GPX) {
 			if (success) {
-				alertMsg = "\n***********\nCompleted GPX import: " + message;
-				initTracks();
+				alertMsg = "***********\nCompleted GPX import: " + message;
 			} else {
 				alertMsg = "GPX import failed: " + message;
 			}
+			initTracks();
+		} else {
+			// Can only be JOB_DELETE_TRKS but if we check against it,
+			// the compiler warns that alertMsg may not be initialized.
+			if (success) {
+				alertMsg = "Finished!";
+			} else {
+				alertMsg = "Deleting track(s) failed: " + message;
+			}
+			initTracks();
 		}
-		addProgressText(alertMsg);
-		finishProgressDisplay();
+		progress.addProgressText(alertMsg);
+		progress.finishProgressDisplay();
+		mJob = JOB_IDLE;
 	}
 
 	public void uploadAborted() {
 		initTracks();
+		mJob = JOB_IDLE;
 	}
 
 	public void show() {
+		// In case that we return to this screen, make sure our state is correct.
+		mJob = JOB_IDLE;
 		GpsMid.getInstance().show(this);
 	}
-
-	/* Show an alert window with the given title that cannot be dismissed by
-	 * the user, i.e. a modal progress dialog.
-	 * @param title The title of the alert
-	 */
-	protected void showProgressDisplay(String title) {
-		if (progressDisplay == null) {
-			progressDisplay = new Alert(title);
-			progressDisplay.setCommandListener(this);
-			progressDisplay.setTimeout(Alert.FOREVER);
-			//creates a progressbar - not used in this case but it should be created when the alert is first created so it's present later
-			progressbar = new Gauge(null, false, Gauge.INDEFINITE, Gauge.CONTINUOUS_RUNNING);
-		} else {
-			progressDisplay.setTitle(title);
-			progressDisplay.setIndicator(null);
-		}
-		// Empty string buffer for alert text.
-		sbProgress = new StringBuffer();
-		// At least on Sony Ericsson phones, the alert won't be shown
-		// until it contains some text, so let's put in a dummy. 
-		progressDisplay.setString(" ");		
-		try {
-			GpsMid.getInstance().show(progressDisplay);
-			progressCloseable = false;
-		} catch (IllegalArgumentException iae) {
-			/**
-			 * Nokia S40 phones seem to throw an exception
-			 * if one tries to set an Alert displayable when
-			 * the current displayable is an alert too.
-			 * 
-			 * Not much we can do about this, other than just
-			 * ignore the exception and not display the new
-			 * alert. 
-			 */
-			logger.info("Could not display progress alert, " + iae.getMessage());
-		}
-	}
 	
-	/**
-	 * Show an alert window with the given title that cannot be dismissed by
-	 * the user, i.e. a modal progress dialog. This Alert Window also has a 
-	 * progress bar indicating the progress.
-	 * 
-	 * @param title The title of the alert
-	 * @param progEndValue the maximum value for the progress bar
+	/** Called by the screen where the new track name is entered (GuiNameEnter).
+	 * @param strResult The string entered by the user
 	 */
-	protected void showProgressDisplay(String title, int progEndValue) {
-		int progrMode = 0;
-		//catch illegal argument
-		if (progEndValue < 1){
-			progEndValue = Gauge.INDEFINITE;
-			//Set mode for progressbar
-			progrMode = Gauge.CONTINUOUS_RUNNING;
-		}
-		
-		if (progressDisplay == null) {
-			progressDisplay = new Alert(title);
-			progressDisplay.setCommandListener(this);
-			progressDisplay.setTimeout(Alert.FOREVER);
-			//create a progressbar that gives an indication about how many waypoints have already been exported
-			progressbar = new Gauge(null, false, progEndValue, progrMode);
-			progressDisplay.setIndicator(progressbar);
-		} else {
-			progressDisplay.setTitle(title);
-			progressbar.setMaxValue(progEndValue);
-			progressbar.setValue(progrMode);
-			progressDisplay.setIndicator(progressbar);
-		}
-		// Empty string buffer for alert text.
-		sbProgress = new StringBuffer();
-		// At least on Sony Ericsson phones, the alert won't be shown
-		// until it contains some text, so let's put in a dummy. 
-		progressDisplay.setString(" ");		
-		try {
-			GpsMid.getInstance().show(progressDisplay);
-			progressCloseable = false;
-		} catch (IllegalArgumentException iae) {
-			/**
-			 * Nokia S40 phones seem to throw an exception
-			 * if one tries to set an Alert displayable when
-			 * the current displayable is an alert too.
-			 * 
-			 * Not much we can do about this, other than just
-			 * ignore the exception and not display the new
-			 * alert. 
-			 */
-			logger.info("Could not display progress alert, " + iae.getMessage());
-		}
-	}
-
-	/* Add text to the progress alert window.
-	 * @param text Text to be added
-	 */
-	protected void addProgressText(String text)	{
-		if (sbProgress != null && progressDisplay != null) {
-			sbProgress.append(text);
-			progressDisplay.setString(sbProgress.toString());
-		}
-	}
-	
-	/* After this method was called, the user can dismiss the 
-	 * alert window (which has no timeout).
-	 */
-	protected void finishProgressDisplay() {
-		//some phones only show a progressbar that's continuous running. So we remove the bar to show that the action is completed
-		progressDisplay.setIndicator(null);
-		progressCloseable = true;
-	}
-	
-	public void actionCompleted(String strResult) {
+	public void inputCompleted(String strResult) {
 		if (strResult != null) {		
 			// rename track
 			trks[idx].displayName = strResult;
@@ -376,5 +284,10 @@ public class GuiGpx extends List implements CommandListener,
 		}
 		show();
 	}
-	
+
+	/** Called when the user closes the progress popup.
+	 */
+	public void actionCompleted() {
+		show();
+	}
 }

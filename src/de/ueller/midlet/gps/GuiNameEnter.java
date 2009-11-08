@@ -1,66 +1,62 @@
-package de.ueller.midlet.gps;
 /*
  * GpsMid - Copyright (c) 2008 Kai Krueger apm at users dot sourceforge dot net 
- * See Copying
+ * See COPYING
  */
+
+package de.ueller.midlet.gps;
 
 import javax.microedition.lcdui.*;
 
-import de.ueller.midlet.gps.data.PositionMark;
-import de.ueller.midlet.gps.data.Proj2DMoveUp;
+import de.ueller.midlet.screens.InputListener;
+
 
 /*
- * GpsMid - Copyright (c) 2007 Kai Krueger apm at users dot sourceforge dot net 
- * See Copying
+ * Screen to enter a name.
  */
 public class GuiNameEnter extends Form implements CommandListener {
-	private TextField fldName; 
-	private static final Command saveCmd = new Command("Ok", Command.OK, 1);
-	private static final Command backCmd = new Command("Cancel", Command.OK, 2);
-	private CompletionListener compListener;
-	private Displayable oldDisplay;
-	private String name;
-	
-	protected static final Logger logger = Logger.getInstance(GuiWaypointSave.class,Logger.TRACE);
+	private TextField mTextFieldName; 
+	private static final Command SAVE_CMD = new Command("Ok", Command.OK, 1);
+	private static final Command BACK_CMD = new Command("Cancel", Command.OK, 2);
+	private InputListener mInputListener;
 
-	public GuiNameEnter(CompletionListener compListener, String title, String defaultName, int maxLen) {
+
+	public GuiNameEnter(InputListener inputListener, String title, 
+				String defaultName, int maxLen) {
 		super(title);
-		createForm(compListener, "Name:", defaultName, maxLen);
+		createForm(inputListener, "Name:", defaultName, maxLen);
 	}
 
-	public GuiNameEnter(CompletionListener compListener, String title, String prompt, String defaultName, int maxLen) {
+	public GuiNameEnter(InputListener inputListener, String title, 
+				String prompt, String defaultName, int maxLen) {
 		super(title);
-		createForm(compListener, prompt, defaultName, maxLen);
+		createForm(inputListener, prompt, defaultName, maxLen);
 	}
 
-	private void createForm(CompletionListener compListener, String prompt, String defaultName, int maxLen) {
-		this.compListener = compListener;
+	private void createForm(InputListener inputListener, String prompt, 
+				String defaultName, int maxLen) {
+		mInputListener = inputListener;
 
-		fldName = new TextField(prompt, defaultName, maxLen, TextField.ANY);
+		mTextFieldName = new TextField(prompt, defaultName, maxLen, TextField.ANY);
 		
 		try {
 			// Set up this Displayable to listen to command events
 			setCommandListener(this);
 			// add the commands
-			addCommand(backCmd);
-			addCommand(saveCmd);
-			this.append(fldName);
+			addCommand(BACK_CMD);
+			addCommand(SAVE_CMD);
+			this.append(mTextFieldName);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}				
 	}
 
-	
-	
-	
 	public void commandAction(Command cmd, Displayable displayable) {
-		CompletionListener compListener=null;
-		if (cmd == saveCmd) {
-			this.compListener.actionCompleted(fldName.getString());
+		if (cmd == SAVE_CMD) {
+			mInputListener.inputCompleted(mTextFieldName.getString());
 			return;
 		}
-		else if (cmd == backCmd) {
-			this.compListener.actionCompleted(null);
+		else if (cmd == BACK_CMD) {
+			mInputListener.inputCompleted(null);
 	    	return;
 		}
 	}

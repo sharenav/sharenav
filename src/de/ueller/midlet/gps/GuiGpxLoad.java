@@ -80,7 +80,6 @@ public class GuiGpxLoad extends Form implements CommandListener,
 				} catch (NumberFormatException nfe) {
 					//#debug info
 					logger.info("Couldn't convert the distance into a float");
-					maxDistance = 0.0f;
 				}
 				if (maxDistance < 0) {
 					maxDistance = 0;
@@ -123,6 +122,7 @@ public class GuiGpxLoad extends Form implements CommandListener,
 				logger.exception("Could not start the import server.", e);
 			} 
 			if (importSession != null) {
+				// Trigger actual import 
 				importSession.initImportServer(feedbackListener, maxDistance, menuLoadGpx);
 			} else {
 				GpsMid.getInstance().alert("Error", "The type of GPX import you have selected is not supported by your phone.", Alert.FOREVER);

@@ -12,15 +12,14 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
+
 package de.ueller.midlet.gps.importexport;
 
-import java.util.Date;
 import java.util.Hashtable;
 
 import de.ueller.gps.data.Position;
 import de.ueller.midlet.gps.ImageCollector;
 import de.ueller.midlet.gps.Logger;
-import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.UploadListener;
 import de.ueller.midlet.gps.data.Gpx;
 import de.ueller.midlet.gps.data.MoreMath;
@@ -97,9 +96,12 @@ public class GpxImportHandler implements XmlParserContentHandler {
 		} else if (qName.equalsIgnoreCase("desc")) {
 			name = false;
 		} else if (qName.equalsIgnoreCase("trk")) {
-			gpx.saveTrk(false);
+			// This is already running in the processorThread of class Gpx,
+			// so we have to do the save directly (doSaveTrk()) instead of 
+			// triggering a thread job (saveTrk()).
+			gpx.doSaveTrk();
 		} else if (qName.equalsIgnoreCase("trkseg")) {
-
+			// Ignored, new track is only started at <trk>!
 		} else if (qName.equalsIgnoreCase("trkpt")) {
 			gpx.addTrkPt(p);
 			importedTpts++;
@@ -176,7 +178,7 @@ public class GpxImportHandler implements XmlParserContentHandler {
 	public String getMessage() {
 		StringBuffer sb = new StringBuffer();
 		if (maxDistance != 0) {
-			sb.append("\n(max. distance: " + maxDistance + " km)");
+			sb.append("\n(Max. distance: " + maxDistance + " km)");
 		}
 		sb.append("\n\n" + importedWpts + " waypoints imported");
 		if (tooFarWpts != 0 || duplicateWpts != 0) {

@@ -1,5 +1,16 @@
+/*
+ * GpsMid - Copyright (c) 2008 Kai Krueger apm at users dot sourceforge dot net 
+ * See COPYING
+ */
+
 package de.ueller.midlet.gps;
 
+/** Interface to inform a listener when an arbitrary operation has completed.
+ * Classes which want to use ProgressDisplay or CustomMenu must implement this.
+ */
 public interface CompletionListener {
-	public void actionCompleted(String strResult);
+	
+	/** Called when the operation was completed.
+	 */
+	public void actionCompleted();
 }

@@ -838,7 +838,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			}
 			if (c == CMDS[MANAGE_TRACKS_CMD]) {
 				if (gpx.isRecordingTrk()) {
-					alert("Record Mode", "You need to stop recording before managing tracks." , 2500);
+					alert("Record Mode", "You need to stop recording before managing tracks." , 4000);
 					return;
 				}
 
@@ -869,13 +869,21 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				return;
 			}
 			if (c == CMDS[ENTER_WAYP_CMD]) {
-				GuiWaypointEnter gwpe = new GuiWaypointEnter(this);
-				gwpe.show();
+				if (gpx.isLoadingWaypoints()) {
+					showAlertLoadingWpt();
+				} else {
+					GuiWaypointEnter gwpe = new GuiWaypointEnter(this);
+					gwpe.show();
+				}
 				return;
 			}
 			if (c == CMDS[MAN_WAYP_CMD]) {
-				GuiWaypoint gwp = new GuiWaypoint(this);
-				gwp.show();
+				if (gpx.isLoadingWaypoints()) {
+					showAlertLoadingWpt();					
+				} else {
+					GuiWaypoint gwp = new GuiWaypoint(this);
+					gwp.show();
+				}					
 				return;
 			}
 			if (c == CMDS[MAPFEATURES_CMD]) {
@@ -973,28 +981,32 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				return;
 			}
 			if (c == CMDS[SAVE_WAYP_CMD]) {
-				if (guiWaypointSave == null) {
-					guiWaypointSave = new GuiWaypointSave(this);
-				}
-				if (guiWaypointSave != null) {
-					if (gpsRecenter) {
-						// TODO: If we lose the fix the old position and height
-						// will be used silently -> we should inform the user
-						// here that we have no fix - he may not know what's going on.
-						guiWaypointSave.setData(new PositionMark(center.radlat,
-								center.radlon, (int)pos.altitude, pos.timeMillis,
-								/* fix */ (byte)-1, /* sats */ (byte)-1, 
-								/* sym */ (byte)-1, /* type */ (byte)-1));
-					} else {
-						// Cursor does not point to current position
-						// -> it does not make sense to add elevation and GPS fix info.
-						guiWaypointSave.setData(new PositionMark(center.radlat, 
-								center.radlon, PositionMark.INVALID_ELEVATION,
-								pos.timeMillis, /* fix */ (byte)-1, 
-								/* sats */ (byte)-1, /* sym */ (byte)-1, 
-								/* type */ (byte)-1));
-					}
-					guiWaypointSave.show();					
+				if (gpx.isLoadingWaypoints()) {
+					showAlertLoadingWpt();
+				} else {
+    				if (guiWaypointSave == null) {
+    					guiWaypointSave = new GuiWaypointSave(this);
+    				}
+    				if (guiWaypointSave != null) {
+    					if (gpsRecenter) {
+    						// TODO: If we lose the fix the old position and height
+    						// will be used silently -> we should inform the user
+    						// here that we have no fix - he may not know what's going on.
+    						guiWaypointSave.setData(new PositionMark(center.radlat,
+    								center.radlon, (int)pos.altitude, pos.timeMillis,
+    								/* fix */ (byte)-1, /* sats */ (byte)-1, 
+    								/* sym */ (byte)-1, /* type */ (byte)-1));
+    					} else {
+    						// Cursor does not point to current position
+    						// -> it does not make sense to add elevation and GPS fix info.
+    						guiWaypointSave.setData(new PositionMark(center.radlat, 
+    								center.radlon, PositionMark.INVALID_ELEVATION,
+    								pos.timeMillis, /* fix */ (byte)-1, 
+    								/* sats */ (byte)-1, /* sym */ (byte)-1, 
+    								/* type */ (byte)-1));
+    					}
+    					guiWaypointSave.show();					
+    				}
 				}
 				return;
 			}
@@ -1192,9 +1204,9 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				manualRotationMode = !manualRotationMode;
 				if (manualRotationMode) {
 					if (hasPointerEvents()) {
-						alert("Manual Rotation", "Change course with zoom buttons", 1250);
+						alert("Manual Rotation", "Change course with zoom buttons", 3000);
 					} else {
-						alert("Manual Rotation", "Change course with left/right keys", 1250);
+						alert("Manual Rotation", "Change course with left/right keys", 3000);
 					}
 				} else {
 					alert("Manual Rotation", "Off", 750);
@@ -1350,7 +1362,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					return;
 				}
 			} else {
-				alert("Error", "currently in route calculation", 1000);
+				alert("Error", "Currently in route calculation", 2000);
 			}
 		} catch (Exception e) {
  			logger.exception("In Trace.commandAction", e);
@@ -1392,7 +1404,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		namesThread = new Names();
 		new DictReader(this);
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_AUTO_START_GPS)) {
-			Thread thread = new Thread(this);
+			Thread thread = new Thread(this, "Trace");
 			thread.start();
 		}
 //		logger.info("Create queueDataReader");
@@ -1689,6 +1701,11 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		}
 	}
 
+	/** Show an alert telling the user that waypoints are not ready yet.
+	 */
+	private void showAlertLoadingWpt() {
+		alert("Way points", "Way points are not ready yet.", 3000);
+	}
 	
 	private void showCurrentAlert(Graphics g) {
 		Font font = g.getFont();
@@ -1717,7 +1734,8 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					nextSpaceAt++;
 				}
 				nextSpaceAt--;
-				// reduce line word by word or if not possible char by char until the remaining string part fits to display width
+				// Reduce line word by word or if not possible char by char until the 
+				// remaining string part fits to display width
 				while (width > maxWidth) {
 					if (prevSpaceAt > start && nextSpaceAt > prevSpaceAt) {
 						nextSpaceAt = prevSpaceAt;
@@ -2161,6 +2179,13 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		// Not interested
 	}
 
+	/** Shows an alert message
+	 * 
+	 * @param title The title of the alert
+	 * @param message The message text
+	 * @param timeout Timeout in ms. Please reserve enough time so the user can 
+	 *   actually read the message. Use Alert.FOREVER if you want no timeout.
+	 */
 	public synchronized void alert(String title, String message, int timeout) {
 //		#debug info
 		logger.info("Showing trace alert: " + title + ": " + message);
@@ -2515,26 +2540,24 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		return travelModes;
 	}
 	
-	public void actionCompleted(String strResult) {
+	public void actionCompleted() {
 		boolean reAddCommands = true;
 
 		// handle command received from custom menu
-		if (customMenu!=null) {
-			if (strResult.equalsIgnoreCase("Ok")) {
-				if (customMenu.getCommandID() == ROUTING_START_WITH_MODE_SELECT_CMD) {
-					if (customMenu.getSelectedEntry() >= Legend.getTravelModes().length) {
-						if (customMenu.getSelectedEntry() == customMenu.getLength() - 1) {
-							Configuration.toggleCfgBitState(Configuration.CFGBIT_TURBO_ROUTE_CALC, true);
-						} else if (customMenu.getSelectedEntry() == Legend.getTravelModes().length) {
-							Configuration.toggleCfgBitState(Configuration.CFGBIT_USE_TURN_RESTRICTIONS_FOR_ROUTE_CALCULATION, true);
-						}
-						customMenu.setMenuEntries(buildRouteModeMenuEntries());
-						reAddCommands = false;
-					} else {
-						Configuration.setTravelMode(customMenu.getSelectedEntry());
-						customMenu = null;
-						commandAction(CMDS[ROUTING_START_CMD], null);
+		if (customMenu != null) {
+			if (customMenu.getCommandID() == ROUTING_START_WITH_MODE_SELECT_CMD) {
+				if (customMenu.getSelectedEntry() >= Legend.getTravelModes().length) {
+					if (customMenu.getSelectedEntry() == customMenu.getLength() - 1) {
+						Configuration.toggleCfgBitState(Configuration.CFGBIT_TURBO_ROUTE_CALC, true);
+					} else if (customMenu.getSelectedEntry() == Legend.getTravelModes().length) {
+						Configuration.toggleCfgBitState(Configuration.CFGBIT_USE_TURN_RESTRICTIONS_FOR_ROUTE_CALCULATION, true);
 					}
+					customMenu.setMenuEntries(buildRouteModeMenuEntries());
+					reAddCommands = false;
+				} else {
+					Configuration.setTravelMode(customMenu.getSelectedEntry());
+					customMenu = null;
+					commandAction(CMDS[ROUTING_START_CMD], null);
 				}
 			}
 		}

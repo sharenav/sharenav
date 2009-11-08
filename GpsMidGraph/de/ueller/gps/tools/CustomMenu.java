@@ -165,7 +165,7 @@ public class CustomMenu {
 	}
 	
 	public void customMenuSelect(boolean performAction) {
-		this.compListener.actionCompleted("OK");
+		this.compListener.actionCompleted();
 	}
 	
 }
