@@ -98,7 +98,7 @@ public class MoreMath {
 	/**
 	 * 1 / PLANET_RADIUS, this saves a floating point division.
 	 */
-	public static final float PLANET_RADIUS_INV = 1 / PLANET_RADIUS;
+	public static final float PLANET_RADIUS_INV = 1.0f / PLANET_RADIUS;
 
 	// cannot construct
 	private MoreMath() {}
@@ -805,7 +805,7 @@ public class MoreMath {
     	double longSin = Math.sin((lon2-lon1)/2d);
     	double a = (latSin * latSin) + (Math.cos(lat1)*Math.cos(lat2)*longSin*longSin);
     	double c = 2d * atan2(Math.sqrt(a),Math.sqrt(1d-a));
-    	return (int)(PLANET_RADIUS_D * (c + 0.5d));
+    	return (int)((PLANET_RADIUS_D * c) + 0.5d);
     }
 
     final public static double bearing_int(double lat1, double lon1,
