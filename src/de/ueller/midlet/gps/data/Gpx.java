@@ -23,7 +23,6 @@ import javax.microedition.rms.RecordStoreFullException;
 import javax.microedition.rms.RecordStoreNotFoundException;
 import javax.microedition.rms.RecordStoreNotOpenException;
 
-
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Position;
 import de.ueller.gpsMid.mapData.GpxTile;
@@ -41,13 +40,15 @@ import de.ueller.midlet.gps.importexport.GpxParser;
 import de.ueller.midlet.gps.tile.PaintContext;
 import de.ueller.gps.tools.HelperRoutines;
 
+
 /**
  * Handles pretty much everything that has to do with tracks and waypoints:
  * <ul>
- * <li>Recording/adding</li>
- * <li>Deleting, renaming</li>
- * <li>Storing in RecordStores</li>
- * <li>Exporting and importing in GPX format</li>
+ * <li>Recording tracks,</li>
+ * <li>Adding waypoints,</li>
+ * <li>Deleting, Renaming,</li>
+ * <li>Storing in RecordStores,</li>
+ * <li>Exporting and Importing in GPX format.</li>
  * </ul>
  */
 public class Gpx extends Tile implements Runnable, CompletionListener {
@@ -392,8 +393,8 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 						// is not always record distance not set
 						// or always record distance reached
 						(
-							Configuration.getGpxRecordAlwaysDistanceCentimeters()!=0 &&
-							100*distance >= Configuration.getGpxRecordAlwaysDistanceCentimeters()
+							Configuration.getGpxRecordAlwaysDistanceCentimeters() !=0 &&
+							100 * distance >= Configuration.getGpxRecordAlwaysDistanceCentimeters()
 						)
 						||
 						(  
@@ -401,14 +402,14 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 								// is minimum time interval not set
 								// or interval at least minimum interval?
 									Configuration.getGpxRecordMinMilliseconds() == 0 ||
-								Math.abs(msTime-oldMsTime) >= Configuration.getGpxRecordMinMilliseconds()
+								Math.abs(msTime - oldMsTime) >= Configuration.getGpxRecordMinMilliseconds()
 							)
 							&&
 							(
 							// is minimum distance not set
 							// or distance at least minimum distance?
-							Configuration.getGpxRecordMinDistanceCentimeters()==0 ||
-							100*distance >= Configuration.getGpxRecordMinDistanceCentimeters()
+							Configuration.getGpxRecordMinDistanceCentimeters() == 0 ||
+							100 * distance >= Configuration.getGpxRecordMinDistanceCentimeters()
 							)
 						)
 				) {
@@ -530,8 +531,8 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 	 * @param dontAskName If true, the user will not be asked for the track name,
 	 *   no matter what the configuration says.
 	 */
-	public void newTrk(boolean dontaskname) {
-		newTrk(null, dontaskname);
+	public void newTrk(boolean dontAskName) {
+		newTrk(null, dontAskName);
 	}
 
 	/** Starts the recording of a new track. An intermediate step may be to ask
@@ -540,7 +541,7 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 	 * @param dontAskName If true, the user will not be asked for the track name,
 	 *   no matter what the configuration says.
 	 */
-	public void newTrk(String newTrackName, boolean dontaskname) {
+	public void newTrk(String newTrackName, boolean dontAskName) {
 		logger.debug("Starting a new track recording");
 		trackTile.dropTrk();
 		Calendar cal = Calendar.getInstance();
@@ -561,7 +562,7 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		}
 		origTrackName = new String(trackName);
 		
-		if ((!dontaskname) && Configuration.getCfgBitState(Configuration.CFGBIT_GPX_ASK_TRACKNAME_START)) {
+		if ((!dontAskName) && Configuration.getCfgBitState(Configuration.CFGBIT_GPX_ASK_TRACKNAME_START)) {
 			getGpxNameStart = true;
 			GuiNameEnter gne = new GuiNameEnter(this, "Starting recording", trackName, Configuration.MAX_TRACKNAME_LENGTH);
 			doNewTrk();
@@ -709,7 +710,8 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 	}
 	
 	/** Changes the name of a track.
-	 * The ID of the track is searched in the RecordStore and its name is replaced.
+	 * The track is searched in the RecordStore by its ID and is rewritten 
+	 * with the new name.
 	 * 
 	 * @param trk The track to rename
 	 */
@@ -753,7 +755,7 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		}
 	}
 	
-	/** Starts the receiving of a GPX. 
+	/** Starts the receiving of GPX data.
 	 * 
 	 * @param ins Stream from which to read the GPX data
 	 * @param ul Listener for progress information
@@ -898,7 +900,6 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 
 	/** Currently without function. 
 	 * TODO: Should it do anything?
-	 * @see Tile.cleanup() 
 	 */
 	public boolean cleanup(int level) {
 		return false;
@@ -906,7 +907,6 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 
 	/** Currently without function. 
 	 * TODO: Should it do anything?
-	 * @see Tile.walk()
 	 */
 	public void walk(PaintContext pc, int opt) {
 	}
@@ -1071,19 +1071,19 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 	/**
 	 * Read waypoints from the RecordStore and put them in the wayPtTile for displaying.
 	 */
-	private void loadWaypointsFromDatabase() {		
+	private void loadWaypointsFromDatabase() {
 		try {
 			wayPtTile.dropWayPt();
 			RecordEnumeration renum;
 			
 			logger.info("Loading waypoints into tile");
 			openWayPtDatabase();
-			renum = wayptDatabase.enumerateRecords(null, null, false);			
+			renum = wayptDatabase.enumerateRecords(null, null, false);
 			while (renum.hasNextElement()) {
-				int id;			
-				id = renum.nextRecordId();			
+				int id;
+				id = renum.nextRecordId();
 				PositionMark waypt = new PositionMark(id, wayptDatabase.getRecord(id));
-				wayPtTile.addWayPt(waypt);						
+				wayPtTile.addWayPt(waypt);
 			}
 			wayptDatabase.closeRecordStore();
 			wayptDatabase = null;
@@ -1179,7 +1179,7 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 				}
 			} else {
 				sb.setLength(0);
-				sb.append("<trkpt lat='").append(lat).append("' lon='").append(lon).append("' >\r\n");
+				sb.append("<trkpt lat='").append(lat).append("' lon='").append(lon).append("'>\r\n");
 				sb.append("<ele>").append(ele).append("</ele>\r\n");
 				date.setTime(time);
 				sb.append("<time>").append(formatUTC(date)).append("</time>\r\n");
@@ -1187,14 +1187,14 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 				writeUTF(oS, sb);
 			}
 			/**
-			 * Increment the progress bar when progress has increased in 2%
+			 * Increment the progress bar when progress has increased 2%
 			 * Don't update on every point as an optimisation.
 			 */
 			if (((i % progUpdtIntervall) == 0) && (feedbackListener != null)) {
-				//update the progressbar in GuiGpx
+				// Update the progress bar in GuiGpx
 				feedbackListener.updateProgressValue(progUpdtIntervall);
 			}
-		}
+		} // for
 		oS.write("</trkseg>\r\n</trk>\r\n".getBytes());
 		oS.write(baos.toByteArray());
 		trackDatabase.closeRecordStore();
@@ -1255,7 +1255,7 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 		
 		for (int i = 0; i < waypts.length; i++) {
 			wayPt = waypts[i];
-			streamWayPt (oS, wayPt);
+			streamWayPt(oS, wayPt);
 		}
 	}
 	
@@ -1428,11 +1428,11 @@ public class Gpx extends Tile implements Runnable, CompletionListener {
 
 	/**
 	 * Date-Time formatter that corresponds to the standard UTC time as used in XML
-	 * @param time
-	 * @return
+	 * @param time Time to be formatted
+	 * @return String containing the formatted time
 	 */
 	private static final String formatUTC(Date time) {
-		// This function needs optimising. It has a too high object churn.
+		// TODO: This function needs optimising. It has a too high object churn.
 		Calendar c = null;
 		if (c == null) {
 			c = Calendar.getInstance();
