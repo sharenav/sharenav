@@ -104,7 +104,10 @@ public class GpxTile extends Tile {
 		// TODO Auto-generated method stub
 	}
 
-	public synchronized void paint(PaintContext pc, byte layer) {
+	public void paint(PaintContext pc, byte layer) {
+		// It seems that making this method synchronized increases how often the
+		// freezing after saving waypoints (as described in tracker item 2189029) occurs. 
+		// As it doesn't alter data, it should be OK that it isn't synchronized.
 		if (layer == Tile.LAYER_NODE) {
 			if (contain(pc)) {			
 				if ((t1 != null) && (t2 != null)) {
