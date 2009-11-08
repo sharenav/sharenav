@@ -583,25 +583,18 @@ public class Routing implements Runnable {
 			} 
 
 			// if the target way is not routable, e.g. an area, remove it as target entity and thus search for a routable way nearby the target node
-			if (toMark.entity != null || !(toMark.entity instanceof Way) || !((Way) toMark.entity).isRoutableWay()) {
+			if (toMark.entity != null && ( !(toMark.entity instanceof Way) || !((Way) toMark.entity).isRoutableWay() ) ) {
 				toMark.entity = null;
 			}
 
 			if (toMark.entity == null) {
 				// if there is no element in the to Mark, fill it from tile-data
-				parent.receiveMessage("search for target element");
-				parent.searchElement(toMark);
+				parent.receiveMessage("search target way");
+				parent.searchNextRoutableWay(toMark);
 				if (toMark.entity == null) {
-					parent.receiveMessage("search for routable way close by the target");
-//					long startTime = System.currentTimeMillis();
-					parent.searchNextRoutableWay(toMark);
-					if (toMark.entity == null) {
-						parent.receiveMessage("No Way found for target point");
-						parent.setRoute(null);
-						return;
-//					} else {
-//						parent.alert("Routing", "Source Way found in " + (long)(System.currentTimeMillis() - startTime), 3000);
-					}
+					parent.receiveMessage("No way at target");
+					parent.setRoute(null);
+					return;
 				}
 			}
 			
