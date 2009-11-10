@@ -374,7 +374,7 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 				setActiveTab(newTab);
 			} else {
 				int actionId = getActiveMenuPage().getActionIdAtPointer(x, y);
-				if (actionId > 0) {
+				if (actionId >= 0) {
 					parent.show();
 					performIconAction(actionId);
 					return;
