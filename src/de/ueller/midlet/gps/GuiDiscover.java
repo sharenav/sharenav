@@ -1022,6 +1022,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				btAutoRecon.setSelectedIndex(0, Configuration.getBtAutoRecon());
 				Display.getDisplay(parent).setCurrentItem(gpsUrl);
 				//Display.getDisplay(parent).setCurrent(menuSelectLocProv);
+				GpsMid.getInstance().show(menuSelectLocProv);
 				state = STATE_LP;
 				break;
 			case MENU_ITEM_GPX_FILTER: // Recording Rules
