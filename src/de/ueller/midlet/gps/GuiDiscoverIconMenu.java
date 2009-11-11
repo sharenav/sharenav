@@ -12,6 +12,9 @@ import javax.microedition.lcdui.Graphics;
 
 
 public class GuiDiscoverIconMenu extends IconMenuWithPagesGUI {
+	private static int rememberedEleId = 0;
+	private static int rememberedTabNr = 0;
+
 
 	public GuiDiscoverIconMenu(GpsMidDisplayable parent, IconActionPerformer actionPerformer) {
 		super(parent, actionPerformer);
@@ -42,6 +45,19 @@ public class GuiDiscoverIconMenu extends IconMenuWithPagesGUI {
 			mp.createAndAddIcon("Keys"/*i:Keys*/, "is_keys", GuiDiscover.MENU_ITEM_KEYS_OPT);
 			mp.createAndAddIcon("Load Config"/*i:LoadConfig*/, "is_load", GuiDiscover.MENU_ITEM_LOAD_CONFIG);
 			mp.createAndAddIcon("Save Config"/*i:SaveConfig*/, "is_save", GuiDiscover.MENU_ITEM_SAVE_CONFIG);
-	}
 
+			setActiveTabAndCursor(rememberedTabNr, rememberedEleId);
+	}
+	
+	private void rememberActiveTabAndEleNr() {
+		rememberedTabNr = tabNr;
+		rememberedEleId = getActiveMenuPage().rememberEleId;
+	}
+	
+	
+	public void paint(Graphics g) {
+		rememberActiveTabAndEleNr();
+		super.paint(g);
+	}
+	
 }
