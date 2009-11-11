@@ -171,15 +171,14 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private final static int		STATE_RECORDING_OPTIONS	= 8;
 	private final static int 		STATE_BT_GPX	= 9;
 	private final static int		STATE_DEBUG		= 10;
-	private final static int		STATE_ROUTING_OPT = 11;
 	//#if polish.api.osm-editing
-	private final static int		STATE_OSM_OPT = 12;
+	private final static int		STATE_OSM_OPT = 11;
 	//#endif
-	private final static int		STATE_OPENCELLID_OPT = 13;
-	private final static int		STATE_LOAD_CONFIG = 14;
-	private final static int		STATE_SAVE_CONFIG = 15;
-	private final static int		STATE_URL_ENTER_GPS = 16;
-	private final static int		STATE_URL_ENTER_GPX = 17;
+	private final static int		STATE_OPENCELLID_OPT = 12;
+	private final static int		STATE_LOAD_CONFIG = 13;
+	private final static int		STATE_SAVE_CONFIG = 14;
+	private final static int		STATE_URL_ENTER_GPS = 15;
+	private final static int		STATE_URL_ENTER_GPX = 16;
 	
 	private Vector urlList; 
 	private Vector friendlyName;
@@ -190,8 +189,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private TextField  tfGpxRecordMinimumSecs; 
 	private TextField  tfGpxRecordMinimumDistanceMeters; 
 	private TextField  tfGpxRecordAlwaysDistanceMeters;
-	private TextField  tfMainStreetNetDistanceKm;
-	private TextField  tfMinRouteLineWidth;
 	private TextField  tfURL;
 	//#if polish.api.osm-editing
 	private TextField  tfOsmUserName;
@@ -222,14 +219,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private String gpsUrlStr;
 	private String rawLogDir;
 
-	private Gauge gaugeRoutingEsatimationFac; 
-	private ChoiceGroup continueMapWhileRouteing;
-	private ChoiceGroup routingOptsGroup;
-	private ChoiceGroup routingStrategyOptsGroup;
-	private ChoiceGroup routingShowOptsGroup;
 	private ChoiceGroup gpxOptsGroup;
 	private ChoiceGroup cellidOptsGroup;
-	private ChoiceGroup routingTravelModesGroup;
 
 	private final static Logger logger=Logger.getInstance(GuiDiscover.class,Logger.DEBUG);
 
@@ -303,65 +294,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		menuRecordingOptions.append(tfGpxRecordAlwaysDistanceMeters);
 		menuRecordingOptions.append(gpxOptsGroup);
 		menuRecordingOptions.append(choiceWptInTrack);
-	}
-
-	private void initRoutingOptions() {
-		// Prepare routingOptions menu
-		logger.info("Starting Routing setup menu");
-		menuRoutingOptions = new Form("Routing Options");
-		menuRoutingOptions.addCommand(BACK_CMD);
-		menuRoutingOptions.addCommand(OK_CMD);
-		menuRoutingOptions.setCommandListener(this);
-
-		String travelModes[] = new String[Legend.getTravelModes().length];
-		for (int i=0; i<travelModes.length; i++) {
-			travelModes[i]=Legend.getTravelModes()[i].travelModeName;
-		}
-		routingTravelModesGroup = new ChoiceGroup("Routing for:", Choice.EXCLUSIVE, travelModes, null);
-		routingTravelModesGroup.setSelectedIndex(Configuration.getTravelModeNr(), true);
-		menuRoutingOptions.append(routingTravelModesGroup);
-		
-		String [] routingBack = new String[3];
-		routingBack[0] = "No";
-		routingBack[1] = "At route line creation";
-		routingBack[2] = "Yes";
-		continueMapWhileRouteing = new ChoiceGroup("Continue Map while calculation:", Choice.EXCLUSIVE, routingBack ,null);
-		continueMapWhileRouteing.setSelectedIndex(Configuration.getContinueMapWhileRouteing(),true);
-		menuRoutingOptions.append(continueMapWhileRouteing);
-		gaugeRoutingEsatimationFac=new Gauge("Speed of route calculation", true, 10, Configuration.getRouteEstimationFac());
-		menuRoutingOptions.append(gaugeRoutingEsatimationFac);
-		tfMainStreetNetDistanceKm = new TextField("Distance in km to main street net (used for large route distances):", Integer.toString(Configuration.getMainStreetDistanceKm()), 5, TextField.DECIMAL);
-		menuRoutingOptions.append(tfMainStreetNetDistanceKm);
-		
-		String [] routingStrategyOpts = new String[3];
-		boolean[] selRoutingStrategy = new boolean[3];
-		routingStrategyOpts[0] = "Look for motorways"; selRoutingStrategy[0]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_ROUTE_TRY_FIND_MOTORWAY);
-		routingStrategyOpts[1] = "Boost motorways"; selRoutingStrategy[1]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_ROUTE_BOOST_MOTORWAYS);
-		routingStrategyOpts[2] = "Boost trunks & primarys"; selRoutingStrategy[2]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_ROUTE_BOOST_TRUNKS_PRIMARYS);
-		routingStrategyOptsGroup = new ChoiceGroup("Calculation Strategies", Choice.MULTIPLE, routingStrategyOpts ,null);
-		routingStrategyOptsGroup.setSelectedFlags(selRoutingStrategy);
-		menuRoutingOptions.append(routingStrategyOptsGroup);
-		
-		String [] routingShowOpts = new String[3];
-		boolean[] selRoutingShow = new boolean[3];
-		routingShowOpts[0] = "Estimated duration"; selRoutingShow[0]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_ROUTE_DURATION_IN_MAP);
-		routingShowOpts[1] = "ETA"; selRoutingShow[1]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_ETA_IN_MAP);
-		routingShowOpts[2] = "Offset to route line"; selRoutingShow[2]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_OFF_ROUTE_DISTANCE_IN_MAP);
-		routingShowOptsGroup = new ChoiceGroup("Infos in Map Screen", Choice.MULTIPLE, routingShowOpts ,null);
-		routingShowOptsGroup.setSelectedFlags(selRoutingShow);
-		menuRoutingOptions.append(routingShowOptsGroup);
-
-		tfMinRouteLineWidth = new TextField("Minimum width of route line", Integer.toString(Configuration.getMinRouteLineWidth()), 1, TextField.DECIMAL);
-		menuRoutingOptions.append(tfMinRouteLineWidth);
-		
-		String [] routingOpts = new String[3];
-		boolean[] selRouting = new boolean[3];
-		routingOpts[0] = "Auto Recalculation"; selRouting[0]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_ROUTE_AUTO_RECALC);
-		routingOpts[1] = "Route Browsing with up/down keys"; selRouting[1]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_ROUTE_BROWSING);
-		routingOpts[2] = "Hide quiet arrows"; selRouting[2]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_ROUTE_HIDE_QUIET_ARROWS);
-		routingOptsGroup = new ChoiceGroup("Other", Choice.MULTIPLE, routingOpts ,null);
-		routingOptsGroup.setSelectedFlags(selRouting);
-		menuRoutingOptions.append(routingOptsGroup);
 	}
 
 	private void initDebugSetupMenu() {
@@ -911,40 +843,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				
 				break;
 
-			case STATE_ROUTING_OPT:
-				Configuration.setTravelMode(routingTravelModesGroup.getSelectedIndex());
-				Configuration.setRouteEstimationFac(gaugeRoutingEsatimationFac.getValue());
-				logger.debug("set continueMapWhileRouteing " + continueMapWhileRouteing.getSelectedIndex());
-				Configuration.setContinueMapWhileRouteing(continueMapWhileRouteing.getSelectedIndex());
-
-				boolean[] selStrategyRouting = new boolean[3];
-				routingStrategyOptsGroup.getSelectedFlags(selStrategyRouting);
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ROUTE_TRY_FIND_MOTORWAY, selStrategyRouting[0]);
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ROUTE_BOOST_MOTORWAYS, selStrategyRouting[1]);
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ROUTE_BOOST_TRUNKS_PRIMARYS, selStrategyRouting[2]);
-				
-				boolean[] selShowRouting = new boolean[3];
-				routingShowOptsGroup.getSelectedFlags(selShowRouting);
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_ROUTE_DURATION_IN_MAP, selShowRouting[0]);
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_ETA_IN_MAP, selShowRouting[1]);
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_OFF_ROUTE_DISTANCE_IN_MAP, selShowRouting[2]);
-				String w=tfMinRouteLineWidth.getString(); 
-				Configuration.setMinRouteLineWidth( 
-						(int) (Float.parseFloat(w)) 
-				); 
-				String km=tfMainStreetNetDistanceKm.getString(); 
-				Configuration.setMainStreetDistanceKm(
-						(int) (Float.parseFloat(km)) 
-				);
-				
-				boolean[] selRouting = new boolean[3];
-				routingOptsGroup.getSelectedFlags(selRouting);
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ROUTE_AUTO_RECALC, selRouting[0]);
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ROUTE_BROWSING, selRouting[1]);
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ROUTE_HIDE_QUIET_ARROWS, selRouting[2]);
-				state = STATE_ROOT;
-				this.show();			
-				break;
 			//#if polish.api.osm-editing
 			case STATE_OSM_OPT:
 				Configuration.setOsmUsername(tfOsmUserName.getString());
@@ -1120,9 +1018,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				state = STATE_DEBUG;
 				break;
 			case MENU_ITEM_ROUTING_OPT:
-				initRoutingOptions();
-				GpsMid.getInstance().show(menuRoutingOptions);
-				state = STATE_ROUTING_OPT;
+				GuiRoute guiRoute = new GuiRoute(this, true);
+				guiRoute.show();
 				break;
 			case MENU_ITEM_SOUNDS_OPT:
 				GuiSetupSound gs = new GuiSetupSound(this);
