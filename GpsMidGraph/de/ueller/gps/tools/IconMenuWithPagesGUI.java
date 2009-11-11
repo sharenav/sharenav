@@ -87,7 +87,7 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 	
 	private int getFontFlag() {
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_BIG_TAB_BUTTONS)) {
-			return LayoutElement.FLAG_FONT_LARGE;
+			return LayoutElement.FLAG_FONT_MEDIUM;
 		}
 		return LayoutElement.FLAG_FONT_SMALL;
 	}
