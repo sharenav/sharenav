@@ -233,7 +233,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 
 	private final static Logger logger=Logger.getInstance(GuiDiscover.class,Logger.DEBUG);
 
-	private GuiDiscoverIconMenu setupIconMenu = null;
+	private static GuiDiscoverIconMenu setupIconMenu = null;
 	
 	public GuiDiscover(GpsMid parent) {
 		this.parent = parent;
@@ -1348,10 +1348,20 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		
 	}
 	
+	// uncache the icon menu to reflect changes in the setup or save memory
+	public static void uncacheIconMenu() {
+		//#mdebug trace
+		if (setupIconMenu != null) {
+			logger.trace("uncaching setupIconMenu");
+		}
+		//#enddebug
+		setupIconMenu = null;
+	}
+	
 	// interface for received actions from the IconMenu GUI
 	public void performIconAction(int actionId) {
 		if (actionId == IconActionPerformer.BACK_ACTIONID) {
-			setupIconMenu = null;
+			uncacheIconMenu();
 			System.gc();
 			commandAction(EXIT_CMD, (Displayable) null);
 		} else {

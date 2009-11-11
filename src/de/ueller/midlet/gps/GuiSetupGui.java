@@ -68,6 +68,7 @@ public class GuiSetupGui extends Form implements CommandListener {
 			Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_MAPPED_ICONS, guiOpts.isSelected(3));
 			Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED, guiOpts.isSelected(4));
 			Trace.uncacheIconMenu();
+			GuiDiscover.uncacheIconMenu();
 			parent.show();
 			return;
 		}
