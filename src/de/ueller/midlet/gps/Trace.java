@@ -785,7 +785,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					}
 				}
 				
-				if (backLightLevelDiff !=0  &&  System.currentTimeMillis() < (lastBackLightOnTime + 1000)) { 
+				if (backLightLevelDiff !=0  &&  System.currentTimeMillis() < (lastBackLightOnTime + 1500)) { 
 					// turn backlight always on when dimming
 					Configuration.setCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON, true, false);
 					lastBackLightOnTime = System.currentTimeMillis();
@@ -2228,7 +2228,13 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		logger.debug("Touch button: " + tl.getActionIdAtPointer(x, y) + " x: " + x + " y: " + y);
 		int actionId = tl.getActionIdAtPointer(x, y);
 		if (actionId > 0) {		
-			if (manualRotationMode) {
+			if (System.currentTimeMillis() < (lastBackLightOnTime + 1500)) { 
+				if (actionId == ZOOM_IN_CMD) {
+					actionId = PAN_RIGHT2_CMD;						
+				} else if (actionId == ZOOM_OUT_CMD) {
+					actionId = PAN_LEFT2_CMD;
+				}					
+			} else if (manualRotationMode) { 
 				if (actionId == ZOOM_IN_CMD) {
 					actionId = PAN_LEFT2_CMD;
 				} else if (actionId == ZOOM_OUT_CMD) {
