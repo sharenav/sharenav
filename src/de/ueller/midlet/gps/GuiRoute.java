@@ -48,7 +48,7 @@ public class GuiRoute extends Form implements CommandListener {
 		for (int i=0; i<travelModes.length; i++) {
 			travelModes[i]=Legend.getTravelModes()[i].travelModeName;
 		}
-		routingTravelModesGroup = new ChoiceGroup("Transport Mode", Choice.EXCLUSIVE, travelModes, null);
+		routingTravelModesGroup = new ChoiceGroup("Travel by", Choice.EXCLUSIVE, travelModes, null);
 		routingTravelModesGroup.setSelectedIndex(Configuration.getTravelModeNr(), true);
 		append(routingTravelModesGroup);
 
