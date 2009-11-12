@@ -67,6 +67,7 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 		super();
 		setFullScreenMode(Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN));
 		this.parent = parent;
+		// must be below setFullScreenMode() for not recreating this icon menu because of the size change
 		this.actionPerformer = actionPerformer;
 		this.minX = 0;
 		this.minY = 0;
@@ -177,25 +178,15 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 		}
 		
 	}
-
 	
 	protected void sizeChanged(int w, int h) {
-		this.maxY = h;
-		createTabPrevNextButtons();
-		IconMenuPage imp = null;
-		for (int i=0; i < iconMenuPages.size(); i++) {
-			imp = (IconMenuPage) iconMenuPages.elementAt(i);
-			imp.minY = minY + eNextTab.bottom + 6;
-			imp.maxY = eStatusBar.top - 5;
-			imp.unloadIcons();
-			if (tabNr == i) {
-				imp.loadIcons();
-				imp.recalcPositions();
-			}
+		// recreate this menu only if we already have an IconActionPerformer, i.e. after setFullScreenMode() in the constructor
+		if (actionPerformer != null) {
+			//#debug debug
+			logger.debug("size changed - recreating icon menu");
+			actionPerformer.recreateAndShowIconMenu();
 		}
-		addCommands();
 	}
-	
 	
 	public void setActiveTab(int tabNr) {
 		if(tabNr >= iconMenuPages.size()) {

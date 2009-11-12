@@ -2339,13 +2339,6 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		repaint();
 	}
 	
-	public void showIconMenu() {
-		if (traceIconMenu == null) {
-			traceIconMenu = new TraceIconMenu(this, this);
-		}
-		traceIconMenu.show();
-	}
-
 	public void recreateTraceLayout() {
 		tl = new TraceLayout(0, 0, getWidth(), getHeight());
 	}
@@ -2514,9 +2507,15 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			addAllCommands();
 		}
 	}
-
 	
-	// recreate the icon menu to reflect changes in the setup or save memory
+	public void showIconMenu() {
+		if (traceIconMenu == null) {
+			traceIconMenu = new TraceIconMenu(this, this);
+		}
+		traceIconMenu.show();
+	}
+	
+	/** uncache the icon menu to reflect changes in the setup or save memory */
 	public static void uncacheIconMenu() {
 		//#mdebug trace
 		if (traceIconMenu != null) {
@@ -2526,7 +2525,13 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		traceIconMenu = null;
 	}
 	
-	// interface for received actions from the IconMenu GUI
+	/** interface for IconMenuWithPages: recreate the icon menu from scratch and show it (introduced for reflecting size change of the Canvas) */
+	public void recreateAndShowIconMenu() {
+		uncacheIconMenu();
+		showIconMenu();
+	}
+	
+	/** interface for received actions from the IconMenu GUI */
 	public void performIconAction(int actionId) {
 		updateLastUserActionTime();
 		// when we are low on memory or during route calculation do not cache the icon menu (including scaled images)

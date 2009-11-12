@@ -1112,10 +1112,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		switch (state) {
 			case STATE_ROOT:
 				if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS)) {
-					if (setupIconMenu == null) {
-						setupIconMenu = new GuiDiscoverIconMenu(this, this);
-					}
-					setupIconMenu.show();
+					showIconMenu();
 				} else {
 					GpsMid.getInstance().show(menu);
 				}
@@ -1245,7 +1242,14 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		
 	}
 	
-	// uncache the icon menu to reflect changes in the setup or save memory
+	public void showIconMenu() {
+		if (setupIconMenu == null) {
+			setupIconMenu = new GuiDiscoverIconMenu(this, this);
+		}
+		setupIconMenu.show();
+	}
+	
+	/** uncache the icon menu to reflect changes in the setup or save memory */
 	public static void uncacheIconMenu() {
 		//#mdebug trace
 		if (setupIconMenu != null) {
@@ -1254,8 +1258,14 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		//#enddebug
 		setupIconMenu = null;
 	}
-	
-	// interface for received actions from the IconMenu GUI
+
+	/** interface for IconMenuWithPages: recreate the icon menu from scratch and show it (introduced for reflecting size change of the Canvas) */
+	public void recreateAndShowIconMenu() {
+		uncacheIconMenu();
+		showIconMenu();
+	}
+
+	/** interface for received actions from the IconMenu GUI */
 	public void performIconAction(int actionId) {
 		if (actionId == IconActionPerformer.BACK_ACTIONID) {
 			uncacheIconMenu();
