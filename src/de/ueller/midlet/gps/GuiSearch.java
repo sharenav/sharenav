@@ -44,12 +44,12 @@ public class GuiSearch extends Canvas implements CommandListener,
 	/** OK1_CMD is used when GUI is not optimised for routing */
 	private final Command OK1_CMD = new Command("Ok", Command.OK, 1);
 	/** ROUTE2_CMD is used when GUI is not optimised for routing */
-	private final Command ROUTE2_CMD = new Command("Route", Command.ITEM, 2);
+	private final Command ROUTE2_CMD = new Command("Route", Command.ITEM, 3);
 	/** ROUTE1_CMD is used when GUI is optimised for routing */
 	private final Command ROUTE1_CMD = new Command("Route", Command.OK, 1);
 	/** OK2_CMD is used when GUI is optimised for routing */
-	private final Command OK2_CMD = new Command("As Target", Command.ITEM, 2);
-	private final Command DISP_CMD = new Command("Display", Command.ITEM, 3);
+	private final Command OK2_CMD = new Command("As Target", Command.ITEM, 3);
+	private final Command DISP_CMD = new Command("Display", Command.ITEM, 2);
 	private final Command DEL_CMD = new Command("delete", Command.ITEM, 4);
 	private final Command CLEAR_CMD = new Command("clear", Command.ITEM, 5);
 	private final Command BOOKMARK_CMD = new Command("add to Waypoint", Command.ITEM, 6);
