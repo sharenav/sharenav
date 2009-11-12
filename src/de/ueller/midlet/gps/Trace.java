@@ -42,7 +42,6 @@ import de.ueller.gps.data.Satelit;
 import de.ueller.gps.nmea.NmeaInput;
 import de.ueller.gps.sirf.SirfInput;
 import de.ueller.gps.tools.HelperRoutines;
-import de.ueller.gps.tools.CustomMenu;
 import de.ueller.gps.tools.IconActionPerformer;
 import de.ueller.gps.tools.LayoutElement;
 import de.ueller.gpsMid.mapData.DictReader;
@@ -716,34 +715,6 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				return;
 			}
 			
-			if (customMenu != null) {
-				// giving the command that opened the custom menu again will select the current entry in the custom menu
-				if (c == CMDS[customMenu.getCommandID()]
-				              ||
-				    // pressing the OK command will also select the current entry
-				    c.getCommandType() == Command.OK
-				              ||
-					// in case of ROUTING_START_WITH_MODE_SELECT_CMD the ROUTING_TOGGLE_CMD might have opened the custom menu
-					(customMenu.getCommandID() == ROUTING_START_WITH_MODE_SELECT_CMD && c == CMDS[ROUTING_TOGGLE_CMD])
-				) {
-					customMenu.customMenuSelect(true);
-			    	repaint();
-					return;
-				}
-			    if (c.getCommandType() == Command.BACK) {
-			    	if (customMenu.getCommandID() == ROUTING_START_WITH_MODE_SELECT_CMD
-			    		&& customMenu.getSelectedEntry() < Legend.getTravelModes().length
-			    	) {
-			    		Configuration.setTravelMode(customMenu.getSelectedEntry());
-				    }
-			    	customMenu = null;
-			    	repaint();
-			    	return;
-			    }
-				alert("Menu", "Waiting for menu", 1000);
-				return;
-			}
-			
 			if ((c == CMDS[PAN_LEFT25_CMD]) || (c == CMDS[PAN_RIGHT25_CMD]) || (c == CMDS[PAN_UP25_CMD]) || (c == CMDS[PAN_DOWN25_CMD])
 					|| (c == CMDS[PAN_LEFT2_CMD]) || (c == CMDS[PAN_RIGHT2_CMD]) || (c == CMDS[PAN_UP2_CMD]) || (c == CMDS[PAN_DOWN2_CMD])) {
 				int panX = 0; int panY = 0;
@@ -1145,8 +1116,6 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					if (Configuration.getCfgBitState(Configuration.CFGBIT_FULLSCREEN)) {
 						removeAllCommands();
 					}
-//					customMenu = new CustomMenu(this, this, "Route to target", menuEntries, ROUTING_START_WITH_MODE_SELECT_CMD, Legend.getTravelModes().length - 1);
-//					customMenu.setSelectedEntry(Configuration.getTravelModeNr());
 					GuiRoute guiRoute = new GuiRoute(this, false);
 					guiRoute.show();
 					return;
@@ -1693,9 +1662,6 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			
 			tl.paint(g);
 			
-			if (customMenu != null) {
-				customMenu.paint(g);
-			}
 			if (currentAlertsOpenCount > 0) {
 				showCurrentAlert(g);
 			}
@@ -2214,14 +2180,6 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	protected void pointerPressed(int x, int y) {
 		updateLastUserActionTime();
 		pointerDragAction = true;
-
-		if (customMenu != null && customMenu.pointerPressed(x, y)) {
-			repaint();
-		}		
-		if (customMenu != null) {
-			pointerDragAction = false;
-			return;			
-		}
 		
 		// check for touchable buttons
 //		#debug debug
@@ -2552,24 +2510,6 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	public void actionCompleted() {
 		boolean reAddCommands = true;
 
-		// handle command received from custom menu
-		if (customMenu != null) {
-			if (customMenu.getCommandID() == ROUTING_START_WITH_MODE_SELECT_CMD) {
-				if (customMenu.getSelectedEntry() >= Legend.getTravelModes().length) {
-					if (customMenu.getSelectedEntry() == customMenu.getLength() - 1) {
-						Configuration.toggleCfgBitState(Configuration.CFGBIT_TURBO_ROUTE_CALC, true);
-					} else if (customMenu.getSelectedEntry() == Legend.getTravelModes().length) {
-						Configuration.toggleCfgBitState(Configuration.CFGBIT_USE_TURN_RESTRICTIONS_FOR_ROUTE_CALCULATION, true);
-					}
-					customMenu.setMenuEntries(buildRouteModeMenuEntries());
-					reAddCommands = false;
-				} else {
-					Configuration.setTravelMode(customMenu.getSelectedEntry());
-					customMenu = null;
-					commandAction(CMDS[ROUTING_START_CMD], null);
-				}
-			}
-		}
 		if (reAddCommands && Configuration.getCfgBitState(Configuration.CFGBIT_FULLSCREEN)) {
 			addAllCommands();
 		}
