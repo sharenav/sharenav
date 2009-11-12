@@ -1104,25 +1104,8 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 
 			if (c == CMDS[ROUTING_START_WITH_MODE_SELECT_CMD]) {
 				gpsRecenter = true;
-				String menuEntries[] = buildRouteModeMenuEntries();
-				if (menuEntries.length > 1) {
-					/*
-					 * Nasty workaround for SE mobiles when using a custom menu in full screen mode:
-					 * SE mobiles cannot handle the fire button in full screen mode when commands are attached to the displayable -
-					 * instead they will turn on a bar offering the available commands and also stop the map drawing
-					 * (probably via hide notify). Therefore in full screen mode we remove all commands
-					 * before creating the custom menu and add them again when the custom menu is closed.
-					 */
-					if (Configuration.getCfgBitState(Configuration.CFGBIT_FULLSCREEN)) {
-						removeAllCommands();
-					}
-					GuiRoute guiRoute = new GuiRoute(this, false);
-					guiRoute.show();
-					return;
-				}
-				else {
-					commandAction(CMDS[ROUTING_START_CMD],(Displayable) null);
-				}
+				GuiRoute guiRoute = new GuiRoute(this, false);
+				guiRoute.show();
 				return;
 			}
 			
@@ -2474,30 +2457,6 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	
 	public Vector getRoute() {
 		return route;
-	}
-	
-	private String[] buildRouteModeMenuEntries() {
-		boolean askForTurnRestrictions = false;
-		int numTravelModes = Legend.getTravelModes().length;
-		int numMenuEntries = numTravelModes + 1;
-		for (int i=0; i<numTravelModes; i++) {
-			if (Legend.getTravelModes()[i].isWithTurnRestrictions()) {
-				askForTurnRestrictions = true;
-			}					
-		}
-		if (askForTurnRestrictions) {
-			numMenuEntries++;
-		}
-		String travelModes[] = new String[numMenuEntries];
-		int i = 0;
-		for (; i<numTravelModes; i++) {
-			travelModes[i]=Legend.getTravelModes()[i].travelModeName;
-		}
-		if (askForTurnRestrictions) {
-			travelModes[i++] = "TurnRestr.: " + (Configuration.getCfgBitState(Configuration.CFGBIT_USE_TURN_RESTRICTIONS_FOR_ROUTE_CALCULATION)?"On":"Off");
-		}
-		travelModes[i++] = "CalcType: " + (Configuration.getCfgBitState(Configuration.CFGBIT_TURBO_ROUTE_CALC)?"Turbo":"Deep");
-		return travelModes;
 	}
 	
 	public void actionCompleted() {
