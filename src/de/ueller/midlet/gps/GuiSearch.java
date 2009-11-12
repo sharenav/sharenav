@@ -39,15 +39,24 @@ public class GuiSearch extends Canvas implements CommandListener,
 
 	private final static Logger logger = Logger.getInstance(GuiSearch.class,Logger.DEBUG);
 
+	/** OK_CMD for Nearest POI / Fulltext Search */
 	private final Command OK_CMD = new Command("Ok", Command.OK, 1);
-	private final Command DISP_CMD = new Command("Display", Command.ITEM, 1);
-	private final Command DEL_CMD = new Command("delete", Command.ITEM, 2);
-	private final Command CLEAR_CMD = new Command("clear", Command.ITEM, 3);
-	private final Command BOOKMARK_CMD = new Command("add to Waypoint", Command.ITEM, 4);
-	private final Command BACK_CMD = new Command("Back", Command.BACK, 5);
-	private final Command OVERVIEW_MAP_CMD = new Command("Overview/Filter Map", Command.ITEM, 6);
-	private final Command POI_CMD = new Command("Nearest POI", Command.ITEM, 7);
-	private final Command FULLT_CMD = new Command("Fulltext Search", Command.ITEM, 8);
+	/** OK1_CMD is used when GUI is not optimised for routing */
+	private final Command OK1_CMD = new Command("Ok", Command.OK, 1);
+	/** ROUTE2_CMD is used when GUI is not optimised for routing */
+	private final Command ROUTE2_CMD = new Command("Route", Command.ITEM, 2);
+	/** ROUTE1_CMD is used when GUI is optimised for routing */
+	private final Command ROUTE1_CMD = new Command("Route", Command.OK, 1);
+	/** OK2_CMD is used when GUI is optimised for routing */
+	private final Command OK2_CMD = new Command("As Target", Command.ITEM, 2);
+	private final Command DISP_CMD = new Command("Display", Command.ITEM, 3);
+	private final Command DEL_CMD = new Command("delete", Command.ITEM, 4);
+	private final Command CLEAR_CMD = new Command("clear", Command.ITEM, 5);
+	private final Command BOOKMARK_CMD = new Command("add to Waypoint", Command.ITEM, 6);
+	private final Command BACK_CMD = new Command("Back", Command.BACK, 7);
+	private final Command OVERVIEW_MAP_CMD = new Command("Overview/Filter Map", Command.ITEM, 8);
+	private final Command POI_CMD = new Command("Nearest POI", Command.ITEM, 9);
+	private final Command FULLT_CMD = new Command("Fulltext Search", Command.ITEM, 10);
 
 	//private Form form;
 
@@ -133,7 +142,13 @@ public class GuiSearch extends Canvas implements CommandListener,
 		setCommandListener(this);
 		
 		searchThread = new SearchNames(this);
-		addCommand(OK_CMD);
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED)) {
+			addCommand(ROUTE1_CMD);			
+			addCommand(OK2_CMD);
+		} else {
+			addCommand(OK1_CMD);
+			addCommand(ROUTE2_CMD);			
+		}
 		addCommand(DISP_CMD);
 		addCommand(DEL_CMD);
 		addCommand(CLEAR_CMD);
@@ -164,7 +179,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 	public void commandAction(Command c, Displayable d) {
 //		System.out.println("got Command " + c);
 		if (state == STATE_MAIN || state == STATE_FAVORITES) {
-			if (c == OK_CMD) {			
+			if (c == OK1_CMD || c == OK2_CMD || c == ROUTE1_CMD || c == ROUTE2_CMD) {			
 				if (!isCursorValid()) {
 					return;
 				}
@@ -178,8 +193,13 @@ public class GuiSearch extends Canvas implements CommandListener,
 					positionMark.displayName=parent.getName(sr.nameIdx);
 				}
 				parent.setTarget(positionMark);
-				parent.show();				
+				//#debug info
+				logger.info("Search selected: " + positionMark);
 				destroy();
+				parent.show();				
+				if (c == ROUTE1_CMD || c == ROUTE2_CMD) {
+					parent.performIconAction(Trace.ROUTING_START_WITH_MODE_SELECT_CMD);
+				}
 				return;
 			}
 			if (c == DISP_CMD) {			
@@ -564,19 +584,11 @@ public class GuiSearch extends Canvas implements CommandListener,
 			// Unicode character 10 is LF
 			// so 10 should correspond to Enter key on QWERT keyboards
 		} else if (keyCode == 10 || action == FIRE) {
-			if (!isCursorValid()) {
-				return;
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED)) {
+				commandAction( ROUTE1_CMD, (Displayable) null);
+			} else {
+				commandAction( OK1_CMD, (Displayable) null);				
 			}
-			SearchResult sr = (SearchResult) result.elementAt(cursor);
-//			System.out.println("select " + sr);
-			PositionMark positionMark = new PositionMark(sr.lat,sr.lon);
-			positionMark.nameIdx=sr.nameIdx;
-			positionMark.displayName=parent.getName(sr.nameIdx);
-			parent.setTarget(positionMark);
-			//#debug info
-			logger.info("Search selected: " + positionMark);
-			destroy();
-			parent.show();
 			return;
 		} else if (action == UP) {
 			if (cursor > 0)
