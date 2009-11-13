@@ -36,6 +36,7 @@ public class TraceIconMenu extends IconMenuWithPagesGUI {
 		// Main
 		mp = createAndAddMenuPage(" Main "/*i:MainTop*/, 3, 4);
 		iconToggleGps =		mp.createAndAddIcon("Start GPS"/*i:StartGPS*/, "i_gps", Trace.CONNECT_GPS_CMD);
+		iconToggleGps.setFlag(LayoutElement.FLAG_IMAGE_TOGGLEABLE);
 							mp.createAndAddIcon("Search"/*i:Search*/, "i_search", Trace.SEARCH_CMD);
 							mp.createAndAddIcon("Map Features"/*i:MapFeature*/, "i_mapfeat", Trace.MAPFEATURES_CMD);
 
@@ -80,6 +81,7 @@ public class TraceIconMenu extends IconMenuWithPagesGUI {
 		// Recordings
 		mp = createAndAddMenuPage(this.getWidth() >= 176 ?" Recordings "/*i:RecordTop*/:" Rec "/*i:RecTop*/, 3, 4);
 		iconToggleTrackRec=	mp.createAndAddIcon("Record Track", "i_rectrack", Trace.START_RECORD_CMD);
+		iconToggleTrackRec.setFlag(LayoutElement.FLAG_IMAGE_TOGGLEABLE);
 							mp.createAndAddIcon("Save Wpt"/*i:SaveWpt*/, "i_savewpt", Trace.SAVE_WAYP_CMD);
 							mp.createAndAddIcon("Enter Wpt"/*i:EnterWpt*/, "i_enterwpt", Trace.ENTER_WAYP_CMD);
 
@@ -87,7 +89,8 @@ public class TraceIconMenu extends IconMenuWithPagesGUI {
 							mp.createAndAddIcon("Waypoints"/*i:Waypoints*/, "i_wpts", Trace.MAN_WAYP_CMD);
 
 							mp.createAndAddIcon("Photo"/*i:Photo*/, "i_photo", Trace.CAMERA_CMD);
-							iconToggleAudioRec=	mp.createAndAddIcon("Voice"/*i:Voice*/, "i_micro", Trace.TOGGLE_AUDIO_REC);
+		iconToggleAudioRec=	mp.createAndAddIcon("Voice"/*i:Voice*/, "i_micro", Trace.TOGGLE_AUDIO_REC);
+		iconToggleAudioRec.setFlag(LayoutElement.FLAG_IMAGE_TOGGLEABLE);
 		
 							mp.createAndAddIcon("Send SMS"/*i:SendSMS*/, "i_sendsms", Trace.SEND_MESSAGE_CMD);		
 	}
@@ -98,6 +101,7 @@ public class TraceIconMenu extends IconMenuWithPagesGUI {
 		// Route
 		mp = createAndAddMenuPage(" Route "/*i:RoutePage*/, 3, 4);
 		iconToggleRoute=	mp.createAndAddIcon("Calculate"/*i:Calc*/, "i_calc", Trace.ROUTING_TOGGLE_CMD);
+		iconToggleRoute.setFlag(LayoutElement.FLAG_IMAGE_TOGGLEABLE);
 							mp.createAndAddIcon("Set target"/*i:SetTarget*/, "i_settarget", Trace.SETTARGET_CMD);
 							mp.createAndAddIcon("Show target"/*i:ShowTarget*/, "i_showtarget", Trace.SHOW_TARGET_CMD);		
 							mp.createAndAddIcon("Clear target"/*i:ClearTarget*/, "i_cleartarget", Trace.CLEARTARGET_CMD);		
@@ -114,16 +118,24 @@ public class TraceIconMenu extends IconMenuWithPagesGUI {
 		
 		Trace trace = Trace.getInstance();
 		// for commands that can be toggled, fill in the current text and/or corresponding actionId before painting
-		iconToggleGps.setText( trace.isGpsConnected() ? "Stop GPS"/*i:StopGPS*/ : "Start GPS"/*i:StartGPS*/);
-		iconToggleGps.setActionID( trace.isGpsConnected() ? Trace.DISCONNECT_GPS_CMD : Trace.CONNECT_GPS_CMD);
+		boolean on = trace.isGpsConnected();
+		iconToggleGps.setText( on ? "Stop GPS"/*i:StopGPS*/ : "Start GPS"/*i:StartGPS*/);
+		iconToggleGps.setActionID( on ? Trace.DISCONNECT_GPS_CMD : Trace.CONNECT_GPS_CMD);
+		iconToggleGps.setImageToggleState( !on );
 		
-		iconToggleTrackRec.setText( trace.gpx.isRecordingTrk() ? "Stop Rec"/*i:StopRec*/ : "Record Track"/*i:RecordTrack*/);
-		iconToggleTrackRec.setActionID( trace.gpx.isRecordingTrk() ? Trace.STOP_RECORD_CMD : Trace.START_RECORD_CMD);
+		on = trace.gpx.isRecordingTrk();
+		iconToggleTrackRec.setText( on ? "Stop Rec"/*i:StopRec*/ : "Record Track"/*i:RecordTrack*/);
+		iconToggleTrackRec.setActionID( on ? Trace.STOP_RECORD_CMD : Trace.START_RECORD_CMD);
+		iconToggleTrackRec.setImageToggleState( !on );
 		
-		iconToggleAudioRec.setText( trace.audioRec.isRecording() ? "Stop VoiceRec"/*i:StopVoice*/ : "Voice"/*i:Voice*/);
+		on = trace.audioRec.isRecording();
+		iconToggleAudioRec.setText( on ? "Stop VoiceRec"/*i:StopVoice*/ : "Voice"/*i:Voice*/);
+		iconToggleAudioRec.setImageToggleState( !on );
 		
-		iconToggleRoute.setText( (trace.route != null || trace.routeCalc) ? "Stop Route"/*i:StopRoute*/ : "Calculate"/*i:Calc*/);				
-
+		on = (trace.route != null || trace.routeCalc);
+		iconToggleRoute.setText( on ? "Stop Route"/*i:StopRoute*/ : "Calculate"/*i:Calc*/);				
+		iconToggleRoute.setImageToggleState( !on );
+				
 		super.paint(g);
 	}
 	

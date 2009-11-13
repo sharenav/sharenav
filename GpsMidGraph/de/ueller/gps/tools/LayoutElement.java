@@ -70,6 +70,7 @@ public class LayoutElement {
 	public static final int FLAG_SCALE_IMAGE_TO_ELEMENT_WIDTH_OR_HEIGHT_KEEPRATIO = (1<<27);
 	public static final int FLAG_BACKGROUND_SCREENPERCENT_HEIGHT = (1<<28);
 	public static final int FLAG_IMAGE_GREY = (1<<29);
+	public static final int FLAG_IMAGE_TOGGLEABLE = (1<<30);
 
 	
 	protected LayoutManager lm = null;
@@ -97,6 +98,7 @@ public class LayoutElement {
 	private String text = "";
 	private String imageName;
 	private Image image = null;
+	private boolean imageToggleState = false;
 	
 	private int textWidth = 0;
 	/** number of chars fitting (if a width flag is set) */
@@ -331,7 +333,13 @@ public class LayoutElement {
 	public void setAndLoadImage(String imageName) {
 		this.imageName = imageName;
 		try {
-			Image orgImage = Image.createImage("/" + imageName + ".png");
+			String imageName2 = imageName;
+			if (hasFlag(FLAG_IMAGE_TOGGLEABLE)) {
+				imageName2 += (imageToggleState?"1":"0");
+				//#debug debug
+				logger.debug("Load toggle image: " + imageName2);
+			}
+			Image orgImage = Image.createImage("/" + imageName2 + ".png");
 			if ( (flags & FLAG_SCALE_IMAGE_TO_ELEMENT_WIDTH_OR_HEIGHT_KEEPRATIO) > 0) {
 				image = null;
 				calcSize(); // behaves different if image is null
@@ -363,6 +371,17 @@ public class LayoutElement {
 			image = orgImage;
 		} catch (IOException ioe) {
 			logger.exception("Failed to load icon " + imageName, ioe);
+		}
+	}
+	
+	public void setImageToggleState(boolean state) {
+		boolean oldState = imageToggleState;
+		if (oldState != state) {
+			imageToggleState = state;
+			if (image != null) {
+				image = null;
+				loadImage();			
+			}
 		}
 	}
 	
@@ -440,6 +459,9 @@ public class LayoutElement {
 	}
 	public void clearFlag(int flag) {
 		flags &= ~flag;
+	}
+	public boolean hasFlag(int flag) {
+		return (flags & flag) > 0;
 	}
 	
 	
