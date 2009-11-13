@@ -68,8 +68,7 @@ public class Routing implements Runnable {
 	Node firstSourcePathSegNodeDummy1 = new Node();
 	int firstNodeId2 = 0;
 	Node firstSourcePathSegNodeDummy2 = new Node();
-	int beforeFirstId = -1;
-	
+
 	/**
 	 * alternatives of path segments closest to the target
 	 * One of these arbitrary positions on the way's path will be after the route calculation
@@ -229,7 +228,12 @@ public class Routing implements Runnable {
 									if (parentNode != null) {
 										prevId = parentNode.state.toId;
 									} else {
-										prevId = beforeFirstId; // if we have no parent node take the id determined on start of the route calculation
+										// if we have no parent node use the alternatve first node determined on start of the route calculation
+										if (currentNode.state.toId == firstNodeId1) {
+											prevId = firstNodeId2;
+										} else {
+											prevId = firstNodeId1;
+										}
 									}
 									if (numAdditionalViaNodes == 0) { // when we already examined all via Nodes of a via Way or there were none
 										// check if the route node id of the way before the via member matches
@@ -632,8 +636,6 @@ public class Routing implements Runnable {
 						}
 						firstSourcePathSegNodeDummy1.radlat = fromMark.nodeLat[firstSeg];
 						firstSourcePathSegNodeDummy1.radlon = fromMark.nodeLon[firstSeg];
-					} else {
-						beforeFirstId = rn.id;
 					}
 				} 
 				rn=findNextRouteNode(nearestSegment, startNode.lat, startNode.lon, fromMark.nodeLat,fromMark.nodeLon);
