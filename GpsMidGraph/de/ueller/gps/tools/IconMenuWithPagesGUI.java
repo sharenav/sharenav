@@ -184,7 +184,7 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 		if (actionPerformer != null) {
 			//#debug debug
 			logger.debug("size changed - recreating icon menu");
-			actionPerformer.recreateAndShowIconMenu();
+			//actionPerformer.recreateAndShowIconMenu();
 		}
 	}
 	
