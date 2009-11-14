@@ -205,13 +205,25 @@ public class Routing implements Runnable {
 			// check for turn restrictions
 			boolean turnRestricted []= new boolean[successor.length];
 			if (checkForTurnRestrictions && tile.lastNodeHadTurnRestrictions) {
+				int nextId;
 				TurnRestriction turnRestriction = tile.getTurnRestrictions(currentNode.state.toId);
 				while (turnRestriction != null) { // loop through all turn restrictions at this route node
 					if ( (turnRestriction.affectedTravelModes & currentTravelMask) > 0 ){
 						GraphNode parentNode;
 						for (int cl=0;cl < successor.length;cl++){
 							Connection nodeSuccessor=successor[cl];
-							if (turnRestriction.toRouteNodeId == nodeSuccessor.toId) {
+
+							nextId = nodeSuccessor.toId;
+							if (nextId == Integer.MAX_VALUE) {
+								// if this is the final node use the alternative final node determined on start of the route calculation
+								if (currentNode.state.toId == finalNodeId1) {
+									nextId = finalNodeId2;
+								} else {
+									nextId = finalNodeId1;
+								}
+							}
+							
+							if (turnRestriction.toRouteNodeId == nextId) {
 								//#debug debug
 								logger.debug("to node matches");
 								int numAdditionalViaNodes = 0; // default to no additional via nodes for via members of node type
