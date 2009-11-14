@@ -54,6 +54,8 @@ public class RouteTile extends RouteBaseTile {
 			if (lastUse >= level){
 				nodes=null;
 				connections=null;
+				turns=null;
+				onlyMainStreetNetLoaded = true;
 //				logger.debug("discard content for " + this +" with level " + level);
 				return true;
 			} else {
