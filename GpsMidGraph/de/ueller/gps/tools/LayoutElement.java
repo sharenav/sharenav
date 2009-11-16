@@ -342,31 +342,26 @@ public class LayoutElement {
 			Image orgImage = Image.createImage("/" + imageName2 + ".png");
 			if ( (flags & FLAG_SCALE_IMAGE_TO_ELEMENT_WIDTH_OR_HEIGHT_KEEPRATIO) > 0) {
 				image = null;
-				calcSize(); // behaves different if image is null
-				if (text.length() > 0) {
-					width -= ((width * fontHeight) / height);
-					height -= fontHeight;
-					calcPosition();
-					// also adjust the top of the element
-					top -= (fontHeight) / 2;
-					// and do not recalculate its position if it's in percent of screen height
-					clearFlag(FLAG_VALIGN_TOP_SCREENHEIGHT_PERCENT);
-				}
+				IconMenuPage imp = (IconMenuPage) lm;
+				int imgWidth = (lm.maxX - lm.minX) / imp.numCols * 7 / 8;
+				int imgHeight = (lm.maxY - lm.minY) / imp.numRows * 7 / 8 - fontHeight;
+				
+				imgWidth += ((imgWidth * fontHeight) / imgHeight);
+				
+				int imgHeightRelativeToWidth = (orgImage.getHeight() * imgWidth) / orgImage.getWidth();
+				int imgWidthRelativeToHeight = (orgImage.getWidth() * imgHeight) / orgImage.getHeight();
 
-				int heightRelativeToWidth = (orgImage.getHeight() * width) / orgImage.getWidth();
-				int widthRelativeToHeight = (orgImage.getWidth() * height) / orgImage.getHeight();
-//				System.out.println("calced Width/Height " + width + " " + height);
-				if (width > widthRelativeToHeight) {
-					width = widthRelativeToHeight;
-				} else if (height > heightRelativeToWidth) {
-					height = heightRelativeToWidth;
+				if (imgWidth > imgWidthRelativeToHeight) {
+					imgWidth = imgWidthRelativeToHeight;
+				} else if (imgHeight > imgHeightRelativeToWidth) {
+					imgHeight = imgHeightRelativeToWidth;
 				}
-//				System.out.println("actual Width/Height " + width + " " + height);
+//				System.out.println("actual Width/Height " + imgWidth + " " + imgHeight);
 				
 				if ( (flags & FLAG_IMAGE_GREY) > 0 ) {
 					orgImage = ImageTools.getGreyImage(orgImage);
 				}
-				orgImage = ImageTools.scaleImage(orgImage, width, height);
+				orgImage = ImageTools.scaleImage(orgImage, imgWidth, imgHeight);
 			}
 			image = orgImage;
 		} catch (IOException ioe) {

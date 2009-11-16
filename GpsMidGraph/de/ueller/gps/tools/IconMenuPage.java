@@ -50,26 +50,32 @@ public class IconMenuPage extends LayoutManager {
 		// divide the available region into a grid making the the number of icon columns and rows fit
 		gridHor = 100 / numCols;
 		gridVer = 100 / numRows;
+	}
 
+	public void loadIconBackgroundImage() {
 		// load icon background image
 		try {
 			bgImage = Image.createImage("/i_bg.png");
-			Font font = Font.getFont(Font.FACE_PROPORTIONAL, 0 , Font.SIZE_SMALL);
-			int fontHeight = font.getHeight();
-			int width = (maxX - minX) / numCols * 7 / 8;
-			int height = (maxY - minY) / numRows * 7 / 8 - fontHeight;
-			
-			width -= ((width * fontHeight) / height);
-			
-			int bgHeightRelativeToWidth = (bgImage.getHeight() * width) / bgImage.getWidth() + 5;
-			int bgWidthRelativeToHeight = (bgImage.getWidth() * height) / bgImage.getHeight() + 5;
-			int edgeLen = bgWidthRelativeToHeight;
-			if (edgeLen > bgHeightRelativeToWidth) {
-				edgeLen = bgHeightRelativeToWidth;
+			if (bgImage != null) {
+				Font font = Font.getFont(Font.FACE_PROPORTIONAL, 0 , Font.SIZE_SMALL);
+				int fontHeight = font.getHeight();
+				int imgWidth = (maxX - minX) / numCols * 7 / 8;
+				int imgHeight = (maxY - minY) / numRows * 7 / 8 - fontHeight;
+				
+				imgWidth += ((imgWidth * fontHeight) / imgHeight);
+				
+				int imgHeightRelativeToWidth = (bgImage.getHeight() * imgWidth) / bgImage.getWidth();
+				int imgWidthRelativeToHeight = (bgImage.getWidth() * imgHeight) / bgImage.getHeight();
+
+				if (imgWidth > imgWidthRelativeToHeight) {
+					imgWidth = imgWidthRelativeToHeight;
+				} else if (imgHeight > imgHeightRelativeToWidth) {
+					imgHeight = imgHeightRelativeToWidth;
+				}
+				bgImage = ImageTools.scaleImage(bgImage, imgWidth , imgHeight);
+				//#debug debug
+				logger.debug("bgImage loaded and scaled to " + imgWidth + "x" + imgHeight);
 			}
-			bgImage = ImageTools.scaleImage(bgImage, edgeLen , edgeLen);
-			//#debug debug
-			logger.debug("bgImage loaded and scaled to " + edgeLen + "x" + edgeLen);
 		} catch (Exception ec) {
 			//#debug debug
 			logger.debug("EXCEPTION loading bgImage");
@@ -127,12 +133,11 @@ public class IconMenuPage extends LayoutManager {
 	
 	/** load all icons for this icon page */
 	protected void loadIcons() {
+		loadIconBackgroundImage();
 		LayoutElement e;
 		for (int i=0; i<this.size(); i++){
 			e = (LayoutElement) this.elementAt(i);
 			e.loadImage();
-			// recalculate icon positions
-			e.setFlag(LayoutElement.FLAG_VALIGN_TOP_SCREENHEIGHT_PERCENT);
 		}
 	}
 	

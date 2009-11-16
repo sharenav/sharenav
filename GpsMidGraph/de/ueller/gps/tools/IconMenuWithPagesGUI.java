@@ -73,8 +73,7 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 		this.minY = 0;
 		this.maxX = getWidth();
 		this.maxY = getHeight();
-		createTabPrevNextButtons();
-		tabButtonManager = new LayoutManager(ePrevTab.right, minY, eNextTab.left, maxY);
+		recreateTabButtons();
 		setCommandListener(this);
 		addCommands();
 	}
@@ -128,9 +127,7 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 	/** recreates the tab buttons for all the iconMenuPages */
 	private void recreateTabButtons() {
 		createTabPrevNextButtons();
-		tabButtonManager.removeAllElements();
-		tabButtonManager.minX = ePrevTab.right;
-		tabButtonManager.maxX = eNextTab.left;
+		tabButtonManager = new LayoutManager(ePrevTab.right, minY, eNextTab.left, maxY);
 		LayoutElement e = null;
 		IconMenuPage imp = null;
 		for (int i=0; i < iconMenuPages.size(); i++) {
@@ -160,8 +157,8 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 
 	public void show() {
 		setFullScreenMode(Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN));
-		GpsMid.getInstance().show(this);
 		repaint();
+		GpsMid.getInstance().show(this);
 	}
 	
 	/** adds the commands to this Displayable but no Ok command in full screen mode - press fire there */
@@ -180,11 +177,16 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 	}
 	
 	protected void sizeChanged(int w, int h) {
-		// recreate this menu only if we already have an IconActionPerformer, i.e. after setFullScreenMode() in the constructor
-		if (actionPerformer != null) {
-			//#debug debug
-			logger.debug("size changed - recreating icon menu");
-			//actionPerformer.recreateAndShowIconMenu();
+		this.maxX = w;
+		this.maxY = h;
+		recreateTabButtons();
+		IconMenuPage imp = null;
+		for (int i=0; i < iconMenuPages.size(); i++) {
+			imp = (IconMenuPage) iconMenuPages.elementAt(i);
+			imp.maxX = maxX;
+			imp.minY = minY + eNextTab.bottom + eNextTab.bottom / 2;
+			imp.maxY = eStatusBar.top - 5;
+			imp.unloadIcons();
 		}
 	}
 	
