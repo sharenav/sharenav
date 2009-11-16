@@ -37,7 +37,13 @@ public class ImageTools  {
 	// from http://willperone.net/Code/codescaling.php 
 	public static Image scaleImage(Image original, int newWidth, int newHeight)
     {        
-        try {
+		if (newWidth < 2) {
+			newWidth = 2;
+		}
+		if (newHeight < 2) {
+			newHeight = 2;
+		}
+		try {
 			int[] rawInput = new int[original.getHeight() * original.getWidth()];
 	        original.getRGB(rawInput, 0, original.getWidth(), 0, 0, original.getWidth(), original.getHeight());	        	        
 	        int[] rawOutput = new int[newWidth*newHeight];        
