@@ -88,7 +88,7 @@ public class RouteTile extends RouteBaseTile {
 //			drawBounds(pc, 255, 255, 255);
 			if (nodes == null || onlyMainStreetNetLoaded){
 				try {
-					loadNodes(false);
+					loadNodes(false, -1);
 				} catch (IOException e) {
 					logger.exception("Failed to load routing nodes", e);
 					return;
@@ -247,9 +247,9 @@ public class RouteTile extends RouteBaseTile {
 			//#debug debug
 			logger.debug("getRouteNode("+id+")");
 			lastUse=0;
-			if (loadNodesRequired()){
+			if (loadNodesRequired() || id - minId >= nodes.length ){
 				try {
-					loadNodes(Routing.onlyMainStreetNet);
+					loadNodes(Routing.onlyMainStreetNet, id);
 				} catch (IOException e) {
 					e.printStackTrace();
 					return null;
@@ -263,7 +263,7 @@ public class RouteTile extends RouteBaseTile {
 	}
 
 
-	private void loadNodes(boolean onlyMainStreetNet) throws IOException {
+	private void loadNodes(boolean onlyMainStreetNet, int idRequested) throws IOException {
 		// when we (re)read the nodes and turn restrictions, the connections must be reread as well because the normal streetNet might be included now as well
 		connections = null;
 		
@@ -273,6 +273,14 @@ public class RouteTile extends RouteBaseTile {
 
 		short numMainStreetTurnRestrictions = ts.readShort();
 		short numNormalStreetTurnRestrictions = ts.readShort();
+		
+		/* a routeNode that's not in the mainStreetNet might have been requested e.g. from getConnections() if since the last getRouteNode()
+		 * this tile has been cleaned up and Routing.onlyMainstreetNet also changed to true
+		 */
+		if (idRequested != -1 && idRequested - minId >= numMainStreetRouteNodes) {
+			/* in this case we must load all nodes, even if onlyMainStreetNet was requested */
+			onlyMainStreetNet = false;
+		}
 		
 		int maxReadStreetNets = 1;
 		int totalRouteNodesToLoad = numMainStreetRouteNodes + numNormalStreetRouteNodes;
@@ -349,7 +357,7 @@ public class RouteTile extends RouteBaseTile {
 		if (contain(lat,lon,0.03f)){
 			if (loadNodesRequired()){
 				try {
-					loadNodes(Routing.onlyMainStreetNet);
+					loadNodes(Routing.onlyMainStreetNet, -1);
 				} catch (IOException e) {
 					e.printStackTrace();
 					return null;
@@ -376,7 +384,7 @@ public class RouteTile extends RouteBaseTile {
 		if (contain(lat,lon)){
 			if (loadNodesRequired()){
 				try {
-					loadNodes(Routing.onlyMainStreetNet);
+					loadNodes(Routing.onlyMainStreetNet, -1);
 				} catch (IOException e) {
 					e.printStackTrace();
 					return null;
@@ -410,9 +418,9 @@ public class RouteTile extends RouteBaseTile {
 			//#debug debug
 			logger.debug("getTurnRestricition for RouteNode("+rnId+")");
 			lastUse=0;
-			if (loadNodesRequired()){
+			if (loadNodesRequired() || rnId - minId >= nodes.length ){
 				try {
-					loadNodes(Routing.onlyMainStreetNet);
+					loadNodes(Routing.onlyMainStreetNet, rnId);
 				} catch (IOException e) {
 					e.printStackTrace();
 					return null;
@@ -451,8 +459,8 @@ public class RouteTile extends RouteBaseTile {
 		if (minId <= id && maxId >= id){
 			lastUse=0;
 			try {
-				if (loadNodesRequired()){
-					loadNodes(Routing.onlyMainStreetNet);
+				if (loadNodesRequired() || id - minId >= nodes.length ){
+					loadNodes(Routing.onlyMainStreetNet, id);
 				}
 				if (connections == null){
 					loadConnections(bestTime);
