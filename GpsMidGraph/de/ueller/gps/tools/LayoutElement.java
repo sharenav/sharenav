@@ -362,11 +362,9 @@ public class LayoutElement {
 		int imgWidthRelativeToHeight = (image.getWidth() * imgHeight) / image.getHeight();
 
 		if (imgWidth > imgWidthRelativeToHeight) {
-			System.out.println("imgWidth");
 			imgWidth = imgWidthRelativeToHeight;
 		} else if (imgHeight > imgHeightRelativeToWidth) {
 			imgHeight = imgHeightRelativeToWidth;
-			System.out.println("imgHeight");
 		}
 //		System.out.println("actual Width/Height " + imgWidth + " " + imgHeight);
 		return ImageTools.scaleImage(image, imgWidth, imgHeight);
