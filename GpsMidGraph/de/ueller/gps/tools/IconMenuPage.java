@@ -58,23 +58,9 @@ public class IconMenuPage extends LayoutManager {
 			bgImage = Image.createImage("/i_bg.png");
 			if (bgImage != null) {
 				Font font = Font.getFont(Font.FACE_PROPORTIONAL, 0 , Font.SIZE_SMALL);
-				int fontHeight = font.getHeight();
-				int imgWidth = (maxX - minX) / numCols * 7 / 8;
-				int imgHeight = (maxY - minY) / numRows * 7 / 8 - fontHeight;
-				
-				imgWidth += ((imgWidth * fontHeight) / imgHeight);
-				
-				int imgHeightRelativeToWidth = (bgImage.getHeight() * imgWidth) / bgImage.getWidth();
-				int imgWidthRelativeToHeight = (bgImage.getWidth() * imgHeight) / bgImage.getHeight();
-
-				if (imgWidth > imgWidthRelativeToHeight) {
-					imgWidth = imgWidthRelativeToHeight;
-				} else if (imgHeight > imgHeightRelativeToWidth) {
-					imgHeight = imgHeightRelativeToWidth;
-				}
-				bgImage = ImageTools.scaleImage(bgImage, imgWidth , imgHeight);
+				bgImage = LayoutElement.scaleIconImage(bgImage, this, font.getHeight());
 				//#debug debug
-				logger.debug("bgImage loaded and scaled to " + imgWidth + "x" + imgHeight);
+				logger.debug("bgImage loaded and scaled to " + bgImage.getWidth() + "x" + bgImage.getHeight());
 			}
 		} catch (Exception ec) {
 			//#debug debug

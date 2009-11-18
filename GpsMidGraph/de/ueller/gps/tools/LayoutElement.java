@@ -341,32 +341,33 @@ public class LayoutElement {
 			}
 			Image orgImage = Image.createImage("/" + imageName2 + ".png");
 			if ( (flags & FLAG_SCALE_IMAGE_TO_ELEMENT_WIDTH_OR_HEIGHT_KEEPRATIO) > 0) {
-				image = null;
-				IconMenuPage imp = (IconMenuPage) lm;
-				int imgWidth = (lm.maxX - lm.minX) / imp.numCols * 7 / 8;
-				int imgHeight = (lm.maxY - lm.minY) / imp.numRows * 7 / 8 - fontHeight;
-				
-				imgWidth += ((imgWidth * fontHeight) / imgHeight);
-				
-				int imgHeightRelativeToWidth = (orgImage.getHeight() * imgWidth) / orgImage.getWidth();
-				int imgWidthRelativeToHeight = (orgImage.getWidth() * imgHeight) / orgImage.getHeight();
-
-				if (imgWidth > imgWidthRelativeToHeight) {
-					imgWidth = imgWidthRelativeToHeight;
-				} else if (imgHeight > imgHeightRelativeToWidth) {
-					imgHeight = imgHeightRelativeToWidth;
-				}
-//				System.out.println("actual Width/Height " + imgWidth + " " + imgHeight);
-				
+				orgImage = scaleIconImage(orgImage, (IconMenuPage) lm, fontHeight);
 				if ( (flags & FLAG_IMAGE_GREY) > 0 ) {
 					orgImage = ImageTools.getGreyImage(orgImage);
 				}
-				orgImage = ImageTools.scaleImage(orgImage, imgWidth, imgHeight);
 			}
 			image = orgImage;
 		} catch (IOException ioe) {
 			logger.exception("Failed to load icon " + imageName, ioe);
 		}
+	}
+	
+	public static Image scaleIconImage(Image image, IconMenuPage imp, int fontHeight) {
+		int imgWidth = (imp.maxX - imp.minX) / imp.numCols * 7 / 8;
+		int imgHeight = (imp.maxY - imp.minY) / imp.numRows * 7 / 8 - fontHeight;
+		
+		imgWidth += ((imgWidth * fontHeight) / imgHeight);
+		
+		int imgHeightRelativeToWidth = (image.getHeight() * imgWidth) / image.getWidth();
+		int imgWidthRelativeToHeight = (image.getWidth() * imgHeight) / image.getHeight();
+
+		if (imgWidth > imgWidthRelativeToHeight) {
+			imgWidth = imgWidthRelativeToHeight;
+		} else if (imgHeight > imgHeightRelativeToWidth) {
+			imgHeight = imgHeightRelativeToWidth;
+		}
+//		System.out.println("actual Width/Height " + imgWidth + " " + imgHeight);
+		return ImageTools.scaleImage(image, imgWidth, imgHeight);
 	}
 	
 	public void setImageToggleState(boolean state) {
