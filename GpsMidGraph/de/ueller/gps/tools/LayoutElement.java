@@ -356,15 +356,17 @@ public class LayoutElement {
 		int imgWidth = (imp.maxX - imp.minX) / imp.numCols * 7 / 8;
 		int imgHeight = (imp.maxY - imp.minY) / imp.numRows * 7 / 8 - fontHeight;
 		
-		imgWidth += ((imgWidth * fontHeight) / imgHeight);
+		imgWidth -= ((imgWidth * fontHeight) / imgHeight);
 		
 		int imgHeightRelativeToWidth = (image.getHeight() * imgWidth) / image.getWidth();
 		int imgWidthRelativeToHeight = (image.getWidth() * imgHeight) / image.getHeight();
 
 		if (imgWidth > imgWidthRelativeToHeight) {
+			System.out.println("imgWidth");
 			imgWidth = imgWidthRelativeToHeight;
 		} else if (imgHeight > imgHeightRelativeToWidth) {
 			imgHeight = imgHeightRelativeToWidth;
+			System.out.println("imgHeight");
 		}
 //		System.out.println("actual Width/Height " + imgWidth + " " + imgHeight);
 		return ImageTools.scaleImage(image, imgWidth, imgHeight);
