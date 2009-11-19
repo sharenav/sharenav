@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
@@ -55,7 +56,7 @@ import de.ueller.osmToGpsMid.tools.FileTools;
 
 
 
-public class CreateGpsMidData {
+public class CreateGpsMidData implements FilenameFilter {
 	
 	/**
 	 * This class is used in order to store a tuple on a dedicated stack.
@@ -364,12 +365,17 @@ public class CreateGpsMidData {
 				dsi.writeUTF(outputMedia);
 			}
 
-			// show summary for copied icon files
-			System.out.println("Icon inclusion summary:");
-			System.out.println("  " + FileTools.copyDir("icon", path, true, true) + 
-					" internal icons replaced from " + "icon" + 
-					System.getProperty("file.separator") + " containing " + 
-					FileTools.countFiles("icon") + " files");
+			if (Configuration.attrToBoolean(configuration.useIcons) < 0) {
+				System.out.println("Icons disabled - removing icon files from midlet.");
+				removeIcons(new File(path));
+			} else {
+				// show summary for copied icon files
+				System.out.println("Icon inclusion summary:");
+				System.out.println("  " + FileTools.copyDir("icon", path, true, true) + 
+						" internal icons replaced from " + "icon" + 
+						System.getProperty("file.separator") + " containing " + 
+						FileTools.countFiles("icon") + " files");
+			}
 
 			// show summary for copied media files
 			if (sbCopiedMedias.length()!=0) {
@@ -435,6 +441,20 @@ public class CreateGpsMidData {
 
 	} 
 
+    public void removeIcons(File path) {
+    	File[] iconsToDelete = path.listFiles(this);
+    	
+    	if (iconsToDelete != null) {
+    		for (File file : iconsToDelete) {
+    			file.delete();
+    		}
+    	}
+    }
+	public boolean accept(File directory, String filename) {
+		return filename.endsWith(".png") && (filename.startsWith("i_") || filename.startsWith("is_")) && !filename.equalsIgnoreCase("i_bg.png");
+	}
+
+	
 	private void removeSoundFile(String soundName) {
 		String soundFile = null;
 		SoundDescription sDes = Configuration.getConfiguration().getSoundDescription(soundName);

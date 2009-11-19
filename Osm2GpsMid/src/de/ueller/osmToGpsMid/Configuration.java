@@ -222,6 +222,8 @@ public class Configuration {
 		private String appJarFileName = null;
 		/** Defines which routing options from the style-file get used. */
 		public String useRouting = "motorcar";
+		/** Defines if icons for icon menu are included in GpsMid */
+		public String useIcons = "true";
 		public boolean enableEditingSupport = false;
 		public int maxTileSize = 20000;
 		public int maxRouteTileSize = 3000;
@@ -403,6 +405,8 @@ public class Configuration {
 			setRouting(getString("useRouting"));
 			maxRouteTileSize = Integer.parseInt(getString("routing.maxTileSize"));
 
+			setIcons(getString("useIcons"));
+			
 			maxTileSize = Integer.parseInt(getString("maxTileSize"));
 			for (int i=0; i<=3; i++) {
 				maxTileWays[i] = Integer.parseInt(getString("maxTileWays" + i));
@@ -754,6 +758,16 @@ public class Configuration {
 			}
 		}
 
+		public void setIcons(String icons) {
+			if (attrToBoolean(icons) > 0) {
+				useIcons = "true";
+			} else {
+				useIcons = "false";
+			}
+		}
+
+		
+		
 		/**
 		 * Returns the application version as specified in version.properties.
 		 * @return Version
@@ -889,6 +903,7 @@ public class Configuration {
 			confString += "  Code base: " + appParam + "\n";
 			confString += "  Keeping map files after .jar creation: " + !cleanupTmpDirAfterUse() + "\n";
 			confString += "  Enable routing: " + useRouting + "\n";
+			confString += "  Include icons: " + useIcons + "\n";
 			confString += "  Style-file: " + getStyleFileName() + "\n";
 			confString += "  Planet source: " + planet + "\n";
 			confString += "  Included CellID data: " + getCellOperator() + "\n";
