@@ -1069,7 +1069,7 @@ public class CreateGpsMidData {
 			writeNode(n,ds,SEGNODE,t);
 		}
 		ds.writeByte(0x55); // Magic number
-		ds.writeByte(ways.size());
+		ds.writeShort(ways.size());
 		for (Way w : ways){
 			w.write(ds, names1,t);
 		}
