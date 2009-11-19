@@ -188,6 +188,16 @@ public class Legend {
 		InputStream is = Configuration.getMapResource("/legend.dat");
 		
 		if (is == null) {
+			/* if legend.dat could not be opened set essential default colors for using e.g. GpsMid-Generic-Full directly
+			 *  (to configure external map using icon menu which will include legend.dat with colors)
+			 */
+			COLORS[COLOR_WAYNAME_BACKGROUND] = 0x00FFFFFF;
+			COLORS[COLOR_ICONMENU_ICON_BORDER_HIGHLIGHT] = 0x00FF0000;
+			COLORS[COLOR_ICONMENU_ICON_TEXT] = 0x00FFFFFF;
+			COLORS[COLOR_ICONMENU_TABBUTTON_BORDER] = 0x00707070;
+			COLORS[COLOR_ICONMENU_TABBUTTON_TEXT] = 0x00FFFFFF;
+			COLORS[COLOR_ICONMENU_TABBUTTON_TEXT_HIGHLIGHT] = 0x00FFFF00;
+			COLORS[COLOR_ICONMENU_TABBUTTON_TEXT_INACTIVE] = 0x00808080;
 			logger.error("Failed to open the legend file");
 			return;			
 		}
@@ -216,6 +226,7 @@ public class Legend {
 		}
 		//#endif
 		
+			
 		// read colors
 		int count = (int) ds.readShort();
 		if (count != COLOR_COUNT) {
