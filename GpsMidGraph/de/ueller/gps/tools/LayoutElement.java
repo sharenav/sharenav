@@ -339,7 +339,14 @@ public class LayoutElement {
 				//#debug debug
 				logger.debug("Load toggle image: " + imageName2);
 			}
-			Image orgImage = Image.createImage("/" + imageName2 + ".png");
+			Image orgImage;
+			try {
+				orgImage = Image.createImage("/" + imageName2 + ".png");
+			} catch (IOException ioe) {
+				//#debug debug
+				logger.debug("Fall back to i_bg.png for " + imageName2);
+				orgImage = Image.createImage("/i_bg.png");				
+			}
 			if ( (flags & FLAG_SCALE_IMAGE_TO_ELEMENT_WIDTH_OR_HEIGHT_KEEPRATIO) > 0) {
 				orgImage = scaleIconImage(orgImage, (IconMenuPage) lm, fontHeight);
 				if ( (flags & FLAG_IMAGE_GREY) > 0 ) {
