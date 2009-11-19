@@ -122,11 +122,7 @@ public class QueueDataReader extends QueueReader implements Runnable {
 			logger.error("Reading nodes went wrong / start of ways not found");
 			throwError("Nodes not OK", tt);
 		}
-		int wayCount=ds.readByte();
-//		logger.trace("reading " + wayCount + " ways");
-		if (wayCount < 0) {
-			wayCount+=256;
-		}
+		int wayCount=ds.readShort();
 //		logger.trace("reading " + wayCount + " ways");
 		int lastread=0;
 		try {
