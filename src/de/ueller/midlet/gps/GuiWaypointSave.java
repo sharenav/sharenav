@@ -90,7 +90,7 @@ public class GuiWaypointSave extends Form implements CommandListener {
 				waypt.ele = Integer.parseInt(ele);
 			} catch (NumberFormatException e) {
 				waypt.ele = PositionMark.INVALID_ELEVATION;
-			}e
+			}
 		            
 			parent.gpx.addWayPt(waypt);
 
