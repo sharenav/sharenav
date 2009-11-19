@@ -225,6 +225,12 @@ public class Configuration {
 		public boolean enableEditingSupport = false;
 		public int maxTileSize = 20000;
 		public int maxRouteTileSize = 3000;
+
+		/** maximum ways that are allowed to be stored into a tile of this zoom level */
+		public int maxTileWays[] = new int[4];
+		/** maximum edge length that is allowed to be stored in a tile of this zoom level */
+		public int maxTileEdgeLen[] = {2000, 2000, 2000, 2000};
+		
 		public String styleFile;
 		/** Bounding boxes, read from properties and/or drawn by the user on the map. */
 		private Vector<Bounds> bounds;
@@ -396,7 +402,13 @@ public class Configuration {
 			vb = new PropertyResourceBundle(getClass().getResourceAsStream("/version.properties"));
 			setRouting(getString("useRouting"));
 			maxRouteTileSize = Integer.parseInt(getString("routing.maxTileSize"));
+
 			maxTileSize = Integer.parseInt(getString("maxTileSize"));
+			for (int i=0; i<=3; i++) {
+				maxTileWays[i] = Integer.parseInt(getString("maxTileWays" + i));
+				maxTileEdgeLen[i] = Integer.parseInt(getString("maxTileEdgeLen" + i));
+			}
+			
 			setStyleFileName(getString("style-file"));
 			appParam = getString("app");
 			enableEditingSupport = getString("EnableEditing").equalsIgnoreCase("true");
@@ -769,6 +781,14 @@ public class Configuration {
 			return maxTileSize;
 		}
 
+		public int getMaxTileWays(int zl) {
+			return maxTileWays[zl];
+		}
+
+		public int getMaxTileEdgeLen(int zl) {
+			return maxTileEdgeLen[zl];
+		}
+		
 		public int getMaxRouteTileSize() {
 			return maxRouteTileSize;
 		}
@@ -882,7 +902,19 @@ public class Configuration {
 			} else {
 				confString += "  Using the complete osm file\n";
 			}
-			
+			confString += "  Limits for tiles:\n";
+			confString += "   maximum size: " + maxTileSize + " max. route tile size: " + maxRouteTileSize + "\n";
+			confString += "   maximum ways for level";
+			for (int i=0;i < 4; i++) {
+				confString += " " + i + ": " + maxTileWays[i] + " ";
+			}
+			confString += "\n";
+			confString += "   maximum edge lengths for level";
+			for (int i=0;i < 4; i++) {
+				confString += " " + i + ": " + maxTileEdgeLen[i] + " ";
+			}
+			confString += "\n";
+						
 			return confString;
 		}
 }

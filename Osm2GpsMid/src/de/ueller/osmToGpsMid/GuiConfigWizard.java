@@ -541,6 +541,24 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			fw.write("# or set to one or more defined in the style-file, e.g. motorcar, bicycle, foot\r\n");
 			fw.write("useRouting = " + config.useRouting + "\r\n");
 			fw.write("\r\n");
+			
+			fw.write("# == Advanced parameters for tile sizes ===\r\n");
+			fw.write("#  Larger values will reduce the number of files in the midlet\r\n");
+			fw.write("#  but more memory will be required on the device to run GpsMid\r\n");	
+			fw.write("# Maximum route tile size in bytes\r\n");
+			fw.write("routing.maxTileSize = " + config.getMaxRouteTileSize() + "\r\n");
+			fw.write("# Maximum tile size in bytes\r\n");
+			fw.write("maxTileSize = " + config.getMaxTileSize() + "\r\n");
+			fw.write("# Maximum ways contained in tiles for level 0-3\r\n");
+			for (int i=0;i < 4; i++) {
+				fw.write("maxTileWays" + i + " = " + config.getMaxTileWays(i) + "\r\n");
+			}
+			fw.write("# Maximum edge len of tiles for level 0-3\r\n");
+			for (int i=0;i < 4; i++) {
+				fw.write("maxTileEdgeLen" + i + " = " + config.getMaxTileEdgeLen(i) + "\r\n");
+			}
+			fw.write("\r\n");
+
 			fw.write("# Style-file containing which way, area and POI types to include in the Midlet\r\n");
 			fw.write("style-file = " + config.getStyleFileName() + "\r\n");
 			fw.write("\r\n");

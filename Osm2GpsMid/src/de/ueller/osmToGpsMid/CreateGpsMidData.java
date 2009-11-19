@@ -83,8 +83,6 @@ public class CreateGpsMidData {
 	public final static byte ROUTE_FLAG_MOTORWAY_LINK = 0x02;
 	public final static byte ROUTE_FLAG_ROUNDABOUT = 0x04;
 		
-//	private final static int MAX_TILE_FILESIZE=20000;
-//	private final static int MAX_ROUTETILE_FILESIZE=5000;
 	public  final static int MAX_DICT_DEEP=5;
 	public  final static int ROUTEZOOMLEVEL=4;
 	OxParser parser;
@@ -657,6 +655,8 @@ public class CreateGpsMidData {
 		LinkedList<Way> ways;
 		Collection<Node> nodes;
 		int maxSize;
+		int maxWays = 0;
+		int maxEdgeLen;
 		boolean unsplittableTile;
 		boolean tooLarge;
 		/*
@@ -680,7 +680,10 @@ public class CreateGpsMidData {
 			// Reduce the content of t.ways and t.nodes to all relevant elements
 			// in the given bounds and create the binary midlet representation
 			if (t.zl != ROUTEZOOMLEVEL){
-				maxSize=configuration.getMaxTileSize();
+				maxSize = configuration.getMaxTileSize();
+				maxWays = configuration.getMaxTileWays(t.zl);
+				maxEdgeLen = configuration.getMaxTileEdgeLen(t.zl);
+
 				ways=getWaysInBound(t.ways, t.zl,tileBound,realBound);
 				nodes=getNodesInBound(t.nodes,t.zl,tileBound);
 				for (Node n : nodes) {
@@ -696,13 +699,13 @@ public class CreateGpsMidData {
 					ways=getWaysInBound(t.ways, t.zl,tileBound,realBound);
 				}				
 				
-				if (ways.size() <= 255){
+				if (ways.size() <= maxWays){
 					t.bounds = realBound.clone();
 					if ((MyMath.degToRad(t.bounds.maxLat - t.bounds.minLat) > 
-							(Short.MAX_VALUE - Short.MIN_VALUE - 2000) / MyMath.PLANET_RADIUS) ||
+							(Short.MAX_VALUE - Short.MIN_VALUE - maxEdgeLen) / MyMath.PLANET_RADIUS) ||
 						(MyMath.degToRad(t.bounds.maxLon - t.bounds.minLon) > 
-							(Short.MAX_VALUE - Short.MIN_VALUE - 2000) / MyMath.PLANET_RADIUS)) {
-							//System.out.println("Tile spacially too large (" + ((Short.MAX_VALUE - Short.MIN_VALUE - 2000)/Tile.fpm) + ": " + t.bounds);
+							(Short.MAX_VALUE - Short.MIN_VALUE - maxEdgeLen) / MyMath.PLANET_RADIUS)) {
+							//System.out.println("Tile spacially too large (" + ((Short.MAX_VALUE - Short.MIN_VALUE - maxEdgeLen)/Tile.fpm) + ": " + t.bounds);
 							tooLarge = true;
 							
 					} else {
@@ -743,7 +746,7 @@ public class CreateGpsMidData {
 			}
 
 			// Split tile if more then 255 Ways or binary content > MAX_TILE_FILESIZE but not if only one Way
-			if ((!unsplittableTile) && ((ways.size() > 255 || (out.length > maxSize && ways.size() != 1) || tooLarge))){
+			if ((!unsplittableTile) && ((ways.size() > maxWays || (out.length > maxSize && ways.size() != 1) || tooLarge))){
 				//System.out.println("create Subtiles size="+out.length+" ways=" + ways.size());
 				t.bounds=realBound.clone();
 				if (t.zl != ROUTEZOOMLEVEL){

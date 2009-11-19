@@ -77,6 +77,14 @@
    		<entry key="keepTemporaryFiles" value="false"/>
    		<entry key="bundle.name" value="GpsMid"/>
 		<entry key="maxTileSize" value="20000"/>
+		<entry key="maxTileWays0" value="255"/>
+		<entry key="maxTileWays1" value="255"/>
+		<entry key="maxTileWays2" value="255"/>
+		<entry key="maxTileWays3" value="255"/>
+		<entry key="maxTileEdgeLen0" value="2000"/>
+		<entry key="maxTileEdgeLen1" value="2000"/>
+		<entry key="maxTileEdgeLen2" value="2000"/>
+		<entry key="maxTileEdgeLen3" value="2000"/>
    		<entry key="style-file" value="style-file.xml"/>
    		<entry key="EnableEditing" value="false"/>
    		<entry key="useCellID" value="false"/>
