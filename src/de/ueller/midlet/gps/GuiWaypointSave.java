@@ -45,6 +45,7 @@ public class GuiWaypointSave extends Form implements CommandListener {
 		fldName = new TextField("Name:", "", Configuration.MAX_WAYPOINTNAME_LENGTH, TextField.ANY);
 		fldEle = new TextField("Altitude (in m):", "", 5, TextField.NUMERIC);
 		cg = new ChoiceGroup("Settings", Choice.MULTIPLE);
+		cg.append("Favorite",null);
 		cg.append("Recenter to GPS after saving",null);
 		
 		// Set up this Displayable to listen to command events
@@ -76,6 +77,10 @@ public class GuiWaypointSave extends Form implements CommandListener {
 	public void commandAction(Command cmd, Displayable displayable) {
 		if (cmd == saveCmd) {
 			name = fldName.getString();
+			if (cg.isSelected(0) && !name.endsWith("*")) {
+				name += "*";
+			}
+			
 			ele  = fldEle.getString();
 			logger.info("Saving waypoint with name: " + name + " ele: " + ele);
 			waypt.displayName = name;
@@ -85,12 +90,12 @@ public class GuiWaypointSave extends Form implements CommandListener {
 				waypt.ele = Integer.parseInt(ele);
 			} catch (NumberFormatException e) {
 				waypt.ele = PositionMark.INVALID_ELEVATION;
-			}
+			}e
 		            
 			parent.gpx.addWayPt(waypt);
 
 			// Recenter GPS after saving a Waypoint if this option is selected
-			if (cg.isSelected(0)) {
+			if (cg.isSelected(1)) {
 				parent.gpsRecenter = true;
 				parent.newDataReady();
 			}
