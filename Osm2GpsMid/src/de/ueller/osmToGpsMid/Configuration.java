@@ -230,8 +230,6 @@ public class Configuration {
 
 		/** maximum ways that are allowed to be stored into a tile of this zoom level */
 		public int maxTileWays[] = new int[4];
-		/** maximum edge length that is allowed to be stored in a tile of this zoom level */
-		public int maxTileEdgeLen[] = {2000, 2000, 2000, 2000};
 		
 		public String styleFile;
 		/** Bounding boxes, read from properties and/or drawn by the user on the map. */
@@ -410,7 +408,6 @@ public class Configuration {
 			maxTileSize = Integer.parseInt(getString("maxTileSize"));
 			for (int i=0; i<=3; i++) {
 				maxTileWays[i] = Integer.parseInt(getString("maxTileWays" + i));
-				maxTileEdgeLen[i] = Integer.parseInt(getString("maxTileEdgeLen" + i));
 			}
 			
 			setStyleFileName(getString("style-file"));
@@ -798,10 +795,6 @@ public class Configuration {
 		public int getMaxTileWays(int zl) {
 			return maxTileWays[zl];
 		}
-
-		public int getMaxTileEdgeLen(int zl) {
-			return maxTileEdgeLen[zl];
-		}
 		
 		public int getMaxRouteTileSize() {
 			return maxRouteTileSize;
@@ -918,15 +911,10 @@ public class Configuration {
 				confString += "  Using the complete osm file\n";
 			}
 			confString += "  Limits for tiles:\n";
-			confString += "   maximum size: " + maxTileSize + " max. route tile size: " + maxRouteTileSize + "\n";
+			confString += "   maximum size: " + maxTileSize + "  max. route tile size: " + maxRouteTileSize + "\n";
 			confString += "   maximum ways for level";
 			for (int i=0;i < 4; i++) {
 				confString += " " + i + ": " + maxTileWays[i] + " ";
-			}
-			confString += "\n";
-			confString += "   maximum edge lengths for level";
-			for (int i=0;i < 4; i++) {
-				confString += " " + i + ": " + maxTileEdgeLen[i] + " ";
 			}
 			confString += "\n";
 						

@@ -676,7 +676,6 @@ public class CreateGpsMidData implements FilenameFilter {
 		Collection<Node> nodes;
 		int maxSize;
 		int maxWays = 0;
-		int maxEdgeLen;
 		boolean unsplittableTile;
 		boolean tooLarge;
 		/*
@@ -702,7 +701,6 @@ public class CreateGpsMidData implements FilenameFilter {
 			if (t.zl != ROUTEZOOMLEVEL){
 				maxSize = configuration.getMaxTileSize();
 				maxWays = configuration.getMaxTileWays(t.zl);
-				maxEdgeLen = configuration.getMaxTileEdgeLen(t.zl);
 
 				ways=getWaysInBound(t.ways, t.zl,tileBound,realBound);
 				nodes=getNodesInBound(t.nodes,t.zl,tileBound);
@@ -722,10 +720,10 @@ public class CreateGpsMidData implements FilenameFilter {
 				if (ways.size() <= maxWays){
 					t.bounds = realBound.clone();
 					if ((MyMath.degToRad(t.bounds.maxLat - t.bounds.minLat) > 
-							(Short.MAX_VALUE - Short.MIN_VALUE - maxEdgeLen) / MyMath.PLANET_RADIUS) ||
+							(Short.MAX_VALUE - Short.MIN_VALUE - 2000) / MyMath.PLANET_RADIUS) ||
 						(MyMath.degToRad(t.bounds.maxLon - t.bounds.minLon) > 
-							(Short.MAX_VALUE - Short.MIN_VALUE - maxEdgeLen) / MyMath.PLANET_RADIUS)) {
-							//System.out.println("Tile spacially too large (" + ((Short.MAX_VALUE - Short.MIN_VALUE - maxEdgeLen)/Tile.fpm) + ": " + t.bounds);
+							(Short.MAX_VALUE - Short.MIN_VALUE - 2000) / MyMath.PLANET_RADIUS)) {
+							//System.out.println("Tile spacially too large (" + ((Short.MAX_VALUE - Short.MIN_VALUE - 2000)/Tile.fpm) + ": " + t.bounds);
 							tooLarge = true;
 							
 					} else {

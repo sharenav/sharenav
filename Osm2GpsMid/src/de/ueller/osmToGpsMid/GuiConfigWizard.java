@@ -553,10 +553,6 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			for (int i=0;i < 4; i++) {
 				fw.write("maxTileWays" + i + " = " + config.getMaxTileWays(i) + "\r\n");
 			}
-			fw.write("# Maximum edge len of tiles for level 0-3\r\n");
-			for (int i=0;i < 4; i++) {
-				fw.write("maxTileEdgeLen" + i + " = " + config.getMaxTileEdgeLen(i) + "\r\n");
-			}
 			fw.write("\r\n");
 
 			fw.write("# Style-file containing which way, area and POI types to include in the Midlet\r\n");
