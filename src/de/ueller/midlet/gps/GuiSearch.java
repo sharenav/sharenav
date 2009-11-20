@@ -705,15 +705,19 @@ public class GuiSearch extends Canvas implements CommandListener,
 	public void pointerDragged(int x, int y) {
 		//#debug debug
 		logger.debug("Pointer dragged: " + x + " " + y);
-		if ((Math.abs(x - pointerXPressed) < 3) && (Math.abs(y - pointerYPressed) < 3)) {
+		if ((Math.abs(x - pointerXPressed) < fontSize / 2) && (Math.abs(y - pointerYPressed) < fontSize / 2)) {
 			/**
 			 * On some devices, such as PhoneME, every pointerPressed event also causes
 			 * a pointerDragged event. We therefore need to filter out those pointerDragged
-			 * events that haven't actually moved the pointer. Chose threshold of 2 pixels
+			 * events that haven't actually moved the pointer.
+			 * 
+			 * Also for devices like Nokia 5800 we need some not too small threshold,
+			 * thus use half of the fontSize as threshold
 			 */
 			//#debug debug
 			logger.debug("No real dragging, as pointer hasn't moved");
 			return;
+
 		}
 		pointerDragged = true;
 		
