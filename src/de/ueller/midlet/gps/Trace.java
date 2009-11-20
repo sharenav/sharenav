@@ -987,7 +987,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					GuiWebInfo gWeb = new GuiWebInfo(this, oPos);
 					gWeb.show();
 				//#else
-					alert("Midlet has no online capabilites", "set app=GpsMid-Generic-editing in .properties file and recreate GpsMid with Osm2GpsMid", 7000);
+					alert("No online capabilites", "set app=GpsMid-Generic-editing in .properties file and recreate GpsMid with Osm2GpsMid", 7000);
 				//#endif
 			}
 			if (c == CMDS[BACK_CMD]) {
@@ -1304,7 +1304,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				}
 				//#else
 				if (c == CMDS[RETRIEVE_XML] || c == CMDS[RETRIEVE_NODE]) { 
-					alert("Midlet has no online capabilites", "set app=GpsMid-Generic-editing and editing=true in .properties file and recreate GpsMid with Osm2GpsMid", 7000);
+					alert("No online capabilites", "set app=GpsMid-Generic-editing and editing=true in .properties file and recreate GpsMid with Osm2GpsMid", 7000);
 				}
 				//#endif
 				if (c == CMDS[SETTARGET_CMD]) {
