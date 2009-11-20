@@ -367,14 +367,20 @@ public class CreateGpsMidData implements FilenameFilter {
 
 			if (Configuration.attrToBoolean(configuration.useIcons) < 0) {
 				System.out.println("Icons disabled - removing icon files from midlet.");
-				removeIcons(new File(path));
-			} else {
+				removeUnusedIconSizes(path, true);
+			} else {				
 				// show summary for copied icon files
 				System.out.println("Icon inclusion summary:");
 				System.out.println("  " + FileTools.copyDir("icon", path, true, true) + 
 						" internal icons replaced from " + "icon" + 
 						System.getProperty("file.separator") + " containing " + 
 						FileTools.countFiles("icon") + " files");
+
+				// if useIcons==small or useIcons==big rename the corresponding icons to normal icons
+				if (Configuration.attrToBoolean(configuration.useIcons) == 0) {
+					renameAlternativeIconSizeToUsedIconSize(configuration.useIcons + "_");
+				}
+				removeUnusedIconSizes(path, false);
 			}
 
 			// show summary for copied media files
@@ -441,17 +447,41 @@ public class CreateGpsMidData implements FilenameFilter {
 
 	} 
 
-    public void removeIcons(File path) {
-    	File[] iconsToDelete = path.listFiles(this);
+	public void renameAlternativeIconSizeToUsedIconSize(String prefixToRename) {
+    	File dir = new File(path);
+		File[] iconsToRename = dir.listFiles(this);
+    	
+    	if (iconsToRename != null) {
+    		for (File file : iconsToRename) {
+    			if (file.getName().startsWith(prefixToRename)) {
+    				File fileRenamed = new File(path + "/" + file.getName().substring(prefixToRename.length()));
+    				if (fileRenamed.exists()) {
+    					fileRenamed.delete();
+    				}
+    				file.renameTo(fileRenamed);
+//    				System.out.println("Rename " + file.getName() + " to " + fileRenamed.getName());
+    			}
+    		}
+    	}		
+	}
+	
+    public void removeUnusedIconSizes(String path, boolean deleteAllIcons) {
+    	File dir = new File(path);
+    	File[] iconsToDelete = dir.listFiles(this);
     	
     	if (iconsToDelete != null) {
     		for (File file : iconsToDelete) {
-    			file.delete();
+    			if (file.getName().matches("(small|big)_is?_.*\\.png")
+    				|| (deleteAllIcons && file.getName().matches("is?_.*\\.png") && !file.getName().equalsIgnoreCase("i_bg.png")) 
+    			) {
+    				//System.out.println("Delete " + file.getName());
+    				file.delete();
+    			}
     		}
     	}
     }
 	public boolean accept(File directory, String filename) {
-		return filename.endsWith(".png") && (filename.startsWith("i_") || filename.startsWith("is_")) && !filename.equalsIgnoreCase("i_bg.png");
+		return filename.endsWith(".png");
 	}
 
 	

@@ -404,6 +404,10 @@ public class Configuration {
 			maxRouteTileSize = Integer.parseInt(getString("routing.maxTileSize"));
 
 			setIcons(getString("useIcons"));
+			if (attrToBoolean(useIcons) == 0 && !(useIcons.equals("small") || useIcons.equals("big")) ) {
+				System.out.println("ERROR: Invalid properties file parameter useIcons=" + getString("useIcons"));
+				System.exit(1);
+			}
 			
 			maxTileSize = Integer.parseInt(getString("maxTileSize"));
 			for (int i=0; i<=3; i++) {
@@ -423,7 +427,7 @@ public class Configuration {
 		public void setPropFileName(String p) {
 			propFile = p;
 		}
-		
+				
 		public String getStyleFileName() {
 			return styleFile;
 		}
@@ -756,14 +760,18 @@ public class Configuration {
 		}
 
 		public void setIcons(String icons) {
-			if (attrToBoolean(icons) > 0) {
+			if (attrToBoolean(icons) > 0 || icons.equalsIgnoreCase("medium")) {
 				useIcons = "true";
-			} else {
+			} else if (attrToBoolean(icons) < 0) {
 				useIcons = "false";
+			} else {
+				useIcons = icons.toLowerCase();
 			}
 		}
-
-		
+	
+		public String getUseIcons() {
+			return useIcons;
+		}
 		
 		/**
 		 * Returns the application version as specified in version.properties.

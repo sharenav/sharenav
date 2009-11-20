@@ -558,6 +558,10 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			fw.write("# Style-file containing which way, area and POI types to include in the Midlet\r\n");
 			fw.write("style-file = " + config.getStyleFileName() + "\r\n");
 			fw.write("\r\n");
+			fw.write("# Whether to include icons for icon menu and their size to include\r\n");
+			fw.write("#  possible values: false|small|true|big  true is the default medium size\r\n");
+			fw.write("useIcons = " + config.getUseIcons() + "\r\n");
+			fw.write("\r\n");
 			fw.write("# Name of the Midlet on the phone\r\n");
 			fw.write("midlet.name = " + config.getMidletName() + "\r\n");
 			fw.close();		
