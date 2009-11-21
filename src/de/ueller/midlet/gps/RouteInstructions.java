@@ -102,6 +102,7 @@ public class RouteInstructions {
 	private static int iPassedRouteArrow=0;
 	private static int iInstructionSaidArrow = -1;
 	private static int iPrepareInstructionSaidArrow = -1;
+	private static int iInInstructionSaidArrow = -1;
 	private static int iFollowStreetInstructionSaidArrow = -1;
 	private static int iNamedArrow = 0;
 	private static String sLastInstruction = "";
@@ -463,13 +464,15 @@ public class RouteInstructions {
 									iPrepareInstructionSaidArrow = iNow;
 								} else if (
 									intDistNow >=100 && intDistNow < 900 && intDistNow < getTellDistance(iNow, aNow)
-									// give in-xxx-m instruction only if the last prepareInstruction was not already for this arrow (this avoids possibly wrong in-xxx-m instructions after passing the arrow)
+									// give in-xxx-m instruction only if the last prepareInstruction was not already for this arrow (this avoids possibly wrong in-xxx-m instructions after passing the arrow)									
 									&& iNow != iPrepareInstructionSaidArrow
 									&& iNow != iInstructionSaidArrow
+									&& iNow != iInInstructionSaidArrow
 									&& intDistNow <= Configuration.getTravelMode().maxInMeters
 								) {
 									soundRepeatDelay=60;
 									soundToPlay.append("IN;" + Integer.toString(intDistNow / 100)+ "00;METERS;" + getSoundInstruction(cNow.wayRouteFlags, aNow));								
+									iInInstructionSaidArrow = iNow;
 								} else if (
 										// follow-street instruction
 										intDistNow > 1200
@@ -1010,6 +1013,7 @@ public class RouteInstructions {
 		iNamedArrow = -1;
 		iInstructionSaidArrow = -1;
 		iPrepareInstructionSaidArrow = -1;
+		iInInstructionSaidArrow = - 1;
 		iFollowStreetInstructionSaidArrow = -1;
 	}
 	
