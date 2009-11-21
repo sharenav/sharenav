@@ -65,11 +65,13 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 	private final byte READING_ROUTEMODES=3;
 	private final byte READING_COLORS=4;
 	private final byte READING_MAXSPEED=5;
+	private final byte READING_TILESCALELEVELS=6;
 	private byte readingType = READING_WAYS;
 	
 	private byte poiIdx = 0;
 	private byte wayIdx = 0;
 	private boolean nonValidStyleFile;
+	public static int tileScaleLevel[] = {Integer.MAX_VALUE, 900000, 180000, 45000}; 
 	
 	public class DTDresolver implements EntityResolver {
 
@@ -222,6 +224,8 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 			readingType=READING_ROUTEMODES;
 		} else if (qName.equals("maxSpeedTemplates")) {
 			readingType=READING_MAXSPEED;
+		} else if (qName.equals("tileScaleLevels")) {
+			readingType=READING_TILESCALELEVELS;
 		}
 		switch (readingType) {
 			case READING_POIS:
@@ -641,6 +645,29 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 					}
 				}
 				break;
+			case READING_TILESCALELEVELS:
+				if (qName.equals("tileScaleLevel")) {
+					int level = -1;
+					try {
+						level = Integer.parseInt(atts.getValue("level"));
+					} catch (NumberFormatException nfe) {
+						System.out.println("level in tileScaleLevel must be integer, but was " + atts.getValue("level"));
+						nonValidStyleFile = true;
+					}
+					if (level >= 0 && level < 4) {
+						int scale = 0;
+						try {
+							scale = Integer.parseInt(atts.getValue("minScale"));
+							scale = (config.getRealScale(scale) + config.getRealScale(scale + 1) / 2);
+							tileScaleLevel[level] = scale;
+							System.out.println("tileScaleLevel " + level + ": " + scale);
+						} catch (NumberFormatException nfe) {
+							System.out.println("scale in tileScaleLevel must be integer, but was " + atts.getValue("scale"));
+							nonValidStyleFile = true;
+						}
+					}
+					break;
+				}
 		}
 	} // startElement
 

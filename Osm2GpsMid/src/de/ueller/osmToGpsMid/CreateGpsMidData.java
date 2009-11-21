@@ -216,6 +216,12 @@ public class CreateGpsMidData implements FilenameFilter {
 				}
 			}
 			/**
+			 * Write Tile Scale Levels
+			 */
+			for (int i = 0; i < 4; i++) {
+				dsi.writeInt(LegendParser.tileScaleLevel[i]);
+			}
+			/**
 			 * Write Travel Modes
 			 */
 			dsi.writeByte(TravelModes.travelModeCount);

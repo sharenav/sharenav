@@ -18,6 +18,7 @@ import java.util.Set;
 
 import de.ueller.osmToGpsMid.Configuration;
 import de.ueller.osmToGpsMid.Constants;
+import de.ueller.osmToGpsMid.LegendParser;
 import de.ueller.osmToGpsMid.MyMath;
 import de.ueller.osmToGpsMid.model.name.Names;
 
@@ -234,16 +235,14 @@ public class Way extends Entity implements Comparable<Way> {
 			return 3;
 		}
 		int maxScale = c.getWayDesc(type).minEntityScale;
-		if (maxScale < 45000) {
+		if (maxScale < LegendParser.tileScaleLevel[3]) { 		// 45000 in GpsMid 0.5.0
 			return 3;
-		}
-		if (maxScale < 180000) {
+		} else if (maxScale < LegendParser.tileScaleLevel[2]) { // 180000 in GpsMid 0.5.0
 			return 2;
-		}
-		if (maxScale < 900000) {
+		} else if (maxScale < LegendParser.tileScaleLevel[1]) { // 900000 in GpsMid 0.5.0
 			return 1;
 		}
-		return 0;		
+		return 0;
 	}
 	
 	/**

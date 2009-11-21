@@ -11,6 +11,7 @@ package de.ueller.osmToGpsMid.model;
 
 import de.ueller.osmToGpsMid.Configuration;
 import de.ueller.osmToGpsMid.Constants;
+import de.ueller.osmToGpsMid.LegendParser;
 
 
 public class Node extends Entity {
@@ -160,12 +161,12 @@ public class Node extends Entity {
 			//System.out.println("unknown type for node " + toString());
 			return 3;
 		}
-		int maxScale = c.getpoiDesc(type).minEntityScale;
-		if (maxScale < 45000) {
+		int maxScale = c.getWayDesc(type).minEntityScale;
+		if (maxScale < LegendParser.tileScaleLevel[3]) { 		// 45000 in GpsMid 0.5.0
 			return 3;
-		} else if (maxScale < 180000) {
+		} else if (maxScale < LegendParser.tileScaleLevel[2]) { // 180000 in GpsMid 0.5.0
 			return 2;
-		} else if (maxScale < 900000) {
+		} else if (maxScale < LegendParser.tileScaleLevel[1]) { // 900000 in GpsMid 0.5.0
 			return 1;
 		}
 		return 0;
