@@ -153,8 +153,9 @@ public class CreateGpsMidData implements FilenameFilter {
 				System.out.println(TravelModes.getTravelMode(i).toString());			
 			}
 		}		
-		System.out.println("Motorway connections: " + TravelModes.numMotorwayConnections + 
-				", MainStreet_Net connections: " + TravelModes.numMainStreetNetConnections);			
+		System.out.println("  MainStreet_Net Connections: " + TravelModes.numMotorwayConnections + " motorway  " 
+				+ TravelModes.numTrunkOrPrimaryConnections + " trunk/primary  "
+				+ TravelModes.numMainStreetNetConnections + " total");			
 		System.out.println("Total ways: "+ totalWaysWritten 
 				         + ", segments: " + totalSegsWritten
 				         + ", nodes: " + totalNodesWritten

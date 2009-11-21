@@ -37,6 +37,15 @@ public class Connection {
 		connTravelModes = w.wayTravelModes;
 		startBearing=bs;
 		endBearing=be;
+		if ( (w.wayTravelModes & Connection.CONNTYPE_MOTORWAY) > 0 ) {
+			TravelModes.numMotorwayConnections++;
+		}
+		if ( (w.wayTravelModes & Connection.CONNTYPE_TRUNK_OR_PRIMARY) > 0 ) {
+			TravelModes.numTrunkOrPrimaryConnections++;
+		}
+		if ( (w.wayTravelModes & Connection.CONNTYPE_MAINSTREET_NET) > 0 ) {
+			TravelModes.numMainStreetNetConnections++;
+		}
 	}
 	public String printTurn(Connection last) {
 		long cost;
