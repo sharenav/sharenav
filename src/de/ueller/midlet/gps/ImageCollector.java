@@ -59,7 +59,9 @@ public class ImageCollector implements Runnable {
 	private volatile boolean needRedraw = false;
 	public static volatile int createImageCount = 0;
 	private final Trace tr;
-	
+	/** additional scale boost for Overview/Filter Map, bigger values load the tiles already when zoomed more out */
+	public static float overviewTileScaleBoost = 1.0f;
+
 	public ImageCollector(Tile[] t, int x, int y, Trace tr, Images i, Legend legend) {
 		super();
 		this.t = t;
@@ -213,7 +215,7 @@ public class ImageCollector implements Runnable {
 							continue;
 						}
 					}
-					byte minTile = Legend.scaleToTile((int)(createPC.scale / boost));
+					byte minTile = Legend.scaleToTile((int)(createPC.scale / (boost * overviewTileScaleBoost) ));
 					if ((minTile >= 3) && (t[3] != null)) {
 						t[3].paint(createPC, layersToRender[layer]);
 						Thread.yield();

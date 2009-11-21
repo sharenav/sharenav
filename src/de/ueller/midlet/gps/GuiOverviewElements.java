@@ -35,11 +35,11 @@ public class GuiOverviewElements extends Form implements CommandListener, ItemSt
 	// other
 	private Trace parent;
 	
-	public int frmMaxEl = 0;
-	public boolean variableGroupsAdded = false;
-	public boolean namePartFieldAdded = false;
-	public boolean hideOtherGroupAdded = false;
-	
+	private int frmMaxEl = 0;
+	private boolean variableGroupsAdded = false;
+	private boolean namePartFieldAdded = false;
+	private boolean hideOtherGroupAdded = false;
+		
 	public GuiOverviewElements(Trace tr) {
 		super("Overview/Filter Map");
 		this.parent = tr;
@@ -146,12 +146,14 @@ public class GuiOverviewElements extends Form implements CommandListener, ItemSt
 	
 	public void commandAction(Command c, Displayable d) {
 		if (c == CMD_OK) {				
+			ImageCollector.overviewTileScaleBoost = 2.25f;
 			ovElGroupNr = (byte) ovElGroupCG.getSelectedIndex();
 			applyElGroupElementStates();
 			parent.show();
 			return;
 		}
 		if (c == CMD_OFF) {			
+			ImageCollector.overviewTileScaleBoost = 1.0f;
 			parent.pc.legend.clearAllNodesOverviewMode();
 			parent.pc.legend.clearAllWaysOverviewMode();
 			parent.show();

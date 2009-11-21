@@ -13,6 +13,7 @@ import javax.microedition.lcdui.Image;
  */
 
 //import de.ueller.gpsMid.mapData.QueueReader;
+import de.ueller.gpsMid.mapData.Tile;
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.names.Names;
@@ -26,7 +27,7 @@ public class Legend {
 	 * Specifies the format of the map on disk we expect to see
 	 * This constant must be in sync with Osm2GpsMid
 	 */
-	public final static short MAP_FORMAT_VERSION = 50;
+	public final static short MAP_FORMAT_VERSION = 51;
 	
 	/** The waypoint format used in the RecordStore. See PositionMark.java. */
 	public final static short WAYPT_FORMAT_VERSION = 2;
@@ -172,8 +173,10 @@ public class Legend {
 	
 	private static String namePartRequired[] = new String[3];
 	
+	public static int tileScaleLevel[] = {Integer.MAX_VALUE, 900000, 180000, 45000}; 
+
 	private static TravelMode midletTravelModes[];	
-	
+
 	private final static Logger logger=Logger.getInstance(Legend.class,Logger.TRACE);
 	
 	public Legend() throws IOException {
@@ -234,6 +237,13 @@ public class Legend {
 		}
 		for (int i=0; i<COLOR_COUNT; i++) {
 			COLORS[i] = readDayOrNightColor(ds);
+		}
+		
+		/**
+		 * Read Tile Scale Levels
+		 */
+		for (int i = 0; i < 4; i++) {
+			tileScaleLevel[i] = ds.readInt();
 		}
 		
 		/**
@@ -490,15 +500,13 @@ public class Legend {
 	}
 	
 	public static final byte scaleToTile(int scale) {
-		if (scale < 45000) {
+		if (scale < tileScaleLevel[3]) { 		// 45000 in GpsMid 0.5.0
 			return 3;
-		}
-		if (scale < 180000) {
+		} else if (scale < tileScaleLevel[2]) { // 180000 in GpsMid 0.5.0
 			return 2;
-		}
-		if (scale < 900000) {
+		} else if (scale < tileScaleLevel[1]) { // 900000 in GpsMid 0.5.0
 			return 1;
-		}		
+		}
 		return 0;
 	}
 
