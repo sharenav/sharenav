@@ -88,6 +88,9 @@ public class CreateGpsMidData implements FilenameFilter {
 	public  final static int ROUTEZOOMLEVEL=4;
 	OxParser parser;
 	Tile tile[]= new Tile[ROUTEZOOMLEVEL+1];
+	/** output length of the route connection for statistics */
+	long outputLengthConns = 0;
+	
 	private final String	path;
 	TreeSet<MapName> names;
 	Names names1;
@@ -131,12 +134,15 @@ public class CreateGpsMidData implements FilenameFilter {
 		SearchList sl=new SearchList(names1);
 		sl.createNameList(path);
 		for (int i=0;i<=3;i++){
-			System.out.println("Exporting tiles for zoomlevel " + i);
-			exportMapToMid(i);
+			System.out.print("Exporting tiles for zoomlevel " + i);
+			long bytesWritten = exportMapToMid(i);
+			System.out.println(": " + Configuration.memoryWithUnit(bytesWritten));
 		}
 		if (Configuration.attrToBoolean(configuration.useRouting) >= 0) {
 			System.out.println("Exporting route tiles");
-			exportMapToMid(ROUTEZOOMLEVEL);
+			long bytesWritten = exportMapToMid(ROUTEZOOMLEVEL);
+			System.out.println("  " + Configuration.memoryWithUnit(bytesWritten) + " for nodes, " +
+			Configuration.memoryWithUnit(outputLengthConns) + " for connections");
 		} else {
 			System.out.println("No route tiles to export");
 		}
@@ -613,9 +619,10 @@ public class CreateGpsMidData implements FilenameFilter {
 	}
 
 	
-	private void exportMapToMid(int zl){
+	private long exportMapToMid(int zl){
 // System.out.println("Total ways : " + parser.ways.size() + " Nodes : " +
 // parser.nodes.size());
+		long outputLength = 0;
 		try {
 			FileOutputStream fo = new FileOutputStream(path+"/dict-"+zl+".dat");
 			DataOutputStream ds = new DataOutputStream(fo);
@@ -647,7 +654,7 @@ public class CreateGpsMidData implements FilenameFilter {
 			tile[zl].ways=parser.getWays();
 			tile[zl].nodes=parser.getNodes();
 			// create the tiles and write the content 
-			exportTile(tile[zl],tileSeq,allBound,routeNodeSeq);
+			outputLength += exportTile(tile[zl],tileSeq,allBound,routeNodeSeq);
 			
 			if (tile[zl].type != Tile.TYPE_ROUTECONTAINER && tile[zl].type != Tile.TYPE_CONTAINER) {
 				/*
@@ -698,9 +705,10 @@ public class CreateGpsMidData implements FilenameFilter {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return outputLength;
 	}
 	
-	private void exportTile(Tile t, Sequence tileSeq, Bounds tileBound, 
+	private long exportTile(Tile t, Sequence tileSeq, Bounds tileBound, 
 			Sequence routeNodeSeq) throws IOException {
 		Bounds realBound = new Bounds();
 		LinkedList<Way> ways;
@@ -709,6 +717,7 @@ public class CreateGpsMidData implements FilenameFilter {
 		int maxWays = 0;
 		boolean unsplittableTile;
 		boolean tooLarge;
+		long outputLength = 0;
 		/*
 		 * Using recursion can cause a stack overflow on large projects,
 		 * so need an explicit stack that can grow larger;
@@ -761,6 +770,7 @@ public class CreateGpsMidData implements FilenameFilter {
 						t.centerLat = (t.bounds.maxLat - t.bounds.minLat) / 2 + t.bounds.minLat;
 						t.centerLon = (t.bounds.maxLon - t.bounds.minLon) / 2 + t.bounds.minLon;
 						out=createMidContent(ways,nodes,t);
+						outputLength += out.length;						
 					}
 				}
 				/**
@@ -786,7 +796,9 @@ public class CreateGpsMidData implements FilenameFilter {
 				nodes=getRouteNodesInBound(t.nodes,tileBound,realBound);
 				byte[][] erg=createMidContent(nodes,t);
 				out=erg[0];
+				outputLength += out.length;
 				connOut = erg[1];
+				outputLengthConns += connOut.length;
 				t.nodes=nodes;
 			}
 			
@@ -846,7 +858,7 @@ public class CreateGpsMidData implements FilenameFilter {
 				}
 			}
 		}
-		return;
+		return outputLength;
 	}
 
 

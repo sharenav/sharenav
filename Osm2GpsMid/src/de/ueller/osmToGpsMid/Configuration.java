@@ -796,6 +796,19 @@ public class Configuration {
 	        return format.format(new Date());	
 		}
 
+		public static String memoryWithUnit(long memoryInBytes) {
+			String unit = "bytes";
+			if (memoryInBytes > 1024) {
+				memoryInBytes /= 1024;
+				unit = "kB";
+			}
+			if (memoryInBytes > 1024) {
+				memoryInBytes /= 1024;
+				unit = "MB";
+			}
+			return "" + memoryInBytes + " " + unit;
+		}
+		
 		public int getMaxTileSize() {
 			return maxTileSize;
 		}
