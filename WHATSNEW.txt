@@ -1,18 +1,23 @@
 GpsMid 0.5.09
        *** Usability ***
        - Icon menus are available as an alternative user interface (activateable in Setup / Display Options)
+         (multiple sized icon sets are included, choose with useIcons=small|true|big|false in the .properties file
+         if and which icon set is included. Default is useIcons=small|true, which includes a medium sized icon set
        - use numeric keys to directly access icons in icon menu and use long presses of numeric keys
          to directly access the tabs of the icon menu - this can be activated in Setup (thx Petr Dlouhý) 
        - Specify in Setup/Display Options to keep backlight on only while GPS is started
        - Many more midlet colors are specifiable in the style-file now (including colors for night mode)
        - Touch screen support:
-        - Click on street name status bar to show icon menu
+        - Touch the street name status bar to show the icon menu
         - Recenter to GPS button
-        - (De)activate manual rotation mode by pointing the point of compass (use zoom buttons to rotate in manual rotation mode)
-        - Show Map Features by pointing to the scale bar
-        - In the Search screen clicking below or above the search results to get a standard input field
+        - (De)activate manual rotation mode by touching the point of compass (use zoom buttons to rotate in manual rotation mode)
+        - Show Map Features by touching the scale bar
+        - In the Search screen touching below or above the search results makes a standard input field show up
+          (for touch screen devices without QWERT keyboard or numeric keys)
+        - Touch the clock on the map to toggle the backlight, with some Nokia mobiles like Nokia 5800 it is also possible to
+		  use the zoom buttons during "Backlight ON" message to dim the backlight on touchscreen mobiles        
         - Display speed and distances in miles if configured in Setup
-        - Show target and move center to GPS to the left (thx jkjp)
+        - Show target and move center to GPS to the left (thx jkpj)
        *** GPS and other location producers ***
        - Add a possibility to manually enter a connection URL, e.g. "comm:COM0;baudrate=115200"
        - CellId provider for S60FP2 usable with the python helper app (providing cellid via a local socket) 
@@ -31,10 +36,9 @@ GpsMid 0.5.09
        - Turn restrictions included in the midlet can be displayed in the map with Setup/Debug Options
        - Max distance for displaying way name while scrolling is now calculated differently.
          A minimum of 10 meters is used for high zoom levels
-       - Buildings and building labels can now be hidden using the Map Features dialog      
        *** Recordings, Tracks and Waypoints ***
        - Allow to save more than 255 waypoints again (thx pos_ei_don)
-       - Ask for track name at start/end of track recording - configurable in Setup / Recording Rules (thx jkjp)
+       - Ask for track name at start/end of track recording - configurable in Setup / Recording Rules (thx jkpj)
        - Numbers of tracks and waypoints displayed in the title of the respective lists (thx Petr Dlouhý)
        - Current date added to name of waypoints file. (thx Petr Dlouhý)
        - Better error message when GPX export fails, fixed typos. (thx Petr Dlouhý)
@@ -42,6 +46,7 @@ GpsMid 0.5.09
        - Using a different icon for waypoints than for the points of a track. (thx Petr Dlouhý)
        - Fix for bug 2737256: Cursor position moved before "Set as target" (thx Petr Dlouhý)
        - auto save the gpx track every 256 points, not only at the end of the recording
+       - Option to save a waypoint as favorite (will be shown in Search screen if no or the first key is pressed) 
        *** Map Elements ***
        - Improved visibility of railways based on GeoCache style - thx GoemonGps/billi25
        - Add place=island as a workaround for land underwater - thx pos_ei_don_
@@ -50,19 +55,26 @@ GpsMid 0.5.09
        - Multiple Route Modes can be bundled for a single midlet with a setting in the .properties file,
          e.g. useRouting = motorcar, bicycle, foot
        - GpsMid asks which route mode to use on start of routing
+       - If you select in GUI Options "optimize for routing", "Route" will be the default action in the Search screen
        - Show remaining route distance to target in map screen
        - Check for turn restrictions for motorcar during route calculation (can be turned off as it needs more memory and is slower)
-       - Turbo or Deep Route Calculation Mode (selectable when routing)
-       - Speed up for long distance routes for motorcars
+       - Speed up of long distance route calculations for motorcars
          by using only the main street net (motorway, trunk, primary, seconday, tertiary)
          in the middle of the route
          (specify distance from start and target where main street net calculation starts in Routing Options)
+       - Route calculation tries to find a motorway at the start of calculation (Option: Look for motorways)
+       - Examine motorways further during route calculation, so it is not left to early when the motorway makes a curve
+         but is in the long term the better route (Option: Boost motorways)
+       - Examine trunks and primaries further to find the best way around cities instead of routing through
+         (Option: Boost trunks & primaries)
+       - Route Line is now determined in a separate thread in the background,
+         therefore instructions can be given already when the route line is not known completely
        - U-turn instruction
        - Cross area routing (e.g. for foot routing through pedestrian zones)
-       - Permissive Routing Restriction are now possible
+       - Permissive Route Access Restrictions are now possible
          (e.g. bicycle routing for an abandoned aeroway=runway if bicycle=true is set
        - Much faster route calculation for bicycles (thx to apmonkey for the hint)
-       - Faster detection of the highlighted ways during rendering
+       - Faster detection of the highlighted ways during rendering (speeds up map rendering, especially on long routes)
        - optionally show remaining route duration / ETA in map screen
          (based on ways' typical/max speeds/number of traffic lights) 
        *** OSM Editing and other only with Internet Connection available features ***
@@ -145,6 +157,8 @@ GpsMid 0.5.0
        - Added "Name Check" feature to Overview/Filter Map,
          this can be used to show only unnamed/named or ways/areas/POIs containing a certain string in the map
        - Place labels (city, town, village, hamlet, suburb) can now be hidden using the Map Features dialog 
+       - Buildings can now be hidden using the Map Features dialog.
+         Hiding buildings is recommended to speed up rendering and voice instructions in regions with many small buildings.
        - Double press of 9 / single press of U-key toggles manual rotation mode (use left / right to rotate)
        - Fixed crashes when displaying route connections via Debug Options
        - When you give POIs the tag <AreaPOI createForAreas="true"/> this POI will also be shown for matching Areas
