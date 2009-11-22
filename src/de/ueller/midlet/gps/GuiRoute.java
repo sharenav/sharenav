@@ -33,16 +33,17 @@ public class GuiRoute extends Form implements CommandListener {
 	
 	public GuiRoute(GpsMidDisplayable parent, boolean useAsSetupDialog) {
 		super("Route to Target");
+		// Set up this Displayable to listen to command events
 		this.parent = parent;
+
+		setCommandListener(this);
+		addCommand(CMD_OK);
+		addCommand(CMD_CANCEL);
+
 		this.useAsSetupDialog = useAsSetupDialog;
 		if (useAsSetupDialog) {
 			setTitle("Routing Options");
 		}
-		addCommand(CMD_OK);
-		addCommand(CMD_CANCEL);
-
-		// Set up this Displayable to listen to command events
-		setCommandListener(this);
 
 		String travelModes[] = new String[Legend.getTravelModes().length];
 		for (int i=0; i<travelModes.length; i++) {
