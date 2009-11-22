@@ -732,14 +732,18 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				} else if (c == CMDS[PAN_DOWN25_CMD]) {
 					panY = 25;
 				} else if (c == CMDS[PAN_LEFT2_CMD]) {
-					if (manualRotationMode) {
+					if (TrackPlayer.isPlaying) {
+						TrackPlayer.slower();
+					} else if (manualRotationMode) {
 						courseDiff=-5;
 					} else {
 						panX = -2;
 					}
 					backLightLevelDiff = -25;
 				} else if (c == CMDS[PAN_RIGHT2_CMD]) {
-					if (manualRotationMode) {
+					if (TrackPlayer.isPlaying) {
+						TrackPlayer.faster();
+					} else if (manualRotationMode) {
 						courseDiff=5;
 					} else {
 						panX = 2;
@@ -826,6 +830,10 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			}
 			if (c == CMDS[CONNECT_GPS_CMD]) {
 				if (locationProducer == null) {
+					if (TrackPlayer.isPlaying) {
+						TrackPlayer.getInstance().stop();
+						alert("Trackplayer", "Playing stopped for connecting to GPS", 2500);
+					}
 					Thread thread = new Thread(this,"LocationProducer init");
 					thread.start();
 				}
@@ -1246,6 +1254,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			}
 			if (c == CMDS[RECENTER_GPS_CMD]) {
 				gpsRecenter = true;
+				autoZoomed = true;
 				newDataReady();
 				return;
 			}
@@ -1408,7 +1417,11 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			logger.debug("Shutdown: locationProducer");
 			locationProducer.close();
 		}
-
+		if (TrackPlayer.isPlaying) {
+			//#debug debug
+			logger.debug("Shutdown: TrackPlayer");
+			TrackPlayer.getInstance().stop();			
+		}
 	}
 	
 	protected void sizeChanged(int w, int h) {	
@@ -1551,7 +1564,11 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					eRecorded.setText(gpx.getTrkPointCount() + "r"); 
 				}
 			} else {
-				eSolution.setText("Off");
+				if (TrackPlayer.isPlaying) {
+					eSolution.setText("Replay");
+				} else {
+					eSolution.setText("Off");					
+				}
 			}
 
 			LayoutElement e = tl.ele[TraceLayout.CELLID];
@@ -2039,7 +2056,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			pc.course=course;
 			repaint();
 			
-			if (locationUpdateListeners != null) {
+			if (locationUpdateListeners != null && !TrackPlayer.isPlaying) {
 				synchronized (locationUpdateListeners) {
 					for (int i = 0; i < locationUpdateListeners.size(); i++) {
 						((LocationUpdateListener)locationUpdateListeners.elementAt(i)).loctionUpdated();
@@ -2108,7 +2125,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		}
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_AUTOZOOM)
 				&& gpsRecenter
-				&& isGpsConnected()
+				&& (isGpsConnected() || TrackPlayer.isPlaying)
 				&& autoZoomed
 				&& pc.getP() != null
 		) {
@@ -2245,6 +2262,12 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				} else if (actionId == ZOOM_OUT_CMD) {
 					actionId = PAN_RIGHT2_CMD;						
 				}
+			} else if (TrackPlayer.isPlaying) {
+				if (actionId == ZOOM_IN_CMD) {
+					actionId = PAN_RIGHT2_CMD;
+				} else if (actionId == ZOOM_OUT_CMD) {
+					actionId = PAN_LEFT2_CMD;						
+				}				
 			}
 			commandAction(CMDS[actionId], (Displayable) null);
 			repaint();

@@ -39,6 +39,7 @@ import de.ueller.midlet.gps.importexport.GpxParser;
 import de.ueller.midlet.gps.tile.PaintContext;
 import de.ueller.midlet.screens.InputListener;
 import de.ueller.gps.tools.HelperRoutines;
+import de.ueller.midlet.gps.TrackPlayer;
 
 
 /**
@@ -282,6 +283,67 @@ public class Gpx extends Tile implements Runnable, InputListener {
 		}
 		
 	}
+
+	
+	/**
+	 * Loads the first given track to replay it on the map-screen
+	 * @param trks Vector of tracks to be replayed
+	 */
+	public void replayTrk(Vector trks) {
+		if (trks == null) {
+			//TODO:
+		} else {
+			try {
+				openTrackDatabase();
+				PersistEntity track = (PersistEntity)trks.firstElement();
+				DataInputStream dis1 = new DataInputStream(new ByteArrayInputStream(trackDatabase.getRecord(track.id)));
+				trackName = dis1.readUTF();
+				mTrkRecorded = dis1.readInt();
+				//#debug debug
+				logger.debug("Replay track with " + mTrkRecorded + " points");
+				int trackSize = dis1.readInt();
+				byte[] trackArray = new byte[trackSize];
+				dis1.read(trackArray);
+				DataInputStream trackIS = new DataInputStream(new ByteArrayInputStream(trackArray));
+				float trkPtLat[] = new float[mTrkRecorded];
+				float trkPtLon[] = new float[mTrkRecorded];
+				long trkPtTime[] = new long[mTrkRecorded];
+				short trkPtSpeed[] = new short[mTrkRecorded];
+				for (int i = 0; i < mTrkRecorded; i++) {
+					trkPtLat[i] = trackIS.readFloat();
+					trkPtLon[i] = trackIS.readFloat();
+					trackIS.readShort(); //altitude
+					trkPtTime[i] = trackIS.readLong();	//Time 
+					trkPtSpeed[i] = trackIS.readByte(); //Speed
+				}
+				TrackPlayer.getInstance().playTrack(trkPtLat, trkPtLon, trkPtTime, trkPtSpeed);
+				dis1.close();
+				dis1 = null;
+				
+				trackDatabase.closeRecordStore();
+				trackDatabase = null;
+				
+			} catch (OutOfMemoryError oome) {
+				try {
+					trackDatabase.closeRecordStore();
+				} catch (RecordStoreException e) {
+					logger.exception("Exception closing Recordstore after OutOfMemoryError replaying tracks", e);
+				}
+				trackDatabase = null;
+				System.gc();
+			
+			} catch (IOException e) {
+				logger.exception("IOException replaying track", e);
+			} catch (RecordStoreNotOpenException e) {
+				logger.exception("Exception replaying track (database not open)", e);
+			} catch (InvalidRecordIDException e) {
+				logger.exception("Exception replaying track (ID invalid)", e);
+			} catch (RecordStoreException e) {
+				logger.exception("Exception replaying track", e);
+			}
+		}
+	}
+
 	
 	/**
 	 * Removes all loaded tracks from the screen

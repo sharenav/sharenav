@@ -244,9 +244,7 @@ public class SECellLocLogger implements LocationMsgReceiver {
 		 * which we know that we won't get a valid fix and
 		 * ignore the position updates we get from there.
 		 */
-		if ((s.equalsIgnoreCase("off")) || (s.equalsIgnoreCase("NoFix"))
-				|| (s.equalsIgnoreCase("cell")) || (s.equalsIgnoreCase("0S"))
-				|| (s.equalsIgnoreCase("~~"))) {
+		if (";off;NoFix;cell;0s;~~;replay;".indexOf(";" + s + ";") >= 0) {
 			valid = false;
 			if (noValid > 0) {
 				noValid = 0;

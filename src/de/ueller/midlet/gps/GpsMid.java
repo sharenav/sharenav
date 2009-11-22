@@ -470,7 +470,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 									// only when map is displayed or option "only when map is displayed" is off
 									&& (trace.isShown() || !Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_MAPONLY)) 
 									// only when GPS is connected or option "only with GPS" is off
-									&& (trace.isGpsConnected() || ! Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ONLY_WHILE_GPS_STARTED))
+									&& (trace.isGpsConnected() || TrackPlayer.isPlaying || ! Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ONLY_WHILE_GPS_STARTED))
 								) {
 									// Method to keep the backlight on
 									// some MIDP2 phones

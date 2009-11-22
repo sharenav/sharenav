@@ -31,6 +31,8 @@ public class GuiGpx extends List implements CommandListener,
 	private final Command DISP_CMD = new Command("Display", "Display selected tracks", Command.ITEM, 3);
 	private final Command UNDISP_CMD = new Command("Undisplay", "Undisplay loaded tracks", Command.ITEM, 3);
 	private final Command RENAME_CMD = new Command("Rename", "Rename first selected", Command.ITEM, 3);	
+	private final Command REPLAY_START_CMD = new Command("Replay", Command.ITEM, 3);	
+	private final Command REPLAY_STOP_CMD = new Command("Stop Replay", Command.ITEM, 3);	
 	private final Command DEL_CMD = new Command("Delete", Command.ITEM, 3);	
 	private final Command SALL_CMD = new Command("Select All", Command.ITEM, 4);
 	private final Command DSALL_CMD = new Command("Deselect All", Command.ITEM, 4);
@@ -81,6 +83,11 @@ public class GuiGpx extends List implements CommandListener,
 		addCommand(UNDISP_CMD);
 		addCommand(RENAME_CMD);		
 		addCommand(DEL_CMD);
+		if (TrackPlayer.isPlaying) {
+			addCommand(REPLAY_STOP_CMD);
+		} else {
+			addCommand(REPLAY_START_CMD);				
+		}
 		addCommand(SALL_CMD);
 		addCommand(DSALL_CMD);		
 		addCommand(BACK_CMD);		
@@ -143,6 +150,25 @@ public class GuiGpx extends List implements CommandListener,
 				parent.gpx.displayTrk(processTracks);
 				parent.show();
 			}
+			return;
+		}
+		if (c == REPLAY_START_CMD) {
+			if (parent.isGpsConnected()) {
+				parent.show();
+				parent.alert("TrackPlayer", "Can't replay while connected to GPS", 2500);
+				return;
+			} else {
+				updateProcessVector();
+				if (processTracks.size() > 0) {
+					parent.gpx.replayTrk(processTracks);
+					parent.show();
+				}
+			}
+			return;
+		}
+		if (c == REPLAY_STOP_CMD) {
+			TrackPlayer.getInstance().stop();
+			parent.show();			
 			return;
 		}
 		if (c == UNDISP_CMD) {
