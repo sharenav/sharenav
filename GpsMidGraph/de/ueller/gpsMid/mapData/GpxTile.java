@@ -5,6 +5,7 @@ package de.ueller.gpsMid.mapData;
  */
 
 import javax.microedition.lcdui.Graphics;
+import javax.microedition.lcdui.Image;
 
 import de.ueller.gps.tools.HelperRoutines;
 import de.ueller.midlet.gps.Logger;
@@ -138,21 +139,16 @@ public class GpxTile extends Tile {
 	 * @param pc
 	 */
 	private void paintLocal(PaintContext pc) {
+		Image trkPtImage = pc.images.IMG_MARK;			
 		if(loadedTrack){
-			for (int i = 0; i < noTrkPts; i++) {
-				if (pc.getP().isPlotable(trkPtLat[i], trkPtLon[i])) {
-					pc.getP().forward(trkPtLat[i], trkPtLon[i], pc.lineP2);
-					pc.g.drawImage(pc.images.IMG_MARK_DISP, pc.lineP2.x, pc.lineP2.y, Graphics.HCENTER | Graphics.VCENTER);					
-				}
+			trkPtImage = pc.images.IMG_MARK_DISP;
+		}
+		for (int i = 0; i < noTrkPts; i++) {
+			if (pc.getP().isPlotable(trkPtLat[i], trkPtLon[i])) {
+				pc.getP().forward(trkPtLat[i], trkPtLon[i], pc.lineP2);
+				pc.g.drawImage(trkPtImage, pc.lineP2.x, pc.lineP2.y, Graphics.HCENTER | Graphics.VCENTER);					
 			}
-		} else {
-			for (int i = 0; i < noTrkPts; i++) {
-				if (pc.getP().isPlotable(trkPtLat[i], trkPtLon[i])) {
-					pc.getP().forward(trkPtLat[i], trkPtLon[i], pc.lineP2);
-					pc.g.drawImage(pc.images.IMG_MARK, pc.lineP2.x, pc.lineP2.y, Graphics.HCENTER | Graphics.VCENTER);					
-				}
-			}
-		}		
+		}
 	}
 	
 	private void extendTile() {
