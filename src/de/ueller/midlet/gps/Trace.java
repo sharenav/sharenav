@@ -151,7 +151,10 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	 * or if the user moved the map away from this position (false).
 	 */
 	public boolean gpsRecenter = true;
-
+	/** Flag if the map is autoZoomed
+	 */
+	public boolean autoZoomed = true;
+	
 	private Position pos = new Position(0.0f, 0.0f, 
 			(float)PositionMark.INVALID_ELEVATION, 0.0f, 0.0f, 1,
 			System.currentTimeMillis());
@@ -1149,10 +1152,12 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			}
 			if (c == CMDS[ZOOM_IN_CMD]) {
 				scale = scale / 1.5f;
+				autoZoomed = false;
 				return;
 			}
 			if (c == CMDS[ZOOM_OUT_CMD]) {
 				scale = scale * 1.5f;
+				autoZoomed = false;
 				return;
 			}
 			if (c == CMDS[MANUAL_ROTATION_MODE_CMD]) {
@@ -2029,8 +2034,6 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 
 	private void updatePosition() {
 		if (pc != null){
-//			projection = ProjFactory.getInstance(center,course, scale, getWidth(), getHeight());
-//			pc.setP(projection);
 			pc.center = center.clone();
 			pc.scale = scale;
 			pc.course=course;
@@ -2075,6 +2078,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			&& isShown()
 		) {
 			gpsRecenter = true;
+			autoZoomed = true;
 		}
 		if (gpsRecenter) {
 			center.setLatLon(pos.latitude, pos.longitude);
@@ -2102,6 +2106,66 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				receiveMessage(e.getMessage());
 			} 
 		}
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_AUTOZOOM)
+				&& gpsRecenter
+				&& isGpsConnected()
+				&& autoZoomed
+				&& pc.getP() != null
+		) {
+			// the minimumScale at 20km/h and below is equivalent to having zoomed in manually once from the startup zoom level 
+			final float minimumScale = 10000;
+			final int minimumSpeed = 20;
+			// the maximumScale at 160km/h and below is equivalent to having zoomed out manually once from the startup zoom level 
+			final float maximumScale = 22500;
+			final int maximumSpeed = 160;
+			int speedForScale = speed;
+			float newScale = minimumScale + (maximumScale - minimumScale) * (speedForScale - minimumSpeed) / (maximumSpeed - minimumSpeed);
+			// make sure the new scale is within the minimum / maximum scale values
+			if (newScale < minimumScale) {
+				newScale = minimumScale;
+			} else if (newScale > maximumScale) {
+				newScale = maximumScale;					
+			}
+			scale = newScale;
+			
+//			// calculate meters to top of screen
+//			float topLat = pc.getP().getMaxLat();
+//			float topLon = (pc.getP().getMinLon() + pc.getP().getMaxLon()) / 2f;
+//			float distance = MoreMath.dist(center.radlat, center.radlon, topLat, topLon );
+//			System.out.println("current distance to top of screen: " + distance);
+//
+//			// avoid zooming in or out too far
+//			int speedForScale = course;
+//			if (speedForScale < 30) {
+//				speedForScale = 30;
+//			} else if (speedForScale > 160) {
+//				speedForScale = 160;
+//			}				
+//
+//			final float SECONDS_TO_PREVIEW = 45f;
+//			float metersToPreview = (float) speedForScale / 3.6f * SECONDS_TO_PREVIEW;
+//			System.out.println(metersToPreview + "meters to preview at " + speedForScale + "km/h");
+//
+//			if (metersToPreview < 2000) {
+//			// calculate top position that needs to be visible to preview the metersToPreview 
+//			topLat = center.radlat + (topLat - center.radlat) * metersToPreview / distance;
+//			topLon = center.radlon + (topLon - center.radlon) * metersToPreview / distance;
+//			System.out.println("new distance to top:" + MoreMath.dist(center.radlat, center.radlon, topLat, topLon ));
+//			
+//			/*
+//			 *  calculate scale factor, we multiply this again with 2 * 1.2 = 2.4 to take into account we calculated half the screen height 
+//			 *  and 1.2f is probably the factor the PaintContext is larger than the display size
+//			 *  (new scale is calculated similiar to GuiWaypoint)
+//			 */ 
+//			IntPoint intPoint1 = new IntPoint(0, 0);
+//			IntPoint intPoint2 = new IntPoint(getWidth(), getHeight());
+//			Node n1 = new Node(center.radlat, center.radlon, true);
+//			Node n2 = new Node(topLat, topLon, true);
+//			scale = pc.getP().getScale(n1, n2, intPoint1, intPoint2) * 2.4f;
+//			}
+							
+		}		
+		
 		updatePosition();		
 	}
 	

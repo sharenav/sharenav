@@ -48,7 +48,7 @@ public class Configuration {
 	 *  the default values for the features added between configVersionStored
 	 *  and VERSION will be set, before the version in the recordstore is increased to VERSION.
 	 */
-	public final static int VERSION = 13;
+	public final static int VERSION = 14;
 
 	public final static int LOCATIONPROVIDER_NONE = 0;
 	public final static int LOCATIONPROVIDER_SIRF = 1;
@@ -207,10 +207,12 @@ public class Configuration {
 	public final static byte CFGBIT_ROUTE_TRY_FIND_MOTORWAY = 74;
 	/** bit 75: Flag whether the route algorithm deeply examines motorways */
 	public final static byte CFGBIT_ROUTE_BOOST_MOTORWAYS = 75;
-	/** bit 75: Flag whether the route algorithm deeply examines trunks and primarys */
+	/** bit 76: Flag whether the route algorithm deeply examines trunks and primarys */
 	public final static byte CFGBIT_ROUTE_BOOST_TRUNKS_PRIMARYS = 76;
-	/** bit 76: Flag whether iconMenus should have bigger tabs */
+	/** bit 77: Flag whether iconMenus should have bigger tabs */
 	public final static byte CFGBIT_ICONMENUS_BIG_TAB_BUTTONS = 77;
+	/** bit 78: Flag whether the map should be auto scaled to speed */
+	public final static byte CFGBIT_AUTOZOOM = 78;
 	
 	/**
 	 * These are the database record ids for each configuration option
@@ -519,15 +521,6 @@ public class Configuration {
 			
 		}
 
-		if (configVersionStored < 12) {
-			if (getDefaultIconMenuBackCmdSupport()) {
-				cfgBits_64_to_127 |=	1L << CFGBIT_ROUTE_TRY_FIND_MOTORWAY |
-										1L << CFGBIT_ROUTE_BOOST_MOTORWAYS |
-										1L << CFGBIT_ROUTE_BOOST_TRUNKS_PRIMARYS;
-			}
-			
-		}
-
 		if (configVersionStored < 13) {
 			// migrate boolean stopAllWhileRouteing to int continueMapWhileRouteing
 			if (continueMapWhileRouteing == 0) {
@@ -538,7 +531,10 @@ public class Configuration {
 		}
 
 		if (configVersionStored < 14) {
-			;
+			cfgBits_64_to_127 |=	1L << CFGBIT_AUTOZOOM |
+									1L << CFGBIT_ROUTE_TRY_FIND_MOTORWAY |
+									1L << CFGBIT_ROUTE_BOOST_MOTORWAYS |
+									1L << CFGBIT_ROUTE_BOOST_TRUNKS_PRIMARYS;			
 		}
 		
 		setCfgBits(cfgBits_0_to_63, cfgBits_64_to_127);
