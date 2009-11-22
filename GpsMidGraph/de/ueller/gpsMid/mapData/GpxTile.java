@@ -8,6 +8,8 @@ import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
 import de.ueller.gps.tools.HelperRoutines;
+import de.ueller.midlet.gps.data.IntPoint;
+import de.ueller.midlet.gps.data.Projection;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.tile.PaintContext;
@@ -143,10 +145,13 @@ public class GpxTile extends Tile {
 		if(loadedTrack){
 			trkPtImage = pc.images.IMG_MARK_DISP;
 		}
+		Projection projection = pc.getP();
+		IntPoint lineP2 = pc.lineP2;
+		Graphics g = pc.g;
 		for (int i = 0; i < noTrkPts; i++) {
-			if (pc.getP().isPlotable(trkPtLat[i], trkPtLon[i])) {
-				pc.getP().forward(trkPtLat[i], trkPtLon[i], pc.lineP2);
-				pc.g.drawImage(trkPtImage, pc.lineP2.x, pc.lineP2.y, Graphics.HCENTER | Graphics.VCENTER);					
+			if (projection.isPlotable(trkPtLat[i], trkPtLon[i])) {
+				projection.forward(trkPtLat[i], trkPtLon[i], lineP2);
+				g.drawImage(trkPtImage, lineP2.x, lineP2.y, Graphics.HCENTER | Graphics.VCENTER);					
 			}
 		}
 	}
