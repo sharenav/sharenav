@@ -33,6 +33,7 @@ GpsMid 0.5.09
        - optionally show altitude from GPS
        - when there is no route calculated but a target is set, show air distance
          instead of remaining route distance in the map screen
+       - New map feature "Auto zoom": this will automatically zoom in and out the map according to the driving speed
        - Turn restrictions included in the midlet can be displayed in the map with Setup/Debug Options
        - Max distance for displaying way name while scrolling is now calculated differently.
          A minimum of 10 meters is used for high zoom levels
@@ -81,6 +82,13 @@ GpsMid 0.5.09
        - Support for GeoHack in "Online Info" (thx jkpj)
        *** Midlet creation with Osm2GpsMid ***
        - improved output, e.g. OSM links to errors to fix and duration for some creation steps
+       - New option maxTileWays0, maxTileWays1, maxTileWays2 and maxTileWays3 in .properties files
+         for specifying the maximum number of ways bundled into tiles of tile zoom level 0 to 3:         
+         With Osm2GpsMid 0.5.0 into each tile of a tile zoom level a maximum of 255 ways was included.
+         This causes each midlet to contain very many small files. By increasing the maximum ways  
+         you can reduce the number of files in the midlet, maybe making it possible to have larger maps
+         on the mobile. However, having more ways in the tiles might require a device with
+         more performance or memory to run GpsMid. Therefore the default maximum ways per tile is still 255. 
        *** Osm2GpsMid GUI ***
        - Loading .properties files works again
        - New option to include cell-ids
