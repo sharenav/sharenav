@@ -134,9 +134,9 @@ public class CreateGpsMidData implements FilenameFilter {
 		SearchList sl=new SearchList(names1);
 		sl.createNameList(path);
 		for (int i=0;i<=3;i++){
-			System.out.print("Exporting tiles for zoomlevel " + i);
+			System.out.println("Exporting tiles for zoomlevel " + i);
 			long bytesWritten = exportMapToMid(i);
-			System.out.println(": " + Configuration.memoryWithUnit(bytesWritten));
+			System.out.println("  Zoomlevel " + i + ": " + Configuration.memoryWithUnit(bytesWritten));
 		}
 		if (Configuration.attrToBoolean(configuration.useRouting) >= 0) {
 			System.out.println("Exporting route tiles");
