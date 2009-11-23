@@ -191,9 +191,11 @@ public class Legend {
 		InputStream is = Configuration.getMapResource("/legend.dat");
 		
 		if (is == null) {
-			/* if legend.dat could not be opened set essential default colors for using e.g. GpsMid-Generic-Full directly
-			 *  (to configure external map using icon menu which will include legend.dat with colors)
+			/* If legend.dat could not be opened set essential default colors for using 
+			 * e.g. GpsMid-Generic-Full directly (to configure external map using 
+			 * icon menu which will include legend.dat with colors).
 			 */
+			COLORS[COLOR_MAP_BACKGROUND] = 0x009BFF9B;
 			COLORS[COLOR_WAYNAME_BACKGROUND] = 0x00FFFFFF;
 			COLORS[COLOR_ICONMENU_ICON_BORDER_HIGHLIGHT] = 0x00FF0000;
 			COLORS[COLOR_ICONMENU_ICON_TEXT] = 0x00FFFFFF;
