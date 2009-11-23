@@ -77,19 +77,20 @@ public class GuiGpx extends List implements CommandListener,
 		setCommandListener(this);
 		initTracks();
 		
+		if (TrackPlayer.isPlaying) {
+			addCommand(REPLAY_STOP_CMD);
+		}
 		addCommand(SEND_CMD);
 		addCommand(LOAD_CMD);
 		addCommand(DISP_CMD);
 		addCommand(UNDISP_CMD);
 		addCommand(RENAME_CMD);		
 		addCommand(DEL_CMD);
-		if (TrackPlayer.isPlaying) {
-			addCommand(REPLAY_STOP_CMD);
-		} else {
-			addCommand(REPLAY_START_CMD);				
-		}
 		addCommand(SALL_CMD);
 		addCommand(DSALL_CMD);		
+		if (!TrackPlayer.isPlaying) {
+			addCommand(REPLAY_START_CMD);				
+		}
 		addCommand(BACK_CMD);		
 	}
 	
