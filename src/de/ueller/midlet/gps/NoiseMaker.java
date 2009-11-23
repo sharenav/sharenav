@@ -175,6 +175,7 @@ public class NoiseMaker
 		}
 		resetSoundRepeatTimes();
 		playSound (name);
+		RouteInstructions.reallowInInstruction();
 	}
 	
 	public void playSound( String names )

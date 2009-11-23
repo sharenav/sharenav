@@ -1327,6 +1327,10 @@ public class RouteInstructions {
 		}
 	}
 	
+	public static void reallowInInstruction() {
+		iInInstructionSaidArrow = -1;
+	}
+
 	public void outputRoutePath() {
 		String name=null;
 		int dist=0;
