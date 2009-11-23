@@ -801,7 +801,11 @@ public class Routing implements Runnable {
 				return null; // cancel route calculation 2/2
 			}
 			if (bestTime){
-				parent.receiveMessage("Route found: " + (bestTotal/600) + "min");
+				if (Configuration.getDebugSeverityDebug()) {
+					parent.receiveMessage("Route found: " + (bestTotal/600) + "min");
+				} else {
+					parent.receiveMessage("Route found");					
+				}
 			} else {
 				parent.receiveMessage("Route found: " + (bestTotal/1000f) + "km");
 			}
