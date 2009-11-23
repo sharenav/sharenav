@@ -46,7 +46,7 @@ public class Routing implements Runnable {
 	private boolean roadRun = false;
 	
 	/** when true, the RouteTile will only load and return mainStreetNet RouteNodes, Connections and TurnRestrictions */ 
-	public static boolean onlyMainStreetNet = false;
+	public static volatile boolean onlyMainStreetNet = false;
 	public int motorwayConsExamined = 0;
 	public int motorwayEntrancesExamined = 0;
 	
