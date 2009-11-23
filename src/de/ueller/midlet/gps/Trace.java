@@ -222,7 +222,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	private GuiWaypointSave guiWaypointSave = null;
 	private static TraceIconMenu traceIconMenu = null;
 	
-	private final static Logger logger = Logger.getInstance(Trace.class,Logger.DEBUG);
+	private final static Logger logger = Logger.getInstance(Trace.class, Logger.DEBUG);
 
 //#mdebug info
 	public static final String statMsg[] = { "no Start1:", "no Start2:",
@@ -386,9 +386,9 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	}
 	
 	/**
-	 * Returns the instance of the map screen. If non exists yet,
-	 * start a new instance.
-	 * @return
+	 * Returns the instance of the map screen. If none exists yet,
+	 * a new instance is generated
+	 * @return Reference to singleton instance
 	 */
 	public static synchronized Trace getInstance() {
 		if (traceInstance == null) {
@@ -425,7 +425,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			running=true;
 			int locprov = Configuration.getLocationProvider();
 			receiveMessage("Connect to " + Configuration.LOCATIONPROVIDER[locprov]);
-			switch (locprov){
+			switch (locprov) {
 				case Configuration.LOCATIONPROVIDER_SIRF:
 					locationProducer = new SirfInput();
 					break;
@@ -565,18 +565,18 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		}
 	}
 
-	public synchronized void pause(){
+	public synchronized void pause() {
 		logger.debug("Pausing application");
 		if (imageCollector != null) {
 			imageCollector.suspend();
 		}
-		if (locationProducer != null){
+		if (locationProducer != null) {
 			locationProducer.close();
 		} else {
 			return;
 		}
 		int polling = 0;
-		while ((locationProducer != null) && (polling < 7)){
+		while ((locationProducer != null) && (polling < 7)) {
 			polling++;
 			try {
 				wait(200);
@@ -589,7 +589,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		}
 	}
 
-	public void resume(){
+	public void resume() {
 		logger.debug("resuming application");
 		if (imageCollector != null) {
 			imageCollector.resume();
@@ -718,8 +718,10 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				return;
 			}
 			
-			if ((c == CMDS[PAN_LEFT25_CMD]) || (c == CMDS[PAN_RIGHT25_CMD]) || (c == CMDS[PAN_UP25_CMD]) || (c == CMDS[PAN_DOWN25_CMD])
-					|| (c == CMDS[PAN_LEFT2_CMD]) || (c == CMDS[PAN_RIGHT2_CMD]) || (c == CMDS[PAN_UP2_CMD]) || (c == CMDS[PAN_DOWN2_CMD])) {
+			if ((c == CMDS[PAN_LEFT25_CMD]) || (c == CMDS[PAN_RIGHT25_CMD]) 
+					|| (c == CMDS[PAN_UP25_CMD]) || (c == CMDS[PAN_DOWN25_CMD])
+					|| (c == CMDS[PAN_LEFT2_CMD]) || (c == CMDS[PAN_RIGHT2_CMD]) 
+					|| (c == CMDS[PAN_UP2_CMD]) || (c == CMDS[PAN_DOWN2_CMD])) {
 				int panX = 0; int panY = 0;
 				int courseDiff = 0;
 				int backLightLevelDiff = 0;
@@ -839,13 +841,13 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				}
 				return;
 			}
-			if (c == CMDS[SEARCH_CMD]){
+			if (c == CMDS[SEARCH_CMD]) {
 				GuiSearch guiSearch = new GuiSearch(this);
 				guiSearch.show();
 				return;
 			}
 			if (c == CMDS[DISCONNECT_GPS_CMD]) {
-				if (locationProducer != null){
+				if (locationProducer != null) {
 					locationProducer.close();
 				}
 				return;
@@ -994,11 +996,15 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			}
 			if (c == CMDS[ONLINE_INFO_CMD]) {
 				//#if polish.api.online
-					Position oPos = new Position(center.radlat,center.radlon,0.0f,0.0f,0.0f,0,0);
+					Position oPos = new Position(center.radlat, center.radlon, 
+							0.0f, 0.0f, 0.0f, 0, 0);
 					GuiWebInfo gWeb = new GuiWebInfo(this, oPos);
 					gWeb.show();
 				//#else
-					alert("No online capabilites", "set app=GpsMid-Generic-editing in .properties file and recreate GpsMid with Osm2GpsMid", 7000);
+					alert("No online capabilites", 
+							"Set app=GpsMid-Generic-editing and editing=true in " +
+							".properties file and recreate GpsMid with Osm2GpsMid.", 
+							Alert.FOREVER);
 				//#endif
 			}
 			if (c == CMDS[BACK_CMD]) {
@@ -1082,7 +1088,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				return;
 			}
 			//#if polish.api.mmapi
-			if (c == CMDS[CAMERA_CMD]){
+			if (c == CMDS[CAMERA_CMD]) {
 				try {
 					Class GuiCameraClass = Class.forName("de.ueller.midlet.gps.GuiCamera");
 					Object GuiCameraObject = GuiCameraClass.newInstance();					
@@ -1309,7 +1315,8 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				}
 				if (c == CMDS[RETRIEVE_NODE]) {
 					if (Legend.enableEdits) {
-						GuiOSMPOIDisplay guiNode = new GuiOSMPOIDisplay(-1,null,center.radlat,center.radlon,this);
+						GuiOSMPOIDisplay guiNode = new GuiOSMPOIDisplay(-1, null, 
+								center.radlat, center.radlon, this);
 						guiNode.show();
 						guiNode.refresh();
 					} else {
@@ -1318,7 +1325,10 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				}
 				//#else
 				if (c == CMDS[RETRIEVE_XML] || c == CMDS[RETRIEVE_NODE]) { 
-					alert("No online capabilites", "set app=GpsMid-Generic-editing and editing=true in .properties file and recreate GpsMid with Osm2GpsMid", 7000);
+					alert("No online capabilites", 
+						"Set app=GpsMid-Generic-editing and editing=true in " +
+						".properties file and recreate GpsMid with Osm2GpsMid.", 
+						Alert.FOREVER);
 				}
 				//#endif
 				if (c == CMDS[SETTARGET_CMD]) {
@@ -1412,7 +1422,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			tileReader.shutdown();
 			tileReader = null;
 		}
-		if (locationProducer != null){
+		if (locationProducer != null) {
 			//#debug debug
 			logger.debug("Shutdown: locationProducer");
 			locationProducer.close();
@@ -1425,7 +1435,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	}
 	
 	protected void sizeChanged(int w, int h) {	
-		if (imageCollector != null){
+		if (imageCollector != null) {
 			logger.info("Size of Canvas changed to " + w + "|" + h);
 			stopImageCollector();
 			try {
@@ -1457,7 +1467,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			g.setColor(Legend.COLORS[Legend.COLOR_MAP_BACKGROUND]);
 			g.fillRect(0, 0, this.getWidth(), this.getHeight());
 			pc.g = g;
-			if (imageCollector != null){				
+			if (imageCollector != null) {				
 				/*
 				 *  When painting we receive a copy of the center coordinates
 				 *  where the imageCollector has drawn last
@@ -1465,7 +1475,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				 *  determined during the way drawing (e.g. the current routePathConnection)
 				 */
 				Node drawnCenter = imageCollector.paint(pc);
-				if (route != null && ri!=null) {
+				if (route != null && ri != null) {
 					pc.getP().forward(drawnCenter.radlat, drawnCenter.radlon, pc.lineP2);
 					/*
 					 * we also need to make sure the current way for the real position
@@ -1509,7 +1519,8 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			// determine if we are currently speeding
 			speeding = false;
 			int maxSpeed = 0;
-			if (gpsRecenter && actualSpeedLimitWay != null) { // only detect speeding when gpsRecentered and there is a current way
+			// only detect speeding when gpsRecentered and there is a current way
+			if (gpsRecenter && actualSpeedLimitWay != null) {
 				maxSpeed = actualSpeedLimitWay.getMaxSpeed();
 				if (maxSpeed != 0 && speed > (maxSpeed + Configuration.getSpeedTolerance()) ) {
 					speeding = true;
@@ -1590,7 +1601,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				e.setText("AudioRec");				
 			}
 			
-			if (pc != null){
+			if (pc != null) {
 				showTarget(pc);
 			}
 
@@ -1686,11 +1697,17 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		// request same font in bold for title
 		Font titleFont = Font.getFont(font.getFace(), Font.STYLE_BOLD, font.getSize());
 		int fontHeight = font.getHeight();
-		int y = titleFont.getHeight() + 2 + fontHeight; // add alert title height plus extra space of one line for calculation of alertHeight
-		int extraWidth = font.charWidth('W'); // extra width for alert
-		int alertWidth = titleFont.stringWidth(currentAlertTitle); // alert is at least as wide as alert title
-		int maxWidth = getWidth() - extraWidth; // width each alert message line must fit in
-		for (int i = 0; i<=1; i++) { // two passes: 1st pass calculates placement and necessary size of alert, 2nd pass actually does the drawing
+		// add alert title height plus extra space of one line for calculation of alertHeight
+		int y = titleFont.getHeight() + 2 + fontHeight;
+		// extra width for alert
+		int extraWidth = font.charWidth('W');
+		// alert is at least as wide as alert title
+		int alertWidth = titleFont.stringWidth(currentAlertTitle);
+		// width each alert message line must fit in
+		int maxWidth = getWidth() - extraWidth;
+		// Two passes: 1st pass calculates placement and necessary size of alert, 
+		// 2nd pass actually does the drawing
+		for (int i = 0; i <= 1; i++) { 
 			int nextSpaceAt = 0;
 			int prevSpaceAt = 0;
 			int start = 0;
@@ -1732,7 +1749,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			} while (nextSpaceAt < currentAlertMessage.length() );
 			
 			// at the end of the first pass draw the alert box and the alert title
-			if (i==0) {
+			if (i == 0) {
 				alertWidth += extraWidth;
 				int alertHeight = y;
 				int alertTop = (getHeight() - alertHeight) /2;
@@ -1740,10 +1757,10 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				int alertLeft = (getWidth() - alertWidth) / 2;
 				// alert background color
 				g.setColor(Legend.COLORS[Legend.COLOR_ALERT_BACKGROUND]);
-				g.fillRect(alertLeft, alertTop , alertWidth, alertHeight);
+				g.fillRect(alertLeft, alertTop, alertWidth, alertHeight);
 				// background color for alert title
 				g.setColor(Legend.COLORS[Legend.COLOR_ALERT_TITLE_BACKGROUND]);
-				g.fillRect(alertLeft, alertTop , alertWidth, fontHeight + 3);
+				g.fillRect(alertLeft, alertTop, alertWidth, fontHeight + 3);
 				// alert border
 				g.setColor(Legend.COLORS[Legend.COLOR_ALERT_BORDER]);
 				g.setStrokeStyle(Graphics.SOLID);
@@ -1823,23 +1840,22 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		dictReader.incUnusedCounter();		
 	}
 	
-	public void searchElement(PositionMark pm) throws Exception{
+	public void searchElement(PositionMark pm) throws Exception {
 		PaintContext pc = new PaintContext(this, null);
-		// take a bigger angle for lon because of positions near to the pols.
-		Node nld=new Node(pm.lat - 0.0001f,pm.lon - 0.0005f,true);
-		Node nru=new Node(pm.lat + 0.0001f,pm.lon + 0.0005f,true);		
-		pc.searchLD=nld;
-		pc.searchRU=nru;
-		pc.target=pm;
-		pc.setP(new Proj2D(new Node(pm.lat,pm.lon, true),5000,100,100));
-		for (int i=0; i<4; i++){
+		// take a bigger angle for lon because of positions near to the poles.
+		Node nld = new Node(pm.lat - 0.0001f, pm.lon - 0.0005f, true);
+		Node nru = new Node(pm.lat + 0.0001f, pm.lon + 0.0005f, true);		
+		pc.searchLD = nld;
+		pc.searchRU = nru;
+		pc.target = pm;
+		pc.setP(new Proj2D(new Node(pm.lat, pm.lon, true), 5000, 100, 100));
+		for (int i = 0; i < 4; i++) {
 			t[i].walk(pc, Tile.OPT_WAIT_FOR_LOAD);
-
 		}
 	}
 	
 	
-	public void searchNextRoutableWay(PositionMark pm) throws Exception{
+	public void searchNextRoutableWay(PositionMark pm) throws Exception {
 		PaintContext pc = new PaintContext(this, null);
 		// take a bigger angle for lon because of positions near to the pols.
 //		Node nld=new Node(pm.lat - 0.0001f,pm.lon - 0.0005f,true);
@@ -1854,7 +1870,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		do {
 			p = new Proj2D(new Node(pm.lat,pm.lon, true),5000,pc.xSize,pc.ySize);
 			pc.setP(p);
-			for (int i=0; i<4; i++){
+			for (int i=0; i<4; i++) {
 				t[i].walk(pc, Tile.OPT_WAIT_FOR_LOAD | Tile.OPT_FIND_CURRENT);
 			}
 			// stop the search when a routable way is found
@@ -1917,8 +1933,8 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		return yc;
 	}
 
-	public void showTarget(PaintContext pc){
-		if (target != null){
+	public void showTarget(PaintContext pc) {
+		if (target != null) {
 			pc.getP().forward(target.lat, target.lon, pc.lineP2);
 //			System.out.println(target.toString());
 			pc.g.drawImage(pc.images.IMG_TARGET,pc.lineP2.x,pc.lineP2.y,CENTERPOS);
@@ -1953,17 +1969,19 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			posX = centerX;
 			posY = centerY;
 		}
-		pc.g.drawImage(pc.images.IMG_POS_BG,posX,posY,CENTERPOS);
+		pc.g.drawImage(pc.images.IMG_POS_BG, posX, posY, CENTERPOS);
 
 		g.setColor(Legend.COLORS[Legend.COLOR_MAP_POSINDICATOR]);
 		float radc = (float) (course * MoreMath.FAC_DECTORAD);
 		int px = posX + (int) (Math.sin(radc) * 20);
 		int py = posY - (int) (Math.cos(radc) * 20);
-		g.drawRect(posX - 2, posY - 2, 4, 4);
+		g.drawRect(posX - 4, posY - 4, 8, 8);
 		g.drawLine(posX, posY, px, py);
-		
-		g.drawLine(centerX - 2, centerY - 2, centerX + 2, centerY + 2);
-		g.drawLine(centerX - 2, centerY + 2, centerX + 2, centerY - 2);
+		if (!gpsRecenter) {
+    		g.drawLine(centerX, centerY - 12, centerX, centerY + 12);
+    		g.drawLine(centerX - 12, centerY, centerX + 12, centerY);
+    		g.drawArc(centerX - 5, centerY - 5, 10, 10, 0, 360);
+		}
 	}
 	
 	/**
@@ -2050,7 +2068,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	}
 
 	private void updatePosition() {
-		if (pc != null){
+		if (pc != null) {
 			pc.center = center.clone();
 			pc.scale = scale;
 			pc.course=course;
@@ -2363,7 +2381,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			gpx.saveTrk(true);
 		}
 		removeCommand(CMDS[DISCONNECT_GPS_CMD]);
-		if (locationProducer == null){
+		if (locationProducer == null) {
 //#debug info
 			logger.info("leave locationDecoderEnd no producer");
 			return;
@@ -2426,15 +2444,20 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		endRouting();
 		this.target = target;
 		pc.target = target;
-		if(target!=null) {
+		if (target != null) {
+			//#debug info
+			logger.info("Setting destination to " + target.toString());
 			//We are explicitly setting the map to this position, so we probably don't
 			//want it to be recentered on the GPS immediately.
 			gpsRecenter = false;
 			
-			center.setLatLon(target.lat, target.lon,true);
+			center.setLatLon(target.lat, target.lon, true);
 			updatePosition();
-		}
-		movedAwayFromTarget=false;
+		} else {
+			//#debug info
+			logger.info("Setting destination to null");
+		}		
+		movedAwayFromTarget = false;
 	}
 
 	public void endRouting() {
@@ -2454,11 +2477,11 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		synchronized(this) {
 			this.route = route;
 		}
-		if (this.route!=null) {
+		if (this.route != null) {
 			// reset off-route as soon as first route connection is known
 			RouteInstructions.resetOffRoute(this.route, center);
 
-			if (ri==null) {
+			if (ri == null) {
 				ri = new RouteInstructions(this);
 			}
 			// show map during route line production 
