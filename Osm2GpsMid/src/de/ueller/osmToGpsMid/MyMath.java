@@ -21,16 +21,18 @@ public class MyMath {
 	
 	/**
 	 * Average earth radius of the WGS84 geoid in meters.
-	 * 
-	 * This is also used as fixed point multiplier to convert
+	 * The old value was 6378159.81 = circumference of the earth in meters / 2 pi.
+	 */	
+	public static final double PLANET_RADIUS = 6371000.8d;
+
+	/**
+	 * This constant is used as fixed point multiplier to convert
 	 * latitude / longitude from radians to fixpoint representation.
 	 * With this multiplier, one should get a resolution of 1 m at the equator.
 	 * 
 	 * This constant has to be in synchrony with the value in GpsMid.
-	 *
-	 * The old value was 6378159.81 = circumference of the earth in meters / 2 pi.
-	 */	
-	public static final double PLANET_RADIUS = 6371000.8d;
+	 */
+	public static final double FIXPT_MULT = PLANET_RADIUS;
 
 	public static final float FEET_TO_METER = 0.3048f;
 

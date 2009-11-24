@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -766,7 +765,7 @@ public class CreateGpsMidData implements FilenameFilter {
 				if (ways.size() <= maxWays){
 					t.bounds = realBound.clone();
 					if ((MyMath.degToRad(t.bounds.maxLat - t.bounds.minLat) > 
-							(Short.MAX_VALUE - Short.MIN_VALUE - 2000) / MyMath.PLANET_RADIUS) ||
+							(Short.MAX_VALUE - Short.MIN_VALUE - 2000) / MyMath.FIXPT_MULT) ||
 						(MyMath.degToRad(t.bounds.maxLon - t.bounds.minLon) > 
 							(Short.MAX_VALUE - Short.MIN_VALUE - 2000) / MyMath.PLANET_RADIUS)) {
 							//System.out.println("Tile spacially too large (" + ((Short.MAX_VALUE - Short.MIN_VALUE - 2000)/Tile.fpm) + ": " + t.bounds);

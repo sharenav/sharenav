@@ -94,8 +94,8 @@ public class Bounds implements Cloneable {
 
 		public String toString() {
 			return ("[Bound (" + minLat + "|" + minLon+")(" + maxLat + "|" + maxLon +
-				") fixptlatspan=" + (int)(MyMath.degToRad(maxLat - minLat) * MyMath.PLANET_RADIUS) + 
-				" fixptlonspan=" + (int)(MyMath.degToRad(maxLon - minLon) * MyMath.PLANET_RADIUS) + 
+				") fixptlatspan=" + (int)(MyMath.degToRad(maxLat - minLat) * MyMath.FIXPT_MULT) + 
+				" fixptlonspan=" + (int)(MyMath.degToRad(maxLon - minLon) * MyMath.FIXPT_MULT) + 
 				"]");
 		}
 
