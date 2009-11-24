@@ -334,10 +334,10 @@ public class Way extends Entity{
 	
 	public float wayBearing(SingleTile t) {
 		return (float) MoreMath.bearing_int(
-				t.nodeLat[path[0]] * MoreMath.PLANET_RADIUS_INV + t.centerLat,
-				t.nodeLon[path[0]] * MoreMath.PLANET_RADIUS_INV + t.centerLon, 
-				t.nodeLat[path[path.length - 1]] * MoreMath.PLANET_RADIUS_INV + t.centerLat,
-				t.nodeLon[path[path.length - 1]] * MoreMath.PLANET_RADIUS_INV + t.centerLon);
+				t.nodeLat[path[0]] * MoreMath.FIXPT_MULT_INV + t.centerLat,
+				t.nodeLon[path[0]] * MoreMath.FIXPT_MULT_INV + t.centerLon, 
+				t.nodeLat[path[path.length - 1]] * MoreMath.FIXPT_MULT_INV + t.centerLat,
+				t.nodeLon[path[path.length - 1]] * MoreMath.FIXPT_MULT_INV + t.centerLon);
 	}
 
 	public void paintAsPath(PaintContext pc, SingleTile t, byte layer) {
@@ -368,10 +368,10 @@ public class Way extends Entity{
 		boolean containsCon2 = false;
 		short containsCon1At = 0;
 		short containsCon2At = 0;
-		short searchCon1Lat = (short) ((pc.searchCon1Lat - t.centerLat) * MoreMath.PLANET_RADIUS);
-		short searchCon1Lon = (short) ((pc.searchCon1Lon - t.centerLon) * MoreMath.PLANET_RADIUS);
-		short searchCon2Lat = (short) ((pc.searchCon2Lat - t.centerLat) * MoreMath.PLANET_RADIUS);
-		short searchCon2Lon = (short) ((pc.searchCon2Lon - t.centerLon) * MoreMath.PLANET_RADIUS);
+		short searchCon1Lat = (short) ((pc.searchCon1Lat - t.centerLat) * MoreMath.FIXPT_MULT);
+		short searchCon1Lon = (short) ((pc.searchCon1Lon - t.centerLon) * MoreMath.FIXPT_MULT);
+		short searchCon2Lat = (short) ((pc.searchCon2Lat - t.centerLat) * MoreMath.FIXPT_MULT);
+		short searchCon2Lon = (short) ((pc.searchCon2Lon - t.centerLon) * MoreMath.FIXPT_MULT);
 		
 		boolean isCircleway = isCircleway(t);
 		// check if way contains both search connections
@@ -410,8 +410,8 @@ public class Way extends Entity{
 							byte bearing = MoreMath.bearing_start(
 									(pc.searchCon1Lat),
 									(pc.searchCon1Lon),
-									(t.centerLat + t.nodeLat[idxC] * MoreMath.PLANET_RADIUS_INV),
-									(t.centerLon + t.nodeLon[idxC] * MoreMath.PLANET_RADIUS_INV)
+									(t.centerLat + t.nodeLat[idxC] * MoreMath.FIXPT_MULT_INV),
+									(t.centerLon + t.nodeLon[idxC] * MoreMath.FIXPT_MULT_INV)
 							);
 							pc.conWayBearings.addElement(new Byte(bearing) );
 						}
@@ -473,10 +473,10 @@ public class Way extends Entity{
 				}
 				idx2 = path[i+1];
 				float dist = ProjMath.getDistance(
-						(t.centerLat + t.nodeLat[idx1] * MoreMath.PLANET_RADIUS_INV),
-						(t.centerLon + t.nodeLon[idx1] * MoreMath.PLANET_RADIUS_INV),
-						(t.centerLat + t.nodeLat[idx2] * MoreMath.PLANET_RADIUS_INV),
-						(t.centerLon + t.nodeLon[idx2] * MoreMath.PLANET_RADIUS_INV));
+						(t.centerLat + t.nodeLat[idx1] * MoreMath.FIXPT_MULT_INV),
+						(t.centerLon + t.nodeLon[idx1] * MoreMath.FIXPT_MULT_INV),
+						(t.centerLat + t.nodeLat[idx2] * MoreMath.FIXPT_MULT_INV),
+						(t.centerLon + t.nodeLon[idx2] * MoreMath.FIXPT_MULT_INV));
 				conWayRealDistance += dist;
 				idx1 = idx2;
 			}
@@ -525,8 +525,8 @@ public class Way extends Entity{
 						pc.conWayStartBearing = MoreMath.bearing_start(
 							(pc.searchCon1Lat),
 							(pc.searchCon1Lon),
-							(t.centerLat + t.nodeLat[idxC] * MoreMath.PLANET_RADIUS_INV),
-							(t.centerLon + t.nodeLon[idxC] * MoreMath.PLANET_RADIUS_INV)
+							(t.centerLat + t.nodeLat[idxC] * MoreMath.FIXPT_MULT_INV),
+							(t.centerLon + t.nodeLon[idxC] * MoreMath.FIXPT_MULT_INV)
 						);
 				}
 
@@ -536,8 +536,8 @@ public class Way extends Entity{
 				) {
 					int idxC = path[containsCon2At - direction];
 					pc.conWayEndBearing = MoreMath.bearing_start(
-						(t.centerLat + t.nodeLat[idxC] * MoreMath.PLANET_RADIUS_INV),
-						(t.centerLon + t.nodeLon[idxC] * MoreMath.PLANET_RADIUS_INV),
+						(t.centerLat + t.nodeLat[idxC] * MoreMath.FIXPT_MULT_INV),
+						(t.centerLon + t.nodeLon[idxC] * MoreMath.FIXPT_MULT_INV),
 						(pc.searchCon2Lat),
 						(pc.searchCon2Lon)
 					);				
@@ -556,10 +556,10 @@ public class Way extends Entity{
 	public void connections2AreaMatch(PaintContext pc, SingleTile t) {
 		boolean containsCon1 = false;
 		boolean containsCon2 = false;
-		short searchCon1Lat = (short)((pc.searchCon1Lat - t.centerLat) * MoreMath.PLANET_RADIUS);
-		short searchCon1Lon = (short)((pc.searchCon1Lon - t.centerLon) * MoreMath.PLANET_RADIUS);
-		short searchCon2Lat = (short)((pc.searchCon2Lat - t.centerLat) * MoreMath.PLANET_RADIUS);
-		short searchCon2Lon = (short)((pc.searchCon2Lon - t.centerLon) * MoreMath.PLANET_RADIUS);
+		short searchCon1Lat = (short)((pc.searchCon1Lat - t.centerLat) * MoreMath.FIXPT_MULT);
+		short searchCon1Lon = (short)((pc.searchCon1Lon - t.centerLon) * MoreMath.FIXPT_MULT);
+		short searchCon2Lat = (short)((pc.searchCon2Lat - t.centerLat) * MoreMath.FIXPT_MULT);
+		short searchCon2Lon = (short)((pc.searchCon2Lon - t.centerLon) * MoreMath.FIXPT_MULT);
 		
 		// check if area way contains both search connections
 //		System.out.println("search area nodes: " + path.length);
@@ -661,7 +661,10 @@ public class Way extends Entity{
 			/**
 			 * check if way matches to one or more route connections,
 			 * so we can highlight the route line parts 
-			 */  
+			 */
+			// TODO: Refactor this to a method of its own to avoid the many levels
+			// of indentation here. This will also make the code easier to understand
+			// as the method name can describe what is being done.
 			if (RouteLineProducer.isWayIdUsedByRouteLine(getWayId(t)) ) {
 				Vector route=pc.trace.getRoute();
 				ConnectionWithNode c;
@@ -671,15 +674,15 @@ public class Way extends Entity{
 						if (c.wayNameIdx == this.nameIdx) {
 							if (path.length > c.wayFromConAt && path.length > c.wayToConAt) {
 								int idx = path[c.wayFromConAt];
-								short searchCon1Lat = (short) ((c.to.lat - t.centerLat) * MoreMath.PLANET_RADIUS);
+								short searchCon1Lat = (short) ((c.to.lat - t.centerLat) * MoreMath.FIXPT_MULT);
 								if ( (Math.abs(t.nodeLat[idx] - searchCon1Lat) < 2) ) {
-									short searchCon1Lon = (short) ((c.to.lon - t.centerLon) * MoreMath.PLANET_RADIUS);
+									short searchCon1Lon = (short) ((c.to.lon - t.centerLon) * MoreMath.FIXPT_MULT);
 									if ( (Math.abs(t.nodeLon[idx] - searchCon1Lon) < 2) ) {
 										idx = path[c.wayToConAt];
 										ConnectionWithNode c2 = (ConnectionWithNode) route.elementAt(i+1);
-										searchCon1Lat = (short) ((c2.to.lat - t.centerLat) * MoreMath.PLANET_RADIUS);
+										searchCon1Lat = (short) ((c2.to.lat - t.centerLat) * MoreMath.FIXPT_MULT);
 										if ( (Math.abs(t.nodeLat[idx] - searchCon1Lat) < 2) ) {
-											searchCon1Lon = (short) ((c2.to.lon - t.centerLon) * MoreMath.PLANET_RADIUS);
+											searchCon1Lon = (short) ((c2.to.lon - t.centerLon) * MoreMath.FIXPT_MULT);
 											if ( (Math.abs(t.nodeLon[idx] - searchCon1Lon) < 2) ) {
 												// if we are not in highlight mode, flag that this layer contains a path segment to highlight 
 												if ((mode & Tile.OPT_HIGHLIGHT) == 0) {
@@ -1324,8 +1327,8 @@ public class Way extends Entity{
 				// this is a divided seg (partly prior route line, partly current route line)
 				dividedSeg = true;
 				pc.getP().forward( 
-						(short)(MoreMath.PLANET_RADIUS * (pc.center.radlat - t.centerLat)), 
-						(short)(MoreMath.PLANET_RADIUS * (pc.center.radlon - t.centerLon)), centerP, t);
+						(short)(MoreMath.FIXPT_MULT * (pc.center.radlat - t.centerLat)), 
+						(short)(MoreMath.FIXPT_MULT * (pc.center.radlon - t.centerLon)), centerP, t);
 				// get point dividing the seg
 				closestP = MoreMath.closestPointOnLine(xPoints[i], yPoints[i], xPoints[i + 1], yPoints[i + 1], centerP.x, centerP.y);
 				// remember original next point
@@ -1834,7 +1837,7 @@ public class Way extends Entity{
 			nodes = t.nodeLon;
 		}
 		for (int i = 0; i < len; i++) {
-			lat[i] = nodes[path[i]] * MoreMath.PLANET_RADIUS_INV + offset;
+			lat[i] = nodes[path[i]] * MoreMath.FIXPT_MULT_INV + offset;
 		}
 		return lat;
 	}

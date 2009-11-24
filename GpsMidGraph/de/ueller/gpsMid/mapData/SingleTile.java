@@ -1,8 +1,9 @@
 /*
  * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net 
  * 			Copyright (c) 2008 Kai Krueger apm at users dot sourceforge dot net
- * See Copying
+ * See COPYING
  */
+
 package de.ueller.gpsMid.mapData;
 
 import java.io.DataInputStream;
@@ -21,9 +22,9 @@ import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.ProjMath;
 import de.ueller.midlet.gps.data.Way;
-import de.ueller.midlet.gps.tile.POIdescription;
 import de.ueller.midlet.gps.tile.PaintContext;
 import de.ueller.midlet.gps.tile.QueueableTile;
+
 
 public class SingleTile extends Tile implements QueueableTile {
 
@@ -138,10 +139,10 @@ public class SingleTile extends Tile implements QueueableTile {
 			/**
 			 * Calculate paint context coordinates in terms of relative single tile coordinates
 			 */
-			float pcLDlatF = ((pc.getP().getMinLat() - this.centerLat) * MoreMath.PLANET_RADIUS);
-			float pcLDlonF = ((pc.getP().getMinLon() - this.centerLon) * MoreMath.PLANET_RADIUS);
-			float pcRUlatF = ((pc.getP().getMaxLat() - this.centerLat) * MoreMath.PLANET_RADIUS);
-			float pcRUlonF = ((pc.getP().getMaxLon() - this.centerLon) * MoreMath.PLANET_RADIUS);
+			float pcLDlatF = ((pc.getP().getMinLat() - this.centerLat) * MoreMath.FIXPT_MULT);
+			float pcLDlonF = ((pc.getP().getMinLon() - this.centerLon) * MoreMath.FIXPT_MULT);
+			float pcRUlatF = ((pc.getP().getMaxLat() - this.centerLat) * MoreMath.FIXPT_MULT);
+			float pcRUlonF = ((pc.getP().getMaxLon() - this.centerLon) * MoreMath.FIXPT_MULT);
 			short pcLDlat;
 			short pcLDlon;
 			short pcRUlat;
@@ -224,8 +225,8 @@ public class SingleTile extends Tile implements QueueableTile {
 								 * To prevent rounding issues, test for approximate
 								 * equality
 								 */
-								short targetLat = (short)((pc.target.lat - centerLat) * MoreMath.PLANET_RADIUS);
-								short targetLon = (short)((pc.target.lon - centerLon) * MoreMath.PLANET_RADIUS);
+								short targetLat = (short)((pc.target.lat - centerLat) * MoreMath.FIXPT_MULT);
+								short targetLon = (short)((pc.target.lon - centerLon) * MoreMath.FIXPT_MULT);
 								for (int i1 = 0; i1 < w.path.length; i1++) {
 									short s = w.path[i1];
 									if ((Math.abs(nodeLat[s] - targetLat) < 2) && 
@@ -392,7 +393,7 @@ public class SingleTile extends Tile implements QueueableTile {
 		// logger.debug("draw txt " + );
 		String name;
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_SHOWWAYPOITYPE)) {
-			name = pc.legend.getNodeTypeDesc(t);
+			name = Legend.getNodeTypeDesc(t);
 		}
 		else {
 			name = pc.trace.getName(nameIdx[i]);
@@ -474,8 +475,8 @@ public class SingleTile extends Tile implements QueueableTile {
 	   for (int i = 0; i < type.length; i++) {
 		   if (type[i] == searchType) {
 			   SearchResult sr = new SearchResult();
-			   sr.lat = nodeLat[i] * MoreMath.PLANET_RADIUS_INV + centerLat;
-			   sr.lon = nodeLon[i] * MoreMath.PLANET_RADIUS_INV + centerLon;
+			   sr.lat = nodeLat[i] * MoreMath.FIXPT_MULT_INV + centerLat;
+			   sr.lon = nodeLon[i] * MoreMath.FIXPT_MULT_INV + centerLon;
 			   sr.nameIdx = nameIdx[i];
 			   sr.type = (byte)(-1 * searchType); //It is a node. They have the top bit set to distinguish them from ways in search results
 			   sr.dist = ProjMath.getDistance(sr.lat, sr.lon, lat, lon);

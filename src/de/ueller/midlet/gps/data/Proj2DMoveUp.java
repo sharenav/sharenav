@@ -16,8 +16,7 @@ public class Proj2DMoveUp  implements Projection {
 	private float	scaled_radius;
 	private float	planetPixelRadius;
 	private int	pixelsPerMeter=DEFAULT_PIXEL_PER_METER;
-    protected float planetPixelCircumference = MoreMath.TWO_PI
-    * planetPixelRadius; // EARTH_PIX_CIRCUMFERENCE
+    protected float planetPixelCircumference = MoreMath.TWO_PI * planetPixelRadius;
 	private float	scaled_lat;
 	private int hy, wx;
 	private float	tanCtrLat;
@@ -152,10 +151,10 @@ public class Proj2DMoveUp  implements Projection {
 	//     two thread are using this 
 	public IntPoint forward(short lat, short lon, IntPoint p, SingleTile t) {
     	if (t != tileCache) {
-    		ctrLonRel = (int)((ctrLon - t.centerLon) * MoreMath.PLANET_RADIUS);
-    		ctrLatRel = (int)((ctrLat - t.centerLat) * MoreMath.PLANET_RADIUS);
-    		scaled_radius_rel = (scaled_radius * MoreMath.PLANET_RADIUS_INV);
-    		scaled_lat_rel = (scaled_lat * MoreMath.PLANET_RADIUS_INV);
+    		ctrLonRel = (int)((ctrLon - t.centerLon) * MoreMath.FIXPT_MULT);
+    		ctrLatRel = (int)((ctrLat - t.centerLat) * MoreMath.FIXPT_MULT);
+    		scaled_radius_rel = (scaled_radius * MoreMath.FIXPT_MULT_INV);
+    		scaled_lat_rel = (scaled_lat * MoreMath.FIXPT_MULT_INV);
     		tileCache = t;    		
     	}         
     	float px=scaled_radius_rel * (lon - ctrLonRel);        

@@ -83,22 +83,24 @@ public class MoreMath {
 
 	/**
 	 * Average earth radius of the WGS84 geoid in meters.
-	 * 
-	 * This is also used as fixed point multiplier to convert
-	 * latitude / longitude from radians to fixpoint representation.
-	 * With this multiplier, one should get a resolution of 1m at the equator.
-	 * 
-	 * This constant has to be in synchrony with the value in Osm2GpsMid.
-	 * 
 	 * The old value used here was 6378140 and 6378159.81 for SingleTile."fpm".
 	 */
 	public static final double PLANET_RADIUS_D = 6371000.8d;
 	public static final float PLANET_RADIUS = 6371000.8f;
-	
+
 	/**
-	 * 1 / PLANET_RADIUS, this saves a floating point division.
+	 * This constant is used as fixed point multiplier to convert
+	 * latitude / longitude from radians to fixpoint representation.
+	 * With this multiplier, one should get a resolution of 1m at the equator.
+	 * 
+	 * This constant has to be in synchrony with the value in Osm2GpsMid.
 	 */
-	public static final float PLANET_RADIUS_INV = 1.0f / PLANET_RADIUS;
+	public static final float FIXPT_MULT = PLANET_RADIUS; 
+
+	/**
+	 * 1 / FIXPT_MULT, this saves a floating point division.
+	 */
+	public static final float FIXPT_MULT_INV = 1.0f / FIXPT_MULT;
 
 	// cannot construct
 	private MoreMath() {}
