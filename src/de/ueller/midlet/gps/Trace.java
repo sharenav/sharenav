@@ -2240,6 +2240,9 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	public synchronized void alert(String title, String message, int timeout) {
 //		#debug info
 		logger.info("Showing trace alert: " + title + ": " + message);
+		if (timeout == Alert.FOREVER) {
+			timeout = 10000;
+		}
 		currentAlertTitle = title;
 		currentAlertMessage = message;
 		synchronized (this) {
