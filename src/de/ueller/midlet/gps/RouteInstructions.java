@@ -1025,7 +1025,26 @@ public class RouteInstructions {
 		return (ConnectionWithNode) route.elementAt(i);
 	}
 	
+	/** returns the next (in the current routeMode) existing route Element with alternatives */
+	private ConnectionWithNode getNextExistingRouteElement(int i) {
+		ConnectionWithNode current = (ConnectionWithNode) route.elementAt(i);
+		while (current.numToRoutableWays <= 1) {
+			i++;
+			current = getRouteElement(i);
+		}
+		return getRouteElement(i + 1);
+	}
 
+	/** returns the previous (in the current routeMode) existing route Element with alternatives */
+	private ConnectionWithNode getPreviousExistingRouteElement(int i) {
+		ConnectionWithNode prev = (ConnectionWithNode) route.elementAt(i - 1);
+		while (prev.numToRoutableWays <= 1 && i > 0) {
+			i--;
+			prev = getRouteElement(i);
+		}
+		return prev;
+	}	
+	
 	/** combine instructions that are closer than 25 m to the previous one into single instructions */
 	private void combineCloseInstructions(int iInstructionStart, int iInstructionCurrent) {
 		if (iInstructionStart < 2) {
@@ -1035,12 +1054,17 @@ public class RouteInstructions {
 		ConnectionWithNode cPrev = (ConnectionWithNode) route.elementAt(iInstructionStart-1);
 		for (int i = iInstructionStart; i <= iInstructionCurrent; i++){
 			c = (ConnectionWithNode) route.elementAt(i);
-			if( (c.wayDistanceToNext < 3)) {
-				c.wayRouteInstruction = RI_SKIPPED;
-				c.wayRouteFlags |= Legend.ROUTE_FLAG_VERY_SMALL_DISTANCE;
+			if (cPrev.numToRoutableWays <= 1) {
+				// ignore connections that only exist because of other route modes
 				cPrev=c;
 				continue;
 			}
+//			if( (c.wayDistanceToNext < 3)) {
+//				c.wayRouteInstruction = RI_SKIPPED;
+//				c.wayRouteFlags |= Legend.ROUTE_FLAG_VERY_SMALL_DISTANCE;
+//				cPrev=c;
+//				continue;
+//			}
 			// skip connections that are closer than 25 m to the previous one
 			if( (i<route.size()-1 && ProjMath.getDistance(c.to.lat, c.to.lon, cPrev.to.lat, cPrev.to.lon) < 25)
 			// only combine direction instructions
@@ -1076,10 +1100,10 @@ public class RouteInstructions {
 		int oldNameIdx = -2;
 		for (int i = iInstructionStart - 1; i < iInstructionCurrent; i++){
 			c = (ConnectionWithNode) route.elementAt(i);
-			cStart = (ConnectionWithNode) route.elementAt(i-1);
+			cStart = getPreviousExistingRouteElement(i);
 			cPrev = cStart;
 			oldNameIdx = cStart.wayNameIdx;
-			cNext = (ConnectionWithNode) route.elementAt(i+1);
+			cNext = (ConnectionWithNode) getNextExistingRouteElement(i);
 			while (	i < iInstructionCurrent
 					&&
 					(
@@ -1133,7 +1157,7 @@ public class RouteInstructions {
 				cPrev = c;
 				c = cNext;
 				if (i < iInstructionCurrent) {
-					cNext = (ConnectionWithNode) route.elementAt(i+1);
+					cNext = getNextExistingRouteElement(i);
 				}
 			}			
 		}
