@@ -374,6 +374,8 @@ public class Way extends Entity{
 		short searchCon2Lon = (short) ((pc.searchCon2Lon - t.centerLon) * MoreMath.FIXPT_MULT);
 		
 		boolean isCircleway = isCircleway(t);
+		byte bearingForward = 0;
+		byte bearingBackward = 0;
 		// check if way contains both search connections
 		// System.out.println("search path nodes: " + path.length);
 		for (short i = 0; i < path.length; i++) {
@@ -416,6 +418,12 @@ public class Way extends Entity{
 										(t.centerLat + t.nodeLat[idxC] * MoreMath.FIXPT_MULT_INV),
 										(t.centerLon + t.nodeLon[idxC] * MoreMath.FIXPT_MULT_INV)
 									);
+								if (d == 1) {
+									bearingForward = pc.conWayBearings[pc.conWayBearingsCount];
+								} else {
+									bearingBackward = pc.conWayBearings[pc.conWayBearingsCount];									
+								}
+//								System.out.println("Bearing: " + pc.conWayBearings[pc.conWayBearingsCount] + new Node(t.centerLat+ t.nodeLat[idxC] * MoreMath.FIXPT_MULT_INV, t.centerLon + t.nodeLon[idxC] * MoreMath.FIXPT_MULT_INV, true).toString());
 								pc.conWayBearingsCount++;
 							} else {
 								System.out.println("Bearing count is > 8");
@@ -528,13 +536,16 @@ public class Way extends Entity{
 						(direction==-1 && containsCon1At > 0)
 					) {
 						int idxC = path[containsCon1At + direction];
-						pc.conWayStartBearing = MoreMath.bearing_start(
-							(pc.searchCon1Lat),
-							(pc.searchCon1Lon),
-							(t.centerLat + t.nodeLat[idxC] * MoreMath.FIXPT_MULT_INV),
-							(t.centerLon + t.nodeLon[idxC] * MoreMath.FIXPT_MULT_INV)
-						);
+						pc.conWayStartBearing = (direction==1) ? bearingForward : bearingBackward;							
+
+//						pc.conWayStartBearing = MoreMath.bearing_start(
+//							(pc.searchCon1Lat),
+//							(pc.searchCon1Lon),
+//							(t.centerLat + t.nodeLat[idxC] * MoreMath.FIXPT_MULT_INV),
+//							(t.centerLon + t.nodeLon[idxC] * MoreMath.FIXPT_MULT_INV)
+//						);
 				}
+//				System.out.println("pc.conWayStartBearing: " + pc.conWayStartBearing);
 
 				if ( (direction==1 && containsCon2At > 0) 
 						||

@@ -173,7 +173,7 @@ public class RouteLineProducer implements Runnable {
 						int iBearingRoute = (int) (cTo.wayConStartBearing) * 2;
 						if (iBearingRoute < 0) iBearingRoute += 360;
 
-						//System.out.println("" + iBearingRoute + " " + iBearingAlternative);
+//						System.out.println(b + ":" + iBearingRoute + " " + iBearingAlternative);
 
 						// if the bearing difference is more than 180 degrees, the angle in the other direction is smaller,
 						// so simply swap signs of the bearings to make the later comparison give the opposite result 
