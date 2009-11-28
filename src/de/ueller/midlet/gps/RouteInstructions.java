@@ -1025,10 +1025,12 @@ public class RouteInstructions {
 		return (ConnectionWithNode) route.elementAt(i);
 	}
 	
-	/** returns the next (in the current routeMode) existing route Element with alternatives */
+	/** returns the next (in the current routeMode) route Element with alternatives
+		if there's no next one with alternatives, the last route element will be returned
+	 */
 	private ConnectionWithNode getNextExistingRouteElement(int i) {
 		ConnectionWithNode current = (ConnectionWithNode) route.elementAt(i);
-		while (current.numToRoutableWays <= 1) {
+		while (current.numToRoutableWays <= 1 && i < route.size() - 2) {
 			i++;
 			current = getRouteElement(i);
 		}
