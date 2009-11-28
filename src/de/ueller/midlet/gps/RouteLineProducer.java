@@ -118,7 +118,7 @@ public class RouteLineProducer implements Runnable {
 		// clear stored nameidxs
 		pc.conWayNumNameIdxs = 0;
 		pc.conWayNameIdxs.removeAll();
-		pc.conWayBearings.removeAllElements();
+		pc.conWayBearingsCount = 0;
 		pc.setP(new Proj2D(new Node(pc.searchCon1Lat,pc.searchCon1Lon, true),5000,100,100));
 		for (int i=0; i<4; i++){
 			trace.t[i].walk(pc, Tile.OPT_WAIT_FOR_LOAD | Tile.OPT_CONNECTIONS2WAY);
@@ -150,9 +150,8 @@ public class RouteLineProducer implements Runnable {
 			
 //			System.out.println(iConnFrom + ": " + cTo.wayConStartBearing);
 			// check if we need a bearing instruction at this connection
-			for (int b = 0; b < pc.conWayBearings.size(); b++) {
-				Byte oBearingAlternative = (Byte) pc.conWayBearings.elementAt(b);
-				byte bearingAlternative = oBearingAlternative.byteValue();
+			for (int b = 0; b < pc.conWayBearingsCount; b++) {
+				byte bearingAlternative = pc.conWayBearings[b];
 //				System.out.println(bearing);
 				
 				if (cTo.wayConStartBearing != bearingAlternative) {					

@@ -407,13 +407,18 @@ public class Way extends Entity{
 								pc.conWayNumMotorways++;
 							}							
 							int idxC = path[i + d];
-							byte bearing = MoreMath.bearing_start(
-									(pc.searchCon1Lat),
-									(pc.searchCon1Lon),
-									(t.centerLat + t.nodeLat[idxC] * MoreMath.FIXPT_MULT_INV),
-									(t.centerLon + t.nodeLon[idxC] * MoreMath.FIXPT_MULT_INV)
-							);
-							pc.conWayBearings.addElement(new Byte(bearing) );
+							if (pc.conWayBearingsCount < 8) {
+								pc.conWayBearings[pc.conWayBearingsCount] =
+									MoreMath.bearing_start(
+										(pc.searchCon1Lat),
+										(pc.searchCon1Lon),
+										(t.centerLat + t.nodeLat[idxC] * MoreMath.FIXPT_MULT_INV),
+										(t.centerLon + t.nodeLon[idxC] * MoreMath.FIXPT_MULT_INV)
+									);
+								pc.conWayBearingsCount++;
+							} else {
+								System.out.println("Bearing count is > 8");
+							}
 						}
 					}
 					// remember nameIdx's leading away from the connection, so we can later on check if multiple ways lead to the same street name

@@ -107,8 +107,12 @@ public class PaintContext extends ScreenContext {
 	public volatile boolean highlightedPathOnTop;
 	/** used to find out if the connection leads to multiple same named ways*/
 	public volatile intTree conWayNameIdxs = new intTree();
+
+	/** count of bearings used to find out if the connection leads straight-on to multiple named routable ways for giving a bearing instruction*/  
+	public volatile int conWayBearingsCount;
 	/** used to find out if the connection leads straight-on to multiple routable ways for giving a bearing instruction*/  
-	public volatile Vector conWayBearings = new Vector(8);
+	public volatile byte conWayBearings[] = new byte[8];
+
 	/** used to vaguely identify ways that might contain a solution path for highlighting*/
 	public volatile int conWayNumNameIdxs;  
 	
