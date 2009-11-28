@@ -162,10 +162,17 @@ public class RouteLineProducer implements Runnable {
 						(riRoute == RouteInstructions.RI_STRAIGHT_ON && riCheck == RouteInstructions.RI_STRAIGHT_ON)
 						// but not if there's exactly one alternative to leave/enter the motorway don't add the bearing
 						&& pc.conWayNumMotorways != 1
-						/* and only if the way of the alternative bearing has a way name (avoids e.g. bearing instructions when passing unnamed service streets)
-						 * or neither the alternative nor the way on the route has a name (keeps bearing instructions e.g. for multiple unnamed footways)
-						 */
-						&& (pc.conWayBearingHasName[b] || (!pc.conWayBearingHasName[b] && cFrom.wayNameIdx < 0)) 
+						&& (
+							// and only if the way of the alternative bearing has a way name (avoids e.g. bearing instructions when passing unnamed service streets)
+							pc.conWayBearingHasName[b]
+							||
+							// or neither the alternative nor the way on the route has a name (keeps bearing instructions e.g. for multiple unnamed footways)
+							(!pc.conWayBearingHasName[b] && cFrom.wayNameIdx < 0)
+						    ||
+							// or when the alternative way and the way on the route have approximately the same width (e.g. secondary / secondary link)
+						    // FIXME: we should rather check for both way types being mainstreet net than for their way widths
+						    Math.abs(Legend.getWayDescription(pc.conWayBearingWayType[b]).wayWidth - Legend.getWayDescription(cFrom.wayType).wayWidth) <= 1
+						)
 					) {
 						int iBearingAlternative = (int) (bearingAlternative) * 2;
 						if (iBearingAlternative < 0) iBearingAlternative += 360;

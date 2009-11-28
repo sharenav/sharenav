@@ -411,6 +411,7 @@ public class Way extends Entity{
 							int idxC = path[i + d];
 							if (pc.conWayBearingsCount < 8) {
 								pc.conWayBearingHasName[pc.conWayBearingsCount] = (nameIdx >= 0);
+								pc.conWayBearingWayType[pc.conWayBearingsCount] = this.type;
 								pc.conWayBearings[pc.conWayBearingsCount] =
 									MoreMath.bearing_start(
 										(pc.searchCon1Lat),
