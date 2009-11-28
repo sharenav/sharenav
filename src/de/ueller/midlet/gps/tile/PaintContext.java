@@ -112,6 +112,8 @@ public class PaintContext extends ScreenContext {
 	public volatile int conWayBearingsCount;
 	/** used to find out if the connection leads straight-on to multiple routable ways for giving a bearing instruction*/  
 	public volatile byte conWayBearings[] = new byte[8];
+	/** used to find out if the connection leads straight-on to multiple named routable ways for giving a bearing instruction*/  
+	public volatile boolean conWayBearingHasName[] = new boolean[8];
 
 	/** used to vaguely identify ways that might contain a solution path for highlighting*/
 	public volatile int conWayNumNameIdxs;  

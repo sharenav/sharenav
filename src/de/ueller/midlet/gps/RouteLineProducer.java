@@ -160,8 +160,12 @@ public class RouteLineProducer implements Runnable {
 					// if we got a second straight-on way at the connection, we need to tell the bearing
 					if (
 						(riRoute == RouteInstructions.RI_STRAIGHT_ON && riCheck == RouteInstructions.RI_STRAIGHT_ON)
-						// if there's exactly one alternative to leave/enter the motorway don't add the bearing
+						// but not if there's exactly one alternative to leave/enter the motorway don't add the bearing
 						&& pc.conWayNumMotorways != 1
+						/* and only if the way of the alternative bearing has a way name (avoids e.g. bearing instructions when passing unnamed service streets)
+						 * or neither the alternative nor the way on the route has a name (keeps bearing instructions e.g. for multiple unnamed footways)
+						 */
+						&& (pc.conWayBearingHasName[b] || (!pc.conWayBearingHasName[b] && cFrom.wayNameIdx < 0)) 
 					) {
 						int iBearingAlternative = (int) (bearingAlternative) * 2;
 						if (iBearingAlternative < 0) iBearingAlternative += 360;
@@ -186,7 +190,7 @@ public class RouteLineProducer implements Runnable {
 						}
 					}
 				}				
-			}		
+			}
 
 			// get ways with same names leading away from the connection
 			int iNumWaysWithThisNameConnected = 99;
