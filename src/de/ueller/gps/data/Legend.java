@@ -195,7 +195,7 @@ public class Legend {
 			 * e.g. GpsMid-Generic-Full directly (to configure external map using 
 			 * icon menu which will include legend.dat with colors).
 			 */
-			COLORS[COLOR_MAP_BACKGROUND] = 0x009BFF9B;
+			COLORS[COLOR_MAP_BACKGROUND] = 0x002020FF;
 			COLORS[COLOR_WAYNAME_BACKGROUND] = 0x00FFFFFF;
 			COLORS[COLOR_ICONMENU_ICON_BORDER_HIGHLIGHT] = 0x00FF0000;
 			COLORS[COLOR_ICONMENU_ICON_TEXT] = 0x00FFFFFF;
