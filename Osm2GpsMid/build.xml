@@ -144,6 +144,7 @@
         <fileset dir="${resources.dir}">
      		<include name="*.jar" />
         	<include name="*.xml" />
+   	 		<include name="style-file.dtd" />
      		<include name="version.properties" />
         	<include name="**/*.png" />
 		</fileset>
@@ -151,8 +152,6 @@
      		<include name="**/*.properties" />
      	 	<include name="**/charMap.txt" />
      	 </fileset>
-	 <fileset file="style-file.xml" />
-   	 <fileset file="style-file.dtd" />
       </jar>
    </target>
 	
