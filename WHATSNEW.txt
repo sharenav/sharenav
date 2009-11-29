@@ -34,6 +34,7 @@ GpsMid 0.5.09
        - when there is no route calculated but a target is set, show air distance
          instead of remaining route distance in the map screen
        - New map feature "Auto zoom": this will automatically zoom in and out the map according to the driving speed
+         (after zooming in or out manually in auto zoom mode, gps recentering will also activate the auto zoom again)
        - Turn restrictions included in the midlet can be displayed in the map with Setup/Debug Options
        - Max distance for displaying way name while scrolling is now calculated differently.
          A minimum of 10 meters is used for high zoom levels
@@ -47,7 +48,8 @@ GpsMid 0.5.09
        - Using a different icon for waypoints than for the points of a track. (thx Petr Dlouhý)
        - Fix for bug 2737256: Cursor position moved before "Set as target" (thx Petr Dlouhý)
        - auto save the gpx track every 256 points, not only at the end of the recording
-       - Option to save a waypoint as favorite (will be shown in Search screen if no or the first key is pressed) 
+       - Option to save a waypoint as favorite (will be shown in Search screen if no or only the first key is pressed)
+       - Replay recorded tracks (experimental) 
        *** Map Elements ***
        - Improved visibility of railways based on GeoCache style - thx GoemonGps/billi25
        - Add place=island as a workaround for land underwater - thx pos_ei_don_
