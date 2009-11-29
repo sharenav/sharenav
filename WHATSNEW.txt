@@ -1,10 +1,10 @@
 GpsMid 0.5.09
        *** Usability ***
        - Icon menus are available as an alternative user interface (activateable in Setup / Display Options)
-         (multiple sized icon sets are included, choose with useIcons=small|true|big|false in the .properties file
+         Multiple sized icon sets are included, choose with useIcons=small|true|big|false in the .properties file
          if and which icon set is included. Default is useIcons=small|true, which includes a medium sized icon set
-       - use numeric keys to directly access icons in icon menu and use long presses of numeric keys
-         to directly access the tabs of the icon menu - this can be activated in Setup (thx Petr Dlouhý) 
+       - Use numeric keys to directly access icons in icon menu and use long presses of numeric keys
+         to directly access the tabs of the icon menu - this can be activated in Setup/GUI (thx Petr Dlouhý) 
        - Specify in Setup/Display Options to keep backlight on only while GPS is started
        - Many more midlet colors are specifiable in the style-file now (including colors for night mode)
        - Touch screen support:
@@ -49,13 +49,13 @@ GpsMid 0.5.09
        - Fix for bug 2737256: Cursor position moved before "Set as target" (thx Petr Dlouhý)
        - auto save the gpx track every 256 points, not only at the end of the recording
        - Option to save a waypoint as favorite (will be shown in Search screen if no or only the first key is pressed)
-       - Replay recorded tracks (experimental) 
+       - Replay recorded track (experimental) 
        *** Map Elements ***
        - Improved visibility of railways based on GeoCache style - thx GoemonGps/billi25
        - Add place=island as a workaround for land underwater - thx pos_ei_don_
        *** Routing ***
        - Foot routing (if bundled into the midlet, see below)
-       - Multiple Route Modes can be bundled for a single midlet with a setting in the .properties file,
+       - Multiple Route Modes can be bundled into a single midlet with a setting in the .properties file,
          e.g. useRouting = motorcar, bicycle, foot
        - GpsMid asks which route mode to use on start of routing
        - If you select in GUI Options "optimize for routing", "Route" will be the default action in the Search screen
@@ -66,24 +66,24 @@ GpsMid 0.5.09
          in the middle of the route
          (specify distance from start and target where main street net calculation starts in Routing Options)
        - Route calculation tries to find a motorway at the start of calculation (Option: Look for motorways)
-       - Examine motorways further during route calculation, so it is not left to early when the motorway makes a curve
+       - Examine motorways further during route calculation, so it is not left too early when the motorway makes a curve
          but is in the long term the better route (Option: Boost motorways)
        - Examine trunks and primaries further to find the best way around cities instead of routing through
          (Option: Boost trunks & primaries)
        - Route Line is now determined in a separate thread in the background,
-         therefore instructions can be given already when the route line is not known completely
+         therefore instructions can be given already before the route line is known completely
+       - Faster detection of the route line ways during rendering (speeds up map rendering, especially on long routes)
        - U-turn instruction
        - Cross area routing (e.g. for foot routing through pedestrian zones)
        - Permissive Route Access Restrictions are now possible
-         (e.g. bicycle routing for an abandoned aeroway=runway if bicycle=true is set
+         (e.g. bicycle routing for an abandoned aeroway=runway if bicycle=true is set)
        - Much faster route calculation for bicycles (thx to apmonkey for the hint)
-       - Faster detection of the highlighted ways during rendering (speeds up map rendering, especially on long routes)
-       - optionally show remaining route duration / ETA in map screen
+       - Optionally show remaining route duration / ETA in map screen
          (based on ways' typical/max speeds/number of traffic lights) 
        *** OSM Editing and other only with Internet Connection available features ***
        - Support for GeoHack in "Online Info" (thx jkpj)
        *** Midlet creation with Osm2GpsMid ***
-       - improved output, e.g. OSM links to errors to fix and duration for some creation steps
+       - Improved output, e.g. OSM links to errors to fix and duration for some creation steps
        - New option maxTileWays0, maxTileWays1, maxTileWays2 and maxTileWays3 in .properties files
          for specifying the maximum number of ways bundled into tiles of tile zoom level 0 to 3:         
          With Osm2GpsMid 0.5.0 into each tile of a tile zoom level a maximum of 255 ways was included.
