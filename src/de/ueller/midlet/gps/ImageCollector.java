@@ -276,7 +276,7 @@ public class ImageCollector implements Runnable {
 		    tr.scale /= 1.5f;
 		    recoverZoomedIn = " Zooming in to recover.";
 		   }   
-		   logger.fatal("ImageCollector thread crashed with out of memory: " + oome.getMessage() + recoverZoomedIn);
+		   logger.fatal("ImageCollector ran out of memory: " + oome.getMessage() + recoverZoomedIn);
 		} catch (Exception e) {
 			crash++;
 			logger.exception("ImageCollector thread crashed unexpectedly with error ", e);
@@ -370,10 +370,10 @@ public class ImageCollector implements Runnable {
 		 *  requires to be exactly on the pixel when zoomed out far
 		 */
 		final int SQUARE_MAXPIXELS = 5 * 5;
-		// Tolerance of 10 pixels converted to meters
-		float pixDest = 10 / paintPC.ppm;
-		if (pixDest < 10) {
-			pixDest = 10;
+		// Tolerance of 15 pixels converted to meters
+		float pixDest = 15 / paintPC.ppm;
+		if (pixDest < 15) {
+			pixDest = 15;
 		}
 		if (paintPC.trace.gpsRecenter) {
 			// Show closest routable way name if map is gpscentered and we are closer 
@@ -389,7 +389,7 @@ public class ImageCollector implements Runnable {
 				wayForName = paintPC.actualWay;
 			}
 		} else if (paintPC.getDstFromSquareDst(paintPC.squareDstToWay) <= pixDest) {
-			// If not gpscentered show closest way name if it's no more than 10 pixels away.
+			// If not gpscentered show closest way name if it's no more than 15 pixels away.
 			wayForName = paintPC.actualWay;
 		}
 		/*
@@ -469,6 +469,7 @@ public class ImageCollector implements Runnable {
 		}
 		return getDrawnCenter;
 	}
+
 	private synchronized void newCollected() {
 		while ((pc[nextPaint].state != PaintContext.STATE_READY) || (pc[nextCreate].state != PaintContext.STATE_READY)) {
 			try {
@@ -482,8 +483,8 @@ public class ImageCollector implements Runnable {
 	}
 
 	/**
-	 * inform the ImagecColloctor, that new vector-Data is available
-	 * and its time to create a new Image
+	 * Inform the ImageCollector that new vector data is available
+	 * and it's time to create a new image.
 	 */
 	public synchronized void newDataReady() {
 		needRedraw = true;
