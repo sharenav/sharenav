@@ -1,13 +1,20 @@
-@if not exist %ProgramFiles%\inkscape\inkscape.exe (
-@ echo Inkscape from http://www.inkscape.org/download/ is required
-@ pause
-@ exit
+@if not exist "%ProgramFiles%\inkscape\inkscape.exe" (
+	@if not exist "%ProgramFiles(x86)%\inkscape\inkscape.exe" (		
+		@ echo Inkscape from http://www.inkscape.org/download/ is required
+		@ pause
+		@ exit
+	) else (
+		@set INKSCAPE="%ProgramFiles(x86)%\inkscape\inkscape.exe"
+	)
+) else (
+	@set INKSCAPE="%ProgramFiles%\inkscape\inkscape.exe"
 )
+@echo Inkscape is %INKSCAPE%  
 
 @if not exist pngcrush.exe (
-@ echo pngcrush from http://sourceforge.net/projects/pmt/files/ is required
-@ pause
-@ exit
+	@ echo pngcrush from http://sourceforge.net/projects/pmt/files/ is required
+	@ pause
+	@ exit
 )
 
 cd main
@@ -47,7 +54,7 @@ exit
 REM %1: edgeLen of icon  Parameter %2: prefix for png
 :svg2png
 REM Konvertieren der svg-Dateien im aktuellen Verzeichnis nach png
-for /R %%i in (*.svg) do start /wait %ProgramFiles%\inkscape\inkscape.exe -f "%%~fi" -e "%%~dpi%2%%~ni.png" -D -w %1
+for /R %%i in (*.svg) do start "Inkscape" /wait %INKSCAPE% -f "%%~fi" -e "%%~dpi%2%%~ni.png" -D -w %1
 
 REM Komprimieren der png-Dateien in den Unterordner crushed
 ..\pngcrush >nul -d crushed -brute %2*.png
