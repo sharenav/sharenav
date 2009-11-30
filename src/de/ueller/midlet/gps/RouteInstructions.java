@@ -437,6 +437,8 @@ public class RouteInstructions {
 							pict=scaledPict;						
 					    	
 					    	sbRouteInstruction.append(getInstruction(cNow.wayRouteFlags, aNow));					    	
+
+					    	ConnectionWithNode cBefore = (ConnectionWithNode) route.elementAt(iNow - 1);
 					    	
 					    	if (intDistNow>=PASSINGDISTANCE && !checkDirectionSaid) {
 								//System.out.println("iNow :" + iNow + " iPassedRA: " + iPassedRouteArrow + " prepareSaidArrow: " + iPrepareInstructionSaidArrow + " iNamedArrow: " + iNamedArrow);
@@ -469,6 +471,8 @@ public class RouteInstructions {
 									&& iNow != iInstructionSaidArrow
 									&& iNow != iInInstructionSaidArrow
 									&& intDistNow <= Configuration.getTravelMode().maxInMeters
+									// never tell in-instructions earlier than 350 meters before the arrow unless the route speed of the way to the arrow is more than 70 km/h 
+									&& (intDistNow <= 350 || (3.6f * 5 * cBefore.wayDistanceToNext / cBefore.durationFSecsToNext) > 70)
 								) {
 									soundRepeatDelay=60;
 									soundToPlay.append("IN;" + Integer.toString(intDistNow / 100)+ "00;METERS;" + getSoundInstruction(cNow.wayRouteFlags, aNow));								
@@ -1404,6 +1408,7 @@ public class RouteInstructions {
 				}
 				sb.append(" Cons:" + c.to.getConSize() + " numRoutableWays: " + c.numToRoutableWays + " startBearing: " + c.startBearing + "/" + c.wayConStartBearing + " endBearing: "+ c.endBearing + "/" + c.wayConEndBearing);
 				sb.append(" Duration: " + c.durationFSecsToNext / 5);
+				sb.append(" Route Speed in km/h: " + (int) (3.6f * 5 * c.wayDistanceToNext / c.durationFSecsToNext));
 				System.out.println(sb.toString());
 			}
 		}		
