@@ -6,9 +6,9 @@
 
 package de.ueller.midlet.gps;
 
+import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Legend;
 import de.ueller.midlet.gps.data.Proj2DMoveUp;
-import de.ueller.midlet.gps.tile.SoundDescription;
 
 import java.io.InputStream;
 //#if polish.api.mmapi	
@@ -47,8 +47,8 @@ public class NoiseMaker
 	private static volatile long mOldMsTime = 0;
 	private static volatile String mOldPlayingNames = "";
 	private static volatile byte mTimesToPlay = 0;
-	private static volatile String mNextSoundFile = null;
 	private static volatile String mPlayingSoundName = "";
+	private static String lastSuccessfulSuffix = "amr";
 	
 	public NoiseMaker()
 	{
@@ -224,7 +224,7 @@ public class NoiseMaker
 			mPlayingNameIndex = 0;
 			mPlayingNames=names;
 		}
-		if (determineNextSoundFile()) {
+		if (determineNextSoundName() != null) {
 			mPlayingNameIndex = 0;
 			playNextSoundFile();
 		} else {
@@ -264,95 +264,100 @@ public class NoiseMaker
 			return nextSoundName;
 		}
 	}
-	
-	// determine name of next sound part
-	private static boolean determineNextSoundFile() {
-		String nextSoundName = determineNextSoundName();
-		if (nextSoundName == null) {
-			mNextSoundFile = null;
-			return false;
-		}
-		
-		SoundDescription sDes = Legend.getSoundDescription(nextSoundName);
-		if (sDes != null) {
-			mNextSoundFile = sDes.soundFile;
-			//#debug debug
-			mLogger.debug("using soundfile " + mNextSoundFile + " from description for " +
-					nextSoundName);
-		}
+
+	private synchronized boolean createResourcePlayer(String soundName) {
 		//#debug debug
-		else mLogger.debug("no description found for " + nextSoundName);
-		if (sDes == null || mNextSoundFile == null) {
-			if (getToneSequence(nextSoundName) != null) {
-				return false;
-			}
-			mNextSoundFile = "/" + nextSoundName.toLowerCase() + ".amr";
-			//#debug debug
-			mLogger.debug("using soundname + extension as sound file: " + mNextSoundFile);
-		}
-		return true;
-	}
-	
-	private synchronized void createResourcePlayer(String soundFile) {
-		//#debug debug
-		mLogger.debug("createResourcePlayer for " + soundFile);
+		mLogger.debug("createResourcePlayer for " + soundName);
 		if (mPlayer != null) {
 			//#debug debug
 			mLogger.debug("Closing old player");
 			mPlayer.close();
 			mPlayer = null;
 		}	
-		try {
-			InputStream is = getClass().getResourceAsStream(soundFile);
+		final String soundFormats[] = {".wav", ".amr", ".mp3", ".ogg"}; 
+		String trySuffix;
+		String soundFileWithSuffix;
+		boolean fileFound = false;
+		for (int i = -1; i < soundFormats.length; i++) {
+			if (i == -1) {
+				// try last successful suffix next
+				 trySuffix = lastSuccessfulSuffix;
+			} else {
+				// try suffix list last
+				trySuffix = soundFormats[i];
+//				System.out.println("****************** try " + trySuffix);
+			}
+			soundFileWithSuffix = "/" + soundName.toLowerCase() + trySuffix;
+			//System.out.println("******************" + soundFileWithSuffix);
+			
+			InputStream is = getClass().getResourceAsStream(soundFileWithSuffix);
 			if (is != null) {
 				//#debug debug
-				mLogger.debug("Got Inputstream for " + soundFile);
+				mLogger.debug("Got Inputstream for " + soundFileWithSuffix);
 				String mediaType = null;
-				if (soundFile.toLowerCase().endsWith(".amr") ) {
+				if (trySuffix.equals(".amr") ) {
 					mediaType = "audio/amr";
-				} else if (soundFile.toLowerCase().endsWith(".wav") ) {
-					mediaType = "audio/x-wav";
-				} else if (soundFile.toLowerCase().endsWith(".mp3") ) {
+				} else if (trySuffix.equals(".mp3") ) {
 					mediaType = "audio/mpeg";
-				} else if (soundFile.toLowerCase().endsWith(".ogg") ) {
+				} else if (trySuffix.equals(".wav") ) {
+					mediaType = "audio/x-wav";
+				} else if (trySuffix.equals(".ogg") ) {
 	            	mediaType = "audio/x-ogg";
 				}
-				mPlayer = Manager.createPlayer(is, mediaType);
-				if (mPlayer!=null) {
-					//#debug debug
-					mLogger.debug("created player for " + soundFile);
-					mPlayer.realize();
-					//#debug debug
-					mLogger.debug("realized player for " + soundFile);
-					mPlayer.addPlayerListener( this );
-					VolumeControl volCtrl = (VolumeControl) mPlayer.getControl("VolumeControl");
-					if (volCtrl != null) {
-						volCtrl.setLevel(100);
-					}
+				try {
+					mPlayer = Manager.createPlayer(is, mediaType);
+				} catch (Exception ex) {
+					mPlayer = null;
+			    	mLogger.exception("Failed to create resource player for " + soundFileWithSuffix, ex);
 				}
-                //#debug debug
-                else mLogger.debug("Could NOT CREATE PLAYER for " + mediaType);
+				if (mPlayer != null) {
+						//#debug debug
+						mLogger.debug("created player for " + soundFileWithSuffix);
+						try {
+							mPlayer.realize();
+						} catch (Exception ex) {
+					    	mLogger.exception("Failed to realize player for " + soundFileWithSuffix, ex);
+							mPlayer = null;
+						}
+						//#debug debug
+						mLogger.debug("realized player for " + soundFileWithSuffix);
+						mPlayer.addPlayerListener( this );
+						VolumeControl volCtrl = (VolumeControl) mPlayer.getControl("VolumeControl");
+						if (volCtrl != null) {
+							volCtrl.setLevel(100);
+						}
+						lastSuccessfulSuffix = trySuffix;
+//						System.out.println("****************** successful " + trySuffix);
+						fileFound = true;
+						break;
+				}
+				else {
+	                //#mdebug debug
+					mLogger.debug("Could NOT CREATE PLAYER for " + mediaType);
+	                //#enddebug
+				}
 			}
 			//#debug debug
-			else mLogger.debug("RESOURCE NOT FOUND: " + soundFile);
-		} catch (Exception ex) {
-	    	mLogger.exception("Failed to create resource player for " + soundFile, ex);
-			mPlayer = null;
+			else mLogger.debug("RESOURCE NOT FOUND: " + soundFileWithSuffix);
 		}
+		return fileFound;
 	}
 	
 		
 	private synchronized void playNextSoundFile() {
-		determineNextSoundFile();
-		if (mNextSoundFile != null) {
-			createResourcePlayer(mNextSoundFile);
-			if (mPlayer != null) {
-				try {
-					mPlayer.start();
-					//#debug debug
-					mLogger.debug("player for " + mNextSoundFile + " started");
-				} catch (Exception ex) {
-			    	mLogger.exception("Failed to play sound", ex);
+		String nextSoundName = determineNextSoundName();
+		if (nextSoundName != null) {
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_SND_TONE_SEQUENCES_PREFERRED) && getToneSequence(nextSoundName) != null) {
+				playSequence(nextSoundName);
+			} else if (createResourcePlayer(nextSoundName)) {
+				if (mPlayer != null) {
+					try {
+						mPlayer.start();
+						//#debug debug
+						mLogger.debug("player for " + nextSoundName + " started");
+					} catch (Exception ex) {
+				    	mLogger.exception("Failed to play sound", ex);
+					}
 				}
 			}
 		}

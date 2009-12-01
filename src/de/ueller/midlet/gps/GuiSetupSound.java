@@ -11,8 +11,8 @@ import de.ueller.gps.data.Configuration;
 public class GuiSetupSound extends Form implements CommandListener {
 	// Groups
 	private ChoiceGroup sndGpsGroup;
-	private	String [] sndGps = new String[2];
-	private boolean[] selSndGps = new boolean[2];
+	private	String [] sndGps = new String[3];
+	private boolean[] selSndGps = new boolean[3];
 
 	private ChoiceGroup sndRoutingGroup=null;
 	private	String [] sndRouting = new String[2];
@@ -38,6 +38,7 @@ public class GuiSetupSound extends Form implements CommandListener {
 			// set choice texts and convert bits from Configuration flag into selection states
 			sndGps[0] = "Connect"; 			selSndGps[0]=Configuration.getCfgBitState(Configuration.CFGBIT_SND_CONNECT);
 			sndGps[1] = "Disconnect";		selSndGps[1]=Configuration.getCfgBitState(Configuration.CFGBIT_SND_DISCONNECT);
+			sndGps[2] = "Prefer tone sequences"; selSndGps[2]=Configuration.getCfgBitState(Configuration.CFGBIT_SND_TONE_SEQUENCES_PREFERRED);
 			sndGpsGroup = new ChoiceGroup("GPS", Choice.MULTIPLE, sndGps ,null);
 			sndGpsGroup.setSelectedFlags(selSndGps);
 			append(sndGpsGroup);
@@ -87,6 +88,7 @@ public class GuiSetupSound extends Form implements CommandListener {
 	        sndGpsGroup.getSelectedFlags(selSndGps);
 	        Configuration.setCfgBitState(Configuration.CFGBIT_SND_CONNECT, selSndGps[0], true);
 	        Configuration.setCfgBitState(Configuration.CFGBIT_SND_DISCONNECT, selSndGps[1], true);
+	        Configuration.setCfgBitState(Configuration.CFGBIT_SND_TONE_SEQUENCES_PREFERRED, selSndGps[2], true);
 
 			sndRoutingGroup.getSelectedFlags(selSndRouting);
 			Configuration.setCfgBitState(Configuration.CFGBIT_SND_ROUTINGINSTRUCTIONS, selSndRouting[0], true);

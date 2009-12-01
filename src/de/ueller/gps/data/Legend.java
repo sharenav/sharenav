@@ -19,7 +19,6 @@ import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.names.Names;
 import de.ueller.midlet.gps.routing.TravelMode;
 import de.ueller.midlet.gps.tile.POIdescription;
-import de.ueller.midlet.gps.tile.SoundDescription;
 import de.ueller.midlet.gps.tile.WayDescription;
 
 public class Legend {
@@ -27,7 +26,7 @@ public class Legend {
 	 * Specifies the format of the map on disk we expect to see
 	 * This constant must be in sync with Osm2GpsMid
 	 */
-	public final static short MAP_FORMAT_VERSION = 51;
+	public final static short MAP_FORMAT_VERSION = 52;
 	
 	/** The waypoint format used in the RecordStore. See PositionMark.java. */
 	public final static short WAYPT_FORMAT_VERSION = 2;
@@ -169,7 +168,6 @@ public class Legend {
 	
 	private static POIdescription[] pois;
 	private static WayDescription[] ways;
-	private static SoundDescription[] sounds;
 	
 	private static String namePartRequired[] = new String[3];
 	
@@ -270,9 +268,6 @@ public class Legend {
 		
 		readPOIdescriptions(ds);
 		readWayDescriptions(ds);
-		readSoundDescriptions(ds);
-		//System.out.println(getSoundDescription("DISCONNECT").soundFile);
-		//System.out.println(getSoundDescription("CONNECT").soundFile);
 				
 		ds.close();
 	}
@@ -388,15 +383,6 @@ public class Legend {
 		}
 	}	
 	
-	private static void readSoundDescriptions(DataInputStream ds) throws IOException {		
-		sounds = new SoundDescription[ds.readByte()];
-		for (int i = 0; i < sounds.length; i++) {
-			sounds[i] = new SoundDescription();
-			sounds[i].name= ds.readUTF();
-			sounds[i].soundFile= ds.readUTF();
-		}
-	}
-	
 	//#if polish.api.osm-editing
 	public static final String[] getNodeOsmTags(byte type) {
 		return pois[type].osmTags;
@@ -486,15 +472,6 @@ public class Legend {
 	
 	public static final byte getMaxWayType() {
 		return (byte)ways.length;
-	}
-	
-	public static final SoundDescription getSoundDescription(String Name) {			
-		for(byte i=0;i<sounds.length;i++) {
-			if (sounds[i].name.equals(Name)) {
-				return sounds[i];
-			}			
-		}
-		return null;
 	}
 	
 	public static final byte getMaxType() {
