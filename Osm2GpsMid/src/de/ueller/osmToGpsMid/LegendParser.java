@@ -37,7 +37,6 @@ import de.ueller.osmToGpsMid.Configuration;
 import de.ueller.osmToGpsMid.model.ConditionTuple;
 import de.ueller.osmToGpsMid.model.EntityDescription;
 import de.ueller.osmToGpsMid.model.POIdescription;
-import de.ueller.osmToGpsMid.model.SoundDescription;
 import de.ueller.osmToGpsMid.model.RouteAccessRestriction;
 import de.ueller.osmToGpsMid.model.TravelMode;
 import de.ueller.osmToGpsMid.model.TravelModes;
@@ -50,9 +49,7 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 	private Hashtable<String, Hashtable<String,Set<EntityDescription>>> wayMap;
 	private LongTri<EntityDescription> pois;
 	private LongTri<EntityDescription> ways;
-	private Vector<SoundDescription> sounds;
 	private POIdescription currentPoi;
-	private SoundDescription currentSound;
 	private TravelMode currentTravelMode;
 	private WayDescription currentWay;
 	private String currentKey;
@@ -61,7 +58,6 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 	private Hashtable<String,Integer> maxSpeedTemplates;
 	private final byte READING_WAYS=0;
 	private final byte READING_POIS=1;
-	private final byte READING_SOUNDS=2;
 	private final byte READING_ROUTEMODES=3;
 	private final byte READING_COLORS=4;
 	private final byte READING_MAXSPEED=5;
@@ -137,8 +133,6 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 			currentWay.value = "A value that should never be triggered";
 			currentWay.description = "No description";
 			ways.put(currentWay.typeNum, currentWay);
-			
-			sounds = new Vector<SoundDescription>();		
 			
 			SAXParserFactory factory = SAXParserFactory.newInstance();
 			factory.setValidating(true);
@@ -218,8 +212,6 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 			readingType=READING_WAYS;			
 		} else if (qName.equals("colors")) {
 			readingType=READING_COLORS;			
-		} else if (qName.equals("sounds")) {
-			readingType=READING_SOUNDS;			
 		} else if (qName.equals("routeModes")) {
 			readingType=READING_ROUTEMODES;
 		} else if (qName.equals("maxSpeedTemplates")) {
@@ -498,21 +490,6 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 					currentWay.hideable = atts.getValue("hideable").equalsIgnoreCase("true");
 				}
 				break;
-			case READING_SOUNDS:
-				if (qName.equals("sound")) {				
-					currentSound = new SoundDescription();
-					currentSound.name = atts.getValue("name");
-					sounds.addElement(currentSound);
-				} else if (qName.equals("soundFile")) {
-					if (currentSound!=null) {
-						currentSound.soundFile  = atts.getValue("src");
-					} else {
-						System.out.println("soundFile without sound in style file");						
-					}
-				} else if (qName.equals("changeFileExtensionTo")) {
-					Configuration.getConfiguration().changeSoundFileExtensionTo = atts.getValue("fileExt");
-				}
-				break;
 			case READING_COLORS:
 				if (qName.equals("color")) {				
 					String colorName = atts.getValue("of");
@@ -543,14 +520,6 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 						System.out.println("Error: style file contains non-existent colorName: " + colorName);												
 					}
 					break;
-				} else if (qName.equals("soundFile")) {
-					if (currentSound!=null) {
-						currentSound.soundFile  = atts.getValue("src");
-					} else {
-						System.out.println("soundFile without sound in style file");						
-					}
-				} else if (qName.equals("changeFileExtensionTo")) {
-					Configuration.getConfiguration().changeSoundFileExtensionTo = atts.getValue("fileExt");
 				}
 				break;
 			case READING_ROUTEMODES:
@@ -715,9 +684,6 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 	
 	public Collection<EntityDescription> getWayDescs() {
 		return ways.values();
-	}
-	public Vector<SoundDescription> getSoundDescs() {
-		return sounds;
 	}
 	
 	public Hashtable<String, Integer> getMaxspeedTemplates() {

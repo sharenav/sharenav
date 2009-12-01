@@ -129,146 +129,16 @@ scale alias 1: zoomed out 21x
 	<color of="tacho_text" is="00000000"/>	
   </colors>
   
-  <sounds>
-<!-- move the following line out of the comment
-     to set the file extensions of all soundFile definitions to .mp3
-	<changeFileExtensionTo fileExt=".mp3"/>
--->		
-
-<!-- these sounds have internal tone sequence
-     that will be used if commented out here
--->	
-	<sound name="CONNECT">
-		<soundFile src="connect.amr"/>
-	</sound>
-	<sound name="DISCONNECT">
-		<soundFile src="disconnect.amr"/>
-	</sound>
-<!-- these soundFiles are automatically determined by the midlet
-      and can stay commented out as long as you don't want
-      to include other sound files or formats (.mp3, .wav) for them.
+<!-- SoundFiles for these sounds are automatically included into the midlet unless useRouting=false is set in .properties file:
+	 CONNECT, DISCONNECT, PREPARE, HALF, HARD, BEAR, LEFT, RIGHT, UTURN, THEN, SOON, AGAIN, TO, ENTER_MOTORWAY, LEAVE_MOTORWAY,
+	 RAB, 1ST, 2ND, 3RD, 4TH, 5TH, 6TH, RABEXIT, CHECK_DIRECTION, ROUTE_RECALCULATION, TARGET_REACHED,
+	 IN, 100, 200, 300, 400, 500, 600, 700, 800, METERS, INTO_TUNNEL, OUT_OF_TUNNEL, FOLLOW_STREET,
+	 AREA_CROSS, AREA_CROSSED, SPEED_LIMIT
+	 Set in your properties file with which extension these sound files are included (lowercase name + .extension)
+	 e.g. useSounds=wav, amr will include e.g. prepare.wav and prepare.amr, etc.
+	 You can also provide external versions of thoses files in a sound sub-directory of the Osm2GpsMid directory.
 -->
-	<sound name="PREPARE">
-		<soundFile src="prepare.amr"/>
-	</sound>
-	<sound name="HALF">
-		<soundFile src="half.amr"/>
-	</sound>
-	<sound name="HARD">
-		<soundFile src="hard.amr"/>
-	</sound>
-	<sound name="BEAR">
-		<soundFile src="bear.amr"/>
-	</sound>
-	<sound name="LEFT">
-		<soundFile src="left.amr"/>
-	</sound>
-	<sound name="RIGHT">
-		<soundFile src="right.amr"/>
-	</sound>
-	<sound name="UTURN">
-		<soundFile src="uturn.amr"/>
-	</sound>
-	<sound name="THEN">
-		<soundFile src="then.amr"/>
-	</sound>
-	<sound name="SOON">
-		<soundFile src="soon.amr"/>
-	</sound>
-	<sound name="AGAIN">
-		<soundFile src="again.amr"/>
-	</sound>
-	<sound name="TO">
-		<soundFile src="to.amr"/>
-	</sound>
-	<sound name="ENTER_MOTORWAY">
-		<soundFile src="enter_motorway.amr"/>
-	</sound>
-	<sound name="LEAVE_MOTORWAY">
-		<soundFile src="leave_motorway.amr"/>
-	</sound>
-	<sound name="RAB">
-		<soundFile src="rab.amr"/>
-	</sound>
-	<sound name="1ST">
-		<soundFile src="1st.amr"/>
-	</sound>
-	<sound name="2ND">
-		<soundFile src="2nd.amr"/>
-	</sound>
-	<sound name="3RD">
-		<soundFile src="3rd.amr"/>
-	</sound>
-	<sound name="4TH">
-		<soundFile src="4th.amr"/>
-	</sound>
-	<sound name="5TH">
-		<soundFile src="5th.amr"/>
-	</sound>
-	<sound name="6TH">
-		<soundFile src="6th.amr"/>
-	</sound>
-	<sound name="RABEXIT">
-		<soundFile src="rabexit.amr"/>
-	</sound>
-	<sound name="CHECK_DIRECTION">
-		<soundFile src="check_direction.amr"/>
-	</sound>
-	<sound name="ROUTE_RECALCULATION">
-		<soundFile src="route_recalculation.amr"/>
-	</sound>
-	<sound name="TARGET_REACHED">
-		<soundFile src="target_reached.amr"/>
-	</sound>
-	<sound name="IN">
-		<soundFile src="in.amr"/>
-	</sound>
-	<sound name="100">
-		<soundFile src="100.amr"/>
-	</sound>
-	<sound name="200">
-		<soundFile src="200.amr"/>
-	</sound>
-	<sound name="300">
-		<soundFile src="300.amr"/>
-	</sound>
-	<sound name="400">
-		<soundFile src="400.amr"/>
-	</sound>
-	<sound name="500">
-		<soundFile src="500.amr"/>
-	</sound>
-	<sound name="600">
-		<soundFile src="600.amr"/>
-	</sound>
-	<sound name="700">
-		<soundFile src="700.amr"/>
-	</sound>
-	<sound name="800">
-		<soundFile src="800.amr"/>
-	</sound>
-	<sound name="METERS">
-		<soundFile src="meters.amr"/>
-	</sound>
-	<sound name="INTO_TUNNEL">
-		<soundFile src="into_tunnel.amr"/>
-	</sound>
-	<sound name="OUT_OF_TUNNEL">
-		<soundFile src="out_of_tunnel.amr"/>
-	</sound>
-	<sound name="FOLLOW_STREET">
-		<soundFile src="follow_street.amr"/>
-	</sound>
-	<sound name="AREA_CROSS">
-		<soundFile src="area_cross.amr"/>
-	</sound>
-	<sound name="AREA_CROSSED">
-		<soundFile src="area_crossed.amr"/>
-	</sound>
-	<sound name="SPEED_LIMIT">
-		<soundFile src="speed_limit.amr"/>
-	</sound>
-  </sounds>
+
   <pois>
 	<key tag="place">
 	  <value name="city">

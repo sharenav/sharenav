@@ -1,8 +1,7 @@
-<!ELEMENT legend (version, colors, sounds?, pois, ways, tileScaleLevels?, routeModes*, maxSpeedTemplates?)>
+<!ELEMENT legend (version, colors, pois, ways, tileScaleLevels?, routeModes*, maxSpeedTemplates?)>
 <!ELEMENT version EMPTY>
 <!ELEMENT colors (color*)>
 <!ELEMENT color EMPTY>
-<!ELEMENT sounds (changeFileExtensionTo?, sound*)>
 <!ELEMENT pois (key*)>
 <!ELEMENT ways (keyW*)>
 <!ELEMENT routeModes (routeMode*)>
@@ -14,9 +13,6 @@
 <!ELEMENT value (specialisation*, description , image? , searchIcon? , namekey , namefallback? , AreaPOI?, scale , textscale? , imageCentered?, hideable?)>
 <!ELEMENT Wvalue (specialisation*, description, namekey, namefallback?, isArea, scale, textscale?, arrowscale?, descriptionscale?, lineColor, lineColorAtNight?, borderColor?, borderColorAtNight?, lineStyle?, wayWidth?, searchIcon?, routing*, force_to?, hideable?)>
 <!ELEMENT routeAccessRestriction EMPTY>
-<!ELEMENT changeFileExtensionTo EMPTY>
-<!ELEMENT sound (soundFile)>
-<!ELEMENT soundFile EMPTY>
 <!ELEMENT restrictionKey EMPTY>
 <!ELEMENT restrictionValues EMPTY>
 <!ELEMENT description EMPTY>
@@ -52,7 +48,6 @@
 <!ATTLIST color of CDATA #REQUIRED>
 <!ATTLIST color is CDATA #REQUIRED>
 <!ATTLIST color isAtNight CDATA #IMPLIED>
-<!ATTLIST sound name CDATA #REQUIRED>
 <!ATTLIST routeAccessRestrictions for CDATA #REQUIRED>
 <!ATTLIST description desc CDATA #REQUIRED>
 <!ATTLIST namekey tag CDATA #REQUIRED>
@@ -77,8 +72,6 @@
 <!ATTLIST force_to layer CDATA #REQUIRED>
 <!ATTLIST hideable hideable CDATA #REQUIRED>
 <!ATTLIST AreaPOI createForAreas CDATA #REQUIRED>
-<!ATTLIST changeFileExtensionTo fileExt CDATA #REQUIRED>
-<!ATTLIST soundFile src CDATA #REQUIRED>
 <!ATTLIST specialisation condition CDATA "match">
 <!ATTLIST specialisation key CDATA #REQUIRED>
 <!ATTLIST specialisation value CDATA #REQUIRED>

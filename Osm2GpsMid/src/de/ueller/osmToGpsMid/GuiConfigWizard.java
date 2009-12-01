@@ -556,8 +556,18 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			fw.write("\r\n");
 
 			fw.write("# Style-file containing which way, area and POI types to include in the Midlet\r\n");
+			fw.write("# This will default to style-file.xml, set style-file=high-style.xml for a more feature rich internal style-file\r\n");
 			fw.write("style-file = " + config.getStyleFileName() + "\r\n");
 			fw.write("\r\n");
+			
+			fw.write("# Sound formats to be included in the midlet, default is useSounds=amr\r\n");
+			fw.write("#  Osm2GpsMid includes from all sound files wav, amr and mp3 variants\r\n");
+			fw.write("#  wav is the most compatible, loudest but also the most size intensive format\r\n");
+			fw.write("#  example to include wav AND amr: useSounds=wav, amr\r\n");
+			fw.write("#  GpsMid will try a fallback to another included sound format when trying to play a format unsupported by the device\r\n");
+			fw.write("useSounds = " + config.getUseSounds() + "\r\n");
+			fw.write("\r\n");
+			
 			fw.write("# Whether to include icons for icon menu and their size to include\r\n");
 			fw.write("#  possible values: false|small|true|big  true is the default medium size\r\n");
 			fw.write("useIcons = " + config.getUseIcons() + "\r\n");

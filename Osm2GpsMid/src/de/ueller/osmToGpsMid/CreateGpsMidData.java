@@ -38,7 +38,6 @@ import de.ueller.osmToGpsMid.model.ConditionTuple;
 import de.ueller.osmToGpsMid.model.Connection;
 import de.ueller.osmToGpsMid.model.EntityDescription;
 import de.ueller.osmToGpsMid.model.MapName;
-import de.ueller.osmToGpsMid.model.SoundDescription;
 import de.ueller.osmToGpsMid.model.Node;
 import de.ueller.osmToGpsMid.model.POIdescription;
 import de.ueller.osmToGpsMid.model.TurnRestriction;
@@ -359,23 +358,17 @@ public class CreateGpsMidData implements FilenameFilter {
 				// System.out.println(way);
 			}
 			/**
-			 * Writing Sound Descriptions 
+			 * Copy sounds for all sound formats to midlet 
 			 */
-			String fileExt = Configuration.getConfiguration().changeSoundFileExtensionTo;
-			dsi.writeByte(Configuration.getConfiguration().getSoundDescs().size());
-			for (SoundDescription sound : Configuration.getConfiguration().getSoundDescs()) {
-				dsi.writeUTF(sound.name);
-				if (fileExt.length() != 0) {
-					int i = sound.soundFile.lastIndexOf('.');
-					if (i!=-1) {
-						sound.soundFile = sound.soundFile.substring(0, i) +  fileExt;
-					} else {
-						sound.soundFile += fileExt;
-					}
+			String soundFile;
+			for (int i = 0; i < Configuration.SOUNDNAMES.length; i++) {
+				soundFile = Configuration.SOUNDNAMES[i].toLowerCase();
+		    	String soundFormat[] = configuration.getUseSounds().split("[;,]", 2);
+		    	for (int j = 0; j < soundFormat.length; j++) {
+					outputMedia = copyMediaToMid(soundFile + "." + soundFormat[j].trim(), path, "sound");					
 				}
-				outputMedia=copyMediaToMid(sound.soundFile, path, "sound");
-				dsi.writeUTF(outputMedia);
 			}
+			removeUnusedSoundFormats(path);
 
 			if (Configuration.attrToBoolean(configuration.useIcons) < 0) {
 				System.out.println("Icons disabled - removing icon files from midlet.");
@@ -412,41 +405,11 @@ public class CreateGpsMidData implements FilenameFilter {
 			
 			if (Configuration.attrToBoolean(configuration.useRouting) < 0) {
 				System.out.println("Routing disabled - removing routing sound files from midlet:");
-				removeSoundFile("AGAIN");
-				removeSoundFile("CHECK_DIRECTION");
-				removeSoundFile("CONTINUE");
-				removeSoundFile("HARD");
-				removeSoundFile("HALF");
-				removeSoundFile("BEAR");
-				removeSoundFile("LEFT");
-				removeSoundFile("PREPARE");
-				removeSoundFile("RIGHT");
-				removeSoundFile("ROUTE_RECALCULATION");
-				removeSoundFile("SOON");
-				removeSoundFile("STRAIGHTON");
-				removeSoundFile("UTURN");
-				//removeSoundFile("TARGET_REACHED");
-				removeSoundFile("THEN");
-				removeSoundFile("IN");
-				removeSoundFile("100");
-				removeSoundFile("200");
-				removeSoundFile("300");
-				removeSoundFile("400");
-				removeSoundFile("500");
-				removeSoundFile("600");
-				removeSoundFile("700");
-				removeSoundFile("800");
-				removeSoundFile("METERS");
-				removeSoundFile("RAB");
-				removeSoundFile("RABEXIT");
-				removeSoundFile("TO");
-				removeSoundFile("ENTER_MOTORWAY");
-				removeSoundFile("LEAVE_MOTORWAY");
-				removeSoundFile("INTO_TUNNEL");
-				removeSoundFile("OUT_OF_TUNNEL");
-				removeSoundFile("FOLLOW_STREET");
-				removeSoundFile("AREA_CROSS");
-				removeSoundFile("AREA_CROSSED");
+				for (int i = 0; i < Configuration.SOUNDNAMES.length; i++) {
+					if (";CONNECT;DISCONNECT;TARGET_REACHED;SPEED_LIMIT;".indexOf(";" + Configuration.SOUNDNAMES[i] + ";") == -1) {
+						removeSoundFile(Configuration.SOUNDNAMES[i]);
+					}
+				}
 			}
 			
 		} catch (FileNotFoundException e) {
@@ -492,26 +455,56 @@ public class CreateGpsMidData implements FilenameFilter {
     		}
     	}
     }
+    
 	public boolean accept(File directory, String filename) {
-		return filename.endsWith(".png");
+		return filename.endsWith(".png") || filename.endsWith(".amr") || filename.endsWith(".mp3") || filename.endsWith(".wav");
 	}
 
+    public void removeUnusedSoundFormats(String path) {
+    	File dir = new File(path);
+    	File[] sounds = dir.listFiles(this);
+
+    	String soundFormat[] = configuration.getUseSounds().split("[;,]", 2);
+    	
+    	String soundMatch = ";";
+    	for (int i = 0; i < soundFormat.length; i++) {
+    		soundMatch += soundFormat[i].trim() + ";";
+    	}
+    	
+    	int deletedFiles = 0;
+    	if (sounds != null) {
+    		for (File file : sounds) {
+    			if (
+    				file.getName().matches(".*\\.amr") && soundMatch.indexOf(";amr;") == -1
+    				||
+    				file.getName().matches(".*\\.mp3") && soundMatch.indexOf(";mp3;") == -1
+    				||
+    				file.getName().matches(".*\\.wav") && soundMatch.indexOf(";wav;") == -1
+    			) {
+    				//System.out.println("Delete " + file.getName());
+    				file.delete();
+    				deletedFiles++;
+    			}
+    		}
+    	}
+    	if (deletedFiles > 0) {
+    		System.out.println(deletedFiles + " files of unused sound formats removed");
+    	}
+    }
+
 	
-	private void removeSoundFile(String soundName) {
-		String soundFile = null;
-		SoundDescription sDes = Configuration.getConfiguration().getSoundDescription(soundName);
-		if (sDes != null) {
-			soundFile = sDes.soundFile;
-		} else {
-			soundFile = soundName.toLowerCase() + ".amr";
+	
+	private void removeSoundFile(String soundName) {		
+		final String soundFormat[] = {"amr", "wav", "mp3"};		
+		String soundFile;
+		for (int i = 0; i < soundFormat.length; i++) {			
+			soundFile = soundName.toLowerCase() + "." + soundFormat[i];			
+			File target = new File(path + "/" + soundFile);
+			if (target.exists()) {
+				target.delete();
+				System.out.println(" - removed " + soundFile);
+			}		
 		}
-		
-		File target = new File(path + "/" + soundFile);
- 
-		if (target.exists()) {
-			target.delete();
-			System.out.println(" - removed " + soundFile);
-		}		
 	}
 	
 	
@@ -533,7 +526,7 @@ public class CreateGpsMidData implements FilenameFilter {
 				// check if file exists in current directory + "/png"
 				if (! (new File(additionalSrcPath+"/"+mediaPath).exists())) {
 					// if not check if we can use the version included in Osm2GpsMid.jar
-					if (CreateGpsMidData.class.getResource("/media/" + mediaPath) == null) {
+					if (CreateGpsMidData.class.getResource("/media/"  + additionalSrcPath + "/" + mediaPath) == null) {
 						// if not check if we can use the internal image file
 						if (!(new File(path + outputMediaName).exists())) {	
 							// append media name if first media or " ,"+media name for the following ones
@@ -548,8 +541,8 @@ public class CreateGpsMidData implements FilenameFilter {
 						 */
 						try {
 							BufferedInputStream bis = new BufferedInputStream(
-									CreateGpsMidData.class.getResourceAsStream("/media/"
-													+ mediaPath));
+									CreateGpsMidData.class.getResourceAsStream("/media/" + additionalSrcPath + "/"  + mediaPath)
+							);
 							BufferedOutputStream bos = new BufferedOutputStream(
 									new FileOutputStream(destDir + outputMediaName));
 							byte[] buf = new byte[4096];

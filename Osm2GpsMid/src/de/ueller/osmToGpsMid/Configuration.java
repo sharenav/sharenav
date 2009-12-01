@@ -39,7 +39,6 @@ import org.apache.tools.bzip2.CBZip2InputStream;
 
 import de.ueller.osmToGpsMid.model.Bounds;
 import de.ueller.osmToGpsMid.model.EntityDescription;
-import de.ueller.osmToGpsMid.model.SoundDescription;
 import de.ueller.osmToGpsMid.model.POIdescription;
 import de.ueller.osmToGpsMid.model.WayDescription;
 
@@ -53,7 +52,7 @@ public class Configuration {
 	 * Specifies the format of the map on disk we are about to write
 	 * This constant must be in sync with GpsMid
 	 */
-	public final static short MAP_FORMAT_VERSION = 51;
+	public final static short MAP_FORMAT_VERSION = 52;
 
 	public final static int COLOR_MAP_BACKGROUND = 0;
 	public final static int COLOR_MAP_TEXT = 1;
@@ -203,6 +202,14 @@ public class Configuration {
 	public static int COLORS[] = new int[COLOR_COUNT];
 	public static int COLORS_AT_NIGHT[] = new int[COLOR_COUNT];
 	
+	public final static String SOUNDNAMES[] = {
+		"CONNECT", "DISCONNECT", "PREPARE", "HALF", "HARD", "BEAR", "LEFT", "RIGHT", "UTURN", "THEN", "SOON", "AGAIN", "TO",
+		"ENTER_MOTORWAY", "LEAVE_MOTORWAY",	"RAB", "1ST", "2ND", "3RD", "4TH", "5TH", "6TH", "RABEXIT",
+		"CHECK_DIRECTION", "ROUTE_RECALCULATION", "TARGET_REACHED",
+		"IN", "100", "200", "300", "400", "500", "600", "700", "800", "METERS", "INTO_TUNNEL", "OUT_OF_TUNNEL", "FOLLOW_STREET",
+		"AREA_CROSS", "AREA_CROSSED", "SPEED_LIMIT"
+	};
+	
 	/** Maximum allowed number of bounding boxes */
 	public static final int MAX_BOUND_BOXES = 9;
 	
@@ -222,8 +229,11 @@ public class Configuration {
 		private String appJarFileName = null;
 		/** Defines which routing options from the style-file get used. */
 		public String useRouting = "motorcar";
-		/** Defines if icons for icon menu are included in GpsMid */
+		/** Defines if icons for icon menu are included in GpsMid or which ones, valid values: true|false|big|small */
 		public String useIcons = "true";
+		/** Defines if and what sound formats are included in GpsMid, valid values: true|false|amr, mp3, wav */
+		public String useSounds = "amr";
+		
 		public boolean enableEditingSupport = false;
 		public int maxTileSize = 20000;
 		public int maxRouteTileSize = 3000;
@@ -234,8 +244,6 @@ public class Configuration {
 		public String styleFile;
 		/** Bounding boxes, read from properties and/or drawn by the user on the map. */
 		private Vector<Bounds> bounds;
-		
-		public String changeSoundFileExtensionTo = "";
 		
 		private LegendParser legend;
 		private InputStream legendInputStream;
@@ -408,6 +416,8 @@ public class Configuration {
 				System.out.println("ERROR: Invalid properties file parameter useIcons=" + getString("useIcons"));
 				System.exit(1);
 			}
+
+			setSounds(getString("useSounds"));
 			
 			maxTileSize = Integer.parseInt(getString("maxTileSize"));
 			for (int i=0; i<=3; i++) {
@@ -772,6 +782,20 @@ public class Configuration {
 		public String getUseIcons() {
 			return useIcons;
 		}
+
+		public void setSounds(String sounds) {
+			if (attrToBoolean(sounds) > 0) {
+				useSounds = "amr";
+			} else if (attrToBoolean(sounds) < 0) {
+				useSounds = "false";
+			} else {
+				useSounds = sounds.toLowerCase();
+			}
+		}
+
+		public String getUseSounds() {
+			return useSounds;
+		}
 		
 		/**
 		 * Returns the application version as specified in version.properties.
@@ -849,18 +873,6 @@ public class Configuration {
 			return legend.getWayDescs();
 		}
 
-		public Vector<SoundDescription> getSoundDescs() {
-			return legend.getSoundDescs();
-		}
-
-		public SoundDescription getSoundDescription(String Name) {			
-			for (SoundDescription sound : getSoundDescs()) {
-				if (sound.name.equals(Name)) {
-					return sound;
-				}			
-			}
-			return null;
-		}
 		
 		public int getMaxspeedTemplate(String template) {
 			Integer maxspeed = legend.getMaxspeedTemplates().get(template);
@@ -918,6 +930,7 @@ public class Configuration {
 			confString += "  Keeping map files after .jar creation: " + !cleanupTmpDirAfterUse() + "\n";
 			confString += "  Enable routing: " + useRouting + "\n";
 			confString += "  Include icons: " + useIcons + "\n";
+			confString += "  Include sound format(s): " + useSounds + "\n";
 			confString += "  Style-file: " + getStyleFileName() + "\n";
 			confString += "  Planet source: " + planet + "\n";
 			confString += "  Included CellID data: " + getCellOperator() + "\n";

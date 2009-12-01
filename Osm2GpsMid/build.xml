@@ -73,7 +73,6 @@
         <entry key="useRouting" value="true"/>
    		<entry key="midlet.name" value="GpsMid"/>
 		<entry key="routing.maxTileSize" value="3000"/>
-		<entry key="useRouting" value="true"/>
    		<entry key="keepTemporaryFiles" value="false"/>
    		<entry key="bundle.name" value="GpsMid"/>
 		<entry key="maxTileSize" value="20000"/>
@@ -85,6 +84,7 @@
    		<entry key="EnableEditing" value="false"/>
    		<entry key="useCellID" value="false"/>
    		<entry key="useIcons" value="true"/>
+   		<entry key="useSounds" value="amr"/>
    		<entry key="lang" value="${local_lang}"/>
    	</propertyfile>
    </target>
@@ -147,6 +147,8 @@
    	 		<include name="style-file.dtd" />
      		<include name="version.properties" />
         	<include name="**/*.png" />
+        	<include name="**/*.wav" />
+           	<include name="**/*.mp3" />
 		</fileset>
      	 <fileset dir="${properties.dir}">
      		<include name="**/*.properties" />
