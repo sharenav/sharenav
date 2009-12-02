@@ -190,112 +190,112 @@ scale alias 1: zoomed out 21x
 		<image src="post_box.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>	
 	  <value name ="post_office">
 		<description desc = "Post office"/>
 		<image src="post_office.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name ="college">
 		<description desc = "College"/>
 		<image src="college.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name ="kindergarten">
 		<description desc = "Kindergarden"/>
 		<image src="kindergarten.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name ="school">
 		<description desc = "School"/>
 		<image src="school.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name ="university">
 		<description desc = "University"/>
 		<image src="college.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name ="telephone">
 		<description desc = "Public telephone"/>
 		<image src="telephone.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name ="emergency_phone">
 		<description desc = "Emergency phone"/>
 		<image src="emergency_phone.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name ="restaurant">
 		<description desc = "Restaurant"/>
 		<image src="restaurant.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name ="fast_food">
 		<description desc = "Fast food"/>
 		<image src="fastfood.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name ="hospital">
 		<description desc = "Hospital"/>
 		<image src="hospital.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name ="pub">
 		<description desc = "Pub"/>
 		<image src="pub.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name ="cafe"  priority = "-10">
 		<description desc = "Cafe"/>
 		<image src="cafe.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name ="ice_cream">
 		<description desc = "Ice Cream"/>
 		<image src="icecream.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name ="atm">
 		<description desc = "Cash machine"/>
@@ -303,56 +303,56 @@ scale alias 1: zoomed out 21x
 		<namekey tag="operator"/>
 		<namefallback tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name ="bank">
 		<description desc = "Bank"/>
 		<image src="bank.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name ="bureau_de_change">
 		<description desc = "Currency exchange"/>
 		<image src="exchange.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>	  
 	  <value name ="cinema">
 		<description desc = "Cinema"/>
 		<image src="cinema.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name ="theatre">
 		<description desc = "Theatre"/>
 		<image src="theater.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name ="pharmacy">
 		<description desc = "Pharmacy"/>
 		<image src="pharmacy.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name ="place_of_worship">
 		<description desc = "Church"/>
 		<image src="church.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name ="fuel">
 		<description desc = "Fuel station"/>
@@ -360,138 +360,138 @@ scale alias 1: zoomed out 21x
 		<namekey tag="operator"/>
 		<namefallback tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>		
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name ="toilets">
 		<description desc = "Public toilet"/>
 		<image src="toilets.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>		
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name ="recycling">
 		<description desc = "Recycling"/>
 		<image src="recycling.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>		
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name ="library">
 		<description desc = "Library"/>
 		<image src="library.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>		
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name ="biergarten">
 		<description desc = "Biergarten"/>
 		<image src="biergarten.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name ="bench">
 		<description desc = "Park bench"/>
 		<image src="bench.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name ="shelter">
 		<description desc = "Shelter"/>
 		<image src="shelter.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name ="fire_station">
 		<description desc = "Fire station"/>
 		<image src="firebrigade.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>	
 	  <value name ="nightclub">
 		<description desc = "Nightclub"/>
 		<image src="nightclub.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>	
 	  <value name ="police">
 		<description desc = "Police station"/>
 		<image src="police.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>	
 	  <value name ="car_rental">
 		<description desc = "Car rental"/>
 		<image src="car_rental.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name ="car_sharing">
 		<description desc = "Car sharing"/>
 		<image src="car_sharing.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name ="parking">
 		<description desc = "Car parking"/>
 		<image src="parking.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name ="bicycle_rental">
 		<description desc = "Bicycle rental"/>
 		<image src="bicycle_rental.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name ="bicycle_parking">
 		<description desc = "Bicycle parking"/>
 		<image src="bicycling.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>		
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name ="taxi">
 		<description desc = "Taxi"/>
 		<image src="taxi.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	  <!--
 	     <value name="*">
 		<description desc = "Other amenity"/>
 		<image src="otheramenity.png"/>
 		<namekey tag="name"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	   </value>
-             -->
+      -->
 	</key>
 	<key tag="leisure">
 	  <value name ="water_park">
@@ -499,16 +499,16 @@ scale alias 1: zoomed out 21x
 		<image src="water_park.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name ="playground">
 		<description desc = "Playground"/>
 		<image src="playground.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	</key>	
 	<key tag="shop">
@@ -517,56 +517,56 @@ scale alias 1: zoomed out 21x
 		<image src="supermarket.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name="bakery">
 		<description desc = "Bakery"/>
 		<image src="bakery.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name="butcher">
 		<description desc = "Butcher"/>
 		<image src="butcher.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name="doityourself">
 		<description desc = "Do-it-yourself store"/>
 		<image src="diy_store.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name="kiosk">
 		<description desc = "Kiosk"/>
 		<image src="kiosk.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name="laundry">
 		<description desc = "Laundry"/>
 		<image src="laundry.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name="optician">
 		<description desc = "Optician"/>
 		<image src="optician.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	  <!--
 	  <value name="*">
@@ -574,8 +574,8 @@ scale alias 1: zoomed out 21x
 		<image src="othershop.png"/>
 		<namekey tag="name"/>
 		<namefallback tag = "*"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	-->
 	</key>
@@ -585,8 +585,8 @@ scale alias 1: zoomed out 21x
 		<image src="bus.png"/>		
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 		<imageCentered value="true"/>
 	  </value>
       <value name="services">
@@ -594,7 +594,7 @@ scale alias 1: zoomed out 21x
 		<image src="services.png"/>		
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="14"/>
+		<scale scale="15"/>
 		<textscale scale="23"/>
 		<imageCentered value="true"/>
 	  </value>
@@ -603,7 +603,7 @@ scale alias 1: zoomed out 21x
 		<image src="toll_station.png"/>		
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="14"/>
+		<scale scale="15"/>
 		<textscale scale="23"/>
 		<imageCentered value="true"/>
 	  </value>
@@ -614,7 +614,7 @@ scale alias 1: zoomed out 21x
   			<namefallback tag = "name"/>
 			<AreaPOI createForAreas="true"/>
 			<scale scale="17"/>
-			<textscale scale="23"/>
+			<textscale scale="20"/>
 			<imageCentered value="true"/>
 			<hideable hideable="false"/>
 	  </value>
@@ -625,8 +625,8 @@ scale alias 1: zoomed out 21x
 		<image src="railstation.png"/>		
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 		<imageCentered value="true"/>
 		<hideable hideable="false"/>
 	  </value>
@@ -635,8 +635,8 @@ scale alias 1: zoomed out 21x
 		<image src="tram.png"/>		
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 		<imageCentered value="true"/>
 	  </value>
 	  <value name="level_crossing">
@@ -644,8 +644,8 @@ scale alias 1: zoomed out 21x
 		<image src="crossing.png"/>		
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 		<imageCentered value="true"/>
 		<hideable hideable="false"/>
 	  </value>
@@ -654,8 +654,8 @@ scale alias 1: zoomed out 21x
 		<image src="crossing_small.png"/>		
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 		<imageCentered value="true"/>
 		<hideable hideable="false"/>
 	  </value>
@@ -666,88 +666,88 @@ scale alias 1: zoomed out 21x
 		<image src="hotel.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>		
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name="hostel">
 		<description desc = "Hostel"/>
 		<image src="hostel.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>		
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name="motel">
 		<description desc = "Motel"/>
 		<image src="motel.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>		
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name="camp_site">
 		<description desc = "Camping"/>
 		<image src="camping.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>		
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name="attraction"  priority = "-10">
 		<description desc = "Tourism attraction"/>
 		<image src="attraction.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name="viewpoint">
 		<description desc = "View point"/>
 		<image src="viewpoint.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name="information">
 		<description desc = "Information"/>
 		<image src="information.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name="museum">
 		<description desc = "Museum"/>
 		<image src="museum.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name="theme_park">
 		<description desc = "Theme park"/>
 		<image src="theme_park.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name="zoo">
 		<description desc = "Zoo"/>
 		<image src="zoo.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	  <!--
 	  <value name="*">
 		<description desc = "Other tourism"/>
 		<image src="othertourism.png"/>
 		<namekey tag="name"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	   -->
 	</key>
@@ -757,16 +757,16 @@ scale alias 1: zoomed out 21x
 		<image src="castle.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>	
 	  <value name ="monument">
 		<description desc = "Monument"/>
 		<image src="monument.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 		<imageCentered value="true"/>
 	  </value>	
 	</key>
@@ -776,8 +776,8 @@ scale alias 1: zoomed out 21x
 		<image src="beach.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="18"/>
-		<textscale scale="20"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
 	  <value name="peak">
 		<description desc = "Peak"/>
@@ -795,8 +795,8 @@ scale alias 1: zoomed out 21x
 		<image src="farm.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>	
 	</key>
 	<key tag="man_made">
@@ -805,32 +805,32 @@ scale alias 1: zoomed out 21x
 			<image src="beacon.png"/>
 			<namekey tag="name"/>
 			<AreaPOI createForAreas="true"/>
-			<scale scale="20"/>
-			<textscale scale="23"/>
+			<scale scale="23"/>
+			<textscale scale="26"/>
 		</value>
 		<value name ="lighthouse">
 			<description desc = "Lighthouse"/>
 			<image src="lighthouse.png"/>
 			<namekey tag="name"/>
 			<AreaPOI createForAreas="true"/>
-			<scale scale="20"/>
-			<textscale scale="23"/>
+			<scale scale="23"/>
+			<textscale scale="26"/>
 		</value>	
 		<value name ="tower">
 			<description desc = "Tower"/>
 			<image src="tower.png"/>
 			<namekey tag="name"/>
 			<AreaPOI createForAreas="true"/>
-			<scale scale="20"/>
-			<textscale scale="23"/>
+			<scale scale="23"/>
+			<textscale scale="26"/>
 		</value>
 		<value name ="water_tower">
 			<description desc = "Water tower"/>
 			<image src="water_tower.png"/>
 			<namekey tag="name"/>
 			<AreaPOI createForAreas="true"/>
-			<scale scale="20"/>
-			<textscale scale="23"/>
+			<scale scale="23"/>
+			<textscale scale="26"/>
 		</value>
 	</key>
 	<key tag = "power">
@@ -840,16 +840,16 @@ scale alias 1: zoomed out 21x
 			<image src="power_wind.png"/>
 			<namekey tag="name"/>
 			<AreaPOI createForAreas="true"/>
-			<scale scale="20"/>
-			<textscale scale="23"/>
+			<scale scale="23"/>
+			<textscale scale="26"/>
 		</value>
 <!--
 		<value name = "tower">
 			<description desc = "Power tower"/>
 			<image src="power_tower.png"/>
 			<namekey tag="ref"/>
-			<scale scale="20"/>
-			<textscale scale="23"/>
+			<scale scale="23"/>
+			<textscale scale="26"/>
 		</value>
 -->
 	</key>
@@ -859,7 +859,7 @@ scale alias 1: zoomed out 21x
 		<description desc = "House number"/>
 		<image src="mark.png"/>
 		<namekey tag="addr:housenumber"/>
-		<scale scale="14"/>
+		<scale scale="17"/>
 		<textscale scale="20"/>
 		<hideable hideable="false"/>
 	  </value>	
@@ -880,16 +880,16 @@ scale alias 1: zoomed out 21x
 		<image src="terminal.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>	
 	  <value name ="helipad">
 		<description desc = "Helipad"/>
 		<image src="helipad.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>	
 	</key>	
 	<key tag="sport">
@@ -898,8 +898,8 @@ scale alias 1: zoomed out 21x
 		<image src="table_tennis.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="20"/>
-		<textscale scale="23"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
 	  </value>
   	</key>
   </pois>
