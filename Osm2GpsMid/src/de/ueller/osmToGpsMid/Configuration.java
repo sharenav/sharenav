@@ -240,8 +240,13 @@ public class Configuration {
 
 		/** maximum ways that are allowed to be stored into a tile of this zoom level */
 		public int maxTileWays[] = new int[4];
-		
+		/** path to the style-file */ 		
 		public String styleFile;
+		/** Directory the style-file remains in with delimiter "/".
+		 *  This directory is used for relatively accessing external media, like png and sound sub directory
+		 */
+		public String styleFileDirectoryWithDelimiter;
+		
 		/** Bounding boxes, read from properties and/or drawn by the user on the map. */
 		private Vector<Bounds> bounds;
 		
@@ -441,7 +446,11 @@ public class Configuration {
 		public String getStyleFileName() {
 			return styleFile;
 		}
-		
+
+		public String getStyleFileDirectory() {
+			return styleFileDirectoryWithDelimiter;
+		}
+
 		public void setStyleFileName(String name) {
 			styleFile = name;
 			try {
@@ -455,6 +464,20 @@ public class Configuration {
 					styleFile = "/style-file.xml";
 				}
 				legendInputStream = getClass().getResourceAsStream(styleFile);
+			}
+			
+			// determine the directory of the style-file
+			styleFileDirectoryWithDelimiter = null;
+			File file = new File(styleFile);
+			if (file != null) {
+				styleFileDirectoryWithDelimiter = file.getParent();
+				if (styleFileDirectoryWithDelimiter == null || styleFileDirectoryWithDelimiter.equalsIgnoreCase("\\")) {
+					styleFileDirectoryWithDelimiter = "";
+				}
+			}
+			if (styleFileDirectoryWithDelimiter != null && styleFileDirectoryWithDelimiter.length() > 1) {
+				styleFileDirectoryWithDelimiter = styleFileDirectoryWithDelimiter.replace('\\', '/');
+				styleFileDirectoryWithDelimiter = styleFileDirectoryWithDelimiter + "/";
 			}
 		}
 		

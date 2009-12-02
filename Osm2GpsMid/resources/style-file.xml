@@ -135,14 +135,21 @@ scale alias 1: zoomed out 21x
 	 AREA_CROSS, AREA_CROSSED, SPEED_LIMIT
 	 Set in your properties file with which extension these sound files are included (lowercase name + .extension)
 	 e.g. useSounds=wav, amr will include e.g. prepare.wav and prepare.amr, etc.
-	 You can also provide external versions of thoses files in a sound sub-directory of the Osm2GpsMid directory.
+	 You can also provide external versions of thoses files
+	 in a sound sub-directory of the Osm2GpsMid directory (when using internal style-file)
+	 or in the directory or a sound sub-directory of the style-file.
 -->
   
+<!-- POIs to be included
+	 If there is no internal version in Osm2GpsMid for the png files, you must provide external versions
+	 in the directory or a sound sub-directory of the Osm2GpsMid directory (when using internal style-file)
+	 or in the directory or a sound sub-directory of the style-file.
+-->	
   <pois>
 	<key tag="place">
 	   <value name="city">
 		<description desc = "City"/>
-		<searchIcon src = "/city.png"/>
+		<searchIcon src = "city.png"/>
 		<namekey tag="name"/>		
 		<scale scale="12"/>
 		<hideable hideable="false"/>

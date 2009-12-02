@@ -393,9 +393,14 @@ public class CreateGpsMidData implements FilenameFilter {
 				removeUnusedIconSizes(path, false);
 			}
 
+			
 			// show summary for copied media files
 			if (sbCopiedMedias.length()!=0) {
 				System.out.println("External media inclusion summary:");
+				sbCopiedMedias.append("\r\n  Media Source:\r\n");			
+				sbCopiedMedias.append("    " + (configuration.getStyleFileDirectory().length() == 0 ? "Current directory" : configuration.getStyleFileDirectory()) + " and its png and sound subdirectories\r\n");
+				sbCopiedMedias.append("    were used for external medias\r\n");
+				sbCopiedMedias.append("    referenced in " + configuration.getStyleFileName());			
 				System.out.println("  " + sbCopiedMedias.toString());
 				if (mediaInclusionErrors!=0) {					
 					System.out.println("");
@@ -523,13 +528,14 @@ public class CreateGpsMidData implements FilenameFilter {
 		// output filename is just the name part of the imagePath filename preceded by "/"  
 		int iPos=mediaPath.lastIndexOf("/");
 		String outputMediaName;
+		// System.out.println(configuration.getStyleFileDirectory() + additionalSrcPath+"/"+mediaPath);
 		// if no "/" is contained look for file in current directory and /png
 		if(iPos==-1) {
 			outputMediaName="/" + mediaPath;
-			// check if file exists in current directory
-			if (! (new File(mediaPath).exists())) {
-				// check if file exists in current directory + "/png"
-				if (! (new File(additionalSrcPath+"/"+mediaPath).exists())) {
+			// check if file exists in current directory of Osm2GpsMid / the style file
+			if (! (new File(configuration.getStyleFileDirectory() + mediaPath).exists())) {
+				// check if file exists in current directory of Osm2GpsMid / the style file + "/png" or "/sound"
+				if (! (new File(configuration.getStyleFileDirectory() + additionalSrcPath + "/" + mediaPath).exists())) {
 					// if not check if we can use the version included in Osm2GpsMid.jar
 					if (CreateGpsMidData.class.getResource("/media/"  + additionalSrcPath + "/" + mediaPath) == null) {
 						// if not check if we can use the internal image file
