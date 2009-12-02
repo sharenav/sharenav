@@ -259,6 +259,7 @@ public class Configuration {
 	private static final int RECORD_ID_PHONE_ALL_TIME_MAX_MEMORY = 38;
 	private static final int RECORD_ID_CFGBITS_64_TO_127 = 39;
 	private static final int RECORD_ID_MAINSTREET_NET_DISTANCE_KM = 40;
+	private static final int RECORD_ID_DETAIL_BOOST_POI = 41;
 
 	// Gpx Recording modes
 	// GpsMid determines adaptive if a trackpoint is written
@@ -301,8 +302,11 @@ public class Configuration {
 	private static long cfgBits_64_to_127 = 0;
 	private static long cfgBitsDefault_64_to_127 = 0;
 	private static int detailBoost = 0;
+	private static int detailBoostPOI = 0;
 	private static int detailBoostDefault = 0;
+	private static int detailBoostDefaultPOI = 0;
 	private static float detailBoostMultiplier;
+	private static float detailBoostMultiplierPOI;
 	private static String gpxUrl;
 	private static String photoUrl;
 	private static String photoEncoding;
@@ -368,7 +372,9 @@ public class Configuration {
 			rawGpsLogEnable = (readInt(database, RECORD_ID_LOG_RAW_GPS_ENABLE) !=0);
 			detailBoost = readInt(database, RECORD_ID_DETAIL_BOOST);
 			detailBoostDefault = detailBoost;
-			calculateDetailBoostMultiplier();
+			detailBoostPOI = readInt(database, RECORD_ID_DETAIL_BOOST_POI);
+			detailBoostDefaultPOI = detailBoostPOI;
+			calculateDetailBoostMultipliers();
 			gpxRecordRuleMode = readInt(database, RECORD_ID_GPX_FILTER_MODE); 
 			gpxRecordMinMilliseconds = readInt(database, RECORD_ID_GPX_FILTER_TIME); 
 			gpxRecordMinDistanceCentimeters = readInt(database, RECORD_ID_GPX_FILTER_DIST); 
@@ -661,7 +667,8 @@ public class Configuration {
 		dos.writeUTF(sanitizeString(mapFileUrl));
 		dos.writeUTF(sanitizeString(rawGpsLogUrl));
 		dos.writeBoolean(rawGpsLogEnable);
-		dos.writeInt(detailBoost);
+		dos.writeInt(detailBoostDefault);
+		dos.writeInt(detailBoostDefaultPOI);
 		dos.writeInt(gpxRecordRuleMode);
 		dos.writeInt(gpxRecordMinMilliseconds); 
 		dos.writeInt(gpxRecordMinDistanceCentimeters); 
@@ -699,6 +706,7 @@ public class Configuration {
 		setGpsRawLoggerUrl(desanitizeString(dis.readUTF()));
 		setGpsRawLoggerEnable(dis.readBoolean());
 		setDetailBoost(dis.readInt(), true);
+		setDetailBoostPOI(dis.readInt(), true);
 		setGpxRecordRuleMode(dis.readInt());
 		setGpxRecordMinMilliseconds(dis.readInt());
 		setGpxRecordMinDistanceCentimeters(dis.readInt());
@@ -939,33 +947,67 @@ public class Configuration {
 	public static int getDetailBoost() {
 		return detailBoost;
 	}
+	
+	public static int getDetailBoostPOI() {
+		return detailBoostPOI;
+	}
 
 	public static void setDetailBoost(int detailBoost, boolean savePermanent) {
 		Configuration.detailBoost = detailBoost;
-		calculateDetailBoostMultiplier();
+		calculateDetailBoostMultipliers();
 		if (savePermanent) {
 			Configuration.detailBoostDefault = detailBoost;
 			write(detailBoost, RECORD_ID_DETAIL_BOOST);		
 		}
 	}
+
+	public static void setDetailBoostPOI(int detailBoost, boolean savePermanent) {
+		Configuration.detailBoostPOI = detailBoost;
+		calculateDetailBoostMultipliers();
+		if (savePermanent) {
+			Configuration.detailBoostDefaultPOI = detailBoost;
+			write(detailBoost, RECORD_ID_DETAIL_BOOST_POI);		
+		}
+	}
+
 	
 	public static float getDetailBoostMultiplier() {
 		return detailBoostMultiplier;
 	}
 
+	public static float getMaxDetailBoostMultiplier() {
+		if (detailBoost >= detailBoostPOI) {
+			return detailBoostMultiplier;
+		}
+		return detailBoostMultiplierPOI;
+	}
+
+	public static float getDetailBoostMultiplierPOI() {
+		return detailBoostMultiplierPOI;
+	}
+	
 	public static int getDetailBoostDefault() {
 		return detailBoostDefault;
 	}
 
+	public static int getDetailBoostDefaultPOI() {
+		return detailBoostDefaultPOI;
+	}
+
+	
 /**
 	There's no pow()-function in J2ME so manually
 	calculate 1.5^detailBoost to get factor
 	to multiply with Zoom Level limits
 **/
-	private static void calculateDetailBoostMultiplier() {
+	private static void calculateDetailBoostMultipliers() {
 		detailBoostMultiplier = 1;
 		for (int i = 1; i <= detailBoost; i++) {
 			detailBoostMultiplier *= 1.5;
+		}
+		detailBoostMultiplierPOI = 1;
+		for (int i = 1; i <= detailBoostPOI; i++) {
+			detailBoostMultiplierPOI *= 1.5;
 		}
 	}
 	

@@ -153,7 +153,7 @@ public class ImageCollector implements Runnable {
 				Way.setupDirectionalPenalty(createPC, tr.speed, tr.gpsRecenter);
 
 
-				float boost = Configuration.getDetailBoostMultiplier();
+				float boost = Configuration.getMaxDetailBoostMultiplier();
 				
 				/*
 				 * layers containing highlighted path segments

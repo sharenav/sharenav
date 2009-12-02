@@ -32,6 +32,7 @@ public class GuiMapFeatures extends Form implements CommandListener {
 	
 	
 	private Gauge gaugeDetailBoost; 
+	private Gauge gaugeDetailBoostPOI; 
 
 	// commands
 	private static final Command CMD_APPLY = new Command("Apply", Command.BACK, 1);
@@ -84,9 +85,13 @@ public class GuiMapFeatures extends Form implements CommandListener {
 			otherGroup.setSelectedFlags(selOther);			
 			append(otherGroup);
 			
-			gaugeDetailBoost = new Gauge("Increase Detail of lower Zoom Levels", true, 3, 0);
+			gaugeDetailBoost = new Gauge("Zooming: show ways earlier", true, 3, 0);
 			append(gaugeDetailBoost);
 			gaugeDetailBoost.setValue(Configuration.getDetailBoost());
+
+			gaugeDetailBoostPOI = new Gauge("Zooming: show POIs earlier", true, 3, 0);
+			append(gaugeDetailBoostPOI);
+			gaugeDetailBoostPOI.setValue(Configuration.getDetailBoostPOI());
 			
 			addCommand(CMD_APPLY);
 			addCommand(CMD_SAVE);
@@ -140,6 +145,7 @@ public class GuiMapFeatures extends Form implements CommandListener {
 			Configuration.setCfgBitState(Configuration.CFGBIT_AUTOSAVE_MAPPOS, selOther[0], setAsDefault);
 			
 			Configuration.setDetailBoost(gaugeDetailBoost.getValue(), setAsDefault); 
+			Configuration.setDetailBoostPOI(gaugeDetailBoostPOI.getValue(), setAsDefault); 
 
 			parent.show();
 			return;

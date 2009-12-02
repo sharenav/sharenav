@@ -325,8 +325,10 @@ public class SingleTile extends Tile implements QueueableTile {
 		byte om = Legend.getNodeOverviewMode(t);
 		switch (om & Legend.OM_MODE_MASK) {
 			case Legend.OM_SHOWNORMAL: 
+				System.out.println( pc.scale + " " + Legend.getNodeMaxScale(t)  + " " +Configuration.getDetailBoostMultiplierPOI());
+				
 				// if not in Overview Mode check for scale
-				if (pc.scale > Legend.getNodeMaxScale(t)) {
+				if (pc.scale > Legend.getNodeMaxScale(t) * Configuration.getDetailBoostMultiplierPOI()) {
 					return;
 				}
 				// disabling POIs does not disable PLACE TEXTs (city, suburb, etc.) 
@@ -373,7 +375,7 @@ public class SingleTile extends Tile implements QueueableTile {
 						Graphics.BOTTOM | Graphics.HCENTER);
 			}
 		}
-		if (pc.scale > Legend.getNodeMaxTextScale(t)) {
+		if (pc.scale > Legend.getNodeMaxTextScale(t) * Configuration.getDetailBoostMultiplierPOI()) {
 			return;
 		}
 		
