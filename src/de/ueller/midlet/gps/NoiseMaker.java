@@ -265,15 +265,19 @@ public class NoiseMaker
 		}
 	}
 
-	private synchronized boolean createResourcePlayer(String soundName) {
-		//#debug debug
-		mLogger.debug("createResourcePlayer for " + soundName);
+	public static synchronized void stopPlayer() {
 		if (mPlayer != null) {
 			//#debug debug
 			mLogger.debug("Closing old player");
 			mPlayer.close();
 			mPlayer = null;
-		}	
+		}
+	}
+	
+	private synchronized boolean createResourcePlayer(String soundName) {
+		//#debug debug
+		mLogger.debug("createResourcePlayer for " + soundName);
+		stopPlayer();
 		
 		String trySuffix;
 		String soundFileWithSuffix;

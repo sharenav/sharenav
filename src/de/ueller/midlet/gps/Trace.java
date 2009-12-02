@@ -1145,6 +1145,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				return;
 			}
 			if (c == CMDS[ROUTING_STOP_CMD]) {
+				NoiseMaker.stopPlayer();
 				if (routeCalc) {
 					if (routeEngine != null) {
 						routeEngine.cancelRouting();
