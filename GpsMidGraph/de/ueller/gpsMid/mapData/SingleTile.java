@@ -325,7 +325,7 @@ public class SingleTile extends Tile implements QueueableTile {
 		byte om = Legend.getNodeOverviewMode(t);
 		switch (om & Legend.OM_MODE_MASK) {
 			case Legend.OM_SHOWNORMAL: 
-				System.out.println( pc.scale + " " + Legend.getNodeMaxScale(t)  + " " +Configuration.getDetailBoostMultiplierPOI());
+				//System.out.println( pc.scale + " " + Legend.getNodeMaxScale(t)  + " " +Configuration.getDetailBoostMultiplierPOI());
 				
 				// if not in Overview Mode check for scale
 				if (pc.scale > Legend.getNodeMaxScale(t) * Configuration.getDetailBoostMultiplierPOI()) {
