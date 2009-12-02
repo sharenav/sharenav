@@ -360,10 +360,15 @@ public class CreateGpsMidData implements FilenameFilter {
 			/**
 			 * Copy sounds for all sound formats to midlet 
 			 */
+	    	String soundFormat[] = configuration.getUseSounds().split("[;,]", 2);
+	    	dsi.write((byte) soundFormat.length);
+	    	for (int j = 0; j < soundFormat.length; j++) {
+		    	dsi.writeUTF(soundFormat[j].trim());
+	    	}
+			
 			String soundFile;
 			for (int i = 0; i < Configuration.SOUNDNAMES.length; i++) {
 				soundFile = Configuration.SOUNDNAMES[i].toLowerCase();
-		    	String soundFormat[] = configuration.getUseSounds().split("[;,]", 2);
 		    	for (int j = 0; j < soundFormat.length; j++) {
 					outputMedia = copyMediaToMid(soundFile + "." + soundFormat[j].trim(), path, "sound");					
 				}
