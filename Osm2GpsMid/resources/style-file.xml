@@ -152,35 +152,35 @@ scale alias 1: zoomed out 21x
 		<description desc = "City"/>
 		<searchIcon src="city.png"/>
 		<namekey tag="name"/>	
-		<scale scale="6"/>
+		<scale scale="9"/>
 		<hideable hideable="false"/>
 	  </value>
 	  <value name="town">
 		<description desc = "Town"/>
 		<searchIcon src="city.png"/>
 		<namekey tag="name"/>
-		<scale scale = "12"/>
+		<scale scale = "15"/>
 		<hideable hideable="false"/>
 	  </value>
 	  <value name="village">
 		<description desc = "Village"/>
 		<searchIcon src="city.png"/>
 		<namekey tag="name"/>
-		<scale scale = "16"/>
+		<scale scale = "19"/>
 		<hideable hideable="false"/>
 	  </value>
 	  <value name="hamlet">
 		<description desc = "Hamlet"/>
 		<searchIcon src="city.png"/>
 		<namekey tag="name"/>
-		<scale scale = "17"/>
+		<scale scale = "20"/>
 		<hideable hideable="false"/>
 	  </value>
 	  <value name="suburb">
 		<description desc = "Suburb"/>
 		<searchIcon src="city.png"/>
 		<namekey tag="name"/>
-		<scale scale = "17"/>
+		<scale scale = "20"/>
 		<hideable hideable="false"/>
 	  </value>
 	</key>
@@ -594,7 +594,7 @@ scale alias 1: zoomed out 21x
 		<image src="services.png"/>		
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="15"/>
+		<scale scale="18"/>
 		<textscale scale="23"/>
 		<imageCentered value="true"/>
 	  </value>
@@ -603,7 +603,7 @@ scale alias 1: zoomed out 21x
 		<image src="toll_station.png"/>		
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="15"/>
+		<scale scale="18"/>
 		<textscale scale="23"/>
 		<imageCentered value="true"/>
 	  </value>
@@ -613,8 +613,8 @@ scale alias 1: zoomed out 21x
 			<namekey tag="ref"/>
   			<namefallback tag = "name"/>
 			<AreaPOI createForAreas="true"/>
-			<scale scale="17"/>
-			<textscale scale="20"/>
+			<scale scale="20"/>
+			<textscale scale="23"/>
 			<imageCentered value="true"/>
 			<hideable hideable="false"/>
 	  </value>
