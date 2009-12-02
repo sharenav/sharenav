@@ -274,20 +274,20 @@ public class NoiseMaker
 			mPlayer.close();
 			mPlayer = null;
 		}	
-		final String soundFormats[] = {".wav", ".amr", ".mp3", ".ogg"}; 
+		
 		String trySuffix;
 		String soundFileWithSuffix;
 		boolean fileFound = false;
-		for (int i = -1; i < soundFormats.length; i++) {
+		for (int i = -1; i < Legend.soundFormats.length; i++) {
 			if (i == -1) {
 				// try last successful suffix next
 				 trySuffix = lastSuccessfulSuffix;
 			} else {
 				// try suffix list last
-				trySuffix = soundFormats[i];
+				trySuffix = Legend.soundFormats[i];
 //				System.out.println("****************** try " + trySuffix);
 			}
-			soundFileWithSuffix = "/" + soundName.toLowerCase() + trySuffix;
+			soundFileWithSuffix = "/" + soundName.toLowerCase() + "." + trySuffix;
 			//System.out.println("******************" + soundFileWithSuffix);
 			
 			InputStream is = getClass().getResourceAsStream(soundFileWithSuffix);
@@ -295,13 +295,13 @@ public class NoiseMaker
 				//#debug debug
 				mLogger.debug("Got Inputstream for " + soundFileWithSuffix);
 				String mediaType = null;
-				if (trySuffix.equals(".amr") ) {
+				if (trySuffix.equals("amr") ) {
 					mediaType = "audio/amr";
-				} else if (trySuffix.equals(".mp3") ) {
+				} else if (trySuffix.equals("mp3") ) {
 					mediaType = "audio/mpeg";
-				} else if (trySuffix.equals(".wav") ) {
+				} else if (trySuffix.equals("wav") ) {
 					mediaType = "audio/x-wav";
-				} else if (trySuffix.equals(".ogg") ) {
+				} else if (trySuffix.equals("ogg") ) {
 	            	mediaType = "audio/x-ogg";
 				}
 				try {
