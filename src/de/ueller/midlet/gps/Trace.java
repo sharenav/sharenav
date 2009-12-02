@@ -2151,7 +2151,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			// the minimumScale at 20km/h and below is equivalent to having zoomed in manually once from the startup zoom level 
 			final float minimumScale = 10000;
 			final int minimumSpeed = 20;
-			// the maximumScale at 160km/h and below is equivalent to having zoomed out manually once from the startup zoom level 
+			// the maximumScale at 160km/h and above is equivalent to having zoomed out manually once from the startup zoom level 
 			final float maximumScale = 22500;
 			final int maximumSpeed = 160;
 			int speedForScale = speed;
