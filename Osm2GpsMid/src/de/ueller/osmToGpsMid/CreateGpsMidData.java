@@ -527,15 +527,17 @@ public class CreateGpsMidData implements FilenameFilter {
 	private String copyMediaToMid(String mediaPath, String destDir, String additionalSrcPath) {
 		// output filename is just the name part of the imagePath filename preceded by "/"  
 		int iPos=mediaPath.lastIndexOf("/");
+		String realMediaPath = configuration.getStyleFileDirectory() + mediaPath;
 		String outputMediaName;
 		// System.out.println(configuration.getStyleFileDirectory() + additionalSrcPath+"/"+mediaPath);
 		// if no "/" is contained look for file in current directory and /png
 		if(iPos==-1) {
 			outputMediaName="/" + mediaPath;
 			// check if file exists in current directory of Osm2GpsMid / the style file
-			if (! (new File(configuration.getStyleFileDirectory() + mediaPath).exists())) {
+			if (! (new File(realMediaPath).exists())) {
 				// check if file exists in current directory of Osm2GpsMid / the style file + "/png" or "/sound"
-				if (! (new File(configuration.getStyleFileDirectory() + additionalSrcPath + "/" + mediaPath).exists())) {
+				realMediaPath = configuration.getStyleFileDirectory() + additionalSrcPath + "/" + mediaPath;
+				if (! (new File(realMediaPath).exists())) {
 					// if not check if we can use the version included in Osm2GpsMid.jar
 					if (CreateGpsMidData.class.getResource("/media/"  + additionalSrcPath + "/" + mediaPath) == null) {
 						// if not check if we can use the internal image file
@@ -575,10 +577,6 @@ public class CreateGpsMidData implements FilenameFilter {
 						return outputMediaName;
 					}
 				}
-				else {
-					// otherwise use from additional directory
-					mediaPath=additionalSrcPath+"/"+mediaPath;
-				}
 			}
 		// if the first and only "/" is at the beginning its the explicit syntax for internal images
 		} else if(iPos==0) {
@@ -599,7 +597,7 @@ public class CreateGpsMidData implements FilenameFilter {
 
 		try {
 			//System.out.println("Copying " + mediaPath + " as " + outputMediaName + " into the midlet");
-			FileChannel fromChannel = new FileInputStream(mediaPath).getChannel();
+			FileChannel fromChannel = new FileInputStream(realMediaPath).getChannel();
 			// Copy Media file
 			try {
 				// check if output file already exists
