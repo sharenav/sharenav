@@ -48,7 +48,7 @@ public class NoiseMaker
 	private static volatile String mOldPlayingNames = "";
 	private static volatile byte mTimesToPlay = 0;
 	private static volatile String mPlayingSoundName = "";
-	private static String lastSuccessfulSuffix = "amr";
+	private static String lastSuccessfulSuffix = null;
 	
 	public NoiseMaker()
 	{
@@ -284,6 +284,10 @@ public class NoiseMaker
 		boolean fileFound = false;
 		for (int i = -1; i < Legend.soundFormats.length; i++) {
 			if (i == -1) {
+				// if there's no successful suffix yet, continue with next (first) sound format
+				 if (lastSuccessfulSuffix == null) {
+					 continue;
+				 }
 				// try last successful suffix next
 				 trySuffix = lastSuccessfulSuffix;
 			} else {
