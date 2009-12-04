@@ -1145,7 +1145,9 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				return;
 			}
 			if (c == CMDS[ROUTING_STOP_CMD]) {
+				//#if polish.api.mmapi
 				NoiseMaker.stopPlayer();
+				//#endif
 				if (routeCalc) {
 					if (routeEngine != null) {
 						routeEngine.cancelRouting();
