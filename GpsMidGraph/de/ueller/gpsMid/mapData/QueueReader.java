@@ -17,7 +17,7 @@ public abstract class QueueReader implements Runnable {
 	protected final Vector			requestQueue		= new Vector();
 	protected final Vector			notificationQueue	= new Vector();
 	protected final Vector			livingQueue			= new Vector();
-	private boolean					shut				= false;
+	private volatile boolean		shut				= false;
 	private final Thread			processorThread;
 
 	public QueueReader(String name) {
