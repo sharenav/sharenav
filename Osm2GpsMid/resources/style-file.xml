@@ -1848,36 +1848,6 @@ scale alias 1: zoomed out 21x
 				<force_to layer = "-2"/>
   			</Wvalue>
   		</keyW>
-		<keyW tag = "contour_ext">
-		  <Wvalue name = "elevation_minor" >
-		    <description desc = "minor elevation" />
-		    <namekey tag = "ele" />
-		    <isArea area = "false" />
-		    <scale scale = "20"/>
-		    <lineColor color = "009CE39C" />
-		    <lineStyle dashed = "true" />
-		    <wayWidth width="1" />
-		    <force_to layer = "-2" />
-		  </Wvalue>
-		  <Wvalue name = "elevation_medium" >
-		    <description desc = "medium elevation" />
-		    <namekey tag = "ele" />
-		    <isArea area = "false" />
-		    <scale scale = "20"/>
-		    <lineColor color = "0089C989" />
-		    <wayWidth width="1" />
-		    <force_to layer = "-2" />
-		  </Wvalue>
-		  <Wvalue name = "elevation_major" >
-		    <description desc = "major elevation" />
-		    <namekey tag = "ele" />
-		    <isArea area = "false" />
-		    <scale scale = "20"/>
-		    <lineColor color = "00215121" />
-		    <wayWidth width="1" />
-		    <force_to layer = "-2" />
-		  </Wvalue>
-		</keyW> 
 	</ways>
 	
 	<!--
