@@ -659,12 +659,11 @@ public class CreateGpsMidData implements FilenameFilter {
 				}
 			}			
 			tile[zl]=new Tile((byte) zl);
-			Sequence routeNodeSeq=new Sequence();
 			Sequence tileSeq=new Sequence();
 			tile[zl].ways=parser.getWays();
 			tile[zl].nodes=parser.getNodes();
 			// create the tiles and write the content 
-			outputLength += exportTile(tile[zl],tileSeq,allBound,routeNodeSeq);
+			outputLength += exportTile(tile[zl],tileSeq,allBound);
 			tileFilesWritten = tileSeq.get();
 			
 			if (tile[zl].type != Tile.TYPE_ROUTECONTAINER && tile[zl].type != Tile.TYPE_CONTAINER) {
@@ -720,8 +719,7 @@ public class CreateGpsMidData implements FilenameFilter {
 		return outputLength;
 	}
 	
-	private long exportTile(Tile t, Sequence tileSeq, Bounds tileBound, 
-			Sequence routeNodeSeq) throws IOException {
+	private long exportTile(Tile t, Sequence tileSeq, Bounds tileBound) throws IOException {
 		Bounds realBound = new Bounds();
 		LinkedList<Way> ways;
 		Collection<Node> nodes;
