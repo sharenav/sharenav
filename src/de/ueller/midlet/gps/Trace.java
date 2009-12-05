@@ -2116,7 +2116,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			&& isShown()
 		) {
 			gpsRecenter = true;
-			autoZoomed = true;
+			//autoZoomed = true;
 		}
 		if (gpsRecenter) {
 			center.setLatLon(pos.latitude, pos.longitude);
