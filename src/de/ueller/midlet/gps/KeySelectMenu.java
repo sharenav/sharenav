@@ -81,23 +81,27 @@ public class KeySelectMenu extends Canvas implements
 	private int pointerYPressed;
 
 	private GpsMidDisplayable parent;
-	private KeySelectMenuListener callback;
+	protected KeySelectMenuListener callback;
 
-	public KeySelectMenu(GpsMidDisplayable parent,
-			KeySelectMenuListener callback) throws Exception {
+	protected KeySelectMenu(GpsMidDisplayable parent) {
 		super();
 		this.parent = parent;
+		
+		setCommandListener(this);
+		addCommand(OK_CMD);
+		addCommand(BACK_CMD);
+	}
+	
+	public KeySelectMenu(GpsMidDisplayable parent,
+			KeySelectMenuListener callback) throws Exception {
+		this(parent);
+		
 		if (callback == null) {
 			//#debug info
 			logger.info("Callback in KeySelectMenu is null");
 			throw new Exception("No Callback was specified");
 		}
 		this.callback = callback;
-		setCommandListener(this);
-
-		addCommand(OK_CMD);
-		addCommand(BACK_CMD);
-		
 	}
 
 	public void show() {
@@ -136,13 +140,14 @@ public class KeySelectMenu extends Canvas implements
 	public void commandAction(Command c, Displayable d) {
 		if (c == BACK_CMD) {
 			destroy();
+			callback.keySelectMenuCancel();
 			parent.show();
 			return;
 		}
 		if (c == DEL_CMD) {
 			if (carret > 0) {
 				searchCanon.deleteCharAt(--carret);
-				callback.searchString(searchCanon.toString());
+				callback.keySelectMenuSearchString(searchCanon.toString());
 			}
 			return;
 		}
@@ -151,7 +156,7 @@ public class KeySelectMenu extends Canvas implements
 				resetResult2 = true;
 				result.removeAllElements();
 			}
-			callback.resetMenu();
+			callback.keySelectMenuResetMenu();
 			searchCanon.setLength(0);
 			carret = 0;
 			repaint();
@@ -162,7 +167,7 @@ public class KeySelectMenu extends Canvas implements
 			Object o = result2.elementAt(cursor);
 			if (o instanceof KeySelectMenuItem) {
 				KeySelectMenuItem menuItem = (KeySelectMenuItem) o;
-				callback.itemSelected(menuItem);
+				callback.keySelectMenuItemSelected(menuItem);
 			} else {
 				logger.error("Selected an item that shouldn't have been there");
 			}
@@ -353,7 +358,7 @@ public class KeySelectMenu extends Canvas implements
 			}
 		}
 		setTitle(searchCanon.toString());
-		callback.searchString(searchCanon.toString());
+		callback.keySelectMenuSearchString(searchCanon.toString());
 	}
 
 	public void pointerPressed(int x, int y) {
@@ -427,7 +432,6 @@ public class KeySelectMenu extends Canvas implements
 	}
 
 	public void destroy() {
-		callback.cancel();
 	}
 
 }

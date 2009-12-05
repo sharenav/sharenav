@@ -8,6 +8,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.Vector;
 
+import de.ueller.gpsMid.CancelMonitorInterface;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.data.PositionMark;
@@ -101,7 +102,7 @@ public class FileTile extends Tile implements QueueableTile {
 	}
 
 
-	public Vector getNearestPoi(byte searchType, float lat, float lon, float maxDist) {		
+	public Vector getNearestPoi(byte searchType, float lat, float lon, float maxDist, CancelMonitorInterface cmi) {		
 		if (tile == null){
 			/**
 			 * This hole case is not correctly handled. The POI data
@@ -136,7 +137,7 @@ public class FileTile extends Tile implements QueueableTile {
 		 */
 		if (tile != null){
 			lastUse=0;
-			return tile.getNearestPoi(searchType, lat, lon, maxDist);
+			return tile.getNearestPoi(searchType, lat, lon, maxDist, cmi);
 		}
 		/** 
 		 * The tile was not loaded in time. In order not to slow down

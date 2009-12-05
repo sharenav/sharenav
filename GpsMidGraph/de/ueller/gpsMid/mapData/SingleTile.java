@@ -17,6 +17,7 @@ import javax.microedition.lcdui.Image;
 import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.SearchResult;
+import de.ueller.gpsMid.CancelMonitorInterface;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.data.MoreMath;
@@ -445,8 +446,14 @@ public class SingleTile extends Tile implements QueueableTile {
     * type searchType close to lat/lon. The list is ordered
     * by distance with the closest one first.  
     */
-   public Vector getNearestPoi(byte searchType, float lat, float lon, float maxDist) {	   
+   public Vector getNearestPoi(byte searchType, float lat, float lon, float maxDist, CancelMonitorInterface cmi) {	   
 	   Vector resList = new Vector();
+	   
+	   if(cmi != null) {
+		   if (cmi.monitorIsCanceled()) {
+			   return resList;
+		   }
+	   }
 	   
 	   if (!isDataReady()) {		   
 		   synchronized(this) {

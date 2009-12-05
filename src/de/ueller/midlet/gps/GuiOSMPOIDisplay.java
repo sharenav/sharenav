@@ -26,6 +26,7 @@ import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.GpsMidDisplayable;
 import de.ueller.midlet.gps.GuiOSMChangeset;
 import de.ueller.midlet.gps.Logger;
+import de.ueller.midlet.gps.GuiPOItypeSelectMenu.POItypeSelectMenuItem;
 import de.ueller.midlet.gps.data.KeySelectMenuItem;
 import de.ueller.midlet.gps.data.OSMdataEntity;
 import de.ueller.midlet.gps.data.OSMdataNode;
@@ -33,42 +34,7 @@ import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.names.NumberCanon;
 import de.ueller.midlet.gps.tile.POIdescription;
 
-public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay implements KeySelectMenuListener{
-	
-	class POITSelectMenuItem implements KeySelectMenuItem {
-		private Image img;
-		private String  name;
-		private byte idx;
-		private String canon;
-		
-		public POITSelectMenuItem(Image img, String name, byte idx) {
-			this.img = img;
-			this.name = name;
-			this.idx = idx;
-			this.canon = NumberCanon.canonial(name);
-		}
-
-		public Image getImage() {
-			return img;
-		}
-
-		public String getName() {
-			return name;
-		}
-		
-		public String getCanon() {
-			return canon;
-		}
-		
-		public byte getIdx() {
-			return idx;
-		}
-		
-		public String toString() {
-			return name + " [" + canon + "] (" + idx +")";
-		}
-		
-	}
+public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay implements KeySelectMenuReducedListener{
 	
 	private final static Logger logger = Logger.getInstance(GuiOSMPOIDisplay.class,Logger.DEBUG);
 	private final static int LOAD_POI_STATE_NONE = 0;
@@ -80,17 +46,15 @@ public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay implements KeySelectMe
 	
 	private int loadPOIxmlState;
 	
-	private KeySelectMenu poiTypeForm;
+	private GuiPOItypeSelectMenu poiTypeForm;
 	private ChoiceGroup poiSelectionCG;
 	private boolean showPoiTypeForm;
 	private boolean showParent;
-	private Vector  poiTypes;
 	private byte poiType;
 	
 	public GuiOSMPOIDisplay(int nodeID, SingleTile t, float lat, float lon, GpsMidDisplayable parent) {
 		super("Node", parent);
 		this.nodeID = nodeID;
-		poiTypes = null;
 		showParent = false;
 		loadPOIxmlState = LOAD_POI_STATE_NONE;
 		if (nodeID < 0) {
@@ -106,8 +70,7 @@ public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay implements KeySelectMe
 	
 	private void setupPoiTypeForm() {
 		try { 
-			poiTypeForm = new KeySelectMenu(this, this);
-			resetMenu();
+			poiTypeForm = new GuiPOItypeSelectMenu(this, this);
 			poiTypeForm.show();
 		} catch (Exception e) {
 			logger.exception("POI type form invalid", e);
@@ -227,12 +190,12 @@ public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay implements KeySelectMe
 		}
 	}
 
-	public void cancel() {
+	public void keySelectMenuCancel() {
 		showPoiTypeForm = false;
 	}
 
-	public void itemSelected(KeySelectMenuItem item) {
-		POITSelectMenuItem poiTypeIt = (POITSelectMenuItem)item;
+	public void keySelectMenuItemSelected(KeySelectMenuItem item) {
+		POItypeSelectMenuItem poiTypeIt = (POItypeSelectMenuItem)item;
 		poiType = poiTypeIt.getIdx();
 		String [] tags = Legend.getNodeOsmTags(poiType);
 		System.out.println("poiType: " + poiTypeIt + "  tags " + tags + " ed: " + osmentity);
@@ -246,31 +209,6 @@ public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay implements KeySelectMe
 		
 	}
 
-	public void resetMenu() {
-		logger.info("Resetting menu");
-		poiTypeForm.removeAll();
-		if (poiTypes == null) {
-			poiTypes = new Vector();
-			for (byte i = 1; i < Legend.getMaxType(); i++) {
-				KeySelectMenuItem menuItem = new POITSelectMenuItem(Legend.getNodeSearchImage(i),Legend.getNodeTypeDesc(i),i);
-				poiTypes.addElement(menuItem);
-			}
-		}
-		poiTypeForm.addResult(poiTypes);
-	}
-
-	public void searchString(String searchString) {
-		poiTypeForm.removeAll();
-		Vector vec = new Vector();
-		for (byte i = 0; i < poiTypes.size(); i++) {
-			POITSelectMenuItem poiType = (POITSelectMenuItem)poiTypes.elementAt(i); 
-			if (poiType.getCanon().startsWith(searchString)) {
-				logger.info(poiType + " matches searchString " + searchString);
-				vec.addElement(poiType);
-			}
-		}
-		poiTypeForm.addResult(vec);
-	}
 
 }
 //#endif

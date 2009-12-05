@@ -23,9 +23,13 @@ import javax.microedition.lcdui.List;
 import javax.microedition.lcdui.TextField;
 
 import de.ueller.gps.data.Configuration;
+import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.SearchResult;
 import de.ueller.gps.tools.HelperRoutines;
+import de.ueller.gpsMid.CancelMonitorInterface;
 import de.ueller.gpsMid.mapData.WaypointsTile;
+import de.ueller.midlet.gps.GuiPOItypeSelectMenu.POItypeSelectMenuItem;
+import de.ueller.midlet.gps.data.KeySelectMenuItem;
 import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.data.ProjMath;
@@ -35,7 +39,7 @@ import de.ueller.midlet.screens.InputListener;
 
 
 public class GuiSearch extends Canvas implements CommandListener,
-		GpsMidDisplayable, InputListener {
+		GpsMidDisplayable, InputListener, KeySelectMenuReducedListener, CancelMonitorInterface {
 
 	private final static Logger logger = Logger.getInstance(GuiSearch.class,Logger.DEBUG);
 
@@ -109,8 +113,11 @@ public class GuiSearch extends Canvas implements CommandListener,
 	public final static byte STATE_POI = 1;
 	public final static byte STATE_FULLTEXT = 2;
 	public final static byte STATE_FAVORITES = 3;
+	public final static byte STATE_SEARCH_PROGRESS = 4;
 	
 	private int fontSize;
+	
+	private volatile boolean isSearchCanceled;
 	
 	/**
 	 * Record the time at which a pointer press was recorded to determine
@@ -134,6 +141,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 	 */
 	private int pointerXPressed;
 	private int pointerYPressed;
+	
+	private KeySelectMenu poiTypeForm;
 
 	
 	public GuiSearch(Trace parent) throws Exception {
@@ -217,51 +226,6 @@ public class GuiSearch extends Canvas implements CommandListener,
 				parent.show();
 				return;
 			}
-		} else if (state == STATE_POI) {
-			if (c == OK_CMD) {
-				setTitle();
-				GpsMid.getInstance().show(new Form("Searching..."));
-				clearList();
-				searchCanon.setLength(0);
-				Thread t = new Thread(new Runnable() {
-					public void run() {
-						try {
-							byte poiType = (byte)poiSelectionCG.getSelectedIndex();
-							int maxScale = parent.pc.legend.getNodeMaxScale(poiType);
-							
-							Vector res = parent.t[parent.pc.legend.scaleToTile(maxScale)].getNearestPoi(poiType, 
-									parent.center.radlat, parent.center.radlon, 
-									Float.parseFloat(poiSelectionMaxDistance.getString())*1000.0f);						
-							for (int i = 0; i < res.size(); i++) {
-								addResult((SearchResult)res.elementAt(i));
-							}
-							show();
-							synchronized(this) {
-								try {
-									//Wait for the Names to be resolved
-									//This is an arbitrary value, but hopefully
-									//a reasonable compromise.
-									wait(500);
-									repaint();
-								} catch (InterruptedException e) {
-									//Nothing to do
-								}							
-							}
-						} catch (Exception e) {
-							logger.exception("Nearest POI search thread crashed ", e);
-						} catch (OutOfMemoryError oome) {
-							logger.error("Nearest POI search thread ran out of memory ");
-						}
-					}
-				}, "nearestPOI");
-				t.start();
-				state = STATE_MAIN;
-			}
-			if (c == BACK_CMD) {
-				state = STATE_MAIN;
-				show();
-				return;
-			}			
 		} else if (state == STATE_FULLTEXT) {
 			if (c == BACK_CMD) {
 				state = STATE_MAIN;
@@ -271,13 +235,18 @@ public class GuiSearch extends Canvas implements CommandListener,
 			if (c == OK_CMD) {
 				clearList();
 				setTitle();
-				searchCanon.setLength(0);	
+				searchCanon.setLength(0);
+				final CancelMonitorInterface cmi = this;
+				isSearchCanceled = false;
 				Thread t = new Thread(new Runnable() {
 					public void run() {
 						setTitle("searching...");
 						show();
-						Vector names = parent.fulltextSearch(fulltextSearchField.getString().toLowerCase());
+						Vector names = parent.fulltextSearch(fulltextSearchField.getString().toLowerCase(), cmi);
 						for (int i = 0; i < names.size(); i++) {
+							if (cmi.monitorIsCanceled()) {
+									break;
+							}
 							searchCanon.setLength(0);
 							String name = (String)names.elementAt(i);
 							//#debug debug
@@ -285,12 +254,22 @@ public class GuiSearch extends Canvas implements CommandListener,
 							searchThread.appendSearchBlocking(NumberCanon.canonial(name));
 						}
 						setTitle("Search results:");
+						state = STATE_MAIN;
+						show();
 						triggerRepaint();
 					}
 				}, "fulltextSearch");
+				state = STATE_SEARCH_PROGRESS;
+				show();
 				t.start();
-				state = STATE_MAIN;				
-			}			
+			}
+		} else if (state == STATE_SEARCH_PROGRESS) {
+			if (c == BACK_CMD) {
+				state = STATE_MAIN;
+				isSearchCanceled = true;
+				show();
+				return;
+			}
 		}
 		if (c == DEL_CMD) {
 			if (carret > 0){
@@ -324,20 +303,15 @@ public class GuiSearch extends Canvas implements CommandListener,
 		
 		if (c == POI_CMD) {
 			state = STATE_POI;
-			Form poiSelectionForm = new Form("POI selection");
-			poiSelectionCG = new ChoiceGroup("search for type: ", ChoiceGroup.EXCLUSIVE);
-			poiSelectionMaxDistance = new TextField("Maximum search distance", "10", 5, TextField.DECIMAL);
-			for (byte i = 0; i < parent.pc.legend.getMaxType(); i++) {				
-				poiSelectionCG.append(parent.pc.legend.getNodeTypeDesc(i), 
-						parent.pc.legend.getNodeSearchImage(i));
+			try{
+				poiTypeForm = new GuiPOItypeSelectMenu(this, this);
+				poiTypeForm.show();
+			} catch (Exception e) {
+				logger.exception("Failed to select POI type", e);
+				state = STATE_MAIN;
+				show();
 			}
-			poiSelectionForm.append(poiSelectionMaxDistance);
-			poiSelectionForm.append(poiSelectionCG);
-			poiSelectionForm.addCommand(BACK_CMD);
-			poiSelectionForm.addCommand(OK_CMD);
-			poiSelectionForm.setCommandListener(this);
 			
-			GpsMid.getInstance().show(poiSelectionForm);			
 		}
 		if (c == FULLT_CMD) {
 			state = STATE_FULLTEXT;
@@ -360,8 +334,15 @@ public class GuiSearch extends Canvas implements CommandListener,
 	public void show() {
 		potentialDoubleClick = false;
 		pointerDragged = false;
-		GpsMid.getInstance().show(this);
-		//Display.getDisplay(parent.getParent()).setCurrent(this);
+		if (state == STATE_SEARCH_PROGRESS) {
+			Form f = new Form("Searching...");
+			f.addCommand(BACK_CMD);
+			f.setCommandListener(this);
+			GpsMid.getInstance().show(f);
+		} else {
+			GpsMid.getInstance().show(this);
+			//Display.getDisplay(parent.getParent()).setCurrent(this);
+		}
 		repaint();
 	}
 
@@ -642,7 +623,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			}
 		}
 		if (searchCanon.length() > 1) {
-			state = STATE_MAIN;			
+			state = STATE_MAIN;
 		}
 		reSearch();
 	}
@@ -853,10 +834,61 @@ public class GuiSearch extends Canvas implements CommandListener,
 			searchCanon.append(strResult);
 			carret = searchCanon.length();
 			if (carret > 1) {
-				state = STATE_MAIN;			
+				state = STATE_MAIN;
 			}
 			reSearch();
 		}
 		show();
-	}		
+	}
+
+	public void keySelectMenuCancel() {
+		state = STATE_MAIN;
+		show();
+	}
+
+	public void keySelectMenuItemSelected(KeySelectMenuItem item) {
+		setTitle();
+		
+		clearList();
+		searchCanon.setLength(0);
+		final byte poiType = ((POItypeSelectMenuItem)item).getIdx();
+		final CancelMonitorInterface cmi = this;
+		isSearchCanceled = false;
+		Thread t = new Thread(new Runnable() {
+			public void run() {
+				try {
+					int maxScale = Legend.getNodeMaxScale(poiType);
+					Vector res = parent.t[Legend.scaleToTile(maxScale)].getNearestPoi(poiType, 
+							parent.center.radlat, parent.center.radlon, 
+							10.0f*1000.0f, cmi);
+					for (int i = 0; i < res.size(); i++) {
+						addResult((SearchResult)res.elementAt(i));
+					}
+					state = STATE_MAIN;
+					show();
+					synchronized(this) {
+						try {
+							//Wait for the Names to be resolved
+							//This is an arbitrary value, but hopefully
+							//a reasonable compromise.
+							wait(500);
+							repaint();
+						} catch (InterruptedException e) {
+							//Nothing to do
+						}
+					}
+				} catch (Exception e) {
+					logger.exception("Nearest POI search thread crashed ", e);
+				} catch (OutOfMemoryError oome) {
+					logger.error("Nearest POI search thread ran out of memory ");
+				}
+			}
+		}, "nearestPOI");
+		state = STATE_SEARCH_PROGRESS;
+		t.start();
+	}
+
+	public boolean monitorIsCanceled() {
+		return isSearchCanceled;
+	}
 }

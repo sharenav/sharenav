@@ -49,6 +49,7 @@ import de.ueller.gpsMid.mapData.DictReader;
 import de.ueller.gpsMid.GUIosmWayDisplay;
 import de.ueller.midlet.gps.data.EditableWay;
 //#endif
+import de.ueller.gpsMid.CancelMonitorInterface;
 import de.ueller.gpsMid.mapData.QueueDataReader;
 import de.ueller.gpsMid.mapData.QueueDictReader;
 import de.ueller.gpsMid.mapData.Tile;
@@ -2412,8 +2413,8 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		return namesThread.getName(idx);
 	}
 	
-	public Vector fulltextSearch (String snippet) {
-		return namesThread.fulltextSearch(snippet);
+	public Vector fulltextSearch (String snippet, CancelMonitorInterface cmi) {
+		return namesThread.fulltextSearch(snippet, cmi);
 	}
 
 	// this is called by ImageCollector

@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.Vector;
 
 import de.ueller.gps.data.SearchResult;
+import de.ueller.gpsMid.CancelMonitorInterface;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.data.ProjMath;
 import de.ueller.midlet.gps.tile.PaintContext;
@@ -120,7 +121,7 @@ public class ContainerTile extends Tile {
 	    * coordinate and traverses that one first to check for
 	    * close by POI.
 	    */
-	public Vector getNearestPoi(byte searchType, float lat, float lon, float maxDist) {
+	public Vector getNearestPoi(byte searchType, float lat, float lon, float maxDist, CancelMonitorInterface cmi) {
 		boolean t1closer;
 		Vector res;
 		Vector res2;
@@ -128,6 +129,13 @@ public class ContainerTile extends Tile {
 		float t2dist = Float.MAX_VALUE;
 		float distClose;
 		float distFar;
+		
+		if(cmi != null) {
+			if (cmi.monitorIsCanceled()) {
+				//Return an empty vector
+				return new Vector();
+			}
+		}
 		
 		/**
 		 * Determine which of the tile bounding boxes is closer to the point
@@ -202,9 +210,9 @@ public class ContainerTile extends Tile {
 		
 		if (distClose < maxDist) {
 			if (t1closer)
-				res = t1.getNearestPoi(searchType, lat, lon, maxDist);
+				res = t1.getNearestPoi(searchType, lat, lon, maxDist, cmi);
 			else
-				res = t2.getNearestPoi(searchType, lat, lon, maxDist);
+				res = t2.getNearestPoi(searchType, lat, lon, maxDist, cmi);
 		} else {
 			res = new Vector();
 		}
@@ -225,9 +233,9 @@ public class ContainerTile extends Tile {
 		if ((distFar < maxDistFound)) { // This might be inexact at tile boundries. We want to check if tile dist < largest res dist
 			//logger.info("traversing tile 2 of dist: " + distFar);
 			if (t1closer) 
-				res2 = t2.getNearestPoi(searchType, lat, lon, maxDistFound);				
+				res2 = t2.getNearestPoi(searchType, lat, lon, maxDistFound, cmi);
 			else
-				res2 = t1.getNearestPoi(searchType, lat, lon, maxDistFound);
+				res2 = t1.getNearestPoi(searchType, lat, lon, maxDistFound, cmi);
 				
 			/**
 			 * Perform a merge sort of the two result lists.

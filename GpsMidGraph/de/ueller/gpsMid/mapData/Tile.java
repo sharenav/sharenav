@@ -6,6 +6,7 @@ package de.ueller.gpsMid.mapData;
 
 import java.util.Vector;
 
+import de.ueller.gpsMid.CancelMonitorInterface;
 import de.ueller.midlet.gps.ScreenContext;
 
 import de.ueller.midlet.gps.data.IntPoint;
@@ -180,7 +181,7 @@ public abstract class Tile {
 	    * type searchType close to lat/lon. The list is ordered
 	    * by distance with the closest one first.  
 	    */
-	public Vector getNearestPoi(byte searchType, float lat, float lon, float maxDist) {
+	public Vector getNearestPoi(byte searchType, float lat, float lon, float maxDist, CancelMonitorInterface cmi) {
 		/**
 		 * All of the Tile types for which we expect to perform a nearest 
 		 * POI search should have this method overwritten

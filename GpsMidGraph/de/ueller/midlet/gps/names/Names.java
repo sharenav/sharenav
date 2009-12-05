@@ -18,6 +18,7 @@ import java.util.Vector;
 
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.tools.intTree;
+import de.ueller.gpsMid.CancelMonitorInterface;
 import de.ueller.gpsMid.mapData.QueueReader;
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.Logger;
@@ -249,12 +250,17 @@ public class Names implements Runnable {
 	 * @param snippet
 	 * @return a Vector of Strings containing the name.
 	 */
-	public Vector fulltextSearch (String snippet) {
+	public Vector fulltextSearch (String snippet, CancelMonitorInterface cmi) {
 		logger.info("Beginning fulltext search for " + snippet);
 		Vector hits = new Vector();
 		int count;		
 		try {
 			for (int fid = 0; fid < (startIndexes.length - 1); fid++) {
+				if(cmi != null) {
+					if (cmi.monitorIsCanceled()) {
+						return hits;
+					}
+				}
 				InputStream is = Configuration.getMapResource("/names-" + fid + ".dat");
 				count = startIndexes[fid + 1] - startIndexes[fid];				
 				if (is == null) {
