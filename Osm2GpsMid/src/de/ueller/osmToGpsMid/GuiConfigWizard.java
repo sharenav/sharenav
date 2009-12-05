@@ -542,9 +542,11 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			fw.write("useRouting = " + config.useRouting + "\r\n");
 			fw.write("\r\n");
 			
-			fw.write("# == Advanced parameters for tile sizes ===\r\n");
-			fw.write("#  Larger values will reduce the number of files in the midlet\r\n");
-			fw.write("#  but more memory will be required on the device to run GpsMid\r\n");	
+			fw.write("# == Advanced parameters for configuring number of files in the midlet ===\r\n");
+			fw.write("#  With less files more memory will be required on the device to run GpsMid\r\n");	
+			fw.write("#  Larger dictionary depth will reduce the number of dictionary files in GpsMid\r\n");
+			fw.write("maxDictDepth = " + config.getMaxDictDepth() + "\r\n");
+			fw.write("#  Larger tile size will reduce the number of tile files in the midlet\r\n");
 			fw.write("# Maximum route tile size in bytes\r\n");
 			fw.write("routing.maxTileSize = " + config.getMaxRouteTileSize() + "\r\n");
 			fw.write("# Maximum tile size in bytes\r\n");

@@ -237,7 +237,8 @@ public class Configuration {
 		public boolean enableEditingSupport = false;
 		public int maxTileSize = 20000;
 		public int maxRouteTileSize = 3000;
-
+		private int maxDictDepth = 5;
+		
 		/** maximum ways that are allowed to be stored into a tile of this zoom level */
 		public int maxTileWays[] = new int[4];
 		/** path to the style-file */ 		
@@ -425,6 +426,8 @@ public class Configuration {
 			setSounds(getString("useSounds"));
 			
 			maxTileSize = Integer.parseInt(getString("maxTileSize"));
+			maxDictDepth = Integer.parseInt(getString("maxDictDepth"));
+			
 			for (int i=0; i<=3; i++) {
 				maxTileWays[i] = Integer.parseInt(getString("maxTileWays" + i));
 			}
@@ -860,6 +863,10 @@ public class Configuration {
 			return maxTileSize;
 		}
 
+		public int getMaxDictDepth() {
+			return maxDictDepth;
+		}
+		
 		public int getMaxTileWays(int zl) {
 			return maxTileWays[zl];
 		}
@@ -968,7 +975,7 @@ public class Configuration {
 				confString += "  Using the complete osm file\n";
 			}
 			confString += "  Limits for tiles:\n";
-			confString += "   maximum size: " + maxTileSize + "  max. route tile size: " + maxRouteTileSize + "\n";
+			confString += "   maximum size: " + maxTileSize + "  max. route tile size: " + maxRouteTileSize + "  max. dict depth: " + maxDictDepth + "\n";
 			confString += "   maximum ways for level";
 			for (int i=0;i < 4; i++) {
 				confString += " " + i + ": " + maxTileWays[i] + " ";

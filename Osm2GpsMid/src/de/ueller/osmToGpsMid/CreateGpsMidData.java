@@ -82,7 +82,7 @@ public class CreateGpsMidData implements FilenameFilter {
 	public final static byte ROUTE_FLAG_MOTORWAY_LINK = 0x02;
 	public final static byte ROUTE_FLAG_ROUNDABOUT = 0x04;
 		
-	public  final static int MAX_DICT_DEEP=5;
+	// public  final static int MAX_DICT_DEEP=5; replaced by Configuration.maxDictDepth
 	public  final static int ROUTEZOOMLEVEL=4;
 	OxParser parser;
 	Tile tile[]= new Tile[ROUTEZOOMLEVEL+1];
@@ -103,6 +103,7 @@ public class CreateGpsMidData implements FilenameFilter {
 	private int totalSegsWritten=0;
 	private int totalNodesWritten=0;
 	private int totalPOIsWritten=0;
+	private static int dictFilesWritten = 0;
 	private RouteData rd;
 	
 	
@@ -134,13 +135,13 @@ public class CreateGpsMidData implements FilenameFilter {
 		for (int i=0;i<=3;i++){
 			System.out.println("Exporting tiles for zoomlevel " + i);
 			long bytesWritten = exportMapToMid(i);
-			System.out.println("  Zoomlevel " + i + ": " + Configuration.memoryWithUnit(bytesWritten));
+			System.out.println("  Zoomlevel " + i + ": " + Configuration.memoryWithUnit(bytesWritten) + " indexed by " + dictFilesWritten + " dictionary files");
 		}
 		if (Configuration.attrToBoolean(configuration.useRouting) >= 0) {
 			System.out.println("Exporting route tiles");
 			long bytesWritten = exportMapToMid(ROUTEZOOMLEVEL);
 			System.out.println("  " + Configuration.memoryWithUnit(bytesWritten) + " for nodes, " +
-			Configuration.memoryWithUnit(outputLengthConns) + " for connections");
+			Configuration.memoryWithUnit(outputLengthConns) + " for connections" + " indexed by " + dictFilesWritten + " dictionary files");
 		} else {
 			System.out.println("No route tiles to export");
 		}
@@ -702,6 +703,7 @@ public class CreateGpsMidData implements FilenameFilter {
 			} 
 			Sequence s=new Sequence();
 			tile[zl].writeTileDict(ds,1,s,path);			
+			dictFilesWritten = s.get();
 			ds.writeUTF("END"); // Magic number
 			fo.close();
 

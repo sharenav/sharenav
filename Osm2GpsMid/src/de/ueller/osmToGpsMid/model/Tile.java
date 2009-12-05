@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import de.ueller.osmToGpsMid.Configuration;
 import de.ueller.osmToGpsMid.CreateGpsMidData;
 import de.ueller.osmToGpsMid.MyMath;
 
@@ -83,7 +84,7 @@ public class Tile {
 		boolean openStream;
 //		System.out.println("Write Tile type=" + type + " deep=" + deep + " fid=" + fid);
 		if ((type == TYPE_CONTAINER || type == TYPE_ROUTECONTAINER) 
-				&& deep >= CreateGpsMidData.MAX_DICT_DEEP){
+				&& deep >= Configuration.getConfiguration().getMaxDictDepth()){
 //			System.out.println("Type 4");
 			// Write containerTile 
 			if (zl != CreateGpsMidData.ROUTEZOOMLEVEL){
