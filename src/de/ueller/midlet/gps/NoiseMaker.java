@@ -161,7 +161,18 @@ public class NoiseMaker
 	    }
 	}
 //#endif
-	
+
+	public static synchronized void stopPlayer() {
+		//#if polish.api.mmapi	
+		if (mPlayer != null) {
+			//#debug debug
+			mLogger.debug("Closing old player");
+			mPlayer.close();
+			mPlayer = null;
+		}
+		//#endif
+	}
+
 
 	public void immediateSound(String name) {
 		synchronized (NoiseMaker.class) {			
@@ -262,15 +273,6 @@ public class NoiseMaker
 			mPlayingNameIndex = iEnd + 1;
 			mPlayingSoundName = nextSoundName;
 			return nextSoundName;
-		}
-	}
-
-	public static synchronized void stopPlayer() {
-		if (mPlayer != null) {
-			//#debug debug
-			mLogger.debug("Closing old player");
-			mPlayer.close();
-			mPlayer = null;
 		}
 	}
 	
