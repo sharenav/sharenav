@@ -508,9 +508,20 @@ public class RouteInstructions {
 							// if nearest route arrow is closer than PASSINGDISTANCE meters we're currently passing this route arrow
 							if (intDistNow < PASSINGDISTANCE) {
 								if (iInstructionSaidArrow != iNow) { 
-									soundToPlay.append (getSoundInstruction(cNow.wayRouteFlags, aNow));
-							    	iInstructionSaidArrow = iNow;
-									soundMaxTimesToPlay=1;
+									if (
+										 // when we should not avoid instructions directly at the arrow	
+										 !Configuration.getCfgBitState(Configuration.CFGBIT_SND_ROUTINGINSTRUCTION_AVOID_AT_ARROW)											
+										 // or the prepare instruction for this arrow has not been given
+										 || iPrepareInstructionSaidArrow != iNow
+										 // or when it's the instruction that we arrived at the destination
+										 ||
+										 aNow == RI_TARGET_REACHED
+									) {
+										// give routing instruction directly at the arrow
+										soundToPlay.append (getSoundInstruction(cNow.wayRouteFlags, aNow));
+								    	iInstructionSaidArrow = iNow;
+										soundMaxTimesToPlay=1;
+									}
 								}
 							} else {
 								sbRouteInstruction.append(" in " + intDistNow + "m");
