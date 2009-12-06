@@ -1,9 +1,10 @@
-package de.ueller.midlet.gps;
 /*
  * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net
  * 			Copyright (c) 2008,2009 Kai Krueger apm at users dot sourceforge dot net 
- * See Copying
+ * See COPYING
  */
+
+package de.ueller.midlet.gps;
 
 import java.util.Vector;
 
@@ -474,7 +475,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		mapInfos[1] = "Scale bar";
 		mapInfos[2] = "Speed when driving";
 		mapInfos[3] = "Altitude from GPS";
-		mapInfos[4] = "Air distance to target when not routing";
+		mapInfos[4] = "Air distance to dest. when not routing";
 		mapInfos[5] = "Clock with current time";
 		mapInfoOpts = new ChoiceGroup("Infos in Map Screen:", Choice.MULTIPLE, mapInfos ,null);
 		menuDisplayOptions.append(mapInfoOpts);

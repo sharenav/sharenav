@@ -1,8 +1,9 @@
-package de.ueller.midlet.gps;
 /*
  * GpsMid - Copyright (c) 2008 sk750 at users dot sourceforge dot net 
- * See Copying
+ * See COPYING
  */
+
+package de.ueller.midlet.gps;
 
 import javax.microedition.lcdui.*;
 import de.ueller.gps.data.Configuration;
@@ -43,24 +44,28 @@ public class GuiSetupSound extends Form implements CommandListener {
 			sndGpsGroup.setSelectedFlags(selSndGps);
 			append(sndGpsGroup);
 			
-			sndRouting[0] = "Routing Instructions"; 			selSndRouting[0]=Configuration.getCfgBitState(Configuration.CFGBIT_SND_ROUTINGINSTRUCTIONS);
-			sndRouting[1] = "try to avoid directly at arrow"; 	selSndRouting[1]=Configuration.getCfgBitState(Configuration.CFGBIT_SND_ROUTINGINSTRUCTION_AVOID_AT_ARROW);
-			sndRouting[2] = "Target Reached"; 					selSndRouting[2]=Configuration.getCfgBitState(Configuration.CFGBIT_SND_TARGETREACHED);
-			sndRoutingGroup = new ChoiceGroup("Navigation / Routing", Choice.MULTIPLE, sndRouting ,null);
+			sndRouting[0] = "Routing instructions";
+			selSndRouting[0]=Configuration.getCfgBitState(Configuration.CFGBIT_SND_ROUTINGINSTRUCTIONS);
+			sndRouting[1] = "Try to avoid directly at arrow";
+			selSndRouting[1]=Configuration.getCfgBitState(Configuration.CFGBIT_SND_ROUTINGINSTRUCTION_AVOID_AT_ARROW);
+			sndRouting[2] = "Destination reached";
+			selSndRouting[2]=Configuration.getCfgBitState(Configuration.CFGBIT_SND_DESTREACHED);
+			sndRoutingGroup = new ChoiceGroup("Navigation / Routing", Choice.MULTIPLE, sndRouting, null);
 			sndRoutingGroup.setSelectedFlags(selSndRouting);
 			append(sndRoutingGroup);
 			
-			spdAlert[0] = "Audio Speeding Alert";
+			spdAlert[0] = "Audio speeding alert";
 			selSpdAlert[0]=Configuration.getCfgBitState(Configuration.CFGBIT_SPEEDALERT_SND);
-			spdAlert[1] = "Visual Speeding Alert";
+			spdAlert[1] = "Visual speeding alert";
 			selSpdAlert[1]=Configuration.getCfgBitState(Configuration.CFGBIT_SPEEDALERT_VISUAL);
-			spdAlert[2] = "Winter Limits Active";
+			spdAlert[2] = "Winter limits active";
 			selSpdAlert[2]=Configuration.getCfgBitState(Configuration.CFGBIT_MAXSPEED_WINTER);
-			spdAlertGroup = new ChoiceGroup("Speeding Alert", Choice.MULTIPLE, spdAlert ,null);
+			spdAlertGroup = new ChoiceGroup("Speeding alert", Choice.MULTIPLE, spdAlert ,null);
 			spdAlertGroup.setSelectedFlags(selSpdAlert);
 			append(spdAlertGroup);
 
-			spdAlertTolerance=new TextField("Speed Alert Tolerance",Integer.toString(Configuration.getSpeedTolerance()),3,TextField.DECIMAL);
+			spdAlertTolerance = new TextField("Speed alert tolerance",
+					Integer.toString(Configuration.getSpeedTolerance()), 3, TextField.DECIMAL);
 			append(spdAlertTolerance);
 
 			addCommand(CMD_SAVE);
@@ -94,7 +99,7 @@ public class GuiSetupSound extends Form implements CommandListener {
 			sndRoutingGroup.getSelectedFlags(selSndRouting);
 			Configuration.setCfgBitState(Configuration.CFGBIT_SND_ROUTINGINSTRUCTIONS, selSndRouting[0], true);
 			Configuration.setCfgBitState(Configuration.CFGBIT_SND_ROUTINGINSTRUCTION_AVOID_AT_ARROW, selSndRouting[1], true);
-			Configuration.setCfgBitState(Configuration.CFGBIT_SND_TARGETREACHED, selSndRouting[2], true);
+			Configuration.setCfgBitState(Configuration.CFGBIT_SND_DESTREACHED, selSndRouting[2], true);
 
 			Configuration.setSpeedTolerance((int)Float.parseFloat(spdAlertTolerance.getString()));
 

@@ -52,15 +52,15 @@ public class GuiSearch extends Canvas implements CommandListener,
 	/** ROUTE1_CMD is used when GUI is optimised for routing */
 	private final Command ROUTE1_CMD = new Command("Route", Command.OK, 1);
 	/** OK2_CMD is used when GUI is optimised for routing */
-	private final Command OK2_CMD = new Command("As Target", Command.ITEM, 3);
+	private final Command OK2_CMD = new Command("As destination", Command.ITEM, 3);
 	private final Command DISP_CMD = new Command("Display", Command.ITEM, 2);
-	private final Command DEL_CMD = new Command("delete", Command.ITEM, 4);
-	private final Command CLEAR_CMD = new Command("clear", Command.ITEM, 5);
-	private final Command BOOKMARK_CMD = new Command("add to Waypoint", Command.ITEM, 6);
+	private final Command DEL_CMD = new Command("Delete", Command.ITEM, 4);
+	private final Command CLEAR_CMD = new Command("Clear", Command.ITEM, 5);
+	private final Command BOOKMARK_CMD = new Command("Add to way points", Command.ITEM, 6);
 	private final Command BACK_CMD = new Command("Back", Command.BACK, 7);
-	private final Command OVERVIEW_MAP_CMD = new Command("Overview/Filter Map", Command.ITEM, 8);
+	private final Command OVERVIEW_MAP_CMD = new Command("Overview/Filter map", Command.ITEM, 8);
 	private final Command POI_CMD = new Command("Nearest POI", Command.ITEM, 9);
-	private final Command FULLT_CMD = new Command("Fulltext Search", Command.ITEM, 10);
+	private final Command FULLT_CMD = new Command("Fulltext search", Command.ITEM, 10);
 
 	//private Form form;
 
@@ -201,7 +201,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 					positionMark.nameIdx=sr.nameIdx;
 					positionMark.displayName=parent.getName(sr.nameIdx);
 				}
-				parent.setTarget(positionMark);
+				parent.setDestination(positionMark);
 				//#debug info
 				logger.info("Search selected: " + positionMark);
 				destroy();
@@ -858,7 +858,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			public void run() {
 				try {
 					int maxScale = Legend.getNodeMaxScale(poiType);
-					Vector res = parent.t[Legend.scaleToTile(maxScale)].getNearestPoi(poiType, 
+					Vector res = parent.tiles[Legend.scaleToTile(maxScale)].getNearestPoi(poiType, 
 							parent.center.radlat, parent.center.radlon, 
 							10.0f*1000.0f, cmi);
 					for (int i = 0; i < res.size(); i++) {

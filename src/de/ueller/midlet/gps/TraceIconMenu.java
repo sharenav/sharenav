@@ -1,9 +1,10 @@
 /*
  * GpsMid - Copyright (c) 2009 sk750 at users dot sourceforge dot net 
- * See Copying
+ * See COPYING
  */
 
 package de.ueller.midlet.gps;
+
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.tools.IconActionPerformer;
 import de.ueller.gps.tools.IconMenuWithPagesGUI;
@@ -102,9 +103,9 @@ public class TraceIconMenu extends IconMenuWithPagesGUI {
 		mp = createAndAddMenuPage(" Route "/*i:RoutePage*/, 3, 4);
 		iconToggleRoute=	mp.createAndAddIcon("Calculate"/*i:Calc*/, "i_calc", Trace.ROUTING_TOGGLE_CMD);
 		iconToggleRoute.setFlag(LayoutElement.FLAG_IMAGE_TOGGLEABLE);
-							mp.createAndAddIcon("Set target"/*i:SetTarget*/, "i_settarget", Trace.SETTARGET_CMD);
-							mp.createAndAddIcon("Show target"/*i:ShowTarget*/, "i_showtarget", Trace.SHOW_TARGET_CMD);		
-							mp.createAndAddIcon("Clear target"/*i:ClearTarget*/, "i_cleartarget", Trace.CLEARTARGET_CMD);		
+							mp.createAndAddIcon("Set dest"/*i:SetDest*/, "i_setdest", Trace.SET_DEST_CMD);
+							mp.createAndAddIcon("Show dest"/*i:ShowDest*/, "i_showdest", Trace.SHOW_DEST_CMD);		
+							mp.createAndAddIcon("Clear dest"/*i:ClearDest*/, "i_cleardest", Trace.CLEAR_DEST_CMD);		
 	}
 
 	private void rememberActiveTabAndEleNr() {

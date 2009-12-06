@@ -1,12 +1,11 @@
-package de.ueller.midlet.gps;
-
 /*
  * GpsMid - Copyright (c) 2008 Markus Baeurle mbaeurle at users dot sourceforge dot net 
- * See Copying
+ * See COPYING
  */
 
+package de.ueller.midlet.gps;
+
 import java.util.Calendar;
-import java.util.TimeZone;
 
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
@@ -106,7 +105,7 @@ public class GuiTrip extends KeyCommandCanvas implements CommandListener,
 		
 		// Draw heading and distance to the destination
 		y += 48;
-		if (mParent.getTarget() == null) {
+		if (mParent.getDestination() == null) {
 			mLcdFont.drawInvalid(g, 3, w, y - 6);
 			y += 48;
 			mLcdFont.drawInvalid(g, 4, w - mKmWidth -1, y - 6);
@@ -117,8 +116,8 @@ public class GuiTrip extends KeyCommandCanvas implements CommandListener,
 			}
 		} else {
 			float[] result = ProjMath.calcDistanceAndCourse(mParent.center.radlat, 
-					mParent.center.radlon, mParent.getTarget().lat, 
-					mParent.getTarget().lon);
+					mParent.center.radlon, mParent.getDestination().lat, 
+					mParent.getDestination().lon);
 			// Heading (result[1])
 			int relHeading = (int)(result[1] - pos.course + 0.5);
 			if (relHeading < 0)

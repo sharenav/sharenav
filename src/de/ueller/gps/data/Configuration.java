@@ -98,8 +98,8 @@ public class Configuration {
 	public final static byte CFGBIT_SND_ROUTINGINSTRUCTIONS = 19;
 	// bit 20: Gps Auto Reconnect
 	public final static byte CFGBIT_GPS_AUTORECONNECT = 20;
-	// bit 21: Sound on target reached
-	public final static byte CFGBIT_SND_TARGETREACHED = 21;
+	// bit 21: Sound when destination reached
+	public final static byte CFGBIT_SND_DESTREACHED = 21;
 	// bit 22: auto recalculate route
 	public final static byte CFGBIT_ROUTE_AUTO_RECALC = 22;
 	// bit 23: use JSR135 or JSR 234 for taking pictures;
@@ -176,7 +176,7 @@ public class Configuration {
 	public final static byte CFGBIT_AUTO_START_GPS = 59;
 	// bit 60: Flag whether to display in metric or imperial units
 	public final static byte CFGBIT_METRIC = 60;
-	// bit 61: Flag whether air-line distance to target should be displayed in map screen
+	// bit 61: Flag whether air distance to destination should be displayed in map screen
 	public final static byte CFGBIT_SHOW_AIR_DISTANCE_IN_MAP = 61;
 	// bit 62: Flag whether offset to route should be displayed in map screen
 	public final static byte CFGBIT_SHOW_OFF_ROUTE_DISTANCE_IN_MAP = 62;
@@ -465,7 +465,7 @@ public class Configuration {
 			cfgBits_0_to_63 |=	1L << CFGBIT_SND_CONNECT |
 				   		1L << CFGBIT_SND_DISCONNECT |
 				   		1L << CFGBIT_SND_ROUTINGINSTRUCTIONS |
-				   		1L << CFGBIT_SND_TARGETREACHED |
+				   		1L << CFGBIT_SND_DESTREACHED |
 				   		1L << CFGBIT_SHOW_POINT_OF_COMPASS |
 				   		1L << CFGBIT_AREAS |
 				   		1L << CFGBIT_ROUTE_AUTO_RECALC;

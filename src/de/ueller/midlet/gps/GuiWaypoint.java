@@ -219,7 +219,7 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 				mLogger.error("No waypoint selected");
 				return;
 			} else if (idx > -1) {
-				mParent.setTarget(mWaypoints[idx]);				
+				mParent.setDestination(mWaypoints[idx]);				
 			} else {
 				IntPoint intPoint1 = new IntPoint(10, 10);
 				IntPoint intPoint2 = new IntPoint(getWidth() - 10, getHeight() - 10);

@@ -1,11 +1,11 @@
 /*
  * GpsMid - Copyright (c) 2009 sk750 at users dot sourceforge dot net 
- * See Copying
+ * See COPYING
  */
 
 package de.ueller.midlet.gps;
+
 import de.ueller.gps.data.Legend;
-import de.ueller.gps.data.Configuration;
 import de.ueller.gps.tools.LayoutElement;
 import de.ueller.gps.tools.LayoutManager;
 import de.ueller.midlet.gps.data.MoreMath;
@@ -36,7 +36,7 @@ public class TraceLayout extends LayoutManager {
 	public static final int ZOOM_IN = 15;
 	public static final int ZOOM_OUT = 16;
 	public static final int RECENTER_GPS = 17;
-	public static final int SHOW_TARGET = 18;
+	public static final int SHOW_DEST = 18;
 	public static final int ALTITUDE = 19;
 	public static final int CURRENT_TIME = 20;
 	public static final int ETA = 21;
@@ -252,7 +252,7 @@ public class TraceLayout extends LayoutManager {
 		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON]);
 		e.setActionID(Trace.ZOOM_IN_CMD);
 
-		e = ele[SHOW_TARGET]; addElement(e, 
+		e = ele[SHOW_DEST]; addElement(e, 
 				LayoutElement.FLAG_HALIGN_LEFTTO_RELATIVE | LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND | LayoutElement.FLAG_VALIGN_CENTER_AT_TOP_OF_ELEMENT |
 				LayoutElement.FLAG_FONT_LARGE |
 				LayoutElement.FLAG_BACKGROUND_BORDER |
@@ -263,7 +263,7 @@ public class TraceLayout extends LayoutManager {
 		e.setHRelative(ele[ZOOM_OUT]);
 		e.setColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON_TEXT]);
 		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON]);
-		e.setActionID(Trace.SHOW_TARGET_CMD);
+		e.setActionID(Trace.SHOW_DEST_CMD);
 		
 		e = ele[RECENTER_GPS]; addElement(e, 
 				LayoutElement.FLAG_HALIGN_LEFTTO_RELATIVE | LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND | LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |
@@ -274,7 +274,7 @@ public class TraceLayout extends LayoutManager {
 		e.setWidthPercent(90);
 		e.setHeightPercent(150);
 		e.setHRelative(ele[ZOOM_IN]);
-		e.setVRelative(ele[SHOW_TARGET]);
+		e.setVRelative(ele[SHOW_DEST]);
 		e.setColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON_TEXT]);
 		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON]);
 		e.setActionID(Trace.RECENTER_GPS_CMD);

@@ -93,8 +93,8 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	protected static final int MAN_WAYP_CMD = 9;
 	protected static final int ROUTING_TOGGLE_CMD = 10;
 	protected static final int CAMERA_CMD = 11;
-	protected static final int CLEARTARGET_CMD = 12;
-	protected static final int SETTARGET_CMD = 13;
+	protected static final int CLEAR_DEST_CMD = 12;
+	protected static final int SET_DEST_CMD = 13;
 	protected static final int MAPFEATURES_CMD = 14;
 	protected static final int RECORDINGS_CMD = 16;
 	protected static final int ROUTINGS_CMD = 17;
@@ -134,7 +134,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	protected static final int ABOUT_CMD = 51;
 	protected static final int SETUP_CMD = 52;
 	protected static final int SEND_MESSAGE_CMD = 53;
-	protected static final int SHOW_TARGET_CMD = 54;
+	protected static final int SHOW_DEST_CMD = 54;
 
 	private final Command [] CMDS = new Command[55];
 
@@ -207,7 +207,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	private static boolean pointerDragAction = false;
 	
 	public volatile boolean routeCalc=false;
-	public Tile t[] = new Tile[6];
+	public Tile tiles[] = new Tile[6];
 	public Way actualSpeedLimitWay;
 
 	// this is only for visual debugging of the routing engine
@@ -260,8 +260,8 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	 */
 	private int course = 0;
 
-	public boolean atTarget = false;
-	public boolean movedAwayFromTarget = true;
+	public boolean atDest = false;
+	public boolean movedAwayFromDest = true;
 
 	private Names namesThread;
 
@@ -273,7 +273,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 
 	private Runtime runtime = Runtime.getRuntime();
 
-	private PositionMark target = null;
+	private PositionMark dest = null;
 	public Vector route = null;
 	private RouteInstructions ri = null;
 	
@@ -313,10 +313,10 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		CMDS[SAVE_WAYP_CMD] = new Command("Save waypoint",Command.ITEM, 7);
 		CMDS[ENTER_WAYP_CMD] = new Command("Enter waypoint",Command.ITEM, 7);
 		CMDS[MAN_WAYP_CMD] = new Command("Manage waypoints",Command.ITEM, 7);
-		CMDS[ROUTING_TOGGLE_CMD] = new Command("Toggle Routing",Command.ITEM, 3);
+		CMDS[ROUTING_TOGGLE_CMD] = new Command("Toggle routing",Command.ITEM, 3);
 		CMDS[CAMERA_CMD] = new Command("Camera",Command.ITEM, 9);
-		CMDS[CLEARTARGET_CMD] = new Command("Clear Target",Command.ITEM, 10);
-		CMDS[SETTARGET_CMD] = new Command("As Target",Command.ITEM, 11);
+		CMDS[CLEAR_DEST_CMD] = new Command("Clear destination",Command.ITEM, 10);
+		CMDS[SET_DEST_CMD] = new Command("As destination",Command.ITEM, 11);
 		CMDS[MAPFEATURES_CMD] = new Command("Map Features",Command.ITEM, 12);
 		CMDS[RECORDINGS_CMD] = new Command("Recordings...",Command.ITEM, 4);
 		CMDS[ROUTINGS_CMD] = new Command("Routing...",Command.ITEM, 3);
@@ -324,7 +324,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		CMDS[BACK_CMD] = new Command("Back",Command.BACK, 15);
 		CMDS[ZOOM_IN_CMD] = new Command("Zoom in",Command.ITEM, 100);
 		CMDS[ZOOM_OUT_CMD] = new Command("Zoom out",Command.ITEM, 100);
-		CMDS[MANUAL_ROTATION_MODE_CMD] = new Command("Manual Rotation Mode",Command.ITEM, 100);
+		CMDS[MANUAL_ROTATION_MODE_CMD] = new Command("Manual rotation mode",Command.ITEM, 100);
 		CMDS[TOGGLE_OVERLAY_CMD] = new Command("Next overlay",Command.ITEM, 100);
 		CMDS[TOGGLE_BACKLIGHT_CMD] = new Command("Keep backlight on/off",Command.ITEM, 100);
 		CMDS[TOGGLE_FULLSCREEN_CMD] = new Command("Switch to fullscreen",Command.ITEM, 100);
@@ -333,9 +333,9 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		CMDS[TOGGLE_RECORDING_CMD] = new Command("(De)Activate recording",Command.ITEM, 100);
 		CMDS[TOGGLE_RECORDING_SUSP_CMD] = new Command("Suspend recording",Command.ITEM, 100);
 		CMDS[RECENTER_GPS_CMD] = new Command("Recenter on GPS",Command.ITEM, 100);
-		CMDS[SHOW_TARGET_CMD] = new Command("Show target",Command.ITEM, 100);
+		CMDS[SHOW_DEST_CMD] = new Command("Show destination",Command.ITEM, 100);
 		CMDS[DATASCREEN_CMD] = new Command("Tacho", Command.ITEM, 15);
-		CMDS[OVERVIEW_MAP_CMD] = new Command("Overview/Filter Map", Command.ITEM, 20);
+		CMDS[OVERVIEW_MAP_CMD] = new Command("Overview/Filter map", Command.ITEM, 20);
 		CMDS[RETRIEVE_XML] = new Command("Retrieve XML",Command.ITEM, 200);
 		CMDS[PAN_LEFT25_CMD] = new Command("left 25%",Command.ITEM, 100);
 		CMDS[PAN_RIGHT25_CMD] = new Command("right 25%",Command.ITEM, 100);
@@ -346,10 +346,10 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		CMDS[PAN_UP2_CMD] = new Command("up 2",Command.ITEM, 100);
 		CMDS[PAN_DOWN2_CMD] = new Command("down 2",Command.ITEM, 100);
 		CMDS[TOGGLE_AUDIO_REC] = new Command("Audio recording",Command.ITEM, 100);
-		CMDS[ROUTING_START_CMD] = new Command("Calculate Route",Command.ITEM, 100);
+		CMDS[ROUTING_START_CMD] = new Command("Calculate route",Command.ITEM, 100);
 		CMDS[ROUTING_STOP_CMD] = new Command("Stop routing",Command.ITEM, 100);
-		CMDS[ONLINE_INFO_CMD] = new Command("Online Info",Command.ITEM, 100);
-		CMDS[ROUTING_START_WITH_MODE_SELECT_CMD] = new Command("Calculate Route...",Command.ITEM, 100);
+		CMDS[ONLINE_INFO_CMD] = new Command("Online info",Command.ITEM, 100);
+		CMDS[ROUTING_START_WITH_MODE_SELECT_CMD] = new Command("Calculate route...",Command.ITEM, 100);
 		CMDS[RETRIEVE_NODE] = new Command("Add POI to OSM...",Command.ITEM, 100);
 		CMDS[ICON_MENU] = new Command("Menu",Command.OK, 100);
 		CMDS[SETUP_CMD] = new Command("Setup", Command.ITEM, 25);
@@ -950,9 +950,9 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					} else {
 						elements[0] = "Calculate route";
 					}
-					elements[1] = "Set target";
-					elements[2] = "Show target";
-					elements[3] = "Clear target";
+					elements[1] = "Set destination";
+					elements[2] = "Show destination";
+					elements[3] = "Clear destination";
 					routingsMenu = new List("Routing..", Choice.IMPLICIT, elements, null);
 					routingsMenu.addCommand(CMDS[OK_CMD]);
 					routingsMenu.addCommand(CMDS[BACK_CMD]);
@@ -1073,15 +1073,15 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 						break;
 					}
 					case 1: {
-						commandAction(CMDS[SETTARGET_CMD], null);
+						commandAction(CMDS[SET_DEST_CMD], null);
 						break;
 					}
 					case 2: {
-						commandAction(CMDS[SHOW_TARGET_CMD], null);
+						commandAction(CMDS[SHOW_DEST_CMD], null);
 						break;
 					}
 					case 3: {
-						commandAction(CMDS[CLEARTARGET_CMD], null);
+						commandAction(CMDS[CLEAR_DEST_CMD], null);
 						break;
 					}			            	
 					}
@@ -1138,8 +1138,8 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					PositionMark routeSource = new PositionMark(center.radlat, center.radlon);
 					logger.info("Routing source: " + routeSource);
 					routeNodes=new Vector();
-					routeEngine = new Routing(t,this);
-					routeEngine.solve(routeSource, target);
+					routeEngine = new Routing(tiles, this);
+					routeEngine.solve(routeSource, dest);
 //					resume();
 				}
 				routingsMenu = null; // refresh routingsMenu
@@ -1266,18 +1266,18 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				newDataReady();
 				return;
 			}
-			if (c == CMDS[SHOW_TARGET_CMD]) {
-				if(target!=null) {
+			if (c == CMDS[SHOW_DEST_CMD]) {
+				if (dest != null) {
 					//We are explicitly setting the map to this position, so we probably don't
 					//want it to be recentered on the GPS immediately.
 					gpsRecenter = false;
 					
-					center.setLatLon(target.lat, target.lon,true);
+					center.setLatLon(dest.lat, dest.lon, true);
 					updatePosition();
-					movedAwayFromTarget=false;
+					movedAwayFromDest = false;
 				}
 				else {
-					alert("Show target", "Target is not specified yet", 1500);
+					alert("Show destination", "Destination is not specified yet", 3000);
 				}
 				
 				return;
@@ -1333,13 +1333,13 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 						Alert.FOREVER);
 				}
 				//#endif
-				if (c == CMDS[SETTARGET_CMD]) {
+				if (c == CMDS[SET_DEST_CMD]) {
 					PositionMark pm1 = new PositionMark(center.radlat, center.radlon);
-					setTarget(pm1);
+					setDestination(pm1);
 					return;
 				}
-				if (c == CMDS[CLEARTARGET_CMD]) {
-					setTarget(null);
+				if (c == CMDS[CLEAR_DEST_CMD]) {
+					setDestination(null);
 					return;
 				}
 			} else {
@@ -1354,13 +1354,12 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	private void startImageCollector() throws Exception {
 		//#debug info
 		logger.info("Starting ImageCollector");
-		Images i;
-		i = new Images();
-		pc = new PaintContext(this, i);
+		Images images = new Images();
+		pc = new PaintContext(this, images);
 		pc.legend = GpsMid.legend;
 		int w = (this.getWidth() * 125) / 100;
 		int h = (this.getHeight() * 125) / 100;
-		imageCollector = new ImageCollector(t, w, h, this, i, pc.legend);
+		imageCollector = new ImageCollector(tiles, w, h, this, images, pc.legend);
 //		projection = ProjFactory.getInstance(center,course, scale, getWidth(), getHeight());
 //		pc.setP(projection);
 		pc.center = center.clone();
@@ -1503,19 +1502,18 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				}
 			}
 			
-			/*
-			 *  beginning of voice instructions started from overlay code (besides showRoute above)
+			/* Beginning of voice instructions started from overlay code (besides showRoute above)
 			 */
-			// determine if we are at the target
-			if (target != null) {
-				float distance = ProjMath.getDistance(target.lat, target.lon, center.radlat, center.radlon);
-				atTarget = (distance < 25);
-				if (atTarget) {
-					if (movedAwayFromTarget && Configuration.getCfgBitState(Configuration.CFGBIT_SND_TARGETREACHED)) {
-						GpsMid.mNoiseMaker.playSound("TARGET_REACHED", (byte) 7, (byte) 1);
+			// Determine if we are at the destination
+			if (dest != null) {
+				float distance = ProjMath.getDistance(dest.lat, dest.lon, center.radlat, center.radlon);
+				atDest = (distance < 25);
+				if (atDest) {
+					if (movedAwayFromDest && Configuration.getCfgBitState(Configuration.CFGBIT_SND_DESTREACHED)) {
+						GpsMid.mNoiseMaker.playSound("DEST_REACHED", (byte) 7, (byte) 1);
 					}
-				} else if (!movedAwayFromTarget) {
-					movedAwayFromTarget=true;
+				} else if (!movedAwayFromDest) {
+					movedAwayFromDest = true;
 				}
 			}
 			// determine if we are currently speeding
@@ -1604,7 +1602,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			}
 			
 			if (pc != null) {
-				showTarget(pc);
+				showDestination(pc);
 			}
 
 			if (speed > 0 && 
@@ -1625,11 +1623,11 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				tl.ele[TraceLayout.ALTITUDE].setText(Integer.toString(altitude) + "m");				
 			}
 
-			if (target != null && (route == null || (!RouteLineProducer.isRouteLineProduced() && !RouteLineProducer.isRunning()) ) && Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_AIR_DISTANCE_IN_MAP)) {				
+			if (dest != null && (route == null || (!RouteLineProducer.isRouteLineProduced() && !RouteLineProducer.isRunning()) ) && Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_AIR_DISTANCE_IN_MAP)) {				
 				e = Trace.tl.ele[TraceLayout.ROUTE_DISTANCE];
 				e.setBackgroundColor(Legend.COLORS[Legend.COLOR_RI_DISTANCE_BACKGROUND]);
-				double distLine=ProjMath.getDistance(center.radlat, center.radlon, target.lat, target.lon);
-				e.setText("air:" + (int) distLine + "m");
+				double distLine = ProjMath.getDistance(center.radlat, center.radlon, dest.lat, dest.lon);
+				e.setText("Air:" + (int) distLine + "m");
 			}
 			
 			if (Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_CLOCK_IN_MAP)) {
@@ -1649,7 +1647,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				tl.ele[TraceLayout.ZOOM_IN].setText("+");
 				tl.ele[TraceLayout.ZOOM_OUT].setText("-");
 				tl.ele[TraceLayout.RECENTER_GPS].setText("|");
-				tl.ele[TraceLayout.SHOW_TARGET].setText(">");
+				tl.ele[TraceLayout.SHOW_DEST].setText(">");
 			}
 
 			e = tl.ele[TraceLayout.TITLEBAR];
@@ -1833,7 +1831,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 //			pc.setP( projection);
 //			projection.inverse(pc.xSize, 0, pc.screenRU);
 //			projection.inverse(0, pc.ySize, pc.screenLD);
-			pc.target=target;
+			pc.target = dest;
 	}
 
 	public void cleanup() {
@@ -1852,7 +1850,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		pc.target = pm;
 		pc.setP(new Proj2D(new Node(pm.lat, pm.lon, true), 5000, 100, 100));
 		for (int i = 0; i < 4; i++) {
-			t[i].walk(pc, Tile.OPT_WAIT_FOR_LOAD);
+			tiles[i].walk(pc, Tile.OPT_WAIT_FOR_LOAD);
 		}
 	}
 	
@@ -1873,7 +1871,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			p = new Proj2D(new Node(pm.lat,pm.lon, true),5000,pc.xSize,pc.ySize);
 			pc.setP(p);
 			for (int i=0; i<4; i++) {
-				t[i].walk(pc, Tile.OPT_WAIT_FOR_LOAD | Tile.OPT_FIND_CURRENT);
+				tiles[i].walk(pc, Tile.OPT_WAIT_FOR_LOAD | Tile.OPT_FIND_CURRENT);
 			}
 			// stop the search when a routable way is found
 			if (pc.actualRoutableWay != null) {
@@ -1935,18 +1933,19 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		return yc;
 	}
 
-	public void showTarget(PaintContext pc) {
-		if (target != null) {
-			pc.getP().forward(target.lat, target.lon, pc.lineP2);
-//			System.out.println(target.toString());
-			pc.g.drawImage(pc.images.IMG_TARGET,pc.lineP2.x,pc.lineP2.y,CENTERPOS);
+	public void showDestination(PaintContext pc) {
+		if (dest != null) {
+			pc.getP().forward(dest.lat, dest.lon, pc.lineP2);
+//			System.out.println(dest.toString());
+			pc.g.drawImage(pc.images.IMG_DEST, pc.lineP2.x, pc.lineP2.y, CENTERPOS);
 			pc.g.setColor(Legend.COLORS[Legend.COLOR_TARGET_TEXT]);
-			if (target.displayName != null)
-				pc.g.drawString(target.displayName, pc.lineP2.x, pc.lineP2.y+8,
+			if (dest.displayName != null) {
+				pc.g.drawString(dest.displayName, pc.lineP2.x, pc.lineP2.y+8,
 					Graphics.TOP | Graphics.HCENTER);
+			}
 			pc.g.setColor(Legend.COLORS[Legend.COLOR_TARGET_LINE]);
 			pc.g.setStrokeStyle(Graphics.DOTTED);
-			pc.g.drawLine(pc.lineP2.x,pc.lineP2.y,pc.xSize/2,pc.ySize/2);
+			pc.g.drawLine(pc.lineP2.x, pc.lineP2.y, pc.xSize / 2, pc.ySize / 2);
 		}
 	}
 
@@ -2337,11 +2336,11 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	}
 	
 	public Tile getDict(byte zl) {
-		return t[zl];
+		return tiles[zl];
 	}
 	
 	public void setDict(Tile dict, byte zl) {		
-		t[zl] = dict;
+		tiles[zl] = dict;
 		// Tile.trace=this;
 		//addCommand(REFRESH_CMD);
 //		if (zl == 3) {
@@ -2352,7 +2351,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		if (zl == 0) {
 			// read saved position from Configuration
 			Configuration.getStartupPos(center);
-			if(center.radlat==0.0f && center.radlon==0.0f) {
+			if (center.radlat == 0.0f && center.radlon == 0.0f) {
 				// if no saved position use center of map
 				dict.getCenter(center);
 			}
@@ -2441,28 +2440,28 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		locationDecoderEnd();
 	}
 
-	public PositionMark getTarget() {
-		return target;
+	public PositionMark getDestination() {
+		return dest;
 	}
 
-	public void setTarget(PositionMark target) {
+	public void setDestination(PositionMark dest) {
 		endRouting();
-		this.target = target;
-		pc.target = target;
-		if (target != null) {
+		this.dest = dest;
+		pc.target = dest;
+		if (dest != null) {
 			//#debug info
-			logger.info("Setting destination to " + target.toString());
+			logger.info("Setting destination to " + dest.toString());
 			//We are explicitly setting the map to this position, so we probably don't
 			//want it to be recentered on the GPS immediately.
 			gpsRecenter = false;
 			
-			center.setLatLon(target.lat, target.lon, true);
+			center.setLatLon(dest.lat, dest.lon, true);
 			updatePosition();
 		} else {
 			//#debug info
 			logger.info("Setting destination to null");
 		}		
-		movedAwayFromTarget = false;
+		movedAwayFromDest = false;
 	}
 
 	public void endRouting() {
@@ -2493,7 +2492,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			if (Configuration.getContinueMapWhileRouteing() == Configuration.continueMap_At_Route_Line_Creation) {
 				resumeImageCollectorAfterRouteCalc();
 			}
-			ri.newRoute(this.route, target);
+			ri.newRoute(this.route, dest);
 			oldRecalculationTime = System.currentTimeMillis();
 		}
 		// show map always after route calculation 

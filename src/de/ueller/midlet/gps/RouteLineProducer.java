@@ -120,8 +120,8 @@ public class RouteLineProducer implements Runnable {
 		pc.conWayNameIdxs.removeAll();
 		pc.conWayBearingsCount = 0;
 		pc.setP(new Proj2D(new Node(pc.searchCon1Lat,pc.searchCon1Lon, true),5000,100,100));
-		for (int i=0; i<4; i++){
-			trace.t[i].walk(pc, Tile.OPT_WAIT_FOR_LOAD | Tile.OPT_CONNECTIONS2WAY);
+		for (int i = 0; i < 4; i++) {
+			trace.tiles[i].walk(pc, Tile.OPT_WAIT_FOR_LOAD | Tile.OPT_CONNECTIONS2WAY);
 		}
 		// if we've got a match
 		if (pc.conWayDistanceToNext != Float.MAX_VALUE ) {
@@ -217,8 +217,8 @@ public class RouteLineProducer implements Runnable {
 		} else {
 			// if we had no way match, look for an area match
 //			System.out.println("search AREA MATCH FOR: " + iConnFrom);
-			for (int i=0; i<4; i++){
-				trace.t[i].walk(pc, Tile.OPT_WAIT_FOR_LOAD | Tile.OPT_CONNECTIONS2AREA);
+			for (int i = 0; i < 4; i++) {
+				trace.tiles[i].walk(pc, Tile.OPT_WAIT_FOR_LOAD | Tile.OPT_CONNECTIONS2AREA);
 			}
 			// if we've got an area match
 			if (pc.conWayDistanceToNext != Float.MAX_VALUE ) {

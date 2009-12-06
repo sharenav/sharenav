@@ -42,7 +42,7 @@ public class RouteInstructions {
 		"hard right", "right", "half right",
 		"bear right", "straight on", "bear left",
 		"half left", "left", "hard left", "u-turn",
-		"Target reached",
+		"Destination reached",
 		"enter motorway", "leave motorway",
 		"cross area", "leave area",
 		"Roundabout exit #1", "Roundabout exit #2", "Roundabout exit #3",
@@ -127,7 +127,7 @@ public class RouteInstructions {
 	private static Trace trace;
 	private static Vector route;
 	
-	private static PositionMark target;
+	private static PositionMark dest;
 	
 	public volatile static int dstToRoutePath=1;
 	public volatile static int routePathConnection=0;
@@ -150,9 +150,9 @@ public class RouteInstructions {
 		RouteInstructions.maxScaleLevelForRouteInstructionSymbols = 15000f * 1.5f * 1.5f * 1.5f;
 	}
 	
-	public void newRoute(Vector route, PositionMark target) {
+	public void newRoute(Vector route, PositionMark dest) {
 		RouteInstructions.route = route;
-		RouteInstructions.target = target;
+		RouteInstructions.dest = dest;
 		iPassedRouteArrow=0;
 		prevRoutePathConnection = 0;
 		prevPathIdxInRoutePathConnection = 0;
@@ -239,15 +239,15 @@ public class RouteInstructions {
 					for (int i = 1; i < maxDeterminedRouteInstruction; i++){
 						c = (ConnectionWithNode) route.elementAt(i);
 						if (c == null){
-							logger.error("show Route got null connection");
+							logger.error("showRoute got null connection");
 							break;
 						}
 						if (c.to == null){
-							logger.error("show Route got connection with NULL as target");
+							logger.error("showRoute got connection with null as destination");
 							break;
 						}
 						if (pc == null){
-							logger.error("show Route strange pc is null");
+							logger.error("showRoute pc is null");
 							break;
 						}
 						if (c.wayRouteInstruction == RI_AREA_CROSS) {
@@ -322,7 +322,7 @@ public class RouteInstructions {
 					for (int i = 1; i < maxDeterminedRouteInstruction; i++){
 						c = (ConnectionWithNode) route.elementAt(i);						
 						
-						// calculate distance and duration to target
+						// Calculate distance and duration to destination
 						if (i >= iRealNow && c.wayDistanceToNext != Float.MAX_VALUE) {
 							remainingDistance += c.wayDistanceToNext;
 							remainingDurationFSecs += c.durationFSecsToNext;
@@ -419,8 +419,8 @@ public class RouteInstructions {
 							case RI_OUT_OF_TUNNEL:	pict=pc.images.IMG_TUNNEL_OUT_OF; break;					
 						}
 						
-						if (trace.atTarget) {
-							aPaint=RI_TARGET_REACHED;
+						if (trace.atDest) {
+							aPaint = RI_TARGET_REACHED;
 						}
 						pc.getP().forward(c.to.lat, c.to.lon, pc.lineP2);
 						// handle current arrow
@@ -599,7 +599,7 @@ public class RouteInstructions {
 						}
 					}
 					routeRecalculationRequired = isOffRoute(route, center);
-					if (trace.atTarget || (aNow == RI_TARGET_REACHED && intDistNow < PASSINGDISTANCE)) {
+					if (trace.atDest || (aNow == RI_TARGET_REACHED && intDistNow < PASSINGDISTANCE)) {
 						routeInstructionColor = Legend.COLORS[Legend.COLOR_RI_AT_TARGET];
 					} else if ( routeRecalculationRequired && trace.gpsRecenter) {
 						//#debug debug
@@ -629,8 +629,9 @@ public class RouteInstructions {
 				}
 			}
 
-			// when routing was started at the target but the map has not been moved away from the target yet, give no voice instruction 
-			if (trace.atTarget && ! trace.movedAwayFromTarget) {
+			// When routing was started at the destination but the map has not been 
+			// moved away from the destination yet, give no voice instruction 
+			if (trace.atDest && ! trace.movedAwayFromDest) {
 				soundToPlay.setLength(0);
 				// tell why there are no route instructions given yet
 //				nameNow = null;
@@ -644,7 +645,8 @@ public class RouteInstructions {
 			}
 						
 			//#debug debug
-			logger.debug("complete route instruction: " + sbRouteInstruction.toString() + " (" + soundToPlay.toString() + ")");													
+			logger.debug("complete route instruction: " + sbRouteInstruction.toString() + 
+					" (" + soundToPlay.toString() + ")");													
 			
 			// Route instruction text output
 			LayoutElement e = Trace.tl.ele[TraceLayout.ROUTE_INSTRUCTION];
@@ -760,12 +762,12 @@ public class RouteInstructions {
 			return false;
 		}
 
-		/* if we did no initial recalculation,
+		/* If we did no initial recalculation,
 		 * the map is gpscentered
-		 * and we just moved away from target
+		 * and we just moved away from the destination
 		 * ==> initial recalculation
 		 */
-		if (!initialRecalcDone && trace.gpsRecenter && trace.movedAwayFromTarget
+		if (!initialRecalcDone && trace.gpsRecenter && trace.movedAwayFromDest
 		) {
 			initialRecalcDone = true;
 			return true;

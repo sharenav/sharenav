@@ -1,24 +1,25 @@
+/*
+ * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net 
+ * See COPYING
+ */
+
 package de.ueller.midlet.gps.routing;
+
 import java.io.IOException;
 import java.lang.Math;
 import java.util.Vector;
 
-import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.tools.intTree;
 import de.ueller.gpsMid.mapData.RouteBaseTile;
 import de.ueller.gpsMid.mapData.Tile;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.RouteInstructions;
-import de.ueller.midlet.gps.RouteLineProducer;
 import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.PositionMark;
-import de.ueller.midlet.gps.data.Projection;
 import de.ueller.midlet.gps.data.Way;
-import de.ueller.midlet.gps.names.NumberCanon;
-
 
 
 
@@ -70,13 +71,13 @@ public class Routing implements Runnable {
 	Node firstSourcePathSegNodeDummy2 = new Node();
 
 	/**
-	 * alternatives of path segments closest to the target
+	 * Alternatives of path segments closest to the destination
 	 * One of these arbitrary positions on the way's path will be after the route calculation
-	 * filled into the last connection (which is initially a connection at the target position).
-	 * Thus it will detected as part of the route line by searchConnection2Ways 
+	 * filled into the last connection (which is initially a connection at the dest. position).
+	 * Thus it will be detected as part of the route line by searchConnection2Ways .
 	 * 
 	 * Which position will be filled in,
-	 * depends on which final connection gets selected by the routing algorithm
+	 * depends on which final connection gets selected by the routing algorithm.
 	 */
 	int finalNodeId1 = 0;
 	Node finalDestPathSegNodeDummy1 = new Node();
@@ -106,7 +107,7 @@ public class Routing implements Runnable {
 		currentTravelMask = Configuration.getTravelMask();
 	}
 	
-	private GraphNode search(RouteNode target) throws Exception {
+	private GraphNode search(RouteNode dest) throws Exception {
 		GraphNode currentNode;
 		int successorCost;
 		Vector children = new Vector();
@@ -150,8 +151,9 @@ public class Routing implements Runnable {
 					break; // cancel route calculation 1/2
 				}
 			} 
-			if (currentNode.state.toId == target.id) 
+			if (currentNode.state.toId == dest.id) {
 				return currentNode;
+			}
 			children.removeAllElements();
 
 			expanded++;
@@ -283,13 +285,17 @@ public class Routing implements Runnable {
 				}
 			}	// end of check for turn restrictions
 			
-			// use only mainstreet net if at least mainStreetNetDistanceMeters away from start and target points and already enough main street connections have been examined
-			// MainStreet Net Distance Check - this will turn on the MainStreetNet mode if we are far away enough from routeStart and routeTarget
+			// Use only mainstreet net if at least mainStreetNetDistanceMeters away from 
+			// start and destination points and already enough main street connections 
+			// have been examined.
+			// MainStreet Net Distance Check - this will turn on the MainStreetNet mode 
+			// if we are far away enough from routeStart and routeDest.
 			if (mainStreetConsExamined > 20
-				&& MoreMath.dist(tile.lastRouteNode.lat,tile.lastRouteNode.lon,target.lat,target.lon) > mainStreetNetDistanceMeters
-				&& MoreMath.dist(tile.lastRouteNode.lat,tile.lastRouteNode.lon,routeFrom.lat,routeFrom.lon) > mainStreetNetDistanceMeters
+				&& MoreMath.dist(tile.lastRouteNode.lat, tile.lastRouteNode.lon, dest.lat, dest.lon) > mainStreetNetDistanceMeters
+				&& MoreMath.dist(tile.lastRouteNode.lat, tile.lastRouteNode.lon, routeFrom.lat, routeFrom.lon) > mainStreetNetDistanceMeters
 			) {
-				// System.out.println(mainStreetConsExamined + " mainStreetConsExamined " + MoreMath.dist(tile.lastRouteNode.lat,tile.lastRouteNode.lon,target.lat,target.lon));
+				// System.out.println(mainStreetConsExamined + " mainStreetConsExamined " + 
+				//		MoreMath.dist(tile.lastRouteNode.lat, tile.lastRouteNode.lon, dest.lat, dest.lon));
 				// turn on mainStreetNetMode
 				Routing.onlyMainStreetNet = true;
 			} else {
@@ -368,7 +374,7 @@ public class Routing implements Runnable {
 				} else { 
 					int estimation;
 					GraphNode newNode;
-					estimation = estimate(currentNode.state,nodeSuccessor, target);
+					estimation = estimate(currentNode.state,nodeSuccessor, dest);
 					newNode = new GraphNode(nodeSuccessor, currentNode, successorCost, estimation, currentNode.fromBearing);
 					if (checkForTurnRestrictions) {
 						open.put(nodeSuccessor.connectionId, newNode);
@@ -477,27 +483,28 @@ public class Routing implements Runnable {
 			return 0;			
 		}
 	}
-	/**
+
+	/** TODO: Explain
 	 * @param nodeSuccessor
-	 * @param target
+	 * @param dest
 	 * @return
 	 */
-	private int estimate(Connection from,Connection to, RouteNode target) {
+	private int estimate(Connection from,Connection to, RouteNode dest) {
 //		if (noHeuristic){
 //			return 0;
 //		}
 		int dTurn=from.endBearing-to.startBearing;
 		int turnCost=getTurnCost(dTurn);
 		RouteNode toNode=getRouteNode(to.toId);
-		if (toNode == null){
-			//#debug error
-			logger.info("RouteNode ("+to.toId+") = null" );
+		if (toNode == null) {
+			//#debug info
+			logger.info("RouteNode (" + to.toId + ") = null" );
 			return (10000000);
 		}
-		if (target == null){
-			throw new Error("Target is NULL");
+		if (dest == null) {
+			throw new Error("Destination is NULL");
 		}
-		int dist = MoreMath.dist(toNode.lat,toNode.lon,target.lat,target.lon);
+		int dist = MoreMath.dist(toNode.lat, toNode.lon, dest.lat, dest.lon);
 		if (bestTime) {
 			if (roadRun) {
 				return (dist+turnCost)* 3 / 2;
@@ -515,18 +522,22 @@ public class Routing implements Runnable {
 				}
 				if (from.isMotorwayConnection()) {
 					if (motorwayEntrancesExamined < 2) {
-						/* estimate 80 Km/h (22 m/s) as average speed if we are on the motorway and only 1 motorway entrance has been examined yet
-						 * This gives the 2nd entrance in the opposite direction also a chance to get examined
+						/* Estimate 80 Km/h (22 m/s) as average speed if we are on the 
+						 * motorway and only 1 motorway entrance has been examined yet
+						 * This gives the 2nd entrance in the opposite direction also 
+						 * a chance to get examined
 						 */
 						return (int) (((dist/2.2f)+turnCost)*estimateFac);
 					}
 				}
-				// estimate 120 Km/h (36 m/s) as average speed to enter the motorway or on the motorway if at least 2 entrances where examined 
+				// Estimate 120 Km/h (36 m/s) as average speed to enter the motorway or 
+				// on the motorway if at least 2 entrances where examined 
 				return (int) (((dist/3.6f))*estimateFac);
 			}
 
 			
-			// if the air distance is more than 20km try to find a motorway that is at maximum 20 km or half of the distance to route start away from the route start 
+			// If the air distance is more than 20km try to find a motorway that is at 
+			// maximum 20 km or half of the distance to route start away from the route start 
 			if (tryFindMotorway && motorwayConsExamined < 10 && dist > 20000 && MoreMath.dist(toNode.lat,toNode.lon,routeFrom.lat,routeFrom.lon) < Math.max(dist / 2, 20000)){
 				// estimate 80 Km/h (22 m/s) as average speed 
 				return (int) (((dist/2.2f)+turnCost)*estimateFac);				
@@ -582,7 +593,7 @@ public class Routing implements Runnable {
 		
 		try {
 			if (toMark == null) {
-				parent.receiveMessage("Please set target first");
+				parent.receiveMessage("Please set destination first");
 				parent.setRoute(null);
 				return;
 			} 
@@ -592,23 +603,24 @@ public class Routing implements Runnable {
 			startNode.lon=fromMark.lon;
 
 			// always search a way for the from position as the travel mode might have changed
-			parent.receiveMessage("search for start element");
+			parent.receiveMessage("Searching for start element");
 			parent.searchNextRoutableWay(fromMark);
 			if (fromMark.entity == null){
-				parent.receiveMessage("No Way found for start point");
+				parent.receiveMessage("No way found for start point");
 			} 
 
-			// if the target way is not routable, e.g. an area, remove it as target entity and thus search for a routable way nearby the target node
+			// If the destination way is not routable, e.g. an area, remove it as 
+			// destination entity and thus search for a routable way nearby the dest. node
 			if (toMark.entity != null && ( !(toMark.entity instanceof Way) || !((Way) toMark.entity).isRoutableWay() ) ) {
 				toMark.entity = null;
 			}
 
 			if (toMark.entity == null) {
 				// if there is no element in the to Mark, fill it from tile-data
-				parent.receiveMessage("search target way");
+				parent.receiveMessage("Searching destination way");
 				parent.searchNextRoutableWay(toMark);
 				if (toMark.entity == null) {
-					parent.receiveMessage("No way at target");
+					parent.receiveMessage("No way at destination");
 					parent.setRoute(null);
 					return;
 				}
@@ -619,10 +631,11 @@ public class Routing implements Runnable {
 			if (fromMark.entity instanceof Way) {
 				// search the next route node in all accessible directions. Then create 
 				// connections that lead form the start point to the next route nodes.
-				parent.receiveMessage("create from Connections");
+				parent.receiveMessage("Creating 'from' connections");
 				Way w=(Way) fromMark.entity;
 				int nearestSegment=getNearestSeg(w, startNode.lat, startNode.lon, fromMark.nodeLat,fromMark.nodeLon);
-				// roundabouts don't need to be explicitely tagged as oneways in OSM according to http://wiki.openstreetmap.org/wiki/Tag:junction%3Droundabout
+				// Roundabouts don't need to be explicitly tagged as oneways in OSM 
+				// according to http://wiki.openstreetmap.org/wiki/Tag:junction%3Droundabout
 					
 //				parent.getRouteNodes().addElement(new RouteHelper(fromMark.nodeLat[nearestSegment],fromMark.nodeLon[nearestSegment],"oneWay sec"));
 				RouteNode rn=findPrevRouteNode(nearestSegment-1, startNode.lat, startNode.lon, fromMark.nodeLat,fromMark.nodeLon);
@@ -682,7 +695,7 @@ public class Routing implements Runnable {
 			routeTo.setConSizeWithFlags((byte) 0);
 			routeTo.lat=toMark.lat;
 			routeTo.lon=toMark.lon;
-			parent.receiveMessage("create to Connections");
+			parent.receiveMessage("Creating 'to' connections");
 			Way w = (Way) toMark.entity;
 			int nearestSeg = getNearestSeg(w,toMark.lat, toMark.lon, toMark.nodeLat, toMark.nodeLon);
 			RouteTileRet nodeTile=new RouteTileRet();
@@ -739,7 +752,7 @@ public class Routing implements Runnable {
 				parent.setRoute(null);
 			}
 		} catch (Exception e) {
-			parent.receiveMessage("Routing Ex " + e.getMessage());
+			parent.receiveMessage("Routing exception " + e.getMessage());
 			//#debug error
 			e.printStackTrace();
 			parent.setRoute(null);
@@ -851,7 +864,7 @@ public class Routing implements Runnable {
 			sourcePathSegNodeDummyConnectionNode.durationFSecsToNext = getConnectionDurationFSecsForRouteNodes(sourcePathSegNodeDummyConnectionNode.to.id, cFirst.to.id);
 			
 			/**
-			 * same for the final connection (which is initially at the target)
+			 * same for the final connection (which is initially at the destination)
 			 */
 			ConnectionWithNode cBeforeFinal = (ConnectionWithNode) sequence.elementAt(sequence.size()-2);
 			ConnectionWithNode cFinal = (ConnectionWithNode) sequence.lastElement();
@@ -908,20 +921,20 @@ public class Routing implements Runnable {
 		
 		try {
 			//#debug error
-			logger.info("Start Routing thread");
+			logger.info("Starting routing thread");
 			Vector solve = solve();
 			parent.setRoute(solve);
 		} catch (NullPointerException npe) {
 			parent.setRoute(null);
 			parent.receiveMessage(npe.getMessage());
-			logger.fatal("Routing thread crashed unexpectadly with error " +  npe.getMessage());			
+			logger.fatal("Routing thread crashed unexpectedly with error " +  npe.getMessage());			
 			npe.printStackTrace();
 			
 		} catch (Exception e) {
 			parent.setRoute(null);
 			parent.receiveMessage(e.getMessage());
 			//#debug error
-			logger.fatal("Routing thread crashed unexpectadly with error " +  e.getMessage());
+			logger.fatal("Routing thread crashed unexpectedly with error " +  e.getMessage());
 			//#debug			
 			e.printStackTrace();
 		} catch (Error e1){
