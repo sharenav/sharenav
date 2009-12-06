@@ -53,7 +53,7 @@ public class RouteInstructions {
 		"HARD;RIGHT", "RIGHT", "HALF;RIGHT",
 		"BEAR;RIGHT", "STRAIGHTON", "BEAR;LEFT",
 		"HALF;LEFT", "LEFT", "HARD;LEFT", "UTURN",
-		"TARGET_REACHED",
+		"DEST_REACHED",
 		"ENTER_MOTORWAY", "LEAVE_MOTORWAY",
 		"AREA_CROSS", "AREA_CROSSED",
 		"RAB;1ST;RABEXIT", "RAB;2ND;RABEXIT", "RAB;3RD;RABEXIT",
@@ -72,7 +72,7 @@ public class RouteInstructions {
 	private static final int RI_LEFT = 8;
 	private static final int RI_HARD_LEFT = 9;
 	private static final int RI_UTURN = 10;
-	private static final int RI_TARGET_REACHED = 11;
+	private static final int RI_DEST_REACHED = 11;
 	private static final int RI_ENTER_MOTORWAY = 12;
 	private static final int RI_LEAVE_MOTORWAY = 13;
 	private static final int RI_AREA_CROSS = 14;
@@ -420,7 +420,7 @@ public class RouteInstructions {
 						}
 						
 						if (trace.atDest) {
-							aPaint = RI_TARGET_REACHED;
+							aPaint = RI_DEST_REACHED;
 						}
 						pc.getP().forward(c.to.lat, c.to.lon, pc.lineP2);
 						// handle current arrow
@@ -515,7 +515,7 @@ public class RouteInstructions {
 										 || iPrepareInstructionSaidArrow != iNow
 										 // or when it's the instruction that we arrived at the destination
 										 ||
-										 aNow == RI_TARGET_REACHED
+										 aNow == RI_DEST_REACHED
 									) {
 										// give routing instruction directly at the arrow
 										soundToPlay.append (getSoundInstruction(cNow.wayRouteFlags, aNow));
@@ -599,7 +599,7 @@ public class RouteInstructions {
 						}
 					}
 					routeRecalculationRequired = isOffRoute(route, center);
-					if (trace.atDest || (aNow == RI_TARGET_REACHED && intDistNow < PASSINGDISTANCE)) {
+					if (trace.atDest || (aNow == RI_DEST_REACHED && intDistNow < PASSINGDISTANCE)) {
 						routeInstructionColor = Legend.COLORS[Legend.COLOR_RI_AT_TARGET];
 					} else if ( routeRecalculationRequired && trace.gpsRecenter) {
 						//#debug debug
@@ -1023,7 +1023,7 @@ public class RouteInstructions {
 		makeArrowsQuiet(iInstructionStart, route.size()-2);
 		
 		c = getRouteElement(route.size()-1);
-		c.wayRouteInstruction = RI_TARGET_REACHED;				
+		c.wayRouteInstruction = RI_DEST_REACHED;				
 		maxDeterminedRouteInstruction = route.size();
 		
 		// reset arrow markers
