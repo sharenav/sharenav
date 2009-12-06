@@ -131,7 +131,7 @@ scale alias 1: zoomed out 21x
   
 <!-- SoundFiles for these sounds are automatically included into the midlet unless useRouting=false is set in .properties file:
 	 CONNECT, DISCONNECT, PREPARE, HALF, HARD, BEAR, LEFT, RIGHT, UTURN, THEN, SOON, AGAIN, TO, ENTER_MOTORWAY, LEAVE_MOTORWAY,
-	 RAB, 1ST, 2ND, 3RD, 4TH, 5TH, 6TH, RABEXIT, CHECK_DIRECTION, ROUTE_RECALCULATION, TARGET_REACHED,
+	 RAB, 1ST, 2ND, 3RD, 4TH, 5TH, 6TH, RABEXIT, CHECK_DIRECTION, ROUTE_RECALCULATION, DEST_REACHED,
 	 IN, 100, 200, 300, 400, 500, 600, 700, 800, METERS, INTO_TUNNEL, OUT_OF_TUNNEL, FOLLOW_STREET,
 	 AREA_CROSS, AREA_CROSSED, SPEED_LIMIT
 	 Set in your properties file with which extension these sound files are included (lowercase name + .extension)
