@@ -8,7 +8,6 @@ package de.ueller.midlet.gps;
 import java.util.Vector;
 
 import de.ueller.gps.data.Legend;
-import de.ueller.gps.tools.LayoutElement;
 import de.ueller.gps.tools.intTree;
 import de.ueller.gpsMid.mapData.Tile;
 import de.ueller.midlet.gps.data.Node;
@@ -131,6 +130,16 @@ public class RouteLineProducer implements Runnable {
 			cFrom.wayNameIdx = pc.conWayNameIdx;
 			cFrom.wayType = pc.conWayType;
 			cFrom.wayDistanceToNext = pc.conWayDistanceToNext;
+			// if there is a max speed on the way (also a winter maxspeed)
+			if (pc.conWayMaxSpeed != 0) {
+				// calculate the duration for the connection in 1/5s from the distance in meters and the maxSpeed in km/h
+				short calculatedDurationFSecs = (short) ( (cFrom.wayDistanceToNext * 5 * 3.6f) / pc.conWayMaxSpeed - 1);
+				// if the duration from the maxSpeed is lower than the duration from the duration for the max speed, use this as connection duration  
+				if (calculatedDurationFSecs > cFrom.durationFSecsToNext) {
+					System.out.println("Using increased connection duration in 1/5s from max(winter)speed: " + calculatedDurationFSecs + " instead of " + cFrom.durationFSecsToNext + " maxSpeed km/h:" + pc.conWayMaxSpeed );
+					cFrom.durationFSecsToNext = calculatedDurationFSecs;
+				}
+			}
 			cFrom.wayRouteFlags = pc.conWayRouteFlags;
 			cFrom.numToRoutableWays = pc.conWayNumToRoutableWays;
 			if ( (pc.searchConPrevWayRouteFlags & Legend.ROUTE_FLAG_ONEDIRECTION_ONLY) == 0) {

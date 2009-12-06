@@ -103,6 +103,8 @@ public class PaintContext extends ScreenContext {
 	public volatile byte conWayEndBearing;
 	/** distance to next connection in meters when following the route path */
 	public volatile float conWayDistanceToNext;
+	/** maximum (winter) speed in km/h of this connection */
+	public volatile short conWayMaxSpeed;
 	/** when painting draw highlighted path on top */
 	public volatile boolean highlightedPathOnTop;
 	/** used to find out if the connection leads to multiple same named ways*/
