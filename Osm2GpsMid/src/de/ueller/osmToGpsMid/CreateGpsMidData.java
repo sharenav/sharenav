@@ -419,7 +419,7 @@ public class CreateGpsMidData implements FilenameFilter {
 			if (Configuration.attrToBoolean(configuration.useRouting) < 0) {
 				System.out.println("Routing disabled - removing routing sound files from midlet:");
 				for (int i = 0; i < Configuration.SOUNDNAMES.length; i++) {
-					if (";CONNECT;DISCONNECT;TARGET_REACHED;SPEED_LIMIT;".indexOf(";" + Configuration.SOUNDNAMES[i] + ";") == -1) {
+					if (";CONNECT;DISCONNECT;DEST_REACHED;SPEED_LIMIT;".indexOf(";" + Configuration.SOUNDNAMES[i] + ";") == -1) {
 						removeSoundFile(Configuration.SOUNDNAMES[i]);
 					}
 				}
