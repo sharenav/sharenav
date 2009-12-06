@@ -22,6 +22,8 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.net.URISyntaxException;
 import java.util.Enumeration;
 import java.util.LinkedList;
@@ -29,6 +31,7 @@ import java.util.Vector;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -37,6 +40,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileFilter;
 
@@ -48,6 +53,35 @@ import de.ueller.osmToGpsMid.model.Bounds;
 
 
 public class GuiConfigWizard extends JFrame implements Runnable, ActionListener, SelectionListener {
+	
+	protected class StreamGobbler extends OutputStream {
+		
+		JTextArea jta;
+		JScrollPane jsp;
+
+		protected StreamGobbler(JTextArea jta, JScrollPane jsp) {
+			this.jta = jta;
+			this.jsp = jsp;
+		}
+		
+		public void write(byte[] b, int off, int len) {
+			jta.append(new String(b,off,len));
+			int max = jsp.getVerticalScrollBar().getMaximum();
+			jsp.getVerticalScrollBar().setValue(max);
+		}
+		
+		public void write(byte [] b) {
+			jta.append(new String(b));
+		}
+		/* (non-Javadoc)
+		 * @see java.io.OutputStream#write(int)
+		 */
+		@Override
+		public void write(int b) throws IOException {
+			throw new IOException("Not yet Implemented");
+		}
+		
+	}
 
 	Configuration config;
 	String planet;
@@ -290,6 +324,36 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		} catch (InterruptedException e) {
 			// Nothing to do
 		}
+		
+		JTextArea jtaConsoleOut = new JTextArea();
+		jtaConsoleOut.setAutoscrolls(true);
+		JScrollPane jspConsoleOut = new JScrollPane(jtaConsoleOut);
+		jspConsoleOut.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),"Console Output:"));
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.gridwidth = 9;
+		gbc.weighty = 9;
+		gbc.gridx = 0;
+		gbc.gridy = 4;
+		add(jspConsoleOut, gbc);
+		
+		JTextArea jtaConsoleErr = new JTextArea();
+		jtaConsoleErr.setAutoscrolls(true);
+		JScrollPane jspConsoleErr = new JScrollPane(jtaConsoleErr);
+		jspConsoleErr.setBorder(BorderFactory.createTitledBorder("Errors:"));
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.gridwidth = 9;
+		gbc.weighty = 3;
+		gbc.gridx = 0;
+		gbc.gridy = 5;
+		add(jspConsoleErr, gbc);
+		
+		remove(map);
+		
+		pack();
+		
+		System.setOut(new PrintStream(new StreamGobbler(jtaConsoleOut, jspConsoleOut), false));
+		System.setErr(new PrintStream(new StreamGobbler(jtaConsoleErr, jspConsoleErr), true));
+		map.setSize(0, 400);
 	}
 	
 	private void addMapMarkers() {	
@@ -597,8 +661,6 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			System.out.println("Create Midlet clicked");
 
 			dialogFinished = true;
-			setVisible(false);
-			dispose();
 			writeProperties("last.properties");
 		}
 		if ("Close-click".equalsIgnoreCase(e.getActionCommand())) {

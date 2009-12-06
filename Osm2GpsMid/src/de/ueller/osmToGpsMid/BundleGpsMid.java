@@ -30,6 +30,8 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
+import javax.swing.JOptionPane;
+
 import de.ueller.osmToGpsMid.model.Node;
 import de.ueller.osmToGpsMid.model.Relation;
 import de.ueller.osmToGpsMid.model.RouteAccessRestriction;
@@ -42,140 +44,47 @@ import de.ueller.osmToGpsMid.model.TravelModes;
  * It triggers all the steps necessary to create a GpsMid JAR file
  * ready for downloading to the mobile phone.
  */
-public class BundleGpsMid {
+public class BundleGpsMid implements Runnable {
 	static boolean compressed = true;
 	static Calendar startTime;
+	
+	static Configuration config;
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-
-		InputStream fr;
-		try {
-			Configuration c;
-			if (args.length == 0) {
-				GuiConfigWizard gcw = new GuiConfigWizard();
-				c = gcw.startWizard();
-			} else {
-				c = new Configuration(args);
-			}
-			
-			validateConfig(c);
-			System.out.println(c.toString());
-
-			// the legend must be parsed after the configuration to apply parameters to the travel modes specified in useRouting
-			TravelModes.stringToTravelModes(c.useRouting);
-			c.parseLegend();
-			
-			startTime = Calendar.getInstance();
-
-			TravelMode tm = null;
-			if (Configuration.attrToBoolean(c.useRouting) >= 0) {
-				for (int i = 0; i < TravelModes.travelModeCount; i++) {				
-					tm = TravelModes.travelModes[i];
-					System.out.println("Route rules in " + c.getStyleFileName() + " for " + tm.getName() + ":");
-					if ( (tm.travelModeFlags & TravelMode.AGAINST_ALL_ONEWAYS) > 0) {
-						System.out.println(" Going against all accessible oneways is allowed");					
-					}
-					if ( (tm.travelModeFlags & TravelMode.BICYLE_OPPOSITE_EXCEPTIONS) > 0) {
-						System.out.println(" Opposite direction exceptions for bicycles get applied");					
-					}
-		        	int routeAccessRestrictionCount = 0;
-		            if (TravelModes.getTravelMode(i).getRouteAccessRestrictions().size() > 0) {
-		            	for (RouteAccessRestriction r: tm.getRouteAccessRestrictions()) {
-		            		routeAccessRestrictionCount++;
-		            		System.out.println(" " + r.toString());
-		            	}
-		            }
-		            if (routeAccessRestrictionCount == 0) {
-		        		System.out.println("Warning: No access restrictions in " + c.getStyleFileName() + " for " + tm.getName());            	
-		            }
-				}
-				System.out.println("");
-			}
-			String tmpDir = c.getTempDir();
-			System.out.println("Unpacking application to " + tmpDir);
-			expand(c, tmpDir);
-			File target = new File(tmpDir);
-			createPath(target);
-			
-			fr = c.getPlanetSteam();
-			OxParser parser = new OxParser(fr,c);
-
-			/**
-			 * Display some stats about the type of relations we currently aren't handling
-			 * to see which ones would be particularly useful to deal with eventually 
-			 */
-			Hashtable<String,Integer> relTypes = new Hashtable<String,Integer>();
-			for (Relation r : parser.getRelations()) {
-				String type = r.getAttribute("type");
-				if (type == null) type = "unknown";	
-				Integer count = relTypes.get(type);
-				if (count != null) {
-					count = new Integer(count.intValue() + 1);
-				} else {
-					count = new Integer(1);
-				}
-				relTypes.put(type, count);
-			}
-			System.out.println("Types of relations present but ignored: ");
-			for (Entry<String, Integer> e : relTypes.entrySet()) {
-				System.out.println("   " + e.getKey() + ": " + e.getValue());
-
-			}
-
-			int numWays = parser.getWays().size();
-			new SplitLongWays(parser);
-			System.out.println("Splitting long ways increased ways from " 
-					+ numWays + " to " + parser.getWays().size());
-			
-			RouteData rd = null;
-			if (Configuration.attrToBoolean(c.useRouting) >= 0 ) {
-				rd = new RouteData(parser,target.getCanonicalPath());
-				System.out.println("Remembering " + parser.trafficSignalCount + " traffic signal nodes");
-				rd.rememberDelayingNodes();
-			}
-			
-			System.out.println("Removing unused nodes");
-			new CleanUpData(parser,c);
-
-			if (Configuration.attrToBoolean(c.useRouting) >= 0 ) {
-				System.out.println("Creating route data");
-				rd.create();
-				System.out.println("Optimizing route data");
-				rd.optimise();
-			}
-			CreateGpsMidData cd = new CreateGpsMidData(parser,target.getCanonicalPath());
-			//				rd.write(target.getCanonicalPath());
-			//				cd.setRouteData(rd);
-			cd.setConfiguration(c);
-
-			new CalcNearBy(parser);
-			cd.exportMapToMid();
-			//Drop parser to conserve Memory
-			parser = null;
-			
-			if (!c.getCellOperator().equalsIgnoreCase("false")) {
-				CellDB cellDB = new CellDB();
-				cellDB.parseCellDB();
-			}
-			
-			pack(c);
-
-			//Cleanup after us again. The .jar and .jad file are in the main directory,
-			//so these won't get deleted
-			if (c.cleanupTmpDirAfterUse()) {
-				File tmpBaseDir = new File(c.getTempBaseDir());
-				System.out.println("Cleaning up temporary directory " + tmpBaseDir);
-				deleteDirectory(tmpBaseDir);
-			}
-			
-
-		} catch (Exception e) {
-			e.printStackTrace();
+		
+		BundleGpsMid bgm = new BundleGpsMid();
+		GuiConfigWizard gcw = null;
+		
+		Configuration c;
+		if (args.length == 0) {
+			 gcw = new GuiConfigWizard();
+			c = gcw.startWizard();
+		} else {
+			c = new Configuration(args);
 		}
-
+		/**
+		 * Decouple the computational thread from
+		 * the GUI thread to make the GUI more smooth
+		 * Not sure if this is actually necessary, but
+		 * it shouldn't harm either.
+		 */
+		config = c;
+		Thread t = new Thread(bgm);
+		t.start();
+		try {
+			t.join();
+		} catch (InterruptedException e) {
+			// Nothing to do
+		}
+		if (gcw != null) {
+			JOptionPane.showMessageDialog(gcw, "A GpsMid midlet was successfully create and can now be copied to your phone");
+			gcw.setVisible(false);
+			gcw.dispose();
+			
+		}
 	}
 
 	private static void expand(Configuration c, String tmpDir) throws ZipException, IOException {
@@ -414,6 +323,131 @@ public class BundleGpsMid {
 					+ "     please fix your .properties file");
 			System.exit(1);
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Runnable#run()
+	 */
+	@Override
+	public void run() {
+		InputStream fr;
+		try {
+			
+			validateConfig(config);
+			System.out.println(config.toString());
+
+			// the legend must be parsed after the configuration to apply parameters to the travel modes specified in useRouting
+			TravelModes.stringToTravelModes(config.useRouting);
+			config.parseLegend();
+			
+			startTime = Calendar.getInstance();
+
+			TravelMode tm = null;
+			if (Configuration.attrToBoolean(config.useRouting) >= 0) {
+				for (int i = 0; i < TravelModes.travelModeCount; i++) {				
+					tm = TravelModes.travelModes[i];
+					System.out.println("Route rules in " + config.getStyleFileName() + " for " + tm.getName() + ":");
+					if ( (tm.travelModeFlags & TravelMode.AGAINST_ALL_ONEWAYS) > 0) {
+						System.out.println(" Going against all accessible oneways is allowed");					
+					}
+					if ( (tm.travelModeFlags & TravelMode.BICYLE_OPPOSITE_EXCEPTIONS) > 0) {
+						System.out.println(" Opposite direction exceptions for bicycles get applied");					
+					}
+		        	int routeAccessRestrictionCount = 0;
+		            if (TravelModes.getTravelMode(i).getRouteAccessRestrictions().size() > 0) {
+		            	for (RouteAccessRestriction r: tm.getRouteAccessRestrictions()) {
+		            		routeAccessRestrictionCount++;
+		            		System.out.println(" " + r.toString());
+		            	}
+		            }
+		            if (routeAccessRestrictionCount == 0) {
+		        		System.out.println("Warning: No access restrictions in " + config.getStyleFileName() + " for " + tm.getName());            	
+		            }
+				}
+				System.out.println("");
+			}
+			String tmpDir = config.getTempDir();
+			System.out.println("Unpacking application to " + tmpDir);
+			expand(config, tmpDir);
+			File target = new File(tmpDir);
+			createPath(target);
+			
+			fr = config.getPlanetSteam();
+			OxParser parser = new OxParser(fr,config);
+
+			/**
+			 * Display some stats about the type of relations we currently aren't handling
+			 * to see which ones would be particularly useful to deal with eventually 
+			 */
+			Hashtable<String,Integer> relTypes = new Hashtable<String,Integer>();
+			for (Relation r : parser.getRelations()) {
+				String type = r.getAttribute("type");
+				if (type == null) type = "unknown";	
+				Integer count = relTypes.get(type);
+				if (count != null) {
+					count = new Integer(count.intValue() + 1);
+				} else {
+					count = new Integer(1);
+				}
+				relTypes.put(type, count);
+			}
+			System.out.println("Types of relations present but ignored: ");
+			for (Entry<String, Integer> e : relTypes.entrySet()) {
+				System.out.println("   " + e.getKey() + ": " + e.getValue());
+
+			}
+
+			int numWays = parser.getWays().size();
+			new SplitLongWays(parser);
+			System.out.println("Splitting long ways increased ways from " 
+					+ numWays + " to " + parser.getWays().size());
+			
+			RouteData rd = null;
+			if (Configuration.attrToBoolean(config.useRouting) >= 0 ) {
+				rd = new RouteData(parser,target.getCanonicalPath());
+				System.out.println("Remembering " + parser.trafficSignalCount + " traffic signal nodes");
+				rd.rememberDelayingNodes();
+			}
+			
+			System.out.println("Removing unused nodes");
+			new CleanUpData(parser,config);
+
+			if (Configuration.attrToBoolean(config.useRouting) >= 0 ) {
+				System.out.println("Creating route data");
+				rd.create();
+				System.out.println("Optimizing route data");
+				rd.optimise();
+			}
+			CreateGpsMidData cd = new CreateGpsMidData(parser,target.getCanonicalPath());
+			//				rd.write(target.getCanonicalPath());
+			//				cd.setRouteData(rd);
+			cd.setConfiguration(config);
+
+			new CalcNearBy(parser);
+			cd.exportMapToMid();
+			//Drop parser to conserve Memory
+			parser = null;
+			
+			if (!config.getCellOperator().equalsIgnoreCase("false")) {
+				CellDB cellDB = new CellDB();
+				cellDB.parseCellDB();
+			}
+			
+			pack(config);
+
+			//Cleanup after us again. The .jar and .jad file are in the main directory,
+			//so these won't get deleted
+			if (config.cleanupTmpDirAfterUse()) {
+				File tmpBaseDir = new File(config.getTempBaseDir());
+				System.out.println("Cleaning up temporary directory " + tmpBaseDir);
+				deleteDirectory(tmpBaseDir);
+			}
+			
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 	}
 
 
