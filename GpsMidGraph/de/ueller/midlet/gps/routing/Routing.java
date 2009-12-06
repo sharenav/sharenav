@@ -752,7 +752,9 @@ public class Routing implements Runnable {
 				parent.setRoute(null);
 			}
 		} catch (Exception e) {
-			parent.receiveMessage("Routing exception " + e.getMessage());
+			//parent.receiveMessage("Routing exception " + e.getMessage());
+			// show that there was exception as an alert so we can see in the title bar where the exception occured
+			parent.alert("Routing Exception", "" + e.getMessage(), 5000);
 			//#debug error
 			e.printStackTrace();
 			parent.setRoute(null);
