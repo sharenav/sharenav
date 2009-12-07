@@ -79,9 +79,20 @@ GpsMid 0.5.09
          (e.g. bicycle routing for an abandoned aeroway=runway if bicycle=true is set)
        - Much faster route calculation for bicycles (thx to apmonkey for the hint)
        - Optionally show remaining route duration / ETA in map screen
-         (based on ways' typical/max speeds/number of traffic lights) 
+         (based on ways' typical/max speeds/number of traffic lights)
+       - "Target" has been renamed to "Destination" throughout GpsMid
        *** OSM Editing and other only with Internet Connection available features ***
        - Support for GeoHack in "Online Info" (thx jkpj)
+       *** Style-file handling ***
+       - The high-style.zip is discontinued. Style-file.xml now replaces the former high-style-file.xml
+         and will be used as default style-file that is completely integrated into Osm2GpsMid.
+         By using an Unzip utility you can extract the style-file.xml from Osm2GpsMid and
+         put it into the filesystem and customize it as before.
+       - The former style-file.xml has been renamed to mini-style-file.xml and can be
+         alternatively specified in the .properties file as "style-file=mini-style-file.xml"
+       - External media in style-file will be searched relative to the style-file location.
+         Therefore when you specify "style-file = myStyle/style-file.xml" in your .properties file
+         Osm2GpsMid will look for external media files to include in myStyle/png and myStyle/sound directories
        *** Midlet creation with Osm2GpsMid ***
        - Improved output, e.g. OSM links to errors to fix and duration for some creation steps
        - New option maxTileWays0, maxTileWays1, maxTileWays2 and maxTileWays3 in .properties files
@@ -91,6 +102,9 @@ GpsMid 0.5.09
          you can reduce the number of files in the midlet, maybe making it possible to have larger maps
          on the mobile. However, having more ways in the tiles might require a device with
          more performance or memory to run GpsMid. Therefore the default maximum ways per tile is still 255. 
+       - New option maxDictDepth in .properties files for specifying th dictionary depth for tiles.       
+         With Osm2GpsMid 0.5.0 this was hardcoded to 5. Increasing the value to e.g. 10 will         
+         decrease the number of dictionary files in the midlet but require more memory in the mobile. 
        *** Osm2GpsMid GUI ***
        - Loading .properties files works again
        - New option to include cell-ids
