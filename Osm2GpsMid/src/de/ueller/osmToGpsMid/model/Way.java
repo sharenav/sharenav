@@ -55,6 +55,12 @@ public class Way extends Entity implements Comparable<Way> {
 	public boolean used = false;
 	private byte type = -1;
 
+	/**
+	 * way id of the last unhandled maxSpeed -
+	 * by using this to detect repeats we can quiet down the console output for unhandled maxspeeds
+	 */
+	public static long lastUnhandledMaxSpeedWayId = -1;
+	
 	public Way(long id) {
 		this.id = id;
 	}
@@ -285,7 +291,10 @@ public class Way extends Entity implements Comparable<Way> {
 			} catch (NumberFormatException e) {
 				int maxs = config.getMaxspeedTemplate(maxSpeedAttr);
 				if (maxs < 0) {
-					System.out.println("Unhandled maxspeed for way " + toString());
+					if (this.id != lastUnhandledMaxSpeedWayId) {
+						System.out.println("Unhandled maxspeed for way " + toString());
+						lastUnhandledMaxSpeedWayId = this.id;
+					}
 				} else {
 					maxSpeed = maxs;
 				}
