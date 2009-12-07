@@ -34,6 +34,32 @@ mkfifo /tmp/italy.osm
 
 cd /unsafe/krueger/Osm2GpsMid
 
+c=california
+rm /tmp/$c.osm
+mkfifo /tmp/$c.osm
+bzcat $c.osm.bz2 > /tmp/$c.osm & java -mx5000M -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /tmp/$c.osm BayArea
+scp GpsMidBay-BayArea-0.5.09.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/prebuild/ &
+
+c=california
+rm /tmp/$c.osm
+mkfifo /tmp/$c.osm
+bzcat $c.osm.bz2 > /tmp/$c.osm & java -mx5000M -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /tmp/$c.osm LosAngeles
+scp GpsMidLA-LosAngeles-0.5.09.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/prebuild/ &
+
+
+
+c=britishcolumbia
+rm /tmp/$c.osm
+mkfifo /tmp/$c.osm
+bzcat $c.osm.bz2 > /tmp/$c.osm & java -mx5000M -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /tmp/$c.osm BritishColumbia
+scp GpsMidBC-BritishColumbia-0.5.09.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/prebuild/ &
+
+c=ontario
+rm /tmp/$c.osm
+mkfifo /tmp/$c.osm
+bzcat $c.osm.bz2 > /tmp/$c.osm & java -mx5000M -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /tmp/$c.osm Ontario
+scp GpsMidON-Ontario-0.5.09.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/prebuild/ &
+
 c=poland
 rm /tmp/$c.osm
 mkfifo /tmp/$c.osm
@@ -183,7 +209,7 @@ scp GpsMidSIt-SouthItaly-0.5.09.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/preb
 c=italy
 rm /tmp/$c.osm
 mkfifo /tmp/$c.osm
-bzcat $c.osm.bz2 > /tmp/$c.osm & java -mx6800M -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /tmp/$c.osm NorthItaly
+bzcat $c.osm.bz2 > /tmp/$c.osm & java -mx7200M -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /tmp/$c.osm NorthItaly
 scp GpsMidNIt-NorthItaly-0.5.09.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/prebuild/ &
 
 c=italy
@@ -392,6 +418,8 @@ bzcat great_britain.osm.bz2 > /tmp/great_b.osm & java -mx3000M -jar Osm2GpsMid-C
 scp GpsMidScot-South-Scotland-0.5.09.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/prebuild/ &
 bzcat  great_britain.osm.bz2 > /tmp/great_b.osm & java -mx3000M -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /tmp/great_b.osm london
 scp GpsLon-London-0.5.09.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/prebuild/ &
+bzcat  great_britain.osm.bz2 > /tmp/great_b.osm & java -mx3000M -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /tmp/great_b.osm SouthWestEngland
+scp GpsMidSWE-SWEngland-0.5.09.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/prebuild/ &
 bzcat  great_britain.osm.bz2 > /tmp/great_b.osm & java -mx3500M -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /tmp/great_b.osm NorthEngland
 scp GpsNEng-NorthernEngland-0.5.09.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/prebuild/ &
 bzcat  germany.osm.bz2 > /tmp/germany.osm & time java -mx5000M -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /tmp/germany.osm RheinMain
@@ -408,6 +436,10 @@ bzcat  germany.osm.bz2 > /tmp/germany.osm & java -mx3000M -jar Osm2GpsMid-CVS.ja
 scp GpsMidHH-Hamburg-0.5.09.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/prebuild/ &
 bzcat  germany.osm.bz2 > /tmp/germany.osm & java -mx5500M -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /tmp/germany.osm Bayern
 scp GpsMidBay-Bayern-0.5.09.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/prebuild/ &
+bzcat  germany.osm.bz2 > /tmp/germany.osm & java -mx3000M -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /tmp/germany.osm Karlsruhe
+scp GpsMidKa-Karlsruhe-0.5.09.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/prebuild/ &
+bzcat  germany.osm.bz2 > /tmp/germany.osm & java -mx3000M -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /tmp/germany.osm RuhrGebiet
+scp GpsMidRuhr-RuhrGebiet-0.5.09.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/prebuild/ &
 bzcat  austria.osm.bz2 > /tmp/austria.osm & java -mx3000M -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /tmp/austria.osm Wien
 scp GpsMidW-Wien-0.5.09.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/prebuild/ &
 bzcat  france.osm.bz2 > /tmp/france.osm & java -mx3000M -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /tmp/france.osm Paris

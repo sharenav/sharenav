@@ -40,6 +40,8 @@ wget http://download.geofabrik.de/osm/europe/turkey.osm.bz2 -O /unsafe/krueger/O
 wget http://download.geofabrik.de/osm/europe/ukraine.osm.bz2 -O /unsafe/krueger/Osm2GpsMid/ukraine.osm.bz2
 wget http://download.geofabrik.de/osm/europe/finland.osm.bz2 -O /unsafe/krueger/Osm2GpsMid/finland.osm.bz2
 wget http://download.geofabrik.de/osm/europe/sweden.osm.bz2 -O /unsafe/krueger/Osm2GpsMid/sweden.osm.bz2
+wget http://downloads.cloudmade.com/north_america/canada/ontario/ontario.osm.bz2 -O /unsafe/krueger/Osm2GpsMid/ontario.osm.bz2
+wget http://downloads.cloudmade.com/north_america/canada/british_columbia/british_columbia.osm.bz2 -O /unsafe/krueger/Osm2GpsMid/britishcolumbia.osm.bz2
 wget http://downloads.cloudmade.com/asia/philippines/philippines.osm.bz2 -O /unsafe/krueger/Osm2GpsMid/philippines.osm.bz2
 wget http://downloads.cloudmade.com/asia/iran/iran.osm.bz2 -O /unsafe/krueger/Osm2GpsMid/iran.osm.bz2
 wget http://downloads.cloudmade.com/asia/sri_lanka/sri_lanka.osm.bz2 -O /unsafe/krueger/Osm2GpsMid/sri_lanka.osm.bz2
@@ -68,3 +70,4 @@ wget http://downloads.cloudmade.com/asia/russian_federation/russian_federation.o
 wget http://downloads.cloudmade.com/asia/china/china.osm.bz2 -O /unsafe/krueger/Osm2GpsMid/china.osm.bz2
 wget http://downloads.cloudmade.com/asia/malaysia/malaysia.osm.bz2 -O /unsafe/krueger/Osm2GpsMid/malaysia.osm.bz2
 wget http://downloads.cloudmade.com/asia/thailand/thailand.osm.bz2 -O /unsafe/krueger/Osm2GpsMid/thailand.osm.bz2
+wget http://download.cloudmade.com/north_america/united_states/california/california.osm.bz2 -O /unsafe/krueger/Osm2GpsMid/california.osm.bz2
