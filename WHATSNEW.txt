@@ -105,11 +105,15 @@ GpsMid 0.5.09
          more performance or memory to run GpsMid. Therefore the default maximum ways per tile is still 255. 
        - New option maxDictDepth in .properties files for specifying th dictionary depth for tiles.       
          With Osm2GpsMid 0.5.0 this was hardcoded to 5. Increasing the value to e.g. 10 will         
-         decrease the number of dictionary files in the midlet but require more memory in the mobile. 
+         decrease the number of dictionary files in the midlet but require more memory in the mobile.
+       - New option useSounds to specify which sound formats to include into the midlet,
+         e.g. "sounds=wav, amr" will include wav and amr sound files. GpsMid will use the first successful
+         playable sound format
        *** Osm2GpsMid GUI ***
        - Loading .properties files works again
        - New option to include cell-ids
        - New option to specify midlet route modes
+       - New option which sound formats (none, amr, wav or both) to include into the midlet
        *** Others ***
        - Don't cause an NPE if getControl doesn't return a VolumeControl as needed for phoneME (thx jkpj)
        - Many more small improvements and bugfixes
