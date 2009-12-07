@@ -1,5 +1,6 @@
 GpsMid 0.5.09
        *** Usability ***
+       - Faster access to the map: There's no extra menu before the map screen anymore 
        - Icon menus are available as an alternative user interface (activateable in Setup / Display Options)
          Multiple sized icon sets are included, choose with useIcons=small|true|big|false in the .properties file
          if and which icon set is included. Default is useIcons=small|true, which includes a medium sized icon set
