@@ -91,6 +91,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	JComboBox jcbStyle;
 	JTextField jtfRouting;
 	JTextField jtfName;
+	JComboBox jcbSoundFormats;
 	JCheckBox jcbEditing;
 	JComboBox jcbCellSource;
 	
@@ -100,9 +101,16 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	private static final String CELL_SRC_NONE = "Include no Cell IDs";
 	private static final String CELL_SRC_FILE = "Load cell ID file";
 	private static final String CELL_SRC_DLOAD = "Download cell ID DB";
+	
+	private static final String SOUND_NONE = "Include no sound files";
+	private static final String SOUND_AMR = "Include AMR sound files";
+	private static final String SOUND_WAV = "Include WAV sound files";
+	private static final String SOUND_WAV_AMR = "Include WAV and AMR files";
+	
 	private static final String JCB_EDITING = "Enable online OSM editing support";
 	String [] planetFiles = {XAPI_SRC, ROMA_SRC, FILE_SRC};
 	String [] cellidFiles = {CELL_SRC_NONE, CELL_SRC_FILE, CELL_SRC_DLOAD};
+	String [] soundFormats = {SOUND_NONE, SOUND_AMR, SOUND_WAV, SOUND_WAV_AMR};
 	
 	private static final String LOAD_PROP = "Load .properties file";
 	private static final String CUSTOM_PROP = "Custom properties";
@@ -258,7 +266,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		gbc.gridwidth = 3;
 		gbc.weighty = 0;
 		add(jpOptions2, gbc);
-		
+				
 		jcbEditing = new JCheckBox(JCB_EDITING);
 		jcbEditing.addActionListener(this);
 		gbc.gridx = 0;
@@ -266,14 +274,23 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		gbc.weighty = 0;
 		jpOptions2.add(jcbEditing, gbc);
 		
+		jcbSoundFormats = new JComboBox(soundFormats);
+		jcbSoundFormats.setSelectedIndex(1);
+		jcbSoundFormats.addActionListener(this);
+		jcbSoundFormats.setToolTipText("Select sound formats to include into the midlet, e.g. most Windows Mobile devices support .wav but cannot replay .amr. GpsMid will use the first successful playing sound format included");
+		gbc.gridx = 0;
+		gbc.gridy = 1;
+		gbc.weighty = 0;
+		jpOptions2.add(jcbSoundFormats, gbc);
+		
 		jcbCellSource = new JComboBox(cellidFiles);
 		jcbCellSource.addActionListener(this);
 		jcbCellSource.setToolTipText("Select a source of the Cell ID db for cell based location.");
 		gbc.gridx = 0;
-		gbc.gridy = 1;
+		gbc.gridy = 2;
 		gbc.weighty = 0;
-		jpOptions2.add(jcbCellSource, gbc);
-
+		jpOptions2.add(jcbCellSource, gbc);		
+		
 		JButton jbOk = new JButton("Create GpsMid midlet");
 		jbOk.setActionCommand("Create-click");
 		jbOk.addActionListener(this);
@@ -775,6 +792,20 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 					askCellFile();
 				}
 			}
+			if (e.getSource() == jcbSoundFormats) {
+				
+				String chosenProperty = (String) jcbSoundFormats.getSelectedItem();
+				if (SOUND_NONE.equalsIgnoreCase(chosenProperty)) {
+					config.setSounds("false");
+				} else if (SOUND_AMR.equalsIgnoreCase(chosenProperty)) {
+					config.setSounds("amr");
+				} else if (SOUND_WAV.equalsIgnoreCase(chosenProperty)) {
+					config.setSounds("wav");
+				} else if (SOUND_WAV_AMR.equalsIgnoreCase(chosenProperty)) {
+					config.setSounds("wav, amr");
+				}
+			}
+
 		}
 
 	}
