@@ -21,9 +21,11 @@ public class ContainerTile extends Tile {
 	Tile t1;
 	Tile t2;
 	private final int	deep;
+	private final String	root;
     
-    ContainerTile(DataInputStream dis,int deep,byte zl) throws IOException{
+    ContainerTile(DataInputStream dis,int deep,byte zl,String root) throws IOException{
     	this.deep = deep;
+		this.root = root;
 		minLat=dis.readFloat();
     	minLon=dis.readFloat();
     	maxLat=dis.readFloat();
@@ -39,11 +41,11 @@ public class ContainerTile extends Tile {
     	case Tile.TYPE_MAP:
     		return new SingleTile(dis,deep,zl);
     	case Tile.TYPE_CONTAINER:
-    		return new ContainerTile(dis,deep,zl);
+    		return new ContainerTile(dis,deep,zl,root);
     	case Tile.TYPE_EMPTY:
     		return new Empty();
     	case Tile.TYPE_FILETILE:
-    		return new FileTile(dis,deep,zl);
+    		return new FileTile(dis,deep,zl,root);
 //    	case Tile.TYPE_ROUTEFILE:
 //    		return new RouteFileTile(dis,deep,zl);
     	default:

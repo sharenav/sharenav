@@ -15,8 +15,10 @@ public class FileTile extends Tile {
 	byte				zl;
 	Tile				tile	= null;
 	private final int	deep;
+	String root;
 
-	public FileTile(DataInputStream dis, int deep, byte zl) throws IOException {
+	public FileTile(DataInputStream dis, int deep, byte zl,String root) throws IOException {
+		this.root=root;
 		this.deep = deep;
 		// logger.info("create deep:"+deep + " zoom:"+zl);
 		minLat = dis.readFloat();
@@ -44,7 +46,7 @@ public class FileTile extends Tile {
 
 	public void readData() throws IOException {
 
-		String fname = "temp2/d" + zl + fileId + ".d";
+		String fname = root+"/d" + zl + fileId + ".d";
 		System.out.println("Read " + fname);
 		InputStream is = new FileInputStream(fname);
 		if (is == null) {
@@ -70,13 +72,13 @@ public class FileTile extends Tile {
 				dict = new SingleTile(ds, 1, zl);
 				break;
 			case 2:
-				dict = new ContainerTile(ds, 1, zl);
+				dict = new ContainerTile(ds, 1, zl,root);
 				break;
 			case 3:
 				dict = new Empty();
 				return;
 			case 4:
-				dict = new FileTile(ds, 1, zl);
+				dict = new FileTile(ds, 1, zl,root);
 				break;
 			default:
 				break;

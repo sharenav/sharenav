@@ -77,13 +77,13 @@ public class DictTreeFrame extends JInternalFrame implements TreeSelectionListen
 				dict=new SingleTile(ds,1,zl);
 				break;
 			case Tile.TYPE_CONTAINER:
-				dict=new ContainerTile(ds,1,zl);
+				dict=new ContainerTile(ds,1,zl,root);
 				break;
 			case Tile.TYPE_EMPTY:
 				// empty tile;
 				break;
 			case Tile.TYPE_FILETILE:
-				dict=new FileTile(ds,1,zl);
+				dict=new FileTile(ds,1,zl,root);
 				break;
 
 			default:
