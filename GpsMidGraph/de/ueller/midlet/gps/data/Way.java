@@ -515,6 +515,10 @@ public class Way extends Entity{
 //				}				
 				// this is currently the best path between searchCon1 and searchCon2
 				pc.conWayDistanceToNext = conWayRealDistance;
+				pc.conWayMaxSpeed = (short) getMaxSpeed();
+				if (getMaxSpeedWinter() != 0 && Configuration.getCfgBitState(Configuration.CFGBIT_MAXSPEED_WINTER)) {
+					pc.conWayMaxSpeed = (short) getMaxSpeedWinter();
+				}
 				pc.conWayCombinedFileAndWayNr = getWayId(t);
 				pc.conWayFromAt = containsCon1At;
 				pc.conWayToAt = containsCon2At;
