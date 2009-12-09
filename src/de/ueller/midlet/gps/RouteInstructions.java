@@ -42,7 +42,7 @@ public class RouteInstructions {
 		"hard right", "right", "half right",
 		"bear right", "straight on", "bear left",
 		"half left", "left", "hard left", "u-turn",
-		"Destination reached",
+		"At destination",
 		"enter motorway", "leave motorway",
 		"cross area", "leave area",
 		"Roundabout exit #1", "Roundabout exit #2", "Roundabout exit #3",
