@@ -18,7 +18,7 @@ GpsMid 0.5.09
         - Touch the clock on the map to toggle the backlight, with some Nokia mobiles like Nokia 5800 it is also possible to
 		  use the zoom buttons during "Backlight ON" message to dim the backlight on touchscreen mobiles        
         - Display speed and distances in miles if configured in Setup
-        - Show target and move center to GPS to the left (thx jkpj)
+        - Show destination and move center to GPS to the left (thx jkpj)
        *** GPS and other location producers ***
        - Add a possibility to manually enter a connection URL, e.g. "comm:COM0;baudrate=115200"
        - CellId provider for S60FP2 usable with the python helper app (providing cellid via a local socket) 
@@ -82,6 +82,7 @@ GpsMid 0.5.09
        - Optionally show remaining route duration / ETA in map screen
          (based on ways' typical/max speeds/number of traffic lights)
        - "Target" has been renamed to "Destination" throughout GpsMid
+       - Only one "in xxx meters" voice instruction is given for each arrow
        *** OSM Editing and other only with Internet Connection available features ***
        - Support for GeoHack in "Online Info" (thx jkpj)
        *** Style-file handling ***
