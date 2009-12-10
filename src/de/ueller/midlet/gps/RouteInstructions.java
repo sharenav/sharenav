@@ -682,12 +682,16 @@ public class RouteInstructions {
 					
 					if (Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_ETA_IN_MAP)) {
 	
+						Trace.tl.ele[TraceLayout.ETA].setText(GpsMid.getClock(System.currentTimeMillis() + remainingDurationFSecs * 200));
+		 				/*
+						don't use new Date() - it is very slow on some Nokia devices			
 						Calendar currentTime = Calendar.getInstance();
 						currentTime.setTime( new Date( System.currentTimeMillis() + remainingDurationFSecs * 200) );		
-						e = Trace.tl.ele[TraceLayout.ETA];
 						e.setText(
 							currentTime.get(Calendar.HOUR_OF_DAY) + ":"  
 							+ HelperRoutines.formatInt2(currentTime.get(Calendar.MINUTE)));
+						*/
+						
 						// if ETA is visible, position OFFROUTE above ETA will work
 						Trace.tl.ele[TraceLayout.ROUTE_OFFROUTE].setVRelative(e);
 					}

@@ -178,7 +178,6 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	private volatile int currentTitleMsgOpenCount = 0;
 	private volatile int setTitleMsgTimeout = 0;
 	private Calendar lastTitleMsgTime = Calendar.getInstance();
-	private Calendar currentTime = Calendar.getInstance();
 	
 	private String currentAlertTitle;
 	private String currentAlertMessage;
@@ -1632,11 +1631,16 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			
 			if (Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_CLOCK_IN_MAP)) {
 
+				tl.ele[TraceLayout.CURRENT_TIME].setText(GpsMid.getClock(System.currentTimeMillis()));
+
+ 				/*
+				don't use new Date() - it is very slow on some Nokia devices			
 				currentTime.setTime( new Date( System.currentTimeMillis() ) );		
-				e = tl.ele[TraceLayout.CURRENT_TIME];
 				e.setText(
 					currentTime.get(Calendar.HOUR_OF_DAY) + ":"  
 					+ HelperRoutines.formatInt2(currentTime.get(Calendar.MINUTE)));
+				*/
+
 				// if current time is visible, positioning OFFROUTE above current time will work
 				tl.ele[TraceLayout.ROUTE_OFFROUTE].setVRelative(e);
 			}
