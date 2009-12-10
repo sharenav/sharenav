@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 import javax.microedition.lcdui.Alert;
 import javax.microedition.lcdui.Choice;
@@ -109,7 +110,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 	private final static int milliSecsPerHour = 60 * milliSecsPerMinute; // 60 minutes * milliSecsPerHour;
 	private final static int milliSecsPerDay = 24 * milliSecsPerHour; 
 	private static int differenceMilliSecs = 0;
-	private static int oldCurrentHoursGMT = -1;
+	private static int oldRawOffset = -1;
 	
 	private static volatile Trace trace = null;
 
@@ -632,19 +633,22 @@ public class GpsMid extends MIDlet implements CommandListener {
 	 *  because "new Date()" is very slow on some Nokia devices and thus not suited for repeated calls
 	 */ 
 	public static String getClock(long timeMillisGMT) {
-		int currentMilliSecsSinceMidnightGMT = (int) (System.currentTimeMillis() % milliSecsPerDay);		
-		int currentHoursGMT = (int) (currentMilliSecsSinceMidnightGMT / milliSecsPerHour);
-		/* calculate the difference between local time and GMT initially and on every hour change */
-		if (currentHoursGMT != oldCurrentHoursGMT) {
+		TimeZone tz = TimeZone.getDefault();
+		int rawOffset = tz.getRawOffset() - (tz.useDaylightTime() ? 999999 : 0);
+		/* calculate the real difference between local time and GMT initially and on every time zone offset change */
+		if (rawOffset != oldRawOffset) {
+			/* calculate current GMT hours and minutes with modulo method */
+			int currentMilliSecsSinceMidnightGMT = (int) (System.currentTimeMillis() % milliSecsPerDay);		
+			int currentHoursGMT = (int) (currentMilliSecsSinceMidnightGMT / milliSecsPerHour);
 			int currentMinutesGMT = (int) ((currentMilliSecsSinceMidnightGMT / 1000 / 60) %  60);	
+			/* calculate current local time from new Date() */
 			Calendar currentTime = Calendar.getInstance();
-			/* calculate local time from new Date() */
 			currentTime.setTime( new Date( System.currentTimeMillis() ) );		
 			int currentHoursLocal = currentTime.get(Calendar.HOUR_OF_DAY);
 			int currentMinutesLocal = currentTime.get(Calendar.MINUTE);
 			/* determine the difference */
 			differenceMilliSecs = (currentHoursGMT - currentHoursLocal) * milliSecsPerHour + (currentMinutesGMT - currentMinutesLocal) * milliSecsPerMinute;
-			oldCurrentHoursGMT = currentHoursGMT;
+			oldRawOffset = rawOffset;
 		}
 		/* own modulo and difference-to-GMT-based routines for calculating the local hour and minute of day for timeMillisGMT */
 		int milliSecsSinceMidnightLocal = (int) ((timeMillisGMT - differenceMilliSecs) % milliSecsPerDay);
