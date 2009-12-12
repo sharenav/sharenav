@@ -338,9 +338,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
-				if (dialogFinished != true) {
-					System.exit(0);
-				}
+				System.exit(0);
 			}
 		});
 		
