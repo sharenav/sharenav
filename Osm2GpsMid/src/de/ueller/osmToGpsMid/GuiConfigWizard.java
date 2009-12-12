@@ -723,6 +723,11 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		
 		if (JCB_EDITING.equalsIgnoreCase(e.getActionCommand())) {
 				config.enableEditingSupport = ((JCheckBox)e.getSource()).isSelected();
+				if (config.enableEditingSupport && !((String)jcbPhone.getSelectedItem()).contains("Editing")) {
+					//TODO: Need to find a way to select item without refering to hardcoded string names
+					jcbPhone.setSelectedItem("GpsMid-Generic-editing");
+					JOptionPane.showMessageDialog(this, "Editing requires online support. Changed Phone capabilities setting accordingly");
+				}
 		}
 		
 		if ("comboBoxChanged".equalsIgnoreCase(e.getActionCommand())) {
