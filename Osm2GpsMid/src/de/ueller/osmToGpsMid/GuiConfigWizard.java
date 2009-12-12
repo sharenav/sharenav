@@ -105,6 +105,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	JCheckBox jcbEditing;
 	JComboBox jcbCellSource;
 	
+	private static final String CHOOSE_SRC = "Choose your map data source";
 	private static final String XAPI_SRC = "OsmXapi";
 	private static final String ROMA_SRC = "ROMA";
 	private static final String FILE_SRC = "Load .osm.bz2 File";
@@ -118,7 +119,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	private static final String SOUND_WAV_AMR = "Include WAV and AMR files";
 	
 	private static final String JCB_EDITING = "Enable online OSM editing support";
-	String [] planetFiles = {XAPI_SRC, ROMA_SRC, FILE_SRC};
+	String [] planetFiles = {CHOOSE_SRC, XAPI_SRC, ROMA_SRC, FILE_SRC};
 	String [] cellidFiles = {CELL_SRC_NONE, CELL_SRC_FILE, CELL_SRC_DLOAD};
 	String [] soundFormats = {SOUND_NONE, SOUND_AMR, SOUND_WAV, SOUND_WAV_AMR};
 	
@@ -179,6 +180,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		jpFiles.add(jlPlanet, gbc);
 
 		jcbPlanet = new JComboBox(planetFiles);
+		jcbPlanet.setSelectedItem(CHOOSE_SRC);
 		jcbPlanet.addActionListener(this);
 		jcbPlanet.setToolTipText("Select the .osm file to use in conversion. ROMA and OsmXapi are online servers and should only be used for small areas.");
 		gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -474,7 +476,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		return res;
 	}
 
-	private void askOsmFile() {
+	private boolean askOsmFile() {
 
 		JFileChooser chooser = new JFileChooser(System.getProperty("user.dir"));
 		FileFilter ff = new FileFilter() {
@@ -501,8 +503,9 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			config.setPlanetName(planet);
 			jcbPlanet.addItem(planet);
 			jcbPlanet.setSelectedItem(planet);
+			return true;
 		}
-		
+		return false;
 	}
 	
 	private void askStyleFile() {
@@ -697,6 +700,13 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	 */
 	public void actionPerformed(ActionEvent e) {
 		if ("Create-click".equalsIgnoreCase(e.getActionCommand())) {
+			if (((String)jcbPlanet.getSelectedItem()).equalsIgnoreCase(CHOOSE_SRC)) {
+				if (!askOsmFile()) {
+					JOptionPane.showMessageDialog(this,"Osm2GpsMid can't create a map with out suitable OpenStreetMap data\n" +
+							"Please choose an appropriate OpenStreetMap data source. See help for more details", "OpenStreetMap data", JOptionPane.PLAIN_MESSAGE);
+					return;
+				}
+			}
 			config.setMidletName(jtfName.getText());
 			config.setRouting(jtfRouting.getText());
 			System.out.println("Create Midlet clicked");
@@ -828,7 +838,9 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 				
 				String chosenProperty = (String) jcbPlanet.getSelectedItem();
 				if (chosenProperty.equalsIgnoreCase(FILE_SRC)) {
-					askOsmFile();
+					if (!askOsmFile()) {
+						jcbPlanet.setSelectedItem(CHOOSE_SRC);
+					}
 					//resetPropertiesSelectors();
 				} else {
 					config.setPlanetName(chosenProperty);
