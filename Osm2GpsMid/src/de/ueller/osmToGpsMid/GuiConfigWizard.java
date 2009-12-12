@@ -11,11 +11,16 @@
 package de.ueller.osmToGpsMid;
 
 import java.awt.Color;
+import java.awt.Desktop;
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.HierarchyEvent;
+import java.awt.event.HierarchyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -36,6 +41,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -44,6 +50,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 import javax.swing.filechooser.FileFilter;
 
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
@@ -701,32 +710,75 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		}
 		
 		if ("Help-click".equalsIgnoreCase(e.getActionCommand())) {
-			JOptionPane.showMessageDialog(
-					this,   "Welcome to the Osm2GpsMid Wizard!\n\n" +
-							"Osm2GpsMid and GpsMid are licensed under GPL2 (http://www.gnu.org/)\n" + 
-							"OpenStreetMap Data is licensed under CC 2.0 (http://www.creativecommons.org/)\n" +
-							"\n" + 
-							"Osm2GpsMid is a conversion program to package map data from OpenStreetMap into a 'midlet' called GpsMid.\n" +
+			final JEditorPane jepHelpMsg = new JEditorPane();
+			jepHelpMsg.setPreferredSize(new Dimension(4000,4000));
+			jepHelpMsg.setEditable(false);
+			jepHelpMsg.setContentType("text/html");
+			jepHelpMsg.setText(
+			
+							"<html><body>" +
+							"<h1>Welcome to the Osm2GpsMid Wizard!</h1><br><br>" +
+							"Osm2GpsMid and GpsMid are licensed under <a href =\"http://www.gnu.org/licenses/old-licenses/gpl-2.0.html\">GPLv2</a><br>" + 
+							"OpenStreetMap Data is licensed under <a href =\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a><br>" +
+							"<br>" + 
+							"Osm2GpsMid is a conversion program to package map data from <a href=\"http://www.openstreetmap.org\">OpenStreetMap</a> into a 'midlet' called GpsMid.\n" +
 							"The resulting midlet includes the specified map data and can be uploaded to J2ME ready mobiles for offline navigation.\n" +
-							"\n" +
-							"Usage:\n" +
-							"1. Specify which region of the world you want to include in your midlet. \n" +
+							"<br><br>" +
+							"Usage:<br><ol>" +
+							"<li> Specify which region of the world you want to include in your midlet. \n" +
 							" This can either be done by dragging over an area on the world map with the right mouse button\n" +
 							" or by specifying a .properties file that already contains the area you want.\n" +
 							" You can delete boxes by double-clicking on them.\n" +
 							" If you want to set all the parameters using this wizard, please leave 'Properties template' on 'Custom'.\n" +
-							"2. Specify a source for the OpenStreetMap data. Currently three sources are directly supported:\n" +
-							" a) ROMA: This is the Read Only Map Api and downloads data directly from the API server (only for small regions like towns)\n" +
-							" b) OsmXapi: This is an alternative server and very similar to ROMA (only for small regions like towns)\n" +
-							" c) Load from file: Use a .osm or .osm.bz2 file previously downloaded to your computer (recommended)\n" +
+							"<li> Specify a source for the OpenStreetMap data. Currently three sources are directly supported:\n" +
+							"<ul>" +
+							" <li> ROMA: This is the Read Only Map Api and downloads data directly from the API server (only for small regions like towns)</li>" +
+							" <li> OsmXapi: This is an alternative server and very similar to ROMA (only for small regions like towns)</li>" +
+							" <li> Load from file: Use a .osm or .osm.bz2 file previously downloaded to your computer (recommended)\n" +
 							"    Country level extracts in .osm.bz2 file format are available\n" +
-							"    i.e. at http://download.geofabrik.de/osm/ and http://downloads.cloudmade.com/\n" +
-							"3. Press 'Create GpsMid midlet'\n" +
-							"\n" +
+							"    i.e. at <a href=\"http://download.geofabrik.de/osm/\">GeoFabrik</a> and <a href=\"http://downloads.cloudmade.com/\">CloudMade</a></li>" +
+							"</ul>" +
+							"<li> Press 'Create GpsMid midlet'\n" +
+							"</ol><br>" +
 							"Your changes in the wizard are written to last.properties so you can use this as\n" +
-							"a starting point for your .properties file.\n" +
-							"\n" +
-							"For more information please visit http://gpsmid.sourceforge.net/ and http://gpsmid.wiki.sourceforge.net/");
+							"a starting point for your .properties file.<br>" +
+							"<br>" +
+							"For more information please visit our <a href=\"http://gpsmid.sourceforge.net/\">Homepage</a> and <a href=\"http://sourceforge.net/apps/mediawiki/gpsmid/\">Wiki</a>"+
+							"</body></html>");
+			
+			
+			jepHelpMsg.addHierarchyListener(new HierarchyListener() {
+				public void hierarchyChanged(HierarchyEvent e) {
+					Window window = SwingUtilities.getWindowAncestor(jepHelpMsg);
+					if (window instanceof Dialog) {
+						Dialog dialog = (Dialog)window;
+						if (!dialog.isResizable()) {
+							dialog.setResizable(true);
+						}
+						dialog.setSize(800, 650);
+					}
+				}
+			});
+			
+			jepHelpMsg.addHyperlinkListener(new HyperlinkListener() {
+
+				@Override
+				public void hyperlinkUpdate(HyperlinkEvent e) {
+					if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+						if (Desktop.isDesktopSupported()) {
+							try {
+								Desktop.getDesktop().browse(e.getURL().toURI());
+							} catch (Exception ex) {
+								//Nothing to do if we can't open a browser
+							}
+						}
+					}
+				}
+				
+			});
+			
+			JOptionPane.showMessageDialog(this,jepHelpMsg,"Help", JOptionPane.PLAIN_MESSAGE);
+			
 		}
 		
 		if ("enable Routing".equalsIgnoreCase(e.getActionCommand())) {
