@@ -5,6 +5,7 @@
 
 package de.ueller.midlet.gps;
 
+import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Legend;
 import de.ueller.gps.tools.LayoutElement;
 import de.ueller.gps.tools.LayoutManager;
@@ -338,10 +339,18 @@ public class TraceLayout extends LayoutManager {
 		g.drawLine(left, top + 3, right, top + 3); //double line width
 		g.drawLine(left, top, left, top + 5);
 		g.drawLine(left + scalePx, top, right, top + 5);
-		if (scale > 1000) {
-			g.drawString(Integer.toString((int)(scale/1000.0f)) + "km", left + scalePx/2, top + 4, Graphics.HCENTER | Graphics.TOP);
+		if (!Configuration.getCfgBitState(Configuration.CFGBIT_METRIC)) {
+			if (scale > 1609.344) {
+				g.drawString(Integer.toString((int)(scale/1609.344f + 0.5)) + "mi", left + scalePx/2, top + 4, Graphics.HCENTER | Graphics.TOP);
+			} else {
+				g.drawString(Integer.toString((int)(scale/0.9144 + 0.5)) + "yd", left + scalePx/2, top + 4, Graphics.HCENTER | Graphics.TOP);
+			}
 		} else {
-			g.drawString(Integer.toString((int)scale) + "m", left + scalePx/2, top + 4, Graphics.HCENTER | Graphics.TOP);
+			if (scale > 1000) {
+				g.drawString(Integer.toString((int)(scale/1000.0f)) + "km", left + scalePx/2, top + 4, Graphics.HCENTER | Graphics.TOP);
+			} else {
+				g.drawString(Integer.toString((int)scale) + "m", left + scalePx/2, top + 4, Graphics.HCENTER | Graphics.TOP);
+			}
 		}
 		
 	}
@@ -358,15 +367,26 @@ public class TraceLayout extends LayoutManager {
 		
 		//Calculate the distance between them in meters
 		float d = ProjMath.getDistance(n1, n2);
-		//round this distance up to the nearest 5 or 10
-		int ordMag = (int)(MoreMath.log(d)/MoreMath.log(10.0f));
-		if (d < 2.5*MoreMath.pow(10,ordMag)) {
-			scale = 2.5f*MoreMath.pow(10,ordMag);
-		} else if (d < 5*MoreMath.pow(10,ordMag)) {
-			scale = 5*MoreMath.pow(10,ordMag);
-		} else {
-			scale = 10*MoreMath.pow(10,ordMag);
+		float conv = 1.0f;
+		if (!Configuration.getCfgBitState(Configuration.CFGBIT_METRIC)) {
+			
+			if (d > 1609.344) {
+				conv = 1609.344f;
+				
+			} else {
+				conv = 0.9144f;
+			}
 		}
+		//round this distance up to the nearest 5 or 10
+		int ordMag = (int)(MoreMath.log((d/conv))/MoreMath.log(10.0f));
+		if ((d/conv) < 2.5*MoreMath.pow(10,ordMag)) {
+			scale = 2.5f*MoreMath.pow(10,ordMag) * conv;
+		} else if ((d/conv) < 5*MoreMath.pow(10,ordMag)) {
+			scale = 5*MoreMath.pow(10,ordMag) * conv;
+		} else {
+			scale = 10*MoreMath.pow(10,ordMag) * conv;
+		}
+
 		//Calculate how many pixels this distance is apart
 		//The scale/d factor should be between 1 and 2.5
 		//due to rounding
