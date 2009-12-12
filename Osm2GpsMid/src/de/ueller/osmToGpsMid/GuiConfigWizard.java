@@ -11,6 +11,7 @@
 package de.ueller.osmToGpsMid;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -342,10 +343,23 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			// Nothing to do
 		}
 		
+		jbCancel.setEnabled(false);
+		jbOk.setEnabled(false);
+		jcbPlanet.setEnabled(false);
+		jcbProperties.setEnabled(false);
+		jcbStyle.setEnabled(false);
+		jtfRouting.setEnabled(false);
+		jtfName.setEnabled(false);
+		jcbPhone.setEnabled(false);
+		jcbSoundFormats.setEnabled(false);
+		jcbCellSource.setEnabled(false);
+		jcbEditing.setEnabled(false);
+		
 		JTextArea jtaConsoleOut = new JTextArea();
 		jtaConsoleOut.setAutoscrolls(true);
 		JScrollPane jspConsoleOut = new JScrollPane(jtaConsoleOut);
 		jspConsoleOut.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),"Console Output:"));
+		jspConsoleOut.setMinimumSize(new Dimension(400, 300));
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.gridwidth = 9;
 		gbc.weighty = 9;
@@ -357,6 +371,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		jtaConsoleErr.setAutoscrolls(true);
 		JScrollPane jspConsoleErr = new JScrollPane(jtaConsoleErr);
 		jspConsoleErr.setBorder(BorderFactory.createTitledBorder("Errors:"));
+		jspConsoleErr.setMinimumSize(new Dimension(400, 200));
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.gridwidth = 9;
 		gbc.weighty = 3;
@@ -365,12 +380,12 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		add(jspConsoleErr, gbc);
 		
 		remove(map);
-		
-		pack();
+		this.validate();
+
 		
 		System.setOut(new PrintStream(new StreamGobbler(jtaConsoleOut, jspConsoleOut), false));
 		System.setErr(new PrintStream(new StreamGobbler(jtaConsoleErr, jspConsoleErr), true));
-		map.setSize(0, 400);
+		
 	}
 	
 	private void addMapMarkers() {	

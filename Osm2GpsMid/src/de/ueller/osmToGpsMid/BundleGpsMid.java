@@ -32,6 +32,8 @@ import java.util.zip.ZipOutputStream;
 
 import javax.swing.JOptionPane;
 
+import sun.font.CreatedFontTracker;
+
 import de.ueller.osmToGpsMid.model.Node;
 import de.ueller.osmToGpsMid.model.Relation;
 import de.ueller.osmToGpsMid.model.RouteAccessRestriction;
@@ -49,6 +51,8 @@ public class BundleGpsMid implements Runnable {
 	static Calendar startTime;
 	
 	static Configuration config;
+	
+	private static volatile boolean createSuccessfully;
 
 	/**
 	 * @param args
@@ -73,6 +77,7 @@ public class BundleGpsMid implements Runnable {
 		 */
 		config = c;
 		Thread t = new Thread(bgm);
+		createSuccessfully = false;
 		t.start();
 		try {
 			t.join();
@@ -80,9 +85,13 @@ public class BundleGpsMid implements Runnable {
 			// Nothing to do
 		}
 		if (gcw != null) {
-			JOptionPane.showMessageDialog(gcw, "A GpsMid midlet was successfully create and can now be copied to your phone");
-			gcw.setVisible(false);
-			gcw.dispose();
+			if (createSuccessfully) {
+				JOptionPane.showMessageDialog(gcw, "A GpsMid midlet was successfully create and can now be copied to your phone");
+				gcw.setVisible(false);
+				gcw.dispose();
+			} else {
+				JOptionPane.showMessageDialog(gcw, "A fatal error occured during processing. Please have a look at the output logs");
+			}
 			
 		}
 	}
@@ -443,6 +452,7 @@ public class BundleGpsMid implements Runnable {
 				deleteDirectory(tmpBaseDir);
 			}
 			
+			createSuccessfully = true;
 
 		} catch (Exception e) {
 			e.printStackTrace();
