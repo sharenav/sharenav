@@ -805,32 +805,32 @@ scale alias 1: zoomed out 21x
 			<image src="beacon.png"/>
 			<namekey tag="name"/>
 			<AreaPOI createForAreas="true"/>
-			<scale scale="23"/>
-			<textscale scale="26"/>
+			<scale scale="20"/>
+			<textscale scale="23"/>
 		</value>
 		<value name ="lighthouse">
 			<description desc = "Lighthouse"/>
 			<image src="lighthouse.png"/>
 			<namekey tag="name"/>
 			<AreaPOI createForAreas="true"/>
-			<scale scale="23"/>
-			<textscale scale="26"/>
+			<scale scale="20"/>
+			<textscale scale="23"/>
 		</value>	
 		<value name ="tower">
 			<description desc = "Tower"/>
 			<image src="tower.png"/>
 			<namekey tag="name"/>
 			<AreaPOI createForAreas="true"/>
-			<scale scale="23"/>
-			<textscale scale="26"/>
+			<scale scale="20"/>
+			<textscale scale="23"/>
 		</value>
 		<value name ="water_tower">
 			<description desc = "Water tower"/>
 			<image src="water_tower.png"/>
 			<namekey tag="name"/>
 			<AreaPOI createForAreas="true"/>
-			<scale scale="23"/>
-			<textscale scale="26"/>
+			<scale scale="20"/>
+			<textscale scale="23"/>
 		</value>
 	</key>
 	<key tag = "power">
@@ -840,8 +840,8 @@ scale alias 1: zoomed out 21x
 			<image src="power_wind.png"/>
 			<namekey tag="name"/>
 			<AreaPOI createForAreas="true"/>
-			<scale scale="23"/>
-			<textscale scale="26"/>
+			<scale scale="20"/>
+			<textscale scale="23"/>
 		</value>
 <!--
 		<value name = "tower">
@@ -1449,7 +1449,7 @@ scale alias 1: zoomed out 21x
   				<isArea area = "true"/>
   				<scale scale = "19"/>
   				<lineColor color = "00141414" /> 	
-  			</Wvalue>  			
+  			</Wvalue>
   			<Wvalue name = "*">
   				<description desc = "Other amenity"/>
   				<namekey tag = "name"/>  				
