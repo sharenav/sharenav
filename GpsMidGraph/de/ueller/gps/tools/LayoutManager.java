@@ -50,9 +50,17 @@ public class LayoutManager extends Vector {
 
 	public void addElement(LayoutElement e) {
 		super.addElement(e);
+		refreshEleIds();
 		recalcPositionsRequired = true;
 	}
 
+	private void refreshEleIds() {
+		LayoutElement e;
+		for (int i=0; i<this.size(); i++){
+			e = (LayoutElement) this.elementAt(i);
+			e.setEleNr(i);
+		}	
+	}
 	
 	public void validate() {
 		LayoutElement e;

@@ -27,8 +27,8 @@ public class LayoutElement {
 	
 	/** align element at minY of the LayoutManager area */
 	public static final int FLAG_VALIGN_TOP = (1<<4);
-	/** align element at percentage of  the LayoutManager area height that has to be set with setTopPercent() */
-	public static final int FLAG_VALIGN_TOP_SCREENHEIGHT_PERCENT = (1<<5);
+	/** use numCols / numRows from IconMenuPage for positioning */
+	public static final int FLAG_ICONMENU_ICON = (1<<5);
 	/** align element at maxY of the LayoutManager area */
 	public static final int FLAG_VALIGN_BOTTOM = (1<<6);
 	/** center element between minY and maxY of the LayoutManager area */
@@ -57,20 +57,15 @@ public class LayoutElement {
 	/** make the background as wide as a percentage of the LayoutManager area.
 		Specify with setWidthPercent();
 	*/
-	public static final int FLAG_BACKGROUND_SCREENPERCENT_WIDTH = (1<<18);
+	public static final int FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH = (1<<18);
+	public static final int FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT = (1<<19);
 
-	public static final int FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH = (1<<19);
-	public static final int FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT = (1<<20);
-
-	public static final int FLAG_FONT_SMALL = (1<<21);
-	public static final int FLAG_FONT_MEDIUM = (1<<22);
-	public static final int FLAG_FONT_LARGE = (1<<24);
-	public static final int FLAG_FONT_BOLD = (1<<25);
-	public static final int FLAG_HALIGN_LEFT_SCREENWIDTH_PERCENT = (1<<26);
-	public static final int FLAG_SCALE_IMAGE_TO_ELEMENT_WIDTH_OR_HEIGHT_KEEPRATIO = (1<<27);
-	public static final int FLAG_BACKGROUND_SCREENPERCENT_HEIGHT = (1<<28);
-	public static final int FLAG_IMAGE_GREY = (1<<29);
-	public static final int FLAG_IMAGE_TOGGLEABLE = (1<<30);
+	public static final int FLAG_FONT_SMALL = (1<<20);
+	public static final int FLAG_FONT_MEDIUM = (1<<21);
+	public static final int FLAG_FONT_LARGE = (1<<22);
+	public static final int FLAG_FONT_BOLD = (1<<23);
+	public static final int FLAG_IMAGE_GREY = (1<<24);
+	public static final int FLAG_IMAGE_TOGGLEABLE = (1<<25);
 
 	
 	protected LayoutManager lm = null;
@@ -87,10 +82,6 @@ public class LayoutElement {
 	private int widthPercent = 100;
 	/** make the element high a percentage of the font height or of the LayoutManager height */
 	private int heightPercent = 100;
-	/** position the element at a percentage of the LayoutManager height */
-	private int topPercent = 100;
-	/** position the element at a percentage of the LayoutManager width */
-	private int leftPercent = 100;
 	private Font font = null;
 	private int fontHeight = 0;
 	private int height = 0;
@@ -122,6 +113,8 @@ public class LayoutElement {
 	
 	private byte specialElementID;
 	
+	private int eleNr;
+	
 	public int actionID = -1;
 
 	
@@ -147,12 +140,6 @@ public class LayoutElement {
 		this.fontHeight = this.font.getHeight();
 		this.height = this.fontHeight;
 		
-		if ( (flags & FLAG_BACKGROUND_FULL_WIDTH) > 0 ) {
-			this.flags |= FLAG_BACKGROUND_SCREENPERCENT_WIDTH;
-			widthPercent = 100;
-			//#debug debug
-			logger.trace("percent width " + widthPercent); 
-		}
 	}
 
 
@@ -169,17 +156,12 @@ public class LayoutElement {
 			width = 0;
 		}
 				
-		if ( (flags & FLAG_BACKGROUND_SCREENPERCENT_WIDTH) > 0 ) {
-			width = ((lm.maxX - lm.minX) * widthPercent) / 100;
-			//#debug debug
-			logger.trace("percent width " + width);
-		}
-		if ( (flags & FLAG_BACKGROUND_SCREENPERCENT_HEIGHT) > 0 ) {
-			height = ((lm.maxY - lm.minY) * heightPercent) / 100;
-		}
 		if ( (flags & FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH) > 0 ) {
 			width = (fontHeight * widthPercent) / 100;
+		} else if ( (flags & FLAG_BACKGROUND_FULL_WIDTH) > 0 ) {
+			width = lm.maxX - lm.minX;
 		}
+		
 		//#debug debug
 		logger.trace("width:" + width); 
 		shortenTextToWidth();
@@ -188,8 +170,9 @@ public class LayoutElement {
 			width = lm.getSpecialElementWidth(specialElementID, text, font);
 			height = lm.getSpecialElementHeight(specialElementID, fontHeight);
 		}
+				
 		
-		if (image != null) {
+		if ( (flags & FLAG_ICONMENU_ICON) > 0 ) {
 			Image im = image;
 			IconMenuPage imp = (IconMenuPage) lm;
 			if (imp.bgImage != null) {
@@ -203,8 +186,8 @@ public class LayoutElement {
 
 	private void shortenTextToWidth() {
 		int realWidth = width;
-		if ( (flags & FLAG_BACKGROUND_SCREENPERCENT_WIDTH) > 0 ) {
-			realWidth = ((lm.maxX - lm.minX) * widthPercent) / 100;
+		if ( (flags & FLAG_ICONMENU_ICON) > 0 ) {
+			realWidth = calcIconReservedWidth((IconMenuPage) lm);
 		}
 		// check how many characters we can draw if the available width is limited
 		while (textWidth > realWidth) {
@@ -223,15 +206,17 @@ public class LayoutElement {
 		} else if ( (flags & FLAG_HALIGN_CENTER) > 0 ) {
 			textLeft = lm.minX + ( lm.maxX - lm.minX - textWidth ) / 2;
 			left = lm.minX + ( lm.maxX - lm.minX - width ) / 2;
-		} else if ( (flags & FLAG_HALIGN_LEFT_SCREENWIDTH_PERCENT) > 0 ) {
-			left = lm.minX + ((lm.maxX - lm.minX) * leftPercent) / 100 - width / 2;			
-			textLeft = left + (width - textWidth) / 2;
 		} else if ( (flags & FLAG_HALIGN_LEFTTO_RELATIVE) > 0 ) {
 			left = getLeftToOrRightToNextVisibleRelative(true);
 			textLeft = left + (width - textWidth) / 2;
 		} else if ( (flags & FLAG_HALIGN_RIGHTTO_RELATIVE) > 0 ) {
 			left = getLeftToOrRightToNextVisibleRelative(false);
 			textLeft = left + (width - textWidth) / 2;
+		} else if ( (flags & FLAG_ICONMENU_ICON) > 0 ) {
+			IconMenuPage imp = (IconMenuPage) lm;
+			left = imp.minX + (eleNr % imp.numCols) * calcIconReservedWidth(imp) + (calcIconReservedWidth(imp) - imp.bgImage.getWidth()) / 2;
+			textLeft = imp.minX + (eleNr % imp.numCols) * calcIconReservedWidth(imp) + (calcIconReservedWidth(imp) - textWidth) / 2 ;
+			top = imp.minY + (eleNr / imp.numCols) * calcIconReservedHeight(imp);
 		}
 		
 		left += addOffsX;
@@ -256,8 +241,6 @@ public class LayoutElement {
 			top = lm.minY + (lm.maxY - lm.minY - height) / 2;
 		} else if ( (flags & FLAG_VALIGN_CENTER_AT_TOP_OF_ELEMENT) > 0 ) {
 			top = lm.minY + (lm.maxY - lm.minY) / 2;
-		} else if ( (flags & FLAG_VALIGN_TOP_SCREENHEIGHT_PERCENT) > 0 ) {
-			top = lm.minY + ((lm.maxY - lm.minY) * topPercent) / 100 - height / 2;
 		} else if ( (flags & FLAG_VALIGN_BELOW_RELATIVE) > 0 ) {
 			top = getAboveOrBelowNextVisibleRelative(false);
 		} else if ( (flags & FLAG_VALIGN_ABOVE_RELATIVE) > 0 ) {
@@ -273,7 +256,7 @@ public class LayoutElement {
 		if ( (flags & FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT) > 0 ) {
 			textTop = top +  (height - fontHeight) / 2;
 		}
-		if (image != null) {
+		if ( (flags & FLAG_ICONMENU_ICON) > 0 ) {
 			textTop = bottom + 1;
 		}
 	}
@@ -347,7 +330,7 @@ public class LayoutElement {
 				logger.debug("Fall back to i_bg.png for " + imageName2);
 				orgImage = Image.createImage("/i_bg.png");				
 			}
-			if ( (flags & FLAG_SCALE_IMAGE_TO_ELEMENT_WIDTH_OR_HEIGHT_KEEPRATIO) > 0) {
+			if ( (flags & FLAG_ICONMENU_ICON) > 0) {
 				orgImage = scaleIconImage(orgImage, (IconMenuPage) lm, fontHeight);
 				if ( (flags & FLAG_IMAGE_GREY) > 0 ) {
 					orgImage = ImageTools.getGreyImage(orgImage);
@@ -359,11 +342,19 @@ public class LayoutElement {
 		}
 	}
 	
+
+	private static int calcIconReservedHeight(IconMenuPage imp) {
+		//System.out.println("maxY " + imp.maxY + " minY: " + imp.minY);
+		return (imp.maxY - imp.minY) / imp.numRows;
+	}
+
+	private static int calcIconReservedWidth(IconMenuPage imp) {
+		return (imp.maxX - imp.minX) / imp.numCols;
+	}
+	
 	public static Image scaleIconImage(Image image, IconMenuPage imp, int fontHeight) {
-		int imgWidth = (imp.maxX - imp.minX) / imp.numCols * 7 / 8;
-		int imgHeight = (imp.maxY - imp.minY) / imp.numRows * 7 / 8 - fontHeight;
-		
-		imgWidth -= ((imgWidth * fontHeight) / imgHeight);
+		int imgWidth = calcIconReservedWidth(imp);
+		int imgHeight = calcIconReservedHeight(imp) - fontHeight;
 		
 		int imgHeightRelativeToWidth = (image.getHeight() * imgWidth) / image.getWidth();
 		int imgWidthRelativeToHeight = (image.getWidth() * imgHeight) / image.getHeight();
@@ -373,6 +364,17 @@ public class LayoutElement {
 		} else if (imgHeight > imgHeightRelativeToWidth) {
 			imgHeight = imgHeightRelativeToWidth;
 		}
+		
+		// shrinken the icons until there's enough space between them
+		while (imgWidth > 10 && imgHeight > 10 &&
+				(calcIconReservedWidth(imp) - imgWidth < fontHeight / 2 || calcIconReservedHeight(imp) - fontHeight - imgHeight < fontHeight / 2)
+		) {
+//			System.out.println("h: " + (calcIconReservedHeight(imp) - fontHeight - imgHeight) + " fh: " +  fontHeight / 2);
+//			System.out.println("w: " + (calcIconReservedWidth(imp) - imgWidth) );
+			imgWidth = imgWidth * 9 / 10;
+			imgHeight = imgHeight * 9 / 10;
+		}
+		
 //		System.out.println("actual Width/Height " + imgWidth + " " + imgHeight);
 		return ImageTools.scaleImage(image, imgWidth, imgHeight);
 	}
@@ -428,7 +430,6 @@ public class LayoutElement {
 				// recalc available width and shorten text to available width (without image)
 				unloadImage();
 				calcSize();
-				setFlag(LayoutElement.FLAG_SCALE_IMAGE_TO_ELEMENT_WIDTH_OR_HEIGHT_KEEPRATIO);
 				image = orgImage;
 			}
 		}
@@ -457,6 +458,10 @@ public class LayoutElement {
 		}
 	}
 
+	public void setEleNr(int eleNr) {
+		this.eleNr = eleNr;
+	}	
+	
 	public void setFlag(int flag) {
 		flags |= flag;
 	}
@@ -488,16 +493,6 @@ public class LayoutElement {
 
 	public void setHeightPercent(int p) {
 		heightPercent = p;
-		lm.recalcPositionsRequired = true;
-	}
-
-	public void setTopPercent(int p) {
-		topPercent = p;
-		lm.recalcPositionsRequired = true;
-	}
-
-	public void setLeftPercent(int p) {
-		leftPercent = p;
 		lm.recalcPositionsRequired = true;
 	}
 
@@ -534,10 +529,10 @@ public class LayoutElement {
 		if (flags == 0) {
 			return "not initialised";
 		}
-		if ( (flags & (FLAG_HALIGN_LEFT | FLAG_HALIGN_CENTER | FLAG_HALIGN_RIGHT | FLAG_HALIGN_LEFTTO_RELATIVE | FLAG_HALIGN_LEFT_SCREENWIDTH_PERCENT | FLAG_HALIGN_RIGHTTO_RELATIVE)) == 0) {
+		if ( (flags & (FLAG_HALIGN_LEFT | FLAG_HALIGN_CENTER | FLAG_HALIGN_RIGHT | FLAG_HALIGN_LEFTTO_RELATIVE | FLAG_ICONMENU_ICON | FLAG_HALIGN_RIGHTTO_RELATIVE)) == 0) {
 			return "horizontal position flag missing";
 		}
-		if ( (flags & (FLAG_VALIGN_BOTTOM | FLAG_VALIGN_CENTER |FLAG_VALIGN_CENTER_AT_TOP_OF_ELEMENT | FLAG_VALIGN_TOP | FLAG_VALIGN_TOP_SCREENHEIGHT_PERCENT |FLAG_VALIGN_ABOVE_RELATIVE | FLAG_VALIGN_BELOW_RELATIVE | FLAG_VALIGN_WITH_RELATIVE)) == 0) {
+		if ( (flags & (FLAG_VALIGN_BOTTOM | FLAG_VALIGN_CENTER |FLAG_VALIGN_CENTER_AT_TOP_OF_ELEMENT | FLAG_VALIGN_TOP | FLAG_ICONMENU_ICON |FLAG_VALIGN_ABOVE_RELATIVE | FLAG_VALIGN_BELOW_RELATIVE | FLAG_VALIGN_WITH_RELATIVE)) == 0) {
 			return "vertical position flag missing";
 		}
 		if (vRelativeTo == null && (flags & (FLAG_VALIGN_ABOVE_RELATIVE | FLAG_VALIGN_BELOW_RELATIVE)) > 0) {
@@ -572,7 +567,7 @@ public class LayoutElement {
 				g.setStrokeStyle(Graphics.SOLID);
 				g.drawRect(left, top, right-left, bottom - top);
 			}			
-			if (image != null) {
+			if ( (flags & FLAG_ICONMENU_ICON) > 0 ) {
 				IconMenuPage imp = (IconMenuPage) lm;
 				if (imp.bgImage != null) {
 					g.drawImage(imp.bgImage, left, top, Graphics.TOP|Graphics.LEFT);

@@ -12,6 +12,7 @@ import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
+import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 
 import java.util.Vector;
@@ -79,7 +80,7 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 	}
 
 	public IconMenuPage createAndAddMenuPage(String pageTitle, int numCols, int numRows) {
-		IconMenuPage imp = new IconMenuPage( pageTitle, actionPerformer, numCols, numRows, minX, minY + eNextTab.bottom + 6, maxX, eStatusBar.top - 5);
+		IconMenuPage imp = new IconMenuPage( pageTitle, actionPerformer, numCols, numRows, minX, calcIconMenuMinY(), maxX, calcIconMenuMaxY());
 		iconMenuPages.addElement(imp);
 		recreateTabButtonsRequired = true;		
 		return imp;
@@ -184,10 +185,19 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 		for (int i=0; i < iconMenuPages.size(); i++) {
 			imp = (IconMenuPage) iconMenuPages.elementAt(i);
 			imp.maxX = maxX;
-			imp.minY = minY + eNextTab.bottom + eNextTab.bottom / 2;
-			imp.maxY = eStatusBar.top - 5;
+			imp.minY = calcIconMenuMinY();
+			imp.maxY = calcIconMenuMaxY();
 			imp.unloadIcons();
 		}
+	}
+	
+	private int calcIconMenuMinY() {
+		Font font = Font.getFont(Font.FACE_PROPORTIONAL, 0 , Font.SIZE_SMALL);
+		return minY + eNextTab.bottom + font.getHeight();
+	}
+
+	private int calcIconMenuMaxY() {
+		return eStatusBar.top;
 	}
 	
 	public void setActiveTab(int tabNr) {

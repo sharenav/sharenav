@@ -82,13 +82,10 @@ public class IconMenuPage extends LayoutManager {
 	public LayoutElement createIcon(String label, String imageName, int actionId) {
 		int eleNr = this.size();
 		LayoutElement e = super.createAndAddElement(
-			LayoutElement.FLAG_HALIGN_LEFT_SCREENWIDTH_PERCENT | LayoutElement.FLAG_VALIGN_TOP_SCREENHEIGHT_PERCENT |
-			LayoutElement.FLAG_BACKGROUND_SCREENPERCENT_WIDTH | LayoutElement.FLAG_BACKGROUND_SCREENPERCENT_HEIGHT |
-			LayoutElement.FLAG_SCALE_IMAGE_TO_ELEMENT_WIDTH_OR_HEIGHT_KEEPRATIO |
+			LayoutElement.FLAG_ICONMENU_ICON |
 			LayoutElement.FLAG_FONT_SMALL
 		);
 //		System.out.println("eleNr:" + eleNr + " x:" + (eleNr % numCols) + "y:" + (eleNr / numCols));
-		setIconPositionAndSize(eleNr, e);
 		e.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_ICON_TEXT]);
 		e.setActionID(actionId);
 		e.setText(label);
@@ -96,24 +93,9 @@ public class IconMenuPage extends LayoutManager {
 		return e;
 	}
 	
-	private void setIconPositionAndSize(int eleNr, LayoutElement e) {
-		e.setLeftPercent((eleNr % numCols) * gridHor + gridHor / 2);
-		e.setTopPercent((eleNr / numCols) * gridVer + gridVer / 2);
-		e.setWidthPercent(gridHor - gridHor / 8);
-		e.setHeightPercent(gridVer - gridVer / 8);
-	}
-
-	private void recalculateIconPositions() {
-		LayoutElement e;
-		for (int i=0; i < this.size(); i++){
-			e = (LayoutElement) this.elementAt(i);
-			setIconPositionAndSize(i, e);
-		}
-	}
 	
 	public void removeElement(LayoutElement e) {
 		super.removeElement(e);
-		recalculateIconPositions();
 	}
 	
 	
