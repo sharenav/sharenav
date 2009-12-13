@@ -451,6 +451,14 @@ scale alias 1: zoomed out 21x
 		<scale scale="23"/>
 		<textscale scale="26"/>
 	  </value>
+	  <value name ="car_wash">
+		<description desc = "Car wash"/>
+		<image src="car_wash.png"/>
+		<namekey tag="name"/>
+		<AreaPOI createForAreas="true"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
+	  </value>
 	  <value name ="parking">
 		<description desc = "Car parking"/>
 		<image src="parking.png"/>
@@ -568,7 +576,15 @@ scale alias 1: zoomed out 21x
 		<scale scale="23"/>
 		<textscale scale="26"/>
 	  </value>
-	  <!--
+	  <value name="car">
+		<description desc = "Car dealership"/>
+		<image src="car.png"/>
+		<namekey tag="name"/>
+		<AreaPOI createForAreas="true"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
+	  </value>
+<!--
 	  <value name="*">
 		<description desc = "Other shop"/>
 		<image src="othershop.png"/>
@@ -618,6 +634,17 @@ scale alias 1: zoomed out 21x
 			<imageCentered value="true"/>
 			<hideable hideable="false"/>
 	  </value>
+<!--
+	  <value name="traffic_signals">
+		<description desc = "Traffic light"/>
+		<image src="traffic-light.png"/>		
+		<namekey tag="name"/>
+		<AreaPOI createForAreas="false"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
+		<imageCentered value="true"/>
+	  </value>
+-->
 	</key>
 	<key tag="railway">
 	   <value name="station">
@@ -685,6 +712,14 @@ scale alias 1: zoomed out 21x
 		<scale scale="23"/>
 		<textscale scale="26"/>
 	  </value>
+	  <value name ="alpine_hut">
+		<description desc = "Alpine hut"/>
+		<image src="alpine_hut.png"/>
+		<namekey tag="name"/>
+		<AreaPOI createForAreas="true"/>
+		<scale scale="16"/>
+		<textscale scale="20"/>
+	  </value>
 	  <value name="camp_site">
 		<description desc = "Camping"/>
 		<image src="camping.png"/>
@@ -693,7 +728,15 @@ scale alias 1: zoomed out 21x
 		<scale scale="23"/>
 		<textscale scale="26"/>
 	  </value>
-	  <value name="attraction"  priority = "-10">
+	  <value name="picnic_site">
+		<description desc = "Picnic site"/>
+		<image src="picnic.png"/>
+		<namekey tag="name"/>
+		<AreaPOI createForAreas="true"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
+	  </value>
+	  <value name="attraction" priority = "-10">
 		<description desc = "Tourism attraction"/>
 		<image src="attraction.png"/>
 		<namekey tag="name"/>
@@ -708,14 +751,25 @@ scale alias 1: zoomed out 21x
 		<AreaPOI createForAreas="true"/>
 		<scale scale="23"/>
 		<textscale scale="26"/>
+		<imageCentered value="true"/>
 	  </value>
 	  <value name="information">
-		<description desc = "Information"/>
+		<specialisation key="information" value="guidepost"/>
+		<description desc = "Guidepost"/>
+		<image src="guidepost.png"/>
+		<namekey tag="name"/>
+		<AreaPOI createForAreas="false"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
+	  </value>
+	  <value name="information">
+		<description desc="Information"/>
 		<image src="information.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
 		<scale scale="23"/>
 		<textscale scale="26"/>
+		<imageCentered value="true"/>
 	  </value>
 	  <value name="museum">
 		<description desc = "Museum"/>
@@ -759,7 +813,8 @@ scale alias 1: zoomed out 21x
 		<AreaPOI createForAreas="true"/>
 		<scale scale="23"/>
 		<textscale scale="26"/>
-	  </value>	
+		<imageCentered value="true"/>
+	  </value>
 	  <value name ="monument">
 		<description desc = "Monument"/>
 		<image src="monument.png"/>
@@ -768,12 +823,38 @@ scale alias 1: zoomed out 21x
 		<scale scale="23"/>
 		<textscale scale="26"/>
 		<imageCentered value="true"/>
-	  </value>	
+	  </value>
+	  <value name ="ruins">
+		<description desc = "Ruins"/>
+		<image src="ruins.png"/>
+		<namekey tag="name"/>
+		<AreaPOI createForAreas="true"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
+		<imageCentered value="true"/>
+	  </value>
 	</key>
 	<key tag="natural">
 	  <value name="beach">
 		<description desc = "Beach"/>
 		<image src="beach.png"/>
+		<namekey tag="name"/>
+		<AreaPOI createForAreas="true"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
+	  </value>
+	  <value name="cave_entrance">
+		<description desc = "Cave entrance"/>
+		<image src="cave_entrance.png"/>
+		<namekey tag="name"/>
+		<AreaPOI createForAreas="true"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
+		<imageCentered value="true"/>
+	  </value>
+	  <value name="spring">
+		<description desc = "Spring"/>
+		<image src="spring.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
 		<scale scale="23"/>
@@ -788,7 +869,15 @@ scale alias 1: zoomed out 21x
 		<scale scale="16"/>
 		<textscale scale="20"/>
 	  </value>
-	</key>	
+	  <value name="tree">
+		<description desc = "Significant tree"/>
+		<image src="trees.png"/>
+		<namekey tag="name"/>
+		<AreaPOI createForAreas="true"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
+	  </value>
+	</key>
 	<key tag="landuse">
 	  <value name ="farm">
 		<description desc = "Farm"/>
@@ -847,6 +936,13 @@ scale alias 1: zoomed out 21x
 		<value name = "tower">
 			<description desc = "Power tower"/>
 			<image src="power_tower.png"/>
+			<namekey tag="ref"/>
+			<scale scale="23"/>
+			<textscale scale="26"/>
+		</value>
+		<value name = "pole">
+			<description desc = "Power pole"/>
+			<image src="power_pole.png"/>
 			<namekey tag="ref"/>
 			<scale scale="23"/>
 			<textscale scale="26"/>
@@ -1295,6 +1391,15 @@ scale alias 1: zoomed out 21x
         <keyW tag = "power">
 			<Wvalue name = "line">
 				<description desc = "power line"/>
+				<namekey tag = "name"/>
+				<isArea area = "false"/>
+				<scale scale = "19"/>
+				<lineColor color = "00800080" />
+				<lineStyle dashed = "false" />
+				<wayWidth width = "1" />
+			</Wvalue>
+			<Wvalue name = "minor_line">
+				<description desc = "small power line"/>
 				<namekey tag = "name"/>
 				<isArea area = "false"/>
 				<scale scale = "19"/>
