@@ -5,18 +5,15 @@
 
 package de.ueller.gps.tools;
 import de.ueller.gps.data.Legend;
-import de.ueller.gps.data.Configuration;
 import de.ueller.gps.tools.LayoutElement;
 import de.ueller.gps.tools.LayoutManager;
 import de.ueller.gps.tools.IconActionPerformer;
 import de.ueller.midlet.gps.Logger;
-import de.ueller.midlet.gps.Trace;
 
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
-import java.util.Vector;
 
 public class IconMenuPage extends LayoutManager { 
 	private final static Logger logger = Logger.getInstance(LayoutManager.class,Logger.DEBUG);

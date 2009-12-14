@@ -8,9 +8,6 @@ import javax.microedition.lcdui.*;
 
 import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.Configuration;
-import de.ueller.gpsMid.mapData.SingleTile;
-import de.ueller.midlet.gps.importexport.ObexExportSession;
-import de.ueller.midlet.gps.tile.POIdescription;
 import de.ueller.midlet.gps.tile.WayDescription;
 
 public class GuiOverviewElements extends Form implements CommandListener, ItemStateListener {
@@ -19,8 +16,6 @@ public class GuiOverviewElements extends Form implements CommandListener, ItemSt
 	private ChoiceGroup ovElHideOtherCG;
 
 	private TextField fldNamePart; 
-	
-	private Image areaPict = null;
 	
 	private ChoiceGroup ovElSelectionCG;
 
@@ -85,7 +80,7 @@ public class GuiOverviewElements extends Form implements CommandListener, ItemSt
 				break;
 		}
 		if (namePartFieldAdded) {
-			parent.pc.legend.set0Poi1Area2WayNamePart(ovElGroupNr, fldNamePart.getString());
+			Legend.set0Poi1Area2WayNamePart(ovElGroupNr, fldNamePart.getString());
 		}
 		if (hideOtherGroupAdded) {
 			showOther[ovElGroupNr] = ovElHideOtherCG.isSelected(0);
@@ -112,29 +107,29 @@ public class GuiOverviewElements extends Form implements CommandListener, ItemSt
 		switch (ovElGroupNr) {
 			case 0:
 				// save overview mode state to node description
-				for (byte i = 1; i < parent.pc.legend.getMaxType(); i++) {				
-					if (parent.pc.legend.isNodeHideable(i)) {
-						parent.pc.legend.setNodeOverviewMode(i, ovElSelectionCG.isSelected(count)?overviewMode:nonOverviewMode);
+				for (byte i = 1; i < Legend.getMaxType(); i++) {				
+					if (Legend.isNodeHideable(i)) {
+						Legend.setNodeOverviewMode(i, ovElSelectionCG.isSelected(count)?overviewMode:nonOverviewMode);
 						count++;
 					}
 				}
 				break;
 			case 1:
 				// save overview mode state to 'area' description
-				for (byte i = 1; i < parent.pc.legend.getMaxWayType(); i++) {				
-					WayDescription w = parent.pc.legend.getWayDescription(i);
-					if (w.isArea && parent.pc.legend.isWayHideable(i) ) {
-						parent.pc.legend.setWayOverviewMode(i, ovElSelectionCG.isSelected(count)?overviewMode:nonOverviewMode);
+				for (byte i = 1; i < Legend.getMaxWayType(); i++) {				
+					WayDescription w = Legend.getWayDescription(i);
+					if (w.isArea && Legend.isWayHideable(i) ) {
+						Legend.setWayOverviewMode(i, ovElSelectionCG.isSelected(count)?overviewMode:nonOverviewMode);
 						count++;
 					}
 				}
 				break;
 			case 2:
 				// save overview mode state to way description
-				for (byte i = 1; i < parent.pc.legend.getMaxWayType(); i++) {				
-					WayDescription w = parent.pc.legend.getWayDescription(i);
-					if (!w.isArea && parent.pc.legend.isWayHideable(i) ) {
-						parent.pc.legend.setWayOverviewMode(i, ovElSelectionCG.isSelected(count)?overviewMode:nonOverviewMode);
+				for (byte i = 1; i < Legend.getMaxWayType(); i++) {				
+					WayDescription w = Legend.getWayDescription(i);
+					if (!w.isArea && Legend.isWayHideable(i) ) {
+						Legend.setWayOverviewMode(i, ovElSelectionCG.isSelected(count)?overviewMode:nonOverviewMode);
 						count++;
 					}
 				}
@@ -154,8 +149,8 @@ public class GuiOverviewElements extends Form implements CommandListener, ItemSt
 		}
 		if (c == CMD_OFF) {			
 			ImageCollector.overviewTileScaleBoost = 1.0f;
-			parent.pc.legend.clearAllNodesOverviewMode();
-			parent.pc.legend.clearAllWaysOverviewMode();
+			Legend.clearAllNodesOverviewMode();
+			Legend.clearAllWaysOverviewMode();
 			parent.show();
 			return;
 		}
@@ -200,32 +195,32 @@ public class GuiOverviewElements extends Form implements CommandListener, ItemSt
 			switch (ovElGroupNr) {
 				case 0:
 					// set POI overview states in form				
-					for (byte i = 1; i < parent.pc.legend.getMaxType(); i++) {				
-						if (parent.pc.legend.isNodeHideable(i)) {
-							ovElSelectionCG.append(parent.pc.legend.getNodeTypeDesc(i), parent.pc.legend.getNodeSearchImage(i));
-							ovElSelectionCG.setSelectedIndex(count, ((parent.pc.legend.getNodeOverviewMode(i) & Legend.OM_MODE_MASK) == Legend.OM_OVERVIEW) );
+					for (byte i = 1; i < Legend.getMaxType(); i++) {				
+						if (Legend.isNodeHideable(i)) {
+							ovElSelectionCG.append(Legend.getNodeTypeDesc(i), Legend.getNodeSearchImage(i));
+							ovElSelectionCG.setSelectedIndex(count, ((Legend.getNodeOverviewMode(i) & Legend.OM_MODE_MASK) == Legend.OM_OVERVIEW) );
 							count++;
 						}
 					}
 					break;
 				case 1:
 					// set Area overview states in form
-					for (byte i = 1; i < parent.pc.legend.getMaxWayType(); i++) {				
-						WayDescription w = parent.pc.legend.getWayDescription(i);
-						if (w.isArea && parent.pc.legend.isWayHideable(i) ) {
+					for (byte i = 1; i < Legend.getMaxWayType(); i++) {				
+						WayDescription w = Legend.getWayDescription(i);
+						if (w.isArea && Legend.isWayHideable(i) ) {
 							ovElSelectionCG.append(w.description, areaImage(w.lineColor));
-							ovElSelectionCG.setSelectedIndex(count, ((parent.pc.legend.getWayOverviewMode(i) & Legend.OM_MODE_MASK) == Legend.OM_OVERVIEW) );
+							ovElSelectionCG.setSelectedIndex(count, ((Legend.getWayOverviewMode(i) & Legend.OM_MODE_MASK) == Legend.OM_OVERVIEW) );
 							count++;
 						}
 					}
 					break;
 				case 2:
 					// set Way overview  states in form
-					for (byte i = 1; i < parent.pc.legend.getMaxWayType(); i++) {				
-						WayDescription w = parent.pc.legend.getWayDescription(i);
-						if (!w.isArea && parent.pc.legend.isWayHideable(i) ) {
+					for (byte i = 1; i < Legend.getMaxWayType(); i++) {				
+						WayDescription w = Legend.getWayDescription(i);
+						if (!w.isArea && Legend.isWayHideable(i) ) {
 							ovElSelectionCG.append(w.description, wayImage(w));
-							ovElSelectionCG.setSelectedIndex(count, ((parent.pc.legend.getWayOverviewMode(i) & Legend.OM_MODE_MASK) == Legend.OM_OVERVIEW) );
+							ovElSelectionCG.setSelectedIndex(count, ((Legend.getWayOverviewMode(i) & Legend.OM_MODE_MASK) == Legend.OM_OVERVIEW) );
 							count++;
 						}
 					}
@@ -239,7 +234,6 @@ public class GuiOverviewElements extends Form implements CommandListener, ItemSt
 			ovElGroupNr = (byte) ovElGroupCG.getSelectedIndex();
 		}
 		ovElGroupNr = (byte) ovElGroupCG.getSelectedIndex();
-		String ovElGroupName = ovElGroupCG.getString(ovElGroupNr); 
 		if (item == ovElNameRequirementCG || item == ovElGroupCG) {
 			if (hideOtherGroupAdded) {
 				frmMaxEl--;
@@ -258,7 +252,7 @@ public class GuiOverviewElements extends Form implements CommandListener, ItemSt
 			}
 			if ((byte) ovElNameRequirementCG.getSelectedIndex() == 3) { 
 				fldNamePart = new TextField("...this name part:", 
-						parent.pc.legend.get0Poi1Area2WayNamePart(ovElGroupNr), 
+						Legend.get0Poi1Area2WayNamePart(ovElGroupNr), 
 						20, TextField.ANY);
 				insert(2, fldNamePart);
 				frmMaxEl++;

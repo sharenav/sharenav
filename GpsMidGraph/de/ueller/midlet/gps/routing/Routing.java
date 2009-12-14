@@ -33,7 +33,6 @@ public class Routing implements Runnable {
 
 	private final static Logger logger = Logger.getInstance(Routing.class, Logger.ERROR);
 	private final RouteBaseTile tile;
-	private final Tile[] tiles;
 	private RouteNode routeFrom;
 	private RouteNode routeTo;
 	private final Trace parent;
@@ -87,7 +86,6 @@ public class Routing implements Runnable {
 	public Routing(Tile[] tile,Trace parent) throws IOException {
 		this.parent = parent;
 		this.tile = (RouteBaseTile) tile[4];
-		this.tiles = tile;
 		estimateFac = (Configuration.getRouteEstimationFac() / 10f) + 0.8f;
 		maxEstimationSpeed = (int) ( (Configuration.getTravelMode().maxEstimationSpeed * 10) / 36);
 		if (maxEstimationSpeed == 0) {
@@ -449,7 +447,6 @@ public class Routing implements Runnable {
 			GraphNode newNode = (GraphNode) children.elementAt(i);
 			long newTotal = newNode.total;
 			long newCosts = newNode.costs;
-			boolean done = false;
 			int idx = bsearch(0, nodes.size()-1, newTotal, newCosts);
 			nodes.insertElementAt(newNode, idx); 
 		}
@@ -849,7 +846,6 @@ public class Routing implements Runnable {
 			 * when searching the ways for matching connections
 			 */
 			ConnectionWithNode cFirst = (ConnectionWithNode) sequence.firstElement();
-			ConnectionWithNode cSecond = (ConnectionWithNode) sequence.elementAt(1);
 
 			if (firstNodeId1 == cFirst.to.id) {
 				sourcePathSegNodeDummyConnectionNode.to.lat=firstSourcePathSegNodeDummy1.radlat;

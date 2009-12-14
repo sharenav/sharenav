@@ -4,7 +4,6 @@ package de.ueller.midlet.gps;
  * See Copying
  */
 
-import javax.microedition.lcdui.Alert;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
@@ -13,10 +12,8 @@ import javax.microedition.lcdui.TextField;
 
 import de.ueller.gps.data.Configuration;
 import de.ueller.midlet.gps.data.PositionMark;
-import de.ueller.midlet.gps.data.Proj2DMoveUp;
 import javax.microedition.lcdui.Choice;
 import javax.microedition.lcdui.ChoiceGroup;
-import javax.microedition.lcdui.Spacer;
 
 
 public class GuiWaypointSave extends Form implements CommandListener {

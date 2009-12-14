@@ -8,7 +8,6 @@ package de.ueller.midlet.gps;
 
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Legend;
-import de.ueller.midlet.gps.data.Proj2DMoveUp;
 
 import java.io.InputStream;
 //#if polish.api.mmapi	

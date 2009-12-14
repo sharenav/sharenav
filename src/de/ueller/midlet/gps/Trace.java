@@ -2496,7 +2496,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			if (Configuration.getContinueMapWhileRouteing() == Configuration.continueMap_At_Route_Line_Creation) {
 				resumeImageCollectorAfterRouteCalc();
 			}
-			ri.newRoute(this.route, dest);
+			ri.newRoute(this.route);
 			oldRecalculationTime = System.currentTimeMillis();
 		}
 		// show map always after route calculation 

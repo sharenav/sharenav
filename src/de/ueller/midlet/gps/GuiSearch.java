@@ -396,7 +396,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			SearchResult sr=(SearchResult) result.elementAt(i);
 			Image img;
 			if (sr.type < 0) {
-				img = parent.pc.legend.getNodeSearchImage((byte)(sr.type*-1));
+				img = Legend.getNodeSearchImage((byte)(sr.type*-1));
 			} else {
 				if (sr.type < ico.length)
 					img = ico[sr.type];

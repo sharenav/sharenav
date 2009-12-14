@@ -365,7 +365,7 @@ public class LayoutElement {
 			imgHeight = imgHeightRelativeToWidth;
 		}
 		
-		// shrinken the icons until there's enough space between them
+		// shrink the icons until there's enough space between them
 		while (imgWidth > 10 && imgHeight > 10 &&
 				(calcIconReservedWidth(imp) - imgWidth < fontHeight / 2 || calcIconReservedHeight(imp) - fontHeight - imgHeight < fontHeight / 2)
 		) {

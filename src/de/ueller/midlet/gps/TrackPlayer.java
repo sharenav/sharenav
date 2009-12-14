@@ -14,7 +14,6 @@ public class TrackPlayer implements Runnable {
 			Logger.TRACE);
 
 	private volatile boolean shutdown = false;
-	private volatile boolean suspended = true;
 	private Thread processorThread;
 	private float trkPtLat[];
 	private float trkPtLon[];

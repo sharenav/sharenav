@@ -5,35 +5,21 @@
 
 package de.ueller.midlet.gps;
 
-import java.io.InputStream;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Vector;
 
-import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.Graphics;
 
 import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.Configuration;
-import de.ueller.gps.tools.HelperRoutines;
-import de.ueller.gps.tools.ImageTools;
-import de.ueller.gps.tools.intTree;
 import de.ueller.gps.tools.LayoutElement;
-import de.ueller.gpsMid.mapData.Tile;
 import de.ueller.midlet.gps.data.IntPoint;
 import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.ProjMath;
-import de.ueller.midlet.gps.data.Projection;
-import de.ueller.midlet.gps.data.Way;
 import de.ueller.midlet.gps.data.PositionMark;
-import de.ueller.midlet.gps.data.Proj2D;
-import de.ueller.midlet.gps.routing.Connection;
 import de.ueller.midlet.gps.routing.ConnectionWithNode;
 import de.ueller.midlet.gps.routing.RouteHelper;
-import de.ueller.midlet.gps.routing.RouteNode;
-import de.ueller.midlet.gps.routing.TravelMode;
 import de.ueller.midlet.gps.tile.PaintContext;
 import de.ueller.midlet.gps.tile.WayDescription;
 
@@ -111,8 +97,6 @@ public class RouteInstructions {
 	/** the index of the route element until which the route instructions are fully determined */
 	private static volatile int maxDeterminedRouteInstruction = 0;
 
-	private static Font routeFont;
-	private static int routeFontHeight = 0;
 	public static volatile int routeInstructionsHeight = 0;
 
 	private static byte cachedPicArrow;
@@ -126,9 +110,7 @@ public class RouteInstructions {
 
 	private static Trace trace;
 	private static Vector route;
-	
-	private static PositionMark dest;
-	
+		
 	public volatile static int dstToRoutePath=1;
 	public volatile static int routePathConnection=0;
 	public volatile static int pathIdxInRoutePathConnection=0;
@@ -150,15 +132,14 @@ public class RouteInstructions {
 		RouteInstructions.maxScaleLevelForRouteInstructionSymbols = 15000f * 1.5f * 1.5f * 1.5f;
 	}
 	
-	public void newRoute(Vector route, PositionMark dest) {
+	public void newRoute(Vector route) {
 		RouteInstructions.route = route;
-		RouteInstructions.dest = dest;
 		iPassedRouteArrow=0;
 		prevRoutePathConnection = 0;
 		prevPathIdxInRoutePathConnection = 0;
 		iBackwardCount = 0;
 		againstDirectionDetectedTime = 0;
-		GpsMid.mNoiseMaker.resetSoundRepeatTimes();		
+		NoiseMaker.resetSoundRepeatTimes();		
 		try {
 			if (rlp == null) {
 				rlp = new RouteLineProducer();
@@ -185,7 +166,6 @@ public class RouteInstructions {
 		*/
 		final int PASSINGDISTANCE=25;
 		Node areaStart = new Node();
-		int iAreaStart = 0;
 		boolean drawRouteInstructionSymbols = (pc.scale <= RouteInstructions.maxScaleLevelForRouteInstructionSymbols);
 		
 		try {
@@ -313,7 +293,7 @@ public class RouteInstructions {
 						nameNow=getInstructionWayName(iNow);
 						// start searching for the 2nd next street for having it in the cache when needed
 						if (nameThen == null && iThen != 0) {
-							String name = getInstructionWayName(iThen);
+							/* String name = */ getInstructionWayName(iThen);
 						}
 						//#debug debug
 						logger.debug("showRoute - iRealNow: " + iRealNow + " iNow: " + iNow + " iThen: " + iThen);						
@@ -939,11 +919,9 @@ public class RouteInstructions {
 				c2 = getRouteElement(i-1);
 				rfPrev=c2.wayRouteFlags;
 			}			
-			short rfNext=0;
 			nextStartBearing = 0;
 			if (i < route.size()-1) {
 				c2 = getRouteElement(i+1);
-				rfNext=Legend.getWayDescription(c2.wayType).routeFlags;
 				// nextStartBearing = c2.startBearing;
 				nextStartBearing = c2.wayConStartBearing;
 			}
@@ -1346,7 +1324,7 @@ public class RouteInstructions {
 			);
 			trace.gpsRecenter=false;
 			// allow to output same instruction again
-			GpsMid.mNoiseMaker.resetSoundRepeatTimes();
+			NoiseMaker.resetSoundRepeatTimes();
 		}
 	}
 		
