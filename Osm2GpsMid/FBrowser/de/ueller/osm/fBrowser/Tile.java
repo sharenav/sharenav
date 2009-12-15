@@ -9,9 +9,12 @@ import java.util.Vector;
 
 import javax.swing.tree.TreeNode;
 
+import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapMarkerArea;
 
 
-public abstract class Tile implements TreeNode {
+
+public abstract class Tile implements TreeNode, MapMarkerArea {
 	public static final byte TYPE_MAP = 1;
 	public static final byte TYPE_CONTAINER = 2;
 	public static final byte TYPE_FILETILE = 4;
@@ -33,7 +36,25 @@ public abstract class Tile implements TreeNode {
 	public static final byte LAYER_ALL = (byte)0x40; //01000000 binary
 	public static final byte LAYER_HIGHLIGHT = (byte)0x20; //00100000 binary
 	public static final byte LAYER_NODE = Byte.MAX_VALUE;
-	
+	public static final double PLANET_RADIUS_D = 6371000.8d;
+	public static final float PLANET_RADIUS = 6371000.8f;
+
+	/**
+	 * This constant is used as fixed point multiplier to convert
+	 * latitude / longitude from radians to fixpoint representation.
+	 * With this multiplier, one should get a resolution of 1m at the equator.
+	 * 
+	 * This constant has to be in synchrony with the value in Osm2GpsMid.
+	 */
+	public static final float f=(float) (180d/Math.PI);
+	public static final float FIXPT_MULT = PLANET_RADIUS; 
+
+	/**
+	 * 1 / FIXPT_MULT, this saves a floating point division.
+	 */
+	public static final float FIXPT_MULT_INV = (1.0f / FIXPT_MULT);
+
+
 	
 
 	public float minLat;

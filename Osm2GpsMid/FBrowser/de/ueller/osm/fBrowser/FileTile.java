@@ -4,12 +4,15 @@ package de.ueller.osm.fBrowser;
  * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net See Copying
  */
 
+import java.awt.Graphics;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 import javax.swing.tree.TreeNode;
+
+import org.openstreetmap.gui.jmapviewer.JMapViewer;
 
 public class FileTile extends Tile {
 	byte				zl;
@@ -69,7 +72,7 @@ public class FileTile extends Tile {
 		Tile dict = null;
 		switch (type) {
 			case 1:
-				dict = new SingleTile(ds, 1, zl);
+				dict = new SingleTile(ds, 1, zl,root);
 				break;
 			case 2:
 				dict = new ContainerTile(ds, 1, zl,root);
@@ -108,6 +111,31 @@ public class FileTile extends Tile {
 			return null;
 		}
 		return tile;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openstreetmap.gui.jmapviewer.interfaces.MapMarkerArea#getLat()
+	 */
+	@Override
+	public double getLat() {
+		return (minLat+maxLat)/2*f;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openstreetmap.gui.jmapviewer.interfaces.MapMarkerArea#getLon()
+	 */
+	@Override
+	public double getLon() {
+		return (minLon+maxLon)/2*f;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openstreetmap.gui.jmapviewer.interfaces.MapMarkerArea#paint(java.awt.Graphics, org.openstreetmap.gui.jmapviewer.JMapViewer)
+	 */
+	@Override
+	public void paint(Graphics g, JMapViewer map) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

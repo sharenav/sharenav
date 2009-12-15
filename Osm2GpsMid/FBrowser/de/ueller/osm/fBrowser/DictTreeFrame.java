@@ -74,7 +74,7 @@ public class DictTreeFrame extends JInternalFrame implements TreeSelectionListen
 		byte type=ds.readByte();
 		switch (type) {
 			case Tile.TYPE_MAP:
-				dict=new SingleTile(ds,1,zl);
+				dict=new SingleTile(ds,1,zl,root);
 				break;
 			case Tile.TYPE_CONTAINER:
 				dict=new ContainerTile(ds,1,zl,root);

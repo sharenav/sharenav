@@ -31,6 +31,7 @@ import org.openstreetmap.gui.jmapviewer.OsmFileCacheTileLoader;
 import org.openstreetmap.gui.jmapviewer.OsmMercator;
 import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
 import org.openstreetmap.gui.jmapviewer.OsmTileSource;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapMarkerArea;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
@@ -46,6 +47,7 @@ public class MapFrame extends JInternalFrame {
 	private static final long serialVersionUID = 1L;
 	final JMapViewer map = new JMapViewer();
 	private MapMarkerRectangle	marker;
+	private Tile	viewTile;
 	public MapFrame() {
 		super("JMapViewer Demo",true, //resizable
 		          true, //closable
@@ -132,16 +134,24 @@ public class MapFrame extends JInternalFrame {
 	/**
 	 * @param tile
 	 */
-	public void setSelected(Tile tile) {
+	public synchronized void setSelected(Tile tile) {
+		System.err.println("Start setSelected " + Thread.currentThread().getName());
+		try {
+			setMapView(tile);
+			map.setIgnoreRepaint(true);
 //		System.out.println("setMarker " + tile);
-		double f=180d/Math.PI;
-		if (marker != null){
-			map.removeMapMarkerArea(marker);
+			double f=180d/Math.PI;
+			map.cleanMapMarkerArea();
+			marker = new MapMarkerRectangle(tile.minLat*f,tile.minLon*f,tile.maxLat*f,tile.maxLon*f);
+			map.addMapMarkerArea(marker);
+			map.addMapMarkerArea(tile);
+			setIgnoreRepaint(false);
+			
+		} catch (Exception e) {
+			System.err.println("pro while setSel");
+			e.printStackTrace();
 		}
-		marker = new MapMarkerRectangle(tile.minLat*f,tile.minLon*f,tile.maxLat*f,tile.maxLon*f);
-		map.addMapMarkerArea(marker);
-		setMapView(tile);
-
+		System.err.println("Stop setSelected " + Thread.currentThread().getName());
 	}
 
 	void setMapView(Tile tile){

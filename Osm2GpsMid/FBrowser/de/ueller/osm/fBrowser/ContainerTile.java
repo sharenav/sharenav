@@ -4,11 +4,14 @@ package de.ueller.osm.fBrowser;
  * See Copying
  */
 
+import java.awt.Graphics;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.Vector;
 
 import javax.swing.tree.TreeNode;
+
+import org.openstreetmap.gui.jmapviewer.JMapViewer;
 
 
 
@@ -39,7 +42,7 @@ public class ContainerTile extends Tile {
     	byte t=dis.readByte();
     	switch (t) {
     	case Tile.TYPE_MAP:
-    		return new SingleTile(dis,deep,zl);
+    		return new SingleTile(dis,deep,zl,root);
     	case Tile.TYPE_CONTAINER:
     		return new ContainerTile(dis,deep,zl,root);
     	case Tile.TYPE_EMPTY:
@@ -79,6 +82,31 @@ public class ContainerTile extends Tile {
 	@Override
 	public String toString() {
 		return deep+ " Container" + super.toString();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openstreetmap.gui.jmapviewer.interfaces.MapMarkerArea#getLat()
+	 */
+	@Override
+	public double getLat() {
+		return (minLat+maxLat)/2*f;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openstreetmap.gui.jmapviewer.interfaces.MapMarkerArea#getLon()
+	 */
+	@Override
+	public double getLon() {
+		return (minLon+maxLon)/2*f;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openstreetmap.gui.jmapviewer.interfaces.MapMarkerArea#paint(java.awt.Graphics, org.openstreetmap.gui.jmapviewer.JMapViewer)
+	 */
+	@Override
+	public void paint(Graphics g, JMapViewer map) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
