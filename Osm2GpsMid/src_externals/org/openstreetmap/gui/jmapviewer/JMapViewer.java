@@ -568,6 +568,9 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 		repaint();
 	}
 
+	public void cleanMapMarkerArea(){
+		mapMarkerAreaList.clear();
+	}
 
 	public List<MapMarker> getMapMarkerList() {
 		return mapMarkerList;
