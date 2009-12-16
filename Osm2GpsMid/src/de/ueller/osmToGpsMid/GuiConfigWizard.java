@@ -666,7 +666,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			fw.write("# Style-file containing which way, area and POI types to include in the Midlet\r\n");
 			fw.write("# This will default to style-file.xml, set style-file=min-style-file.xml for a smaller style-file with less features in the map\r\n");
 			fw.write("#	 If there is no internal version in Osm2GpsMid for the png / sound files, you must provide external versions\r\n");
-			fw.write("#	 in the directory or a sound sub-directory of the Osm2GpsMid directory (when using internal style-file)");
+			fw.write("#	 in the directory or a sound sub-directory of the Osm2GpsMid directory (when using internal style-file)\r\n");
 			fw.write("#	 or in the directory or a png / sound sub-directory of the style-file. \r\n");
 			fw.write("style-file = " + config.getStyleFileName() + "\r\n");
 			fw.write("\r\n");
