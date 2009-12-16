@@ -67,7 +67,7 @@ public class MapMarkerRectangle implements MapMarkerArea {
 			return;
 		
 		g.setColor(colorFill);
-		g.fillRect(tl.x, tl.y, br.x - tl.x, br.y - tl.y);
+//		g.fillRect(tl.x, tl.y, br.x - tl.x, br.y - tl.y);
 		g.setColor(colorBoarder);
 		g.drawRect(tl.x, tl.y, br.x - tl.x, br.y - tl.y);
 	}
