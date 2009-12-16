@@ -94,7 +94,7 @@ public class SingleTile extends Tile{
 							
 			radlat[i] = ds.readShort();
 			radlon[i] = ds.readShort();
-			if (i < iNodeCount){
+//			if (i < iNodeCount){
 			if ((flag & Constants.NODE_MASK_NAME) > 0){
 				if ((flag & Constants.NODE_MASK_NAMEHIGH) > 0) {
 					nameIdx[i]=ds.readInt();
@@ -103,7 +103,7 @@ public class SingleTile extends Tile{
 				}
 				type[i]=ds.readByte();
 			} 
-			}	
+//			}	
 		}
 		nodeLat=radlat;
 		nodeLon=radlon;
