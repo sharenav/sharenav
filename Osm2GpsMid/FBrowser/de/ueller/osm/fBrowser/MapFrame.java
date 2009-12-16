@@ -24,6 +24,7 @@ import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import org.openstreetmap.gui.jmapviewer.DefaultMapController;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.MapMarkerDot;
 import org.openstreetmap.gui.jmapviewer.MapMarkerRectangle;
@@ -57,7 +58,7 @@ public class MapFrame extends JInternalFrame {
 		
 		// final JMapViewer map = new JMapViewer(new MemoryTileCache(),4);
 		// map.setTileLoader(new OsmFileCacheTileLoader(map));
-		// new DefaultMapController(map);
+		 new DefaultMapController(map);
 		setLayout(new BorderLayout());
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 //		setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -137,7 +138,7 @@ public class MapFrame extends JInternalFrame {
 	public synchronized void setSelected(Tile tile) {
 		System.err.println("Start setSelected " + Thread.currentThread().getName());
 		try {
-			setMapView(tile);
+//			setMapView(tile);
 			map.setIgnoreRepaint(true);
 //		System.out.println("setMarker " + tile);
 			double f=180d/Math.PI;
