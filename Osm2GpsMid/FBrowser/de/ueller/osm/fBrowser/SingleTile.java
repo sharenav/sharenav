@@ -87,23 +87,28 @@ public class SingleTile extends Tile{
 			nameIdx[i] = -1;
 		}
 		byte[] type = new byte[iNodeCount];
-		for (int i=0; i< nodeCount;i++){
+		try {
+			for (int i=0; i< nodeCount;i++){
 //			System.out.println("read coord :"+i+"("+nodeCount+")"+"("+iNodeCount+")");
-			
-			byte flag = ds.readByte();
-							
-			radlat[i] = ds.readShort();
-			radlon[i] = ds.readShort();
+				
+				byte flag = ds.readByte();
+								
+				radlat[i] = ds.readShort();
+				radlon[i] = ds.readShort();
 //			if (i < iNodeCount){
-			if ((flag & Constants.NODE_MASK_NAME) > 0){
-				if ((flag & Constants.NODE_MASK_NAMEHIGH) > 0) {
-					nameIdx[i]=ds.readInt();
-				} else {
-					nameIdx[i]=ds.readShort();
-				}
-				type[i]=ds.readByte();
-			} 
+				if ((flag & Constants.NODE_MASK_NAME) > 0){
+					if ((flag & Constants.NODE_MASK_NAMEHIGH) > 0) {
+						nameIdx[i]=ds.readInt();
+					} else {
+						nameIdx[i]=ds.readShort();
+					}
+					type[i]=ds.readByte();
+				} 
 //			}	
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		nodeLat=radlat;
 		nodeLon=radlon;
