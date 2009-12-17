@@ -135,7 +135,7 @@ scale alias 1: zoomed out 21x
 	 AREA_CROSS, AREA_CROSSED, SPEED_LIMIT
 	 Set in your properties file with which extension these sound files are included (lowercase name + .extension)
 	 e.g. useSounds=wav, amr will include e.g. prepare.wav and prepare.amr, etc.
-	 You can also provide external versions of thoses files
+	 You can also provide external versions of those files
 	 in a sound sub-directory of the Osm2GpsMid directory (when using internal style-file)
 	 or in the directory or a sound sub-directory of the style-file.
 -->
@@ -262,15 +262,39 @@ scale alias 1: zoomed out 21x
 		<scale scale="24"/>
 		<textscale scale="26"/>
 	  </value>
-	  <value name ="place_of_worship">
+	  <value name ="place_of_worship" priority="10">
+		<specialisation key="religion" value="christian"/>
 		<description desc = "Church"/>
 		<image src="church.png"/>
 		<namekey tag="name"/>
-		<scale scale="24"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
+	  </value>
+	  <value name ="place_of_worship" priority="10">
+		<specialisation key="religion" value="jewish"/>
+		<description desc = "Synagogue"/>
+		<image src="jewish.png"/>
+		<namekey tag="name"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
+	  </value>
+	  <value name ="place_of_worship" priority="10">
+		<specialisation key="religion" value="muslim"/>
+		<description desc = "Mosque"/>
+		<image src="muslim.png"/>
+		<namekey tag="name"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
+	  </value>
+	  <value name ="place_of_worship" priority="5">
+		<description desc = "Place of worship"/>
+		<image src="religion.png"/>
+		<namekey tag="name"/>
+		<scale scale="23"/>
 		<textscale scale="26"/>
 	  </value>
 	  <value name ="fuel">
-		<description desc = "Refueling station"/>
+		<description desc = "Fuel station"/>
 		<image src="fuel.png"/>
 		<namekey tag="operator"/>
 		<namefallback tag="name"/>
