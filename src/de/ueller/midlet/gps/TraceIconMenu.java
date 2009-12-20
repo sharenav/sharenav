@@ -21,8 +21,10 @@ public class TraceIconMenu extends IconMenuWithPagesGUI {
 	LayoutElement iconToggleAudioRec; 
 	LayoutElement iconToggleRoute; 
 	LayoutElement iconOnlineInfo; 
-	LayoutElement iconAddPOI; 
+	LayoutElement iconAddPOI;
+	LayoutElement iconAddAddr;
 	LayoutElement iconEditWay;
+	
 	
 	private static int rememberedEleId = 0;
 	private static int rememberedTabNr = 0;
@@ -63,6 +65,7 @@ public class TraceIconMenu extends IconMenuWithPagesGUI {
 		mp = createAndAddMenuPage(" Osm "/*i:OsmTop*/, 3, 4);
 		iconEditWay =		mp.createAndAddIcon("Edit way"/*i:EditWay*/, "i_editway", Trace.RETRIEVE_XML);
 		iconAddPOI =		mp.createAndAddIcon("Add POI"/*i:AddPOI*/, "i_addpoi", Trace.RETRIEVE_NODE);
+		iconAddAddr =		mp.createAndAddIcon("Add Address"/*i:AddAddr*/, "i_addpoi", Trace.EDIT_ADDR_CMD);
 
 		//#if not polish.api.online
 		iconOnlineInfo.makeImageGreyed();

@@ -135,8 +135,9 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	protected static final int SETUP_CMD = 52;
 	protected static final int SEND_MESSAGE_CMD = 53;
 	protected static final int SHOW_DEST_CMD = 54;
+	protected static final int EDIT_ADDR_CMD = 55;
 
-	private final Command [] CMDS = new Command[55];
+	private final Command [] CMDS = new Command[56];
 
 	public static final int DATASCREEN_NONE = 0;
 	public static final int DATASCREEN_TACHO = 1;
@@ -356,6 +357,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		//#if polish.api.wmapi
 		CMDS[SEND_MESSAGE_CMD] = new Command("Send SMS (map pos)",Command.ITEM, 20);
 		//#endif
+		CMDS[EDIT_ADDR_CMD] = new Command("Add Addr node"/*i:AddAddrNode*/,Command.ITEM,100);
 
 		addAllCommands();
 		
@@ -640,6 +642,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		//#if polish.api.osm-editing
 		addCommand(CMDS[RETRIEVE_XML]);
 		addCommand(CMDS[RETRIEVE_NODE]);
+		addCommand(CMDS[EDIT_ADDR_CMD]);
 		//#endif
 		//#endif
 		addCommand(CMDS[SETUP_CMD]);
@@ -1320,6 +1323,19 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 								center.radlat, center.radlon, this);
 						guiNode.show();
 						guiNode.refresh();
+					} else {
+						logger.error("Editing is not enabled in this map");
+					}
+				}
+				if (c == CMDS[EDIT_ADDR_CMD]) {
+					if (Legend.enableEdits) {
+						String streetName = "";
+						if ((pc != null) && (pc.actualWay != null)) {
+							streetName = getName(pc.actualWay.nameIdx);
+						}
+						GuiOSMAddrDisplay guiAddr = new GuiOSMAddrDisplay(-1, streetName, null, 
+								center.radlat, center.radlon, this);
+						guiAddr.show();
 					} else {
 						logger.error("Editing is not enabled in this map");
 					}
