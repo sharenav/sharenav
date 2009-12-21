@@ -1,10 +1,10 @@
-package de.ueller.midlet.gps.data;
-
 /*
  * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net 
  * 			Copyright (c) 2008 sk750 at users dot sourceforge dot net 
- * See Copying
+ * See COPYING
  */
+
+package de.ueller.midlet.gps.data;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -14,12 +14,10 @@ import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 
 import net.sourceforge.jmicropolygon.PolygonGraphics;
-import de.enough.polish.util.DrawUtil;
 import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.Configuration;
 import de.ueller.gpsMid.mapData.SingleTile;
 import de.ueller.gpsMid.mapData.Tile;
-import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.RouteInstructions;
 import de.ueller.midlet.gps.RouteLineProducer;
@@ -35,8 +33,7 @@ import de.ueller.midlet.gps.tile.WayDescription;
  * - Which region is covered by a SingleTile, does it always contain all Nodes of the complete way?
  * - Where are the way nodes combined if a tile was split in Osm2GpsMid?
  */
-
-public class Way extends Entity{
+public class Way extends Entity {
 	
 	public static final byte WAY_FLAG_NAME = 1;
 	public static final byte WAY_FLAG_MAXSPEED = 2;
@@ -65,12 +62,12 @@ public class Way extends Entity{
 	private static final int ModMask = 0xff00;
 	private static final int ModShift = 8;
 	
-	public static final int WAY_ONEWAY=1 << ModShift;
-	public static final int WAY_AREA=2 << ModShift;
-	public static final int WAY_ROUNDABOUT=4 << ModShift;
-	public static final int WAY_TUNNEL=8 << ModShift;
-	public static final int WAY_BRIDGE=16 << ModShift;
-	public static final int WAY_CYCLE_OPPOSITE=32 << ModShift;
+	public static final int WAY_ONEWAY = 1 << ModShift;
+	public static final int WAY_AREA = 2 << ModShift;
+	public static final int WAY_ROUNDABOUT = 4 << ModShift;
+	public static final int WAY_TUNNEL = 8 << ModShift;
+	public static final int WAY_BRIDGE = 16 << ModShift;
+	public static final int WAY_CYCLE_OPPOSITE = 32 << ModShift;
 
 	public static final byte PAINTMODE_COUNTFITTINGCHARS = 0;
 	public static final byte PAINTMODE_DRAWCHARS = 1;
@@ -83,12 +80,13 @@ public class Way extends Entity{
 	private static final int HIGHLIGHT_TARGET = 1;
 	private static final int HIGHLIGHT_ROUTEPATH_CONTAINED = 2;
 	
-	protected static final Logger logger = Logger.getInstance(Way.class,Logger.TRACE);
+	protected static final Logger logger = Logger.getInstance(Way.class, Logger.TRACE);
 
-	private int flags=0;
-	private int flagswinter=0;
+	private int flags = 0;
+	private int flagswinter = 0;
 
-	/** indicate by which route modes this way can be used (motorcar, bicycle, etc.) */
+	/** indicate by which route modes this way can be used (motorcar, bicycle, etc.)
+	TODO: Explain where allowed values come from or document them here. */
 	private byte wayRouteModes = 0;
 
 	public short[] path;
@@ -103,7 +101,7 @@ public class Way extends Entity{
 	 * This is a buffer for the drawing routines
 	 * so that we don't have to allocate new
 	 * memory at each time we draw a way. This
-	 * saves some time on memory managment
+	 * saves some time on memory management
 	 * too.
 	 * 
 	 * This makes this function thread unsafe,
@@ -165,15 +163,15 @@ public class Way extends Entity{
 //			Logger.TRACE);
 
 	/**
-	 * the flag should be readed by caller. if Flag == 128 this is a dummy Way
-	 * and can ignored.
+	 * The flag should be read by caller. If Flag == 128 this is a dummy way
+	 * and can be ignored.
 	 * 
 	 * @param is Tile inputstream
 	 * @param f flags
 	 * @param t Tile
 	 * @param layers: this is somewhat awkward. We need to get the layer information back out to 
 	 * 			the caller, so use a kind of call by reference
-	 * @paran idx index into the layers array where to store the layer info.
+	 * @param idx index into the layers array where to store the layer info.
 	 * @param nodes
 	 * @throws IOException
 	 */
@@ -182,7 +180,7 @@ public class Way extends Entity{
 		minLon = is.readShort();
 		maxLat = is.readShort();
 		maxLon = is.readShort();
-//		if (is.readByte() != 0x58){
+//		if (is.readByte() != 0x58) {
 //			logger.error("wrong magic after way bounds");
 //		}
 		//System.out.println("Way flags: " + f);
@@ -236,28 +234,28 @@ public class Way extends Entity{
 			flags += WAY_ONEWAY;
 		}
 		if (((f & WAY_FLAG_AREA) == WAY_FLAG_AREA) || Legend.getWayDescription(type).isArea) {
-			if ((f & WAY_FLAG_AREA) == WAY_FLAG_AREA){
+			if ((f & WAY_FLAG_AREA) == WAY_FLAG_AREA) {
 				//#debug debug
 				logger.debug("Loading explicit Area: " + this);
 			}
 			flags += WAY_AREA;
 		}
 
-		boolean longWays=false;
+		boolean longWays = false;
 		if ((f2 & WAY_FLAG2_LONGWAY) > 0) {
-			longWays=true;
+			longWays = true;
 		}
 
 			int count;
-			if (longWays){
+			if (longWays) {
 				count = is.readShort();
 				if (count < 0) {
-					count+=65536;
+					count += 65536;
 				}
 			} else {
 				count = is.readByte();
 				if (count < 0) {
-					count+=256;
+					count += 256;
 				}
 				
 			}
@@ -266,7 +264,7 @@ public class Way extends Entity{
 				path[i] = is.readShort();
 //				logger.debug("read node id=" + path[i]);
 			}
-//			if (is.readByte() != 0x59 ){
+//			if (is.readByte() != 0x59 ) {
 //				logger.error("wrong magic code after path");
 //			}			
 	}
@@ -298,14 +296,14 @@ public class Way extends Entity{
 		float lon1 = pc.center.radlon;
 		IntPoint lineP1 = new IntPoint();
 		IntPoint lineP2 = new IntPoint();
-		float lat2 = pc.center.radlat + (float) (0.00001*Math.cos(pc.course * MoreMath.FAC_DECTORAD));
-		float lon2 = pc.center.radlon + (float) (0.00001*Math.sin(pc.course * MoreMath.FAC_DECTORAD));
+		float lat2 = pc.center.radlat + (float) (0.00001 * Math.cos(pc.course * MoreMath.FAC_DECTORAD));
+		float lon2 = pc.center.radlon + (float) (0.00001 * Math.sin(pc.course * MoreMath.FAC_DECTORAD));
 		p.forward(lat1, lon1, lineP1);
 		p.forward(lat2, lon2, lineP2);
 		
 		courseVecX = lineP1.x - lineP2.x;
 		courseVecY = lineP1.y - lineP2.y;
-		float norm = (float)Math.sqrt(courseVecX*courseVecX + courseVecY*courseVecY);
+		float norm = (float)Math.sqrt(courseVecX * courseVecX + courseVecY * courseVecY);
 		courseVecX /= norm; courseVecY /= norm;
 		
 		//Calculate the lat and lon coordinates of two
@@ -319,7 +317,7 @@ public class Way extends Entity{
 		float d = ProjMath.getDistance(n1, n2);
 		//Set the scale of the direction penalty to roughly
 		//match that of a penalty of 100m at a 90 degree angle
-		scalePen = 35.0f/d*100.0f;
+		scalePen = 35.0f / d * 100.0f;
 	}
 
 	public boolean isOnScreen( short pcLDlat, short pcLDlon, short pcRUlat, short pcRUlon) { 
@@ -433,13 +431,13 @@ public class Way extends Entity{
 					}
 					// remember nameIdx's leading away from the connection, so we can later on check if multiple ways lead to the same street name
 					changeCountNameIdx(pc, 1);						
-					//System.out.println("add 1 " + "con1At: " + i + " pathlen-1: " + (path.length-1) );
+					//System.out.println("add 1 " + "con1At: " + i + " pathlen - 1: " + (path.length - 1) );
 					pc.conWayNumToRoutableWays++;
 					// if we are in the middle of the way, count the way once more (if no against oneway rule applies)
-					if (i != 0 && i != path.length-1 && !isOneDirectionOnly()) {
+					if (i != 0 && i != path.length - 1 && !isOneDirectionOnly()) {
 						pc.conWayNumToRoutableWays++;
 						changeCountNameIdx(pc, 1);
-						//System.out.println("add middle 1 " + "con1At: " + i + " pathlen-1: " + (path.length-1) );
+						//System.out.println("add middle 1 " + "con1At: " + i + " pathlen - 1: " + (path.length - 1) );
 					}			
 				}
 				containsCon1 = true;
@@ -468,8 +466,11 @@ public class Way extends Entity{
 			short to = containsCon2At;
 			int direction = 1;
 			if (from > to && !(isRoundAbout() || isCircleway) ) {
-				// if this is a oneway but not a roundabout or circleway it can't be the route path as we would go against the oneway's direction (if no against oneway rule applies)
-				if (isOneDirectionOnly()) return;
+				// if this is a oneway but not a roundabout or circle way it can't be 
+				// the route path as we would go against the oneway's direction (if no against oneway rule applies)
+				if (isOneDirectionOnly()) {
+					return;
+				}
 				// swap direction
 				from = to;
 				to = containsCon1At;
@@ -480,9 +481,9 @@ public class Way extends Entity{
 
 			// sum up the distance of the segments between searchCon1 and searchCon2
 			for (short i = from; i != to; i++) {
-				if ( (isRoundAbout() || isCircleway) && i >= (path.length-2))  {
+				if ( (isRoundAbout() || isCircleway) && i >= (path.length - 2))  {
 					i=-1; // if in roundabout at end of path continue at first node
-					if (to == (path.length-1) ) {
+					if (to == (path.length - 1) ) {
 						break;
 					}
 				}
@@ -536,9 +537,9 @@ public class Way extends Entity{
 				//System.out.println("sub 1");
 				
 				// calculate bearings
-				if ( (direction==1 && containsCon1At < (path.length - 1)) 
+				if ( (direction == 1 && containsCon1At < (path.length - 1)) 
 						||
-						(direction==-1 && containsCon1At > 0)
+						(direction == -1 && containsCon1At > 0)
 					) {
 						int idxC = path[containsCon1At + direction];
 						pc.conWayStartBearing = (direction==1) ? bearingForward : bearingBackward;							
@@ -552,9 +553,9 @@ public class Way extends Entity{
 				}
 //				System.out.println("pc.conWayStartBearing: " + pc.conWayStartBearing);
 
-				if ( (direction==1 && containsCon2At > 0) 
+				if ( (direction == 1 && containsCon2At > 0) 
 						||
-						(direction==-1 && containsCon2At < (path.length - 1))
+						(direction == -1 && containsCon2At < (path.length - 1))
 				) {
 					int idxC = path[containsCon2At - direction];
 					pc.conWayEndBearing = MoreMath.bearing_start(
@@ -663,20 +664,30 @@ public class Way extends Entity{
 	
 			switch (om & Legend.OM_NAME_MASK) {
 				case Legend.OM_WITH_NAMEPART: 
-					if (nameIdx == -1) return;
+					if (nameIdx == -1) {
+						return;
+					}
 					String name = pc.trace.getName(nameIdx);
-					if (name == null) return;
+					if (name == null) {
+						return;
+					}
 					/**
 					 * The overview filter mode allows you to restrict showing ways if their name
 					 * does not match a substring. So check if this condition is fulfilled.
 					 */
-					if (name.toUpperCase().indexOf(Legend.get0Poi1Area2WayNamePart((byte) 2).toUpperCase()) == -1) return;
+					if (name.toUpperCase().indexOf(Legend.get0Poi1Area2WayNamePart((byte) 2).toUpperCase()) == -1) {
+						return;
+					}
 					break;
 				case Legend.OM_WITH_NAME: 
-					if (nameIdx == -1) return;
+					if (nameIdx == -1) {
+						return;
+					}
 					break;
 				case Legend.OM_NO_NAME: 
-					if (nameIdx != -1) return;
+					if (nameIdx != -1) {
+						return;
+					}
 					break;
 			}
 			
@@ -691,7 +702,7 @@ public class Way extends Entity{
 				Vector route=pc.trace.getRoute();
 				ConnectionWithNode c;
 				if (route!=null && route.size()!=0) { 
-					for (int i=0; i<route.size()-1; i++){
+					for (int i = 0; i < route.size() - 1; i++) {
 						c = (ConnectionWithNode) route.elementAt(i);
 						if (c.wayNameIdx == this.nameIdx) {
 							if (path.length > c.wayFromConAt && path.length > c.wayToConAt) {
@@ -701,7 +712,7 @@ public class Way extends Entity{
 									short searchCon1Lon = (short) ((c.to.lon - t.centerLon) * MoreMath.FIXPT_MULT);
 									if ( (Math.abs(t.nodeLon[idx] - searchCon1Lon) < 2) ) {
 										idx = path[c.wayToConAt];
-										ConnectionWithNode c2 = (ConnectionWithNode) route.elementAt(i+1);
+										ConnectionWithNode c2 = (ConnectionWithNode) route.elementAt(i + 1);
 										searchCon1Lat = (short) ((c2.to.lat - t.centerLat) * MoreMath.FIXPT_MULT);
 										if ( (Math.abs(t.nodeLat[idx] - searchCon1Lat) < 2) ) {
 											searchCon1Lon = (short) ((c2.to.lon - t.centerLon) * MoreMath.FIXPT_MULT);
@@ -728,9 +739,10 @@ public class Way extends Entity{
 												
 												for (int n = from; n != to; n++) {
 													hl[n] = i;
-													if ( ( isRoundAbout() || isCircleway ) && n >= (path.length-1) )  {
-														n=-1; //  // if in roundabout at end of path continue at first node
-														if (to == (path.length-1) ) {
+													if ( ( isRoundAbout() || isCircleway ) && n >= (path.length - 1) )  {
+														// if in roundabout at end of path continue at first node
+														n = -1;
+														if (to == (path.length - 1) ) {
 															break;
 														}
 													}
@@ -799,12 +811,12 @@ public class Way extends Entity{
 						 * of the way should more or less match if we are travelling on this way
 						 */
 						if (addDirectionalPenalty) {
-							int segDirVecX = lineP1.x-lineP2.x;
-							int segDirVecY = lineP1.y-lineP2.y;
-							float norm = (float) Math.sqrt((double)(segDirVecX*segDirVecX + segDirVecY*segDirVecY));
+							int segDirVecX = lineP1.x - lineP2.x;
+							int segDirVecY = lineP1.y - lineP2.y;
+							float norm = (float) Math.sqrt((double)(segDirVecX * segDirVecX + segDirVecY * segDirVecY));
 							//This is a hack to use a linear approximation to keep computational requirements down
-							pen = scalePen*(1.0f - Math.abs((segDirVecX*courseVecX + segDirVecY*courseVecY)/norm));
-							pen*=pen;
+							pen = scalePen * (1.0f - Math.abs((segDirVecX * courseVecX + segDirVecY * courseVecY) / norm));
+							pen *= pen;
 						}
 						float dstWithPen = dst + pen;
 						// if this way is closer including penalty than the old one set it as new actualWay
@@ -820,10 +832,10 @@ public class Way extends Entity{
 								pc.actualRoutableWay = this;
 							}
 							// if this is a highlighted path seg and it's closer than the old one including penalty set it as new one 
-							if ((hl[i1-1] > PATHSEG_DO_NOT_HIGHLIGHT) && (dstWithPen < pc.squareDstWithPenToRoutePath)) {
+							if ((hl[i1 - 1] > PATHSEG_DO_NOT_HIGHLIGHT) && (dstWithPen < pc.squareDstWithPenToRoutePath)) {
 								pc.squareDstWithPenToRoutePath = dst + pen;
 								pc.squareDstToRoutePath = dst;
-								pc.routePathConnection = hl[i1-1];
+								pc.routePathConnection = hl[i1 - 1];
 								pc.pathIdxInRoutePathConnection = pi;
 							}
 						}
@@ -833,12 +845,12 @@ public class Way extends Entity{
 					swapLineP = lineP1;
 					lineP1 = lineP2;
 					lineP2 = swapLineP;
-				} else if ((i1+1) == path.length){
+				} else if ((i1+1) == path.length) {
 					/**
 					 * This is an endpoint, so we can't simply drop it, as the lines would potentially look disconnected
 					 */
-					//System.out.println(" endpoint " + lineP2.x + "/" + lineP2.y+ " " +pc.trace.getName(nameIdx));					
-					if (!lineP1.equals(lineP2)){
+					//System.out.println(" endpoint " + lineP2.x + "/" + lineP2.y+ " " + pc.trace.getName(nameIdx));					
+					if (!lineP1.equals(lineP2)) {
 						x[pi] = lineP2.x;
 						y[pi++] = lineP2.y;												
 					} else {
@@ -876,17 +888,18 @@ public class Way extends Entity{
 				w = (int) (pc.ppm * wayDesc.wayWidth / 2 + 0.5);
 			}
 
-			if (highlight != HIGHLIGHT_ROUTEPATH_CONTAINED && pc.target != null && this.equals(pc.target.entity)) {
+			if (highlight != HIGHLIGHT_ROUTEPATH_CONTAINED && pc.target != null 
+					&& this.equals(pc.target.entity)) {
 				highlight = HIGHLIGHT_TARGET;
 			}
 			// if render as lines and no part of the way is highlighted
 			if (w == 0 && highlight == HIGHLIGHT_NONE) {
 				setColor(pc);
 				PolygonGraphics.drawOpenPolygon(pc.g, x, y, pi - 1);
-                if (isOneway()){
+                if (isOneway()) {
                     // Loop through all waysegments for painting the OnewayArrows as overlay
                     // TODO: Maybe, we can integrate this one day in the main loop. Currently, we have troubles
-                    // with "not completely fitting arrows" getting overpainted by the next waysegment.
+                    // with "not completely fitting arrows" getting painted over by the next waysegment.
                     paintPathOnewayArrows(pi - 1, wayDesc, pc);
                 }
 			// if render as streets or a part of the way is highlighted
@@ -911,39 +924,37 @@ public class Way extends Entity{
 			return;
 		}
 
-		
 		//remember previous font
 		Font originalFont = pc.g.getFont();
-		if (pathFont==null) {
-			pathFont=Font.getFont(Font.FACE_SYSTEM, Font.STYLE_PLAIN, Font.SIZE_SMALL);
-			pathFontHeight=pathFont.getHeight();
+		if (pathFont == null) {
+			pathFont = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_PLAIN, Font.SIZE_SMALL);
+			pathFontHeight = pathFont.getHeight();
 			pathFontMaxCharWidth = pathFont.charWidth('W');
 			pathFontBaseLinePos = pathFont.getBaselinePosition();
 		}
 		// At least the half font height must fit to the on-screen-width of the way
 		// (is calculation of w correct???)
-		int w = (int)(pc.ppm*wayDesc.wayWidth);
-		if (pathFontHeight/4>w) {
+		int w = (int)(pc.ppm * wayDesc.wayWidth);
+		if (pathFontHeight / 4 > w) {
 			return;
 		}
 		
-		String name=null;
+		String name = null;
 		if ( Configuration.getCfgBitState(Configuration.CFGBIT_SHOWWAYPOITYPE)) {
-			name=(this.isRoundAbout()?"rab ":"") + wayDesc.description;
+			name = (this.isRoundAbout() ? "rab " : "") + wayDesc.description;
 		} else {			
 			if (nameIdx != -1) {
-				name=Trace.getInstance().getName(nameIdx);
+				name = Trace.getInstance().getName(nameIdx);
 			}
 		}
-
 		
-		if (name==null) {
+		if (name == null) {
 			return;
 		}		
 
 		// determine region in which chars can be drawn
 		int minCharScreenX = pc.g.getClipX() - pathFontMaxCharWidth;
-		int minCharScreenY = pc.g.getClipY() - pathFontBaseLinePos - (w/2);
+		int minCharScreenY = pc.g.getClipY() - pathFontBaseLinePos - (w / 2);
 		int maxCharScreenX = minCharScreenX + pc.g.getClipWidth() + pathFontMaxCharWidth;
 		int maxCharScreenY = minCharScreenY + pc.g.getClipHeight() + pathFontBaseLinePos * 2;
 		
@@ -952,34 +963,34 @@ public class Way extends Entity{
 		pc.g.setFont(pathFont);
 
 		IntPoint posChar = new IntPoint();
-		char letter=' ';
-		short charsDrawable=0;
+		char letter = ' ';
+		short charsDrawable = 0;
 		Projection p = pc.getP();
 
 		//if(info)System.out.println("Draw "  + name + " from " + path.length + " points");
 		
-		boolean reversed=false;
-		boolean abbreviated=false;
-		int iNameRepeatable=0;
-		int iNameRepeated=0;
+		boolean reversed = false;
+		boolean abbreviated = false;
+		int iNameRepeatable = 0;
+		int iNameRepeated = 0;
 
     	// 2 passes:
     	// - 1st pass only counts fitting chars, so we can correctly
     	//   abbreviate reversed strings
     	// - 2nd pass actually draws
-    	for (byte mode=PAINTMODE_COUNTFITTINGCHARS;mode<=PAINTMODE_DRAWCHARS; mode++) { 
+    	for (byte mode = PAINTMODE_COUNTFITTINGCHARS; mode <= PAINTMODE_DRAWCHARS; mode++) { 
     		double posChar_x = 0;
     		double posChar_y = 0;
-    		double slope_x=0;
-    		double slope_y=0;
-    		double nextDeltaSub=0;
-    		int delta=0;
+    		double slope_x = 0;
+    		double slope_y = 0;
+    		double nextDeltaSub = 0;
+    		int delta = 0;
     		IntPoint lineP1 = pc.lineP1;
     		IntPoint lineP2 = pc.lineP2;
     		IntPoint swapLineP = pc.swapLineP;
     		// do indent because first letter position would often
     		// be covered by other connecting  streets
-			short streetNameCharIndex=-INDENT_PATHNAME;
+			short streetNameCharIndex = -INDENT_PATHNAME;
 
 			// draw name again and again until end of path
 			for (int i1 = 0; i1 < path.length; i1++) {
@@ -994,11 +1005,11 @@ public class Way extends Entity{
 					continue;
 				}
 				// calculate the slope of the new line 
-				double distance = Math.sqrt( ((double)lineP2.y-(double)lineP1.y)*((double)lineP2.y-(double)lineP1.y) +
-						((double)lineP2.x-(double)lineP1.x)*((double)lineP2.x-(double)lineP1.x) );
-				if (distance!=0) {
-					slope_x = ((double)lineP2.x-(double)lineP1.x)/distance;
-					slope_y = ((double)lineP2.y-(double)lineP1.y)/distance;
+				double distance = Math.sqrt( ((double)lineP2.y - (double)lineP1.y) * ((double)lineP2.y - (double)lineP1.y) +
+						((double)lineP2.x - (double)lineP1.x) * ((double)lineP2.x - (double)lineP1.x) );
+				if (distance != 0) {
+					slope_x = ((double)lineP2.x - (double)lineP1.x) / distance;
+					slope_y = ((double)lineP2.y - (double)lineP1.y) / distance;
 				} else {
 					//logger.debug("ZERO distance in path segment " + i1 + "/" + path.length + " of " + name);
 					break;
@@ -1011,32 +1022,31 @@ public class Way extends Entity{
 				
 				// as long as we have not passed the next line point
 				while( 	(
-							(slope_x<=0 && posChar_x >= lineP2.x) ||
-							(slope_x>=0 && posChar_x <= lineP2.x)
+							(slope_x <= 0 && posChar_x >= lineP2.x) ||
+							(slope_x >= 0 && posChar_x <= lineP2.x)
 						) && (
-							(slope_y<=0 && posChar_y >= lineP2.y) ||
-							(slope_y>=0 && posChar_y <= lineP2.y)
+							(slope_y <= 0 && posChar_y >= lineP2.y) ||
+							(slope_y >= 0 && posChar_y <= lineP2.y)
 						)
 				) {
 					
-
 					// get the street name into the buffer
-					if (streetNameCharIndex==-INDENT_PATHNAME) {
+					if (streetNameCharIndex == -INDENT_PATHNAME) {
 						// use full name to count fitting chars
 						sbName.setLength(0);
 						sbName.append(name);
-						abbreviated=false;
-						reversed=false;
-						if(mode==PAINTMODE_DRAWCHARS) {
+						abbreviated = false;
+						reversed = false;
+						if (mode == PAINTMODE_DRAWCHARS) {
 							if (
-								iNameRepeated>=iNameRepeatable &&
-								charsDrawable>0 &&
-								charsDrawable<name.length()
+								iNameRepeated >= iNameRepeatable &&
+								charsDrawable > 0 &&
+								charsDrawable < name.length()
 							) {
 								//if(info)System.out.println(sbName.toString() + " i1: " + i1 + " lastFitI1 " + lastFittingI1 + " charsdrawable: " + charsDrawable );
-								sbName.setLength(charsDrawable-1);
-								abbreviated=true;
-								if (sbName.length()==0) {
+								sbName.setLength(charsDrawable - 1);
+								abbreviated = true;
+								if (sbName.length() == 0) {
 									sbName.append(".");
 								}
 							}
@@ -1044,16 +1054,16 @@ public class Way extends Entity{
 							// left to right
 							if (lineP1.x > lineP2.x) {
 								sbName.reverse();
-								reversed=true;
+								reversed = true;
 							}
 						}
 					}	
 					// draw letter
-					if (streetNameCharIndex >=0) {
+					if (streetNameCharIndex >= 0) {
 						// char to draw
-						letter=sbName.charAt(streetNameCharIndex);
+						letter = sbName.charAt(streetNameCharIndex);
 						
-						if (mode==PAINTMODE_DRAWCHARS) {
+						if (mode == PAINTMODE_DRAWCHARS) {
 							// draw char only if it's at least partly on-screen
 							if ( (int)posChar_x >= minCharScreenX &&
 								 (int)posChar_x <= maxCharScreenX &&
@@ -1067,37 +1077,37 @@ public class Way extends Entity{
 								}
 								pc.g.drawChar(
 									letter,
-									(int)posChar_x, (int)(posChar_y+(w/2)),
+									(int)posChar_x, (int)(posChar_y + (w / 2)),
 									Graphics.BASELINE | Graphics.HCENTER
 								);
 							}
 						}
-//						if (mode==PAINTMODE_COUNTFITTINGCHARS ) {
-//							pc.g.setColor(150,150,150);
+//						if (mode == PAINTMODE_COUNTFITTINGCHARS ) {
+//							pc.g.setColor(150, 150, 150);
 //							pc.g.drawChar(letter,
-//							(int)posChar_x, (int)(posChar_y+(w/2)),
+//							(int)posChar_x, (int)(posChar_y + (w / 2)),
 //							Graphics.BASELINE | Graphics.HCENTER);
 //						}
 
 						// delta calculation should be improved
 						if (Math.abs(slope_x) > Math.abs(slope_y)) {
-							delta=(pathFont.charWidth(letter) + pathFontHeight ) /2;							
+							delta = (pathFont.charWidth(letter) + pathFontHeight ) /2;							
 						} else {
-							delta=pathFontHeight*3/4;							
+							delta = pathFontHeight * 3 / 4;							
 						}
 					} else {
 						// delta for indent 
-						delta=pathFontHeight;
+						delta = pathFontHeight;
 					}
 
 					streetNameCharIndex++;
-					if(mode==PAINTMODE_COUNTFITTINGCHARS) {
-						charsDrawable=streetNameCharIndex;
+					if (mode == PAINTMODE_COUNTFITTINGCHARS) {
+						charsDrawable = streetNameCharIndex;
 					}
 					// if at end of name
-					if (streetNameCharIndex>=sbName.length()) {
-						streetNameCharIndex=-INDENT_PATHNAME;
-						if(mode==PAINTMODE_COUNTFITTINGCHARS) {
+					if (streetNameCharIndex >= sbName.length()) {
+						streetNameCharIndex = -INDENT_PATHNAME;
+						if (mode == PAINTMODE_COUNTFITTINGCHARS) {
 							// increase number of times the name fitted completely
 							iNameRepeatable++;
 						} else {
@@ -1111,9 +1121,9 @@ public class Way extends Entity{
 					
 					// how much would we start to draw the next char over the end point
 					if (slope_x != 0) {
-						nextDeltaSub=(lineP2.x-posChar_x) / slope_x;
+						nextDeltaSub = (lineP2.x - posChar_x) / slope_x;
 					} else {
-						nextDeltaSub=0;
+						nextDeltaSub = 0;
 					}
 					
 				} // end while loop
@@ -1141,19 +1151,19 @@ public class Way extends Entity{
 		}
 		
 		// calculate on-screen-width of the way
-		float w = (int)(pc.ppm*wayDesc.wayWidth + 1);
+		float w = (int)(pc.ppm * wayDesc.wayWidth + 1);
 		 
 		// if arrow would get too small do not draw
-		if(w<3) {
+		if (w < 3) {
 			return;
 		}
 		// if arrow would be very small make it a bit larger
-		if(w<5) {
-			w=5;
+		if (w < 5) {
+			w = 5;
 		}
 		// limit maximum arrow width
 		if (w > 10) {
-			w=10;
+			w = 10;
 		}
 		// calculate arrow length
 		int lenTriangle = (int) ((w * 5) / 4);
@@ -1170,18 +1180,18 @@ public class Way extends Entity{
 				
 		float posArrow_x = 0;
 		float posArrow_y = 0;
-		float slope_x=0;
-		float slope_y=0;
+		float slope_x = 0;
+		float slope_y = 0;
     	
-    	// cache i+1 to i2
-    	int i2= 0; 
+    	// cache i + 1 to i2
+    	int i2 = 0; 
     	
     	// draw arrow in each segment of path
 		for (int i = 0; i < count; i++) {
-			i2=i+1;
+			i2 = i + 1;
 			// calculate the slope of the new line 
-			float distance = (float) Math.sqrt( (y[i2]-y[i])*(y[i2]-y[i]) +
-												(x[i2]-x[i])*(x[i2]-x[i]) );
+			float distance = (float) Math.sqrt( (y[i2] - y[i]) * (y[i2] - y[i]) +
+												(x[i2] - x[i]) * (x[i2] - x[i]) );
 
 			if (distance > completeLen || sumTooSmallLen > completeLen) {
 				if (sumTooSmallLen > completeLen) {
@@ -1193,13 +1203,13 @@ public class Way extends Entity{
 					pc.g.setColor(Legend.COLORS[Legend.COLOR_ONEWAY_ARROW]);
 				}
 				if (distance!=0) {
-					slope_x = (x[i2]-x[i])/distance;
-					slope_y = (y[i2]-y[i])/distance;
+					slope_x = (x[i2] - x[i]) / distance;
+					slope_y = (y[i2] - y[i]) / distance;
 				} 
 				
 				// new arrow position is middle of way segment
-				posArrow_x = x[i] + slope_x * (distance-completeLen)/2;
-				posArrow_y = y[i] + slope_y * (distance-completeLen)/2;				
+				posArrow_x = x[i] + slope_x * (distance - completeLen) / 2;
+				posArrow_y = y[i] + slope_y * (distance - completeLen) / 2;				
 				
 				// draw arrow only if it's at least partly on-screen
 				if ( (int)posArrow_x >= minArrowScreenX &&
@@ -1219,13 +1229,13 @@ public class Way extends Entity{
 //				// add slope to arrow position
 //				posArrow_x += slope_x * delta;
 //				posArrow_y += slope_y * delta;
-//				if (slope_x==0 && slope_y==0) {
+//				if (slope_x == 0 && slope_y == 0) {
 //					break;
 //				}
 //
 //				// how much would we start to draw the next arrow over the end point
 //				if (slope_x != 0) {
-//					nextDeltaSub=(x[i1+1]-posArrow_x) / slope_x;
+//					nextDeltaSub=(x[i1 + 1] - posArrow_x) / slope_x;
 //				}
 			} else {
 				sumTooSmallLen += distance;
@@ -1243,21 +1253,21 @@ public class Way extends Entity{
     	
     	pc.g.drawLine((int) x, (int) y, (int) x2, (int) y2);
     	pc.g.fillTriangle(
-			(int)(x2 + slopeY * w/2), (int)(y2 - slopeX * w/2),
-			(int)(x2 - slopeY * w/2), (int)(y2 + slopeX * w/2),
+			(int)(x2 + slopeY * w / 2), (int)(y2 - slopeX * w / 2),
+			(int)(x2 - slopeY * w / 2), (int)(y2 + slopeX * w / 2),
 			(int)(x2 + slopeX * lenTriangle), (int)(y2 + slopeY * lenTriangle)
     	);
     }
     
    	/** Calculates the turn 2 vectors make (left, right, straight) 
-   	 * @return s<0 for right turn, s>0 for left turn. 0 for straight
+   	 * @return s < 0 for right turn, s > 0 for left turn. 0 for straight
    	 */
     public int getVectorTurn(int ax, int ay, int bx, int by, int cx, int cy) {
-  	   //    	 	s<0      Legend is left of AB
-  	   //         	s>0      Legend is right of AB
-  	   //         	s=0      Legend is on AB
+  	   //    	 	s < 0      Legend is left of AB
+  	   //         	s > 0      Legend is right of AB
+  	   //         	s = 0      Legend is on AB
      
-     	    return (ay-cy)*(bx-ax)-(ax-cx)*(by-ay);
+     	    return (ay - cy) * (bx - ax) - (ax - cx) * (by - ay);
      }    
     
    //Todo: Describe, what the returning float is.
@@ -1300,9 +1310,8 @@ public class Way extends Entity{
 		}
 	}
 	
-	
-
-	private void draw(PaintContext pc, SingleTile t, int w, int xPoints[], int yPoints[], int hl[], int count,byte highlight/*,byte mode*/) {
+	private void draw(PaintContext pc, SingleTile t, int w, int xPoints[], int yPoints[], 
+			int hl[], int count, byte highlight /*, byte mode*/) {
 		
 		IntPoint closestP = new IntPoint();
 		int wClosest = 0;
@@ -1314,7 +1323,6 @@ public class Way extends Entity{
 		if (w <1) w=1;
 		int wDraw = w;
 		int turn = 0;
-
 		
 		WayDescription wayDesc = Legend.getWayDescription(type);
 
@@ -1330,10 +1338,10 @@ public class Way extends Entity{
 			}
 			if (dividedSeg) {
 				// if this is a divided seg, draw second part of it
-				xPoints[i] = xPoints[i+1]; 
-				yPoints[i] = yPoints[i+1]; 
-				xPoints[i+1] = originalX;
-				yPoints[i+1] = originalY;
+				xPoints[i] = xPoints[i + 1]; 
+				yPoints[i] = yPoints[i + 1]; 
+				xPoints[i + 1] = originalX;
+				yPoints[i + 1] = originalY;
 				dividedHighlight = !dividedHighlight;
 			} else {
 				// if not turn off the highlight
@@ -1342,7 +1350,7 @@ public class Way extends Entity{
 			if (hl[i] >= 0
 					// if this is the closest segment of the closest connection
 					&& RouteInstructions.routePathConnection == hl[i]
-				    && i==RouteInstructions.pathIdxInRoutePathConnection - 1
+				    && i == RouteInstructions.pathIdxInRoutePathConnection - 1
 				    && !dividedSeg
 			) {
 				IntPoint centerP = new IntPoint();
@@ -1362,7 +1370,7 @@ public class Way extends Entity{
 				// remember width for drawing the closest point
 				wClosest = wDraw;
 				// get direction we go on the way
-				Vector route=pc.trace.getRoute();
+				Vector route = pc.trace.getRoute();
 				ConnectionWithNode c = (ConnectionWithNode) route.elementAt(hl[i]);
 				dividedHighlight = (c.wayFromConAt > c.wayToConAt);
 			} else {
@@ -1374,76 +1382,106 @@ public class Way extends Entity{
 
 			
 			if (hl[i] != PATHSEG_DO_NOT_DRAW) {
-	//			if (mode == DRAW_AREA){
+	//			if (mode == DRAW_AREA) {
 				
-				setColor(pc,wayDesc,(hl[i] >= 0), (isCurrentRoutePath(pc, i)|| dividedHighlight), (highlight == HIGHLIGHT_TARGET));
+				setColor(pc, wayDesc, (hl[i] >= 0), 
+						(isCurrentRoutePath(pc, i) || dividedHighlight), 
+						(highlight == HIGHLIGHT_TARGET));
 						
 				// when this is not render as lines (for the non-highlighted part of the way) or it is a highlighted part, draw as area
 				if (wOriginal != 0 || hl[i] >= 0) {
 					pc.g.fillTriangle(l2b.x, l2b.y, l1b.x, l1b.y, l1e.x, l1e.y);
 					pc.g.fillTriangle(l1e.x, l1e.y, l2e.x, l2e.y, l2b.x, l2b.y);
 
-					if (i==0) {  // if this is the first segment, draw the lines
-						setBorderColor(pc,wayDesc,(hl[i] >= 0), (isCurrentRoutePath(pc, i)|| dividedHighlight), (highlight == HIGHLIGHT_TARGET));
+					if (i == 0) {  // if this is the first segment, draw the lines
+						setBorderColor(pc, wayDesc,(hl[i] >= 0), 
+								(isCurrentRoutePath(pc, i) || dividedHighlight), 
+								(highlight == HIGHLIGHT_TARGET));
 						pc.g.drawLine(l2b.x, l2b.y, l2e.x, l2e.y);
 						pc.g.drawLine(l1b.x, l1b.y, l1e.x, l1e.y);
 					}
 
 					
-					// Now look at the turns(corners) of the waysegment and fill them if nessesary.
+					// Now look at the turns(corners) of the waysegment and fill them if necessary.
 					// We always look back to the turn between current and previous waysegment.
-					if (i>0) {  // as we look back, there is no turn at the first segment
-						
-						turn = getVectorTurn(xPoints[i-1],yPoints[i-1], xPoints[i],yPoints[i],xPoints[i+1],yPoints[i+1] );
-						if (turn < 0 ){												// turn right
-							intersectionPoint(l4b,l4e,l2b,l2e,intersecP,1);
+					if (i > 0) {
+						// as we look back, there is no turn at the first segment
+						turn = getVectorTurn(xPoints[i - 1], yPoints[i - 1], xPoints[i],
+								yPoints[i], xPoints[i + 1], yPoints[i + 1] );
+						if (turn < 0 ) {
+							// turn right
+							intersectionPoint(l4b, l4e, l2b, l2e, intersecP, 1);
 							
-							setColor(pc,wayDesc,(hl[i] >= 0), (isCurrentRoutePath(pc, i)|| dividedHighlight), (highlight == HIGHLIGHT_TARGET));
-							pc.g.fillTriangle(xPoints[i], yPoints[i] , l3e.x, l3e.y, l1b.x,l1b.y);  // Fills the gap of the corner with a small triangle								        	
+							setColor(pc, wayDesc,(hl[i] >= 0), 
+									(isCurrentRoutePath(pc, i) || dividedHighlight), 
+									(highlight == HIGHLIGHT_TARGET));
+							// Fills the gap of the corner with a small triangle								     
+							pc.g.fillTriangle(xPoints[i], yPoints[i] , l3e.x, l3e.y, l1b.x,l1b.y);
  
-								setBorderColor(pc,wayDesc,(hl[i] >= 0), (isCurrentRoutePath(pc, i)|| dividedHighlight), (highlight == HIGHLIGHT_TARGET));
-								if (highlight == HIGHLIGHT_NONE){
-									pc.g.drawLine(intersecP.x, intersecP.y, l2e.x, l2e.y); 	//paint the inner turn border to the intersection point between old and current waysegment 
-							}else{
-								pc.g.drawLine(l2b.x, l2b.y, l2e.x, l2e.y);  			//painting full border of the inner turn while routing
+							setBorderColor(pc, wayDesc, (hl[i] >= 0), 
+									(isCurrentRoutePath(pc, i) || dividedHighlight), 
+									(highlight == HIGHLIGHT_TARGET));
+							if (highlight == HIGHLIGHT_NONE) {
+								//paint the inner turn border to the intersection point between old and current waysegment 
+								pc.g.drawLine(intersecP.x, intersecP.y, l2e.x, l2e.y);
+							} else {
+								//painting full border of the inner turn while routing
+								pc.g.drawLine(l2b.x, l2b.y, l2e.x, l2e.y);
 							}
-							pc.g.drawLine(l1b.x, l1b.y, l1e.x, l1e.y);					// paint the full outer turn border
-							pc.g.drawLine(l1b.x, l1b.y, l3e.x, l3e.y); 					// paint the border of the corner turn-triangle
+							// paint the full outer turn border
+							pc.g.drawLine(l1b.x, l1b.y, l1e.x, l1e.y);
+							// paint the full outer turn border
+							pc.g.drawLine(l1b.x, l1b.y, l3e.x, l3e.y);
 						}
-						else if (turn > 0 ){															// turn left
+						else if (turn > 0 ) {
+							// turn left
 							intersectionPoint(l3b,l3e,l1b,l1e,intersecP,1);
-							setColor(pc,wayDesc,(hl[i] >= 0), (isCurrentRoutePath(pc, i)|| dividedHighlight), (highlight == HIGHLIGHT_TARGET));
-
-							pc.g.fillTriangle(xPoints[i], yPoints[i] , l4e.x, l4e.y, l2b.x,l2b.y);  // Fills the gap of the corner with a small triangle
-							setBorderColor(pc,wayDesc,(hl[i] >= 0), (isCurrentRoutePath(pc, i)|| dividedHighlight), (highlight == HIGHLIGHT_TARGET));
-							if (highlight == HIGHLIGHT_NONE){ 							//see coments above
+							setColor(pc, wayDesc, (hl[i] >= 0), 
+									(isCurrentRoutePath(pc, i) || dividedHighlight), 
+									(highlight == HIGHLIGHT_TARGET));
+							// Fills the gap of the corner with a small triangle
+							pc.g.fillTriangle(xPoints[i], yPoints[i] , l4e.x, l4e.y, l2b.x,l2b.y);
+							setBorderColor(pc, wayDesc, (hl[i] >= 0), 
+									(isCurrentRoutePath(pc, i) || dividedHighlight), 
+									(highlight == HIGHLIGHT_TARGET));
+							if (highlight == HIGHLIGHT_NONE) {
+								//see comments above
 								pc.g.drawLine(intersecP.x, intersecP.y, l1e.x, l1e.y);
-							} else{
+							} else {
 								pc.g.drawLine(l1b.x, l1b.y, l1e.x, l1e.y);
 							}
 							pc.g.drawLine(l2b.x, l2b.y, l2e.x, l2e.y);
-							pc.g.drawLine(l2b.x, l2b.y, l4e.x, l4e.y); //corner
+							//corner
+							pc.g.drawLine(l2b.x, l2b.y, l4e.x, l4e.y);
 						}
-						else { //no turn, way is straight
-							setBorderColor(pc,wayDesc,(hl[i] >= 0), (isCurrentRoutePath(pc, i)|| dividedHighlight), (highlight == HIGHLIGHT_TARGET));
+						else {
+							//no turn, way is straight
+							setBorderColor(pc, wayDesc, (hl[i] >= 0), 
+									(isCurrentRoutePath(pc, i) || dividedHighlight), 
+									(highlight == HIGHLIGHT_TARGET));
 							pc.g.drawLine(l2b.x, l2b.y, l2e.x, l2e.y);
-							pc.g.drawLine(l1b.x, l1b.y, l1e.x, l1e.y);					// paint the full outer turn border
+							// paint the full outer turn border
+							pc.g.drawLine(l1b.x, l1b.y, l1e.x, l1e.y);
 						}
 					}
 				} else {
 					// Draw streets as lines (only 1px wide) 
-					setColor(pc,wayDesc,(hl[i] >= 0), (isCurrentRoutePath(pc, i)|| dividedHighlight), (highlight == HIGHLIGHT_TARGET));
+					setColor(pc,wayDesc, (hl[i] >= 0), 
+							(isCurrentRoutePath(pc, i) || dividedHighlight), 
+							(highlight == HIGHLIGHT_TARGET));
 					pc.g.drawLine(xPoints[i], yPoints[i], xPoints[i + 1], yPoints[i + 1]);
 				}
-				if (isBridge()){
-					waySegment.drawBridge(pc,xPoints,yPoints,i,count-1,w,l1b,l1e,l2b,l2e);
+				if (isBridge()) {
+					waySegment.drawBridge(pc, xPoints, yPoints, i, count - 1, w, 
+							l1b, l1e, l2b, l2e);
 				}
-				if (isTunnel()){
-					waySegment.drawTunnel(pc,xPoints,yPoints,i,count-1,w,l1b,l1e,l2b,l2e);
+				if (isTunnel()) {
+					waySegment.drawTunnel(pc, xPoints, yPoints, i, count - 1, w, 
+							l1b, l1e, l2b, l2e);
 				}
 			}
-			
-			l3b.set(l1b);  //Save the way-corners for the next loop to fill segment-gaps
+			//Save the way-corners for the next loop to fill segment-gaps
+			l3b.set(l1b);
 			l4b.set(l2b);
 			l3e.set(l1e);
 			l4e.set(l2e);
@@ -1451,13 +1489,11 @@ public class Way extends Entity{
 				// if this is a divided seg, in the next step draw the second part
 				i--;
 			}
-			
-			
 		} 
 		
-		if (isOneway()){
+		if (isOneway()) {
 			// Loop through all waysegments for painting the OnewayArrows as overlay
-			// Todo: Maybe, we can integrate this one day in the main loop. Currently, we have troubles
+			// TODO: Maybe, we can integrate this one day in the main loop. Currently, we have troubles
 			// with "not completely fitting arrows" getting overpainted by the next waysegment. 
 			paintPathOnewayArrows(count, wayDesc, pc);
 		}
@@ -1489,7 +1525,7 @@ public class Way extends Entity{
 	private void intersectionPoint(IntPoint p1, IntPoint p2, IntPoint p3,
 								   IntPoint p4, IntPoint ret, int aprox) {
 
-		if (p2.approximatelyEquals(p3, aprox)){
+		if (p2.approximatelyEquals(p3, aprox)) {
 			// as p2 and p3 are (approx) equal, the intersectionpoint is infinite
 			ret.x = p3.x; //  returning p3 as this is the best solution
 			ret.y = p3.y;
@@ -1503,12 +1539,11 @@ public class Way extends Entity{
 	private void intersectionPoint(IntPoint p1, IntPoint p2, IntPoint p3,
 								   IntPoint p4, IntPoint ret) {
 
-		if (p2.equals(p3)){
+		if (p2.equals(p3)) {
 			// as p2 and p3 are (approx) equal, the intersectionpoint is infinite
 			ret.x = p3.x; //  returning p3 as this is the best solution
 			ret.y = p3.y;
-		}
-		else {
+		} else {
 			intersectionPointCalc(p1, p2,p3,p4,ret);
 		}
 	}
@@ -1559,6 +1594,7 @@ public class Way extends Entity{
 		return true;
 	}
 */
+	
 /*	private static float det(float a, float b, float c, float d) {
 		return a * d - b * c;
 	} */
@@ -1593,16 +1629,26 @@ public class Way extends Entity{
 		}
 		switch (om & Legend.OM_NAME_MASK) {
 			case Legend.OM_WITH_NAMEPART: 
-				if (nameIdx == -1) return;
+				if (nameIdx == -1) {
+					return;
+				}
 				String name = pc.trace.getName(nameIdx);
-				if (name == null) return;
-				if (name.toUpperCase().indexOf(Legend.get0Poi1Area2WayNamePart((byte) 1).toUpperCase()) == -1) return;
+				if (name == null) {
+					return;
+				}
+				if (name.toUpperCase().indexOf(Legend.get0Poi1Area2WayNamePart((byte) 1).toUpperCase()) == -1) {
+					return;
+				}
 				break;
 			case Legend.OM_WITH_NAME: 
-				if (nameIdx == -1) return;
+				if (nameIdx == -1) {
+					return;
+				}
 				break;
 			case Legend.OM_NO_NAME: 
-				if (nameIdx != -1) return;
+				if (nameIdx != -1) {
+					return;
+				}
 				break;
 		}
 		
@@ -1622,7 +1668,7 @@ public class Way extends Entity{
 			x[i1] = lineP2.x;
 			y[i1] = lineP2.y;
 		}
-		/*if ((x[0] != x[path.length - 1]) || (y[0] != y[path.length - 1])){
+		/*if ((x[0] != x[path.length - 1]) || (y[0] != y[path.length - 1])) {
 			System.out.println("WARNING: start and end coordinates of area don't match " + this);			
 			return;
 		}*/
@@ -1645,89 +1691,98 @@ public class Way extends Entity{
 			}
 		// non-building areas
 		} else {
-			if(wayDesc.hideable && !Configuration.getCfgBitState(Configuration.CFGBIT_AREATEXTS)) {
+			if (wayDesc.hideable && !Configuration.getCfgBitState(Configuration.CFGBIT_AREATEXTS)) {
 				return;
 			}
 		}
 
-		String name=null;
+		String name = null;
 		if ( Configuration.getCfgBitState(Configuration.CFGBIT_SHOWWAYPOITYPE)) {
-			name=wayDesc.description;
+			name = wayDesc.description;
 		} else {			
 			if (nameIdx != -1) {
-				name=Trace.getInstance().getName(nameIdx);
+				name = Trace.getInstance().getName(nameIdx);
 			}
 		}
 		// if zoomed in enough, show description 
 		if (pc.scale < wayDesc.maxDescriptionScale) {
-		// show waydescription
-			if (name==null) {
-				name=wayDesc.description;
+		// show way description
+			if (name == null) {
+				name = wayDesc.description;
 			} else {
-				name=name + " (" + wayDesc.description + ")";
+				name = name + " (" + wayDesc.description + ")";
 			}
 		}
-		if (name == null)
+		if (name == null) {
 			return;
+		}
 		IntPoint lineP2 = pc.lineP2;
 		Projection p = pc.getP();
 		int x;
 		int y;
 
 		// get screen clip
-		int clipX=pc.g.getClipX();
-		int clipY=pc.g.getClipY();
-		int clipMaxX=clipX+pc.g.getClipWidth();
-		int clipMaxY=clipY+pc.g.getClipHeight();;
+		int clipX = pc.g.getClipX();
+		int clipY = pc.g.getClipY();
+		int clipMaxX = clipX + pc.g.getClipWidth();
+		int clipMaxY = clipY + pc.g.getClipHeight();;
 
 		// find center of area
-		int minX=clipMaxX;
-		int maxX=clipX;
-		int minY=clipMaxY;
-		int maxY=clipY;
+		int minX = clipMaxX;
+		int maxX = clipX;
+		int minY = clipMaxY;
+		int maxY = clipY;
 		for (int i1 = 0; i1 < path.length; i1++) {
 			int idx = path[i1];			
 			p.forward(t.nodeLat[idx], t.nodeLon[idx], lineP2, t);
 			x = lineP2.x;
 			y = lineP2.y;
-			if (minX>x) minX=x;
-			if (minY>y) minY=y;
-			if (maxX<x) maxX=x;
-			if (maxY<y) maxY=y;
+			if (minX > x) {
+				minX = x;
+			}
+			if (minY > y) {
+				minY = y;
+			}
+			if (maxX < x) {
+				maxX = x;
+			}
+			if (maxY < y) {
+				maxY = y;
+			}
 		}
 	
 		// System.out.println("name:" + name + " ClipX:" + clipX + " ClipMaxX:" + clipMaxX + " ClipY:" + clipY + " ClipMaxY:" + clipMaxY + " minx:" + minX + " maxX:"+maxX + " miny:"+minY+ " maxY" + maxY);
 
 		Font originalFont = pc.g.getFont();
-		if (areaFont==null) {
-			areaFont=Font.getFont(Font.FACE_SYSTEM, Font.STYLE_PLAIN, Font.SIZE_SMALL);
-			areaFontHeight=areaFont.getHeight();
+		if (areaFont == null) {
+			areaFont = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_PLAIN, Font.SIZE_SMALL);
+			areaFontHeight = areaFont.getHeight();
 		}
 		// find out how many chars of the name fit into the area
-		int i=name.length()+1;
+		int i = name.length() + 1;
 		int w;
 		do {
 			i--;
-			w=areaFont.substringWidth(name,0,i);
-		} while (w>(maxX-minX) && i>1);
+			w = areaFont.substringWidth(name, 0, i);
+		} while (w > (maxX - minX) && i > 1);
 		// is area wide enough to draw at least a dot into it?
-		if ((maxX-minX)>=3 ) {
+		if ((maxX - minX) >= 3 ) {
 			pc.g.setColor(Legend.COLORS[Legend.COLOR_AREA_LABEL_TEXT]);
 			// if at least two chars have fit or name is a fitting single char, draw name
-			if (i>1 || (i==name.length() && w<=(maxX-minX))  ) {
+			if (i > 1 || (i == name.length() && w <= (maxX - minX))  ) {
 				pc.g.setFont(areaFont);
 				// center vertically in area
-				int y1=(minY+maxY-areaFontHeight)/2;
+				int y1 = (minY + maxY - areaFontHeight) / 2;
 				// draw centered into area
-				pc.g.drawSubstring(name, 0, i, (minX+maxX-w)/2, y1, Graphics.TOP | Graphics.LEFT);
+				pc.g.drawSubstring(name, 0, i, (minX + maxX - w) / 2, y1, Graphics.TOP | Graphics.LEFT);
 				// if name fits not completely, append "..."
-				if (i!=name.length()) {
-					pc.g.drawString("...", (minX+maxX+w)/2, y1, Graphics.TOP | Graphics.LEFT);
+				if (i != name.length()) {
+					pc.g.drawString("...", (minX + maxX + w) / 2, y1, Graphics.TOP | Graphics.LEFT);
 				}
 				pc.g.setFont(originalFont);
 				// else draw a dot to indicate there's a name for this area available
 			} else {
-				pc.g.drawRect((minX+maxX)/2, (minY+maxY)/2, 0, 0 );
+				pc.g.drawRect((minX + maxX) / 2, (minY + maxY) / 2, 0, 0 );
 			}
 		}		
 	}
@@ -1737,13 +1792,18 @@ public class Way extends Entity{
 		if (routing) {
 			// set the way(area)-color
 			if (isCurrentRoutePath) {
-				pc.g.setColor(Legend.COLORS[Legend.COLOR_ROUTE_ROUTELINE]);			// set this color if way is part of current route
+				// set this color if way is part of current route
+				pc.g.setColor(Legend.COLORS[Legend.COLOR_ROUTE_ROUTELINE]);
 			} else {
-				pc.g.setColor(Legend.COLORS[Legend.COLOR_ROUTE_PRIOR_ROUTELINE]);		// set this color if way was part of current route
+				// set this color if way was part of current route
+				pc.g.setColor(Legend.COLORS[Legend.COLOR_ROUTE_PRIOR_ROUTELINE]);
 			}
-		} else if (highlight) {		// way is highlighted as target for routing
-			pc.g.setColor(255,50,50);						
-		} else { 										// use color from style.xml
+		} else if (highlight) {
+			// way is highlighted as destination for routing
+			// TODO: Shouldn't this colour be configurable too?
+			pc.g.setColor(255, 50, 50);						
+		} else {
+			// use color from style.xml
 			pc.g.setStrokeStyle(wayDesc.getGraphicsLineStyle());
 			pc.g.setColor(wayDesc.lineColor);
 		}
@@ -1762,16 +1822,18 @@ public class Way extends Entity{
 	/**
 	 * Advanced setting of the BorderColor
 	 */
-	public void setBorderColor(PaintContext pc,WayDescription wayDesc, boolean routing,boolean dividedHighlight, boolean highlight) {
+	public void setBorderColor(PaintContext pc, WayDescription wayDesc, boolean routing, 
+			boolean dividedHighlight, boolean highlight) {
 		
-		if (routing){
+		if (routing) {
 			if (dividedHighlight) {
 				pc.g.setColor(Legend.COLORS[Legend.COLOR_ROUTE_ROUTELINE_BORDER]);
 			} else {
 				pc.g.setColor(Legend.COLORS[Legend.COLOR_ROUTE_PRIOR_ROUTELINE_BORDER]);
 			}
-		} else if (highlight){
-				pc.g.setColor(255,50,50);
+		} else if (highlight) {
+			// TODO: Shouldn't this colour be configurable too?
+			pc.g.setColor(255, 50, 50);
 		} else {
 			pc.g.setStrokeStyle(Graphics.SOLID);
 			pc.g.setColor(wayDesc.boardedColor);
@@ -1784,14 +1846,14 @@ public class Way extends Entity{
 		pc.g.setColor(wayDesc.boardedColor);
 	}
 	
-	public boolean isOneway(){
+	public boolean isOneway() {
 		return (flags & WAY_ONEWAY) != 0;
 	}
 	
 	
 	/**
-	 * Checks if the way is a cirlceway (a closed way - with the same node at the start and the end)
-	 * @return true if this way is a circleway  
+	 * Checks if the way is a circle way (a closed way - with the same node at the start and the end)
+	 * @return true if this way is a circle way  
 	 */
 	public boolean isCircleway(SingleTile t) {
 		return (path[0] == path[path.length - 1]);
@@ -1809,19 +1871,17 @@ public class Way extends Entity{
 		return (flags & (WAY_ONEWAY + WAY_ROUNDABOUT)) != 0
 				&& !(
 						(Configuration.getTravelMode().travelModeFlags & TravelMode.AGAINST_ALL_ONEWAYS) > 0
-						||
-						(
-							(Configuration.getTravelMode().travelModeFlags & TravelMode.BICYLE_OPPOSITE_EXCEPTIONS) > 0
+					||	((Configuration.getTravelMode().travelModeFlags & TravelMode.BICYLE_OPPOSITE_EXCEPTIONS) > 0
 							&& (flags & WAY_CYCLE_OPPOSITE) != 0
 						)				
-				)
-		;
+				);
 	}
 	
 	
 	public boolean isTunnel() {
 		return ((flags & WAY_TUNNEL) > 0);
 	}
+	
 	public boolean isBridge() {
 		return ((flags & WAY_BRIDGE) > 0);
 	}
@@ -1834,17 +1894,15 @@ public class Way extends Entity{
 		return ((flagswinter & MaxSpeedMask) >> MaxSpeedShift);
 	}
 
-
-	
 /*	private float[] getFloatNodes(SingleTile t, short[] nodes, float offset) {
 	    float [] res = new float[nodes.length];
 	    for (int i = 0; i < nodes.length; i++) {
-		res[i] = nodes[i]*SingleTile.fpminv + offset;
+		res[i] = nodes[i] * SingleTile.fpminv + offset;
 	    }
 	    return res;
 	}
 */
-	
+
 	public float[] getNodesLatLon(SingleTile t, boolean latlon) {
 		float offset; 
 		short [] nodes;
