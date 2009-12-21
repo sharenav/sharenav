@@ -373,15 +373,14 @@ public class SunCalc
     * <a href="http://www.merrymeet.com/minow/sunclock/SunClock.html">SunClock</a>
     * by Martin Minow.
     *
-    * @parameter hour The actual time for ephemeris to be computed.
-    * @return   Array for solar ephemeris. Use RIGHTASCENSION and DECLENSION
-    *           as indices into this array.
+    * @param hour The actual time for ephemeris to be computed.
+    * @return Array for solar ephemeris. Use RIGHTASCENSION and DECLENSION
+    *         as indices into this array.
     *
     * @see <a href="http://www.merrymeet.com/minow/sunclock/Sun.java">Sun.java</a>
     */
     public double[] calcSolarCoordinates(double hour)
     {
-
         double TZOffset = _tzOffset;
 
         // constants

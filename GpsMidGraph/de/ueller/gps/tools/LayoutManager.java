@@ -1,6 +1,6 @@
 /*
  * GpsMid - Copyright (c) 2009 sk750 at users dot sourceforge dot net 
- * See Copying
+ * See COPYING
  */
 
 package de.ueller.gps.tools;
@@ -23,11 +23,10 @@ public class LayoutManager extends Vector {
 	protected volatile boolean recalcPositionsRequired = true;
 	
 	/**
-	 * @param numElements - number of LayoutElements in this layout manager 
-	 * @param minX - layout area left
-	 * @param minY - layout area top
-	 * @param maxX - layout area right
-	 * @param maxY - layout area bottom
+	 * @param minX layout area left
+	 * @param minY layout area top
+	 * @param maxX layout area right
+	 * @param maxY layout area bottom
 	 */
 	public LayoutManager(int minX, int minY, int maxX, int maxY) {	
 		this.minX = minX;
