@@ -772,9 +772,12 @@ public class CreateGpsMidData implements FilenameFilter {
 					if ((MyMath.degToRad(t.bounds.maxLat - t.bounds.minLat) > 
 							(Short.MAX_VALUE - Short.MIN_VALUE - 2000) / MyMath.FIXPT_MULT) ||
 						(MyMath.degToRad(t.bounds.maxLon - t.bounds.minLon) > 
-							(Short.MAX_VALUE - Short.MIN_VALUE - 2000) / MyMath.PLANET_RADIUS)) {
-							//System.out.println("Tile spacially too large (" + ((Short.MAX_VALUE - Short.MIN_VALUE - 2000)/Tile.fpm) + ": " + t.bounds);
-							tooLarge = true;
+							(Short.MAX_VALUE - Short.MIN_VALUE - 2000) / MyMath.FIXPT_MULT))
+					{
+						//System.out.println("Tile spacially too large (" + 
+						//	((Short.MAX_VALUE - Short.MIN_VALUE - 2000) / MyMath.FIXPT_MULT) +
+						//	": " + t.bounds);
+						tooLarge = true;
 							
 					} else {
 						t.centerLat = (t.bounds.maxLat - t.bounds.minLat) / 2 + t.bounds.minLat;
@@ -1213,8 +1216,8 @@ public class CreateGpsMidData implements FilenameFilter {
 		 * With 16bit shorts, this should allow for tile sizes of
 		 * about 65 km in width and with 1 m accuracy at the equator.  
 		 */
-		double tmpLat = (MyMath.degToRad(n.lat - t.centerLat)) * MyMath.PLANET_RADIUS;
-		double tmpLon = (MyMath.degToRad(n.lon - t.centerLon)) * MyMath.PLANET_RADIUS;
+		double tmpLat = (MyMath.degToRad(n.lat - t.centerLat)) * MyMath.FIXPT_MULT;
+		double tmpLon = (MyMath.degToRad(n.lon - t.centerLon)) * MyMath.FIXPT_MULT;
 		if ((tmpLat > Short.MAX_VALUE) || (tmpLat < Short.MIN_VALUE)) {
 			System.out.println("Numeric overflow of latitude for node: " + n.id);
 		}
