@@ -40,8 +40,6 @@ public abstract class Tile {
 	public static final byte LAYER_HIGHLIGHT = (byte)0x20; //00100000 binary
 	public static final byte LAYER_NODE = Byte.MAX_VALUE;
 	
-	
-
 	public float minLat;
 	public float maxLat;
 	public float minLon;
@@ -49,9 +47,8 @@ public abstract class Tile {
 	public float centerLat;
 	public float centerLon;
 	
-	public short fileId=0;
+	public short fileId = 0;
 	public byte	lastUse	= 0;
-//	public static Trace				trace				= null;
 
 	/**
 	 * Paint all elements of a tile to the PaintContext that are in layer
@@ -62,109 +59,112 @@ public abstract class Tile {
 	public abstract void walk(PaintContext pc,int opt);
 	public abstract boolean cleanup(int level);
 		
-	boolean contain(ScreenContext pc){
+	boolean contain(ScreenContext pc) {
 //		System.out.println(this);
 //		System.out.println(pc.screenLD + "   " + pc.screenRU);
 		//TODO: HMU there must be a better way
 		Projection p = pc.getP();
-		if (p == null){
-			if(maxLat < pc.searchLD.radlat) {
+		if (p == null) {
+			if (maxLat < pc.searchLD.radlat) {
 				return false;
 			}
-			if(maxLon < pc.searchLD.radlon) {
+			if (maxLon < pc.searchLD.radlon) {
 				return false;
 			}
-			if(minLat > pc.searchRU.radlat) {
+			if (minLat > pc.searchRU.radlat) {
 				return false;
 			}
-			if(minLon > pc.searchRU.radlon) {
+			if (minLon > pc.searchRU.radlon) {
 				return false;
 			}
-
-
 		} else {			
-			if(maxLat < p.getMinLat()) {
+			if (maxLat < p.getMinLat()) {
 				return false;
 			}
-			if(maxLon < p.getMinLon()) {
+			if (maxLon < p.getMinLon()) {
 				return false;
 			}
-			if(minLat > p.getMaxLat()) {
+			if (minLat > p.getMaxLat()) {
 				return false;
 			}
-			if(minLon > p.getMaxLon()) {
+			if (minLon > p.getMaxLon()) {
 				return false;
 			}
 		}
 //		System.out.println("Paint gpsMidMap");
 		return true;
 	}
-	boolean contain(float lat, float lon){
+	
+	boolean contain(float lat, float lon) {
 //		System.out.println(this);
 //		System.out.println(pc.screenLD + "   " + pc.screenRU);
-		if(maxLat < lat) {
+		if (maxLat < lat) {
 			return false;
 		}
-		if(maxLon < lon) {
+		if (maxLon < lon) {
 			return false;
 		}
 		if(minLat > lat) {
 			return false;
 		}
-		if(minLon > lon) {
+		if (minLon > lon) {
 			return false;
 		}
 //		System.out.println("Paint gpsMidMap");
 		return true;
 	}
-	boolean contain(float lat, float lon,float epsilon){
+	
+	boolean contain(float lat, float lon,float epsilon) {
 //		System.out.println(this);
 //		System.out.println(pc.screenLD + "   " + pc.screenRU);
-		if((maxLat+epsilon) < lat) {
+		if ((maxLat + epsilon) < lat) {
 			return false;
 		}
-		if((maxLon+epsilon) < lon) {
+		if ((maxLon + epsilon) < lon) {
 			return false;
 		}
-		if((minLat-epsilon) > lat) {
+		if ((minLat - epsilon) > lat) {
 			return false;
 		}
-		if((minLon-epsilon) > lon) {
+		if ((minLon - epsilon) > lon) {
 			return false;
 		}
 //		System.out.println("Paint gpsMidMap");
 		return true;
 	}
-	boolean contain(PositionMark pm){
-		if(maxLat < pm.lat) {
+	
+	boolean contain(PositionMark pm) {
+		if (maxLat < pm.lat) {
 			return false;
 		}
-		if(maxLon < pm.lon) {
+		if (maxLon < pm.lon) {
 			return false;
 		}
-		if(minLat > pm.lat) {
+		if (minLat > pm.lat) {
 			return false;
 		}
-		if(minLon > pm.lon) {
+		if (minLon > pm.lon) {
 			return false;
 		}
 		return true;
 	}
-	public void getCenter(Node center){
-		center.radlat=(maxLat+minLat)/2;
-		center.radlon=(maxLon+minLon)/2;
+	
+	public void getCenter(Node center) {
+		center.radlat = (maxLat + minLat) / 2;
+		center.radlon = (maxLon + minLon) / 2;
 	}
+	
 	protected void drawBounds(PaintContext pc, int r, int g, int b) {
 			pc.g.setColor(r,g,b);
-			IntPoint p1=new IntPoint(0,0);
-			IntPoint p2=new IntPoint(0,0);
-			IntPoint p3=new IntPoint(0,0);
-			IntPoint p4=new IntPoint(0,0);
+			IntPoint p1 = new IntPoint(0,0);
+			IntPoint p2 = new IntPoint(0,0);
+			IntPoint p3 = new IntPoint(0,0);
+			IntPoint p4 = new IntPoint(0,0);
 			Projection p = pc.getP();
-			p.forward(minLat,minLon,p1);
-			p.forward(minLat,maxLon,p2);
-			p.forward(maxLat,maxLon,p3);
-			p.forward(maxLat,minLon,p4);
+			p.forward(minLat, minLon, p1);
+			p.forward(minLat, maxLon, p2);
+			p.forward(maxLat, maxLon, p3);
+			p.forward(maxLat, minLon, p4);
 			pc.g.drawLine(p1.x, p1.y, p2.x, p2.y);
 			pc.g.drawLine(p2.x, p2.y, p3.x, p3.y);
 			pc.g.drawLine(p3.x, p3.y, p4.x, p4.y);
@@ -188,7 +188,9 @@ public abstract class Tile {
 		System.out.println("getNearestPoi: We shouldn't be in this base function " + this);
 		return new Vector();
 	}
-	public String toString(){
-		return "Tile " + this.getClass().getName() + " " + minLat+","+minLon+"/"+ maxLat+","+maxLon;
+	
+	public String toString() {
+		return "Tile " + this.getClass().getName() + " " + minLat + "," + minLon + 
+			"/" + maxLat + "," + maxLon;
 	}
 }
