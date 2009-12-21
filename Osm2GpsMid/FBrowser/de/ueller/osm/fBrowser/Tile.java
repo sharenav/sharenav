@@ -26,7 +26,7 @@ public abstract class Tile implements TreeNode, MapMarkerArea {
 
 	public static final int OPT_WAIT_FOR_LOAD = 1;
 	public static final int OPT_PAINT = 2;
-	public static final int OPT_FIND_TARGET = 4;
+	public static final int OPT_FIND_DEST = 4;
 	public static final int OPT_FIND_CURRENT= 8;
 	public static final int OPT_CONNECTIONS2WAY= 16;
 	public static final int OPT_CONNECTIONS2AREA= 32;

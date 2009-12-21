@@ -523,12 +523,12 @@ public class RouteData {
 					System.out.println("Connections contain " + rd.connections.size());
 					RouteNode start = rd.nodes.get(new Long(1955808));
 					System.out.println("Start " + start);
-//					RouteNode target = rd.nodes.get(new Long(25844378));
-//					RouteNode target = rd.nodes.get(new Long(33141402));
-//					RouteNode target = rd.nodes.get(new Long(28380647));
-//					System.out.println("target " + target);
+//					RouteNode dest = rd.nodes.get(new Long(25844378));
+//					RouteNode dest = rd.nodes.get(new Long(33141402));
+//					RouteNode dest = rd.nodes.get(new Long(28380647));
+//					System.out.println("Destination " + dest);
 //					AStar2 astar = new AStar2();
-//					Vector<Connection> solve = astar.solve(start, target);
+//					Vector<Connection> solve = astar.solve(start, dest);
 //					System.out.println("\n\nSolution:");
 					PrintWriter fo = new PrintWriter("/Massenspeicher/routetestErg.osm");
 //					exportResultOSM(fo, rd, solve);

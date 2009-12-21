@@ -74,8 +74,8 @@ public class Configuration {
 	public final static int COLOR_CELLID_LOG_ON_TEXT = 17;
 	public final static int COLOR_CELLID_LOG_ON_ATTEMPTING_TEXT = 18;
 	public final static int COLOR_AUDIOREC_TEXT = 19;	
-	public final static int COLOR_TARGET_TEXT = 20;	
-	public final static int COLOR_TARGET_LINE = 21;	
+	public final static int COLOR_DEST_TEXT = 20;	
+	public final static int COLOR_DEST_LINE = 21;	
 	public final static int COLOR_MAP_CURSOR = 22;	
 	public final static int COLOR_MAP_POSINDICATOR = 23;	
 	public final static int COLOR_SCALEBAR = 24;	
@@ -86,7 +86,7 @@ public class Configuration {
 	public final static int COLOR_SPEEDING_SIGN_BORDER = 29;	
 	public final static int COLOR_SPEEDING_SIGN_INNER = 30;	
 	public final static int COLOR_SPEEDING_SIGN_TEXT = 31;	
-	public final static int COLOR_RI_AT_TARGET = 32;
+	public final static int COLOR_RI_AT_DEST = 32;
 	public final static int COLOR_RI_ON_ROUTE = 33;
 	public final static int COLOR_RI_OFF_ROUTE_SLIGHT = 34;
 	public final static int COLOR_RI_OFF_ROUTE_FULL = 35;
@@ -147,8 +147,8 @@ public class Configuration {
 			 "cellid_log_on_text",
 			 "cellid_log_on_attempting_text",
 			 "audioRec_text",
-			 "target_text",
-			 "target_line",
+			 "dest_text",
+			 "dest_line",
 			 "map_cursor",
 			 "map_posindicator",
 			 "scalebar",
@@ -159,7 +159,7 @@ public class Configuration {
 			 "speeding_sign_border",
 			 "speeding_sign_inner",
 			 "speeding_sign_text",
-			 "ri_at_target",
+			 "ri_at_dest",
 			 "ri_on_route",
 			 "ri_off_route_slight",
 			 "ri_off_route_full",

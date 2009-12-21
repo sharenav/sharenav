@@ -38,7 +38,6 @@
 
 package de.ueller.osmToGpsMid;
 
-import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -51,52 +50,51 @@ import de.ueller.osmToGpsMid.model.RouteNode;
  */
 public class AStar2 {
 
-	private final Hashtable<RouteNode, Node> open = new Hashtable<RouteNode, Node>(
-			500);
-	private final Hashtable<RouteNode, Node> closed = new Hashtable<RouteNode, Node>(
-			500);
+	private final Hashtable<RouteNode, Node> open = new Hashtable<RouteNode, Node>(500);
+	private final Hashtable<RouteNode, Node> closed = new Hashtable<RouteNode, Node>(500);
 	public int evaluated = 0;
 	public int expanded = 0;
 	public long bestTotal = 0;
 	public boolean ready = false;
 	private boolean newBest = false;
 	private final Vector<Node> nodes = new Vector<Node>();
-	private RouteNode target;
-	private boolean bestTime=true;
-	private boolean noHeuristic=false;
+	private RouteNode dest;
+	private boolean bestTime = true;
+	private boolean noHeuristic = false;
 	
-	private Node search(RouteNode target) {
-		this.target = target;
+	private Node search(RouteNode dest) {
+		this.dest = dest;
 		Node currentNode;
 //		ArrayList<Connection> childStates;
 		long successorCost;
 		Vector<Node> children = new Vector<Node>();
 		while (!(nodes.isEmpty())) {
 			currentNode = nodes.firstElement();
-//			System.out.println("AStar2 "+currentNode + " size of nodes " + nodes.size()+ " size of open " + open.size()+ " size of closed " + closed.size());
-			if(closed.get(currentNode.state.to) != null) { // to avoid having to remove
+//			System.out.println("AStar2 " + currentNode + " size of nodes " + nodes.size() + " size of open " + open.size() + " size of closed " + closed.size());
+			if (closed.get(currentNode.state.to) != null) { // to avoid having to remove
 				nodes.removeElementAt(0);// improved nodes from nodes
 				continue;
 			}
 			if (!(currentNode.total == bestTotal)) {
 				setBest(currentNode.total);
 			} 
-			if (currentNode.state.to == target) 
+			if (currentNode.state.to == dest) {
 				return currentNode;
+			}
 			children.removeAllElements();
 
 			expanded++;
-//			System.out.println(""+currentNode + " has " +  currentNode.state.to.connected.size() +" successors");
+//			System.out.println("" + currentNode + " has " +  currentNode.state.to.connected.size() +" successors");
 			for (Connection nodeSuccessor: currentNode.state.to.connected) { 
 				nodeSuccessor.used++;
 				int dTurn=currentNode.fromBearing-nodeSuccessor.startBearing;
 				long turnCost=getTurnCost(dTurn);
 				if (bestTime) {
 					System.out.println("AStar2.search(): only first route mode");
-					successorCost = currentNode.costs + nodeSuccessor.times[0]+turnCost;
+					successorCost = currentNode.costs + nodeSuccessor.times[0] + turnCost;
+				} else { 
+					successorCost = currentNode.costs + nodeSuccessor.length + turnCost;
 				}
-				else 
-					successorCost = currentNode.costs + nodeSuccessor.length+turnCost;
 				Node openNode = null;
 				Node theNode = null;
 				Node closedNode =  closed.get(nodeSuccessor.to);
@@ -130,7 +128,7 @@ public class AStar2 {
 				} else { 
 					long estimation;
 					Node newNode;
-					estimation = estimate(currentNode.state,nodeSuccessor, target);
+					estimation = estimate(currentNode.state,nodeSuccessor, dest);
 					newNode = new Node(nodeSuccessor, currentNode, successorCost, estimation, currentNode.fromBearing);
 //					System.out.println("NewNode add to open" + newNode + " set dist to "+ estimation);
 					open.put(nodeSuccessor.to, newNode);
@@ -150,35 +148,35 @@ public class AStar2 {
 
 	/**
 	 * @param nodeSuccessor
-	 * @param target
+	 * @param dest
 	 * @return
 	 */
-	private long estimate(Connection from,Connection to, RouteNode target) {
-		if (noHeuristic){
+	private long estimate(Connection from,Connection to, RouteNode dest) {
+		if (noHeuristic) {
 			return 0;
 		}
-		int dTurn=from.endBearing-to.startBearing;
-		long turnCost=getTurnCost(dTurn);
-		long dist = MyMath.dist(to.to.node, target.node,1.2);
-		long estimatedSpeed=speed(30);
+		int dTurn = from.endBearing-to.startBearing;
+		long turnCost = getTurnCost(dTurn);
+		long dist = MyMath.dist(to.to.node, dest.node, 1.2);
+		long estimatedSpeed = speed(30);
 		if (bestTime){
 			if (dist > 100000) {
-				estimatedSpeed=speed(100);
+				estimatedSpeed = speed(100);
 			} else if (dist > 50000) {
-				estimatedSpeed=speed(80);
+				estimatedSpeed = speed(80);
 			} else if (dist > 10000) {
-				estimatedSpeed=speed(60);
+				estimatedSpeed = speed(60);
 			} else if (dist > 5000) {
-				estimatedSpeed=speed(45);
+				estimatedSpeed = speed(45);
 			}
-			return (long)(dist/estimatedSpeed)+turnCost;
+			return (long)(dist / estimatedSpeed) + turnCost;
+		} else {
+			return (long)(dist * 1.1f + turnCost);
 		}
-		else
-			return (long) (dist*1.1f + turnCost);
 	} 
 	
-	private long speed(int kmh){
-		return (long) (kmh/3.6);
+	private long speed(int kmh) {
+		return (long)(kmh / 3.6);
 	}
 	
 	/**
@@ -188,50 +186,55 @@ public class AStar2 {
 	private long getTurnCost(int turn) {
 		long cost;
 		String turnString;
-		int adTurn=Math.abs(turn*2);
-		if (adTurn > 150){
-			cost=150;
-			turnString="wende ";
-		} else if (adTurn > 120){
-			cost=15;
-			turnString="scharf ";
-		} else if (adTurn > 60){
-			cost=10;
-			turnString="";
-		} else if (adTurn > 30){
-			cost=5;
-			turnString="halb ";
+		int adTurn = Math.abs(turn * 2);
+		if (adTurn > 150) {
+			cost = 150;
+			turnString = "wende ";
+		} else if (adTurn > 120) {
+			cost = 15;
+			turnString = "scharf ";
+		} else if (adTurn > 60) {
+			cost = 10;
+			turnString = "";
+		} else if (adTurn > 30) {
+			cost = 5;
+			turnString = "halb ";
 		} else {
-			cost=0;
-			turnString="gerade ";			
+			cost = 0;
+			turnString = "gerade ";			
 		}
-		if (cost==0){
+		if (cost == 0) {
 //			System.out.println("gerade aus");
 		} else {
-//			System.out.println(turnString + ((turn > 0)?"rechts ":"links ") + adTurn);
+//			System.out.println(turnString + ((turn > 0) ? "rechts " : "links ") + adTurn);
 		}
 		return cost;
 //		return 0;
 	}
 
-	private int rbsearch(int l, int h, long tot, long costs){
-		if(l>h) return l; //insert before l 
-		int cur = (l+h)/2;
+	private int rbsearch(int l, int h, long tot, long costs) {
+		if (l > h) {
+			return l; //insert before l 
+		}
+		int cur = (l + h) / 2;
 		long ot = nodes.elementAt(cur).total;
-		if((tot < ot) || (tot == ot && costs >= nodes.elementAt(cur).costs)) 
+		if ((tot < ot) || (tot == ot && costs >= nodes.elementAt(cur).costs)) { 
 			return rbsearch(l, cur-1, tot, costs);
-		return rbsearch(cur+1, h, tot, costs);
+		}
+		return rbsearch(cur + 1, h, tot, costs);
 	} 
 
-	private int bsearch(int l, int h, long tot, long costs){
+	private int bsearch(int l, int h, long tot, long costs) {
 		int lo = l;
 		int hi = h;
-		while(lo<=hi) {
-			int cur = (lo+hi)/2;
+		while (lo <= hi) {
+			int cur = (lo + hi) / 2;
 			long ot = nodes.elementAt(cur).total;
-			if((tot < ot) || (tot == ot && costs >= ((Node) nodes.elementAt(cur)).costs)) 
+			if ((tot < ot) || (tot == ot && costs >= ((Node) nodes.elementAt(cur)).costs)) { 
 				hi = cur - 1;
-			else lo = cur + 1;
+			} else {
+				lo = cur + 1;
+			}
 		} 
 		return lo; //insert before lo 
 	} 
@@ -243,30 +246,29 @@ public class AStar2 {
 			Node newNode = children.elementAt(i);
 			long newTotal = newNode.total;
 			long newCosts = newNode.costs;
-			boolean done = false;
 			int idx = bsearch(0, nodes.size()-1, newTotal, newCosts);
 			nodes.insertElementAt(newNode, idx); 
 		}
 	}
 	// {{{ public final Vector solve (State initialState) 
-	public final Vector<Connection> solve (RouteNode start,RouteNode target) {
-		long totalDist = MyMath.dist(start.node, target.node,1.2);
-		long estimateSpeed=0;
+	public final Vector<Connection> solve (RouteNode start,RouteNode dest) {
+		long totalDist = MyMath.dist(start.node, dest.node, 1.2);
+		long estimateSpeed = 0;
 		System.out.println("AStar2.solve(): only first route mode");
 		int times[] = new int[1];
-		times[0]=0;
-		Connection initialState=new Connection(start,(short)0,times,(byte)0,(byte)0,null);
+		times[0] = 0;
+		Connection initialState = new Connection(start, (short)0, times, (byte)0, (byte)0, null);
 		Node solution;
 		Node firstNode;
 		long estimation;
 		expanded = 0;
 		evaluated = 1;
 		estimation=0;
-//		estimation = estimate(initialState, target);
-		firstNode = new Node(initialState, null, 0l, estimation,(byte)0);
+//		estimation = estimate(initialState, dest);
+		firstNode = new Node(initialState, null, 0l, estimation, (byte)0);
 		open.put(initialState.to, firstNode);
 		nodes.addElement(firstNode);
-		solution = search(target);
+		solution = search(dest);
 		nodes.removeAllElements();
 		open.clear();
 		closed.clear();
@@ -279,13 +281,13 @@ public class AStar2 {
 	private Vector<Connection> getSequence(Node n) { 
 		Vector<Connection> result;
 		if (n == null) {
-		result = new Vector<Connection>();
+			result = new Vector<Connection>();
 		} else { 
-		result = getSequence (n.parent);
-		result.addElement(n.state);
+			result = getSequence (n.parent);
+			result.addElement(n.state);
 		} 
 		return result; 
-		} 
+	} 
 	
 	private synchronized void setBest (long value) {
 		bestTotal = value;
@@ -295,7 +297,7 @@ public class AStar2 {
 	} 
 
 	public synchronized long getNewBest() {
-		while(!newBest) {
+		while (!newBest) {
 			try { 
 				wait(); 
 			} catch (InterruptedException e) {
@@ -303,7 +305,8 @@ public class AStar2 {
 		} 
 		newBest = false;
 		return bestTotal; 
-	} 
+	}
+
 	final class Node {
 		Connection state;
 		long costs;
@@ -312,7 +315,7 @@ public class AStar2 {
 		byte fromBearing;
 		Node parent;
 
-		Node(Connection theState, Node theParent, long theCosts, long theDistance,byte bearing) {
+		Node(Connection theState, Node theParent, long theCosts, long theDistance, byte bearing) {
 //			theDistance = 1000000 - theDistance;
 			state = theState;
 			parent = theParent;
@@ -320,9 +323,10 @@ public class AStar2 {
 			distance = theDistance;
 			total = theCosts + (theDistance);
 			fromBearing = bearing;
-		};
-		public String toString(){
-			return "Node id="+state.to.node.id+" g="+costs+" h="+distance+" f="+total;
+		}
+
+		public String toString() {
+			return "Node id=" + state.to.node.id + " g=" + costs + " h=" + distance + " f=" + total;
 		}
 	}
 }
