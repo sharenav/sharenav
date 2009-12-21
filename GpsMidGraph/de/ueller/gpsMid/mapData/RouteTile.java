@@ -1,3 +1,8 @@
+/*
+ * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net 
+ * See COPYING
+ */
+
 package de.ueller.gpsMid.mapData;
 
 import java.io.DataInputStream;
@@ -501,7 +506,7 @@ public class RouteTile extends RouteBaseTile {
 				Connection c=new Connection();
 				c.connectionId = minConnectionId++;
 				int nodeId = cs.readInt();
-				// fill in TargetNode but only if in the same Tile
+				// fill in DestNode but only if in the same Tile
 				// don't store this costs a lot of memory this can taken from the cache if needed 
 //				if (nodeId <= maxId && nodeId >= minId){
 //					c.to=nodes[nodeId - minId];

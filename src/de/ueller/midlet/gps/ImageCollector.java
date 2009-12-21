@@ -1,3 +1,9 @@
+/*
+ * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net
+ * 			Copyright (c) 2008 Kai Krueger apmonkey at users dot sourceforge dot net 
+ * See Copying
+ */
+
 package de.ueller.midlet.gps;
 
 import javax.microedition.lcdui.Graphics;
@@ -17,25 +23,13 @@ import de.ueller.midlet.gps.tile.Images;
 import de.ueller.midlet.gps.tile.PaintContext;
 import de.ueller.midlet.gps.tile.WayDescription;
 
-
-/*
- * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net
- * 			Copyright (c) 2008 Kai Krueger apmonkey at users dot sourceforge dot net 
- * See Copying
- * 
- * this class collects all visible object to a off line image for later painting .
- * Run in a low priority to avoid interrupting GUI.
+/* This class collects all visible objects to an offline image for later painting.
+ * It is run in a low priority to avoid interrupting the GUI.
  */
-
-
-//import de.ueller.midlet.gps.Logger;
-
 public class ImageCollector implements Runnable {
 	private final static Logger logger = Logger.getInstance(ImageCollector.class, 
 			Logger.TRACE);
 
-	//private boolean lockg = false;
-	//private boolean lockc = false;
 	private volatile boolean shutdown = false;
 	private volatile boolean suspended = true;
 	private final Tile t[];
@@ -49,7 +43,6 @@ public class ImageCollector implements Runnable {
 	byte nextCreate = 1;
 	byte nextPaint = 0;
 
-//	volatile byte stat = 0;
 	int xSize;
 	int ySize;
 	IntPoint newCenter = new IntPoint(0, 0);
@@ -145,7 +138,7 @@ public class ImageCollector implements Runnable {
 				createPC.squareDstToActualRoutableWay = Float.MAX_VALUE;
 				createPC.squareDstWithPenToRoutePath = Float.MAX_VALUE;
 				createPC.squareDstToRoutePath = Float.MAX_VALUE;
-				createPC.target = nextSc.target;
+				createPC.dest = nextSc.dest;
 				createPC.course = nextSc.course;
 				// System.out.println("create " + pcCollect);
 				
@@ -331,7 +324,7 @@ public class ImageCollector implements Runnable {
 		nextSc.center = screenPc.center.clone();
 		nextSc.course = screenPc.course;
 		nextSc.scale = screenPc.scale;
-		nextSc.target = screenPc.target;
+		nextSc.dest = screenPc.dest;
 		nextSc.xSize = screenPc.xSize;
 		nextSc.ySize = screenPc.ySize;
 		Projection p = ProjFactory.getInstance(nextSc.center, 

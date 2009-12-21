@@ -1,12 +1,11 @@
-package de.ueller.midlet.gps;
 /*
  * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net
  * 			Copyright (c) 2008 Kai Krueger apm at users dot sourceforge dot net 
- * See Copying
+ * See COPYING
  */
 
-import de.ueller.gpsMid.mapData.QueueDataReader;
-import de.ueller.gpsMid.mapData.QueueReader;
+package de.ueller.midlet.gps;
+
 import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.data.Projection;
@@ -21,34 +20,31 @@ public class ScreenContext {
 	public float scale = 15000f;
 	byte viewId = 1;
 	private Projection p;
-	public int course=0;
+	public int course = 0;
 	public Trace trace;
 	
-	public float ppm=1f;
-	/**
-	 * hold, if there is any, the actual target position and element to the
-	 * navigation target.
-	 */
-	public PositionMark target;
-    /**
-     * store the actual position and the actual way;
-     */
-	public PositionMark currentPos=new PositionMark(0f,0f);
+	public float ppm = 1f;
+	
+	/** Hold, if there is any, the current destination position and element. */
+	public PositionMark dest;
+	
+    /** Stores the current position */
+	public PositionMark currentPos = new PositionMark(0f, 0f);
 
 
 	
 	public ScreenContext cloneToScreenContext() {
-		ScreenContext sc=new ScreenContext();
-		sc.scale=scale;
-//		sc.screenLD=screenLD.clone();
-//		sc.screenRU=screenRU.clone();
-		sc.xSize=xSize;
-		sc.ySize=ySize;
-		sc.center=center.clone();
-		sc.trace=trace;		
-		sc.ppm=ppm;
-		sc.target=target;
-		sc.course=course;
+		ScreenContext sc = new ScreenContext();
+		sc.scale = scale;
+//		sc.screenLD = screenLD.clone();
+//		sc.screenRU = screenRU.clone();
+		sc.xSize = xSize;
+		sc.ySize = ySize;
+		sc.center = center.clone();
+		sc.trace = trace;		
+		sc.ppm = ppm;
+		sc.dest = dest;
+		sc.course = course;
 		return sc;
 	}
 
@@ -59,7 +55,8 @@ public class ScreenContext {
 	public void setP(Projection p) {
 		this.p = p;
 		float scale = p.getScale();
-		ppm=(40075016.6855784861531768177614f/scale/p.getPPM());
+		// TODO: Explain where this constant is derived from.
+		ppm = (40075016.6855784861531768177614f / scale / p.getPPM());
 	}
 
 //	public boolean isVisible(float lat, float lon){
@@ -79,6 +76,6 @@ public class ScreenContext {
 //	}
 	
 	public String toString() {
-		return "SC : " + p;
+		return "ScreenContext: " + p;
 	}
 }

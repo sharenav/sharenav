@@ -1,7 +1,8 @@
 /*
  * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net 
- * See Copying
+ * See COPYING
  */
+
 package de.ueller.gpsMid.mapData;
 
 import java.util.Vector;
@@ -13,8 +14,6 @@ import de.ueller.midlet.gps.data.IntPoint;
 import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.data.Projection;
-import de.ueller.midlet.gps.data.Way;
-import de.ueller.midlet.gps.routing.RouteNode;
 import de.ueller.midlet.gps.tile.PaintContext;
 
 
@@ -30,10 +29,10 @@ public abstract class Tile {
 
 	public static final int OPT_WAIT_FOR_LOAD = 1;
 	public static final int OPT_PAINT = 2;
-	public static final int OPT_FIND_TARGET = 4;
-	public static final int OPT_FIND_CURRENT= 8;
-	public static final int OPT_CONNECTIONS2WAY= 16;
-	public static final int OPT_CONNECTIONS2AREA= 32;
+	public static final int OPT_FIND_DEST = 4;
+	public static final int OPT_FIND_CURRENT = 8;
+	public static final int OPT_CONNECTIONS2WAY = 16;
+	public static final int OPT_CONNECTIONS2AREA = 32;
 	public static final int OPT_HIGHLIGHT = 64;
 	
 	public static final byte LAYER_AREA = (byte)0x80; //10000000 binary

@@ -77,7 +77,7 @@ public class Way extends Entity {
 	private static final int PATHSEG_DO_NOT_DRAW = -2;
 	
 	private static final int HIGHLIGHT_NONE = 0;
-	private static final int HIGHLIGHT_TARGET = 1;
+	private static final int HIGHLIGHT_DEST = 1;
 	private static final int HIGHLIGHT_ROUTEPATH_CONTAINED = 2;
 	
 	protected static final Logger logger = Logger.getInstance(Way.class, Logger.TRACE);
@@ -888,9 +888,9 @@ public class Way extends Entity {
 				w = (int) (pc.ppm * wayDesc.wayWidth / 2 + 0.5);
 			}
 
-			if (highlight != HIGHLIGHT_ROUTEPATH_CONTAINED && pc.target != null 
-					&& this.equals(pc.target.entity)) {
-				highlight = HIGHLIGHT_TARGET;
+			if (highlight != HIGHLIGHT_ROUTEPATH_CONTAINED && pc.dest != null 
+					&& this.equals(pc.dest.entity)) {
+				highlight = HIGHLIGHT_DEST;
 			}
 			// if render as lines and no part of the way is highlighted
 			if (w == 0 && highlight == HIGHLIGHT_NONE) {
@@ -1386,7 +1386,7 @@ public class Way extends Entity {
 				
 				setColor(pc, wayDesc, (hl[i] >= 0), 
 						(isCurrentRoutePath(pc, i) || dividedHighlight), 
-						(highlight == HIGHLIGHT_TARGET));
+						(highlight == HIGHLIGHT_DEST));
 						
 				// when this is not render as lines (for the non-highlighted part of the way) or it is a highlighted part, draw as area
 				if (wOriginal != 0 || hl[i] >= 0) {
@@ -1396,7 +1396,7 @@ public class Way extends Entity {
 					if (i == 0) {  // if this is the first segment, draw the lines
 						setBorderColor(pc, wayDesc,(hl[i] >= 0), 
 								(isCurrentRoutePath(pc, i) || dividedHighlight), 
-								(highlight == HIGHLIGHT_TARGET));
+								(highlight == HIGHLIGHT_DEST));
 						pc.g.drawLine(l2b.x, l2b.y, l2e.x, l2e.y);
 						pc.g.drawLine(l1b.x, l1b.y, l1e.x, l1e.y);
 					}
@@ -1414,13 +1414,13 @@ public class Way extends Entity {
 							
 							setColor(pc, wayDesc,(hl[i] >= 0), 
 									(isCurrentRoutePath(pc, i) || dividedHighlight), 
-									(highlight == HIGHLIGHT_TARGET));
+									(highlight == HIGHLIGHT_DEST));
 							// Fills the gap of the corner with a small triangle								     
 							pc.g.fillTriangle(xPoints[i], yPoints[i] , l3e.x, l3e.y, l1b.x,l1b.y);
  
 							setBorderColor(pc, wayDesc, (hl[i] >= 0), 
 									(isCurrentRoutePath(pc, i) || dividedHighlight), 
-									(highlight == HIGHLIGHT_TARGET));
+									(highlight == HIGHLIGHT_DEST));
 							if (highlight == HIGHLIGHT_NONE) {
 								//paint the inner turn border to the intersection point between old and current waysegment 
 								pc.g.drawLine(intersecP.x, intersecP.y, l2e.x, l2e.y);
@@ -1438,12 +1438,12 @@ public class Way extends Entity {
 							intersectionPoint(l3b,l3e,l1b,l1e,intersecP,1);
 							setColor(pc, wayDesc, (hl[i] >= 0), 
 									(isCurrentRoutePath(pc, i) || dividedHighlight), 
-									(highlight == HIGHLIGHT_TARGET));
+									(highlight == HIGHLIGHT_DEST));
 							// Fills the gap of the corner with a small triangle
 							pc.g.fillTriangle(xPoints[i], yPoints[i] , l4e.x, l4e.y, l2b.x,l2b.y);
 							setBorderColor(pc, wayDesc, (hl[i] >= 0), 
 									(isCurrentRoutePath(pc, i) || dividedHighlight), 
-									(highlight == HIGHLIGHT_TARGET));
+									(highlight == HIGHLIGHT_DEST));
 							if (highlight == HIGHLIGHT_NONE) {
 								//see comments above
 								pc.g.drawLine(intersecP.x, intersecP.y, l1e.x, l1e.y);
@@ -1458,7 +1458,7 @@ public class Way extends Entity {
 							//no turn, way is straight
 							setBorderColor(pc, wayDesc, (hl[i] >= 0), 
 									(isCurrentRoutePath(pc, i) || dividedHighlight), 
-									(highlight == HIGHLIGHT_TARGET));
+									(highlight == HIGHLIGHT_DEST));
 							pc.g.drawLine(l2b.x, l2b.y, l2e.x, l2e.y);
 							// paint the full outer turn border
 							pc.g.drawLine(l1b.x, l1b.y, l1e.x, l1e.y);
@@ -1468,7 +1468,7 @@ public class Way extends Entity {
 					// Draw streets as lines (only 1px wide) 
 					setColor(pc,wayDesc, (hl[i] >= 0), 
 							(isCurrentRoutePath(pc, i) || dividedHighlight), 
-							(highlight == HIGHLIGHT_TARGET));
+							(highlight == HIGHLIGHT_DEST));
 					pc.g.drawLine(xPoints[i], yPoints[i], xPoints[i + 1], yPoints[i + 1]);
 				}
 				if (isBridge()) {

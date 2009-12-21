@@ -210,15 +210,15 @@ public class SingleTile extends Tile implements QueueableTile {
 						if (!w.isOnScreen(pcLDlat, pcLDlon, pcRUlat, pcRUlon)) continue; 
 						/**
 						 * In addition to rendering we also check for which way
-						 * corresponds to the target set in the paintcontext identified
+						 * corresponds to the destination set in the paint context identified
 						 * by the name of the way and the coordinates of a node on the way
 						 */
-						if (pc.target != null ) {
-							//							logger.debug("search target nameIdx" );
-							if (pc.target.entity == null && pc.target.nameIdx == w.nameIdx) {
-								// 								logger.debug("search target way");
+						if (pc.dest != null ) {
+							// logger.debug("search dest nameIdx" );
+							if (pc.dest.entity == null && pc.dest.nameIdx == w.nameIdx) {
+								// logger.debug("search dest way");
 								/**
-								 * The name of the way and the target matches, now we
+								 * The name of the way and the dest matches, now we
 								 * check if the coordinates match.
 								 * 
 								 * We have to be careful here, to not get into trouble
@@ -226,14 +226,14 @@ public class SingleTile extends Tile implements QueueableTile {
 								 * To prevent rounding issues, test for approximate
 								 * equality
 								 */
-								short targetLat = (short)((pc.target.lat - centerLat) * MoreMath.FIXPT_MULT);
-								short targetLon = (short)((pc.target.lon - centerLon) * MoreMath.FIXPT_MULT);
+								short destLat = (short)((pc.dest.lat - centerLat) * MoreMath.FIXPT_MULT);
+								short destLon = (short)((pc.dest.lon - centerLon) * MoreMath.FIXPT_MULT);
 								for (int i1 = 0; i1 < w.path.length; i1++) {
 									short s = w.path[i1];
-									if ((Math.abs(nodeLat[s] - targetLat) < 2) && 
-											(Math.abs(nodeLon[s] - targetLon) < 2)) {
-										//										logger.debug("found Target way");
-										pc.target.setEntity(w, w.getNodesLatLon(this, true), w.getNodesLatLon(this, false));
+									if ((Math.abs(nodeLat[s] - destLat) < 2) && 
+											(Math.abs(nodeLon[s] - destLon) < 2)) {
+										// logger.debug("found dest way");
+										pc.dest.setEntity(w, w.getNodesLatLon(this, true), w.getNodesLatLon(this, false));
 									}
 								}
 							}

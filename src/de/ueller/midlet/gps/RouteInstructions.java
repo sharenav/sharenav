@@ -1,6 +1,6 @@
 /*
  * GpsMid - Copyright (c) 2009 sk750 at users dot sourceforge dot net 
- * See Copying 
+ * See COPYING
  */
 
 package de.ueller.midlet.gps;
@@ -554,9 +554,9 @@ public class RouteInstructions {
 						if (Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_BEARINGS)) {					
 							// end bearings
 							pc.g.setStrokeStyle(Graphics.SOLID);
-							drawBearing(pc, pc.lineP2.x,pc.lineP2.y, c.endBearing, true, 0x00800000);
+							drawBearing(pc, pc.lineP2.x, pc.lineP2.y, c.endBearing, true, 0x00800000);
 							pc.g.setStrokeStyle(Graphics.DOTTED);
-							drawBearing(pc, pc.lineP2.x,pc.lineP2.y, c.wayConEndBearing, true, 0x00FF0000);							
+							drawBearing(pc, pc.lineP2.x, pc.lineP2.y, c.wayConEndBearing, true, 0x00FF0000);							
 							byte startBearingCon = 0;
 							byte startBearingWay = 0;
 							if ( i < route.size()-1 ) {
@@ -566,21 +566,22 @@ public class RouteInstructions {
 							}
 							// start bearings
 							pc.g.setStrokeStyle(Graphics.SOLID);
-							drawBearing(pc, pc.lineP2.x,pc.lineP2.y, startBearingCon, false, 0x00008000);
+							drawBearing(pc, pc.lineP2.x, pc.lineP2.y, startBearingCon, false, 0x00008000);
 							pc.g.setStrokeStyle(Graphics.DOTTED);
-							drawBearing(pc, pc.lineP2.x,pc.lineP2.y, startBearingWay, false, 0x0000FF00);
+							drawBearing(pc, pc.lineP2.x, pc.lineP2.y, startBearingWay, false, 0x0000FF00);
 							if ( (c.wayRouteFlags & Legend.ROUTE_FLAG_INCONSISTENT_BEARING) > 0) {
 								// draw red circle aroud inconsistent bearing
 								pc.g.setColor(0x00FF6600);
 								pc.g.setStrokeStyle(Graphics.SOLID);
-								final byte radius=40;
-								pc.g.drawArc(pc.lineP2.x-radius/2,pc.lineP2.y-radius/2,radius,radius,0,359);
+								final byte radius = 40;
+								pc.g.drawArc(pc.lineP2.x - radius / 2, 
+										pc.lineP2.y - radius / 2, radius, radius, 0, 359);
 							}
 						}
 					}
 					routeRecalculationRequired = isOffRoute(route, center);
 					if (trace.atDest || (aNow == RI_DEST_REACHED && intDistNow < PASSINGDISTANCE)) {
-						routeInstructionColor = Legend.COLORS[Legend.COLOR_RI_AT_TARGET];
+						routeInstructionColor = Legend.COLORS[Legend.COLOR_RI_AT_DEST];
 					} else if ( routeRecalculationRequired && trace.gpsRecenter) {
 						//#debug debug
 						logger.debug("off route detected");												

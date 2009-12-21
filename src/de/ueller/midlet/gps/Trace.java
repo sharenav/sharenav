@@ -1845,13 +1845,13 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	 * 
 	 */
 	private void getPC() {
-			pc.course=course;
-			pc.scale=scale;
-			pc.center=center.clone();
+			pc.course = course;
+			pc.scale = scale;
+			pc.center = center.clone();
 //			pc.setP( projection);
 //			projection.inverse(pc.xSize, 0, pc.screenRU);
 //			projection.inverse(0, pc.ySize, pc.screenLD);
-			pc.target = dest;
+			pc.dest = dest;
 	}
 
 	public void cleanup() {
@@ -1867,7 +1867,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		Node nru = new Node(pm.lat + 0.0001f, pm.lon + 0.0005f, true);		
 		pc.searchLD = nld;
 		pc.searchRU = nru;
-		pc.target = pm;
+		pc.dest = pm;
 		pc.setP(new Proj2D(new Node(pm.lat, pm.lon, true), 5000, 100, 100));
 		for (int i = 0; i < 4; i++) {
 			tiles[i].walk(pc, Tile.OPT_WAIT_FOR_LOAD);
@@ -1958,12 +1958,12 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			pc.getP().forward(dest.lat, dest.lon, pc.lineP2);
 //			System.out.println(dest.toString());
 			pc.g.drawImage(pc.images.IMG_DEST, pc.lineP2.x, pc.lineP2.y, CENTERPOS);
-			pc.g.setColor(Legend.COLORS[Legend.COLOR_TARGET_TEXT]);
+			pc.g.setColor(Legend.COLORS[Legend.COLOR_DEST_TEXT]);
 			if (dest.displayName != null) {
 				pc.g.drawString(dest.displayName, pc.lineP2.x, pc.lineP2.y+8,
 					Graphics.TOP | Graphics.HCENTER);
 			}
-			pc.g.setColor(Legend.COLORS[Legend.COLOR_TARGET_LINE]);
+			pc.g.setColor(Legend.COLORS[Legend.COLOR_DEST_LINE]);
 			pc.g.setStrokeStyle(Graphics.DOTTED);
 			pc.g.drawLine(pc.lineP2.x, pc.lineP2.y, pc.xSize / 2, pc.ySize / 2);
 		}
@@ -2467,7 +2467,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	public void setDestination(PositionMark dest) {
 		endRouting();
 		this.dest = dest;
-		pc.target = dest;
+		pc.dest = dest;
 		if (dest != null) {
 			//#debug info
 			logger.info("Setting destination to " + dest.toString());

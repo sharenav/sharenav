@@ -1,22 +1,17 @@
+/*
+ * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net 
+ * See COPYING
+ */
+
 package de.ueller.gps.data;
 
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
-/*
- * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net 
- * See Copying
- */
-
-//import de.ueller.gpsMid.mapData.QueueReader;
-import de.ueller.gpsMid.mapData.Tile;
-import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.Logger;
-import de.ueller.midlet.gps.names.Names;
 import de.ueller.midlet.gps.routing.TravelMode;
 import de.ueller.midlet.gps.tile.POIdescription;
 import de.ueller.midlet.gps.tile.WayDescription;
@@ -35,10 +30,10 @@ public class Legend {
 	public final static byte MAX_PLACETYPE = 5; // suburb
 	
 	//public final static byte NODE_MASK_ROUTENODELINK=0x1; //obsolete
-	public final static byte NODE_MASK_TYPE=0x2;
-	public final static byte NODE_MASK_NAME=0x4;
-	public final static byte NODE_MASK_ROUTENODE=0x8;
-	public final static byte NODE_MASK_NAMEHIGH=0x10;
+	public final static byte NODE_MASK_TYPE = 0x2;
+	public final static byte NODE_MASK_NAME = 0x4;
+	public final static byte NODE_MASK_ROUTENODE = 0x8;
+	public final static byte NODE_MASK_NAMEHIGH = 0x10;
 	
 	public final static byte LEGEND_FLAG_IMAGE = 0x01;
 	public final static byte LEGEND_FLAG_SEARCH_IMAGE = 0x02;
@@ -107,8 +102,8 @@ public class Legend {
 	public final static int COLOR_CELLID_LOG_ON_TEXT = 17;
 	public final static int COLOR_CELLID_LOG_ON_ATTEMPTING_TEXT = 18;
 	public final static int COLOR_AUDIOREC_TEXT = 19;	
-	public final static int COLOR_TARGET_TEXT = 20;	
-	public final static int COLOR_TARGET_LINE = 21;	
+	public final static int COLOR_DEST_TEXT = 20;	
+	public final static int COLOR_DEST_LINE = 21;	
 	public final static int COLOR_MAP_CURSOR = 22;	
 	public final static int COLOR_MAP_POSINDICATOR = 23;	
 	public final static int COLOR_SCALEBAR = 24;	
@@ -119,7 +114,7 @@ public class Legend {
 	public final static int COLOR_SPEEDING_SIGN_BORDER = 29;	
 	public final static int COLOR_SPEEDING_SIGN_INNER = 30;	
 	public final static int COLOR_SPEEDING_SIGN_TEXT = 31;	
-	public final static int COLOR_RI_AT_TARGET = 32;
+	public final static int COLOR_RI_AT_DEST = 32;
 	public final static int COLOR_RI_ON_ROUTE = 33;
 	public final static int COLOR_RI_OFF_ROUTE_SLIGHT = 34;
 	public final static int COLOR_RI_OFF_ROUTE_FULL = 35;
