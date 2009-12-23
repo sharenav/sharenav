@@ -71,6 +71,7 @@ public class TraceIconMenu extends IconMenuWithPagesGUI {
 		iconOnlineInfo.makeImageGreyed();
 		iconAddPOI.makeImageGreyed();
 		iconEditWay.makeImageGreyed();
+		iconAddAddr.makeImageGreyed();
 		//#endif
 
 		//#if not polish.api.osm-editing

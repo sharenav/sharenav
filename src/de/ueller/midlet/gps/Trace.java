@@ -682,6 +682,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		//#if polish.api.osm-editing
 		removeCommand(CMDS[RETRIEVE_XML]);
 		removeCommand(CMDS[RETRIEVE_NODE]);
+		removeCommand(CMDS[EDIT_ADDR_CMD]);
 		//#endif
 		//#endif
 		removeCommand(CMDS[SETUP_CMD]);
@@ -1341,7 +1342,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					}
 				}
 				//#else
-				if (c == CMDS[RETRIEVE_XML] || c == CMDS[RETRIEVE_NODE]) { 
+				if (c == CMDS[RETRIEVE_XML] || c == CMDS[RETRIEVE_NODE] || c == CMDS[EDIT_ADDR_CMD]) { 
 					alert("No online capabilites", 
 						"Set app=GpsMid-Generic-editing and editing=true in " +
 						".properties file and recreate GpsMid with Osm2GpsMid.", 
