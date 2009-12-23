@@ -52,13 +52,14 @@ public class IconMenuPage extends LayoutManager {
 	public void loadIconBackgroundImage() {
 		// load icon background image
 		try {
-			bgImage = Image.createImage("/i_bg.png");
+			Image bgImage = Image.createImage("/i_bg.png");
 			if (bgImage != null) {
 				Font font = Font.getFont(Font.FACE_PROPORTIONAL, 0 , Font.SIZE_SMALL);
 				bgImage = LayoutElement.scaleIconImage(bgImage, this, font.getHeight());
 				//#debug debug
 				logger.debug("bgImage loaded and scaled to " + bgImage.getWidth() + "x" + bgImage.getHeight());
 			}
+			this.bgImage = bgImage;
 		} catch (Exception ec) {
 			//#debug debug
 			logger.debug("EXCEPTION loading bgImage");
