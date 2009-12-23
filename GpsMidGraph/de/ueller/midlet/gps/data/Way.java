@@ -86,7 +86,11 @@ public class Way extends Entity {
 	private int flagswinter = 0;
 
 	/** indicate by which route modes this way can be used (motorcar, bicycle, etc.)
-	TODO: Explain where allowed values come from or document them here. */
+	 * Each bit represents one of the route modes in the midlet, with bit 0 being the first route mode.
+	 * The routeability of the way in each route mode is determined by Osm2GpsMid,
+	 * which derives it from the accessible flag of the wValue of way type's description
+	 * and the routeAccess specifications in the style file 
+	 */
 	private byte wayRouteModes = 0;
 
 	public short[] path;
