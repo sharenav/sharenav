@@ -71,13 +71,8 @@ public class IconMenuPage extends LayoutManager {
 		rememberEleId = eleId;
 	}
 	
-	public LayoutElement createAndAddIcon(String label, String imageName, int actionId) {
-		LayoutElement e = createIcon(label, imageName, actionId);
-		return e;
-	};
 		
-	public LayoutElement createIcon(String label, String imageName, int actionId) {
-		int eleNr = this.size();
+	public LayoutElement createAndAddIcon(String label, String imageName, int actionId) {
 		LayoutElement e = super.createAndAddElement(
 			LayoutElement.FLAG_ICONMENU_ICON |
 			LayoutElement.FLAG_FONT_SMALL
