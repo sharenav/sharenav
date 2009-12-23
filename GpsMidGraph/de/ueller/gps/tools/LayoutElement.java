@@ -364,10 +364,13 @@ public class LayoutElement {
 		} else if (imgHeight > imgHeightRelativeToWidth) {
 			imgHeight = imgHeightRelativeToWidth;
 		}
-		
+				
 		// shrink the icons until there's enough space between them
 		while (imgWidth > 10 && imgHeight > 10 &&
 				(calcIconReservedWidth(imp) - imgWidth < fontHeight / 2 || calcIconReservedHeight(imp) - fontHeight - imgHeight < fontHeight / 2)
+				||
+				// also shrink the icon while it is wider/higher than the bgImage's width/height
+				(imp.bgImage != null && ( imp.bgImage.getWidth() < imgWidth || imp.bgImage.getHeight() < imgHeight) )
 		) {
 //			System.out.println("h: " + (calcIconReservedHeight(imp) - fontHeight - imgHeight) + " fh: " +  fontHeight / 2);
 //			System.out.println("w: " + (calcIconReservedWidth(imp) - imgWidth) );
