@@ -215,8 +215,6 @@ public class Configuration {
 	public final static byte CFGBIT_AUTOZOOM = 78;
 	/** bit 79: Flag whether if available tone sequences should be played instead of sound samples */
 	public final static byte CFGBIT_SND_TONE_SEQUENCES_PREFERRED = 79;
-	/** bit 80: Flag whether to give a routing instruction when directly at the arrow */
-	public final static byte CFGBIT_SND_ROUTINGINSTRUCTION_AVOID_AT_ARROW = 80;
 	
 	/**
 	 * These are the database record ids for each configuration option

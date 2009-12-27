@@ -16,8 +16,8 @@ public class GuiSetupSound extends Form implements CommandListener {
 	private boolean[] selSndGps = new boolean[3];
 
 	private ChoiceGroup sndRoutingGroup=null;
-	private	String [] sndRouting = new String[3];
-	private	boolean[] selSndRouting = new boolean[3];
+	private	String [] sndRouting = new String[2];
+	private	boolean[] selSndRouting = new boolean[2];
 
 	private ChoiceGroup spdAlertGroup=null;
 	private	String [] spdAlert = new String[3];
@@ -46,10 +46,8 @@ public class GuiSetupSound extends Form implements CommandListener {
 			
 			sndRouting[0] = "Routing instructions";
 			selSndRouting[0]=Configuration.getCfgBitState(Configuration.CFGBIT_SND_ROUTINGINSTRUCTIONS);
-			sndRouting[1] = "Try to avoid directly at arrow";
-			selSndRouting[1]=Configuration.getCfgBitState(Configuration.CFGBIT_SND_ROUTINGINSTRUCTION_AVOID_AT_ARROW);
-			sndRouting[2] = "Destination reached";
-			selSndRouting[2]=Configuration.getCfgBitState(Configuration.CFGBIT_SND_DESTREACHED);
+			sndRouting[1] = "Destination reached";
+			selSndRouting[1]=Configuration.getCfgBitState(Configuration.CFGBIT_SND_DESTREACHED);
 			sndRoutingGroup = new ChoiceGroup("Navigation / Routing", Choice.MULTIPLE, sndRouting, null);
 			sndRoutingGroup.setSelectedFlags(selSndRouting);
 			append(sndRoutingGroup);
@@ -98,8 +96,7 @@ public class GuiSetupSound extends Form implements CommandListener {
 
 			sndRoutingGroup.getSelectedFlags(selSndRouting);
 			Configuration.setCfgBitState(Configuration.CFGBIT_SND_ROUTINGINSTRUCTIONS, selSndRouting[0], true);
-			Configuration.setCfgBitState(Configuration.CFGBIT_SND_ROUTINGINSTRUCTION_AVOID_AT_ARROW, selSndRouting[1], true);
-			Configuration.setCfgBitState(Configuration.CFGBIT_SND_DESTREACHED, selSndRouting[2], true);
+			Configuration.setCfgBitState(Configuration.CFGBIT_SND_DESTREACHED, selSndRouting[1], true);
 
 			Configuration.setSpeedTolerance((int)Float.parseFloat(spdAlertTolerance.getString()));
 

@@ -489,10 +489,8 @@ public class RouteInstructions {
 							if (intDistNow < PASSINGDISTANCE) {
 								if (iInstructionSaidArrow != iNow) { 
 									if (
-										 // when we should not avoid instructions directly at the arrow	
-										 !Configuration.getCfgBitState(Configuration.CFGBIT_SND_ROUTINGINSTRUCTION_AVOID_AT_ARROW)											
-										 // or the prepare instruction for this arrow has not been given
-										 || iPrepareInstructionSaidArrow != iNow
+										 // when the prepare instruction for this arrow has not been given
+										 iPrepareInstructionSaidArrow != iNow
 										 // or when it's the instruction that we arrived at the destination
 										 ||
 										 aNow == RI_DEST_REACHED
