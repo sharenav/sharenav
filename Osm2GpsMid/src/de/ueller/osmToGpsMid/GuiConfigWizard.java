@@ -561,6 +561,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			try {
 				System.out.println("Loading properties specified by GUI: " + propName);
 				config.loadPropFile(new FileInputStream(propName));
+				config.readBounds();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -898,6 +899,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	 * @see de.ueller.osmToGpsMid.SelectionListener#regionMarked(de.ueller.osmToGpsMid.model.Bounds)
 	 */
 	public void regionMarked(Bounds bound) {
+		System.out.println("Region marked: " + bound.toString());
 		if (config.getBounds().size() < Configuration.MAX_BOUND_BOXES)
 		{
 			config.addBounds(bound);

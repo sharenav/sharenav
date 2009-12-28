@@ -767,13 +767,8 @@ public class Configuration {
 					bounds.add(bound);
 				}
 			} else {
-				System.out.println("Note: No bounds were given - using [-180, -90, 180, 90]");
-				System.out.println("  This will create a GpsMid for the whole region");
-				System.out.println("  contained in " + planet);
-				Bounds bound = new Bounds();
-				bound.extend(-90.0, -180.0);
-				bound.extend(90.0, 180.0);
-				bounds.add(bound);
+				System.out.println("NOTE: No bounds were given. This will create a GpsMid");
+				System.out.println("  for the whole region contained in " + planet);
 			}
 		}
 		
