@@ -424,15 +424,13 @@ public class CreateGpsMidData implements FilenameFilter {
 					}
 				}
 			}
-			
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (FileNotFoundException fnfe) {
+			System.err.println("Unhandled FileNotFoundException: " + fnfe.getMessage());
+			fnfe.printStackTrace();
+		} catch (IOException ioe) {
+			System.err.println("Unhandled IOException: " + ioe.getMessage());
+			ioe.printStackTrace();
 		}
-
 	} 
 
 	public void renameAlternativeIconSizeToUsedIconSize(String prefixToRename) {
@@ -612,15 +610,15 @@ public class CreateGpsMidData implements FilenameFilter {
 					sbCopiedMedias.append("(REPLACED " + outputMediaName + ")");
 				}
 			}
-			catch(Exception e) {
+			catch (Exception e) {
 				sbCopiedMedias.append("(ERROR accessing destination file " + destDir + outputMediaName + ")");
 				mediaInclusionErrors++;
 				e.printStackTrace();
 			}
 			fromChannel.close();
 		}
-		catch(Exception e) {
-			System.out.println("Error accessing source file: " + mediaPath);
+		catch (Exception e) {
+			System.err.println("Error accessing source file: " + mediaPath);
 			sbCopiedMedias.append("(ERROR accessing source file " + mediaPath + ")");
 			mediaInclusionErrors++;
 			e.printStackTrace();
@@ -629,41 +627,44 @@ public class CreateGpsMidData implements FilenameFilter {
 	}
 
 	
-	private long exportMapToMid(int zl){
-// System.out.println("Total ways : " + parser.ways.size() + " Nodes : " +
-// parser.nodes.size());
+	private long exportMapToMid(int zl) {
+		// System.out.println("Total ways : " + parser.ways.size() + " Nodes : " +
+		// parser.nodes.size());
 		long outputLength = 0;
 		try {
 			FileOutputStream fo = new FileOutputStream(path+"/dict-"+zl+".dat");
 			DataOutputStream ds = new DataOutputStream(fo);
-// Node min=new Node(90f,180f,0);
-// Node max=new Node(-90f,-180f,0);
-			ds.writeUTF("DictMid"); // magig number
-			Bounds allBound=new Bounds();
+			// magic number
+			ds.writeUTF("DictMid");
+			Bounds allBound = new Bounds();
 			for (Way w1 : parser.getWays()) {				
-				if (w1.getZoomlevel(configuration) != zl) continue;
-				w1.used=false;
+				if (w1.getZoomlevel(configuration) != zl) {
+					continue;
+				}
+				w1.used = false;
 				allBound.extend(w1.getBounds());
 			}			
-			if (zl == ROUTEZOOMLEVEL){
+			if (zl == ROUTEZOOMLEVEL) {
 				// for RouteNodes
 				for (Node n : parser.getNodes()) {
 					n.used=false;
 					if (n.routeNode == null) continue;
-					allBound.extend(n.lat,n.lon);
+					allBound.extend(n.lat, n.lon);
 				}
 			} else {
 				for (Node n : parser.getNodes()) {
-					if (n.getZoomlevel(configuration) != zl) continue;
-					allBound.extend(n.lat,n.lon);
+					if (n.getZoomlevel(configuration) != zl) {
+						continue;
+					}
+					allBound.extend(n.lat, n.lon);
 				}
 			}			
-			tile[zl]=new Tile((byte) zl);
-			Sequence tileSeq=new Sequence();
-			tile[zl].ways=parser.getWays();
-			tile[zl].nodes=parser.getNodes();
+			tile[zl] = new Tile((byte) zl);
+			Sequence tileSeq = new Sequence();
+			tile[zl].ways = parser.getWays();
+			tile[zl].nodes = parser.getNodes();
 			// create the tiles and write the content 
-			outputLength += exportTile(tile[zl],tileSeq,allBound);
+			outputLength += exportTile(tile[zl], tileSeq, allBound);
 			tileFilesWritten = tileSeq.get();
 			
 			if (tile[zl].type != Tile.TYPE_ROUTECONTAINER && tile[zl].type != Tile.TYPE_CONTAINER) {
@@ -693,28 +694,29 @@ public class CreateGpsMidData implements FilenameFilter {
 				parser.freeUpDelayingNodes();
 				
 				long time = (System.currentTimeMillis() - startTime);
-				System.out.println("  Applied " + parser.trafficSignalCount + " traffic signals to "
-						+ Tile.numTrafficSignalRouteNodes + " route nodes, took "
-						+ time + " ms");
+				System.out.println("  Applied " + parser.trafficSignalCount + 
+						" traffic signals to " + Tile.numTrafficSignalRouteNodes + 
+						" route nodes, took " + time + " ms");
 
-				Sequence rnSeq=new Sequence();
+				Sequence rnSeq = new Sequence();
 				tile[zl].renumberRouteNode(rnSeq);
 				tile[zl].calcHiLo();
 				tile[zl].writeConnections(path, parser.getTurnRestrictionHashMap());
-		        tile[zl].type=Tile.TYPE_ROUTECONTAINER;
+		        tile[zl].type = Tile.TYPE_ROUTECONTAINER;
 			} 
-			Sequence s=new Sequence();
-			tile[zl].writeTileDict(ds,1,s,path);			
+			Sequence s = new Sequence();
+			tile[zl].writeTileDict(ds, 1, s, path);			
 			dictFilesWritten = s.get();
-			ds.writeUTF("END"); // Magic number
+			// Magic number
+			ds.writeUTF("END");
 			fo.close();
 
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (FileNotFoundException fnfe) {
+			System.err.println("Unhandled FileNotFoundException: " + fnfe.getMessage());
+			fnfe.printStackTrace();
+		} catch (IOException ioe) {
+			System.err.println("Unhandled IOException: " + ioe.getMessage());
+			ioe.printStackTrace();
 		}
 		return outputLength;
 	}
@@ -1192,9 +1194,8 @@ public class CreateGpsMidData implements FilenameFilter {
 		}
 	}
 
-	private void writeNode(Node n,DataOutputStream ds,int type, Tile t) throws IOException{
-		
-		int flags=0;
+	private void writeNode(Node n, DataOutputStream ds, int type, Tile t) throws IOException {
+		int flags = 0;
 		int nameIdx = -1;
 		if (type == INODE){
 			if (! "".equals(n.getName())){
@@ -1219,10 +1220,10 @@ public class CreateGpsMidData implements FilenameFilter {
 		double tmpLat = (MyMath.degToRad(n.lat - t.centerLat)) * MyMath.FIXPT_MULT;
 		double tmpLon = (MyMath.degToRad(n.lon - t.centerLon)) * MyMath.FIXPT_MULT;
 		if ((tmpLat > Short.MAX_VALUE) || (tmpLat < Short.MIN_VALUE)) {
-			System.out.println("Numeric overflow of latitude for node: " + n.id);
+			System.err.println("ERROR: Numeric overflow of latitude for node: " + n.id);
 		}
 		if ((tmpLon > Short.MAX_VALUE) || (tmpLon < Short.MIN_VALUE)) {
-			System.out.println("Numeric overflow of longitude for node: " + n.id);
+			System.err.println("ERROR: Numeric overflow of longitude for node: " + n.id);
 		}
 		ds.writeShort((short)tmpLat);
 		ds.writeShort((short)tmpLon);
@@ -1240,7 +1241,7 @@ public class CreateGpsMidData implements FilenameFilter {
 			ds.writeByte(n.getType(configuration));
 			if (configuration.enableEditingSupport) {
 				if (n.id > Integer.MAX_VALUE) {
-					System.out.println("WARNING: OSM-ID won't fit in 32 bits for way " + n);
+					System.err.println("ERROR: OSM-ID won't fit in 32 bits for way " + n);
 					ds.writeInt(-1);
 				} else {
 					ds.writeInt((int)n.id);
@@ -1249,15 +1250,11 @@ public class CreateGpsMidData implements FilenameFilter {
 		}
 	}
 
-
-
 	/**
 	 * @param c
 	 */
 	public void setConfiguration(Configuration c) {
 		this.configuration = c;
-		// TODO Auto-generated method stub
-		
 	}
 
 	/**
