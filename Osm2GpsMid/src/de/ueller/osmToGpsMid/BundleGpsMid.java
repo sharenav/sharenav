@@ -32,8 +32,6 @@ import java.util.zip.ZipOutputStream;
 
 import javax.swing.JOptionPane;
 
-import sun.font.CreatedFontTracker;
-
 import de.ueller.osmToGpsMid.model.Node;
 import de.ueller.osmToGpsMid.model.Relation;
 import de.ueller.osmToGpsMid.model.RouteAccessRestriction;
@@ -86,13 +84,11 @@ public class BundleGpsMid implements Runnable {
 		}
 		if (gcw != null) {
 			if (createSuccessfully) {
-				JOptionPane.showMessageDialog(gcw, "A GpsMid midlet was successfully create and can now be copied to your phone");
-				gcw.setVisible(false);
-				gcw.dispose();
+				JOptionPane.showMessageDialog(gcw, "A GpsMid midlet was successfully created and can now be copied to your phone.");
 			} else {
-				JOptionPane.showMessageDialog(gcw, "A fatal error occured during processing. Please have a look at the output logs");
+				JOptionPane.showMessageDialog(gcw, "A fatal error occured during processing. Please have a look at the output logs.");
 			}
-			
+			gcw.reenableClose();						
 		}
 	}
 

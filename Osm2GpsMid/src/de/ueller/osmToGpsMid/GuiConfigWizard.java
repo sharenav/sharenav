@@ -104,6 +104,8 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	JComboBox jcbSoundFormats;
 	JCheckBox jcbEditing;
 	JComboBox jcbCellSource;
+	JButton jbCreate;
+	JButton jbClose;
 	
 	private static final String CHOOSE_SRC = "Choose your map data source";
 	private static final String XAPI_SRC = "OsmXapi";
@@ -163,7 +165,6 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		gbc.gridy = 0;
 		add(map, gbc);
 		
-
 		
 		JPanel jpFiles = new JPanel(new GridBagLayout());
 		gbc.gridx = 0;
@@ -303,25 +304,25 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		gbc.weighty = 0;
 		jpOptions2.add(jcbCellSource, gbc);		
 		
-		JButton jbOk = new JButton("Create GpsMid midlet");
-		jbOk.setActionCommand("Create-click");
-		jbOk.addActionListener(this);
+		jbCreate = new JButton("Create GpsMid midlet");
+		jbCreate.setActionCommand("Create-click");
+		jbCreate.addActionListener(this);
 		gbc.gridwidth = 3;
 		gbc.weighty = 0;
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.gridx = 0;
 		gbc.gridy = 3;
-		add(jbOk, gbc);
+		add(jbCreate, gbc);
 
-		JButton jbCancel = new JButton("Close");
-		jbCancel.setActionCommand("Close-click");
-		jbCancel.addActionListener(this);
+		jbClose = new JButton("Close");
+		jbClose.setActionCommand("Close-click");
+		jbClose.addActionListener(this);
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.gridwidth = 3;
 		gbc.weighty = 0;
 		gbc.gridx = 3;
 		gbc.gridy = 3;
-		add(jbCancel, gbc);
+		add(jbClose, gbc);
 		
 		JButton jbHelp = new JButton("Help");
 		jbHelp.setActionCommand("Help-click");
@@ -352,8 +353,8 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			// Nothing to do
 		}
 		
-		jbCancel.setEnabled(false);
-		jbOk.setEnabled(false);
+		jbClose.setEnabled(false);
+		jbCreate.setEnabled(false);
 		jcbPlanet.setEnabled(false);
 		jcbProperties.setEnabled(false);
 		jcbStyle.setEnabled(false);
@@ -418,8 +419,9 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 					isAlreadyIn = true;
 				}
 			}
-			if (!isAlreadyIn)
+			if (!isAlreadyIn) {
 				jcbStyle.addItem(styleFile);
+			}
 			jcbStyle.setSelectedItem(styleFile);
 		}
 		jtfRouting.setText(config.useRouting);
@@ -923,4 +925,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		}
 	}
 
+	public void reenableClose() {
+		jbClose.setEnabled(true);
+	}
 }
