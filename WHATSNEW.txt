@@ -104,7 +104,7 @@ GpsMid 0.5.09
          you can reduce the number of files in the midlet, maybe making it possible to have larger maps
          on the mobile. However, having more ways in the tiles might require a device with
          more performance or memory to run GpsMid. Therefore the default maximum ways per tile is still 255. 
-       - New option maxDictDepth in .properties files for specifying th dictionary depth for tiles.       
+       - New option maxDictDepth in .properties files for specifying the dictionary depth for tiles.       
          With Osm2GpsMid 0.5.0 this was hardcoded to 5. Increasing the value to e.g. 10 will         
          decrease the number of dictionary files in the midlet but require more memory in the mobile.
        - New option useSounds to specify which sound formats to include into the midlet,
