@@ -28,19 +28,19 @@ public class TraceLayout extends LayoutManager {
 	public static final int WAYNAME = 6;
 	public static final int ROUTE_INTO = 7;
 	public static final int ROUTE_INSTRUCTION = 8;
-	public static final int ROUTE_OFFROUTE = 9;
-	public static final int ROUTE_DISTANCE = 10;
-	public static final int ROUTE_DURATION = 11;
-	public static final int SCALEBAR = 12;
-	public static final int SPEEDING_SIGN = 13;
-	public static final int SPEED_CURRENT = 14;
-	public static final int ZOOM_IN = 15;
-	public static final int ZOOM_OUT = 16;
-	public static final int RECENTER_GPS = 17;
-	public static final int SHOW_DEST = 18;
-	public static final int ALTITUDE = 19;
-	public static final int CURRENT_TIME = 20;
-	public static final int ETA = 21;
+	public static final int ROUTE_DISTANCE = 9;
+	public static final int ROUTE_DURATION = 10;
+	public static final int SCALEBAR = 11;
+	public static final int SPEEDING_SIGN = 12;
+	public static final int SPEED_CURRENT = 13;
+	public static final int ZOOM_IN = 14;
+	public static final int ZOOM_OUT = 15;
+	public static final int RECENTER_GPS = 16;
+	public static final int SHOW_DEST = 17;
+	public static final int ALTITUDE = 18;
+	public static final int CURRENT_TIME = 19;
+	public static final int ETA = 20;
+	public static final int ROUTE_OFFROUTE = 21;
 	public static final int ELE_COUNT = 22;
 
 	// special element ids
