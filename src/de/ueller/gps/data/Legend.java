@@ -29,7 +29,7 @@ public class Legend {
 	public final static byte MIN_PLACETYPE = 1; // city
 	public final static byte MAX_PLACETYPE = 5; // suburb
 	
-	//public final static byte NODE_MASK_ROUTENODELINK=0x1; //obsolete
+	//public final static byte NODE_MASK_ROUTENODELINK = 0x1; //obsolete
 	public final static byte NODE_MASK_TYPE = 0x2;
 	public final static byte NODE_MASK_NAME = 0x4;
 	public final static byte NODE_MASK_ROUTENODE = 0x8;
@@ -64,22 +64,23 @@ public class Legend {
 	 * to get the minimum distance use: <code>MAX_DIST_CITY[node.getType(null)]</code>
 	 */
 
-	public final static byte NAME_CITY=1;
-	public final static byte NAME_SUBURB=2;
-	public final static byte NAME_STREET=3;
-	public final static byte NAME_AMENITY=4;
+	public final static byte NAME_CITY = 1;
+	public final static byte NAME_SUBURB = 2;
+	public final static byte NAME_STREET = 3;
+	public final static byte NAME_AMENITY = 4;
 	
-	public final static byte OM_HIDE=0;
-	public final static byte OM_SHOWNORMAL=1;
-	public final static byte OM_OVERVIEW=2;
-	public final static byte OM_OVERVIEW2=4; // this is used to set overview mode for the element without setting the checkbox in the UI
-	public final static byte OM_MODE_MASK=OM_SHOWNORMAL | OM_OVERVIEW | OM_OVERVIEW2;
+	public final static byte OM_HIDE = 0;
+	public final static byte OM_SHOWNORMAL = 1;
+	public final static byte OM_OVERVIEW = 2;
+	// OM_OVERVIEW2 is used to set overview mode for the element without setting the checkbox in the UI.
+	public final static byte OM_OVERVIEW2 = 4;
+	public final static byte OM_MODE_MASK = OM_SHOWNORMAL | OM_OVERVIEW | OM_OVERVIEW2;
 	
-	public final static byte OM_NAME_ALL=0;
-	public final static byte OM_NO_NAME=8;
-	public final static byte OM_WITH_NAME=16;
-	public final static byte OM_WITH_NAMEPART=32;
-	public final static byte OM_NAME_MASK=OM_NO_NAME | OM_WITH_NAME | OM_WITH_NAMEPART;
+	public final static byte OM_NAME_ALL = 0;
+	public final static byte OM_NO_NAME = 8;
+	public final static byte OM_WITH_NAME = 16;
+	public final static byte OM_WITH_NAMEPART = 32;
+	public final static byte OM_NAME_MASK = OM_NO_NAME | OM_WITH_NAME | OM_WITH_NAMEPART;
 	
 
 	public final static int COLOR_MAP_BACKGROUND = 0;
@@ -167,11 +168,11 @@ public class Legend {
 	
 	private static String namePartRequired[] = new String[3];
 	
-	public static int tileScaleLevel[] = {Integer.MAX_VALUE, 900000, 180000, 45000}; 
+	public static int tileScaleLevel[] = { Integer.MAX_VALUE, 900000, 180000, 45000 }; 
 
 	private static TravelMode midletTravelModes[];	
 
-	private final static Logger logger=Logger.getInstance(Legend.class,Logger.TRACE);
+	private final static Logger logger = Logger.getInstance(Legend.class, Logger.TRACE);
 	
 	public Legend() throws IOException {
 		readLegend();
@@ -225,29 +226,30 @@ public class Legend {
 		}
 		//#endif
 		
-			
-		// read colors
+		/*
+		 * Read colors
+		 */
 		int count = (int) ds.readShort();
 		if (count != COLOR_COUNT) {
 			throw new IOException("Map file contains " + count + "colors but midlet's COLOR_COUNT is " + COLOR_COUNT);
 		}
-		for (int i=0; i<COLOR_COUNT; i++) {
+		for (int i = 0; i < COLOR_COUNT; i++) {
 			COLORS[i] = readDayOrNightColor(ds);
 		}
 		
-		/**
+		/*
 		 * Read Tile Scale Levels
 		 */
 		for (int i = 0; i < 4; i++) {
 			tileScaleLevel[i] = ds.readInt();
 		}
 		
-		/**
+		/*
 		 * Read Travel Modes
 		 */
 		count = (int) ds.readByte();
 		midletTravelModes = new TravelMode[count];
-		for (int i=0; i<count;i++) {
+		for (int i = 0; i < count; i++) {
 			midletTravelModes[i] = new TravelMode();
 			midletTravelModes[i].travelModeName = ds.readUTF();
 			midletTravelModes[i].maxPrepareMeters = ds.readShort();
@@ -261,7 +263,6 @@ public class Legend {
 			Configuration.setTravelMode(0);
 		}
 		
-		
 		readPOIdescriptions(ds);
 		readWayDescriptions(ds);
 
@@ -270,7 +271,7 @@ public class Legend {
 		 */
 		count = (int) ds.readByte();
 		soundFormats = new String[count];
-		for (int i=0; i<count;i++) {
+		for (int i = 0; i < count; i++) {
 			soundFormats[i] = ds.readUTF();
 		}
 		
@@ -279,11 +280,15 @@ public class Legend {
 	
 	private static void readPOIdescriptions(DataInputStream ds) throws IOException {		
 		Image generic = Image.createImage("/unknown.png");
-		pois = new POIdescription[ds.readByte()];
+		byte numPoiDesc = ds.readByte();
+		//#debug info
+		logger.info("Reading " + (numPoiDesc - 1) + " POI descriptions (+ 1 bogus) from legend.dat");
+		pois = new POIdescription[numPoiDesc];
 		for (int i = 0; i < pois.length; i++) {
 			pois[i] = new POIdescription();
-			if (ds.readByte() != i)
-				logger.error("Read legend had troubles");
+			if (ds.readByte() != i) {
+				logger.error("Read legend had trouble reading POI descriptions");
+			}
 			byte flags = ds.readByte();
 			pois[i].description = ds.readUTF();
 			//System.out.println("POI: " +  pois[i].description);
@@ -297,38 +302,39 @@ public class Legend {
 					pois[i].image = Image.createImage(Configuration.getMapResource(imageName));
 				} catch (IOException e) {
 					//#debug info
-					logger.info("could not open POI image " + imageName + " for " + pois[i].description);
+					logger.info("Could not open POI image " + imageName + " for " + pois[i].description);
 					pois[i].image = generic;
 				}				
 			}
 			if ((flags & LEGEND_FLAG_SEARCH_IMAGE) > 0) {
 				String imageName = ds.readUTF();
-				logger.debug("trying to open search image " + imageName);
+				logger.debug("Trying to open search image " + imageName);
 				try {
 					pois[i].searchIcon = Image.createImage(Configuration.getMapResource(imageName));
 				} catch (IOException e) {
 					//#debug info
-					logger.info("could not open POI image " + imageName + " for " + pois[i].description);
+					logger.info("Could not open POI image " + imageName + " for " + pois[i].description);
 					pois[i].searchIcon = generic;
 				}				
 			} else if (pois[i].image != null) {
 				pois[i].searchIcon = pois[i].image;
 			}
-			if ((flags & LEGEND_FLAG_MIN_IMAGE_SCALE) > 0)
+			if ((flags & LEGEND_FLAG_MIN_IMAGE_SCALE) > 0) {
 				pois[i].maxTextScale = ds.readInt();
-			else
-				pois[i].maxTextScale = pois[i].maxImageScale; 
+			} else {
+				pois[i].maxTextScale = pois[i].maxImageScale;
+			}
 			if ((flags & LEGEND_FLAG_TEXT_COLOR) > 0) {			
 				pois[i].textColor = ds.readInt();
 			} else {
 				pois[i].textColor = COLORS[COLOR_POI_LABEL_TEXT];
 			}
-			pois[i].overviewMode=OM_SHOWNORMAL;
+			pois[i].overviewMode = OM_SHOWNORMAL;
 			//#if polish.api.osm-editing
 			if (enableEdits) {
 				int noKVpairs = ds.readShort();
-				pois[i].osmTags = new String[noKVpairs*2];
-				for (int j = 0; j < noKVpairs*2; j++) {
+				pois[i].osmTags = new String[noKVpairs * 2];
+				for (int j = 0; j < noKVpairs * 2; j++) {
 					pois[i].osmTags[j] =  ds.readUTF();
 				}
 			}
@@ -348,13 +354,16 @@ public class Legend {
 		return color & 0x00FFFFFF;
 	}
 	
-	private static void readWayDescriptions(DataInputStream ds) throws IOException {		
-		Image generic = Image.createImage("/unknown.png");
-		ways = new WayDescription[ds.readByte()];		
+	private static void readWayDescriptions(DataInputStream ds) throws IOException {
+		byte numWayDesc = ds.readByte();
+		//#debug info
+		logger.info("Reading " + (numWayDesc - 1) + " way descriptions (+ 1 bogus) from legend.dat");
+		ways = new WayDescription[numWayDesc];		
 		for (int i = 0; i < ways.length; i++) {
 			ways[i] = new WayDescription();
-			if (ds.readByte() != i)
-				logger.error("Read legend had troubles");
+			if (ds.readByte() != i) {
+				logger.error("Read legend had trouble reading way descriptions");
+			}
 			byte flags = ds.readByte();
 			ways[i].hideable = ((flags & LEGEND_FLAG_NON_HIDEABLE) == 0);
 			ways[i].routeFlags = ds.readByte();			
@@ -367,20 +376,21 @@ public class Legend {
 			ways[i].wayWidth = ds.readByte();
 			ways[i].overviewMode = OM_SHOWNORMAL;
 			ways[i].wayDescFlags = ds.readInt();
-			if ((flags & LEGEND_FLAG_MIN_ONEWAY_ARROW_SCALE) > 0)
+			if ((flags & LEGEND_FLAG_MIN_ONEWAY_ARROW_SCALE) > 0) {
 				ways[i].maxOnewayArrowScale = ds.readInt();
-			else
+			} else {
 				ways[i].maxOnewayArrowScale = ways[i].maxScale; 
-			
-			if ((flags & LEGEND_FLAG_MIN_DESCRIPTION_SCALE) > 0)
+			}
+			if ((flags & LEGEND_FLAG_MIN_DESCRIPTION_SCALE) > 0) {
 				ways[i].maxDescriptionScale = ds.readInt();
-			else
+			} else {
 				ways[i].maxDescriptionScale = 15000;
+			}
 			//#if polish.api.osm-editing
 			if (enableEdits) {
 				int noKVpairs = ds.readShort();
-				ways[i].osmTags = new String[noKVpairs*2];
-				for (int j = 0; j < noKVpairs*2; j++) {
+				ways[i].osmTags = new String[noKVpairs * 2];
+				for (int j = 0; j < noKVpairs * 2; j++) {
 					ways[i].osmTags[j] = ds.readUTF();
 				}
 			}
@@ -401,6 +411,7 @@ public class Legend {
 	public static final Image getNodeImage(byte type)  {
 		return pois[type].image;
 	}
+	
 	public static final Image getNodeSearchImage(byte type)  {
 		return pois[type].searchIcon;
 	}
@@ -408,6 +419,7 @@ public class Legend {
 	public static final int getNodeMaxScale(byte type) {
 		return pois[type].maxImageScale;
 	}
+	
 	public static final int getNodeMaxTextScale(byte type) {
 		return pois[type].maxTextScale;
 	}
@@ -415,31 +427,35 @@ public class Legend {
 	public static final boolean isNodeImageCentered(byte type) {
 		return pois[type].imageCenteredOnNode;
 	}
+	
 	public static final boolean isNodeHideable(byte type) {
 		return pois[type].hideable;
 	}
+	
 	public static final byte getNodeOverviewMode(byte type) {
 		return pois[type].overviewMode;
 	}
+	
 	public static void setNodeOverviewMode(byte type, byte state) {
 		pois[type].overviewMode = state;
 	}
+	
 	public static void clearAllNodesOverviewMode() {
 		for (byte i = 1; i < getMaxType(); i++) {
 			pois[i].overviewMode = OM_SHOWNORMAL;
 		}
 	}	
 	public static final  String getNodeTypeDesc(byte type) {
-		if (type < 0 || type > pois.length) {
-			logger.error("ERROR: wrong type " + type);
+		if (type < 0 || type >= pois.length) {
+			logger.error("ERROR: Invalid POI type " + type + " requested!");
 			return null;
 		}
 		return pois[type].description;
 	}
 	
 	public static final WayDescription getWayDescription(byte type) {			
-		if (type >= ways.length) {
-			logger.error("Invalid type request: " + type);
+		if (type < 0 || type >= ways.length) {
+			logger.error("ERROR: Invalid way type " + type + " requested");
 			return null;
  		}
 		return ways[type];

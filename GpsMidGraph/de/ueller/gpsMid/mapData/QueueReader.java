@@ -100,7 +100,6 @@ public abstract class QueueReader implements Runnable {
 
 	public void run() {
 		Tile tt;
-		int loop;
 		// logger.info("DataReader Thread start ");
 		try {
 			while (!shut) {
@@ -139,7 +138,7 @@ public abstract class QueueReader implements Runnable {
 						logger.error("Out of memory reading tiles, trying to recover");
 						Trace.getInstance().dropCache();
 					} catch (final IOException e) {
-						logger.exception("Failed to read tile: ", e);
+						logger.exception("Failed to read tile", e);
 						synchronized (this) {
 							/* Start a fresh */
 							requestQueue.removeAllElements();
@@ -159,11 +158,11 @@ public abstract class QueueReader implements Runnable {
 				} catch (final OutOfMemoryError oome) {
 					logger.error("Out of memory while trying to read tiles. Not recovering");
 				} catch (final RuntimeException e) {
-					logger.exception("Excpetion in reading tiles, continueing never the less: ", e);
+					logger.exception("Exception reading tiles, continuing never the less", e);
 				}
 			}
 		} catch (final Exception e) {
-			logger.fatal("QueueReader thread crashed unexpectadly with error " + e.getMessage());
+			logger.fatal("QueueReader thread crashed unexpectedly with error " + e.getMessage());
 		}
 		// logger.info("DataReader Thread end ");
 	}

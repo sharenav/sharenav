@@ -1,8 +1,9 @@
-package de.ueller.gpsMid.mapData;
 /*
  * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net 
- * See Copying
+ * See COPYING
  */
+
+package de.ueller.gpsMid.mapData;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -31,7 +32,7 @@ public class QueueDataReader extends QueueReader implements Runnable {
 		
 	}
 		
-	public void readData(Tile t, Object notifyReady) throws IOException{
+	public void readData(Tile t, Object notifyReady) throws IOException {
 		logger.info("Reading tile: " + t);
 		SingleTile tt = (SingleTile) t;
 		InputStream is = Configuration.getMapResource("/t" + tt.zl + tt.fileId + ".d");
@@ -45,13 +46,13 @@ public class QueueDataReader extends QueueReader implements Runnable {
 		DataInputStream ds = new DataInputStream(is);
 		if (ds == null) {
 //			logger.error("file DataImputStream "+url+" not found" );
-			tt.state=0;
+			tt.state = 0;
 			is.close();
 			return;
 		}
 //		end open data from JAR
 //		logger.info("read Magic code");
-		if (ds.readByte()!=0x54) {
+		if (ds.readByte() != 0x54) {
 //			logger.error("not a MapMid-file");
 			throwError( "Not a MapMid-file", tt);
 		}
@@ -59,13 +60,13 @@ public class QueueDataReader extends QueueReader implements Runnable {
 		tt.centerLon = ds.readFloat();
 		//#debug debug
 		logger.debug("Center coordinate of tile: " + tt.centerLat + "/" + tt.centerLon);
-		int nodeCount=ds.readShort();
+		int nodeCount = ds.readShort();
 		short[] radlat = new short[nodeCount];
 		short[] radlon = new short[nodeCount];
-		int iNodeCount=ds.readShort();
+		int iNodeCount = ds.readShort();
 		//#debug trace
 		logger.trace("nodes total: " + nodeCount + " interestNode: " + iNodeCount);
-		int[] nameIdx=new int[iNodeCount];
+		int[] nameIdx = new int[iNodeCount];
 		for (int i = 0; i < iNodeCount; i++) {
 			nameIdx[i] = -1;
 		}
@@ -80,28 +81,28 @@ public class QueueDataReader extends QueueReader implements Runnable {
 		//#else
 		osmID = null;
 		//#endif
-		byte flag=0;
+		byte flag = 0;
 		//#debug trace
 		logger.trace("About to read nodes");
 		try {
-			for (int i=0; i< nodeCount;i++){
+			for (int i = 0; i < nodeCount; i++) {
 				//#debug error
 				//	logger.info("read coord :"+i+"("+nodeCount+")");
 				
-				flag=ds.readByte();
-								
+				flag = ds.readByte();
+		
 				radlat[i] = ds.readShort();
 				radlon[i] = ds.readShort();
 				
-				if ((flag & Legend.NODE_MASK_NAME) > 0){
+				if ((flag & Legend.NODE_MASK_NAME) > 0) {
 					if ((flag & Legend.NODE_MASK_NAMEHIGH) > 0) {
-						nameIdx[i]=ds.readInt();
+						nameIdx[i] = ds.readInt();
 					} else {
-						nameIdx[i]=ds.readShort();
+						nameIdx[i] = ds.readShort();
 					}
 				} 
-				if ((flag & Legend.NODE_MASK_TYPE) > 0){
-					type[i]=ds.readByte();
+				if ((flag & Legend.NODE_MASK_TYPE) > 0) {
+					type[i] = ds.readByte();
 					//#if polish.api.osm-editing
 					if (Legend.enableEdits) {
 						osmID[i] = ds.readInt();
@@ -110,40 +111,40 @@ public class QueueDataReader extends QueueReader implements Runnable {
 					
 				}
 			}
-			tt.nameIdx=nameIdx;
-			tt.nodeLat=radlat;
-			tt.nodeLon=radlon;
-			tt.type=type;
+			tt.nameIdx = nameIdx;
+			tt.nodeLat = radlat;
+			tt.nodeLon = radlon;
+			tt.type = type;
 		} catch (RuntimeException e) {
-			throwError(e, "reading nodes", tt);
+			throwError(e, "Reading nodes", tt);
 		}
 		logger.info("read nodes");
-		if (ds.readByte()!=0x55){			
+		if (ds.readByte() != 0x55) {			
 			logger.error("Reading nodes went wrong / start of ways not found");
 			throwError("Nodes not OK", tt);
 		}
-		int wayCount=ds.readShort();
+		int wayCount = ds.readShort();
 //		logger.trace("reading " + wayCount + " ways");
-		int lastread=0;
+		int lastread = 0;
 		try {
 			Way[] tmpWays = new Way[wayCount];
 			byte[] layers = new byte[wayCount];
 			short[] layerCount = new short[5];			
-			for (int i=0; i< wayCount;i++){				
-				byte flags=ds.readByte();
-				if (flags != 128){
+			for (int i = 0; i < wayCount; i++) {				
+				byte flags = ds.readByte();
+				if (flags != 128) {
 					Way w;
 					//#if polish.api.osm-editing
 					if (Legend.enableEdits) {
-						w = new EditableWay(ds,flags,tt,layers,i);
+						w = new EditableWay(ds, flags, tt, layers, i);
 					} else {
-						w = new Way(ds,flags,tt,layers,i);
+						w = new Way(ds, flags, tt, layers, i);
 					}
 					//#else
-					w=new Way(ds,flags,tt, layers, i);
+					w = new Way(ds, flags, tt, layers, i);
 					w.wayNrInFile = (short) i;
 					//#endif
-					tmpWays[i]=w;
+					tmpWays[i] = w;
 					/**
 					 * To save resources, only allow layers -2 .. +2
 					 */
@@ -155,7 +156,7 @@ public class QueueDataReader extends QueueReader implements Runnable {
 					layers[i] += 2;
 					layerCount[layers[i]]++;
 				}
-				lastread=i;
+				lastread = i;
 			}			
 			
 			/**
@@ -174,9 +175,10 @@ public class QueueDataReader extends QueueReader implements Runnable {
 				}
 			}			
 		} catch (RuntimeException e) {			
-			throwError(e, "Ways (last ok index " + lastread + " out of " + wayCount +")", tt);
+			throwError(e, "Ways (last ok index " + lastread + " out of " + 
+					wayCount + ")", tt);
 		}
-		if (ds.readByte() != 0x56){
+		if (ds.readByte() != 0x56) {
 			throwError("Ways not OK, failed to read final magic value", tt);
 		} else {
 //			logger.info("ready");
@@ -191,35 +193,38 @@ public class QueueDataReader extends QueueReader implements Runnable {
 			}
 		}
 		//#debug debug
-		logger.debug("DataReader ready "+ tt.fileId + " " + tt.nodeLat.length + " Nodes " + tt.ways.length + " Ways" );
+		logger.debug("DataReader ready "+ tt.fileId + " " + tt.nodeLat.length + 
+				" Nodes " + tt.ways.length + " Ways" );
 
 //		}
 
 	}
 
 	private void throwError(String string, SingleTile tt) throws IOException {
-		throw new IOException("MapMid-file corrupt: " + string + " zl=" + tt.zl + " fid=" + tt.fileId);
+		throw new IOException("MapMid-file corrupt: " + string + " zoomlevel=" + tt.zl + 
+				" fid=" + tt.fileId);
 		
 	}
 
-	private void throwError(RuntimeException e, String string, SingleTile tt) throws IOException {
-		e.printStackTrace();
-		throw new IOException("MapMid-file corrupt: " + string + " Problem was in: zl=" + tt.zl + " fid=" + tt.fileId + ": " + e.getMessage());
+	private void throwError(RuntimeException rte, String string, SingleTile tt) throws IOException {
+		throw new IOException("MapMid-file corrupt: " + string + 
+				" Problem was in: zoomlevel=" + tt.zl + " fid=" + tt.fileId + ": " + 
+				rte.getMessage());
 	}
 
-	public String toString(){
+	public String toString() {
 		int loop;
-		StringBuffer ret=new StringBuffer();
+		StringBuffer ret = new StringBuffer();
 		SingleTile tt;
 		ret.append("\nliving ");
-		for (loop=0; loop < livingQueue.size(); loop++){
-			tt=(SingleTile) livingQueue.elementAt(loop);
+		for (loop = 0; loop < livingQueue.size(); loop++) {
+			tt = (SingleTile) livingQueue.elementAt(loop);
 			ret.append(tt.toString());
 			ret.append(" ");
 		}
 		ret.append("\nrequest ");
-		for (loop=0; loop < requestQueue.size(); loop++){
-			tt=(SingleTile) requestQueue.elementAt(loop);
+		for (loop = 0; loop < requestQueue.size(); loop++) {
+			tt = (SingleTile) requestQueue.elementAt(loop);
 			ret.append(tt.toString());
 			ret.append(" ");
 		}
