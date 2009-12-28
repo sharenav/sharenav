@@ -1647,8 +1647,8 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			}
 			
 			if (Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_CLOCK_IN_MAP)) {
-
-				tl.ele[TraceLayout.CURRENT_TIME].setText(GpsMid.getClock(System.currentTimeMillis()));
+				e = tl.ele[TraceLayout.CURRENT_TIME]; // e is used *twice* below (also as vRelative)
+				e.setText(GpsMid.getClock(System.currentTimeMillis()));
 
  				/*
 				don't use new Date() - it is very slow on some Nokia devices			

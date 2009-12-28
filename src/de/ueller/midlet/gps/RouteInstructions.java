@@ -660,8 +660,8 @@ public class RouteInstructions {
 							 );
 					
 					if (Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_ETA_IN_MAP)) {
-	
-						Trace.tl.ele[TraceLayout.ETA].setText(GpsMid.getClock(System.currentTimeMillis() + remainingDurationFSecs * 200));
+						e = Trace.tl.ele[TraceLayout.ETA]; // e is used *twice* below (also as vRelative)
+						e.setText(GpsMid.getClock(System.currentTimeMillis() + remainingDurationFSecs * 200));
 		 				/*
 						don't use new Date() - it is very slow on some Nokia devices			
 						Calendar currentTime = Calendar.getInstance();
