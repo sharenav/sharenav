@@ -1,15 +1,21 @@
+/*
+ * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net 
+ * See COPYING
+ */
+
 package de.ueller.midlet.gps;
 
 import de.ueller.gps.data.Configuration;
 import javax.microedition.lcdui.Alert;
 
-/*
- * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net 
- * See Copying
+/** Provides an interface for the logging of messages.
+ * It mainly implements the different logging levels.
+ * There are many instances to distinguish the different "sources" (usually identical to
+ * classes) and their logging levels, but the active levels are determined by 
+ * class variables here. 
+ * The actual logging is done by the GpsMid instance that is passed to the constructor. 
+ * There can only be one such class.
  */
-
-
-
 public class Logger {
 	public final static int FATAL = 1;
 	public final static int ERROR = 2;
@@ -32,7 +38,7 @@ public class Logger {
 		this.source = getClassName(c);		
 	}
 
-	public Logger(Class c,int level) {
+	public Logger(Class c, int level) {
 		this.source = getClassName(c);
 		this.level = level;		
 	}
@@ -45,26 +51,32 @@ public class Logger {
 		return new Logger(c);
 	}
 
-	public static Logger getInstance(Class c, int level){
+	public static Logger getInstance(Class c, int level) {
 		if (app == null) {
 			return null;
 //			throw new Error("not initialized");
 		}
-		return new Logger(c,level);
+		return new Logger(c, level);
 	}
 
-	public void fatal(String msg){
+	/** Logs a fatal error. It is also displayed in an alert window. 
+	 */
+	public void fatal(String msg) {
 		if (level >= FATAL) {
 			app.log("F[" + source + msg);			
 			GpsMid.getInstance().alert("Fatal", msg, Alert.FOREVER);
 		}
 	}
 
-	public void error(String msg){		
+	/** Logs an error. It is also displayed in an alert window. 
+	 */
+	public void error(String msg) {		
 		error(msg, false);
 	}
 
-	public void error(String msg, boolean silent){		
+	/** Logs an error. It is also displayed in an alert window if silent is false. 
+	 */
+	public void error(String msg, boolean silent) {		
 		if (level >= ERROR) {
 			app.log("E[" + source + msg);
 			if (!silent) {
@@ -73,16 +85,22 @@ public class Logger {
 		}		
 	}
 
+	/** Logs an exception. It is also displayed in an alert window. 
+	 */
 	public void exception(String msg, Exception e) {		
 		error(msg + ": " + e + ": " + e.getMessage());
 		e.printStackTrace();		
 	}
 
+	/** Logs an exception. It is *not* displayed in an alert window. 
+	 */
 	public void silentexception(String msg, Exception e) {		
 		error(msg + ": " + e + ": " + e.getMessage(), true);
 		e.printStackTrace();		
 	}
 
+	/** Logs an information message, the highest level of log messages. 
+	 */
 	public void info(String msg) {
 		//#mdebug info
 		if (level >= INFO && infoEnabled) {
@@ -91,6 +109,8 @@ public class Logger {
 		//#enddebug
 	}
 
+	/** Logs a debug message, the second highest level of log messages. 
+	 */
 	public void debug(String msg) {
 		//#mdebug debug
 		if (level >= DEBUG && debugEnabled) {
@@ -99,6 +119,8 @@ public class Logger {
 		//#enddebug
 	}
 
+	/** Logs a trace message, the lowest level of log messages. 
+	 */
 	public void trace(String msg) {
 		//#mdebug debug
 		if (level >= TRACE && traceEnabled) {
