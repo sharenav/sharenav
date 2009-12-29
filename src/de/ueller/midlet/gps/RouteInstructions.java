@@ -488,18 +488,10 @@ public class RouteInstructions {
 							// if nearest route arrow is closer than PASSINGDISTANCE meters we're currently passing this route arrow
 							if (intDistNow < PASSINGDISTANCE) {
 								if (iInstructionSaidArrow != iNow) { 
-									if (
-										 // when the prepare instruction for this arrow has not been given
-										 iPrepareInstructionSaidArrow != iNow
-										 // or when it's the instruction that we arrived at the destination
-										 ||
-										 aNow == RI_DEST_REACHED
-									) {
-										// give routing instruction directly at the arrow
-										soundToPlay.append (getSoundInstruction(cNow.wayRouteFlags, aNow));
-								    	iInstructionSaidArrow = iNow;
-										soundMaxTimesToPlay=1;
-									}
+									// give routing instruction directly at the arrow
+									soundToPlay.append (getSoundInstruction(cNow.wayRouteFlags, aNow));
+							    	iInstructionSaidArrow = iNow;
+									soundMaxTimesToPlay=1;
 								}
 							} else {
 								sbRouteInstruction.append(" in " + intDistNow + "m");
