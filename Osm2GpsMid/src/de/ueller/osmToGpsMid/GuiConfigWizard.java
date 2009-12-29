@@ -55,9 +55,11 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.filechooser.FileFilter;
 
+import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
-import org.openstreetmap.gui.jmapviewer.MapMarkerRectangle;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapMarkerArea;
+import org.openstreetmap.gui.jmapviewer.MapArea;
+import org.openstreetmap.gui.jmapviewer.MemoryTileCache;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapRectangle;
 
 import de.ueller.osmToGpsMid.model.Bounds;
 
@@ -155,7 +157,9 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 				+ " (" + Configuration.getConfiguration().getBundleDate() + ")");
 		this.setLayout(gbl);
 		
-		map = new JMapViewer();
+		// Default constructor uses the DefaultMapController, so we need to use 
+		// the specialized constructor.
+		map = new JMapViewer(new MemoryTileCache(), 4);
 		SelectionMapController mapController = new SelectionMapController(map, this);
 		map.setSize(600, 400);
 		gbc.gridwidth = 9;
@@ -398,14 +402,17 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		
 	}
 	
-	private void addMapMarkers() {	
-		map.setMapMarkerAreaList(new LinkedList<MapMarkerArea>());
+	private void addMapMarkers() {
+		LinkedList<MapRectangle> rects = new LinkedList<MapRectangle>();
 		Vector<Bounds> bounds = config.getBounds();
 		for (Bounds b : bounds) {
-			MapMarkerRectangle boundMarker = new MapMarkerRectangle(Color.BLACK, 
-					new Color(0x2fffffaf, true), b.maxLat, b.maxLon, b.minLat, b.minLon);
-			map.addMapMarkerArea(boundMarker);
+			Coordinate boundTopLeft = new Coordinate(b.maxLat, b.maxLon);
+			Coordinate boundBottomRight = new Coordinate(b.minLat, b.minLon);
+			MapArea boundMarker = new MapArea(Color.BLACK, 
+					new Color(0x2fffff70, true), boundTopLeft, boundBottomRight);
+			rects.add(boundMarker);
 		}
+		map.setMapRectangleList(rects);
 	}
 	
 	private void resetPropertiesSelectors() {
@@ -477,7 +484,6 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	}
 
 	private boolean askOsmFile() {
-
 		JFileChooser chooser = new JFileChooser(System.getProperty("user.dir"));
 		FileFilter ff = new FileFilter() {
 			@Override
@@ -509,7 +515,6 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	}
 	
 	private void askStyleFile() {
-
 		JFileChooser chooser = new JFileChooser(System.getProperty("user.dir"));
 		FileFilter ff = new FileFilter() {
 			@Override
@@ -833,6 +838,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 					}
 				}
 				addMapMarkers();
+				map.setDisplayToFitMapRectangle();
 				resetPropertiesSelectors();
 			}
 			if (e.getSource() == jcbPlanet) {
