@@ -352,7 +352,7 @@ public class Configuration {
 	public static void read() {
 	logger = Logger.getInstance(Configuration.class, Logger.DEBUG);
 	RecordStore	database;
-		try {			
+		try {
 			database = RecordStore.openRecordStore("Receiver", true);
 			if (database == null) {
 				//#debug debug
@@ -1102,29 +1102,42 @@ public class Configuration {
 		autoRecenterToGpsMilliSecs = ms;
 		write(autoRecenterToGpsMilliSecs, RECORD_ID_AUTO_RECENTER_TO_GPS_MILLISECS);
 	}
-		
+	
+	/**
+	 * Opens a resource, either from the JAR, the file system or a ZIP archive, 
+	 * depending on the configuration, see mapFromJar and mapFileUrl.
+	 * @param name Full path of the resource
+	 * @return Stream which reads from the resource
+	 * @throws IOException if file could not be found
+	 */
 	public static InputStream getMapResource(String name) throws IOException {
 		InputStream is = null;
 		if (mapFromJar) {
-			is = QueueReader.class.getResourceAsStream(name);			
+			//#debug debug
+			logger.debug("Opening file from JAR: " + name);
+			is = QueueReader.class.getResourceAsStream(name);
+			if (is == null) {
+				throw new IOException("Could not find file "/*i:ExFNF1*/ + name + 
+						" in JAR"/*i:ExFNF2*/);
+			}
 		} else {
 			//#if polish.api.fileconnection
-			
 			try { 
 				if (mapFileUrl.endsWith("/")) { 
 					// directory mode 
 					name = mapFileUrl + name.substring(1);
-					//#debug info
-					logger.info("Opening file from filesystem: " + name);
+					//#debug debug
+					logger.debug("Opening file from filesystem: " + name);
 					FileConnection fc = (FileConnection) Connector.open(name, Connector.READ); 
 					is = fc.openInputStream(); 
 				} 
 				else { 
 					// zipfile mode 
-					if (mapZipFile == null) 
+					if (mapZipFile == null) {
 						mapZipFile = new ZipFile(mapFileUrl, -1);
-					//#debug info
-					logger.info("Opening file from zip-file: " + name);
+					}
+					//#debug debug
+					logger.debug("Opening file from zip-file: " + name);
 					is = mapZipFile.getInputStream(mapZipFile.getEntry(name.substring(1))); 
 				} 
 			} catch (Exception e) { 

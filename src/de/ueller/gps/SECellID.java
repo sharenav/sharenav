@@ -433,10 +433,9 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 		InputStream is ;
 		try {
 			is = Configuration.getMapResource(filename);
-			if (is == null) {
-				throw new IOException("Could not find file "/*i:ExFNF1*/ + filename);
-			}
 		} catch (IOException ioe) {
+			//#debug debug
+			logger.debug("Could not find Operator CellID file " + filename);
 			try {
 				/**
 				 * In order to reduce the number of cells, we combine all the lacs that
@@ -444,12 +443,9 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 				 */
 				filename = "/c" + cellLoc.mcc + cellLoc.mnc +".id";
 				is = Configuration.getMapResource(filename);
-				if (is == null) {
-					throw new IOException("Could not find file " + filename + " either");
-				}
 			} catch (IOException ioe2) {
 				//#debug debug
-				logger.debug("Could not find Operator CellID file");
+				logger.debug("Could not find file " + filename + " either");
 				return null;
 			}
 		}

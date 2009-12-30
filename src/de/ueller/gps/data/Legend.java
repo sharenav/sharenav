@@ -291,29 +291,29 @@ public class Legend {
 			}
 			byte flags = ds.readByte();
 			pois[i].description = ds.readUTF();
-			//System.out.println("POI: " +  pois[i].description);
+			//logger.debug("POI: " +  pois[i].description);
 			pois[i].imageCenteredOnNode = ds.readBoolean();
 			pois[i].maxImageScale = ds.readInt();
 			pois[i].hideable = ((flags & LEGEND_FLAG_NON_HIDEABLE) == 0);	
 			if ((flags & LEGEND_FLAG_IMAGE) > 0) {
 				String imageName = ds.readUTF();
-				//System.out.println("trying to open image " + imageName);
+				//logger.debug("Trying to open image " + imageName);
 				try {
 					pois[i].image = Image.createImage(Configuration.getMapResource(imageName));
 				} catch (IOException e) {
-					//#debug info
-					logger.info("Could not open POI image " + imageName + " for " + pois[i].description);
+					//#debug error
+					logger.error("Could not open POI icon " + imageName + " for " + pois[i].description);
 					pois[i].image = generic;
 				}				
 			}
 			if ((flags & LEGEND_FLAG_SEARCH_IMAGE) > 0) {
 				String imageName = ds.readUTF();
-				logger.debug("Trying to open search image " + imageName);
+				//logger.debug("Trying to open search image " + imageName);
 				try {
 					pois[i].searchIcon = Image.createImage(Configuration.getMapResource(imageName));
 				} catch (IOException e) {
-					//#debug info
-					logger.info("Could not open POI image " + imageName + " for " + pois[i].description);
+					//#debug error
+					logger.error("Could not open search icon " + imageName + " for " + pois[i].description);
 					pois[i].searchIcon = generic;
 				}				
 			} else if (pois[i].image != null) {
