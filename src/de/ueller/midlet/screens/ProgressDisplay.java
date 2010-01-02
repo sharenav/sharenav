@@ -93,12 +93,18 @@ public class ProgressDisplay implements CommandListener {
 			// Create a progress bar that gives an indication about how much has 
 			// already been exported.
 			progressbar = new Gauge(null, false, progEndValue, progrMode);
-			progressDisplay.setIndicator(progressbar);
 		} else {
 			progressDisplay.setTitle(title);
 			progressbar.setMaxValue(progEndValue);
 			progressbar.setValue(progrMode);
-			progressDisplay.setIndicator(progressbar);
+		}
+		try {
+			/* MicroEmulator throws an exception:
+			 *  java.lang.IllegalArgumentException: This gauge cannot be added to an Alert
+			 */ 
+			progressDisplay.setIndicator(progressbar);			
+		} catch (Exception e) {
+			logger.info("Could not set progressbar, " + e.getMessage());
 		}
 		// Empty string buffer for alert text.
 		sbProgress = new StringBuffer();
