@@ -199,7 +199,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private TextField  tfOpencellidApikey;
 	private ChoiceGroup rawLogCG;
 	private ChoiceGroup mapSrc;
-	private Gauge gaugeDetailBoost; 
 	private ChoiceGroup rotationGroup;
 	private ChoiceGroup nightModeGroup;
 	private ChoiceGroup renderOpts;
@@ -422,11 +421,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		renders[1] = "as streets";
 		renderOpts = new ChoiceGroup("Rendering Options:", Choice.EXCLUSIVE, renders ,null);
 		menuDisplayOptions.append(renderOpts);
-
-		// gaugeDetailBoost = new Gauge("Zoom Detail Boost", true, 3, 0);
-		// gaugeDetailBoost = new Gauge("Scale Detail Level", true, 3, 0);
-		gaugeDetailBoost = new Gauge("Increase Detail of lower Zoom Levels", true, 3, 0);
-		menuDisplayOptions.append(gaugeDetailBoost);
 		
 		String [] metricUnit = new String[1];
 		metricUnit[0] = "metric units";
@@ -766,8 +760,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_AIR_DISTANCE_IN_MAP, mapInfoOpts.isSelected(4));
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_CLOCK_IN_MAP, mapInfoOpts.isSelected(5));
 				
-				Configuration.setDetailBoost(gaugeDetailBoost.getValue(), true); 
-				
 				String secs=tfAutoRecenterToGpsSecs.getString(); 
 				Configuration.setAutoRecenterToGpsMilliSecs( 
 						(int) (Float.parseFloat(secs)) * 1000
@@ -967,7 +959,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				metricUnits.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_METRIC));
 				SingleTile.newPOIFont();
 				WaypointsTile.useNewWptFont();
-				gaugeDetailBoost.setValue(Configuration.getDetailBoostDefault());
+
 				// convert bits from backlight flag into selection states
 				boolean[] sellight = new boolean[7];
 				sellight[0]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_ON);
