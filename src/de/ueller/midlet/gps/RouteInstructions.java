@@ -12,6 +12,7 @@ import javax.microedition.lcdui.Graphics;
 
 import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.Configuration;
+import de.ueller.gps.tools.DateTimeTools;
 import de.ueller.gps.tools.LayoutElement;
 import de.ueller.midlet.gps.data.IntPoint;
 import de.ueller.midlet.gps.data.MoreMath;
@@ -653,7 +654,7 @@ public class RouteInstructions {
 					
 					if (Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_ETA_IN_MAP)) {
 						e = Trace.tl.ele[TraceLayout.ETA]; // e is used *twice* below (also as vRelative)
-						e.setText(GpsMid.getClock(System.currentTimeMillis() + remainingDurationFSecs * 200));
+						e.setText(DateTimeTools.getClock(System.currentTimeMillis() + remainingDurationFSecs * 200));
 		 				/*
 						don't use new Date() - it is very slow on some Nokia devices			
 						Calendar currentTime = Calendar.getInstance();

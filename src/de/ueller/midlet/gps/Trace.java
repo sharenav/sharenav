@@ -41,6 +41,7 @@ import de.ueller.gps.data.Satelit;
 
 import de.ueller.gps.nmea.NmeaInput;
 import de.ueller.gps.sirf.SirfInput;
+import de.ueller.gps.tools.DateTimeTools;
 import de.ueller.gps.tools.HelperRoutines;
 import de.ueller.gps.tools.IconActionPerformer;
 import de.ueller.gps.tools.LayoutElement;
@@ -1648,7 +1649,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			
 			if (Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_CLOCK_IN_MAP)) {
 				e = tl.ele[TraceLayout.CURRENT_TIME]; // e is used *twice* below (also as vRelative)
-				e.setText(GpsMid.getClock(System.currentTimeMillis()));
+				e.setText(DateTimeTools.getClock(System.currentTimeMillis()));
 
  				/*
 				don't use new Date() - it is very slow on some Nokia devices			
