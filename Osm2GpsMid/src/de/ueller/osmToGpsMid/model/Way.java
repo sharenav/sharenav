@@ -411,6 +411,10 @@ public class Way extends Entity implements Comparable<Way> {
 		return res;
 	}
 
+	public String toUrl() {
+		return "http://www.openstreetmap.org/browse/way/" + id;
+	}
+	
 	/**
 	 * @return
 	 */

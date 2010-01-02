@@ -227,26 +227,31 @@ public class RouteData {
 //					System.out.println("Resolved viaWay x fromWay to node " + n.node.id);
 				}
 			}
-			if (viaWayRouteNodes.size() >= 2) {
+			if (viaWayRouteNodes.size() >= 2 && turn.viaRouteNode != null && turn.additionalViaRouteNodes[0] != null) {
 				//  fill in the remaining viaRouteNodes into the array so the result is ordered with route nodes from the fromWay to the toWay exclusively
-				for (RouteNode n:viaWayRouteNodes) {
+				for (RouteNode n:viaWayRouteNodes) {					
 					if (n.id != turn.viaRouteNode.id && n.id != turn.additionalViaRouteNodes[0].id) {
 						turn.additionalViaRouteNodes[startEntry] = n; // and becomes the first additionalViaRouteNode
 						startEntry += direction;
 					}
 				}
-				System.out.println("  viaRouteNodes on viaWay " + restrictionViaWay.id + ":");
+				System.out.println("  viaRouteNodes on viaWay " + restrictionViaWay.toUrl() + ":");
 				for (RouteNode n:turn.additionalViaRouteNodes) {
-					System.out.println("  " + n.node.id);					
+					System.out.println("    " + n.node.toUrl());					
 				}
-				System.out.println(turn.viaRouteNode.node.id);									
-			}
-			
-			if (viaWayRouteNodes.size() >= 2 && turn.viaRouteNode != null && turn.additionalViaRouteNodes[0] != null) {
+				System.out.println("    " + turn.viaRouteNode.node.toUrl());									
+
 				parser.getTurnRestrictionHashMap().put(new Long(turn.viaRouteNode.node.id), turn);
 				numViaWaysResolved++;
 			} else {
-				System.out.println("  Could not resolve route nodes for viaWay " + restrictionViaWay.id);				
+				System.out.println("  WARNING: Could not resolve viaRouteNodes");
+				System.out.println("    for viaWay " + restrictionViaWay.toUrl());
+				if ( turn.additionalViaRouteNodes[0] == null) {
+					System.out.println("    fromWay " + restrictionFromWay.toUrl() + " is not connected");	
+				}
+				if (turn.viaRouteNode == null) {
+					System.out.println("    toWay " + restrictionToWay.toUrl() + " is not connected");	
+				}
 			}
 		}
 		System.out.println("  " + numViaWaysResolved + " viaWays resolved");
