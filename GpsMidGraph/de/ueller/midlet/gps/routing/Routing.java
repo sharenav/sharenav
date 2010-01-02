@@ -35,6 +35,8 @@ public class Routing implements Runnable {
 	private final RouteBaseTile tile;
 	private RouteNode routeFrom;
 	private RouteNode routeTo;
+	private volatile PositionMark fromMark;
+	private volatile PositionMark toMark;	
 	private final Trace parent;
 	private int bestTotal;
 	private long nextUpdate;
@@ -581,30 +583,69 @@ public class Routing implements Runnable {
 	} 
 
 
-	public void solve (PositionMark fromMark,PositionMark toMark) {
-
-		logger.info("Calculating route from " + fromMark + " to " + toMark);
-
-		// when we search the closest routeNode, we must be able to access all routeNodes, not only the mainStreetNet one's
-		Routing.onlyMainStreetNet = false;
-
-		// when we search for the closest routeNode, we need to reload the route tiles because the travel mode might have changed 
-		tile.cleanup(-1);
+	public void solve(PositionMark fromMark,PositionMark toMark) {
+		this.fromMark = fromMark;
+		this.toMark = toMark;
 		
-/*
- * TODO: if we would cleanup the route tiles only when the travel mode changed, this would result in very fast route recalculations
- * However it would require better memory management, maybe to clean up the route tiles only as much as required
-		// when we search for the closest routeNode, reload the route tiles only if the travel mode changed 
-		if (tile.travelModeNr != Configuration.getTravelModeNr()) { 
-			tile.cleanup(-1);
-			tile.travelModeNr = Configuration.getTravelModeNr();
-		}
-*/
+		logger.info("Calculating route from " + fromMark + " to " + toMark);
+		processorThread = new Thread(this);
+		processorThread.setPriority(Thread.NORM_PRIORITY);
+		processorThread.start();		
+	}
+		
+
+	private int getNearestSeg(Way w,float lat, float lon,float[] lats,float[] lons){
+			float minDistSq=Float.MAX_VALUE;
+			int startAt=0;
+			int max=lats.length -1;
+			for (int u=0;u<max;u++){
+				  float distSq = MoreMath.ptSegDistSq(
+						  lats[u],
+						  lons[u],
+						  lats[u+1],
+						  lons[u+1],
+						  lat,
+						  lon);
+//				  logger.debug("dist:" + distSq + "  minDist:" + minDistSq);
+				  if (distSq < minDistSq){
+//					  logger.debug("index " + (u+1) + " is actual min");
+					  minDistSq=distSq;
+					  startAt=u+1;
+				  }
+			}
+		return startAt;
+	}
+	
+	private RouteNode findNextRouteNode(int begin,float lat, float lon,float[] lats,float[] lons){
+		RouteNode rn=null;
+		for (int v=begin;v < lats.length; v++){
+			//#debug debug
+			logger.debug("search point "+ lats[v] +"," + lons[v]);
+			rn=tile.getRouteNode(lats[v], lons[v]);
+			if (rn !=null){return rn;}
+		} 
+		return null;
+	}
+	private RouteNode findPrevRouteNode(int end,float lat, float lon,float[] lats,float[] lons){
+		RouteNode rn=null;
+		for (int v=end;v >= 0; v--){
+			//#debug debug
+			logger.debug("search point "+ lats[v] +"," + lons[v]);
+			rn=tile.getRouteNode(lats[v], lons[v]);
+			if (rn !=null){return rn;}
+		} 
+		return null;
+	}
+	
+		/**
+	 * prepares for solving a requested route, e.g. by determining the closest route nodes at the start and destination ways
+	 * @return true, if preparing was successfull
+	 */
+	private boolean prepareSolving() {
 		try {
 			if (toMark == null) {
 				parent.receiveMessage("Please set destination first");
-				parent.setRoute(null);
-				return;
+				return false;
 			} 
 			
 			RouteNode startNode=new RouteNode();
@@ -627,8 +668,7 @@ public class Routing implements Runnable {
 			parent.searchNextRoutableWay(toMark);
 			if (toMark.entity == null) {
 				parent.receiveMessage("No way at destination");
-				parent.setRoute(null);
-				return;
+				return false;
 			}
 			
 			logger.info("Calculating route from " + fromMark + " to " + toMark);
@@ -730,8 +770,7 @@ public class Routing implements Runnable {
 			RouteNode prefNode = findPrevRouteNode(nearestSeg - 1, toMark.lat, toMark.lon, toMark.nodeLat, toMark.nodeLon);
 			if (prefNode == null) {
 				parent.receiveMessage("No prev route node at destination");
-				parent.setRoute(null);
-				return;				
+				return false;
 			}
 			// TODO: fill in bearings and cost
 			Connection newCon=new Connection(routeTo,0,(byte)0,(byte)0, -4);
@@ -749,78 +788,53 @@ public class Routing implements Runnable {
 			}
 			finalNodeId1 = prefNode.id;
 			finalDestPathSegNodeDummy1.radlat = toMark.nodeLat[finalSeg];
-			finalDestPathSegNodeDummy1.radlon = toMark.nodeLon[finalSeg];			
+			finalDestPathSegNodeDummy1.radlon = toMark.nodeLon[finalSeg];
+			
 			if (routeTo != null) {
 				parent.cleanup();
 				System.gc();
 				//#debug error
 				logger.info("free mem: "+runtime.freeMemory());
-				processorThread = new Thread(this);
-				processorThread.setPriority(Thread.NORM_PRIORITY);
-				processorThread.start();
-			} else {
-				parent.setRoute(null);
+				return true;
 			}
+
 		} catch (Exception e) {
 			//parent.receiveMessage("Routing exception " + e.getMessage());
 			// show that there was exception as an alert so we can see in the title bar where the exception occured
 			parent.alert("Routing Exception", "" + e.getMessage(), 5000);
 			e.printStackTrace();
-			parent.setRoute(null);
 		}
-	}
-		
-
-	private int getNearestSeg(Way w,float lat, float lon,float[] lats,float[] lons){
-			float minDistSq=Float.MAX_VALUE;
-			int startAt=0;
-			int max=lats.length -1;
-			for (int u=0;u<max;u++){
-				  float distSq = MoreMath.ptSegDistSq(
-						  lats[u],
-						  lons[u],
-						  lats[u+1],
-						  lons[u+1],
-						  lat,
-						  lon);
-//				  logger.debug("dist:" + distSq + "  minDist:" + minDistSq);
-				  if (distSq < minDistSq){
-//					  logger.debug("index " + (u+1) + " is actual min");
-					  minDistSq=distSq;
-					  startAt=u+1;
-				  }
-			}
-		return startAt;
+		return false;
 	}
 	
-	private RouteNode findNextRouteNode(int begin,float lat, float lon,float[] lats,float[] lons){
-		RouteNode rn=null;
-		for (int v=begin;v < lats.length; v++){
-			//#debug debug
-			logger.debug("search point "+ lats[v] +"," + lons[v]);
-			rn=tile.getRouteNode(lats[v], lons[v]);
-			if (rn !=null){return rn;}
-		} 
-		return null;
-	}
-	private RouteNode findPrevRouteNode(int end,float lat, float lon,float[] lats,float[] lons){
-		RouteNode rn=null;
-		for (int v=end;v >= 0; v--){
-			//#debug debug
-			logger.debug("search point "+ lats[v] +"," + lons[v]);
-			rn=tile.getRouteNode(lats[v], lons[v]);
-			if (rn !=null){return rn;}
-		} 
-		return null;
-	}
 	
 	private final Vector solve () {
+		// when we search the closest routeNode, we must be able to access all routeNodes, not only the mainStreetNet one's
+		Routing.onlyMainStreetNet = false;
+
+		// when we search for the closest routeNode, we need to reload the route tiles because the travel mode might have changed 
+		tile.cleanup(-1);
+		
+/*
+ * TODO: if we would cleanup the route tiles only when the travel mode changed, this would result in very fast route recalculations
+ * However it would require better memory management, maybe to clean up the route tiles only as much as required
+		// when we search for the closest routeNode, reload the route tiles only if the travel mode changed 
+		if (tile.travelModeNr != Configuration.getTravelModeNr()) { 
+			tile.cleanup(-1);
+			tile.travelModeNr = Configuration.getTravelModeNr();
+		}
+*/
+		
+		// create from and to connections
+		if (! prepareSolving()) {
+			return null;
+		}		
+		
 		try {
 			GraphNode solution=search(routeTo);
 			nodes.removeAllElements();
 			open.removeAll();
 			closed.removeAll();
-			//tile.cleanup(-1); // we already cleaned up in solve(fromMark, toMark)
 			if (solution == null) {
 				return null; // cancel route calculation 2/2
 			}
