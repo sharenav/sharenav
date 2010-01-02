@@ -8,8 +8,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
-import de.ueller.midlet.gps.Logger;
-
 public class DateTimeTools  {
 	private final static int milliSecsPerSecond = 1000; // 1000 milliSecs;
 	private final static int milliSecsPerMinute = 60 * milliSecsPerSecond; // 60 seconds * 1000 milliSecs;
@@ -19,7 +17,11 @@ public class DateTimeTools  {
 	private static int differenceMilliSecs = -1;
 	private static long lastDateCallMillis = 0;
 
+	private static int lastHoursUTC = -1;
+	private static long lastTimeMillisUTC = 0;
+	private static String dateUTC;
 
+	
 	/** returns a string containing the local clock time, e.g. "20:15"
 	 *  we have our own code for calculating the clock time that calls "new Date()" only initially and once per minute
 	 *  because "new Date()" is very slow on some Nokia devices and thus not suited for repeated calls
@@ -47,6 +49,31 @@ public class DateTimeTools  {
 		int minutesLocal = ((milliSecsSinceMidnightLocal / milliSecsPerMinute) % 60);
 	
 		return hoursLocal + ":" + formatInt2(minutesLocal);
+	}
+
+	
+	/** returns a string containing the UTC-Date-time, e.g. "2009-11-20-T20:15Z"
+	 *  we have our own code for calculating the clock time that calls "new Date()" only seldom
+	 *  because "new Date()" is very slow on some Nokia devices and thus not suited for frequent calls
+	 */ 
+	public static String getUTCDateTime(long timeMillisUTC) {
+		int milliSecsSinceMidnightUTC =  (int) ((timeMillisUTC) % milliSecsPerDay);
+		int hoursUTC = (int) ((milliSecsSinceMidnightUTC / milliSecsPerHour) % 24);
+		int minutesUTC = (int) (milliSecsSinceMidnightUTC / milliSecsPerMinute) % 60;
+		int secondsUTC = (int) (milliSecsSinceMidnightUTC / milliSecsPerSecond) % 60;
+
+		/*
+		 * when the hour is different than the calculated hour of the last time or the
+		 * difference to the last calculated date is more than a day, a date calculation is required
+		 */
+		if (lastHoursUTC != hoursUTC || Math.abs(timeMillisUTC - lastTimeMillisUTC) >= milliSecsPerDay ) {
+			Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GMT")); // GMT and UTC only differ up to 0.9 secs
+			c.setTime( new Date( timeMillisUTC ) );		
+			dateUTC = c.get(Calendar.YEAR) + "-" + formatInt2(c.get(Calendar.MONTH) + 1) + "-" + formatInt2(c.get(Calendar.DAY_OF_MONTH));
+			lastTimeMillisUTC = timeMillisUTC;
+			lastHoursUTC = hoursUTC;
+		}		
+		return dateUTC + "T" + hoursUTC + ":" + formatInt2(minutesUTC) + ":" + formatInt2(secondsUTC) + "Z";
 	}
 
 	/**

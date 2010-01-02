@@ -38,6 +38,7 @@ import de.ueller.midlet.gps.importexport.GpxImportHandler;
 import de.ueller.midlet.gps.importexport.GpxParser;
 import de.ueller.midlet.gps.tile.PaintContext;
 import de.ueller.midlet.screens.InputListener;
+import de.ueller.gps.tools.DateTimeTools;
 import de.ueller.gps.tools.HelperRoutines;
 import de.ueller.midlet.gps.TrackPlayer;
 
@@ -78,7 +79,7 @@ public class Gpx extends Tile implements Runnable, InputListener {
 	private String url = null;
 	private String waypointsSaveFileName = null;
 	
-	private Date dateStreamWayPt = new Date();
+	//private Date dateStreamWayPt = new Date();
 	
 	/** Value for mJobState: No job */
 	private static final int JOB_IDLE = 0;
@@ -661,9 +662,9 @@ public class Gpx extends Tile implements Runnable, InputListener {
 		if (newTrackName == null) {
 			StringBuffer trkName = new StringBuffer();
 			// TODO: Should we change the format?
-			trkName.append(cal.get(Calendar.YEAR)).append("-").append(formatInt2(cal.get(Calendar.MONTH) + 1));
-			trkName.append("-").append(formatInt2(cal.get(Calendar.DAY_OF_MONTH))).append("_");
-			trkName.append(formatInt2(cal.get(Calendar.HOUR_OF_DAY))).append("-").append(formatInt2(cal.get(Calendar.MINUTE)));
+			trkName.append(cal.get(Calendar.YEAR)).append("-").append(DateTimeTools.formatInt2(cal.get(Calendar.MONTH) + 1));
+			trkName.append("-").append(DateTimeTools.formatInt2(cal.get(Calendar.DAY_OF_MONTH))).append("_");
+			trkName.append(DateTimeTools.formatInt2(cal.get(Calendar.HOUR_OF_DAY))).append("-").append(DateTimeTools.formatInt2(cal.get(Calendar.MINUTE)));
 			trackName = trkName	.toString();
 		} else {
 			// TODO: what to do if track with this name exists?
@@ -1267,7 +1268,7 @@ public class Gpx extends Tile implements Runnable, InputListener {
 		float lat, lon;
 		short ele;
 		long time;
-		Date date = new Date();
+//		Date date = new Date();
 		
 		openTrackDatabase();
 		DataInputStream dis1 = new DataInputStream(new ByteArrayInputStream(
@@ -1326,8 +1327,10 @@ public class Gpx extends Tile implements Runnable, InputListener {
 				sb.setLength(0);
 				sb.append("<trkpt lat='").append(lat).append("' lon='").append(lon).append("'>\r\n");
 				sb.append("<ele>").append(ele).append("</ele>\r\n");
-				date.setTime(time);
-				sb.append("<time>").append(formatUTC(date)).append("</time>\r\n");
+//				date.setTime(time);
+//				sb.append("<time>").append(formatUTC(date)).append("</time>\r\n");
+				sb.append("<time>").append(DateTimeTools.getUTCDateTime(time)).append("</time>\r\n");
+				//System.out.println(DateTimeTools.getUTCDateTime(time) + " / " + formatUTC(date));
 				sb.append("</trkpt>\r\n");
 				writeUTF(oS, sb);
 			}
@@ -1381,8 +1384,9 @@ public class Gpx extends Tile implements Runnable, InputListener {
 		// TODO: explain When will timeMillis of a wayPt be 0 ?
 		if (wayPt.timeMillis != 0)
 		{
-			dateStreamWayPt.setTime(wayPt.timeMillis);
-			sb.append("<time>").append(formatUTC(dateStreamWayPt)).append("</time>\r\n");			
+			//dateStreamWayPt.setTime(wayPt.timeMillis);
+			//sb.append("<time>").append(formatUTC(dateStreamWayPt)).append("</time>\r\n");			
+			sb.append("<time>").append(DateTimeTools.getUTCDateTime(wayPt.timeMillis)).append("</time>\r\n");
 		}
 		// fix and sats are not filled yet so we don't export them either.
 		// sym and type are not exported yet but they could be mapped to strings.
@@ -1563,35 +1567,35 @@ public class Gpx extends Tile implements Runnable, InputListener {
 		return false;
 	}
 	
-	/**
-	 * Formats an integer to 2 digits, as used for example in time.
-	 * I.e. 3 gets printed as 03. 
-	 **/
-	private static final String formatInt2(int n) {
-		if (n < 10) {
-			return "0" + n;
-		} else {
-			return Integer.toString(n);
-		}	
-	}
-
-	/**
-	 * Date-Time formatter that corresponds to the standard UTC time as used in XML
-	 * @param time Time to be formatted
-	 * @return String containing the formatted time
-	 */
-	private static final String formatUTC(Date time) {
-		// TODO: This function needs optimising. It has a too high object churn.
-		Calendar c = null;
-		if (c == null) {
-			c = Calendar.getInstance();
-		}
-		c.setTime(time);
-		return c.get(Calendar.YEAR) + "-" + formatInt2(c.get(Calendar.MONTH) + 1) + "-" +
-		formatInt2(c.get(Calendar.DAY_OF_MONTH)) + "T" + formatInt2(c.get(Calendar.HOUR_OF_DAY)) + ":" +
-		formatInt2(c.get(Calendar.MINUTE)) + ":" + formatInt2(c.get(Calendar.SECOND)) + "Z";
-		
-	}
+//	/**
+//	 * Formats an integer to 2 digits, as used for example in time.
+//	 * I.e. 3 gets printed as 03. 
+//	 **/
+//	private static final String formatInt2(int n) {
+//		if (n < 10) {
+//			return "0" + n;
+//		} else {
+//			return Integer.toString(n);
+//		}	
+//	}
+//
+//	/**
+//	 * Date-Time formatter that corresponds to the standard UTC time as used in XML
+//	 * @param time Time to be formatted
+//	 * @return String containing the formatted time
+//	 */
+//	private static final String formatUTC(Date time) {
+//		// TODO: This function needs optimising. It has a too high object churn.
+//		Calendar c = null;
+//		if (c == null) {
+//			c = Calendar.getInstance();
+//		}
+//		c.setTime(time);
+//		return c.get(Calendar.YEAR) + "-" + formatInt2(c.get(Calendar.MONTH) + 1) + "-" +
+//		formatInt2(c.get(Calendar.DAY_OF_MONTH)) + "T" + formatInt2(c.get(Calendar.HOUR_OF_DAY)) + ":" +
+//		formatInt2(c.get(Calendar.MINUTE)) + ":" + formatInt2(c.get(Calendar.SECOND)) + "Z";
+//		
+//	}
 
 	/** Called when the user has entered a name.
 	 * Will continue with the actual operation, i.e. saving the track or the waypoints.
