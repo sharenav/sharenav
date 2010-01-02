@@ -59,7 +59,7 @@ public class Way extends Entity {
 	
 	private static final int MaxSpeedMask = 0xff;
 	private static final int MaxSpeedShift = 0;
-	private static final int ModMask = 0xff00;
+	//private static final int ModMask = 0xff00;
 	private static final int ModShift = 8;
 	
 	public static final int WAY_ONEWAY = 1 << ModShift;
@@ -489,7 +489,6 @@ public class Way extends Entity {
 		if (containsCon1 && containsCon2) {
 			WayDescription wayDesc = Legend.getWayDescription(this.type);
 			float conWayRealDistance = 0;
-			int conWayDuration = 0;
 			short from = containsCon1At;
 			short to = containsCon2At;
 			int direction = 1;
@@ -569,7 +568,6 @@ public class Way extends Entity {
 						||
 						(direction == -1 && containsCon1At > 0)
 					) {
-						int idxC = path[containsCon1At + direction];
 						pc.conWayStartBearing = (direction==1) ? bearingForward : bearingBackward;							
 
 //						pc.conWayStartBearing = MoreMath.bearing_start(
@@ -1012,14 +1010,12 @@ public class Way extends Entity {
   	
 		pc.g.setFont(pathFont);
 
-		IntPoint posChar = new IntPoint();
 		char letter = ' ';
 		short charsDrawable = 0;
 		Projection p = pc.getP();
 
 		//if(info)System.out.println("Draw "  + name + " from " + path.length + " points");
 		
-		boolean reversed = false;
 		boolean abbreviated = false;
 		int iNameRepeatable = 0;
 		int iNameRepeated = 0;
@@ -1086,7 +1082,6 @@ public class Way extends Entity {
 						sbName.setLength(0);
 						sbName.append(name);
 						abbreviated = false;
-						reversed = false;
 						if (mode == PAINTMODE_DRAWCHARS) {
 							if (
 								iNameRepeated >= iNameRepeatable &&
@@ -1104,7 +1099,6 @@ public class Way extends Entity {
 							// left to right
 							if (lineP1.x > lineP2.x) {
 								sbName.reverse();
-								reversed = true;
 							}
 						}
 					}	
@@ -1586,17 +1580,17 @@ public class Way extends Entity {
 	}
 
 
-	private void intersectionPoint(IntPoint p1, IntPoint p2, IntPoint p3,
-								   IntPoint p4, IntPoint ret) {
-
-		if (p2.equals(p3)) {
-			// as p2 and p3 are (approx) equal, the intersectionpoint is infinite
-			ret.x = p3.x; //  returning p3 as this is the best solution
-			ret.y = p3.y;
-		} else {
-			intersectionPointCalc(p1, p2,p3,p4,ret);
-		}
-	}
+//	private void intersectionPoint(IntPoint p1, IntPoint p2, IntPoint p3,
+//								   IntPoint p4, IntPoint ret) {
+//
+//		if (p2.equals(p3)) {
+//			// as p2 and p3 are (approx) equal, the intersectionpoint is infinite
+//			ret.x = p3.x; //  returning p3 as this is the best solution
+//			ret.y = p3.y;
+//		} else {
+//			intersectionPointCalc(p1, p2,p3,p4,ret);
+//		}
+//	}
 
 	private void intersectionPointCalc(IntPoint p1, IntPoint p2, IntPoint p3,
 			IntPoint p4, IntPoint ret) {
