@@ -587,7 +587,19 @@ public class Routing implements Runnable {
 
 		// when we search the closest routeNode, we must be able to access all routeNodes, not only the mainStreetNet one's
 		Routing.onlyMainStreetNet = false;
+
+		// when we search for the closest routeNode, we need to reload the route tiles because the travel mode might have changed 
+		tile.cleanup(-1);
 		
+/*
+ * TODO: if we would cleanup the route tiles only when the travel mode changed, this would result in very fast route recalculations
+ * However it would require better memory management, maybe to clean up the route tiles only as much as required
+		// when we search for the closest routeNode, reload the route tiles only if the travel mode changed 
+		if (tile.travelModeNr != Configuration.getTravelModeNr()) { 
+			tile.cleanup(-1);
+			tile.travelModeNr = Configuration.getTravelModeNr();
+		}
+*/
 		try {
 			if (toMark == null) {
 				parent.receiveMessage("Please set destination first");
@@ -606,21 +618,17 @@ public class Routing implements Runnable {
 				parent.receiveMessage("No way found for start point");
 			} 
 
-			// If the destination way is not routable, e.g. an area, remove it as 
-			// destination entity and thus search for a routable way nearby the dest. node
-			if (toMark.entity != null && ( !(toMark.entity instanceof Way) || !((Way) toMark.entity).isRoutableWay() ) ) {
-				toMark.entity = null;
-			}
-
+			/* always search a way for the destination position
+			 * because there might be a better destination way since setting the destination position in another travel mode
+			 * (after a route mode change to e.g. footway)
+			 */			
+			parent.receiveMessage("Searching destination way");
+			//parent.setDestination(toMark, false);
+			parent.searchNextRoutableWay(toMark);
 			if (toMark.entity == null) {
-				// if there is no element in the to Mark, fill it from tile-data
-				parent.receiveMessage("Searching destination way");
-				parent.searchNextRoutableWay(toMark);
-				if (toMark.entity == null) {
-					parent.receiveMessage("No way at destination");
-					parent.setRoute(null);
-					return;
-				}
+				parent.receiveMessage("No way at destination");
+				parent.setRoute(null);
+				return;
 			}
 			
 			logger.info("Calculating route from " + fromMark + " to " + toMark);
@@ -720,6 +728,11 @@ public class Routing implements Runnable {
 				}
 			}
 			RouteNode prefNode = findPrevRouteNode(nearestSeg - 1, toMark.lat, toMark.lon, toMark.nodeLat, toMark.nodeLon);
+			if (prefNode == null) {
+				parent.receiveMessage("No prev route node at destination");
+				parent.setRoute(null);
+				return;				
+			}
 			// TODO: fill in bearings and cost
 			Connection newCon=new Connection(routeTo,0,(byte)0,(byte)0, -4);
 			tile.getRouteNode(prefNode.lat, prefNode.lon, nodeTile);
@@ -752,7 +765,6 @@ public class Routing implements Runnable {
 			//parent.receiveMessage("Routing exception " + e.getMessage());
 			// show that there was exception as an alert so we can see in the title bar where the exception occured
 			parent.alert("Routing Exception", "" + e.getMessage(), 5000);
-			//#debug error
 			e.printStackTrace();
 			parent.setRoute(null);
 		}
@@ -808,7 +820,7 @@ public class Routing implements Runnable {
 			nodes.removeAllElements();
 			open.removeAll();
 			closed.removeAll();
-			tile.cleanup(-1);
+			//tile.cleanup(-1); // we already cleaned up in solve(fromMark, toMark)
 			if (solution == null) {
 				return null; // cancel route calculation 2/2
 			}
