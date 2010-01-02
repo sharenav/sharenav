@@ -410,10 +410,34 @@ public class Way extends Entity {
 							) {
 								pc.conWayNumMotorways++;
 							}							
-							int idxC = path[i + d];
 							if (pc.conWayBearingsCount < 8) {
 								pc.conWayBearingHasName[pc.conWayBearingsCount] = (nameIdx >= 0);
 								pc.conWayBearingWayType[pc.conWayBearingsCount] = this.type;
+								int idxC = path[i + d];
+								/* if the route node and the next node on the way are very close together, use one node later on the way for the bearing calculation:
+								 * this especially prevents issues with almost identical coordinates from the start point to the next node on the way like
+								 * http://www.openstreetmap.org/browse/node/429201917 and http://www.openstreetmap.org/browse/node/21042290
+								 * (as we can't distinguish them exactly enough with fix point coordinates)
+								 */
+								int iAfterNext = i + d + d; 
+								if (
+										MoreMath.dist(
+											pc.searchCon1Lat,
+											pc.searchCon1Lon,
+											t.centerLat + t.nodeLat[idxC] * MoreMath.FIXPT_MULT_INV,
+											t.centerLon + t.nodeLon[idxC] * MoreMath.FIXPT_MULT_INV
+										)
+										< 3
+										&&
+										// FIXME: It might even make sense to take the next way into account if there's no next node on this way
+										iAfterNext < path.length
+										&&
+										iAfterNext >= 0)
+								{
+									idxC = path [iAfterNext];
+									//System.out.println("EXAMINE AFTER NEXT");
+								}
+								
 								pc.conWayBearings[pc.conWayBearingsCount] =
 									MoreMath.bearing_start(
 										(pc.searchCon1Lat),
@@ -557,11 +581,33 @@ public class Way extends Entity {
 				}
 //				System.out.println("pc.conWayStartBearing: " + pc.conWayStartBearing);
 
-				if ( (direction == 1 && containsCon2At > 0) 
-						||
-						(direction == -1 && containsCon2At < (path.length - 1))
+				if (
+					containsCon2At - direction >= 0 
+					&&
+					containsCon2At - direction < path.length
 				) {
 					int idxC = path[containsCon2At - direction];
+					/* if the route node and the previous node on the way are very close together, use one node before on the way for the bearing calculation:
+					 * this especially prevents issues with almost identical coordinates from the previous node on the way and the route node
+					 * (as we can't distinguish them exactly enough with fix point coordinates)
+					 */
+					int iBeforePrevious = containsCon2At - direction - direction;
+					if (
+							MoreMath.dist(
+									t.centerLat + t.nodeLat[idxC] * MoreMath.FIXPT_MULT_INV,
+									t.centerLon + t.nodeLon[idxC] * MoreMath.FIXPT_MULT_INV,
+									pc.searchCon2Lat,
+									pc.searchCon2Lon
+							)
+							< 3
+							// FIXME: It might even make sense to take the previous way into account if there's no previous node on this way
+							&&
+							iBeforePrevious >= 0 
+							&&
+							iBeforePrevious < path.length
+					) {
+						idxC = path [iBeforePrevious];
+					}
 					pc.conWayEndBearing = MoreMath.bearing_start(
 						(t.centerLat + t.nodeLat[idxC] * MoreMath.FIXPT_MULT_INV),
 						(t.centerLon + t.nodeLon[idxC] * MoreMath.FIXPT_MULT_INV),
