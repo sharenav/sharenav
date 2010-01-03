@@ -400,17 +400,19 @@ public class CreateGpsMidData implements FilenameFilter {
 			// show summary for copied media files
 			if (sbCopiedMedias.length()!=0) {
 				System.out.println("External media inclusion summary:");
-				sbCopiedMedias.append("\r\n  Media Source:\r\n");			
-				sbCopiedMedias.append("    " + (configuration.getStyleFileDirectory().length() == 0 ? "Current directory" : configuration.getStyleFileDirectory()) + " and its png and sound subdirectories\r\n");
-				sbCopiedMedias.append("    were used for external medias\r\n");
-				sbCopiedMedias.append("    referenced in " + configuration.getStyleFileName());			
-				System.out.println("  " + sbCopiedMedias.toString());
-				if (mediaInclusionErrors!=0) {					
-					System.out.println("");
-					System.out.println("  WARNING: " + mediaInclusionErrors + 
-							" media files could NOT be included - see details above");
-					System.out.println("");
-				}
+				sbCopiedMedias.append("\r\n");
+			} else {				
+				System.out.println("No external medias included.");
+			}
+			sbCopiedMedias.append("  Media Sources for external medias\r\n");
+			sbCopiedMedias.append("  referenced in " + configuration.getStyleFileName() +" have been:\r\n");
+			sbCopiedMedias.append("    " + (configuration.getStyleFileDirectory().length() == 0 ? "Current directory" : configuration.getStyleFileDirectory()) + " and its png and sound subdirectories");
+			System.out.println(sbCopiedMedias.toString());
+			if (mediaInclusionErrors!=0) {
+				System.out.println("");
+				System.out.println("  WARNING: " + mediaInclusionErrors + 
+						" media files could NOT be included - see details above");
+				System.out.println("");
 			}
 			
 			dsi.close();
@@ -530,7 +532,7 @@ public class CreateGpsMidData implements FilenameFilter {
 		int iPos=mediaPath.lastIndexOf("/");
 		String realMediaPath = configuration.getStyleFileDirectory() + mediaPath;
 		String outputMediaName;
-		// System.out.println(configuration.getStyleFileDirectory() + additionalSrcPath+"/"+mediaPath);
+//		System.out.println("Processing: " + configuration.getStyleFileDirectory() + additionalSrcPath+"/"+mediaPath);
 		// if no "/" is contained look for file in current directory and /png
 		if(iPos==-1) {
 			outputMediaName="/" + mediaPath;
@@ -538,7 +540,9 @@ public class CreateGpsMidData implements FilenameFilter {
 			if (! (new File(realMediaPath).exists())) {
 				// check if file exists in current directory of Osm2GpsMid / the style file + "/png" or "/sound"
 				realMediaPath = configuration.getStyleFileDirectory() + additionalSrcPath + "/" + mediaPath;
+//				System.out.println("checking for realMediaPath: " + realMediaPath);
 				if (! (new File(realMediaPath).exists())) {
+//					System.out.println("realMediaPath not found: " + realMediaPath);
 					// if not check if we can use the version included in Osm2GpsMid.jar
 					if (CreateGpsMidData.class.getResource("/media/"  + additionalSrcPath + "/" + mediaPath) == null) {
 						// if not check if we can use the internal image file
@@ -597,7 +601,7 @@ public class CreateGpsMidData implements FilenameFilter {
 		sbCopiedMedias.append( (sbCopiedMedias.length()==0)?mediaPath:", " + mediaPath);					
 
 		try {
-			//System.out.println("Copying " + mediaPath + " as " + outputMediaName + " into the midlet");
+//			System.out.println("Copying " + mediaPath + " as " + outputMediaName + " into the midlet");
 			FileChannel fromChannel = new FileInputStream(realMediaPath).getChannel();
 			// Copy Media file
 			try {
