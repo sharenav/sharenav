@@ -367,9 +367,11 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				nonReleasableKeyPressCommand, CMDS);
 
 		if (!Configuration.getCfgBitState(Configuration.CFGBIT_DISPLAYSIZE_SPECIFIC_DEFAULTS_DONE)) {
-			// if the map display is wide enough, show the clock in the map screen by default
 			if (getWidth() > 219) {
+				// if the map display is wide enough, show the clock in the map screen by default
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_CLOCK_IN_MAP, true);
+				// if the map display is wide enough, use big tab buttons by default
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_BIG_TAB_BUTTONS, true);
 			}
 			Configuration.setCfgBitSavedState(Configuration.CFGBIT_DISPLAYSIZE_SPECIFIC_DEFAULTS_DONE, true);
 		}
