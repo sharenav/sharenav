@@ -835,6 +835,8 @@ public class Routing implements Runnable {
 			nodes.removeAllElements();
 			open.removeAll();
 			closed.removeAll();
+			// cleanup the route tiles after searching the route
+			tile.cleanup(-1);
 			if (solution == null) {
 				return null; // cancel route calculation 2/2
 			}
@@ -907,6 +909,8 @@ public class Routing implements Runnable {
 //			logger.info("Ready with route discovery");
 			return sequence;
 		} catch (Exception e) {
+			// cleanup the route tiles also when an exception occurred
+			tile.cleanup(-1);
 			parent.receiveMessage("Routing Ex " + e.getMessage());
 			//#debug error
 			e.printStackTrace();
