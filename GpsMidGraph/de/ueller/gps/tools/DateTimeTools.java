@@ -73,7 +73,7 @@ public class DateTimeTools  {
 			lastTimeMillisUTC = timeMillisUTC;
 			lastHoursUTC = hoursUTC;
 		}		
-		return dateUTC + "T" + hoursUTC + ":" + formatInt2(minutesUTC) + ":" + formatInt2(secondsUTC) + "Z";
+		return dateUTC + "T" + formatInt2(hoursUTC) + ":" + formatInt2(minutesUTC) + ":" + formatInt2(secondsUTC) + "Z";
 	}
 
 	/**
