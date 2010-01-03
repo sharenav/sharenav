@@ -1,7 +1,7 @@
 GpsMid 0.5.09
        *** Usability ***
        - Faster access to the map: There's no extra menu before the map screen anymore 
-       - Icon menus are available as an alternative user interface (activateable in Setup / Display Options)
+       - Icon menus are available as an alternative user interface (activateable in Setup / GUI Options)
          Multiple sized icon sets are included, choose with useIcons=small|true|big|false in the .properties file
          if and which icon set is included. Default is useIcons=small|true, which includes a medium sized icon set
        - Use numeric keys to directly access icons in icon menu and use long presses of numeric keys
@@ -32,7 +32,7 @@ GpsMid 0.5.09
        - Better handling of appearing and disappearing text items (title bar, route instructions, etc.) on the map screen
        - optionally show speed when driving
        - optionally show altitude from GPS
-       - when there is no route calculated but a target is set, show air distance
+       - when there is no route calculated but a destination is set, show air distance
          instead of remaining route distance in the map screen
        - New map feature "Auto zoom": this will automatically zoom in and out the map according to the driving speed
          (after zooming in or out manually in auto zoom mode, gps recentering will also activate the auto zoom again)
@@ -50,6 +50,7 @@ GpsMid 0.5.09
        - Fix for bug 2737256: Cursor position moved before "Set as target" (thx Petr Dlouhý)
        - auto save the gpx track every 256 points, not only at the end of the recording
        - Option to save a waypoint as favorite (will be shown in Search screen if no or only the first key is pressed)
+       - Faster export of tracks and waypoints (especially on some Nokia devices)
        - Replay recorded track (experimental) 
        *** Map Elements ***
        - Improved visibility of railways based on GeoCache style - thx GoemonGps/billi25
@@ -60,7 +61,10 @@ GpsMid 0.5.09
          e.g. useRouting = motorcar, bicycle, foot
        - GpsMid asks which route mode to use on start of routing
        - If you select in GUI Options "optimize for routing", "Route" will be the default action in the Search screen
+       - "Target" has been renamed to "Destination" throughout GpsMid
        - Show remaining route distance to target in map screen
+       - Optionally show remaining route duration / ETA in map screen
+         (based on ways' typical/max speeds/number of traffic lights)
        - Check for turn restrictions for motorcar during route calculation (can be turned off as it needs more memory and is slower)
        - Speed up of long distance route calculations for motorcars
          by using only the main street net (motorway, trunk, primary, seconday, tertiary)
@@ -79,9 +83,6 @@ GpsMid 0.5.09
        - Permissive Route Access Restrictions are now possible
          (e.g. bicycle routing for an abandoned aeroway=runway if bicycle=true is set)
        - Much faster route calculation for bicycles (thx to apmonkey for the hint)
-       - Optionally show remaining route duration / ETA in map screen
-         (based on ways' typical/max speeds/number of traffic lights)
-       - "Target" has been renamed to "Destination" throughout GpsMid
        - Only one "in xxx meters" voice instruction is given for each arrow
        *** OSM Editing and other only with Internet Connection available features ***
        - Support for GeoHack in "Online Info" (thx jkpj)
