@@ -116,7 +116,7 @@ public class GpxImportHandler implements XmlParserContentHandler {
 		// #debug debug
 		logger.debug("Started parsing XML document");
 		if (ul != null) {
-			ul.startProgress("Importing tracks");
+			ul.startProgress("GPX Import"); // this is shown for both waypoint and track import
 			ul.updateProgress("Starting GPX import\n");
 		}
 	}
