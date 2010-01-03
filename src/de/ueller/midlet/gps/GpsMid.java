@@ -149,8 +149,13 @@ public class GpsMid extends MIDlet implements CommandListener {
 			trace = Trace.getInstance();
 		}
 		if (!Configuration.getCfgBitState(Configuration.CFGBIT_INITIAL_SETUP_DONE)) {
-			GuiSetupGui gsg = new GuiSetupGui(trace);
-			gsg.show();
+			if (isRunningInMicroEmulator()) {
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_FULLSCREEN, true);				
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_BIG_TAB_BUTTONS, true);				
+			} else {
+				GuiSetupGui gsg = new GuiSetupGui(trace);
+				gsg.show();							
+			}
 			Configuration.setCfgBitSavedState(Configuration.CFGBIT_INITIAL_SETUP_DONE, true);
 		} else {
 			trace.show();
@@ -668,4 +673,13 @@ public class GpsMid extends MIDlet implements CommandListener {
 		log.trace("Enough memory");
 		return false;
 	}
+	
+	public final static boolean isRunningInMicroEmulator() {
+		String microEmu = getInstance().getAppProperty("microedition.platform");
+		if (microEmu == null || !microEmu.equalsIgnoreCase("MicroEmulator") ) {
+			return false;
+		}
+		return true;
+	}
+	
 }
