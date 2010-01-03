@@ -474,7 +474,7 @@ public class Configuration {
 			File file = new File(styleFile);
 			if (file != null) {
 				styleFileDirectoryWithDelimiter = file.getParent();
-				if (styleFileDirectoryWithDelimiter == null || styleFileDirectoryWithDelimiter.equalsIgnoreCase("\\")) {
+				if (styleFileDirectoryWithDelimiter == null || styleFileDirectoryWithDelimiter.equalsIgnoreCase("\\") || styleFileDirectoryWithDelimiter.equalsIgnoreCase("/")) {
 					styleFileDirectoryWithDelimiter = "";
 				}
 			}
