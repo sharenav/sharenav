@@ -33,9 +33,12 @@ import java.io.PrintStream;
 import java.net.URISyntaxException;
 import java.util.Enumeration;
 import java.util.LinkedList;
+import java.util.Properties;
 import java.util.Vector;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -97,20 +100,10 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		
 	}
 
-	Configuration config;
-	String planet;
-	JComboBox jcbPlanet;
-	JComboBox jcbProperties;
-	JComboBox jcbPhone;
-	JComboBox jcbStyle;
-	JTextField jtfRouting;
-	JTextField jtfName;
-	JComboBox jcbSoundFormats;
-	JCheckBox jcbEditing;
-	JComboBox jcbCellSource;
-	JButton jbCreate;
-	JButton jbClose;
 	
+	/** Needed as this class is somehow serializable. */
+	private static final long serialVersionUID = 1L;
+
 	private static final String CHOOSE_SRC = "Choose your map data source";
 	private static final String XAPI_SRC = "OsmXapi";
 	private static final String ROMA_SRC = "ROMA";
@@ -136,18 +129,46 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	private static final String BUILTIN_STYLE_NORMAL = "Built-in style-file.xml";
 	private static final String BUILTIN_STYLE_MINI = "Built-in mini-style-file.xml";
 	private static final String LOAD_STYLE = "Load custom style file";
+	
+	/** Preferences stored in a location determined automatically by the runtime */
+	Preferences prefs;
+	
+	Configuration config;
+	String planet;
+	JComboBox jcbPlanet;
+	JComboBox jcbProperties;
+	JComboBox jcbPhone;
+	JComboBox jcbStyle;
+	JTextField jtfRouting;
+	JTextField jtfName;
+	JComboBox jcbSoundFormats;
+	JCheckBox jcbEditing;
+	JComboBox jcbCellSource;
+	JButton jbCreate;
+	JButton jbClose;
+	/** File chooser dialog for OSM file */
+	JFileChooser jOsmFileChooser;
+	/** File chooser dialog for bundle .properties file */
+	JFileChooser jPropFileChooser;
+	/** File chooser dialog for style file */
+	JFileChooser jStyleFileChooser;
+	/** Component handling the map display */
 	JMapViewer map;
 
 	boolean dialogFinished = false;
 
+
 	public GuiConfigWizard() {
 		//this.config = c;
+		// Load preferences, the package name of this class is relevant for
+		// finding them again. The runtime chooses an appropriate location for
+		// them, usually in the user's directory.
+        prefs = Preferences.userNodeForPackage(this.getClass());
 	}
 
 	public Configuration startWizard() {
 		System.out.println("Starting configuration wizard");
 		config = new Configuration();
-		//askOsmFile();
 		setupWizard();
 		return config;
 	}
@@ -348,7 +369,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
-				System.exit(0);
+				exitApplication();
 			}
 		});
 		
@@ -377,7 +398,8 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		JTextArea jtaConsoleOut = new JTextArea();
 		jtaConsoleOut.setAutoscrolls(true);
 		JScrollPane jspConsoleOut = new JScrollPane(jtaConsoleOut);
-		jspConsoleOut.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),"Console Output:"));
+		jspConsoleOut.setBorder(BorderFactory.createTitledBorder(
+				BorderFactory.createEtchedBorder(),	"Console Output:"));
 		jspConsoleOut.setMinimumSize(new Dimension(400, 300));
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.gridwidth = 9;
@@ -401,12 +423,35 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		remove(map);
 		this.validate();
 
-		
 		System.setOut(new PrintStream(new StreamGobbler(jtaConsoleOut, jspConsoleOut), false));
 		System.setErr(new PrintStream(new StreamGobbler(jtaConsoleErr, jspConsoleErr), true));
-		
 	}
-	
+
+	/** All actions that result in an exit of the application *must* call this
+	 * method to allow proper saving of data.
+	 */
+	private void exitApplication() {
+		writeProperties("last.properties");
+		
+		// Update persistent settings for next program run
+		if (jOsmFileChooser != null) {
+			prefs.put("planet-file.lastDirectory",
+					jOsmFileChooser.getSelectedFile().getParent());
+		}
+		
+        try {
+            prefs.flush();
+        } catch (BackingStoreException bse) {
+			JOptionPane.showMessageDialog(this,	"Failed to save preferences, error is: "
+					+ bse.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			bse.printStackTrace();
+        }
+
+		System.exit(0);
+	}
+
+	/** Takes the bounds from the config object and puts them on the map.
+	 */
 	private void addMapMarkers() {
 		LinkedList<MapRectangle> rects = new LinkedList<MapRectangle>();
 		Vector<Bounds> bounds = config.getBounds();
@@ -441,6 +486,12 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		jtfName.setText(config.getString("midlet.name"));
 	}
 
+	/** Finds all files in the Osm2GpsMid JAR that match the pattern "GpsMid-*.jar"
+	 * and puts their names in a vector, cutting off at the last "-".
+	 * E.g. GpsMid-Generic-multi-0.5.09_de.jar -> GpsMid-Generic-multi
+	 * 
+	 * @return Vector containing the names
+	 */
 	private Vector<String> enumerateAppParam() {
 		Vector<String> res = new Vector<String>();
 		try {
@@ -455,7 +506,6 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 						res.add(entryName.substring(0, entryName.lastIndexOf("-")));
 					}
 				}
-
 			}
 		} catch (URISyntaxException e1) {
 			e1.printStackTrace();
@@ -465,6 +515,12 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		return res;
 	}
 	
+	/** Finds all files in the Osm2GpsMid JAR that match the pattern "*.properties"
+	 * and puts their names in a vector, without the ".properties".
+	 * E.g. Cologne.properties -> Cologne
+	 * 
+	 * @return Vector containing the names
+	 */
 	private Vector<String> enumerateBuiltinProperties() {
 		Vector<String> res = new Vector<String>();
 		try {
@@ -488,86 +544,108 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		return res;
 	}
 
+	/** Opens a file chooser dialog for the OSM XML (.osm or .bz2 or .gz) file.
+	 * Updates the config when the file was chosen.
+	 */
 	private boolean askOsmFile() {
-		JFileChooser chooser = new JFileChooser(System.getProperty("user.dir"));
-		FileFilter ff = new FileFilter() {
-			@Override
-			public boolean accept(File f) {
-				if (f.isDirectory() || f.getAbsolutePath().endsWith(".osm")
-						|| f.getAbsolutePath().endsWith(".osm.bz2")
-						|| f.getAbsolutePath().endsWith(".osm.gz")) {
-					return true;
+		if (jOsmFileChooser == null) {
+			// Use the previously chosen directory if available, else use the user directory.
+			String chosenDir = prefs.get("planet-file.lastDirectory",
+					System.getProperty("user.dir"));
+			jOsmFileChooser = new JFileChooser(chosenDir);
+			FileFilter ff = new FileFilter() {
+				@Override
+				public boolean accept(File f) {
+					if (f.isDirectory() || f.getAbsolutePath().endsWith(".osm")
+							|| f.getAbsolutePath().endsWith(".osm.bz2")
+							|| f.getAbsolutePath().endsWith(".osm.gz")) {
+						return true;
+					}
+					return false;
 				}
-				return false;
-			}
-
-			@Override
-			public String getDescription() {
-				return "Openstreetmap file (*.osm.bz2, *.osm)";
-			}
-
-		};
-		chooser.setFileFilter(ff);
-		int returnVal = chooser.showOpenDialog(null);
+	
+				@Override
+				public String getDescription() {
+					return "Openstreetmap file (*.osm.bz2, *.osm)";
+				}
+			};
+			jOsmFileChooser.setFileFilter(ff);
+		}
+		
+		int returnVal = jOsmFileChooser.showOpenDialog(null);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
-			planet = chooser.getSelectedFile().getAbsolutePath();
+			// Update configuration
+			planet = jOsmFileChooser.getSelectedFile().getAbsolutePath();
 			config.setPlanetName(planet);
+			// Add as entry to the drop down list
 			jcbPlanet.addItem(planet);
 			jcbPlanet.setSelectedItem(planet);
 			return true;
+		} else {
+			return false;
 		}
-		return false;
 	}
 	
+	/** Opens a file chooser dialog for the style file.
+	 * Lets the config read the file when it was chosen.
+	 */
 	private void askStyleFile() {
-		JFileChooser chooser = new JFileChooser(System.getProperty("user.dir"));
-		FileFilter ff = new FileFilter() {
-			@Override
-			public boolean accept(File f) {
-				if (f.isDirectory() || f.getAbsolutePath().endsWith(".xml")) {
-					return true;
+		if (jStyleFileChooser == null) {
+			jStyleFileChooser = new JFileChooser(System.getProperty("user.dir"));
+			FileFilter ff = new FileFilter() {
+				@Override
+				public boolean accept(File f) {
+					if (f.isDirectory() || f.getAbsolutePath().endsWith(".xml")) {
+						return true;
+					}
+					return false;
 				}
-				return false;
-			}
+	
+				@Override
+				public String getDescription() {
+					return "style file";
+				}
+	
+			};
+			jStyleFileChooser.setFileFilter(ff);
+		}
 
-			@Override
-			public String getDescription() {
-				return "style file";
-			}
-
-		};
-		chooser.setFileFilter(ff);
-		int returnVal = chooser.showOpenDialog(null);
+		int returnVal = jStyleFileChooser.showOpenDialog(null);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
-			String styleName = chooser.getSelectedFile().getAbsolutePath();
+			String styleName = jStyleFileChooser.getSelectedFile().getAbsolutePath();
 			config.setStyleFileName(styleName);
 			jcbStyle.addItem(styleName);
 			jcbStyle.setSelectedItem(styleName);
 		}
-		
 	}
 
+	/** Opens a file chooser dialog for the bundle .properties file.
+	 * Lets the config read the file when it was chosen.
+	 */
 	private void askPropFile() {
-		JFileChooser chooser = new JFileChooser(System.getProperty("user.dir"));
-		FileFilter ff = new FileFilter() {
-			@Override
-			public boolean accept(File f) {
-				if (f.isDirectory()	|| f.getAbsolutePath().endsWith(".properties")) {
-					return true;
+		if (jPropFileChooser == null) {
+			jPropFileChooser = new JFileChooser(System.getProperty("user.dir"));
+			FileFilter ff = new FileFilter() {
+				@Override
+				public boolean accept(File f) {
+					if (f.isDirectory()	|| f.getAbsolutePath().endsWith(".properties")) {
+						return true;
+					}
+					return false;
 				}
-				return false;
-			}
-
-			@Override
-			public String getDescription() {
-				return ".properties files";
-			}
-
-		};
-		chooser.setFileFilter(ff);
-		int returnVal = chooser.showOpenDialog(null);
+	
+				@Override
+				public String getDescription() {
+					return ".properties files";
+				}
+	
+			};
+			jPropFileChooser.setFileFilter(ff);
+		}
+		
+		int returnVal = jPropFileChooser.showOpenDialog(null);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
-			String propName = chooser.getSelectedFile().getAbsolutePath();
+			String propName = jPropFileChooser.getSelectedFile().getAbsolutePath();
 			try {
 				System.out.println("Loading properties specified by GUI: " + propName);
 				config.loadPropFile(new FileInputStream(propName));
@@ -578,9 +656,11 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 				e.printStackTrace();
 			}
 		}
-
 	}
 	
+	/** Opens a file chooser dialog for the file containing the CellID data.
+	 * Updates config when file was chosen.
+	 */
 	private void askCellFile() {
 		JFileChooser chooser = new JFileChooser(System.getProperty("user.dir"));
 		FileFilter ff = new FileFilter() {
@@ -626,14 +706,17 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	}
 
 	/**
-	 * 
+	 * Writes the current properties to a .properties file
+	 * TODO: Shouldn't useCellID and EnableEditing be written too?
+	 * And what about the cellSource variable from Configuration.java?
+	 * @param fileName Path name of file to write
 	 */
 	private void writeProperties(String fileName) {
 		File file = new File(fileName);
 		try {
 			FileWriter fw = new FileWriter(file);
 
-			fw.write("# Properties file generated by the Osm2GpsMid Wizard");
+			fw.write("# Properties file generated by the Osm2GpsMid Wizard\r\n");
 			fw.write("\r\n");
 			fw.write("# You can have up to 9 regions.\r\n");
 			fw.write("# Ways and POIs in any of the regions will be written to the bundle.\r\n");
@@ -645,8 +728,8 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 				}
 			}
 			fw.write("\r\n");
-			fw.write("# To choose a different device specific build use the app property.\r\n");
-			fw.write("# GpsMid-Generic-full should work for most phones (except BlackBerry)\r\n");
+			fw.write("# To choose a different device specific build, use the app property.\r\n");
+			fw.write("# GpsMid-Generic-full should work for most phones (except BlackBerry).\r\n");
 			String app = config.getAppParam();
 			fw.write("app = " + app + "\r\n");
 
@@ -658,16 +741,16 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 				}
 			}
 			fw.write("\r\n");
-			fw.write("# Routing ability can be disabled to save space in the midlet by setting to false\r\n");
-			fw.write("# or set to one or more defined in the style-file, e.g. motorcar, bicycle, foot\r\n");
+			fw.write("# Routing ability can be disabled to save space in the midlet by setting to false.\r\n");
+			fw.write("# Or set to one or more defined in the style-file, e.g. motorcar, bicycle, foot.\r\n");
 			fw.write("useRouting = " + config.useRouting + "\r\n");
 			fw.write("\r\n");
 			
 			fw.write("# == Advanced parameters for configuring number of files in the midlet ===\r\n");
-			fw.write("#  With less files more memory will be required on the device to run GpsMid\r\n");
-			fw.write("#  Larger dictionary depth will reduce the number of dictionary files in GpsMid\r\n");
+			fw.write("#  With less files more memory will be required on the device to run GpsMid.\r\n");
+			fw.write("#  Larger dictionary depth will reduce the number of dictionary files in GpsMid.\r\n");
 			fw.write("maxDictDepth = " + config.getMaxDictDepth() + "\r\n");
-			fw.write("#  Larger tile size will reduce the number of tile files in the midlet\r\n");
+			fw.write("#  Larger tile size will reduce the number of tile files in the midlet.\r\n");
 			fw.write("# Maximum route tile size in bytes\r\n");
 			fw.write("routing.maxTileSize = " + config.getMaxRouteTileSize() + "\r\n");
 			fw.write("# Maximum tile size in bytes\r\n");
@@ -678,24 +761,24 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			}
 			fw.write("\r\n");
 
-			fw.write("# Style-file containing which way, area and POI types to include in the Midlet\r\n");
-			fw.write("# This will default to style-file.xml, set style-file=min-style-file.xml for a smaller style-file with less features in the map\r\n");
+			fw.write("# Style-file containing which way, area and POI types to include in the Midlet.\r\n");
+			fw.write("# This will default to style-file.xml, set style-file=min-style-file.xml for a smaller version with less features in the map.\r\n");
 			fw.write("#	 If there is no internal version in Osm2GpsMid for the png / sound files, you must provide external versions\r\n");
-			fw.write("#	 in the directory or a sound sub-directory of the Osm2GpsMid directory (when using internal style-file)\r\n");
-			fw.write("#	 or in the directory or a png / sound sub-directory of the style-file. \r\n");
+			fw.write("#	 in the current directory or sub-directories 'sound' and 'png' inside Osm2GpsMid.jar (when using internal style-file)\r\n");
+			fw.write("#	 or sub-directories 'sound' and 'png' in the same directory as the external style-file.\r\n");
 			fw.write("style-file = " + config.getStyleFileName() + "\r\n");
 			fw.write("\r\n");
 			
-			fw.write("# Sound formats to be included in the midlet, default is useSounds=amr\r\n");
-			fw.write("#  Osm2GpsMid includes from all sound files wav, amr and mp3 variants\r\n");
-			fw.write("#  wav is the most compatible, loudest but also the most size intensive format\r\n");
-			fw.write("#  example to include wav AND amr: useSounds=wav, amr\r\n");
-			fw.write("#  GpsMid will try a fallback to another included sound format when trying to play a format unsupported by the device\r\n");
+			fw.write("# Sound formats to be included in the midlet, default is useSounds=amr.\r\n");
+			fw.write("#  Osm2GpsMid includes from all sound files wav, amr and mp3 variants.\r\n");
+			fw.write("#  Wav is the most compatible, loudest but also the most size intensive format.\r\n");
+			fw.write("#  Example to include wav AND amr: useSounds=wav, amr\r\n");
+			fw.write("#  GpsMid will try a fallback to another included sound format when trying to play a format unsupported by the device.\r\n");
 			fw.write("useSounds = " + config.getUseSounds() + "\r\n");
 			fw.write("\r\n");
 			
-			fw.write("# Whether to include icons for icon menu and their size to include\r\n");
-			fw.write("#  possible values: false|small|true|big  true is the default medium size\r\n");
+			fw.write("# Whether to include icons for icon menu and their size to include.\r\n");
+			fw.write("#  Possible values: false|small|true|big, true is the default medium size\r\n");
 			fw.write("useIcons = " + config.getUseIcons() + "\r\n");
 			fw.write("\r\n");
 			fw.write("# Name of the Midlet on the phone\r\n");
@@ -714,9 +797,11 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	public void actionPerformed(ActionEvent e) {
 		if ("Create-click".equalsIgnoreCase(e.getActionCommand())) {
 			if (((String)jcbPlanet.getSelectedItem()).equalsIgnoreCase(CHOOSE_SRC)) {
-				if (!askOsmFile()) {
-					JOptionPane.showMessageDialog(this,"Osm2GpsMid can't create a map with out suitable OpenStreetMap data\n" +
-							"Please choose an appropriate OpenStreetMap data source. See help for more details", "OpenStreetMap data", JOptionPane.PLAIN_MESSAGE);
+				if (askOsmFile() == false) {
+					JOptionPane.showMessageDialog(this,
+						"Osm2GpsMid can't create a map without suitable OpenStreetMap data.\n" +
+						"Please choose an appropriate OpenStreetMap data source. See help for more details.",
+						"OpenStreetMap data", JOptionPane.PLAIN_MESSAGE);
 					return;
 				}
 			}
@@ -728,17 +813,14 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			writeProperties("last.properties");
 		}
 		if ("Close-click".equalsIgnoreCase(e.getActionCommand())) {
-			writeProperties("last.properties");
-			System.exit(0);
+			exitApplication();
 		}
-		
 		if ("Help-click".equalsIgnoreCase(e.getActionCommand())) {
 			final JEditorPane jepHelpMsg = new JEditorPane();
 			jepHelpMsg.setPreferredSize(new Dimension(4000,4000));
 			jepHelpMsg.setEditable(false);
 			jepHelpMsg.setContentType("text/html");
 			jepHelpMsg.setText(
-			
 							"<html><body>" +
 							"<h1>Welcome to the Osm2GpsMid Wizard!</h1><br><br>" +
 							"Osm2GpsMid and GpsMid are licensed under <a href =\"http://www.gnu.org/licenses/old-licenses/gpl-2.0.html\">GPLv2</a><br>" +
@@ -769,7 +851,6 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 							"For more information please visit our <a href=\"http://gpsmid.sourceforge.net/\">Homepage</a> and <a href=\"http://sourceforge.net/apps/mediawiki/gpsmid/\">Wiki</a>"+
 							"</body></html>");
 			
-			
 			jepHelpMsg.addHierarchyListener(new HierarchyListener() {
 				public void hierarchyChanged(HierarchyEvent e) {
 					Window window = SwingUtilities.getWindowAncestor(jepHelpMsg);
@@ -784,7 +865,6 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			});
 			
 			jepHelpMsg.addHyperlinkListener(new HyperlinkListener() {
-
 				@Override
 				public void hyperlinkUpdate(HyperlinkEvent e) {
 					if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
@@ -797,12 +877,11 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 						}
 					}
 				}
-				
 			});
 			
-			JOptionPane.showMessageDialog(this,jepHelpMsg,"Help", JOptionPane.PLAIN_MESSAGE);
+			JOptionPane.showMessageDialog(this, jepHelpMsg, "Help", JOptionPane.PLAIN_MESSAGE);
 			
-		}
+		} // if "Help-click"
 		
 		if ("enable Routing".equalsIgnoreCase(e.getActionCommand())) {
 			// TODO: expose different vehicles for routing in GuiConfigWizard instead of always assuming motorcar
@@ -903,9 +982,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 					config.setSounds("wav, amr");
 				}
 			}
-
 		}
-
 	}
 
 	/* (non-Javadoc)
@@ -940,6 +1017,8 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		}
 	}
 
+	/** Used to reenable the "Close" button from BundleGpsMid (after Midlet creation).
+	 */
 	public void reenableClose() {
 		jbClose.setEnabled(true);
 	}
