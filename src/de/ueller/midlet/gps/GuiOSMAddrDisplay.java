@@ -25,10 +25,8 @@ import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.TextField;
 
 import de.ueller.gps.data.Configuration;
-import de.ueller.gps.data.Legend;
 import de.ueller.gps.tools.HTTPhelper;
 import de.ueller.gpsMid.mapData.SingleTile;
-import de.ueller.midlet.gps.data.OSMdataEntity;
 import de.ueller.midlet.gps.data.OSMdataNode;
 import de.ueller.midlet.gps.data.PositionMark;
 

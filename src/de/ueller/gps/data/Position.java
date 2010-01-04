@@ -15,11 +15,9 @@
  */
 package de.ueller.gps.data;
 
-import java.util.Date;
-
 import de.ueller.midlet.gps.Logger;
 
-/** TODO: Explain: Difference between PositionMark and Position */
+/** Position received from LocationReceiver */
 public class Position {
 	private static final Logger logger = Logger.getInstance(
 			Position.class, Logger.TRACE);

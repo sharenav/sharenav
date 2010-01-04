@@ -18,7 +18,6 @@ import de.ueller.midlet.gps.data.IntPoint;
 import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.ProjMath;
-import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.routing.ConnectionWithNode;
 import de.ueller.midlet.gps.routing.RouteHelper;
 import de.ueller.midlet.gps.tile.PaintContext;

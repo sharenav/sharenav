@@ -14,9 +14,7 @@ import javax.microedition.lcdui.Graphics;
 
 import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.Configuration;
-import de.ueller.gps.tools.HelperRoutines;
 import de.ueller.midlet.gps.Logger;
-import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.tile.PaintContext;

@@ -1,7 +1,5 @@
 package de.ueller.gpsMid.mapData;
 
-import de.ueller.midlet.gps.data.PositionMark;
-import de.ueller.midlet.gps.data.Way;
 import de.ueller.midlet.gps.routing.Connection;
 import de.ueller.midlet.gps.routing.RouteNode;
 import de.ueller.midlet.gps.routing.RouteTileRet;

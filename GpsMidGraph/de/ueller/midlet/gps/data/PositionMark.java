@@ -10,7 +10,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.Date;
 
 import de.ueller.gps.data.Legend;
 import de.ueller.midlet.gps.Logger;
