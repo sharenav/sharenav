@@ -8,7 +8,9 @@ GpsMid 0.5.09
          to directly access the tabs of the icon menu - this can be activated in Setup/GUI (thx Petr Dlouhý) 
        - Specify in Setup/Display Options to keep backlight on only while GPS is started
        - Many more midlet colors are specifiable in the style-file now (including colors for night mode)
-       - Touch screen support:
+       - Display speed and distances in miles if configured in Setup
+       - Show destination and move center to GPS to the left (thx jkpj)
+       *** Touch screen support ***
         - Touch the street name status bar to show the icon menu
         - Recenter to GPS button
         - (De)activate manual rotation mode by touching the point of compass (use zoom buttons to rotate in manual rotation mode)
@@ -17,8 +19,6 @@ GpsMid 0.5.09
           (for touch screen devices without QWERT keyboard or numeric keys)
         - Touch the clock on the map to toggle the backlight, with some Nokia mobiles like Nokia 5800 it is also possible to
 		  use the zoom buttons during "Backlight ON" message to dim the backlight on touchscreen mobiles        
-        - Display speed and distances in miles if configured in Setup
-        - Show destination and move center to GPS to the left (thx jkpj)
        *** GPS and other location producers ***
        - Add a possibility to manually enter a connection URL, e.g. "comm:COM0;baudrate=115200"
        - CellId provider for S60FP2 usable with the python helper app (providing cellid via a local socket) 
