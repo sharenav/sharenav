@@ -454,27 +454,43 @@ public class Configuration {
 			return styleFileDirectoryWithDelimiter;
 		}
 
-		public void setStyleFileName(String name) {
+		/** Sets the current name of the style-file and tries to open it.
+		 * It first searches in the file system, then in the Osm2GpsMid JAR.
+		 * Will also set legendInputStream to read from this file.
+		 * @param name File name (may include path) of the style-file
+		 */
+		public void setStyleFileName(String name) throws IOException {
 			styleFile = name;
 			try {
 				legendInputStream = new FileInputStream(styleFile);
+				System.out.println("Using style file '" + styleFile + "' from file system");
 			} catch (IOException e) {
-				System.out.println("'" + styleFile + "' not found, searching in JAR");
-				if (getClass().getResource("/" + styleFile) != null) {
+				// Only add '/' once, getResource() doesn't like '//'!
+				if (styleFile.startsWith("/") == false) {
 					styleFile = "/" + styleFile;
-				} else {
-					System.out.println("Warning: Style file (" + styleFile + ") not found. Using default one!");
-					styleFile = "/style-file.xml";
 				}
-				legendInputStream = getClass().getResourceAsStream(styleFile);
+				//System.out.println("'" + styleFile + "' not found, searching in JAR");
+				if (getClass().getResource(styleFile) != null) {
+					legendInputStream = getClass().getResourceAsStream(styleFile);
+					System.out.println("Using style file '" + styleFile + "' from JAR");
+				} else {
+					// When reading the bundle file, there is already a fallback
+					// to the style-file specified in version.properties - see getString().
+					// So this means we really couldn't find the file.
+					legendInputStream = null;
+					throw new IOException("Style file '" + styleFile
+							+ "' not found in file system or Osm2GpsMid.jar!");
+				}
 			}
 			
-			// determine the directory of the style-file
+			// Determine the directory of the style-file
 			styleFileDirectoryWithDelimiter = null;
 			File file = new File(styleFile);
 			if (file != null) {
 				styleFileDirectoryWithDelimiter = file.getParent();
-				if (styleFileDirectoryWithDelimiter == null || styleFileDirectoryWithDelimiter.equalsIgnoreCase("\\") || styleFileDirectoryWithDelimiter.equalsIgnoreCase("/")) {
+				if (styleFileDirectoryWithDelimiter == null
+						|| styleFileDirectoryWithDelimiter.equalsIgnoreCase("\\")
+						|| styleFileDirectoryWithDelimiter.equalsIgnoreCase("/")) {
 					styleFileDirectoryWithDelimiter = "";
 				}
 			}

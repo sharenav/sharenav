@@ -373,7 +373,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			}
 		});
 		
-		resetPropertiesSelectors();
+		updatePropertiesSelectors();
 
 		Thread t = new Thread(this);
 		t.start();
@@ -465,10 +465,13 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		map.setMapRectangleList(rects);
 	}
 	
-	private void resetPropertiesSelectors() {
+	/** Updates the GUI elements from the settings currently found in config.
+	 * This is usually needed after reading a bundle file.
+	 */
+	private void updatePropertiesSelectors() {
 		String styleFile = config.getStyleFileName();
 		if (styleFile != null) {
-			System.out.println("Style: " + styleFile);
+			System.out.println("Updating GUI elements\n  Style: " + styleFile);
 			//jcbStyle.removeItem(styleFile);
 			boolean isAlreadyIn = false;
 			for (int i = 0; i <  jcbStyle.getItemCount(); i++) {
@@ -479,10 +482,15 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			if (!isAlreadyIn) {
 				jcbStyle.addItem(styleFile);
 			}
+			// Unfortunately, this triggers another setStyleFile() through
+			// actionPerformed()... :-(
 			jcbStyle.setSelectedItem(styleFile);
 		}
+		System.out.println("  useRouting: " + config.useRouting);
 		jtfRouting.setText(config.useRouting);
+		System.out.println("  app: " + config.getString("app"));
 		jcbPhone.setSelectedItem(config.getString("app"));
+		System.out.println("  midlet.name: " + config.getString("midlet.name"));
 		jtfName.setText(config.getString("midlet.name"));
 	}
 
@@ -605,17 +613,22 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 				public String getDescription() {
 					return "style file";
 				}
-	
 			};
 			jStyleFileChooser.setFileFilter(ff);
 		}
 
 		int returnVal = jStyleFileChooser.showOpenDialog(null);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
-			String styleName = jStyleFileChooser.getSelectedFile().getAbsolutePath();
-			config.setStyleFileName(styleName);
-			jcbStyle.addItem(styleName);
-			jcbStyle.setSelectedItem(styleName);
+			try {
+				String styleName = jStyleFileChooser.getSelectedFile().getAbsolutePath();
+				config.setStyleFileName(styleName);
+				jcbStyle.addItem(styleName);
+				jcbStyle.setSelectedItem(styleName);
+			} catch (IOException ioe) {
+				JOptionPane.showMessageDialog(this,	ioe.getMessage(), "Error",
+						JOptionPane.ERROR_MESSAGE);
+				ioe.printStackTrace();
+			}
 		}
 	}
 
@@ -638,7 +651,6 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 				public String getDescription() {
 					return ".properties files";
 				}
-	
 			};
 			jPropFileChooser.setFileFilter(ff);
 		}
@@ -652,8 +664,12 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 				config.readBounds();
 				jcbProperties.addItem(propName);
 				jcbProperties.setSelectedItem(propName);
-			} catch (IOException e) {
-				e.printStackTrace();
+			} catch (IOException ioe) {
+				JOptionPane.showMessageDialog(this,
+						"Failed to load properties file. Error is: "
+						+ ioe.getMessage(), "Error",
+						JOptionPane.ERROR_MESSAGE);
+				ioe.printStackTrace();
 			}
 		}
 	}
@@ -902,30 +918,48 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		if ("comboBoxChanged".equalsIgnoreCase(e.getActionCommand())) {
 			if (e.getSource() == jcbProperties) {
 				
-				config.resetConfig();
 				String chosenProperty = (String) jcbProperties.getSelectedItem();
 				if (chosenProperty.equalsIgnoreCase(LOAD_PROP)) {
 					askPropFile();
 				} else if (chosenProperty.equalsIgnoreCase(CUSTOM_PROP)) {
-				} else {
+					config.resetConfig();
+				} else if (chosenProperty.contains("/") || chosenProperty.contains("\\")) {
+					// Entries added by askPropFile() have a full path name
 					try {
-						System.out.println("Loading built in properties (" + chosenProperty + ")");
+						System.out.println("Loading properties specified by GUI: " +
+								chosenProperty);
+						config.loadPropFile(new FileInputStream(chosenProperty));
+						config.readBounds();
+					} catch (IOException ioe) {
+						JOptionPane.showMessageDialog(this,
+								"Failed to load properties file. Error is: "
+								+ ioe.getMessage(), "Error",
+								JOptionPane.ERROR_MESSAGE);
+						ioe.printStackTrace();
+					}
+				} else {
+					// These are entries added with enumerateBuiltinProperties()
+					try {
+						System.out.println("Loading built in properties '" + chosenProperty + "'");
 						InputStream is = getClass().getResourceAsStream("/" + chosenProperty + ".properties");
 						if (is == null) {
-							System.out.println("Something went wrong");
-						}
-						if (1 == 0) {
-							throw new IOException();
+							throw new IOException("Properties file could not be opened.");
 						}
 						config.loadPropFile(is);
+						config.readBounds();
 					} catch (IOException ioe) {
+						JOptionPane.showMessageDialog(this,
+								"Failed to load built in properties. Error is: "
+								+ ioe.getMessage() + " Please report this bug.",
+								"Error",
+								JOptionPane.ERROR_MESSAGE);
 						ioe.printStackTrace();
 						return;
 					}
 				}
 				addMapMarkers();
 				map.setDisplayToFitMapRectangle();
-				resetPropertiesSelectors();
+				updatePropertiesSelectors();
 			}
 			if (e.getSource() == jcbPlanet) {
 				
@@ -934,23 +968,27 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 					if (!askOsmFile()) {
 						jcbPlanet.setSelectedItem(CHOOSE_SRC);
 					}
-					//resetPropertiesSelectors();
 				} else {
 					config.setPlanetName(chosenProperty);
 				}
 				
 			}
 			if (e.getSource() == jcbStyle) {
-				String chosenProperty = (String) jcbStyle.getSelectedItem();
-				if (chosenProperty.equalsIgnoreCase(LOAD_STYLE)) {
-					askStyleFile();
-					//resetPropertiesSelectors();
-				} else if (chosenProperty.equalsIgnoreCase(BUILTIN_STYLE_NORMAL)) {
-					config.setStyleFileName("/style-file.xml");
-				} else if (chosenProperty.equalsIgnoreCase(BUILTIN_STYLE_MINI)) {
-					config.setStyleFileName("/mini-style-file.xml");
-				} else {
-					config.setStyleFileName(chosenProperty);
+				try {
+					String chosenProperty = (String) jcbStyle.getSelectedItem();
+					if (chosenProperty.equalsIgnoreCase(LOAD_STYLE)) {
+						askStyleFile();
+					} else if (chosenProperty.equalsIgnoreCase(BUILTIN_STYLE_NORMAL)) {
+						config.setStyleFileName("/style-file.xml");
+					} else if (chosenProperty.equalsIgnoreCase(BUILTIN_STYLE_MINI)) {
+						config.setStyleFileName("/mini-style-file.xml");
+					} else {
+						config.setStyleFileName(chosenProperty);
+					}
+				} catch (IOException ioe) {
+					JOptionPane.showMessageDialog(this,	ioe.getMessage(), "Error",
+							JOptionPane.ERROR_MESSAGE);
+					ioe.printStackTrace();
 				}
 			}
 			if (e.getSource() == jcbPhone) {
