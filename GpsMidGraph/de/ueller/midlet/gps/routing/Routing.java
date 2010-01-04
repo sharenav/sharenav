@@ -639,7 +639,7 @@ public class Routing implements Runnable {
 	
 		/**
 	 * prepares for solving a requested route, e.g. by determining the closest route nodes at the start and destination ways
-	 * @return true, if preparing was successfull
+	 * @return true, if preparing was successful
 	 */
 	private boolean prepareSolving() {
 		try {
@@ -652,23 +652,34 @@ public class Routing implements Runnable {
 			startNode.lat=fromMark.lat;
 			startNode.lon=fromMark.lon;
 
-			// always search a way for the from position as the travel mode might have changed
-			parent.receiveMessage("Searching for start element");
-			parent.searchNextRoutableWay(fromMark);
-			if (fromMark.entity == null){
-				parent.receiveMessage("No way found for start point");
-			} 
-
-			/* always search a way for the destination position
-			 * because there might be a better destination way since setting the destination position in another travel mode
-			 * (after a route mode change to e.g. footway)
+			/* search again the closest way to the start position
+			 * if the travel mode changed (e.g from motorcar to foot)
+			 * - currently this will be always because in Trace the closest way for the routeSource PositionMark is not set
 			 */			
-			parent.receiveMessage("Searching destination way");
-			//parent.setDestination(toMark, false);
-			parent.searchNextRoutableWay(toMark);
+			if (fromMark.entityTravelModeNr != Configuration.getTravelModeNr()) {
+				fromMark.entity = null;
+			}
+			if (fromMark.entity == null) {
+				parent.receiveMessage("Searching start way");
+				parent.searchNextRoutableWay(fromMark);
+				if (fromMark.entity == null){
+					parent.receiveMessage("No way found for start point");
+				}
+			}
+
+			/* search again the closest way to the destination position
+			 * if the travel mode changed (e.g from motorcar to foot)
+			 */			
+			if (toMark.entityTravelModeNr != Configuration.getTravelModeNr()) {
+				toMark.entity = null;
+			}
 			if (toMark.entity == null) {
-				parent.receiveMessage("No way at destination");
-				return false;
+				parent.receiveMessage("Searching destination way");
+				parent.searchNextRoutableWay(toMark);
+				if (toMark.entity == null) {
+					parent.receiveMessage("No way at destination");
+					return false;
+				}
 			}
 			
 			logger.info("Calculating route from " + fromMark + " to " + toMark);

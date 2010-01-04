@@ -11,6 +11,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Legend;
 import de.ueller.midlet.gps.Logger;
 
@@ -41,6 +42,8 @@ public class PositionMark extends PersistEntity {
 	/** The type of this position mark, e.g. to mark those imported from outside GpsMid. */
 	public byte type;
 	public Entity entity;
+	/** the travel mode with which this PositionMark's entity has been set as closest way */ 
+	public byte entityTravelModeNr = -1;
 	public float[] nodeLat;
 	public float[] nodeLon;
 	public int nameIdx = -1;
@@ -114,6 +117,7 @@ public class PositionMark extends PersistEntity {
 		entity = w;
 		nodeLat = lat;
 		nodeLon = lon;
+		entityTravelModeNr = (byte) Configuration.getTravelModeNr();
 	}
 
 	public byte[] toByte() {
