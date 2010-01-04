@@ -487,14 +487,17 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			if (!isAlreadyIn) {
 				jcbStyle.addItem(styleFile);
 			}
-			// Unfortunately, this triggers another setStyleFile() through
-			// actionPerformed()... :-(
+			// Avoid trigger of another setStyleFile() through handleComboBoxChanged()
+			jcbStyle.removeActionListener(this);
 			jcbStyle.setSelectedItem(styleFile);
+			jcbStyle.addActionListener(this);
 		}
 		System.out.println("  useRouting: " + config.useRouting);
 		jtfRouting.setText(config.useRouting);
 		System.out.println("  app: " + config.getString("app"));
+		jcbPhone.removeActionListener(this);
 		jcbPhone.setSelectedItem(config.getString("app"));
+		jcbPhone.addActionListener(this);
 		System.out.println("  midlet.name: " + config.getString("midlet.name"));
 		jtfName.setText(config.getString("midlet.name"));
 	}
