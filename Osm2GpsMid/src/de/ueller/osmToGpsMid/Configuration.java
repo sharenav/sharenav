@@ -1,5 +1,5 @@
 /**
- * This file is part of OSM2GpsMid 
+ * This file is part of OSM2GpsMid
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as published by
@@ -43,14 +43,20 @@ import de.ueller.osmToGpsMid.model.POIdescription;
 import de.ueller.osmToGpsMid.model.WayDescription;
 
 /**
- * @author hmueller
- *
+ * This class reads and holds all the configuration information needed to generate
+ * the target Midlet. These are mainly:
+ * <ul>
+ * <li>Where to get the OSM XML data</li>
+ * <li>The bundle .properties file and the settings it contains</li>
+ * <li>The name and path of the style-file</li>
+ * <li>Reference to the LegendParser which parses the style-file data</li>
+ * </ul>
  */
 public class Configuration {
 	
 	/**
-	 * Specifies the format of the map on disk we are about to write
-	 * This constant must be in sync with GpsMid
+	 * Specifies the format of the map on disk we are about to write.
+	 * This constant must be in sync with GpsMid.
 	 */
 	public final static short MAP_FORMAT_VERSION = 53;
 
@@ -73,19 +79,19 @@ public class Configuration {
 	public final static int COLOR_RECORDING_ON_TEXT = 16;
 	public final static int COLOR_CELLID_LOG_ON_TEXT = 17;
 	public final static int COLOR_CELLID_LOG_ON_ATTEMPTING_TEXT = 18;
-	public final static int COLOR_AUDIOREC_TEXT = 19;	
-	public final static int COLOR_DEST_TEXT = 20;	
-	public final static int COLOR_DEST_LINE = 21;	
-	public final static int COLOR_MAP_CURSOR = 22;	
-	public final static int COLOR_MAP_POSINDICATOR = 23;	
-	public final static int COLOR_SCALEBAR = 24;	
-	public final static int COLOR_ZOOM_BUTTON = 25;	
-	public final static int COLOR_ZOOM_BUTTON_TEXT = 26;	
-	public final static int COLOR_COMPASS_DIRECTION_BACKGROUND = 27;	
-	public final static int COLOR_COMPASS_DIRECTION_TEXT = 28;	
-	public final static int COLOR_SPEEDING_SIGN_BORDER = 29;	
-	public final static int COLOR_SPEEDING_SIGN_INNER = 30;	
-	public final static int COLOR_SPEEDING_SIGN_TEXT = 31;	
+	public final static int COLOR_AUDIOREC_TEXT = 19;
+	public final static int COLOR_DEST_TEXT = 20;
+	public final static int COLOR_DEST_LINE = 21;
+	public final static int COLOR_MAP_CURSOR = 22;
+	public final static int COLOR_MAP_POSINDICATOR = 23;
+	public final static int COLOR_SCALEBAR = 24;
+	public final static int COLOR_ZOOM_BUTTON = 25;
+	public final static int COLOR_ZOOM_BUTTON_TEXT = 26;
+	public final static int COLOR_COMPASS_DIRECTION_BACKGROUND = 27;
+	public final static int COLOR_COMPASS_DIRECTION_TEXT = 28;
+	public final static int COLOR_SPEEDING_SIGN_BORDER = 29;
+	public final static int COLOR_SPEEDING_SIGN_INNER = 30;
+	public final static int COLOR_SPEEDING_SIGN_TEXT = 31;
 	public final static int COLOR_RI_AT_DEST = 32;
 	public final static int COLOR_RI_ON_ROUTE = 33;
 	public final static int COLOR_RI_OFF_ROUTE_SLIGHT = 34;
@@ -213,56 +219,92 @@ public class Configuration {
 	/** Maximum allowed number of bounding boxes */
 	public static final int MAX_BOUND_BOXES = 9;
 	
+		/** The bundle .properties file containing most settings */
 		private ResourceBundle rb;
+
+		/** The version.properties file containing default settings used as fallback */
 		private ResourceBundle vb;
-		private String tmp = null;
-		/** Name of the OSM XML file */
+
+		/** Path of the temporary directory (which is relative to the current directory
+		 * where the data is assembled before it is written to the target Midlet JAR.
+		 */
+		private String tempDir = null;
+
+		/** Path name of the OSM XML file */
 		private String planet;
+		
+		/** Path name of the file containing the cell IDs */
 		private String cellSource;
+		
+		/** TODO: Explain: Is this only true/false or can it have other values? */
 		private String cellOperator;
+		
+		/** Path name of the bundle .properties file */
 		private String propFile;
+
 		/** Name to be used for the generated Midlet (as it will be shown on the phone). */
 		private String midletName;
+
 		/** Name of the base Midlet (e.g. GpsMid-Generic-multi) to be used. */
 		private String appParam;
-		/** full name of the jar file of the base midlet */
+
+		/** Full name of the jar file of the base midlet */
 		private String appJarFileName = null;
+		
 		/** Defines which routing options from the style-file get used. */
 		public String useRouting = "motorcar";
+		
 		/** Defines if icons for icon menu are included in GpsMid or which ones, valid values: true|false|big|small */
 		public String useIcons = "true";
+		
 		/** Defines if and what sound formats are included in GpsMid, valid values: true|false|amr, mp3, wav */
 		public String useSounds = "amr";
 		
+		/** Flag whether the generated Midlet will have editing support. */
 		public boolean enableEditingSupport = false;
+
+		/** Maximum tile size in bytes */
 		public int maxTileSize = 20000;
+		
+		/** Maximum route tile size in bytes */
 		public int maxRouteTileSize = 3000;
+
+		/** TODO: Explain this, what is behind the "dict depth"? */
 		private int maxDictDepth = 5;
 		
-		/** maximum ways that are allowed to be stored into a tile of this zoom level */
+		/** Maximum ways that are allowed to be stored into a tile of the zoom levels. */
 		public int maxTileWays[] = new int[4];
-		/** path to the style-file */ 		
+
+		/** Path name of the style-file */
 		public String styleFile;
-		/** Directory the style-file remains in with delimiter "/".
-		 *  This directory is used for relatively accessing external media, like png and sound sub directory
+
+		/** Directory of the style-file, with delimiter "/".
+		 *  This directory is used for relative access to external media, like png and sound sub directory.
 		 */
 		public String styleFileDirectoryWithDelimiter;
 		
 		/** Bounding boxes, read from properties and/or drawn by the user on the map. */
-		private Vector<Bounds> bounds;
+		private final Vector<Bounds> bounds;
 		
+		/** The parser for the style file */
 		private LegendParser legend;
+		
+		/** The stream to read from the style file */
 		private InputStream legendInputStream;
 		
 		/** Array containing real scale for pseudo zoom 0..32 */
-		private static float realScale [] = new float[33]; 
+		private static float realScale [] = new float[33];
 
 		/** Singleton reference */
 		private static Configuration conf;
 
-//		private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 
-		public Configuration(String [] args) {		
+		/** Singleton getter */
+		public static Configuration getConfiguration() {
+			return conf;
+		}
+		
+		public Configuration(String [] args) {
 			//Set singleton
 			conf = this;
 			
@@ -278,7 +320,7 @@ public class Configuration {
 						String [] boundValues = bound.split(",");
 						if (boundValues.length == 4) {
 							Bounds b = new Bounds();
-							try {								
+							try {
 								b.minLon = Float.parseFloat(boundValues[0]);
 								b.minLat = Float.parseFloat(boundValues[1]);
 								b.maxLon = Float.parseFloat(boundValues[2]);
@@ -295,9 +337,10 @@ public class Configuration {
 						}
 					}
 					if (arg.startsWith("--cellID=")) {
-						//Filename for a list of GSM cellIDs with their coordinates.
-						//This file can be obtained from http://myapp.fr/cellsIdData/ (OpenCellID.org)
+						// Filename for a list of GSM cellIDs with their coordinates.
+						// This file can be obtained from http://myapp.fr/cellsIdData/ (OpenCellID.org)
 						cellSource = arg.substring(9);
+						// TODO: Shouldn't cellOperator be set too?
 					}
 					if (arg.startsWith("--help")) {
 						System.err.println("Usage: Osm2GpsMid [--bounds=left,bottom,right,top] [--cellID=filename] planet.osm.bz2 [location]");
@@ -340,7 +383,7 @@ public class Configuration {
 						}
 					}
 				} else {
-					//No .properties file was specified, so use the default one
+					// No .properties file was specified, so use the default one
 					System.out.println("Loading built in default properties (version.properties)");
 					cf = getClass().getResourceAsStream("/version.properties");
 				}
@@ -368,7 +411,8 @@ public class Configuration {
 		
 		private void resetColors() {
 			if (COLOR_COUNT != COLORNAMES.length) {
-				System.out.println("WARNING: COLORNAMES.length (" + COLORNAMES.length + ") does not match COLOR_COUNT (" + COLOR_COUNT + ")");				
+				System.out.println("WARNING: COLORNAMES.length (" + COLORNAMES.length 
+						+ ") does not match COLOR_COUNT (" + COLOR_COUNT + ")");
 			}
 			for (int i = 0; i < COLOR_COUNT; i++) {
 				COLORS[i] = 0xFFFFFFFF; 			// mark that color is not specified
@@ -500,17 +544,26 @@ public class Configuration {
 			}
 		}
 		
-		public void parseLegend() {			
+		public void parseLegend() {
 			legend = new LegendParser(legendInputStream);
 		}
 		
 		public boolean use(String key) {
 			if ("true".equalsIgnoreCase(getString(key))) {
 				return true;
-			} else return false;
+			} else {
+				return false;
+			}
 		}
 
-		public  String getString(String key) {
+		/**
+		 * Gets a string for the given key from the current .properties file or,
+		 * if it doesn't exist there, from 'version.properties'.
+		 * @param key The key to search
+		 * @return The string for the given key
+		 * @throws MissingResourceException if the key exists in neither of the two files
+		 */
+		public String getString(String key) {
 			try {
 				return rb.getString(key).trim();
 			} catch (MissingResourceException e) {
@@ -518,6 +571,14 @@ public class Configuration {
 			}
 		}
 
+		/**
+		 * Gets a number for the given key from the current .properties file or,
+		 * if it doesn't exist there, from 'version.properties'.
+		 * @param key The key to search
+		 * @return The float number for the given key
+		 * @throws MissingResourceException if the key exists in neither of the two files
+		 * @throws NumberFormatException if the string for the key could not be parsed as a float
+		 */
 		public float getFloat(String key) {
 			return Float.parseFloat(getString(key));
 		}
@@ -557,6 +618,15 @@ public class Configuration {
 			appParam = app;
 		}
 		
+		/**
+		 * Returns a stream to read from the JAR file containing the base Midlet -
+		 * see appParam. Adds the version number and will also add the language
+		 * abbreviation if necessary.
+		 * On the side, it changes appJarFileName to be the name of this JAR file
+		 * which is a very great idea to do in a method which is named like a simple
+		 * getter.
+		 * @return Stream to read from the JAR
+		 */
 		public InputStream getJarFile() {
 			String baseName = appParam;
 			if ("false".equals(baseName)) {
@@ -595,10 +665,10 @@ public class Configuration {
 		}
 
 		public String getTempBaseDir() {
-			if (tmp == null) {
-				tmp = "temp" + Math.abs(new Random(System.currentTimeMillis()).nextLong());
+			if (tempDir == null) {
+				tempDir = "temp" + Math.abs(new Random(System.currentTimeMillis()).nextLong());
 			}
-			return tmp;
+			return tempDir;
 //			return getString("tmp.dir");
 		}
 		
@@ -624,10 +694,10 @@ public class Configuration {
 				Bounds bound = bounds.elementAt(0);
 				URL url = null;
 				if (planet.equalsIgnoreCase("osmxapi")) {
-					url = new URL("http://osmxapi.informationfreeway.org/api/0.6/*[bbox=" + 
+					url = new URL("http://osmxapi.informationfreeway.org/api/0.6/*[bbox=" +
 							bound.minLon + "," + bound.minLat + "," + bound.maxLon + "," + bound.maxLat + "]");
 				} else if (planet.equalsIgnoreCase("ROMA")){
-					url = new URL("http://api1.osm.mat.cc/api/0.6/map?bbox=" + 
+					url = new URL("http://api1.osm.mat.cc/api/0.6/map?bbox=" +
 							bound.minLon + "," + bound.minLat + "," + bound.maxLon + "," + bound.maxLat);
 				}
 				 
@@ -664,9 +734,9 @@ public class Configuration {
 					/*int availableProcessors = Runtime.getRuntime().availableProcessors();
 					if (availableProcessors > 1){
 						System.out.println("Found " + availableProcessors + " CPU's: uncompress in seperate thread");
-						fr = new ThreadBufferedInputStream(fr);				
-					} else {						
-						System.out.println("Only one CPU: uncompress in same thread");						
+						fr = new ThreadBufferedInputStream(fr);
+					} else {
+						System.out.println("Only one CPU: uncompress in same thread");
 					}*/
 				}
 				/**
@@ -676,7 +746,7 @@ public class Configuration {
 				 * read operations such as decomressing bz2. However even when only reading from
 				 * a named pipe and let an external program (bzCat) do the decompression, somehow
 				 * still the standard BufferedInputStream does poorly and blocks a lot leaving
-				 * CPUs idle.   
+				 * CPUs idle.
 				 */
 				fr = new ThreadBufferedInputStream(fr);
 			}
@@ -773,7 +843,7 @@ public class Configuration {
 			}
 
 			if (i > 0) {
-				System.out.println("Found " + i + " bounds");
+				System.out.println("Found " + i + " bound(s)");
 				for (int l = 0; l < i; l++) {
 					Bounds bound = new Bounds();
 					bound.extend(getFloat("region." + (l + 1) + ".lat.min"),
@@ -849,12 +919,12 @@ public class Configuration {
 				//doesn't support if when defining local_lang
 				return "en";
 			}
-			return lang; 
+			return lang;
 		}
 
 		public String getBundleDate() {
 	        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-	        return format.format(new Date());	
+	        return format.format(new Date());
 		}
 
 		public static String memoryWithUnit(long memoryInBytes) {
@@ -894,10 +964,6 @@ public class Configuration {
 			return legend.getWayLegend();
 		}
 		
-		public static Configuration getConfiguration() {
-			return conf;
-		}
-		
 		public POIdescription getpoiDesc(byte t) {
 			return legend.getPOIDesc(t);
 		}
@@ -930,8 +996,7 @@ public class Configuration {
 		 * 
 		 * For scale 0..32 a pseudo zoom level is assumed
 		 * and it is converted to a real scale level.
-		 */  
-
+		 */
 		public int getRealScale(int scale) {
 			if (scale < realScale.length) {
 				return (int) realScale[scale];
@@ -941,29 +1006,37 @@ public class Configuration {
 		}
 		
 		/**
-		 * attrToBoolean canonicalises textual boolean values e.g. yes, true and 1
+		 * Canonicalises textual boolean values e.g. 'yes', 'true' and '1'.
 		 * 
-		 * @param a string to be canonicalised
-		 * @return It returns 1 if it is a valid true, -1 if it is a valid false and 0 otherwise
+		 * @param attr A string to be canonicalised
+		 * @return 1 if it is a valid true, -1 if it is a valid false and 0 otherwise
 		 */
 		public static int attrToBoolean(String attr) {
-			if (attr == null)
+			if (attr == null) {
 				return 0;
-			if (attr.equalsIgnoreCase("yes"))
+			}
+			if (attr.equalsIgnoreCase("yes")) {
 				return 1;
-			if (attr.equalsIgnoreCase("true"))
+			}
+			if (attr.equalsIgnoreCase("true")) {
 				return 1;
-			if (attr.equalsIgnoreCase("1"))
+			}
+			if (attr.equalsIgnoreCase("1")) {
 				return 1;
-			if (attr.equalsIgnoreCase("no"))
+			}
+			if (attr.equalsIgnoreCase("no")) {
 				return -1;
-			if (attr.equalsIgnoreCase("false"))
+			}
+			if (attr.equalsIgnoreCase("false")) {
 				return -1;
-			if (attr.equalsIgnoreCase("0"))
+			}
+			if (attr.equalsIgnoreCase("0")) {
 				return -1;
+			}
 			return 0;
 		}
 		
+		@Override
 		public String toString() {
 			String confString = "Osm2GpsMid configuration:\n";
 			confString += "  Midlet name: " + getMidletName() + "\n";
