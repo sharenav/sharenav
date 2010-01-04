@@ -1,5 +1,5 @@
 /**
- * This file is part of OSM2GpsMid 
+ * This file is part of OSM2GpsMid
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as published by
@@ -8,6 +8,7 @@
  * Copyright (C) 2007 Harald Mueller
  * Copyright (C) 2008 Kai Krueger
  */
+
 package de.ueller.osmToGpsMid;
 
 import java.io.BufferedReader;
@@ -62,7 +63,7 @@ public class BundleGpsMid implements Runnable {
 		
 		Configuration c;
 		if (args.length == 0) {
-			 gcw = new GuiConfigWizard();
+			gcw = new GuiConfigWizard();
 			c = gcw.startWizard();
 		} else {
 			c = new Configuration(args);
@@ -88,7 +89,7 @@ public class BundleGpsMid implements Runnable {
 			} else {
 				JOptionPane.showMessageDialog(gcw, "A fatal error occured during processing. Please have a look at the output logs.");
 			}
-			gcw.reenableClose();						
+			gcw.reenableClose();
 		}
 	}
 
@@ -131,16 +132,16 @@ public class BundleGpsMid implements Runnable {
 			BufferedReader fr = new BufferedReader(new FileReader(manifest));
 			FileWriter fw = new FileWriter(manifest2);
 			String line;
-			Pattern p1 = Pattern.compile("MIDlet-(\\d):\\s(.*),(.*),(.*)");			
+			Pattern p1 = Pattern.compile("MIDlet-(\\d):\\s(.*),(.*),(.*)");
 			while (true) {
 				line = fr.readLine();
-				if (line == null) {				
-					break;				
+				if (line == null) {
+					break;
 				}
 
-				Matcher m1 = p1.matcher(line);				
-				if (m1.matches()) {					
-					fw.write("MIDlet-" + m1.group(1) + ": " + c.getMidletName() 
+				Matcher m1 = p1.matcher(line);
+				if (m1.matches()) {
+					fw.write("MIDlet-" + m1.group(1) + ": " + c.getMidletName()
 							+ "," + m1.group(3) + "," + m1.group(4) + "\n");
 				} else if (line.startsWith("MIDlet-Name: ")) {
 					fw.write("MIDlet-Name: " + c.getMidletName() + "\n");
@@ -180,7 +181,7 @@ public class BundleGpsMid implements Runnable {
 					break;
 				}
 				if (line.startsWith("MIDlet") || line.startsWith("MicroEdition")) {
-					fw.write(line + "\n");					
+					fw.write(line + "\n");
 				}
 			}
 		} catch (IOException ioe) {
@@ -218,14 +219,14 @@ public class BundleGpsMid implements Runnable {
 				(duration.get(Calendar.HOUR) - 1) + ":" + duration.get(Calendar.MINUTE) + ":" + duration.get(Calendar.SECOND));
 	}
 	
-	private static void packDir(ZipOutputStream os, File d,String path) throws IOException {
+	private static void packDir(ZipOutputStream os, File d, String path) throws IOException {
 		File[] files = d.listFiles();
 		for (int i = 0; i < files.length; i++) {
 			if (files[i].isDirectory()) {
 				if (path.length() > 0) {
-					packDir(os, files[i],path + "/" + files[i].getName());
+					packDir(os, files[i], path + "/" + files[i].getName());
 				} else {
-					packDir(os, files[i],files[i].getName());					
+					packDir(os, files[i], files[i].getName());
 				}
 			} else {
 //				System.out.println();
@@ -233,7 +234,7 @@ public class BundleGpsMid implements Runnable {
 				if (path.length() > 0) {
 				   ze = new ZipEntry(path + "/" + files[i].getName());
 				} else {
-				   ze = new ZipEntry(files[i].getName());				
+				   ze = new ZipEntry(files[i].getName());
 				}
 				int ch;
 				int count = 0;
@@ -292,13 +293,14 @@ public class BundleGpsMid implements Runnable {
 	}
 
 	/**
-	 * ensures that the path denoted whit <code>f</code> will exist
-	 * on the file-system. 
-	 * @param f
+	 * Ensures that the path denoted with <code>f</code> will exist
+	 * on the file-system.
+	 * @param f File whose directory must exist
 	 */
 	private static void createPath(File f) {
-		if (! f.canWrite())
+		if (! f.canWrite()) {
 			createPath(f.getParentFile());
+		}
 		f.mkdir();
 	}
 	
@@ -313,8 +315,7 @@ public class BundleGpsMid implements Runnable {
 			for (int i = 0; i < files.length; i++) {
 				if (files[i].isDirectory()) {
 					deleteDirectory(files[i]);
-				}
-				else {
+				} else {
 					files[i].delete();
 				}
 			}
@@ -349,14 +350,15 @@ public class BundleGpsMid implements Runnable {
 
 			TravelMode tm = null;
 			if (Configuration.attrToBoolean(config.useRouting) >= 0) {
-				for (int i = 0; i < TravelModes.travelModeCount; i++) {				
+				for (int i = 0; i < TravelModes.travelModeCount; i++) {
 					tm = TravelModes.travelModes[i];
-					System.out.println("Route rules in " + config.getStyleFileName() + " for " + tm.getName() + ":");
+					System.out.println("Route rules in " + config.getStyleFileName()
+							+ " for " + tm.getName() + ":");
 					if ( (tm.travelModeFlags & TravelMode.AGAINST_ALL_ONEWAYS) > 0) {
-						System.out.println(" Going against all accessible oneways is allowed");					
+						System.out.println(" Going against all accessible oneways is allowed");
 					}
 					if ( (tm.travelModeFlags & TravelMode.BICYLE_OPPOSITE_EXCEPTIONS) > 0) {
-						System.out.println(" Opposite direction exceptions for bicycles get applied");					
+						System.out.println(" Opposite direction exceptions for bicycles get applied");
 					}
 		        	int routeAccessRestrictionCount = 0;
 		            if (TravelModes.getTravelMode(i).getRouteAccessRestrictions().size() > 0) {
@@ -366,7 +368,8 @@ public class BundleGpsMid implements Runnable {
 		            	}
 		            }
 		            if (routeAccessRestrictionCount == 0) {
-		        		System.out.println("Warning: No access restrictions in " + config.getStyleFileName() + " for " + tm.getName());            	
+		        		System.out.println("Warning: No access restrictions in "
+		        				+ config.getStyleFileName() + " for " + tm.getName());
 		            }
 				}
 				System.out.println("");
@@ -378,16 +381,18 @@ public class BundleGpsMid implements Runnable {
 			createPath(target);
 			
 			fr = config.getPlanetSteam();
-			OxParser parser = new OxParser(fr,config);
+			OxParser parser = new OxParser(fr, config);
 
 			/**
 			 * Display some stats about the type of relations we currently aren't handling
-			 * to see which ones would be particularly useful to deal with eventually 
+			 * to see which ones would be particularly useful to deal with eventually
 			 */
-			Hashtable<String,Integer> relTypes = new Hashtable<String,Integer>();
+			Hashtable<String, Integer> relTypes = new Hashtable<String, Integer>();
 			for (Relation r : parser.getRelations()) {
 				String type = r.getAttribute("type");
-				if (type == null) type = "unknown";	
+				if (type == null) {
+					type = "unknown";
+				}
 				Integer count = relTypes.get(type);
 				if (count != null) {
 					count = new Integer(count.intValue() + 1);
@@ -404,18 +409,18 @@ public class BundleGpsMid implements Runnable {
 
 			int numWays = parser.getWays().size();
 			new SplitLongWays(parser);
-			System.out.println("Splitting long ways increased ways from " 
+			System.out.println("Splitting long ways increased ways from "
 					+ numWays + " to " + parser.getWays().size());
 			
 			RouteData rd = null;
 			if (Configuration.attrToBoolean(config.useRouting) >= 0 ) {
-				rd = new RouteData(parser,target.getCanonicalPath());
+				rd = new RouteData(parser, target.getCanonicalPath());
 				System.out.println("Remembering " + parser.trafficSignalCount + " traffic signal nodes");
 				rd.rememberDelayingNodes();
 			}
 			
 			System.out.println("Removing unused nodes");
-			new CleanUpData(parser,config);
+			new CleanUpData(parser, config);
 
 			if (Configuration.attrToBoolean(config.useRouting) >= 0 ) {
 				System.out.println("Creating route data");
@@ -423,7 +428,7 @@ public class BundleGpsMid implements Runnable {
 				System.out.println("Optimizing route data");
 				rd.optimise();
 			}
-			CreateGpsMidData cd = new CreateGpsMidData(parser,target.getCanonicalPath());
+			CreateGpsMidData cd = new CreateGpsMidData(parser, target.getCanonicalPath());
 			//				rd.write(target.getCanonicalPath());
 			//				cd.setRouteData(rd);
 			cd.setConfiguration(config);
