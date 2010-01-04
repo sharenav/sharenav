@@ -435,8 +435,13 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		
 		// Update persistent settings for next program run
 		if (jOsmFileChooser != null) {
-			prefs.put("planet-file.lastDirectory",
-					jOsmFileChooser.getSelectedFile().getParent());
+			File file = jOsmFileChooser.getSelectedFile();
+			if (file != null) {
+				String parent = file.getParent();
+				if (parent != null) {
+					prefs.put("planet-file.lastDirectory", parent);
+				}
+			}
 		}
 		
         try {
@@ -810,215 +815,224 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	 * @see
 	 * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
-	public void actionPerformed(ActionEvent e) {
-		if ("Create-click".equalsIgnoreCase(e.getActionCommand())) {
-			if (((String)jcbPlanet.getSelectedItem()).equalsIgnoreCase(CHOOSE_SRC)) {
-				if (askOsmFile() == false) {
-					JOptionPane.showMessageDialog(this,
-						"Osm2GpsMid can't create a map without suitable OpenStreetMap data.\n" +
-						"Please choose an appropriate OpenStreetMap data source. See help for more details.",
-						"OpenStreetMap data", JOptionPane.PLAIN_MESSAGE);
-					return;
-				}
-			}
-			config.setMidletName(jtfName.getText());
-			config.setRouting(jtfRouting.getText());
-			System.out.println("Create Midlet clicked");
-
-			dialogFinished = true;
-			writeProperties("last.properties");
-		}
-		if ("Close-click".equalsIgnoreCase(e.getActionCommand())) {
+	public void actionPerformed(ActionEvent event) {
+		if ("Create-click".equalsIgnoreCase(event.getActionCommand())) {
+			handleCreateClicked();
+		} else if ("Close-click".equalsIgnoreCase(event.getActionCommand())) {
 			exitApplication();
-		}
-		if ("Help-click".equalsIgnoreCase(e.getActionCommand())) {
-			final JEditorPane jepHelpMsg = new JEditorPane();
-			jepHelpMsg.setPreferredSize(new Dimension(4000,4000));
-			jepHelpMsg.setEditable(false);
-			jepHelpMsg.setContentType("text/html");
-			jepHelpMsg.setText(
-							"<html><body>" +
-							"<h1>Welcome to the Osm2GpsMid Wizard!</h1><br><br>" +
-							"Osm2GpsMid and GpsMid are licensed under <a href =\"http://www.gnu.org/licenses/old-licenses/gpl-2.0.html\">GPLv2</a><br>" +
-							"OpenStreetMap Data is licensed under <a href =\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a><br>" +
-							"<br>" +
-							"Osm2GpsMid is a conversion program to package map data from <a href=\"http://www.openstreetmap.org\">OpenStreetMap</a> into a 'midlet' called GpsMid.\n" +
-							"The resulting midlet includes the specified map data and can be uploaded to J2ME ready mobiles for offline navigation.\n" +
-							"<br><br>" +
-							"Usage:<br><ol>" +
-							"<li> Specify which region of the world you want to include in your midlet. \n" +
-							" This can either be done by dragging over an area on the world map with the right mouse button\n" +
-							" or by specifying a .properties file that already contains the area you want.\n" +
-							" You can delete boxes by double-clicking on them.\n" +
-							" If you want to set all the parameters using this wizard, please leave 'Properties template' on 'Custom'.\n" +
-							"<li> Specify a source for the OpenStreetMap data. Currently three sources are directly supported:\n" +
-							"<ul>" +
-							" <li> ROMA: This is the Read Only Map Api and downloads data directly from the API server (only for small regions like towns)</li>" +
-							" <li> OsmXapi: This is an alternative server and very similar to ROMA (only for small regions like towns)</li>" +
-							" <li> Load from file: Use a .osm or .osm.bz2 file previously downloaded to your computer (recommended)\n" +
-							"    Country level extracts in .osm.bz2 file format are available\n" +
-							"    i.e. at <a href=\"http://download.geofabrik.de/osm/\">GeoFabrik</a> and <a href=\"http://downloads.cloudmade.com/\">CloudMade</a></li>" +
-							"</ul>" +
-							"<li> Press 'Create GpsMid midlet'\n" +
-							"</ol><br>" +
-							"Your changes in the wizard are written to last.properties so you can use this as\n" +
-							"a starting point for your .properties file.<br>" +
-							"<br>" +
-							"For more information please visit our <a href=\"http://gpsmid.sourceforge.net/\">Homepage</a> and <a href=\"http://sourceforge.net/apps/mediawiki/gpsmid/\">Wiki</a>"+
-							"</body></html>");
-			
-			jepHelpMsg.addHierarchyListener(new HierarchyListener() {
-				public void hierarchyChanged(HierarchyEvent e) {
-					Window window = SwingUtilities.getWindowAncestor(jepHelpMsg);
-					if (window instanceof Dialog) {
-						Dialog dialog = (Dialog)window;
-						if (!dialog.isResizable()) {
-							dialog.setResizable(true);
-						}
-						dialog.setSize(800, 650);
-					}
-				}
-			});
-			
-			jepHelpMsg.addHyperlinkListener(new HyperlinkListener() {
-				@Override
-				public void hyperlinkUpdate(HyperlinkEvent e) {
-					if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-						if (Desktop.isDesktopSupported()) {
-							try {
-								Desktop.getDesktop().browse(e.getURL().toURI());
-							} catch (Exception ex) {
-								//Nothing to do if we can't open a browser
-							}
-						}
-					}
-				}
-			});
-			
-			JOptionPane.showMessageDialog(this, jepHelpMsg, "Help", JOptionPane.PLAIN_MESSAGE);
-			
-		} // if "Help-click"
-		
-		if ("enable Routing".equalsIgnoreCase(e.getActionCommand())) {
+		} else if ("Help-click".equalsIgnoreCase(event.getActionCommand())) {
+			handleHelpClicked();
+		} else if ("enable Routing".equalsIgnoreCase(event.getActionCommand())) {
 			// TODO: expose different vehicles for routing in GuiConfigWizard instead of always assuming motorcar
-			if ( ((JCheckBox)e.getSource()).isSelected() ) {
+			if ( ((JCheckBox)event.getSource()).isSelected() ) {
 				config.setRouting("motorcar");
 			}
+		} else if (JCB_EDITING.equalsIgnoreCase(event.getActionCommand())) {
+			config.enableEditingSupport = ((JCheckBox)event.getSource()).isSelected();
+			if (config.enableEditingSupport && !((String)jcbPhone.getSelectedItem()).contains("Editing")) {
+				//TODO: Need to find a way to select item without refering to hardcoded string names
+				jcbPhone.setSelectedItem("GpsMid-Generic-editing");
+				JOptionPane.showMessageDialog(this, "Editing requires online support. Changed Phone capabilities setting accordingly");
+			}
+		} else if ("comboBoxChanged".equalsIgnoreCase(event.getActionCommand())) {
+			handleComboBoxChanged(event);
 		}
-		
-		if (JCB_EDITING.equalsIgnoreCase(e.getActionCommand())) {
-				config.enableEditingSupport = ((JCheckBox)e.getSource()).isSelected();
-				if (config.enableEditingSupport && !((String)jcbPhone.getSelectedItem()).contains("Editing")) {
-					//TODO: Need to find a way to select item without refering to hardcoded string names
-					jcbPhone.setSelectedItem("GpsMid-Generic-editing");
-					JOptionPane.showMessageDialog(this, "Editing requires online support. Changed Phone capabilities setting accordingly");
-				}
+	}
+
+	/** Handles the case that the button "Create Midlet" was clicked.
+	 */
+	private void handleCreateClicked() {
+		if (((String)jcbPlanet.getSelectedItem()).equalsIgnoreCase(CHOOSE_SRC)) {
+			if (askOsmFile() == false) {
+				JOptionPane.showMessageDialog(this,
+					"Osm2GpsMid can't create a map without suitable OpenStreetMap data.\n" +
+					"Please choose an appropriate OpenStreetMap data source. See help for more details.",
+					"OpenStreetMap data", JOptionPane.PLAIN_MESSAGE);
+				return;
+			}
 		}
+		config.setMidletName(jtfName.getText());
+		config.setRouting(jtfRouting.getText());
+		System.out.println("Create Midlet clicked");
+
+		dialogFinished = true;
+		writeProperties("last.properties");
+	}
+
+	/** Handles the case that the button "Help" was clicked.
+	 */
+	private void handleHelpClicked() {
+		final JEditorPane jepHelpMsg = new JEditorPane();
+		jepHelpMsg.setPreferredSize(new Dimension(4000,4000));
+		jepHelpMsg.setEditable(false);
+		jepHelpMsg.setContentType("text/html");
+		jepHelpMsg.setText(
+			"<html><body>" +
+			"<h1>Welcome to the Osm2GpsMid Wizard!</h1><br><br>" +
+			"Osm2GpsMid and GpsMid are licensed under <a href =\"http://www.gnu.org/licenses/old-licenses/gpl-2.0.html\">GPLv2</a><br>" +
+			"OpenStreetMap Data is licensed under <a href =\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a><br>" +
+			"<br>" +
+			"Osm2GpsMid is a conversion program to package map data from <a href=\"http://www.openstreetmap.org\">OpenStreetMap</a> into a 'midlet' called GpsMid.\n" +
+			"The resulting midlet includes the specified map data and can be uploaded to J2ME ready mobiles for offline navigation.\n" +
+			"<br><br>" +
+			"Usage:<br><ol>" +
+			"<li> Specify which region of the world you want to include in your midlet. \n" +
+			" This can either be done by dragging over an area on the world map with the right mouse button\n" +
+			" or by specifying a .properties file that already contains the area you want.\n" +
+			" You can delete boxes by double-clicking on them.\n" +
+			" If you want to set all the parameters using this wizard, please leave 'Properties template' on 'Custom'.\n" +
+			"<li> Specify a source for the OpenStreetMap data. Currently three sources are directly supported:\n" +
+			"<ul>" +
+			" <li> ROMA: This is the Read Only Map Api and downloads data directly from the API server (only for small regions like towns)</li>" +
+			" <li> OsmXapi: This is an alternative server and very similar to ROMA (only for small regions like towns)</li>" +
+			" <li> Load from file: Use a .osm or .osm.bz2 file previously downloaded to your computer (recommended)\n" +
+			"    Country level extracts in .osm.bz2 file format are available\n" +
+			"    i.e. at <a href=\"http://download.geofabrik.de/osm/\">GeoFabrik</a> and <a href=\"http://downloads.cloudmade.com/\">CloudMade</a></li>" +
+			"</ul>" +
+			"<li> Press 'Create GpsMid midlet'\n" +
+			"</ol><br>" +
+			"Your changes in the wizard are written to last.properties so you can use this as\n" +
+			"a starting point for your .properties file.<br>" +
+			"<br>" +
+			"For more information please visit our <a href=\"http://gpsmid.sourceforge.net/\">Homepage</a> and <a href=\"http://sourceforge.net/apps/mediawiki/gpsmid/\">Wiki</a>"+
+			"</body></html>");
 		
-		if ("comboBoxChanged".equalsIgnoreCase(e.getActionCommand())) {
-			if (e.getSource() == jcbProperties) {
-				
-				String chosenProperty = (String) jcbProperties.getSelectedItem();
-				if (chosenProperty.equalsIgnoreCase(LOAD_PROP)) {
-					askPropFile();
-				} else if (chosenProperty.equalsIgnoreCase(CUSTOM_PROP)) {
-					config.resetConfig();
-				} else if (chosenProperty.contains("/") || chosenProperty.contains("\\")) {
-					// Entries added by askPropFile() have a full path name
-					try {
-						System.out.println("Loading properties specified by GUI: " +
-								chosenProperty);
-						config.loadPropFile(new FileInputStream(chosenProperty));
-						config.readBounds();
-					} catch (IOException ioe) {
-						JOptionPane.showMessageDialog(this,
-								"Failed to load properties file. Error is: "
-								+ ioe.getMessage(), "Error",
-								JOptionPane.ERROR_MESSAGE);
-						ioe.printStackTrace();
+		jepHelpMsg.addHierarchyListener(new HierarchyListener() {
+			public void hierarchyChanged(HierarchyEvent e) {
+				Window window = SwingUtilities.getWindowAncestor(jepHelpMsg);
+				if (window instanceof Dialog) {
+					Dialog dialog = (Dialog)window;
+					if (!dialog.isResizable()) {
+						dialog.setResizable(true);
 					}
-				} else {
-					// These are entries added with enumerateBuiltinProperties()
-					try {
-						System.out.println("Loading built in properties '" + chosenProperty + "'");
-						InputStream is = getClass().getResourceAsStream("/" + chosenProperty + ".properties");
-						if (is == null) {
-							throw new IOException("Properties file could not be opened.");
+					dialog.setSize(800, 650);
+				}
+			}
+		});
+		
+		jepHelpMsg.addHyperlinkListener(new HyperlinkListener() {
+			@Override
+			public void hyperlinkUpdate(HyperlinkEvent e) {
+				if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+					if (Desktop.isDesktopSupported()) {
+						try {
+							Desktop.getDesktop().browse(e.getURL().toURI());
+						} catch (Exception ex) {
+							//Nothing to do if we can't open a browser
 						}
-						config.loadPropFile(is);
-						config.readBounds();
-					} catch (IOException ioe) {
-						JOptionPane.showMessageDialog(this,
-								"Failed to load built in properties. Error is: "
-								+ ioe.getMessage() + " Please report this bug.",
-								"Error",
-								JOptionPane.ERROR_MESSAGE);
-						ioe.printStackTrace();
-						return;
 					}
 				}
-				addMapMarkers();
-				map.setDisplayToFitMapRectangle();
-				updatePropertiesSelectors();
 			}
-			if (e.getSource() == jcbPlanet) {
-				
-				String chosenProperty = (String) jcbPlanet.getSelectedItem();
-				if (chosenProperty.equalsIgnoreCase(FILE_SRC)) {
-					if (!askOsmFile()) {
-						jcbPlanet.setSelectedItem(CHOOSE_SRC);
-					}
-				} else {
-					config.setPlanetName(chosenProperty);
-				}
-				
-			}
-			if (e.getSource() == jcbStyle) {
+		});
+		
+		JOptionPane.showMessageDialog(this, jepHelpMsg, "Help", JOptionPane.PLAIN_MESSAGE);
+	}
+
+	/** Handles change events for the combo boxes
+	 * @param event ActionEvent describing the change
+	 */
+	private void handleComboBoxChanged(ActionEvent event) {
+		if (event.getSource() == jcbProperties) {
+			String chosenProperty = (String) jcbProperties.getSelectedItem();
+			if (chosenProperty.equalsIgnoreCase(LOAD_PROP)) {
+				askPropFile();
+			} else if (chosenProperty.equalsIgnoreCase(CUSTOM_PROP)) {
+				config.resetConfig();
+			} else if (chosenProperty.contains("/") || chosenProperty.contains("\\")) {
+				// Entries added by askPropFile() have a full path name
 				try {
-					String chosenProperty = (String) jcbStyle.getSelectedItem();
-					if (chosenProperty.equalsIgnoreCase(LOAD_STYLE)) {
-						askStyleFile();
-					} else if (chosenProperty.equalsIgnoreCase(BUILTIN_STYLE_NORMAL)) {
-						config.setStyleFileName("/style-file.xml");
-					} else if (chosenProperty.equalsIgnoreCase(BUILTIN_STYLE_MINI)) {
-						config.setStyleFileName("/mini-style-file.xml");
-					} else {
-						config.setStyleFileName(chosenProperty);
-					}
+					System.out.println("Loading properties specified by GUI: " +
+							chosenProperty);
+					config.loadPropFile(new FileInputStream(chosenProperty));
+					config.readBounds();
 				} catch (IOException ioe) {
-					JOptionPane.showMessageDialog(this,	ioe.getMessage(), "Error",
+					JOptionPane.showMessageDialog(this,
+							"Failed to load properties file. Error is: "
+							+ ioe.getMessage(), "Error",
 							JOptionPane.ERROR_MESSAGE);
 					ioe.printStackTrace();
 				}
-			}
-			if (e.getSource() == jcbPhone) {
-				config.setCodeBase((String)jcbPhone.getSelectedItem());
-			}
-			if (e.getSource() == jcbCellSource) {
-				
-				String chosenProperty = (String) jcbCellSource.getSelectedItem();
-				if (CELL_SRC_NONE.equalsIgnoreCase(chosenProperty)) {
-					config.setCellOperator("false");
-				} else if (CELL_SRC_DLOAD.equalsIgnoreCase(chosenProperty)) {
-					config.setCellOperator("true");
-					config.setCellSource("http://myapp.fr/cellsIdData/cells.txt.gz");
-				} else if (CELL_SRC_FILE.equalsIgnoreCase(chosenProperty)) {
-					config.setCellOperator("true");
-					askCellFile();
+			} else {
+				// These are entries added with enumerateBuiltinProperties()
+				try {
+					System.out.println("Loading built in properties '" + chosenProperty + "'");
+					InputStream is = getClass().getResourceAsStream("/" + chosenProperty + ".properties");
+					if (is == null) {
+						throw new IOException("Properties file could not be opened.");
+					}
+					config.loadPropFile(is);
+					config.readBounds();
+				} catch (IOException ioe) {
+					JOptionPane.showMessageDialog(this,
+							"Failed to load built in properties. Error is: "
+							+ ioe.getMessage() + " Please report this bug.",
+							"Error",
+							JOptionPane.ERROR_MESSAGE);
+					ioe.printStackTrace();
+					return;
 				}
 			}
-			if (e.getSource() == jcbSoundFormats) {
-				
-				String chosenProperty = (String) jcbSoundFormats.getSelectedItem();
-				if (SOUND_NONE.equalsIgnoreCase(chosenProperty)) {
-					config.setSounds("false");
-				} else if (SOUND_AMR.equalsIgnoreCase(chosenProperty)) {
-					config.setSounds("amr");
-				} else if (SOUND_WAV.equalsIgnoreCase(chosenProperty)) {
-					config.setSounds("wav");
-				} else if (SOUND_WAV_AMR.equalsIgnoreCase(chosenProperty)) {
-					config.setSounds("wav, amr");
+			addMapMarkers();
+			map.setDisplayToFitMapRectangle();
+			updatePropertiesSelectors();
+		}
+		if (event.getSource() == jcbPlanet) {
+			
+			String chosenProperty = (String) jcbPlanet.getSelectedItem();
+			if (chosenProperty.equalsIgnoreCase(FILE_SRC)) {
+				if (!askOsmFile()) {
+					jcbPlanet.setSelectedItem(CHOOSE_SRC);
 				}
+			} else {
+				config.setPlanetName(chosenProperty);
+			}
+			
+		}
+		if (event.getSource() == jcbStyle) {
+			try {
+				String chosenProperty = (String) jcbStyle.getSelectedItem();
+				if (chosenProperty.equalsIgnoreCase(LOAD_STYLE)) {
+					askStyleFile();
+				} else if (chosenProperty.equalsIgnoreCase(BUILTIN_STYLE_NORMAL)) {
+					config.setStyleFileName("/style-file.xml");
+				} else if (chosenProperty.equalsIgnoreCase(BUILTIN_STYLE_MINI)) {
+					config.setStyleFileName("/mini-style-file.xml");
+				} else {
+					config.setStyleFileName(chosenProperty);
+				}
+			} catch (IOException ioe) {
+				JOptionPane.showMessageDialog(this,	ioe.getMessage(), "Error",
+						JOptionPane.ERROR_MESSAGE);
+				ioe.printStackTrace();
+			}
+		}
+		if (event.getSource() == jcbPhone) {
+			config.setCodeBase((String)jcbPhone.getSelectedItem());
+		}
+		if (event.getSource() == jcbCellSource) {
+			
+			String chosenProperty = (String) jcbCellSource.getSelectedItem();
+			if (CELL_SRC_NONE.equalsIgnoreCase(chosenProperty)) {
+				config.setCellOperator("false");
+			} else if (CELL_SRC_DLOAD.equalsIgnoreCase(chosenProperty)) {
+				config.setCellOperator("true");
+				config.setCellSource("http://myapp.fr/cellsIdData/cells.txt.gz");
+			} else if (CELL_SRC_FILE.equalsIgnoreCase(chosenProperty)) {
+				config.setCellOperator("true");
+				askCellFile();
+			}
+		}
+		if (event.getSource() == jcbSoundFormats) {
+			
+			String chosenProperty = (String) jcbSoundFormats.getSelectedItem();
+			if (SOUND_NONE.equalsIgnoreCase(chosenProperty)) {
+				config.setSounds("false");
+			} else if (SOUND_AMR.equalsIgnoreCase(chosenProperty)) {
+				config.setSounds("amr");
+			} else if (SOUND_WAV.equalsIgnoreCase(chosenProperty)) {
+				config.setSounds("wav");
+			} else if (SOUND_WAV_AMR.equalsIgnoreCase(chosenProperty)) {
+				config.setSounds("wav, amr");
 			}
 		}
 	}
