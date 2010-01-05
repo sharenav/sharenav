@@ -653,7 +653,7 @@ public class RouteInstructions {
 					
 					if (Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_ETA_IN_MAP)) {
 						e = Trace.tl.ele[TraceLayout.ETA]; // e is used *twice* below (also as vRelative)
-						e.setText(DateTimeTools.getClock(System.currentTimeMillis() + remainingDurationFSecs * 200));
+						e.setText(DateTimeTools.getClock(System.currentTimeMillis() + remainingDurationFSecs * 200, true));
 		 				/*
 						don't use new Date() - it is very slow on some Nokia devices			
 						Calendar currentTime = Calendar.getInstance();

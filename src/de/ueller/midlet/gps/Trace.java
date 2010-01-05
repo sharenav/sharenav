@@ -179,7 +179,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	private String currentTitleMsg;
 	private volatile int currentTitleMsgOpenCount = 0;
 	private volatile int setTitleMsgTimeout = 0;
-	private Calendar lastTitleMsgTime = Calendar.getInstance();
+	private String lastTitleMsgClock;
 	
 	private String currentAlertTitle;
 	private String currentAlertMessage;
@@ -1651,7 +1651,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			
 			if (Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_CLOCK_IN_MAP)) {
 				e = tl.ele[TraceLayout.CURRENT_TIME]; // e is used *twice* below (also as vRelative)
-				e.setText(DateTimeTools.getClock(System.currentTimeMillis()));
+				e.setText(DateTimeTools.getClock(System.currentTimeMillis(), true));
 
  				/*
 				don't use new Date() - it is very slow on some Nokia devices			
@@ -2084,9 +2084,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		g.drawString("LastMsg: " + lastTitleMsg, 0, yc, Graphics.TOP
 				| Graphics.LEFT);
 		yc += la;
-		g.drawString( "at " + lastTitleMsgTime.get(Calendar.HOUR_OF_DAY) + ":"  
-				+ HelperRoutines.formatInt2(lastTitleMsgTime.get(Calendar.MINUTE)) + ":"  
-				+ HelperRoutines.formatInt2(lastTitleMsgTime.get(Calendar.SECOND)), 0, yc,  
+		g.drawString( "at " + lastTitleMsgClock, 0, yc,  
 				Graphics.TOP | Graphics.LEFT );
 		return (yc);
 
@@ -2247,7 +2245,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			}
 			setTitleMsgTimeout = 3000;
 		}
-		lastTitleMsgTime.setTime( new Date( System.currentTimeMillis() ) );		
+		lastTitleMsgClock = DateTimeTools.getClock(System.currentTimeMillis(), false);		
 		repaint();
 	}
 

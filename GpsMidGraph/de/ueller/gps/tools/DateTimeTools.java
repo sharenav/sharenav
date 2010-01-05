@@ -25,7 +25,7 @@ public class DateTimeTools  {
 	 *  we have our own code for calculating the clock time that calls "new Date()" only initially and once per minute
 	 *  because "new Date()" is very slow on some Nokia devices and thus not suited for repeated calls
 	 */ 
-	public static String getClock(long timeMillisGMT) {
+	public static String getClock(long timeMillisGMT, boolean noSeconds) {
 		long currentTimeMillis = System.currentTimeMillis();
 		/* calculate the real difference between local time and GMT initially and once per minute */
 		if ( Math.abs(currentTimeMillis - lastDateCallMillis) >= milliSecsPerMinute ) {
@@ -47,7 +47,12 @@ public class DateTimeTools  {
 		int hoursLocal = (int) ((milliSecsSinceMidnightLocal / milliSecsPerHour) % 24);
 		int minutesLocal = ((milliSecsSinceMidnightLocal / milliSecsPerMinute) % 60);
 	
-		return hoursLocal + ":" + formatInt2(minutesLocal);
+		if (noSeconds) {
+			return hoursLocal + ":" + formatInt2(minutesLocal);
+		} else {
+			int secondsLocal = ((milliSecsSinceMidnightLocal / milliSecsPerSecond) % 60);
+			return hoursLocal + ":" + formatInt2(minutesLocal) + ":" + formatInt2(secondsLocal);
+		}
 	}
 
 	
