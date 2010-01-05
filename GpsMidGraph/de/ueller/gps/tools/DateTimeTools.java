@@ -17,8 +17,7 @@ public class DateTimeTools  {
 	private static int differenceMilliSecs = -1;
 	private static long lastDateCallMillis = 0;
 
-	private static int lastHoursUTC = -1;
-	private static long lastTimeMillisUTC = 0;
+	private static long lastDaysUTC = -1;
 	private static String dateUTC;
 
 	
@@ -57,22 +56,24 @@ public class DateTimeTools  {
 	 *  because "new Date()" is very slow on some Nokia devices and thus not suited for frequent calls
 	 */ 
 	public static String getUTCDateTime(long timeMillisUTC) {
+		// calculate the days since 01-01-1970 for timeMillisUTC
+		long daysUTC = timeMillisUTC / milliSecsPerDay;		
+		/*
+		 * when the days since 01-01-1970 have changed, recalculate the dateUTC string
+		 */
+		if (lastDaysUTC != daysUTC ) {
+			Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GMT")); // GMT and UTC only differ up to 0.9 secs
+			c.setTime( new Date( timeMillisUTC ) );		
+			dateUTC = c.get(Calendar.YEAR) + "-" + formatInt2(c.get(Calendar.MONTH) + 1) + "-" + formatInt2(c.get(Calendar.DAY_OF_MONTH));
+			lastDaysUTC = daysUTC;
+		}		
+		
+		// calculate the time values
 		int milliSecsSinceMidnightUTC =  (int) ((timeMillisUTC) % milliSecsPerDay);
 		int hoursUTC = (int) ((milliSecsSinceMidnightUTC / milliSecsPerHour) % 24);
 		int minutesUTC = (int) (milliSecsSinceMidnightUTC / milliSecsPerMinute) % 60;
 		int secondsUTC = (int) (milliSecsSinceMidnightUTC / milliSecsPerSecond) % 60;
-
-		/*
-		 * when the hour is different than the calculated hour of the last time or the
-		 * difference to the last calculated date is more than a day, a date calculation is required
-		 */
-		if (lastHoursUTC != hoursUTC || Math.abs(timeMillisUTC - lastTimeMillisUTC) >= milliSecsPerDay ) {
-			Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GMT")); // GMT and UTC only differ up to 0.9 secs
-			c.setTime( new Date( timeMillisUTC ) );		
-			dateUTC = c.get(Calendar.YEAR) + "-" + formatInt2(c.get(Calendar.MONTH) + 1) + "-" + formatInt2(c.get(Calendar.DAY_OF_MONTH));
-			lastTimeMillisUTC = timeMillisUTC;
-			lastHoursUTC = hoursUTC;
-		}		
+		
 		return dateUTC + "T" + formatInt2(hoursUTC) + ":" + formatInt2(minutesUTC) + ":" + formatInt2(secondsUTC) + "Z";
 	}
 
