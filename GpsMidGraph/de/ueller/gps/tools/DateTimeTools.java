@@ -70,9 +70,9 @@ public class DateTimeTools  {
 		
 		// calculate the time values
 		int milliSecsSinceMidnightUTC =  (int) ((timeMillisUTC) % milliSecsPerDay);
-		int hoursUTC = (int) ((milliSecsSinceMidnightUTC / milliSecsPerHour) % 24);
-		int minutesUTC = (int) (milliSecsSinceMidnightUTC / milliSecsPerMinute) % 60;
-		int secondsUTC = (int) (milliSecsSinceMidnightUTC / milliSecsPerSecond) % 60;
+		int hoursUTC = (milliSecsSinceMidnightUTC / milliSecsPerHour) % 24;
+		int minutesUTC = (milliSecsSinceMidnightUTC / milliSecsPerMinute) % 60;
+		int secondsUTC = (milliSecsSinceMidnightUTC / milliSecsPerSecond) % 60;
 		
 		return dateUTC + "T" + formatInt2(hoursUTC) + ":" + formatInt2(minutesUTC) + ":" + formatInt2(secondsUTC) + "Z";
 	}
