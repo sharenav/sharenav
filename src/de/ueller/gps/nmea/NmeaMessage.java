@@ -1,11 +1,14 @@
-package de.ueller.gps.nmea;
 /*
  * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net
- * 			Copyright (c) 2008 Kai Krueger apm at users dot sourceforge dot net 
- * See Copying
+ * 			Copyright (c) 2008 Kai Krueger apmonkey at users dot sourceforge dot net
+ * See COPYING
  */
+
+package de.ueller.gps.nmea;
+
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 import java.util.Vector;
 
 import de.ueller.gps.data.Position;
@@ -88,15 +91,14 @@ public class NmeaMessage {
 	private int qual;
 	/** Flag if last received message was GSV */
 	private boolean lastMsgGSV = false;
-	/** Array with information about the satellites */ 
-	private Satelit satellites[] = new Satelit[12];
+	/** Array with information about the satellites */
+	private final Satelit satellites[] = new Satelit[12];
 	/** The last received GPS time and date */
-	public Date dateDecode = new Date();
+	private Date dateDecode = new Date();
 	/** The last received position */
-	private Position pos = new Position(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1,
-			System.currentTimeMillis());
-	/** Needed to turn GPS time and date into timeMillis */
-	private Calendar cal = Calendar.getInstance();
+	private final Position pos = new Position(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1, 0);
+	/** Needed to turn GPS time and date (which are in UTC) into timeMillis */
+	private final Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
 
 
 	public NmeaMessage(LocationMsgReceiver receiver) {
