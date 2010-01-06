@@ -31,6 +31,7 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import de.ueller.osmToGpsMid.model.Node;
@@ -57,15 +58,47 @@ public class BundleGpsMid implements Runnable {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+
+		long maxMem = Runtime.getRuntime().maxMemory() / (1024 * 1024);
+		String dataModel = System.getProperty("sun.arch.data.model");
+		System.out.println("Available memory: " + maxMem + "MB (" + dataModel + " bit system)");
+		String warning = null;
+		if (
+				(maxMem < 800 && dataModel.equals("32"))
+				||
+				(maxMem < 1500 && dataModel.equals("64"))			
+		
+		) {
+			warning = 	"Heap space for this " + dataModel + " bit system might be low! (available memory is " + maxMem + "MB)\r\n" +
+						"   Use command line options to avoid out-of-memory errors during map making.\r\n" +
+						"   On 32 bit systems start Osm2GpsMid e.g. with:\r\n" +
+						"     java -Xmx1024M Osm2GpsMid-xxxx.jar\r\n" +
+						"     to increase the heap space to 1024 MB\r\n" +			
+						"   On 64 bit systems use e.g.:\r\n" +
+						"     java -Xmx4096M -XX:+UseCompressedOops Osm2GpsMid-xxxx.jar\r\n" +
+						"     for 4096 MB heap space and an option to reduce memory requirements\r\n";
+		}
 		
 		BundleGpsMid bgm = new BundleGpsMid();
 		GuiConfigWizard gcw = null;
 		
 		Configuration c;
 		if (args.length == 0) {
+			if (warning != null) {
+				JFrame frame = new JFrame("Alert");
+				JOptionPane.showMessageDialog(frame,
+					    warning,
+					    "Warning",
+					    JOptionPane.WARNING_MESSAGE);
+
+			}
 			gcw = new GuiConfigWizard();
 			c = gcw.startWizard();
 		} else {
+			if (warning != null) {
+				System.out.println("WARNING:");
+				System.out.println(warning);
+			}
 			c = new Configuration(args);
 		}
 		/**
@@ -338,10 +371,9 @@ public class BundleGpsMid implements Runnable {
 	public void run() {
 		InputStream fr;
 		try {
-			
 			validateConfig(config);
 			System.out.println(config.toString());
-
+			
 			// the legend must be parsed after the configuration to apply parameters to the travel modes specified in useRouting
 			TravelModes.stringToTravelModes(config.useRouting);
 			config.parseLegend();
