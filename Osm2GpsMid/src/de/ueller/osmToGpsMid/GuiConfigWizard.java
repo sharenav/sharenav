@@ -105,9 +105,9 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	private static final long serialVersionUID = 1L;
 
 	private static final String CHOOSE_SRC = "Choose your map data source";
-	private static final String XAPI_SRC = "OsmXapi";
-	private static final String ROMA_SRC = "ROMA";
-	private static final String FILE_SRC = "Load .osm.bz2 File";
+	private static final String FILE_SRC = "Load .osm.bz2 File (recommended)";
+	private static final String XAPI_SRC = "OsmXapi (only for one small region)";
+	private static final String ROMA_SRC = "ROMA (only for one small region)";
 	private static final String CELL_SRC_NONE = "Include no Cell IDs";
 	private static final String CELL_SRC_FILE = "Load cell ID file";
 	private static final String CELL_SRC_DLOAD = "Download cell ID DB";
@@ -118,7 +118,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	private static final String SOUND_WAV_AMR = "Include WAV and AMR files";
 	
 	private static final String JCB_EDITING = "Enable online OSM editing support";
-	String [] planetFiles = {CHOOSE_SRC, XAPI_SRC, ROMA_SRC, FILE_SRC};
+	String [] planetFiles = {CHOOSE_SRC, FILE_SRC, XAPI_SRC, ROMA_SRC};
 	String [] cellidFiles = {CELL_SRC_NONE, CELL_SRC_FILE, CELL_SRC_DLOAD};
 	String [] soundFormats = {SOUND_NONE, SOUND_AMR, SOUND_WAV, SOUND_WAV_AMR};
 	
