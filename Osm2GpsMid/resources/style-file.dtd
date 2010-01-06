@@ -11,7 +11,7 @@
 <!ELEMENT key (value+)>
 <!ELEMENT keyW (Wvalue+)>
 <!ELEMENT value (specialisation*, description , image? , searchIcon? , namekey , namefallback? , AreaPOI?, scale , textscale? , imageCentered?, hideable?)>
-<!ELEMENT Wvalue (specialisation*, description, namekey, namefallback?, isArea, scale, textscale?, arrowscale?, descriptionscale?, lineColor, lineColorAtNight?, borderColor?, borderColorAtNight?, lineStyle?, wayWidth?, searchIcon?, routing*, force_to?, hideable?)>
+<!ELEMENT Wvalue (specialisation*, description, namekey, namefallback?, isArea, scale, textscale?, arrowscale?, descriptionscale?, lineColor, borderColor?, lineStyle?, wayWidth?, searchIcon?, routing*, force_to?, hideable?)>
 <!ELEMENT routeAccessRestriction EMPTY>
 <!ELEMENT restrictionKey EMPTY>
 <!ELEMENT restrictionValues EMPTY>
