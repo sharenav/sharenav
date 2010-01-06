@@ -108,6 +108,7 @@ public class TraceLayout extends LayoutManager {
 			LayoutElement.FLAG_BACKGROUND_BOX
 		);	
 		e.setVRelative(ele[TITLEBAR]);
+		e.setColor(Legend.COLORS[Legend.COLOR_COMPASS_DIRECTION_TEXT]);
 		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_COMPASS_DIRECTION_BACKGROUND]);
 		e.setActionID(Trace.MANUAL_ROTATION_MODE_CMD);
 	
