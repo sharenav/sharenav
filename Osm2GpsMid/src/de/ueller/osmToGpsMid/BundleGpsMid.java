@@ -69,13 +69,13 @@ public class BundleGpsMid implements Runnable {
 				(maxMem < 1500 && dataModel.equals("64"))			
 		
 		) {
-			warning = 	"Heap space for this " + dataModel + " bit system might be low! (available memory is " + maxMem + "MB)\r\n" +
+			warning = 	"Heap space might be not set or set too low! (available memory of " + dataModel + " bit system is " + maxMem + "MB)\r\n" +
 						"   Use command line options to avoid out-of-memory errors during map making.\r\n" +
 						"   On 32 bit systems start Osm2GpsMid e.g. with:\r\n" +
-						"     java -Xmx1024M Osm2GpsMid-xxxx.jar\r\n" +
+						"     java -Xmx1024M -jar Osm2GpsMid-xxxx.jar\r\n" +
 						"     to increase the heap space to 1024 MB\r\n" +			
 						"   On 64 bit systems use e.g.:\r\n" +
-						"     java -Xmx4096M -XX:+UseCompressedOops Osm2GpsMid-xxxx.jar\r\n" +
+						"     java -Xmx4096M -XX:+UseCompressedOops -jar Osm2GpsMid-xxxx.jar\r\n" +
 						"     for 4096 MB heap space and an option to reduce memory requirements\r\n";
 		}
 		
@@ -88,7 +88,7 @@ public class BundleGpsMid implements Runnable {
 				JFrame frame = new JFrame("Alert");
 				JOptionPane.showMessageDialog(frame,
 					    warning,
-					    "Warning",
+					    "Osm2GpsMid",
 					    JOptionPane.WARNING_MESSAGE);
 
 			}
