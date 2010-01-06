@@ -7,8 +7,8 @@
 package de.ueller.midlet.gps;
 
 import de.ueller.midlet.gps.data.Node;
-import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.data.Projection;
+import de.ueller.midlet.gps.data.RoutePositionMark;
 
 public class ScreenContext {
 
@@ -26,10 +26,10 @@ public class ScreenContext {
 	public float ppm = 1f;
 	
 	/** Hold, if there is any, the current destination position and element. */
-	public PositionMark dest;
+	public RoutePositionMark dest;
 	
     /** Stores the current position */
-	public PositionMark currentPos = new PositionMark(0f, 0f);
+	public RoutePositionMark currentPos = new RoutePositionMark(0f, 0f);
 
 
 	

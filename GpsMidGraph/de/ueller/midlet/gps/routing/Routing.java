@@ -19,6 +19,7 @@ import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.PositionMark;
+import de.ueller.midlet.gps.data.RoutePositionMark;
 import de.ueller.midlet.gps.data.Way;
 
 
@@ -35,8 +36,8 @@ public class Routing implements Runnable {
 	private final RouteBaseTile tile;
 	private RouteNode routeFrom;
 	private RouteNode routeTo;
-	private volatile PositionMark fromMark;
-	private volatile PositionMark toMark;	
+	private volatile RoutePositionMark fromMark;
+	private volatile RoutePositionMark toMark;	
 	private final Trace parent;
 	private int bestTotal;
 	private long nextUpdate;
@@ -583,7 +584,7 @@ public class Routing implements Runnable {
 	} 
 
 
-	public void solve(PositionMark fromMark,PositionMark toMark) {
+	public void solve(RoutePositionMark fromMark,RoutePositionMark toMark) {
 		this.fromMark = fromMark;
 		this.toMark = toMark;
 		

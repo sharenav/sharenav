@@ -65,6 +65,7 @@ import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.data.Projection;
+import de.ueller.midlet.gps.data.RoutePositionMark;
 import de.ueller.midlet.gps.data.SECellLocLogger;
 import de.ueller.midlet.gps.data.Way;
 import de.ueller.midlet.gps.names.Names;
@@ -274,7 +275,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 
 	private Runtime runtime = Runtime.getRuntime();
 
-	private PositionMark dest = null;
+	private RoutePositionMark dest = null;
 	public Vector route = null;
 	private RouteInstructions ri = null;
 	
@@ -1141,7 +1142,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					}
 					RouteInstructions.resetOffRoute(route, center);
 					// center of the map is the route source
-					PositionMark routeSource = new PositionMark(center.radlat, center.radlon);
+					RoutePositionMark routeSource = new RoutePositionMark(center.radlat, center.radlon);
 					logger.info("Routing source: " + routeSource);
 					routeNodes=new Vector();
 					routeEngine = new Routing(tiles, this);
@@ -1353,7 +1354,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				}
 				//#endif
 				if (c == CMDS[SET_DEST_CMD]) {
-					PositionMark pm1 = new PositionMark(center.radlat, center.radlon);
+					RoutePositionMark pm1 = new RoutePositionMark(center.radlat, center.radlon);
 					setDestination(pm1);
 					return;
 				}
@@ -1864,22 +1865,22 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		dictReader.incUnusedCounter();		
 	}
 	
-	public void searchElement(PositionMark pm) throws Exception {
-		PaintContext pc = new PaintContext(this, null);
-		// take a bigger angle for lon because of positions near to the poles.
-		Node nld = new Node(pm.lat - 0.0001f, pm.lon - 0.0005f, true);
-		Node nru = new Node(pm.lat + 0.0001f, pm.lon + 0.0005f, true);		
-		pc.searchLD = nld;
-		pc.searchRU = nru;
-		pc.dest = pm;
-		pc.setP(new Proj2D(new Node(pm.lat, pm.lon, true), 5000, 100, 100));
-		for (int i = 0; i < 4; i++) {
-			tiles[i].walk(pc, Tile.OPT_WAIT_FOR_LOAD);
-		}
-	}
+//	public void searchElement(PositionMark pm) throws Exception {
+//		PaintContext pc = new PaintContext(this, null);
+//		// take a bigger angle for lon because of positions near to the poles.
+//		Node nld = new Node(pm.lat - 0.0001f, pm.lon - 0.0005f, true);
+//		Node nru = new Node(pm.lat + 0.0001f, pm.lon + 0.0005f, true);		
+//		pc.searchLD = nld;
+//		pc.searchRU = nru;
+//		pc.dest = pm;
+//		pc.setP(new Proj2D(new Node(pm.lat, pm.lon, true), 5000, 100, 100));
+//		for (int i = 0; i < 4; i++) {
+//			tiles[i].walk(pc, Tile.OPT_WAIT_FOR_LOAD);
+//		}
+//	}
 	
 	
-	public void searchNextRoutableWay(PositionMark pm) throws Exception {
+	public void searchNextRoutableWay(RoutePositionMark pm) throws Exception {
 		PaintContext pc = new PaintContext(this, null);
 		// take a bigger angle for lon because of positions near to the pols.
 //		Node nld=new Node(pm.lat - 0.0001f,pm.lon - 0.0005f,true);
@@ -2466,7 +2467,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		return dest;
 	}
 
-	public void setDestination(PositionMark dest) {
+	public void setDestination(RoutePositionMark dest) {
 		endRouting();
 		this.dest = dest;
 		pc.dest = dest;

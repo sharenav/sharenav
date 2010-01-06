@@ -920,7 +920,7 @@ public class Way extends Entity {
 		 * pc.actualRoutableWaySingleTile and only calculate the entity and position mark when we need them?
 		 */
 		if ((pc.actualRoutableWay == this) && ((pc.currentPos == null) || (pc.currentPos.entity != this))) {
-			pc.currentPos = new PositionMark(pc.center.radlat, pc.center.radlon);
+			pc.currentPos = new RoutePositionMark(pc.center.radlat, pc.center.radlon);
 			pc.currentPos.setEntity(this, getNodesLatLon(t, true), getNodesLatLon(t, false));
 		}
 		

@@ -27,12 +27,12 @@ import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.SearchResult;
 import de.ueller.gps.tools.HelperRoutines;
 import de.ueller.gpsMid.CancelMonitorInterface;
-import de.ueller.gpsMid.mapData.WaypointsTile;
 import de.ueller.midlet.gps.GuiPOItypeSelectMenu.POItypeSelectMenuItem;
 import de.ueller.midlet.gps.data.KeySelectMenuItem;
 import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.data.ProjMath;
+import de.ueller.midlet.gps.data.RoutePositionMark;
 import de.ueller.midlet.gps.names.NumberCanon;
 import de.ueller.midlet.gps.tile.SearchNames;
 import de.ueller.midlet.screens.InputListener;
@@ -194,7 +194,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				}
 				SearchResult sr = (SearchResult) result.elementAt(cursor);
 				//			System.out.println("select " + sr);
-				PositionMark positionMark = new PositionMark(sr.lat,sr.lon);
+				RoutePositionMark positionMark = new RoutePositionMark(sr.lat,sr.lon);
 				if (state == STATE_FAVORITES) {
 					positionMark.displayName = wayPts[sr.nameIdx].displayName;
 				} else {
@@ -289,7 +289,6 @@ public class GuiSearch extends Canvas implements CommandListener,
 			if (cursor >= result.size()) return;
 			SearchResult sr = (SearchResult) result.elementAt(cursor);
 			PositionMark positionMark = new PositionMark(sr.lat,sr.lon);
-			positionMark.nameIdx=sr.nameIdx;
 			positionMark.displayName=parent.getName(sr.nameIdx);
 			parent.gpx.addWayPt(positionMark);
 			parent.show();

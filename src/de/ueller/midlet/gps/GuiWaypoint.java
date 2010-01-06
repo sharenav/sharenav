@@ -19,6 +19,7 @@ import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.IntPoint;
 import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.PositionMark;
+import de.ueller.midlet.gps.data.RoutePositionMark;
 import de.ueller.midlet.screens.InputListener;
 import de.ueller.midlet.screens.ProgressDisplay;
 
@@ -219,7 +220,7 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 				mLogger.error("No waypoint selected");
 				return;
 			} else if (idx > -1) {
-				mParent.setDestination(mWaypoints[idx]);				
+				mParent.setDestination(new RoutePositionMark(mWaypoints[idx], -1));				
 			} else {
 				IntPoint intPoint1 = new IntPoint(10, 10);
 				IntPoint intPoint2 = new IntPoint(getWidth() - 10, getHeight() - 10);
