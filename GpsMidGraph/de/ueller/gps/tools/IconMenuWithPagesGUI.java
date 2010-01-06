@@ -1,11 +1,11 @@
-package de.ueller.gps.tools;
 /*
  * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net
- * 			Copyright (c) 2008 Kai Krueger apmonkey at users dot sourceforge dot net 
- * 			Copyright (c) 2009 sk750 at users dot sourceforge dot net 
- * See Copying
+ * 			Copyright (c) 2008 Kai Krueger apmonkey at users dot sourceforge dot net
+ * 			Copyright (c) 2009 sk750 at users dot sourceforge dot net
+ * See COPYING
  */
 
+package de.ueller.gps.tools;
 
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Command;
@@ -33,8 +33,8 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 	private final Command OK_CMD = new Command("Ok", Command.OK, 1);
 	private final Command BACK_CMD = new Command("Back", Command.BACK, 5);
 
-	private GpsMidDisplayable parent;
-	private IconActionPerformer actionPerformer;
+	protected GpsMidDisplayable parent = null;
+	protected IconActionPerformer actionPerformer = null;
 
 	private int minX;
 	private int maxX;
@@ -57,14 +57,24 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 	private boolean recreateTabButtonsRequired = false;
 	
 	/** the tab Pages with the icons */
-	private Vector iconMenuPages = new Vector();
+	private final Vector iconMenuPages = new Vector();
 
 	protected static long pressedKeyTime = 0;
 	protected static int pressedKeyCode = 0;
-	
+
 	public IconMenuWithPagesGUI(GpsMidDisplayable parent, IconActionPerformer actionPerformer) {
 		// create Canvas
 		super();
+		initIconMenuWithPagesGUI(parent, actionPerformer);
+	}
+
+	public IconMenuWithPagesGUI(GpsMidDisplayable parent) {
+		// create Canvas
+		super();
+		initIconMenuWithPagesGUI(parent, null);
+	}
+
+	private void initIconMenuWithPagesGUI(GpsMidDisplayable parent, IconActionPerformer actionPerformer) {
 		setFullScreenMode(Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN));
 		this.parent = parent;
 		// must be below setFullScreenMode() for not recreating this icon menu because of the size change
@@ -76,6 +86,10 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 		recreateTabButtons();
 		setCommandListener(this);
 		addCommands();
+	}
+	
+	public void setIconActionPerformer(IconActionPerformer actionPerformer) {
+		this.actionPerformer = actionPerformer;
 	}
 
 	public IconMenuPage createAndAddMenuPage(String pageTitle, int numCols, int numRows) {
@@ -389,9 +403,14 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 
 	private void performIconAction(int actionId) {
 		//#debug debug
-		logger.debug("perform action " + actionId);		
-		// pass the action id to the listening action performer
-		actionPerformer.performIconAction(actionId);
+		logger.debug("Perform action " + actionId);
+		// Pass the action id to the listening action performer
+		if (actionPerformer != null) {
+			actionPerformer.performIconAction(actionId);
+		} else {
+			//#debug error
+			logger.error("No IconActionPerformer set!");
+		}
 	}
 	
 	protected void paint(Graphics g) {
