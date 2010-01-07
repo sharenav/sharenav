@@ -1010,7 +1010,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					gWeb.show();
 				//#else
 					alert("No online capabilites", 
-							"Set app=GpsMid-Generic-editing and editing=true in " +
+							"Set app=GpsMid-Generic-editing and enableEditing=true in " +
 							".properties file and recreate GpsMid with Osm2GpsMid.", 
 							Alert.FOREVER);
 				//#endif
@@ -1348,7 +1348,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				//#else
 				if (c == CMDS[RETRIEVE_XML] || c == CMDS[RETRIEVE_NODE] || c == CMDS[EDIT_ADDR_CMD]) { 
 					alert("No online capabilites", 
-						"Set app=GpsMid-Generic-editing and editing=true in " +
+						"Set app=GpsMid-Generic-editing and enableEditing=true in " +
 						".properties file and recreate GpsMid with Osm2GpsMid.", 
 						Alert.FOREVER);
 				}
