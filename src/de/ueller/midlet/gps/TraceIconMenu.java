@@ -29,9 +29,6 @@ public class TraceIconMenu extends IconMenuWithPagesGUI {
 	private static int rememberedEleId = 0;
 	private static int rememberedTabNr = 0;
 	
-	
-	private boolean optimizedForRouting = false;
-	
 	public TraceIconMenu(GpsMidDisplayable parent, IconActionPerformer actionPerformer) {
 		super(parent, actionPerformer);
 	
