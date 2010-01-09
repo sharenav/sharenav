@@ -69,6 +69,51 @@ import de.ueller.osmToGpsMid.model.Bounds;
 
 public class GuiConfigWizard extends JFrame implements Runnable, ActionListener, SelectionListener {
 	
+	protected class TeeOutputStream extends OutputStream {
+		OutputStream s1;
+		OutputStream s2;
+		protected TeeOutputStream(OutputStream stream1, OutputStream stream2) {
+			s1 = stream1;
+			s2 = stream2;
+		}
+		
+		@Override
+		public void write(byte[] b, int off, int len){
+			try {
+				s1.write(b,off,len);
+				s2.write(b,off,len);
+			} catch (IOException ioe) {
+				System.err.println("Error in writing to stream: " + ioe.getMessage());
+			}
+		}
+		
+		@Override
+		public void write(byte [] b) {
+			try{
+				s1.write(b);
+				s2.write(b);
+			} catch (IOException ioe) {
+				System.err.println("Error in writing to stream: " + ioe.getMessage());
+			}
+		}
+		/* (non-Javadoc)
+		 * @see java.io.OutputStream#write(int)
+		 */
+
+		/* (non-Javadoc)
+		 * @see java.io.OutputStream#write(int)
+		 */
+		@Override
+		public void write(int i) throws IOException {
+			try{
+				s1.write(i);
+				s2.write(i);
+			} catch (IOException ioe) {
+				System.err.println("Error in writing to stream: " + ioe.getMessage());
+			}
+		}
+	}
+	
 	protected class StreamGobbler extends OutputStream {
 		
 		JTextArea jta;
@@ -423,8 +468,8 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		remove(map);
 		this.validate();
 
-		System.setOut(new PrintStream(new StreamGobbler(jtaConsoleOut, jspConsoleOut), false));
-		System.setErr(new PrintStream(new StreamGobbler(jtaConsoleErr, jspConsoleErr), true));
+		System.setOut(new PrintStream(new TeeOutputStream(System.out,new StreamGobbler(jtaConsoleOut, jspConsoleOut))));
+		System.setErr(new PrintStream(new TeeOutputStream(System.err, new StreamGobbler(jtaConsoleErr, jspConsoleErr))));
 	}
 
 	/** All actions that result in an exit of the application *must* call this
