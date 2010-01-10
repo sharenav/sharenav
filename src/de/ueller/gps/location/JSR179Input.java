@@ -179,7 +179,7 @@ public class JSR179Input
 					//#debug info
 					logger.info("Decoding: " + nmeaMessage);
 					if ((nmeaMessage != null) && (nmeaMessage.length() > 5))
-						smsg.decodeMessage(nmeaMessage);
+						smsg.decodeMessage(nmeaMessage, false);
 				}
 			}
 		}

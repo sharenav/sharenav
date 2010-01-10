@@ -110,15 +110,16 @@ public class NmeaMessage {
 	}	
 	
 	public void decodeMessage() {
-		decodeMessage(buffer.toString());
+		decodeMessage(buffer.toString(), true);
 	}
 
 	/** This method does the actual decoding work. It puts the data into
 	 * member variables and forwards it to the LocationMsgReceiver.
 	 * 
 	 * @param nmea_sentence The NMEA sentence to be decoded
+	 * @param receivePositionIsAllowed Set to true if it is allowed to forward a new position from the NMEA sentence to the LocationMsgReceiver 
 	 */
-	public void decodeMessage(String nmea_sentence) {
+	public void decodeMessage(String nmea_sentence, boolean receivePositionIsAllowed) {
 		
         Vector param = StringTokenizer.getVector(nmea_sentence, spChar);
 		String sentence = (String)param.elementAt(0);
@@ -206,7 +207,9 @@ public class NmeaMessage {
 				dateDecode = cal.getTime();				// get Date from Calendar
 				pos.timeMillis = dateDecode.getTime();	// get milliSecs since 01-Jan-1970 from Date
 				
-				receiver.receivePosition(pos);
+				if (receivePositionIsAllowed) {
+					receiver.receivePosition(pos);
+				}
 				if (this.qual > 1) {
 					receiver.receiveSolution("D" + mAllSatellites + "S");
 				} else {

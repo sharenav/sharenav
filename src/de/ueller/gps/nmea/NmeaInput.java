@@ -92,7 +92,7 @@ public class NmeaInput extends BtReceiverInput {
 			if (isChecksumCorrect(buf2, p2)) {
 				//Throw away the first 3 characters ($GP) and the last 5 (checksum and \r\n)
 				String nmea_sentence = new String(buf2,3,p2-8);
-				smsg.decodeMessage(nmea_sentence);
+				smsg.decodeMessage(nmea_sentence, true);
 			} else {
 				logger.info("NMEA sentence has incorrect checksum, discarding: " + new String(buf2));
 			}
