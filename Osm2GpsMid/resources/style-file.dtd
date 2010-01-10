@@ -44,7 +44,6 @@
 <!ATTLIST value priority CDATA #IMPLIED>
 <!ATTLIST Wvalue name CDATA #REQUIRED>
 <!ATTLIST Wvalue priority CDATA #IMPLIED>
-<!ATTLIST changeToFileExtension type CDATA #REQUIRED>
 <!ATTLIST color of CDATA #REQUIRED>
 <!ATTLIST color is CDATA #REQUIRED>
 <!ATTLIST color isAtNight CDATA #IMPLIED>
