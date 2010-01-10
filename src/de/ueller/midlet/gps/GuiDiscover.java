@@ -1000,7 +1000,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				break;
 			case MENU_ITEM_MAP_SRC: // Map Source 
 				initMapSource(); 
-				mapSrc.set(1, "Filesystem: " + ( (Configuration.getMapUrl()==null)?"<Please select map directory first>":Configuration.getMapUrl() ), null);
+				mapSrc.set(1, "Filesystem: " + ( (Configuration.getMapUrl()==null)?"<Please select map directory or other .jar/zip file first>":Configuration.getMapUrl() ), null);
 				mapSrc.setSelectedIndex(Configuration.usingBuiltinMap()?0:1, true);
 				GpsMid.getInstance().show(menuSelectMapSource);
 				state = STATE_MAP;
