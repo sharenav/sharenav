@@ -276,9 +276,14 @@ public class OxParser extends DefaultHandler {
 			}
 
 			if (inBound) {
-				nodes.put(new Long(current.id), (Node) current);
+				Node previousNodeWithThisId = nodes.put(new Long(current.id), (Node) current);
 				nodeIns++;
 				if (current.getAttribute("highway") != null && current.getAttribute("highway").equalsIgnoreCase("traffic_signals")) {
+					// decrement trafficSignalCount if a previous node with this id got replaced but was a traffic signal node
+					if (previousNodeWithThisId != null && previousNodeWithThisId.isTrafficSignals()) {
+						trafficSignalCount--;
+						System.out.println("DUPLICATE TRAFFIC SIGNAL NODE ID: " + previousNodeWithThisId.id + " more than once in osm file");
+					}
 					n.markAsTrafficSignals();
 					trafficSignalCount++;
 				}

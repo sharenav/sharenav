@@ -691,8 +691,13 @@ public class CreateGpsMidData implements FilenameFilter {
 			if (zl == ROUTEZOOMLEVEL){
 				long startTime = System.currentTimeMillis();
 				for (Node n : parser.getDelayingNodes()) {
-					if (n.isTrafficSignals()) {
-						tile[zl].markTrafficSignalsRouteNodes(n);
+					if (n != null) {
+						if (n.isTrafficSignals()) {
+							tile[zl].markTrafficSignalsRouteNodes(n);
+						}
+					} else {
+						// this should not happen anymore because trafficSignalCount gets decremented now when the node id is duplicate
+						System.out.println("Warning: Delaying node is NULL");
 					}
 				}
 				parser.freeUpDelayingNodes();
