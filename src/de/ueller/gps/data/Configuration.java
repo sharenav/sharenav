@@ -215,6 +215,8 @@ public class Configuration {
 	public final static byte CFGBIT_AUTOZOOM = 78;
 	/** bit 79: Flag whether if available tone sequences should be played instead of sound samples */
 	public final static byte CFGBIT_SND_TONE_SEQUENCES_PREFERRED = 79;
+	/** bit 80: Flag whether internal PNG files should be preferred when using an external map (faster on some Nokias) */
+	public final static byte CFGBIT_PREFER_INTERNAL_PNGS = 80;
 	
 	/**
 	 * These are the database record ids for each configuration option
@@ -1112,46 +1114,54 @@ public class Configuration {
 	 */
 	public static InputStream getMapResource(String name) throws IOException {
 		InputStream is = null;
-		if (mapFromJar) {
+		if (mapFromJar
+			||
+			(
+				Configuration.getCfgBitSavedState(Configuration.CFGBIT_PREFER_INTERNAL_PNGS)
+					&&
+				name.toLowerCase().endsWith(".png")
+			)
+		) {
 			//#debug debug
 			logger.debug("Opening file from JAR: " + name);
 			is = QueueReader.class.getResourceAsStream(name);
-			if (is == null) {
+			if (is != null) {
+				return is;
+			} else if (!Configuration.getCfgBitSavedState(Configuration.CFGBIT_PREFER_INTERNAL_PNGS)) {
 				throw new IOException("Could not find file "/*i:ExFNF1*/ + name + 
 						" in JAR"/*i:ExFNF2*/);
 			}
-		} else {
-			//#if polish.api.fileconnection
-			try { 
-				if (mapFileUrl.endsWith("/")) { 
-					// directory mode 
-					name = mapFileUrl + name.substring(1);
-					//#debug debug
-					logger.debug("Opening file from filesystem: " + name);
-					FileConnection fc = (FileConnection) Connector.open(name, Connector.READ); 
-					is = fc.openInputStream(); 
-				} 
-				else { 
-					// zipfile mode 
-					if (mapZipFile == null) {
-						mapZipFile = new ZipFile(mapFileUrl, -1);
-					}
-					//#debug debug
-					logger.debug("Opening file from zip-file: " + name);
-					is = mapZipFile.getInputStream(mapZipFile.getEntry(name.substring(1))); 
-				} 
-			} catch (Exception e) { 
-				//#debug info 
-				logger.info("Failed to open: " + name); 
-				throw new IOException(e.getMessage());
-			}
-			//#else
-			//This should never happen.
-			is = null;
-			logger.fatal("Error, we don't have access to the filesystem, but our map data is supposed to be there!");
-			//#endif
-			
 		}
+		//#if polish.api.fileconnection
+		try { 
+			if (mapFileUrl.endsWith("/")) { 
+				// directory mode 
+				name = mapFileUrl + name.substring(1);
+				//#debug debug
+				logger.debug("Opening file from filesystem: " + name);
+				FileConnection fc = (FileConnection) Connector.open(name, Connector.READ); 
+				is = fc.openInputStream(); 
+			} 
+			else { 
+				// zipfile mode 
+				if (mapZipFile == null) {
+					mapZipFile = new ZipFile(mapFileUrl, -1);
+				}
+				//#debug debug
+				logger.debug("Opening file from zip-file: " + name);
+				is = mapZipFile.getInputStream(mapZipFile.getEntry(name.substring(1))); 
+			} 
+		} catch (Exception e) { 
+			//#debug info 
+			logger.info("Failed to open: " + name); 
+			throw new IOException(e.getMessage());
+		}
+		//#else
+		//This should never happen.
+		is = null;
+		logger.fatal("Error, we don't have access to the filesystem, but our map data is supposed to be there!");
+		//#endif
+
 		return is;
 	}
 

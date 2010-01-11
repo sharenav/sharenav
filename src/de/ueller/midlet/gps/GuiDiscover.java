@@ -199,6 +199,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	private TextField  tfOpencellidApikey;
 	private ChoiceGroup rawLogCG;
 	private ChoiceGroup mapSrc;
+	private ChoiceGroup mapSrcOptions;
 	private ChoiceGroup rotationGroup;
 	private ChoiceGroup nightModeGroup;
 	private ChoiceGroup renderOpts;
@@ -391,7 +392,12 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		sources[1] = "Filesystem: ";		
 		mapSrc = new ChoiceGroup("Map source:", Choice.EXCLUSIVE, sources, null);
 
+		String [] preferInternal = new String[1];
+		preferInternal[0] = "Prefer built-in POI PNGs (faster startup e.g. on some Nokias)";
+		mapSrcOptions = new ChoiceGroup("Options",ChoiceGroup.MULTIPLE, preferInternal, null);
+		
 		menuSelectMapSource.append(mapSrc);
+		menuSelectMapSource.append(mapSrcOptions);
 		menuSelectMapSource.setCommandListener(this);
 	}
 
@@ -728,6 +734,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 					url=null; 
 				} 
 				Configuration.setMapUrl(url); 
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_PREFER_INTERNAL_PNGS, mapSrcOptions.isSelected(0));
 				state = STATE_ROOT;
 				show();
 				logger.fatal("Need to restart GpsMid, otherwise map is in an inconsistant state"+url+Configuration.getMapUrl());
@@ -1002,6 +1009,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				initMapSource(); 
 				mapSrc.set(1, "Filesystem: " + ( (Configuration.getMapUrl()==null)?"<Please select map directory or other .jar/zip file first>":Configuration.getMapUrl() ), null);
 				mapSrc.setSelectedIndex(Configuration.usingBuiltinMap()?0:1, true);
+				mapSrcOptions.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_PREFER_INTERNAL_PNGS));
 				GpsMid.getInstance().show(menuSelectMapSource);
 				state = STATE_MAP;
 				break;			
