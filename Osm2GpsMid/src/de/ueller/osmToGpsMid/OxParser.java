@@ -64,7 +64,9 @@ public class OxParser extends DefaultHandler {
 	 */
 	private LinkedList<Way> duplicateWays;
 	private long startTime;
-
+	
+	private Node previousNodeWithThisId;
+	
 	/**
 	 * @param i InputStream from which planet file is read
 	 */
@@ -276,7 +278,7 @@ public class OxParser extends DefaultHandler {
 			}
 
 			if (inBound) {
-				Node previousNodeWithThisId = nodes.put(new Long(current.id), (Node) current);
+				previousNodeWithThisId = nodes.put(new Long(current.id), (Node) current);
 				nodeIns++;
 				if (current.getAttribute("highway") != null && current.getAttribute("highway").equalsIgnoreCase("traffic_signals")) {
 					// decrement trafficSignalCount if a previous node with this id got replaced but was a traffic signal node
