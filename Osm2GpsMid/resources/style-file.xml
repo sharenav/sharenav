@@ -49,7 +49,7 @@ scale alias 1: zoomed out 21x
 
 
 <legend>
-  <version release="0.5.09"/>
+  <version release="0.6.0"/>
   <colors>
 	<!-- Map Screen -->
 	<color of="map_background" is="009BFF9B" isAtNight="00002200"/>
