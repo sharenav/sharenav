@@ -70,12 +70,12 @@
    	<propertyfile file="${resources.dir}/version.properties">
    		<entry key="app" value="${app}"/>
    		<entry key="version" value="${version}"/>
-        <entry key="useRouting" value="true"/>
+        <entry key="useRouting" value="motorcar, bicycle, foot"/>
    		<entry key="midlet.name" value="GpsMid"/>
 		<entry key="routing.maxTileSize" value="3000"/>
    		<entry key="keepTemporaryFiles" value="false"/>
    		<entry key="bundle.name" value="GpsMid"/>
-		<entry key="maxDictDepth" value="5"/>
+		<entry key="maxDictDepth" value="7"/>
 		<entry key="maxTileSize" value="20000"/>
 		<entry key="maxTileWays0" value="255"/>
 		<entry key="maxTileWays1" value="255"/>
