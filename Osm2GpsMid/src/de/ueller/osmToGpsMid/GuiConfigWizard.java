@@ -151,8 +151,8 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 
 	private static final String CHOOSE_SRC = "Choose your map data source";
 	private static final String FILE_SRC = "Load .osm.bz2 File (recommended)";
-	private static final String XAPI_SRC = "OsmXapi (only for one small region)";
-	private static final String ROMA_SRC = "ROMA (only for one small region)";
+	private static final String XAPI_SRC = "OsmXapi";
+	private static final String ROMA_SRC = "ROMA";
 	private static final String CELL_SRC_NONE = "Include no Cell IDs";
 	private static final String CELL_SRC_FILE = "Load cell ID file";
 	private static final String CELL_SRC_DLOAD = "Download cell ID DB";
