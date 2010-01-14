@@ -411,7 +411,7 @@ public class Configuration {
 		
 		private void resetColors() {
 			if (COLOR_COUNT != COLORNAMES.length) {
-				System.out.println("WARNING: COLORNAMES.length (" + COLORNAMES.length 
+				System.out.println("WARNING: COLORNAMES.length (" + COLORNAMES.length
 						+ ") does not match COLOR_COUNT (" + COLOR_COUNT + ")");
 			}
 			for (int i = 0; i < COLOR_COUNT; i++) {
@@ -718,7 +718,7 @@ public class Configuration {
 					apiStream = conn.getInputStream();
 				}
 
-				fr = new TeeInputStream(apiStream,new FileOutputStream(new File(getTempDir() + "Online.osm")));
+				fr = new TeeInputStream(apiStream, new FileOutputStream(new File("Online.osm")));
 			} else {
 				System.out.println("Opening planet file: " + planet);
 				
@@ -769,7 +769,7 @@ public class Configuration {
 				conn.connect();
 				InputStream cellStream;
 				cellStream = new GZIPInputStream(new BufferedInputStream(conn.getInputStream()));
-				fr = new TeeInputStream(cellStream,new FileOutputStream(new File(getTempDir() + "CellDB.txt")));
+				fr = new TeeInputStream(cellStream, new FileOutputStream(new File("CellDB.txt")));
 			} else {
 				fr = new FileInputStream(cellSource);
 				if (cellSource.endsWith(".bz2") || cellSource.endsWith(".gz")){
