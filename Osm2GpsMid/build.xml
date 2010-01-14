@@ -70,7 +70,7 @@
    	<propertyfile file="${resources.dir}/version.properties">
    		<entry key="app" value="${app}"/>
    		<entry key="version" value="${version}"/>
-        <entry key="useRouting" value="motorcar, bicycle, foot"/>
+        <entry key="useRouting" value="true"/>
    		<entry key="midlet.name" value="GpsMid"/>
 		<entry key="routing.maxTileSize" value="3000"/>
    		<entry key="keepTemporaryFiles" value="false"/>
@@ -82,7 +82,7 @@
 		<entry key="maxTileWays2" value="255"/>
 		<entry key="maxTileWays3" value="255"/>
    		<entry key="style-file" value="style-file.xml"/>
-   		<entry key="EnableEditing" value="false"/>
+   		<entry key="enableEditing" value="false"/>
    		<entry key="useCellID" value="false"/>
    		<entry key="useIcons" value="true"/>
    		<entry key="useSounds" value="amr"/>

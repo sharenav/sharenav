@@ -478,7 +478,7 @@ public class Configuration {
 			
 			setStyleFileName(getString("style-file"));
 			appParam = getString("app");
-			enableEditingSupport = getString("EnableEditing").equalsIgnoreCase("true");
+			enableEditingSupport = getString("enableEditing").equalsIgnoreCase("true");
 			cellOperator = getString("useCellID");
 		}
 
