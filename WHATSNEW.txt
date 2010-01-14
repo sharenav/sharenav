@@ -1,124 +1,143 @@
-GpsMid 0.5.09
-       *** Usability ***
-       - Faster access to the map: There's no extra menu before the map screen anymore 
-       - Icon menus are available as an alternative user interface (activateable in Setup / GUI Options)
-         Multiple sized icon sets are included, choose with useIcons=small|true|big|false in the .properties file
-         if and which icon set is included. Default is useIcons=small|true, which includes a medium sized icon set
+GpsMid 0.6
+    *** Usability ***
+       - Faster access to the map: There's no extra menu before the map screen anymore.
+       - Icon menus are available as an alternative user interface (activateable in Setup / GUI Options).
+         Multiple sized icon sets are included, choose with "useIcons = small|true|big|false" in the .properties file
+         if and which icon set is included. Default is "useIcons = small|true", which includes a medium sized icon set.
        - Use numeric keys to directly access icons in icon menu and use long presses of numeric keys
-         to directly access the tabs of the icon menu - this can be activated in Setup/GUI (thx Petr Dlouhý) 
-       - Specify in Setup/Display Options to keep backlight on only while GPS is started
-       - Many more midlet colors are specifiable in the style-file now (including colors for night mode)
-       - Display speed and distances in miles if configured in Setup
-       - Show destination and move center to GPS to the left (thx jkpj)
-       *** Touch screen support ***
-        - Touch the street name status bar to show the icon menu
-        - Recenter to GPS button
-        - (De)activate manual rotation mode by touching the point of compass (use zoom buttons to rotate in manual rotation mode)
-        - Show Map Features by touching the scale bar
+         to directly access the tabs of the icon menu - this can be activated in Setup/GUI (thx Petr Dlouhï¿½). 
+       - Specify in Setup/Display Options to keep backlight on only while GPS is started.
+       - Many more midlet colors are specifiable in the style-file now (including colors for night mode).
+       - Display speed and distances in miles if configured in Setup.
+       - Correct error message during start if a POI icon is not found (bug was
+         2913528 "Broken Midlets generated").
+    *** Touch screen support ***
+        - Touch the street name status bar to show the icon menu.
+        - Recenter to GPS button.
+        - (De)activate manual rotation mode by touching the point of compass (use zoom buttons to rotate in manual rotation mode).
+        - Show Map Features by touching the scale bar.
         - In the Search screen touching below or above the search results makes a standard input field show up
-          (for touch screen devices without QWERT keyboard or numeric keys)
+          (for touch screen devices without QWERT keyboard or numeric keys).
         - Touch the clock on the map to toggle the backlight, with some Nokia mobiles like Nokia 5800 it is also possible to
-		  use the zoom buttons during "Backlight ON" message to dim the backlight on touchscreen mobiles        
-       *** GPS and other location producers ***
-       - Add a possibility to manually enter a connection URL, e.g. "comm:COM0;baudrate=115200"
-       - CellId provider for S60FP2 usable with the python helper app (providing cellid via a local socket) 
-       - CellId can now be used to position one self without the need to connect to the internet
-       *** Map Screen ***
-       - Improved painting of waysegments to draw them connected (thx pos_ei_don_) 
-       - Faster painting of oneway arrows (thx pos_ei_don_)
-       - Special rendering of ways that are bridges or tunnels (thx pos_ei_don_) 
-       - In Setup / Display Options there's now a textfield for specifying how many seconds after
+		  use the zoom buttons during "Backlight ON" message to dim the backlight on touchscreen mobiles.        
+        - Show destination and move center to GPS to the left (thx jkpj).
+    *** GPS and other location producers ***
+       - Add a possibility to manually enter a connection URL, e.g. "comm:COM0;baudrate=115200".
+       - CellId provider for S60FP2 usable with the python helper app (providing CellId via a local socket). 
+       - CellId can now be used to position oneself without the need to connect to the Internet.
+    *** Map Screen ***
+       - Improved painting of way segments to draw them connected (thx pos_ei_don_). 
+       - Faster painting of oneway arrows (thx pos_ei_don_).
+       - Special rendering of ways that are bridges or tunnels (thx pos_ei_don_).
+       - In Setup / Display Options there's now a text field for specifying how many seconds after
        	 the last user interaction the map will be automatically recentered to the GPS position
-       - Better handling of appearing and disappearing text items (title bar, route instructions, etc.) on the map screen
-       - optionally show speed when driving
-       - optionally show altitude from GPS
-       - when there is no route calculated but a destination is set, show air distance
-         instead of remaining route distance in the map screen
-       - New map feature "Auto zoom": this will automatically zoom in and out the map according to the driving speed
-         (after zooming in or out manually in auto zoom mode, gps recentering will also activate the auto zoom again)
-       - Turn restrictions included in the midlet can be displayed in the map with Setup/Debug Options
+       - Better handling of appearing and disappearing text items (title bar, route instructions, etc.) on the map screen.
+       - Optionally show speed when driving.
+       - Optionally show altitude from GPS.
+       - When there is no route calculated but a destination is set, show air distance
+         instead of remaining route distance in the map screen.
+       - New map feature "Auto zoom": This will automatically zoom the map in and out according to the driving speed
+         (after zooming in or out manually in auto zoom mode, GPS recentering will also activate the auto zoom again).
+       - Turn restrictions included in the midlet can be displayed in the map with Setup/Debug Options.
        - Max distance for displaying way name while scrolling is now calculated differently.
-         A minimum of 10 meters is used for high zoom levels
-       *** Recordings, Tracks and Waypoints ***
-       - Allow to save more than 255 waypoints again (thx pos_ei_don)
-       - Ask for track name at start/end of track recording - configurable in Setup / Recording Rules (thx jkpj)
-       - Numbers of tracks and waypoints displayed in the title of the respective lists (thx Petr Dlouhý)
-       - Current date added to name of waypoints file. (thx Petr Dlouhý)
-       - Better error message when GPX export fails, fixed typos. (thx Petr Dlouhý)
-       - Fix for the bug that waypoints were sometimes no longer drawn. (thx Petr Dlouhý)
-       - Using a different icon for waypoints than for the points of a track. (thx Petr Dlouhý)
-       - Fix for bug 2737256: Cursor position moved before "Set as target" (thx Petr Dlouhý)
-       - auto save the gpx track every 256 points, not only at the end of the recording
-       - Option to save a waypoint as favorite (will be shown in Search screen if no or only the first key is pressed)
-       - Faster export of tracks and waypoints (especially on some Nokia devices)
-       - Replay recorded track (experimental) 
-       *** Map Elements ***
-       - Improved visibility of railways based on GeoCache style - thx GoemonGps/billi25
-       - Add place=island as a workaround for land underwater - thx pos_ei_don_
-       *** Routing ***
-       - Foot routing (if bundled into the midlet, see below)
+         A minimum of 10 meters is used for high zoom levels.
+    *** Recordings, Tracks and Waypoints ***
+       - Allow to save more than 255 waypoints again. (thx pos_ei_don)
+       - Ask for track name at start/end of track recording - configurable in Setup / Recording Rules (thx jkpj).
+       - Numbers of tracks and waypoints displayed in the title of the respective lists (thx Petr Dlouhï¿½).
+       - Current date added to name of waypoints file (thx Petr Dlouhï¿½).
+       - Better feedback (progress popups) during GPX imports and exports.
+       - Better error message when GPX export fails, fixed typos (thx Petr Dlouhï¿½).
+       - Fix for the bug that waypoints were sometimes no longer drawn (thx Petr Dlouhï¿½).
+       - Using a different icon for waypoints than for the points of a track (thx Petr Dlouhï¿½).
+       - Fix for bug 2737256: Cursor position moved before "Set as target" (thx Petr Dlouhï¿½).
+       - Auto save the gpx track every 256 points, not only at the end of the recording.
+       - Option to save a waypoint as favorite (will be shown in Search screen if no or only the first key is pressed).
+       - Faster export of tracks and waypoints (on some Nokia devices).
+       - Replay recorded track (experimental).
+       - Timestamps in GPX exports when using internal GPS (JSR-179) were in local time, not UTC.
+       - Time and elevation jumps in GPX (bug 2928508) when using internal GPS (JSR-179) fixed.
+         With JSR-179, the WGS84 geoid elevation is now always used which is different
+         from external GPS which uses mean sea level elevation.
+    *** Map Elements ***
+       - Many POI types added to the default style.
+       - Different icons for churches, mosques, synagogues and unspecified religions.
+       - Trunk and primary roads now have a colour of their own.
+       - Improved visibility of railways based on GeoCache style - thx GoemonGps/billi25.
+       - Add place=island as a workaround for land underwater - thx pos_ei_don_.
+    *** Routing ***
+       - Foot routing (if bundled into the midlet, see below).
        - Multiple Route Modes can be bundled into a single midlet with a setting in the .properties file,
          e.g. useRouting = motorcar, bicycle, foot
-       - GpsMid asks which route mode to use on start of routing
-       - If you select in GUI Options "optimize for routing", "Route" will be the default action in the Search screen
-       - "Target" has been renamed to "Destination" throughout GpsMid
-       - Show remaining route distance to target in map screen
+       - GpsMid asks which route mode to use on start of routing.
+       - If you select "Optimize for routing" in GUI Options, "Route" will be the default action in the Search screen.
+       - "Target" has been renamed to "Destination" throughout GpsMid.
+       - Show remaining route distance to distance in map screen.
        - Optionally show remaining route duration / ETA in map screen
-         (based on ways' typical/max speeds/number of traffic lights)
-       - Check for turn restrictions for motorcar during route calculation (can be turned off as it needs more memory and is slower)
+         (based on ways' typical/max speeds/number of traffic lights).
+       - Check for turn restrictions for motorcar during route calculation 
+       	 (can be turned off as it needs more memory and is slower).
        - Speed up of long distance route calculations for motorcars
          by using only the main street net (motorway, trunk, primary, seconday, tertiary)
-         in the middle of the route
-         (specify distance from start and target where main street net calculation starts in Routing Options)
-       - Route calculation tries to find a motorway at the start of calculation (Option: Look for motorways)
+         in the middle of the route.
+         (Specify distance from start and destination where main street net calculation starts in Routing Options.)
+       - Route calculation tries to find a motorway at the start of calculation (Option: Look for motorways).
        - Examine motorways further during route calculation, so it is not left too early when the motorway makes a curve
-         but is in the long term the better route (Option: Boost motorways)
+         but is in the long term the better route (Option: Boost motorways).
        - Examine trunks and primaries further to find the best way around cities instead of routing through
-         (Option: Boost trunks & primaries)
+         (Option: Boost trunks & primaries).
        - Route Line is now determined in a separate thread in the background,
-         therefore instructions can be given already before the route line is known completely
-       - Faster detection of the route line ways during rendering (speeds up map rendering, especially on long routes)
-       - U-turn instruction
-       - Cross area routing (e.g. for foot routing through pedestrian zones)
+         therefore instructions can be given already before the route line is known completely.
+       - Faster detection of the route line ways during rendering (speeds up map rendering, especially on long routes).
+       - U-turn instruction added.
+       - Cross area routing (e.g. for foot routing through pedestrian zones).
        - Permissive Route Access Restrictions are now possible
-         (e.g. bicycle routing for an abandoned aeroway=runway if bicycle=true is set)
-       - Much faster route calculation for bicycles (thx to apmonkey for the hint)
-       - Only one "in xxx meters" voice instruction is given for each arrow
-       *** OSM Editing and other only with Internet Connection available features ***
-       - Support for GeoHack in "Online Info" (thx jkpj)
-       *** Style-file handling ***
-       - The high-style.zip is discontinued. Style-file.xml now replaces the former high-style-file.xml
-         and will be used as default style-file that is completely integrated into Osm2GpsMid.
+         (e.g. bicycle routing for an abandoned aeroway=runway if bicycle=true is set).
+       - Much faster route calculation for bicycles (thx to apmonkey for the hint).
+       - Only one "in xxx meters" voice instruction is given for each arrow.
+    *** OSM editing and other features only available with Internet connection ***
+       - Support for GeoHack in "Online Info" (thx jkpj).
+    *** Style-file handling ***
+       - High-style-file.xml has been renamed to style-file.xml and is used as 
+         default style-file that is completely integrated into Osm2GpsMid.
+         The high-style.zip is discontinued.
          By using an Unzip utility you can extract the style-file.xml from Osm2GpsMid and
-         put it into the filesystem and customize it as before.
+         put it into the file system and customize it as before.
        - The former style-file.xml has been renamed to mini-style-file.xml and can be
-         alternatively specified in the .properties file as "style-file=mini-style-file.xml"
+         alternatively specified in the .properties file as "style-file = mini-style-file.xml".
        - External media in style-file will be searched relative to the style-file location.
          Therefore when you specify "style-file = myStyle/style-file.xml" in your .properties file
-         Osm2GpsMid will look for external media files to include in myStyle/png and myStyle/sound directories
-       *** Midlet creation with Osm2GpsMid ***
-       - Improved output, e.g. OSM links to errors to fix and duration for some creation steps
+         Osm2GpsMid will look for external media files to include in myStyle/png and myStyle/sound directories.
+    *** Midlet creation with Osm2GpsMid ***
+       - Improved output, e.g. OSM links to errors to fix and duration for some creation steps.
        - New option maxTileWays0, maxTileWays1, maxTileWays2 and maxTileWays3 in .properties files
          for specifying the maximum number of ways bundled into tiles of tile zoom level 0 to 3:         
-         With Osm2GpsMid 0.5.0 into each tile of a tile zoom level a maximum of 255 ways was included.
-         This causes each midlet to contain very many small files. By increasing the maximum ways  
-         you can reduce the number of files in the midlet, maybe making it possible to have larger maps
+         With Osm2GpsMid 0.5.0, a maximum of 255 ways was included into each tile of a tile zoom level.
+         This causes each Midlet to contain very many small files. By increasing the maximum ways  
+         you can reduce the number of files in the Midlet, maybe making it possible to have larger maps
          on the mobile. However, having more ways in the tiles might require a device with
          more performance or memory to run GpsMid. Therefore the default maximum ways per tile is still 255. 
-       - New option maxDictDepth in .properties files for specifying the dictionary depth for tiles.       
-         With Osm2GpsMid 0.5.0 this was hardcoded to 5. Increasing the value to e.g. 10 will         
+       - New option maxDictDepth in .properties files for specifying the dictionary depth for tiles.
+         With Osm2GpsMid 0.5.0 this was hardcoded to 5. Increasing the value to e.g. 10 will 
          decrease the number of dictionary files in the midlet but require more memory in the mobile.
        - New option useSounds to specify which sound formats to include into the midlet,
-         e.g. "sounds=wav, amr" will include wav and amr sound files. GpsMid will use the first successful
-         playable sound format
-       *** Osm2GpsMid GUI ***
-       - Loading .properties files works again
-       - New option to include cell-ids
-       - New option to specify midlet route modes
-       - New option which sound formats (none, amr, wav or both) to include into the midlet
-       *** Others ***
-       - Don't cause an NPE if getControl doesn't return a VolumeControl as needed for phoneME (thx jkpj)
-       - Many more small improvements and bugfixes
+         e.g. "sounds = wav, amr" will include wav and amr sound files. GpsMid will use the first successful
+         playable sound format.
+    *** Osm2GpsMid GUI ***
+       - Output of Midlet creation is displayed in the GUI, so the user can now see it
+         if Osm2GpsMid was not started from a console.
+       - GUI no longer disappears when Midlet creation is started.
+       - Bounding boxes can now be deleted by double-clicking inside of them.
+       - Map is zoomed to the relevant map area when loading a .properties file.
+       - Loading .properties files works again.
+       - Error message if style file specified in .properties file can't be found.
+       - Specifying a relative path or a path in the JAR for a style-file now works. 
+       - New option to include CellIds.
+       - New option to specify Midlet route modes.
+       - New option which sound formats (none, amr, wav or both) to include into the Midlet.
+    *** Others ***
+       - Don't cause an NPE if getControl doesn't return a VolumeControl as needed for phoneME (thx jkpj).
+       - Many more small improvements and bugfixes.
 
 GpsMid 0.5.0
        *** Usability ***
@@ -196,10 +215,10 @@ GpsMid 0.5.0
        *** Map Elements ***
        - Added POIs for beacons, towers and power objects (thx mbaeurle) and bench, cafe (thx pos_eid_on_), optician to high-style.zip 
        - Added POIs for emergency phones and tourist informations to normal style-file and high-style.zip (thx mbaeurle)
-       - Different colors and names for different track grades in high-style.zip - thx Petr Dlouhý
-       - Paths are now dark grey in high-style.zip - thx Petr Dlouhý
-       - Fuel stations show now (preferably) the operator name - thx Petr Dlouhý
-       - Highway junctions and mountain peaks added (with new symbols) - thx Petr Dlouhý
+       - Different colors and names for different track grades in high-style.zip - thx Petr Dlouhï¿½
+       - Paths are now dark grey in high-style.zip - thx Petr Dlouhï¿½
+       - Fuel stations show now (preferably) the operator name - thx Petr Dlouhï¿½
+       - Highway junctions and mountain peaks added (with new symbols) - thx Petr Dlouhï¿½
        *** Routing ***
        - Routing to POIs/waypoints is now possible - GpsMid will route you to the closest routable way
        - Display the name of the street the route instruction leads into
