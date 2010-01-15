@@ -239,8 +239,8 @@ public class SingleTile extends Tile implements QueueableTile {
 							}
 						}
 						if ((opt & Tile.OPT_PAINT) != 0){
-							w.setColor(pc);
 							if (!w.isArea()) {
+								w.setColor(pc);
 								if (renderHighlight) {									
 									if (pc.highlightedPathOnTop) {
 										w.paintHighlightPath(pc, this, (byte) 0);

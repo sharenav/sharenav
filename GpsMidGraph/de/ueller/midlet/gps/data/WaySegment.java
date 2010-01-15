@@ -1,5 +1,6 @@
 package de.ueller.midlet.gps.data;
 
+import de.ueller.gps.data.Legend;
 import de.ueller.midlet.gps.tile.PaintContext;
 
 /** 
@@ -14,15 +15,12 @@ public class WaySegment {
 	/** used to store calculated values */
 	WaySegmentData linePoints = new WaySegmentData();
 
-	// Predefined Colors. 
-	// Todo: They should be made configurable in the stylefiles.
-	public int COL_BRIDGE = 0x00FFFFFF;
-	public int COL_BRIDGE_MIDDLE = 0x00FFFFFF;
-	public int COL_TUNNEL = 0x00000000;
 	
 	public static boolean  waycolor = true;
 	
 	public void drawBridge(PaintContext pc, int x[],int y[],int i,int max,int waywidth, IntPoint edgeA,IntPoint edgeB,IntPoint edgeC,IntPoint edgeD){
+		
+		int colorBridge = Legend.COLORS[Legend.COLOR_BRIDGE_DECORATION];
 		
 		point.a.set(x[i],y[i]);
 		point.b.set(x[i+1],y[i+1]);
@@ -35,23 +33,24 @@ public class WaySegment {
 					point.a.vectorAddRotate90(	// vector point.a, add rotated vector
 					point.a.vectorSubstract(edgeA)));	// point.a - a
 			
-			fillTriangle(COL_BRIDGE,edgeA,edgeC,point.c,pc);
+			fillTriangle(colorBridge,edgeA,edgeC,point.c,pc);
 			draw2Wings(edgeA,edgeC,point.c,pc);  // draws the wings, two little lines indicating the start/end of a bridge
 		default:
-			drawLine(COL_BRIDGE,point.a,point.b,pc);
+			drawLine(colorBridge,point.a,point.b,pc);
 		
 			// this is the last segment of the bridge, so paint the endtriangle
 			if (i==max){ 
 				point.c.set( 						// set point.c to...
 						point.b.vectorAddRotate90( 	// point.b with added and rotated vector...
 						edgeA.vectorSubstract(point.a))); // a - point.a
-				fillTriangle(COL_BRIDGE,edgeB,edgeD,point.c,pc);
+				fillTriangle(colorBridge,edgeB,edgeD,point.c,pc);
 				draw2Wings(edgeB,edgeD,point.c,pc);
 			}
 		}
 	}
 
 	public void drawTunnel(PaintContext pc,int x[],int y[],int i,int max,int w,IntPoint edgeA,IntPoint edgeB,IntPoint edgeC,IntPoint edgeD){
+		int colorTunnel = Legend.COLORS[Legend.COLOR_TUNNEL_DECORATION];
 		
 		// do nothing if way is too thin
 		if (w <2){
@@ -67,17 +66,32 @@ public class WaySegment {
 						point.a.vectorAddRotate90(	// vector point.a, add rotated vector
 						point.a.vectorSubstract(edgeA)));	// point.a - a
 
-				fillTriangle(COL_TUNNEL,edgeA,edgeC,point.c,pc);
+				fillTriangle(colorTunnel,edgeA,edgeC,point.c,pc);
 			default:
-				drawWideLine(COL_TUNNEL,point.a, point.b, (int)(w/4f), 0, pc);
+				drawWideLine(colorTunnel,point.a, point.b, (int)(w/4f), 0, pc);
 				if (i==max){
 					point.c.set( 						// set point.c to...
 							point.b.vectorAddRotate90( 	// point.b with added and rotated vector...
 							edgeA.vectorSubstract(point.a))); // a - point.a
-					fillTriangle(COL_TUNNEL,edgeB,edgeD,point.c,pc);
+					fillTriangle(colorTunnel,edgeB,edgeD,point.c,pc);
 				}
 		}// end switch
 	}
+
+		public void drawDamage(PaintContext pc,int x[],int y[],int i,int max,int w,IntPoint edgeA,IntPoint edgeB,IntPoint edgeC,IntPoint edgeD){
+		int colorDamaged = Legend.COLORS[Legend.COLOR_WAY_DAMAGED_DECORATION];
+
+		// do nothing if way is too thin
+//		if (w <2){
+//			return;
+//		}
+		
+		point.a.set(x[i],y[i]);
+		point.b.set(x[i+1],y[i+1]);
+		
+		drawWideLine(colorDamaged,point.a, point.b, (int)(w/1.5f), 0, pc);
+	}
+	
 	
 	private void fillTriangle(int color, IntPoint a,IntPoint b,IntPoint c,PaintContext pc){
 		pc.g.setColor(color);

@@ -21,7 +21,7 @@ public class Legend {
 	 * Specifies the format of the map on disk we expect to see
 	 * This constant must be in sync with Osm2GpsMid
 	 */
-	public final static short MAP_FORMAT_VERSION = 53;
+	public final static short MAP_FORMAT_VERSION = 54;
 	
 	/** The waypoint format used in the RecordStore. See PositionMark.java. */
 	public final static short WAYPT_FORMAT_VERSION = 2;
@@ -153,8 +153,13 @@ public class Legend {
 	public final static int COLOR_TACHO_TEXT = 67;
 	public final static int COLOR_CLOCK_BACKGROUND = 68;
 	public final static int COLOR_CLOCK_TEXT = 69;
-	public final static int COLOR_COUNT = 70;
-		
+	public final static int COLOR_BRIDGE_DECORATION = 70;
+	public final static int COLOR_TUNNEL_DECORATION = 71;
+	public final static int COLOR_WAY_DAMAGED_BORDER = 72;
+	public final static int COLOR_WAY_DAMAGED_DECORATION = 73;
+	public final static int COLOR_DAMAGED_BORDER = 74;
+	public final static int COLOR_COUNT = 75;
+	
 	public static int COLORS[] = new int[COLOR_COUNT];
 
 	public static String soundFormats[];

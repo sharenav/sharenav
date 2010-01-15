@@ -52,6 +52,8 @@ public class Way extends Entity {
 	public static final byte WAY_FLAG2_CYCLE_OPPOSITE = 8;
 	public static final byte WAY_FLAG2_LONGWAY = 16;
 	public static final byte WAY_FLAG2_MAXSPEED_WINTER = 32;
+	/** http://wiki.openstreetmap.org/wiki/WikiProject_Haiti */
+	public static final byte WAY_FLAG2_DAMAGED = 64;
 	
 	public static final byte DRAW_BORDER=1;
 	public static final byte DRAW_AREA=2;
@@ -68,6 +70,8 @@ public class Way extends Entity {
 	public static final int WAY_TUNNEL = 8 << ModShift;
 	public static final int WAY_BRIDGE = 16 << ModShift;
 	public static final int WAY_CYCLE_OPPOSITE = 32 << ModShift;
+	/** http://wiki.openstreetmap.org/wiki/WikiProject_Haiti */
+	public static final int WAY_DAMAGED = 64 << ModShift;
 
 	public static final byte PAINTMODE_COUNTFITTINGCHARS = 0;
 	public static final byte PAINTMODE_DRAWCHARS = 1;
@@ -216,6 +220,9 @@ public class Way extends Entity {
 			}
 			if ( (f2 & WAY_FLAG2_BRIDGE) > 0 ) {
 				flags += WAY_BRIDGE;
+			}
+			if ( (f2 & WAY_FLAG2_DAMAGED) > 0 ) {
+				flags += WAY_DAMAGED;
 			}
 			if ( (f2 & WAY_FLAG2_CYCLE_OPPOSITE) > 0 ) {
 				flags += WAY_CYCLE_OPPOSITE;
@@ -1523,6 +1530,10 @@ public class Way extends Entity {
 					waySegment.drawTunnel(pc, xPoints, yPoints, i, count - 1, w, 
 							l1b, l1e, l2b, l2e);
 				}
+				if (isDamaged()) {
+					waySegment.drawDamage(pc, xPoints, yPoints, i, count - 1, w, 
+							l1b, l1e, l2b, l2e);
+				}
 			}
 			//Save the way-corners for the next loop to fill segment-gaps
 			l3b.set(l1b);
@@ -1645,6 +1656,8 @@ public class Way extends Entity {
 
 	public void paintAsArea(PaintContext pc, SingleTile t) {
 		WayDescription wayDesc = Legend.getWayDescription(type);
+
+		pc.g.setColor(wayDesc.lineColor);
 		
 		byte om = Legend.getWayOverviewMode(type);
 		switch (om & Legend.OM_MODE_MASK) {
@@ -1719,6 +1732,10 @@ public class Way extends Entity {
 		//PolygonGraphics.drawPolygon(g, x, y);
 		//DrawUtil.fillPolygon(x, y, wayDesc.lineColor, pc.g);
 		PolygonGraphics.fillPolygon(pc.g, x, y);
+		if (isDamaged()) {
+			pc.g.setColor(Legend.COLORS[Legend.COLOR_DAMAGED_BORDER]);
+			PolygonGraphics.drawPolygon(pc.g, x, y);
+		}
 		paintAreaName(pc,t);
 	}
 
@@ -1852,12 +1869,12 @@ public class Way extends Entity {
 			pc.g.setColor(wayDesc.lineColor);
 		}
 	}
+
 	public void setColor(PaintContext pc) {		
 		WayDescription wayDesc = Legend.getWayDescription(type);
 		pc.g.setStrokeStyle(wayDesc.getGraphicsLineStyle());
-		pc.g.setColor(wayDesc.lineColor);
+		pc.g.setColor(isDamaged() ? Legend.COLORS[Legend.COLOR_WAY_DAMAGED_DECORATION] : wayDesc.lineColor);
 	}
-
 	public int getWidth(PaintContext pc) {
 		WayDescription wayDesc = Legend.getWayDescription(type);
 		return wayDesc.wayWidth;
@@ -1880,14 +1897,14 @@ public class Way extends Entity {
 			pc.g.setColor(255, 50, 50);
 		} else {
 			pc.g.setStrokeStyle(Graphics.SOLID);
-			pc.g.setColor(wayDesc.boardedColor);
+			pc.g.setColor(isDamaged() ? Legend.COLORS[Legend.COLOR_WAY_DAMAGED_BORDER] : wayDesc.boardedColor);
 		}
 	}
 
 	public void setBorderColor(PaintContext pc) {
 		pc.g.setStrokeStyle(Graphics.SOLID);
 		WayDescription wayDesc = Legend.getWayDescription(type);
-		pc.g.setColor(wayDesc.boardedColor);
+		pc.g.setColor(isDamaged() ? Legend.COLOR_WAY_DAMAGED_BORDER : wayDesc.boardedColor);
 	}
 	
 	public boolean isOneway() {
@@ -1928,6 +1945,10 @@ public class Way extends Entity {
 	
 	public boolean isBridge() {
 		return ((flags & WAY_BRIDGE) > 0);
+	}
+
+	public boolean isDamaged() {
+		return ((flags & WAY_DAMAGED) > 0);
 	}
 	
 	public int getMaxSpeed() {
