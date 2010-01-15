@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.Vector;
 
 import de.ueller.osmToGpsMid.Configuration;
 import de.ueller.osmToGpsMid.Constants;
@@ -40,6 +41,8 @@ public class Way extends Entity implements Comparable<Way> {
 	/** TODO: Is this really in use??? */
 	public static final byte WAY_FLAG2_LONGWAY = 16;
 	public static final byte WAY_FLAG2_MAXSPEED_WINTER = 32;
+	/** http://wiki.openstreetmap.org/wiki/WikiProject_Haiti */
+	public static final byte WAY_FLAG2_COLLAPSED_OR_IMPASSABLE = 64;
 
 	public Path path = null;
 
@@ -170,6 +173,26 @@ public class Way extends Entity implements Comparable<Way> {
 		return (containsKey("bridge"));
 	}
 
+	public boolean isDamaged() {
+		Vector <Damage> damages = LegendParser.getDamages();
+		if (damages.size() != 0) {
+			for (Damage damage: LegendParser.getDamages()) {
+				for (String s: getTags()) {
+					if (damage.key.equals("*") || s.equalsIgnoreCase(damage.key)) {
+						if (damage.values.equals("*")
+								||
+							("|" + damage.values +"|").indexOf("|" + getAttribute(s) + "|" ) != -1
+						) { 
+							return true;
+						}
+					}
+				}				
+			}
+		}
+		return false;
+	}
+	
+	
     public byte getType(Configuration c) {
     	if (type == -1) {
 			type = calcType(c);
@@ -543,6 +566,9 @@ public class Way extends Entity implements Comparable<Way> {
 			}
 			if (isBridge()) {
 				flags2 += WAY_FLAG2_BRIDGE;
+			}
+			if (isDamaged()) {
+				flags2 += WAY_FLAG2_COLLAPSED_OR_IMPASSABLE;
 			}
 			if (isOppositeDirectionForBicycleAllowed()) {
 				flags2 += WAY_FLAG2_CYCLE_OPPOSITE;				

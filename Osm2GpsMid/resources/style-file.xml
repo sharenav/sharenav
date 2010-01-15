@@ -127,6 +127,12 @@ scale alias 1: zoomed out 21x
 	<!-- other screens -->
 	<color of="tacho_background" is="00FFFFFF" isAtNight="00000000"/>	
 	<color of="tacho_text" is="00000000" isAtNight="0011CC00"/>	
+	<!-- decorations -->
+	<color of="bridge_decoration" is="00FFFFFF"/>	
+	<color of="tunnel_decoration" is="00000000"/>	
+	<color of="way_damaged_border" is="00FF0000"/>	
+	<color of="way_damaged_decoration" is="00FF0000"/>	
+	<color of="area_damaged_border" is="00FF0000"/>	
   </colors>
   
 <!-- SoundFiles for these sounds are automatically included into the midlet unless useRouting=false is set in .properties file:
@@ -2020,6 +2026,17 @@ scale alias 1: zoomed out 21x
   			</Wvalue>
   		</keyW>
 	</ways>
+
+	<!--
+		Damages describe tags that will modify ways / areas with
+		the colors way_damaged_border, way_damaged_decoration or area_damaged_border	
+		this is taken from http://wiki.openstreetmap.org/wiki/WikiProject_Haiti
+	-->
+	<damages>
+		<damage damageKey="earthquake:damage" damageValues="collapsed_buiding|damaged_infrastructure|landslide" />
+		<damage damageKey="*" damageValues="collapsed" />
+		<damage damageKey="impassable" damageValues="yes" />
+	</damages>	
 	
 	<!--
 	Osm2GpsMid will include ways/pois into the first tile level where the way/poi type's scale is at least the tile level's minScale
@@ -2045,6 +2062,9 @@ scale alias 1: zoomed out 21x
 			<routeAccessRestriction restrictionKey = "motor_vehicle" restrictionValues = "no|private"/>
 			<routeAccessRestriction restrictionKey = "access" restrictionValues = "no|private"/>
 			<routeAccessRestriction restrictionKey = "vehicle" restrictionValues = "no|private"/>
+			<!-- http://wiki.openstreetmap.org/wiki/WikiProject_Haiti -->
+			<routeAccessRestriction restrictionKey = "bridge" restrictionValues = "collapsed"/>
+			<routeAccessRestriction restrictionKey = "impassable" restrictionValues = "yes"/>
 		</routeMode>
 			<routeMode modeName = "bicycle" maxPrepareMeters="75" maxInMeters="299" maxEstimationSpeed="20" bicycleOppositeExceptions = "true">
 				<routeAccessRestriction restrictionKey = "bicycle" restrictionValues = "yes|designated" restrictionPermit = "true"/>
@@ -2052,11 +2072,17 @@ scale alias 1: zoomed out 21x
 				<routeAccessRestriction restrictionKey = "bicycle" restrictionValues = "no|private"/>
 				<routeAccessRestriction restrictionKey = "access" restrictionValues = "no|private"/>
 				<routeAccessRestriction restrictionKey = "vehicle" restrictionValues = "no|private"/>
+				<!-- http://wiki.openstreetmap.org/wiki/WikiProject_Haiti -->
+				<routeAccessRestriction restrictionKey = "bridge" restrictionValues = "collapsed"/>
+				<routeAccessRestriction restrictionKey = "impassable" restrictionValues = "yes"/>
 			</routeMode>
 		<routeMode modeName = "foot" maxPrepareMeters="50" maxInMeters="125" maxEstimationSpeed="4" againstAllOneWays = "true">
 			<routeAccessRestriction restrictionKey = "foot" restrictionValues = "yes|designated" restrictionPermit = "true"/>
 			<routeAccessRestriction restrictionKey = "foot" restrictionValues = "no|private"/>
 			<routeAccessRestriction restrictionKey = "access" restrictionValues = "no|private"/>
+			<!-- http://wiki.openstreetmap.org/wiki/WikiProject_Haiti -->
+			<routeAccessRestriction restrictionKey = "bridge" restrictionValues = "collapsed"/>
+			<routeAccessRestriction restrictionKey = "impassable" restrictionValues = "yes"/>
 		</routeMode>
 	</routeModes>
 	<maxSpeedTemplates>

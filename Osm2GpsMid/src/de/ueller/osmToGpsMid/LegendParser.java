@@ -35,6 +35,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import de.ueller.osmToGpsMid.Configuration;
 import de.ueller.osmToGpsMid.model.ConditionTuple;
+import de.ueller.osmToGpsMid.model.Damage;
 import de.ueller.osmToGpsMid.model.EntityDescription;
 import de.ueller.osmToGpsMid.model.POIdescription;
 import de.ueller.osmToGpsMid.model.RouteAccessRestriction;
@@ -56,12 +57,14 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 	private Hashtable<String, Set<EntityDescription>> keyValuesPoi;
 	private Hashtable<String, Set<EntityDescription>> keyValuesWay;
 	private Hashtable<String, Integer> maxSpeedTemplates;
+	private static final Vector<Damage> damages = new Vector<Damage>();
 	private final byte READING_WAYS = 0;
 	private final byte READING_POIS = 1;
 	private final byte READING_ROUTEMODES = 3;
 	private final byte READING_COLORS = 4;
 	private final byte READING_MAXSPEED = 5;
 	private final byte READING_TILESCALELEVELS = 6;
+	private final byte READING_DAMAGES = 7;
 	private byte readingType = READING_WAYS;
 
 	private byte poiIdx = 0;
@@ -221,6 +224,8 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 			readingType = READING_MAXSPEED;
 		} else if (qName.equals("tileScaleLevels")) {
 			readingType = READING_TILESCALELEVELS;
+		} else if (qName.equals("damages")) {
+			readingType = READING_DAMAGES;
 		}
 		// TODO: Suppose the method is called with qName="pois". I think the
 		// 'case'
@@ -692,8 +697,13 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 						nonValidStyleFile = true;
 					}
 				}
-				break;
 			}
+			break;  // tileScaleLevels
+		case READING_DAMAGES:
+			if (qName.equals("damage")) {
+				damages.add(new Damage(atts.getValue("damageKey"), atts.getValue("damageValues")));
+			}
+			break; // damages
 		}
 	} // startElement
 
@@ -747,6 +757,10 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 		return maxSpeedTemplates;
 	}
 
+	public static Vector<Damage> getDamages() {
+		return damages;
+	}
+	
 	@Override
 	public void warning(SAXParseException e) throws SAXException {
 		System.out.println("Warning on line " + e.getLineNumber() + ": " + e.getMessage());

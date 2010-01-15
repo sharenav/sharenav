@@ -1,9 +1,10 @@
-<!ELEMENT legend (version, colors, pois, ways, tileScaleLevels?, routeModes*, maxSpeedTemplates?)>
+<!ELEMENT legend (version, colors, pois, ways, damages, tileScaleLevels?, routeModes*, maxSpeedTemplates?)>
 <!ELEMENT version EMPTY>
 <!ELEMENT colors (color*)>
 <!ELEMENT color EMPTY>
 <!ELEMENT pois (key*)>
 <!ELEMENT ways (keyW*)>
+<!ELEMENT damages (damage*)>
 <!ELEMENT routeModes (routeMode*)>
 <!ELEMENT routeMode (routeAccessRestriction*)>
 <!ELEMENT maxSpeedTemplates (maxSpeedTemplate*)>
@@ -12,6 +13,7 @@
 <!ELEMENT keyW (Wvalue+)>
 <!ELEMENT value (specialisation*, description , image? , searchIcon? , namekey , namefallback? , AreaPOI?, scale , textscale? , imageCentered?, hideable?)>
 <!ELEMENT Wvalue (specialisation*, description, namekey, namefallback?, isArea, scale, textscale?, arrowscale?, descriptionscale?, lineColor, borderColor?, lineStyle?, wayWidth?, searchIcon?, routing*, force_to?, hideable?)>
+<!ELEMENT damage EMPTY>
 <!ELEMENT routeAccessRestriction EMPTY>
 <!ELEMENT restrictionKey EMPTY>
 <!ELEMENT restrictionValues EMPTY>
@@ -85,6 +87,8 @@
 <!ATTLIST routeAccessRestriction restrictionKey CDATA #REQUIRED>
 <!ATTLIST routeAccessRestriction restrictionValues CDATA #REQUIRED>
 <!ATTLIST routeAccessRestriction restrictionPermit CDATA #IMPLIED>
+<!ATTLIST damage damageKey CDATA #REQUIRED>
+<!ATTLIST damage damageValues CDATA #REQUIRED>
 <!ATTLIST maxSpeedTemplate name CDATA #REQUIRED>
 <!ATTLIST maxSpeedTemplate maxspeed CDATA #REQUIRED>
 <!ATTLIST tileScaleLevel level CDATA #REQUIRED>

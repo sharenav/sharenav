@@ -58,7 +58,7 @@ public class Configuration {
 	 * Specifies the format of the map on disk we are about to write.
 	 * This constant must be in sync with GpsMid.
 	 */
-	public final static short MAP_FORMAT_VERSION = 53;
+	public final static short MAP_FORMAT_VERSION = 54;
 
 	public final static int COLOR_MAP_BACKGROUND = 0;
 	public final static int COLOR_MAP_TEXT = 1;
@@ -130,7 +130,12 @@ public class Configuration {
 	public final static int COLOR_TACHO_TEXT = 67;
 	public final static int COLOR_CLOCK_BACKGROUND = 68;
 	public final static int COLOR_CLOCK_TEXT = 69;
-	public final static int COLOR_COUNT = 70;
+	public final static int COLOR_BRIDGE_DECORATION = 70;
+	public final static int COLOR_TUNNEL_DECORATION = 71;
+	public final static int COLOR_WAY_DAMAGED_BORDER = 72;
+	public final static int COLOR_WAY_DAMAGED_DECORATION = 73;
+	public final static int COLOR_DAMAGED_BORDER = 74;
+	public final static int COLOR_COUNT = 75;
 
 	public final static String COLORNAMES[] =
 			{"map_background",
@@ -202,7 +207,12 @@ public class Configuration {
 			 "tacho_background",
 			 "tacho_text",
 			 "clock_background",
-			 "clock_text"
+			 "clock_text",
+			 "bridge_decoration",
+			 "tunnel_decoration",
+			 "way_damaged_border",
+			 "way_damaged_decoration",
+			 "area_damaged_border"
 			};
 
 	public static int COLORS[] = new int[COLOR_COUNT];

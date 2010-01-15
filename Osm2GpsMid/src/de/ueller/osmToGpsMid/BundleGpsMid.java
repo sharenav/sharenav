@@ -34,6 +34,7 @@ import java.util.zip.ZipOutputStream;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
+import de.ueller.osmToGpsMid.model.Damage;
 import de.ueller.osmToGpsMid.model.Node;
 import de.ueller.osmToGpsMid.model.Relation;
 import de.ueller.osmToGpsMid.model.RouteAccessRestriction;
@@ -406,6 +407,15 @@ public class BundleGpsMid implements Runnable {
 				}
 				System.out.println("");
 			}
+			
+            if (LegendParser.getDamages().size() == 0) {
+        		System.out.println("No damage markers in "	+ config.getStyleFileName());
+            } else {
+            	System.out.println("Damage markers in " + config.getStyleFileName() + ":");
+				for (Damage damage: LegendParser.getDamages()) {
+	        		System.out.println(" Ways/Areas with " + damage.key + "=" + damage.values + " are marked damaged"); 
+				}
+            }
 			String tmpDir = config.getTempDir();
 			System.out.println("Unpacking application to " + tmpDir);
 			expand(config, tmpDir);
