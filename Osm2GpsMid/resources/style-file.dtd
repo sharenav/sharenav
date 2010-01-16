@@ -1,4 +1,4 @@
-<!ELEMENT legend (version, colors, pois, ways, damages, tileScaleLevels?, routeModes*, maxSpeedTemplates?)>
+<!ELEMENT legend (version, colors, pois, ways, damages?, tileScaleLevels?, routeModes*, maxSpeedTemplates?)>
 <!ELEMENT version EMPTY>
 <!ELEMENT colors (color*)>
 <!ELEMENT color EMPTY>
