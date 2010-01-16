@@ -1232,7 +1232,9 @@ scale alias 1: zoomed out 21x
   				<isArea area = "false"/>
   				<scale scale = "20"/>
   				<lineColor color="0057520D" colorAtNight="00524E19" />
-				<borderColor color="008C8C8C" colorAtNight="008C8C8C" />
+<!-- grey border color for typical non-motorcar ways
+ 				<borderColor color="008C8C8C" colorAtNight="008C8C8C" />
+-->
   				<lineStyle dashed = "true" />
   				<wayWidth width="2" />
   				<routing with="motorcar" accessible="no" speed="5" />  	
@@ -1246,7 +1248,9 @@ scale alias 1: zoomed out 21x
   				<isArea area = "false"/>
   				<scale scale = "20"/>
   				<lineColor color="008C8515" colorAtNight="00524E19" />
-				<borderColor color="008C8C8C" colorAtNight="008C8C8C" />
+<!-- grey border color for typical non-motorcar ways
+ 				<borderColor color="008C8C8C" colorAtNight="008C8C8C" />
+-->
   				<lineStyle dashed = "true" />
   				<wayWidth width="2" />
   				<routing with="motorcar" accessible="no" speed="5" />  	
@@ -1260,7 +1264,9 @@ scale alias 1: zoomed out 21x
   				<isArea area = "false"/>
   				<scale scale = "20"/>
   				<lineColor color="00BEB41D" colorAtNight="00524E19" />
-				<borderColor color="008C8C8C" colorAtNight="008C8C8C" />
+<!-- grey border color for typical non-motorcar ways
+ 				<borderColor color="008C8C8C" colorAtNight="008C8C8C" />
+-->
   				<lineStyle dashed = "true" />
   				<wayWidth width="2" />
   				<routing with="motorcar" accessible="no" speed="5" />  	
@@ -1274,7 +1280,9 @@ scale alias 1: zoomed out 21x
   				<isArea area = "false"/>
   				<scale scale = "20"/>
   				<lineColor color="00E0D538" colorAtNight="00524E19" />
-				<borderColor color="008C8C8C" colorAtNight="008C8C8C" />
+<!-- grey border color for typical non-motorcar ways
+ 				<borderColor color="008C8C8C" colorAtNight="008C8C8C" />
+-->
   				<lineStyle dashed = "true" />
   				<wayWidth width="2" />
   				<routing with="motorcar" accessible="no" speed="5" />  	
@@ -1288,7 +1296,9 @@ scale alias 1: zoomed out 21x
   				<isArea area = "false"/>
   				<scale scale = "20"/>
   				<lineColor color="00E8E06C" colorAtNight="00524E19" />
-				<borderColor color="008C8C8C" colorAtNight="008C8C8C" />
+<!-- grey border color for typical non-motorcar ways
+ 				<borderColor color="008C8C8C" colorAtNight="008C8C8C" />
+-->
   				<lineStyle dashed = "true" />
   				<wayWidth width="2" />
   				<routing with="motorcar" accessible="no" speed="5" />  	
@@ -1301,7 +1311,9 @@ scale alias 1: zoomed out 21x
   				<isArea area = "false"/>
   				<scale scale = "20"/>
   				<lineColor color="00EFEAA0" colorAtNight="00524E19" />
-				<borderColor color="008C8C8C" colorAtNight="008C8C8C" />
+<!-- grey border color for typical non-motorcar ways
+ 				<borderColor color="008C8C8C" colorAtNight="008C8C8C" />
+-->
   				<lineStyle dashed = "true" />
   				<wayWidth width="2" />
   				<routing with="motorcar" accessible="no" speed="5" />  	
@@ -1325,7 +1337,9 @@ scale alias 1: zoomed out 21x
   				<isArea area = "false"/>
   				<scale scale = "20"/>
   				<lineColor color = "007777FF" colorAtNight="0037922D" />
-				<borderColor color="008C8C8C" colorAtNight="008C8C8C"/>
+<!-- grey border color for typical non-motorcar ways
+ 				<borderColor color="008C8C8C" colorAtNight="008C8C8C" />
+-->
   				<lineStyle dashed = "true" />
   				<wayWidth width="2" />
   				<routing with="motorcar" accessible="false" speed="5" />
@@ -1338,7 +1352,9 @@ scale alias 1: zoomed out 21x
   				<isArea area = "false"/>
   				<scale scale = "20"/>
   				<lineColor color = "00FFFFFF" colorAtNight="00515151" />
-				<borderColor color="008C8C8C" colorAtNight="008C8C8C" />
+<!-- grey border color for typical non-motorcar ways
+ 				<borderColor color="008C8C8C" colorAtNight="008C8C8C" />
+-->
   				<wayWidth width="2" />
 				<routing with="motorcar" accessible="false" speed="5" />  	
 				<routing with="bicycle" accessible="true" speed="12" />
@@ -1350,7 +1366,9 @@ scale alias 1: zoomed out 21x
   				<isArea area = "false"/>
   				<scale scale = "20"/>
   				<lineColor color = "00FFBBBB" colorAtNight="007D4040" />
-				<borderColor color="008C8C8C" colorAtNight="008C8C8C" />
+<!-- grey border color for typical non-motorcar ways
+ 				<borderColor color="008C8C8C" colorAtNight="008C8C8C" />
+-->
   				<lineStyle dashed = "false" />
   				<wayWidth width="2" />
 				<routing with="motorcar" accessible="false" speed="1" />  	
@@ -1363,7 +1381,9 @@ scale alias 1: zoomed out 21x
   				<isArea area = "false"/>
   				<scale scale = "20"/>
   				<lineColor color = "00808080" colorAtNight="00515151" />
-				<borderColor color="008C8C8C" colorAtNight="008C8C8C" />
+<!-- grey border color for typical non-motorcar ways
+ 				<borderColor color="008C8C8C" colorAtNight="008C8C8C" />
+-->
   				<lineStyle dashed = "false" />
   				<wayWidth width="2" />
 				<routing with="motorcar" accessible="false" speed="5" />  	
@@ -1376,7 +1396,9 @@ scale alias 1: zoomed out 21x
   				<isArea area = "false"/>
   				<scale scale = "20"/>
 				<lineColor color="00CCCCCC" colorAtNight="00737373" />
-				<borderColor color="008C8C8C" colorAtNight="008C8C8C" />
+<!-- grey border color for typical non-motorcar ways
+ 				<borderColor color="008C8C8C" colorAtNight="008C8C8C" />
+-->
   				<lineStyle dashed = "false" />
   				<wayWidth width="3" />
   				<routing with="motorcar" accessible="false" speed="5" />  	
