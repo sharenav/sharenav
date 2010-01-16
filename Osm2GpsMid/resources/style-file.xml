@@ -276,7 +276,7 @@ scale alias 1: zoomed out 21x
 		<image src="hospital.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="23"/>
+		<scale scale="20"/>
 		<textscale scale="26"/>
 	  </value>
 	  <value name ="pub">
@@ -758,7 +758,7 @@ scale alias 1: zoomed out 21x
 		<image src="camping.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
-		<scale scale="23"/>
+		<scale scale="20"/>
 		<textscale scale="26"/>
 	  </value>
 	  <value name="picnic_site">
@@ -1029,6 +1029,40 @@ scale alias 1: zoomed out 21x
 		<AreaPOI createForAreas="true"/>
 		<scale scale="23"/>
 		<textscale scale="26"/>
+	  </value>
+  	</key>
+	<!-- http://wiki.openstreetmap.org/wiki/WikiProject_Haiti -->
+	<key tag="building">
+	  <value name ="collapsed">
+		<description desc = "collapsed building"/>
+		<image src="damage.png"/>
+		<namekey tag = "name"/>  				
+		<AreaPOI createForAreas="false"/>
+		<scale scale="20"/>
+		<textscale scale="25"/>
+	  </value>
+  	</key>
+	<!-- http://wiki.openstreetmap.org/wiki/WikiProject_Haiti -->
+	<key tag="building">
+	  <value name ="risky">
+		<description desc = "risky building"/>
+		<image src="damage.png"/>
+		<namekey tag = "name"/>  				
+		<AreaPOI createForAreas="true"/>
+		<scale scale="20"/>
+		<textscale scale="25"/>
+	  </value>
+  	</key>
+	<!-- http://wiki.openstreetmap.org/wiki/WikiProject_Haiti -->
+	<key tag="earthquake:damage">
+	  <value name ="*">
+		<description desc = "earthquake damage"/>
+		<image src="damage.png"/>
+		<namekey tag = "name"/>  				
+		<namefallback tag = "*"/>  	
+		<AreaPOI createForAreas="true"/>
+		<scale scale="20"/>
+		<textscale scale="25"/>
 	  </value>
   	</key>
   </pois>
@@ -1972,6 +2006,15 @@ scale alias 1: zoomed out 21x
   				<lineColor color = "0055FF55" />  	  				
   			</Wvalue>
 		</keyW>
+		<keyW tag = "tourism">
+			<Wvalue name = "camp_site">
+  				<description desc = "Camp Site"/>
+  				<namekey tag = "name"/>  				
+  				<isArea area = "true"/>
+  				<scale scale = "19"/>
+  				<lineColor color = "0000A020" />  	  				
+  			</Wvalue>
+		</keyW>			
 		<keyW tag = "building">
 			<Wvalue name = "yes">
 				<!-- if * is specified as value for a specialisation key,
