@@ -57,7 +57,7 @@ REM Konvertieren der svg-Dateien im aktuellen Verzeichnis nach png
 for /R %%i in (*.svg) do start "Inkscape" /wait %INKSCAPE% -f "%%~fi" -e "%%~dpi%2%%~ni.png" -D -w %1
 
 REM Komprimieren der png-Dateien in den Unterordner crushed
-..\pngcrush >nul -d crushed -brute %2*.png
+..\pngcrush >nul -d crushed -rem allb -brute -reduce %2*.png
 REM Ersetzen der png-Dateien durch die komprimierten aus dem Unterordner crushed
 copy crushed\*.png .
 REM Löschen des Unterordners crushed
