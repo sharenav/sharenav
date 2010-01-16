@@ -65,6 +65,9 @@ GpsMid 0.6
        - Trunk and primary roads now have a colour of their own.
        - Improved visibility of railways based on GeoCache style - thx GoemonGps/billi25.
        - Add place=island as a workaround for land underwater - thx pos_ei_don_.
+       - http://wiki.openstreetmap.org/wiki/WikiProject_Haiti:
+          - new damages section in style-file to give certain ways / areas a red border
+          - damage POIs for collapsed buildings and other earthquake damages
     *** Routing ***
        - Foot routing (if bundled into the midlet, see below).
        - Multiple Route Modes can be bundled into a single midlet with a setting in the .properties file,
@@ -95,6 +98,8 @@ GpsMid 0.6
          (e.g. bicycle routing for an abandoned aeroway=runway if bicycle=true is set).
        - Much faster route calculation for bicycles (thx to apmonkey for the hint).
        - Only one "in xxx meters" voice instruction is given for each arrow.
+       - http://wiki.openstreetmap.org/wiki/WikiProject_Haiti:
+         routing repects impassable=yes and bridge=collapsed as non-routable
     *** OSM editing and other features only available with Internet connection ***
        - Support for GeoHack in "Online Info" (thx jkpj).
     *** Style-file handling ***
