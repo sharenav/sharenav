@@ -701,7 +701,7 @@ public class Way extends Entity implements Comparable<Way> {
 		return path.getLineCount();
 	}
 	
-	public Way split() {		
+	public Way split() {
 		if (isValid() == false) {
 			System.out.println("Way before split is not valid");
 		}
@@ -709,7 +709,7 @@ public class Way extends Entity implements Comparable<Way> {
 		if (split != null) {
 			//If we split the way, the bounds are no longer valid
 			this.clearBounds();
-			Way newWay = new Way(this);			
+			Way newWay = new Way(this);
 			newWay.path = split;
 			if (newWay.isValid() == false) {
 				System.out.println("New Way after split is not valid");
@@ -731,5 +731,33 @@ public class Way extends Entity implements Comparable<Way> {
 			return false;
 		}
 		return true;
+	}
+	
+	public boolean isClosed() {
+		if (!isValid()) {
+			return false;
+		}
+
+		if (path.isMultiPath()) {
+			return false;
+		}
+
+		SubPath spath = path.getActualSeg();
+		List<Node> nlist = spath.getNodes();
+		if (nlist.get(0) == nlist.get(nlist.size() - 1)) {
+			return true;
+		}
+		
+		return false;
+	}
+
+	public boolean isArea() {
+		if (isExplicitArea()) {
+			return true;
+		}
+		if (type >= 0) {
+			return Configuration.getConfiguration().getWayDesc(type).isArea;
+		}
+		return false;
 	}
 }

@@ -36,7 +36,8 @@ public class SplitLongWays {
 
 	private void testAndSplit(Way way) {
 //		if (nonCont && way.getSegmentCount() == 1) return;
-		if (way.getType() >= 50) return;
+		/* TODO: Need to find a way to correctly split areas, but a naive (linear) split won't work */
+		if (way.isArea()) return;
 		Bounds b=way.getBounds();
 		if ((b.maxLat-b.minLat) > 0.09f 
 				|| (b.maxLon-b.minLon) > 0.09f ){
