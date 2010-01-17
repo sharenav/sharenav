@@ -1031,7 +1031,10 @@ scale alias 1: zoomed out 21x
 		<textscale scale="26"/>
 	  </value>
   	</key>
-	<!-- http://wiki.openstreetmap.org/wiki/WikiProject_Haiti -->
+	<!-- http://wiki.openstreetmap.org/wiki/WikiProject_Haiti
+		 uncomment below to include damage POIs
+	 -->
+	<!--
 	<key tag="building">
 	  <value name ="collapsed">
 		<description desc = "collapsed building"/>
@@ -1042,7 +1045,6 @@ scale alias 1: zoomed out 21x
 		<textscale scale="25"/>
 	  </value>
   	</key>
-	<!-- http://wiki.openstreetmap.org/wiki/WikiProject_Haiti -->
 	<key tag="building">
 	  <value name ="risky">
 		<description desc = "risky building"/>
@@ -1053,7 +1055,6 @@ scale alias 1: zoomed out 21x
 		<textscale scale="25"/>
 	  </value>
   	</key>
-	<!-- http://wiki.openstreetmap.org/wiki/WikiProject_Haiti -->
 	<key tag="earthquake:damage">
 	  <value name ="*">
 		<description desc = "earthquake damage"/>
@@ -1065,6 +1066,7 @@ scale alias 1: zoomed out 21x
 		<textscale scale="25"/>
 	  </value>
   	</key>
+	-->
   </pois>
   <ways>
   		<keyW tag = "highway">
