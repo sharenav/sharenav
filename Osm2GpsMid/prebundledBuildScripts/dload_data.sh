@@ -50,7 +50,7 @@ wget http://downloads.cloudmade.com/asia/india/india.osm.bz2 -O /unsafe/krueger/
 wget http://downloads.cloudmade.com/asia/saudi_arabia/saudi_arabia.osm.bz2 -O /unsafe/krueger/Osm2GpsMid/saudi_arabia.osm.bz2
 wget http://downloads.cloudmade.com/asia/pakistan/pakistan.osm.bz2 -O /unsafe/krueger/Osm2GpsMid/pakistan.osm.bz2
 wget http://downloads.cloudmade.com/asia/south_korea/south_korea.osm.bz2 -O /unsafe/krueger/Osm2GpsMid/south_korea.osm.bz2
-wget http://downloads.cloudmade.com/asia/japan/japan.osm.bz2 -O /unsafe/krueger/Osm2GpsMid/japan.bz2
+wget http://downloads.cloudmade.com/asia/japan/japan.osm.bz2 -O /unsafe/krueger/Osm2GpsMid/japan.osm.bz2
 wget http://downloads.cloudmade.com/africa/south_africa/south_africa.osm.bz2 -O /unsafe/krueger/Osm2GpsMid/south_africa.osm.bz2
 wget http://downloads.cloudmade.com/africa/zimbabwe/zimbabwe.osm.bz2 -O /unsafe/krueger/Osm2GpsMid/zimbabwe.osm.bz2
 wget http://downloads.cloudmade.com/africa/ethiopia/ethiopia.osm.bz2 -O /unsafe/krueger/Osm2GpsMid/ethiopia.osm.bz2
@@ -71,3 +71,5 @@ wget http://downloads.cloudmade.com/asia/china/china.osm.bz2 -O /unsafe/krueger/
 wget http://downloads.cloudmade.com/asia/malaysia/malaysia.osm.bz2 -O /unsafe/krueger/Osm2GpsMid/malaysia.osm.bz2
 wget http://downloads.cloudmade.com/asia/thailand/thailand.osm.bz2 -O /unsafe/krueger/Osm2GpsMid/thailand.osm.bz2
 wget http://download.cloudmade.com/north_america/united_states/california/california.osm.bz2 -O /unsafe/krueger/Osm2GpsMid/california.osm.bz2
+wget http://downloads.cloudmade.com/north_america/puerto_rico/puerto_rico.osm.bz2 -O /unsafe/krueger/Osm2GpsMid/puerto_rico.osm.bz2
+wget http://downloads.cloudmade.com/north_america/united_states/louisiana/louisiana.osm.bz2 -O /unsafe/krueger/Osm2GpsMid/louisiana.osm.bz2

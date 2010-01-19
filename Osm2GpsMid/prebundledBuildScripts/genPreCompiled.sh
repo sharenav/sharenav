@@ -34,6 +34,72 @@ mkfifo /tmp/italy.osm
 
 cd /unsafe/krueger/Osm2GpsMid
 
+c=haiti
+rm /tmp/$c.osm
+mkfifo /tmp/$c.osm
+bzcat $c.osm.bz2 > /tmp/$c.osm & java -mx5000M -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /tmp/$c.osm Haiti
+scp GpsMidHt-Haiti-0.5.09.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/prebuild/ &
+
+c=australia
+rm /tmp/$c.osm
+mkfifo /tmp/$c.osm
+bzcat $c.osm.bz2 > /tmp/$c.osm & java -mx5000M -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /tmp/$c.osm CentralAustralia
+scp GpsMidCA-CentralAustralia-0.5.09.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/prebuild/ &
+
+c=australia
+rm /tmp/$c.osm
+mkfifo /tmp/$c.osm
+bzcat $c.osm.bz2 > /tmp/$c.osm & java -mx5000M -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /tmp/$c.osm WesternAustralia
+scp GpsMidWA-WesternAustralia-0.5.09.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/prebuild/ &
+
+c=sri_lanka
+rm /tmp/$c.osm
+mkfifo /tmp/$c.osm
+bzcat $c.osm.bz2 > /tmp/$c.osm & java -mx5000M -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /tmp/$c.osm Sri_Lanka
+scp GpsMidLk-SriLanka-0.5.09.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/prebuild/ &
+
+c=australia
+rm /tmp/$c.osm
+mkfifo /tmp/$c.osm
+bzcat $c.osm.bz2 > /tmp/$c.osm & java -mx5000M -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /tmp/$c.osm Queensland
+scp GpsMidQu-Queensland-0.5.09.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/prebuild/ &
+
+c=australia
+rm /tmp/$c.osm
+mkfifo /tmp/$c.osm
+bzcat $c.osm.bz2 > /tmp/$c.osm & java -mx5000M -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /tmp/$c.osm Victoria
+scp GpsMidVic-Victoria-0.5.09.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/prebuild/ &
+
+c=australia
+rm /tmp/$c.osm
+mkfifo /tmp/$c.osm
+bzcat $c.osm.bz2 > /tmp/$c.osm & java -mx5000M -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /tmp/$c.osm NSW
+scp GpsMidNSW-NewSouthWales-0.5.09.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/prebuild/ &
+
+c=germany
+rm /tmp/$c.osm
+mkfifo /tmp/$c.osm
+bzcat $c.osm.bz2 > /tmp/$c.osm & java -mx5000M -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /tmp/$c.osm Stuttgart
+scp GpsMidSt-Stuttgart-0.5.09.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/prebuild/ &
+
+c=louisiana
+rm /tmp/$c.osm
+mkfifo /tmp/$c.osm
+bzcat $c.osm.bz2 > /tmp/$c.osm & java -mx5000M -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /tmp/$c.osm NewOrleans
+scp GpsMidNO-NewOrleans-0.5.09.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/prebuild/ &
+
+c=puerto_rico
+rm /tmp/$c.osm
+mkfifo /tmp/$c.osm
+bzcat $c.osm.bz2 > /tmp/$c.osm & java -mx5000M -jar Osm2GpsMid-CVS.jar /tmp/$c.osm PuertoRico
+scp GpsMidPr-PuertoRico-0.5.09.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/prebuild/ &
+
+c=germany
+rm /tmp/$c.osm
+mkfifo /tmp/$c.osm
+bzcat $c.osm.bz2 > /tmp/$c.osm & java -mx5000M -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /tmp/$c.osm Schleswig
+scp GpsMidSW-Schleswig-0.5.09.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/prebuild/ &
+
 c=california
 rm /tmp/$c.osm
 mkfifo /tmp/$c.osm
