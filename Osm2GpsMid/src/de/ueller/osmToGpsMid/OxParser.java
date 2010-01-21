@@ -295,6 +295,9 @@ public class OxParser extends DefaultHandler {
 		if (qName.equals("way")) {
 			wayTot++;
 			Way w = (Way) current;
+			// TODO: this seems to be not useful, because the list of tags is shared (only one list)
+			//       so a add of an attribute to one if the ways already adds it to the
+			//		 other as well.
 			if (duplicateWays != null) {
 				for (Way ww : duplicateWays) {
 					ww.cloneTags(w);
