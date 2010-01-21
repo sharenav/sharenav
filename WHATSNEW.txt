@@ -9,8 +9,14 @@ GpsMid 0.6
        - Specify in Setup/Display Options to keep backlight on only while GPS is started.
        - Many more midlet colors are specifiable in the style-file now (including colors for night mode).
        - Display speed and distances in miles if configured in Setup.
-       - Correct error message during start if a POI icon is not found (bug was
-         2913528 "Broken Midlets generated").
+       - Many mobile devices only allow to install rather small jar files (e.g. only 1 MB or 3 MB): 
+         - A new workaround for this install a GpsMid with a small file size and
+           to specify in it in Setup/Map Source another (bigger) GpsMid.jar as external map source
+           (some devices require to rename the suffix of the .jar to .zip first)
+         - On some mobiles the access to the external jar/zip won't work.
+           If this is the case you can alternatively specify a directory with the unzipped contents
+           of another large GpsMid.jar as external map source.
+       - Some improvements to the quality of the included voice samples
     *** Touch screen support ***
         - Touch the street name status bar to show the icon menu.
         - Recenter to GPS button.
@@ -102,7 +108,7 @@ GpsMid 0.6
          routing repects impassable=yes and bridge=collapsed as non-routable
     *** OSM editing and other features only available with Internet connection ***
        - Support for GeoHack in "Online Info" (thx jkpj).
-    *** Style-file handling ***
+    *** Style-file and external media handling ***
        - High-style-file.xml has been renamed to style-file.xml and is used as 
          default style-file that is completely integrated into Osm2GpsMid.
          The high-style.zip is discontinued.
@@ -141,6 +147,8 @@ GpsMid 0.6
        - New option to specify Midlet route modes.
        - New option which sound formats (none, amr, wav or both) to include into the Midlet.
     *** Others ***
+       - Correct error message during start if a POI icon is not found (bug was
+         2913528 "Broken Midlets generated").
        - Don't cause an NPE if getControl doesn't return a VolumeControl as needed for phoneME (thx jkpj).
        - Many more small improvements and bugfixes.
 
