@@ -411,9 +411,9 @@ public class BundleGpsMid implements Runnable {
             if (LegendParser.getDamages().size() == 0) {
         		System.out.println("No damage markers in "	+ config.getStyleFileName());
             } else {
-            	System.out.println("Damage markers in " + config.getStyleFileName() + ":");
+            	System.out.println("Rules specified in " + config.getStyleFileName() + " for marking damages:");
 				for (Damage damage: LegendParser.getDamages()) {
-	        		System.out.println(" Ways/Areas with " + damage.key + "=" + damage.values + " are marked damaged"); 
+	        		System.out.println(" Ways/Areas with key " + damage.key + "=" + damage.values); 
 				}
             }
 			String tmpDir = config.getTempDir();
