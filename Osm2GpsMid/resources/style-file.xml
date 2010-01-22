@@ -1718,7 +1718,7 @@ scale alias 1: zoomed out 21x
   		</keyW>
   		<keyW tag="route">
 			<Wvalue name="ferry">
-				<description desc="Fähre" />
+				<description desc="ferry" />
 				<namekey tag="name" />  				
 				<isArea area="false" />
 				<scale scale="17" />
