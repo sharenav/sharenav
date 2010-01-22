@@ -89,14 +89,14 @@
 		<info
 			name="GpsMid"
 			version="0.6"
-			description=""
+			description="Shows moving map made from OpenStreetMap data"
 			vendorName="Harald Mueller"
 			infoUrl="http://gpsmid.sourceforge.net"
 			icon="GpsMid.png"
-			jarName="GpsMid-${polish.vendor}-${polish.name}-${polish.version}_${polish.locale}.jar" 
+			jarName="GpsMid-${polish.vendor}-${polish.name}-${polish.version}.jar"
 			jarUrl="${deploy-url}${polish.jarName}"
-			copyright="Copyright 2007, 2008, 2009 Harald Mueller."
-			deleteConfirm="Do you really want to kill me?" 
+			copyright="Copyright 2007 - 2010 Harald Mueller and others"
+			deleteConfirm="Do you really want to kill me?"
 		/>
 		
 		<!-- selection of supported devices -->
@@ -190,7 +190,7 @@
 				<!-- add the localization element for created localized
 				     versions of your application: -->
 				<localization  unless="test">
-					<locale name="de" />
+<!--					<locale name="de" /> -->
 					<locale name="en" />
 				</localization>
 				<localization locales="en" if="test" />
