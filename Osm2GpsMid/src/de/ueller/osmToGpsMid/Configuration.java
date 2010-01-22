@@ -593,10 +593,6 @@ public class Configuration {
 			return Float.parseFloat(getString(key));
 		}
 		
-		public String getName() {
-			return getString("bundle.name");
-		}
-
 		/** Allows to set the Midlet name.
 		 * @param name Name to be set
 		 */
@@ -618,7 +614,7 @@ public class Configuration {
 		 * @return File name
 		 */
 		public String getMidletFileName() {
-			return getMidletName() + "-" + getName() + "-" + getVersion();
+			return getMidletName() + "-" + getVersion();
 		}
 		
 		/** Allows to set the name of the base Midlet (e.g. GpsMid-Generic-multi).

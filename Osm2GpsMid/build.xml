@@ -3,7 +3,7 @@
          basedir=".">
 
 
-<!-- this schold adapted to your local requirements -->
+<!-- this should be adapted to your local requirements -->
 	<property name="planet" value="/Massenspeicher/myStreetMap-0.5.osm"/>
 	<property name="france" value="/Massenspeicher/france.osm.bz2"/>
 	<property name="germany" value="/Massenspeicher/germany.osm.bz2"/>
@@ -22,9 +22,8 @@
 	<property name="lib.dir" value="${basedir}/lib"/>
 
    	<property name="dist.dir" value="${basedir}/dist"/>
-	<property name="version" value="0.5.10"/>
-	<property name="buildlib"
-	             value="buildlib/explode.jar"/>
+	<property name="version" value="0.6"/>
+	<property name="buildlib" value="buildlib/explode.jar"/>
 
    <available property="clover.available" classname="org.apache.tools.ant.taskdefs.CloverCompilerAdapter"/>
 
@@ -74,7 +73,6 @@
    		<entry key="midlet.name" value="GpsMid"/>
 		<entry key="routing.maxTileSize" value="3000"/>
    		<entry key="keepTemporaryFiles" value="false"/>
-   		<entry key="bundle.name" value="GpsMid"/>
 		<entry key="maxDictDepth" value="7"/>
 		<entry key="maxTileSize" value="20000"/>
 		<entry key="maxTileWays0" value="255"/>
