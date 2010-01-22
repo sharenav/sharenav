@@ -954,34 +954,6 @@ scale alias 1: zoomed out 21x
 				<lineColor color = "009BFF9B" />  <!-- same as map background -->
 			</Wvalue>
 		</keyW>
-  		<keyW tag = "building">
-  			<Wvalue name = "yes">
-				<!-- if * is specified as value for a specialisation key,
-				this will match only if the specialisation key exists:
-				 so only named buildings will be included
-				 -->
-				<specialisation key="name" value="*"/>
-  				<description desc = "Building"/>
-  				<namekey tag = "name"/>  				
-  				<isArea area = "true"/>
-  				<scale scale = "20"/>
-  				<textscale scale = "21"/>
-  				<!-- scale level when area descriptions
-  				     will start to show, default is 23
-  				 -->
-  				<descriptionscale scale = "27"/>
-  				<lineColor color = "00CC0000" />
-			</Wvalue>  			
-  			<Wvalue name = "*">
-  				<description desc = "Other building"/>
-  				<namekey tag = "name"/>  				
-  				<namefallback tag = "*"/>  				
-  				<isArea area = "true"/>
-  				<scale scale = "20"/>
-  				<textscale scale = "21"/>
-  				<lineColor color = "00EE0000" />
-			</Wvalue>  			
-  		</keyW>  		
 	</ways>
 
 	<!--
