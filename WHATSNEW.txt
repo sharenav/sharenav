@@ -13,6 +13,7 @@ GpsMid 0.6
          - A new workaround for this install a GpsMid with a small file size and
            to specify in it in Setup/Map Source another (bigger) GpsMid.jar as external map source
            (some devices require to rename the suffix of the .jar to .zip first)
+           Many thx for the "j2me zipfile reading patch (no permission nags anymore)" to trendypack
          - On some mobiles the access to the external jar/zip won't work.
            If this is the case you can alternatively specify a directory with the unzipped contents
            of another large GpsMid.jar as external map source.
