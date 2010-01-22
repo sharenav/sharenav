@@ -1,5 +1,5 @@
 <project name="Osm2GpsMid"
-         default="deploy_int"
+         default="deploy"
          basedir=".">
 
 
@@ -57,12 +57,13 @@
 	<tstamp>
 		<format property="TODAY_DE" pattern="yyyy-MM-dd HH:mm z" locale="de,DE"/>
 	</tstamp>
-   	<echo message="Lang: ${local_lang}"/>
+<!--   	<echo message="Lang: ${local_lang}"/> -->
    	<copy todir="resources">
    		<fileset dir="../GpsMid/dist">
-   			
-   			<include name="*_${local_lang}.jar" if="local_lang" />
+   			<include name="*.jar"/>
+<!--   			<include name="*_${local_lang}.jar" if="local_lang" />
    			<include name="*.jar" unless="local_lang" />
+-->
    		</fileset>
    	</copy>
 
@@ -124,7 +125,8 @@
 	</target>
 	
    	<target name="deploy" depends="explode,compile">
-      <jar jarfile="${dist.dir}/${ant.project.name}-${version}_${local_lang2}.jar">
+      <jar jarfile="${dist.dir}/${ant.project.name}-${version}.jar">
+<!--      <jar jarfile="${dist.dir}/${ant.project.name}-${version}_${local_lang2}.jar"> -->
 		<manifest>
     		<attribute name="Built-By" value="${user.name}"/>
 			<attribute name="Main-Class" value="de.ueller.osmToGpsMid.BundleGpsMid"/>
