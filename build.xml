@@ -88,7 +88,7 @@
 	         You can also define localized attributes in the resources/messages.txt files -->
 		<info
 			name="GpsMid"
-			version="0.5.09"
+			version="0.5.10"
 			description=""
 			vendorName="Harald Mueller"
 			infoUrl="http://gpsmid.sourceforge.net"
