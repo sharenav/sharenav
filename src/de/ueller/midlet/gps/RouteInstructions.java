@@ -30,6 +30,8 @@ public class RouteInstructions {
 		"half left", "left", "hard left", "u-turn",
 		"At destination",
 		"enter motorway", "leave motorway",
+		"b.left enter motorway", "b.right enter motorway",
+		"b.left leave motorway", "b.right leave motorway",
 		"cross area", "leave area",
 		"Roundabout exit #1", "Roundabout exit #2", "Roundabout exit #3",
 		"Roundabout exit #4", "Roundabout exit #5", "Roundabout exit #6",
@@ -41,6 +43,8 @@ public class RouteInstructions {
 		"HALF;LEFT", "LEFT", "HARD;LEFT", "UTURN",
 		"DEST_REACHED",
 		"ENTER_MOTORWAY", "LEAVE_MOTORWAY",
+		"BEAR;LEFT;TO;ENTER_MOTORWAY", "BEAR;RIGHT;TO;ENTER_MOTORWAY",
+		"BEAR;LEFT;TO;LEAVE_MOTORWAY", "BEAR;RIGHT;TO;LEAVE_MOTORWAY",
 		"AREA_CROSS", "AREA_CROSSED",
 		"RAB;1ST;RABEXIT", "RAB;2ND;RABEXIT", "RAB;3RD;RABEXIT",
 		"RAB;4TH;RABEXIT", "RAB;5TH;RABEXIT", "RAB;6TH;RABEXIT",
@@ -61,17 +65,21 @@ public class RouteInstructions {
 	private static final int RI_DEST_REACHED = 11;
 	private static final int RI_ENTER_MOTORWAY = 12;
 	private static final int RI_LEAVE_MOTORWAY = 13;
-	private static final int RI_AREA_CROSS = 14;
-	private static final int RI_AREA_CROSSED = 15;
-	private static final int RI_1ST_EXIT = 16;
-	private static final int RI_2ND_EXIT = 17;
-	private static final int RI_3RD_EXIT = 18;
-	private static final int RI_4TH_EXIT = 19;
-	private static final int RI_5TH_EXIT = 20;
-	private static final int RI_6TH_EXIT = 21;
-	private static final int RI_INTO_TUNNEL = 22;
-	private static final int RI_OUT_OF_TUNNEL = 23;
-	private static final int RI_SKIPPED = 24;
+	private static final int RI_BEAR_LEFT_ENTER_MOTORWAY = 14;
+	private static final int RI_BEAR_RIGHT_ENTER_MOTORWAY = 15;
+	private static final int RI_BEAR_LEFT_LEAVE_MOTORWAY = 16;
+	private static final int RI_BEAR_RIGHT_LEAVE_MOTORWAY = 17;
+	private static final int RI_AREA_CROSS = 18;
+	private static final int RI_AREA_CROSSED = 19;
+	private static final int RI_1ST_EXIT = 20;
+	private static final int RI_2ND_EXIT = 21;
+	private static final int RI_3RD_EXIT = 22;
+	private static final int RI_4TH_EXIT = 23;
+	private static final int RI_5TH_EXIT = 24;
+	private static final int RI_6TH_EXIT = 25;
+	private static final int RI_INTO_TUNNEL = 26;
+	private static final int RI_OUT_OF_TUNNEL = 27;
+	private static final int RI_SKIPPED = 28;
 	
 	private static boolean checkDirectionSaid=false;
 	public volatile static boolean initialRecalcDone=false;
@@ -393,8 +401,14 @@ public class RouteInstructions {
 //														}
 //													}
 //													break;
-							case RI_ENTER_MOTORWAY:	pict=pc.images.IMG_MOTORWAYENTER; break;
-							case RI_LEAVE_MOTORWAY:	pict=pc.images.IMG_MOTORWAYLEAVE; break;					
+							case RI_ENTER_MOTORWAY:
+							case RI_BEAR_LEFT_ENTER_MOTORWAY:
+							case RI_BEAR_RIGHT_ENTER_MOTORWAY:
+													pict=pc.images.IMG_MOTORWAYENTER; break;
+							case RI_LEAVE_MOTORWAY:
+							case RI_BEAR_LEFT_LEAVE_MOTORWAY:
+							case RI_BEAR_RIGHT_LEAVE_MOTORWAY:
+													pict=pc.images.IMG_MOTORWAYLEAVE; break;					
 							case RI_INTO_TUNNEL:	pict=pc.images.IMG_TUNNEL_INTO; break;
 							case RI_OUT_OF_TUNNEL:	pict=pc.images.IMG_TUNNEL_OUT_OF; break;					
 						}
@@ -416,7 +430,7 @@ public class RouteInstructions {
 							}
 							pict=scaledPict;						
 					    	
-					    	sbRouteInstruction.append(getInstruction(cNow.wayRouteFlags, aNow));					    	
+					    	sbRouteInstruction.append(directions[aNow]);					    	
 
 					    	ConnectionWithNode cBefore = (ConnectionWithNode) route.elementAt(iNow - 1);
 					    	
@@ -432,12 +446,12 @@ public class RouteInstructions {
 								) {
 									if (aNow < RI_ENTER_MOTORWAY) {
 										soundToPlay.append( (aNow==RI_STRAIGHT_ON ? "CONTINUE" : "PREPARE") + ";" + soundDirections[aNow]);
-									} else if (aNow>=RI_ENTER_MOTORWAY && aNow<=RI_LEAVE_MOTORWAY) {
-										soundToPlay.append("PREPARE;TO;" + getSoundInstruction(cNow.wayRouteFlags, aNow));
+									} else if (aNow>=RI_ENTER_MOTORWAY && aNow<=RI_BEAR_RIGHT_LEAVE_MOTORWAY) {
+										soundToPlay.append("PREPARE;TO;" + soundDirections[aNow]);
 									} else if (aNow==RI_AREA_CROSS || aNow==RI_AREA_CROSSED) {
-										soundToPlay.append("PREPARE;TO;" + getSoundInstruction(cNow.wayRouteFlags, aNow));
+										soundToPlay.append("PREPARE;TO;" + soundDirections[aNow]);
 									} else if (aNow>=RI_1ST_EXIT && aNow<=RI_6TH_EXIT) {
-										soundToPlay.append(getSoundInstruction(cNow.wayRouteFlags, aNow));
+										soundToPlay.append(soundDirections[aNow]);
 									}
 									soundMaxTimesToPlay=1;
 									// Because of adaptive-to-speed distances for "prepare"-instructions
@@ -455,7 +469,7 @@ public class RouteInstructions {
 									&& (intDistNow <= 350 || (3.6f * 5 * cBefore.wayDistanceToNext / cBefore.durationFSecsToNext) > 70)
 								) {
 									soundRepeatDelay=60;
-									soundToPlay.append("IN;" + Integer.toString(intDistNow / 100)+ "00;METERS;" + getSoundInstruction(cNow.wayRouteFlags, aNow));								
+									soundToPlay.append("IN;" + Integer.toString(intDistNow / 100)+ "00;METERS;" + soundDirections[aNow]);								
 									iInInstructionSaidArrow = iNow;
 								} else if (
 										// follow-street instruction
@@ -489,7 +503,7 @@ public class RouteInstructions {
 							if (intDistNow < PASSINGDISTANCE) {
 								if (iInstructionSaidArrow != iNow) { 
 									// give routing instruction directly at the arrow
-									soundToPlay.append (getSoundInstruction(cNow.wayRouteFlags, aNow));
+									soundToPlay.append (soundDirections[aNow]);
 							    	iInstructionSaidArrow = iNow;
 									soundMaxTimesToPlay=1;
 								}
@@ -512,7 +526,7 @@ public class RouteInstructions {
 									if (distNowThen > PASSINGDISTANCE) {
 										soundToPlay.append("SOON;");
 									}
-									soundToPlay.append(getSoundInstruction(cThen.wayRouteFlags, aThen));
+									soundToPlay.append(soundDirections[aThen]);
 									// same arrow as currently nearest arrow?
 									if (aNow==aThen) {
 										soundToPlay.append(";AGAIN");							
@@ -679,36 +693,6 @@ public class RouteInstructions {
 		} catch (Exception e) {
 			logger.silentexception("Unhandled exception in showRoute()", e);
 		}
-	}
-
-	private String getSoundInstruction(short routeFlags, byte aNow) {
-		StringBuffer sb = new StringBuffer();
-		// prefix motorway instructions
-		if (aNow == RI_ENTER_MOTORWAY || aNow == RI_LEAVE_MOTORWAY) {
-			if ( (routeFlags & Legend.ROUTE_FLAG_BEAR_LEFT) > 0) {
-				sb.append("BEAR;LEFT;TO;");
-			}
-			if ( (routeFlags & Legend.ROUTE_FLAG_BEAR_RIGHT) > 0) {
-				sb.append("BEAR;RIGHT;TO;");
-			}
-		}
-		sb.append (soundDirections[aNow]);
-		return sb.toString();
-	}
-
-	private String getInstruction(short routeFlags, byte aNow) {
-		StringBuffer sb = new StringBuffer();
-		// prefix motorway instructions
-		if (aNow == RI_ENTER_MOTORWAY || aNow == RI_LEAVE_MOTORWAY) {
-			if ( (routeFlags & Legend.ROUTE_FLAG_BEAR_LEFT) > 0) {
-				sb.append("b.left ");
-			}
-			if ( (routeFlags & Legend.ROUTE_FLAG_BEAR_RIGHT) > 0) {
-				sb.append("b.right ");
-			}
-		}
-		sb.append(directions[aNow]);	
-		return sb.toString();
 	}
 
 	public static void drawRouteDot(Graphics g, IntPoint p, int radius) {
@@ -932,11 +916,23 @@ public class RouteInstructions {
 			}
 			// enter motorway
 			if ( isEnterMotorway(rfPrev, rfCurr) ) {
-				ri = RI_ENTER_MOTORWAY;
+				if ( (rfCurr & Legend.ROUTE_FLAG_BEAR_LEFT) > 0) {
+					ri = RI_BEAR_LEFT_ENTER_MOTORWAY;
+				} else if ((rfCurr & Legend.ROUTE_FLAG_BEAR_RIGHT) > 0) {
+					ri = RI_BEAR_RIGHT_ENTER_MOTORWAY;
+				} else {
+					ri = RI_ENTER_MOTORWAY;					
+				}
 			}
 			// leave motorway
 			if ( isLeaveMotorway(rfPrev, rfCurr) ) {
-				ri = RI_LEAVE_MOTORWAY;
+				if ( (rfCurr & Legend.ROUTE_FLAG_BEAR_LEFT) > 0) {
+					ri = RI_BEAR_LEFT_LEAVE_MOTORWAY;
+				} else if ((rfCurr & Legend.ROUTE_FLAG_BEAR_RIGHT) > 0) {
+					ri = RI_BEAR_RIGHT_LEAVE_MOTORWAY;
+				} else {
+					ri = RI_LEAVE_MOTORWAY;					
+				}
 			}
 			// area start
 			if ( isAreaStart(rfPrev, rfCurr) ) {
@@ -979,10 +975,10 @@ public class RouteInstructions {
 			if (ri==0) {				
 				// ri = convertTurnToRouteInstruction( (nextStartBearing - c.endBearing) * 2 );
 				ri = convertTurnToRouteInstruction( (nextStartBearing - c.wayConEndBearing) * 2 );
-				if ( (c.wayRouteFlags & Legend.ROUTE_FLAG_BEAR_LEFT) > 0 ) {
+				if ( (rfCurr & Legend.ROUTE_FLAG_BEAR_LEFT) > 0 ) {
 					ri = RI_BEAR_LEFT;
 				}
-				if ( (c.wayRouteFlags & Legend.ROUTE_FLAG_BEAR_RIGHT) > 0 ) {
+				if ( (rfCurr & Legend.ROUTE_FLAG_BEAR_RIGHT) > 0 ) {
 					ri = RI_BEAR_RIGHT;
 				}
 			}
