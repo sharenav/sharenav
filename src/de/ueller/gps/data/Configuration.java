@@ -262,6 +262,7 @@ public class Configuration {
 	private static final int RECORD_ID_CFGBITS_64_TO_127 = 39;
 	private static final int RECORD_ID_MAINSTREET_NET_DISTANCE_KM = 40;
 	private static final int RECORD_ID_DETAIL_BOOST_POI = 41;
+	private static final int RECORD_ID_LANGUAGE = 42;
 
 	// Gpx Recording modes
 	// GpsMid determines adaptive if a trackpoint is written
@@ -351,6 +352,8 @@ public class Configuration {
 	private static int currentTravelModeNr = 0;
 	private static int currentTravelMask = 0;
 
+	private static String language = "EN";
+	
 	public static void read() {
 	logger = Logger.getInstance(Configuration.class, Logger.DEBUG);
 	RecordStore	database;
@@ -413,7 +416,8 @@ public class Configuration {
 			currentTravelModeNr = readInt(database, RECORD_ID_ROUTE_TRAVEL_MODE);
 			currentTravelMask = 1 << currentTravelModeNr;
 			phoneAllTimeMaxMemory = readLong(database, RECORD_ID_PHONE_ALL_TIME_MAX_MEMORY);
-
+			language = readString(database, RECORD_ID_LANGUAGE); 			
+			
 			int configVersionStored = readInt(database, RECORD_ID_CONFIG_VERSION);
 			//#debug info
 			logger.info("Config version stored: " + configVersionStored);
@@ -1645,5 +1649,13 @@ public class Configuration {
 		} catch (IOException ioe) {
 			logger.exception("Failed to save keyshortcuts", ioe);
 		}
+	}
+	
+	public static String getLanguage() {
+		return language;
+	}
+	public static void setLanguage(String language) {
+		Configuration.language = language;
+		write(language, RECORD_ID_LANGUAGE);
 	}
 }

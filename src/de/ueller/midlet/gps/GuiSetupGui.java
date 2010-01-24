@@ -10,6 +10,7 @@ import de.ueller.gps.data.Configuration;
 
 public class GuiSetupGui extends Form implements CommandListener {
 	private ChoiceGroup guiOpts;
+	private ChoiceGroup guiLangs;
 
 	// commands
 	private static final Command CMD_SAVE = new Command("Ok", Command.ITEM, 2);
@@ -36,6 +37,17 @@ public class GuiSetupGui extends Form implements CommandListener {
 			guiOpts.setSelectedIndex(4, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED));
 			append(guiOpts);
 
+			String [] guiLanguages = new String[2];
+			guiLanguages[0] = "EN";
+			guiLanguages[1] = "DE";
+			guiLangs = new ChoiceGroup("Route Language:", Choice.EXCLUSIVE, guiLanguages ,null);
+			for (int i=0; i<guiLanguages.length; i++) {
+				if (guiLanguages[i].equalsIgnoreCase(Configuration.getLanguage())) {
+					guiLangs.setSelectedIndex(i, true);
+				}
+			}
+			append(guiLangs);
+			
 			addCommand(CMD_SAVE);
 			addCommand(CMD_CANCEL);
 
@@ -63,6 +75,7 @@ public class GuiSetupGui extends Form implements CommandListener {
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS, guiOpts.isSelected(0));
 				trace.addAllCommands();					
 			}
+			Configuration.setLanguage(guiLangs.getString(guiLangs.getSelectedIndex()));
 			Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN, guiOpts.isSelected(1));
 			Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_BIG_TAB_BUTTONS, guiOpts.isSelected(2));
 			Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_MAPPED_ICONS, guiOpts.isSelected(3));

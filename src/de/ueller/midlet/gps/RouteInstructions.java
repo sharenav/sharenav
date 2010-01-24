@@ -24,62 +24,35 @@ import de.ueller.midlet.gps.tile.PaintContext;
 import de.ueller.midlet.gps.tile.WayDescription;
 
 public class RouteInstructions {
-	private static final String[] directions  = { "mark",
-		"hard right", "right", "half right",
-		"bear right", "straight on", "bear left",
-		"half left", "left", "hard left", "u-turn",
-		"At destination",
-		"enter motorway", "leave motorway",
-		"b.left enter motorway", "b.right enter motorway",
-		"b.left leave motorway", "b.right leave motorway",
-		"cross area", "leave area",
-		"Roundabout exit #1", "Roundabout exit #2", "Roundabout exit #3",
-		"Roundabout exit #4", "Roundabout exit #5", "Roundabout exit #6",
-		"into tunnel", "out of tunnel", "skip"
-	};
-	private static final String[] soundDirections  = { "",
-		"HARD;RIGHT", "RIGHT", "HALF;RIGHT",
-		"BEAR;RIGHT", "STRAIGHTON", "BEAR;LEFT",
-		"HALF;LEFT", "LEFT", "HARD;LEFT", "UTURN",
-		"DEST_REACHED",
-		"ENTER_MOTORWAY", "LEAVE_MOTORWAY",
-		"BEAR;LEFT;TO;ENTER_MOTORWAY", "BEAR;RIGHT;TO;ENTER_MOTORWAY",
-		"BEAR;LEFT;TO;LEAVE_MOTORWAY", "BEAR;RIGHT;TO;LEAVE_MOTORWAY",
-		"AREA_CROSS", "AREA_CROSSED",
-		"RAB;1ST;RABEXIT", "RAB;2ND;RABEXIT", "RAB;3RD;RABEXIT",
-		"RAB;4TH;RABEXIT", "RAB;5TH;RABEXIT", "RAB;6TH;RABEXIT",
-		"INTO_TUNNEL", "OUT_OF_TUNNEL"
-	};
-
-	private static final int RI_NONE = 0;
-	private static final int RI_HARD_RIGHT = 1;
-	private static final int RI_RIGHT = 2;
-	private static final int RI_HALF_RIGHT = 3;
-	private static final int RI_BEAR_RIGHT = 4;
+	protected static final int RI_NONE = 0;
+	protected static final int RI_HARD_RIGHT = 1;
+	protected static final int RI_RIGHT = 2;
+	protected static final int RI_HALF_RIGHT = 3;
+	protected static final int RI_BEAR_RIGHT = 4;
 	public static final int RI_STRAIGHT_ON = 5;
-	private static final int RI_BEAR_LEFT = 6;
-	private static final int RI_HALF_LEFT = 7;
-	private static final int RI_LEFT = 8;
-	private static final int RI_HARD_LEFT = 9;
-	private static final int RI_UTURN = 10;
-	private static final int RI_DEST_REACHED = 11;
-	private static final int RI_ENTER_MOTORWAY = 12;
-	private static final int RI_LEAVE_MOTORWAY = 13;
-	private static final int RI_BEAR_LEFT_ENTER_MOTORWAY = 14;
-	private static final int RI_BEAR_RIGHT_ENTER_MOTORWAY = 15;
-	private static final int RI_BEAR_LEFT_LEAVE_MOTORWAY = 16;
-	private static final int RI_BEAR_RIGHT_LEAVE_MOTORWAY = 17;
-	private static final int RI_AREA_CROSS = 18;
-	private static final int RI_AREA_CROSSED = 19;
-	private static final int RI_1ST_EXIT = 20;
-	private static final int RI_2ND_EXIT = 21;
-	private static final int RI_3RD_EXIT = 22;
-	private static final int RI_4TH_EXIT = 23;
-	private static final int RI_5TH_EXIT = 24;
-	private static final int RI_6TH_EXIT = 25;
-	private static final int RI_INTO_TUNNEL = 26;
-	private static final int RI_OUT_OF_TUNNEL = 27;
-	private static final int RI_SKIPPED = 28;
+	protected static final int RI_BEAR_LEFT = 6;
+	protected static final int RI_HALF_LEFT = 7;
+	protected static final int RI_LEFT = 8;
+	protected static final int RI_HARD_LEFT = 9;
+	protected static final int RI_UTURN = 10;
+	protected static final int RI_DEST_REACHED = 11;
+	protected static final int RI_ENTER_MOTORWAY = 12;
+	protected static final int RI_LEAVE_MOTORWAY = 13;
+	protected static final int RI_BEAR_LEFT_ENTER_MOTORWAY = 14;
+	protected static final int RI_BEAR_RIGHT_ENTER_MOTORWAY = 15;
+	protected static final int RI_BEAR_LEFT_LEAVE_MOTORWAY = 16;
+	protected static final int RI_BEAR_RIGHT_LEAVE_MOTORWAY = 17;
+	protected static final int RI_AREA_CROSS = 18;
+	protected static final int RI_AREA_CROSSED = 19;
+	protected static final int RI_1ST_EXIT = 20;
+	protected static final int RI_2ND_EXIT = 21;
+	protected static final int RI_3RD_EXIT = 22;
+	protected static final int RI_4TH_EXIT = 23;
+	protected static final int RI_5TH_EXIT = 24;
+	protected static final int RI_6TH_EXIT = 25;
+	protected static final int RI_INTO_TUNNEL = 26;
+	protected static final int RI_OUT_OF_TUNNEL = 27;
+	protected static final int RI_SKIPPED = 28;
 	
 	private static boolean checkDirectionSaid=false;
 	public volatile static boolean initialRecalcDone=false;
@@ -135,6 +108,7 @@ public class RouteInstructions {
 	
 	private final static Logger logger = Logger.getInstance(RouteInstructions.class,Logger.DEBUG);
 
+	
 	public RouteInstructions(Trace trace) {
 		RouteInstructions.trace = trace;
 		RouteInstructions.maxScaleLevelForRouteInstructionSymbols = 15000f * 1.5f * 1.5f * 1.5f;
@@ -175,6 +149,8 @@ public class RouteInstructions {
 		final int PASSINGDISTANCE=25;
 		Node areaStart = new Node();
 		boolean drawRouteInstructionSymbols = (pc.scale <= RouteInstructions.maxScaleLevelForRouteInstructionSymbols);
+
+		RouteSyntax routeSyntax = RouteSyntax.getInstance();
 		
 		try {
 			StringBuffer soundToPlay = new StringBuffer();
@@ -430,8 +406,6 @@ public class RouteInstructions {
 							}
 							pict=scaledPict;						
 					    	
-					    	sbRouteInstruction.append(directions[aNow]);					    	
-
 					    	ConnectionWithNode cBefore = (ConnectionWithNode) route.elementAt(iNow - 1);
 					    	
 					    	if (intDistNow>=PASSINGDISTANCE && !checkDirectionSaid) {
@@ -444,15 +418,7 @@ public class RouteInstructions {
 									&& intDistNow <= Configuration.getTravelMode().maxPrepareMeters
 									
 								) {
-									if (aNow < RI_ENTER_MOTORWAY) {
-										soundToPlay.append( (aNow==RI_STRAIGHT_ON ? "CONTINUE" : "PREPARE") + ";" + soundDirections[aNow]);
-									} else if (aNow>=RI_ENTER_MOTORWAY && aNow<=RI_BEAR_RIGHT_LEAVE_MOTORWAY) {
-										soundToPlay.append("PREPARE;TO;" + soundDirections[aNow]);
-									} else if (aNow==RI_AREA_CROSS || aNow==RI_AREA_CROSSED) {
-										soundToPlay.append("PREPARE;TO;" + soundDirections[aNow]);
-									} else if (aNow>=RI_1ST_EXIT && aNow<=RI_6TH_EXIT) {
-										soundToPlay.append(soundDirections[aNow]);
-									}
+									soundToPlay.append(routeSyntax.getSoundInstructionPrepare(aNow));
 									soundMaxTimesToPlay=1;
 									// Because of adaptive-to-speed distances for "prepare"-instructions
 									// GpsMid could fall back from "prepare"-instructions to "in xxx metres" voice instructions
@@ -469,7 +435,7 @@ public class RouteInstructions {
 									&& (intDistNow <= 350 || (3.6f * 5 * cBefore.wayDistanceToNext / cBefore.durationFSecsToNext) > 70)
 								) {
 									soundRepeatDelay=60;
-									soundToPlay.append("IN;" + Integer.toString(intDistNow / 100)+ "00;METERS;" + soundDirections[aNow]);								
+									soundToPlay.append(routeSyntax.getSoundInstructionIn(aNow, intDistNow));								
 									iInInstructionSaidArrow = iNow;
 								} else if (
 										// follow-street instruction
@@ -484,7 +450,7 @@ public class RouteInstructions {
 									ConnectionWithNode cPassed = (ConnectionWithNode) route.elementAt(iPassedRouteArrow);
 							    	float distPassed=ProjMath.getDistance(center.radlat, center.radlon, cPassed.to.lat, cPassed.to.lon);
 									if (distPassed > 50) {
-								    	soundToPlay.append("FOLLOW_STREET");
+								    	soundToPlay.append(routeSyntax.getFollowStreetVoice());
 								    	iFollowStreetInstructionSaidArrow = iNow;
 									}
 								}
@@ -501,14 +467,15 @@ public class RouteInstructions {
 							}
 							// if nearest route arrow is closer than PASSINGDISTANCE meters we're currently passing this route arrow
 							if (intDistNow < PASSINGDISTANCE) {
+						    	sbRouteInstruction.append(routeSyntax.getTextInstruction(aNow));					    	
 								if (iInstructionSaidArrow != iNow) { 
 									// give routing instruction directly at the arrow
-									soundToPlay.append (soundDirections[aNow]);
+									soundToPlay.append (routeSyntax.getSoundInstruction(aNow));
 							    	iInstructionSaidArrow = iNow;
 									soundMaxTimesToPlay=1;
 								}
 							} else {
-								sbRouteInstruction.append(" in " + intDistNow + "m");
+						    	sbRouteInstruction.append(routeSyntax.getTextInstructionIn(aNow, intDistNow ));					    	
 							}
 							
 							// when we have a then instruction and this is not a follow street instruction
@@ -522,15 +489,7 @@ public class RouteInstructions {
 									// and only as continuation of instruction
 									soundToPlay.length()!=0
 								   ) {
-									soundToPlay.append(";THEN;");
-									if (distNowThen > PASSINGDISTANCE) {
-										soundToPlay.append("SOON;");
-									}
-									soundToPlay.append(soundDirections[aThen]);
-									// same arrow as currently nearest arrow?
-									if (aNow==aThen) {
-										soundToPlay.append(";AGAIN");							
-									}
+									soundToPlay.append(routeSyntax.getSoundInstructionThen(aThen, distNowThen > PASSINGDISTANCE, aNow==aThen));
 									
 									//System.out.println(soundToPlay.toString());
 								}
@@ -603,11 +562,11 @@ public class RouteInstructions {
 						}
 					} else if (checkAgainstDirection()) {
 						soundToPlay.setLength(0);
-						soundToPlay.append ("CHECK_DIRECTION");
+						soundToPlay.append (routeSyntax.getCheckDirectionVoice());
 						soundRepeatDelay = 15;
 						nameNow = null;
 						sbRouteInstruction.setLength(0);
-						sbRouteInstruction.append("check direction");
+						sbRouteInstruction.append(routeSyntax.getCheckDirectionText());
 						routeInstructionColor = Legend.COLORS[Legend.COLOR_RI_CHECK_DIRECTION];
 ;
 					}
@@ -644,7 +603,7 @@ public class RouteInstructions {
 				e.setBackgroundColor(routeInstructionColor);				
 				e.setColor(Legend.COLORS[Legend.COLOR_RI_TEXT]);				
 				if (nameNow != null) {
-					e.setText("into " + nameNow);
+					e.setText("=> " + nameNow);
 				}				
 				if(Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_OFF_ROUTE_DISTANCE_IN_MAP)) {
 					e = Trace.tl.ele[TraceLayout.ROUTE_OFFROUTE];
@@ -1367,7 +1326,7 @@ public class RouteInstructions {
 				if ( (c.wayRouteFlags & Legend.ROUTE_FLAG_VERY_SMALL_DISTANCE) > 0) { 
 					sb.append("(small distance) ");
 				}
-				sb.append(directions[ri]);
+				sb.append(RouteSyntax.getInstance().getTextInstruction(ri));
 				sb.append(" into ");
 				sb.append((name==null?"":name));
 				sb.append(" then go ");
