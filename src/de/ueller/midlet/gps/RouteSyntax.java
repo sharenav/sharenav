@@ -255,8 +255,8 @@ public class RouteSyntax {
 			);
 
 		syntaxTemplates[SyntaxInstructionTypes.roundabout] = 
-			new SyntaxTemplate(	"", "DE_IM_KREISEL;DE_NIMM;%EXIT%;DE_KV_AUSFAHRT",
-								"DE_IN;%METERS%;DE_METERN;DE_NIMM;DE_IM_KREISEL;DE_DIE;%EXIT%;DE_KV_AUSFAHRT", ";DANN;NIMM;IM_KREISEL;%SOON%;DE_DIE;%EXIT%;DE_KV_AUSFAHRT",
+			new SyntaxTemplate(	"", "DE_IM_KREISEL;DE_NIMM;DE_DIE;%EXIT%;DE_KREISEL_ABFAHRT",
+								"DE_IN;%METERS%;DE_METERN;DE_NIMM;DE_IM_KREISEL;DE_DIE;%EXIT%;DE_KREISEL_ABFAHRT", ";DANN;NIMM;IM_KREISEL;%SOON%;DE_DIE;%EXIT%;DE_KREISEL_ABFAHRT",
 						   		"Kreisausfahrt %exit%", "Kreisausfahrt %exit% in %meters%m"
 			);
 
@@ -434,5 +434,9 @@ public class RouteSyntax {
 	public static String getSpeedLimitVoice() {
 		return speedLimitVoice;
 	}
+	
+	public static String getDestReachedVoice() {
+		return getSoundInstruction(RouteInstructions.RI_DEST_REACHED);
+	}	
 
 }

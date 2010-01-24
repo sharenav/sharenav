@@ -1530,7 +1530,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				atDest = (distance < 25);
 				if (atDest) {
 					if (movedAwayFromDest && Configuration.getCfgBitState(Configuration.CFGBIT_SND_DESTREACHED)) {
-						GpsMid.mNoiseMaker.playSound("DEST_REACHED", (byte) 7, (byte) 1);
+						GpsMid.mNoiseMaker.playSound(RouteSyntax.getInstance().getDestReachedVoice(), (byte) 7, (byte) 1);
 					}
 				} else if (!movedAwayFromDest) {
 					movedAwayFromDest = true;
