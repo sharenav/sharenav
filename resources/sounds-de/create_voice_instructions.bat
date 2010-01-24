@@ -43,7 +43,8 @@ espeak -a180 -w%lang%halten.wav -z -p79 -s150 -vde+f1 -x -k5 "halten"
 espeak -a180 -w%lang%folge_der_strasse.wav -z -p79 -s200 -vde+f1 -x -k5 "bis auf weiteres derr Strasse folgen"
 espeak -a180 -w%lang%ueber_platz.wav -z -p79 -s150 -vde+f1 -x -k5 "ueber den Platz"
 espeak -a180 -w%lang%platz_verlassen.wav -z -p79 -s150 -vde+f1 -x -k5 "den Platz verlassen"
-espeak -a180 -w%lang%wenden.wav -z -p79 -s180 -vde+f1 -x -k5 "bitte wenden"
+espeak -a180 -w%lang%bitte.wav -z -p79 -s180 -vde+f1 -x -k5 "bitte"
+espeak -a180 -w%lang%wenden.wav -z -p79 -s180 -vde+f1 -x -k5 "wenden"
 
 REM resample and increase volume of all sounds using sox from http://sox.sf.net
 FOR /F "tokens=*" %%i in ('dir /b *.wav') do (
