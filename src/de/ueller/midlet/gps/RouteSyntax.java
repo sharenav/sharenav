@@ -281,7 +281,7 @@ public class RouteSyntax {
 		syntaxTemplates[SyntaxInstructionTypes.bearAndLeaveMotorway] = 
 			new SyntaxTemplate(	"%BEAR_DIR%;ZUM;AUTOBAHN_VERLASSEN", "DE_GLEICH;%BEAR_DIR%;DE_ZUM;DE_AUTOBAHN_VERLASSEN",
 								"DE_IN;%METERS%;DE_METERN;%BEAR_DIR%;DE_ZUM;DE_AUTOBAHN_VERLASSEN", ";DE_DANN;%SOON%;%BEAR_DIR%;DE_ZUM;DE_AUTOBAHN_VERLASSEN",
-						   		"%bear_dir% Autobahn verlassen", "%bear_dir% Aotobahn verlassen in %meters%m"
+						   		"%bear_dir% Autobahn verlassen", "%bear_dir% Autobahn verlassen in %meters%m"
 			);
 
 		syntaxTemplates[SyntaxInstructionTypes.areaCross] = 
