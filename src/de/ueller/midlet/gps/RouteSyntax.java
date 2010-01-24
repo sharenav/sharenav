@@ -257,7 +257,7 @@ public class RouteSyntax {
 		syntaxTemplates[SyntaxInstructionTypes.roundabout] = 
 			new SyntaxTemplate(	"", "DE_IM_KREISEL;DE_NIMM;DE_DIE;%EXIT%;DE_KREISEL_ABFAHRT",
 								"DE_IN;%METERS%;DE_METERN;DE_NIMM;DE_IM_KREISEL;DE_DIE;%EXIT%;DE_KREISEL_ABFAHRT", ";DANN;NIMM;IM_KREISEL;%SOON%;DE_DIE;%EXIT%;DE_KREISEL_ABFAHRT",
-						   		"Kreisausfahrt %exit%", "Kreisausfahrt %exit% in %meters%m"
+						   		"Kreisausfahrt #%exit%", "Kreisausfahrt #%exit% in %meters%m"
 			);
 
 		syntaxTemplates[SyntaxInstructionTypes.enterMotorway] = 
@@ -352,9 +352,9 @@ public class RouteSyntax {
 				case RouteInstructions.RI_BEAR_LEFT_LEAVE_MOTORWAY:
 				case RouteInstructions.RI_BEAR_RIGHT_LEAVE_MOTORWAY:
 					if (syntaxComponent >= SyntaxTemplateComponents.startOfTextComponents) {
-						returnString = StringTools.replace(syntaxTemplates[SyntaxInstructionTypes.bearAndEnterMotorway].getComponent(syntaxComponent), "%bear_dir%", bearDirTexts[instruction - RouteInstructions.RI_BEAR_LEFT_LEAVE_MOTORWAY]);
+						returnString = StringTools.replace(syntaxTemplates[SyntaxInstructionTypes.bearAndLeaveMotorway].getComponent(syntaxComponent), "%bear_dir%", bearDirTexts[instruction - RouteInstructions.RI_BEAR_LEFT_LEAVE_MOTORWAY]);
 					} else {
-						returnString = StringTools.replace(syntaxTemplates[SyntaxInstructionTypes.bearAndEnterMotorway].getComponent(syntaxComponent), "%BEAR_DIR%", bearDirVoices[instruction - RouteInstructions.RI_BEAR_LEFT_LEAVE_MOTORWAY]);						
+						returnString = StringTools.replace(syntaxTemplates[SyntaxInstructionTypes.bearAndLeaveMotorway].getComponent(syntaxComponent), "%BEAR_DIR%", bearDirVoices[instruction - RouteInstructions.RI_BEAR_LEFT_LEAVE_MOTORWAY]);						
 					}
 					break;
 				case RouteInstructions.RI_LEAVE_MOTORWAY: returnString = syntaxTemplates[SyntaxInstructionTypes.leaveMotorway].getComponent(syntaxComponent); break;
