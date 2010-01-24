@@ -384,7 +384,7 @@ public class RouteSyntax {
 	}
 	
 	public static String getSoundInstructionIn(int instruction, int inDistance) {		
-		return StringTools.replace( getSyntaxTemplate(instruction, SyntaxTemplateComponents.in) , "%METERS%", metersVoices[inDistance / 100]);
+		return StringTools.replace( getSyntaxTemplate(instruction, SyntaxTemplateComponents.in) , "%METERS%", metersVoices[(inDistance / 100) - 1]);
 	}
 
 	public static String getTextInstructionIn(int instruction, int inDistance) {
