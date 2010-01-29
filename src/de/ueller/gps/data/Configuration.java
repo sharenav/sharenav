@@ -1652,8 +1652,9 @@ public class Configuration {
 	}
 	
 	public static String getLanguage() {
-		return language;
+		return language == null ? "EN" : language;
 	}
+	
 	public static void setLanguage(String language) {
 		Configuration.language = language;
 		write(language, RECORD_ID_LANGUAGE);
