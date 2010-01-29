@@ -2056,7 +2056,7 @@ scale alias 1: zoomed out 21x
 				     will start to show, default is 23
 				 -->
 				<descriptionscale scale = "27"/>
-				<lineColor color="00A08080" colorAtNight="00780901" />
+				<lineColor color="00B08070" colorAtNight="00780901" />
 			</Wvalue>
 			<Wvalue name = "*">
 				<description desc = "Other building"/>
