@@ -1,8 +1,9 @@
-package de.ueller.midlet.gps.data;
 /*
- * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net 
- * See Copying
+ * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net
+ * See COPYING
  */
+
+package de.ueller.midlet.gps.data;
 
 
 public class IntPoint {
@@ -13,70 +14,72 @@ public class IntPoint {
 		this.x = x;
 		this.y = y;
 	}
+
 	public IntPoint() {
 	}
 	
-	public IntPoint set(IntPoint other){
-		x=other.x;
-		y=other.y;
+	public IntPoint set(IntPoint other) {
+		x = other.x;
+		y = other.y;
 		return this;
 	}
 
-	public IntPoint set(int x1, int y1){
-		x=x1;
-		y=y1;
+	public IntPoint set(int x1, int y1) {
+		x = x1;
+		y = y1;
 		return this;
 	}
 
-	/** Returns x+other.x,y + other.y 
-	 * @param other the vector which gets added
-	 * @return
+	/** Returns x + other.x, y + other.y
+	 * @param other The IntPoint which gets added
+	 * @return This point plus other
 	 */
-	public IntPoint vectorAdd(IntPoint other){
-		return new IntPoint(this.x + other.x,this.y + other.y);
+	public IntPoint vectorAdd(IntPoint other) {
+		return new IntPoint(this.x + other.x, this.y + other.y);
 	}
-	public IntPoint add(IntPoint other){
-		x=this.x + other.x;
-		y=this.y + other.y;
+
+	public IntPoint add(IntPoint other) {
+		x = this.x + other.x;
+		y = this.y + other.y;
 		return this;
 	}
 	
-	/** Returns a new IntPoint. The given IntPoint gets rotated (90°) and added to the current IntPoint.
-	 * @param other
-	 * @return
+	/** Returns a new IntPoint. The given IntPoint gets rotated by 90 degrees and
+	 * added to the current IntPoint.
+	 * @param other The given IntPoint
+	 * @return Rotated IntPoint
 	 */
-	public IntPoint vectorAddRotate90(IntPoint other){
-		return new IntPoint(this.x + other.y,
-							this.y - other.x );
+	public IntPoint vectorAddRotate90(IntPoint other) {
+		return new IntPoint(this.x + other.y, this.y - other.x );
 	}
 	
 	/** Returns a new IntPoint with the value (current IntPoint - given Intpoint)
 	 * This doesn't change the value of the current IntPoint xy values
-	 * @param other IntPoint. The Point which gets substracted
+	 * @param other IntPoint. The Point which gets subtracted
 	 * @return
 	 */
-	public IntPoint vectorSubstract(IntPoint other){
-			return new IntPoint(this.x - other.x,this.y - other.y);	
+	public IntPoint vectorSubstract(IntPoint other) {
+			return new IntPoint(this.x - other.x, this.y - other.y);
 	}
 
 	/**
-	 * Returns x,y from current IntPoint multiplied the parameter
+	 * Returns x, y from current IntPoint multiplied the parameter
 	 * @param multi
 	 * @return
 	 */
-	public IntPoint vectorMultiply(float multi){
-		return  new IntPoint((int)(this.x * multi), (int) (this.y * multi));
+	public IntPoint vectorMultiply(float multi) {
+		return new IntPoint((int)(this.x * multi), (int)(this.y * multi));
 	}
 
 	/**
-	 * adds the given IntPoint multiplied by factor to the object
+	 * Adds the given IntPoint multiplied by factor to the object
 	 * @param other
 	 * @param factor
 	 * @return return the new IntPoint in needed
 	 */
-	public IntPoint add(IntPoint other,float factor){
-		x=(int)(this.x + other.x * factor);
-		y=(int)(this.y + other.y * factor);
+	public IntPoint add(IntPoint other, float factor) {
+		x = (int)(this.x + other.x * factor);
+		y = (int)(this.y + other.y * factor);
 		return this;
 	}
 
@@ -87,6 +90,7 @@ public class IntPoint {
 	public void setX(int x) {
 		this.x = x;
 	}
+
 	public void setX(float x) {
 		this.x = (int)x;
 	}
@@ -98,33 +102,36 @@ public class IntPoint {
 	public void setY(int y) {
 		this.y = y;
 	}
+
 	public void setY(float y) {
 		this.y = (int)y;
 	}
 
 	public boolean approximatelyEquals(IntPoint other, int diff) {
-		if (Math.abs(x - other.x) > diff ){
+		if (Math.abs(x - other.x) > diff ) {
 			return false;
 		}
-		if (Math.abs(y - other.y) > diff ){
+		if (Math.abs(y - other.y) > diff ) {
 			return false;
 		}
 		return true;
 	}
+
 	public boolean approximatelyEquals(IntPoint other) {
-		return approximatelyEquals(other,3);
+		return approximatelyEquals(other, 3);
 	}
 	
 	public boolean equals(IntPoint other) {
-		if (x != other.x ){
+		if (x != other.x ) {
 			return false;
 		}
-		if (y != other.y){
+		if (y != other.y) {
 			return false;
 		}
 		return true;
 	}
-	public String toString(){
-		return "IntPoint("+x+","+y+")";
+
+	public String toString() {
+		return "IntPoint(" + x + "," + y + ")";
 	}
 }

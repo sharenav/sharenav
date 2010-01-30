@@ -95,7 +95,7 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 	public IconMenuPage createAndAddMenuPage(String pageTitle, int numCols, int numRows) {
 		IconMenuPage imp = new IconMenuPage( pageTitle, actionPerformer, numCols, numRows, minX, calcIconMenuMinY(), maxX, calcIconMenuMaxY());
 		iconMenuPages.addElement(imp);
-		recreateTabButtonsRequired = true;		
+		recreateTabButtonsRequired = true;
 		return imp;
 	}
 	
@@ -113,7 +113,7 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 				LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_TOP |
 				LayoutElement.FLAG_BACKGROUND_BORDER |
 				getFontFlag()
-		);					
+		);
 		ePrevTab.setBackgroundColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_BORDER]);
 		ePrevTab.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_TEXT]);
 		ePrevTab.setText( " < ");
@@ -149,7 +149,7 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 			if (tabButtonManager.size() == 0) {
 				e = tabButtonManager.createAndAddElement(
 						LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_TOP |
-						LayoutElement.FLAG_BACKGROUND_BORDER | 
+						LayoutElement.FLAG_BACKGROUND_BORDER |
 						getFontFlag()
 				);
 			// all the other tab buttons are positioned rightto-relative to the previous one
@@ -217,15 +217,15 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 		if(tabNr >= iconMenuPages.size()) {
 			return;
 		}
-		// clear the FLAG_BACKGROUND_BOX for all other tab buttons except the current one, where it needs to get set 
+		// clear the FLAG_BACKGROUND_BOX for all other tab buttons except the current one, where it needs to get set
 		for (int i=0; i < tabButtonManager.size(); i++) {
 			if (i == tabNr) {
 				tabButtonManager.getElementAt(i).setFlag(LayoutElement.FLAG_BACKGROUND_BOX);
 			} else {
-				tabButtonManager.getElementAt(i).clearFlag(LayoutElement.FLAG_BACKGROUND_BOX);				
+				tabButtonManager.getElementAt(i).clearFlag(LayoutElement.FLAG_BACKGROUND_BOX);
 			}
 		}
-		// load all icons for the new icon page 
+		// load all icons for the new icon page
 		getActiveMenuPage().loadIcons();
 		//#debug debug
 		logger.debug("set tab " + tabNr);
@@ -237,7 +237,7 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 	
 	public void setActiveTabAndCursor(int tabNr, int eleId) {
 		setActiveTab(tabNr);
-		getActiveMenuPage().setCursor(eleId);	
+		getActiveMenuPage().setCursor(eleId);
 	}
 	
 	public void nextTab() {
@@ -245,7 +245,7 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 			tabNr++;
 			//#debug debug
 			logger.debug("next tab " + tabNr);
-		}		
+		}
 		// set flags for tab buttons
 		setActiveTab(tabNr);
 	}
@@ -271,11 +271,11 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 				repaint();
 			} else {
 				parent.show();
-				performIconAction(getActiveMenuPage().getActiveEleActionId());				
+				performIconAction(getActiveMenuPage().getActiveEleActionId());
 			}
 		} else if (c == BACK_CMD) {
 			parent.show();
-			performIconAction(IconActionPerformer.BACK_ACTIONID);				
+			performIconAction(IconActionPerformer.BACK_ACTIONID);
 		}
 	}
 	
@@ -343,8 +343,9 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 	protected void keyRepeated(int keyCode) {
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_MAPPED_ICONS)
 			&& (keyCode == KEY_STAR || keyCode == KEY_POUND || keyCode <= KEY_NUM9 && keyCode >= KEY_NUM0)) {
-			if ((System.currentTimeMillis() - pressedKeyTime) >= 1000 && pressedKeyCode == keyCode)
+			if ((System.currentTimeMillis() - pressedKeyTime) >= 1000 && pressedKeyCode == keyCode) {
 				keyReleased(keyCode);
+			}
 			} else {
 				keyPressed(keyCode);
 			}
@@ -415,8 +416,9 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 	
 	protected void paint(Graphics g) {
 		//#debug debug
-		logger.debug("Painting Icon Menu");
-		// clean the Canvas
+		logger.debug("Painting IconMenu");
+		
+		// Clean the Canvas
 		g.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_BACKGROUND]);
 		g.fillRect(0, 0, getWidth(), getHeight());
 
@@ -425,14 +427,14 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 		}
 		
 		LayoutElement e;
-		boolean activeTabVisible = false;		
+		boolean activeTabVisible = false;
 		do {
 			for (int i=0; i < tabButtonManager.size(); i++) {
 				e = tabButtonManager.getElementAt(i);
 				if (inTabRow && i == tabNr) {
 					e.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_TEXT_HIGHLIGHT]); // when in tab button row draw the current tab button in yellow text
 				} else {
-					e.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_TEXT]); // else draw it in white text				
+					e.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_TEXT]); // else draw it in white text
 				}
 				if ( i >= leftMostTabNr) {
 					// set the button text, so the LayoutManager knows it has to be drawn
@@ -447,11 +449,13 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 			// if the right button does not fit, scroll the bar
 			if (eNextTab.left < tabButtonManager.getElementAt(tabNr).right) {
 				leftMostTabNr++;
-				
 			} else {
 				activeTabVisible = true;
 			}
 		} while (!activeTabVisible);
+
+		//#debug debug
+		logger.debug("  Painting tab buttons");
 		// let the layout manager draw the tab buttons
 		tabButtonManager.paint(g);
 
@@ -460,7 +464,7 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 		if (tabNr == 0) {
 			ePrevTab.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_TEXT_INACTIVE]); // grey
 		} else {
-			ePrevTab.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_TEXT]); // white										
+			ePrevTab.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_TEXT]); // white
 		}
 		if (tabNr == tabButtonManager.size() - 1) {
 			eNextTab.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_TEXT_INACTIVE]); // grey
@@ -479,5 +483,8 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 		tabDirectionButtonManager.paint(g);
 		
 		getActiveMenuPage().paint(g, !inTabRow);
+
+		//#debug debug
+		logger.debug("Painting IconMenu finished");
 	}
 }

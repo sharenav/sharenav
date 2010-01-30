@@ -1,5 +1,5 @@
 /*
- * GpsMid - Copyright (c) 2008 Kai Krueger apmonkey at users dot sourceforge dot net 
+ * GpsMid - Copyright (c) 2008 Kai Krueger apmonkey at users dot sourceforge dot net
  * See COPYING
  */
 
@@ -29,10 +29,10 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 
 	private final static Logger mLogger = Logger.getInstance(GuiWaypoint.class, Logger.DEBUG);
 	
-	private final Command EXPORT_ALL_CMD = new Command("Export All", Command.ITEM, 1);	
+	private final Command EXPORT_ALL_CMD = new Command("Export All", Command.ITEM, 1);
 	private final Command IMPORT_CMD = new Command("Import", Command.ITEM, 2);
-	private final Command RENAME_CMD = new Command("Rename", Command.ITEM, 2);	
-	private final Command DEL_CMD = new Command("Delete", Command.ITEM, 2);	
+	private final Command RENAME_CMD = new Command("Rename", Command.ITEM, 2);
+	private final Command DEL_CMD = new Command("Delete", Command.ITEM, 2);
 	private final Command SALL_CMD = new Command("Select All", Command.ITEM, 2);
 	private final Command DSALL_CMD = new Command("Deselect All", Command.ITEM, 2);
 	private final Command BACK_CMD = new Command("Back", Command.BACK, 5);
@@ -41,15 +41,15 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 	/** Array containing all waypoints currently in the application. */
 	private PositionMark[] mWaypoints;
 	
-	/** Reference to the Trace class, needed to access the Gpx class and 
-	 * to switch back to the map. */ 
+	/** Reference to the Trace class, needed to access the Gpx class and
+	 * to switch back to the map. */
 	private final Trace mParent;
 	
 	/** Alert to display the progress of the operations. */
-	private ProgressDisplay mProgress;
+	private final ProgressDisplay mProgress;
 	
-	/** ID of the waypoint to be renamed. */
-	private static int mWptId;
+	/** Index of the waypoint to be renamed. */
+	private static int mWptIdx;
 	
 	/** Flag whether we are currently exporting waypoints */
 	private boolean mExporting;
@@ -69,11 +69,11 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 		
 		addCommand(EXPORT_ALL_CMD);
 		addCommand(IMPORT_CMD);
-		addCommand(RENAME_CMD);		
-		addCommand(DEL_CMD);		
-		addCommand(SALL_CMD);		
+		addCommand(RENAME_CMD);
+		addCommand(DEL_CMD);
+		addCommand(SALL_CMD);
 		addCommand(DSALL_CMD);
-		addCommand(BACK_CMD);		
+		addCommand(BACK_CMD);
 		addCommand(GOTO_CMD);
 	}
 	
@@ -83,8 +83,8 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 	private void initWaypoints() {
 		int count = this.size();
 		if (count != 0) {
-			/*  Workaround: on some SE phones the selection state of list elements 
-			 *  must be explicitly cleared before re-adding list elements - otherwise 
+			/*  Workaround: on some SE phones the selection state of list elements
+			 *  must be explicitly cleared before re-adding list elements - otherwise
 			 *  they stay selected .
 			 */
 			boolean[] boolSelected = new boolean[count];
@@ -94,7 +94,7 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 			this.setSelectedFlags(boolSelected);
 		}
 
-		this.deleteAll();		
+		this.deleteAll();
 
 		mWaypoints = mParent.gpx.listWayPt();
 		
@@ -103,7 +103,7 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 		
 		// Limit display of Waypoints to 255 because some Phones can only display 255 listitems
 		if (count_waypoints > 255) {
-			count_waypoints = 255;    
+			count_waypoints = 255;
 		}
 		for (int i = 0; i < count_waypoints; i++) {
 			if ((mWaypoints[i].displayName == null) || (mWaypoints[i].displayName.equals(""))) {
@@ -122,11 +122,11 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 			mExporting = false;
 			mImporting = false;
 			boolean[] sel = new boolean[mWaypoints.length];
-			this.getSelectedFlags(sel);			
+			this.getSelectedFlags(sel);
 			for (int i = 0; i < sel.length; i++) {
 				if (sel[i]) {
-					mWptId = i;
-					GuiNameEnter gne = new GuiNameEnter(this, "Rename Waypoint", 
+					mWptIdx = i;
+					GuiNameEnter gne = new GuiNameEnter(this, "Rename Waypoint",
 							mWaypoints[i].displayName, Configuration.MAX_WAYPOINTNAME_LENGTH);
 					gne.show();
 					break;
@@ -137,15 +137,15 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 		if (c == DEL_CMD) {
 			Vector idsToDelete = new Vector();
 			boolean[] sel = new boolean[mWaypoints.length];
-			this.getSelectedFlags(sel);			
+			this.getSelectedFlags(sel);
 			for (int i = 0; i < sel.length; i++) {
 				if (sel[i]) {
 					// mParent.gpx.deleteWayPt(mWaypoints[i], this);
 					idsToDelete.addElement(new Integer(mWaypoints[i].id));
 				}
 			}
-			mLogger.info("Delete waypoints, idsToDelete=" + idsToDelete.size() + 
-					" sel.length=" + sel.length + 
+			mLogger.info("Delete waypoints, idsToDelete=" + idsToDelete.size() +
+					" sel.length=" + sel.length +
 					" mWaypoints.length=" + mWaypoints.length);
 			if (idsToDelete.size() > 0)
 			{
@@ -165,16 +165,16 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 			}
 			this.setSelectedFlags(sel);
 			return;
-		}		
-		if (c == BACK_CMD) {			
+		}
+		if (c == BACK_CMD) {
 			mParent.show();
 			return;
 		}
 		if (c == EXPORT_ALL_CMD) {
 			mExporting = true;
 			mImporting = false;
-			GuiNameEnter gne = new GuiNameEnter(this, "Send as (without .gpx)", 
-					HelperRoutines.formatSimpleDateNow() + "-waypoints", 
+			GuiNameEnter gne = new GuiNameEnter(this, "Send as (without .gpx)",
+					HelperRoutines.formatSimpleDateNow() + "-waypoints",
 					Configuration.MAX_WAYPOINTS_NAME_LENGTH);
 			gne.show();
 			return;
@@ -184,13 +184,13 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 			mImporting = true;
 			GuiGpxLoad ggl = new GuiGpxLoad(this, this, true);
 			ggl.show();
-			return;			
+			return;
 		}
 		if (c == GOTO_CMD) {
-			float w = 0, e = 0, n = 0, s = 0; 
+			float w = 0, e = 0, n = 0, s = 0;
 			int idx = -1;
 			boolean[] sel = new boolean[mWaypoints.length];
-			this.getSelectedFlags(sel);			
+			this.getSelectedFlags(sel);
 			for (int i = 0; i < sel.length; i++) {
 				if (sel[i]) {
 					if (idx == -1) {
@@ -213,14 +213,14 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 						if (mWaypoints[i].lat > n) {
 							n = mWaypoints[i].lat;
 						}
-					}					
+					}
 				}
 			}
 			if (idx == -1) {
 				mLogger.error("No waypoint selected");
 				return;
 			} else if (idx > -1) {
-				mParent.setDestination(new RoutePositionMark(mWaypoints[idx], -1));				
+				mParent.setDestination(new RoutePositionMark(mWaypoints[idx], -1));
 			} else {
 				IntPoint intPoint1 = new IntPoint(10, 10);
 				IntPoint intPoint2 = new IntPoint(getWidth() - 10, getHeight() - 10);
@@ -253,11 +253,11 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 	}
 
 	public void completedUpload(boolean success, String message) {
-		String alertMsg;		
+		String alertMsg;
 		if (mExporting) {
-			if (success)
+			if (success) {
 				alertMsg = "Completed GPX export: " + message;
-			else {
+			} else {
 				alertMsg = "GPX export failed: " + message;
 			}
 		} else if (mImporting) {
@@ -290,16 +290,16 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 			// 255 items - at least on some phones).
 			// Todo: Some Phones doesn't have this 255 Items-Limit so we may improve the code here
 			if (mWaypoints.length > 255) {
-				GpsMid.getInstance().alert("Info", 
-					"Due to a platform restriction we display only the first 255 of " + 
-					mWaypoints.length + " waypoints. Hint: Export some waypoints to " + 
-					"a file and delete them to show the remaining waypoints.", 
+				GpsMid.getInstance().alert("Info",
+					"Due to a platform restriction we display only the first 255 of " +
+					mWaypoints.length + " waypoints. Hint: Export some waypoints to " +
+					"a file and delete them to show the remaining waypoints.",
 					Alert.FOREVER);
 			}
 	}
 
 	public void uploadAborted() {
-		initWaypoints();				
+		initWaypoints();
 	}
 
 	/** Called when the user has entered the GPX filename or the new waypoint name.
@@ -318,15 +318,15 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 			// Must be rename
 			if (strResult != null) {
     			// rename waypoint
-    			mWaypoints[mWptId].displayName = strResult;
-    			mParent.gpx.updateWayPt(mWaypoints[mWptId]);
+    			mWaypoints[mWptIdx].displayName = strResult;
+    			mParent.gpx.updateWayPt(mWaypoints[mWptIdx]);
     			// change item in list
-    			set(mWptId, strResult, null);
+    			set(mWptIdx, strResult, null);
     			// unselect changed item
-    			setSelectedIndex(mWptId, false);
+    			setSelectedIndex(mWptIdx, false);
     		}
     		show();
-		}		
+		}
 	}
 
 	/** Called when the user closes the progress popup.

@@ -1,10 +1,10 @@
-package de.ueller.midlet.gps.data;
-
 /*
  * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net
  *          Copyright (c) 2008 Markus Baeurle mbaeurle at users dot sourceforge dot net
- * See Copying
+ * See COPYING
  */
+
+package de.ueller.midlet.gps.data;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -19,7 +19,7 @@ public class PositionMark extends PersistEntity {
 	private final static Logger logger = Logger.getInstance(PositionMark.class, Logger.DEBUG);
 	
 	/** Constant to use if the elevation is invalid. Hopefully, nobody will
-	 * use GpsMid for deep sea exploration. ;-) */ 
+	 * use GpsMid for deep sea exploration. ;-) */
 	public static final int INVALID_ELEVATION = -1000;
 	
 	/** Name of this position mark. */
@@ -28,7 +28,7 @@ public class PositionMark extends PersistEntity {
 	public float lat;
 	/** Longitude in radians */
 	public float lon;
-	/** Elevation above mean sea level in meters */
+	/** Elevation above mean sea level or WGS84 geoid in meters */
 	public int ele;
 	/** currentTimeMillis() when this position mark was created. */
 	public long timeMillis;
@@ -67,7 +67,7 @@ public class PositionMark extends PersistEntity {
 	public PositionMark(int i, byte[] data) {
 		DataInputStream ds = getByteInputStream(data);
 		try {
-			// Version is ignored at the moment but in the future we can 
+			// Version is ignored at the moment but in the future we can
 			// use it to call routines which read old formats.
 			int dummy = ds.readShort();
 			displayName = ds.readUTF();
@@ -80,7 +80,7 @@ public class PositionMark extends PersistEntity {
 			sym = ds.readByte();
 			type = ds.readByte();
 		} catch (IOException ioe) {
-			// Maybe reading failed because it is the old format without 
+			// Maybe reading failed because it is the old format without
 			// version and all the new attributes, so let's try it:
 			logger.debug("Wpt " + i + " is probably in the old format.");
 			ds = getByteInputStream(data);
@@ -128,13 +128,13 @@ public class PositionMark extends PersistEntity {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}	
+		}
 		return bs.toByteArray();
 	}
 
 	public String toString() {
-		return new String(id + ": " + displayName + "(" + 
-						  (lat * MoreMath.FAC_RADTODEC) + "/" + 
+		return new String("id=" + id + ": " + displayName + "(" +
+						  (lat * MoreMath.FAC_RADTODEC) + "/" +
 						  (lon * MoreMath.FAC_RADTODEC) + ") ");
 	}
 }

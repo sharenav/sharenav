@@ -1,13 +1,20 @@
+/*
+ * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net
+ * 			Copyright (c) 2008 Kai Krueger apmonkey at users dot sourceforge dot net
+ * See COPYING
+ */
+
 package de.ueller.gps.tools;
 
 import java.util.Calendar;
 import java.util.Date;
 
+
 public class HelperRoutines {
 	
 	/**
 	 * Formats an integer to 2 digits, as used for example in time.
-	 * I.e. a 0 gets printed as 00. 
+	 * I.e. a 0 gets printed as 00.
 	 **/
 	public static final String formatInt2(int n) {
 		if (n < 10) {
@@ -18,19 +25,22 @@ public class HelperRoutines {
 	}
 	
 	/**
-	 * Date-Time formater that corresponds to the standard UTC time as used in XML
+	 * Date-Time formatter that corresponds to the standard UTC time as used in XML
 	 * @param time
 	 * @return
 	 */
 	public static final String formatUTC(Date time) {
 		// This function needs optimising. It has a too high object churn.
 		Calendar c = null;
-		if (c == null)
+		if (c == null) {
 			c = Calendar.getInstance();
+		}
 		c.setTime(time);
 		return c.get(Calendar.YEAR) + "-" + formatInt2(c.get(Calendar.MONTH) + 1) + "-" +
-		formatInt2(c.get(Calendar.DAY_OF_MONTH)) + "T" + formatInt2(c.get(Calendar.HOUR_OF_DAY)) + ":" +
-		formatInt2(c.get(Calendar.MINUTE)) + ":" + formatInt2(c.get(Calendar.SECOND)) + "Z";		 
+			formatInt2(c.get(Calendar.DAY_OF_MONTH)) + "T" +
+			formatInt2(c.get(Calendar.HOUR_OF_DAY)) + ":" +
+			formatInt2(c.get(Calendar.MINUTE)) + ":" +
+			formatInt2(c.get(Calendar.SECOND)) + "Z";
 		
 	}
 	
@@ -51,6 +61,7 @@ public class HelperRoutines {
 		
 		return formatedStr.toString();
 	}
+
 	public static final String formatSimpleDateSecondNow() {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(new Date());
@@ -64,6 +75,7 @@ public class HelperRoutines {
 		
 		return formatedStr.toString();
 	}
+
 	/**
 	 * 
 	 */
@@ -75,7 +87,7 @@ public class HelperRoutines {
 		} else if (dist < 10000) {
 			return Float.toString(((int)(dist/100))/10.0f) + "km";
 		} else {
-			return Integer.toString((int)(dist/1000)) + "km";			
+			return Integer.toString((int)(dist/1000)) + "km";
 		}
 	}
 	
@@ -103,7 +115,7 @@ public class HelperRoutines {
 					changed = true;
 					float tmp = tmpArray[i];
 					tmpArray[i] = tmpArray[i + 1];
-					tmpArray[i+1] = tmp;					
+					tmpArray[i+1] = tmp;
 				}
 			}
 		}
@@ -116,19 +128,17 @@ public class HelperRoutines {
 		array[pos + 2] = (byte)(val >> 16);
 		array[pos + 3] = (byte)(val >> 24);
 	}
-	
 
-	
 	/**
-	 * ReplacesALL Replaces every occurance of searchString with replacementString in text
+	 * Replaces every occurrence of searchString with replacementString in text
 	 * 
 	 * @param text
 	 * @param searchString
 	 * @param replacementString
-	 * @return
+	 * @return The changed string
 	 */
 
-	public static String replaceAll(String text, String searchString, String replacementString){
+	public static String replaceAll(String text, String searchString, String replacementString) {
 		StringBuffer sBuffer = new StringBuffer();
 		int pos = 0;
 		while((pos = text.indexOf(searchString)) != -1) {
@@ -145,7 +155,7 @@ public class HelperRoutines {
 	 * @param toxml
 	 * @return
 	 */
-	public static String utf2xml(String toxml) {		
+	public static String utf2xml(String toxml) {
 		toxml = HelperRoutines.replaceAll(toxml,"&", "&amp;" );
 		toxml = HelperRoutines.replaceAll(toxml,"<", "&lt;"  );
 		toxml = HelperRoutines.replaceAll(toxml,">", "&gt;"  );

@@ -43,24 +43,24 @@ import de.ueller.midlet.gps.Logger;
  *Cross Track Error
  *  field #:  0  1 2  3   4 5
  * sentence: XTE,A,A,#.##,L,N
- *1, blink/SNR (A=valid, V=invalid); 2, cycle lock (A/V); 3-5, dist 
+ *1, blink/SNR (A=valid, V=invalid); 2, cycle lock (A/V); 3-5, dist
  *off, Left or Right, Nautical miles or Kilometers.
  * 
  *Autopilot (format A)
  *  field #:  0  1 2  3   4 5 6 7  8  9  10
  * sentence: APA,A,A,#.##,L,N,A,A,###,M,####
- *1,  blink/SNR (A/V); 2 cycle lock (A/V); 3-5, dist off,  Left  or 
- *Right, Nautical miles or Kilometers; 6-7, arrival circle, arrival 
+ *1,  blink/SNR (A/V); 2 cycle lock (A/V); 3-5, dist off,  Left  or
+ *Right, Nautical miles or Kilometers; 6-7, arrival circle, arrival
  *perpendicular (A/V); 8-9, brg, Magnetic; 10, dest wpt.
  * 
  *Bearing to Waypoint along Great Circle
  * fld:  0   1      2      3  4       5  6  7  8  9  10  11  12
  * sen: BWC,HHMMSS,####.##,N,#####.##,W,###,T,###,M,###.#,N,####
- *1, Hours, Minutes, Seconds of universal time code; 2-3, Lat, N/S; 
- *4-5,  Lon,  W/E;  6-7, brg, True; 8-9, brg,  Mag;  10-12,  range, 
+ *1, Hours, Minutes, Seconds of universal time code; 2-3, Lat, N/S;
+ *4-5,  Lon,  W/E;  6-7, brg, True; 8-9, brg,  Mag;  10-12,  range,
  *Nautical miles or Kilometers, dest wpt.
  * 
- *BWR:  Bearing  to Waypoint, Rhumbline, BPI: Bearing to  Point  of 
+ *BWR:  Bearing  to Waypoint, Rhumbline, BPI: Bearing to  Point  of
  *Interest, all follow data field format of BWC.
  *</pre>
  */
@@ -83,7 +83,7 @@ public class NmeaMessage {
 	private float alt;
 	/** Positional dilution of precision */
 	private float pdop;
-	/** This will receive the information extracted from NMEA. */ 
+	/** This will receive the information extracted from NMEA. */
 	private final LocationMsgReceiver receiver;
 	/** The number of satellites received (field 6 from message GGA) */
 	private int mAllSatellites;
@@ -107,7 +107,7 @@ public class NmeaMessage {
 
 	public StringBuffer getBuffer() {
 		return buffer;
-	}	
+	}
 	
 	public void decodeMessage() {
 		decodeMessage(buffer.toString(), true);
@@ -139,12 +139,12 @@ public class NmeaMessage {
 				
 				// lat
 				float lat = getLat((String)param.elementAt(2));
-				if ("S".equals((String)param.elementAt(3))) {
+				if ("S".equals(param.elementAt(3))) {
 					lat = -lat;
 				}
 				// lon
 				float lon = getLon((String)param.elementAt(4));
-				if ("W".equals((String)param.elementAt(5))) {
+				if ("W".equals(param.elementAt(5))) {
 					lon = -lon;
 				}
 				// quality
@@ -157,7 +157,7 @@ public class NmeaMessage {
 				
 				// meters above mean sea level
 				alt = getFloatToken((String)param.elementAt(9));
-				// Height of geoid above WGS84 ellipsoid				
+				// Height of geoid above WGS84 ellipsoid
 			} else if ("RMC".equals(sentence)) {
 				/* RMC encodes the recomended minimum information */
 				 
@@ -179,33 +179,37 @@ public class NmeaMessage {
 				}
 				// Latitude
 				float lat = getLat((String)param.elementAt(3));
-				if ("S".equals((String)param.elementAt(4))) {
+				if ("S".equals(param.elementAt(4))) {
 					lat =  -lat;
 				}
 				// Longitude
 				float lon = getLon((String)param.elementAt(5));
-				if ("W".equals((String)param.elementAt(6))) {
+				if ("W".equals(param.elementAt(6))) {
 					lon = -lon;
-				}				
-				// Speed over the ground in knots, but GpsMid uses m/s				
+				}
+				// Speed over the ground in knots, but GpsMid uses m/s
 				speed = getFloatToken((String)param.elementAt(7)) * 0.5144444f;
 			    // Heading in degrees
 				head = getFloatToken((String)param.elementAt(8));
 				// Date
-				int date_tmp = getIntegerToken((String)param.elementAt(9));				
+				int date_tmp = getIntegerToken((String)param.elementAt(9));
 				cal.set(Calendar.YEAR, 2000 + date_tmp % 100);
 				cal.set(Calendar.MONTH, ((date_tmp / 100) % 100) - 1);
-				cal.set(Calendar.DAY_OF_MONTH, (date_tmp / 10000) % 100);				
+				cal.set(Calendar.DAY_OF_MONTH, (date_tmp / 10000) % 100);
 			    // Magnetic Variation is not used
-				pos.latitude = lat; 
-				pos.longitude = lon; 
-				pos.altitude = alt; 
-				pos.speed = speed; 
+				
+				// Copy data to current position
+				pos.latitude = lat;
+				pos.longitude = lon;
+				pos.altitude = alt;
+				pos.speed = speed;
 				pos.course = head;
 				pos.pdop = pdop;
 				
-				dateDecode = cal.getTime();				// get Date from Calendar
-				pos.timeMillis = dateDecode.getTime();	// get milliSecs since 01-Jan-1970 from Date
+				// Get Date from Calendar
+				dateDecode = cal.getTime();
+				// Get milliSecs since 01-Jan-1970 from Date
+				pos.timeMillis = dateDecode.getTime();
 				
 				if (receivePositionIsAllowed) {
 					receiver.receivePosition(pos);
@@ -231,14 +235,14 @@ public class NmeaMessage {
 			     *                          3 = 3D fix
 				 */
 				/**
-				 * A list of up to 12 PRNs which are used for the fix 
+				 * A list of up to 12 PRNs which are used for the fix
 				 */
 				for (int j = 0; j < 12; j++) {
 					/**
 					 * Resetting all the satellites to non locked
 					 */
 					if ((satellites[j] != null)) {
-						satellites[j].isLocked(false);						
+						satellites[j].isLocked(false);
 					}
 				}
 				for (int i = 0; i < 12; i++) {
@@ -248,7 +252,7 @@ public class NmeaMessage {
 						logger.debug("Satelit " + prn + " is part of fix");
 						for (int j = 0; j < 12; j++) {
 							if ((satellites[j] != null) && (satellites[j].id == prn)) {
-								satellites[j].isLocked(true);				
+								satellites[j].isLocked(true);
 							}
 						}
 					}
@@ -258,18 +262,18 @@ public class NmeaMessage {
 				 */
 				pdop = getFloatToken((String)param.elementAt(15));
 				/**
-			     *  Horizontal dilution of precision (HDOP) 
-			     *  Vertical dilution of precision (VDOP) 
+			     *  Horizontal dilution of precision (HDOP)
+			     *  Vertical dilution of precision (VDOP)
 				 */
 			} else if ("GSV".equals(sentence)) {
 				/* GSV encodes the satellites that are currently in view
 				 * A maximum of 4 satellites are reported per message,
-				 * if more are visible, then they are split over multiple messages				 * 
-				 */				
+				 * if more are visible, then they are split over multiple messages				 *
+				 */
 	            int j;
-	            // Calculate which satellites are in this message (message number * 4) 
+	            // Calculate which satellites are in this message (message number * 4)
 	            j = (getIntegerToken((String)param.elementAt(2)) - 1) * 4;
-	            int noSatInView =(getIntegerToken((String)param.elementAt(3)));	            
+	            int noSatInView =(getIntegerToken((String)param.elementAt(3)));
 	            for (int i = 4; i < param.size() && j < 12; i += 4, j++) {
 	            	if (satellites[j] == null) {
 	            		satellites[j] = new Satelit();
@@ -277,14 +281,14 @@ public class NmeaMessage {
 	            	satellites[j].id = getIntegerToken((String)param.elementAt(i));
 	            	satellites[j].elev = getIntegerToken((String)param.elementAt(i + 1));
 	            	satellites[j].azimut = getIntegerToken((String)param.elementAt(i + 2));
-	            	satellites[j].snr = getIntegerToken((String)param.elementAt(i + 3));	                
+	            	satellites[j].snr = getIntegerToken((String)param.elementAt(i + 3));
 	            }
 	            lastMsgGSV = true;
 	            for (int i = noSatInView; i < 12; i++) {
 	            	satellites[i] = null;
 	            }
 	            if (getIntegerToken((String)param.elementAt(2)) == getIntegerToken((String)param.elementAt(1))) {
-	            	receiver.receiveSatellites(satellites);	            	
+	            	receiver.receiveSatellites(satellites);
 		            lastMsgGSV = false;
 	            }
 			}
@@ -323,5 +327,5 @@ public class NmeaMessage {
 		int lon = Integer.parseInt(s.substring(0, 3));
 		float lonf = Float.parseFloat(s.substring(3));
 		return (lon + (lonf / 60));
-	}	
+	}
 }

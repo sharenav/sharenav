@@ -1,14 +1,14 @@
-package de.ueller.gps;
-
 /**
- * This file is part of GpsMid 
+ * This file is part of GpsMid.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as published by
  * the Free Software Foundation.
- * Copyright (c) 2008 Kai Krueger apmonkey at users dot sourceforge dot net 
- * See Copying
+ * Copyright (c) 2008 Kai Krueger apmonkey at users dot sourceforge dot net
+ * See COPYING
  */
+
+package de.ueller.gps;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,17 +26,15 @@ import de.ueller.midlet.gps.LocationMsgProducer;
 import de.ueller.midlet.gps.LocationMsgReceiver;
 import de.ueller.midlet.gps.LocationMsgReceiverList;
 import de.ueller.midlet.gps.Logger;
-import de.ueller.midlet.gps.Trace;
+
 
 /**
- * 
  * This class shares the functionality to read from the Bluetooth GPS receiver
  * and handles common functionality such as dealing with receiver quality and
- * lost connections
+ * lost connections.
  * 
  * The protocol specific decoding is handled in the abstract process() function
- * of subclasses
- * 
+ * of subclasses.
  */
 public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 	private static final Logger logger = Logger.getInstance(NmeaInput.class,
@@ -76,8 +74,9 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 	}
 
 	public boolean init(LocationMsgReceiver receiver) {
-		if (receiver != null)
+		if (receiver != null) {
 			this.receiverList.addReceiver(receiver);
+		}
 		
 		//#debug info
 		logger.info("Connect to "+Configuration.getBtUrl());
@@ -144,8 +143,7 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 							connectQuality = 0;
 						}
 						receiverList.receiveStatistics(connectError, connectQuality);
-						// watchdog if no bytes received in 10 sec then exit
-						// thread
+						// Watchdog: if no bytes received in 10 sec then exit thread
 						if (bytesReceived == 0) {
 							throw new IOException("No Data from GPS"/*i:BTNoData*/);
 						} else {
@@ -174,7 +172,7 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 						return;
 					}
 				}
-				if (!closed)
+				if (!closed) {
 					try {
 						synchronized (this) {
 							connectError[LocationMsgReceiver.SIRF_FAIL_MSG_INTERUPTED]++;
@@ -183,6 +181,7 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 					} catch (InterruptedException e) {
 						// Nothing to do in this case
 					}
+				}
 
 			}
 			
@@ -223,8 +222,9 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 	public void close() {
 		logger.info("Location producer closing");
 		closed = true;
-		if (processorThread != null)
+		if (processorThread != null) {
 			processorThread.interrupt();
+		}
 	}
 
 	public void close(String message) {
@@ -259,8 +259,9 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 		if (btGpsInputStream != null){
 			return true;
 		}
-		if (url == null)
+		if (url == null) {
 			return false;
+		}
 		try {
 			logger.info("Connector.open()");
 			conn = (StreamConnection) Connector.open(url);
@@ -278,13 +279,13 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 			
 		} catch (SecurityException se) {
 			/**
-			 * The application was not permitted to connect to bluetooth  
+			 * The application was not permitted to connect to bluetooth
 			 */
 			receiverList.receiveMessage("Connecting to BT not permitted"/*i:AlBTConnectNotPermit*/);
 			return false;
 			
 		} catch (IOException e) {
-			receiverList.receiveMessage("err BT:"/*i:AlErr*/+e.getMessage());
+			receiverList.receiveMessage("BT error:"/*i:AlErr*/ + e.getMessage());
 			return false;
 		}
 		return true;
@@ -312,7 +313,7 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 			} catch (IOException e) {
 			}
 			conn=null;
-		}		
+		}
 	}
 	
 	/**
@@ -357,8 +358,9 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 			init(null);
 			return true;
 		}
-		if (!closed)
+		if (!closed) {
 			logger.error("Lost connection to GPS and failed to reconnect"/*i:ErLostConnection*/);
+		}
 		return false;
 	}
 

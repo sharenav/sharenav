@@ -1,3 +1,8 @@
+/*
+ * GpsMid - Copyright (c) 2008 Kai Krueger apmonkey at users dot sourceforge dot net 
+ * See COPYING
+ */
+
 package de.ueller.midlet.gps;
 
 public interface UploadListener {

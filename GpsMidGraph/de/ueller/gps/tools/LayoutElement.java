@@ -1,6 +1,6 @@
 /*
- * GpsMid - Copyright (c) 2009 sk750 at users dot sourceforge dot net 
- * See Copying
+ * GpsMid - Copyright (c) 2009 sk750 at users dot sourceforge dot net
+ * See COPYING
  */
 
 package de.ueller.gps.tools;
@@ -149,7 +149,7 @@ public class LayoutElement {
 	}
 
 	
-	protected void calcSize() {		
+	protected void calcSize() {
 		if ( textIsValid ) {
 			width = textWidth;
 		} else {
@@ -163,10 +163,10 @@ public class LayoutElement {
 		}
 		
 		//#debug debug
-		logger.trace("width:" + width); 
+		logger.trace("width:" + width);
 		shortenTextToWidth();
 
-		if (specialElementID != 0) {			
+		if (specialElementID != 0) {
 			width = lm.getSpecialElementWidth(specialElementID, text, font);
 			height = lm.getSpecialElementHeight(specialElementID, fontHeight);
 		}
@@ -226,7 +226,7 @@ public class LayoutElement {
 			textLeft = left + (width - textWidth) / 2;
 		}
 		
-		right = left + width;		
+		right = left + width;
 		
 		
 		if ( (flags & FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT) > 0 ) {
@@ -328,7 +328,7 @@ public class LayoutElement {
 			} catch (IOException ioe) {
 				//#debug debug
 				logger.debug("Fall back to i_bg.png for " + imageName2);
-				orgImage = Image.createImage("/i_bg.png");				
+				orgImage = Image.createImage("/i_bg.png");
 			}
 			if ( (flags & FLAG_ICONMENU_ICON) > 0) {
 				orgImage = scaleIconImage(orgImage, (IconMenuPage) lm, fontHeight);
@@ -388,7 +388,7 @@ public class LayoutElement {
 			imageToggleState = state;
 			if (image != null) {
 				image = null;
-				loadImage();			
+				loadImage();
 			}
 		}
 	}
@@ -423,7 +423,7 @@ public class LayoutElement {
 
 	public void setText(String text) {
 		if (!textIsValid || !text.equalsIgnoreCase(this.text) ) {
-			this.text = text; 
+			this.text = text;
 			textWidth = font.stringWidth(text);
 			numDrawChars = (short) text.length();
 			lm.recalcPositionsRequired = true;
@@ -463,7 +463,7 @@ public class LayoutElement {
 
 	public void setEleNr(int eleNr) {
 		this.eleNr = eleNr;
-	}	
+	}
 	
 	public void setFlag(int flag) {
 		flags |= flag;
@@ -546,13 +546,13 @@ public class LayoutElement {
 		}
 		if ( (flags & (FLAG_FONT_SMALL | FLAG_FONT_MEDIUM | FLAG_FONT_LARGE)) == 0) {
 			return "font size missing";
-		}		
+		}
 		return null;
 	}
 
 	
 	public void paint(Graphics g) {
-		if (specialElementID != 0 && textIsValid) {			
+		if (specialElementID != 0 && textIsValid) {
 			g.setFont(font);
 			lm.drawSpecialElement(g, specialElementID, text, left, top);
 			isOnScreen = true;
@@ -569,7 +569,7 @@ public class LayoutElement {
 				logger.trace("draw border at " + left + "," + top + " size: " + (right-left) + "/" + (bottom - top));
 				g.setStrokeStyle(Graphics.SOLID);
 				g.drawRect(left, top, right-left, bottom - top);
-			}			
+			}
 			if ( (flags & FLAG_ICONMENU_ICON) > 0 ) {
 				IconMenuPage imp = (IconMenuPage) lm;
 				if (imp.bgImage != null) {
@@ -589,16 +589,16 @@ public class LayoutElement {
 				isOnScreen = true;
 			} else {
 				//#debug debug
-				logger.debug("no font for element");			
+				logger.debug("no font for element");
 			}
 		} else {
 			isOnScreen = false;
 		}
 		oldTextIsValid = textIsValid;
 		textIsValid = false; // text is invalid after drawing until it is set with setText() again
-	}				
+	}
 
 	public boolean isInElement(int x, int y) {
 		return (isOnScreen && x > left && x < right && y > top && y < bottom);
-	}	
+	}
 }
