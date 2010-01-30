@@ -22,7 +22,7 @@
 	<property name="lib.dir" value="${basedir}/lib"/>
 
    	<property name="dist.dir" value="${basedir}/dist"/>
-	<property name="version" value="0.6.09"/>
+	<property name="version" value="0.6.1"/>
 	<property name="buildlib" value="buildlib/explode.jar"/>
 
    <available property="clover.available" classname="org.apache.tools.ant.taskdefs.CloverCompilerAdapter"/>
@@ -59,7 +59,7 @@
 	</tstamp>
 <!--   	<echo message="Lang: ${local_lang}"/> -->
    	<copy todir="resources">
-   		<fileset dir="../GpsMid/dist">
+   		<fileset dir="../GpsMidDepot/dist">
    			<include name="*.jar"/>
 <!--   			<include name="*_${local_lang}.jar" if="local_lang" />
    			<include name="*.jar" unless="local_lang" />
