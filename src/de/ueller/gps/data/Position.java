@@ -15,31 +15,24 @@
  */
 package de.ueller.gps.data;
 
-import de.ueller.midlet.gps.Logger;
 
-/** Position received from LocationReceiver */
+/** TODO: Explain difference between Position and PositionMark */
 public class Position {
-	private static final Logger logger = Logger.getInstance(
-			Position.class, Logger.TRACE);
-	/**
-	 * position in degrees
-	 */
+	/** Latitude in degrees, Western values are negative */
 	public float latitude;
+	/** Longitude in degrees, Southern values are negative */
 	public float longitude;
+	/** Altitude above mean sea level or WGS84 geoid in meters */
 	public float altitude;
-	/**
-	 * Speed over ground in m/s
-	 */
+	/** Speed over ground in m/s */
 	public float speed;
-	/**
-	 * Course in DEC (360°)
-	 * Normally filled with Info direcly from NMEA-Head
-	 * TODO: Explain: source of this value: calculated course between actual 
-	 * and last point or course while saving actual point??
+	/** Course in degrees (0..359)
+	 * Normally filled with GPS course directly from NMEA messages
+	 * while point was created.
 	 */
 	public float course;
+	/** Positional dilution of precision */
 	public float pdop = 0.0f;
-	public int mode = -1;
 	/** currentTimeMillis() of this position. */
 	public long timeMillis;
 
@@ -49,7 +42,6 @@ public class Position {
 		this.altitude = pos.altitude;
 		this.speed = pos.speed;
 		this.course = pos.course;
-		this.mode = pos.mode;
 		this.timeMillis = pos.timeMillis;
 	}
 
@@ -60,22 +52,7 @@ public class Position {
 		this.altitude = altitude;
 		this.speed = speed;
 		this.course = course;
-		this.mode = mode;
 		this.timeMillis = timeMillis;
-	}
-
-	public Position(String latitude, String longitude, String altitude,
-			String speed, String course, String mode, String date, String time) {
-		try {
-			this.latitude = Float.parseFloat(latitude);
-			this.longitude = Float.parseFloat(longitude);
-			this.altitude = Float.parseFloat(altitude);
-			this.speed = Float.parseFloat(speed);
-			this.course = Float.parseFloat(course);
-			this.mode = Integer.parseInt(mode);
-		} catch (NumberFormatException e) {
-			logger.exception("Failed to parse position", e);
-		}
 	}
 
 	public String toString() {

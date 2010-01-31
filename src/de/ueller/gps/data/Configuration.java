@@ -1,9 +1,9 @@
-package de.ueller.gps.data;
-
 /*
- * Configuration - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net 
- * See Copying
+ * Configuration - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net
+ * See COPYING
  */
+
+package de.ueller.gps.data;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -291,9 +291,9 @@ public class Configuration {
 
 	private static String btUrl;
 	/** This URL is used to store logs of raw data received from the GPS receiver*/
-	private static String rawGpsLogUrl; 
+	private static String rawGpsLogUrl;
 	private static boolean rawGpsLogEnable;
-	private static String rawDebugLogUrl; 
+	private static String rawDebugLogUrl;
 	private static boolean rawDebugLogEnable;
 	private static int locationProvider = 0;
 	private static int gpxRecordRuleMode;
@@ -333,8 +333,8 @@ public class Configuration {
 	private static String mapFileUrl;
 	private static ZipFile mapZipFile;
 
-	private static String smsRecipient; 
-	private static int speedTolerance = 0; 
+	private static String smsRecipient;
+	private static int speedTolerance = 0;
 	
 	private static String utf8encodingstring = null;
 	
@@ -363,7 +363,7 @@ public class Configuration {
 				//#debug debug
 				System.out.println("Could not open config"); // Logger won't work if config is not read yet
 				return;
-			}	
+			}
 			cfgBits_0_to_63 = readLong(database, RECORD_ID_CFGBITS_0_TO_63);
 			cfgBits_64_to_127 = readLong(database, RECORD_ID_CFGBITS_64_TO_127);
 			btUrl = readString(database, RECORD_ID_BT_URL);
@@ -380,10 +380,10 @@ public class Configuration {
 			detailBoostPOI = readInt(database, RECORD_ID_DETAIL_BOOST_POI);
 			detailBoostDefaultPOI = detailBoostPOI;
 			calculateDetailBoostMultipliers();
-			gpxRecordRuleMode = readInt(database, RECORD_ID_GPX_FILTER_MODE); 
-			gpxRecordMinMilliseconds = readInt(database, RECORD_ID_GPX_FILTER_TIME); 
-			gpxRecordMinDistanceCentimeters = readInt(database, RECORD_ID_GPX_FILTER_DIST); 
-			gpxRecordAlwaysDistanceCentimeters = readInt(database, RECORD_ID_GPX_FILTER_ALWAYS_DIST); 
+			gpxRecordRuleMode = readInt(database, RECORD_ID_GPX_FILTER_MODE);
+			gpxRecordMinMilliseconds = readInt(database, RECORD_ID_GPX_FILTER_TIME);
+			gpxRecordMinDistanceCentimeters = readInt(database, RECORD_ID_GPX_FILTER_DIST);
+			gpxRecordAlwaysDistanceCentimeters = readInt(database, RECORD_ID_GPX_FILTER_ALWAYS_DIST);
 			rawDebugLogUrl = readString(database, RECORD_ID_LOG_DEBUG_URL);
 			rawDebugLogEnable = (readInt(database,  RECORD_ID_LOG_DEBUG_ENABLE) !=0);
 			debugSeverity = readInt(database, RECORD_ID_LOG_DEBUG_SEVERITY);
@@ -410,13 +410,13 @@ public class Configuration {
 
 			opencellid_apikey = readString(database, RECORD_ID_OPENCELLID_APIKEY);
 
-			minRouteLineWidth = readInt(database, RECORD_ID_MIN_ROUTELINE_WIDTH); 
-			mainStreetDistanceKm = readInt(database, RECORD_ID_MAINSTREET_NET_DISTANCE_KM); 
+			minRouteLineWidth = readInt(database, RECORD_ID_MIN_ROUTELINE_WIDTH);
+			mainStreetDistanceKm = readInt(database, RECORD_ID_MAINSTREET_NET_DISTANCE_KM);
 			autoRecenterToGpsMilliSecs = readInt(database, RECORD_ID_AUTO_RECENTER_TO_GPS_MILLISECS);
 			currentTravelModeNr = readInt(database, RECORD_ID_ROUTE_TRAVEL_MODE);
 			currentTravelMask = 1 << currentTravelModeNr;
 			phoneAllTimeMaxMemory = readLong(database, RECORD_ID_PHONE_ALL_TIME_MAX_MEMORY);
-			language = readString(database, RECORD_ID_LANGUAGE); 			
+			language = readString(database, RECORD_ID_LANGUAGE);
 			
 			int configVersionStored = readInt(database, RECORD_ID_CONFIG_VERSION);
 			//#debug info
@@ -431,8 +431,7 @@ public class Configuration {
 		}
 	}
 	
-	/** 
-	 *  If in the recordstore (configVersionStored) there is a lower version than VERSION 
+	/** If in the recordstore (configVersionStored) there is a lower version than VERSION
 	 *  of the Configuration, the default values for the features added between configVersionStored
 	 *  and VERSION will be set, before the version in the recordstore is increased to VERSION.
 	 */
@@ -450,7 +449,7 @@ public class Configuration {
 			   			getDefaultDeviceBacklightMethodMask();
 			// Record Rule Default
 			setGpxRecordRuleMode(GPX_RECORD_MINIMUM_SECS_DIST);
-			setGpxRecordMinMilliseconds(1000);				
+			setGpxRecordMinMilliseconds(1000);
 			setGpxRecordMinDistanceCentimeters(300);
 			setGpxRecordAlwaysDistanceCentimeters(500);
 			// Routing defaults
@@ -548,7 +547,7 @@ public class Configuration {
 			cfgBits_64_to_127 |=	1L << CFGBIT_AUTOZOOM |
 									1L << CFGBIT_ROUTE_TRY_FIND_MOTORWAY |
 									1L << CFGBIT_ROUTE_BOOST_MOTORWAYS |
-									1L << CFGBIT_ROUTE_BOOST_TRUNKS_PRIMARYS;			
+									1L << CFGBIT_ROUTE_BOOST_TRUNKS_PRIMARYS;
 		}
 		
 		setCfgBits(cfgBits_0_to_63, cfgBits_64_to_127);
@@ -636,7 +635,7 @@ public class Configuration {
 				return 0;
 			} else {
 				return Integer.parseInt(tmp);
-			}			
+			}
 		} catch (Exception e) {
 			logger.exception("Failed to read int from config database", e);
 			return 0;
@@ -652,7 +651,7 @@ public class Configuration {
 				return 0;
 			} else {
 				return Long.parseLong(tmp);
-			}			
+			}
 		} catch (Exception e) {
 			logger.exception("Failed to read Long from config database", e);
 			return 0;
@@ -676,8 +675,8 @@ public class Configuration {
 		dos.writeInt(detailBoostDefault);
 		dos.writeInt(detailBoostDefaultPOI);
 		dos.writeInt(gpxRecordRuleMode);
-		dos.writeInt(gpxRecordMinMilliseconds); 
-		dos.writeInt(gpxRecordMinDistanceCentimeters); 
+		dos.writeInt(gpxRecordMinMilliseconds);
+		dos.writeInt(gpxRecordMinDistanceCentimeters);
 		dos.writeInt(gpxRecordAlwaysDistanceCentimeters);
 		dos.writeUTF(sanitizeString(rawDebugLogUrl));
 		dos.writeBoolean(rawDebugLogEnable);
@@ -733,7 +732,7 @@ public class Configuration {
 		setOpencellidApikey(desanitizeString(dis.readUTF()));
 	}
 	
-	public static String getGpsRawLoggerUrl() {		
+	public static String getGpsRawLoggerUrl() {
 		return rawGpsLogUrl;
 	}
 	
@@ -751,12 +750,12 @@ public class Configuration {
 		}
 	}
 	
-	public static boolean getDebugRawLoggerEnable() {		
-		return rawDebugLogEnable;		
+	public static boolean getDebugRawLoggerEnable() {
+		return rawDebugLogEnable;
 	}
 	
-	public static String getDebugRawLoggerUrl() {		
-		return rawDebugLogUrl;		
+	public static String getDebugRawLoggerUrl() {
+		return rawDebugLogUrl;
 	}
 	
 	public static void setDebugRawLoggerUrl(String url) {
@@ -812,7 +811,7 @@ public class Configuration {
 		}
 	}
 	
-	public static boolean getGpsRawLoggerEnable() {		
+	public static boolean getGpsRawLoggerEnable() {
 		return rawGpsLogEnable;
 	}
 
@@ -848,7 +847,7 @@ public class Configuration {
 	public static void setGpxRecordMinMilliseconds(int gpxRecordMinMilliseconds) {
 		Configuration.gpxRecordMinMilliseconds = gpxRecordMinMilliseconds;
 			write(gpxRecordMinMilliseconds, RECORD_ID_GPX_FILTER_TIME);
-	}	
+	}
 
 	public static int getGpxRecordMinDistanceCentimeters() {
 		return gpxRecordMinDistanceCentimeters;
@@ -856,7 +855,7 @@ public class Configuration {
 	public static void setGpxRecordMinDistanceCentimeters(int gpxRecordMinDistanceCentimeters) {
 		Configuration.gpxRecordMinDistanceCentimeters = gpxRecordMinDistanceCentimeters;
 			write(gpxRecordMinDistanceCentimeters, RECORD_ID_GPX_FILTER_DIST);
-	}	
+	}
 
 	public static int getGpxRecordAlwaysDistanceCentimeters() {
 		return gpxRecordAlwaysDistanceCentimeters;
@@ -875,13 +874,13 @@ public class Configuration {
 	public static boolean getCfgBitState(byte bit, boolean getDefault) {
 		if (bit < 64) {
 			if (getDefault) {
-				return ((cfgBitsDefault_0_to_63 & (1L << bit)) != 0);			
+				return ((cfgBitsDefault_0_to_63 & (1L << bit)) != 0);
 			} else {
 				return ((cfgBits_0_to_63 & (1L << bit)) != 0);
 			}
 		} else {
 			if (getDefault) {
-				return ((cfgBitsDefault_64_to_127 & (1L << (bit - 64) )) != 0);			
+				return ((cfgBitsDefault_64_to_127 & (1L << (bit - 64) )) != 0);
 			} else {
 				return ((cfgBits_64_to_127 & (1L << (bit - 64) )) != 0);
 			}
@@ -889,11 +888,11 @@ public class Configuration {
 	}
 
 	public static boolean getCfgBitState(byte bit) {
-		return getCfgBitState(bit, false);			
+		return getCfgBitState(bit, false);
 	}
 	
 	public static boolean getCfgBitSavedState(byte bit) {
-		return getCfgBitState(bit, true);			
+		return getCfgBitState(bit, true);
 	}
 
 	
@@ -914,7 +913,7 @@ public class Configuration {
 				if (!state) {
 					// clear bit
 					Configuration.cfgBitsDefault_0_to_63 ^= (1L << bit);
-				}			
+				}
 				write(cfgBitsDefault_0_to_63, RECORD_ID_CFGBITS_0_TO_63);
 			}
 		} else {
@@ -930,18 +929,18 @@ public class Configuration {
 				if (!state) {
 					// clear bit
 					Configuration.cfgBitsDefault_64_to_127 ^= (1L << bit);
-				}			
+				}
 				write(cfgBitsDefault_64_to_127, RECORD_ID_CFGBITS_64_TO_127);
-			}			
+			}
 		}
-	}	
+	}
 
 	public static void setCfgBitSavedState(byte bit, boolean state) {
 		setCfgBitState(bit, state, true);
 	}
 	
 	private static void setCfgBits(long cfgBits_0_to_63, long cfgBits_64_to_127) {
-		Configuration.cfgBits_0_to_63 = cfgBits_0_to_63;		
+		Configuration.cfgBits_0_to_63 = cfgBits_0_to_63;
 		Configuration.cfgBitsDefault_0_to_63 = cfgBits_0_to_63;
 		write(cfgBitsDefault_0_to_63, RECORD_ID_CFGBITS_0_TO_63);
 		
@@ -963,7 +962,7 @@ public class Configuration {
 		calculateDetailBoostMultipliers();
 		if (savePermanent) {
 			Configuration.detailBoostDefault = detailBoost;
-			write(detailBoost, RECORD_ID_DETAIL_BOOST);		
+			write(detailBoost, RECORD_ID_DETAIL_BOOST);
 		}
 	}
 
@@ -972,7 +971,7 @@ public class Configuration {
 		calculateDetailBoostMultipliers();
 		if (savePermanent) {
 			Configuration.detailBoostDefaultPOI = detailBoost;
-			write(detailBoost, RECORD_ID_DETAIL_BOOST_POI);		
+			write(detailBoost, RECORD_ID_DETAIL_BOOST_POI);
 		}
 	}
 
@@ -1059,7 +1058,7 @@ public class Configuration {
 	
 	public static void setMapUrl(String url) {
 		write(url, RECORD_ID_MAP_FILE_URL);
-		mapFileUrl = url;		
+		mapFileUrl = url;
 	}
 
 	public static String getSmsRecipient() {
@@ -1068,7 +1067,7 @@ public class Configuration {
 	
 	public static void setSmsRecipient(String s) {
 		write(s, RECORD_ID_SMS_RECIPIENT);
-		smsRecipient = s;		
+		smsRecipient = s;
 	}
 	
 	public static int getSpeedTolerance() {
@@ -1077,7 +1076,7 @@ public class Configuration {
 	
 	public static void setSpeedTolerance(int s) {
 		write(s, RECORD_ID_SPEED_TOLERANCE);
-		speedTolerance = s;		
+		speedTolerance = s;
 	}
 
 	public static int getMinRouteLineWidth() {
@@ -1110,7 +1109,7 @@ public class Configuration {
 	}
 	
 	/**
-	 * Opens a resource, either from the JAR, the file system or a ZIP archive, 
+	 * Opens a resource, either from the JAR, the file system or a ZIP archive,
 	 * depending on the configuration, see mapFromJar and mapFileUrl.
 	 * @param name Full path of the resource
 	 * @return Stream which reads from the resource
@@ -1132,32 +1131,32 @@ public class Configuration {
 			if (is != null) {
 				return is;
 			} else if (!Configuration.getCfgBitSavedState(Configuration.CFGBIT_PREFER_INTERNAL_PNGS)) {
-				throw new IOException("Could not find file "/*i:ExFNF1*/ + name + 
+				throw new IOException("Could not find file "/*i:ExFNF1*/ + name +
 						" in JAR"/*i:ExFNF2*/);
 			}
 		}
 		//#if polish.api.fileconnection
-		try { 
-			if (mapFileUrl.endsWith("/")) { 
-				// directory mode 
+		try {
+			if (mapFileUrl.endsWith("/")) {
+				// directory mode
 				name = mapFileUrl + name.substring(1);
 				//#debug debug
 				logger.debug("Opening file from filesystem: " + name);
-				FileConnection fc = (FileConnection) Connector.open(name, Connector.READ); 
-				is = fc.openInputStream(); 
-			} 
-			else { 
-				// zipfile mode 
+				FileConnection fc = (FileConnection) Connector.open(name, Connector.READ);
+				is = fc.openInputStream();
+			}
+			else {
+				// zipfile mode
 				if (mapZipFile == null) {
 					mapZipFile = new ZipFile(mapFileUrl, -1);
 				}
 				//#debug debug
 				logger.debug("Opening file from zip-file: " + name);
-				is = mapZipFile.getInputStream(mapZipFile.getEntry(name.substring(1))); 
-			} 
-		} catch (Exception e) { 
-			//#debug info 
-			logger.info("Failed to open: " + name); 
+				is = mapZipFile.getInputStream(mapZipFile.getEntry(name.substring(1)));
+			}
+		} catch (Exception e) {
+			//#debug info
+			logger.info("Failed to open: " + name);
 			throw new IOException(e.getMessage());
 		}
 		//#else
@@ -1181,21 +1180,21 @@ public class Configuration {
 
 	public static TravelMode getTravelMode() {
 		return Legend.getTravelModes()[currentTravelModeNr];
-	}	
+	}
 	
 	public static int getTravelModeNr() {
 		return currentTravelModeNr;
-	}	
+	}
 
 	public static int getTravelMask() {
 		return currentTravelMask;
-	}	
+	}
 	
 	public static void setTravelMode(int travelModeNr) {
 		write(travelModeNr, RECORD_ID_ROUTE_TRAVEL_MODE);
 		Configuration.currentTravelModeNr = travelModeNr;
-		Configuration.currentTravelMask = 1 << travelModeNr;		
-	}	
+		Configuration.currentTravelMask = 1 << travelModeNr;
+	}
 
 	
 	
@@ -1275,7 +1274,7 @@ public class Configuration {
 	public static void setProjTypeDefault(byte t) {
 		ProjFactory.setProj(t);
 		projTypeDefault = t;
-		write((int) t, RECORD_ID_MAP_PROJECTION);
+		write(t, RECORD_ID_MAP_PROJECTION);
 	}
 
 	public static byte getProjDefault() {
@@ -1294,8 +1293,8 @@ public class Configuration {
 			 */
 		} catch (Exception e) {
 			/**
-			 * See above 
-			 */				
+			 * See above
+			 */
 		}
 		if (jsr135Version != null && jsr135Version.length() > 0) {
 			return true;
@@ -1315,8 +1314,8 @@ public class Configuration {
 			 */
 		} catch (Exception e) {
 			/**
-			 * See above 
-			 */				
+			 * See above
+			 */
 		}
 		if (jsr179Version != null && jsr179Version.length() > 0) {
 			return true;
@@ -1345,7 +1344,7 @@ public class Configuration {
 			 */
 		} catch (Exception e) {
 			/**
-			 * See above 
+			 * See above
 			 */
 		}
 		return "";
@@ -1362,16 +1361,16 @@ public class Configuration {
 			phoneModel.startsWith("SonyEricssonC") ||
 			phoneModel.startsWith("SonyEricssonK550")
 		) {
-			return 1L << CFGBIT_BACKLIGHT_NOKIA;			
+			return 1L << CFGBIT_BACKLIGHT_NOKIA;
 		} else if (phoneModel.startsWith("SonyEricssonK750") ||
 			phoneModel.startsWith("SonyEricssonW800")
 		) {
 			return 1L << CFGBIT_BACKLIGHT_NOKIAFLASH;
-		} else if (phoneModel.endsWith("(NSG)") || 
+		} else if (phoneModel.endsWith("(NSG)") ||
 		    phoneModel.startsWith("SIE")
 		) {
 			return 1 << CFGBIT_BACKLIGHT_SIEMENS;
-        } 			
+        }
 		//#endif
 		return 0;
 	}
@@ -1394,7 +1393,7 @@ public class Configuration {
 	}
 	
 	public static String getCompassDirection(int course) {
-		return compassDirections[(int) ((float) ((course % 360 + 11.25f) / 22.5f)) ];
+		return compassDirections[(int)(((course % 360 + 11.25f) / 22.5f)) ];
 	}
 
 	public static long getPhoneAllTimeMaxMemory() {
@@ -1421,19 +1420,19 @@ public class Configuration {
 		return "";
 	}
 	
-	public static void loadKeyShortcuts(intTree gameKeys, intTree singleKeys, 
-			intTree repeatableKeys, intTree doubleKeys, intTree longKeys, 
+	public static void loadKeyShortcuts(intTree gameKeys, intTree singleKeys,
+			intTree repeatableKeys, intTree doubleKeys, intTree longKeys,
 			intTree specialKeys, Command [] cmds) {
 		logger.info("Loading key shortcuts");
-		if (!loadKeyShortcutsDB(gameKeys, singleKeys, repeatableKeys, doubleKeys, 
+		if (!loadKeyShortcutsDB(gameKeys, singleKeys, repeatableKeys, doubleKeys,
 				longKeys, specialKeys, cmds)) {
-			loadDefaultKeyShortcuts(gameKeys, singleKeys, repeatableKeys, doubleKeys, 
+			loadDefaultKeyShortcuts(gameKeys, singleKeys, repeatableKeys, doubleKeys,
 					longKeys, specialKeys, cmds);
 		}
 	}
 	
-	private static void loadDefaultKeyShortcuts(intTree gameKeys, intTree singleKeys, 
-			intTree repeatableKeys, intTree doubleKeys, intTree longKeys, 
+	private static void loadDefaultKeyShortcuts(intTree gameKeys, intTree singleKeys,
+			intTree repeatableKeys, intTree doubleKeys, intTree longKeys,
 			intTree specialKeys, Command [] cmds) {
 		int keyType = 0;
 		//#debug info
@@ -1529,8 +1528,8 @@ public class Configuration {
 		
 	}
 	
-	private static boolean loadKeyShortcutsDB(intTree gameKeys, intTree singleKeys, 
-			intTree repeatableKeys, intTree doubleKeys, intTree longKeys, 
+	private static boolean loadKeyShortcutsDB(intTree gameKeys, intTree singleKeys,
+			intTree repeatableKeys, intTree doubleKeys, intTree longKeys,
 			intTree specialKeys, Command [] cmds) {
 		try {
 			//#debug info
@@ -1588,8 +1587,8 @@ public class Configuration {
 		}
 	}
 	
-	public static void saveKeyShortcuts(intTree gameKeys, intTree singleKeys, 
-			intTree repeatableKeys, intTree doubleKeys, intTree longKeys, 
+	public static void saveKeyShortcuts(intTree gameKeys, intTree singleKeys,
+			intTree repeatableKeys, intTree doubleKeys, intTree longKeys,
 			intTree specialKeys, Command [] cmds) {
 		//#debug info
 		logger.info("Saving key shortcuts");
