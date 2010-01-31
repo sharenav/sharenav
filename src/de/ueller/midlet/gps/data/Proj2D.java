@@ -171,8 +171,8 @@ public class Proj2D implements Projection {
 			int deltaPix;
 			int dx = Math.abs(IntPoint2.getX() - IntPoint1.getX());
 			int dy = Math.abs(IntPoint2.getY() - IntPoint1.getY());
-			float dlat = Math.abs(ll1.getLatitude() - ll2.getLatitude());
-			float dlon = Math.abs(ll1.getLongitude() - ll2.getLongitude());
+			float dlat = Math.abs(ll1.getLatDeg() - ll2.getLatDeg());
+			float dlon = Math.abs(ll1.getLonDeg() - ll2.getLonDeg());
 			
 			if (dlon/dx < dlat/dy) {
 				deltaDegrees = dlat;
@@ -192,10 +192,11 @@ public class Proj2D implements Projection {
     }
 
 	public Node inverse(int x, int y, Node llp) {
-    	if (llp==null) llp = new Node();    	    	
-        llp.setLatLon((-1*(y - hy)/scaled_lat + ctrLat),
-                ((x - wx) / scaled_radius) + ctrLon,
-                true);        
+    	if (llp == null) {
+    		llp = new Node();    	    	
+    	}
+        llp.setLatLonRad((-1 * (y - hy) / scaled_lat + ctrLat),
+                ((x - wx) / scaled_radius) + ctrLon);        
         
         return llp;
 	}
@@ -213,9 +214,8 @@ public class Proj2D implements Projection {
         x -= wx;
         float y_=(((hy-y))/scaled_radius)+asinh_of_tanCtrLat ;
 
-        llp.setLatLon(MoreMath.atan(MoreMath.sinh(y_)),
-                (x / scaled_radius) + ctrLon,
-                true);
+        llp.setLatLonRad(MoreMath.atan(MoreMath.sinh(y_)),
+                (x / scaled_radius) + ctrLon);
         return llp;
     }
 

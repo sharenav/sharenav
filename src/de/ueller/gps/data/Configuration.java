@@ -1227,7 +1227,7 @@ public class Configuration {
 	}
 
 	public static void getStartupPos(Node pos) {
-		pos.setLatLon(startupPos.radlat, startupPos.radlon, true);
+		pos.setLatLonRad(startupPos.radlat, startupPos.radlon);
 	}
 
 	public static void setStartupPos(Node pos) {

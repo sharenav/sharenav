@@ -1279,7 +1279,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					//want it to be recentered on the GPS immediately.
 					gpsRecenter = false;
 					
-					center.setLatLon(dest.lat, dest.lon, true);
+					center.setLatLonRad(dest.lat, dest.lon);
 					updatePosition();
 					movedAwayFromDest = false;
 				}
@@ -2117,7 +2117,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		//want it to be recentered on the GPS immediately.
 		gpsRecenter = false;
 		
-		center.setLatLon(lat, lon, true);
+		center.setLatLonRad(lat, lon);
 		this.scale = scale;
 		updatePosition();
 	}
@@ -2140,7 +2140,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			//autoZoomed = true;
 		}
 		if (gpsRecenter) {
-			center.setLatLon(pos.latitude, pos.longitude);
+			center.setLatLonDeg(pos.latitude, pos.longitude);
 			if (speed > 2) {
 				/*  don't rotate too fast
 				 *  FIXME: the following line to not rotate too fast
@@ -2478,7 +2478,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			//want it to be recentered on the GPS immediately.
 			gpsRecenter = false;
 			
-			center.setLatLon(dest.lat, dest.lon, true);
+			center.setLatLonRad(dest.lat, dest.lon);
 			updatePosition();
 		} else {
 			//#debug info

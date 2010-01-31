@@ -180,22 +180,21 @@ public class Proj2DMoveUp  implements Projection {
 	//TODO: needs adaption to rotated map???
 	public float getScale(Node ll1, Node ll2, IntPoint IntPoint1, IntPoint IntPoint2) {
 		try {
-
 			float deltaDegrees;
 			float pixPerDegree;
 			int deltaPix;
 			int dx = Math.abs(IntPoint2.getX() - IntPoint1.getX());
 			int dy = Math.abs(IntPoint2.getY() - IntPoint1.getY());
-			float dlat = Math.abs(ll1.getLatitude() - ll2.getLatitude());
-			float dlon = Math.abs(ll1.getLongitude() - ll2.getLongitude());
+			float dlat = Math.abs(ll1.getLatDeg() - ll2.getLatDeg());
+			float dlon = Math.abs(ll1.getLonDeg() - ll2.getLonDeg());
 			
-			if (dlon/dx < dlat/dy) {
+			if (dlon / dx < dlat / dy) {
 				deltaDegrees = dlat;
 				deltaPix = dy;                
-			} else {            
+			} else {
 				deltaDegrees = dlon;
 				deltaPix = dx;
-			}    
+			}
 			// This might not be correct for all projection types
 			pixPerDegree = planetPixelCircumference / 360f;            
 			// The new scale...
@@ -207,15 +206,15 @@ public class Proj2DMoveUp  implements Projection {
     }
 
 	public Node inverse_app(int x, int y, Node llp) {
-    	if (llp==null) llp = new Node();    	    	
+    	if (llp == null) {
+    		llp = new Node();
+    	}
     	x -= wx;
     	y = hy - y;
-		float x1= y*sinRoh + x*cosRoh;
-		float y1= -x*sinRoh + y*cosRoh;
-       llp.setLatLon((y1/scaled_lat + ctrLat),
-                (x1 / scaled_radius) + ctrLon,
-                true);        
-        
+		float x1= y * sinRoh + x * cosRoh;
+		float y1= -x * sinRoh + y * cosRoh;
+		llp.setLatLonRad((y1 / scaled_lat + ctrLat),
+				(x1 / scaled_radius) + ctrLon);
         return llp;
 	}
 
@@ -235,14 +234,13 @@ public class Proj2DMoveUp  implements Projection {
 //    	System.out.println("sinRoh=" + sinRoh);
 //    	System.out.println("cosRoh=" + cosRoh);
 //    	System.out.println("1 x="+x + "  y="+y);
-		float x1= y*sinRoh + x*cosRoh;
-		float y1= -x*sinRoh + y*cosRoh;
+		float x1 = y * sinRoh + x * cosRoh;
+		float y1 = -x * sinRoh + y * cosRoh;
 //    	System.out.println("1 x'="+x1 + "  y'="+y1);
  
-        float y_=(y1/scaled_radius)+asinh_of_tanCtrLat ;
-        llp.setLatLon(MoreMath.atan(MoreMath.sinh(y_)),
-                (x1 / scaled_radius) + ctrLon,
-                true);
+        float y_ = (y1 / scaled_radius) + asinh_of_tanCtrLat ;
+        llp.setLatLonRad(MoreMath.atan(MoreMath.sinh(y_)),
+                (x1 / scaled_radius) + ctrLon);
 //    	System.out.println("1 x''="+llp.radlat + "  y''="+llp.radlon);
         return llp;
     }
@@ -250,11 +248,10 @@ public class Proj2DMoveUp  implements Projection {
     private Node inverse_wo_rot(int x, int y, Node llp) {
         // convert from screen to world coordinates
         x -= wx;
-        float y_=(((hy-y))/scaled_radius)+asinh_of_tanCtrLat ;
+        float y_ = (((hy - y)) / scaled_radius) + asinh_of_tanCtrLat ;
 
-        llp.setLatLon(MoreMath.atan(MoreMath.sinh(y_)),
-                (x / scaled_radius) + ctrLon,
-                true);
+        llp.setLatLonRad(MoreMath.atan(MoreMath.sinh(y_)),
+                (x / scaled_radius) + ctrLon);
         return llp;
     }
 
@@ -262,28 +259,26 @@ public class Proj2DMoveUp  implements Projection {
 		return minLat;
 	}
 
-
 	public float getMaxLat() {
 		return maxLat;
 	}
 
-
 	public float getMinLon() {
 		return minLon;
 	}
-
 
 	public float getMaxLon() {
 		return maxLon;
 	}
 
 	public void pan(Node n, int xd,int yd) {		
-		forward(n,panP);
-		inverse((width*xd/100)+panP.x,( height*yd/100)+panP.y, n);
+		forward(n, panP);
+		inverse((width * xd / 100) + panP.x, (height * yd / 100) + panP.y, n);
 	}
 
 	public String toString() {
-		return "Proj2DMoveUp: " + (ctrLat * MoreMath.FAC_RADTODEC) + "/"+ (ctrLon * MoreMath.FAC_RADTODEC) + " s:" + scale + " u"+upDir;
+		return "Proj2DMoveUp: " + (ctrLat * MoreMath.FAC_RADTODEC) + "/" + 
+			(ctrLon * MoreMath.FAC_RADTODEC) + " s:" + scale + " u" + upDir;
 	}
 
 	public float getCourse() {

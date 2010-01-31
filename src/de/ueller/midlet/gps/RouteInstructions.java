@@ -215,7 +215,7 @@ public class RouteInstructions {
 							break;
 						}
 						if (c.wayRouteInstruction == RI_AREA_CROSS) {
-							areaStart.setLatLon(c.to.lat, c.to.lon, true);
+							areaStart.setLatLonRad(c.to.lat, c.to.lon);
 						} else if (c.wayRouteInstruction == RI_AREA_CROSSED) {
 							IntPoint lineP1 = new IntPoint();
 							IntPoint lineP2 = new IntPoint();							
@@ -300,7 +300,7 @@ public class RouteInstructions {
 						
 						// draw cross area instruction
 						if (c.wayRouteInstruction == RI_AREA_CROSS) {
-							areaStart.setLatLon(c.to.lat, c.to.lon, true);
+							areaStart.setLatLonRad(c.to.lat, c.to.lon);
 						} else if (c.wayRouteInstruction == RI_AREA_CROSSED) {
 							// draw line for crossing area
 							IntPoint lineP1 = new IntPoint();
@@ -1252,31 +1252,32 @@ public class RouteInstructions {
 		}
 	}
 
-	
 	public static void toNextInstruction(int direction) {
-		if (routePathConnection != -1 && routePathConnection < route.size()-1) {
+		if (routePathConnection != -1 && routePathConnection < route.size() - 1) {
 			int i;
-			i=idxNextInstructionArrow (routePathConnection+1);			
+			i = idxNextInstructionArrow (routePathConnection + 1);			
 			if (direction > 0) {
 				i = idxNextInstructionArrow (i + 1);
 			} else {
 				i = idxPrevInstructionArrow (i - 1);				
 			}
 			ConnectionWithNode c = (ConnectionWithNode) route.elementAt(i);
-			double rad=Math.toRadians((double) (c.wayConEndBearing*2));
-			trace.center.setLatLon(	c.to.lat - 0.0000025f * (float) Math.cos(rad),
-									c.to.lon - 0.0000025f * (float) Math.sin(rad),
-									true
-			);
-			trace.gpsRecenter=false;
+			double rad = Math.toRadians((double) (c.wayConEndBearing * 2));
+			trace.center.setLatLonRad(	c.to.lat - 0.0000025f * (float) Math.cos(rad),
+										c.to.lon - 0.0000025f * (float) Math.sin(rad) );
+			trace.gpsRecenter = false;
 			// allow to output same instruction again
 			NoiseMaker.resetSoundRepeatTimes();
 		}
 	}
 		
 	public static byte convertTurnToRouteInstruction(int turn) {
-		if (turn > 180) turn -= 360;
-		if (turn < -180) turn += 360;
+		if (turn > 180) {
+			turn -= 360;
+		}
+		if (turn < -180) {
+			turn += 360;
+		}
 		if (turn > 160) {
 			return RI_UTURN;
 		} else if (turn > 110) {
