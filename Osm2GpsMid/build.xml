@@ -147,7 +147,9 @@
         	<include name="*.xml" />
    	 		<include name="style-file.dtd" />
      		<include name="version.properties" />
+     		<include name="**/syntax.cfg" />
         	<include name="**/*.png" />
+        	<include name="**/*.amr" />
         	<include name="**/*.wav" />
            	<include name="**/*.mp3" />
 		</fileset>

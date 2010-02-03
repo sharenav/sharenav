@@ -360,6 +360,10 @@ public class CreateGpsMidData implements FilenameFilter {
 				}
 				// System.out.println(way);
 			}
+			
+			RouteSoundSyntax soundSyn = new RouteSoundSyntax("sound", path + "/syntax.dat");
+			
+			
 			/**
 			 * Copy sounds for all sound formats to midlet 
 			 */
@@ -370,8 +374,10 @@ public class CreateGpsMidData implements FilenameFilter {
 	    	}
 			
 			String soundFile;
-			for (int i = 0; i < Configuration.SOUNDNAMES.length; i++) {
-				soundFile = Configuration.SOUNDNAMES[i].toLowerCase();
+			Object soundNames[] = soundSyn.getSoundNames(); 
+			for (int i = 0; i < soundNames.length ; i++) {
+				soundFile = (String) soundNames[i];
+				soundFile = soundFile.toLowerCase();
 		    	for (int j = 0; j < soundFormat.length; j++) {
 					outputMedia = copyMediaToMid(soundFile + "." + soundFormat[j].trim(), path, "sound");					
 				}
