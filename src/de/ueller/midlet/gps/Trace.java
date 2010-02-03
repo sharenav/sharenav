@@ -608,7 +608,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		if ( gpsRecenter && Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_AUTO_RECALC) ) {
 			if (Math.abs(System.currentTimeMillis()-oldRecalculationTime) >= 7000 ) {
 				if (Configuration.getCfgBitState(Configuration.CFGBIT_SND_ROUTINGINSTRUCTIONS)) {
-					GpsMid.mNoiseMaker.playSound(RouteSyntax.getInstance().getRecalculationVoice(), (byte) 5, (byte) 1 );
+					GpsMid.mNoiseMaker.playSound(RouteSyntax.getInstance().getRecalculationSound(), (byte) 5, (byte) 1 );
 				}
 				//#debug debug
 				logger.debug("autoRouteRecalculate");
@@ -1530,7 +1530,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				atDest = (distance < 25);
 				if (atDest) {
 					if (movedAwayFromDest && Configuration.getCfgBitState(Configuration.CFGBIT_SND_DESTREACHED)) {
-						GpsMid.mNoiseMaker.playSound(RouteSyntax.getInstance().getDestReachedVoice(), (byte) 7, (byte) 1);
+						GpsMid.mNoiseMaker.playSound(RouteSyntax.getInstance().getDestReachedSound(), (byte) 7, (byte) 1);
 					}
 				} else if (!movedAwayFromDest) {
 					movedAwayFromDest = true;
@@ -1550,7 +1550,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				// give speeding alert only every 10 seconds
 				if ( (System.currentTimeMillis() - lastTimeOfSpeedingSound) > 10000 ) {
 					lastTimeOfSpeedingSound = System.currentTimeMillis();
-					GpsMid.mNoiseMaker.immediateSound(RouteSyntax.getInstance().getSpeedLimitVoice());					
+					GpsMid.mNoiseMaker.immediateSound(RouteSyntax.getInstance().getSpeedLimitSound());					
 				}
 			}
 			/*

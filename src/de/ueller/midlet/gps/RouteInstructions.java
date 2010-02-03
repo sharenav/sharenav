@@ -28,12 +28,12 @@ public class RouteInstructions {
 	protected static final int RI_HARD_RIGHT = 1;
 	protected static final int RI_RIGHT = 2;
 	protected static final int RI_HALF_RIGHT = 3;
-	protected static final int RI_BEAR_RIGHT = 4;
-	public static final int RI_STRAIGHT_ON = 5;
-	protected static final int RI_BEAR_LEFT = 6;
-	protected static final int RI_HALF_LEFT = 7;
-	protected static final int RI_LEFT = 8;
-	protected static final int RI_HARD_LEFT = 9;
+	public static final int RI_STRAIGHT_ON = 4;
+	protected static final int RI_HALF_LEFT = 5;
+	protected static final int RI_LEFT = 6;
+	protected static final int RI_HARD_LEFT = 7; // don't change ordering, this is used in a "<= comparison" 
+	protected static final int RI_BEAR_RIGHT = 8;
+	protected static final int RI_BEAR_LEFT = 9;  // don't change ordering, this is used in a "<= comparison"
 	protected static final int RI_UTURN = 10;
 	protected static final int RI_DEST_REACHED = 11;
 	protected static final int RI_ENTER_MOTORWAY = 12;
@@ -450,7 +450,7 @@ public class RouteInstructions {
 									ConnectionWithNode cPassed = (ConnectionWithNode) route.elementAt(iPassedRouteArrow);
 							    	float distPassed=ProjMath.getDistance(center.radlat, center.radlon, cPassed.to.lat, cPassed.to.lon);
 									if (distPassed > 50) {
-								    	soundToPlay.append(routeSyntax.getFollowStreetVoice());
+								    	soundToPlay.append(routeSyntax.getFollowStreetSound());
 								    	iFollowStreetInstructionSaidArrow = iNow;
 									}
 								}
@@ -562,7 +562,7 @@ public class RouteInstructions {
 						}
 					} else if (checkAgainstDirection()) {
 						soundToPlay.setLength(0);
-						soundToPlay.append (routeSyntax.getCheckDirectionVoice());
+						soundToPlay.append (routeSyntax.getCheckDirectionSound());
 						soundRepeatDelay = 15;
 						nameNow = null;
 						sbRouteInstruction.setLength(0);
@@ -1017,9 +1017,9 @@ public class RouteInstructions {
 			// only combine direction instructions
 			&& (cPrev.wayRouteInstruction <= RI_HARD_LEFT && c.wayRouteInstruction <= RI_HARD_LEFT)
 			// do not skip a bear instruction that follows close after another instruction
-			&& (c.wayRouteFlags & (Legend.ROUTE_FLAG_BEAR_LEFT | Legend.ROUTE_FLAG_BEAR_RIGHT)) == 0
+			// && (c.wayRouteFlags & (Legend.ROUTE_FLAG_BEAR_LEFT | Legend.ROUTE_FLAG_BEAR_RIGHT)) == 0
 			// do not combine a bear instruction with the one following close after it
-			&& (cPrev.wayRouteFlags & (Legend.ROUTE_FLAG_BEAR_LEFT | Legend.ROUTE_FLAG_BEAR_RIGHT)) == 0
+			// && (cPrev.wayRouteFlags & (Legend.ROUTE_FLAG_BEAR_LEFT | Legend.ROUTE_FLAG_BEAR_RIGHT)) == 0
 			)	{
 				c.wayRouteInstruction = RI_SKIPPED;
 				c.wayRouteFlags |= Legend.ROUTE_FLAG_QUIET;
@@ -1063,7 +1063,7 @@ public class RouteInstructions {
 						(
 							c.numToRoutableWays == 1
 							&&
-							c.wayRouteInstruction <= RI_HARD_LEFT
+							c.wayRouteInstruction <= RI_BEAR_LEFT
 							&&
 							c.wayRouteInstruction >= RI_HARD_RIGHT
 							&&
