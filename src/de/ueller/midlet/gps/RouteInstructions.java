@@ -32,16 +32,16 @@ public class RouteInstructions {
 	protected static final int RI_HALF_LEFT = 5;
 	protected static final int RI_LEFT = 6;
 	protected static final int RI_HARD_LEFT = 7; // don't change ordering, this is used in a "<= comparison" 
-	protected static final int RI_BEAR_RIGHT = 8;
+	protected static final int RI_BEAR_RIGHT = 8; // don't change ordering, this is used in RouteSyntax to calculate an array index offset for bearing
 	protected static final int RI_BEAR_LEFT = 9;  // don't change ordering, this is used in a "<= comparison"
 	protected static final int RI_UTURN = 10;
 	protected static final int RI_DEST_REACHED = 11;
 	protected static final int RI_ENTER_MOTORWAY = 12;
 	protected static final int RI_LEAVE_MOTORWAY = 13;
-	protected static final int RI_BEAR_LEFT_ENTER_MOTORWAY = 14;
-	protected static final int RI_BEAR_RIGHT_ENTER_MOTORWAY = 15;
-	protected static final int RI_BEAR_LEFT_LEAVE_MOTORWAY = 16;
-	protected static final int RI_BEAR_RIGHT_LEAVE_MOTORWAY = 17;
+	protected static final int RI_BEAR_RIGHT_ENTER_MOTORWAY = 14; // don't change ordering, this is used in RouteSyntax to calculate an array index offset for bearing
+	protected static final int RI_BEAR_LEFT_ENTER_MOTORWAY = 15;
+	protected static final int RI_BEAR_RIGHT_LEAVE_MOTORWAY = 16; // don't change ordering, this is used in RouteSyntax to calculate an array index offset for bearing
+	protected static final int RI_BEAR_LEFT_LEAVE_MOTORWAY = 17;
 	protected static final int RI_AREA_CROSS = 18;
 	protected static final int RI_AREA_CROSSED = 19;
 	protected static final int RI_1ST_EXIT = 20;
