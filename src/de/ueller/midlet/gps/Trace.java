@@ -2474,17 +2474,21 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		if (dest != null) {
 			//#debug info
 			logger.info("Setting destination to " + dest.toString());
-			//We are explicitly setting the map to this position, so we probably don't
-			//want it to be recentered on the GPS immediately.
-			gpsRecenter = false;
 			
-			center.setLatLonRad(dest.lat, dest.lon);
-			updatePosition();
+			// move map only to the destination, if GUI is not optimized for routing 
+			if (! Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED)) {
+				//We are explicitly setting the map to this position, so we probably don't
+				//want it to be recentered on the GPS immediately.
+				gpsRecenter = false;
+				
+				center.setLatLonRad(dest.lat, dest.lon);
+				updatePosition();
+				movedAwayFromDest = false;
+			}
 		} else {
 			//#debug info
 			logger.info("Setting destination to null");
 		}		
-		movedAwayFromDest = false;
 	}
 
 	public void endRouting() {
