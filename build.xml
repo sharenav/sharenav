@@ -172,6 +172,7 @@
 				<fileset dir="resources" includes="**/*.id" if="test" />
 				<fileset dir="resources" includes="**/*.png"/>
 				<fileset dir="resources" includes="**/*.amr"/>
+				<fileset dir="resources" includes="**/syntax.dat"/>
 				<fileset dir="resources" includes="**/charMap.txt"/>
 				<fileset dir="" includes="**/COPYING"/>
 
