@@ -2477,13 +2477,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			
 			// move map only to the destination, if GUI is not optimized for routing 
 			if (! Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED)) {
-				//We are explicitly setting the map to this position, so we probably don't
-				//want it to be recentered on the GPS immediately.
-				gpsRecenter = false;
-				
-				center.setLatLonRad(dest.lat, dest.lon);
-				updatePosition();
-				movedAwayFromDest = false;
+				commandAction(CMDS[SHOW_DEST_CMD],(Displayable) null);
 			}
 		} else {
 			//#debug info
