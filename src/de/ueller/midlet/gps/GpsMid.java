@@ -474,19 +474,16 @@ public class GpsMid extends MIDlet implements CommandListener {
 							boolean notInterupted = true;
 							while (notInterupted) {
 								if (trace != null
-									// only when map is displayed or option "only when map is displayed" is off
-									&& (trace.isShown() || !Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_MAPONLY)) 
 									// only when GPS is connected or option "only with GPS" is off
-									&& (trace.isGpsConnected() || TrackPlayer.isPlaying || ! Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ONLY_WHILE_GPS_STARTED))
+									&& (trace.isGpsConnected() || TrackPlayer.isPlaying
+											|| ! Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ONLY_WHILE_GPS_STARTED))
 								) {
 									// Method to keep the backlight on
 									// some MIDP2 phones
 									if (Configuration
 											.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_MIDP2)) {
-										Display
-												.getDisplay(
-														GpsMid.getInstance())
-												.flashBacklight(6000);
+										Display.getDisplay(
+											GpsMid.getInstance()).flashBacklight(6000);
 										//#if polish.api.nokia-ui
 										// Method to keep the backlight on
 										// on SE K750i and some other models
@@ -498,27 +495,27 @@ public class GpsMid extends MIDlet implements CommandListener {
 										// nokia-ui
 									} else if (Configuration
 											.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIA)) {
-										DeviceControl.setLights(0,
-												backLightLevel);
+										DeviceControl.setLights(0, backLightLevel);
 										//#endif
 										//#if polish.api.min-siemapi
 									} else if (Configuration
 											.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_SIEMENS)) {
 										try {
-											Class
-													.forName("com.siemens.mp.game.Light");
+											Class.forName("com.siemens.mp.game.Light");
 											SiemGameLight.SwitchOn();
 										} catch (Exception e) {
-											log.exception("Siemens API error: ",
-													e);
+											log.exception("Siemens API error: ", e);
 										}
 										//#endif
 									}
-
 								}
 								try {
 									synchronized (this) {
-										wait(5000);
+										if (Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ONLY_KEEPALIVE)) {
+											wait(60000);
+										} else {
+											wait(5000);
+										}
 									}
 								} catch (InterruptedException e) {
 									notInterupted = false;
@@ -533,12 +530,11 @@ public class GpsMid extends MIDlet implements CommandListener {
 							logger.info("Backlight prodding failed: "
 									+ rte.getMessage());
 						} catch (NoClassDefFoundError ncdfe) {
-							logger
-									.error("Backlight prodding failed, API not supported: "
-											+ ncdfe.getMessage());
+							logger.error("Backlight prodding failed, API not supported: "
+									+ ncdfe.getMessage());
 						}
 					} // run()
-				});
+				} );
 				lightTimer.setPriority(Thread.MIN_PRIORITY);
 				lightTimer.start();
 			}
@@ -548,8 +544,8 @@ public class GpsMid extends MIDlet implements CommandListener {
 	public void addToBackLightLevel(int diffBacklight) {
 		backLightLevel += diffBacklight;
 		if (backLightLevel > 100
-				|| !Configuration
-						.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIA)) {
+			|| !Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIA))
+		{
 			backLightLevel = 100;
 		}
 		if (backLightLevel <= 1) {
@@ -565,12 +561,13 @@ public class GpsMid extends MIDlet implements CommandListener {
 	}
 
 	public void showBackLightLevel() {
-		if ( Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON, 
+		if ( Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON,
 				false) ) {
-			trace.alert("Backlight", "Backlight " 
+			trace.alert("Backlight", "Backlight "
 					+ (backLightLevel == 100 ? "ON" : (backLightLevel + "%"))
-					+ (Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ONLY_WHILE_GPS_STARTED) ? " while GPS started" : ""),
-					1000);
+					+ (Configuration.getCfgBitState(
+							Configuration.CFGBIT_BACKLIGHT_ONLY_WHILE_GPS_STARTED)
+								? " while GPS started" : ""), 1000);
 		} else {
 			trace.alert("Backlight", "Backlight off", 1000);
 		}

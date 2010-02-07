@@ -450,7 +450,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 
 		backlights[0] = "Keep backlight on";
 		backlights[1] = "only while GPS started";
-		backlights[2] = "only in map screen";
+		backlights[2] = "only as keep-alive";
 		backlights[3] = "with MIDP2.0";
 		i = 4;
 		//#if polish.api.nokia-ui
@@ -461,13 +461,14 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		backlights[i++] = "with Siemens API";
 		//#endif
 
-		backlightOpts = new ChoiceGroup("Backlight Options:", Choice.MULTIPLE, backlights ,null);
+		backlightOpts = new ChoiceGroup("Backlight Options:",
+				Choice.MULTIPLE, backlights, null);
 		menuDisplayOptions.append(backlightOpts);
 
 		String [] sizes = new String[2];
 		sizes[0] = "larger POI labels";
 		sizes[1] = "larger waypoint labels";
-		sizeOpts = new ChoiceGroup("Size Options:", Choice.MULTIPLE, sizes ,null);
+		sizeOpts = new ChoiceGroup("Size Options:", Choice.MULTIPLE, sizes, null);
 		menuDisplayOptions.append(sizeOpts);
 
 		String [] mapInfos = new String[6];
@@ -477,7 +478,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		mapInfos[3] = "Altitude from GPS";
 		mapInfos[4] = "Air distance to dest. when not routing";
 		mapInfos[5] = "Clock with current time";
-		mapInfoOpts = new ChoiceGroup("Infos in Map Screen:", Choice.MULTIPLE, mapInfos ,null);
+		mapInfoOpts = new ChoiceGroup("Infos in Map Screen:",
+				Choice.MULTIPLE, mapInfos, null);
 		menuDisplayOptions.append(mapInfoOpts);
 				
 		menuDisplayOptions.setCommandListener(this);
@@ -779,7 +781,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 	            // save selected values to record store
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_ON, sellight[0]);
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_ONLY_WHILE_GPS_STARTED, sellight[1]);
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_MAPONLY, sellight[2]);
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_ONLY_KEEPALIVE, sellight[2]);
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_MIDP2, sellight[3]);
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_NOKIA , sellight[4]);
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_NOKIAFLASH , sellight[5]);
@@ -971,7 +973,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				boolean[] sellight = new boolean[7];
 				sellight[0]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_ON);
 				sellight[1]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_ONLY_WHILE_GPS_STARTED);
-				sellight[2]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_MAPONLY);
+				sellight[2]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_ONLY_KEEPALIVE);
 				sellight[3]=Configuration.getCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_MIDP2);
 				byte i = 4;
 				//#if polish.api.nokia-ui

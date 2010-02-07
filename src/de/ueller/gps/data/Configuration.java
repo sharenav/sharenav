@@ -48,7 +48,7 @@ public class Configuration {
 	 *  the default values for the features added between configVersionStored
 	 *  and VERSION will be set, before the version in the recordstore is increased to VERSION.
 	 */
-	public final static int VERSION = 14;
+	public final static int VERSION = 15;
 
 	public final static int LOCATIONPROVIDER_NONE = 0;
 	public final static int LOCATIONPROVIDER_SIRF = 1;
@@ -78,8 +78,8 @@ public class Configuration {
 	public final static byte CFGBIT_FULLSCREEN = 9;
 	// bit 10: keep backlight on
 	public final static byte CFGBIT_BACKLIGHT_ON = 10;
-	// bit 11: backlight on map screen only
-	public final static byte CFGBIT_BACKLIGHT_MAPONLY = 11;
+	// bit 11: backlight on map screen as keep-alive (every 60 s) only
+	public final static byte CFGBIT_BACKLIGHT_ONLY_KEEPALIVE = 11;
 	// bit 12: backlight method MIDP2
 	public final static byte CFGBIT_BACKLIGHT_MIDP2 = 12;
 	// bit 13: backlight method NOKIA
@@ -213,13 +213,15 @@ public class Configuration {
 	public final static byte CFGBIT_ICONMENUS_BIG_TAB_BUTTONS = 77;
 	/** bit 78: Flag whether the map should be auto scaled to speed */
 	public final static byte CFGBIT_AUTOZOOM = 78;
-	/** bit 79: Flag whether if available tone sequences should be played instead of sound samples */
+	/** bit 79: Flag whether, if available, tone sequences should be played instead of sound samples */
 	public final static byte CFGBIT_SND_TONE_SEQUENCES_PREFERRED = 79;
 	/** bit 80: Flag whether internal PNG files should be preferred when using an external map (faster on some Nokias) */
 	public final static byte CFGBIT_PREFER_INTERNAL_PNGS = 80;
+	/** bit 81: Flag whether the menu with predefined way points is shown. */
+	public final static byte CFGBIT_WAYPT_OFFER_PREDEF = 81;
 	
 	/**
-	 * These are the database record ids for each configuration option
+	 * These are the database record IDs for each configuration option
 	 */
 	private static final int RECORD_ID_BT_URL = 1;
 	private static final int RECORD_ID_LOCATION_PROVIDER = 2;
@@ -262,7 +264,7 @@ public class Configuration {
 	private static final int RECORD_ID_CFGBITS_64_TO_127 = 39;
 	private static final int RECORD_ID_MAINSTREET_NET_DISTANCE_KM = 40;
 	private static final int RECORD_ID_DETAIL_BOOST_POI = 41;
-	//private static final int RECORD_ID_LANGUAGE = 42;
+	private static final int RECORD_ID_WAYPT_SORT_MODE = 42;
 
 	// Gpx Recording modes
 	// GpsMid determines adaptive if a trackpoint is written
@@ -316,7 +318,7 @@ public class Configuration {
 	private static int debugSeverity;
 	private static int routeEstimationFac = 6;
 	
-	// values for continueMapWhileRouteing
+	// Constants for continueMapWhileRouteing
 	public static final int continueMap_Not = 0;
 	public static final int continueMap_At_Route_Line_Creation = 1;
 	public static final int continueMap_Always = 2;
@@ -351,6 +353,15 @@ public class Configuration {
 	private static int autoRecenterToGpsMilliSecs = 10;
 	private static int currentTravelModeNr = 0;
 	private static int currentTravelMask = 0;
+	
+	// Constants for way point sort mode
+	public static final int WAYPT_SORT_MODE_NONE = 0;
+	public static final int WAYPT_SORT_MODE_NEW_FIRST = 1;
+	public static final int WAYPT_SORT_MODE_OLD_FIRST = 2;
+	public static final int WAYPT_SORT_MODE_ALPHABET = 3;
+	public static final int WAYPT_SORT_MODE_DISTANCE = 4;
+	
+	private static int wayptSortMode = WAYPT_SORT_MODE_NEW_FIRST;
 
 
 	public static void read() {
@@ -415,6 +426,7 @@ public class Configuration {
 			currentTravelModeNr = readInt(database, RECORD_ID_ROUTE_TRAVEL_MODE);
 			currentTravelMask = 1 << currentTravelModeNr;
 			phoneAllTimeMaxMemory = readLong(database, RECORD_ID_PHONE_ALL_TIME_MAX_MEMORY);
+			wayptSortMode = readInt(database, RECORD_ID_WAYPT_SORT_MODE);
 			
 			int configVersionStored = readInt(database, RECORD_ID_CONFIG_VERSION);
 			//#debug info
@@ -443,7 +455,6 @@ public class Configuration {
 			   			1L << CFGBIT_ONEWAY_ARROWS |
 			   			1L << CFGBIT_POIS |
 			   			1L << CFGBIT_AUTOSAVE_MAPPOS |
-			   			1L << CFGBIT_BACKLIGHT_MAPONLY |
 			   			getDefaultDeviceBacklightMethodMask();
 			// Record Rule Default
 			setGpxRecordRuleMode(GPX_RECORD_MINIMUM_SECS_DIST);
@@ -547,7 +558,15 @@ public class Configuration {
 									1L << CFGBIT_ROUTE_BOOST_MOTORWAYS |
 									1L << CFGBIT_ROUTE_BOOST_TRUNKS_PRIMARYS;
 		}
-		
+
+		if (configVersionStored < 15) {
+			// This bit was recycled as "backlight keep-alive only",
+			// so it should be off by default.
+			cfgBits_0_to_63   ^= 	1L << CFGBIT_BACKLIGHT_ONLY_KEEPALIVE;
+
+			cfgBits_64_to_127 |=	1L << CFGBIT_WAYPT_OFFER_PREDEF;
+		}
+
 		setCfgBits(cfgBits_0_to_63, cfgBits_64_to_127);
 	}
 
@@ -590,6 +609,7 @@ public class Configuration {
 	private static void write(int i, int idx) {
 		write("" + i, idx);
 	}
+
 	private static void write(long i, int idx) {
 		write("" + i, idx);
 	}
@@ -834,6 +854,7 @@ public class Configuration {
 	public static int getGpxRecordRuleMode() {
 		return gpxRecordRuleMode;
 	}
+
 	public static void setGpxRecordRuleMode(int gpxRecordRuleMode) {
 		Configuration.gpxRecordRuleMode = gpxRecordRuleMode;
 			write(gpxRecordRuleMode, RECORD_ID_GPX_FILTER_MODE);
@@ -842,6 +863,7 @@ public class Configuration {
 	public static int getGpxRecordMinMilliseconds() {
 		return gpxRecordMinMilliseconds;
 	}
+
 	public static void setGpxRecordMinMilliseconds(int gpxRecordMinMilliseconds) {
 		Configuration.gpxRecordMinMilliseconds = gpxRecordMinMilliseconds;
 			write(gpxRecordMinMilliseconds, RECORD_ID_GPX_FILTER_TIME);
@@ -850,6 +872,7 @@ public class Configuration {
 	public static int getGpxRecordMinDistanceCentimeters() {
 		return gpxRecordMinDistanceCentimeters;
 	}
+
 	public static void setGpxRecordMinDistanceCentimeters(int gpxRecordMinDistanceCentimeters) {
 		Configuration.gpxRecordMinDistanceCentimeters = gpxRecordMinDistanceCentimeters;
 			write(gpxRecordMinDistanceCentimeters, RECORD_ID_GPX_FILTER_DIST);
@@ -858,6 +881,7 @@ public class Configuration {
 	public static int getGpxRecordAlwaysDistanceCentimeters() {
 		return gpxRecordAlwaysDistanceCentimeters;
 	}
+
 	public static void setGpxRecordAlwaysDistanceCentimeters(int gpxRecordAlwaysDistanceCentimeters) {
 		Configuration.gpxRecordAlwaysDistanceCentimeters = gpxRecordAlwaysDistanceCentimeters;
 			write(gpxRecordAlwaysDistanceCentimeters, RECORD_ID_GPX_FILTER_ALWAYS_DIST);
@@ -893,7 +917,6 @@ public class Configuration {
 		return getCfgBitState(bit, true);
 	}
 
-	
 	public static void toggleCfgBitState(byte bit, boolean savePermanent) {
 		setCfgBitState(bit, !getCfgBitState(bit), savePermanent);
 	}
@@ -917,7 +940,7 @@ public class Configuration {
 		} else {
 			bit -= 64;
 			// set bit
-			Configuration.cfgBits_64_to_127|= (1L << bit);
+			Configuration.cfgBits_64_to_127 |= (1L << bit);
 			if (!state) {
 				// clear bit
 				Configuration.cfgBits_64_to_127 ^= (1L << bit);
@@ -997,12 +1020,9 @@ public class Configuration {
 		return detailBoostDefaultPOI;
 	}
 
-	
-/**
-	There's no pow()-function in J2ME so manually
-	calculate 1.5^detailBoost to get factor
-	to multiply with Zoom Level limits
-**/
+    /**	There's no pow()-function in J2ME so this manually calculates
+     * 1.5 ^ detailBoost to get factor to multiply with zoom level limits
+    **/
 	private static void calculateDetailBoostMultipliers() {
 		detailBoostMultiplier = 1;
 		for (int i = 1; i <= detailBoost; i++) {
@@ -1416,6 +1436,10 @@ public class Configuration {
     		}
 		}
 		return "";
+	}
+	
+	public static int getWaypointSortMode() {
+		return wayptSortMode;
 	}
 	
 	public static void loadKeyShortcuts(intTree gameKeys, intTree singleKeys,
