@@ -171,10 +171,16 @@ public class JSR179Input
 						// Cut off GP from the start
 						nmeaMessage = nmeaMessage.substring(2);
 					}
-					int starIdx = nmeaMessage.indexOf("*");
-					if (starIdx > 0) {
+					int delimiterIdx = nmeaMessage.indexOf("*");
+					if (delimiterIdx > 0) {
 						// remove the checksum
-						nmeaMessage = nmeaMessage.substring(0, starIdx);
+						nmeaMessage = nmeaMessage.substring(0, delimiterIdx);
+					}
+					delimiterIdx = nmeaMessage.indexOf(" ");
+					if (delimiterIdx > 0) {
+						// remove trailing whitespace because some mobiles like HTC Touch Diamond 2 with JavaFX
+						// receive NMEA sentences terminated by a space instead of a star followed by the checksum
+						nmeaMessage = nmeaMessage.substring(0, delimiterIdx);
 					}
 					//#debug info
 					logger.info("Decoding: " + nmeaMessage);
