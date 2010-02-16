@@ -33,6 +33,8 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.TreeSet;
 
+import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
+
 import de.ueller.osmToGpsMid.model.Bounds;
 import de.ueller.osmToGpsMid.model.ConditionTuple;
 import de.ueller.osmToGpsMid.model.Connection;
@@ -361,7 +363,7 @@ public class CreateGpsMidData implements FilenameFilter {
 				// System.out.println(way);
 			}
 			
-			RouteSoundSyntax soundSyn = new RouteSoundSyntax("sound", path + "/syntax.dat");
+			RouteSoundSyntax soundSyn = new RouteSoundSyntax(configuration.getSoundFiles(), path + "/syntax.dat");
 			
 			
 			/**
@@ -379,7 +381,7 @@ public class CreateGpsMidData implements FilenameFilter {
 				soundFile = (String) soundNames[i];
 				soundFile = soundFile.toLowerCase();
 		    	for (int j = 0; j < soundFormat.length; j++) {
-					outputMedia = copyMediaToMid(soundFile + "." + soundFormat[j].trim(), path, "sound");					
+					outputMedia = copyMediaToMid(soundFile + "." + soundFormat[j].trim(), path, configuration.getSoundFiles());					
 				}
 			}
 			removeUnusedSoundFormats(path);

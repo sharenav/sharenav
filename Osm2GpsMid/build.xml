@@ -85,6 +85,7 @@
    		<entry key="useCellID" value="false"/>
    		<entry key="useIcons" value="true"/>
    		<entry key="useSounds" value="amr"/>
+   		<entry key="useSoundFilesWithSyntax" value="sound"/>
    		<entry key="lang" value="${local_lang}"/>
    	</propertyfile>
    </target>

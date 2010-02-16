@@ -270,6 +270,9 @@ public class Configuration {
 		/** Defines if and what sound formats are included in GpsMid, valid values: true|false|amr, mp3, wav */
 		public String useSounds = "amr";
 		
+		/** Defines what sound directory is included in GpsMid, e.g. sound or sounds-de */
+		public String useSoundFiles = "sound";		
+		
 		/** Flag whether the generated Midlet will have editing support. */
 		public boolean enableEditingSupport = false;
 
@@ -478,6 +481,9 @@ public class Configuration {
 			}
 
 			setSounds(getString("useSounds"));
+
+			setSoundFiles(getString("useSoundFilesWithSyntax"));
+
 			
 			maxTileSize = Integer.parseInt(getString("maxTileSize"));
 			maxDictDepth = Integer.parseInt(getString("maxDictDepth"));
@@ -908,6 +914,14 @@ public class Configuration {
 
 		public String getUseSounds() {
 			return useSounds;
+		}
+		
+		public String getSoundFiles() {
+			return useSoundFiles;
+		}
+		
+		public void setSoundFiles(String soundFiles) {
+			useSoundFiles = soundFiles;
 		}
 		
 		/**

@@ -39,7 +39,7 @@ public class RouteSoundSyntax {
 				;
 			}
 		} else {
-			System.out.println ("ERROR: syntax.cfg not found");
+			System.out.println ("ERROR: syntax.cfg not found in the " + additionalSrcPath + " directory");
 			System.exit(1);
 		}
 		
