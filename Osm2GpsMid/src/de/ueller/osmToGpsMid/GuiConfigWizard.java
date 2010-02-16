@@ -845,6 +845,20 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			fw.write("#  GpsMid will try a fallback to another included sound format when trying to play a format unsupported by the device.\r\n");
 			fw.write("useSounds = " + config.getUseSounds() + "\r\n");
 			fw.write("\r\n");
+
+			fw.write("# Directory with sound files and syntax.cfg, default is useSounds=sound.\r\n");
+			fw.write("#  syntax.cfg is a text file defining which sound files\r\n");
+			fw.write("#  are played by GpsMid for the various routing instructions in which order (to respect grammar)\r\n");
+			fw.write("#  Osm2GpsMid includes all sound files referenced in the syntax.cfg either from an internal folder\r\n");
+			fw.write("#  or the directory with the specified name relative to the style-file.\r\n");
+			fw.write("#  File Format examples are at:\r\n");
+			fw.write("#   English: http://gpsmid.cvs.sourceforge.net/viewvc/gpsmid/Osm2GpsMid/resources/media/sound/syntax.cfg?view=markup.\r\n");
+			fw.write("#   German: http://gpsmid.cvs.sourceforge.net/viewvc/gpsmid/Osm2GpsMid/resources/media/sound-de/syntax.cfg?view=markup.\r\n");
+			fw.write("#  Currently the following sound-files with syntax are internal to Osm2GpsMid:\r\n");
+			fw.write("#   English: sound  German: sound-de\r\n");			
+			fw.write("#  Example to include the sound-de sound files: useSoundFilesWithSyntax=sound-de\r\n");			
+			fw.write("useSoundFilesWithSyntax = " + config.getSoundFiles() + "\r\n");
+			fw.write("\r\n");
 			
 			fw.write("# Whether to include icons for icon menu and their size to include.\r\n");
 			fw.write("#  Possible values: false|small|true|big, true is the default medium size\r\n");
