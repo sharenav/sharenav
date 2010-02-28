@@ -1549,6 +1549,14 @@ scale alias 1: zoomed out 21x
   				<scale scale = "19"/>
   				<lineColor color = "00FFFFBB"  colorAtNight="00636300"/>
   			</Wvalue>
+  			<Wvalue name = "pitch">
+  				<description desc = "Pitch"/>
+  				<namekey tag = "name"/>  				
+  				<isArea area = "true"/>
+  				<scale scale = "19"/>
+  				<lineColor color = "00A0F000"/>
+				<force_to layer = "-2"/>
+  			</Wvalue>
   			<Wvalue name = "water_park">
   				<description desc = "Water Park"/>
   				<namekey tag = "name"/>  				
@@ -1663,7 +1671,7 @@ scale alias 1: zoomed out 21x
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
-  				<lineColor color = "00141414" colorAtNight="00505050" /> 	
+  				<lineColor color = "00203020" colorAtNight="00505050" /> 	
   			</Wvalue>
   			<Wvalue name = "*">
   				<description desc = "Other amenity"/>
@@ -1808,6 +1816,14 @@ scale alias 1: zoomed out 21x
   				<lineColor color = "00886B1D" colorAtNight="005E462B"/>
 				<force_to layer = "-2"/>
   			</Wvalue>  		
+  			<Wvalue name = "farmyard">
+  				<description desc = "Farm Yard"/>
+  				<namekey tag = "name"/>  				
+  				<isArea area = "true"/>
+  				<scale scale = "19"/>
+  				<lineColor color = "00713800"/>
+				<force_to layer = "-2"/>
+  			</Wvalue> 		
   			<Wvalue name = "landfill">
   				<description desc = "Landfill"/>
   				<namekey tag = "name"/>  				
@@ -1852,7 +1868,7 @@ scale alias 1: zoomed out 21x
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
-  				<lineColor color = "0039E3E7" colorAtNight="00785656"/>
+  				<lineColor color = "0020A0B0" colorAtNight="00785656"/>
 				<force_to layer = "-2"/>
 			</Wvalue>
   			<Wvalue name = "commercial">
@@ -1900,7 +1916,7 @@ scale alias 1: zoomed out 21x
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "19"/>
-  				<lineColor color = "00141414" colorAtNight="00484848"/> 	
+  				<lineColor color = "00203020" colorAtNight="00484848"/> 	
 				<force_to layer = "-2"/>
   			</Wvalue>
 			<Wvalue name = "village_green">
@@ -1932,6 +1948,14 @@ scale alias 1: zoomed out 21x
   				<isArea area = "true"/>
   				<scale scale = "19"/>
   				<lineColor color = "00A0A0A0" colorAtNight="0056405C"/>
+				<force_to layer = "-2"/>
+			</Wvalue>
+  			<Wvalue name = "military">
+  				<description desc = "Military"/>
+  				<namekey tag = "name"/>  				
+  				<isArea area = "true"/>
+  				<scale scale = "19"/>
+  				<lineColor color = "00F06000"/>
 				<force_to layer = "-2"/>
 			</Wvalue>
   			<Wvalue name = "*">
@@ -2040,7 +2064,7 @@ scale alias 1: zoomed out 21x
   			</Wvalue>
 		</keyW>			
 		<keyW tag = "building">
-			<Wvalue name = "yes">
+			<Wvalue name = "yes"  priority = "-1">
 				<!-- if * is specified as value for a specialisation key,
 				this will match only if the specialisation key exists:
 				 so only named buildings would be included
@@ -2058,7 +2082,7 @@ scale alias 1: zoomed out 21x
 				<descriptionscale scale = "27"/>
 				<lineColor color="00B08070" colorAtNight="00780901" />
 			</Wvalue>
-			<Wvalue name = "*">
+			<Wvalue name = "*"  priority = "-1">
 				<description desc = "Other building"/>
 				<namekey tag = "name"/>
 				<namefallback tag = "*"/>
