@@ -264,7 +264,11 @@ public class Configuration {
 	private static final int RECORD_ID_CFGBITS_64_TO_127 = 39;
 	private static final int RECORD_ID_MAINSTREET_NET_DISTANCE_KM = 40;
 	private static final int RECORD_ID_DETAIL_BOOST_POI = 41;
-	private static final int RECORD_ID_WAYPT_SORT_MODE = 42;
+	/* Record ID 42 has been used for a while by the nightly builds and strings where written to it.
+	 * Therefore reserve it to avoid number format exceptions when parsing an integer value from it.
+	 */
+	//private static final int RECORD_ID_LANGUAGE = 42;  
+	private static final int RECORD_ID_WAYPT_SORT_MODE = 43;
 
 	// Gpx Recording modes
 	// GpsMid determines adaptive if a trackpoint is written
