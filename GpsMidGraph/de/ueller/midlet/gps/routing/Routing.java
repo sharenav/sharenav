@@ -121,6 +121,7 @@ public class Routing implements Runnable {
 		tryFindMotorway = Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_TRY_FIND_MOTORWAY);
 		boostMotorways = Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_BOOST_MOTORWAYS);
 		boostTrunksAndPrimarys = Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_BOOST_TRUNKS_PRIMARYS);
+		int trafficSignalCalcDelayTSecs = Configuration.getTrafficSignalCalcDelay() * 10;
 		
 		// set a mainStreetNetDistance that is unreachable to indicate the mainStreetNet is disabled
 		int mainStreetNetDistanceMeters = 40000000;
@@ -329,7 +330,13 @@ public class Routing implements Runnable {
 
 				int dTurn=currentNode.fromBearing-nodeSuccessor.startBearing;
 				int turnCost=getTurnCost(dTurn);
-				successorCost = currentNode.costs + nodeSuccessor.cost+turnCost;
+				successorCost = currentNode.costs + nodeSuccessor.getCost()+turnCost;
+				// when the next connection starts at traffic signals and the current one isn't also starting at a traffic signal but we are not on a motorway connection
+				if (nodeSuccessor.startsAtTrafficSignals() && !currentNode.state.startsAtTrafficSignals() && !nodeSuccessor.isMotorwayConnection() ) {
+					//System.out.println("TRAFFIC SIGNAL");
+					// add configured secs traffic signal calc delay
+					successorCost += trafficSignalCalcDelayTSecs;
+				}
 				GraphNode openNode = null;
 				GraphNode theNode = null;
 				GraphNode closedNode;

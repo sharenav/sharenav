@@ -170,7 +170,7 @@ public class RouteTile extends RouteBaseTile {
 								g.drawLine(pc.swapLineP.x, pc.swapLineP.y, pc.lineP2.x, pc.lineP2.y);
 								g.setColor(0, 0, 0);
 								if (showCost) {
-									g.drawString(Integer.toString(c.cost), (pc.swapLineP.x + pc.lineP2.x) / 2, (pc.swapLineP.y + pc.lineP2.y) / 2, Graphics.TOP | Graphics.RIGHT);
+									g.drawString(Integer.toString(c.getCost()), (pc.swapLineP.x + pc.lineP2.x) / 2, (pc.swapLineP.y + pc.lineP2.y) / 2, Graphics.TOP | Graphics.RIGHT);
 								}
 							}
 						}
@@ -504,6 +504,9 @@ public class RouteTile extends RouteBaseTile {
 			Connection[] cons=new Connection[conSize];
 			for (int i = 0; i<conSize;i++){
 				Connection c=new Connection();
+				if (n.isAtTrafficSignals()) {
+					c.setStartsAtTrafficSignals();
+				}
 				c.connectionId = minConnectionId++;
 				int nodeId = cs.readInt();
 				// fill in DestNode but only if in the same Tile
@@ -546,9 +549,9 @@ public class RouteTile extends RouteBaseTile {
 				}
 				int costLength = upper;
 				if (bestTime){
-					c.cost = costTime;
+					c.setCost(costTime);
 				} else {
-					c.cost = costLength;
+					c.setCost(costLength);
 				}
 				c.setDurationFSecsFromTSecs(costTime);
 				c.startBearing=cs.readByte();

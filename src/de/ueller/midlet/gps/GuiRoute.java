@@ -25,6 +25,7 @@ public class GuiRoute extends Form implements CommandListener {
 	private ChoiceGroup routingShowOptsGroup;
 	private TextField  tfMainStreetNetDistanceKm;
 	private TextField  tfMinRouteLineWidth;
+	private TextField tfTrafficSignalCalcDelay;
 
 	// other
 	private GpsMidDisplayable parent;
@@ -104,6 +105,9 @@ public class GuiRoute extends Form implements CommandListener {
 			routingOptsGroup = new ChoiceGroup("Other", Choice.MULTIPLE, routingOpts ,null);
 			routingOptsGroup.setSelectedFlags(selRouting);
 			append(routingOptsGroup);
+			
+			tfTrafficSignalCalcDelay = new TextField("Seconds the examined route path gets delayed at traffic signals during calculation", Integer.toString(Configuration.getTrafficSignalCalcDelay()), 2, TextField.DECIMAL);
+			append(tfTrafficSignalCalcDelay);
 		}
 
 	}
@@ -150,6 +154,12 @@ public class GuiRoute extends Form implements CommandListener {
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ROUTE_AUTO_RECALC, selRouting[0]);
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ROUTE_BROWSING, selRouting[1]);
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ROUTE_HIDE_QUIET_ARROWS, selRouting[2]);
+
+				String s=tfTrafficSignalCalcDelay.getString(); 
+				Configuration.setTrafficSignalCalcDelay( 
+						(int) (Integer.parseInt(s)) 
+				); 
+			
 			} else {
 				Trace.getInstance().performIconAction(Trace.ROUTING_START_CMD);
 			}

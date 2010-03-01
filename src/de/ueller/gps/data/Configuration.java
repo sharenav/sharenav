@@ -48,7 +48,7 @@ public class Configuration {
 	 *  the default values for the features added between configVersionStored
 	 *  and VERSION will be set, before the version in the recordstore is increased to VERSION.
 	 */
-	public final static int VERSION = 15;
+	public final static int VERSION = 16;
 
 	public final static int LOCATIONPROVIDER_NONE = 0;
 	public final static int LOCATIONPROVIDER_SIRF = 1;
@@ -264,10 +264,7 @@ public class Configuration {
 	private static final int RECORD_ID_CFGBITS_64_TO_127 = 39;
 	private static final int RECORD_ID_MAINSTREET_NET_DISTANCE_KM = 40;
 	private static final int RECORD_ID_DETAIL_BOOST_POI = 41;
-	/* Record ID 42 has been used for a while by the nightly builds and strings where written to it.
-	 * Therefore reserve it to avoid number format exceptions when parsing an integer value from it.
-	 */
-	//private static final int RECORD_ID_LANGUAGE = 42;  
+	private static final int RECORD_ID_TRAFFIC_SIGNAL_CALC_DELAY = 42;  
 	private static final int RECORD_ID_WAYPT_SORT_MODE = 43;
 
 	// Gpx Recording modes
@@ -367,6 +364,7 @@ public class Configuration {
 	
 	private static int wayptSortMode = WAYPT_SORT_MODE_NEW_FIRST;
 
+	private static int trafficSignalCalcDelay = 5;
 
 	public static void read() {
 	logger = Logger.getInstance(Configuration.class, Logger.DEBUG);
@@ -430,6 +428,7 @@ public class Configuration {
 			currentTravelModeNr = readInt(database, RECORD_ID_ROUTE_TRAVEL_MODE);
 			currentTravelMask = 1 << currentTravelModeNr;
 			phoneAllTimeMaxMemory = readLong(database, RECORD_ID_PHONE_ALL_TIME_MAX_MEMORY);
+			trafficSignalCalcDelay = readInt(database, RECORD_ID_TRAFFIC_SIGNAL_CALC_DELAY);
 			wayptSortMode = readInt(database, RECORD_ID_WAYPT_SORT_MODE);
 			
 			int configVersionStored = readInt(database, RECORD_ID_CONFIG_VERSION);
@@ -571,6 +570,10 @@ public class Configuration {
 			cfgBits_64_to_127 |=	1L << CFGBIT_WAYPT_OFFER_PREDEF;
 		}
 
+		if (configVersionStored < 16) {
+			setTrafficSignalCalcDelay(5);
+		}
+		
 		setCfgBits(cfgBits_0_to_63, cfgBits_64_to_127);
 	}
 
@@ -1445,6 +1448,17 @@ public class Configuration {
 	public static int getWaypointSortMode() {
 		return wayptSortMode;
 	}
+	
+
+	public static int getTrafficSignalCalcDelay() {
+		return trafficSignalCalcDelay ;
+	}
+
+	public static void setTrafficSignalCalcDelay(int i) {
+		trafficSignalCalcDelay = i;
+		write(i, RECORD_ID_TRAFFIC_SIGNAL_CALC_DELAY);
+	}
+
 	
 	public static void loadKeyShortcuts(intTree gameKeys, intTree singleKeys,
 			intTree repeatableKeys, intTree doubleKeys, intTree longKeys,

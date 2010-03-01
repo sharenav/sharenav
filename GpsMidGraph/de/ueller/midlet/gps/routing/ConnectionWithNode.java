@@ -20,7 +20,7 @@ public class ConnectionWithNode {
 	
 	public ConnectionWithNode(RouteNode n,Connection c){
 		this.to=n;
-		this.cost=c.cost;
+		this.cost=c.getCost();
 		this.durationFSecsToNext = c.durationFSecs;
 		this.startBearing=c.startBearing;
 		this.endBearing=c.endBearing;

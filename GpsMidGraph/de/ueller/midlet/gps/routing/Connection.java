@@ -7,9 +7,9 @@ public class Connection {
 	private final static Logger logger = Logger.getInstance(Connection.class, Logger.ERROR);
 
 	/**
-	 * represent time in s or length in m depending on the search mode
+	 * represent time in 1/10 s or length in m depending on the search mode
 	 */
-	public int cost;
+	private int cost;
 	/** duration in 1/5 secs (this allows more than 100 mins per connection which hopefully is enough */
 	public short durationFSecs;
 //	public Integer toId=null;
@@ -33,11 +33,33 @@ public class Connection {
 //		this.to = to;
 		this.toId=to.id;
 		this.connectionId=connectionId;
-		this.cost=cost;
+		setCost(cost);
+		if (to.isAtTrafficSignals()) {
+			setStartsAtTrafficSignals();
+		}
 		this.startBearing=bs;
 		this.endBearing=be;
 	}
 
+	
+	public void setCost(int cost) {
+		this.cost &= 0x80000000;
+		this.cost |= cost;
+	}
+
+	public int getCost() {
+		return this.cost & 0x7FFFFFFF;
+	}
+	
+	public boolean startsAtTrafficSignals() {
+		return (this.cost & 0x80000000) != 0;
+	}
+	
+	public void setStartsAtTrafficSignals() {
+		this.cost |= 0x80000000;
+	}
+	
+	
 	
 	/**
 	 * @param durationTSecs: duration in 1/10 secs
