@@ -264,7 +264,7 @@ public class Configuration {
 	private static final int RECORD_ID_CFGBITS_64_TO_127 = 39;
 	private static final int RECORD_ID_MAINSTREET_NET_DISTANCE_KM = 40;
 	private static final int RECORD_ID_DETAIL_BOOST_POI = 41;
-	private static final int RECORD_ID_TRAFFIC_SIGNAL_CALC_DELAY = 42;  
+	private static final int RECORD_ID_TRAFFIC_SIGNAL_CALC_DELAY = 42;
 	private static final int RECORD_ID_WAYPT_SORT_MODE = 43;
 
 	// Gpx Recording modes
@@ -565,9 +565,12 @@ public class Configuration {
 		if (configVersionStored < 15) {
 			// This bit was recycled as "backlight keep-alive only",
 			// so it should be off by default.
-			cfgBits_0_to_63   ^= 	1L << CFGBIT_BACKLIGHT_ONLY_KEEPALIVE;
-
-			cfgBits_64_to_127 |=	1L << CFGBIT_WAYPT_OFFER_PREDEF;
+			if (getCfgBitState(CFGBIT_BACKLIGHT_ONLY_KEEPALIVE))
+			{
+				cfgBits_0_to_63 ^= 1L << CFGBIT_BACKLIGHT_ONLY_KEEPALIVE;
+			}
+			cfgBits_64_to_127 |= 1L << CFGBIT_WAYPT_OFFER_PREDEF;
+			wayptSortMode = WAYPT_SORT_MODE_NEW_FIRST;
 		}
 
 		if (configVersionStored < 16) {
@@ -1449,7 +1452,15 @@ public class Configuration {
 		return wayptSortMode;
 	}
 	
-
+	public static void setWaypointSortMode(int mode) {
+		if (mode >= WAYPT_SORT_MODE_NONE && mode <= WAYPT_SORT_MODE_DISTANCE) {
+			wayptSortMode = mode;
+			write(wayptSortMode, RECORD_ID_WAYPT_SORT_MODE);
+		} else {
+			throw new IllegalArgumentException("Waypoint sort mode out of range!");
+		}
+	}
+	
 	public static int getTrafficSignalCalcDelay() {
 		return trafficSignalCalcDelay ;
 	}
@@ -1459,7 +1470,6 @@ public class Configuration {
 		write(i, RECORD_ID_TRAFFIC_SIGNAL_CALC_DELAY);
 	}
 
-	
 	public static void loadKeyShortcuts(intTree gameKeys, intTree singleKeys,
 			intTree repeatableKeys, intTree doubleKeys, intTree longKeys,
 			intTree specialKeys, Command [] cmds) {
