@@ -26,7 +26,7 @@ public class Area  {
 	public void clean(){
 		outlineList = new ArrayList<Outline>();
 		holeList = new ArrayList<Outline>();
-		tri= new ArrayList<Triangle>();
+//		tri= new ArrayList<Triangle>();
 		outline=new Outline();	
 	}
 
@@ -51,7 +51,7 @@ int loop=0;
 				if (edgeInside == null) {
 					// this is an ear with nothing in it so cut the ear
 					ret.add(triangle);
-					tri=ret;
+//					tri=ret;
 					outline.remove(n);
 				} else {
 					// at leased one edge is inside this ear
