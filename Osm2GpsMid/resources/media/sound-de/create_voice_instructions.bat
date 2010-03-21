@@ -41,7 +41,7 @@ espeak -a180 -w%lang%neue_route.wav -z -p79 -s180 -vde+f1 -x -k5 "Die Route wird
 espeak -a180 -w%lang%geschwindigkeit.wav -z -p79 -s200 -vde+f1 -x -k5 "Bitte nicht zu schnell!"
 espeak -a180 -w%lang%halten.wav -z -p79 -s150 -vde+f1 -x -k5 "halten"
 espeak -a180 -w%lang%halte_dich.wav -z -p79 -s150 -vde+f1 -x -k5 "halte Dich"
-espeak -a180 -w%lang%folge_der_strasse.wav -z -p79 -s200 -vde+f1 -x -k5 "bis auf weiteres derr Strasse folgen"
+espeak -a180 -w%lang%folge_strasse.wav -z -p79 -s200 -vde+f1 -x -k5 "Dem Strassenverlauf folgen"
 espeak -a180 -w%lang%ueber_platz.wav -z -p79 -s150 -vde+f1 -x -k5 "ueber den Platz"
 espeak -a180 -w%lang%platz_verlassen.wav -z -p79 -s150 -vde+f1 -x -k5 "den Platz verlassen"
 espeak -a180 -w%lang%bitte.wav -z -p79 -s180 -vde+f1 -x -k5 "bitte"
