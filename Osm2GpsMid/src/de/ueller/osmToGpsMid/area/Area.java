@@ -15,6 +15,7 @@ public class Area {
 	ArrayList<Triangle> triangleList=null;
 	static DebugViewer			viewer		= null;
 	public Vertex	edgeInside;
+	private static boolean debug=false;
 
 	public Area() {
 
@@ -36,7 +37,7 @@ public class Area {
 	}
 
 	public List<Triangle> triangulate() {
-		if (viewer == null){
+		if (viewer == null && debug){
 			viewer=new DebugViewer(this);
 		} else {
 			viewer.setArea(this);
@@ -71,6 +72,7 @@ public class Area {
 	 * 
 	 */
 	private void repaint() {
+		if (viewer != null){
 		viewer.repaint();
 //		try {
 //			Thread.sleep(3000);
@@ -85,6 +87,7 @@ public class Area {
 //			// TODO Auto-generated catch block
 //			e.printStackTrace();
 //		}
+		}
 	}
 
 	private Triangle cutOneEar(Outline outline, ArrayList<Outline> holeList, int dir) {
