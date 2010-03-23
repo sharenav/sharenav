@@ -47,11 +47,11 @@ public class Vertex {
 	}
 
 	public float getX() {
-		return node.lon;
+		return node.lat;
 	}
 
 	public float getY() {
-		return node.lat;
+		return node.lon;
 	}
 
 	public void setLon(float lon) {
@@ -90,7 +90,7 @@ public class Vertex {
 		return node.lat*lon-node.lon*lat;
 	}
 	public float cross(Vertex other){
-		return node.lat*other.getLon()-node.lon*other.getLat();
+		return node.lat*other.getLon()-other.getLat()*node.lon;
 	}
 
 	public boolean partOf(Outline o){
@@ -110,7 +110,7 @@ public class Vertex {
 //	}
 
 	public String toString() {
-		return String.format(" %d(%1.10f/%1.10f) ", node.id,node.lat,node.lon);
+		return String.format(" %d(%1.2f/%1.2f) ", node.id,node.lat,node.lon);
 	}
 
 
@@ -124,5 +124,18 @@ public class Vertex {
 	public void extendBounds(Bounds bound) {
 			bound.extend(node.lat, node.lon);
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		Vertex other=(Vertex)obj;
+		if (getX() == other.getX() &&
+		getY() == other.getY()){
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+
 
 }
