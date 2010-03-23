@@ -1,6 +1,5 @@
 package de.ueller.osmToGpsMid.area;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -37,10 +36,12 @@ public class Area {
 	}
 
 	public List<Triangle> triangulate() {
-		if (viewer == null && debug){
+		if (debug) {
+		if (viewer == null){
 			viewer=new DebugViewer(this);
 		} else {
 			viewer.setArea(this);
+		}
 		}
 
 		int dir = 0;
