@@ -14,6 +14,7 @@ import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.Configuration;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
+import de.ueller.midlet.gps.data.IntPoint;
 import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.routing.Connection;
 import de.ueller.midlet.gps.routing.Routing;
@@ -108,6 +109,9 @@ public class RouteTile extends RouteBaseTile {
 			}
 			
 			Graphics g = pc.g;
+
+//			int turnPaint = 0;
+			
 			for (int i=0; i< nodes.length;i++){
 				if (pc.getP().isPlotable(nodes[i].lat, nodes[i].lon)){
 					pc.getP().forward(nodes[i].lat, nodes[i].lon, pc.swapLineP);
@@ -176,14 +180,22 @@ public class RouteTile extends RouteBaseTile {
 						}
 					}
 					if (showTurnRestrictions && nodes[i].hasTurnRestrictions()) {
+						IntPoint viaNodeP = new IntPoint();
+						viaNodeP.set(pc.swapLineP);
 						g.setColor(0xD00000);
-						g.fillRect(pc.swapLineP.x-3, pc.swapLineP.y-2, 7, 7); //Draw viaTo node
+						g.fillRect(viaNodeP.x-3, viaNodeP.y-2, 7, 7); //Draw viaTo node
 						TurnRestriction turnRestriction = getTurnRestrictions(nodes[i].id);
 						int drawOffs = 0;
 						RouteBaseTile dict = (RouteBaseTile) Trace.getInstance().getDict((byte)4);
-						while (turnRestriction != null) {
+						while (turnRestriction != null) {						
+//							turnPaint++;
+//							if (turnPaint > 2) { // paint only a certain turn restriction for debugging
+//								turnRestriction = turnRestriction.nextTurnRestrictionAtThisNode;
+//								continue;
+//							}
+
 							g.setColor(0);
-							g.drawString(turnRestriction.getRestrictionType(), pc.swapLineP.x, pc.swapLineP.y + drawOffs * g.getFont().getHeight(), Graphics.TOP | Graphics.HCENTER);
+							g.drawString(turnRestriction.getRestrictionType(), viaNodeP.x, viaNodeP.y + drawOffs * g.getFont().getHeight(), Graphics.TOP | Graphics.HCENTER);
 							RouteNode to = dict.getRouteNode(turnRestriction.toRouteNodeId);
 							if (to != null) {
 								if (turnRestriction.isOnlyTypeRestriction()) {
@@ -193,7 +205,7 @@ public class RouteTile extends RouteBaseTile {
 								}
 								pc.getP().forward(to.lat, to.lon, pc.lineP2);
 								g.setStrokeStyle(Graphics.SOLID);
-								g.drawLine(pc.swapLineP.x, pc.swapLineP.y + drawOffs, pc.lineP2.x, pc.lineP2.y + drawOffs);									
+								g.drawLine(viaNodeP.x, viaNodeP.y + drawOffs, pc.lineP2.x, pc.lineP2.y + drawOffs);									
 							}
 							//#mdebug debug
 							else {								
@@ -203,11 +215,15 @@ public class RouteTile extends RouteBaseTile {
 
 							// draw the viaFrom nodes if this turnRestriction has a viaWay, in the end the coordinates of the real viaFrom node will be in swapLineP
 							if (turnRestriction.isViaTypeWay()) {
+								pc.lineP2.set(viaNodeP);
 								for (int a = turnRestriction.extraViaNodes.length-1; a >= 0; a--) { // count backwards so in the end the coordinates of the real viaFrom will be in swapLineP
 									RouteNode viaFrom = dict.getRouteNode(turnRestriction.extraViaNodes[a]);
 									if (viaFrom != null) {
 										pc.getP().forward(viaFrom.lat, viaFrom.lon, pc.swapLineP);														
 										g.setStrokeStyle(Graphics.SOLID);
+										g.setColor(0xFFFFFF); // draw the viaWay white
+										g.drawLine(pc.swapLineP.x, pc.swapLineP.y + drawOffs, pc.lineP2.x, pc.lineP2.y + drawOffs);
+										pc.lineP2.set(pc.swapLineP);
 										if (a == 0) {
 											g.setColor(0x0000D0); // draw the real viaFrom node in blue
 											g.fillRect(pc.swapLineP.x-3, pc.swapLineP.y-2, 7, 7); //Draw node
