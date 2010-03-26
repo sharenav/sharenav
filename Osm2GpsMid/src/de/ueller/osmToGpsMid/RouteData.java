@@ -103,11 +103,13 @@ public class RouteData {
 				Way restrictionFromWay = parser.getWayHashMap().get(new Long(turn.fromWayRef));
 				// skip if restrictionFromWay is not in available wayData				
 				if (restrictionFromWay == null) {
+					System.out.println("  no fromWay");
 					continue;
 				}
 				// skip if restrictionToWay is not in available wayData				
 				Way restrictionToWay = parser.getWayHashMap().get(new Long(turn.toWayRef));
 				if (restrictionToWay == null) {
+					System.out.println("  no toWay");
 					continue;
 				}
 				
@@ -148,6 +150,8 @@ public class RouteData {
 					}
 					System.out.println("  URL for via node: " + n.node.toUrl());					
 				}
+
+				// search the RouteNode following the viaRouteNode on the toWay
 				int numToConnections = 0;
 				lastId = -1;
 				for (Connection c:n.connected) {
@@ -208,40 +212,80 @@ public class RouteData {
 			}
 			
 			ArrayList<RouteNode> viaWayRouteNodes = restrictionViaWay.getAllRouteNodesOnTheWay();
-			// System.out.println(viaWayRouteNodes.size() + " contained route nodes");
-			turn.additionalViaRouteNodes = new RouteNode[viaWayRouteNodes.size() - 1];
-			// the direction to fill in the remaining viaRouteNodes into the array so the result is ordered with route nodes from the fromWay to the toWay exclusively
-			int direction = 1;
-			int startEntry = 1;
+			
+			// if it's a circle way remove the first viaRouteNode
+			if (viaWayRouteNodes.get(0).id == viaWayRouteNodes.get(viaWayRouteNodes.size() -1 ).id) {
+				viaWayRouteNodes.remove(0);
+			}
+			ArrayList<RouteNode> additionalViaRouteNodesCache = new ArrayList<RouteNode>();
+			
+			int startEntry = 0;
+			// find the index of the element crossing the fromWay (start entry)
 			for (RouteNode n:viaWayRouteNodes) {
-				if (restrictionToWay.containsNode(n.node)) { // this is where viaWay and toWay are connected, so use this as via node
-					turn.viaRouteNode = n;
-//					System.out.println("Resolved viaWay x toWay to node " + n.node.id);
-				}
 				if (restrictionFromWay.containsNode(n.node)) { // this is where viaWay and fromWay are connected
-					turn.additionalViaRouteNodes[0] = n; // and becomes the first entry in the additionalViaRouteNode array
-					if (turn.viaRouteNode != null) {
+					additionalViaRouteNodesCache.add(n); // and becomes the first entry in the additionalViaRouteNode array
+					System.out.println("  Resolved viaWay x fromWay to node " + n.node.id);
+					break;
+				}
+				startEntry++;
+			}
+
+			// find the index of the element crossing the toWay (the end entry)
+			int endEntry = 0;
+			RouteNode rn = null;
+			// the direction to fill in the remaining viaRouteNodes into the array so the result is ordered with route nodes from the fromWay to the toWay exclusively
+			int direction = 1;			
+			for (int i = startEntry; i < viaWayRouteNodes.size() * 2; i++) {
+				// use index with modulo because of circle ways in roundabouts
+				rn = viaWayRouteNodes.get(i % viaWayRouteNodes.size());
+				if (restrictionToWay.containsNode(rn.node)) {
+					turn.viaRouteNode = rn;
+					endEntry = i % viaWayRouteNodes.size();
+					if (i == endEntry || restrictionViaWay.isOneWay()) {
+						direction = 1;
+					} else {
 						direction = -1;
-						startEntry = turn.additionalViaRouteNodes.length - 1;
 					}
-//					System.out.println("Resolved viaWay x fromWay to node " + n.node.id);
+					System.out.println("  Resolved viaWay x toWay to node " + rn.node.id);					
+					break;
 				}
 			}
-			if (viaWayRouteNodes.size() >= 2 && turn.viaRouteNode != null && turn.additionalViaRouteNodes[0] != null) {
+			
+			// fill in routeNodes between start and end entry
+			if (turn.viaRouteNode != null && additionalViaRouteNodesCache.size() != 0) {
 				//  fill in the remaining viaRouteNodes into the array so the result is ordered with route nodes from the fromWay to the toWay exclusively
-				for (RouteNode n:viaWayRouteNodes) {					
-					if (n.id != turn.viaRouteNode.id && n.id != turn.additionalViaRouteNodes[0].id) {
-						turn.additionalViaRouteNodes[startEntry] = n; // and becomes the first additionalViaRouteNode
-						startEntry += direction;
-					}
+				for (int i = startEntry + direction; i != startEntry && i % viaWayRouteNodes.size() != endEntry; i += direction) {
+					// use index with modulo because of circle ways in roundabouts
+					i %= viaWayRouteNodes.size();
+//					System.out.println(i + " " + startEntry + " " + endEntry + " dir " + direction );
+					rn = viaWayRouteNodes.get(i);
+					additionalViaRouteNodesCache.add(rn);
 				}
+				
+				// transfer the route nodes from the ArrayList to the additionalViaRouteNodes array
+				turn.additionalViaRouteNodes = new RouteNode[additionalViaRouteNodesCache.size()];
+				for (int i=0; i < turn.additionalViaRouteNodes.length; i++) {
+					turn.additionalViaRouteNodes[i] = additionalViaRouteNodesCache.get(i);
+				}
+				
 				System.out.println("  viaRouteNodes on viaWay " + restrictionViaWay.toUrl() + ":");
 				for (RouteNode n:turn.additionalViaRouteNodes) {
-					System.out.println("    " + n.node.toUrl());					
+					if (n != null && n.node != null) {
+						System.out.println("    " + n.node.toUrl());
+					} else {
+						if (n == null) {
+							System.out.println("    n is null");
+						} else {
+							System.out.println("    n.node is null");
+						}
+						continue;
+					}
 				}
 				System.out.println("    " + turn.viaRouteNode.node.toUrl());									
 
-				parser.getTurnRestrictionHashMap().put(new Long(turn.viaRouteNode.node.id), turn);
+				// add the resolved viaWay turn restriction to its viaRouteNode
+				parser.addTurnRestriction(new Long(turn.viaRouteNode.node.id), turn);
+				
 				numViaWaysResolved++;
 			} else {
 				System.out.println("  WARNING: Could not resolve viaRouteNodes");

@@ -332,14 +332,8 @@ public class OxParser extends DefaultHandler {
 						turnRestriction.flags |= TurnRestriction.VIA_TYPE_IS_WAY;
 						// add restrictions with viaWays into an ArrayList to be resolved later
 						turnRestrictionsWithViaWays.add(turnRestriction);
-					} else {
-						if (! turnRestrictions.containsKey(new Long(viaNodeOrWayRef))) {
-							turnRestrictions.put(new Long(viaNodeOrWayRef), turnRestriction);
-						} else {
-							turnRestriction = (TurnRestriction) turnRestrictions.get(new Long(viaNodeOrWayRef));
-							turnRestriction.nextTurnRestrictionAtThisNode = new TurnRestriction(r);
-							// System.out.println("Multiple turn restrictions at " + r.toString()); 
-						}						
+					} else { // remember normal turn restrictions now because we already know the via node 
+						addTurnRestriction(viaNodeOrWayRef, turnRestriction);
 					}
 				}
 				else {
@@ -351,6 +345,26 @@ public class OxParser extends DefaultHandler {
 		}
 	} // endElement
 
+	/**
+	 * @param viaNodeOrWayRef
+	 * @param turnRestriction
+	 */
+	public void addTurnRestriction(long viaNodeOrWayRef,
+			TurnRestriction turnRestriction) {
+		if (! turnRestrictions.containsKey(new Long(viaNodeOrWayRef))) {
+			turnRestrictions.put(new Long(viaNodeOrWayRef), turnRestriction);
+			// System.out.println("Put turn restrictions at " + viaNodeOrWayRef); 
+		} else {
+			TurnRestriction baseTurnRestriction = (TurnRestriction) turnRestrictions.get(new Long(viaNodeOrWayRef));
+			while (baseTurnRestriction.nextTurnRestrictionAtThisNode != null) {
+				baseTurnRestriction = baseTurnRestriction.nextTurnRestrictionAtThisNode;
+			}
+			baseTurnRestriction.nextTurnRestrictionAtThisNode = turnRestriction;
+			// System.out.println("Multiple turn restrictions at " + viaNodeOrWayRef); 
+		}
+	}
+	
+	
 	/**
 	 * @param w
 	 */
