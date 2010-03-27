@@ -226,8 +226,12 @@ public class Way extends Entity implements Comparable<Way> {
 				 * TODO: Come up with a sane solution to find out where to place
 				 * the node to represent the area POI
 				 */
-				Node n = path.getSubPaths().getFirst().get(0);
-				n.wayToPOItransfer(this, poi);
+				Node n = getFirstNodeWithoutPOIType();
+				if (n != null) {
+					n.wayToPOItransfer(this, poi);
+				} else {
+					System.out.println("WARNING: No way poi assigned because no node without a poi type has been available on way " + toString());
+				}
 			}
 		}
 		return type;
@@ -655,6 +659,20 @@ public class Way extends Entity implements Comparable<Way> {
 		}
 		return false;
 	}
+	
+	
+	public Node getFirstNodeWithoutPOIType() {
+		for (SubPath s:path.getSubPaths()) {
+			for (Node n:s.getNodes()) {
+				if (n.getType(config) == -1) {
+					return n;
+				}
+			}
+		}
+		return null;
+	}
+	
+	
 	
 	public ArrayList<RouteNode> getAllRouteNodesOnTheWay() {
 		ArrayList<RouteNode> returnNodes = new ArrayList<RouteNode>();
