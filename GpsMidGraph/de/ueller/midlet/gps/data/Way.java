@@ -206,7 +206,7 @@ public class Way extends Entity {
 		}
 		if ((f & WAY_FLAG_MAXSPEED) == WAY_FLAG_MAXSPEED) {
 //			logger.debug("read maxspeed");
-			flags = is.readByte();
+			flags = is.readByte() & 0xff; // apply an 8 bit mask to the maxspeed byte read so values >127 won't result in a negative integer with wrong bits set for the flags
 		}
 		
 		byte f2=0;
