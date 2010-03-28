@@ -9,10 +9,25 @@ import de.ueller.osmToGpsMid.model.Bounds;
 
 public class Outline {
 	private ArrayList<Vertex> vertexList = new ArrayList<Vertex>();
+	private long wayId=-1;
 //	private ArrayList<Vertex> ordered;
 	
+	public long getWayId() {
+		return wayId;
+	}
+
+	public void setWayId(long wayId) {
+		this.wayId = wayId;
+	}
+
 	public ArrayList<Vertex> getVertexList() {
 		return vertexList;
+	}
+	public boolean isValid(){
+		if (vertexList.size() < 3){
+			return false;
+		}
+		return true;
 	}
 
 	public void clean(){
@@ -32,7 +47,12 @@ public class Outline {
 		if (first.equals(prev)){
 			vertexList.remove(vertexList.size()-1);
 		}
+		if (vertexList.size() <3){
+			// this is a degenerated polygon make it empty
+			vertexList.clear();
+		}
 		for (Vertex v:vertexList){
+			v.setOutline(this);
 			if (first==null){
 				first=v;
 				prev=v;
@@ -109,12 +129,17 @@ public class Outline {
 	
 	public boolean isClockWise(){
 		boolean cw=isClockWise3();
-		if (cw != isClockWise2()){
-			System.out.println("2 and 3 not the same");
-		}
+//		if (cw != isClockWise2()){
+//			System.out.println("2 and 3 not the same");
+//		}
 		return cw;
 	}
 	
+	/**
+	 * Check if this outline (polygone) is clockwise. Therfore we get the leftmost vertex and the
+	 * booth neighbors. This edge must be convex. 
+	 * @return
+	 */
 	public boolean isClockWise3(){
 		CalcNextPrev();
 		Vertex v=getLonOrdered().get(0);
@@ -127,11 +152,13 @@ public class Outline {
 		}
 	}
 	
+	/**
+	 * this one is only valid for convex polygon
+	 * @return
+	 */
 	public boolean isClockWise2(){
 		float z=0.0f;
 		for (Vertex i : vertexList) {
-//		for (int l=0;l<(vertexList.size()-1);l++){
-//			Vertex i=vertexList.get(l);
 			z+=i.cross(i.getNext());
 		}
 		if (z<0) return true; else return false;

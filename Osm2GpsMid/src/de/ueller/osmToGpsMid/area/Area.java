@@ -14,14 +14,17 @@ public class Area {
 	ArrayList<Triangle> triangleList=null;
 	static DebugViewer			viewer		= null;
 	public Vertex	edgeInside;
-	private static boolean debug=false;
+	public  boolean debug=false;
 
 	public Area() {
 
 	}
 
 	public void addOutline(Outline p) {
-		outlineList.add(p);
+		if (p.isValid()){
+			outlineList.add(p);
+			p.CalcNextPrev();
+		}
 	}
 
 	public void addHole(Outline p) {
@@ -51,12 +54,17 @@ public class Area {
 		int loop = 0;
 		while (outlineList.size() > 0) {
 			outline = outlineList.get(0);
+			if (! outline.isValid()){
+				outlineList.remove(0);
+				continue;
+			}
 			outline.CalcNextPrev();
 			outlineList.remove(0);
 			while (outline.vertexCount() > 2) {
 				loop++;
 				if (loop > 10000) {
-					System.err.println("Break because of infinite loop");
+					System.err.println("Break because of infinite loop for outline " + outline.getWayId());
+					System.err.println(" see http://www.openstreetmap.org/?way="+outline.getWayId());
 					break;
 				}
 				ret.add(cutOneEar(outline, holeList, dir));
@@ -65,29 +73,57 @@ public class Area {
 		}
 		// System.out.println(ret);
 		// System.out.println("loops :" + loop);
+//		optimize();
 		return ret;
 
+	}
+	private void optimize(){
+		for (Triangle t:triangleList){
+			t.opt=false;
+		}
+		while (true){
+			for (Triangle t1:triangleList){
+				if (! t1.opt){
+					for (Triangle t2:triangleList){
+						if (t1.equalVert(t2) == 2){
+							optimize(t1,t2);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * @param t1
+	 * @param t2
+	 */
+	private void optimize(Triangle t1, Triangle t2) {
+		
 	}
 
 	/**
 	 * 
 	 */
 	private void repaint() {
+		if (debug) {
+			if (viewer == null){
+				viewer=DebugViewer.getInstanz(this);
+			} else {
+				viewer.setArea(this);
+			}
+
+
 		if (viewer != null){
 		viewer.repaint();
-//		try {
-//			Thread.sleep(3000);
-//		} catch (InterruptedException e) {
-//			// TODO Auto-generated catch block
-//			
-//		}
-		System.out.println("Area.repaint()");
-//		try {
-//			System.in.read();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		try {
+			Thread.sleep(30);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			
+		}
+//		System.out.println("Area.repaint()");
+		}
 		}
 	}
 
@@ -103,8 +139,10 @@ public class Area {
 				outline.remove(n);
 				return triangle;
 			} else {
+				boolean handeld=false;
 				// at least one edge is inside this ear
 				if (edgeInside.partOf(outline)) {
+					handeld=true;
 					// node of the outline is in the ear so we have to cut the outline into two parts
 					// one will handled now and the other goes to the stack
 					outline.clean();
@@ -115,12 +153,15 @@ public class Area {
 					}
 					outline.append(edgeInside);
 					Outline newOutline = new Outline();
+					newOutline.setWayId(outline.getWayId());
 					while (nt != n) {
 						newOutline.append(nt);
 						nt = nt.getNext();
 					}
 					newOutline.append(n);
-					addOutline(newOutline);
+					if (newOutline.isValid()){
+						addOutline(newOutline);
+					}
 					// reinititalisize outline;
 					outline.CalcNextPrev();
 					orderedOutline = outline.getOrdered(dir);
@@ -162,8 +203,16 @@ public class Area {
 							holeList.remove(hole);
 							outline.CalcNextPrev();
 							orderedOutline = outline.getOrdered(dir);
+							handeld=true;
 							break; // we found the hole so break this for loop
 						}
+					}
+					if (!handeld){
+					System.err.println("someting strange happens, there is an edge inside, but the member outline "+edgeInside.getOutline().getWayId()+" wasn't found");
+					System.err.println(" see http://www.openstreetmap.org/?node="+edgeInside.getId());
+//					debug=true;
+//					repaint();
+					return triangle;
 					}
 				}
 			}
@@ -214,6 +263,11 @@ public class Area {
 		}
 		for (Outline o:holeList){
 			o.extendBounds(b);
+		}
+		if (triangleList != null){
+			for (Triangle t: triangleList){
+				t.extendBound(b);
+			}
 		}
 
 		return b;
