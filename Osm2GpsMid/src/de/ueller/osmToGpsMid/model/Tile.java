@@ -82,11 +82,11 @@ public class Tile {
 	public void writeTileDict(DataOutputStream ds,Integer deep,Sequence fid,String path) throws IOException{
 		DataOutputStream lds;
 		boolean openStream;
-//		System.out.println("Write Tile type=" + type + " deep=" + deep + " fid=" + fid);
+		System.out.println("Write Tile type=" + type + " deep=" + deep + " fid=" + fid);
 		if ((type == TYPE_CONTAINER || type == TYPE_ROUTECONTAINER) 
 				&& deep >= Configuration.getConfiguration().getMaxDictDepth()){
-//			System.out.println("Type 4");
-			// Write containerTile 
+			System.out.println("Start new Dict file");
+			// Write this containerTile as a FileTile this container will be then places within this new FileTile 
 			if (zl != CreateGpsMidData.ROUTEZOOMLEVEL){
 				ds.writeByte(TYPE_FILETILE);
 				ds.writeFloat(degToRad(bounds.minLat));
@@ -159,7 +159,7 @@ public class Tile {
 				break;
 			case TYPE_EMPTY:
 //				System.out.println("Type 3");
-				lds.writeByte(3);
+				lds.writeByte(TYPE_EMPTY);
 //			case 4:
 //				System.out.println("Type 4");
 //				lds.writeByte(4);

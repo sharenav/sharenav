@@ -1,5 +1,5 @@
 /**
- * This file is part of OSM2GpsMid
+ * This file is part of OSM2GpsMid 
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as published by
@@ -13,13 +13,18 @@ package de.ueller.osmToGpsMid;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
+import de.ueller.osmToGpsMid.area.Area;
+import de.ueller.osmToGpsMid.area.Outline;
+import de.ueller.osmToGpsMid.area.Triangle;
+import de.ueller.osmToGpsMid.area.Vertex;
+import de.ueller.osmToGpsMid.model.Member;
+import de.ueller.osmToGpsMid.model.Relation;
 import de.ueller.osmToGpsMid.model.Hash;
 import de.ueller.osmToGpsMid.model.Node;
 import de.ueller.osmToGpsMid.model.Storage;
-import de.ueller.osmToGpsMid.model.SubPath;
 import de.ueller.osmToGpsMid.model.Way;
-
 /**
  * @author hmueller
  *
@@ -28,19 +33,26 @@ public class CleanUpData {
 
 	private final OxParser parser;
 	private final Configuration conf;
-
-	private HashMap<Node,Node> replaceNodes = new HashMap<Node,Node>();
+	int triangles=0;
+	int areas=0;
+	
+	private HashMap<Node,Node> replaceNodes = new HashMap<Node,Node>(); 
 
 	public CleanUpData(OxParser parser, Configuration conf) {
 		this.parser = parser;
 		this.conf = conf;
+//		removeEmptyWays();
 		removeDupNodes();
 		removeUnusedNodes();
+		convertAreasToTriangles();
+
 		parser.resize();
 		System.out.println("Remaining after cleanup:");
 		System.out.println("  Nodes: " + parser.getNodes().size());
 		System.out.println("  Ways: " + parser.getWays().size());
 		System.out.println("  Relations: " + parser.getRelations().size());
+		System.out.println("  Areas: " + areas);
+		System.out.println("  Triangles: " + triangles);
 	}
 
 	private static class NodeHash implements Hash<Node, Node> {
@@ -61,6 +73,77 @@ public class CleanUpData {
 			return Float.floatToIntBits(k.lat) + Float.floatToIntBits(k.lon);
 		}
 
+	}
+
+	/**
+	 * 
+	 */
+	private void convertAreasToTriangles() {
+		HashMap<Long, Way> wayHashMap = parser.getWayHashMap();
+		ArrayList<Way> removeWays = new ArrayList<Way>();
+		Way firstWay = null;
+		Iterator<Relation> i = parser.getRelations().iterator();
+		while (i.hasNext()) {
+			Relation r = i.next();
+			if (r.isValid() && "multipolygon".equals(r.getAttribute("type"))) {
+				Area a = new Area();
+				for (Long ref : r.getWayIds(Member.ROLE_OUTER)) {
+					if (ref == 24515042) {
+						a.debug = true;
+					}
+					Way w = wayHashMap.get(ref);
+					Outline no = createOutline(w);
+					if (no != null) {
+						a.addOutline(no);
+						if (firstWay == null) {
+							firstWay = w;
+						} else {
+							removeWays.add(w);
+						}
+					}
+				}
+				for (Long ref : r.getWayIds(Member.ROLE_INNER)) {
+					Way w = wayHashMap.get(ref);
+					Outline no = createOutline(w);
+					if (no != null) {
+						a.addHole(no);
+						if (w.getType(conf) < 1) {
+							removeWays.add(w);
+						}
+					}
+				}
+				List<Triangle> areaTriangles = a.triangulate();
+				firstWay.triangles = areaTriangles;
+				for (Way w : removeWays) {
+					parser.removeWay(w);
+				}
+				triangles += areaTriangles.size();
+				areas += 1;
+				i.remove();
+			}
+		}
+		parser.resize();
+	}
+
+	/**
+	 * @param wayHashMap
+	 * @param r
+	 */
+	private Outline createOutline(Way w) {
+			
+			Outline o=null;
+			if (w!=null){
+				Node last=null;
+				o = new Outline();
+				o.setWayId(w.id);
+				for (Node n:w.getNodes()){
+					if (last != n){
+					o.append(new Vertex(n,o));
+					}
+					last=n;
+				}
+			}			
+		return o;
 	}
 
 	/**
@@ -144,10 +227,8 @@ public class CleanUpData {
 		}
 
 		for (Way w:parser.getWays()){
-			for (SubPath s:w.getSubPaths()) {
-				for (Node n:s.getNodes()) {
-					n.used = true;
-				}
+			for (Node n:w.getNodes()) {
+				n.used = true;
 			}
 		}
 		ArrayList<Node> rmNodes = new ArrayList<Node>();

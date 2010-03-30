@@ -10,8 +10,11 @@
  */
 package de.ueller.osmToGpsMid;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
+import de.ueller.osmToGpsMid.area.DebugViewer;
+import de.ueller.osmToGpsMid.area.Triangle;
 import de.ueller.osmToGpsMid.model.Bounds;
 import de.ueller.osmToGpsMid.model.Way;
 
@@ -36,14 +39,20 @@ public class SplitLongWays {
 
 	private void testAndSplit(Way way) {
 //		if (nonCont && way.getSegmentCount() == 1) return;
-		/* TODO: Need to find a way to correctly split areas, but a naive (linear) split won't work */
-		if (way.isArea()) return;
+// if w way is an Area, it's now also splitable
+//		if ( way.isArea()) return;
 		Bounds b=way.getBounds();
 		if ((b.maxLat-b.minLat) > 0.09f 
 				|| (b.maxLon-b.minLon) > 0.09f ){
 			Way newWay=way.split();
 			if (newWay != null){
 				added.add(newWay);
+//				if (way.isArea()){
+//					DebugViewer v=DebugViewer.getInstanz(new ArrayList<Triangle>(way.triangles));
+//					v.alt=new ArrayList<Triangle>(newWay.triangles);
+//					v.recalcView();
+//					v.repaint();
+//				}
 				testAndSplit(way);
 				testAndSplit(newWay);
 			} 

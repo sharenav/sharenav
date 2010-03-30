@@ -6,27 +6,55 @@
  *
  * Copyright (C) 2007 Harald Mueller
  */
-package de.ueller.osmToGpsMid.model;
+package de.ueller.osmToGpsMid.db;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+
 
 /**
  * @author hmueller
  *
  */
-public class Relation extends Entity {
-	protected LinkedList<Member> members=new LinkedList<Member>();
+@javax.persistence.Entity
+@Table(name = "REL")
+@DiscriminatorValue(value="R")
+public class Relation extends Entity implements Serializable {
+	@OneToMany(mappedBy = "relation",cascade={CascadeType.ALL})
+	private final List<Member> members=new ArrayList<Member>();
 	private boolean partialMembers = false; //Set if not all members of the realtion are available
+	
+	/**
+	 * 
+	 */
+	public Relation() {
+		// TODO Auto-generated constructor stub
+	}
 	
 	public Relation(long id) {
 		this.id = id;
 	}
 	/**
+	 * @return the members
+	 */
+	public List<Member> getMembers() {
+		return members;
+	}
+
+	/**
 	 * @param m
 	 */
 	public void add(Member m) {
-		members.add(m);		
+		m.setRelation(this);
+		getMembers().add(m);		
 	}
 	
 	public String toUrl() {
@@ -38,7 +66,7 @@ public class Relation extends Entity {
 		for (String key : getTags()) {
 			ret.append(key + "=" + getAttribute(key) + " ");
 		}
-		for (Member m:members){
+		for (Member m:getMembers()){
 			ret.append(m.toString());
 			ret.append(", ");
 		}
@@ -47,20 +75,8 @@ public class Relation extends Entity {
 		return ret.toString();
 	}
 	
-	public ArrayList<Long> getWayIds(int role){
-		ArrayList<Long> ret=new ArrayList<Long>();
-		for (Member m:members){
-			if (m.getType() == Member.TYPE_WAY){
-				if (m.getRole()==role){
-					ret.add(new Long(m.getRef()));
-				}
-			}
-		}
-		return ret;
-	}
-	
 	public boolean isValid() {
-		if (members.size() > 0) {
+		if (getMembers().size() > 0) {
 			//TODO: A more elaborate check is needed
 			//based on the type of relation and the
 			//partial members attribute is needed
@@ -71,7 +87,7 @@ public class Relation extends Entity {
 				}
 				if (type.equalsIgnoreCase("restriction")) {					
 					int  role_via = 0;	int role_from = 0;	int role_to = 0;
-					for (Member m : members) {
+					for (Member m : getMembers()) {
 						switch (m.getRole()) {
 						case Member.ROLE_FROM: {
 							if (m.getType() == Member.TYPE_WAY) {
@@ -120,11 +136,11 @@ public class Relation extends Entity {
 	
 	public long getViaNodeOrWayRef() {
 		long ref = 0;
-		if (members.size() > 0) {
+		if (getMembers().size() > 0) {
 			String type = getAttribute("type");
 			if (type != null) {
 				if (type.equalsIgnoreCase("restriction")) {
-					for (Member m : members) {
+					for (Member m : getMembers()) {
 						if (m.getRole() == Member.ROLE_VIA) {
 							if (m.getType() == Member.TYPE_NODE || m.getType() == Member.TYPE_WAY) {
 								ref = m.getRef();
@@ -140,8 +156,8 @@ public class Relation extends Entity {
 	}
 	
 	public boolean isViaWay() {
-		if (members.size() > 0) {
-			for (Member m : members) {
+		if (getMembers().size() > 0) {
+			for (Member m : getMembers()) {
 				if (m.getRole() == Member.ROLE_VIA) {
 					if (m.getType() == Member.TYPE_WAY) {
 						return true;

@@ -11,65 +11,63 @@
  */
 package de.ueller.osmToGpsMid.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author hmueller
  *
  */
 public class Path {
-	private LinkedList<SubPath> subPathList;
-	private SubPath currentSeg = null;
+	private List<Node> nodeList = new ArrayList<Node>();
+//	private LinkedList<SubPath> subPathList;
+//	private SubPath currentSeg = null;
 	
 	public Path() {
 		super();
 	}
 	
-	
-	public Path(LinkedList<SubPath> subPathList) {
-		super();
-		this.subPathList = subPathList;
+	public Path(ArrayList<Node> newNodeList) {
+		nodeList = newNodeList;
 	}
 
+	
+//	public Path(LinkedList<SubPath> subPathList) {
+//		super();
+//		this.subPathList = subPathList;
+//	}
+
 	public void add(Node n) {
-		if (subPathList == null) {
-			subPathList = new LinkedList<SubPath>();
-		}
-		if (currentSeg == null) {
-			currentSeg = new SubPath();
-			subPathList.add(currentSeg);
-		}
-		currentSeg.add(n);
+		nodeList.add(n);
 	}
 	
-	protected void addNewSegment() {
-		if (subPathList == null) {
-			subPathList = new LinkedList<SubPath>();
-		}
-		if (currentSeg != null && currentSeg.getLineCount() >0) {
-			currentSeg = null;
-		}
-	}
+//	protected void addNewSegment() {
+//		if (subPathList == null) {
+//			subPathList = new LinkedList<SubPath>();
+//		}
+//		if (currentSeg != null && currentSeg.getLineCount() >0) {
+//			currentSeg = null;
+//		}
+//	}
 	
+	@Deprecated
 	public boolean isMultiPath() {
-		if (subPathList != null) {
-			if (subPathList.size() == 1) {
-				return false;
-			} else {
-				return true;
-			}
-		}
+//		if (subPathList != null) {
+//			if (subPathList.size() == 1) {
+//				return false;
+//			} else {
+//				return true;
+//			}
+//		}
 		return false;
 	}
 
+	@Deprecated
 	public int getPathCount() {
-		if (subPathList != null) {
-			return subPathList.size();
-		} else {
-			return 0;
-		}	
+		return 1;
 	}
 
 	/**
@@ -78,8 +76,10 @@ public class Path {
 	 * @param node2 Node by which to replace node1.
 	 */
 	public void replace(Node node1, Node node2) {
-		for (SubPath s:subPathList) {
-			s.replace(node1, node2);
+		int occur = nodeList.indexOf(node1);
+		while (occur != -1) {
+			nodeList.set(occur, node2);
+			occur = nodeList.indexOf(node1);
 		}
 	}
 
@@ -87,28 +87,36 @@ public class Path {
 	 * This method applies this list to this path.
 	 * @param replaceNodes Hashmap of pairs of nodes
 	 */
-	public void replace(HashMap<Node,Node> replaceNodes) {
-		for (SubPath s:subPathList) {
-			s.replace(replaceNodes);
-		}
+	public void replace(HashMap<Node, Node> replaceNodes) {
+		for (int i = 0; i < nodeList.size(); i++) {
+			Node newNode = replaceNodes.get(nodeList.get(i));
+			if (newNode != null) {
+				nodeList.set(i, newNode);	
+			}
+		}		
 	}
 
-	/**
-	 * @return
-	 */
-	public LinkedList<SubPath> getSubPaths() {
-		return subPathList;
-	}
 
 	/**
 	 * 
 	 */
 	public int getLineCount() {
-		int count = 0;
-		for (SubPath s:subPathList) {
-			count += s.getLineCount();
+		if (nodeList == null) {
+			return 0;
 		}
-		return count;
+		if (nodeList.size() > 1) {
+			return (nodeList.size() - 1);
+		}
+		return 0;
+	}
+	public int getNodeCount() {
+		if (nodeList == null) {
+			return 0;
+		}
+		if (nodeList.size() > 1) {
+			return (nodeList.size());
+		}
+		return 0;
 	}
 	
 	/**
@@ -117,55 +125,45 @@ public class Path {
 	 *         a new Path with the rest after split.  
 	 */
 	public Path split() {
-		if (isMultiPath()) {
-//			System.out.println("split pathlist");
-			int splitp = subPathList.size() / 2;
-			int a = 0;
-			LinkedList<SubPath> newSubPathList = new LinkedList<SubPath>();
-			for (Iterator<SubPath> si = subPathList.iterator(); si.hasNext();) {
-				SubPath t = si.next();
-				if (a >= splitp) {
-					newSubPathList.add(t);
+		if (nodeList == null || getLineCount() < 2) {
+			return null;
+		}
+		int splitP = nodeList.size() / 2;
+		ArrayList<Node> newNodeList = new ArrayList<Node>();
+		int a = 0;
+		for (Iterator<Node> si = nodeList.iterator(); si.hasNext();) {
+			Node t = si.next();
+			if (a >= splitP) {
+				newNodeList.add(t);
+				if (a > splitP) {
 					si.remove();
 				}
-				a++;
 			}
-			Path newPath = new Path(newSubPathList);
-			return newPath;
-		} else {
-			
-			SubPath newPath = subPathList.getFirst().split();
-			if (newPath != null) {
-				LinkedList<SubPath> newSubPathList = new LinkedList<SubPath>();
-				newSubPathList.add(newPath);
-				return new Path(newSubPathList);
-			}
+			a++;
 		}
-		return null;
+		Path newPath = new Path(newNodeList);
+//		System.out.println("old SubPath has " + getLineCount()+ " lines");
+//		System.out.println("new SubPath has " + newSubPath.getLineCount()+ " lines");
+		return newPath;
 	}
 	
-	public void clean() {
-		for (Iterator<SubPath> si = subPathList.iterator(); si.hasNext();) {
-			SubPath t = si.next();
-			if (t.getLineCount() == 0) {
-				si.remove();
-			}
-		}
-	}
+// this has removed Segements with emty nodeList: not used anymore
+//	public void clean() {
+//		nodeList = new ArrayList<Node>();
+//	}
 
 	/**
 	 * @param bound
 	 */
 	public void extendBounds(Bounds bound) {
-		for (SubPath s:subPathList) {
-			s.extendBounds(bound);
-		}		
+		for (Node n:nodeList) {
+			bound.extend(n.lat, n.lon);
+		}
 	}
 
-	/**
-	 * @return
-	 */
-	public SubPath getActualSeg() {
-		return currentSeg;
+
+	
+	public List<Node> getNodes() {
+		return nodeList;
 	}
 }

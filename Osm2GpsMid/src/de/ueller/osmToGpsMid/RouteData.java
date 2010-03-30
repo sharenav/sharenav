@@ -27,7 +27,6 @@ import java.util.Vector;
 import de.ueller.osmToGpsMid.model.Connection;
 import de.ueller.osmToGpsMid.model.Node;
 import de.ueller.osmToGpsMid.model.RouteNode;
-import de.ueller.osmToGpsMid.model.SubPath;
 import de.ueller.osmToGpsMid.model.TravelMode;
 import de.ueller.osmToGpsMid.model.TravelModes;
 import de.ueller.osmToGpsMid.model.TurnRestriction;
@@ -60,10 +59,9 @@ public class RouteData {
 			if (! w.isAccessForAnyRouting()) {
 				continue;
 			}
-			//TODO: explain what are subpaths?
-			for (SubPath s:w.getSubPaths()) {
+
 				Node lastNode = null;
-				for (Node n:s.getNodes()) {
+				for (Node n:w.getNodes()) {
 					n.incConnectedLineCount();
 					if (lastNode != null) {
 						n.incConnectedLineCount();
@@ -73,16 +71,14 @@ public class RouteData {
 				if (lastNode != null) {
 					lastNode.decConnectedLineCount();
 				}
-			}
 		}
 		 
 		for (Way w:parser.getWays()) {
 			if (!w.isAccessForAnyRouting()) {
 				continue;
 			}
-			for (SubPath s:w.getSubPaths()) {
-				addConnections(s.getNodes(), w);
-			}
+			addConnections(w.getNodes(), w);
+
 		}
 		createIds();
 		calculateTurnRestrictions();

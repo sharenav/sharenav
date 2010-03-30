@@ -392,6 +392,10 @@ public class OxParser extends DefaultHandler {
 			wayIns++;
 		}
 	}
+	
+	public void removeWay(Way w){
+		ways.remove(new Long(w.id));
+	}
 
 	public void fatalError(SAXParseException e) throws SAXException {
 		System.out.println("Error: " + e);
@@ -449,6 +453,7 @@ public class OxParser extends DefaultHandler {
 		System.out.println("Free memory: " + Runtime.getRuntime().freeMemory());
 		System.out.println("Resizing nodes HashMap");
 		nodes=new HashMap<Long, Node>(nodes);
+		relations=new HashMap<Long, Relation>(relations);
 		System.gc();
 		System.out.println("Free memory: " + Runtime.getRuntime().freeMemory());
 	}

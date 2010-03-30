@@ -33,8 +33,8 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.TreeSet;
 
-import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
 
+import de.ueller.osmToGpsMid.area.Triangle;
 import de.ueller.osmToGpsMid.model.Bounds;
 import de.ueller.osmToGpsMid.model.ConditionTuple;
 import de.ueller.osmToGpsMid.model.Connection;
@@ -42,11 +42,9 @@ import de.ueller.osmToGpsMid.model.EntityDescription;
 import de.ueller.osmToGpsMid.model.MapName;
 import de.ueller.osmToGpsMid.model.Node;
 import de.ueller.osmToGpsMid.model.POIdescription;
-import de.ueller.osmToGpsMid.model.TurnRestriction;
 import de.ueller.osmToGpsMid.model.WayDescription;
 import de.ueller.osmToGpsMid.model.RouteNode;
 import de.ueller.osmToGpsMid.model.Sequence;
-import de.ueller.osmToGpsMid.model.SubPath;
 import de.ueller.osmToGpsMid.model.Tile;
 import de.ueller.osmToGpsMid.model.TravelModes;
 import de.ueller.osmToGpsMid.model.Way;
@@ -108,6 +106,7 @@ public class CreateGpsMidData implements FilenameFilter {
 	private static int dictFilesWritten = 0;
 	private static int tileFilesWritten = 0;
 	private RouteData rd;
+	private static double	MAX_RAD_RANGE=(Short.MAX_VALUE - Short.MIN_VALUE - 2000) / MyMath.FIXPT_MULT;
 	
 	
 	public CreateGpsMidData(OxParser parser,String path) {
@@ -406,21 +405,26 @@ public class CreateGpsMidData implements FilenameFilter {
 
 			
 			// show summary for copied media files
-			if (sbCopiedMedias.length()!=0) {
-				System.out.println("External media inclusion summary:");
-				sbCopiedMedias.append("\r\n");
-			} else {				
-				System.out.println("No external medias included.");
-			}
-			sbCopiedMedias.append("  Media Sources for external medias\r\n");
-			sbCopiedMedias.append("  referenced in " + configuration.getStyleFileName() +" have been:\r\n");
-			sbCopiedMedias.append("    " + (configuration.getStyleFileDirectory().length() == 0 ? "Current directory" : configuration.getStyleFileDirectory()) + " and its png and sound subdirectories");
-			System.out.println(sbCopiedMedias.toString());
-			if (mediaInclusionErrors!=0) {
-				System.out.println("");
-				System.out.println("  WARNING: " + mediaInclusionErrors + 
-						" media files could NOT be included - see details above");
-				System.out.println("");
+			try {
+				if (sbCopiedMedias.length()!=0) {
+					System.out.println("External media inclusion summary:");
+					sbCopiedMedias.append("\r\n");
+				} else {				
+					System.out.println("No external medias included.");
+				}
+				sbCopiedMedias.append("  Media Sources for external medias\r\n");
+				sbCopiedMedias.append("  referenced in " + configuration.getStyleFileName() +" have been:\r\n");
+				sbCopiedMedias.append("    " + (configuration.getStyleFileDirectory().length() == 0 ? "Current directory" : configuration.getStyleFileDirectory()) + " and its png and sound subdirectories");
+				System.out.println(sbCopiedMedias.toString());
+				if (mediaInclusionErrors!=0) {
+					System.out.println("");
+					System.out.println("  WARNING: " + mediaInclusionErrors + 
+							" media files could NOT be included - see details above");
+					System.out.println("");
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 			
 			dsi.close();
@@ -761,6 +765,7 @@ public class CreateGpsMidData implements FilenameFilter {
 			unsplittableTile = false;
 			tooLarge = false;
 			t = tt.t; tileBound = tt.bound;
+//			System.out.println("try create tile for " + t.zl + " " + tileBound);
 			ways=new LinkedList<Way>();
 			nodes=new ArrayList<Node>();
 			realBound=new Bounds();
@@ -773,6 +778,7 @@ public class CreateGpsMidData implements FilenameFilter {
 
 				ways=getWaysInBound(t.ways, t.zl,tileBound,realBound);
 				nodes=getNodesInBound(t.nodes,t.zl,tileBound);
+//				System.out.println("found " + nodes.size() + " node and " + ways.size() + " ways maxSize=" + maxSize + " maxWay="+ maxWays);
 				for (Node n : nodes) {
 					realBound.extend(n.lat,n.lon);
 				}
@@ -784,23 +790,25 @@ public class CreateGpsMidData implements FilenameFilter {
 				if (ways.size() > 2*mostlyInBound){
 					realBound=new Bounds();
 					ways=getWaysInBound(t.ways, t.zl,tileBound,realBound);
+					// add nodes as well to the bound HMu: 29.3.2010
+					for (Node n : nodes) {
+						realBound.extend(n.lat,n.lon);
+					}
+
 				}				
 				
 				if (ways.size() <= maxWays){
 					t.bounds = realBound.clone();
-					if ((MyMath.degToRad(t.bounds.maxLat - t.bounds.minLat) > 
-							(Short.MAX_VALUE - Short.MIN_VALUE - 2000) / MyMath.FIXPT_MULT) ||
-						(MyMath.degToRad(t.bounds.maxLon - t.bounds.minLon) > 
-							(Short.MAX_VALUE - Short.MIN_VALUE - 2000) / MyMath.FIXPT_MULT))
+					if (t.bounds.getFixPtSpan() > 65000)
 					{
-						//System.out.println("Tile spacially too large (" + 
-						//	((Short.MAX_VALUE - Short.MIN_VALUE - 2000) / MyMath.FIXPT_MULT) +
-						//	": " + t.bounds);
+						System.out.println("Tile spacially too large (" + 
+								MAX_RAD_RANGE +
+							": " + t.bounds);
 						tooLarge = true;
 							
 					} else {
-						t.centerLat = (t.bounds.maxLat - t.bounds.minLat) / 2 + t.bounds.minLat;
-						t.centerLon = (t.bounds.maxLon - t.bounds.minLon) / 2 + t.bounds.minLon;
+						t.centerLat = (t.bounds.maxLat + t.bounds.minLat) / 2;
+						t.centerLon = (t.bounds.maxLon + t.bounds.minLon) / 2;
 						out=createMidContent(ways,nodes,t);
 						outputLength += out.length;						
 					}
@@ -839,7 +847,10 @@ public class CreateGpsMidData implements FilenameFilter {
 			}
 
 			// Split tile if more then 255 Ways or binary content > MAX_TILE_FILESIZE but not if only one Way
-			if ((!unsplittableTile) && ((ways.size() > maxWays || (out.length > maxSize && ways.size() != 1) || tooLarge))){
+			
+			boolean toManyWays = ways.size() > maxWays;
+			boolean toManyBytes = out.length > maxSize;
+			if ((!unsplittableTile) && ((toManyWays || (toManyBytes && ways.size() != 1) || tooLarge))){
 				//System.out.println("create Subtiles size="+out.length+" ways=" + ways.size());
 				t.bounds=realBound.clone();
 				if (t.zl != ROUTEZOOMLEVEL){
@@ -850,6 +861,7 @@ public class CreateGpsMidData implements FilenameFilter {
 				t.t1=new Tile((byte) t.zl,ways,nodes);
 				t.t2=new Tile((byte) t.zl,ways,nodes);
 				t.setRouteNodes(null);
+//				System.out.println("split tile because it`s to big ToLarge="+tooLarge+" toManyWays="+toManyWays+" toManyBytes="+toManyBytes);
 				if ((tileBound.maxLat-tileBound.minLat) > (tileBound.maxLon-tileBound.minLon)){
 					// split to half latitude
 					float splitLat=(tileBound.minLat+tileBound.maxLat)/2;
@@ -874,6 +886,7 @@ public class CreateGpsMidData implements FilenameFilter {
 
 				//			System.gc();
 			} else {
+//				System.out.println("use this tile, will write " + out.length + " bytes");
 				if (ways.size() > 0 || nodes.size() > 0){					
 					// Write as dataTile
 					t.fid=tileSeq.next();
@@ -886,6 +899,7 @@ public class CreateGpsMidData implements FilenameFilter {
 
 				} else {
 					//Write as empty box
+//					System.out.println("this is an empty box");
 					t.type = Tile.TYPE_EMPTY;
 				}
 			}
@@ -933,6 +947,7 @@ public class CreateGpsMidData implements FilenameFilter {
 		totalWaysWritten += t.ways.size();
 		
 		//TODO: Is this safe to comment out??
+		//Hmu: this was used to have a defined order of drawing. Small ways first, highways last.
 		//Collections.sort(t.ways);
 		for (Way w: t.ways){
 			totalSegsWritten += w.getLineCount();
@@ -1034,6 +1049,14 @@ public class CreateGpsMidData implements FilenameFilter {
 		return ways;
 	}
 	
+	/**
+	 * Find all nodes out of the given collection that are in within the bounds and in the correct zoomlevel
+	 * 
+	 * @param parentNodes the collection that will used for search
+	 * @param zl the level of detail
+	 * @param targetBound the target bounderies
+	 * @return
+	 */
 	public Collection<Node> getNodesInBound(Collection<Node> parentNodes,int zl,Bounds targetBound){
 		Collection<Node> nodes = new LinkedList<Node>();
 		for (Node node : parentNodes){
@@ -1114,11 +1137,9 @@ public class CreateGpsMidData implements FilenameFilter {
 		int ren=0;
 		// reset all used flags of all Nodes that are part of ways in <code>ways</code>
 		for (Way way : ways) {
-			for (SubPath sp:way.getSubPaths()){
-				for (Node n:sp.getNodes()){
+				for (Node n:way.getNodes()){
 					n.used=false;
 				}
-			}
 		}
 		// mark all interestNodes as used
 		for (Node n1 : interestNodes){
@@ -1126,14 +1147,19 @@ public class CreateGpsMidData implements FilenameFilter {
 		}
 		// find all nodes that are part of a way but not in interestNodes
 		for (Way w1: ways) {
-			for (SubPath sp:w1.getSubPaths()){
-				for (Node n:sp.getNodes()){
-					Long id=new Long(n.id);
-					if ((!wayNodes.containsKey(id)) && !n.used){
-						wayNodes.put(id, n);
+			if (w1.isArea()){
+				if (w1.getTriangles() != null){
+					for (Triangle tri:w1.getTriangles()){
+						for (int lo=0;lo<3;lo++){
+							addUnusedNode(wayNodes, tri.getVert()[lo].getNode());
+						}
 					}
-
 				}
+			} else {
+
+					for (Node n:w1.getNodes()){
+						addUnusedNode(wayNodes, n);
+					}
 			}
 		}
 
@@ -1172,6 +1198,18 @@ public class CreateGpsMidData implements FilenameFilter {
 		ds.writeByte(0x56); // Magic number
 		fo.close();
 		return fo.toByteArray();
+	}
+
+
+	/**
+	 * @param wayNodes
+	 * @param n
+	 */
+	private void addUnusedNode(Map<Long, Node> wayNodes, Node n) {
+		Long id=new Long(n.id);
+		if ((!wayNodes.containsKey(id)) && !n.used){
+			wayNodes.put(id, n);
+		}
 	}
 	
 	private void writeRouteNode(Node n,DataOutputStream nds,DataOutputStream cds) throws IOException{

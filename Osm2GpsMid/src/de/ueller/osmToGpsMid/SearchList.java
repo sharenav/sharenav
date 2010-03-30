@@ -17,6 +17,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import de.ueller.osmToGpsMid.model.Bounds;
 import de.ueller.osmToGpsMid.model.Entity;
 import de.ueller.osmToGpsMid.model.Node;
 import de.ueller.osmToGpsMid.model.Way;
@@ -115,7 +116,12 @@ public class SearchList {
 						Way w = (Way) e;
 						ds.writeByte(w.getNameType());
 //						System.out.println("entryType " + w.getNameType() + " idx=" + mapName.getIndex());
-						center=w.getMidPoint();
+						if (w.isArea()){
+							Bounds b = w.getBounds();
+							center=new Node((b.maxLat+b.minLat)/2,(b.maxLon+b.minLon)/2,-1);
+						} else {
+							center=w.getMidPoint();
+						}
 					}
 					ArrayList<Entity> isIn=new ArrayList<Entity>();
 					Entity nb=e.nearBy;
@@ -136,6 +142,10 @@ public class SearchList {
 						} else {				  
 							ds.writeShort(isinIdx);
 						}
+					}
+					if (center == null){
+						System.out.println("no center for searchList for "+e);
+						center=new Node(0f,0f,-1);
 					}
 					ds.writeFloat(MyMath.degToRad(center.lat));
 					ds.writeFloat(MyMath.degToRad(center.lon));

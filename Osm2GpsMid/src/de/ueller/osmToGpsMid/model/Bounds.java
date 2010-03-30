@@ -63,6 +63,12 @@ public class Bounds implements Cloneable {
 			return true;
 		}
 
+		/**
+		 * test if the tested coordinate is inside this boundaries
+		 * @param lat lat part of tested coordinate
+		 * @param lon lon part of tested coordinate
+		 * @return true if test coordinate is inside of this boundaries
+		 */
 		public boolean isIn(float lat, float lon) {
 			if (lat < minLat) return false;
 			if (lon < minLon) return false;
@@ -91,12 +97,53 @@ public class Bounds implements Cloneable {
 			b.minLon = minLon;
 			return b;
 		}
+		
+		/**
+		 * Create two boundaries out of this bound by dividing it into two pieces.
+		 * The orientation will be chosen so that length:width will be near 1:1
+		 * @return an array of two bounds.
+		 */
+		public Bounds[] split(){
+			Bounds[] ret = new Bounds[2];
+			if ((maxLat-minLat) > (maxLon-minLon)){
+				float splitLat=(minLat+maxLat)/2;
+				ret[0]=clone();
+				ret[0].maxLat=splitLat;
+				ret[1]=clone();
+				ret[1].minLat=splitLat;
+			} else {
+				float splitLon=(minLon+maxLon)/2;
+				ret[0]=clone();
+				ret[0].maxLon=splitLon;
+				ret[1]=clone();
+				ret[1].minLon=splitLon;				
+			}
+			return ret;
+		}
 
 		public String toString() {
 			return ("[Bound (" + minLat + "|" + minLon+")(" + maxLat + "|" + maxLon +
-				") fixptlatspan=" + (int)(MyMath.degToRad(maxLat - minLat) * MyMath.FIXPT_MULT) + 
-				" fixptlonspan=" + (int)(MyMath.degToRad(maxLon - minLon) * MyMath.FIXPT_MULT) + 
+				") fixptlatspan=" + getFixPtLatSpan() + 
+				" fixptlonspan=" + getFixPtLonSpan() + 
 				"]");
+		}
+
+		/**
+		 * @return
+		 */
+		private int getFixPtLonSpan() {
+			return (int)(MyMath.degToRad(maxLon - minLon) * MyMath.FIXPT_MULT);
+		}
+
+		/**
+		 * @return
+		 */
+		private int getFixPtLatSpan() {
+			return (int)(MyMath.degToRad(maxLat - minLat) * MyMath.FIXPT_MULT);
+		}
+		
+		public int getFixPtSpan(){
+			return Math.max(getFixPtLonSpan(), getFixPtLatSpan());
 		}
 
 		public String toPropertyString(int regionNr) {

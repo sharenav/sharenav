@@ -6,15 +6,23 @@
  *
  * Copyright (C) 2007 Harald Mueller
  */
-package de.ueller.osmToGpsMid.model;
+package de.ueller.osmToGpsMid.db;
+
+import java.io.Serializable;
+
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 /**
  * @author hmueller
  *
  */
-
-public class Member {
-
+@javax.persistence.Entity
+public class Member implements Serializable{
+	
 	public static final byte TYPE_UNKOWN=0;
 	public static final byte TYPE_WAY=1;
 	public static final byte TYPE_NODE=2;
@@ -25,14 +33,25 @@ public class Member {
 	public static final byte ROLE_FROM = 2;
 	public static final byte ROLE_TO = 3;
 	public static final byte ROLE_VIA = 4;
-	public static final byte ROLE_OUTER = 5;
-	public static final byte ROLE_INNER = 6;
-	
+
 	
 	private byte type;
 	private long ref;
 	private byte role;
+	@ManyToOne
+    @JoinColumn(name="RelationId", nullable=false)
+	private Relation relation;
+	@Id
+	@GeneratedValue(strategy = GenerationType.TABLE)
+	private long id;
 	
+	/**
+	 * 
+	 */
+	public Member() {
+		// TODO Auto-generated constructor stub
+	}
+
 	public Member(String type,String ref, String role){
 		setType(type);
 		setRef(ref);
@@ -88,8 +107,6 @@ public class Member {
 		case ROLE_FROM: return "from";
 		case ROLE_TO: return "to";
 		case ROLE_VIA: return "via";
-		case ROLE_OUTER: return "outer";
-		case ROLE_INNER: return "inner";
 		}
 		return "undef";
 	}
@@ -106,10 +123,6 @@ public class Member {
 			this.role=ROLE_TO;
 		} else if ("via".equals(role)){ 
 			this.role=ROLE_VIA;
-		} else if ("outer".equals(role)){ 
-			this.role=ROLE_OUTER;
-		} else if ("inner".equals(role)){ 
-			this.role=ROLE_INNER;
 		} else {
 			this.role = ROLE_UNKOWN;
 		}
@@ -117,5 +130,33 @@ public class Member {
 	
 	public String toString(){
 		return "member " + getTypeName() + "(" + ref + ") as " + getRoleName();
+	}
+
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	/**
+	 * @return the id
+	 */
+	public long getId() {
+		return id;
+	}
+
+	/**
+	 * @param relation the relation to set
+	 */
+	public void setRelation(Relation relation) {
+		this.relation = relation;
+	}
+
+	/**
+	 * @return the relation
+	 */
+	public Relation getRelation() {
+		return relation;
 	}
 }

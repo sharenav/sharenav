@@ -39,6 +39,9 @@ public class CalcNearBy {
 		for (Way w : parser.getWays()) {
 			if (w.isHighway() /*&& w.getIsIn() == null */){
 				Node thisNode=w.getMidPoint();
+				if (thisNode == null){
+					continue;
+				}
 				Node nearestPlace = null;				
 				try {					
 					nearestPlace = (Node) nearByElements.nearest(MyMath.latlon2XYZ(thisNode));					

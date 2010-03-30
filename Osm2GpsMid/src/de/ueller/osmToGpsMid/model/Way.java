@@ -21,6 +21,10 @@ import de.ueller.osmToGpsMid.Configuration;
 import de.ueller.osmToGpsMid.Constants;
 import de.ueller.osmToGpsMid.LegendParser;
 import de.ueller.osmToGpsMid.MyMath;
+import de.ueller.osmToGpsMid.area.Area;
+import de.ueller.osmToGpsMid.area.Outline;
+import de.ueller.osmToGpsMid.area.Triangle;
+import de.ueller.osmToGpsMid.area.Vertex;
 import de.ueller.osmToGpsMid.model.name.Names;
 
 public class Way extends Entity implements Comparable<Way> {
@@ -45,7 +49,8 @@ public class Way extends Entity implements Comparable<Way> {
 	public static final byte WAY_FLAG2_COLLAPSED_OR_IMPASSABLE = 64;
 
 	public Path path = null;
-
+	public List<Triangle> triangles = null;
+	private Node center=null;
 	Bounds bound = null;
 	
 	/** Travel modes for which this way can be used (motorcar, bicycle, etc.) */
@@ -415,7 +420,15 @@ public class Way extends Entity implements Comparable<Way> {
 	public Bounds getBounds() {
 		if (bound == null) {
 			bound = new Bounds();
-			path.extendBounds(bound);
+			if (triangles != null && triangles.size()>0){
+				for (Triangle t:triangles){
+					bound.extend(t.getVert()[0].getLat(), t.getVert()[0].getLon());
+					bound.extend(t.getVert()[1].getLat(), t.getVert()[1].getLon());
+					bound.extend(t.getVert()[2].getLat(), t.getVert()[2].getLon());
+				}
+			} else {
+				path.extendBounds(bound);
+			}
 		}
 		return bound;
 	}
@@ -464,9 +477,21 @@ public class Way extends Entity implements Comparable<Way> {
 	 * @return
 	 */
 	public Node getMidPoint() {
-		List<Node> nl = path.getSubPaths().getFirst().getNodes();
-		int splitp = nl.size() / 2;
-		return (nl.get(splitp));
+		if (isArea()){
+			if (getTriangles().size() >0){
+			return getTriangles().get(0).getVert()[0].getNode();
+			} else {
+				Bounds b = getBounds();
+				center=new Node((b.maxLat+b.minLat)/2,(b.maxLon+b.minLon)/2,-1);
+			}
+		}
+		List<Node> nl = path.getNodes();
+		if (nl.size()>1){
+			int splitp = nl.size() / 2;
+			return (nl.get(splitp));
+		} else {
+			return null;
+		}
 	}
 
 	/**
@@ -485,9 +510,6 @@ public class Way extends Entity implements Comparable<Way> {
 		return ("|opposite|opposite_track|opposite_lane|".indexOf("|" + s.toLowerCase() + "|") >= 0);
 	}
 	
-	public boolean isExplicitArea() {
-		return Configuration.attrToBoolean(getAttribute("area")) > 0;
-	}
 
 	public void write(DataOutputStream ds,Names names1,Tile t) throws IOException {		
 		Bounds b = new Bounds();
@@ -498,13 +520,13 @@ public class Way extends Entity implements Comparable<Way> {
 		int nameIdx = -1;
 		int isinIdx = -1;
 		byte layer = 0;
-		
+
 		if (config == null) {
 			config = Configuration.getConfiguration();
 		}
 
 		byte type = getType();
-		
+
 		if (getName() != null && getName().trim().length() > 0) {			
 			flags += WAY_FLAG_NAME;
 			nameIdx = names1.getNameIdx(getName());
@@ -522,7 +544,7 @@ public class Way extends Entity implements Comparable<Way> {
 		if (maxspeed > 0) {
 			flags += WAY_FLAG_MAXSPEED;
 		}
-		
+
 		if (containsKey("layer")) {
 			try {
 				layer = (byte)Integer.parseInt(getAttribute("layer"));
@@ -538,28 +560,29 @@ public class Way extends Entity implements Comparable<Way> {
 
 		boolean isWay = false;
 		boolean longWays = false;
-		
+
 		if (type < 1) {
 			System.out.println("ERROR! Invalid way type for way " + toString());
 		}
-		
-		for (SubPath s:path.getSubPaths()) {
-			if (s.size() >= 255) {
-				longWays = true;
-			}
-			if (s.size() > 1) {
-				isWay = true;
-			}
+
+
+		if (getNodeCount() > 255) {
+			longWays = true;
 		}
-		if (isWay) {
+		if (getNodeCount() > 1) {
+			isWay = true;
+		}
+
+//		if (isWay) {
 			if (path.isMultiPath()) {
-//				flags += WAY_FLAG_MULTIPATH;
+				//				flags += WAY_FLAG_MULTIPATH;
 				System.err.println("MULTIPATH");
 			}
 			if (isOneWay()) {
 				flags += WAY_FLAG_ONEWAY;
 			}
-			if (isExplicitArea()) {				
+			if (isArea()) {	
+				//			if (isExplicitArea()) {				
 				flags += WAY_FLAG_AREA;				
 			}
 			if (isRoundabout()) {
@@ -590,12 +613,10 @@ public class Way extends Entity implements Comparable<Way> {
 			ds.writeShort((short)(MyMath.degToRad(b.minLon - t.centerLon) * MyMath.FIXPT_MULT));
 			ds.writeShort((short)(MyMath.degToRad(b.maxLat - t.centerLat) * MyMath.FIXPT_MULT));
 			ds.writeShort((short)(MyMath.degToRad(b.maxLon - t.centerLon) * MyMath.FIXPT_MULT));
-			
-//			ds.writeByte(0x58);
-			ds.writeByte(type);
-			
+
+			ds.writeByte(type);			
 			ds.writeByte(wayTravelModes);
-			
+
 			if ((flags & WAY_FLAG_NAME) == WAY_FLAG_NAME) {
 				if ((flags & WAY_FLAG_NAMEHIGH) == WAY_FLAG_NAMEHIGH) {
 					ds.writeInt(nameIdx);
@@ -606,7 +627,7 @@ public class Way extends Entity implements Comparable<Way> {
 			if ((flags & WAY_FLAG_MAXSPEED) == WAY_FLAG_MAXSPEED) {
 				ds.writeByte(maxspeed);
 			}
-			// must be below maxspeed as this is a combined flag and FpsMid relies it's below maxspeed
+			// must be below maxspeed as this is a combined flag and GpsMid relies it's below maxspeed
 			if (flags2 != 0) {
 				ds.writeByte(flags2);				
 			}
@@ -616,20 +637,39 @@ public class Way extends Entity implements Comparable<Way> {
 			if ((flags & WAY_FLAG_LAYER) == WAY_FLAG_LAYER) {
 				ds.writeByte(layer);
 			}
-			
-			for (SubPath s:path.getSubPaths()) {
+			if (isArea()){
 				if (longWays) {
-					ds.writeShort(s.size());
+					ds.writeShort(getNodeCount());
 				} else {
-					ds.writeByte(s.size());
+					ds.writeByte(getNodeCount());
 				}
-				for (Node n : s.getNodes()) {
+				for (Triangle tri:getTriangles()){
+					ds.writeShort(tri.getVert()[0].getNode().renumberdId);
+					ds.writeShort(tri.getVert()[1].getNode().renumberdId);
+					ds.writeShort(tri.getVert()[2].getNode().renumberdId);
+				}
+			} else {
+//				for (SubPath s:path.getSubPaths()) {
+//					if (longWays) {
+//						ds.writeShort(s.size());
+//					} else {
+//						ds.writeByte(s.size());
+//					}
+//					for (Node n : s.getNodes()) {
+//						ds.writeShort(n.renumberdId);
+//					}
+//				}
+				if (longWays) {
+					ds.writeShort(getNodeCount());
+				} else {
+					ds.writeByte(getNodeCount());
+				}
+				for (Node n : path.getNodes()) {
 					ds.writeShort(n.renumberdId);
 				}
-// only for test integrity
-//				System.out.println("   write magic code 0x59");
-//				ds.writeByte(0x59);
 			}
+
+
 			if (config.enableEditingSupport) {
 				if (id > Integer.MAX_VALUE) {
 					System.out.println("WARNING: OSM-ID won't fit in 32 bits for way " + this);
@@ -637,9 +677,10 @@ public class Way extends Entity implements Comparable<Way> {
 				} else
 					ds.writeInt((int)id);
 			}
-		} else {
-			ds.write(128); // flag that mark there is no way
-		}		
+
+//		} else {
+//			ds.write(128); // flag that mark there is no way
+//		}		
 	}
 
 	public void add(Node n) {
@@ -650,23 +691,21 @@ public class Way extends Entity implements Comparable<Way> {
 	}
 	
 	public boolean containsNode(Node nSearch) {
-		for (SubPath s:path.getSubPaths()) {
-			for (Node n:s.getNodes()) {
+
+			for (Node n:path.getNodes()) {
 				if (nSearch.id == n.id) {
 					return true;
 				}
-			}
 		}
 		return false;
 	}
 	
 	
 	public Node getFirstNodeWithoutPOIType() {
-		for (SubPath s:path.getSubPaths()) {
-			for (Node n:s.getNodes()) {
-				if (n.getType(config) == -1) {
-					return n;
-				}
+
+		for (Node n:path.getNodes()) {
+			if (n.getType(config) == -1) {
+				return n;
 			}
 		}
 		return null;
@@ -676,22 +715,20 @@ public class Way extends Entity implements Comparable<Way> {
 	
 	public ArrayList<RouteNode> getAllRouteNodesOnTheWay() {
 		ArrayList<RouteNode> returnNodes = new ArrayList<RouteNode>();
-		for (SubPath s:path.getSubPaths()) {
-			for (Node n:s.getNodes()) {
+			for (Node n:path.getNodes()) {
 				if (n.routeNode != null) {
 					returnNodes.add(n.routeNode);
 				}
-			}
 		}
 		return returnNodes;
 	}
 	
-	public void startNextSegment() {
-		if (path == null) {
-			path = new Path();
-		}
-		path.addNewSegment();
-	}
+//	public void startNextSegment() {
+//		if (path == null) {
+//			path = new Path();
+//		}
+//		path.addNewSegment();
+//	}
 	
 
 	/**
@@ -711,15 +748,73 @@ public class Way extends Entity implements Comparable<Way> {
 		path.replace(replaceNodes);
 	}
 
-	public List<SubPath> getSubPaths() {
-		return path.getSubPaths();
+//	public List<SubPath> getSubPaths() {
+//		return path.getSubPaths();
+//	}
+	
+	public List<Triangle> getTriangles(){
+		if (isArea() && triangles==null){
+			triangulate();
+		}
+		return triangles;
 	}
 	
 	public int getLineCount() {
-		return path.getLineCount();
+		if (isArea()){
+			return getTriangles().size();
+		} else {
+			return path.getLineCount();
+		}
+	}
+	public int getNodeCount() {
+		if (isArea()){
+			return getTriangles().size()*3;
+		} else {
+			return path.getNodeCount();
+		}
 	}
 	
-	public Way split() {
+	public Way split(){
+		if (isArea()) {
+			return splitArea();
+		} else {
+			return splitNormalWay();
+		}
+	}
+	
+	private Way splitArea() {
+		if (triangles == null){
+			triangulate();
+		}
+//		System.out.println("Split area id=" + id + " s=" + triangles.size());
+		Way newWay = new Way(this);
+		Bounds newBbounds = getBounds().split()[0];
+		ArrayList<Triangle> tri=new ArrayList<Triangle>();
+		for (Triangle t:triangles){
+			Vertex midpoint = t.getMidpoint();
+			if (! newBbounds.isIn(midpoint.getLat(), midpoint.getLon())){
+				tri.add(t);
+			}
+		}
+		if (tri.size() == triangles.size()){
+			// all triangles would go to the other way
+			return null;
+		}
+		for (Triangle t:tri){
+			triangles.remove(t);
+		}
+//		System.out.println("split area triangles " + "s1=" + triangles.size() + " s2=" + tri.size());
+		if (tri.size() == 0){
+			return null;
+		}
+		clearBounds();
+		newWay.triangles=tri;
+		newWay.recreatePath();
+		recreatePath();
+		return newWay;
+	}
+	
+	private Way splitNormalWay() {
 		if (isValid() == false) {
 			System.out.println("Way before split is not valid");
 		}
@@ -740,12 +835,9 @@ public class Way extends Entity implements Comparable<Way> {
 		return null;
 	}
 
+
 	public boolean isValid() {
-		if (path == null) {
-			return false;
-		}
-		path.clean();
-		if (path.getPathCount() == 0) {
+		if (path == null || path.getNodeCount() == 0) {
 			return false;
 		}
 		return true;
@@ -760,8 +852,8 @@ public class Way extends Entity implements Comparable<Way> {
 			return false;
 		}
 
-		SubPath spath = path.getActualSeg();
-		List<Node> nlist = spath.getNodes();
+
+		List<Node> nlist = path.getNodes();
 		if (nlist.get(0) == nlist.get(nlist.size() - 1)) {
 			return true;
 		}
@@ -778,4 +870,54 @@ public class Way extends Entity implements Comparable<Way> {
 		}
 		return false;
 	}
+	
+	public boolean isExplicitArea() {
+		return Configuration.attrToBoolean(getAttribute("area")) > 0;
+	}
+
+	public List<Node> getNodes() {
+		return path.getNodes();
+	}
+	/**
+	 * @param wayHashMap
+	 * @param r
+	 */
+	private void triangulate() {
+		if (isArea()) {
+			Outline o = null;
+			o = new Outline();
+			o.setWayId(id);
+			for (Node n : getNodes()) {
+				o.append(new Vertex(n, o));
+			}
+			Area a = new Area();
+			a.addOutline(o);
+			 if (id == 24515042){
+			 a.debug=true;
+			 }
+			triangles = a.triangulate();
+			recreatePath();
+		} else {
+			System.err.println("Cant triangulate normal Ways");
+		}
+	}
+
+	/**
+	 * 
+	 */
+	private void recreatePath() {
+		// // regenrate Path
+		if (isArea() && triangles.size() > 0)
+		path = new Path();
+		for (Triangle t : triangles) {
+			for (int l = 0; l < 3; l++) {
+				Node n = t.getVert()[l].getNode();
+				if (!path.getNodes().contains(n)) {
+					path.add(n);
+				}
+			}
+		}
+		clearBounds();
+	}
+
 }
