@@ -39,7 +39,10 @@ public class Outline {
 		v.setOutline(this);
 	}
 	
-	public void CalcNextPrev(){
+	public void calcNextPrev(){
+		if (vertexList == null || vertexList.size()==0){
+			return;
+		}
 		Vertex prev=null;
 		Vertex first=null;
 		first=vertexList.get(0);
@@ -141,7 +144,7 @@ public class Outline {
 	 * @return
 	 */
 	public boolean isClockWise3(){
-		CalcNextPrev();
+		calcNextPrev();
 		Vertex v=getLonOrdered().get(0);
 		Vertex vp=v.getPrev();
 		Vertex vn=v.getNext();
