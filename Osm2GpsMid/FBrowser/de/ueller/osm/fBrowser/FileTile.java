@@ -4,7 +4,9 @@ package de.ueller.osm.fBrowser;
  * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net See Copying
  */
 
+import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Point;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -113,29 +115,20 @@ public class FileTile extends Tile {
 		return tile;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.openstreetmap.gui.jmapviewer.interfaces.MapMarkerArea#getLat()
-	 */
 	@Override
-	public double getLat() {
-		return (minLat+maxLat)/2*f;
-	}
+	public void paint(Graphics g, Point tl, Point br,int deep) {
+
+		g.setColor(new Color(255/deep,0,0));
+		g.drawRect(tl.x, tl.y, br.x - tl.x, br.y - tl.y);	
+
+}
 
 	/* (non-Javadoc)
-	 * @see org.openstreetmap.gui.jmapviewer.interfaces.MapMarkerArea#getLon()
+	 * @see org.openstreetmap.gui.jmapviewer.interfaces.MapRectangle#paint(java.awt.Graphics, java.awt.Point, java.awt.Point)
 	 */
 	@Override
-	public double getLon() {
-		return (minLon+maxLon)/2*f;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.openstreetmap.gui.jmapviewer.interfaces.MapMarkerArea#paint(java.awt.Graphics, org.openstreetmap.gui.jmapviewer.JMapViewer)
-	 */
-	@Override
-	public void paint(Graphics g, JMapViewer map) {
-		// TODO Auto-generated method stub
-		
+	public void paint(Graphics g, Point topLeft, Point bottomRight) {
+		paint(g,topLeft,bottomRight,1);
 	}
 
 }

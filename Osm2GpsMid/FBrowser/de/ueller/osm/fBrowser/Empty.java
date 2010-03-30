@@ -9,6 +9,7 @@
 package de.ueller.osm.fBrowser;
 
 import java.awt.Graphics;
+import java.awt.Point;
 
 import javax.swing.tree.TreeNode;
 
@@ -47,30 +48,22 @@ public class Empty extends Tile{
 	}
 
 	/* (non-Javadoc)
-	 * @see org.openstreetmap.gui.jmapviewer.interfaces.MapMarkerArea#getLat()
+	 * @see de.ueller.osm.fBrowser.Tile#paint(java.awt.Graphics, java.awt.Point, java.awt.Point, int)
 	 */
 	@Override
-	public double getLat() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.openstreetmap.gui.jmapviewer.interfaces.MapMarkerArea#getLon()
-	 */
-	@Override
-	public double getLon() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.openstreetmap.gui.jmapviewer.interfaces.MapMarkerArea#paint(java.awt.Graphics, org.openstreetmap.gui.jmapviewer.JMapViewer)
-	 */
-	@Override
-	public void paint(Graphics g, JMapViewer map) {
+	public void paint(Graphics g, Point topLeft, Point bottomRight, int deep) {
 		// TODO Auto-generated method stub
 		
 	}
+
+	/* (non-Javadoc)
+	 * @see org.openstreetmap.gui.jmapviewer.interfaces.MapRectangle#paint(java.awt.Graphics, java.awt.Point, java.awt.Point)
+	 */
+	@Override
+	public void paint(Graphics g, Point topLeft, Point bottomRight) {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 }

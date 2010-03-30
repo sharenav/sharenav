@@ -5,6 +5,7 @@
  */
 package de.ueller.osm.fBrowser;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.io.DataInputStream;
@@ -16,7 +17,6 @@ import java.io.IOException;
 
 import javax.swing.tree.TreeNode;
 
-import org.openstreetmap.gui.jmapviewer.JMapViewer;
 
 import de.ueller.osmToGpsMid.Constants;
 
@@ -42,13 +42,9 @@ public class SingleTile extends Tile{
 	public int[] nameIdx;
 
 	public byte[] type;
+	BWay[] ways;
 
-//	Way[][] ways;
-
-//	byte state = 0;
-//	
-//	boolean abortPainting = false;
-
+	int iNodeCount;
 
 	public final byte zl;
 
@@ -80,7 +76,7 @@ public class SingleTile extends Tile{
 		int nodeCount=ds.readShort();
 		short[] radlat = new short[nodeCount];
 		short[] radlon = new short[nodeCount];
-		int iNodeCount=ds.readShort();
+		iNodeCount=ds.readShort();
 		System.out.println("nodes total: " + nodeCount + " interestNode: " + iNodeCount);
 		int[] nameIdx=new int[iNodeCount];
 		for (int i = 0; i < iNodeCount; i++) {
@@ -89,22 +85,37 @@ public class SingleTile extends Tile{
 		byte[] type = new byte[iNodeCount];
 		try {
 			for (int i=0; i< nodeCount;i++){
-//			System.out.println("read coord :"+i+"("+nodeCount+")"+"("+iNodeCount+")");
+//			System.out.print("read coord :"+i+"("+nodeCount+")"+"("+iNodeCount+")");
 				
 				byte flag = ds.readByte();
 								
 				radlat[i] = ds.readShort();
 				radlon[i] = ds.readShort();
-//			if (i < iNodeCount){
+
 				if ((flag & Constants.NODE_MASK_NAME) > 0){
+//					System.out.print(" found NODE_MASK_NAME");
 					if ((flag & Constants.NODE_MASK_NAMEHIGH) > 0) {
+//						System.out.println(" found NODE_MASK_NAMEHIGH");
 						nameIdx[i]=ds.readInt();
 					} else {
 						nameIdx[i]=ds.readShort();
 					}
-					type[i]=ds.readByte();
+					
 				} 
-//			}	
+				if ((flag & Constants.NODE_MASK_TYPE) > 0){
+					type[i]=ds.readByte();
+				}
+			}
+
+			if (0x55 != ds.readByte()){
+				System.out.println("No Magic code found, expect a data error");
+			}
+			// now we read the ways/areas
+			int wayCount = ds.readShort();
+			ways=new BWay[wayCount];
+			for (int i = 0; i < wayCount; i++) {
+				byte flags = ds.readByte();
+				ways[i] = new BWay(ds, flags, i);
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -137,35 +148,59 @@ public class SingleTile extends Tile{
 		return null;
 	}
 
+
+
 	/* (non-Javadoc)
-	 * @see org.openstreetmap.gui.jmapviewer.interfaces.MapMarkerArea#getLat()
+	 * @see de.ueller.osm.fBrowser.Tile#paint(java.awt.Graphics, java.awt.Point, java.awt.Point, int)
 	 */
 	@Override
-	public double getLat() {
-		return (minLat+maxLat)/2*f;
+	public void paint(Graphics g, Point topLeft, Point bottomRight, int deep) {
+		paint(g,topLeft,bottomRight);
+		
 	}
 
 	/* (non-Javadoc)
-	 * @see org.openstreetmap.gui.jmapviewer.interfaces.MapMarkerArea#getLon()
+	 * @see org.openstreetmap.gui.jmapviewer.interfaces.MapRectangle#paint(java.awt.Graphics, java.awt.Point, java.awt.Point)
 	 */
 	@Override
-	public double getLon() {
-		return (minLon+maxLon)/2*f;
-	}
+	public void paint(Graphics g, Point topLeft, Point bottomRight) {
+		int[] tx=new int[3000];
+		int[] ty=new int[3000];
+		for (int i=0;i<ways.length;i++){
+			BWay w=ways[i];
+			if (w.isArea()){
+				for (int i1 = 0; i1 < w.path.length; ){
+					g.setColor(new Color(00, 00, 00,60));
+					for (int l=0;l<3;l++){
+						short idx = w.path[i1++];
+						Point p1 = map.getMapPosition((centerLat+nodeLat[idx]*FIXPT_MULT_INV)*f, (centerLon+nodeLon[idx]*FIXPT_MULT_INV)*f,false);
+						tx[l]=p1.x;
+						ty[l]=p1.y;
+					}
+					g.fillPolygon(tx, ty, 3);
+					g.drawPolygon(tx, ty, 3);
+				}
+			} else {
+				for (int i1 = 0; i1 < w.path.length; i1++){
+					g.setColor(new Color(00, 00, 00));
+					short idx = w.path[i1];
+					Point p1 = map.getMapPosition((centerLat+nodeLat[idx]*FIXPT_MULT_INV)*f, (centerLon+nodeLon[idx]*FIXPT_MULT_INV)*f,false);
+					tx[i1]=p1.x;
+					ty[i1]=p1.y;
+					}
+			g.drawPolyline(tx, ty, w.path.length);
 
-	/* (non-Javadoc)
-	 * @see org.openstreetmap.gui.jmapviewer.interfaces.MapMarkerArea#paint(java.awt.Graphics, org.openstreetmap.gui.jmapviewer.JMapViewer)
-	 */
-	@Override
-	public void paint(Graphics g, JMapViewer map) {
-		System.out.println("draw "+this);
-		for (int i=0;i<nodeLat.length;i++){
+			}
+		}
+		for (int i=0;i<iNodeCount;i++){
 			
 			float x = centerLat+nodeLat[i]*FIXPT_MULT_INV;
 			float y = centerLon+nodeLon[i]*FIXPT_MULT_INV;
 //			System.out.println("draw " + i + " "+ x + "/" + y);
-			Point tl = map.getMapPosition(x*f, y*f, false);
-			g.fillOval(tl.x - 2, tl.y - 2, 5, 5);
+			Point tl = map.getMapPosition(x*f, y*f,true);
+			if (tl != null){
+				g.fillOval(tl.x - 2, tl.y - 2, 5, 5);
+			}
 		}
 	}
 

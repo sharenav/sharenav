@@ -4,7 +4,9 @@ package de.ueller.osm.fBrowser;
  * See Copying
  */
 
+import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Point;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.Vector;
@@ -84,28 +86,26 @@ public class ContainerTile extends Tile {
 		return deep+ " Container" + super.toString();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.openstreetmap.gui.jmapviewer.interfaces.MapMarkerArea#getLat()
-	 */
-	@Override
-	public double getLat() {
-		return (minLat+maxLat)/2*f;
+
+
+	public void paint(Graphics g,  Point topLeft, Point bottomRight,int deep) {
+//			System.out.println("paint Container " + deep + " " + topLeft + "/" + bottomRight);
+			int s=255-(255/deep);
+			g.setColor(new Color(s,s,s,80));
+			Point tl=map.getMapPosition(minLat*f, maxLon*f, false);
+			Point br=map.getMapPosition(maxLat*f, minLon*f, false);
+			g.setColor(Color.BLACK);
+			g.drawRect(tl.x, tl.y, br.x - br.x, br.y - tl.y);	
+			if (t1 != null) {t1.paint(g, topLeft, bottomRight,deep+1);};
+			if (t2 != null) {t2.paint(g,topLeft, bottomRight,deep+1);};
 	}
 
 	/* (non-Javadoc)
-	 * @see org.openstreetmap.gui.jmapviewer.interfaces.MapMarkerArea#getLon()
+	 * @see org.openstreetmap.gui.jmapviewer.interfaces.MapRectangle#paint(java.awt.Graphics, java.awt.Point, java.awt.Point)
 	 */
 	@Override
-	public double getLon() {
-		return (minLon+maxLon)/2*f;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.openstreetmap.gui.jmapviewer.interfaces.MapMarkerArea#paint(java.awt.Graphics, org.openstreetmap.gui.jmapviewer.JMapViewer)
-	 */
-	@Override
-	public void paint(Graphics g, JMapViewer map) {
-		// TODO Auto-generated method stub
+	public void paint(Graphics g, Point topLeft, Point bottomRight) {
+		paint(g,topLeft, bottomRight,1);
 		
 	}
 

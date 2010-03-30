@@ -11,10 +11,12 @@ package de.ueller.osm.fBrowser;
 //License: GPL. Copyright 2008 by Jan Peter Stotz
 
 import java.awt.BorderLayout;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -27,12 +29,11 @@ import javax.swing.JPanel;
 import org.openstreetmap.gui.jmapviewer.DefaultMapController;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.MapMarkerDot;
-import org.openstreetmap.gui.jmapviewer.MapMarkerRectangle;
 import org.openstreetmap.gui.jmapviewer.OsmFileCacheTileLoader;
 import org.openstreetmap.gui.jmapviewer.OsmMercator;
 import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
 import org.openstreetmap.gui.jmapviewer.OsmTileSource;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapMarkerArea;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapRectangle;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
@@ -47,7 +48,7 @@ public class MapFrame extends JInternalFrame {
 
 	private static final long serialVersionUID = 1L;
 	final JMapViewer map = new JMapViewer();
-	private MapMarkerRectangle	marker;
+//	private MapMarkerRectangle	marker;
 	private Tile	viewTile;
 	public MapFrame() {
 		super("JMapViewer Demo",true, //resizable
@@ -136,28 +137,24 @@ public class MapFrame extends JInternalFrame {
 	 * @param tile
 	 */
 	public synchronized void setSelected(Tile tile) {
-		System.err.println("Start setSelected " + Thread.currentThread().getName());
 		try {
 //			setMapView(tile);
 			map.setIgnoreRepaint(true);
 //		System.out.println("setMarker " + tile);
 			double f=180d/Math.PI;
-			map.cleanMapMarkerArea();
-			marker = new MapMarkerRectangle(tile.minLat*f,tile.minLon*f,tile.maxLat*f,tile.maxLon*f);
-			map.addMapMarkerArea(marker);
-			map.addMapMarkerArea(tile);
+			map.setMapRectangleList(new ArrayList<MapRectangle>());
+			map.addMapRectangle(tile);
 			setIgnoreRepaint(false);
 			
 		} catch (Exception e) {
 			System.err.println("pro while setSel");
 			e.printStackTrace();
 		}
-		System.err.println("Stop setSelected " + Thread.currentThread().getName());
 	}
 
 	void setMapView(Tile tile){
 		double f=180d/Math.PI;
-		int mapZoomMax = map.getTileLayerSource().getMaxZoom();
+		int mapZoomMax =  JMapViewer.MAX_ZOOM;
 	int newZoom = mapZoomMax;
 	int x_min=OsmMercator.LonToX(tile.minLon*f, mapZoomMax);
 	int y_min=OsmMercator.LatToY(tile.maxLat*f, mapZoomMax);
@@ -181,4 +178,7 @@ public class MapFrame extends JInternalFrame {
 	map.setDisplayPosition(x, y, newZoom);
 	}
 
+    public Point getMapPosition(double lat, double lon, boolean checkOutside) {
+    	return map.getMapPosition(lat,lon, checkOutside);
+    }
 }

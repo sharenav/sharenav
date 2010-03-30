@@ -4,17 +4,22 @@
  */
 package de.ueller.osm.fBrowser;
 
+import java.awt.Graphics;
+import java.awt.Point;
 import java.util.Enumeration;
 import java.util.Vector;
 
 import javax.swing.tree.TreeNode;
 
+import org.openstreetmap.gui.jmapviewer.Coordinate;
+import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapMarkerArea;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapRectangle;
 
 
 
-public abstract class Tile implements TreeNode, MapMarkerArea {
+
+public abstract class Tile implements TreeNode, MapRectangle {
 	public static final byte TYPE_MAP = 1;
 	public static final byte TYPE_CONTAINER = 2;
 	public static final byte TYPE_FILETILE = 4;
@@ -66,6 +71,7 @@ public abstract class Tile implements TreeNode, MapMarkerArea {
 	
 	public short fileId=0;
 	public byte	lastUse	= 0;
+	protected static MapFrame map;
 
 	public String toString(){
 		return " " + minLat+","+minLon+"/"+ maxLat+","+maxLon;
@@ -124,6 +130,24 @@ public abstract class Tile implements TreeNode, MapMarkerArea {
 		return false;
 	}
 
+	
+	@Override
+	public Coordinate getBottomRight() {
+		return new Coordinate(minLat, maxLon);
+	}
 
+	@Override
+	public Coordinate getTopLeft() {
+		return new Coordinate(maxLat, minLon);
+	}
+
+	public abstract void paint(Graphics g, Point topLeft, Point bottomRight,int deep);
+
+	/**
+	 * @param map
+	 */
+	public void setMap(MapFrame map) {
+		this.map = map;
+	}
 
 }

@@ -26,8 +26,7 @@ import javax.swing.KeyStroke;
 import javax.swing.filechooser.FileFilter;
 
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
-import org.openstreetmap.gui.jmapviewer.MapMarkerRectangle;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapMarkerArea;
+
 
 /**
  * @author hmueller
@@ -40,7 +39,7 @@ public class FBrowser extends JFrame
 	 */
 	private static final long	serialVersionUID	= 1L;
 	JDesktopPane desktop;
-	private String	root="L:/java/Workspace/sourceforgeGpsMid/Osm2GpsMid/temp4";
+	private String	root="D:/java/Workspace/sourceforgeGpsMid/Osm2GpsMid/test";
 	public String getRoot() {
 		return root;
 	}
@@ -51,7 +50,7 @@ public class FBrowser extends JFrame
 
 
 	private MapFrame	map;
-	private MapMarkerArea	marker;
+
     
     /**
 	 * 
@@ -154,7 +153,7 @@ public class FBrowser extends JFrame
 	    }
 
 
-    //Create a new internal frame.
+    //Create a new internal Tree frame. this shows the tile structure
     protected void createFrame(String cmd) {
         DictTreeFrame frame = new DictTreeFrame(cmd,this);
         frame.setVisible(true); //necessary as of 1.3
@@ -230,8 +229,10 @@ public class FBrowser extends JFrame
 	 * @param tile
 	 */
 	public void setSelected(Tile tile) {
-		if (map != null)
+		if (map != null){
 			map.setSelected(tile);
+			tile.setMap(map);
+		}
 	}
 
 
