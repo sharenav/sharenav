@@ -17,13 +17,13 @@ public class Area {
 	public  boolean debug=false;
 
 	public Area() {
-
 	}
+	
 
 	public void addOutline(Outline p) {
 		if (p.isValid()){
 			outlineList.add(p);
-			p.CalcNextPrev();
+			p.calcNextPrev();
 		}
 	}
 
@@ -58,7 +58,7 @@ public class Area {
 				outlineList.remove(0);
 				continue;
 			}
-			outline.CalcNextPrev();
+			outline.calcNextPrev();
 			outlineList.remove(0);
 			while (outline.vertexCount() > 2) {
 				loop++;
@@ -147,10 +147,12 @@ public class Area {
 					// one will handled now and the other goes to the stack
 					outline.clean();
 					Vertex nt = n;
+					// create a fresh copy of the old outline starting from outer edge of the expected ear
 					while (nt != edgeInside) {
 						outline.append(nt);
 						nt = nt.getNext();
 					}
+					// go ahead the edge that was found inside the test triangle
 					outline.append(edgeInside);
 					Outline newOutline = new Outline();
 					newOutline.setWayId(outline.getWayId());
@@ -163,7 +165,7 @@ public class Area {
 						addOutline(newOutline);
 					}
 					// reinititalisize outline;
-					outline.CalcNextPrev();
+					outline.calcNextPrev();
 					orderedOutline = outline.getOrdered(dir);
 				} else {
 					for (Outline p : holeList) {
@@ -171,7 +173,7 @@ public class Area {
 							// now we have an edge of a hole inside the rectangle
 							// lets join the hole with the outline and have a next try
 							Outline hole = edgeInside.getOutline();
-							hole.CalcNextPrev();
+							hole.calcNextPrev();
 							repaint();
 //							Outline newOutline = new Outline();
 							Vertex nt = n;
@@ -201,7 +203,7 @@ public class Area {
 							} while (nt != edgeInside);
 							outline.append(edgeInside.clone());
 							holeList.remove(hole);
-							outline.CalcNextPrev();
+							outline.calcNextPrev();
 							orderedOutline = outline.getOrdered(dir);
 							handeld=true;
 							break; // we found the hole so break this for loop
