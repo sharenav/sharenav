@@ -59,6 +59,12 @@ public class PaintContext extends ScreenContext {
 	 * the calculation go directly to the literals inside the object.
 	 */
 	public IntPoint lineP2=new IntPoint(0,0);
+	/** 
+	 * used to avoid frequent memory allocations. this point have to have
+	 * a valid Object after method exit. Point will used as end point of a line.
+	 * the calculation go directly to the literals inside the object.
+	 */
+	public IntPoint tempPoint=new IntPoint(0,0);
 	public Images images;
 	public byte drawAreas=DRAW_AREAS_NO;
 	public boolean showTileOutline=false;
