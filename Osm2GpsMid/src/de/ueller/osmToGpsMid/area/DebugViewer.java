@@ -152,8 +152,8 @@ public class DebugViewer extends JFrame {
 		g2.drawLine(s.x, s.y, e.x, e.y);
 	}
 	private Point toScreen(Node n) {
-		int x = (int)((n.lat-ox)*f + 20);
-		int y = (int)(ys-20-(n.lon-oy)*f);
+		int x = ys-(int)((n.lat-ox)*f + 20);
+		int y = (int)(20+(n.lon-oy)*f);
 //		System.out.println("DebugViewer.toScreen() " + x + " " +y);
 		return new Point(y,x);
 	}
