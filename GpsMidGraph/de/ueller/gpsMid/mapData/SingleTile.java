@@ -47,7 +47,7 @@ public class SingleTile extends Tile implements QueueableTile {
 
 	public byte[] type;
 
-	Way[][] ways;
+	private Way[][] ways;
 
 	byte state = 0;
 	
@@ -185,22 +185,22 @@ public class SingleTile extends Tile implements QueueableTile {
 
 			lastUse = 0;
 			if (layer != Tile.LAYER_NODE) {
-				if (ways == null) {
+				if (getWays() == null) {
 					return;
 				}
 
-				for (int l = 0; l < ways.length; l++) {
-					if (((relLayer != l) && !renderAll) || (ways[l] == null)) {
+				for (int l = 0; l < getWays().length; l++) {
+					if (((relLayer != l) && !renderAll) || (getWays()[l] == null)) {
 						continue;
 					}
 
 					/**
 					 * Render all ways in the appropriate layer
 					 */
-					for (int i = 0; i < ways[l].length; i++) {
+					for (int i = 0; i < getWays()[l].length; i++) {
 						if (abortPainting)
 							return;
-						Way w = ways[l][i];
+						Way w = getWays()[l][i];
 						if (w == null) continue;
 						//Determine if the way is an area or not. 
 						if (w.isArea() != renderArea)
@@ -302,7 +302,7 @@ public class SingleTile extends Tile implements QueueableTile {
 				nodeLat = null;
 				nodeLon = null;
 				type = null;
-				ways = null;
+				setWays(null);
 				state = STATE_NOTLOAD;
 				}
 				abortPainting = false;
@@ -536,5 +536,19 @@ public class SingleTile extends Tile implements QueueableTile {
    
    public static void newPOIFont() {
 	   poiFont = null;
-   }   	
+   }
+
+/**
+ * @param ways the ways to set
+ */
+public void setWays(Way[][] ways) {
+	this.ways = ways;
+}
+
+/**
+ * @return the ways
+ */
+public Way[][] getWays() {
+	return ways;
+}   	
 }
