@@ -28,7 +28,9 @@ public class Area {
 	}
 
 	public void addHole(Outline p) {
-		holeList.add(p);
+		if (p.isValid()){
+			holeList.add(p);
+		}
 	}
 
 	public void clean() {
