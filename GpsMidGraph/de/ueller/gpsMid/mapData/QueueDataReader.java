@@ -52,6 +52,30 @@ public class QueueDataReader extends QueueReader implements Runnable {
 		}
 //		end open data from JAR
 //		logger.info("read Magic code");
+		readSingleTile(tt, ds);
+		ds.close();
+
+		tt.dataReady();
+		trace.newDataReady();
+		if (notifyReady != null) {			
+			synchronized(notifyReady) {
+				notifyReady.notifyAll();
+			}
+		}
+		//#debug debug
+		logger.debug("DataReader ready "+ tt.fileId + " " + tt.nodeLat.length + 
+				" Nodes " + tt.getWays().length + " Ways" );
+
+//		}
+
+	}
+
+	/**
+	 * @param tt
+	 * @param ds
+	 * @throws IOException
+	 */
+	private void readSingleTile(SingleTile tt, DataInputStream ds) throws IOException {
 		if (ds.readByte() != 0x54) {
 //			logger.error("not a MapMid-file");
 			throwError( "Not a MapMid-file", tt);
@@ -119,10 +143,7 @@ public class QueueDataReader extends QueueReader implements Runnable {
 			throwError(e, "Reading nodes", tt);
 		}
 		logger.info("read nodes");
-		if (ds.readByte() != 0x55) {			
-			logger.error("Reading nodes went wrong / start of ways not found");
-			throwError("Nodes not OK", tt);
-		}
+		readVerify((byte) 0x55,"start of ways " ,ds,tt);
 		int wayCount = ds.readShort();
 //		logger.trace("reading " + wayCount + " ways");
 		int lastread = 0;
@@ -130,9 +151,9 @@ public class QueueDataReader extends QueueReader implements Runnable {
 			Way[] tmpWays = new Way[wayCount];
 			byte[] layers = new byte[wayCount];
 			short[] layerCount = new short[5];			
-			for (int i = 0; i < wayCount; i++) {				
+			for (int i = 0; i < wayCount; i++) {
 				byte flags = ds.readByte();
-				if (flags != 128) {
+//				if (flags != 0x80) {
 					Way w;
 					//#if polish.api.osm-editing
 					if (Legend.enableEdits) {
@@ -155,21 +176,24 @@ public class QueueDataReader extends QueueReader implements Runnable {
 					}
 					layers[i] += 2;
 					layerCount[layers[i]]++;
-				}
+//				} else {
+//					logger.debug("got empty Way");
+//				}
 				lastread = i;
+				
 			}			
 			
 			/**
 			 * Split way list into different layers
 			 */
-			tt.ways = new Way[5][];
+			tt.setWays(new Way[5][]);
 			for (int i = 0; i < 5; i++) {
 				if (layerCount[i] > 0) {
-					tt.ways[i] = new Way[layerCount[i]];
+					tt.getWays()[i] = new Way[layerCount[i]];
 					int k = 0;
 					for (int j = 0; j < wayCount; j++) {
 						if (layers[j] == i) {
-							tt.ways[i][k++] = tmpWays[j];
+							tt.getWays()[i][k++] = tmpWays[j];
 						}
 					}
 				}
@@ -178,27 +202,26 @@ public class QueueDataReader extends QueueReader implements Runnable {
 			throwError(e, "Ways (last ok index " + lastread + " out of " + 
 					wayCount + ")", tt);
 		}
-		if (ds.readByte() != 0x56) {
-			throwError("Ways not OK, failed to read final magic value", tt);
-		} else {
-//			logger.info("ready");
-		}
-		ds.close();
-
-		tt.dataReady();
-		trace.newDataReady();
-		if (notifyReady != null) {			
-			synchronized(notifyReady) {
-				notifyReady.notifyAll();
-			}
-		}
-		//#debug debug
-		logger.debug("DataReader ready "+ tt.fileId + " " + tt.nodeLat.length + 
-				" Nodes " + tt.ways.length + " Ways" );
-
-//		}
-
+		readVerify((byte) 0x56,"read final magic value",ds,tt);
 	}
+	private void readVerify(byte expect,String msg,DataInputStream is, Tile tt){
+		try {
+			byte next=is.readByte();
+			if (next == expect) {
+				logger.debug("Verify Reader " + expect + " OK " +msg);
+				return;
+			}
+			logger.debug("Error while verify Reader " + msg + " expect " + expect + " got " + next);
+			for (int l=0; l<10 ; l++){
+				logger.debug(" " + is.readByte());
+			}
+			throwError(msg, null);
+			
+		} catch (IOException e) {
+			logger.error("Error while verify " + msg + " " + e.getMessage());
+		}
+	}
+
 
 	private void throwError(String string, SingleTile tt) throws IOException {
 		throw new IOException("MapMid-file corrupt: " + string + " zoomlevel=" + tt.zl + 
