@@ -86,7 +86,7 @@ public class Way extends Entity {
 	
 	protected static final Logger logger = Logger.getInstance(Way.class, Logger.TRACE);
 
-	private int flags = 0;
+	public int flags = 0;
 	private int flagswinter = 0;
 
 	/** indicate by which route modes this way can be used (motorcar, bicycle, etc.)
@@ -169,13 +169,17 @@ public class Way extends Entity {
 
 //	private final static Logger logger = Logger.getInstance(Way.class,
 //			Logger.TRACE);
+	
+	public Way() {
+		super();
+	}
 
 	/**
-	 * The flag should be read by caller. If Flag == 128 this is a dummy way
+	 * The flag should be read by caller. If FLAGS == 128 this is a dummy way
 	 * and can be ignored.
 	 * 
 	 * @param is Tile inputstream
-	 * @param f flags
+	 * @param f flags this is read by the caller
 	 * @param t Tile
 	 * @param layers: this is somewhat awkward. We need to get the layer information back out to 
 	 * 			the caller, so use a kind of call by reference
@@ -184,17 +188,14 @@ public class Way extends Entity {
 	 * @throws IOException
 	 */
 	public Way(DataInputStream is, byte f, Tile t, byte[] layers, int idx) throws IOException {
+
 		minLat = is.readShort();
 		minLon = is.readShort();
 		maxLat = is.readShort();
 		maxLon = is.readShort();
-//		if (is.readByte() != 0x58) {
-//			logger.error("wrong magic after way bounds");
-//		}
-		//System.out.println("Way flags: " + f);
 
 		type = is.readByte();
-		wayRouteModes = is.readByte();	
+		setWayRouteModes(is.readByte());	
 		
 		if ((f & WAY_FLAG_NAME) == WAY_FLAG_NAME) {
 			if ((f & WAY_FLAG_NAMEHIGH) == WAY_FLAG_NAMEHIGH) {
@@ -202,7 +203,7 @@ public class Way extends Entity {
 				//System.out.println("Name_High " + f );
 			} else {
 				nameIdx = is.readShort();
-			}			
+			}
 		}
 		if ((f & WAY_FLAG_MAXSPEED) == WAY_FLAG_MAXSPEED) {
 //			logger.debug("read maxspeed");
@@ -230,7 +231,7 @@ public class Way extends Entity {
 		}
 		
 		if ((f2 & WAY_FLAG2_MAXSPEED_WINTER) == WAY_FLAG2_MAXSPEED_WINTER) {
-			flagswinter = is.readByte();
+			setFlagswinter(is.readByte());
 		}
 
 		layers[idx] = 0;
@@ -244,44 +245,63 @@ public class Way extends Entity {
 		if ((f & WAY_FLAG_ONEWAY) == WAY_FLAG_ONEWAY) {
 			flags += WAY_ONEWAY;
 		}
-		if (((f & WAY_FLAG_AREA) == WAY_FLAG_AREA) || Legend.getWayDescription(type).isArea) {
-			if ((f & WAY_FLAG_AREA) == WAY_FLAG_AREA) {
-				//#debug debug
-				logger.debug("Loading explicit Area: " + this);
-			}
+		if ((f & WAY_FLAG_AREA) > 0){
 			flags += WAY_AREA;
+			logger.debug("Area = true");
 		}
+//		if (((f & WAY_FLAG_AREA) == WAY_FLAG_AREA) || Legend.getWayDescription(type).isArea) {
+//			if ((f & WAY_FLAG_AREA) == WAY_FLAG_AREA) {
+//				//#debug debug
+//				logger.debug("Loading explicit Area: " + this);
+//			}
+//			flags += WAY_AREA;
+//		}
 
 		boolean longWays = false;
 		if ((f2 & WAY_FLAG2_LONGWAY) > 0) {
 			longWays = true;
+			logger.debug("longway = true");
 		}
+		int count;
+		if (longWays) {
+			count = is.readShort();
+			if (count < 0) {
+				count += 65536;
+			}
+		} else {
+			count = is.readByte();
+			if (count < 0) {
+				count += 256;
+			}
 
-			int count;
-			if (longWays) {
-				count = is.readShort();
-				if (count < 0) {
-					count += 65536;
-				}
-			} else {
-				count = is.readByte();
-				if (count < 0) {
-					count += 256;
-				}
-				
+		}
+		path = new short[count];
+		logger.debug("expecting " + count + " nodes");
+		for (short i = 0; i < count; i++) {
+			path[i] = is.readShort();
+		}
+			
+	}
+	
+	private void readVerify(byte expect,String msg,DataInputStream is){
+		try {
+			byte next=is.readByte();
+			if (next == expect) {
+				logger.debug("Verify Way " + expect + " OK" +msg);
+				return;
 			}
-			path = new short[count];
-			for (short i = 0; i < count; i++) {
-				path[i] = is.readShort();
-//				logger.debug("read node id=" + path[i]);
+			logger.debug("Error while verify Way " + msg + " expect " + expect + " got " + next);
+			for (int l=0; l<10 ; l++){
+				logger.debug(" " + is.readByte());
 			}
-//			if (is.readByte() != 0x59 ) {
-//				logger.error("wrong magic code after path");
-//			}			
+			System.exit(-1);
+		} catch (IOException e) {
+			logger.error("Error while verify " + msg + " " + e.getMessage());
+		}
 	}
 	
 	public boolean isRoutableWay() {
-		return (wayRouteModes & Configuration.getTravelMask()) != 0;
+		return (getWayRouteModes() & Configuration.getTravelMask()) != 0;
 	}
 	
 	/**
@@ -1709,32 +1729,25 @@ public class Way extends Entity {
 				break;
 		}
 		
-		IntPoint lineP2 = pc.lineP2;
 		Projection p = pc.getP();
-		/**
-		 * we should probably use the static x and y variables
-		 * but that would require to rewrite the fillPolygon
-		 * function
-		 */
-		int[] x = new int[path.length];
-		int[] y = new int[path.length];
-		
-		for (int i1 = 0; i1 < path.length; i1++) {
-			int idx = path[i1];			
-			p.forward(t.nodeLat[idx], t.nodeLon[idx], lineP2, t);
-			x[i1] = lineP2.x;
-			y[i1] = lineP2.y;
-		}
-		/*if ((x[0] != x[path.length - 1]) || (y[0] != y[path.length - 1])) {
-			System.out.println("WARNING: start and end coordinates of area don't match " + this);			
-			return;
-		}*/
-		//PolygonGraphics.drawPolygon(g, x, y);
-		//DrawUtil.fillPolygon(x, y, wayDesc.lineColor, pc.g);
-		PolygonGraphics.fillPolygon(pc.g, x, y);
-		if (isDamaged()) {
-			pc.g.setColor(Legend.COLORS[Legend.COLOR_DAMAGED_BORDER]);
-			PolygonGraphics.drawPolygon(pc.g, x, y);
+		IntPoint p1 = pc.lineP2;
+		IntPoint p2 = pc.swapLineP;
+		IntPoint p3 = pc.tempPoint;
+		pc.g.setColor(wayDesc.lineColor);
+		for (int i1 = 0; i1 < path.length; ){
+//			pc.g.setColor(wayDesc.lineColor);
+			int idx = path[i1++];	
+			p.forward(t.nodeLat[idx],t.nodeLon[idx],p1,t);
+			idx = path[i1++];	
+			p.forward(t.nodeLat[idx],t.nodeLon[idx],p2,t);
+			idx = path[i1++];	
+			p.forward(t.nodeLat[idx],t.nodeLon[idx],p3,t);
+			pc.g.fillTriangle(p1.x,p1.y,p2.x,p2.y,p3.x,p3.y);
+//			pc.g.setColor(0);
+//			pc.g.drawLine(p1.x,p1.y,p2.x,p2.y);
+//			pc.g.drawLine(p2.x,p2.y,p3.x,p3.y);
+//			pc.g.drawLine(p1.x,p1.y,p3.x,p3.y);
+			
 		}
 		paintAreaName(pc,t);
 	}
@@ -1956,7 +1969,7 @@ public class Way extends Entity {
 	}
 	
 	public int getMaxSpeedWinter() {
-		return ((flagswinter & MaxSpeedMask) >> MaxSpeedShift);
+		return ((getFlagswinter() & MaxSpeedMask) >> MaxSpeedShift);
 	}
 
 /*	private float[] getFloatNodes(SingleTile t, short[] nodes, float offset) {
@@ -1989,5 +2002,33 @@ public class Way extends Entity {
 	
 	public String toString() {
 		return "Way " + Trace.getInstance().getName(nameIdx) + " type: " +  Legend.getWayDescription(type).description;
+	}
+
+	/**
+	 * @param wayRouteModes the wayRouteModes to set
+	 */
+	public void setWayRouteModes(byte wayRouteModes) {
+		this.wayRouteModes = wayRouteModes;
+	}
+
+	/**
+	 * @return the wayRouteModes
+	 */
+	public byte getWayRouteModes() {
+		return wayRouteModes;
+	}
+
+	/**
+	 * @param flagswinter the flagswinter to set
+	 */
+	public void setFlagswinter(int flagswinter) {
+		this.flagswinter = flagswinter;
+	}
+
+	/**
+	 * @return the flagswinter
+	 */
+	public int getFlagswinter() {
+		return flagswinter;
 	}
 }
