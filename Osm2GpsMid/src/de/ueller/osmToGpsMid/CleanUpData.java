@@ -88,9 +88,9 @@ public class CleanUpData {
 			if (r.isValid() && "multipolygon".equals(r.getAttribute("type"))) {
 				Area a = new Area();
 				for (Long ref : r.getWayIds(Member.ROLE_OUTER)) {
-					if (ref == 24515042) {
-						a.debug = true;
-					}
+//					if (ref == 24515042) {
+//						a.debug = true;
+//					}
 					Way w = wayHashMap.get(ref);
 					Outline no = createOutline(w);
 					if (no != null) {

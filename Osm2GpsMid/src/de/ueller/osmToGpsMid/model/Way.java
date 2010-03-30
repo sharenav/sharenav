@@ -892,9 +892,9 @@ public class Way extends Entity implements Comparable<Way> {
 			}
 			Area a = new Area();
 			a.addOutline(o);
-			 if (id == 24515042){
-			 a.debug=true;
-			 }
+//			 if (id == 24515042){
+//			 a.debug=true;
+//			 }
 			triangles = a.triangulate();
 			recreatePath();
 		} else {
