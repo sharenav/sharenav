@@ -1416,8 +1416,13 @@ public class Configuration {
 	}
 	
 	public static String getValidFileName(String fileName) {
-		return fileName.replace('\\', '_').replace('/', '_').replace('>', '_').
-			replace('<', '_').replace(':', '_').replace('?', '_').replace('*', '_');
+		return fileName.replace('\\', '_')
+		               .replace('/', '_')
+		               .replace('>', '_')
+		               .replace('<', '_')
+		               .replace(':', '_')
+		               .replace('?', '_')
+		               .replace('*', '_');
 	}
 	
 	public static String getCompassDirection(int course) {
