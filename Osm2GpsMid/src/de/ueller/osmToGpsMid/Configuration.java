@@ -58,7 +58,7 @@ public class Configuration {
 	 * Specifies the format of the map on disk we are about to write.
 	 * This constant must be in sync with GpsMid.
 	 */
-	public final static short MAP_FORMAT_VERSION = 54;
+	public final static short MAP_FORMAT_VERSION = 55;
 
 	public final static int COLOR_MAP_BACKGROUND = 0;
 	public final static int COLOR_MAP_TEXT = 1;
@@ -402,7 +402,7 @@ public class Configuration {
 				}
 				loadPropFile(cf);
 				readBounds();
-			} catch (IOException e) {
+			} catch (Exception e) {
 				System.out.println("Could not load the configuration properly for conversion");
 				e.printStackTrace();
 				System.exit(1);
@@ -546,7 +546,7 @@ public class Configuration {
 			// Determine the directory of the style-file
 			styleFileDirectoryWithDelimiter = null;
 			File file = new File(styleFile);
-			if (file != null) {
+			if (! file.canRead()) {
 				styleFileDirectoryWithDelimiter = file.getParent();
 				if (styleFileDirectoryWithDelimiter == null
 						|| styleFileDirectoryWithDelimiter.equalsIgnoreCase("\\")
@@ -580,10 +580,20 @@ public class Configuration {
 		 * @throws MissingResourceException if the key exists in neither of the two files
 		 */
 		public String getString(String key) {
+			if ("region.1.lat.min".equals(key)){
+				System.out.println("Try to fetch bounds");
+			}
 			try {
+				System.out.print("load arg.property for "+ key +" = ");
+				System.out.println(rb.getString(key));
 				return rb.getString(key).trim();
 			} catch (MissingResourceException e) {
+				System.out.print("load version.property for "+ key +" = ");
+				System.out.println(vb.getString(key));
 				return vb.getString(key).trim();
+			} catch (Exception e1){
+				e1.printStackTrace();
+				return null;
 			}
 		}
 
