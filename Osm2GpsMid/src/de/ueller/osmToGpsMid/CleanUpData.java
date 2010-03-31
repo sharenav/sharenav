@@ -83,13 +83,13 @@ public class CleanUpData {
 		ArrayList<Way> removeWays = new ArrayList<Way>();
 		Way firstWay = null;
 		Iterator<Relation> i = parser.getRelations().iterator();
-		while (i.hasNext()) {
+		rel: while (i.hasNext()) {
 			firstWay = null;
 			Relation r = i.next();
 			if (r.isValid() && "multipolygon".equals(r.getAttribute("type"))) {
 				Area a = new Area();
 				for (Long ref : r.getWayIds(Member.ROLE_OUTER)) {
-//					if (ref == 24515042) {
+//					if (ref == 4083319) {
 //						a.debug = true;
 //					}
 					Way w = wayHashMap.get(ref);
@@ -97,6 +97,11 @@ public class CleanUpData {
 					if (no != null) {
 						a.addOutline(no);
 						if (firstWay == null) {
+							if (w.triangles != null){
+								System.err.println("strange this outline is already triangulated ! maybe dublicate. I will ignore it");
+								System.err.println("please see http://www.openstreetmap.org/?relation=" + r.id);
+								continue rel;
+							}
 							firstWay = w;
 						} else {
 							removeWays.add(w);
