@@ -477,16 +477,16 @@ public class Way extends Entity implements Comparable<Way> {
 	 * @return
 	 */
 	public Node getMidPoint() {
-		if (isArea()){
-			if (getTriangles().size() >0){
-			return getTriangles().get(0).getVert()[0].getNode();
-			} else {
+		if (isArea()) {
+//			if (getTriangles().size() > 0) {
+//				return getTriangles().get(0).getVert()[0].getNode();
+//			} else {
 				Bounds b = getBounds();
-				center=new Node((b.maxLat+b.minLat)/2,(b.maxLon+b.minLon)/2,-1);
-			}
+				center = new Node((b.maxLat + b.minLat) / 2, (b.maxLon + b.minLon) / 2, -1);
+//			}
 		}
 		List<Node> nl = path.getNodes();
-		if (nl.size()>1){
+		if (nl.size() > 1) {
 			int splitp = nl.size() / 2;
 			return (nl.get(splitp));
 		} else {
@@ -892,9 +892,6 @@ public class Way extends Entity implements Comparable<Way> {
 			}
 			Area a = new Area();
 			a.addOutline(o);
-//			 if (id == 24515042){
-//			 a.debug=true;
-//			 }
 			triangles = a.triangulate();
 			recreatePath();
 		} else {
