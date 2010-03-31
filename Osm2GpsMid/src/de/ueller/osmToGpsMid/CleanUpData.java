@@ -84,6 +84,7 @@ public class CleanUpData {
 		Way firstWay = null;
 		Iterator<Relation> i = parser.getRelations().iterator();
 		while (i.hasNext()) {
+			firstWay = null;
 			Relation r = i.next();
 			if (r.isValid() && "multipolygon".equals(r.getAttribute("type"))) {
 				Area a = new Area();
@@ -114,13 +115,14 @@ public class CleanUpData {
 				}
 				List<Triangle> areaTriangles = a.triangulate();
 				firstWay.triangles = areaTriangles;
-				for (Way w : removeWays) {
-					parser.removeWay(w);
-				}
 				triangles += areaTriangles.size();
 				areas += 1;
 				i.remove();
 			}
+		}
+		
+		for (Way w : removeWays) {
+			parser.removeWay(w);
 		}
 		parser.resize();
 	}
