@@ -100,7 +100,7 @@ public class Bounds implements Cloneable {
 		
 		/**
 		 * Create two boundaries out of this bound by dividing it into two pieces.
-		 * The orientation will be chosen so that length:width will be near 1:1
+		 * The orientation will be chosen so that length:width will be nearest 1:1
 		 * @return an array of two bounds.
 		 */
 		public Bounds[] split(){
