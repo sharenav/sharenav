@@ -395,14 +395,15 @@ public class Way extends Entity implements Comparable<Way> {
 		}
 		float maxSpeed = getMaxSpeed();
 		float typicalSpeed = config.getWayDesc(type).typicalSpeed[routeModeNr];
-		if (maxSpeed <= 0) {
-			maxSpeed = 60.0f; //Default case;
-		}
 		if (typicalSpeed != 0) {
-			if (typicalSpeed < maxSpeed) {
+			if (typicalSpeed < maxSpeed || maxSpeed < 0) {
 				maxSpeed = typicalSpeed;
 			}
 		}
+		if (maxSpeed <= 0) {
+			maxSpeed = 60.0f; //Default case;
+		}
+
 		return maxSpeed / 3.6f;
 	}
 
@@ -511,6 +512,7 @@ public class Way extends Entity implements Comparable<Way> {
 	}
 	
 
+	@SuppressWarnings("deprecation")
 	public void write(DataOutputStream ds,Names names1,Tile t) throws IOException {		
 		Bounds b = new Bounds();
 		int flags = 0;
@@ -843,6 +845,7 @@ public class Way extends Entity implements Comparable<Way> {
 		return true;
 	}
 	
+	@SuppressWarnings("deprecation")
 	public boolean isClosed() {
 		if (!isValid()) {
 			return false;
