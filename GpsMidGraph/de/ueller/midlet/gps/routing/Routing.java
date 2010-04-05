@@ -537,9 +537,9 @@ public class Routing implements Runnable {
 						return (int) (((dist/2.2f)+turnCost)*estimateFac);
 					}
 				}
-				// Estimate 120 Km/h (36 m/s) as average speed to enter the motorway or 
+				// Estimate 100 Km/h (28 m/s) as average speed to enter the motorway or 
 				// on the motorway if at least 2 entrances where examined 
-				return (int) (((dist/3.6f))*estimateFac);
+				return (int) (((dist/2.8f))*estimateFac);
 			}
 
 			
