@@ -286,8 +286,8 @@ public class Configuration {
 		"Bluetooth (NMEA)", "Internal (JSR179)", "Cell-ID (OpenCellId.org)" };
 	
 	private static final String[] compassDirections  =
-	{ "N", "NNE", "NE", "NEE", "E", "SEE", "SE", "SSE",
-	  "S", "SSW", "SW", "SWW", "W", "NWW", "NW", "NNW",
+	{ "N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE",
+	  "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW",
 	  "N" };
 	
 	private final static byte[] empty = "".getBytes();
