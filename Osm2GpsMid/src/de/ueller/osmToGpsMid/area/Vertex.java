@@ -110,7 +110,7 @@ public class Vertex {
 //	}
 
 	public String toString() {
-		return String.format(" %d(%1.2f/%1.2f) ", node.id,node.lat,node.lon);
+		return String.format(" %d(%1.2f/%1.2f)%d ", node.id,node.lat,node.lon,node.renumberdId);
 	}
 
 
