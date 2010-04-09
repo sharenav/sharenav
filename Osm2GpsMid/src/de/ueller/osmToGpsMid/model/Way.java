@@ -526,6 +526,10 @@ public class Way extends Entity implements Comparable<Way> {
 		if (config == null) {
 			config = Configuration.getConfiguration();
 		}
+		if (id == 39123631) {
+			System.out.println("Write way 39123631");
+		}
+
 
 		byte type = getType();
 
@@ -865,6 +869,9 @@ public class Way extends Entity implements Comparable<Way> {
 	}
 
 	public boolean isArea() {
+		if (triangles != null){
+			return true;
+		}
 		if (isExplicitArea()) {
 			return true;
 		}
@@ -905,7 +912,7 @@ public class Way extends Entity implements Comparable<Way> {
 	/**
 	 * 
 	 */
-	private void recreatePath() {
+	public void recreatePath() {
 		// // regenrate Path
 		if (isArea() && triangles.size() > 0)
 		path = new Path();
