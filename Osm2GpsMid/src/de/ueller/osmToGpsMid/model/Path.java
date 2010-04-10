@@ -6,25 +6,19 @@
  * the Free Software Foundation.
  *
  * @version $Revision$ ($Name$)
- *
- * Copyright (C) 2007 Harald Mueller
+ * @author hmueller
+ * Copyright (C) 2007-2010 Harald Mueller
  */
 package de.ueller.osmToGpsMid.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
-/**
- * @author hmueller
- *
- */
+
 public class Path {
 	private List<Node> nodeList = new ArrayList<Node>();
-//	private LinkedList<SubPath> subPathList;
-//	private SubPath currentSeg = null;
 	
 	public Path() {
 		super();
@@ -34,24 +28,10 @@ public class Path {
 		nodeList = newNodeList;
 	}
 
-	
-//	public Path(LinkedList<SubPath> subPathList) {
-//		super();
-//		this.subPathList = subPathList;
-//	}
-
 	public void add(Node n) {
 		nodeList.add(n);
 	}
 	
-//	protected void addNewSegment() {
-//		if (subPathList == null) {
-//			subPathList = new LinkedList<SubPath>();
-//		}
-//		if (currentSeg != null && currentSeg.getLineCount() >0) {
-//			currentSeg = null;
-//		}
-//	}
 	
 	@Deprecated
 	public boolean isMultiPath() {
@@ -142,16 +122,9 @@ public class Path {
 			a++;
 		}
 		Path newPath = new Path(newNodeList);
-//		System.out.println("old SubPath has " + getLineCount()+ " lines");
-//		System.out.println("new SubPath has " + newSubPath.getLineCount()+ " lines");
 		return newPath;
 	}
 	
-// this has removed Segements with emty nodeList: not used anymore
-//	public void clean() {
-//		nodeList = new ArrayList<Node>();
-//	}
-
 	/**
 	 * @param bound
 	 */

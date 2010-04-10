@@ -116,12 +116,7 @@ public class SearchList {
 						Way w = (Way) e;
 						ds.writeByte(w.getNameType());
 //						System.out.println("entryType " + w.getNameType() + " idx=" + mapName.getIndex());
-						if (w.isArea()){
-							Bounds b = w.getBounds();
-							center=new Node((b.maxLat+b.minLat)/2,(b.maxLon+b.minLon)/2,-1);
-						} else {
-							center=w.getMidPoint();
-						}
+						center=w.getMidPoint();
 					}
 					ArrayList<Entity> isIn=new ArrayList<Entity>();
 					Entity nb=e.nearBy;
