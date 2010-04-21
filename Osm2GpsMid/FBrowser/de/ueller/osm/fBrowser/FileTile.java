@@ -120,6 +120,16 @@ public class FileTile extends Tile {
 
 		g.setColor(new Color(255/deep,0,0));
 		g.drawRect(tl.x, tl.y, br.x - tl.x, br.y - tl.y);	
+		try {
+			if (tile == null) {
+				readData();
+			}
+			tile.paint(g, tl, br, deep);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 
 }
 

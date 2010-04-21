@@ -50,6 +50,7 @@ public class MapFrame extends JInternalFrame {
 	final JMapViewer map = new JMapViewer();
 //	private MapMarkerRectangle	marker;
 	private Tile	viewTile;
+	private BWay	way;
 	public MapFrame() {
 		super("JMapViewer Demo",true, //resizable
 		          true, //closable
@@ -140,16 +141,27 @@ public class MapFrame extends JInternalFrame {
 		try {
 //			setMapView(tile);
 			map.setIgnoreRepaint(true);
+			if (tile instanceof SingleTile){
+				((SingleTile) tile).setSelected(null);
+			}
 //		System.out.println("setMarker " + tile);
 			double f=180d/Math.PI;
 			map.setMapRectangleList(new ArrayList<MapRectangle>());
 			map.addMapRectangle(tile);
 			setIgnoreRepaint(false);
-			
 		} catch (Exception e) {
 			System.err.println("pro while setSel");
 			e.printStackTrace();
 		}
+	}
+	/**
+	 * @param sel
+	 */
+	public void setSelected(BWay sel) {
+		this.way = sel;
+		sel.getTile().setSelected(sel);
+		map.addMapRectangle(sel.getTile());
+		System.out.println("set selected Way");
 	}
 
 	void setMapView(Tile tile){
@@ -181,4 +193,6 @@ public class MapFrame extends JInternalFrame {
     public Point getMapPosition(double lat, double lon, boolean checkOutside) {
     	return map.getMapPosition(lat,lon, checkOutside);
     }
+
+
 }

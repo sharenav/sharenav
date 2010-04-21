@@ -39,7 +39,7 @@ public class FBrowser extends JFrame
 	 */
 	private static final long	serialVersionUID	= 1L;
 	JDesktopPane desktop;
-	private String	root="D:/java/Workspace/sourceforgeGpsMid/Osm2GpsMid/test";
+	private String	root="D:/java/Workspace/GpsMid -Release/Osm2GpsMid/testdata";
 	public String getRoot() {
 		return root;
 	}
@@ -232,6 +232,15 @@ public class FBrowser extends JFrame
 		if (map != null){
 			map.setSelected(tile);
 			tile.setMap(map);
+		}
+	}
+	/**
+	 * @param sel
+	 */
+	public void setSelected(BWay sel) {
+		if (map != null){
+			map.setSelected(sel);
+			sel.getTile().setMap(map);
 		}
 	}
 

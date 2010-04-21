@@ -101,9 +101,13 @@ public class DictTreeFrame extends JInternalFrame implements TreeSelectionListen
 	public void valueChanged(TreeSelectionEvent e) {
 		TreePath path = e.getPath();
 		JTree tree = (JTree) e.getSource();
-		Tile tile=(Tile) tree.getLastSelectedPathComponent();
-//		System.out.println("selevent on source " + tile);
-		fBrowser.setSelected(tile);
+		Object sel=tree.getLastSelectedPathComponent();
+		if (sel instanceof Tile){
+			fBrowser.setSelected((Tile) sel);
+		} 
+		if (sel instanceof BWay){
+			fBrowser.setSelected((BWay) sel);
+		}
 		
 	}
 

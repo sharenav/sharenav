@@ -33,7 +33,16 @@ public class SingleTile extends Tile{
 
 	private static final byte STATE_CLEANUP = 3;
 
+	private BWay selected=null;
     
+	public BWay getSelected() {
+		return selected;
+	}
+
+	public void setSelected(BWay selected) {
+		this.selected = selected;
+	}
+
 	// Node[] nodes;
 	public short[] nodeLat;
 
@@ -115,7 +124,7 @@ public class SingleTile extends Tile{
 			ways=new BWay[wayCount];
 			for (int i = 0; i < wayCount; i++) {
 				byte flags = ds.readByte();
-				ways[i] = new BWay(ds, flags, i);
+				ways[i] = new BWay(ds, flags, i,this);
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -128,7 +137,7 @@ public class SingleTile extends Tile{
 	
 
 	public String toString() {
-		return "Map " + zl + "-" + fileId;
+		return "Map " + zl + "-" + fileId + ":" +  ways.length;
 	}
 
 
@@ -137,7 +146,7 @@ public class SingleTile extends Tile{
 	 */
 	@Override
 	public int getChildCount() {
-		return 0;
+		return ways.length;
 	}
 	/* (non-Javadoc)
 	 * @see javax.swing.tree.TreeNode#getChildAt(int)
@@ -145,7 +154,7 @@ public class SingleTile extends Tile{
 	@Override
 	public TreeNode getChildAt(int childIndex) {
 		// TODO Auto-generated method stub
-		return null;
+		return ways[childIndex];
 	}
 
 
@@ -168,6 +177,9 @@ public class SingleTile extends Tile{
 		int[] ty=new int[3000];
 		for (int i=0;i<ways.length;i++){
 			BWay w=ways[i];
+			if (selected != null && selected !=w){
+				continue;
+			}
 			if (w.isArea()){
 				for (int i1 = 0; i1 < w.path.length; ){
 					g.setColor(new Color(00, 00, 00,60));
