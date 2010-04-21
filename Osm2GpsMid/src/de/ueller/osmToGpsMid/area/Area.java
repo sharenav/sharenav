@@ -2,6 +2,7 @@ package de.ueller.osmToGpsMid.area;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import de.ueller.osmToGpsMid.model.Bounds;
@@ -75,7 +76,7 @@ public class Area {
 		}
 		// System.out.println(ret);
 		// System.out.println("loops :" + loop);
-//		optimize();
+		optimize();
 		return ret;
 
 	}
@@ -83,17 +84,25 @@ public class Area {
 		for (Triangle t:triangleList){
 			t.opt=false;
 		}
-		while (true){
-			for (Triangle t1:triangleList){
-				if (! t1.opt){
-					for (Triangle t2:triangleList){
-						if (t1.equalVert(t2) == 2){
-							optimize(t1,t2);
-						}
-					}
+//		while (true){
+			Iterator<Triangle> it = triangleList.iterator();
+			while (it.hasNext()){
+				Triangle t1=it.next();
+				if (t1.getVert()[0].getNode() == t1.getVert()[1].getNode() 
+						|| t1.getVert()[0].getNode() == t1.getVert()[2].getNode()
+						|| t1.getVert()[1].getNode() == t1.getVert()[2].getNode()){
+					it.remove();
+//					System.out.println("remove degenerated Triangle");
 				}
+//				if (! t1.opt){
+//					for (Triangle t2:triangleList){
+//						if (t1.equalVert(t2) == 2){
+//							optimize(t1,t2);
+//						}
+//					}
+//				}
 			}
-		}
+//		}
 	}
 
 	/**
@@ -119,7 +128,7 @@ public class Area {
 		if (viewer != null){
 		viewer.repaint();
 		try {
-			Thread.sleep(30);
+			Thread.sleep(100);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			
@@ -201,7 +210,7 @@ public class Area {
 								} else {
 									nt = nt.getNext();
 								}
-								repaint();
+//								repaint();
 							} while (nt != edgeInside);
 							outline.append(edgeInside.clone());
 							holeList.remove(hole);
