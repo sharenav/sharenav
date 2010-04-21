@@ -33,8 +33,7 @@ public class CleanUpData {
 
 	private final OxParser parser;
 	private final Configuration conf;
-	int triangles=0;
-	int areas=0;
+
 	
 	private HashMap<Node,Node> replaceNodes = new HashMap<Node,Node>(); 
 
@@ -44,15 +43,13 @@ public class CleanUpData {
 //		removeEmptyWays();
 		removeDupNodes();
 		removeUnusedNodes();
-		convertAreasToTriangles();
 
 		parser.resize();
 		System.out.println("Remaining after cleanup:");
 		System.out.println("  Nodes: " + parser.getNodes().size());
 		System.out.println("  Ways: " + parser.getWays().size());
 		System.out.println("  Relations: " + parser.getRelations().size());
-		System.out.println("  Areas: " + areas);
-		System.out.println("  Triangles: " + triangles);
+
 	}
 
 	private static class NodeHash implements Hash<Node, Node> {
@@ -75,87 +72,6 @@ public class CleanUpData {
 
 	}
 
-	/**
-	 * 
-	 */
-	private void convertAreasToTriangles() {
-		HashMap<Long, Way> wayHashMap = parser.getWayHashMap();
-		ArrayList<Way> removeWays = new ArrayList<Way>();
-		Way firstWay = null;
-		Iterator<Relation> i = parser.getRelations().iterator();
-		rel: while (i.hasNext()) {
-			firstWay = null;
-			Relation r = i.next();
-			if (r.isValid() && "multipolygon".equals(r.getAttribute("type"))) {
-				if (r.getAttribute("admin_level") != null){
-					continue;
-				}
-				Area a = new Area();
-				for (Long ref : r.getWayIds(Member.ROLE_OUTER)) {
-//					if (ref == 39123631) {
-//						a.debug = true;
-//					}
-					Way w = wayHashMap.get(ref);
-					Outline no = createOutline(w);
-					if (no != null) {
-						a.addOutline(no);
-						if (firstWay == null) {
-							if (w.triangles != null){
-								System.err.println("strange this outline is already triangulated ! maybe dublicate. I will ignore it");
-								System.err.println("please see http://www.openstreetmap.org/?relation=" + r.id);
-								continue rel;
-							}
-							firstWay = w;
-						} else {
-							removeWays.add(w);
-						}
-					}
-				}
-				for (Long ref : r.getWayIds(Member.ROLE_INNER)) {
-					Way w = wayHashMap.get(ref);
-					Outline no = createOutline(w);
-					if (no != null) {
-						a.addHole(no);
-						if (w.getType(conf) < 1) {
-							removeWays.add(w);
-						}
-					}
-				}
-				List<Triangle> areaTriangles = a.triangulate();
-				firstWay.triangles = areaTriangles;
-				firstWay.recreatePath();
-				triangles += areaTriangles.size();
-				areas += 1;
-				i.remove();
-			}
-		}
-		
-		for (Way w : removeWays) {
-			parser.removeWay(w);
-		}
-		parser.resize();
-	}
-
-	/**
-	 * @param wayHashMap
-	 * @param r
-	 */
-	private Outline createOutline(Way w) {
-			
-			Outline o=null;
-			if (w!=null){
-				Node last=null;
-				o = new Outline();
-				o.setWayId(w.id);
-				for (Node n:w.getNodes()){
-					if (last != n){
-					o.append(new Vertex(n,o));
-					}
-					last=n;
-				}
-			}			
-		return o;
-	}
 
 	/**
 	 *

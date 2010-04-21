@@ -448,7 +448,7 @@ public class BundleGpsMid implements Runnable {
 				System.out.println("   " + e.getKey() + ": " + e.getValue());
 
 			}
-
+			new TriangulateRelations(parser, config);
 			int numWays = parser.getWays().size();
 			new SplitLongWays(parser);
 			System.out.println("Splitting long ways increased ways from "
