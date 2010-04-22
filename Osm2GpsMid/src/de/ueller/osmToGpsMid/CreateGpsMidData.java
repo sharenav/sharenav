@@ -783,7 +783,7 @@ public class CreateGpsMidData implements FilenameFilter {
 					realBound.extend(n.lat,n.lon);
 				}
 				if (ways.size() == 0){
-					t.type=3;
+					t.type=Tile.TYPE_EMPTY;
 				}
 				int mostlyInBound=ways.size();
 				addWaysCompleteInBound(ways,t.ways,t.zl,realBound);
