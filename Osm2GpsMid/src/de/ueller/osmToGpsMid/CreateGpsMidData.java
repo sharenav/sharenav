@@ -1027,7 +1027,7 @@ public class CreateGpsMidData implements FilenameFilter {
 		TreeSet<Way> waysTS = new TreeSet<Way>(ways);
 		for (Way w1 : parentWays) {
 			byte type=w1.getType();
-			if (type == 0) {
+			if (type < 1) {
 				continue;
 			}
 			if (w1.getZoomlevel(configuration) != zl) {
