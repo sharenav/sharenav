@@ -15,7 +15,7 @@ public class Area {
 	ArrayList<Triangle> triangleList=null;
 	static DebugViewer			viewer		= null;
 	public Vertex	edgeInside;
-	public  boolean debug=true;
+	public  boolean debug=false;
 
 	public Area() {
 	}
