@@ -38,6 +38,15 @@ public class Entity {
 		this.tags=other.tags;		
 	}
 	
+	/**
+	 * @param tags
+	 */
+	public void replaceTags(Entity other) {
+		this.tags=other.tags;
+		
+	}
+
+	
 	public String getName() {
 		if (tags == null)
 			return null;

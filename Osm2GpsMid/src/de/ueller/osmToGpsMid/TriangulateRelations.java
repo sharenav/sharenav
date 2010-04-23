@@ -119,6 +119,10 @@ public class TriangulateRelations {
 				List<Triangle> areaTriangles = a.triangulate();
 				firstWay.triangles = areaTriangles;
 				firstWay.recreatePath();
+				r.getTags().remove("type");
+				if (r.getTags().size() > 0){
+					firstWay.replaceTags(r);
+				}
 				triangles += areaTriangles.size();
 				areas += 1;
 				i.remove();

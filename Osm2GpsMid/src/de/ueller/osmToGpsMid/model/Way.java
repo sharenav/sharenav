@@ -846,4 +846,5 @@ public class Way extends Entity implements Comparable<Way> {
 		clearBounds();
 	}
 
+
 }
