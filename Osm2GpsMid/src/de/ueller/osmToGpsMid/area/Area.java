@@ -15,7 +15,7 @@ public class Area {
 	ArrayList<Triangle> triangleList=null;
 	static DebugViewer			viewer		= null;
 	public Vertex	edgeInside;
-	public  boolean debug=false;
+	public  boolean debug=true;
 
 	public Area() {
 	}
@@ -24,7 +24,7 @@ public class Area {
 	public void addOutline(Outline p) {
 		if (p.isValid()){
 			outlineList.add(p);
-			p.calcNextPrev();
+//			p.calcNextPrev();
 		}
 	}
 
@@ -49,7 +49,33 @@ public class Area {
 			viewer.setArea(this);
 		}
 		}
-
+		// if there are more ways than one are used to build the outline, try to contruct one outline for that
+		ArrayList<Outline>	outlineTempList=new ArrayList<Outline>();
+		while (outlineList.size() > 0) {
+			outline = outlineList.get(0);
+			if (!outline.isClosed()) {
+				outline.connectPartWays(outlineList);
+			}
+			if (outline.isClosed()){
+				outlineTempList.add(outline);
+			}
+			outlineList.remove(0);
+		}
+		outlineList=outlineTempList;
+		// the same for the holes
+		outlineTempList=new ArrayList<Outline>();
+		while (holeList.size() > 0) {
+			outline = holeList.get(0);
+			if (!outline.isClosed()) {
+				outline.connectPartWays(holeList);
+			}
+			if (outline.isClosed()){
+				outlineTempList.add(outline);
+			}
+			holeList.remove(0);
+		}
+		holeList=outlineTempList;
+		
 		int dir = 0;
 		ArrayList<Triangle> ret = new ArrayList<Triangle>();
 		triangleList=ret;
@@ -57,10 +83,12 @@ public class Area {
 		int loop = 0;
 		while (outlineList.size() > 0) {
 			outline = outlineList.get(0);
+			
 			if (! outline.isValid()){
 				outlineList.remove(0);
 				continue;
 			}
+
 			outline.calcNextPrev();
 			outlineList.remove(0);
 			while (outline.vertexCount() > 2) {

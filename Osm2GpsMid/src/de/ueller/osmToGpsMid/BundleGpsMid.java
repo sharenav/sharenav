@@ -424,6 +424,7 @@ public class BundleGpsMid implements Runnable {
 			
 			fr = config.getPlanetSteam();
 			OxParser parser = new OxParser(fr, config);
+			new TriangulateRelations(parser, config);
 
 			/**
 			 * Display some stats about the type of relations we currently aren't handling
@@ -448,7 +449,6 @@ public class BundleGpsMid implements Runnable {
 				System.out.println("   " + e.getKey() + ": " + e.getValue());
 
 			}
-			new TriangulateRelations(parser, config);
 			int numWays = parser.getWays().size();
 			new SplitLongWays(parser);
 			System.out.println("Splitting long ways increased ways from "

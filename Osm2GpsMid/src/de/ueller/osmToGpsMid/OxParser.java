@@ -374,7 +374,7 @@ public class OxParser extends DefaultHandler {
 		 * We seem to have a bit of a mess with respect to type -1 and 0.
 		 * Both are used to indicate invalid type it seems.
 		 */
-		if (w.isValid() && t > 0) {
+		if (w.isValid() /*&& t > 0 */) {
 			if (ways.get(new Long(w.id)) != null) {
 				/**
 				 * This way is already in data storage.

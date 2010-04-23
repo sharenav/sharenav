@@ -71,36 +71,40 @@ public class DebugViewer extends JFrame {
 	public void paint(Graphics g) {
 		Graphics2D g2=(Graphics2D) g;
 		g.clearRect(0, 0, getWidth(), getHeight());
-		g2.setColor(Color.WHITE);
-		for (Outline o:a.getOutlineList()){
+		try {
+			g2.setColor(Color.WHITE);
+			for (Outline o:a.getOutlineList()){
 //			drawOutline(g2, o,400);
-			drawOutline(g2, o,0);
-		}
-		for (Outline o:a.getHoleList()){
+				drawOutline(g2, o,0);
+			}
+			for (Outline o:a.getHoleList()){
 //			drawOutline(g2, o,400);
-			drawOutline(g2, o,0);
-		}
-		g2.setColor(Color.cyan);
-		drawOutline(g2, a.outline,0);
+				drawOutline(g2, o,0);
+			}
+			g2.setColor(Color.cyan);
+			drawOutline(g2, a.outline,0);
 //		drawOutline(g2, a.outline,400);
-		Color cf = new Color(0,255,0,50);		
-		Color co = Color.BLACK;
-		for (Triangle t:a.triangleList){
-			drawTriangle(g2, t, cf, co);
-		}
-		if (a.triangle != null){
-			drawTriangle(g2, a.triangle, new Color(255,0,0,40), Color.RED);
-		}
-		Color cAlt = new Color(255,255,0,40);
-		if (alt != null){
-		for (Triangle t:alt){
-			drawTriangle(g2, t, cAlt, co);
-		}
-		if (a.edgeInside != null){
-			Point ei=toScreen(a.edgeInside.getNode());
-			g2.setColor(Color.magenta);
-			g2.drawString("*", ei.x, ei.y);
-		}
+			Color cf = new Color(0,255,0,50);		
+			Color co = Color.BLACK;
+			for (Triangle t:a.triangleList){
+				drawTriangle(g2, t, cf, co);
+			}
+			if (a.triangle != null){
+				drawTriangle(g2, a.triangle, new Color(255,0,0,40), Color.RED);
+			}
+			Color cAlt = new Color(255,255,0,40);
+			if (alt != null){
+			for (Triangle t:alt){
+				drawTriangle(g2, t, cAlt, co);
+			}
+			if (a.edgeInside != null){
+				Point ei=toScreen(a.edgeInside.getNode());
+				g2.setColor(Color.magenta);
+				g2.drawString("*", ei.x, ei.y);
+			}
+			}
+		} catch (Exception e) {
+			System.out.println("error while painting " + e.getLocalizedMessage());
 		}
 	}
 	/**

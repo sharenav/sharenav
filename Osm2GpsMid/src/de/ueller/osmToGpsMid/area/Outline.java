@@ -3,7 +3,9 @@ package de.ueller.osmToGpsMid.area;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+
 
 import de.ueller.osmToGpsMid.model.Bounds;
 
@@ -37,6 +39,54 @@ public class Outline {
 	public void append(Vertex v){
 		vertexList.add(v);
 		v.setOutline(this);
+	}
+	
+	public boolean isClosed(){
+		if (vertexList.size() < 1){
+			return false;
+		}
+		Vertex prev=null;
+		Vertex first=null;
+		first=vertexList.get(0);
+		prev=vertexList.get(vertexList.size()-1);
+		if (first.equals(prev)){
+			return true;
+		}
+		return false;
+	}
+	
+	public void connectPartWays(ArrayList<Outline> others) {
+		Vertex last = null;
+		last = vertexList.get(vertexList.size() - 1);
+		boolean changed = false;
+		do {
+			changed = false;
+			Iterator<Outline> i = others.iterator();
+			while (i.hasNext()) {
+				Outline o = i.next();
+				if (o == this) continue;
+				if (!o.isClosed()) {
+					if (o.vertexList.get(0).getNode().equals(last.getNode())) {
+//						System.out.println("found connecting outline, so append it");
+						changed = true;
+						for (Vertex v : o.vertexList) {
+							append(v);
+						}
+						i.remove();
+					}
+					if (o.vertexList.get(o.vertexList.size()-1).getNode().equals(last.getNode())) {
+//						System.out.println("found reverse connecting outline, so append it");
+						changed = true;
+						for (int loop=o.vertexList.size()-1; loop>= 0; loop--){
+						    Vertex v = o.vertexList.get(loop);
+							append(v);
+						}
+						i.remove();
+					}
+				}
+			}
+		} while (changed);
+
 	}
 	
 	public void calcNextPrev(){

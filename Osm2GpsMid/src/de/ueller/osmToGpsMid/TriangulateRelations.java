@@ -40,7 +40,7 @@ public class TriangulateRelations {
 		this.conf = conf;
 		convertAreasToTriangles();
 		parser.resize();
-		System.out.println("Remaining after cleanup:");
+		System.out.println("Remaining after triangulation:");
 		System.out.println("  Nodes: " + parser.getNodes().size());
 		System.out.println("  Ways: " + parser.getWays().size());
 		System.out.println("  Relations: " + parser.getRelations().size());
@@ -60,13 +60,19 @@ public class TriangulateRelations {
 		rel: while (i.hasNext()) {
 			firstWay = null;
 			Relation r = i.next();
+//			System.out.println("check relation " + r + "is valid()=" + r.isValid() );
 			if (r.isValid() && "multipolygon".equals(r.getAttribute("type"))) {
 				if (r.getAttribute("admin_level") != null){
 					continue;
 				}
-				System.err.println("Triangulate relation " + r.id);
+				if (r.getWayIds(Member.ROLE_OUTER).size() == 0){
+					System.out.println("Relation has no outer member");
+					System.out.println("    see http://www.openstreetmap.org/?relation=" + r.id + "I'll ignore this relation");
+					continue;
+				}
+//				System.out.println("Triangulate relation " + r.id);
 				Area a = new Area();
-//				if (r.id == 544315 ){
+//				if (r.id == 405925 ){
 //					a.debug=true;
 //				}
 				for (Long ref : r.getWayIds(Member.ROLE_OUTER)) {
@@ -75,8 +81,8 @@ public class TriangulateRelations {
 //					}
 					Way w = wayHashMap.get(ref);
 					if (w == null) {
-						System.err.println("Way http://www.openstreetmap.org/?way=" + ref + " was not found but referred  as outline in ");
-						System.err.println("    relation http://www.openstreetmap.org/?relation=" + r.id + "I'll ignore this relation");
+						System.out.println("Way http://www.openstreetmap.org/?way=" + ref + " was not found but referred  as outline in ");
+						System.out.println("    relation http://www.openstreetmap.org/?relation=" + r.id + " I'll ignore this relation");
 						continue rel;
 					}
 					Outline no = createOutline(w);
@@ -84,9 +90,9 @@ public class TriangulateRelations {
 						a.addOutline(no);
 						if (firstWay == null) {
 							if (w.triangles != null){
-								System.err.println("strange this outline is already triangulated ! maybe dublicate. I will ignore it");
-								System.err.println("Way http://www.openstreetmap.org/?way=" + ref);
-								System.err.println("please see http://www.openstreetmap.org/?relation=" + r.id);
+								System.out.println("strange this outline is already triangulated ! maybe dublicate. I will ignore it");
+								System.out.println("Way http://www.openstreetmap.org/?way=" + ref);
+								System.out.println("please see http://www.openstreetmap.org/?relation=" + r.id);
 								continue rel;
 							}
 							firstWay = w;
@@ -98,8 +104,8 @@ public class TriangulateRelations {
 				for (Long ref : r.getWayIds(Member.ROLE_INNER)) {
 					Way w = wayHashMap.get(ref);
 					if (w == null) {
-						System.err.println("Way http://www.openstreetmap.org/?way=" + ref + " was not found but referred  as INNER in ");
-						System.err.println("    relation http://www.openstreetmap.org/?relation=" + r.id + "I'll ignore this relation");
+						System.out.println("Way http://www.openstreetmap.org/?way=" + ref + " was not found but referred  as INNER in ");
+						System.out.println("    relation http://www.openstreetmap.org/?relation=" + r.id + " I'll ignore this relation");
 						continue rel;
 					}
 					Outline no = createOutline(w);
@@ -130,21 +136,20 @@ public class TriangulateRelations {
 	 * @param r
 	 */
 	private Outline createOutline(Way w) {
-			
-			Outline o=null;
-			if (w!=null){
-				Node last=null;
-				o = new Outline();
-				o.setWayId(w.id);
-				for (Node n:w.getNodes()){
-					if (last != n){
-					o.append(new Vertex(n,o));
-					}
-					last=n;
+
+		Outline o = null;
+		if (w != null) {
+			Node last = null;
+			o = new Outline();
+			o.setWayId(w.id);
+			for (Node n : w.getNodes()) {
+				if (last != n) {
+					o.append(new Vertex(n, o));
 				}
-			}			
+				last = n;
+			}
+		}
 		return o;
 	}
-
 
 }
