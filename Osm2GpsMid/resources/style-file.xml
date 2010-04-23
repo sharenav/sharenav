@@ -561,6 +561,14 @@ scale alias 1: zoomed out 21x
 		<scale scale="23"/>
 		<textscale scale="26"/>
 	  </value>
+	   <value name="organic">
+		<description desc = "Organic shop"/>
+		<image src="shop_organic.png"/>
+		<namekey tag="name"/>
+		<AreaPOI createForAreas="true"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
+	  </value>
 	  <value name="bakery">
 		<description desc = "Bakery"/>
 		<image src="bakery.png"/>
@@ -1975,6 +1983,16 @@ scale alias 1: zoomed out 21x
 				<isArea area = "true"/>
 				<scale scale = "12"/>
 				<lineColor color = "009BFF9B" colorAtNight="00002200"/>  <!-- same as map background -->
+			</Wvalue>
+		</keyW>
+		<keyW tag = "shop">
+  			<Wvalue name = "*">
+  				<description desc = "Shop"/>
+  				<namekey tag = "name"/>  				
+  				<isArea area = "true"/>
+  				<scale scale = "19"/>
+  				<lineColor color = "00008090" colorAtNight="00583636"/>
+				<force_to layer = "-2"/>
 			</Wvalue>
 		</keyW>
   		<keyW tag = "natural">
