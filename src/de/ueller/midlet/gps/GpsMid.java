@@ -114,10 +114,12 @@ public class GpsMid extends MIDlet implements CommandListener {
 		log = new Logger(this);
 		log.setLevel(Logger.INFO);
 		Configuration.read();
-
+		
 		enableDebugFileLogging();
 		Logger.setGlobalLevel();
 
+		//#debug info
+		log.debug("Phone Model: " + Configuration.getPhoneModel());
 		mNoiseMaker = new NoiseMaker();
 
 		// read in legend.dat to have i.e. bundle date already accessable from
