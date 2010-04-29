@@ -1362,7 +1362,7 @@ public class Configuration {
 		}
 	}
 	
-	private static String getPhoneModel() {
+	public static String getPhoneModel() {
 		try {
 			return System.getProperty("microedition.platform");
 		} catch (RuntimeException re) {
