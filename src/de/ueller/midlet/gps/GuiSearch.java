@@ -95,12 +95,12 @@ public class GuiSearch extends Canvas implements CommandListener,
 	private SearchNames searchThread;
 
 	//private boolean abortPaint = false;
-	private boolean needsPainting;
+	private volatile boolean needsPainting;
 	
 	public int displayReductionLevel = 0;
 	
-	private TimerTask timerT;
-	private Timer timer;
+	private volatile TimerTask timerT;
+	private volatile Timer timer;
 	
 	private ChoiceGroup poiSelectionCG;
 	private TextField poiSelectionMaxDistance;
