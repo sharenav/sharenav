@@ -1542,6 +1542,11 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			// only detect speeding when gpsRecentered and there is a current way
 			if (gpsRecenter && actualSpeedLimitWay != null) {
 				maxSpeed = actualSpeedLimitWay.getMaxSpeed();
+				// check for winter speed limit if configured
+				if (Configuration.getCfgBitState(Configuration.CFGBIT_MAXSPEED_WINTER)
+                		&& (actualSpeedLimitWay.getMaxSpeedWinter() > 0)) {
+                	maxSpeed = actualSpeedLimitWay.getMaxSpeedWinter();
+                }
 				if (maxSpeed != 0 && speed > (maxSpeed + Configuration.getSpeedTolerance()) ) {
 					speeding = true;
 				}
