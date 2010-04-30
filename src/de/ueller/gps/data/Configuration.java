@@ -434,11 +434,17 @@ public class Configuration {
 			int configVersionStored = readInt(database, RECORD_ID_CONFIG_VERSION);
 			//#debug info
 			logger.info("Config version stored: " + configVersionStored);
+
+			/* close the record store before accessing it nested for writing
+			 * might otherwise cause problems on some devices
+			 * see [ gpsmid-Bugs-2983148 ] Recordstore error on startup, settings are not persistent 
+			 */
+			database.closeRecordStore();
+			
 			applyDefaultValues(configVersionStored);
 			// remember for which version the default values were stored
 			write(VERSION, RECORD_ID_CONFIG_VERSION);
 			
-			database.closeRecordStore();
 		} catch (Exception e) {
 			logger.exception("Problems with reading our configuration: ", e);
 		}
@@ -571,6 +577,7 @@ public class Configuration {
 			}
 			cfgBits_64_to_127 |= 1L << CFGBIT_WAYPT_OFFER_PREDEF;
 			wayptSortMode = WAYPT_SORT_MODE_NEW_FIRST;
+			setWaypointSortMode(wayptSortMode);
 		}
 
 		if (configVersionStored < 16) {
@@ -1598,6 +1605,7 @@ public class Configuration {
 			byte [] data = readBinary(database, RECORD_ID_KEY_SHORTCUT);
 			if (data == null) {
 				logger.info("Record store did not contain key shortcut entry");
+				database.closeRecordStore();
 				return false;
 			}
 			ByteArrayInputStream bais = new ByteArrayInputStream(data);
@@ -1635,6 +1643,7 @@ public class Configuration {
 
 				dis.readUTF();
 			}
+		database.closeRecordStore();
 		return true;
 		} catch (Exception e) {
 			logger.exception("Failed to load keyshortcuts", e);
