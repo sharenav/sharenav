@@ -1,5 +1,5 @@
 /**
- * This file is part of OSM2GpsMid 
+  * This file is part of OSM2GpsMid 
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as published by
@@ -100,12 +100,14 @@ public class RouteData {
 				// skip if restrictionFromWay is not in available wayData				
 				if (restrictionFromWay == null) {
 					System.out.println("  no fromWay");
+					turn = turn.nextTurnRestrictionAtThisNode;
 					continue;
 				}
 				// skip if restrictionToWay is not in available wayData				
 				Way restrictionToWay = parser.getWayHashMap().get(new Long(turn.toWayRef));
 				if (restrictionToWay == null) {
 					System.out.println("  no toWay");
+					turn = turn.nextTurnRestrictionAtThisNode;
 					continue;
 				}
 				
