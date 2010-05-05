@@ -27,11 +27,24 @@ import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.tile.PaintContext;
 import de.ueller.midlet.gps.tile.WayDescription;
 
-// TODO: explain
+/**
+ * handle Ways and arrays. Be careful, all paint parts useing static vars so painting
+ *  is NOT thread save, because of Imagecollector is a single Thread which is the only one that
+ *  uses painting of obects, its assured that one Way will be painted after the other.
+ * @author hmu
+ *
+ */
+
 /* Questions:
  * - What classes are involved for getting the necessary Way data from the Jar?
+ *   QueueDataReader read the whole tile, and calls this constructor to read the way details
  * - Which region is covered by a SingleTile, does it always contain all Nodes of the complete way?
+ *   Yes/No ;-) from the GpsMid data perspective a way is complete within a tile.
+ *   from OSM Perspective ways are splited into two ways if they are to large 
  * - Where are the way nodes combined if a tile was split in Osm2GpsMid?
+ *   in case of a split way, we have one part in one tile and a other part in an other tile.
+ *   so the endpoint of one way is the same as the start point of the other way. In this case
+ *   both tiles contains its own copy of this Node.
  */
 public class Way extends Entity {
 	
