@@ -26,6 +26,23 @@ import de.ueller.midlet.gps.data.Way;
 import de.ueller.midlet.gps.tile.PaintContext;
 import de.ueller.midlet.gps.tile.QueueableTile;
 
+/**
+ * In general a SingleTile is a container that holds all graphical information for an rectangular array out of the world.
+ * Single tiles are overlaping each other in the most cases, because the hold complete ways or arrays.
+ * The data structure for the data file is:
+ * 0x54 > indicates that this is a SingleTile file
+ * 2 floats for the center in lat/lon
+ * int nodeCount > count off all node in this file
+ * int iNodeCount > count off interestNodes (POI) in this file 
+ * nodeCount Nodes (first INodeCount nodes have i.e. a name) the rest up to nodeCount are only 2 coordinates
+ * 0x55 >  indicate start of ways (to be able to detect structure errors)
+ * short wayCount > count of ways and areas
+ * wayCount ways/areas with different details
+ * 0x56 > indicate end of tile (to be able to detect structure errors)
+ * 
+ * @author hmu
+ *
+ */
 
 public class SingleTile extends Tile implements QueueableTile {
 
