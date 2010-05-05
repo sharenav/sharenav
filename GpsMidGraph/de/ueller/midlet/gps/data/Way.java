@@ -1341,7 +1341,19 @@ public class Way extends Entity {
      	    return (ay - cy) * (bx - ax) - (ax - cx) * (by - ay);
      }    
     
-   //Todo: Describe, what the returning float is.
+   /** Calculate the end points for 2 paralell lines with distance w which
+    * has the origin line (Xpoint[i]/Ypoint[i]) to (Xpoint[i+1]/Ypoint[i+1])
+	* as centre line
+    * @param xPoints list off all XPoints for this Way
+    * @param yPoints list off all YPoints for this Way
+    * @param i the index out of (X/Y) Point for the line segement we looking for
+    * @param w the width of the segment out of the way
+    * @param p1 left start point
+    * @param p2	right start point
+    * @param p3 left end point
+    * @param p4 right end point
+    * @return the angle of the line in radians ( -Pi .. +Pi )
+    */
 	private float getParLines(int xPoints[], int yPoints[], int i, int w,
 			IntPoint p1, IntPoint p2, IntPoint p3, IntPoint p4) {
 		int i1 = i + 1;
