@@ -185,6 +185,15 @@ public class QueueDataReader extends QueueReader implements Runnable {
 			
 			/**
 			 * Split way list into different layers
+			 * TODO: shouldn't this moved to OSM2GpsMid 
+			 * I'll suggest that in font of ways are 5 short values
+			 * for each layer one value for the count of ways in this layer.
+			 * So the Way itself don't need a layer and all array can create 
+			 * at start and have not to be sorted afterward into the correct layer.
+			 * This saves allocation of tempWays!
+			 * if more then 10 ways/areas have a layer this version will save bytes.
+			 * 
+			 * a value for the layer
 			 */
 			tt.setWays(new Way[5][]);
 			for (int i = 0; i < 5; i++) {
