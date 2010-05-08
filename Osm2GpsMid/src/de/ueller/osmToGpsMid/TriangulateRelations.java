@@ -67,7 +67,7 @@ public class TriangulateRelations {
 				}
 				if (r.getWayIds(Member.ROLE_OUTER).size() == 0){
 					System.out.println("Relation has no outer member");
-					System.out.println("    see http://www.openstreetmap.org/?relation=" + r.id + "I'll ignore this relation");
+					System.out.println("    see " + r.toUrl() + " I'll ignore this relation");
 					continue;
 				}
 //				System.out.println("Triangulate relation " + r.id);
@@ -81,8 +81,8 @@ public class TriangulateRelations {
 //					}
 					Way w = wayHashMap.get(ref);
 					if (w == null) {
-						System.out.println("Way http://www.openstreetmap.org/?way=" + ref + " was not found but referred  as outline in ");
-						System.out.println("    relation http://www.openstreetmap.org/?relation=" + r.id + " I'll ignore this relation");
+						System.out.println("Way " + w.toUrl() + " was not found but referred  as outline in ");
+						System.out.println("    relation " + r.toUrl() + " I'll ignore this relation");
 						continue rel;
 					}
 					Outline no = createOutline(w);
@@ -91,8 +91,8 @@ public class TriangulateRelations {
 						if (firstWay == null) {
 							if (w.triangles != null){
 								System.out.println("strange this outline is already triangulated ! maybe dublicate. I will ignore it");
-								System.out.println("Way http://www.openstreetmap.org/?way=" + ref);
-								System.out.println("please see http://www.openstreetmap.org/?relation=" + r.id);
+								System.out.println("Way " + w.toUrl());
+								System.out.println("please see " + r.toUrl());
 								continue rel;
 							}
 							firstWay = w;
@@ -104,8 +104,8 @@ public class TriangulateRelations {
 				for (Long ref : r.getWayIds(Member.ROLE_INNER)) {
 					Way w = wayHashMap.get(ref);
 					if (w == null) {
-						System.out.println("Way http://www.openstreetmap.org/?way=" + ref + " was not found but referred  as INNER in ");
-						System.out.println("    relation http://www.openstreetmap.org/?relation=" + r.id + " I'll ignore this relation");
+						System.out.println("Way " + w.toUrl() + " was not found but referred  as INNER in ");
+						System.out.println("    relation "+ r.toUrl() + " I'll ignore this relation");
 						continue rel;
 					}
 					Outline no = createOutline(w);
