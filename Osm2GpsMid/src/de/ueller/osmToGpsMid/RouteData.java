@@ -246,6 +246,8 @@ public class RouteData {
 					}
 					System.out.println("  Resolved viaWay x toWay to node " + rn.node.id);					
 					break;
+				} else {
+					
 				}
 			}
 			
@@ -288,7 +290,9 @@ public class RouteData {
 			} else {
 				System.out.println("  WARNING: Could not resolve viaRouteNodes");
 				System.out.println("    for viaWay " + restrictionViaWay.toUrl());
-				if ( turn.additionalViaRouteNodes[0] == null) {
+				if ( turn.additionalViaRouteNodes == null) {
+					System.out.println("    viaWay " + restrictionFromWay.toUrl() + " does not end at start of toWay");						
+				} else if (turn.additionalViaRouteNodes[0] == null) {
 					System.out.println("    fromWay " + restrictionFromWay.toUrl() + " is not connected");	
 				}
 				if (turn.viaRouteNode == null) {
