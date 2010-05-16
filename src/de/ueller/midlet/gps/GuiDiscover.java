@@ -1029,7 +1029,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				gs.show();
 				break;
 			case MENU_ITEM_GUI_OPT:
-				GuiSetupGui gsg = new GuiSetupGui(this);
+				GuiSetupGui gsg = new GuiSetupGui(this, false);
 				gsg.show();
 				break;
 			case MENU_ITEM_KEYS_OPT:

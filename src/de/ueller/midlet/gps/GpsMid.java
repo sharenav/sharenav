@@ -156,7 +156,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_FULLSCREEN, true);				
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_BIG_TAB_BUTTONS, true);				
 			} else {
-				GuiSetupGui gsg = new GuiSetupGui(trace);
+				GuiSetupGui gsg = new GuiSetupGui(trace, true);
 				gsg.show();							
 			}
 			Configuration.setCfgBitSavedState(Configuration.CFGBIT_INITIAL_SETUP_DONE, true);

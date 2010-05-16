@@ -17,10 +17,12 @@ public class GuiSetupGui extends Form implements CommandListener {
 	
 	// other
 	private GpsMidDisplayable parent;
+	private boolean initialSetup;
 	
-	public GuiSetupGui(GpsMidDisplayable parent) {
+	public GuiSetupGui(GpsMidDisplayable parent, boolean initialSetup) {
 		super("GUI Options");
 		this.parent = parent;
+		this.initialSetup = initialSetup;
 		try {
 			String [] guis = new String[5];
 			guis[0] = "use icon menu";
@@ -66,7 +68,14 @@ public class GuiSetupGui extends Form implements CommandListener {
 			Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN, guiOpts.isSelected(1));
 			Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_BIG_TAB_BUTTONS, guiOpts.isSelected(2));
 			Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_MAPPED_ICONS, guiOpts.isSelected(3));
-			Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED, guiOpts.isSelected(4));
+			boolean optimizedForRouting = guiOpts.isSelected(4);
+			Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED, optimizedForRouting);
+			// when the GUI is to be optimized for routing and we have a default backlight method, turn the backlight on			
+			if (initialSetup && optimizedForRouting) {
+				if (Configuration.getDefaultDeviceBacklightMethodMask() != 0) {
+					Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_ON, true);
+				}
+			}
 			Trace.uncacheIconMenu();
 			GuiDiscover.uncacheIconMenu();
 			parent.show();

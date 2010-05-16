@@ -1385,7 +1385,7 @@ public class Configuration {
 		return "";
 	}
 	
-	private static long getDefaultDeviceBacklightMethodMask() {
+	public static long getDefaultDeviceBacklightMethodMask() {
 		// a list of return codes for microedition.platform can be found at:
 		// http://www.club-java.com/TastePhone/J2ME/MIDP_Benchmark.jsp
 
