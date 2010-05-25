@@ -253,6 +253,13 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 	}
 
 	public void completedUpload(boolean success, String message) {
+		// Seems the activity is sometimes ready before the popup is open,
+		// so let's wait a little to make sure the message isn't lost.
+		try {
+			Thread.sleep( 500 );
+		} catch (InterruptedException ie) {
+		}
+		
 		String alertMsg;
 		if (mExporting) {
 			if (success) {
