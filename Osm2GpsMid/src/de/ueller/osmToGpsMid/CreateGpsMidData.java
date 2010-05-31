@@ -361,9 +361,27 @@ public class CreateGpsMidData implements FilenameFilter {
 				}
 				// System.out.println(way);
 			}
+
+
+			if (Configuration.attrToBoolean(configuration.useIcons) < 0) {
+				System.out.println("Icons disabled - removing icon files from midlet.");
+				removeUnusedIconSizes(path, true);
+			} else {				
+				// show summary for copied icon files
+				System.out.println("Icon inclusion summary:");
+				System.out.println("  " + FileTools.copyDir("icon", path, true, true) + 
+						" internal icons replaced from " + "icon" + 
+						System.getProperty("file.separator") + " containing " + 
+						FileTools.countFiles("icon") + " files");
+
+				// if useIcons==small or useIcons==big rename the corresponding icons to normal icons
+				if (Configuration.attrToBoolean(configuration.useIcons) == 0) {
+					renameAlternativeIconSizeToUsedIconSize(configuration.useIcons + "_");
+				}
+				removeUnusedIconSizes(path, false);
+			}
 			
-			RouteSoundSyntax soundSyn = new RouteSoundSyntax(configuration.getSoundFiles(), path + "/syntax.dat");
-			
+			RouteSoundSyntax soundSyn = new RouteSoundSyntax(configuration.getStyleFileDirectory(), configuration.getSoundFiles(), path + "/syntax.dat");			
 			
 			/**
 			 * Copy sounds for all sound formats to midlet 
@@ -385,24 +403,6 @@ public class CreateGpsMidData implements FilenameFilter {
 			}
 			removeUnusedSoundFormats(path);
 
-			if (Configuration.attrToBoolean(configuration.useIcons) < 0) {
-				System.out.println("Icons disabled - removing icon files from midlet.");
-				removeUnusedIconSizes(path, true);
-			} else {				
-				// show summary for copied icon files
-				System.out.println("Icon inclusion summary:");
-				System.out.println("  " + FileTools.copyDir("icon", path, true, true) + 
-						" internal icons replaced from " + "icon" + 
-						System.getProperty("file.separator") + " containing " + 
-						FileTools.countFiles("icon") + " files");
-
-				// if useIcons==small or useIcons==big rename the corresponding icons to normal icons
-				if (Configuration.attrToBoolean(configuration.useIcons) == 0) {
-					renameAlternativeIconSizeToUsedIconSize(configuration.useIcons + "_");
-				}
-				removeUnusedIconSizes(path, false);
-			}
-
 			
 			// show summary for copied media files
 			try {
@@ -414,7 +414,7 @@ public class CreateGpsMidData implements FilenameFilter {
 				}
 				sbCopiedMedias.append("  Media Sources for external medias\r\n");
 				sbCopiedMedias.append("  referenced in " + configuration.getStyleFileName() +" have been:\r\n");
-				sbCopiedMedias.append("    " + (configuration.getStyleFileDirectory().length() == 0 ? "Current directory" : configuration.getStyleFileDirectory()) + " and its png and sound subdirectories");
+				sbCopiedMedias.append("    " + (configuration.getStyleFileDirectory().length() == 0 ? "Current directory" : configuration.getStyleFileDirectory()) + " and its png and " + configuration.getSoundFiles() + " subdirectories");
 				System.out.println(sbCopiedMedias.toString());
 				if (mediaInclusionErrors!=0) {
 					System.out.println("");

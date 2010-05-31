@@ -20,20 +20,24 @@ public class RouteSoundSyntax {
 	private DataOutputStream dsi = null;
 	private ArrayList<String> soundNames = new ArrayList<String>(1);
 	
-	public RouteSoundSyntax(String additionalSrcPath, String destinationPathAndFile) {
+	public RouteSoundSyntax(String styleFileDirectory, String additionalSrcPath, String destinationPathAndFile) {
 	
+		String info = "Using " + styleFileDirectory + additionalSrcPath + "/syntax.cfg";
 		// try syntax.cfg from file system
 		try {			
-			is = new FileInputStream(additionalSrcPath + "/syntax.cfg");
+			is = new FileInputStream(styleFileDirectory + additionalSrcPath + "/syntax.cfg");
 		} catch (Exception e) {
 			// try internal syntax.cfg
 			try {			
+				info = "Using internal syntax.cfg from " + additionalSrcPath;
 				is = getClass().getResourceAsStream("/media/" + additionalSrcPath + "/syntax.cfg");
 			} catch (Exception e2) {
 				;
 			}
 		}			
 
+		System.out.println(info + " for specifying route and sound syntax");
+		
 		if (is != null) {
 			try {
 				InputStreamReader isr = new InputStreamReader(is, "UTF-8");
