@@ -543,17 +543,25 @@ public class Configuration {
 				}
 			}
 			
-			// Determine the directory of the style-file
-			styleFileDirectoryWithDelimiter = null;
+			/* 
+			 * Determine the directory of the style-file
+			 */
+			// the default style-file directory is the current directory
+			styleFileDirectoryWithDelimiter = "";
 			File file = new File(styleFile);
-			if (! file.canRead()) {
+			// if the style-file can be read from the file system.. 
+			if (file.canRead()) {
+				// ..then the style-file-directory is the parent directory of the style-file
 				styleFileDirectoryWithDelimiter = file.getParent();
+				// if the style-file's parent directory is not valid or it's simply a slash (linux) / back slash (windows)...
 				if (styleFileDirectoryWithDelimiter == null
 						|| styleFileDirectoryWithDelimiter.equalsIgnoreCase("\\")
 						|| styleFileDirectoryWithDelimiter.equalsIgnoreCase("/")) {
+					// ...then simply use the current directory as media directory
 					styleFileDirectoryWithDelimiter = "";
 				}
 			}
+			// make the style-file directory end on "/" (if it's not the current directory)
 			if (styleFileDirectoryWithDelimiter != null && styleFileDirectoryWithDelimiter.length() > 1) {
 				styleFileDirectoryWithDelimiter = styleFileDirectoryWithDelimiter.replace('\\', '/');
 				styleFileDirectoryWithDelimiter = styleFileDirectoryWithDelimiter + "/";
