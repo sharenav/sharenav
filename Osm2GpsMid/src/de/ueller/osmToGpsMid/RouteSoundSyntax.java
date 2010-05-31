@@ -5,6 +5,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.MissingResourceException;
 import java.util.PropertyResourceBundle;
@@ -33,11 +35,20 @@ public class RouteSoundSyntax {
 		}			
 
 		if (is != null) {
-			try {			
-				rb = new PropertyResourceBundle(is);
-			} catch (Exception e) {
-				;
-			}
+			try {
+				InputStreamReader isr = new InputStreamReader(is, "UTF-8");
+				try {			
+					rb = new PropertyResourceBundle(isr);
+				} catch (Exception e) {
+					System.out.println ("ERROR: PropertyResourceBundle for syntax.cfg could not be created");
+					e.printStackTrace();
+					System.exit(1);
+				}
+			} catch (UnsupportedEncodingException e1) {
+					System.out.println ("ERROR: InputStreamReader for syntax.cfg could not be created");
+					e1.printStackTrace();
+					System.exit(1);
+			}			
 		} else {
 			System.out.println ("ERROR: syntax.cfg not found in the " + additionalSrcPath + " directory");
 			System.exit(1);
