@@ -1,5 +1,5 @@
 /**
- * GpsMid - Copyright (c) 2009 Kai Krueger apmonkey at users dot sourceforge dot net 
+ * GpsMid - Copyright (c) 2009 Kai Krueger apmonkey at users dot sourceforge dot net
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -40,6 +40,7 @@ public class CellDB {
 		int lac;
 		int cellid;
 
+		@Override
 		public String toString() {
 			return "Cell MCC: " + mcc + " MNC: " + mnc + " LAC: " + lac
 					+ " CellID: " + cellid + " (" + lat + "|" + lon + ")";
@@ -89,7 +90,7 @@ public class CellDB {
 		try {
 			BufferedReader r = new BufferedReader(new InputStreamReader(conf
 					.getCellStream()));
-			if (r == null) { 
+			if (r == null) {
 				System.out.println("WARNING: could not find cellID file, NOT including cell ids");
 				return;
 			}
@@ -121,11 +122,15 @@ public class CellDB {
 					Integer.parseInt(cellString[8]); // NoSample
 
 					boolean isIn = false;
-					for (Bounds bound : bounds) {
-						if (bound.isIn(c.lat, c.lon)) {
-							isIn = true;
-							continue;
+					if (bounds != null && bounds.size() != 0) {
+						for (Bounds bound : bounds) {
+							if (bound.isIn(c.lat, c.lon)) {
+								isIn = true;
+								continue;
+							}
 						}
+					} else {
+						isIn = true;
 					}
 					if (!isIn) {
 						continue;
