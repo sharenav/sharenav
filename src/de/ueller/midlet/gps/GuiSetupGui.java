@@ -74,6 +74,7 @@ public class GuiSetupGui extends Form implements CommandListener {
 			if (initialSetup && optimizedForRouting) {
 				if (Configuration.getDefaultDeviceBacklightMethodMask() != 0) {
 					Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_ON, true);
+					GpsMid.getInstance().restartBackLightTimer();			
 				}
 			}
 			Trace.uncacheIconMenu();

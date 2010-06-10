@@ -590,6 +590,11 @@ public class GpsMid extends MIDlet implements CommandListener {
 		}
 	}
 
+	public void restartBackLightTimer() {
+		stopBackLightTimer();
+		startBackLightTimer();
+	}
+	
 	/**
 	 * Try and determine the maximum available memory. As some phones have
 	 * dynamic growing heaps, we need to try and cause a out of memory error, as

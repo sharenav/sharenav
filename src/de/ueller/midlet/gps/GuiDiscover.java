@@ -794,8 +794,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 				state = STATE_ROOT;
 				show();
 
-				parent.stopBackLightTimer();				
-				parent.startBackLightTimer();			
+				parent.restartBackLightTimer();		
 				break;
 			case STATE_DEBUG:
 				boolean [] selDebug = new boolean[1];
