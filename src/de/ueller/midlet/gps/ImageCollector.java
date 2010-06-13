@@ -38,7 +38,7 @@ public class ImageCollector implements Runnable {
 
 	private Image[] img = new Image[2];
 	private volatile PaintContext[] pc = new PaintContext[2];
-	public static Node mapCenter = new Node();
+	public static volatile Node mapCenter = new Node();
 	public static volatile long icDuration = 0;
 	byte nextCreate = 1;
 	byte nextPaint = 0;
