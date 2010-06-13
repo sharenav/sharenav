@@ -581,6 +581,7 @@ public class Configuration {
 		}
 
 		if (configVersionStored < 16) {
+			cfgBits_0_to_63 |= 1L << CFGBIT_USE_TURN_RESTRICTIONS_FOR_ROUTE_CALCULATION;
 			setTrafficSignalCalcDelay(5);
 		}
 		
