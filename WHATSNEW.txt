@@ -1,4 +1,4 @@
-GpsMid 0.6.5
+GpsMid 0.6.2
 	*** Map Screen ***
 	   - Greatly improved area rendering:
 	     - J2ME mobiles can only draw triangles, so for rendering filled polygons they need to be split into triangles.
@@ -24,8 +24,10 @@ GpsMid 0.6.5
 	     This will include the Finnish sound files into GpsMid (thx jkpj)  	     	   
     *** Map Elements ***
 	   - improved color for buildings
-	   - add area types leisure=pitch, landuse=farm_yard, landuse=military
+	   - add area types shop=*, leisure=pitch, landuse=farm_yard, landuse=military
+	   - add POIs for shop=bicycle/organic/clothes
 	   - changed colors for landuse=commercial and graveyards/cemeteries
+	   - Paths with bicycle=designated / foot=designated added and drawn like footways / cycleways
 	*** Routing ***   
 	   - If GUI is optimized for routing after selecting in the Search results "Route"
 	     or "As destination" do not move map to destination, thus the route gets calculated
