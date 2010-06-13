@@ -1372,6 +1372,25 @@ scale alias 1: zoomed out 21x
 				<routing with="bicycle" accessible="true" speed="15" />
   				<routing with="foot" accessible="false" speed="4" />  	
   			</Wvalue>
+<!-- according to http://wiki.openstreetmap.org/wiki/Tag:highway%3Dpath
+	 a path tagged with bicycle=designated can be rendered equally to highway=cycleway
+-->
+  			<Wvalue name = "path" priority = "10">
+  				<specialisation key="bicycle" value="designated"/>
+  				<description desc = "cycleway2"/>
+  				<namekey tag = "name"/>  				
+  				<isArea area = "false"/>
+  				<scale scale = "20"/>
+  				<lineColor color = "007777FF" colorAtNight="0037922D" />
+<!-- grey border color for typical non-motorcar ways
+ 				<borderColor color="008C8C8C" colorAtNight="008C8C8C" />
+-->
+  				<lineStyle dashed = "true" />
+  				<wayWidth width="2" />
+  				<routing with="motorcar" accessible="false" speed="5" />
+				<routing with="bicycle" accessible="true" speed="12" />
+  				<routing with="foot" accessible="true" speed="4" />  	
+  			</Wvalue>
   			<Wvalue name = "footway" priority = "7">
   				<description desc = "footway"/>
   				<namekey tag = "name"/>  				
@@ -1384,6 +1403,24 @@ scale alias 1: zoomed out 21x
   				<wayWidth width="2" />
 				<routing with="motorcar" accessible="false" speed="5" />  	
 				<routing with="bicycle" accessible="true" speed="12" />
+  				<routing with="foot" accessible="true" speed="4" />
+  			</Wvalue>
+<!-- according to http://wiki.openstreetmap.org/wiki/Tag:highway%3Dpath
+	 a path tagged with foot=designated can be rendered equally to highway=footway
+-->
+  			<Wvalue name = "path" priority = "9">
+  				<specialisation key="foot" value="designated"/>
+  				<description desc = "footway2"/>
+  				<namekey tag = "name"/>  				
+  				<isArea area = "false"/>
+  				<scale scale = "20"/>
+  				<lineColor color = "00FFFFFF" colorAtNight="00515151" />
+<!-- grey border color for typical non-motorcar ways
+ 				<borderColor color="008C8C8C" colorAtNight="008C8C8C" />
+-->
+  				<wayWidth width="2" />
+				<routing with="motorcar" accessible="false" speed="5" />  	
+				<routing with="bicycle" accessible="false" speed="12" />
   				<routing with="foot" accessible="true" speed="4" />
   			</Wvalue>
   			<Wvalue name = "steps" priority = "10">
