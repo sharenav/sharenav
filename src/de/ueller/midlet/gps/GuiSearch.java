@@ -251,7 +251,16 @@ public class GuiSearch extends Canvas implements CommandListener,
 							String name = (String)names.elementAt(i);
 							//#debug debug
 							logger.debug("Retrieving entries for " + name);							
-							searchThread.appendSearchBlocking(NumberCanon.canonial(name));
+
+							// FIXME: Workaround for the full text search sometimes failing for substrings included at the end of names
+							// This change from "[ gpsmid-Patches-3002028 ] Improving full text search" reduces the number of failures
+							// see also: http://sourceforge.net/projects/gpsmid/forums/forum/677687/topic/3708460
+							// old code: searchThread.appendSearchBlocking(NumberCanon.canonial(name));							
+							if (name.length() < 21) {						
+								searchThread.appendSearchBlocking(NumberCanon.canonial(name));
+							} else {
+								searchThread.appendSearchBlocking(NumberCanon.canonial(name.substring(0,20)));
+							}
 						}
 						setTitle("Search results:");
 						state = STATE_MAIN;
