@@ -93,9 +93,9 @@ public class Area {
 			outlineList.remove(0);
 			while (outline.vertexCount() > 2) {
 				loop++;
-				if (loop > 10000) {
+				if (loop > 50000) {
 					System.err.println("Break because of infinite loop for outline " + outline.getWayId());
-					System.err.println(" see http://www.openstreetmap.org/?way="+outline.getWayId());
+					System.err.println(" see http://www.openstreetmap.org/browse/way/" + outline.getWayId());
 					break;
 				}
 				ret.add(cutOneEar(outline, holeList, dir));
