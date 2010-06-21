@@ -320,6 +320,16 @@ public class MoreMath {
 		return (x & 0xFFFFFFFFL);
 	}
 
+	/**
+	 * Calculate the shortest square distance of point (PX,PX) to the line (X1,Y1)-(X2,Y2)
+	 * @param X1
+	 * @param Y1
+	 * @param X2
+	 * @param Y2
+	 * @param PX
+	 * @param PY
+	 * @return
+	 */
 	public static float  ptSegDistSq  (  int X1, int Y1,  
 			int X2, int Y2,  
 			int PX, int PY  
