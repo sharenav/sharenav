@@ -1217,18 +1217,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				return;
 			}
 			if (c == CMDS[TOGGLE_MAP_PROJ_CMD]) {
-				if (ProjFactory.getProj() == ProjFactory.NORTH_UP ) {
-					ProjFactory.setProj(ProjFactory.MOVE_UP);
-					alert("Map Rotation", "Driving Direction", 750);
-				} else {
-					if (manualRotationMode) {
-						course = 0;
-						alert("Manual Rotation", "to North", 750);
-					} else {
-						ProjFactory.setProj(ProjFactory.NORTH_UP);					
-						alert("Map Rotation", "NORTH UP", 750);
-					}
-				}
+				alert("Map Rotation", ProjFactory.nextProj(), 750);
 				// redraw immediately
 				synchronized (this) {
 					if (imageCollector != null) {
@@ -1377,12 +1366,14 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		Images images = new Images();
 		pc = new PaintContext(this, images);
 		pc.legend = GpsMid.legend;
+		/* move responsibility for overscan to ImmageCollector 
 		int w = (this.getWidth() * 125) / 100;
 		int h = (this.getHeight() * 125) / 100;
-		imageCollector = new ImageCollector(tiles, w, h, this, images, pc.legend);
+		*/
+		imageCollector = new ImageCollector(tiles, this.getWidth(), this.getHeight(), this, images, pc.legend);
 //		projection = ProjFactory.getInstance(center,course, scale, getWidth(), getHeight());
 //		pc.setP(projection);
-		pc.center = center.clone();
+		pc.center = center.copy();
 		pc.scale = scale;
 		pc.xSize = this.getWidth();
 		pc.ySize = this.getHeight();
@@ -1508,16 +1499,16 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					 * obsolete instruction from inside the tunnel
 					 */
 					int maxAllowedMapMoveOffs = Math.min(pc.xSize/2, pc.ySize/2);
-					if ( Math.abs(pc.lineP2.x - pc.xSize/2) < maxAllowedMapMoveOffs
+					if ( Math.abs(pc.lineP2.x - pc.getP().getImageCenter().x) < maxAllowedMapMoveOffs
 						 &&
-						 Math.abs(pc.lineP2.y - pc.ySize/2) < maxAllowedMapMoveOffs
+						 Math.abs(pc.lineP2.y - pc.getP().getImageCenter().y) < maxAllowedMapMoveOffs
 					) {
 						/*
 						 *  we need to synchronize the route instructions on the informations determined during way painting
 						 *  so we give the route instructions right after drawing the image with the map
 						 *  and use the center of the last drawn image for the route instructions
 						 */
-						ri.showRoute(pc, drawnCenter);
+						ri.showRoute(pc, drawnCenter,imageCollector.xScreenOverscan,imageCollector.yScreenOverscan);
 					}
 				}
 			}
@@ -1857,7 +1848,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	private void getPC() {
 			pc.course = course;
 			pc.scale = scale;
-			pc.center = center.clone();
+			pc.center = center.copy();
 //			pc.setP( projection);
 //			projection.inverse(pc.xSize, 0, pc.screenRU);
 //			projection.inverse(0, pc.ySize, pc.screenLD);
@@ -1918,7 +1909,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	
 	private void setPointOfTheCompass() {
 		String c = "";
-		if (ProjFactory.getProj() == ProjFactory.MOVE_UP
+		if (ProjFactory.getProj() != ProjFactory.NORTH_UP
 				&& Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_POINT_OF_COMPASS)) {
 			c = Configuration.getCompassDirection(course);
 		}
@@ -1964,18 +1955,27 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	}
 
 	public void showDestination(PaintContext pc) {
+		try {
 		if (dest != null) {
 			pc.getP().forward(dest.lat, dest.lon, pc.lineP2);
 //			System.out.println(dest.toString());
-			pc.g.drawImage(pc.images.IMG_DEST, pc.lineP2.x, pc.lineP2.y, CENTERPOS);
+			int x = pc.lineP2.x-imageCollector.xScreenOverscan;
+			int y = pc.lineP2.y-imageCollector.yScreenOverscan;
+			pc.g.drawImage(pc.images.IMG_DEST, x, y, CENTERPOS);
 			pc.g.setColor(Legend.COLORS[Legend.COLOR_DEST_TEXT]);
 			if (dest.displayName != null) {
-				pc.g.drawString(dest.displayName, pc.lineP2.x, pc.lineP2.y+8,
+				pc.g.drawString(dest.displayName, x, y+8,
 					Graphics.TOP | Graphics.HCENTER);
 			}
 			pc.g.setColor(Legend.COLORS[Legend.COLOR_DEST_LINE]);
 			pc.g.setStrokeStyle(Graphics.DOTTED);
-			pc.g.drawLine(pc.lineP2.x, pc.lineP2.y, pc.xSize / 2, pc.ySize / 2);
+			pc.g.drawLine(x, y, pc.getP().getImageCenter().x-imageCollector.xScreenOverscan, pc.getP().getImageCenter().y-imageCollector.yScreenOverscan);
+		}
+		} catch (Exception e) {
+			if (imageCollector == null){
+				System.out.println("No ImmageCollector");
+			}
+			e.printStackTrace();
 		}
 	}
 
@@ -1986,32 +1986,46 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	 * @param g Graphics context for drawing
 	 */
 	public void showMovement(Graphics g) {
-		g.setColor(Legend.COLORS[Legend.COLOR_MAP_CURSOR]);
-		int centerX = getWidth() / 2;
-		int centerY = getHeight() / 2;
-		int posX, posY;
-		if (!gpsRecenter) {
-			IntPoint p1 = new IntPoint(0, 0);				
-			pc.getP().forward((pos.latitude * MoreMath.FAC_DECTORAD), 
-							  (pos.longitude * MoreMath.FAC_DECTORAD), p1);
-			posX = p1.getX();
-			posY = p1.getY();		
-		} else {
-			posX = centerX;
-			posY = centerY;
-		}
-		pc.g.drawImage(pc.images.IMG_POS_BG, posX, posY, CENTERPOS);
+		IntPoint centerP=null;
+		try {
+			if (imageCollector != null){
+			g.setColor(Legend.COLORS[Legend.COLOR_MAP_CURSOR]);
+			centerP = pc.getP().getImageCenter();
+			int centerX = centerP.x-imageCollector.xScreenOverscan;
+			int centerY = centerP.y-imageCollector.yScreenOverscan;
+			int posX, posY;
+			if (!gpsRecenter) {
+				IntPoint p1 = new IntPoint(0, 0);				
+				pc.getP().forward((pos.latitude * MoreMath.FAC_DECTORAD), 
+								  (pos.longitude * MoreMath.FAC_DECTORAD), p1);
+				posX = p1.getX();
+				posY = p1.getY();		
+			} else {
+				posX = centerX;
+				posY = centerY;
+			}
+			pc.g.drawImage(pc.images.IMG_POS_BG, posX, posY, CENTERPOS);
 
-		g.setColor(Legend.COLORS[Legend.COLOR_MAP_POSINDICATOR]);
-		float radc = (float) (course * MoreMath.FAC_DECTORAD);
-		int px = posX + (int) (Math.sin(radc) * 20);
-		int py = posY - (int) (Math.cos(radc) * 20);
-		g.drawRect(posX - 4, posY - 4, 8, 8);
-		g.drawLine(posX, posY, px, py);
-		if (!gpsRecenter) {
-    		g.drawLine(centerX, centerY - 12, centerX, centerY + 12);
-    		g.drawLine(centerX - 12, centerY, centerX + 12, centerY);
-    		g.drawArc(centerX - 5, centerY - 5, 10, 10, 0, 360);
+			g.setColor(Legend.COLORS[Legend.COLOR_MAP_POSINDICATOR]);
+			float radc = (float) (course * MoreMath.FAC_DECTORAD);
+			int px = posX + (int) (Math.sin(radc) * 20);
+			int py = posY - (int) (Math.cos(radc) * 20);
+			g.drawRect(posX - 4, posY - 4, 8, 8);
+			g.drawLine(posX, posY, px, py);
+			if (!gpsRecenter) {
+				g.drawLine(centerX, centerY - 12, centerX, centerY + 12);
+				g.drawLine(centerX - 12, centerY, centerX + 12, centerY);
+				g.drawArc(centerX - 5, centerY - 5, 10, 10, 0, 360);
+			}
+			}
+		} catch (Exception e) {
+			if (imageCollector == null){
+				System.out.println("No ImmageCollector");
+			}
+			if (centerP == null){
+				System.out.println("No centerP");
+			}
+			e.printStackTrace();
 		}
 	}
 	
@@ -2098,7 +2112,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 
 	private void updatePosition() {
 		if (pc != null) {
-			pc.center = center.clone();
+			pc.center = center.copy();
 			pc.scale = scale;
 			pc.course=course;
 			repaint();
@@ -2329,7 +2343,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		Trace.touchX = x;
 		Trace.touchY = y;
 		// remember center when the pointer was pressed
-		centerPointerPressedN = center.clone();
+		centerPointerPressedN = center.copy();
 	}
 	
 	protected void pointerReleased(int x, int y) {
@@ -2385,7 +2399,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			}
 
 			if (pc != null) {				
-				pc.center = center.clone();
+				pc.center = center.copy();
 				pc.scale = scale;
 				pc.course = course;
 			}

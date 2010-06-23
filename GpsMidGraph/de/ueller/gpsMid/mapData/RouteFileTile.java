@@ -90,18 +90,18 @@ public class RouteFileTile extends RouteBaseTile {
 
 	private void loadTile() throws IOException {
             //#debug debug
-			logger.debug("load Tile /d"+zl+fileId+".d");
-			InputStream is = Configuration.getMapResource("/d"+zl+fileId+".d");
+			logger.debug("load Tile /d"+zl+"/"+fileId+".d");
+			InputStream is = Configuration.getMapResource("/d"+zl+"/"+fileId+".d");
 			if (is == null){
 //				logger.error("file inputStream /d"+tt.zl+tt.fileId+".d not found" );
-				throw new IOException("File not found /d"+zl+fileId+".d" );
+				throw new IOException("File not found /d"+zl+"/"+fileId+".d" );
 			}
 //			logger.info("open DataInputStream");
 			DataInputStream ds=new DataInputStream(is);
 			if (ds == null){
 //				logger.error("file DataImputStream "+url+" not found" );
 				is.close();
-				throw new IOException("DataStream not open for /d"+zl+fileId+".d" );
+				throw new IOException("DataStream not open for /d"+zl+"/"+fileId+".d" );
 			}
 //			end open data from JAR
 //			logger.info("read Magic code");

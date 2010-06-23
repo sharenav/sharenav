@@ -862,6 +862,7 @@ public class Way extends Entity {
 		IntPoint lineP2 = pc.lineP2;
 		IntPoint swapLineP = pc.swapLineP;
 		Projection p = pc.getP();
+		boolean orthogonal=p.isOrthogonal();
 		
 		int pi=0;
 		
@@ -889,8 +890,21 @@ public class Way extends Entity {
 					/**
 					 * calculate closest distance to specific ways
 					 */
+					IntPoint center = pc.getP().getImageCenter();
 					float dst = MoreMath.ptSegDistSq(lineP1.x, lineP1.y,
-							lineP2.x, lineP2.y, pc.xSize / 2, pc.ySize / 2);					
+							lineP2.x, lineP2.y, center.x, center.y);
+//					String name = pc.trace.getName(nameIdx);
+//					if (dst < pc.squareDstToWay){
+//						System.out.println(" Way " + name + " dst=" + dst);
+//					}
+					// let see where the imageCenter is at this point
+					// TODO: hmu comment out
+//					try {
+//						pc.g.drawLine(center.x-5, center.y-7, center.x+5, center.y+7);
+//						pc.g.drawLine(center.x-5, center.y+7, center.x+5, center.y-7);
+//					} catch(Exception e){
+//						
+//					}
 					
 					if (dst < pc.squareDstToWay || dst < pc.squareDstToActualRoutableWay || dst < pc.squareDstToRoutePath) { 
 						float pen = 0;
@@ -992,7 +1006,7 @@ public class Way extends Entity {
                 }
 			// if render as streets or a part of the way is highlighted
 			} else {
-				draw(pc, t, (w == 0) ? 1 : w, x, y, hl, pi - 1, highlight);
+				draw(pc, t, (w == 0) ? 1 : w, x, y, hl, pi - 1, highlight,orthogonal);
 			}
 
 			paintPathName(pc, t);
@@ -1407,7 +1421,7 @@ public class Way extends Entity {
 	}
 	
 	private void draw(PaintContext pc, SingleTile t, int w, int xPoints[], int yPoints[], 
-			int hl[], int count, byte highlight /*, byte mode*/) {
+			int hl[], int count, byte highlight,boolean ortho /*, byte mode*/) {
 		
 		IntPoint closestP = new IntPoint();
 		int wClosest = 0;
@@ -1452,9 +1466,11 @@ public class Way extends Entity {
 				IntPoint centerP = new IntPoint();
 				// this is a divided seg (partly prior route line, partly current route line)
 				dividedSeg = true;
-				pc.getP().forward( 
-						(short)(MoreMath.FIXPT_MULT * (pc.center.radlat - t.centerLat)), 
-						(short)(MoreMath.FIXPT_MULT * (pc.center.radlon - t.centerLon)), centerP, t);
+				centerP=pc.getP().getImageCenter();
+				/** centerP is now provided by Projection implementation */
+//				pc.getP().forward( 
+//						(short)(MoreMath.FIXPT_MULT * (pc.center.radlat - t.centerLat)), 
+//						(short)(MoreMath.FIXPT_MULT * (pc.center.radlon - t.centerLon)), centerP, t);
 				// get point dividing the seg
 				closestP = MoreMath.closestPointOnLine(xPoints[i], yPoints[i], xPoints[i + 1], yPoints[i + 1], centerP.x, centerP.y);
 				// remember original next point
@@ -1474,7 +1490,11 @@ public class Way extends Entity {
 			}			
 
 			// Get the four outer points of the wDraw-wide waysegment
-			getParLines(xPoints, yPoints, i , wDraw, l1b, l2b, l1e, l2e);
+			if (ortho){
+				getParLines(xPoints, yPoints, i , wDraw, l1b, l2b, l1e, l2e);
+			} else {
+				pc.getP().getParLines(xPoints, yPoints, i , wDraw, l1b, l2b, l1e, l2e);
+			}
 
 			
 			if (hl[i] != PATHSEG_DO_NOT_DRAW) {

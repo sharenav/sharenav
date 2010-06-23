@@ -137,7 +137,7 @@ public class RouteInstructions {
 	}
 	
 
-	public void showRoute(PaintContext pc, Node center) {
+	public void showRoute(PaintContext pc, Node center,int xo,int yo) {
 		/*	PASSINGDISTANCE is the distance when a routing arrow
 			is considered to match to the current position.
 			We currently can't adjust this value according to the speed
@@ -183,6 +183,9 @@ public class RouteInstructions {
 			for (int x=0; x<routeNodes.size();x++){
 				RouteHelper n=(RouteHelper) routeNodes.elementAt(x);
 				pc.getP().forward(n.node.radlat, n.node.radlon, pc.lineP2);
+				pc.lineP2.x-=xo;
+				pc.lineP2.x-=yo;
+
 				pc.g.drawRect(pc.lineP2.x-5, pc.lineP2.y-5, 10, 10);
 				pc.g.drawString(n.name, pc.lineP2.x+7, pc.lineP2.y+5, Graphics.BOTTOM | Graphics.LEFT);
 			}
@@ -220,7 +223,13 @@ public class RouteInstructions {
 							IntPoint lineP1 = new IntPoint();
 							IntPoint lineP2 = new IntPoint();							
 							pc.getP().forward(areaStart.radlat, areaStart.radlon, lineP1);
+							pc.lineP1.x-=xo;
+							pc.lineP1.x-=yo;
+
 							pc.getP().forward(c.to.lat, c.to.lon, lineP2);
+							pc.lineP2.x-=xo;
+							pc.lineP2.x-=yo;
+
 							int dst = pc.getDstFromSquareDst( MoreMath.ptSegDistSq(lineP1.x, lineP1.y,
 									lineP2.x, lineP2.y, pc.xSize / 2, pc.ySize / 2));		
 //							System.out.println("Area dst:" + dst  + " way: " + dstToRoutePath);
@@ -306,7 +315,13 @@ public class RouteInstructions {
 							IntPoint lineP1 = new IntPoint();
 							IntPoint lineP2 = new IntPoint();							
 							pc.getP().forward(areaStart.radlat, areaStart.radlon, lineP1);
+							pc.lineP1.x-=xo;
+							pc.lineP1.x-=yo;
+
 							pc.getP().forward(c.to.lat, c.to.lon, lineP2);
+							pc.lineP2.x-=xo;
+							pc.lineP2.x-=yo;
+
 							pc.g.setStrokeStyle(Graphics.SOLID);
 							if (iNow > i) {
 								pc.g.setColor(Legend.COLORS[Legend.COLOR_ROUTE_PRIOR_ROUTELINE]);														
@@ -320,6 +335,9 @@ public class RouteInstructions {
 								// we are currently crossing the area, so we need to divide the line and draw a route dot onto it
 								IntPoint centerP = new IntPoint();
 								pc.getP().forward(center.radlat, center.radlon, centerP);
+								pc.lineP2.x-=xo;
+								pc.lineP2.x-=yo;
+
 								IntPoint closestP = MoreMath.closestPointOnLine(lineP1.x, lineP1.y, lineP2.x, lineP2.y, centerP.x, centerP.y);
 								pc.g.setColor(Legend.COLORS[Legend.COLOR_ROUTE_PRIOR_ROUTELINE]);														
 						    	pc.g.drawLine(lineP1.x, lineP1.y, closestP.x, closestP.y);
@@ -393,6 +411,8 @@ public class RouteInstructions {
 							aPaint = RI_DEST_REACHED;
 						}
 						pc.getP().forward(c.to.lat, c.to.lon, pc.lineP2);
+						pc.lineP2.x-=xo;
+						pc.lineP2.y-=yo;
 						// handle current arrow
 						if (i == iNow && aNow != RI_NONE) {
 						    // scale nearest arrow
@@ -500,6 +520,8 @@ public class RouteInstructions {
 						    if (aPaint == RI_SKIPPED) {
 								pc.g.setColor(0x00FDDF9F);
 								pc.getP().forward(c.to.lat, c.to.lon, pc.lineP2);
+								pc.lineP2.x-=xo;
+								pc.lineP2.x-=yo;
 								final byte radius=6;
 								pc.g.fillArc(pc.lineP2.x-radius/2,pc.lineP2.y-radius/2,radius,radius,0,359);
 							} else {

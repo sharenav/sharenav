@@ -55,6 +55,8 @@ public class Proj2D implements Projection {
     private float minLon=Float.MAX_VALUE;
     private float maxLon=-Float.MAX_VALUE;
 	private IntPoint	panP=new IntPoint();
+	private IntPoint	centerScreen=new IntPoint();
+
 	
 	protected static final Logger logger = Logger.getInstance(Proj2D.class,Logger.INFO);
 
@@ -97,7 +99,7 @@ public class Proj2D implements Projection {
     	extendMinMax(ret);
     	inverse(width, height, ret);
     	extendMinMax(ret);
-    	
+    	centerScreen=new IntPoint(wx, hy);
     	//#mdebug debug
     	logger.debug("scaled lat=" + scaled_lat);
     	logger.debug("scaled_Radius=" + scaled_radius);
@@ -200,6 +202,12 @@ public class Proj2D implements Projection {
         
         return llp;
 	}
+	
+	
+	public boolean isPlotable(short lat, short lon, SingleTile t) {
+		return isPlotable(lat*MoreMath.FIXPT_MULT_INV+t.centerLat,
+				lon*MoreMath.FIXPT_MULT_INV+t.centerLon);
+	}
 
 	public boolean isPlotable(float lat, float lon) {
 		if (lat < minLat) return false;
@@ -251,6 +259,65 @@ public class Proj2D implements Projection {
 	
 	public String toString() {
 		return "Proj2D " + (ctrLat * MoreMath.FAC_RADTODEC) + "/"+ (ctrLon * MoreMath.FAC_RADTODEC) + " s:" + scale;
+	}
+	public boolean isOrthogonal() {
+		return true;
+	}
+	   /** Calculate the end points for 2 paralell lines with distance w which
+	    * has the origin line (Xpoint[i]/Ypoint[i]) to (Xpoint[i+1]/Ypoint[i+1])
+		* as centre line
+	    * @param xPoints list off all XPoints for this Way
+	    * @param yPoints list off all YPoints for this Way
+	    * @param i the index out of (X/Y) Point for the line segement we looking for
+	    * @param w the width of the segment out of the way
+	    * @param p1 left start point
+	    * @param p2	right start point
+	    * @param p3 left end point
+	    * @param p4 right end point
+	    * @return the angle of the line in radians ( -Pi .. +Pi )
+	    */
+		public float getParLines(int xPoints[], int yPoints[], int i, int w,
+				IntPoint p1, IntPoint p2, IntPoint p3, IntPoint p4) {
+			int i1 = i + 1;
+			int dx = xPoints[i1] - xPoints[i];
+			int dy = yPoints[i1] - yPoints[i];
+			int l2 = dx * dx + dy * dy;
+			float l2f = (float) Math.sqrt(l2);
+			float lf = w / l2f;
+			int xb = (int) ((Math.abs(lf * dy)) + 0.5f);
+			int yb = (int) ((Math.abs(lf * dx)) + 0.5f);
+			int rfx = 1;
+			int rfy = 1;
+			if (dy < 0) {
+				rfx = -1;
+			}
+			if (dx > 0) {
+				rfy = -1;
+			}
+			int xd = rfx * xb;
+			int yd = rfy * yb;
+			p1.x = xPoints[i] + xd;	
+			p1.y = yPoints[i] + yd;
+			p2.x = xPoints[i] - xd;
+			p2.y = yPoints[i] - yd;
+			p3.x = xPoints[i1] + xd;
+			p3.y = yPoints[i1] + yd;
+			p4.x = xPoints[i1] - xd;
+			p4.y = yPoints[i1] - yd;
+			if (dx != 0) {
+				return (MoreMath.atan(1f * dy / dx));
+			} else {
+				if (dy > 0) {
+					return MoreMath.PiDiv2;
+				} else {
+					return -MoreMath.PiDiv2;
+				}
+			}
+		}
+
+
+	public IntPoint getImageCenter() {
+		return centerScreen;
 	}
 
 }

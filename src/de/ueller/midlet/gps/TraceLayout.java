@@ -357,41 +357,46 @@ public class TraceLayout extends LayoutManager {
 	}
 	
 	public void calcScaleBarWidth(PaintContext pc) {
-		Node n1 = new Node();
-		Node n2 = new Node();
-		
-		//Calculate the lat and lon coordinates of two
-		//points that are 1/7th of the screen width apart
-		int basePx = (pc.xSize / 7);
-		pc.getP().inverse(10, 10, n1);
-		pc.getP().inverse(10 + basePx, 10, n2);
-		
-		//Calculate the distance between them in meters
-		float d = ProjMath.getDistance(n1, n2);
-		float conv = 1.0f;
-		if (!Configuration.getCfgBitState(Configuration.CFGBIT_METRIC)) {
+		try {
+			Node n1 = new Node();
+			Node n2 = new Node();
 			
-			if (d > 1609.344) {
-				conv = 1609.344f;
+			//Calculate the lat and lon coordinates of two
+			//points that are 1/7th of the screen width apart
+			int basePx = (pc.xSize / 7);
+			pc.getP().inverse(10, 10, n1);
+			pc.getP().inverse(10 + basePx, 10, n2);
+			
+			//Calculate the distance between them in meters
+			float d = ProjMath.getDistance(n1, n2);
+			float conv = 1.0f;
+			if (!Configuration.getCfgBitState(Configuration.CFGBIT_METRIC)) {
 				
-			} else {
-				conv = 0.9144f;
+				if (d > 1609.344) {
+					conv = 1609.344f;
+					
+				} else {
+					conv = 0.9144f;
+				}
 			}
-		}
-		//round this distance up to the nearest 5 or 10
-		int ordMag = (int)(MoreMath.log((d/conv))/MoreMath.log(10.0f));
-		if ((d/conv) < 2.5*MoreMath.pow(10,ordMag)) {
-			scale = 2.5f*MoreMath.pow(10,ordMag) * conv;
-		} else if ((d/conv) < 5*MoreMath.pow(10,ordMag)) {
-			scale = 5*MoreMath.pow(10,ordMag) * conv;
-		} else {
-			scale = 10*MoreMath.pow(10,ordMag) * conv;
-		}
+			//round this distance up to the nearest 5 or 10
+			int ordMag = (int)(MoreMath.log((d/conv))/MoreMath.log(10.0f));
+			if ((d/conv) < 2.5*MoreMath.pow(10,ordMag)) {
+				scale = 2.5f*MoreMath.pow(10,ordMag) * conv;
+			} else if ((d/conv) < 5*MoreMath.pow(10,ordMag)) {
+				scale = 5*MoreMath.pow(10,ordMag) * conv;
+			} else {
+				scale = 10*MoreMath.pow(10,ordMag) * conv;
+			}
 
-		//Calculate how many pixels this distance is apart
-		//The scale/d factor should be between 1 and 2.5
-		//due to rounding
-		scalePx = (int)(((float)basePx)*scale/d);
+			//Calculate how many pixels this distance is apart
+			//The scale/d factor should be between 1 and 2.5
+			//due to rounding
+			scalePx = (int)(((float)basePx)*scale/d);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	

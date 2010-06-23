@@ -139,6 +139,8 @@ public class PaintContext extends ScreenContext {
 	public int routePathConnection;
 	/** the index of the path segment (of the way) where the nearest point on the route line is on */
 	public int pathIdxInRoutePathConnection;
+	/** the hotspot in pixel */
+	public IntPoint hotspot=new IntPoint();
 	
 	
 	/**public float actualNodeLat;
@@ -162,11 +164,14 @@ public class PaintContext extends ScreenContext {
 	 */
 	public int getDstFromSquareDst(float squareDst) {
 		if (squareDst != Float.MAX_VALUE) {
-			Node n1 = new Node();
-			Node n2 = new Node();
-			getP().inverse(0, 0, n1);
-			getP().inverse( (int) Math.sqrt(squareDst), 0, n2);
-			return (int) ProjMath.getDistance(n1, n2);
+//			Node n1 = new Node();
+//			Node n2 = new Node();
+//			/* have to use a point at the hotspot because not all projections are ortognoal */
+//			/* TODO: find a better way to calc this */
+//			getP().inverse(hotspot.x, hotspot.y, n1);
+//			getP().inverse( hotspot.x + (int) Math.sqrt(squareDst), hotspot.y, n2);
+//			return (int) ProjMath.getDistance(n1, n2);
+			return (int) (Math.sqrt(squareDst)/ppm);
 		} else {
 			return Integer.MAX_VALUE;
 		}

@@ -35,10 +35,10 @@ public class QueueDataReader extends QueueReader implements Runnable {
 	public void readData(Tile t, Object notifyReady) throws IOException {
 		logger.info("Reading tile: " + t);
 		SingleTile tt = (SingleTile) t;
-		InputStream is = Configuration.getMapResource("/t" + tt.zl + tt.fileId + ".d");
+		InputStream is = Configuration.getMapResource("/t" + tt.zl + "/" + tt.fileId + ".d");
 		if (is == null) {
 		    //#debug error
-			logger.error("File inputStream/t" + tt.zl + tt.fileId + ".d not found");
+			logger.error("File inputStream/t" + tt.zl + "/" + tt.fileId + ".d not found");
 			tt.state = 0;
 			return;
 		}

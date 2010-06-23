@@ -1,46 +1,51 @@
 package de.ueller.midlet.gps.data;
 
+import de.ueller.gps.nmea.NmeaInput;
 import de.ueller.gpsMid.mapData.SingleTile;
 import de.ueller.midlet.gps.Logger;
 
-public class Proj2DMoveUp implements Projection {
-	private float upDir;
+public class Proj2DEnh implements Projection {
+	private float					upDir;
 
-	private int course;
-	protected float ctrLat = 0.0f; // center latitude in radians
-	protected float ctrLon = 0.0f; // center longitude in radians
-	private final float scale;
-	private final int width;
-	private final int height;
-	private float scaled_radius;
-	private float planetPixelRadius;
-	private int pixelsPerMeter = DEFAULT_PIXEL_PER_METER;
-	protected float planetPixelCircumference = MoreMath.TWO_PI
-			* planetPixelRadius;
-	private float scaled_lat;
-	private int hy, wx;
-	private float tanCtrLat;
-	private float asinh_of_tanCtrLat;
-	private SingleTile tileCache;
-	private int ctrLonRel;
-	private int ctrLatRel;
-	private float scaled_radius_rel;
-	private float scaled_lat_rel;
-	private float sinRoh;
-	private float cosRoh;
-	private float minLat = Float.MAX_VALUE;
-	private float maxLat = -Float.MAX_VALUE;
-	private float minLon = Float.MAX_VALUE;
-	private float maxLon = -Float.MAX_VALUE;
-	private IntPoint centerScreen = new IntPoint();
+	private int						course;
+	protected float					ctrLat						= 0.0f;											// center
+																													// latitude
+																													// in
+																													// radians
+	protected float					ctrLon						= 0.0f;											// center
+																													// longitude
+																													// in
+																													// radians
+	private final float				scale;
+	private final int				width;
+	private final int				height;
+	private float					scaled_radius;
+	private float					planetPixelRadius;
+	private int						pixelsPerMeter				= DEFAULT_PIXEL_PER_METER;
+	protected float					planetPixelCircumference	= MoreMath.TWO_PI * planetPixelRadius;
+	private float					scaled_lat;
+	private int						hy, wx;
+	private float					hFac						= 0.70f;
+	private float					tanCtrLat;
+	private float					asinh_of_tanCtrLat;
+	private SingleTile				tileCache;
+	private int						ctrLonRel;
+	private int						ctrLatRel;
+	private float					scaled_radius_rel;
+	private float					scaled_lat_rel;
+	private float					sinRoh;
+	private float					cosRoh;
+	private float					minLat						= Float.MAX_VALUE;
+	private float					maxLat						= -Float.MAX_VALUE;
+	private float					minLon						= Float.MAX_VALUE;
+	private float					maxLon						= -Float.MAX_VALUE;
+	private IntPoint				centerScreen				= new IntPoint();
 
-	private IntPoint panP = new IntPoint();
+	private IntPoint				panP						= new IntPoint();
 
-	protected static final Logger logger = Logger.getInstance(
-			Proj2DMoveUp.class, Logger.INFO);
+	protected static final Logger	logger						= Logger.getInstance(Proj2DEnh.class, Logger.INFO);
 
-	public Proj2DMoveUp(Node center, int upDir, float scale, int width,
-			int height) {
+	public Proj2DEnh(Node center, int upDir, float scale, int width, int height) {
 		this.upDir = ProjMath.degToRad(upDir);
 		this.course = upDir;
 		this.ctrLat = center.radlat;
@@ -61,7 +66,7 @@ public class Proj2DMoveUp implements Projection {
 		asinh_of_tanCtrLat = MoreMath.asinh(tanCtrLat);
 
 		// compute the offsets
-		hy = height / 2;
+		hy = (int) (height * hFac);
 		wx = width / 2;
 		centerScreen = new IntPoint(wx, hy);
 		cosRoh = (float) Math.cos(upDir);
@@ -171,7 +176,7 @@ public class Proj2DMoveUp implements Projection {
 	}
 
 	public String getProjectionID() {
-		return "2DNorthUp";
+		return "2DRose";
 	}
 
 	public float getScale() {
@@ -179,8 +184,7 @@ public class Proj2DMoveUp implements Projection {
 	}
 
 	// TODO: needs adaption to rotated map???
-	public float getScale(Node ll1, Node ll2, IntPoint IntPoint1,
-			IntPoint IntPoint2) {
+	public float getScale(Node ll1, Node ll2, IntPoint IntPoint1, IntPoint IntPoint2) {
 		try {
 			float deltaDegrees;
 			float pixPerDegree;
@@ -215,26 +219,21 @@ public class Proj2DMoveUp implements Projection {
 		y = hy - y;
 		float x1 = y * sinRoh + x * cosRoh;
 		float y1 = -x * sinRoh + y * cosRoh;
-		llp.setLatLonRad((y1 / scaled_lat + ctrLat), (x1 / scaled_radius)
-				+ ctrLon);
+		llp.setLatLonRad((y1 / scaled_lat + ctrLat), (x1 / scaled_radius) + ctrLon);
 		return llp;
 	}
-
 	
 	public boolean isPlotable(short lat, short lon, SingleTile t) {
 		return isPlotable(lat*MoreMath.FIXPT_MULT_INV+t.centerLat,
 				lon*MoreMath.FIXPT_MULT_INV+t.centerLon);
 	}
 
+
 	public boolean isPlotable(float lat, float lon) {
-		if (lat < minLat)
-			return false;
-		if (lat > maxLat)
-			return false;
-		if (lon < minLon)
-			return false;
-		if (lon > maxLon)
-			return false;
+		if (lat < minLat) return false;
+		if (lat > maxLat) return false;
+		if (lon < minLon) return false;
+		if (lon > maxLon) return false;
 		return true;
 	}
 
@@ -251,8 +250,7 @@ public class Proj2DMoveUp implements Projection {
 		// System.out.println("1 x'="+x1 + "  y'="+y1);
 
 		float y_ = (y1 / scaled_radius) + asinh_of_tanCtrLat;
-		llp.setLatLonRad(MoreMath.atan(MoreMath.sinh(y_)), (x1 / scaled_radius)
-				+ ctrLon);
+		llp.setLatLonRad(MoreMath.atan(MoreMath.sinh(y_)), (x1 / scaled_radius) + ctrLon);
 		// System.out.println("1 x''="+llp.radlat + "  y''="+llp.radlon);
 		return llp;
 	}
@@ -262,8 +260,7 @@ public class Proj2DMoveUp implements Projection {
 		x -= wx;
 		float y_ = (((hy - y)) / scaled_radius) + asinh_of_tanCtrLat;
 
-		llp.setLatLonRad(MoreMath.atan(MoreMath.sinh(y_)), (x / scaled_radius)
-				+ ctrLon);
+		llp.setLatLonRad(MoreMath.atan(MoreMath.sinh(y_)), (x / scaled_radius) + ctrLon);
 		return llp;
 	}
 
@@ -289,9 +286,7 @@ public class Proj2DMoveUp implements Projection {
 	}
 
 	public String toString() {
-		return "Proj2DMoveUp: " + (ctrLat * MoreMath.FAC_RADTODEC) + "/"
-				+ (ctrLon * MoreMath.FAC_RADTODEC) + " s:" + scale + " u"
-				+ upDir;
+		return "Proj2DMoveUp: " + (ctrLat * MoreMath.FAC_RADTODEC) + "/" + (ctrLon * MoreMath.FAC_RADTODEC) + " s:" + scale + " u" + upDir;
 	}
 
 	public float getCourse() {
@@ -303,17 +298,15 @@ public class Proj2DMoveUp implements Projection {
 	}
 
 	/**
-	 * Calculate the end points for 2 paralell lines with distance w which has
-	 * the origin line (Xpoint[i]/Ypoint[i]) to (Xpoint[i+1]/Ypoint[i+1]) as
-	 * centre line
+	 * Calculate the end points for 2 paralell lines with distance w which has the origin line (Xpoint[i]/Ypoint[i]) to
+	 * (Xpoint[i+1]/Ypoint[i+1]) as centre line
 	 * 
 	 * @param xPoints
 	 *            list off all XPoints for this Way
 	 * @param yPoints
 	 *            list off all YPoints for this Way
 	 * @param i
-	 *            the index out of (X/Y) Point for the line segement we looking
-	 *            for
+	 *            the index out of (X/Y) Point for the line segement we looking for
 	 * @param w
 	 *            the width of the segment out of the way
 	 * @param p1
@@ -326,8 +319,7 @@ public class Proj2DMoveUp implements Projection {
 	 *            right end point
 	 * @return the angle of the line in radians ( -Pi .. +Pi )
 	 */
-	public float getParLines(int xPoints[], int yPoints[], int i, int w,
-			IntPoint p1, IntPoint p2, IntPoint p3, IntPoint p4) {
+	public float getParLines(int xPoints[], int yPoints[], int i, int w, IntPoint p1, IntPoint p2, IntPoint p3, IntPoint p4) {
 		int i1 = i + 1;
 		int dx = xPoints[i1] - xPoints[i];
 		int dy = yPoints[i1] - yPoints[i];

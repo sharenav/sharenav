@@ -298,7 +298,8 @@ public class SingleTile extends Tile implements QueueableTile {
 						if (type[i] == 0) {
 							break;
 						}
-						if (!isNodeOnScreen(i, pcLDlat, pcLDlon, pcRUlat, pcRUlon))
+//						if (!isNodeOnScreen(i, pcLDlat, pcLDlon, pcRUlat, pcRUlon))
+						if (! pc.getP().isPlotable(nodeLat[i] , nodeLon[i],this))
 							continue;
 						paintNode(pc, i);
 					}

@@ -35,6 +35,7 @@ import de.ueller.gps.data.Configuration;
 import de.ueller.gps.tools.IconActionPerformer;
 import de.ueller.gpsMid.mapData.SingleTile;
 import de.ueller.midlet.gps.data.Gpx;
+import de.ueller.midlet.gps.data.ProjFactory;
 import de.ueller.midlet.gps.data.Projection;
 import de.ueller.gpsMid.mapData.WaypointsTile;
 
@@ -416,9 +417,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener, GpsMid
 		nightModeGroup = new ChoiceGroup("Colors", Choice.EXCLUSIVE, nightMode ,null);
 		menuDisplayOptions.append(nightModeGroup);
 
-		String [] rotation = new String[2];
-		rotation[0] = "North Up";
-		rotation[1] = "to Driving Direction";
+		String [] rotation = ProjFactory.name;
 		rotationGroup = new ChoiceGroup("Map Rotation", Choice.EXCLUSIVE, rotation ,null);
 		menuDisplayOptions.append(rotationGroup);
 

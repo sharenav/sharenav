@@ -11,15 +11,19 @@ import de.ueller.midlet.gps.data.Projection;
 import de.ueller.midlet.gps.data.RoutePositionMark;
 
 public class ScreenContext {
-
+	/** width of the screen map area (without overscan) */
 	public int xSize;
+	/** hight of the screen map area (without overscan) */
 	public int ySize;
 	public Node searchRU = new Node();
 	public Node searchLD = new Node();
+	/** this are the real world coordinates that represents the midpoint of interested area
+	 * Not in every case the center of the image
+	 */
 	public Node center = new Node();
 	public float scale = 15000f;
 	byte viewId = 1;
-	private Projection p;
+	private volatile Projection p;
 	public int course = 0;
 	public Trace trace;
 	
@@ -40,11 +44,15 @@ public class ScreenContext {
 //		sc.screenRU = screenRU.clone();
 		sc.xSize = xSize;
 		sc.ySize = ySize;
-		sc.center = center.clone();
-		sc.trace = trace;		
+		sc.center = center.copy();
+		sc.trace = trace;	
+		/**
+		 * PIXEL_PER_METER
+		 */
 		sc.ppm = ppm;
 		sc.dest = dest;
 		sc.course = course;
+		sc.p=p;
 		return sc;
 	}
 
@@ -55,7 +63,7 @@ public class ScreenContext {
 	public void setP(Projection p) {
 		this.p = p;
 		float scale = p.getScale();
-		// TODO: Explain where this constant is derived from.
+		// Earth circumference / scale / pixel per meter
 		ppm = (40075016.6855784861531768177614f / scale / p.getPPM());
 	}
 

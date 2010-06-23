@@ -6,6 +6,7 @@
 package de.ueller.midlet.gps.data;
 
 import de.ueller.gpsMid.mapData.SingleTile;
+import de.ueller.gpsMid.mapData.Tile;
 
 
 public interface Projection {
@@ -39,6 +40,8 @@ public interface Projection {
      * @return boolean
      */
     public boolean isPlotable(float lat, float lon);
+	public boolean isPlotable(short lat, short lon, SingleTile t) ;
+
 
     /**
      * Forward project a Node into XY space.
@@ -120,6 +123,10 @@ public interface Projection {
      */
     public void pan(Node n,int xd, int yd);
     
+    /**
+     * get PIXEL_PER_METER for this projection
+     * @return
+     */
     public int getPPM();
     
 	public float getMinLat();
@@ -136,4 +143,22 @@ public interface Projection {
 	public float getCourse();
 
 	public String toString();
+	
+	public boolean isOrthogonal();
+	public float getParLines(int xPoints[], int yPoints[], int i, int w,
+			IntPoint p1, IntPoint p2, IntPoint p3, IntPoint p4);
+	
+	/**
+	 * the hotspot within the image
+	 * @return the point in image coordinates where the cursor should be
+	 */
+	public IntPoint getImageCenter();
+	
+//	/**
+//	 * get the hotspot in screen coordinates.
+//	 * in case of ortogonal projections, this is a fixed point,
+//	 * in case of a non orthogonal projection, this can move arround a bit (because th image can't moved)
+//	 */
+//	public IntPoint getScreenCenter();
+	
 }

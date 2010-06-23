@@ -1,9 +1,10 @@
 package de.ueller.midlet.gps.data;
 
 import de.ueller.gpsMid.mapData.SingleTile;
+import de.ueller.gpsMid.mapData.Tile;
 import de.ueller.midlet.gps.Logger;
 
-public class Proj2DMoveUp implements Projection {
+public class Proj3D implements Projection {
 	private float upDir;
 
 	private int course;
@@ -12,13 +13,27 @@ public class Proj2DMoveUp implements Projection {
 	private final float scale;
 	private final int width;
 	private final int height;
+	private float mapWidth;
+	private float mapHeight;
 	private float scaled_radius;
 	private float planetPixelRadius;
 	private int pixelsPerMeter = DEFAULT_PIXEL_PER_METER;
 	protected float planetPixelCircumference = MoreMath.TWO_PI
 			* planetPixelRadius;
 	private float scaled_lat;
-	private int hy, wx;
+	private float hy, wx;
+	/** percent of height of the hot spot on the screen */
+	private float hFac = 0.60f;
+	/** factor to compute hep out of screen height. This have to be greater as hFac */
+	private float hep_fac = 0.68f;
+	private float hyp;
+	/** height of the eye point */
+	private float hep;
+	/** distance factor of the eye point to the hotspot */
+	private float dep_fac = 0.9f;
+	/** distance of the eye point to the hotspot */
+	private float loY;
+	private float dep;
 	private float tanCtrLat;
 	private float asinh_of_tanCtrLat;
 	private SingleTile tileCache;
@@ -32,15 +47,15 @@ public class Proj2DMoveUp implements Projection {
 	private float maxLat = -Float.MAX_VALUE;
 	private float minLon = Float.MAX_VALUE;
 	private float maxLon = -Float.MAX_VALUE;
+	public Node borderLU,borderLD,borderRU,borderRD;
 	private IntPoint centerScreen = new IntPoint();
 
 	private IntPoint panP = new IntPoint();
 
-	protected static final Logger logger = Logger.getInstance(
-			Proj2DMoveUp.class, Logger.INFO);
+	protected static final Logger logger = Logger.getInstance(Proj3D.class,
+			Logger.INFO);
 
-	public Proj2DMoveUp(Node center, int upDir, float scale, int width,
-			int height) {
+	public Proj3D(Node center, int upDir, float scale, int width, int height) {
 		this.upDir = ProjMath.degToRad(upDir);
 		this.course = upDir;
 		this.ctrLat = center.radlat;
@@ -61,35 +76,54 @@ public class Proj2DMoveUp implements Projection {
 		asinh_of_tanCtrLat = MoreMath.asinh(tanCtrLat);
 
 		// compute the offsets
-		hy = height / 2;
+		hep = height * hep_fac;
+		dep = height * dep_fac;
+		hyp = height * hFac;
+		hy = dep / ((hep / hyp) - 1);
+		mapHeight = hy - (dep / ((hep / (height - hy)) - 1));
+		loY=dep+hy-mapHeight;
+		mapWidth=width;
 		wx = width / 2;
-		centerScreen = new IntPoint(wx, hy);
+//		System.out.println("hep=" + hep + " dep=" + dep + " hyp=" + hyp + "hy="
+//				+ hy);
+
+		centerScreen = new IntPoint((int) wx, (int) hyp);
 		cosRoh = (float) Math.cos(upDir);
 		sinRoh = (float) Math.sin(upDir);
 
 		Node n1 = new Node();
 		Node n2 = new Node();
+		float tmp = upDir;
+		upDir = 0f;
 		n1 = inverse_wo_rot(width / 2, 0, n1);
-		n2 = inverse_wo_rot(width / 2, height, n2);
-		scaled_lat = height / (n1.radlat - n2.radlat);
-		Node ret = new Node();
-		inverse(0, 0, ret);
-		extendMinMax(ret);
-		inverse(0, height, ret);
-		extendMinMax(ret);
-		inverse(width, 0, ret);
-		extendMinMax(ret);
-		inverse(width, height, ret);
-		extendMinMax(ret);
+		n2 = inverse_wo_rot(width / 2, (int) mapHeight, n2);
+		upDir = tmp;
+		scaled_lat = mapHeight / (n1.radlat - n2.radlat);
+//		Node ret = new Node();
+		int horizont=height/40;
+		borderLU=inverse(width/25, horizont, borderLU);
+//		System.out.println("borderLU " + borderLU);
+		extendMinMax(borderLU);
+		borderLD=inverse(width/25, height-40, borderLD);
+//		System.out.println("borderLD " + borderLD);
+		extendMinMax(borderLD);
+		borderRU=inverse(width-width/25, horizont, borderRU);
+//		System.out.println("borderRU" + borderRU);
+		extendMinMax(borderRU);
+		borderRD=inverse(width-width/25, height-40, borderRD);
+//		System.out.println("borderRD" + borderRD);
+		extendMinMax(borderRD);
 
-		// #mdebug debug
-		logger.debug("cosRoh=" + cosRoh);
-		logger.debug("sinRoh=" + sinRoh);
-		logger.debug("scaled lat=" + scaled_lat);
-		logger.debug("scaled_Radius=" + scaled_radius);
-		logger.debug("tanCtrLat=" + tanCtrLat);
-		logger.debug("asinh_of_tanCtrLat=" + asinh_of_tanCtrLat);
-		// #enddebug
+//		System.out.println(this.toString());
+//		System.out.println("cosRoh=" + cosRoh);
+//		System.out.println("sinRoh=" + sinRoh);
+//		System.out.println("scaled lat=" + scaled_lat);
+//		System.out.println("scaled_Radius=" + scaled_radius);
+//		System.out.println("tanCtrLat=" + tanCtrLat);
+//		System.out.println("asinh_of_tanCtrLat=" + asinh_of_tanCtrLat);
+//		System.out.println("Size = " + mapWidth + "/" + mapHeight);
+//		System.out.println(MoreMath.FAC_RADTODEC * minLat + "/" + MoreMath.FAC_RADTODEC * minLon + " " + MoreMath.FAC_RADTODEC * maxLat + "/" + MoreMath.FAC_RADTODEC * maxLon);
+
 	}
 
 	private void extendMinMax(Node n) {
@@ -113,6 +147,7 @@ public class Proj2DMoveUp implements Projection {
 
 	public void setUpDir(float upDir) {
 		this.upDir = upDir;
+		computeParameters();
 	}
 
 	// private void rotate(float x,float y,float[] ret){
@@ -131,26 +166,30 @@ public class Proj2DMoveUp implements Projection {
 	public IntPoint forward(float lat, float lon, IntPoint p) {
 		// same as forward_x and forward_y, and convert to screen
 		// coords
+		// System.out.println("public IntPoint forward(" + lat + "," + lon + ","
+		//		+ p + ")");
 		float px = (scaled_radius * ProjMath.wrap_longitude(lon - ctrLon));
 		float py = (scaled_radius * (MoreMath.asinh((float) Math.tan(lat)) - asinh_of_tanCtrLat));
-		p.setX((int) (px * cosRoh - py * sinRoh + 0.5f) + wx);
-		p.setY(hy - (int) (px * sinRoh + py * cosRoh + 0.5f));
-
-		return p;
+		float x = px * cosRoh - py * sinRoh;
+		float y = px * sinRoh + py * cosRoh;
+		return projectionTo3D(x, y, p);
 	}
 
 	public IntPoint forward_app(float lat, float lon, IntPoint p) {
+		//System.out.println("public IntPoint forward_app(" + lat + "," + lon
+		//		+ "," + p + ")");
 		float px = scaled_radius * ProjMath.wrap_longitude(lon - ctrLon);
 		float py = scaled_lat * (lat - ctrLat);
-		p.setX((int) (px * cosRoh - py * sinRoh + 0.5f) + wx);
-		p.setY(hy - (int) (px * sinRoh + py * cosRoh + 0.5f));
-		// System.out.println("f x="+px+" y="+py+" x'="+p.getX()+" y'="+p.getY());
-		return p;
+		float x = px * cosRoh - py * sinRoh;
+		float y = px * sinRoh + py * cosRoh;
+		return projectionTo3D(x, y, p);
 	}
 
 	// TODO check if this doesn't cause any concurrent modification if
 	// two thread are using this
 	public IntPoint forward(short lat, short lon, IntPoint p, SingleTile t) {
+//		System.out.println("public IntPoint forward(" + lat + "," + lon + ","
+//				+ p + "," + t + ")");
 		if (t != tileCache) {
 			ctrLonRel = (int) ((ctrLon - t.centerLon) * MoreMath.FIXPT_MULT);
 			ctrLatRel = (int) ((ctrLat - t.centerLat) * MoreMath.FIXPT_MULT);
@@ -160,9 +199,68 @@ public class Proj2DMoveUp implements Projection {
 		}
 		float px = scaled_radius_rel * (lon - ctrLonRel);
 		float py = scaled_lat_rel * (lat - ctrLatRel);
-		p.setX((int) (px * cosRoh - py * sinRoh + 0.5f) + wx);
-		p.setY(hy - (int) (px * sinRoh + py * cosRoh + 0.5f));
-		// System.out.println("tf x="+px+" y="+py+" x'="+p.getX()+" y'="+p.getY());
+		float x = px * cosRoh - py * sinRoh;
+		float y = px * sinRoh + py * cosRoh;
+//		System.out.println("ret " + upDir + ":" +px +"/"+py + " | "+x +"/"+y+ " ("+cosRoh+"/"+sinRoh+")");
+		return projectionTo3D(x, y, p);
+	}
+
+//	private Node invProjectionTo3D(int x, int y, Node ret) {
+//		if (ret == null) {
+//			ret = new Node();
+//		}
+//		ret.radlon = x - wx;
+//		ret.radlat = hyp - y;
+//		return ret;
+//	}
+	
+	public int getScaleFor(int x, int y){
+		float y_ = hyp- y;
+		float y1 = (dep / ((hep / y_) - 1)); 
+		float fac=dep * (dep + y1);
+		return (int) (scale*fac);
+	}
+
+	private Node invProjectionTo3D(int x, int y, Node ret) {
+		
+		if (ret == null) {
+			ret = new Node();
+		}
+		float y_ = hyp- y;
+//		if (y_ <0.5f ) {
+//			ret.radlat = 0.5f;
+//		} else {
+			ret.radlat = (dep / ((hep / y_) - 1));
+//		}
+		ret.radlon = (x - wx) / dep * (dep + ret.radlat);
+		return ret;
+	}
+
+	/**
+	 * convert from the flat map with origin on the hotspot to screen
+	 * coordinates
+	 * 
+	 * @param y
+	 * @param x
+	 * @param p
+	 * @return
+	 */
+//	private IntPoint projectionTo3D(float x, float y, IntPoint p) {
+//		float z = dep + y;
+//		p.setY((int) (hyp - (y)));
+//		p.setX((int) ((x)) + wx);
+//		return p;
+//	}
+
+	private IntPoint projectionTo3D(float x, float y, IntPoint p) {
+		float z = dep + y;
+		if (z < loY){
+			// ugly way to avoid overflow;
+//			System.out.println(" fit z from " + z + " to 2.0");
+			z=loY;
+		}
+		p.setY((int) ((hyp - (y * hep / z)+0.5f)));
+		p.setX((int) ((dep * x / z)+0.5f) + wx);
 		return p;
 	}
 
@@ -171,7 +269,7 @@ public class Proj2DMoveUp implements Projection {
 	}
 
 	public String getProjectionID() {
-		return "2DNorthUp";
+		return "Proj3D";
 	}
 
 	public float getScale() {
@@ -211,43 +309,79 @@ public class Proj2DMoveUp implements Projection {
 		if (llp == null) {
 			llp = new Node();
 		}
-		x -= wx;
-		y = hy - y;
-		float x1 = y * sinRoh + x * cosRoh;
-		float y1 = -x * sinRoh + y * cosRoh;
+		llp = invProjectionTo3D(x, y, llp);
+		float x1 = llp.radlat * sinRoh + llp.radlon * cosRoh;
+		float y1 = -llp.radlon * sinRoh + llp.radlat * cosRoh;
 		llp.setLatLonRad((y1 / scaled_lat + ctrLat), (x1 / scaled_radius)
 				+ ctrLon);
 		return llp;
 	}
-
 	
+
 	public boolean isPlotable(short lat, short lon, SingleTile t) {
 		return isPlotable(lat*MoreMath.FIXPT_MULT_INV+t.centerLat,
 				lon*MoreMath.FIXPT_MULT_INV+t.centerLon);
 	}
 
+	int cMinLat,cMaxLat,cMinlon,cMaxLon,cLeft,cUpper,cRight,cDown,c;
+	public void printClipstat(){
+		System.out.println("clipStat "+cMinLat+","+cMaxLat+","+cMinlon+","+cMaxLon+"  "+cLeft+","+cUpper+","+cRight+","+cDown+"  "+c);
+	}
 	public boolean isPlotable(float lat, float lon) {
-		if (lat < minLat)
+		if (lat < minLat){
+			cMinLat++;
 			return false;
-		if (lat > maxLat)
+		}
+		if (lat > maxLat){
+			cMaxLat++;
 			return false;
-		if (lon < minLon)
+		}
+		if (lon < minLon){
+			cMinlon++;
 			return false;
-		if (lon > maxLon)
+		}
+		if (lon > maxLon){
+			cMaxLon++;
 			return false;
+		}
+		if (! isRightOf(borderLD,borderLU,lat,lon)){
+			cLeft++;
+			return false;
+		}
+		if (! isRightOf(borderLU,borderRU,lat,lon)){
+			cUpper++;
+			return false;
+		}
+		if (! isRightOf(borderRU,borderRD,lat,lon)){
+			cRight++;
+			return false;
+		}
+		if (! isRightOf(borderRD,borderLD,lat,lon)){
+			cDown++;
+			return false;
+		}
+		c++;
 		return true;
+	}
+	
+	private boolean isRightOf(Node p0,Node p1,float lat, float lon){
+		// x=lon y=lat
+		//(y - y0) (x1 - x0) - (x - x0) (y1 - y0)
+		if (((lat - p0.radlat) * (p1.radlon - p0.radlon) - (lon - p0.radlon) * (p1.radlat - p0.radlat)) <= 0f){
+			return true;
+		}
+		return false;
 	}
 
 	public Node inverse(int x, int y, Node llp) {
 		// convert from screen to world coordinates
 		// System.out.println("Inverse Full("+x+","+y+")");
-		x -= wx;
-		y = hy - y;
+		llp = invProjectionTo3D(x, y, llp);
 		// System.out.println("sinRoh=" + sinRoh);
 		// System.out.println("cosRoh=" + cosRoh);
-		// System.out.println("1 x="+x + "  y="+y);
-		float x1 = y * sinRoh + x * cosRoh;
-		float y1 = -x * sinRoh + y * cosRoh;
+		// System.out.println("1 x="+llp.radlon + "  y="+llp.radlat);
+		float x1 = llp.radlat * sinRoh + llp.radlon * cosRoh;
+		float y1 = -llp.radlon * sinRoh + llp.radlat * cosRoh;
 		// System.out.println("1 x'="+x1 + "  y'="+y1);
 
 		float y_ = (y1 / scaled_radius) + asinh_of_tanCtrLat;
@@ -289,9 +423,9 @@ public class Proj2DMoveUp implements Projection {
 	}
 
 	public String toString() {
-		return "Proj2DMoveUp: " + (ctrLat * MoreMath.FAC_RADTODEC) + "/"
+		return "Proj3d: " + (ctrLat * MoreMath.FAC_RADTODEC) + "/"
 				+ (ctrLon * MoreMath.FAC_RADTODEC) + " s:" + scale + " u"
-				+ upDir;
+				+ (upDir * MoreMath.FAC_RADTODEC);
 	}
 
 	public float getCourse() {
@@ -299,7 +433,7 @@ public class Proj2DMoveUp implements Projection {
 	}
 
 	public boolean isOrthogonal() {
-		return true;
+		return false;
 	}
 
 	/**
@@ -329,9 +463,11 @@ public class Proj2DMoveUp implements Projection {
 	public float getParLines(int xPoints[], int yPoints[], int i, int w,
 			IntPoint p1, IntPoint p2, IntPoint p3, IntPoint p4) {
 		int i1 = i + 1;
-		int dx = xPoints[i1] - xPoints[i];
-		int dy = yPoints[i1] - yPoints[i];
-		int l2 = dx * dx + dy * dy;
+		Node n0=invProjectionTo3D(xPoints[i],yPoints[i],null);
+		Node n1=invProjectionTo3D(xPoints[i1],yPoints[i1],null);
+		float dx = n1.radlon - n0.radlon;
+		float dy = n1.radlat - n0.radlat;
+		float l2 = dx * dx + dy * dy;
 		float l2f = (float) Math.sqrt(l2);
 		float lf = w / l2f;
 		int xb = (int) ((Math.abs(lf * dy)) + 0.5f);
@@ -344,16 +480,12 @@ public class Proj2DMoveUp implements Projection {
 		if (dx > 0) {
 			rfy = -1;
 		}
-		int xd = rfx * xb;
-		int yd = rfy * yb;
-		p1.x = xPoints[i] + xd;
-		p1.y = yPoints[i] + yd;
-		p2.x = xPoints[i] - xd;
-		p2.y = yPoints[i] - yd;
-		p3.x = xPoints[i1] + xd;
-		p3.y = yPoints[i1] + yd;
-		p4.x = xPoints[i1] - xd;
-		p4.y = yPoints[i1] - yd;
+		float xd = rfx * xb;
+		float yd = rfy * yb;
+		projectionTo3D(n0.radlon+xd, n0.radlat+yd, p1);
+		projectionTo3D(n0.radlon-xd, n0.radlat-yd, p2);
+		projectionTo3D(n1.radlon+xd, n1.radlat+yd, p3);
+		projectionTo3D(n1.radlon-xd, n1.radlat-yd, p4);
 		if (dx != 0) {
 			return (MoreMath.atan(1f * dy / dx));
 		} else {
@@ -366,6 +498,9 @@ public class Proj2DMoveUp implements Projection {
 	}
 
 	public IntPoint getImageCenter() {
+		return centerScreen;
+	}
+	public IntPoint getScreenCenter() {
 		return centerScreen;
 	}
 

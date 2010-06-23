@@ -287,7 +287,7 @@ public class RouteTile extends RouteBaseTile {
 		// when we (re)read the nodes and turn restrictions, the connections must be reread as well because the normal streetNet might be included now as well
 		connections = null;
 		
-		DataInputStream ts=new DataInputStream(Configuration.getMapResource("/t4" + fileId + ".d"));
+		DataInputStream ts=new DataInputStream(Configuration.getMapResource("/t4/" + fileId + ".d"));
 		short numMainStreetRouteNodes = ts.readShort();
 		short numNormalStreetRouteNodes = ts.readShort();
 
@@ -320,7 +320,7 @@ public class RouteTile extends RouteBaseTile {
 		short count = numMainStreetRouteNodes;
 		short countTurnRestrictions = numMainStreetTurnRestrictions;
 		//#debug debug		
-		logger.debug("load nodes "+count+" ("+minId+"/"+maxId+") in Tile t4" + fileId + ".d");
+		logger.debug("load nodes "+count+" ("+minId+"/"+maxId+") in Tile t4/" + fileId + ".d");
 		nodes = new RouteNode[totalRouteNodesToLoad];
 		turns = new TurnRestriction[totalTurnRestrictionsToLoad];
 		for (int readStreetNets = 0; readStreetNets <= maxReadStreetNets; readStreetNets++) {
@@ -508,8 +508,8 @@ public class RouteTile extends RouteBaseTile {
 			
 		connections = new Connection[nodes.length][];
 		//#debug debug
-		logger.debug("getConnections in file " + "/c" + fileId + ".d");
-		DataInputStream cs=new DataInputStream(Configuration.getMapResource("/c" + fileId + ".d"));
+		logger.debug("getConnections in file " + "/c/" + fileId + ".d");
+		DataInputStream cs=new DataInputStream(Configuration.getMapResource("/c/" + fileId + ".d"));
 
 		int minConnectionId = cs.readInt();
 		

@@ -131,7 +131,7 @@ public class Node extends Entity {
         return lon;
     }
 
-    public Node clone() {
+    public Node copy() {
     	Node n = new Node();
     	if (nameIdx != -1) {
 			n.nameIdx = nameIdx;
