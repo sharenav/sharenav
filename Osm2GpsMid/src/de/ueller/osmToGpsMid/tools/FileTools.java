@@ -92,4 +92,18 @@ public class FileTools {
         }	        
         return 1;
     }
+    
+    public static FileOutputStream createFileOutputStream(String name) throws FileNotFoundException{
+    	File f=new File(name);
+    	createPath(f.getParentFile());
+    	return new FileOutputStream(f);	
+    }
+    
+    public static void createPath(File f) {
+		if (! f.canWrite()) {
+			createPath(f.getParentFile());
+		}
+		f.mkdir();
+	}
+
 } 

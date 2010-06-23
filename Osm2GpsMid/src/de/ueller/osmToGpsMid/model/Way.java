@@ -626,7 +626,7 @@ public class Way extends Entity implements Comparable<Way> {
 				System.out.println("WARNING: OSM-ID won't fit in 32 bits for way " + this);
 				ds.writeInt(-1);
 			} else
-				ds.writeInt((int) id);
+				ds.writeInt(id.intValue());
 		}
 
 	}

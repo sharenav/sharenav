@@ -963,8 +963,8 @@ public class CreateGpsMidData implements FilenameFilter {
 		// RouteTiles will be written later because of renumbering
 		if (t.zl != ROUTEZOOMLEVEL) {
 			t.bounds = realBound.clone();
-			FileOutputStream fo = new FileOutputStream(path + "/t" + t.zl
-					+ t.fid + ".d");
+			String lpath = path  + "/t" + t.zl  ;
+			FileOutputStream fo = FileTools.createFileOutputStream(lpath + "/" + t.fid + ".d");
 			DataOutputStream tds = new DataOutputStream(fo);
 			tds.write(out);
 			fo.close();
@@ -1299,7 +1299,7 @@ public class CreateGpsMidData implements FilenameFilter {
 					System.err.println("ERROR: OSM-ID won't fit in 32 bits for way " + n);
 					ds.writeInt(-1);
 				} else {
-					ds.writeInt((int)n.id);
+					ds.writeInt(n.id.intValue());
 				}
 			}
 		}
@@ -1317,6 +1317,17 @@ public class CreateGpsMidData implements FilenameFilter {
 	 */
 	public void setRouteData(RouteData rd) {
 		this.rd = rd;
+	}
+	/**
+	 * Ensures that the path denoted with <code>f</code> will exist
+	 * on the file-system.
+	 * @param f File whose directory must exist
+	 */
+	private void createPath(File f) {
+		if (! f.canWrite()) {
+			createPath(f.getParentFile());
+		}
+		f.mkdir();
 	}
 
 }

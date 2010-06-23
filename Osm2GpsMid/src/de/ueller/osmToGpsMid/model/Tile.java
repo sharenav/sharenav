@@ -24,6 +24,7 @@ import java.util.LinkedList;
 import de.ueller.osmToGpsMid.Configuration;
 import de.ueller.osmToGpsMid.CreateGpsMidData;
 import de.ueller.osmToGpsMid.MyMath;
+import de.ueller.osmToGpsMid.tools.FileTools;
 
 
 public class Tile {
@@ -104,7 +105,7 @@ public class Tile {
 			}
 			ds.writeShort(fid.get());
 			openStream=true;
-			FileOutputStream fo = new FileOutputStream(path+"/d"+zl+fid.get()+".d");
+			FileOutputStream fo = FileTools.createFileOutputStream(path+"/d"+zl+"/"+fid.get()+".d");
 			lds = new DataOutputStream(fo);
 			lds.writeUTF("DictMid");
 			fid.inc();
@@ -378,9 +379,9 @@ public class Tile {
 		}
 		if (routeNodes != null){
 			//System.out.println("Write Routenodes " + fid + " nodes " + routeNodes.size()+"  with " + idxMin + " to "+ idxMax);
-			FileOutputStream cfo = new FileOutputStream(path+"/c"+fid+".d");
+			FileOutputStream cfo = FileTools.createFileOutputStream(path+"/c/"+fid+".d");
 			DataOutputStream cds = new DataOutputStream(new BufferedOutputStream(cfo));
-			FileOutputStream fo = new FileOutputStream(path+"/t"+zl+fid+".d");
+			FileOutputStream fo = FileTools.createFileOutputStream(path+"/t"+zl+"/"+fid+".d");
 			DataOutputStream nds = new DataOutputStream(new BufferedOutputStream(fo));
 			// write out the number of mainStreetNet RouteNodes
 			nds.writeShort(numMainStreetRouteNodes);

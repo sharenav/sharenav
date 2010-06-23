@@ -278,7 +278,7 @@ public class OxParser extends DefaultHandler {
 			}
 
 			if (inBound) {
-				previousNodeWithThisId = nodes.put(new Long(current.id), (Node) current);
+				previousNodeWithThisId = nodes.put(current.id, (Node) current);
 				nodeIns++;
 				if (current.getAttribute("highway") != null && current.getAttribute("highway").equalsIgnoreCase("traffic_signals")) {
 					// decrement trafficSignalCount if a previous node with this id got replaced but was a traffic signal node
@@ -337,7 +337,7 @@ public class OxParser extends DefaultHandler {
 					}
 				}
 				else {
-					relations.put(new Long(r.id),r);
+					relations.put(r.id,r);
 				}
 			}			
 			
@@ -375,7 +375,7 @@ public class OxParser extends DefaultHandler {
 		 * Both are used to indicate invalid type it seems.
 		 */
 		if (w.isValid() /*&& t > 0 */) {
-			if (ways.get(new Long(w.id)) != null) {
+			if (ways.get(w.id) != null) {
 				/**
 				 * This way is already in data storage.
 				 * This results from splitting a single
@@ -387,14 +387,14 @@ public class OxParser extends DefaultHandler {
 				 */				
 				ways.put(new Long(-1 * wayIns), w);
 			} else {
-				ways.put(new Long(w.id), w);
+				ways.put(w.id, w);
 			}
 			wayIns++;
 		}
 	}
 	
 	public void removeWay(Way w){
-		ways.remove(new Long(w.id));
+		ways.remove(w.id);
 	}
 
 	public void fatalError(SAXParseException e) throws SAXException {

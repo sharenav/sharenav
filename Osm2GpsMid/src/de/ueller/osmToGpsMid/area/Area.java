@@ -49,7 +49,7 @@ public class Area {
 			viewer.setArea(this);
 		}
 		}
-		// if there are more ways than one are used to build the outline, try to contruct one outline for that
+		// if there are more ways than one are used to build the outline, try to construct one outline for that
 		ArrayList<Outline>	outlineTempList=new ArrayList<Outline>();
 		while (outlineList.size() > 0) {
 			outline = outlineList.get(0);
@@ -211,7 +211,11 @@ public class Area {
 						if (edgeInside.partOf(p)) {
 							// now we have an edge of a hole inside the rectangle
 							// lets join the hole with the outline and have a next try
-							Outline hole = edgeInside.getOutline();
+//							Outline hole = edgeInside.getOutline();
+							Outline hole = p;
+							if (hole != edgeInside.getOutline()){
+								System.out.println("Warning: someting wrong with internal data, ");
+							}
 							hole.calcNextPrev();
 							repaint();
 //							Outline newOutline = new Outline();

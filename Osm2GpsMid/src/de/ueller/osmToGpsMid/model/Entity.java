@@ -16,7 +16,7 @@ public class Entity {
 	/**
 	 * the OSM id of this node
 	 */
-	public long	id;
+	public Long	id;
 	public Node nearBy;	
 	/**
 	 * The tags for this object  

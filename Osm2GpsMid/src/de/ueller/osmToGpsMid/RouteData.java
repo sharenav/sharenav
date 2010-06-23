@@ -31,6 +31,7 @@ import de.ueller.osmToGpsMid.model.TravelMode;
 import de.ueller.osmToGpsMid.model.TravelModes;
 import de.ueller.osmToGpsMid.model.TurnRestriction;
 import de.ueller.osmToGpsMid.model.Way;
+import de.ueller.osmToGpsMid.tools.FileTools;
 
 /**
  * @author hmueller
@@ -671,7 +672,7 @@ public class RouteData {
 	 * @throws FileNotFoundException 
 	 */
 	public void write(int zl, int fid, Collection<Node> nodes2) throws FileNotFoundException {
-		FileOutputStream fo = new FileOutputStream(path + "/t" + zl + fid + ".d");
+		FileOutputStream fo = FileTools.createFileOutputStream(path + "/t" + zl +"/"+ fid + ".d");
 		DataOutputStream tds = new DataOutputStream(fo);
 		for (Node n: nodes2) {
 			if (nodes.containsKey(n.id)) {
@@ -680,51 +681,51 @@ public class RouteData {
 		}
 	}
 
-	/**
-	 * deprecated but still used by routeTiles 
-	 * @param canonicalPath
-	 * @throws IOException 
-	 */
-	@Deprecated
-	public void write(String canonicalPath) throws IOException {
-		DataOutputStream nodeStream = new DataOutputStream(new FileOutputStream(canonicalPath + "/rn.d"));
-		File f = new File(canonicalPath + "/rc");
-		f.mkdir();
-//		DataOutputStream connStream = new DataOutputStream(new FileOutputStream(canonicalPath + "/rc.d"));
-		int[] connectionIndex = new int[nodes.size()];
-		int i = 0;
-		for (RouteNode rde : nodes.values()) {
-			rde.node.renumberdId = i++;
-			rde.id = rde.node.renumberdId;
-		}
-		i = 0;
-		nodeStream.writeInt(nodes.size());
-		for (RouteNode rde : nodes.values()) {
-			connectionIndex[i++] = nodeStream.size();
-			nodeStream.writeFloat(MyMath.degToRad(rde.node.lat));
-			nodeStream.writeFloat(MyMath.degToRad(rde.node.lon));
-			nodeStream.writeInt(rde.node.renumberdId);
-			System.out.println("id=" + rde.node.renumberdId);
-			nodeStream.writeByte(rde.connected.size());
-			DataOutputStream connStream = new DataOutputStream(new FileOutputStream(canonicalPath + "/" + rde.node.renumberdId + ".d"));
-			for (Connection c : rde.connected) {
-				connStream.writeInt(c.to.node.renumberdId);
-				System.out.println("RouteData.write(): only first route mode");
-				connStream.writeShort((int) c.times[0]); // only first route mode
-				connStream.writeShort((int) c.length);
-				connStream.writeByte(c.startBearing);
-				connStream.writeByte(c.endBearing);
-			}
-			connStream.close();
-		}
-//		System.out.println("size " + ro.size());
-		nodeStream.close();
-		DataOutputStream indexStream = new DataOutputStream(new FileOutputStream(canonicalPath + "/rd.idx"));
-		for (int il : connectionIndex) {
-			indexStream.write(il);
-		}
-		indexStream.close();
-	}
+//	/**
+//	 * deprecated but still used by routeTiles 
+//	 * @param canonicalPath
+//	 * @throws IOException 
+//	 */
+//	@Deprecated
+//	public void write(String canonicalPath) throws IOException {
+//		DataOutputStream nodeStream = new DataOutputStream(new FileOutputStream(canonicalPath + "/rn.d"));
+//		File f = new File(canonicalPath + "/rc");
+//		f.mkdir();
+////		DataOutputStream connStream = new DataOutputStream(new FileOutputStream(canonicalPath + "/rc.d"));
+//		int[] connectionIndex = new int[nodes.size()];
+//		int i = 0;
+//		for (RouteNode rde : nodes.values()) {
+//			rde.node.renumberdId = i++;
+//			rde.id = rde.node.renumberdId;
+//		}
+//		i = 0;
+//		nodeStream.writeInt(nodes.size());
+//		for (RouteNode rde : nodes.values()) {
+//			connectionIndex[i++] = nodeStream.size();
+//			nodeStream.writeFloat(MyMath.degToRad(rde.node.lat));
+//			nodeStream.writeFloat(MyMath.degToRad(rde.node.lon));
+//			nodeStream.writeInt(rde.node.renumberdId);
+//			System.out.println("id=" + rde.node.renumberdId);
+//			nodeStream.writeByte(rde.connected.size());
+//			DataOutputStream connStream = new DataOutputStream(new FileOutputStream(canonicalPath + "/" + rde.node.renumberdId + ".d"));
+//			for (Connection c : rde.connected) {
+//				connStream.writeInt(c.to.node.renumberdId);
+//				System.out.println("RouteData.write(): only first route mode");
+//				connStream.writeShort((int) c.times[0]); // only first route mode
+//				connStream.writeShort((int) c.length);
+//				connStream.writeByte(c.startBearing);
+//				connStream.writeByte(c.endBearing);
+//			}
+//			connStream.close();
+//		}
+////		System.out.println("size " + ro.size());
+//		nodeStream.close();
+//		DataOutputStream indexStream = new DataOutputStream(new FileOutputStream(canonicalPath + "/rd.idx"));
+//		for (int il : connectionIndex) {
+//			indexStream.write(il);
+//		}
+//		indexStream.close();
+//	}
 
 	/** Remember traffic signals nodes in own array so they can be removed by CleanupData
 	 * (traffic signals nodes must not be marked as used because otherwise they are written to the midlet) 
