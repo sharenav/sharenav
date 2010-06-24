@@ -67,8 +67,7 @@ public class GuiMapFeatures extends Form implements CommandListener {
 			altInfosGroup.setSelectedFlags(selAltInfos);
 			append(altInfosGroup);
 
-			rotation[0] = "North up";
-			rotation[1] = "to driving direction";
+			rotation = ProjFactory.name;
 			rotationGroup = new ChoiceGroup("Map rotation", Choice.EXCLUSIVE, rotation ,null);
 			rotationGroup.setSelectedIndex((int) ProjFactory.getProj(), true);
 			append(rotationGroup);			
