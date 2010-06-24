@@ -453,22 +453,22 @@ public class ImageCollector implements Runnable {
 		}
 		
 		// screenPc.g.drawArc(newXCenter-14, newYCenter-14, 28, 28, 0, 360);
-		if (p instanceof Proj3D){
-			screenPc.g.setColor(255,50,50);
-			IntPoint pt0 = new IntPoint();
-			IntPoint pt1 = new IntPoint();
-			Proj3D p3=(Proj3D)p;
-			p.forward(p3.borderLD,pt0);
-			p.forward(p3.borderLU,pt1);
-			screenPc.g.drawLine(pt0.x, pt0.y, pt1.x, pt1.y);
-			p.forward(p3.borderRU,pt0);
-			screenPc.g.drawLine(pt0.x, pt0.y, pt1.x, pt1.y);
-			p.forward(p3.borderRD,pt1);
-			screenPc.g.drawLine(pt0.x, pt0.y, pt1.x, pt1.y);
-			p.forward(p3.borderLD,pt0);
-			screenPc.g.drawLine(pt0.x, pt0.y, pt1.x, pt1.y);
-
-		}
+//		if (p instanceof Proj3D){
+//			screenPc.g.setColor(255,50,50);
+//			IntPoint pt0 = new IntPoint();
+//			IntPoint pt1 = new IntPoint();
+//			Proj3D p3=(Proj3D)p;
+//			p.forward(p3.borderLD,pt0);
+//			p.forward(p3.borderLU,pt1);
+//			screenPc.g.drawLine(pt0.x, pt0.y, pt1.x, pt1.y);
+//			p.forward(p3.borderRU,pt0);
+//			screenPc.g.drawLine(pt0.x, pt0.y, pt1.x, pt1.y);
+//			p.forward(p3.borderRD,pt1);
+//			screenPc.g.drawLine(pt0.x, pt0.y, pt1.x, pt1.y);
+//			p.forward(p3.borderLD,pt0);
+//			screenPc.g.drawLine(pt0.x, pt0.y, pt1.x, pt1.y);
+//
+//		}
 		String name = null;
 		Way wayForName = null;
 		/**
