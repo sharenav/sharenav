@@ -100,17 +100,17 @@ public class Proj3D implements Projection {
 		upDir = tmp;
 		scaled_lat = mapHeight / (n1.radlat - n2.radlat);
 //		Node ret = new Node();
-		int horizont=height/40;
-		borderLU=inverse(width/25, horizont, borderLU);
+		int horizont=16;
+		borderLU=inverse(0, horizont, borderLU);
 //		System.out.println("borderLU " + borderLU);
 		extendMinMax(borderLU);
-		borderLD=inverse(width/25, height-40, borderLD);
+		borderLD=inverse(0, height-16, borderLD);
 //		System.out.println("borderLD " + borderLD);
 		extendMinMax(borderLD);
-		borderRU=inverse(width-width/25, horizont, borderRU);
+		borderRU=inverse(width, horizont, borderRU);
 //		System.out.println("borderRU" + borderRU);
 		extendMinMax(borderRU);
-		borderRD=inverse(width-width/25, height-40, borderRD);
+		borderRD=inverse(width, height-16, borderRD);
 //		System.out.println("borderRD" + borderRD);
 		extendMinMax(borderRD);
 
@@ -482,10 +482,10 @@ public class Proj3D implements Projection {
 		}
 		float xd = rfx * xb;
 		float yd = rfy * yb;
-		projectionTo3D(n0.radlon+xd, n0.radlat+yd, p1);
-		projectionTo3D(n0.radlon-xd, n0.radlat-yd, p2);
-		projectionTo3D(n1.radlon+xd, n1.radlat+yd, p3);
-		projectionTo3D(n1.radlon-xd, n1.radlat-yd, p4);
+		projectionTo3D(n0.radlon+xd, n0.radlat+yd, p2);
+		projectionTo3D(n0.radlon-xd, n0.radlat-yd, p1);
+		projectionTo3D(n1.radlon+xd, n1.radlat+yd, p4);
+		projectionTo3D(n1.radlon-xd, n1.radlat-yd, p3);
 		if (dx != 0) {
 			return (MoreMath.atan(1f * dy / dx));
 		} else {
