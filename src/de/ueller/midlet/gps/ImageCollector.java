@@ -579,6 +579,13 @@ public class ImageCollector implements Runnable {
 			System.out.println("wakeup thread because scale changed");
 			needRedraw = true;
 		}
+
+		// when the projection has changed we must redraw
+		if (!paintPC.getP().getProjectionID().equals(screenPc.getP().getProjectionID()) ) {
+			System.out.println("wakeup thread because projection changed");
+			needRedraw = true;
+		}
+
 		synchronized (this) {
 			paintPC.state = PaintContext.STATE_READY;
 			if (needRedraw) {
