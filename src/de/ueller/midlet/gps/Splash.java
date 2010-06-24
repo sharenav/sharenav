@@ -182,6 +182,12 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 		}
 	}
 
+	protected void pointerPressed(int x, int y) {
+		if (y < getHeight() / 5) {
+			keyPressed(KEY_STAR);
+		}
+	}
+	
 	protected void keyPressed(int keyCode) {
 		if (keyCode == KEY_STAR) {
 			boolean current = Configuration.getCfgBitState(Configuration.CFGBIT_SKIPP_SPLASHSCREEN);
