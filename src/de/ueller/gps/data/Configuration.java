@@ -406,8 +406,12 @@ public class Configuration {
 			String s = readString(database, RECORD_ID_STARTUP_RADLAT);
 			String s2 = readString(database, RECORD_ID_STARTUP_RADLON);
 			if (s != null && s2 != null) {
-				startupPos.radlat = Float.parseFloat(s);
-				startupPos.radlon = Float.parseFloat(s2);
+				try {
+					startupPos.radlat = Float.parseFloat(s);
+					startupPos.radlon = Float.parseFloat(s2);
+				} catch (NumberFormatException nfe) {
+					logger.exception("Error parsing startupPos: ", nfe);					
+				}
 			}
 			//System.out.println("Map startup lat/lon: " + startupPos.radlat*MoreMath.FAC_RADTODEC + "/" + startupPos.radlon*MoreMath.FAC_RADTODEC);
 			setProjTypeDefault((byte) readInt(database,  RECORD_ID_MAP_PROJECTION));
