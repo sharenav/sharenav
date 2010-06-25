@@ -1446,7 +1446,8 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		}
 	}
 	
-	protected void sizeChanged(int w, int h) {	
+	protected void sizeChanged(int w, int h) {
+		updateLastUserActionTime();
 		if (imageCollector != null) {
 			logger.info("Size of Canvas changed to " + w + "|" + h);
 			stopImageCollector();
