@@ -685,8 +685,15 @@ public class GuiSearch extends Canvas implements CommandListener,
 				return;
 			}
 		}
-		potentialDoubleClick = true;
-		cursor = clickIdx;
+		
+		// if touching the right side of the display (150% font height) this equals to the * key 
+		if (x > getWidth() - fontSize * 3 / 2) {
+			keyPressed(KEY_STAR);
+		} else {
+		// else position the cursor
+			potentialDoubleClick = true;			
+			cursor = clickIdx;					
+		}
 		
 		repaint();
 	}
