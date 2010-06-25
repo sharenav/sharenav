@@ -115,7 +115,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 	public final static byte STATE_FAVORITES = 3;
 	public final static byte STATE_SEARCH_PROGRESS = 4;
 	
-	private int fontSize;
+	private volatile int fontSize;
 	
 	private volatile boolean isSearchCanceled;
 	
@@ -677,7 +677,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			return;
 		}
 		if (potentialDoubleClick) {
-			if ((currTime - pressedPointerTime < 400) && (clickIdx == cursor)) {
+			if ((currTime - pressedPointerTime < 1500) && (clickIdx == cursor)) {
 				//#debug debug
 				logger.debug("PointerDoublePressed");
 				keyPressed(10);
