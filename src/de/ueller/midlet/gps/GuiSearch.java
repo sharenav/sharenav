@@ -133,6 +133,10 @@ public class GuiSearch extends Canvas implements CommandListener,
 	 */
 	private boolean pointerDragged;
 	/**
+	 * Stores the position of the X coordinate at which the pointer started dragging since the last update 
+	 */
+	private int pointerXDragged;
+	/**
 	 * Stores the position of the Y coordinate at which the pointer started dragging since the last update 
 	 */
 	private int pointerYDragged;
@@ -648,6 +652,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		} else {
 			pressedPointerTime = currTime;
 		}
+		pointerXDragged = x;
 		pointerYDragged = y;
 		pointerXPressed = x;
 		pointerYPressed = y;
@@ -672,6 +677,13 @@ public class GuiSearch extends Canvas implements CommandListener,
 		long currTime = System.currentTimeMillis();
 		int clickIdx = (y - scrollOffset)/fontSize;
 		if (pointerDragged) {
+			/*
+			 * dragging horizontally to the right with almost no vertical movement for at least half the screen width
+			 * is the same as the # key (toggling sort order)
+			 */
+			if ( (x - pointerXPressed) > getWidth() / 2 && (Math.abs(y - pointerYPressed) < fontSize) ) {
+				keyPressed(KEY_POUND);
+			}
 			pointerDragged = false;
 			potentialDoubleClick = false;
 			return;
@@ -725,6 +737,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		if (scrollOffset < -1*(result.size() - 2) *fontSize) {
 			scrollOffset = -1*(result.size() - 2) *fontSize;
 		}
+		pointerXDragged = x;
 		pointerYDragged = y;
 		repaint();
 	}
