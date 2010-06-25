@@ -91,6 +91,7 @@ public class TraceLayout extends LayoutManager {
 		);
 		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_TITLEBAR_BACKGROUND]);
 		e.setColor(Legend.COLORS[Legend.COLOR_TITLEBAR_TEXT]);
+		e.setActionID(Trace.ICON_MENU);
 		
 		e = ele[SCALEBAR]; addElement(e, 
 				LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
