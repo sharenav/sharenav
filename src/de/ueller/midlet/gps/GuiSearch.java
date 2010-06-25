@@ -829,7 +829,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 
 	
 	// TODO: optimize sort-in algorithm, e.g. by bisectioning
-	public void synchronized insertWptSearchResultSortedByNameOrDist(PositionMark[] wpts, SearchResult srNew) {
+	public synchronized void  insertWptSearchResultSortedByNameOrDist(PositionMark[] wpts, SearchResult srNew) {
 		addDistanceToSearchResult(srNew);
 		SearchResult sr = null;
 		int i = 0;
