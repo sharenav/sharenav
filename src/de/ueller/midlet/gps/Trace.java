@@ -189,7 +189,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 
 	private long lastBackLightOnTime = 0;
 	
-	private static long lastUserActionTime = 0;
+	private volatile static long lastUserActionTime = 0;
 	
 	private long collected = 0;
 
@@ -2145,6 +2145,9 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		lastUserActionTime = System.currentTimeMillis();
 	}
 	
+	public static long getDurationSinceLastUserActionTime() {
+		return System.currentTimeMillis() - lastUserActionTime;
+	}
 	
 	public synchronized void receivePosition(Position pos) {
 		//#debug info
@@ -2152,7 +2155,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		this.pos = pos;
 		collected++;
 		if (Configuration.getAutoRecenterToGpsMilliSecs() !=0 &&
-			System.currentTimeMillis() > lastUserActionTime + Configuration.getAutoRecenterToGpsMilliSecs()
+			getDurationSinceLastUserActionTime() > Configuration.getAutoRecenterToGpsMilliSecs()
 			&& isShown()
 		) {
 			gpsRecenter = true;
@@ -2470,6 +2473,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		//Display.getDisplay(parent).setCurrent(this);
 		GpsMid.getInstance().show(this);
 		setFullScreenMode(Configuration.getCfgBitState(Configuration.CFGBIT_FULLSCREEN));
+		updateLastUserActionTime();
 		repaint();
 	}
 	
