@@ -124,12 +124,13 @@ public class ImageCollector implements Runnable {
 							 * e.g. on Nokia 5800 after returning from another Displayable
 							 * Therefore reduce the timeout for redrawing anyway from 30 seconds to 1 seconds 
 							 * if the last user interaction happened less than 1.5 secs before 
-							 */
 							if (Trace.getDurationSinceLastUserActionTime() > 1500 ) {
 								wait(30000);
 							} else {
 								wait(1000);
 							}
+							 */
+							wait(30000);
 						} catch (InterruptedException e) {
 							continue; // Recheck condition of the loop
 						}
