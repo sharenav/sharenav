@@ -749,17 +749,20 @@ public class GuiSearch extends Canvas implements CommandListener,
 		}
 		pointerDragged = true;
 		
-		scrollOffset += (y - pointerYDragged);
-		
-		if (scrollOffset > 0) {
-			scrollOffset = 0;
+		// only scroll if drag wasn't started at the first entry to avoid scrolling it out accidently during slide gestures
+		if (pointerYPressed > fontSize) {		
+			scrollOffset += (y - pointerYDragged);
+			
+			if (scrollOffset > 0) {
+				scrollOffset = 0;
+			}
+			if (scrollOffset < -1*(result.size() - 2) *fontSize) {
+				scrollOffset = -1*(result.size() - 2) *fontSize;
+			}
+			pointerXDragged = x;
+			pointerYDragged = y;
+			repaint();
 		}
-		if (scrollOffset < -1*(result.size() - 2) *fontSize) {
-			scrollOffset = -1*(result.size() - 2) *fontSize;
-		}
-		pointerXDragged = x;
-		pointerYDragged = y;
-		repaint();
 	}
 
 	private void reSearch() {
