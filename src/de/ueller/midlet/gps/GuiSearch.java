@@ -677,12 +677,32 @@ public class GuiSearch extends Canvas implements CommandListener,
 		long currTime = System.currentTimeMillis();
 		int clickIdx = (y - scrollOffset)/fontSize;
 		if (pointerDragged) {
-			/*
-			 * dragging horizontally to the right with almost no vertical movement for at least half the screen width
-			 * is the same as the # key (toggling sort order)
-			 */
-			if ( (x - pointerXPressed) > getWidth() / 2 && (Math.abs(y - pointerYPressed) < fontSize) ) {
-				keyPressed(KEY_POUND);
+			 // Gestures: sliding horizontally with almost no vertical movement
+			if ( Math.abs(y - pointerYPressed) < fontSize ) {
+				int xDist = x - pointerXPressed; 
+				logger.debug("Slide right " + xDist);
+				// Sort mode Slide: Sliding right at least half the screen width is the same as the # key
+				if (xDist > getWidth() / 2 ) {
+					//#debug debug
+					logger.debug("Sort mode slide");
+					keyPressed(KEY_POUND);
+				// Route Slide: sliding right at least the fontHeight
+				} else if (xDist > fontSize ) {
+					logger.debug("Route slide");
+					cursor = clickIdx;
+					repaint();
+					commandAction( ROUTE1_CMD, (Displayable) null);					
+				// Search field slide: sliding left at least the fontHeight
+				} else if (xDist < -getWidth()/2 ) {
+					logger.debug("Search field slide");
+					GuiNameEnter gne = new GuiNameEnter(this, null, "Search for names starting with:", searchCanon.toString(), 20);
+					gne.show();
+				// Select entry slide: sliding left at least the fontHeight
+				} else if (xDist < -fontSize ) {
+					logger.debug("Select entry slide");
+					cursor = clickIdx;					
+					repaint();
+				}
 			}
 			pointerDragged = false;
 			potentialDoubleClick = false;
