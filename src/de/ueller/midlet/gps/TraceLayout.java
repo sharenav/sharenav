@@ -183,6 +183,7 @@ public class TraceLayout extends LayoutManager {
 		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_RI_DISTANCE_BACKGROUND]);
 		e.setColor(Legend.COLORS[Legend.COLOR_RI_DISTANCE_TEXT]);
 		e.setVRelative(ele[ROUTE_INSTRUCTION]);			
+		e.setActionID(Trace.ROUTING_TOGGLE_CMD);
 		
 		e = ele[SPEED_CURRENT]; addElement(e, 
 				LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |
