@@ -592,12 +592,12 @@ public class Configuration {
 				System.out.println("Try to fetch bounds");
 			}
 			try {
-				System.out.print("load arg.property for "+ key +" = ");
-				System.out.println(rb.getString(key));
+//				System.out.print("load arg.property for "+ key +" = ");
+//				System.out.println(rb.getString(key));
 				return rb.getString(key).trim();
 			} catch (MissingResourceException e) {
-				System.out.print("load version.property for "+ key +" = ");
-				System.out.println(vb.getString(key));
+//				System.out.print("load version.property for "+ key +" = ");
+//				System.out.println(vb.getString(key));
 				return vb.getString(key).trim();
 			} catch (Exception e1){
 				e1.printStackTrace();
