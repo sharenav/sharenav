@@ -1,8 +1,9 @@
-package de.ueller.gpsMid.mapData;
 /*
- * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net 
- * See Copying
+ * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net
+ * See COPYING
  */
+
+package de.ueller.gpsMid.mapData;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -13,18 +14,21 @@ import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
 
-public class DictReader  implements Runnable {
-	private Thread	processorThread;
-	private final static Logger logger=Logger.getInstance(DictReader.class,Logger.INFO);
+/** Reads the dict-files (/dict-[1..4].dat) from the map source
+ *  and creates tiles from them.
+ */
+public class DictReader implements Runnable {
+	private final Thread processorThread;
+	private final static Logger logger = Logger.getInstance(DictReader.class, Logger.INFO);
 	private Tile dict;
 	private final Trace	t;
 
 	
-	public DictReader(Trace t){
+	public DictReader(Trace t) {
 		super();
 		this.t = t;
-		processorThread = new Thread(this,"DictReader");
-		processorThread.setPriority(Thread.MIN_PRIORITY+2);
+		processorThread = new Thread(this, "DictReader");
+		processorThread.setPriority(Thread.MIN_PRIORITY + 2);
 		processorThread.start();
 		//#debug trace
 		logger.trace("DictReader Thread started");
@@ -33,7 +37,7 @@ public class DictReader  implements Runnable {
 
 	public void run() {
 		try {
-			for (byte i=0;i<=4;i++) {
+			for (byte i = 0; i <= 4; i++) {
 				readData(i);
 			}
 		} catch (OutOfMemoryError oome) {
@@ -41,62 +45,67 @@ public class DictReader  implements Runnable {
 			oome.printStackTrace();
 		} catch (IOException e) {
 			GpsMid.getInstance().restart();
-			logger.fatal("Failed to load basic map data:" + e.getMessage());
+			logger.fatal("Failed to load basic map data: " + e.getMessage());
 			e.printStackTrace();
 		}
 
 	}
-	private void readData(byte zl) throws IOException{
 
-		//#debug error
-		logger.info("open dict-"+zl+".dat");
-		InputStream is = Configuration.getMapResource("/dict-"+zl+".dat");
-		if (is == null) {
-			//Special case zoom level 4, which is the routing zoom level
-			//If routing was disabled in Osm2GpsMid, then this file shouln't
-			//exist. Give a more helpful error message
-			if (zl == 4) {
-				logger.error("Routing is not enabled in this midlet");
-				return;
+	private void readData(byte zl) throws IOException {
+		String filename = "/dict-" + zl + ".dat";
+		//#debug info
+		logger.info("open " + filename);
+		try {
+			InputStream is = Configuration.getMapResource(filename);
+			if (is == null) {
+				throw new IOException("Could not open " + filename);
 			}
-			logger.error("Could not open /dict-" + zl + ".dat");
-			throw new IOException("DictMid-file not found");
+			// logger.info("open DataInputStream");
+			DataInputStream ds = new DataInputStream(is);
+			// logger.info("read Magic code");
+			if (! "DictMid".equals(ds.readUTF())) {
+				throw new IOException("Not a DictMid-file");
+			}
+			// logger.trace("read TileType");
+			byte type = ds.readByte();
+			// logger.trace("TileType=" + type);
+			switch (type) {
+			case Tile.TYPE_MAP:
+				dict = new SingleTile(ds, 1, zl);
+				break;
+			case Tile.TYPE_CONTAINER:
+				dict = new ContainerTile(ds, 1, zl);
+				break;
+			case Tile.TYPE_EMPTY:
+				// empty tile;
+				break;
+			case Tile.TYPE_FILETILE:
+				dict = new FileTile(ds, 1, zl);
+				break;
+			case Tile.TYPE_ROUTEDATA:
+				// RouteData Tile
+				dict = new RouteTile(ds, 1, zl);
+				break;
+			case Tile.TYPE_ROUTECONTAINER:
+				// RouteData Tile
+				dict = new RouteContainerTile(ds, 1, zl);
+			default:
+				break;
+			}
+			ds.close();
+			
+			t.setDict(dict, zl);
+		} catch (IOException ioe) {
+			// Special case zoom level 4, which is the routing zoom level.
+			// If routing was disabled in Osm2GpsMid, this file won't
+			// exist. Give a more helpful message.
+			if (zl == 4) {
+				logger.info("Routing is not enabled in this midlet");
+				return;
+			} else {
+				throw ioe;
+			}
 		}
-		//		    	logger.info("open DataInputStream");
-		DataInputStream ds=new DataInputStream(is);
-		//				logger.info("read Magic code");
-		if (! "DictMid".equals(ds.readUTF())){
-			throw new IOException("not a DictMid-file");
-		}
-		//				logger.trace("read TileType");
-		byte type=ds.readByte();
-		//				logger.trace("TileType="+type);
-		switch (type) {
-		case Tile.TYPE_MAP:
-			dict=new SingleTile(ds,1,zl);
-			break;
-		case Tile.TYPE_CONTAINER:
-			dict=new ContainerTile(ds,1,zl);
-			break;
-		case Tile.TYPE_EMPTY:
-			// empty tile;
-			break;
-		case Tile.TYPE_FILETILE:
-			dict=new FileTile(ds,1,zl);
-			break;
-		case Tile.TYPE_ROUTEDATA:
-			// RouteData Tile
-			dict=new RouteTile(ds,1,zl);
-			break;
-		case Tile.TYPE_ROUTECONTAINER:
-			// RouteData Tile
-			dict=new RouteContainerTile(ds,1,zl);
-		default:
-			break;
-		}
-		ds.close();
-		
-		t.setDict(dict,zl);
 	}
 
 }
