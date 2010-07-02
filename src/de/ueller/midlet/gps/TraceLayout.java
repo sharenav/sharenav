@@ -1,5 +1,5 @@
 /*
- * GpsMid - Copyright (c) 2009 sk750 at users dot sourceforge dot net 
+ * GpsMid - Copyright (c) 2009 sk750 at users dot sourceforge dot net
  * See COPYING
  */
 
@@ -76,15 +76,15 @@ public class TraceLayout extends LayoutManager {
 			usingVerticalLayout = true;
 		}
 		
-		validate();		
+		validate();
 	}
 	
 	/*
 	 * layout for most mobiles
 	 */
-	private void createHorizontalLayout() { 
+	private void createHorizontalLayout() {
 		LayoutElement e;
-		e = ele[TITLEBAR]; addElement(e, 
+		e = ele[TITLEBAR]; addElement(e,
 			LayoutElement.FLAG_HALIGN_CENTER | LayoutElement.FLAG_VALIGN_TOP |
 			LayoutElement.FLAG_FONT_MEDIUM |
 			LayoutElement.FLAG_BACKGROUND_BOX | LayoutElement.FLAG_BACKGROUND_FULL_WIDTH
@@ -93,7 +93,7 @@ public class TraceLayout extends LayoutManager {
 		e.setColor(Legend.COLORS[Legend.COLOR_TITLEBAR_TEXT]);
 		e.setActionID(Trace.ICON_MENU);
 		
-		e = ele[SCALEBAR]; addElement(e, 
+		e = ele[SCALEBAR]; addElement(e,
 				LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
 				LayoutElement.FLAG_FONT_MEDIUM
 		);
@@ -103,17 +103,17 @@ public class TraceLayout extends LayoutManager {
 		e.setSpecialElementID(SE_SCALEBAR);
 		e.setActionID(Trace.MAPFEATURES_CMD);
 
-		e = ele[POINT_OF_COMPASS]; addElement(e, 
+		e = ele[POINT_OF_COMPASS]; addElement(e,
 			LayoutElement.FLAG_HALIGN_CENTER | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
 			LayoutElement.FLAG_FONT_MEDIUM |
 			LayoutElement.FLAG_BACKGROUND_BOX
-		);	
+		);
 		e.setVRelative(ele[TITLEBAR]);
 		e.setColor(Legend.COLORS[Legend.COLOR_COMPASS_DIRECTION_TEXT]);
 		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_COMPASS_DIRECTION_BACKGROUND]);
 		e.setActionID(Trace.MANUAL_ROTATION_MODE_CMD);
 	
-		e = ele[SOLUTION]; addElement(e, 
+		e = ele[SOLUTION]; addElement(e,
 			LayoutElement.FLAG_HALIGN_RIGHT | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
 			LayoutElement.FLAG_FONT_MEDIUM | LayoutElement.FLAG_BACKGROUND_BOX
 		);
@@ -121,36 +121,36 @@ public class TraceLayout extends LayoutManager {
 		e.setAdditionalOffsX(-1);
 		e.setVRelative(ele[TITLEBAR]);
 
-		e = ele[ALTITUDE]; addElement(e, 
+		e = ele[ALTITUDE]; addElement(e,
 				LayoutElement.FLAG_HALIGN_LEFTTO_RELATIVE | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
 				LayoutElement.FLAG_FONT_SMALL
 			);
 			e.setColor(Legend.COLORS[Legend.COLOR_MAP_TEXT]);
 			e.setAdditionalOffsX(-8);
-			e.setHRelative(ele[SOLUTION]);		
-			e.setVRelative(ele[TITLEBAR]);		
+			e.setHRelative(ele[SOLUTION]);
+			e.setVRelative(ele[TITLEBAR]);
 		
-		e = ele[RECORDED_COUNT]; addElement(e, 
+		e = ele[RECORDED_COUNT]; addElement(e,
 				LayoutElement.FLAG_HALIGN_RIGHT | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
 				LayoutElement.FLAG_FONT_MEDIUM | LayoutElement.FLAG_BACKGROUND_BOX);
 		e.setAdditionalOffsX(-1);
 		e.setVRelative(ele[SOLUTION]);
 	
-		e = ele[CELLID]; addElement(e, 
+		e = ele[CELLID]; addElement(e,
 				LayoutElement.FLAG_HALIGN_RIGHT | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
 				LayoutElement.FLAG_FONT_MEDIUM
-			);	
+			);
 		e.setAdditionalOffsX(-1);
 		e.setVRelative(ele[RECORDED_COUNT]);
 	
-		e = ele[AUDIOREC]; addElement(e, 
+		e = ele[AUDIOREC]; addElement(e,
 				LayoutElement.FLAG_HALIGN_RIGHT | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
 				LayoutElement.FLAG_FONT_MEDIUM
-			);	
+			);
 		e.setAdditionalOffsX(-1);
 		e.setVRelative(ele[CELLID]);
 		
-		e = ele[WAYNAME]; addElement(e, 
+		e = ele[WAYNAME]; addElement(e,
 			LayoutElement.FLAG_HALIGN_CENTER | LayoutElement.FLAG_VALIGN_BOTTOM |
 			LayoutElement.FLAG_FONT_MEDIUM |
 			LayoutElement.FLAG_BACKGROUND_BOX | LayoutElement.FLAG_BACKGROUND_FULL_WIDTH |
@@ -160,40 +160,40 @@ public class TraceLayout extends LayoutManager {
 		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_WAYNAME_BACKGROUND]);
 		e.setActionID(Trace.ICON_MENU);
 		
-		e = ele[ROUTE_INTO]; addElement(e, 
+		e = ele[ROUTE_INTO]; addElement(e,
 			LayoutElement.FLAG_HALIGN_CENTER | LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |
-			LayoutElement.FLAG_FONT_MEDIUM | LayoutElement.FLAG_FONT_BOLD |  
+			LayoutElement.FLAG_FONT_MEDIUM | LayoutElement.FLAG_FONT_BOLD |
 			LayoutElement.FLAG_BACKGROUND_BOX | LayoutElement.FLAG_BACKGROUND_FULL_WIDTH
 		);
 		e.setVRelative(ele[WAYNAME]);
 	
-		e = ele[ROUTE_INSTRUCTION]; addElement(e, 
+		e = ele[ROUTE_INSTRUCTION]; addElement(e,
 			LayoutElement.FLAG_HALIGN_CENTER | LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |
-			LayoutElement.FLAG_FONT_MEDIUM | LayoutElement.FLAG_FONT_BOLD |  
+			LayoutElement.FLAG_FONT_MEDIUM | LayoutElement.FLAG_FONT_BOLD |
 			LayoutElement.FLAG_BACKGROUND_BOX | LayoutElement.FLAG_BACKGROUND_FULL_WIDTH
 		);
-		e.setVRelative(ele[ROUTE_INTO]);		
+		e.setVRelative(ele[ROUTE_INTO]);
 		
-		e = ele[ROUTE_DISTANCE]; addElement(e, 
+		e = ele[ROUTE_DISTANCE]; addElement(e,
 			LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |
 			LayoutElement.FLAG_FONT_MEDIUM |
 			LayoutElement.FLAG_BACKGROUND_BOX
 		);
 		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_RI_DISTANCE_BACKGROUND]);
 		e.setColor(Legend.COLORS[Legend.COLOR_RI_DISTANCE_TEXT]);
-		e.setVRelative(ele[ROUTE_INSTRUCTION]);			
+		e.setVRelative(ele[ROUTE_INSTRUCTION]);
 		e.setActionID(Trace.ROUTING_TOGGLE_CMD);
 		
-		e = ele[SPEED_CURRENT]; addElement(e, 
+		e = ele[SPEED_CURRENT]; addElement(e,
 				LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |
 				LayoutElement.FLAG_FONT_MEDIUM |
 				LayoutElement.FLAG_BACKGROUND_BOX
 		);
 		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_SPEED_BACKGROUND]);
 		e.setColor(Legend.COLORS[Legend.COLOR_SPEED_TEXT]);
-		e.setVRelative(ele[ROUTE_DISTANCE]);		
+		e.setVRelative(ele[ROUTE_DISTANCE]);
 		
-		e = ele[CURRENT_TIME]; addElement(e, 
+		e = ele[CURRENT_TIME]; addElement(e,
 				LayoutElement.FLAG_HALIGN_RIGHT | LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |
 				LayoutElement.FLAG_FONT_MEDIUM |
 				LayoutElement.FLAG_BACKGROUND_BOX
@@ -201,40 +201,43 @@ public class TraceLayout extends LayoutManager {
 		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_CLOCK_BACKGROUND]);
 		e.setColor(Legend.COLORS[Legend.COLOR_CLOCK_TEXT]);
 		e.setAdditionalOffsX(1); // FIXME: This should not be necessary to be exactly right aligned on the display
-		e.setVRelative(ele[ROUTE_INSTRUCTION]);		
+		e.setVRelative(ele[ROUTE_INSTRUCTION]);
 		e.setActionID(Trace.TOGGLE_BACKLIGHT_CMD);
 
-		e = ele[ETA]; addElement(e, 
+		e = ele[ETA]; addElement(e,
 				LayoutElement.FLAG_HALIGN_LEFTTO_RELATIVE | LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |
 				LayoutElement.FLAG_FONT_MEDIUM |
 				LayoutElement.FLAG_BACKGROUND_BOX
 		);
 		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_RI_ETA_BACKGROUND]);
 		e.setColor(Legend.COLORS[Legend.COLOR_RI_ETA_TEXT]);
-		e.setVRelative(ele[ROUTE_INSTRUCTION]);	
-		e.setHRelative(ele[CURRENT_TIME]);	
+		e.setVRelative(ele[ROUTE_INSTRUCTION]);
+		e.setHRelative(ele[CURRENT_TIME]);
 		e.setAdditionalOffsX(-2);
 		
-		e = ele[ROUTE_OFFROUTE]; addElement(e, 
+		e = ele[ROUTE_OFFROUTE]; addElement(e,
 				LayoutElement.FLAG_HALIGN_RIGHT | LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |
-				LayoutElement.FLAG_FONT_SMALL  
+				LayoutElement.FLAG_FONT_SMALL
 			);
 		e.setColor(Legend.COLORS[Legend.COLOR_RI_OFF_DISTANCE_TEXT]);
-		e.setVRelative(ele[CURRENT_TIME]);		
+		e.setVRelative(ele[CURRENT_TIME]);
 		
-		e = ele[SPEEDING_SIGN]; addElement(e, 
+		e = ele[SPEEDING_SIGN]; addElement(e,
 				LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |
 				LayoutElement.FLAG_FONT_LARGE
 		);
 		e.setSpecialElementID(SE_SPEEDING_SIGN);
 		e.setAdditionalOffsY(-5);
-		e.setVRelative(ele[SPEED_CURRENT]);	
+		e.setVRelative(ele[SPEED_CURRENT]);
 
-		e = ele[ZOOM_OUT]; addElement(e, 
-				LayoutElement.FLAG_HALIGN_RIGHT | LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND | LayoutElement.FLAG_VALIGN_CENTER_AT_TOP_OF_ELEMENT |
+		e = ele[ZOOM_OUT]; addElement(e,
+				LayoutElement.FLAG_HALIGN_RIGHT |
+				LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
+				LayoutElement.FLAG_VALIGN_CENTER_AT_TOP_OF_ELEMENT |
 				LayoutElement.FLAG_FONT_LARGE |
 				LayoutElement.FLAG_BACKGROUND_BORDER |
-				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH | LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT
+				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH |
+				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT
 		);
 		e.setWidthPercent(170);
 		e.setHeightPercent(170);
@@ -242,11 +245,14 @@ public class TraceLayout extends LayoutManager {
 		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON]);
 		e.setActionID(Trace.ZOOM_OUT_CMD);
 		
-		e = ele[ZOOM_IN]; addElement(e, 
-				LayoutElement.FLAG_HALIGN_RIGHT | LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND | LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |
+		e = ele[ZOOM_IN]; addElement(e,
+				LayoutElement.FLAG_HALIGN_RIGHT |
+				LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
+				LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |
 				LayoutElement.FLAG_FONT_LARGE |
 				LayoutElement.FLAG_BACKGROUND_BORDER |
-				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH | LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT
+				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH |
+				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT
 		);
 		e.setWidthPercent(170);
 		e.setHeightPercent(170);
@@ -255,11 +261,14 @@ public class TraceLayout extends LayoutManager {
 		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON]);
 		e.setActionID(Trace.ZOOM_IN_CMD);
 
-		e = ele[SHOW_DEST]; addElement(e, 
-				LayoutElement.FLAG_HALIGN_LEFTTO_RELATIVE | LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND | LayoutElement.FLAG_VALIGN_CENTER_AT_TOP_OF_ELEMENT |
+		e = ele[SHOW_DEST]; addElement(e,
+				LayoutElement.FLAG_HALIGN_LEFTTO_RELATIVE |
+				LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
+				LayoutElement.FLAG_VALIGN_CENTER_AT_TOP_OF_ELEMENT |
 				LayoutElement.FLAG_FONT_LARGE |
 				LayoutElement.FLAG_BACKGROUND_BORDER |
-				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH | LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT
+				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH |
+				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT
 		);
 		e.setWidthPercent(100);
 		e.setHeightPercent(170);
@@ -268,11 +277,14 @@ public class TraceLayout extends LayoutManager {
 		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON]);
 		e.setActionID(Trace.SHOW_DEST_CMD);
 		
-		e = ele[RECENTER_GPS]; addElement(e, 
-				LayoutElement.FLAG_HALIGN_LEFTTO_RELATIVE | LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND | LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |
+		e = ele[RECENTER_GPS]; addElement(e,
+				LayoutElement.FLAG_HALIGN_LEFTTO_RELATIVE |
+				LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
+				LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |
 				LayoutElement.FLAG_FONT_LARGE |
 				LayoutElement.FLAG_BACKGROUND_BORDER |
-				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH | LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT
+				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH |
+				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT
 		);
 		e.setWidthPercent(100);
 		e.setHeightPercent(170);
@@ -287,7 +299,7 @@ public class TraceLayout extends LayoutManager {
 	/*
 	 * layout for mobiles with very wide displays like Nokia E90
 	 */
-	private void createVerticalLayout() { 
+	private void createVerticalLayout() {
 		// TODO: create vertical layout - currently this layout is still the same as the horizontal layout
 		createHorizontalLayout();
 	}
@@ -296,10 +308,10 @@ public class TraceLayout extends LayoutManager {
 		switch(id) {
 			case SE_SCALEBAR:
 				showScale(g, left, top);
-				break;		
+				break;
 			case SE_SPEEDING_SIGN:
 				showSpeedingSign(g, text, left, top);
-				break;		
+				break;
 		}
 	}
 	
@@ -308,7 +320,7 @@ public class TraceLayout extends LayoutManager {
 		case SE_SCALEBAR:
 			return scalePx;
 		case SE_SPEEDING_SIGN:
-			return getSpeedingSignWidth(font, text); 
+			return getSpeedingSignWidth(font, text);
 		}
 		return 0;
 	}
@@ -325,33 +337,37 @@ public class TraceLayout extends LayoutManager {
 	
 	
 	/**
-	 * Draws a map scale onto screen.
-	 * This calculation is currently horribly
-	 * inefficient. There must be a better way
-	 * than this.
+	 * Draws the map scale to the screen.
+	 * This calculation is currently horribly inefficient.
+	 * There must be a better way than this.
 	 * 
-	 * @param pc Paint context for drawing
+	 * @param g Graphics context for drawing
+	 * @param left Screen X of top left corner of scale bar
+	 * @param top Screen Y of top left corner of scale bar
 	 */
 	public void showScale(Graphics g, int left, int top) {
-		//Draw the scale bar
 		g.setColor(Legend.COLORS[Legend.COLOR_SCALEBAR]);
 		g.setStrokeStyle(Graphics.SOLID);
 		int right = left + scalePx;
 		g.drawLine(left, top + 2, right, top + 2);
-		g.drawLine(left, top + 3, right, top + 3); //double line width
+		g.drawLine(left, top + 3, right, top + 3); // -> double line width
 		g.drawLine(left, top, left, top + 5);
 		g.drawLine(left + scalePx, top, right, top + 5);
 		if (!Configuration.getCfgBitState(Configuration.CFGBIT_METRIC)) {
 			if (scale > 1609.344) {
-				g.drawString(Integer.toString((int)(scale/1609.344f + 0.5)) + "mi", left + scalePx/2, top + 4, Graphics.HCENTER | Graphics.TOP);
+				g.drawString(Integer.toString((int)(scale / 1609.344f + 0.5)) + "mi",
+						left + scalePx / 2, top + 4, Graphics.HCENTER | Graphics.TOP);
 			} else {
-				g.drawString(Integer.toString((int)(scale/0.9144 + 0.5)) + "yd", left + scalePx/2, top + 4, Graphics.HCENTER | Graphics.TOP);
+				g.drawString(Integer.toString((int)(scale / 0.9144 + 0.5)) + "yd",
+						left + scalePx / 2, top + 4, Graphics.HCENTER | Graphics.TOP);
 			}
 		} else {
 			if (scale > 1000) {
-				g.drawString(Integer.toString((int)(scale/1000.0f)) + "km", left + scalePx/2, top + 4, Graphics.HCENTER | Graphics.TOP);
+				g.drawString(Integer.toString((int)(scale / 1000.0f)) + "km",
+						left + scalePx / 2, top + 4, Graphics.HCENTER | Graphics.TOP);
 			} else {
-				g.drawString(Integer.toString((int)scale) + "m", left + scalePx/2, top + 4, Graphics.HCENTER | Graphics.TOP);
+				g.drawString(Integer.toString((int)scale) + "m",
+						left + scalePx / 2, top + 4, Graphics.HCENTER | Graphics.TOP);
 			}
 		}
 		
@@ -393,7 +409,7 @@ public class TraceLayout extends LayoutManager {
 			//Calculate how many pixels this distance is apart
 			//The scale/d factor should be between 1 and 2.5
 			//due to rounding
-			scalePx = (int)(((float)basePx)*scale/d);
+			scalePx = (int)((basePx)*scale/d);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -416,9 +432,12 @@ public class TraceLayout extends LayoutManager {
 		g.setColor(Legend.COLORS[Legend.COLOR_SPEEDING_SIGN_BORDER]);
 		g.fillArc(left, top, speedingSignWidth, speedingSignWidth, 0, 360);
 		g.setColor(Legend.COLORS[Legend.COLOR_SPEEDING_SIGN_INNER]);
-		g.fillArc(left + char0Width, top + char0Width, speedingSignWidth - (char0Width * 2), speedingSignWidth - (char0Width * 2), 0, 360);
+		g.fillArc(left + char0Width, top + char0Width, speedingSignWidth - (char0Width * 2),
+				speedingSignWidth - (char0Width * 2), 0, 360);
 		g.setColor(Legend.COLORS[Legend.COLOR_SPEEDING_SIGN_TEXT]);
-		g.drawString(sMaxSpeed, left + speedingSignWidth/2, top + speedingSignWidth/2 - (char0Height / 2), Graphics.TOP | Graphics.HCENTER);
+		g.drawString(sMaxSpeed, left + speedingSignWidth / 2,
+				top + speedingSignWidth / 2 - (char0Height / 2),
+				Graphics.TOP | Graphics.HCENTER);
 	}
 	
 }
