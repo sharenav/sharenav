@@ -115,7 +115,7 @@ public class TraceLayout extends LayoutManager {
 	
 		e = ele[SOLUTION]; addElement(e, 
 			LayoutElement.FLAG_HALIGN_RIGHT | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
-			LayoutElement.FLAG_FONT_MEDIUM
+			LayoutElement.FLAG_FONT_MEDIUM | LayoutElement.FLAG_BACKGROUND_BOX
 		);
 		e.setColor(Legend.COLORS[Legend.COLOR_MAP_TEXT]);
 		e.setAdditionalOffsX(-1);
@@ -132,8 +132,7 @@ public class TraceLayout extends LayoutManager {
 		
 		e = ele[RECORDED_COUNT]; addElement(e, 
 				LayoutElement.FLAG_HALIGN_RIGHT | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
-				LayoutElement.FLAG_FONT_MEDIUM
-			);	
+				LayoutElement.FLAG_FONT_MEDIUM | LayoutElement.FLAG_BACKGROUND_BOX);
 		e.setAdditionalOffsX(-1);
 		e.setVRelative(ele[SOLUTION]);
 	
