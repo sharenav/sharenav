@@ -1,9 +1,9 @@
-package de.ueller.midlet.gps.importexport;
-
 /*
  * GpsMid - Copyright (c) 2008 Kai Krueger apmonkey at users dot sourceforge dot net 
- * See Copying
+ * See COPYING
  */
+
+package de.ueller.midlet.gps.importexport;
 
 import java.io.IOException;
 
@@ -16,11 +16,11 @@ import de.ueller.gps.data.Configuration;
 import de.ueller.midlet.gps.FsDiscover;
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.GpsMidDisplayable;
-import de.ueller.midlet.gps.GuiGpxLoad;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.SelectionListener;
 import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.UploadListener;
+
 
 public class FileGpxImportSession implements GpxImportSession, SelectionListener, GpsMidDisplayable {
 	
@@ -66,7 +66,8 @@ public class FileGpxImportSession implements GpxImportSession, SelectionListener
 					Connection conn = Connector.open(url, Connector.READ);
 					if (conn instanceof InputConnection) {
 						InputConnection inConn = ((InputConnection)conn);
-						Trace.getInstance().gpx.receiveGpx(inConn.openInputStream(), feedbackListener, maxDistance);
+						Trace.getInstance().gpx.receiveGpx(inConn.openInputStream(), 
+								feedbackListener, maxDistance);
 						return;
 					}
 					logger.error("Unknown url type to load from: " + url);

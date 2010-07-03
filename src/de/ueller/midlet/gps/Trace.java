@@ -1,9 +1,9 @@
-package de.ueller.midlet.gps;
-
 /*
- * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net 
- * See Copying
+ * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net
+ * See COPYING
  */
+
+package de.ueller.midlet.gps;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -76,9 +76,9 @@ import de.ueller.midlet.gps.tile.Images;
 import de.ueller.midlet.gps.tile.PaintContext;
 import de.ueller.midlet.gps.GpsMidDisplayable;
 
-/** 
- * Implements the main "Map" screen which displays the map, offers track recording etc. 
- * @author Harald Mueller 
+/**
+ * Implements the main "Map" screen which displays the map, offers track recording etc.
+ * @author Harald Mueller
  * 
  */
 public class Trace extends KeyCommandCanvas implements LocationMsgReceiver,
@@ -159,8 +159,8 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	 */
 	public boolean autoZoomed = true;
 	
-	private Position pos = new Position(0.0f, 0.0f, 
-			(float)PositionMark.INVALID_ELEVATION, 0.0f, 0.0f, 1,
+	private Position pos = new Position(0.0f, 0.0f,
+			PositionMark.INVALID_ELEVATION, 0.0f, 0.0f, 1,
 			System.currentTimeMillis());
 
 	/**
@@ -174,7 +174,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 
 	private final GpsMid parent;
 	
-	public static TraceLayout tl = null; 
+	public static TraceLayout tl = null;
 
 	private String lastTitleMsg;
 	private String currentTitleMsg;
@@ -232,24 +232,24 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			"to long  :", "interrupt:", "checksum :", "no End1  :",
 			"no End2  :" };
 //#enddebug
-	/** 
-	 * Quality of Bluetooth reception, 0..100. 
-	 */	
+	/**
+	 * Quality of Bluetooth reception, 0..100.
+	 */
 	private byte btquality;
 
 	private int[] statRecord;
 
-	/** 
-	 * Current speed from GPS in km/h. 
+	/**
+	 * Current speed from GPS in km/h.
 	 */
 	public volatile int speed;
 
-	/** 
-	 * Current altitude from GPS in m. 
+	/**
+	 * Current altitude from GPS in m.
 	 */
 	public volatile int altitude;
 	
-	/** 
+	/**
 	 * Flag if we're speeding
 	 */
 	private volatile boolean speeding = false;
@@ -258,7 +258,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	private int speedingSpeedLimit = 0;
 
 	/**
-	 * Current course from GPS in compass degrees, 0..359.  
+	 * Current course from GPS in compass degrees, 0..359.
 	 */
 	private int course = 0;
 
@@ -273,7 +273,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 
 	private QueueDictReader dictReader;
 
-	private Runtime runtime = Runtime.getRuntime();
+	private final Runtime runtime = Runtime.getRuntime();
 
 	private RoutePositionMark dest = null;
 	public Vector route = null;
@@ -307,7 +307,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		CMDS[EXIT_CMD] = new Command("Exit", Command.EXIT, 2);
 		CMDS[REFRESH_CMD] = new Command("Refresh", Command.ITEM, 4);
 		CMDS[SEARCH_CMD] = new Command("Search", Command.OK, 1);
-		CMDS[CONNECT_GPS_CMD] = new Command("Start GPS",Command.ITEM, 2);		 
+		CMDS[CONNECT_GPS_CMD] = new Command("Start GPS",Command.ITEM, 2);
 		CMDS[DISCONNECT_GPS_CMD] = new Command("Stop GPS",Command.ITEM, 2);
 		CMDS[START_RECORD_CMD] = new Command("Start record",Command.ITEM, 4);
 		CMDS[STOP_RECORD_CMD] = new Command("Stop record",Command.ITEM, 4);
@@ -363,8 +363,8 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 
 		addAllCommands();
 		
-		Configuration.loadKeyShortcuts(gameKeyCommand, singleKeyPressCommand, 
-				repeatableKeyPressCommand, doubleKeyPressCommand, longKeyPressCommand, 
+		Configuration.loadKeyShortcuts(gameKeyCommand, singleKeyPressCommand,
+				repeatableKeyPressCommand, doubleKeyPressCommand, longKeyPressCommand,
 				nonReleasableKeyPressCommand, CMDS);
 
 		if (!Configuration.getCfgBitState(Configuration.CFGBIT_DISPLAYSIZE_SPECIFIC_DEFAULTS_DONE)) {
@@ -448,14 +448,10 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 						try {
 							jsr179Version = System.getProperty("microedition.location.version");
 						} catch (RuntimeException re) {
-							/**
-							 * Some phones throw exceptions if trying to access properties that don't
-							 * exist, so we have to catch these and just ignore them.
-							 */
+							// Some phones throw exceptions if trying to access properties that don't
+							// exist, so we have to catch these and just ignore them.
 						} catch (Exception e) {
-							/**
-							 * See above 
-							 */				
+							// As above
 						}
 						if (jsr179Version != null && jsr179Version.length() > 0) {
 							Class jsr179Class = Class.forName("de.ueller.gps.location.JSR179Input");
@@ -468,7 +464,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 						return;
 					}
 					//#else
-					// keep eclipse happy 
+					// keep Eclipse happy
 					if (true) {
 						logger.error("JSR179 is not compiled in this version of GpsMid");
 						running = false;
@@ -479,7 +475,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 
 			}
 			
-			//#if polish.api.fileconnection	
+			//#if polish.api.fileconnection
 			/**
 			 * Allow for logging the raw data coming from the gps
 			 */
@@ -487,14 +483,15 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			//logger.error("Raw logging url: " + url);
 			if (url != null) {
 				try {
-					if (Configuration.getGpsRawLoggerEnable()) { 
+					if (Configuration.getGpsRawLoggerEnable()) {
 						logger.info("Raw Location logging to: " + url);
 						url += "rawGpsLog" + HelperRoutines.formatSimpleDateNow() + ".txt";
-						javax.microedition.io.Connection logCon = Connector.open(url);				
+						javax.microedition.io.Connection logCon = Connector.open(url);
 						if (logCon instanceof FileConnection) {
 							FileConnection fileCon = (FileConnection)logCon;
-							if (!fileCon.exists())
+							if (!fileCon.exists()) {
 								fileCon.create();
+							}
 							locationProducer.enableRawLogging(((FileConnection)logCon).openOutputStream());
 						} else {
 							logger.info("Raw logging of NMEA is only to filesystem supported");
@@ -507,7 +504,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					 * can then be uploaded to their web site to determine the position of the
 					 * cell towers. It currently only works for SE phones
 					 */
-					if (Configuration.getCfgBitState(Configuration.CFGBIT_CELLID_LOGGING)) { 
+					if (Configuration.getCfgBitState(Configuration.CFGBIT_CELLID_LOGGING)) {
 						SECellLocLogger secl = new SECellLocLogger();
 						if (secl.init()) {
 							locationProducer.addLocationMsgReceiver(secl);
@@ -517,7 +514,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					logger.exception("Couldn't open file for raw logging of Gps data",ioe);
 				} catch (SecurityException se) {
 					logger.error("Permission to write data for NMEA raw logging was denied");
-				}				
+				}
 			}
 			//#endif
 			if (locationProducer == null) {
@@ -539,15 +536,15 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			addCommand(CMDS[DISCONNECT_GPS_CMD]);
 			//#debug info
 			logger.info("end startLocationPovider thread");
-			//		setTitle("lp="+Configuration.getLocationProvider() + " " + Configuration.getBtUrl());			
+			//		setTitle("lp="+Configuration.getLocationProvider() + " " + Configuration.getBtUrl());
 		} catch (SecurityException se) {
 			/**
 			 * The application was not permitted to connect to the required resources
-			 * Not much we can do here other than gracefully shutdown the thread			 *  
+			 * Not much we can do here other than gracefully shutdown the thread			 *
 			 */
-		} catch (OutOfMemoryError oome) { 
-			logger.fatal("Trace thread crashed as out of memory: " + oome.getMessage()); 
-			oome.printStackTrace(); 
+		} catch (OutOfMemoryError oome) {
+			logger.fatal("Trace thread crashed as out of memory: " + oome.getMessage());
+			oome.printStackTrace();
 		} catch (Exception e) {
 			logger.fatal("Trace thread crashed unexpectadly with error " +  e.getMessage());
 			e.printStackTrace();
@@ -726,9 +723,9 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				return;
 			}
 			
-			if ((c == CMDS[PAN_LEFT25_CMD]) || (c == CMDS[PAN_RIGHT25_CMD]) 
+			if ((c == CMDS[PAN_LEFT25_CMD]) || (c == CMDS[PAN_RIGHT25_CMD])
 					|| (c == CMDS[PAN_UP25_CMD]) || (c == CMDS[PAN_DOWN25_CMD])
-					|| (c == CMDS[PAN_LEFT2_CMD]) || (c == CMDS[PAN_RIGHT2_CMD]) 
+					|| (c == CMDS[PAN_LEFT2_CMD]) || (c == CMDS[PAN_RIGHT2_CMD])
 					|| (c == CMDS[PAN_UP2_CMD]) || (c == CMDS[PAN_DOWN2_CMD])) {
 				int panX = 0; int panY = 0;
 				int courseDiff = 0;
@@ -773,7 +770,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					}
 				}
 				
-				if (backLightLevelDiff !=0  &&  System.currentTimeMillis() < (lastBackLightOnTime + 1500)) { 
+				if (backLightLevelDiff !=0  &&  System.currentTimeMillis() < (lastBackLightOnTime + 1500)) {
 					// turn backlight always on when dimming
 					Configuration.setCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON, true, false);
 					lastBackLightOnTime = System.currentTimeMillis();
@@ -797,7 +794,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				return;
 			}
 			if (c == CMDS[EXIT_CMD]) {
-				// FIXME: This is a workaround. It would be better if recording 
+				// FIXME: This is a workaround. It would be better if recording
 				// would not be stopped when leaving the map.
 				if (gpx.isRecordingTrk()) {
 					alert("Record Mode", "Please stop recording before exit." , 2500);
@@ -871,11 +868,11 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			}
 			if (c == CMDS[MAN_WAYP_CMD]) {
 				if (gpx.isLoadingWaypoints()) {
-					showAlertLoadingWpt();					
+					showAlertLoadingWpt();
 				} else {
 					GuiWaypoint gwp = new GuiWaypoint(this);
 					gwp.show();
-				}					
+				}
 				return;
 			}
 			if (c == CMDS[MAPFEATURES_CMD]) {
@@ -941,7 +938,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					recordingsMenu.addCommand(CMDS[BACK_CMD]);
 					recordingsMenu.setSelectCommand(CMDS[OK_CMD]);
 					parent.show(recordingsMenu);
-					recordingsMenu.setCommandListener(this);				
+					recordingsMenu.setCommandListener(this);
 				}
 				if (recordingsMenu != null) {
 					recordingsMenu.setSelectedIndex(0, true);
@@ -964,7 +961,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					routingsMenu.addCommand(CMDS[OK_CMD]);
 					routingsMenu.addCommand(CMDS[BACK_CMD]);
 					routingsMenu.setSelectCommand(CMDS[OK_CMD]);
-					routingsMenu.setCommandListener(this);				
+					routingsMenu.setCommandListener(this);
 				}
 				if (routingsMenu != null) {
 					routingsMenu.setSelectedIndex(0, true);
@@ -1004,14 +1001,14 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			}
 			if (c == CMDS[ONLINE_INFO_CMD]) {
 				//#if polish.api.online
-					Position oPos = new Position(center.radlat, center.radlon, 
+					Position oPos = new Position(center.radlat, center.radlon,
 							0.0f, 0.0f, 0.0f, 0, 0);
 					GuiWebInfo gWeb = new GuiWebInfo(this, oPos);
 					gWeb.show();
 				//#else
-					alert("No online capabilites", 
+					alert("No online capabilites",
 							"Set app=GpsMid-Generic-editing and enableEditing=true in " +
-							".properties file and recreate GpsMid with Osm2GpsMid.", 
+							".properties file and recreate GpsMid with Osm2GpsMid.",
 							Alert.FOREVER);
 				//#endif
 			}
@@ -1059,23 +1056,23 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			            case 5: {
 			            	commandAction(CMDS[SEND_MESSAGE_CMD], null);
 			            	break;
-			            }			            	
+			            }
 			          //#elif polish.api.wmapi
 			            case 3: {
 			            	commandAction(CMDS[SEND_MESSAGE_CMD], null);
 			            	break;
-			            }			            	
-			          //#endif					 
-					 }				
+			            }
+			          //#endif
+					 }
 				}
 				if (d == routingsMenu) {
 					show();
 					switch (routingsMenu.getSelectedIndex()) {
-					case 0: {			            	
+					case 0: {
 						if (routeCalc || route != null) {
 							commandAction(CMDS[ROUTING_STOP_CMD], null);
 						} else {
-							commandAction(CMDS[ROUTING_START_WITH_MODE_SELECT_CMD], null);							
+							commandAction(CMDS[ROUTING_START_WITH_MODE_SELECT_CMD], null);
 						}
 						break;
 					}
@@ -1090,7 +1087,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					case 3: {
 						commandAction(CMDS[CLEAR_DEST_CMD], null);
 						break;
-					}			            	
+					}
 					}
 				}
 				return;
@@ -1099,14 +1096,14 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			if (c == CMDS[CAMERA_CMD]) {
 				try {
 					Class GuiCameraClass = Class.forName("de.ueller.midlet.gps.GuiCamera");
-					Object GuiCameraObject = GuiCameraClass.newInstance();					
+					Object GuiCameraObject = GuiCameraClass.newInstance();
 					GuiCameraInterface cam = (GuiCameraInterface)GuiCameraObject;
 					cam.init(this);
 					cam.show();
 				} catch (ClassNotFoundException cnfe) {
 					logger.exception("Your phone does not support the necessary JSRs to use the camera", cnfe);
 				}
-				return;				
+				return;
 			}
 			if (c == CMDS[TOGGLE_AUDIO_REC]) {
 				if (audioRec.isRecording()) {
@@ -1121,7 +1118,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			if (c == CMDS[ROUTING_TOGGLE_CMD]) {
 				if (routeCalc || route != null) {
 					commandAction(CMDS[ROUTING_STOP_CMD],(Displayable) null);
-				} else { 
+				} else {
 					commandAction(CMDS[ROUTING_START_WITH_MODE_SELECT_CMD],(Displayable) null);
 				}
 				return;
@@ -1136,7 +1133,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			
 			if (c == CMDS[ROUTING_START_CMD]) {
 				if (! routeCalc || RouteLineProducer.isRunning()) {
-					routeCalc = true; 
+					routeCalc = true;
 					if (Configuration.getContinueMapWhileRouteing() != Configuration.continueMap_Always ) {
 	  				   stopImageCollector();
 					}
@@ -1206,7 +1203,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				Configuration.setCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON,
 									!(Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON)),
 									false);
-				lastBackLightOnTime = System.currentTimeMillis(); 
+				lastBackLightOnTime = System.currentTimeMillis();
 				parent.showBackLightLevel();
 				return;
 			}
@@ -1232,7 +1229,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					// show alert that keys are locked
 					keyPressed(0);
 				} else {
-					alert("GpsMid", "Keys unlocked", 1000);					
+					alert("GpsMid", "Keys unlocked", 1000);
 				}
 				return;
 			}
@@ -1298,7 +1295,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 
 			
 			if (! routeCalc) {
-				//#if polish.api.osm-editing 
+				//#if polish.api.osm-editing
 				if (c == CMDS[RETRIEVE_XML]) {
 					if (Legend.enableEdits) {
 						if ((pc.actualWay != null) && (pc.actualWay instanceof EditableWay)) {
@@ -1313,7 +1310,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				}
 				if (c == CMDS[RETRIEVE_NODE]) {
 					if (Legend.enableEdits) {
-						GuiOSMPOIDisplay guiNode = new GuiOSMPOIDisplay(-1, null, 
+						GuiOSMPOIDisplay guiNode = new GuiOSMPOIDisplay(-1, null,
 								center.radlat, center.radlon, this);
 						guiNode.show();
 						guiNode.refresh();
@@ -1327,7 +1324,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 						if ((pc != null) && (pc.actualWay != null)) {
 							streetName = getName(pc.actualWay.nameIdx);
 						}
-						GuiOSMAddrDisplay guiAddr = new GuiOSMAddrDisplay(-1, streetName, null, 
+						GuiOSMAddrDisplay guiAddr = new GuiOSMAddrDisplay(-1, streetName, null,
 								center.radlat, center.radlon, this);
 						guiAddr.show();
 					} else {
@@ -1335,10 +1332,10 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					}
 				}
 				//#else
-				if (c == CMDS[RETRIEVE_XML] || c == CMDS[RETRIEVE_NODE] || c == CMDS[EDIT_ADDR_CMD]) { 
-					alert("No online capabilites", 
+				if (c == CMDS[RETRIEVE_XML] || c == CMDS[RETRIEVE_NODE] || c == CMDS[EDIT_ADDR_CMD]) {
+					alert("No online capabilites",
 						"Set app=GpsMid-Generic-editing and enableEditing=true in " +
-						".properties file and recreate GpsMid with Osm2GpsMid.", 
+						".properties file and recreate GpsMid with Osm2GpsMid.",
 						Alert.FOREVER);
 				}
 				//#endif
@@ -1366,7 +1363,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		Images images = new Images();
 		pc = new PaintContext(this, images);
 		pc.legend = GpsMid.legend;
-		/* move responsibility for overscan to ImmageCollector 
+		/* move responsibility for overscan to ImmageCollector
 		int w = (this.getWidth() * 125) / 100;
 		int h = (this.getHeight() * 125) / 100;
 		*/
@@ -1442,7 +1439,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		if (TrackPlayer.isPlaying) {
 			//#debug debug
 			logger.debug("Shutdown: TrackPlayer");
-			TrackPlayer.getInstance().stop();			
+			TrackPlayer.getInstance().stop();
 		}
 	}
 	
@@ -1480,7 +1477,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			g.setColor(Legend.COLORS[Legend.COLOR_MAP_BACKGROUND]);
 			g.fillRect(0, 0, this.getWidth(), this.getHeight());
 			pc.g = g;
-			if (imageCollector != null) {				
+			if (imageCollector != null) {
 				/*
 				 *  When painting we receive a copy of the center coordinates
 				 *  where the imageCollector has drawn last
@@ -1494,7 +1491,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					 * we also need to make sure the current way for the real position
 					 * has really been detected by the imageCollector which happens when drawing the ways
 					 * So we check if we just painted an image that did not cover
-					 * the center of the display because it was too far painted off from 
+					 * the center of the display because it was too far painted off from
 					 * the display center position and in this case we don't give route instructions
 					 * Thus e.g. after leaving a long tunnel without gps fix there will not be given an
 					 * obsolete instruction from inside the tunnel
@@ -1547,7 +1544,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				// give speeding alert only every 10 seconds
 				if ( (System.currentTimeMillis() - lastTimeOfSpeedingSound) > 10000 ) {
 					lastTimeOfSpeedingSound = System.currentTimeMillis();
-					GpsMid.mNoiseMaker.immediateSound(RouteSyntax.getInstance().getSpeedLimitSound());					
+					GpsMid.mNoiseMaker.immediateSound(RouteSyntax.getInstance().getSpeedLimitSound());
 				}
 			}
 			/*
@@ -1589,18 +1586,18 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					} else {
 						eRecorded.setColor(Legend.COLORS[Legend.COLOR_RECORDING_ON_TEXT]); // red
 					}
-					eRecorded.setText(gpx.getTrkPointCount() + "r"); 
+					eRecorded.setText(gpx.getTrkPointCount() + "r");
 				}
 			} else {
 				if (TrackPlayer.isPlaying) {
 					eSolution.setText("Replay");
 				} else {
-					eSolution.setText("Off");					
+					eSolution.setText("Off");
 				}
 			}
 
 			LayoutElement e = tl.ele[TraceLayout.CELLID];
-			// show if we are logging cellIDs 
+			// show if we are logging cellIDs
 			if (SECellLocLogger.isCellIDLogging() > 0) {
 				if (SECellLocLogger.isCellIDLogging() == 2) {
 					e.setColor(Legend.COLORS[Legend.COLOR_CELLID_LOG_ON_TEXT]); // yellow
@@ -1614,15 +1611,15 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			// show audio recording status
 			e = tl.ele[TraceLayout.AUDIOREC];
 			if (audioRec.isRecording()) {
-				e.setColor(Legend.COLORS[Legend.COLOR_AUDIOREC_TEXT]); // red 
-				e.setText("AudioRec");				
+				e.setColor(Legend.COLORS[Legend.COLOR_AUDIOREC_TEXT]); // red
+				e.setText("AudioRec");
 			}
 			
 			if (pc != null) {
 				showDestination(pc);
 			}
 
-			if (speed > 0 && 
+			if (speed > 0 &&
 					Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_SPEED_IN_MAP)) {
 				if (Configuration.getCfgBitState(Configuration.CFGBIT_METRIC)) {
 					tl.ele[TraceLayout.SPEED_CURRENT].setText(" " + Integer.toString(speed) + " km/h");
@@ -1637,10 +1634,10 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					&&
 				";off;nofix;cell;0s;~~;".indexOf(";" + solution.toLowerCase() + ";") == -1
 			) {
-				tl.ele[TraceLayout.ALTITUDE].setText(Integer.toString(altitude) + "m");				
+				tl.ele[TraceLayout.ALTITUDE].setText(Integer.toString(altitude) + "m");
 			}
 
-			if (dest != null && (route == null || (!RouteLineProducer.isRouteLineProduced() && !RouteLineProducer.isRunning()) ) && Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_AIR_DISTANCE_IN_MAP)) {				
+			if (dest != null && (route == null || (!RouteLineProducer.isRouteLineProduced() && !RouteLineProducer.isRunning()) ) && Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_AIR_DISTANCE_IN_MAP)) {
 				e = Trace.tl.ele[TraceLayout.ROUTE_DISTANCE];
 				e.setBackgroundColor(Legend.COLORS[Legend.COLOR_RI_DISTANCE_BACKGROUND]);
 				double distLine = ProjMath.getDistance(center.radlat, center.radlon, dest.lat, dest.lon);
@@ -1652,10 +1649,10 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				e.setText(DateTimeTools.getClock(System.currentTimeMillis(), true));
 
  				/*
-				don't use new Date() - it is very slow on some Nokia devices			
-				currentTime.setTime( new Date( System.currentTimeMillis() ) );		
+				don't use new Date() - it is very slow on some Nokia devices
+				currentTime.setTime( new Date( System.currentTimeMillis() ) );
 				e.setText(
-					currentTime.get(Calendar.HOUR_OF_DAY) + ":"  
+					currentTime.get(Calendar.HOUR_OF_DAY) + ":"
 					+ HelperRoutines.formatInt2(currentTime.get(Calendar.MINUTE)));
 				*/
 
@@ -1674,13 +1671,13 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 
 			e = tl.ele[TraceLayout.TITLEBAR];
 			if (currentTitleMsgOpenCount != 0) {
-				e.setText(currentTitleMsg); 
+				e.setText(currentTitleMsg);
 
 				// setTitleMsgTimeOut can be changed in receiveMessage()
 				synchronized (this) {
 					if (setTitleMsgTimeout != 0) {
 						TimerTask timerT;
-						Timer tm = new Timer();	    
+						Timer tm = new Timer();
 						timerT = new TimerTask() {
 							public synchronized void run() {
 								currentTitleMsgOpenCount--;
@@ -1690,7 +1687,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 									logger.debug("clearing title");
 									repaint();
 								}
-							}			
+							}
 						};
 						tm.schedule(timerT, setTitleMsgTimeout);
 						setTitleMsgTimeout = 0;
@@ -1727,9 +1724,9 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		int alertWidth = titleFont.stringWidth(currentAlertTitle);
 		// width each alert message line must fit in
 		int maxWidth = getWidth() - extraWidth;
-		// Two passes: 1st pass calculates placement and necessary size of alert, 
+		// Two passes: 1st pass calculates placement and necessary size of alert,
 		// 2nd pass actually does the drawing
-		for (int i = 0; i <= 1; i++) { 
+		for (int i = 0; i <= 1; i++) {
 			int nextSpaceAt = 0;
 			int prevSpaceAt = 0;
 			int start = 0;
@@ -1747,7 +1744,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					nextSpaceAt++;
 				}
 				nextSpaceAt--;
-				// Reduce line word by word or if not possible char by char until the 
+				// Reduce line word by word or if not possible char by char until the
 				// remaining string part fits to display width
 				while (width > maxWidth) {
 					if (prevSpaceAt > start && nextSpaceAt > prevSpaceAt) {
@@ -1758,8 +1755,8 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					width = font.substringWidth(currentAlertMessage, start, nextSpaceAt - start);
 				}
 				// determine maximum alert width
-				if (alertWidth < width ) { 
-					alertWidth = width; 
+				if (alertWidth < width ) {
+					alertWidth = width;
 				}
 				// during the second pass draw the message text lines
 				if (i==1) {
@@ -1795,14 +1792,14 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				g.drawString(currentAlertTitle, getWidth()/2, y , Graphics.TOP|Graphics.HCENTER);
 				g.setFont(font);
 				// output alert message 1.5 lines below alert title in the next pass
-				y += (fontHeight * 3 / 2); 
+				y += (fontHeight * 3 / 2);
 			}
 		} // end for
 		// setAlertTimeOut can be changed in receiveMessage()
 		synchronized (this) {
 			if (setAlertTimeout != 0) {
 				TimerTask timerT;
-				Timer tm = new Timer();	    
+				Timer tm = new Timer();
 				timerT = new TimerTask() {
 					public synchronized void run() {
 						currentAlertsOpenCount--;
@@ -1811,7 +1808,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 							logger.debug("clearing alert");
 							repaint();
 						}
-					}			
+					}
 				};
 				tm.schedule(timerT, setAlertTimeout);
 				setAlertTimeout = 0;
@@ -1859,14 +1856,14 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	public void cleanup() {
 		namesThread.cleanup();
 		tileReader.incUnusedCounter();
-		dictReader.incUnusedCounter();		
+		dictReader.incUnusedCounter();
 	}
 	
 //	public void searchElement(PositionMark pm) throws Exception {
 //		PaintContext pc = new PaintContext(this, null);
 //		// take a bigger angle for lon because of positions near to the poles.
 //		Node nld = new Node(pm.lat - 0.0001f, pm.lon - 0.0005f, true);
-//		Node nru = new Node(pm.lat + 0.0001f, pm.lon + 0.0005f, true);		
+//		Node nru = new Node(pm.lat + 0.0001f, pm.lon + 0.0005f, true);
 //		pc.searchLD = nld;
 //		pc.searchRU = nru;
 //		pc.dest = pm;
@@ -1887,7 +1884,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		pc.squareDstToActualRoutableWay = Float.MAX_VALUE;
 		pc.xSize = 100;
 		pc.ySize = 100;
-		// retry searching an expanding region at the position mark 
+		// retry searching an expanding region at the position mark
 		Projection p;
 		do {
 			p = new Proj2D(new Node(pm.lat,pm.lon, true),5000,pc.xSize,pc.ySize);
@@ -1996,11 +1993,11 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			int centerY = centerP.y-imageCollector.yScreenOverscan;
 			int posX, posY;
 			if (!gpsRecenter) {
-				IntPoint p1 = new IntPoint(0, 0);				
-				pc.getP().forward((pos.latitude * MoreMath.FAC_DECTORAD), 
+				IntPoint p1 = new IntPoint(0, 0);
+				pc.getP().forward((pos.latitude * MoreMath.FAC_DECTORAD),
 								  (pos.longitude * MoreMath.FAC_DECTORAD), p1);
 				posX = p1.getX();
-				posY = p1.getY();		
+				posY = p1.getY();
 			} else {
 				posX = centerX;
 				posY = centerY;
@@ -2008,7 +2005,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			pc.g.drawImage(pc.images.IMG_POS_BG, posX, posY, CENTERPOS);
 
 			g.setColor(Legend.COLORS[Legend.COLOR_MAP_POSINDICATOR]);
-			float radc = (float) (course * MoreMath.FAC_DECTORAD);
+			float radc = (course * MoreMath.FAC_DECTORAD);
 			int px = posX + (int) (Math.sin(radc) * 20);
 			int py = posY - (int) (Math.cos(radc) * 20);
 			g.drawRect(posX - 4, posY - 4, 8, 8);
@@ -2021,7 +2018,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			}
 		} catch (Exception e) {
 			if (imageCollector == null){
-				System.out.println("No ImmageCollector");
+				System.out.println("No ImageCollector");
 			}
 			if (centerP == null){
 				System.out.println("No centerP");
@@ -2087,10 +2084,10 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				+ (100f * runtime.freeMemory() / runtime.totalMemory()), 0, yc,
 				Graphics.TOP | Graphics.LEFT);
 		yc += la;
-		g.drawString("Threads running: " 
-				+ Thread.activeCount(), 0, yc, 
-				Graphics.TOP | Graphics.LEFT); 
-		yc += la;		
+		g.drawString("Threads running: "
+				+ Thread.activeCount(), 0, yc,
+				Graphics.TOP | Graphics.LEFT);
+		yc += la;
 		g.drawString("Names: " + namesThread.getNameCount(), 0, yc,
 				Graphics.TOP | Graphics.LEFT);
 		yc += la;
@@ -2105,7 +2102,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		g.drawString("LastMsg: " + lastTitleMsg, 0, yc, Graphics.TOP
 				| Graphics.LEFT);
 		yc += la;
-		g.drawString( "at " + lastTitleMsgClock, 0, yc,  
+		g.drawString( "at " + lastTitleMsgClock, 0, yc,
 				Graphics.TOP | Graphics.LEFT );
 		return (yc);
 
@@ -2131,7 +2128,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	
 	public synchronized void receivePosition(float lat, float lon, float scale) {
 		//#debug debug
-		logger.debug("Now displaying: " + (lat * MoreMath.FAC_RADTODEC) + " | " + 	
+		logger.debug("Now displaying: " + (lat * MoreMath.FAC_RADTODEC) + " | " +
 			     (lon * MoreMath.FAC_RADTODEC));
 		//We are explicitly setting the map to this position, so we probably don't
 		//want it to be recentered on the GPS immediately.
@@ -2178,15 +2175,15 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					course -= 360;
 				}
 			}
-		}		
+		}
 		speed = (int) (pos.speed * 3.6f);
 		altitude = (int) (pos.altitude);
 		if (gpx.isRecordingTrk()) {
 			try {
-				gpx.addTrkPt(pos);				
+				gpx.addTrkPt(pos);
 			} catch (Exception e) {
 				receiveMessage(e.getMessage());
-			} 
+			}
 		}
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_AUTOZOOM)
 				&& gpsRecenter
@@ -2194,10 +2191,10 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				&& autoZoomed
 				&& pc.getP() != null
 		) {
-			// the minimumScale at 20km/h and below is equivalent to having zoomed in manually once from the startup zoom level 
+			// the minimumScale at 20km/h and below is equivalent to having zoomed in manually once from the startup zoom level
 			final float minimumScale = 10000;
 			final int minimumSpeed = 20;
-			// the maximumScale at 160km/h and above is equivalent to having zoomed out manually once from the startup zoom level 
+			// the maximumScale at 160km/h and above is equivalent to having zoomed out manually once from the startup zoom level
 			final float maximumScale = 22500;
 			final int maximumSpeed = 160;
 			int speedForScale = speed;
@@ -2206,7 +2203,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			if (newScale < minimumScale) {
 				newScale = minimumScale;
 			} else if (newScale > maximumScale) {
-				newScale = maximumScale;					
+				newScale = maximumScale;
 			}
 			scale = newScale;
 			
@@ -2222,23 +2219,23 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 //				speedForScale = 30;
 //			} else if (speedForScale > 160) {
 //				speedForScale = 160;
-//			}				
+//			}
 //
 //			final float SECONDS_TO_PREVIEW = 45f;
 //			float metersToPreview = (float) speedForScale / 3.6f * SECONDS_TO_PREVIEW;
 //			System.out.println(metersToPreview + "meters to preview at " + speedForScale + "km/h");
 //
 //			if (metersToPreview < 2000) {
-//			// calculate top position that needs to be visible to preview the metersToPreview 
+//			// calculate top position that needs to be visible to preview the metersToPreview
 //			topLat = center.radlat + (topLat - center.radlat) * metersToPreview / distance;
 //			topLon = center.radlon + (topLon - center.radlon) * metersToPreview / distance;
 //			System.out.println("new distance to top:" + MoreMath.dist(center.radlat, center.radlon, topLat, topLon ));
-//			
+//
 //			/*
-//			 *  calculate scale factor, we multiply this again with 2 * 1.2 = 2.4 to take into account we calculated half the screen height 
+//			 *  calculate scale factor, we multiply this again with 2 * 1.2 = 2.4 to take into account we calculated half the screen height
 //			 *  and 1.2f is probably the factor the PaintContext is larger than the display size
 //			 *  (new scale is calculated similiar to GuiWaypoint)
-//			 */ 
+//			 */
 //			IntPoint intPoint1 = new IntPoint(0, 0);
 //			IntPoint intPoint2 = new IntPoint(getWidth(), getHeight());
 //			Node n1 = new Node(center.radlat, center.radlon, true);
@@ -2246,9 +2243,9 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 //			scale = pc.getP().getScale(n1, n2, intPoint1, intPoint2) * 2.4f;
 //			}
 							
-		}		
+		}
 		
-		updatePosition();		
+		updatePosition();
 	}
 	
 	public synchronized Position getCurrentPosition() {
@@ -2269,7 +2266,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			}
 			setTitleMsgTimeout = 3000;
 		}
-		lastTitleMsgClock = DateTimeTools.getClock(System.currentTimeMillis(), false);		
+		lastTitleMsgClock = DateTimeTools.getClock(System.currentTimeMillis(), false);
 		repaint();
 	}
 
@@ -2281,7 +2278,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	 * 
 	 * @param title The title of the alert
 	 * @param message The message text
-	 * @param timeout Timeout in ms. Please reserve enough time so the user can 
+	 * @param timeout Timeout in ms. Please reserve enough time so the user can
 	 *   actually read the message. Use Alert.FOREVER if you want no timeout.
 	 */
 	public synchronized void alert(String title, String message, int timeout) {
@@ -2317,25 +2314,25 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 //		#debug debug
 		logger.debug("Touch button: " + tl.getActionIdAtPointer(x, y) + " x: " + x + " y: " + y);
 		int actionId = tl.getActionIdAtPointer(x, y);
-		if (actionId > 0) {		
-			if (System.currentTimeMillis() < (lastBackLightOnTime + 1500)) { 
+		if (actionId > 0) {
+			if (System.currentTimeMillis() < (lastBackLightOnTime + 1500)) {
 				if (actionId == ZOOM_IN_CMD) {
-					actionId = PAN_RIGHT2_CMD;						
+					actionId = PAN_RIGHT2_CMD;
 				} else if (actionId == ZOOM_OUT_CMD) {
 					actionId = PAN_LEFT2_CMD;
-				}					
-			} else if (manualRotationMode) { 
+				}
+			} else if (manualRotationMode) {
 				if (actionId == ZOOM_IN_CMD) {
 					actionId = PAN_LEFT2_CMD;
 				} else if (actionId == ZOOM_OUT_CMD) {
-					actionId = PAN_RIGHT2_CMD;						
+					actionId = PAN_RIGHT2_CMD;
 				}
 			} else if (TrackPlayer.isPlaying) {
 				if (actionId == ZOOM_IN_CMD) {
 					actionId = PAN_RIGHT2_CMD;
 				} else if (actionId == ZOOM_OUT_CMD) {
-					actionId = PAN_LEFT2_CMD;						
-				}				
+					actionId = PAN_LEFT2_CMD;
+				}
 			}
 			commandAction(CMDS[actionId], (Displayable) null);
 			repaint();
@@ -2374,8 +2371,8 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	/**
 	 * Returns the command used to go to the data screens.
 	 * Needed by the data screens so they can find the key codes used for this
-	 * as they have to use them too. 
-	 * @return Command 
+	 * as they have to use them too.
+	 * @return Command
 	 */
 	public Command getDataScreenCommand() {
 		return CMDS[DATASCREEN_CMD];
@@ -2385,7 +2382,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		return tiles[zl];
 	}
 	
-	public void setDict(Tile dict, byte zl) {		
+	public void setDict(Tile dict, byte zl) {
 		tiles[zl] = dict;
 		// Tile.trace=this;
 		//addCommand(REFRESH_CMD);
@@ -2402,7 +2399,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				dict.getCenter(center);
 			}
 
-			if (pc != null) {				
+			if (pc != null) {
 				pc.center = center.copy();
 				pc.scale = scale;
 				pc.course = course;
@@ -2437,7 +2434,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			return;
 		}
 		locationProducer = null;
-		notify();		
+		notify();
 		addCommand(CMDS[CONNECT_GPS_CMD]);
 //		addCommand(START_RECORD_CMD);
 //#debug info
@@ -2466,8 +2463,9 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	}
 
 	public void newDataReady() {
-		if (imageCollector != null)
+		if (imageCollector != null) {
 			imageCollector.newDataReady();
+		}
 	}
 
 	public void show() {
@@ -2499,14 +2497,14 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			//#debug info
 			logger.info("Setting destination to " + dest.toString());
 			
-			// move map only to the destination, if GUI is not optimized for routing 
+			// move map only to the destination, if GUI is not optimized for routing
 			if (! Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED)) {
 				commandAction(CMDS[SHOW_DEST_CMD],(Displayable) null);
 			}
 		} else {
 			//#debug info
 			logger.info("Setting destination to null");
-		}		
+		}
 	}
 
 	public void endRouting() {
@@ -2533,14 +2531,14 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			if (ri == null) {
 				ri = new RouteInstructions(this);
 			}
-			// show map during route line production 
+			// show map during route line production
 			if (Configuration.getContinueMapWhileRouteing() == Configuration.continueMap_At_Route_Line_Creation) {
 				resumeImageCollectorAfterRouteCalc();
 			}
 			ri.newRoute(this.route);
 			oldRecalculationTime = System.currentTimeMillis();
 		}
-		// show map always after route calculation 
+		// show map always after route calculation
 		resumeImageCollectorAfterRouteCalc();
 		routeCalc=false;
 		routeEngine=null;
@@ -2570,15 +2568,15 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	 * to allocate some memory for dropping
 	 * caches.
 	 */
-	public void dropCache() { 
-		tileReader.dropCache(); 
-		dictReader.dropCache(); 
-		System.gc(); 
-		namesThread.dropCache(); 
-		System.gc(); 
-		if (gpx != null) { 
-			gpx.dropCache(); 
-		} 
+	public void dropCache() {
+		tileReader.dropCache();
+		dictReader.dropCache();
+		System.gc();
+		namesThread.dropCache();
+		System.gc();
+		if (gpx != null) {
+			gpx.dropCache();
+		}
 	}
 	
 	public QueueDataReader getDataReader() {
