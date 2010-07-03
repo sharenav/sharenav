@@ -31,18 +31,35 @@ public class GpxImportHandler implements XmlParserContentHandler {
 	private final static Logger logger = Logger.getInstance(
 			GpxImportHandler.class, Logger.DEBUG);
 
+	/** The way point that is currently parsed. */
 	private PositionMark wayPt;
-	private Position p = new Position(0, 0, 0, 0, 0, 0, System.currentTimeMillis());
+	/** The track point that is currently parsed. */
+	private Position trackPt = new Position(0, 0, 0, 0, 0, 0, System.currentTimeMillis());
+	/** Flag if current element is "name" */
 	private boolean name = false;
+	/** Flag if current element is "desc" */
+	private boolean desc = false;
+	/** Flag if current element is "ele" */
 	private boolean ele = false;
+	/** Flag if current element is "time" */
 	private boolean time = false;
+	/** Temporarily holds the name of the way point. */
+	private String wptName = null;
+	/** Temporarily holds the description of the way point. */
+	private String wptDesc = null;
+	/** Way points further away than this (in kilometers) will not be imported. */
 	private float maxDistance;
+	/** Counter how many way points were imported. */
 	private int importedWpts;
+	/** Counter how many track points were imported. */
 	private int importedTpts;
+	/** Counter how many way points were ignored because they are too far away. */
 	private int tooFarWpts;
+	/** Counter how many way points were ignored because there is an identical one. */
 	private int duplicateWpts;
-
+	/** Parent which manages the way points and track points. */
 	private Gpx gpx;
+	/** Listener for progress messages */
 	private UploadListener ul;
 
 	public GpxImportHandler(float maxDistance, Gpx gpx, UploadListener ul) {
@@ -58,17 +75,15 @@ public class GpxImportHandler implements XmlParserContentHandler {
 	public void characters(char[] ch, int start, int length) {
 		if (wayPt != null) {
 			if (name) {
-				String wptName = new String(ch, start, length);
-				if (wayPt.displayName == null) {
-					wayPt.displayName = wptName;
-				} else {
-					wayPt.displayName += wptName;
-				}
+				wptName = new String(ch, start, length);
+			} else if (desc) {
+				wptDesc = new String(ch, start, length);				
 			}
-		} else if (p != null) {
+		} else if (trackPt != null) {
 			if (ele) {
-				p.altitude = Float.parseFloat(new String(ch, start, length));
+				trackPt.altitude = Float.parseFloat(new String(ch, start, length));
 			} else if (time) {
+				// Time stamps of track points are not used by GpsMid. 
 			}
 		}
 	}
@@ -81,6 +96,12 @@ public class GpxImportHandler implements XmlParserContentHandler {
 	public void endElement(String namespaceURI, String localName, String qName) {
 		if (qName.equalsIgnoreCase("wpt")) {
 			if (wayPt != null) {
+				// Only use "desc" if there is no "name".
+				if (wptName != null) {
+					wayPt.displayName = wptName;
+				} else if (wptDesc != null) {
+					wayPt.displayName = wptDesc;
+				}
 				logger.info("Received waypoint: " + wayPt);
 				if (!gpx.existsWayPt(wayPt)) {
 					gpx.addWayPt(wayPt);
@@ -89,12 +110,14 @@ public class GpxImportHandler implements XmlParserContentHandler {
 					duplicateWpts++;
 				}
 				wayPt = null;
+				wptName = null;
+				wptDesc = null;
 			}
 
 		} else if (qName.equalsIgnoreCase("name")) {
 			name = false;
 		} else if (qName.equalsIgnoreCase("desc")) {
-			name = false;
+			desc = false;
 		} else if (qName.equalsIgnoreCase("trk")) {
 			// This is already running in the processorThread of class Gpx,
 			// so we have to do the save directly (doSaveTrk()) instead of 
@@ -103,7 +126,7 @@ public class GpxImportHandler implements XmlParserContentHandler {
 		} else if (qName.equalsIgnoreCase("trkseg")) {
 			// Ignored, new track is only started at <trk>!
 		} else if (qName.equalsIgnoreCase("trkpt")) {
-			gpx.addTrkPt(p);
+			gpx.addTrkPt(trackPt);
 			importedTpts++;
 		} else if (qName.equalsIgnoreCase("ele")) {
 			ele = false;
@@ -153,21 +176,21 @@ public class GpxImportHandler implements XmlParserContentHandler {
 		} else if (qName.equalsIgnoreCase("name")) {
 			name = true;
 		} else if (qName.equalsIgnoreCase("desc")) {
-			name = true;
+			desc = true;
 		} else if (qName.equalsIgnoreCase("trk")) {
 			gpx.newTrk(false);
 		} else if (qName.equalsIgnoreCase("trkseg")) {
 
 		} else if (qName.equalsIgnoreCase("trkpt")) {
 			/**
-			 * Positions seem to be handeled in degree rather than radians as
+			 * Positions seem to be handled in degree rather than radians as
 			 * all the other coordinates. Be careful with the conversions!
 			 */
-			p.latitude = Float.parseFloat((String) atts.get("lat"));
-			p.longitude = Float.parseFloat((String) atts.get("lon"));
-			p.altitude = 0;
-			p.course = 0;
-			p.speed = 0;
+			trackPt.latitude = Float.parseFloat((String) atts.get("lat"));
+			trackPt.longitude = Float.parseFloat((String) atts.get("lon"));
+			trackPt.altitude = 0;
+			trackPt.course = 0;
+			trackPt.speed = 0;
 		} else if (qName.equalsIgnoreCase("ele")) {
 			ele = true;
 		} else if (qName.equalsIgnoreCase("time")) {
