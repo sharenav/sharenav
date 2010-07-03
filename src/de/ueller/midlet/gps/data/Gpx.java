@@ -1,8 +1,10 @@
-package de.ueller.midlet.gps.data;
 /*
- * GpsMid - Copyright (c) 2008 Kai Krueger apmonkey at users dot sourceforge dot net 
- * See Copying
+ * GpsMid - Copyright (c) 2008 Kai Krueger apmonkey at users dot sourceforge dot net
+ * 			Copyright (c) 2009 Markus Baeurle mbaeurle at users dot sourceforge dot net
+ * See COPYING
  */
+
+package de.ueller.midlet.gps.data;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -79,8 +81,6 @@ public class Gpx extends Tile implements Runnable, InputListener {
 	private String url = null;
 	private String waypointsSaveFileName = null;
 	
-	//private Date dateStreamWayPt = new Date();
-	
 	/** Value for mJobState: No job */
 	private static final int JOB_IDLE = 0;
 	/** Value for mJobState: Reloading waypoints */
@@ -145,17 +145,17 @@ public class Gpx extends Tile implements Runnable, InputListener {
 	private boolean trkRecordingSuspended;
 	
 	/** Holds the track that is currently recorded. */
-	private GpxTile trackTile;
+	private final GpxTile trackTile;
 
 	/** Holds tracks that are loaded to be displayed but not altered by recording more trackpoints. */
-	private GpxTile	loadedTracksTile;
+	private final GpxTile	loadedTracksTile;
 
 	/** Holds all waypoints to display them on the map. */
-	private WaypointsTile wayPtTile;
+	private final WaypointsTile wayPtTile;
 
 	/** Default constructor of this class.
 	 * It creates new tiles for waypoints, the recording track and loaded tracks.
-	 * It also triggers loading of the waypoints from the RecordStore. 
+	 * It also triggers loading of the waypoints from the RecordStore.
 	 */
 	public Gpx() {
 		trackTile = new GpxTile();
@@ -191,13 +191,13 @@ public class Gpx extends Tile implements Runnable, InputListener {
 					float lon = trackIS.readFloat();
 					if (i == 0) {
 						Trace tr = Trace.getInstance();
-						tr.receivePosition(lat * MoreMath.FAC_DECTORAD, 
+						tr.receivePosition(lat * MoreMath.FAC_DECTORAD,
 								lon * MoreMath.FAC_DECTORAD, tr.scale);
 					}
 					trackIS.readShort(); //altitude
 					long time = trackIS.readLong();	//Time
 					trackIS.readByte(); //Speed
-					if (time > Long.MIN_VALUE + 10) { //We use some special markers in the Time to indicate 
+					if (time > Long.MIN_VALUE + 10) { //We use some special markers in the Time to indicate
 									//Data other than trackpoints, so ignore these.
 						trackTile.addTrkPt(lat, lon, false);
 					}
@@ -244,7 +244,7 @@ public class Gpx extends Tile implements Runnable, InputListener {
 						//center map on track start
 						if (i == 0 && j == 0) {
 							Trace tr = Trace.getInstance();
-							tr.receivePosition(lat * MoreMath.FAC_DECTORAD, 
+							tr.receivePosition(lat * MoreMath.FAC_DECTORAD,
 									lon * MoreMath.FAC_DECTORAD, tr.scale);
 						}
 						trackIS.readShort(); //altitude
@@ -935,14 +935,54 @@ public class Gpx extends Tile implements Runnable, InputListener {
 		startProcessorThread(JOB_EXPORT_WPTS);
 	}
 	
-	/** Returns a list of all waypoints.
-	 * TODO: There is a piece of random in how the waypoints are distributed
-	 * between the tiles. So this list has no specific order.
+	/** Returns a list of all way points, sorted by the current search criterion.
 	 * 
-	 * @return Array of waypoints
+	 * @return Vector of waypoints
 	 */
-	public PositionMark [] listWayPt() {
-		return wayPtTile.listWayPt();
+	public Vector listWayPoints() {
+		int sortmode = Configuration.getWaypointSortMode();
+		Node centerPos = Trace.getInstance().center;
+		Vector source = wayPtTile.listWayPt();
+		Vector sorted = new Vector(source.size());
+		PositionMark insert;
+		PositionMark compare;
+		for (int i = 0; i < source.size(); i++) {
+			// We want to insert source[i] at the right position into sorted
+			insert = (PositionMark)source.elementAt(i);
+			float distInsert = ProjMath.getDistance(centerPos.radlat, centerPos.radlon,
+					insert.lat, insert.lon);
+			int j = 0;
+			while (j < sorted.size()) {
+				compare = (PositionMark)sorted.elementAt(j);
+				if (sortmode == Configuration.WAYPT_SORT_MODE_NEW_FIRST) {
+    				// Newest waypoints first
+    				if (insert.timeMillis > compare.timeMillis) {
+    					break;
+    				}
+				} else if (sortmode == Configuration.WAYPT_SORT_MODE_OLD_FIRST) {
+    				// Oldest waypoints first
+    				if (insert.timeMillis <= compare.timeMillis) {
+    					break;
+    				}
+				} else if (sortmode == Configuration.WAYPT_SORT_MODE_ALPHABET) {
+    				// Alphabetically
+    				if (insert.displayName.compareTo(compare.displayName) < 0) {
+    					break;
+    				}
+				} else if (sortmode == Configuration.WAYPT_SORT_MODE_DISTANCE) {
+    				// By distance from map center
+					float distCompare = ProjMath.getDistance(
+							centerPos.radlat, centerPos.radlon, compare.lat, compare.lon);
+    				if (distInsert <= distCompare) {
+    					break;
+    				}
+				}
+				j++;
+			}
+			sorted.insertElementAt(insert, j);
+		}
+		return sorted;
+		//return wayPts;
 	}
 	
 	/** Returns the number of waypoints.
@@ -1398,12 +1438,12 @@ public class Gpx extends Tile implements Runnable, InputListener {
 	 * 
 	 * @param oS The stream to which the waypoints are written
 	 */
-	private void streamWayPts (OutputStream oS) throws IOException {		
-		PositionMark[] waypts = wayPtTile.listWayPt();
+	private void streamWayPts (OutputStream oS) throws IOException {
+		Vector waypts = listWayPoints();
 		PositionMark wayPt = null;
 		
-		for (int i = 0; i < waypts.length; i++) {
-			wayPt = waypts[i];
+		for (int i = 0; i < waypts.size(); i++) {
+			wayPt = (PositionMark)waypts.elementAt(i);
 			streamWayPt(oS, wayPt);
 		}
 	}
@@ -1462,7 +1502,7 @@ public class Gpx extends Tile implements Runnable, InputListener {
 				} else if (url.startsWith("http:")) {
 					tmp = Class.forName("de.ueller.midlet.gps.GuiGPXOSMUpload");
 				}
-				if (tmp != null)
+				if (tmp != null) {
 					logger.info("Got class: " + tmp);
 					Object objTmp = tmp.newInstance();
 					if (objTmp instanceof ExportSession) {
@@ -1470,7 +1510,7 @@ public class Gpx extends Tile implements Runnable, InputListener {
 					} else {
 						logger.info("objTmp: " + objTmp + "is not part of " + ExportSession.class.getName());
 					}
-					
+				}
 			} catch (ClassNotFoundException cnfe) {
 				importExportMessage = "Your phone does not support this form of exporting, please choose a different one";
 				session = null;

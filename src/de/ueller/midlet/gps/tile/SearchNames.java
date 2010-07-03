@@ -9,14 +9,14 @@ import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Vector;
 
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.SearchResult;
-import de.ueller.gpsMid.mapData.QueueReader;
-import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.GuiSearch;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
+import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.names.Names;
 import de.ueller.midlet.gps.names.NumberCanon;
 
@@ -82,16 +82,21 @@ public class SearchNames implements Runnable {
 				synchronized (this) {
 					//#debug
 					logger.info("Collecting waypoints");
-					// we want each time a fresh copy of the waypoint array as they might be loading in the background
-					gui.wayPts = Trace.getInstance().gpx.listWayPt();
+					// We want each time a fresh copy of the waypoint array 
+					// as they might be loading in the background.
+					// TODO: Explain: How might they be loading in the background?
+					// TODO: "Waypoints ending with * get a special treatment" is a very
+					// invisible feature for the user. How is he ever going to find out???
+					Vector wpt = Trace.getInstance().gpx.listWayPoints();
+					gui.wayPts = new PositionMark[wpt.size()];
+					wpt.copyInto(gui.wayPts);
 					final int canonLen = search.length();
 					final String cSearch = NumberCanon.canonial(search);
 					boolean inserted = false;
 					for (int i = 0; i < gui.wayPts.length; i++ ) {
 						if (gui.wayPts[i].displayName.length() > 0) {
 							if (gui.showAllWayPts || gui.wayPts[i].displayName.endsWith("*")) {
-			    				if (
-			    					canonLen == 0
+			    				if (canonLen == 0
 			    					||
 			    					NumberCanon.canonial(gui.wayPts[i].displayName.substring(0, 1)).equals( cSearch )
 			    				) {

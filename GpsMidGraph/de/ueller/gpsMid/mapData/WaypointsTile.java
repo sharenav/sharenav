@@ -1,10 +1,10 @@
-package de.ueller.gpsMid.mapData;
-
 /*
  * GpsMid - Copyright (c) 2008 Kai Krueger apmonkey at users dot sourceforge dot net
  *          Copyright (c) 2008 Markus Baeurle mbaeurle at users dot sourceforge dot net
- * See Copying
+ * See COPYING
  */
+
+package de.ueller.gpsMid.mapData;
 
 import java.util.Random;
 import java.util.Vector;
@@ -82,20 +82,22 @@ public class WaypointsTile extends Tile {
 		totalWayPts++;
 	}
 
-	public synchronized PositionMark[] listWayPt() {
+	public synchronized Vector listWayPt() {
 		if ((t1 != null) && (t2 != null)) {
-			PositionMark[] wayPts1 = t1.listWayPt();
-			PositionMark[] wayPts2 = t2.listWayPt();
-			PositionMark[] wayPtsAll = new PositionMark[wayPts1.length
-					+ wayPts2.length];
-			System.arraycopy(wayPts1, 0, wayPtsAll, 0, wayPts1.length);
-			System.arraycopy(wayPts2, 0, wayPtsAll, wayPts1.length,
-					wayPts2.length);
+			Vector wayPtsAll = new Vector(t1.getNumberWaypoints()
+					+ t2.getNumberWaypoints());
+			// May be the result of another copy-together, so we should buffer them.
+			Vector t1WayPts = t1.listWayPt();
+			Vector t2WayPts = t2.listWayPt();
+			for (int i = 0; i < t1.getNumberWaypoints(); i++) {
+				wayPtsAll.addElement(t1WayPts.elementAt(i));
+			}
+			for (int i = 0; i < t2.getNumberWaypoints(); i++) {
+				wayPtsAll.addElement(t2WayPts.elementAt(i));
+			}
 			return wayPtsAll;
 		} else {
-			PositionMark[] wayPtsAll = new PositionMark[wayPts.size()];
-			wayPts.copyInto(wayPtsAll);
-			return wayPtsAll;
+			return wayPts;
 		}
 	}
 
@@ -165,20 +167,20 @@ public class WaypointsTile extends Tile {
 				pc.g.drawImage(pc.images.IMG_WAYPT, pc.lineP2.x, pc.lineP2.y,
 						Graphics.HCENTER | Graphics.VCENTER);
 				// Draw waypoint text if enabled
-				if (   (Configuration.getCfgBitState(Configuration.CFGBIT_WPTTEXTS) 
+				if (   (Configuration.getCfgBitState(Configuration.CFGBIT_WPTTEXTS)
 					&& (waypt.displayName != null))) {
-					if (waypt.displayName.length() > maxLen) {						
+					if (waypt.displayName.length() > maxLen) {
 						// Truncate name to maximum maxLen chars plus "..." where required.
 						sb.setLength(0);
 						sb.append(waypt.displayName.substring(0, maxLen));
 						sb.append("...");
-						pc.g.drawString(sb.toString(), pc.lineP2.x, pc.lineP2.y, 
+						pc.g.drawString(sb.toString(), pc.lineP2.x, pc.lineP2.y,
 										Graphics.HCENTER | Graphics.BOTTOM);
 					}
 					else
 					{
-						pc.g.drawString(waypt.displayName, pc.lineP2.x, pc.lineP2.y, 
-								Graphics.HCENTER | Graphics.BOTTOM);						
+						pc.g.drawString(waypt.displayName, pc.lineP2.x, pc.lineP2.y,
+								Graphics.HCENTER | Graphics.BOTTOM);
  					}
  				}
 			}

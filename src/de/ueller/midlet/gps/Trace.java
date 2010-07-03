@@ -168,7 +168,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	 * although the constructor for Node(lat, lon) requires parameters in DEC format
 	 * - e. g. "new Node(49.328010f, 11.352556f)"
 	 */
-	Node center = new Node(49.328010f, 11.352556f);
+	public Node center = new Node(49.328010f, 11.352556f);
 
 //	Projection projection;
 

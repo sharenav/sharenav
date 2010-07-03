@@ -20,6 +20,7 @@ import de.ueller.midlet.gps.data.IntPoint;
 import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.data.RoutePositionMark;
+import de.ueller.midlet.screens.GuiWaypointSorting;
 import de.ueller.midlet.screens.InputListener;
 import de.ueller.midlet.screens.ProgressDisplay;
 
@@ -35,11 +36,12 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 	private final Command DEL_CMD = new Command("Delete", Command.ITEM, 2);
 	private final Command SALL_CMD = new Command("Select All", Command.ITEM, 2);
 	private final Command DSALL_CMD = new Command("Deselect All", Command.ITEM, 2);
+	private final Command SORT_MENU_CMD = new Command("Sorting", Command.ITEM, 2);
 	private final Command BACK_CMD = new Command("Back", Command.BACK, 5);
 	private final Command GOTO_CMD = new Command("Display", Command.OK,6);
 
-	/** Array containing all waypoints currently in the application. */
-	private PositionMark[] mWaypoints;
+	/** Vector containing all waypoints currently in the application. */
+	private Vector mWaypoints;
 	
 	/** Reference to the Trace class, needed to access the Gpx class and
 	 * to switch back to the map. */
@@ -73,6 +75,7 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 		addCommand(DEL_CMD);
 		addCommand(SALL_CMD);
 		addCommand(DSALL_CMD);
+		addCommand(SORT_MENU_CMD);
 		addCommand(BACK_CMD);
 		addCommand(GOTO_CMD);
 	}
@@ -96,20 +99,20 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 
 		this.deleteAll();
 
-		mWaypoints = mParent.gpx.listWayPt();
+		mWaypoints = mParent.gpx.listWayPoints();
 		
 		// save total waypoints
-		int count_waypoints = mWaypoints.length;
+		int count_waypoints = mWaypoints.size();
 		
 		// Limit display of Waypoints to 255 because some Phones can only display 255 listitems
 		if (count_waypoints > 255) {
 			count_waypoints = 255;
 		}
 		for (int i = 0; i < count_waypoints; i++) {
-			if ((mWaypoints[i].displayName == null) || (mWaypoints[i].displayName.equals(""))) {
+			if ((getWaypoint(i).displayName == null) || (getWaypoint(i).displayName.equals(""))) {
 				this.append("(unnamed)", null);
 			} else {
-				this.append(mWaypoints[i].displayName, null);
+				this.append(getWaypoint(i).displayName, null);
 			}
 		}
 		this.setTitle("Waypoints (" + count_waypoints + ")");
@@ -117,17 +120,17 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 
 	public void commandAction(Command c, Displayable d) {
 		//#debug debug
-		mLogger.debug("got Command " + c);
+		mLogger.debug("GuiWaypoint got Command " + c);
 		if (c == RENAME_CMD) {
 			mExporting = false;
 			mImporting = false;
-			boolean[] sel = new boolean[mWaypoints.length];
+			boolean[] sel = new boolean[mWaypoints.size()];
 			this.getSelectedFlags(sel);
 			for (int i = 0; i < sel.length; i++) {
 				if (sel[i]) {
 					mWptIdx = i;
 					GuiNameEnter gne = new GuiNameEnter(this, "Rename Waypoint",
-							mWaypoints[i].displayName, Configuration.MAX_WAYPOINTNAME_LENGTH);
+							getWaypoint(i).displayName, Configuration.MAX_WAYPOINTNAME_LENGTH);
 					gne.show();
 					break;
 				}
@@ -136,17 +139,17 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 		}
 		if (c == DEL_CMD) {
 			Vector idsToDelete = new Vector();
-			boolean[] sel = new boolean[mWaypoints.length];
+			boolean[] sel = new boolean[mWaypoints.size()];
 			this.getSelectedFlags(sel);
 			for (int i = 0; i < sel.length; i++) {
 				if (sel[i]) {
 					// mParent.gpx.deleteWayPt(mWaypoints[i], this);
-					idsToDelete.addElement(new Integer(mWaypoints[i].id));
+					idsToDelete.addElement(new Integer(getWaypoint(i).id));
 				}
 			}
 			mLogger.info("Delete waypoints, idsToDelete=" + idsToDelete.size() +
 					" sel.length=" + sel.length +
-					" mWaypoints.length=" + mWaypoints.length);
+					" mWaypoints.length=" + mWaypoints.size());
 			if (idsToDelete.size() > 0)
 			{
 				mExporting = false;
@@ -159,8 +162,8 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 		}
 		if ((c == SALL_CMD) || (c == DSALL_CMD)) {
 			boolean select = (c == SALL_CMD);
-			boolean[] sel = new boolean[mWaypoints.length];
-			for (int i = 0; i < mWaypoints.length; i++) {
+			boolean[] sel = new boolean[mWaypoints.size()];
+			for (int i = 0; i < mWaypoints.size(); i++) {
 				sel[i] = select;
 			}
 			this.setSelectedFlags(sel);
@@ -187,55 +190,80 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 			return;
 		}
 		if (c == GOTO_CMD) {
-			float w = 0, e = 0, n = 0, s = 0;
-			int idx = -1;
-			boolean[] sel = new boolean[mWaypoints.length];
-			this.getSelectedFlags(sel);
-			for (int i = 0; i < sel.length; i++) {
-				if (sel[i]) {
-					if (idx == -1) {
-						idx = i;
-						w =  mWaypoints[i].lon;
-						e =  mWaypoints[i].lon;
-						n = mWaypoints[i].lat;
-						s = mWaypoints[i].lat;
-					} else {
-						idx = -2;
-						if (mWaypoints[i].lon < w) {
-							w = mWaypoints[i].lon;
-						}
-						if (mWaypoints[i].lon > e) {
-							e = mWaypoints[i].lon;
-						}
-						if (mWaypoints[i].lat < s) {
-							s = mWaypoints[i].lat;
-						}
-						if (mWaypoints[i].lat > n) {
-							n = mWaypoints[i].lat;
-						}
-					}
-				}
-			}
-			if (idx == -1) {
-				mLogger.error("No waypoint selected");
-				return;
-			} else if (idx > -1) {
-				mParent.setDestination(new RoutePositionMark(mWaypoints[idx], -1));
-			} else {
-				IntPoint intPoint1 = new IntPoint(10, 10);
-				IntPoint intPoint2 = new IntPoint(getWidth() - 10, getHeight() - 10);
-				Node n1 = new Node(n * MoreMath.FAC_RADTODEC, w * MoreMath.FAC_RADTODEC);
-				Node n2 = new Node(s * MoreMath.FAC_RADTODEC, e * MoreMath.FAC_RADTODEC);
-				float scale = mParent.pc.getP().getScale(n1, n2, intPoint1, intPoint2);
-				mParent.receivePosition((n-s) / 2 + s, (e-w) / 2 + w, scale * 1.2f);
-			}
-			mParent.show();
+			handleGotoWaypoint();
+			return;
+		}
+		if (c == SORT_MENU_CMD) {
+			GuiWaypointSorting gws = new GuiWaypointSorting(this);
+			gws.show();
 			return;
 		}
 		// uncomment this for use with GuiCustomList.java
 		//super.commandAction(c, d);
 	}
+
+	/**
+	 * Moves the map to the first selected way point and tells the map to show itself.
+	 */
+	private void handleGotoWaypoint() {
+		float w = 0, e = 0, n = 0, s = 0;
+		int idx = -1;
+		boolean[] sel = new boolean[mWaypoints.size()];
+		this.getSelectedFlags(sel);
+		for (int i = 0; i < sel.length; i++) {
+			if (sel[i]) {
+				if (idx == -1) {
+					idx = i;
+					w =  getWaypoint(i).lon;
+					e =  getWaypoint(i).lon;
+					n = getWaypoint(i).lat;
+					s = getWaypoint(i).lat;
+				} else {
+					idx = -2;
+					if (getWaypoint(i).lon < w) {
+						w = getWaypoint(i).lon;
+					}
+					if (getWaypoint(i).lon > e) {
+						e = getWaypoint(i).lon;
+					}
+					if (getWaypoint(i).lat < s) {
+						s = getWaypoint(i).lat;
+					}
+					if (getWaypoint(i).lat > n) {
+						n = getWaypoint(i).lat;
+					}
+				}
+			}
+		}
+		if (idx == -1) {
+			mLogger.error("No waypoint selected");
+			return;
+		} else if (idx > -1) {
+			mParent.setDestination(new RoutePositionMark(getWaypoint(idx), -1));
+		} else {
+			IntPoint intPoint1 = new IntPoint(10, 10);
+			IntPoint intPoint2 = new IntPoint(getWidth() - 10, getHeight() - 10);
+			Node n1 = new Node(n * MoreMath.FAC_RADTODEC, w * MoreMath.FAC_RADTODEC);
+			Node n2 = new Node(s * MoreMath.FAC_RADTODEC, e * MoreMath.FAC_RADTODEC);
+			float scale = mParent.pc.getP().getScale(n1, n2, intPoint1, intPoint2);
+			mParent.receivePosition((n-s) / 2 + s, (e-w) / 2 + w, scale * 1.2f);
+		}
+		mParent.show();
+		return;
+	}
 	
+	/** Provides easy access to the way points
+	 * @param i Index of way point
+	 * @return Way point or null if no way points were loaded or index is out of range
+	 */
+	private PositionMark getWaypoint(int i) {
+		if (mWaypoints != null && i < mWaypoints.size()) {
+			return (PositionMark)mWaypoints.elementAt(i);
+		} else {
+			return null;
+		}
+	}
+
 	public void startProgress(String title) {
 		mProgress.showProgressDisplay(title);
 	}
@@ -290,16 +318,24 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 	}
 
 	public void show() {
+		show(false);
+	}
+	
+	public void show(boolean refresh) {
+			if (refresh) {
+				initWaypoints();
+			}
+		
 			GpsMid.getInstance().show(this);
 
 			// Show Alert to inform the user right before showing the waypoints
 			// (because the J2ME List class can not display more than
 			// 255 items - at least on some phones).
 			// Todo: Some Phones doesn't have this 255 Items-Limit so we may improve the code here
-			if (mWaypoints.length > 255) {
+			if (mWaypoints.size() > 255) {
 				GpsMid.getInstance().alert("Info",
 					"Due to a platform restriction we display only the first 255 of " +
-					mWaypoints.length + " waypoints. Hint: Export some waypoints to " +
+					mWaypoints.size() + " waypoints. Hint: Export some waypoints to " +
 					"a file and delete them to show the remaining waypoints.",
 					Alert.FOREVER);
 			}
@@ -315,7 +351,7 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 		if (mExporting) {
 			if (strResult != null) {
 				mProgress.showProgressDisplay("Exporting way points");
-				mProgress.addProgressText("Exporting all " + mWaypoints.length + " way point(s).\n");
+				mProgress.addProgressText("Exporting all " + mWaypoints.size() + " way point(s).\n");
 				mParent.gpx.exportWayPts(Configuration.getGpxUrl(), strResult, this);
 			} else {
 				// BACK action from name input
@@ -325,8 +361,8 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 			// Must be rename
 			if (strResult != null) {
     			// rename waypoint
-    			mWaypoints[mWptIdx].displayName = strResult;
-    			mParent.gpx.updateWayPt(mWaypoints[mWptIdx]);
+    			getWaypoint(mWptIdx).displayName = strResult;
+    			mParent.gpx.updateWayPt(getWaypoint(mWptIdx));
     			// change item in list
     			set(mWptIdx, strResult, null);
     			// unselect changed item
