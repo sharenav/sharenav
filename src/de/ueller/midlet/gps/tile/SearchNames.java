@@ -83,10 +83,10 @@ public class SearchNames implements Runnable {
 					//#debug
 					logger.info("Collecting waypoints");
 					// We want each time a fresh copy of the waypoint array 
-					// as they might be loading in the background.
-					// TODO: Explain: How might they be loading in the background?
-					// TODO: "Waypoints ending with * get a special treatment" is a very
-					// invisible feature for the user. How is he ever going to find out???
+					// as they might be loading in the background
+					// (you might already go to the Search screen while waypoints are still loading during GpsMid's startup) 
+					// Waypoints ending with * are favorites (selectable for the user during "Save waypoint") and shown in GuiSearch
+					// before typing more than one char 
 					Vector wpt = Trace.getInstance().gpx.listWayPoints();
 					gui.wayPts = new PositionMark[wpt.size()];
 					wpt.copyInto(gui.wayPts);
