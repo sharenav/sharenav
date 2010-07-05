@@ -77,7 +77,7 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 				deglon = (int)deglonf;
 				minlon = (int) ((deglonf - deglon) * 60);
 				seclon = ((deglonf - deglon-minlon/60)*60);
-				url = "http://stable.toolserver.org/geohack/geohack.php?params="
+				url = "http://toolserver.org/~geohack/geohack.php?params="
 						+ deglat
 						+ "_"
 						+ minlat
