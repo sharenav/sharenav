@@ -30,15 +30,16 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 
 	private final static Logger mLogger = Logger.getInstance(GuiWaypoint.class, Logger.DEBUG);
 	
-	private final Command EXPORT_ALL_CMD = new Command("Export All", Command.ITEM, 1);
-	private final Command IMPORT_CMD = new Command("Import", Command.ITEM, 2);
-	private final Command RENAME_CMD = new Command("Rename", Command.ITEM, 2);
-	private final Command DEL_CMD = new Command("Delete", Command.ITEM, 2);
-	private final Command SALL_CMD = new Command("Select All", Command.ITEM, 2);
-	private final Command DSALL_CMD = new Command("Deselect All", Command.ITEM, 2);
-	private final Command SORT_MENU_CMD = new Command("Sorting", Command.ITEM, 2);
+	private final Command EXPORT_ALL_CMD = new Command("Export All", Command.ITEM, 2);
+	private final Command IMPORT_CMD = new Command("Import", Command.ITEM, 3);
+	private final Command RENAME_CMD = new Command("Rename", Command.ITEM, 3);
+	private final Command DEL_CMD = new Command("Delete", Command.ITEM, 3);
+	private final Command SALL_CMD = new Command("Select All", Command.ITEM, 3);
+	private final Command DSALL_CMD = new Command("Deselect All", Command.ITEM, 3);
+	private final Command SORT_MENU_CMD = new Command("Sorting", Command.ITEM, 3);
 	private final Command BACK_CMD = new Command("Back", Command.BACK, 5);
-	private final Command GOTO_CMD = new Command("Display", Command.OK,6);
+	private final Command DEST_CMD = new Command("As destination", Command.ITEM, 6);
+	private final Command DISP_CMD = new Command("Display", Command.OK, 6);
 
 	/** Vector containing all waypoints currently in the application. */
 	private Vector mWaypoints;
@@ -77,7 +78,8 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 		addCommand(DSALL_CMD);
 		addCommand(SORT_MENU_CMD);
 		addCommand(BACK_CMD);
-		addCommand(GOTO_CMD);
+		addCommand(DEST_CMD);
+		addCommand(DISP_CMD);
 	}
 	
 	/**
@@ -189,8 +191,12 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 			ggl.show();
 			return;
 		}
-		if (c == GOTO_CMD) {
-			handleGotoWaypoint();
+		if (c == DISP_CMD) {
+			handleDisplayWaypoint(false);
+			return;
+		}
+		if (c == DEST_CMD) {
+			handleDisplayWaypoint(true);
 			return;
 		}
 		if (c == SORT_MENU_CMD) {
@@ -203,9 +209,12 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 	}
 
 	/**
-	 * Moves the map to the first selected way point and tells the map to show itself.
+	 * Sets the first selected way point as target (setAsDestination=true).
+	 * or
+	 * Moves the map to the first selected way point (setAsDestination=false).
+	 * then tells the map to show itself 
 	 */
-	private void handleGotoWaypoint() {
+	private void handleDisplayWaypoint(boolean setAsDestination) {
 		float w = 0, e = 0, n = 0, s = 0;
 		int idx = -1;
 		boolean[] sel = new boolean[mWaypoints.size()];
@@ -238,9 +247,13 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 		if (idx == -1) {
 			mLogger.error("No waypoint selected");
 			return;
-		} else if (idx > -1) {
-			mParent.setDestination(new RoutePositionMark(getWaypoint(idx), -1));
-		} else {
+		} else if (idx > -1) {  // only one waypoint selected
+ 			if (setAsDestination) {
+				mParent.setDestination(new RoutePositionMark(getWaypoint(idx), -1));
+			} else {
+				mParent.receivePosition(n, w, 15000f);
+			}
+		} else {		// two or more waypoints selected, won't set as destination
 			IntPoint intPoint1 = new IntPoint(10, 10);
 			IntPoint intPoint2 = new IntPoint(getWidth() - 10, getHeight() - 10);
 			Node n1 = new Node(n * MoreMath.FAC_RADTODEC, w * MoreMath.FAC_RADTODEC);
