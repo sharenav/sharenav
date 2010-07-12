@@ -90,7 +90,7 @@ public class TriangulateRelations {
 						a.addOutline(no);
 						if (firstWay == null) {
 							if (w.triangles != null){
-								System.out.println("strange this outline is already triangulated ! maybe dublicate. I will ignore it");
+								System.out.println("strange this outline is already triangulated ! maybe duplicate. I will ignore it");
 								System.out.println("Way " + w.toUrl());
 								System.out.println("please see " + r.toUrl());
 								continue rel;
