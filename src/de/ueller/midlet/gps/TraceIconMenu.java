@@ -34,21 +34,21 @@ public class TraceIconMenu extends IconMenuWithPagesGUI {
 	
 		IconMenuPage mp;
 		// Main
-		mp = createAndAddMenuPage(" Main "/*i:MainTop*/, 3, 4);
-		iconToggleGps =		mp.createAndAddIcon("Start GPS"/*i:StartGPS*/, "i_gps", Trace.CONNECT_GPS_CMD);
+		mp = createAndAddMenuPage(Locale.get("traceiconmenu.MainTop")/* Main */, 3, 4);
+		iconToggleGps =		mp.createAndAddIcon(Locale.get("traceiconmenu.StartGPS")/*Start GPS*/, "i_gps", Trace.CONNECT_GPS_CMD);
 		iconToggleGps.setFlag(LayoutElement.FLAG_IMAGE_TOGGLEABLE);
-							mp.createAndAddIcon("Search"/*i:Search*/, "i_search", Trace.SEARCH_CMD);
-							mp.createAndAddIcon("Map Features"/*i:MapFeature*/, "i_mapfeat", Trace.MAPFEATURES_CMD);
-
-							mp.createAndAddIcon("Setup"/*i:Setup*/, "i_setup", Trace.SETUP_CMD);
-							mp.createAndAddIcon("Tacho"/*i:Tacho*/, "i_tacho", Trace.DATASCREEN_CMD);
-							mp.createAndAddIcon("Overview/Filter Map"/*i:Overview*/, "i_overview", Trace.OVERVIEW_MAP_CMD);
+		mp.createAndAddIcon(Locale.get("traceiconmenu.Search")/*Search*/, "i_search", Trace.SEARCH_CMD);
+		mp.createAndAddIcon(Locale.get("traceiconmenu.MapFeature")/*Map Features*/, "i_mapfeat", Trace.MAPFEATURES_CMD);
 		
-		iconOnlineInfo =	mp.createAndAddIcon("Online"/*i:Online*/, "i_online", Trace.ONLINE_INFO_CMD);		
-							mp.createAndAddIcon("About"/*i:About*/, "i_about", Trace.ABOUT_CMD);
-							mp.createAndAddIcon("Back"/*i:Back*/, "i_back", IconActionPerformer.BACK_ACTIONID);
+		mp.createAndAddIcon(Locale.get("traceiconmenu.Setup")/*Setup*/, "i_setup", Trace.SETUP_CMD);
+		mp.createAndAddIcon(Locale.get("traceiconmenu.Tacho")/*Tacho*/, "i_tacho", Trace.DATASCREEN_CMD);
+		mp.createAndAddIcon(Locale.get("traceiconmenu.Overview")/*Overview/Filter Map*/, "i_overview", Trace.OVERVIEW_MAP_CMD);
+		
+		iconOnlineInfo =	mp.createAndAddIcon(Locale.get("traceiconmenu.Online")/*Online*/, "i_online", Trace.ONLINE_INFO_CMD);		
+		mp.createAndAddIcon(Locale.get("traceiconmenu.About")/*About*/, "i_about", Trace.ABOUT_CMD);
+		mp.createAndAddIcon(Locale.get("traceiconmenu.Back")/*Back*/, "i_back", IconActionPerformer.BACK_ACTIONID);
 
-							mp.createAndAddIcon("Exit"/*i:Exit*/, "i_exit", Trace.EXIT_CMD);
+		mp.createAndAddIcon(Locale.get("traceiconmenu.Exit")/*Exit*/, "i_exit", Trace.EXIT_CMD);
 
 		// determine preferred ordering
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED)) {
@@ -59,10 +59,10 @@ public class TraceIconMenu extends IconMenuWithPagesGUI {
 			createAndAddRoutingMenu();
 		}
 		// Osm
-		mp = createAndAddMenuPage(" Osm "/*i:OsmTop*/, 3, 4);
-		iconEditWay =		mp.createAndAddIcon("Edit way"/*i:EditWay*/, "i_editway", Trace.RETRIEVE_XML);
-		iconAddPOI =		mp.createAndAddIcon("Add POI"/*i:AddPOI*/, "i_addpoi", Trace.RETRIEVE_NODE);
-		iconAddAddr =		mp.createAndAddIcon("Add Address"/*i:AddAddr*/, "i_addpoi", Trace.EDIT_ADDR_CMD);
+		mp = createAndAddMenuPage(Locale.get("traceiconmenu.OsmTop")/* Osm */, 3, 4);
+		iconEditWay =		mp.createAndAddIcon(Locale.get("traceiconmenu.EditWay")/*Edit way*/, "i_editway", Trace.RETRIEVE_XML);
+		iconAddPOI =		mp.createAndAddIcon(Locale.get("traceiconmenu.AddPOI")/*Add POI*/, "i_addpoi", Trace.RETRIEVE_NODE);
+		iconAddAddr =		mp.createAndAddIcon(Locale.get("traceiconmenu.AddAddr")/*Add Address*/, "i_addpoi", Trace.EDIT_ADDR_CMD);
 
 		//#if not polish.api.online
 		iconOnlineInfo.makeImageGreyed();
@@ -81,32 +81,32 @@ public class TraceIconMenu extends IconMenuWithPagesGUI {
 	private void createAndAddRecordingMenu() {
 		IconMenuPage mp;
 		// Recordings
-		mp = createAndAddMenuPage(this.getWidth() >= 176 ?" Recordings "/*i:RecordTop*/:" Rec "/*i:RecTop*/, 3, 4);
+		mp = createAndAddMenuPage(this.getWidth() >= 176 ?Locale.get("traceiconmenu.RecordTop")/* Recordings */:Locale.get("traceiconmenu.RecTop")/* Rec */, 3, 4);
 		iconToggleTrackRec=	mp.createAndAddIcon("Record Track", "i_rectrack", Trace.START_RECORD_CMD);
 		iconToggleTrackRec.setFlag(LayoutElement.FLAG_IMAGE_TOGGLEABLE);
-							mp.createAndAddIcon("Save Wpt"/*i:SaveWpt*/, "i_savewpt", Trace.SAVE_WAYP_CMD);
-							mp.createAndAddIcon("Enter Wpt"/*i:EnterWpt*/, "i_enterwpt", Trace.ENTER_WAYP_CMD);
+		mp.createAndAddIcon(Locale.get("traceiconmenu.SaveWpt")/*Save Wpt*/, "i_savewpt", Trace.SAVE_WAYP_CMD);
+		mp.createAndAddIcon(Locale.get("traceiconmenu.EnterWpt")/*Enter Wpt*/, "i_enterwpt", Trace.ENTER_WAYP_CMD);
 
-							mp.createAndAddIcon("Tracks"/*i:Tracks*/, "i_tracks", Trace.MANAGE_TRACKS_CMD);
-							mp.createAndAddIcon("Waypoints"/*i:Waypoints*/, "i_wpts", Trace.MAN_WAYP_CMD);
+		mp.createAndAddIcon(Locale.get("traceiconmenu.Tracks")/*Tracks*/, "i_tracks", Trace.MANAGE_TRACKS_CMD);
+		mp.createAndAddIcon(Locale.get("traceiconmenu.Waypoints")/*Waypoints*/, "i_wpts", Trace.MAN_WAYP_CMD);
 
-							mp.createAndAddIcon("Photo"/*i:Photo*/, "i_photo", Trace.CAMERA_CMD);
-		iconToggleAudioRec=	mp.createAndAddIcon("Voice"/*i:Voice*/, "i_micro", Trace.TOGGLE_AUDIO_REC);
+		mp.createAndAddIcon(Locale.get("traceiconmenu.Photo")/*Photo*/, "i_photo", Trace.CAMERA_CMD);
+		iconToggleAudioRec=	mp.createAndAddIcon(Locale.get("traceiconmenu.Voice")/*Voice*/, "i_micro", Trace.TOGGLE_AUDIO_REC);
 		iconToggleAudioRec.setFlag(LayoutElement.FLAG_IMAGE_TOGGLEABLE);
 		
-							mp.createAndAddIcon("Send SMS"/*i:SendSMS*/, "i_sendsms", Trace.SEND_MESSAGE_CMD);		
+							mp.createAndAddIcon(Locale.get("traceiconmenu.SendSMS")/*Send SMS*/, "i_sendsms", Trace.SEND_MESSAGE_CMD);		
 	}
 
 
 	private void createAndAddRoutingMenu() {
 		IconMenuPage mp;
 		// Route
-		mp = createAndAddMenuPage(" Route "/*i:RoutePage*/, 3, 4);
-		iconToggleRoute=	mp.createAndAddIcon("Calculate"/*i:Calc*/, "i_calc", Trace.ROUTING_TOGGLE_CMD);
+		mp = createAndAddMenuPage(Locale.get("traceiconmenu.RoutePage")/* Route */, 3, 4);
+		iconToggleRoute=	mp.createAndAddIcon(Locale.get("traceiconmenu.Calc")/*Calculate*/, "i_calc", Trace.ROUTING_TOGGLE_CMD);
 		iconToggleRoute.setFlag(LayoutElement.FLAG_IMAGE_TOGGLEABLE);
-							mp.createAndAddIcon("Set dest"/*i:SetDest*/, "i_setdest", Trace.SET_DEST_CMD);
-							mp.createAndAddIcon("Show dest"/*i:ShowDest*/, "i_showdest", Trace.SHOW_DEST_CMD);		
-							mp.createAndAddIcon("Clear dest"/*i:ClearDest*/, "i_cleardest", Trace.CLEAR_DEST_CMD);		
+		mp.createAndAddIcon(Locale.get("traceiconmenu.SetDest")/*Set dest*/, "i_setdest", Trace.SET_DEST_CMD);
+		mp.createAndAddIcon(Locale.get("traceiconmenu.ShowDest")/*Show dest*/, "i_showdest", Trace.SHOW_DEST_CMD);		
+		mp.createAndAddIcon(Locale.get("traceiconmenu.ClearDest")/*Clear dest*/, "i_cleardest", Trace.CLEAR_DEST_CMD);		
 	}
 
 	private void rememberActiveTabAndEleNr() {
@@ -121,21 +121,21 @@ public class TraceIconMenu extends IconMenuWithPagesGUI {
 		Trace trace = Trace.getInstance();
 		// for commands that can be toggled, fill in the current text and/or corresponding actionId before painting
 		boolean on = trace.isGpsConnected();
-		iconToggleGps.setText( on ? "Stop GPS"/*i:StopGPS*/ : "Start GPS"/*i:StartGPS*/);
+		iconToggleGps.setText( on ? Locale.get("traceiconmenu.StopGPS")/*Stop GPS*/ : Locale.get("traceiconmenu.StartGPS")/*Start GPS*/);
 		iconToggleGps.setActionID( on ? Trace.DISCONNECT_GPS_CMD : Trace.CONNECT_GPS_CMD);
 		iconToggleGps.setImageToggleState( !on );
 		
 		on = trace.gpx.isRecordingTrk();
-		iconToggleTrackRec.setText( on ? "Stop Rec"/*i:StopRec*/ : "Record Track"/*i:RecordTrack*/);
+		iconToggleTrackRec.setText( on ? Locale.get("traceiconmenu.StopRec")/*Stop Rec*/ : Locale.get("traceiconmenu.RecordTrack")/*Record Track*/);
 		iconToggleTrackRec.setActionID( on ? Trace.STOP_RECORD_CMD : Trace.START_RECORD_CMD);
 		iconToggleTrackRec.setImageToggleState( !on );
 		
 		on = trace.audioRec.isRecording();
-		iconToggleAudioRec.setText( on ? "Stop VoiceRec"/*i:StopVoice*/ : "Voice"/*i:Voice*/);
+		iconToggleAudioRec.setText( on ? Locale.get("traceiconmenu.StopVoice")/*Stop VoiceRec*/ : Locale.get("traceiconmenu.Voice")/*Voice*/);
 		iconToggleAudioRec.setImageToggleState( !on );
 		
 		on = (trace.route != null || trace.routeCalc);
-		iconToggleRoute.setText( on ? "Stop Route"/*i:StopRoute*/ : "Calculate"/*i:Calc*/);				
+		iconToggleRoute.setText( on ? Locale.get("traceiconmenu.StopRoute")/*Stop Route*/ : Locale.get("traceiconmenu.Calc")/*Calculate*/);				
 		iconToggleRoute.setImageToggleState( !on );
 				
 		super.paint(g);
