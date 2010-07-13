@@ -480,6 +480,7 @@ public class ImageCollector implements Runnable {
 //
 //		}
 		String name = null;
+		String url = null;
 		Way wayForName = null;
 		/**
 		 * used to check for pixel distances because checking for meters from
@@ -553,6 +554,10 @@ public class ImageCollector implements Runnable {
 				name = maxspeed;
 			} else {
 				name = name + maxspeed;
+			}
+			// If there's an URL associated with way, show U next to name
+			if (wayForName.urlIdx != -1) {
+			    name = name + " U";
 			}
 		}
 		// use the nearest routable way for the the speed limit detection if

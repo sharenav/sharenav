@@ -62,6 +62,8 @@ public class SingleTile extends Tile implements QueueableTile {
 
 	public int[] nameIdx;
 
+	public int[] urlIdx;
+
 	public byte[] type;
 
 	private Way[][] ways;
@@ -317,6 +319,7 @@ public class SingleTile extends Tile implements QueueableTile {
 				// nodes = null;
 				state = STATE_CLEANUP;
 				nameIdx = null;
+				urlIdx = null;
 				nodeLat = null;
 				nodeLon = null;
 				type = null;
@@ -366,7 +369,9 @@ public class SingleTile extends Tile implements QueueableTile {
 		switch (om & Legend.OM_NAME_MASK) {
 			case Legend.OM_WITH_NAMEPART: 
 				if (nameIdx[i] == -1) return;
+				if (urlIdx[i] == -1) return;
 				String name = pc.trace.getName(nameIdx[i]);
+				String url = pc.trace.getUrl(urlIdx[i]);
 				if (name == null) return;
 				if (name.toUpperCase().indexOf(Legend.get0Poi1Area2WayNamePart((byte) 0).toUpperCase()) == -1) return;
 				break;

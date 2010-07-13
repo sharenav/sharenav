@@ -69,6 +69,7 @@ import de.ueller.midlet.gps.data.RoutePositionMark;
 import de.ueller.midlet.gps.data.SECellLocLogger;
 import de.ueller.midlet.gps.data.Way;
 import de.ueller.midlet.gps.names.Names;
+import de.ueller.midlet.gps.urls.Urls;
 import de.ueller.midlet.gps.routing.RouteNode;
 import de.ueller.midlet.gps.routing.Routing;
 import de.ueller.midlet.gps.GuiMapFeatures;
@@ -138,8 +139,9 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	protected static final int SEND_MESSAGE_CMD = 53;
 	protected static final int SHOW_DEST_CMD = 54;
 	protected static final int EDIT_ADDR_CMD = 55;
+	protected static final int OPEN_URL_CMD = 56;
 
-	private final Command [] CMDS = new Command[56];
+	private final Command [] CMDS = new Command[57];
 
 	public static final int DATASCREEN_NONE = 0;
 	public static final int DATASCREEN_TACHO = 1;
@@ -267,6 +269,8 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 
 	private Names namesThread;
 
+	private Urls urlsThread;
+
 	private ImageCollector imageCollector;
 	
 	private QueueDataReader tileReader;
@@ -351,6 +355,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		CMDS[ROUTING_START_CMD] = new Command("Calculate route",Command.ITEM, 100);
 		CMDS[ROUTING_STOP_CMD] = new Command("Stop routing",Command.ITEM, 100);
 		CMDS[ONLINE_INFO_CMD] = new Command("Online info",Command.ITEM, 100);
+		CMDS[OPEN_URL_CMD] = new Command("Open URL",Command.ITEM, 100);
 		CMDS[ROUTING_START_WITH_MODE_SELECT_CMD] = new Command("Calculate route...",Command.ITEM, 100);
 		CMDS[RETRIEVE_NODE] = new Command("Add POI to OSM...",Command.ITEM, 100);
 		CMDS[ICON_MENU] = new Command("Menu",Command.OK, 100);
@@ -640,6 +645,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		addCommand(CMDS[OVERVIEW_MAP_CMD]);
 		//#if polish.api.online
 		addCommand(CMDS[ONLINE_INFO_CMD]);
+		addCommand(CMDS[OPEN_URL_CMD]);
 		//#if polish.api.osm-editing
 		addCommand(CMDS[RETRIEVE_XML]);
 		addCommand(CMDS[RETRIEVE_NODE]);
@@ -680,6 +686,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		removeCommand(CMDS[OVERVIEW_MAP_CMD]);
 		//#if polish.api.online
 		removeCommand(CMDS[ONLINE_INFO_CMD]);
+		removeCommand(CMDS[OPEN_URL_CMD]);
 		//#if polish.api.osm-editing
 		removeCommand(CMDS[RETRIEVE_XML]);
 		removeCommand(CMDS[RETRIEVE_NODE]);
@@ -1012,6 +1019,29 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 							Alert.FOREVER);
 				//#endif
 			}
+			if (c == CMDS[OPEN_URL_CMD]) {
+				//#if polish.api.online
+				String url;
+				if ((pc.actualWay != null) && ((url = getUrl(pc.actualWay.urlIdx)) != null)) {
+					try {
+						// #debug info
+						logger.info("Platform request for " + url);
+						GpsMid.getInstance().platformRequest(getUrl(pc.actualWay.urlIdx));
+					}
+					catch (Exception e) {
+						logger.exception("Could not open url " + url, e);
+					}
+				} else {
+					alert("Open URL"/*i*/, "No URL available"/*i*/, 1500);
+				}
+				return;
+				//#else
+					alert("No online capabilites",
+							"Set app=GpsMid-Generic-editing and enableEditing=true in " +
+							".properties file and recreate GpsMid with Osm2GpsMid.",
+							Alert.FOREVER);
+				//#endif
+			}
 			if (c == CMDS[BACK_CMD]) {
 				show();
 				return;
@@ -1298,6 +1328,11 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				//#if polish.api.osm-editing
 				if (c == CMDS[RETRIEVE_XML]) {
 					if (Legend.enableEdits) {
+						// -1 alert ("Editing", "Urlidx: " + pc.actualWay.urlIdx, Alert.FOREVER);
+						if ((pc.actualWay != null) && (getUrl(pc.actualWay.urlIdx) != null)) {
+							parent.alert ("Url", "Url: " + getUrl(pc.actualWay.urlIdx), Alert.FOREVER);
+						}
+
 						if ((pc.actualWay != null) && (pc.actualWay instanceof EditableWay)) {
 							EditableWay eway = (EditableWay)pc.actualWay;
 							GUIosmWayDisplay guiWay = new GUIosmWayDisplay(eway, pc.actualSingleTile, this);
@@ -1390,6 +1425,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	public void startup() throws Exception {
 //		logger.info("reading Data ...");
 		namesThread = new Names();
+		urlsThread = new Urls();
 		new DictReader(this);
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_AUTO_START_GPS)) {
 			Thread thread = new Thread(this, "Trace");
@@ -1418,6 +1454,10 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			logger.debug("Shutdown: namesThread");
 			namesThread.stop();
 			namesThread = null;
+		}
+		if (urlsThread != null) {
+			urlsThread.stop();
+			urlsThread = null;
 		}
 		if (dictReader != null) {
 			//#debug debug
@@ -1855,6 +1895,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 
 	public void cleanup() {
 		namesThread.cleanup();
+		urlsThread.cleanup();
 		tileReader.incUnusedCounter();
 		dictReader.incUnusedCounter();
 	}
@@ -2453,6 +2494,12 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		return namesThread.getName(idx);
 	}
 	
+	public String getUrl(int idx) {
+		if (idx < 0)
+			return null;
+		return urlsThread.getUrl(idx);
+	}
+
 	public Vector fulltextSearch (String snippet, CancelMonitorInterface cmi) {
 		return namesThread.fulltextSearch(snippet, cmi);
 	}
@@ -2573,6 +2620,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		dictReader.dropCache();
 		System.gc();
 		namesThread.dropCache();
+		urlsThread.dropCache(); 
 		System.gc();
 		if (gpx != null) {
 			gpx.dropCache();

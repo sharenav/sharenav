@@ -67,7 +67,11 @@ public class Way extends Entity {
 	public static final byte WAY_FLAG2_MAXSPEED_WINTER = 32;
 	/** http://wiki.openstreetmap.org/wiki/WikiProject_Haiti */
 	public static final byte WAY_FLAG2_DAMAGED = 64;
+	public static final int WAY_FLAG2_ADDITIONALFLAG = 128;
 	
+	public static final byte WAY_FLAG3_URL = 1;
+	public static final byte WAY_FLAG3_URLHIGH = 2;
+
 	public static final byte DRAW_BORDER=1;
 	public static final byte DRAW_AREA=2;
 	public static final byte DRAW_FULL=3;
@@ -224,6 +228,7 @@ public class Way extends Entity {
 		}
 		
 		byte f2=0;
+		byte f3=0;
 		if ( (f & WAY_FLAG_ADDITIONALFLAG) > 0 ) {
 			f2 = is.readByte();
 			if ( (f2 & WAY_FLAG2_ROUNDABOUT) > 0 ) {
@@ -241,6 +246,18 @@ public class Way extends Entity {
 			if ( (f2 & WAY_FLAG2_CYCLE_OPPOSITE) > 0 ) {
 				flags += WAY_CYCLE_OPPOSITE;
 			}
+			if ( (f2 & WAY_FLAG2_ADDITIONALFLAG) == WAY_FLAG2_ADDITIONALFLAG ) {
+				f3 = is.readByte();
+				if ( (f3 & WAY_FLAG3_URL) > 0 ) {
+					if ( (f3 & WAY_FLAG3_URLHIGH) > 0 ) {
+						urlIdx = is.readInt();
+					} else {
+						urlIdx = is.readShort();
+
+					}
+				}
+			}
+
 		}
 		
 		if ((f2 & WAY_FLAG2_MAXSPEED_WINTER) == WAY_FLAG2_MAXSPEED_WINTER) {
@@ -756,8 +773,13 @@ public class Way extends Entity {
 						return;
 					}
 					String name = pc.trace.getName(nameIdx);
+					String url = pc.trace.getUrl(urlIdx);
 					if (name == null) {
 						return;
+					} else {
+						if (url != null) {
+							name = name + url;
+						}
 					}
 					/**
 					 * The overview filter mode allows you to restrict showing ways if their name
@@ -1042,6 +1064,7 @@ public class Way extends Entity {
 		}
 		
 		String name = null;
+		String url = null;
 		if ( Configuration.getCfgBitState(Configuration.CFGBIT_SHOWWAYPOITYPE)) {
 			name = (this.isRoundAbout() ? "rab " : "") + wayDesc.description;
 		} else {			
@@ -1050,9 +1073,17 @@ public class Way extends Entity {
 			}
 		}
 		
+		if (urlIdx != -1) {
+			url=Trace.getInstance().getUrl(urlIdx);
+		}
+
 		if (name == null) {
 			return;
 		}		
+
+		if (url != null) {
+			name = name + url;
+		}
 
 		// determine region in which chars can be drawn
 		int minCharScreenX = pc.g.getClipX() - pathFontMaxCharWidth;
@@ -1755,6 +1786,7 @@ public class Way extends Entity {
 					return;
 				}
 				String name = pc.trace.getName(nameIdx);
+				String url = pc.trace.getName(urlIdx);
 				if (name == null) {
 					return;
 				}
