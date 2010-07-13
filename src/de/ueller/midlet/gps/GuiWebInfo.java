@@ -4,14 +4,19 @@ package de.ueller.midlet.gps;
  * GpsMid - Copyright (c) 2008 Kai Krueger apmon at users dot sourceforge dot net 
  * See Copying
  */
-//#if polish.api.online
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.List;
 
+import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.Position;
 import de.ueller.midlet.gps.data.MoreMath;
+import de.ueller.midlet.gps.data.Way;
+import de.ueller.midlet.gps.urls.Urls;
+import de.ueller.midlet.gps.data.Node;
+import de.ueller.midlet.gps.Trace;
+import de.ueller.midlet.gps.tile.PaintContext;
 
 public class GuiWebInfo extends List implements GpsMidDisplayable,
 		CommandListener {
@@ -22,15 +27,28 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 	private final Command SELECT_CMD = new Command("Select", Command.OK, 2);
 	private GpsMidDisplayable mParent;
 	private Position mPos;
+	private Way actualWay;
+	private Trace trace;
 
-	public GuiWebInfo(GpsMidDisplayable parent, Position pos) {
+	public GuiWebInfo(GpsMidDisplayable parent, Position pos, PaintContext pc) {
 		super("Info on the web", List.IMPLICIT);
+		actualWay = pc.actualWay;
+		trace = pc.trace;
 		mParent = parent;
 		mPos = pos;
+		//#if polish.api.online
 		this.append("Wikipedia (RSS)", null);
 		this.append("Wikipedia (Web)", null);
 		this.append("Weather", null);
 		this.append("GeoHack", null);
+		//#endif
+		if (Legend.enableUrlTags) {
+			this.append("Website", null);
+		}
+		if (Legend.enablePhoneTags) {
+			this.append("Phone", null);
+		}
+		// FIXME add "search for name on the web" for POI names once the code to select POIS is in place
 		this.addCommand(BACK_CMD);
 		this.setCommandListener(this);
 		this.setSelectCommand(SELECT_CMD);
@@ -91,11 +109,26 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 						+ seclon
 						+ ((mPos.longitude < 0)?"_W_":"_E_");
 			}
+			if (site.equalsIgnoreCase("Website")) {
+				if ((actualWay != null)) {
+					url = trace.getUrl(actualWay.urlIdx);
+				}
+			}
+			if (site.equalsIgnoreCase("Phone")) {
+				String phone;
+				if ((actualWay != null) && ((phone = trace.getUrl(actualWay.phoneIdx)) != null)) {
+					url = "tel:" + phone;
+				}
+			}
 			try {
 				if (url != null) {
 					// #debug info
 					mLogger.info("Platform request for " + url);
+					//#if polish.api.online
 					GpsMid.getInstance().platformRequest(url);
+					//#else
+					// FIXME: show user the url or phone number
+					//#endif
 				}
 			} catch (Exception e) {
 				mLogger.exception("Could not open url " + url, e);
@@ -106,4 +139,3 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 	}
 
 }
-//#endif

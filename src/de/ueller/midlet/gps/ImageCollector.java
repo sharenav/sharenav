@@ -480,7 +480,6 @@ public class ImageCollector implements Runnable {
 //
 //		}
 		String name = null;
-		String url = null;
 		Way wayForName = null;
 		/**
 		 * used to check for pixel distances because checking for meters from
@@ -528,18 +527,17 @@ public class ImageCollector implements Runnable {
 						.getCfgBitState(Configuration.CFGBIT_MAXSPEED_WINTER)
 						&& (wayForName.getMaxSpeedWinter() > 0)) {
 					nummaxspeed = wayForName.getMaxSpeedWinter();
-					winter = " W";
+					winter = "W ";
 				}
 				if (Configuration.getCfgBitState(Configuration.CFGBIT_METRIC)) {
-					maxspeed = " SL:" + nummaxspeed + winter;
+					maxspeed = " SL:" + winter + nummaxspeed;
 				} else {
 					// Round up at this point, as the the previouse two
 					// conversions
 					// were rounded down already. (Seems to work better for
 					// speed limits of
 					// 20mph and 30mph)
-					maxspeed = " SL:" + ((int) (nummaxspeed / 1.609344f) + 1)
-							+ winter;
+					maxspeed = " SL:" + winter + ((int)(nummaxspeed / 1.609344f) + 1);
 				}
 			}
 
@@ -555,9 +553,13 @@ public class ImageCollector implements Runnable {
 			} else {
 				name = name + maxspeed;
 			}
-			// If there's an URL associated with way, show U next to name
+			// If there's an URL associated with way, show a letter next to name
 			if (wayForName.urlIdx != -1) {
-			    name = name + " W";
+				name = name + " W";
+			}
+			// Show 'P' for phone number
+			if (wayForName.phoneIdx != -1) {
+				name = name + " P";
 			}
 		}
 		// use the nearest routable way for the the speed limit detection if

@@ -13,12 +13,14 @@ import java.util.Vector;
 
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.SearchResult;
+import de.ueller.gps.data.Legend;
 import de.ueller.midlet.gps.GuiSearch;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.names.Names;
 import de.ueller.midlet.gps.names.NumberCanon;
+import de.ueller.midlet.gps.urls.Urls;
 
 public class SearchNames implements Runnable {
 
@@ -239,9 +241,28 @@ public class SearchNames implements Runnable {
 					}
 					float lat = ds.readFloat();
 					float lon = ds.readFloat();
+					int urlidx = -1;
+					int phoneidx = -1;
+					if (Legend.enableUrlTags) {
+						//#if polish.api.online
+						urlidx = Urls.readUrlIdx(ds);
+						//#endif
+					}
+					if (Legend.enablePhoneTags) {
+						phoneidx = Urls.readUrlIdx(ds);
+					}
+					if (urlidx == 0) {
+						urlidx = -1;
+					}
+					if (phoneidx == 0) {
+						phoneidx = -1;
+					}
+
 					if (idx != -1) {
 						SearchResult sr = new SearchResult();
 						sr.nameIdx = idx;
+						sr.urlIdx = urlidx;
+						sr.phoneIdx = phoneidx;
 						sr.type = (byte) type;
 						sr.lat = lat;
 						sr.lon = lon;

@@ -64,6 +64,8 @@ public class SingleTile extends Tile implements QueueableTile {
 
 	public int[] urlIdx;
 
+	public int[] phoneIdx;
+
 	public byte[] type;
 
 	private Way[][] ways;
@@ -320,6 +322,7 @@ public class SingleTile extends Tile implements QueueableTile {
 				state = STATE_CLEANUP;
 				nameIdx = null;
 				urlIdx = null;
+				phoneIdx = null;
 				nodeLat = null;
 				nodeLon = null;
 				type = null;
@@ -371,7 +374,10 @@ public class SingleTile extends Tile implements QueueableTile {
 				if (nameIdx[i] == -1) return;
 				if (urlIdx[i] == -1) return;
 				String name = pc.trace.getName(nameIdx[i]);
-				String url = pc.trace.getUrl(urlIdx[i]);
+				String url = null;
+				if (urlIdx[i] != -1) {
+					url = pc.trace.getUrl(urlIdx[i]);
+				}
 				if (name == null) return;
 				if (name.toUpperCase().indexOf(Legend.get0Poi1Area2WayNamePart((byte) 0).toUpperCase()) == -1) return;
 				break;
@@ -418,11 +424,23 @@ public class SingleTile extends Tile implements QueueableTile {
 		
 		// logger.debug("draw txt " + );
 		String name;
+		String url = null;
+		String phone = null;
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_SHOWWAYPOITYPE)) {
 			name = Legend.getNodeTypeDesc(t);
 		}
 		else {
 			name = pc.trace.getName(nameIdx[i]);
+		}
+		if (Legend.enableUrlTags) {
+			if (urlIdx[i] != -1) {
+				url = pc.trace.getUrl(urlIdx[i]);
+			}
+		}
+		if (Legend.enablePhoneTags) {
+			if (phoneIdx[i] != -1) {
+				phone = pc.trace.getUrl(phoneIdx[i]);
+			}
 		}
 		if (name != null) {			
 			Font originalFont = pc.g.getFont();
@@ -510,6 +528,8 @@ public class SingleTile extends Tile implements QueueableTile {
 			   sr.lat = nodeLat[i] * MoreMath.FIXPT_MULT_INV + centerLat;
 			   sr.lon = nodeLon[i] * MoreMath.FIXPT_MULT_INV + centerLon;
 			   sr.nameIdx = nameIdx[i];
+			   sr.urlIdx = urlIdx[i];
+			   sr.phoneIdx = phoneIdx[i];
 			   sr.type = (byte)(-1 * searchType); //It is a node. They have the top bit set to distinguish them from ways in search results
 			   sr.dist = ProjMath.getDistance(sr.lat, sr.lon, lat, lon);
 			   if (sr.dist < maxDist) {

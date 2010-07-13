@@ -71,6 +71,8 @@ public class Way extends Entity {
 	
 	public static final byte WAY_FLAG3_URL = 1;
 	public static final byte WAY_FLAG3_URLHIGH = 2;
+	public static final byte WAY_FLAG3_PHONE = 4;
+	public static final byte WAY_FLAG3_PHONEHIGH = 8;
 
 	public static final byte DRAW_BORDER=1;
 	public static final byte DRAW_AREA=2;
@@ -253,6 +255,14 @@ public class Way extends Entity {
 						urlIdx = is.readInt();
 					} else {
 						urlIdx = is.readShort();
+
+					}
+				}
+				if ( (f3 & WAY_FLAG3_PHONE) > 0 ) {
+					if ( (f3 & WAY_FLAG3_PHONEHIGH) > 0 ) {
+						phoneIdx = is.readInt();
+					} else {
+						phoneIdx = is.readShort();
 
 					}
 				}

@@ -21,7 +21,7 @@ public class Legend {
 	 * Specifies the format of the map on disk we expect to see
 	 * This constant must be in sync with Osm2GpsMid
 	 */
-	public final static short MAP_FORMAT_VERSION = 56;
+	public final static short MAP_FORMAT_VERSION = 57;
 	
 	/** The waypoint format used in the RecordStore. See PositionMark.java. */
 	public final static short WAYPT_FORMAT_VERSION = 2;
@@ -34,6 +34,11 @@ public class Legend {
 	public final static byte NODE_MASK_NAME = 0x4;
 	public final static byte NODE_MASK_ROUTENODE = 0x8;
 	public final static byte NODE_MASK_NAMEHIGH = 0x10;
+	public final static byte NODE_MASK_URL=0x20;
+	public final static byte NODE_MASK_URLHIGH=0x40;
+	public final static int NODE_MASK_ADDITIONALFLAG=0x80;
+	public final static byte NODE_MASK2_PHONE=0x1;
+	public final static byte NODE_MASK2_PHONEHIGH=0x2;
 	
 	public final static byte LEGEND_FLAG_IMAGE = 0x01;
 	public final static byte LEGEND_FLAG_SEARCH_IMAGE = 0x02;
@@ -167,6 +172,8 @@ public class Legend {
 	public static String appVersion;
 	public static String bundleDate;
 	public static boolean enableEdits;
+	public static boolean enableUrlTags;
+	public static boolean enablePhoneTags;
 	
 	private static POIdescription[] pois;
 	private static WayDescription[] ways;
@@ -222,6 +229,8 @@ public class Legend {
 		appVersion = ds.readUTF();
 		bundleDate = ds.readUTF();
 		enableEdits = ds.readBoolean();
+		enableUrlTags = ds.readBoolean();
+		enablePhoneTags = ds.readBoolean();
 		//#if polish.api.osm-editing
 		
 		//#else

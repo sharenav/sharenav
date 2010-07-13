@@ -5,6 +5,7 @@
 
 package de.ueller.midlet.gps.data;
 
+import de.ueller.gps.data.Legend;
 
 public class Node extends Entity {
 	public float radlat = 0;
@@ -134,8 +135,18 @@ public class Node extends Entity {
     public Node copy() {
     	Node n = new Node();
     	if (nameIdx != -1) {
-			n.nameIdx = nameIdx;
+		n.nameIdx = nameIdx;
+	}
+	if (Legend.enableUrlTags) {
+		if (urlIdx != -1) {
+			n.urlIdx=urlIdx;
 		}
+	}
+	if (Legend.enablePhoneTags) {
+		if (phoneIdx != -1) {
+			n.phoneIdx=phoneIdx;
+		}
+	}
     	n.type = type;
     	n.radlat = radlat;
     	n.radlon = radlon;

@@ -91,6 +91,18 @@ public class QueueDataReader extends QueueReader implements Runnable {
 		//#debug trace
 		logger.trace("nodes total: " + nodeCount + " interestNode: " + iNodeCount);
 		int[] nameIdx = new int[iNodeCount];
+		int[] urlIdx;
+		int[] phoneIdx;
+		if (Legend.enableUrlTags) {
+			urlIdx=new int[iNodeCount];
+		} else {
+			urlIdx = null;
+		}
+		if (Legend.enablePhoneTags) {
+			phoneIdx=new int[iNodeCount];
+		} else {
+			phoneIdx = null;
+		}
 		for (int i = 0; i < iNodeCount; i++) {
 			nameIdx[i] = -1;
 		}
@@ -106,6 +118,7 @@ public class QueueDataReader extends QueueReader implements Runnable {
 		osmID = null;
 		//#endif
 		byte flag = 0;
+		byte flag2 = 0;
 		//#debug trace
 		logger.trace("About to read nodes");
 		try {
@@ -114,6 +127,10 @@ public class QueueDataReader extends QueueReader implements Runnable {
 				//	logger.info("read coord :"+i+"("+nodeCount+")");
 				
 				flag = ds.readByte();
+				flag2 = 0;
+				if ((flag & Legend.NODE_MASK_ADDITIONALFLAG) == Legend.NODE_MASK_ADDITIONALFLAG) {
+					flag2 = ds.readByte();
+				}
 		
 				radlat[i] = ds.readShort();
 				radlon[i] = ds.readShort();
@@ -123,6 +140,21 @@ public class QueueDataReader extends QueueReader implements Runnable {
 						nameIdx[i] = ds.readInt();
 					} else {
 						nameIdx[i] = ds.readShort();
+					}
+				} 
+				if ((flag & Legend.NODE_MASK_URL) > 0){
+					if ((flag & Legend.NODE_MASK_URLHIGH) > 0) {
+						urlIdx[i]=ds.readInt();
+					} else {
+						urlIdx[i]=ds.readShort();
+					}
+				} 
+
+				if ((flag2 & Legend.NODE_MASK2_PHONE) > 0){
+					if ((flag2 & Legend.NODE_MASK2_PHONEHIGH) > 0) {
+						phoneIdx[i]=ds.readInt();
+					} else {
+						phoneIdx[i]=ds.readShort();
 					}
 				} 
 				if ((flag & Legend.NODE_MASK_TYPE) > 0) {
@@ -136,6 +168,8 @@ public class QueueDataReader extends QueueReader implements Runnable {
 				}
 			}
 			tt.nameIdx = nameIdx;
+			tt.urlIdx = urlIdx;
+			tt.phoneIdx = phoneIdx;
 			tt.nodeLat = radlat;
 			tt.nodeLon = radlon;
 			tt.type = type;

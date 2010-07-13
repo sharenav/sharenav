@@ -61,6 +61,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 	private final Command OVERVIEW_MAP_CMD = new Command("Overview/Filter map", Command.ITEM, 8);
 	private final Command POI_CMD = new Command("Nearest POI", Command.ITEM, 9);
 	private final Command FULLT_CMD = new Command("Fulltext search", Command.ITEM, 10);
+	private final Command URL_CMD = new Command("Open URL", Command.ITEM, 11);
+	private final Command PHONE_CMD = new Command("Call Phone", Command.ITEM, 12);
 
 	//private Form form;
 
@@ -170,6 +172,12 @@ public class GuiSearch extends Canvas implements CommandListener,
 		addCommand(OVERVIEW_MAP_CMD);
 		addCommand(POI_CMD);
 		addCommand(FULLT_CMD);
+		if (Legend.enableUrlTags) {
+			addCommand(URL_CMD);
+		}
+		if (Legend.enablePhoneTags) {
+			addCommand(PHONE_CMD);
+		}
 		
 		timerT = new TimerTask() {
 			public void run() {
@@ -192,6 +200,38 @@ public class GuiSearch extends Canvas implements CommandListener,
 	public void commandAction(Command c, Displayable d) {
 //		System.out.println("got Command " + c);
 		if (state == STATE_MAIN || state == STATE_FAVORITES) {
+			if (c == URL_CMD || c == PHONE_CMD) {
+				if (!isCursorValid()) {
+					return;
+				}
+				SearchResult sr = (SearchResult) result.elementAt(cursor);
+				String url = null;
+				String phone = null;
+				if (c == PHONE_CMD) {
+					if (sr.phoneIdx != -1) {
+						phone = parent.getUrl(sr.phoneIdx);
+						if (phone != null) {
+							url = "tel:" + phone;
+						}
+					}
+				}
+				if (c == URL_CMD) {
+					if (sr.phoneIdx != -1) {
+						url = parent.getUrl(sr.urlIdx);
+					}
+				}
+				try {
+					if (url != null) {
+						//#if polish.api.online
+						GpsMid.getInstance().platformRequest(url);
+						//#else
+						// FIXME: show user the url or phone number
+						//#endif
+					}
+				} catch (Exception e) {
+					//mLogger.exception("Could not open url " + url, e);
+				}
+			}
 			if (c == OK1_CMD || c == OK2_CMD || c == ROUTE1_CMD || c == ROUTE2_CMD) {			
 				if (!isCursorValid()) {
 					return;
@@ -406,6 +446,16 @@ public class GuiSearch extends Canvas implements CommandListener,
 				gc.setColor(0, 0, 0);
 			}
 			SearchResult sr=(SearchResult) result.elementAt(i);
+			String flags="";
+			if (sr.urlIdx != -1) {
+				flags = flags + "W";
+			}
+			if (sr.phoneIdx != -1) {
+				flags = flags + "P";
+			}
+			if (sr.urlIdx != -1 || sr.phoneIdx != -1) {
+				flags = flags + " ";
+			}
 			Image img;
 			if (sr.type < 0) {
 				img = Legend.getNodeSearchImage((byte)(sr.type*-1));
@@ -421,7 +471,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				gc.drawImage(img, 8, yc + fontSize / 2 - 1, Graphics.VCENTER | Graphics.HCENTER);
 			String name = null;
 			if (state != STATE_FAVORITES) {
-				name = parent.getName(sr.nameIdx);
+				name = flags + parent.getName(sr.nameIdx);
 			} else {
 				if (wayPts.length > sr.nameIdx) {
 					name = wayPts[sr.nameIdx].displayName;

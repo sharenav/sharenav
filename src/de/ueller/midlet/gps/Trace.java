@@ -1010,7 +1010,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				//#if polish.api.online
 					Position oPos = new Position(center.radlat, center.radlon,
 							0.0f, 0.0f, 0.0f, 0, 0);
-					GuiWebInfo gWeb = new GuiWebInfo(this, oPos);
+					GuiWebInfo gWeb = new GuiWebInfo(this, oPos, pc);
 					gWeb.show();
 				//#else
 					alert("No online capabilites",
