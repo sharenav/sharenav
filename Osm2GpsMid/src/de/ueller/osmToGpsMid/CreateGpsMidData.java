@@ -135,7 +135,7 @@ public class CreateGpsMidData implements FilenameFilter {
 		names1=getNames1();
 		urls1=getUrls1();
 		exportLegend(path);
-		SearchList sl=new SearchList(names1);
+		SearchList sl=new SearchList(names1,urls1);
 		UrlList ul=new UrlList(urls1);
 		sl.createNameList(path);
 		ul.createUrlList(path);
@@ -194,11 +194,13 @@ public class CreateGpsMidData implements FilenameFilter {
 		Urls na=new Urls();
 		for (Way w : parser.getWays()) {
 			na.addUrl(w);		
+			na.addPhone(w);		
 		}
 		for (Node n : parser.getNodes()) {
 			na.addUrl(n);
+			na.addPhone(n);
 		}
-		System.out.println("found " + na.getUrls().size() + " urls ");
+		System.out.println("found " + na.getUrls().size() + " urls, including phones ");
 		na.calcUrlIndex();
 		return (na);
 	}
@@ -223,6 +225,11 @@ public class CreateGpsMidData implements FilenameFilter {
 			 * Note if additional information is included that can enable editing of OSM data
 			 */
 			dsi.writeBoolean(config.enableEditingSupport);
+ 			/**
+			 * Note if urls and phones are in the midlet
+			 */
+			dsi.writeBoolean(config.useUrlTags);
+			dsi.writeBoolean(config.usePhoneTags);
 			/**
 			 * Writing colors 
 			 */
@@ -1269,7 +1276,11 @@ public class CreateGpsMidData implements FilenameFilter {
 
 	private void writeNode(Node n, DataOutputStream ds, int type, Tile t) throws IOException {
 		int flags = 0;
+		int flags2 = 0;
 		int nameIdx = -1;
+		int urlIdx = -1;
+		int phoneIdx = -1;
+		Configuration config = Configuration.getConfiguration();
 		if (type == INODE){
 			if (! "".equals(n.getName())){
 				flags += Constants.NODE_MASK_NAME;
@@ -1278,11 +1289,38 @@ public class CreateGpsMidData implements FilenameFilter {
 					flags += Constants.NODE_MASK_NAMEHIGH;
 				} 
 			}
+			if (config.useUrlTags) {
+				System.out.println("Using UrlTags");
+				if (! "".equals(n.getUrl())){
+					flags += Constants.NODE_MASK_URL;
+					urlIdx = urls1.getUrlIdx(n.getUrl());
+					if (urlIdx >= Short.MAX_VALUE) {
+						flags += Constants.NODE_MASK_URLHIGH;
+					} 
+				}
+			}
+			if (config.usePhoneTags) {
+				System.out.println("Using PhoneTags");
+				if (! "".equals(n.getPhone())){
+					flags2 += Constants.NODE_MASK2_PHONE;
+					phoneIdx = urls1.getUrlIdx(n.getPhone());
+					if (phoneIdx >= Short.MAX_VALUE) {
+						flags2 += Constants.NODE_MASK2_PHONEHIGH;
+					} 
+				}
+			}
+
 			if (n.getType(configuration) != -1){
 				flags += Constants.NODE_MASK_TYPE;
 			}
 		}
+		if (flags2 != 0) {
+			flags += Constants.NODE_MASK_ADDITIONALFLAG;
+		}
 		ds.writeByte(flags);
+		if (flags2 != 0) {
+			ds.writeByte(flags2);
+		}
 		
 		/**
 		 * Convert coordinates to relative fixpoint (integer) coordinates
@@ -1307,6 +1345,22 @@ public class CreateGpsMidData implements FilenameFilter {
 				ds.writeInt(nameIdx);
 			} else {
 				ds.writeShort(nameIdx);
+			}
+					
+		}
+		if ((flags & Constants.NODE_MASK_URL) > 0){
+			if ((flags & Constants.NODE_MASK_URLHIGH) > 0) {
+				ds.writeInt(urlIdx);
+			} else {
+				ds.writeShort(urlIdx);
+			}
+					
+		}
+		if ((flags2 & Constants.NODE_MASK2_PHONE) > 0){
+			if ((flags2 & Constants.NODE_MASK2_PHONEHIGH) > 0) {
+				ds.writeInt(phoneIdx);
+			} else {
+				ds.writeShort(phoneIdx);
 			}
 					
 		}

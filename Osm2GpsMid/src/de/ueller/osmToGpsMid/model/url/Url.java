@@ -24,6 +24,13 @@ public class Url {
 		setUrl(e.getUrl());
 		addEntity(e);
 	}
+	public Url(Entity e, String url) {
+		if (url == null){
+			throw new IllegalArgumentException("null url not allowed");
+		}
+		setUrl(url);
+		addEntity(e);
+	}
 	/**
 	 * construct a dummy element for subSet
 	 * @param url

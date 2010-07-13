@@ -23,6 +23,8 @@ import de.ueller.osmToGpsMid.model.Node;
 import de.ueller.osmToGpsMid.model.Way;
 import de.ueller.osmToGpsMid.model.name.Name;
 import de.ueller.osmToGpsMid.model.name.Names;
+import de.ueller.osmToGpsMid.model.url.Url;
+import de.ueller.osmToGpsMid.model.url.Urls;
 
 /**
  * @author hmueller
@@ -30,10 +32,12 @@ import de.ueller.osmToGpsMid.model.name.Names;
  */
 public class SearchList {
 	Names names;
+	Urls urls;
 
-	public SearchList(Names names) {
+	public SearchList(Names names, Urls urls) {
 		super();
 		this.names = names;
+		this.urls = urls;
 	}
 
 	public void createSearchList(String path){
@@ -106,14 +110,20 @@ public class SearchList {
 				}				
 				for (Entity e : mapName.getEntitys()){
 					Node center=null;
+					String url = null;
+					String phone = null;
 					if (e instanceof Node) {
 						Node n = (Node) e;						
+						url = n.getUrl();
+						phone = n.getPhone();
 						ds.writeByte(-1*n.getType(Configuration.getConfiguration()));
 						center=n;
 //						System.out.println("entryType " + n.getNameType() + " idx=" + mapName.getIndex());
 					}
 					if (e instanceof Way) {
 						Way w = (Way) e;
+						url = w.getUrl();
+						phone = w.getPhone();
 						ds.writeByte(w.getNameType());
 //						System.out.println("entryType " + w.getNameType() + " idx=" + mapName.getIndex());
 						center=w.getMidPoint();
@@ -144,6 +154,30 @@ public class SearchList {
 					}
 					ds.writeFloat(MyMath.degToRad(center.lat));
 					ds.writeFloat(MyMath.degToRad(center.lon));
+					int urlIdx = urls.getUrlIdx(url);
+					int phoneIdx = urls.getUrlIdx(phone);
+					if (urlIdx == -1) {
+						urlIdx = 0;
+					}
+					if (phoneIdx == -1) {
+						phoneIdx = 0;
+					}
+					//#if polish.api.online
+					if (Configuration.getConfiguration().useUrlTags) {
+						if (urlIdx >= Short.MAX_VALUE) {  // FIXME a flag somewhere to save space?
+							ds.writeInt(urlIdx | 0x80000000);
+						} else {
+							ds.writeShort(urlIdx);
+						}				
+					}
+					//#endif
+					if (Configuration.getConfiguration().usePhoneTags) {
+						if (phoneIdx >= Short.MAX_VALUE) {// FIXME a flag somewhere to save space?
+							ds.writeInt(phoneIdx | 0x80000000);
+						} else {
+							ds.writeShort(phoneIdx);
+						}				
+					}
 				}
 				ds.writeByte(0);
 //				ds.writeUTF(string.substring(eq));

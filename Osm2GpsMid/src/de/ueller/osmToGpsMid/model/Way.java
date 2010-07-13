@@ -48,7 +48,8 @@ public class Way extends Entity implements Comparable<Way> {
 
 	public static final byte WAY_FLAG3_URL = 1;
 	public static final byte WAY_FLAG3_URLHIGH = 2;
-
+	public static final byte WAY_FLAG3_PHONE = 4;
+	public static final byte WAY_FLAG3_PHONEHIGH = 8;
 
 	public Path					path								= null;
 	public List<Triangle>		triangles							= null;
@@ -259,6 +260,32 @@ public class Way extends Entity implements Comparable<Way> {
 		return null;
 	}
 
+	public String getUrl() {
+		if (type != -1) {
+			WayDescription desc = Configuration.getConfiguration().getWayDesc(type);
+			if (desc != null) {
+				if (containsKey("url")){
+					String url = getAttribute("url");
+					return url!=null ? url.trim() : "";
+				}
+			}
+		}
+		return null;
+	}
+	
+	public String getPhone() {
+		if (type != -1) {
+			WayDescription desc = Configuration.getConfiguration().getWayDesc(type);
+			if (desc != null) {
+				if (containsKey("phone")){
+					String phone = getAttribute("phone");
+					return phone!=null ? phone.trim() : ""; // prepend "tel:" ?
+				}
+			}
+		}
+		return null;
+	}
+	
 	public byte getZoomlevel(Configuration c) {
 		byte type = getType();
 
@@ -498,6 +525,7 @@ public class Way extends Entity implements Comparable<Way> {
 		int maxspeedwinter = 50;
 		int nameIdx = -1;
 		int urlIdx = -1;
+		int phoneIdx = -1;
 		byte layer = 0;
 
 		if (config == null) {
@@ -516,11 +544,18 @@ public class Way extends Entity implements Comparable<Way> {
 				flags += WAY_FLAG_NAMEHIGH;
 			}
 		}
-		if (getUrl() != null && getUrl().trim().length() > 0){			
+		if (config.useUrlTags && getUrl() != null && getUrl().trim().length() > 0){			
 			flags3+=WAY_FLAG3_URL;
 			urlIdx = urls1.getUrlIdx(getUrl());
 			if (urlIdx >= Short.MAX_VALUE) {
 				flags3 += WAY_FLAG3_URLHIGH;
+			}
+		}
+		if (config.usePhoneTags && getPhone() != null && getPhone().trim().length() > 0){			
+			flags3+=WAY_FLAG3_PHONE;
+			phoneIdx = urls1.getUrlIdx(getPhone());
+			if (phoneIdx >= Short.MAX_VALUE) {
+				flags3 += WAY_FLAG3_PHONEHIGH;
 			}
 		}
 		maxspeed = (int) getMaxSpeed();
@@ -619,6 +654,13 @@ public class Way extends Entity implements Comparable<Way> {
 				ds.writeInt(urlIdx);
 			} else {
 				ds.writeShort(urlIdx);
+			}
+		}
+		if ((flags3 & WAY_FLAG3_PHONE) == WAY_FLAG3_PHONE){
+			if ((flags3 & WAY_FLAG3_PHONEHIGH) == WAY_FLAG3_PHONEHIGH){
+				ds.writeInt(phoneIdx);
+			} else {
+				ds.writeShort(phoneIdx);
 			}
 		}
 		if ((flags2 & WAY_FLAG2_MAXSPEED_WINTER) == WAY_FLAG2_MAXSPEED_WINTER) {

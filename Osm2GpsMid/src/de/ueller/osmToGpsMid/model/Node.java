@@ -83,6 +83,12 @@ public class Node extends Entity {
 		return null;
 	}
 
+	public String getPhone() {
+		String phone = getAttribute("phone");
+		if (phone != null) return phone;
+		return null;
+	}
+
 	public String getPlace() {
 		String place = (getAttribute("place"));
 //		System.out.println("Read place for id=" + id + " as=" + place);

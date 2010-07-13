@@ -25,6 +25,11 @@ public class Constants {
 	public final static byte NODE_MASK_NAME=0x4;
 	public final static byte NODE_MASK_ROUTENODE=0x8;
 	public final static byte NODE_MASK_NAMEHIGH=0x10;
+	public final static byte NODE_MASK_URL=0x20;
+	public final static byte NODE_MASK_URLHIGH=0x40;
+	public final static int NODE_MASK_ADDITIONALFLAG=0x80;
+	public final static byte NODE_MASK2_PHONE=0x1;
+	public final static byte NODE_MASK2_PHONEHIGH=0x2;
 	
 	// node with name and no image
 	public final static byte NODE_PLACE_CITY=1;

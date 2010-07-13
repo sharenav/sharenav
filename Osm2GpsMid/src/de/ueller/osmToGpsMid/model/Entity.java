@@ -59,6 +59,12 @@ public class Entity {
 		return tags.get("url");
 	}
 
+	public String getPhone() {
+		if (tags == null)
+			return null;
+		return tags.get("phone");
+	}
+
 	public void setAttribute(String key, String value) {
 		if (tags == null)
 			tags = new SmallArrayMap<String,String>();

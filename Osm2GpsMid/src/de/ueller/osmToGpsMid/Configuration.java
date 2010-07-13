@@ -58,7 +58,7 @@ public class Configuration {
 	 * Specifies the format of the map on disk we are about to write.
 	 * This constant must be in sync with GpsMid.
 	 */
-	public final static short MAP_FORMAT_VERSION = 56;
+	public final static short MAP_FORMAT_VERSION = 57;
 
 	public final static int COLOR_MAP_BACKGROUND = 0;
 	public final static int COLOR_MAP_TEXT = 1;
@@ -282,6 +282,10 @@ public class Configuration {
 		/** Maximum route tile size in bytes */
 		public int maxRouteTileSize = 3000;
 
+		/** Use or don't use url and phone tags from OSM */
+		public boolean useUrlTags=false;
+		public boolean usePhoneTags=false;
+
 		/** TODO: Explain this, what is behind the "dict depth"? */
 		private int maxDictDepth = 5;
 		
@@ -472,6 +476,8 @@ public class Configuration {
 			rb = new PropertyResourceBundle(propIS);
 			vb = new PropertyResourceBundle(getClass().getResourceAsStream("/version.properties"));
 			setRouting(getString("useRouting"));
+			useUrlTags = getString("useUrlTags").equalsIgnoreCase("true");
+			usePhoneTags = getString("usePhoneTags").equalsIgnoreCase("true");
 			maxRouteTileSize = Integer.parseInt(getString("routing.maxTileSize"));
 
 			setIcons(getString("useIcons"));
@@ -1087,6 +1093,8 @@ public class Configuration {
 			confString += "  Planet source: " + planet + "\n";
 			confString += "  Included CellID data: " + getCellOperator() + "\n";
 			confString += "  CellID source: " + cellSource + "\n";
+			confString += "  Use url tags: " + useUrlTags + "\n";
+			confString += "  Use phone tags: " + usePhoneTags + "\n";
 			confString += "  Enable editing support: " + enableEditingSupport + "\n";
 			if (bounds.size() > 0) {
 				confString += "  Using " + bounds.size() + " bounding boxes\n";
