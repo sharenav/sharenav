@@ -1290,7 +1290,6 @@ public class CreateGpsMidData implements FilenameFilter {
 				} 
 			}
 			if (config.useUrlTags) {
-				System.out.println("Using UrlTags");
 				if (! "".equals(n.getUrl())){
 					flags += Constants.NODE_MASK_URL;
 					urlIdx = urls1.getUrlIdx(n.getUrl());
@@ -1300,7 +1299,6 @@ public class CreateGpsMidData implements FilenameFilter {
 				}
 			}
 			if (config.usePhoneTags) {
-				System.out.println("Using PhoneTags");
 				if (! "".equals(n.getPhone())){
 					flags2 += Constants.NODE_MASK2_PHONE;
 					phoneIdx = urls1.getUrlIdx(n.getPhone());
