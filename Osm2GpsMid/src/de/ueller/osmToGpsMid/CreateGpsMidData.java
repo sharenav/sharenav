@@ -49,6 +49,7 @@ import de.ueller.osmToGpsMid.model.Tile;
 import de.ueller.osmToGpsMid.model.TravelModes;
 import de.ueller.osmToGpsMid.model.Way;
 import de.ueller.osmToGpsMid.model.name.Names;
+import de.ueller.osmToGpsMid.model.url.Urls;
 import de.ueller.osmToGpsMid.tools.FileTools;
 
 
@@ -92,6 +93,7 @@ public class CreateGpsMidData implements FilenameFilter {
 	private final String	path;
 	TreeSet<MapName> names;
 	Names names1;
+	Urls urls1;
 	StringBuffer sbCopiedMedias= new StringBuffer();
 	short mediaInclusionErrors=0;
 	
@@ -131,9 +133,12 @@ public class CreateGpsMidData implements FilenameFilter {
 
 	public void exportMapToMid() {
 		names1=getNames1();
+		urls1=getUrls1();
 		exportLegend(path);
 		SearchList sl=new SearchList(names1);
+		UrlList ul=new UrlList(urls1);
 		sl.createNameList(path);
+		ul.createUrlList(path);
 		for (int i=0;i<=3;i++){
 			System.out.println("Exporting tiles for zoomlevel " + i);
 			long bytesWritten = exportMapToMid(i);
@@ -182,6 +187,19 @@ public class CreateGpsMidData implements FilenameFilter {
 		System.out.println("Found " + na.getNames().size() + " names, " + 
 				na.getCanons().size() + " canon");
 		na.calcNameIndex();
+		return (na);
+	}
+	
+	private Urls getUrls1(){
+		Urls na=new Urls();
+		for (Way w : parser.getWays()) {
+			na.addUrl(w);		
+		}
+		for (Node n : parser.getNodes()) {
+			na.addUrl(n);
+		}
+		System.out.println("found " + na.getUrls().size() + " urls ");
+		na.calcUrlIndex();
 		return (na);
 	}
 	
@@ -1193,7 +1211,7 @@ public class CreateGpsMidData implements FilenameFilter {
 		ds.writeByte(0x55); // Magic number
 		ds.writeShort(ways.size());
 		for (Way w : ways){
-			w.write(ds, names1,t);
+			w.write(ds, names1, urls1, t);
 		}
 		ds.writeByte(0x56); // Magic number
 		fo.close();

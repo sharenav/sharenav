@@ -77,6 +77,12 @@ public class Node extends Entity {
 		return null;
 	}
 	
+	public String getUrl() {
+		String url = getAttribute("url");
+		if (url != null) return url;
+		return null;
+	}
+
 	public String getPlace() {
 		String place = (getAttribute("place"));
 //		System.out.println("Read place for id=" + id + " as=" + place);

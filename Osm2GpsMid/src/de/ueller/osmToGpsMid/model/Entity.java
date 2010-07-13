@@ -53,6 +53,12 @@ public class Entity {
 		return tags.get("name");
 	}
 	
+	public String getUrl() {
+		if (tags == null)
+			return null;
+		return tags.get("url");
+	}
+
 	public void setAttribute(String key, String value) {
 		if (tags == null)
 			tags = new SmallArrayMap<String,String>();

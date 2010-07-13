@@ -22,6 +22,7 @@ import de.ueller.osmToGpsMid.area.Outline;
 import de.ueller.osmToGpsMid.area.Triangle;
 import de.ueller.osmToGpsMid.area.Vertex;
 import de.ueller.osmToGpsMid.model.name.Names;
+import de.ueller.osmToGpsMid.model.url.Urls;
 
 public class Way extends Entity implements Comparable<Way> {
 
@@ -43,6 +44,11 @@ public class Way extends Entity implements Comparable<Way> {
 	public static final byte	WAY_FLAG2_MAXSPEED_WINTER			= 32;
 	/** http://wiki.openstreetmap.org/wiki/WikiProject_Haiti */
 	public static final byte	WAY_FLAG2_COLLAPSED_OR_IMPASSABLE	= 64;
+	public static final int		WAY_FLAG2_ADDITIONALFLAG				= 128;
+
+	public static final byte WAY_FLAG3_URL = 1;
+	public static final byte WAY_FLAG3_URLHIGH = 2;
+
 
 	public Path					path								= null;
 	public List<Triangle>		triangles							= null;
@@ -483,13 +489,15 @@ public class Way extends Entity implements Comparable<Way> {
 		return ("|opposite|opposite_track|opposite_lane|".indexOf("|" + s.toLowerCase() + "|") >= 0);
 	}
 
-	public void write(DataOutputStream ds, Names names1, Tile t) throws IOException {
+	public void write(DataOutputStream ds, Names names1, Urls urls1, Tile t) throws IOException {
 		Bounds b = new Bounds();
 		int flags = 0;
 		int flags2 = 0;
+		int flags3 = 0;
 		int maxspeed = 50;
 		int maxspeedwinter = 50;
 		int nameIdx = -1;
+		int urlIdx = -1;
 		byte layer = 0;
 
 		if (config == null) {
@@ -506,6 +514,13 @@ public class Way extends Entity implements Comparable<Way> {
 			nameIdx = names1.getNameIdx(getName());
 			if (nameIdx >= Short.MAX_VALUE) {
 				flags += WAY_FLAG_NAMEHIGH;
+			}
+		}
+		if (getUrl() != null && getUrl().trim().length() > 0){			
+			flags3+=WAY_FLAG3_URL;
+			urlIdx = urls1.getUrlIdx(getUrl());
+			if (urlIdx >= Short.MAX_VALUE) {
+				flags3 += WAY_FLAG3_URLHIGH;
 			}
 		}
 		maxspeed = (int) getMaxSpeed();
@@ -565,6 +580,9 @@ public class Way extends Entity implements Comparable<Way> {
 		if (longWays) {
 			flags2 += WAY_FLAG2_LONGWAY;
 		}
+		if (flags3 != 0) {
+			flags2 += WAY_FLAG2_ADDITIONALFLAG;
+		}
 		if (flags2 != 0) {
 			flags += WAY_FLAG_ADDITIONALFLAG;
 		}
@@ -592,6 +610,16 @@ public class Way extends Entity implements Comparable<Way> {
 		// must be below maxspeed as this is a combined flag and GpsMid relies it's below maxspeed
 		if (flags2 != 0) {
 			ds.writeByte(flags2);
+		}
+		if (flags3 != 0) {
+			ds.writeByte(flags3);
+		}
+		if ((flags3 & WAY_FLAG3_URL) == WAY_FLAG3_URL){
+			if ((flags3 & WAY_FLAG3_URLHIGH) == WAY_FLAG3_URLHIGH){
+				ds.writeInt(urlIdx);
+			} else {
+				ds.writeShort(urlIdx);
+			}
 		}
 		if ((flags2 & WAY_FLAG2_MAXSPEED_WINTER) == WAY_FLAG2_MAXSPEED_WINTER) {
 			ds.writeByte(maxspeedwinter);
