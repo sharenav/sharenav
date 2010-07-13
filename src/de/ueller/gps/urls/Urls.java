@@ -65,14 +65,6 @@ public class Urls implements Runnable {
 				//efficiency. Should not effect perceived
 				//Speed much
 				Thread.sleep(500);
-				// change to give cleanup a chance
-				if (addQueue2.size() != 0) {
-					synchronized (addQueue2) {					
-						queue2.clone(addQueue2);
-						addQueue2.removeAll();					
-					}
-					readData(queue2);
-				}
 				if (cleanup) {
 					cleanupStringCache();
 				}
@@ -147,66 +139,6 @@ public class Urls implements Runnable {
 		return ("");
 	}
 
-	private void readData(intTree queue) throws IOException {
-		int idx = queue.popFirstKey();
-		int fid = 0;
-		InputStream is = null;
-		int count = 0;
-		int actIdx = 0;
-
-		while (idx != -1) {
-			//#debug debug
-			logger.debug("Looking up url " + idx);
-			/* Lookup in which urls file the entry is contained */
-			for (int i = fid; i < startIndexes.length; i++) {
-				if (startIndexes[i] > idx) {
-					is = Configuration.getMapResource("/urls-" + fid + ".dat");
-					count = startIndexes[i] - startIndexes[fid];
-					actIdx = startIndexes[fid];
-					break;
-				}
-				fid = i;
-			}
-			if (is == null) {
-//				logger.error("no inputstream found");
-				break;
-			}
-			DataInputStream ds = new DataInputStream(is);
-
-			int pos = 0;
-			StringBuffer url = new StringBuffer();
-			StringEntry bufferSe = new StringEntry(null);
-			//Search through all urls in the the given file
-			//as we can only read linearly in this file 
-			files:for (int l = 0; l < count; l++) {
-				pos = readNextWord(ds, pos, url, bufferSe);
-				//logger.info("test Url '" + url + "' at idx:" + actIdx);
-				if (actIdx == idx) {
-					StringEntry se = (StringEntry) stringCache.get(idx);
-					if (se == null) {
-						/*
-						 * We might have dropped the cache in between for low memory,
-						 * in this case just read the entry now.
-						 */
-						se = new StringEntry(null);
-						stringCache.put(idx, se);
-						se.count = 4;
-					}
-					se.name = url.toString();
-					
-					if (queue.size() != 0) {
-						idx = queue.popFirstKey();
-					} else {
-						idx = -1;
-						break files;
-					}
-				}
-				actIdx++;
-			}
-			ds.close();
-		}
-	}
-
 	private int readNextWord(DataInputStream ds, int pos, StringBuffer url, StringEntry se) throws IOException {
 		int delta;
 		try { 
@@ -226,67 +158,49 @@ public class Urls implements Runnable {
 
 	
 	public synchronized String getUrl(int idx) {
-		if (idx < 0) {
-			return null;
-		}
-		StringEntry ret = (StringEntry) stringCache.get(idx);
-		if (ret != null) {
-			ret.count = 4;
-			return ret.name;
-		}
-		StringEntry newEntry = new StringEntry(null);
-		stringCache.put(idx, newEntry);
-		newEntry.count = 4;
-		addQueue2.put(idx, null);
-		notify();
-		return null;
-	}
-	
-	// FIXME consider removing, probably not needed
-	/**
-	 * Search linearly through all urls in the urls files and do a comparison
-	 * to the search string. If the search string is contained somewhere in the url,
-	 * return it as a hit. The comparison is done in lower case and so is case insensitive 
-	 * @param snippet
-	 * @return a Vector of Strings containing the url.
-	 */
-	public Vector fulltextSearch (String snippet) {
-		logger.info("Beginning fulltext search for " + snippet);
-		Vector hits = new Vector();
-		int count;		
+		int fid = 0;
+		InputStream is = null;
+		int count = 0;
+		int actIdx = 0;
+		String urlret = null;
+		//#debug debug
+		logger.debug("Looking up url " + idx);
+		/* Lookup in which urls file the entry is contained */
 		try {
-			for (int fid = 0; fid < (startIndexes.length - 1); fid++) {
-				InputStream is = Configuration.getMapResource("/urls-" + fid + ".dat");
-				count = startIndexes[fid + 1] - startIndexes[fid];
-				if (is == null) {
+			for (int i = fid; i < startIndexes.length; i++) {
+				if (startIndexes[i] > idx) {
+					is = Configuration.getMapResource("/urls-" + fid + ".dat");
+					count = startIndexes[i] - startIndexes[fid];
+					actIdx = startIndexes[fid];
 					break;
 				}
-				DataInputStream ds = new DataInputStream(is);
-
-				int pos = 0;
-				StringBuffer url = new StringBuffer();
-				StringEntry bufferSe = new StringEntry(null);
-				//Search through all urls in the the given file
-				//as we can only read linearly in this file 
-				for (int l = 0; l < count; l++) {
-					pos = readNextWord(ds, pos, url, bufferSe);
-					String fullUrl = url.toString().toLowerCase();
-					if (fullUrl.indexOf(snippet) > -1) {
-						//#debug debug
-						logger.debug("found fulltext match: " + fullUrl);
-						hits.addElement(fullUrl);
-					}
-				}
-				ds.close();
+				fid = i;
 			}
-			//#debug
-			logger.info("Finished fulltext search. Found " + hits.size() + " hits");
-		} catch (IOException e) {
-			logger.exception("Could not perform fulltext search", e);
+			if (is == null) {
+//				logger.error("no inputstream found");
+				return null;
+			}
+			DataInputStream ds = new DataInputStream(is);
+		
+			int pos = 0;
+			StringBuffer url = new StringBuffer();
+			StringEntry bufferSe = new StringEntry(null);
+			//Search through all urls in the the given file
+			//as we can only read linearly in this file 
+			files:for (int l = 0; l < count; l++) {
+				pos = readNextWord(ds, pos, url, bufferSe);
+				//logger.info("test Url '" + url + "' at idx:" + actIdx);
+				if (actIdx == idx) {
+					StringEntry se = (StringEntry) stringCache.get(idx);
+					urlret = url.toString();
+				}
+				actIdx++;
+			}
+			ds.close();
+		} catch (IOException ioe) {
 		}
-		return hits;
+		return urlret;
 	}
-	
 	private void cleanupStringCache() {
 		//#debug info
 		logger.info("cleanup urlsCache " + stringCache.size());
