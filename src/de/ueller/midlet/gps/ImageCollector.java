@@ -557,7 +557,7 @@ public class ImageCollector implements Runnable {
 			}
 			// If there's an URL associated with way, show U next to name
 			if (wayForName.urlIdx != -1) {
-			    name = name + " U";
+			    name = name + " W";
 			}
 		}
 		// use the nearest routable way for the the speed limit detection if
