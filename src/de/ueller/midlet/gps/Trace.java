@@ -781,7 +781,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					// turn backlight always on when dimming
 					Configuration.setCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON, true, false);
 					lastBackLightOnTime = System.currentTimeMillis();
-					parent.addToBackLightLevel(backLightLevelDiff);
+					Configuration.addToBackLightLevel(backLightLevelDiff);
 					parent.showBackLightLevel();
 				} else if (imageCollector != null) {
 					if (courseDiff == 360) {

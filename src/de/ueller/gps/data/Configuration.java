@@ -48,7 +48,7 @@ public class Configuration {
 	 *  the default values for the features added between configVersionStored
 	 *  and VERSION will be set, before the version in the recordstore is increased to VERSION.
 	 */
-	public final static int VERSION = 16;
+	public final static int VERSION = 17;
 
 	public final static int LOCATIONPROVIDER_NONE = 0;
 	public final static int LOCATIONPROVIDER_SIRF = 1;
@@ -266,6 +266,7 @@ public class Configuration {
 	private static final int RECORD_ID_DETAIL_BOOST_POI = 41;
 	private static final int RECORD_ID_TRAFFIC_SIGNAL_CALC_DELAY = 42;
 	private static final int RECORD_ID_WAYPT_SORT_MODE = 43;
+	private static final int RECORD_ID_BACKLIGHTLEVEL = 43;
 
 	// Gpx Recording modes
 	// GpsMid determines adaptive if a trackpoint is written
@@ -366,6 +367,8 @@ public class Configuration {
 
 	private static int trafficSignalCalcDelay = 5;
 
+	private static volatile int backLightLevel = 50;
+	
 	public static void read() {
 	logger = Logger.getInstance(Configuration.class, Logger.DEBUG);
 	RecordStore	database;
@@ -434,6 +437,7 @@ public class Configuration {
 			phoneAllTimeMaxMemory = readLong(database, RECORD_ID_PHONE_ALL_TIME_MAX_MEMORY);
 			trafficSignalCalcDelay = readInt(database, RECORD_ID_TRAFFIC_SIGNAL_CALC_DELAY);
 			wayptSortMode = readInt(database, RECORD_ID_WAYPT_SORT_MODE);
+			backLightLevel = readInt(database, RECORD_ID_BACKLIGHTLEVEL);
 			
 			int configVersionStored = readInt(database, RECORD_ID_CONFIG_VERSION);
 			//#debug info
@@ -588,6 +592,12 @@ public class Configuration {
 			cfgBits_0_to_63 |= 1L << CFGBIT_USE_TURN_RESTRICTIONS_FOR_ROUTE_CALCULATION;
 			setTrafficSignalCalcDelay(5);
 		}
+
+		if (configVersionStored < 17) {
+			backLightLevel = 50;
+			setBackLightLevel(backLightLevel);
+		}
+
 		
 		setCfgBits(cfgBits_0_to_63, cfgBits_64_to_127);
 	}
@@ -1217,7 +1227,32 @@ public class Configuration {
 		Configuration.routeEstimationFac = routeEstimationFac;
 	}
 
+	public static int getBackLightLevel() {
+		return backLightLevel;
+	}
 
+	public static void setBackLightLevel(int backLightLevel) {
+		write(backLightLevel, RECORD_ID_BACKLIGHTLEVEL);
+		Configuration.backLightLevel = backLightLevel;
+	}
+	
+	public static void addToBackLightLevel(int diffBacklight) {
+		backLightLevel += diffBacklight;
+		if (backLightLevel > 100
+			|| !Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIA))
+		{
+			backLightLevel = 100;
+		}
+		if (backLightLevel <= 1) {
+			backLightLevel = 1;
+		}
+		if (backLightLevel == 26) {
+			backLightLevel = 25;
+		}
+		setBackLightLevel(backLightLevel);
+	}
+
+	
 	public static TravelMode getTravelMode() {
 		return Legend.getTravelModes()[currentTravelModeNr];
 	}

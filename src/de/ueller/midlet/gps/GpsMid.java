@@ -95,7 +95,6 @@ public class GpsMid extends MIDlet implements CommandListener {
 	 * backlight illuminator if this is wanted by the user
 	 */
 	private Thread lightTimer;
-	private volatile int backLightLevel = 100;
 
 	private Displayable shouldBeDisplaying;
 	private Displayable prevDisplayable;
@@ -498,7 +497,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 										// nokia-ui
 									} else if (Configuration
 											.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIA)) {
-										DeviceControl.setLights(0, backLightLevel);
+										DeviceControl.setLights(0, Configuration.getBackLightLevel());
 										//#endif
 										//#if polish.api.min-siemapi
 									} else if (Configuration
@@ -544,30 +543,12 @@ public class GpsMid extends MIDlet implements CommandListener {
 		}
 	}
 
-	public void addToBackLightLevel(int diffBacklight) {
-		backLightLevel += diffBacklight;
-		if (backLightLevel > 100
-			|| !Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIA))
-		{
-			backLightLevel = 100;
-		}
-		if (backLightLevel <= 1) {
-			backLightLevel = 1;
-		}
-		if (backLightLevel == 26) {
-			backLightLevel = 25;
-		}
-	}
-
-	public int getBackLightLevel() {
-		return backLightLevel;
-	}
 
 	public void showBackLightLevel() {
 		if ( Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON,
 				false) ) {
 			trace.alert("Backlight", "Backlight "
-					+ (backLightLevel == 100 ? "ON" : (backLightLevel + "%"))
+					+ (Configuration.getBackLightLevel() == 100 ? "ON" : (Configuration.getBackLightLevel() + "%"))
 					+ (Configuration.getCfgBitState(
 							Configuration.CFGBIT_BACKLIGHT_ONLY_WHILE_GPS_STARTED)
 								? " while GPS started" : ""), 1000);
