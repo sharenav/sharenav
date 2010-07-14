@@ -68,7 +68,7 @@ public class Urls {
 		Url mn =new Url(w, w.getPhone());
 		if (urls1.containsKey(mn.getUrl())){
 //			System.out.println("url for phone already there:" + mn);
-			Url mnNext=new Url(w.getUrl()+"\0");
+			Url mnNext=new Url(w.getPhone()+"\0");
 			SortedMap<String,Url> subSet=urls1.subMap(mn.getUrl(), mnNext.getUrl());
 			Url mnExist=subSet.get(subSet.firstKey());
 			mnExist.addEntity(w);
