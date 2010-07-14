@@ -528,8 +528,12 @@ public class SingleTile extends Tile implements QueueableTile {
 			   sr.lat = nodeLat[i] * MoreMath.FIXPT_MULT_INV + centerLat;
 			   sr.lon = nodeLon[i] * MoreMath.FIXPT_MULT_INV + centerLon;
 			   sr.nameIdx = nameIdx[i];
-			   sr.urlIdx = urlIdx[i];
-			   sr.phoneIdx = phoneIdx[i];
+			   if (Legend.enableUrlTags) {
+				   sr.urlIdx = urlIdx[i];
+			   }
+			   if (Legend.enablePhoneTags) {
+				   sr.phoneIdx = phoneIdx[i];
+			   }
 			   sr.type = (byte)(-1 * searchType); //It is a node. They have the top bit set to distinguish them from ways in search results
 			   sr.dist = ProjMath.getDistance(sr.lat, sr.lon, lat, lon);
 			   if (sr.dist < maxDist) {
