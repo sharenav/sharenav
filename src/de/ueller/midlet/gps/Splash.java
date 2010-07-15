@@ -54,14 +54,14 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 		" from OpenStreetMap",
 		" licensed under CC 2.0",
 		" http://creativecommons.org/",
-		"Thanks for source parts to:",
+		Locale.get("splash.thanks")/* Thanks for source parts to: */,
 		" Nikolay Klimchuk",
 		" Simon Turner",
 		" Sualeh Fatehi",
-		"Artwork:",
+		Locale.get("splash.artwork")/* Artwork: */,
 		" Tobias Mueller",
-		"Press '*' to skip this",
-		"screen at startup." };
+		Locale.get("splash.skip")/* Press '*' to skip this */,
+		Locale.get("splash.screen")/* screen at startup. */ };
 	private Font f;
 	int top = 0;
 	private Thread processorThread;
