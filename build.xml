@@ -93,7 +93,7 @@
 			vendorName="Harald Mueller"
 			infoUrl="http://gpsmid.sourceforge.net"
 			icon="GpsMid.png"
-			jarName="GpsMid-${polish.vendor}-${polish.name}-${polish.version}_${polish.lang.jar"
+			jarName="GpsMid-${polish.vendor}-${polish.name}-${polish.version}_${polish.lang}.jar"
 			jarUrl="${deploy-url}${polish.jarName}"
 			copyright="Copyright 2007 - 2010 Harald Mueller and others"
 			deleteConfirm="Do you really want to kill me?"
