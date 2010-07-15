@@ -191,8 +191,12 @@
 				<!-- add the localization element for created localized
 				     versions of your application: -->
 				<localization  unless="test">
-<!--					<locale name="de" /> -->
+					<locale name="de" />
 					<locale name="en" />
+					<locale name="fi" />
+					<locale name="fr" />
+					<locale name="ru" />
+					<locale name="sk" />
 				</localization>
 				<localization locales="en" if="test" />
 			</resources>
