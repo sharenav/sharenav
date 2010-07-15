@@ -536,14 +536,14 @@ public class GuiSearch extends Canvas implements CommandListener,
 				} else { 
 					gc.setColor(0, 0, 0); 
 				}
-				gc.drawString(name.substring(0,imatch), 17, yc, Graphics.TOP | Graphics.LEFT); 
+				gc.drawString(name.substring(0,imatch+flags.length()), 17, yc, Graphics.TOP | Graphics.LEFT); 
 				// remaining name part 
 				if (i == cursor){ 
 					gc.setColor(255, 100, 100); 
 				} else { 
 					gc.setColor(150, 150, 250); 
 				} 
-				gc.drawString(name.substring(imatch), 17 + gc.getFont().stringWidth(name.substring(0,imatch)) , yc, Graphics.TOP | Graphics.LEFT);
+				gc.drawString(name.substring(imatch+flags.length()), 17 + gc.getFont().stringWidth(name.substring(0,imatch+flags.length())) , yc, Graphics.TOP | Graphics.LEFT);
 
 				// carret 
 				if(carret<=imatch && displayReductionLevel<1) { 
