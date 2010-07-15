@@ -355,7 +355,6 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		CMDS[ROUTING_START_CMD] = new Command("Calculate route",Command.ITEM, 100);
 		CMDS[ROUTING_STOP_CMD] = new Command("Stop routing",Command.ITEM, 100);
 		CMDS[ONLINE_INFO_CMD] = new Command("Online info",Command.ITEM, 100);
-		CMDS[OPEN_URL_CMD] = new Command("Open URL",Command.ITEM, 100);
 		CMDS[ROUTING_START_WITH_MODE_SELECT_CMD] = new Command("Calculate route...",Command.ITEM, 100);
 		CMDS[RETRIEVE_NODE] = new Command("Add POI to OSM...",Command.ITEM, 100);
 		CMDS[ICON_MENU] = new Command("Menu",Command.OK, 100);
@@ -645,7 +644,6 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		addCommand(CMDS[OVERVIEW_MAP_CMD]);
 		//#if polish.api.online
 		addCommand(CMDS[ONLINE_INFO_CMD]);
-		addCommand(CMDS[OPEN_URL_CMD]);
 		//#if polish.api.osm-editing
 		addCommand(CMDS[RETRIEVE_XML]);
 		addCommand(CMDS[RETRIEVE_NODE]);
@@ -686,7 +684,6 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		removeCommand(CMDS[OVERVIEW_MAP_CMD]);
 		//#if polish.api.online
 		removeCommand(CMDS[ONLINE_INFO_CMD]);
-		removeCommand(CMDS[OPEN_URL_CMD]);
 		//#if polish.api.osm-editing
 		removeCommand(CMDS[RETRIEVE_XML]);
 		removeCommand(CMDS[RETRIEVE_NODE]);
@@ -1012,29 +1009,6 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 							0.0f, 0.0f, 0.0f, 0, 0);
 					GuiWebInfo gWeb = new GuiWebInfo(this, oPos, pc);
 					gWeb.show();
-				//#else
-					alert("No online capabilites",
-							"Set app=GpsMid-Generic-editing and enableEditing=true in " +
-							".properties file and recreate GpsMid with Osm2GpsMid.",
-							Alert.FOREVER);
-				//#endif
-			}
-			if (c == CMDS[OPEN_URL_CMD]) {
-				//#if polish.api.online
-				String url;
-				if ((pc.actualWay != null) && ((url = getUrl(pc.actualWay.urlIdx)) != null)) {
-					try {
-						// #debug info
-						logger.info("Platform request for " + url);
-						GpsMid.getInstance().platformRequest(getUrl(pc.actualWay.urlIdx));
-					}
-					catch (Exception e) {
-						logger.exception("Could not open url " + url, e);
-					}
-				} else {
-					alert("Open URL"/*i*/, "No URL available"/*i*/, 1500);
-				}
-				return;
 				//#else
 					alert("No online capabilites",
 							"Set app=GpsMid-Generic-editing and enableEditing=true in " +

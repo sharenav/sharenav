@@ -21,7 +21,6 @@ public class TraceIconMenu extends IconMenuWithPagesGUI {
 	LayoutElement iconToggleAudioRec; 
 	LayoutElement iconToggleRoute; 
 	LayoutElement iconOnlineInfo; 
-	LayoutElement iconOpenURL; 
 	LayoutElement iconAddPOI;
 	LayoutElement iconAddAddr;
 	LayoutElement iconEditWay;
@@ -50,7 +49,6 @@ public class TraceIconMenu extends IconMenuWithPagesGUI {
 		mp.createAndAddIcon(Locale.get("traceiconmenu.Back")/*Back*/, "i_back", IconActionPerformer.BACK_ACTIONID);
 
 		mp.createAndAddIcon(Locale.get("traceiconmenu.Exit")/*Exit*/, "i_exit", Trace.EXIT_CMD);
-		iconOpenURL = mp.createAndAddIcon("Open URL", "i_openurl", Trace.OPEN_URL_CMD);		
 
 		// determine preferred ordering
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED)) {
