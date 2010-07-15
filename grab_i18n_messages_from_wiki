@@ -1,0 +1,24 @@
+#!/bin/sh
+  
+# grab GpsMid i18n (language) messages from the wiki, write to messages_lang.txt
+# requirements: lynx,awk,bourne-compatible shell 
+# usage: $0 [ lang1 lang2 lang3 ... ]
+  
+# default languages to fetch
+lang="fi de fr sk ru" 
+
+if [ "$#" -gt 0 ]
+then
+  lang="$@"
+fi
+
+path=resources
+  
+for l in $lang
+do
+   lynx -source http://sourceforge.net/apps/mediawiki/gpsmid/index.php?title=I18n/messages_$l |
+   awk 'BEGIN { pr = 0 } 
+     /<\/pre>/ { pr = 0 } 
+     { if (pr) print; }
+     /<pre>/ { print substr ($0, index($0, "<pre>") + 5); pr = 1 }' > $path/messages_$l.txt
+done
