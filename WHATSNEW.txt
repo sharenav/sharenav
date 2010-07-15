@@ -37,6 +37,7 @@ GpsMid 0.6.3
 	   - Finnish voice and route instructions:
 	     Specify in your .properties file: useSoundFilesWithSyntax=sound-fi
 	     This will include the Finnish sound files into GpsMid (thx jkpj)  	     	   
+	*** Localization of on-screen messages ***
 	   - Icon menu and some other on-screen messages in Finnish, French,
              German, Russian and Slovak
 
