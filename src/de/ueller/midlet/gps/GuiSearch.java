@@ -547,7 +547,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 
 				// carret 
 				if(carret<=imatch && displayReductionLevel<1) { 
-					int cx=17 + gc.getFont().stringWidth(name.substring(0,carret)); 
+					int cx=17 + gc.getFont().stringWidth(name.substring(0,carret+flags.length())); 
 					gc.setColor(255, 0, 0); 
 					gc.drawLine(cx-1,yc+fontSize,cx+1,yc+fontSize); 
 				}
