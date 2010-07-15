@@ -93,7 +93,7 @@
 			vendorName="Harald Mueller"
 			infoUrl="http://gpsmid.sourceforge.net"
 			icon="GpsMid.png"
-			jarName="GpsMid-${polish.vendor}-${polish.name}-${polish.version}.jar"
+			jarName="GpsMid-${polish.vendor}-${polish.name}-${polish.version}_${polish.lang.jar"
 			jarUrl="${deploy-url}${polish.jarName}"
 			copyright="Copyright 2007 - 2010 Harald Mueller and others"
 			deleteConfirm="Do you really want to kill me?"
@@ -112,6 +112,7 @@
 		<deviceRequirements unless="test">
 			<or>
 				<requirement name="Identifier" value="Generic/editing" />
+				<!--
 				<requirement name="Identifier" value="Generic/blackberry" />
 				<requirement name="Identifier" value="Generic/full" />
 				<requirement name="Identifier" value="Generic/minimal" />
@@ -120,7 +121,6 @@
 				<requirement name="Identifier" value="Generic/minimal-bt" />
 				<requirement name="Identifier" value="Generic/no-obex" />
 				<requirement name="Identifier" value="Generic/no-xml" />
-				<!--
 				<requirement name="Identifier" value="Motorola/Motorazr_V3i" />
 				<requirement name="Identifier" value="Sony-Ericsson/K750" />
 				<requirement name="Identifier" value="Siemens/SL75" />
