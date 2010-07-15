@@ -35,9 +35,9 @@ public class GuiOSMAddrDisplay extends Form implements GpsMidDisplayable,
 	private final static Logger logger = Logger.getInstance(
 			GuiOSMAddrDisplay.class, Logger.DEBUG);
 
-	private final Command UPLOAD_CMD = new Command("Upload to OSM", Command.OK,
+	private final Command UPLOAD_CMD = new Command("Upload to OSM"/* i:UploadToOSM */, Command.OK,
 			6);
-	private final Command BACK_CMD = new Command("Back", Command.BACK, 1);
+	private final Command BACK_CMD = new Command("Back"/* i:Back */, Command.BACK, 1);
 
 	private GpsMidDisplayable parent;
 	private int loadState;
@@ -180,13 +180,10 @@ public class GuiOSMAddrDisplay extends Form implements GpsMidDisplayable,
 			switch (loadState) {
 			case GuiOSMEntityDisplay.LOAD_STATE_UPLOAD: {
 				GpsMid.getInstance().alert("Adding Addr"/* i:AddingAddr */,
-						"Addr was successfully added to OpenStreetMap"/*
-																	 * i:AddrUploadSuccess
-																	 */, 1000);
-				logger
-						.info("Adding Waypoint to mark where Addr was uploaded to OSM");
+						"Addr was successfully added to OpenStreetMap"/* i:AddrUploadSuccess */, 1000);
+				logger.info("Adding Waypoint to mark where Addr was uploaded to OSM");
 				PositionMark waypt = new PositionMark(lat, lon);
-				waypt.displayName = "adr: " + sHousenumber;
+				waypt.displayName = "adr: "/* i:adr */ + sHousenumber;
 				Trace.getInstance().gpx.addWayPt(waypt);
 
 				loadState = GuiOSMEntityDisplay.LOAD_STATE_NONE;
