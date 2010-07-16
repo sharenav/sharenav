@@ -1181,8 +1181,8 @@ public class Configuration {
 			if (is != null) {
 				return is;
 			} else if (!Configuration.getCfgBitSavedState(Configuration.CFGBIT_PREFER_INTERNAL_PNGS)) {
-				throw new IOException("Could not find file "/*i:ExFNF1*/ + name +
-						" in JAR"/*i:ExFNF2*/);
+				throw new IOException(Locale.get("configuration.ExFNF1")/*Could not find file*/ + name +
+						Locale.get("configuration.ExFNF2")/* in JAR*/);
 			}
 		}
 		//#if polish.api.fileconnection
