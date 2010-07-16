@@ -812,7 +812,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			if (c == CMDS[START_RECORD_CMD]) {
 				try {
 					gpx.newTrk(false);
-					alert(Locale.get("trace.GpsRecording")/*Gps track recording*/, Locale.get("trace.StartingToRecord ")/*Starting to record*/, 1250);
+					alert(Locale.get("trace.GpsRecording")/*Gps track recording*/, Locale.get("trace.StartingToRecord")/*Starting to record*/, 1250);
 				} catch (RuntimeException e) {
 					receiveMessage(e.getMessage());
 				}
@@ -821,13 +821,13 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			}
 			if (c == CMDS[STOP_RECORD_CMD]) {
 				gpx.saveTrk(false);
-				alert(Locale.get("trace.GpsRecording")/*Gps track recording*/, Locale.get("trace.StoppingToRecord ")/*Stopping to record*/, 1250);
+				alert(Locale.get("trace.GpsRecording")/*Gps track recording*/, Locale.get("trace.StoppingToRecord")/*Stopping to record*/, 1250);
 				recordingsMenu = null; // refresh recordings menu
 				return;
 			}
 			if (c == CMDS[MANAGE_TRACKS_CMD]) {
 				if (gpx.isRecordingTrk()) {
-					alert(Locale.get("trace.RecordMode")/*Record Mode*/, Locale.get("trace.YouNeedStopRecording ")/*You need to stop recording before managing tracks.*/ , 4000);
+					alert(Locale.get("trace.RecordMode")/*Record Mode*/, Locale.get("trace.YouNeedStopRecording")/*You need to stop recording before managing tracks.*/ , 4000);
 					return;
 				}
 
@@ -843,7 +843,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				if (locationProducer == null) {
 					if (TrackPlayer.isPlaying) {
 						TrackPlayer.getInstance().stop();
-						alert(Locale.get("trace.Trackplayer")/*Trackplayer*/, Locale.get("trace.PlayingStopped ")/*Playing stopped for connecting to GPS*/, 2500);
+						alert(Locale.get("trace.Trackplayer")/*Trackplayer*/, Locale.get("trace.PlayingStopped")/*Playing stopped for connecting to GPS*/, 2500);
 					}
 					Thread thread = new Thread(this,"LocationProducer init");
 					thread.start();
@@ -1159,7 +1159,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					if (routeEngine != null) {
 						routeEngine.cancelRouting();
 					}
-					alert(Locale.get("trace.RouteCalculation")/*Route Calculation*/, Locale.get("trace.Cancelled ")/*Cancelled*/, 1500);
+					alert(Locale.get("trace.RouteCalculation")/*Route Calculation*/, Locale.get("trace.Cancelled")/*Cancelled*/, 1500);
 				} else {
 					alert(Locale.get("trace.Routing")/*Routing*/, Locale.get("trace.Off")/*Off*/, 750);
 				}
@@ -1188,9 +1188,9 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				manualRotationMode = !manualRotationMode;
 				if (manualRotationMode) {
 					if (hasPointerEvents()) {
-						alert(Locale.get("trace.ManualRotation")/*Manual Rotation*/, Locale.get("trace.ChangeCourse ")/*Change course with zoom buttons*/, 3000);
+						alert(Locale.get("trace.ManualRotation")/*Manual Rotation*/, Locale.get("trace.ChangeCourse")/*Change course with zoom buttons*/, 3000);
 					} else {
-						alert(Locale.get("trace.ManualRotation")/*Manual Rotation*/, Locale.get("trace.ChangeCourseWithLeftRightKeys ")/*Change course with left/right keys*/, 3000);
+						alert(Locale.get("trace.ManualRotation")/*Manual Rotation*/, Locale.get("trace.ChangeCourseWithLeftRightKeys")/*Change course with left/right keys*/, 3000);
 					}
 				} else {
 					alert(Locale.get("trace.ManualRotation")/*Manual Rotation*/, Locale.get("trace.Off")/*Off*/, 750);
@@ -1248,10 +1248,10 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			if (c == CMDS[TOGGLE_RECORDING_SUSP_CMD]) {
 				if (gpx.isRecordingTrk()) {
 					if ( gpx.isRecordingTrkSuspended() ) {
-						alert(Locale.get("trace.GpsRecording")/*Gps track recording*/, Locale.get("trace.ResumingRecording ")/*Resuming recording*/, 1000);
+						alert(Locale.get("trace.GpsRecording")/*Gps track recording*/, Locale.get("trace.ResumingRecording")/*Resuming recording*/, 1000);
 						gpx.resumeTrk();
 					} else {
-						alert(Locale.get("trace.GpsRecording")/*Gps track recording*/, Locale.get("trace.SuspendingRecording ")/*Suspending recording*/, 1000);
+						alert(Locale.get("trace.GpsRecording")/*Gps track recording*/, Locale.get("trace.SuspendingRecording")/*Suspending recording*/, 1000);
 						gpx.suspendTrk();
 					}
 				}
@@ -1274,7 +1274,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					movedAwayFromDest = false;
 				}
 				else {
-					alert(Locale.get("trace.ShowDestination")/*Show destination*/, Locale.get("trace.DestinationNotSpecifiedYet ")/*Destination is not specified yet*/, 3000);
+					alert(Locale.get("trace.ShowDestination")/*Show destination*/, Locale.get("trace.DestinationNotSpecifiedYet")/*Destination is not specified yet*/, 3000);
 				}
 				
 				return;
@@ -1358,7 +1358,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					return;
 				}
 			} else {
-				alert(Locale.get("trace.Error")/*Error*/, Locale.get("trace.CurrentlyInRouteCalculation ")/*Currently in route calculation*/, 2000);
+				alert(Locale.get("trace.Error")/*Error*/, Locale.get("trace.CurrentlyInRouteCalculation")/*Currently in route calculation*/, 2000);
 			}
 		} catch (Exception e) {
  			logger.exception("In Trace.commandAction", e);
