@@ -8,6 +8,7 @@ splash.skip=Press '*' to skip this
 splash.screen=screen at startup.
 traceiconmenu.About=About
 traceiconmenu.AddAddr=Add Address
+traceiconmenu.AddAddrNode=Add Addr node
 traceiconmenu.AddPOI=Add POI
 traceiconmenu.Back=Back
 traceiconmenu.Calc=Calculate
@@ -147,7 +148,7 @@ trace.SaveWaypoint=Save waypoint
 trace.Search=Search
 trace.SendSMSMapPos=Send SMS (map pos)
 trace.SendSMSPos=Send SMS (map pos)
-trace.SetAppGeneric =Set app=GpsMid-Generic-editing and enableEditing=true in 
+trace.SetAppGeneric=Set app=GpsMid-Generic-editing and enableEditing=true in 
 trace.SetDestination=Set destination
 trace.Setup=Setup
 trace.ShowDestination=Show destination

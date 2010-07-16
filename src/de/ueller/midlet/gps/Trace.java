@@ -363,7 +363,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		//#if polish.api.wmapi
 		CMDS[SEND_MESSAGE_CMD] = new Command(Locale.get("trace.SendSMSMapPos")/*Send SMS (map pos)*/,Command.ITEM, 20);
 		//#endif
-		CMDS[EDIT_ADDR_CMD] = new Command("Add Addr node"/*i:AddAddrNode*/,Command.ITEM,100);
+		CMDS[EDIT_ADDR_CMD] = new Command(Locale.get("trace.AddAddrNode")/*Add Addr node*/,Command.ITEM,100);
 
 		addAllCommands();
 		
@@ -1011,7 +1011,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					gWeb.show();
 				//#else
 					alert(Locale.get("trace.NoOnlineCapa")/*No online capabilites*/,
-					      "Set app=GpsMid-Generic-editing and enableEditing=true in "/* i:SetAppGeneric  */ +
+					      Locale.get("trace.SetAppGeneric")/*Set app=GpsMid-Generic-editing and enableEditing=true in*/ +
 					      Locale.get("trace.PropertiesFile")/*.properties file and recreate GpsMid with Osm2GpsMid.*/,
 							Alert.FOREVER);
 				//#endif
@@ -1343,7 +1343,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				//#else
 				if (c == CMDS[RETRIEVE_XML] || c == CMDS[RETRIEVE_NODE] || c == CMDS[EDIT_ADDR_CMD]) {
 					alert("No online capabilites",
-					      "Set app=GpsMid-Generic-editing and enableEditing=true in "/* i:SetAppGeneric  */ +
+					      Locale.get("trace.SetAppGeneric")/*Set app=GpsMid-Generic-editing and enableEditing=true in*/ +
 					      Locale.get("trace.PropertiesFile")/*.properties file and recreate GpsMid with Osm2GpsMid.*/,
 						Alert.FOREVER);
 				}
