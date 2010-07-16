@@ -145,6 +145,8 @@
 
 		   and modify the android.home property in the beginning of the file to have the correct path for android SDK
 		   As there's no bundling support yet, you need to have the map on the sd card at directory gpsmidmap 
+		   Success varies with j2mpolish versions; succesfull build has been
+		   achieved with http://download.j2mepolish.org/daily/j2mepolish-2010-06-10.jar
 		 -->
 
 		<build
