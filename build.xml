@@ -22,6 +22,10 @@
 	default="j2mepolish">
 	
 	
+<property 
+	name="android.home" 
+	location="/path/to/android-sdk" />
+
 <property file="build.properties" />
 <property file="midlet.properties" />
 <property file="${polish.home}/global.properties" />
@@ -139,13 +143,9 @@
 			fullscreen="no"
 			usePolishGui="true"
 
-		   and modify the android.home property below to have the correct path for android SDK
+		   and modify the android.home property in the beginning of the file to have the correct path for android SDK
 		   As there's no bundling support yet, you need to have the map on the sd card at directory gpsmidmap 
 		 -->
-
-<property 
-	name="android.home" 
-	location="/path/to/android-sdk" />
 
 		<build
 			symbols="ExampleSymbol, AnotherExample"
