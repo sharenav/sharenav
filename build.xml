@@ -121,6 +121,8 @@
 				<requirement name="Identifier" value="Generic/no-obex" />
 				<requirement name="Identifier" value="Generic/no-xml" />
 				<!--
+				<requirement name="Identifier" value="Generic/android" />
+				<requirement name="Identifier" value="Generic/android2.1" />
 				<requirement name="Identifier" value="Motorola/Motorazr_V3i" />
 				<requirement name="Identifier" value="Sony-Ericsson/K750" />
 				<requirement name="Identifier" value="Siemens/SL75" />
@@ -132,6 +134,19 @@
 	    <!-- build settings -->
 		<!-- 
 		 -->
+		<!-- 
+		   building for Android:
+			fullscreen="no"
+			usePolishGui="true"
+
+		   and modify the android.home property below to have the correct path for android SDK
+		   As there's no bundling support yet, you need to have the map on the sd card at directory gpsmidmap 
+		 -->
+
+<property 
+	name="android.home" 
+	location="/path/to/android-sdk" />
+
 		<build
 			symbols="ExampleSymbol, AnotherExample"
 			fullscreen="menu"
@@ -279,6 +294,8 @@
 				depends="init"
 				description="This is a NMEA over bluetooth simulator" 
 				>
+	                <!-- lowercase icon name required for Android, before Android support was icon="GpsMid.png" -->
+
 			<j2mepolish>		    
 				<info
 					license="GPL"
@@ -287,7 +304,7 @@
 					description=""
 					vendorName="Harald Mueller"
 					infoUrl="http://gpsmid.sourceforge.net"
-					icon="GpsMid.png"
+					icon="gpsmid.png"
 					jarName="NMEAsim-${polish.version}.jar" 
 					jarUrl="${deploy-url}${polish.jarName}"					
 					deleteConfirm="Do you really want to kill me?" 
