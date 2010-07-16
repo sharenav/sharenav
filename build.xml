@@ -90,13 +90,14 @@
 	    <!-- general settings, these settings basically form the JAD-attributes. -->
 	    <!-- Have a look at the <jad>-section for setting specialised attributes.
 	         You can also define localized attributes in the resources/messages.txt files -->
+            <!-- lowercase icon name required for Android, before Android support was icon="GpsMid.png" -->
 		<info
 			name="GpsMid"
 			version="0.6.3"
 			description="Shows moving map made from OpenStreetMap data"
 			vendorName="Harald Mueller"
 			infoUrl="http://gpsmid.sourceforge.net"
-			icon="GpsMid.png"
+			icon="gpsmid.png"
 			jarName="GpsMid-${polish.vendor}-${polish.name}-${polish.version}_${polish.locale}.jar"
 			jarUrl="${deploy-url}${polish.jarName}"
 			copyright="Copyright 2007 - 2010 Harald Mueller and others"
@@ -296,7 +297,6 @@
 				depends="init"
 				description="This is a NMEA over bluetooth simulator" 
 				>
-	                <!-- lowercase icon name required for Android, before Android support was icon="GpsMid.png" -->
 
 			<j2mepolish>		    
 				<info
@@ -306,7 +306,7 @@
 					description=""
 					vendorName="Harald Mueller"
 					infoUrl="http://gpsmid.sourceforge.net"
-					icon="gpsmid.png"
+					icon="GpsMid.png"
 					jarName="NMEAsim-${polish.version}.jar" 
 					jarUrl="${deploy-url}${polish.jarName}"					
 					deleteConfirm="Do you really want to kill me?" 
