@@ -457,10 +457,17 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 						} catch (Exception e) {
 							// As above
 						}
+						//#if polish.android
+						// FIXME current (2010-06) android j2mepolish doesn't give this info
+						//#else
 						if (jsr179Version != null && jsr179Version.length() > 0) {
+						//#endif
 							Class jsr179Class = Class.forName("de.ueller.gps.location.JSR179Input");
 							locationProducer = (LocationMsgProducer) jsr179Class.newInstance();
+						//#if polish.android
+						//#else
 						}
+						//#endif
 					} catch (ClassNotFoundException cnfe) {
 						locationDecoderEnd();
 						logger.exception("Your phone does not support JSR179, please use a different location provider", cnfe);
