@@ -228,7 +228,7 @@ public class JSR179Input
 			
 		}
 		//#if polish.android
-		// current (2010-06) android j2mepolish gives OUT_OF_SERVICE even when a fix exists
+		// FIXME current (2010-06) android j2mepolish gives OUT_OF_SERVICE even when a fix exists
 		//#else
 		if (state == LocationProvider.OUT_OF_SERVICE) {
 			locationProvider.setLocationListener(this, 1, -1, -1);
