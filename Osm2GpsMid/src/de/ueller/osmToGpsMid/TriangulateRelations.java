@@ -65,11 +65,15 @@ public class TriangulateRelations {
 				if (r.getAttribute("admin_level") != null){
 					continue;
 				}
+//				System.out.println("Starting to handle multipolygon relation");
+//				System.out.println("    see http://www.openstreetmap.org/browse/relation/" + r.id);
+
 				if (r.getWayIds(Member.ROLE_OUTER).size() == 0){
 					System.out.println("Relation has no outer member");
 					System.out.println("    see " + r.toUrl() + " I'll ignore this relation");
 					continue;
 				}
+//				System.out.println("outer size: " + r.getWayIds(Member.ROLE_OUTER).size());
 //				System.out.println("Triangulate relation " + r.id);
 				Area a = new Area();
 //				if (r.id == 405925 ){
@@ -80,6 +84,7 @@ public class TriangulateRelations {
 //						a.debug = true;
 //					}
 					Way w = wayHashMap.get(ref);
+//					System.out.println("Handling outer way http://www.openstreetmap.org/browse/way/" + ref);
 					if (w == null) {
 						System.out.println("Way " + w.toUrl() + " was not found but referred  as outline in ");
 						System.out.println("    relation " + r.toUrl() + " I'll ignore this relation");
@@ -87,6 +92,7 @@ public class TriangulateRelations {
 					}
 					Outline no = createOutline(w);
 					if (no != null) {
+//						System.out.println("Adding way " + w.toUrl() + " as OUTER");
 						a.addOutline(no);
 						if (firstWay == null) {
 							if (w.triangles != null){
@@ -108,6 +114,7 @@ public class TriangulateRelations {
 						System.out.println("    relation "+ r.toUrl() + " I'll ignore this relation");
 						continue rel;
 					}
+//					System.out.println("Adding way " + w.toUrl() + " as INNER");
 					Outline no = createOutline(w);
 					if (no != null) {
 						a.addHole(no);
