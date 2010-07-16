@@ -61,42 +61,27 @@ public class Outline {
 	}
 	
 	public void connectPartWays(ArrayList<Outline> others) {
-		Vertex last = null;
-		Vertex first = null;
-		last = vertexList.get(vertexList.size() - 1);
-		first = vertexList.get(0);
 		boolean changed = false;
 //		System.out.println("Entering connectPartWays");
 		do {
 			changed = false;
 			Iterator<Outline> i = others.iterator();
 			while (i.hasNext()) {
+				Vertex last = null;
+				Vertex first = null;
+				last = vertexList.get(vertexList.size() - 1);
+				first = vertexList.get(0);
 				Outline o = i.next();
-				System.out.println("Iterating, node: " + o.vertexList.get(0).getNode());
+//				System.out.println("Iterating, node: " + o.vertexList.get(0).getNode());
 				if (o == this) {
-					System.out.println("o == this");
+//					System.out.println("o == this");
 					continue;
 				}
 				if (!o.isClosed()) {
 //					System.out.println("not o.isClosed()");
 
-					if (o.vertexList.get(0).getNode().equals(first.getNode())) {
-//						System.out.println("found way connecting to start of outline, so prepend it");
-						changed = true;
-						for (Vertex v : o.vertexList) {
-							prepend(v);
-						}
-						i.remove();
-					}
-					if (o.vertexList.get(o.vertexList.size()-1).getNode().equals(first.getNode())) {
-//						System.out.println("found way reverse connecting to start of outline, so prepend it");
-						changed = true;
-						for (int loop=o.vertexList.size()-1; loop>= 0; loop--){
-							Vertex v = o.vertexList.get(loop);
-							prepend(v);
-						}
-						i.remove();
-					}
+//					System.out.println("last.getNode(): " + last.getNode());
+//					System.out.println("first.getNode(): " + first.getNode());
 					if (o.vertexList.get(0).getNode().equals(last.getNode())) {
 //						System.out.println("found way connecting to end of outline, so append it");
 						changed = true;
@@ -104,13 +89,27 @@ public class Outline {
 							append(v);
 						}
 						i.remove();
-					}
-					if (o.vertexList.get(o.vertexList.size()-1).getNode().equals(last.getNode())) {
+					} else if (o.vertexList.get(o.vertexList.size()-1).getNode().equals(last.getNode())) {
 //						System.out.println("found way reverse connecting to end of outline, so append it");
 						changed = true;
 						for (int loop=o.vertexList.size()-1; loop>= 0; loop--){
 						    Vertex v = o.vertexList.get(loop);
 							append(v);
+						}
+						i.remove();
+					} else if (o.vertexList.get(0).getNode().equals(first.getNode())) {
+//						System.out.println("found way connecting to start of outline, so prepend it");
+						changed = true;
+						for (Vertex v : o.vertexList) {
+							prepend(v);
+						}
+						i.remove();
+					} else if (o.vertexList.get(o.vertexList.size()-1).getNode().equals(first.getNode())) {
+//						System.out.println("found way reverse connecting to start of outline, so prepend it");
+						changed = true;
+						for (int loop=o.vertexList.size()-1; loop>= 0; loop--){
+							Vertex v = o.vertexList.get(loop);
+							prepend(v);
 						}
 						i.remove();
 					}
