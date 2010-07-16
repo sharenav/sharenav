@@ -500,7 +500,11 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					if (Configuration.getGpsRawLoggerEnable()) {
 						logger.info("Raw Location logging to: " + url);
 						url += "rawGpsLog" + HelperRoutines.formatSimpleDateNow() + ".txt";
+						//#if polish.android
+						de.enough.polish.android.io.Connection logCon = Connector.open(url);
+						//#else
 						javax.microedition.io.Connection logCon = Connector.open(url);
+						//#endif
 						if (logCon instanceof FileConnection) {
 							FileConnection fileCon = (FileConnection)logCon;
 							if (!fileCon.exists()) {
