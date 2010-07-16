@@ -327,7 +327,7 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 				
 			}
 			if (db.getNumRecords() == 0) {
-				logger.info("Persisten Cell-id database is empty, initialising it");
+				logger.info("Persistent Cell-id database is empty, initialising it");
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				DataOutputStream dos = new DataOutputStream(baos);
 				dos.writeByte(CELLDB_LACIDX);
@@ -508,10 +508,10 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 						cellPos.put(tmpCell.cellID, tmpCell);
 					}
 					if (dis.readInt() != 0xdeadbeaf) {
-						logger.error("Persisten Cell-id cache is corrupt"/* i:ErCellcacheCorrupt */);
+						logger.error("Persistent Cell-id cache is corrupt"/* i:ErCellcacheCorrupt */);
 					}
 				} else {
-					logger.error("Persisten Cell-id cache is corrupt"/* i:ErCellcacheCorrupt2 */);
+					logger.error("Persistent Cell-id cache is corrupt"/* i:ErCellcacheCorrupt2 */);
 				}
 			}
 			db.closeRecordStore();
