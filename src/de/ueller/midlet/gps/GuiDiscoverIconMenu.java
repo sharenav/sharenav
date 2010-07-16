@@ -24,7 +24,7 @@ public class GuiDiscoverIconMenu extends IconMenuWithPagesGUI {
 		mp = createAndAddMenuPage(Locale.get("guidiscovericonmenu.Basic")/* Basic */, 3, 3);
 			mp.createAndAddIcon(Locale.get("guidiscovericonmenu.LocReceiver")/*Location Receiver*/, "is_loc", GuiDiscover.MENU_ITEM_LOCATION);
 			mp.createAndAddIcon(Locale.get("guidiscovericonmenu.Display")/*Display*/, "is_display", GuiDiscover.MENU_ITEM_DISP_OPT);
-			mp.createAndAddIcon(Locale.get("guidiscovericonmenu.SoundAlert")/*Sounds "Sounds & Alerts" /* i:SoundAlert */ Alerts*/, "is_sound", GuiDiscover.MENU_ITEM_SOUNDS_OPT);
+			mp.createAndAddIcon(Locale.get("guidiscovericonmenu.SoundAlert")/*Sounds "Sounds & Alerts" */, "is_sound", GuiDiscover.MENU_ITEM_SOUNDS_OPT);
 
 			mp.createAndAddIcon(Locale.get("guidiscovericonmenu.Routing")/*Routing*/, "is_route", GuiDiscover.MENU_ITEM_ROUTING_OPT);
 			mp.createAndAddIcon(Locale.get("guidiscovericonmenu.RecRules")/*Recording Rules*/, "is_rec", GuiDiscover.MENU_ITEM_GPX_FILTER);
