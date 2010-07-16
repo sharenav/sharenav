@@ -151,7 +151,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 //	private SirfInput si;
 	private LocationMsgProducer locationProducer;
 
-	public String solution = "NoFix"/* i:NoFix */;
+	public String solution = Locale.get("trace.NoFix")/*NoFix*/;
 	
 	/** Flag if the map is centered to the current GPS position (true)
 	 * or if the user moved the map away from this position (false).
@@ -308,60 +308,60 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		
 		this.parent = GpsMid.getInstance();
 		
-		CMDS[EXIT_CMD] = new Command("Exit"/* i:Exit */, Command.EXIT, 2);
-		CMDS[REFRESH_CMD] = new Command("Refresh"/* i:Refresh */, Command.ITEM, 4);
-		CMDS[SEARCH_CMD] = new Command("Search"/* i:Search */, Command.OK, 1);
-		CMDS[CONNECT_GPS_CMD] = new Command("Start GPS"/* i:StartGPS */,Command.ITEM, 2);
-		CMDS[DISCONNECT_GPS_CMD] = new Command("Stop GPS"/* i:StopGPS */,Command.ITEM, 2);
-		CMDS[START_RECORD_CMD] = new Command("Start record"/* i:StartRecord */,Command.ITEM, 4);
-		CMDS[STOP_RECORD_CMD] = new Command("Stop record"/* i:StopRecord */,Command.ITEM, 4);
-		CMDS[MANAGE_TRACKS_CMD] = new Command("Manage tracks"/* i:ManageTracks */,Command.ITEM, 5);
-		CMDS[SAVE_WAYP_CMD] = new Command("Save waypoint"/* i:SaveWaypoint */,Command.ITEM, 7);
-		CMDS[ENTER_WAYP_CMD] = new Command("Enter waypoint"/* i:EnterWaypoint */,Command.ITEM, 7);
-		CMDS[MAN_WAYP_CMD] = new Command("Manage waypoints"/* i:ManageWaypoints */,Command.ITEM, 7);
-		CMDS[ROUTING_TOGGLE_CMD] = new Command("Toggle routing"/* i:ToggleRouting */,Command.ITEM, 3);
-		CMDS[CAMERA_CMD] = new Command("Camera"/* i:Camera */,Command.ITEM, 9);
-		CMDS[CLEAR_DEST_CMD] = new Command("Clear destination"/* i:ClearDestination */,Command.ITEM, 10);
-		CMDS[SET_DEST_CMD] = new Command("As destination"/* i:AsDestination */,Command.ITEM, 11);
-		CMDS[MAPFEATURES_CMD] = new Command("Map Features"/* i:MapFeatures */,Command.ITEM, 12);
-		CMDS[RECORDINGS_CMD] = new Command("Recordings..."/* i:Recordings */,Command.ITEM, 4);
-		CMDS[ROUTINGS_CMD] = new Command("Routing..."/* i:Routing */,Command.ITEM, 3);
-		CMDS[OK_CMD] = new Command("OK"/* i:OK */,Command.OK, 14);
-		CMDS[BACK_CMD] = new Command("Back"/* i:Back */,Command.BACK, 15);
-		CMDS[ZOOM_IN_CMD] = new Command("Zoom in"/* i:ZoomIn */,Command.ITEM, 100);
-		CMDS[ZOOM_OUT_CMD] = new Command("Zoom out"/* i:ZoomOut */,Command.ITEM, 100);
-		CMDS[MANUAL_ROTATION_MODE_CMD] = new Command("Manual rotation mode"/* i:ManualRotation */,Command.ITEM, 100);
-		CMDS[TOGGLE_OVERLAY_CMD] = new Command("Next overlay"/* i:NextOverlay */,Command.ITEM, 100);
-		CMDS[TOGGLE_BACKLIGHT_CMD] = new Command("Keep backlight on/off"/* i:KeepBacklight */,Command.ITEM, 100);
-		CMDS[TOGGLE_FULLSCREEN_CMD] = new Command("Switch to fullscreen"/* i:SwitchToFullscreen */,Command.ITEM, 100);
-		CMDS[TOGGLE_MAP_PROJ_CMD] = new Command("Next map projection"/* i:NextMapProjection */,Command.ITEM, 100);
-		CMDS[TOGGLE_KEY_LOCK_CMD] = new Command("(De)Activate Keylock"/* i:ToggleKeylock */,Command.ITEM, 100);
-		CMDS[TOGGLE_RECORDING_CMD] = new Command("(De)Activate recording"/* i:ToggleRecording */,Command.ITEM, 100);
-		CMDS[TOGGLE_RECORDING_SUSP_CMD] = new Command("Suspend recording"/* i:SuspendRecording */,Command.ITEM, 100);
-		CMDS[RECENTER_GPS_CMD] = new Command("Recenter on GPS"/* i:RecenterOnGPS */,Command.ITEM, 100);
-		CMDS[SHOW_DEST_CMD] = new Command("Show destination"/* i:ShowDestination */,Command.ITEM, 100);
-		CMDS[DATASCREEN_CMD] = new Command("Tacho"/* i:Tacho */, Command.ITEM, 15);
-		CMDS[OVERVIEW_MAP_CMD] = new Command("Overview/Filter map"/* i:OverviewFilterMap */, Command.ITEM, 20);
-		CMDS[RETRIEVE_XML] = new Command("Retrieve XML"/* i:RetrieveXML */,Command.ITEM, 200);
-		CMDS[PAN_LEFT25_CMD] = new Command("left 25%"/* i:left25 */,Command.ITEM, 100);
-		CMDS[PAN_RIGHT25_CMD] = new Command("right 25%"/* i:right25 */,Command.ITEM, 100);
-		CMDS[PAN_UP25_CMD] = new Command("up 25%"/* i:up25 */,Command.ITEM, 100);
-		CMDS[PAN_DOWN25_CMD] = new Command("down 25%"/* i:down25 */,Command.ITEM, 100);
-		CMDS[PAN_LEFT2_CMD] = new Command("left 2"/* i:left2 */,Command.ITEM, 100);
-		CMDS[PAN_RIGHT2_CMD] = new Command("right 2"/* i:right2 */,Command.ITEM, 100);
-		CMDS[PAN_UP2_CMD] = new Command("up 2"/* i:up2 */,Command.ITEM, 100);
-		CMDS[PAN_DOWN2_CMD] = new Command("down 2"/* i:down2 */,Command.ITEM, 100);
-		CMDS[TOGGLE_AUDIO_REC] = new Command("Audio recording"/* i:AudioRecording */,Command.ITEM, 100);
-		CMDS[ROUTING_START_CMD] = new Command("Calculate route"/* i:CalculateRoute */,Command.ITEM, 100);
-		CMDS[ROUTING_STOP_CMD] = new Command("Stop routing"/* i:StopRouting */,Command.ITEM, 100);
-		CMDS[ONLINE_INFO_CMD] = new Command("Online info"/* i:OnlineInfo */,Command.ITEM, 100);
-		CMDS[ROUTING_START_WITH_MODE_SELECT_CMD] = new Command("Calculate route..."/* i:CalculateRoute */,Command.ITEM, 100);
-		CMDS[RETRIEVE_NODE] = new Command("Add POI to OSM..."/* i:AddPOI */,Command.ITEM, 100);
-		CMDS[ICON_MENU] = new Command("Menu"/* i:Menu */,Command.OK, 100);
-		CMDS[SETUP_CMD] = new Command("Setup"/* i:Setup */, Command.ITEM, 25);
-		CMDS[ABOUT_CMD] = new Command("About"/* i:About */, Command.ITEM, 30);
+		CMDS[EXIT_CMD] = new Command(Locale.get("trace.Exit")/*Exit*/, Command.EXIT, 2);
+		CMDS[REFRESH_CMD] = new Command(Locale.get("trace.Refresh")/*Refresh*/, Command.ITEM, 4);
+		CMDS[SEARCH_CMD] = new Command(Locale.get("trace.Search")/*Search*/, Command.OK, 1);
+		CMDS[CONNECT_GPS_CMD] = new Command(Locale.get("trace.StartGPS")/*Start GPS*/,Command.ITEM, 2);
+		CMDS[DISCONNECT_GPS_CMD] = new Command(Locale.get("trace.StopGPS")/*Stop GPS*/,Command.ITEM, 2);
+		CMDS[START_RECORD_CMD] = new Command(Locale.get("trace.StartRecord")/*Start record*/,Command.ITEM, 4);
+		CMDS[STOP_RECORD_CMD] = new Command(Locale.get("trace.StopRecord")/*Stop record*/,Command.ITEM, 4);
+		CMDS[MANAGE_TRACKS_CMD] = new Command(Locale.get("trace.ManageTracks")/*Manage tracks*/,Command.ITEM, 5);
+		CMDS[SAVE_WAYP_CMD] = new Command(Locale.get("trace.SaveWaypoint")/*Save waypoint*/,Command.ITEM, 7);
+		CMDS[ENTER_WAYP_CMD] = new Command(Locale.get("trace.EnterWaypoint")/*Enter waypoint*/,Command.ITEM, 7);
+		CMDS[MAN_WAYP_CMD] = new Command(Locale.get("trace.ManageWaypoints")/*Manage waypoints*/,Command.ITEM, 7);
+		CMDS[ROUTING_TOGGLE_CMD] = new Command(Locale.get("trace.ToggleRouting")/*Toggle routing*/,Command.ITEM, 3);
+		CMDS[CAMERA_CMD] = new Command(Locale.get("trace.Camera")/*Camera*/,Command.ITEM, 9);
+		CMDS[CLEAR_DEST_CMD] = new Command(Locale.get("trace.ClearDestination")/*Clear destination*/,Command.ITEM, 10);
+		CMDS[SET_DEST_CMD] = new Command(Locale.get("trace.AsDestination")/*As destination*/,Command.ITEM, 11);
+		CMDS[MAPFEATURES_CMD] = new Command(Locale.get("trace.MapFeatures")/*Map Features*/,Command.ITEM, 12);
+		CMDS[RECORDINGS_CMD] = new Command(Locale.get("trace.Recordings")/*Recordings...*/,Command.ITEM, 4);
+		CMDS[ROUTINGS_CMD] = new Command(Locale.get("trace.Routing")/*Routing...*/,Command.ITEM, 3);
+		CMDS[OK_CMD] = new Command(Locale.get("trace.OK")/*OK*/,Command.OK, 14);
+		CMDS[BACK_CMD] = new Command(Locale.get("trace.Back")/*Back*/,Command.BACK, 15);
+		CMDS[ZOOM_IN_CMD] = new Command(Locale.get("trace.ZoomIn")/*Zoom in*/,Command.ITEM, 100);
+		CMDS[ZOOM_OUT_CMD] = new Command(Locale.get("trace.ZoomOut")/*Zoom out*/,Command.ITEM, 100);
+		CMDS[MANUAL_ROTATION_MODE_CMD] = new Command(Locale.get("trace.ManualRotation")/*Manual rotation mode*/,Command.ITEM, 100);
+		CMDS[TOGGLE_OVERLAY_CMD] = new Command(Locale.get("trace.NextOverlay")/*Next overlay*/,Command.ITEM, 100);
+		CMDS[TOGGLE_BACKLIGHT_CMD] = new Command(Locale.get("trace.KeepBacklight")/*Keep backlight on/off*/,Command.ITEM, 100);
+		CMDS[TOGGLE_FULLSCREEN_CMD] = new Command(Locale.get("trace.SwitchToFullscreen")/*Switch to fullscreen*/,Command.ITEM, 100);
+		CMDS[TOGGLE_MAP_PROJ_CMD] = new Command(Locale.get("trace.NextMapProjection")/*Next map projection*/,Command.ITEM, 100);
+		CMDS[TOGGLE_KEY_LOCK_CMD] = new Command(Locale.get("trace.ToggleKeylock")/*(De)Activate Keylock*/,Command.ITEM, 100);
+		CMDS[TOGGLE_RECORDING_CMD] = new Command(Locale.get("trace.ToggleRecording")/*(De)Activate recording*/,Command.ITEM, 100);
+		CMDS[TOGGLE_RECORDING_SUSP_CMD] = new Command(Locale.get("trace.SuspendRecording")/*Suspend recording*/,Command.ITEM, 100);
+		CMDS[RECENTER_GPS_CMD] = new Command(Locale.get("trace.RecenterOnGPS")/*Recenter on GPS*/,Command.ITEM, 100);
+		CMDS[SHOW_DEST_CMD] = new Command(Locale.get("trace.ShowDestination")/*Show destination*/,Command.ITEM, 100);
+		CMDS[DATASCREEN_CMD] = new Command(Locale.get("trace.Tacho")/*Tacho*/, Command.ITEM, 15);
+		CMDS[OVERVIEW_MAP_CMD] = new Command(Locale.get("trace.OverviewFilterMap")/*Overview/Filter map*/, Command.ITEM, 20);
+		CMDS[RETRIEVE_XML] = new Command(Locale.get("trace.RetrieveXML")/*Retrieve XML*/,Command.ITEM, 200);
+		CMDS[PAN_LEFT25_CMD] = new Command(Locale.get("trace.left25")/*left 25%*/,Command.ITEM, 100);
+		CMDS[PAN_RIGHT25_CMD] = new Command(Locale.get("trace.right25")/*right 25%*/,Command.ITEM, 100);
+		CMDS[PAN_UP25_CMD] = new Command(Locale.get("trace.up25")/*up 25%*/,Command.ITEM, 100);
+		CMDS[PAN_DOWN25_CMD] = new Command(Locale.get("trace.down25")/*down 25%*/,Command.ITEM, 100);
+		CMDS[PAN_LEFT2_CMD] = new Command(Locale.get("trace.left2")/*left 2*/,Command.ITEM, 100);
+		CMDS[PAN_RIGHT2_CMD] = new Command(Locale.get("trace.right2")/*right 2*/,Command.ITEM, 100);
+		CMDS[PAN_UP2_CMD] = new Command(Locale.get("trace.up2")/*up 2*/,Command.ITEM, 100);
+		CMDS[PAN_DOWN2_CMD] = new Command(Locale.get("trace.down2")/*down 2*/,Command.ITEM, 100);
+		CMDS[TOGGLE_AUDIO_REC] = new Command(Locale.get("trace.AudioRecording")/*Audio recording*/,Command.ITEM, 100);
+		CMDS[ROUTING_START_CMD] = new Command(Locale.get("trace.CalculateRoute")/*Calculate route*/,Command.ITEM, 100);
+		CMDS[ROUTING_STOP_CMD] = new Command(Locale.get("trace.StopRouting")/*Stop routing*/,Command.ITEM, 100);
+		CMDS[ONLINE_INFO_CMD] = new Command(Locale.get("trace.OnlineInfo")/*Online info*/,Command.ITEM, 100);
+		CMDS[ROUTING_START_WITH_MODE_SELECT_CMD] = new Command(Locale.get("trace.CalculateRoute")/*Calculate route...*/,Command.ITEM, 100);
+		CMDS[RETRIEVE_NODE] = new Command(Locale.get("trace.AddPOI")/*Add POI to OSM...*/,Command.ITEM, 100);
+		CMDS[ICON_MENU] = new Command(Locale.get("trace.Menu")/*Menu*/,Command.OK, 100);
+		CMDS[SETUP_CMD] = new Command(Locale.get("trace.Setup")/*Setup*/, Command.ITEM, 25);
+		CMDS[ABOUT_CMD] = new Command(Locale.get("trace.About")/*About*/, Command.ITEM, 30);
 		//#if polish.api.wmapi
-		CMDS[SEND_MESSAGE_CMD] = new Command("Send SMS (map pos)"/* i:SendSMSPos */,Command.ITEM, 20);
+		CMDS[SEND_MESSAGE_CMD] = new Command(Locale.get("trace.SendSMSMapPos")/*Send SMS (map pos)*/,Command.ITEM, 20);
 		//#endif
 		CMDS[EDIT_ADDR_CMD] = new Command("Add Addr node"/*i:AddAddrNode*/,Command.ITEM,100);
 
@@ -621,7 +621,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 
 	
 	public boolean isGpsConnected() {
-		return locationProducer != null && !solution.equalsIgnoreCase("Off"/* i:Off */);
+		return locationProducer != null && !solution.equalsIgnoreCase(Locale.get("trace.Off")/*Off*/);
 	}
 
 	/**
@@ -801,7 +801,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				// FIXME: This is a workaround. It would be better if recording
 				// would not be stopped when leaving the map.
 				if (gpx.isRecordingTrk()) {
-					alert("Record Mode"/* i:RecordMode */, "Please stop recording before exit."/* i:PleaseStopRecording */ , 2500);
+					alert(Locale.get("trace.RecordMode")/*Record Mode*/, Locale.get("trace.PleaseStopRecording ")/*Please stop recording before exit.*/ , 2500);
 					return;
 				}
 				
@@ -812,7 +812,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			if (c == CMDS[START_RECORD_CMD]) {
 				try {
 					gpx.newTrk(false);
-					alert("Gps track recording"/* i:GpsRecording */, "Starting to record"/* i:StartingToRecord */, 1250);
+					alert(Locale.get("trace.GpsRecording")/*Gps track recording*/, Locale.get("trace.StartingToRecord ")/*Starting to record*/, 1250);
 				} catch (RuntimeException e) {
 					receiveMessage(e.getMessage());
 				}
@@ -821,13 +821,13 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			}
 			if (c == CMDS[STOP_RECORD_CMD]) {
 				gpx.saveTrk(false);
-				alert("Gps track recording"/* i:GpsRecording */, "Stopping to record"/* i:StoppingToRecord */, 1250);
+				alert(Locale.get("trace.GpsRecording")/*Gps track recording*/, Locale.get("trace.StoppingToRecord ")/*Stopping to record*/, 1250);
 				recordingsMenu = null; // refresh recordings menu
 				return;
 			}
 			if (c == CMDS[MANAGE_TRACKS_CMD]) {
 				if (gpx.isRecordingTrk()) {
-					alert("Record Mode"/* i:RecordMode */, "You need to stop recording before managing tracks."/* i:YouNeedStopRecording */ , 4000);
+					alert(Locale.get("trace.RecordMode")/*Record Mode*/, Locale.get("trace.YouNeedStopRecording ")/*You need to stop recording before managing tracks.*/ , 4000);
 					return;
 				}
 
@@ -843,7 +843,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				if (locationProducer == null) {
 					if (TrackPlayer.isPlaying) {
 						TrackPlayer.getInstance().stop();
-						alert("Trackplayer"/* i:Trackplayer */, "Playing stopped for connecting to GPS"/* i:PlayingStopped */, 2500);
+						alert(Locale.get("trace.Trackplayer")/*Trackplayer*/, Locale.get("trace.PlayingStopped ")/*Playing stopped for connecting to GPS*/, 2500);
 					}
 					Thread thread = new Thread(this,"LocationProducer init");
 					thread.start();
@@ -915,29 +915,29 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					int idx = 0;
 					String[] elements = new String[noElements];
 					if (gpx.isRecordingTrk()) {
-						elements[idx++] = "Stop Gpx tracklog"/* i:StopGpxTracklog */;
+						elements[idx++] = Locale.get("trace.StopGpxTracklog")/*Stop Gpx tracklog*/;
 					} else {
-						elements[idx++] = "Start Gpx tracklog"/* i:StartGpxTracklog */;
+						elements[idx++] = Locale.get("trace.StartGpxTracklog")/*Start Gpx tracklog*/;
 					}
 					
-					elements[idx++] = "Save waypoint"/* i:SaveWaypoint */;
-					elements[idx++] = "Enter waypoint"/* i:EnterWaypoint */;
+					elements[idx++] = Locale.get("trace.SaveWaypoint")/*Save waypoint*/;
+					elements[idx++] = Locale.get("trace.EnterWaypoint")/*Enter waypoint*/;
 					//#if polish.api.mmapi
-					elements[idx++] = "Take pictures"/* i:TakePictures */;
+					elements[idx++] = Locale.get("trace.TakePictures")/*Take pictures*/;
 					if (audioRec.isRecording()) {
-						elements[idx++] = "Stop audio recording"/* i:StopAudioRecording */;
+						elements[idx++] = Locale.get("trace.StopAudioRecording")/*Stop audio recording*/;
 					} else {
-						elements[idx++] = "Start audio recording"/* i:StartAudioRecording */;
+						elements[idx++] = Locale.get("trace.StartAudioRecording")/*Start audio recording*/;
 						
 					}
 					//#endif
 					//#if polish.api.wmapi
 					if (hasJSR120) {
-						elements[idx++] = "Send SMS (map pos)"/* i:SendSMSMapPos */;
+						elements[idx++] = Locale.get("trace.SendSMSMapPos")/*Send SMS (map pos)*/;
 					}
 					//#endif
 					
-					recordingsMenu = new List("Recordings..."/* i:Recordings */,Choice.IMPLICIT,elements,null);
+					recordingsMenu = new List(Locale.get("trace.Recordings")/*Recordings...*/,Choice.IMPLICIT,elements,null);
 					recordingsMenu.addCommand(CMDS[OK_CMD]);
 					recordingsMenu.addCommand(CMDS[BACK_CMD]);
 					recordingsMenu.setSelectCommand(CMDS[OK_CMD]);
@@ -954,14 +954,14 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				if (routingsMenu == null) {
 					String[] elements = new String[4];
 					if (routeCalc || route != null) {
-						elements[0] = "Stop routing"/* i:StopRouting */;
+						elements[0] = Locale.get("trace.StopRouting")/*Stop routing*/;
 					} else {
-						elements[0] = "Calculate route"/* i:CalculateRoute */;
+						elements[0] = Locale.get("trace.CalculateRoute")/*Calculate route*/;
 					}
-					elements[1] = "Set destination"/* i:SetDestination */;
-					elements[2] = "Show destination"/* i:ShowDestination */;
-					elements[3] = "Clear destination"/* i:ClearDestination */;
-					routingsMenu = new List("Routing.."/* i:Routing */, Choice.IMPLICIT, elements, null);
+					elements[1] = Locale.get("trace.SetDestination")/*Set destination*/;
+					elements[2] = Locale.get("trace.ShowDestination")/*Show destination*/;
+					elements[3] = Locale.get("trace.ClearDestination")/*Clear destination*/;
+					routingsMenu = new List(Locale.get("trace.Routing")/*Routing..*/, Choice.IMPLICIT, elements, null);
 					routingsMenu.addCommand(CMDS[OK_CMD]);
 					routingsMenu.addCommand(CMDS[BACK_CMD]);
 					routingsMenu.setSelectCommand(CMDS[OK_CMD]);
@@ -1010,9 +1010,9 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					GuiWebInfo gWeb = new GuiWebInfo(this, oPos, pc);
 					gWeb.show();
 				//#else
-					alert("No online capabilites"/* i:NoOnlineCapa */,
+					alert(Locale.get("trace.NoOnlineCapa")/*No online capabilites*/,
 					      "Set app=GpsMid-Generic-editing and enableEditing=true in "/* i:SetAppGeneric  */ +
-					      ".properties file and recreate GpsMid with Osm2GpsMid."/* i:PropertiesFile */,
+					      Locale.get("trace.PropertiesFile")/*.properties file and recreate GpsMid with Osm2GpsMid.*/,
 							Alert.FOREVER);
 				//#endif
 			}
@@ -1159,9 +1159,9 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					if (routeEngine != null) {
 						routeEngine.cancelRouting();
 					}
-					alert("Route Calculation"/* i:RouteCalculation */, "Cancelled"/* i:Cancelled */, 1500);
+					alert(Locale.get("trace.RouteCalculation")/*Route Calculation*/, Locale.get("trace.Cancelled ")/*Cancelled*/, 1500);
 				} else {
-					alert("Routing"/* i:Routing */, "Off"/* i:Off */, 750);
+					alert(Locale.get("trace.Routing")/*Routing*/, Locale.get("trace.Off")/*Off*/, 750);
 				}
 				endRouting();
 				routingsMenu = null; // refresh routingsMenu
@@ -1188,12 +1188,12 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				manualRotationMode = !manualRotationMode;
 				if (manualRotationMode) {
 					if (hasPointerEvents()) {
-						alert("Manual Rotation"/* i:ManualRotation */, "Change course with zoom buttons"/* i:ChangeCourse */, 3000);
+						alert(Locale.get("trace.ManualRotation")/*Manual Rotation*/, Locale.get("trace.ChangeCourse ")/*Change course with zoom buttons*/, 3000);
 					} else {
-						alert("Manual Rotation"/* i:ManualRotation */, "Change course with left/right keys"/* i:ChangeCourseWithLeftRightKeys */, 3000);
+						alert(Locale.get("trace.ManualRotation")/*Manual Rotation*/, Locale.get("trace.ChangeCourseWithLeftRightKeys ")/*Change course with left/right keys*/, 3000);
 					}
 				} else {
-					alert("Manual Rotation"/* i:ManualRotation */, "Off"/* i:Off */, 750);
+					alert(Locale.get("trace.ManualRotation")/*Manual Rotation*/, Locale.get("trace.Off")/*Off*/, 750);
 				}
 				return;
 			}
@@ -1218,7 +1218,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				return;
 			}
 			if (c == CMDS[TOGGLE_MAP_PROJ_CMD]) {
-				alert("Map Rotation"/* i:MapRotation */, ProjFactory.nextProj(), 750);
+				alert(Locale.get("trace.MapRotation")/*Map Rotation*/, ProjFactory.nextProj(), 750);
 				// redraw immediately
 				synchronized (this) {
 					if (imageCollector != null) {
@@ -1233,7 +1233,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					// show alert that keys are locked
 					keyPressed(0);
 				} else {
-					alert("GpsMid"/* i:GpsMid */, "Keys unlocked"/* i:KeysUnlocked */, 1000);
+					alert(Locale.get("trace.GpsMid")/*GpsMid*/, Locale.get("trace.KeysUnlocked")/*Keys unlocked*/, 1000);
 				}
 				return;
 			}
@@ -1248,10 +1248,10 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			if (c == CMDS[TOGGLE_RECORDING_SUSP_CMD]) {
 				if (gpx.isRecordingTrk()) {
 					if ( gpx.isRecordingTrkSuspended() ) {
-						alert("Gps track recording"/* i:GpsTrackRecording */, "Resuming recording"/* i:ResumingRecording */, 1000);
+						alert(Locale.get("trace.GpsRecording")/*Gps track recording*/, Locale.get("trace.ResumingRecording ")/*Resuming recording*/, 1000);
 						gpx.resumeTrk();
 					} else {
-						alert("Gps track recording"/* i:GpsTrackRecording */, "Suspending recording"/* i:SuspendingRecording */, 1000);
+						alert(Locale.get("trace.GpsRecording")/*Gps track recording*/, Locale.get("trace.SuspendingRecording ")/*Suspending recording*/, 1000);
 						gpx.suspendTrk();
 					}
 				}
@@ -1274,7 +1274,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					movedAwayFromDest = false;
 				}
 				else {
-					alert("Show destination"/* i:ShowDestination */, "Destination is not specified yet"/* i:DestinationNotSpecifiedYet */, 3000);
+					alert(Locale.get("trace.ShowDestination")/*Show destination*/, Locale.get("trace.DestinationNotSpecifiedYet ")/*Destination is not specified yet*/, 3000);
 				}
 				
 				return;
@@ -1344,7 +1344,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				if (c == CMDS[RETRIEVE_XML] || c == CMDS[RETRIEVE_NODE] || c == CMDS[EDIT_ADDR_CMD]) {
 					alert("No online capabilites",
 					      "Set app=GpsMid-Generic-editing and enableEditing=true in "/* i:SetAppGeneric  */ +
-					      ".properties file and recreate GpsMid with Osm2GpsMid."/* i:PropertiesFile */,
+					      Locale.get("trace.PropertiesFile")/*.properties file and recreate GpsMid with Osm2GpsMid.*/,
 						Alert.FOREVER);
 				}
 				//#endif
@@ -1358,7 +1358,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					return;
 				}
 			} else {
-				alert("Error"/* i:Error */, "Currently in route calculation"/* i:CurrentlyInRouteCalculation */, 2000);
+				alert(Locale.get("trace.Error")/*Error*/, Locale.get("trace.CurrentlyInRouteCalculation ")/*Currently in route calculation*/, 2000);
 			}
 		} catch (Exception e) {
  			logger.exception("In Trace.commandAction", e);
@@ -1600,13 +1600,13 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					} else {
 						eRecorded.setColor(Legend.COLORS[Legend.COLOR_RECORDING_ON_TEXT]); // red
 					}
-					eRecorded.setText(gpx.getTrkPointCount() + "r"/* i:r */);
+					eRecorded.setText(gpx.getTrkPointCount() + Locale.get("trace.r")/*r*/);
 				}
 			} else {
 				if (TrackPlayer.isPlaying) {
-					eSolution.setText("Replay"/* i:Replay */);
+					eSolution.setText(Locale.get("trace.Replay")/*Replay*/);
 				} else {
-					eSolution.setText("Off"/* i:TrackPlayerOff */);
+					eSolution.setText(Locale.get("trace.Off")/*Off*/);
 				}
 			}
 
@@ -1619,14 +1619,14 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					//Attempting to log, but currently no valid info available
 					e.setColor(Legend.COLORS[Legend.COLOR_CELLID_LOG_ON_ATTEMPTING_TEXT]); // red
 				}
-				e.setText("cellIDs"/* i:cellIDs */);
+				e.setText(Locale.get("trace.cellIDs")/*cellIDs*/);
 			}
 
 			// show audio recording status
 			e = tl.ele[TraceLayout.AUDIOREC];
 			if (audioRec.isRecording()) {
 				e.setColor(Legend.COLORS[Legend.COLOR_AUDIOREC_TEXT]); // red
-				e.setText("AudioRec"/* i:AudioRec */);
+				e.setText(Locale.get("trace.AudioRec")/*AudioRec*/);
 			}
 			
 			if (pc != null) {
@@ -1636,7 +1636,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			if (speed > 0 &&
 					Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_SPEED_IN_MAP)) {
 				if (Configuration.getCfgBitState(Configuration.CFGBIT_METRIC)) {
-					tl.ele[TraceLayout.SPEED_CURRENT].setText(" " + Integer.toString(speed) + " km/h"/* i:kmh */);
+					tl.ele[TraceLayout.SPEED_CURRENT].setText(" " + Integer.toString(speed) + Locale.get("trace.kmh")/* km/h*/);
 				} else {
 					tl.ele[TraceLayout.SPEED_CURRENT].setText(" " + Integer.toString((int)(speed / 1.609344f)) + " mph");
 				}
@@ -2089,35 +2089,35 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 
 	public int showMemory(Graphics g, int yc, int la) {
 		g.setColor(0);
-		g.drawString("Freemem: "/* i:Freemem */ + runtime.freeMemory(), 0, yc, Graphics.TOP
+		g.drawString(Locale.get("trace.Freemem")/*Freemem: */ + runtime.freeMemory(), 0, yc, Graphics.TOP
 				| Graphics.LEFT);
 		yc += la;
-		g.drawString("Totmem: "/* i:Totmem */ + runtime.totalMemory(), 0, yc, Graphics.TOP
+		g.drawString(Locale.get("trace.Totmem")/*Totmem: */ + runtime.totalMemory(), 0, yc, Graphics.TOP
 				| Graphics.LEFT);
 		yc += la;
-		g.drawString("Percent: "/* i:Percent */
+		g.drawString(Locale.get("trace.Percent")/*Percent: */
 				+ (100f * runtime.freeMemory() / runtime.totalMemory()), 0, yc,
 				Graphics.TOP | Graphics.LEFT);
 		yc += la;
-		g.drawString("Threads running: "/* i:ThreadsRunning */
+		g.drawString(Locale.get("trace.ThreadsRunning")/*Threads running: */
 				+ Thread.activeCount(), 0, yc,
 				Graphics.TOP | Graphics.LEFT);
 		yc += la;
-		g.drawString("Names: "/* i:Names */ + namesThread.getNameCount(), 0, yc,
+		g.drawString(Locale.get("trace.Names")/*Names: */ + namesThread.getNameCount(), 0, yc,
 				Graphics.TOP | Graphics.LEFT);
 		yc += la;
-		g.drawString("Single T: "/* i:SingleT */ + tileReader.getLivingTilesCount() + "/"
+		g.drawString(Locale.get("trace.SingleT")/*Single T: */ + tileReader.getLivingTilesCount() + "/"
 				+ tileReader.getRequestQueueSize(), 0, yc, Graphics.TOP
 				| Graphics.LEFT);
 		yc += la;
-		g.drawString("File T: "/* i:FileT */ + dictReader.getLivingTilesCount() + "/"
+		g.drawString(Locale.get("trace.FileT")/*File T: */ + dictReader.getLivingTilesCount() + "/"
 				+ dictReader.getRequestQueueSize() + " Map: " + ImageCollector.icDuration + " ms", 0, yc, Graphics.TOP
 				| Graphics.LEFT);
 		yc += la;
-		g.drawString("LastMsg: "/* i:LastMsg */ + lastTitleMsg, 0, yc, Graphics.TOP
+		g.drawString(Locale.get("trace.LastMsg")/*LastMsg: */ + lastTitleMsg, 0, yc, Graphics.TOP
 				| Graphics.LEFT);
 		yc += la;
-		g.drawString( "at "/* i:at */ + lastTitleMsgClock, 0, yc,
+		g.drawString( Locale.get("trace.at")/*at */ + lastTitleMsgClock, 0, yc,
 				Graphics.TOP | Graphics.LEFT );
 		return (yc);
 
