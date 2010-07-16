@@ -35,9 +35,9 @@ public class GuiOSMAddrDisplay extends Form implements GpsMidDisplayable,
 	private final static Logger logger = Logger.getInstance(
 			GuiOSMAddrDisplay.class, Logger.DEBUG);
 
-	private final Command UPLOAD_CMD = new Command("Upload to OSM"/* i:UploadToOSM */, Command.OK,
+	private final Command UPLOAD_CMD = new Command(Locale.get("guiosmaddrdisplay.UploadToOSM")/*Upload to OSM*/, Command.OK,
 			6);
-	private final Command BACK_CMD = new Command("Back"/* i:Back */, Command.BACK, 1);
+	private final Command BACK_CMD = new Command(Locale.get("guiosmaddrdisplay.Back")/*Back*/, Command.BACK, 1);
 
 	private GpsMidDisplayable parent;
 	private int loadState;
@@ -62,7 +62,7 @@ public class GuiOSMAddrDisplay extends Form implements GpsMidDisplayable,
 
 	public GuiOSMAddrDisplay(int nodeID, String streetName, SingleTile t,
 			float lat, float lon, GpsMidDisplayable parent) {
-		super("Addressing"/* i:AddrTitle */);
+		super(Locale.get("guiosmaddrdisplay.AddrTitle")/*Addressing*/);
 
 		addCommand(UPLOAD_CMD);
 		addCommand(BACK_CMD);
@@ -74,14 +74,14 @@ public class GuiOSMAddrDisplay extends Form implements GpsMidDisplayable,
 
 		setCommandListener(this);
 
-		tfHousenumber = new TextField("Housenumber"/* i:HouseNumber */, "", 100, TextField.ANY);
+		tfHousenumber = new TextField(Locale.get("guiosmaddrdisplay.HouseNumber")/*Housenumber*/, "", 100, TextField.ANY);
 		tfHousenumber.setInitialInputMode("IS_LATIN_DIGITS");
 		append(tfHousenumber);
-		tfHousename = new TextField("Housename" /* i:HouseName */, "", 100, TextField.ANY);
+		tfHousename = new TextField(Locale.get("guiosmaddrdisplay.HouseName")/*Housename*/, "", 100, TextField.ANY);
 		append(tfHousename);
-		tfPostcode = new TextField("Postcode" /* i:Postcode */, "", 100, TextField.ANY);
+		tfPostcode = new TextField(Locale.get("guiosmaddrdisplay.Postcode")/*Postcode*/, "", 100, TextField.ANY);
 		append(tfPostcode);
-		tfStreet = new TextField("Street" /* i:Street */, (streetName != null ? streetName
+		tfStreet = new TextField(Locale.get("guiosmaddrdisplay.Street")/*Street*/, (streetName != null ? streetName
 				: ""), 100, TextField.ANY);
 		append(tfStreet);
 
@@ -179,11 +179,11 @@ public class GuiOSMAddrDisplay extends Form implements GpsMidDisplayable,
 		if (success) {
 			switch (loadState) {
 			case GuiOSMEntityDisplay.LOAD_STATE_UPLOAD: {
-				GpsMid.getInstance().alert("Adding Addr"/* i:AddingAddr */,
-						"Addr was successfully added to OpenStreetMap"/* i:AddrUploadSuccess */, 1000);
+				GpsMid.getInstance().alert(Locale.get("guiosmaddrdisplay.AddingAddr")/*Adding Addr*/,
+						Locale.get("guiosmaddrdisplay.AddrUploadSuccess")/*Addr was successfully added to OpenStreetMap*/, 1000);
 				logger.info("Adding Waypoint to mark where Addr was uploaded to OSM");
 				PositionMark waypt = new PositionMark(lat, lon);
-				waypt.displayName = "adr: "/* i:adr */ + sHousenumber;
+				waypt.displayName = Locale.get("guiosmaddrdisplay.adr")/*adr: */ + sHousenumber;
 				Trace.getInstance().gpx.addWayPt(waypt);
 
 				loadState = GuiOSMEntityDisplay.LOAD_STATE_NONE;
@@ -196,7 +196,7 @@ public class GuiOSMAddrDisplay extends Form implements GpsMidDisplayable,
 			}
 			}
 		} else {
-			logger.error("Server operation failed: " /* i:ServerError */ + message);
+			logger.error(Locale.get("guiosmaddrdisplay.ServerError")/*Server operation failed: */ + message);
 		}
 	}
 
