@@ -283,8 +283,8 @@ public class Configuration {
 	public static final int MAX_TRACKNAME_LENGTH = 50;
 	public static final int MAX_WAYPOINTS_NAME_LENGTH = 50;
 	
-	public final static String[] LOCATIONPROVIDER = { "None"/* i:LPNone */, "Bluetooth (Sirf)"/* i:LPBluetoothSirf */,
-							  "Bluetooth (NMEA)"/* i:LPBluetoothNMEA */, "Internal (JSR179)"/* i:LPInternalJSR179 */, "Cell-ID (OpenCellId.org)"/* i:LPCellID */ };
+	public final static String[] LOCATIONPROVIDER = { Locale.get("configuration.LPNone")/*None*/, Locale.get("configuration.LPBluetoothSirf")/*Bluetooth (Sirf)*/,
+							  Locale.get("configuration.LPBluetoothNMEA")/*Bluetooth (NMEA)*/, Locale.get("configuration.LPInternalJSR179")/*Internal (JSR179)*/, Locale.get("configuration.LPCellID")/*Cell-ID (OpenCellId.org)*/ };
 	
 	private static final String[] compassDirections  =
 	{ "N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE",
@@ -604,13 +604,13 @@ public class Configuration {
 
 	private final static String sanitizeString(String s) {
 		if (s == null) {
-			return "!null!"/* i:nullexclmark */;
+			return Locale.get("configuration.nullexclmark")/*!null!*/;
 		}
 		return s;
 	}
 	
 	private final static String desanitizeString(String s) {
-		if (s.equalsIgnoreCase("!null!"/* i:nullexclmark */)) {
+		if (s.equalsIgnoreCase(Locale.get("configuration.nullexclmark")/*!null!*/)) {
 			return null;
 		}
 		return s;
@@ -748,7 +748,7 @@ public class Configuration {
 		DataInputStream dis = new DataInputStream(is);
 		int version = dis.readInt();
 		if (version != VERSION) {
-			throw new IOException("Version of the stored config does not match with current GpsMid"/* i:ConfigVersionMismatch */);
+			throw new IOException(Locale.get("configuration.ConfigVersionMismatch")/*Version of the stored config does not match with current GpsMid*/);
 		}
 		setCfgBits(dis.readLong(), dis.readLong());
 		setBtUrl(desanitizeString(dis.readUTF()));
@@ -1509,7 +1509,7 @@ public class Configuration {
 			wayptSortMode = mode;
 			write(wayptSortMode, RECORD_ID_WAYPT_SORT_MODE);
 		} else {
-			throw new IllegalArgumentException("Waypoint sort mode out of range!"/* i:WaypointSortModeRangeError */);
+			throw new IllegalArgumentException(Locale.get("configuration.WaypointSortModeRangeError")/*Waypoint sort mode out of range!*/);
 		}
 	}
 	
