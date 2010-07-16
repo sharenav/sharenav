@@ -28,7 +28,10 @@ import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.List;
+//#if polish.android
+//#else
 import javax.microedition.lcdui.game.GameCanvas;
+//#endif
 import javax.microedition.midlet.MIDlet;
 
 
