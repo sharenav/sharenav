@@ -671,16 +671,7 @@ scale alias 1: zoomed out 21x
 		<textscale scale="23"/>
 		<imageCentered value="true"/>
 	  </value>
-      <value name="toll_booth">
-		<description desc = "Toll station"/>
-		<image src="toll_station.png"/>		
-		<namekey tag="name"/>
-		<AreaPOI createForAreas="true"/>
-		<scale scale="18"/>
-		<textscale scale="23"/>
-		<imageCentered value="true"/>
-	  </value>
-	   <value name="motorway_junction">
+	  <value name="motorway_junction">
 			<description desc = "Motorway junction"/>
 			<image src="motorway_junction.png"/>		
 			<namekey tag="ref"/>
@@ -703,6 +694,17 @@ scale alias 1: zoomed out 21x
 	  </value>
 -->
 	</key>
+	<key tag="barrier">
+	  <value name="toll_booth">
+		<description desc = "Toll station"/>
+		<image src="toll_station.png"/>		
+		<namekey tag="name"/>
+		<AreaPOI createForAreas="true"/>
+		<scale scale="18"/>
+		<textscale scale="23"/>
+		<imageCentered value="true"/>			
+	  </value>
+	</key>	
 	<key tag="railway">
 	   <value name="station">
 		<description desc = "Railway station"/>
