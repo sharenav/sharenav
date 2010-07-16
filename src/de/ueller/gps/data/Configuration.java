@@ -473,6 +473,11 @@ public class Configuration {
 			   			1L << CFGBIT_POIS |
 			   			1L << CFGBIT_AUTOSAVE_MAPPOS |
 			   			getDefaultDeviceBacklightMethodMask();
+			//#if polish.android
+			// no bundle support for android yet, set a fixed location for map
+			setBuiltinMap(false);
+			setMapUrl("file:///sdcard/gpsmidmap/");
+			//#endif
 			// Record Rule Default
 			setGpxRecordRuleMode(GPX_RECORD_MINIMUM_SECS_DIST);
 			setGpxRecordMinMilliseconds(1000);
