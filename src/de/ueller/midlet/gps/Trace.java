@@ -801,7 +801,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				// FIXME: This is a workaround. It would be better if recording
 				// would not be stopped when leaving the map.
 				if (gpx.isRecordingTrk()) {
-					alert(Locale.get("trace.RecordMode")/*Record Mode*/, Locale.get("trace.PleaseStopRecording ")/*Please stop recording before exit.*/ , 2500);
+					alert(Locale.get("trace.RecordMode")/*Record Mode*/, Locale.get("trace.PleaseStopRecording")/*Please stop recording before exit.*/ , 2500);
 					return;
 				}
 				
