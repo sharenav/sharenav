@@ -325,7 +325,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		CMDS[SET_DEST_CMD] = new Command(Locale.get("trace.AsDestination")/*As destination*/,Command.ITEM, 11);
 		CMDS[MAPFEATURES_CMD] = new Command(Locale.get("trace.MapFeatures")/*Map Features*/,Command.ITEM, 12);
 		CMDS[RECORDINGS_CMD] = new Command(Locale.get("trace.Recordings")/*Recordings...*/,Command.ITEM, 4);
-		CMDS[ROUTINGS_CMD] = new Command(Locale.get("trace.Routing")/*Routing...*/,Command.ITEM, 3);
+		CMDS[ROUTINGS_CMD] = new Command(Locale.get("trace.Routing3")/*Routing...*/,Command.ITEM, 3);
 		CMDS[OK_CMD] = new Command(Locale.get("trace.OK")/*OK*/,Command.OK, 14);
 		CMDS[BACK_CMD] = new Command(Locale.get("trace.Back")/*Back*/,Command.BACK, 15);
 		CMDS[ZOOM_IN_CMD] = new Command(Locale.get("trace.ZoomIn")/*Zoom in*/,Command.ITEM, 100);
@@ -355,7 +355,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		CMDS[ROUTING_START_CMD] = new Command(Locale.get("trace.CalculateRoute")/*Calculate route*/,Command.ITEM, 100);
 		CMDS[ROUTING_STOP_CMD] = new Command(Locale.get("trace.StopRouting")/*Stop routing*/,Command.ITEM, 100);
 		CMDS[ONLINE_INFO_CMD] = new Command(Locale.get("trace.OnlineInfo")/*Online info*/,Command.ITEM, 100);
-		CMDS[ROUTING_START_WITH_MODE_SELECT_CMD] = new Command(Locale.get("trace.CalculateRoute")/*Calculate route...*/,Command.ITEM, 100);
+		CMDS[ROUTING_START_WITH_MODE_SELECT_CMD] = new Command(Locale.get("trace.CalculateRoute2")/*Calculate route...*/,Command.ITEM, 100);
 		CMDS[RETRIEVE_NODE] = new Command(Locale.get("trace.AddPOI")/*Add POI to OSM...*/,Command.ITEM, 100);
 		CMDS[ICON_MENU] = new Command(Locale.get("trace.Menu")/*Menu*/,Command.OK, 100);
 		CMDS[SETUP_CMD] = new Command(Locale.get("trace.Setup")/*Setup*/, Command.ITEM, 25);
@@ -961,7 +961,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					elements[1] = Locale.get("trace.SetDestination")/*Set destination*/;
 					elements[2] = Locale.get("trace.ShowDestination")/*Show destination*/;
 					elements[3] = Locale.get("trace.ClearDestination")/*Clear destination*/;
-					routingsMenu = new List(Locale.get("trace.Routing")/*Routing..*/, Choice.IMPLICIT, elements, null);
+					routingsMenu = new List(Locale.get("trace.Routing2")/*Routing..*/, Choice.IMPLICIT, elements, null);
 					routingsMenu.addCommand(CMDS[OK_CMD]);
 					routingsMenu.addCommand(CMDS[BACK_CMD]);
 					routingsMenu.setSelectCommand(CMDS[OK_CMD]);
