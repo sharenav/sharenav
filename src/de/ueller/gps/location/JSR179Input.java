@@ -227,6 +227,8 @@ public class JSR179Input
 			}
 			
 		}
+		//#if polish.android
+		//#else
 		if (state == LocationProvider.OUT_OF_SERVICE) {
 			locationProvider.setLocationListener(this, 1, -1, -1);
 			if (receiverList != null) {
@@ -234,7 +236,12 @@ public class JSR179Input
 				receiverList.receiveMessage("provider stopped");
 			}
 		}
+		//#endif
+		//#if polish.android
+		if (state == LocationProvider.TEMPORARILY_UNAVAILABLE || state == LocationProvider.OUT_OF_SERVICE) {
+		//#else
 		if (state == LocationProvider.TEMPORARILY_UNAVAILABLE) {
+		//#endif
 			/**
 			 * Even though the receiver is temporarily un-available,
 			 * we still need to receive updates periodically, as some
