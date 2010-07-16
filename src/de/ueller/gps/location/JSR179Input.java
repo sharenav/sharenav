@@ -114,7 +114,7 @@ public class JSR179Input
 			if (locationProvider != null) {
 				updateSolution(locationProvider.getState());
 			} else {
-				receiverList.locationDecoderEnd("no JSR179 Provider");
+				receiverList.locationDecoderEnd("no JSR179 Provider"/* i:NoJSR179Provider */);
 				//#debug info
 				logger.info("Cannot create LocationProvider for criteria.");
 			}
@@ -223,17 +223,18 @@ public class JSR179Input
 		if (state == LocationProvider.AVAILABLE) {
 			locationProvider.setLocationListener(this, 1, -1, -1);
 			if (receiverList != null) {
-				receiverList.receiveSolution("On");
+				receiverList.receiveSolution("On"/* i:On */);
 			}
 			
 		}
 		//#if polish.android
+		// current (2010-06) android j2mepolish gives OUT_OF_SERVICE even when a fix exists
 		//#else
 		if (state == LocationProvider.OUT_OF_SERVICE) {
 			locationProvider.setLocationListener(this, 1, -1, -1);
 			if (receiverList != null) {
-				receiverList.receiveSolution("Off");
-				receiverList.receiveMessage("provider stopped");
+				receiverList.receiveSolution("Off"/* i:Off */);
+				receiverList.receiveMessage("provider stopped"/* i:ProviderStopped */);
 			}
 		}
 		//#endif
@@ -251,7 +252,7 @@ public class JSR179Input
 			 */
 			locationProvider.setLocationListener(this, 1, -1, -1);
 			if (receiverList != null) {
-				receiverList.receiveSolution("NoFix");
+				receiverList.receiveSolution("NoFix"/* i:NoFix */);
 			}
 		}
 		locationUpdated(locationProvider, LocationProvider.getLastKnownLocation());
