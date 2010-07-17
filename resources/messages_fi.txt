@@ -182,7 +182,7 @@ trace.YouNeedStopRecording =You need to stop recording before managing tracks.
 trace.ZoomIn=Zoom in
 trace.ZoomOut=Zoom out
 splash.Application2= GPL2-lisensoitu
-splash.Application3= <a href="http://www.gnu.org/" class="external free" title="http://www.gnu.org/" rel="nofollow">http://www.gnu.org/</a>
+splash.Application3= http://www.gnu.org/
 splash.Application=Sovellus:
 splash.Copyright=Tekijänoikeudet:
 splash.Discl1=Vastuutiedot:
@@ -193,5 +193,5 @@ splash.Discl5= käyttö on sallittua soveltuvien
 splash.Discl6= lakien mukaan.
 splash.MapData2= OpenStreetMap
 splash.MapData3= CC 2.0-lisensoitu
-splash.MapData4= <a href="http://creativecommons.org/" class="external free" title="http://creativecommons.org/" rel="nofollow">http://creativecommons.org/</a>
+splash.MapData4= http://creativecommons.org/
 splash.MapData=Kartta-aineisto:
