@@ -333,7 +333,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		CMDS[BACK_CMD] = new Command(Locale.get("trace.Back")/*Back*/,Command.BACK, 15);
 		CMDS[ZOOM_IN_CMD] = new Command(Locale.get("trace.ZoomIn")/*Zoom in*/,Command.ITEM, 100);
 		CMDS[ZOOM_OUT_CMD] = new Command(Locale.get("trace.ZoomOut")/*Zoom out*/,Command.ITEM, 100);
-		CMDS[MANUAL_ROTATION_MODE_CMD] = new Command(Locale.get("trace.ManualRotation")/*Manual rotation mode*/,Command.ITEM, 100);
+		CMDS[MANUAL_ROTATION_MODE_CMD] = new Command(Locale.get("trace.ManualRotation2")/*Manual rotation mode*/,Command.ITEM, 100);
 		CMDS[TOGGLE_OVERLAY_CMD] = new Command(Locale.get("trace.NextOverlay")/*Next overlay*/,Command.ITEM, 100);
 		CMDS[TOGGLE_BACKLIGHT_CMD] = new Command(Locale.get("trace.KeepBacklight")/*Keep backlight on/off*/,Command.ITEM, 100);
 		CMDS[TOGGLE_FULLSCREEN_CMD] = new Command(Locale.get("trace.SwitchToFullscreen")/*Switch to fullscreen*/,Command.ITEM, 100);
