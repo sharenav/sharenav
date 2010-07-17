@@ -20,5 +20,6 @@ do
    awk 'BEGIN { pr = 0 } 
      /<\/pre>/ { pr = 0 } 
      { if (pr) print; }
-     /<pre>/ { print substr ($0, index($0, "<pre>") + 5); pr = 1 }' > $path/messages_$l.txt
-done
+     /<pre>/ { print substr ($0, index($0, "<pre>") + 5); pr = 1 }' | sed 's/&amp;/\&/g' > $path/messages_$l.txt
+done 
+
