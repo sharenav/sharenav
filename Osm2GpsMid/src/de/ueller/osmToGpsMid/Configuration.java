@@ -58,7 +58,7 @@ public class Configuration {
 	 * Specifies the format of the map on disk we are about to write.
 	 * This constant must be in sync with GpsMid.
 	 */
-	public final static short MAP_FORMAT_VERSION = 57;
+	public final static short MAP_FORMAT_VERSION = 58;
 
 	public final static int COLOR_MAP_BACKGROUND = 0;
 	public final static int COLOR_MAP_TEXT = 1;
@@ -671,7 +671,7 @@ public class Configuration {
 			baseName = "/" + appParam + "-" + getVersion() + ".jar";
 			InputStream is = getClass().getResourceAsStream(baseName);
 			if (is == null) {
-				baseName = "/" + appParam + "-" + getVersion() +"_" + getLang() +  ".jar";
+				baseName = "/" + appParam + "-" + getVersion() +  ".jar";
 				System.out.println("Using lang=" + getLang());
 				is = getClass().getResourceAsStream(baseName);
 			}

@@ -225,6 +225,20 @@ public class CreateGpsMidData implements FilenameFilter {
 			 * Note if additional information is included that can enable editing of OSM data
 			 */
 			dsi.writeBoolean(config.enableEditingSupport);
+			/* Note what languages are enabled
+			 */
+			short numUiLang=1;
+			short numNaviLang=1;
+			short numOnlineLang=1;
+			short numWikipediaLang=1;
+			dsi.writeShort(numUiLang);
+			dsi.writeUTF(config.getLang());
+			dsi.writeShort(numNaviLang);
+			dsi.writeUTF(config.getLang());
+			dsi.writeShort(numOnlineLang);
+			dsi.writeUTF(config.getLang());
+			dsi.writeShort( numWikipediaLang);
+			dsi.writeUTF(config.getLang());
  			/**
 			 * Note if urls and phones are in the midlet
 			 */
