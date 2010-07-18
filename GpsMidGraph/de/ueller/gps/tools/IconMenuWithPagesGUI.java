@@ -190,11 +190,7 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 		
 	}
 	
-//#if polish.android
 	public void sizeChanged(int w, int h) {
-//#else
-	protected void sizeChanged(int w, int h) {
-//#endif
 		this.maxX = w;
 		this.maxY = h;
 		recreateTabButtons();

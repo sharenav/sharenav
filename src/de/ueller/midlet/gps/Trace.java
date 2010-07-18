@@ -1471,11 +1471,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		}
 	}
 	
-//#if polish.android
 	public void sizeChanged(int w, int h) {
-//#else
-	protected void sizeChanged(int w, int h) {
-//#endif
 		updateLastUserActionTime();
 		if (imageCollector != null) {
 			logger.info("Size of Canvas changed to " + w + "|" + h);
