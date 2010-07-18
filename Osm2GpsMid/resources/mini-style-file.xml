@@ -309,7 +309,7 @@ scale alias 1: zoomed out 21x
 	  </value>
 	  <value name ="bicycle_parking">
 		<description desc = "Bicycle parking"/>
-		<image src="bicycling.png"/>
+		<image src="bicycle_parking.png"/>
 		<namekey tag="name"/>
 		<scale scale="23"/>
 		<textscale scale="26"/>		

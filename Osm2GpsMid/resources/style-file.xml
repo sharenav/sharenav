@@ -510,7 +510,7 @@ scale alias 1: zoomed out 21x
 	  </value>
 	  <value name ="bicycle_parking">
 		<description desc = "Bicycle parking"/>
-		<image src="bicycling.png"/>
+		<image src="bicycle_parking.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
 		<scale scale="23"/>
@@ -524,8 +524,16 @@ scale alias 1: zoomed out 21x
 		<scale scale="23"/>
 		<textscale scale="26"/>
 	  </value>
-	  <!--
-	     <value name="*">
+	  <value name ="vending_machine">
+		<description desc = "Vending machine"/>
+		<image src="ticket-machine.png"/>
+		<namekey tag="name"/>
+		<AreaPOI createForAreas="true"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
+	  </value>
+<!--
+<value name="*">
 		<description desc = "Other amenity"/>
 		<image src="otheramenity.png"/>
 		<namekey tag="name"/>
@@ -561,7 +569,7 @@ scale alias 1: zoomed out 21x
 		<scale scale="23"/>
 		<textscale scale="26"/>
 	  </value>
-	   <value name="organic">
+	  <value name="organic">
 		<description desc = "Organic shop"/>
 		<image src="shop_organic.png"/>
 		<namekey tag="name"/>
@@ -662,8 +670,19 @@ scale alias 1: zoomed out 21x
 		<textscale scale="26"/>
 		<imageCentered value="true"/>
 	  </value>
+	  <value name="motorway_junction">
+		<description desc = "Motorway junction"/>
+		<image src="motorway_junction.png"/>		
+		<namekey tag="ref"/>
+  		<namefallback tag = "name"/>
+		<AreaPOI createForAreas="true"/>
+		<scale scale="20"/>
+		<textscale scale="23"/>
+		<imageCentered value="true"/>
+		<hideable hideable="false"/>
+	  </value>
       <value name="services">
-		<description desc = "Services"/>
+		<description desc = "Motorist services"/>
 		<image src="services.png"/>		
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
@@ -671,16 +690,14 @@ scale alias 1: zoomed out 21x
 		<textscale scale="23"/>
 		<imageCentered value="true"/>
 	  </value>
-	  <value name="motorway_junction">
-			<description desc = "Motorway junction"/>
-			<image src="motorway_junction.png"/>		
-			<namekey tag="ref"/>
-  			<namefallback tag = "name"/>
-			<AreaPOI createForAreas="true"/>
-			<scale scale="20"/>
-			<textscale scale="23"/>
-			<imageCentered value="true"/>
-			<hideable hideable="false"/>
+	  <value name ="speed_camera">
+		<description desc="Speed camera" />
+		<image src="speed_trap.png" />
+		<namekey tag="maxspeed" />
+		<namefallback tag="name" />
+		<scale scale="23" />
+		<textscale scale="26" />
+		<imageCentered value="true"/>
 	  </value>
 <!--
 	  <value name="traffic_signals">
@@ -747,6 +764,14 @@ scale alias 1: zoomed out 21x
 	  </value>
 	</key>
 	<key tag="tourism">
+	  <value name="guest_house">
+		<description desc = "Guest House"/>
+		<image src="guest_house.png"/>
+		<namekey tag="name"/>
+		<AreaPOI createForAreas="true"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
+	  </value>
 	  <value name="hotel">
 		<description desc = "Hotel"/>
 		<image src="hotel.png"/>
@@ -1006,6 +1031,13 @@ scale alias 1: zoomed out 21x
 			<scale scale="23"/>
 			<textscale scale="26"/>
 		</value>
+		<value name = "sub_station">
+			<description desc = "Power sub station"/>
+			<image src="power.png"/>
+			<namekey tag="ref"/>
+			<scale scale="23"/>
+			<textscale scale="26"/>
+		</value>
 -->
 	</key>
 <!--
@@ -1048,18 +1080,25 @@ scale alias 1: zoomed out 21x
 	  </value>	
 	</key>	
 	<key tag="sport">
-	  <value name ="table_tennis">
-		<description desc = "Table tennis"/>
-		<image src="table_tennis.png"/>
-		<namekey tag="name"/>
-		<AreaPOI createForAreas="true"/>
-		<scale scale="23"/>
-		<textscale scale="26"/>
-	  </value>
-  	</key>
+		<value name ="swimming">
+			<description desc = "Swimming"/>
+			<image src="swimming.png"/>
+			<namekey tag="name"/>
+			<AreaPOI createForAreas="true"/>
+			<scale scale="23"/>
+			<textscale scale="26"/>
+		</value>
+		<value name ="table_tennis">
+			<description desc = "Table tennis"/>
+			<image src="table_tennis.png"/>
+			<namekey tag="name"/>
+			<AreaPOI createForAreas="true"/>
+			<scale scale="23"/>
+			<textscale scale="26"/>
+	  	</value>
+	</key>
 	<!-- http://wiki.openstreetmap.org/wiki/WikiProject_Haiti
-		 uncomment below to include damage POIs
-	 -->
+		 Uncomment below to include damage POIs -->
 	<!--
 	<key tag="building">
 	  <value name ="collapsed">
