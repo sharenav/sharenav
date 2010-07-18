@@ -109,12 +109,6 @@ public class GpsMid extends MIDlet implements CommandListener {
 	private static volatile Trace trace = null;
 
 	public GpsMid() {
-//		try {
-//			Locale.loadTranslations( "/" + lang + ".loc" );
-//		} catch (IOException ioe) {
-//			System.out.println("Couldn't open translations file");
-//		}
-
 		String errorMsg = null;
 		instance = this;
 		System.out.println("Init GpsMid");		
@@ -138,6 +132,12 @@ public class GpsMid extends MIDlet implements CommandListener {
 			e.printStackTrace();
 			errorMsg = "Failed to load basic configuration! Check your map data source: "
 					+ e.getMessage();
+		}
+
+		try {
+			Locale.loadTranslations( "/" + Legend.uiLang + ".loc" );
+		} catch (IOException ioe) {
+			System.out.println("Couldn't open translations file");
 		}
 
 		phoneMaxMemory = determinPhoneMaxMemory();		

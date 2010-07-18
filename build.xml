@@ -98,7 +98,7 @@
 			vendorName="Harald Mueller"
 			infoUrl="http://gpsmid.sourceforge.net"
 			icon="gpsmid.png"
-			jarName="GpsMid-${polish.vendor}-${polish.name}-${polish.version}_${polish.locale}.jar"
+			jarName="GpsMid-${polish.vendor}-${polish.name}-${polish.version}.jar"
 			jarUrl="${deploy-url}${polish.jarName}"
 			copyright="Copyright 2007 - 2010 Harald Mueller and others"
 			deleteConfirm="Do you really want to kill me?"
@@ -208,15 +208,11 @@
 				-->
 				<!-- add the localization element for created localized
 				     versions of your application: -->
-				<localization  unless="test">
-					<locale name="de" />
-					<locale name="en" />
-					<locale name="fi" />
-					<locale name="fr" />
-					<locale name="ru" />
-					<locale name="sk" />
-				</localization>
-				<localization locales="en" if="test" />
+				<localization
+					dynamic="true"
+					defaultLocale="en"
+					locales="de, en, fi, fr, ru, sk"
+				/>
 			</resources>
 			
 			<!-- obfuscator settings: do not obfuscate when the test-property is true -->
