@@ -30,6 +30,8 @@ import de.ueller.gpsMid.mapData.SingleTile;
 import de.ueller.midlet.gps.data.OSMdataNode;
 import de.ueller.midlet.gps.data.PositionMark;
 
+import de.enough.polish.util.Locale;
+
 public class GuiOSMAddrDisplay extends Form implements GpsMidDisplayable,
 		CommandListener, UploadListener {
 	private final static Logger logger = Logger.getInstance(

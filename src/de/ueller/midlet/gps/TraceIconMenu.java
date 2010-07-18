@@ -13,6 +13,7 @@ import de.ueller.gps.tools.LayoutElement;
 
 import javax.microedition.lcdui.Graphics;
 
+import de.enough.polish.util.Locale;
 
 public class TraceIconMenu extends IconMenuWithPagesGUI {
 

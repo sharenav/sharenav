@@ -33,7 +33,7 @@ import javax.microedition.lcdui.List;
 import javax.microedition.lcdui.game.GameCanvas;
 //#endif
 import javax.microedition.midlet.MIDlet;
-
+import de.enough.polish.util.Locale;
 
 
 import de.ueller.gps.SECellID;

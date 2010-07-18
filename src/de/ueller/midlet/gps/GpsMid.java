@@ -51,6 +51,8 @@ import de.ueller.gps.data.Configuration;
 import de.ueller.gps.tools.HelperRoutines;
 import de.ueller.midlet.gps.data.Node;
 
+import de.enough.polish.util.Locale;
+
 /**
  * Central class of GpsMid which implements the MIDlet interface.
  */
@@ -107,6 +109,12 @@ public class GpsMid extends MIDlet implements CommandListener {
 	private static volatile Trace trace = null;
 
 	public GpsMid() {
+//		try {
+//			Locale.loadTranslations( "/" + lang + ".loc" );
+//		} catch (IOException ioe) {
+//			System.out.println("Couldn't open translations file");
+//		}
+
 		String errorMsg = null;
 		instance = this;
 		System.out.println("Init GpsMid");		

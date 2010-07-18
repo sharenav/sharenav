@@ -10,6 +10,7 @@ import de.ueller.gps.tools.IconMenuPage;
 
 import javax.microedition.lcdui.Graphics;
 
+import de.enough.polish.util.Locale;
 
 public class GuiDiscoverIconMenu extends IconMenuWithPagesGUI {
 	private static int rememberedEleId = 0;

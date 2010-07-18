@@ -36,6 +36,8 @@ import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.ProjFactory;
 import de.ueller.midlet.gps.routing.TravelMode;
 
+import de.enough.polish.util.Locale;
+
 /**
  * This class holds all the configurable data (i.e. the settings) that GpsMid has.
  */
