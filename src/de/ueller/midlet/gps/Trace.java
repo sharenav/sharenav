@@ -2190,6 +2190,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		}
 		if (gpsRecenter) {
 			center.setLatLonDeg(pos.latitude, pos.longitude);
+			speed = (int) (pos.speed * 3.6f);
 			if (speed > 2) {
 				/*  don't rotate too fast
 				 *  FIXME: the following line to not rotate too fast
@@ -2205,7 +2206,6 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				}
 			}
 		}
-		speed = (int) (pos.speed * 3.6f);
 		altitude = (int) (pos.altitude);
 		if (gpx.isRecordingTrk()) {
 			try {
