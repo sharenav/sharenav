@@ -13,8 +13,6 @@ import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.Position;
 import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.Way;
-import de.ueller.midlet.gps.urls.Urls;
-import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.tile.PaintContext;
 
