@@ -24,11 +24,16 @@ public class Position {
 	public float longitude;
 	/** Altitude above mean sea level or WGS84 geoid in meters */
 	public float altitude;
-	/** Speed over ground in m/s */
+	/** Speed over ground in m/s
+	 * Normally filled with GPS speed directly from NMEA messages / JSR-179
+	 * while position was created. Might also contain Float.NaN
+	 * like it is returned by JSR-179 if the speed is unknown
+	 */
 	public float speed;
 	/** Course in degrees (0..359)
-	 * Normally filled with GPS course directly from NMEA messages
-	 * while point was created.
+	 * Normally filled with GPS course directly from NMEA messages / JSR-179
+	 * while position was created. Might also contain Float.NaN
+	 * like it is returned by JSR-179 if the course is unknown
 	 */
 	public float course;
 	/** Positional dilution of precision */
