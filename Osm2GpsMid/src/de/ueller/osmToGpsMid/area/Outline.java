@@ -27,7 +27,7 @@ public class Outline {
 		return vertexList;
 	}
 	public boolean isValid(){
-		if (vertexList.size() < 3){
+		if (vertexList.size() < 2){
 			return false;
 		}
 		return true;
