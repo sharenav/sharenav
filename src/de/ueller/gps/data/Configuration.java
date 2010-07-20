@@ -16,7 +16,6 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Vector;
 
-import javax.microedition.io.Connection;
 import javax.microedition.io.Connector;
 //#if polish.api.fileconnection
 import javax.microedition.io.file.FileConnection;
@@ -603,9 +602,9 @@ public class Configuration {
 		if (configVersionStored < 17) {
 			backLightLevel = 50;
 			setBackLightLevel(backLightLevel);
+			setPhoneAllTimeMaxMemory(0);
 		}
 
-		
 		setCfgBits(cfgBits_0_to_63, cfgBits_64_to_127);
 	}
 
