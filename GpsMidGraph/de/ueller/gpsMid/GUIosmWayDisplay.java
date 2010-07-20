@@ -63,7 +63,7 @@ public class GUIosmWayDisplay extends GuiOSMEntityDisplay implements GpsMidDispl
 		float wayBearing = eway.wayBearing(t);
 		if (wayBearing < 0)
 			wayBearing += 2*Math.PI;
-		System.out.println(wayBearing);
+//		System.out.println(wayBearing);
 		double x0,y0,x1,y1,x2,y2;
 		
 		x0 =  0; y0 = -6;

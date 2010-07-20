@@ -525,7 +525,7 @@ public class Routing implements Runnable {
 			if (boostMotorways && to.isMotorwayConnection()) {
 				if (!from.isMotorwayConnection()) {
 					motorwayEntrancesExamined++;					
-					System.out.println("Motorway entrance");
+//					System.out.println("Motorway entrance");
 				}
 				if (from.isMotorwayConnection()) {
 					if (motorwayEntrancesExamined < 2) {
@@ -954,7 +954,7 @@ public class Routing implements Runnable {
 			for (int cl=0;cl < successor.length;cl++){
 				Connection nodeSuccessor=successor[cl];
 				if (nodeSuccessor.toId == rnToId) {
-					System.out.println("CONNECTION FOUND: " + nodeSuccessor.durationFSecs / 5 );
+//					System.out.println("CONNECTION FOUND: " + nodeSuccessor.durationFSecs / 5 );
 					return nodeSuccessor.durationFSecs;
 				}
 			}

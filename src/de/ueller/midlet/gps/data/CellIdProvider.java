@@ -365,7 +365,7 @@ public class CellIdProvider {
 		
 		Random r = new Random();
 		int rr = r.nextInt(16) + 1;
-		System.out.println("RR: " +rr);
+//		System.out.println("RR: " +rr);
 		switch (rr) {
 		case 1:
 			cellidS = "2627"; mccS = "234"; mncS = "33"; lacS = "133";

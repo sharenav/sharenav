@@ -26,6 +26,7 @@ public class Proj3D implements Projection {
 	private float hFac = 0.60f;
 	/** factor to compute hep out of screen height. This have to be greater as hFac */
 	private float hep_fac = 0.68f;
+//	private float hep_fac = 1.2f;
 	private float hyp;
 	/** height of the eye point */
 	private float hep;
@@ -245,13 +246,6 @@ public class Proj3D implements Projection {
 	 * @param p
 	 * @return
 	 */
-//	private IntPoint projectionTo3D(float x, float y, IntPoint p) {
-//		float z = dep + y;
-//		p.setY((int) (hyp - (y)));
-//		p.setX((int) ((x)) + wx);
-//		return p;
-//	}
-
 	private IntPoint projectionTo3D(float x, float y, IntPoint p) {
 		float z = dep + y;
 		if (z < loY){
@@ -325,7 +319,7 @@ public class Proj3D implements Projection {
 
 	int cMinLat,cMaxLat,cMinlon,cMaxLon,cLeft,cUpper,cRight,cDown,c;
 	public void printClipstat(){
-		System.out.println("clipStat "+cMinLat+","+cMaxLat+","+cMinlon+","+cMaxLon+"  "+cLeft+","+cUpper+","+cRight+","+cDown+"  "+c);
+//		System.out.println("clipStat "+cMinLat+","+cMaxLat+","+cMinlon+","+cMaxLon+"  "+cLeft+","+cUpper+","+cRight+","+cDown+"  "+c);
 	}
 	public boolean isPlotable(float lat, float lon) {
 		if (lat < minLat){

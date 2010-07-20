@@ -309,9 +309,9 @@ public class RouteTile extends RouteBaseTile {
 			maxReadStreetNets = 0;
 			totalRouteNodesToLoad = numMainStreetRouteNodes;
 			totalTurnRestrictionsToLoad = numMainStreetTurnRestrictions;
-			System.out.println("mainstreet load tile: " + fileId);
+//			System.out.println("mainstreet load tile: " + fileId);
 		} else {
-			System.out.println("full load tile: " + fileId);
+//			System.out.println("full load tile: " + fileId);
 			onlyMainStreetNetLoaded = false;
 		}
 		

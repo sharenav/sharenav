@@ -290,20 +290,8 @@ public class ImageCollector implements Runnable {
 				icDuration = System.currentTimeMillis() - startTime;
 				//#mdebug
 				logger.info("Painting map took " + icDuration + " ms");
-				if (createPC.getP() instanceof Proj3D){
-					((Proj3D)(createPC.getP())).printClipstat();
-				}
 				//#enddebug
 				System.out.println("Painting map took " + icDuration + " ms " + xSize + "/" + ySize);
-				/********* for testing projection ***************/
-//				createPC.g.setColor(255,0,0);
-//				createPC.g.drawArc(xSize/2-10, ySize/2-10, 20, 20, 0, 360);
-//				createPC.g.setColor(0,0,0);
-//				System.out.println(createPC.getP().getImageCenter() + " Size:" + xSize + "/" + ySize);
-//				createPC.g.drawArc(createPC.getP().getImageCenter().x-10, createPC.getP().getImageCenter().y-10, 20, 20, 0, 360);
-//				createPC.g.drawRect(0, 0, xSize-1, ySize-1);
-//				createPC.g.drawRect(xScreenOverscan+2, yScreenOverscan+2, xSize-2*xScreenOverscan-5, ySize-2*yScreenOverscan-5);
-				/******end for testing projection ***************/
 
 				createPC.state = PaintContext.STATE_READY;
 				lastCreatedSc=createPC.cloneToScreenContext();
@@ -449,15 +437,6 @@ public class ImageCollector implements Runnable {
 			if ( Math.abs(newXCenter - screenXCenter) > 1
 					|| Math.abs(newYCenter - screenYCenter) > 1
 					|| paintPC.course != nextSc.course) {
-				if (Math.abs(newXCenter - screenXCenter) > 1){
-					System.out.println("redraw because x has moved by " + (screenXCenter - newXCenter));
-				}
-				if (Math.abs(newYCenter - screenYCenter) > 1){
-					System.out.println("redraw because y has moved by " + (screenYCenter - newYCenter));
-				}
-				if (paintPC.course != nextSc.course){
-					System.out.println("redraw because orientation has moved by " + (paintPC.course - nextSc.course));
-				}
 				needRedraw = true;
 			}
 		}
@@ -593,13 +572,13 @@ public class ImageCollector implements Runnable {
 		}
 
 		if (paintPC.scale != screenPc.scale) {
-			System.out.println("wakeup thread because scale changed");
+//			System.out.println("wakeup thread because scale changed");
 			needRedraw = true;
 		}
 
 		// when the projection has changed we must redraw
 		if (!paintPC.getP().getProjectionID().equals(screenPc.getP().getProjectionID()) ) {
-			System.out.println("wakeup thread because projection changed");
+//			System.out.println("wakeup thread because projection changed");
 			needRedraw = true;
 		}
 
@@ -608,7 +587,7 @@ public class ImageCollector implements Runnable {
 			if (needRedraw) {
 				notify();
 			} else {
-				System.out.println("No need to redraw after painting");
+//				System.out.println("No need to redraw after painting");
 			}
 		}
 		// currentVisibleSc=lastCreatedSc.cloneToScreenContext();
