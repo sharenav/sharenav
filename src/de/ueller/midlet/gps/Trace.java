@@ -2194,7 +2194,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		if (gpsRecenter) {
 			center.setLatLonDeg(pos.latitude, pos.longitude);
 			speed = (int) (pos.speed * 3.6f);
-			if (speed > 2) {
+			if (speed > 2 && pos.course != Float.NaN) {
 				/*  don't rotate too fast
 				 *  FIXME: the following line to not rotate too fast
 				 * 	is commented out because it causes the map to perform
