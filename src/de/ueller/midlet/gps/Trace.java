@@ -2222,6 +2222,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				&& (isGpsConnected() || TrackPlayer.isPlaying)
 				&& autoZoomed
 				&& pc.getP() != null
+				&& pos.speed != Float.NaN // if speed is unknown do not autozoom
 		) {
 			// the minimumScale at 20km/h and below is equivalent to having zoomed in manually once from the startup zoom level
 			final float minimumScale = 10000;
