@@ -14,6 +14,7 @@ import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.gui.jmapviewer.JMapController;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.MapArea;
+import org.openstreetmap.gui.jmapviewer.MapMarkerDot;
 
 import de.ueller.osmToGpsMid.model.Bounds;
 
@@ -80,6 +81,11 @@ public class SelectionMapController extends JMapController implements
 			Coordinate clickPoint = map.getPosition(e.getPoint());
 			mSelListener.pointDoubleClicked((float)clickPoint.getLat(), 
 					(float)clickPoint.getLon());
+		} else if (e.getClickCount() == 1 && e.getButton() == MouseEvent.BUTTON1 && ((e.getModifiersEx() & MouseEvent.ALT_DOWN_MASK) > 0)){
+			Coordinate clickPoint = map.getPosition(e.getPoint());
+			mSelListener.addRouteDestination(clickPoint);
+			map.addMapMarker(new MapMarkerDot(clickPoint.getLat(), clickPoint.getLon()));
+			map.repaint();
 		}
 	}
 

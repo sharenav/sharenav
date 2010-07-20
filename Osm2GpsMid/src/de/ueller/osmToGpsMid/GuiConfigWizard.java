@@ -23,6 +23,7 @@ import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.geom.Area;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
@@ -33,12 +34,12 @@ import java.io.PrintStream;
 import java.net.URISyntaxException;
 import java.util.Enumeration;
 import java.util.LinkedList;
-import java.util.Properties;
 import java.util.Vector;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
+import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -51,6 +52,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
@@ -62,9 +64,13 @@ import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.MapArea;
 import org.openstreetmap.gui.jmapviewer.MemoryTileCache;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapRectangle;
 
 import de.ueller.osmToGpsMid.model.Bounds;
+import de.ueller.osmToGpsMid.route.Location;
+import de.ueller.osmToGpsMid.route.LocationTableModel;
+import de.ueller.osmToGpsMid.route.Route;
 
 
 public class GuiConfigWizard extends JFrame implements Runnable, ActionListener, SelectionListener {
@@ -163,6 +169,9 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	private static final String SOUND_WAV_AMR = "Include WAV and AMR files";
 	
 	private static final String JCB_EDITING = "Enable online OSM editing support";
+	
+	private static final String ORS_URL="http://openrouteservice.org/php/OpenLSRS_DetermineRoute.php";
+	
 	String [] planetFiles = {CHOOSE_SRC, FILE_SRC, XAPI_SRC, ROMA_SRC};
 	String [] cellidFiles = {CELL_SRC_NONE, CELL_SRC_FILE, CELL_SRC_DLOAD};
 	String [] soundFormats = {SOUND_NONE, SOUND_AMR, SOUND_WAV, SOUND_WAV_AMR};
@@ -191,6 +200,9 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	JComboBox jcbCellSource;
 	JButton jbCreate;
 	JButton jbClose;
+	JButton jbClearRoute;
+	JButton jbCalcRoute;
+	
 	/** File chooser dialog for OSM file */
 	JFileChooser jOsmFileChooser;
 	/** File chooser dialog for bundle .properties file */
@@ -199,8 +211,13 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	JFileChooser jStyleFileChooser;
 	/** Component handling the map display */
 	JMapViewer map;
-
+	Vector<Location> routeList=new Vector<Location>();
+	Pattern startPattern=Pattern.compile("<gml:LineString");
+	Pattern posPattern=Pattern.compile("<gml:pos>([0-9.]+) ([0-9.]+)</gml:pos>");
+	Vector<Coordinate> routeResult=new Vector<Coordinate>();
 	boolean dialogFinished = false;
+
+	private JTable destList;
 
 
 	public GuiConfigWizard() {
@@ -231,12 +248,20 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		map = new JMapViewer(new MemoryTileCache(), 4);
 		SelectionMapController mapController = new SelectionMapController(map, this);
 		map.setSize(600, 400);
-		gbc.gridwidth = 9;
+		gbc.gridwidth = 8;
 		gbc.weighty = 1;
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 		add(map, gbc);
+
+		destList=new JTable(new LocationTableModel(routeList));
+		gbc.gridwidth = 1;
+		gbc.weighty = 1;
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.gridx = 8;
+		gbc.gridy = 0;
+		add(destList, gbc);
 		
 		
 		JPanel jpFiles = new JPanel(new GridBagLayout());
@@ -378,6 +403,27 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		gbc.weighty = 0;
 		jpOptions2.add(jcbCellSource, gbc);
 		
+		jbClearRoute = new JButton("Clear RoutePoints");
+		jbClearRoute.setActionCommand("ClearRoute-click");
+		jbClearRoute.addActionListener(this);
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.gridwidth = 3;
+		gbc.weighty = 0;
+		gbc.gridx = 0;
+		gbc.gridy = 3;
+		add(jbClearRoute, gbc);
+
+		jbCalcRoute = new JButton("Calculate Route");
+		jbCalcRoute.setActionCommand("CalculateRoute-click");
+		jbCalcRoute.addActionListener(this);
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.gridwidth = 3;
+		gbc.weighty = 0;
+		gbc.gridx = 3;
+		gbc.gridy = 3;
+		add(jbCalcRoute, gbc);
+
+		
 		jbCreate = new JButton("Create GpsMid midlet");
 		jbCreate.setActionCommand("Create-click");
 		jbCreate.addActionListener(this);
@@ -385,7 +431,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		gbc.weighty = 0;
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.gridx = 0;
-		gbc.gridy = 3;
+		gbc.gridy = 4;
 		add(jbCreate, gbc);
 
 		jbClose = new JButton("Close");
@@ -395,7 +441,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		gbc.gridwidth = 3;
 		gbc.weighty = 0;
 		gbc.gridx = 3;
-		gbc.gridy = 3;
+		gbc.gridy = 4;
 		add(jbClose, gbc);
 		
 		JButton jbHelp = new JButton("Help");
@@ -405,7 +451,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		gbc.gridwidth = 3;
 		gbc.weighty = 0;
 		gbc.gridx = 6;
-		gbc.gridy = 3;
+		gbc.gridy = 4;
 		add(jbHelp, gbc);
 
 		pack();
@@ -439,6 +485,9 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		jcbSoundFormats.setEnabled(false);
 		jcbCellSource.setEnabled(false);
 		jcbEditing.setEnabled(false);
+		destList.setVisible(false);
+		jbCalcRoute.setEnabled(false);
+		jbClearRoute.setEnabled(false);
 		
 		JTextArea jtaConsoleOut = new JTextArea();
 		jtaConsoleOut.setAutoscrolls(true);
@@ -450,7 +499,8 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		gbc.gridwidth = 9;
 		gbc.weighty = 9;
 		gbc.gridx = 0;
-		gbc.gridy = 4;
+		gbc.gridy = 5;
+		gbc.gridheight=1;
 		add(jspConsoleOut, gbc);
 		
 		JTextArea jtaConsoleErr = new JTextArea();
@@ -462,7 +512,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		gbc.gridwidth = 9;
 		gbc.weighty = 3;
 		gbc.gridx = 0;
-		gbc.gridy = 5;
+		gbc.gridy = 6;
 		add(jspConsoleErr, gbc);
 		
 		remove(map);
@@ -889,6 +939,12 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			if ( ((JCheckBox)event.getSource()).isSelected() ) {
 				config.setRouting("motorcar");
 			}
+		} else if ("ClearRoute-click".equalsIgnoreCase(event.getActionCommand())) {
+			routeList.clear();
+			map.setMapMarkerList(new LinkedList<MapMarker>());
+			destList.repaint();
+		} else if ("CalculateRoute-click".equalsIgnoreCase(event.getActionCommand())) {
+			handleCalculateRoute();
 		} else if (JCB_EDITING.equalsIgnoreCase(event.getActionCommand())) {
 			config.enableEditingSupport = ((JCheckBox)event.getSource()).isSelected();
 			if (config.enableEditingSupport && !((String)jcbPhone.getSelectedItem()).contains("Editing")) {
@@ -900,6 +956,19 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			handleComboBoxChanged(event);
 		}
 	}
+
+	/**
+	 * 
+	 */
+	private void handleCalculateRoute() {
+		if (routeList.size() > 1) {
+			Route route = new Route(routeList, 10000,map);
+			Area a=route.createArea();
+			config.setArea(a);
+		}
+
+	}
+
 
 	/** Handles the case that the button "Create Midlet" was clicked.
 	 */
@@ -1135,5 +1204,18 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	 */
 	public void reenableClose() {
 		jbClose.setEnabled(true);
+	}
+
+	/* (non-Javadoc)
+	 * @see de.ueller.osmToGpsMid.SelectionListener#addRouteDestination(org.openstreetmap.gui.jmapviewer.Coordinate)
+	 */
+	@Override
+	public void addRouteDestination(Coordinate clickPoint) {
+		Location location = new Location((float)clickPoint.getLat(),(float)clickPoint.getLon());
+		routeList.add(location);
+		new Route().revResolv(location);
+		destList.repaint();
+		
+		
 	}
 }

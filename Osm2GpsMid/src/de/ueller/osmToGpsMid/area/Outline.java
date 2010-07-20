@@ -8,6 +8,7 @@ import java.util.List;
 
 
 import de.ueller.osmToGpsMid.model.Bounds;
+import de.ueller.osmToGpsMid.model.Node;
 
 public class Outline {
 	private ArrayList<Vertex> vertexList = new ArrayList<Vertex>();
@@ -281,5 +282,13 @@ public class Outline {
 			i.extendBounds(b);
 		}
 		return b;
+	}
+
+	/**
+	 * @param i
+	 * @return
+	 */
+	public Node getNode(int i) {
+		return (vertexList.get(i).getNode());
 	}
 }

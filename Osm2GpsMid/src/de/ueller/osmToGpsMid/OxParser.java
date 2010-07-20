@@ -266,6 +266,9 @@ public class OxParser extends DefaultHandler {
 			Node n = (Node) current;
 			boolean inBound = false;
 			nodeTot++;
+			if (configuration.getArea()!=null && configuration.getArea().contains(n.lat, n.lon)){
+				inBound = true;
+			}
 			if (bounds != null && bounds.size() != 0) {
 				for (Bounds b : bounds) {
 					if (b.isIn(n.lat, n.lon)) {
@@ -273,7 +276,8 @@ public class OxParser extends DefaultHandler {
 						break;
 					}
 				}
-			} else {
+			} 
+			if ((bounds==null || bounds.size()==0) && configuration.getArea() == null){
 				inBound = true;
 			}
 

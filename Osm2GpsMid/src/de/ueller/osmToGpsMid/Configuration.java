@@ -12,6 +12,7 @@
  */
 package de.ueller.osmToGpsMid;
 
+import java.awt.geom.Area;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -315,6 +316,15 @@ public class Configuration {
 		/** Singleton reference */
 		private static Configuration conf;
 
+		private Area area;
+
+
+		/**
+		 * @return the area
+		 */
+		public Area getArea() {
+			return area;
+		}
 
 		/** Singleton getter */
 		public static Configuration getConfiguration() {
@@ -1113,5 +1123,14 @@ public class Configuration {
 			confString += "\n";
 						
 			return confString;
+		}
+
+		/**
+		 * @param a
+		 */
+		public void setArea(Area area) {
+			this.area = area;
+			// TODO Auto-generated method stub
+			
 		}
 }
