@@ -15,8 +15,6 @@ package de.ueller.midlet.gps;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.util.Calendar;
-import java.util.Date;
 
 import javax.microedition.lcdui.Alert;
 import javax.microedition.lcdui.Choice;
@@ -593,20 +591,6 @@ public class GpsMid extends MIDlet implements CommandListener {
 	 */
 	private long determinPhoneMaxMemory() {
 		long maxMem = Runtime.getRuntime().totalMemory();
-		// int [][] buf = new int[2048][];
-		// try {
-		// for (int i = 0; i < 2048; i++) {
-		// buf[i] = new int[16000];
-		// }
-		// } catch (OutOfMemoryError oome) {
-		// //l.info("Hit out of memory while determining maximum heap size");
-		// maxMem = Runtime.getRuntime().totalMemory();
-		// } finally {
-		// for (int i = 0; i < 2048; i++) {
-		// buf[i] = null;
-		// }
-		// }
-		// System.gc();
 		log.info("Maximum phone memory: " + maxMem);
 		if (maxMem < Configuration.getPhoneAllTimeMaxMemory()) {
 			maxMem = Configuration.getPhoneAllTimeMaxMemory();
@@ -638,10 +622,16 @@ public class GpsMid extends MIDlet implements CommandListener {
 		}
 		long freeMem = 0;
 		for (int i=0; i < 3; i++) {
-			freeMem = runt.freeMemory();
+			if ( phoneMaxMemory > totalMem ) {
+				// Phone with increasing heap
+				freeMem = phoneMaxMemory - totalMem + runt.freeMemory();;
+			} else {
+				// Phone with fixed heap
+				freeMem = runt.freeMemory();
+			}
+
 			if ((freeMem < 30000)
-				|| ((totalMem >= phoneMaxMemory) && (((float) freeMem
-						/ (float) totalMem) < 0.10f))) {
+				|| (((float) freeMem / (float) totalMem) < 0.10f)) {
 				switch(i) {
 					case 0:
 						//#debug trace
