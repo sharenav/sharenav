@@ -123,6 +123,9 @@ public class Way extends Entity {
 	public short maxLon;
 	
 	public short wayNrInFile = 0;
+	public int nameIdx = -1;
+	public int urlIdx = -1;
+	public int phoneIdx = -1;
 	
 	/**
 	 * This is a buffer for the drawing routines
@@ -520,7 +523,7 @@ public class Way extends Entity {
 //								System.out.println("Bearing: " + pc.conWayBearings[pc.conWayBearingsCount] + new Node(t.centerLat+ t.nodeLat[idxC] * MoreMath.FIXPT_MULT_INV, t.centerLon + t.nodeLon[idxC] * MoreMath.FIXPT_MULT_INV, true).toString());
 								pc.conWayBearingsCount++;
 							} else {
-								System.out.println("Bearing count is > 8");
+//								System.out.println("Bearing count is > 8");
 							}
 						}
 					}
