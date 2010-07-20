@@ -321,7 +321,7 @@ public class MyMath {
 	  double dLon13 = Math.atan2( Math.sin(b1)*Math.sin(dist13)*Math.cos(lat1), 
 	                       Math.cos(dist13)-Math.sin(lat1)*Math.sin(lat3) );
 	  double lon3 = lon1+dLon13;
-	  lon3 = (lon3+Math.PI) % (2*Math.PI) - Math.PI;  // normalise to -180..180º
+	  lon3 = (lon3+Math.PI) % (2*Math.PI) - Math.PI;  // normalize to -180..180 degrees
 	  
 	  return new Node((float)Math.toDegrees(lat3), (float)Math.toDegrees(lon3),-1);
 	}
