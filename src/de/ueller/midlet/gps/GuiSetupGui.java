@@ -5,6 +5,7 @@ package de.ueller.midlet.gps;
  */
 
 import javax.microedition.lcdui.*;
+
 import de.ueller.gps.data.Configuration;
 
 
@@ -18,6 +19,8 @@ public class GuiSetupGui extends Form implements CommandListener {
 	// other
 	private GpsMidDisplayable parent;
 	private boolean initialSetup;
+
+	private TextField memField;
 	
 	public GuiSetupGui(GpsMidDisplayable parent, boolean initialSetup) {
 		super("GUI Options");
@@ -37,6 +40,14 @@ public class GuiSetupGui extends Form implements CommandListener {
 			guiOpts.setSelectedIndex(3, Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_MAPPED_ICONS));
 			guiOpts.setSelectedIndex(4, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED));
 			append(guiOpts);
+			long mem=Configuration.getPhoneAllTimeMaxMemory();
+			if (mem == 0){
+				mem=Runtime.getRuntime().totalMemory();
+			}
+			mem=mem/1024;
+			memField = new TextField("Define maxMem (kbyte)",
+					Long.toString(mem), 8, TextField.DECIMAL);
+			append(memField);
 			
 			addCommand(CMD_SAVE);
 			addCommand(CMD_CANCEL);
@@ -76,6 +87,12 @@ public class GuiSetupGui extends Form implements CommandListener {
 					Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_ON, true);
 					GpsMid.getInstance().restartBackLightTimer();			
 				}
+			}
+			try {
+				long mem=Long.parseLong(memField.getString());
+				Configuration.setPhoneAllTimeMaxMemory(mem*1024);
+			} catch (NumberFormatException e) {
+				// nothing to do (igore content)
 			}
 			Trace.uncacheIconMenu();
 			GuiDiscover.uncacheIconMenu();
