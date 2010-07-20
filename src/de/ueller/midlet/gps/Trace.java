@@ -48,6 +48,7 @@ import de.ueller.gps.tools.DateTimeTools;
 import de.ueller.gps.tools.HelperRoutines;
 import de.ueller.gps.tools.IconActionPerformer;
 import de.ueller.gps.tools.LayoutElement;
+import de.ueller.gps.urls.Urls;
 import de.ueller.gpsMid.mapData.DictReader;
 //#if polish.api.osm-editing
 import de.ueller.gpsMid.GUIosmWayDisplay;
@@ -72,7 +73,6 @@ import de.ueller.midlet.gps.data.RoutePositionMark;
 import de.ueller.midlet.gps.data.SECellLocLogger;
 import de.ueller.midlet.gps.data.Way;
 import de.ueller.midlet.gps.names.Names;
-import de.ueller.midlet.gps.urls.Urls;
 import de.ueller.midlet.gps.routing.RouteNode;
 import de.ueller.midlet.gps.routing.Routing;
 import de.ueller.midlet.gps.GuiMapFeatures;
@@ -210,6 +210,8 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	private static int touchY = 0;
 	/** center when display was touched last time */
 	private static Node	centerPointerPressedN = new Node();
+	private static Node	pickPointStart = new Node();
+	private static Node	pickPointEnd = new Node();
 	/** indicates whether this is a touch button or drag action*/
 	private static boolean pointerDragAction = false;
 	
@@ -304,6 +306,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	public boolean manualRotationMode = false;
 	
 	public Vector locationUpdateListeners;
+	private Projection panProjection;
 	
 	private Trace() throws Exception {
 		//#debug
@@ -2370,10 +2373,12 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		
 		// remember positions for dragging
 		// remember position the pointer was pressed
-		Trace.touchX = x;
-		Trace.touchY = y;
+//		Trace.touchX = x;
+//		Trace.touchY = y;
 		// remember center when the pointer was pressed
 		centerPointerPressedN = center.copy();
+		pickPointStart=imageCollector.getCurrentProjection().inverse(x,y, pickPointStart);
+		panProjection=imageCollector.getCurrentProjection();
 	}
 	
 	protected void pointerReleased(int x, int y) {
@@ -2386,12 +2391,14 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		updateLastUserActionTime();
 		if (pointerDragAction && imageCollector != null) {
 			// difference between where the pointer was pressed and is currently dragged
-			int diffX = Trace.touchX - x;
-			int diffY = Trace.touchY - y;
-			
-			IntPoint centerPointerPressedP = new IntPoint();
-			imageCollector.getCurrentProjection().forward(centerPointerPressedN, centerPointerPressedP);
-			imageCollector.getCurrentProjection().inverse(centerPointerPressedP.x + diffX, centerPointerPressedP.y + diffY, center);
+//			int diffX = Trace.touchX - x;
+//			int diffY = Trace.touchY - y;
+//			
+//			IntPoint centerPointerPressedP = new IntPoint();
+			pickPointEnd=panProjection.inverse(x,y, pickPointEnd);
+			center.radlat=centerPointerPressedN.radlat-(pickPointEnd.radlat-pickPointStart.radlat);
+			center.radlon=centerPointerPressedN.radlon-(pickPointEnd.radlon-pickPointStart.radlon);
+//			System.out.println("diff " + diffX + "/" + diffY + "  " + (pickPointEnd.radlat-pickPointStart.radlat) + "/" + (pickPointEnd.radlon-pickPointStart.radlon) ); 
 			imageCollector.newDataReady();
 			gpsRecenter = false;
 		}
