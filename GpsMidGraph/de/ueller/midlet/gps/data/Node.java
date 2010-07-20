@@ -134,19 +134,19 @@ public class Node extends Entity {
 
     public Node copy() {
     	Node n = new Node();
-    	if (nameIdx != -1) {
-		n.nameIdx = nameIdx;
-	}
-	if (Legend.enableUrlTags) {
-		if (urlIdx != -1) {
-			n.urlIdx=urlIdx;
-		}
-	}
-	if (Legend.enablePhoneTags) {
-		if (phoneIdx != -1) {
-			n.phoneIdx=phoneIdx;
-		}
-	}
+//    	if (nameIdx != -1) {
+//		n.nameIdx = nameIdx;
+//	}
+//	if (Legend.enableUrlTags) {
+//		if (urlIdx != -1) {
+//			n.urlIdx=urlIdx;
+//		}
+//	}
+//	if (Legend.enablePhoneTags) {
+//		if (phoneIdx != -1) {
+//			n.phoneIdx=phoneIdx;
+//		}
+//	}
     	n.type = type;
     	n.radlat = radlat;
     	n.radlon = radlon;
