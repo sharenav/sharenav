@@ -20,7 +20,7 @@ import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.names.Names;
 import de.ueller.midlet.gps.names.NumberCanon;
-import de.ueller.midlet.gps.urls.Urls;
+import de.ueller.gps.urls.Urls;;
 
 public class SearchNames implements Runnable {
 
