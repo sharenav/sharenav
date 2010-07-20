@@ -39,11 +39,11 @@ public abstract class QueueReader implements Runnable {
 		int loop;
 		for (loop = 0; loop < livingQueue.size(); loop++) {
 			tt = (Tile) livingQueue.elementAt(loop);
-			tt.lastUse++;
+			if (tt.lastUse < 126) tt.lastUse++;
 		}
 		for (loop = 0; loop < requestQueue.size(); loop++) {
 			tt = (Tile) requestQueue.elementAt(loop);
-			tt.lastUse++;
+			if (tt.lastUse < 126) tt.lastUse++;
 		}
 
 	}
@@ -58,10 +58,7 @@ public abstract class QueueReader implements Runnable {
 	public synchronized void dropCache() {
 		Tile tt;
 		int loop;
-		for (loop = 0; loop < livingQueue.size(); loop++) {
-			tt = (Tile) livingQueue.elementAt(loop);
-			tt.cleanup(0);
-		}
+		cleanOldLivingTiles(0);
 		for (loop = 0; loop < requestQueue.size(); loop++) {
 			tt = (Tile) requestQueue.elementAt(loop);
 			tt.cleanup(0);
@@ -73,15 +70,7 @@ public abstract class QueueReader implements Runnable {
 		Tile tt;
 		
 		if (GpsMid.getInstance().needsFreeingMemory()) {
-			for (loop = 0; loop < livingQueue.size(); loop++) {
-				tt = (Tile) livingQueue.elementAt(loop);
-				if (tt.cleanup(3)) {
-					// logger.info("cleanup living " + tt.fileId);
-					synchronized (this) {
-						livingQueue.removeElementAt(loop--);
-					}
-				}
-			}
+			loop = cleanOldLivingTiles(3);
 			for (loop = 0; loop < requestQueue.size(); loop++) {
 				tt = (Tile) requestQueue.elementAt(loop);
 				if (tt.cleanup(2)) {
@@ -95,7 +84,26 @@ public abstract class QueueReader implements Runnable {
 		} else {
 			//#debug debug
 			logger.debug("Not cleaning up caches, still enough memory left");
+			// it make not really sense to keep all tiles in memory
+			// if there is enough so remove very old tile in every case:
+			// very old is in this case not used for the last 120 paints
+			cleanOldLivingTiles(120);
 		}		
+	}
+
+	private int cleanOldLivingTiles(int age) {
+		int loop;
+		Tile tt;
+		for (loop = 0; loop < livingQueue.size(); loop++) {
+			tt = (Tile) livingQueue.elementAt(loop);
+			if (tt.cleanup(age)) {
+				// logger.info("cleanup living " + tt.fileId);
+				synchronized (this) {
+					livingQueue.removeElementAt(loop--);
+				}
+			}
+		}
+		return loop;
 	}
 
 	public void run() {
