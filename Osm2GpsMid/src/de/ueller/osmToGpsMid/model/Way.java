@@ -287,7 +287,7 @@ public class Way extends Entity implements Comparable<Way> {
 	}
 	
 	public byte getZoomlevel(Configuration c) {
-		byte type = getType();
+		byte type = getType(c);
 
 		if (type == -1) {
 			// System.out.println("unknown type for node " + toString());
