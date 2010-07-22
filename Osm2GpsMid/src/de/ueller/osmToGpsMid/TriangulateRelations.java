@@ -65,6 +65,9 @@ public class TriangulateRelations {
 				if (r.getAttribute("admin_level") != null){
 					continue;
 				}
+				if ("administrative".equalsIgnoreCase(r.getAttribute("boundary"))){
+					continue;
+				}
 //				System.out.println("Starting to handle multipolygon relation");
 //				System.out.println("    see http://www.openstreetmap.org/browse/relation/" + r.id);
 
