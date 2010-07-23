@@ -512,6 +512,18 @@ public class Routing implements Runnable {
 			throw new Error("Destination is NULL");
 		}
 		int dist = MoreMath.dist(toNode.lat, toNode.lon, dest.lat, dest.lon);
+		
+		/* sharp turns > 100 degrees between motorways and especially motorway links
+		 * can't be accepted without checking for a better alternative
+		 * to avoid entering and then immediately leaving motorway links
+		 * like at http://www.openstreetmap.org/?mlat=48.061419&mlon=11.639106&zoom=18&layers=B000FTF
+		 * or vice versa like at http://www.openstreetmap.org/browse/node/673142
+		 */
+		if (from.isMotorwayConnection() && to.isMotorwayConnection() && Math.abs(dTurn*2) > 100 ) {
+			return (int) (dist * 2);
+		}
+		
+		
 		if (bestTime) {
 			if (roadRun) {
 				return (dist+turnCost)* 3 / 2;
@@ -525,7 +537,7 @@ public class Routing implements Runnable {
 			if (boostMotorways && to.isMotorwayConnection()) {
 				if (!from.isMotorwayConnection()) {
 					motorwayEntrancesExamined++;					
-//					System.out.println("Motorway entrance");
+					System.out.println("Motorway entrance");
 				}
 				if (from.isMotorwayConnection()) {
 					if (motorwayEntrancesExamined < 2) {
