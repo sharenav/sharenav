@@ -87,6 +87,13 @@ public class TriangulateRelations {
 //						a.debug = true;
 //					}
 					Way w = wayHashMap.get(ref);
+					if (w.getAttribute("admin_level") != null){
+						continue rel;
+					}
+					if ("administrative".equalsIgnoreCase(w.getAttribute("boundary"))){
+						continue rel;
+					}
+
 //					System.out.println("Handling outer way http://www.openstreetmap.org/browse/way/" + ref);
 					if (w == null) {
 						System.out.println("Way " + w.toUrl() + " was not found but referred  as outline in ");
