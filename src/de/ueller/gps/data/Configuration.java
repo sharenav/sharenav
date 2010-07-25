@@ -267,7 +267,7 @@ public class Configuration {
 	private static final int RECORD_ID_DETAIL_BOOST_POI = 41;
 	private static final int RECORD_ID_TRAFFIC_SIGNAL_CALC_DELAY = 42;
 	private static final int RECORD_ID_WAYPT_SORT_MODE = 43;
-	private static final int RECORD_ID_BACKLIGHTLEVEL = 43;
+	private static final int RECORD_ID_BACKLIGHTLEVEL = 44;
 	private static final int RECORD_ID_BASESCALE = 45;
 
 	// Gpx Recording modes
@@ -444,6 +444,12 @@ public class Configuration {
 			trafficSignalCalcDelay = readInt(database, RECORD_ID_TRAFFIC_SIGNAL_CALC_DELAY);
 			wayptSortMode = readInt(database, RECORD_ID_WAYPT_SORT_MODE);
 			backLightLevel = readInt(database, RECORD_ID_BACKLIGHTLEVEL);
+			/* there's been duplicate use of the id for RECORD_ID_BACKLIGHTLEVEL / RECORD_ID_WAYPTSORTMODE
+			 * so we need to check if backlightlevel is 0 to not end up with a black display
+			 */
+			if (backLightLevel == 0) { 
+				backLightLevel = 50;
+			}
 			baseScale = readInt(database, RECORD_ID_BASESCALE);
 			calculateRealBaseScale();
 			
