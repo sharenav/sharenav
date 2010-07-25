@@ -242,10 +242,9 @@ public class SearchNames implements Runnable {
 					}
 					float lat = ds.readFloat();
 					float lon = ds.readFloat();
-					int nameidx = -1;
 					int urlidx = -1;
 					int phoneidx = -1;
-					nameidx = Names.readNameIdx(ds);
+					int nameidx = Names.readNameIdx(ds);
 					if (Legend.enableUrlTags) {
 						//#if polish.api.online
 						urlidx = Urls.readUrlIdx(ds);
