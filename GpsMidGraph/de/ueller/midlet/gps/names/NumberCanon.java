@@ -107,7 +107,7 @@ public class NumberCanon {
 		if (charMapCore == null)
 			initCharMaps();
 		StringBuffer erg=new StringBuffer();
-		//System.out.print("canonial '" + s + "' ");
+//		System.out.print("canonial '" + s + "' ");
 		for (int i=0;i<s.length();i++){
 			erg.append(getNumberOf(s.charAt(i)));
 		}
@@ -118,6 +118,7 @@ public class NumberCanon {
 	private static char getNumberOf(char s){
 		if (s == 0)
 			return s;
+//		System.out.print("getNumberOf() s: '" + s + "' ");
 		if ((s >= minFastRange) && (s < maxFastRange)) {
 			/* This is the fast path */
 			return charMapCore[s - minFastRange];
