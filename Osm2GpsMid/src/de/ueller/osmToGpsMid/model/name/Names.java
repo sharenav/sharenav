@@ -13,6 +13,7 @@ import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.NoSuchElementException;
 
 import de.ueller.osmToGpsMid.model.Entity;
 
@@ -47,6 +48,7 @@ public class Names {
 			return;
 		}
 		Name mn =new Name(w);
+//		System.out.println("adding name:" + mn.getName());
 		if (names1.containsKey(mn.getName())){
 //			System.out.println("name already there:" + mn);
 			Name mnNext=new Name(w.getName()+"\0");
@@ -59,9 +61,17 @@ public class Names {
 		if (! canons.add(mn)){
 //			System.out.println("canon already there:" + mn);
 			Name mnNext=new Name(w.getName()+"\0");
-			SortedMap<String,Name> subSet=names1.subMap(mn.getName(), mnNext.getName());
-			Name mnExist=subSet.get(subSet.firstKey());
-			mnExist.addEntity(w);
+			mnNext.setCanon( mn.getCanon());
+			try {
+				SortedSet<Name> subSet=canons.tailSet(mnNext);
+				Name mnExist=subSet.first();
+				if (mnExist != null) {
+					System.out.println("mnExist:" + mnExist);
+					mnExist.addEntity(w);
+				}
+			}
+			catch (NoSuchElementException e) {
+			}
 		}
 	}
 

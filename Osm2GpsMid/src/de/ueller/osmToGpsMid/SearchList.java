@@ -103,6 +103,7 @@ public class SearchList {
 						ds.writeLong(l);
 					}
 				int nameIdx = mapName.getIndex();
+				int primaryNameIdx = nameIdx;
 				if (nameIdx >= Short.MAX_VALUE) {
 					ds.writeInt(nameIdx | 0x80000000);
 				} else {
@@ -112,10 +113,12 @@ public class SearchList {
 					Node center=null;
 					String url = null;
 					String phone = null;
+					String name = null;
 					if (e instanceof Node) {
 						Node n = (Node) e;						
 						url = n.getUrl();
 						phone = n.getPhone();
+						name = n.getName();
 						ds.writeByte(-1*n.getType(Configuration.getConfiguration()));
 						center=n;
 //						System.out.println("entryType " + n.getNameType() + " idx=" + mapName.getIndex());
@@ -124,6 +127,7 @@ public class SearchList {
 						Way w = (Way) e;
 						url = w.getUrl();
 						phone = w.getPhone();
+						name = w.getName();
 						ds.writeByte(w.getNameType());
 //						System.out.println("entryType " + w.getNameType() + " idx=" + mapName.getIndex());
 						center=w.getMidPoint();
@@ -156,12 +160,25 @@ public class SearchList {
 					ds.writeFloat(MyMath.degToRad(center.lon));
 					int urlIdx = urls.getUrlIdx(url);
 					int phoneIdx = urls.getUrlIdx(phone);
+					int entityNameIdx = names.getNameIdx(name);
+//					System.out.println("in entity, name: " + name);
+//					System.out.println("in entity, entityNameIdx: " + entityNameIdx);
+					if (entityNameIdx != -1) {
+						nameIdx = entityNameIdx;
+					} else {
+						nameIdx = primaryNameIdx;
+					}
 					if (urlIdx == -1) {
 						urlIdx = 0;
 					}
 					if (phoneIdx == -1) {
 						phoneIdx = 0;
 					}
+					if (nameIdx >= Short.MAX_VALUE) {
+						ds.writeInt(nameIdx | 0x80000000);
+					} else {
+						ds.writeShort(nameIdx);
+					}				
 					//#if polish.api.online
 					if (Configuration.getConfiguration().useUrlTags) {
 						if (urlIdx >= Short.MAX_VALUE) {  // FIXME a flag somewhere to save space?

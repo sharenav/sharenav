@@ -99,6 +99,10 @@ public class Name {
 	public String getCanon() {
 		return canon;
 	}
+	public void setCanon(String c){
+		canon = c;
+		return;
+	}
 	/**
 	 * @param i
 	 */
