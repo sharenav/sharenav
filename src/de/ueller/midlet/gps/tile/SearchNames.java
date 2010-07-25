@@ -135,6 +135,7 @@ public class SearchNames implements Runnable {
 			String fn = search.substring(0,2);
 			String compare = search.substring(2);
 			StringBuffer current = new StringBuffer();
+//			System.out.println("compare: " + compare);
 			
 			String fileName = "/s" + fn + ".d";
 //			System.out.println("open " + fileName);
@@ -185,13 +186,13 @@ public class SearchNames implements Runnable {
 				 * 00000000 byte
 				 * 000xxxxx delta 
 				 */				
-				//System.out.println("type = " + type);
+//				System.out.println("type = " + type);
 				int sign = 1;
 				if ((type & 0x80) != 0) {
 					sign = -1;
 				}
 				int delta = (type & 0x1f) * sign;				
-				//System.out.println("type = " + type);
+//				System.out.println("type = " + type);
 				int entryType = (type & 0x60);
 				if (delta > Byte.MAX_VALUE) {
 					delta -= Byte.MAX_VALUE;
@@ -241,8 +242,10 @@ public class SearchNames implements Runnable {
 					}
 					float lat = ds.readFloat();
 					float lon = ds.readFloat();
+					int nameidx = -1;
 					int urlidx = -1;
 					int phoneidx = -1;
+					nameidx = Names.readNameIdx(ds);
 					if (Legend.enableUrlTags) {
 						//#if polish.api.online
 						urlidx = Urls.readUrlIdx(ds);
@@ -256,6 +259,10 @@ public class SearchNames implements Runnable {
 					}
 					if (phoneidx == 0) {
 						phoneidx = -1;
+					}
+
+					if (idx != -1 && nameidx != 0) {
+						idx = nameidx;
 					}
 
 					if (idx != -1) {
@@ -285,7 +292,7 @@ public class SearchNames implements Runnable {
 							ds.close();
 							return;
 						}
-						//System.out.println("found " + current +"(" + idx + ") type=" + type);
+//						System.out.println("found " + current +"(" + idx + ") type=" + type);
 					}
 					type = ds.readByte();
 				} // while (type != 0)
