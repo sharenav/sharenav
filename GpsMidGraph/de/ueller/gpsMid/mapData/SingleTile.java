@@ -372,7 +372,6 @@ public class SingleTile extends Tile implements QueueableTile {
 		switch (om & Legend.OM_NAME_MASK) {
 			case Legend.OM_WITH_NAMEPART: 
 				if (nameIdx[i] == -1) return;
-				if (urlIdx[i] == -1) return;
 				String name = pc.trace.getName(nameIdx[i]);
 				String url = null;
 				if (urlIdx[i] != -1) {
