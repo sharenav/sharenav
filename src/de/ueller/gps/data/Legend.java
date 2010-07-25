@@ -198,6 +198,14 @@ public class Legend {
 		namePartRequired[2] = "";
 	}
 
+	public static void reReadLegend() {
+		try {
+			Legend.readLegend();
+		} catch (Exception e) {
+			logger.fatal("Failed to reread legend");
+		}	
+	}
+	
 	public static void readLegend() throws IOException {
 		InputStream is = Configuration.getMapResource("/legend.dat");
 		
@@ -410,7 +418,7 @@ public class Legend {
 			if ((flags & LEGEND_FLAG_MIN_DESCRIPTION_SCALE) > 0) {
 				ways[i].maxDescriptionScale = ds.readInt();
 			} else {
-				ways[i].maxDescriptionScale = 15000;
+				ways[i].maxDescriptionScale = (int) Configuration.getRealBaseScale();
 			}
 			//#if polish.api.osm-editing
 			if (enableEdits) {

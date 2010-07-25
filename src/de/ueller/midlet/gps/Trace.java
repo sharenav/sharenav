@@ -200,7 +200,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 
 	public PaintContext pc;
 	
-	public float scale = 15000f;
+	public float scale = Configuration.getRealBaseScale();
 	
 	int showAddons = 0;
 	
@@ -2225,10 +2225,10 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				&& pos.speed != Float.NaN // if speed is unknown do not autozoom
 		) {
 			// the minimumScale at 20km/h and below is equivalent to having zoomed in manually once from the startup zoom level
-			final float minimumScale = 10000;
+			final float minimumScale = Configuration.getRealBaseScale() / 1.5f;
 			final int minimumSpeed = 20;
 			// the maximumScale at 160km/h and above is equivalent to having zoomed out manually once from the startup zoom level
-			final float maximumScale = 22500;
+			final float maximumScale = Configuration.getRealBaseScale() * 1.5f;
 			final int maximumSpeed = 160;
 			int speedForScale = speed;
 			float newScale = minimumScale + (maximumScale - minimumScale) * (speedForScale - minimumSpeed) / (maximumSpeed - minimumSpeed);

@@ -734,11 +734,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				
 				if (nightMode != Configuration.getCfgBitState(Configuration.CFGBIT_NIGHT_MODE) ) {
 					Configuration.setCfgBitSavedState(Configuration.CFGBIT_NIGHT_MODE, nightMode);
-					try {
-						Legend.readLegend();
-					} catch (Exception e) {
-						logger.fatal("Failed to reread legend");
-					}
+					Legend.reReadLegend();
 					Trace trace = Trace.getInstance();
 					trace.recreateTraceLayout();
 				}

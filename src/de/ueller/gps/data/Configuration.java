@@ -268,6 +268,7 @@ public class Configuration {
 	private static final int RECORD_ID_TRAFFIC_SIGNAL_CALC_DELAY = 42;
 	private static final int RECORD_ID_WAYPT_SORT_MODE = 43;
 	private static final int RECORD_ID_BACKLIGHTLEVEL = 43;
+	private static final int RECORD_ID_BASESCALE = 45;
 
 	// Gpx Recording modes
 	// GpsMid determines adaptive if a trackpoint is written
@@ -369,6 +370,10 @@ public class Configuration {
 	private static int trafficSignalCalcDelay = 5;
 
 	private static volatile int backLightLevel = 50;
+
+	private static int baseScale = 23;
+	private static float realBaseScale = 15000;
+
 	
 	public static void read() {
 	logger = Logger.getInstance(Configuration.class, Logger.DEBUG);
@@ -439,6 +444,8 @@ public class Configuration {
 			trafficSignalCalcDelay = readInt(database, RECORD_ID_TRAFFIC_SIGNAL_CALC_DELAY);
 			wayptSortMode = readInt(database, RECORD_ID_WAYPT_SORT_MODE);
 			backLightLevel = readInt(database, RECORD_ID_BACKLIGHTLEVEL);
+			baseScale = readInt(database, RECORD_ID_BASESCALE);
+			calculateRealBaseScale();
 			
 			int configVersionStored = readInt(database, RECORD_ID_CONFIG_VERSION);
 			//#debug info
@@ -603,6 +610,7 @@ public class Configuration {
 			backLightLevel = 50;
 			setBackLightLevel(backLightLevel);
 			setPhoneAllTimeMaxMemory(0);
+			setBaseScale(23);
 		}
 
 		setCfgBits(cfgBits_0_to_63, cfgBits_64_to_127);
@@ -1233,6 +1241,47 @@ public class Configuration {
 		Configuration.routeEstimationFac = routeEstimationFac;
 	}
 
+	public static int getBaseScale() {
+		return baseScale;
+	}
+
+	public static float getRealBaseScale() {
+		return realBaseScale;
+	}
+
+	
+	public static void setBaseScale(int baseScale) {
+		calculateRealBaseScale();
+		write(baseScale, RECORD_ID_BASESCALE);
+		Configuration.baseScale = baseScale;
+	}
+	
+	public static void calculateRealBaseScale() {
+		realBaseScale = baseScale;
+		// if we have a pseudo zoom level, calculate the real one
+		if (baseScale < 50) {
+			// if the pseudo zoom level is 0 use 23
+			if (baseScale == 0) {
+				baseScale = 23;
+			}
+			// don't zoom out too much by default
+			if (baseScale < 10) {
+				baseScale = 10;
+			}
+			realBaseScale = 15000f;
+			for (int scale = 23; baseScale != scale;) {
+				if ( baseScale > 23) {
+					realBaseScale /= 1.5f;
+					scale++;					
+				} else {
+					realBaseScale *= 1.5f;
+					scale--;										
+				}
+			}
+		}
+	}
+	
+	
 	public static int getBackLightLevel() {
 		return backLightLevel;
 	}

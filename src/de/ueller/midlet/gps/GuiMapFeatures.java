@@ -7,6 +7,7 @@ package de.ueller.midlet.gps;
 import javax.microedition.lcdui.*;
 
 import de.ueller.gps.data.Configuration;
+import de.ueller.gps.data.Legend;
 import de.ueller.midlet.gps.data.ProjFactory;
 
 public class GuiMapFeatures extends Form implements CommandListener {
@@ -26,6 +27,8 @@ public class GuiMapFeatures extends Form implements CommandListener {
 	private	String [] modes = new String[3];
 	private	boolean[] selModes = new boolean[3];
 
+	private TextField  tfBaseScale;
+	
 	private ChoiceGroup otherGroup;
 	private	String [] other = new String[1];
 	private	boolean[] selOther = new boolean[1];
@@ -79,6 +82,9 @@ public class GuiMapFeatures extends Form implements CommandListener {
 			modesGroup.setSelectedFlags(selModes);			
 			append(modesGroup);
 
+			tfBaseScale = new TextField("Base Zoom Level (23 = default)", Integer.toString(Configuration.getBaseScale()), 6, TextField.DECIMAL);
+			append(tfBaseScale);
+			
 			other[0] = "Save map position on exit for next start";	selOther[0]=Configuration.getCfgBitState(Configuration.CFGBIT_AUTOSAVE_MAPPOS);
 			otherGroup = new ChoiceGroup("Other", Choice.MULTIPLE, other, null);
 			otherGroup.setSelectedFlags(selOther);			
@@ -140,6 +146,15 @@ public class GuiMapFeatures extends Form implements CommandListener {
 			Configuration.setCfgBitState(Configuration.CFGBIT_AUTOZOOM, selModes[1], setAsDefault);
 			Configuration.setCfgBitState(Configuration.CFGBIT_STREETRENDERMODE, selModes[2], setAsDefault);
 			
+			float oldRealBaseScale = Configuration.getRealBaseScale();
+			Configuration.setBaseScale(
+					(int) (Float.parseFloat(tfBaseScale.getString())) 
+			);
+			if (oldRealBaseScale != Configuration.getRealBaseScale()) {
+				Legend.reReadLegend();
+				Trace.getInstance().scale = Configuration.getRealBaseScale();
+			}
+
 			otherGroup.getSelectedFlags(selOther);
 			Configuration.setCfgBitState(Configuration.CFGBIT_AUTOSAVE_MAPPOS, selOther[0], setAsDefault);
 			

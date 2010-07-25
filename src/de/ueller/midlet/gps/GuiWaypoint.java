@@ -251,7 +251,7 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
  			if (setAsDestination) {
 				mParent.setDestination(new RoutePositionMark(getWaypoint(idx), -1));
 			} else {
-				mParent.receivePosition(n, w, 15000f);
+				mParent.receivePosition(n, w, Configuration.getRealBaseScale());
 			}
 		} else {		// two or more waypoints selected, won't set as destination
 			IntPoint intPoint1 = new IntPoint(10, 10);
