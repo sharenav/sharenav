@@ -798,7 +798,7 @@ public class CreateGpsMidData implements FilenameFilter {
 		byte [] out=new byte[1];
 		expTiles.push(new TileTuple(t,tileBound));
 		byte [] connOut;
-		//System.out.println("Exporting Tiles");
+//		System.out.println("Exporting Tiles");
 		while (!expTiles.isEmpty()) {			
 			TileTuple tt = expTiles.pop();
 			unsplittableTile = false;
@@ -827,6 +827,7 @@ public class CreateGpsMidData implements FilenameFilter {
 				int mostlyInBound=ways.size();
 				addWaysCompleteInBound(ways,t.ways,t.zl,realBound);
 				if (ways.size() > 2*mostlyInBound){
+//					System.out.println("ways.size > 2*mostlyInBound, mostlyInBound: " + mostlyInBound);		
 					realBound=new Bounds();
 					ways=getWaysInBound(t.ways, t.zl,tileBound,realBound);
 					// add nodes as well to the bound HMu: 29.3.2010
@@ -887,10 +888,11 @@ public class CreateGpsMidData implements FilenameFilter {
 
 			// Split tile if more then 255 Ways or binary content > MAX_TILE_FILESIZE but not if only one Way
 			
+//			System.out.println("out.length="+out.length+" ways=" + ways.size());
 			boolean toManyWays = ways.size() > maxWays;
 			boolean toManyBytes = out.length > maxSize;
 			if ((!unsplittableTile) && ((toManyWays || (toManyBytes && ways.size() != 1) || tooLarge))){
-				//System.out.println("create Subtiles size="+out.length+" ways=" + ways.size());
+//				System.out.println("create Subtiles size="+out.length+" ways=" + ways.size());
 				t.bounds=realBound.clone();
 				if (t.zl != ROUTEZOOMLEVEL){
 					t.type=Tile.TYPE_CONTAINER;				
@@ -930,7 +932,6 @@ public class CreateGpsMidData implements FilenameFilter {
 					// Write as dataTile
 					t.fid=tileSeq.next();
 					if (t.zl != ROUTEZOOMLEVEL) {
-						t.setWays(ways);
 						writeRenderTile(t, tileBound, realBound, nodes, out);
 					} else {
 						writeRouteTile(t, tileBound, realBound, nodes, out);
@@ -980,8 +981,8 @@ public class CreateGpsMidData implements FilenameFilter {
 	private void writeRenderTile(Tile t, Bounds tileBound, Bounds realBound,
 			 Collection<Node> nodes, byte[] out)
 			throws FileNotFoundException, IOException {
-		//System.out.println("Writing route tile " + t.zl + ":" + t.fid + 
-		//	" ways:" + t.ways.size() + " nodes:" + nodes.size());
+//		System.out.println("Writing render tile " + t.zl + ":" + t.fid + 
+//			" ways:" + t.ways.size() + " nodes:" + nodes.size());
 		totalNodesWritten += nodes.size();
 		totalWaysWritten += t.ways.size();
 		

@@ -142,6 +142,7 @@ public class TriangulateRelations {
 						firstWay.replaceTags(r);
 					}
 					triangles += areaTriangles.size();
+//					System.out.println("areaTriangles.size for relation " + r.toUrl() + " :" + areaTriangles.size());
 					areas += 1;
 				} catch (Exception e) {
 					System.out.println("Something went wrong when trying to triangulate relation " + r.toUrl() + " I'll attempt to ignore this relation");

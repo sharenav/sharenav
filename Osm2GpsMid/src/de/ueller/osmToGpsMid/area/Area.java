@@ -102,8 +102,8 @@ public class Area {
 				dir = (dir + 1) % 4;
 			}
 		}
-		// System.out.println(ret);
-		// System.out.println("loops :" + loop);
+//		System.out.println(ret);
+//		System.out.println("loops :" + loop);
 		optimize();
 		return ret;
 

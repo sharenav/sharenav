@@ -83,6 +83,7 @@ public class Outline {
 
 //					System.out.println("last.getNode(): " + last.getNode());
 //					System.out.println("first.getNode(): " + first.getNode());
+//					System.out.println("vertexlist size: " + vertexList.size());
 					if (o.vertexList.get(0).getNode().equals(last.getNode())) {
 //						System.out.println("found way connecting to end of outline, so append it");
 						changed = true;
@@ -283,7 +284,6 @@ public class Outline {
 		}
 		return b;
 	}
-
 	/**
 	 * @param i
 	 * @return

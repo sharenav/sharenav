@@ -115,6 +115,7 @@ public class NumberCanon {
 	private static char getNumberOf(char s){
 		if (s == 0)
 			return s;
+//		System.out.print("getNumberOf() s: '" + s + "' ");
 		if ((s >= minFastRange) && (s < maxFastRange)) {
 			/* This is the fast path */
 			return charMapCore[s - minFastRange];
