@@ -66,7 +66,7 @@ public class Names {
 				SortedSet<Name> subSet=canons.tailSet(mnNext);
 				Name mnExist=subSet.first();
 				if (mnExist != null) {
-					System.out.println("mnExist:" + mnExist);
+//					System.out.println("mnExist:" + mnExist);
 					mnExist.addEntity(w);
 				}
 			}
