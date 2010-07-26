@@ -373,10 +373,14 @@ public class SingleTile extends Tile implements QueueableTile {
 			case Legend.OM_WITH_NAMEPART: 
 				if (nameIdx[i] == -1) return;
 				String name = pc.trace.getName(nameIdx[i]);
-				String url = null;
-				if (urlIdx[i] != -1) {
-					url = pc.trace.getUrl(urlIdx[i]);
+				/* code for later inclusion of URL filtering
+				if (Legend.enableUrlTags) {
+				 String url = null;
+				 if (urlIdx[i] != -1) {
+				 	url = pc.trace.getUrl(urlIdx[i]);
+				 }
 				}
+				*/
 				if (name == null) return;
 				if (name.toUpperCase().indexOf(Legend.get0Poi1Area2WayNamePart((byte) 0).toUpperCase()) == -1) return;
 				break;
