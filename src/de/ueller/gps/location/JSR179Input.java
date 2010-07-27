@@ -112,6 +112,7 @@ public class JSR179Input
 				}
 			}
 			if (locationProvider != null) {
+				locationProvider.setLocationListener(this, 1, -1, -1);
 				updateSolution(locationProvider.getState());
 			} else {
 				receiverList.locationDecoderEnd("no JSR179 Provider"/* i:NoJSR179Provider */);
@@ -223,7 +224,6 @@ public class JSR179Input
 	private void updateSolution(int state) {
 		logger.info("Update Solution");
 		if (state == LocationProvider.AVAILABLE) {
-			locationProvider.setLocationListener(this, 1, -1, -1);
 			if (receiverList != null) {
 				receiverList.receiveSolution("On"/* i:On */);
 			}
@@ -233,7 +233,6 @@ public class JSR179Input
 		// FIXME current (2010-06) android j2mepolish gives OUT_OF_SERVICE even when a fix exists
 		//#else
 		if (state == LocationProvider.OUT_OF_SERVICE) {
-			locationProvider.setLocationListener(this, 1, -1, -1);
 			if (receiverList != null) {
 				receiverList.receiveSolution("Off"/* i:Off */);
 				receiverList.receiveMessage("provider stopped"/* i:ProviderStopped */);
@@ -252,7 +251,6 @@ public class JSR179Input
 			 * So setting setLocationListener to 0 interval, which should have given
 			 * you all the status changes, does not work.
 			 */
-			locationProvider.setLocationListener(this, 1, -1, -1);
 			if (receiverList != null) {
 				receiverList.receiveSolution("NoFix"/* i:NoFix */);
 			}
