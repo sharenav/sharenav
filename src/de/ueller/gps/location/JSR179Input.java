@@ -126,7 +126,7 @@ public class JSR179Input
 	public void locationUpdated(LocationProvider provider, Location location) {
 		//#debug info
 		logger.info("updateLocation: " + location);
-		if (location == null) {
+		if (location == null || ! location.isValid()) {
 			return;
 		}
 		//#debug debug
