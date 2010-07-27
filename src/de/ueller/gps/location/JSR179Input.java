@@ -192,6 +192,10 @@ public class JSR179Input
 			pos.speed = location.getSpeed();
 			pos.timeMillis = location.getTimestamp();
 			receiverList.receivePosition(pos);
+		} else {
+			if (receiverList != null) {
+				receiverList.receiveSolution("NoFix"/* i:NoFix */);
+			}
 		}
 		// logger.trace("exit locationUpdated(provider,location)");
 	}
