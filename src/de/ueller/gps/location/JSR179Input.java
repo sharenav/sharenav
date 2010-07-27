@@ -126,20 +126,12 @@ public class JSR179Input
 	public void locationUpdated(LocationProvider provider, Location location) {
 		//#debug info
 		logger.info("updateLocation: " + location);
-		if (location == null || ! location.isValid()) {
+		if (location == null) {
 			return;
 		}
 		//#debug debug
 		logger.debug("received Location: " + location.getLocationMethod());
 		
-		Coordinates coordinates = location.getQualifiedCoordinates();
-		pos.latitude = (float) coordinates.getLatitude();
-		pos.longitude = (float) coordinates.getLongitude();
-		pos.altitude = (float) coordinates.getAltitude();
-		pos.course = location.getCourse();
-		pos.speed = location.getSpeed();
-		pos.timeMillis = location.getTimestamp();
-		receiverList.receivePosition(pos);
 		String nmeaString = location
 				.getExtraInfo("application/X-jsr179-location-nmea");
 		//nmeaString =
@@ -190,6 +182,16 @@ public class JSR179Input
 			}
 		}
 
+		if (location.isValid()) {
+			Coordinates coordinates = location.getQualifiedCoordinates();
+			pos.latitude = (float) coordinates.getLatitude();
+			pos.longitude = (float) coordinates.getLongitude();
+			pos.altitude = (float) coordinates.getAltitude();
+			pos.course = location.getCourse();
+			pos.speed = location.getSpeed();
+			pos.timeMillis = location.getTimestamp();
+			receiverList.receivePosition(pos);
+		}
 		// logger.trace("exit locationUpdated(provider,location)");
 	}
 
