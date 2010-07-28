@@ -246,9 +246,7 @@ public class SearchNames implements Runnable {
 					int phoneidx = -1;
 					int nameidx = Names.readNameIdx(ds);
 					if (Legend.enableUrlTags) {
-						//#if polish.api.online
 						urlidx = Urls.readUrlIdx(ds);
-						//#endif
 					}
 					if (Legend.enablePhoneTags) {
 						phoneidx = Urls.readUrlIdx(ds);
