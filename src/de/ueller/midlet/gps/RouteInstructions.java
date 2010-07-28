@@ -222,16 +222,14 @@ public class RouteInstructions {
 						} else if (c.wayRouteInstruction == RI_AREA_CROSSED) {
 							IntPoint lineP1 = new IntPoint();
 							IntPoint lineP2 = new IntPoint();							
+							IntPoint centerP = new IntPoint();
+
 							pc.getP().forward(areaStart.radlat, areaStart.radlon, lineP1);
-							pc.lineP1.x-=xo;
-							pc.lineP1.x-=yo;
-
 							pc.getP().forward(c.to.lat, c.to.lon, lineP2);
-							pc.lineP2.x-=xo;
-							pc.lineP2.x-=yo;
-
+							pc.getP().forward(center.radlat, center.radlon, centerP);
+							
 							int dst = pc.getDstFromSquareDst( MoreMath.ptSegDistSq(lineP1.x, lineP1.y,
-									lineP2.x, lineP2.y, pc.xSize / 2, pc.ySize / 2));		
+									lineP2.x, lineP2.y, centerP.x, centerP.y ));		
 //							System.out.println("Area dst:" + dst  + " way: " + dstToRoutePath);
 							if (dst < dstToRoutePath) {
 								routePathConnection = i - 1;
@@ -315,12 +313,12 @@ public class RouteInstructions {
 							IntPoint lineP1 = new IntPoint();
 							IntPoint lineP2 = new IntPoint();							
 							pc.getP().forward(areaStart.radlat, areaStart.radlon, lineP1);
-							pc.lineP1.x-=xo;
-							pc.lineP1.x-=yo;
+							lineP1.x-=xo;
+							lineP1.y-=yo;
 
 							pc.getP().forward(c.to.lat, c.to.lon, lineP2);
-							pc.lineP2.x-=xo;
-							pc.lineP2.x-=yo;
+							lineP2.x-=xo;
+							lineP2.y-=yo;
 
 							pc.g.setStrokeStyle(Graphics.SOLID);
 							if (iNow > i) {
@@ -335,8 +333,8 @@ public class RouteInstructions {
 								// we are currently crossing the area, so we need to divide the line and draw a route dot onto it
 								IntPoint centerP = new IntPoint();
 								pc.getP().forward(center.radlat, center.radlon, centerP);
-								pc.lineP2.x-=xo;
-								pc.lineP2.x-=yo;
+								centerP.x-=xo;
+								centerP.y-=yo;
 
 								IntPoint closestP = MoreMath.closestPointOnLine(lineP1.x, lineP1.y, lineP2.x, lineP2.y, centerP.x, centerP.y);
 								pc.g.setColor(Legend.COLORS[Legend.COLOR_ROUTE_PRIOR_ROUTELINE]);														
