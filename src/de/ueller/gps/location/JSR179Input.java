@@ -234,7 +234,8 @@ public class JSR179Input
 			
 		}
 		//#if polish.android
-		// FIXME current (2010-06) android j2mepolish gives OUT_OF_SERVICE even when a fix exists
+		// FIXME when j2mepolish is fixed; 2010-06 j2mepolish gives OUT_OF_SERVICE
+		// even when waiting for a fix, so we don't want to switch GPS off here
 		//#else
 		if (state == LocationProvider.OUT_OF_SERVICE) {
 			if (receiverList != null) {
