@@ -140,14 +140,18 @@
 		<!-- 
 		 -->
 		<!-- 
-		   building for Android:
+		   building for Android
+
 			fullscreen="no"
 			usePolishGui="true"
 
-		   and modify the android.home property in the beginning of the file to have the correct path for android SDK
-		   As there's no bundling support yet, you need to have the map on the sd card at directory gpsmidmap 
-		   Success varies with j2mpolish versions; succesfull build has been
+		   with j2mepolish 2010-07-28 and later also must be used for J2ME builds:
+
+		   for android, modify the android.home property in the beginning of the file to have the correct path for android SDK
+		   As there's no bundling support yet, you need to have the map on the sd card at directory named "gpsmidmap".
+		   Success varies with j2mpolish versions; succesful build has been
 		   achieved with http://download.j2mepolish.org/daily/j2mepolish-2010-06-10.jar
+                   and 2010-07-28; probably later versions will also work.
 		 -->
 
 		<build
@@ -216,7 +220,7 @@
 			</resources>
 			
 			<!-- obfuscator settings: do not obfuscate when the test-property is true -->
-			<obfuscator name="ProGuard" useDefaultPackage="false" unless="logging || polish.blackberry || polish.api.noobfuscation" >
+			<obfuscator name="ProGuard" useDefaultPackage="false" unless="logging || polish.blackberry || polish.api.noobfuscation || polish.android" >
 				<!--
 				You can set additional parameters here, e.g.:
 				<parameter name="optimize" value="false" />
