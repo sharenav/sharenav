@@ -65,8 +65,16 @@ done
 # Finally convert the wav-files to AMR format
 # GpsMid's standard sound files are at 4.75kbit/s which is the lowest possible bit rate
 # don't have the command for this available, apparently I'm missing the amr codec
-
+# this uses MR122 for a better sound quality
 #for file in *.wav
 #do
 #  code-for-amr-program-or-sox-with-parametres  $file `basename $file .wav`.amr
 #done
+#
+#package is: amrnb
+#
+
+for file in *.wav
+do
+  amrnb-encoder MR122 $file `basename $file .wav`.amr
+done
