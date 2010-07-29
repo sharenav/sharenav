@@ -89,6 +89,7 @@
    		<entry key="useSounds" value="amr"/>
    		<entry key="useSoundFilesWithSyntax" value="sound"/>
    		<entry key="lang" value="${local_lang}"/>
+   		<entry key="langName" value=""/>
    	</propertyfile>
    </target>
 
@@ -182,6 +183,7 @@
 		<antcall target="deploy">
 			<param name="local_lang2" value="de"/>
 			<param name="local_lang" value="de"/>
+			<param name="local_lang" value="Deutsch"/>
 		</antcall>
         <delete file="${resources.dir}/version.properties" failonerror="false"/>
         <delete failonerror="false">
@@ -193,6 +195,7 @@
 		<antcall target="deploy">
 			<param name="local_lang2" value="en"/>
 			<param name="local_lang" value="en"/>
+			<param name="local_lang_name" value="English"/>
 		</antcall>
 	</target>
 

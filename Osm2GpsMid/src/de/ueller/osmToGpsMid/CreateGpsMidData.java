@@ -227,18 +227,28 @@ public class CreateGpsMidData implements FilenameFilter {
 			dsi.writeBoolean(config.enableEditingSupport);
 			/* Note what languages are enabled
 			 */
-			short numUiLang=1;
-			short numNaviLang=1;
-			short numOnlineLang=1;
-			short numWikipediaLang=1;
-			dsi.writeShort(numUiLang);
-			dsi.writeUTF(config.getLang());
-			dsi.writeShort(numNaviLang);
-			dsi.writeUTF(config.getLang());
-			dsi.writeShort(numOnlineLang);
-			dsi.writeUTF(config.getLang());
-			dsi.writeShort( numWikipediaLang);
-			dsi.writeUTF(config.getLang());
+/*			short numNaviLang=2;
+			short numOnlineLang=2;
+			short numWikipediaLang=2;
+			short numNamesOnMapLang=2;*/
+
+			// make all available languages the same for now:
+			// useLang if set and English
+			for (int i = 1; i <= 5 ; i++) {
+				short numUiLang;
+				if (config.getLang().equals("en")) { 
+					numUiLang = 1;
+				} else {
+					numUiLang = 2;
+				}
+				dsi.writeShort(numUiLang);
+				if (! config.getLang().equals("en")) { 
+					dsi.writeUTF(config.getLang());
+					dsi.writeUTF(config.getLangName());
+				}
+				dsi.writeUTF("en");
+				dsi.writeUTF("English");
+			}
  			/**
 			 * Note if urls and phones are in the midlet
 			 */
