@@ -180,17 +180,6 @@
                 <include name="*.jar" />
             </fileset>  
         </delete>
-		<antcall target="deploy">
-			<param name="local_lang2" value="de"/>
-			<param name="local_lang" value="de"/>
-			<param name="local_lang" value="Deutsch"/>
-		</antcall>
-        <delete file="${resources.dir}/version.properties" failonerror="false"/>
-        <delete failonerror="false">
-            <fileset dir="${resources.dir}">
-                <include name="*.jar" />
-            </fileset>  
-        </delete>
 
 		<antcall target="deploy">
 			<param name="local_lang2" value="en"/>
