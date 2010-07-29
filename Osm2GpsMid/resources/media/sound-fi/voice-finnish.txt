@@ -1,8 +1,10 @@
 after:päästä
-half:loiva
-hard:jyrkkä
+half:loivasti
+hard:jyrkästi
 left:vasen
+toleft:vasemmalle
 right:oikea
+toright:oikealle
 straighton:suoraan eteenpäin
 prepare:valmistaudu
 continue:jatka
@@ -34,7 +36,7 @@ target_reached:kohde saavutettu
 check_direction:tarkista suunta!
 route_recalculation:Lasken reitin uudelleen
 speed_limit:Ylinopeus
-bear:kaarra
+bear:kaista
 follow_street:seuraa tätä tietä
 area_cross:ylitä alue
 area_crossed:jätä alue
@@ -42,3 +44,4 @@ uturn:uu-käännös
 dest_reached:Olet perillä
 connect:Paikannus
 disconnect:Paikannus poissa
+and:ja
