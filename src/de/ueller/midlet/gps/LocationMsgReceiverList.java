@@ -35,6 +35,8 @@ public class LocationMsgReceiverList implements LocationMsgReceiver {
 	 * Vector of all the LocationMsgReceivers
 	 */
 	private Vector receiverList;
+	
+	private volatile String currentSolution; 
 
 	public LocationMsgReceiverList() {
 		receiverList = new Vector(2);
@@ -77,12 +79,17 @@ public class LocationMsgReceiverList implements LocationMsgReceiver {
 	}
 
 	public void receiveSolution(String solution) {
+		currentSolution = solution;
 		Enumeration en = receiverList.elements();
 		LocationMsgReceiver receiver;
 		while (en.hasMoreElements()) {
 			receiver = (LocationMsgReceiver) en.nextElement();
 			receiver.receiveSolution(solution);
 		}
+	}
+	
+	public String getCurrentSolution() {
+		return currentSolution;
 	}
 
 	public void receiveSatellites(Satelit[] sats) {

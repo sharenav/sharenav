@@ -184,6 +184,12 @@ public class JSR179Input
 		}
 
 		if (location.isValid()) {
+			/* e.g. SE C702 only receives from getExtraInfo() $GPGSV sentences,
+			 * therefore use On as solution when it's still set to NoFix though the location is valid
+			 */
+			if (receiverList.getCurrentSolution().equals("NoFix"/* i:NoFix */)) {
+				receiverList.receiveSolution("On"/* i:On */);				
+			}
 			Coordinates coordinates = location.getQualifiedCoordinates();
 			pos.latitude = (float) coordinates.getLatitude();
 			pos.longitude = (float) coordinates.getLongitude();
