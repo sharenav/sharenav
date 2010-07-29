@@ -7,6 +7,9 @@
 package de.ueller.midlet.gps;
 
 import java.util.Vector;
+import java.io.IOException;
+
+import de.enough.polish.util.Locale;
 
 import javax.microedition.io.Connection;
 import javax.microedition.io.Connector;
@@ -21,6 +24,7 @@ import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Form;
+import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.List;
 import javax.microedition.lcdui.StringItem;
@@ -190,6 +194,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	private ChoiceGroup mapSrcOptions;
 	private ChoiceGroup rotationGroup;
 	private ChoiceGroup nightModeGroup;
+	private ChoiceGroup uiLangGroup;
 	private ChoiceGroup renderOpts;
 	private ChoiceGroup metricUnits;
 	private TextField	tfAutoRecenterToGpsSecs;
@@ -400,6 +405,16 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		menuDisplayOptions.addCommand(BACK_CMD);
 		menuDisplayOptions.addCommand(OK_CMD);
 
+		if (Legend.numUiLang > 1) {
+			String [] uiLang = new String[Legend.numUiLang];
+			for (int i = 0; i < Legend.numUiLang; i++) {
+				uiLang[i] = Legend.uiLangName[i];
+			}
+			uiLangGroup = new ChoiceGroup("Language", Choice.EXCLUSIVE, uiLang, null);
+			menuDisplayOptions.append(uiLangGroup);
+		}
+		// FIXME add dialogue for navi, online & street name language switch,
+		// maybe make a submenu
 		String [] nightMode = new String[2];
 		nightMode[0] = "Day Mode";
 		nightMode[1] = "Night Mode";
@@ -730,6 +745,18 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				logger.fatal("Need to restart GpsMid, otherwise map is in an inconsistant state" + url+Configuration.getMapUrl());
 				break;
 			case STATE_DISPOPT:
+				if (Legend.numUiLang > 1) {
+					try {
+						Locale.loadTranslations( "/" + Legend.uiLang[uiLangGroup.getSelectedIndex()] + ".loc" );
+					} catch (IOException ioe) {
+						System.out.println("Couldn't open translations file");
+					}
+					Configuration.setUiLang(Legend.uiLang[uiLangGroup.getSelectedIndex()]);
+					Configuration.setNaviLang(Legend.uiLang[uiLangGroup.getSelectedIndex()]);
+					Configuration.setOnlineLang(Legend.uiLang[uiLangGroup.getSelectedIndex()]);
+					Configuration.setWikipediaLang(Legend.uiLang[uiLangGroup.getSelectedIndex()]);
+					Configuration.setNamesOnMapLang(Legend.uiLang[uiLangGroup.getSelectedIndex()]);
+				}
 				boolean nightMode = (nightModeGroup.getSelectedIndex() == 1);
 				
 				if (nightMode != Configuration.getCfgBitState(Configuration.CFGBIT_NIGHT_MODE) ) {
@@ -937,6 +964,16 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				break;
 			case MENU_ITEM_DISP_OPT: // Display Options
 				initDisplay();
+				int langNum = 0; // default is the first in bundle
+				if (Legend.numUiLang > 1) {
+					String lang = Configuration.getUiLang();
+					for (int i = 0; i < Legend.numUiLang; i++) {
+						if (Legend.uiLang[i].equalsIgnoreCase(lang)) {
+							langNum = i;
+						}
+					}
+					uiLangGroup.setSelectedIndex( langNum, true);
+				}
 				nightModeGroup.setSelectedIndex( Configuration.getCfgBitSavedState(Configuration.CFGBIT_NIGHT_MODE) ? 1 : 0, true);
 				rotationGroup.setSelectedIndex(Configuration.getProjDefault(), true);
 				renderOpts.setSelectedIndex( Configuration.getCfgBitSavedState(Configuration.CFGBIT_STREETRENDERMODE) ? 1 : 0, true);

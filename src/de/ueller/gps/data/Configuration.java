@@ -49,7 +49,7 @@ public class Configuration {
 	 *  the default values for the features added between configVersionStored
 	 *  and VERSION will be set, before the version in the recordstore is increased to VERSION.
 	 */
-	public final static int VERSION = 17;
+	public final static int VERSION = 18;
 
 	public final static int LOCATIONPROVIDER_NONE = 0;
 	public final static int LOCATIONPROVIDER_SIRF = 1;
@@ -269,6 +269,11 @@ public class Configuration {
 	private static final int RECORD_ID_WAYPT_SORT_MODE = 43;
 	private static final int RECORD_ID_BACKLIGHTLEVEL = 44;
 	private static final int RECORD_ID_BASESCALE = 45;
+	private static final int RECORD_ID_UI_LANG = 46;
+	private static final int RECORD_ID_NAVI_LANG = 47;
+	private static final int RECORD_ID_ONLINE_LANG = 48;
+	private static final int RECORD_ID_WP_LANG = 49;
+	private static final int RECORD_ID_NAME_LANG = 50;
 
 	// Gpx Recording modes
 	// GpsMid determines adaptive if a trackpoint is written
@@ -374,6 +379,12 @@ public class Configuration {
 	private static int baseScale = 23;
 	private static float realBaseScale = 15000;
 
+	private static String uiLang;
+	private static String naviLang;
+	private static String onlineLang;
+	private static String wikipediaLang;
+	private static String namesOnMapLang;
+
 	
 	public static void read() {
 	logger = Logger.getInstance(Configuration.class, Logger.DEBUG);
@@ -432,6 +443,12 @@ public class Configuration {
 			if (osm_url == null) {
 				osm_url = "http://api.openstreetmap.org/api/0.6/";
 			}
+
+			uiLang = readString(database, RECORD_ID_UI_LANG);
+			naviLang = readString(database, RECORD_ID_NAVI_LANG);
+			onlineLang = readString(database, RECORD_ID_ONLINE_LANG);
+			wikipediaLang = readString(database, RECORD_ID_WP_LANG);
+			namesOnMapLang = readString(database, RECORD_ID_NAME_LANG);
 
 			opencellid_apikey = readString(database, RECORD_ID_OPENCELLID_APIKEY);
 
@@ -617,6 +634,13 @@ public class Configuration {
 			setBackLightLevel(backLightLevel);
 			setPhoneAllTimeMaxMemory(0);
 			setBaseScale(23);
+		}
+		if (configVersionStored < 18) {
+			setUiLang("en");
+			setNaviLang("en");
+			setOnlineLang("en");
+			setWikipediaLang("en");
+			setNamesOnMapLang("en");
 		}
 
 		setCfgBits(cfgBits_0_to_63, cfgBits_64_to_127);
@@ -1086,6 +1110,51 @@ public class Configuration {
 		}
 	}
 	
+	public static void setUiLang(String uiLang) {
+		Configuration.uiLang = uiLang;
+		write(uiLang, RECORD_ID_UI_LANG);
+	}
+
+	public static String getUiLang() {
+		return uiLang;
+	}
+
+	public static void setNaviLang(String naviLang) {
+		Configuration.naviLang = naviLang;
+		write(naviLang, RECORD_ID_NAVI_LANG);
+	}
+
+	public static String getNaviLang() {
+		return naviLang;
+	}
+
+	public static void setOnlineLang(String onlineLang) {
+		Configuration.onlineLang = onlineLang;
+		write(onlineLang, RECORD_ID_ONLINE_LANG);
+	}
+
+	public static String getOnlineLang() {
+		return onlineLang;
+	}
+
+	public static void setWikipediaLang(String wikipediaLang) {
+		Configuration.wikipediaLang = wikipediaLang;
+		write(wikipediaLang, RECORD_ID_WP_LANG);
+	}
+
+	public static String getWikipediaLang() {
+		return wikipediaLang;
+	}
+
+	public static void setNamesOnMapLang(String namesOnMapLang) {
+		Configuration.namesOnMapLang = namesOnMapLang;
+		write(namesOnMapLang, RECORD_ID_NAME_LANG);
+	}
+
+	public static String getNamesOnMapLang() {
+		return namesOnMapLang;
+	}
+
 	public static void setGpxUrl(String url) {
 		Configuration.gpxUrl = url;
 		write(url, RECORD_ID_GPX_URL);

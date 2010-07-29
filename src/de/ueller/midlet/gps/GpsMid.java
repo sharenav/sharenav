@@ -132,8 +132,18 @@ public class GpsMid extends MIDlet implements CommandListener {
 					+ e.getMessage();
 		}
 
+		int langNum = 0;  // default is the first in bundle
+		if (Legend.numUiLang > 1) {
+			langNum = 0; 
+			String lang = Configuration.getUiLang();
+			for (int i = 0; i < Legend.numUiLang; i++) {
+				if (Legend.uiLang[i].equalsIgnoreCase(lang)) {
+					langNum = i;
+				}
+			}
+		}
 		try {
-			Locale.loadTranslations( "/" + Legend.uiLang + ".loc" );
+			Locale.loadTranslations( "/" + Legend.uiLang[langNum] + ".loc" );
 		} catch (IOException ioe) {
 			System.out.println("Couldn't open translations file");
 		}
