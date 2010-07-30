@@ -36,7 +36,7 @@ public class LocationMsgReceiverList implements LocationMsgReceiver {
 	 */
 	private Vector receiverList;
 	
-	private volatile String currentSolution; 
+	private volatile String currentSolution = ""; 
 
 	public LocationMsgReceiverList() {
 		receiverList = new Vector(2);
