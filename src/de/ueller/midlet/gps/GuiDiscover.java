@@ -751,7 +751,12 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 					} catch (IOException ioe) {
 						System.out.println("Couldn't open translations file");
 					}
-					Configuration.setUiLang(Legend.uiLang[uiLangGroup.getSelectedIndex()]);
+					String uiLang = Legend.uiLang[uiLangGroup.getSelectedIndex()];
+					if (!uiLang.equals(Configuration.getUiLang())) { 
+						Trace.uncacheIconMenu();
+						uncacheIconMenu();
+					}
+					Configuration.setUiLang(uiLang);
 					Configuration.setNaviLang(Legend.uiLang[uiLangGroup.getSelectedIndex()]);
 					Configuration.setOnlineLang(Legend.uiLang[uiLangGroup.getSelectedIndex()]);
 					Configuration.setWikipediaLang(Legend.uiLang[uiLangGroup.getSelectedIndex()]);
