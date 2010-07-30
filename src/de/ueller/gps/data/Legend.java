@@ -21,7 +21,7 @@ public class Legend {
 	 * Specifies the format of the map on disk we expect to see
 	 * This constant must be in sync with Osm2GpsMid
 	 */
-	public final static short MAP_FORMAT_VERSION = 59;
+	public final static short MAP_FORMAT_VERSION = 60;
 	
 	/** The waypoint format used in the RecordStore. See PositionMark.java. */
 	public final static short WAYPT_FORMAT_VERSION = 2;
@@ -171,13 +171,24 @@ public class Legend {
 	
 	public static String appVersion;
 	public static String bundleDate;
-	public static String uiLang;
-	public static String naviLang;
-	public static String onlineLang;
-	public static String wikipediaLang;
 	public static boolean enableEdits;
 	public static boolean enableUrlTags;
 	public static boolean enablePhoneTags;
+	public static short numUiLang;
+	public static short numNaviLang;
+	public static short numOnlineLang;
+	public static short numWikipediaLang;
+	public static short numNamesOnMapLang;
+	public static String[] uiLang;
+	public static String[] uiLangName;
+	public static String[] naviLang;
+	public static String[] naviLangName;
+	public static String[] onlineLang;
+	public static String[] onlineLangName;
+	public static String[] wikipediaLang;
+	public static String[] wikipediaLangName;
+	public static String[] namesOnMapLang;
+	public static String[] namesOnMapLangName;
 	
 	private static POIdescription[] pois;
 	private static WayDescription[] ways;
@@ -241,18 +252,47 @@ public class Legend {
 		appVersion = ds.readUTF();
 		bundleDate = ds.readUTF();
 		enableEdits = ds.readBoolean();
-		short numUiLang = ds.readShort();	// ignored for now
-		uiLang = ds.readUTF();
-		short numNaviLang = ds.readShort();	// ignored for now
-		naviLang = ds.readUTF();
-		short numOnlineLang = ds.readShort();	// ignored for now
-		onlineLang = ds.readUTF();
-		short numWikipediaLang = ds.readShort();// ignored for now
-		wikipediaLang = ds.readUTF();
+		numUiLang = ds.readShort();
+		uiLang = new String[numUiLang];
+		uiLangName = new String[numUiLang];
+		for (int i = 0; i < numUiLang; i++) {
+			uiLang[i] = ds.readUTF();
+			uiLangName[i] = ds.readUTF();
+		}
+		numNaviLang = ds.readShort();
+		naviLang = new String[numNaviLang];
+		naviLangName = new String[numNaviLang];
+		for (int i = 0; i < numNaviLang; i++) {
+			naviLang[i] = ds.readUTF();
+			naviLangName[i] = ds.readUTF();
+		}
+		numOnlineLang = ds.readShort();
+		onlineLang = new String[numOnlineLang];
+		onlineLangName = new String[numOnlineLang];
+		for (int i = 0; i < numOnlineLang; i++) {
+			onlineLang[i] = ds.readUTF();
+			onlineLangName[i] = ds.readUTF();
+		}
+		numWikipediaLang = ds.readShort();
+		wikipediaLang = new String[numWikipediaLang];
+		wikipediaLangName = new String[numWikipediaLang];
+		for (int i = 0; i < numWikipediaLang; i++) {
+			wikipediaLang[i] = ds.readUTF();
+			wikipediaLangName[i] = ds.readUTF();
+		}
+		numNamesOnMapLang = ds.readShort();
+		namesOnMapLang = new String[numNamesOnMapLang];
+		namesOnMapLangName = new String[numNamesOnMapLang];
+		for (int i = 0; i < numNamesOnMapLang; i++) {
+			namesOnMapLang[i] = ds.readUTF();
+			namesOnMapLangName[i] = ds.readUTF();
+		}
+
 		enableUrlTags = ds.readBoolean();
 		enablePhoneTags = ds.readBoolean();
+
 		//#if polish.api.osm-editing
-		
+
 		//#else
 		if (enableEdits) {
 			throw new IOException("The Map files are enabled for editing, but editing is not compiled into GpsMid." +
