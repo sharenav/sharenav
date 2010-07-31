@@ -21,7 +21,7 @@ public class Legend {
 	 * Specifies the format of the map on disk we expect to see
 	 * This constant must be in sync with Osm2GpsMid
 	 */
-	public final static short MAP_FORMAT_VERSION = 60;
+	public final static short MAP_FORMAT_VERSION = 61;
 	
 	/** The waypoint format used in the RecordStore. See PositionMark.java. */
 	public final static short WAYPT_FORMAT_VERSION = 2;
@@ -168,6 +168,7 @@ public class Legend {
 	public static int COLORS[] = new int[COLOR_COUNT];
 
 	public static String soundFormats[];
+	public static String soundDirectories[];
 	
 	public static String appVersion;
 	public static String bundleDate;
@@ -348,6 +349,16 @@ public class Legend {
 		for (int i = 0; i < count; i++) {
 			soundFormats[i] = ds.readUTF();
 		}
+
+		/*
+		 * Read sound directories
+		 */
+		count = (int) ds.readByte();
+		soundDirectories = new String[count];
+		for (int i = 0; i < count; i++) {
+			soundDirectories[i] = ds.readUTF();
+		}
+
 		
 		ds.close();
 	}

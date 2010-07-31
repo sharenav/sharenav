@@ -274,6 +274,7 @@ public class Configuration {
 	private static final int RECORD_ID_ONLINE_LANG = 48;
 	private static final int RECORD_ID_WP_LANG = 49;
 	private static final int RECORD_ID_NAME_LANG = 50;
+	private static final int RECORD_ID_SOUND_DIRECTORY = 51;
 
 	// Gpx Recording modes
 	// GpsMid determines adaptive if a trackpoint is written
@@ -384,6 +385,7 @@ public class Configuration {
 	private static String onlineLang;
 	private static String wikipediaLang;
 	private static String namesOnMapLang;
+	private static String soundDirectory;
 
 	
 	public static void read() {
@@ -449,7 +451,8 @@ public class Configuration {
 			onlineLang = readString(database, RECORD_ID_ONLINE_LANG);
 			wikipediaLang = readString(database, RECORD_ID_WP_LANG);
 			namesOnMapLang = readString(database, RECORD_ID_NAME_LANG);
-
+			soundDirectory = readString(database, RECORD_ID_SOUND_DIRECTORY);
+			
 			opencellid_apikey = readString(database, RECORD_ID_OPENCELLID_APIKEY);
 
 			minRouteLineWidth = readInt(database, RECORD_ID_MIN_ROUTELINE_WIDTH);
@@ -1485,6 +1488,20 @@ public class Configuration {
 	public static byte getProjDefault() {
 		return projTypeDefault;
 	}
+
+	public static String getSoundDirectory() {
+		if (soundDirectory == null) {
+			soundDirectory = Legend.soundDirectories[0];
+		}
+		return soundDirectory;
+	}
+
+	public static void setSoundDirectory(String soundDir) {
+		soundDirectory = soundDir;
+		write(soundDir, RECORD_ID_SOUND_DIRECTORY);
+	}
+
+	
 	
 	public static boolean getDeviceSupportsJSR135() {
 		//#if polish.api.mmapi

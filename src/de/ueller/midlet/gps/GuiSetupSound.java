@@ -7,9 +7,13 @@ package de.ueller.midlet.gps;
 
 import javax.microedition.lcdui.*;
 import de.ueller.gps.data.Configuration;
+import de.ueller.gps.data.Legend;
 
 
 public class GuiSetupSound extends Form implements CommandListener {
+	// Sound Directories
+	private ChoiceGroup sndDirsGroup;
+	
 	// Groups
 	private ChoiceGroup sndGpsGroup;
 	private	String [] sndGps = new String[3];
@@ -36,6 +40,15 @@ public class GuiSetupSound extends Form implements CommandListener {
 		super("Sounds & Alerts");
 		this.parent = parent;
 		try {
+			// add sound directories and set selected one.
+			sndDirsGroup = new ChoiceGroup("Sound/Navigation", Choice.EXCLUSIVE, Legend.soundDirectories ,null);
+			for (int i=0; i < Legend.soundDirectories.length; i++) {
+				if (Legend.soundDirectories[i].equals(Configuration.getSoundDirectory())) {
+					sndDirsGroup.setSelectedIndex(i, true);
+				}
+			}
+			append(sndDirsGroup);
+
 			// set choice texts and convert bits from Configuration flag into selection states
 			sndGps[0] = "Connect"; 			selSndGps[0]=Configuration.getCfgBitState(Configuration.CFGBIT_SND_CONNECT);
 			sndGps[1] = "Disconnect";		selSndGps[1]=Configuration.getCfgBitState(Configuration.CFGBIT_SND_DISCONNECT);
@@ -86,7 +99,14 @@ public class GuiSetupSound extends Form implements CommandListener {
 			return;
 		}
 
-		if (c == CMD_SAVE) {			
+		if (c == CMD_SAVE) {		
+			// set sound directory
+	        String newSoundDir = Legend.soundDirectories[sndDirsGroup.getSelectedIndex()];
+			if (!newSoundDir.equals(Configuration.getSoundDirectory())) {
+				Configuration.setSoundDirectory(newSoundDir);
+				RouteSyntax.getInstance().readSyntax();
+			}
+			
 			// convert boolean array with selection states for Configuration bits
 			// to one flag with corresponding bits set
 	        sndGpsGroup.getSelectedFlags(selSndGps);

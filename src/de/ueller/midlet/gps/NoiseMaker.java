@@ -296,7 +296,7 @@ public class NoiseMaker
 				trySuffix = Legend.soundFormats[i];
 //				System.out.println("****************** try " + trySuffix);
 			}
-			soundFileWithSuffix = "/" + soundName.toLowerCase() + "." + trySuffix;
+			soundFileWithSuffix = "/" + Configuration.getSoundDirectory() + "/" + soundName.toLowerCase() + "." + trySuffix;
 			//System.out.println("******************" + soundFileWithSuffix);
 			
 			InputStream is = getClass().getResourceAsStream(soundFileWithSuffix);

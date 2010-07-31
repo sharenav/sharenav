@@ -9,6 +9,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import de.ueller.gps.data.Configuration;
 import de.ueller.gps.tools.StringTools;
 import de.ueller.gpsMid.mapData.QueueReader;
 
@@ -115,11 +116,12 @@ public class RouteSyntax {
 	
 	public boolean readSyntax() {
 		int i;
+		String syntaxDat = "/" + Configuration.getSoundDirectory() + "/syntax.dat";
 		try {
-			InputStream is = QueueReader.class.getResourceAsStream("/syntax.dat");
+			InputStream is = QueueReader.class.getResourceAsStream(syntaxDat);
 			DataInputStream dis = new DataInputStream(is);
 			if (dis.readByte() != SYNTAX_FORMAT_VERSION) {
-				logger.error("syntax.dat corrupt");
+				logger.error(syntaxDat + " corrupt");
 				return false;			
 			}			
 			
@@ -166,17 +168,16 @@ public class RouteSyntax {
 			recalculationSound = dis.readUTF();
 
 			if (dis.readShort() != 0x3550) {
-				logger.error("syntax.dat corrupt");
+				logger.error(syntaxDat + " corrupt");
 				return false;
 			}
 			
 		} catch (IOException ioe) {
-			logger.error("error reading syntax.dat");
+			logger.error("error reading " + syntaxDat);
 			return false;			
 		}
-		System.out.println("syntax.dat read successfully");
+		System.out.println(syntaxDat + " read successfully");
 		return true;
-		
 	}
 	
 	
