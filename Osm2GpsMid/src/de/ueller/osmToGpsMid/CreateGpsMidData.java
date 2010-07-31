@@ -429,28 +429,42 @@ public class CreateGpsMidData implements FilenameFilter {
 				}
 				removeUnusedIconSizes(path, false);
 			}
-			
-			RouteSoundSyntax soundSyn = new RouteSoundSyntax(configuration.getStyleFileDirectory(), configuration.getSoundFiles(), path + "/syntax.dat");			
-			
+						
 			/**
 			 * Copy sounds for all sound formats to midlet 
 			 */
-	    	String soundFormat[] = configuration.getUseSounds().split("[;,]", 2);
-	    	dsi.write((byte) soundFormat.length);
-	    	for (int j = 0; j < soundFormat.length; j++) {
-		    	dsi.writeUTF(soundFormat[j].trim());
+			String soundFormat[] = configuration.getUseSounds().split("[;,]", 2);
+			// write sound format infos 
+			dsi.write((byte) soundFormat.length);
+	    	for (int i = 0; i < soundFormat.length; i++) {
+		    	dsi.writeUTF(soundFormat[i].trim());
 	    	}
 			
-			String soundFile;
-			Object soundNames[] = soundSyn.getSoundNames(); 
-			for (int i = 0; i < soundNames.length ; i++) {
-				soundFile = (String) soundNames[i];
-				soundFile = soundFile.toLowerCase();
-		    	for (int j = 0; j < soundFormat.length; j++) {
-					outputMedia = copyMediaToMid(soundFile + "." + soundFormat[j].trim(), path, configuration.getSoundFiles());					
+	    	/**
+	    	 * write all sound files in each sound directory for all sound formats
+	    	 */
+	    	String soundFileDirectories[] = configuration.getSoundFiles().split("[;,]", 10);
+			dsi.write((byte) soundFileDirectories.length);
+	    	for (int i = 0; i < soundFileDirectories.length; i++) {
+	    		String destSoundPath = path + "/" + soundFileDirectories[i].trim();
+	    		// System.out.println("create sound directory: " + destSoundPath);
+	    		FileTools.createPath(new File(destSoundPath));
+	    		dsi.writeUTF(soundFileDirectories[i].trim());
+	    		
+	    		// create soundSyntax for current sound directory
+				RouteSoundSyntax soundSyn = new RouteSoundSyntax(configuration.getStyleFileDirectory(), soundFileDirectories[i].trim(), destSoundPath + "/syntax.dat");			
+	    		
+		    	String soundFile;
+				Object soundNames[] = soundSyn.getSoundNames(); 
+				for (int j = 0; j < soundNames.length ; j++) {
+					soundFile = (String) soundNames[j];
+					soundFile = soundFile.toLowerCase();
+			    	for (int k = 0; k < soundFormat.length; k++) {
+						outputMedia = copyMediaToMid(soundFile + "." + soundFormat[k].trim(), destSoundPath, soundFileDirectories[i].trim());					
+					}
 				}
-			}
-			removeUnusedSoundFormats(path);
+				removeUnusedSoundFormats(destSoundPath);
+	    	}
 
 			
 			// show summary for copied media files
