@@ -61,7 +61,8 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 		Locale.get("splash.artwork")/* Artwork: */,
 		" Tobias Mueller",
 		Locale.get("splash.skip")/* Press '*' to skip this */,
-		Locale.get("splash.screen")/* screen at startup. */ };
+		Locale.get("splash.screen")/* screen at startup. */,
+		"Press '#' to switch to English" };
 	private Font f;
 	int top = 0;
 	private Thread processorThread;
@@ -197,6 +198,19 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 			} else {
 				main.alert("Splash", Locale.get("splash.HideSplash"), 3000);
 			}
+		}
+		if (keyCode == KEY_POUND) {
+			main.alert("Splash", "Switching to English", 3000);
+			try {
+				Locale.loadTranslations( "/en.loc" );
+			} catch (IOException ioe) {
+				System.out.println("Couldn't open translations file");
+			}
+			Configuration.setUiLang("en");
+			Configuration.setNaviLang("en");
+			Configuration.setOnlineLang("en");
+			Configuration.setWikipediaLang("en");
+			Configuration.setNamesOnMapLang("en");
 		}
 	}
 }
