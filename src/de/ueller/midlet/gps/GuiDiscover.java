@@ -195,6 +195,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	private ChoiceGroup rotationGroup;
 	private ChoiceGroup nightModeGroup;
 	private ChoiceGroup uiLangGroup;
+	private ChoiceGroup naviLangGroup;
 	private ChoiceGroup renderOpts;
 	private ChoiceGroup metricUnits;
 	private TextField	tfAutoRecenterToGpsSecs;
@@ -413,8 +414,16 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 			uiLangGroup = new ChoiceGroup("Language", Choice.EXCLUSIVE, uiLang, null);
 			menuDisplayOptions.append(uiLangGroup);
 		}
-		// FIXME add dialogue for navi, online & street name language switch,
-		// maybe make a submenu
+		if (Legend.numNaviLang > 1) {
+			String [] naviLang = new String[Legend.numNaviLang];
+			for (int i = 0; i < Legend.numNaviLang; i++) {
+				naviLang[i] = Legend.naviLangName[i];
+			}
+			naviLangGroup = new ChoiceGroup("Sound/Navi language", Choice.EXCLUSIVE, naviLang, null);
+			menuDisplayOptions.append(naviLangGroup);
+		}
+		// FIXME add dialogue for online & street name language switch,
+		// maybe make a submenu or a separate language menu
 		String [] nightMode = new String[2];
 		nightMode[0] = "Day Mode";
 		nightMode[1] = "Night Mode";
@@ -746,21 +755,87 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				break;
 			case STATE_DISPOPT:
 				if (Legend.numUiLang > 1) {
+					String uiLang = Legend.uiLang[uiLangGroup.getSelectedIndex()];
 					try {
-						Locale.loadTranslations( "/" + Legend.uiLang[uiLangGroup.getSelectedIndex()] + ".loc" );
+						Locale.loadTranslations( "/" + uiLang + ".loc" );
 					} catch (IOException ioe) {
 						System.out.println("Couldn't open translations file");
 					}
-					String uiLang = Legend.uiLang[uiLangGroup.getSelectedIndex()];
 					if (!uiLang.equals(Configuration.getUiLang())) { 
 						Trace.uncacheIconMenu();
 						uncacheIconMenu();
 					}
 					Configuration.setUiLang(uiLang);
-					Configuration.setNaviLang(Legend.uiLang[uiLangGroup.getSelectedIndex()]);
 					Configuration.setOnlineLang(Legend.uiLang[uiLangGroup.getSelectedIndex()]);
 					Configuration.setWikipediaLang(Legend.uiLang[uiLangGroup.getSelectedIndex()]);
 					Configuration.setNamesOnMapLang(Legend.uiLang[uiLangGroup.getSelectedIndex()]);
+				}
+				if (Legend.numNaviLang > 1) {
+					String naviLang = Legend.naviLang[naviLangGroup.getSelectedIndex()];
+					boolean multipleDirsForLanguage = false;
+					if (!naviLang.equals(Configuration.getNaviLang())) { 
+						// selected language changed
+						String soundDirBase[] = new String[Legend.soundDirectories.length];
+						int soundDirBaseCount = 0;
+						String soundDir = null;
+						for (int i = 0; i < Legend.soundDirectories.length; i++) {
+							// build a table of basenames by matching "-xx" at end of dirname
+							if (Legend.soundDirectories[i] != null && Legend.soundDirectories[i].length() > 3) {
+								if (Legend.soundDirectories[i].substring(Legend.soundDirectories[i].length() - 3, Legend.soundDirectories[i].length() - 2).equals("-")) {
+									String basename = new String(Legend.soundDirectories[i].substring(0, Legend.soundDirectories[i].length() - 3));
+									boolean duplicate = false;
+									for (int j = 0; j < soundDirBaseCount; j++) {
+										if (basename.equals(soundDirBase[j])) {
+											duplicate = true;
+										}
+									}
+									if (! duplicate) {
+										soundDirBase[soundDirBaseCount] = basename;
+										soundDirBaseCount++;
+									}
+									}
+								}
+							// set dir if a language match is found
+							if (Legend.soundDirectories[i].substring(Legend.soundDirectories[i].length() - 3).equals("-" + naviLang)) {
+								// first suitable-language sound dir is taken into use
+								if (soundDir == null) {
+									soundDir = Legend.soundDirectories[i];
+								} else {
+									multipleDirsForLanguage = true;
+								}
+							}
+						}
+						// store language choice. Sound directory choice takes preference over it.
+						Configuration.setNaviLang(Legend.naviLang[naviLangGroup.getSelectedIndex()]);
+						if (soundDir != null) {
+							Configuration.setSoundDirectory(soundDir);
+							RouteSyntax.getInstance().readSyntax();
+						} else {
+							// special case English as default language
+							// if -en was not found, use a matching basename 
+
+							for (int i = 0; i < Legend.soundDirectories.length; i++) {
+								for (int j = 0; j < soundDirBaseCount; j++) {
+									if (soundDirBase[j].equals(Legend.soundDirectories[i])) {
+										soundDir = soundDirBase[j];
+									}
+								}
+							}
+							if (soundDir != null) {
+								Configuration.setSoundDirectory(soundDir);
+								RouteSyntax.getInstance().readSyntax();
+							}
+						}
+
+						if (soundDir == null) {
+							logger.error("Sound directory for " + naviLang + " not found!");
+						}
+						//if (multipleDirsForLanguage) {
+							// FIXME: if more than one dir for lang available,
+							// tell the user it can be switched at "sounds&alerts" menu
+							// ("Changing language", "Selecting " + soundDir, 3000);
+						//}
+					}
 				}
 				boolean nightMode = (nightModeGroup.getSelectedIndex() == 1);
 				
@@ -978,6 +1053,16 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 						}
 					}
 					uiLangGroup.setSelectedIndex( langNum, true);
+				}
+				langNum = 0;
+				if (Legend.numNaviLang > 1) {
+					String lang = Configuration.getNaviLang();
+					for (int i = 0; i < Legend.numNaviLang; i++) {
+						if (Legend.naviLang[i].equalsIgnoreCase(lang)) {
+							langNum = i;
+						}
+					}
+					naviLangGroup.setSelectedIndex( langNum, true);
 				}
 				nightModeGroup.setSelectedIndex( Configuration.getCfgBitSavedState(Configuration.CFGBIT_NIGHT_MODE) ? 1 : 0, true);
 				rotationGroup.setSelectedIndex(Configuration.getProjDefault(), true);
