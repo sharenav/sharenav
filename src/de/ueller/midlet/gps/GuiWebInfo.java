@@ -69,11 +69,16 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 						+ mPos.latitude * MoreMath.FAC_RADTODEC + "&lng="
 						+ mPos.longitude * MoreMath.FAC_RADTODEC;
 			}
+			/*
+			 * rss2html.com public service has closed down, 2010-08-01
+                         *
 			if (site.equalsIgnoreCase("Wikipedia (Web)")) {
 				url = "http://www.rss2html.com/public/rss2html.php?TEMPLATE=template-1-2-1.htm&XMLFILE=http://ws.geonames.org/findNearbyWikipediaRSS?lat="
 						+ mPos.latitude * MoreMath.FAC_RADTODEC + "%26lng="
 						+ mPos.longitude * MoreMath.FAC_RADTODEC;
 			}
+			*/
+
 			if (site.equalsIgnoreCase("Weather")) {
 				url = "http://m.wund.com/cgi-bin/findweather/getForecast?brand=mobile&query="
 						+ (mPos.latitude * MoreMath.FAC_RADTODEC)
