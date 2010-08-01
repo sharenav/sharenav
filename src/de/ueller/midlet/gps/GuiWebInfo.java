@@ -10,6 +10,7 @@ import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.List;
 
 import de.ueller.gps.data.Legend;
+import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Position;
 import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.Way;
@@ -36,7 +37,7 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 		mPos = pos;
 		//#if polish.api.online
 		this.append("Wikipedia (RSS)", null);
-		this.append("Wikipedia (Web)", null);
+		//this.append("Wikipedia (Web)", null);
 		this.append("Weather", null);
 		this.append("GeoHack", null);
 		//#endif
@@ -65,7 +66,11 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 			String site = getString(getSelectedIndex());
 			String url = null;
 			if (site.equalsIgnoreCase("Wikipedia (RSS)")) {
-				url = "http://ws.geonames.org/findNearbyWikipediaRSS?lat="
+				String lang = "";
+				if (! Configuration.getOnlineLang().equals("en")) {
+				    lang = "lang=" + Configuration.getOnlineLang() + "&";
+				}
+				url = "http://ws.geonames.org/findNearbyWikipediaRSS?" + lang + "lat="
 						+ mPos.latitude * MoreMath.FAC_RADTODEC + "&lng="
 						+ mPos.longitude * MoreMath.FAC_RADTODEC;
 			}
@@ -80,6 +85,7 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 			*/
 
 			if (site.equalsIgnoreCase("Weather")) {
+				// weather underground doesn't seem to have a language switch
 				url = "http://m.wund.com/cgi-bin/findweather/getForecast?brand=mobile&query="
 						+ (mPos.latitude * MoreMath.FAC_RADTODEC)
 						+ "%2C"
@@ -98,7 +104,11 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 				deglon = (int)deglonf;
 				minlon = (int) ((deglonf - deglon) * 60);
 				seclon = ((deglonf - deglon-minlon/60)*60);
-				url = "http://toolserver.org/~geohack/geohack.php?params="
+				String lang = "";
+				if (! Configuration.getOnlineLang().equals("en")) {
+				    lang = "language=" + Configuration.getOnlineLang() + "&";
+				}
+				url = "http://toolserver.org/~geohack/geohack.php?" + lang + "params="
 						+ deglat
 						+ "_"
 						+ minlat

@@ -196,6 +196,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	private ChoiceGroup nightModeGroup;
 	private ChoiceGroup uiLangGroup;
 	private ChoiceGroup naviLangGroup;
+	private ChoiceGroup onlineLangGroup;
 	private ChoiceGroup renderOpts;
 	private ChoiceGroup metricUnits;
 	private TextField	tfAutoRecenterToGpsSecs;
@@ -422,7 +423,15 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 			naviLangGroup = new ChoiceGroup("Sound/Navi language", Choice.EXCLUSIVE, naviLang, null);
 			menuDisplayOptions.append(naviLangGroup);
 		}
-		// FIXME add dialogue for online & street name language switch,
+		if (Legend.numOnlineLang > 1) {
+			String [] onlineLang = new String[Legend.numOnlineLang];
+			for (int i = 0; i < Legend.numOnlineLang; i++) {
+				onlineLang[i] = Legend.onlineLangName[i];
+			}
+			onlineLangGroup = new ChoiceGroup("Online language", Choice.EXCLUSIVE, onlineLang, null);
+			menuDisplayOptions.append(onlineLangGroup);
+		}
+		// FIXME add dialogue for wikipedia & street name language switch,
 		// maybe make a submenu or a separate language menu
 		String [] nightMode = new String[2];
 		nightMode[0] = "Day Mode";
@@ -766,7 +775,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 						uncacheIconMenu();
 					}
 					Configuration.setUiLang(uiLang);
-					Configuration.setOnlineLang(Legend.uiLang[uiLangGroup.getSelectedIndex()]);
 					Configuration.setWikipediaLang(Legend.uiLang[uiLangGroup.getSelectedIndex()]);
 					Configuration.setNamesOnMapLang(Legend.uiLang[uiLangGroup.getSelectedIndex()]);
 				}
@@ -836,6 +844,10 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 							// ("Changing language", "Selecting " + soundDir, 3000);
 						//}
 					}
+				}
+				if (Legend.numOnlineLang > 1) {
+					String onlineLang = Legend.onlineLang[onlineLangGroup.getSelectedIndex()];
+					Configuration.setOnlineLang(onlineLang);
 				}
 				boolean nightMode = (nightModeGroup.getSelectedIndex() == 1);
 				
@@ -1063,6 +1075,16 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 						}
 					}
 					naviLangGroup.setSelectedIndex( langNum, true);
+				}
+				langNum = 0;
+				if (Legend.numOnlineLang > 1) {
+					String lang = Configuration.getOnlineLang();
+					for (int i = 0; i < Legend.numOnlineLang; i++) {
+						if (Legend.onlineLang[i].equalsIgnoreCase(lang)) {
+							langNum = i;
+						}
+					}
+					onlineLangGroup.setSelectedIndex( langNum, true);
 				}
 				nightModeGroup.setSelectedIndex( Configuration.getCfgBitSavedState(Configuration.CFGBIT_NIGHT_MODE) ? 1 : 0, true);
 				rotationGroup.setSelectedIndex(Configuration.getProjDefault(), true);
