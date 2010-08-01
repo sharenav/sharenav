@@ -235,7 +235,7 @@ public class JSR179Input
 		logger.info("Update Solution");
 		if (state == LocationProvider.AVAILABLE) {
 			if (receiverList != null) {
-				receiverList.receiveSolution("On"/* i:On */);
+				receiverList.receiveSolution("NoFix"/* i:NoFix */);
 			}
 			
 		}
