@@ -90,6 +90,8 @@
    		<entry key="useSoundFilesWithSyntax" value="sound"/>
    		<entry key="lang" value="${local_lang}"/>
    		<entry key="langName" value=""/>
+		<entry key="useLang" value="en"/>
+		<entry key="useLangName" value="English"/>
    	</propertyfile>
    </target>
 

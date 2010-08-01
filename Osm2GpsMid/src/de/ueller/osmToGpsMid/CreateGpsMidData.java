@@ -227,6 +227,17 @@ public class CreateGpsMidData implements FilenameFilter {
 			dsi.writeBoolean(config.enableEditingSupport);
 			/* Note what languages are enabled
 			 */
+			String useLang[] = configuration.getUseLang().split("[;,]", 20);
+			String useLangName[] = configuration.getUseLangName().split("[;,]", 20);
+			if (useLangName.length != useLang.length) {
+				System.out.println("");
+				System.out.println("  Warning: useLang count " + useLang.length + " different than useLangName count " + useLangName.length + " - ignoring useLangNames");
+				System.out.println("");
+				useLangName = useLang;
+			}
+
+			System.out.println ("Building for languages: " + configuration.getUseLang());
+
 /*			short numNaviLang=2;
 			short numOnlineLang=2;
 			short numWikipediaLang=2;
@@ -235,19 +246,38 @@ public class CreateGpsMidData implements FilenameFilter {
 			// make all available languages the same for now:
 			// useLang if set and English
 			for (int i = 1; i <= 5 ; i++) {
-				short numUiLang;
-				if (config.getLang().equals("en")) { 
-					numUiLang = 1;
+				if (useLang.length < 2) {
+					short numUiLang;
+					if (config.getLang().equals("en")) { 
+						numUiLang = 1;
+					} else {
+						numUiLang = 2;
+					}
+					dsi.writeShort(numUiLang);
+					if (! config.getLang().equals("en")) { 
+						dsi.writeUTF(config.getLang());
+						dsi.writeUTF(config.getLangName());
+					}
+					dsi.writeUTF("en");
+					dsi.writeUTF("English");
 				} else {
-					numUiLang = 2;
-				}
-				dsi.writeShort(numUiLang);
-				if (! config.getLang().equals("en")) { 
+					boolean langIsInUseLang = false;
+					for (int j = 0 ; j < useLang.length ; j++) {
+						if (useLang[j].equals(config.getLang())) {
+							langIsInUseLang = true;
+						}
+					}
+
+					dsi.writeShort(useLang.length + (langIsInUseLang ? 0 : 1));
 					dsi.writeUTF(config.getLang());
 					dsi.writeUTF(config.getLangName());
+					for (int j = 0 ; j < useLang.length ; j++) {
+						if (! useLang[j].equals(config.getLang())) {
+							dsi.writeUTF(useLang[j]);
+							dsi.writeUTF(useLangName[j]);
+						}
+					}
 				}
-				dsi.writeUTF("en");
-				dsi.writeUTF("English");
 			}
  			/**
 			 * Note if urls and phones are in the midlet

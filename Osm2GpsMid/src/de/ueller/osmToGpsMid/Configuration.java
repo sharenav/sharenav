@@ -274,6 +274,12 @@ public class Configuration {
 		/** Defines what sound directory is included in GpsMid, e.g. sound or sounds-de */
 		public String useSoundFiles = "sound";		
 		
+		/** Defines what languages are included in GpsMid */
+		public String useLang = "en";
+
+		/** Defines what languages are included in GpsMid */
+		public String useLangName = "English";
+		
 		/** Flag whether the generated Midlet will have editing support. */
 		public boolean enableEditingSupport = false;
 
@@ -499,6 +505,10 @@ public class Configuration {
 			setSounds(getString("useSounds"));
 
 			setSoundFiles(getString("useSoundFilesWithSyntax"));
+
+			setUseLang(getString("useLang"));
+
+			setUseLangName(getString("useLangName"));
 
 			
 			maxTileSize = Integer.parseInt(getString("maxTileSize"));
@@ -957,7 +967,23 @@ public class Configuration {
 		public void setSoundFiles(String soundFiles) {
 			useSoundFiles = soundFiles;
 		}
+
+		public String getUseLang() {
+			return useLang;
+		}
 		
+		public void setUseLang(String lang) {
+			useLang = lang;
+		}
+
+		public String getUseLangName() {
+			return useLangName;
+		}
+		
+		public void setUseLangName(String langName) {
+			useLangName = langName;
+		}
+
 		/**
 		 * Returns the application version as specified in version.properties.
 		 * @return Version
