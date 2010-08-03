@@ -94,6 +94,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 
 	private StringBuffer searchCanon = new StringBuffer();
 
+	private boolean searchAlpha = false;
+
 	private SearchNames searchThread;
 
 	//private boolean abortPaint = false;
@@ -334,6 +336,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		if (c == CLEAR_CMD) {
 			result.removeAllElements();
 			searchCanon.setLength(0);
+			searchAlpha = false;
 			carret=0;
 			repaint();
 			return;
@@ -368,7 +371,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 		if (c == FULLT_CMD) {
 			state = STATE_FULLTEXT;
 			Form fulltextForm = new Form("Fulltext search");
-			fulltextSearchField = new TextField("Find: ", "", 40, TextField.ANY);
+			fulltextSearchField = new TextField("Find: ", 
+							    searchAlpha ? searchCanon.toString() : "", 40, TextField.ANY);
 			fulltextForm.append(fulltextSearchField);
 			fulltextForm.addCommand(BACK_CMD);
 			fulltextForm.addCommand(OK_CMD);
@@ -416,7 +420,12 @@ public class GuiSearch extends Canvas implements CommandListener,
 	    if (result2.size() > 0) {
 	    	synchronized(this) {				
 	    		for (int i = 0; i < result2.size(); i++ ) {
-	    			result.addElement(result2.elementAt(i));
+				SearchResult res = (SearchResult) result2.elementAt(i);
+				String name = parent.getName(res.nameIdx);
+				if (!searchAlpha || name == null || searchCanon.toString().equalsIgnoreCase(
+					    name.substring(0, searchCanon.toString().length()))) {
+					result.addElement(res);
+				}
 	    		}
 	    		result2.removeAllElements();
 	    	}
@@ -580,10 +589,10 @@ public class GuiSearch extends Canvas implements CommandListener,
 			action = 0;
 		}
 		logger.info("Search dialog: got key " + keyCode + " " + action);
-/* the commented out code below is redundant because the KEY_NUM constants match "(char) keycode"
+/* the code below is needed only for searchAlpha, because the KEY_NUM constants match "(char) keycode"
  * and any keyCode >= 32 will be inserted as default action
  */
-/*		if (keyCode == KEY_NUM1) {
+		if (keyCode == KEY_NUM1) {
 			searchCanon.insert(carret++,'1');
 		} else if (keyCode == KEY_NUM2) {
 			searchCanon.insert(carret++,'2');
@@ -603,8 +612,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			searchCanon.insert(carret++,'9');
 		} else if (keyCode == KEY_NUM0) {
 			searchCanon.insert(carret++,'0');
-		} else */
-		if (keyCode == KEY_POUND) {
+		} else if (keyCode == KEY_POUND) {
 			if (state == STATE_FAVORITES) {
 				sortByDist = !sortByDist;
 				reSearch();
@@ -681,6 +689,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 		} else {
 			// filter out special keys such as shift key (-50), volume keys, camera keys...
 			if (keyCode > 0) {
+				// this is an alpha key (letter), set flag for post-filtering of results
+				searchAlpha = true;
 				searchCanon.insert(carret++,(char)keyCode);
 			}
 		}
@@ -952,6 +962,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		
 		clearList();
 		searchCanon.setLength(0);
+		searchAlpha = false;
 		final byte poiType = ((POItypeSelectMenuItem)item).getIdx();
 		final CancelMonitorInterface cmi = this;
 		isSearchCanceled = false;
