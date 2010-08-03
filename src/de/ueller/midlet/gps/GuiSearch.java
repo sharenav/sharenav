@@ -371,8 +371,22 @@ public class GuiSearch extends Canvas implements CommandListener,
 		if (c == FULLT_CMD) {
 			state = STATE_FULLTEXT;
 			Form fulltextForm = new Form("Fulltext search");
+			String match = "";
+			if (!searchAlpha) {
+				if (isCursorValid()) {
+					SearchResult sr = (SearchResult) result.elementAt(cursor);
+					String name=parent.getName(sr.nameIdx);
+					int imatch=searchCanon.length(); 
+					if (name.length()<imatch) { 
+						imatch=name.length(); 
+					}
+					if (name != null) {
+						match = name.substring(0,imatch);
+					}
+				}
+			}
 			fulltextSearchField = new TextField("Find: ", 
-							    searchAlpha ? searchCanon.toString() : "", 40, TextField.ANY);
+							    searchAlpha ? searchCanon.toString() : match, 40, TextField.ANY);
 			fulltextForm.append(fulltextSearchField);
 			fulltextForm.addCommand(BACK_CMD);
 			fulltextForm.addCommand(OK_CMD);
