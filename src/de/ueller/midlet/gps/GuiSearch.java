@@ -908,11 +908,14 @@ public class GuiSearch extends Canvas implements CommandListener,
 	}
 	
 	public synchronized void addResult(SearchResult sr){		
-		parent.getName(sr.nameIdx);
+		String name = parent.getName(sr.nameIdx);
 		//#debug debug
 		logger.debug("Found matching name: " + sr);
 
-		result2.addElement(sr);
+		if (!searchAlpha || name == null || searchCanon.toString().equalsIgnoreCase(
+			    name.substring(0, searchCanon.toString().length()))) {
+			result2.addElement(sr);
+		}
 		if (!needsPainting) {
 			needsPainting = true;
 			try {
