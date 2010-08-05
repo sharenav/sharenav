@@ -183,10 +183,19 @@ public class GuiSearch extends Canvas implements CommandListener,
 		
 		timerT = new TimerTask() {
 			public void run() {
-				repaint();				
+				if (needsPainting) {
+					repaint();
+				}
 			}			
 		};
+		
+		needsPainting = false;
 		timer = new Timer();
+		try {
+			timer.schedule(timerT, 500, 500);
+		} catch (Exception e) {
+			logger.exception("Failed to initialize GuiSearch repaint timer", e);
+		}
 		
 		reSearch();
 
@@ -444,11 +453,13 @@ public class GuiSearch extends Canvas implements CommandListener,
 	    		result2.removeAllElements();
 	    	}
 	    }
+
+	    needsPainting = false;
+	    
 	    // keep cursor within bounds
 		if (cursor!=0 && cursor >= result.size()) {
 			cursor = result.size() - 1;
 		}
-	    needsPainting = false;
 		StringBuffer nameb=new StringBuffer();
 		StringBuffer nearNameb=new StringBuffer();
 	    for (int i=0;i<result.size();i++){	    	
@@ -494,7 +505,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				gc.drawImage(img, 8, yc + fontSize / 2 - 1, Graphics.VCENTER | Graphics.HCENTER);
 			String name = null;
 			if (state != STATE_FAVORITES) {
-				name = flags + parent.getName(sr.nameIdx);
+				name = flags + getName(sr.nameIdx);
 			} else {
 				if (wayPts.length > sr.nameIdx) {
 					name = wayPts[sr.nameIdx].displayName;
@@ -516,7 +527,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				for (int ib=sr.nearBy.length; ib-- != 0;){
 					nameb.append(" / ");
 					nearNameb.setLength(0);
-					nearNameb.append(parent.getName(sr.nearBy[ib]));
+					nearNameb.append(getName(sr.nearBy[ib]));
 					if (displayReductionLevel < (sr.nearBy.length - ib + 1)) {
 						nameb.append(nearNameb);
 						reducedName=0;
@@ -907,6 +918,14 @@ public class GuiSearch extends Canvas implements CommandListener,
 		setTitle(sb.toString());
 	}
 	
+	private String getName(int idx) {
+		String name = parent.getName(idx);
+		if (name == null) {			
+			needsPainting = true;
+		}
+		return name;
+	}
+	
 	public synchronized void addResult(SearchResult sr){		
 		String name = parent.getName(sr.nameIdx);
 		//#debug debug
@@ -916,15 +935,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			    name.substring(0, searchCanon.toString().length()))) {
 			result2.addElement(sr);
 		}
-		if (!needsPainting) {
-			needsPainting = true;
-			try {
-				timer.schedule(timerT, 500);
-			} catch (IllegalStateException ise) {
-				//timer was already scheduled.
-				//this doesn't matter
-			}
-		}
+		needsPainting = true;
 	}
 
 	
