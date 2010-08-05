@@ -2110,7 +2110,7 @@ scale alias 1: zoomed out 21x
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
   				<scale scale = "6"/>
-  				<lineColor color = "00005555" colorAtNight="00CCFFFF"/> 				
+  				<lineColor color = "000000CC" colorAtNight="0000009A"/>  <!-- same as natural=water -->
   				<wayWidth width="10" />
 				<force_to layer = "-2"/>
 			</Wvalue>  			
