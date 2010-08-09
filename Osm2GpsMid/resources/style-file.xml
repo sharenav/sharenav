@@ -2107,7 +2107,7 @@ scale alias 1: zoomed out 21x
 			</Wvalue>  			
   			<Wvalue name = "coastline">
 			  <!-- special case for natural=coastline area handling (see https://sourceforge.net/tracker/index.php?func=detail&aid=3041068&group_id=192084&atid=939974 )  -->
-			  <specialisation key="area" value="*" condition="exclude" />
+			  <specialisation key="area" value="yes" condition="exclude" />
   				<description desc = "coastline"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
