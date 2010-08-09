@@ -189,13 +189,10 @@
 			</variables>
 			<!-- Here you can set the dir attribute to "resources2" for an alternative design. -->
 			<resources dir="resources" defaultexcludes="yes" excludes="readme.txt">
-				<fileset dir="resources" includes="**/*.dat" if="test"/>
-				<fileset dir="resources" includes="**/*.d" if="test" />
-				<fileset dir="resources" includes="**/*.id" if="test" />
-				<fileset dir="resources" includes="**/*.png"/>
-				<fileset dir="resources" includes="**/*.amr"/>
+				<fileset dir="resources/images" includes="**/*.png"/>
 				<fileset dir="resources" includes="**/syntax.dat"/>
 				<fileset dir="resources" includes="**/charMap.txt"/>
+				<root dir="resources/map" includeSubDirs="true" includeBaseDir="false" if="test"/>
 				<fileset dir="" includes="**/COPYING"/>
 
 				<!-- you can add resources based on complex criterias: 
