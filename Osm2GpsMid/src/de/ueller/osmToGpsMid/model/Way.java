@@ -871,7 +871,12 @@ public class Way extends Entity implements Comparable<Way> {
 	}
 
 	public boolean isExplicitArea() {
-		return Configuration.attrToBoolean(getAttribute("area")) > 0;
+		// Ignore area=yes in OSM data if the style file for way type says so
+		if (type >= 0 && Configuration.getConfiguration().getWayDesc(type).ignoreOsmAreaTag) {
+			return false;
+		} else {
+			return Configuration.attrToBoolean(getAttribute("area")) > 0;
+		}
 	}
 
 	public List<Node> getNodes() {

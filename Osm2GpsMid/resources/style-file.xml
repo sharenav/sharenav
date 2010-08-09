@@ -2119,24 +2119,13 @@ scale alias 1: zoomed out 21x
 				<force_to layer = "-2"/>
 			</Wvalue>  			
   			<Wvalue name = "coastline">
-			  <!-- special case for natural=coastline area handling (see https://sourceforge.net/tracker/index.php?func=detail&aid=3041068&group_id=192084&atid=939974 )  -->
-			  <specialisation key="area" value="yes" condition="exclude" />
   				<description desc = "coastline"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
+				<!-- take care of natural=coastline area handling (see https://sourceforge.net/tracker/index.php?func=detail&aid=3041068&group_id=192084&atid=939974 )  -->
+  				<ignoreOsmAreaTag ignore = "true"/>
   				<scale scale = "6"/>
   				<lineColor color = "000000CC" colorAtNight="0000009A"/>  <!-- same as natural=water -->
-  				<wayWidth width="10" />
-				<force_to layer = "-2"/>
-			</Wvalue>  			
-  			<Wvalue name = "coastline">
-			  <!-- special case for natural=coastline area handling (see https://sourceforge.net/tracker/index.php?func=detail&aid=3041068&group_id=192084&atid=939974 )  -->
-			  <specialisation key="area" value="yes"/>
-  				<description desc = "island coastline"/>
-  				<namekey tag = "name"/>  				
-  				<isArea area = "false"/>
-  				<scale scale = "6"/>
-  				<lineColor color = "00005555" colorAtNight="00CCFFFF"/> 				
   				<wayWidth width="10" />
 				<force_to layer = "-2"/>
 			</Wvalue>  			

@@ -20,6 +20,7 @@ public class WayDescription extends EntityDescription{
 	public int		boardedColor;
 	public int		boardedColorAtNight = -1;
 	public boolean	isArea;
+	public boolean	ignoreOsmAreaTag;
 	public int		wayWidth;
 	/** Travel Modes (motorcar, bicycle, etc.) supported by this WayDescription (1 bit per travel mode) */
 	public byte		wayDescTravelModes;

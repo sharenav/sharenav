@@ -438,6 +438,9 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 			if (qName.equals("isArea")) {
 				currentWay.isArea = atts.getValue("area").equalsIgnoreCase("true");
 			}
+			if (qName.equals("ignoreOsmAreaTag")) {
+				currentWay.ignoreOsmAreaTag = atts.getValue("ignore").equalsIgnoreCase("true");
+			}
 			if (qName.equals("lineColor")) {
 				try {
 					currentWay.lineColor = Integer.parseInt(atts.getValue("color"), 16);
