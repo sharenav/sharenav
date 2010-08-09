@@ -73,6 +73,7 @@ public class Way extends Entity {
 	public static final byte WAY_FLAG3_URLHIGH = 2;
 	public static final byte WAY_FLAG3_PHONE = 4;
 	public static final byte WAY_FLAG3_PHONEHIGH = 8;
+	public static final byte WAY_FLAG3_NAMEASFORAREA = 16;
 
 	public static final byte DRAW_BORDER=1;
 	public static final byte DRAW_AREA=2;
@@ -91,6 +92,7 @@ public class Way extends Entity {
 	public static final int WAY_CYCLE_OPPOSITE = 32 << ModShift;
 	/** http://wiki.openstreetmap.org/wiki/WikiProject_Haiti */
 	public static final int WAY_DAMAGED = 64 << ModShift;
+	public static final int WAY_NAMEASFORAREA = 128 << ModShift;
 
 	public static final byte PAINTMODE_COUNTFITTINGCHARS = 0;
 	public static final byte PAINTMODE_DRAWCHARS = 1;
@@ -253,6 +255,10 @@ public class Way extends Entity {
 			}
 			if ( (f2 & WAY_FLAG2_ADDITIONALFLAG) == WAY_FLAG2_ADDITIONALFLAG ) {
 				f3 = is.readByte();
+				if ( (f3 & WAY_FLAG3_NAMEASFORAREA) > 0) {
+					flags += WAY_NAMEASFORAREA;
+				}
+
 				if ( (f3 & WAY_FLAG3_URL) > 0 ) {
 					if ( (f3 & WAY_FLAG3_URLHIGH) > 0 ) {
 						urlIdx = is.readInt();
@@ -1688,6 +1694,9 @@ public class Way extends Entity {
 			// if we got a closest seg, draw closest point to the center in it
 			RouteInstructions.drawRouteDot(pc.g, closestP, wClosest);
 		}
+		if (nameAsForArea()) {
+			paintAreaName(pc,t);
+		}
 	}
 
 	
@@ -2052,6 +2061,10 @@ public class Way extends Entity {
 	public boolean isArea() {
 		return ((flags & WAY_AREA) > 0);
 	}
+
+       public boolean nameAsForArea() {
+               return ((flags & WAY_NAMEASFORAREA) > 0);
+       }
 
 	public boolean isRoundAbout() {
 		return ((flags & WAY_ROUNDABOUT) > 0);
