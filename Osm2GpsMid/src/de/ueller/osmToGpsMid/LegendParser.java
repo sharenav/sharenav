@@ -435,6 +435,9 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 							+ currentWay.description + " is incorrect");
 				}
 			}
+			if (qName.equals("showName")) {
+				currentWay.showNameAsForArea = atts.getValue("style").equalsIgnoreCase("area");
+			}
 			if (qName.equals("isArea")) {
 				currentWay.isArea = atts.getValue("area").equalsIgnoreCase("true");
 			}

@@ -50,6 +50,7 @@ public class Way extends Entity implements Comparable<Way> {
 	public static final byte WAY_FLAG3_URLHIGH = 2;
 	public static final byte WAY_FLAG3_PHONE = 4;
 	public static final byte WAY_FLAG3_PHONEHIGH = 8;
+	public static final byte WAY_FLAG3_NAMEASFORAREA = 16;
 
 	public Path					path								= null;
 	public List<Triangle>		triangles							= null;
@@ -558,6 +559,9 @@ public class Way extends Entity implements Comparable<Way> {
 				flags3 += WAY_FLAG3_PHONEHIGH;
 			}
 		}
+		if (showNameAsForArea()) {
+			flags3 += WAY_FLAG3_NAMEASFORAREA;
+		}
 		maxspeed = (int) getMaxSpeed();
 		maxspeedwinter = (int) getMaxSpeedWinter();
 		if (maxspeedwinter > 0) {
@@ -867,6 +871,11 @@ public class Way extends Entity implements Comparable<Way> {
 		if (triangles != null) { return true; }
 		if (isExplicitArea()) { return true; }
 		if (type >= 0) { return Configuration.getConfiguration().getWayDesc(type).isArea; }
+		return false;
+	}
+
+	public boolean showNameAsForArea() {
+		if (type >= 0) { return Configuration.getConfiguration().getWayDesc(type).showNameAsForArea; }
 		return false;
 	}
 

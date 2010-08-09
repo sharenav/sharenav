@@ -12,7 +12,7 @@
 <!ELEMENT key (value+)>
 <!ELEMENT keyW (Wvalue+)>
 <!ELEMENT value (specialisation*, description , image? , searchIcon? , namekey , namefallback? , AreaPOI?, scale , textscale? , imageCentered?, hideable?)>
-<!ELEMENT Wvalue (specialisation*, description, namekey, namefallback?, isArea, ignoreOsmAreaTag?, scale, textscale?, arrowscale?, descriptionscale?, lineColor, borderColor?, lineStyle?, wayWidth?, searchIcon?, routing*, force_to?, hideable?)>
+<!ELEMENT Wvalue (specialisation*, description, namekey, namefallback?, showName?, isArea, ignoreOsmAreaTag?, scale, textscale?, arrowscale?, descriptionscale?, lineColor, borderColor?, lineStyle?, wayWidth?, searchIcon?, routing*, force_to?, hideable?)>
 <!ELEMENT damage EMPTY>
 <!ELEMENT routeAccessRestriction EMPTY>
 <!ELEMENT restrictionKey EMPTY>
@@ -27,6 +27,7 @@
 <!ELEMENT arrowscale EMPTY>
 <!ELEMENT descriptionscale EMPTY>
 <!ELEMENT imageCentered EMPTY>
+<!ELEMENT showName EMPTY>
 <!ELEMENT isArea EMPTY>
 <!ELEMENT ignoreOsmAreaTag EMPTY>
 <!ELEMENT lineColor EMPTY>
@@ -47,6 +48,7 @@
 <!ATTLIST value priority CDATA #IMPLIED>
 <!ATTLIST Wvalue name CDATA #REQUIRED>
 <!ATTLIST Wvalue priority CDATA #IMPLIED>
+<!ATTLIST style is CDATA #REQUIRED>
 <!ATTLIST ignore is CDATA #REQUIRED>
 <!ATTLIST color of CDATA #REQUIRED>
 <!ATTLIST color is CDATA #REQUIRED>
@@ -62,6 +64,7 @@
 <!ATTLIST image src CDATA #REQUIRED>
 <!ATTLIST searchIcon src CDATA #REQUIRED>
 <!ATTLIST imageCentered value CDATA #REQUIRED>
+<!ATTLIST showName style CDATA #REQUIRED>
 <!ATTLIST isArea area CDATA #REQUIRED>
 <!ATTLIST ignoreOsmAreaTag ignore CDATA #REQUIRED>
 <!ATTLIST lineColor color CDATA #REQUIRED>

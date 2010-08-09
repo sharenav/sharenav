@@ -2076,6 +2076,7 @@ scale alias 1: zoomed out 21x
 				<specialisation key="natural" value="coastline"/>
 				<description desc = "Island"/>
 				<namekey tag = "name"/>                 
+				<showName style = "area"/> 
 				<isArea area = "false"/>
 				<scale scale = "12"/>
   				<lineColor color = "000000CC" colorAtNight="0000009A"/>  <!-- same as natural=water -->

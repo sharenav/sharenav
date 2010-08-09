@@ -21,6 +21,7 @@ public class WayDescription extends EntityDescription{
 	public int		boardedColorAtNight = -1;
 	public boolean	isArea;
 	public boolean	ignoreOsmAreaTag;
+	public boolean	showNameAsForArea;
 	public int		wayWidth;
 	/** Travel Modes (motorcar, bicycle, etc.) supported by this WayDescription (1 bit per travel mode) */
 	public byte		wayDescTravelModes;
@@ -41,6 +42,8 @@ public class WayDescription extends EntityDescription{
 		wayDescFlags = WDFLAG_LINESTYLE_SOLID;
 		boardedColor = 0;
 		isArea = false;
+		ignoreOsmAreaTag = false;
+		showNameAsForArea = false;
 		wayWidth = 2;
 		wayDescTravelModes = 0;
 		for (int i = 0; i < TravelModes.travelModeCount; i++) {
