@@ -219,11 +219,12 @@ public class JSR179Input
 		// locationProvider.setLocationListener(null, -1, -1, -1);
 		// }
 		if (locationProvider != null) {
-			// locationProvider.reset();
-			try {
-				locationProvider.setLocationListener(null, 0, 0, 0);
-			} catch (Exception e) {
-			}
+/* locationProvider.setLocationListener(null, 0, 0, 0) tends to freeze Samsung S8000 frequently when stopping GPS
+ * and therefore has been replaced by locationProvider.reset() again.
+ * So if other mobile devices have issues with locationProvider.reset(),
+ * please document this here
+ */  
+			locationProvider.reset();
 		}
 		locationProvider = null;
 		receiverList.locationDecoderEnd();
