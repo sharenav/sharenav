@@ -2072,6 +2072,19 @@ scale alias 1: zoomed out 21x
    		</keyW>
 		<keyW tag = "place">
 			<Wvalue name = "island" priority = "10">
+			  <!-- special case for islands with natural=coastline which implies water around the island is not drawn correctly. FIXME when natural=coastline is handled right. -->
+				<specialisation key="natural" value="coastline"/>
+				<description desc = "Island"/>
+				<namekey tag = "name"/>                 
+				<isArea area = "false"/>
+				<scale scale = "12"/>
+  				<lineColor color = "000000CC" colorAtNight="0000009A"/>  <!-- same as natural=water -->
+  				<wayWidth width="10" />
+				<force_to layer = "-2"/>
+			</Wvalue>
+			<Wvalue name = "island" priority = "10">
+			  <!-- special case for islands with natural=coastline which implies water around the island is not drawn correctly. FIXME when natural=coastline is handled right. -->
+				<specialisation key="natural" value="coastline" condition="exclude"/>
 				<description desc = "Island"/>
 				<namekey tag = "name"/>                 
 				<isArea area = "true"/>
