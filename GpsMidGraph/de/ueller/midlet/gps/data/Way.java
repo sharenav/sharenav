@@ -1561,15 +1561,17 @@ public class Way extends Entity {
 
 					if (i == 0) {  // if this is the first segment, draw the lines
 						// draw circular endings
-						if (ortho) { // FIXME make work for eagle projection
-							circleWayEnd(pc, (l2b.x + l1b.x) / 2, (l2b.y + l1b.y) / 2, wDraw);
-							circleWayEnd(pc, (l2e.x + l1e.x) / 2, (l2e.y + l1e.y) / 2, wDraw);
+						if (wDraw > 2) {
+							if (ortho) { // FIXME make work for eagle projection
+								circleWayEnd(pc, (l2b.x + l1b.x) / 2, (l2b.y + l1b.y) / 2, wDraw);
+								circleWayEnd(pc, (l2e.x + l1e.x) / 2, (l2e.y + l1e.y) / 2, wDraw);
+							}
+							setBorderColor(pc, wayDesc,(hl[i] >= 0), 
+								       (isCurrentRoutePath(pc, i) || dividedHighlight), 
+								       (highlight == HIGHLIGHT_DEST));
+							pc.g.drawLine(l2b.x, l2b.y, l2e.x, l2e.y);
+							pc.g.drawLine(l1b.x, l1b.y, l1e.x, l1e.y);
 						}
-						setBorderColor(pc, wayDesc,(hl[i] >= 0), 
-								(isCurrentRoutePath(pc, i) || dividedHighlight), 
-								(highlight == HIGHLIGHT_DEST));
-						pc.g.drawLine(l2b.x, l2b.y, l2e.x, l2e.y);
-						pc.g.drawLine(l1b.x, l1b.y, l1e.x, l1e.y);
 					}
 
 					
@@ -1589,25 +1591,27 @@ public class Way extends Entity {
 							// Fills the gap of the corner with a small triangle								     
 							pc.g.fillTriangle(xPoints[i], yPoints[i] , l3e.x, l3e.y, l1b.x,l1b.y);
  
-							if (ortho) { // FIXME make work for eagle projection
-								circleWayEnd(pc, (l2b.x + l1b.x) / 2, (l2b.y + l1b.y) / 2, wDraw);
-								circleWayEnd(pc, (l2e.x + l1e.x) / 2, (l2e.y + l1e.y) / 2, wDraw
-);
+							if (wDraw > 2) {
+								if (ortho) { // FIXME make work for eagle projection
+									circleWayEnd(pc, (l2b.x + l1b.x) / 2, (l2b.y + l1b.y) / 2, wDraw);
+									circleWayEnd(pc, (l2e.x + l1e.x) / 2, (l2e.y + l1e.y) / 2, wDraw
+										);
+								}
+								setBorderColor(pc, wayDesc, (hl[i] >= 0), 
+									       (isCurrentRoutePath(pc, i) || dividedHighlight), 
+									       (highlight == HIGHLIGHT_DEST));
+								if (highlight == HIGHLIGHT_NONE) {
+									//paint the inner turn border to the intersection point between old and current waysegment 
+									pc.g.drawLine(intersecP.x, intersecP.y, l2e.x, l2e.y);
+								} else {
+									//painting full border of the inner turn while routing
+									pc.g.drawLine(l2b.x, l2b.y, l2e.x, l2e.y);
+								}
+								// paint the full outer turn border
+								pc.g.drawLine(l1b.x, l1b.y, l1e.x, l1e.y);
+								// paint the full outer turn border
+								pc.g.drawLine(l1b.x, l1b.y, l3e.x, l3e.y);
 							}
-							setBorderColor(pc, wayDesc, (hl[i] >= 0), 
-									(isCurrentRoutePath(pc, i) || dividedHighlight), 
-									(highlight == HIGHLIGHT_DEST));
-							if (highlight == HIGHLIGHT_NONE) {
-								//paint the inner turn border to the intersection point between old and current waysegment 
-								pc.g.drawLine(intersecP.x, intersecP.y, l2e.x, l2e.y);
-							} else {
-								//painting full border of the inner turn while routing
-								pc.g.drawLine(l2b.x, l2b.y, l2e.x, l2e.y);
-							}
-							// paint the full outer turn border
-							pc.g.drawLine(l1b.x, l1b.y, l1e.x, l1e.y);
-							// paint the full outer turn border
-							pc.g.drawLine(l1b.x, l1b.y, l3e.x, l3e.y);
 						}
 						else if (turn > 0 ) {
 							// turn left
@@ -1618,9 +1622,11 @@ public class Way extends Entity {
 							// Fills the gap of the corner with a small triangle
 							pc.g.fillTriangle(xPoints[i], yPoints[i] , l4e.x, l4e.y, l2b.x,l2b.y);
 
-							if (ortho) { // FIXME make work for eagle projection
-								circleWayEnd(pc, (l2b.x + l1b.x) / 2, (l2b.y + l1b.y) / 2, wDraw);
-								circleWayEnd(pc, (l2e.x + l1e.x) / 2, (l2e.y + l1e.y) / 2, wDraw);
+							if (wDraw > 2) {
+								if (ortho) { // FIXME make work for eagle projection
+									circleWayEnd(pc, (l2b.x + l1b.x) / 2, (l2b.y + l1b.y) / 2, wDraw);
+									circleWayEnd(pc, (l2e.x + l1e.x) / 2, (l2e.y + l1e.y) / 2, wDraw);
+								}
 							}
 							setBorderColor(pc, wayDesc, (hl[i] >= 0), 
 									(isCurrentRoutePath(pc, i) || dividedHighlight), 
@@ -1640,9 +1646,11 @@ public class Way extends Entity {
 							setColor(pc, wayDesc, (hl[i] >= 0), 
 									(isCurrentRoutePath(pc, i) || dividedHighlight), 
 									(highlight == HIGHLIGHT_DEST));
-							if (ortho) { // FIXME make work for eagle projection
-								circleWayEnd(pc, (l2b.x + l1b.x) / 2, (l2b.y + l1b.y) / 2, wDraw);
-								circleWayEnd(pc, (l2e.x + l1e.x) / 2, (l2e.y + l1e.y) / 2, wDraw);
+							if (wDraw > 2) {
+								if (ortho) { // FIXME make work for eagle projection
+									circleWayEnd(pc, (l2b.x + l1b.x) / 2, (l2b.y + l1b.y) / 2, wDraw);
+									circleWayEnd(pc, (l2e.x + l1e.x) / 2, (l2e.y + l1e.y) / 2, wDraw);
+								}
 							}
 							setBorderColor(pc, wayDesc, (hl[i] >= 0), 
 									(isCurrentRoutePath(pc, i) || dividedHighlight), 
