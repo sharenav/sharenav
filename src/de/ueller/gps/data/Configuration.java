@@ -220,6 +220,8 @@ public class Configuration {
 	public final static byte CFGBIT_PREFER_INTERNAL_PNGS = 80;
 	/** bit 81: Flag whether the menu with predefined way points is shown. */
 	public final static byte CFGBIT_WAYPT_OFFER_PREDEF = 81;
+	/** bit 82: Flag whether street borders are shown. */
+	public final static byte CFGBIT_NOSTREETBORDERS = 82;
 	
 	/**
 	 * These are the database record IDs for each configuration option
