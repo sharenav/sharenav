@@ -93,6 +93,10 @@ public class TriangulateRelations {
 					if ("administrative".equalsIgnoreCase(w.getAttribute("boundary"))){
 						continue rel;
 					}
+					// FIXME can be removed when proper coastline support exists
+					if ("coastline".equalsIgnoreCase(w.getAttribute("natural"))){
+						continue rel;
+					}
 
 //					System.out.println("Handling outer way http://www.openstreetmap.org/browse/way/" + ref);
 					if (w == null) {
