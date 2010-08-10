@@ -19,7 +19,10 @@ do
    lynx -source http://sourceforge.net/apps/mediawiki/gpsmid/index.php?title=I18n/messages_$l |
    awk 'BEGIN { pr = 0 } 
      /<\/pre>/ { pr = 0 } 
+     /=section=/ { pr = 0 } 
      { if (pr) {
-   if (substr ($0, 1, 1) == " ") { print substr ($0, 2) } else { print; } } }
-     /<pre>/ { pr = 1 } ' | sed 's/&amp;/\&/g' > $path/messages_$l.txt
+   if (substr ($0, 1, 1) == " ") { print substr ($0, 2) } else { if ($0 != "") { print; } } } }
+     /section=messages;/ { pr = 1 } 
+     /<pre>/ { pr = 1 } 
+     ' | sed 's/&amp;/\&/g' > $path/messages_$l.txt
 done
