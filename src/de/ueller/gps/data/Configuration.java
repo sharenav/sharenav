@@ -222,6 +222,8 @@ public class Configuration {
 	public final static byte CFGBIT_WAYPT_OFFER_PREDEF = 81;
 	/** bit 82: Flag whether street borders are shown. */
 	public final static byte CFGBIT_NOSTREETBORDERS = 82;
+	/** bit 82: Flag whether to show distances variably as km/m instead of just m. */
+	public final static byte CFGBIT_DISTANCE_VIEW = 83;
 	
 	/**
 	 * These are the database record IDs for each configuration option

@@ -525,7 +525,7 @@ public class ImageCollector implements Runnable {
 			} else {
 				WayDescription wayDesc = Legend
 						.getWayDescription(wayForName.type);
-				name = "(unnamed " + wayDesc.description + ")";
+				name = "(unnamed " /* i:unnamed */ + wayDesc.description + ")";
 			}
 			if (name == null) {
 				name = maxspeed;

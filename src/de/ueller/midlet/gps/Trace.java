@@ -1665,14 +1665,14 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					&&
 				";off;nofix;cell;0s;~~;".indexOf(";" + solution.toLowerCase() + ";") == -1
 			) {
-				tl.ele[TraceLayout.ALTITUDE].setText(Integer.toString(altitude) + "m");
+				tl.ele[TraceLayout.ALTITUDE].setText(showDistance(altitude));
 			}
 
 			if (dest != null && (route == null || (!RouteLineProducer.isRouteLineProduced() && !RouteLineProducer.isRunning()) ) && Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_AIR_DISTANCE_IN_MAP)) {
 				e = Trace.tl.ele[TraceLayout.ROUTE_DISTANCE];
 				e.setBackgroundColor(Legend.COLORS[Legend.COLOR_RI_DISTANCE_BACKGROUND]);
 				double distLine = ProjMath.getDistance(center.radlat, center.radlon, dest.lat, dest.lon);
-				e.setText("Air:" + (int) distLine + "m");
+				e.setText("Air:" /* i:Air */ + showDistance((int) distLine));
 			}
 			
 			if (Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_CLOCK_IN_MAP)) {
@@ -2704,6 +2704,26 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			commandAction(CMDS[actionId], null);
 		}
 	}
+	/** convert distance to string based on user preferences */
 
+	// The representation could also change based on the number. The default way to show distance would perhaps be "10km" for distances 10km or more, "2,6km" for distances under 10, and "600m" for distances under 1km.
 
+	public String showDistance(int meters) {
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_METRIC)) {
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_DISTANCE_VIEW)) {
+				if (meters >= 10000) {
+					return (int) meters / 1000 + "km";
+				} else if (meters < 1000) {
+					return meters + "m";
+				} else {
+					// FIXME use e.g. getDecimalSeparator() for decimal comma/point selection
+					return meters / 1000 + "." + (meters % 1000) / 100 + "km";
+				}
+			} else {
+				return meters + "m";
+			}
+		} else {
+			return Integer.toString((int)(meters / 0.9144 + 0.5)) + "yd";
+		}
+	}
 }

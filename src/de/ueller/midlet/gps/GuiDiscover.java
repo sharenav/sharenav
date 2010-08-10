@@ -200,6 +200,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	private ChoiceGroup renderOpts;
 	private ChoiceGroup visualOpts;
 	private ChoiceGroup metricUnits;
+	private ChoiceGroup distanceViews;
 	private TextField	tfAutoRecenterToGpsSecs;
 	private ChoiceGroup backlightOpts;
 	private ChoiceGroup sizeOpts;
@@ -460,6 +461,12 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		metricUnit[0] = "metric units";
 		metricUnits = new ChoiceGroup("Units", Choice.MULTIPLE, metricUnit, null);
 		menuDisplayOptions.append(metricUnits);
+
+		String [] distanceView = new String[2];
+		distanceView[0] = "only meters";
+		distanceView[1] = "km or m";
+		distanceViews = new ChoiceGroup("Distances", Choice.EXCLUSIVE, distanceView, null);
+		menuDisplayOptions.append(distanceViews);
 
 		tfAutoRecenterToGpsSecs = new TextField("Auto-recenter to GPS after no user action for these seconds (0=disabled)",
 				Integer.toString(Configuration.getAutoRecenterToGpsMilliSecs() / 1000),
@@ -872,6 +879,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_NOSTREETBORDERS,
 						(visualOpts.getSelectedIndex() == 1)
 				);
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_DISTANCE_VIEW,
+						(distanceViews.getSelectedIndex() == 1)
+				);
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_POI_LABELS_LARGER, sizeOpts.isSelected(0));
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_WPT_LABELS_LARGER, sizeOpts.isSelected(1));
 				
@@ -1100,6 +1110,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				rotationGroup.setSelectedIndex(Configuration.getProjDefault(), true);
 				renderOpts.setSelectedIndex( Configuration.getCfgBitSavedState(Configuration.CFGBIT_STREETRENDERMODE) ? 1 : 0, true);
 				visualOpts.setSelectedIndex( Configuration.getCfgBitSavedState(Configuration.CFGBIT_NOSTREETBORDERS) ? 1 : 0, true);
+				distanceViews.setSelectedIndex( Configuration.getCfgBitSavedState(Configuration.CFGBIT_DISTANCE_VIEW) ? 1 : 0, true);
 				sizeOpts.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_POI_LABELS_LARGER));
 				sizeOpts.setSelectedIndex(1, Configuration.getCfgBitSavedState(Configuration.CFGBIT_WPT_LABELS_LARGER));
 				mapInfoOpts.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_POINT_OF_COMPASS));
