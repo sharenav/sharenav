@@ -2034,19 +2034,21 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				posX = centerX;
 				posY = centerY;
 			}
-			pc.g.drawImage(pc.images.IMG_POS_BG, posX, posY, CENTERPOS);
-
 			g.setColor(Legend.COLORS[Legend.COLOR_MAP_POSINDICATOR]);
 			float radc = (course * MoreMath.FAC_DECTORAD);
 			int px = posX + (int) (Math.sin(radc) * 20);
 			int py = posY - (int) (Math.cos(radc) * 20);
-			g.drawRect(posX - 4, posY - 4, 8, 8);
-			g.drawLine(posX, posY, px, py);
 			if (!gpsRecenter) {
-				g.drawLine(centerX, centerY - 12, centerX, centerY + 12);
-				g.drawLine(centerX - 12, centerY, centerX + 12, centerY);
-				g.drawArc(centerX - 5, centerY - 5, 10, 10, 0, 360);
+				// gps position spot
+				pc.g.drawImage(pc.images.IMG_POS_BG, posX, posY, CENTERPOS);
+				// gps position rectangle
+				g.drawRect(posX - 4, posY - 4, 8, 8);
+				g.drawLine(posX, posY, px, py);
 			}
+			// crosshair center cursor
+			g.drawLine(centerX, centerY - 12, centerX, centerY + 12);
+			g.drawLine(centerX - 12, centerY, centerX + 12, centerY);
+			g.drawArc(centerX - 5, centerY - 5, 10, 10, 0, 360);
 			}
 		} catch (Exception e) {
 			if (imageCollector == null){
@@ -2704,12 +2706,26 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			commandAction(CMDS[actionId], null);
 		}
 	}
+	protected static final int DISTANCE_GENERIC = 1;
+	protected static final int DISTANCE_ALTITUDE = 2;
+	protected static final int DISTANCE_ROAD = 3;
+	protected static final int DISTANCE_AIR = 4;
+	protected static final int DISTANCE_UNKNOWN = 5;
+
 	/** convert distance to string based on user preferences */
 
-	// The representation could also change based on the number. The default way to show distance would perhaps be "10km" for distances 10km or more, "2,6km" for distances under 10, and "600m" for distances under 1km.
+	// The default way to show a distance is  "10km" for
+	// distances 10km or more, "2,6km" for distances under 10, and
+	// "600m" for distances under 1km.
 
 	public String showDistance(int meters) {
+		return showDistance(meters, DISTANCE_GENERIC);
+	}
+	public String showDistance(int meters, int type) {
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_METRIC)) {
+			if (type == DISTANCE_UNKNOWN) {
+				return "???m";
+			}
 			if (Configuration.getCfgBitState(Configuration.CFGBIT_DISTANCE_VIEW)) {
 				if (meters >= 10000) {
 					return (int) meters / 1000 + "km";
@@ -2723,7 +2739,13 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				return meters + "m";
 			}
 		} else {
-			return Integer.toString((int)(meters / 0.9144 + 0.5)) + "yd";
+			if (type == DISTANCE_UNKNOWN) {
+				return "???yd";
+			} else if (type == DISTANCE_ALTITUDE) {
+				return Integer.toString((int)(meters / 0.30480 + 0.5)) + "ft";
+			} else {
+				return Integer.toString((int)(meters / 0.9144 + 0.5)) + "yd";
+			}
 		}
 	}
 }
