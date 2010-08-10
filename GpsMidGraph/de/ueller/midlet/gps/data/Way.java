@@ -1599,22 +1599,22 @@ public class Way extends Entity {
 									circleWayEnd(pc, (l2e.x + l1e.x) / 2, (l2e.y + l1e.y) / 2, wDraw
 										);
 								}
-								setBorderColor(pc, wayDesc, (hl[i] >= 0), 
-									       (isCurrentRoutePath(pc, i) || dividedHighlight), 
-									       (highlight == HIGHLIGHT_DEST));
-								if (! Configuration.getCfgBitState(Configuration.CFGBIT_NOSTREETBORDERS)) {
-									if (highlight == HIGHLIGHT_NONE) {
-										//paint the inner turn border to the intersection point between old and current waysegment 
-										pc.g.drawLine(intersecP.x, intersecP.y, l2e.x, l2e.y);
-								        } else {
-										//painting full border of the inner turn while routing
-										pc.g.drawLine(l2b.x, l2b.y, l2e.x, l2e.y);
-									}
-									// paint the full outer turn border
-									pc.g.drawLine(l1b.x, l1b.y, l1e.x, l1e.y);
-									// paint the full outer turn border
-									pc.g.drawLine(l1b.x, l1b.y, l3e.x, l3e.y);
-								}
+							}
+							setBorderColor(pc, wayDesc, (hl[i] >= 0), 
+								       (isCurrentRoutePath(pc, i) || dividedHighlight), 
+								       (highlight == HIGHLIGHT_DEST));
+							if (! Configuration.getCfgBitState(Configuration.CFGBIT_NOSTREETBORDERS)) {
+							    if (highlight == HIGHLIGHT_NONE) {
+								//paint the inner turn border to the intersection point between old and current waysegment 
+								pc.g.drawLine(intersecP.x, intersecP.y, l2e.x, l2e.y);
+							    } else {
+								//painting full border of the inner turn while routing
+								pc.g.drawLine(l2b.x, l2b.y, l2e.x, l2e.y);
+							    }
+							    // paint the full outer turn border
+							    pc.g.drawLine(l1b.x, l1b.y, l1e.x, l1e.y);
+							    // paint the full outer turn border
+							    pc.g.drawLine(l1b.x, l1b.y, l3e.x, l3e.y);
 							}
 						}
 						else if (turn > 0 ) {
