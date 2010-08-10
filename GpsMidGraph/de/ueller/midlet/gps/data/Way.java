@@ -1566,13 +1566,13 @@ public class Way extends Entity {
 								circleWayEnd(pc, (l2b.x + l1b.x) / 2, (l2b.y + l1b.y) / 2, wDraw);
 								circleWayEnd(pc, (l2e.x + l1e.x) / 2, (l2e.y + l1e.y) / 2, wDraw);
 							}
-							setBorderColor(pc, wayDesc,(hl[i] >= 0), 
-								       (isCurrentRoutePath(pc, i) || dividedHighlight), 
-								       (highlight == HIGHLIGHT_DEST));
-							if (! Configuration.getCfgBitState(Configuration.CFGBIT_NOSTREETBORDERS) ) {
-								pc.g.drawLine(l2b.x, l2b.y, l2e.x, l2e.y);
-								pc.g.drawLine(l1b.x, l1b.y, l1e.x, l1e.y);
-							}
+						}
+						setBorderColor(pc, wayDesc,(hl[i] >= 0), 
+							       (isCurrentRoutePath(pc, i) || dividedHighlight), 
+							       (highlight == HIGHLIGHT_DEST));
+						if (! Configuration.getCfgBitState(Configuration.CFGBIT_NOSTREETBORDERS) ) {
+						    pc.g.drawLine(l2b.x, l2b.y, l2e.x, l2e.y);
+						    pc.g.drawLine(l1b.x, l1b.y, l1e.x, l1e.y);
 						}
 					}
 
@@ -1610,8 +1610,6 @@ public class Way extends Entity {
 										//painting full border of the inner turn while routing
 										pc.g.drawLine(l2b.x, l2b.y, l2e.x, l2e.y);
 									}
-								}
-								if (! Configuration.getCfgBitState(Configuration.CFGBIT_NOSTREETBORDERS)) {
 									// paint the full outer turn border
 									pc.g.drawLine(l1b.x, l1b.y, l1e.x, l1e.y);
 									// paint the full outer turn border
@@ -1644,8 +1642,6 @@ public class Way extends Entity {
 								} else {
 									pc.g.drawLine(l1b.x, l1b.y, l1e.x, l1e.y);
 								}
-							}
-							if (! Configuration.getCfgBitState(Configuration.CFGBIT_NOSTREETBORDERS)) {
 								pc.g.drawLine(l2b.x, l2b.y, l2e.x, l2e.y);
 								//corner
 								pc.g.drawLine(l2b.x, l2b.y, l4e.x, l4e.y);
