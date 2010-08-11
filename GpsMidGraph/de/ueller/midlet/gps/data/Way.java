@@ -1554,6 +1554,15 @@ public class Way extends Entity {
 						(isCurrentRoutePath(pc, i) || dividedHighlight), 
 						(highlight == HIGHLIGHT_DEST));
 						
+				int xbcentre = (l2b.x + l1b.x) / 2;
+				int xecentre = (l2e.x + l1e.x) / 2;
+				int ybcentre = (l2b.y + l1b.y) / 2;
+				int yecentre = (l2e.y + l1e.y) / 2;
+				int xbradius = Math.abs(l2b.x - l1b.x)/2;
+				int xeradius = Math.abs(l2e.x - l1e.x)/2;
+				int ybradius = Math.abs(l2b.y - l1b.y)/2;
+				int yeradius = Math.abs(l2e.y - l1e.y)/2;
+
 				// when this is not render as lines (for the non-highlighted part of the way) or it is a highlighted part, draw as area
 				if (wOriginal != 0 || hl[i] >= 0) {
 					pc.g.fillTriangle(l2b.x, l2b.y, l1b.x, l1b.y, l1e.x, l1e.y);
@@ -1561,10 +1570,15 @@ public class Way extends Entity {
 
 					if (i == 0) {  // if this is the first segment, draw the lines
 						// draw circular endings
-						if (wDraw > 2) {
-							if (ortho) { // FIXME make work for eagle projection
+						if (Configuration.getCfgBitState(Configuration.CFGBIT_ROUND_WAY_ENDS) && wDraw > 2) {
+							if (ortho) {
 								circleWayEnd(pc, (l2b.x + l1b.x) / 2, (l2b.y + l1b.y) / 2, wDraw);
 								circleWayEnd(pc, (l2e.x + l1e.x) / 2, (l2e.y + l1e.y) / 2, wDraw);
+							} else {
+								// ellipse is close, but rotation is missing
+								// FIXME fix the bad appearance for eagle projection
+								pc.g.fillArc(xbcentre - xbradius, ybcentre - ybradius, xbradius*2, ybradius*2, 0, 360);
+								pc.g.fillArc(xecentre - xeradius, yecentre - yeradius, xeradius*2, yeradius*2, 0, 360);
 							}
 						}
 						setBorderColor(pc, wayDesc,(hl[i] >= 0), 
@@ -1593,11 +1607,16 @@ public class Way extends Entity {
 							// Fills the gap of the corner with a small triangle								     
 							pc.g.fillTriangle(xPoints[i], yPoints[i] , l3e.x, l3e.y, l1b.x,l1b.y);
  
-							if (wDraw > 2) {
-								if (ortho) { // FIXME make work for eagle projection
+							if (Configuration.getCfgBitState(Configuration.CFGBIT_ROUND_WAY_ENDS) && wDraw > 2) {
+								if (ortho) {
 									circleWayEnd(pc, (l2b.x + l1b.x) / 2, (l2b.y + l1b.y) / 2, wDraw);
 									circleWayEnd(pc, (l2e.x + l1e.x) / 2, (l2e.y + l1e.y) / 2, wDraw
 										);
+								} else {
+									// ellipse is close, but rotation is missing
+									// FIXME fix the bad appearance for eagle projection
+									pc.g.fillArc(xbcentre - xbradius, ybcentre - ybradius, xbradius*2, ybradius*2, 0, 360);
+									pc.g.fillArc(xecentre - xeradius, yecentre - yeradius, xeradius*2, yeradius*2, 0, 360);
 								}
 							}
 							setBorderColor(pc, wayDesc, (hl[i] >= 0), 
@@ -1626,10 +1645,15 @@ public class Way extends Entity {
 							// Fills the gap of the corner with a small triangle
 							pc.g.fillTriangle(xPoints[i], yPoints[i] , l4e.x, l4e.y, l2b.x,l2b.y);
 
-							if (wDraw > 2) {
-								if (ortho) { // FIXME make work for eagle projection
+							if (Configuration.getCfgBitState(Configuration.CFGBIT_ROUND_WAY_ENDS) && wDraw > 2) {
+								if (ortho) {
 									circleWayEnd(pc, (l2b.x + l1b.x) / 2, (l2b.y + l1b.y) / 2, wDraw);
 									circleWayEnd(pc, (l2e.x + l1e.x) / 2, (l2e.y + l1e.y) / 2, wDraw);
+								} else {
+									// ellipse is close, but rotation is missing
+									// FIXME fix the bad appearance for eagle projection
+									pc.g.fillArc(xbcentre - xbradius, ybcentre - ybradius, xbradius*2, ybradius*2, 0, 360);
+									pc.g.fillArc(xecentre - xeradius, yecentre - yeradius, xeradius*2, yeradius*2, 0, 360);
 								}
 							}
 							setBorderColor(pc, wayDesc, (hl[i] >= 0), 
@@ -1652,10 +1676,15 @@ public class Way extends Entity {
 							setColor(pc, wayDesc, (hl[i] >= 0), 
 									(isCurrentRoutePath(pc, i) || dividedHighlight), 
 									(highlight == HIGHLIGHT_DEST));
-							if (wDraw > 2) {
-								if (ortho) { // FIXME make work for eagle projection
+							if (Configuration.getCfgBitState(Configuration.CFGBIT_ROUND_WAY_ENDS) && wDraw > 2) {
+								if (ortho) {
 									circleWayEnd(pc, (l2b.x + l1b.x) / 2, (l2b.y + l1b.y) / 2, wDraw);
 									circleWayEnd(pc, (l2e.x + l1e.x) / 2, (l2e.y + l1e.y) / 2, wDraw);
+								} else {
+									// ellipse is close, but rotation is missing
+									// FIXME fix the bad appearance for eagle projection
+									pc.g.fillArc(xbcentre - xbradius, ybcentre - ybradius, xbradius*2, ybradius*2, 0, 360);
+									pc.g.fillArc(xecentre - xeradius, yecentre - yeradius, xeradius*2, yeradius*2, 0, 360);
 								}
 							}
 							setBorderColor(pc, wayDesc, (hl[i] >= 0), 

@@ -51,6 +51,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	/** A menu list instance */
 	private static final String[] elements = {
 		"Location Receiver", "Recording Rules",
+		/*		"Languages & Units", */
 		"Display options", "Sounds & Alerts", "Routing options",
 		"GPX Receiver", "GUI Options", "Map source", "Debug options", "Key shortcuts",
 		"Opencellid",
@@ -453,8 +454,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		
 		String [] visuals = new String[2];
 		visuals[0] = "road borders";
-		visuals[1] = "no borders";
-		visualOpts = new ChoiceGroup("Visual Options:", Choice.EXCLUSIVE, visuals, null);
+		visuals[1] = "round road ends";
+		visualOpts = new ChoiceGroup("Visual Options:", Choice.MULTIPLE, visuals, null);
 		menuDisplayOptions.append(visualOpts);
 		
 		String [] metricUnit = new String[1];
@@ -876,9 +877,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_STREETRENDERMODE,
 						(renderOpts.getSelectedIndex() == 1)
 				);
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_NOSTREETBORDERS,
-						(visualOpts.getSelectedIndex() == 1)
-				);
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_DISTANCE_VIEW,
 						(distanceViews.getSelectedIndex() == 1)
 				);
@@ -914,6 +912,11 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				metricUnits.getSelectedFlags(sellight);
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_METRIC, sellight[0]);
 				
+				sellight = new boolean[2];
+				visualOpts.getSelectedFlags(sellight);
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_NOSTREETBORDERS, ! sellight[0]);
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ROUND_WAY_ENDS, sellight[1]);
+
 				state = STATE_ROOT;
 				show();
 
@@ -1109,7 +1112,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				nightModeGroup.setSelectedIndex( Configuration.getCfgBitSavedState(Configuration.CFGBIT_NIGHT_MODE) ? 1 : 0, true);
 				rotationGroup.setSelectedIndex(Configuration.getProjDefault(), true);
 				renderOpts.setSelectedIndex( Configuration.getCfgBitSavedState(Configuration.CFGBIT_STREETRENDERMODE) ? 1 : 0, true);
-				visualOpts.setSelectedIndex( Configuration.getCfgBitSavedState(Configuration.CFGBIT_NOSTREETBORDERS) ? 1 : 0, true);
 				distanceViews.setSelectedIndex( Configuration.getCfgBitSavedState(Configuration.CFGBIT_DISTANCE_VIEW) ? 1 : 0, true);
 				sizeOpts.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_POI_LABELS_LARGER));
 				sizeOpts.setSelectedIndex(1, Configuration.getCfgBitSavedState(Configuration.CFGBIT_WPT_LABELS_LARGER));
@@ -1120,6 +1122,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				mapInfoOpts.setSelectedIndex(4, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_AIR_DISTANCE_IN_MAP));
 				mapInfoOpts.setSelectedIndex(5, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_CLOCK_IN_MAP));
 				metricUnits.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_METRIC));
+				visualOpts.setSelectedIndex(0, ! Configuration.getCfgBitSavedState(Configuration.CFGBIT_NOSTREETBORDERS));
+				visualOpts.setSelectedIndex(1, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ROUND_WAY_ENDS));
 				SingleTile.newPOIFont();
 				WaypointsTile.useNewWptFont();
 
