@@ -24,8 +24,8 @@ public class GuiOverviewElements extends Form implements CommandListener, ItemSt
 	private static byte ovElGroupNr = 0;
 	
 	// commands
-	private static final Command CMD_OK = new Command("Ok", Command.OK, 1);
-	private static final Command CMD_OFF = new Command("Off", Command.ITEM, 2);
+	private static final Command CMD_OK = new Command("Ok"/* i:Ok */, Command.OK, 1);
+	private static final Command CMD_OFF = new Command("Off"/* i:Off */, Command.ITEM, 2);
 	
 	// other
 	private Trace parent;
@@ -36,13 +36,13 @@ public class GuiOverviewElements extends Form implements CommandListener, ItemSt
 	private boolean hideOtherGroupAdded = false;
 		
 	public GuiOverviewElements(Trace tr) {
-		super("Overview/Filter Map");
+		super("Overview/Filter Map"/* i:OverviewFilterMap */);
 		this.parent = tr;
 		try {
-			ovElGroupCG = new ChoiceGroup("Element Type: ", ChoiceGroup.EXCLUSIVE);
-			ovElGroupCG.append("POIs", null);
-			ovElGroupCG.append("Areas", null);
-			ovElGroupCG.append("Ways", null);
+			ovElGroupCG = new ChoiceGroup("Element Type: "/* i:ElementType */, ChoiceGroup.EXCLUSIVE);
+			ovElGroupCG.append("POIs"/* i:POIs */, null);
+			ovElGroupCG.append("Areas"/* i:Areas */, null);
+			ovElGroupCG.append("Ways"/* i:Ways */, null);
 			ovElGroupCG.setSelectedIndex(ovElGroupNr, true);
 			append(ovElGroupCG);
 			setItemStateListener(this);
@@ -174,24 +174,24 @@ public class GuiOverviewElements extends Form implements CommandListener, ItemSt
 			String ovElGroupName = ovElGroupCG.getString(ovElGroupNr); 
 
 			// set NameRequirement state in form
-			ovElNameRequirementCG = new ChoiceGroup("Name Check", ChoiceGroup.EXCLUSIVE);
-			ovElNameRequirementCG.append("off", null);
-			ovElNameRequirementCG.append("only unnamed " + ovElGroupName, null);
-			ovElNameRequirementCG.append("only named " + ovElGroupName, null);
-			ovElNameRequirementCG.append(ovElGroupName + " containing...", null);
+			ovElNameRequirementCG = new ChoiceGroup("Name Check"/* i:NameCheck */, ChoiceGroup.EXCLUSIVE);
+			ovElNameRequirementCG.append("off"/* i:off */, null);
+			ovElNameRequirementCG.append("only unnamed "/* i:onlyunnamed */ + ovElGroupName, null);
+			ovElNameRequirementCG.append("only named "/* i:onlynamed  */ + ovElGroupName, null);
+			ovElNameRequirementCG.append(ovElGroupName + " containing..."/* i: containing */, null);
 			ovElNameRequirementCG.setSelectedIndex(nameRequirement[ovElGroupNr], true); 
 
 			// set None-Overview state in form
-			ovElHideOtherCG = new ChoiceGroup("Non-Overview " + ovElGroupName, ChoiceGroup.EXCLUSIVE);
-			ovElHideOtherCG.append("Show normally", null);
-			ovElHideOtherCG.append("Filter out", null);			
+			ovElHideOtherCG = new ChoiceGroup("Non-Overview "/* i:NonOverview */ + ovElGroupName, ChoiceGroup.EXCLUSIVE);
+			ovElHideOtherCG.append("Show normally"/* i:ShowNormally */, null);
+			ovElHideOtherCG.append("Filter out"/* i:FilterOut */, null);			
 			if (showOther[ovElGroupNr]) {
 				ovElHideOtherCG.setSelectedIndex(0, true);
 			} else {
 				ovElHideOtherCG.setSelectedIndex(1, true);				
 			}
 
-			ovElSelectionCG = new ChoiceGroup("Overview " + ovElGroupName, ChoiceGroup.MULTIPLE);
+			ovElSelectionCG = new ChoiceGroup("Overview "/* i:Overview */ + ovElGroupName, ChoiceGroup.MULTIPLE);
 			switch (ovElGroupNr) {
 				case 0:
 					// set POI overview states in form				
@@ -251,7 +251,7 @@ public class GuiOverviewElements extends Form implements CommandListener, ItemSt
 				namePartFieldAdded = false;
 			}
 			if ((byte) ovElNameRequirementCG.getSelectedIndex() == 3) { 
-				fldNamePart = new TextField("...this name part:", 
+				fldNamePart = new TextField("...this name part:"/* i:thisNamePart */, 
 						Legend.get0Poi1Area2WayNamePart(ovElGroupNr), 
 						20, TextField.ANY);
 				insert(2, fldNamePart);
