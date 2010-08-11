@@ -44,25 +44,26 @@ public class GuiSearch extends Canvas implements CommandListener,
 	private final static Logger logger = Logger.getInstance(GuiSearch.class,Logger.DEBUG);
 
 	/** OK_CMD for Nearest POI / Fulltext Search */
-	private final Command OK_CMD = new Command("Ok", Command.OK, 1);
+	private final Command OK_CMD = new Command("Ok"/* i:Ok */, Command.OK, 1);
 	/** OK1_CMD is used when GUI is not optimised for routing */
-	private final Command OK1_CMD = new Command("Ok", Command.OK, 1);
+	private final Command OK1_CMD = new Command("Ok"/* i:Ok1 */, Command.OK, 1);
 	/** ROUTE2_CMD is used when GUI is not optimised for routing */
-	private final Command ROUTE2_CMD = new Command("Route", Command.ITEM, 3);
+	private final Command ROUTE2_CMD = new Command("Route"/* i:Route2 */, Command.ITEM, 3);
 	/** ROUTE1_CMD is used when GUI is optimised for routing */
-	private final Command ROUTE1_CMD = new Command("Route", Command.OK, 1);
+	private final Command ROUTE1_CMD = new Command("Route"/* i:Route1 */, Command.OK, 1);
 	/** OK2_CMD is used when GUI is optimised for routing */
-	private final Command OK2_CMD = new Command("As destination", Command.ITEM, 3);
-	private final Command DISP_CMD = new Command("Display", Command.ITEM, 2);
-	private final Command DEL_CMD = new Command("Delete", Command.ITEM, 4);
-	private final Command CLEAR_CMD = new Command("Clear", Command.ITEM, 5);
-	private final Command BOOKMARK_CMD = new Command("Add to way points", Command.ITEM, 6);
-	private final Command BACK_CMD = new Command("Back", Command.BACK, 7);
-	private final Command OVERVIEW_MAP_CMD = new Command("Overview/Filter map", Command.ITEM, 8);
-	private final Command POI_CMD = new Command("Nearest POI", Command.ITEM, 9);
-	private final Command FULLT_CMD = new Command("Fulltext search", Command.ITEM, 10);
-	private final Command URL_CMD = new Command("Open URL", Command.ITEM, 11);
-	private final Command PHONE_CMD = new Command("Call Phone", Command.ITEM, 12);
+	private final Command OK2_CMD = new Command("As destination"/* i:Asdest */, Command.ITEM, 3);
+	private final Command DISP_CMD = new Command("Display"/* i:Disp */, Command.ITEM, 2);
+	private final Command DEL_CMD = new Command("Delete"/* i:Del */, Command.ITEM, 4);
+	private final Command CLEAR_CMD = new Command("Clear"/* i:Clear */, Command.ITEM, 5);
+	private final Command BOOKMARK_CMD = new Command("Add to way points"/* i:Bookmark */, Command.ITEM, 6);
+	private final Command BACK_CMD = new Command("Back"/* i:Back */, Command.BACK, 7);
+	private final Command OVERVIEW_MAP_CMD = new Command("Overview/Filter map"/* i:OverviewMap */, Command.ITEM, 8);
+	private final Command POI_CMD = new Command("Nearest POI"/* i:NearestPoi */, Command.ITEM, 9);
+	private final Command SORT_CMD = new Command("Toggle sort order"/* i:Sort */, Command.ITEM, 10);
+	private final Command FULLT_CMD = new Command("Fulltext search"/* i:Fulltext */, Command.ITEM, 10);
+	private final Command URL_CMD = new Command("Open URL"/* i:OpenURL */, Command.ITEM, 11);
+	private final Command PHONE_CMD = new Command("Call Phone"/* i:Phone */, Command.ITEM, 12);
 
 	//private Form form;
 
@@ -174,6 +175,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		addCommand(OVERVIEW_MAP_CMD);
 		addCommand(POI_CMD);
 		addCommand(FULLT_CMD);
+		addCommand(SORT_CMD);
 		if (Legend.enableUrlTags) {
 			addCommand(URL_CMD);
 		}
@@ -295,7 +297,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				isSearchCanceled = false;
 				Thread t = new Thread(new Runnable() {
 					public void run() {
-						setTitle("searching...");
+						setTitle("searching..."/* i:searchingdots */);
 						show();
 						Vector names = parent.fulltextSearch(fulltextSearchField.getString().toLowerCase(), cmi);
 						for (int i = 0; i < names.size(); i++) {
@@ -317,7 +319,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 								searchThread.appendSearchBlocking(NumberCanon.canonial(name.substring(0,20)));
 							}
 						}
-						setTitle("Search results:");
+						setTitle("Search results:"/* i:SearchResults */);
 						state = STATE_MAIN;
 						show();
 						triggerRepaint();
@@ -377,9 +379,14 @@ public class GuiSearch extends Canvas implements CommandListener,
 			}
 			
 		}
+		if (c == SORT_CMD) {
+				sortByDist = !sortByDist;
+				reSearch();
+				return;
+		}
 		if (c == FULLT_CMD) {
 			state = STATE_FULLTEXT;
-			Form fulltextForm = new Form("Fulltext search");
+			Form fulltextForm = new Form("Fulltext search"/* i:FulltextSearchForm */);
 			String match = "";
 			if (!searchAlpha) {
 				if (isCursorValid()) {
@@ -394,7 +401,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 					}
 				}
 			}
-			fulltextSearchField = new TextField("Find: ", 
+			fulltextSearchField = new TextField("Find: "/* i:Find */, 
 							    searchAlpha ? searchCanon.toString() : match, 40, TextField.ANY);
 			fulltextForm.append(fulltextSearchField);
 			fulltextForm.addCommand(BACK_CMD);
@@ -414,7 +421,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		potentialDoubleClick = false;
 		pointerDragged = false;
 		if (state == STATE_SEARCH_PROGRESS) {
-			Form f = new Form("Searching...");
+			Form f = new Form("Searching..." /* i:SearchingdotsForm */);
 			f.addCommand(BACK_CMD);
 			f.setCommandListener(this);
 			GpsMid.getInstance().show(f);
@@ -747,7 +754,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		if ( (state == STATE_MAIN || state == STATE_FAVORITES)
 			&& (clickIdx < 0 || clickIdx >= result.size() || ((clickIdx + 1) * fontSize + scrollOffset) > getHeight())
 		) {
-			GuiNameEnter gne = new GuiNameEnter(this, null, "Search for names starting with:", searchCanon.toString(), 20);
+			GuiNameEnter gne = new GuiNameEnter(this, null, "Search for names starting with:"/* i:SearchForNamesStarting */, searchCanon.toString(), 20);
 			gne.show();
 		}
 	}
@@ -780,7 +787,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				// Search field slide: sliding left at least the fontHeight
 				} else if (xDist < -getWidth()/2 ) {
 					logger.debug("Search field slide");
-					GuiNameEnter gne = new GuiNameEnter(this, null, "Search for names starting with:", searchCanon.toString(), 20);
+					GuiNameEnter gne = new GuiNameEnter(this, null, "Search for names starting with:"/* i:SearchForNamesStarting */, searchCanon.toString(), 20);
 					gne.show();
 				// Select entry slide: sliding left at least the fontHeight
 				} else if (xDist < -fontSize ) {
@@ -889,31 +896,40 @@ public class GuiSearch extends Canvas implements CommandListener,
 		switch (state) {
 			case STATE_MAIN:
 				if (searchCanon.length() == 0) {
-					sb.append("Search for name");
+					sb.append("Search for name"/* i:Searchforname */);
 				} else {
 					sb.append((searchCanon.toString() + " " + carret));
+				}
+				if (searchCanon.length() > 0) {
+					sb.append(" (" + "key"/* i:key */ + " " + searchCanon.toString() + ")");
+				} else {
+					if (sortByDist) {
+						sb.append(" (" + "distance"/* i:distance */ + ")");
+					} else {
+						sb.append(" (" + "name"/* i:name */ + ")");
+					}
 				}
 				break;
 			case STATE_FAVORITES:
 				if (showAllWayPts) {
-					sb.append("Waypoints");
+					sb.append("Waypoints"/* i:Waypoints */);
 				} else {
-					sb.append("Favorites");					
+					sb.append("Favorites"/* i:Favorites */);					
 				}
 				if (searchCanon.length() > 0) {
 					sb.append(" (key " + searchCanon.toString() + ")");
 				} else {
 					if (sortByDist) {
-						sb.append(" by distance");
+						sb.append(" by distance"/* i:bydistance */);
 					} else {
-						sb.append(" by name");
+						sb.append(" by name"/* i:byname */);
 					}
 				}
 				break;
 			case STATE_POI:
-				sb.append("Nearest POIs"); break;			
+				sb.append("Nearest POIs"/* i: nearestpois */); break;			
 			case STATE_FULLTEXT:
-				sb.append("Fulltext Results"); break;			
+				sb.append("Fulltext Results"/* i:fulltextresults */); break;			
 		}
 		setTitle(sb.toString());
 	}
@@ -926,14 +942,28 @@ public class GuiSearch extends Canvas implements CommandListener,
 		return name;
 	}
 	
-	public synchronized void addResult(SearchResult sr){		
-		String name = parent.getName(sr.nameIdx);
+	// TODO: optimize sort-in algorithm, e.g. by bisectioning
+	public synchronized void addResult(SearchResult srNew){		
+		addDistanceToSearchResult(srNew);
+		String name = parent.getName(srNew.nameIdx);
 		//#debug debug
-		logger.debug("Found matching name: " + sr);
+		logger.debug("Found matching name: "/* i:matchingnamefound */ + srNew);
 
 		if (!searchAlpha || name == null || searchCanon.toString().equalsIgnoreCase(
 			    name.substring(0, searchCanon.toString().length()))) {
-			result2.addElement(sr);
+			if (!sortByDist) {
+				result2.addElement(srNew);
+			} else {
+				SearchResult sr = null;
+				int i = 0;
+				for (i=0; i<result2.size(); i++) {
+					sr = (SearchResult) result2.elementAt(i);
+					if (srNew.dist < sr.dist) {
+						break;
+					}
+				}
+				result2.insertElementAt(srNew, i);
+			}
 		}
 		needsPainting = true;
 	}
