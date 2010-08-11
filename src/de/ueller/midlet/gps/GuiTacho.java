@@ -28,8 +28,8 @@ import de.ueller.midlet.graphics.LcdNumericFont;
 public class GuiTacho extends KeyCommandCanvas implements CommandListener,
 		GpsMidDisplayable, LocationUpdateListener {
 
-	private final Command BACK_CMD = new Command("Back", Command.BACK, 5);
-	private final Command NEXT_CMD = new Command("Next", Command.SCREEN, 5);
+	private final Command BACK_CMD = new Command("Back"/* i:Back */, Command.BACK, 5);
+	private final Command NEXT_CMD = new Command("Next"/* i:Next */, Command.SCREEN, 5);
 	private final static Logger logger = Logger.getInstance(GuiTacho.class,
 			Logger.DEBUG);
 	private final Trace parent;
