@@ -75,7 +75,7 @@ public class RouteLineProducer implements Runnable {
 					maxRouteElementDone = route.size();
 					//#debug debug
 					logger.debug("Connection2Ways found: " + connsFound + "/" + (route.size()-1) + " in " + (long)(System.currentTimeMillis() - startTime) + " ms");
-					trace.receiveMessage ("Route: " /* i:Route */ + trace.showDistance((int) routeLen) + (connsFound==(route.size()-1)?"":" (" + connsFound + "/" + (route.size()-1) + ")"));
+					trace.receiveMessage ("Route: " /* i:Route */ + trace.showDistance((int) routeLen, Trace.DISTANCE_ROAD) + (connsFound==(route.size()-1)?"":" (" + connsFound + "/" + (route.size()-1) + ")"));
 				} else {
 					//#debug debug
 					logger.debug("RouteLineProducer aborted at " + connsFound + "/" + (route.size()-1));					

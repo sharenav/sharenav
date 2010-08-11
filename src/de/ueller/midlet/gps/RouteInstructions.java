@@ -627,16 +627,16 @@ public class RouteInstructions {
 				}				
 				if(Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_OFF_ROUTE_DISTANCE_IN_MAP)) {
 					e = Trace.tl.ele[TraceLayout.ROUTE_OFFROUTE];
-					e.setText("off:" /* i:off */ + (dstToRoutePath == Integer.MAX_VALUE ? ( "???" + (Configuration.getCfgBitState(Configuration.CFGBIT_METRIC) ? "m" : "yd" )) : "" + trace.showDistance(dstToRoutePath)));
+					e.setText("off:" /* i:off */ + trace.showDistance(dstToRoutePath, (dstToRoutePath == Integer.MAX_VALUE ? Trace.DISTANCE_UNKNOWN : Trace.DISTANCE_AIR)));
 				}
 				e = Trace.tl.ele[TraceLayout.ROUTE_DISTANCE];
 				if (RouteLineProducer.isRunning()) {
 					// use routeLine Color for distance while route line is produced
 					e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ROUTE_ROUTELINE]);
-					e.setText(">" + trace.showDistance((int) remainingDistance));
+					e.setText(">" + trace.showDistance((int) remainingDistance, Trace.DISTANCE_ROAD));
 				} else if (RouteLineProducer.isRouteLineProduced()) {
 					e.setBackgroundColor(Legend.COLORS[Legend.COLOR_RI_DISTANCE_BACKGROUND]);
-					e.setText(" " + trace.showDistance((int) remainingDistance) +
+					e.setText(" " + trace.showDistance((int) remainingDistance, Trace.DISTANCE_ROAD) +
 							(
 							 Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_ROUTE_DURATION_IN_MAP)?
 							 " " + ((remainingDurationFSecs >= 300)?remainingDurationFSecs / 300 + "min": remainingDurationFSecs / 5 + "s")

@@ -151,6 +151,12 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	public static final int DATASCREEN_TRIP = 2;
 	public static final int DATASCREEN_SATS = 3;
 	
+	public final static int DISTANCE_GENERIC = 1;
+	public final static int DISTANCE_ALTITUDE = 2;
+	public final static int DISTANCE_ROAD = 3;
+	public final static int DISTANCE_AIR = 4;
+	public final static int DISTANCE_UNKNOWN = 5;
+
 //	private SirfInput si;
 	private LocationMsgProducer locationProducer;
 
@@ -1665,7 +1671,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					&&
 				";off;nofix;cell;0s;~~;".indexOf(";" + solution.toLowerCase() + ";") == -1
 			) {
-				tl.ele[TraceLayout.ALTITUDE].setText(showDistance(altitude));
+				tl.ele[TraceLayout.ALTITUDE].setText(showDistance(altitude, DISTANCE_ALTITUDE));
 			}
 
 			if (dest != null && (route == null || (!RouteLineProducer.isRouteLineProduced() && !RouteLineProducer.isRunning()) ) && Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_AIR_DISTANCE_IN_MAP)) {
@@ -2706,12 +2712,6 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			commandAction(CMDS[actionId], null);
 		}
 	}
-	protected static final int DISTANCE_GENERIC = 1;
-	protected static final int DISTANCE_ALTITUDE = 2;
-	protected static final int DISTANCE_ROAD = 3;
-	protected static final int DISTANCE_AIR = 4;
-	protected static final int DISTANCE_UNKNOWN = 5;
-
 	/** convert distance to string based on user preferences */
 
 	// The default way to show a distance is  "10km" for
