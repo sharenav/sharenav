@@ -927,7 +927,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				}
 				break;
 			case STATE_POI:
-				sb.append("Nearest POIs"/* i: nearestpois */); break;			
+				sb.append("Nearest POIs"/* i:nearestpois */); break;			
 			case STATE_FULLTEXT:
 				sb.append("Fulltext Results"/* i:fulltextresults */); break;			
 		}

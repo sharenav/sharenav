@@ -408,7 +408,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		//Prepare Display options menu
 		logger.info("Starting display setup menu"/* i:StartingDisplaySetupMenu */);
 
-		menuDisplayOptions = new Form("Display Options"/* i:DisplayOptions */);
+		menuDisplayOptions = new Form("Display Options"/* i:DisplayOptions2 */);
 
 		menuDisplayOptions.addCommand(BACK_CMD);
 		menuDisplayOptions.addCommand(OK_CMD);
@@ -452,7 +452,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		String [] renders = new String[2];
 		renders[0] = "as lines"/* i:aslines */;
 		renders[1] = "as streets"/* i:asstreets */;
-		renderOpts = new ChoiceGroup("Rendering Options:"/* i:RenderingOptions: */, Choice.EXCLUSIVE, renders, null);
+		renderOpts = new ChoiceGroup("Rendering Options:"/* i:RenderingOptions */, Choice.EXCLUSIVE, renders, null);
 		menuDisplayOptions.append(renderOpts);
 		
 		String [] visuals = new String[2];
@@ -1161,7 +1161,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				menuGpx.addCommand(OSM_URL);
 				//#endif
 		
-				gpxUrl = new StringItem("Gpx Receiver Url: "/* i:GpxReceiverUrl:  */, "<Please select in menu>"/* i:PleaseSelectInMenu */);
+				gpxUrl = new StringItem("Gpx Receiver Url: "/* i:GpxReceiverUrl */, "<Please select in menu>"/* i:PleaseSelectInMenu */);
 				menuGpx.append(gpxUrl);
 				menuGpx.setCommandListener(this);
 				gpxUrl.setText(Configuration.getGpxUrl() == null ?
@@ -1172,7 +1172,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 			case MENU_ITEM_MAP_SRC: // Map Source
 				initMapSource();
 				mapSrc.set(1, "Filesystem: "/* i:Filesystem */ + ( (Configuration.getMapUrl() == null) ?
-								 "<Please select map directory or other .jar/zip file first>"/* i:<PleaseSelectMapDirFirst */ :
+								 "<Please select map directory or other .jar/zip file first>"/* i:PleaseSelectMapDirFirst */ :
 							Configuration.getMapUrl() ), null);
 				mapSrc.setSelectedIndex(Configuration.usingBuiltinMap() ? 0 : 1, true);
 				mapSrcOptions.setSelectedIndex(0,
