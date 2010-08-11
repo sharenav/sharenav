@@ -30,18 +30,18 @@ public class GuiSetupSound extends Form implements CommandListener {
         private TextField spdAlertTolerance=null;
 
 	// commands
-	private static final Command CMD_SAVE = new Command("Ok", Command.ITEM, 2);
-	private static final Command CMD_CANCEL = new Command("Cancel", Command.BACK, 3);
+	private static final Command CMD_SAVE = new Command("Ok"/* i:Ok */, Command.ITEM, 2);
+	private static final Command CMD_CANCEL = new Command("Cancel"/* i:Cancel */, Command.BACK, 3);
 	
 	// other
 	private GuiDiscover parent;
 	
 	public GuiSetupSound(GuiDiscover parent) {
-		super("Sounds & Alerts");
+		super("Sounds & Alerts"/* i:SoundsAlerts */);
 		this.parent = parent;
 		try {
 			// add sound directories and set selected one.
-			sndDirsGroup = new ChoiceGroup("Sound/Navigation", Choice.EXCLUSIVE, Legend.soundDirectories ,null);
+			sndDirsGroup = new ChoiceGroup("Sound/Navigation"/* i:SoundNavigation */, Choice.EXCLUSIVE, Legend.soundDirectories ,null);
 			for (int i=0; i < Legend.soundDirectories.length; i++) {
 				if (Legend.soundDirectories[i].equals(Configuration.getSoundDirectory())) {
 					sndDirsGroup.setSelectedIndex(i, true);
@@ -50,32 +50,32 @@ public class GuiSetupSound extends Form implements CommandListener {
 			append(sndDirsGroup);
 
 			// set choice texts and convert bits from Configuration flag into selection states
-			sndGps[0] = "Connect"; 			selSndGps[0]=Configuration.getCfgBitState(Configuration.CFGBIT_SND_CONNECT);
-			sndGps[1] = "Disconnect";		selSndGps[1]=Configuration.getCfgBitState(Configuration.CFGBIT_SND_DISCONNECT);
-			sndGps[2] = "Prefer tone sequences"; selSndGps[2]=Configuration.getCfgBitState(Configuration.CFGBIT_SND_TONE_SEQUENCES_PREFERRED);
-			sndGpsGroup = new ChoiceGroup("GPS", Choice.MULTIPLE, sndGps ,null);
+			sndGps[0] = "Connect"/* i:Connect */; 			selSndGps[0]=Configuration.getCfgBitState(Configuration.CFGBIT_SND_CONNECT);
+			sndGps[1] = "Disconnect"/* i:Disconnect */;		selSndGps[1]=Configuration.getCfgBitState(Configuration.CFGBIT_SND_DISCONNECT);
+			sndGps[2] = "Prefer tone sequences"/* i:PreferToneS */; selSndGps[2]=Configuration.getCfgBitState(Configuration.CFGBIT_SND_TONE_SEQUENCES_PREFERRED);
+			sndGpsGroup = new ChoiceGroup("GPS"/* i:GPS */, Choice.MULTIPLE, sndGps ,null);
 			sndGpsGroup.setSelectedFlags(selSndGps);
 			append(sndGpsGroup);
 			
-			sndRouting[0] = "Routing instructions";
+			sndRouting[0] = "Routing instructions"/* i:RoutingInstructions */;
 			selSndRouting[0]=Configuration.getCfgBitState(Configuration.CFGBIT_SND_ROUTINGINSTRUCTIONS);
-			sndRouting[1] = "Destination reached";
+			sndRouting[1] = "Destination reached"/* i:DestinationReached */;
 			selSndRouting[1]=Configuration.getCfgBitState(Configuration.CFGBIT_SND_DESTREACHED);
-			sndRoutingGroup = new ChoiceGroup("Navigation / Routing", Choice.MULTIPLE, sndRouting, null);
+			sndRoutingGroup = new ChoiceGroup("Navigation / Routing"/* i:NavigationRouting */, Choice.MULTIPLE, sndRouting, null);
 			sndRoutingGroup.setSelectedFlags(selSndRouting);
 			append(sndRoutingGroup);
 			
-			spdAlert[0] = "Audio speeding alert";
+			spdAlert[0] = "Audio speeding alert"/* i:AudioSpeedingAlert */;
 			selSpdAlert[0]=Configuration.getCfgBitState(Configuration.CFGBIT_SPEEDALERT_SND);
-			spdAlert[1] = "Visual speeding alert";
+			spdAlert[1] = "Visual speeding alert"/* i:VisualSpeedingAlert */;
 			selSpdAlert[1]=Configuration.getCfgBitState(Configuration.CFGBIT_SPEEDALERT_VISUAL);
-			spdAlert[2] = "Winter limits active";
+			spdAlert[2] = "Winter limits active"/* i:WinterLimitsCctive */;
 			selSpdAlert[2]=Configuration.getCfgBitState(Configuration.CFGBIT_MAXSPEED_WINTER);
-			spdAlertGroup = new ChoiceGroup("Speeding alert", Choice.MULTIPLE, spdAlert ,null);
+			spdAlertGroup = new ChoiceGroup("Speeding alert"/* i:SpeedingAlert */, Choice.MULTIPLE, spdAlert ,null);
 			spdAlertGroup.setSelectedFlags(selSpdAlert);
 			append(spdAlertGroup);
 
-			spdAlertTolerance = new TextField("Speed alert tolerance",
+			spdAlertTolerance = new TextField("Speed alert tolerance"/* i:SpeedAlertTolerance */,
 					Integer.toString(Configuration.getSpeedTolerance()), 3, TextField.DECIMAL);
 			append(spdAlertTolerance);
 
