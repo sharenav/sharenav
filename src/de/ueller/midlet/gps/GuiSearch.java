@@ -60,7 +60,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 	private final Command BACK_CMD = new Command("Back"/* i:Back */, Command.BACK, 7);
 	private final Command OVERVIEW_MAP_CMD = new Command("Overview/Filter map"/* i:OverviewMap */, Command.ITEM, 8);
 	private final Command POI_CMD = new Command("Nearest POI"/* i:NearestPoi */, Command.ITEM, 9);
-	private final Command SORT_CMD = new Command("Toggle sort order"/* i:Sort */, Command.ITEM, 10);
+	private final Command SORT_CMD = new Command("Toggle sort order (exper.)"/* i:Sort */, Command.ITEM, 10);
 	private final Command FULLT_CMD = new Command("Fulltext search"/* i:Fulltext */, Command.ITEM, 10);
 	private final Command URL_CMD = new Command("Open URL"/* i:OpenURL */, Command.ITEM, 11);
 	private final Command PHONE_CMD = new Command("Call Phone"/* i:Phone */, Command.ITEM, 12);
