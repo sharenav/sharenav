@@ -458,7 +458,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		String [] visuals = new String[2];
 		visuals[0] = Locale.get("guidiscover.roadborders")/*road borders*/;
 		visuals[1] = Locale.get("guidiscover.roundroadends")/*round road ends*/;
-		visualOpts = new ChoiceGroup(Locale.get("guidiscover.VisualOptions:")/*Visual Options:*/, Choice.MULTIPLE, visuals, null);
+		visualOpts = new ChoiceGroup(Locale.get("guidiscover.VisualOptions")/*Visual Options:*/, Choice.MULTIPLE, visuals, null);
 		menuDisplayOptions.append(visualOpts);
 		
 		String [] metricUnit = new String[1];
