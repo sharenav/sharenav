@@ -1678,7 +1678,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				e = Trace.tl.ele[TraceLayout.ROUTE_DISTANCE];
 				e.setBackgroundColor(Legend.COLORS[Legend.COLOR_RI_DISTANCE_BACKGROUND]);
 				double distLine = ProjMath.getDistance(center.radlat, center.radlon, dest.lat, dest.lon);
-				e.setText("Air:" /* i:Air */ + showDistance((int) distLine));
+				e.setText(Locale.get("trace.Air")/*Air:*/ + showDistance((int) distLine));
 			}
 			
 			if (Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_CLOCK_IN_MAP)) {

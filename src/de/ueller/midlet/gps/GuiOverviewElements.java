@@ -9,6 +9,7 @@ import javax.microedition.lcdui.*;
 import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.Configuration;
 import de.ueller.midlet.gps.tile.WayDescription;
+import de.enough.polish.util.Locale;
 
 public class GuiOverviewElements extends Form implements CommandListener, ItemStateListener {
 	private ChoiceGroup ovElGroupCG;
@@ -24,8 +25,8 @@ public class GuiOverviewElements extends Form implements CommandListener, ItemSt
 	private static byte ovElGroupNr = 0;
 	
 	// commands
-	private static final Command CMD_OK = new Command("Ok"/* i:Ok */, Command.OK, 1);
-	private static final Command CMD_OFF = new Command("Off"/* i:Off */, Command.ITEM, 2);
+	private static final Command CMD_OK = new Command(Locale.get("guioverviewelements.Ok")/*Ok*/, Command.OK, 1);
+	private static final Command CMD_OFF = new Command(Locale.get("guioverviewelements.Off")/*Off*/, Command.ITEM, 2);
 	
 	// other
 	private Trace parent;
@@ -36,13 +37,13 @@ public class GuiOverviewElements extends Form implements CommandListener, ItemSt
 	private boolean hideOtherGroupAdded = false;
 		
 	public GuiOverviewElements(Trace tr) {
-		super("Overview/Filter Map"/* i:OverviewFilterMap */);
+		super(Locale.get("guioverviewelements.OverviewFilterMap")/*Overview/Filter Map*/);
 		this.parent = tr;
 		try {
-			ovElGroupCG = new ChoiceGroup("Element Type: "/* i:ElementType */, ChoiceGroup.EXCLUSIVE);
-			ovElGroupCG.append("POIs"/* i:POIs */, null);
-			ovElGroupCG.append("Areas"/* i:Areas */, null);
-			ovElGroupCG.append("Ways"/* i:Ways */, null);
+			ovElGroupCG = new ChoiceGroup(Locale.get("guioverviewelements.ElementType")/*Element Type: */, ChoiceGroup.EXCLUSIVE);
+			ovElGroupCG.append(Locale.get("guioverviewelements.POIs")/*POIs*/, null);
+			ovElGroupCG.append(Locale.get("guioverviewelements.Areas")/*Areas*/, null);
+			ovElGroupCG.append(Locale.get("guioverviewelements.Ways")/*Ways*/, null);
 			ovElGroupCG.setSelectedIndex(ovElGroupNr, true);
 			append(ovElGroupCG);
 			setItemStateListener(this);
@@ -174,24 +175,24 @@ public class GuiOverviewElements extends Form implements CommandListener, ItemSt
 			String ovElGroupName = ovElGroupCG.getString(ovElGroupNr); 
 
 			// set NameRequirement state in form
-			ovElNameRequirementCG = new ChoiceGroup("Name Check"/* i:NameCheck */, ChoiceGroup.EXCLUSIVE);
-			ovElNameRequirementCG.append("off"/* i:off */, null);
-			ovElNameRequirementCG.append("only unnamed "/* i:onlyunnamed */ + ovElGroupName, null);
-			ovElNameRequirementCG.append("only named "/* i:onlynamed  */ + ovElGroupName, null);
-			ovElNameRequirementCG.append(ovElGroupName + " containing..."/* i: containing */, null);
+			ovElNameRequirementCG = new ChoiceGroup(Locale.get("guioverviewelements.NameCheck")/*Name Check*/, ChoiceGroup.EXCLUSIVE);
+			ovElNameRequirementCG.append(Locale.get("guioverviewelements.off")/*off*/, null);
+			ovElNameRequirementCG.append(Locale.get("guioverviewelements.onlyunnamed")/*only unnamed */ + ovElGroupName, null);
+			ovElNameRequirementCG.append(Locale.get("guioverviewelements.onlynamed")/*only named */ + ovElGroupName, null);
+			ovElNameRequirementCG.append(ovElGroupName + Locale.get("guioverviewelements.containing")/* containing...*/, null);
 			ovElNameRequirementCG.setSelectedIndex(nameRequirement[ovElGroupNr], true); 
 
 			// set None-Overview state in form
-			ovElHideOtherCG = new ChoiceGroup("Non-Overview "/* i:NonOverview */ + ovElGroupName, ChoiceGroup.EXCLUSIVE);
-			ovElHideOtherCG.append("Show normally"/* i:ShowNormally */, null);
-			ovElHideOtherCG.append("Filter out"/* i:FilterOut */, null);			
+			ovElHideOtherCG = new ChoiceGroup(Locale.get("guioverviewelements.NonOverview")/*Non-Overview */ + ovElGroupName, ChoiceGroup.EXCLUSIVE);
+			ovElHideOtherCG.append(Locale.get("guioverviewelements.ShowNormally")/*Show normally*/, null);
+			ovElHideOtherCG.append(Locale.get("guioverviewelements.FilterOut")/*Filter out*/, null);			
 			if (showOther[ovElGroupNr]) {
 				ovElHideOtherCG.setSelectedIndex(0, true);
 			} else {
 				ovElHideOtherCG.setSelectedIndex(1, true);				
 			}
 
-			ovElSelectionCG = new ChoiceGroup("Overview "/* i:Overview */ + ovElGroupName, ChoiceGroup.MULTIPLE);
+			ovElSelectionCG = new ChoiceGroup(Locale.get("guioverviewelements.Overview")/*Overview */ + ovElGroupName, ChoiceGroup.MULTIPLE);
 			switch (ovElGroupNr) {
 				case 0:
 					// set POI overview states in form				
@@ -251,7 +252,7 @@ public class GuiOverviewElements extends Form implements CommandListener, ItemSt
 				namePartFieldAdded = false;
 			}
 			if ((byte) ovElNameRequirementCG.getSelectedIndex() == 3) { 
-				fldNamePart = new TextField("...this name part:"/* i:thisNamePart */, 
+				fldNamePart = new TextField(Locale.get("guioverviewelements.thisNamePart")/*...this name part:*/, 
 						Legend.get0Poi1Area2WayNamePart(ovElGroupNr), 
 						20, TextField.ANY);
 				insert(2, fldNamePart);

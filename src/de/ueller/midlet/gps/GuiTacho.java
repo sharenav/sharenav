@@ -22,14 +22,16 @@ import de.ueller.gps.tools.intTree;
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.graphics.LcdNumericFont;
 
+import de.enough.polish.util.Locale;
+
 /** 
  * Implements the "Tacho" screen which displays numbers such as speed, height etc.
  */
 public class GuiTacho extends KeyCommandCanvas implements CommandListener,
 		GpsMidDisplayable, LocationUpdateListener {
 
-	private final Command BACK_CMD = new Command("Back"/* i:Back */, Command.BACK, 5);
-	private final Command NEXT_CMD = new Command("Next"/* i:Next */, Command.SCREEN, 5);
+	private final Command BACK_CMD = new Command(Locale.get("guitacho.Back")/*Back*/, Command.BACK, 5);
+	private final Command NEXT_CMD = new Command(Locale.get("guitacho.Next")/*Next*/, Command.SCREEN, 5);
 	private final static Logger logger = Logger.getInstance(GuiTacho.class,
 			Logger.DEBUG);
 	private final Trace parent;

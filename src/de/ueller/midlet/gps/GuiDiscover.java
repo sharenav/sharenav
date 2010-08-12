@@ -50,24 +50,24 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 
 	/** A menu list instance */
 	private static final String[] elements = {
-		"Location Receiver"/* i:LocationReceiver */, "Recording Rules"/* i:RecordingRules */,
+		Locale.get("guidiscover.LocationReceiver")/*Location Receiver*/, Locale.get("guidiscover.RecordingRules")/*Recording Rules*/,
 		/*		"Languages & Units", */
-		"Display options"/* i:DisplayOptions */, "Sounds & Alerts"/* i:SoundsAlerts */,
-		"Routing options"/* i:RoutingOptions */,
-		"GPX Receiver"/* i:GPXReceiver */, "GUI Options"/* i:GUIOptions */,
-		"Map source"/* i:MapSource */, "Debug options"/* i:DebugOptions */,
-		"Key shortcuts"/* i:KeyShortcuts */,
-		"Opencellid"/* i:Opencellid */,
+		Locale.get("guidiscover.DisplayOptions")/*Display options*/, Locale.get("guidiscover.SoundsAlerts")/*Sounds "Sounds & Alerts",
+		Locale.get("guidiscover.RoutingOptions")/*Routing options*/,
+		Locale.get("guidiscover.GPXReceiver")/*GPX Receiver*/, Locale.get("guidiscover.GUIOptions")/*GUI Options*/,
+		Locale.get("guidiscover.MapSource")/*Map source*/, Locale.get("guidiscover.DebugOptions")/*Debug options*/,
+		Locale.get("guidiscover.KeyShortcuts")/*Key shortcuts*/,
+		Locale.get("guidiscover.Opencellid")/*Opencellid*/,
 		//#if polish.api.osm-editing
-		"OSM account"/* i:OSMAccount */,
+		Locale.get("guidiscover.OSMAccount")/*OSM account*/,
 		//#endif
 		//#if polish.api.fileconnection
-		"Save config"/* i:SaveConfig */, "Load config"/* i:LoadConfig */
+		Locale.get("guidiscover.SaveConfig")/*Save config*/, Locale.get("guidiscover.LoadConfig")/*Load config*/
 		//#endif
 		};
 
-	private static final String LABEL_SELECT_LOGDIR_FIRST = "Please select first the log directory for:"/* i:PleaseSelectLogDir */;
-	private static final String LOG_TO = "Log To: "/* i:LogTo */;
+	private static final String LABEL_SELECT_LOGDIR_FIRST = Locale.get("guidiscover.PleaseSelectLogDir")/*Please select first the log directory for:*/;
+	private static final String LOG_TO = Locale.get("guidiscover.LogTo")/*Log To: */;
 
 	/**
 	 * The following MENU_ITEM constants have to be in sync
@@ -96,39 +96,39 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	private static final String[] empty = {};
 
 	/** Soft button for exiting to RootMenu. */
-	private final Command EXIT_CMD = new Command("Back"/* i:Back */, Command.BACK, 2);
+	private final Command EXIT_CMD = new Command(Locale.get("guidiscover.Back")/*Back*/, Command.BACK, 2);
 
-	private final Command BACK_CMD = new Command("Cancel"/* i:Cancel */, Command.BACK, 2);
+	private final Command BACK_CMD = new Command(Locale.get("guidiscover.Cancel")/*Cancel*/, Command.BACK, 2);
 
 	/** Soft button for discovering BT. */
-	private final Command OK_CMD = new Command("Ok"/* i:Ok */, Command.OK, 1);
+	private final Command OK_CMD = new Command(Locale.get("guidiscover.Ok")/*Ok*/, Command.OK, 1);
 
-	private final Command STORE_BT_URL = new Command("Select"/* i:Select */, Command.OK, 2);
+	private final Command STORE_BT_URL = new Command(Locale.get("guidiscover.Select")/*Select*/, Command.OK, 2);
 
-	private final Command STORE_ROOTFS = new Command("Select"/* i:Select */, Command.OK, 2);
+	private final Command STORE_ROOTFS = new Command(Locale.get("guidiscover.Select")/*Select*/, Command.OK, 2);
 	
-	private final Command FILE_MAP = new Command("Select Directory"/* i:SelectDirectory */, Command.ITEM, 2);
-	private final Command BT_MAP	= new Command("Select bluetooth device"/* i:SelectBtDev */, Command.ITEM, 2);
+	private final Command FILE_MAP = new Command(Locale.get("guidiscover.SelectDirectory")/*Select Directory*/, Command.ITEM, 2);
+	private final Command BT_MAP	= new Command(Locale.get("guidiscover.SelectBtDev")/*Select bluetooth device*/, Command.ITEM, 2);
 	//#if polish.api.osm-editing
-	private final Command OSM_URL = new Command("Upload to OSM"/* i:UploadOSM */, Command.ITEM, 2);
+	private final Command OSM_URL = new Command(Locale.get("guidiscover.UploadOSM")/*Upload to OSM*/, Command.ITEM, 2);
 	//#endif
 	//#if polish.api.online
-	private final Command OPENCELLID_APIKEY = new Command("Opencellid apikey"/* i:OpencellidApikey */, Command.ITEM, 1);
+	private final Command OPENCELLID_APIKEY = new Command(Locale.get("guidiscover.OpencellidApikey")/*Opencellid apikey*/, Command.ITEM, 1);
 	//#endif
-	private final Command GPS_DISCOVER = new Command("Discover GPS"/* i:DiscoverGPS */, Command.ITEM, 1);
+	private final Command GPS_DISCOVER = new Command(Locale.get("guidiscover.DiscoverGPS")/*Discover GPS*/, Command.ITEM, 1);
 	
-	private final Command MANUAL_URL_CMD = new Command("Enter URL"/* i:EnterURL */, Command.ITEM, 1);
+	private final Command MANUAL_URL_CMD = new Command(Locale.get("guidiscover.EnterURL")/*Enter URL*/, Command.ITEM, 1);
 	
 	/** Soft button for cache reset. */
-	private final Command CELLID_CACHE_RESET_CMD = new Command("Reset cellid cache"/* i:ResetCellidCache */,
+	private final Command CELLID_CACHE_RESET_CMD = new Command(Locale.get("guidiscover.ResetCellidCache")/*Reset cellid cache*/,
 															Command.OK, 2);
 
 	/** A menu list instance */
-	private final List menu = new List("Setup"/* i:Setup */, Choice.IMPLICIT, elements, null);
+	private final List menu = new List(Locale.get("guidiscover.Setup")/*Setup*/, Choice.IMPLICIT, elements, null);
 
 	private List menuBT;
 
-	private final List menuFS = new List("Devices"/* i:Devices */, Choice.IMPLICIT, empty, null);
+	private final List menuFS = new List(Locale.get("guidiscover.Devices")/*Devices*/, Choice.IMPLICIT, empty, null);
 
 	private Form					menuSelectLocProv;
 	
@@ -249,7 +249,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	private void initBluetoothSelect() {
 		//Prepare Bluetooth selection menu
 		logger.info("Starting bluetooth setup menu");
-		menuBT = new List("Devices"/* i:Devices */, Choice.IMPLICIT, empty, null);
+		menuBT = new List(Locale.get("guidiscover.Devices")/*Devices*/, Choice.IMPLICIT, empty, null);
 		menuBT.addCommand(OK_CMD);
 		menuBT.addCommand(BACK_CMD);
 		menuBT.addCommand(MANUAL_URL_CMD);
@@ -261,33 +261,33 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	private void initRecordingSetupMenu() {
 		//Prepare Recording Options selection menu
 		logger.info("Starting Recording setup menu");
-		menuRecordingOptions = new Form("Recording Rules"/* i:RecordingRules */);
+		menuRecordingOptions = new Form(Locale.get("guidiscover.RecordingRules")/*Recording Rules*/);
 		menuRecordingOptions.addCommand(BACK_CMD);
 		menuRecordingOptions.addCommand(OK_CMD);
 		menuRecordingOptions.setCommandListener(this);
 		String [] recModes = new String[2];
-		recModes[0] = "adaptive to speed"/* i:adaptivetospeed */;
-		recModes[1] = "manual rules:"/* i:manualrules */;
-		choiceGpxRecordRuleMode = new ChoiceGroup("Record Trackpoints"/* i:RecordTrackpoints */, Choice.EXCLUSIVE, recModes ,null);
+		recModes[0] = Locale.get("guidiscover.adaptivetospeed")/*adaptive to speed*/;
+		recModes[1] = Locale.get("guidiscover.manualrules")/*manual rules:*/;
+		choiceGpxRecordRuleMode = new ChoiceGroup(Locale.get("guidiscover.RecordTrackpoints")/*Record Trackpoints*/, Choice.EXCLUSIVE, recModes ,null);
 
 		tfGpxRecordMinimumSecs = new TextField("Minimum seconds between trackpoints (0=disabled)"/* i:MinimumSeconds */, "0", 3, TextField.DECIMAL);
 		tfGpxRecordMinimumDistanceMeters = new TextField("Minimum meters between trackpoints (0=disabled)"/* i:MinimumMeters */, "0", 3, TextField.DECIMAL);
 		tfGpxRecordAlwaysDistanceMeters = new TextField("Always record when exceeding these meters between trackpoints (0=disabled)"/* i:AlwaysRecord */, "0", 3, TextField.DECIMAL);
 		
 		String [] wptFlag = new String[1];
-		wptFlag[0] = "Also put waypoints in track"/* i:WpAlsoInTrack */;
-		choiceWptInTrack = new ChoiceGroup("Waypoints in track"/* i:WaypointsInTrack */, Choice.MULTIPLE,
+		wptFlag[0] = Locale.get("guidiscover.WpAlsoInTrack")/*Also put waypoints in track*/;
+		choiceWptInTrack = new ChoiceGroup(Locale.get("guidiscover.WaypointsInTrack")/*Waypoints in track*/, Choice.MULTIPLE,
 				wptFlag, null);
 		choiceWptInTrack.setSelectedIndex(0, Configuration.getCfgBitSavedState(
 				Configuration.CFGBIT_WPTS_IN_TRACK));
 		String [] gpxNameOpts = new String[2];
 		boolean[] selGpxName = new boolean[2];
-		gpxNameOpts[0] = "Ask track name at start of recording"/* i:AskTrackNameStart */;
-		gpxNameOpts[1] = "Ask track name at end of recording"/* i:AskTrackNameEnd */;
+		gpxNameOpts[0] = Locale.get("guidiscover.AskTrackNameStart")/*Ask track name at start of recording*/;
+		gpxNameOpts[1] = Locale.get("guidiscover.AskTrackNameEnd")/*Ask track name at end of recording*/;
 		selGpxName[0] = Configuration.getCfgBitSavedState(Configuration.CFGBIT_GPX_ASK_TRACKNAME_START);
 		selGpxName[1] = Configuration.getCfgBitSavedState(Configuration.CFGBIT_GPX_ASK_TRACKNAME_STOP);
 		
-		gpxOptsGroup = new ChoiceGroup("Track Naming"/* i:TrackNaming */, Choice.MULTIPLE, gpxNameOpts ,null);
+		gpxOptsGroup = new ChoiceGroup(Locale.get("guidiscover.TrackNaming")/*Track Naming*/, Choice.MULTIPLE, gpxNameOpts ,null);
 		gpxOptsGroup.setSelectedFlags(selGpxName);
 
 		menuRecordingOptions.append(choiceGpxRecordRuleMode);
@@ -301,7 +301,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	private void initDebugSetupMenu() {
 		//Prepare Debug selection menu
 		logger.info("Starting Debug setup menu");
-		menuDebug = new Form("Debug options"/* i:DebugOptions */);
+		menuDebug = new Form(Locale.get("guidiscover.DebugOptions")/*Debug options*/);
 		String [] loggings = new String[1];
 		menuDebug.addCommand(BACK_CMD);
 		menuDebug.addCommand(OK_CMD);
@@ -312,9 +312,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		loggings = new String[1];
 		loggings[0] = Configuration.getDebugRawLoggerUrl();
 		if (loggings[0] == null) {
-			loggings[0] = "Please select directory"/* i:PleaseSelectDir */;
+			loggings[0] = Locale.get("guidiscover.PleaseSelectDir")/*Please select directory*/;
 		}
-		debugLog = new ChoiceGroup("Debug event logging to:"/* i:DebugTo */, ChoiceGroup.MULTIPLE, loggings, null);
+		debugLog = new ChoiceGroup(Locale.get("guidiscover.DebugTo")/*Debug event logging to:*/, ChoiceGroup.MULTIPLE, loggings, null);
 		debugLog.setSelectedFlags(selDebug);
 		menuDebug.append(debugLog);
 
@@ -323,18 +323,18 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		selDebug[0] = Configuration.getDebugSeverityInfo();
 		selDebug[1] = Configuration.getDebugSeverityDebug();
 		selDebug[2] = Configuration.getDebugSeverityTrace();
-		loggings[0] = "Info"/* i:Info */;
-		loggings[1] = "Debug"/* i:Debug */;
-		loggings[2] = "Trace"/* i:Trace */;
-		debugSeverity = new ChoiceGroup("Log severity:"/* i:LogSeverity: */, ChoiceGroup.MULTIPLE, loggings, null);
+		loggings[0] = Locale.get("guidiscover.Info")/*Info*/;
+		loggings[1] = Locale.get("guidiscover.Debug")/*Debug*/;
+		loggings[2] = Locale.get("guidiscover.Trace")/*Trace*/;
+		debugSeverity = new ChoiceGroup(Locale.get("guidiscover.LogSeverity:")/*Log severity:*/, ChoiceGroup.MULTIPLE, loggings, null);
 		debugSeverity.setSelectedFlags(selDebug);
 		menuDebug.append(debugSeverity);
 
 		loggings = new String[3];
-		loggings[0] = "Show route connections"/* i:ShowRouteConnections */;
-		loggings[1] = "Show turn restrictions"/* i:ShowTurnRestrictions */;
-		loggings[2] = "Show inconsistent bearings"/* i:ShowInconsistentBearings */;
-		debugOther = new ChoiceGroup("Other:"/* i:Other */, ChoiceGroup.MULTIPLE, loggings, null);
+		loggings[0] = Locale.get("guidiscover.ShowRouteConnections")/*Show route connections*/;
+		loggings[1] = Locale.get("guidiscover.ShowTurnRestrictions")/*Show turn restrictions*/;
+		loggings[2] = Locale.get("guidiscover.ShowInconsistentBearings")/*Show inconsistent bearings*/;
+		debugOther = new ChoiceGroup(Locale.get("guidiscover.Other")/*Other:*/, ChoiceGroup.MULTIPLE, loggings, null);
 		debugOther.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ROUTE_CONNECTIONS));
 		debugOther.setSelectedIndex(1, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_TURN_RESTRICTIONS));
 		debugOther.setSelectedIndex(2, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ROUTE_BEARINGS));
@@ -346,32 +346,32 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		//Prepare Location Provider setup menu
 		logger.info("Starting Locationreceiver setup menu");
 
-		menuSelectLocProv = new Form("Location Receiver"/* i:LocationReceiver */);
+		menuSelectLocProv = new Form(Locale.get("guidiscover.LocationReceiver")/*Location Receiver*/);
 
 		menuSelectLocProv.addCommand(BACK_CMD);
 		menuSelectLocProv.addCommand(OK_CMD);
 		menuSelectLocProv.addCommand(GPS_DISCOVER);
 		menuSelectLocProv.addCommand(FILE_MAP);
 
-		gpsUrl = new StringItem("GPS: "/* i:GPS */, null);
+		gpsUrl = new StringItem(Locale.get("guidiscover.GPS")/*GPS: */, null);
 		gpsUrl.setDefaultCommand(GPS_DISCOVER);
 		gpsUrl.setItemCommandListener(this);
-		locProv = new ChoiceGroup("input from:"/* i:inputfrom */, Choice.EXCLUSIVE, Configuration.LOCATIONPROVIDER, new Image[Configuration.LOCATIONPROVIDER.length]);
+		locProv = new ChoiceGroup(Locale.get("guidiscover.inputfrom")/*input from:*/, Choice.EXCLUSIVE, Configuration.LOCATIONPROVIDER, new Image[Configuration.LOCATIONPROVIDER.length]);
 
-		final String[] logCategories = {"Cell-IDs for OpenCellID.org"/* i:CellIDs */, "Raw Gps Data"/* i:RawGpsData */ };
+		final String[] logCategories = {Locale.get("guidiscover.CellIDs")/*Cell-IDs for OpenCellID.org*/, Locale.get("guidiscover.RawGpsData")/*Raw Gps Data*/ };
 		rawLogCG = new ChoiceGroup(LABEL_SELECT_LOGDIR_FIRST, ChoiceGroup.MULTIPLE, logCategories, new Image[2]);
 
 		String [] aconn = new String[1];
-		aconn[0] = "Start GPS at startup"/* i:StartGPSAtStartup */;
-		autoConnect = new ChoiceGroup("GPS start"/* i:GPSstart */, ChoiceGroup.MULTIPLE, aconn, null);
+		aconn[0] = Locale.get("guidiscover.StartGPSAtStartup")/*Start GPS at startup*/;
+		autoConnect = new ChoiceGroup(Locale.get("guidiscover.GPSstart")/*GPS start*/, ChoiceGroup.MULTIPLE, aconn, null);
 
 		String [] btka = new String[1];
-		btka[0] = "Send keep alives"/* i:Sendkeepalives */;
-		btKeepAlive = new ChoiceGroup("BT keep alive"/* i:BTkeepalive */, ChoiceGroup.MULTIPLE, btka, null);
+		btka[0] = Locale.get("guidiscover.Sendkeepalives")/*Send keep alives*/;
+		btKeepAlive = new ChoiceGroup(Locale.get("guidiscover.BTkeepalive")/*BT keep alive*/, ChoiceGroup.MULTIPLE, btka, null);
 
 		String [] btar = new String[1];
-		btar[0] = "Auto reconnect GPS"/* i:AutoreconnectGPS */;
-		btAutoRecon = new ChoiceGroup("BT reconnect"/* i:BTreconnect */, ChoiceGroup.MULTIPLE, btar, null);
+		btar[0] = Locale.get("guidiscover.AutoreconnectGPS")/*Auto reconnect GPS*/;
+		btAutoRecon = new ChoiceGroup(Locale.get("guidiscover.BTreconnect")/*BT reconnect*/, ChoiceGroup.MULTIPLE, btar, null);
 
 		menuSelectLocProv.append(gpsUrl);
 		menuSelectLocProv.append(autoConnect);
@@ -386,18 +386,18 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	private void initMapSource() {
 		//Prepare Map Source selection menu
 		logger.info("Starting map source setup menu");
-		menuSelectMapSource = new Form("Select Map Source"/* i:SelectMapSource */);
+		menuSelectMapSource = new Form(Locale.get("guidiscover.SelectMapSource")/*Select Map Source*/);
 		menuSelectMapSource.addCommand(BACK_CMD);
 		menuSelectMapSource.addCommand(OK_CMD);
 		menuSelectMapSource.addCommand(FILE_MAP);
 		String [] sources = new String[2];
-		sources[0] = "Built-in map"/* i:Built-inMap */;
-		sources[1] = "Filesystem: "/* i:Filesystem */;
-		mapSrc = new ChoiceGroup("Map source:"/* i:MapSource */, Choice.EXCLUSIVE, sources, null);
+		sources[0] = Locale.get("guidiscover.Built-inMap")/*Built-in map*/;
+		sources[1] = Locale.get("guidiscover.Filesystem")/*Filesystem: */;
+		mapSrc = new ChoiceGroup(Locale.get("guidiscover.MapSource")/*Map source:*/, Choice.EXCLUSIVE, sources, null);
 
 		String [] preferInternal = new String[1];
-		preferInternal[0] = "Prefer built-in POI PNGs (faster startup e.g. on some Nokias)"/* i:PreferBuiltInPNGs */;
-		mapSrcOptions = new ChoiceGroup("Options"/* i:Options */, ChoiceGroup.MULTIPLE, preferInternal, null);
+		preferInternal[0] = Locale.get("guidiscover.PreferBuiltInPNGs")/*Prefer built-in POI PNGs (faster startup e.g. on some Nokias)*/;
+		mapSrcOptions = new ChoiceGroup(Locale.get("guidiscover.Options")/*Options*/, ChoiceGroup.MULTIPLE, preferInternal, null);
 		
 		menuSelectMapSource.append(mapSrc);
 		menuSelectMapSource.append(mapSrcOptions);
@@ -406,9 +406,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 
 	private void initDisplay() {
 		//Prepare Display options menu
-		logger.info("Starting display setup menu"/* i:StartingDisplaySetupMenu */);
+		logger.info(Locale.get("guidiscover.StartingDisplaySetupMenu")/*Starting display setup menu*/);
 
-		menuDisplayOptions = new Form("Display Options"/* i:DisplayOptions2 */);
+		menuDisplayOptions = new Form(Locale.get("guidiscover.DisplayOptions2")/*Display Options*/);
 
 		menuDisplayOptions.addCommand(BACK_CMD);
 		menuDisplayOptions.addCommand(OK_CMD);
@@ -418,7 +418,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 			for (int i = 0; i < Legend.numUiLang; i++) {
 				uiLang[i] = Legend.uiLangName[i];
 			}
-			uiLangGroup = new ChoiceGroup("Language"/* i:Language */, Choice.EXCLUSIVE, uiLang, null);
+			uiLangGroup = new ChoiceGroup(Locale.get("guidiscover.Language")/*Language*/, Choice.EXCLUSIVE, uiLang, null);
 			menuDisplayOptions.append(uiLangGroup);
 		}
 		if (Legend.numNaviLang > 1) {
@@ -426,7 +426,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 			for (int i = 0; i < Legend.numNaviLang; i++) {
 				naviLang[i] = Legend.naviLangName[i];
 			}
-			naviLangGroup = new ChoiceGroup("Sound/Navi language"/* i:SoundNavilanguage */, Choice.EXCLUSIVE, naviLang, null);
+			naviLangGroup = new ChoiceGroup(Locale.get("guidiscover.SoundNavilanguage")/*Sound/Navi language*/, Choice.EXCLUSIVE, naviLang, null);
 			menuDisplayOptions.append(naviLangGroup);
 		}
 		if (Legend.numOnlineLang > 1) {
@@ -434,42 +434,42 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 			for (int i = 0; i < Legend.numOnlineLang; i++) {
 				onlineLang[i] = Legend.onlineLangName[i];
 			}
-			onlineLangGroup = new ChoiceGroup("Online language"/* i:OnlineLanguage */, Choice.EXCLUSIVE, onlineLang, null);
+			onlineLangGroup = new ChoiceGroup(Locale.get("guidiscover.OnlineLanguage")/*Online language*/, Choice.EXCLUSIVE, onlineLang, null);
 			menuDisplayOptions.append(onlineLangGroup);
 		}
 		// FIXME add dialogue for wikipedia & street name language switch,
 		// maybe make a submenu or a separate language menu
 		String [] nightMode = new String[2];
-		nightMode[0] = "Day Mode"/* i:DayMode */;
-		nightMode[1] = "Night Mode"/* i:NightMode */;
-		nightModeGroup = new ChoiceGroup("Colors"/* i:Colors */, Choice.EXCLUSIVE, nightMode, null);
+		nightMode[0] = Locale.get("guidiscover.DayMode")/*Day Mode*/;
+		nightMode[1] = Locale.get("guidiscover.NightMode")/*Night Mode*/;
+		nightModeGroup = new ChoiceGroup(Locale.get("guidiscover.Colors")/*Colors*/, Choice.EXCLUSIVE, nightMode, null);
 		menuDisplayOptions.append(nightModeGroup);
 
 		String [] rotation = ProjFactory.name;
-		rotationGroup = new ChoiceGroup("Map Projection"/* i:Map Projection */, Choice.EXCLUSIVE, rotation, null);
+		rotationGroup = new ChoiceGroup(Locale.get("guidiscover.Map Projection")/*Map Projection*/, Choice.EXCLUSIVE, rotation, null);
 		menuDisplayOptions.append(rotationGroup);
 
 		String [] renders = new String[2];
-		renders[0] = "as lines"/* i:aslines */;
-		renders[1] = "as streets"/* i:asstreets */;
-		renderOpts = new ChoiceGroup("Rendering Options:"/* i:RenderingOptions */, Choice.EXCLUSIVE, renders, null);
+		renders[0] = Locale.get("guidiscover.aslines")/*as lines*/;
+		renders[1] = Locale.get("guidiscover.asstreets")/*as streets*/;
+		renderOpts = new ChoiceGroup(Locale.get("guidiscover.RenderingOptions")/*Rendering Options:*/, Choice.EXCLUSIVE, renders, null);
 		menuDisplayOptions.append(renderOpts);
 		
 		String [] visuals = new String[2];
-		visuals[0] = "road borders"/* i:roadborders */;
-		visuals[1] = "round road ends"/* i:roundroadends */;
-		visualOpts = new ChoiceGroup("Visual Options:"/* i:VisualOptions: */, Choice.MULTIPLE, visuals, null);
+		visuals[0] = Locale.get("guidiscover.roadborders")/*road borders*/;
+		visuals[1] = Locale.get("guidiscover.roundroadends")/*round road ends*/;
+		visualOpts = new ChoiceGroup(Locale.get("guidiscover.VisualOptions:")/*Visual Options:*/, Choice.MULTIPLE, visuals, null);
 		menuDisplayOptions.append(visualOpts);
 		
 		String [] metricUnit = new String[1];
-		metricUnit[0] = "metric units"/* i:metricunits */;
-		metricUnits = new ChoiceGroup("Units"/* i:Units */, Choice.MULTIPLE, metricUnit, null);
+		metricUnit[0] = Locale.get("guidiscover.metricunits")/*metric units*/;
+		metricUnits = new ChoiceGroup(Locale.get("guidiscover.Units")/*Units*/, Choice.MULTIPLE, metricUnit, null);
 		menuDisplayOptions.append(metricUnits);
 
 		String [] distanceView = new String[2];
-		distanceView[0] = "only meters"/* i:onlymeters */;
-		distanceView[1] = "km or m"/* i:kmorm */;
-		distanceViews = new ChoiceGroup("Distances"/* i:Distances */, Choice.EXCLUSIVE, distanceView, null);
+		distanceView[0] = Locale.get("guidiscover.onlymeters")/*only meters*/;
+		distanceView[1] = Locale.get("guidiscover.kmorm")/*km or m*/;
+		distanceViews = new ChoiceGroup(Locale.get("guidiscover.Distances")/*Distances*/, Choice.EXCLUSIVE, distanceView, null);
 		menuDisplayOptions.append(distanceViews);
 
 		tfAutoRecenterToGpsSecs = new TextField("Auto-recenter to GPS after no user action for these seconds (0=disabled)"/* i:Autorecentertimeout */,
@@ -487,37 +487,37 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		//#endif
 		backlights = new String[i];
 
-		backlights[0] = "Keep backlight on"/* i:Keepbacklighton */;
-		backlights[1] = "only while GPS started"/* i:onlywhileGPS */;
-		backlights[2] = "only as keep-alive"/* i:onlyaskeepalive */;
-		backlights[3] = "with MIDP2.0"/* i:withMIDP2 */;
+		backlights[0] = Locale.get("guidiscover.Keepbacklighton")/*Keep backlight on*/;
+		backlights[1] = Locale.get("guidiscover.onlywhileGPS")/*only while GPS started*/;
+		backlights[2] = Locale.get("guidiscover.onlyaskeepalive")/*only as keep-alive*/;
+		backlights[3] = Locale.get("guidiscover.withMIDP2")/*with MIDP2.0*/;
 		i = 4;
 		//#if polish.api.nokia-ui
-		backlights[i++] = "with Nokia API"/* i:withNokiaAPI */;
-		backlights[i++] = "with Nokia Flashlight"/* i:withNokiaFlashlight */;
+		backlights[i++] = Locale.get("guidiscover.withNokiaAPI")/*with Nokia API*/;
+		backlights[i++] = Locale.get("guidiscover.withNokiaFlashlight")/*with Nokia Flashlight*/;
 		//#endif
 		//#if polish.api.min-siemapi
-		backlights[i++] = "with Siemens API"/* i:withSiemensAPI */;
+		backlights[i++] = Locale.get("guidiscover.withSiemensAPI")/*with Siemens API*/;
 		//#endif
 
-		backlightOpts = new ChoiceGroup("Backlight Options:"/* i:BacklightOptions */,
+		backlightOpts = new ChoiceGroup(Locale.get("guidiscover.BacklightOptions")/*Backlight Options:*/,
 				Choice.MULTIPLE, backlights, null);
 		menuDisplayOptions.append(backlightOpts);
 
 		String [] sizes = new String[2];
-		sizes[0] = "larger POI labels"/* i:largerPOIlabels */;
-		sizes[1] = "larger waypoint labels"/* i:largerwaypointlabels */;
-		sizeOpts = new ChoiceGroup("Size Options:"/* i:SizeOptions */, Choice.MULTIPLE, sizes, null);
+		sizes[0] = Locale.get("guidiscover.largerPOIlabels")/*larger POI labels*/;
+		sizes[1] = Locale.get("guidiscover.largerwaypointlabels")/*larger waypoint labels*/;
+		sizeOpts = new ChoiceGroup(Locale.get("guidiscover.SizeOptions")/*Size Options:*/, Choice.MULTIPLE, sizes, null);
 		menuDisplayOptions.append(sizeOpts);
 
 		String [] mapInfos = new String[6];
-		mapInfos[0] = "Point of compass in rotated map"/* i:Pointofcompass */;
-		mapInfos[1] = "Scale bar"/* i:Scalebar */;
-		mapInfos[2] = "Speed when driving"/* i:Speed */;
-		mapInfos[3] = "Altitude from GPS"/* i:Altitude */;
-		mapInfos[4] = "Air distance to dest. when not routing"/* i:Airdistance */;
-		mapInfos[5] = "Clock with current time"/* i:Clock */;
-		mapInfoOpts = new ChoiceGroup("Infos in Map Screen:"/* i:Infos */,
+		mapInfos[0] = Locale.get("guidiscover.Pointofcompass")/*Point of compass in rotated map*/;
+		mapInfos[1] = Locale.get("guidiscover.Scalebar")/*Scale bar*/;
+		mapInfos[2] = Locale.get("guidiscover.Speed")/*Speed when driving*/;
+		mapInfos[3] = Locale.get("guidiscover.Altitude")/*Altitude from GPS*/;
+		mapInfos[4] = Locale.get("guidiscover.Airdistance")/*Air distance to dest. when not routing*/;
+		mapInfos[5] = Locale.get("guidiscover.Clock")/*Clock with current time*/;
+		mapInfoOpts = new ChoiceGroup(Locale.get("guidiscover.Infos")/*Infos in Map Screen:*/,
 				Choice.MULTIPLE, mapInfos, null);
 		menuDisplayOptions.append(mapInfoOpts);
 				
@@ -527,15 +527,15 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	//#if polish.api.osm-editing
 	private void initOSMaccountOptions() {
 		//Prepare Debug selection menu
-		logger.info("Starting OSM account setup menu"/* i:StartingOSM */);
-		menuOsmAccountOptions = new Form("OpenStreetMap account"/* i:OpenStreetMapAccount */);
+		logger.info(Locale.get("guidiscover.StartingOSM")/*Starting OSM account setup menu*/);
+		menuOsmAccountOptions = new Form(Locale.get("guidiscover.OpenStreetMapAccount")/*OpenStreetMap account*/);
 		menuOsmAccountOptions.addCommand(BACK_CMD);
 		menuOsmAccountOptions.addCommand(OK_CMD);
 		menuOsmAccountOptions.setCommandListener(this);
 		
-		tfOsmUserName = new TextField("User name:"/* i:Username */, Configuration.getOsmUsername(), 100, TextField.ANY);
-		tfOsmPassword = new TextField("Password:"/* i:Password */, Configuration.getOsmPwd(), 100, TextField.ANY | TextField.PASSWORD);
-		tfOsmUrl = new TextField("Server URL:"/* i:ServerURL */, Configuration.getOsmUrl(), 255, TextField.URL);
+		tfOsmUserName = new TextField(Locale.get("guidiscover.Username")/*User name:*/, Configuration.getOsmUsername(), 100, TextField.ANY);
+		tfOsmPassword = new TextField(Locale.get("guidiscover.Password")/*Password:*/, Configuration.getOsmPwd(), 100, TextField.ANY | TextField.PASSWORD);
+		tfOsmUrl = new TextField(Locale.get("guidiscover.ServerURL")/*Server URL:*/, Configuration.getOsmUrl(), 255, TextField.URL);
 		
 		menuOsmAccountOptions.append(tfOsmUserName);
 		menuOsmAccountOptions.append(tfOsmPassword);
@@ -547,12 +547,12 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	private void initOpencellidOptions() {
 		//Prepare Debug selection menu
 		logger.info("Starting Opencellid apikey setup menu");
-		menuOpencellidOptions = new Form("Opencellid"/* i:Opencellid */);
+		menuOpencellidOptions = new Form(Locale.get("guidiscover.Opencellid")/*Opencellid*/);
 		menuOpencellidOptions.addCommand(BACK_CMD);
 		menuOpencellidOptions.addCommand(OK_CMD);
 		menuOpencellidOptions.addCommand(CELLID_CACHE_RESET_CMD);
 		menuOpencellidOptions.setCommandListener(this);
-		//tfOpencellidApikey = new TextField("apikey:"/* i:apikey */, Configuration.getOpencellidApikey(), 100, TextField.ANY);
+		//tfOpencellidApikey = new TextField(Locale.get("guidiscover.apikey")/*apikey:*/, Configuration.getOpencellidApikey(), 100, TextField.ANY);
 		
 		//menuOpencellidOptions.append(tfOpencellidApikey);
 
@@ -560,12 +560,12 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		boolean[] opencellidFlags = new boolean[2];
 
 		cellidOpts[0] = "Don't use online cellid lookups"/* i:noonlinecellid */;
-		cellidOpts[1] = "Use only online cellid lookups"/* i:onlyonlinecellid */;
+		cellidOpts[1] = Locale.get("guidiscover.onlyonlinecellid")/*Use only online cellid lookups*/;
 		//cellidOpts[2] = "Upload log always";
 		//cellidOpts[3] = "Confirmation before log upload";
 		//cellidOpts[4] = "Fallback to cellid when no fix";
 		
-		cellidOptsGroup = new ChoiceGroup("Cellid options"/* i:CellidOptions */, Choice.MULTIPLE, cellidOpts, null);
+		cellidOptsGroup = new ChoiceGroup(Locale.get("guidiscover.CellidOptions")/*Cellid options*/, Choice.MULTIPLE, cellidOpts, null);
 		opencellidFlags[0] = Configuration.getCfgBitSavedState(Configuration.CFGBIT_CELLID_OFFLINEONLY);
 		opencellidFlags[1] = Configuration.getCfgBitSavedState(Configuration.CFGBIT_CELLID_ONLINEONLY);
 		//opencellidFlags[2] = Configuration.getCfgBitSavedState(Configuration.CFGBIT_CELLID_ALWAYS);
@@ -606,14 +606,14 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		if (c == FILE_MAP) {
 			//#if polish.api.fileconnection
 			String initialDir = "";
-			String title = "Select Directory"/* i:SelectDirectory */;
+			String title = Locale.get("guidiscover.SelectDirectory")/*Select Directory*/;
 			switch (state) {
 				case STATE_LP:
-					title = "Raw GPS/CellID Log Directory"/* i:RawLogDir */;
+					title = Locale.get("guidiscover.RawLogDir")/*Raw GPS/CellID Log Directory*/;
 					initialDir = (rawLogDir == null) ? "" : rawLogDir;
 					break;
 				case STATE_MAP:
-					title = "Map ZipFile or Directory"/* i:MapZipFileOrDirectory */;
+					title = Locale.get("guidiscover.MapZipFileOrDirectory")/*Map ZipFile or Directory*/;
 					// get initialDir from form
 					String url = mapSrc.getString(1);
 					// skip "Filesystem: "
@@ -621,11 +621,11 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 					initialDir = url;
 					break;
 				case STATE_GPX:
-					title = "Gpx Directory"/* i:GpxDirectory */;
+					title = Locale.get("guidiscover.GpxDirectory")/*Gpx Directory*/;
 					initialDir = gpxUrl.getText();
 					break;
 				case STATE_DEBUG:
-					title = "Log Directory"/* i:LogDirectory */;
+					title = Locale.get("guidiscover.LogDirectory")/*Log Directory*/;
 					initialDir = Configuration.getDebugRawLoggerUrl();
 					break;
 			}
@@ -640,8 +640,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 			//#endif
 		}
 		if (c == MANUAL_URL_CMD) {
-			menuURLEnter = new Form("Enter connection url"/* i:EnterConnectionUrl */);
-			tfURL = new TextField("URL"/* i:URL */, gpsUrlStr, 256, TextField.ANY);
+			menuURLEnter = new Form(Locale.get("guidiscover.EnterConnectionUrl")/*Enter connection url*/);
+			tfURL = new TextField(Locale.get("guidiscover.URL")/*URL*/, gpsUrlStr, 256, TextField.ANY);
 			menuURLEnter.addCommand(OK_CMD);
 			menuURLEnter.addCommand(BACK_CMD);
 			menuURLEnter.setCommandListener(this);
@@ -778,7 +778,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_PREFER_INTERNAL_PNGS, mapSrcOptions.isSelected(0));
 				state = STATE_ROOT;
 				show();
-				logger.fatal("Need to restart GpsMid, otherwise map is in an inconsistant state"/* i:NeedRestart */ + url+Configuration.getMapUrl());
+				logger.fatal(Locale.get("guidiscover.NeedRestart")/*Need to restart GpsMid, otherwise map is in an inconsistant state*/ + url+Configuration.getMapUrl());
 				break;
 			case STATE_DISPOPT:
 				if (Legend.numUiLang > 1) {
@@ -1152,7 +1152,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				break;
 			case MENU_ITEM_GPX_DEVICE: // GPX Receiver
 				//Prepare Gpx receiver selection menu
-				menuGpx = new Form("Gpx Receiver"/* i:GpxReceiver */);
+				menuGpx = new Form(Locale.get("guidiscover.GpxReceiver")/*Gpx Receiver*/);
 				menuGpx.addCommand(BACK_CMD);
 				menuGpx.addCommand(OK_CMD);
 				menuGpx.addCommand(FILE_MAP);
@@ -1161,7 +1161,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				menuGpx.addCommand(OSM_URL);
 				//#endif
 		
-				gpxUrl = new StringItem("Gpx Receiver Url: "/* i:GpxReceiverUrl */, "<Please select in menu>"/* i:PleaseSelectInMenu */);
+				gpxUrl = new StringItem(Locale.get("guidiscover.GpxReceiverUrl")/*Gpx Receiver Url: */, "<Please select in menu>"/* i:PleaseSelectInMenu */);
 				menuGpx.append(gpxUrl);
 				menuGpx.setCommandListener(this);
 				gpxUrl.setText(Configuration.getGpxUrl() == null ?
@@ -1171,7 +1171,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				break;
 			case MENU_ITEM_MAP_SRC: // Map Source
 				initMapSource();
-				mapSrc.set(1, "Filesystem: "/* i:Filesystem */ + ( (Configuration.getMapUrl() == null) ?
+				mapSrc.set(1, Locale.get("guidiscover.Filesystem")/*Filesystem: */ + ( (Configuration.getMapUrl() == null) ?
 								 "<Please select map directory or other .jar/zip file first>"/* i:PleaseSelectMapDirFirst */ :
 							Configuration.getMapUrl() ), null);
 				mapSrc.setSelectedIndex(Configuration.usingBuiltinMap() ? 0 : 1, true);
@@ -1273,7 +1273,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 
 	public void completeInitialization(boolean isBTReady) {
 		//menuBT.addCommand(STORE_BT_URL);
-		menuBT.setTitle("Search Device"/* i:SearchDevice */);
+		menuBT.setTitle(Locale.get("guidiscover.SearchDevice")/*Search Device*/);
 	}
 
 	/** Shows Setup menu of MIDlet on the screen. */
@@ -1325,7 +1325,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 
 	public void fsDiscoverReady() {
 		menuFS.addCommand(STORE_ROOTFS);
-		menuFS.setTitle("Select Root"/* i:SelectRoot */);
+		menuFS.setTitle(Locale.get("guidiscover.SelectRoot")/*Select Root*/);
 	}
 
 	public void addRootFs(String root) {
@@ -1370,7 +1370,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 			break;
 		//#if polish.api.fileconnection
 		case STATE_MAP:
-			mapSrc.set(1, "Filesystem: "/* i:Filesystem */ + url, null);
+			mapSrc.set(1, Locale.get("guidiscover.Filesystem")/*Filesystem: */ + url, null);
 			mapSrc.setSelectedIndex(1, true);
 			//As the Filesystem chooser has called the show()
 			//method of this class, it currently shows the root
@@ -1390,7 +1390,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				Configuration.serialise(con.openOutputStream());
 				con.close();
 			} catch (Exception e) {
-				logger.exception("Could not save configuration"/* i:CouldNotSaveCfg */, e);
+				logger.exception(Locale.get("guidiscover.CouldNotSaveCfg")/*Could not save configuration*/, e);
 			}
 			state = STATE_ROOT;
 			show();
@@ -1401,7 +1401,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				Configuration.deserialise(con.openInputStream());
 				con.close();
 			} catch (Exception e) {
-				logger.exception("Could not load configuration"/* i:CouldNotLoadCfg */, e);
+				logger.exception(Locale.get("guidiscover.CouldNotLoadCfg")/*Could not load configuration*/, e);
 			}
 			state = STATE_ROOT;
 			show();

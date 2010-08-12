@@ -37,6 +37,7 @@ import de.ueller.midlet.gps.names.NumberCanon;
 import de.ueller.midlet.gps.tile.SearchNames;
 import de.ueller.midlet.screens.InputListener;
 
+import de.enough.polish.util.Locale;
 
 public class GuiSearch extends Canvas implements CommandListener,
 		GpsMidDisplayable, InputListener, KeySelectMenuReducedListener, CancelMonitorInterface {
@@ -44,26 +45,26 @@ public class GuiSearch extends Canvas implements CommandListener,
 	private final static Logger logger = Logger.getInstance(GuiSearch.class,Logger.DEBUG);
 
 	/** OK_CMD for Nearest POI / Fulltext Search */
-	private final Command OK_CMD = new Command("Ok"/* i:Ok */, Command.OK, 1);
+	private final Command OK_CMD = new Command(Locale.get("guisearch.Ok1")/*Ok*/, Command.OK, 1);
 	/** OK1_CMD is used when GUI is not optimised for routing */
-	private final Command OK1_CMD = new Command("Ok"/* i:Ok1 */, Command.OK, 1);
+	private final Command OK1_CMD = new Command(Locale.get("guisearch.Ok1")/*Ok*/, Command.OK, 1);
 	/** ROUTE2_CMD is used when GUI is not optimised for routing */
-	private final Command ROUTE2_CMD = new Command("Route"/* i:Route2 */, Command.ITEM, 3);
+	private final Command ROUTE2_CMD = new Command(Locale.get("guisearch.Route1")/*Route*/, Command.ITEM, 3);
 	/** ROUTE1_CMD is used when GUI is optimised for routing */
-	private final Command ROUTE1_CMD = new Command("Route"/* i:Route1 */, Command.OK, 1);
+	private final Command ROUTE1_CMD = new Command(Locale.get("guisearch.Route1")/*Route*/, Command.OK, 1);
 	/** OK2_CMD is used when GUI is optimised for routing */
-	private final Command OK2_CMD = new Command("As destination"/* i:Asdest */, Command.ITEM, 3);
-	private final Command DISP_CMD = new Command("Display"/* i:Disp */, Command.ITEM, 2);
-	private final Command DEL_CMD = new Command("Delete"/* i:Del */, Command.ITEM, 4);
-	private final Command CLEAR_CMD = new Command("Clear"/* i:Clear */, Command.ITEM, 5);
-	private final Command BOOKMARK_CMD = new Command("Add to way points"/* i:Bookmark */, Command.ITEM, 6);
-	private final Command BACK_CMD = new Command("Back"/* i:Back */, Command.BACK, 7);
-	private final Command OVERVIEW_MAP_CMD = new Command("Overview/Filter map"/* i:OverviewMap */, Command.ITEM, 8);
-	private final Command POI_CMD = new Command("Nearest POI"/* i:NearestPoi */, Command.ITEM, 9);
-	private final Command SORT_CMD = new Command("Toggle sort order (exper.)"/* i:Sort */, Command.ITEM, 10);
-	private final Command FULLT_CMD = new Command("Fulltext search"/* i:Fulltext */, Command.ITEM, 10);
-	private final Command URL_CMD = new Command("Open URL"/* i:OpenURL */, Command.ITEM, 11);
-	private final Command PHONE_CMD = new Command("Call Phone"/* i:Phone */, Command.ITEM, 12);
+	private final Command OK2_CMD = new Command(Locale.get("guisearch.Asdest")/*As destination*/, Command.ITEM, 3);
+	private final Command DISP_CMD = new Command(Locale.get("guisearch.Disp")/*Display*/, Command.ITEM, 2);
+	private final Command DEL_CMD = new Command(Locale.get("guisearch.Del")/*Delete*/, Command.ITEM, 4);
+	private final Command CLEAR_CMD = new Command(Locale.get("guisearch.Clear")/*Clear*/, Command.ITEM, 5);
+	private final Command BOOKMARK_CMD = new Command(Locale.get("guisearch.Bookmark")/*Add to way points*/, Command.ITEM, 6);
+	private final Command BACK_CMD = new Command(Locale.get("guisearch.Back")/*Back*/, Command.BACK, 7);
+	private final Command OVERVIEW_MAP_CMD = new Command(Locale.get("guisearch.OverviewMap")/*Overview/Filter map*/, Command.ITEM, 8);
+	private final Command POI_CMD = new Command(Locale.get("guisearch.NearestPoi")/*Nearest POI*/, Command.ITEM, 9);
+	private final Command SORT_CMD = new Command(Locale.get("guisearch.Sort")/*Toggle sort order (exper.)*/, Command.ITEM, 10);
+	private final Command FULLT_CMD = new Command(Locale.get("guisearch.Fulltext")/*Fulltext search*/, Command.ITEM, 10);
+	private final Command URL_CMD = new Command(Locale.get("guisearch.OpenURL")/*Open URL*/, Command.ITEM, 11);
+	private final Command PHONE_CMD = new Command(Locale.get("guisearch.Phone")/*Call Phone*/, Command.ITEM, 12);
 
 	//private Form form;
 
@@ -297,7 +298,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				isSearchCanceled = false;
 				Thread t = new Thread(new Runnable() {
 					public void run() {
-						setTitle("searching..."/* i:searchingdots */);
+						setTitle(Locale.get("guisearch.searchingdots")/*searching...*/);
 						show();
 						Vector names = parent.fulltextSearch(fulltextSearchField.getString().toLowerCase(), cmi);
 						for (int i = 0; i < names.size(); i++) {
@@ -319,7 +320,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 								searchThread.appendSearchBlocking(NumberCanon.canonial(name.substring(0,20)));
 							}
 						}
-						setTitle("Search results:"/* i:SearchResults */);
+						setTitle(Locale.get("guisearch.SearchResults")/*Search results:*/);
 						state = STATE_MAIN;
 						show();
 						triggerRepaint();
@@ -386,7 +387,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		}
 		if (c == FULLT_CMD) {
 			state = STATE_FULLTEXT;
-			Form fulltextForm = new Form("Fulltext search"/* i:FulltextSearchForm */);
+			Form fulltextForm = new Form(Locale.get("guisearch.Fulltext")/*Fulltext search*/);
 			String match = "";
 			if (!searchAlpha) {
 				if (isCursorValid()) {
@@ -401,7 +402,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 					}
 				}
 			}
-			fulltextSearchField = new TextField("Find: "/* i:Find */, 
+			fulltextSearchField = new TextField(Locale.get("guisearch.Find")/*Find: */, 
 							    searchAlpha ? searchCanon.toString() : match, 40, TextField.ANY);
 			fulltextForm.append(fulltextSearchField);
 			fulltextForm.addCommand(BACK_CMD);
@@ -421,7 +422,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		potentialDoubleClick = false;
 		pointerDragged = false;
 		if (state == STATE_SEARCH_PROGRESS) {
-			Form f = new Form("Searching..." /* i:SearchingdotsForm */);
+			Form f = new Form(Locale.get("guisearch.SearchingdotsForm")/*Searching...*/);
 			f.addCommand(BACK_CMD);
 			f.setCommandListener(this);
 			GpsMid.getInstance().show(f);
@@ -754,7 +755,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		if ( (state == STATE_MAIN || state == STATE_FAVORITES)
 			&& (clickIdx < 0 || clickIdx >= result.size() || ((clickIdx + 1) * fontSize + scrollOffset) > getHeight())
 		) {
-			GuiNameEnter gne = new GuiNameEnter(this, null, "Search for names starting with:"/* i:SearchForNamesStarting */, searchCanon.toString(), 20);
+			GuiNameEnter gne = new GuiNameEnter(this, null, Locale.get("guisearch.SearchForNamesStarting")/*Search for names starting with:*/, searchCanon.toString(), 20);
 			gne.show();
 		}
 	}
@@ -787,7 +788,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				// Search field slide: sliding left at least the fontHeight
 				} else if (xDist < -getWidth()/2 ) {
 					logger.debug("Search field slide");
-					GuiNameEnter gne = new GuiNameEnter(this, null, "Search for names starting with:"/* i:SearchForNamesStarting */, searchCanon.toString(), 20);
+					GuiNameEnter gne = new GuiNameEnter(this, null, Locale.get("guisearch.SearchForNamesStarting")/*Search for names starting with:*/, searchCanon.toString(), 20);
 					gne.show();
 				// Select entry slide: sliding left at least the fontHeight
 				} else if (xDist < -fontSize ) {
@@ -896,40 +897,40 @@ public class GuiSearch extends Canvas implements CommandListener,
 		switch (state) {
 			case STATE_MAIN:
 				if (searchCanon.length() == 0) {
-					sb.append("Search for name"/* i:Searchforname */);
+					sb.append(Locale.get("guisearch.Searchforname")/*Search for name*/);
 				} else {
 					sb.append((searchCanon.toString() + " " + carret));
 				}
 				if (searchCanon.length() > 0) {
-					sb.append(" (" + "key"/* i:key */ + " " + searchCanon.toString() + ")");
+					sb.append(" (" + Locale.get("guisearch.key")/*key*/ + " " + searchCanon.toString() + ")");
 				} else {
 					if (sortByDist) {
-						sb.append(" (" + "distance"/* i:distance */ + ")");
+						sb.append(" (" + Locale.get("guisearch.distance")/*distance*/ + ")");
 					} else {
-						sb.append(" (" + "name"/* i:name */ + ")");
+						sb.append(" (" + Locale.get("guisearch.name")/*name*/ + ")");
 					}
 				}
 				break;
 			case STATE_FAVORITES:
 				if (showAllWayPts) {
-					sb.append("Waypoints"/* i:Waypoints */);
+					sb.append(Locale.get("guisearch.Waypoints")/*Waypoints*/);
 				} else {
-					sb.append("Favorites"/* i:Favorites */);					
+					sb.append(Locale.get("guisearch.Favorites")/*Favorites*/);					
 				}
 				if (searchCanon.length() > 0) {
 					sb.append(" (key " + searchCanon.toString() + ")");
 				} else {
 					if (sortByDist) {
-						sb.append(" by distance"/* i:bydistance */);
+						sb.append(Locale.get("guisearch.bydistance")/* by distance*/);
 					} else {
-						sb.append(" by name"/* i:byname */);
+						sb.append(Locale.get("guisearch.byname")/* by name*/);
 					}
 				}
 				break;
 			case STATE_POI:
-				sb.append("Nearest POIs"/* i:nearestpois */); break;			
+				sb.append(Locale.get("guisearch.nearestpois")/*Nearest POIs*/); break;			
 			case STATE_FULLTEXT:
-				sb.append("Fulltext Results"/* i:fulltextresults */); break;			
+				sb.append(Locale.get("guisearch.fulltextresults")/*Fulltext Results*/); break;			
 		}
 		setTitle(sb.toString());
 	}
@@ -947,7 +948,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		addDistanceToSearchResult(srNew);
 		String name = parent.getName(srNew.nameIdx);
 		//#debug debug
-		logger.debug("Found matching name: "/* i:matchingnamefound */ + srNew);
+		logger.debug(Locale.get("guisearch.matchingnamefound")/*Found matching name: */ + srNew);
 
 		if (!searchAlpha || name == null || searchCanon.toString().equalsIgnoreCase(
 			    name.substring(0, searchCanon.toString().length()))) {

@@ -17,35 +17,37 @@ import de.ueller.midlet.gps.data.Way;
 import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.tile.PaintContext;
 
+import de.enough.polish.util.Locale;
+
 public class GuiWebInfo extends List implements GpsMidDisplayable,
 		CommandListener {
 
 	private final static Logger mLogger = Logger.getInstance(GuiWebInfo.class,
 			Logger.DEBUG);
-	private final Command BACK_CMD = new Command("Back"/* i:Back */, Command.BACK, 1);
-	private final Command SELECT_CMD = new Command("Select"/* i:Select */, Command.OK, 2);
+	private final Command BACK_CMD = new Command(Locale.get("guiwebinfo.Back")/*Back*/, Command.BACK, 1);
+	private final Command SELECT_CMD = new Command(Locale.get("guiwebinfo.Select")/*Select*/, Command.OK, 2);
 	private GpsMidDisplayable mParent;
 	private Position mPos;
 	private Way actualWay;
 	private Trace trace;
 
 	public GuiWebInfo(GpsMidDisplayable parent, Position pos, PaintContext pc) {
-		super("Contact by web or phone"/* i:ContactWebOrPhone */, List.IMPLICIT);
+		super(Locale.get("guiwebinfo.ContactWebOrPhone")/*Contact by web or phone*/, List.IMPLICIT);
 		actualWay = pc.actualWay;
 		trace = pc.trace;
 		mParent = parent;
 		mPos = pos;
 		//#if polish.api.online
-		this.append("Wikipedia (RSS)"/* i:WikipediaRSS */, null);
+		this.append(Locale.get("guiwebinfo.WikipediaRSS")/*Wikipedia (RSS)*/, null);
 		//this.append("Wikipedia (Web)", null);
-		this.append("Weather"/* i:Weather */, null);
-		this.append("GeoHack"/* i:GeoHack */, null);
+		this.append(Locale.get("guiwebinfo.Weather")/*Weather*/, null);
+		this.append(Locale.get("guiwebinfo.GeoHack")/*GeoHack*/, null);
 		//#endif
 		if (Legend.enableUrlTags) {
-			this.append("Website"/* i:Website */, null);
+			this.append(Locale.get("guiwebinfo.Website")/*Website*/, null);
 		}
 		if (Legend.enablePhoneTags) {
-			this.append("Phone"/* i:Phone */, null);
+			this.append(Locale.get("guiwebinfo.Phone")/*Phone*/, null);
 		}
 		// FIXME add "search for name on the web" for POI names once the code to select POIS is in place
 		this.addCommand(BACK_CMD);
@@ -65,7 +67,7 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 		if (c == SELECT_CMD) {
 			String site = getString(getSelectedIndex());
 			String url = null;
-			if (site.equalsIgnoreCase("Wikipedia (RSS)"/* i:WikipediaRSS */)) {
+			if (site.equalsIgnoreCase(Locale.get("guiwebinfo.WikipediaRSS")/*Wikipedia (RSS)*/)) {
 				String lang = "";
 				if (! Configuration.getOnlineLang().equals("en")) {
 				    lang = "lang=" + Configuration.getOnlineLang() + "&";
@@ -84,14 +86,14 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 			}
 			*/
 
-			if (site.equalsIgnoreCase("Weather"/* i:Weather */)) {
+			if (site.equalsIgnoreCase(Locale.get("guiwebinfo.Weather")/*Weather*/)) {
 				// weather underground doesn't seem to have a language switch
 				url = "http://m.wund.com/cgi-bin/findweather/getForecast?brand=mobile&query="
 						+ (mPos.latitude * MoreMath.FAC_RADTODEC)
 						+ "%2C"
 						+ (mPos.longitude * MoreMath.FAC_RADTODEC);
 			}
-			if (site.equalsIgnoreCase("GeoHack"/* i:GeoHack */)) {
+			if (site.equalsIgnoreCase(Locale.get("guiwebinfo.GeoHack")/*GeoHack*/)) {
 				int deglat, minlat;
 				float deglatf, seclat;
 				int deglon, minlon;
@@ -122,12 +124,12 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 						+ seclon
 						+ ((mPos.longitude < 0)?"_W_":"_E_");
 			}
-			if (site.equalsIgnoreCase("Website"/* i:Website */)) {
+			if (site.equalsIgnoreCase(Locale.get("guiwebinfo.Website")/*Website*/)) {
 				if ((actualWay != null)) {
 					url = trace.getUrl(actualWay.urlIdx);
 				}
 			}
-			if (site.equalsIgnoreCase("Phone"/* i:Phone */)) {
+			if (site.equalsIgnoreCase(Locale.get("guiwebinfo.Phone")/*Phone*/)) {
 				String phone;
 				if ((actualWay != null) && ((phone = trace.getUrl(actualWay.phoneIdx)) != null)) {
 					url = "tel:" + phone;

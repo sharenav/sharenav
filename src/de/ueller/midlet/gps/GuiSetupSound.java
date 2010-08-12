@@ -8,6 +8,7 @@ package de.ueller.midlet.gps;
 import javax.microedition.lcdui.*;
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Legend;
+import de.enough.polish.util.Locale;
 
 
 public class GuiSetupSound extends Form implements CommandListener {
@@ -30,18 +31,18 @@ public class GuiSetupSound extends Form implements CommandListener {
         private TextField spdAlertTolerance=null;
 
 	// commands
-	private static final Command CMD_SAVE = new Command("Ok"/* i:Ok */, Command.ITEM, 2);
-	private static final Command CMD_CANCEL = new Command("Cancel"/* i:Cancel */, Command.BACK, 3);
+	private static final Command CMD_SAVE = new Command(Locale.get("guisetupsound.Ok")/*Ok*/, Command.ITEM, 2);
+	private static final Command CMD_CANCEL = new Command(Locale.get("guisetupsound.Cancel")/*Cancel*/, Command.BACK, 3);
 	
 	// other
 	private GuiDiscover parent;
 	
 	public GuiSetupSound(GuiDiscover parent) {
-		super("Sounds & Alerts"/* i:SoundsAlerts */);
+		super(Locale.get("guisetupsound.SoundsAlerts")/*Sounds & Alerts*/);
 		this.parent = parent;
 		try {
 			// add sound directories and set selected one.
-			sndDirsGroup = new ChoiceGroup("Sound/Navigation"/* i:SoundNavigation */, Choice.EXCLUSIVE, Legend.soundDirectories ,null);
+			sndDirsGroup = new ChoiceGroup(Locale.get("guisetupsound.SoundNavigation")/*Sound/Navigation*/, Choice.EXCLUSIVE, Legend.soundDirectories ,null);
 			for (int i=0; i < Legend.soundDirectories.length; i++) {
 				if (Legend.soundDirectories[i].equals(Configuration.getSoundDirectory())) {
 					sndDirsGroup.setSelectedIndex(i, true);
@@ -50,32 +51,32 @@ public class GuiSetupSound extends Form implements CommandListener {
 			append(sndDirsGroup);
 
 			// set choice texts and convert bits from Configuration flag into selection states
-			sndGps[0] = "Connect"/* i:Connect */; 			selSndGps[0]=Configuration.getCfgBitState(Configuration.CFGBIT_SND_CONNECT);
-			sndGps[1] = "Disconnect"/* i:Disconnect */;		selSndGps[1]=Configuration.getCfgBitState(Configuration.CFGBIT_SND_DISCONNECT);
-			sndGps[2] = "Prefer tone sequences"/* i:PreferToneS */; selSndGps[2]=Configuration.getCfgBitState(Configuration.CFGBIT_SND_TONE_SEQUENCES_PREFERRED);
-			sndGpsGroup = new ChoiceGroup("GPS"/* i:GPS */, Choice.MULTIPLE, sndGps ,null);
+			sndGps[0] = Locale.get("guisetupsound.Connect")/*Connect*/; 			selSndGps[0]=Configuration.getCfgBitState(Configuration.CFGBIT_SND_CONNECT);
+			sndGps[1] = Locale.get("guisetupsound.Disconnect")/*Disconnect*/;		selSndGps[1]=Configuration.getCfgBitState(Configuration.CFGBIT_SND_DISCONNECT);
+			sndGps[2] = Locale.get("guisetupsound.PreferToneS")/*Prefer tone sequences*/; selSndGps[2]=Configuration.getCfgBitState(Configuration.CFGBIT_SND_TONE_SEQUENCES_PREFERRED);
+			sndGpsGroup = new ChoiceGroup(Locale.get("guisetupsound.GPS")/*GPS*/, Choice.MULTIPLE, sndGps ,null);
 			sndGpsGroup.setSelectedFlags(selSndGps);
 			append(sndGpsGroup);
 			
-			sndRouting[0] = "Routing instructions"/* i:RoutingInstructions */;
+			sndRouting[0] = Locale.get("guisetupsound.RoutingInstructions")/*Routing instructions*/;
 			selSndRouting[0]=Configuration.getCfgBitState(Configuration.CFGBIT_SND_ROUTINGINSTRUCTIONS);
-			sndRouting[1] = "Destination reached"/* i:DestinationReached */;
+			sndRouting[1] = Locale.get("guisetupsound.DestinationReached")/*Destination reached*/;
 			selSndRouting[1]=Configuration.getCfgBitState(Configuration.CFGBIT_SND_DESTREACHED);
-			sndRoutingGroup = new ChoiceGroup("Navigation / Routing"/* i:NavigationRouting */, Choice.MULTIPLE, sndRouting, null);
+			sndRoutingGroup = new ChoiceGroup(Locale.get("guisetupsound.NavigationRouting")/*Navigation / Routing*/, Choice.MULTIPLE, sndRouting, null);
 			sndRoutingGroup.setSelectedFlags(selSndRouting);
 			append(sndRoutingGroup);
 			
-			spdAlert[0] = "Audio speeding alert"/* i:AudioSpeedingAlert */;
+			spdAlert[0] = Locale.get("guisetupsound.AudioSpeedingAlert")/*Audio speeding alert*/;
 			selSpdAlert[0]=Configuration.getCfgBitState(Configuration.CFGBIT_SPEEDALERT_SND);
-			spdAlert[1] = "Visual speeding alert"/* i:VisualSpeedingAlert */;
+			spdAlert[1] = Locale.get("guisetupsound.VisualSpeedingAlert")/*Visual speeding alert*/;
 			selSpdAlert[1]=Configuration.getCfgBitState(Configuration.CFGBIT_SPEEDALERT_VISUAL);
-			spdAlert[2] = "Winter limits active"/* i:WinterLimitsCctive */;
+			spdAlert[2] = Locale.get("guisetupsound.WinterLimitsCctive")/*Winter limits active*/;
 			selSpdAlert[2]=Configuration.getCfgBitState(Configuration.CFGBIT_MAXSPEED_WINTER);
-			spdAlertGroup = new ChoiceGroup("Speeding alert"/* i:SpeedingAlert */, Choice.MULTIPLE, spdAlert ,null);
+			spdAlertGroup = new ChoiceGroup(Locale.get("guisetupsound.SpeedingAlert")/*Speeding alert*/, Choice.MULTIPLE, spdAlert ,null);
 			spdAlertGroup.setSelectedFlags(selSpdAlert);
 			append(spdAlertGroup);
 
-			spdAlertTolerance = new TextField("Speed alert tolerance"/* i:SpeedAlertTolerance */,
+			spdAlertTolerance = new TextField(Locale.get("guisetupsound.SpeedAlertTolerance")/*Speed alert tolerance*/,
 					Integer.toString(Configuration.getSpeedTolerance()), 3, TextField.DECIMAL);
 			append(spdAlertTolerance);
 

@@ -9,6 +9,7 @@ import javax.microedition.lcdui.*;
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Legend;
 import de.ueller.midlet.gps.data.ProjFactory;
+import de.enough.polish.util.Locale;
 
 public class GuiMapFeatures extends Form implements CommandListener {
 	// Groups
@@ -38,63 +39,63 @@ public class GuiMapFeatures extends Form implements CommandListener {
 	private Gauge gaugeDetailBoostPOI; 
 
 	// commands
-	private static final Command CMD_APPLY = new Command("Apply"/* i:Apply */, Command.BACK, 1);
-	private static final Command CMD_SAVE = new Command("Save"/* i:Save */, Command.ITEM, 2);
+	private static final Command CMD_APPLY = new Command(Locale.get("guimapfeatures.Apply")/*Apply*/, Command.BACK, 1);
+	private static final Command CMD_SAVE = new Command(Locale.get("guimapfeatures.Save")/*Save*/, Command.ITEM, 2);
 	//private static final Command CMD_CANCEL = new Command("Cancel", Command.CANCEL, 3);
 	
 	// other
 	private Trace parent;
 	
 	public GuiMapFeatures(Trace tr) {
-		super("Map features"/* i:MapFeatures */);
+		super(Locale.get("guimapfeatures.MapFeatures")/*Map features*/);
 		this.parent = tr;
 		try {
 			// set choice texts and convert bits from render flag into selection states
-			elems[0] = "POIs"/* i:POIs */;					selElems[0]=Configuration.getCfgBitState(Configuration.CFGBIT_POIS);
-			elems[1] = "POI labels"/* i:POIlabels */; 			selElems[1]=Configuration.getCfgBitState(Configuration.CFGBIT_POITEXTS);
-			elems[2] = "Way labels"/* i:Waylabels */; 			selElems[2]=Configuration.getCfgBitState(Configuration.CFGBIT_WAYTEXTS);
-			elems[3] = "Oneway arrows"/* i:Onewayarrows */; 		selElems[3]=Configuration.getCfgBitState(Configuration.CFGBIT_ONEWAY_ARROWS);
-			elems[4] = "Areas"/* i:Areas */; 				selElems[4]=Configuration.getCfgBitState(Configuration.CFGBIT_AREAS);
-			elems[5] = "Area labels"/* i:AreaLabels */; 			selElems[5]=Configuration.getCfgBitState(Configuration.CFGBIT_AREATEXTS);
-			elems[6] = "Buildings"/* i:Buildings */; 			selElems[6]=Configuration.getCfgBitState(Configuration.CFGBIT_BUILDINGS);
-			elems[7] = "Building labels"/* i:BuildingLabels */; 		selElems[7]=Configuration.getCfgBitState(Configuration.CFGBIT_BUILDING_LABELS);
-			elems[8] = "Waypoint labels"/* i:WaypointLabels */; 		selElems[8]=Configuration.getCfgBitState(Configuration.CFGBIT_WPTTEXTS);
-			elems[9] = "Place labels (cities, etc.)"/* i:PlaceLabels */;	selElems[9]=Configuration.getCfgBitState(Configuration.CFGBIT_PLACETEXTS);
-			elemsGroup = new ChoiceGroup("Elements"/* i:Elements */, Choice.MULTIPLE, elems ,null);
+			elems[0] = Locale.get("guimapfeatures.POIs")/*POIs*/;					selElems[0]=Configuration.getCfgBitState(Configuration.CFGBIT_POIS);
+			elems[1] = Locale.get("guimapfeatures.POIlabels")/*POI labels*/; 			selElems[1]=Configuration.getCfgBitState(Configuration.CFGBIT_POITEXTS);
+			elems[2] = Locale.get("guimapfeatures.Waylabels")/*Way labels*/; 			selElems[2]=Configuration.getCfgBitState(Configuration.CFGBIT_WAYTEXTS);
+			elems[3] = Locale.get("guimapfeatures.Onewayarrows")/*Oneway arrows*/; 		selElems[3]=Configuration.getCfgBitState(Configuration.CFGBIT_ONEWAY_ARROWS);
+			elems[4] = Locale.get("guimapfeatures.Areas")/*Areas*/; 				selElems[4]=Configuration.getCfgBitState(Configuration.CFGBIT_AREAS);
+			elems[5] = Locale.get("guimapfeatures.AreaLabels")/*Area labels*/; 			selElems[5]=Configuration.getCfgBitState(Configuration.CFGBIT_AREATEXTS);
+			elems[6] = Locale.get("guimapfeatures.Buildings")/*Buildings*/; 			selElems[6]=Configuration.getCfgBitState(Configuration.CFGBIT_BUILDINGS);
+			elems[7] = Locale.get("guimapfeatures.BuildingLabels")/*Building labels*/; 		selElems[7]=Configuration.getCfgBitState(Configuration.CFGBIT_BUILDING_LABELS);
+			elems[8] = Locale.get("guimapfeatures.WaypointLabels")/*Waypoint labels*/; 		selElems[8]=Configuration.getCfgBitState(Configuration.CFGBIT_WPTTEXTS);
+			elems[9] = Locale.get("guimapfeatures.PlaceLabels")/*Place labels (cities, etc.)*/;	selElems[9]=Configuration.getCfgBitState(Configuration.CFGBIT_PLACETEXTS);
+			elemsGroup = new ChoiceGroup(Locale.get("guimapfeatures.Elements")/*Elements*/, Choice.MULTIPLE, elems ,null);
 			elemsGroup.setSelectedFlags(selElems);
 			append(elemsGroup);
 			
-			altInfos[0] = "Lat/lon"/* i:LatLon */; 			selAltInfos[0]=Configuration.getCfgBitState(Configuration.CFGBIT_SHOWLATLON);
-			altInfos[1] = "Type information"/* i:TypeInformation */; 	selAltInfos[1]=Configuration.getCfgBitState(Configuration.CFGBIT_SHOWWAYPOITYPE);
-			altInfosGroup = new ChoiceGroup("Alternative info"/* i:AlternativeInfo */, Choice.MULTIPLE, altInfos ,null);
+			altInfos[0] = Locale.get("guimapfeatures.LatLon")/*Lat/lon*/; 			selAltInfos[0]=Configuration.getCfgBitState(Configuration.CFGBIT_SHOWLATLON);
+			altInfos[1] = Locale.get("guimapfeatures.TypeInformation")/*Type information*/; 	selAltInfos[1]=Configuration.getCfgBitState(Configuration.CFGBIT_SHOWWAYPOITYPE);
+			altInfosGroup = new ChoiceGroup(Locale.get("guimapfeatures.AlternativeInfo")/*Alternative info*/, Choice.MULTIPLE, altInfos ,null);
 			altInfosGroup.setSelectedFlags(selAltInfos);
 			append(altInfosGroup);
 
 			rotation = ProjFactory.name;
-			rotationGroup = new ChoiceGroup("Map projection"/* i:MapProjection */, Choice.EXCLUSIVE, rotation ,null);
+			rotationGroup = new ChoiceGroup(Locale.get("guimapfeatures.MapProjection")/*Map projection*/, Choice.EXCLUSIVE, rotation ,null);
 			rotationGroup.setSelectedIndex((int) ProjFactory.getProj(), true);
 			append(rotationGroup);			
 			
-			modes[0] = "Full screen"/* i:FullScreen */; 			selModes[0]=Configuration.getCfgBitState(Configuration.CFGBIT_FULLSCREEN);
-			modes[1] = "Auto zoom"/* i:AutoZoom */; 	selModes[1]=Configuration.getCfgBitState(Configuration.CFGBIT_AUTOZOOM);
-			modes[2] = "Render as streets"/* i:RenderAsStreets */; 	selModes[2]=Configuration.getCfgBitState(Configuration.CFGBIT_STREETRENDERMODE);
-			modesGroup = new ChoiceGroup("Mode"/* i:Mode */, Choice.MULTIPLE, modes ,null);
+			modes[0] = Locale.get("guimapfeatures.FullScreen")/*Full screen*/; 			selModes[0]=Configuration.getCfgBitState(Configuration.CFGBIT_FULLSCREEN);
+			modes[1] = Locale.get("guimapfeatures.AutoZoom")/*Auto zoom*/; 	selModes[1]=Configuration.getCfgBitState(Configuration.CFGBIT_AUTOZOOM);
+			modes[2] = Locale.get("guimapfeatures.RenderAsStreets")/*Render as streets*/; 	selModes[2]=Configuration.getCfgBitState(Configuration.CFGBIT_STREETRENDERMODE);
+			modesGroup = new ChoiceGroup(Locale.get("guimapfeatures.Mode")/*Mode*/, Choice.MULTIPLE, modes ,null);
 			modesGroup.setSelectedFlags(selModes);			
 			append(modesGroup);
 
 			tfBaseScale = new TextField("Base Zoom Level (23 = default)"/* i:BaseZoomLevel */, Integer.toString(Configuration.getBaseScale()), 6, TextField.DECIMAL);
 			append(tfBaseScale);
 			
-			other[0] = "Save map position on exit for next start"/* i:SaveMapPosition */;	selOther[0]=Configuration.getCfgBitState(Configuration.CFGBIT_AUTOSAVE_MAPPOS);
-			otherGroup = new ChoiceGroup("Other"/* i:Other */, Choice.MULTIPLE, other, null);
+			other[0] = Locale.get("guimapfeatures.SaveMapPosition")/*Save map position on exit for next start*/;	selOther[0]=Configuration.getCfgBitState(Configuration.CFGBIT_AUTOSAVE_MAPPOS);
+			otherGroup = new ChoiceGroup(Locale.get("guimapfeatures.Other")/*Other*/, Choice.MULTIPLE, other, null);
 			otherGroup.setSelectedFlags(selOther);			
 			append(otherGroup);
 			
-			gaugeDetailBoost = new Gauge("Zooming: show ways earlier"/* i:ZoomingWaysEarlier */, true, 3, 0);
+			gaugeDetailBoost = new Gauge(Locale.get("guimapfeatures.ZoomingWaysEarlier")/*Zooming: show ways earlier*/, true, 3, 0);
 			append(gaugeDetailBoost);
 			gaugeDetailBoost.setValue(Configuration.getDetailBoost());
 
-			gaugeDetailBoostPOI = new Gauge("Zooming: show POIs earlier"/* i:ZoomingPoisEarlier */, true, 3, 0);
+			gaugeDetailBoostPOI = new Gauge(Locale.get("guimapfeatures.ZoomingPoisEarlier")/*Zooming: show POIs earlier*/, true, 3, 0);
 			append(gaugeDetailBoostPOI);
 			gaugeDetailBoostPOI.setValue(Configuration.getDetailBoostPOI());
 			
