@@ -11,11 +11,15 @@ import de.ueller.gps.data.Legend;
 
 import java.io.InputStream;
 //#if polish.api.mmapi	
-import javax.microedition.media.Manager;
 import javax.microedition.media.Player;
 import javax.microedition.media.PlayerListener;
+//#if polish.android
+import de.enough.polish.multimedia.AudioPlayer;
+//#else
+import javax.microedition.media.Manager;
 import javax.microedition.media.control.ToneControl;
 import javax.microedition.media.control.VolumeControl;
+//#endif
 //#endif
 
 /**
@@ -38,6 +42,9 @@ public class NoiseMaker
 	private static volatile int mPlayingNameIndex=0;
 
 //#if polish.api.mmapi			
+//#if polish.android
+	private static volatile AudioPlayer aPlayer = null; 
+//#else
 	private static volatile Player mPlayer = null; 
 	private static byte[] mConnOpenedSequence;	
 	private static byte[] mConnLostSequence;
@@ -52,6 +59,7 @@ public class NoiseMaker
 	public NoiseMaker()
 	{
 //#if polish.api.mmapi	
+//#ifndef polish.android
 	    final byte tempo = 30; // set tempo to 120 bpm 
 	    final byte e = 8;  // eighth-note
 	    final byte q = 16; // quarter-note
@@ -93,6 +101,7 @@ public class NoiseMaker
   		//#enddebug
 	    
 //#endif
+//#endif
 	}
 
 //#if polish.api.mmapi	
@@ -103,11 +112,16 @@ public class NoiseMaker
 		// Release resources used by player when it's finished.
 		if (event == PlayerListener.END_OF_MEDIA)
 		{
+//#if polish.android
+			aPlayer.cleanUpPlayer();
+//#else
 			mPlayer.close();
+//#endif
 			playNextSoundFile();
 		}
 	}
 	
+//#ifndef polish.android
 	private static byte [] getToneSequence( String name ) {
     	byte sequence[] = null;
 		if (name.equals("CONNECT")) {
@@ -160,15 +174,18 @@ public class NoiseMaker
 	    }
 	}
 //#endif
+//#endif
 
 	public static synchronized void stopPlayer() {
 		//#if polish.api.mmapi	
+		//#ifndef polish.android
 		if (mPlayer != null) {
 			//#debug debug
 			mLogger.debug("Closing old player");
 			mPlayer.close();
 			mPlayer = null;
 		}
+		//#endif
 		//#endif
 	}
 
@@ -196,10 +213,10 @@ public class NoiseMaker
 	/* names can contain multiple sound names separated by ;
 	 * the contained sound parts will be played after each other
 	 * */
+//#if polish.api.mmapi                         
+
 	public void playSound( String names, byte minSecsBeforeRepeat, byte maxTimesToPlay )
 	{
-//#if polish.api.mmapi				
-		
 		// do not repeat same sound before minSecsBeforeRepeat
 		long msTime = System.currentTimeMillis();			
 		if (mOldPlayingNames.equals(names) &&
@@ -238,11 +255,15 @@ public class NoiseMaker
 			mPlayingNameIndex = 0;
 			playNextSoundFile();
 		} else {
+//#if polish.android
+//#else
 			playSequence(names);
+//#endif
 		}
 		mTimesToPlay--;
 		//#debug debug
 		mLogger.debug("mTimesToPlay--:" + mTimesToPlay );
+
 //#endif
 	}
 	
@@ -296,13 +317,22 @@ public class NoiseMaker
 				trySuffix = Legend.soundFormats[i];
 //				System.out.println("****************** try " + trySuffix);
 			}
+//#if polish.android
+			soundFileWithSuffix = Configuration.getMapUrl() + Configuration.getSoundDirectory() + "/" + soundName.toLowerCase() + "." + trySuffix;
+//#else
 			soundFileWithSuffix = "/" + Configuration.getSoundDirectory() + "/" + soundName.toLowerCase() + "." + trySuffix;
+//#endif
 			//System.out.println("******************" + soundFileWithSuffix);
-			
+
+//#if polish.android
+			mLogger.debug("Preparing to play " + soundFileWithSuffix);
+			if (true) {
+//#else
 			InputStream is = getClass().getResourceAsStream(soundFileWithSuffix);
 			if (is != null) {
 				//#debug debug
 				mLogger.debug("Got Inputstream for " + soundFileWithSuffix);
+//#endif
 				String mediaType = null;
 				if (trySuffix.equals("amr") ) {
 					mediaType = "audio/amr";
@@ -314,27 +344,53 @@ public class NoiseMaker
 	            	mediaType = "audio/x-ogg";
 				}
 				try {
+//#if polish.android
+					aPlayer = new AudioPlayer(mediaType);
+//#else
 					mPlayer = Manager.createPlayer(is, mediaType);
+//#endif
 				} catch (Exception ex) {
+//#if polish.android
+					aPlayer = null;
+//#else
 					mPlayer = null;
+//#endif
 			    	mLogger.exception("Failed to create resource player for " + soundFileWithSuffix, ex);
 				}
+//#if polish.android
+				if (aPlayer != null) {
+//#else
 				if (mPlayer != null) {
+//#endif
 						//#debug debug
 						mLogger.debug("created player for " + soundFileWithSuffix);
 						try {
+//#if polish.android
+							aPlayer.prepare(soundFileWithSuffix);
+//#else
 							mPlayer.realize();
+//#endif
 						} catch (Exception ex) {
 					    	mLogger.exception("Failed to realize player for " + soundFileWithSuffix, ex);
+//#if polish.android
+							aPlayer = null;
+//#else
 							mPlayer = null;
+//#endif
 						}
 						//#debug debug
 						mLogger.debug("realized player for " + soundFileWithSuffix);
+//#endif
+//#if polish.android
+						aPlayer.setPlayerListener( this );
+						aPlayer.setVolumeLevel(100);
+//#else
 						mPlayer.addPlayerListener( this );
 						VolumeControl volCtrl = (VolumeControl) mPlayer.getControl("VolumeControl");
 						if (volCtrl != null) {
 							volCtrl.setLevel(100);
 						}
+//#endif
 						lastSuccessfulSuffix = trySuffix;
 //						System.out.println("****************** successful " + trySuffix);
 						fileFound = true;
@@ -351,17 +407,29 @@ public class NoiseMaker
 		}
 		return fileFound;
 	}
-	
+		
 		
 	private synchronized void playNextSoundFile() {
 		String nextSoundName = determineNextSoundName();
 		if (nextSoundName != null) {
+			//#if polish.android
+			if (false) {
+			//#else
 			if (Configuration.getCfgBitState(Configuration.CFGBIT_SND_TONE_SEQUENCES_PREFERRED) && getToneSequence(nextSoundName) != null) {
 				playSequence(nextSoundName);
+			//#endif
 			} else if (createResourcePlayer(nextSoundName)) {
+//#if polish.android
+				if (aPlayer != null) {
+//#else
 				if (mPlayer != null) {
+//#endif
 					try {
+//#if polish.android
+						aPlayer.play();
+//#else
 						mPlayer.start();
+//#endif
 						//#debug debug
 						mLogger.debug("player for " + nextSoundName + " started");
 					} catch (Exception ex) {
