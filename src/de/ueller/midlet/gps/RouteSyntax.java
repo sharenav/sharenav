@@ -9,6 +9,11 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.microedition.io.Connector;
+//#if polish.api.fileconnection
+import javax.microedition.io.file.FileConnection;
+//#endif
+
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.tools.StringTools;
 import de.ueller.gpsMid.mapData.QueueReader;
@@ -116,9 +121,18 @@ public class RouteSyntax {
 	
 	public boolean readSyntax() {
 		int i;
+		//#if polish.android
+		String syntaxDat = Configuration.getMapUrl() + Configuration.getSoundDirectory() + "/syntax.dat";
+		//#else
 		String syntaxDat = "/" + Configuration.getSoundDirectory() + "/syntax.dat";
+		//#endif
 		try {
+			//#if polish.android
+			FileConnection fc = (FileConnection) Connector.open(syntaxDat, Connector.READ);
+			InputStream is = fc.openInputStream();
+			//#else
 			InputStream is = QueueReader.class.getResourceAsStream(syntaxDat);
+			//#endif
 			DataInputStream dis = new DataInputStream(is);
 			if (dis.readByte() != SYNTAX_FORMAT_VERSION) {
 				logger.error(syntaxDat + " corrupt");
