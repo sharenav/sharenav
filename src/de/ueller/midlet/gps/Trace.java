@@ -2398,7 +2398,6 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			potentialDoubleClick = false;
 		} else {
 			if (potentialDoubleClick) {
-				//if ((currTime - pressedPointerTime < 1500) && (clickIdx == cursor)) {
 				if (currTime - pressedPointerTime < 1500) {
 					//#debug debug
 					logger.debug("PointerDoublePressed");
