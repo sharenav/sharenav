@@ -5,7 +5,7 @@
 # usage: $0 [ lang1 lang2 lang3 ... ]
   
 # default languages to fetch
-lang="fi de fr sk ru" 
+lang="fi de fr es sk ru it en" 
 
 if [ "$#" -gt 0 ]
 then
@@ -26,3 +26,4 @@ do
      /<pre>/ { pr = 1 } 
      ' | sed 's/&amp;/\&/g' > $path/messages_$l.txt
 done
+mv $path/messages_en.txt $path/messages.txt

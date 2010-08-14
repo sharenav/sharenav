@@ -197,3 +197,4 @@ splash.MapData2= OpenStreetMap
 splash.MapData3= sotto licenza CC 2.0
 splash.MapData4= http://creativecommons.org/
 splash.MapData=Dati mappe:
+guidiscover.lang_it=italiano
