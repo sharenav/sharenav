@@ -43,12 +43,13 @@ public class NoiseMaker
 
 //#if polish.api.mmapi			
 //#if polish.android
-	private static volatile AudioPlayer aPlayer = null; 
+	private static volatile AudioPlayer sPlayer = null; 
 //#else
-	private static volatile Player mPlayer = null; 
+	private static volatile Player sPlayer = null; 
 	private static byte[] mConnOpenedSequence;	
 	private static byte[] mConnLostSequence;
 //#endif			
+//#endif
 	
 	private static volatile long mOldMsTime = 0;
 	private static volatile String mOldPlayingNames = "";
@@ -93,7 +94,7 @@ public class NoiseMaker
 	   //deviceSupportsMixing = false;
 	    
 		//#mdebug debug
-    	mLogger.debug("Supported content types:");
+	    mLogger.debug("Supported content types:");
 	    String[] contentTypes = Manager.getSupportedContentTypes(null) ;       
 	    for (int i = 0  ; i < contentTypes.length  ; i++) { 
 	    	mLogger.debug(i + ". " + contentTypes[i]);
@@ -104,7 +105,100 @@ public class NoiseMaker
 //#endif
 	}
 
-//#if polish.api.mmapi	
+//#if polish.api.mmapi
+//#if polish.android
+	// using AudioPlayer
+	private synchronized boolean preparePlayer(String soundFile, String mediaType, String suffix) {
+		String soundFileWithSuffix = Configuration.getMapUrl() + soundFile;
+		//#debug debug
+		mLogger.debug("Preparing to play url " + soundFileWithSuffix);
+		try {
+			sPlayer = new AudioPlayer(mediaType);
+		} catch (Exception ex) {
+			sPlayer = null;
+			mLogger.exception("Failed to create resource player for " + soundFileWithSuffix, ex);
+		}
+		if (sPlayer != null) {
+			//#debug debug
+			mLogger.debug("created player for " + soundFileWithSuffix);
+			try {
+				sPlayer.prepare(soundFileWithSuffix);
+			} catch (Exception ex) {
+				//#debug debug
+				mLogger.debug("RESOURCE NOT FOUND: " + soundFileWithSuffix);
+			}
+			sPlayer.setPlayerListener( this );
+			sPlayer.setVolumeLevel(100);
+			lastSuccessfulSuffix = suffix;
+			return true;
+		}
+		return false;
+	}
+	
+	private synchronized void startPlayer(String nextSoundName) {
+		try {
+			sPlayer.play();
+			//#debug debug
+			mLogger.debug("player for " + nextSoundName + " started");
+		} catch (Exception ex) {
+			mLogger.exception("Failed to play sound", ex);
+		}
+	}
+	private synchronized void cleanPlayer() {
+		sPlayer.cleanUpPlayer();
+	}
+//#else
+	// using MMAPI for J2ME
+	private synchronized boolean preparePlayer(String soundFile, String mediaType, String suffix) {
+		// read from bundle
+		String soundFileWithSuffix = "/" + soundFile;
+		InputStream is = getClass().getResourceAsStream(soundFileWithSuffix);
+		if (is != null) {
+			//#debug debug
+			mLogger.debug("Got Inputstream for " + soundFileWithSuffix);
+			try {
+				sPlayer = Manager.createPlayer(is, mediaType);
+			} catch (Exception ex) {
+				sPlayer = null;
+				mLogger.exception("Failed to create resource player for " + soundFileWithSuffix, ex);
+			}
+		}
+		//#debug debug
+		else mLogger.debug("RESOURCE NOT FOUND: " + soundFileWithSuffix);
+		if (sPlayer != null) {
+			//#debug debug
+			mLogger.debug("created player for " + soundFileWithSuffix);
+			try {
+				sPlayer.realize();
+			} catch (Exception ex) {
+				mLogger.exception("Failed to realize player for " + soundFileWithSuffix, ex);
+			}
+			//#debug debug
+			mLogger.debug("realized player for " + soundFileWithSuffix);
+			sPlayer.addPlayerListener( this );
+			VolumeControl volCtrl = (VolumeControl) sPlayer.getControl("VolumeControl");
+			if (volCtrl != null) {
+				volCtrl.setLevel(100);
+			}
+			lastSuccessfulSuffix = suffix;
+			return true;
+		}
+		return false;
+	}
+			
+	private synchronized void startPlayer(String nextSoundName) {
+		try {
+			sPlayer.start();
+			//#debug debug
+			mLogger.debug("player for " + nextSoundName + " started");
+		} catch (Exception ex) {
+			mLogger.exception("Failed to play sound", ex);
+		}
+	}
+	private synchronized void cleanPlayer() {
+		sPlayer.close();
+	}
+//#endif
 	public synchronized void playerUpdate( Player player, String event, Object eventData )
 	{
 		//#debug debug
@@ -112,11 +206,7 @@ public class NoiseMaker
 		// Release resources used by player when it's finished.
 		if (event == PlayerListener.END_OF_MEDIA)
 		{
-//#if polish.android
-			aPlayer.cleanUpPlayer();
-//#else
-			mPlayer.close();
-//#endif
+			cleanPlayer();
 			playNextSoundFile();
 		}
 	}
@@ -173,22 +263,11 @@ public class NoiseMaker
 	    	mLogger.exception("Failed to play sound", ex);
 	    }
 	}
-//#endif
-//#endif
-
-	public static synchronized void stopPlayer() {
-		//#if polish.api.mmapi	
-		//#ifndef polish.android
-		if (mPlayer != null) {
-			//#debug debug
-			mLogger.debug("Closing old player");
-			mPlayer.close();
-			mPlayer = null;
-		}
-		//#endif
-		//#endif
+//#else
+	private void playSequence( String name ) {
 	}
-
+//#endif
+//#endif
 
 	public void immediateSound(String name) {
 		synchronized (NoiseMaker.class) {			
@@ -213,10 +292,10 @@ public class NoiseMaker
 	/* names can contain multiple sound names separated by ;
 	 * the contained sound parts will be played after each other
 	 * */
-//#if polish.api.mmapi                         
-
 	public void playSound( String names, byte minSecsBeforeRepeat, byte maxTimesToPlay )
 	{
+//#if polish.api.mmapi                         
+
 		// do not repeat same sound before minSecsBeforeRepeat
 		long msTime = System.currentTimeMillis();			
 		if (mOldPlayingNames.equals(names) &&
@@ -255,8 +334,7 @@ public class NoiseMaker
 			mPlayingNameIndex = 0;
 			playNextSoundFile();
 		} else {
-//#if polish.android
-//#else
+//#ifndef polish.android
 			playSequence(names);
 //#endif
 		}
@@ -302,142 +380,80 @@ public class NoiseMaker
 		stopPlayer();
 		
 		String trySuffix;
-		String soundFileWithSuffix;
 		boolean fileFound = false;
 		for (int i = -1; i < Legend.soundFormats.length; i++) {
 			if (i == -1) {
 				// if there's no successful suffix yet, continue with next (first) sound format
-				 if (lastSuccessfulSuffix == null) {
-					 continue;
-				 }
+				if (lastSuccessfulSuffix == null) {
+					continue;
+				}
 				// try last successful suffix next
-				 trySuffix = lastSuccessfulSuffix;
+				trySuffix = lastSuccessfulSuffix;
 			} else {
 				// try suffix list last
 				trySuffix = Legend.soundFormats[i];
 //				System.out.println("****************** try " + trySuffix);
 			}
-//#if polish.android
-			soundFileWithSuffix = Configuration.getMapUrl() + Configuration.getSoundDirectory() + "/" + soundName.toLowerCase() + "." + trySuffix;
-//#else
-			soundFileWithSuffix = "/" + Configuration.getSoundDirectory() + "/" + soundName.toLowerCase() + "." + trySuffix;
-//#endif
-			//System.out.println("******************" + soundFileWithSuffix);
-
-//#if polish.android
-			mLogger.debug("Preparing to play " + soundFileWithSuffix);
-			if (true) {
-//#else
-			InputStream is = getClass().getResourceAsStream(soundFileWithSuffix);
-			if (is != null) {
-				//#debug debug
-				mLogger.debug("Got Inputstream for " + soundFileWithSuffix);
-//#endif
-				String mediaType = null;
-				if (trySuffix.equals("amr") ) {
-					mediaType = "audio/amr";
-				} else if (trySuffix.equals("mp3") ) {
-					mediaType = "audio/mpeg";
-				} else if (trySuffix.equals("wav") ) {
-					mediaType = "audio/x-wav";
-				} else if (trySuffix.equals("ogg") ) {
-	            	mediaType = "audio/x-ogg";
-				}
-				try {
-//#if polish.android
-					aPlayer = new AudioPlayer(mediaType);
-//#else
-					mPlayer = Manager.createPlayer(is, mediaType);
-//#endif
-				} catch (Exception ex) {
-//#if polish.android
-					aPlayer = null;
-//#else
-					mPlayer = null;
-//#endif
-			    	mLogger.exception("Failed to create resource player for " + soundFileWithSuffix, ex);
-				}
-//#if polish.android
-				if (aPlayer != null) {
-//#else
-				if (mPlayer != null) {
-//#endif
-						//#debug debug
-						mLogger.debug("created player for " + soundFileWithSuffix);
-						try {
-//#if polish.android
-							aPlayer.prepare(soundFileWithSuffix);
-//#else
-							mPlayer.realize();
-//#endif
-						} catch (Exception ex) {
-					    	mLogger.exception("Failed to realize player for " + soundFileWithSuffix, ex);
-//#if polish.android
-							aPlayer = null;
-//#else
-							mPlayer = null;
-//#endif
-						}
-						//#debug debug
-						mLogger.debug("realized player for " + soundFileWithSuffix);
-//#endif
-//#if polish.android
-						aPlayer.setPlayerListener( this );
-						aPlayer.setVolumeLevel(100);
-//#else
-						mPlayer.addPlayerListener( this );
-						VolumeControl volCtrl = (VolumeControl) mPlayer.getControl("VolumeControl");
-						if (volCtrl != null) {
-							volCtrl.setLevel(100);
-						}
-//#endif
-						lastSuccessfulSuffix = trySuffix;
-//						System.out.println("****************** successful " + trySuffix);
-						fileFound = true;
-						break;
-				}
-				else {
-	                //#mdebug debug
-					mLogger.debug("Could NOT CREATE PLAYER for " + mediaType);
-	                //#enddebug
-				}
+			String mediaType = null;
+			if (trySuffix.equals("amr") ) {
+				mediaType = "audio/amr";
+			} else if (trySuffix.equals("mp3") ) {
+				mediaType = "audio/mpeg";
+			} else if (trySuffix.equals("wav") ) {
+				mediaType = "audio/x-wav";
+			} else if (trySuffix.equals("ogg") ) {
+				mediaType = "audio/x-ogg";
 			}
 			//#debug debug
-			else mLogger.debug("RESOURCE NOT FOUND: " + soundFileWithSuffix);
+			mLogger.debug("Preparing to play sound " + soundName.toLowerCase());
+			if (preparePlayer(Configuration.getSoundDirectory() + "/" + soundName.toLowerCase() + "." + trySuffix, mediaType, trySuffix)) {
+				fileFound = true;
+				break;
+			} else {
+				//#mdebug debug
+				mLogger.debug("Could NOT CREATE PLAYER for " + mediaType);
+				//#enddebug
+			}
 		}
 		return fileFound;
 	}
-		
-		
 	private synchronized void playNextSoundFile() {
 		String nextSoundName = determineNextSoundName();
 		if (nextSoundName != null) {
+			if (
 			//#if polish.android
-			if (false) {
+				false
 			//#else
-			if (Configuration.getCfgBitState(Configuration.CFGBIT_SND_TONE_SEQUENCES_PREFERRED) && getToneSequence(nextSoundName) != null) {
-				playSequence(nextSoundName);
+				Configuration.getCfgBitState(Configuration.CFGBIT_SND_TONE_SEQUENCES_PREFERRED) && getToneSequence(nextSoundName) != null
 			//#endif
+			    ) {
+				playSequence(nextSoundName);
 			} else if (createResourcePlayer(nextSoundName)) {
-//#if polish.android
-				if (aPlayer != null) {
-//#else
-				if (mPlayer != null) {
-//#endif
-					try {
-//#if polish.android
-						aPlayer.play();
-//#else
-						mPlayer.start();
-//#endif
-						//#debug debug
-						mLogger.debug("player for " + nextSoundName + " started");
-					} catch (Exception ex) {
-				    	mLogger.exception("Failed to play sound", ex);
-					}
+				if (sPlayer != null) {
+					startPlayer(nextSoundName);
 				}
 			}
 		}
 	}
 //#endif
+	public static synchronized void stopPlayer() {
+	//#if polish.api.mmapi	
+	//#if polish.android
+	if (sPlayer != null) {
+		//#debug debug
+		mLogger.debug("Closing old player");
+		sPlayer.cleanUpPlayer();
+		sPlayer = null;
+	}
+	//#else
+	if (sPlayer != null) {
+		//#debug debug
+		mLogger.debug("Closing old player");
+		sPlayer.close();
+		sPlayer = null;
+	}
+	//#endif
+	//#endif
+	}
 }
+
