@@ -501,7 +501,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 									if (Configuration
 											.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_MIDP2)) {
 										Display.getDisplay(
-											GpsMid.getInstance()).flashBacklight(6000);
+											GpsMid.getInstance()).flashBacklight(1000);
 										//#if polish.api.nokia-ui
 										// Method to keep the backlight on
 										// on SE K750i and some other models
@@ -532,7 +532,8 @@ public class GpsMid extends MIDlet implements CommandListener {
 										if (Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ONLY_KEEPALIVE)) {
 											wait(60000);
 										} else {
-											wait(5000);
+											// if MIDP 2.0 method is used, wait only 500 ms instead of 5000 ms
+											wait(Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_MIDP2) ? 500 : 5000);
 										}
 									}
 								} catch (InterruptedException e) {
