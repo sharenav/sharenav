@@ -80,6 +80,10 @@ import de.ueller.midlet.gps.tile.Images;
 import de.ueller.midlet.gps.tile.PaintContext;
 import de.ueller.midlet.gps.GpsMidDisplayable;
 
+//#if polish.android
+import de.enough.polish.android.midlet.MidletBridge;
+//#endif
+
 /**
  * Implements the main "Map" screen which displays the map, offers track recording etc.
  * @author Harald Mueller
@@ -218,6 +222,18 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	private static Node	centerPointerPressedN = new Node();
 	private static Node	pickPointStart = new Node();
 	private static Node	pickPointEnd = new Node();
+	/**
+	 * Record the time at which a pointer press was recorded to determine
+	 * a double click
+	 */
+	private long pressedPointerTime;
+	/**
+	 * Stores if there was already a click that might be the first click in a double click
+	 */
+	private boolean potentialDoubleClick;
+	/**
+	 * Indicates that there was a drag event since the last pointerPressed
+	 */
 	/** indicates whether this is a touch button or drag action*/
 	private static boolean pointerDragAction = false;
 	
@@ -2348,9 +2364,10 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	}
 
 	protected void pointerPressed(int x, int y) {
+		long currTime = System.currentTimeMillis();
 		updateLastUserActionTime();
 		pointerDragAction = true;
-		
+
 		// check for touchable buttons
 //		#debug debug
 		logger.debug("Touch button: " + tl.getActionIdAtPointer(x, y) + " x: " + x + " y: " + y);
@@ -2378,12 +2395,28 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			commandAction(CMDS[actionId], (Displayable) null);
 			repaint();
 			pointerDragAction = false;
+			potentialDoubleClick = false;
+		} else {
+			if (potentialDoubleClick) {
+				//if ((currTime - pressedPointerTime < 1500) && (clickIdx == cursor)) {
+				if (currTime - pressedPointerTime < 1500) {
+					//#debug debug
+					logger.debug("PointerDoublePressed");
+					commandAction(CMDS[ZOOM_IN_CMD], (Displayable) null);
+					repaint();
+					pointerDragAction = false;
+					potentialDoubleClick = false;
+				}
+			} else {
+				pressedPointerTime = currTime;
+				potentialDoubleClick = true;
+			}		
 		}
 		
 		// remember positions for dragging
 		// remember position the pointer was pressed
-//		Trace.touchX = x;
-//		Trace.touchY = y;
+		Trace.touchX = x;
+		Trace.touchY = y;
 		// remember center when the pointer was pressed
 		centerPointerPressedN = center.copy();
 		pickPointStart=imageCollector.getCurrentProjection().inverse(x,y, pickPointStart);
@@ -2391,6 +2424,16 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	}
 	
 	protected void pointerReleased(int x, int y) {
+		long currTime = System.currentTimeMillis();
+		if (potentialDoubleClick) {
+			if ((currTime - pressedPointerTime > 400) ||
+			    (Math.abs(touchX - x) > 8) ||
+			    (Math.abs(touchY - y) > 8)) {
+				potentialDoubleClick = false;
+			}
+		} else {
+			pressedPointerTime = currTime;
+		}
 		if (pointerDragAction) {
 			pointerDragged(x , y);
 		}
@@ -2522,6 +2565,9 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	public void show() {
 		//Display.getDisplay(parent).setCurrent(this);
 		GpsMid.getInstance().show(this);
+//#if polish.android
+//		parent.midletBridge.backlightOn();
+//#endif
 		setFullScreenMode(Configuration.getCfgBitState(Configuration.CFGBIT_FULLSCREEN));
 		updateLastUserActionTime();
 		repaint();
