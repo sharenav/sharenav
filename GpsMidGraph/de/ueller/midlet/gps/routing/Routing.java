@@ -882,7 +882,19 @@ public class Routing implements Runnable {
 			}
 			// when finally we get the sequence we must be able to access all route nodes, not only the mainstreet net's
 			Routing.onlyMainStreetNet = false;
-			Vector sequence = getSequence(solution);
+			
+			Vector solutionVector = new Vector();
+			while (solution != null) {
+			    solutionVector.addElement(solution);
+			    solution = solution.parent;
+			}
+			GraphNode solutionNode;
+			Vector sequence = new Vector();
+			for (int i = solutionVector.size() - 1; i >= 0; i--) {
+			    solutionNode = (GraphNode) solutionVector.elementAt(i);
+			    ConnectionWithNode c = new ConnectionWithNode(getRouteNode(solutionNode.state.toId), solutionNode.state);
+			    sequence.addElement(c);
+			} 
 
 			// move connection durations so that they represent the time to travel to the next node, rather than to the current node
 			ConnectionWithNode c;
