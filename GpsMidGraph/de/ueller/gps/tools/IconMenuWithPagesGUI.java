@@ -432,9 +432,19 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 			for (int i=0; i < tabButtonManager.size(); i++) {
 				e = tabButtonManager.getElementAt(i);
 				if (inTabRow && i == tabNr) {
-					e.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_TEXT_HIGHLIGHT]); // when in tab button row draw the current tab button in yellow text
+					if (GpsMid.legend == null) {
+						// make text visible even when map couldn't be read
+						e.setColor(0x00FFFF00);
+					} else {
+						e.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_TEXT_HIGHLIGHT]); // when in tab button row draw the current tab button in yellow text
+					}
 				} else {
-					e.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_TEXT]); // else draw it in white text
+					if (GpsMid.legend == null) {
+						// make text visible even when map couldn't be read
+						e.setColor(0x00FFFFFF);
+					} else {
+						e.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_TABBUTTON_TEXT]); // else draw it in white text
+					}
 				}
 				if ( i >= leftMostTabNr) {
 					// set the button text, so the LayoutManager knows it has to be drawn

@@ -10,6 +10,8 @@ import de.ueller.gps.tools.LayoutManager;
 import de.ueller.gps.tools.IconActionPerformer;
 import de.ueller.midlet.gps.Logger;
 
+import de.ueller.midlet.gps.GpsMid;
+
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
@@ -79,7 +81,12 @@ public class IconMenuPage extends LayoutManager {
 			LayoutElement.FLAG_FONT_SMALL
 		);
 //		System.out.println("eleNr:" + eleNr + " x:" + (eleNr % numCols) + "y:" + (eleNr / numCols));
-		e.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_ICON_TEXT]);
+		if (GpsMid.legend == null) {
+		    // make text visible even when map couldn't be read
+		    e.setColor(0x00FFFF00);
+		} else {
+		    e.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_ICON_TEXT]);
+		}
 		e.setActionID(actionId);
 		e.setText(label);
 		e.setImageNameOnly(imageName);
