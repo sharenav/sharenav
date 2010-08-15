@@ -154,6 +154,7 @@ trace.SetAppGeneric=Set app=GpsMid-Generic-editing and enableEditing=true in
 trace.SetDestination=Set destination
 trace.Setup=Setup
 trace.ShowDestination=Show destination
+trace.ShowPreviousPosition=Show previous position
 trace.SingleT=Single T:
 trace.StartAudioRecording=Start audio recording
 trace.StartGPS=Start GPS

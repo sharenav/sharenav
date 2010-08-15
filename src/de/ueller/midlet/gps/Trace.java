@@ -147,8 +147,9 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	protected static final int SHOW_DEST_CMD = 54;
 	protected static final int EDIT_ADDR_CMD = 55;
 	protected static final int OPEN_URL_CMD = 56;
+	protected static final int SHOW_PREVIOUS_POSITION_CMD = 57;
 
-	private final Command [] CMDS = new Command[57];
+	private final Command [] CMDS = new Command[58];
 
 	public static final int DATASCREEN_NONE = 0;
 	public static final int DATASCREEN_TACHO = 1;
@@ -185,6 +186,8 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	 */
 	public Node center = new Node(49.328010f, 11.352556f);
 
+	private Node prevPositionNode = null;
+	
 //	Projection projection;
 
 	private final GpsMid parent;
@@ -370,6 +373,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		CMDS[TOGGLE_RECORDING_SUSP_CMD] = new Command(Locale.get("trace.SuspendRecording")/*Suspend recording*/,Command.ITEM, 100);
 		CMDS[RECENTER_GPS_CMD] = new Command(Locale.get("trace.RecenterOnGPS")/*Recenter on GPS*/,Command.ITEM, 100);
 		CMDS[SHOW_DEST_CMD] = new Command(Locale.get("trace.ShowDestination")/*Show destination*/,Command.ITEM, 100);
+		CMDS[SHOW_PREVIOUS_POSITION_CMD] = new Command(Locale.get("trace.ShowPreviousPosition")/*Previous position*/,Command.ITEM, 100);
 		CMDS[DATASCREEN_CMD] = new Command(Locale.get("trace.Tacho")/*Tacho*/, Command.ITEM, 15);
 		CMDS[OVERVIEW_MAP_CMD] = new Command(Locale.get("trace.OverviewFilterMap")/*Overview/Filter map*/, Command.ITEM, 20);
 		CMDS[RETRIEVE_XML] = new Command(Locale.get("trace.RetrieveXML")/*Retrieve XML*/,Command.ITEM, 200);
@@ -1311,16 +1315,28 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					//We are explicitly setting the map to this position, so we probably don't
 					//want it to be recentered on the GPS immediately.
 					gpsRecenter = false;
-					
-					center.setLatLonRad(dest.lat, dest.lon);
-					updatePosition();
+										
+					prevPositionNode = center.copy(); 
+					center.setLatLonRad(dest.lat, dest.lon);						
 					movedAwayFromDest = false;
+					updatePosition();
 				}
 				else {
 					alert(Locale.get("trace.ShowDestination")/*Show destination*/, Locale.get("trace.DestinationNotSpecifiedYet")/*Destination is not specified yet*/, 3000);
 				}
 				
 				return;
+			}
+			if (c == CMDS[SHOW_PREVIOUS_POSITION_CMD]) {
+				if (prevPositionNode != null) {
+					//We are explicitly setting the map to this position, so we probably don't
+					//want it to be recentered on the GPS immediately.
+					gpsRecenter = false;
+					
+					center.setLatLon(prevPositionNode);						
+	
+					updatePosition();
+				}
 			}
 			if (c == CMDS[DATASCREEN_CMD]) {
 				showNextDataScreen(DATASCREEN_NONE);
@@ -1723,7 +1739,14 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				tl.ele[TraceLayout.ZOOM_IN].setText("+");
 				tl.ele[TraceLayout.ZOOM_OUT].setText("-");
 				tl.ele[TraceLayout.RECENTER_GPS].setText("|");
-				tl.ele[TraceLayout.SHOW_DEST].setText(">");
+				e = tl.ele[TraceLayout.SHOW_DEST];
+				if (atDest && prevPositionNode != null) {
+					e.setText("<");
+					e.setActionID(SHOW_PREVIOUS_POSITION_CMD);
+				} else {
+					e.setText(">");
+					e.setActionID(SHOW_DEST_CMD);					
+				}
 			}
 
 			e = tl.ele[TraceLayout.TITLEBAR];
