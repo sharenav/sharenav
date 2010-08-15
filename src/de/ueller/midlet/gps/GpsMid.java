@@ -51,6 +51,13 @@ import de.ueller.midlet.gps.data.Node;
 
 import de.enough.polish.util.Locale;
 
+//#if polish.android
+import de.enough.polish.android.midlet.MidletBridge;
+import android.os.PowerManager;
+import android.os.PowerManager.WakeLock;
+import android.content.Context;
+//#endif
+
 /**
  * Central class of GpsMid which implements the MIDlet interface.
  */
@@ -88,7 +95,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 
 	public static NoiseMaker mNoiseMaker = null;
 
-	public static Legend legend;
+	public static Legend legend = null;
 
 	/**
 	 * This Thread is used to periodically prod the display to keep the
@@ -106,14 +113,33 @@ public class GpsMid extends MIDlet implements CommandListener {
 
 	private static volatile Trace trace = null;
 
+	public static String errorMsg = null;
+
+//#if polish.android
+	//public static MidletBridge midletBridge;
+	//private PowerManager.WakeLock wl;
+//#endif
 	public GpsMid() {
-		String errorMsg = null;
 		instance = this;
 		System.out.println("Init GpsMid");		
 		log = new Logger(this);
 		log.setLevel(Logger.INFO);
 		Configuration.read();
 		
+//#if polish.android
+		// midletBridge = instance._getMidletBridge();
+		// on android, switch backlight always on to keep in foreground
+//		midletBridge.backlightOn();
+//		midletBridge.setKeepScreenOn(true);
+//		instance.setSystemProperty("keepScreenOn", "true");
+//		instance.backlightOn();
+//		midletBridge.setSystemProperty("keepScreenOn", "true");
+//		midletBridge.showSoftKeyboard();
+		//PowerManager pm = (PowerManager) midletBridge.getApplicationContext().getSystemService(Context.POWER_SERVICE);
+		//wl = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "GpsMid");
+		//wl.acquire();
+//#endif
+
 		enableDebugFileLogging();
 		Logger.setGlobalLevel();
 
@@ -130,22 +156,25 @@ public class GpsMid extends MIDlet implements CommandListener {
 			e.printStackTrace();
 			errorMsg = "Failed to load basic configuration! Check your map data source: "
 					+ e.getMessage();
+			legend = null;
 		}
 
-		int langNum = 0;  // default is the first in bundle
-		if (Legend.numUiLang > 1) {
-			langNum = 0; 
-			String lang = Configuration.getUiLang();
-			for (int i = 0; i < Legend.numUiLang; i++) {
-				if (Legend.uiLang[i].equalsIgnoreCase(lang)) {
-					langNum = i;
+		if (legend != null) {
+			int langNum = 0;  // default is the first in bundle
+			if (Legend.numUiLang > 1) {
+				langNum = 0; 
+				String lang = Configuration.getUiLang();
+				for (int i = 0; i < Legend.numUiLang; i++) {
+					if (Legend.uiLang[i].equalsIgnoreCase(lang)) {
+						langNum = i;
+					}
 				}
 			}
-		}
-		try {
-			Locale.loadTranslations( "/" + Legend.uiLang[langNum] + ".loc" );
-		} catch (IOException ioe) {
-			System.out.println("Couldn't open translations file");
+			try {
+				Locale.loadTranslations( "/" + Legend.uiLang[langNum] + ".loc" );
+			} catch (IOException ioe) {
+				System.out.println("Couldn't open translations file");
+			}
 		}
 
 		phoneMaxMemory = determinPhoneMaxMemory();		
@@ -242,7 +271,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 		}
 		//#endif
 
-		if (Configuration.getCfgBitState(Configuration.CFGBIT_SKIPP_SPLASHSCREEN)) {
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_SKIPP_SPLASHSCREEN) && legend != null) {
 			showMapScreen();
 		} else {
 			new Splash(this);
@@ -319,6 +348,10 @@ public class GpsMid extends MIDlet implements CommandListener {
 
 	public void exit() {
 		try {
+//#if polish.android
+			//midletBridge.backlightRelease();
+			//wl.release();
+//#endif
 			destroyApp(true);
 		} catch (MIDletStateChangeException e) {
 			// TODO Auto-generated catch block

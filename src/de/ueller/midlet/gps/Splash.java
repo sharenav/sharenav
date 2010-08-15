@@ -107,7 +107,11 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 		space = getHeight() - topStart;
 		ssize = f.getHeight() * txt.length + space;
 		top = -space;
-		strVersion = "V" + Legend.getAppVersion() + " (" + Legend.getBundleDate() + ")";
+		if (GpsMid.legend != null) {
+			strVersion = "V" + Legend.getAppVersion() + " (" + Legend.getBundleDate() + ")";
+		} else {
+			strVersion = "Error reading map!";
+		}
 		show();
 		addCommand(BACK_CMD);
 		addCommand(EXIT_CMD);
@@ -167,6 +171,9 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 	}
 
 	public void run() {
+		if (GpsMid.legend == null) {
+			main.alert("Splash", GpsMid.errorMsg, 6000);
+		}
 		while (! shutdown){
 			synchronized (this) {
 				try {
