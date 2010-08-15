@@ -720,7 +720,7 @@ public class Configuration {
 
 	private static String readString(RecordStore database, int idx) {
 		byte [] data = readBinary(database, idx);
-		if (data == null) {
+		if (data == null || data.length == 0 ) {
 			return null;
 		}
 		String ret = desanitizeString(new String(data));
