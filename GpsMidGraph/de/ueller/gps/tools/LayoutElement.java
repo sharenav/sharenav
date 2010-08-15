@@ -64,6 +64,7 @@ public class LayoutElement {
 	public static final int FLAG_FONT_MEDIUM = (1<<21);
 	public static final int FLAG_FONT_LARGE = (1<<22);
 	public static final int FLAG_FONT_BOLD = (1<<23);
+	public static final int FONT_FLAGS = FLAG_FONT_BOLD | FLAG_FONT_LARGE | FLAG_FONT_MEDIUM | FLAG_FONT_SMALL;
 	public static final int FLAG_IMAGE_GREY = (1<<24);
 	public static final int FLAG_IMAGE_TOGGLEABLE = (1<<25);
 
@@ -124,7 +125,10 @@ public class LayoutElement {
 
 	public void init(int flags) {
 		this.flags = flags;
-		
+		initFont();
+	}
+
+	private void initFont() {
 		int fontSize = Font.SIZE_LARGE;
 		int fontStyle = Font.STYLE_PLAIN;
 		if ( (flags & FLAG_FONT_SMALL) > 0 ) {
@@ -139,9 +143,9 @@ public class LayoutElement {
 		this.font = Font.getFont(Font.FACE_PROPORTIONAL, fontStyle, fontSize);
 		this.fontHeight = this.font.getHeight();
 		this.height = this.fontHeight;
-		
+		lm.recalcPositionsRequired = true;
 	}
-
+	
 
 	protected void calcSizeAndPosition() {
 		calcSize();
@@ -466,8 +470,15 @@ public class LayoutElement {
 	}
 	
 	public void setFlag(int flag) {
-		flags |= flag;
+		if ((flag & FONT_FLAGS) > 0) {
+			flags &= ~FONT_FLAGS;
+			flags |= flag;
+			initFont();
+		} else {
+			flags |= flag;
+		}
 	}
+	
 	public void clearFlag(int flag) {
 		flags &= ~flag;
 	}

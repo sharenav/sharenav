@@ -49,6 +49,9 @@ public class TraceLayout extends LayoutManager {
 	
 	public boolean usingVerticalLayout = false;
 	
+	public static boolean bigOnScreenButtons = false;
+	
+	
 	public LayoutElement ele[] = new LayoutElement[ELE_COUNT];
 	
 	// variables for scale bar
@@ -239,8 +242,6 @@ public class TraceLayout extends LayoutManager {
 				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH |
 				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT
 		);
-		e.setWidthPercent(170);
-		e.setHeightPercent(170);
 		e.setColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON_TEXT]);
 		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON]);
 		e.setActionID(Trace.ZOOM_OUT_CMD);
@@ -254,8 +255,6 @@ public class TraceLayout extends LayoutManager {
 				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH |
 				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT
 		);
-		e.setWidthPercent(170);
-		e.setHeightPercent(170);
 		e.setVRelative(ele[ZOOM_OUT]);
 		e.setColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON_TEXT]);
 		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON]);
@@ -270,8 +269,6 @@ public class TraceLayout extends LayoutManager {
 				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH |
 				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT
 		);
-		e.setWidthPercent(100);
-		e.setHeightPercent(170);
 		e.setHRelative(ele[ZOOM_OUT]);
 		e.setColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON_TEXT]);
 		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON]);
@@ -286,16 +283,16 @@ public class TraceLayout extends LayoutManager {
 				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_WIDTH |
 				LayoutElement.FLAG_BACKGROUND_FONTHEIGHTPERCENT_HEIGHT
 		);
-		e.setWidthPercent(100);
-		e.setHeightPercent(170);
 		e.setHRelative(ele[ZOOM_IN]);
 		e.setVRelative(ele[SHOW_DEST]);
 		e.setColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON_TEXT]);
 		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON]);
 		e.setActionID(Trace.RECENTER_GPS_CMD);
 
-	}
-
+		setOnScreenButtonSize();
+	}	
+	
+	
 	/*
 	 * layout for mobiles with very wide displays like Nokia E90
 	 */
@@ -303,6 +300,56 @@ public class TraceLayout extends LayoutManager {
 		// TODO: create vertical layout - currently this layout is still the same as the horizontal layout
 		createHorizontalLayout();
 	}
+	
+
+	public void toggleOnScreenButtonSize() {
+		TraceLayout.bigOnScreenButtons = !TraceLayout.bigOnScreenButtons;
+		setOnScreenButtonSize();
+	}
+	
+	
+	private void setOnScreenButtonSize() {
+		float factor;
+		int fontFlag;
+		int fontFlag2;
+		if (TraceLayout.bigOnScreenButtons) {
+			factor = 1.5f;
+			fontFlag = LayoutElement.FLAG_FONT_LARGE;
+			fontFlag2 = fontFlag | LayoutElement.FLAG_FONT_BOLD;
+		} else {
+			factor = 1;
+			fontFlag = LayoutElement.FLAG_FONT_MEDIUM;
+			fontFlag2 = fontFlag;
+		}
+		
+		LayoutElement e = ele[ZOOM_IN];
+		e.setWidthPercent((int) (170 * factor));
+		e.setHeightPercent((int) (170 * factor));
+		e.setFlag(fontFlag2);
+		e = ele[ZOOM_OUT];
+		e.setWidthPercent((int) (170 * factor));
+		e.setHeightPercent((int) (170 * factor));		
+		e.setFlag(fontFlag2);
+		e = ele[SHOW_DEST];
+		e.setWidthPercent((int) (100 * factor));
+		e.setHeightPercent((int) (170 * factor));
+		e.setFlag(fontFlag2);
+		e = ele[RECENTER_GPS];
+		e.setWidthPercent((int) (100 * factor));
+		e.setHeightPercent((int) (170 * factor));
+		e.setFlag(fontFlag2);
+		e = ele[POINT_OF_COMPASS];
+		e.setFlag(fontFlag2);
+		e = ele[CURRENT_TIME];
+		e.setFlag(fontFlag);
+		e = ele[ROUTE_DISTANCE];
+		e.setFlag(fontFlag);
+		e = ele[WAYNAME];
+		e.setFlag(fontFlag);
+		e = ele[SCALEBAR];
+		e.setFlag(fontFlag2);
+	}
+	
 	
 	protected void drawSpecialElement(Graphics g, byte id, String text, int left, int top) {
 		switch(id) {

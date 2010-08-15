@@ -2405,7 +2405,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				if (currTime - pressedPointerTime < 1500) {
 					//#debug debug
 					logger.debug("PointerDoublePressed");
-					commandAction(CMDS[ZOOM_IN_CMD], (Displayable) null);
+					tl.toggleOnScreenButtonSize();
 					repaint();
 					pointerDragAction = false;
 					potentialDoubleClick = false;
