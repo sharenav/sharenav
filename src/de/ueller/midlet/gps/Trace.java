@@ -223,10 +223,12 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	private static Node	pickPointStart = new Node();
 	private static Node	pickPointEnd = new Node();
 	/**
-	 * Record the time at which a pointer press was recorded to determine
-	 * a double click
+	 * Record the time at which a pointer press & release were recorded to determine
+	 * a double click and long click
 	 */
 	private long pressedPointerTime;
+	private long releasedPointerTime;
+	private long clickedPointerTime;
 	/**
 	 * Stores if there was already a click that might be the first click in a double click
 	 */
@@ -839,12 +841,14 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			if (c == CMDS[EXIT_CMD]) {
 				// FIXME: This is a workaround. It would be better if recording
 				// would not be stopped when leaving the map.
-				if (gpx.isRecordingTrk()) {
+				if ((GpsMid.legend != null) && gpx.isRecordingTrk()) {
 					alert(Locale.get("trace.RecordMode")/*Record Mode*/, Locale.get("trace.PleaseStopRecording")/*Please stop recording before exit.*/ , 2500);
 					return;
 				}
 				
-				pause();
+				if ((GpsMid.legend != null)) {
+					pause();
+				}
 				parent.exit();
 				return;
 			}
@@ -2408,6 +2412,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				}
 			} else {
 				pressedPointerTime = currTime;
+				clickedPointerTime = currTime;
 				potentialDoubleClick = true;
 			}		
 		}
@@ -2418,6 +2423,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		Trace.touchY = y;
 		// remember center when the pointer was pressed
 		centerPointerPressedN = center.copy();
+		pressedPointerTime = currTime;
 		pickPointStart=imageCollector.getCurrentProjection().inverse(x,y, pickPointStart);
 		panProjection=imageCollector.getCurrentProjection();
 	}
@@ -2425,13 +2431,33 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	protected void pointerReleased(int x, int y) {
 		long currTime = System.currentTimeMillis();
 		if (potentialDoubleClick) {
-			if ((currTime - pressedPointerTime > 400) ||
+			if ((currTime - clickedPointerTime > 400) ||
 			    (Math.abs(touchX - x) > 8) ||
 			    (Math.abs(touchY - y) > 8)) {
 				potentialDoubleClick = false;
 			}
+			// long tap to open a place-related menu
+			if ((currTime - pressedPointerTime > 900) &&
+			    (Math.abs(touchX - x) <= 8) &&
+			    (Math.abs(touchY - y) <= 8)) {
+				potentialDoubleClick = false;
+				//#if polish.api.online
+				// use the place of touch instead of old center as position,
+				// set as new center
+				pickPointEnd=panProjection.inverse(x,y, pickPointEnd);
+				center.radlat=centerPointerPressedN.radlat-(pickPointEnd.radlat-pickPointStart.radlat);
+				center.radlon=centerPointerPressedN.radlon-(pickPointEnd.radlon-pickPointStart.radlon);
+				Position oPos = new Position(center.radlat, center.radlon,
+							     0.0f, 0.0f, 0.0f, 0, 0);
+				imageCollector.newDataReady();
+				gpsRecenter = false;
+				GuiWebInfo gWeb = new GuiWebInfo(this, oPos, pc);
+				gWeb.show();
+				//#endif
+			}
 		} else {
 			pressedPointerTime = currTime;
+			clickedPointerTime = currTime;
 		}
 		if (pointerDragAction) {
 			pointerDragged(x , y);
@@ -2506,7 +2532,10 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 //#debug info
 		logger.info("enter locationDecoderEnd");
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_SND_DISCONNECT)) {
-			GpsMid.mNoiseMaker.playSound("DISCONNECT");
+			// some fault tolerance  - will crash without a map
+			if (GpsMid.legend != null) {
+				GpsMid.mNoiseMaker.playSound("DISCONNECT");
+			}
 		}
 		if (gpx != null) {
 			/**
