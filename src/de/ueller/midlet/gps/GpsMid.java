@@ -157,7 +157,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 			errorMsg = "Failed to load basic configuration! Check your map data source: "
 					+ e.getMessage();
 //#if polish.android
-			errorMsg += " - For Android, you must install the map on the SD card for now";
+			errorMsg += " - For Android, you must manually install the map (unzip the map jar with same settings & version as the .apk) on the SD card for now";
 //#endif
 			legend = null;
 		}
