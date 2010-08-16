@@ -212,7 +212,7 @@
 				<localization
 					dynamic="true"
 					defaultLocale="en"
-					locales="de, en, fi, fr, ru, sk"
+					locales="de, en, fi, fr, ru, sk, es, cs"
 				/>
 			</resources>
 			
