@@ -2086,8 +2086,8 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				IntPoint p1 = new IntPoint(0, 0);
 				pc.getP().forward((pos.latitude * MoreMath.FAC_DECTORAD),
 								  (pos.longitude * MoreMath.FAC_DECTORAD), p1);
-				posX = p1.getX();
-				posY = p1.getY();
+				posX = p1.getX()-imageCollector.xScreenOverscan;
+				posY = p1.getY()-imageCollector.yScreenOverscan;
 			} else {
 				posX = centerX;
 				posY = centerY;
