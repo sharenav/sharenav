@@ -40,8 +40,8 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 	private int maxX;
 	private int minY;
 	private int maxY;
-	public int tabNr = 0;
-	private int leftMostTabNr = 0;
+	public volatile int tabNr = 0;
+	private volatile int leftMostTabNr = 0;
 	private boolean inTabRow = false;
 	/** LayoutManager for the prev / next direction buttons */
 	private LayoutManager tabDirectionButtonManager;
@@ -61,6 +61,12 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 
 	protected static long pressedKeyTime = 0;
 	protected static int pressedKeyCode = 0;
+
+	/** x position display was touched last time */
+	private static int touchX = 0;
+	/** y position display was touched last time */
+	private static int touchY = 0;
+
 
 	public IconMenuWithPagesGUI(GpsMidDisplayable parent, IconActionPerformer actionPerformer) {
 		// create Canvas
@@ -378,26 +384,49 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 	}
 	
 	protected void pointerReleased(int x, int y) {
-		//#debug debug
-		logger.debug("pointer released at " + x + " " + y);
-		int directionId = tabDirectionButtonManager.getElementIdAtPointer(x, y);
-		if (directionId == 0) {
-			prevTab();
-		} else if (directionId == 1) {
-			nextTab();
-		} else {
-			int newTab = tabButtonManager.getElementIdAtPointer(x, y);
-			if (newTab >= 0) {
-				setActiveTab(newTab);
+		if (Math.abs(x - touchX) < 10) { // if this is no drag action
+			//#debug debug
+			logger.debug("pointer released at " + x + " " + y);
+			int directionId = tabDirectionButtonManager.getElementIdAtPointer(x, y);
+			if (directionId == 0) {
+				prevTab();
+			} else if (directionId == 1) {
+				nextTab();
 			} else {
-				int actionId = getActiveMenuPage().getActionIdAtPointer(x, y);
-				if (actionId >= 0) {
-					parent.show();
-					performIconAction(actionId);
-					return;
+				int newTab = tabButtonManager.getElementIdAtPointer(x, y);
+				if (newTab >= 0) {
+					setActiveTab(newTab);
+				} else {
+					int actionId = getActiveMenuPage().getActionIdAtPointer(x, y);
+					if (actionId >= 0) {
+						parent.show();
+						performIconAction(actionId);
+						return;
+					}
 				}
 			}
 		}
+		
+		// sliding to the right at least a quarter of the display will show the previous menu page
+		if ( (x - touchX) > (maxX - minX) / 4) {
+			prevTab();
+		// sliding to the left at least a quarter of the display will show the next menu page
+		} else if ( (touchX - x) > (maxX - minX) / 4) {
+			nextTab();
+		}
+
+		getActiveMenuPage().dragOffsX = 0;
+		repaint();
+	}
+	
+	
+	protected void pointerPressed(int x, int y) {
+		touchX = x;
+		touchY = y;
+	}
+	
+	protected void pointerDragged (int x, int y) {
+		getActiveMenuPage().dragOffsX = x - touchX;
 		repaint();
 	}
 	

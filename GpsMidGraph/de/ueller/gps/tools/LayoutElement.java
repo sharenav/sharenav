@@ -101,7 +101,7 @@ public class LayoutElement {
 	private int bgColor = 0x00FFFFFF;
 	private int fgColor = 0x00000000;
 
-	private int textLeft = 0;
+	public int textLeft = 0;
 	public int left = 0;
 	/** additional offset to be added to left and textLeft */
 	private int addOffsX = 0;

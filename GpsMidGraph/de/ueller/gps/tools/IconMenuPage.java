@@ -38,6 +38,9 @@ public class IconMenuPage extends LayoutManager {
 	public int gridHor;
 	public int gridVer;
 	
+	/** the horizontal offset the icons on this page should be drawn at */
+	public volatile int dragOffsX = 0;
+	
 	
 	public IconMenuPage(String title, IconActionPerformer actionPerformer, int numCols, int numRows, int minX, int minY, int maxX, int maxY) {
 		super(minX, minY, maxX, maxY);
@@ -166,14 +169,27 @@ public class IconMenuPage extends LayoutManager {
 		if (showCursor) {
 			e = (LayoutElement) this.elementAt(getEleId(currentCol, currentRow));		
 			g.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_ICON_BORDER_HIGHLIGHT]);
-			g.fillRect(e.left - 2, e.top - 2, e.right - e.left + 4, e.bottom - e.top + 4);
+			g.fillRect(e.left + dragOffsX - 2, e.top - 2, e.right - e.left + 4, e.bottom - e.top + 4);
 			g.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_BACKGROUND]);
-			g.fillRect(e.left, e.top, e.right - e.left, e.bottom - e.top);
+			g.fillRect(e.left + dragOffsX, e.top, e.right - e.left, e.bottom - e.top);
 		}
+		int orgLeft;
+		int orgTextLeft;
 		// draw all icons
 		for (int i=0; i<this.size(); i++){
 			e = (LayoutElement) this.elementAt(i);
-			e.paint(g);
+			if (dragOffsX == 0) {
+				e.paint(g);				
+			} else {
+				// paint with drag offset
+				orgTextLeft = e.textLeft;
+				orgLeft = e.left;
+				e.left += dragOffsX;
+				e.textLeft += dragOffsX;
+				e.paint(g);
+				e.left = orgLeft;
+				e.textLeft = orgTextLeft;
+			}
 		}
 	}
 }
