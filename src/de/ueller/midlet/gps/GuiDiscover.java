@@ -50,19 +50,24 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 
 	/** A menu list instance */
 	private static final String[] elements = {
-		Locale.get("guidiscover.LocationReceiver")/*Location Receiver*/, Locale.get("guidiscover.RecordingRules")/*Recording Rules*/,
+		Locale.get("guidiscover.LocationReceiver")/*Location Receiver*/, 
+		Locale.get("guidiscover.RecordingRules")/*Recording Rules*/,
 		/*		"Languages & Units", */
-		Locale.get("guidiscover.DisplayOptions")/*Display options*/, Locale.get("guidiscover.SoundsAlerts")/*Sounds "Sounds & Alerts",
+		Locale.get("guidiscover.DisplayOptions")/*Display options*/, 
+		Locale.get("guidiscover.SoundsAlerts")/*Sounds "Sounds & Alerts"*/,
 		Locale.get("guidiscover.RoutingOptions")/*Routing options*/,
-		Locale.get("guidiscover.GPXReceiver")/*GPX Receiver*/, Locale.get("guidiscover.GUIOptions")/*GUI Options*/,
-		Locale.get("guidiscover.MapSource")/*Map source*/, Locale.get("guidiscover.DebugOptions")/*Debug options*/,
+		Locale.get("guidiscover.GPXReceiver")/*GPX Receiver*/, 
+		Locale.get("guidiscover.GUIOptions")/*GUI Options*/,
+		Locale.get("guidiscover.MapSource")/*Map source*/, 
+		Locale.get("guidiscover.DebugOptions")/*Debug options*/,
 		Locale.get("guidiscover.KeyShortcuts")/*Key shortcuts*/,
 		Locale.get("guidiscover.Opencellid")/*Opencellid*/,
 		//#if polish.api.osm-editing
 		Locale.get("guidiscover.OSMAccount")/*OSM account*/,
 		//#endif
 		//#if polish.api.fileconnection
-		Locale.get("guidiscover.SaveConfig")/*Save config*/, Locale.get("guidiscover.LoadConfig")/*Load config*/
+		Locale.get("guidiscover.SaveConfig")/*Save config*/, 
+		Locale.get("guidiscover.LoadConfig")/*Load config*/
 		//#endif
 		};
 
