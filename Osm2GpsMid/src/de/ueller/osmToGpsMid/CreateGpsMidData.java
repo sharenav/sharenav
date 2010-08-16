@@ -236,47 +236,19 @@ public class CreateGpsMidData implements FilenameFilter {
 				useLangName = useLang;
 			}
 
-			System.out.println ("Building for languages: " + configuration.getUseLang());
+			System.out.println ("Building for languages: " + configuration.getUseLang() + " (" + configuration.getUseLangName() + ")" );
 
 /*			short numNaviLang=2;
 			short numOnlineLang=2;
 			short numWikipediaLang=2;
 			short numNamesOnMapLang=2;*/
 
-			// make all available languages the same for now:
-			// useLang if set and English
+			// make all available languages the same for now
 			for (int i = 1; i <= 5 ; i++) {
-				if (useLang.length < 2) {
-					short numUiLang;
-					if (config.getLang().equals("en")) { 
-						numUiLang = 1;
-					} else {
-						numUiLang = 2;
-					}
-					dsi.writeShort(numUiLang);
-					if (! config.getLang().equals("en")) { 
-						dsi.writeUTF(config.getLang());
-						dsi.writeUTF(config.getLangName());
-					}
-					dsi.writeUTF("en");
-					dsi.writeUTF("English");
-				} else {
-					boolean langIsInUseLang = false;
-					for (int j = 0 ; j < useLang.length ; j++) {
-						if (useLang[j].equals(config.getLang())) {
-							langIsInUseLang = true;
-						}
-					}
-
-					dsi.writeShort(useLang.length + (langIsInUseLang ? 0 : 1));
-					dsi.writeUTF(config.getLang());
-					dsi.writeUTF(config.getLangName());
-					for (int j = 0 ; j < useLang.length ; j++) {
-						if (! useLang[j].equals(config.getLang())) {
-							dsi.writeUTF(useLang[j]);
-							dsi.writeUTF(useLangName[j]);
-						}
-					}
+				dsi.writeShort(useLang.length);
+				for (int j = 0 ; j < useLang.length ; j++) {
+					dsi.writeUTF(useLang[j]);
+					dsi.writeUTF(useLangName[j]);
 				}
 			}
  			/**

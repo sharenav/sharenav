@@ -88,8 +88,8 @@
    		<entry key="useIcons" value="true"/>
    		<entry key="useSounds" value="amr"/>
    		<entry key="useSoundFilesWithSyntax" value="sound"/>
-   		<entry key="lang" value="${local_lang}"/>
-   		<entry key="langName" value=""/>
+   		<entry key="lang" value="en"/>
+   		<entry key="langName" value="English"/>
 		<entry key="useLang" value="en"/>
 		<entry key="useLangName" value="English"/>
    	</propertyfile>

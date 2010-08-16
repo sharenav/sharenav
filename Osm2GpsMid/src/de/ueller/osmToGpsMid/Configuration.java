@@ -506,11 +506,24 @@ public class Configuration {
 
 			setSoundFiles(getString("useSoundFilesWithSyntax"));
 
-			setUseLang(getString("useLang"));
-
-			setUseLangName(getString("useLangName"));
-
+			setUseLang(getString("lang"));
+			if (! getString("useLang").equals("en")) {
+				setUseLang(getString("useLang"));
+			}
+			setUseLangName(getString("langName"));
+			if (! getString("useLangName").equals("English")) {
+				setUseLangName(getString("useLangName"));
+			}
+			// default to language code for language name if not defined
+			if (! getUseLang().equals("en") && getUseLangName().equals("English")) {
+				useLangName = useLang;
+			}
 			
+			// add English if not there
+			if (! (useLang.indexOf("en" ) > -1)) {
+				useLang += ",en";
+				useLangName += ",English";
+			}
 			maxTileSize = Integer.parseInt(getString("maxTileSize"));
 			maxDictDepth = Integer.parseInt(getString("maxDictDepth"));
 			
@@ -692,7 +705,7 @@ public class Configuration {
 			InputStream is = getClass().getResourceAsStream(baseName);
 			if (is == null) {
 				baseName = "/" + appParam + "-" + getVersion() +  ".jar";
-				System.out.println("Using lang=" + getLang() + " (" + getLangName() + ")");
+				System.out.println("Using lang=" + getUseLang() + " (" + getUseLangName() + ")");
 				is = getClass().getResourceAsStream(baseName);
 			}
 			appJarFileName = baseName;
@@ -990,25 +1003,6 @@ public class Configuration {
 		 */
 		public String getVersion() {
 			return vb.getString("version");
-		}
-		
-		public String getLang() {
-			String lang = getString("lang");
-			if (lang.equalsIgnoreCase("${local_lang}")) {
-				//This is an ugly hack, as the ant build script
-				//doesn't support if when defining local_lang
-				return "en";
-			}
-			return lang;
-		}
-
-		public String getLangName() {
-			String langName = getString("langName");
-			if (langName.equalsIgnoreCase("")) {
-				// if langName not set, show user the language code
-				return getLang();
-			}
-			return langName;
 		}
 
 		public String getBundleDate() {
