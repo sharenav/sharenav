@@ -1579,7 +1579,11 @@ public class Configuration {
 		if (model != null) {
 		    return model;
 		} else {
+//#if polish.android
+		    return "Android";
+//#else
 		    return "";
+//#endif
 		}
 	}
 	
