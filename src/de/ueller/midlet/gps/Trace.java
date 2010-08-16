@@ -167,10 +167,13 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 
 	public String solution = Locale.get("trace.NoFix")/*NoFix*/;
 	
-	/** Flag if the map is centered to the current GPS position (true)
+	/** Flag if the user requested to be centered to the current GPS position (true)
 	 * or if the user moved the map away from this position (false).
 	 */
 	public boolean gpsRecenter = true;
+	/** Flag if the gps position is not yet valid after recenter request
+	 */
+	public boolean gpsRecenterInvalid = true;
 	/** Flag if the map is autoZoomed
 	 */
 	public boolean autoZoomed = true;
@@ -1181,6 +1184,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 
 			if (c == CMDS[ROUTING_START_WITH_MODE_SELECT_CMD]) {
 				gpsRecenter = true;
+				gpsRecenterInvalid = true;
 				GuiRoute guiRoute = new GuiRoute(this, false);
 				guiRoute.show();
 				return;
@@ -1310,6 +1314,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			}
 			if (c == CMDS[RECENTER_GPS_CMD]) {
 				gpsRecenter = true;
+				gpsRecenterInvalid = true;
 				autoZoomed = true;
 				newDataReady();
 				return;
@@ -2091,17 +2096,19 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			float radc = (course * MoreMath.FAC_DECTORAD);
 			int px = posX + (int) (Math.sin(radc) * 20);
 			int py = posY - (int) (Math.cos(radc) * 20);
-			if (!gpsRecenter) {
+			// crosshair center cursor
+			if (!gpsRecenter || gpsRecenterInvalid) {
+				g.drawLine(centerX, centerY - 12, centerX, centerY + 12);
+				g.drawLine(centerX - 12, centerY, centerX + 12, centerY);
+				g.drawArc(centerX - 5, centerY - 5, 10, 10, 0, 360);
+			}
+			if (! gpsRecenterInvalid) {
 				// gps position spot
 				pc.g.drawImage(pc.images.IMG_POS_BG, posX, posY, CENTERPOS);
 				// gps position rectangle
 				g.drawRect(posX - 4, posY - 4, 8, 8);
 				g.drawLine(posX, posY, px, py);
 			}
-			// crosshair center cursor
-			g.drawLine(centerX, centerY - 12, centerX, centerY + 12);
-			g.drawLine(centerX - 12, centerY, centerX + 12, centerY);
-			g.drawArc(centerX - 5, centerY - 5, 10, 10, 0, 360);
 			}
 		} catch (Exception e) {
 			if (imageCollector == null){
@@ -2247,6 +2254,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			//autoZoomed = true;
 		}
 		if (gpsRecenter) {
+			gpsRecenterInvalid = false;
 			center.setLatLonDeg(pos.latitude, pos.longitude);
 			speed = (int) (pos.speed * 3.6f);
 			if (speed > 2 && pos.course != Float.NaN) {
