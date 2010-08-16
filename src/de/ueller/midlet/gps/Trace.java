@@ -235,12 +235,16 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	/**
 	 * Stores if there was already a click that might be the first click in a double click
 	 */
-	private boolean potentialDoubleClick;
+	private volatile boolean potentialDoubleClick;
+	/**
+	 * Stores if there was a click that might be a single click
+	 */
+	private volatile boolean potentialSingleClick;
 	/**
 	 * Indicates that there was a drag event since the last pointerPressed
 	 */
 	/** indicates whether this is a touch button or drag action*/
-	private static boolean pointerDragAction = false;
+	private static volatile boolean pointerDragAction = false;
 	
 	public volatile boolean routeCalc=false;
 	public Tile tiles[] = new Tile[6];
@@ -2425,18 +2429,20 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			potentialDoubleClick = false;
 		} else {
 			if (potentialDoubleClick) {
-				if (currTime - pressedPointerTime < 1500) {
+				if (currTime - pressedPointerTime < 700) {
 					//#debug debug
 					logger.debug("PointerDoublePressed");
-					tl.toggleOnScreenButtonSize();
+					commandAction(CMDS[ZOOM_IN_CMD], (Displayable) null);
 					repaint();
 					pointerDragAction = false;
 					potentialDoubleClick = false;
+					potentialSingleClick = false;
 				}
 			} else {
 				pressedPointerTime = currTime;
 				clickedPointerTime = currTime;
 				potentialDoubleClick = true;
+				potentialSingleClick = true;
 			}		
 		}
 		
@@ -2459,8 +2465,31 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			    (Math.abs(touchY - y) > 8)) {
 				potentialDoubleClick = false;
 			}
+			// single tap to make active touch areas (more) visible
+			if ((currTime - pressedPointerTime < 400) &&
+			    (Math.abs(touchX - x) <= 8) &&
+			    (Math.abs(touchY - y) <= 8)) {
+				TimerTask timerT;
+				Timer tm = new Timer();
+				timerT = new TimerTask() {
+					public void run() {
+						if (potentialSingleClick) {
+							// #debug debug
+							logger.debug("single click ");
+							// time
+							potentialDoubleClick = false;
+							potentialSingleClick = false;
+							tl.toggleOnScreenButtonSize();
+							repaint();
+							pointerDragAction = false;
+						}
+					}
+				};
+				// set timer to check if this is a long or double click
+				tm.schedule(timerT, 800);
+			}
 			// long tap to open a place-related menu
-			if ((currTime - pressedPointerTime > 900) &&
+			if ((currTime - pressedPointerTime > 700) &&
 			    (Math.abs(touchX - x) <= 8) &&
 			    (Math.abs(touchY - y) <= 8)) {
 				potentialDoubleClick = false;
