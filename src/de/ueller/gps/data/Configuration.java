@@ -1563,8 +1563,9 @@ public class Configuration {
 	}
 	
 	public static String getPhoneModel() {
+		String  model = null;
 		try {
-			return System.getProperty("microedition.platform");
+			model = System.getProperty("microedition.platform");
 		} catch (RuntimeException re) {
 			/**
 			 * Some phones throw exceptions if trying to access properties that don't
@@ -1575,7 +1576,11 @@ public class Configuration {
 			 * See above
 			 */
 		}
-		return "";
+		if (model != null) {
+		    return model;
+		} else {
+		    return "";
+		}
 	}
 	
 	public static long getDefaultDeviceBacklightMethodMask() {
@@ -1796,7 +1801,7 @@ public class Configuration {
 				return false;
 			}
 			byte [] data = readBinary(database, RECORD_ID_KEY_SHORTCUT);
-			if (data == null) {
+			if (data == null || data.length == 0) {
 				logger.info("Record store did not contain key shortcut entry");
 				database.closeRecordStore();
 				return false;
