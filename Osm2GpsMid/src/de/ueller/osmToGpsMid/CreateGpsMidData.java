@@ -236,8 +236,6 @@ public class CreateGpsMidData implements FilenameFilter {
 				useLangName = useLang;
 			}
 
-			System.out.println ("Building for languages: " + configuration.getUseLang() + " (" + configuration.getUseLangName() + ")" );
-
 /*			short numNaviLang=2;
 			short numOnlineLang=2;
 			short numWikipediaLang=2;

@@ -1135,6 +1135,8 @@ public class Configuration {
 			confString += "  Use url tags: " + useUrlTags + "\n";
 			confString += "  Use phone tags: " + usePhoneTags + "\n";
 			confString += "  Enable editing support: " + enableEditingSupport + "\n";
+			confString += "  Building for languages: " + getUseLang() + " (" + getUseLangName() + ")" + "\n";
+
 			if (bounds.size() > 0) {
 				confString += "  Using " + bounds.size() + " bounding boxes\n";
 				for (Bounds b : bounds) {
