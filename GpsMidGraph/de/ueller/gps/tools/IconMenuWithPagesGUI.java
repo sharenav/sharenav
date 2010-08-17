@@ -252,6 +252,7 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 			//#debug debug
 			logger.debug("next tab " + tabNr);
 		}
+		getActiveMenuPage().dragOffsX = 0;
 		// set flags for tab buttons
 		setActiveTab(tabNr);
 	}
@@ -262,6 +263,7 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 			//#debug debug
 			logger.debug("prev tab " + tabNr);
 		}
+		getActiveMenuPage().dragOffsX = 0;
 		// set flags for tab buttons
 		setActiveTab(tabNr);
 	}
