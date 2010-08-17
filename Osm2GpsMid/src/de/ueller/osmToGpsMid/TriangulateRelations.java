@@ -8,6 +8,7 @@
  * Copyright (C) 2007        Harald Mueller
  * Copyright (C) 2007, 2008  Kai Krueger
  */
+
 package de.ueller.osmToGpsMid;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ import de.ueller.osmToGpsMid.model.Member;
 import de.ueller.osmToGpsMid.model.Relation;
 import de.ueller.osmToGpsMid.model.Node;
 import de.ueller.osmToGpsMid.model.Way;
+
 /**
  * @author hmueller
  *
@@ -31,8 +33,8 @@ public class TriangulateRelations {
 
 	private final OxParser parser;
 	private final Configuration conf;
-	int triangles=0;
-	int areas=0;
+	int triangles = 0;
+	int areas = 0;
 	
 
 	public TriangulateRelations(OxParser parser, Configuration conf) {
@@ -65,21 +67,21 @@ public class TriangulateRelations {
 				if (r.getAttribute("admin_level") != null){
 					continue;
 				}
-				if ("administrative".equalsIgnoreCase(r.getAttribute("boundary"))){
+				if ("administrative".equalsIgnoreCase(r.getAttribute("boundary"))) {
 					continue;
 				}
 //				System.out.println("Starting to handle multipolygon relation");
-//				System.out.println("    see http://www.openstreetmap.org/browse/relation/" + r.id);
+//				System.out.println("  see http://www.openstreetmap.org/browse/relation/" + r.id);
 
-				if (r.getWayIds(Member.ROLE_OUTER).size() == 0){
+				if (r.getWayIds(Member.ROLE_OUTER).size() == 0) {
 					System.out.println("Relation has no outer member");
-					System.out.println("    see " + r.toUrl() + " I'll ignore this relation");
+					System.out.println("  see " + r.toUrl() + " I'll ignore this relation");
 					continue;
 				}
 //				System.out.println("outer size: " + r.getWayIds(Member.ROLE_OUTER).size());
 //				System.out.println("Triangulate relation " + r.id);
 				Area a = new Area();
-//				if (r.id == 405925 ){
+//				if (r.id == 405925 ) {
 //					a.debug=true;
 //				}
 				for (Long ref : r.getWayIds(Member.ROLE_OUTER)) {
@@ -87,21 +89,21 @@ public class TriangulateRelations {
 //						a.debug = true;
 //					}
 					Way w = wayHashMap.get(ref);
-					if (w.getAttribute("admin_level") != null){
+					if (w.getAttribute("admin_level") != null) {
 						continue rel;
 					}
-					if ("administrative".equalsIgnoreCase(w.getAttribute("boundary"))){
+					if ("administrative".equalsIgnoreCase(w.getAttribute("boundary"))) {
 						continue rel;
 					}
 					// FIXME can be removed when proper coastline support exists
-					if ("coastline".equalsIgnoreCase(w.getAttribute("natural"))){
+					if ("coastline".equalsIgnoreCase(w.getAttribute("natural"))) {
 						continue rel;
 					}
 
 //					System.out.println("Handling outer way http://www.openstreetmap.org/browse/way/" + ref);
 					if (w == null) {
-						System.out.println("Way " + w.toUrl() + " was not found but referred  as outline in ");
-						System.out.println("    relation " + r.toUrl() + " I'll ignore this relation");
+						System.out.println("Way " + w.toUrl() + " was not found but referred as outline in ");
+						System.out.println("  relation " + r.toUrl() + " I'll ignore this relation");
 						continue rel;
 					}
 					Outline no = createOutline(w);
@@ -109,10 +111,10 @@ public class TriangulateRelations {
 //						System.out.println("Adding way " + w.toUrl() + " as OUTER");
 						a.addOutline(no);
 						if (firstWay == null) {
-							if (w.triangles != null){
-								System.out.println("strange this outline is already triangulated ! maybe duplicate. I will ignore it");
-								System.out.println("Way " + w.toUrl());
-								System.out.println("please see " + r.toUrl());
+							if (w.triangles != null) {
+								System.out.println("Strange, this outline is already triangulated! May be a duplicate, I'll ignore it");
+								System.out.println("  way " + w.toUrl());
+								System.out.println("  relation " + r.toUrl());
 								continue rel;
 							}
 							firstWay = w;
@@ -124,8 +126,8 @@ public class TriangulateRelations {
 				for (Long ref : r.getWayIds(Member.ROLE_INNER)) {
 					Way w = wayHashMap.get(ref);
 					if (w == null) {
-						System.out.println("Way " + w.toUrl() + " was not found but referred  as INNER in ");
-						System.out.println("    relation "+ r.toUrl() + " I'll ignore this relation");
+						System.out.println("Way " + w.toUrl() + " was not found but referred as INNER in ");
+						System.out.println("  relation "+ r.toUrl() + " I'll ignore this relation");
 						continue rel;
 					}
 //					System.out.println("Adding way " + w.toUrl() + " as INNER");
@@ -142,14 +144,15 @@ public class TriangulateRelations {
 					firstWay.triangles = areaTriangles;
 					firstWay.recreatePath();
 					r.getTags().remove("type");
-					if (r.getTags().size() > 0){
+					if (r.getTags().size() > 0) {
 						firstWay.replaceTags(r);
 					}
 					triangles += areaTriangles.size();
 //					System.out.println("areaTriangles.size for relation " + r.toUrl() + " :" + areaTriangles.size());
 					areas += 1;
 				} catch (Exception e) {
-					System.out.println("Something went wrong when trying to triangulate relation " + r.toUrl() + " I'll attempt to ignore this relation");
+					System.out.println("Something went wrong when trying to triangulate relation ");
+					System.out.println("  " + r.toUrl() + " I'll attempt to ignore this relation");
 					e.printStackTrace();
 				}
 				

@@ -32,21 +32,29 @@ public class Tile {
 	public Bounds bounds = new Bounds();
 
 	/**
-	 * Center coordinates of the tile in deg
+	 * Center latitude of the tile in degrees.
 	 * This is used as a reference point for the relative coordinates 
 	 * stored in the file.
 	 */
-	public float centerLat, centerLon;
-	public Tile t1=null;
-	public Tile t2=null;
+	public float centerLat;
+	/**
+	 * Center longitude of the tile in degrees.
+	 * This is used as a reference point for the relative coordinates 
+	 * stored in the file.
+	 */
+	public float centerLon;
+	public Tile t1 = null;
+	public Tile t2 = null;
 	public int fid;
 	public byte type;
+	
+	/** The data of this tile is for this zoom level. */
 	public byte zl;
-	public Collection<Way> ways=null;
-	private ArrayList<RouteNode> routeNodes=null;
-	public Collection<Node> nodes=new ArrayList<Node>();
-	int idxMin=Integer.MAX_VALUE;
-	int idxMax=0;
+	public Collection<Way> ways = null;
+	private ArrayList<RouteNode> routeNodes = null;
+	public Collection<Node> nodes = new ArrayList<Node>();
+	int idxMin = Integer.MAX_VALUE;
+	int idxMax = 0;
 	short numMainStreetRouteNodes = 0;
 	public static int numTrafficSignalRouteNodes = 0;
 	
@@ -64,31 +72,33 @@ public class Tile {
 
 	public Tile() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
+	
 	public Tile(byte zl) {
 		this.zl = zl;
 	}
-	public Tile(byte zl,LinkedList<Way> ways,Collection<Node> nodes) {
+
+	public Tile(byte zl, LinkedList<Way> ways, Collection<Node> nodes) {
 		this.zl = zl;
 		this.ways = ways;
 		this.nodes = nodes;
 	}
 
-
 	public Tile(Bounds b) {
-		bounds=b.clone();		
+		bounds = b.clone();		
 	}
 	
-	public void writeTileDict(DataOutputStream ds,Integer deep,Sequence fid,String path) throws IOException{
+	public void writeTileDict(DataOutputStream ds, Integer deep, 
+			Sequence fid, String path) throws IOException {
 		DataOutputStream lds;
 		boolean openStream;
 //		System.out.println("Write Tile type=" + type + " deep=" + deep + " fid=" + fid);
 		if ((type == TYPE_CONTAINER || type == TYPE_ROUTECONTAINER) 
-				&& deep >= Configuration.getConfiguration().getMaxDictDepth()){
+				&& deep >= Configuration.getConfiguration().getMaxDictDepth()) {
 //			System.out.println("Start new Dict file");
-			// Write this containerTile as a FileTile this container will be then places within this new FileTile 
-			if (zl != CreateGpsMidData.ROUTEZOOMLEVEL){
+			// Write this containerTile as a FileTile. This container will be then 
+			// placed within this new FileTile. 
+			if (zl != CreateGpsMidData.ROUTEZOOMLEVEL) {
 				ds.writeByte(TYPE_FILETILE);
 				ds.writeFloat(degToRad(bounds.minLat));
 				ds.writeFloat(degToRad(bounds.minLon));
@@ -96,30 +106,31 @@ public class Tile {
 				ds.writeFloat(degToRad(bounds.maxLon));
 			} else {
 				ds.writeByte(TYPE_ROUTEFILE);				
-				ds.writeFloat(degToRad(bounds.minLat-RTEpsilon));
-				ds.writeFloat(degToRad(bounds.minLon-RTEpsilon));
-				ds.writeFloat(degToRad(bounds.maxLat+RTEpsilon));
-				ds.writeFloat(degToRad(bounds.maxLon+RTEpsilon));
+				ds.writeFloat(degToRad(bounds.minLat - RTEpsilon));
+				ds.writeFloat(degToRad(bounds.minLon - RTEpsilon));
+				ds.writeFloat(degToRad(bounds.maxLat + RTEpsilon));
+				ds.writeFloat(degToRad(bounds.maxLon + RTEpsilon));
 				ds.writeInt(idxMin);
 				ds.writeInt(idxMax);
 			}
 			ds.writeShort(fid.get());
-			openStream=true;
-			FileOutputStream fo = FileTools.createFileOutputStream(path+"/d"+zl+"/"+fid.get()+".d");
+			openStream = true;
+			FileOutputStream fo = FileTools.createFileOutputStream(
+					path + "/d" + zl + "/" + fid.get() + ".d");
 			lds = new DataOutputStream(fo);
 			lds.writeUTF("DictMid");
 			fid.inc();
-			deep=1;
+			deep = 1;
 		} else {
-			openStream=false;
-			lds=ds;
+			openStream = false;
+			lds = ds;
 			deep++;
 		}
-		switch (type){
+		switch (type) {
 			case TYPE_MAP:
 			case TYPE_ROUTEDATA:
 //				System.out.println("Type 1");
-				if (zl != CreateGpsMidData.ROUTEZOOMLEVEL){
+				if (zl != CreateGpsMidData.ROUTEZOOMLEVEL) {
 					lds.writeByte(TYPE_MAP);
 					lds.writeFloat(degToRad(bounds.minLat));
 					lds.writeFloat(degToRad(bounds.minLon));
@@ -127,10 +138,10 @@ public class Tile {
 					lds.writeFloat(degToRad(bounds.maxLon));
 				} else {
 					lds.writeByte(TYPE_ROUTEDATA);	
-					lds.writeFloat(degToRad(bounds.minLat-RTEpsilon));
-					lds.writeFloat(degToRad(bounds.minLon-RTEpsilon));
-					lds.writeFloat(degToRad(bounds.maxLat+RTEpsilon));
-					lds.writeFloat(degToRad(bounds.maxLon+RTEpsilon));
+					lds.writeFloat(degToRad(bounds.minLat - RTEpsilon));
+					lds.writeFloat(degToRad(bounds.minLon - RTEpsilon));
+					lds.writeFloat(degToRad(bounds.maxLat + RTEpsilon));
+					lds.writeFloat(degToRad(bounds.maxLon + RTEpsilon));
 					lds.writeInt(idxMin);
 					lds.writeInt(idxMax);
 				}
@@ -140,7 +151,7 @@ public class Tile {
 			case TYPE_CONTAINER:
 			case TYPE_ROUTECONTAINER:
 //				System.out.println("Type 2");
-				if (zl != CreateGpsMidData.ROUTEZOOMLEVEL){
+				if (zl != CreateGpsMidData.ROUTEZOOMLEVEL) {
 					lds.writeByte(TYPE_CONTAINER);
 					lds.writeFloat(degToRad(bounds.minLat));
 					lds.writeFloat(degToRad(bounds.minLon));
@@ -148,15 +159,15 @@ public class Tile {
 					lds.writeFloat(degToRad(bounds.maxLon));
 				} else {
 					lds.writeByte(TYPE_ROUTECONTAINER);					
-					lds.writeFloat(degToRad(bounds.minLat-RTEpsilon));
-					lds.writeFloat(degToRad(bounds.minLon-RTEpsilon));
-					lds.writeFloat(degToRad(bounds.maxLat+RTEpsilon));
-					lds.writeFloat(degToRad(bounds.maxLon+RTEpsilon));
+					lds.writeFloat(degToRad(bounds.minLat - RTEpsilon));
+					lds.writeFloat(degToRad(bounds.minLon - RTEpsilon));
+					lds.writeFloat(degToRad(bounds.maxLat + RTEpsilon));
+					lds.writeFloat(degToRad(bounds.maxLon + RTEpsilon));
 					lds.writeInt(idxMin);
 					lds.writeInt(idxMax);
 				}				
-				t1.writeTileDict(lds,deep,fid,path);
-				t2.writeTileDict(lds,deep,fid,path);
+				t1.writeTileDict(lds, deep, fid, path);
+				t2.writeTileDict(lds, deep, fid, path);
 				break;
 			case TYPE_EMPTY:
 //				System.out.println("Type 3");
@@ -170,7 +181,7 @@ public class Tile {
 //				lds.writeFloat(degToRad(bounds.maxLon));
 //				lds.writeShort(fid);
 		}
-		if (openStream){
+		if (openStream) {
 			lds.writeUTF("END"); // Magic number
 			lds.close();
 		}
@@ -189,11 +200,11 @@ public class Tile {
 	     * 
 	     * @return the bounds for the current tile tree.
 	     */
-	    public Bounds recalcBounds(){
-	    	Bounds b1=null;
-	    	Bounds b2=null;
-	    	Bounds ret=bounds.clone();	    	
-	    	if (type == TYPE_MAP || type == TYPE_ROUTEDATA){
+	    public Bounds recalcBounds() {
+	    	Bounds b1 = null;
+	    	Bounds b2 = null;
+	    	Bounds ret = bounds.clone();	    	
+	    	if (type == TYPE_MAP || type == TYPE_ROUTEDATA) {
 	    		/**
 	    		 * This is a leaf of the tile tree and should have correct bounds
 	    		 * anyway, so don't update and return the current bounds
@@ -201,13 +212,13 @@ public class Tile {
 	    		return ret;
 	    	}	    	
 			if (t1 != null && (t1.type != TYPE_EMPTY)) {								
-				b1=t1.recalcBounds();				
-				ret=b1.clone();				
+				b1 = t1.recalcBounds();				
+				ret = b1.clone();				
 			}
 			
-			if (t2 != null && (t2.type != TYPE_EMPTY)){				
-				b2=t2.recalcBounds();				
-				if (ret != null){
+			if (t2 != null && (t2.type != TYPE_EMPTY)) {				
+				b2 = t2.recalcBounds();				
+				if (ret != null) {
 					ret.extend(b2);
 				}
 			}
@@ -232,7 +243,7 @@ public class Tile {
 		 * @param routeNode
 		 */
 		public void addRouteNode(RouteNode routeNode) {
-			if (routeNodes == null){
+			if (routeNodes == null) {
 				routeNodes = new ArrayList<RouteNode>();
 			}
 			routeNodes.add(routeNode);
@@ -244,25 +255,26 @@ public class Tile {
 	  * 
 	  */
 	public void renumberRouteNode(Sequence rnSeq) {
-		if (type == TYPE_ROUTECONTAINER){
-			if (t1 != null){
+		if (type == TYPE_ROUTECONTAINER) {
+			if (t1 != null) {
 				t1.renumberRouteNode(rnSeq);
 			}
 			if (t2 != null) {
 				t2.renumberRouteNode(rnSeq);
 			}
 		}
-		if (type == TYPE_ROUTEDATA){
+		if (type == TYPE_ROUTEDATA) {
 			boolean isOnMainStreetNet = false;
-			// renumber the mainStreetNet routeNodes in the first loop, in the second loop the remaining ones
-			for (int writeStreetNets = 0; writeStreetNets <=1; writeStreetNets++) {
-				for (RouteNode rn : routeNodes){
+			// renumber the mainStreetNet routeNodes in the first loop, 
+			// in the second loop the remaining ones
+			for (int writeStreetNets = 0; writeStreetNets <= 1; writeStreetNets++) {
+				for (RouteNode rn : routeNodes) {
 					isOnMainStreetNet = rn.isOnMainStreetNet();
 					if (writeStreetNets == 0 && isOnMainStreetNet
 						||
 						writeStreetNets > 0 && !isOnMainStreetNet
 					) { 
-						rn.id=rnSeq.get();
+						rn.id = rnSeq.get();
 //						if (isOnMainStreetNet) {
 //							System.out.println("main" + rn.id);
 //						} else {
@@ -279,53 +291,53 @@ public class Tile {
 	}
 
 	public void markTrafficSignalsRouteNodes(Node n) {
-		if (type == TYPE_ROUTECONTAINER){
-			if (t1 != null){
+		if (type == TYPE_ROUTECONTAINER) {
+			if (t1 != null) {
 				t1.markTrafficSignalsRouteNodes(n);
 			}
 			if (t2 != null) {
 				t2.markTrafficSignalsRouteNodes(n);
 			}
-		} else if (type == TYPE_ROUTEDATA && bounds.isInOrAlmostIn(n.lat, n.lon)){
-			for (RouteNode rn : routeNodes){
-				if (MyMath.dist(n, rn.node) < 25)  {
+		} else if (type == TYPE_ROUTEDATA && bounds.isInOrAlmostIn(n.lat, n.lon)) {
+			for (RouteNode rn : routeNodes) {
+				if (MyMath.dist(n, rn.node) < 25) {
 					rn.node.markAsTrafficSignalsRouteNode();
 					numTrafficSignalRouteNodes++;
-					// System.out.println(MyMath.dist(n, rn.node) + "Traffic Light " + n.toUrl() + " at " + rn.node.toUrl()); 
+					// System.out.println(MyMath.dist(n, rn.node) + "Traffic Light " + 
+					// n.toUrl() + " at " + rn.node.toUrl()); 
 				}
 			}
 		}
 	}
 
-	
 	/**
 	 * for Debugging the correct sequence of RouteNodes
 	 * @param deep
 	 * @param maxDeep
 	 */
-	public void printHiLo(int deep,int maxDeep){
-		if (type == TYPE_ROUTECONTAINER){
-			if (deep < maxDeep){
+	public void printHiLo(int deep, int maxDeep) {
+		if (type == TYPE_ROUTECONTAINER) {
+			if (deep < maxDeep) {
 				System.out.print(":");
-				if (t1 == null){
+				if (t1 == null) {
 					System.out.print("(empty)");
 				} else {
-					t1.printHiLo(deep+1,maxDeep);
+					t1.printHiLo(deep + 1, maxDeep);
 				}
 				System.out.print("-");
-				if (t2 == null){
+				if (t2 == null) {
 					System.out.print("(empty)");
 				} else {
-					t2.printHiLo(deep+1,maxDeep);
+					t2.printHiLo(deep + 1, maxDeep);
 				}
 				System.out.print(":");
 			}
-			if (deep == maxDeep){
-				System.out.print("((C)"+idxMin+"/"+idxMax+")");
+			if (deep == maxDeep) {
+				System.out.print("((C)" + idxMin + "/" + idxMax + ")");
 			}
-		} else if (type == TYPE_ROUTEDATA){
-			if (deep == maxDeep){
-			  System.out.print("((D"+fid+")"+idxMin+"/"+idxMax+")");
+		} else if (type == TYPE_ROUTEDATA) {
+			if (deep == maxDeep) {
+			  System.out.print("((D" + fid + ")" + idxMin + "/" + idxMax + ")");
 			}
 		} else {
 			System.out.print(" type(" + type + ")");
@@ -337,28 +349,28 @@ public class Tile {
 	 * @return
 	 */
 	public HiLo calcHiLo() {
-		if (type == TYPE_ROUTEDATA ){
-			HiLo retHiLo1=new HiLo();
-			if (routeNodes != null){
-				for (RouteNode rn: routeNodes){
+		if (type == TYPE_ROUTEDATA ) {
+			HiLo retHiLo1 = new HiLo();
+			if (routeNodes != null) {
+				for (RouteNode rn: routeNodes) {
 					retHiLo1.extend(rn.id);
 				}
 			}
-			idxMin=retHiLo1.lo;
-			idxMax=retHiLo1.hi;
+			idxMin = retHiLo1.lo;
+			idxMax = retHiLo1.hi;
 			return retHiLo1;
-		} else if (type == TYPE_ROUTECONTAINER){
-			HiLo retHiLo=new HiLo();
-			if (t1 != null){
+		} else if (type == TYPE_ROUTECONTAINER) {
+			HiLo retHiLo = new HiLo();
+			if (t1 != null) {
 				retHiLo.extend(t1.calcHiLo());
 			}
 			if (t2 != null) {
 				retHiLo.extend(t2.calcHiLo());
 			}
-			idxMin=retHiLo.lo;
-			idxMax=retHiLo.hi;
+			idxMin = retHiLo.lo;
+			idxMax = retHiLo.hi;
 			return retHiLo;
-		} else if (type == TYPE_EMPTY){
+		} else if (type == TYPE_EMPTY) {
 			return new HiLo();
 		} else {
 			throw new Error("Wrong type of tile in " + this);
@@ -368,8 +380,9 @@ public class Tile {
 	 * @param path
 	 * @throws IOException 
 	 */
-	public void writeConnections(String path, HashMap<Long,TurnRestriction> turnRestrictions) throws IOException {
-		if (t1 != null){
+	public void writeConnections(String path, HashMap<Long, 
+			TurnRestriction> turnRestrictions) throws IOException {
+		if (t1 != null) {
 			t1.writeConnections(path, turnRestrictions);
 //			System.out.println("resolve T1 with " + idxMin + " to "+ idxMax);
 		}
@@ -377,11 +390,14 @@ public class Tile {
 			t2.writeConnections(path, turnRestrictions);
 //			System.out.println("resolve T2 with " + idxMin + " to "+ idxMax);
 		}
-		if (routeNodes != null){
-			//System.out.println("Write Routenodes " + fid + " nodes " + routeNodes.size()+"  with " + idxMin + " to "+ idxMax);
-			FileOutputStream cfo = FileTools.createFileOutputStream(path+"/c/"+fid+".d");
+		if (routeNodes != null) {
+			//System.out.println("Write Routenodes " + fid + " nodes " + 
+			// routeNodes.size() +"  with " + idxMin + " to " + idxMax);
+			FileOutputStream cfo = FileTools.createFileOutputStream(
+					path + "/c/" + fid + ".d");
 			DataOutputStream cds = new DataOutputStream(new BufferedOutputStream(cfo));
-			FileOutputStream fo = FileTools.createFileOutputStream(path+"/t"+zl+"/"+fid+".d");
+			FileOutputStream fo = FileTools.createFileOutputStream(
+					path + "/t" + zl + "/" + fid + ".d");
 			DataOutputStream nds = new DataOutputStream(new BufferedOutputStream(fo));
 			// write out the number of mainStreetNet RouteNodes
 			nds.writeShort(numMainStreetRouteNodes);
@@ -391,15 +407,16 @@ public class Tile {
 			cds.writeInt(minConnectionId);
 
 			short countTurnRestrictions[] = new short[2];
-			TurnRestriction turnWrite=null;
-			boolean hasTurnRestriction=false;
+			TurnRestriction turnWrite = null;
+			boolean hasTurnRestriction = false;
 			boolean isOnMainStreetNet = false;
 			int connected2 = 0;
 
 			// count how many turn restrictions we will write for this tile
-			// turn restrictions at mainStreetNet routeNodes are counted in the first loop, in the second loop the remaining ones
-			for (int writeStreetNets = 0; writeStreetNets <=1; writeStreetNets++) {
-				for (RouteNode n : routeNodes){
+			// turn restrictions at mainStreetNet routeNodes are counted in the first loop, 
+			// in the second loop the remaining ones
+			for (int writeStreetNets = 0; writeStreetNets <= 1; writeStreetNets++) {
+				for (RouteNode n : routeNodes) {
 					isOnMainStreetNet = n.isOnMainStreetNet();
 					if (writeStreetNets == 0 && isOnMainStreetNet
 						||
@@ -418,9 +435,10 @@ public class Tile {
 				nds.writeShort(countTurnRestrictions[writeStreetNets]);
 			}
 
-			// write mainStreetNet routeNodes / turn restrictions in the first loop, in the second loop the remaining ones
-			for (int writeStreetNets = 0; writeStreetNets <=1; writeStreetNets++) {								
-				for (RouteNode n : routeNodes){
+			// write mainStreetNet routeNodes / turn restrictions in the first loop, 
+			// in the second loop the remaining ones
+			for (int writeStreetNets = 0; writeStreetNets <= 1; writeStreetNets++) {								
+				for (RouteNode n : routeNodes) {
 					isOnMainStreetNet = n.isOnMainStreetNet();
 					if (writeStreetNets == 0 && isOnMainStreetNet
 						||
@@ -430,34 +448,36 @@ public class Tile {
 						nds.writeFloat(MyMath.degToRad(n.node.lon));
 						//nds.writeInt(cds.size());
 		
-						hasTurnRestriction=false;
+						hasTurnRestriction = false;
 						turnWrite = turnRestrictions.get(n.node.id);
 						while (turnWrite != null) {
 							if (turnWrite.isComplete()) {
 								countTurnRestrictions[writeStreetNets]++;
-								hasTurnRestriction=true;
+								hasTurnRestriction = true;
 							}
 							turnWrite = turnWrite.nextTurnRestrictionAtThisNode;
 						}
 						connected2 = n.connected.size();
 						if (hasTurnRestriction) {
-							connected2 |= RouteNode.CS_FLAG_HASTURNRESTRICTIONS; // write indicator that this route node has turn restrictions attached
+							// Write indicator that this route node has turn restrictions attached
+							connected2 |= RouteNode.CS_FLAG_HASTURNRESTRICTIONS;
 						}
 						if (n.node.isTrafficSignalsRouteNode()) {
-							connected2 |= RouteNode.CS_FLAG_TRAFFICSIGNALS_ROUTENODE; // write indicator that this route node is at traffic lights
+							// Write indicator that this route node is at traffic lights
+							connected2 |= RouteNode.CS_FLAG_TRAFFICSIGNALS_ROUTENODE;
 						}
 						nds.writeByte((byte) connected2);					
 		
 						byte routeNodeWayFlags = 0;
-						for (Connection c : n.connected){
+						for (Connection c : n.connected) {
 							minConnectionId ++;
 							routeNodeWayFlags |= c.connTravelModes;
 							cds.writeInt(c.to.id);
 							// write out wayTravelModes flag
 							cds.writeByte(c.connTravelModes);
-							for (int i=0; i<TravelModes.travelModeCount; i++) {
+							for (int i = 0; i < TravelModes.travelModeCount; i++) {
 								// only store times for available travel modes of the connection
-								if ( (c.connTravelModes & (1<<i)) !=0 ) {
+								if ( (c.connTravelModes & (1 << i)) != 0 ) {
 									/**
 									 * If we can't fit the values into short,
 									 * we write an int. In order for the other
@@ -466,14 +486,14 @@ public class Tile {
 									 */
 									int time = c.times[i];
 									if (time > Short.MAX_VALUE) {
-										cds.writeInt(-1*time);
+										cds.writeInt(-1 * time);
 									} else {
 										cds.writeShort((short) time);
 									}
 								}
 							}
 							if (c.length > Short.MAX_VALUE) {
-								cds.writeInt(-1*c.length);
+								cds.writeInt(-1 * c.length);
 							} else {
 								cds.writeShort((short) c.length);
 							}
@@ -482,8 +502,8 @@ public class Tile {
 							cds.writeByte(c.endBearing);
 						}
 						// count in which travel modes route node is used
-						for (int i=0; i < TravelModes.travelModeCount; i++) {
-							if ( (routeNodeWayFlags & (1<<i)) !=0) {
+						for (int i = 0; i < TravelModes.travelModeCount; i++) {
+							if ( (routeNodeWayFlags & (1<<i)) != 0) {
 								TravelModes.getTravelMode(i).numRouteNodes++;
 							}
 						}
@@ -491,7 +511,7 @@ public class Tile {
 				} // end of routeNodes loop
 								
 				// attach turn restrictions at the end of the mainstreet / normal street node data
-				for (RouteNode n : routeNodes){
+				for (RouteNode n : routeNodes) {
 					isOnMainStreetNet = n.isOnMainStreetNet();
 					if (writeStreetNets == 0 && isOnMainStreetNet
 						||
@@ -501,7 +521,8 @@ public class Tile {
 						while (turnWrite != null) {
 							if (turnWrite.isComplete()) {					
 								nds.writeInt(turnWrite.viaRouteNode.id);
-								if (turnWrite.viaRouteNode.id != n.id) { // just a prevention against renumbered RouteNodes
+								// just a prevention against renumbered RouteNodes
+								if (turnWrite.viaRouteNode.id != n.id) {
 									System.out.println("RouteNode ID mismatch for turn restrictions");
 								}
 								nds.writeInt(turnWrite.fromRouteNode.id);

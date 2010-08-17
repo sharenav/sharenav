@@ -1,3 +1,13 @@
+/**
+ * This file is part of OSM2GpsMid 
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as published by
+ * the Free Software Foundation.
+ *
+ * Copyright (C) 2010 Harald Mueller
+ */
+
 package de.ueller.osmToGpsMid.area;
 
 import java.util.ArrayList;
@@ -7,29 +17,30 @@ import java.util.List;
 
 import de.ueller.osmToGpsMid.model.Bounds;
 
+
 public class Area {
 	private ArrayList<Outline>	outlineList	= new ArrayList<Outline>();
 	private ArrayList<Outline>	holeList	= new ArrayList<Outline>();
 	Outline						outline		= new Outline();
 	public Triangle			triangle;
-	ArrayList<Triangle> triangleList=null;
+	ArrayList<Triangle> triangleList = null;
 	static DebugViewer			viewer		= null;
 	public Vertex	edgeInside;
-	public  boolean debug=false;
+	public  boolean debug = false;
 
 	public Area() {
 	}
 	
 
 	public void addOutline(Outline p) {
-		if (p.isValid()){
+		if (p.isValid()) {
 			outlineList.add(p);
 //			p.calcNextPrev();
 		}
 	}
 
 	public void addHole(Outline p) {
-		if (p.isValid()){
+		if (p.isValid()) {
 			holeList.add(p);
 		}
 	}
@@ -37,54 +48,54 @@ public class Area {
 	public void clean() {
 		outlineList = new ArrayList<Outline>();
 		holeList = new ArrayList<Outline>();
-		// tri= new ArrayList<Triangle>();
+		// tri = new ArrayList<Triangle>();
 		outline = new Outline();
 	}
 
 	public List<Triangle> triangulate() {
 		if (debug) {
-		if (viewer == null){
-			viewer=new DebugViewer(this);
-		} else {
-			viewer.setArea(this);
-		}
+			if (viewer == null) {
+				viewer = new DebugViewer(this);
+			} else {
+				viewer.setArea(this);
+			}
 		}
 		// if there are more ways than one are used to build the outline, try to construct one outline for that
-		ArrayList<Outline>	outlineTempList=new ArrayList<Outline>();
+		ArrayList<Outline>	outlineTempList = new ArrayList<Outline>();
 		while (outlineList.size() > 0) {
 			outline = outlineList.get(0);
 			if (!outline.isClosed()) {
 				outline.connectPartWays(outlineList);
 			}
-			if (outline.isClosed()){
+			if (outline.isClosed()) {
 				outlineTempList.add(outline);
 			}
 			outlineList.remove(0);
 		}
-		outlineList=outlineTempList;
+		outlineList = outlineTempList;
 		// the same for the holes
-		outlineTempList=new ArrayList<Outline>();
+		outlineTempList = new ArrayList<Outline>();
 		while (holeList.size() > 0) {
 			outline = holeList.get(0);
 			if (!outline.isClosed()) {
 				outline.connectPartWays(holeList);
 			}
-			if (outline.isClosed()){
+			if (outline.isClosed()) {
 				outlineTempList.add(outline);
 			}
 			holeList.remove(0);
 		}
-		holeList=outlineTempList;
+		holeList = outlineTempList;
 		
 		int dir = 0;
 		ArrayList<Triangle> ret = new ArrayList<Triangle>();
-		triangleList=ret;
+		triangleList = ret;
 		repaint();
 		int loop = 0;
 		while (outlineList.size() > 0) {
 			outline = outlineList.get(0);
 			
-			if (! outline.isValid()){
+			if (! outline.isValid()) {
 				outlineList.remove(0);
 				continue;
 			}
@@ -95,7 +106,7 @@ public class Area {
 				loop++;
 				if (loop > 50000) {
 					System.err.println("Break because of infinite loop for outline " + outline.getWayId());
-					System.err.println(" see http://www.openstreetmap.org/browse/way/" + outline.getWayId());
+					System.err.println("  see http://www.openstreetmap.org/browse/way/" + outline.getWayId());
 					break;
 				}
 				ret.add(cutOneEar(outline, holeList, dir));
@@ -108,23 +119,23 @@ public class Area {
 		return ret;
 
 	}
-	private void optimize(){
-		for (Triangle t:triangleList){
-			t.opt=false;
+	private void optimize() {
+		for (Triangle t:triangleList) {
+			t.opt = false;
 		}
-//		while (true){
+//		while (true) {
 			Iterator<Triangle> it = triangleList.iterator();
-			while (it.hasNext()){
-				Triangle t1=it.next();
+			while (it.hasNext()) {
+				Triangle t1 = it.next();
 				if (t1.getVert()[0].getNode() == t1.getVert()[1].getNode() 
 						|| t1.getVert()[0].getNode() == t1.getVert()[2].getNode()
-						|| t1.getVert()[1].getNode() == t1.getVert()[2].getNode()){
+						|| t1.getVert()[1].getNode() == t1.getVert()[2].getNode()) {
 					it.remove();
 //					System.out.println("remove degenerated Triangle");
 				}
-//				if (! t1.opt){
-//					for (Triangle t2:triangleList){
-//						if (t1.equalVert(t2) == 2){
+//				if (! t1.opt) {
+//					for (Triangle t2:triangleList) {
+//						if (t1.equalVert(t2) == 2) {
 //							optimize(t1,t2);
 //						}
 //					}
@@ -146,23 +157,20 @@ public class Area {
 	 */
 	private void repaint() {
 		if (debug) {
-			if (viewer == null){
-				viewer=DebugViewer.getInstanz(this);
+			if (viewer == null) {
+				viewer = DebugViewer.getInstanz(this);
 			} else {
 				viewer.setArea(this);
 			}
 
-
-		if (viewer != null){
-		viewer.repaint();
-		try {
-			Thread.sleep(100);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			
-		}
-//		System.out.println("Area.repaint()");
-		}
+			if (viewer != null) {
+				viewer.repaint();
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+				}
+				// System.out.println("Area.repaint()");
+			}
 		}
 	}
 
@@ -178,10 +186,10 @@ public class Area {
 				outline.remove(n);
 				return triangle;
 			} else {
-				boolean handeld=false;
+				boolean handled = false;
 				// at least one edge is inside this ear
 				if (edgeInside.partOf(outline)) {
-					handeld=true;
+					handled = true;
 					// node of the outline is in the ear so we have to cut the outline into two parts
 					// one will handled now and the other goes to the stack
 					outline.clean();
@@ -200,7 +208,7 @@ public class Area {
 						nt = nt.getNext();
 					}
 					newOutline.append(n);
-					if (newOutline.isValid()){
+					if (newOutline.isValid()) {
 						addOutline(newOutline);
 					}
 					// reinititalisize outline;
@@ -213,8 +221,8 @@ public class Area {
 							// lets join the hole with the outline and have a next try
 //							Outline hole = edgeInside.getOutline();
 							Outline hole = p;
-							if (hole != edgeInside.getOutline()){
-								System.out.println("Warning: someting wrong with internal data, ");
+							if (hole != edgeInside.getOutline()) {
+								System.out.println("Warning: something wrong with internal data!");
 							}
 							hole.calcNextPrev();
 							repaint();
@@ -248,16 +256,17 @@ public class Area {
 							holeList.remove(hole);
 							outline.calcNextPrev();
 							orderedOutline = outline.getOrdered(dir);
-							handeld=true;
+							handled = true;
 							break; // we found the hole so break this for loop
 						}
 					}
-					if (!handeld){
-					System.err.println("someting strange happens, there is an edge inside, but the member outline "+edgeInside.getOutline().getWayId()+" wasn't found");
-					System.err.println(" see http://www.openstreetmap.org/?node="+edgeInside.getId());
-//					debug=true;
-//					repaint();
-					return triangle;
+					if (!handled) {
+						System.err.println("Something strange happened, there is an edge inside, but the member outline "
+								+ edgeInside.getOutline().getWayId() + " wasn't found");
+						System.err.println("  see http://www.openstreetmap.org/?node=" + edgeInside.getId());
+	//					debug = true;
+	//					repaint();
+						return triangle;
 					}
 				}
 			}
@@ -286,31 +295,32 @@ public class Area {
 //		}
 //		return leftmost;
 //	}
+
 	private Vertex findEdgeInside(Outline outline, Triangle triangle, int dir) {
 		ArrayList<Vertex> ret;
 		ret = outline.findVertexInside(triangle);
 		for (Outline p : holeList) {
 			ret.addAll(p.findVertexInside(triangle));
 		}
-		if (ret.size() == 0){
+		if (ret.size() == 0) {
 			return null;
 		}
 		Collections.sort(ret, new DirectionComperator(dir));
 		return ret.get(0);
 	}
 	
-	public Bounds extendBounds(Bounds b){
-		if (b==null){
-			b=new Bounds();
+	public Bounds extendBounds(Bounds b) {
+		if (b == null) {
+			b = new Bounds();
 		}
-		for (Outline o:outlineList){
+		for (Outline o:outlineList) {
 			o.extendBounds(b);
 		}
-		for (Outline o:holeList){
+		for (Outline o:holeList) {
 			o.extendBounds(b);
 		}
-		if (triangleList != null){
-			for (Triangle t: triangleList){
+		if (triangleList != null) {
+			for (Triangle t: triangleList) {
 				t.extendBound(b);
 			}
 		}
@@ -325,6 +335,5 @@ public class Area {
 	public ArrayList<Outline> getHoleList() {
 		return holeList;
 	}
-
 
 }

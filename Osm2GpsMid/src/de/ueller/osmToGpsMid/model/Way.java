@@ -1,8 +1,13 @@
 /**
- * This file is part of OSM2GpsMid This program is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License version 2 as published by the Free Software Foundation. Copyright (C) 2007
- * Harald Mueller
+ * This file is part of OSM2GpsMid 
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as published by
+ * the Free Software Foundation.
+ *
+ * Copyright (C) 2007 Harald Mueller
  */
+
 package de.ueller.osmToGpsMid.model;
 
 import java.io.DataOutputStream;
@@ -23,6 +28,7 @@ import de.ueller.osmToGpsMid.area.Triangle;
 import de.ueller.osmToGpsMid.area.Vertex;
 import de.ueller.osmToGpsMid.model.name.Names;
 import de.ueller.osmToGpsMid.model.url.Urls;
+
 
 public class Way extends Entity implements Comparable<Way> {
 
@@ -238,6 +244,7 @@ public class Way extends Entity implements Comparable<Way> {
 		return type;
 	}
 
+	@Override
 	public String getName() {
 		if (type != -1) {
 			WayDescription desc = Configuration.getConfiguration().getWayDesc(type);
@@ -261,6 +268,7 @@ public class Way extends Entity implements Comparable<Way> {
 		return null;
 	}
 
+	@Override
 	public String getUrl() {
 		if (type != -1) {
 			WayDescription desc = Configuration.getConfiguration().getWayDesc(type);
@@ -274,6 +282,7 @@ public class Way extends Entity implements Comparable<Way> {
 		return null;
 	}
 	
+	@Override
 	public String getPhone() {
 		if (type != -1) {
 			WayDescription desc = Configuration.getConfiguration().getWayDesc(type);
@@ -454,6 +463,7 @@ public class Way extends Entity implements Comparable<Way> {
 		bound = null;
 	}
 
+	@Override
 	public String toString() {
 		String res = "id=" + id + ((nearBy == null) ? "" : (" near " + nearBy)) + " type=" + getType() + " [";
 		Set<String> tags = getTags();
@@ -487,7 +497,7 @@ public class Way extends Entity implements Comparable<Way> {
 	}
 
 	/**
-	 * @return
+	 * @return Node in the middle or null if way has no nodes
 	 */
 	public Node getMidPoint() {
 		if (isArea()) {
@@ -699,8 +709,9 @@ public class Way extends Entity implements Comparable<Way> {
 			if (id > Integer.MAX_VALUE) {
 				System.out.println("WARNING: OSM-ID won't fit in 32 bits for way " + this);
 				ds.writeInt(-1);
-			} else
+			} else {
 				ds.writeInt(id.intValue());
+			}
 		}
 
 	}
@@ -713,17 +724,19 @@ public class Way extends Entity implements Comparable<Way> {
 	}
 
 	public boolean containsNode(Node nSearch) {
-
 		for (Node n : path.getNodes()) {
-			if (nSearch.id == n.id) { return true; }
+			if (nSearch.id == n.id) { 
+				return true;
+			}
 		}
 		return false;
 	}
 
 	public Node getFirstNodeWithoutPOIType() {
-
 		for (Node n : path.getNodes()) {
-			if (n.getType(config) == -1) { return n; }
+			if (n.getType(config) == -1) {
+				return n;
+			}
 		}
 		return null;
 	}
@@ -748,20 +761,18 @@ public class Way extends Entity implements Comparable<Way> {
 	/**
 	 * Replaces node1 with node2 in this way.
 	 * 
-	 * @param node1
-	 *            Node to be replaced
-	 * @param node2
-	 *            Node by which to replace node1.
+	 * @param node1 Node to be replaced
+	 * @param node2 Node by which to replace node1.
 	 */
 	public void replace(Node node1, Node node2) {
 		path.replace(node1, node2);
 	}
 
 	/**
-	 * replaceNodes lists nodes and by which nodes they have to be replaced. This method applies this list to this way.
+	 * replaceNodes lists nodes and by which nodes they have to be replaced. 
+	 * This method applies the specified list to this way.
 	 * 
-	 * @param replaceNodes
-	 *            Hashmap of pairs of nodes
+	 * @param replaceNodes Hashmap of pairs of nodes
 	 */
 	public void replace(HashMap<Node, Node> replaceNodes) {
 		path.replace(replaceNodes);
@@ -854,28 +865,42 @@ public class Way extends Entity implements Comparable<Way> {
 	}
 
 	public boolean isValid() {
-		if (path == null || path.getNodeCount() == 0) { return false; }
+		if (path == null || path.getNodeCount() == 0) {
+			return false;
+		}
 		return true;
 	}
 
 	public boolean isClosed() {
-		if (!isValid()) { return false; }
+		if (!isValid()) { 
+			return false;
+		}
 
 		List<Node> nlist = path.getNodes();
-		if (nlist.get(0) == nlist.get(nlist.size() - 1)) { return true; }
+		if (nlist.get(0) == nlist.get(nlist.size() - 1)) {
+			return true;
+		}
 
 		return false;
 	}
 
 	public boolean isArea() {
-		if (triangles != null) { return true; }
-		if (isExplicitArea()) { return true; }
-		if (type >= 0) { return Configuration.getConfiguration().getWayDesc(type).isArea; }
+		if (triangles != null) { 
+			return true;
+		}
+		if (isExplicitArea()) { 
+			return true;
+		}
+		if (type >= 0) { 
+			return Configuration.getConfiguration().getWayDesc(type).isArea;
+		}
 		return false;
 	}
 
 	public boolean showNameAsForArea() {
-		if (type >= 0) { return Configuration.getConfiguration().getWayDesc(type).showNameAsForArea; }
+		if (type >= 0) { 
+			return Configuration.getConfiguration().getWayDesc(type).showNameAsForArea;
+		}
 		return false;
 	}
 
@@ -909,7 +934,7 @@ public class Way extends Entity implements Comparable<Way> {
 			triangles = a.triangulate();
 			recreatePath();
 		} else {
-			System.err.println("Cant triangulate normal Ways");
+			System.err.println("Can't triangulate normal ways");
 		}
 	}
 
@@ -918,7 +943,9 @@ public class Way extends Entity implements Comparable<Way> {
 	 */
 	public void recreatePath() {
 		// // regenrate Path
-		if (isArea() && triangles.size() > 0) path = new Path();
+		if (isArea() && triangles.size() > 0) {
+			path = new Path();
+		}
 		for (Triangle t : triangles) {
 			for (int l = 0; l < 3; l++) {
 				Node n = t.getVert()[l].getNode();
@@ -929,6 +956,5 @@ public class Way extends Entity implements Comparable<Way> {
 		}
 		clearBounds();
 	}
-
 
 }

@@ -1,3 +1,13 @@
+/**
+ * This file is part of OSM2GpsMid 
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as published by
+ * the Free Software Foundation.
+ *
+ * Copyright (C) 2010 Harald Mueller
+ */
+
 package de.ueller.osmToGpsMid.area;
 
 
@@ -6,13 +16,13 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-
 import de.ueller.osmToGpsMid.model.Bounds;
 import de.ueller.osmToGpsMid.model.Node;
 
+
 public class Outline {
 	private ArrayList<Vertex> vertexList = new ArrayList<Vertex>();
-	private long wayId=-1;
+	private long wayId = -1;
 //	private ArrayList<Vertex> ordered;
 	
 	public long getWayId() {
@@ -26,36 +36,36 @@ public class Outline {
 	public ArrayList<Vertex> getVertexList() {
 		return vertexList;
 	}
-	public boolean isValid(){
-		if (vertexList.size() < 2){
+	public boolean isValid() {
+		if (vertexList.size() < 2) {
 			return false;
 		}
 		return true;
 	}
 
-	public void clean(){
+	public void clean() {
 		vertexList = new ArrayList<Vertex>();
 	}
 	
-	public void prepend(Vertex v){
+	public void prepend(Vertex v) {
 		vertexList.add(0, v);
 		v.setOutline(this);
 	}
 	
-	public void append(Vertex v){
+	public void append(Vertex v) {
 		vertexList.add(v);
 		v.setOutline(this);
 	}
 	
-	public boolean isClosed(){
-		if (vertexList.size() < 1){
+	public boolean isClosed() {
+		if (vertexList.size() < 1) {
 			return false;
 		}
-		Vertex prev=null;
-		Vertex first=null;
-		first=vertexList.get(0);
-		prev=vertexList.get(vertexList.size()-1);
-		if (first.equals(prev)){
+		Vertex prev = null;
+		Vertex first = null;
+		first = vertexList.get(0);
+		prev = vertexList.get(vertexList.size() - 1);
+		if (first.equals(prev)) {
 			return true;
 		}
 		return false;
@@ -94,7 +104,7 @@ public class Outline {
 					} else if (o.vertexList.get(o.vertexList.size()-1).getNode().equals(last.getNode())) {
 //						System.out.println("found way reverse connecting to end of outline, so append it");
 						changed = true;
-						for (int loop=o.vertexList.size()-1; loop>= 0; loop--){
+						for (int loop = o.vertexList.size()-1; loop >= 0; loop--) {
 						    Vertex v = o.vertexList.get(loop);
 							append(v);
 						}
@@ -109,7 +119,7 @@ public class Outline {
 					} else if (o.vertexList.get(o.vertexList.size()-1).getNode().equals(first.getNode())) {
 //						System.out.println("found way reverse connecting to start of outline, so prepend it");
 						changed = true;
-						for (int loop=o.vertexList.size()-1; loop>= 0; loop--){
+						for (int loop = o.vertexList.size()-1; loop >= 0; loop--) {
 							Vertex v = o.vertexList.get(loop);
 							prepend(v);
 						}
@@ -121,30 +131,30 @@ public class Outline {
 
 	}
 	
-	public void calcNextPrev(){
-		if (vertexList == null || vertexList.size()==0){
+	public void calcNextPrev() {
+		if (vertexList == null || vertexList.size() == 0) {
 			return;
 		}
-		Vertex prev=null;
-		Vertex first=null;
-		first=vertexList.get(0);
-		prev=vertexList.get(vertexList.size()-1);
-		if (first.equals(prev)){
-			vertexList.remove(vertexList.size()-1);
+		Vertex prev = null;
+		Vertex first = null;
+		first = vertexList.get(0);
+		prev = vertexList.get(vertexList.size() - 1);
+		if (first.equals(prev)) {
+			vertexList.remove(vertexList.size() - 1);
 		}
-		if (vertexList.size() <3){
+		if (vertexList.size() < 3) {
 			// this is a degenerated polygon make it empty
 			vertexList.clear();
 		}
-		for (Vertex v:vertexList){
+		for (Vertex v:vertexList) {
 			v.setOutline(this);
-			if (first==null){
-				first=v;
-				prev=v;
+			if (first == null) {
+				first = v;
+				prev = v;
 			} else {
 				v.setPrev(prev);
 				prev.setNext(v);
-				prev=v;
+				prev = v;
 			}
 			
 		}
@@ -153,28 +163,28 @@ public class Outline {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<Vertex> getLonOrdered(){
-		ArrayList<Vertex> ordered=(ArrayList<Vertex>) vertexList.clone();
+	public List<Vertex> getLonOrdered() {
+		ArrayList<Vertex> ordered = (ArrayList<Vertex>) vertexList.clone();
 		Collections.sort(ordered, new LonComperator());
 		return ordered;
 	}
 	@SuppressWarnings("unchecked")
-	public List<Vertex> getOrdered(int dir){
+	public List<Vertex> getOrdered(int dir) {
 //		return getLonOrdered();
-		ArrayList<Vertex> ordered=(ArrayList<Vertex>) vertexList.clone();
+		ArrayList<Vertex> ordered = (ArrayList<Vertex>) vertexList.clone();
 		Collections.sort(ordered, new DirectionComperator(dir));
 		return ordered;
 	}
 	
 //	public Vertex findVertexInside(Triangle triangle) {
-//		float leftmost=Float.MAX_VALUE;
-//		Vertex leftmostNode=null;
-//		for (Vertex v:vertexList){
-//			if (triangle.isVertexInside(v)){
-//				float lon=v.getX();
-//				if (lon < leftmost){
-//					leftmost=lon;
-//					leftmostNode=v;
+//		float leftmost = Float.MAX_VALUE;
+//		Vertex leftmostNode = null;
+//		for (Vertex v:vertexList) {
+//			if (triangle.isVertexInside(v)) {
+//				float lon = v.getX();
+//				if (lon < leftmost) {
+//					leftmost = lon;
+//					leftmostNode = v;
 //				}
 //			}
 //		}
@@ -182,9 +192,9 @@ public class Outline {
 //	}
 
 	public ArrayList<Vertex> findVertexInside(Triangle triangle) {
-		ArrayList<Vertex> ret=new ArrayList<Vertex>();
+		ArrayList<Vertex> ret = new ArrayList<Vertex>();
 
-		for (Vertex v:vertexList){
+		for (Vertex v:vertexList) {
 			if (triangle.isVertexInside(v)){
 				ret.add(v);
 			}
@@ -199,21 +209,21 @@ public class Outline {
 		
 	}
 	
-	public int vertexCount(){
+	public int vertexCount() {
 		return vertexList.size();
 	}
 	
 	@Override
 	public String toString() {
-		StringBuffer b=new StringBuffer();
-		for (Vertex n:vertexList){
+		StringBuffer b = new StringBuffer();
+		for (Vertex n:vertexList) {
 			b.append(n);
 		}
 		return b.toString();
 	}
 	
-	public boolean isClockWise(){
-		boolean cw=isClockWise3();
+	public boolean isClockWise() {
+		boolean cw = isClockWise3();
 //		if (cw != isClockWise2()){
 //			System.out.println("2 and 3 not the same");
 //		}
@@ -225,11 +235,11 @@ public class Outline {
 	 * booth neighbors. This edge must be convex. 
 	 * @return
 	 */
-	public boolean isClockWise3(){
+	public boolean isClockWise3() {
 		calcNextPrev();
-		Vertex v=getLonOrdered().get(0);
-		Vertex vp=v.getPrev();
-		Vertex vn=v.getNext();
+		Vertex v = getLonOrdered().get(0);
+		Vertex vp = v.getPrev();
+		Vertex vn = v.getNext();
 		if (((v.getX()-vp.getX())*(vn.getY()-v.getY())-(v.getY()-vp.getY())*(vn.getX()-v.getX())) <0  ) {
 			return true;
 		} else {
@@ -241,15 +251,19 @@ public class Outline {
 	 * this one is only valid for convex polygon
 	 * @return
 	 */
-	public boolean isClockWise2(){
-		float z=0.0f;
+	public boolean isClockWise2() {
+		float z = 0.0f;
 		for (Vertex i : vertexList) {
-			z+=i.cross(i.getNext());
+			z += i.cross(i.getNext());
 		}
-		if (z<0) return true; else return false;
+		if (z < 0) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
-	public boolean isClockWise1(){
+	public boolean isClockWise1() {
 		Vertex j, k;
 		int count = 0;
 		double z;
@@ -278,7 +292,7 @@ public class Outline {
 		}
 	}
 	
-	public Bounds extendBounds(Bounds b){
+	public Bounds extendBounds(Bounds b) {
 		for (Vertex i:vertexList){
 			i.extendBounds(b);
 		}

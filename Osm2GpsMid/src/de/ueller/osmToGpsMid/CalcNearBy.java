@@ -8,6 +8,7 @@
  * Copyright (C) 2007        Harald Mueller
  * Copyright (C) 2007, 2008  Kai Krueger
  */
+
 package de.ueller.osmToGpsMid;
 
 import de.ueller.osmToGpsMid.model.Node;
@@ -37,30 +38,32 @@ public class CalcNearBy {
 	 */
 	private void calcWayIsIn(OxParser parser2, KDTree nearByElements) {		
 		for (Way w : parser.getWays()) {
-			if (w.isHighway() /*&& w.getIsIn() == null */){
-				Node thisNode=w.getMidPoint();
-				if (thisNode == null){
+			if (w.isHighway() /*&& w.getIsIn() == null */) {
+				Node thisNode = w.getMidPoint();
+				if (thisNode == null) {
 					continue;
 				}
 				Node nearestPlace = null;				
 				try {					
 					nearestPlace = (Node) nearByElements.nearest(MyMath.latlon2XYZ(thisNode));					
 
-					if (!(MyMath.dist(thisNode, nearestPlace) < Constants.MAX_DIST_CITY[nearestPlace.getType(null)])){					
+					if (!(MyMath.dist(thisNode, nearestPlace) < Constants.MAX_DIST_CITY[nearestPlace.getType(null)])) {					
 						long maxDistanceTested = MyMath.dist(thisNode, nearestPlace);
 						int retrieveN = 5;
-						if (retrieveN > kdSize) retrieveN = kdSize;
-						nearestPlace=null;
+						if (retrieveN > kdSize) {
+							retrieveN = kdSize;
+						}
+						nearestPlace = null;
 						while (maxDistanceTested < Constants.MAX_DIST_CITY[Constants.NODE_PLACE_CITY]) {							
-							Object [] nearPlaces = nearByElements.nearest(MyMath.latlon2XYZ(thisNode),retrieveN);
+							Object [] nearPlaces = nearByElements.nearest(MyMath.latlon2XYZ(thisNode), retrieveN);
 							long dist = 0;
 							for (Object o : nearPlaces) {
 								Node other = (Node) o;								
 								dist = MyMath.dist(thisNode, other);
 								//As the list returned by the kd-tree is sorted by distance,
 								//we can stop at the first found 
-								if (dist < Constants.MAX_DIST_CITY[other.getType(null)]){								
-									nearestPlace=other;									
+								if (dist < Constants.MAX_DIST_CITY[other.getType(null)]) {								
+									nearestPlace = other;									
 									break;
 								}							
 							}
@@ -77,7 +80,9 @@ public class CalcNearBy {
 							}
 							maxDistanceTested = dist;
 							retrieveN = retrieveN * 5;
-							if (retrieveN > kdSize) retrieveN = kdSize;
+							if (retrieveN > kdSize) {
+								retrieveN = kdSize;
+							}
 						}
 					}
 				} catch (KeySizeException e) {
@@ -86,9 +91,9 @@ public class CalcNearBy {
 					e.printStackTrace();
 					return;
 				}
-				if (nearestPlace != null){
+				if (nearestPlace != null) {
 					w.setAttribute("is_in", nearestPlace.getName());					
-					w.nearBy=nearestPlace;
+					w.nearBy = nearestPlace;
 				}				
 			}
 		}		
@@ -106,8 +111,9 @@ public class CalcNearBy {
 					nearesDist = Long.MAX_VALUE;
 					Object[] nearNodes = null;
 
-					if (kdSize < nneighbours)
+					if (kdSize < nneighbours) {
 						nneighbours = kdSize;
+					}
 					try {
 						nearNodes = nearByElements.nearest(
 								MyMath.latlon2XYZ(n), nneighbours);
@@ -131,13 +137,14 @@ public class CalcNearBy {
 							}
 						}
 					}
-					if (nneighbours == kdSize)
+					if (nneighbours == kdSize) {
 						break;
+					}
 					nneighbours *= 5;
 				}
-				if (nearestPlace != null){
-					n.nearBy=nearestPlace;
-					//n.nearByDist=nearesDist;					
+				if (nearestPlace != null) {
+					n.nearBy = nearestPlace;
+					//n.nearByDist = nearesDist;					
 //					System.out.println(n + " near " + n.nearBy);
 				}
 			}
