@@ -712,24 +712,24 @@ public class GuiSearch extends Canvas implements CommandListener,
 			repaint(0, 0, getWidth(), getHeight());
 			return;
 		} else if (action == RIGHT) {
-			if (carret < searchCanon.length())
+			if (carret < searchCanon.length()) {
 				carret++;
-			//{			} else {
-			//	if (isCursorValid())   {
-			//		SearchResult sr = (SearchResult) result.elementAt(cursor);
-			//		String name = null;
-			//		if (state == STATE_FAVORITES) {
-			//			name = wayPts[sr.nameIdx].displayName;
-			//		} else {
-			//			name = parent.getName(sr.nameIdx);
-			//		}
-			//		if (carret < name.length()) {
-			//			searchAlpha = true;
-			//			char nameLetters[] = name.toCharArray();
-			//			searchCanon.insert(carret++,nameLetters[carret]);
-			//		}
-			//	}
-			//}
+			} else {
+				if (isCursorValid())   {
+					SearchResult sr = (SearchResult) result.elementAt(cursor);
+					String name = null;
+					if (state == STATE_FAVORITES) {
+						name = wayPts[sr.nameIdx].displayName;
+					} else {
+						name = parent.getName(sr.nameIdx);
+					}
+					if (carret < name.length()) {
+						searchAlpha = true;
+						char nameLetters[] = name.toCharArray();
+						searchCanon.insert(carret++,nameLetters[carret-1]);
+					}
+				}
+			}
 
 			repaint(0, 0, getWidth(), getHeight());
 			return;
