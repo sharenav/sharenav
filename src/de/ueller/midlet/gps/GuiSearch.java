@@ -386,11 +386,10 @@ public class GuiSearch extends Canvas implements CommandListener,
 				return;
 		}
 		if (c == FULLT_CMD) {
-			state = STATE_FULLTEXT;
 			Form fulltextForm = new Form(Locale.get("guisearch.Fulltext")/*Fulltext search*/);
 			String match = "";
 			String name = null;
-			if ((!searchAlpha) && isCursorValid()) {
+			if (isCursorValid()) {
 				SearchResult sr = (SearchResult) result.elementAt(cursor);
 				if (state == STATE_FAVORITES) {
 					name = wayPts[sr.nameIdx].displayName;
@@ -406,9 +405,10 @@ public class GuiSearch extends Canvas implements CommandListener,
 				}
 			}
 			fulltextSearchField = new TextField(Locale.get("guisearch.Find")/*Find: */, 
-//							    (state == STATE_FAVORITES && name != null ) ?
-//							    name :
+							    (state == STATE_FAVORITES && name != null ) ?
+							    name :
 							    (searchAlpha ? searchCanon.toString() : match), 40, TextField.ANY);
+			state = STATE_FULLTEXT;
 			fulltextForm.append(fulltextSearchField);
 			fulltextForm.addCommand(BACK_CMD);
 			fulltextForm.addCommand(OK_CMD);
