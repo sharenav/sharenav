@@ -389,21 +389,26 @@ public class GuiSearch extends Canvas implements CommandListener,
 			state = STATE_FULLTEXT;
 			Form fulltextForm = new Form(Locale.get("guisearch.Fulltext")/*Fulltext search*/);
 			String match = "";
-			if (!searchAlpha) {
-				if (isCursorValid()) {
-					SearchResult sr = (SearchResult) result.elementAt(cursor);
-					String name=parent.getName(sr.nameIdx);
-					int imatch=searchCanon.length(); 
-					if (name.length()<imatch) { 
-						imatch=name.length(); 
-					}
-					if (name != null) {
-						match = name.substring(0,imatch);
-					}
+			String name = null;
+			if ((!searchAlpha) && isCursorValid()) {
+				SearchResult sr = (SearchResult) result.elementAt(cursor);
+				if (state == STATE_FAVORITES) {
+					name = wayPts[sr.nameIdx].displayName;
+				} else {
+					name = parent.getName(sr.nameIdx);
+				}
+				int imatch=searchCanon.length(); 
+				if (name != null && name.length()<imatch) { 
+					imatch=name.length(); 
+				}
+				if (name != null) {
+					match = name.substring(0,imatch);
 				}
 			}
 			fulltextSearchField = new TextField(Locale.get("guisearch.Find")/*Find: */, 
-							    searchAlpha ? searchCanon.toString() : match, 40, TextField.ANY);
+//							    (state == STATE_FAVORITES && name != null ) ?
+//							    name :
+							    (searchAlpha ? searchCanon.toString() : match), 40, TextField.ANY);
 			fulltextForm.append(fulltextSearchField);
 			fulltextForm.addCommand(BACK_CMD);
 			fulltextForm.addCommand(OK_CMD);
@@ -452,7 +457,12 @@ public class GuiSearch extends Canvas implements CommandListener,
 	    	synchronized(this) {				
 	    		for (int i = 0; i < result2.size(); i++ ) {
 				SearchResult res = (SearchResult) result2.elementAt(i);
-				String name = parent.getName(res.nameIdx);
+				String name = null;
+				if (state == STATE_FAVORITES) {
+					name = wayPts[res.nameIdx].displayName;
+				} else {
+					name = parent.getName(res.nameIdx);
+				}
 				if (!searchAlpha || name == null || searchCanon.toString().equalsIgnoreCase(
 					    name.substring(0, searchCanon.toString().length()))) {
 					result.addElement(res);
@@ -704,6 +714,23 @@ public class GuiSearch extends Canvas implements CommandListener,
 		} else if (action == RIGHT) {
 			if (carret < searchCanon.length())
 				carret++;
+			//{			} else {
+			//	if (isCursorValid())   {
+			//		SearchResult sr = (SearchResult) result.elementAt(cursor);
+			//		String name = null;
+			//		if (state == STATE_FAVORITES) {
+			//			name = wayPts[sr.nameIdx].displayName;
+			//		} else {
+			//			name = parent.getName(sr.nameIdx);
+			//		}
+			//		if (carret < name.length()) {
+			//			searchAlpha = true;
+			//			char nameLetters[] = name.toCharArray();
+			//			searchCanon.insert(carret++,nameLetters[carret]);
+			//		}
+			//	}
+			//}
+
 			repaint(0, 0, getWidth(), getHeight());
 			return;
 		} else if (keyCode == -8 || keyCode == 8 || keyCode == 127) { 
@@ -946,7 +973,12 @@ public class GuiSearch extends Canvas implements CommandListener,
 	// TODO: optimize sort-in algorithm, e.g. by bisectioning
 	public synchronized void addResult(SearchResult srNew){		
 		addDistanceToSearchResult(srNew);
-		String name = parent.getName(srNew.nameIdx);
+		String name = null;
+		if (state == STATE_FAVORITES) {
+			name = wayPts[srNew.nameIdx].displayName;
+		} else {
+			name = parent.getName(srNew.nameIdx);
+		}
 		//#debug debug
 		logger.debug(Locale.get("guisearch.matchingnamefound")/*Found matching name: */ + srNew);
 
