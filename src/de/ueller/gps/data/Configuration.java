@@ -226,6 +226,8 @@ public class Configuration {
 	public final static byte CFGBIT_DISTANCE_VIEW = 83;
 	/** bit 84: Flag whether to show round way (segment) ends. */
 	public final static byte CFGBIT_ROUND_WAY_ENDS = 84;
+	/** bit 85: backlight method ANDROID_WAKELOCK */
+	public final static byte CFGBIT_BACKLIGHT_ANDROID_WAKELOCK = 85;
 	
 	/**
 	 * These are the database record IDs for each configuration option

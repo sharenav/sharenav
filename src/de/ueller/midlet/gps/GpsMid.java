@@ -117,7 +117,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 
 //#if polish.android
 	//public static MidletBridge midletBridge;
-	//private PowerManager.WakeLock wl;
+	private PowerManager.WakeLock wl;
 //#endif
 	public GpsMid() {
 		instance = this;
@@ -135,9 +135,6 @@ public class GpsMid extends MIDlet implements CommandListener {
 //		instance.backlightOn();
 //		midletBridge.setSystemProperty("keepScreenOn", "true");
 //		midletBridge.showSoftKeyboard();
-		//PowerManager pm = (PowerManager) midletBridge.getApplicationContext().getSystemService(Context.POWER_SERVICE);
-		//wl = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "GpsMid");
-		//wl.acquire();
 //#endif
 
 		enableDebugFileLogging();
@@ -352,8 +349,12 @@ public class GpsMid extends MIDlet implements CommandListener {
 	public void exit() {
 		try {
 //#if polish.android
-			//midletBridge.backlightRelease();
-			//wl.release();
+			if (Configuration
+			    .getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ANDROID_WAKELOCK)) {
+				wl.release();
+				// Method to keep the backlight on
+				// on those phones that support the
+			}
 //#endif
 			destroyApp(true);
 		} catch (MIDletStateChangeException e) {
@@ -550,6 +551,17 @@ public class GpsMid extends MIDlet implements CommandListener {
 									} else if (Configuration
 											.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIA)) {
 										DeviceControl.setLights(0, Configuration.getBackLightLevel());
+										//#endif
+										//#if polish.android
+										// Method to keep the backlight on
+										// with Android WakeLock
+									} else if (Configuration
+											.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ANDROID_WAKELOCK)) {
+										PowerManager pm = (PowerManager) MidletBridge.instance.getSystemService(Context.POWER_SERVICE);
+										wl = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "GpsMid");
+										wl.acquire();
+										// Method to keep the backlight on
+										// on those phones that support the
 										//#endif
 										//#if polish.api.min-siemapi
 									} else if (Configuration
