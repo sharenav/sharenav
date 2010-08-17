@@ -46,6 +46,7 @@ public class GuiDiscoverIconMenu extends IconMenuWithPagesGUI {
 			mp.createAndAddIcon(Locale.get("guidiscovericonmenu.Keys")/*Keys*/, "is_keys", GuiDiscover.MENU_ITEM_KEYS_OPT);
 			mp.createAndAddIcon(Locale.get("guidiscovericonmenu.LoadConfig")/*Load Config*/, "is_load", GuiDiscover.MENU_ITEM_LOAD_CONFIG);
 			mp.createAndAddIcon(Locale.get("guidiscovericonmenu.SaveConfig")/*Save Config*/, "is_save", GuiDiscover.MENU_ITEM_SAVE_CONFIG);
+			mp.createAndAddIcon(Locale.get("traceiconmenu.Back")/*Back*/, "i_back", IconActionPerformer.BACK_ACTIONID);
 
 			setActiveTabAndCursor(rememberedTabNr, rememberedEleId);
 	}
