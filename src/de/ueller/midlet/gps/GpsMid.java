@@ -240,9 +240,12 @@ public class GpsMid extends MIDlet implements CommandListener {
 	protected void pauseApp() {
 		//#debug
 		System.out.println("Pause GpsMid");
+//#ifndef polish.android
+		// FIXME we should save state here to prepare for Android killing us
 		if (trace != null) {
 			trace.pause();
 		}
+//#endif
 	}
 
 	protected void startApp() throws MIDletStateChangeException {
