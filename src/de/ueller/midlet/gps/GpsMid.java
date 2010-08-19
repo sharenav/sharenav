@@ -118,7 +118,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 //#if polish.android
 	//public static MidletBridge midletBridge;
 	private PowerManager.WakeLock wl = null;
-	private PowerManager pm;
+	private PowerManager pm = null;
 //#endif
 	public GpsMid() {
 		instance = this;
@@ -560,7 +560,9 @@ public class GpsMid extends MIDlet implements CommandListener {
 										// with Android WakeLock
 									} else if (Configuration
 											.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ANDROID_WAKELOCK)) {
-										pm = (PowerManager) MidletBridge.instance.getSystemService(Context.POWER_SERVICE);
+										if (pm == null) {
+											pm = (PowerManager) MidletBridge.instance.getSystemService(Context.POWER_SERVICE);
+										}
 										if (wl == null) {
 											wl = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "GpsMid");
 											wl.acquire();
@@ -631,11 +633,8 @@ public class GpsMid extends MIDlet implements CommandListener {
 
 	public void stopBackLightTimer() {
 //#if polish.android
-		if (Configuration
-		    .getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ANDROID_WAKELOCK)) {
-			if (wl != null) {
-				wl.release();
-			}
+		if (wl != null) {
+			wl.release();
 			wl = null;
 		}
 //#endif
