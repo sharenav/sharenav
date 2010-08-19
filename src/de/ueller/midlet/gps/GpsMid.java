@@ -355,9 +355,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 //#if polish.android
 			if (Configuration
 			    .getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ANDROID_WAKELOCK)) {
-				wl.release();
-				// Method to keep the backlight on
-				// on those phones that support the
+				stopBackLightTimer();
 			}
 //#endif
 			destroyApp(true);
@@ -630,6 +628,12 @@ public class GpsMid extends MIDlet implements CommandListener {
 	}
 
 	public void stopBackLightTimer() {
+//#if polish.android
+		if (Configuration
+		    .getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ANDROID_WAKELOCK)) {
+			wl.release();
+		}
+//#endif
 		if (lightTimer != null) {
 			lightTimer.interrupt();
 			try {
