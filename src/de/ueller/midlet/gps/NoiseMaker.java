@@ -126,6 +126,7 @@ public class NoiseMaker
 			} catch (Exception ex) {
 				//#debug debug
 				mLogger.debug("RESOURCE NOT FOUND: " + soundFileWithSuffix);
+				return false;
 			}
 			sPlayer.setPlayerListener( this );
 			sPlayer.setVolumeLevel(100);
