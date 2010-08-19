@@ -564,7 +564,10 @@ public class GpsMid extends MIDlet implements CommandListener {
 											pm = (PowerManager) MidletBridge.instance.getSystemService(Context.POWER_SERVICE);
 										}
 										if (wl == null) {
-											wl = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "GpsMid");
+											wl = pm.newWakeLock(
+												(Configuration.getBackLightLevel() <= 50) ?
+												PowerManager.SCREEN_DIM_WAKE_LOCK : PowerManager.FULL_WAKE_LOCK,
+												"GpsMid");
 											wl.acquire();
 										}
 										// Method to keep the backlight on
