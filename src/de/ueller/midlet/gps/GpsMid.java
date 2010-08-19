@@ -633,7 +633,9 @@ public class GpsMid extends MIDlet implements CommandListener {
 //#if polish.android
 		if (Configuration
 		    .getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ANDROID_WAKELOCK)) {
-			wl.release();
+			if (wl != null) {
+				wl.release();
+			}
 			wl = null;
 		}
 //#endif
