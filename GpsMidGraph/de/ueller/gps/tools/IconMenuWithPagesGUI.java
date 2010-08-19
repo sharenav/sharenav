@@ -252,7 +252,6 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 			//#debug debug
 			logger.debug("next tab " + tabNr);
 		}
-		getActiveMenuPage().dragOffsX = 0;
 		// set flags for tab buttons
 		setActiveTab(tabNr);
 	}
@@ -263,7 +262,6 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 			//#debug debug
 			logger.debug("prev tab " + tabNr);
 		}
-		getActiveMenuPage().dragOffsX = 0;
 		// set flags for tab buttons
 		setActiveTab(tabNr);
 	}
@@ -408,6 +406,9 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 				}
 			}
 		}
+
+		// reset the dragOffsX of the current tab when releasing the pointer
+		getActiveMenuPage().dragOffsX = 0;
 		
 		// sliding to the right at least a quarter of the display will show the previous menu page
 		if ( (x - touchX) > (maxX - minX) / 4) {
@@ -417,7 +418,6 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 			nextTab();
 		}
 
-		getActiveMenuPage().dragOffsX = 0;
 		repaint();
 	}
 	
