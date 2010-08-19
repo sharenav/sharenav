@@ -117,7 +117,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 
 //#if polish.android
 	//public static MidletBridge midletBridge;
-	private PowerManager.WakeLock wl;
+	private PowerManager.WakeLock wl = null;
 	private PowerManager pm;
 //#endif
 	public GpsMid() {
@@ -561,8 +561,10 @@ public class GpsMid extends MIDlet implements CommandListener {
 									} else if (Configuration
 											.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ANDROID_WAKELOCK)) {
 										pm = (PowerManager) MidletBridge.instance.getSystemService(Context.POWER_SERVICE);
-										wl = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "GpsMid");
-										wl.acquire();
+										if (wl == null) {
+											wl = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "GpsMid");
+											wl.acquire();
+										}
 										// Method to keep the backlight on
 										// on those phones that support the
 										//#endif
@@ -632,6 +634,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 		if (Configuration
 		    .getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ANDROID_WAKELOCK)) {
 			wl.release();
+			wl = null;
 		}
 //#endif
 		if (lightTimer != null) {
