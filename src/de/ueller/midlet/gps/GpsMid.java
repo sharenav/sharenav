@@ -518,7 +518,8 @@ public class GpsMid extends MIDlet implements CommandListener {
 							.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIA)
 					|| Configuration
 							.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIAFLASH) || Configuration
-					.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_SIEMENS))) {
+					.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_SIEMENS) || Configuration
+					.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ANDROID_WAKELOCK))) {
 				log.error("Backlight cannot be kept on when no 'with'-method is specified in Setup");
 			}
 			if (lightTimer == null) {
