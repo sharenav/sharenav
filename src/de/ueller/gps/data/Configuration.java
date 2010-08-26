@@ -1,5 +1,5 @@
 /*
- * Configuration - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net
+ * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net
  * See COPYING
  */
 
@@ -1714,7 +1714,7 @@ public class Configuration {
 			line = br.readLine();
 			while (line != null) {
 				line.trim();
-				if (line.length() == 0) {
+				if (line.length() == 0 || line.startsWith(";")) {
 					line = br.readLine();
 					continue;
 				}
