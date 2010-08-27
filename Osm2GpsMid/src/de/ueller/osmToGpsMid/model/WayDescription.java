@@ -37,6 +37,7 @@ public class WayDescription extends EntityDescription{
 	public final static int WDFLAG_LINESTYLE_STEPS = 0x04;
 	public final static int WDFLAG_LINESTYLE_POWERLINE = 0x08;
 	public final static int WDFLAG_BUILDING = 0x10;
+	public final static int WDFLAG_HIGHWAY_LINK = 0x20;
 	
 	public WayDescription() {
 		wayDescFlags = WDFLAG_LINESTYLE_SOLID;

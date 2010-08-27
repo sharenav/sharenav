@@ -348,6 +348,11 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 				if (currentKey.equalsIgnoreCase("building")) {
 					currentWay.wayDescFlags |= WayDescription.WDFLAG_BUILDING;
 				}
+				if (currentKey.equalsIgnoreCase("highway") && currentWay.value.toLowerCase().endsWith("_link")) {
+					currentWay.wayDescFlags |= WayDescription.WDFLAG_HIGHWAY_LINK;
+					// System.out.println("Waydescription is a highway link: " + currentWay.value);
+				}
+				
 				/* Assign a small default speed for the case that the way
 				 * becomes accessible for routing by a RouteAccessRestriction
 				 * but the way description itself in the style file contains no
