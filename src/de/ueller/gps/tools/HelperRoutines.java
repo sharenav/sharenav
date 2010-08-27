@@ -17,11 +17,31 @@ public class HelperRoutines {
 	 * I.e. a 0 gets printed as 00.
 	 **/
 	public static final String formatInt2(int n) {
-		if (n < 10) {
-			return "0" + n;
-		} else {
+		if (n > 9) {
 			return Integer.toString(n);
 		}
+		return "0" + n;		
+	}
+
+	/**
+	 * Same as {@link #formatInt2(int)} but appends to specified buffer.
+	 */
+	private static StringBuffer appendInt2(StringBuffer buf, int n) {
+		if (n < 10) {
+			buf.append('0');
+		}
+		buf.append(n);
+		return buf;
+	}
+
+	/**
+	 * Append date (in YYYY-MM-DD format) to specified buffer.
+	 */
+	private static StringBuffer appendDate(StringBuffer buf, Calendar cal) {
+		buf.append(cal.get(Calendar.YEAR)).append('-');
+		appendInt2(buf, cal.get(Calendar.MONTH)+1).append('-');
+		appendInt2(buf, cal.get(Calendar.DAY_OF_MONTH));
+		return buf;
 	}
 	
 	/**
@@ -30,18 +50,14 @@ public class HelperRoutines {
 	 * @return
 	 */
 	public static final String formatUTC(Date time) {
-		// This function needs optimising. It has a too high object churn.
-		Calendar c = null;
-		if (c == null) {
-			c = Calendar.getInstance();
-		}
-		c.setTime(time);
-		return c.get(Calendar.YEAR) + "-" + formatInt2(c.get(Calendar.MONTH) + 1) + "-" +
-			formatInt2(c.get(Calendar.DAY_OF_MONTH)) + "T" +
-			formatInt2(c.get(Calendar.HOUR_OF_DAY)) + ":" +
-			formatInt2(c.get(Calendar.MINUTE)) + ":" +
-			formatInt2(c.get(Calendar.SECOND)) + "Z";
-		
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(time);
+		StringBuffer buf = new StringBuffer(20);
+		appendDate(buf, cal).append('T');
+		appendInt2(buf, cal.get(Calendar.HOUR_OF_DAY)).append(':');
+		appendInt2(buf, cal.get(Calendar.MINUTE)).append(':');
+		appendInt2(buf, cal.get(Calendar.SECOND)).append('Z');
+		return buf.toString();
 	}
 	
 	/**
@@ -63,17 +79,21 @@ public class HelperRoutines {
 	}
 
 	public static final String formatSimpleDateSecondNow() {
+		return formatSimpleDateNow(true);
+	}
+
+	private static String formatSimpleDateNow(boolean seconds) {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(new Date());
-		
 		//Construct a track name from the current time
-		StringBuffer formatedStr = new StringBuffer();
-		formatedStr.append(cal.get(Calendar.YEAR)).append("-").append(formatInt2(cal.get(Calendar.MONTH) + 1));
-		formatedStr.append("-").append(formatInt2(cal.get(Calendar.DAY_OF_MONTH))).append("_");
-		formatedStr.append(formatInt2(cal.get(Calendar.HOUR_OF_DAY))).append("-").append(formatInt2(cal.get(Calendar.MINUTE)))
-			.append("-").append(formatInt2(cal.get(Calendar.SECOND)));
-		
-		return formatedStr.toString();
+		StringBuffer buf = new StringBuffer(19);
+		appendDate(buf, cal).append("_");
+		appendInt2(buf, cal.get(Calendar.HOUR_OF_DAY)).append("-");
+		appendInt2(buf, cal.get(Calendar.MINUTE));
+		if (seconds) {
+			appendInt2(buf.append('-'), cal.get(Calendar.SECOND));
+		}
+		return buf.toString();
 	}
 
 	/**
@@ -105,48 +125,55 @@ public class HelperRoutines {
 	 * @return
 	 */
 	public static float medianElement(float[] array, int size) {
-		float [] tmpArray = new float[size];
+		float[] tmpArray = new float[size];
 		System.arraycopy(array, 0, tmpArray, 0, size);
-		boolean changed = true;
-		while (changed) {
+		boolean changed;
+		float ival, jval;
+		do {
 			changed = false;
-			for (int i = 0; i < size - 1; i++) {
-				if (tmpArray[i] > tmpArray[i+1]) {
-					changed = true;
-					float tmp = tmpArray[i];
-					tmpArray[i] = tmpArray[i + 1];
-					tmpArray[i+1] = tmp;
+			for (int i = size - 1, j = i; --i >= 0; j = i) {
+				ival = tmpArray[i];
+				jval = tmpArray[j];
+				if (ival <= jval) {
+					continue;
 				}
+				tmpArray[i] = jval;
+				tmpArray[j] = ival;
+				changed = true;
 			}
-		}
+		} while (changed);
 		return tmpArray[size/2];
 	}
 	
 	public static void copyInt2ByteArray(byte[] array, int pos, int val) {
-		array[pos] = (byte)val;
-		array[pos + 1] = (byte)(val >> 8);
-		array[pos + 2] = (byte)(val >> 16);
-		array[pos + 3] = (byte)(val >> 24);
+		array[pos++] = (byte)val;
+		array[pos++] = (byte)(val >> 8);
+		array[pos++] = (byte)(val >> 16);
+		array[pos]   = (byte)(val >> 24);
 	}
 
 	/**
-	 * Replaces every occurrence of searchString with replacementString in text
-	 * 
+	 * Replaces every occurrence of <code>search</code> with <code>replace</code>
+	 * in <code>text</code>.
 	 * @param text
-	 * @param searchString
-	 * @param replacementString
+	 * @param search
+	 * @param replace
 	 * @return The changed string
 	 */
 
-	public static String replaceAll(String text, String searchString, String replacementString) {
-		StringBuffer sBuffer = new StringBuffer();
-		int pos = 0;
-		while((pos = text.indexOf(searchString)) != -1) {
-			sBuffer.append(text.substring(0, pos) + replacementString);
-			text = text.substring(pos + searchString.length());
+	public static String replaceAll(String text, String search, String replace) {
+		final int textlen   = text.length();
+		final int searchlen = search.length();
+		StringBuffer buf = new StringBuffer(textlen);
+		int start = 0, end;
+		while ((end = text.indexOf(search, start)) != -1) {
+			buf.append(text.substring(start, end)).append(replace);
+			start = end + searchlen;
 		}
-		sBuffer.append(text);
-		return sBuffer.toString();
+		if (start < textlen) {
+			buf.append(text.substring(start));
+		}
+		return buf.toString();
 	}
 	
 	/**

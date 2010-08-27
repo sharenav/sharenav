@@ -15,7 +15,7 @@ import javax.microedition.io.file.FileConnection;
 //#endif
 
 import de.ueller.gps.data.Configuration;
-import de.ueller.gps.tools.StringTools;
+import de.ueller.gps.tools.HelperRoutines;
 import de.ueller.gpsMid.mapData.QueueReader;
 
 
@@ -199,9 +199,9 @@ public class RouteSyntax {
 		String returnString = "";
 		if (instruction <= RouteInstructions.RI_HARD_LEFT) {
 			if (syntaxComponent >= SyntaxTemplateComponents.startOfTextComponents) {
-				returnString = StringTools.replace(syntaxTemplates[SyntaxInstructionTypes.simpleDirection].getComponent(syntaxComponent), "%direction%", simpleDirectionTexts[instruction]);
+				returnString = HelperRoutines.replaceAll(syntaxTemplates[SyntaxInstructionTypes.simpleDirection].getComponent(syntaxComponent), "%direction%", simpleDirectionTexts[instruction]);
 			} else {
-				returnString = StringTools.replace(syntaxTemplates[SyntaxInstructionTypes.simpleDirection].getComponent(syntaxComponent), "%DIRECTION%", simpleDirectionSounds[instruction]);					
+				returnString = HelperRoutines.replaceAll(syntaxTemplates[SyntaxInstructionTypes.simpleDirection].getComponent(syntaxComponent), "%DIRECTION%", simpleDirectionSounds[instruction]);					
 			}
 		} else if (instruction == RouteInstructions.RI_BEAR_LEFT || instruction == RouteInstructions.RI_BEAR_RIGHT
 					|| instruction == RouteInstructions.RI_BEAR_LEFT_ENTER_MOTORWAY || instruction == RouteInstructions.RI_BEAR_RIGHT_ENTER_MOTORWAY
@@ -224,15 +224,15 @@ public class RouteSyntax {
 					instType = SyntaxInstructionTypes.beardir;
 			}
 			if (syntaxComponent >= SyntaxTemplateComponents.startOfTextComponents) {
-				returnString = StringTools.replace(syntaxTemplates[instType].getComponent(syntaxComponent), "%bear_dir%", bearDirectionTexts[instruction - baseInst]);
+				returnString = HelperRoutines.replaceAll(syntaxTemplates[instType].getComponent(syntaxComponent), "%bear_dir%", bearDirectionTexts[instruction - baseInst]);
 			} else {
-				returnString = StringTools.replace(syntaxTemplates[instType].getComponent(syntaxComponent), "%BEAR_DIR%", bearDirectionSounds[instruction - baseInst]);				
+				returnString = HelperRoutines.replaceAll(syntaxTemplates[instType].getComponent(syntaxComponent), "%BEAR_DIR%", bearDirectionSounds[instruction - baseInst]);				
 			}
 		} else if (instruction >= RouteInstructions.RI_1ST_EXIT && instruction <= RouteInstructions.RI_6TH_EXIT) {
 			if (syntaxComponent >= SyntaxTemplateComponents.startOfTextComponents) {
-				returnString = StringTools.replace(syntaxTemplates[SyntaxInstructionTypes.roundabout].getComponent(syntaxComponent), "%exit%", roundAboutExitTexts[instruction - RouteInstructions.RI_1ST_EXIT]);
+				returnString = HelperRoutines.replaceAll(syntaxTemplates[SyntaxInstructionTypes.roundabout].getComponent(syntaxComponent), "%exit%", roundAboutExitTexts[instruction - RouteInstructions.RI_1ST_EXIT]);
 			} else {
-				returnString = StringTools.replace(syntaxTemplates[SyntaxInstructionTypes.roundabout].getComponent(syntaxComponent), "%EXIT%", roundAboutExitSounds[instruction - RouteInstructions.RI_1ST_EXIT]);				
+				returnString = HelperRoutines.replaceAll(syntaxTemplates[SyntaxInstructionTypes.roundabout].getComponent(syntaxComponent), "%EXIT%", roundAboutExitSounds[instruction - RouteInstructions.RI_1ST_EXIT]);				
 			}
 		} else {
 			switch (instruction) {
@@ -265,11 +265,11 @@ public class RouteSyntax {
 	}
 	
 	public static String getSoundInstructionIn(int instruction, int inDistance) {		
-		return StringTools.replace( getSyntaxTemplate(instruction, SyntaxTemplateComponents.in) , "%METERS%", metersSounds[(inDistance / 100) - 1]);
+		return HelperRoutines.replaceAll( getSyntaxTemplate(instruction, SyntaxTemplateComponents.in) , "%METERS%", metersSounds[(inDistance / 100) - 1]);
 	}
 
 	public static String getTextInstructionIn(int instruction, int inDistance) {
-		return StringTools.replace( getSyntaxTemplate(instruction, SyntaxTemplateComponents.inText) , "%meters%", "" + inDistance);
+		return HelperRoutines.replaceAll( getSyntaxTemplate(instruction, SyntaxTemplateComponents.inText) , "%meters%", "" + inDistance);
 	}
 
 	public static String getSoundInstructionThen(int instructionThen, boolean soon, boolean again) {
@@ -279,17 +279,17 @@ public class RouteSyntax {
 		if (soon) {
 			soonReplacement = soonSound;
 		}
-		returnString = StringTools.replace(returnString, "%SOON%", soonReplacement);			
+		returnString = HelperRoutines.replaceAll(returnString, "%SOON%", soonReplacement);			
 
 		String againReplacement = "";
 		if (again) {
 			againReplacement = againSound;
 		}
-		returnString = StringTools.replace(returnString, "%AGAIN%", againReplacement);			
+		returnString = HelperRoutines.replaceAll(returnString, "%AGAIN%", againReplacement);			
 
 		while (returnString.indexOf(";;") != -1) {
 			System.out.println(returnString);
-			returnString = StringTools.replace(returnString, ";;", ";");
+			returnString = HelperRoutines.replaceAll(returnString, ";;", ";");
 		}
 		
 		return returnString;
