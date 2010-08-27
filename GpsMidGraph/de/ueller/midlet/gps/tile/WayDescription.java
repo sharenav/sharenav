@@ -25,7 +25,8 @@ public class WayDescription {
 	public final static int WDFLAG_LINESTYLE_STEPS = 0x04;
 	public final static int WDFLAG_LINESTYLE_POWERLINE = 0x08;
 	public final static int WDFLAG_BUILDING = 0x10;
-	
+	public final static int WDFLAG_HIGHWAY_LINK = 0x20;
+
 	public int getGraphicsLineStyle() {
 		return wayDescFlags & 0x01;
 	}
@@ -45,6 +46,11 @@ public class WayDescription {
 	public boolean isBuilding() {
 		return (wayDescFlags & WDFLAG_BUILDING) > 0;
 	}
+
+	public boolean isHighwayLink() {
+		return (wayDescFlags & WDFLAG_HIGHWAY_LINK) > 0;
+	}
+	
 	
 }
 
