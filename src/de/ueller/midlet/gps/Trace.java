@@ -234,15 +234,15 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	 */
 	private long pressedPointerTime;
 	private long releasedPointerTime;
-	private long clickedPointerTime;
 	/**
-	 * Stores if there was already a click that might be the first click in a double click
+	 * indicates if the single click is still valid when the timeout occurs
 	 */
-	private volatile boolean potentialDoubleClick;
+	private volatile boolean singleClickValid;
 	/**
-	 * Stores if there was a click that might be a single click
+	 * indicates if the next release event is valid or the corresponding pointer pressing has already been handled
 	 */
-	private volatile boolean potentialSingleClick;
+	private volatile boolean pointerPressActionDone;
+
 	/**
 	 * Indicates that there was a drag event since the last pointerPressed
 	 */
@@ -2405,10 +2405,11 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	protected void pointerPressed(int x, int y) {
 		long currTime = System.currentTimeMillis();
 		updateLastUserActionTime();
-		pointerDragAction = true;
+		pointerDragAction = false;
+		pointerPressActionDone = false;
 
 		// check for touchable buttons
-//		#debug debug
+		// #debug debug
 		logger.debug("Touch button: " + tl.getActionIdAtPointer(x, y) + " x: " + x + " y: " + y);
 		int actionId = tl.getActionIdAtPointer(x, y);
 		if (actionId > 0) {
@@ -2432,26 +2433,21 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				}
 			}
 			commandAction(CMDS[actionId], (Displayable) null);
+			pointerPressActionDone = true;
 			repaint();
-			pointerDragAction = false;
-			potentialDoubleClick = false;
-		} else {
-			if (potentialDoubleClick) {
-				if (currTime - pressedPointerTime < 700) {
-					//#debug debug
-					logger.debug("PointerDoublePressed");
-					commandAction(CMDS[ZOOM_IN_CMD], (Displayable) null);
-					repaint();
-					pointerDragAction = false;
-					potentialDoubleClick = false;
-					potentialSingleClick = false;
-				}
-			} else {
-				pressedPointerTime = currTime;
-				clickedPointerTime = currTime;
-				potentialDoubleClick = true;
-				potentialSingleClick = true;
-			}		
+			// end of check for touchable buttons
+			return;
+		}		
+		
+		
+		// check for double press
+		if (currTime - pressedPointerTime < 700) {
+			//#debug debug
+			logger.debug("PointerDoublePressed");
+			commandAction(CMDS[ZOOM_IN_CMD], (Displayable) null);
+			pointerPressActionDone = true;
+			repaint();
+			return;
 		}
 		
 		// remember positions for dragging
@@ -2466,66 +2462,68 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	}
 	
 	protected void pointerReleased(int x, int y) {
-		long currTime = System.currentTimeMillis();
-		if (potentialDoubleClick) {
-			if ((currTime - clickedPointerTime > 400) ||
-			    (Math.abs(touchX - x) > 8) ||
-			    (Math.abs(touchY - y) > 8)) {
-				potentialDoubleClick = false;
-			}
-			// single tap to make active touch areas (more) visible
-			if ((currTime - pressedPointerTime < 400) &&
-			    (Math.abs(touchX - x) <= 8) &&
-			    (Math.abs(touchY - y) <= 8)) {
-				TimerTask timerT;
-				Timer tm = new Timer();
-				timerT = new TimerTask() {
-					public void run() {
-						if (potentialSingleClick) {
-							// #debug debug
-							logger.debug("single click ");
-							// time
-							potentialDoubleClick = false;
-							potentialSingleClick = false;
-							tl.toggleOnScreenButtonSize();
-							repaint();
-							pointerDragAction = false;
-						}
-					}
-				};
-				// set timer to check if this is a long or double click
-				tm.schedule(timerT, 800);
-			}
-			// long tap to open a place-related menu
-			if ((currTime - pressedPointerTime > 700) &&
-			    (Math.abs(touchX - x) <= 8) &&
-			    (Math.abs(touchY - y) <= 8)) {
-				potentialDoubleClick = false;
-				//#if polish.api.online
-				// use the place of touch instead of old center as position,
-				// set as new center
-				pickPointEnd=panProjection.inverse(x,y, pickPointEnd);
-				center.radlat=centerPointerPressedN.radlat-(pickPointEnd.radlat-pickPointStart.radlat);
-				center.radlon=centerPointerPressedN.radlon-(pickPointEnd.radlon-pickPointStart.radlon);
-				Position oPos = new Position(center.radlat, center.radlon,
-							     0.0f, 0.0f, 0.0f, 0, 0);
-				imageCollector.newDataReady();
-				gpsRecenter = false;
-				GuiWebInfo gWeb = new GuiWebInfo(this, oPos, pc);
-				gWeb.show();
-				//#endif
-			}
-		} else {
-			pressedPointerTime = currTime;
-			clickedPointerTime = currTime;
+		if (pointerPressActionDone) {
+			return;
 		}
+		
 		if (pointerDragAction) {
 			pointerDragged(x , y);
+			return;
+		}
+		
+		// only continue if almost no movement since touching
+		// TODO: when moving wouldn't this be a drag action anyway? If this is because we need some tolerance, this should be handled in pointerDragged() 
+		//		if ( (Math.abs(touchX - x) > 8) ||
+		//			 (Math.abs(touchY - y) > 8)
+		//		) {
+		//			return;
+		//		}
+		
+		long currTime = System.currentTimeMillis();
+		// long tap to open a place-related menu
+		// TODO: would be nicer if long tap would cause the action already BEFORE releasing the pointer 
+		if (currTime - pressedPointerTime > 700) {
+			//#if polish.api.online
+			// use the place of touch instead of old center as position,
+			// set as new center
+			pickPointEnd=panProjection.inverse(x,y, pickPointEnd);
+			center.radlat=centerPointerPressedN.radlat-(pickPointEnd.radlat-pickPointStart.radlat);
+			center.radlon=centerPointerPressedN.radlon-(pickPointEnd.radlon-pickPointStart.radlon);
+			Position oPos = new Position(center.radlat, center.radlon,
+						     0.0f, 0.0f, 0.0f, 0, 0);
+			imageCollector.newDataReady();
+			gpsRecenter = false;
+			GuiWebInfo gWeb = new GuiWebInfo(this, oPos, pc);
+			gWeb.show();
+			//#endif
+			return;
+		}
+			
+		// add timer for single click
+		if (currTime - pressedPointerTime < 400) {
+			TimerTask timerT;
+			Timer tm = new Timer();
+			timerT = new TimerTask() {
+				public void run() {
+					if (!pointerPressActionDone) {
+						// #debug debug
+						logger.debug("single click ");
+						// time
+						tl.toggleOnScreenButtonSize();
+						repaint();
+						pointerDragAction = false;
+					}
+				}
+			};
+			// set timer to check if this is a long or double click
+			tm.schedule(timerT, 800);
+			return;
 		}
 	}
 	
 	protected void pointerDragged (int x, int y) {
 		updateLastUserActionTime();
+		pointerDragAction = true;
 		if (pointerDragAction && imageCollector != null) {
 			// difference between where the pointer was pressed and is currently dragged
 //			int diffX = Trace.touchX - x;
