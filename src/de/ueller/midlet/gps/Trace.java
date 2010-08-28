@@ -235,10 +235,6 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	private long pressedPointerTime;
 	private long releasedPointerTime;
 	/**
-	 * indicates if the single click is still valid when the timeout occurs
-	 */
-	private volatile boolean singleClickValid;
-	/**
 	 * indicates if the next release event is valid or the corresponding pointer pressing has already been handled
 	 */
 	private volatile boolean pointerPressActionDone;
