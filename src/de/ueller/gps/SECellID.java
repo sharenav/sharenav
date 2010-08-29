@@ -39,6 +39,7 @@ import de.ueller.gps.tools.HTTPhelper;
 //#endif
 import de.ueller.gps.tools.StringTokenizer;
 import de.ueller.gps.tools.intTree;
+import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.LocationMsgProducer;
 import de.ueller.midlet.gps.LocationMsgReceiver;
 import de.ueller.midlet.gps.LocationMsgReceiverList;
@@ -339,9 +340,8 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 			}
 			db.closeRecordStore();
 			
-			Timer t = new Timer();
 			rp = new RetrievePosition();
-			t.schedule(rp, 1000, 5000);
+			GpsMid.getTimer().schedule(rp, 1000, 5000);
 			return true;
 		} catch (SecurityException se) {
 			logger.silentexception(

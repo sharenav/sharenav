@@ -15,6 +15,7 @@ package de.ueller.midlet.gps;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.Timer;
 
 import javax.microedition.lcdui.Alert;
 import javax.microedition.lcdui.Choice;
@@ -102,6 +103,8 @@ public class GpsMid extends MIDlet implements CommandListener {
 	 * backlight illuminator if this is wanted by the user
 	 */
 	private Thread lightTimer;
+	
+	private volatile static Timer timer = new Timer();
 
 	private Displayable shouldBeDisplaying;
 	private Displayable prevDisplayable;
@@ -460,6 +463,10 @@ public class GpsMid extends MIDlet implements CommandListener {
 
 	public static GpsMid getInstance() {
 		return instance;
+	}
+
+	public static Timer getTimer() {
+		return timer;
 	}
 
 	public void enableDebugFileLogging() {

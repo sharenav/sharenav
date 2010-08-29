@@ -98,8 +98,7 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 		if (Configuration.getBtKeepAlive()) {
 			TimerTask tt = new KeepAliveTimer();
 			logger.info("Setting keep alive timer: " + tt);
-			Timer t = new Timer();
-			t.schedule(tt, 1000, 1000);
+			GpsMid.getTimer().schedule(tt, 1000, 1000);
 		}
 		return true;
 	}

@@ -151,9 +151,7 @@ public abstract class KeyCommandCanvas extends Canvas implements
 					+ " executing command " + singleC);
 			if (singleC != null) {
 				if (doubleC != null) {
-					TimerTask timerT;
-					Timer tm = new Timer();
-					timerT = new TimerTask() {
+					TimerTask timerT = new TimerTask() {
 						public void run() {
 							if (releasedKeyCode == keyCode) {
 								// #debug debug
@@ -169,7 +167,7 @@ public abstract class KeyCommandCanvas extends Canvas implements
 						}
 					};
 					// set double press time
-					tm.schedule(timerT, 300);
+					GpsMid.getTimer().schedule(timerT, 300);
 				} else {
 					// #debug debug
 					logger.debug("single key pressed " + keyCode
