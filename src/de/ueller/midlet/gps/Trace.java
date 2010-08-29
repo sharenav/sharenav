@@ -229,21 +229,28 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	private static Node	pickPointStart = new Node();
 	private static Node	pickPointEnd = new Node();
 	/**
-	 * Record the time at which a pointer press & release were recorded to determine
-	 * a double click and long click
+	 * time at which a pointer press occured to determine
+	 * single / double / long taps 
 	 */
 	private long pressedPointerTime;
-	private long releasedPointerTime;
 	/**
 	 * indicates if the next release event is valid or the corresponding pointer pressing has already been handled
 	 */
-	private volatile boolean pointerPressActionDone;
-
+	private volatile boolean pointerActionDone;
 	/**
-	 * Indicates that there was a drag event since the last pointerPressed
+	 * Indicates that there was any drag event since the last pointerPressed
 	 */
-	/** indicates whether this is a touch button or drag action*/
-	private static volatile boolean pointerDragAction = false;
+	private static volatile boolean pointerDragged = false;
+	/**
+	 * Indicates that there was a rather far drag event since the last pointerPressed
+	 */
+	private static volatile boolean pointerDraggedMuch = false;
+	/** indicates whether the pointer is currently pressed down */
+	private static volatile boolean pointerIsPressed = false;
+	
+	private final int DOUBLETAP_MAXDELAY = 500;
+	private final int LONGTAP_DELAY = 1500;
+	private final int SINGLETAP_MINDELAY = 300;
 	
 	public volatile boolean routeCalc=false;
 	public Tile tiles[] = new Tile[6];
@@ -1761,9 +1768,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				// setTitleMsgTimeOut can be changed in receiveMessage()
 				synchronized (this) {
 					if (setTitleMsgTimeout != 0) {
-						TimerTask timerT;
-						Timer tm = new Timer();
-						timerT = new TimerTask() {
+						TimerTask timerT = new TimerTask() {
 							public synchronized void run() {
 								currentTitleMsgOpenCount--;
 								lastTitleMsg = currentTitleMsg;
@@ -1774,7 +1779,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 								}
 							}
 						};
-						tm.schedule(timerT, setTitleMsgTimeout);
+						GpsMid.getTimer().schedule(timerT, setTitleMsgTimeout);
 						setTitleMsgTimeout = 0;
 					}
 				}
@@ -1883,9 +1888,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		// setAlertTimeOut can be changed in receiveMessage()
 		synchronized (this) {
 			if (setAlertTimeout != 0) {
-				TimerTask timerT;
-				Timer tm = new Timer();
-				timerT = new TimerTask() {
+				TimerTask timerT = new TimerTask() {
 					public synchronized void run() {
 						currentAlertsOpenCount--;
 						if (currentAlertsOpenCount == 0) {
@@ -1895,7 +1898,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 						}
 					}
 				};
-				tm.schedule(timerT, setAlertTimeout);
+				GpsMid.getTimer().schedule(timerT, setAlertTimeout);
 				setAlertTimeout = 0;
 			}
 		}
@@ -2399,128 +2402,121 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	}
 
 	protected void pointerPressed(int x, int y) {
-		long currTime = System.currentTimeMillis();
 		updateLastUserActionTime();
-		pointerDragAction = false;
-		pointerPressActionDone = false;
+		long currTime = System.currentTimeMillis();
+		long durationSinceLastPress = currTime - pressedPointerTime; 		
 
-		// check for touchable buttons
-		// #debug debug
-		logger.debug("Touch button: " + tl.getActionIdAtPointer(x, y) + " x: " + x + " y: " + y);
-		int actionId = tl.getActionIdAtPointer(x, y);
-		if (actionId > 0) {
-			if (System.currentTimeMillis() < (lastBackLightOnTime + 1500)) {
-				if (actionId == ZOOM_IN_CMD) {
-					actionId = PAN_RIGHT2_CMD;
-				} else if (actionId == ZOOM_OUT_CMD) {
-					actionId = PAN_LEFT2_CMD;
-				}
-			} else if (manualRotationMode) {
-				if (actionId == ZOOM_IN_CMD) {
-					actionId = PAN_LEFT2_CMD;
-				} else if (actionId == ZOOM_OUT_CMD) {
-					actionId = PAN_RIGHT2_CMD;
-				}
-			} else if (TrackPlayer.isPlaying) {
-				if (actionId == ZOOM_IN_CMD) {
-					actionId = PAN_RIGHT2_CMD;
-				} else if (actionId == ZOOM_OUT_CMD) {
-					actionId = PAN_LEFT2_CMD;
-				}
-			}
-			commandAction(CMDS[actionId], (Displayable) null);
-			pointerPressActionDone = true;
-			repaint();
-			// end of check for touchable buttons
-			return;
-		}		
-		
-		
-		// check for double press
-		if (currTime - pressedPointerTime < 700) {
-			//#debug debug
-			logger.debug("PointerDoublePressed");
-			commandAction(CMDS[ZOOM_IN_CMD], (Displayable) null);
-			pointerPressActionDone = true;
-			repaint();
-			return;
-		}
-		
-		// remember positions for dragging
+		pointerIsPressed = true;
+		pointerDragged = false;
+		pointerDraggedMuch = false;
+		pointerActionDone = false;
+
 		// remember position the pointer was pressed
 		Trace.touchX = x;
 		Trace.touchY = y;
-		// remember center when the pointer was pressed
+		// remember center when the pointer was pressed for dragging
 		centerPointerPressedN = center.copy();
 		pressedPointerTime = currTime;
 		pickPointStart=imageCollector.getCurrentProjection().inverse(x,y, pickPointStart);
 		panProjection=imageCollector.getCurrentProjection();
+
+		// check for double press
+		if (!pointerDraggedMuch && durationSinceLastPress < DOUBLETAP_MAXDELAY) {
+			// if not double tapping a control, then the map area must be double tapped and we zoom in
+			if (tl.getElementIdAtPointer(touchX, touchY) < 0) {
+				//#debug debug
+				logger.debug("PointerDoublePressed");
+				pointerActionDone = true;
+				commandAction(CMDS[ZOOM_IN_CMD], (Displayable) null);
+				repaint();
+			}
+			return;
+		}		
+
+		TimerTask singleTapTimerTask = new TimerTask() {
+			public void run() {
+				if (!pointerActionDone) {
+					// if pointer is already released, then this is a single click
+					if (!pointerIsPressed) {
+						// #debug debug
+						logger.debug("single tap");
+						singleTap();
+					} else {
+						TimerTask longTapTimerTask = new TimerTask() {
+							public void run() {
+								if (!pointerActionDone && !pointerDragged) {
+									// if the pointer is released after the time a single tap would have been triggered by the timer
+									// but before a long tap would happen, handle this also as a single tap
+									if (!pointerIsPressed) {							
+										singleTap();
+									} else if (System.currentTimeMillis() - pressedPointerTime >= LONGTAP_DELAY){
+										// if pointer is still pressed down and no action has been done since the last tap,
+										// and no dragging is active in the meanwhile, then this is a long tap
+										// if not tapping a control, then the map area must be tapped so we do the long tap action for the map area
+										if (tl.getElementIdAtPointer(touchX, touchY) < 0) {							
+											// long tap to open a place-related menu
+											//#if polish.api.online
+											// use the place of touch instead of old center as position,
+											// set as new center
+											pickPointEnd=panProjection.inverse(touchX,touchY, pickPointEnd);
+											center.radlat=centerPointerPressedN.radlat-(pickPointEnd.radlat-pickPointStart.radlat);
+											center.radlon=centerPointerPressedN.radlon-(pickPointEnd.radlon-pickPointStart.radlon);
+											Position oPos = new Position(center.radlat, center.radlon,
+														     0.0f, 0.0f, 0.0f, 0, 0);
+											imageCollector.newDataReady();
+											gpsRecenter = false;
+											commandAction(CMDS[ONLINE_INFO_CMD], (Displayable) null);
+											//#endif
+											return;
+										}
+									}
+								}
+							}
+						};
+						try {
+							// set timer to continue check if this is a long tap
+							GpsMid.getTimer().schedule(longTapTimerTask, LONGTAP_DELAY - SINGLETAP_MINDELAY);
+						} catch (Exception e) {
+							logger.error("No LongTap TimerTask: " + e.toString());
+						}
+					}
+				}
+			}
+		};
+		try {
+			// set timer to check if this is a single tap
+			GpsMid.getTimer().schedule(singleTapTimerTask, SINGLETAP_MINDELAY);
+		} catch (Exception e) {
+			logger.error("No SingleTap TimerTask: " + e.toString());
+		}
+		return;
 	}
 	
 	protected void pointerReleased(int x, int y) {
-		if (pointerPressActionDone) {
+		pointerIsPressed = false;
+		if (pointerActionDone) {
 			return;
-		}
+		}		
 		
-		if (pointerDragAction) {
+		if (pointerDragged) {
 			pointerDragged(x , y);
-			return;
-		}
-		
-		// only continue if almost no movement since touching
-		// TODO: when moving wouldn't this be a drag action anyway? If this is because we need some tolerance, this should be handled in pointerDragged() 
-		//		if ( (Math.abs(touchX - x) > 8) ||
-		//			 (Math.abs(touchY - y) > 8)
-		//		) {
-		//			return;
-		//		}
-		
-		long currTime = System.currentTimeMillis();
-		// long tap to open a place-related menu
-		// TODO: would be nicer if long tap would cause the action already BEFORE releasing the pointer 
-		if (currTime - pressedPointerTime > 700) {
-			//#if polish.api.online
-			// use the place of touch instead of old center as position,
-			// set as new center
-			pickPointEnd=panProjection.inverse(x,y, pickPointEnd);
-			center.radlat=centerPointerPressedN.radlat-(pickPointEnd.radlat-pickPointStart.radlat);
-			center.radlon=centerPointerPressedN.radlon-(pickPointEnd.radlon-pickPointStart.radlon);
-			Position oPos = new Position(center.radlat, center.radlon,
-						     0.0f, 0.0f, 0.0f, 0, 0);
-			imageCollector.newDataReady();
-			gpsRecenter = false;
-			GuiWebInfo gWeb = new GuiWebInfo(this, oPos, pc);
-			gWeb.show();
-			//#endif
-			return;
-		}
-			
-		// add timer for single click
-		if (currTime - pressedPointerTime < 400) {
-			TimerTask timerT;
-			Timer tm = new Timer();
-			timerT = new TimerTask() {
-				public void run() {
-					if (!pointerPressActionDone) {
-						// #debug debug
-						logger.debug("single click ");
-						// time
-						tl.toggleOnScreenButtonSize();
-						repaint();
-						pointerDragAction = false;
-					}
-				}
-			};
-			// set timer to check if this is a long or double click
-			tm.schedule(timerT, 800);
 			return;
 		}
 	}
 	
 	protected void pointerDragged (int x, int y) {
 		updateLastUserActionTime();
-		pointerDragAction = true;
-		if (pointerDragAction && imageCollector != null) {
+		pointerDragged = true;
+		if (Math.abs(x - Trace.touchX) > 8
+				|| 
+			Math.abs(y - Trace.touchY) > 8
+		) {
+			pointerDraggedMuch = true;
+		}
+		// avoid double tap triggering on fast consecutive drag actions starting at almost the same position
+		pressedPointerTime = 0; 
+		
+		if (imageCollector != null) {
 			// difference between where the pointer was pressed and is currently dragged
 //			int diffX = Trace.touchX - x;
 //			int diffY = Trace.touchY - y;
@@ -2534,6 +2530,45 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			gpsRecenter = false;
 		}
 	}
+	
+	private void singleTap() {
+		if (pointerDraggedMuch) {
+			return;
+		}
+		pointerActionDone = true;
+		// if not tapping a control, then the map area must be tapped so we set the touchable button sizes
+		if (tl.getElementIdAtPointer(touchX, touchY) < 0) {							
+			tl.toggleOnScreenButtonSize();
+			repaint();
+		} else {
+			int actionId = tl.getActionIdAtPointer(touchX, touchY);
+			if (actionId > 0) {
+				logger.debug("Touch button: " + tl.getActionIdAtPointer(touchX, touchY) + " x: " + touchX + " y: " + touchY);
+				if (System.currentTimeMillis() < (lastBackLightOnTime + 1500)) {
+					if (actionId == ZOOM_IN_CMD) {
+						actionId = PAN_RIGHT2_CMD;
+					} else if (actionId == ZOOM_OUT_CMD) {
+						actionId = PAN_LEFT2_CMD;
+					}
+				} else if (manualRotationMode) {
+					if (actionId == ZOOM_IN_CMD) {
+						actionId = PAN_LEFT2_CMD;
+					} else if (actionId == ZOOM_OUT_CMD) {
+						actionId = PAN_RIGHT2_CMD;
+					}
+				} else if (TrackPlayer.isPlaying) {
+					if (actionId == ZOOM_IN_CMD) {
+						actionId = PAN_RIGHT2_CMD;
+					} else if (actionId == ZOOM_OUT_CMD) {
+						actionId = PAN_LEFT2_CMD;
+					}
+				}
+				commandAction(CMDS[actionId], (Displayable) null);
+				repaint();
+			}
+		}
+	}
+	
 	
 	/**
 	 * Returns the command used to go to the data screens.
