@@ -66,7 +66,8 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 	private static int touchX = 0;
 	/** y position display was touched last time */
 	private static int touchY = 0;
-
+	/** indicates if the pointer is currently pressed */	
+	private static boolean pointerPressedDown = false;
 
 	public IconMenuWithPagesGUI(GpsMidDisplayable parent, IconActionPerformer actionPerformer) {
 		// create Canvas
@@ -384,6 +385,7 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 	}
 	
 	protected void pointerReleased(int x, int y) {
+		pointerPressedDown = false;
 		if (Math.abs(x - touchX) < 10) { // if this is no drag action
 			//#debug debug
 			logger.debug("pointer released at " + x + " " + y);
@@ -423,11 +425,16 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 	
 	
 	protected void pointerPressed(int x, int y) {
+		pointerPressedDown = true;
 		touchX = x;
 		touchY = y;
 	}
 	
 	protected void pointerDragged (int x, int y) {
+		// return if drag event was not in this canvas but rather the previous one
+		if (!pointerPressedDown) {
+			return;
+		}
 		getActiveMenuPage().dragOffsX = x - touchX;
 		repaint();
 	}
