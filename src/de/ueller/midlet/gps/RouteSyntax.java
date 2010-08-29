@@ -106,6 +106,8 @@ public class RouteSyntax {
 
 	private static RouteSyntax instance = null;
 	
+	private static boolean routeSyntaxAvailable;
+	
 	public RouteSyntax() {
 		logger = Logger.getInstance(RouteSyntax.class, Logger.DEBUG);
 		readSyntax();
@@ -120,6 +122,7 @@ public class RouteSyntax {
 	}
 	
 	public boolean readSyntax() {
+		routeSyntaxAvailable = false;
 		int i;
 		//#if polish.android
 		String syntaxDat = Configuration.getMapUrl() + Configuration.getSoundDirectory() + "/syntax.dat";
@@ -133,6 +136,11 @@ public class RouteSyntax {
 			//#else
 			InputStream is = QueueReader.class.getResourceAsStream(syntaxDat);
 			//#endif
+			if (is == null) {
+				logger.error("Error opening " + syntaxDat);
+				return false;							
+			}
+
 			DataInputStream dis = new DataInputStream(is);
 			if (dis.readByte() != SYNTAX_FORMAT_VERSION) {
 				logger.error(syntaxDat + " corrupt");
@@ -191,12 +199,16 @@ public class RouteSyntax {
 			return false;			
 		}
 		System.out.println(syntaxDat + " read successfully");
+		routeSyntaxAvailable = true;
 		return true;
 	}
 	
 	
 	public static String getSyntaxTemplate(int instruction, int syntaxComponent) {
 		String returnString = "";
+		if (!routeSyntaxAvailable) {
+			return returnString;
+		}
 		if (instruction <= RouteInstructions.RI_HARD_LEFT) {
 			if (syntaxComponent >= SyntaxTemplateComponents.startOfTextComponents) {
 				returnString = HelperRoutines.replaceAll(syntaxTemplates[SyntaxInstructionTypes.simpleDirection].getComponent(syntaxComponent), "%direction%", simpleDirectionTexts[instruction]);
@@ -297,26 +309,44 @@ public class RouteSyntax {
 		
 
 	public static String getCheckDirectionText() {
+		if (!routeSyntaxAvailable) {
+			return "";
+		}
 		return checkDirectionText;
 	}
 	
 	public static String getFollowStreetSound() {
+		if (!routeSyntaxAvailable) {
+			return "";
+		}
 		return followStreetSound;
 	}
 
 	public static String getCheckDirectionSound() {
+		if (!routeSyntaxAvailable) {
+			return "";
+		}
 		return checkDirectionSound;
 	}
 
 	public static String getRecalculationSound() {
+		if (!routeSyntaxAvailable) {
+			return "";
+		}
 		return recalculationSound;
 	}
 
 	public static String getSpeedLimitSound() {
+		if (!routeSyntaxAvailable) {
+			return "";
+		}
 		return speedLimitSound;
 	}
 	
 	public static String getDestReachedSound() {
+		if (!routeSyntaxAvailable) {
+			return "";
+		}
 		return getSoundInstruction(RouteInstructions.RI_DEST_REACHED);
 	}	
 
