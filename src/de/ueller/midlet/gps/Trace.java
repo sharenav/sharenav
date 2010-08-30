@@ -1291,7 +1291,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					// show alert that keys are locked
 					keyPressed(0);
 				} else {
-					alert(Locale.get("trace.GpsMid")/*GpsMid*/, Locale.get("trace.KeysUnlocked")/*Keys unlocked*/, 1000);
+					alert(Locale.get("trace.GpsMid")/*GpsMid*/, hasPointerEvents() ? Locale.get("trace.KeysAndTouchscreenUnlocked")/*Keys and touch screen unlocked*/ : Locale.get("trace.KeysUnlocked")/*Keys unlocked*/, 1000);
 				}
 				return;
 			}
@@ -2416,6 +2416,12 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		Trace.touchX = x;
 		Trace.touchY = y;
 
+		// give a message if keyboard/user interface is locked
+		if (keyboardLocked) {
+			keyPressed(0);
+			return;
+		}
+		
 		// remember center when the pointer was pressed for dragging
 		centerPointerPressedN = center.copy();
 		if (imageCollector != null) {
@@ -2499,7 +2505,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	
 	protected void pointerReleased(int x, int y) {
 		pointerIsPressed = false;
-		if (pointerActionDone) {
+		if (pointerActionDone || keyboardLocked) {
 			return;
 		}		
 		
@@ -2511,6 +2517,26 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	
 	protected void pointerDragged (int x, int y) {
 		updateLastUserActionTime();
+		if (pointerActionDone) {
+			return;
+		}
+
+		// slide at least 1/4 display width to lock / unlock GpsMid		
+		if (tl.getActionIdAtPointer(touchX, touchY) == Trace.ICON_MENU) {
+			if ( tl.getActionIdAtPointer(x, y) ==  Trace.ICON_MENU
+					&&
+				x - touchX > getWidth() / 4
+			) {
+				commandAction(CMDS[TOGGLE_KEY_LOCK_CMD], (Displayable) null);
+				pointerActionDone = true;
+			}
+			return;
+		}
+
+		if (keyboardLocked) {
+			return;
+		}
+		
 		pointerDragged = true;
 		if (Math.abs(x - Trace.touchX) > 8
 				|| 
@@ -2518,6 +2544,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		) {
 			pointerDraggedMuch = true;
 		}
+
 		// avoid double tap triggering on fast consecutive drag actions starting at almost the same position
 		pressedPointerTime = 0; 
 		

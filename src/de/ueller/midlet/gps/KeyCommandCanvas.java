@@ -51,7 +51,8 @@ public abstract class KeyCommandCanvas extends Canvas implements
 		pressedKeyTime = System.currentTimeMillis();
 		if (keyboardLocked && keyCode != KEY_NUM9) {
 			GpsMid.getInstance().alert("GpsMid",
-					"Keys locked. Hold down '9' to unlock.", 3000);
+					(hasPointerEvents() ? "Keys and touchscreen locked. Hold down '9' or slide right on way bar to unlock." : "Keys locked. Hold down '9' to unlock."),					
+					3000);
 			ignoreKeyCode = keyCode;
 			return;
 		}

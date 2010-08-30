@@ -108,6 +108,7 @@ trace.GpsRecording=Gps track recording
 trace.GpsTrackRecording=Gps track recording
 trace.KeepBacklight=Keep backlight on/off
 trace.KeysUnlocked=Keys unlocked
+trace.KeysAndTouchscreenUnlocked=Keys and touchscreen unlocked
 trace.kmh= km/h
 trace.LastMsg=LastMsg:
 trace.left25=left 25%
