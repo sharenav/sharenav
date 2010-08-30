@@ -205,7 +205,7 @@ public class TraceLayout extends LayoutManager {
 		e.setColor(Legend.COLORS[Legend.COLOR_CLOCK_TEXT]);
 		e.setAdditionalOffsX(1); // FIXME: This should not be necessary to be exactly right aligned on the display
 		e.setVRelative(ele[ROUTE_INSTRUCTION]);
-		e.setActionID(Trace.TOGGLE_BACKLIGHT_CMD);
+		e.setActionID(Trace.TOGGLE_BACKLIGHT_CMD + (Trace.DATASCREEN_CMD << 8) + (Trace.TOGGLE_OVERLAY_CMD << 16));
 
 		e = ele[ETA]; addElement(e,
 				LayoutElement.FLAG_HALIGN_LEFTTO_RELATIVE | LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |

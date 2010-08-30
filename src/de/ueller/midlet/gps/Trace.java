@@ -2433,13 +2433,23 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		
 		// check for double press
 		if (!pointerDraggedMuch && durationSinceLastPress < DOUBLETAP_MAXDELAY) {
+			pointerActionDone = true;
 			// if not double tapping a control, then the map area must be double tapped and we zoom in
 			if (tl.getElementIdAtPointer(touchX, touchY) < 0) {
 				//#debug debug
-				logger.debug("PointerDoublePressed");
+				logger.debug("double tap map");
 				pointerActionDone = true;
 				commandAction(CMDS[ZOOM_IN_CMD], (Displayable) null);
 				repaint();
+			} else {
+			// double tapping a control
+				int actionId = tl.getActionIdDoubleAtPointer(touchX, touchY);
+				//#debug debug
+				logger.debug("double tap button: " + actionId + " x: " + touchX + " y: " + touchY);
+				if (actionId > 0) {
+					commandAction(CMDS[actionId], (Displayable) null);
+					repaint();
+				}
 			}
 			return;
 		}		
@@ -2449,24 +2459,26 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				if (!pointerActionDone) {
 					// if pointer is already released, then this is a single click
 					if (!pointerIsPressed) {
-						// #debug debug
-						logger.debug("single tap");
 						singleTap();
 					} else {
 						TimerTask longTapTimerTask = new TimerTask() {
 							public void run() {
-								if (!pointerActionDone && !pointerDragged) {
+								int touchControlId = tl.getElementIdAtPointer(touchX, touchY);
+								// if no action (e.g. from double tap) is already done
+								// and the pointer did not move or if it was pressed on a control and not moved much
+								if (!pointerActionDone && (!pointerDragged || !pointerDraggedMuch && touchControlId >= 0) ) {
 									// if the pointer is released after the time a single tap would have been triggered by the timer
 									// but before a long tap would happen, handle this also as a single tap
 									if (!pointerIsPressed) {							
 										singleTap();
+									// else pointer is still pressed down and if this is long enough then this is a long tap
 									} else if (System.currentTimeMillis() - pressedPointerTime >= LONGTAP_DELAY){
-										// if pointer is still pressed down and no action has been done since the last tap,
-										// and no dragging is active in the meanwhile, then this is a long tap
 										// if not tapping a control, then the map area must be tapped so we do the long tap action for the map area
 										if (tl.getElementIdAtPointer(touchX, touchY) < 0 && panProjection != null) {							
-											// long tap to open a place-related menu
+											//#debug debug
+											logger.debug("long tap map");										
 											//#if polish.api.online
+											// long tap map to open a place-related menu
 											// use the place of touch instead of old center as position,
 											// set as new center
 											pickPointEnd=panProjection.inverse(touchX,touchY, pickPointEnd);
@@ -2479,6 +2491,15 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 											commandAction(CMDS[ONLINE_INFO_CMD], (Displayable) null);
 											//#endif
 											return;
+										// long tapping a control											
+										} else {
+											int actionId = tl.getActionIdLongAtPointer(touchX, touchY);
+											if (actionId > 0) {
+												//#debug debug
+												logger.debug("long tap button: " + actionId + " x: " + touchX + " y: " + touchY);
+												commandAction(CMDS[actionId], (Displayable) null);
+												repaint();
+											}
 										}
 									}
 								}
@@ -2570,12 +2591,15 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		pointerActionDone = true;
 		// if not tapping a control, then the map area must be tapped so we set the touchable button sizes
 		if (tl.getElementIdAtPointer(touchX, touchY) < 0) {							
+			// #debug debug
+			logger.debug("single tap map");
 			tl.toggleOnScreenButtonSize();
 			repaint();
 		} else {
 			int actionId = tl.getActionIdAtPointer(touchX, touchY);
 			if (actionId > 0) {
-				logger.debug("Touch button: " + tl.getActionIdAtPointer(touchX, touchY) + " x: " + touchX + " y: " + touchY);
+				// #debug debug
+				logger.debug("single tap button: " + actionId + " x: " + touchX + " y: " + touchY);
 				if (System.currentTimeMillis() < (lastBackLightOnTime + 1500)) {
 					if (actionId == ZOOM_IN_CMD) {
 						actionId = PAN_RIGHT2_CMD;

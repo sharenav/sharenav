@@ -140,11 +140,26 @@ public class LayoutManager extends Vector {
 		}
 		return -1;	
 	}
-	
+
 	public int getActionIdAtPointer(int x, int y) {
+		return getActionIdShiftedAtPointer(x, y, 0);
+	}
+	
+	public int getActionIdDoubleAtPointer(int x, int y) {
+		return getActionIdShiftedAtPointer(x, y, 8);
+	}
+
+	public int getActionIdLongAtPointer(int x, int y) {
+		return getActionIdShiftedAtPointer(x, y, 16);
+	}
+	
+	public int getActionIdShiftedAtPointer(int x, int y, int shift) {
 		int i = getElementIdAtPointer(x, y);
-		if (i != -1) {
-			return this.getElementAt(i).actionID;
+		if (i != -1) {			
+			i = this.getElementAt(i).actionID;
+			if (i != -1) {
+				return (i >> shift) & 0x000000FF;
+			}
 		}
 		return -1;
 	}
