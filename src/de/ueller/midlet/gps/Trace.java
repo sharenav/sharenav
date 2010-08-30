@@ -2411,15 +2411,20 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		pointerDraggedMuch = false;
 		pointerActionDone = false;
 
-		// remember position the pointer was pressed
+		// remember time and position the pointer was pressed
+		pressedPointerTime = currTime;
 		Trace.touchX = x;
 		Trace.touchY = y;
+
 		// remember center when the pointer was pressed for dragging
 		centerPointerPressedN = center.copy();
-		pressedPointerTime = currTime;
-		pickPointStart=imageCollector.getCurrentProjection().inverse(x,y, pickPointStart);
-		panProjection=imageCollector.getCurrentProjection();
-
+		if (imageCollector != null) {
+			panProjection=imageCollector.getCurrentProjection();
+			pickPointStart=panProjection.inverse(x,y, pickPointStart);
+		} else {
+			panProjection = null;
+		}
+		
 		// check for double press
 		if (!pointerDraggedMuch && durationSinceLastPress < DOUBLETAP_MAXDELAY) {
 			// if not double tapping a control, then the map area must be double tapped and we zoom in
@@ -2453,7 +2458,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 										// if pointer is still pressed down and no action has been done since the last tap,
 										// and no dragging is active in the meanwhile, then this is a long tap
 										// if not tapping a control, then the map area must be tapped so we do the long tap action for the map area
-										if (tl.getElementIdAtPointer(touchX, touchY) < 0) {							
+										if (tl.getElementIdAtPointer(touchX, touchY) < 0 && panProjection != null) {							
 											// long tap to open a place-related menu
 											//#if polish.api.online
 											// use the place of touch instead of old center as position,
@@ -2516,7 +2521,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		// avoid double tap triggering on fast consecutive drag actions starting at almost the same position
 		pressedPointerTime = 0; 
 		
-		if (imageCollector != null) {
+		if (imageCollector != null && panProjection != null) {
 			// difference between where the pointer was pressed and is currently dragged
 //			int diffX = Trace.touchX - x;
 //			int diffY = Trace.touchY - y;
