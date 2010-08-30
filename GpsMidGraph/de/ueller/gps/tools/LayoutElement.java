@@ -610,6 +610,6 @@ public class LayoutElement {
 	}
 
 	public boolean isInElement(int x, int y) {
-		return (isOnScreen && x > left && x < right && y > top && y < bottom);
+		return (isOnScreen && x >= left && x <= right && y >= top && y <= bottom);
 	}
 }
