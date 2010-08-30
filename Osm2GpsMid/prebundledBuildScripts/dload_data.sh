@@ -73,5 +73,7 @@ wget http://downloads.cloudmade.com/asia/thailand/thailand.osm.bz2 -O /home/apmo
 wget http://download.cloudmade.com/north_america/united_states/california/california.osm.bz2 -O /home/apmon/planet_dumps/california.osm.bz2
 wget http://downloads.cloudmade.com/north_america/puerto_rico/puerto_rico.osm.bz2 -O /home/apmon/planet_dumps/puerto_rico.osm.bz2
 wget http://downloads.cloudmade.com/north_america/united_states/louisiana/louisiana.osm.bz2 -O /home/apmon/planet_dumps/louisiana.osm.bz2
+wget http://download.cloudmade.com/north_america/united_states/colorado/colorado.osm.bz2 -O /home/apmon/planet_dumps/colorado.osm.bz2
+wget http://download.cloudmade.com/north_america/united_states/new_york/new_york.osm.bz2 -O /home/apmon/planet_dumps/new_york.osm.bz2
 wget http://download.cloudmade.com/asia/indonesia/indonesia.osm.bz2 -O /home/apmon/planet_dumps/indonesia.osm.bz2
 wget http://download.cloudmade.com/north_america/trinidad_and_tobago/trinidad_and_tobago.osm.bz2 -O /home/apmon/planet_dumps/trinidad.osm.bz2

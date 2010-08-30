@@ -1,6 +1,7 @@
 #!/bin/bash
 
 ulimit -Sv 8000000
+renice 15 $$
 
 rm /tmp/great_b.osm
 mkfifo /tmp/great_b.osm
@@ -31,7 +32,7 @@ mkfifo /tmp/finland.osm
 rm /tmp/italy.osm
 mkfifo /tmp/italy.osm
 
-skip=1;
+skip=0;
 idx=1;
 idx=$[$idx+1];
 skip=$[$skip+1];
@@ -47,7 +48,27 @@ c=trinidad
 rm /tmp/$c.osm
 mkfifo /tmp/$c.osm
 bzcat /home/apmon/planet_dumps/$c.osm.bz2 > /tmp/$c.osm & java -mx5000M -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /tmp/$c.osm Trinidad
-scp GpsMidTt-0.6.2.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/prebuild/ &
+scp GpsMidTt-0.6.3.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/prebuild/ &
+fi
+idx=$[$idx+1]
+
+if [ $skip -lt $idx ]
+then
+c=czech_republic
+rm /tmp/$c.osm
+mkfifo /tmp/$c.osm
+bzcat /home/apmon/planet_dumps/$c.osm.bz2 > /tmp/$c.osm & java -mx8000M -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /tmp/$c.osm Czech
+scp GpsMidCz-0.6.3.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/prebuild/ &
+fi
+idx=$[$idx+1]
+
+if [ $skip -lt $idx ]
+then
+c=spain
+rm /tmp/$c.osm
+mkfifo /tmp/$c.osm
+bzcat /home/apmon/planet_dumps/$c.osm.bz2 > /tmp/$c.osm & java -mx5000M -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /tmp/$c.osm Madrid
+scp GpsMidMad-0.6.3.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/prebuild/ &
 fi
 idx=$[$idx+1]
 
@@ -154,6 +175,26 @@ idx=$[$idx+1]
 
 if [ $skip -lt $idx ]
 then
+c=colorado
+rm /tmp/$c.osm
+mkfifo /tmp/$c.osm
+bzcat /home/apmon/planet_dumps/$c.osm.bz2 > /tmp/$c.osm & java -mx5000M -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /tmp/$c.osm Colorado
+scp GpsMidCol-0.6.3.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/prebuild/ &
+fi
+idx=$[$idx+1]
+
+if [ $skip -lt $idx ]
+then
+c=new_york
+rm /tmp/$c.osm
+mkfifo /tmp/$c.osm
+bzcat /home/apmon/planet_dumps/$c.osm.bz2 > /tmp/$c.osm & java -mx5000M -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /tmp/$c.osm NYC
+scp GpsMidNYC-0.6.3.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/prebuild/ &
+fi
+idx=$[$idx+1]
+
+if [ $skip -lt $idx ]
+then
 c=puerto_rico
 rm /tmp/$c.osm
 mkfifo /tmp/$c.osm
@@ -220,6 +261,16 @@ rm /tmp/$c.osm
 mkfifo /tmp/$c.osm
 bzcat /home/apmon/planet_dumps/$c.osm.bz2 > /tmp/$c.osm & java -mx5000M -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /tmp/$c.osm Poland
 scp GpsMidPl-0.6.3.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/prebuild/ &
+fi
+idx=$[$idx+1]
+
+if [ $skip -lt $idx ]
+then
+c=poland
+rm /tmp/$c.osm
+mkfifo /tmp/$c.osm
+bzcat /home/apmon/planet_dumps/$c.osm.bz2 > /tmp/$c.osm & java -mx5000M -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /tmp/$c.osm Warsaw
+scp GpsMidWarsaw-0.6.3.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/prebuild/ &
 fi
 idx=$[$idx+1]
 
@@ -353,7 +404,7 @@ scp GpsMidHel-0.6.3.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/prebuild/ &
 c=netherlands
 rm /tmp/$c.osm
 mkfifo /tmp/$c.osm
-bzcat /home/apmon/planet_dumps/$c.osm.bz2 > /tmp/$c.osm & java -mx8700M -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /tmp/$c.osm Netherlands
+bzcat /home/apmon/planet_dumps/$c.osm.bz2 > /tmp/$c.osm & java -mx12700M -jar Osm2GpsMid-CVS.jar --cellID=cells.txt.gz /tmp/$c.osm Netherlands
 scp GpsMidNl-0.6.3.ja* gpsmidW:/home/groups/g/gp/gpsmid/htdocs/prebuild/ &
 
 c=netherlands
