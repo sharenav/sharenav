@@ -2558,16 +2558,19 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			return;
 		}
 		
+		// avoid double tap triggering on fast consecutive drag actions starting at almost the same position
+		pressedPointerTime = 0; 
+		
 		pointerDragged = true;
 		if (Math.abs(x - Trace.touchX) > 8
 				|| 
 			Math.abs(y - Trace.touchY) > 8
 		) {
 			pointerDraggedMuch = true;
+		// do not start map dragging on a touch control if only dragged slightly
+		} else if (tl.getElementIdAtPointer(touchX, touchY) >= 0) {
+			return;
 		}
-
-		// avoid double tap triggering on fast consecutive drag actions starting at almost the same position
-		pressedPointerTime = 0; 
 		
 		if (imageCollector != null && panProjection != null) {
 			// difference between where the pointer was pressed and is currently dragged
