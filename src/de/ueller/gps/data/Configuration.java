@@ -1380,7 +1380,8 @@ public class Configuration {
 	public static void addToBackLightLevel(int diffBacklight) {
 		backLightLevel += diffBacklight;
 		if (backLightLevel > 100
-			|| !Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIA))
+		    || (!Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIA) &&
+			!Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ANDROID_WAKELOCK)));
 		{
 			backLightLevel = 100;
 		}
