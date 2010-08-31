@@ -2000,6 +2000,10 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				&& Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_POINT_OF_COMPASS)) {
 			c = Configuration.getCompassDirection(course);
 		}
+		// if tl shows big onscreen buttons add spaces to compass directions consisting of only one char or not shown
+		if (tl.bigOnScreenButtons && c.length() <= 1) {
+				c = " " + c + " ";
+		}
 		tl.ele[TraceLayout.POINT_OF_COMPASS].setText(c);
 	}
 	
