@@ -29,6 +29,7 @@ import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.List;
 //#if polish.android
+import android.view.WindowManager;
 //#else
 import javax.microedition.lcdui.game.GameCanvas;
 //#endif
@@ -767,7 +768,16 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				super.addCommand(CMDS[ICON_MENU]);
 			}
 		}
+//#if polish.android
+		if (fullScreen) {
+			MidletBridge.instance.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		} else {
+			MidletBridge.instance.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		}
+//#else
 		super.setFullScreenMode(fullScreen);
+//#endif
+
 	}
 
 	
@@ -2745,9 +2755,6 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	public void show() {
 		//Display.getDisplay(parent).setCurrent(this);
 		GpsMid.getInstance().show(this);
-//#if polish.android
-//		parent.midletBridge.backlightOn();
-//#endif
 		setFullScreenMode(Configuration.getCfgBitState(Configuration.CFGBIT_FULLSCREEN));
 		updateLastUserActionTime();
 		repaint();
