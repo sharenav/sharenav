@@ -123,6 +123,7 @@ public class TraceLayout extends LayoutManager {
 		e.setColor(Legend.COLORS[Legend.COLOR_MAP_TEXT]);
 		e.setAdditionalOffsX(-1);
 		e.setVRelative(ele[TITLEBAR]);
+		e.setActionID((Trace.TOGGLE_GPS_CMD << 16));
 
 		e = ele[ALTITUDE]; addElement(e,
 				LayoutElement.FLAG_HALIGN_LEFTTO_RELATIVE | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |

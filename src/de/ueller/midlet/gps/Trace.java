@@ -149,8 +149,9 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	protected static final int EDIT_ADDR_CMD = 55;
 	protected static final int OPEN_URL_CMD = 56;
 	protected static final int SHOW_PREVIOUS_POSITION_CMD = 57;
+	protected static final int TOGGLE_GPS_CMD = 58;
 
-	private final Command [] CMDS = new Command[58];
+	private final Command [] CMDS = new Command[59];
 
 	public static final int DATASCREEN_NONE = 0;
 	public static final int DATASCREEN_TACHO = 1;
@@ -359,6 +360,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		CMDS[SEARCH_CMD] = new Command(Locale.get("trace.Search")/*Search*/, Command.OK, 1);
 		CMDS[CONNECT_GPS_CMD] = new Command(Locale.get("trace.StartGPS")/*Start GPS*/,Command.ITEM, 2);
 		CMDS[DISCONNECT_GPS_CMD] = new Command(Locale.get("trace.StopGPS")/*Stop GPS*/,Command.ITEM, 2);
+		CMDS[TOGGLE_GPS_CMD] = new Command(Locale.get("trace.ToggleGPS")/*Toggle GPS*/,Command.ITEM, 2);
 		CMDS[START_RECORD_CMD] = new Command(Locale.get("trace.StartRecord")/*Start record*/,Command.ITEM, 4);
 		CMDS[STOP_RECORD_CMD] = new Command(Locale.get("trace.StopRecord")/*Stop record*/,Command.ITEM, 4);
 		CMDS[MANAGE_TRACKS_CMD] = new Command(Locale.get("trace.ManageTracks")/*Manage tracks*/,Command.ITEM, 5);
@@ -782,7 +784,10 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 
 	}
 
-	
+	private void commandAction(int actionId) {
+		commandAction(CMDS[actionId], null);
+	}
+
 	
 	public void commandAction(Command c, Displayable d) {
 		updateLastUserActionTime();
@@ -919,17 +924,29 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				}
 				return;
 			}
-			if (c == CMDS[SEARCH_CMD]) {
-				GuiSearch guiSearch = new GuiSearch(this);
-				guiSearch.show();
-				return;
-			}
+
 			if (c == CMDS[DISCONNECT_GPS_CMD]) {
 				if (locationProducer != null) {
 					locationProducer.close();
 				}
 				return;
 			}
+			
+			if (c == CMDS[TOGGLE_GPS_CMD]) {
+				if (isGpsConnected()) {
+					commandAction(DISCONNECT_GPS_CMD);
+				} else {
+					commandAction(CONNECT_GPS_CMD);					
+				}
+				return;
+			}
+
+			if (c == CMDS[SEARCH_CMD]) {
+				GuiSearch guiSearch = new GuiSearch(this);
+				guiSearch.show();
+				return;
+			}
+			
 			if (c == CMDS[ENTER_WAYP_CMD]) {
 				if (gpx.isLoadingWaypoints()) {
 					showAlertLoadingWpt();
@@ -2948,6 +2965,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		showIconMenu();
 	}
 	
+		
 	/** interface for received actions from the IconMenu GUI */
 	public void performIconAction(int actionId) {
 		updateLastUserActionTime();
