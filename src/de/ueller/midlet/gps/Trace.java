@@ -674,7 +674,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				//#debug debug
 				logger.debug("autoRouteRecalculate");
 				// recalculate route
-				commandAction(CMDS[ROUTING_START_CMD],(Displayable) null);
+				commandAction(ROUTING_START_CMD);
 			}
 		}
 	}
@@ -1111,12 +1111,12 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					 switch (recordingsMenu.getSelectedIndex()) {
 			            case 0: {
 		    				if ( gpx.isRecordingTrk() ) {
-		    					commandAction(CMDS[STOP_RECORD_CMD],(Displayable) null);
+		    					commandAction(STOP_RECORD_CMD);
 								if (! Configuration.getCfgBitState(Configuration.CFGBIT_GPX_ASK_TRACKNAME_STOP)) {
 							    	show();
 								}
 		    				} else {
-		    					commandAction(CMDS[START_RECORD_CMD],(Displayable) null);
+		    					commandAction(START_RECORD_CMD);
 								if (! Configuration.getCfgBitState(Configuration.CFGBIT_GPX_ASK_TRACKNAME_START)) {
 							    	show();
 								}
@@ -1124,32 +1124,32 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			            	break;
 			            }
 			            case 1: {
-			            	commandAction(CMDS[SAVE_WAYP_CMD], null);
+			            	commandAction(SAVE_WAYP_CMD);
 							break;
 			            }
 			            case 2: {
-			            	commandAction(CMDS[ENTER_WAYP_CMD], null);
+			            	commandAction(ENTER_WAYP_CMD);
 							break;
 			            }
 			          //#if polish.api.mmapi
 			            case 3: {
-			            	commandAction(CMDS[CAMERA_CMD], null);
+			            	commandAction(CAMERA_CMD);
 			            	break;
 			            }
 			            case 4: {
 			            	show();
-			            	commandAction(CMDS[TOGGLE_AUDIO_REC], null);
+			            	commandAction(TOGGLE_AUDIO_REC);
 			            	break;
 			            }
 			          //#endif
 			          //#if polish.api.mmapi && polish.api.wmapi
 			            case 5: {
-			            	commandAction(CMDS[SEND_MESSAGE_CMD], null);
+			            	commandAction(SEND_MESSAGE_CMD);
 			            	break;
 			            }
 			          //#elif polish.api.wmapi
 			            case 3: {
-			            	commandAction(CMDS[SEND_MESSAGE_CMD], null);
+			            	commandAction(SEND_MESSAGE_CMD);
 			            	break;
 			            }
 			          //#endif
@@ -1160,22 +1160,22 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					switch (routingsMenu.getSelectedIndex()) {
 					case 0: {
 						if (routeCalc || route != null) {
-							commandAction(CMDS[ROUTING_STOP_CMD], null);
+							commandAction(ROUTING_STOP_CMD);
 						} else {
-							commandAction(CMDS[ROUTING_START_WITH_MODE_SELECT_CMD], null);
+							commandAction(ROUTING_START_WITH_MODE_SELECT_CMD);
 						}
 						break;
 					}
 					case 1: {
-						commandAction(CMDS[SET_DEST_CMD], null);
+						commandAction(SET_DEST_CMD);
 						break;
 					}
 					case 2: {
-						commandAction(CMDS[SHOW_DEST_CMD], null);
+						commandAction(SHOW_DEST_CMD);
 						break;
 					}
 					case 3: {
-						commandAction(CMDS[CLEAR_DEST_CMD], null);
+						commandAction(CLEAR_DEST_CMD);
 						break;
 					}
 					}
@@ -1207,9 +1207,9 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			//#endif
 			if (c == CMDS[ROUTING_TOGGLE_CMD]) {
 				if (routeCalc || route != null) {
-					commandAction(CMDS[ROUTING_STOP_CMD],(Displayable) null);
+					commandAction(ROUTING_STOP_CMD);
 				} else {
-					commandAction(CMDS[ROUTING_START_WITH_MODE_SELECT_CMD],(Displayable) null);
+					commandAction(ROUTING_START_WITH_MODE_SELECT_CMD);
 				}
 				return;
 			}
@@ -1326,9 +1326,9 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			}
 			if (c == CMDS[TOGGLE_RECORDING_CMD]) {
 				if ( gpx.isRecordingTrk() ) {
-					commandAction(CMDS[STOP_RECORD_CMD],(Displayable) null);
+					commandAction(STOP_RECORD_CMD);
 				} else {
-					commandAction(CMDS[START_RECORD_CMD],(Displayable) null);
+					commandAction(START_RECORD_CMD);
 				}
 				return;
 			}
@@ -2464,7 +2464,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				//#debug debug
 				logger.debug("double tap map");
 				pointerActionDone = true;
-				commandAction(CMDS[ZOOM_IN_CMD], (Displayable) null);
+				commandAction(ZOOM_IN_CMD);
 				repaint();
 				return;
 			} else {
@@ -2474,7 +2474,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				logger.debug("double tap button: " + actionId + " x: " + touchX + " y: " + touchY);
 				if (actionId > 0) {
 					pointerActionDone = true;
-					commandAction(CMDS[actionId], (Displayable) null);
+					commandAction(actionId);
 					repaint();
 					return;
 				}
@@ -2529,7 +2529,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 														     0.0f, 0.0f, 0.0f, 0, 0);
 											imageCollector.newDataReady();
 											gpsRecenter = false;
-											commandAction(CMDS[ONLINE_INFO_CMD], (Displayable) null);
+											commandAction(ONLINE_INFO_CMD);
 											//#endif
 											return;
 										// long tapping a control											
@@ -2538,7 +2538,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 											if (actionId > 0) {
 												//#debug debug
 												logger.debug("long tap button: " + actionId + " x: " + touchX + " y: " + touchY);
-												commandAction(CMDS[actionId], (Displayable) null);
+												commandAction(actionId);
 												repaint();
 											}
 										}
@@ -2601,7 +2601,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					&&
 				x - touchX > getWidth() / 4
 			) {
-				commandAction(CMDS[TOGGLE_KEY_LOCK_CMD], (Displayable) null);
+				commandAction(TOGGLE_KEY_LOCK_CMD);
 				pointerActionDone = true;
 			}
 			return;
@@ -2669,7 +2669,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 						actionId = PAN_LEFT2_CMD;
 					}
 				}
-				commandAction(CMDS[actionId], (Displayable) null);
+				commandAction(actionId);
 				repaint();
 			}
 		}
@@ -2816,7 +2816,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			
 			// move map only to the destination, if GUI is not optimized for routing
 			if (! Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED)) {
-				commandAction(CMDS[SHOW_DEST_CMD],(Displayable) null);
+				commandAction(SHOW_DEST_CMD);
 			}
 		} else {
 			//#debug info
@@ -2976,7 +2976,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			uncacheIconMenu();
 		}
 		if (actionId != IconActionPerformer.BACK_ACTIONID) {
-			commandAction(CMDS[actionId], null);
+			commandAction(actionId);
 		}
 	}
 	/** convert distance to string based on user preferences */
