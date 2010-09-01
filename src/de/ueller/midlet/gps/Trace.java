@@ -248,6 +248,8 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	private static volatile boolean pointerDraggedMuch = false;
 	/** indicates whether the pointer is currently pressed down */
 	private static volatile boolean pointerIsPressed = false;
+	/** indicates whether we already are checking for a single tap in the TimerTask */
+	private static volatile boolean checkingForSingleTap = false;
 	
 	private final int DOUBLETAP_MAXDELAY = 500;
 	private final int LONGTAP_DELAY = 1500;
@@ -2418,17 +2420,10 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	protected void pointerPressed(int x, int y) {
 		updateLastUserActionTime();
 		long currTime = System.currentTimeMillis();
-		long durationSinceLastPress = currTime - pressedPointerTime; 		
-
 		pointerIsPressed = true;
 		pointerDragged = false;
 		pointerDraggedMuch = false;
 		pointerActionDone = false;
-
-		// remember time and position the pointer was pressed
-		pressedPointerTime = currTime;
-		Trace.touchX = x;
-		Trace.touchY = y;
 
 		// give a message if keyboard/user interface is locked
 		if (keyboardLocked) {
@@ -2446,8 +2441,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		}
 		
 		// check for double press
-		if (!pointerDraggedMuch && durationSinceLastPress < DOUBLETAP_MAXDELAY) {
-			pointerActionDone = true;
+		if (!pointerDraggedMuch && currTime - pressedPointerTime < DOUBLETAP_MAXDELAY) {
 			// if not double tapping a control, then the map area must be double tapped and we zoom in
 			if (tl.getElementIdAtPointer(touchX, touchY) < 0) {
 				//#debug debug
@@ -2455,32 +2449,48 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				pointerActionDone = true;
 				commandAction(CMDS[ZOOM_IN_CMD], (Displayable) null);
 				repaint();
+				return;
 			} else {
 			// double tapping a control
 				int actionId = tl.getActionIdDoubleAtPointer(touchX, touchY);
 				//#debug debug
 				logger.debug("double tap button: " + actionId + " x: " + touchX + " y: " + touchY);
 				if (actionId > 0) {
+					pointerActionDone = true;
 					commandAction(CMDS[actionId], (Displayable) null);
 					repaint();
+					return;
 				}
 			}
-			return;
-		}		
-
+		}
+		
+		// remember time and position the pointer was pressed after the check for double tap,
+		// so the double tap code will check for the position of the first of the two taps
+		pressedPointerTime = currTime;
+		Trace.touchX = x;
+		Trace.touchY = y;
+				
+		// when these statements are reached, no double tap action has been executed,
+		// so check here if there's currently already a TimerTask waiting for a single tap.
+		// If yes, perform the current single tap action immediately before starting the next TimerTask
+		if (checkingForSingleTap && !pointerDraggedMuch) {
+			singleTap();
+			pointerActionDone = false;
+		}
+		
+		checkingForSingleTap = true;
 		TimerTask singleTapTimerTask = new TimerTask() {
 			public void run() {
 				if (!pointerActionDone) {
 					// if pointer is already released, then this is a single click
 					if (!pointerIsPressed) {
 						singleTap();
-					} else {
+					} else if (!pointerDraggedMuch){
 						TimerTask longTapTimerTask = new TimerTask() {
 							public void run() {
-								int touchControlId = tl.getElementIdAtPointer(touchX, touchY);
 								// if no action (e.g. from double tap) is already done
 								// and the pointer did not move or if it was pressed on a control and not moved much
-								if (!pointerActionDone && (!pointerDragged || !pointerDraggedMuch && touchControlId >= 0) ) {
+								if (!pointerActionDone && !pointerDraggedMuch) {
 									// if the pointer is released after the time a single tap would have been triggered by the timer
 									// but before a long tap would happen, handle this also as a single tap
 									if (!pointerIsPressed) {							
@@ -2527,6 +2537,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 						}
 					}
 				}
+				checkingForSingleTap = false;
 			}
 		};
 		try {
@@ -2556,6 +2567,17 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			return;
 		}
 
+		// check if there's been much movement, do this before the slide lock/unlock
+		// to avoid a single tap action when not sliding enough
+		if (Math.abs(x - Trace.touchX) > 8
+				|| 
+			Math.abs(y - Trace.touchY) > 8
+		) {
+			pointerDraggedMuch = true;
+			// avoid double tap triggering on fast consecutive drag actions starting at almost the same position
+			pressedPointerTime = 0; 
+		}
+		
 		// slide at least 1/4 display width to lock / unlock GpsMid		
 		if (tl.getActionIdAtPointer(touchX, touchY) == Trace.ICON_MENU) {
 			if ( tl.getActionIdAtPointer(x, y) ==  Trace.ICON_MENU
@@ -2571,18 +2593,12 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		if (keyboardLocked) {
 			return;
 		}
-		
-		// avoid double tap triggering on fast consecutive drag actions starting at almost the same position
-		pressedPointerTime = 0; 
-		
+
 		pointerDragged = true;
-		if (Math.abs(x - Trace.touchX) > 8
-				|| 
-			Math.abs(y - Trace.touchY) > 8
-		) {
-			pointerDraggedMuch = true;
+		
+				
 		// do not start map dragging on a touch control if only dragged slightly
-		} else if (tl.getElementIdAtPointer(touchX, touchY) >= 0) {
+		if (!pointerDraggedMuch && tl.getElementIdAtPointer(touchX, touchY) >= 0) {
 			return;
 		}
 		
