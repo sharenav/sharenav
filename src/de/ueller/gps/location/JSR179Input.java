@@ -112,8 +112,15 @@ public class JSR179Input
 				}
 			}
 			if (locationProvider != null) {
-				locationProvider.setLocationListener(this, 1, -1, -1);
-				updateSolution(locationProvider.getState());
+				try {
+					locationProvider.setLocationListener(this, 1, -1, -1);
+				} catch (Exception e) {
+					receiverList.receiveSolution("SecEx"/*SecEx*/);
+					locationProvider = null;
+				}
+				if (locationProvider != null)  {
+					updateSolution(locationProvider.getState());
+				}
 			} else {
 				receiverList.locationDecoderEnd("no JSR179 Provider"/* i:NoJSR179Provider */);
 				//#debug info

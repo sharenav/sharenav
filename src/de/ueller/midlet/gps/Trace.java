@@ -1746,7 +1746,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					&&
 				locationProducer != null
 					&&
-				";off;nofix;cell;0s;~~;".indexOf(";" + solution.toLowerCase() + ";") == -1
+				";off;nofix;secex;cell;0s;~~;".indexOf(";" + solution.toLowerCase() + ";") == -1
 			) {
 				tl.ele[TraceLayout.ALTITUDE].setText(showDistance(altitude, DISTANCE_ALTITUDE));
 			}
