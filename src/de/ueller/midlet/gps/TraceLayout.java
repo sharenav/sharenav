@@ -341,6 +341,8 @@ public class TraceLayout extends LayoutManager {
 		e.setFlag(fontFlag2);
 		e = ele[POINT_OF_COMPASS];
 		e.setFlag(fontFlag2);
+		e = ele[SOLUTION];
+		e.setFlag(fontFlag2);
 		e = ele[CURRENT_TIME];
 		e.setFlag(fontFlag);
 		e = ele[ROUTE_DISTANCE];
