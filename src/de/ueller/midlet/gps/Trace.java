@@ -2442,12 +2442,6 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		pointerDraggedMuch = false;
 		pointerActionDone = false;
 
-		// give a message if keyboard/user interface is locked
-		if (keyboardLocked) {
-			keyPressed(0);
-			return;
-		}
-		
 		// remember center when the pointer was pressed for dragging
 		centerPointerPressedN = center.copy();
 		if (imageCollector != null) {
@@ -2458,7 +2452,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		}
 		
 		// check for double press
-		if (!pointerDraggedMuch && currTime - pressedPointerTime < DOUBLETAP_MAXDELAY) {
+		if (!keyboardLocked && !pointerDraggedMuch && currTime - pressedPointerTime < DOUBLETAP_MAXDELAY) {
 			// if not double tapping a control, then the map area must be double tapped and we zoom in
 			if (tl.getElementIdAtPointer(touchX, touchY) < 0) {
 				//#debug debug
@@ -2481,12 +2475,19 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			}
 		}
 		
-		// remember time and position the pointer was pressed after the check for double tap,
+		// Remember the time and position the pointer was pressed after the check for double tap,
 		// so the double tap code will check for the position of the first of the two taps
 		pressedPointerTime = currTime;
 		Trace.touchX = x;
 		Trace.touchY = y;
-				
+
+		// Give a message if keyboard/user interface is locked.
+		// This must be done after remembering the touchX/Y positions as they are needed to unlock
+		if (keyboardLocked) {
+			keyPressed(0);
+			return;
+		}		
+		
 		// when these statements are reached, no double tap action has been executed,
 		// so check here if there's currently already a TimerTask waiting for a single tap.
 		// If yes, perform the current single tap action immediately before starting the next TimerTask
