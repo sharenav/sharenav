@@ -35,8 +35,7 @@ public class IconMenuPage extends LayoutManager {
 	
 	/** active ele */
 	public int rememberEleId = 0;
-	public int gridHor;
-	public int gridVer;
+
 	
 	/** the horizontal offset the icons on this page should be drawn at */
 	public volatile int dragOffsX = 0;
@@ -49,9 +48,6 @@ public class IconMenuPage extends LayoutManager {
 		this.numRows = numRows;
 		this.actionPerformer = actionPerformer;
 		setCursor(rememberEleId);
-		// divide the available region into a grid making the the number of icon columns and rows fit
-		gridHor = 100 / numCols;
-		gridVer = 100 / numRows;
 	}
 
 	public void loadIconBackgroundImage() {
