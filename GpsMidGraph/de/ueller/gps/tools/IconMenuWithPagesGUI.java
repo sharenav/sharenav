@@ -100,6 +100,15 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 	}
 
 	public IconMenuPage createAndAddMenuPage(String pageTitle, int numCols, int numRows) {
+		// swap numCols with numRows if this makes icons bigger
+		if (this.maxX - this.minX > this.maxY - this.minY && numRows > numCols
+				||
+			this.maxX - this.minX < this.maxY - this.minY && numRows < numCols
+		) {
+			int tmp = numCols;
+			numCols = numRows;
+			numRows = tmp;
+		}
 		IconMenuPage imp = new IconMenuPage( pageTitle, actionPerformer, numCols, numRows, minX, calcIconMenuMinY(), maxX, calcIconMenuMaxY());
 		iconMenuPages.addElement(imp);
 		recreateTabButtonsRequired = true;
@@ -207,6 +216,18 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 			imp.maxX = maxX;
 			imp.minY = calcIconMenuMinY();
 			imp.maxY = calcIconMenuMaxY();
+			// swap numCols with numRows if this makes icons bigger
+			if (imp.maxX - imp.minX > imp.maxY - imp.minY && imp.numRows > imp.numCols
+					||
+				imp.maxX - imp.minX < imp.maxY - imp.minY && imp.numRows < imp.numCols
+			) {
+				int tmp = imp.numCols;
+				imp.numCols = imp.numRows;
+				imp.numRows = tmp;
+			}
+
+			
+			
 			imp.unloadIcons();
 		}
 	}
