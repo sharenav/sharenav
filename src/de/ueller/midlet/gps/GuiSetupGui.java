@@ -8,13 +8,15 @@ import javax.microedition.lcdui.*;
 
 import de.ueller.gps.data.Configuration;
 
+import de.enough.polish.util.Locale;
+
 
 public class GuiSetupGui extends Form implements CommandListener {
 	private ChoiceGroup guiOpts;
 
 	// commands
 	private static final Command CMD_SAVE = new Command("Ok", Command.ITEM, 2);
-	private static final Command CMD_CANCEL = new Command("Cancel", Command.BACK, 3);
+	private static final Command CMD_CANCEL = new Command(Locale.get("guisetupgui.Cancel")/*Cancel*/, Command.BACK, 3);
 	
 	// other
 	private GpsMidDisplayable parent;
@@ -23,17 +25,17 @@ public class GuiSetupGui extends Form implements CommandListener {
 	private TextField memField;
 	
 	public GuiSetupGui(GpsMidDisplayable parent, boolean initialSetup) {
-		super("GUI Options");
+		super(Locale.get("guisetupgui.GUIOptions")/*GUI Options*/);
 		this.parent = parent;
 		this.initialSetup = initialSetup;
 		try {
 			String [] guis = new String[5];
-			guis[0] = "use icon menu";
-			guis[1] = "fullscreen icon menu";
-			guis[2] = "large tab buttons";
-			guis[3] = "icons mapped on keys";
-			guis[4] = "optimise for routing";
-			guiOpts = new ChoiceGroup("Icon Menu:", Choice.MULTIPLE, guis ,null);
+			guis[0] = Locale.get("guisetupgui.UseIconMenu")/*use icon menu*/;
+			guis[1] = Locale.get("guisetupgui.FullscreenIconMenu")/*fullscreen icon menu*/;
+			guis[2] = Locale.get("guisetupgui.LargeTabButtons")/*large tab buttons*/;
+			guis[3] = Locale.get("guisetupgui.IconsMappedOnKeys")/*icons mapped on keys*/;
+			guis[4] = Locale.get("guisetupgui.OptimiseForRouting")/*optimise for routing*/;
+			guiOpts = new ChoiceGroup(Locale.get("guisetupgui.IconMenu")/*Icon Menu:*/, Choice.MULTIPLE, guis ,null);
 			guiOpts.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS));
 			guiOpts.setSelectedIndex(1, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN));
 			guiOpts.setSelectedIndex(2, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_BIG_TAB_BUTTONS));
@@ -45,7 +47,7 @@ public class GuiSetupGui extends Form implements CommandListener {
 				mem=Runtime.getRuntime().totalMemory();
 			}
 			mem=mem/1024;
-			memField = new TextField("Define maxMem (kbyte)",
+			memField = new TextField(Locale.get("guisetupgui.DefineMaxMem")/*Define maxMem (kbyte)*/,
 					Long.toString(mem), 8, TextField.DECIMAL);
 			append(memField);
 			
