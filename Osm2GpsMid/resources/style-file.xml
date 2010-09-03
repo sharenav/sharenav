@@ -54,6 +54,7 @@ scale alias 1: zoomed out 21x
 	<!-- Map Screen -->
 	<color of="map_background" is="009BFF9B" isAtNight="00002200"/>
 	<color of="map_text" is="00000000" isAtNight="00FFFFFF"/>
+	<color of="map_touched_button_background" is="00FFFF77" isAtNight="00FFFF77"/>
 	<color of="speed_background" is="009BFF9B"/>
 	<color of="speed_text" is="00000000"/>
 	<color of="titleBar_background" is="00FFFFFF" isAtNight="00222222"/>
@@ -79,7 +80,7 @@ scale alias 1: zoomed out 21x
 	<color of="scalebar" is="00000000" isAtNight="00FFFFFF"/>
 	<color of="zoom_button" is="00000000" isAtNight="00FFFFFF"/>
 	<color of="zoom_text" is="00000000" isAtNight="00FFFFFF" />
-	<color of="compass_direction_background" is="00FFFF96" isAtNight="00000000"/>
+	<color of="compass_direction_background" is="00FFFFC0" isAtNight="00000000"/>
 	<color of="compass_direction_text" is="00000000" isAtNight="00FFFFFF"/>
 	<color of="speeding_sign_border" is="00FF0000"/>
 	<color of="speeding_sign_inner" is="00FFFFFF"/>
@@ -2079,7 +2080,7 @@ scale alias 1: zoomed out 21x
 				<showName style = "area"/> 
 				<isArea area = "false"/>
 				<scale scale = "12"/>
-  				<lineColor color = "000000CC" colorAtNight="0000009A"/>  <!-- same as natural=water -->
+  				<lineColor color = "00005555" colorAtNight="0000009A"/>  <!-- same as natural=water -->
   				<wayWidth width="10" />
 				<force_to layer = "-2"/>
 			</Wvalue>
@@ -2102,7 +2103,7 @@ scale alias 1: zoomed out 21x
 				<showName style = "area"/> 
 				<isArea area = "false"/>
 				<scale scale = "12"/>
-  				<lineColor color = "000000CC" colorAtNight="0000009A"/>  <!-- same as natural=water -->
+  				<lineColor color = "00005555" colorAtNight="0000009A"/>  <!-- same as natural=water -->
   				<wayWidth width="10" />
 				<force_to layer = "-2"/>
 			</Wvalue>
@@ -2149,7 +2150,7 @@ scale alias 1: zoomed out 21x
 				<!-- take care of natural=coastline area handling (see https://sourceforge.net/tracker/index.php?func=detail&aid=3041068&group_id=192084&atid=939974 )  -->
   				<ignoreOsmAreaTag ignore = "true"/>
   				<scale scale = "6"/>
-  				<lineColor color = "000000CC" colorAtNight="0000009A"/>  <!-- same as natural=water -->
+  				<lineColor color = "00005555" colorAtNight="0000009A"/>  <!-- same as natural=water -->
   				<wayWidth width="10" />
 				<force_to layer = "-2"/>
 			</Wvalue>  			

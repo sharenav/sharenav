@@ -51,34 +51,35 @@ scale alias 1: zoomed out 21x
   <version release="0.6.0"/>
   <colors>
 	<!-- Map Screen -->
-	<color of="map_background" is="009BFF9B" isAtNight="006BC06B"/>
-	<color of="map_text" is="00000000"/>
+	<color of="map_background" is="009BFF9B" isAtNight="00002200"/>
+	<color of="map_text" is="00000000" isAtNight="00FFFFFF"/>
+	<color of="map_touched_button_background" is="00FFFF77" isAtNight="00FFFF77"/>
 	<color of="speed_background" is="009BFF9B"/>
 	<color of="speed_text" is="00000000"/>
-	<color of="titleBar_background" is="00FFFFFF" isAtNight="0000A000"/>
-	<color of="titleBar_text" is="00000000" isAtNight="00000000"/>
-	<color of="wayName_background" is="00FFFFFF" isAtNight="00000000"/>
-	<color of="wayName_text" is="00000000" isAtNight="0000A000"/>
-	<color of="area_label_text" is="00000000"/>	
-	<color of="way_label_text" is="00000000"/>	
-	<color of="way_label_text_abbreviated" is="00646464"/>	
-	<color of="poi_label_text" is="00000000"/>	
-	<color of="wayPoint_label_text" is="00000000"/>	
-	<color of="oneway_arrow" is="00323232"/>	
-	<color of="oneway_arrow_non_fitting" is="00505050"/>	
-	<color of="recording_suspended_text" is="000000FF"/>
+	<color of="titleBar_background" is="00FFFFFF" isAtNight="00222222"/>
+	<color of="titleBar_text" is="00000000" isAtNight="00FFFFFF"/>
+	<color of="wayName_background" is="00FFFFFF" isAtNight="00222222"/>
+	<color of="wayName_text" is="00000000" isAtNight="00FFFFFF"/>
+	<color of="area_label_text" is="00000000" isAtNight="00FFFFFF"/>	
+	<color of="way_label_text" is="00000000" isAtNight="00FFFFFF"/>	
+	<color of="way_label_text_abbreviated" is="00646464" isAtNight="00FFFFFF"/>	
+	<color of="poi_label_text" is="00000000" isAtNight="00FFFFFF"/>	
+	<color of="wayPoint_label_text" is="00000000" isAtNight="00FFFFFF"/>	
+	<color of="oneway_arrow" is="00323232" isAtNight="00323232"/>	
+	<color of="oneway_arrow_non_fitting" is="00505050" isAtNight="00505050"/>	
+	<color of="recording_suspended_text" is="000000FF" isAtNight="00FF0000"/>
 	<color of="recording_on_text" is="00FF0000"/>
 	<color of="cellid_log_on_text" is="00FFFF96"/>
-	<color of="cellid_log_on_attempting_text" is="00FF5656"/>
-	<color of="audioRec_text" is="00FF0000"/>
-	<color of="dest_text" is="00000000"/>
+	<color of="cellid_log_on_attempting_text" is="00FF5656" isAtNight="00FF0000"/>
+	<color of="audioRec_text" is="00FF0000" isAtNight="00FF0000"/>
+	<color of="dest_text" is="00000000" isAtNight="00FF0000"/>
 	<color of="dest_line" is="00FF3232"/>
-	<color of="map_cursor" is="00000000"/>
-	<color of="map_posindicator" is="00000000"/>
-	<color of="scalebar" is="00000000"/>
-	<color of="zoom_button" is="00000000"/>
-	<color of="zoom_text" is="00000000"/>
-	<color of="compass_direction_background" is="00FFFF96"/>
+	<color of="map_cursor" is="00000000" isAtNight="00FFFFFF"/>
+	<color of="map_posindicator" is="00000000" isAtNight="00FFFFFF"/>
+	<color of="scalebar" is="00000000" isAtNight="00FFFFFF"/>
+	<color of="zoom_button" is="00000000" isAtNight="00FFFFFF"/>
+	<color of="zoom_text" is="00000000" isAtNight="00FFFFFF" />
+	<color of="compass_direction_background" is="00FFFFC0" isAtNight="00000000"/>
 	<color of="compass_direction_text" is="00000000"/>
 	<color of="speeding_sign_border" is="00FF0000"/>
 	<color of="speeding_sign_inner" is="00FFFFFF"/>

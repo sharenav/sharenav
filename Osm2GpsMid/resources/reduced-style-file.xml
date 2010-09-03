@@ -54,6 +54,7 @@ scale alias 1: zoomed out 21x
 	<!-- Map Screen -->
 	<color of="map_background" is="009BFF9B" isAtNight="00002200"/>
 	<color of="map_text" is="00000000" isAtNight="00FFFFFF"/>
+	<color of="map_touched_button_background" is="00FFFF77" isAtNight="00FFFF77"/>
 	<color of="speed_background" is="009BFF9B"/>
 	<color of="speed_text" is="00000000"/>
 	<color of="titleBar_background" is="00FFFFFF" isAtNight="00222222"/>
@@ -79,7 +80,7 @@ scale alias 1: zoomed out 21x
 	<color of="scalebar" is="00000000" isAtNight="00FFFFFF"/>
 	<color of="zoom_button" is="00000000" isAtNight="00FFFFFF"/>
 	<color of="zoom_text" is="00000000" isAtNight="00FFFFFF" />
-	<color of="compass_direction_background" is="00FFFF96" isAtNight="00000000"/>
+	<color of="compass_direction_background" is="00FFFFC0" isAtNight="00000000"/>
 	<color of="compass_direction_text" is="00000000" isAtNight="00FFFFFF"/>
 	<color of="speeding_sign_border" is="00FF0000"/>
 	<color of="speeding_sign_inner" is="00FFFFFF"/>
