@@ -2470,41 +2470,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		
 		// check for double press
 		if (!keyboardLocked && currTime - pressedPointerTime < DOUBLETAP_MAXDELAY) {
-			// if not double tapping a control, then the map area must be double tapped and we zoom in
-			if (tl.getElementIdAtPointer(touchX, touchY) < 0) {
-				// if this is a double press on the map, cancel the timer checking for a single press
-				if (singleTapTimerTask != null) {
-					singleTapTimerTask.cancel();
-				}
-				// if pointer was dragged much, do not recognize a double tap on the map
-				if (pointerDraggedMuch) {
-					return;
-				}
-				//#debug debug
-				logger.debug("double tap map");
-				pointerActionDone = true;
-				commandAction(ZOOM_IN_CMD);
-				repaint();
-				return;
-			} else if (tl.getTouchedElement() == tl.getElementAtPointer(x, y) ){
-			// double tapping a control
-				int actionId = tl.getActionIdDoubleAtPointer(x, y);
-				//#debug debug
-				logger.debug("double tap button: " + actionId + " x: " + x + " y: " + x);
-				if (actionId > 0) {
-					// if this is a double press on a control, cancel the timer checking for a single press
-					if (singleTapTimerTask != null) {
-						singleTapTimerTask.cancel();
-					}
-					pointerActionDone = true;
-					commandAction(actionId);
-					tl.clearTouchedElement();
-					repaint();
-					return;
-				} else {
-					singleTap(x, y);
-				}
-			}
+			doubleTap(x, y);
 		}
 		
 		// Remember the time and position the pointer was pressed after the check for double tap,
@@ -2534,36 +2500,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				// and the pointer did not move or if it was pressed on a control and not moved much
 				if (!pointerActionDone && !pointerDraggedMuch) {
 					if (System.currentTimeMillis() - pressedPointerTime >= LONGTAP_DELAY){
-						pointerActionDone = true;
-						// if not tapping a control, then the map area must be tapped so we do the long tap action for the map area
-						if (tl.getElementIdAtPointer(touchX, touchY) < 0 && panProjection != null) {							
-							//#debug debug
-							logger.debug("long tap map");										
-							//#if polish.api.online
-							// long tap map to open a place-related menu
-							// use the place of touch instead of old center as position,
-							// set as new center
-							pickPointEnd=panProjection.inverse(touchX,touchY, pickPointEnd);
-							center.radlat=centerPointerPressedN.radlat-(pickPointEnd.radlat-pickPointStart.radlat);
-							center.radlon=centerPointerPressedN.radlon-(pickPointEnd.radlon-pickPointStart.radlon);
-							Position oPos = new Position(center.radlat, center.radlon,
-										     0.0f, 0.0f, 0.0f, 0, 0);
-							imageCollector.newDataReady();
-							gpsRecenter = false;
-							commandAction(ONLINE_INFO_CMD);
-							//#endif
-							return;
-						// long tapping a control											
-						} else {
-							int actionId = tl.getActionIdLongAtPointer(touchX, touchY);
-							if (actionId > 0) {
-								tl.clearTouchedElement();
-								//#debug debug
-								logger.debug("long tap button: " + actionId + " x: " + touchX + " y: " + touchY);
-								commandAction(actionId);
-								repaint();
-							}
-						}
+						longTap();
 					}
 				}
 			}
@@ -2724,6 +2661,77 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		}
 	}
 	
+	private void doubleTap(int x, int y) {
+		// if not double tapping a control, then the map area must be double tapped and we zoom in
+		if (tl.getElementIdAtPointer(touchX, touchY) < 0) {
+			// if this is a double press on the map, cancel the timer checking for a single press
+			if (singleTapTimerTask != null) {
+				singleTapTimerTask.cancel();
+			}
+			// if pointer was dragged much, do not recognize a double tap on the map
+			if (pointerDraggedMuch) {
+				return;
+			}
+			//#debug debug
+			logger.debug("double tap map");
+			pointerActionDone = true;
+			commandAction(ZOOM_IN_CMD);
+			repaint();
+			return;
+		} else if (tl.getTouchedElement() == tl.getElementAtPointer(x, y) ){
+		// double tapping a control
+			int actionId = tl.getActionIdDoubleAtPointer(x, y);
+			//#debug debug
+			logger.debug("double tap button: " + actionId + " x: " + x + " y: " + x);
+			if (actionId > 0) {
+				// if this is a double press on a control, cancel the timer checking for a single press
+				if (singleTapTimerTask != null) {
+					singleTapTimerTask.cancel();
+				}
+				pointerActionDone = true;
+				commandAction(actionId);
+				tl.clearTouchedElement();
+				repaint();
+				return;
+			} else {
+				singleTap(x, y);
+			}
+		}
+	}
+	
+	private void longTap() {
+		pointerActionDone = true;
+		// if not tapping a control, then the map area must be tapped so we do the long tap action for the map area
+		if (tl.getElementIdAtPointer(touchX, touchY) < 0 && panProjection != null) {							
+			//#debug debug
+			logger.debug("long tap map");										
+			//#if polish.api.online
+			// long tap map to open a place-related menu
+			// use the place of touch instead of old center as position,
+			// set as new center
+			pickPointEnd=panProjection.inverse(touchX,touchY, pickPointEnd);
+			center.radlat=centerPointerPressedN.radlat-(pickPointEnd.radlat-pickPointStart.radlat);
+			center.radlon=centerPointerPressedN.radlon-(pickPointEnd.radlon-pickPointStart.radlon);
+			Position oPos = new Position(center.radlat, center.radlon,
+						     0.0f, 0.0f, 0.0f, 0, 0);
+			imageCollector.newDataReady();
+			gpsRecenter = false;
+			commandAction(ONLINE_INFO_CMD);
+			//#endif
+			return;
+		// long tapping a control											
+		} else {
+			int actionId = tl.getActionIdLongAtPointer(touchX, touchY);
+			if (actionId > 0) {
+				tl.clearTouchedElement();
+				//#debug debug
+				logger.debug("long tap button: " + actionId + " x: " + touchX + " y: " + touchY);
+				commandAction(actionId);
+				repaint();
+			}
+		}
+	}
+
 	
 	/**
 	 * Returns the command used to go to the data screens.
