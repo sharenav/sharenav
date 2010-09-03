@@ -508,7 +508,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		backlights[i++] = Locale.get("guidiscover.withSiemensAPI")/*with Siemens API*/;
 		//#endif
 		//#if polish.android
-		backlights[i++] = "with Android wakelock";
+		backlights[i++] = Locale.get("guidiscover.withAndroidWakelock")/*with Android wakelock*/;
 		//#endif
 
 		backlightOpts = new ChoiceGroup(Locale.get("guidiscover.BacklightOptions")/*Backlight Options:*/,
