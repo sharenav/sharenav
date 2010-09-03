@@ -766,9 +766,12 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	*/
 	public void setFullScreenMode(boolean fullScreen) {
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS)) {
+			//#ifndef polish.android
 			if (fullScreen) {
 				super.removeCommand(CMDS[ICON_MENU]);
-			} else {
+			} else
+			//#endif
+			{
 				super.addCommand(CMDS[ICON_MENU]);
 			}
 		}
