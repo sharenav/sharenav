@@ -226,7 +226,11 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	private static int touchX = 0;
 	/** y position display was touched last time (on pointerPressed() ) */
 	private static int touchY = 0;
-	/** center when display was touched last time (on pointerPressed() ) */
+	/** x position display was released last time (on pointerReleased() ) */
+	private static int touchReleaseX = 0;
+	/** y position display was released last time (on pointerReleased() ) */
+	private static int touchReleaseY = 0;
+	/** center when display was touched last time (on pointerReleased() ) */
 	private static Node	centerPointerPressedN = new Node();
 	private static Node	pickPointStart = new Node();
 	private static Node	pickPointEnd = new Node();
@@ -2498,7 +2502,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					repaint();
 					return;
 				} else {
-					singleTap();
+					singleTap(x, y);
 				}
 			}
 		}
@@ -2584,11 +2588,13 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		}
 		
 		if (!pointerActionDone && !keyboardLocked) {
+			touchReleaseX = x;
+			touchReleaseY = y;
 			// check for a single tap in a timer started after the maximum double tap delay
 			// if the timer will not be cancelled by a double tap, the timer will execute the single tap command
 			singleTapTimerTask = new TimerTask() {
 				public void run() {
-					singleTap();
+					singleTap(touchReleaseX, touchReleaseY);
 				}
 			};
 			try {
@@ -2675,7 +2681,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		}
 	}
 	
-	private void singleTap() {
+	private void singleTap(int x, int y) {
 		pointerActionDone = true;
 		// if not tapping a control, then the map area must be tapped so we set the touchable button sizes
 		if (tl.getElementIdAtPointer(touchX, touchY) < 0) {							
@@ -2687,9 +2693,9 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			logger.debug("single tap map");
 			tl.toggleOnScreenButtonSize();
 			repaint();
-		} else if (tl.getTouchedElement() != null) {
+		} else if (tl.getElementIdAtPointer(x, y) == tl.getElementIdAtPointer(touchX, touchY)) {
 			tl.clearTouchedElement();
-			int actionId = tl.getActionIdAtPointer(touchX, touchY);
+			int actionId = tl.getActionIdAtPointer(x, y);
 			if (actionId > 0) {
 				// #debug debug
 				logger.debug("single tap button: " + actionId + " x: " + touchX + " y: " + touchY);
