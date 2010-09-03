@@ -745,6 +745,11 @@ public class GuiSearch extends Canvas implements CommandListener,
 			if (carret > 0){
 				searchCanon.deleteCharAt(--carret);
 			}
+		} else if (keyCode == -111) {
+			/**
+			 * Do not reSearch() after Android MENU key is pressed, otherwise selected result looses focus
+			 **/
+			return;
 		} else {
 			// filter out special keys such as shift key (-50), volume keys, camera keys...
 			if (keyCode > 0) {
