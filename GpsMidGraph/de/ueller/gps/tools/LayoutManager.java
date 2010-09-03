@@ -183,6 +183,19 @@ public class LayoutManager extends Vector {
 		return getActionIdShiftedAtPointer(x, y, 16);
 	}
 	
+	public boolean isAnyActionIdAtPointer(int x, int y) {
+		int i = getElementIdAtPointer(x, y);
+		if (i != -1) {			
+			i = this.getElementAt(i).actionID;
+			if (i != -1) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	
+	
 	public int getActionIdShiftedAtPointer(int x, int y, int shift) {
 		int i = getElementIdAtPointer(x, y);
 		if (i != -1) {			

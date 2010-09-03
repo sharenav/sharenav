@@ -2458,7 +2458,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		int touchedElementId = tl.getElementIdAtPointer(x, y);
 		if (touchedElementId >= 0 && (!keyboardLocked || tl.getActionIdAtPointer(x, y) == Trace.ICON_MENU)
 				&&
-			(tl.getActionIdAtPointer(x, y) >= 0 || tl.getActionIdDoubleAtPointer(x, y) >= 0 || tl.getActionIdLongAtPointer(x, y) >= 0)  
+			tl.isAnyActionIdAtPointer(x, y)
 		) {
 			tl.setTouchedElement((LayoutElement) tl.elementAt(touchedElementId));
 			repaint();
@@ -2617,7 +2617,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			repaint();
 		}
 		// If the initially touched element is reached again during dragging, highlight it 
-		if (e != null && tl.getTouchedElement() == e) {
+		if (tl.getElementAtPointer(touchX, touchY) == e && tl.isAnyActionIdAtPointer(x, y)) {
 			tl.setTouchedElement(e);
 			repaint();
 		}
@@ -2687,7 +2687,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			logger.debug("single tap map");
 			tl.toggleOnScreenButtonSize();
 			repaint();
-		} else {
+		} else if (tl.getTouchedElement() != null) {
 			tl.clearTouchedElement();
 			int actionId = tl.getActionIdAtPointer(touchX, touchY);
 			if (actionId > 0) {
