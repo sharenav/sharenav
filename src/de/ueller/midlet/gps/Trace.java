@@ -222,11 +222,11 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	
 	int showAddons = 0;
 	
-	/** x position display was touched last time */
+	/** x position display was touched last time (on pointerPressed() ) */
 	private static int touchX = 0;
-	/** y position display was touched last time */
+	/** y position display was touched last time (on pointerPressed() ) */
 	private static int touchY = 0;
-	/** center when display was touched last time */
+	/** center when display was touched last time (on pointerPressed() ) */
 	private static Node	centerPointerPressedN = new Node();
 	private static Node	pickPointStart = new Node();
 	private static Node	pickPointEnd = new Node();
@@ -239,6 +239,10 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	 * indicates if the next release event is valid or the corresponding pointer pressing has already been handled
 	 */
 	private volatile boolean pointerActionDone;
+	/** timer checking for single tap */
+	private volatile TimerTask singleTapTimerTask = null;
+	/** timer checking for long tap */
+	private volatile TimerTask longTapTimerTask = null;
 	/**
 	 * Indicates that there was any drag event since the last pointerPressed
 	 */
@@ -247,14 +251,11 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	 * Indicates that there was a rather far drag event since the last pointerPressed
 	 */
 	private static volatile boolean pointerDraggedMuch = false;
-	/** indicates whether the pointer is currently pressed down */
-	private static volatile boolean pointerIsPressed = false;
 	/** indicates whether we already are checking for a single tap in the TimerTask */
 	private static volatile boolean checkingForSingleTap = false;
 	
-	private final int DOUBLETAP_MAXDELAY = 500;
+	private final int DOUBLETAP_MAXDELAY = 300;
 	private final int LONGTAP_DELAY = 1500;
-	private final int SINGLETAP_MINDELAY = 300;
 	
 	public volatile boolean routeCalc=false;
 	public Tile tiles[] = new Tile[6];
@@ -2440,7 +2441,6 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	protected void pointerPressed(int x, int y) {
 		updateLastUserActionTime();
 		long currTime = System.currentTimeMillis();
-		pointerIsPressed = true;
 		pointerDragged = false;
 		pointerDraggedMuch = false;
 		pointerActionDone = false;
@@ -2453,27 +2453,52 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		} else {
 			panProjection = null;
 		}
+
+		// remember the LayoutElement the pointer is pressed down at, this will also highlight it on the display
+		int touchedElementId = tl.getElementIdAtPointer(x, y);
+		if (touchedElementId >= 0 && (!keyboardLocked || tl.getActionIdAtPointer(x, y) == Trace.ICON_MENU)
+				&&
+			(tl.getActionIdAtPointer(x, y) >= 0 || tl.getActionIdDoubleAtPointer(x, y) >= 0 || tl.getActionIdLongAtPointer(x, y) >= 0)  
+		) {
+			tl.setTouchedElement((LayoutElement) tl.elementAt(touchedElementId));
+			repaint();
+		}
 		
 		// check for double press
-		if (!keyboardLocked && !pointerDraggedMuch && currTime - pressedPointerTime < DOUBLETAP_MAXDELAY) {
+		if (!keyboardLocked && currTime - pressedPointerTime < DOUBLETAP_MAXDELAY) {
 			// if not double tapping a control, then the map area must be double tapped and we zoom in
 			if (tl.getElementIdAtPointer(touchX, touchY) < 0) {
+				// if this is a double press on the map, cancel the timer checking for a single press
+				if (singleTapTimerTask != null) {
+					singleTapTimerTask.cancel();
+				}
+				// if pointer was dragged much, do not recognize a double tap on the map
+				if (pointerDraggedMuch) {
+					return;
+				}
 				//#debug debug
 				logger.debug("double tap map");
 				pointerActionDone = true;
 				commandAction(ZOOM_IN_CMD);
 				repaint();
 				return;
-			} else {
+			} else if (tl.getTouchedElement() == tl.getElementAtPointer(x, y) ){
 			// double tapping a control
-				int actionId = tl.getActionIdDoubleAtPointer(touchX, touchY);
+				int actionId = tl.getActionIdDoubleAtPointer(x, y);
 				//#debug debug
-				logger.debug("double tap button: " + actionId + " x: " + touchX + " y: " + touchY);
+				logger.debug("double tap button: " + actionId + " x: " + x + " y: " + x);
 				if (actionId > 0) {
+					// if this is a double press on a control, cancel the timer checking for a single press
+					if (singleTapTimerTask != null) {
+						singleTapTimerTask.cancel();
+					}
 					pointerActionDone = true;
 					commandAction(actionId);
+					tl.clearTouchedElement();
 					repaint();
 					return;
+				} else {
+					singleTap();
 				}
 			}
 		}
@@ -2491,103 +2516,115 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			return;
 		}		
 		
-		// when these statements are reached, no double tap action has been executed,
-		// so check here if there's currently already a TimerTask waiting for a single tap.
-		// If yes, perform the current single tap action immediately before starting the next TimerTask
-		if (checkingForSingleTap && !pointerDraggedMuch) {
-			singleTap();
-			pointerActionDone = false;
-		}
-		
-		checkingForSingleTap = true;
-		TimerTask singleTapTimerTask = new TimerTask() {
+//		// when these statements are reached, no double tap action has been executed,
+//		// so check here if there's currently already a TimerTask waiting for a single tap.
+//		// If yes, perform the current single tap action immediately before starting the next TimerTask
+//		if (checkingForSingleTap && !pointerDraggedMuch) {
+//			singleTap();
+//			pointerActionDone = false;
+//		}
+//		
+		longTapTimerTask = new TimerTask() {
 			public void run() {
-				if (!pointerActionDone) {
-					// if pointer is already released, then this is a single click
-					if (!pointerIsPressed) {
-						singleTap();
-					} else if (!pointerDraggedMuch){
-						TimerTask longTapTimerTask = new TimerTask() {
-							public void run() {
-								// if no action (e.g. from double tap) is already done
-								// and the pointer did not move or if it was pressed on a control and not moved much
-								if (!pointerActionDone && !pointerDraggedMuch) {
-									// if the pointer is released after the time a single tap would have been triggered by the timer
-									// but before a long tap would happen, handle this also as a single tap
-									if (!pointerIsPressed) {							
-										singleTap();
-									// else pointer is still pressed down and if this is long enough then this is a long tap
-									} else if (System.currentTimeMillis() - pressedPointerTime >= LONGTAP_DELAY){
-										// if not tapping a control, then the map area must be tapped so we do the long tap action for the map area
-										if (tl.getElementIdAtPointer(touchX, touchY) < 0 && panProjection != null) {							
-											//#debug debug
-											logger.debug("long tap map");										
-											//#if polish.api.online
-											// long tap map to open a place-related menu
-											// use the place of touch instead of old center as position,
-											// set as new center
-											pickPointEnd=panProjection.inverse(touchX,touchY, pickPointEnd);
-											center.radlat=centerPointerPressedN.radlat-(pickPointEnd.radlat-pickPointStart.radlat);
-											center.radlon=centerPointerPressedN.radlon-(pickPointEnd.radlon-pickPointStart.radlon);
-											Position oPos = new Position(center.radlat, center.radlon,
-														     0.0f, 0.0f, 0.0f, 0, 0);
-											imageCollector.newDataReady();
-											gpsRecenter = false;
-											commandAction(ONLINE_INFO_CMD);
-											//#endif
-											return;
-										// long tapping a control											
-										} else {
-											int actionId = tl.getActionIdLongAtPointer(touchX, touchY);
-											if (actionId > 0) {
-												//#debug debug
-												logger.debug("long tap button: " + actionId + " x: " + touchX + " y: " + touchY);
-												commandAction(actionId);
-												repaint();
-											}
-										}
-									}
-								}
+				// if no action (e.g. from double tap) is already done
+				// and the pointer did not move or if it was pressed on a control and not moved much
+				if (!pointerActionDone && !pointerDraggedMuch) {
+					if (System.currentTimeMillis() - pressedPointerTime >= LONGTAP_DELAY){
+						pointerActionDone = true;
+						// if not tapping a control, then the map area must be tapped so we do the long tap action for the map area
+						if (tl.getElementIdAtPointer(touchX, touchY) < 0 && panProjection != null) {							
+							//#debug debug
+							logger.debug("long tap map");										
+							//#if polish.api.online
+							// long tap map to open a place-related menu
+							// use the place of touch instead of old center as position,
+							// set as new center
+							pickPointEnd=panProjection.inverse(touchX,touchY, pickPointEnd);
+							center.radlat=centerPointerPressedN.radlat-(pickPointEnd.radlat-pickPointStart.radlat);
+							center.radlon=centerPointerPressedN.radlon-(pickPointEnd.radlon-pickPointStart.radlon);
+							Position oPos = new Position(center.radlat, center.radlon,
+										     0.0f, 0.0f, 0.0f, 0, 0);
+							imageCollector.newDataReady();
+							gpsRecenter = false;
+							commandAction(ONLINE_INFO_CMD);
+							//#endif
+							return;
+						// long tapping a control											
+						} else {
+							int actionId = tl.getActionIdLongAtPointer(touchX, touchY);
+							if (actionId > 0) {
+								tl.clearTouchedElement();
+								//#debug debug
+								logger.debug("long tap button: " + actionId + " x: " + touchX + " y: " + touchY);
+								commandAction(actionId);
+								repaint();
 							}
-						};
-						try {
-							// set timer to continue check if this is a long tap
-							GpsMid.getTimer().schedule(longTapTimerTask, LONGTAP_DELAY - SINGLETAP_MINDELAY);
-						} catch (Exception e) {
-							logger.error("No LongTap TimerTask: " + e.toString());
 						}
 					}
 				}
-				checkingForSingleTap = false;
 			}
 		};
 		try {
-			// set timer to check if this is a single tap
-			GpsMid.getTimer().schedule(singleTapTimerTask, SINGLETAP_MINDELAY);
+			// set timer to continue check if this is a long tap
+			GpsMid.getTimer().schedule(longTapTimerTask, LONGTAP_DELAY);
 		} catch (Exception e) {
-			logger.error("No SingleTap TimerTask: " + e.toString());
+			logger.error("No LongTap TimerTask: " + e.toString());
 		}
-		return;
 	}
 	
-	protected void pointerReleased(int x, int y) {
-		pointerIsPressed = false;
-		if (pointerActionDone || keyboardLocked) {
-			return;
-		}		
+	protected void pointerReleased(int x, int y) {	
+		// releasing the pointer cancels the check for long tap
+		if (longTapTimerTask != null) {
+			longTapTimerTask.cancel();
+		}
+		// releasing the pointer will clear the highlighting of the touched element
+		if (tl.getTouchedElement() != null) {
+			tl.clearTouchedElement();
+			repaint();
+		}
 		
-		if (pointerDragged) {
-			pointerDragged(x , y);
-			return;
+		if (!pointerActionDone && !keyboardLocked) {
+			// check for a single tap in a timer started after the maximum double tap delay
+			// if the timer will not be cancelled by a double tap, the timer will execute the single tap command
+			singleTapTimerTask = new TimerTask() {
+				public void run() {
+					singleTap();
+				}
+			};
+			try {
+				// set timer to check if this is a single tap
+				GpsMid.getTimer().schedule(singleTapTimerTask, DOUBLETAP_MAXDELAY);
+			} catch (Exception e) {
+				logger.error("No SingleTap TimerTask: " + e.toString());
+			}
+		
+			if (pointerDragged) {
+				pointerDragged(x , y);
+				return;
+			}
 		}
 	}
 	
 	protected void pointerDragged (int x, int y) {
 		updateLastUserActionTime();
+		LayoutElement e = tl.getElementAtPointer(x, y);
+		if (tl.getTouchedElement() != e) {
+			// leaving the touched element cancels the check for long tap
+			if (longTapTimerTask != null) {
+				longTapTimerTask.cancel();
+			}			
+			tl.clearTouchedElement();
+			repaint();
+		}
+		// If the initially touched element is reached again during dragging, highlight it 
+		if (e != null && tl.getTouchedElement() == e) {
+			tl.setTouchedElement(e);
+			repaint();
+		}
+		
 		if (pointerActionDone) {
 			return;
-		}
-
+		}		
 		// check if there's been much movement, do this before the slide lock/unlock
 		// to avoid a single tap action when not sliding enough
 		if (Math.abs(x - Trace.touchX) > 8
@@ -2623,7 +2660,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			return;
 		}
 		
-		if (imageCollector != null && panProjection != null) {
+		if (tl.getElementIdAtPointer(touchX, touchY) < 0 && imageCollector != null && panProjection != null) {
 			// difference between where the pointer was pressed and is currently dragged
 //			int diffX = Trace.touchX - x;
 //			int diffY = Trace.touchY - y;
@@ -2639,17 +2676,19 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	}
 	
 	private void singleTap() {
-		if (pointerDraggedMuch) {
-			return;
-		}
 		pointerActionDone = true;
 		// if not tapping a control, then the map area must be tapped so we set the touchable button sizes
 		if (tl.getElementIdAtPointer(touchX, touchY) < 0) {							
+			// if pointer was dragged much, do not recognize a single tap on the map
+			if (pointerDraggedMuch) {
+				return;
+			}
 			// #debug debug
 			logger.debug("single tap map");
 			tl.toggleOnScreenButtonSize();
 			repaint();
 		} else {
+			tl.clearTouchedElement();
 			int actionId = tl.getActionIdAtPointer(touchX, touchY);
 			if (actionId > 0) {
 				// #debug debug

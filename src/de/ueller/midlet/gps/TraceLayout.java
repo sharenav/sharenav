@@ -368,7 +368,7 @@ public class TraceLayout extends LayoutManager {
 	protected int getSpecialElementWidth(byte id, String text, Font font) {
 		switch(id) {
 		case SE_SCALEBAR:
-			return scalePx;
+			return scalePx + 1;
 		case SE_SPEEDING_SIGN:
 			return getSpeedingSignWidth(font, text);
 		}

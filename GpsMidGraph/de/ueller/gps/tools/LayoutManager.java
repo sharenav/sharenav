@@ -22,6 +22,9 @@ public class LayoutManager extends Vector {
 	protected int maxY;
 	protected volatile boolean recalcPositionsRequired = true;
 	
+	// element currently touched and thus to be highlighted
+	protected volatile LayoutElement touchedElement = null;
+	
 	/**
 	 * @param minX layout area left
 	 * @param minY layout area top
@@ -121,15 +124,30 @@ public class LayoutManager extends Vector {
 		Font oldFont = g.getFont();
 		for (int i = 0; i < this.size(); i++){
 			e = (LayoutElement) this.elementAt(i);
-			//#debug debug
-			logger.trace("paint element " + i);
-			e.paint(g);
+			if (e == touchedElement) {
+				//#debug debug
+				logger.trace("paint touched element " + i);
+				e.paintHighlighted(g);
+			} else {
+				//#debug debug
+				logger.trace("paint element " + i);
+				e.paint(g);
+			}
 		}
 		g.setFont(oldFont);
 		g.setColor(oldColor);
-	}				
-	
+	}					
 
+	
+	public LayoutElement getElementAtPointer(int x, int y) {
+		int i = getElementIdAtPointer(x, y);
+		if (i >= 0) {
+			return getElementAt(i);
+		}
+		return null;	
+	}
+
+	
 	public int getElementIdAtPointer(int x, int y) {
 		LayoutElement e;
 		for (int i = 0; i < this.size(); i++){
@@ -141,6 +159,18 @@ public class LayoutManager extends Vector {
 		return -1;	
 	}
 
+	public LayoutElement getTouchedElement() {
+		return touchedElement;
+	}
+	
+	public void setTouchedElement(LayoutElement e) {
+		touchedElement = e;
+	}
+
+	public void clearTouchedElement() {
+		touchedElement = null;
+	}
+	
 	public int getActionIdAtPointer(int x, int y) {
 		return getActionIdShiftedAtPointer(x, y, 0);
 	}

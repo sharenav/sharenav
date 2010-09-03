@@ -10,6 +10,7 @@ import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
+import de.ueller.gps.data.Legend;
 import de.ueller.midlet.gps.Logger;
 
 
@@ -561,6 +562,18 @@ public class LayoutElement {
 		return null;
 	}
 
+
+	public void paintHighlighted(Graphics g) {
+		//#debug trace
+		logger.trace("draw highlight box at " + left + "," + top + " size: " + (right-left) + "/" + (bottom - top));
+		g.setColor(Legend.COLORS[Legend.COLOR_MAP_TOUCHED_BUTTON_BACKGROUND]);
+		g.fillRect(left, top, right-left, bottom - top);
+		int oldFlags = flags;
+		int oldBgColor = bgColor;
+		clearFlag(FLAG_BACKGROUND_BOX);
+		paint(g);
+		flags = oldFlags;
+	}
 	
 	public void paint(Graphics g) {
 		if (specialElementID != 0 && textIsValid) {
