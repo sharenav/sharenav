@@ -2080,7 +2080,7 @@ scale alias 1: zoomed out 21x
 				<showName style = "area"/> 
 				<isArea area = "false"/>
 				<scale scale = "12"/>
-  				<lineColor color = "000000CC" colorAtNight="0000009A"/>  <!-- same as natural=water -->
+  				<lineColor color = "00005555" colorAtNight="0000009A"/>
   				<wayWidth width="10" />
 				<force_to layer = "-2"/>
 			</Wvalue>
@@ -2103,7 +2103,7 @@ scale alias 1: zoomed out 21x
 				<showName style = "area"/> 
 				<isArea area = "false"/>
 				<scale scale = "12"/>
-  				<lineColor color = "000000CC" colorAtNight="0000009A"/>  <!-- same as natural=water -->
+  				<lineColor color = "00005555" colorAtNight="0000009A"/>
   				<wayWidth width="10" />
 				<force_to layer = "-2"/>
 			</Wvalue>
@@ -2150,7 +2150,7 @@ scale alias 1: zoomed out 21x
 				<!-- take care of natural=coastline area handling (see https://sourceforge.net/tracker/index.php?func=detail&aid=3041068&group_id=192084&atid=939974 )  -->
   				<ignoreOsmAreaTag ignore = "true"/>
   				<scale scale = "6"/>
-  				<lineColor color = "000000CC" colorAtNight="0000009A"/>  <!-- same as natural=water -->
+  				<lineColor color = "00005555" colorAtNight="0000009A"/>
   				<wayWidth width="10" />
 				<force_to layer = "-2"/>
 			</Wvalue>  			
