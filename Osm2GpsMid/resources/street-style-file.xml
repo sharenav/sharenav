@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE legend SYSTEM "style-file.dtd">
+<!DOCTYPE legend SYSTEM "style-file.dtd" [
+<!ENTITY maxspeed SYSTEM "maxspeed_templates.inc">
+<!ENTITY colors SYSTEM "colors.inc">
+<!ENTITY routemodes SYSTEM "routemodes.inc">
+<!ENTITY tilescale SYSTEM "tilescale.inc">
+<!ENTITY damages SYSTEM "damages.inc">
+]>
 <!--
 This is a sample style file for use with GpsMid. It allows
 to specify which map features get converted from the osm
@@ -659,78 +665,11 @@ scale alias 1: zoomed out 21x
 		</keyW>			
 	</ways>
 
-	<!--
-		Damages describe tags that will modify ways / areas with
-		the colors way_damaged_border, way_damaged_decoration or area_damaged_border	
-		this is taken from http://wiki.openstreetmap.org/wiki/WikiProject_Haiti
-	-->
-	<damages>
-		<damage damageKey="earthquake:damage" damageValues="collapsed_buiding|damaged_infrastructure|landslide" />
-		<damage damageKey="*" damageValues="collapsed" />
-		<damage damageKey="impassable" damageValues="yes" />
-	</damages>
-		
-	<!--
-	Osm2GpsMid will include ways/pois into the first tile level where the way/poi type's scale is at least the tile level's minScale
-	If you zoom out far, GpsMid will only load the tiles of lower scale levels to save memory and performance.
-	-->
-	<tileScaleLevels>
-		<tileScaleLevel level="3" minScale ="20" />
-		<tileScaleLevel level="2" minScale ="18" />
-		<tileScaleLevel level="1" minScale ="15" />
-		<!-- lower scales will be included in tile level 0 -->
-	</tileScaleLevels>
-	
-	<!--
-	Osm2GpsMid will check ways for route access restrictions specified for the route Modes specified in the entry "useRouting" in the properties file
-	e.g. useRouting = "motorcar, bicycle".
-	If restrictionPermit is true, ways having tags matching the restrictionKey and restrictionValues become accessible for routing.
-	If restrictionPermit is missing or false, ways having tags matching the restrictionKey and restrictionValues become inaccessible for routing.
-	-->
-	<routeModes>
-		<routeMode modeName = "motorcar" maxPrepareMeters="500" maxInMeters="899" maxEstimationSpeed="100" applyTurnRestrictions = "true" mainStreetNet="true">
-			<routeAccessRestriction restrictionKey = "motorcar" restrictionValues = "yes|designated" restrictionPermit = "true"/>
-			<routeAccessRestriction restrictionKey = "motorcar" restrictionValues = "no|private"/>
-			<routeAccessRestriction restrictionKey = "motor_vehicle" restrictionValues = "yes|designated" restrictionPermit = "true"/>
-			<routeAccessRestriction restrictionKey = "motor_vehicle" restrictionValues = "no|private"/>
-			<routeAccessRestriction restrictionKey = "access" restrictionValues = "no|private"/>
-			<routeAccessRestriction restrictionKey = "vehicle" restrictionValues = "no|private"/>
-			<!-- http://wiki.openstreetmap.org/wiki/WikiProject_Haiti -->
-			<routeAccessRestriction restrictionKey = "bridge" restrictionValues = "collapsed"/>
-			<routeAccessRestriction restrictionKey = "impassable" restrictionValues = "yes"/>
-		</routeMode>
-			<routeMode modeName = "bicycle" maxPrepareMeters="75" maxInMeters="299" maxEstimationSpeed="20" bicycleOppositeExceptions = "true">
-				<routeAccessRestriction restrictionKey = "bicycle" restrictionValues = "yes|designated" restrictionPermit = "true"/>
-				<routeAccessRestriction restrictionKey = "cycleway" restrictionValues = "track" restrictionPermit = "true"/>
-				<routeAccessRestriction restrictionKey = "bicycle" restrictionValues = "no|private"/>
-				<routeAccessRestriction restrictionKey = "access" restrictionValues = "no|private"/>
-				<routeAccessRestriction restrictionKey = "vehicle" restrictionValues = "no|private"/>
-				<!-- http://wiki.openstreetmap.org/wiki/WikiProject_Haiti -->
-				<routeAccessRestriction restrictionKey = "bridge" restrictionValues = "collapsed"/>
-				<routeAccessRestriction restrictionKey = "impassable" restrictionValues = "yes"/>
-			</routeMode>
-		<routeMode modeName = "foot" maxPrepareMeters="50" maxInMeters="125" maxEstimationSpeed="4" againstAllOneWays = "true">
-			<routeAccessRestriction restrictionKey = "foot" restrictionValues = "yes|designated" restrictionPermit = "true"/>
-			<routeAccessRestriction restrictionKey = "foot" restrictionValues = "no|private"/>
-			<routeAccessRestriction restrictionKey = "access" restrictionValues = "no|private"/>
-			<!-- http://wiki.openstreetmap.org/wiki/WikiProject_Haiti -->
-			<routeAccessRestriction restrictionKey = "bridge" restrictionValues = "collapsed"/>
-			<routeAccessRestriction restrictionKey = "impassable" restrictionValues = "yes"/>
-		</routeMode>
-	</routeModes>
-	<maxSpeedTemplates>
-		<maxSpeedTemplate name="AT:urban" maxspeed="50" />
-		<maxSpeedTemplate name="AT:land" maxspeed="100" />
-		<maxSpeedTemplate name="DE:urban" maxspeed="50" />
-	    <maxSpeedTemplate name="DE:city" maxspeed="50" />
-     	<maxSpeedTemplate name="DE:living_street" maxspeed="7" />
-		<maxSpeedTemplate name="DE:rural" maxspeed="100" />
-		<maxSpeedTemplate name="FI:urban" maxspeed="50" />
-		<maxSpeedTemplate name="nsl" maxspeed="97" />
-		<maxSpeedTemplate name="national" maxspeed="97" />
-		<maxSpeedTemplate name="Ortsgebiet" maxspeed="50" />
-    	<maxSpeedTemplate name="city_limits" maxspeed="50" />
-		<maxSpeedTemplate name="walk" maxspeed="7" />
-	</maxSpeedTemplates>
+
+    &damages;
+    &tilescale;
+    &routemodes;
+    &maxspeed;
+
 
 </legend>
