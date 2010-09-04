@@ -100,10 +100,14 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 	}
 
 	public IconMenuPage createAndAddMenuPage(String pageTitle, int numCols, int numRows) {
-		// swap numCols with numRows if this makes icons bigger
-		if (this.maxX - this.minX > this.maxY - this.minY && numRows > numCols
+		/* swap numCols with numRows according to display size to make icons bigger
+		   (we don't take the actual width/height of the LayoutManager
+		   because the icons would then would be mapped wrongly to keys on 176*220 because
+		   of buttons and status bar)
+		*/
+		if (getWidth() > getHeight() && numRows > numCols
 				||
-			this.maxX - this.minX < this.maxY - this.minY && numRows < numCols
+			getWidth() < getHeight() && numRows < numCols
 		) {
 			int tmp = numCols;
 			numCols = numRows;
@@ -216,17 +220,19 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 			imp.maxX = maxX;
 			imp.minY = calcIconMenuMinY();
 			imp.maxY = calcIconMenuMaxY();
-			// swap numCols with numRows if this makes icons bigger
-			if (imp.maxX - imp.minX > imp.maxY - imp.minY && imp.numRows > imp.numCols
+			/* swap numCols with numRows according to display size to make icons bigger
+			   (we don't take the actual width/height of the LayoutManager
+			   because the icons would then would be mapped wrongly to keys on 176*220 because
+			   of buttons and status bar)
+			*/
+			if (getWidth() > getHeight() && imp.numRows > imp.numCols
 					||
-				imp.maxX - imp.minX < imp.maxY - imp.minY && imp.numRows < imp.numCols
+				getWidth() < getHeight() && imp.numRows < imp.numCols
 			) {
 				int tmp = imp.numCols;
 				imp.numCols = imp.numRows;
 				imp.numRows = tmp;
 			}
-
-			
 			
 			imp.unloadIcons();
 		}
