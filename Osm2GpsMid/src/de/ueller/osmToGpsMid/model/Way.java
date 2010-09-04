@@ -205,11 +205,20 @@ public class Way extends Entity implements Comparable<Way> {
 		if (type == -1) {
 			type = calcType(c);
 		}
-		return type;
+		//Different negative values are used to indicate internal state, canonicalise it back to -1
+		if (type > -1) {
+			return type;
+		} else {
+			return -1;
+		}
 	}
 
 	public byte getType() {
-		return type;
+		if (type > -1) {
+			return type;
+		} else {
+			return -1;
+		}
 	}
 
 	private byte calcType(Configuration c) {
@@ -235,6 +244,8 @@ public class Way extends Entity implements Comparable<Way> {
 				Node n = getFirstNodeWithoutPOIType();
 				if (n != null) {
 					n.wayToPOItransfer(this, poi);
+					//Indicate that this way has been dealt with, even though the way itself has no type.
+					type = -2;
 				} else {
 					System.out.println("WARNING: No way poi assigned because no node without a poi type has been available on way "
 							+ toString());
@@ -246,7 +257,7 @@ public class Way extends Entity implements Comparable<Way> {
 
 	@Override
 	public String getName() {
-		if (type != -1) {
+		if (type > -1) {
 			WayDescription desc = Configuration.getConfiguration().getWayDesc(type);
 			if (desc != null) {
 				String name = getAttribute(desc.nameKey);
@@ -270,7 +281,7 @@ public class Way extends Entity implements Comparable<Way> {
 
 	@Override
 	public String getUrl() {
-		if (type != -1) {
+		if (type > -1) {
 			WayDescription desc = Configuration.getConfiguration().getWayDesc(type);
 			if (desc != null) {
 				if (containsKey("url")){
@@ -284,7 +295,7 @@ public class Way extends Entity implements Comparable<Way> {
 	
 	@Override
 	public String getPhone() {
-		if (type != -1) {
+		if (type > -1) {
 			WayDescription desc = Configuration.getConfiguration().getWayDesc(type);
 			if (desc != null) {
 				if (containsKey("phone")){
@@ -299,7 +310,7 @@ public class Way extends Entity implements Comparable<Way> {
 	public byte getZoomlevel(Configuration c) {
 		byte type = getType(c);
 
-		if (type == -1) {
+		if (type < 0) {
 			// System.out.println("unknown type for node " + toString());
 			return 3;
 		}
