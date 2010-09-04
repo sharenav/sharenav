@@ -2,7 +2,7 @@
 	<!-- Map Screen -->
 	<color of="map_background" is="009BFF9B" isAtNight="00002200"/>
 	<color of="map_text" is="00000000" isAtNight="00FFFFFF"/>
-	<color of="map_touched_button_background" is="00FFFF77" isAtNight="00FFFF77"/>
+	<color of="map_touched_button_background" is="00FFFF77"/>
 	<color of="speed_background" is="009BFF9B"/>
 	<color of="speed_text" is="00000000"/>
 	<color of="titleBar_background" is="00FFFFFF" isAtNight="00222222"/>
@@ -29,7 +29,7 @@
 	<color of="zoom_button" is="00000000" isAtNight="00FFFFFF"/>
 	<color of="zoom_text" is="00000000" isAtNight="00FFFFFF" />
 	<color of="compass_direction_background" is="00FFFFC0" isAtNight="00000000"/>
-	<color of="compass_direction_text" is="00000000" isAtNight="00FFFFFF"/>
+	<color of="compass_direction_text" is="00000000"/>
 	<color of="speeding_sign_border" is="00FF0000"/>
 	<color of="speeding_sign_inner" is="00FFFFFF"/>
 	<color of="speeding_sign_text" is="00000000"/>
@@ -62,21 +62,16 @@
 	<color of="iconMenu_tabButton_text_inactive" is="00808080"/>	
 	<color of="iconMenu_icon_text" is="00FFFFFF"/>	
 	<color of="iconMenu_icon_border_highlight" is="00FFFF00"/>
+	<color of="iconMenu_touched_button_background" is="00AAAA77"/>
 	<!-- alert -->
 	<color of="alert_background" is="00DEDEDE"/>	
 	<color of="alert_border" is="00000000"/>	
 	<color of="alert_title_background" is="00FFFFFF"/>	
 	<color of="alert_text" is="00000000"/>	
-	<!-- customMenu -->
-	<color of="customMenu_background" is="00E0E0E0"/>	
-	<color of="customMenu_border" is="00000000"/>	
-	<color of="customMenu_title_background" is="00FFFFFF"/>	
-	<color of="customMenu_text" is="00000000"/>	
-	<color of="customMenu_highlight_background" is="00FFFFFF"/>	
 	<!-- other screens -->
-	<color of="tacho_background" is="00FFFFFF" isAtNight="00000000"/>	
-	<color of="tacho_text" is="00000000" isAtNight="0011CC00"/>	
-	<!-- decorations -->
+	<color of="tacho_background" is="00FFFFFF"/>	
+	<color of="tacho_text" is="00000000"/>	
+	<!-- way / area decorations -->
 	<color of="bridge_decoration" is="00FFFFFF"/>	
 	<color of="tunnel_decoration" is="00000000"/>	
 	<color of="way_damaged_border" is="00FF0000"/>	

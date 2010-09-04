@@ -119,25 +119,21 @@ public class Configuration {
 	public final static int COLOR_ICONMENU_TABBUTTON_TEXT_INACTIVE = 55;
 	public final static int COLOR_ICONMENU_ICON_TEXT = 56;
 	public final static int COLOR_ICONMENU_ICON_BORDER_HIGHLIGHT = 57;
-	public final static int COLOR_ALERT_BACKGROUND = 58;
-	public final static int COLOR_ALERT_BORDER = 59;
-	public final static int COLOR_ALERT_TITLE_BACKGROUND = 60;
-	public final static int COLOR_ALERT_TEXT = 61;
-	public final static int COLOR_CUSTOMMENU_BACKGROUND = 62;
-	public final static int COLOR_CUSTOMMENU_BORDER = 63;
-	public final static int COLOR_CUSTOMMENU_TITLE_BACKGROUND = 64;
-	public final static int COLOR_CUSTOMMENU_TEXT = 65;
-	public final static int COLOR_CUSTOMMENU_HIGHLIGHT_BACKGROUND = 66;
-	public final static int COLOR_TACHO_BACKGROUND = 67;
-	public final static int COLOR_TACHO_TEXT = 68;
-	public final static int COLOR_CLOCK_BACKGROUND = 69;
-	public final static int COLOR_CLOCK_TEXT = 70;
-	public final static int COLOR_BRIDGE_DECORATION = 71;
-	public final static int COLOR_TUNNEL_DECORATION = 72;
-	public final static int COLOR_WAY_DAMAGED_BORDER = 73;
-	public final static int COLOR_WAY_DAMAGED_DECORATION = 74;
-	public final static int COLOR_DAMAGED_BORDER = 75;
-	public final static int COLOR_COUNT = 76;
+	public final static int COLOR_ICONMENU_TOUCHED_BUTTON_BACKGROUND_COLOR = 58;
+	public final static int COLOR_ALERT_BACKGROUND = 59;
+	public final static int COLOR_ALERT_BORDER = 60;
+	public final static int COLOR_ALERT_TITLE_BACKGROUND = 61;
+	public final static int COLOR_ALERT_TEXT = 62;
+	public final static int COLOR_TACHO_BACKGROUND = 63;
+	public final static int COLOR_TACHO_TEXT = 64;
+	public final static int COLOR_CLOCK_BACKGROUND = 65;
+	public final static int COLOR_CLOCK_TEXT = 66;
+	public final static int COLOR_BRIDGE_DECORATION = 67;
+	public final static int COLOR_TUNNEL_DECORATION = 68;
+	public final static int COLOR_WAY_DAMAGED_BORDER = 69;
+	public final static int COLOR_WAY_DAMAGED_DECORATION = 70;
+	public final static int COLOR_DAMAGED_BORDER = 71;
+	public final static int COLOR_COUNT = 72;
 	
 	public final static String COLORNAMES[] =
 			{"map_background",
@@ -198,15 +194,11 @@ public class Configuration {
 			 "iconMenu_tabbutton_text_inactive",
 			 "iconMenu_icon_text",
 			 "iconMenu_icon_border_highlight",
+			 "iconMenu_touched_button_background",
 			 "alert_background",
 			 "alert_border",
 			 "alert_title_background",
 			 "alert_text",
-			 "customMenu_background",
-			 "customMenu_border",
-			 "customMenu_title_background",
-			 "customMenu_text",
-			 "customMenu_highlight_background",
 			 "tacho_background",
 			 "tacho_text",
 			 "clock_background",
