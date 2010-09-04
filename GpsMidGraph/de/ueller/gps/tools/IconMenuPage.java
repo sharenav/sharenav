@@ -32,6 +32,9 @@ public class IconMenuPage extends LayoutManager {
 	
 	/** background image for icons on this page */
 	public Image bgImage = null;
+
+	/** highlight image for icons on this page */
+	public Image hlImage = null;
 	
 	/** active ele */
 	public int rememberEleId = 0;
@@ -50,23 +53,34 @@ public class IconMenuPage extends LayoutManager {
 		setCursor(rememberEleId);
 	}
 
-	public void loadIconBackgroundImage() {
-		// load icon background image
+	public Image loadIconImage(String name) {
 		try {
-			Image bgImage = Image.createImage("/i_bg.png");
-			if (bgImage != null) {
+			Image image = Image.createImage("/" + name);
+			if (image != null) {
 				Font font = Font.getFont(Font.FACE_PROPORTIONAL, 0 , Font.SIZE_SMALL);
-				bgImage = LayoutElement.scaleIconImage(bgImage, this, font.getHeight());
+				image = LayoutElement.scaleIconImage(image, this, font.getHeight(), 0);
 				//#debug debug
-				logger.debug("bgImage loaded and scaled to " + bgImage.getWidth() + "x" + bgImage.getHeight());
+				logger.debug(name + " loaded and scaled to " + image.getWidth() + "x" + image.getHeight());
 			}
-			this.bgImage = bgImage;
+			return image;
 		} catch (Exception ec) {
 			//#debug debug
-			logger.debug("EXCEPTION loading bgImage");
+			logger.debug("EXCEPTION loading " + name);
 		}
+		return null;
+	}
+	
+	public void loadIconBackgroundImage() {
+		// load icon background image
+		this.bgImage = loadIconImage("i_bg.png");
 	}
 
+	public void loadIconHighlighterImage() {
+		// load icon highlighter image
+		this.hlImage = loadIconImage("i_hl.png");
+	}
+	
+	
 	public void setCursor(int eleId) {
 		this.currentRow = eleId / numCols;
 		this.currentCol = eleId % numCols;
@@ -101,6 +115,7 @@ public class IconMenuPage extends LayoutManager {
 	/** load all icons for this icon page */
 	protected void loadIcons() {
 		loadIconBackgroundImage();
+		loadIconHighlighterImage();
 		LayoutElement e;
 		for (int i=0; i<this.size(); i++){
 			e = (LayoutElement) this.elementAt(i);
@@ -116,6 +131,7 @@ public class IconMenuPage extends LayoutManager {
 			e.unloadImage();
 		}
 		this.bgImage = null;
+		this.hlImage = null;
 	}
 	
 	protected boolean changeSelectedColRow(int offsCol, int offsRow) {

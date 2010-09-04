@@ -406,6 +406,7 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 	}
 	
 	protected void pointerReleased(int x, int y) {
+		getActiveMenuPage().clearTouchedElement();
 		pointerPressedDown = false;
 		if (Math.abs(x - touchX) < 10) { // if this is no drag action
 			//#debug debug
@@ -449,12 +450,27 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 		pointerPressedDown = true;
 		touchX = x;
 		touchY = y;
+		LayoutElement e = getActiveMenuPage().getElementAtPointer(x, y);
+		if (e != null && e.actionID >= 0) {
+			getActiveMenuPage().setTouchedElement(e);
+		}
+		if (e != null) {
+			repaint();
+		}
 	}
 	
 	protected void pointerDragged (int x, int y) {
 		// return if drag event was not in this canvas but rather the previous one
 		if (!pointerPressedDown) {
 			return;
+		}
+		if (Math.abs(x - touchX) < 10) {
+			LayoutElement e = getActiveMenuPage().getElementAtPointer(touchX, touchY);
+			if (e != null) {
+				getActiveMenuPage().setTouchedElement(e);
+			}
+		} else {
+			getActiveMenuPage().clearTouchedElement();
 		}
 		getActiveMenuPage().dragOffsX = x - touchX;
 		repaint();
@@ -546,8 +562,13 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 		ePrevTab.setTextValid();
 		eNextTab.setTextValid();
 		
+		IconMenuPage imp = getActiveMenuPage();
 		if (!inTabRow) {
-			eStatusBar.setText(getActiveMenuPage().getElementAt(getActiveMenuPage().rememberEleId).getText());
+			if (imp.touchedElement != null) {
+				eStatusBar.setText(imp.touchedElement.getText());				
+			} else {
+				eStatusBar.setText(imp.getElementAt(imp.rememberEleId).getText());
+			}
 		}
 		tabDirectionButtonManager.paint(g);
 		

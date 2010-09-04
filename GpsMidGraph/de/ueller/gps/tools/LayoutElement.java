@@ -336,7 +336,7 @@ public class LayoutElement {
 				orgImage = Image.createImage("/i_bg.png");
 			}
 			if ( (flags & FLAG_ICONMENU_ICON) > 0) {
-				orgImage = scaleIconImage(orgImage, (IconMenuPage) lm, fontHeight);
+				orgImage = scaleIconImage(orgImage, (IconMenuPage) lm, fontHeight, 0);
 				if ( (flags & FLAG_IMAGE_GREY) > 0 ) {
 					orgImage = ImageTools.getGreyImage(orgImage);
 				}
@@ -357,7 +357,7 @@ public class LayoutElement {
 		return (imp.maxX - imp.minX) / imp.numCols;
 	}
 	
-	public static Image scaleIconImage(Image image, IconMenuPage imp, int fontHeight) {
+	public static Image scaleIconImage(Image image, IconMenuPage imp, int fontHeight, int extraSize) {
 		int imgWidth = calcIconReservedWidth(imp);
 		int imgHeight = calcIconReservedHeight(imp) - fontHeight;
 		
@@ -384,7 +384,7 @@ public class LayoutElement {
 		}
 		
 //		System.out.println("actual Width/Height " + imgWidth + " " + imgHeight);
-		return ImageTools.scaleImage(image, imgWidth, imgHeight);
+		return ImageTools.scaleImage(image, imgWidth + extraSize, imgHeight + extraSize);
 	}
 	
 	public void setImageToggleState(boolean state) {
@@ -601,6 +601,9 @@ public class LayoutElement {
 					g.drawImage(image, left + (imp.bgImage.getWidth() - image.getWidth()) / 2, top + (imp.bgImage.getHeight() - image.getHeight()) / 2, Graphics.TOP|Graphics.LEFT);
 				} else {
 					g.drawImage(image, left, top, Graphics.TOP|Graphics.LEFT);
+				}
+				if (imp.touchedElement == this) {
+					g.drawImage(imp.hlImage, left - 1, top - 1, Graphics.TOP|Graphics.LEFT);					
 				}
 			}
 			if (font != null) {
