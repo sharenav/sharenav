@@ -349,14 +349,16 @@ public class Way extends Entity implements Comparable<Way> {
 					maxSpeed *= 1.609; // Convert to km/h
 				}
 			} catch (NumberFormatException e) {
-				int maxs = config.getMaxspeedTemplate(maxSpeedAttr);
-				if (maxs < 0) {
+				try {
+					int maxs = config.getMaxspeedTemplate(maxSpeedAttr);
+					if (maxs > 0) {
+						maxSpeed = maxs;
+					}
+				} catch (Exception ex) {
 					if (this.id != lastUnhandledMaxSpeedWayId) {
-						System.out.println("Unhandled maxspeed for way " + toString());
+						System.out.println("Unhandled maxspeed for way " + toString() + ": " + maxSpeedAttr);
 						lastUnhandledMaxSpeedWayId = this.id;
 					}
-				} else {
-					maxSpeed = maxs;
 				}
 			}
 		}
@@ -398,11 +400,13 @@ public class Way extends Entity implements Comparable<Way> {
 					maxSpeed *= 1.609; // Convert to km/h
 				}
 			} catch (NumberFormatException e) {
-				int maxs = config.getMaxspeedTemplate(maxSpeedAttr);
-				if (maxs < 0) {
+				try {
+					int maxs = config.getMaxspeedTemplate(maxSpeedAttr);
+					if (maxs > 0) {
+						maxSpeed = maxs;
+					}
+				} catch (Exception ex) {
 					System.out.println("Unhandled maxspeedwinter for way + " + toString() + ": " + getAttribute("maxspeed"));
-				} else {
-					maxSpeed = maxs;
 				}
 			}
 		}

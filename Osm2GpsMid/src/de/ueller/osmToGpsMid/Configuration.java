@@ -1066,10 +1066,10 @@ public class Configuration {
 		}
 
 		
-		public int getMaxspeedTemplate(String template) {
+		public int getMaxspeedTemplate(String template) throws Exception{
 			Integer maxspeed = legend.getMaxspeedTemplates().get(template);
 			if (maxspeed == null) {
-				return -1;
+				throw new Exception("Unhandled maxspeed value: " + template);
 			} else {
 				return maxspeed.intValue();
 			}
