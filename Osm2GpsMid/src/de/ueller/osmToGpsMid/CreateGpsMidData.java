@@ -902,8 +902,8 @@ public class CreateGpsMidData implements FilenameFilter {
 				if (ways.size() <= maxWays) {
 					t.bounds = realBound.clone();
 					if (t.bounds.getFixPtSpan() > 65000) {
-						System.out.println("Tile spacially too large (" + 
-								MAX_RAD_RANGE +	": " + t.bounds);
+//						System.out.println("Tile spacially too large (" + 
+//								MAX_RAD_RANGE +	": " + t.bounds);
 						tooLarge = true;
 							
 					} else {
