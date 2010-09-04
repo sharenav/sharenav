@@ -14,6 +14,7 @@ package de.ueller.osmToGpsMid;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -92,7 +93,20 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 					return null;
 				}
 			}
-			System.out.println("Resolving entity: " + systemId);
+			System.out.println("Trying to resolve XML entity " + systemId); 
+			try {
+				InputStream is = new URL(systemId).openStream();
+				if (is != null) {
+					System.out.println("Resolved entity externally");
+					return new InputSource(is);
+				}
+			} catch (FileNotFoundException fnfe) {
+				InputStream is = this.getClass().getResourceAsStream(systemId.substring(systemId.lastIndexOf('/')));
+				if (is != null) {
+					System.out.println("No such file, resolved entity internally instead");
+					return new InputSource(is);
+				}
+			}
 			return null;
 		}
 

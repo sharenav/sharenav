@@ -151,6 +151,7 @@
         <fileset dir="${resources.dir}">
      		<include name="*.jar" />
         	<include name="*.xml" />
+            <include name="*.inc" />
    	 		<include name="style-file.dtd" />
      		<include name="version.properties" />
      		<include name="**/syntax.cfg" />
