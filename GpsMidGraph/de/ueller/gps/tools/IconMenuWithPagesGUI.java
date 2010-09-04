@@ -128,7 +128,7 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 	
 	/** create a layout manager with the direction buttons */
 	private void createTabPrevNextButtons() {
-		tabDirectionButtonManager = new LayoutManager(minX, minY, maxX, maxY, 0);
+		tabDirectionButtonManager = new LayoutManager(minX, minY, maxX, maxY, Legend.COLORS[Legend.COLOR_ICONMENU_TOUCHED_BUTTON_BACKGROUND_COLOR]);
 		ePrevTab = tabDirectionButtonManager.createAndAddElement(
 				LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_TOP |
 				LayoutElement.FLAG_BACKGROUND_BORDER |
@@ -161,7 +161,7 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 	/** recreates the tab buttons for all the iconMenuPages */
 	private void recreateTabButtons() {
 		createTabPrevNextButtons();
-		tabButtonManager = new LayoutManager(ePrevTab.right, minY, eNextTab.left, maxY, 0);
+		tabButtonManager = new LayoutManager(ePrevTab.right, minY, eNextTab.left, maxY, Legend.COLORS[Legend.COLOR_ICONMENU_TOUCHED_BUTTON_BACKGROUND_COLOR]);
 		LayoutElement e = null;
 		IconMenuPage imp = null;
 		for (int i=0; i < iconMenuPages.size(); i++) {
@@ -186,6 +186,7 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 			e.setText(imp.title);
 		}
 		setActiveTab(tabNr);
+		recreateTabButtonsRequired = false;
 	}
 	
 
@@ -236,6 +237,7 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 			
 			imp.unloadIcons();
 		}
+		recreateTabButtonsRequired = true;
 	}
 	
 	private int calcIconMenuMinY() {
@@ -259,14 +261,14 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 				tabButtonManager.getElementAt(i).clearFlag(LayoutElement.FLAG_BACKGROUND_BOX);
 			}
 		}
-		// load all icons for the new icon page
-		getActiveMenuPage().loadIcons();
 		//#debug debug
 		logger.debug("set tab " + tabNr);
 		this.tabNr = tabNr;
 		if (tabNr < leftMostTabNr) {
 			leftMostTabNr = tabNr;
 		}
+		// load all icons for the new icon page
+		getActiveMenuPage().loadIcons();
 	}
 	
 	public void setActiveTabAndCursor(int tabNr, int eleId) {
@@ -413,6 +415,8 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 	
 	protected void pointerReleased(int x, int y) {
 		getActiveMenuPage().clearTouchedElement();
+		tabButtonManager.clearTouchedElement();
+		tabDirectionButtonManager.clearTouchedElement();
 		pointerPressedDown = false;
 		if (Math.abs(x - touchX) < 10) { // if this is no drag action
 			//#debug debug
@@ -459,6 +463,16 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 		LayoutElement e = getActiveMenuPage().getElementAtPointer(x, y);
 		if (e != null && e.actionID >= 0) {
 			getActiveMenuPage().setTouchedElement(e);
+		} else {
+			e = tabButtonManager.getElementAtPointer(x, y);
+			if (e != null) {
+				tabButtonManager.setTouchedElement(e);
+			} else {
+				e = tabDirectionButtonManager.getElementAtPointer(x, y);
+				if (e != null && e != eStatusBar) {
+					tabDirectionButtonManager.setTouchedElement(e);
+				}
+			}
 		}
 		if (e != null) {
 			repaint();
