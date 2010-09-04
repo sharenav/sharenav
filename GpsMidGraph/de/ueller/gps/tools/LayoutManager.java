@@ -25,17 +25,20 @@ public class LayoutManager extends Vector {
 	// element currently touched and thus to be highlighted
 	protected volatile LayoutElement touchedElement = null;
 	
+	protected int touchedElementBackgroundColor = 0;
+	
 	/**
 	 * @param minX layout area left
 	 * @param minY layout area top
 	 * @param maxX layout area right
 	 * @param maxY layout area bottom
 	 */
-	public LayoutManager(int minX, int minY, int maxX, int maxY) {	
+	public LayoutManager(int minX, int minY, int maxX, int maxY, int touchedElementBackgroundColor) {	
 		this.minX = minX;
 		this.minY = minY;
 		this.maxX = maxX;
 		this.maxY = maxY;
+		this.touchedElementBackgroundColor = touchedElementBackgroundColor;
 	}
 
 	public LayoutElement createAndAddElement(int initialFlags) {

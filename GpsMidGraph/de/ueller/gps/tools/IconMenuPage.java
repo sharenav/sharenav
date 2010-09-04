@@ -45,7 +45,7 @@ public class IconMenuPage extends LayoutManager {
 	
 	
 	public IconMenuPage(String title, IconActionPerformer actionPerformer, int numCols, int numRows, int minX, int minY, int maxX, int maxY) {
-		super(minX, minY, maxX, maxY);
+		super(minX, minY, maxX, maxY, 0);
 		this.title = title;
 		this.numCols = numCols;
 		this.numRows = numRows;

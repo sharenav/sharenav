@@ -65,7 +65,7 @@ public class TraceLayout extends LayoutManager {
 	private String sOldSpeed = "";
 	
 	public TraceLayout(int minX, int minY, int maxX, int maxY) {
-		super(minX, minY, maxX, maxY);
+		super(minX, minY, maxX, maxY, Legend.COLORS[Legend.COLOR_MAP_TOUCHED_BUTTON_BACKGROUND]);
 		
 		for (int i=0; i<ELE_COUNT; i++){
 			ele[i] = new LayoutElement(this);

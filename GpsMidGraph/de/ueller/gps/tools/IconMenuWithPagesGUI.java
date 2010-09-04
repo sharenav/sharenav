@@ -124,7 +124,7 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 	
 	/** create a layout manager with the direction buttons */
 	private void createTabPrevNextButtons() {
-		tabDirectionButtonManager = new LayoutManager(minX, minY, maxX, maxY);
+		tabDirectionButtonManager = new LayoutManager(minX, minY, maxX, maxY, 0);
 		ePrevTab = tabDirectionButtonManager.createAndAddElement(
 				LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_TOP |
 				LayoutElement.FLAG_BACKGROUND_BORDER |
@@ -157,7 +157,7 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 	/** recreates the tab buttons for all the iconMenuPages */
 	private void recreateTabButtons() {
 		createTabPrevNextButtons();
-		tabButtonManager = new LayoutManager(ePrevTab.right, minY, eNextTab.left, maxY);
+		tabButtonManager = new LayoutManager(ePrevTab.right, minY, eNextTab.left, maxY, 0);
 		LayoutElement e = null;
 		IconMenuPage imp = null;
 		for (int i=0; i < iconMenuPages.size(); i++) {

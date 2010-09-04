@@ -566,7 +566,7 @@ public class LayoutElement {
 	public void paintHighlighted(Graphics g) {
 		//#debug trace
 		logger.trace("draw highlight box at " + left + "," + top + " size: " + (right-left) + "/" + (bottom - top));
-		g.setColor(Legend.COLORS[Legend.COLOR_MAP_TOUCHED_BUTTON_BACKGROUND]);
+		g.setColor(lm.touchedElementBackgroundColor);
 		g.fillRect(left, top, right-left, bottom - top);
 		int oldFlags = flags;
 		int oldBgColor = bgColor;
