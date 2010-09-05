@@ -25,7 +25,7 @@ public abstract class KeyCommandCanvas extends Canvas implements
 	protected static int lastGameKeyCode = 0; 	 
 	protected static int lastGameAction = 0;
 	
-	protected boolean keyboardLocked = false;
+	protected volatile boolean keyboardLocked = false;
 
 	protected intTree singleKeyPressCommand = new intTree();
 	protected intTree repeatableKeyPressCommand = new intTree();

@@ -2531,7 +2531,9 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			// if the timer will not be cancelled by a double tap, the timer will execute the single tap command
 			singleTapTimerTask = new TimerTask() {
 				public void run() {
-					singleTap(touchReleaseX, touchReleaseY);
+					if (!keyboardLocked) {
+						singleTap(touchReleaseX, touchReleaseY);
+					}
 				}
 			};
 			try {
