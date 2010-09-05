@@ -163,7 +163,7 @@ public abstract class KeyCommandCanvas extends Canvas implements
 								// time
 								commandAction(singleC, (Displayable) null);
 								releasedKeyCode = 0;
-								repaint(0, 0, getWidth(), getHeight());
+								repaint();
 							}
 						}
 					};
