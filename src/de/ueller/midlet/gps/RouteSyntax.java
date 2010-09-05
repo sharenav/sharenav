@@ -276,7 +276,10 @@ public class RouteSyntax {
 		return getSyntaxTemplate(instruction, SyntaxTemplateComponents.prepare);
 	}
 	
-	public static String getSoundInstructionIn(int instruction, int inDistance) {		
+	public static String getSoundInstructionIn(int instruction, int inDistance) {
+		if(!routeSyntaxAvailable) {
+			return "";
+		}
 		return HelperRoutines.replaceAll( getSyntaxTemplate(instruction, SyntaxTemplateComponents.in) , "%METERS%", metersSounds[(inDistance / 100) - 1]);
 	}
 
