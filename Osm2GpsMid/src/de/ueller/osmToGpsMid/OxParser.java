@@ -46,6 +46,7 @@ public class OxParser extends DefaultHandler {
 	 * Key: Long   Value: Node
 	 */
 	private HashMap<Long, Node> nodes = new HashMap<Long, Node>(80000, 0.60f);
+	private Vector<Node> nodes2 = null;
 	private static HashMap<Long, Way> ways = new HashMap<Long, Way>(); // must be static only to be able to call getWayHashMap() from Tile for debugging
 	private HashMap<Long, Relation> relations = new HashMap<Long, Relation>();
 	private HashMap<Long,TurnRestriction> turnRestrictions = new HashMap<Long, TurnRestriction>();
@@ -407,7 +408,11 @@ public class OxParser extends DefaultHandler {
 	}
 
 	public Collection<Node> getNodes() {
-		return nodes.values();
+		if (nodes == null) { 
+			return nodes2; 
+		} else { 
+			return nodes.values(); 
+		}
 	}
 
 
@@ -444,9 +449,16 @@ public class OxParser extends DefaultHandler {
 		return ways;
 	}
 
-	
-	public void removeNode(long id) {
-		nodes.remove(new Long(id));
+	public void removeNodes(Collection<Node> nds) {
+		if (nodes == null) {
+			//This operation appears rather slow,
+			//so try and avoid calling remove nodes once it is in the nodes2 format
+			nodes2.removeAll(nds);
+		} else {
+			for (Node n : nds) {
+				nodes.remove(new Long(n.id));
+			}
+		}
 	}
 	
 	/**
@@ -456,9 +468,18 @@ public class OxParser extends DefaultHandler {
 		System.gc();
 		System.out.println("Free memory: " + Runtime.getRuntime().freeMemory());
 		System.out.println("Resizing nodes HashMap");
-		nodes=new HashMap<Long, Node>(nodes);
+		if (nodes == null) { 
+			nodes2 = new Vector<Node>(nodes2); 
+		} else { 
+			nodes = new HashMap<Long, Node>(nodes); 
+		} 
 		relations=new HashMap<Long, Relation>(relations);
 		System.gc();
 		System.out.println("Free memory: " + Runtime.getRuntime().freeMemory());
+	}
+	
+	public void dropHashMap() { 
+		nodes2 = new Vector<Node>(nodes.values()); 
+		nodes = null; 
 	}
 }
