@@ -14,8 +14,10 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.LinkedList;
+import java.util.Set;
 import java.util.Vector;
 
 import javax.xml.parsers.SAXParser;
@@ -195,9 +197,7 @@ public class OxParser extends DefaultHandler {
 					 * If this is the only tag on a Node, we end up saving creating a Hashtable
 					 * object to store the tags, saving some memory.
 					 */
-					if (!key.equalsIgnoreCase("created_by") && !key.equalsIgnoreCase("converted_by") &&
-							!key.equalsIgnoreCase("source") && !key.startsWith("tiger") && 
-							!key.equalsIgnoreCase("attribution") && !key.equalsIgnoreCase("note")) {
+					if (LegendParser.getRelevantKeys().contains(key)) {
 						if (!tagsCache.containsKey(key)) {
 							tagsCache.put(key, key);
 						}

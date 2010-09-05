@@ -72,6 +72,8 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 	private byte wayIdx = 0;
 	private boolean nonValidStyleFile;
 	public static int tileScaleLevel[] = { Integer.MAX_VALUE, 900000, 180000, 45000 };
+	
+	private static HashSet<String> relevantKeys;
 
 	public class DTDresolver implements EntityResolver {
 
@@ -122,6 +124,8 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 
 	private void init(InputStream i) {
 		try {
+			relevantKeys = new HashSet<String>();
+			initSpecialcasedRelevantKeys();
 			poiMap = new Hashtable<String, Hashtable<String, Set<EntityDescription>>>();
 			pois = new LongTri<EntityDescription>();
 			currentPoi = new POIdescription();
@@ -195,6 +199,41 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 					}
 				}
 			}
+			
+			/**
+			 * Calculate the relevant keys that we need to care about in the XML stream
+			 */
+			for (EntityDescription e : pois.values()) {
+				relevantKeys.add(e.key);
+				relevantKeys.add(e.nameKey);
+				relevantKeys.add(e.nameFallbackKey);
+				if (e.specialisation != null) {
+					for (ConditionTuple ct : e.specialisation) {
+						relevantKeys.add(ct.key);
+					}
+				}
+			}
+			for (EntityDescription e : ways.values()) {
+				relevantKeys.add(e.key);
+				relevantKeys.add(e.nameKey);
+				relevantKeys.add(e.nameFallbackKey);
+				if (e.specialisation != null) {
+					for (ConditionTuple ct : e.specialisation) {
+						relevantKeys.add(ct.key);
+					}
+				}
+			}
+			for (TravelMode tm : TravelModes.travelModes) {
+				if (tm == null) continue;
+				if (tm.getRouteAccessRestrictions() != null) {
+					for (RouteAccessRestriction rar : tm.getRouteAccessRestrictions()) {
+						relevantKeys.add(rar.key);
+					}
+				}
+			}
+			for (Damage d : damages) {
+				relevantKeys.add(d.key);
+			}
 		} catch (FileNotFoundException fnfe) {
 			System.out.println("ERROR, could not find necessary file: "
 					+ fnfe.getMessage());
@@ -212,6 +251,37 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 		// System.out.println("ERROR: Other Exception: " + e);
 		// System.exit(1);
 		}
+	}
+	
+	private void initSpecialcasedRelevantKeys() {
+		/* 
+		 * Add all the keys that are hardcoded in Osm2GpsMid to be included in the relevantKeys set
+		 */
+		relevantKeys.add("type");
+		relevantKeys.add("admin_level");
+		relevantKeys.add("boundary");
+		relevantKeys.add("natural");
+		relevantKeys.add("highway");
+		relevantKeys.add("is_in");
+		relevantKeys.add("maxspeed");
+		relevantKeys.add("maxspeed:seasonal:winter");
+		relevantKeys.add("access");
+		relevantKeys.add("junction");
+		relevantKeys.add("cycleway");
+		relevantKeys.add("oneway");
+		relevantKeys.add("restriction");
+		relevantKeys.add("bridge");
+		relevantKeys.add("tunnel");
+		relevantKeys.add("phone");
+		relevantKeys.add("url");
+		relevantKeys.add("place");
+		relevantKeys.add("area");
+		relevantKeys.add("layer");
+		
+		//relevantKeys.add("barrier");
+		//relevantKeys.add("direction");
+		//relevantKeys.add("crossing");
+		
 	}
 
 	@Override
@@ -796,5 +866,9 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 		System.out.println("Error on line " + e.getLineNumber()
 				+ " (remember ordering matters): " + e.getMessage());
 		nonValidStyleFile = true;
+	}
+	
+	public static Set<String> getRelevantKeys() {
+		return relevantKeys;
 	}
 }
