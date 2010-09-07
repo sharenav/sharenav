@@ -7,9 +7,17 @@
 <!ENTITY damages SYSTEM "damages.inc">
 ]>
 <!--
-This is a sample style file for use with GpsMid. It allows
-to specify which map features get converted from the osm
-data to GpsMid. This can and should be changed at will to suit
+This is a reduced style file for Osm2GpsMid.
+It is derived from the default style and leaves out most of the landuse areas
+and buildings without additional tagging (i.e. shops etc are kept) to bring down 
+resource usage on the phone as well as during the conversion process. 
+So it removes many elements which make the map look nicer but tries to keep
+elements such as POI which provide useful information for the user.
+It should be discussed whether both mini-style-file.xml and this style should
+be maintained.
+
+In general, style files allow to specify which map features get converted from 
+the OSM data to GpsMid. This can and should be changed at will to suit
 your personal preferences, as long as it conforms to style-file.dtd.
 
 WARNING: There is currently one extra restriction. The "key tag=place"

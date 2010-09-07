@@ -7,9 +7,13 @@
 <!ENTITY damages SYSTEM "damages.inc">
 ]>
 <!--
-This is a sample style file for use with GpsMid. It allows
-to specify which map features get converted from the osm
-data to GpsMid. This can and should be changed at will to suit
+This is the default style file for Osm2GpsMid.
+It uses as many commonly used tags from OSM as possible to provide a feature
+rich map. If this uses too much resources on your phone, try one of the other
+style files or comment out features you don't need.
+
+In general, style files allow to specify which map features get converted from 
+the OSM data to GpsMid. This can and should be changed at will to suit
 your personal preferences, as long as it conforms to style-file.dtd.
 
 WARNING: There is currently one extra restriction. The "key tag=place"
