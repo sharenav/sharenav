@@ -28,6 +28,7 @@ public class Connection {
 	public static final int CONNTYPE_MAINSTREET_NET = 128;
 	public static final int CONNTYPE_MOTORWAY = 64;
 	public static final int CONNTYPE_TRUNK_OR_PRIMARY = 32;
+	public static final int CONNTYPE_TOLLROAD = 16;
 	
 	public Connection(RouteNode to, int dist, int times[], byte bs, byte be, Way w) {
 		super();
@@ -45,6 +46,9 @@ public class Connection {
 		}
 		if ( (w.wayTravelModes & Connection.CONNTYPE_MAINSTREET_NET) > 0 ) {
 			TravelModes.numMainStreetNetConnections++;
+		}
+		if ( (w.wayTravelModes & Connection.CONNTYPE_TOLLROAD) > 0 ) {
+			TravelModes.numTollRoadConnections++;
 		}
 	}
 	public String printTurn(Connection last) {

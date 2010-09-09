@@ -266,6 +266,7 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 		relevantKeys.add("maxspeed");
 		relevantKeys.add("maxspeed:seasonal:winter");
 		relevantKeys.add("access");
+		relevantKeys.add("toll");
 		relevantKeys.add("junction");
 		relevantKeys.add("cycleway");
 		relevantKeys.add("oneway");

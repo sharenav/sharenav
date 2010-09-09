@@ -138,6 +138,9 @@ public class Way extends Entity implements Comparable<Way> {
 				wayTravelModes |= Connection.CONNTYPE_MAINSTREET_NET;
 			}
 		}
+		if (containsKey("toll")) {
+			wayTravelModes |= Connection.CONNTYPE_TOLLROAD;			
+		}
 	}
 
 	public boolean isAccessForRouting(int travelModeNr) {
