@@ -24,6 +24,7 @@ public class Connection {
 	public static final int CONNTYPE_MAINSTREET_NET = 128;
 	public static final int CONNTYPE_MOTORWAY = 64;
 	public static final int CONNTYPE_TRUNK_OR_PRIMARY = 32;
+	public static final int CONNTYPE_TOLLROAD = 16;
 	
 	public Connection(){
 	}
@@ -84,6 +85,10 @@ public class Connection {
 
 	public boolean isTrunkOrPrimaryConnection() {
 		return (connTravelModes & CONNTYPE_TRUNK_OR_PRIMARY) > 0;
+	}
+
+	public boolean isTollRoadConnection() {
+		return (connTravelModes & CONNTYPE_TOLLROAD) > 0;
 	}
 	
 	public String toString(){

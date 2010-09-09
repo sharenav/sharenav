@@ -49,7 +49,7 @@ public class Configuration {
 	 *  the default values for the features added between configVersionStored
 	 *  and VERSION will be set, before the version in the recordstore is increased to VERSION.
 	 */
-	public final static int VERSION = 18;
+	public final static int VERSION = 19;
 
 	public final static int LOCATIONPROVIDER_NONE = 0;
 	public final static int LOCATIONPROVIDER_SIRF = 1;
@@ -228,6 +228,10 @@ public class Configuration {
 	public final static byte CFGBIT_ROUND_WAY_ENDS = 84;
 	/** bit 85: backlight method ANDROID_WAKELOCK */
 	public final static byte CFGBIT_BACKLIGHT_ANDROID_WAKELOCK = 85;
+	/** bit 86: Flag whether the route algorithm uses motorways */
+	public final static byte CFGBIT_ROUTE_USE_MOTORWAYS = 86;
+	/** bit 87: Flag whether the route algorithm uses toll roads */
+	public final static byte CFGBIT_ROUTE_USE_TOLLROADS = 87;
 	
 	/**
 	 * These are the database record IDs for each configuration option
@@ -652,6 +656,10 @@ public class Configuration {
 			setOnlineLang("en");
 			setWikipediaLang("en");
 			setNamesOnMapLang("en");
+		}
+		if (configVersionStored < 19) {
+			cfgBits_64_to_127 |= 1L << CFGBIT_ROUTE_USE_MOTORWAYS |
+			 					 1L << CFGBIT_ROUTE_USE_TOLLROADS;
 		}
 
 		setCfgBits(cfgBits_0_to_63, cfgBits_64_to_127);

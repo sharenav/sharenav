@@ -21,6 +21,7 @@ import de.ueller.gpsMid.mapData.Tile;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.RouteInstructions;
 import de.ueller.midlet.gps.RouteLineProducer;
+import de.ueller.midlet.gps.routing.Connection;
 import de.ueller.midlet.gps.routing.ConnectionWithNode;
 import de.ueller.midlet.gps.routing.TravelMode;
 import de.ueller.midlet.gps.Trace;
@@ -2145,6 +2146,10 @@ public class Way extends Entity {
 	
 	public boolean isBridge() {
 		return ((flags & WAY_BRIDGE) > 0);
+	}
+
+	public boolean isTollRoad() {
+		return ((wayRouteModes & Connection.CONNTYPE_TOLLROAD) > 0);
 	}
 
 	public boolean isDamaged() {

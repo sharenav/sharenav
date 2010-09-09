@@ -22,6 +22,7 @@ public class GuiRoute extends Form implements CommandListener {
 	private ChoiceGroup routingTurnRestrictionsGroup;
 	private ChoiceGroup continueMapWhileRouteing;
 	private ChoiceGroup routingOptsGroup;
+	private ChoiceGroup routingAllowOptsGroup;
 	private ChoiceGroup routingStrategyOptsGroup;
 	private ChoiceGroup routingShowOptsGroup;
 	private TextField  tfMainStreetNetDistanceKm;
@@ -60,7 +61,14 @@ public class GuiRoute extends Form implements CommandListener {
 		routingTurnRestrictionsGroup = new ChoiceGroup(Locale.get("guiroute.TurnRestrictions")/*Turn restrictions*/, Choice.EXCLUSIVE, trStates ,null);
 		routingTurnRestrictionsGroup.setSelectedIndex( (Configuration.getCfgBitSavedState(Configuration.CFGBIT_USE_TURN_RESTRICTIONS_FOR_ROUTE_CALCULATION) ? 0 : 1) ,true);
 		append(routingTurnRestrictionsGroup);
-		
+
+		String [] routingAllowOpts = new String[2];
+		routingAllowOpts[0] = Locale.get("guiroute.AllowMotorways")/*Motorways*/;
+		routingAllowOpts[1] = Locale.get("guiroute.AllowTollRoads")/*TollRoads*/;
+		routingAllowOptsGroup = new ChoiceGroup(Locale.get("guiroute.AllowOptsGroup")/*Allow*/, Choice.MULTIPLE, routingAllowOpts ,null);
+		routingAllowOptsGroup.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ROUTE_USE_MOTORWAYS));
+		routingAllowOptsGroup.setSelectedIndex(1, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ROUTE_USE_TOLLROADS));
+		append(routingAllowOptsGroup);
 
 		gaugeRoutingEsatimationFac=new Gauge(Locale.get("guiroute.CalculationSpeed")/*Calculation speed*/, true, 10, Configuration.getRouteEstimationFac());
 		append(gaugeRoutingEsatimationFac);
@@ -131,6 +139,9 @@ public class GuiRoute extends Form implements CommandListener {
 					(int) (Float.parseFloat(km)) 
 			);
 
+			Configuration.setCfgBitSavedState(Configuration.CFGBIT_ROUTE_USE_MOTORWAYS, routingAllowOptsGroup.isSelected(0));
+			Configuration.setCfgBitSavedState(Configuration.CFGBIT_ROUTE_USE_TOLLROADS, routingAllowOptsGroup.isSelected(1));			
+			
 			boolean[] selStrategyRouting = new boolean[3];
 			routingStrategyOptsGroup.getSelectedFlags(selStrategyRouting);
 			Configuration.setCfgBitSavedState(Configuration.CFGBIT_ROUTE_TRY_FIND_MOTORWAY, selStrategyRouting[0]);

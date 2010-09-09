@@ -56,6 +56,8 @@ public class Routing implements Runnable {
 	public boolean tryFindMotorway = false;
 	public boolean boostMotorways = false;
 	public boolean boostTrunksAndPrimarys = false;	
+	public boolean useMotorways = false;
+	public boolean useTollRoads = false;	
 	
 	private int oomCounter = 0;
 	private int expanded;
@@ -118,6 +120,8 @@ public class Routing implements Runnable {
 			Configuration.getCfgBitState(Configuration.CFGBIT_USE_TURN_RESTRICTIONS_FOR_ROUTE_CALCULATION) &&
 			Configuration.getTravelMode().isWithTurnRestrictions();
 		
+		useMotorways = Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_USE_MOTORWAYS);
+		useTollRoads = Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_USE_TOLLROADS);
 		tryFindMotorway = Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_TRY_FIND_MOTORWAY);
 		boostMotorways = Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_BOOST_MOTORWAYS);
 		boostTrunksAndPrimarys = Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_BOOST_TRUNKS_PRIMARYS);
@@ -324,7 +328,14 @@ public class Routing implements Runnable {
 				}
 				Connection nodeSuccessor=successor[cl];
 				// do not try a u-turn back to the route node we are coming from
-				if (currentNode.parent != null && nodeSuccessor.toId == currentNode.parent.state.toId) {
+				if ( (currentNode.parent != null && nodeSuccessor.toId == currentNode.parent.state.toId)
+						||
+				// do not uses motorways if not allowed
+					 (!useMotorways && nodeSuccessor.isMotorwayConnection())
+						||
+				// do not uses toll roads if not allowed
+					 (!useTollRoads && nodeSuccessor.isTollRoadConnection())
+				) {
 					continue;
 				}
 
