@@ -1,28 +1,33 @@
-/**
- * This is a close copy of the file in OSM2GpsMid 
+/*
+ * This is a close copy of the file in Osm2GpsMid.
  *
- *
- *
- * Copyright (C) 2007 Harald Mueller
- * Copyright (C) 2008 Kai Krueger
+ * Copyright (c) 2007 Harald Mueller
+ * Copyright (c) 2008 Kai Krueger
+ * See COPYING
  */
+
 package de.ueller.midlet.gps.names;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import de.ueller.gps.data.Configuration;
-import de.ueller.midlet.gps.Trace;
 
 
 public class NumberCanon {
 	
-	private static char [] charMapCore; //fast direct lookup table (Can't cover the entire unicode code range though)
-	private static char [] charMapExtendedKey = new char [0]; //ordered Map to store the rest of the char -> num mappings
+	/** Fast direct lookup table (Can't cover the entire unicode code range though) */
+	private static char [] charMapCore;
+	/** Ordered Map to store the rest of the char -> num mappings */
+	private static char [] charMapExtendedKey = new char [0];
+	/** Ordered Map to store the rest of the char -> num mappings */
 	private static char [] charMapExtendedValue = new char [0];
-	private static char minFastRange = 47; //Specify the codepoint range that gets mapped in the lookup table
+	/** Specifies the codepoint range that gets mapped in the lookup table */
+	private static char minFastRange = 47;
+	/** Specifies the codepoint range that gets mapped in the lookup table */
 	private static char maxFastRange = 123;
-	private static char defaultChar = '1'; //All unknown characters get mapped to this
+	/** All unknown characters get mapped to this */
+	private static char defaultChar = '1';
 	
 	private static final int canonType = 0;
 	private static final int normType = 2;
@@ -46,8 +51,9 @@ public class NumberCanon {
 					char c = buf[idx++];
 					switch (charType) {
 					case canonType: {
-						if ((c == '\n') || (c == '\r'))
+						if ((c == '\n') || (c == '\r')) {
 							break;
+						}
 						if (c != '\t') {
 							charType = normType;
 						}
@@ -74,11 +80,11 @@ public class NumberCanon {
 						}
 						break;
 					}
-					}
-				}
+					} // switch
+				} // for
 				readChars = isr.read(buf);
 
-			}
+			} // while
 			isr.close();
 			is.close();
 			/* Bubble sort */
@@ -97,27 +103,29 @@ public class NumberCanon {
 						changed = true;
 					}
 				}
-			}		
+			} // while
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public static String canonial(String s){
-		if (charMapCore == null)
+	public static String canonial(String s) {
+		if (charMapCore == null) {
 			initCharMaps();
-		StringBuffer erg=new StringBuffer();
-//		System.out.print("canonial '" + s + "' ");
-		for (int i=0;i<s.length();i++){
+		}
+		StringBuffer erg = new StringBuffer();
+//		System.out.print("canonical '" + s + "' ");
+		for (int i = 0; i < s.length(); i++) {
 			erg.append(getNumberOf(s.charAt(i)));
 		}
 		//System.out.println("'" + erg + "'");
 		return erg.toString();
 	}
 	
-	private static char getNumberOf(char s){
-		if (s == 0)
+	private static char getNumberOf(char s) {
+		if (s == 0) {
 			return s;
+		}
 //		System.out.print("getNumberOf() s: '" + s + "' ");
 		if ((s >= minFastRange) && (s < maxFastRange)) {
 			/* This is the fast path */
@@ -126,7 +134,7 @@ public class NumberCanon {
 			int minIdx, maxIdx, pivot;
 			minIdx = 0;
 			maxIdx = charMapExtendedKey.length - 1;
-			pivot = (minIdx+maxIdx)/2;
+			pivot = (minIdx + maxIdx) / 2;
 			while (minIdx < maxIdx) {
 				if (charMapExtendedKey[pivot] == s) {
 					return charMapExtendedValue[pivot];
@@ -140,14 +148,14 @@ public class NumberCanon {
 				} else {
 					minIdx = pivot;
 				}
-				pivot = (minIdx+maxIdx)/2;
+				pivot = (minIdx + maxIdx) / 2;
 			}
 			if (charMapExtendedKey[pivot] == s) {
 				return charMapExtendedValue[pivot];
 			}
 		}
 
-		//We need some default character value, we might as well use 1
+		// We need some default character value, we might as well use 1
 		return '1';
 	}
 }

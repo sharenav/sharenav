@@ -1,42 +1,41 @@
-package de.ueller.midlet.gps.names;
 /*
  * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net
  * 			Copyright (c) 2008 Kai Krueger apm at users dot sourceforge dot net 
- * See Copying
+ * See COPYING
  * 
- * this class maintains all about Names. Run in a low proirity, has a request queue and
- * a String cache. All done, to avoid many an frequent memory allocations.
  */
+
+package de.ueller.midlet.gps.names;
 
 import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.Vector;
 
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.tools.intTree;
 import de.ueller.gpsMid.CancelMonitorInterface;
-import de.ueller.gpsMid.mapData.QueueReader;
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.Logger;
-import de.ueller.midlet.gps.Trace;
 
-import de.ueller.midlet.gps.data.MapName;
 import de.ueller.midlet.gps.tile.StringEntry;
 
+
+/**
+ * This class maintains all about names. Runs in a low priority, has a request queue and
+ * a string cache. All done to avoid many and frequent memory allocations.
+ */
 public class Names implements Runnable {
 //	#debug
 	private final static Logger logger = Logger.getInstance(Names.class, Logger.TRACE);
-	private intTree queue2 = new intTree();	
-	private intTree addQueue2 = new intTree();
+	private final intTree queue2 = new intTree();	
+	private final intTree addQueue2 = new intTree();
 	private int[] startIndexes = null;
 	boolean shutdown = false;
 	boolean cleanup = false;
-	private intTree stringCache = new intTree();
-	private Thread processorThread;
+	private final intTree stringCache = new intTree();
+	private final Thread processorThread;
 	boolean isReady = false;
 
 	public Names() {
@@ -79,11 +78,10 @@ public class Names implements Runnable {
 				}
 			}
 		} catch (Exception e) {
-			logger.fatal("Names thread crashed unexpectedly with error " +  e.getMessage() + " at " +e.toString());
-			// TODO Auto-generated catch block
+			logger.fatal("Names thread crashed unexpectedly with error " + 
+					e.getMessage() + " at " + e.toString());
 			e.printStackTrace();
 		}
-
 	}
 
 	public void stop() {
@@ -142,7 +140,7 @@ public class Names implements Runnable {
 			ds.close();
 			return firstWord;
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			// TODO Should the user be alerted or does this never happen?
 			e.printStackTrace();
 		}
 		return ("");
@@ -185,8 +183,7 @@ public class Names implements Runnable {
 				if (actIdx == idx) {
 					StringEntry se = (StringEntry) stringCache.get(idx);
 					if (se == null) {
-						/*
-						 * We might have dropped the cache in between for low memory,
+						/* We might have dropped the cache in between for low memory,
 						 * in this case just read the entry now.
 						 */
 						se = new StringEntry(null);
@@ -310,7 +307,7 @@ public class Names implements Runnable {
 		}
 		cleanup = false;
 	}
-
+	
 	public int getNameCount() {
 		return stringCache.size();
 	}
@@ -318,7 +315,7 @@ public class Names implements Runnable {
 	public void dropCache() {
 		stringCache.removeAll();
 	}
-
+	
 	public static final int readNameIdx(DataInputStream ds) {		
 		int idx = -1;
 		try {			
@@ -334,7 +331,6 @@ public class Names implements Runnable {
 		return idx;
 	}
 	
-
 /*	
  * This function is currently unused. Might reintroduce it later
  * 
