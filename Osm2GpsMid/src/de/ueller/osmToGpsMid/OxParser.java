@@ -47,7 +47,7 @@ public class OxParser extends DefaultHandler {
 	 */
 	private HashMap<Long, Node> nodes = new HashMap<Long, Node>(80000, 0.60f);
 	private Vector<Node> nodes2 = null;
-	private static HashMap<Long, Way> ways = new HashMap<Long, Way>(); // must be static only to be able to call getWayHashMap() from Tile for debugging
+	private HashMap<Long, Way> ways = new HashMap<Long, Way>();
 	private HashMap<Long, Relation> relations = new HashMap<Long, Relation>();
 	private HashMap<Long,TurnRestriction> turnRestrictions = new HashMap<Long, TurnRestriction>();
 	private ArrayList<TurnRestriction> turnRestrictionsWithViaWays = new ArrayList<TurnRestriction>();

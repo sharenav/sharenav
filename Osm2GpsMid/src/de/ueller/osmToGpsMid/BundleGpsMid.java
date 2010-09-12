@@ -449,6 +449,7 @@ public class BundleGpsMid implements Runnable {
 				System.out.println("   " + e.getKey() + ": " + e.getValue());
 
 			}
+			relTypes = null;
 			int numWays = parser.getWays().size();
 			new SplitLongWays(parser);
 			System.out.println("Splitting long ways increased ways from "
@@ -480,6 +481,8 @@ public class BundleGpsMid implements Runnable {
 			cd.exportMapToMid();
 			//Drop parser to conserve Memory
 			parser = null;
+			cd = null;
+			rd = null;
 			
 			if (!config.getCellOperator().equalsIgnoreCase("false")) {
 				CellDB cellDB = new CellDB();
