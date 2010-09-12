@@ -136,16 +136,41 @@ public class OxParser extends DefaultHandler {
 				", Relations " + relTot + "/" + relPart + "/" + relIns);
 		System.out.println("End of document, reading took " + time + " seconds");
 	}
+	
+	private boolean nodeInArea(float lat, float lon) {
+		boolean inBound = false;
+		
+		if (configuration.getArea()!=null && configuration.getArea().contains(lat, lon)){
+			inBound = true;
+		}
+		if (bounds != null && bounds.size() != 0) {
+			for (Bounds b : bounds) {
+				if (b.isIn(lat, lon)) {
+					inBound = true;
+					break;
+				}
+			}
+		} 
+		if ((bounds==null || bounds.size()==0) && configuration.getArea() == null){
+			inBound = true;
+		}
+		
+		return inBound;
+	}
 
 	public void startElement(String namespaceURI, String localName, String qName, Attributes atts) {		
 //		System.out.println("start " + localName + " " + qName);
 		if (qName.equals("node")) {
+			nodeTot++;
 			float node_lat = Float.parseFloat(atts.getValue("lat"));
 			float node_lon = Float.parseFloat(atts.getValue("lon"));
 			
-			long id = Long.parseLong(atts.getValue("id"));
-			current = new Node(node_lat, node_lon, id);
-			
+			if (nodeInArea(node_lat, node_lon)) {
+				long id = Long.parseLong(atts.getValue("id"));
+				current = new Node(node_lat, node_lon, id);
+			} else {
+				current = null;
+			}
 		}
 		if (qName.equals("way")) {
 			long id = Long.parseLong(atts.getValue("id"));
@@ -181,7 +206,7 @@ public class OxParser extends DefaultHandler {
 			}
 		}
 		if (qName.equals("tag")) {
-			if (current != null) {				
+			if (current != null) {
 				String key = atts.getValue("k");
 				String val = atts.getValue("v");
 				/**
@@ -207,9 +232,7 @@ public class OxParser extends DefaultHandler {
 						}
 						current.setAttribute(tagsCache.get(key), tagsCache.get(val));
 					}
-				}				
-			} else {
-				System.out.println("Tag at unexpected position " + current);
+				}
 			}
 		}
 		if (qName.equals("relation")) {
@@ -264,36 +287,18 @@ public class OxParser extends DefaultHandler {
 					", Relations " + relTot + "/" + relPart + "/" + relIns);
 		}
 		if (qName.equals("node")) {
+			if (current == null) return; //Node not in bound
 			Node n = (Node) current;
-			boolean inBound = false;
-			nodeTot++;
-			if (configuration.getArea()!=null && configuration.getArea().contains(n.lat, n.lon)){
-				inBound = true;
-			}
-			if (bounds != null && bounds.size() != 0) {
-				for (Bounds b : bounds) {
-					if (b.isIn(n.lat, n.lon)) {
-						inBound = true;
-						break;
-					}
+			previousNodeWithThisId = nodes.put(current.id, (Node) current);
+			nodeIns++;
+			if (current.getAttribute("highway") != null && current.getAttribute("highway").equalsIgnoreCase("traffic_signals")) {
+				// decrement trafficSignalCount if a previous node with this id got replaced but was a traffic signal node
+				if (previousNodeWithThisId != null && previousNodeWithThisId.isTrafficSignals()) {
+					trafficSignalCount--;
+					System.out.println("DUPLICATE TRAFFIC SIGNAL NODE ID: " + previousNodeWithThisId.id + " more than once in osm file");
 				}
-			} 
-			if ((bounds==null || bounds.size()==0) && configuration.getArea() == null){
-				inBound = true;
-			}
-
-			if (inBound) {
-				previousNodeWithThisId = nodes.put(current.id, (Node) current);
-				nodeIns++;
-				if (current.getAttribute("highway") != null && current.getAttribute("highway").equalsIgnoreCase("traffic_signals")) {
-					// decrement trafficSignalCount if a previous node with this id got replaced but was a traffic signal node
-					if (previousNodeWithThisId != null && previousNodeWithThisId.isTrafficSignals()) {
-						trafficSignalCount--;
-						System.out.println("DUPLICATE TRAFFIC SIGNAL NODE ID: " + previousNodeWithThisId.id + " more than once in osm file");
-					}
-					n.markAsTrafficSignals();
-					trafficSignalCount++;
-				}
+				n.markAsTrafficSignals();
+				trafficSignalCount++;
 			}
 			current = null;
 		} 
