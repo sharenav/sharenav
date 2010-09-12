@@ -387,7 +387,6 @@ guioverviewelements.thisNamePart=...this name part:
 guioverviewelements.Ways=Ways
 guiroute.AtCreation=At route line creation
 guiroute.AutoRecalculation=Auto recalculation
-guiroute.CalculationStrategies=Calculation strategies
 guiroute.AllowOptsGroup=Allow
 guiroute.AllowMotorways=Motorways
 guiroute.AllowTollRoads=Toll roads
