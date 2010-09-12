@@ -40,7 +40,7 @@ public class ThreadBufferedInputStream extends InputStream implements Runnable {
 		writeIdx = 0;
 		eof = false;
 		eofIn = false;
-		workerThread = new Thread(this);
+		workerThread = new Thread(this, "ThreadBuffered-reader");
 		workerThread.start();
 	}
 	
