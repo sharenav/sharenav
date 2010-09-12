@@ -958,14 +958,12 @@ public class RouteInstructions {
 			if (ri==0) {				
 				// ri = convertTurnToRouteInstruction( (nextStartBearing - c.endBearing) * 2 );
 				ri = convertTurnToRouteInstruction( (nextStartBearing - c.wayConEndBearing) * 2 );
-				// give bear instruction only if way type or name of the way is not available or changes or the way leads to a highway link
-				if (c.wayType != cPrev.wayType || c.wayNameIdx == -1 || c.wayNameIdx != cPrev.wayNameIdx || Legend.getWayDescription(c.wayType).isHighwayLink()) {					
-					if ( (rfCurr & Legend.ROUTE_FLAG_BEAR_LEFT) > 0 ) {
-						ri = RI_BEAR_LEFT;
-					}
-					if ( (rfCurr & Legend.ROUTE_FLAG_BEAR_RIGHT) > 0 ) {
-						ri = RI_BEAR_RIGHT;
-					}
+				// give bear instruction if bearing is available
+				if ( (rfCurr & Legend.ROUTE_FLAG_BEAR_LEFT) > 0 ) {
+					ri = RI_BEAR_LEFT;
+				}
+				if ( (rfCurr & Legend.ROUTE_FLAG_BEAR_RIGHT) > 0 ) {
+					ri = RI_BEAR_RIGHT;
 				}
 			}
 			c.wayRouteInstruction = ri;

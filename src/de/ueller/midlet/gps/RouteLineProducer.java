@@ -12,8 +12,10 @@ import de.ueller.gps.tools.intTree;
 import de.ueller.gpsMid.mapData.Tile;
 import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.Proj2D;
+import de.ueller.midlet.gps.routing.Connection;
 import de.ueller.midlet.gps.routing.ConnectionWithNode;
 import de.ueller.midlet.gps.tile.PaintContext;
+import de.ueller.midlet.gps.tile.WayDescription;
 
 
 public class RouteLineProducer implements Runnable {
@@ -157,6 +159,16 @@ public class RouteLineProducer implements Runnable {
 				cTo.wayRouteFlags |= Legend.ROUTE_FLAG_INCONSISTENT_BEARING;				
 			}
 			
+			int countSameBearings = 0;
+			for (int b = 0; b < pc.conWayBearingsCount; b++) {
+				byte bearingAlternative = pc.conWayBearings[b];
+				if (cTo.wayConStartBearing == bearingAlternative) {
+					countSameBearings++;
+				}
+			}
+			if (countSameBearings>1) {
+				System.out.println("!!! " + countSameBearings + " same bearings at conn " + iConnFrom);
+			}
 //			System.out.println(iConnFrom + ": " + cTo.wayConStartBearing);
 			// check if we need a bearing instruction at this connection
 			for (int b = 0; b < pc.conWayBearingsCount; b++) {
@@ -166,43 +178,46 @@ public class RouteLineProducer implements Runnable {
 				if (cTo.wayConStartBearing != bearingAlternative) {					
 					byte riRoute = RouteInstructions.convertTurnToRouteInstruction( (cTo.wayConStartBearing - cFrom.wayConEndBearing) * 2 );
 					byte riCheck = RouteInstructions.convertTurnToRouteInstruction( (bearingAlternative - cFrom.wayConEndBearing) * 2 );
-					// if we got a second straight-on way at the connection, we need to tell the bearing
-					if (
-						(riRoute == RouteInstructions.RI_STRAIGHT_ON && riCheck == RouteInstructions.RI_STRAIGHT_ON)
+					// if we got a second straight-on way at the connection, we need to check if we must tell the bearing
+					if (riRoute == RouteInstructions.RI_STRAIGHT_ON && riCheck == RouteInstructions.RI_STRAIGHT_ON) {
+						WayDescription wdRoute = Legend.getWayDescription(cFrom.wayType);
+						WayDescription wdCheck = Legend.getWayDescription(pc.conWayBearingWayType[b]);
 						// but not if there's exactly one alternative to leave/enter the motorway don't add the bearing
-						&& pc.conWayNumMotorways != 1
-						&& (
-							// and only if the way of the alternative bearing has a way name (avoids e.g. bearing instructions when passing unnamed service streets)
-							pc.conWayBearingHasName[b]
-							||
-							// or neither the alternative nor the way on the route has a name (keeps bearing instructions e.g. for multiple unnamed footways)
-							(!pc.conWayBearingHasName[b] && cFrom.wayNameIdx < 0)
-						    ||
-							// or when the alternative way and the way on the route have approximately the same width (e.g. secondary / secondary link)
-						    // FIXME: we should rather check for both way types being mainstreet net than for their way widths
-						    Math.abs(Legend.getWayDescription(pc.conWayBearingWayType[b]).wayWidth - Legend.getWayDescription(cFrom.wayType).wayWidth) <= 1
-						)
-					) {
-						int iBearingAlternative = (int) (bearingAlternative) * 2;
-						if (iBearingAlternative < 0) iBearingAlternative += 360;
-
-						int iBearingRoute = (int) (cTo.wayConStartBearing) * 2;
-						if (iBearingRoute < 0) iBearingRoute += 360;
-
-//						System.out.println(b + ":" + iBearingRoute + " " + iBearingAlternative);
-
-						// if the bearing difference is more than 180 degrees, the angle in the other direction is smaller,
-						// so simply swap signs of the bearings to make the later comparison give the opposite result 
-						if (Math.abs(iBearingRoute - iBearingAlternative) > 180) {
-							iBearingAlternative = -iBearingAlternative;
-							iBearingRoute = -iBearingRoute;
-							//System.out.println("changed signs: " + iBearingRoute + " " + iBearingAlternative);
-						}
-						
-						if (iBearingRoute < iBearingAlternative) {
-							cFrom.wayRouteFlags |= Legend.ROUTE_FLAG_BEAR_LEFT;
-						} else {
-							cFrom.wayRouteFlags |= Legend.ROUTE_FLAG_BEAR_RIGHT;							
+						if ( pc.conWayNumMotorways != 1
+							&& (
+								// or when the way on the route is smaller than the way of the bearing alternative
+							    // TODO: should we really check for wayWidth or use some other criteria?
+							    wdRoute.wayWidth < wdCheck.wayWidth
+							    ||
+							    // or when the way on the route is a highway link
+							    wdRoute.isHighwayLink()
+							    ||
+							    // or when neither the way on the route nor the alternative way is a highway link
+							    !(wdRoute.isHighwayLink() || wdCheck.isHighwayLink())
+							)
+						) {
+							int iBearingAlternative = (int) (bearingAlternative) * 2;
+							if (iBearingAlternative < 0) iBearingAlternative += 360;
+	
+							int iBearingRoute = (int) (cTo.wayConStartBearing) * 2;
+							if (iBearingRoute < 0) iBearingRoute += 360;
+	
+	//						System.out.println(b + ":" + iBearingRoute + " " + iBearingAlternative);
+	
+							// if the bearing difference is more than 180 degrees, the angle in the other direction is smaller,
+							// so simply swap signs of the bearings to make the later comparison give the opposite result 
+							if (Math.abs(iBearingRoute - iBearingAlternative) > 180) {
+								iBearingAlternative = -iBearingAlternative;
+								iBearingRoute = -iBearingRoute;
+								//System.out.println("changed signs: " + iBearingRoute + " " + iBearingAlternative);
+							}
+							
+							if (iBearingRoute < iBearingAlternative) {
+								cFrom.wayRouteFlags |= Legend.ROUTE_FLAG_BEAR_LEFT;
+							} else {
+								cFrom.wayRouteFlags |= Legend.ROUTE_FLAG_BEAR_RIGHT;							
+							}
+							cFrom.wayTypeOfAlternativeBearingWay = pc.conWayBearingWayType[b];
 						}
 					}
 				}				
