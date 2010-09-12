@@ -78,7 +78,46 @@ public class WaySegment {
 		}// end switch
 	}
 
-		public void drawDamage(PaintContext pc,int x[],int y[],int i,int max,int w,IntPoint edgeA,IntPoint edgeB,IntPoint edgeC,IntPoint edgeD){
+	
+	public void drawTollRoad(PaintContext pc,int x[],int y[],int i,int max,int w,IntPoint edgeA,IntPoint edgeB,IntPoint edgeC,IntPoint edgeD){
+		// do nothing if way is too thin
+		if (w < 1){
+			return;
+		}
+		
+		// old edge
+		point.a.set(edgeC);
+		// 0, 0
+		point.b.set(0 , 0);
+				
+		pc.g.setColor(Legend.COLORS[Legend.COLOR_TOLLROAD_DECORATION]);
+		
+		double distanceLine = edgeA.vectorMagnitude(edgeB);
+		double distanceDeco = edgeA.vectorMagnitude(edgeC);
+		if (distanceLine != 0) {
+			double dx = ( (double) (edgeA.x - edgeB.x) * distanceDeco / distanceLine);
+			double dy = ( (double)(edgeA.y - edgeB.y) * distanceDeco / distanceLine);
+			point.d.set((int) dx, (int) dy);
+			for (int j = 1; point.d.vectorMagnitude(point.b) < distanceLine; j++) {
+				point.d.set((int) (dx * j), (int) (dy * j));
+				if ( ( j & 0x1) == 0 ) {
+					point.c.set(
+						edgeC.vectorSubstract(point.d)
+					);
+				} else {
+					point.c.set(
+						edgeA.vectorSubstract(point.d)
+					);
+				}
+				
+				pc.g.drawLine(point.a.x, point.a.y, point.c.x, point.c.y);
+				point.a.set(point.c);
+			}
+		}
+	}
+
+	
+	public void drawDamage(PaintContext pc,int x[],int y[],int i,int max,int w,IntPoint edgeA,IntPoint edgeB,IntPoint edgeC,IntPoint edgeD){
 		int colorDamaged = Legend.COLORS[Legend.COLOR_WAY_DAMAGED_DECORATION];
 
 		// do nothing if way is too thin

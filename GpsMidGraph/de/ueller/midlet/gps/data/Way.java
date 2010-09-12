@@ -116,6 +116,7 @@ public class Way extends Entity {
 	 * The routeability of the way in each route mode is determined by Osm2GpsMid,
 	 * which derives it from the accessible flag of the wValue of way type's description
 	 * and the routeAccess specifications in the style file 
+	 * Higher bits (bit 4 to 7 are used for the same flags like in Connection)
 	 */
 	private byte wayRouteModes = 0;
 
@@ -1724,6 +1725,10 @@ public class Way extends Entity {
 				}
 				if (isTunnel()) {
 					waySegment.drawTunnel(pc, xPoints, yPoints, i, count - 1, w, 
+							l1b, l1e, l2b, l2e);
+				}
+				if (isTollRoad()) {
+					waySegment.drawTollRoad(pc, xPoints, yPoints, i, count - 1, w, 
 							l1b, l1e, l2b, l2e);
 				}
 				if (isDamaged()) {

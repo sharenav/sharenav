@@ -70,6 +70,10 @@ public class IntPoint {
 	public IntPoint vectorMultiply(float multi) {
 		return new IntPoint((int)(this.x * multi), (int)(this.y * multi));
 	}
+	
+	public double vectorMagnitude(IntPoint other) {
+		return Math.sqrt( (this.x - other.x) * (this.x - other.x) + (this.y - other.y) * (this.y - other.y)) ;
+	}
 
 	/**
 	 * Adds the given IntPoint multiplied by factor to the object
