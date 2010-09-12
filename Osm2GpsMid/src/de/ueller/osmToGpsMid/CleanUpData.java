@@ -40,7 +40,7 @@ public class CleanUpData {
 	public CleanUpData(OxParser parser, Configuration conf) {
 		this.parser = parser;
 		this.conf = conf;
-//		removeEmptyWays();
+		removeEmptyWays();
 		removeDupNodes();
 		removeUnusedNodes();
 		parser.dropHashMap();
@@ -139,6 +139,26 @@ public class CleanUpData {
 		return true;
 	}
 
+	
+	private void removeEmptyWays() {
+		/**
+		 * At this point, the area triangulation should have happened
+		 * that might reference empty ways. Also the tag information for
+		 * area POIs (whos ways has no type) should have been copied over too.
+		 * So it should be safe to remove all ways (and in the second step free the nodes)
+		 * of ways that have no type. This can save quite a lot of memory depending on style-file
+		 */
+		ArrayList<Way> rmWays = new ArrayList<Way>();
+		for (Way w : parser.getWays()) {
+			if (w.getType() < 0) {
+				rmWays.add(w);
+			}
+		}
+		for (Way w : rmWays) {
+			parser.removeWay(w);
+		}
+	}
+	
 	/**
 	 *
 	 */
