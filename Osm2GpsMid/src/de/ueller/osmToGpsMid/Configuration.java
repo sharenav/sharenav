@@ -130,10 +130,11 @@ public class Configuration {
 	public final static int COLOR_CLOCK_TEXT = 66;
 	public final static int COLOR_BRIDGE_DECORATION = 67;
 	public final static int COLOR_TUNNEL_DECORATION = 68;
-	public final static int COLOR_WAY_DAMAGED_BORDER = 69;
-	public final static int COLOR_WAY_DAMAGED_DECORATION = 70;
-	public final static int COLOR_DAMAGED_BORDER = 71;
-	public final static int COLOR_COUNT = 72;
+	public final static int COLOR_TOLLROAD_DECORATION = 69;
+	public final static int COLOR_WAY_DAMAGED_BORDER = 70;
+	public final static int COLOR_WAY_DAMAGED_DECORATION = 71;
+	public final static int COLOR_DAMAGED_BORDER = 72;
+	public final static int COLOR_COUNT = 73;
 	
 	public final static String COLORNAMES[] =
 			{"map_background",
@@ -205,6 +206,7 @@ public class Configuration {
 			 "clock_text",
 			 "bridge_decoration",
 			 "tunnel_decoration",
+			 "tollroad_decoration",
 			 "way_damaged_border",
 			 "way_damaged_decoration",
 			 "area_damaged_border"

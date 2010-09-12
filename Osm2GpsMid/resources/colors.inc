@@ -74,6 +74,7 @@
 	<!-- way / area decorations -->
 	<color of="bridge_decoration" is="00FFFFFF"/>	
 	<color of="tunnel_decoration" is="00000000"/>	
+	<color of="tollroad_decoration" is="00FFDDBB"/>	
 	<color of="way_damaged_border" is="00FF0000"/>	
 	<color of="way_damaged_decoration" is="00FF0000"/>	
 	<color of="area_damaged_border" is="00FF0000"/>	
