@@ -10,6 +10,7 @@
  */
 package de.ueller.osmToGpsMid;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.Dialog;
@@ -255,13 +256,71 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		gbc.gridy = 0;
 		add(map, gbc);
 
-		destList=new JTable(new LocationTableModel(routeList));
-		gbc.gridwidth = 1;
-		gbc.weighty = 1;
-		gbc.fill = GridBagConstraints.BOTH;
+
+		JPanel jpRouteCorridor = new JPanel(new GridBagLayout());
 		gbc.gridx = 8;
 		gbc.gridy = 0;
-		add(destList, gbc);
+		gbc.gridwidth = 1;
+		gbc.weighty = 0;
+		add(jpRouteCorridor, gbc);
+
+		JLabel jlSeparator1 = new JLabel(" ");
+		gbc.gridwidth = 1;
+		gbc.weightx = 0;
+		gbc.weighty = 0;
+		gbc.fill = GridBagConstraints.CENTER;
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		jpRouteCorridor.add(jlSeparator1, gbc);
+
+		JLabel jlRouteCorridor = new JLabel("Optional Route Corridor Destinations");
+		gbc.gridwidth = 1;
+		gbc.weightx = 0;
+		gbc.weighty = 0;
+		gbc.fill = GridBagConstraints.CENTER;
+		gbc.gridx = 0;
+		gbc.gridy = 1;
+		jpRouteCorridor.add(jlRouteCorridor, gbc);
+
+		destList=new JTable(new LocationTableModel(routeList));
+		destList.setToolTipText("Add route corridor destinations with Alt+Click on the map");
+		gbc.gridwidth = 1;
+		gbc.weightx = 1;
+		gbc.weighty = 1;
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.gridx = 0;
+		gbc.gridy = 2;
+		jpRouteCorridor.add(destList, gbc);
+		
+		
+		jbClearRoute = new JButton("Clear Route Corridor");
+		jbClearRoute.setActionCommand("ClearRoute-click");
+		jbClearRoute.addActionListener(this);
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.gridwidth = 1;
+		gbc.weighty = 0;
+		gbc.gridx = 0;
+		gbc.gridy = 3;
+		jpRouteCorridor.add(jbClearRoute, gbc);
+
+		jbCalcRoute = new JButton("Calculate Route Corridor");
+		jbCalcRoute.setActionCommand("CalculateRoute-click");
+		jbCalcRoute.addActionListener(this);
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.gridwidth = 1;
+		gbc.weighty = 0;
+		gbc.gridx = 0;
+		gbc.gridy = 4;
+		jpRouteCorridor.add(jbCalcRoute, gbc);
+
+		JLabel jlSeparator2 = new JLabel(" ");
+		gbc.gridwidth = 1;
+		gbc.weightx = 0;
+		gbc.weighty = 0;
+		gbc.fill = GridBagConstraints.CENTER;
+		gbc.gridx = 0;
+		gbc.gridy = 5;
+		jpRouteCorridor.add(jlSeparator2, gbc);
 		
 		
 		JPanel jpFiles = new JPanel(new GridBagLayout());
@@ -402,27 +461,6 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		gbc.gridy = 2;
 		gbc.weighty = 0;
 		jpOptions2.add(jcbCellSource, gbc);
-		
-		jbClearRoute = new JButton("Clear RoutePoints");
-		jbClearRoute.setActionCommand("ClearRoute-click");
-		jbClearRoute.addActionListener(this);
-		gbc.fill = GridBagConstraints.BOTH;
-		gbc.gridwidth = 3;
-		gbc.weighty = 0;
-		gbc.gridx = 0;
-		gbc.gridy = 3;
-		add(jbClearRoute, gbc);
-
-		jbCalcRoute = new JButton("Calculate Route");
-		jbCalcRoute.setActionCommand("CalculateRoute-click");
-		jbCalcRoute.addActionListener(this);
-		gbc.fill = GridBagConstraints.BOTH;
-		gbc.gridwidth = 3;
-		gbc.weighty = 0;
-		gbc.gridx = 3;
-		gbc.gridy = 3;
-		add(jbCalcRoute, gbc);
-
 		
 		jbCreate = new JButton("Create GpsMid midlet");
 		jbCreate.setActionCommand("Create-click");
@@ -965,6 +1003,9 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			Route route = new Route(routeList, 10000,map);
 			Area a=route.createArea();
 			config.setArea(a);
+		} else {
+			JOptionPane.showMessageDialog(this,	"Please add first at least two route destinations with Alt+Click on the map"
+					, "Route Corridor Calculation", JOptionPane.ERROR_MESSAGE);
 		}
 
 	}
