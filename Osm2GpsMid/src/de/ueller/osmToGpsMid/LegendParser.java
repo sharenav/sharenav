@@ -68,8 +68,8 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 	private final byte READING_DAMAGES = 7;
 	private byte readingType = READING_WAYS;
 
-	private byte poiIdx = 0;
-	private byte wayIdx = 0;
+	private int poiIdx = 0;
+	private int wayIdx = 0;
 	private boolean nonValidStyleFile;
 	public static int tileScaleLevel[] = { Integer.MAX_VALUE, 900000, 180000, 45000 };
 	
@@ -131,7 +131,7 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 			currentPoi = new POIdescription();
 			maxSpeedTemplates = new Hashtable<String, Integer>();
 			/* Add a bogous POI description, to reserve type 0 as a special marker */
-			currentPoi.typeNum = poiIdx++;
+			currentPoi.typeNum = (byte)poiIdx++;
 			currentPoi.key = "A key that should never be hot";
 			currentPoi.value = "A value that should never be triggered";
 			currentPoi.description = "No description";
@@ -144,7 +144,7 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 			 * Add a bogous Way description, to reserve type 0 as a special
 			 * marker
 			 */
-			currentWay.typeNum = wayIdx++;
+			currentWay.typeNum = (byte)wayIdx++;
 			currentWay.key = "A key that should never be hot";
 			currentWay.value = "A value that should never be triggered";
 			currentWay.description = "No description";
@@ -332,7 +332,7 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 			}
 			if (qName.equals("value")) {
 				currentPoi = new POIdescription();
-				currentPoi.typeNum = poiIdx++;
+				currentPoi.typeNum = (byte)poiIdx++;
 				currentPoi.key = currentKey;
 				currentPoi.value = atts.getValue("name");
 				currentPoi.hideable = true;
@@ -426,7 +426,7 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 			}
 			if (qName.equals("Wvalue")) {
 				currentWay = new WayDescription();
-				currentWay.typeNum = wayIdx++;
+				currentWay.typeNum = (byte)wayIdx++;
 				currentWay.key = currentKey;
 				currentWay.value = atts.getValue("name");
 				currentWay.hideable = true;
