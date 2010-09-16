@@ -9,10 +9,9 @@ import java.util.Vector;
 
 
 public class StringTokenizer {
-
 	public static Vector getVector(String text, String separator) {
-    	Vector tokens = new Vector();
-    	int seplen = separator.length();
+		Vector tokens = new Vector();
+		int seplen = separator.length();
 		int start = 0;
 		int end;
 		while ((end = text.indexOf(separator, start)) != -1) {
@@ -22,14 +21,16 @@ public class StringTokenizer {
 		if (start < text.length()) {
 			tokens.addElement(text.substring(start));
 		}
+		if (start == text.length()) {
+			tokens.addElement(null);
+		}
 		return tokens;
-    }
-
-    public static String[] getArray(String text, String separator) {
-    	Vector tmp = getVector(text, separator);
-    	String[] tokens = new String[tmp.size()];
-    	tmp.copyInto(tokens);
-    	return tokens;
-    }
-
+	}
+	
+	public static String[] getArray(String text, String separator) {
+		Vector tmp = getVector(text, separator);
+		String[] tokens = new String[tmp.size()];
+		tmp.copyInto(tokens);
+		return tokens;
+	}
 }
