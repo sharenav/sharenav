@@ -18,11 +18,8 @@ public class StringTokenizer {
 			tokens.addElement(text.substring(start, end));
 			start = end + seplen;
 		}
-		if (start < text.length()) {
+		if (start <= text.length()) {
 			tokens.addElement(text.substring(start));
-		}
-		if (start == text.length()) {
-			tokens.addElement(null);
 		}
 		return tokens;
 	}
