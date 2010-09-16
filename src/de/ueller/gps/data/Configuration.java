@@ -20,6 +20,11 @@ import javax.microedition.io.Connector;
 //#if polish.api.fileconnection
 import javax.microedition.io.file.FileConnection;
 //#endif
+//#if polish.android
+import de.enough.polish.android.midlet.MidletBridge;
+import android.content.res.AssetManager;
+import android.content.Context;
+//#endif
 import javax.microedition.lcdui.Command;
 import javax.microedition.rms.InvalidRecordIDException;
 import javax.microedition.rms.RecordStore;
@@ -1283,9 +1288,15 @@ public class Configuration {
 				name.toLowerCase().endsWith(".png")
 			)
 		) {
+			//#if polish.android
+			//#debug debug
+			logger.debug("Opening file as android asset: " + name);
+			is = MidletBridge.instance.getResources().getAssets().open(name.substring(1));
+			//#else
 			//#debug debug
 			logger.debug("Opening file from JAR: " + name);
 			is = QueueReader.class.getResourceAsStream(name);
+			//#endif
 			if (is != null) {
 				return is;
 			} else if (!Configuration.getCfgBitSavedState(Configuration.CFGBIT_PREFER_INTERNAL_PNGS)) {
