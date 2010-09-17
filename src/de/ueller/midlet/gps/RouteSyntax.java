@@ -13,6 +13,11 @@ import javax.microedition.io.Connector;
 //#if polish.api.fileconnection
 import javax.microedition.io.file.FileConnection;
 //#endif
+//#if polish.android
+import de.enough.polish.android.midlet.MidletBridge;
+import android.content.res.AssetManager;
+import android.content.Context;
+//#endif
 
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.tools.HelperRoutines;
@@ -125,14 +130,24 @@ public class RouteSyntax {
 		routeSyntaxAvailable = false;
 		int i;
 		//#if polish.android
-		String syntaxDat = Configuration.getMapUrl() + Configuration.getSoundDirectory() + "/syntax.dat";
+		String syntaxDat = null;
+		if (Configuration.usingBuiltinMap()) {
+			syntaxDat = "/" + Configuration.getSoundDirectory() + "/syntax.dat";
+		} else {
+			syntaxDat = Configuration.getMapUrl() + Configuration.getSoundDirectory() + "/syntax.dat";
+		}
 		//#else
 		String syntaxDat = "/" + Configuration.getSoundDirectory() + "/syntax.dat";
 		//#endif
 		try {
 			//#if polish.android
-			FileConnection fc = (FileConnection) Connector.open(syntaxDat, Connector.READ);
-			InputStream is = fc.openInputStream();
+			InputStream is = null;
+			if (Configuration.usingBuiltinMap()) {
+				is = MidletBridge.instance.getResources().getAssets().open(syntaxDat.substring(1));
+			} else {
+				FileConnection fc = (FileConnection) Connector.open(syntaxDat, Connector.READ);
+				is = fc.openInputStream();
+			}
 			//#else
 			InputStream is = QueueReader.class.getResourceAsStream(syntaxDat);
 			//#endif
