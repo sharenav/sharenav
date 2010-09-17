@@ -11,14 +11,20 @@ import de.ueller.gps.data.Legend;
 
 import java.io.InputStream;
 //#if polish.api.mmapi	
+//#ifndef polish.android
 import javax.microedition.media.Player;
 import javax.microedition.media.PlayerListener;
-//#if polish.android
-import de.enough.polish.multimedia.AudioPlayer;
-//#else
 import javax.microedition.media.Manager;
 import javax.microedition.media.control.ToneControl;
 import javax.microedition.media.control.VolumeControl;
+//#else
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import de.enough.polish.android.midlet.MidletBridge;
+import android.content.res.AssetManager;
+import android.content.res.AssetManager.AssetInputStream;
+import android.content.Context;
+import java.io.FileDescriptor;
 //#endif
 //#endif
 
@@ -27,8 +33,13 @@ import javax.microedition.media.control.VolumeControl;
  */
 public class NoiseMaker
 //#if polish.api.mmapi	
-		implements PlayerListener
+//#ifndef polish.android
+	implements PlayerListener
+//#else
+	implements MediaPlayer.OnCompletionListener
 //#endif
+//#endif
+
 {
 	
 	// private final byte[] mPosFixSequence;
@@ -43,7 +54,7 @@ public class NoiseMaker
 
 //#if polish.api.mmapi			
 //#if polish.android
-	private static volatile AudioPlayer sPlayer = null; 
+	private static volatile MediaPlayer sPlayer = null;
 //#else
 	private static volatile Player sPlayer = null; 
 	private static byte[] mConnOpenedSequence;	
@@ -107,46 +118,57 @@ public class NoiseMaker
 
 //#if polish.api.mmapi
 //#if polish.android
-	// using AudioPlayer
+	// using MediaPlayer
 	private synchronized boolean preparePlayer(String soundFile, String mediaType, String suffix) {
-		String soundFileWithSuffix = Configuration.getMapUrl() + soundFile;
-		//#debug debug
-		mLogger.debug("Preparing to play url " + soundFileWithSuffix);
+		String soundFileWithSuffix = soundFile;
+		if (Configuration.usingBuiltinMap()) {
+			//#debug debug
+			mLogger.debug("Preparing to play sound " + soundFile);
+		} else {
+			soundFileWithSuffix = Configuration.getMapUrl() + soundFile;
+			//#debug debug
+			mLogger.debug("Preparing to play url " + soundFileWithSuffix);
+		}
 		try {
-			sPlayer = new AudioPlayer(mediaType);
+			if (sPlayer == null)
+			{
+				sPlayer = new MediaPlayer();
+				sPlayer.setOnCompletionListener(this);
+				sPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+			}
 		} catch (Exception ex) {
 			sPlayer = null;
 			mLogger.exception("Failed to create resource player for " + soundFileWithSuffix, ex);
 		}
-		if (sPlayer != null) {
+		if (sPlayer != null) {	
 			//#debug debug
 			mLogger.debug("created player for " + soundFileWithSuffix);
 			try {
-				sPlayer.prepare(soundFileWithSuffix);
+				if (Configuration.usingBuiltinMap()) {
+					sPlayer.setDataSource((FileDescriptor) MidletBridge.instance.getResources().getAssets().openFd(soundFile).getFileDescriptor());
+				} else {
+					sPlayer.setDataSource(soundFileWithSuffix.substring("file://".length()));
+				}
+				sPlayer.prepare();
 			} catch (Exception ex) {
 				//#debug debug
 				mLogger.debug("RESOURCE NOT FOUND: " + soundFileWithSuffix);
 				return false;
 			}
-			sPlayer.setPlayerListener( this );
-			sPlayer.setVolumeLevel(100);
 			lastSuccessfulSuffix = suffix;
 			return true;
 		}
 		return false;
 	}
-	
-	private synchronized void startPlayer(String nextSoundName) {
-		try {
-			sPlayer.play();
-			//#debug debug
-			mLogger.debug("player for " + nextSoundName + " started");
-		} catch (Exception ex) {
-			mLogger.exception("Failed to play sound", ex);
-		}
-	}
+
 	private synchronized void cleanPlayer() {
-		sPlayer.cleanUpPlayer();
+		if (sPlayer != null) sPlayer.release();
+		sPlayer = null;
+	}
+
+	public void onCompletion(MediaPlayer mp) {
+		cleanPlayer();
+		playNextSoundFile();
 	}
 //#else
 	// using MMAPI for J2ME
@@ -187,19 +209,10 @@ public class NoiseMaker
 		return false;
 	}
 			
-	private synchronized void startPlayer(String nextSoundName) {
-		try {
-			sPlayer.start();
-			//#debug debug
-			mLogger.debug("player for " + nextSoundName + " started");
-		} catch (Exception ex) {
-			mLogger.exception("Failed to play sound", ex);
-		}
-	}
 	private synchronized void cleanPlayer() {
 		sPlayer.close();
 	}
-//#endif
+	
 	public synchronized void playerUpdate( Player player, String event, Object eventData )
 	{
 		//#debug debug
@@ -211,7 +224,19 @@ public class NoiseMaker
 			playNextSoundFile();
 		}
 	}
+//#endif
+
 	
+	private synchronized void startPlayer(String nextSoundName) {
+		try {
+			sPlayer.start();
+			//#debug debug
+			mLogger.debug("player for " + nextSoundName + " started");
+		} catch (Exception ex) {
+			mLogger.exception("Failed to play sound", ex);
+		}
+	}
+
 //#ifndef polish.android
 	private static byte [] getToneSequence( String name ) {
     	byte sequence[] = null;
@@ -418,6 +443,7 @@ public class NoiseMaker
 		}
 		return fileFound;
 	}
+	
 	private synchronized void playNextSoundFile() {
 		String nextSoundName = determineNextSoundName();
 		if (nextSoundName != null) {
@@ -437,24 +463,19 @@ public class NoiseMaker
 		}
 	}
 //#endif
+
 	public static synchronized void stopPlayer() {
 	//#if polish.api.mmapi	
-	//#if polish.android
 	if (sPlayer != null) {
 		//#debug debug
 		mLogger.debug("Closing old player");
-		sPlayer.cleanUpPlayer();
-		sPlayer = null;
-	}
-	//#else
-	if (sPlayer != null) {
-		//#debug debug
-		mLogger.debug("Closing old player");
+		//#if polish.android
+		if (sPlayer != null) sPlayer.release();
+		//#else
 		sPlayer.close();
+		//#endif
 		sPlayer = null;
 	}
-	//#endif
 	//#endif
 	}
 }
-
