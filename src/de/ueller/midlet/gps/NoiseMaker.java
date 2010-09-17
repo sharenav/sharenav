@@ -23,6 +23,7 @@ import android.media.MediaPlayer;
 import de.enough.polish.android.midlet.MidletBridge;
 import android.content.res.AssetManager;
 import android.content.res.AssetManager.AssetInputStream;
+import android.content.res.AssetFileDescriptor;
 import android.content.Context;
 import java.io.FileDescriptor;
 //#endif
@@ -145,7 +146,9 @@ public class NoiseMaker
 			mLogger.debug("created player for " + soundFileWithSuffix);
 			try {
 				if (Configuration.usingBuiltinMap()) {
-					sPlayer.setDataSource((FileDescriptor) MidletBridge.instance.getResources().getAssets().openFd(soundFile).getFileDescriptor());
+					AssetFileDescriptor afd = MidletBridge.instance.getResources().getAssets().openFd(soundFile);
+					sPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+					afd.close();
 				} else {
 					sPlayer.setDataSource(soundFileWithSuffix.substring("file://".length()));
 				}
