@@ -433,9 +433,15 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 				if (currentKey.equalsIgnoreCase("building")) {
 					currentWay.wayDescFlags |= WayDescription.WDFLAG_BUILDING;
 				}
-				if (currentKey.equalsIgnoreCase("highway") && currentWay.value.toLowerCase().endsWith("_link")) {
-					currentWay.wayDescFlags |= WayDescription.WDFLAG_HIGHWAY_LINK;
-					// System.out.println("Waydescription is a highway link: " + currentWay.value);
+				if (currentKey.equalsIgnoreCase("highway")) {
+					if (currentWay.value.toLowerCase().endsWith("_link")) {
+						currentWay.wayDescFlags |= WayDescription.WDFLAG_HIGHWAY_LINK;
+						// System.out.println("Waydescription is a highway link: " + currentWay.value);
+					}
+					if (currentWay.value.toLowerCase().startsWith("motorway")) {
+						currentWay.wayDescFlags |= WayDescription.WDFLAG_MOTORWAY;
+						// System.out.println("Waydescription is a motorway or motorway link: " + currentWay.value);
+					}
 				}
 				
 				/* Assign a small default speed for the case that the way
