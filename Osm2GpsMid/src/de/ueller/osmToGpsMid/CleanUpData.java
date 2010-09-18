@@ -150,7 +150,7 @@ public class CleanUpData {
 		 */
 		ArrayList<Way> rmWays = new ArrayList<Way>();
 		for (Way w : parser.getWays()) {
-			if (w.getType() < 0) {
+			if (w.getType(conf) < 0) {
 				rmWays.add(w);
 			}
 		}
