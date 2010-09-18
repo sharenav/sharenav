@@ -211,6 +211,7 @@ guidiscover.lang_ru=Russian
 guidiscover.lang_sk=Slovak
 guidiscover.adaptivetospeed=adaptive to speed
 guidiscover.Airdistance=Air distance to dest. when not routing
+guidiscover.AirdistanceWhenRouting=Air distance to dest. when routing
 guidiscover.Altitude=Altitude from GPS
 guidiscover.AlwaysRecord=Always record when exceeding these meters between trackpoints (0=disabled)
 guidiscover.apikey=apikey:

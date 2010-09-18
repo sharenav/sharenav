@@ -22,6 +22,7 @@ import de.ueller.midlet.gps.routing.ConnectionWithNode;
 import de.ueller.midlet.gps.routing.RouteHelper;
 import de.ueller.midlet.gps.tile.PaintContext;
 import de.ueller.midlet.gps.tile.WayDescription;
+import de.ueller.midlet.gps.data.RoutePositionMark;
 
 public class RouteInstructions {
 	protected static final int RI_NONE = 0;
@@ -630,13 +631,20 @@ public class RouteInstructions {
 					e.setText("off:" /* i:off */ + trace.showDistance(dstToRoutePath, (dstToRoutePath == Integer.MAX_VALUE ? Trace.DISTANCE_UNKNOWN : Trace.DISTANCE_AIR)));
 				}
 				e = Trace.tl.ele[TraceLayout.ROUTE_DISTANCE];
+				String airDistance = "";
+				if (Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_AIR_DISTANCE_WHEN_ROUTING)) {
+					RoutePositionMark dest = trace.getDest();
+					if (dest != null) {
+						airDistance = "(" + trace.showDistance((int) ProjMath.getDistance(center.radlat, center.radlon, dest.lat, dest.lon), Trace.DISTANCE_AIR) + ")";
+					}
+				}
 				if (RouteLineProducer.isRunning()) {
 					// use routeLine Color for distance while route line is produced
 					e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ROUTE_ROUTELINE]);
-					e.setText(">" + trace.showDistance((int) remainingDistance, Trace.DISTANCE_ROAD));
+					e.setText(">" + trace.showDistance((int) remainingDistance, Trace.DISTANCE_ROAD) + airDistance);
 				} else if (RouteLineProducer.isRouteLineProduced()) {
 					e.setBackgroundColor(Legend.COLORS[Legend.COLOR_RI_DISTANCE_BACKGROUND]);
-					e.setText(" " + trace.showDistance((int) remainingDistance, Trace.DISTANCE_ROAD) +
+					e.setText(" " + trace.showDistance((int) remainingDistance, Trace.DISTANCE_ROAD) + airDistance + 
 							(
 							 Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_ROUTE_DURATION_IN_MAP)?
 							 " " + ((remainingDurationFSecs >= 300)?remainingDurationFSecs / 300 + "min": remainingDurationFSecs / 5 + "s")

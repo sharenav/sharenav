@@ -239,6 +239,8 @@ public class Configuration {
 	public final static byte CFGBIT_ROUTE_USE_TOLLROADS = 87;
 	/** bit 88: Flag whether the touch zones for zoom & center & destionation are symmetric */
 	public final static byte CFGBIT_DISPLAY_SYMMETRIC_TOUCHZONES = 88;
+	/** bit 89: Flag whether air distance to destination should be displayed even when routing */
+	public final static byte CFGBIT_SHOW_AIR_DISTANCE_WHEN_ROUTING = 89;
 	
 	/**
 	 * These are the database record IDs for each configuration option

@@ -630,6 +630,10 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		}
 	}
 
+	public RoutePositionMark getDest() {
+		return dest;
+	}
+
 	// remove the command only if icon menus are not used
 	public void removeCommand(Command c) {
 		if (!Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS)) {
@@ -1763,7 +1767,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				e = Trace.tl.ele[TraceLayout.ROUTE_DISTANCE];
 				e.setBackgroundColor(Legend.COLORS[Legend.COLOR_RI_DISTANCE_BACKGROUND]);
 				double distLine = ProjMath.getDistance(center.radlat, center.radlon, dest.lat, dest.lon);
-				e.setText(Locale.get("trace.Air")/*Air:*/ + showDistance((int) distLine));
+				e.setText(Locale.get("trace.Air")/*Air:*/ + showDistance((int) distLine, DISTANCE_AIR));
 			}
 			
 			if (Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_CLOCK_IN_MAP)) {

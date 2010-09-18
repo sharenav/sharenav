@@ -528,13 +528,14 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		sizeOpts = new ChoiceGroup(Locale.get("guidiscover.SizeOptions")/*Size Options:*/, Choice.MULTIPLE, sizes, null);
 		menuDisplayOptions.append(sizeOpts);
 
-		String [] mapInfos = new String[6];
+		String [] mapInfos = new String[7];
 		mapInfos[0] = Locale.get("guidiscover.Pointofcompass")/*Point of compass in rotated map*/;
 		mapInfos[1] = Locale.get("guidiscover.Scalebar")/*Scale bar*/;
 		mapInfos[2] = Locale.get("guidiscover.Speed")/*Speed when driving*/;
 		mapInfos[3] = Locale.get("guidiscover.Altitude")/*Altitude from GPS*/;
 		mapInfos[4] = Locale.get("guidiscover.Airdistance")/*Air distance to dest. when not routing*/;
-		mapInfos[5] = Locale.get("guidiscover.Clock")/*Clock with current time*/;
+		mapInfos[5] = Locale.get("guidiscover.AirdistanceWhenRouting")/*Air distance to dest. when routing*/;
+		mapInfos[6] = Locale.get("guidiscover.Clock")/*Clock with current time*/;
 		mapInfoOpts = new ChoiceGroup(Locale.get("guidiscover.Infos")/*Infos in Map Screen:*/,
 				Choice.MULTIPLE, mapInfos, null);
 		menuDisplayOptions.append(mapInfoOpts);
@@ -918,7 +919,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_SPEED_IN_MAP, mapInfoOpts.isSelected(2));
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_ALTITUDE_IN_MAP, mapInfoOpts.isSelected(3));
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_AIR_DISTANCE_IN_MAP, mapInfoOpts.isSelected(4));
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_CLOCK_IN_MAP, mapInfoOpts.isSelected(5));
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_AIR_DISTANCE_WHEN_ROUTING, mapInfoOpts.isSelected(5));
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SHOW_CLOCK_IN_MAP, mapInfoOpts.isSelected(6));
 				
 				String secs = tfAutoRecenterToGpsSecs.getString();
 				Configuration.setAutoRecenterToGpsMilliSecs(
@@ -1159,7 +1161,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				mapInfoOpts.setSelectedIndex(2, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_SPEED_IN_MAP));
 				mapInfoOpts.setSelectedIndex(3, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_ALTITUDE_IN_MAP));
 				mapInfoOpts.setSelectedIndex(4, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_AIR_DISTANCE_IN_MAP));
-				mapInfoOpts.setSelectedIndex(5, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_CLOCK_IN_MAP));
+				mapInfoOpts.setSelectedIndex(5, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_AIR_DISTANCE_WHEN_ROUTING));
+				mapInfoOpts.setSelectedIndex(6, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_CLOCK_IN_MAP));
 				metricUnits.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_METRIC));
 				visualOpts.setSelectedIndex(0, ! Configuration.getCfgBitSavedState(Configuration.CFGBIT_NOSTREETBORDERS));
 				visualOpts.setSelectedIndex(1, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ROUND_WAY_ENDS));
