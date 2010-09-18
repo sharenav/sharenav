@@ -248,7 +248,8 @@ public class Way extends Entity implements Comparable<Way> {
 				if (n != null) {
 					n.wayToPOItransfer(this, poi);
 					//Indicate that this way has been dealt with, even though the way itself has no type.
-					type = -2;
+					//Some stylefiles might have both way styling and areaPOI styling for the same type.
+					if (type < 0) type = -2;
 				} else {
 					System.out.println("WARNING: No way poi assigned because no node without a poi type has been available on way "
 							+ toString());
