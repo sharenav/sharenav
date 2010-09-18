@@ -237,6 +237,8 @@ public class Configuration {
 	public final static byte CFGBIT_ROUTE_USE_MOTORWAYS = 86;
 	/** bit 87: Flag whether the route algorithm uses toll roads */
 	public final static byte CFGBIT_ROUTE_USE_TOLLROADS = 87;
+	/** bit 88: Flag whether the touch zones for zoom & center & destionation are symmetric */
+	public final static byte CFGBIT_DISPLAY_SYMMETRIC_TOUCHZONES = 88;
 	
 	/**
 	 * These are the database record IDs for each configuration option
