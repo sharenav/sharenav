@@ -26,6 +26,7 @@ public class WayDescription {
 	public final static int WDFLAG_LINESTYLE_POWERLINE = 0x08;
 	public final static int WDFLAG_BUILDING = 0x10;
 	public final static int WDFLAG_HIGHWAY_LINK = 0x20;
+	public final static int WDFLAG_MOTORWAY = 0x40;
 
 	public int getGraphicsLineStyle() {
 		return wayDescFlags & 0x01;
@@ -50,7 +51,11 @@ public class WayDescription {
 	public boolean isHighwayLink() {
 		return (wayDescFlags & WDFLAG_HIGHWAY_LINK) > 0;
 	}
-	
+
+	public boolean isMotorway() {
+		return (wayDescFlags & WDFLAG_MOTORWAY) > 0;
+	}
+
 	
 }
 

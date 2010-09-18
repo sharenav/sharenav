@@ -185,15 +185,22 @@ public class RouteLineProducer implements Runnable {
 						// but not if there's exactly one alternative to leave/enter the motorway don't add the bearing
 						if ( pc.conWayNumMotorways != 1
 							&& (
-								// or when the way on the route is smaller than the way of the bearing alternative
-							    // TODO: should we really check for wayWidth or use some other criteria?
-							    wdRoute.wayWidth < wdCheck.wayWidth
-							    ||
-							    // or when the way on the route is a highway link
+							    // when the way on the route is a highway link
 							    wdRoute.isHighwayLink()
-							    ||
-							    // or when neither the way on the route nor the alternative way is a highway link
-							    !(wdRoute.isHighwayLink() || wdCheck.isHighwayLink())
+							    	||
+								/* when the route way is smaller or same width like the alternative way
+								 * (don't give bearing instruction when passing e.g. besides service ways)
+								 * and neither the way on the route nor the alternative way is a highway link
+								 * TODO: should we really check for wayWidth or use some other criteria?
+								 */
+							    (
+							    	wdRoute.wayWidth <= wdCheck.wayWidth
+							    		&&
+							    	!(wdRoute.isHighwayLink() || wdCheck.isHighwayLink())
+							    )
+							    	||
+							    // when both alternatives are motorways (or motorway links) always give the bear instruction
+							    wdRoute.isMotorway() && wdCheck.isMotorway()
 							)
 						) {
 							int iBearingAlternative = (int) (bearingAlternative) * 2;
