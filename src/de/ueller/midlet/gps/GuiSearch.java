@@ -40,7 +40,7 @@ import de.ueller.midlet.screens.InputListener;
 import de.enough.polish.util.Locale;
 
 public class GuiSearch extends Canvas implements CommandListener,
-		GpsMidDisplayable, InputListener, KeySelectMenuReducedListener, CancelMonitorInterface {
+		      GpsMidDisplayable, InputListener, KeySelectMenuReducedListener, CancelMonitorInterface {
 
 	private final static Logger logger = Logger.getInstance(GuiSearch.class,Logger.DEBUG);
 
@@ -61,6 +61,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 	private final Command BACK_CMD = new Command(Locale.get("guisearch.Back")/*Back*/, Command.BACK, 7);
 	private final Command OVERVIEW_MAP_CMD = new Command(Locale.get("guisearch.OverviewMap")/*Overview/Filter map*/, Command.ITEM, 8);
 	private final Command POI_CMD = new Command(Locale.get("guisearch.NearestPoi")/*Nearest POI*/, Command.ITEM, 9);
+	public final Command POI_URL_SEARCH_CMD = new Command(Locale.get("guiwebinfo.Websites")/*Nearby POIs with websites*/, Command.ITEM, 9);
+	private final Command POI_PHONE_SEARCH_CMD = new Command(Locale.get("guiwebinfo.Phones")/*Nearby POIs with phone numbers*/, Command.ITEM, 9);
 	private final Command SORT_CMD = new Command(Locale.get("guisearch.Sort")/*Toggle sort order (exper.)*/, Command.ITEM, 10);
 	private final Command FULLT_CMD = new Command(Locale.get("guisearch.Fulltext")/*Fulltext search*/, Command.ITEM, 10);
 	private final Command URL_CMD = new Command(Locale.get("guisearch.OpenURL")/*Open URL*/, Command.ITEM, 11);
@@ -115,11 +117,17 @@ public class GuiSearch extends Canvas implements CommandListener,
 	
 	public volatile byte state;
 	
+	public volatile int filter;
+	public final static byte FILTER_BIT_URLS = 1;
+	public final static byte FILTER_BIT_PHONES = 2;
+	
 	public final static byte STATE_MAIN = 0;
 	public final static byte STATE_POI = 1;
 	public final static byte STATE_FULLTEXT = 2;
 	public final static byte STATE_FAVORITES = 3;
 	public final static byte STATE_SEARCH_PROGRESS = 4;
+	public final static byte STATE_POI_URLS = 5;
+	public final static byte STATE_POI_PHONES = 6;
 	
 	private volatile int fontSize;
 	
@@ -154,7 +162,6 @@ public class GuiSearch extends Canvas implements CommandListener,
 	
 	private KeySelectMenu poiTypeForm;
 
-	
 	public GuiSearch(Trace parent) throws Exception {
 		super();
 		this.parent = parent;
@@ -175,6 +182,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 		addCommand(BACK_CMD);
 		addCommand(OVERVIEW_MAP_CMD);
 		addCommand(POI_CMD);
+		addCommand(POI_URL_SEARCH_CMD);
+		addCommand(POI_PHONE_SEARCH_CMD);
 		addCommand(FULLT_CMD);
 		addCommand(SORT_CMD);
 		if (Legend.enableUrlTags) {
@@ -369,6 +378,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		
 		if (c == POI_CMD) {
 			state = STATE_POI;
+			filter = 0;
 			try{
 				poiTypeForm = new GuiPOItypeSelectMenu(this, this);
 				poiTypeForm.show();
@@ -378,6 +388,30 @@ public class GuiSearch extends Canvas implements CommandListener,
 				show();
 			}
 			
+		}
+		if (c == POI_URL_SEARCH_CMD) {
+			filter = 1 << FILTER_BIT_URLS;
+			state = STATE_POI_URLS;
+			try{
+				poiTypeForm = new GuiPOItypeSelectMenu(this, this);
+				poiTypeForm.show();
+			} catch (Exception e) {
+				logger.exception("Failed to select POI type", e);
+				state = STATE_MAIN;
+				show();
+			}
+		}
+		if (c == POI_PHONE_SEARCH_CMD) {
+			filter = 1 << FILTER_BIT_PHONES;
+			state = STATE_POI_URLS;
+			try{
+				poiTypeForm = new GuiPOItypeSelectMenu(this, this);
+				poiTypeForm.show();
+			} catch (Exception e) {
+				logger.exception("Failed to select POI type", e);
+				state = STATE_MAIN;
+				show();
+			}
 		}
 		if (c == SORT_CMD) {
 				sortByDist = !sortByDist;
@@ -960,7 +994,11 @@ public class GuiSearch extends Canvas implements CommandListener,
 				break;
 			case STATE_POI:
 				sb.append(Locale.get("guisearch.nearestpois")/*Nearest POIs*/); break;			
-			case STATE_FULLTEXT:
+			case STATE_POI_URLS:
+				sb.append(Locale.get("guisearch.nearestpoiswithurls")/*Nearest POIs with URLs*/); break;
+			case STATE_POI_PHONES:
+				sb.append(Locale.get("guisearch.nearestpoiswithphones")/*Nearest POIs with phone #s*/); break;
+		        case STATE_FULLTEXT:
 				sb.append(Locale.get("guisearch.fulltextresults")/*Fulltext Results*/); break;			
 		}
 		setTitle(sb.toString());
@@ -1052,7 +1090,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		show();
 	}
 
-	public void keySelectMenuItemSelected(KeySelectMenuItem item) {
+	public void keySelectMenuItemSelected(final KeySelectMenuItem item) {
 		setTitle();
 		
 		clearList();
@@ -1065,11 +1103,28 @@ public class GuiSearch extends Canvas implements CommandListener,
 			public void run() {
 				try {
 					int maxScale = Legend.getNodeMaxScale(poiType);
-					Vector res = parent.tiles[Legend.scaleToTile(maxScale)].getNearestPoi(poiType, 
-							parent.center.radlat, parent.center.radlon, 
-							10.0f*1000.0f, cmi);
+					// index 0 is all POI types
+					Vector res = parent.tiles[Legend.scaleToTile(maxScale)].getNearestPoi(
+						(((POItypeSelectMenuItem)item).getIdx() == 0) ? true : false, poiType, 
+						parent.center.radlat, parent.center.radlon, 10.0f*1000.0f, cmi);
 					for (int i = 0; i < res.size(); i++) {
-						addResult((SearchResult)res.elementAt(i));
+						SearchResult sr=(SearchResult) res.elementAt(i);
+						boolean match = false;
+						// don't filter
+						if (filter == 0) {
+							match = true;
+						}
+						// show urls
+						if ((filter & (1 << FILTER_BIT_URLS)) == (1 << FILTER_BIT_URLS) && sr.urlIdx != -1) {
+							match = true;
+						}
+						// show phones
+						if ((filter & (1 << FILTER_BIT_PHONES)) == (1 << FILTER_BIT_PHONES) && sr.phoneIdx != -1) {
+							match = true;
+						}
+						if (match) {
+							addResult(sr);
+						}
 					}
 					state = STATE_MAIN;
 					show();
@@ -1094,7 +1149,6 @@ public class GuiSearch extends Canvas implements CommandListener,
 		state = STATE_SEARCH_PROGRESS;
 		t.start();
 	}
-
 	public boolean monitorIsCanceled() {
 		return isSearchCanceled;
 	}
