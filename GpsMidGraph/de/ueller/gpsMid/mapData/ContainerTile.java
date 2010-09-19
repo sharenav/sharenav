@@ -121,7 +121,7 @@ public class ContainerTile extends Tile {
 	    * coordinate and traverses that one first to check for
 	    * close by POI.
 	    */
-	public Vector getNearestPoi(byte searchType, float lat, float lon, float maxDist, CancelMonitorInterface cmi) {
+	public Vector getNearestPoi(boolean matchAnyPoi, byte searchType, float lat, float lon, float maxDist, CancelMonitorInterface cmi) {
 		boolean t1closer;
 		Vector res;
 		Vector res2;
@@ -210,9 +210,9 @@ public class ContainerTile extends Tile {
 		
 		if (distClose < maxDist) {
 			if (t1closer)
-				res = t1.getNearestPoi(searchType, lat, lon, maxDist, cmi);
+				res = t1.getNearestPoi(matchAnyPoi, searchType, lat, lon, maxDist, cmi);
 			else
-				res = t2.getNearestPoi(searchType, lat, lon, maxDist, cmi);
+				res = t2.getNearestPoi(matchAnyPoi, searchType, lat, lon, maxDist, cmi);
 		} else {
 			res = new Vector();
 		}
@@ -233,9 +233,9 @@ public class ContainerTile extends Tile {
 		if ((distFar < maxDistFound)) { // This might be inexact at tile boundries. We want to check if tile dist < largest res dist
 			//logger.info("traversing tile 2 of dist: " + distFar);
 			if (t1closer) 
-				res2 = t2.getNearestPoi(searchType, lat, lon, maxDistFound, cmi);
+				res2 = t2.getNearestPoi(matchAnyPoi, searchType, lat, lon, maxDistFound, cmi);
 			else
-				res2 = t1.getNearestPoi(searchType, lat, lon, maxDistFound, cmi);
+				res2 = t1.getNearestPoi(matchAnyPoi, searchType, lat, lon, maxDistFound, cmi);
 				
 			/**
 			 * Perform a merge sort of the two result lists.

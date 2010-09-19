@@ -99,7 +99,7 @@ public class FileTile extends Tile implements QueueableTile {
 	}
 
 
-	public Vector getNearestPoi(byte searchType, float lat, float lon, float maxDist, CancelMonitorInterface cmi) {		
+	public Vector getNearestPoi(boolean matchAnyPoi, byte searchType, float lat, float lon, float maxDist, CancelMonitorInterface cmi) {		
 		if (tile == null){
 			/**
 			 * This hole case is not correctly handled. The POI data
@@ -134,7 +134,7 @@ public class FileTile extends Tile implements QueueableTile {
 		 */
 		if (tile != null){
 			lastUse=0;
-			return tile.getNearestPoi(searchType, lat, lon, maxDist, cmi);
+			return tile.getNearestPoi(matchAnyPoi, searchType, lat, lon, maxDist, cmi);
 		}
 		/** 
 		 * The tile was not loaded in time. In order not to slow down

@@ -180,7 +180,7 @@ public abstract class Tile {
 	    * type searchType close to lat/lon. The list is ordered
 	    * by distance with the closest one first.  
 	    */
-	public Vector getNearestPoi(byte searchType, float lat, float lon, float maxDist, CancelMonitorInterface cmi) {
+	public Vector getNearestPoi(boolean matchAnyPoi, byte searchType, float lat, float lon, float maxDist, CancelMonitorInterface cmi) {
 		/**
 		 * All of the Tile types for which we expect to perform a nearest 
 		 * POI search should have this method overwritten

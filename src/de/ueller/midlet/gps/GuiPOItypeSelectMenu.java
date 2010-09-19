@@ -74,8 +74,11 @@ class GuiPOItypeSelectMenu extends KeySelectMenu implements KeySelectMenuListene
 		this.removeAll();
 		if (poiTypes == null) {
 			poiTypes = new Vector();
+			// FIXME select proper image for
+			KeySelectMenuItem menuItem = new POItypeSelectMenuItem(Legend.getNodeSearchImage((byte)0), "Everything", (byte)0);
+			poiTypes.addElement(menuItem);
 			for (byte i = 1; i < Legend.getMaxType(); i++) {
-				KeySelectMenuItem menuItem = new POItypeSelectMenuItem(Legend.getNodeSearchImage(i),Legend.getNodeTypeDesc(i),i);
+				menuItem = new POItypeSelectMenuItem(Legend.getNodeSearchImage(i),Legend.getNodeTypeDesc(i),i);
 				poiTypes.addElement(menuItem);
 			}
 		}

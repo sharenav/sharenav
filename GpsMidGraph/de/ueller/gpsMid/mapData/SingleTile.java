@@ -275,6 +275,9 @@ public class SingleTile extends Tile implements QueueableTile {
 								
 							} else {
 								w.paintAsArea(pc, this);
+								// draw also border. condition? don't draw name in path.
+								//w.setBorderColor(pc);
+								//w.paintAsPath(pc, this, relLayer);
 							}
 						} else if ((opt & Tile.OPT_CONNECTIONS2WAY) != 0) {
 							if (!w.isArea()) {
@@ -490,7 +493,7 @@ public class SingleTile extends Tile implements QueueableTile {
     * type searchType close to lat/lon. The list is ordered
     * by distance with the closest one first.  
     */
-   public Vector getNearestPoi(byte searchType, float lat, float lon, float maxDist, CancelMonitorInterface cmi) {	   
+   public Vector getNearestPoi(boolean matchAnyPoi, byte searchType, float lat, float lon, float maxDist, CancelMonitorInterface cmi) {	   
 	   Vector resList = new Vector();
 	   
 	   if(cmi != null) {
@@ -526,7 +529,20 @@ public class SingleTile extends Tile implements QueueableTile {
 	   }
 	   
 	   for (int i = 0; i < type.length; i++) {
-		   if (type[i] == searchType) {
+		   if ((!matchAnyPoi) && type[i] != searchType) {
+			   continue;
+		   }
+		   if (matchAnyPoi) {
+			   boolean match = false;
+			   for (byte j = 1; j < Legend.getMaxType(); j++) {
+				   if (type[i] == j) {
+					   match = true;
+				   }
+			   }
+			   if (! match) {
+				   continue;
+			   }
+		   }
 			   SearchResult sr = new SearchResult();
 			   sr.lat = nodeLat[i] * MoreMath.FIXPT_MULT_INV + centerLat;
 			   sr.lon = nodeLon[i] * MoreMath.FIXPT_MULT_INV + centerLon;
@@ -537,12 +553,11 @@ public class SingleTile extends Tile implements QueueableTile {
 			   if (Legend.enablePhoneTags) {
 				   sr.phoneIdx = phoneIdx[i];
 			   }
-			   sr.type = (byte)(-1 * searchType); //It is a node. They have the top bit set to distinguish them from ways in search results
+			   sr.type = (byte)(-1 * type[i]); //It is a node. They have the top bit set to distinguish them from ways in search results
 			   sr.dist = ProjMath.getDistance(sr.lat, sr.lon, lat, lon);
 			   if (sr.dist < maxDist) {
 				   resList.addElement(sr);				   
 			   }
-		   }
 	   }
 	   /**
 	    * Perform a bubble sort on the distances of the search
