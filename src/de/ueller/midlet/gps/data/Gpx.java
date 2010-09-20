@@ -714,13 +714,13 @@ public class Gpx extends Tile implements Runnable, InputListener {
 			trackDatabase = null;
 			
 		} catch (IOException e) {
-			logger.exception("IOException saving track", e);
+			logger.exception("IOException saving track: ", e);
 		} catch (RecordStoreNotOpenException e) {
-			logger.exception("Exception saving track (database not open)", e);
+			logger.exception("Exception saving track (database not open): ", e);
 		} catch (RecordStoreFullException e) {
-			logger.exception("Exception saving track (database full)", e);
+			logger.exception("Exception saving track (database full): ", e);
 		} catch (RecordStoreException e) {
-			logger.exception("Exception saving track", e);
+			logger.exception("Exception saving track: ", e);
 		} catch (OutOfMemoryError oome) {
 			logger.fatal("Out of memory, can't save tracklog");
 		}
@@ -1021,20 +1021,34 @@ public class Gpx extends Tile implements Runnable, InputListener {
 			int i = 0;
 			while (p.hasNextElement()) {
 				int idx = p.nextRecordId();
-				while (trackDatabase.getRecordSize(idx) > record.length) {
-					record = new byte[record.length + 16000];
-					dis = new DataInputStream(new ByteArrayInputStream(record));
-				}
-				trackDatabase.getRecord(idx, record, 0);
-				dis.reset();
-				
-				String trackName = dis.readUTF();
-				int noTrackPoints = dis.readInt();
-				logger.debug("Found track " + trackName + " with " + noTrackPoints + "TrkPoints");
 				PersistEntity trk = new PersistEntity();
+
+				try{
+					while (trackDatabase.getRecordSize(idx) > record.length) {
+						record = new byte[record.length + 16000];
+						dis = new DataInputStream(new ByteArrayInputStream(record));
+					}
+
+					trackDatabase.getRecord(idx, record, 0);
+					dis.reset();
+					
+					String trackName = dis.readUTF();
+					int noTrackPoints = dis.readInt();
+					logger.debug("Found track " + trackName + " with " + noTrackPoints + " TrkPoints");
+					trk.displayName = trackName + " (" + noTrackPoints + ")";
+					trk.setTrackSize(noTrackPoints);
+				} catch (RecordStoreFullException e) {
+					trk.displayName = "Error (RecordStoreFullException)";
+					logger.error("Record Store is full, can't load list " + i + " with index " + idx + ":" + e.getMessage());
+				} catch (RecordStoreNotFoundException e) {
+					trk.displayName = "Error (RecordStoreNotFoundException)";
+					logger.error("Record Store not found, can't load list " + i + " with index " + idx + ": " + e.getMessage());
+				} catch (RecordStoreException e) {
+					trk.displayName = "Error (RecordStoreException)";
+					logger.error("Record Store exception, can't load track " + i + " with index " + idx + ": " + e.getMessage());
+					logger.error( e.toString());
+				}
 				trk.id = idx;
-				trk.displayName = trackName + " (" + noTrackPoints + ")";
-				trk.setTrackSize(noTrackPoints);
 				trks[i++] = trk;
 			}
 			logger.info("Enumerated tracks");
@@ -1042,13 +1056,13 @@ public class Gpx extends Tile implements Runnable, InputListener {
 			trackDatabase = null;
 			return trks;
 		} catch (RecordStoreFullException e) {
-			logger.error("Record Store is full, can't load list" + e.getMessage());
+			logger.error("Record Store is full, can't load list: " + e.getMessage());
 		} catch (RecordStoreNotFoundException e) {
-			logger.error("Record Store not found, can't load list" + e.getMessage());
+			logger.error("Record Store not found, can't load list: " + e.getMessage());
 		} catch (RecordStoreException e) {
-			logger.error("Record Store exception, can't load list" + e.getMessage());
+			logger.error("Record Store exception, can't load list: " + e.getMessage());
 		} catch (IOException e) {
-			logger.error("IO exception, can't load list" + e.getMessage());
+			logger.error("IO exception, can't load list: " + e.getMessage());
 		}
 		return null;
 	}

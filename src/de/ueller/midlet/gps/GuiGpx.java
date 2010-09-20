@@ -114,7 +114,11 @@ public class GuiGpx extends List implements CommandListener,
 		this.deleteAll();
 		trks = parent.gpx.listTrks();
 		for (int i = 0; i < trks.length; i++) {
-			this.append(trks[i].displayName, null);
+			try {
+				this.append(trks[i].displayName, null);
+			} catch (NullPointerException e){
+					logger.error("Null pointer exception, can't load track number" + i + ": " + e.getMessage());
+			}
 		}
 		this.setTitle("GPX tracklogs (" + trks.length + ")");
 	}
