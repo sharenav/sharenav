@@ -342,10 +342,10 @@ public class NoiseMaker
 			// put the alert sound at the beginning of the new sound chain to play
 			if (mPlayingNameIndex < mPlayingNames.length() ) {
 				if(
-					mPlayingSoundName.equals("SPEED_LIMIT")
-					|| mPlayingNames.indexOf("SPEED_LIMIT", mPlayingNameIndex) != -1
+					mPlayingSoundName.equals(RouteSyntax.getSpeedLimitSound())
+					|| mPlayingNames.indexOf(RouteSyntax.getSpeedLimitSound(), mPlayingNameIndex) != -1
 				) {
-					names = "SPEED_LIMIT;" + names;
+					names = RouteSyntax.getSpeedLimitSound() + ";" + names;
 				}
 			}
 			//#debug debug
