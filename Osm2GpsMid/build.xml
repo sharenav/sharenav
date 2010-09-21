@@ -88,10 +88,10 @@
    		<entry key="useIcons" value="true"/>
    		<entry key="useSounds" value="amr"/>
    		<entry key="useSoundFilesWithSyntax" value="sound"/>
-   		<entry key="lang" value="en"/>
-   		<entry key="langName" value="English"/>
-		<entry key="useLang" value="en"/>
-		<entry key="useLangName" value="English"/>
+   		<entry key="lang" value="*"/>
+   		<entry key="langName" value="All"/>
+		<entry key="useLang" value="*"/>
+		<entry key="useLangName" value="All"/>
    	</propertyfile>
    </target>
 
