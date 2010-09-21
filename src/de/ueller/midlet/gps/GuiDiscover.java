@@ -437,7 +437,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 					uiLang[i + numLangDifference] = Legend.uiLangName[i];
 				}
 				if (parent.localeLang != null && Legend.uiLang[i].equalsIgnoreCase("devdefault")) {
-					uiLang[i] = Locale.get("guidiscover.devicedefault")/*Device default*/;
+					uiLang[i] = Locale.get("guidiscover.devicedefault")/*Device default*/ +
+						" (" + System.getProperty("microedition.locale").substring(0, 2) + ")";
 				}
 			}
 			uiLangGroup = new ChoiceGroup(Locale.get("guidiscover.Language")/*Language*/, Choice.EXCLUSIVE, uiLang, null);
@@ -450,7 +451,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 					naviLang[i + numLangDifference] = Legend.naviLangName[i];
 				}
 				if (parent.localeLang != null && Legend.naviLang[i].equalsIgnoreCase("devdefault")) {
-					naviLang[i] = Locale.get("guidiscover.devicedefault")/*Device default*/;
+					naviLang[i] = Locale.get("guidiscover.devicedefault")/*Device default*/ +
+						" (" + System.getProperty("microedition.locale").substring(0, 2) + ")";
 				}
 			}
 			naviLangGroup = new ChoiceGroup(Locale.get("guidiscover.SoundNavilanguage")/*Sound/Navi language*/, Choice.EXCLUSIVE, naviLang, null);
@@ -463,7 +465,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 					onlineLang[i + numLangDifference] = Legend.onlineLangName[i];
 				}
 				if (parent.localeLang != null && Legend.onlineLang[i].equalsIgnoreCase("devdefault")) {
-					onlineLang[i] = Locale.get("guidiscover.devicedefault")/*Device default*/;
+					onlineLang[i] = Locale.get("guidiscover.devicedefault")/*Device default*/ +
+						" (" + System.getProperty("microedition.locale").substring(0, 2) + ")";
 				}
 			}
 			onlineLangGroup = new ChoiceGroup(Locale.get("guidiscover.OnlineLanguage")/*Online language*/, Choice.EXCLUSIVE, onlineLang, null);
