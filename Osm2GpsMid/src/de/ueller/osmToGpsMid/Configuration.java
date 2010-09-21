@@ -523,14 +523,24 @@ public class Configuration {
 				// * should be last, ignore it
 				useLang = useLang.substring(0, useLang.indexOf(",*"));
 			}
+			if (useLang.indexOf("*") > -1) {
+				allLang = true;
+				// * should be last, ignore it
+				useLang = useLang.substring(0, useLang.indexOf("*"));
+			}
 			// add English if not there
 			//if (! (useLang.indexOf("en" ) > -1)) {
 			//	useLang += ",en";
 			//	useLangName += ",English";
 			//}
 			// add device's default language; FIXME shouldn't add this, if only English is included
-		        useLang = "devdefault," + useLang;
-			useLangName = "Device's default," + useLangName;
+			if (useLang.equals("")) {
+				useLang = "devdefault";
+				useLangName = "Device's default";
+			} else {
+				useLang = "devdefault," + useLang;
+				useLangName = "Device's default," + useLangName;
+			}
 			maxTileSize = Integer.parseInt(getString("maxTileSize"));
 			maxDictDepth = Integer.parseInt(getString("maxDictDepth"));
 			
