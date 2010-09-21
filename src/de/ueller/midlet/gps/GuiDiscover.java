@@ -419,12 +419,21 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		menuDisplayOptions.addCommand(BACK_CMD);
 		menuDisplayOptions.addCommand(OK_CMD);
 
-		if (Legend.numUiLang > 1) {
-			String [] uiLang = new String[Legend.numUiLang];
+		int difference = 0;
+		// device default (if it exists) is the first
+		if (parent.localeLang == null && Legend.uiLang[0].equalsIgnoreCase("devdefault")) {
+			// device doesn't support giving local language, omit the choice for device default
+			difference = -1;
+		}
+		if (Legend.numUiLang + difference > 1) {
+			String [] uiLang = new String[Legend.numUiLang+difference];
+
 			for (int i = 0; i < Legend.numUiLang; i++) {
-				uiLang[i] = Legend.uiLangName[i];
-				if (Legend.uiLang[i].equalsIgnoreCase("devdefault")) {
-					uiLang[i] = Locale.get("guidiscover.devicedefault")/*Device default*/;
+				if (i+difference > 0) {
+					uiLang[i + difference] = Legend.uiLangName[i];
+				}
+				if (Legend.uiLang[i].equalsIgnoreCase("devdefault") && parent.localeLang != null) {
+					uiLang[i + difference] = Locale.get("guidiscover.devicedefault")/*Device default*/;
 				}
 			}
 			uiLangGroup = new ChoiceGroup(Locale.get("guidiscover.Language")/*Language*/, Choice.EXCLUSIVE, uiLang, null);
