@@ -273,6 +273,9 @@ public class Configuration {
 		/** Defines what languages are included in GpsMid */
 		public String useLang = "en";
 
+		/** Defines if all languages will be included in GpsMid bundle */
+		public boolean allLang = false;
+
 		/** Defines what languages are included in GpsMid */
 		public String useLangName = "English";
 		
@@ -514,15 +517,20 @@ public class Configuration {
 			if (! getUseLang().equals("en") && getUseLangName().equals("English")) {
 				useLangName = useLang;
 			}
-			
+
+			if (useLang.indexOf(",*") > -1) {
+				allLang = true;
+				// * should be last, ignore it
+				useLang = useLang.substring(0, useLang.indexOf(",*"));
+			}
 			// add English if not there
 			if (! (useLang.indexOf("en" ) > -1)) {
 				useLang += ",en";
 				useLangName += ",English";
 			}
-			// add device's default language
+			// add device's default language; FIXME shouldn't add this, if only English is included
 		        useLang = "devdefault," + useLang;
-			useLangName = "device's default," + useLangName;
+			useLangName = "Device's default," + useLangName;
 			maxTileSize = Integer.parseInt(getString("maxTileSize"));
 			maxDictDepth = Integer.parseInt(getString("maxDictDepth"));
 			
@@ -1134,7 +1142,10 @@ public class Configuration {
 			confString += "  Use url tags: " + useUrlTags + "\n";
 			confString += "  Use phone tags: " + usePhoneTags + "\n";
 			confString += "  Enable editing support: " + enableEditingSupport + "\n";
-			confString += "  Building for languages: " + getUseLang() + " (" + getUseLangName() + ")" + "\n";
+			confString += "  Adding menu entries for languages: " + getUseLang() + " (" + getUseLangName() + ")" + "\n";
+			//if (allLang) {
+				confString += "  Including also all other supported languages\n";
+			//}
 
 			if (bounds.size() > 0) {
 				confString += "  Using " + bounds.size() + " bounding boxes\n";

@@ -419,6 +419,8 @@ public class BundleGpsMid implements Runnable {
 			String tmpDir = config.getTempDir();
 			System.out.println("Unpacking application to " + tmpDir);
 			expand(config, tmpDir);
+			// FIXME we should remove unused .loca files, around here?
+			// Configuration allLang boolean specifies whether to keep all .loc files
 			File target = new File(tmpDir);
 			createPath(target);
 			
