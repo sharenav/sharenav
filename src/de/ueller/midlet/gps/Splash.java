@@ -219,6 +219,7 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 			main.alert("Splash", "Switching to English", 3000);
 			try {
 				Locale.loadTranslations( "/en.loc" );
+				Trace.uncacheIconMenu();
 			} catch (IOException ioe) {
 				System.out.println("Couldn't open translations file");
 			}
