@@ -250,11 +250,6 @@ public class CreateGpsMidData implements FilenameFilter {
 				useLangName = useLang;
 			}
 
-/*			short numNaviLang = 2;
-			short numOnlineLang = 2;
-			short numWikipediaLang = 2;
-			short numNamesOnMapLang = 2;*/
-
 			// make all available languages the same for now
 			for (int i = 1; i <= 5 ; i++) {
 				dsi.writeShort(useLang.length);
