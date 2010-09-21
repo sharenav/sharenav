@@ -506,11 +506,11 @@ public class Configuration {
 			setSoundFiles(getString("useSoundFilesWithSyntax"));
 
 			setUseLang(getString("lang"));
-			if (! getString("useLang").equals("en")) {
+			if (! getString("useLang").equals("*")) {
 				setUseLang(getString("useLang"));
 			}
 			setUseLangName(getString("langName"));
-			if (! getString("useLangName").equals("English")) {
+			if (! getString("useLangName").equals("All")) {
 				setUseLangName(getString("useLangName"));
 			}
 			// default to language code for language name if not defined
@@ -533,7 +533,6 @@ public class Configuration {
 			//	useLang += ",en";
 			//	useLangName += ",English";
 			//}
-			// add device's default language; FIXME shouldn't add this, if only English is included
 			if (useLang.equals("")) {
 				useLang = "devdefault";
 				useLangName = "Device's default";
