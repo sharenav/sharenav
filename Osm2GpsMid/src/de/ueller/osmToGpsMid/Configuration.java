@@ -514,7 +514,7 @@ public class Configuration {
 				setUseLangName(getString("useLangName"));
 			}
 			// default to language code for language name if not defined
-			if (! getUseLang().equals("en") && getUseLangName().equals("English")) {
+			if (! getUseLang().equals("en") && getUseLangName().equals("All")) {
 				useLangName = useLang;
 			}
 
