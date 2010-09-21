@@ -423,6 +423,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 			String [] uiLang = new String[Legend.numUiLang];
 			for (int i = 0; i < Legend.numUiLang; i++) {
 				uiLang[i] = Legend.uiLangName[i];
+				if (Legend.uiLang[i].equalsIgnoreCase("devdefault")) {
+					uiLang[i] = Locale.get("guidiscover.devicedefault")/*Device default*/;
+				}
 			}
 			uiLangGroup = new ChoiceGroup(Locale.get("guidiscover.Language")/*Language*/, Choice.EXCLUSIVE, uiLang, null);
 			menuDisplayOptions.append(uiLangGroup);
@@ -431,6 +434,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 			String [] naviLang = new String[Legend.numNaviLang];
 			for (int i = 0; i < Legend.numNaviLang; i++) {
 				naviLang[i] = Legend.naviLangName[i];
+				if (Legend.naviLang[i].equalsIgnoreCase("devdefault")) {
+					naviLang[i] = Locale.get("guidiscover.devicedefault")/*Device default*/;
+				}
 			}
 			naviLangGroup = new ChoiceGroup(Locale.get("guidiscover.SoundNavilanguage")/*Sound/Navi language*/, Choice.EXCLUSIVE, naviLang, null);
 			menuDisplayOptions.append(naviLangGroup);
@@ -439,6 +445,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 			String [] onlineLang = new String[Legend.numOnlineLang];
 			for (int i = 0; i < Legend.numOnlineLang; i++) {
 				onlineLang[i] = Legend.onlineLangName[i];
+				if (Legend.onlineLang[i].equalsIgnoreCase("devdefault")) {
+					onlineLang[i] = Locale.get("guidiscover.devicedefault")/*Device default*/;
+				}
 			}
 			onlineLangGroup = new ChoiceGroup(Locale.get("guidiscover.OnlineLanguage")/*Online language*/, Choice.EXCLUSIVE, onlineLang, null);
 			menuDisplayOptions.append(onlineLangGroup);
@@ -803,7 +812,15 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				if (Legend.numUiLang > 1) {
 					String uiLang = Legend.uiLang[uiLangGroup.getSelectedIndex()];
 					try {
-						Locale.loadTranslations( "/" + uiLang + ".loc" );
+						if (uiLang.equalsIgnoreCase("locale")) {
+							// get phone's locale
+							String locale = System.getProperty("microedition.locale");
+							if (locale != null) {
+								Locale.loadTranslations( "/" + locale.substring(0, 2) + ".loc" );
+							}
+						} else {
+							Locale.loadTranslations( "/" + uiLang + ".loc" );
+						}
 					} catch (IOException ioe) {
 						System.out.println("Couldn't open translations file");
 					}
@@ -817,9 +834,18 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				}
 				if (Legend.numNaviLang > 1) {
 					String naviLang = Legend.naviLang[naviLangGroup.getSelectedIndex()];
+					String locale = null;
 					boolean multipleDirsForLanguage = false;
-					if (!naviLang.equals(Configuration.getNaviLang())) { 
-						// selected language changed
+					if ((!naviLang.equals(Configuration.getNaviLang())) ||
+					    naviLang.equalsIgnoreCase("locale")) { 
+						// selected language changed, or possibly changed (if device's default)
+						if (naviLang.equalsIgnoreCase("locale")) {
+							// get phone's locale
+							locale = System.getProperty("microedition.locale");
+							if (locale != null) {
+								naviLang = locale;
+							}
+						}
 						String soundDirBase[] = new String[Legend.soundDirectories.length];
 						int soundDirBaseCount = 0;
 						String soundDir = null;

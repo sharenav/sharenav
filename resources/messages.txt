@@ -345,6 +345,7 @@ guidiscover.withAndroidWakelock=with Android wakelock
 guidiscover.ButtonsRight=Buttons Right
 guidiscover.Symmetric=Symmetric
 guidiscover.TouchScreenLayout=Touchscreen layout
+guidiscover.devicedefault=Device default
 guimapfeatures.AlternativeInfo=Alternative info
 guimapfeatures.Apply=Apply
 guimapfeatures.AreaLabels=Area labels

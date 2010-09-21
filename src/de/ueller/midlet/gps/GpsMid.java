@@ -165,19 +165,35 @@ public class GpsMid extends MIDlet implements CommandListener {
 
 		if (legend != null) {
 			int langNum = 0;  // default is the first in bundle
-			if (Legend.numUiLang > 1) {
-				langNum = 0; 
-				String lang = Configuration.getUiLang();
-				for (int i = 0; i < Legend.numUiLang; i++) {
-					if (Legend.uiLang[i].equalsIgnoreCase(lang)) {
-						langNum = i;
+			String lang = Configuration.getUiLang();
+			String locale = System.getProperty("microedition.locale");
+			String localeLang = null;
+			if (locale != null) {
+				localeLang = locale.substring(0, 2);
+			}
+			if (lang.equalsIgnoreCase("devdefault")) {
+				if (localeLang != null) {
+					lang = localeLang;
+				} else {
+					// if device locale not available, use first bundle-mentioned if available;
+					// if not, use English.
+					if (Legend.numUiLang > 1) {
+						lang = Legend.uiLang[1];
+ 					} else {
+						lang = "en";
 					}
 				}
 			}
 			try {
-				Locale.loadTranslations( "/" + Legend.uiLang[langNum] + ".loc" );
+				Locale.loadTranslations( "/" + lang + ".loc" );
 			} catch (IOException ioe) {
-				System.out.println("Couldn't open translations file");
+				System.out.println("Couldn't open translations file for " + lang);
+				// if loading language fails, use English
+				try {
+					Locale.loadTranslations( "/en.loc" );
+				} catch (IOException ioe2) {
+					System.out.println("Couldn't open English translations file");
+				}
 			}
 		}
 

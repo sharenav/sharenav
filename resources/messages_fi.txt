@@ -337,6 +337,7 @@ guidiscover.withNokiaAPI=with Nokia API
 guidiscover.withNokiaFlashlight=with Nokia Flashlight
 guidiscover.withSiemensAPI=with Siemens API
 guidiscover.WpAlsoInTrack=Also put waypoints in track
+guidiscover.devicedefault=Laitteen kieli
 guimapfeatures.AlternativeInfo=Alternative info
 guimapfeatures.Apply=Apply
 guimapfeatures.AreaLabels=Area labels
