@@ -183,6 +183,10 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 		if (GpsMid.legend == null) {
 			main.alert("Splash", GpsMid.errorMsg, 6000);
 		}
+//#if polish.android
+		// workaround for Android accept buttons; without this, accept/deny don't work.
+		main.alert("Splash", "Android!", 500);
+//#endif
 		while (! shutdown){
 			synchronized (this) {
 				try {
