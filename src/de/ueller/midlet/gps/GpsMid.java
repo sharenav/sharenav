@@ -98,6 +98,8 @@ public class GpsMid extends MIDlet implements CommandListener {
 
 	public static Legend legend = null;
 
+	public String localeLang = null;
+
 	/**
 	 * This Thread is used to periodically prod the display to keep the
 	 * backlight illuminator if this is wanted by the user
@@ -167,7 +169,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 			int langNum = 0;  // default is the first in bundle
 			String lang = Configuration.getUiLang();
 			String locale = System.getProperty("microedition.locale");
-			String localeLang = null;
+			localeLang = null;
 			if (locale != null) {
 				localeLang = locale.substring(0, 2);
 			}
