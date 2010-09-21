@@ -98,6 +98,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	protected static final int MENU_ITEM_LOAD_CONFIG = 12;
 	//#endif
 
+	private int numLangDifference = 0;
+
 	private static final String[] empty = {};
 
 	/** Soft button for exiting to RootMenu. */
@@ -192,6 +194,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	private TextField  tfGpxRecordMinimumDistanceMeters;
 	private TextField  tfGpxRecordAlwaysDistanceMeters;
 	private TextField  tfURL;
+	private TextField  uiLangURL;
+	private TextField  naviLangURL;
+	private TextField  onlineLangURL;
 	//#if polish.api.osm-editing
 	private TextField  tfOsmUserName;
 	private TextField  tfOsmPassword;
@@ -419,42 +424,46 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		menuDisplayOptions.addCommand(BACK_CMD);
 		menuDisplayOptions.addCommand(OK_CMD);
 
-		int difference = 0;
-		// device default (if it exists) is the first
+		// device default (if it exists) is the first; check if device supports getting locale
 		if (parent.localeLang == null && Legend.uiLang[0].equalsIgnoreCase("devdefault")) {
-			// device doesn't support giving local language, omit the choice for device default
-			difference = -1;
+			// device doesn't support giving local language which is first in Legend, omit the choice for device default
+			numLangDifference = -1;
 		}
-		if (Legend.numUiLang + difference > 1) {
-			String [] uiLang = new String[Legend.numUiLang+difference];
+		if (Legend.numUiLang + numLangDifference > 1) {
+			String [] uiLang = new String[Legend.numUiLang + numLangDifference];
 
 			for (int i = 0; i < Legend.numUiLang; i++) {
-				if (i+difference > 0) {
-					uiLang[i + difference] = Legend.uiLangName[i];
+				if (i + numLangDifference >= 0) {
+					uiLang[i + numLangDifference] = Legend.uiLangName[i];
 				}
-				if (Legend.uiLang[i].equalsIgnoreCase("devdefault") && parent.localeLang != null) {
-					uiLang[i + difference] = Locale.get("guidiscover.devicedefault")/*Device default*/;
+				if (parent.localeLang != null && Legend.uiLang[i].equalsIgnoreCase("devdefault")) {
+					uiLang[i] = Locale.get("guidiscover.devicedefault")/*Device default*/;
 				}
 			}
 			uiLangGroup = new ChoiceGroup(Locale.get("guidiscover.Language")/*Language*/, Choice.EXCLUSIVE, uiLang, null);
 			menuDisplayOptions.append(uiLangGroup);
 		}
-		if (Legend.numNaviLang > 1) {
-			String [] naviLang = new String[Legend.numNaviLang];
+		//uiLangURL = new TextField(Locale.get("guidiscover.uiLangURL")/*Enter language code or URL*/, null, 256, TextField.ANY);
+		if (Legend.numNaviLang  + numLangDifference > 1) {
+			String [] naviLang = new String[Legend.numNaviLang + numLangDifference];
 			for (int i = 0; i < Legend.numNaviLang; i++) {
-				naviLang[i] = Legend.naviLangName[i];
-				if (Legend.naviLang[i].equalsIgnoreCase("devdefault")) {
+				if (i + numLangDifference >= 0) {
+					naviLang[i + numLangDifference] = Legend.naviLangName[i];
+				}
+				if (parent.localeLang != null && Legend.naviLang[i].equalsIgnoreCase("devdefault")) {
 					naviLang[i] = Locale.get("guidiscover.devicedefault")/*Device default*/;
 				}
 			}
 			naviLangGroup = new ChoiceGroup(Locale.get("guidiscover.SoundNavilanguage")/*Sound/Navi language*/, Choice.EXCLUSIVE, naviLang, null);
 			menuDisplayOptions.append(naviLangGroup);
 		}
-		if (Legend.numOnlineLang > 1) {
-			String [] onlineLang = new String[Legend.numOnlineLang];
+		if (Legend.numOnlineLang + numLangDifference > 1) {
+			String [] onlineLang = new String[Legend.numOnlineLang + numLangDifference];
 			for (int i = 0; i < Legend.numOnlineLang; i++) {
-				onlineLang[i] = Legend.onlineLangName[i];
-				if (Legend.onlineLang[i].equalsIgnoreCase("devdefault")) {
+				if (i + numLangDifference >= 0) {
+					onlineLang[i + numLangDifference] = Legend.onlineLangName[i];
+				}
+				if (parent.localeLang != null && Legend.onlineLang[i].equalsIgnoreCase("devdefault")) {
 					onlineLang[i] = Locale.get("guidiscover.devicedefault")/*Device default*/;
 				}
 			}
@@ -818,8 +827,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				logger.fatal(Locale.get("guidiscover.NeedRestart")/*Need to restart GpsMid, otherwise map is in an inconsistant state*/ + url+Configuration.getMapUrl());
 				break;
 			case STATE_DISPOPT:
-				if (Legend.numUiLang > 1) {
-					String uiLang = Legend.uiLang[uiLangGroup.getSelectedIndex()];
+				if (Legend.numUiLang + numLangDifference > 1) {
+					String uiLang = Legend.uiLang[uiLangGroup.getSelectedIndex()-numLangDifference];
 					try {
 						if (uiLang.equalsIgnoreCase("devdefault")) {
 							// get phone's locale
@@ -833,7 +842,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 					} catch (IOException ioe) {
 						System.out.println("Couldn't open translations file");
 					}
-					if (!uiLang.equals(Configuration.getUiLang())) { 
+					if (!uiLang.equals(Configuration.getUiLang()) || uiLang.equalsIgnoreCase("devdefault")) { 
 						Trace.uncacheIconMenu();
 						uncacheIconMenu();
 					}
@@ -841,8 +850,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 					Configuration.setWikipediaLang(uiLang);
 					Configuration.setNamesOnMapLang(uiLang);
 				}
-				if (Legend.numNaviLang > 1) {
-					String naviLang = Legend.naviLang[naviLangGroup.getSelectedIndex()];
+				if (Legend.numNaviLang + numLangDifference > 1) {
+					String naviLang = Legend.naviLang[naviLangGroup.getSelectedIndex()-numLangDifference];
 					String locale = null;
 					boolean multipleDirsForLanguage = false;
 					if ((!naviLang.equals(Configuration.getNaviLang())) ||
@@ -886,7 +895,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 							}
 						}
 						// store language choice. Sound directory choice takes preference over it.
-						Configuration.setNaviLang(Legend.naviLang[naviLangGroup.getSelectedIndex()]);
+						Configuration.setNaviLang(Legend.naviLang[naviLangGroup.getSelectedIndex()-numLangDifference]);
 						if (soundDir != null) {
 							Configuration.setSoundDirectory(soundDir);
 							RouteSyntax.getInstance().readSyntax();
@@ -917,8 +926,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 						//}
 					}
 				}
-				if (Legend.numOnlineLang > 1) {
-					String onlineLang = Legend.onlineLang[onlineLangGroup.getSelectedIndex()];
+				if (Legend.numOnlineLang + numLangDifference > 1) {
+					String onlineLang = Legend.onlineLang[onlineLangGroup.getSelectedIndex()-numLangDifference];
 					Configuration.setOnlineLang(onlineLang);
 				}
 				boolean nightMode = (nightModeGroup.getSelectedIndex() == 1);
@@ -1155,31 +1164,31 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 			case MENU_ITEM_DISP_OPT: // Display Options
 				initDisplay();
 				int langNum = 0; // default is the first in bundle
-				if (Legend.numUiLang > 1) {
+				if (Legend.numUiLang + numLangDifference > 1) {
 					String lang = Configuration.getUiLang();
 					for (int i = 0; i < Legend.numUiLang; i++) {
-						if (Legend.uiLang[i].equalsIgnoreCase(lang)) {
-							langNum = i;
+						if (i + numLangDifference >= 0 && Legend.uiLang[i].equalsIgnoreCase(lang)) {
+							langNum = i + numLangDifference;
 						}
 					}
 					uiLangGroup.setSelectedIndex( langNum, true);
 				}
 				langNum = 0;
-				if (Legend.numNaviLang > 1) {
+				if (Legend.numNaviLang  + numLangDifference > 1) {
 					String lang = Configuration.getNaviLang();
 					for (int i = 0; i < Legend.numNaviLang; i++) {
-						if (Legend.naviLang[i].equalsIgnoreCase(lang)) {
-							langNum = i;
+						if (i + numLangDifference >= 0 && Legend.naviLang[i].equalsIgnoreCase(lang)) {
+							langNum = i + numLangDifference;
 						}
 					}
 					naviLangGroup.setSelectedIndex( langNum, true);
 				}
 				langNum = 0;
-				if (Legend.numOnlineLang > 1) {
+				if (Legend.numOnlineLang + numLangDifference > 1) {
 					String lang = Configuration.getOnlineLang();
 					for (int i = 0; i < Legend.numOnlineLang; i++) {
-						if (Legend.onlineLang[i].equalsIgnoreCase(lang)) {
-							langNum = i;
+						if (i + numLangDifference >= 0 && Legend.onlineLang[i].equalsIgnoreCase(lang)) {
+							langNum = i + numLangDifference;
 						}
 					}
 					onlineLangGroup.setSelectedIndex( langNum, true);
