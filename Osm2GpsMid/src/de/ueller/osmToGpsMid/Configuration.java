@@ -520,6 +520,9 @@ public class Configuration {
 				useLang += ",en";
 				useLangName += ",English";
 			}
+			// add device's default language
+		        useLang = "devdefault," + useLang;
+			useLangName = "device's default," + useLangName;
 			maxTileSize = Integer.parseInt(getString("maxTileSize"));
 			maxDictDepth = Integer.parseInt(getString("maxDictDepth"));
 			
