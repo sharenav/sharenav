@@ -812,7 +812,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				if (Legend.numUiLang > 1) {
 					String uiLang = Legend.uiLang[uiLangGroup.getSelectedIndex()];
 					try {
-						if (uiLang.equalsIgnoreCase("locale")) {
+						if (uiLang.equalsIgnoreCase("devdefault")) {
 							// get phone's locale
 							String locale = System.getProperty("microedition.locale");
 							if (locale != null) {
@@ -829,17 +829,17 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 						uncacheIconMenu();
 					}
 					Configuration.setUiLang(uiLang);
-					Configuration.setWikipediaLang(Legend.uiLang[uiLangGroup.getSelectedIndex()]);
-					Configuration.setNamesOnMapLang(Legend.uiLang[uiLangGroup.getSelectedIndex()]);
+					Configuration.setWikipediaLang(uiLang);
+					Configuration.setNamesOnMapLang(uiLang);
 				}
 				if (Legend.numNaviLang > 1) {
 					String naviLang = Legend.naviLang[naviLangGroup.getSelectedIndex()];
 					String locale = null;
 					boolean multipleDirsForLanguage = false;
 					if ((!naviLang.equals(Configuration.getNaviLang())) ||
-					    naviLang.equalsIgnoreCase("locale")) { 
+					    naviLang.equalsIgnoreCase("devdefault")) { 
 						// selected language changed, or possibly changed (if device's default)
-						if (naviLang.equalsIgnoreCase("locale")) {
+						if (naviLang.equalsIgnoreCase("devdefault")) {
 							// get phone's locale
 							locale = System.getProperty("microedition.locale");
 							if (locale != null) {

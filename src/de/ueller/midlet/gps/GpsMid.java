@@ -169,7 +169,6 @@ public class GpsMid extends MIDlet implements CommandListener {
 			int langNum = 0;  // default is the first in bundle
 			String lang = Configuration.getUiLang();
 			String locale = System.getProperty("microedition.locale");
-			localeLang = null;
 			if (locale != null) {
 				localeLang = locale.substring(0, 2);
 			}
