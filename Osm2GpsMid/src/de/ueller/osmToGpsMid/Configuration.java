@@ -524,10 +524,10 @@ public class Configuration {
 				useLang = useLang.substring(0, useLang.indexOf(",*"));
 			}
 			// add English if not there
-			if (! (useLang.indexOf("en" ) > -1)) {
-				useLang += ",en";
-				useLangName += ",English";
-			}
+			//if (! (useLang.indexOf("en" ) > -1)) {
+			//	useLang += ",en";
+			//	useLangName += ",English";
+			//}
 			// add device's default language; FIXME shouldn't add this, if only English is included
 		        useLang = "devdefault," + useLang;
 			useLangName = "Device's default," + useLangName;
