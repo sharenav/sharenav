@@ -69,8 +69,8 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 			String url = null;
 			if (site.equalsIgnoreCase(Locale.get("guiwebinfo.WikipediaRSS")/*Wikipedia (RSS)*/)) {
 				String lang = "";
-				if (! Configuration.getOnlineLang().equals("en")) {
-				    lang = "lang=" + Configuration.getOnlineLang() + "&";
+				if (! Configuration.getOnlineLangString().equals("en")) {
+				    lang = "lang=" + Configuration.getOnlineLangString() + "&";
 				}
 				url = "http://ws.geonames.org/findNearbyWikipediaRSS?" + lang + "lat="
 						+ mPos.latitude * MoreMath.FAC_RADTODEC + "&lng="
@@ -107,8 +107,8 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 				minlon = (int) ((deglonf - deglon) * 60);
 				seclon = ((deglonf - deglon-minlon/60)*60);
 				String lang = "";
-				if (! Configuration.getOnlineLang().equals("en")) {
-				    lang = "language=" + Configuration.getOnlineLang() + "&";
+				if (! Configuration.getOnlineLangString().equals("en")) {
+				    lang = "language=" + Configuration.getOnlineLangString() + "&";
 				}
 				url = "http://toolserver.org/~geohack/geohack.php?" + lang + "params="
 						+ deglat
@@ -125,6 +125,7 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 						+ ((mPos.longitude < 0)?"_W_":"_E_");
 			}
 			if (site.equalsIgnoreCase(Locale.get("guiwebinfo.Website")/*Website*/)) {
+				// FIXME way urls are quite rare, should add support for POI urls
 				if ((actualWay != null)) {
 					url = trace.getUrl(actualWay.urlIdx);
 				}

@@ -876,6 +876,25 @@ public class Configuration {
 		return rawDebugLogEnable;
 	}
 	
+	public static String getOnlineLangString() {
+		String lang = naviLang;
+		if (naviLang.equalsIgnoreCase("devdefault")) {
+			// get phone's locale
+			String locale = System.getProperty("microedition.locale");
+			
+			if (locale != null) {
+				lang = locale.substring(0, 2);
+			} else {
+				if (Legend.numOnlineLang > 1) {
+					lang = Legend.onlineLang[1];
+				} else {
+					lang = "en";
+				}
+			}
+		}
+		return lang;
+	}
+
 	public static String getDebugRawLoggerUrl() {
 		return rawDebugLogUrl;
 	}

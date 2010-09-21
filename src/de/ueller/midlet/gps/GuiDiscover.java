@@ -443,7 +443,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 			uiLangGroup = new ChoiceGroup(Locale.get("guidiscover.Language")/*Language*/, Choice.EXCLUSIVE, uiLang, null);
 			menuDisplayOptions.append(uiLangGroup);
 		}
-		//uiLangURL = new TextField(Locale.get("guidiscover.uiLangURL")/*Enter language code or URL*/, null, 256, TextField.ANY);
 		if (Legend.numNaviLang  + numLangDifference > 1) {
 			String [] naviLang = new String[Legend.numNaviLang + numLangDifference];
 			for (int i = 0; i < Legend.numNaviLang; i++) {
@@ -567,6 +566,16 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				Choice.MULTIPLE, mapInfos, null);
 		menuDisplayOptions.append(mapInfoOpts);
 				
+		uiLangURL = new TextField(Locale.get("guidiscover.uiLangURL")/*Enter language code or URL*/,
+					  Configuration.getUiLang(), 256, TextField.ANY);
+		menuDisplayOptions.append(uiLangURL);
+		naviLangURL = new TextField(Locale.get("guidiscover.naviLangURL")/*Enter language code or URL*/, 
+					    Configuration.getNaviLang(), 256, TextField.ANY);
+		menuDisplayOptions.append(naviLangURL);
+		onlineLangURL = new TextField(Locale.get("guidiscover.onlineLangURL")/*Enter language code or URL*/,
+					      Configuration.getOnlineLang(), 256, TextField.ANY);
+		menuDisplayOptions.append(onlineLangURL);
+
 		menuDisplayOptions.setCommandListener(this);
 	}
 	
@@ -827,18 +836,34 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				logger.fatal(Locale.get("guidiscover.NeedRestart")/*Need to restart GpsMid, otherwise map is in an inconsistant state*/ + url+Configuration.getMapUrl());
 				break;
 			case STATE_DISPOPT:
-				if (Legend.numUiLang + numLangDifference > 1) {
-					String uiLang = Legend.uiLang[uiLangGroup.getSelectedIndex()-numLangDifference];
-					try {
-						if (uiLang.equalsIgnoreCase("devdefault")) {
-							// get phone's locale
-							String locale = System.getProperty("microedition.locale");
-							if (locale != null) {
-								Locale.loadTranslations( "/" + locale.substring(0, 2) + ".loc" );
-							}
+				String uiLang = null;
+				String uiLangUse = null;
+				if (!uiLangURL.getString().equalsIgnoreCase(Configuration.getUiLang())) {
+					uiLang = uiLangURL.getString().toLowerCase();
+					if (uiLang.equals("")) {
+						uiLang = "devdefault";
+					}
+				} else if (Legend.numUiLang + numLangDifference > 1) {
+					uiLang = Legend.uiLang[uiLangGroup.getSelectedIndex()-numLangDifference];
+				}
+				if (uiLang != null) {
+					uiLangUse = uiLang;
+					if (uiLang.equalsIgnoreCase("devdefault")) {
+						// get phone's locale
+						String locale = System.getProperty("microedition.locale");
+
+						if (locale != null) {
+							uiLangUse = locale.substring(0, 2);
 						} else {
-							Locale.loadTranslations( "/" + uiLang + ".loc" );
+							if (Legend.numUiLang > 1) {
+								uiLangUse = Legend.uiLang[1];
+							} else {
+								uiLangUse = "en";
+							}
 						}
+					}
+					try {
+						Locale.loadTranslations( "/" + uiLangUse + ".loc" );
 					} catch (IOException ioe) {
 						System.out.println("Couldn't open translations file");
 					}
@@ -850,84 +875,109 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 					Configuration.setWikipediaLang(uiLang);
 					Configuration.setNamesOnMapLang(uiLang);
 				}
-				if (Legend.numNaviLang + numLangDifference > 1) {
-					String naviLang = Legend.naviLang[naviLangGroup.getSelectedIndex()-numLangDifference];
+				String naviLang = null;				
+				if (!naviLangURL.getString().equalsIgnoreCase(Configuration.getNaviLang())) {
+					naviLang = naviLangURL.getString().toLowerCase();
+					if (naviLang.equals("")) {
+						naviLang = "devdefault";
+					}
+				} else if (Legend.numNaviLang + numLangDifference > 1) {
+					naviLang = Legend.naviLang[naviLangGroup.getSelectedIndex()-numLangDifference];
+					if (naviLang.equals(Configuration.getNaviLang()) && ! naviLang.equalsIgnoreCase("devdefault")) {
+						naviLang = null;
+					}
+				}
+				if (naviLang != null) {
 					String locale = null;
+					String naviLangUse = naviLang;
 					boolean multipleDirsForLanguage = false;
-					if ((!naviLang.equals(Configuration.getNaviLang())) ||
-					    naviLang.equalsIgnoreCase("devdefault")) { 
-						// selected language changed, or possibly changed (if device's default)
-						if (naviLang.equalsIgnoreCase("devdefault")) {
-							// get phone's locale
-							locale = System.getProperty("microedition.locale");
-							if (locale != null) {
-								naviLang = locale;
+					if (naviLang.equalsIgnoreCase("devdefault")) {
+						// get phone's locale
+						locale = System.getProperty("microedition.locale");
+
+						if (locale != null) {
+							naviLangUse = locale.substring(0, 2);
+						} else {
+							if (Legend.numNaviLang > 1) {
+								naviLangUse = Legend.naviLang[1];
+							} else {
+								naviLangUse = "en";
 							}
 						}
-						String soundDirBase[] = new String[Legend.soundDirectories.length];
-						int soundDirBaseCount = 0;
-						String soundDir = null;
+					}
+					// store language choice. Sound directory choice takes preference over it.
+					Configuration.setNaviLang(naviLang);
+
+					String soundDirBase[] = new String[Legend.soundDirectories.length];
+					int soundDirBaseCount = 0;
+					String soundDir = null;
+					for (int i = 0; i < Legend.soundDirectories.length; i++) {
+						// build a table of basenames by matching "-xx" at end of dirname
+						if (Legend.soundDirectories[i] != null && Legend.soundDirectories[i].length() > 3) {
+							if (Legend.soundDirectories[i].substring(Legend.soundDirectories[i].length() - 3, Legend.soundDirectories[i].length() - 2).equals("-")) {
+								String basename = new String(Legend.soundDirectories[i].substring(0, Legend.soundDirectories[i].length() - 3));
+								boolean duplicate = false;
+								for (int j = 0; j < soundDirBaseCount; j++) {
+									if (basename.equals(soundDirBase[j])) {
+										duplicate = true;
+									}
+								}
+								if (! duplicate) {
+									soundDirBase[soundDirBaseCount] = basename;
+									soundDirBaseCount++;
+								}
+							}
+						}
+						// set dir if a language match is found
+						if (Legend.soundDirectories[i].substring(Legend.soundDirectories[i].length() - 3).equals("-" + naviLangUse)) {
+							// first suitable-language sound dir is taken into use
+							if (soundDir == null) {
+								soundDir = Legend.soundDirectories[i];
+							} else {
+								multipleDirsForLanguage = true;
+							}
+						}
+					}
+
+					if (soundDir != null) {
+						Configuration.setSoundDirectory(soundDir);
+						RouteSyntax.getInstance().readSyntax();
+					} else {
+						// special case English as default language
+						// if -en was not found, use a matching basename 
+
 						for (int i = 0; i < Legend.soundDirectories.length; i++) {
-							// build a table of basenames by matching "-xx" at end of dirname
-							if (Legend.soundDirectories[i] != null && Legend.soundDirectories[i].length() > 3) {
-								if (Legend.soundDirectories[i].substring(Legend.soundDirectories[i].length() - 3, Legend.soundDirectories[i].length() - 2).equals("-")) {
-									String basename = new String(Legend.soundDirectories[i].substring(0, Legend.soundDirectories[i].length() - 3));
-									boolean duplicate = false;
-									for (int j = 0; j < soundDirBaseCount; j++) {
-										if (basename.equals(soundDirBase[j])) {
-											duplicate = true;
-										}
-									}
-									if (! duplicate) {
-										soundDirBase[soundDirBaseCount] = basename;
-										soundDirBaseCount++;
-									}
-									}
-								}
-							// set dir if a language match is found
-							if (Legend.soundDirectories[i].substring(Legend.soundDirectories[i].length() - 3).equals("-" + naviLang)) {
-								// first suitable-language sound dir is taken into use
-								if (soundDir == null) {
-									soundDir = Legend.soundDirectories[i];
-								} else {
-									multipleDirsForLanguage = true;
+							for (int j = 0; j < soundDirBaseCount; j++) {
+								if (soundDirBase[j].equals(Legend.soundDirectories[i])) {
+									soundDir = soundDirBase[j];
 								}
 							}
 						}
-						// store language choice. Sound directory choice takes preference over it.
-						Configuration.setNaviLang(Legend.naviLang[naviLangGroup.getSelectedIndex()-numLangDifference]);
 						if (soundDir != null) {
 							Configuration.setSoundDirectory(soundDir);
 							RouteSyntax.getInstance().readSyntax();
-						} else {
-							// special case English as default language
-							// if -en was not found, use a matching basename 
-
-							for (int i = 0; i < Legend.soundDirectories.length; i++) {
-								for (int j = 0; j < soundDirBaseCount; j++) {
-									if (soundDirBase[j].equals(Legend.soundDirectories[i])) {
-										soundDir = soundDirBase[j];
-									}
-								}
-							}
-							if (soundDir != null) {
-								Configuration.setSoundDirectory(soundDir);
-								RouteSyntax.getInstance().readSyntax();
-							}
 						}
-
-						if (soundDir == null) {
-							logger.error("Sound directory for " + naviLang + " not found!");
-						}
-						//if (multipleDirsForLanguage) {
-							// FIXME: if more than one dir for lang available,
-							// tell the user it can be switched at "sounds&alerts" menu
-							// ("Changing language", "Selecting " + soundDir, 3000);
-						//}
 					}
+
+					if (soundDir == null) {
+						logger.error("Sound directory for " + naviLangUse + " not found!");
+					}
+					//if (multipleDirsForLanguage) {
+					// FIXME: if more than one dir for lang available,
+					// tell the user it can be switched at "sounds&alerts" menu
+					// ("Changing language", "Selecting " + soundDir, 3000);
+					//}
 				}
-				if (Legend.numOnlineLang + numLangDifference > 1) {
-					String onlineLang = Legend.onlineLang[onlineLangGroup.getSelectedIndex()-numLangDifference];
+				String onlineLang = null;
+				if (!onlineLangURL.getString().equalsIgnoreCase(Configuration.getOnlineLang())) {
+					onlineLang = onlineLangURL.getString().toLowerCase();
+					if (onlineLang.equals("")) {
+						onlineLang = "devdefault";
+					}
+				} else if (Legend.numOnlineLang + numLangDifference > 1) {
+					onlineLang = Legend.onlineLang[onlineLangGroup.getSelectedIndex()-numLangDifference];
+				}
+				if (onlineLang != null) {
 					Configuration.setOnlineLang(onlineLang);
 				}
 				boolean nightMode = (nightModeGroup.getSelectedIndex() == 1);
