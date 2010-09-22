@@ -1686,9 +1686,15 @@ public class Gpx extends Tile implements Runnable, InputListener {
 			if (mEnteringGpxNameStop) {
 				mEnteringGpxNameStop = false;
 				if (trackName == null) {
-					trackName = origTrackName;
+					// old behaviour: cancel rename: trackName = origTrackName;
+					Trace tr = Trace.getInstance();
+					// don't stop recording
+					tr.alert(Locale.get("trace.GpsRecording")/*Gps track recording*/, Locale.get("trace.Continuing")/*Continuing*/, 1250);
+					trackName = new String(origTrackName);
+
+				} else {
+					startProcessorThread(JOB_SAVE_TRK);
 				}
-				startProcessorThread(JOB_SAVE_TRK);
 			}
 			Trace.getInstance().show();
 			return;
