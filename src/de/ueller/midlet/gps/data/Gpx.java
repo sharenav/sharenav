@@ -44,6 +44,8 @@ import de.ueller.gps.tools.DateTimeTools;
 import de.ueller.gps.tools.HelperRoutines;
 import de.ueller.midlet.gps.TrackPlayer;
 
+import de.enough.polish.util.Locale;
+
 
 /**
  * Handles pretty much everything that has to do with tracks and waypoints:
@@ -1663,7 +1665,22 @@ public class Gpx extends Tile implements Runnable, InputListener {
 				if (trackName != null) {
 					origTrackName = new String(trackName);
 				} else {
-					trackName = new String(origTrackName);
+					// cancel start of recording
+					// old behaviour: cancel rename: trackName = new String(origTrackName);
+					try {
+						Trace tr = Trace.getInstance();
+						//#debug debug
+						logger.debug("Closing track with " + mTrkRecorded + " points due to user cancel");
+						mTrkOutStream.flush();
+						mTrkOutStream.close();
+						mTrkByteOutStream.close();
+						tr.alert(Locale.get("trace.GpsRecording")/*Gps track recording*/, Locale.get("trace.Cancelled")/*Cancelled*/, 1250);
+					} catch (IOException e) {
+						logger.exception("Failed to close trackrecording", e);
+					}
+					mTrkOutStream = null;
+					mTrkByteOutStream = null;
+					trackTile.dropTrk();
 				}
 			}
 			if (mEnteringGpxNameStop) {
