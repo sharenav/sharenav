@@ -186,6 +186,7 @@ trace.up2=up 2
 trace.YouNeedStopRecording=You need to stop recording before managing tracks.
 trace.ZoomIn=Zoom in
 trace.ZoomOut=Zoom out
+trace.Continuing=Continuing
 splash.Application2= licensed under GPL2
 splash.Application3= http://www.gnu.org/
 splash.Application=Application:
