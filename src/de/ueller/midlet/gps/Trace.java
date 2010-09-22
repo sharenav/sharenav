@@ -1530,6 +1530,10 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 
 	public void shutdown() {
 		if (gpx != null) {
+			// change to "false" to ask for track name if configure to
+			// currently "true" to not ask for name to ensure fast
+			// quit & try to avoid loss of data which might result from
+			// waiting for user to type the name
 			gpx.saveTrk(true);
 		}
 		//#debug debug
@@ -2799,7 +2803,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			/**
 			 * Close and Save the gpx recording, to ensure we don't loose data
 			 */
-			gpx.saveTrk(true);
+			gpx.saveTrk(false);
 		}
 		removeCommand(CMDS[DISCONNECT_GPS_CMD]);
 		if (locationProducer == null) {
