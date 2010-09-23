@@ -31,12 +31,12 @@ public class TraceLayout extends LayoutManager {
 	public static final int ROUTE_DISTANCE = 9;
 	public static final int ROUTE_DURATION = 10;
 	public static final int SCALEBAR = 11;
-	public static final int SPEED_CURRENT = 12;
-	public static final int ZOOM_IN = 13;
-	public static final int ZOOM_OUT = 14;
-	public static final int RECENTER_GPS = 15;
-	public static final int SHOW_DEST = 16;
-	public static final int SPEEDING_SIGN = 17;
+	public static final int SPEEDING_SIGN = 12;
+	public static final int SPEED_CURRENT = 13;
+	public static final int ZOOM_IN = 14;
+	public static final int ZOOM_OUT = 15;
+	public static final int RECENTER_GPS = 16;
+	public static final int SHOW_DEST = 17;
 	public static final int ALTITUDE = 18;
 	public static final int CURRENT_TIME = 19;
 	public static final int ETA = 20;
@@ -225,14 +225,6 @@ public class TraceLayout extends LayoutManager {
 			);
 		e.setColor(Legend.COLORS[Legend.COLOR_RI_OFF_DISTANCE_TEXT]);
 		e.setVRelative(ele[CURRENT_TIME]);
-		
-		e = ele[SPEEDING_SIGN]; addElement(e,
-				LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |
-				LayoutElement.FLAG_FONT_LARGE
-		);
-		e.setSpecialElementID(SE_SPEEDING_SIGN);
-		e.setAdditionalOffsY(-5);
-		e.setVRelative(ele[SPEED_CURRENT]);
 
 		e = ele[ZOOM_OUT]; addElement(e,
 				LayoutElement.FLAG_HALIGN_RIGHT |
@@ -316,7 +308,15 @@ public class TraceLayout extends LayoutManager {
 		e.setColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON_TEXT]);
 		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON]);
 		e.setActionID(Trace.RECENTER_GPS_CMD);
-
+		
+		e = ele[SPEEDING_SIGN]; addElement(e,
+				LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |
+				LayoutElement.FLAG_FONT_LARGE
+		);
+		e.setSpecialElementID(SE_SPEEDING_SIGN);
+		e.setAdditionalOffsY(-5);
+		e.setVRelative(ele[SPEED_CURRENT]);		
+		
 		setOnScreenButtonSize();
 	}	
 	
