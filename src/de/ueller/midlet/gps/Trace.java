@@ -1714,18 +1714,17 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			// Show gpx track recording status
 			LayoutElement eSolution = tl.ele[TraceLayout.SOLUTION];
 			LayoutElement eRecorded = tl.ele[TraceLayout.RECORDED_COUNT];
+			if (gpx.isRecordingTrk()) {
+				// we are recording tracklogs
+				if (gpx.isRecordingTrkSuspended()) {
+					eRecorded.setColor(Legend.COLORS[Legend.COLOR_RECORDING_SUSPENDED_TEXT]); // blue
+				} else {
+					eRecorded.setColor(Legend.COLORS[Legend.COLOR_RECORDING_ON_TEXT]); // red
+				}
+				eRecorded.setText(gpx.getTrkPointCount() + Locale.get("trace.r")/*r*/);
+			}
 			if (locationProducer != null) {
 				eSolution.setText(solution);
-
-				if (gpx.isRecordingTrk()) {
-					// we are recording tracklogs
-					if (gpx.isRecordingTrkSuspended()) {
-						eRecorded.setColor(Legend.COLORS[Legend.COLOR_RECORDING_SUSPENDED_TEXT]); // blue
-					} else {
-						eRecorded.setColor(Legend.COLORS[Legend.COLOR_RECORDING_ON_TEXT]); // red
-					}
-					eRecorded.setText(gpx.getTrkPointCount() + Locale.get("trace.r")/*r*/);
-				}
 			} else {
 				if (TrackPlayer.isPlaying) {
 					eSolution.setText(Locale.get("trace.Replay")/*Replay*/);
@@ -2298,6 +2297,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	}
 	
 	public synchronized void receivePosition(Position pos) {
+		// FIXME signal on location gained
 		//#debug info
 		logger.info("New position: " + pos);
 		this.pos = pos;
@@ -2311,10 +2311,17 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		}
 		if (gpsRecenter) {
 			// first call here a) after enabling gpsrecenter or b) after JSR179 location producer
-			// init is the last known location, next calls are valid current locations
+			// init is the last known location, next calls are valid current locations.
 			if (gpsRecenterInvalid) {
 				gpsRecenterInvalid = false;
 			} else {
+				if (gpx.isRecordingTrk()) {
+					try {
+						gpx.addTrkPt(pos);
+					} catch (Exception e) {
+						receiveMessage(e.getMessage());
+					}
+				}
 				if (gpsRecenterStale) {
 					gpsRecenterStale = false;
 				}
@@ -2337,13 +2344,6 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			}
 		}
 		altitude = (int) (pos.altitude);
-		if (gpx.isRecordingTrk()) {
-			try {
-				gpx.addTrkPt(pos);
-			} catch (Exception e) {
-				receiveMessage(e.getMessage());
-			}
-		}
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_AUTOZOOM)
 				&& gpsRecenter
 				&& (isGpsConnected() || TrackPlayer.isPlaying)
@@ -2815,12 +2815,12 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				GpsMid.mNoiseMaker.playSound("DISCONNECT");
 			}
 		}
-		if (gpx != null) {
-			/**
-			 * Close and Save the gpx recording, to ensure we don't loose data
-			 */
-			gpx.saveTrk(false);
-		}
+		//if (gpx != null) {
+		//	/**
+		//	 * Close and Save the gpx recording, to ensure we don't loose data
+		//	 */
+		//	gpx.saveTrk(false);
+		//}
 		removeCommand(CMDS[DISCONNECT_GPS_CMD]);
 		if (locationProducer == null) {
 //#debug info
@@ -2836,6 +2836,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	}
 
 	public void receiveSolution(String s) {
+		// FIXME signal a sound on location gained or lost
 		solution = s;
 		repaint();
 	}
