@@ -15,6 +15,7 @@ public class Images {
 	public final Image IMG_MARK_DISP = Image.createImage("/mark_display.png");
 	public final Image IMG_WAYPT = Image.createImage("/waypoint.png");
 	public final Image IMG_POS_BG = Image.createImage("/posbg.png");
+	public final Image IMG_POS_BG_STALE = Image.createImage("/posbgstale.png");
 	public final Image IMG_DEST = Image.createImage("/destination.png");
 	public final Image IMG_STRAIGHTON=Image.createImage("/straighton.png");
 	public final Image IMG_LEFT = Image.createImage("/left.png");

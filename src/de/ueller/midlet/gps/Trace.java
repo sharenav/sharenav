@@ -175,7 +175,10 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	public boolean gpsRecenter = true;
 	/** Flag if the gps position is not yet valid after recenter request
 	 */
-	public boolean gpsRecenterInvalid = true;
+	public volatile boolean gpsRecenterInvalid = true;
+	/** Flag if the gps position is stale after recenter request
+	 */
+	public volatile boolean gpsRecenterStale = true;
 	/** Flag if the map is autoZoomed
 	 */
 	public boolean autoZoomed = true;
@@ -1229,6 +1232,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			if (c == CMDS[ROUTING_START_WITH_MODE_SELECT_CMD]) {
 				gpsRecenter = true;
 				gpsRecenterInvalid = true;
+				gpsRecenterStale = true;
 				GuiRoute guiRoute = new GuiRoute(this, false);
 				guiRoute.show();
 				return;
@@ -1359,7 +1363,11 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			if (c == CMDS[RECENTER_GPS_CMD]) {
 				gpsRecenter = true;
 				gpsRecenterInvalid = true;
+				gpsRecenterStale = true;
 				autoZoomed = true;
+				if (pos.latitude != 0.0f) {
+					receivePosition(pos);
+				}
 				newDataReady();
 				return;
 			}
@@ -2152,7 +2160,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			}
 			if (! gpsRecenterInvalid) {
 				// gps position spot
-				pc.g.drawImage(pc.images.IMG_POS_BG, posX, posY, CENTERPOS);
+				pc.g.drawImage(gpsRecenterStale ? pc.images.IMG_POS_BG_STALE : pc.images.IMG_POS_BG, posX, posY, CENTERPOS);
 				// gps position rectangle
 				g.drawRect(posX - 4, posY - 4, 8, 8);
 				g.drawLine(posX, posY, px, py);
@@ -2302,7 +2310,15 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			//autoZoomed = true;
 		}
 		if (gpsRecenter) {
-			gpsRecenterInvalid = false;
+			// first call here a) after enabling gpsrecenter or b) after JSR179 location producer
+			// init is the last known location, next calls are valid current locations
+			if (gpsRecenterInvalid) {
+				gpsRecenterInvalid = false;
+			} else {
+				if (gpsRecenterStale) {
+					gpsRecenterStale = false;
+				}
+			}
 			center.setLatLonDeg(pos.latitude, pos.longitude);
 			speed = (int) (pos.speed * 3.6f);
 			if (speed > 2 && pos.course != Float.NaN) {
