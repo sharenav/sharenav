@@ -860,7 +860,7 @@ scale alias 1: zoomed out 21x
   				<lineColor color = "000000CC" />  				  				  				
   			</Wvalue>
 			<Wvalue name = "wood">
-  				<description desc = "Wood"/>
+  				<description desc = "Natural wood"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "true"/>
   				<scale scale = "21"/>
@@ -871,6 +871,9 @@ scale alias 1: zoomed out 21x
   				<description desc = "coastline"/>
   				<namekey tag = "name"/>  				
   				<isArea area = "false"/>
+				<!-- take care of natural=coastline area handling 
+				(see https://sourceforge.net/tracker/index.php?func=detail&aid=3041068&group_id=192084&atid=939974 ) -->
+  				<ignoreOsmAreaTag ignore = "true"/>
   				<scale scale = "2"/>
   				<lineColor color = "00005555" />  				  				  				
   				<wayWidth width="10" />
