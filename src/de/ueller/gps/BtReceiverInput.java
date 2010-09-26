@@ -103,6 +103,13 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 		return true;
 	}
 
+	public boolean activate(LocationMsgReceiver receiver) {
+		// FIXME move activation code (code to enable continuos location feed) here
+		return true;
+	}
+	public boolean deactivate(LocationMsgReceiver receiver) {
+		return true;
+	}
 	abstract protected void process() throws IOException;
 
 	public void run() {
@@ -246,6 +253,15 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 		}
 	}
 
+	public void triggerLastKnownPositionUpdate() {
+	}
+
+	public void triggerPositionUpdate() {
+		//FIXME make a proper interface for passing fix age information instead of accessing trace variable directly
+		//tr.gpsRecenterInvalid = true;
+		//tr.gpsRecenterStale = true;
+		//locationUpdated(locationProvider, LocationProvider.getLastKnownLocation());
+	}
 	public void addLocationMsgReceiver(LocationMsgReceiver receiver) {
 		receiverList.addReceiver(receiver);
 	}

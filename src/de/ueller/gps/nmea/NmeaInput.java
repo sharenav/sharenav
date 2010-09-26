@@ -36,6 +36,19 @@ public class NmeaInput extends BtReceiverInput {
 		return super.init(receiver);
 	}
 
+	public boolean activate(LocationMsgReceiver receiver) {
+		// FIXME move activation code (code to enable continuos location feed) here
+		//#debug
+		logger.debug("Activating NMEA");
+		return super.activate(receiver);
+	}
+
+	public boolean deactivate(LocationMsgReceiver receiver) {
+		//#debug
+		logger.debug("Deactivating NMEA");
+		return super.deactivate(receiver);
+	}
+
 	public void process() throws IOException{		
 		//position markers in buf1 and buf2, length of useful data in buf1
 		int p1 = 0, p2 = 0, len1 = 0;

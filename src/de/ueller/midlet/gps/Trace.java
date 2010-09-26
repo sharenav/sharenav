@@ -150,8 +150,10 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	protected static final int OPEN_URL_CMD = 56;
 	protected static final int SHOW_PREVIOUS_POSITION_CMD = 57;
 	protected static final int TOGGLE_GPS_CMD = 58;
+	protected static final int CELLID_LOCATION_CMD = 59;
+	protected static final int MANUAL_LOCATION_CMD = 60;
 
-	private final Command [] CMDS = new Command[59];
+	private final Command [] CMDS = new Command[61];
 
 	public static final int DATASCREEN_NONE = 0;
 	public static final int DATASCREEN_TACHO = 1;
@@ -166,6 +168,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 
 //	private SirfInput si;
 	private LocationMsgProducer locationProducer;
+	private LocationMsgProducer cellIDLocationProducer = null;
 
 	public String solution = Locale.get("trace.NoFix")/*NoFix*/;
 	
@@ -421,6 +424,8 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		CMDS[SEND_MESSAGE_CMD] = new Command(Locale.get("trace.SendSMSMapPos")/*Send SMS (map pos)*/,Command.ITEM, 20);
 		//#endif
 		CMDS[EDIT_ADDR_CMD] = new Command(Locale.get("trace.AddAddrNode")/*Add Addr node*/,Command.ITEM,100);
+		CMDS[CELLID_LOCATION_CMD] = new Command(Locale.get("trace.CellidLocation")/*Set location from CellID*/,Command.ITEM,100);
+		CMDS[MANUAL_LOCATION_CMD] = new Command(Locale.get("trace.ManualLocation")/*Set location manually*/,Command.ITEM,100);
 
 		addAllCommands();
 		
@@ -500,6 +505,9 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					locationProducer = new NmeaInput();
 					break;
 				case Configuration.LOCATIONPROVIDER_SECELL:
+					if (cellIDLocationProducer != null) {
+						cellIDLocationProducer.close();
+					}
 					locationProducer = new SECellID();
 					break;
 				case Configuration.LOCATIONPROVIDER_JSR179:
@@ -596,6 +604,11 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 			}
 			if (!locationProducer.init(this)) {
 				logger.info("Failed to initialise location producer");
+				running = false;
+				return;
+			}
+			if (!locationProducer.activate(this)) {
+				logger.info("Failed to activate location producer");
 				running = false;
 				return;
 			}
@@ -764,6 +777,8 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		//#endif
 		removeCommand(CMDS[SETUP_CMD]);
 		removeCommand(CMDS[ABOUT_CMD]);
+		removeCommand(CMDS[CELLID_LOCATION_CMD]);
+		removeCommand(CMDS[MANUAL_LOCATION_CMD]);
 		
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS)) {
 			if (!Configuration.getCfgBitState(Configuration.CFGBIT_FULLSCREEN)) {
@@ -1416,7 +1431,39 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				new Splash(parent);
 				return;
 			}
-
+			if (c == CMDS[CELLID_LOCATION_CMD]) {
+				if (Configuration.getLocationProvider() == Configuration.LOCATIONPROVIDER_SECELL && locationProducer != null) {
+						locationProducer.triggerPositionUpdate();
+						newDataReady();
+				} else {
+					if (cellIDLocationProducer == null) {
+						// init sleeping cellid location provider if cellid is not primary
+						cellIDLocationProducer = new SECellID();
+						if (cellIDLocationProducer != null && !cellIDLocationProducer.init(this)) {
+							logger.info("Failed to initialise CellID location producer");
+						}
+					}
+					if (cellIDLocationProducer != null) {
+						cellIDLocationProducer.triggerPositionUpdate();
+						newDataReady();
+					}
+				}
+				return;
+			}
+			if (c == CMDS[MANUAL_LOCATION_CMD]) {
+				Position setpos = new Position(center.radlat / MoreMath.FAC_DECTORAD,
+    								center.radlon / MoreMath.FAC_DECTORAD,
+								    PositionMark.INVALID_ELEVATION, 0.0f, 0.0f, 1,
+								    System.currentTimeMillis());
+				// implies center to gps, to give feedback as the gps rectangle
+				gpsRecenter = true;
+				// gpsRecenterInvalid = true;
+				// gpsRecenterStale = true;
+				autoZoomed = true;
+				receivePosition (setpos);
+				newDataReady();
+				return;
+			}
 			
 			if (! routeCalc) {
 				//#if polish.api.osm-editing

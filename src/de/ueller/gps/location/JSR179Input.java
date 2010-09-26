@@ -79,6 +79,14 @@ public class JSR179Input
 		return true;
 	}
 
+	public boolean activate(LocationMsgReceiver receiver) {
+		// FIXME move activation code (code to enable continuos location feed) here
+		return true;
+	}
+	public boolean deactivate(LocationMsgReceiver receiver) {
+		return true;
+	}
+
 	/**
 	 * Initializes LocationProvider uses default criteria
 	 * 
@@ -278,6 +286,16 @@ public class JSR179Input
 				receiverList.receiveSolution("NoFix"/* i:NoFix */);
 			}
 		}
+		//FIXME make a proper interface for passing fix age information instead of accessing trace variable directly
+		tr.gpsRecenterInvalid = true;
+		tr.gpsRecenterStale = true;
+		locationUpdated(locationProvider, LocationProvider.getLastKnownLocation());
+	}
+
+	public void triggerPositionUpdate() {
+	}
+
+	public void triggerLastKnownPositionUpdate() {
 		//FIXME make a proper interface for passing fix age information instead of accessing trace variable directly
 		tr.gpsRecenterInvalid = true;
 		tr.gpsRecenterStale = true;

@@ -117,6 +117,14 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 		}
 	}
 
+	public void triggerLastKnownPositionUpdate() {
+	}
+
+	public void triggerPositionUpdate() {
+		RetrievePosition rp = new RetrievePosition();
+		rp.run();
+	}
+
 	/**
 	 * Periodically retrieve the current Cell-id and
 	 * convert cell id to a location and send it
@@ -340,8 +348,6 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 			}
 			db.closeRecordStore();
 			
-			rp = new RetrievePosition();
-			GpsMid.getTimer().schedule(rp, 1000, 5000);
 			return true;
 		} catch (SecurityException se) {
 			logger.silentexception(
@@ -354,6 +360,14 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 	}
 	
 	
+	public boolean activate(LocationMsgReceiver receiver) {
+		rp = new RetrievePosition();
+		GpsMid.getTimer().schedule(rp, 1000, 5000);
+		return true;
+	}
+	public boolean deactivate(LocationMsgReceiver receiver) {
+		return true;
+	}
 	
 	
 	private GSMCell retrieveFromCache(GSMCell cell) {
