@@ -782,7 +782,7 @@ public class Configuration {
 					url = new URL("http://osmxapi.informationfreeway.org/api/0.6/*[bbox=" +
 							bound.minLon + "," + bound.minLat + "," + bound.maxLon + "," + bound.maxLat + "]");
 				} else if (planet.equalsIgnoreCase("ROMA")){
-					url = new URL("http://api1.osm.mat.cc/api/0.6/map?bbox=" +
+					url = new URL("http://api1.osm.absolight.net/api/0.6/map?bbox=" +
 							bound.minLon + "," + bound.minLat + "," + bound.maxLon + "," + bound.maxLat);
 				}
 				 
