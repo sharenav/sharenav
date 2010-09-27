@@ -28,6 +28,13 @@ import javax.microedition.io.SocketConnection;
 
 import de.ueller.midlet.gps.Logger;
 
+//#if polish.android
+import android.content.Context;
+import de.enough.polish.android.midlet.MidletBridge;
+import android.telephony.TelephonyManager;
+import android.telephony.gsm.GsmCellLocation;
+//#endif
+
 public class CellIdProvider {
 	final int PROTO_REQ_CELLID = 6574723;
 	
@@ -37,6 +44,7 @@ public class CellIdProvider {
 	private static final int CELLMETHOD_MOTO = 3;
 	private static final int CELLMETHOD_SOCKET = 4;
 	private static final int CELLMETHOD_DEBUG = 5;
+	private static final int CELLMETHOD_ANDROID = 6;
 	
 	private static CellIdProvider singelton;
 	
@@ -54,6 +62,25 @@ public class CellIdProvider {
 	private CellIdProvider() {
 		//#debug info
 		logger.info("Trying to find a suitable cell id provider");
+		//#if polish.android
+		try {
+			//#debug info
+			logger.info("Trying to see if android method is available");
+			GSMCell cell = obtainAndroidCell();
+			if (cell != null) {
+				cellRetrievelMethod = CELLMETHOD_ANDROID;
+				//#debug info
+				logger.info("   Yes, the Android method works");
+				return;
+			} else {
+				//#debug info
+				logger.info("   No, need to use a different method");
+			}
+		} catch (Exception e) {
+			logger.silentexception("Retrieving CellID as Android failed", e);
+			//Nothing to do here, just fall through to the next method
+		}
+		//#endif
 		try {
 			//#debug info
 			logger.info("Trying to see if Sony-Ericcson method is available");
@@ -131,6 +158,35 @@ public class CellIdProvider {
 		}
 		return singelton;
 	}
+	
+	//#if polish.android
+	private GSMCell obtainAndroidCell() {
+		GSMCell cell = new GSMCell();
+		
+		TelephonyManager tm  = 
+			(TelephonyManager) MidletBridge.instance.getSystemService(Context.TELEPHONY_SERVICE); 
+		GsmCellLocation location = (GsmCellLocation) tm.getCellLocation();
+		cell.cellID = location.getCid();
+                cell.lac = location.getLac();
+
+		String networkOperator = tm.getNetworkOperator();
+		if (networkOperator != null && networkOperator.length() > 0) {
+			try {
+				cell.mcc = (short) Integer.parseInt(networkOperator.substring(0, 3));
+				cell.mnc = (short) Integer.parseInt(networkOperator.substring(3));
+			} catch (NumberFormatException e) {
+			}
+		}
+
+		if (location == null) {
+			//#debug debug
+			logger.debug("No valid cell-id");
+			return null;
+		}
+		
+		return cell;
+	}
+	//#endif
 	
 	private GSMCell obtainSECell() {
 		String cellidS = null;
@@ -456,6 +512,11 @@ public class CellIdProvider {
 		if (cellRetrievelMethod == CELLMETHOD_SE) {
 			cachedCell =  obtainSECell();
 		}
+		//#if polish.android
+		if (cellRetrievelMethod == CELLMETHOD_ANDROID) {
+			cachedCell =  obtainAndroidCell();
+		}
+		//#endif
 		if (cellRetrievelMethod == CELLMETHOD_MOTO) {
 			cachedCell =  obtainMotoCell();
 		}
