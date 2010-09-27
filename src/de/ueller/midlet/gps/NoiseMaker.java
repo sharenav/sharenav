@@ -122,14 +122,16 @@ public class NoiseMaker
 	// using MediaPlayer
 	private synchronized boolean preparePlayer(String soundFile, String mediaType, String suffix) {
 		String soundFileWithSuffix = soundFile;
-		if (Configuration.usingBuiltinMap()) {
+		// if it doesn't end with /, it's a zip file: use sounds from android bundle for now
+		// FIXME add code to play sound from zipfile if possible
+		if (Configuration.usingBuiltinMap() || !Configuration.getMapUrl().endsWith("/")) {
 			//#debug debug
 			mLogger.debug("Preparing to play sound " + soundFile);
 		} else {
 			soundFileWithSuffix = Configuration.getMapUrl() + soundFile;
 			//#debug debug
 			mLogger.debug("Preparing to play url " + soundFileWithSuffix);
-		}
+		}	
 		try {
 			if (sPlayer == null)
 			{
@@ -145,7 +147,7 @@ public class NoiseMaker
 			//#debug debug
 			mLogger.debug("created player for " + soundFileWithSuffix);
 			try {
-				if (Configuration.usingBuiltinMap()) {
+				if (Configuration.usingBuiltinMap() || !Configuration.getMapUrl().endsWith("/")) {
 					AssetFileDescriptor afd = MidletBridge.instance.getResources().getAssets().openFd(soundFile);
 					sPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
 					afd.close();

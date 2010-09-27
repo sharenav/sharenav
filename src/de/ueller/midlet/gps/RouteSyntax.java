@@ -131,7 +131,8 @@ public class RouteSyntax {
 		int i;
 		//#if polish.android
 		String syntaxDat = null;
-		if (Configuration.usingBuiltinMap()) {
+		if (Configuration.usingBuiltinMap() || !Configuration.getMapUrl().endsWith("/")) {
+			// use bundled sounds for zip file; FIXME add code reading zipfiles
 			syntaxDat = "/" + Configuration.getSoundDirectory() + "/syntax.dat";
 		} else {
 			syntaxDat = Configuration.getMapUrl() + Configuration.getSoundDirectory() + "/syntax.dat";
@@ -142,7 +143,7 @@ public class RouteSyntax {
 		try {
 			//#if polish.android
 			InputStream is = null;
-			if (Configuration.usingBuiltinMap()) {
+			if (Configuration.usingBuiltinMap() || !Configuration.getMapUrl().endsWith("/")) {
 				is = MidletBridge.instance.getResources().getAssets().open(syntaxDat.substring(1));
 			} else {
 				FileConnection fc = (FileConnection) Connector.open(syntaxDat, Connector.READ);
