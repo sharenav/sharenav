@@ -2,7 +2,6 @@ splash.Accept=Accept
 splash.Deny=Deny
 splash.ShowSplash=Showing splash screen on startup
 splash.HideSplash=Not showing splash screen again...
-splash.thanks=Thanks for source parts to:
 splash.artwork=Artwork:
 splash.skip=Press '*' to skip this
 splash.screen=screen at startup.

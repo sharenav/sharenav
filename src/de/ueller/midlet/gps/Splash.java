@@ -50,6 +50,8 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 		" S. Hochmuth",
 		" Markus Bäurle",
 		" Jyrki Kuoppala",
+		Locale.get("splash.artwork")/* Artwork: */,
+		" Tobias Mueller",
 		Locale.get("splash.contributors")/*Many other contributors*/,
 		Locale.get("splash.codefrom")/*Includes code by:*/, 
 		" Sualeh Fatehi " +
@@ -63,12 +65,6 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 		Locale.get("splash.MapData2")/* from OpenStreetMap*/,
 		Locale.get("splash.MapData3")/* licensed under CC 2.0*/,
 		Locale.get("splash.MapData4")/* http://creativecommons.org/*/,
-		Locale.get("splash.thanks")/* Thanks for source parts to: */,
-		" Nikolay Klimchuk",
-		" Simon Turner",
-		" Sualeh Fatehi",
-		Locale.get("splash.artwork")/* Artwork: */,
-		" Tobias Mueller",
 		Locale.get("splash.skip")/* Press '*' to skip this */,
 		Locale.get("splash.screen")/* screen at startup. */,
 		"Press '#' to switch to English" };
