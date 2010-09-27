@@ -123,7 +123,7 @@ public class TraceLayout extends LayoutManager {
 		e.setColor(Legend.COLORS[Legend.COLOR_MAP_TEXT]);
 		e.setAdditionalOffsX(-1);
 		e.setVRelative(ele[TITLEBAR]);
-		e.setActionID((Trace.TOGGLE_GPS_CMD << 16));
+		e.setActionID((Trace.TOGGLE_GPS_CMD << 16) + (Trace.CELLID_LOCATION_CMD << 8));
 
 		e = ele[ALTITUDE]; addElement(e,
 				LayoutElement.FLAG_HALIGN_LEFTTO_RELATIVE | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
@@ -307,7 +307,7 @@ public class TraceLayout extends LayoutManager {
 		}
 		e.setColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON_TEXT]);
 		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON]);
-		e.setActionID(Trace.RECENTER_GPS_CMD);
+		e.setActionID(Trace.RECENTER_GPS_CMD + (Trace.MANUAL_LOCATION_CMD << 8));
 		
 		e = ele[SPEEDING_SIGN]; addElement(e,
 				LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_ABOVE_RELATIVE |
