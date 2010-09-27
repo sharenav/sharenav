@@ -241,6 +241,8 @@ public class Configuration {
 	public final static byte CFGBIT_DISPLAY_SYMMETRIC_TOUCHZONES = 88;
 	/** bit 89: Flag whether air distance to destination should be displayed even when routing */
 	public final static byte CFGBIT_SHOW_AIR_DISTANCE_WHEN_ROUTING = 89;
+	/** bit 90: Flag whether ask for routing options before starting routing */
+	public final static byte CFGBIT_DONT_ASK_FOR_ROUTING_OPTIONS = 90;
 	
 	/**
 	 * These are the database record IDs for each configuration option

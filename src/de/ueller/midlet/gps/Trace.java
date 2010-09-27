@@ -1249,7 +1249,11 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				gpsRecenterInvalid = true;
 				gpsRecenterStale = true;
 				GuiRoute guiRoute = new GuiRoute(this, false);
-				guiRoute.show();
+				if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_DONT_ASK_FOR_ROUTING_OPTIONS)) {
+					commandAction(ROUTING_START_CMD);
+				} else {
+					guiRoute.show();
+				}
 				return;
 			}
 			

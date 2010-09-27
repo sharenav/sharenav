@@ -425,6 +425,7 @@ guiroute.SecondsDelayed=Seconds the examined route path gets delayed at traffic 
 guiroute.TravelBy=Travel by
 guiroute.TurnRestrictions=Turn restrictions
 guiroute.Yes=Yes
+guiroute.AskForRoutingOptions=Ask for routing options
 guisearch.Asdest=As destination
 guisearch.Back=Back
 guisearch.Bookmark=Add to way points
