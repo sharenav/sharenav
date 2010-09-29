@@ -252,6 +252,9 @@ public class Configuration {
 		/** Name to be used for the generated Midlet (as it will be shown on the phone). */
 		private String midletName;
 
+		/** Name to be used for the generated Map (as it will be shown on the phone). */
+		private String mapName;
+
 		/** Name of the base Midlet (e.g. GpsMid-Generic-multi) to be used. */
 		private String appParam;
 
@@ -679,6 +682,13 @@ public class Configuration {
 			midletName = name;
 		}
 		
+		/** Allows to set the Map name.
+		 * @param name Name to be set
+		 */
+		public void setMapName(String name) {
+			mapName = name;
+		}
+		
 		/** Returns the name of the Midlet (as it will be shown on the phone).
 		 * @return Name
 		 */
@@ -689,11 +699,28 @@ public class Configuration {
 			return getString("midlet.name");
 		}
 		
+		/** Returns the name of the Map (as it will be shown on the phone).
+		 * @return Name
+		 */
+		public String getMapName() {
+			if (mapName != null) {
+				return mapName;
+			}
+			return getString("map.name");
+		}
+		
 		/** Returns the name for the Midlet files (JAR and JAD) without extension.
 		 * @return File name
 		 */
 		public String getMidletFileName() {
 			return getMidletName() + "-" + getVersion();
+		}
+		
+		/** Returns the name for the Map files with version and extension.
+		 * @return File name
+		 */
+		public String getMapFileName() {
+			return getMapName() + "-" + getVersion() + ".zip";
 		}
 		
 		/** Allows to set the name of the base Midlet (e.g. GpsMid-Generic-multi).
@@ -1138,7 +1165,12 @@ public class Configuration {
 		@Override
 		public String toString() {
 			String confString = "Osm2GpsMid configuration:\n";
-			confString += "  Midlet name: " + getMidletName() + "\n";
+			if (getMapName().equals("")) {
+				confString += "  Midlet name: " + getMidletName() + "\n";
+			} else {
+				confString += "  Map name: " + getMapName() + "\n";
+				confString += "  Map file name: " + getMapFileName() + "\n";
+			}
 			confString += "  Code base: " + appParam + "\n";
 			confString += "  Keeping map files after .jar creation: " + !cleanupTmpDirAfterUse() + "\n";
 			confString += "  Enable routing: " + useRouting + "\n";
@@ -1152,9 +1184,9 @@ public class Configuration {
 			confString += "  Use phone tags: " + usePhoneTags + "\n";
 			confString += "  Enable editing support: " + enableEditingSupport + "\n";
 			confString += "  Adding menu entries for languages: " + getUseLang() + " (" + getUseLangName() + ")" + "\n";
-			//if (allLang) {
+			if (allLang) {
 				confString += "  Including also all other supported languages\n";
-			//}
+			}
 
 			if (bounds.size() > 0) {
 				confString += "  Using " + bounds.size() + " bounding boxes\n";

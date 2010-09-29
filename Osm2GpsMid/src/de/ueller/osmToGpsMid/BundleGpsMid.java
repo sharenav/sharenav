@@ -232,7 +232,12 @@ public class BundleGpsMid implements Runnable {
 
 	private static void pack(Configuration c) throws ZipException, IOException {
 		rewriteManifestFile(c);
-		File n = new File(c.getMidletFileName() + ".jar");
+		File n = null;
+		if (config.getMapName().equals("")) {
+			n = new File(c.getMidletFileName() + ".jar");
+		} else {
+			n = new File(c.getMapFileName());
+		}
 		FileOutputStream fo = new FileOutputStream(n);
 		ZipOutputStream zf = new ZipOutputStream(fo);
 		zf.setLevel(9);
@@ -419,8 +424,6 @@ public class BundleGpsMid implements Runnable {
 			String tmpDir = config.getTempDir();
 			System.out.println("Unpacking application to " + tmpDir);
 			expand(config, tmpDir);
-			// FIXME we should remove unused .loca files, around here?
-			// Configuration allLang boolean specifies whether to keep all .loc files
 			File target = new File(tmpDir);
 			createPath(target);
 			

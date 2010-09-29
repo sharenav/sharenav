@@ -107,7 +107,7 @@ public class CreateGpsMidData implements FilenameFilter {
 	private static int tileFilesWritten = 0;
 	private RouteData rd;
 	private static double MAX_RAD_RANGE = (Short.MAX_VALUE - Short.MIN_VALUE - 2000) / MyMath.FIXPT_MULT;
-	
+	private String[] useLang = null;
 	
 	public CreateGpsMidData(OxParser parser, String path) {
 		super();
@@ -239,8 +239,8 @@ public class CreateGpsMidData implements FilenameFilter {
 			dsi.writeBoolean(config.enableEditingSupport);
 			/* Note what languages are enabled
 			 */
-			String useLang[] = configuration.getUseLang().split("[;,]", 20);
-			String useLangName[] = configuration.getUseLangName().split("[;,]", 20);
+			useLang = configuration.getUseLang().split("[;,]", 200);
+			String useLangName[] = configuration.getUseLangName().split("[;,]", 200);
 			if (useLangName.length != useLang.length) {
 				System.out.println("");
 				System.out.println("  Warning: useLang count " + useLang.length + 
@@ -258,6 +258,17 @@ public class CreateGpsMidData implements FilenameFilter {
 					dsi.writeUTF(useLangName[j]);
 				}
 			}
+			// remove unneeded .loc files
+			if (!Configuration.getConfiguration().allLang) {
+				String langs = configuration.getUseLang() + ",en";
+				removeFilesWithExt(path, "loc", langs.split("[;,]", 200));
+			}
+
+			// remove class files (midlet code) if building just the map
+			if (!configuration.getMapName().equals("")) {
+				removeFilesWithExt(path, "class", null);
+			}
+
  			/**
 			 * Note if urls and phones are in the midlet
 			 */
@@ -610,6 +621,54 @@ public class CreateGpsMidData implements FilenameFilter {
 
 	
 	
+	// remove files with a certain extension from dir, except strings with basename list in exceptions
+	public void removeFilesWithExt(String path, String ext, String exceptions[]) {
+		File dir = new File(path);
+		String[] files = dir.list();
+
+		int deletedFiles = 0;
+		int retainedFiles = 0;
+		File file = null;
+		if (files != null) {
+			for (String name : files) {
+				boolean remove = false;
+				if (name.matches(".*\\." + ext)) {
+					remove = true;
+					if (exceptions != null) {
+						for (String basename : exceptions) {
+							if (file.getName().startsWith(basename)) {				
+								remove = false;
+								retainedFiles++;
+							}
+						}
+					}
+					if (remove) {
+						file = new File(path, name);
+						file.delete();
+						deletedFiles++;
+					}
+				} else {
+					//System.out.println ("checking if it's a dir: " + name);
+					file = new File(path, name);
+					try {
+						if (file.isDirectory()) {
+							//System.out.println ("checking subdir: " + file + " (" + file.getCanonicalPath() + ")");
+							removeFilesWithExt(file.getCanonicalPath(), ext, exceptions);
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+		if (retainedFiles > 0) {
+			System.out.println("retained " + retainedFiles + " files with extension " + ext);
+		}
+		if (deletedFiles > 0) {
+			System.out.println("deleted " + deletedFiles + " files with extension " + ext);
+		}
+	}
+
 	private void removeSoundFile(String soundName) {		
 		final String soundFormat[] = { "amr", "wav", "mp3" };		
 		String soundFile;
