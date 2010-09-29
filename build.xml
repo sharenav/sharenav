@@ -102,6 +102,7 @@
 			jarUrl="${deploy-url}${polish.jarName}"
 			copyright="Copyright 2007 - 2010 Harald Mueller and others"
 			deleteConfirm="Do you really want to kill me?"
+			optionalPermissions="javax.microedition.io.Connector.file.read,javax.microedition.io.Connector.file.write,javax.microedition.io.Connector.bluetooth.client,javax.microedition.location.Location,javax.microedition.media.control.VideoControl.getSnapshot,javax.microedition.io.Connector.sms,javax.wireless.messaging.sms.receive,javax.wireless.messaging.sms.send,javax.microedition.io.Connector.comm,javax.microedition.io.Connector.cbs,javax.wireless.messaging.cbs.receive,javax.microedition.io.Connector.socket,javax.microedition.io.PushRegistry"
 		/>
 		
 		<!-- selection of supported devices -->
@@ -365,7 +366,7 @@
 	</target>
 
 	<target name="compile-test" depends="prepare">
-		<javac srcdir="${basedir}/test/unit-tests;${basedir}/test/unit-tests/j2se_replacements;${basedir}/src/de/ueller/gps/tools;${basedir}/src/de/ueller/gps/nmea;
+		<javac srcdir="${basedir}/test/unit-tests;${basedir}/src/de/ueller/gps/tools;${basedir}/src/de/ueller/gps/nmea;
 			${basedir}/src/de/ueller/gps/data; ${basedir}/GpsMidGraph/de/ueller/midlet/gps;
 			${basedir}/GpsMidGraph/de/ueller/midlet/gps/data/;${basedir}/GpsMidGraph/de/ueller/gps/tools/" destdir="bin-tests" debug="on" 
 			includes="StringTokenizer.java, MoreMath.java, intTree.java,
