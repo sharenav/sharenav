@@ -152,6 +152,19 @@ public class BundleGpsMid implements Runnable {
 	}
 	
 	/**
+	 * Rename the Copying files to .txt suffix for easy access on all OS's
+	 * 
+	 */
+	private static void renameCopying(Configuration c) {
+		String tmpDir = c.getTempDir();
+		File copying = new File(tmpDir + "/COPYING");
+		File copying2 = new File(tmpDir + "/COPYING.txt");
+		File copyingosm = new File(tmpDir + "/COPYING-OSM");
+		File copyingosm2 = new File(tmpDir + "/COPYING-OSM.txt");
+		copying.renameTo(copying2);
+		copyingosm.renameTo(copyingosm2);
+	}
+	/**
 	 * Rewrite or remove the Manifest file to change the bundle name to reflect the one
 	 * specified in the properties file.
 	 * 
@@ -243,6 +256,7 @@ public class BundleGpsMid implements Runnable {
 		} else {
 			n = new File(c.getMapFileName());
 			rewriteManifestFile(c, false);
+			renameCopying(c);
 		}
 		FileOutputStream fo = new FileOutputStream(n);
 		ZipOutputStream zf = new ZipOutputStream(fo);
