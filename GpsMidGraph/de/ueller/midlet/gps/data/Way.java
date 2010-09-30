@@ -75,6 +75,8 @@ public class Way extends Entity {
 	public static final byte WAY_FLAG3_PHONE = 4;
 	public static final byte WAY_FLAG3_PHONEHIGH = 8;
 	public static final byte WAY_FLAG3_NAMEASFORAREA = 16;
+	public static final byte WAY_FLAG3_HAS_HOUSENUMBERS = 32;
+	public static final byte WAY_FLAG3_LONGHOUSENUMBERS = 64;
 
 	public static final byte DRAW_BORDER=1;
 	public static final byte DRAW_AREA=2;
@@ -275,6 +277,15 @@ public class Way extends Entity {
 					} else {
 						phoneIdx = is.readShort();
 
+					}
+				}
+				if ( (f3 & WAY_FLAG3_HAS_HOUSENUMBERS) > 0 ) {
+					// FIXME increase map format version
+					// ignore for now
+					if ( (f3 & WAY_FLAG3_LONGHOUSENUMBERS) > 0 ) {
+						is.readInt();
+					} else {
+						is.readShort();
 					}
 				}
 			}
@@ -1933,9 +1944,11 @@ public class Way extends Entity {
 			p.forward(t.nodeLat[idx],t.nodeLon[idx],p3,t);
 			pc.g.fillTriangle(p1.x,p1.y,p2.x,p2.y,p3.x,p3.y);
 //			pc.g.setColor(0);
-//			pc.g.drawLine(p1.x,p1.y,p2.x,p2.y);
-//			pc.g.drawLine(p2.x,p2.y,p3.x,p3.y);
-//			pc.g.drawLine(p1.x,p1.y,p3.x,p3.y);
+//#if polish.android
+			pc.g.drawLine(p1.x,p1.y,p2.x,p2.y);
+			pc.g.drawLine(p2.x,p2.y,p3.x,p3.y);
+			pc.g.drawLine(p1.x,p1.y,p3.x,p3.y);
+//#endif
 			
 		}
 		paintAreaName(pc,t);
