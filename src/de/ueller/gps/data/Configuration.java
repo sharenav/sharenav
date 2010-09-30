@@ -243,6 +243,8 @@ public class Configuration {
 	public final static byte CFGBIT_SHOW_AIR_DISTANCE_WHEN_ROUTING = 89;
 	/** bit 90: Flag whether ask for routing options before starting routing */
 	public final static byte CFGBIT_DONT_ASK_FOR_ROUTING_OPTIONS = 90;
+	/** bit 91: Flag whether to use digital compass for map direction (rotation) */
+	public final static byte CFGBIT_COMPASS_DIRECTION = 91;
 	
 	/**
 	 * These are the database record IDs for each configuration option

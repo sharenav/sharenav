@@ -207,11 +207,13 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	private ChoiceGroup mapSrc;
 	private ChoiceGroup mapSrcOptions;
 	private ChoiceGroup rotationGroup;
+	private ChoiceGroup directionGroup;
 	private ChoiceGroup nightModeGroup;
 	private ChoiceGroup touchScreenLayoutGroup;
 	private ChoiceGroup uiLangGroup;
 	private ChoiceGroup naviLangGroup;
 	private ChoiceGroup onlineLangGroup;
+	private ChoiceGroup directionOpts;
 	private ChoiceGroup renderOpts;
 	private ChoiceGroup visualOpts;
 	private ChoiceGroup metricUnits;
@@ -489,6 +491,12 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		String [] rotation = ProjFactory.name;
 		rotationGroup = new ChoiceGroup(Locale.get("guidiscover.Map Projection")/*Map Projection*/, Choice.EXCLUSIVE, rotation, null);
 		menuDisplayOptions.append(rotationGroup);
+
+		String [] direction = new String[2];
+		direction[0] = Locale.get("guidiscover.movement")/*by movement*/;
+		direction[1] = Locale.get("guidiscover.compass")/*by compass*/;
+		directionOpts = new ChoiceGroup(Locale.get("guidiscover.DirectionOptions")/*Rotate map*/, Choice.EXCLUSIVE, direction, null);
+		menuDisplayOptions.append(directionOpts);
 
 		String [] renders = new String[2];
 		renders[0] = Locale.get("guidiscover.aslines")/*as lines*/;
@@ -1002,6 +1010,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				}
 
 				Configuration.setProjTypeDefault( (byte) rotationGroup.getSelectedIndex() );
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_COMPASS_DIRECTION,
+						(directionOpts.getSelectedIndex() == 1)
+				);
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_STREETRENDERMODE,
 						(renderOpts.getSelectedIndex() == 1)
 				);
@@ -1250,6 +1261,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				touchScreenLayoutGroup.setSelectedIndex( Configuration.getCfgBitSavedState(Configuration.CFGBIT_DISPLAY_SYMMETRIC_TOUCHZONES) ? 1 : 0, true);
 				rotationGroup.setSelectedIndex(Configuration.getProjDefault(), true);
 				renderOpts.setSelectedIndex( Configuration.getCfgBitSavedState(Configuration.CFGBIT_STREETRENDERMODE) ? 1 : 0, true);
+				directionOpts.setSelectedIndex( Configuration.getCfgBitSavedState(Configuration.CFGBIT_COMPASS_DIRECTION) ? 1 : 0, true);
 				distanceViews.setSelectedIndex( Configuration.getCfgBitSavedState(Configuration.CFGBIT_DISTANCE_VIEW) ? 1 : 0, true);
 				sizeOpts.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_POI_LABELS_LARGER));
 				sizeOpts.setSelectedIndex(1, Configuration.getCfgBitSavedState(Configuration.CFGBIT_WPT_LABELS_LARGER));

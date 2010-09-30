@@ -38,6 +38,7 @@ import de.enough.polish.util.Locale;
 
 
 import de.ueller.gps.SECellID;
+import de.ueller.gps.GetCompass;
 import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Position;
@@ -60,6 +61,8 @@ import de.ueller.gpsMid.mapData.QueueDataReader;
 import de.ueller.gpsMid.mapData.QueueDictReader;
 import de.ueller.gpsMid.mapData.Tile;
 import de.ueller.midlet.gps.data.CellIdProvider;
+import de.ueller.midlet.gps.data.CompassProvider;
+import de.ueller.midlet.gps.data.Compass;
 import de.ueller.midlet.gps.data.GSMCell;
 import de.ueller.midlet.gps.data.Proj2D;
 import de.ueller.midlet.gps.data.ProjFactory;
@@ -91,7 +94,7 @@ import de.enough.polish.android.midlet.MidletBridge;
  * 
  */
 public class Trace extends KeyCommandCanvas implements LocationMsgReceiver,
-Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
+CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	/** Soft button for exiting the map screen */
 	protected static final int EXIT_CMD = 1;
 	protected static final int CONNECT_GPS_CMD = 2;
@@ -169,6 +172,8 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 //	private SirfInput si;
 	private LocationMsgProducer locationProducer;
 	private LocationMsgProducer cellIDLocationProducer = null;
+	private CompassProducer compassProducer = null;
+	private volatile int compassdirection = 0;
 
 	public String solution = Locale.get("trace.NoFix")/*NoFix*/;
 	
@@ -495,6 +500,13 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				return;
 			}
 			running=true;
+			compassProducer = new GetCompass();
+			if (!compassProducer.init(this)) {
+				logger.info("Failed to init compass producer");
+				compassProducer = null;
+			} else if (!compassProducer.activate(this)) {
+				logger.info("Failed to activate compass producer");
+			}
 			int locprov = Configuration.getLocationProvider();
 			receiveMessage("Connect to " + Configuration.LOCATIONPROVIDER[locprov]);
 			switch (locprov) {
@@ -2036,6 +2048,10 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	 */
 	private void getPC() {
 			pc.course = course;
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION)) {
+				pc.course = compassdirection;
+			}
+
 			pc.scale = scale;
 			pc.center = center.copy();
 //			pc.setP( projection);
@@ -2101,7 +2117,7 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		String c = "";
 		if (ProjFactory.getProj() != ProjFactory.NORTH_UP
 				&& Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_POINT_OF_COMPASS)) {
-			c = Configuration.getCompassDirection(course);
+			c = Configuration.getCompassDirection(Configuration.getCfgBitState(Configuration.CFGBIT_METRIC) ? compassdirection : course);
 		}
 		// if tl shows big onscreen buttons add spaces to compass directions consisting of only one char or not shown
 		if (tl.bigOnScreenButtons && c.length() <= 1) {
@@ -2113,6 +2129,8 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 	private int showConnectStatistics(Graphics g, int yc, int la) {
 		g.setColor(Legend.COLORS[Legend.COLOR_MAP_TEXT]);
 		GSMCell cell = CellIdProvider.getInstance().obtainCachedCellID();
+		Compass compass = CompassProvider.getInstance().obtainCachedCompass();
+
 		if (cell == null) {
 			g.drawString("No Cell ID available", 0, yc, Graphics.TOP
 					| Graphics.LEFT);
@@ -2125,6 +2143,15 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 					| Graphics.LEFT);
 			yc += la;
 			g.drawString("cellID=" + cell.cellID, 0, yc, Graphics.TOP
+					| Graphics.LEFT);
+			yc += la;
+		}
+		if (compass == null) {
+			g.drawString("No compass direction available", 0, yc, Graphics.TOP
+					| Graphics.LEFT);
+			yc += la;
+		} else {
+			g.drawString("Compass direction: " + compass.direction, 0, yc, Graphics.TOP
 					| Graphics.LEFT);
 			yc += la;
 		}
@@ -2199,7 +2226,8 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				posY = centerY;
 			}
 			g.setColor(Legend.COLORS[Legend.COLOR_MAP_POSINDICATOR]);
-			float radc = (course * MoreMath.FAC_DECTORAD);
+			float radc = (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION) ? compassdirection : course) * MoreMath.FAC_DECTORAD;
+			
 			int px = posX + (int) (Math.sin(radc) * 20);
 			int py = posY - (int) (Math.cos(radc) * 20);
 			// crosshair center cursor
@@ -2312,6 +2340,9 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		if (pc != null) {
 			pc.center = center.copy();
 			pc.scale = scale;
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION)) {
+				course = compassdirection;
+			}
 			pc.course=course;
 			repaint();
 			
@@ -2337,6 +2368,16 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 		center.setLatLonRad(lat, lon);
 		this.scale = scale;
 		updatePosition();
+	}
+
+	public synchronized void receiveCompassStatus(int status) {
+	}
+
+	public synchronized void receiveCompass(float direction) {
+		//#debug debug
+		logger.debug("Got compass reading: " + direction);
+		this.compassdirection = (int) direction;
+		repaint();
 	}
 
 	public static void updateLastUserActionTime() {
@@ -2845,6 +2886,9 @@ Runnable , GpsMidDisplayable, CompletionListener, IconActionPerformer {
 				pc.center = center.copy();
 				pc.scale = scale;
 				pc.course = course;
+				if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION)) {
+					pc.course = compassdirection;
+				}
 			}
 		}
 		updatePosition();
