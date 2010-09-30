@@ -197,6 +197,8 @@ public class CompassProvider {
 			direction = event.values[0];
 		}
 	};
+        //#endif
+
 
 	private Compass obtainSECompass() {
 		Compass compass = new Compass();
