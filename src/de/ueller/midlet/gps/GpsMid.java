@@ -45,6 +45,10 @@ import de.ueller.midlet.gps.importexport.Jsr211ContentHandlerInterface;
 import de.ueller.midlet.gps.importexport.SiemGameLight;
 //#endif
 
+//#if polish.api.min-samsapi
+import de.ueller.midlet.gps.importexport.SamsLCDLight;
+//#endif
+
 import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.tools.HelperRoutines;
@@ -540,9 +544,15 @@ public class GpsMid extends MIDlet implements CommandListener {
 					|| Configuration
 							.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIA)
 					|| Configuration
-							.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIAFLASH) || Configuration
-					.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_SIEMENS) || Configuration
-					.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ANDROID_WAKELOCK))) {
+							.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIAFLASH)
+					|| Configuration
+						.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_SIEMENS)
+					|| Configuration
+						.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_SAMSUNG)
+					|| Configuration
+						.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ANDROID_WAKELOCK)
+				  )
+			) {
 				log.error("Backlight cannot be kept on when no 'with'-method is specified in Setup");
 				// turn backlight off to avoid repeating the warning above
 				Configuration.setCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON, false, false);
@@ -605,6 +615,16 @@ public class GpsMid extends MIDlet implements CommandListener {
 										try {
 											Class.forName("com.siemens.mp.game.Light");
 											SiemGameLight.SwitchOn();
+										} catch (Exception e) {
+											log.exception("Siemens API error: ", e);
+										}
+										//#endif
+										//#if polish.api.min-samsapi
+									} else if (Configuration
+											.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_SAMSUNG)) {
+										try {
+											Class.forName("com.samsung.util.LCDLight");
+											SamsLCDLight.on(5000);
 										} catch (Exception e) {
 											log.exception("Siemens API error: ", e);
 										}

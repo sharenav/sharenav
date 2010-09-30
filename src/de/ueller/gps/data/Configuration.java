@@ -247,6 +247,8 @@ public class Configuration {
 	public final static byte CFGBIT_COMPASS_DIRECTION = 91;
 	/** bit 92: Flag whether cellid location is to be performed at startup */
 	public final static byte CFGBIT_CELLID_STARTUP = 92;
+	/** bit 93: backlight method SAMSUNG */
+	public final static byte CFGBIT_BACKLIGHT_SAMSUNG = 93;
 	
 	/**
 	 * These are the database record IDs for each configuration option

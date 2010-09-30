@@ -409,5 +409,15 @@
 	<target name="min-siemapi" description="create api jar for some Siemens-specific functions" depends="min-siemapi-compile">
         <jar destfile="lib/min-siemapi.jar" basedir="build/min-siemapi"/>
     </target>
+
+    <target name="min-samsapi-compile" description="compile min-samsapi class files for api jar">
+        <mkdir dir="build/min-samsapi"/>
+        <javac srcdir="src-lib/min-samsapi" destdir="build/min-samsapi"/>
+    </target>
+    	
+	<target name="min-samsapi" description="create api jar for some Samsung-specific functions" depends="min-samsapi-compile">
+        <jar destfile="lib/min-samsapi.jar" basedir="build/min-samsapi"/>
+    </target>
+
 	
 </project>

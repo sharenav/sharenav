@@ -557,6 +557,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		//#if polish.api.min-siemapi
 		backlights[i++] = Locale.get("guidiscover.withSiemensAPI")/*with Siemens API*/;
 		//#endif
+		//#if polish.api.min-samsapi
+		backlights[i++] = Locale.get("guidiscover.withSamsungAPI")/*with Samsung API*/;
+		//#endif
 		//#if polish.android
 		backlights[i++] = Locale.get("guidiscover.withAndroidWakelock")/*with Android wakelock*/;
 		//#endif
@@ -1045,7 +1048,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				
 				// convert boolean array with selection states for backlight
 				// to one flag with corresponding bits set
-				boolean[] sellight = new boolean[8];
+				boolean[] sellight = new boolean[9];
 				backlightOpts.getSelectedFlags( sellight );
 	            // save selected values to record store
 				int i = 0;
@@ -1059,6 +1062,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				//#endif
 				//#if polish.api.min-siemapi
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_SIEMENS, sellight[i++]);
+				//#endif
+				//#if polish.api.min-samsapi
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_SAMSUNG, sellight[i++]);
 				//#endif
 				//#if polish.android
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_ANDROID_WAKELOCK, sellight[i++]);
@@ -1288,7 +1294,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				WaypointsTile.useNewWptFont();
 
 				// convert bits from backlight flag into selection states
-				boolean[] sellight = new boolean[8];
+				boolean[] sellight = new boolean[9];
 				sellight[0] = Configuration.getCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_ON);
 				sellight[1] = Configuration.getCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_ONLY_WHILE_GPS_STARTED);
 				sellight[2] = Configuration.getCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_ONLY_KEEPALIVE);
@@ -1300,6 +1306,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				//#endif
 				//#if polish.api.min-siemapi
 					sellight[i++] = Configuration.getCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_SIEMENS);
+				//#endif
+				//#if polish.api.min-samsapi
+					sellight[i++] = Configuration.getCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_SAMSUNG);
 				//#endif
 				//#if polish.android
 					sellight[i++] = Configuration.getCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_ANDROID_WAKELOCK);

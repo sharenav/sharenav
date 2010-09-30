@@ -340,6 +340,7 @@ guidiscover.withMIDP2=with MIDP2.0
 guidiscover.withNokiaAPI=with Nokia API
 guidiscover.withNokiaFlashlight=with Nokia Flashlight
 guidiscover.withSiemensAPI=with Siemens API
+guidiscover.withSamsungAPI=with Samsung API
 guidiscover.WpAlsoInTrack=Also put waypoints in track
 guidiscover.withAndroidWakelock=with Android wakelock
 guidiscover.ButtonsRight=Buttons Right
