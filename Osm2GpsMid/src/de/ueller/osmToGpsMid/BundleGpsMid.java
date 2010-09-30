@@ -299,6 +299,13 @@ public class BundleGpsMid implements Runnable {
 				}
 				int ch;
 				int count = 0;
+				// for android sounds, don't compress, so set STORED/DEFLATED flag
+				// android map should be bundled in "assets" subdir into *.ap_
+				// and then the *.ap_ must be linked with android libtool which signs into and creates *.apk
+				//if (compressed == false) {
+				//ze.setMethod(ZipOutputStream.STORED);
+				//}
+
 				//byte buffer to read in larger chunks
 				byte[] bb = new byte[4096];
 				FileInputStream stream = new FileInputStream(files[i]);
