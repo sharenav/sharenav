@@ -173,7 +173,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	private LocationMsgProducer locationProducer;
 	private LocationMsgProducer cellIDLocationProducer = null;
 	private CompassProducer compassProducer = null;
-	private volatile int compassdirection = 0;
+	private volatile int compassDirection = 0;
+	private volatile int compassDeviation = 0;
+	private volatile int compassDeviated = 0;
 
 	public String solution = Locale.get("trace.NoFix")/*NoFix*/;
 	
@@ -861,6 +863,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 						TrackPlayer.slower();
 					} else if (manualRotationMode) {
 						courseDiff=-5;
+					} else if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION)) {
+						courseDiff=-5;
 					} else {
 						panX = -2;
 					}
@@ -869,6 +873,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					if (TrackPlayer.isPlaying) {
 						TrackPlayer.faster();
 					} else if (manualRotationMode) {
+						courseDiff=5;
+					} else if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION)) {
 						courseDiff=5;
 					} else {
 						panX = 2;
@@ -895,19 +901,34 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					Configuration.addToBackLightLevel(backLightLevelDiff);
 					parent.showBackLightLevel();
 				} else if (imageCollector != null) {
-					if (courseDiff == 360) {
-						course = 0; //N
-					} else {
-						course += courseDiff;
-						course %= 360;
-						if (course < 0) {
-							course += 360;
+					if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION)) {
+						// set compass compassDeviation
+						if (compassDeviation == 360) {
+							compassDeviation = 0;
+						} else {
+							compassDeviation += courseDiff;
+							compassDeviation %= 360;
+							if (course < 0) {
+								course += 360;
+							}
 						}
+						imageCollector.getCurrentProjection().pan(center, panX, panY);
+					} else {
+						// manual rotation 
+						if (courseDiff == 360) {
+							course = 0; //N
+						} else {
+							course += courseDiff;
+							course %= 360;
+							if (course < 0) {
+								course += 360;
+							}
+						}
+						if (panX != 0 || panY != 0) {
+							gpsRecenter = false;
+						}
+						imageCollector.getCurrentProjection().pan(center, panX, panY);
 					}
-					if (panX != 0 || panY != 0) {
-						gpsRecenter = false;
-					}
-					imageCollector.getCurrentProjection().pan(center, panX, panY);
 				}
 				return;
 			}
@@ -2049,7 +2070,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	private void getPC() {
 			pc.course = course;
 			if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION)) {
-				pc.course = compassdirection;
+				pc.course = compassDeviated;
 			}
 
 			pc.scale = scale;
@@ -2117,7 +2138,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		String c = "";
 		if (ProjFactory.getProj() != ProjFactory.NORTH_UP
 				&& Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_POINT_OF_COMPASS)) {
-			c = Configuration.getCompassDirection(Configuration.getCfgBitState(Configuration.CFGBIT_METRIC) ? compassdirection : course);
+			c = Configuration.getCompassDirection(Configuration.getCfgBitState(Configuration.CFGBIT_METRIC) ? compassDeviated : course);
 		}
 		// if tl shows big onscreen buttons add spaces to compass directions consisting of only one char or not shown
 		if (tl.bigOnScreenButtons && c.length() <= 1) {
@@ -2226,7 +2247,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				posY = centerY;
 			}
 			g.setColor(Legend.COLORS[Legend.COLOR_MAP_POSINDICATOR]);
-			float radc = (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION) ? compassdirection : course) * MoreMath.FAC_DECTORAD;
+			float radc = (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION) ? compassDeviated : course) * MoreMath.FAC_DECTORAD;
 			
 			int px = posX + (int) (Math.sin(radc) * 20);
 			int py = posY - (int) (Math.cos(radc) * 20);
@@ -2341,7 +2362,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			pc.center = center.copy();
 			pc.scale = scale;
 			if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION)) {
-				course = compassdirection;
+				course = compassDeviated;
 			}
 			pc.course=course;
 			repaint();
@@ -2376,7 +2397,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	public synchronized void receiveCompass(float direction) {
 		//#debug debug
 		logger.debug("Got compass reading: " + direction);
-		this.compassdirection = (int) direction;
+		this.compassDirection = (int) direction;
+		this.compassDeviated = ((int) direction + compassDeviation + 360) % 360;
 		repaint();
 	}
 
@@ -2887,7 +2909,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				pc.scale = scale;
 				pc.course = course;
 				if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION)) {
-					pc.course = compassdirection;
+					pc.course = compassDeviated;
 				}
 			}
 		}
