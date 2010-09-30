@@ -24,7 +24,7 @@
 	
 <property 
 	name="android.home" 
-	location="/path/to/android-sdk" />
+	location="/home/jkp/omat/droid/android-sdk-linux_86" />
 
 <property file="build.properties" />
 <property file="midlet.properties" />
@@ -37,6 +37,9 @@
 	classpath="${polish.home}/lib/enough-j2mepolish-build.jar:${polish.home}/lib/jdom.jar"/>
 
 	
+<!-- run the ant timestamp task -->
+<tstamp/>
+
 <!-- build targets, each target can be called via "ant [name]", 
 	 e.g. "ant clean", "ant test j2mepolish" or just "ant" for calling the default target -->
 
@@ -117,18 +120,22 @@
 		</deviceRequirements>
 		<deviceRequirements unless="test">
 			<or>
+
 				<requirement name="Identifier" value="Generic/editing" />
-				<requirement name="Identifier" value="Generic/blackberry" />
-				<requirement name="Identifier" value="Generic/full" />
+				<!--
+				<requirement name="Identifier" value="Generic/android-desire" />
 				<requirement name="Identifier" value="Generic/minimal" />
+				<requirement name="Identifier" value="Generic/full-nobt" />
+				<requirement name="Identifier" value="Generic/editing" />
+				<requirement name="Identifier" value="Generic/full" />
 				<requirement name="Identifier" value="Generic/full-nolocation" />
 				<requirement name="Identifier" value="Generic/multi" />
 				<requirement name="Identifier" value="Generic/minimal-bt" />
 				<requirement name="Identifier" value="Generic/no-obex" />
 				<requirement name="Identifier" value="Generic/no-xml" />
-				<!--
 				<requirement name="Identifier" value="Generic/android" />
 				<requirement name="Identifier" value="Generic/android2.1" />
+				<requirement name="Identifier" value="Generic/blackberry" />
 				<requirement name="Identifier" value="Motorola/Motorazr_V3i" />
 				<requirement name="Identifier" value="Sony-Ericsson/K750" />
 				<requirement name="Identifier" value="Siemens/SL75" />
@@ -146,6 +153,12 @@
 			fullscreen="no"
 			usePolishGui="true"
 
+		   for j2me, j2mepolish 2.1.4
+
+			fullscreen="menu"
+			usePolishGui="no"
+
+
 		   with j2mepolish 2010-07-28 and later also must be used for J2ME builds:
 
 		   for android, modify the android.home property in the beginning of the file to have the correct path for android SDK
@@ -158,7 +171,7 @@
 		<build
 			symbols="ExampleSymbol, AnotherExample"
 			fullscreen="menu"
-			usePolishGui="false"
+			usePolishGui="no"
 			workDir="${dir.work}"
 		>     
 		   <!-- postcompiler name="floater">
@@ -193,10 +206,12 @@
 				<fileset dir="resources/images" includes="**/*.png"/>
 				<fileset dir="resources" includes="**/syntax.dat"/>
 				<fileset dir="resources" includes="**/charMap.txt"/>
-				<root dir="resources/map" includeSubDirs="true" includeBaseDir="false" if="test"/>
+<!--				<root dir="resources/map" includeSubDirs="true" includeBaseDir="false" if="test"/>-->
+				<root dir="resources/map" includeSubDirs="true" includeBaseDir="false"/>
 				<fileset dir="" includes="**/COPYING"/>
-
+				<fileset dir="" includes="**/COPYING-OSM"/>
 				<!-- you can add resources based on complex criterias: 
+
 				<fileset 
 					dir="resources/multimedia" 
 					includes="*.wav" 
