@@ -1661,7 +1661,7 @@ public class Configuration {
 			    phoneModel.startsWith("SIE")
 			) {
 				return CFGBIT_BACKLIGHT_SIEMENS;
-		} else if (phoneModel.endsWith("SAMSUNG-S5230")	) {
+		} else if (phoneModel.startsWith("SAMSUNG-S5230")	) {
 			return CFGBIT_BACKLIGHT_SAMSUNG;
         }
 		//#endif
