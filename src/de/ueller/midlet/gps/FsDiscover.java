@@ -102,6 +102,7 @@ public class FsDiscover
 		List list = new List(title, Choice.IMPLICIT);
 		list.addCommand(BACK_CMD);
 		list.addCommand(OK_CMD);
+		list.addCommand(UP_CMD);
 		list.setCommandListener(this);
 		list.setSelectCommand(DOWN_CMD);
 		return list;
