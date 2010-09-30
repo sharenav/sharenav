@@ -255,6 +255,9 @@ public class Configuration {
 		/** Name to be used for the generated Map (as it will be shown on the phone). */
 		private String mapName;
 
+		/** Flag if zip (with no midlet) is to be built instead of a jar (as it will be shown on the phone). */
+		private boolean mapzip;
+
 		/** Name of the base Midlet (e.g. GpsMid-Generic-multi) to be used. */
 		private String appParam;
 
@@ -377,6 +380,14 @@ public class Configuration {
 						cellSource = arg.substring(9);
 						// TODO: Shouldn't cellOperator be set too?
 					}
+					if (arg.startsWith("--mapzip")) {
+						// create a map zip instead of bundle jar
+						mapzip = true;
+					}
+					if (arg.startsWith("--map.name=")) {
+						// give name to the map zip
+						mapName = arg.substring(11);
+					}
 					if (arg.startsWith("--help")) {
 						System.err.println("Usage: Osm2GpsMid [--bounds=left,bottom,right,top] [--cellID=filename] planet.osm.bz2 [location]");
 						System.err.println("  \"--bounds=\" specifies the set of bounds to use in GpsMid ");
@@ -385,6 +396,8 @@ public class Configuration {
 						System.err.println("       contained in the.osm(.bz2) file");
 						System.err.println("  \"--cellID=\" specifies the file from which to load cellIDs for cell based positioning");
 						System.err.println("       The data comes from OpenCellId.org and the file can be found at http://myapp.fr/cellsIdData/");
+						System.err.println("  \"--map.name=\" specifies the output map zip basename");
+						System.err.println("  \"--mapzip\" builds a map zip named by properties midlet.name");
 						System.err.println("  planet.osm.bz2: points to a (compressed) .osm file");
 						System.err.println("       By specifying osmXapi, the data can be fetched straight from the server (only works for small areas)");
 						System.err.println("  location: points to a .properties file specifying additional parameters");
@@ -706,7 +719,11 @@ public class Configuration {
 			if (mapName != null) {
 				return mapName;
 			}
-			return getString("map.name");
+			if (mapzip && mapName == null) {
+				return getString("midlet.name");
+			} else {
+				return getString("map.name");
+			}
 		}
 		
 		/** Returns the name for the Midlet files (JAR and JAD) without extension.
