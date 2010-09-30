@@ -27,6 +27,7 @@ import de.ueller.osmToGpsMid.area.Outline;
 import de.ueller.osmToGpsMid.area.Triangle;
 import de.ueller.osmToGpsMid.area.Vertex;
 import de.ueller.osmToGpsMid.model.name.Names;
+import de.ueller.osmToGpsMid.model.HouseNumber;
 import de.ueller.osmToGpsMid.model.url.Urls;
 
 
@@ -57,8 +58,11 @@ public class Way extends Entity implements Comparable<Way> {
 	public static final byte WAY_FLAG3_PHONE = 4;
 	public static final byte WAY_FLAG3_PHONEHIGH = 8;
 	public static final byte WAY_FLAG3_NAMEASFORAREA = 16;
+	public static final byte WAY_FLAG3_HAS_HOUSENUMBERS = 32;
+	public static final byte WAY_FLAG3_LONGHOUSENUMBERS = 64;
 
 	public Path					path								= null;
+	public HouseNumber				housenumber							= null;
 	public List<Triangle>		triangles							= null;
 	Bounds						bound								= null;
 
@@ -615,6 +619,7 @@ public class Way extends Entity implements Comparable<Way> {
 		}
 
 		boolean longWays = false;
+		boolean longHouseNumbers = false;
 
 		if (type < 1) {
 			System.out.println("ERROR! Invalid way type for way " + toString());
@@ -622,6 +627,9 @@ public class Way extends Entity implements Comparable<Way> {
 
 		if (getNodeCount() > 255) {
 			longWays = true;
+		}
+		if (housenumber != null && housenumber.getHouseNumberCount() > 255) {
+			longHouseNumbers = true;
 		}
 		if (isOneWay()) {
 			flags += WAY_FLAG_ONEWAY;
@@ -701,6 +709,17 @@ public class Way extends Entity implements Comparable<Way> {
 		}
 		if ((flags & WAY_FLAG_LAYER) == WAY_FLAG_LAYER) {
 			ds.writeByte(layer);
+		}
+		if ((flags3 & WAY_FLAG3_HAS_HOUSENUMBERS) == WAY_FLAG3_HAS_HOUSENUMBERS){
+			if (longHouseNumbers) {
+				ds.writeShort(housenumber.getHouseNumberCount());
+			} else {
+				ds.writeByte(housenumber.getHouseNumberCount());
+			}
+			for (Node n : housenumber.getNodes()) {
+				ds.writeShort(n.renumberdId);
+			}
+
 		}
 		if (isArea()) {
 			if (longWays) {
