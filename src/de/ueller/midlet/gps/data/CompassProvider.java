@@ -269,21 +269,20 @@ public class CompassProvider {
 			//debug trace
 			logger.trace("Wrote Compass request");
 			Compass compass = new Compass();
-			if (clientIS.available() < 18) {
+			if (clientIS.available() < 4) {
 				//#debug debug
 				logger.debug("Not Enough Data wait 50");
 				Thread.sleep(50);
 			}
-			if (clientIS.available() < 18) {
+			if (clientIS.available() < 4) {
 				//#debug debug
 				logger.debug("Not Enough Data wait 500");
 				Thread.sleep(500);
 			}
-			if (clientIS.available() > 17) {
+			if (clientIS.available() > 3) {
 				//#debug debug
 				logger.debug("Reading");
 				compass.direction = clientIS.readInt();
-				short signal = clientIS.readShort();
 				logger.info("Read Compass: " + compass);
 				return compass;
 			}
