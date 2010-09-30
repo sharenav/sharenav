@@ -245,6 +245,8 @@ public class Configuration {
 	public final static byte CFGBIT_DONT_ASK_FOR_ROUTING_OPTIONS = 90;
 	/** bit 91: Flag whether to use digital compass for map direction (rotation) */
 	public final static byte CFGBIT_COMPASS_DIRECTION = 91;
+	/** bit 92: Flag whether cellid location is to be performed at startup */
+	public final static byte CFGBIT_CELLID_STARTUP = 92;
 	
 	/**
 	 * These are the database record IDs for each configuration option

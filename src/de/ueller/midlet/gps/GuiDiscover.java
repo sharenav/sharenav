@@ -228,6 +228,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	private StringItem  gpxUrl;
 	private StringItem  gpsUrl;
 	private ChoiceGroup autoConnect;
+	private ChoiceGroup cellIDStartup;
 	private ChoiceGroup btKeepAlive;
 	private ChoiceGroup btAutoRecon;
 	  
@@ -378,6 +379,10 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		aconn[0] = Locale.get("guidiscover.StartGPSAtStartup")/*Start GPS at startup*/;
 		autoConnect = new ChoiceGroup(Locale.get("guidiscover.GPSstart")/*GPS start*/, ChoiceGroup.MULTIPLE, aconn, null);
 
+		String [] cellidStart = new String[1];
+		cellidStart[0] = Locale.get("guidiscover.cellIDAtStartup")/*Do a single lookup*/;
+		cellIDStartup = new ChoiceGroup(Locale.get("guidiscover.cellIDStart")/*CellID lookup at startup*/, ChoiceGroup.MULTIPLE, cellidStart, null);
+
 		String [] btka = new String[1];
 		btka[0] = Locale.get("guidiscover.Sendkeepalives")/*Send keep alives*/;
 		btKeepAlive = new ChoiceGroup(Locale.get("guidiscover.BTkeepalive")/*BT keep alive*/, ChoiceGroup.MULTIPLE, btka, null);
@@ -388,6 +393,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 
 		menuSelectLocProv.append(gpsUrl);
 		menuSelectLocProv.append(autoConnect);
+		menuSelectLocProv.append(cellIDStartup);
 		menuSelectLocProv.append(btKeepAlive);
 		menuSelectLocProv.append(btAutoRecon);
 		menuSelectLocProv.append(locProv);
@@ -823,6 +829,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 
 				autoConnect.getSelectedFlags(selraw);
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_AUTO_START_GPS, selraw[0]);
+				cellIDStartup.getSelectedFlags(selraw);
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_CELLID_STARTUP, selraw[0]);
 				btKeepAlive.getSelectedFlags(selraw);
 				Configuration.setBtKeepAlive(selraw[0]);
 				btAutoRecon.getSelectedFlags(selraw);
@@ -1191,6 +1199,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				rawLogCG.setSelectedFlags(selLog);
 
 				autoConnect.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_AUTO_START_GPS));
+				cellIDStartup.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_CELLID_STARTUP));
 				btKeepAlive.setSelectedIndex(0, Configuration.getBtKeepAlive());
 				btAutoRecon.setSelectedIndex(0, Configuration.getBtAutoRecon());
 				Display.getDisplay(parent).setCurrentItem(gpsUrl);

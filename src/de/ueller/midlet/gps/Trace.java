@@ -633,6 +633,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			logger.debug("rm connect, add disconnect");
 			removeCommand(CMDS[CONNECT_GPS_CMD]);
 			addCommand(CMDS[DISCONNECT_GPS_CMD]);
+			if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_CELLID_STARTUP)) {
+					commandAction(CELLID_LOCATION_CMD);
+			}
 			//#debug info
 			logger.info("end startLocationPovider thread");
 			//		setTitle("lp="+Configuration.getLocationProvider() + " " + Configuration.getBtUrl());
