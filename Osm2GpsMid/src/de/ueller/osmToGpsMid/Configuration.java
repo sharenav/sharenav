@@ -256,7 +256,7 @@ public class Configuration {
 		private String mapName;
 
 		/** Flag if zip (with no midlet) is to be built instead of a jar (as it will be shown on the phone). */
-		private boolean mapzip;
+		public boolean mapzip;
 
 		/** Name of the base Midlet (e.g. GpsMid-Generic-multi) to be used. */
 		private String appParam;

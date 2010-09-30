@@ -405,7 +405,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		gbc.gridwidth = 1;
 		jpOptions.add(jtfRouting, gbc);
 		
-		JLabel jlName = new JLabel("Midlet name:");
+		JLabel jlName = new JLabel("Midlet/map name:");
 		gbc.gridx = 0;
 		gbc.gridy = 1;
 		gbc.weighty = 0;
@@ -463,12 +463,22 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		jpOptions2.add(jcbCellSource, gbc);
 		
 		jbCreate = new JButton("Create GpsMid midlet");
-		jbCreate.setActionCommand("Create-click");
+		jbCreate.setActionCommand("Create-midlet");
 		jbCreate.addActionListener(this);
-		gbc.gridwidth = 3;
+		gbc.gridwidth = 2;
 		gbc.weighty = 0;
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.gridx = 0;
+		gbc.gridy = 4;
+		add(jbCreate, gbc);
+
+		jbCreate = new JButton("Create GpsMid map zip");
+		jbCreate.setActionCommand("Create-map");
+		jbCreate.addActionListener(this);
+		gbc.gridwidth = 2;
+		gbc.weighty = 0;
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.gridx = 2;
 		gbc.gridy = 4;
 		add(jbCreate, gbc);
 
@@ -476,9 +486,9 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		jbClose.setActionCommand("Close-click");
 		jbClose.addActionListener(this);
 		gbc.fill = GridBagConstraints.BOTH;
-		gbc.gridwidth = 3;
+		gbc.gridwidth = 2;
 		gbc.weighty = 0;
-		gbc.gridx = 3;
+		gbc.gridx = 4;
 		gbc.gridy = 4;
 		add(jbClose, gbc);
 		
@@ -966,8 +976,10 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	 * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	public void actionPerformed(ActionEvent event) {
-		if ("Create-click".equalsIgnoreCase(event.getActionCommand())) {
-			handleCreateClicked();
+		if ("Create-midlet".equalsIgnoreCase(event.getActionCommand())) {
+			handleCreateClicked(true);
+		} else if ("Create-map".equalsIgnoreCase(event.getActionCommand())) {
+			handleCreateClicked(false);
 		} else if ("Close-click".equalsIgnoreCase(event.getActionCommand())) {
 			exitApplication();
 		} else if ("Help-click".equalsIgnoreCase(event.getActionCommand())) {
@@ -1013,7 +1025,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 
 	/** Handles the case that the button "Create Midlet" was clicked.
 	 */
-	private void handleCreateClicked() {
+	private void handleCreateClicked(boolean midlet) {
 		if (((String)jcbPlanet.getSelectedItem()).equalsIgnoreCase(CHOOSE_SRC)) {
 			if (askOsmFile() == false) {
 				JOptionPane.showMessageDialog(this,
@@ -1025,9 +1037,10 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		}
 		config.setMidletName(jtfName.getText());
 		config.setRouting(jtfRouting.getText());
-		System.out.println("Create Midlet clicked");
+		System.out.println("Create Map or Midlet clicked");
 
 		dialogFinished = true;
+		config.mapzip = !midlet;
 		writeProperties("last.properties");
 	}
 
