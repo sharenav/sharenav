@@ -107,7 +107,6 @@ public class CompassProvider {
 			logger.info("Trying to see if Motorola method is available");
 			//#debug info
 			logger.info("   No, need to use a different method");
-			}
 		} catch (Exception e) {
 			logger.silentexception("Retrieving Compass as a Motorola failed", e);
 			//Nothing to do here, just fall through to the next method
