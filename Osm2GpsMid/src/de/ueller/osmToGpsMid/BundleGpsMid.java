@@ -152,41 +152,46 @@ public class BundleGpsMid implements Runnable {
 	}
 	
 	/**
-	 * Rewrite the Manifet file to change the bundle name to reflect the one
+	 * Rewrite or remove the Manifest file to change the bundle name to reflect the one
 	 * specified in the properties file.
 	 * 
 	 * @param c
 	 */
-	private static void rewriteManifestFile(Configuration c) {
+	private static void rewriteManifestFile(Configuration c, boolean rename) {
 		String tmpDir = c.getTempDir();
 		try {
 			File manifest = new File(tmpDir + "/META-INF/MANIFEST.MF");
 			File manifest2 = new File(tmpDir + "/META-INF/MANIFEST.tmp");
+			FileWriter fw = null;
 
-			BufferedReader fr = new BufferedReader(new FileReader(manifest));
-			FileWriter fw = new FileWriter(manifest2);
-			String line;
-			Pattern p1 = Pattern.compile("MIDlet-(\\d):\\s(.*),(.*),(.*)");
-			while (true) {
-				line = fr.readLine();
-				if (line == null) {
-					break;
-				}
+			if (rename) {
+				BufferedReader fr = new BufferedReader(new FileReader(manifest));
+				fw = new FileWriter(manifest2);
+				String line;
+				Pattern p1 = Pattern.compile("MIDlet-(\\d):\\s(.*),(.*),(.*)");
+				while (true) {
+					line = fr.readLine();
+					if (line == null) {
+						break;
+					}
 
-				Matcher m1 = p1.matcher(line);
-				if (m1.matches()) {
-					fw.write("MIDlet-" + m1.group(1) + ": " + c.getMidletName()
-							+ "," + m1.group(3) + "," + m1.group(4) + "\n");
-				} else if (line.startsWith("MIDlet-Name: ")) {
-					fw.write("MIDlet-Name: " + c.getMidletName() + "\n");
-				} else {
-					fw.write(line + "\n");
+					Matcher m1 = p1.matcher(line);
+					if (m1.matches()) {
+						fw.write("MIDlet-" + m1.group(1) + ": " + c.getMidletName()
+							 + "," + m1.group(3) + "," + m1.group(4) + "\n");
+					} else if (line.startsWith("MIDlet-Name: ")) {
+						fw.write("MIDlet-Name: " + c.getMidletName() + "\n");
+					} else {
+						fw.write(line + "\n");
+					}
 				}
+				fr.close();
 			}
-			fw.close();
-			fr.close();
 			manifest.delete();
-			manifest2.renameTo(manifest);
+			if (rename) {
+				fw.close();
+				manifest2.renameTo(manifest);
+			}
 
 		} catch (IOException ioe) {
 			System.out.println("Something went wrong rewriting the manifest file");
@@ -231,12 +236,13 @@ public class BundleGpsMid implements Runnable {
 	}
 
 	private static void pack(Configuration c) throws ZipException, IOException {
-		rewriteManifestFile(c);
 		File n = null;
 		if (config.getMapName().equals("")) {
 			n = new File(c.getMidletFileName() + ".jar");
+			rewriteManifestFile(c, true);
 		} else {
 			n = new File(c.getMapFileName());
+			rewriteManifestFile(c, false);
 		}
 		FileOutputStream fo = new FileOutputStream(n);
 		ZipOutputStream zf = new ZipOutputStream(fo);
@@ -250,7 +256,9 @@ public class BundleGpsMid implements Runnable {
 		}
 		packDir(zf, src, "");
 		zf.close();
-		writeJADfile(c, n.length());
+		if (config.getMapName().equals("")) {
+			writeJADfile(c, n.length());
+		}
 		Calendar endTime = Calendar.getInstance();
 		Calendar duration = Calendar.getInstance();
 		duration.setTimeInMillis(endTime.getTimeInMillis() - startTime.getTimeInMillis());
