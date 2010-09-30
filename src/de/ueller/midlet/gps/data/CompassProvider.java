@@ -282,10 +282,7 @@ public class CompassProvider {
 			if (clientIS.available() > 17) {
 				//#debug debug
 				logger.debug("Reading");
-				compass.mcc = (short)clientIS.readInt();
-				compass.mnc = (short)clientIS.readInt();
-				compass.lac = clientIS.readInt();
-				compass.compassID = clientIS.readInt();
+				compass.direction = clientIS.readInt();
 				short signal = clientIS.readShort();
 				logger.info("Read Compass: " + compass);
 				return compass;
