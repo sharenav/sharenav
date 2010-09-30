@@ -295,7 +295,7 @@ public class Legend {
 		//#else
 		if (enableEdits) {
 			throw new IOException("The Map files are enabled for editing, but editing is not compiled into GpsMid." +
-					"Please use the correct Osm2GpsMid to recreate the map ");
+					"Please use the correct Osm2GpsMid settings to recreate the map or use a correct GpsMid");
 		}
 		//#endif
 		
