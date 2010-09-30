@@ -179,8 +179,11 @@ public class FsDiscover
 
 			list = createEmptyList();
 			urlList.removeAllElements();
+			list.append(".", null);
+			urlList.addElement(url);
 			list.append("..", null);
-			urlList.addElement(url + "Directory Up");
+			//urlList.addElement(url + "Directory Up");
+			urlList.addElement(url);
 			Enumeration filelist = fc.list();
 			while (filelist.hasMoreElements()) {
 				String fileName = (String) filelist.nextElement();
