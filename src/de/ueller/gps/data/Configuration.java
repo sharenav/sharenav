@@ -534,8 +534,10 @@ public class Configuration {
 			   			// 1L << CFGBIT_WAYTEXTS | // way texts are still experimental
 			   			1L << CFGBIT_ONEWAY_ARROWS |
 			   			1L << CFGBIT_POIS |
-			   			1L << CFGBIT_AUTOSAVE_MAPPOS |
-			   			getDefaultDeviceBacklightMethodMask();
+			   			1L << CFGBIT_AUTOSAVE_MAPPOS;
+			if (getDefaultDeviceBacklightMethodCfgBit() != 0) {
+				setCfgBitSavedState(getDefaultDeviceBacklightMethodCfgBit(), true);
+			}
 			//#if polish.android
 			// no bundle support for android yet, set a fixed location for map
 			setBuiltinMap(false);
@@ -1639,7 +1641,7 @@ public class Configuration {
 		}
 	}
 	
-	public static long getDefaultDeviceBacklightMethodMask() {
+	public static byte getDefaultDeviceBacklightMethodCfgBit() {
 		// a list of return codes for microedition.platform can be found at:
 		// http://www.club-java.com/TastePhone/J2ME/MIDP_Benchmark.jsp
 
@@ -1650,15 +1652,17 @@ public class Configuration {
 			phoneModel.startsWith("SonyEricssonC") ||
 			phoneModel.startsWith("SonyEricssonK550")
 		) {
-			return 1L << CFGBIT_BACKLIGHT_NOKIA;
+			return CFGBIT_BACKLIGHT_NOKIA;
 		} else if (phoneModel.startsWith("SonyEricssonK750") ||
 			phoneModel.startsWith("SonyEricssonW800")
 		) {
-			return 1L << CFGBIT_BACKLIGHT_NOKIAFLASH;
+			return CFGBIT_BACKLIGHT_NOKIAFLASH;
 		} else if (phoneModel.endsWith("(NSG)") ||
-		    phoneModel.startsWith("SIE")
-		) {
-			return 1 << CFGBIT_BACKLIGHT_SIEMENS;
+			    phoneModel.startsWith("SIE")
+			) {
+				return CFGBIT_BACKLIGHT_SIEMENS;
+		} else if (phoneModel.endsWith("SAMSUNG-S5230")	) {
+			return CFGBIT_BACKLIGHT_SAMSUNG;
         }
 		//#endif
 		return 0;

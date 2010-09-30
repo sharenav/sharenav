@@ -85,7 +85,7 @@ public class GuiSetupGui extends Form implements CommandListener {
 			Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED, optimizedForRouting);
 			// when the GUI is to be optimized for routing and we have a default backlight method, turn the backlight on			
 			if (initialSetup && optimizedForRouting) {
-				if (Configuration.getDefaultDeviceBacklightMethodMask() != 0) {
+				if (Configuration.getDefaultDeviceBacklightMethodCfgBit() != 0) {
 					Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_ON, true);
 					GpsMid.getInstance().restartBackLightTimer();			
 				}
