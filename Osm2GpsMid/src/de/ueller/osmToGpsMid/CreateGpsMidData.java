@@ -261,7 +261,7 @@ public class CreateGpsMidData implements FilenameFilter {
 			// remove unneeded .loc files
 			if (!Configuration.getConfiguration().allLang) {
 				String langs = configuration.getUseLang() + ",en";
-				removeFilesWithExt(path, "loc", langs.split("[;,]", 200));
+				// removeFilesWithExt(path, "loc", langs.split("[;,]", 200));
 			}
 
 			// remove class files (midlet code) if building just the map
