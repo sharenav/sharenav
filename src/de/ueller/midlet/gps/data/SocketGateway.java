@@ -42,17 +42,17 @@ import android.hardware.SensorListener;
 
 
 public class SocketGateway {
-	final int PROTO_REQ_COMPASS = 6574724;
-	final int PROTO_REQ_CELLID = 6574723;
+	final static int PROTO_REQ_COMPASS = 6574724;
+	final static int PROTO_REQ_CELLID = 6574723;
 	
 	private static CompassProvider singelton;
 	
 	private static final Logger logger = Logger.getInstance(CompassProvider.class,
 			Logger.TRACE);
 	
-	SocketConnection clientSock = null;
-	DataInputStream clientIS = null;
-	DataOutputStream clientOS = null;
+	private static SocketConnection clientSock = null;
+	private static DataInputStream clientIS = null;
+	private static DataOutputStream clientOS = null;
 	
 	final static int TYPE_COMPASS = 1;
 	final static int TYPE_CELLID = 2;
@@ -61,14 +61,17 @@ public class SocketGateway {
 	final static int RETURN_IOE = 2;
 	final static int RETURN_FAIL = 3;
 
-	volatile float direction = 0.0f;
-	static boolean inited = false;
-
-	GSMCell cachedCell = null;
+	static GSMCell cell = null;
 	
-	Compass cachedCompass = null;
+	static Compass compass = null;
 	
-	private int getSocketData(int dataType) {
+	public static Compass getCompass() {
+		return compass;
+	}
+	public static GSMCell getCell() {
+		return cell;
+	}
+	public synchronized static int getSocketData(int dataType) {
 		if (clientSock == null) {
 			try {
 				logger.info("Connecting to socket://127.0.0.1:59721");
@@ -112,7 +115,6 @@ public class SocketGateway {
 				clientOS.flush();
 				//debug trace
 				logger.trace("Wrote Compass request");
-				Compass compass = new Compass();
 				if (clientIS.available() < 4) {
 					//#debug debug
 					logger.debug("Not Enough Data wait 50");
@@ -132,7 +134,7 @@ public class SocketGateway {
 				}
 				logger.info("Not enough data available from socket, can't retrieve Compass: " + clientIS.available());
 			} catch (IOException ioe) {
-				logger.silentexception("Failed to read cellid", ioe);
+				logger.silentexception("Failed to read compass", ioe);
 				clientSock = null;
 				return RETURN_IOE;
 			} catch (InterruptedException ie) {
@@ -156,7 +158,6 @@ public class SocketGateway {
 				clientOS.flush();
 				//debug trace
 				logger.trace("Wrote Cell request");
-				GSMCell cell = new GSMCell();
 				if (clientIS.available() < 18) {
 					//#debug debug
 					logger.debug("Not Enough Data wait 50");
