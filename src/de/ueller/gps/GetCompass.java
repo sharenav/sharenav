@@ -129,7 +129,7 @@ public class GetCompass implements CompassProducer {
 			if (compassProvider.obtainCurrentCompass() == null) {
 				//#debug info
 				logger.info("No valid compass direction, closing down");
-				this.receiverList.locationDecoderEnd("No valid compass direction"/* i:NoValidCompass */);
+				//this.receiverList.locationDecoderEnd("No valid compass direction"/* i:NoValidCompass */);
 				return false;
 			}
 			closed = false;
@@ -138,7 +138,7 @@ public class GetCompass implements CompassProducer {
 		} catch (Exception e) {
 			logger.silentexception("Could not retrieve compass direction", e);
 		}
-		this.receiverList.locationDecoderEnd("Can't use compass for direction"/* i:CompassFail */);
+		//this.receiverList.locationDecoderEnd("Can't use compass for direction"/* i:CompassFail */);
 		return false;
 	}
 	
@@ -151,7 +151,7 @@ public class GetCompass implements CompassProducer {
 
 	public boolean activate(CompassReceiver receiver) {
 		rp = new RetrievePosition();
-		GpsMid.getTimer().schedule(rp, 500, 500);
+		GpsMid.getTimer().schedule(rp, 250, 250);
 		return true;
 	}
 	public boolean deactivate(CompassReceiver receiver) {

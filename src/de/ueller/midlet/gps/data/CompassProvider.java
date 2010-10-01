@@ -22,11 +22,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Random;
 
-import javax.microedition.io.ConnectionNotFoundException;
-import javax.microedition.io.Connector;
-import javax.microedition.io.SocketConnection;
-
 import de.ueller.midlet.gps.Logger;
+import de.ueller.midlet.gps.data.CellIdProvider;
+import de.ueller.midlet.gps.data.SocketGateway;
 
 //#if polish.android
 import java.util.List;
@@ -41,8 +39,6 @@ import android.hardware.SensorListener;
 
 
 public class CompassProvider {
-	final int PROTO_REQ_COMPASS = 6574724;
-	
 	private static final int COMPASSMETHOD_NONE = 0;
 	private static final int COMPASSMETHOD_SE = 1;
 	private static final int COMPASSMETHOD_S60FP5 = 2;
@@ -61,10 +57,6 @@ public class CompassProvider {
 //#endif
 
 	private int compassRetrievelMethod = -1;
-	
-	SocketConnection clientSock = null;
-	DataInputStream clientIS = null;
-	DataOutputStream clientOS = null;
 	
 	volatile float direction = 0.0f;
 	static boolean inited = false;
@@ -115,6 +107,8 @@ public class CompassProvider {
 			//#debug info
 			logger.info("Trying to see if there is a compassid server running on this device");
 			Compass compass = obtainSocketCompass();
+			// FIXME
+			// compassRetrievelMethod = COMPASSMETHOD_SOCKET;
 			if (compass != null) {
 				compassRetrievelMethod = COMPASSMETHOD_SOCKET;
 				logger.info("   Yes, there is a server running and we can get a compass from it");
@@ -217,81 +211,18 @@ public class CompassProvider {
 	}
 	
 	private Compass obtainSocketCompass() {
-		if (clientSock == null) {
-			try {
-				logger.info("Connecting to socket://127.0.0.1:59721");
-				clientSock = (SocketConnection) Connector.open("socket://127.0.0.1:59721");
-				clientSock.setSocketOption(SocketConnection.KEEPALIVE, 0);
-				clientOS = new DataOutputStream(clientSock.openOutputStream());
-				clientIS = new DataInputStream(clientSock.openInputStream());
-				logger.info("Connected to socket");
-				
-				
-			} catch (SecurityException se) {
-				logger.exception("Sorry, you declined to try and connect to a local helper deamon", se);
-				clientSock = null;
-				return null;
-			} catch (ConnectionNotFoundException cnfe) {
-				//This is quite common, so silently ignore this;
-				logger.silentexception("Could not open a connection to local helper deamon", cnfe);
-				clientSock = null;
-				return null;
-			} catch (IOException ioe) {
-				logger.exception("Failed to open connection to a local helper deamon", ioe);
-				clientSock = null;
-				if (compassRetrievelMethod == COMPASSMETHOD_SOCKET) {
-					/*
-					 * The local helper daemon seems to have died.
-					 * No point in trying to continue trying,
-					 * as otherwise we will get an exception every time
-					 */
-					compassRetrievelMethod = COMPASSMETHOD_NONE;
-				}
-				return null;
-			}
+		int retval;
+		retval = SocketGateway.getSocketData(SocketGateway.TYPE_COMPASS);
+		if (retval == SocketGateway.RETURN_OK) {
+			return SocketGateway.getCompass();
 		}
-		
-		try {
-			byte [] buf = new byte[4096];
-			logger.info("Requesting next Compass");
-			int noAvail = clientIS.available();
-			while (noAvail > 0) {
-				if (noAvail > 4096) {
-					noAvail = 4096;
-				}
-				//#debug debug
-				logger.debug("Emptying Buffer of length " + noAvail);
-				clientIS.read(buf,0,noAvail);
-				noAvail = clientIS.available();
-			}
-			clientOS.writeInt(PROTO_REQ_COMPASS);
-			clientOS.flush();
-			//debug trace
-			logger.trace("Wrote Compass request");
-			Compass compass = new Compass();
-			if (clientIS.available() < 4) {
-				//#debug debug
-				logger.debug("Not Enough Data wait 50");
-				Thread.sleep(50);
-			}
-			if (clientIS.available() < 4) {
-				//#debug debug
-				logger.debug("Not Enough Data wait 500");
-				Thread.sleep(500);
-			}
-			if (clientIS.available() > 3) {
-				//#debug debug
-				logger.debug("Reading");
-				compass.direction = clientIS.readInt();
-				logger.info("Read Compass: " + compass);
-				return compass;
-			}
-			logger.info("Not enough data available from socket, can't retrieve Compass: " + clientIS.available());
-		} catch (IOException ioe) {
-			logger.silentexception("Failed to read compass", ioe);
-			clientSock = null;
-			return null;
-		} catch (InterruptedException ie) {
+		if (compassRetrievelMethod == COMPASSMETHOD_SOCKET && retval == SocketGateway.RETURN_IOE) {
+			/*
+			 * The local helper daemon seems to have died.
+			 * No point in trying to continue trying,
+			 * as otherwise we will get an exception every time
+			 */
+			//compassRetrievelMethod = COMPASSMETHOD_NONE;
 			return null;
 		}
 		return null;

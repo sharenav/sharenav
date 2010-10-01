@@ -77,7 +77,7 @@ public class SocketGateway {
 		newcell.cellID = cell.cellID;
 		return newcell;
 	}
-	public static synchornized int getSocketData(int dataType) {
+	public static synchronized int getSocketData(int dataType) {
 		if (clientSock == null) {
 			try {
 				logger.info("Connecting to socket://127.0.0.1:59721");

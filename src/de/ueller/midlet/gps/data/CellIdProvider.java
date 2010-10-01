@@ -22,11 +22,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Random;
 
-import javax.microedition.io.ConnectionNotFoundException;
-import javax.microedition.io.Connector;
-import javax.microedition.io.SocketConnection;
-
 import de.ueller.midlet.gps.Logger;
+import de.ueller.midlet.gps.data.CompassProvider;
+import de.ueller.midlet.gps.data.SocketGateway;
 
 //#if polish.android
 import android.content.Context;
@@ -36,8 +34,6 @@ import android.telephony.gsm.GsmCellLocation;
 //#endif
 
 public class CellIdProvider {
-	final int PROTO_REQ_CELLID = 6574723;
-	
 	private static final int CELLMETHOD_NONE = 0;
 	private static final int CELLMETHOD_SE = 1;
 	private static final int CELLMETHOD_S60FP2 = 2;
@@ -52,10 +48,6 @@ public class CellIdProvider {
 			Logger.TRACE);
 	
 	private int cellRetrievelMethod = -1;
-	
-	SocketConnection clientSock = null;
-	DataInputStream clientIS = null;
-	DataOutputStream clientOS = null;
 	
 	GSMCell cachedCell = null;
 	
@@ -120,6 +112,8 @@ public class CellIdProvider {
 			//#debug info
 			logger.info("Trying to see if there is a cellid server running on this device");
 			GSMCell cell = obtainSocketCell();
+			// FIXME 
+			// cellRetrievelMethod = CELLMETHOD_SOCKET;
 			if (cell != null) {
 				cellRetrievelMethod = CELLMETHOD_SOCKET;
 				logger.info("   Yes, there is a server running and we can get a cell from it");
@@ -324,85 +318,18 @@ public class CellIdProvider {
 	}
 	
 	private GSMCell obtainSocketCell() {
-		if (clientSock == null) {
-			try {
-				logger.info("Connecting to socket://127.0.0.1:59721");
-				clientSock = (SocketConnection) Connector.open("socket://127.0.0.1:59721");
-				clientSock.setSocketOption(SocketConnection.KEEPALIVE, 0);
-				clientOS = new DataOutputStream(clientSock.openOutputStream());
-				clientIS = new DataInputStream(clientSock.openInputStream());
-				logger.info("Connected to socket");
-				
-				
-			} catch (SecurityException se) {
-				logger.exception("Sorry, you declined to try and connect to a local helper deamon", se);
-				clientSock = null;
-				return null;
-			} catch (ConnectionNotFoundException cnfe) {
-				//This is quite common, so silently ignore this;
-				logger.silentexception("Could not open a connection to local helper deamon", cnfe);
-				clientSock = null;
-				return null;
-			} catch (IOException ioe) {
-				logger.exception("Failed to open connection to a local helper deamon", ioe);
-				clientSock = null;
-				if (cellRetrievelMethod == CELLMETHOD_SOCKET) {
-					/*
-					 * The local helper daemon seems to have died.
-					 * No point in trying to continue trying,
-					 * as otherwise we will get an exception every time
-					 */
-					cellRetrievelMethod = CELLMETHOD_NONE;
-				}
-				return null;
-			}
+		int retval;
+		retval = SocketGateway.getSocketData(SocketGateway.TYPE_CELLID);
+		if (retval == SocketGateway.RETURN_OK) {
+			return SocketGateway.getCell();
 		}
-		
-		try {
-			byte [] buf = new byte[4096];
-			logger.info("Requesting next CellID");
-			int noAvail = clientIS.available();
-			while (noAvail > 0) {
-				if (noAvail > 4096) {
-					noAvail = 4096;
-				}
-				//#debug debug
-				logger.debug("Emptying Buffer of length " + noAvail);
-				clientIS.read(buf,0,noAvail);
-				noAvail = clientIS.available();
-			}
-			clientOS.writeInt(PROTO_REQ_CELLID);
-			clientOS.flush();
-			//debug trace
-			logger.trace("Wrote Cell request");
-			GSMCell cell = new GSMCell();
-			if (clientIS.available() < 18) {
-				//#debug debug
-				logger.debug("Not Enough Data wait 50");
-				Thread.sleep(50);
-			}
-			if (clientIS.available() < 18) {
-				//#debug debug
-				logger.debug("Not Enough Data wait 500");
-				Thread.sleep(500);
-			}
-			if (clientIS.available() > 17) {
-				//#debug debug
-				logger.debug("Reading");
-				cell.mcc = (short)clientIS.readInt();
-				cell.mnc = (short)clientIS.readInt();
-				cell.lac = clientIS.readInt();
-				cell.cellID = clientIS.readInt();
-				short signal = clientIS.readShort();
-				logger.info("Read Cell: " + cell);
-				return cell;
-			}
-			logger.info("Not enough data available from socket, can't retrieve Cell: " + clientIS.available());
-		} catch (IOException ioe) {
-			logger.silentexception("Failed to read cell", ioe);
-			clientSock = null;
-			return null;
-		} catch (InterruptedException ie) {
+		if (cellRetrievelMethod == CELLMETHOD_SOCKET && retval == SocketGateway.RETURN_IOE) {
+			/*
+			 * The local helper daemon seems to have died.
+			 * No point in trying to continue trying,
+			 * as otherwise we will get an exception every time
+			 */
+			//cellRetrievelMethod = CELLMETHOD_NONE;
 			return null;
 		}
 		return null;
