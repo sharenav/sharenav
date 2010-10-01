@@ -42,8 +42,8 @@ import android.hardware.SensorListener;
 
 
 public class SocketGateway {
-	final static int PROTO_REQ_COMPASS = 6574724;
 	final static int PROTO_REQ_CELLID = 6574723;
+	final static int PROTO_REQ_COMPASS = 6574724;
 	
 	private static CompassProvider singelton;
 	
@@ -61,17 +61,23 @@ public class SocketGateway {
 	final static int RETURN_IOE = 2;
 	final static int RETURN_FAIL = 3;
 
-	static GSMCell cell = null;
-	
-	static Compass compass = null;
+	static GSMCell cell = new GSMCell();
+	static Compass compass = new Compass();
 	
 	public static Compass getCompass() {
-		return compass;
+		Compass newcompass = new Compass();
+		newcompass.direction = compass.direction;
+		return newcompass;
 	}
 	public static GSMCell getCell() {
-		return cell;
+		GSMCell newcell = new GSMCell();
+		newcell.mcc = cell.mcc;
+		newcell.mnc = cell.mnc;
+		newcell.lac = cell.lac;
+		newcell.cellID = cell.cellID;
+		return newcell;
 	}
-	public synchronized static int getSocketData(int dataType) {
+	public static synchornized int getSocketData(int dataType) {
 		if (clientSock == null) {
 			try {
 				logger.info("Connecting to socket://127.0.0.1:59721");
@@ -79,15 +85,17 @@ public class SocketGateway {
 				clientSock.setSocketOption(SocketConnection.KEEPALIVE, 0);
 				clientOS = new DataOutputStream(clientSock.openOutputStream());
 				clientIS = new DataInputStream(clientSock.openInputStream());
-				logger.info("Connected to socket");
-				
+				//logger.info("Connected to socket");
+				// = null;
+				//logger.exception("Connected to socket", IOException ioeioe);
 			} catch (SecurityException se) {
 				logger.exception("Sorry, you declined to try and connect to a local helper deamon", se);
 				clientSock = null;
 				return RETURN_FAIL;
 			} catch (ConnectionNotFoundException cnfe) {
 				//This is quite common, so silently ignore this;
-				logger.silentexception("Could not open a connection to local helper deamon", cnfe);
+				//logger.silentexception("Could not open a connection to local helper deamon", cnfe);
+				logger.exception("Could not open a connection to local helper deamon", cnfe);
 				clientSock = null;
 				return RETURN_FAIL;
 			} catch (IOException ioe) {
@@ -118,12 +126,16 @@ public class SocketGateway {
 				if (clientIS.available() < 4) {
 					//#debug debug
 					logger.debug("Not Enough Data wait 50");
-					Thread.sleep(50);
+					try {
+						Thread.sleep(50);
+						} catch (Exception ex) {}
 				}
 				if (clientIS.available() < 4) {
 					//#debug debug
 					logger.debug("Not Enough Data wait 500");
-					Thread.sleep(500);
+					try {
+						Thread.sleep(500);
+					} catch (Exception ex) {}
 				}
 				if (clientIS.available() > 3) {
 					//#debug debug
@@ -134,11 +146,12 @@ public class SocketGateway {
 				}
 				logger.info("Not enough data available from socket, can't retrieve Compass: " + clientIS.available());
 			} catch (IOException ioe) {
-				logger.silentexception("Failed to read compass", ioe);
+				//logger.silentexception("Failed to read compass", ioe);
+				logger.exception("Failed to read compass", ioe);
 				clientSock = null;
 				return RETURN_IOE;
-			} catch (InterruptedException ie) {
-				return RETURN_FAIL;
+				//} catch (InterruptedException ie) {
+				//return RETURN_FAIL;
 			}
 		} else if (dataType == TYPE_CELLID) {
 			try {
@@ -161,12 +174,16 @@ public class SocketGateway {
 				if (clientIS.available() < 18) {
 					//#debug debug
 					logger.debug("Not Enough Data wait 50");
-					Thread.sleep(50);
+					try {
+						Thread.sleep(50);
+					} catch (Exception ex) {}
 				}
 				if (clientIS.available() < 18) {
 					//#debug debug
 					logger.debug("Not Enough Data wait 500");
-					Thread.sleep(500);
+					try {
+						Thread.sleep(500);
+					} catch (Exception ex) {}
 				}
 				if (clientIS.available() > 17) {
 					//#debug debug
@@ -183,9 +200,9 @@ public class SocketGateway {
 			} catch (IOException ioe) {
 				logger.silentexception("Failed to read cellid", ioe);
 				clientSock = null;
-				return RETURN_IOE;
-			} catch (InterruptedException ie) {
 				return RETURN_FAIL;
+				//} catch (InterruptedException ie) {
+				//return RETURN_FAIL;
 			}
 		}
 		return RETURN_FAIL;
