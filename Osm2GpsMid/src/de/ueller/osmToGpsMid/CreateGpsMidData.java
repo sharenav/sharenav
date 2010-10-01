@@ -261,6 +261,9 @@ public class CreateGpsMidData implements FilenameFilter {
 			// remove unneeded .loc files
 			if (!Configuration.getConfiguration().allLang) {
 				String langs = configuration.getUseLang() + ",en";
+				// FIXME there's a problem seemingly with this,
+				// a 60 Mb midlet had none of .loc file with
+				// lang=fi,en,de langName=Suomi,English,Deutsch
 				// removeFilesWithExt(path, "loc", langs.split("[;,]", 200));
 			}
 
