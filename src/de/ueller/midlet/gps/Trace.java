@@ -502,12 +502,14 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				return;
 			}
 			running=true;
-			compassProducer = new GetCompass();
-			if (!compassProducer.init(this)) {
-				logger.info("Failed to init compass producer");
-				compassProducer = null;
-			} else if (!compassProducer.activate(this)) {
-				logger.info("Failed to activate compass producer");
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION)) {
+				compassProducer = new GetCompass();
+				if (!compassProducer.init(this)) {
+					logger.info("Failed to init compass producer");
+					compassProducer = null;
+				} else if (!compassProducer.activate(this)) {
+					logger.info("Failed to activate compass producer");
+				}
 			}
 			int locprov = Configuration.getLocationProvider();
 			receiveMessage("Connect to " + Configuration.LOCATIONPROVIDER[locprov]);
