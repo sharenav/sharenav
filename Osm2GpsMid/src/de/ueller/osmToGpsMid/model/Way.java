@@ -27,7 +27,6 @@ import de.ueller.osmToGpsMid.area.Outline;
 import de.ueller.osmToGpsMid.area.Triangle;
 import de.ueller.osmToGpsMid.area.Vertex;
 import de.ueller.osmToGpsMid.model.name.Names;
-import de.ueller.osmToGpsMid.model.HouseNumber;
 import de.ueller.osmToGpsMid.model.url.Urls;
 
 
@@ -194,6 +193,10 @@ public class Way extends Entity implements Comparable<Way> {
 		return (containsKey("bridge"));
 	}
 
+	//public boolean hasHouseNumber() {
+	//	return (containsKey("addr:housenumber"));
+	//}
+
 	public boolean isDamaged() {
 		Vector<Damage> damages = LegendParser.getDamages();
 		if (damages.size() != 0) {
@@ -241,6 +244,7 @@ public class Way extends Entity implements Comparable<Way> {
 		/**
 		 * Check to see if the way corresponds to any of the POI types If it does, then we insert a POI node to reflect
 		 * this, as otherwise the nearest POI search or other POI features don't work on ways
+		 * housenumber search for buildings also requires this
 		 */
 		POIdescription poi = (POIdescription) super.calcType(c.getPOIlegend());
 		if (poi != null && poi.createPOIsForAreas) {
@@ -628,8 +632,11 @@ public class Way extends Entity implements Comparable<Way> {
 		if (getNodeCount() > 255) {
 			longWays = true;
 		}
-		if (housenumber != null && housenumber.getHouseNumberCount() > 255) {
-			longHouseNumbers = true;
+		if (housenumber != null) {
+			flags3 += WAY_FLAG3_HAS_HOUSENUMBERS;
+			if (getHouseNumberCount() > 255) {
+				longHouseNumbers = true;
+			}
 		}
 		if (isOneWay()) {
 			flags += WAY_FLAG_ONEWAY;
@@ -711,13 +718,15 @@ public class Way extends Entity implements Comparable<Way> {
 			ds.writeByte(layer);
 		}
 		if ((flags3 & WAY_FLAG3_HAS_HOUSENUMBERS) == WAY_FLAG3_HAS_HOUSENUMBERS){
+			System.out.println("Writing housenumbers (nodecount=" + getHouseNumberCount() + ") for way " + this);
 			if (longHouseNumbers) {
-				ds.writeShort(housenumber.getHouseNumberCount());
+				ds.writeShort(getHouseNumberCount());
 			} else {
-				ds.writeByte(housenumber.getHouseNumberCount());
+				ds.writeByte(getHouseNumberCount());
 			}
 			for (Node n : housenumber.getNodes()) {
-				ds.writeShort(n.renumberdId);
+				ds.writeLong(n.id);
+				System.out.println("Writing node " + n);
 			}
 
 		}
@@ -759,6 +768,13 @@ public class Way extends Entity implements Comparable<Way> {
 			path = new Path();
 		}
 		path.add(n);
+	}
+
+	public void houseNumberAdd(Node n) {
+		if (housenumber == null) {
+			housenumber = new HouseNumber();
+		}
+		housenumber.add(n);
 	}
 
 	public boolean containsNode(Node nSearch) {
@@ -841,6 +857,10 @@ public class Way extends Entity implements Comparable<Way> {
 		} else {
 			return path.getNodeCount();
 		}
+	}
+
+	public int getHouseNumberCount() {
+		return housenumber.getHouseNumberCount();
 	}
 
 	public Way split() {
