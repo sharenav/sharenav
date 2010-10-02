@@ -280,11 +280,21 @@ public class Way extends Entity {
 					}
 				}
 				if ( (f3 & WAY_FLAG3_HAS_HOUSENUMBERS) > 0 ) {
-					// FIXME increase map format version
-					// ignore for now
+					int hcount;
+					// Ignore the data for now
 					if ( (f3 & WAY_FLAG3_LONGHOUSENUMBERS) > 0 ) {
-						is.readInt();
+						hcount = is.readShort();
+						if (hcount < 0) {
+							hcount += 65536;
+						}
 					} else {
+						hcount = is.readByte();
+						if (hcount < 0) {
+							hcount += 256;
+						}
+					}
+					logger.debug("expecting " + hcount + " housenumber nodes");
+					for (short i = 0; i < hcount; i++) {
 						is.readShort();
 					}
 				}
