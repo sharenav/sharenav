@@ -299,7 +299,7 @@ public class BundleGpsMid implements Runnable {
 				}
 				int ch;
 				int count = 0;
-				// for android sounds, don't compress, so set STORED/DEFLATED flag
+				// for android sounds, don't compress, so set STORED flag, then set DEFLATED 
 				// android map should be bundled in "assets" subdir into *.ap_
 				// and then the *.ap_ must be linked with android libtool which signs into and creates *.apk
 				//if (compressed == false) {
