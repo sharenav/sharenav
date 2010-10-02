@@ -41,7 +41,7 @@ public class HouseNumber {
 		if (nodeList == null) {
 			return 0;
 		}
-		if (nodeList.size() > 1) {
+		if (nodeList.size() >= 1) {
 			return (nodeList.size());
 		}
 		return 0;
