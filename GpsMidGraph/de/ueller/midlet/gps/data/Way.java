@@ -295,7 +295,7 @@ public class Way extends Entity {
 					}
 					logger.debug("expecting " + hcount + " housenumber nodes");
 					for (short i = 0; i < hcount; i++) {
-						is.readShort();
+						is.readLong();
 					}
 				}
 			}
