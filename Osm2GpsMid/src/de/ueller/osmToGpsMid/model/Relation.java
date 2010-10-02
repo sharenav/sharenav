@@ -59,6 +59,18 @@ public class Relation extends Entity {
 		return ret;
 	}
 	
+	public ArrayList<Long> getNodeIds(int role){
+		ArrayList<Long> ret=new ArrayList<Long>();
+		for (Member m:members){
+			if (m.getType() == Member.TYPE_NODE){
+				if (m.getRole()==role){
+					ret.add(new Long(m.getRef()));
+				}
+			}
+		}
+		return ret;
+	}
+	
 	public boolean isValid() {
 		if (members.size() > 0) {
 			//TODO: A more elaborate check is needed
@@ -107,6 +119,44 @@ public class Relation extends Entity {
 						System.out.println(toUrl() + ": Neither a no_ nor an only_ restriction " + toString());return false;
 					}
 
+				}
+				if (type.equalsIgnoreCase("associatedStreet") || type.equalsIgnoreCase("street")) {
+					int waycount = 0;
+					int nodecount = 0;
+					boolean ok = false;
+					for (Member m : members) {
+						switch (m.getRole()) {
+						case Member.ROLE_STREET: {
+							if (m.getType() == Member.TYPE_WAY) {
+								waycount++;
+								//System.out.println("Relation " + id + " way ref = " + wref);
+								break;
+							}
+						}
+						case Member.ROLE_HOUSE: {
+							// FIXME handle ways (buildings) with areapois or something
+							if (m.getType() == Member.TYPE_NODE) {
+								nodecount++;
+								//System.out.println("Relation " + id + " node ref = " + nref);
+								break;
+							}
+							if (m.getType() == Member.TYPE_WAY) {
+								// FIXME handle buildings too
+								System.out.println("ERROR: Unable to handle area (typically building) with housenumber, relation url: " + toUrl());
+								nodecount++;
+								break;
+							}
+						}
+						}
+
+					}
+					if (waycount == 1 && nodecount >= 1) {
+						//System.out.println("Housenumber relation ok, way count: " + waycount + " node count " + nodecount + " url: " + toUrl());
+						return true;
+					} else {
+						System.out.println("ERROR: Housenumber relation not ok, way count: " + waycount + " node count " + nodecount + " url: " + toUrl());
+						return false;
+					}
 				}
 				return !isPartial();
 			} else {

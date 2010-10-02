@@ -454,6 +454,10 @@ public class OxParser extends DefaultHandler {
 		return ways;
 	}
 
+	public HashMap<Long,Node> getNodeHashMap() {
+		return nodes;
+	}
+
 	public void removeNodes(Collection<Node> nds) {
 		if (nodes == null) {
 			//This operation appears rather slow,

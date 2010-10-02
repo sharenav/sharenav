@@ -27,6 +27,8 @@ public class Member {
 	public static final byte ROLE_VIA = 4;
 	public static final byte ROLE_OUTER = 5;
 	public static final byte ROLE_INNER = 6;
+	public static final byte ROLE_STREET = 7;
+	public static final byte ROLE_HOUSE = 8;
 	
 	
 	private byte type;
@@ -90,6 +92,8 @@ public class Member {
 		case ROLE_VIA: return "via";
 		case ROLE_OUTER: return "outer";
 		case ROLE_INNER: return "inner";
+		case ROLE_STREET: return "street";
+		case ROLE_HOUSE: return "house";
 		}
 		return "undef";
 	}
@@ -110,6 +114,10 @@ public class Member {
 			this.role=ROLE_OUTER;
 		} else if ("inner".equals(role)){ 
 			this.role=ROLE_INNER;
+		} else if ("street".equals(role)){ 
+			this.role=ROLE_STREET;
+		} else if ("house".equals(role) || "addr:houselink".equals(role) || "address".equals(role)){ 
+			this.role=ROLE_HOUSE;
 		} else {
 			this.role = ROLE_UNKOWN;
 		}
