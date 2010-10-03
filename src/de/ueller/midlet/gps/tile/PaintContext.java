@@ -68,7 +68,6 @@ public class PaintContext extends ScreenContext {
 	public Images images;
 	public byte drawAreas=DRAW_AREAS_NO;
 	public boolean showTileOutline=false;
-	public Legend legend;
 
 	/**
 	 * the the paint-process will store Street which is nearest to the center

@@ -100,8 +100,6 @@ public class GpsMid extends MIDlet implements CommandListener {
 
 	public static NoiseMaker mNoiseMaker = null;
 
-	public static Legend legend = null;
-
 	public String localeLang = null;
 
 	/**
@@ -158,7 +156,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 		// read in legend.dat to have i.e. bundle date already accessable from
 		// the splash screen
 		try {
-			legend = new Legend();
+			Legend.readLegend();
 		} catch (Exception e) {
 			e.printStackTrace();
 			errorMsg = "Failed to load basic configuration! Check your map data source: "
@@ -166,10 +164,9 @@ public class GpsMid extends MIDlet implements CommandListener {
 //#if polish.android
 			errorMsg += " - For Android, you must manually install the map (e.g. unzip the J2ME map jar bundle with same settings & version as the .apk) on the SD card for now";
 //#endif
-			legend = null;
 		}
 
-		if (legend != null) {
+		if (Legend.isValid) {
 			int langNum = 0;  // default is the first in bundle
 			String lang = Configuration.getUiLang();
 			String locale = System.getProperty("microedition.locale");
@@ -299,7 +296,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 		}
 		//#endif
 
-		if (Configuration.getCfgBitState(Configuration.CFGBIT_SKIPP_SPLASHSCREEN) && legend != null) {
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_SKIPP_SPLASHSCREEN) && Legend.isValid) {
 			showMapScreen();
 		} else {
 			new Splash(this);

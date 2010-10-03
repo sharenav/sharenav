@@ -940,12 +940,12 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			if (c == CMDS[EXIT_CMD]) {
 				// FIXME: This is a workaround. It would be better if recording
 				// would not be stopped when leaving the map.
-				if ((GpsMid.legend != null) && gpx.isRecordingTrk()) {
+				if (Legend.isValid && gpx.isRecordingTrk()) {
 					alert(Locale.get("trace.RecordMode")/*Record Mode*/, Locale.get("trace.PleaseStopRecording")/*Please stop recording before exit.*/ , 2500);
 					return;
 				}
 				
-				if ((GpsMid.legend != null)) {
+				if (Legend.isValid) {
 					pause();
 				}
 				parent.exit();
@@ -1580,12 +1580,11 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		logger.info("Starting ImageCollector");
 		Images images = new Images();
 		pc = new PaintContext(this, images);
-		pc.legend = GpsMid.legend;
-		/* move responsibility for overscan to ImmageCollector
+		/* move responsibility for overscan to ImageCollector
 		int w = (this.getWidth() * 125) / 100;
 		int h = (this.getHeight() * 125) / 100;
 		*/
-		imageCollector = new ImageCollector(tiles, this.getWidth(), this.getHeight(), this, images, pc.legend);
+		imageCollector = new ImageCollector(tiles, this.getWidth(), this.getHeight(), this, images);
 //		projection = ProjFactory.getInstance(center,course, scale, getWidth(), getHeight());
 //		pc.setP(projection);
 		pc.center = center.copy();
@@ -2933,7 +2932,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		logger.info("enter locationDecoderEnd");
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_SND_DISCONNECT)) {
 			// some fault tolerance  - will crash without a map
-			if (GpsMid.legend != null) {
+			if (Legend.isValid) {
 				GpsMid.mNoiseMaker.playSound("DISCONNECT");
 			}
 		}

@@ -94,12 +94,7 @@ public class IconMenuPage extends LayoutManager {
 			LayoutElement.FLAG_FONT_SMALL
 		);
 //		System.out.println("eleNr:" + eleNr + " x:" + (eleNr % numCols) + "y:" + (eleNr / numCols));
-		if (GpsMid.legend == null) {
-		    // make text visible even when map couldn't be read
-		    e.setColor(0x00FFFF00);
-		} else {
-		    e.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_ICON_TEXT]);
-		}
+	    e.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_ICON_TEXT]);
 		e.setActionID(actionId);
 		e.setText(label);
 		e.setImageNameOnly(imageName);
@@ -180,11 +175,7 @@ public class IconMenuPage extends LayoutManager {
 		// draw to boxes under the still to be drawn active icon to create a border
 		if (showCursor) {
 			e = (LayoutElement) this.elementAt(getEleId(currentCol, currentRow));		
-		if (GpsMid.legend == null) {
-			g.setColor(0x00FFFF00);
-		} else {
 			g.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_ICON_BORDER_HIGHLIGHT]);
-		}
 			g.fillRect(e.left + dragOffsX - 2, e.top - 2, e.right - e.left + 4, e.bottom - e.top + 4);
 			g.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_BACKGROUND]);
 			g.fillRect(e.left + dragOffsX, e.top, e.right - e.left, e.bottom - e.top);

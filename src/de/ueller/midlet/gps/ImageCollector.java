@@ -67,7 +67,7 @@ public class ImageCollector implements Runnable {
 	public static float overviewTileScaleBoost = 1.0f;
 	boolean collectorReady=false;
 	
-	public ImageCollector(Tile[] t, int x, int y, Trace tr, Images i, Legend legend) {
+	public ImageCollector(Tile[] t, int x, int y, Trace tr, Images i) {
 		super();
 		this.t = t;
 		this.tr = tr;
@@ -90,11 +90,9 @@ public class ImageCollector implements Runnable {
 		img[1] = Image.createImage(xSize, ySize);
 		try {
 			pc[0] = new PaintContext(tr, i);
-			pc[0].legend = legend;
 			pc[0].setP(p1);
 			pc[0].state = PaintContext.STATE_READY;
 			pc[1] = new PaintContext(tr, i);
-			pc[1].legend = legend;
 			pc[1].setP(ProjFactory.getInstance(n, 0, 1500, xSize, ySize));
 			pc[1].state = PaintContext.STATE_READY;
 

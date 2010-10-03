@@ -170,6 +170,7 @@ public class Legend {
 	
 	public static String appVersion;
 	public static String bundleDate;
+	public static boolean isValid = false;
 	public static boolean enableEdits;
 	public static boolean enableUrlTags;
 	public static boolean enablePhoneTags;
@@ -192,7 +193,8 @@ public class Legend {
 	private static POIdescription[] pois;
 	private static WayDescription[] ways;
 	
-	private static String namePartRequired[] = new String[3];
+	/** name parts for Overview/Filter mode (index 0 for poi name part, index 1 for area name part, index 2 for way name part) */
+	private static String namePartRequired[] = {"", "", ""};
 	
 	public static int tileScaleLevel[] = { Integer.MAX_VALUE, 900000, 180000, 45000 }; 
 
@@ -200,14 +202,6 @@ public class Legend {
 
 	private final static Logger logger = Logger.getInstance(Legend.class, Logger.TRACE);
 	
-	public Legend() throws IOException {
-		readLegend();
-		
-		namePartRequired[0] = "";
-		namePartRequired[1] = "";
-		namePartRequired[2] = "";
-	}
-
 	public static void reReadLegend() {
 		try {
 			Legend.readLegend();
@@ -217,21 +211,24 @@ public class Legend {
 	}
 	
 	public static void readLegend() throws IOException {
+		isValid = false;
+		/* Set some essential default colors in case legend.dat can not be opened/read for using 
+		 * e.g. GpsMid-Generic-Full directly (to configure external map using 
+		 * icon menu which will include legend.dat with colors).
+		 */
+		COLORS[COLOR_MAP_BACKGROUND] = 0x002020FF;
+		COLORS[COLOR_WAYNAME_BACKGROUND] = 0x00FFFFFF;
+		COLORS[COLOR_ICONMENU_ICON_BORDER_HIGHLIGHT] = 0x00FF0000;
+		COLORS[COLOR_ICONMENU_ICON_TEXT] = 0x00FFFFFF;
+		COLORS[COLOR_ICONMENU_TABBUTTON_BORDER] = 0x00707070;
+		COLORS[COLOR_ICONMENU_TABBUTTON_TEXT] = 0x00FFFFFF;
+		COLORS[COLOR_ICONMENU_TABBUTTON_TEXT_HIGHLIGHT] = 0x00FFFF00;
+		COLORS[COLOR_ICONMENU_TABBUTTON_TEXT_INACTIVE] = 0x00808080;
+		
 		InputStream is = Configuration.getMapResource("/legend.dat");
 		
 		if (is == null) {
-			/* If legend.dat could not be opened set essential default colors for using 
-			 * e.g. GpsMid-Generic-Full directly (to configure external map using 
-			 * icon menu which will include legend.dat with colors).
-			 */
-			COLORS[COLOR_MAP_BACKGROUND] = 0x002020FF;
-			COLORS[COLOR_WAYNAME_BACKGROUND] = 0x00FFFFFF;
-			COLORS[COLOR_ICONMENU_ICON_BORDER_HIGHLIGHT] = 0x00FF0000;
-			COLORS[COLOR_ICONMENU_ICON_TEXT] = 0x00FFFFFF;
-			COLORS[COLOR_ICONMENU_TABBUTTON_BORDER] = 0x00707070;
-			COLORS[COLOR_ICONMENU_TABBUTTON_TEXT] = 0x00FFFFFF;
-			COLORS[COLOR_ICONMENU_TABBUTTON_TEXT_HIGHLIGHT] = 0x00FFFF00;
-			COLORS[COLOR_ICONMENU_TABBUTTON_TEXT_INACTIVE] = 0x00808080;
+
 			logger.error("Failed to open the legend file");
 			return;			
 		}
@@ -357,7 +354,7 @@ public class Legend {
 			soundDirectories[i] = ds.readUTF();
 		}
 
-		
+		isValid = true;
 		ds.close();
 	}
 	
