@@ -53,6 +53,8 @@ public class BundleGpsMid implements Runnable {
 	
 	static Configuration config;
 	
+	static String dontCompress[] = null;
+
 	private static volatile boolean createSuccessfully;
 
 	/**
@@ -108,6 +110,15 @@ public class BundleGpsMid implements Runnable {
 		 * Not sure if this is actually necessary, but
 		 * it shouldn't harm either.
 		 */
+		if (c.getDontCompress().equals("*")) {
+			compressed = false;
+		} else {
+			dontCompress = c.getDontCompress().split("[;,]", 2);
+			if (dontCompress[0].equals("")) {
+				dontCompress = null;
+			}
+		}
+
 		config = c;
 		Thread t = new Thread(bgm);
 		createSuccessfully = false;
@@ -299,17 +310,21 @@ public class BundleGpsMid implements Runnable {
 				}
 				int ch;
 				int count = 0;
-				// for android sounds, don't compress, so set STORED flag, then set DEFLATED 
-				// android map should be bundled in "assets" subdir into *.ap_
-				// and then the *.ap_ must be linked with android libtool which signs into and creates *.apk
-				//if (compressed == false) {
-				//ze.setMethod(ZipOutputStream.STORED);
-				//}
+				boolean storethis = false;
+
+				if (compressed && dontCompress != null) {
+					for (String extension : dontCompress) {
+						if (files[i].getName().endsWith(extension)) {
+							ze.setMethod(ZipOutputStream.STORED);
+							storethis = true;
+						}
+					}
+				}
 
 				//byte buffer to read in larger chunks
 				byte[] bb = new byte[4096];
 				FileInputStream stream = new FileInputStream(files[i]);
-				if (!compressed) {
+				if ((!compressed) || storethis) {
 					CRC32 crc = new CRC32();
 					count = 0;
 					while ((ch = stream.read(bb)) != -1) {

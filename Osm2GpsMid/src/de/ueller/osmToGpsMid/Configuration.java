@@ -279,6 +279,9 @@ public class Configuration {
 		/** Defines what languages are included in GpsMid */
 		public String useLang = "en";
 
+		/** Defines files with endings which won't be compressed */
+		public String dontCompress = "";
+
 		/** Defines if all languages will be included in GpsMid bundle */
 		public boolean allLang = false;
 
@@ -520,6 +523,8 @@ public class Configuration {
 			setSounds(getString("useSounds"));
 
 			setSoundFiles(getString("useSoundFilesWithSyntax"));
+
+			setDontCompress(getString("dontCompress"));
 
 			setUseLang(getString("lang"));
 			if (! getString("useLang").equals("*")) {
@@ -1041,8 +1046,16 @@ public class Configuration {
 			useSoundFiles = soundFiles;
 		}
 
+		public void setDontCompress(String compressExts) {
+			dontCompress = compressExts;
+		}
+
 		public String getUseLang() {
 			return useLang;
+		}
+		
+		public String getDontCompress() {
+			return dontCompress;
 		}
 		
 		public void setUseLang(String lang) {
@@ -1201,6 +1214,7 @@ public class Configuration {
 			confString += "  Use phone tags: " + usePhoneTags + "\n";
 			confString += "  Enable editing support: " + enableEditingSupport + "\n";
 			confString += "  Adding menu entries for languages: " + getUseLang() + " (" + getUseLangName() + ")" + "\n";
+			confString += "  Don't compress files ending with: " + getDontCompress() + "\n";
 			if (allLang) {
 				confString += "  Including also all other supported languages\n";
 			}
