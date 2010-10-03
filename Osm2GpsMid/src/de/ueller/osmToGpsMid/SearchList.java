@@ -179,7 +179,6 @@ public class SearchList {
 					} else {
 						ds.writeShort(nameIdx);
 					}				
-					//#if polish.api.online
 					if (Configuration.getConfiguration().useUrlTags) {
 						if (urlIdx >= Short.MAX_VALUE) {  // FIXME a flag somewhere to save space?
 							ds.writeInt(urlIdx | 0x80000000);
@@ -187,7 +186,6 @@ public class SearchList {
 							ds.writeShort(urlIdx);
 						}				
 					}
-					//#endif
 					if (Configuration.getConfiguration().usePhoneTags) {
 						if (phoneIdx >= Short.MAX_VALUE) {// FIXME a flag somewhere to save space?
 							ds.writeInt(phoneIdx | 0x80000000);
