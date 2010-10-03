@@ -974,8 +974,8 @@ scale alias 1: zoomed out 21x
 		<description desc = "House number"/>
 		<image src="mark.png"/>
 		<namekey tag="addr:housenumber"/>
-		<scale scale="17"/>
-		<textscale scale="20"/>
+		<scale scale="20"/>
+		<textscale scale="21"/>
 		<hideable hideable="false"/>
 	  </value>	
 	</key>
