@@ -163,6 +163,10 @@ public class QueueDataReader extends QueueReader implements Runnable {
 					if (Legend.enableEdits) {
 						osmID[i] = ds.readInt();
 					}
+					//#else
+					if (Legend.enableEdits) {
+						int x = ds.readInt();
+					}
 					//#endif
 					
 				}
@@ -197,6 +201,9 @@ public class QueueDataReader extends QueueReader implements Runnable {
 					}
 					//#else
 					w = new Way(ds, flags, tt, layers, i);
+					if (Legend.enableEdits) {
+						int x = ds.readInt();
+					}
 					w.wayNrInFile = (short) i;
 					//#endif
 					tmpWays[i] = w;

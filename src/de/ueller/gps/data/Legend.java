@@ -290,10 +290,10 @@ public class Legend {
 		//#if polish.api.osm-editing
 
 		//#else
-		if (enableEdits) {
-			throw new IOException("The Map files are enabled for editing, but editing is not compiled into GpsMid." +
-					"Please use the correct Osm2GpsMid settings to recreate the map or use a correct GpsMid");
-		}
+		//if (enableEdits) {
+		//	throw new IOException("The Map files are enabled for editing, but editing is not compiled into GpsMid." +
+		//			"Please use the correct Osm2GpsMid settings to recreate the map or use a correct GpsMid to enable editing");
+		//}
 		//#endif
 		
 		/*
@@ -418,6 +418,13 @@ public class Legend {
 					pois[i].osmTags[j] =  ds.readUTF();
 				}
 			}
+			//#else
+			if (enableEdits) {
+				int noKVpairs = ds.readShort();
+				for (int j = 0; j < noKVpairs * 2; j++) {
+					String x = ds.readUTF();
+				}
+			}
 			//#endif
 		}
 	}
@@ -472,6 +479,13 @@ public class Legend {
 				ways[i].osmTags = new String[noKVpairs * 2];
 				for (int j = 0; j < noKVpairs * 2; j++) {
 					ways[i].osmTags[j] = ds.readUTF();
+				}
+			}
+			//#else
+			if (enableEdits) {
+				int noKVpairs = ds.readShort();
+				for (int j = 0; j < noKVpairs * 2; j++) {
+					String x = ds.readUTF();
 				}
 			}
 			//#endif
