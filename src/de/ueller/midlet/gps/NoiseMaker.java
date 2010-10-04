@@ -9,6 +9,8 @@ package de.ueller.midlet.gps;
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Legend;
 
+import net.sourceforge.util.zip.ZipFile;
+
 import java.io.InputStream;
 //#if polish.api.mmapi	
 //#ifndef polish.android
@@ -52,6 +54,8 @@ public class NoiseMaker
 	
 	private static volatile String mPlayingNames = "";
 	private static volatile int mPlayingNameIndex=0;
+
+	private static ZipFile mapZipFile;
 
 //#if polish.api.mmapi			
 //#if polish.android
@@ -179,8 +183,36 @@ public class NoiseMaker
 	// using MMAPI for J2ME
 	private synchronized boolean preparePlayer(String soundFile, String mediaType, String suffix) {
 		// read from bundle
-		String soundFileWithSuffix = "/" + soundFile;
-		InputStream is = getClass().getResourceAsStream(soundFileWithSuffix);
+		String soundFileWithSuffix = null;
+		if (Configuration.usingBuiltinMap()) {
+			soundFileWithSuffix = "/" + soundFile;
+		} else {
+			if (Configuration.getMapUrl().endsWith("/")) {
+				soundFileWithSuffix = soundFile;
+			} else {
+				soundFileWithSuffix = Configuration.getMapUrl() + soundFile;
+			}
+		}
+
+		InputStream is = null;
+		if (Configuration.usingBuiltinMap()) {
+			if (Configuration.getMapUrl().endsWith("/")) {
+				// mapdir map
+				is = getClass().getResourceAsStream(soundFileWithSuffix);
+			} else {
+				try {
+					if (mapZipFile == null) {
+						//#debug debug
+						mapZipFile = new ZipFile(Configuration.getMapUrl(), -1);
+					}
+					is = mapZipFile.getInputStream(mapZipFile.getEntry(soundFileWithSuffix));
+				} catch (Exception ex) {
+					mLogger.exception("Error opening zip file: " + Configuration.getMapUrl(), ex);
+					return false;
+				}
+				// zip map
+			}
+		}
 		if (is != null) {
 			//#debug debug
 			mLogger.debug("Got Inputstream for " + soundFileWithSuffix);

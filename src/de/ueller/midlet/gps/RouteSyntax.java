@@ -23,11 +23,14 @@ import de.ueller.gps.data.Configuration;
 import de.ueller.gps.tools.HelperRoutines;
 import de.ueller.gpsMid.mapData.QueueReader;
 
+import net.sourceforge.util.zip.ZipFile;
 
 public class RouteSyntax {
 	private final static byte SYNTAX_FORMAT_VERSION = 1;
 	private static Logger logger;
 	
+	private static ZipFile mapZipFile;
+
 	private class SyntaxInstructionTypes {
 		final static int simpleDirection = 0;
 		final static int beardir = 1;
@@ -129,29 +132,41 @@ public class RouteSyntax {
 	public boolean readSyntax() {
 		routeSyntaxAvailable = false;
 		int i;
-		//#if polish.android
 		String syntaxDat = null;
-		if (Configuration.usingBuiltinMap() || !Configuration.getMapUrl().endsWith("/")) {
-			// use bundled sounds for zip file; FIXME add code reading zipfiles
+		if (Configuration.usingBuiltinMap()) {
 			syntaxDat = "/" + Configuration.getSoundDirectory() + "/syntax.dat";
 		} else {
-			syntaxDat = Configuration.getMapUrl() + Configuration.getSoundDirectory() + "/syntax.dat";
-		}
-		//#else
-		String syntaxDat = "/" + Configuration.getSoundDirectory() + "/syntax.dat";
-		//#endif
-		try {
-			//#if polish.android
-			InputStream is = null;
-			if (Configuration.usingBuiltinMap() || !Configuration.getMapUrl().endsWith("/")) {
-				is = MidletBridge.instance.getResources().getAssets().open(syntaxDat.substring(1));
+			if (Configuration.getMapUrl().endsWith("/")) {
+				syntaxDat = Configuration.getMapUrl() + Configuration.getSoundDirectory() + "/syntax.dat";
 			} else {
-				FileConnection fc = (FileConnection) Connector.open(syntaxDat, Connector.READ);
-				is = fc.openInputStream();
+				syntaxDat = Configuration.getSoundDirectory() + "/syntax.dat";
 			}
-			//#else
-			InputStream is = QueueReader.class.getResourceAsStream(syntaxDat);
-			//#endif
+		}
+		try {
+			InputStream is = null;
+			if (Configuration.usingBuiltinMap()) {
+				//#if polish.android
+				// for builtin maps, open as asset from bundle
+				is = MidletBridge.instance.getResources().getAssets().open(syntaxDat.substring(1));
+				//#else
+				// for builtin maps, open from bundle
+				is = getClass().getResourceAsStream(syntaxDat);
+				//#endif
+			}
+			else {
+				// either in map dir or map bundle
+				if (Configuration.getMapUrl().endsWith("/")) {
+					// map dir
+					FileConnection fc = (FileConnection) Connector.open(syntaxDat, Connector.READ);
+					is = fc.openInputStream();
+				} else {
+					// zip map 
+					if (mapZipFile == null) {
+						mapZipFile = new ZipFile(Configuration.getMapUrl(), -1);
+					}
+					is = mapZipFile.getInputStream(mapZipFile.getEntry(syntaxDat));
+				}
+			}
 			if (is == null) {
 				logger.error("Error opening " + syntaxDat);
 				return false;							
