@@ -41,6 +41,7 @@ public class FsDiscover
 	private final Command OK_CMD = new Command("Select", Command.ITEM, 1);
 
 	private final Command UP_CMD = new Command("Directory up", Command.ITEM, 1);
+	private final Command ROOT_CMD = new Command("Go to root(s)", Command.ITEM, 1);
 	private final Command DOWN_CMD = new Command("Directory down",
 			Command.ITEM, 1);
 
@@ -103,6 +104,7 @@ public class FsDiscover
 		list.addCommand(BACK_CMD);
 		list.addCommand(OK_CMD);
 		list.addCommand(UP_CMD);
+		list.addCommand(ROOT_CMD);
 		list.setCommandListener(this);
 		list.setSelectCommand(DOWN_CMD);
 		return list;
@@ -223,6 +225,12 @@ public class FsDiscover
 			 * as we need to keep track of state for e.g. GuiDiscover
 			 */
 			sl.selectionCanceled();
+			parent.show();
+			return;
+		}
+		if (c == ROOT_CMD) {
+			url = "file:///";
+			sl.selectedFile(url);
 			parent.show();
 			return;
 		}
