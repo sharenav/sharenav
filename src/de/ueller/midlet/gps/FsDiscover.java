@@ -113,12 +113,19 @@ public class FsDiscover
 	public void run() {
 		try {
 			if (url.equalsIgnoreCase("file:///")) {
+				//#if polish.android
+				//#else
 				getRoots();
+				//#endif
 			} else {
 				// try to get url content, if nok get roots instead
 				if (!getRootContent(url)) {
 					url = "file:///";
+					//#if polish.android
+					getRootContent(url);
+					//#else
 					getRoots();
+					//#endif
 				}
 			}
 		} catch (SecurityException se) {
@@ -217,6 +224,9 @@ public class FsDiscover
 			show();
 		} catch (IOException ioe) {
 			logger.error(ioe.getMessage());
+		}
+		catch( SecurityException e ){
+			logger.error(e.getMessage());
 		}
 		//#endif
 		return true;
