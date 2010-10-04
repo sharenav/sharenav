@@ -29,8 +29,6 @@ public class RouteSyntax {
 	private final static byte SYNTAX_FORMAT_VERSION = 1;
 	private static Logger logger;
 	
-	private static ZipFile mapZipFile;
-
 	private class SyntaxInstructionTypes {
 		final static int simpleDirection = 0;
 		final static int beardir = 1;
@@ -161,10 +159,10 @@ public class RouteSyntax {
 					is = fc.openInputStream();
 				} else {
 					// zip map 
-					if (mapZipFile == null) {
-						mapZipFile = new ZipFile(Configuration.getMapUrl(), -1);
+					if (Configuration.mapZipFile == null) {
+						Configuration.mapZipFile = new ZipFile(Configuration.getMapUrl(), -1);
 					}
-					is = mapZipFile.getInputStream(mapZipFile.getEntry(syntaxDat));
+					is = Configuration.mapZipFile.getInputStream(Configuration.mapZipFile.getEntry(syntaxDat));
 				}
 			}
 			if (is == null) {

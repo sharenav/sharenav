@@ -11,7 +11,13 @@ import de.ueller.gps.data.Legend;
 
 import net.sourceforge.util.zip.ZipFile;
 
+import java.io.DataInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import javax.microedition.io.Connector;
+//#if polish.api.fileconnection
+import javax.microedition.io.file.FileConnection;
+//#endif
 //#if polish.api.mmapi	
 //#ifndef polish.android
 import javax.microedition.media.Player;
@@ -54,8 +60,6 @@ public class NoiseMaker
 	
 	private static volatile String mPlayingNames = "";
 	private static volatile int mPlayingNameIndex=0;
-
-	private static ZipFile mapZipFile;
 
 //#if polish.api.mmapi			
 //#if polish.android
@@ -196,22 +200,31 @@ public class NoiseMaker
 
 		InputStream is = null;
 		if (Configuration.usingBuiltinMap()) {
-			if (Configuration.getMapUrl().endsWith("/")) {
-				// mapdir map
-				is = getClass().getResourceAsStream(soundFileWithSuffix);
-			} else {
-				try {
-					if (mapZipFile == null) {
+			// mapdir map
+			//#if polish.android
+			// for builtin maps, open as asset from bundle
+			is = MidletBridge.instance.getResources().getAssets().open(soundFileWithSuffix);
+			//#else
+			// for builtin maps, open from bundle
+			is = getClass().getResourceAsStream(soundFileWithSuffix);
+			//#endif
+		} else {
+			try {
+				if (Configuration.getMapUrl().endsWith("/")) {
+					FileConnection fc = (FileConnection) Connector.open(soundFileWithSuffix, Connector.READ);
+					is = fc.openInputStream();
+				} else {
+					if (Configuration.mapZipFile == null) {
 						//#debug debug
-						mapZipFile = new ZipFile(Configuration.getMapUrl(), -1);
+						Configuration.mapZipFile = new ZipFile(Configuration.getMapUrl(), -1);
 					}
-					is = mapZipFile.getInputStream(mapZipFile.getEntry(soundFileWithSuffix));
-				} catch (Exception ex) {
-					mLogger.exception("Error opening zip file: " + Configuration.getMapUrl(), ex);
-					return false;
+					is = Configuration.mapZipFile.getInputStream(Configuration.mapZipFile.getEntry(soundFileWithSuffix));
 				}
-				// zip map
+			} catch (Exception ex) {
+				mLogger.exception("Error opening zip file: " + Configuration.getMapUrl(), ex);
+				return false;
 			}
+			// zip map
 		}
 		if (is != null) {
 			//#debug debug
