@@ -414,8 +414,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		sources[1] = Locale.get("guidiscover.Filesystem")/*Filesystem: */;
 		mapSrc = new ChoiceGroup(Locale.get("guidiscover.MapSource")/*Map source:*/, Choice.EXCLUSIVE, sources, null);
 
-		String [] preferInternal = new String[1];
+		String [] preferInternal = new String[2];
 		preferInternal[0] = Locale.get("guidiscover.PreferBuiltInPNGs")/*Prefer built-in POI PNGs (faster startup e.g. on some Nokias)*/;
+		preferInternal[1] = Locale.get("guidiscover.PreferBuiltInSounds")/*Prefer built-in sounds*/;
 		mapSrcOptions = new ChoiceGroup(Locale.get("guidiscover.Options")/*Options*/, ChoiceGroup.MULTIPLE, preferInternal, null);
 		
 		menuSelectMapSource.append(mapSrc);
@@ -853,6 +854,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				}
 				Configuration.setMapUrl(url);
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_PREFER_INTERNAL_PNGS, mapSrcOptions.isSelected(0));
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_PREFER_INTERNAL_SOUNDS, mapSrcOptions.isSelected(1));
 				state = STATE_ROOT;
 				show();
 				logger.fatal(Locale.get("guidiscover.NeedRestart")/*Need to restart GpsMid, otherwise map is in an inconsistant state*/ + " " + Configuration.getMapUrl());
@@ -1346,6 +1348,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				mapSrc.setSelectedIndex(Configuration.usingBuiltinMap() ? 0 : 1, true);
 				mapSrcOptions.setSelectedIndex(0,
 						Configuration.getCfgBitSavedState(Configuration.CFGBIT_PREFER_INTERNAL_PNGS));
+				mapSrcOptions.setSelectedIndex(1,
+						Configuration.getCfgBitSavedState(Configuration.CFGBIT_PREFER_INTERNAL_SOUNDS));
 				GpsMid.getInstance().show(menuSelectMapSource);
 				state = STATE_MAP;
 				break;

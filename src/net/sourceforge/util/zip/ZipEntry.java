@@ -120,6 +120,11 @@ public class ZipEntry implements ZipConstants
     return name;
   }
 
+  public int getOffset()
+  {
+    return offset;
+  }
+
   /**
    * Sets the time of last modification of the entry.
    * @time the time of last modification of the entry.

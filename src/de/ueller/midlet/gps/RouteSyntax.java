@@ -131,7 +131,7 @@ public class RouteSyntax {
 		routeSyntaxAvailable = false;
 		int i;
 		String syntaxDat = null;
-		if (Configuration.usingBuiltinMap()) {
+		if (Configuration.usingBuiltinMap() || Configuration.getCfgBitSavedState(Configuration.CFGBIT_PREFER_INTERNAL_SOUNDS)) {
 			syntaxDat = "/" + Configuration.getSoundDirectory() + "/syntax.dat";
 		} else {
 			if (Configuration.getMapUrl().endsWith("/")) {
@@ -142,7 +142,7 @@ public class RouteSyntax {
 		}
 		try {
 			InputStream is = null;
-			if (Configuration.usingBuiltinMap()) {
+			if (Configuration.usingBuiltinMap() || Configuration.getCfgBitSavedState(Configuration.CFGBIT_PREFER_INTERNAL_SOUNDS)) {
 				//#if polish.android
 				// for builtin maps, open as asset from bundle
 				is = MidletBridge.instance.getResources().getAssets().open(syntaxDat.substring(1));

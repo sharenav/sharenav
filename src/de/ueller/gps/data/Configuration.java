@@ -249,6 +249,8 @@ public class Configuration {
 	public final static byte CFGBIT_CELLID_STARTUP = 92;
 	/** bit 93: backlight method SAMSUNG */
 	public final static byte CFGBIT_BACKLIGHT_SAMSUNG = 93;
+	/** bit 94: Flag whether internal sound files should be used instead of ones with external map */
+	public final static byte CFGBIT_PREFER_INTERNAL_SOUNDS = 94;
 	
 	/**
 	 * These are the database record IDs for each configuration option
@@ -372,7 +374,7 @@ public class Configuration {
 	
 	private static boolean mapFromJar;
 	private static String mapFileUrl;
-	private static ZipFile mapZipFile;
+	public static ZipFile mapZipFile;
 
 	private static String smsRecipient;
 	private static int speedTolerance = 0;

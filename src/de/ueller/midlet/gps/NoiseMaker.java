@@ -10,6 +10,7 @@ import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Legend;
 
 import net.sourceforge.util.zip.ZipFile;
+import net.sourceforge.util.zip.ZipEntry;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -34,6 +35,7 @@ import android.content.res.AssetManager.AssetInputStream;
 import android.content.res.AssetFileDescriptor;
 import android.content.Context;
 import java.io.FileDescriptor;
+import java.io.FileInputStream;
 //#endif
 //#endif
 
@@ -132,13 +134,19 @@ public class NoiseMaker
 		String soundFileWithSuffix = soundFile;
 		// if it doesn't end with /, it's a zip file: use sounds from android bundle for now
 		// FIXME add code to play sound from zipfile if possible
-		if (Configuration.usingBuiltinMap() || !Configuration.getMapUrl().endsWith("/")) {
+		//if (Configuration.usingBuiltinMap() || !Configuration.getMapUrl().endsWith("/")) {
+		if (Configuration.usingBuiltinMap() || Configuration.getCfgBitSavedState(Configuration.CFGBIT_PREFER_INTERNAL_SOUNDS)) {
 			//#debug debug
 			mLogger.debug("Preparing to play sound " + soundFile);
 		} else {
-			soundFileWithSuffix = Configuration.getMapUrl() + soundFile;
-			//#debug debug
-			mLogger.debug("Preparing to play url " + soundFileWithSuffix);
+			if (Configuration.getMapUrl().endsWith("/")) {
+				soundFileWithSuffix = Configuration.getMapUrl() + soundFile;
+				//#debug debug
+				mLogger.debug("Preparing to play url " + soundFileWithSuffix);
+			} else {
+				//#debug debug
+				mLogger.debug("Preparing to play zip sound " + soundFileWithSuffix);
+			}
 		}	
 		try {
 			if (sPlayer == null)
@@ -155,12 +163,23 @@ public class NoiseMaker
 			//#debug debug
 			mLogger.debug("created player for " + soundFileWithSuffix);
 			try {
-				if (Configuration.usingBuiltinMap() || !Configuration.getMapUrl().endsWith("/")) {
+				if (Configuration.usingBuiltinMap() || Configuration.getCfgBitSavedState(Configuration.CFGBIT_PREFER_INTERNAL_SOUNDS)) {
 					AssetFileDescriptor afd = MidletBridge.instance.getResources().getAssets().openFd(soundFile);
 					sPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
 					afd.close();
 				} else {
-					sPlayer.setDataSource(soundFileWithSuffix.substring("file://".length()));
+					if (Configuration.getMapUrl().endsWith("/")) {
+						sPlayer.setDataSource(soundFileWithSuffix.substring("file://".length()));
+					} else {
+						if (Configuration.mapZipFile == null) {
+							//#debug debug
+							Configuration.mapZipFile = new ZipFile(Configuration.getMapUrl(), -1);
+						}
+						ZipEntry ze = Configuration.mapZipFile.getEntry(soundFileWithSuffix);
+						InputStream is = Configuration.mapZipFile.getInputStream(ze);
+						FileInputStream fis = new FileInputStream(Configuration.getMapUrl());
+						sPlayer.setDataSource(fis.getFD(), ze.getOffset(), ze.getSize());
+					}
 				}
 				sPlayer.prepare();
 			} catch (Exception ex) {
@@ -188,7 +207,7 @@ public class NoiseMaker
 	private synchronized boolean preparePlayer(String soundFile, String mediaType, String suffix) {
 		// read from bundle
 		String soundFileWithSuffix = null;
-		if (Configuration.usingBuiltinMap()) {
+		if (Configuration.usingBuiltinMap() || Configuration.getCfgBitSavedState(Configuration.CFGBIT_PREFER_INTERNAL_SOUNDS)) {
 			soundFileWithSuffix = "/" + soundFile;
 		} else {
 			if (Configuration.getMapUrl().endsWith("/")) {
@@ -199,7 +218,7 @@ public class NoiseMaker
 		}
 
 		InputStream is = null;
-		if (Configuration.usingBuiltinMap()) {
+		if (Configuration.usingBuiltinMap() || Configuration.getCfgBitSavedState(Configuration.CFGBIT_PREFER_INTERNAL_SOUNDS)) {
 			// mapdir map
 			//#if polish.android
 			// for builtin maps, open as asset from bundle

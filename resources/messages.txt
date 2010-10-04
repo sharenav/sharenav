@@ -355,6 +355,7 @@ guidiscover.compass=by compass
 guidiscover.DirectionOptions=Rotate map
 guidiscover.cellIDAtStartup=Do a single lookup
 guidiscover.cellIDStart=CellID lookup at startup
+guidiscover.PreferBuiltInSounds=Prefer built-in sounds
 guimapfeatures.AlternativeInfo=Alternative info
 guimapfeatures.Apply=Apply
 guimapfeatures.AreaLabels=Area labels
