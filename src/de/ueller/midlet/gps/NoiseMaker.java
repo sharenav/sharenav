@@ -132,9 +132,6 @@ public class NoiseMaker
 	// using MediaPlayer
 	private synchronized boolean preparePlayer(String soundFile, String mediaType, String suffix) {
 		String soundFileWithSuffix = soundFile;
-		// if it doesn't end with /, it's a zip file: use sounds from android bundle for now
-		// FIXME add code to play sound from zipfile if possible
-		//if (Configuration.usingBuiltinMap() || !Configuration.getMapUrl().endsWith("/")) {
 		if (Configuration.usingBuiltinMap() || Configuration.getCfgBitSavedState(Configuration.CFGBIT_PREFER_INTERNAL_SOUNDS)) {
 			//#debug debug
 			mLogger.debug("Preparing to play sound " + soundFile);
@@ -147,7 +144,7 @@ public class NoiseMaker
 				//#debug debug
 				mLogger.debug("Preparing to play zip sound " + soundFileWithSuffix);
 			}
-		}	
+		}
 		try {
 			if (sPlayer == null)
 			{
@@ -175,9 +172,10 @@ public class NoiseMaker
 							//#debug debug
 							Configuration.mapZipFile = new ZipFile(Configuration.getMapUrl(), -1);
 						}
+						// access the zip to find out at which position the uncompressed sound is at and what is the length
 						ZipEntry ze = Configuration.mapZipFile.getEntry(soundFileWithSuffix);
-						InputStream is = Configuration.mapZipFile.getInputStream(ze);
-						FileInputStream fis = new FileInputStream(Configuration.getMapUrl());
+						// then open the zip file and position media player there for playing
+						FileInputStream fis = new FileInputStream(Configuration.getMapUrl().substring("file://".length()));
 						sPlayer.setDataSource(fis.getFD(), ze.getOffset(), ze.getSize());
 					}
 				}
