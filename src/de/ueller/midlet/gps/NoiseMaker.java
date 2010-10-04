@@ -192,9 +192,9 @@ public class NoiseMaker
 			soundFileWithSuffix = "/" + soundFile;
 		} else {
 			if (Configuration.getMapUrl().endsWith("/")) {
-				soundFileWithSuffix = soundFile;
-			} else {
 				soundFileWithSuffix = Configuration.getMapUrl() + soundFile;
+			} else {
+				soundFileWithSuffix = soundFile;
 			}
 		}
 
