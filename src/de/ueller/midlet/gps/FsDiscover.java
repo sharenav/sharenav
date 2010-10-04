@@ -168,6 +168,7 @@ public class FsDiscover
 			// To list just visible files and directories, use
 			// list() with no arguments.
 			if (!fc.exists()) {
+				url = "file:///";
 				return false;
 			}
 			if (!fc.isDirectory()) {
@@ -193,6 +194,13 @@ public class FsDiscover
 				//#debug debug
 				logger.debug("found file: " + fileName);
 				// add files too if not choosedir
+				//#if polish.android
+				FileConnection fc2 = (FileConnection) Connector.open(url + fileName);
+				if (fc2.isDirectory()) {
+					fileName += "/";
+					fc2.close();
+				}
+				//#endif
 				if (fileName.endsWith("/") ||
 						!chooseDir &&
 						( suffix == null ||	fileName.toLowerCase()
@@ -230,8 +238,8 @@ public class FsDiscover
 		}
 		if (c == ROOT_CMD) {
 			url = "file:///";
-			sl.selectedFile(url);
-			parent.show();
+			processorThread = new Thread(this);
+			processorThread.start();
 			return;
 		}
 		if (list.getSelectedIndex() < 0) {
