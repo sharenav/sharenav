@@ -21,7 +21,7 @@
 	</api>
 	<api>
 		<name>min-samsapi</name>
-		<description>minimal Siemens API for backlight and vibration
+		<description>minimal Samsung API for backlight
 		</description>
 		<names>min-samsapi</names>
 		<symbol>min-samsapi</symbol>
