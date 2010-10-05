@@ -1568,6 +1568,7 @@ scale alias 1: zoomed out 21x
 		<keyW tag = "leisure">
   			<Wvalue name = "park">
   				<description desc = "Park"/>
+				<image src = "park.png"/>
   				<namekey tag = "name"/>
   				<isArea area = "true"/>
   				<scale scale = "19"/>
