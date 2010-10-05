@@ -1065,6 +1065,7 @@ scale alias 1: zoomed out 21x
   		<keyW tag = "highway">
   			<Wvalue name = "motorway" priority = "10">
   				<description desc = "motorway"/>
+				<image src = "motorway.png"/>
   				<namekey tag = "name"/>
   				<namefallback tag = "ref"/>
   				<isArea area = "false"/>
@@ -1077,6 +1078,7 @@ scale alias 1: zoomed out 21x
   			</Wvalue>
   			<Wvalue name = "motorway_link" priority = "10">
   				<description desc = "motorway link"/>
+				<image src = "motorway.png"/>
   				<namekey tag = "name"/>
   				<namefallback tag = "ref"/>
   				<isArea area = "false"/>
