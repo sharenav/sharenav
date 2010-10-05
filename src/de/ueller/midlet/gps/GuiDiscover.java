@@ -541,6 +541,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		//#if polish.api.min-siemapi
 		i++;
 		//#endif
+		//#if polish.api.min-samsapi
+		i++;
+		//#endif
 		//#if polish.android
 		i++;
 		//#endif
