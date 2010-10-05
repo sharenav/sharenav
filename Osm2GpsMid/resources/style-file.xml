@@ -1666,6 +1666,7 @@ scale alias 1: zoomed out 21x
 			</Wvalue>  			
   			<Wvalue name = "school">
   				<description desc = "School"/>
+				<image src = "school.png"/>
   				<namekey tag = "name"/>
   				<isArea area = "true"/>
   				<scale scale = "19"/>
