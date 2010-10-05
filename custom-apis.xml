@@ -20,6 +20,15 @@
 		<path>lib/min-siemapi.jar</path>
 	</api>
 	<api>
+		<name>min-samsapi</name>
+		<description>minimal Siemens API for backlight and vibration
+		</description>
+		<names>min-samsapi</names>
+		<symbol>min-samsapi</symbol>
+		<files>min-samsapi</files>
+		<path>lib/min-samsapi.jar</path>
+	</api>
+	<api>
 		<name>OpenStreetMap-editing</name>
 		<description>Pseudo-API to (miss)use device selection to compile in OpenStreetMap editing
 		</description>
