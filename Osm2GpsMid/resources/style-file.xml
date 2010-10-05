@@ -1197,7 +1197,7 @@ scale alias 1: zoomed out 21x
   			</Wvalue>  			
   			<Wvalue name = "residential" priority = "10">
   				<description desc = "residential"/>
-  				<namekey tag = "name"/>  				
+  				<namekey tag = "name"/>
   				<namefallback tag = "ref"/>
   				<isArea area = "false"/>
   				<scale scale = "20"/>
@@ -1566,7 +1566,7 @@ scale alias 1: zoomed out 21x
 		<keyW tag = "leisure">
   			<Wvalue name = "park">
   				<description desc = "Park"/>
-  				<namekey tag = "name"/>  				
+  				<namekey tag = "name"/>
   				<isArea area = "true"/>
   				<scale scale = "19"/>
   				<lineColor color = "0000FF00" colorAtNight="00147414"/>
@@ -1574,14 +1574,14 @@ scale alias 1: zoomed out 21x
   			</Wvalue>
   			<Wvalue name = "stadium">
   				<description desc = "Stadium"/>
-  				<namekey tag = "name"/>  				
+  				<namekey tag = "name"/>
   				<isArea area = "true"/>
   				<scale scale = "19"/>
   				<lineColor color = "00FFFFBB"  colorAtNight="00636300"/>
   			</Wvalue>
   			<Wvalue name = "pitch">
   				<description desc = "Pitch"/>
-  				<namekey tag = "name"/>  				
+  				<namekey tag = "name"/>
   				<isArea area = "true"/>
   				<scale scale = "19"/>
   				<lineColor color = "00A0F000"/>
@@ -1663,7 +1663,7 @@ scale alias 1: zoomed out 21x
 			</Wvalue>  			
   			<Wvalue name = "school">
   				<description desc = "School"/>
-  				<namekey tag = "name"/>  				
+  				<namekey tag = "name"/>
   				<isArea area = "true"/>
   				<scale scale = "19"/>
   				<lineColor color = "00EEEEEE" colorAtNight="00622F2F"/>
@@ -1999,7 +1999,7 @@ scale alias 1: zoomed out 21x
 				<showName style = "area"/> 
 				<isArea area = "false"/>
 				<scale scale = "12"/>
-  				<lineColor color = "00005555" colorAtNight="00CCFFFF"/>
+				<lineColor color = "00005555" colorAtNight="00CCFFFF"/>
   				<wayWidth width="10" />
 				<force_to layer = "-2"/>
 			</Wvalue>
@@ -2022,7 +2022,7 @@ scale alias 1: zoomed out 21x
 				<showName style = "area"/> 
 				<isArea area = "false"/>
 				<scale scale = "12"/>
-  				<lineColor color = "00005555" colorAtNight="00CCFFFF"/>
+				<lineColor color = "00005555" colorAtNight="00CCFFFF"/>
   				<wayWidth width="10" />
 				<force_to layer = "-2"/>
 			</Wvalue>
@@ -2070,7 +2070,7 @@ scale alias 1: zoomed out 21x
 				(see https://sourceforge.net/tracker/index.php?func=detail&aid=3041068&group_id=192084&atid=939974 ) -->
   				<ignoreOsmAreaTag ignore = "true"/>
   				<scale scale = "6"/>
-  				<lineColor color = "00005555" colorAtNight="00CCFFFF"/>
+				<lineColor color = "00005555" colorAtNight="00CCFFFF"/>
   				<wayWidth width="10" />
 				<force_to layer = "-2"/>
 			</Wvalue>  			
