@@ -39,6 +39,7 @@ public class Node extends Entity {
 	private byte connectedLineCount = 0;
 //	private Set<Way> connectedWays = new HashSet<Way>();
 	public RouteNode routeNode;
+	public boolean fid = false;
 	
 	// the upper flags of connectedLineCount are used to indicate special informations about the node
 	public static final int CLC_MASK_CONNECTEDLINECOUNT = 31;

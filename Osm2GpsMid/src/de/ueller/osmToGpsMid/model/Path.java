@@ -109,7 +109,7 @@ public class Path {
 			return null;
 		}
 		int splitP = nodeList.size() / 2;
-		ArrayList<Node> newNodeList = new ArrayList<Node>();
+		ArrayList<Node> newNodeList = new ArrayList<Node>(1);
 		int a = 0;
 		for (Iterator<Node> si = nodeList.iterator(); si.hasNext();) {
 			Node t = si.next();

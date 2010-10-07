@@ -14,10 +14,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.LinkedList;
-import java.util.Set;
 import java.util.Vector;
 
 import javax.xml.parsers.SAXParser;
@@ -123,17 +121,20 @@ public class OxParser extends DefaultHandler {
 		}
 	}
 
+	@Override
 	public void startDocument() {
 		System.out.println("Start of Document");
 		System.out.println("Nodes read/used, Ways read/used, Relations read/partial/used");
 	}
 
+	@Override
 	public void endDocument() {
 	    long time = (System.currentTimeMillis() - startTime) / 1000;
 
 		System.out.println("Nodes " + nodeTot + "/" + nodeIns + 
 				", Ways "+ wayTot + "/" + wayIns + 
 				", Relations " + relTot + "/" + relPart + "/" + relIns);
+		printMemoryUsage(2);
 		System.out.println("End of document, reading took " + time + " seconds");
 	}
 	
@@ -158,6 +159,7 @@ public class OxParser extends DefaultHandler {
 		return inBound;
 	}
 
+	@Override
 	public void startElement(String namespaceURI, String localName, String qName, Attributes atts) {		
 //		System.out.println("start " + localName + " " + qName);
 		if (qName.equals("node")) {
@@ -277,6 +279,7 @@ public class OxParser extends DefaultHandler {
 
 	} // startElement
 
+	@Override
 	public void endElement(String namespaceURI, String localName, String qName) {		
 //		System.out.println("end  " + localName + " " + qName);
 		ele++;
@@ -407,6 +410,7 @@ public class OxParser extends DefaultHandler {
 		ways.remove(w.id);
 	}
 
+	@Override
 	public void fatalError(SAXParseException e) throws SAXException {
 		System.out.println("Error: " + e);
 		throw e;
@@ -491,4 +495,31 @@ public class OxParser extends DefaultHandler {
 		nodes2 = new Vector<Node>(nodes.values()); 
 		nodes = null; 
 	}
+
+	/**
+	 * Print memory usage.
+	 *
+	 * @param numberOfGarbageLoops Number of times to call the garbage colector and print the memory usage again.
+	 */
+	public static void printMemoryUsage(int numberOfGarbageLoops)
+	{
+		System.out.print("---> Used memory: " + (Runtime.getRuntime().totalMemory () - Runtime.getRuntime().freeMemory ())/1024+ " KB / " +Runtime.getRuntime().maxMemory()/1024 +" KB");
+		for ( int i = 0; i < numberOfGarbageLoops; i++)
+		{
+			System.gc();
+			System.out.print(" --> gc: " + (Runtime.getRuntime().totalMemory () - Runtime.getRuntime().freeMemory ())/1024+ " KB");
+			try
+			{
+				if ( i + 1 <  numberOfGarbageLoops)
+				{
+					Thread.sleep(100);
+				}
+			}
+			catch (InterruptedException ex)
+			{
+			}
+		}
+		System.out.println("");
+	}
+
 }

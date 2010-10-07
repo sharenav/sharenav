@@ -1130,16 +1130,16 @@ public class CreateGpsMidData implements FilenameFilter {
 			fo.close();
 			// mark nodes as written to MidStorage 
 			for (Node n : nodes) { 
-				if (n.fid != 0) {
+				if (n.fid) {
 					System.out.println("DATA DUPLICATION: This node has been written already! " + n);
 				}
-				n.fid = t.fid; 
+				n.fid = true; 
 			}
 			// mark ways as written to MidStorage
 			for (Iterator<Way> wi = t.ways.iterator(); wi.hasNext(); ) {
 				Way w1 = wi.next();
 				w1.used = true;
-				w1.fid = t.fid;
+				//w1.fid = t.fid;
 			}
 		} else {
 			t.bounds = tileBound.clone();
@@ -1224,7 +1224,7 @@ public class CreateGpsMidData implements FilenameFilter {
 			//Check to see if the node has already been written to MidStorage
 			//If yes, then ignore the node here, to prevent duplicate nodes
 			//due to overlapping tiles
-			if (node.fid != 0) {
+			if (node.fid) {
 				continue;
 			}
 			if (node.getType(configuration) < 0) {
@@ -1354,7 +1354,7 @@ public class CreateGpsMidData implements FilenameFilter {
 			//still hit the case when a node is written twice.
 			//Warn about this fact to fix this correctly at a
 			//later stage
-			if (n.fid != 0) {
+			if (n.fid) {
 				System.out.println("WARNING: Writing interest node twice, " + n);
 			}
 			writeNode(n, ds, INODE, t);
@@ -1454,7 +1454,6 @@ public class CreateGpsMidData implements FilenameFilter {
 					} 
 				}
 			}
-
 			if (n.getType(configuration) != -1) {
 				flags += Constants.NODE_MASK_TYPE;
 			}

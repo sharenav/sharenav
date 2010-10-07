@@ -1,13 +1,10 @@
 package de.ueller.osmToGpsMid.model;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
-import de.ueller.osmToGpsMid.Configuration;
 import de.ueller.osmToGpsMid.SmallArrayMap;
 
 
@@ -19,16 +16,10 @@ public class Entity {
 	public Long	id;
 	public Node nearBy;	
 	/**
-	 * the name index
-         */
-        public int nameIdx;
-
-	/**
 	 * The tags for this object  
 	 * Key: String  Value: String
 	 */
 	private Map<String,String> tags;	
-	public int fid;
 	
 	public Entity() {
 		
