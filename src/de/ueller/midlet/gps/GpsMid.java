@@ -610,6 +610,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 									} else if (Configuration
 											.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_SIEMENS)) {
 										try {
+											// TODO: Do we really need the following code line?
 											Class.forName("com.siemens.mp.game.Light");
 											SiemGameLight.SwitchOn();
 										} catch (Exception e) {
@@ -620,10 +621,11 @@ public class GpsMid extends MIDlet implements CommandListener {
 									} else if (Configuration
 											.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_SAMSUNG)) {
 										try {
+											// TODO: Do we really need the following code line?
 											Class.forName("com.samsung.util.LCDLight");
 											SamsLCDLight.on(5000);
 										} catch (Exception e) {
-											log.exception("Siemens API error: ", e);
+											log.exception("Samsung API error: ", e);
 										}
 										//#endif
 									}
@@ -692,6 +694,15 @@ public class GpsMid extends MIDlet implements CommandListener {
 
 			}
 			lightTimer = null;
+		}
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_SAMSUNG)) {
+			try {
+				// TODO: Do we really need the following code line?
+				Class.forName("com.samsung.util.LCDLight");
+				SamsLCDLight.off();
+			} catch (Exception e) {
+				log.exception("Samsung API error: ", e);
+			}
 		}
 	}
 
