@@ -695,6 +695,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 			}
 			lightTimer = null;
 		}
+//#if polish.api.min-samsapi
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_SAMSUNG)) {
 			try {
 				// TODO: Do we really need the following code line?
@@ -704,6 +705,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 				log.exception("Samsung API error: ", e);
 			}
 		}
+//#endif
 	}
 
 	public void restartBackLightTimer() {
