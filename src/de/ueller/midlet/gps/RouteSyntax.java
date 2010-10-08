@@ -152,6 +152,7 @@ public class RouteSyntax {
 				//#endif
 			}
 			else {
+				//#if polish.api.fileconnection
 				// either in map dir or map bundle
 				if (Configuration.getMapUrl().endsWith("/")) {
 					// map dir
@@ -164,6 +165,11 @@ public class RouteSyntax {
 					}
 					is = Configuration.mapZipFile.getInputStream(Configuration.mapZipFile.getEntry(syntaxDat));
 				}
+				//This should never happen.
+				is = null;
+				logger.fatal("Error, we don't have access to the filesystem, but our syntax data is supposed to be there!");
+				//#endif
+
 			}
 			if (is == null) {
 				logger.error("Error opening " + syntaxDat);
