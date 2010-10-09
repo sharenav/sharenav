@@ -21,11 +21,6 @@
 	name="GpsMid" 
 	default="j2mepolish">
 	
-	
-<property 
-	name="android.home" 
-	location="/path/to/android-sdk" />
-
 <property file="build.properties" />
 <property file="midlet.properties" />
 <property file="${polish.home}/global.properties" />
