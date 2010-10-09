@@ -47,7 +47,7 @@ public class CalcNearBy {
 				try {					
 					nearestPlace = (Node) nearByElements.nearest(MyMath.latlon2XYZ(thisNode));					
 
-					if (!(MyMath.dist(thisNode, nearestPlace) < Constants.MAX_DIST_CITY[nearestPlace.getType(null)])) {					
+					if (nearestPlace.getType(null) <= 5 && !(MyMath.dist(thisNode, nearestPlace) < Constants.MAX_DIST_CITY[nearestPlace.getType(null)])) {					
 						long maxDistanceTested = MyMath.dist(thisNode, nearestPlace);
 						int retrieveN = 5;
 						if (retrieveN > kdSize) {
@@ -62,7 +62,7 @@ public class CalcNearBy {
 								dist = MyMath.dist(thisNode, other);
 								//As the list returned by the kd-tree is sorted by distance,
 								//we can stop at the first found 
-								if (dist < Constants.MAX_DIST_CITY[other.getType(null)]) {								
+								if (other.getType(null) <= 5 && dist < Constants.MAX_DIST_CITY[other.getType(null)]) {								
 									nearestPlace = other;									
 									break;
 								}							
