@@ -136,7 +136,8 @@
 		<!-- 
 		 -->
 		<!-- 
-		   building for Android
+		   building for Android: ant -propertyfile android.properties
+		   settings are in android.properties rather then here.
 
 			fullscreen="no"
 			usePolishGui="true"
@@ -152,8 +153,8 @@
 
 		<build
 			symbols="ExampleSymbol, AnotherExample"
-			fullscreen="menu"
-			usePolishGui="false"
+			fullscreen="${fullscreen}"
+			usePolishGui="${usePolishGui}"
 			workDir="${dir.work}"
 		>     
 		   <!-- postcompiler name="floater">
