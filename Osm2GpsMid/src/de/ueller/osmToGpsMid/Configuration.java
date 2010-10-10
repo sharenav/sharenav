@@ -882,9 +882,19 @@ public class Configuration {
 				 * still the standard BufferedInputStream does poorly and blocks a lot leaving
 				 * CPUs idle.
 				 */
-				fr = new ThreadBufferedInputStream(fr);
+				if (!planet.endsWith("osm.pbf")) {
+					fr = new ThreadBufferedInputStream(fr);
+				}
 			}
 			return fr;
+		}
+		
+		public OsmParser getPlanetParser() throws IOException {
+			if (planet.endsWith("osm.pbf")) {
+				return new OpbfParser(getPlanetSteam(), this);
+			} else {
+				return new OxParser(getPlanetSteam(), this);
+			}
 		}
 		
 		public InputStream getCellStream() throws IOException {

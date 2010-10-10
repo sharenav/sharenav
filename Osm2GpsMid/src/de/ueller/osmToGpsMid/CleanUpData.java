@@ -31,13 +31,13 @@ import de.ueller.osmToGpsMid.model.Way;
  */
 public class CleanUpData {
 
-	private final OxParser parser;
+	private final OsmParser parser;
 	private final Configuration conf;
 
 	
 	private HashMap<Node,Node> replaceNodes = new HashMap<Node,Node>(); 
 
-	public CleanUpData(OxParser parser, Configuration conf) {
+	public CleanUpData(OsmParser parser, Configuration conf) {
 		this.parser = parser;
 		this.conf = conf;
 		removeEmptyWays();

@@ -19,10 +19,10 @@ import edu.wlu.cs.levy.CG.KeySizeException;
 
 
 public class CalcNearBy {
-	OxParser parser;
+	OsmParser parser;
 	private int kdSize = 0; // Hack around the fact that KD-tree doesn't tell us it's size
 
-	public CalcNearBy(OxParser parser) {
+	public CalcNearBy(OsmParser parser) {
 		super();
 		this.parser = parser;
 		KDTree nearByElements = getNearByElements();
@@ -36,7 +36,7 @@ public class CalcNearBy {
 	 * @param parser2
 	 * @param nearByElements
 	 */
-	private void calcWayIsIn(OxParser parser2, KDTree nearByElements) {		
+	private void calcWayIsIn(OsmParser parser2, KDTree nearByElements) {		
 		for (Way w : parser.getWays()) {
 			if (w.isHighway() /*&& w.getIsIn() == null */) {
 				Node thisNode = w.getMidPoint();
@@ -99,7 +99,7 @@ public class CalcNearBy {
 		}		
 	}
 
-	private void calcCityNearBy(OxParser parser, KDTree nearByElements) {
+	private void calcCityNearBy(OsmParser parser, KDTree nearByElements) {
 		//double [] latlonKey = new double[2];
 		for (Node n : parser.getNodes()) {
 			String place = n.getPlace();

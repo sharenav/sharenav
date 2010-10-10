@@ -38,12 +38,12 @@ import de.ueller.osmToGpsMid.tools.FileTools;
  *
  */
 public class RouteData {
-	private OxParser parser;
+	private OsmParser parser;
 	private String path;
 	public Map<Long, RouteNode> nodes = new HashMap<Long, RouteNode>();
 	public ArrayList<Connection> connections = new ArrayList<Connection>();
 
-	public RouteData(OxParser parser, String path) {
+	public RouteData(OsmParser parser, String path) {
 		super();
 		this.parser = parser;
 		this.path = path;

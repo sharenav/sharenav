@@ -205,7 +205,15 @@
           file="lib/kd.jar"
           todir="${basedir}"
           name="exploded"/>
-   </target>
+<explode
+          file="lib/protobuf-java-2.3.0.jar"
+          todir="${basedir}"
+          name="exploded"/>
+<explode
+          file="lib/osmbin.jar"
+          todir="${basedir}"
+          name="exploded"/>
+</target>
 	
 	<target name="compile-test" depends="prepare">
 		<javac srcdir="${basedir}/test;${src.dir}" destdir="bin-tests" debug="on">

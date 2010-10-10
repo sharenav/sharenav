@@ -717,6 +717,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 				public boolean accept(File f) {
 					if (f.isDirectory() || f.getAbsolutePath().endsWith(".osm")
 							|| f.getAbsolutePath().endsWith(".osm.bz2")
+							|| f.getAbsolutePath().endsWith(".osm.pbf")
 							|| f.getAbsolutePath().endsWith(".osm.gz")) {
 						return true;
 					}
@@ -725,7 +726,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	
 				@Override
 				public String getDescription() {
-					return "Openstreetmap file (*.osm.bz2, *.osm)";
+					return "Openstreetmap file (*.osm.pbf, *.osm.bz2, *.osm)";
 				}
 			};
 			jOsmFileChooser.setFileFilter(ff);

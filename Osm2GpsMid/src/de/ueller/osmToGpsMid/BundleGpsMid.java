@@ -35,7 +35,6 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import de.ueller.osmToGpsMid.model.Damage;
-import de.ueller.osmToGpsMid.model.Node;
 import de.ueller.osmToGpsMid.model.Relation;
 import de.ueller.osmToGpsMid.model.RouteAccessRestriction;
 import de.ueller.osmToGpsMid.model.TravelMode;
@@ -471,8 +470,8 @@ public class BundleGpsMid implements Runnable {
 			File target = new File(tmpDir);
 			createPath(target);
 			
-			fr = config.getPlanetSteam();
-			OxParser parser = new OxParser(fr, config);
+			OsmParser parser = config.getPlanetParser();
+
 			new TriangulateRelations(parser, config);
 
 			/**

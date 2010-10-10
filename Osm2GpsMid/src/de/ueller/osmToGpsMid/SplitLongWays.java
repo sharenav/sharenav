@@ -20,12 +20,12 @@ import de.ueller.osmToGpsMid.model.Way;
 
 
 public class SplitLongWays {
-	OxParser parser;
+	OsmParser parser;
 	LinkedList<Way> added=new LinkedList<Way>();
 	LinkedList<Way> deleted=new LinkedList<Way>();
 	
 	
-	public SplitLongWays(OxParser parser) {
+	public SplitLongWays(OsmParser parser) {
 		super();
 		this.parser = parser;
 		for (Way way : parser.getWays()) {

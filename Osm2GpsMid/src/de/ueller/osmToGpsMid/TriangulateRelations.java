@@ -31,13 +31,13 @@ import de.ueller.osmToGpsMid.model.Way;
  */
 public class TriangulateRelations {
 
-	private final OxParser parser;
+	private final OsmParser parser;
 	private final Configuration conf;
 	int triangles = 0;
 	int areas = 0;
 	
 
-	public TriangulateRelations(OxParser parser, Configuration conf) {
+	public TriangulateRelations(OsmParser parser, Configuration conf) {
 		this.parser = parser;
 		this.conf = conf;
 		convertAreasToTriangles();

@@ -83,7 +83,7 @@ public class CreateGpsMidData implements FilenameFilter {
 		
 	// public  final static int MAX_DICT_DEEP = 5; replaced by Configuration.maxDictDepth
 	public  final static int ROUTEZOOMLEVEL = 4;
-	OxParser parser;
+	OsmParser parser;
 	Tile tile[] = new Tile[ROUTEZOOMLEVEL + 1];
 	/** output length of the route connection for statistics */
 	long outputLengthConns = 0;
@@ -109,7 +109,7 @@ public class CreateGpsMidData implements FilenameFilter {
 	private static double MAX_RAD_RANGE = (Short.MAX_VALUE - Short.MIN_VALUE - 2000) / MyMath.FIXPT_MULT;
 	private String[] useLang = null;
 	
-	public CreateGpsMidData(OxParser parser, String path) {
+	public CreateGpsMidData(OsmParser parser, String path) {
 		super();
 		this.parser = parser;
 		this.path = path;

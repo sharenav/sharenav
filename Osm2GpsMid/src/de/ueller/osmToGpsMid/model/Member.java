@@ -40,6 +40,11 @@ public class Member {
 		setRef(ref);
 		setRole(role);
 	}
+	public Member(String type,long ref, String role){
+		setType(type);
+		setRef(ref);
+		setRole(role);
+	}
 
 	public byte getType() {
 		return type;
