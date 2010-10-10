@@ -165,6 +165,7 @@ public class RouteSyntax {
 					}
 					is = Configuration.mapZipFile.getInputStream(Configuration.mapZipFile.getEntry(syntaxDat));
 				}
+				//#else
 				//This should never happen.
 				is = null;
 				logger.fatal("Error, we don't have access to the filesystem, but our syntax data is supposed to be there!");
