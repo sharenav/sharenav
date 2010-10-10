@@ -37,8 +37,8 @@ public class GuiSendMessage extends Form implements CommandListener {
 		this.parent = tr;
 		try {
 			tfMessage = new TextField("Message text",
-							"Lat: " + ImageCollector.mapCenter.radlat * MoreMath.FAC_RADTODEC +
-							" Lon: " + ImageCollector.mapCenter.radlon * MoreMath.FAC_RADTODEC +
+							"Lat: " + tr.center.radlat * MoreMath.FAC_RADTODEC +
+							" Lon: " + tr.center.radlon * MoreMath.FAC_RADTODEC +
 							" ",
 							160,
 							TextField.ANY
