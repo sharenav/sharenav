@@ -71,9 +71,9 @@ public class FileGpxImportSession implements GpxImportSession, SelectionListener
 								feedbackListener, maxDistance);
 						return;
 					}
-					logger.error("Unknown url type to load from: " + url);
+					logger.error(Locale.get("filegpximportsession.UnknownUrlType")/*Unknown url type to load from: */ + url);
 				} catch (IOException e) {
-					logger.exception("Could not open GPX file for import",e);
+					logger.exception(Locale.get("filegpximportsession.CouldNotOpenGPXImport")/*Could not open GPX file for import*/,e);
 				} catch (SecurityException se) {
 					logger.silentexception("Gpx file import was not allowed", se);
 				}

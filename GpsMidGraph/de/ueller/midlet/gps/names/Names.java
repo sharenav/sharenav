@@ -21,6 +21,7 @@ import de.ueller.midlet.gps.Logger;
 
 import de.ueller.midlet.gps.tile.StringEntry;
 
+import de.enough.polish.util.Locale;
 
 /**
  * This class maintains all about names. Runs in a low priority, has a request queue and
@@ -78,8 +79,8 @@ public class Names implements Runnable {
 				}
 			}
 		} catch (Exception e) {
-			logger.fatal("Names thread crashed unexpectedly with error " + 
-					e.getMessage() + " at " + e.toString());
+			logger.fatal(Locale.get("names.NamesThreadCrashedWith")/*Names thread crashed unexpectedly with error */ + 
+				     e.getMessage() + Locale.get("names.at")/* at */ + e.toString());
 			e.printStackTrace();
 		}
 	}
@@ -284,7 +285,7 @@ public class Names implements Runnable {
 			//#debug
 			logger.info("Finished fulltext search. Found " + hits.size() + " hits");
 		} catch (IOException e) {
-			logger.exception("Could not perform fulltext search", e);
+			logger.exception(Locale.get("names.CouldNotPerformFulltextSearch")/*Could not perform fulltext search*/, e);
 		}
 		return hits;
 	}

@@ -40,6 +40,7 @@ import android.hardware.SensorManager;
 import android.hardware.SensorListener;
 //#endif
 
+import de.enough.polish.util.Locale;
 
 public class SocketGateway {
 	final static int PROTO_REQ_CELLID = 6574723;
@@ -89,17 +90,17 @@ public class SocketGateway {
 				// = null;
 				//logger.exception("Connected to socket", IOException ioeioe);
 			} catch (SecurityException se) {
-				logger.exception("Sorry, you declined to try and connect to a local helper deamon", se);
+				logger.exception(Locale.get("socketgateway.SorryYouDeclined")/*Sorry, you declined to try and connect to a local helper deamon*/, se);
 				clientSock = null;
 				return RETURN_FAIL;
 			} catch (ConnectionNotFoundException cnfe) {
 				//This is quite common, so silently ignore this;
 				//logger.silentexception("Could not open a connection to local helper deamon", cnfe);
-				logger.exception("Could not open a connection to local helper deamon", cnfe);
+				logger.exception(Locale.get("socketgateway.CouldNotOpenHelperDaemonConn")/*Could not open a connection to local helper daemon*/, cnfe);
 				clientSock = null;
 				return RETURN_FAIL;
 			} catch (IOException ioe) {
-				logger.exception("Failed to open connection to a local helper deamon", ioe);
+				logger.exception(Locale.get("socketgateway.FailedOpenConnectionToHelperDaemon")/*Failed to open connection to a local helper daemon*/, ioe);
 				clientSock = null;
 				return RETURN_IOE;
 			}
@@ -147,7 +148,7 @@ public class SocketGateway {
 				logger.info("Not enough data available from socket, can't retrieve Compass: " + clientIS.available());
 			} catch (IOException ioe) {
 				//logger.silentexception("Failed to read compass", ioe);
-				logger.exception("Failed to read compass", ioe);
+				logger.exception(Locale.get("socketgateway.FailedReadingCompass")/*Failed to read compass*/, ioe);
 				clientSock = null;
 				return RETURN_IOE;
 				//} catch (InterruptedException ie) {

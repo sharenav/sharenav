@@ -11,6 +11,8 @@ import javax.microedition.io.file.FileConnection;
 
 import de.ueller.midlet.gps.Logger;
 
+import de.enough.polish.util.Locale;
+
 public class FileExportSession implements ExportSession {
 	private final static Logger logger = Logger.getInstance(FileExportSession.class,Logger.DEBUG);
 	//#if polish.api.fileconnection
@@ -22,7 +24,7 @@ public class FileExportSession implements ExportSession {
 		try {
 			session.close();			
 		} catch (IOException e) {
-			logger.error("Failed to close connection after storing to file");
+			logger.error(Locale.get("fileexportsession.FailedToCloseConnection")/*Failed to close connection after storing to file*/);
 			e.printStackTrace();
 		}
 		//#endif
@@ -47,7 +49,7 @@ public class FileExportSession implements ExportSession {
 			
 			oS = fileCon.openOutputStream();
 		} catch (IOException e) {
-			logger.error("Could not obtain connection with " + url + " (" + e.getMessage() + ")");
+			logger.error(Locale.get("fileexportsession.CouldNotObtainConnection")/*Could not obtain connection with */ + url + " (" + e.getMessage() + ")");
 			e.printStackTrace();
 		}
 		//#endif

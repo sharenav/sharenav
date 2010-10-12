@@ -20,7 +20,9 @@ import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.names.Names;
 import de.ueller.midlet.gps.names.NumberCanon;
-import de.ueller.gps.urls.Urls;;
+import de.ueller.gps.urls.Urls;
+
+import de.enough.polish.util.Locale;
 
 public class SearchNames implements Runnable {
 
@@ -59,10 +61,10 @@ public class SearchNames implements Runnable {
 			    }
 			}
 	    } catch (OutOfMemoryError oome ) {
-	    	logger.fatal("SearchNames thread crashed as out of memory: " + oome.getMessage());
+		    logger.fatal(Locale.get("searchnames.SearchNamesCrashedOOM")/*SearchNames thread crashed as out of memory: */ + oome.getMessage());
 	    	oome.printStackTrace();
 	    } catch (Exception e) {
-	    	logger.fatal("SearchNames thread crashed unexpectedly with error " +  e.getMessage());
+		    logger.fatal(Locale.get("searchnames.SearchNamesCrashedWith")/*SearchNames thread crashed unexpectedly with error */ +  e.getMessage());
 	    	e.printStackTrace();
 	    }		
 	}
@@ -295,7 +297,7 @@ public class SearchNames implements Runnable {
 				} // while (type != 0)
 			} // while (true)
 		} catch (NullPointerException e) {
-			logger.exception("Null pointer exception in SearchNames: ", e);			
+			logger.exception(Locale.get("searchnames.NullPointerInSearchNames")/*Null pointer exception in SearchNames: */, e);			
 		}
 	}
 	

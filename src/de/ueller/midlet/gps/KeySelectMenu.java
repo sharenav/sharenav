@@ -128,7 +128,7 @@ public class KeySelectMenu extends Canvas implements
 			if (items.elementAt(i) instanceof KeySelectMenuItem) {
 				result.addElement(items.elementAt(i));
 			} else {
-				logger.error("Adding a wrong type to KeySelectMenu");
+				logger.error(Locale.get("keyselectmenu.AddingWrongTypeToKeySelectMenu")/*Adding a wrong type to KeySelectMenu*/);
 			}
 		}
 		repaint();
@@ -171,14 +171,14 @@ public class KeySelectMenu extends Canvas implements
 				KeySelectMenuItem menuItem = (KeySelectMenuItem) o;
 				callback.keySelectMenuItemSelected(menuItem);
 			} else {
-				logger.error("Selected an item that shouldn't have been there");
+				logger.error(Locale.get("keyselectmenu.SelectedBogusItem")/*Selected an item that should not have been there*/);
 			}
 			destroy();
 			parent.show();
 			} catch (Exception e) {
 				//logger.exception("Failed to OK ", e);
 			} catch (Error ee) {
-				logger.error("Failed with error: " + ee.getMessage());
+				logger.error(Locale.get("keyselectmenu.FailedWithError")/*Failed with error: */ + ee.getMessage());
 			}
 		}
 	}
@@ -269,7 +269,7 @@ public class KeySelectMenu extends Canvas implements
 				}
 				yc += fontSize;
 			} else {
-				logger.error("Painting an invalid item");
+				logger.error(Locale.get("keyselectmenu.PaintingInvalidItem")/*Painting an invalid item*/);
 				continue;
 			}
 

@@ -23,6 +23,8 @@ import de.ueller.gps.data.Configuration;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
 
+import de.enough.polish.util.Locale;
+
 public class QDGpxParser extends QDParser implements DocHandler, GpxParser {
 	/**
 	 * This is a wrapper for the QDParser parser. We need this wrapper so that we
@@ -69,7 +71,7 @@ public class QDGpxParser extends QDParser implements DocHandler, GpxParser {
 			QDParser.parse( (DocHandler) this, new InputStreamReader(in, Configuration.getUtf8Encoding()));
 			return true;
 		} catch (Exception e) {
-			logger.exception("Error while parsing the XML file", e);
+			logger.exception(Locale.get("qdgpxparser.ErrorParsingXML")/*Error while parsing the XML file*/, e);
 		}
 		return false;
 	}

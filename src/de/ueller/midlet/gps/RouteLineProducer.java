@@ -17,6 +17,8 @@ import de.ueller.midlet.gps.routing.ConnectionWithNode;
 import de.ueller.midlet.gps.tile.PaintContext;
 import de.ueller.midlet.gps.tile.WayDescription;
 
+import de.enough.polish.util.Locale;
+
 
 public class RouteLineProducer implements Runnable {
 	private final static Logger logger = Logger.getInstance(RouteLineProducer.class,Logger.DEBUG);
@@ -77,7 +79,7 @@ public class RouteLineProducer implements Runnable {
 					maxRouteElementDone = route.size();
 					//#debug debug
 					logger.debug("Connection2Ways found: " + connsFound + "/" + (route.size()-1) + " in " + (long)(System.currentTimeMillis() - startTime) + " ms");
-					trace.receiveMessage ("Route: " /* i:Route */ + trace.showDistance((int) routeLen, Trace.DISTANCE_ROAD) + (connsFound==(route.size()-1)?"":" (" + connsFound + "/" + (route.size()-1) + ")"));
+					trace.receiveMessage (Locale.get("routelineproducer.Route")/*Route: */ + trace.showDistance((int) routeLen, Trace.DISTANCE_ROAD) + (connsFound==(route.size()-1)?"":" (" + connsFound + "/" + (route.size()-1) + ")"));
 				} else {
 					//#debug debug
 					logger.debug("RouteLineProducer aborted at " + connsFound + "/" + (route.size()-1));					
@@ -86,7 +88,7 @@ public class RouteLineProducer implements Runnable {
 			}
 		} catch (Exception e) {
 			//#debug error
-			logger.error("RouteLineProducer crashed with " +  e.getMessage());
+			logger.error(Locale.get("routelineproducer.RouteLineProducerCrashed")/*RouteLineProducer crashed with */ +  e.getMessage());
 			e.printStackTrace();
 		}
 		producerThread = null;

@@ -370,7 +370,7 @@ public class Way extends Entity {
 			}
 			System.exit(-1);
 		} catch (IOException e) {
-			logger.error("Error while verify " + msg + " " + e.getMessage());
+			logger.error(Locale.get("way.ErrorWhileVerify")/*Error while verify */ + msg + " " + e.getMessage());
 		}
 	}
 	

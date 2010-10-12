@@ -9,6 +9,8 @@ import javax.microedition.io.Connector;
 
 import de.ueller.midlet.gps.Logger;
 
+import de.enough.polish.util.Locale;
+
 public class CommExportSession implements ExportSession {
 	
 	private final static Logger logger=Logger.getInstance(CommExportSession.class,Logger.DEBUG);
@@ -26,7 +28,7 @@ public class CommExportSession implements ExportSession {
 			CommConnection commCon = (CommConnection) session;			
 			oS = commCon.openOutputStream();			
 		} catch (IOException e) {
-			logger.error("Could not obtain connection with " + url + " (" + e.getMessage() + ")");
+			logger.error(Locale.get("commexportsession.CouldNotObtainConnectionWith")/*Could not obtain connection with */ + url + " (" + e.getMessage() + ")");
 			e.printStackTrace();
 		}		
 		return oS;

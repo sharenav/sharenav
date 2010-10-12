@@ -119,7 +119,7 @@ public class GuiGpx extends List implements CommandListener,
 			try {
 				this.append(trks[i].displayName, null);
 			} catch (NullPointerException e){
-					logger.error("Null pointer exception, can't load track number" + i + ": " + e.getMessage());
+				logger.error(Locale.get("guigpx.NullPointerCantLoadTrack")/*Null pointer exception, can not load track number*/ + i + ": " + e.getMessage());
 			}
 		}
 		this.setTitle(Locale.get("guigpx.GPXTracklogs")/*GPX tracklogs (*/ + trks.length + ")");
@@ -139,7 +139,7 @@ public class GuiGpx extends List implements CommandListener,
 					}
 					progress.showProgressDisplay(Locale.get("guigpx.ExportingTracks")/*Exporting tracks*/, numAllPtsInTrack);
 				} catch (ClassCastException cce) {
-					logger.exception("ClassCastException in commandAction", cce);
+					logger.exception(Locale.get("guigpx.ClassCastExceptionInCommandAction")/*ClassCastException in commandAction*/, cce);
 				}
 				parent.gpx.exportTracks(Configuration.getGpxUrl(), this, processTracks );
 			}

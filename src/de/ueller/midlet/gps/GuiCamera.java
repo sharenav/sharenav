@@ -117,7 +117,7 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 				mPlayer = Manager.createPlayer("capture://video");
 			}
 			if (mPlayer == null) {
-				logger.error("Couldn't initialize camera player");
+				logger.error(Locale.get("guicamera.CouldntInitializeCameraPlayer")/*Could not initialize camera player*/);
 				return;
 			}
 			mPlayer.realize();
@@ -145,7 +145,7 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 				//#debug debug
 				logger.debug("Resolution: " + camera.getStillResolution());
 			} else {
-				logger.error("Can't get access to camera properties");
+				logger.error(Locale.get("guicamera.CantGetAccessToCameraProp")/*Can not get access to camera properties*/);
 			}
 
 			ImageFormatControl format = (ImageFormatControl) mPlayer
@@ -171,27 +171,27 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 				//#enddebug
 				
 			} else {
-				logger.debug("Device doesn't support ImageFormatControl");
+				logger.debug("Device does not support ImageFormatControl");
 			}
 			//#endif
 			
 			
 			
 		} catch (SecurityException se) {
-			logger.exception("Security Exception: ", se);
+			logger.exception(Locale.get("guicamera.SecurityException")/*Security Exception: */, se);
 			mPlayer = null;
 			video = null;
 		} catch (IOException e) {
-			logger.exception("IOexception", e);
+			logger.exception(Locale.get("guicamera.IOexception")/*IOexception*/, e);
 			mPlayer = null;
 			video = null;
 		} catch (MediaException e) {
-			logger.exception("MediaExcpetion", e);
+			logger.exception(Locale.get("guicamera.MediaException")/*MediaException*/, e);
 			mPlayer = null;
 			video = null;
 		}
 		//#else
-		logger.error("Camera control is not supported by this device");
+		logger.error(Locale.get("guicamera.CameraControlNotSupported")/*Camera control is not supported by this device*/);
 		//#endif
 	}
 	
@@ -199,7 +199,7 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 		logger.info("Captureing photo with jsr 135");
 		//#if polish.api.mmapi
 		if (mPlayer == null || video == null) {
-			logger.error("mPlayer is not initialised, couldn't capture photo");
+			logger.error(Locale.get("guicamera.mPlayerNotInitedCaptureFail")/*mPlayer is not initialised, could not capture photo*/);
 			return;
 		}
 		
@@ -224,11 +224,11 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 			fos.close();
 			video.setVisible(true);
 		} catch (MediaException e) {
-			logger.exception("Couldn't take picture", e);
+			logger.exception(Locale.get("guicamera.CouldntTakePicture")/*Could not take picture*/, e);
 		} catch (IOException e) {
-			logger.exception("IOException capturing the photo", e);
+			logger.exception(Locale.get("guicamera.IOExceptionCapturingPhoto")/*IOException capturing the photo*/, e);
 		} catch (NullPointerException npe) {
-			logger.exception("Failed to take a picture", npe);
+			logger.exception(Locale.get("guicamera.FailedToTakePicture")/*Failed to take a picture*/, npe);
 		}
 		//#endif
  
@@ -238,7 +238,7 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 		logger.info("Captureing photo with jsr 234");
 		//#if polish.api.mmapi && polish.api.advancedmultimedia		
 		if (mPlayer == null) {
-			logger.error("mPlayer is not initialised, couldn't capture photo");
+			logger.error(Locale.get("guicamera.mPlayerNotInitedCaptureFail")/*mPlayer is not initialised, could not capture photo*/);
 			return;
 		}
 
@@ -255,7 +255,7 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 				}
 			} else {
 				//#debug debug
-				logger.debug("Couldn't get focus control");
+				logger.debug("Could not get focus control");
 			}
 			
 			//#debug trace
@@ -264,7 +264,7 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 			SnapshotControl snapshot = (SnapshotControl) mPlayer
 					.getControl("SnapshotControl");
 			if (snapshot == null) {
-				logger.info("Couldn't aquire SnapshotControl, falling back to jsr135");
+				logger.info("Could not aquire SnapshotControl, falling back to jsr135");
 				takePicture135();
 				return;
 			}
@@ -276,7 +276,7 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 						+ HelperRoutines.formatSimpleDateSecondNow() + "-");
 				snapshot.setFileSuffix(".jpg");
 			} catch (Exception e) {
-				logger.exception("Failed to set directory", e);
+				logger.exception(Locale.get("guicamera.FailedSettingDirectory")/*Failed to set directory*/, e);
 			}
 			
 			//#debug
@@ -311,7 +311,7 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 					}
 					logger.info("Could not find the image file to add exif information");
 				} catch (IOException ioe) {
-					logger.exception("Trying to read file after picture", ioe);
+					logger.exception(Locale.get("guicamera.TryingToReadFileAfterPicture")/*Trying to read file after picture*/, ioe);
 				} catch (InterruptedException ie) {
 					logger.info("Sleep was interupted");
 				}
@@ -320,10 +320,10 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 			
 			
 		} catch (MediaException e) {
-			logger.exception("Couldn't capture photo", e);
+			logger.exception(Locale.get("guicamera.CouldntCapturePhoto")/*Could not capture photo*/, e);
 		}
 		//#else
-		logger.error("JSR-234 support is not compiled into this MIDlet. Please use JSR-135");
+		logger.error(Locale.get("guicamera.JSR234SupportNotAvailable")/*JSR-234 support is not compiled into this MIDlet. Please use JSR-135*/);
 		//#endif
 
 	}
@@ -336,7 +336,7 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 				takePicture135();
 			}			
 		} catch (SecurityException se) {
-			logger.error("Permission denied to take a photo");
+			logger.error(Locale.get("guicamera.PermissionDeniedPhoto")/*Permission denied to take a photo*/);
 		}
 	}
 
@@ -393,7 +393,7 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 		//#if polish.api.mmapi
 		if (c == CAPTURE_CMD) {
 			if ((basedirectory == null) ||(!basedirectory.startsWith("file:///"))) {
-				logger.error("You need to select a directory where to save first");
+				logger.error(Locale.get("guicamera.SelectDirFirst")/*You need to select a directory where to save first*/);
 				return;
 			}
 			takePicture();
@@ -411,7 +411,7 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 					mPlayer.stop();
 					video.setVisible(false);
 				} catch (MediaException e) {
-					logger.exception("Could not stop camera viewer", e);
+					logger.exception(Locale.get("guicamera.CouldNotStopCameraViewer")/*Could not stop camera viewer*/, e);
 				}
 			}
 			Form setupDialog = new Form(Locale.get("guicamera.Setup")/*Setup*/);
@@ -615,7 +615,7 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 				mPlayer.start();
 				video.setVisible(true);
 			} catch (MediaException e) {
-				logger.exception("Could not show camera viewer", e);
+				logger.exception(Locale.get("guicamera.CouldNotShowCameraViewer")/*Could not show camera viewer*/, e);
 			}
 		}
 		//#endif

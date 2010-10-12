@@ -24,6 +24,8 @@ import de.ueller.gps.tools.HelperRoutines;
 import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.PositionMark;
 
+import de.enough.polish.util.Locale;
+
 public class AudioRecorder  implements SelectionListener{
 	private final static Logger logger = Logger.getInstance(AudioRecorder.class, Logger.DEBUG);
 	
@@ -38,24 +40,24 @@ public class AudioRecorder  implements SelectionListener{
 		try{
 			String supportRecording = System.getProperty("supports.audio.capture");
 			if ((supportRecording == null) || (!supportRecording.equalsIgnoreCase("true"))) {
-				logger.error("Phone does not support recording");
+				logger.error(Locale.get("audiorecorder.PhoneNoRecordSupp")/*Phone does not support recording*/);
 			}
 			logger.info("Supported audio encodings: " + System.getProperty("audio.encodings"));
 			logger.info("Starting audio recording");
 			mPlayer = Manager.createPlayer("capture://audio");
 			if (mPlayer == null) {
-				logger.error("Couldn't initialize audio recorder");
+				logger.error(Locale.get("audiorecorder.InitializeAudioRecorderFail")/*Could not initialize audio recorder*/);
 				return false;
 			}
 			mPlayer.realize();			
 			record = (RecordControl) mPlayer.getControl("RecordControl");
 			if (record == null) {
-				logger.error("Failed to get RecordControl");
+				logger.error(Locale.get("audiorecorder.FailedGettingRecordControl")/*Failed to get RecordControl*/);
 				return false;
 			}
 			basedirectory = Configuration.getPhotoUrl();
 			if (basedirectory == null) {
-				logger.error("Don't know where to save the recording, please specify a directory and try again");
+				logger.error(Locale.get("audiorecorder.SpecifyDir")/*Dont know where to save the recording, please specify a directory and try again*/);
 				//#if polish.api.fileConnection				
 				new FsDiscover(Trace.getInstance(),this,basedirectory,true,null,"Media Store Directory");
 				//#endif
@@ -89,10 +91,10 @@ public class AudioRecorder  implements SelectionListener{
 			tr.alert("Audio recording", "Recording audio to " + fileName, 1500);
 		} catch (SecurityException se) {
 			record = null;
-			logger.error("Permision denied to record audio");
+			logger.error(Locale.get("audiorecorder.PermisionDeniedRecordingAudio")/*Permision denied to record audio*/);
 		} catch (Exception me) {
 			record = null;
-			logger.exception("Failed to start recording", me);
+			logger.exception(Locale.get("audiorecorder.FailedStartingRecording")/*Failed to start recording*/, me);
 		}
 		//#endif
 
@@ -112,9 +114,9 @@ public class AudioRecorder  implements SelectionListener{
 			Trace tr = Trace.getInstance();
 			tr.alert("Audio recording", "Stopped audio recording", 750);
 		} catch (IOException ioe) {
-			logger.exception("Failed to save audio recording", ioe);
+			logger.exception(Locale.get("audiorecorder.FailedSavingAudioRecording")/*Failed to save audio recording*/, ioe);
 		} catch (MediaException e) {
-			logger.exception("Failed to close audio recording", e);
+			logger.exception(Locale.get("audiorecorder.FailedClosingAudioRecording")/*Failed to close audio recording*/, e);
 		}
 		//#endif
  

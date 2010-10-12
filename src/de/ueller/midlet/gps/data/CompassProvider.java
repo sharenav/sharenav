@@ -137,7 +137,7 @@ public class CompassProvider {
 		}
 		compassRetrievelMethod = COMPASSMETHOD_NONE;
 		//#debug info
-		logger.error("No method of retrieving Compass is valid, can't use Compass");
+		logger.error(Locale.get("compassprovider.NoMethodForCompass")/*No method of retrieving Compass is valid, can not use Compass*/);
 		
 	}
 	

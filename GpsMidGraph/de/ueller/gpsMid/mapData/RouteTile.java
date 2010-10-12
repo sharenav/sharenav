@@ -23,6 +23,8 @@ import de.ueller.midlet.gps.routing.RouteTileRet;
 import de.ueller.midlet.gps.routing.TurnRestriction;
 import de.ueller.midlet.gps.tile.PaintContext;
 
+import de.enough.polish.util.Locale;
+
 public class RouteTile extends RouteBaseTile {
 
 	RouteNode[] nodes=null;
@@ -95,7 +97,7 @@ public class RouteTile extends RouteBaseTile {
 				try {
 					loadNodes(false, -1);
 				} catch (IOException e) {
-					logger.exception("Failed to load routing nodes", e);
+					logger.exception(Locale.get("routetile.FailedLoadingRoutingNodes")/*Failed to load routing nodes*/, e);
 					return;
 				}
 			}
@@ -103,7 +105,7 @@ public class RouteTile extends RouteBaseTile {
 				try {
 					loadConnections(true);
 				} catch (IOException e) {
-					logger.exception("Failed to load routing connections", e);
+					logger.exception(Locale.get("routetile.FailedLoadingRoutingConnections")/*Failed to load routing connections*/, e);
 					return;
 				}
 			}
@@ -603,8 +605,8 @@ public class RouteTile extends RouteBaseTile {
 			 */
 			int endMarker = cs.readInt();
 			if (endMarker != 0xdeadbeaf) {
-				logger.error("RouteTile did not read correctly");
-				throw new IOException("Failed to read correct end of file marker. Read " + 
+				logger.error(Locale.get("routetile.RouteTileDidNotReadCorrectly")/*RouteTile did not read correctly*/);
+				throw new IOException(Locale.get("routetile.FailedToReadCorrectEOF")/*Failed to read correct end of file marker. Read */ + 
 						endMarker + " but expected " + 0xdeadbeaf);
 			}
 		}

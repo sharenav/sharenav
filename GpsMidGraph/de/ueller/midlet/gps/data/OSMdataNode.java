@@ -93,7 +93,7 @@ public class OSMdataNode extends OSMdataEntity implements XmlParserContentHandle
 					ignoring = true;
 				}
 			} catch (NumberFormatException nfe) {
-				logger.exception("Failed to parse osm id", nfe);
+				logger.exception(Locale.get("osmdatanode.FailedParseingOSMid")/*Failed to parse osm id*/, nfe);
 			}
 		}
 		if (ignoring) {

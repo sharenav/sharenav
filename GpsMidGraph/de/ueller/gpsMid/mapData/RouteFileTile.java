@@ -14,6 +14,8 @@ import de.ueller.midlet.gps.routing.TurnRestriction;
 import de.ueller.midlet.gps.tile.PaintContext;
 import de.ueller.midlet.gps.tile.QueueableTile;
 
+import de.enough.polish.util.Locale;
+
 public class RouteFileTile extends RouteBaseTile {
 	byte zl;
 	RouteBaseTile tile=null;
@@ -94,7 +96,7 @@ public class RouteFileTile extends RouteBaseTile {
 			InputStream is = Configuration.getMapResource("/d"+zl+"/"+fileId+".d");
 			if (is == null){
 //				logger.error("file inputStream /d"+tt.zl+tt.fileId+".d not found" );
-				throw new IOException("File not found /d"+zl+"/"+fileId+".d" );
+				throw new IOException(Locale.get("routefiletile.FileNotFoundD")/*File not found /d*/+zl+"/"+fileId+".d" );
 			}
 //			logger.info("open DataInputStream");
 			DataInputStream ds=new DataInputStream(is);

@@ -141,7 +141,7 @@ public class GuiOSMChangeset extends Form implements GpsMidDisplayable,
 				changesetID = Integer.parseInt(changeID);
 			} catch (NumberFormatException nfe) {
 				changesetID = -1;
-				logger.exception("Returned changesetID was non numerical", nfe);
+				logger.exception(Locale.get("guiosmchangeset.ReturnedchangesetIDNonNumerical")/*Returned changesetID was non numerical*/, nfe);
 				ul.completedUpload(false, Locale.get("guiosmchangeset.NoValidIDReturned")/*No valid changeset ID was returned*/);
 				return;
 			}
@@ -151,7 +151,7 @@ public class GuiOSMChangeset extends Form implements GpsMidDisplayable,
 					+ changesetID);
 		} else {
 			changesetID = -1;
-			logger.error("Failed to created Changeset " + message);
+			logger.error(Locale.get("guiosmchangeset.FailedToCreateChangeset")/*Failed to create Changeset */ + message);
 			ul.completedUpload(false, message);
 		}
 	}

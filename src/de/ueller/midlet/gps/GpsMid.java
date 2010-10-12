@@ -652,7 +652,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 							logger.info("Backlight prodding failed: "
 									+ rte.getMessage());
 						} catch (NoClassDefFoundError ncdfe) {
-							logger.error("Backlight prodding failed, API not supported: "
+							logger.error(Locale.get("gpsmid.BacklightAPINotSupported")/*Backlight prodding failed, API not supported: */
 									+ ncdfe.getMessage());
 						}
 					} // run()

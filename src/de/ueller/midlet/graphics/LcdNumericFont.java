@@ -13,6 +13,8 @@ import javax.microedition.lcdui.Image;
 import de.ueller.gps.tools.ImageTools;
 import de.ueller.midlet.gps.Logger;
 
+import de.enough.polish.util.Locale;
+
 public class LcdNumericFont {
 
 	private final static Logger logger = Logger.getInstance(
@@ -43,7 +45,7 @@ public class LcdNumericFont {
 			vert_bar = vert_bar_orig;
 			horiz_bar = horiz_bar_orig;
 		} catch (IOException ioe) {
-			logger.exception("Could not load the LCD font segments", ioe);
+			logger.exception(Locale.get("lcdnumericfont.CouldNotLoadLCDFontSegments")/*Could not load the LCD font segments*/, ioe);
 		}
 	}
 

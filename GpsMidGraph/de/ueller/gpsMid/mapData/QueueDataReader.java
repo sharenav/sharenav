@@ -18,6 +18,8 @@ import de.ueller.midlet.gps.data.EditableWay;
 //#endif
 import de.ueller.midlet.gps.data.Way;
 
+import de.enough.polish.util.Locale;
+
 
 public class QueueDataReader extends QueueReader implements Runnable {
     //#debug error
@@ -38,7 +40,7 @@ public class QueueDataReader extends QueueReader implements Runnable {
 		InputStream is = Configuration.getMapResource("/t" + tt.zl + "/" + tt.fileId + ".d");
 		if (is == null) {
 		    //#debug error
-			logger.error("File inputStream/t" + tt.zl + "/" + tt.fileId + ".d not found");
+			logger.error(Locale.get("queuedatareader.FileInputStream")/*File inputStream/t*/ + tt.zl + "/" + tt.fileId + Locale.get("queuedatareader.dNotFound")/*.d not found*/);
 			tt.state = 0;
 			return;
 		}
@@ -78,7 +80,7 @@ public class QueueDataReader extends QueueReader implements Runnable {
 	private void readSingleTile(SingleTile tt, DataInputStream ds) throws IOException {
 		if (ds.readByte() != 0x54) {
 //			logger.error("not a MapMid-file");
-			throwError( "Not a MapMid-file", tt);
+			throwError( Locale.get("queuedatareader.NotMapMidFile")/*Not a MapMid-file*/, tt);
 		}
 		tt.centerLat = ds.readFloat();
 		tt.centerLon = ds.readFloat();
@@ -268,7 +270,7 @@ public class QueueDataReader extends QueueReader implements Runnable {
 			throwError(msg, null);
 			
 		} catch (IOException e) {
-			logger.error("Error while verify " + msg + " " + e.getMessage());
+			logger.error(Locale.get("queuedatareader.ErrorWhileVerify")/* Error while verify */ + msg + " " + e.getMessage());
 		}
 	}
 

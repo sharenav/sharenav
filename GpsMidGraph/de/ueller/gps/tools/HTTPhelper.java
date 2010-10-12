@@ -29,6 +29,8 @@ import de.ueller.gps.data.Configuration;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.UploadListener;
 
+import de.enough.polish.util.Locale;
+
 public class HTTPhelper implements Runnable{
 	private final static Logger logger = Logger.getInstance(HTTPhelper.class,Logger.DEBUG);
 	private boolean upload;
@@ -42,7 +44,7 @@ public class HTTPhelper implements Runnable{
 	
 	public void getURL(String url, UploadListener ul) {
 		if ((ul == null) || (url == null)) {
-			logger.error("Broken code retrieving url " + url);
+			logger.error(Locale.get("httphelper.BrokenCodeRetrUrl")/*Broken code retrieving url */ + url);
 			return;
 		}
 		if (busy) {
@@ -58,7 +60,7 @@ public class HTTPhelper implements Runnable{
 	
 	public void uploadData(String url, String data, boolean putMethod, UploadListener ul, String username, String password) {
 		if ((ul == null) || (url == null)) {
-			logger.error("Broken code posting to url " + url);
+			logger.error(Locale.get("httphelper.BrokenCodePostingToUrl")/*Broken code posting to url */ + url);
 			return;
 		}
 		if (busy) {
@@ -160,11 +162,11 @@ public class HTTPhelper implements Runnable{
 				
 			} else {
 				success = false;
-				logger.error("Data was not uploaded (" + respCode + "): " + respMessage);
+				logger.error(Locale.get("httphelper.DataWasNotUploaded")/*Data was not uploaded*/ + " (" + respCode + "): " + respMessage);
 			}
 			
 		} catch (Exception e) {
-			logger.exception("Failed to upload data to " + url + ": ", e);
+			logger.exception(Locale.get("httphelper.FailedToUploadData")/*Failed to upload data to */ + url + ": ", e);
 			success = false;
 		}
 		busy = false;
@@ -215,15 +217,15 @@ public class HTTPhelper implements Runnable{
 				//#debug info
 				logger.info("HTTP: " + data);
 			} else {
-				logger.error("Request failed (" + connection.getResponseCode() + "): " + connection.getResponseMessage());
+				logger.error(Locale.get("httphelper.RequestFailed")/*Request failed*/ + " (" + connection.getResponseCode() + "): " + connection.getResponseMessage());
 			}
 		} catch (IOException ioe) {
-			logger.error("Failed to retrieve URL: " + ioe.getMessage(), true);
+			logger.error(Locale.get("httphelper.FailedToRetrieveURL")/*Failed to retrieve URL*/ +  ": " + ioe.getMessage(), true);
 		} catch (SecurityException se) {
-			logger.error("Failed to retrieve URL. J2me dissallowed it", true);
+			logger.error(Locale.get("httphelper.FailedToRetrieveURLDenied")/*Failed to retrieve URL. J2me disallowed it*/, true);
 		}
 		if (ul != null) {
-			ul.completedUpload(data != null, "Retrieved URL " + url);
+			ul.completedUpload(data != null, Locale.get("httphelper.RetrievedURL")/*Retrieved URL */ + url);
 		}
 		busy = false;
 	}

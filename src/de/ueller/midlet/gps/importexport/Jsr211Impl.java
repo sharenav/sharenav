@@ -56,23 +56,23 @@ public class Jsr211Impl implements Jsr211ContentHandlerInterface,
 				handlerServer = Registry.getServer(GpsMid.class.getName());
 				handlerServer.setListener(this);
 			} catch (ContentHandlerException che) {
-				logger.exception("Could not retriever ContentHandlerServer",
+				logger.exception(Locale.get("jsr211impl.CouldNotRetrieveContentHandlerServer")/*Could not retrieve ContentHandlerServer*/,
 						che);
 			}
 
 			logger.info("Registered Content handler " + handler);
 
 		} catch (ContentHandlerException e) {
-			logger.exception("Failed to register Contenthandler", e);
+			logger.exception(Locale.get("jsr211impl.FailedRegisteringContenthandler")/*Failed to register Contenthandler*/, e);
 		} catch (SecurityException e) {
 			logger.exception(
-					"Sorry, was not permitted to register Contenthandler", e);
+				Locale.get("jsr211impl.SorryNotPermittedContenthandler")/*Sorry, was not permitted to register Contenthandler*/, e);
 		} catch (IllegalArgumentException e) {
 			logger.exception(
-					"Failed to register Contenthandler due to wrong arguments",
+				Locale.get("jsr211impl.FailedRegisteringContenthandlerWrongArguments")/*Failed to register Contenthandler due to wrong arguments*/,
 					e);
 		} catch (ClassNotFoundException e) {
-			logger.exception("Failed to find Contenthandler", e);
+			logger.exception(Locale.get("jsr211impl.FailedFinding Contenthandler")/*Failed to find Contenthandler*/, e);
 		}
 
 	}
@@ -84,14 +84,14 @@ public class Jsr211Impl implements Jsr211ContentHandlerInterface,
 			Trace trace = Trace.getInstance();
 			if (trace != null) {
 				logger.error(
-					"Failed to handle content handler invocation as trace was null",
+					Locale.get("jsr211impl.FailedHandlingContentHandlerInvocation")/*Failed to handle content handler invocation as trace was null*/,
 					 true);
 			}
 			// args should be 2 coordinates and one name
 			String[] coords = invoc.getArgs();
 			if (coords.length != 3) {
 				logger.error(
-					"Received an invalid content handler invocation. Incorrect number of arguments",
+					Locale.get("jsr211impl.ReceivedInvalidCHInvocation")/*Received an invalid content handler invocation. Incorrect number of arguments*/,
 					true);
 				return;
 			}
@@ -109,7 +109,7 @@ public class Jsr211Impl implements Jsr211ContentHandlerInterface,
 				trace.receivePosition(latf, lonf, 1500);
 				trace.show();
 			} catch (NumberFormatException nfe) {
-				logger.error("Content handler invocation contained invalid coordinates ("
+				logger.error(Locale.get("jsr211impl.ContentHandlerInvocationInvalidCoordinates")/*Content handler invocation contained invalid coordinates*/+" ("
 								+ lat + "|" + lon + ")");
 			}
 		}

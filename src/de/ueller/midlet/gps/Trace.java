@@ -453,7 +453,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		try {
 			startup();
 		} catch (Exception e) {
-			logger.fatal("Got an exception during startup: " + e.getMessage());
+			logger.fatal(Locale.get("trace.GotExceptionDuringStartup")/*Got an exception during startup: */ + e.getMessage());
 			e.printStackTrace();
 			return;
 		}
@@ -474,7 +474,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			try {
 				traceInstance = new Trace();
 			} catch (Exception e) {
-				logger.exception("Failed to initialise Map screen", e);
+				logger.exception(Locale.get("trace.FailedToInitialiseMapScreen")/*Failed to initialise Map screen*/, e);
 			}
 		}
 		return traceInstance;
@@ -551,14 +551,14 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 						//#endif
 					} catch (ClassNotFoundException cnfe) {
 						locationDecoderEnd();
-						logger.exception("Your phone does not support JSR179, please use a different location provider", cnfe);
+						logger.exception(Locale.get("trace.NoJSR179Support")/*Your phone does not support JSR179, please use a different location provider*/, cnfe);
 						running = false;
 						return;
 					}
 					//#else
 					// keep Eclipse happy
 					if (true) {
-						logger.error("JSR179 is not compiled in this version of GpsMid");
+						logger.error(Locale.get("trace.JSR179NotCompiledIn")/*JSR179 is not compiled in this version of GpsMid*/);
 						running = false;
 						return;
 					}
@@ -607,14 +607,14 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 						}
 					}
 				} catch (IOException ioe) {
-					logger.exception("Couldn't open file for raw logging of Gps data",ioe);
+					logger.exception(Locale.get("trace.CouldntOpenFileForRawLogging")/*Could not open file for raw logging of Gps data*/,ioe);
 				} catch (SecurityException se) {
-					logger.error("Permission to write data for NMEA raw logging was denied");
+					logger.error(Locale.get("trace.PermissionWritingDataDenied")/*Permission to write data for NMEA raw logging was denied*/);
 				}
 			}
 			//#endif
 			if (locationProducer == null) {
-				logger.error("Your phone does not seem to support this method of location input, please choose a different one");
+				logger.error(Locale.get("trace.ChooseDiffLocMethod")/*Your phone does not seem to support this method of location input, please choose a different one*/);
 				running  = false;
 				return;
 			}
@@ -647,10 +647,10 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			 * Not much we can do here other than gracefully shutdown the thread			 *
 			 */
 		} catch (OutOfMemoryError oome) {
-			logger.fatal("Trace thread crashed as out of memory: " + oome.getMessage());
+			logger.fatal(Locale.get("trace.TraceThreadCrashOOM")/*Trace thread crashed as out of memory: */ + oome.getMessage());
 			oome.printStackTrace();
 		} catch (Exception e) {
-			logger.fatal("Trace thread crashed unexpectadly with error " +  e.getMessage());
+			logger.fatal(Locale.get("trace.TraceThreadCrashWith")/*Trace thread crashed unexpectadly with error */ +  e.getMessage());
 			e.printStackTrace();
 		} finally {
 			running = false;
@@ -696,7 +696,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			}
 		}
 		if (locationProducer != null) {
-			logger.error("LocationProducer took too long to close, giving up");
+			logger.error(Locale.get("trace.LocationProducerTookTooLong")/*LocationProducer took too long to close, giving up*/);
 		}
 	}
 
@@ -1259,7 +1259,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					cam.init(this);
 					cam.show();
 				} catch (ClassNotFoundException cnfe) {
-					logger.exception("Your phone does not support the necessary JSRs to use the camera", cnfe);
+					logger.exception(Locale.get("trace.YourPhoneNoCamSupport")/*Your phone does not support the necessary JSRs to use the camera*/, cnfe);
 				}
 				return;
 			}
@@ -1533,7 +1533,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 						guiNode.show();
 						guiNode.refresh();
 					} else {
-						logger.error("Editing is not enabled in this map");
+						logger.error(Locale.get("trace.EditingIsNotEnabled")/*Editing is not enabled in this map*/);
 					}
 				}
 				if (c == CMDS[EDIT_ADDR_CMD]) {
@@ -1546,7 +1546,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 								center.radlat, center.radlon, this);
 						guiAddr.show();
 					} else {
-						logger.error("Editing is not enabled in this map");
+						logger.error(Locale.get("trace.EditingIsNotEnabled")/*Editing is not enabled in this map*/);
 					}
 				}
 				//#else
@@ -1570,7 +1570,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				alert(Locale.get("trace.Error")/*Error*/, Locale.get("trace.CurrentlyInRouteCalculation")/*Currently in route calculation*/, 2000);
 			}
 		} catch (Exception e) {
- 			logger.exception("In Trace.commandAction", e);
+ 			logger.exception(Locale.get("trace.InTraceCommandAction")/*In Trace.commandAction*/, e);
 		}
 
 	}
@@ -1679,7 +1679,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				imageCollector.resume();
 				imageCollector.newDataReady();
 			} catch (Exception e) {
-				logger.exception("Could not reinitialise Image Collector after size change", e);
+				logger.exception(Locale.get("trace.CouldNotReinitialiseImageCollector")/*Could not reinitialise Image Collector after size change*/, e);
 			}
 			/**
 			 * Recalculate the projection, as it may depends on the size of the screen
@@ -2651,7 +2651,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			// set timer to continue check if this is a long tap
 			GpsMid.getTimer().schedule(longTapTimerTask, LONGTAP_DELAY);
 		} catch (Exception e) {
-			logger.error("No LongTap TimerTask: " + e.toString());
+			logger.error(Locale.get("trace.NoLongTapTimerTask")/*No LongTap TimerTask: */ + e.toString());
 		}
 	}
 	
@@ -2682,7 +2682,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				// set timer to check if this is a single tap
 				GpsMid.getTimer().schedule(singleTapTimerTask, DOUBLETAP_MAXDELAY);
 			} catch (Exception e) {
-				logger.error("No SingleTap TimerTask: " + e.toString());
+				logger.error(Locale.get("trace.NoSingleTapTimerTask")/*No SingleTap TimerTask: */ + e.toString());
 			}
 		
 			if (pointerDragged) {
@@ -3078,7 +3078,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			}
 			repaint();
 		} catch (Exception e) {
-			logger.exception("In Trace.resumeImageCollector", e);
+			logger.exception(Locale.get("trace.InTraceResumeImageCollector")/*In Trace.resumeImageCollector*/, e);
 		}
 	}
 	

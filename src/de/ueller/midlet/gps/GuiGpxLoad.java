@@ -118,17 +118,17 @@ public class GuiGpxLoad extends Form implements CommandListener,
 				}
 			} catch (ClassNotFoundException cnfe) {
 				GpsMid.getInstance().alert(Locale.get("guigpxload.Error")/*Error*/, Locale.get("guigpxload.GPXImportNotSupported")/*The type of GPX import you have selected is not supported by your phone.*/, Alert.FOREVER);
-				logger.error("The type of GPX import you have selected is not supported by your phone.");
+				logger.error(Locale.get("guigpxload.GPXImportNotSupported")/*The type of GPX import you have selected is not supported by your phone.*/);
 			} catch (Exception e) {
 				GpsMid.getInstance().alert(Locale.get("guigpxload.Error")/*Error*/, Locale.get("guigpxload.CouldNotStartImportServer")/*Could not start the import server.*/, Alert.FOREVER);
-				logger.exception("Could not start the import server.", e);
+				logger.exception(Locale.get("guigpxload.CouldNotStartImportServer")/*Could not start the import server.*/, e);
 			} 
 			if (importSession != null) {
 				// Trigger actual import 
 				importSession.initImportServer(feedbackListener, maxDistance, menuLoadGpx);
 			} else {
 				GpsMid.getInstance().alert(Locale.get("guigpxload.Error")/*Error*/, Locale.get("guigpxload.GPXImportNotSupported")/*The type of GPX import you have selected is not supported by your phone.*/, Alert.FOREVER);
-				logger.error("The type of GPX import you have selected is not supported by your phone.");
+				logger.error(Locale.get("guigpxload.GPXImportNotSupported")/*The type of GPX import you have selected is not supported by your phone.*/);
 			}
 		}
 	}

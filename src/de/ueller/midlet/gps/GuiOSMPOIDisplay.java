@@ -75,7 +75,7 @@ public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay implements KeySelectMe
 			poiTypeForm = new GuiPOItypeSelectMenu(this, this);
 			poiTypeForm.show();
 		} catch (Exception e) {
-			logger.exception("POI type form invalid", e);
+			logger.exception(Locale.get("guiosmpoidisplay.POItypeFormInvalid")/*POI type form invalid*/, e);
 		}
 	}
 	
@@ -188,7 +188,7 @@ public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay implements KeySelectMe
 			}
 			}
 		} else {
-			logger.error("Server operation failed: " + message);
+			logger.error(Locale.get("guiosmpoidisplay.ServerOperationFailed")/*Server operation failed: */ + message);
 		}
 	}
 

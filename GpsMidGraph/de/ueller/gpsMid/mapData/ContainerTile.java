@@ -66,7 +66,7 @@ public class ContainerTile extends Tile {
     		return new RouteFileTile(dis,deep,zl);
     	default:
     		//#debug error
-    		logger.error("wrongTileType");
+		logger.error(Locale.get("containertile.wrongTileType")/*wrongTileType*/);
     	throw new IOException("wrong TileType");
     	}
     }

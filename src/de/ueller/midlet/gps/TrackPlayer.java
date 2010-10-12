@@ -178,7 +178,7 @@ public class TrackPlayer implements Runnable {
 			try {
 				trackPlayer = new TrackPlayer();
 			} catch (Exception e) {
-				logger.exception("Failed to initialise TrackPlayer", e);
+				logger.exception(Locale.get("trackplayer.FailedToInitTrackPlayer")/*Failed to initialise TrackPlayer*/, e);
 			}
 		}
 		return trackPlayer;

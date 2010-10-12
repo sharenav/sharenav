@@ -25,6 +25,8 @@ import de.ueller.gpsMid.mapData.QueueReader;
 
 import net.sourceforge.util.zip.ZipFile;
 
+import de.enough.polish.util.Locale;
+
 public class RouteSyntax {
 	private final static byte SYNTAX_FORMAT_VERSION = 1;
 	private static Logger logger;
@@ -168,18 +170,18 @@ public class RouteSyntax {
 				//#else
 				//This should never happen.
 				is = null;
-				logger.fatal("Error, we don't have access to the filesystem, but our syntax data is supposed to be there!");
+				logger.fatal(Locale.get("routesyntax.ErrorFS")/*Error, we do not have access to the filesystem, but our syntax data is supposed to be there!*/);
 				//#endif
 
 			}
 			if (is == null) {
-				logger.error("Error opening " + syntaxDat);
+				logger.error(Locale.get("routesyntax.ErrorOpening")/*Error opening */ + syntaxDat);
 				return false;							
 			}
 
 			DataInputStream dis = new DataInputStream(is);
 			if (dis.readByte() != SYNTAX_FORMAT_VERSION) {
-				logger.error(syntaxDat + " corrupt");
+				logger.error(syntaxDat + Locale.get("routesyntax.corrupt")/* corrupt*/);
 				return false;			
 			}			
 			
@@ -226,12 +228,12 @@ public class RouteSyntax {
 			recalculationSound = dis.readUTF();
 
 			if (dis.readShort() != 0x3550) {
-				logger.error(syntaxDat + " corrupt");
+				logger.error(syntaxDat + Locale.get("routesyntax.corrupt")/* corrupt*/);
 				return false;
 			}
 			
 		} catch (IOException ioe) {
-			logger.error("error reading " + syntaxDat);
+			logger.error(Locale.get("routesyntax.ErrorReading")/*error reading */ + syntaxDat);
 			return false;			
 		}
 		System.out.println(syntaxDat + " read successfully");

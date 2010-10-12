@@ -11,6 +11,8 @@ import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
 
+import de.enough.polish.util.Locale;
+
 public abstract class QueueReader implements Runnable {
 
 	protected static final Logger	logger				= Logger.getInstance(QueueReader.class, Logger.ERROR);
@@ -143,10 +145,10 @@ public abstract class QueueReader implements Runnable {
 							System.gc();
 						}
 					} catch (final OutOfMemoryError oome) {
-						logger.error("Out of memory reading tiles, trying to recover");
+						logger.error(Locale.get("queuereader.OOMReadingTiles")/*Out of memory reading tiles, trying to recover*/);
 						Trace.getInstance().dropCache();
 					} catch (final IOException e) {
-						logger.exception("Failed to read tile", e);
+						logger.exception(Locale.get("queuereader.FailedToReadTile")/*Failed to read tile*/, e);
 						synchronized (this) {
 							/* Start a fresh */
 							requestQueue.removeAllElements();
@@ -164,13 +166,13 @@ public abstract class QueueReader implements Runnable {
 						}
 					}
 				} catch (final OutOfMemoryError oome) {
-					logger.error("Out of memory while trying to read tiles. Not recovering");
+					logger.error(Locale.get("queuereader.OOMReadTilesNotRec")/*Out of memory while trying to read tiles. Not recovering*/);
 				} catch (final RuntimeException e) {
-					logger.exception("Exception reading tiles, continuing never the less", e);
+					logger.exception(Locale.get("queuereader.ExceptionReadingTilesCont")/*Exception reading tiles, continuing never the less*/, e);
 				}
 			}
 		} catch (final Exception e) {
-			logger.fatal("QueueReader thread crashed unexpectedly with error " + e.getMessage());
+			logger.fatal(Locale.get("queuereader.QueueReaderCrashed")/*QueueReader thread crashed unexpectedly with error */ + e.getMessage());
 		}
 		// logger.info("DataReader Thread end ");
 	}

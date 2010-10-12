@@ -313,13 +313,13 @@ public class ImageCollector implements Runnable {
 		    tr.scale /= 1.5f;
 		    recoverZoomedIn = Locale.get("imagecollector.ZoomingInToRecover")/* Zooming in to recover.*/;
 		   }   
-		   logger.fatal("ImageCollector ran out of memory: " + oome.getMessage() + recoverZoomedIn);
+		   logger.fatal(Locale.get("imagecollector.ImageCollectorRanOutOfMemory")/*ImageCollector ran out of memory: */ + oome.getMessage() + recoverZoomedIn);
 		} catch (Exception e) {
 			crash++;
-			logger.exception("ImageCollector thread crashed unexpectedly with error ", e);
+			logger.exception(Locale.get("imagecollector.ImageCollectorCrashed")/*ImageCollector thread crashed unexpectedly with error */, e);
 		}
 		if(crash >= MAXCRASHES) {
-		   logger.fatal("ImageCollector crashed too often. Aborting.");
+			logger.fatal(Locale.get("imagecollector.ImageCollectorCrashedAborting")/*ImageCollector crashed too often. Aborting.*/);
 		}
 		} while (!shutdown && crash <MAXCRASHES);
 		processorThread = null;
@@ -384,7 +384,7 @@ public class ImageCollector implements Runnable {
 
 		synchronized (this) {
 			if (pc[nextPaint].state != PaintContext.STATE_READY) {
-				logger.error("ImageCollector was trying to draw a non ready PaintContext "
+				logger.error(Locale.get("imagecollector.ImageCollectorNonReadyPaintContext")/*ImageCollector was trying to draw a non ready PaintContext */
 						+ pc[nextPaint].state);
 				return new Node(0, 0);
 			}

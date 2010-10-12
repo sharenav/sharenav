@@ -83,7 +83,7 @@ public class GuiMapFeatures extends Form implements CommandListener {
 			modesGroup.setSelectedFlags(selModes);			
 			append(modesGroup);
 
-			tfBaseScale = new TextField("Base Zoom Level (23 = default)"/* i:BaseZoomLevel */, Integer.toString(Configuration.getBaseScale()), 6, TextField.DECIMAL);
+			tfBaseScale = new TextField(Locale.get("guimapfeatures.BaseZoomLevel")/*Base Zoom Level (23 = default)*/, Integer.toString(Configuration.getBaseScale()), 6, TextField.DECIMAL);
 			append(tfBaseScale);
 			
 			other[0] = Locale.get("guimapfeatures.SaveMapPosition")/*Save map position on exit for next start*/;	selOther[0]=Configuration.getCfgBitState(Configuration.CFGBIT_AUTOSAVE_MAPPOS);

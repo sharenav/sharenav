@@ -284,9 +284,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		recModes[1] = Locale.get("guidiscover.manualrules")/*manual rules:*/;
 		choiceGpxRecordRuleMode = new ChoiceGroup(Locale.get("guidiscover.RecordTrackpoints")/*Record Trackpoints*/, Choice.EXCLUSIVE, recModes ,null);
 
-		tfGpxRecordMinimumSecs = new TextField("Minimum seconds between trackpoints (0=disabled)"/* i:MinimumSeconds */, "0", 3, TextField.DECIMAL);
-		tfGpxRecordMinimumDistanceMeters = new TextField("Minimum meters between trackpoints (0=disabled)"/* i:MinimumMeters */, "0", 3, TextField.DECIMAL);
-		tfGpxRecordAlwaysDistanceMeters = new TextField("Always record when exceeding these meters between trackpoints (0=disabled)"/* i:AlwaysRecord */, "0", 3, TextField.DECIMAL);
+		tfGpxRecordMinimumSecs = new TextField(Locale.get("guidiscover.MinimumSeconds")/*Minimum seconds between trackpoints*/, "0", 3, TextField.DECIMAL);
+		tfGpxRecordMinimumDistanceMeters = new TextField(Locale.get("guidiscover.MinimumMeters")/*Minimum meters between trackpoints*/, "0", 3, TextField.DECIMAL);
+		tfGpxRecordAlwaysDistanceMeters = new TextField(Locale.get("guidiscover.AlwaysRecord")/*Always record when exceeding these meters between trackpoints*/, "0", 3, TextField.DECIMAL);
 		
 		String [] wptFlag = new String[1];
 		wptFlag[0] = Locale.get("guidiscover.WpAlsoInTrack")/*Also put waypoints in track*/;
@@ -340,7 +340,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		loggings[0] = Locale.get("guidiscover.Info")/*Info*/;
 		loggings[1] = Locale.get("guidiscover.Debug")/*Debug*/;
 		loggings[2] = Locale.get("guidiscover.Trace")/*Trace*/;
-		debugSeverity = new ChoiceGroup(Locale.get("guidiscover.LogSeverity:")/*Log severity:*/, ChoiceGroup.MULTIPLE, loggings, null);
+		debugSeverity = new ChoiceGroup(Locale.get("guidiscover.LogSeverity")/*Log severity:*/, ChoiceGroup.MULTIPLE, loggings, null);
 		debugSeverity.setSelectedFlags(selDebug);
 		menuDebug.append(debugSeverity);
 
@@ -528,7 +528,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		distanceViews = new ChoiceGroup(Locale.get("guidiscover.Distances")/*Distances*/, Choice.EXCLUSIVE, distanceView, null);
 		menuDisplayOptions.append(distanceViews);
 
-		tfAutoRecenterToGpsSecs = new TextField("Auto-recenter to GPS after no user action for these seconds (0=disabled)"/* i:Autorecentertimeout */,
+		tfAutoRecenterToGpsSecs = new TextField(Locale.get("guidiscover.Autorecentertimeout")/*Auto-recenter to GPS after no user action for these seconds*/,
 				Integer.toString(Configuration.getAutoRecenterToGpsMilliSecs() / 1000),
 				2, TextField.DECIMAL);
 		menuDisplayOptions.append(tfAutoRecenterToGpsSecs);
@@ -638,7 +638,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		String [] cellidOpts = new String[2];
 		boolean[] opencellidFlags = new boolean[2];
 
-		cellidOpts[0] = "Don't use online cellid lookups"/* i:noonlinecellid */;
+		cellidOpts[0] = Locale.get("guidiscover.noonlinecellid")/*Do not use online cellid lookups*/;
 		cellidOpts[1] = Locale.get("guidiscover.onlyonlinecellid")/*Use only online cellid lookups*/;
 		//cellidOpts[2] = "Upload log always";
 		//cellidOpts[3] = "Confirmation before log upload";
@@ -750,7 +750,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 			}
 			 
 			//#else
-				logger.error("Bluetooth is not compiled into this version");
+			logger.error(Locale.get("guidiscover.BluetoothNotCompiledIn")/*Bluetooth is not compiled into this version*/);
 			//#endif
 		}
 		//#if polish.api.osm-editing
@@ -770,7 +770,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				// remember discovered BT URL and put status in form
 				if(urlList.size() != 0) {
 					gpsUrlStr = (String) urlList.elementAt(menuBT.getSelectedIndex());
-					gpsUrl.setText((gpsUrlStr == null) ? "<Discover>"/* i:Discover */ : "<Discovered>"/* i:Discovered */);
+					gpsUrl.setText((gpsUrlStr == null) ? Locale.get("guidiscover.Discover")/*<Discover>*/ : Locale.get("guidiscover.Discovered")/*<Discovered>*/);
 				}
 				state = STATE_LP;
 				show();
@@ -779,7 +779,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				// put discovered BT Url in form
 				if(urlList.size() != 0) {
 					String gpxUrlStr = (String) urlList.elementAt(menuBT.getSelectedIndex());
-					gpxUrl.setText(gpxUrlStr == null ? "<Please select in menu>"/* i:PleaseSelectInMenu */ : gpxUrlStr);
+					gpxUrl.setText(gpxUrlStr == null ? Locale.get("guidiscover.xyzaoio")/*<Please select in menu>*/ : gpxUrlStr);
 				}
 				state = STATE_GPX;
 
@@ -987,7 +987,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 					}
 
 					if (soundDir == null) {
-						logger.error("Sound directory for " + naviLangUse + " not found!");
+						logger.error(Locale.get("guidiscover.SoundDirectoryFor")/*Sound directory for */ + naviLangUse + Locale.get("guidiscover.NotFound")/* not found!*/);
 					}
 					//if (multipleDirsForLanguage) {
 					// FIXME: if more than one dir for lang available,
@@ -1120,19 +1120,19 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				//#debug trace
 				debugAvail = true;
 				if (selDebug[2] && !debugAvail) {
-					logger.error("Logging at \"Trace\" level is not compiled into this version of GpsMid so log will be empty");
+					logger.error(Locale.get("guidiscover.LoggingAtTraceNotCompiledIn")/*Logging at Trace level is not compiled into this version of GpsMid so log will be empty*/);
 				}
 				debugAvail = false;
 				//#debug debug
 				debugAvail = true;
 				if (selDebug[1] && !debugAvail) {
-					logger.error("Logging at \"Debug\" level is not compiled into this version of GpsMid so log will be empty");
+					logger.error(Locale.get("guidiscover.LoggingAtDebugNotCompiledIn")/*Logging at Debug level is not compiled into this version of GpsMid so log will be empty*/);
 				}
 				debugAvail = false;
 				//#debug info
 				debugAvail = true;
 				if (selDebug[0] && !debugAvail) {
-					logger.error("Logging at \"Info\" level is not compiled into this version of GpsMid so log will be empty");
+					logger.error(Locale.get("guidiscover.LoggingAtInfoNotCompiledIn")/*Logging at Info level is not compiled into this version of GpsMid so log will be empty*/);
 				}
 				
 				break;
@@ -1166,7 +1166,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				//#if polish.api.online
 				//#else
 				if (opencellidFlags[1]) {
-					logger.error("Online access is not compiled into this midlet");
+					logger.error(Locale.get("guidiscover.OnlineAccessNotCompiledIn")/*Online access is not compiled into this midlet*/);
 				}
 				//#endif
 
@@ -1191,7 +1191,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 			case MENU_ITEM_LOCATION: // Location Receiver
 				initLocationSetupMenu();
 				gpsUrlStr = Configuration.getBtUrl();
-				gpsUrl.setText(gpsUrlStr == null ? "<Discover>"/* i:Discover */ : "<Discovered>"/* i:Discovered */);
+				gpsUrl.setText(gpsUrlStr == null ? Locale.get("guidiscover.Discover")/*<Discover>*/ : Locale.get("guidiscover.Discovered")/*<Discovered>*/);
 				int selIdx = Configuration.getLocationProvider();
 				locProv.setSelectedIndex(selIdx, true);
 				
@@ -1335,18 +1335,18 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				menuGpx.addCommand(OSM_URL);
 				//#endif
 		
-				gpxUrl = new StringItem(Locale.get("guidiscover.GpxReceiverUrl")/*Gpx Receiver Url: */, "<Please select in menu>"/* i:PleaseSelectInMenu */);
+				gpxUrl = new StringItem(Locale.get("guidiscover.GpxReceiverUrl")/*Gpx Receiver Url: */, Locale.get("guidiscover.xyzaoio")/*<Please select in menu>*/);
 				menuGpx.append(gpxUrl);
 				menuGpx.setCommandListener(this);
 				gpxUrl.setText(Configuration.getGpxUrl() == null ?
-					       "<Please select in menu>"/* i:PleaseSelectInMenu */ : Configuration.getGpxUrl());
+					       Locale.get("guidiscover.xyzaoio")/*<Please select in menu>*/ : Configuration.getGpxUrl());
 				GpsMid.getInstance().show(menuGpx);
 				state = STATE_GPX;
 				break;
 			case MENU_ITEM_MAP_SRC: // Map Source
 				initMapSource();
 				mapSrc.set(1, Locale.get("guidiscover.Filesystem")/*Filesystem: */ + ( (Configuration.getMapUrl() == null) ?
-								 "<Please select map directory or other .jar/zip file first>"/* i:PleaseSelectMapDirFirst */ :
+								 Locale.get("guidiscover.PleaseSelectMapDirFirst")/*<Please select map directory or other .jar/zip file first>*/ :
 							Configuration.getMapUrl() ), null);
 				mapSrc.setSelectedIndex(Configuration.usingBuiltinMap() ? 0 : 1, true);
 				mapSrcOptions.setSelectedIndex(0,
@@ -1481,7 +1481,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				GpsMid.getInstance().show(menuBT);
 				break;
 			default:
-				logger.error("Show called without a valid state");
+				logger.error(Locale.get("guidiscover.ShowCalledInvalidState")/*Show called without a valid state*/);
 		}
 	}
 
@@ -1496,7 +1496,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	}
 
 	public void showState(String a) {
-		menuBT.setTitle("Devices "/* i:Devices */ + a);
+		menuBT.setTitle(Locale.get("guidiscover.Devices")/*Devices */ + a);
 	}
 
 	public void fsDiscoverReady() {

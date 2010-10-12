@@ -13,6 +13,7 @@ import de.ueller.midlet.gps.Trace;
 import de.ueller.gps.data.Configuration;
 import de.ueller.midlet.gps.data.Way;
 
+import de.enough.polish.util.Locale;
 
 public class QueueDictReader extends QueueReader implements Runnable {
 	
@@ -29,14 +30,14 @@ public class QueueDictReader extends QueueReader implements Runnable {
 		InputStream is = Configuration.getMapResource("/d"+tt.zl+"/"+tt.fileId+".d");
 		if (is == null){
 //			logger.error("file inputStream /d"+tt.zl+tt.fileId+".d not found" );
-			throw new IOException("File not found /d"+tt.zl+"/"+tt.fileId+".d" );
+			throw new IOException(Locale.get("queuedictreader.FileNotFound")/*File not found /d*/+tt.zl+"/"+tt.fileId+".d");
 		}
 //		logger.info("open DataInputStream");
 		DataInputStream ds=new DataInputStream(is);
 		if (ds == null){
 //			logger.error("file DataImputStream "+url+" not found" );
 			is.close();
-			throw new IOException("DataStream not open for /d"+tt.zl+"/"+tt.fileId+".d" );
+			throw new IOException(Locale.get("queuedictreader.DataStreamNotOpenForD")/*DataStream not open for /d*/+tt.zl+"/"+tt.fileId+".d" );
 		}
 //		end open data from JAR
 //		logger.info("read Magic code");

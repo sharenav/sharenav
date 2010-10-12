@@ -14,6 +14,7 @@ import javax.obex.ResponseCodes;
 //#endif
 import de.ueller.midlet.gps.Logger;
 
+import de.enough.polish.util.Locale;
 
 public class ObexExportSession implements ExportSession {
 	
@@ -32,10 +33,10 @@ public class ObexExportSession implements ExportSession {
 			if (code == ResponseCodes.OBEX_HTTP_OK) {				
 				logger.info("Successfully transfered file");				
 			} else {
-				logger.error("Unsuccessful return code in Opex push: " + code);
+				logger.error(Locale.get("obexexportsession.UnsuccessfulReturnCodeInObexPush")/*Unsuccessful return code in Obex push: */ + code);
 			}
 		} catch (IOException e) {
-			logger.error("Failed to close connection after transmitting GPX");
+			logger.error(Locale.get("obexexportsession.FailedClosingConnectionAfterGPX")/*Failed to close connection after transmitting GPX*/);
 			e.printStackTrace();
 		}		
 		//#endif
@@ -57,11 +58,11 @@ public class ObexExportSession implements ExportSession {
 			operation = csession.put(headers);			
 			oS = operation.openOutputStream();
 		} catch (IOException e) {
-			logger.error("Could not obtain connection with " + url + " (" + e.getMessage() + ")");
+			logger.error(Locale.get("obexexportsession.CouldNotObtainConnectionWith")/*Could not obtain connection with */ + url + " (" + e.getMessage() + ")");
 			e.printStackTrace();
 		}
 		//#else
-		logger.fatal("This version does not support OBEX over bluetooth, so we can't send files");		
+		logger.fatal(Locale.get("obexexportsession.NoObexSupport")/*This version does not support OBEX over bluetooth, so we can not send files*/);		
 		//#endif
 		return oS;
 	}

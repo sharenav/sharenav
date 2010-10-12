@@ -24,6 +24,8 @@ import de.ueller.midlet.gps.tile.PaintContext;
 import de.ueller.midlet.gps.tile.WayDescription;
 import de.ueller.midlet.gps.data.RoutePositionMark;
 
+import de.enough.polish.util.Locale;
+
 public class RouteInstructions {
 	protected static final int RI_NONE = 0;
 	protected static final int RI_HARD_RIGHT = 1;
@@ -132,7 +134,7 @@ public class RouteInstructions {
 			outputRoutePath();
 		} catch (Exception e) {
 			//#debug error
-			logger.error("RI thread crashed unexpectadly with error " +  e.getMessage());
+			logger.error(Locale.get("routeinstructions.RIthreadCrashedUnexpectadlyWithError")/*RI thread crashed unexpectadly with error */ +  e.getMessage());
 			e.printStackTrace();
 		}			
 	}
@@ -207,15 +209,15 @@ public class RouteInstructions {
 					for (int i = 1; i < maxDeterminedRouteInstruction; i++){
 						c = (ConnectionWithNode) route.elementAt(i);
 						if (c == null){
-							logger.error("showRoute got null connection");
+							logger.error(Locale.get("routeinstructions.showRouteGotNullConnection")/*showRoute got null connection*/);
 							break;
 						}
 						if (c.to == null){
-							logger.error("showRoute got connection with null as destination");
+							logger.error(Locale.get("routeinstructions.showRouteNullDestination")/*showRoute got connection with null as destination*/);
 							break;
 						}
 						if (pc == null){
-							logger.error("showRoute pc is null");
+							logger.error(Locale.get("routeinstructions.showRoutePcIsNull")/*showRoute pc is null*/);
 							break;
 						}
 						if (c.wayRouteInstruction == RI_AREA_CROSS) {
@@ -628,7 +630,7 @@ public class RouteInstructions {
 				}				
 				if(Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_OFF_ROUTE_DISTANCE_IN_MAP)) {
 					e = Trace.tl.ele[TraceLayout.ROUTE_OFFROUTE];
-					e.setText("off:" /* i:off */ + trace.showDistance(dstToRoutePath, (dstToRoutePath == Integer.MAX_VALUE ? Trace.DISTANCE_UNKNOWN : Trace.DISTANCE_AIR)));
+					e.setText(Locale.get("routeinstructions.off")/*off:*/ + trace.showDistance(dstToRoutePath, (dstToRoutePath == Integer.MAX_VALUE ? Trace.DISTANCE_UNKNOWN : Trace.DISTANCE_AIR)));
 				}
 				e = Trace.tl.ele[TraceLayout.ROUTE_DISTANCE];
 				String airDistance = "";

@@ -60,7 +60,7 @@ public class BtObexServer
 		   String fileName = op.getReceivedHeaders().getHeader(HeaderSet.NAME).toString();
 		   
 		   if (!fileName.endsWith(".gpx")) {
-			   logger.error("Can only accept GPX files. File not valid: " + fileName);
+			   logger.error(Locale.get("btobexserver.CanOnlyAcceptGPXFiles")/*Can only accept GPX files. File not valid: */ + fileName);
 			   return ResponseCodes.OBEX_HTTP_UNSUPPORTED_TYPE;
 		   }
 		   					
@@ -68,7 +68,7 @@ public class BtObexServer
 		   
 		   wait();
 		} catch (Exception e) {
-			logger.error("Receiving of file went wrong: " + e.getMessage());
+			logger.error(Locale.get("btobexserver.ReceivingWentWrong")/*Receiving of file went wrong: */ + e.getMessage());
 			e.printStackTrace(); 
 		}
 		

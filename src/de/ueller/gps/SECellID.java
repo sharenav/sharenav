@@ -49,6 +49,8 @@ import de.ueller.midlet.gps.data.CellIdProvider;
 import de.ueller.midlet.gps.data.GSMCell;
 import de.ueller.gps.data.Configuration;
 
+import de.enough.polish.util.Locale;
+
 /**
  * 
  * This location provider tries to use the cell-id of the currently
@@ -112,7 +114,7 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 		}
 		
 		public String toString() {
-			return "LacIdxEntry (mcc="/* i:LacIdxEntry */ + mcc + ", mnc=" + mnc + ", lac=" + lac 
+			return Locale.get("secellid.LacIdxEntry")/* LacIdxEntry (mcc=*/ + mcc + ", mnc=" + mnc + ", lac=" + lac 
 			+ " -> " + recordId + " |" + hashCode() + "|)";
 		}
 	}
@@ -198,7 +200,7 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 							} else {
 								//#debug info
 								logger.info("Cell is unknown, can't calculate a location based on it");
-								receiverList.receiveSolution("NoFix"/* i:NoFix */);
+								receiverList.receiveSolution(Locale.get("secellid.NoFix")/*NoFix*/);
 								return;
 							}
 						}
@@ -214,20 +216,20 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 				}
 				if ((loc.lat != 0.0) && (loc.lon != 0.0)) {
 					if (receiverList == null) {
-						logger.error("ReceiverList == null");
+						logger.error(Locale.get("secellid.ReceiverListNull")/*ReceiverList == null*/);
 					}
 					//#debug info
 					logger.info("Obtained a position from " + loc);
-					receiverList.receiveSolution("Cell"/* i:Cell */);
+					receiverList.receiveSolution(Locale.get("secellid.Cell")/*Cell*/);
 					receiverList.receivePosition(new Position(loc.lat, loc.lon, 0, 0, 0, 0,
 							System.currentTimeMillis()));
 				} else {
-					receiverList.receiveSolution("NoFix"/* i:NoFix */);
+					receiverList.receiveSolution(Locale.get("secellid.NoFix")/*NoFix*/);
 				} 
 			} catch (Exception e) {
 				logger.silentexception("Could not retrieve cell-id", e);
 				this.cancel();
-				close("Cell-id retrieval failed"/* i:AlCellIDretfail */);
+				close(Locale.get("secellid.AlCellIDretfail")/*Cell-id retrieval failed*/);
 			}
 		}
 	}
@@ -262,7 +264,7 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 			logger.info("deleting cellID recordstore to clear cell cache");
 			RecordStore.deleteRecordStore(CELLDB_NAME);
 		} catch (Exception e) {
-			logger.exception("Failed to delete cell-id to clear persistent cache"/* i:ExCellIDCachClearFail */, e);
+			logger.exception(Locale.get("secellid.ExCellIDCachClearFail")/*Failed to delete cell-id to clear persistent cache*/, e);
 		}
 	}
 
@@ -277,7 +279,7 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 			if (cellProvider.obtainCurrentCellId() == null) {
 				//#debug info
 				logger.info("No valid cell-id, closing down");
-				this.receiverList.locationDecoderEnd("No valid cell-id"/* i:AlNoValidCellID */);
+				this.receiverList.locationDecoderEnd(Locale.get("secellid.AlNoValidCellID")/*No valid cell-id*/);
 				return false;
 			}
 			closed = false;
@@ -296,14 +298,14 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 					RecordEnumeration re = db.enumerateRecords(null, null, false);
 					while (!indexFound) {
 						if (!re.hasNextElement()) {
-							throw new IOException("Failed to find index for Cell-id database"/* i:ExCellDBIdxFail */);
+							throw new IOException(Locale.get("secellid.ExCellDBIdxFail")/*Failed to find index for Cell-id database*/);
 						}
 						dblacidx = re.nextRecordId();
 						byte [] buf = db.getRecord(dblacidx);
 						DataInputStream dis = new DataInputStream(new ByteArrayInputStream(buf));
 						if (dis.readByte() == CELLDB_LACIDX) {
 							if (dis.readByte() != CELLDB_VERSION) {
-								throw new IOException("Wrong version of CellDb, expected "/* i:ExCellDBverFail */ + CELLDB_VERSION);
+								throw new IOException(Locale.get("secellid.ErCellDBVersionMismatch")/*Wrong version of CellDb, expected */ + CELLDB_VERSION);
 
 							}
 
@@ -319,7 +321,7 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 								logger.debug("Adding index entry for " + idxEntry);
 							}
 							if (dis.readInt() != 0xbeafdead) {
-								throw new IOException("Persistent cell-id index is corrupt"/* i:ExCellDBcacheCorrupt */);
+								throw new IOException(Locale.get("secellid.ErCellPersIdxFail")/*Persistent cell-id index is corrupt*/);
 							}
 							indexFound = true;
 						} else {
@@ -328,7 +330,7 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 						}
 					}
 				} catch (IOException ioe) {
-					logger.exception("Could not read persistent cell-id cache. Dropping to recover"/* i:ExCellcacheDropping */, ioe);
+					logger.exception(Locale.get("secellid.ExCellcacheDropping")/*Could not read persistent cell-id cache. Dropping to recover*/, ioe);
 					db.closeRecordStore();
 					RecordStore.deleteRecordStore(CELLDB_NAME);
 					db = RecordStore.openRecordStore(CELLDB_NAME, true);
@@ -355,7 +357,7 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 		} catch (Exception e) {
 			logger.silentexception("Could not retrieve cell-id", e);
 		}
-		this.receiverList.locationDecoderEnd("Can't use Cell-id for location"/* i:AlCellIDLocFail */);
+		this.receiverList.locationDecoderEnd(Locale.get("secellid.AlCellIDLocFail")/*Cant use Cell-id for location*/);
 		return false;
 	}
 	
@@ -431,7 +433,7 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 		loc.mcc = cellLoc.mcc;	loc.mnc = cellLoc.mnc;	loc.lac = cellLoc.lac;
 		loc.lat = lat;	loc.lon = lon;
 		if (cellPos == null) {
-			logger.error("Cellpos == null");
+			logger.error(Locale.get("secellid.CellposNull")/*Cellpos == null*/);
 			retrieving = false;
 			return null;
 		}
@@ -522,10 +524,10 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 						cellPos.put(tmpCell.cellID, tmpCell);
 					}
 					if (dis.readInt() != 0xdeadbeaf) {
-						logger.error("Persistent Cell-id cache is corrupt"/* i:ErCellcacheCorrupt */);
+						logger.error(Locale.get("secellid.ErCellcacheCorrupt2")/*Persistent Cell-id cache is corrupt*/);
 					}
 				} else {
-					logger.error("Persistent Cell-id cache is corrupt"/* i:ErCellcacheCorrupt2 */);
+					logger.error(Locale.get("secellid.ErCellcacheCorrupt2")/*Persistent Cell-id cache is corrupt*/);
 				}
 			}
 			db.closeRecordStore();
@@ -535,7 +537,7 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 			 */
 			return retrieveFromCache(cell);
 		} catch (Exception e) {
-			logger.exception("Failed to look for " + cell + " in persitent cache", e);
+			logger.exception(Locale.get("secellid.FailedToLookFor")/*Failed to look for */ + cell + Locale.get("secellid.inPersistentCache")/* in persistent cache*/, e);
 		}
 		return null;
 	}
@@ -581,7 +583,7 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 				dos = new DataOutputStream(baos);
 				if (dis.readByte() == CELLDB_LACIDX) {
 					if (dis.readByte() != CELLDB_VERSION) {
-						logger.error("Wrong version of CellDb, expected "/* i:ErCellDBVersionMismatch */ + CELLDB_VERSION);
+						logger.error(Locale.get("secellid.ErCellDBVersionMismatch")/*Wrong version of CellDb, expected */ + CELLDB_VERSION);
 						db.closeRecordStore();
 						return;
 					}
@@ -594,7 +596,7 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 						lie.serialize(dos);
 					}
 					if (dis.readInt() != 0xbeafdead) {
-						logger.error("Persistent cell-id index is corrupt"/* i:ErCellPersIdxFail */);
+						logger.error(Locale.get("secellid.ErCellPersIdxFail")/*Persistent cell-id index is corrupt*/);
 					}
 					idx.serialize(dos);
 					dos.writeInt(0xbeafdead);
@@ -602,7 +604,7 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 					db.setRecord(dblacidx, baos.toByteArray(), 0, baos.size());
 
 				} else {
-					logger.error("Corrupted read of Cell-id db"/* i:ErrCellDBreadCorrupt */);
+					logger.error(Locale.get("secellid.ErrCellDBreadCorrupt")/*Corrupted read of Cell-id db*/);
 				}
 				db.closeRecordStore();
 			} else {
@@ -625,7 +627,7 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 						tmpCell.serialise(dos);
 					}
 					if (dis.readInt() != 0xdeadbeaf) {
-						logger.error("Persistent Cellid-cache is corrupt"/* i:ErCellDBPersCorrupt1 */);
+						logger.error(Locale.get("secellid.ErCellDBPersCorrupt1")/*Persistent Cellid-cache is corrupt*/);
 					}
 					cell.serialise(dos);
 					dos.writeInt(0xdeadbeaf);
@@ -634,11 +636,11 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 					//#debug debug
 					logger.debug("Added Cell to area list");
 				} else {
-					logger.error("Persistent Cellid-cache is corrupt"/* i:ErCellDBPersCorrupt2 */);
+					logger.error(Locale.get("secellid.ErCellDBPersCorrupt1")/*Persistent Cellid-cache is corrupt*/);
 				}
 			}
 		} catch (Exception e) {
-			logger.exception("Failed to save cell-id to persistent cache"/* i:ExSaveCellPersFail */, e);
+			logger.exception(Locale.get("secellid.ExSaveCellPersFail")/*Failed to save cell-id to persistent cache*/, e);
 		}
 
 	}
@@ -666,7 +668,7 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 			try {
 				rawDataLogger.close();
 			} catch (IOException e) {
-				logger.exception("Couldn't close raw GPS logger"/* i:ExCloseGPSLogFail */, e);
+				logger.exception(Locale.get("secellid.ExCloseGPSLogFail")/*Couldnt close raw GPS logger*/, e);
 			}
 			rawDataLogger = null;
 		}

@@ -12,6 +12,7 @@ import de.ueller.midlet.gps.Logger;
 
 import java.util.Vector;
 
+import de.enough.polish.util.Locale;
 
 public class LayoutManager extends Vector {
 	private final static Logger logger = Logger.getInstance(LayoutManager.class,Logger.DEBUG);
@@ -70,7 +71,7 @@ public class LayoutManager extends Vector {
 		for (int i=0; i<this.size(); i++){
 			e = (LayoutElement) this.elementAt(i);
 			if (e.getValidationError() != null) {
-				logger.error("Element " + i + ": " + e.getValidationError());
+				logger.error(Locale.get("layoutmanager.Element")/*Element */ + i + ": " + e.getValidationError());
 			}
 		}
 	}

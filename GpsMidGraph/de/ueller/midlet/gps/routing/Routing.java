@@ -1011,14 +1011,14 @@ public class Routing implements Runnable {
 		} catch (NullPointerException npe) {
 			parent.setRoute(null);
 			parent.receiveMessage(npe.getMessage());
-			logger.fatal("Routing thread crashed unexpectedly with error " +  npe.getMessage());			
+			logger.fatal(Locale.get("routing.RoutingRhreadCrashedWith")/*Routing thread crashed unexpectedly with error */ +  npe.getMessage());			
 			npe.printStackTrace();
 			
 		} catch (Exception e) {
 			parent.setRoute(null);
 			parent.receiveMessage(e.getMessage());
 			//#debug error
-			logger.fatal("Routing thread crashed unexpectedly with error " +  e.getMessage());
+			logger.fatal(Locale.get("routing.RoutingRhreadCrashedWith")/*Routing thread crashed unexpectedly with error */ +  e.getMessage());
 			//#debug			
 			e.printStackTrace();
 		} catch (Error e1){

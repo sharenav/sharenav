@@ -102,7 +102,7 @@ public abstract class GuiOSMEntityDisplay extends Form implements GpsMidDisplaya
 				this.append(i);
 			}
 		} catch (Exception e) { 
-			logger.exception("Initialising entity tag screen failed: " , e);
+			logger.exception(Locale.get("guiosmentitydisplay.InitialisingEntityTagScreenFailed")/*Initialising entity tag screen failed: */ , e);
 		}
 	}
 
@@ -134,7 +134,7 @@ public abstract class GuiOSMEntityDisplay extends Form implements GpsMidDisplaya
 		
 		if (c == CLOSE_CHANGE_CMD) {
 			if (changesetGui == null) {
-				logger.error("No changeset is currently open");
+				logger.error(Locale.get("guiosmentitydisplay.NoChangesetIsCurrentlyOpen")/*No changeset is currently open*/);
 			} else {
 				changesetGui.closeChangeset();
 				changesetGui = null;

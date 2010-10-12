@@ -26,6 +26,8 @@ import de.ueller.midlet.gps.data.Way;
 import de.ueller.midlet.gps.tile.PaintContext;
 import de.ueller.midlet.gps.tile.QueueableTile;
 
+import de.enough.polish.util.Locale;
+
 /**
  * In general a SingleTile is a container that holds all graphical information for an rectangular array out of the world.
  * Single tiles are overlaping each other in the most cases, because the hold complete ways or arrays.
@@ -130,7 +132,7 @@ public class SingleTile extends Tile implements QueueableTile {
 		
 		
 		if (pc.getP() == null) {
-			logger.error("We don't have a projection to walk Tile");
+			logger.error(Locale.get("singletile.NoProj")/*We do not have a projection to walk Tile*/);
 			return;
 		}
 		

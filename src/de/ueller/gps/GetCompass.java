@@ -49,6 +49,8 @@ import de.ueller.midlet.gps.data.CompassProvider;
 import de.ueller.midlet.gps.data.Compass;
 import de.ueller.gps.data.Configuration;
 
+import de.enough.polish.util.Locale;
+
 /**
  * 
  * This location provider tries to use the cell-id of the currently
@@ -102,7 +104,7 @@ public class GetCompass implements CompassProducer {
 			} catch (Exception e) {
 				logger.silentexception("Could not retrieve compass direction", e);
 				this.cancel();
-				close("Compass direction retrieval failed"/* i:CompDirFailed */);
+				close(Locale.get("getcompass.CompDirFailed")/*Compass direction retrieval failed*/);
 			}
 		}
 	}
@@ -129,7 +131,7 @@ public class GetCompass implements CompassProducer {
 			if (compassProvider.obtainCurrentCompass() == null) {
 				//#debug info
 				logger.info("No valid compass direction, closing down");
-				//this.receiverList.locationDecoderEnd("No valid compass direction"/* i:NoValidCompass */);
+				//this.receiverList.locationDecoderEnd(Locale.get("getcompass.NoValidCompass")/*No valid compass direction*/);
 				return false;
 			}
 			closed = false;
@@ -138,7 +140,7 @@ public class GetCompass implements CompassProducer {
 		} catch (Exception e) {
 			logger.silentexception("Could not retrieve compass direction", e);
 		}
-		//this.receiverList.locationDecoderEnd("Can't use compass for direction"/* i:CompassFail */);
+		//this.receiverList.locationDecoderEnd(Locale.get("getcompass.CompassFail")/*Can't use compass for direction*/);
 		return false;
 	}
 	

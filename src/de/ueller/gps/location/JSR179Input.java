@@ -39,6 +39,8 @@ import de.ueller.midlet.gps.Logger;
 //FIXME make a proper interface for passing fix age information instead of accessing trace variable
 import de.ueller.midlet.gps.Trace;
 
+import de.enough.polish.util.Locale;
+
 /**
  * This class implements a location producer which uses the JSR-179 API
  * to get the device's current position.
@@ -120,7 +122,7 @@ public class JSR179Input
 					logger.info("LocationProvider criteria not fitting: " + i);
 					locationProvider = null;
 				} catch (Exception e) {
-					logger.exception("unexpected exception while probing LocationProvider criteria.",e);
+					logger.exception(Locale.get("jsr179input.unexpectedExceptioninLocProv")/*unexpected exception while probing LocationProvider criteria.*/,e);
 				}
 			}
 			if (locationProvider != null) {
@@ -134,7 +136,7 @@ public class JSR179Input
 					updateSolution(locationProvider.getState());
 				}
 			} else {
-				receiverList.locationDecoderEnd("no JSR179 Provider"/* i:NoJSR179Provider */);
+				receiverList.locationDecoderEnd(Locale.get("jsr179input.NoJSR179Provider")/*no JSR179 Provider*/);
 				//#debug info
 				logger.info("Cannot create LocationProvider for criteria.");
 			}
@@ -166,7 +168,7 @@ public class JSR179Input
 					rawDataLogger.write(nmeaString.getBytes());
 					rawDataLogger.flush();
 				} catch (IOException ioe) {
-					logger.exception("Could not write raw GPS log", ioe);
+					logger.exception(Locale.get("jsr179input.CouldNotWriteGPSLog")/*Could not write raw GPS log*/, ioe);
 				}
 			}
 			Vector messages = StringTokenizer.getVector(nmeaString, "$");
@@ -206,8 +208,8 @@ public class JSR179Input
 			/* e.g. SE C702 only receives from getExtraInfo() $GPGSV sentences,
 			 * therefore use On as solution when it's still set to NoFix though the location is valid
 			 */
-			if (receiverList.getCurrentSolution().equals("NoFix"/* i:NoFix */)) {
-				receiverList.receiveSolution("On"/* i:On */);				
+			if (receiverList.getCurrentSolution().equals(Locale.get("jsr179input.NoFix")/*NoFix*/)) {
+				receiverList.receiveSolution(Locale.get("jsr179input.On")/*On*/);				
 			}
 			Coordinates coordinates = location.getQualifiedCoordinates();
 			pos.latitude = (float) coordinates.getLatitude();
@@ -219,7 +221,7 @@ public class JSR179Input
 			receiverList.receivePosition(pos);
 		} else {
 			if (receiverList != null) {
-				receiverList.receiveSolution("NoFix"/* i:NoFix */);
+				receiverList.receiveSolution(Locale.get("jsr179input.NoFix")/*NoFix*/);
 			}
 		}
 		// logger.trace("exit locationUpdated(provider,location)");
@@ -255,7 +257,7 @@ public class JSR179Input
 		logger.info("Update Solution");
 		if (state == LocationProvider.AVAILABLE) {
 			if (receiverList != null) {
-				receiverList.receiveSolution("NoFix"/* i:NoFix */);
+				receiverList.receiveSolution(Locale.get("jsr179input.NoFix")/*NoFix*/);
 			}
 			
 		}
@@ -265,8 +267,8 @@ public class JSR179Input
 		//#else
 		if (state == LocationProvider.OUT_OF_SERVICE) {
 			if (receiverList != null) {
-				receiverList.receiveSolution("Off"/* i:Off */);
-				receiverList.receiveMessage("provider stopped"/* i:ProviderStopped */);
+				receiverList.receiveSolution(Locale.get("jsr179input.Off")/*Off*/);
+				receiverList.receiveMessage(Locale.get("jsr179input.ProviderStopped")/*provider stopped*/);
 			}
 		}
 		//#endif
@@ -283,7 +285,7 @@ public class JSR179Input
 			 * you all the status changes, does not work.
 			 */
 			if (receiverList != null) {
-				receiverList.receiveSolution("NoFix"/* i:NoFix */);
+				receiverList.receiveSolution(Locale.get("jsr179input.NoFix")/*NoFix*/);
 			}
 		}
 		//FIXME make a proper interface for passing fix age information instead of accessing trace variable directly
@@ -307,7 +309,7 @@ public class JSR179Input
 			try {
 				rawDataLogger.close();
 			} catch (IOException e) {
-				logger.exception("Couldn't close raw gps logger", e);
+				logger.exception(Locale.get("jsr179input.CouldntCloseRawGpsLogger")/*Couldnt close raw gps logger*/, e);
 			}
 			rawDataLogger = null;
 		}

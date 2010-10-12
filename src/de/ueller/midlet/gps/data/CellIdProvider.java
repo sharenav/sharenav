@@ -33,6 +33,8 @@ import android.telephony.TelephonyManager;
 import android.telephony.gsm.GsmCellLocation;
 //#endif
 
+import de.enough.polish.util.Locale;
+
 public class CellIdProvider {
 	private static final int CELLMETHOD_NONE = 0;
 	private static final int CELLMETHOD_SE = 1;
@@ -95,7 +97,7 @@ public class CellIdProvider {
 			logger.info("Trying to see if Motorola method is available");
 			GSMCell cell = obtainMotoCell();
 			if (cell != null) {
-				logger.error("Motorola CellID is experimental and may be wrong. Please check data before uploading");
+				logger.error(Locale.get("cellidprovider.MotorolaCellIDPleseCheck")/*Motorola CellID is experimental and may be wrong. Please check data before uploading*/);
 				cellRetrievelMethod = CELLMETHOD_MOTO;
 				//#debug info
 				logger.info("   Yes, the Motorola method works");
@@ -142,7 +144,7 @@ public class CellIdProvider {
 		}
 		cellRetrievelMethod = CELLMETHOD_NONE;
 		//#debug info
-		logger.error("No method of retrieving CellID is valid, can't use CellID");
+		logger.error(Locale.get("cellidprovider.NoCellIDUsable")/*No method of retrieving CellID is valid, can not use CellID*/);
 		
 	}
 	

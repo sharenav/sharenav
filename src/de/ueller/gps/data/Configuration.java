@@ -463,7 +463,7 @@ public class Configuration {
 					startupPos.radlat = Float.parseFloat(s);
 					startupPos.radlon = Float.parseFloat(s2);
 				} catch (NumberFormatException nfe) {
-					logger.exception("Error parsing startupPos: ", nfe);					
+					logger.exception(Locale.get("configuration.ErrorParsingStartupPos")/*Error parsing startupPos: */, nfe);					
 				}
 			}
 			//System.out.println("Map startup lat/lon: " + startupPos.radlat*MoreMath.FAC_RADTODEC + "/" + startupPos.radlon*MoreMath.FAC_RADTODEC);
@@ -519,7 +519,7 @@ public class Configuration {
 			write(VERSION, RECORD_ID_CONFIG_VERSION);
 			
 		} catch (Exception e) {
-			logger.exception("Problems with reading our configuration: ", e);
+			logger.exception(Locale.get("configuration.ProblemsWithReadingConfig")/*Problems with reading our configuration: */, e);
 		}
 	}
 	
@@ -718,7 +718,7 @@ public class Configuration {
 			//#debug info
 			logger.info("wrote binary data to " + idx);
 		} catch (Exception e) {
-			logger.exception("Could not write data (idx = " + idx + ") to recordstore", e);
+			logger.exception(Locale.get("configuration.CouldNotWriteData")/*Could not write data*/ + " (idx = " + idx + ") " + Locale.get("configuration.ToRecordstore")/*to recordstore*/, e);
 		}
 	}
 	
@@ -744,7 +744,7 @@ public class Configuration {
 			
 			return data;
 		} catch (Exception e) {
-			logger.exception("Failed to read binary from config database", e);
+			logger.exception(Locale.get("configuration.FailedToReadBinaryFromConfig")/*Failed to read binary from config database*/, e);
 			return null;
 		}
 	}
@@ -771,7 +771,7 @@ public class Configuration {
 				return Integer.parseInt(tmp);
 			}
 		} catch (Exception e) {
-			logger.exception("Failed to read int from config database", e);
+			logger.exception(Locale.get("configuration.FailedReadingInt")/*Failed to read int from config database*/, e);
 			return 0;
 		}
 	}
@@ -787,7 +787,7 @@ public class Configuration {
 				return Long.parseLong(tmp);
 			}
 		} catch (Exception e) {
-			logger.exception("Failed to read Long from config database", e);
+			logger.exception(Locale.get("configuration.FailedReadingLong")/*Failed to read Long from config database*/, e);
 			return 0;
 		}
 	}
@@ -1366,7 +1366,7 @@ public class Configuration {
 		//#else
 		//This should never happen.
 		is = null;
-		logger.fatal("Error, we don't have access to the filesystem, but our map data is supposed to be there!");
+		logger.fatal(Locale.get("configuration.ErrorNoFS")/*Error, we don't have access to the filesystem, but our map data is supposed to be there!*/);
 		//#endif
 
 		return is;
@@ -1845,7 +1845,7 @@ public class Configuration {
 				line = br.readLine();
 			};
 		} catch (IOException ioe) {
-			logger.exception("Could not load key shortcuts", ioe);
+			logger.exception(Locale.get("configuration.ErrShortcuts")/*Could not load key shortcuts*/, ioe);
 		}
 		
 	}
@@ -1906,7 +1906,7 @@ public class Configuration {
 		database.closeRecordStore();
 		return true;
 		} catch (Exception e) {
-			logger.exception("Failed to load keyshortcuts", e);
+			logger.exception(Locale.get("configuration.ErrKeyshortcuts")/*Failed to load keyshortcuts*/, e);
 			return false;
 		}
 	}
@@ -1956,7 +1956,7 @@ public class Configuration {
 						}
 					}
 					if (cmdCode < 0) {
-						logger.error("Could not associate cmd number. Failed to save key shortcuts");
+						logger.error(Locale.get("configuration.ErrSaveKeyShortcuts")/*Could not associate cmd number. Failed to save key shortcuts*/);
 						return;
 					}
 					dos.writeInt(keyCode);
@@ -1970,7 +1970,7 @@ public class Configuration {
 			writeBinary(baos.toByteArray(), RECORD_ID_KEY_SHORTCUT);
 		
 		} catch (IOException ioe) {
-			logger.exception("Failed to save keyshortcuts", ioe);
+			logger.exception(Locale.get("configuration.Err2SaveKeyshortcuts")/*Failed to save keyshortcuts*/, ioe);
 		}
 	}
 	

@@ -198,8 +198,8 @@ public class DiscoverGps
 				// remember we've reached this point.
 				isBTReady = true;
 			} catch (Exception e) {
-				logger.exception("Can't initialize bluetooth: ", e);
-				parent.addDevice(Locale.get("discovergps.CantInitBluetooth")/* Can't init bluetooth */);
+				logger.exception(Locale.get("discovergps.CantInitBlue")/*Can not initialize bluetooth: */, e);
+				parent.addDevice(Locale.get("discovergps.CantInitBluetooth2")/*Can not init bluetooth*/);
 			}
 
 			parent.completeInitialization(isBTReady);

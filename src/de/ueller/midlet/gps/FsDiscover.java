@@ -236,7 +236,7 @@ public class FsDiscover
 
 	public void commandAction(Command c, Displayable d) {
 		if (processorThread.isAlive()) {
-			logger.error("Still busy, try again later");
+			logger.error(Locale.get("fsdiscover.StillBusyTryAgain")/*Still busy, try again later*/);
 			return;
 		}
 		if (c == BACK_CMD) {
@@ -255,7 +255,7 @@ public class FsDiscover
 			return;
 		}
 		if (list.getSelectedIndex() < 0) {
-			logger.error("No element selected");
+			logger.error(Locale.get("fsdiscover.NoElementSelected")/*No element selected*/);
 			return;
 		}
 		if (c == OK_CMD) {

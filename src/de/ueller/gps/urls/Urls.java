@@ -26,6 +26,8 @@ import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.data.MapName;
 import de.ueller.midlet.gps.tile.StringEntry;
 
+import de.enough.polish.util.Locale;
+
 public class Urls implements Runnable {
 //	#debug
 	private final static Logger logger = Logger.getInstance(Urls.class, Logger.TRACE);
@@ -70,7 +72,7 @@ public class Urls implements Runnable {
 				}
 			}
 		} catch (Exception e) {
-			logger.fatal("Urls thread crashed unexpectedly with error " +  e.getMessage() + " at"  +e.toString());
+			logger.fatal(Locale.get("urls.UrlsThreadCrashed")/*Urls thread crashed unexpectedly with error */ +  e.getMessage() + Locale.get("urls.at")/* at*/  +e.toString());
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

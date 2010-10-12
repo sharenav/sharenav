@@ -8,6 +8,8 @@ import javax.microedition.lcdui.Image;
 
 import de.ueller.midlet.gps.Logger;
 
+import de.enough.polish.util.Locale;
+
 public class ImageTools  {
 	private final static Logger logger = Logger.getInstance(ImageTools.class,Logger.DEBUG);
 
@@ -27,7 +29,7 @@ public class ImageTools  {
             } 
 	        return Image.createRGBImage(rawInput, original.getWidth(), original.getHeight(), true);
         } catch (Exception e) {
-        	logger.exception("Exception greying image", e);
+		logger.exception(Locale.get("imagetools.ExceptionGreyingImage")/*Exception greying image*/, e);
         	return original;
         }
 	}
@@ -75,7 +77,7 @@ public class ImageTools  {
 	        }               
 	        return Image.createRGBImage(rawOutput, newWidth, newHeight, true);
         } catch (Exception e) {
-        	logger.exception("Exception scaling image", e);
+			logger.exception(Locale.get("imagetools.ExceptionScalingImage")/*Exception scaling image*/, e);
         	return original;
         }
     }

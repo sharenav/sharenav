@@ -17,6 +17,8 @@ import de.ueller.gps.tools.StringTokenizer;
 import de.ueller.midlet.gps.LocationMsgReceiver;
 import de.ueller.midlet.gps.Logger;
 
+import de.enough.polish.util.Locale;
+
 /**
  * This class takes NMEA0183 compliant sentences and extracts information from them:
  * <pre>
@@ -293,7 +295,7 @@ public class NmeaMessage {
 	            }
 			}
 		} catch (RuntimeException e) {
-			logger.exception("Error while decoding " + sentence, e);
+			logger.exception(Locale.get("nmeamessage.ErrorDecoding")/*Error while decoding */ + sentence, e);
 		}
 	}
 

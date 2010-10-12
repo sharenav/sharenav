@@ -14,6 +14,8 @@ import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
 
+import de.enough.polish.util.Locale;
+
 /** Reads the dict-files (/dict-[1..4].dat) from the map source
  *  and creates tiles from them.
  */
@@ -41,11 +43,11 @@ public class DictReader implements Runnable {
 				readData(i);
 			}
 		} catch (OutOfMemoryError oome) {
-			logger.fatal("DictReader thread crashed as out of memory: " + oome.getMessage());
+			logger.fatal(Locale.get("dictreader.DictReaderCrashOOM")/*DictReader thread crashed as out of memory: */ + oome.getMessage());
 			oome.printStackTrace();
 		} catch (IOException e) {
 			GpsMid.getInstance().restart();
-			logger.fatal("Failed to load basic map data: " + e.getMessage());
+			logger.fatal(Locale.get("dictreader.FailedToLoadMap")/*Failed to load basic map data: */ + e.getMessage());
 			e.printStackTrace();
 		}
 

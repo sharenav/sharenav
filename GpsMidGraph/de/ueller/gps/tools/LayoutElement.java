@@ -13,6 +13,7 @@ import javax.microedition.lcdui.Image;
 import de.ueller.gps.data.Legend;
 import de.ueller.midlet.gps.Logger;
 
+import de.enough.polish.util.Locale;
 
 public class LayoutElement {
 	private final static Logger logger = Logger.getInstance(LayoutElement.class,Logger.DEBUG);
@@ -343,7 +344,7 @@ public class LayoutElement {
 			}
 			image = orgImage;
 		} catch (IOException ioe) {
-			logger.exception("Failed to load icon " + imageName, ioe);
+			logger.exception(Locale.get("layoutelement.FailedToLoadIcon")/*Failed to load icon*/ + " " + imageName, ioe);
 		}
 	}
 	
@@ -462,7 +463,7 @@ public class LayoutElement {
 		vRelativeTo.usedAsRelative = true;
 		lm.recalcPositionsRequired = true;
 		if (vRelativeTo.flags == 0) {
-			logger.error("Warning: Tried to use uninitialised element " + e + " as vRelative");
+			logger.error(Locale.get("layoutelement.WarningTriedUninitialisedElement")/*Warning: Tried to use uninitialised element*/ + " " + e + " " + Locale.get("layoutelement.asvRelative")/*as vRelative*/);
 		}
 	}
 
@@ -497,7 +498,7 @@ public class LayoutElement {
 		hRelativeTo.usedAsRelative = true;
 		lm.recalcPositionsRequired = true;
 		if (hRelativeTo.flags == 0) {
-			logger.error("Warning: Tried to use uninitialised element " + e + " as hRelative");
+			logger.error(Locale.get("layoutelement.WarningTriedUninitialisedElement")/*Warning: Tried to use uninitialised element*/ + " " + e + " " + Locale.get("layoutelement.ashRelative")/*as hRelative*/);
 		}
 	}
 

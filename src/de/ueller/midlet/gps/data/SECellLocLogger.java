@@ -103,11 +103,11 @@ public class SECellLocLogger implements LocationMsgReceiver {
 					return true;
 				} catch (SecurityException se) {
 					logger.exception(
-							"Logging of Cell-IDs is not permitted on this phone.", se);
+						Locale.get("secellloclogger.LoggingCellIDsNotPermitted")/*Logging of Cell-IDs is not permitted on this phone.*/, se);
 					return false;
 				} catch (IOException ioe) {
 					logger.exception(
-							"Failed to write Cell-ID log file.", ioe);
+						Locale.get("secellloclogger.FailedToWriteCellIDLog")/*Failed to write Cell-ID log file.*/, ioe);
 					if ((logCon != null) && (logCon.exists())) {
 						logCon.delete();
 					}
@@ -159,7 +159,7 @@ public class SECellLocLogger implements LocationMsgReceiver {
 			    //				OpencellidUpload(GpsMid.getInstance(), null );
 			//			}
 		} catch (IOException ioe) {
-			logger.exception("Failed to close cell-id logger", ioe);
+			logger.exception(Locale.get("secellloclogger.FailedToCloseCellidLogger")/*Failed to close cell-id logger*/, ioe);
 		}
 		//#endif
 		cellIDLogging = false;

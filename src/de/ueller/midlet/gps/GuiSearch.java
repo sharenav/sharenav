@@ -387,7 +387,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				poiTypeForm = new GuiPOItypeSelectMenu(this, this);
 				poiTypeForm.show();
 			} catch (Exception e) {
-				logger.exception("Failed to select POI type", e);
+				logger.exception(Locale.get("guisearch.FailedToSelectPOIType")/*Failed to select POI type*/, e);
 				state = STATE_MAIN;
 				show();
 			}
@@ -400,7 +400,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				poiTypeForm = new GuiPOItypeSelectMenu(this, this);
 				poiTypeForm.show();
 			} catch (Exception e) {
-				logger.exception("Failed to select POI type", e);
+				logger.exception(Locale.get("guisearch.FailedToSelectPOIType")/*Failed to select POI type*/, e);
 				state = STATE_MAIN;
 				show();
 			}
@@ -412,7 +412,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				poiTypeForm = new GuiPOItypeSelectMenu(this, this);
 				poiTypeForm.show();
 			} catch (Exception e) {
-				logger.exception("Failed to select POI type", e);
+				logger.exception(Locale.get("guisearch.FailedToSelectPOIType")/*Failed to select POI type*/, e);
 				state = STATE_MAIN;
 				show();
 			}
@@ -552,7 +552,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				if (sr.type < ico.length)
 					img = ico[sr.type];
 				else {
-					logger.error("trying to find image icon for a POI of type: " + sr.type);
+					logger.error(Locale.get("guisearch.tryingToFindImageIcon")/*trying to find image icon for a POI of type: */ + sr.type);
 					img = null;
 				}
 			}
@@ -1144,9 +1144,9 @@ public class GuiSearch extends Canvas implements CommandListener,
 						}
 					}
 				} catch (Exception e) {
-					logger.exception("Nearest POI search thread crashed ", e);
+					logger.exception(Locale.get("guisearch.NearestPOISearchThreadCrashed")/*Nearest POI search thread crashed */, e);
 				} catch (OutOfMemoryError oome) {
-					logger.error("Nearest POI search thread ran out of memory ");
+					logger.error(Locale.get("guisearch.NearestPOISearchOOM")/*Nearest POI search thread ran out of memory */);
 				}
 			}
 		}, "nearestPOI");

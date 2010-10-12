@@ -72,7 +72,7 @@ public class OSMdataWay extends OSMdataEntity implements XmlParserContentHandler
 					ignoring = true;
 				}
 			} catch (NumberFormatException nfe) {
-				logger.exception("Failed to parse osm id", nfe);
+				logger.exception(Locale.get("osmdataway.FailedParsingOSMId")/*Failed to parse osm id*/, nfe);
 			}
 		}
 		if (ignoring) {
@@ -84,7 +84,7 @@ public class OSMdataWay extends OSMdataEntity implements XmlParserContentHandler
 				long nd_ref = Long.parseLong(tmp);
 				nodes.addElement(new Long(nd_ref));
 			} catch (NumberFormatException nfe) {
-				logger.exception("Failed to parse osm id", nfe);
+				logger.exception(Locale.get("osmdataway.FailedParsingOSMId")/*Failed to parse osm id*/, nfe);
 			}
 		}
 		if (name.equalsIgnoreCase("tag")) {

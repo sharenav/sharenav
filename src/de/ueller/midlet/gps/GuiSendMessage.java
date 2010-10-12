@@ -87,7 +87,7 @@ public class GuiSendMessage extends Form implements CommandListener {
 	        	//#debug
 	        	logger.info("SMS sent to " + recipientAddr);
 	        } catch (Exception e) {
-	        	logger.exception("Failed to send to " + recipientAddr, e);
+			logger.exception(Locale.get("guisendmessage.FailedToSend")/*Failed to send to */ + recipientAddr, e);
 	        }
 	        finally {
 	        	if( conn != null ){

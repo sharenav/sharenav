@@ -505,7 +505,7 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 			actionPerformer.performIconAction(actionId);
 		} else {
 			//#debug error
-			logger.error("No IconActionPerformer set!");
+			logger.error(Locale.get("iconmenuwithpagesgui.NoIconActionPerformerSet")/*No IconActionPerformer set!*/);
 		}
 	}
 	

@@ -16,6 +16,8 @@ import de.ueller.midlet.gps.routing.TravelMode;
 import de.ueller.midlet.gps.tile.POIdescription;
 import de.ueller.midlet.gps.tile.WayDescription;
 
+import de.enough.polish.util.Locale;
+
 public class Legend {
 	/**
 	 * Specifies the format of the map on disk we expect to see
@@ -206,7 +208,7 @@ public class Legend {
 		try {
 			Legend.readLegend();
 		} catch (Exception e) {
-			logger.fatal("Failed to reread legend");
+			logger.fatal(Locale.get("legend.FailedRereadLegend")/*Failed to reread legend*/);
 		}	
 	}
 	
@@ -229,7 +231,7 @@ public class Legend {
 		
 		if (is == null) {
 
-			logger.error("Failed to open the legend file");
+			logger.error(Locale.get("legend.FailedOpeningLegend")/*Failed to open the legend file*/);
 			return;			
 		}
 	
@@ -367,7 +369,7 @@ public class Legend {
 		for (int i = 0; i < pois.length; i++) {
 			pois[i] = new POIdescription();
 			if (ds.readByte() != i) {
-				logger.error("Read legend had trouble reading POI descriptions");
+				logger.error(Locale.get("legend.ReadLegendPOIErr")/*Read legend had trouble reading POI descriptions*/);
 			}
 			byte flags = ds.readByte();
 			pois[i].description = ds.readUTF();
@@ -382,7 +384,7 @@ public class Legend {
 					pois[i].image = Image.createImage(Configuration.getMapResource(imageName));
 				} catch (IOException e) {
 					//#debug error
-					logger.error("Could not open POI icon " + imageName + " for " + pois[i].description);
+					logger.error(Locale.get("legend.CouldNotOpenPOI")/*Could not open POI icon */ + imageName + Locale.get("legend.for")/* for */ + pois[i].description);
 					pois[i].image = generic;
 				}				
 			}
@@ -393,7 +395,7 @@ public class Legend {
 					pois[i].searchIcon = Image.createImage(Configuration.getMapResource(imageName));
 				} catch (IOException e) {
 					//#debug error
-					logger.error("Could not open search icon " + imageName + " for " + pois[i].description);
+					logger.error(Locale.get("legend.SearchIconOpenFail")/*Could not open search icon */ + imageName + Locale.get("legend.for")/* for */ + pois[i].description);
 					pois[i].searchIcon = generic;
 				}				
 			} else if (pois[i].image != null) {
@@ -449,7 +451,7 @@ public class Legend {
 		for (int i = 0; i < ways.length; i++) {
 			ways[i] = new WayDescription();
 			if (ds.readByte() != i) {
-				logger.error("Read legend had trouble reading way descriptions");
+				logger.error(Locale.get("legend.ReadLegendWayErr")/*Read legend had trouble reading way descriptions*/);
 			}
 			byte flags = ds.readByte();
 			ways[i].hideable = ((flags & LEGEND_FLAG_NON_HIDEABLE) == 0);
@@ -541,7 +543,7 @@ public class Legend {
 	}	
 	public static final  String getNodeTypeDesc(byte type) {
 		if (type < 0 || type >= pois.length) {
-			logger.error("ERROR: Invalid POI type " + type + " requested!");
+			logger.error(Locale.get("legend.ERRORInvalidPOItype")/*ERROR: Invalid POI type */ + type + Locale.get("legend.requested")/* requested!*/);
 			return null;
 		}
 		return pois[type].description;
@@ -549,7 +551,7 @@ public class Legend {
 	
 	public static final WayDescription getWayDescription(byte type) {			
 		if (type < 0 || type >= ways.length) {
-			logger.error("ERROR: Invalid way type " + type + " requested");
+			logger.error(Locale.get("legend.ERRORInvalidWaytype")/*ERROR: Invalid way type */ + type + Locale.get("legend.requested")/* requested*/);
 			return null;
  		}
 		return ways[type];
