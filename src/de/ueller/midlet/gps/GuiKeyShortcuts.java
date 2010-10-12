@@ -81,7 +81,7 @@ public class GuiKeyShortcuts extends List implements CommandListener,
 
 		keyMap = Trace.getInstance().gameKeyCommand;
 		this.append(" ", null);
-		this.append(Locale.get("guikeyshortcuts.GameActionKeyPresses:")/*Game Action key presses:*/, null);
+		this.append(Locale.get("guikeyshortcuts.GameActionKeyPresses")/*Game Action key presses:*/, null);
 		for (int i = 0; i < keyMap.size(); i++) {
 			int key = keyMap.getKeyIdx(i);
 			if (key > 31) {
