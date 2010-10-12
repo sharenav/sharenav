@@ -197,3 +197,4 @@ splash.MapData2= z OpenStreetMap
 splash.MapData3= pod licencí CC 2.0
 splash.MapData4= http://creativecommons.org/
 splash.MapData=Mapová data:
+guidiscover.lang_cs=Čeština
