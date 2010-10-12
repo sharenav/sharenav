@@ -2,6 +2,8 @@ package de.ueller.midlet.gps.routing;
 
 import de.ueller.midlet.gps.Logger;
 
+import de.enough.polish.util.Locale;
+
 public class Connection {
 	//#debug debug
 	private final static Logger logger = Logger.getInstance(Connection.class, Logger.ERROR);
@@ -92,7 +94,7 @@ public class Connection {
 	}
 	
 	public String toString(){
-		return "connection to " + toId; 
+		return Locale.get("connection.ConnectionTo")/*connection to*/ + " " + toId; 
 	}
 
 }

@@ -20,6 +20,8 @@ import de.ueller.gpsMid.mapData.Tile;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.UploadListener;
 
+import de.enough.polish.util.Locale;
+
 public class EditableWay extends Way implements UploadListener {
 	private final static Logger logger = Logger.getInstance(EditableWay.class,Logger.DEBUG);
 	private UploadListener ul;
@@ -81,11 +83,11 @@ public class EditableWay extends Way implements UploadListener {
 			//#debug
 			logger.debug(OSMdata.toString());
 			if (ul != null) {
-				ul.completedUpload(true, "Retrieved XML for way " + osmID);
+				ul.completedUpload(true, Locale.get("editableway.RetrievedXMLForWay")/*Retrieved XML for way */ + osmID);
 			}
 		} else {
 			if (ul != null) {
-				ul.completedUpload(false, "Retrieved XML for way " + osmID);
+				ul.completedUpload(false, Locale.get("editableway.RetrievedXMLForWay")/*Retrieved XML for way */ + osmID);
 			}
 		}
 		//#endif

@@ -591,11 +591,11 @@ public class Gpx extends Tile implements Runnable, InputListener {
 			wayptDatabase.closeRecordStore();
 			wayptDatabase = null;
 			mWayPtIdsToDelete = null;
-			importExportMessage = "Success!";
+			importExportMessage = Locale.get("gpx.Success")/*Success!*/;
 			return true;
 		} catch (RecordStoreNotOpenException e) {
 			logger.exception("Exception deleting waypoint (database not open)", e);
-			importExportMessage = "Exception deleting waypoint (database not open): " +
+			importExportMessage = Locale.get("gpx.ExceptionDeletingWaypoint")/*Exception deleting waypoint (database not open):*/ + " " +
 				e.getMessage();
 			return false;
 		} catch (InvalidRecordIDException e) {
@@ -677,7 +677,7 @@ public class Gpx extends Tile implements Runnable, InputListener {
 		
 		if ((!dontAskName) && Configuration.getCfgBitState(Configuration.CFGBIT_GPX_ASK_TRACKNAME_START)) {
 			mEnteringGpxNameStart = true;
-			GuiNameEnter gne = new GuiNameEnter(this, "Starting recording", trackName, Configuration.MAX_TRACKNAME_LENGTH);
+			GuiNameEnter gne = new GuiNameEnter(this, Locale.get("gpx.StartingRecording")/*Starting recording*/, trackName, Configuration.MAX_TRACKNAME_LENGTH);
 			doNewTrk();
 			gne.show();
 		} else {
@@ -760,7 +760,7 @@ public class Gpx extends Tile implements Runnable, InputListener {
 		}
 		if ((!dontAskName) && Configuration.getCfgBitState(Configuration.CFGBIT_GPX_ASK_TRACKNAME_STOP)) {
 			mEnteringGpxNameStop = true;
-			GuiNameEnter gne = new GuiNameEnter(this, "Stopping recording", trackName, Configuration.MAX_TRACKNAME_LENGTH);
+			GuiNameEnter gne = new GuiNameEnter(this, Locale.get("gpx.StoppingRecording")/*Stopping recording*/, trackName, Configuration.MAX_TRACKNAME_LENGTH);
 			gne.show();
 		} else {
 			startProcessorThread(JOB_SAVE_TRK);
@@ -823,7 +823,7 @@ public class Gpx extends Tile implements Runnable, InputListener {
 			trackDatabase = null;
 			trackTile.dropTrk();
 			mTrksToDelete = null;
-			importExportMessage = "Finished!";
+			importExportMessage = Locale.get("gpx.Finished")/*Finished!*/;
 			return true;
 		} catch (RecordStoreNotOpenException e) {
 			logger.exception("Exception deleting track (database not open)", e);
@@ -850,7 +850,7 @@ public class Gpx extends Tile implements Runnable, InputListener {
 	 * @param trk The track to rename
 	 */
 	public void updateTrackName(PersistEntity trk) {
-		String action = " reading for updating trackname";
+		String action = " " + Locale.get("gpx.ReadingForUpdatingTrackname")/*reading for updating trackname*/;
 		try {
 			openTrackDatabase();
 			DataInputStream dis1 = new DataInputStream(new ByteArrayInputStream(
@@ -861,7 +861,7 @@ public class Gpx extends Tile implements Runnable, InputListener {
 			byte[] trackArray = new byte[trackSize];
 			dis1.read(trackArray);
 
-			action = " preparing update of ";
+			action = " " + Locale.get("gpx.PreparingUpdateOf")/*preparing update of*/ + " ";
 			ByteArrayOutputStream baosDb = new ByteArrayOutputStream();
 			DataOutputStream dosDb = new DataOutputStream(baosDb);
 			dosDb.writeUTF(trk.displayName);
@@ -870,7 +870,7 @@ public class Gpx extends Tile implements Runnable, InputListener {
 			dosDb.write(trackArray);
 			dosDb.flush();
 			
-			action = " updating of ";
+			action = " " + Locale.get("gpx.UpdatingOf")/*updating of*/ + " ";
 			trackDatabase.setRecord(trk.id, baosDb.toByteArray(), 0, baosDb.size());
 			
 			trackDatabase.closeRecordStore();
@@ -1040,13 +1040,13 @@ public class Gpx extends Tile implements Runnable, InputListener {
 					trk.displayName = trackName + " (" + noTrackPoints + ")";
 					trk.setTrackSize(noTrackPoints);
 				} catch (RecordStoreFullException e) {
-					trk.displayName = "Error (RecordStoreFullException)";
+					trk.displayName = Locale.get("gpx.ErrorRecordStoreFullException")/*Error (RecordStoreFullException)*/;
 					logger.error("Record Store is full, can't load list " + i + " with index " + idx + ":" + e.getMessage());
 				} catch (RecordStoreNotFoundException e) {
-					trk.displayName = "Error (RecordStoreNotFoundException)";
+					trk.displayName = Locale.get("gpx.ErrorRecordStoreNotFoundException")/*Error (RecordStoreNotFoundException)*/;
 					logger.error("Record Store not found, can't load list " + i + " with index " + idx + ": " + e.getMessage());
 				} catch (RecordStoreException e) {
-					trk.displayName = "Error (RecordStoreException)";
+					trk.displayName = Locale.get("gpx.ErrorRecordStoreException")/*Error (RecordStoreException)*/;
 					logger.error("Record Store exception, can't load track " + i + " with index " + idx + ": " + e.getMessage());
 					logger.error( e.toString());
 				}
@@ -1205,7 +1205,7 @@ public class Gpx extends Tile implements Runnable, InputListener {
 				for (int i = 0; i < exportTracks.size(); i++) {
 					currentTrk = (PersistEntity)exportTracks.elementAt(i);
 					if (feedbackListener != null) {
-						feedbackListener.updateProgress("Exporting " + currentTrk.displayName + "\n");
+						feedbackListener.updateProgress(Locale.get("gpx.Exporting")/*Exporting */ + currentTrk.displayName + "\n");
 					}
 					success = sendGpx();
 					if (success == false) {
@@ -1232,7 +1232,7 @@ public class Gpx extends Tile implements Runnable, InputListener {
 				success = doSaveTrk();
 			} else {
 				logger.error("Did not know what to do in Gpx.run()");
-				importExportMessage = "Did not know what to do.";
+				importExportMessage = Locale.get("gpx.DidNotKnowWhatToDo")/*Did not know what to do.*/;
 				success = false;
 			}
 			// Must be called *before* changing the job state, else somebody might
@@ -1481,14 +1481,14 @@ public class Gpx extends Tile implements Runnable, InputListener {
 			else if (mJobState == JOB_EXPORT_WPTS) 
 			{
 				if (waypointsSaveFileName == null) {
-					importExportMessage = "No filename, way points sending aborted";
+					importExportMessage = Locale.get("gpx.NoWilenameWpSendingAborted")/*No filename, way points sending aborted*/;
 					return false;
 				}
 				name = Configuration.getValidFileName(waypointsSaveFileName);
 			}
 			
 			if (url == null) {
-				importExportMessage = "No GPX receiver specified. Please select a GPX receiver in the setup menu";
+				importExportMessage = Locale.get("gpx.NoGPXreceiver")/*No GPX receiver specified. Please select a GPX receiver in the setup menu*/;
 				return false;
 			}
 			
@@ -1528,19 +1528,19 @@ public class Gpx extends Tile implements Runnable, InputListener {
 					}
 				}
 			} catch (ClassNotFoundException cnfe) {
-				importExportMessage = "Your phone does not support this form of exporting, please choose a different one";
+				importExportMessage = Locale.get("gpx.UnsuportedExport")/*Your phone does not support this form of exporting, please choose a different one*/;
 				session = null;
 				return false;
 			} catch (ClassCastException cce) {
 				logger.exception("Could not cast the class", cce);				
 			}
 			if (session == null) {
-				importExportMessage = "Your phone does not support this form of exporting, please choose a different one";
+				importExportMessage = Locale.get("gpx.UnsuportedExport")/*Your phone does not support this form of exporting, please choose a different one*/;
 				return false;
 			}
 			outStream = session.openSession(url, name);
 			if (outStream == null) {
-				importExportMessage = "Could not obtain a valid connection to " + url;
+				importExportMessage = Locale.get("gpx.CouldNotObtainValidConn")/*Could not obtain a valid connection to*/ + " " + url;
 				return false;
 			}
 			outStream.write("<?xml version='1.0' encoding='UTF-8'?>\r\n".getBytes());
@@ -1559,7 +1559,7 @@ public class Gpx extends Tile implements Runnable, InputListener {
 			outStream.flush();
 			outStream.close();
 			session.closeSession();
-			importExportMessage = "success";
+			importExportMessage = Locale.get("gpx.success")/*success*/;
 			return true;
 		} catch (IOException e) {			
 			logger.error("IOException, can't transmit tracklog: " + e);
@@ -1616,9 +1616,9 @@ public class Gpx extends Tile implements Runnable, InputListener {
 			importExportMessage = importHandler.getMessage();
 			return success;
 		} catch (ClassNotFoundException cnfe) {
-			importExportMessage = "Your phone does not support XML parsing";
+			importExportMessage = Locale.get("gpx.NoXMLParseSupport")/*Your phone does not support XML parsing*/;
 		} catch (Exception e) {
-			importExportMessage = "Something went wrong while importing GPX: " + e;
+			importExportMessage = Locale.get("gpx.ImportGPXError")/*Something went wrong while importing GPX*/ + ": " + e;
 		}
 		return false;
 	}

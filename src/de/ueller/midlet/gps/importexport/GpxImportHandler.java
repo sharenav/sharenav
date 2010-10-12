@@ -26,6 +26,8 @@ import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.data.ProjMath;
 
+import de.enough.polish.util.Locale;
+
 public class GpxImportHandler implements XmlParserContentHandler {
 
 	private final static Logger logger = Logger.getInstance(
@@ -139,8 +141,8 @@ public class GpxImportHandler implements XmlParserContentHandler {
 		// #debug debug
 		logger.debug("Started parsing XML document");
 		if (ul != null) {
-			ul.startProgress("GPX Import"); // this is shown for both waypoint and track import
-			ul.updateProgress("Starting GPX import\n");
+			ul.startProgress(Locale.get("gpximporthandler.GPXImport")/*GPX Import*/); // this is shown for both waypoint and track import
+			ul.updateProgress(Locale.get("gpximporthandler.StartingGPXimport")/*Starting GPX import*/ + "\n");
 		}
 	}
 
@@ -201,19 +203,19 @@ public class GpxImportHandler implements XmlParserContentHandler {
 	public String getMessage() {
 		StringBuffer sb = new StringBuffer();
 		if (maxDistance != 0) {
-			sb.append("\n(Max. distance: " + maxDistance + " km)");
+			sb.append("\n(" + Locale.get("gpximporthandler.MaxDistance")/*Max. distance*/ + ": " + maxDistance + " " + Locale.get("gpximporthandler.km")/*km*/ + ")");
 		}
-		sb.append("\n\n" + importedWpts + " waypoints imported");
+		sb.append("\n\n" + importedWpts + " " + Locale.get("gpximporthandler.WaypointsImported")/*waypoints imported*/);
 		if (tooFarWpts != 0 || duplicateWpts != 0) {
-			sb.append("\n\nSkipped waypoints:");
+			sb.append("\n\n" + Locale.get("gpximporthandler.SkippedWaypoints")/*Skipped waypoints*/ + ":");
 			if (maxDistance != 0) {
-				sb.append("\n" + tooFarWpts + " too far away");
+				sb.append("\n" + tooFarWpts + " " + Locale.get("gpximporthandler.TooFarAway")/*too far away*/);
 			}
 			if (duplicateWpts != 0) {
-				sb.append("\n" + duplicateWpts + " already existing");
+				sb.append("\n" + duplicateWpts + " " + Locale.get("gpximporthandler.AlreadyExisting")/*already existing*/);
 			}
 		}
-		sb.append("\n\n" + importedTpts + " trackpoints imported");
+		sb.append("\n\n" + importedTpts + " " + Locale.get("gpximporthandler.TrackpointsImported")/*trackpoints imported*/);
 		return sb.toString();
 
 	}

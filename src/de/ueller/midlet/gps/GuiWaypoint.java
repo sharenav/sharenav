@@ -24,22 +24,23 @@ import de.ueller.midlet.screens.GuiWaypointSorting;
 import de.ueller.midlet.screens.InputListener;
 import de.ueller.midlet.screens.ProgressDisplay;
 
+import de.enough.polish.util.Locale;
 
 public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 		GpsMidDisplayable, UploadListener, InputListener, CompletionListener {
 
 	private final static Logger mLogger = Logger.getInstance(GuiWaypoint.class, Logger.DEBUG);
 	
-	private final Command EXPORT_ALL_CMD = new Command("Export All", Command.ITEM, 2);
-	private final Command IMPORT_CMD = new Command("Import", Command.ITEM, 3);
-	private final Command RENAME_CMD = new Command("Rename", Command.ITEM, 3);
-	private final Command DEL_CMD = new Command("Delete", Command.ITEM, 3);
-	private final Command SALL_CMD = new Command("Select All", Command.ITEM, 3);
-	private final Command DSALL_CMD = new Command("Deselect All", Command.ITEM, 3);
-	private final Command SORT_MENU_CMD = new Command("Sorting", Command.ITEM, 3);
-	private final Command BACK_CMD = new Command("Back", Command.BACK, 5);
-	private final Command DEST_CMD = new Command("As destination", Command.ITEM, 6);
-	private final Command DISP_CMD = new Command("Display", Command.OK, 6);
+	private final Command EXPORT_ALL_CMD = new Command(Locale.get("guiwaypoint.ExportAll")/*Export All*/, Command.ITEM, 2);
+	private final Command IMPORT_CMD = new Command(Locale.get("guiwaypoint.Import")/*Import*/, Command.ITEM, 3);
+	private final Command RENAME_CMD = new Command(Locale.get("guiwaypoint.Rename")/*Rename*/, Command.ITEM, 3);
+	private final Command DEL_CMD = new Command(Locale.get("guiwaypoint.Delete")/*Delete*/, Command.ITEM, 3);
+	private final Command SALL_CMD = new Command(Locale.get("guiwaypoint.SelectAll")/*Select All*/, Command.ITEM, 3);
+	private final Command DSALL_CMD = new Command(Locale.get("guiwaypoint.DeselectAll")/*Deselect All*/, Command.ITEM, 3);
+	private final Command SORT_MENU_CMD = new Command(Locale.get("guiwaypoint.Sorting")/*Sorting*/, Command.ITEM, 3);
+	private final Command BACK_CMD = new Command(Locale.get("guiwaypoint.Back")/*Back*/, Command.BACK, 5);
+	private final Command DEST_CMD = new Command(Locale.get("guiwaypoint.AsDestination")/*As destination*/, Command.ITEM, 6);
+	private final Command DISP_CMD = new Command(Locale.get("guiwaypoint.Display")/*Display*/, Command.OK, 6);
 
 	/** Vector containing all waypoints currently in the application. */
 	private Vector mWaypoints;
@@ -62,7 +63,7 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 	
 	
 	public GuiWaypoint(Trace parent) throws Exception {
-		super("Waypoints", List.MULTIPLE);
+		super(Locale.get("guiwaypoint.Waypoints")/*Waypoints*/, List.MULTIPLE);
 		mParent = parent;
 		mProgress = new ProgressDisplay(this);
 		mExporting = false;
@@ -112,12 +113,12 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 		}
 		for (int i = 0; i < count_waypoints; i++) {
 			if ((getWaypoint(i).displayName == null) || (getWaypoint(i).displayName.equals(""))) {
-				this.append("(unnamed)", null);
+				this.append("(" + Locale.get("guiwaypoint.unnamed")/*unnamed*/ + ")", null);
 			} else {
 				this.append(getWaypoint(i).displayName, null);
 			}
 		}
-		this.setTitle("Waypoints (" + count_waypoints + ")");
+		this.setTitle(Locale.get("guiwaypoint.Waypoints")/*Waypoints*/ +  " (" + count_waypoints + ")");
 	}
 
 	public void commandAction(Command c, Displayable d) {
@@ -131,7 +132,7 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 			for (int i = 0; i < sel.length; i++) {
 				if (sel[i]) {
 					mWptIdx = i;
-					GuiNameEnter gne = new GuiNameEnter(this, "Rename Waypoint",
+					GuiNameEnter gne = new GuiNameEnter(this, Locale.get("guiwaypoint.RenameWaypoint")/*Rename Waypoint*/,
 							getWaypoint(i).displayName, Configuration.MAX_WAYPOINTNAME_LENGTH);
 					gne.show();
 					break;
@@ -156,8 +157,8 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 			{
 				mExporting = false;
 				mImporting = false;
-				mProgress.showProgressDisplay("Deleting way points");
-				mProgress.addProgressText("Deleting " + idsToDelete.size() + " way point(s).\n");
+				mProgress.showProgressDisplay(Locale.get("guiwaypoint.DeletingWayPoints")/*Deleting way points*/);
+				mProgress.addProgressText(Locale.get("guiwaypoint.Deleting")/*Deleting*/ +  " " + idsToDelete.size() + " " + Locale.get("guiwaypoint.way points")/*way point(s)*/ + ".\n");
 				mParent.gpx.deleteWayPts(idsToDelete, this);
 			}
 			return;
@@ -178,7 +179,7 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 		if (c == EXPORT_ALL_CMD) {
 			mExporting = true;
 			mImporting = false;
-			GuiNameEnter gne = new GuiNameEnter(this, "Send as (without .gpx)",
+			GuiNameEnter gne = new GuiNameEnter(this, Locale.get("guiwaypoint.SendAsWithoutGPX")/*Send as (without .gpx)*/,
 					HelperRoutines.formatSimpleDateNow() + "-waypoints",
 					Configuration.MAX_WAYPOINTS_NAME_LENGTH);
 			gne.show();
@@ -304,23 +305,23 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 		String alertMsg;
 		if (mExporting) {
 			if (success) {
-				alertMsg = "Completed GPX export: " + message;
+				alertMsg = Locale.get("guiwaypoint.CompletedGPXExport")/*Completed GPX export: */ + message;
 			} else {
-				alertMsg = "GPX export failed: " + message;
+				alertMsg = Locale.get("guiwaypoint.GPXExportFailed")/*GPX export failed: */ + message;
 			}
 		} else if (mImporting) {
 			if (success) {
-				alertMsg = "Completed GPX import: " + message;
+				alertMsg = Locale.get("guiwaypoint.CompletedGPXImport")/*Completed GPX import: */ + message;
 				initWaypoints();
 			} else {
-				alertMsg = "GPX import failed: " + message;
+				alertMsg = Locale.get("guiwaypoint.GPXImportFailed")/*GPX import failed: */ + message;
 			}
 		} else {
 			if (success) {
 				alertMsg = message;
 				initWaypoints();
 			} else {
-				alertMsg = "Failed: " + message;
+				alertMsg = Locale.get("guiwaypoint.Failed")/*Failed: */ + message;
 			}
 			
 		}
@@ -346,10 +347,10 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 			// 255 items - at least on some phones).
 			// Todo: Some Phones doesn't have this 255 Items-Limit so we may improve the code here
 			if (mWaypoints.size() > 255) {
-				GpsMid.getInstance().alert("Info",
-					"Due to a platform restriction we display only the first 255 of " +
-					mWaypoints.size() + " waypoints. Hint: Export some waypoints to " +
-					"a file and delete them to show the remaining waypoints.",
+				GpsMid.getInstance().alert(Locale.get("guiwaypoint.Info")/*Info*/,
+							   Locale.get("guiwaypoint.DueToPlatform")/*Due to a platform restriction we display only the first 255 of */ +
+						   mWaypoints.size() + Locale.get("guiwaypoint.HintExport")/* waypoints. Hint: Export some waypoints to */ +
+						   Locale.get("guiwaypoint.DeleteThem")/*a file and delete them to show the remaining waypoints.*/,
 					Alert.FOREVER);
 			}
 	}
@@ -363,8 +364,8 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 	public void inputCompleted(String strResult) {
 		if (mExporting) {
 			if (strResult != null) {
-				mProgress.showProgressDisplay("Exporting way points");
-				mProgress.addProgressText("Exporting all " + mWaypoints.size() + " way point(s).\n");
+				mProgress.showProgressDisplay(Locale.get("guiwaypoint.ExportingWayPoints")/*Exporting way points*/);
+				mProgress.addProgressText(Locale.get("guiwaypoint.ExportingAll")/*Exporting all */ + mWaypoints.size() + " " + Locale.get("guiwaypoint.way points")/*way point(s)*/ + ".\n");
 				mParent.gpx.exportWayPts(Configuration.getGpxUrl(), strResult, this);
 			} else {
 				// BACK action from name input

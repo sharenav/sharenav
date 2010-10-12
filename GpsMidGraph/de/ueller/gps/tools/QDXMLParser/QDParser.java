@@ -3,6 +3,8 @@ package de.ueller.gps.tools.QDXMLParser;
 import java.io.*;
 import java.util.*;
 
+import de.enough.polish.util.Locale;
+
 /**
  * Quick and Dirty xml parser
  * 
@@ -189,7 +191,7 @@ public class QDParser {
 	    sb.append((char)Integer.parseInt(cent.substring(1)));
 	  // Insert custom entity definitions here
 	  else
-	    exc("Unknown entity: &"+cent+";",line,col);
+	    exc(Locale.get("qdparser.UnknownEntity")/*Unknown entity: &*/+cent+";",line,col);
 	} else {
 	  etag.append((char)c);
 	}
@@ -201,7 +203,7 @@ public class QDParser {
 	if(tagName == null)
 	  tagName = sb.toString();
         if(c != '>')
-	  exc("Expected > for tag: <"+tagName+"/>",line,col);
+	  exc(Locale.get("qdparser.ExpectedGtForTag")/*Expected > for tag: <*/,line,col);
 	doc.startElement(tagName,attrs);
 	doc.endElement(tagName);
 	if(depth==0) {
@@ -271,7 +273,7 @@ public class QDParser {
 	} else if(isWhitespace((char)c)) {
 	  ;
 	} else {
-	  exc("Error in attribute processing",line,col);
+  	  exc(Locale.get("qdparser.ErrorInattrProc")/*Error in attribute processing*/,line,col);
 	}
 
       } else if(mode == ATTRIBUTE_LVALUE) {
@@ -293,7 +295,7 @@ public class QDParser {
 	} else if(isWhitespace((char)c)) {
 	  ;
 	} else {
-	  exc("Error in attribute processing.",line,col);
+	  exc(Locale.get("qdparser.ErrorInattrProc")/*Error in attribute processing*/ + ".",line,col);
 	}
 
       } else if(mode == IN_TAG) {
@@ -316,7 +318,7 @@ public class QDParser {
     if(mode == DONE)
       doc.endDocument();
     else
-      exc("missing end tag",line,col);
+      exc(Locale.get("qdparser.MissingEndTag")/*missing end tag*/,line,col);
   }
   private static void exc(String s,int line,int col)
     throws Exception

@@ -9,6 +9,7 @@ package de.ueller.midlet.gps;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
+import de.enough.polish.util.Locale;
 
 import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.Configuration;
@@ -310,7 +311,7 @@ public class ImageCollector implements Runnable {
 		   crash++;
 		   if(tr.scale > 10000 && crash < MAXCRASHES) {
 		    tr.scale /= 1.5f;
-		    recoverZoomedIn = " Zooming in to recover.";
+		    recoverZoomedIn = Locale.get("imagecollector.ZoomingInToRecover")/* Zooming in to recover.*/;
 		   }   
 		   logger.fatal("ImageCollector ran out of memory: " + oome.getMessage() + recoverZoomedIn);
 		} catch (Exception e) {
@@ -410,10 +411,10 @@ public class ImageCollector implements Runnable {
 				// newYCenter);
 				// System.out.println("Paint ysize=" + ySize + " nextSc.xSize="
 				// + nextSc.ySize + " hotspot=" + p.getImageCenter());
-
+				
 			}
 			screenPc.g.drawImage(img[nextPaint], newXCenter, newYCenter,
-					Graphics.VCENTER | Graphics.HCENTER);
+					     Graphics.VCENTER | Graphics.HCENTER);
 			// Test if the new center is around the middle of the screen, in which
 			// case we don't need to redraw (recreate a new image), as nothing has changed.
 			if ( Math.abs(newXCenter - screenXCenter) > 4
@@ -433,8 +434,8 @@ public class ImageCollector implements Runnable {
 			newXCenter = oldCenter.x - p.getImageCenter().x + screenXCenter;
 			newYCenter = oldCenter.y - p.getImageCenter().y + screenYCenter;
 			if ( Math.abs(newXCenter - screenXCenter) > 1
-					|| Math.abs(newYCenter - screenYCenter) > 1
-					|| paintPC.course != nextSc.course) {
+			     || Math.abs(newYCenter - screenYCenter) > 1
+			     || paintPC.course != nextSc.course) {
 				needRedraw = true;
 			}
 		}
@@ -475,10 +476,10 @@ public class ImageCollector implements Runnable {
 			// than SQUARE_MAXPIXELS or 30 m (including penalty) to it.
 			// If the routable way is too far away, we try the closest way.
 			if (paintPC.squareDstToActualRoutableWay < SQUARE_MAXPIXELS
-					|| paintPC.getDstFromSquareDst(paintPC.squareDstToActualRoutableWay) < 30) {
+			    || paintPC.getDstFromSquareDst(paintPC.squareDstToActualRoutableWay) < 30) {
 				wayForName = paintPC.actualRoutableWay;
 			} else if (paintPC.squareDstToWay < SQUARE_MAXPIXELS
-					|| paintPC.getDstFromSquareDst(paintPC.squareDstToWay) < 30) {
+				   || paintPC.getDstFromSquareDst(paintPC.squareDstToWay) < 30) {
 				wayForName = paintPC.actualWay;
 			}
 		} else if (paintPC.getDstFromSquareDst(paintPC.squareDstToWay) <= pixDest) {
@@ -501,20 +502,20 @@ public class ImageCollector implements Runnable {
 			if (wayForName.getMaxSpeed() != 0) {
 				nummaxspeed = wayForName.getMaxSpeed();
 				if (Configuration
-						.getCfgBitState(Configuration.CFGBIT_MAXSPEED_WINTER)
-						&& (wayForName.getMaxSpeedWinter() > 0)) {
+				    .getCfgBitState(Configuration.CFGBIT_MAXSPEED_WINTER)
+				    && (wayForName.getMaxSpeedWinter() > 0)) {
 					nummaxspeed = wayForName.getMaxSpeedWinter();
-					winter = "W ";
+					winter = Locale.get("imagecollector.Winter")/*W */;
 				}
 				if (Configuration.getCfgBitState(Configuration.CFGBIT_METRIC)) {
-					maxspeed = " SL:" + winter + nummaxspeed;
+					maxspeed = Locale.get("imagecollector.SL")/* SL:*/ + winter + nummaxspeed;
 				} else {
 					// Round up at this point, as the the previouse two
 					// conversions
 					// were rounded down already. (Seems to work better for
 					// speed limits of
 					// 20mph and 30mph)
-					maxspeed = " SL:" + winter + ((int)(nummaxspeed / 1.609344f) + 1);
+				    maxspeed = Locale.get("imagecollector.SL")/* SL:*/ + winter + ((int)(nummaxspeed / 1.609344f) + 1);
 				}
 			}
 
@@ -523,7 +524,7 @@ public class ImageCollector implements Runnable {
 			} else {
 				WayDescription wayDesc = Legend
 						.getWayDescription(wayForName.type);
-				name = "(unnamed " /* i:unnamed */ + wayDesc.description + ")";
+				name = Locale.get("imagecollector.unnamed")/*(unnamed */ + wayDesc.description + ")";
 			}
 			if (name == null) {
 				name = maxspeed;
@@ -532,35 +533,35 @@ public class ImageCollector implements Runnable {
 			}
 			// If there's an URL associated with way, show a letter next to name
 			if (wayForName.urlIdx != -1) {
-				name = name + " W";
+			    name = name + Locale.get("imagecollector.W")/* W*/;
 			}
 			// Show 'P' for phone number
 			if (wayForName.phoneIdx != -1) {
-				name = name + " P";
+				name = name + Locale.get("imagecollector.P")/* P*/;
 			}
 		}
 		// use the nearest routable way for the the speed limit detection if
 		// it's
 		// closer than 30 m or SQUARE_MAXPIXELS including penalty
 		if (paintPC.squareDstToActualRoutableWay < SQUARE_MAXPIXELS
-				|| paintPC
-						.getDstFromSquareDst(paintPC.squareDstToActualRoutableWay) < 30) {
+		    || paintPC
+		    .getDstFromSquareDst(paintPC.squareDstToActualRoutableWay) < 30) {
 			tr.actualSpeedLimitWay = paintPC.actualRoutableWay;
 		} else {
 			tr.actualSpeedLimitWay = null;
 		}
-
+		
 		boolean showLatLon = Configuration
-				.getCfgBitState(Configuration.CFGBIT_SHOWLATLON);
+			.getCfgBitState(Configuration.CFGBIT_SHOWLATLON);
 
 		LayoutElement e = Trace.tl.ele[TraceLayout.WAYNAME];
 		if (showLatLon) {
-			e.setText("lat: "
-					+ Float.toString(paintPC.center.radlat
-							* MoreMath.FAC_RADTODEC)
-					+ " lon: "
-					+ Float.toString(paintPC.center.radlon
-							* MoreMath.FAC_RADTODEC));
+			e.setText(Locale.get("imagecollector.lat")/* lat: */
+				  + Float.toString(paintPC.center.radlat
+						   * MoreMath.FAC_RADTODEC)
+				  + Locale.get("imagecollector.lon")/* lon: */
+				  + Float.toString(paintPC.center.radlon
+						   * MoreMath.FAC_RADTODEC));
 		} else {
 			if (name != null && name.length() > 0) {
 				e.setText(name);
@@ -573,13 +574,13 @@ public class ImageCollector implements Runnable {
 //			System.out.println("wakeup thread because scale changed");
 			needRedraw = true;
 		}
-
+		
 		// when the projection has changed we must redraw
 		if (!paintPC.getP().getProjectionID().equals(screenPc.getP().getProjectionID()) ) {
 //			System.out.println("wakeup thread because projection changed");
 			needRedraw = true;
 		}
-
+		
 		synchronized (this) {
 			paintPC.state = PaintContext.STATE_READY;
 			if (needRedraw) {
@@ -591,7 +592,7 @@ public class ImageCollector implements Runnable {
 		// currentVisibleSc=lastCreatedSc.cloneToScreenContext();
 		return getDrawnCenter;
 	}
-
+	
 	private synchronized void newCollected() {
 		while ((pc[nextPaint].state != PaintContext.STATE_READY) || (pc[nextCreate].state != PaintContext.STATE_READY)) {
 			try {

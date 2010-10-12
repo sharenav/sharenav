@@ -22,6 +22,8 @@ import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.importexport.QDGpxParser;
 import de.ueller.midlet.gps.importexport.XmlParserContentHandler;
 
+import de.enough.polish.util.Locale;
+
 public class OSMdataWay extends OSMdataEntity implements XmlParserContentHandler{
 	private final static Logger logger = Logger.getInstance(
 			OSMdataWay.class, Logger.DEBUG);
@@ -125,16 +127,16 @@ public class OSMdataWay extends OSMdataEntity implements XmlParserContentHandler
 	
 	public String toString() {
 		String res;
-		res = "\nOSM way " + osmID + "\n";
-		res += "     last edited by " + editBy + " at " + editTime + "\n";
-		res += "     version " + version + " in changeset " + changesetID + "\n";
+		res = "\n" + Locale.get("osmdataway.OSMway")/*OSM way*/ + " " + osmID + "\n";
+		res += "     " + Locale.get("osmdataway.LastEditedBy")/*last edited by*/ + " " + editBy + " " + Locale.get("osmdataway.at")/*at*/ + " " + editTime + "\n";
+		res += "     " + Locale.get("osmdataway.version")/*version*/ + " " + version + " " + Locale.get("osmdataway.InChangeset")/*in changeset*/ + " " + changesetID + "\n";
 		res += " Tags:\n";
 		Enumeration enKey = tags.keys();
 		while (enKey.hasMoreElements()) {
 			String key = (String)enKey.nextElement();
 			res += "   " + key + " = " + tags.get(key) + "\n";
 		}
-		res += " Nodes:\n";
+		res += " " + Locale.get("osmdataway.Nodes")/*Nodes*/ + ":\n";
 		for (int i = 0; i < nodes.size(); i++) {
 			res += "   ref=" + nodes.elementAt(i) + "\n";
 		}

@@ -8,6 +8,7 @@ package de.ueller.midlet.gps;
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Graphics;
 
+import de.enough.polish.util.Locale;
 
 public class GuiBusy extends Canvas implements GpsMidDisplayable {
 
@@ -21,7 +22,7 @@ public class GuiBusy extends Canvas implements GpsMidDisplayable {
 		g.fillRect((width - 100)/2, (height - 50)/2, 100, 50);
 		g.setColor(0);
 		g.drawRect((width - 100)/2, (height - 50)/2, 100, 50);		
-		g.drawString("Busy...", (width - g.getFont().stringWidth("Busy...")) / 2, 
+		g.drawString(Locale.get("guibusy.Busy")/*Busy...*/, (width - g.getFont().stringWidth(Locale.get("guibusy.Busy")/*Busy...*/)) / 2, 
 			(height - g.getFont().getHeight())/2, Graphics.TOP | Graphics.LEFT);
 	}
 

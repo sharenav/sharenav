@@ -20,6 +20,8 @@ import javax.bluetooth.UUID;
 //#endif
 import de.ueller.gps.tools.StringTokenizer;
 
+import de.enough.polish.util.Locale;
+
 public class DiscoverGps
 	//#if polish.api.btapi
 	implements Runnable, DiscoveryListener
@@ -46,8 +48,8 @@ public class DiscoverGps
 	/** the engine is wating for a serviceselection */
 	public static final int		NODEVICE				= 5;
 
-	private static final String[]	stateText					= { "ready",
-			"device search", "device select", "service search","select service","No Device in range"};
+        private static final String[]	stateText					= { Locale.get("discovergps.ready")/*ready*/,
+                                                    Locale.get("discovergps.DeviceSearch")/*device search*/, Locale.get("discovergps.DeviceSelect")/*device select*/, Locale.get("discovergps.ServiceSearch")/*service search*/,Locale.get("discovergps.SelectService")/*select service*/,Locale.get("discovergps.NoDeviceInRange")/*No Device in range*/};
 
 	private final GuiDiscover		parent;
 
@@ -122,7 +124,7 @@ public class DiscoverGps
 	 */
 	void destroy() {
 		synchronized (this) {
-			parent.addDevice("shutdown discover");
+		        parent.addDevice(Locale.get("discovergps.ShutdownDiscover")/*shutdown discover*/);
 			cancelSearch();
 			isClosed = true;
 
@@ -135,7 +137,7 @@ public class DiscoverGps
 		try {
 			processorThread.join();
 		} catch (InterruptedException e) {} // ignore
-		parent.addDevice("distroyed");
+		parent.addDevice(Locale.get("discovergps.Distroyed")/*distroyed*/);
 		parent.show();
 	}
 
@@ -144,7 +146,7 @@ public class DiscoverGps
 	 */
 	public void deviceDiscovered(RemoteDevice btDevice, DeviceClass cod) {
 		// same device may found several times during single search
-		parent.addDevice("found "+btDevice.getBluetoothAddress());		
+	    parent.addDevice(Locale.get("discovergps.Found")/*found */+btDevice.getBluetoothAddress());		
 		if (devices.indexOf(btDevice) == -1) {
 			devices.addElement(btDevice);
 		}
@@ -162,7 +164,7 @@ public class DiscoverGps
 	public void inquiryCompleted(int discType) {
 		this.discType = discType;
 		// parent.showState("search complete");
-		parent.addDevice("inquiry Complete");
+		parent.addDevice(Locale.get("discovergps.InquiryComplete")/*inquiry Complete*/);
 		synchronized (this) {
 			notify();
 		}
@@ -185,7 +187,7 @@ public class DiscoverGps
 			
 //			System.out.println("Start Thread Discover Gps");
 			// initialize bluetooth first
-			parent.addDevice("init BT");
+			parent.addDevice(Locale.get("discovergps.InitBT")/*init BT*/);
 			boolean isBTReady = false;
 
 			try {
@@ -197,14 +199,14 @@ public class DiscoverGps
 				isBTReady = true;
 			} catch (Exception e) {
 				logger.exception("Can't initialize bluetooth: ", e);
-				parent.addDevice("Can't init bluetooth");
+				parent.addDevice(Locale.get("discovergps.CantInitBluetooth")/* Can't init bluetooth */);
 			}
 
 			parent.completeInitialization(isBTReady);
 
 			// nothing to do if no bluetooth available
 			if (!isBTReady) {
-				parent.addDevice("no Blutooth");
+			    parent.addDevice(Locale.get("discovergps.NoBlutooth")/*no Blutooth*/);
 				return;
 			}
 
@@ -233,7 +235,7 @@ public class DiscoverGps
 			logger.silentexception("Comm ports are not supported on this device",e);
 		}
 		parent.show();
-		parent.addDevice("Thread end");
+		parent.addDevice(Locale.get("discovergps.ThreadEnd")/*Thread end*/);
 		parent.btDiscoverReady();
 
 	}
@@ -251,11 +253,11 @@ public class DiscoverGps
 		}
 		switch (discType) {
 			case INQUIRY_ERROR:
-				parent.addDevice("Device discovering error...");
+			    parent.addDevice(Locale.get("discovergps.DeviceDiscoveringError")/*Device discovering error...*/);
 				return;
 			case INQUIRY_TERMINATED:
 				// make sure no garbage in found devices list
-				parent.addDevice("Device search canceled");
+				    parent.addDevice(Locale.get("discovergps.DeviceSearchCanceled")/*Device search canceled*/);
 
 				// nothing to report - go to next request
 				break;
@@ -272,7 +274,7 @@ public class DiscoverGps
 				break;
 			default:
 				// what kind of system you are?... :(
-				parent.addDevice("unknown Return from Discover");
+				parent.addDevice(Locale.get("discovergps.UnkRetFromDiscover")/*unknown Return from Discover*/);
 				logger.error("system error:"
 						+ " unexpected device discovery code: " + discType);
 //					destroy();
@@ -316,7 +318,7 @@ public class DiscoverGps
 				i++;
 				retries = 0;
 			}			
-			parent.addDevice("wait for Discovery end");
+			  parent.addDevice(Locale.get("discovergps.WaitForDiscoveryEnd")/*wait for Discovery end*/);
 		}
 	}
 
@@ -329,20 +331,20 @@ public class DiscoverGps
 	private void selectService() {
 //		while (!isClosed) {
 		// suche die devices
-		    parent.addDevice("search devices");
+		    parent.addDevice(Locale.get("discovergps.SearchDevices")/*search devices*/);
 			searchDevice();
 			if (devices.size() == 0){
-				parent.addDevice("no Device found");
+			    parent.addDevice(Locale.get("discovergps.NoDeviceFound")/*no Device found*/);
 			    return;
 			}
 			// durchsuche alle devices nach services
-			parent.addDevice("search services");
+			    parent.addDevice(Locale.get("discovergps.SearchServices")/*search services*/);
 			searchService();
 			if (getState() != SERVICE_SELECT)			
 				waitUntilNotify();			
 //			parent.clear();
 			if (devices.size() == 0){
-				parent.addDevice("no Service found");
+				parent.addDevice(Locale.get("discovergps.NoServiceFound")/*no Service found*/);
 			    return;
 			}
 			for (int i=0; i<records.size();i++){
@@ -352,7 +354,7 @@ public class DiscoverGps
 			// if no Services found, try with the discovered BT devices
 			// this is because RAZER V3i is after firmware update not able
 			// to discover services
-			parent.addDevice("constuct "+devices.size()+" services");
+			parent.addDevice(Locale.get("discovergps.Constuct")/*constuct */+devices.size()+Locale.get("discovergps.Services")/* services*/);
 			if (records.size()==0 && devices.size() > 0){
 				for (int dl=0; dl < devices.size(); dl++){
 					RemoteDevice rd = (RemoteDevice) devices.elementAt(dl);
@@ -450,7 +452,7 @@ public class DiscoverGps
 				wait(); // until devices or service are found
 			} catch (InterruptedException e) {
 				logger.silentexception("Unexpected interruption: ",  e);
-				parent.addDevice("interrupted");
+				    parent.addDevice(Locale.get("discovergps.Interrupted")/*interrupted*/);
 				return true;
 			}
 		}

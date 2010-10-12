@@ -32,12 +32,14 @@ import de.enough.polish.util.base64.Base64;
 import de.ueller.gps.data.Configuration;
 import de.ueller.midlet.gps.importexport.ExportSession;
 
+import de.enough.polish.util.Locale;
+
 public class GuiGPXOSMUpload extends Form implements GpsMidDisplayable, CommandListener, ExportSession{
 	
 	private final static Logger logger = Logger.getInstance(GuiGPXOSMUpload.class,Logger.DEBUG);
 	
-	private final static Command BACK_CMD = new Command("Cancel", Command.BACK, 2);
-	private final static Command OK_CMD = new Command("Upload", Command.OK, 1);
+	private final static Command BACK_CMD = new Command(Locale.get("guigpxosmupload.Cancel")/*Cancel*/, Command.BACK, 2);
+	private final static Command OK_CMD = new Command(Locale.get("guigpxosmupload.Upload")/*Upload*/, Command.OK, 1);
 	
 	private TextField descriptionTF;
 	private TextField tagsTF;
@@ -55,12 +57,12 @@ public class GuiGPXOSMUpload extends Form implements GpsMidDisplayable, CommandL
 	private boolean publicFlag;
 
 	public GuiGPXOSMUpload() {
-		super("Gpx upload to OSM");
+		super(Locale.get("guigpxosmupload.GPXToOSM")/*GPX upload to OSM*/);
 		
-		descriptionTF = new TextField("Description:","", 255, TextField.ANY);
-		tagsTF = new TextField("Tags:","", 255, TextField.ANY);
+		descriptionTF = new TextField(Locale.get("guigpxosmupload.Description")/*Description:*/,"", 255, TextField.ANY);
+		tagsTF = new TextField(Locale.get("guigpxosmupload.Tags")/*Tags:*/,"", 255, TextField.ANY);
 		String [] items = new String[1];
-		items[0] = "Public";
+		items[0] = Locale.get("guigpxosmupload.Public")/*Public*/;
 		publicCG = new ChoiceGroup("",Choice.MULTIPLE,items,null);
 		
 		this.append(descriptionTF);
@@ -72,13 +74,13 @@ public class GuiGPXOSMUpload extends Form implements GpsMidDisplayable, CommandL
 	}
 	
 	public void upload() throws IOException{
-		logger.info("Uploading OSM GPX");
+		logger.info(Locale.get("guigpxosmupload.UploadingOSMGPX")/*Uploading OSM GPX*/);
 		int respCode;
 		String respMessage;
 		try {
 			HttpConnection connection = (HttpConnection) Connector
 			.open(url);
-			System.out.println("Connection: " + connection);
+			System.out.println(Locale.get("guigpxosmupload.Connection")/*Connection: */ + connection);
 			connection.setRequestMethod(HttpConnection.POST);
 			connection.setRequestProperty("Connection", "close");
 			connection.setRequestProperty("User-Agent", "GpsMid");
@@ -117,14 +119,14 @@ public class GuiGPXOSMUpload extends Form implements GpsMidDisplayable, CommandL
 			respMessage = connection.getResponseMessage();
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new IOException("Failed uploading GPX: " + e.getMessage());
+			throw new IOException(Locale.get("guigpxosmupload.FailedUploadingGPX")/*Failed uploading GPX: */ + e.getMessage());
 		}
 
 		if (respCode == HttpConnection.HTTP_OK) {
 			logger.info("Successfully uploaded GPX");
 			
 		} else {
-			throw new IOException("GPX trace was not accepted (" + respCode + "): " + respMessage);
+			throw new IOException(Locale.get("guigpxosmupload.GPXTraceNotAccepted")/*GPX trace was not accepted (*/ + respCode + "): " + respMessage);
 		}
 	}
 

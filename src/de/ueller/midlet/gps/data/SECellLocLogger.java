@@ -34,6 +34,8 @@ import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.LocationMsgReceiver;
 import de.ueller.midlet.gps.Logger;
 
+import de.enough.polish.util.Locale;
+
 /**
  * 
  * The SECellLocLogger is a LocationMsgReceiver that listens to location updates
@@ -114,15 +116,15 @@ public class SECellLocLogger implements LocationMsgReceiver {
 			} else {
 				//#debug info
 				logger.info("Cell-ID properties were empty, this is only supported on newer Sony Ericsson phones.");
-				GpsMid.getInstance().alert("Cell logging", 
-					"Cell-ID properties were empty, this is only supported on some phones.",
+				GpsMid.getInstance().alert(Locale.get("secellloclogger.CellLogging")/*Cell logging*/, 
+							   Locale.get("secellloclogger.EmptyCellIDProp")/*Cell-ID properties were empty, this is only supported on some phones.*/,
 					Alert.FOREVER);
 			}
 		} catch (Exception e) {
 			logger.silentexception(
 				"Logging of Cell-IDs is not supported on this phone.", e);
-			GpsMid.getInstance().alert("Cell logging", 
-				"Logging of Cell-IDs is not supported on this phone.", 
+			GpsMid.getInstance().alert(Locale.get("secellloclogger.CellLogging")/*Cell logging*/, 
+						   Locale.get("secellloclogger.CellIDLogNotSupported")/*Logging of Cell-IDs is not supported on this phone.*/, 
 				Alert.FOREVER);
 		}
 		//#endif
@@ -132,7 +134,7 @@ public class SECellLocLogger implements LocationMsgReceiver {
 	}
 
 	public void locationDecoderEnd() {
-		locationDecoderEnd("Closing");
+		locationDecoderEnd(Locale.get("secellloclogger.Closing")/*Closing*/);
 		cellIDLogging = false;
 	}
 
@@ -244,7 +246,8 @@ public class SECellLocLogger implements LocationMsgReceiver {
 		 * which we know that we won't get a valid fix and
 		 * ignore the position updates we get from there.
 		 */
-		if (";off;NoFix;SecEx;cell;0s;~~;replay;".indexOf(";" + s + ";") >= 0) {
+		String st = ";" + Locale.get("secellloclogger.off")/*off*/ + ";" + Locale.get("secellloclogger.NoFix")/*NoFix*/ + ";" + Locale.get("secellloclogger.SecEx")/*SecEx*/ + ";" + Locale.get("secellloclogger.cell")/*cell*/ + ";" + Locale.get("secellloclogger.s")/*0s*/ + ";" + "~~" + ";" + Locale.get("secellloclogger.replay")/*replay*/ + ";";
+		if (st.indexOf(";" + s + ";") >= 0) {
 			valid = false;
 			if (noValid > 0) {
 				noValid = 0;

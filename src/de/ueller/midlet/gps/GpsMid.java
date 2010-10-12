@@ -70,28 +70,28 @@ public class GpsMid extends MIDlet implements CommandListener {
 	/** Class variable with the Singleton reference. */
 	private volatile static GpsMid instance;
 	/** A menu list instance */
-	private static final String[] elements = { "Map", "Search", "Setup",
-			"About", "Log" };
-
+	private static final String[] elements = { Locale.get("gpsmid.Map")/*Map*/, Locale.get("gpsmid.Search")/*Search*/, Locale.get("gpsmid.Setup")/*Setup*/,
+						   Locale.get("gpsmid.About")/*About*/, Locale.get("gpsmid.Log")/*Log*/ };
+	
 	/** Soft button for exiting GpsMid. */
-	private final Command EXIT_CMD = new Command("Exit", Command.EXIT, 2);
-
+	private final Command EXIT_CMD = new Command(Locale.get("gpsmid.Exit")/*Exit*/, Command.EXIT, 2);
+	
 	/** Soft button for launching a client or server. */
-	private final Command OK_CMD = new Command("Ok", Command.SCREEN, 1);
+	private final Command OK_CMD = new Command(Locale.get("gpsmid.Ok")/*Ok*/, Command.SCREEN, 1);
 	/** Soft button to go back from about screen. */
-	private final Command BACK_CMD = new Command("Back", Command.BACK, 1);
+	private final Command BACK_CMD = new Command(Locale.get("gpsmid.Back")/*Back*/, Command.BACK, 1);
 	/** Soft button to show Debug Log. */
 	// private final Command DEBUG_CMD = new Command("", Command.BACK, 1);
 	/** Soft button to go back from about screen. */
-	private final Command CLEAR_DEBUG_CMD = new Command("Clear", Command.BACK,
+	private final Command CLEAR_DEBUG_CMD = new Command(Locale.get("gpsmid.Clear")/*Clear*/, Command.BACK,
 			1);
 
 	/** A menu list instance */
-	private final List menu = new List("GPSMid", Choice.IMPLICIT, elements,
+	private final List menu = new List(Locale.get("gpsmid.GPSMid")/*GPSMid*/, Choice.IMPLICIT, elements,
 			null);
 	// private boolean isInit=false;
 
-	private final List loghist = new List("Log Hist", Choice.IMPLICIT);
+	private final List loghist = new List(Locale.get("gpsmid.LogHist")/*Log Hist*/, Choice.IMPLICIT);
 
 	// #debug
 	private Logger log;
@@ -159,10 +159,10 @@ public class GpsMid extends MIDlet implements CommandListener {
 			Legend.readLegend();
 		} catch (Exception e) {
 			e.printStackTrace();
-			errorMsg = "Failed to load basic configuration! Check your map data source: "
+			errorMsg = Locale.get("gpsmid.FailToLoadBasicConf")/*Failed to load basic configuration! Check your map data source: */
 					+ e.getMessage();
 //#if polish.android
-			errorMsg += " - For Android, you must manually install the map (e.g. unzip the J2ME map jar bundle with same settings & version as the .apk) on the SD card for now";
+			errorMsg += Locale.get("gpsmid.ForAndroidInstall")/*  - For Android, you must manually install the map (e.g. unzip the J2ME map jar bundle with same settings & version as the .apk) on the SD card for now*/;
 //#endif
 		}
 
@@ -667,13 +667,13 @@ public class GpsMid extends MIDlet implements CommandListener {
 	public void showBackLightLevel() {
 		if ( Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON,
 				false) ) {
-			trace.alert("Backlight", "Backlight "
+			trace.alert(Locale.get("gpsmid.Backlight")/*Backlight*/, Locale.get("gpsmid.Backlight2")/*Backlight */
 					+ (Configuration.getBackLightLevel() == 100 ? "ON" : (Configuration.getBackLightLevel() + "%"))
 					+ (Configuration.getCfgBitState(
 							Configuration.CFGBIT_BACKLIGHT_ONLY_WHILE_GPS_STARTED)
 								? " while GPS started" : ""), 1000);
 		} else {
-			trace.alert("Backlight", "Backlight off", 1000);
+			trace.alert(Locale.get("gpsmid.Backlight")/*Backlight*/, Locale.get("gpsmid.BacklightOff")/*Backlight off*/, 1000);
 		}
 		stopBackLightTimer();
 		startBackLightTimer();
@@ -743,7 +743,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 			phoneMaxMemory = totalMem;
 			if (phoneMaxMemory > Configuration.getPhoneAllTimeMaxMemory() + 100000) {
 				if (trace != null) {
-					trace.receiveMessage("Inc maxMem: " + phoneMaxMemory);
+					trace.receiveMessage(Locale.get("gpsmid.IncMaxMem")/*Inc maxMem: */ + phoneMaxMemory);
 				}
 			}
 			if (phoneMaxMemory > Configuration.getPhoneAllTimeMaxMemory()) {
@@ -777,7 +777,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 						//#debug trace
 						log.trace("Memory is low, need freeing " + freeMem);
 						if (trace != null) {
-							trace.receiveMessage("Freeing mem");
+							trace.receiveMessage(Locale.get("gpsmid.FreeingMem")/*Freeing mem*/);
 						}
 						return true;						
 				}

@@ -31,18 +31,20 @@ import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.UploadListener;
 import de.ueller.midlet.gps.data.OSMdataEntity;
 
+import de.enough.polish.util.Locale;
+
 public abstract class GuiOSMEntityDisplay extends Form implements GpsMidDisplayable, CommandListener, UploadListener, ItemCommandListener {
 	
 	private final static Logger logger = Logger.getInstance(GuiOSMEntityDisplay.class,Logger.DEBUG);
 
-	protected final Command BACK_CMD = new Command("Back", Command.BACK, 1);
-	protected final Command OK_CMD = new Command("OK", Command.OK, 1);
-	protected final Command ADD_CMD = new Command("Add tag", Command.ITEM, 2);
-	protected final Command EDIT_CMD = new Command("Edit tag", Command.ITEM, 2);
-	protected final Command REMOVE_CMD = new Command("Remove tag", Command.ITEM, 3);
-	protected final Command UPLOAD_CMD = new Command("Upload to OSM", Command.OK, 6);
-	protected final Command CREATE_CHANGE_CMD = new Command("Create changeset", Command.OK, 6);
-	protected final Command CLOSE_CHANGE_CMD = new Command("Close changeset", Command.OK, 6);
+	protected final Command BACK_CMD = new Command(Locale.get("guiosmentitydisplay.Back")/*Back*/, Command.BACK, 1);
+	protected final Command OK_CMD = new Command(Locale.get("guiosmentitydisplay.OK")/*OK*/, Command.OK, 1);
+	protected final Command ADD_CMD = new Command(Locale.get("guiosmentitydisplay.AddTag")/*Add tag*/, Command.ITEM, 2);
+	protected final Command EDIT_CMD = new Command(Locale.get("guiosmentitydisplay.EditTag")/*Edit tag*/, Command.ITEM, 2);
+	protected final Command REMOVE_CMD = new Command(Locale.get("guiosmentitydisplay.RemoveTag")/*Remove tag*/, Command.ITEM, 3);
+	protected final Command UPLOAD_CMD = new Command(Locale.get("guiosmentitydisplay.UploadToOSM")/*Upload to OSM*/, Command.OK, 6);
+	protected final Command CREATE_CHANGE_CMD = new Command(Locale.get("guiosmentitydisplay.CreateChangeset")/*Create changeset*/, Command.OK, 6);
+	protected final Command CLOSE_CHANGE_CMD = new Command(Locale.get("guiosmentitydisplay.CloseChangeset")/*Close changeset*/, Command.OK, 6);
 	
 	protected final static int LOAD_STATE_NONE = 0;
 	protected final static int LOAD_STATE_LOAD = 1;
@@ -77,14 +79,14 @@ public abstract class GuiOSMEntityDisplay extends Form implements GpsMidDisplaya
 			this.deleteAll();
 			addTag = false;
 			if (osmentity == null) {
-				this.append(new StringItem("No Data available","..."));
+				this.append(new StringItem(Locale.get("guiosmentitydisplay.NoDataAvailable")/*No Data available*/,"..."));
 				return;
 			}
 			if (osmentity.getVersion() > 0) {
-				this.append(new StringItem("Edited ", null));
-				this.append(new StringItem("    at:", osmentity.getEditTime()));
-				this.append(new StringItem("    by:", osmentity.getEditor()));
-				this.append(new StringItem("    ver:", Integer.toString(osmentity.getVersion())));
+				this.append(new StringItem(Locale.get("guiosmentitydisplay.Edited")/*Edited */, null));
+				this.append(new StringItem(Locale.get("guiosmentitydisplay.at")/*    at:*/, osmentity.getEditTime()));
+				this.append(new StringItem(Locale.get("guiosmentitydisplay.by")/*    by:*/, osmentity.getEditor()));
+				this.append(new StringItem(Locale.get("guiosmentitydisplay.ver")/*    ver:*/, Integer.toString(osmentity.getVersion())));
 			}
 
 			Hashtable tags = osmentity.getTags();
@@ -114,12 +116,12 @@ public abstract class GuiOSMEntityDisplay extends Form implements GpsMidDisplaya
 		}
 		if (c == ADD_CMD) {
 			this.addTag = true;
-			TextField tf = new TextField("key","", 100, TextField.ANY);
+			TextField tf = new TextField(Locale.get("guiosmentitydisplay.key")/*key*/,"", 100, TextField.ANY);
 			tf.addCommand(OK_CMD);
 			tf.setItemCommandListener(this);
 			this.append(tf);
 			Display.getDisplay(GpsMid.getInstance()).setCurrentItem(tf);
-			tf = new TextField("value","", 100, TextField.ANY);
+			tf = new TextField(Locale.get("guiosmentitydisplay.value")/*value*/,"", 100, TextField.ANY);
 			tf.addCommand(OK_CMD);
 			tf.setItemCommandListener(this);
 			this.append(tf);

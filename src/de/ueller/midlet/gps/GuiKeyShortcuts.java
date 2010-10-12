@@ -9,16 +9,18 @@ import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.List;
 
+import de.enough.polish.util.Locale;
+
 import de.ueller.gps.tools.intTree;
 
 public class GuiKeyShortcuts extends List implements CommandListener,
 		GpsMidDisplayable {
 
-	private static final Command CMD_BACK = new Command("Back", Command.BACK, 3);
+	private static final Command CMD_BACK = new Command(Locale.get("guikeyshortcuts.Back")/*Back*/, Command.BACK, 3);
 	private GuiDiscover parent;
 
 	public GuiKeyShortcuts(GuiDiscover parent) {
-		super("Key shortcuts in Map", List.IMPLICIT);
+		super(Locale.get("guikeyshortcuts.KeyShortcutsInMap")/*Key shortcuts in Map*/, List.IMPLICIT);
 		addCommand(CMD_BACK);
 
 		// Set up this Displayable to listen to command events
@@ -26,7 +28,7 @@ public class GuiKeyShortcuts extends List implements CommandListener,
 		this.parent = parent;
 
 		intTree keyMap = Trace.getInstance().singleKeyPressCommand;
-		this.append("Single key presses:", null);
+		this.append(Locale.get("guikeyshortcuts.SingleKeyPresses")/*Single key presses:*/, null);
 		for (int i = 0; i < keyMap.size(); i++) {
 			int key = keyMap.getKeyIdx(i);
 			if (key > 31) {
@@ -39,7 +41,7 @@ public class GuiKeyShortcuts extends List implements CommandListener,
 		}
 		keyMap = Trace.getInstance().repeatableKeyPressCommand;
 		this.append(" ", null);
-		this.append("Repeatable key presses:", null);
+		this.append(Locale.get("guikeyshortcuts.RepeatableKeyPresses")/*Repeatable key presses:*/, null);
 		for (int i = 0; i < keyMap.size(); i++) {
 			int key = keyMap.getKeyIdx(i);
 			if (key > 31) {
@@ -52,7 +54,7 @@ public class GuiKeyShortcuts extends List implements CommandListener,
 		}
 		keyMap = Trace.getInstance().longKeyPressCommand;
 		this.append(" ", null);
-		this.append("Long key presses:", null);
+		this.append(Locale.get("guikeyshortcuts.LongKeyPresses")/*Long key presses:*/, null);
 		for (int i = 0; i < keyMap.size(); i++) {
 			int key = keyMap.getKeyIdx(i);
 			if (key > 31) {
@@ -65,7 +67,7 @@ public class GuiKeyShortcuts extends List implements CommandListener,
 		}
 		keyMap = Trace.getInstance().doubleKeyPressCommand;
 		this.append(" ", null);
-		this.append("Double key presses:", null);
+		this.append(Locale.get("guikeyshortcuts.DoubleKeyPresses")/*Double key presses:*/, null);
 		for (int i = 0; i < keyMap.size(); i++) {
 			int key = keyMap.getKeyIdx(i);
 			if (key > 31) {
@@ -79,7 +81,7 @@ public class GuiKeyShortcuts extends List implements CommandListener,
 
 		keyMap = Trace.getInstance().gameKeyCommand;
 		this.append(" ", null);
-		this.append("Game Action key presses:", null);
+		this.append(Locale.get("guikeyshortcuts.GameActionKeyPresses:")/*Game Action key presses:*/, null);
 		for (int i = 0; i < keyMap.size(); i++) {
 			int key = keyMap.getKeyIdx(i);
 			if (key > 31) {

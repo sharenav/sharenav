@@ -13,6 +13,8 @@ import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.data.Proj2DMoveUp;
 
+import de.enough.polish.util.Locale;
+
 /*
  * GUI to enter a waypoint with coordinates.
  * The gimmick is that you can enter decimal places in any field.
@@ -23,20 +25,20 @@ import de.ueller.midlet.gps.data.Proj2DMoveUp;
  */
 public class GuiWaypointEnter extends Form implements CommandListener {
 	private TextField fldName;
-	private TextField fldLatDeg = new TextField("Lat deg:", "", 10, TextField.DECIMAL);
-	private TextField fldLatMin = new TextField("Lat min:", "", 10, TextField.DECIMAL);
-	private TextField fldLatSec = new TextField("Lat sec:", "", 10, TextField.DECIMAL);
-	private TextField fldLonDeg = new TextField("Lon deg:", "", 10, TextField.DECIMAL);
-	private TextField fldLonMin = new TextField("Lon min:", "", 10, TextField.DECIMAL);
-	private TextField fldLonSec = new TextField("Lon sec:", "", 10, TextField.DECIMAL);
-	private static final Command saveCmd = new Command("Save", Command.OK, 1);
-	private static final Command backCmd = new Command("Back", Command.BACK, 2);
+	private TextField fldLatDeg = new TextField(Locale.get("guiwaypointenter.LatDeg")/*Lat deg:*/, "", 10, TextField.DECIMAL);
+	private TextField fldLatMin = new TextField(Locale.get("guiwaypointenter.LatMin")/*Lat min:*/, "", 10, TextField.DECIMAL);
+	private TextField fldLatSec = new TextField(Locale.get("guiwaypointenter.LatSec")/*Lat sec:*/, "", 10, TextField.DECIMAL);
+	private TextField fldLonDeg = new TextField(Locale.get("guiwaypointenter.LonDeg")/*Lon deg:*/, "", 10, TextField.DECIMAL);
+	private TextField fldLonMin = new TextField(Locale.get("guiwaypointenter.LonMin")/*Lon min:*/, "", 10, TextField.DECIMAL);
+	private TextField fldLonSec = new TextField(Locale.get("guiwaypointenter.LonSec")/*Lon sec:*/, "", 10, TextField.DECIMAL);
+	private static final Command saveCmd = new Command(Locale.get("guiwaypointenter.Save")/*Save*/, Command.OK, 1);
+	private static final Command backCmd = new Command(Locale.get("guiwaypointenter.Back")/*Back*/, Command.BACK, 2);
 	private Trace parent;
 	
 	protected static final Logger logger = Logger.getInstance(GuiWaypointEnter.class,Logger.TRACE);
 
 	public GuiWaypointEnter(Trace tr) {
-		super("Enter Waypoint");
+		super(Locale.get("guiwaypointenter.EnterWaypoint")/*Enter Waypoint*/);
 		this.parent = tr;
 		try {
 			jbInit();
@@ -46,7 +48,7 @@ public class GuiWaypointEnter extends Form implements CommandListener {
 	}
 
 	private void jbInit() throws Exception {
-		fldName = new TextField("Name:", "", Configuration.MAX_WAYPOINTNAME_LENGTH, TextField.ANY);
+		fldName = new TextField(Locale.get("guiwaypointenter.Name")/*Name:*/, "", Configuration.MAX_WAYPOINTNAME_LENGTH, TextField.ANY);
 		// Set up this Displayable to listen to command events
 		setCommandListener(this);
 		// add the commands
@@ -124,10 +126,10 @@ public class GuiWaypointEnter extends Form implements CommandListener {
 					parent.gpx.addWayPt(waypt);				
 					parent.show();
 				} else {
-					GpsMid.getInstance().alert("Error", "Please enter valid coordinates", 5000);
+					GpsMid.getInstance().alert(Locale.get("guiwaypointenter.Error")/*Error*/, Locale.get("guiwaypointenter.EnterValidCoordinates")/*Please enter valid coordinates*/, 5000);
 				}
 			} else {
-				GpsMid.getInstance().alert("Error", "Please enter valid coordinates", 5000);
+				GpsMid.getInstance().alert(Locale.get("guiwaypointenter.Error")/*Error*/, Locale.get("guiwaypointenter.EnterValidCoordinates")/*Please enter valid coordinates*/, 5000);
 			}
 			return;
 		} else if (cmd == backCmd) {

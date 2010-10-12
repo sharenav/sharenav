@@ -34,6 +34,8 @@ import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.names.NumberCanon;
 import de.ueller.midlet.gps.tile.POIdescription;
 
+import de.enough.polish.util.Locale;
+
 public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay implements KeySelectMenuReducedListener{
 	
 	private final static Logger logger = Logger.getInstance(GuiOSMPOIDisplay.class,Logger.DEBUG);
@@ -53,7 +55,7 @@ public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay implements KeySelectMe
 	private byte poiType;
 	
 	public GuiOSMPOIDisplay(int nodeID, SingleTile t, float lat, float lon, GpsMidDisplayable parent) {
-		super("Node", parent);
+		super(Locale.get("guiosmpoidisplay.Node")/*Node*/, parent);
 		this.nodeID = nodeID;
 		showParent = false;
 		loadPOIxmlState = LOAD_POI_STATE_NONE;
@@ -166,13 +168,13 @@ public class GuiOSMPOIDisplay extends GuiOSMEntityDisplay implements KeySelectMe
 				break;
 			}
 			case LOAD_STATE_UPLOAD: {
-				GpsMid.getInstance().alert("Adding POI", "Poi was successfully added to OpenStreetMap", 1000);
+				GpsMid.getInstance().alert(Locale.get("guiosmpoidisplay.AddingPOI")/*Adding POI*/, Locale.get("guiosmpoidisplay.PoiSuccessfullyAdded")/*Poi was successfully added to OpenStreetMap*/, 1000);
 				
 				if (osmentity instanceof OSMdataEntity) {
 					logger.info("Adding Waypoint to mark where POI was uploaded to OSM");
 					OSMdataNode poi = (OSMdataNode)osmentity;
 					PositionMark waypt = new PositionMark(poi.getLat(), poi.getLon());
-					waypt.displayName = "POI: " + Legend.getNodeTypeDesc(poiType);
+					waypt.displayName = Locale.get("guiosmpoidisplay.POI")/*POI: */ + Legend.getNodeTypeDesc(poiType);
 					Trace.getInstance().gpx.addWayPt(waypt);
 				}
 

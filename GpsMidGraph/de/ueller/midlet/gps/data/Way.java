@@ -10,6 +10,8 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.Vector;
 
+import de.enough.polish.util.Locale;
+
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 
@@ -2221,7 +2223,7 @@ public class Way extends Entity {
 	}
 	
 	public String toString() {
-		return "Way " + Trace.getInstance().getName(nameIdx) + " type: " +  Legend.getWayDescription(type).description;
+		return Locale.get("way.Way")/*Way*/ + " " + Trace.getInstance().getName(nameIdx) + " " + Locale.get("way.type")/*type*/ + ": " +  Legend.getWayDescription(type).description;
 	}
 
 	/**

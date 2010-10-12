@@ -7,6 +7,8 @@ package de.ueller.midlet.gps;
 
 import java.util.Calendar;
 
+import de.enough.polish.util.Locale;
+
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
@@ -26,8 +28,8 @@ import net.fatehi.SunCalc;
 public class GuiTrip extends KeyCommandCanvas implements CommandListener,
 		GpsMidDisplayable, LocationUpdateListener {
 
-	private final Command BACK_CMD = new Command("Back", Command.BACK, 5);
-	private final Command NEXT_CMD = new Command("Next", Command.SCREEN, 5);
+	private final Command BACK_CMD = new Command(Locale.get("guitrip.Back")/*Back*/, Command.BACK, 5);
+	private final Command NEXT_CMD = new Command(Locale.get("guitrip.Next")/*Next*/, Command.SCREEN, 5);
 	private final static Logger mLogger = Logger.getInstance(GuiTrip.class,
 			Logger.DEBUG);
 	private final Trace mParent;
@@ -197,15 +199,15 @@ public class GuiTrip extends KeyCommandCanvas implements CommandListener,
 		//mLcdFont.setFontSize(18);
 		g.drawLine(w >> 1, y - 24, w >> 1, h);
 		if (mSunRiseset != null) {
-			g.drawString("Sunrise: " + mSunCalc.formatTime(mSunRiseset[SunCalc.RISE]), 
+			g.drawString(Locale.get("guitrip.Sunrise")/*Sunrise: */ + mSunCalc.formatTime(mSunRiseset[SunCalc.RISE]), 
 						 (w >> 1) - 3, y, Graphics.BOTTOM | Graphics.RIGHT);
 
-			g.drawString("Sunset: " + mSunCalc.formatTime(mSunRiseset[SunCalc.SET]), 
+			g.drawString(Locale.get("guitrip.Sunset")/*Sunset: */ + mSunCalc.formatTime(mSunRiseset[SunCalc.SET]), 
 					 	 w - 3, y, Graphics.BOTTOM | Graphics.RIGHT);
 		} else {
-			g.drawString("Sunrise: N/A", (w >> 1) - 3, y, 
+			g.drawString(Locale.get("guitrip.SunriseNA")/*Sunrise: N/A*/, (w >> 1) - 3, y, 
 						 Graphics.BOTTOM | Graphics.RIGHT);
-			g.drawString("Sunset: N/A", w - 3, y, 
+			g.drawString(Locale.get("guitrip.SunsetNA")/*Sunset: N/A*/, w - 3, y, 
 					 	 Graphics.BOTTOM | Graphics.RIGHT);
 		}
 	}

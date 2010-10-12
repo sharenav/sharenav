@@ -98,12 +98,12 @@ public class GuiTacho extends KeyCommandCanvas implements CommandListener,
 			 * Cache the values of the width of these Strings
 			 */
 			Font f = g.getFont();
-			kmhWidth = f.stringWidth("km/h");
-			mphWidth = f.stringWidth("mph");
-			kmWidth = f.stringWidth("km");
-			miWidth = f.stringWidth("mi");
-			mminWidth = f.stringWidth("m/min");
-			mWidth = f.stringWidth("m");
+			kmhWidth = f.stringWidth(Locale.get("guitacho.kmh")/*km/h*/);
+			mphWidth = f.stringWidth(Locale.get("guitacho.mph")/*mph*/);
+			kmWidth = f.stringWidth(Locale.get("guitacho.km")/*km*/);
+			miWidth = f.stringWidth(Locale.get("guitacho.mi")/*mi*/);
+			mminWidth = f.stringWidth(Locale.get("guitacho.mmin")/*m/min*/);
+			mWidth = f.stringWidth(Locale.get("guitacho.m")/*m*/);
 			fHeight = f.getHeight();
 		}
 		Position pos = parent.getCurrentPosition();
@@ -159,7 +159,7 @@ public class GuiTacho extends KeyCommandCanvas implements CommandListener,
 		lcdFont.setFontSize(48);
 		
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_METRIC)) {
-			g.drawString("km/h", w - 1, y - 3, Graphics.BOTTOM | Graphics.RIGHT);
+		        g.drawString(Locale.get("guitacho.kmh")/*km/h*/, w - 1, y - 3, Graphics.BOTTOM | Graphics.RIGHT);
 
 			if (pos.speed > 10) {
 				lcdFont.drawInt(g, (int)(pos.speed * 3.6f), w - kmhWidth - 1, y - 5);
@@ -167,7 +167,7 @@ public class GuiTacho extends KeyCommandCanvas implements CommandListener,
 				lcdFont.drawFloat(g, pos.speed * 3.6f, 1, w - kmhWidth - 1, y - 5);
 			}
 		} else {
-			g.drawString("mph", w - 1, y - 3, Graphics.BOTTOM | Graphics.RIGHT);
+		        g.drawString(Locale.get("guitacho.mph")/*mph*/, w - 1, y - 3, Graphics.BOTTOM | Graphics.RIGHT);
 
 			if (pos.speed > 10) {
 				lcdFont.drawInt(g, (int)(pos.speed * 2.237f), w - kmhWidth - 1, y - 5);
@@ -183,28 +183,28 @@ public class GuiTacho extends KeyCommandCanvas implements CommandListener,
 		g.drawLine(w >> 1, y, w >> 1, y + 32);
 		y += 28;
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_METRIC)) {
-			g.drawString("km", (w >> 1) - 1, y - 5, Graphics.BOTTOM
+		        g.drawString(Locale.get("guitacho.km")/*km*/, (w >> 1) - 1, y - 5, Graphics.BOTTOM
 					| Graphics.RIGHT);
 			if (odo > 10) {
 				lcdFont.drawFloat(g, odo, 1, (w >> 1) - kmWidth - 2, y);
 			} else {
 				lcdFont.drawFloat(g, odo, 2, (w >> 1) - kmWidth - 2, y);
 			}
-			g.drawString("km/h", w - 1, y - 5, Graphics.BOTTOM | Graphics.RIGHT);
+			g.drawString(Locale.get("guitacho.kmh")/*km/h*/, w - 1, y - 5, Graphics.BOTTOM | Graphics.RIGHT);
 			if (avg_spd > 30) {
 				lcdFont.drawInt(g, (int)avg_spd, w - kmhWidth - 2, y);
 			} else {
 				lcdFont.drawFloat(g, avg_spd, 1, w - kmhWidth - 2, y);
 			}
 		} else {
-			g.drawString("mi", (w >> 1) - 1, y - 5, Graphics.BOTTOM
+		        g.drawString(Locale.get("guitacho.mi")/*mi*/, (w >> 1) - 1, y - 5, Graphics.BOTTOM
 					| Graphics.RIGHT);
 			if (odo > 10) {
 				lcdFont.drawFloat(g, (odo / 1.609344f), 1, (w >> 1) - miWidth - 2, y);
 			} else {
 				lcdFont.drawFloat(g, (odo / 1.609344f), 2, (w >> 1) - miWidth - 2, y);
 			}
-			g.drawString("mph", w - 1, y - 5, Graphics.BOTTOM | Graphics.RIGHT);
+			g.drawString(Locale.get("guitacho.mph")/*mph*/, w - 1, y - 5, Graphics.BOTTOM | Graphics.RIGHT);
 			if (avg_spd > 30) {
 				lcdFont.drawInt(g, (int)(avg_spd / 1.609344f), w - mphWidth - 2, y);
 			} else {
@@ -215,10 +215,10 @@ public class GuiTacho extends KeyCommandCanvas implements CommandListener,
 		g.drawLine(w >> 1, y, w >> 1, y + 32);
 		y += 28;
 		
-		g.drawString("m", (w >> 1) - 1, y - 3, Graphics.BOTTOM | Graphics.RIGHT);
+		g.drawString(Locale.get("guitacho.m")/*m*/, (w >> 1) - 1, y - 3, Graphics.BOTTOM | Graphics.RIGHT);
 		lcdFont.drawInt(g, (int) pos.altitude, (w >> 1) - mWidth - 2, y);
 		
-		g.drawString("m/min", w - 1, y - 3, Graphics.BOTTOM | Graphics.RIGHT);
+		g.drawString(Locale.get("guitacho.mmin")/*m/min*/, w - 1, y - 3, Graphics.BOTTOM | Graphics.RIGHT);
 		lcdFont.drawFloat(g, alt_delta * 60, 1, w - mminWidth - 2, y);
 		g.drawLine(0, y, w, y);
 		y += fHeight;
@@ -235,10 +235,10 @@ public class GuiTacho extends KeyCommandCanvas implements CommandListener,
 		g.drawString(timeString.toString(), (w >> 1) - 1, y + 3,
 				Graphics.BOTTOM | Graphics.RIGHT);
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_METRIC)) {
-			g.drawString(max_spd + " km/h", w - 1, y + 3, Graphics.BOTTOM
+			g.drawString(max_spd + " " + Locale.get("guitacho.kmh")/*km/h*/, w - 1, y + 3, Graphics.BOTTOM
 					| Graphics.RIGHT);
 		} else {
-			g.drawString((max_spd / 1.609334f) + " mph", w - 1, y + 3, Graphics.BOTTOM
+			g.drawString((max_spd / 1.609334f) + " " + Locale.get("guitacho.mph")/*mph*/, w - 1, y + 3, Graphics.BOTTOM
 					| Graphics.RIGHT);
 		}
 	}

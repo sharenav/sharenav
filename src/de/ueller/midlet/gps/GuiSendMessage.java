@@ -14,11 +14,13 @@ import javax.microedition.io.*;
 import de.ueller.gps.data.Configuration;
 import de.ueller.midlet.gps.data.MoreMath;
 
+import de.enough.polish.util.Locale;
+
 public class GuiSendMessage extends Form implements CommandListener {
 		
 	// commands
-	private static final Command CMD_SEND = new Command("Send", Command.OK, 1);
-	private static final Command CMD_BACK = new Command("Back", Command.BACK, 2);
+	private static final Command CMD_SEND = new Command(Locale.get("guisendmessage.Send")/*Send*/, Command.OK, 1);
+	private static final Command CMD_BACK = new Command(Locale.get("guisendmessage.Back")/*Back*/, Command.BACK, 2);
 	
     // text fields
 	private TextField tfMessage;
@@ -33,19 +35,19 @@ public class GuiSendMessage extends Form implements CommandListener {
 	protected static final Logger logger = Logger.getInstance(GuiSendMessage.class,Logger.TRACE);
 		
 	public GuiSendMessage(Trace tr) {
-		super("Send SMS (map pos)");
+		super(Locale.get("guisendmessage.SendSMS")/*Send SMS (map pos)*/);
 		this.parent = tr;
 		try {
-			tfMessage = new TextField("Message text",
-							"Lat: " + tr.center.radlat * MoreMath.FAC_RADTODEC +
-							" Lon: " + tr.center.radlon * MoreMath.FAC_RADTODEC +
+			tfMessage = new TextField(Locale.get("guisendmessage.MessageText")/*Message text*/,
+						        Locale.get("guisendmessage.Lat")/*Lat: */ + tr.center.radlat * MoreMath.FAC_RADTODEC +
+						        Locale.get("guisendmessage.Lon")/* Lon: */ + tr.center.radlon * MoreMath.FAC_RADTODEC +
 							" ",
 							160,
 							TextField.ANY
 			);
 			append(tfMessage);
 
-			tfRecipientPhoneNumber = new TextField("Recipient", 
+			tfRecipientPhoneNumber = new TextField(Locale.get("guisendmessage.Recipient")/*Recipient*/, 
 													Configuration.getSmsRecipient(),
 													50,
 													TextField.PHONENUMBER
@@ -53,8 +55,8 @@ public class GuiSendMessage extends Form implements CommandListener {
 			append(tfRecipientPhoneNumber);
 
 			String [] rememberOpts = new String[1];
-			rememberOpts[0] = "Set as default recipient";
-			cgRemember = new ChoiceGroup("Options:", Choice.MULTIPLE, rememberOpts, null);
+			rememberOpts[0] = Locale.get("guisendmessage.SetDefaultRecipient")/*Set as default recipient*/;
+			cgRemember = new ChoiceGroup(Locale.get("guisendmessage.Options")/*Options:*/, Choice.MULTIPLE, rememberOpts, null);
 			append(cgRemember);			
 			
 			addCommand(CMD_SEND);

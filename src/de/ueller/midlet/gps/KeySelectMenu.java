@@ -24,16 +24,18 @@ import de.ueller.midlet.gps.data.KeySelectMenuItem;
 import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.tile.SearchNames;
 
+import de.enough.polish.util.Locale;
+
 public class KeySelectMenu extends Canvas implements
 		GpsMidDisplayable, CommandListener {
 
 	private final static Logger logger = Logger.getInstance(
 			KeySelectMenu.class, Logger.DEBUG);
 
-	private final Command OK_CMD = new Command("Ok", Command.OK, 1);
-	private final Command BACK_CMD = new Command("Back", Command.BACK, 5);
-	private final Command DEL_CMD = new Command("delete", Command.ITEM, 2);
-	private final Command CLEAR_CMD = new Command("clear", Command.ITEM, 3);
+	private final Command OK_CMD = new Command(Locale.get("keyselectmenu.Ok")/*Ok*/, Command.OK, 1);
+	private final Command BACK_CMD = new Command(Locale.get("keyselectmenu.Back")/*Back*/, Command.BACK, 5);
+	private final Command DEL_CMD = new Command(Locale.get("keyselectmenu.delete")/*delete*/, Command.ITEM, 2);
+	private final Command CLEAR_CMD = new Command(Locale.get("keyselectmenu.clear")/*clear*/, Command.ITEM, 3);
 
 	private Vector result = new Vector();
 
@@ -99,7 +101,7 @@ public class KeySelectMenu extends Canvas implements
 		if (callback == null) {
 			//#debug info
 			logger.info("Callback in KeySelectMenu is null");
-			throw new Exception("No Callback was specified");
+			throw new Exception(Locale.get("keyselectmenu.NoCallbackSpecified")/*No Callback was specified*/);
 		}
 		this.callback = callback;
 	}

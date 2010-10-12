@@ -35,12 +35,14 @@ import de.ueller.midlet.gps.UploadListener;
 import de.ueller.midlet.gps.data.EditableWay;
 import de.ueller.midlet.gps.data.OSMdataWay;
 
+import de.enough.polish.util.Locale;
+
 public class GUIosmWayDisplay extends GuiOSMEntityDisplay implements GpsMidDisplayable, CommandListener, UploadListener, ItemCommandListener {
 	
 	private final static Logger logger = Logger.getInstance(GUIosmWayDisplay.class,Logger.DEBUG);
 
-	private final Command REVERSE_CMD = new Command("Reverse direction", Command.ITEM, 4);
-	private final Command PRESET_CMD = new Command("Add preset", Command.ITEM, 5);
+    private final Command REVERSE_CMD = new Command(Locale.get("guiosmwaydisplay.ReverseDirection")/*Reverse direction*/, Command.ITEM, 4);
+    private final Command PRESET_CMD = new Command(Locale.get("guiosmwaydisplay.AddPreset")/*Add preset*/, Command.ITEM, 5);
 	
 	
 	
@@ -49,7 +51,7 @@ public class GUIosmWayDisplay extends GuiOSMEntityDisplay implements GpsMidDispl
 	private List presets;
 	
 	public GUIosmWayDisplay(EditableWay way, SingleTile t, GpsMidDisplayable parent) {
-		super("Way " + way.osmID, parent);
+	        super(Locale.get("guiosmwaydisplay.Way")/*Way */ + way.osmID, parent);
 		this.eway = way;
 		addCommand(REVERSE_CMD);
 		addCommand(PRESET_CMD);
@@ -116,9 +118,9 @@ public class GUIosmWayDisplay extends GuiOSMEntityDisplay implements GpsMidDispl
 		}
 		
 		if (c == PRESET_CMD) {
-			presets = new List("Tagging Presets", List.IMPLICIT);
-			presets.append("maxspeed=20 mph", null);
-			presets.append("maxspeed=30 mph", null);
+		        presets = new List(Locale.get("guiosmwaydisplay.TaggingPresets")/*Tagging Presets*/, List.IMPLICIT);
+			presets.append(Locale.get("guiosmwaydisplay.maxspeed20mph")/*maxspeed=20 mph*/, null);
+			presets.append(Locale.get("guiosmwaydisplay.maxspeed30mph")/*maxspeed=30 mph*/, null);
 			presets.append("oneway=yes", null);
 			presets.append("name=", null);
 			presets.append("ref=", null);

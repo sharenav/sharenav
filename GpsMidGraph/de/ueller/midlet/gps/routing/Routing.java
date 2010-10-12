@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.lang.Math;
 import java.util.Vector;
 
+import de.enough.polish.util.Locale;
+
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.tools.intTree;
 import de.ueller.gpsMid.mapData.RouteBaseTile;
@@ -428,7 +430,7 @@ public class Routing implements Runnable {
 		}
 		} // end noSolutionRetries loop
 		if (!Routing.stopRouting) {
-			parent.receiveMessage("no Solution found");
+			parent.receiveMessage(Locale.get("routing.NoSolutionFound")/*no Solution found*/);
 		}
 		return null;
 
@@ -449,14 +451,14 @@ public class Routing implements Runnable {
 		}
 		if (bestTime){
 			parent.receiveMessage("" + (bestTotal/600) 
-					+ "min " + (100*actual/total)
-					+ "% m:" + runtime.freeMemory()/1000 
-					+ "k s:" + oomCounter+"/"+expanded+"/"+open.size());
+					      + Locale.get("routing.min")/*min*/ + " " + (100*actual/total)
+					      + Locale.get("routing.memperc:")/*% m:*/ + runtime.freeMemory()/1000 
+					      + Locale.get("routing.ks")/*k s:*/ + oomCounter+"/"+expanded+"/"+open.size());
 		} else {
 			parent.receiveMessage("" + (bestTotal/1000f) 
-					+ "km " + (100*actual/total)
-					+ "% m:" + runtime.freeMemory()/1000 
-					+ "k s:" + oomCounter+"/"+expanded);
+					      + Locale.get("routing.km")/*km*/ + " " + (100*actual/total)
+					      + Locale.get("routing.memperc:")/*% m:*/ + runtime.freeMemory()/1000 
+					      + Locale.get("routing.ks")/*k s:*/ + oomCounter+"/"+expanded);
 		}
 		nextUpdate=now + 1000;
 		}
@@ -520,7 +522,7 @@ public class Routing implements Runnable {
 			return (10000000);
 		}
 		if (dest == null) {
-			throw new Error("Destination is NULL");
+			throw new Error(Locale.get("routing.DestinationIsNULL")/*Destination is NULL*/);
 		}
 		int dist = MoreMath.dist(toNode.lat, toNode.lon, dest.lat, dest.lon);
 		
@@ -675,7 +677,7 @@ public class Routing implements Runnable {
 	private boolean prepareSolving() {
 		try {
 			if (toMark == null) {
-				parent.receiveMessage("Please set destination first");
+				parent.receiveMessage(Locale.get("routing.PleaseSetDestinationFirst")/*Please set destination first*/);
 				return false;
 			} 
 			
@@ -691,10 +693,10 @@ public class Routing implements Runnable {
 				fromMark.entity = null;
 			}
 			if (fromMark.entity == null) {
-				parent.receiveMessage("Searching start way");
+				parent.receiveMessage(Locale.get("routing.SearchingStartWay")/*Searching start way*/);
 				parent.searchNextRoutableWay(fromMark);
 				if (fromMark.entity == null){
-					parent.receiveMessage("No way found for start point");
+					parent.receiveMessage(Locale.get("routing.NoWayFoundForStartPoint")/*No way found for start point*/);
 				}
 			}
 
@@ -705,10 +707,10 @@ public class Routing implements Runnable {
 				toMark.entity = null;
 			}
 			if (toMark.entity == null) {
-				parent.receiveMessage("Searching destination way");
+				parent.receiveMessage(Locale.get("routing.SearchingDestinationWay")/*Searching destination way*/);
 				parent.searchNextRoutableWay(toMark);
 				if (toMark.entity == null) {
-					parent.receiveMessage("No way at destination");
+					parent.receiveMessage(Locale.get("routing.NoWayAtDestination")/*No way at destination*/);
 					return false;
 				}
 			}
@@ -718,7 +720,7 @@ public class Routing implements Runnable {
 			if (fromMark.entity instanceof Way) {
 				// search the next route node in all accessible directions. Then create 
 				// connections that lead form the start point to the next route nodes.
-				parent.receiveMessage("Creating 'from' connections");
+				parent.receiveMessage(Locale.get("routing.CreatingFromConnections")/*Creating from connections*/);
 				Way w=(Way) fromMark.entity;
 				int nearestSegment=getNearestSeg(w, startNode.lat, startNode.lon, fromMark.nodeLat,fromMark.nodeLon);
 				// Roundabouts don't need to be explicitly tagged as oneways in OSM 
@@ -782,7 +784,7 @@ public class Routing implements Runnable {
 			routeTo.setConSizeWithFlags((byte) 0);
 			routeTo.lat=toMark.lat;
 			routeTo.lon=toMark.lon;
-			parent.receiveMessage("Creating 'to' connections");
+			parent.receiveMessage(Locale.get("routing.CreatingToConnections")/*Creating to connections*/);
 			Way w = (Way) toMark.entity;
 			int nearestSeg = getNearestSeg(w,toMark.lat, toMark.lon, toMark.nodeLat, toMark.nodeLon);
 			RouteTileRet nodeTile=new RouteTileRet();
@@ -811,7 +813,7 @@ public class Routing implements Runnable {
 			}
 			RouteNode prefNode = findPrevRouteNode(nearestSeg - 1, toMark.lat, toMark.lon, toMark.nodeLat, toMark.nodeLon);
 			if (prefNode == null) {
-				parent.receiveMessage("No prev route node at destination");
+				parent.receiveMessage(Locale.get("routing.NoPrevRouteNodeAtDestination")/*No prev route node at destination*/);
 				return false;
 			}
 			// TODO: fill in bearings and cost
@@ -843,7 +845,7 @@ public class Routing implements Runnable {
 		} catch (Exception e) {
 			//parent.receiveMessage("Routing exception " + e.getMessage());
 			// show that there was exception as an alert so we can see in the title bar where the exception occured
-			parent.alert("Routing Exception", "" + e.getMessage(), 5000);
+			parent.alert(Locale.get("routing.RoutingException")/*Routing Exception*/, "" + e.getMessage(), 5000);
 			e.printStackTrace();
 		}
 		return false;
@@ -884,12 +886,12 @@ public class Routing implements Runnable {
 			}
 			if (bestTime){
 				if (Configuration.getDebugSeverityDebug()) {
-					parent.receiveMessage("Route found: " + (bestTotal/600) + "min");
+					parent.receiveMessage(Locale.get("routing.RouteFound")/*Route found*/ + ": " + (bestTotal/600) + "min");
 				} else {
-					parent.receiveMessage("Route found");					
+					parent.receiveMessage(Locale.get("routing.RouteFound")/*Route found*/);					
 				}
 			} else {
-				parent.receiveMessage("Route found: " + (bestTotal/1000f) + "km");
+				parent.receiveMessage(Locale.get("routing.RouteFound")/*Route found*/ + ": " + (bestTotal/1000f) + Locale.get("routing.km")/*km*/);
 			}
 			// when finally we get the sequence we must be able to access all route nodes, not only the mainstreet net's
 			Routing.onlyMainStreetNet = false;
@@ -965,7 +967,7 @@ public class Routing implements Runnable {
 		} catch (Exception e) {
 			// cleanup the route tiles also when an exception occurred
 			tile.cleanup(-1);
-			parent.receiveMessage("Routing Ex " + e.getMessage());
+			parent.receiveMessage(Locale.get("routing.Routing Ex")/*Routing Ex*/ + " " + e.getMessage());
 			//#debug error
 			e.printStackTrace();
 			return null;

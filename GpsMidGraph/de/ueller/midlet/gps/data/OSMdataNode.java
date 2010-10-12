@@ -21,6 +21,8 @@ import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.importexport.QDGpxParser;
 import de.ueller.midlet.gps.importexport.XmlParserContentHandler;
 
+import de.enough.polish.util.Locale;
+
 public class OSMdataNode extends OSMdataEntity implements XmlParserContentHandler{
 	private final static Logger logger = Logger.getInstance(
 			OSMdataNode.class, Logger.DEBUG);
@@ -128,10 +130,10 @@ public class OSMdataNode extends OSMdataEntity implements XmlParserContentHandle
 	
 	public String toString() {
 		String res;
-		res = "\nOSM node " + osmID + "\n";
-		res += "     last edited by " + editBy + " at " + editTime + "\n";
-		res += "     version " + version + " in changeset " + changesetID + "\n";
-		res += " Tags:\n";
+		res = "\n " + Locale.get("osmdatanode.OSMnode")/*OSM node*/ + " " + osmID + "\n";
+		res += "     " + Locale.get("osmdatanode.LastEditedBy")/*last edited by*/ + editBy + Locale.get("osmdatanode.at")/* at */ + editTime + "\n";
+		res += "     " + Locale.get("osmdatanode.version")/*version*/ + " " + version + " " + Locale.get("osmdatanode.in changeset")/*in changeset*/ + " " + changesetID + "\n";
+		res += " " + Locale.get("osmdatanode.Tags")/*Tags*/ + ":\n";
 		Enumeration enKey = tags.keys();
 		while (enKey.hasMoreElements()) {
 			String key = (String)enKey.nextElement();

@@ -8,6 +8,8 @@ package de.ueller.midlet.gps;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import de.enough.polish.util.Locale;
+
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
@@ -51,7 +53,7 @@ public abstract class KeyCommandCanvas extends Canvas implements
 		pressedKeyTime = System.currentTimeMillis();
 		if (keyboardLocked && keyCode != KEY_NUM9) {
 			GpsMid.getInstance().alert("GpsMid",
-					(hasPointerEvents() ? "Keys and touchscreen locked. Hold down '9' or slide right on way bar to unlock." : "Keys locked. Hold down '9' to unlock."),					
+						   (hasPointerEvents() ? Locale.get("keycommandcanvas.KeysAndTouchscreen")/*Keys and touchscreen locked. Hold down 9 or slide right on way bar to unlock.*/ : Locale.get("keycommandcanvas.KeysLocked")/*Keys locked. Hold down 9 to unlock.*/),					
 					3000);
 			ignoreKeyCode = keyCode;
 			return;

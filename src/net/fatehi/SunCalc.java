@@ -30,6 +30,8 @@ package net.fatehi;
 // Needed for atan2
 import de.ueller.midlet.gps.data.MoreMath;
 
+import de.enough.polish.util.Locale;
+
 /**
  * Computes the times of sunrise and sunset for a specified date and location.
  * Also finds the Sun's co-ordinates (declination and right ascension) for a
@@ -134,7 +136,7 @@ public class SunCalc
     public void setLatitude(float latitude)  {
 
         if (Math.abs(latitude) > 90)  {
-            throw new IllegalArgumentException("Out of range");
+            throw new IllegalArgumentException(Locale.get("suncalc.OutOfRange")/*Out of range*/);
         }
         _latitude = latitude;
     }
@@ -153,7 +155,7 @@ public class SunCalc
     public void setLongitude(float longitude)  {
 
         if (Math.abs(longitude) > 180)  {
-            throw new IllegalArgumentException("Out of range");
+            throw new IllegalArgumentException(Locale.get("suncalc.OutOfRange")/*Out of range*/);
         }
         _longitude = longitude;
     }
@@ -172,7 +174,7 @@ public class SunCalc
     public void setTimeZoneOffset(double timeZoneOffset)  {
 
         if (Math.abs(timeZoneOffset) > 13)  {
-            throw new IllegalArgumentException("Out of range");
+            throw new IllegalArgumentException(Locale.get("suncalc.OutOfRange")/*Out of range*/);
         }
         _tzOffset = timeZoneOffset;
     }
@@ -190,7 +192,7 @@ public class SunCalc
     */
     public void setYear(int year)  {
         if (year < 1500 || year > 3000)  {
-            throw new IllegalArgumentException("Out of range");
+            throw new IllegalArgumentException(Locale.get("suncalc.OutOfRange")/*Out of range*/);
         }
         _year = year;
     }
@@ -208,7 +210,7 @@ public class SunCalc
     */
     public void setMonth(int month)  {
         if (month < 1 || month > 12)  {
-            throw new IllegalArgumentException("Out of range");
+            throw new IllegalArgumentException(Locale.get("suncalc.OutOfRange")/*Out of range*/);
         }
         _month = month;
     }
@@ -226,7 +228,7 @@ public class SunCalc
     */
     public void setDay(int day)  {
         if (day < 1 || day > 31)  {
-            throw new IllegalArgumentException("Out of range");
+            throw new IllegalArgumentException(Locale.get("suncalc.OutOfRange")/*Out of range*/);
         }
         _day = day;
     }
@@ -686,12 +688,12 @@ public class SunCalc
 
         riseset = calcRiseSet(SUNRISE_SUNSET);
 
-        strValue =  "latitude=" + _latitude + ";" +
-                    "longitude=" + _longitude + ";" +
-                    "timezone=" + _tzOffset + ";" +
-                    "date=" + _year + "." + _month + "." + _day + ";" +
-                    "rise=" + formatTime(riseset[RISE]) + ";" +
-                    "set=" + formatTime(riseset[SET]) + ";" +
+        strValue =  Locale.get("suncalc.latitude")/*latitude=*/ + _latitude + ";" +
+	            Locale.get("suncalc.longitude")/*longitude=*/ + _longitude + ";" +
+	            Locale.get("suncalc.timezone")/*timezone=*/ + _tzOffset + ";" +
+	            Locale.get("suncalc.date")/*date=*/ + _year + "." + _month + "." + _day + ";" +
+	            Locale.get("suncalc.rise")/*rise=*/ + formatTime(riseset[RISE]) + ";" +
+	            Locale.get("suncalc.set")/*set=*/ + formatTime(riseset[SET]) + ";" +
                     "";
 
         return strValue;

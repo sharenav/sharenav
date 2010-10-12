@@ -23,6 +23,8 @@ import javax.microedition.lcdui.List;
 
 //#endif
 
+import de.enough.polish.util.Locale;
+
 public class FsDiscover
 //#if polish.api.pdaapi
 		implements Runnable, GpsMidDisplayable, CommandListener
@@ -37,12 +39,12 @@ public class FsDiscover
 	private final static Logger logger = Logger.getInstance(FsDiscover.class,
 			Logger.TRACE);
 
-	private final Command BACK_CMD = new Command("Back", Command.BACK, 2);
-	private final Command OK_CMD = new Command("Select", Command.ITEM, 1);
+    private final Command BACK_CMD = new Command(Locale.get("fsdiscover.Back")/*Back*/, Command.BACK, 2);
+    private final Command OK_CMD = new Command(Locale.get("fsdiscover.Select")/*Select*/, Command.ITEM, 1);
 
-	private final Command UP_CMD = new Command("Directory up", Command.ITEM, 1);
-	private final Command ROOT_CMD = new Command("Go to root(s)", Command.ITEM, 1);
-	private final Command DOWN_CMD = new Command("Directory down",
+    private final Command UP_CMD = new Command(Locale.get("fsdiscover.DirUp")/*Directory up*/, Command.ITEM, 1);
+    private final Command ROOT_CMD = new Command(Locale.get("fsdiscover.GoToRoot")/*Go to root(s)*/, Command.ITEM, 1);
+    private final Command DOWN_CMD = new Command(Locale.get("fsdiscover.DirDown")/*Directory down*/,
 			Command.ITEM, 1);
 
 	private String url;
@@ -151,7 +153,7 @@ public class FsDiscover
 			urlList.addElement(url + root);
 		}
 		//#else
-		list.append("API not supported by device", null);
+		list.append(Locale.get("fsdiscover.APINotSupByDevice")/*API not supported by device*/, null);
 		//#endif
 		// Display the new list. We just assume, that the old list was still
 		// displaying

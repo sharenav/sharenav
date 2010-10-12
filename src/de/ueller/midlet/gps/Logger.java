@@ -5,6 +5,8 @@
 
 package de.ueller.midlet.gps;
 
+import de.enough.polish.util.Locale;
+
 import de.ueller.gps.data.Configuration;
 import javax.microedition.lcdui.Alert;
 
@@ -64,7 +66,7 @@ public class Logger {
 	public void fatal(String msg) {
 		if (level >= FATAL) {
 			app.log("F[" + source + msg);			
-			GpsMid.getInstance().alert("Fatal", msg, Alert.FOREVER);
+			GpsMid.getInstance().alert(Locale.get("logger.Fatal")/*Fatal*/, msg, Alert.FOREVER);
 		}
 	}
 
@@ -80,7 +82,7 @@ public class Logger {
 		if (level >= ERROR) {
 			app.log("E[" + source + msg);
 			if (!silent) {
-				GpsMid.getInstance().alert("Error", msg, Alert.FOREVER);			
+			    GpsMid.getInstance().alert(Locale.get("logger.Error")/*Error*/, msg, Alert.FOREVER);			
 			}
 		}		
 	}

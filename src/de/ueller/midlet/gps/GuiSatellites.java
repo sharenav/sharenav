@@ -14,6 +14,8 @@ import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
+import de.enough.polish.util.Locale;
+
 import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Position;
@@ -23,7 +25,7 @@ import de.ueller.midlet.gps.GpsMid;
 public class GuiSatellites extends KeyCommandCanvas implements CommandListener,
 		GpsMidDisplayable, LocationMsgReceiver  {
 
-	private final Command BACK_CMD = new Command("Back", Command.BACK, 5);
+    private final Command BACK_CMD = new Command(Locale.get("guisatellites.Back")/*Back*/, Command.BACK, 5);
 	
 	private final static Logger mLogger = Logger.getInstance(GuiSatellites.class,
 			Logger.DEBUG);
@@ -78,7 +80,7 @@ public class GuiSatellites extends KeyCommandCanvas implements CommandListener,
 		g.drawArc(centerX - r, centerY - r, dia, dia, 0, 360);
 		if (mSatellites == null) {
 			g.setColor(0, 0, 0);
-			g.drawString("Satellites n/a", centerX, centerY - g.getFont().getHeight() / 2, Graphics.TOP|Graphics.HCENTER);
+			g.drawString(Locale.get("guisatellites.Satellites")/*Satellites n/a*/, centerX, centerY - g.getFont().getHeight() / 2, Graphics.TOP|Graphics.HCENTER);
 			return;
 		}
 		for (byte i = 0; i < mSatellites.length; i++) {

@@ -14,23 +14,25 @@ import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.TextField;
 import de.ueller.midlet.gps.importexport.GpxImportSession;
 
+import de.enough.polish.util.Locale;
+
 public class GuiGpxLoad extends Form implements CommandListener,
 		GpsMidDisplayable {
 
 	private final static Logger logger = 
 		Logger.getInstance(GuiGpxLoad.class, Logger.DEBUG);
 	
-	private final Command IMPORT_CMD = new Command("Import", Command.OK, 1);
-	private final Command BACK_CMD = new Command("Back", Command.BACK, 5);
+	private final Command IMPORT_CMD = new Command(Locale.get("guigpxload.Import")/*Import*/, Command.OK, 1);
+	private final Command BACK_CMD = new Command(Locale.get("guigpxload.Back")/*Back*/, Command.BACK, 5);
 	
-	private final String LOADFROMFILE = "from file";
-	private final String LOADFROMBT = "via bluetooth";
-	private final String LOADFROMCOMM = "from commport";
+	private final String LOADFROMFILE = Locale.get("guigpxload.FromFile")/*from file*/;
+	private final String LOADFROMBT = Locale.get("guigpxload.ViaBluetooth")/*via bluetooth*/;
+	private final String LOADFROMCOMM = Locale.get("guigpxload.FromCommport")/*from commport*/;
 	
 	private GpsMidDisplayable parent;
 	private UploadListener feedbackListener;
 	
-	private final Form menuLoadGpx = new Form("Import GPX file");
+	private final Form menuLoadGpx = new Form(Locale.get("guigpxload.ImportGPXFile")/*Import GPX file*/);
 	private ChoiceGroup choiceFrom;
 	private TextField tfMaxDist;
 	private boolean getWpts;
@@ -46,7 +48,7 @@ public class GuiGpxLoad extends Form implements CommandListener,
 
 		menuLoadGpx.addCommand(BACK_CMD);
 		menuLoadGpx.addCommand(IMPORT_CMD);
-		choiceFrom = new ChoiceGroup("Load Gpx", Choice.EXCLUSIVE);
+		choiceFrom = new ChoiceGroup(Locale.get("guigpxload.LoadGPX")/*Load GPX*/, Choice.EXCLUSIVE);
 		//#if polish.api.fileconnectionapi
 		choiceFrom.append(LOADFROMFILE, null);
 		//#endif
@@ -55,11 +57,11 @@ public class GuiGpxLoad extends Form implements CommandListener,
 		//#endif
 		//this.append(LOADFROMCOMM,null); //Not tested properly, so leave it out		
 		if (choiceFrom.size() == 0) {
-			choiceFrom.append("No method for loading available", null);
+			choiceFrom.append(Locale.get("guigpxload.NoLoadingAvailable")/*No method for loading available*/, null);
 		}
 		menuLoadGpx.append(choiceFrom);
 		if (getWpts) {
-			tfMaxDist = new TextField("Max. distance in km to current map position (0 = no limit)",
+			tfMaxDist = new TextField(Locale.get("guigpxload.MaxDistanceKmPosition")/*Max. distance in km to current map position (0 = no limit)*/,
 					"0", 3, TextField.DECIMAL);
 			menuLoadGpx.append(tfMaxDist);
 		}
@@ -115,17 +117,17 @@ public class GuiGpxLoad extends Form implements CommandListener,
 					importSession = (GpxImportSession)(tmp.newInstance());
 				}
 			} catch (ClassNotFoundException cnfe) {
-				GpsMid.getInstance().alert("Error", "The type of GPX import you have selected is not supported by your phone.", Alert.FOREVER);
+				GpsMid.getInstance().alert(Locale.get("guigpxload.Error")/*Error*/, Locale.get("guigpxload.GPXImportNotSupported")/*The type of GPX import you have selected is not supported by your phone.*/, Alert.FOREVER);
 				logger.error("The type of GPX import you have selected is not supported by your phone.");
 			} catch (Exception e) {
-				GpsMid.getInstance().alert("Error", "Could not start the import server.", Alert.FOREVER);
+				GpsMid.getInstance().alert(Locale.get("guigpxload.Error")/*Error*/, Locale.get("guigpxload.CouldNotStartImportServer")/*Could not start the import server.*/, Alert.FOREVER);
 				logger.exception("Could not start the import server.", e);
 			} 
 			if (importSession != null) {
 				// Trigger actual import 
 				importSession.initImportServer(feedbackListener, maxDistance, menuLoadGpx);
 			} else {
-				GpsMid.getInstance().alert("Error", "The type of GPX import you have selected is not supported by your phone.", Alert.FOREVER);
+				GpsMid.getInstance().alert(Locale.get("guigpxload.Error")/*Error*/, Locale.get("guigpxload.GPXImportNotSupported")/*The type of GPX import you have selected is not supported by your phone.*/, Alert.FOREVER);
 				logger.error("The type of GPX import you have selected is not supported by your phone.");
 			}
 		}

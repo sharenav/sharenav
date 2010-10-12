@@ -5,12 +5,14 @@ import javax.microedition.lcdui.CommandListener;
 import de.ueller.midlet.gps.GpsMidDisplayable;
 import javax.microedition.lcdui.List;
 
+import de.enough.polish.util.Locale;
+
 public abstract class OptionsList extends List implements CommandListener {
 
-	protected final Command			BACK_CMD		= new Command("Back",
+	protected final Command			BACK_CMD		= new Command(Locale.get("optionslist.Back")/*Back*/,
 			Command.BACK, 2);
 
-	protected final Command			OK_CMD			= new Command("Ok",
+	protected final Command			OK_CMD			= new Command(Locale.get("optionslist.Ok")/*Ok*/,
 			Command.ITEM, 1);
 
 	protected GpsMidDisplayable parent;

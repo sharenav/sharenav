@@ -4,6 +4,8 @@ package de.ueller.midlet.gps;
  * See Copying
  */
 
+import de.enough.polish.util.Locale;
+
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
@@ -19,8 +21,8 @@ import javax.microedition.lcdui.ChoiceGroup;
 public class GuiWaypointSave extends Form implements CommandListener {
 	private TextField fldName,fldEle;
 	private ChoiceGroup cg;
-	private static final Command saveCmd = new Command("Save", Command.OK, 1);
-	private static final Command backCmd = new Command("Back", Command.BACK, 2);
+	private static final Command saveCmd = new Command(Locale.get("guiwaypointsave.Save")/*Save*/, Command.OK, 1);
+	private static final Command backCmd = new Command(Locale.get("guiwaypointsave.Back")/*Back*/, Command.BACK, 2);
 	
 	private Trace parent;
 	private String name,ele;
@@ -29,7 +31,7 @@ public class GuiWaypointSave extends Form implements CommandListener {
 	protected static final Logger logger = Logger.getInstance(GuiWaypointSave.class,Logger.TRACE);
 
 	public GuiWaypointSave(Trace tr) {
-		super("Save Waypoint");
+		super(Locale.get("guiwaypointsave.SaveWaypoint")/*Save Waypoint*/);
 		this.parent = tr;
 		try {
 			jbInit();
@@ -39,11 +41,11 @@ public class GuiWaypointSave extends Form implements CommandListener {
 	}
 
 	private void jbInit() throws Exception {
-		fldName = new TextField("Name:", "", Configuration.MAX_WAYPOINTNAME_LENGTH, TextField.ANY);
-		fldEle = new TextField("Altitude (in m):", "", 5, TextField.NUMERIC);
-		cg = new ChoiceGroup("Settings", Choice.MULTIPLE);
-		cg.append("Favorite",null);
-		cg.append("Recenter to GPS after saving",null);
+		fldName = new TextField(Locale.get("guiwaypointsave.Name")/*Name:*/, "", Configuration.MAX_WAYPOINTNAME_LENGTH, TextField.ANY);
+		fldEle = new TextField(Locale.get("guiwaypointsave.AltitudeInM")/*Altitude (in m):*/, "", 5, TextField.NUMERIC);
+		cg = new ChoiceGroup(Locale.get("guiwaypointsave.Settings")/*Settings*/, Choice.MULTIPLE);
+		cg.append(Locale.get("guiwaypointsave.Favorite")/*Favorite*/,null);
+		cg.append(Locale.get("guiwaypointsave.RecenterToGPS")/*Recenter to GPS after saving*/,null);
 		
 		// Set up this Displayable to listen to command events
 		setCommandListener(this);
@@ -51,7 +53,7 @@ public class GuiWaypointSave extends Form implements CommandListener {
 		addCommand(backCmd);
 		addCommand(saveCmd);
 		this.append(fldName);
-		this.append("Optional data");
+		this.append(Locale.get("guiwaypointsave.OptionalData")/*Optional data*/);
 		this.append(fldEle);		
 		this.append(cg);
 	}

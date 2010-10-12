@@ -16,27 +16,29 @@ import de.ueller.midlet.gps.data.PersistEntity;
 import de.ueller.midlet.screens.InputListener;
 import de.ueller.midlet.screens.ProgressDisplay;
 
+import de.enough.polish.util.Locale;
+
 /**
  * GuiGpx represents the track management screen. It allows export, import, 
  * deletion, display and renaming of GPX tracklogs. It handles the GUI part of
  * track management. The real GPX data is handled in the GPX class.
  */
 public class GuiGpx extends List implements CommandListener,
-		GpsMidDisplayable, UploadListener, InputListener, CompletionListener {
-
+				 GpsMidDisplayable, UploadListener, InputListener, CompletionListener {
+	
 	private final static Logger logger = Logger.getInstance(GuiGpx.class, Logger.DEBUG);
 	
-	private final Command SEND_CMD = new Command("Export", Command.OK, 1);
-	private final Command LOAD_CMD = new Command("Import", Command.ITEM, 3);
-	private final Command DISP_CMD = new Command("Display", "Display selected tracks", Command.ITEM, 3);
-	private final Command UNDISP_CMD = new Command("Undisplay", "Undisplay loaded tracks", Command.ITEM, 3);
-	private final Command RENAME_CMD = new Command("Rename", "Rename first selected", Command.ITEM, 3);	
-	private final Command REPLAY_START_CMD = new Command("Replay", Command.ITEM, 3);	
-	private final Command REPLAY_STOP_CMD = new Command("Stop Replay", Command.ITEM, 3);	
-	private final Command DEL_CMD = new Command("Delete", Command.ITEM, 3);	
-	private final Command SALL_CMD = new Command("Select All", Command.ITEM, 4);
-	private final Command DSALL_CMD = new Command("Deselect All", Command.ITEM, 4);
-	private final Command BACK_CMD = new Command("Back", Command.BACK, 5);
+	private final Command SEND_CMD = new Command(Locale.get("guigpx.Export")/*Export*/, Command.OK, 1);
+	private final Command LOAD_CMD = new Command(Locale.get("guigpx.Import")/*Import*/, Command.ITEM, 3);
+	private final Command DISP_CMD = new Command(Locale.get("guigpx.Display")/*Display*/, Locale.get("guigpx.DispSelectedTracks")/*Display selected tracks*/, Command.ITEM, 3);
+	private final Command UNDISP_CMD = new Command(Locale.get("guigpx.Undisplay")/*Undisplay*/, Locale.get("guigpx.UndispLoadedTracks")/*Undisplay loaded tracks*/, Command.ITEM, 3);
+	private final Command RENAME_CMD = new Command(Locale.get("guigpx.Rename")/*Rename*/, Locale.get("guigpx.RenameFirstSelected")/*Rename first selected*/, Command.ITEM, 3);	
+	private final Command REPLAY_START_CMD = new Command(Locale.get("guigpx.Replay")/*Replay*/, Command.ITEM, 3);	
+	private final Command REPLAY_STOP_CMD = new Command(Locale.get("guigpx.StopReplay")/*Stop Replay*/, Command.ITEM, 3);	
+	private final Command DEL_CMD = new Command(Locale.get("guigpx.Delete")/*Delete*/, Command.ITEM, 3);	
+	private final Command SALL_CMD = new Command(Locale.get("guigpx.SelectAll")/*Select All*/, Command.ITEM, 4);
+	private final Command DSALL_CMD = new Command(Locale.get("guigpx.DeselectAll")/*Deselect All*/, Command.ITEM, 4);
+	private final Command BACK_CMD = new Command(Locale.get("guigpx.Back")/*Back*/, Command.BACK, 5);
 
 	/** Value for mJob: No job */
 	private static final int JOB_IDLE = 0;
@@ -69,7 +71,7 @@ public class GuiGpx extends List implements CommandListener,
 	private Vector processTracks;
 	
 	public GuiGpx(Trace parent) throws Exception {
-		super("GPX tracklogs", List.MULTIPLE);
+		super(Locale.get("guigpx.GPXlogs")/*GPX tracklogs*/, List.MULTIPLE);
 		this.parent = parent;
 		progress = new ProgressDisplay(this);
 		processTracks = new Vector();
@@ -120,7 +122,7 @@ public class GuiGpx extends List implements CommandListener,
 					logger.error("Null pointer exception, can't load track number" + i + ": " + e.getMessage());
 			}
 		}
-		this.setTitle("GPX tracklogs (" + trks.length + ")");
+		this.setTitle(Locale.get("guigpx.GPXTracklogs")/*GPX tracklogs (*/ + trks.length + ")");
 	}
 	
 	public void commandAction(Command c, Displayable d) {
@@ -135,7 +137,7 @@ public class GuiGpx extends List implements CommandListener,
 					for (int i = 0; i < processTracks.size(); i++){
 						numAllPtsInTrack += ((PersistEntity)processTracks.elementAt(i)).getTrackSize();
 					}
-					progress.showProgressDisplay("Exporting tracks", numAllPtsInTrack);
+					progress.showProgressDisplay(Locale.get("guigpx.ExportingTracks")/*Exporting tracks*/, numAllPtsInTrack);
 				} catch (ClassCastException cce) {
 					logger.exception("ClassCastException in commandAction", cce);
 				}
@@ -160,7 +162,7 @@ public class GuiGpx extends List implements CommandListener,
 		if (c == REPLAY_START_CMD) {
 			if (parent.isGpsConnected()) {
 				parent.show();
-				parent.alert("TrackPlayer", "Can't replay while connected to GPS", 2500);
+				parent.alert(Locale.get("guigpx.TrackPlayer")/*TrackPlayer*/, Locale.get("guigpx.CantReplayGPS")/* Can't replay while connected to GPS */, 2500);
 				return;
 			} else {
 				updateProcessVector();
@@ -184,7 +186,7 @@ public class GuiGpx extends List implements CommandListener,
 		if (c == RENAME_CMD) {
 			idx = getFirstSelectedIndex();
 			if (idx >= 0) {
-				GuiNameEnter gne = new GuiNameEnter(this, "Rename Track", 
+				GuiNameEnter gne = new GuiNameEnter(this, Locale.get("guigpx.RenameTrack")/*Rename Track*/, 
 						trks[idx].displayName, Configuration.MAX_TRACKNAME_LENGTH);
 				gne.show();
 			}
@@ -195,8 +197,8 @@ public class GuiGpx extends List implements CommandListener,
 			if (processTracks.size() > 0)
 			{
 				mJob = JOB_DELETE_TRKS;
-				progress.showProgressDisplay("Deleting tracks");
-				progress.addProgressText("Deleting " + processTracks.size() + " track(s).\n");
+				progress.showProgressDisplay(Locale.get("guigpx.DeletingTracks")/*Deleting tracks*/);
+				progress.addProgressText(Locale.get("guigpx.Deleting")/*Deleting */ + processTracks.size() + " " + Locale.get("guigpx.Tracks")/*track(s)*/ + ".\n");
 				parent.gpx.deleteTracks(processTracks, this);
 			}
 			return;
@@ -265,24 +267,24 @@ public class GuiGpx extends List implements CommandListener,
 		String alertMsg;		
 		if (mJob == JOB_EXPORT_TRKS) {
 			if (success) {
-				alertMsg = "Finished!";
+				alertMsg = Locale.get("guigpx.Finished")/*Finished!*/;
 			} else {
-				alertMsg = "GPX export failed: " + message;
+				alertMsg = Locale.get("guigpx.GPXExportFailed")/*GPX export failed: */ + message;
 			}
 		} else if (mJob == JOB_IMPORT_GPX) {
 			if (success) {
-				alertMsg = "***********\nCompleted GPX import: " + message;
+				alertMsg = "***********\n" + Locale.get("guigpx.CompletedGPXImport")/*Completed GPX import: */ + message;
 			} else {
-				alertMsg = "GPX import failed: " + message;
+				alertMsg = Locale.get("guigpx.GPXImportFailed")/*GPX import failed: */ + message;
 			}
 			initTracks();
 		} else {
 			// Can only be JOB_DELETE_TRKS but if we check against it,
 			// the compiler warns that alertMsg may not be initialized.
 			if (success) {
-				alertMsg = "Finished!";
+				alertMsg = Locale.get("guigpx.Finished")/*Finished!*/;
 			} else {
-				alertMsg = "Deleting track(s) failed: " + message;
+				alertMsg = Locale.get("guigpx.DeletingTrackFailed")/*Deleting track(s) failed: */ + message;
 			}
 			initTracks();
 		}

@@ -3,6 +3,8 @@ package de.ueller.midlet.gps;
 import de.ueller.gps.data.Position;
 import de.ueller.midlet.gps.data.MoreMath;
 
+import de.enough.polish.util.Locale;
+
 /*
  * GpsMid - Copyright (c) 200 sk750 at users dot sourceforge dot net 
  * this class replays a GPX track
@@ -126,7 +128,7 @@ public class TrackPlayer implements Runnable {
 			pos.altitude = 0;
 			tr.receivePosition(pos);		
 		}
-		tr.receiveMessage("Replay done");
+		tr.receiveMessage(Locale.get("trackplayer.ReplayDone")/*Replay done*/);
 		processorThread = null;
 		this.trkPtLat = null;
 		this.trkPtLon = null;
@@ -163,7 +165,7 @@ public class TrackPlayer implements Runnable {
 		if ( (trackPtsPerSecond + diff) <= 50 &&  (trackPtsPerSecond + diff) >= 1) {
 			trackPtsPerSecond += diff;
 		}
-		Trace.getInstance().alert("Player: " + getInstance().iReplaying + "/" + getInstance().trkPtLat.length + " trackpoints", "Replaying at " + trackPtsPerSecond + " trackpoints/s", 1000);
+		Trace.getInstance().alert(Locale.get("trackplayer.Player")/*Player: */ + getInstance().iReplaying + "/" + getInstance().trkPtLat.length + Locale.get("trackplayer. trackpoints")/* trackpoints*/, Locale.get("trackplayer.ReplayingAt")/*Replaying at */ + trackPtsPerSecond + Locale.get("trackplayer. trackpointss")/* trackpoints/s*/, 1000);
 	}
 	
 	/**

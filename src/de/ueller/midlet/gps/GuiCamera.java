@@ -43,6 +43,8 @@ import de.ueller.gps.tools.HelperRoutines;
 import de.ueller.gps.tools.StringTokenizer;
 import de.ueller.midlet.gps.data.MoreMath;
 
+import de.enough.polish.util.Locale;
+
 /**
  * 
  * This class provides a camera capture form based on jsr-135 and jsr-234
@@ -55,12 +57,12 @@ import de.ueller.midlet.gps.data.MoreMath;
  */
 public class GuiCamera extends Canvas implements CommandListener, ItemCommandListener, GuiCameraInterface, SelectionListener, GpsMidDisplayable {
 
-	private final Command BACK_CMD = new Command("Back", Command.BACK, 5);
-	private final Command OK_CMD = new Command("Ok", Command.OK, 5);
-	private final Command CAPTURE_CMD = new Command("Capture", Command.OK, 5);
-	private final Command STORE_CMD = new Command("Select directory", Command.ITEM, 5);
-	private final Command SETUP_CMD = new Command("Setup", Command.ITEM, 6);
-
+	private final Command BACK_CMD = new Command(Locale.get("guicamera.Back")/*Back*/, Command.BACK, 5);
+	private final Command OK_CMD = new Command(Locale.get("guicamera.Ok")/*Ok*/, Command.OK, 5);
+	private final Command CAPTURE_CMD = new Command(Locale.get("guicamera.Capture")/*Capture*/, Command.OK, 5);
+	private final Command STORE_CMD = new Command(Locale.get("guicamera.SelectDir")/*Select directory*/, Command.ITEM, 5);
+	private final Command SETUP_CMD = new Command(Locale.get("guicamera.Setup")/*Setup*/, Command.ITEM, 6);
+	
 	private final static Logger logger = Logger.getInstance(GuiCamera.class,
 			Logger.DEBUG);
 	//#if polish.api.mmapi	
@@ -351,7 +353,7 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 		g.drawRect(6, 6, getWidth() - 12, getHeight() - 12);
 		g.drawRect(7, 7, getWidth() - 14, getHeight() - 14);
 		g.setColor(0,255,0);
-		g.drawString("Saving photo...", getWidth()/2, getHeight()/2, Graphics.BASELINE | Graphics.HCENTER);
+		g.drawString(Locale.get("guicamera.SavingPhoto")/*Saving photo...*/, getWidth()/2, getHeight()/2, Graphics.BASELINE | Graphics.HCENTER);
 	}
 
 	public void keyPressed(int keyCode) {
@@ -412,7 +414,7 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 					logger.exception("Could not stop camera viewer", e);
 				}
 			}
-			Form setupDialog = new Form("Setup");
+			Form setupDialog = new Form(Locale.get("guicamera.Setup")/*Setup*/);
 			setupDialog.addCommand(BACK_CMD);
 			setupDialog.addCommand(OK_CMD);
 			setupDialog.addCommand(STORE_CMD);
@@ -422,7 +424,7 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 			 * Setup JSR selector
 			 */
 			String [] selectJsr = {"JSR-135", "JSR-234"};
-			selectJsrCG = new ChoiceGroup("Pictures via...", Choice.EXCLUSIVE, selectJsr ,null);
+			selectJsrCG = new ChoiceGroup(Locale.get("guicamera.PicturesVia")/*Pictures via...*/, Choice.EXCLUSIVE, selectJsr ,null);
 			if (Configuration.getCfgBitState(Configuration.CFGBIT_USE_JSR_234)) {
 				selectJsrCG.setSelectedIndex(1, true);
 			} else {
@@ -432,8 +434,8 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 			/**
 			 * Setup Exif selector
 			 */
-			String [] selectExif = {"Add exif"};
-			selectExifCG = new ChoiceGroup("Geocoding", Choice.MULTIPLE,selectExif,null);
+			String [] selectExif = {Locale.get("guicamera.AddExif")/*Add exif*/};
+			selectExifCG = new ChoiceGroup(Locale.get("guicamera.Geocoding")/*Geocoding*/, Choice.MULTIPLE,selectExif,null);
 			boolean [] selExif = new boolean[1];
 			selExif[0] = Configuration.getCfgBitState(Configuration.CFGBIT_ADD_EXIF);
 			selectExifCG.setSelectedFlags(selExif);
@@ -441,7 +443,7 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 			/**
 			 * Setup Encoding
 			 */
-			encodingTF = new TextField("Encoding string: ", Configuration.getPhotoEncoding() , 100 ,TextField.ANY);
+			encodingTF = new TextField(Locale.get("guicamera.EncodingString")/*Encoding string: */, Configuration.getPhotoEncoding() , 100 ,TextField.ANY);
 			String encodings = null;
 			try {
 				 encodings = System.getProperty("video.snapshot.encodings");
@@ -469,24 +471,24 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 					encodingSel = encStrings.length;
 			String [] tmp = new String[encStrings.length + 1];
 			System.arraycopy(encStrings, 0, tmp, 0, encStrings.length);
-			tmp[encStrings.length] = "Custom";
+			tmp[encStrings.length] = Locale.get("guicamera.Custom")/*Custom*/;
 			encStrings = tmp;
-			encodingCG = new ChoiceGroup("Select encoding: ", Choice.EXCLUSIVE, encStrings, null);
+			encodingCG = new ChoiceGroup(Locale.get("guicamera.SelectEncoding")/*Select encoding: */, Choice.EXCLUSIVE, encStrings, null);
 			encodingCG.setSelectedIndex(encodingSel, true);
-			
-			/**
-			 * Setup custom encoding text field
-			 */
-			TextField storageDir = new TextField("store: ", basedirectory, 100, TextField.UNEDITABLE);
-			storageDir.setDefaultCommand(STORE_CMD);
-			storageDir.setItemCommandListener(this);
-			
-			setupDialog.append(selectJsrCG);
-			setupDialog.append(selectExifCG);
-			setupDialog.append(encodingCG);
-			setupDialog.append(encodingTF);
-			setupDialog.append(storageDir);
-			GpsMid.getInstance().show(setupDialog);
+					     
+					     /**
+					     * Setup custom encoding text field
+					     */
+					     TextField storageDir = new TextField(Locale.get("guicamera.store")/*store: */, basedirectory, 100, TextField.UNEDITABLE);
+					     storageDir.setDefaultCommand(STORE_CMD);
+					     storageDir.setItemCommandListener(this);
+					     
+					     setupDialog.append(selectJsrCG);
+					     setupDialog.append(selectExifCG);
+					     setupDialog.append(encodingCG);
+					     setupDialog.append(encodingTF);
+					     setupDialog.append(storageDir);
+					     GpsMid.getInstance().show(setupDialog);
 			//#debug trace
 			logger.trace("Showing Setup dialog");
 			
@@ -510,7 +512,7 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 			}
 			
 			String encType = encodingCG.getString(encodingCG.getSelectedIndex());
-			if (encType.equals("Custom"))
+			if (encType.equals(Locale.get("guicamera.Custom")/*Custom*/))
 				encType = encodingTF.getString();
 			Configuration.setPhotoEncoding(encType);
 			

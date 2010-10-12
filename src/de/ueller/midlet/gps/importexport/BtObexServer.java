@@ -20,6 +20,8 @@ import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.UploadListener;
 
+import de.enough.polish.util.Locale;
+
 public class BtObexServer
 //#if polish.api.obex
 	extends ServerRequestHandler implements Runnable, UploadListener, GpxImportSession
@@ -41,7 +43,7 @@ public class BtObexServer
 		processorThread = new Thread(this);
 		processorThread.start();
 		
-		GpsMid.getInstance().alert("Information", "Obex server started, please send your GPX file now", 3000);		
+		GpsMid.getInstance().alert(Locale.get("btobexserver.Information")/*Information*/, Locale.get("btobexserver.ObexServerStarted")/*Obex server started, please send your GPX file now*/, 3000);		
 	}
 	
 	public int onConnect(HeaderSet request, HeaderSet reply) {

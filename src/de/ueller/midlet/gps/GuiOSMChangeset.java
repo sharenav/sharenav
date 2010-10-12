@@ -22,6 +22,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 
+import de.enough.polish.util.Locale;
+
 import javax.microedition.io.Connector;
 import javax.microedition.io.HttpConnection;
 import javax.microedition.lcdui.Command;
@@ -41,8 +43,8 @@ public class GuiOSMChangeset extends Form implements GpsMidDisplayable,
 	private final static Logger logger = Logger.getInstance(
 			GuiOSMChangeset.class, Logger.DEBUG);
 
-	private final Command BACK_CMD = new Command("Back", Command.BACK, 1);
-	private final Command SAVE_CMD = new Command("Save", Command.OK, 1);
+	private final Command BACK_CMD = new Command(Locale.get("guiosmchangeset.Back")/*Back*/, Command.BACK, 1);
+	private final Command SAVE_CMD = new Command(Locale.get("guiosmchangeset.Save")/*Save*/, Command.OK, 1);
 
 	private UploadListener ul;
 	private GpsMidDisplayable parent;
@@ -60,7 +62,7 @@ public class GuiOSMChangeset extends Form implements GpsMidDisplayable,
 		changesetID = -1;
 		this.ul = ul;
 		this.parent = parent;
-		commentField = new TextField("Comment", "", 255, TextField.ANY);
+		commentField = new TextField(Locale.get("guiosmchangeset.Comment")/*Comment*/, "", 255, TextField.ANY);
 		append(commentField);
 		addCommand(BACK_CMD);
 		addCommand(SAVE_CMD);
@@ -140,12 +142,12 @@ public class GuiOSMChangeset extends Form implements GpsMidDisplayable,
 			} catch (NumberFormatException nfe) {
 				changesetID = -1;
 				logger.exception("Returned changesetID was non numerical", nfe);
-				ul.completedUpload(false, "No valid changeset ID was returned");
+				ul.completedUpload(false, Locale.get("guiosmchangeset.NoValidIDReturned")/*No valid changeset ID was returned*/);
 				return;
 			}
 			//#debug info
 			logger.info("Successfully created Changeset " + changesetID);
-			ul.completedUpload(true, "Successfully created Changeset "
+			ul.completedUpload(true, Locale.get("guiosmchangeset.SuccessfullyCreatedChangeset")/*Successfully created Changeset */
 					+ changesetID);
 		} else {
 			changesetID = -1;

@@ -19,6 +19,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import de.enough.polish.util.Locale;
+
 /**
  * 
  * This object contains the compass data structures
@@ -39,7 +41,7 @@ public class Compass {
 	}
 
 	public String toString() {
-		String s = "Compass direction=" + direction + ")";
+		String s = Locale.get("compass.CompassDirection")/*Compass direction*/ + "=" + direction + ")";
 		return s;
 	}
 

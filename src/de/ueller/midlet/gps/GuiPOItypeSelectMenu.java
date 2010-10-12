@@ -17,6 +17,8 @@ import de.ueller.gps.data.Legend;
 import de.ueller.midlet.gps.data.KeySelectMenuItem;
 import de.ueller.midlet.gps.names.NumberCanon;
 
+import de.enough.polish.util.Locale;
+
 class GuiPOItypeSelectMenu extends KeySelectMenu implements KeySelectMenuListener {
 	
 	class POItypeSelectMenuItem implements KeySelectMenuItem {
@@ -65,7 +67,7 @@ class GuiPOItypeSelectMenu extends KeySelectMenu implements KeySelectMenuListene
 		super(parent);
 		super.callback = this;
 		callbackReduced = callback;
-		setTitle("Select POI type");
+		setTitle(Locale.get("guipoitypeselectmenu.SelectPOIType")/*Select POI type*/);
 		keySelectMenuResetMenu();
 	}
 	
@@ -75,7 +77,7 @@ class GuiPOItypeSelectMenu extends KeySelectMenu implements KeySelectMenuListene
 		if (poiTypes == null) {
 			poiTypes = new Vector();
 			// FIXME select proper image for
-			KeySelectMenuItem menuItem = new POItypeSelectMenuItem(Legend.getNodeSearchImage((byte)0), "Everything", (byte)0);
+			KeySelectMenuItem menuItem = new POItypeSelectMenuItem(Legend.getNodeSearchImage((byte)0), Locale.get("guipoitypeselectmenu.Everything")/*Everything*/, (byte)0);
 			poiTypes.addElement(menuItem);
 			for (byte i = 1; i < Legend.getMaxType(); i++) {
 				menuItem = new POItypeSelectMenuItem(Legend.getNodeSearchImage(i),Legend.getNodeTypeDesc(i),i);

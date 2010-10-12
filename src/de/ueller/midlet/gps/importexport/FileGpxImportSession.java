@@ -21,6 +21,7 @@ import de.ueller.midlet.gps.SelectionListener;
 import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.UploadListener;
 
+import de.enough.polish.util.Locale;
 
 public class FileGpxImportSession implements GpxImportSession, SelectionListener, GpsMidDisplayable {
 	
@@ -36,7 +37,7 @@ public class FileGpxImportSession implements GpxImportSession, SelectionListener
 		
 		//#if polish.api.fileconnectionapi
 		FsDiscover fsd = new FsDiscover(this, this, Configuration.getGpxUrl(), 
-										false, ".gpx", "Load *.gpx file");
+						false, ".gpx", Locale.get("filegpximportsession.LoadGgpxFile")/*Load *.gpx file*/);
 		fsd.show();				
 		//#endif
 	}
