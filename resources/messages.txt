@@ -851,7 +851,7 @@ suncalc.timezone=timezone=
 trackplayer.Player=Player: 
 trackplayer.ReplayDone=Replay done
 trackplayer.ReplayingAt=Replaying at 
-trackplayer. trackpointss= trackpoints/s
-trackplayer. trackpoints= trackpoints
+trackplayer.trackpointss= trackpoints/s
+trackplayer.trackpoints= trackpoints
 way.type=type
 way.Way=Way

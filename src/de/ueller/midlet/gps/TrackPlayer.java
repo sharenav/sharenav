@@ -165,7 +165,7 @@ public class TrackPlayer implements Runnable {
 		if ( (trackPtsPerSecond + diff) <= 50 &&  (trackPtsPerSecond + diff) >= 1) {
 			trackPtsPerSecond += diff;
 		}
-		Trace.getInstance().alert(Locale.get("trackplayer.Player")/*Player: */ + getInstance().iReplaying + "/" + getInstance().trkPtLat.length + Locale.get("trackplayer. trackpoints")/* trackpoints*/, Locale.get("trackplayer.ReplayingAt")/*Replaying at */ + trackPtsPerSecond + Locale.get("trackplayer. trackpointss")/* trackpoints/s*/, 1000);
+		Trace.getInstance().alert(Locale.get("trackplayer.Player")/*Player: */ + getInstance().iReplaying + "/" + getInstance().trkPtLat.length + Locale.get("trackplayer.trackpoints")/* trackpoints*/, Locale.get("trackplayer.ReplayingAt")/*Replaying at */ + trackPtsPerSecond + Locale.get("trackplayer.trackpointss")/* trackpoints/s*/, 1000);
 	}
 	
 	/**
