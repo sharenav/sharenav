@@ -12,6 +12,8 @@ grep "/\* i:.*\*/" /dev/null $files |
 awk -F: '{
   file = $1;
   filebase = tolower(substr(file, 0, index($1, ".java") - 1));
+  ret = split (filebase, a, "/");
+  filebase = a[ret];
   line = $0;
   ind = index (line, "/* i:");
   matchend = index (line, "*/");
@@ -23,7 +25,7 @@ awk -F: '{
    line = substr(line, matchend+2);
    ind = index (line, "/* i:");
    matchend = index (line, "*/");
-   strname=substr (line, ind + 5, matchend - ind - 5);
+   strname=substr (line, ind + 5, matchend - ind - 6);
   } while(ind > 0);
-}' |sort|uniq
+}'|sort|uniq
 
