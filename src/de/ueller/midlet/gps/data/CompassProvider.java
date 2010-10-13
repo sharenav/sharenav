@@ -108,7 +108,7 @@ public class CompassProvider {
 			logger.info("Trying to see if there is a compassid server running on this device");
 			Compass compass = obtainSocketCompass();
 			// FIXME
-			// compassRetrievelMethod = COMPASSMETHOD_SOCKET;
+			compassRetrievelMethod = COMPASSMETHOD_SOCKET;
 			if (compass != null) {
 				compassRetrievelMethod = COMPASSMETHOD_SOCKET;
 				logger.info("   Yes, there is a server running and we can get a compass from it");
