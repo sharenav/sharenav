@@ -330,8 +330,8 @@ public class TraceLayout extends LayoutManager {
 	}
 	
 
-	public void toggleOnScreenButtonSize() {
-		TraceLayout.bigOnScreenButtons = !TraceLayout.bigOnScreenButtons;
+	public void setOnScreenButtonSize(boolean big) {
+		TraceLayout.bigOnScreenButtons = big;
 		setOnScreenButtonSize();
 	}
 	

@@ -34,6 +34,7 @@ import android.view.WindowManager;
 import javax.microedition.lcdui.game.GameCanvas;
 //#endif
 import javax.microedition.midlet.MIDlet;
+
 import de.enough.polish.util.Locale;
 
 
@@ -260,6 +261,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	private volatile TimerTask singleTapTimerTask = null;
 	/** timer checking for long tap */
 	private volatile TimerTask longTapTimerTask = null;
+	/** timer for returning to small buttons */
+	private volatile TimerTask bigButtonTimerTask = null;
 	/**
 	 * Indicates that there was any drag event since the last pointerPressed
 	 */
@@ -2772,7 +2775,26 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			}
 			// #debug debug
 			logger.debug("single tap map");
-			tl.toggleOnScreenButtonSize();
+			tl.setOnScreenButtonSize(true);
+
+			// set timer to continuously check if the last user interaction is old enough to make the buttons small again
+			final long BIGBUTTON_DURATION = 5000;
+			bigButtonTimerTask = new TimerTask() {
+				public void run() {
+					if (System.currentTimeMillis() - lastUserActionTime > BIGBUTTON_DURATION ) {
+						// make the on screen touch buttons small again
+						tl.setOnScreenButtonSize(false);
+						requestRedraw();						
+						bigButtonTimerTask.cancel();
+					}
+				}
+			};
+			try {
+				GpsMid.getTimer().schedule(bigButtonTimerTask, BIGBUTTON_DURATION, 500);
+			} catch (Exception e) {
+				logger.error("Error scheduling bigButtonTimerTask: " + e.toString());
+			}
+
 			repaint();
 		} else if (tl.getElementIdAtPointer(x, y) == tl.getElementIdAtPointer(touchX, touchY)) {
 			tl.clearTouchedElement();
