@@ -14,7 +14,7 @@ import de.ueller.midlet.gps.routing.RouteTileRet;
 import de.ueller.midlet.gps.routing.TurnRestriction;
 import de.ueller.midlet.gps.tile.PaintContext;
 
-
+import de.enough.polish.util.Locale;
 
 public class RouteContainerTile extends RouteBaseTile {
 	//#debug error
