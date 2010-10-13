@@ -24,6 +24,7 @@ import de.ueller.midlet.gps.GpsMidDisplayable;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.gps.tools.IconMenuPage;
 
+import de.enough.polish.util.Locale;
 
 public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 		GpsMidDisplayable {
