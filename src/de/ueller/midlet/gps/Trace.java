@@ -2775,27 +2775,30 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			}
 			// #debug debug
 			logger.debug("single tap map");
-			tl.setOnScreenButtonSize(true);
 
-			// set timer to continuously check if the last user interaction is old enough to make the buttons small again
-			final long BIGBUTTON_DURATION = 5000;
-			bigButtonTimerTask = new TimerTask() {
-				public void run() {
-					if (System.currentTimeMillis() - lastUserActionTime > BIGBUTTON_DURATION ) {
-						// make the on screen touch buttons small again
-						tl.setOnScreenButtonSize(false);
-						requestRedraw();						
-						bigButtonTimerTask.cancel();
+			if (!tl.bigOnScreenButtons) {
+				tl.setOnScreenButtonSize(true);
+	
+				// set timer to continuously check if the last user interaction is old enough to make the buttons small again
+				final long BIGBUTTON_DURATION = 5000;
+				bigButtonTimerTask = new TimerTask() {
+					public void run() {
+						if (System.currentTimeMillis() - lastUserActionTime > BIGBUTTON_DURATION ) {
+							// make the on screen touch buttons small again
+							tl.setOnScreenButtonSize(false);
+							requestRedraw();						
+							bigButtonTimerTask.cancel();
+						}
 					}
+				};
+				try {
+					GpsMid.getTimer().schedule(bigButtonTimerTask, BIGBUTTON_DURATION, 500);
+				} catch (Exception e) {
+					logger.error("Error scheduling bigButtonTimerTask: " + e.toString());
 				}
-			};
-			try {
-				GpsMid.getTimer().schedule(bigButtonTimerTask, BIGBUTTON_DURATION, 500);
-			} catch (Exception e) {
-				logger.error("Error scheduling bigButtonTimerTask: " + e.toString());
-			}
 
-			repaint();
+				repaint();
+			}
 		} else if (tl.getElementIdAtPointer(x, y) == tl.getElementIdAtPointer(touchX, touchY)) {
 			tl.clearTouchedElement();
 			int actionId = tl.getActionIdAtPointer(x, y);
