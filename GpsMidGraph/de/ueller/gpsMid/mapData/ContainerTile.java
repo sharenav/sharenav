@@ -14,7 +14,7 @@ import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.data.ProjMath;
 import de.ueller.midlet.gps.tile.PaintContext;
 
-
+import de.enough.polish.util.Locale;
 
 public class ContainerTile extends Tile {
 	//#debug error
