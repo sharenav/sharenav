@@ -40,11 +40,13 @@ public class Name {
 			return;
 		}
 		if (name.equals(e.getName())){
-			for (Entity other :entitys ){
-				if (other.nearBy == e.nearBy){
-					if (debug)
-					System.out.println("dont add " +e + " because simular element exists");
-					return;
+			if (e instanceof Way) {
+				for (Entity other :entitys ){
+					if (other.nearBy == e.nearBy){
+						if (debug)
+							System.out.println("dont add " +e + " because simular element exists");
+						return;
+					}
 				}
 			}
 		}
