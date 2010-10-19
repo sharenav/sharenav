@@ -937,6 +937,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 						imageCollector.getCurrentProjection().pan(center, panX, panY);
 					}
 				}
+				gpsRecenter = false;
 				return;
 			}
 			if (c == CMDS[EXIT_CMD]) {
