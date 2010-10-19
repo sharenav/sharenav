@@ -1196,3 +1196,4 @@ trackplayer.FailedToInitTrackPlayer=Failed to initialise TrackPlayer
 urls.at= at
 urls.UrlsThreadCrashed=Urls thread crashed unexpectedly with error 
 way.ErrorWhileVerify=Error while verify 
+trace.ManualLoc=Manual

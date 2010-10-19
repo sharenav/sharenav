@@ -1506,6 +1506,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				// gpsRecenterStale = true;
 				autoZoomed = true;
 				receivePosition (setpos);
+				receiveSolution (Locale.get("trace.ManualLoc")/*Manual*/);
 				newDataReady();
 				return;
 			}
@@ -1814,13 +1815,14 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				}
 				eRecorded.setText(gpx.getTrkPointCount() + Locale.get("trace.r")/*r*/);
 			}
-			if (locationProducer != null) {
-				eSolution.setText(solution);
+			if (TrackPlayer.isPlaying) {
+				eSolution.setText(Locale.get("trace.Replay")/*Replay*/);
 			} else {
-				if (TrackPlayer.isPlaying) {
-					eSolution.setText(Locale.get("trace.Replay")/*Replay*/);
-				} else {
+				if (locationProducer == null && !(solution.equals(Locale.get("secellid.Cell"))/*Cell*/ ||
+										  solution.equals(Locale.get("trace.ManualLoc")/*Manual*/))) {
 					eSolution.setText(Locale.get("trace.Off")/*Off*/);
+				} else {
+					eSolution.setText(solution);
 				}
 			}
 
