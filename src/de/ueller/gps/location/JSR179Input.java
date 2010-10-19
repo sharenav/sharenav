@@ -38,6 +38,7 @@ import de.ueller.midlet.gps.LocationMsgReceiverList;
 import de.ueller.midlet.gps.Logger;
 //FIXME make a proper interface for passing fix age information instead of accessing trace variable
 import de.ueller.midlet.gps.Trace;
+import de.ueller.gps.data.Configuration;
 
 import de.enough.polish.util.Locale;
 
@@ -255,11 +256,21 @@ public class JSR179Input
 
 	private void updateSolution(int state) {
 		logger.info("Update Solution");
+		// if we have a current cell id fix from startup cellid location,
+		// don't overwrite it with a stale GPS location
+		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_CELLID_STARTUP) && tr.solution.equals(Locale.get("secellid.Cell"))) {
+			// do nothing
+		} else {
+			// pass last known GPS location
+			//FIXME make a proper interface for passing fix age information instead of accessing trace variable directly
+			tr.gpsRecenterInvalid = true;
+			tr.gpsRecenterStale = true;
+			locationUpdated(locationProvider, LocationProvider.getLastKnownLocation());
+		}
 		if (state == LocationProvider.AVAILABLE) {
 			if (receiverList != null) {
 				receiverList.receiveSolution(Locale.get("jsr179input.NoFix")/*NoFix*/);
 			}
-			
 		}
 		//#if polish.android
 		// FIXME when j2mepolish is fixed; 2010-06 j2mepolish gives OUT_OF_SERVICE
@@ -288,10 +299,6 @@ public class JSR179Input
 				receiverList.receiveSolution(Locale.get("jsr179input.NoFix")/*NoFix*/);
 			}
 		}
-		//FIXME make a proper interface for passing fix age information instead of accessing trace variable directly
-		tr.gpsRecenterInvalid = true;
-		tr.gpsRecenterStale = true;
-		locationUpdated(locationProvider, LocationProvider.getLastKnownLocation());
 	}
 
 	public void triggerPositionUpdate() {
