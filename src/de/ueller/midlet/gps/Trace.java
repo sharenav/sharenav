@@ -2217,7 +2217,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					Graphics.TOP | Graphics.HCENTER);
 			}
 			pc.g.setColor(Legend.COLORS[Legend.COLOR_DEST_LINE]);
-			pc.g.setStrokeStyle(Graphics.DOTTED);
+			pc.g.setStrokeStyle(Graphics.SOLID);
 			pc.g.drawLine(x, y, pc.getP().getImageCenter().x-imageCollector.xScreenOverscan, pc.getP().getImageCenter().y-imageCollector.yScreenOverscan);
 		}
 		} catch (Exception e) {
