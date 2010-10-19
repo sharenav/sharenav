@@ -123,7 +123,9 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 	}
 
 	public void triggerPositionUpdate() {
-		RetrievePosition rp = new RetrievePosition();
+		if (rp == null) {
+			rp = new RetrievePosition();
+		}
 		rp.run();
 	}
 
@@ -242,7 +244,7 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 	protected LocationMsgReceiverList receiverList;
 	protected boolean closed = false;
 	private String message;
-	private RetrievePosition rp;
+	private RetrievePosition rp = null;
 
 	private intTree cellPos;
 	private intTree lacidx;
@@ -278,7 +280,7 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 			
 			if (cellProvider.obtainCurrentCellId() == null) {
 				//#debug info
-				logger.info("No valid cell-id, closing down");
+				logger.error("No valid cell-id, closing down");
 				this.receiverList.locationDecoderEnd(Locale.get("secellid.AlNoValidCellID")/*No valid cell-id*/);
 				return false;
 			}
