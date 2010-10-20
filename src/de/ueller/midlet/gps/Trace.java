@@ -2147,7 +2147,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		String c = "";
 		if (ProjFactory.getProj() != ProjFactory.NORTH_UP
 				&& Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_POINT_OF_COMPASS)) {
-			c = Configuration.getCompassDirection(Configuration.getCfgBitState(Configuration.CFGBIT_METRIC) ? compassDeviated : course);
+			c = Configuration.getCompassDirection(Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION) ? compassDeviated : course);
 		}
 		// if tl shows big onscreen buttons add spaces to compass directions consisting of only one char or not shown
 		if (tl.bigOnScreenButtons && c.length() <= 1) {
