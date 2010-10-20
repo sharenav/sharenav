@@ -870,8 +870,6 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 						TrackPlayer.slower();
 					} else if (manualRotationMode) {
 						courseDiff=-5;
-					} else if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION)) {
-						courseDiff=-5;
 					} else {
 						panX = -2;
 					}
@@ -880,8 +878,6 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					if (TrackPlayer.isPlaying) {
 						TrackPlayer.faster();
 					} else if (manualRotationMode) {
-						courseDiff=5;
-					} else if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION)) {
 						courseDiff=5;
 					} else {
 						panX = 2;
