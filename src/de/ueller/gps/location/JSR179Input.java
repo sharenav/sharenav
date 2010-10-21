@@ -242,11 +242,15 @@ public class JSR179Input
 		// }
 		if (locationProvider != null) {
 /* locationProvider.setLocationListener(null, 0, 0, 0) tends to freeze Samsung S8000 frequently when stopping GPS
- * and therefore has been replaced by locationProvider.reset() again.
+ * was replaced by locationProvider.reset() until 2010-10-21.
  * So if other mobile devices have issues with locationProvider.reset(),
  * please document this here
+ * - Aparently Gps is left on, on at least Nokia S40 phones and SE G705, without 
+ * locationProvider.setLocationListener(null, 0, 0, 0) - hopefully both reset()
+ * and setLocationListener(null... will work on all phones.
  */  
 			locationProvider.reset();
+			locationProvider.setLocationListener(null, 0, 0, 0);
 		}
 		locationProvider = null;
 		receiverList.locationDecoderEnd();
