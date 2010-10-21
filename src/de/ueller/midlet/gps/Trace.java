@@ -488,9 +488,6 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	 */
 	public void run() {
 		try {
-			if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_CELLID_STARTUP) && Configuration.getLocationProvider() != Configuration.LOCATIONPROVIDER_SECELL) {
-				commandAction(CELLID_LOCATION_CMD);
-			}
 			if (running) {
 				receiveMessage("GPS starter already running");
 				return;
@@ -1609,6 +1606,12 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		namesThread = new Names();
 		urlsThread = new Urls();
 		new DictReader(this);
+		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_CELLID_STARTUP)) {
+			// Don't do initial lookup if we're going to start primary cellid location provider anyway
+			if (Configuration.getLocationProvider() != Configuration.LOCATIONPROVIDER_SECELL || !Configuration.getCfgBitState(Configuration.CFGBIT_AUTO_START_GPS)) {
+				commandAction(CELLID_LOCATION_CMD);
+			}
+		}
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_AUTO_START_GPS)) {
 			Thread thread = new Thread(this, "Trace");
 			thread.start();
