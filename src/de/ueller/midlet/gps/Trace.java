@@ -2154,8 +2154,16 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	
 	private int showConnectStatistics(Graphics g, int yc, int la) {
 		g.setColor(Legend.COLORS[Legend.COLOR_MAP_TEXT]);
-		GSMCell cell = CellIdProvider.getInstance().obtainCachedCellID();
-		Compass compass = CompassProvider.getInstance().obtainCachedCompass();
+		// only try to show compass id and cell id if user has somehow switched them on
+		GSMCell cell = null;
+		if (cellIDLocationProducer != null || Configuration.getLocationProvider() == Configuration.LOCATIONPROVIDER_SECELL) {
+			CellIdProvider.getInstance().obtainCachedCellID();
+		}
+		Compass compass = null;
+
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION)) {
+			CompassProvider.getInstance().obtainCachedCompass();
+		}
 
 		if (cell == null) {
 			g.drawString("No Cell ID available", 0, yc, Graphics.TOP
