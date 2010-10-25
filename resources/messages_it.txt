@@ -44,7 +44,6 @@ guiosmaddrdisplay.AddingAddr=Aggiungi Indirizzo
 guiosmaddrdisplay.AddrTitle=Addressing
 guiosmaddrdisplay.AddrUploadSuccess=Addr was successfully added to OpenStreetMap
 guiosmaddrdisplay.adr=adr: 
-guiosmaddrdisplay.Back=Back
 guiosmaddrdisplay.HouseName=Nome edificio
 guiosmaddrdisplay.HouseNumber=Numero civico
 guiosmaddrdisplay.Postcode=Codice postale

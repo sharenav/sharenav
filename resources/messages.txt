@@ -60,7 +60,6 @@ configuration.WaypointSortModeRangeError=Waypoint sort mode out of range!
 configuration.ExFNF1=Could not find file
 configuration.ExFNF2= in JAR
 guidiscovericonmenu.Advanced= Advanced
-guidiscovericonmenu.Back=Back
 guidiscovericonmenu.Basic= Basic
 guidiscovericonmenu.Debug=Debug
 guidiscovericonmenu.Display=Display

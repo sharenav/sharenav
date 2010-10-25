@@ -44,7 +44,6 @@ guiosmaddrdisplay.AddingAddr=Pridání adresy
 guiosmaddrdisplay.AddrTitle=Adresace
 guiosmaddrdisplay.AddrUploadSuccess=Adresa byla úspěšně přidána do OpenStreetMap
 guiosmaddrdisplay.adr=adr: 
-guiosmaddrdisplay.Back=Zpět
 guiosmaddrdisplay.HouseName=Název budovy
 guiosmaddrdisplay.HouseNumber=Číslo budovy
 guiosmaddrdisplay.Postcode=Směrové číslo

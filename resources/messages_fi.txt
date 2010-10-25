@@ -44,7 +44,6 @@ guiosmaddrdisplay.AddingAddr=Osoitteen lisäys
 guiosmaddrdisplay.AddrTitle=Osoite
 guiosmaddrdisplay.AddrUploadSuccess=Osoitteen lisäys OSM:ään onnistui
 guiosmaddrdisplay.adr=os: 
-guiosmaddrdisplay.Back=Takaisin
 guiosmaddrdisplay.HouseName=Talon nimi
 guiosmaddrdisplay.HouseNumber=Talon numero
 guiosmaddrdisplay.Postcode=Postinumero

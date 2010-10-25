@@ -44,7 +44,6 @@ guiosmaddrdisplay.AddingAddr=la dirección va a ser añadido
 guiosmaddrdisplay.AddrTitle=dirección
 guiosmaddrdisplay.AddrUploadSuccess=La dirección estaba añadido en OpenStreetMap.
 guiosmaddrdisplay.adr=dirección:
-guiosmaddrdisplay.Back=atrás
 guiosmaddrdisplay.HouseName=nombre de la casa
 guiosmaddrdisplay.HouseNumber=número de la casa
 guiosmaddrdisplay.Postcode=código postal

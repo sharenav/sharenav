@@ -39,7 +39,7 @@ public class GuiOSMAddrDisplay extends Form implements GpsMidDisplayable,
 
 	private final Command UPLOAD_CMD = new Command(Locale.get("guiosmaddrdisplay.UploadToOSM")/*Upload to OSM*/, Command.OK,
 			6);
-	private final Command BACK_CMD = new Command(Locale.get("guiosmaddrdisplay.Back")/*Back*/, Command.BACK, 1);
+	private final Command BACK_CMD = new Command(Locale.get("generic.Back")/*Back*/, Command.BACK, 1);
 
 	private GpsMidDisplayable parent;
 	private int loadState;
