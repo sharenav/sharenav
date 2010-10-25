@@ -20,7 +20,7 @@ public class GuiSendMessage extends Form implements CommandListener {
 		
 	// commands
 	private static final Command CMD_SEND = new Command(Locale.get("guisendmessage.Send")/*Send*/, Command.OK, 1);
-	private static final Command CMD_BACK = new Command(Locale.get("guisendmessage.Back")/*Back*/, Command.BACK, 2);
+	private static final Command CMD_BACK = new Command(Locale.get("generic.Back")/*Back*/, Command.BACK, 2);
 	
     // text fields
 	private TextField tfMessage;

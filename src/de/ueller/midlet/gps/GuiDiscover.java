@@ -103,7 +103,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	private static final String[] empty = {};
 
 	/** Soft button for exiting to RootMenu. */
-	private final Command EXIT_CMD = new Command(Locale.get("guidiscover.Back")/*Back*/, Command.BACK, 2);
+	private final Command EXIT_CMD = new Command(Locale.get("generic.Back")/*Back*/, Command.BACK, 2);
 
 	private final Command BACK_CMD = new Command(Locale.get("guidiscover.Cancel")/*Cancel*/, Command.BACK, 2);
 

@@ -9,7 +9,7 @@ import de.enough.polish.util.Locale;
 
 public abstract class OptionsList extends List implements CommandListener {
 
-	protected final Command			BACK_CMD		= new Command(Locale.get("optionslist.Back")/*Back*/,
+	protected final Command			BACK_CMD		= new Command(Locale.get("generic.Back")/*Back*/,
 			Command.BACK, 2);
 
 	protected final Command			OK_CMD			= new Command(Locale.get("optionslist.Ok")/*Ok*/,

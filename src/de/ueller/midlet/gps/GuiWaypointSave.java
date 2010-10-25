@@ -22,7 +22,7 @@ public class GuiWaypointSave extends Form implements CommandListener {
 	private TextField fldName,fldEle;
 	private ChoiceGroup cg;
 	private static final Command saveCmd = new Command(Locale.get("guiwaypointsave.Save")/*Save*/, Command.OK, 1);
-	private static final Command backCmd = new Command(Locale.get("guiwaypointsave.Back")/*Back*/, Command.BACK, 2);
+	private static final Command backCmd = new Command(Locale.get("generic.Back")/*Back*/, Command.BACK, 2);
 	
 	private Trace parent;
 	private String name,ele;

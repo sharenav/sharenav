@@ -39,7 +39,7 @@ public class FsDiscover
 	private final static Logger logger = Logger.getInstance(FsDiscover.class,
 			Logger.TRACE);
 
-    private final Command BACK_CMD = new Command(Locale.get("fsdiscover.Back")/*Back*/, Command.BACK, 2);
+    private final Command BACK_CMD = new Command(Locale.get("generic.Back")/*Back*/, Command.BACK, 2);
     private final Command OK_CMD = new Command(Locale.get("fsdiscover.Select")/*Select*/, Command.ITEM, 1);
 
     private final Command UP_CMD = new Command(Locale.get("fsdiscover.DirUp")/*Directory up*/, Command.ITEM, 1);

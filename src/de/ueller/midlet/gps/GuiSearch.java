@@ -58,7 +58,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 	private final Command DEL_CMD = new Command(Locale.get("guisearch.Del")/*Delete*/, Command.ITEM, 4);
 	private final Command CLEAR_CMD = new Command(Locale.get("guisearch.Clear")/*Clear*/, Command.ITEM, 5);
 	private final Command BOOKMARK_CMD = new Command(Locale.get("guisearch.Bookmark")/*Add to way points*/, Command.ITEM, 6);
-	private final Command BACK_CMD = new Command(Locale.get("guisearch.Back")/*Back*/, Command.BACK, 7);
+	private final Command BACK_CMD = new Command(Locale.get("generic.Back")/*Back*/, Command.BACK, 7);
 	private final Command OVERVIEW_MAP_CMD = new Command(Locale.get("guisearch.OverviewMap")/*Overview/Filter map*/, Command.ITEM, 8);
 	private final Command POI_CMD = new Command(Locale.get("guisearch.NearestPoi")/*Nearest POI*/, Command.ITEM, 9);
 	public final Command POI_URL_SEARCH_CMD = new Command(Locale.get("guiwebinfo.Websites")/*Nearby POIs with websites*/, Command.ITEM, 9);

@@ -30,7 +30,7 @@ import de.enough.polish.util.Locale;
 public class GuiTacho extends KeyCommandCanvas implements CommandListener,
 		GpsMidDisplayable, LocationUpdateListener {
 
-	private final Command BACK_CMD = new Command(Locale.get("guitacho.Back")/*Back*/, Command.BACK, 5);
+	private final Command BACK_CMD = new Command(Locale.get("generic.Back")/*Back*/, Command.BACK, 5);
 	private final Command NEXT_CMD = new Command(Locale.get("guitacho.Next")/*Next*/, Command.SCREEN, 5);
 	private final static Logger logger = Logger.getInstance(GuiTacho.class,
 			Logger.DEBUG);

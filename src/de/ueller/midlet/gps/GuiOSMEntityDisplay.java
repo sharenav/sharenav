@@ -37,7 +37,7 @@ public abstract class GuiOSMEntityDisplay extends Form implements GpsMidDisplaya
 	
 	private final static Logger logger = Logger.getInstance(GuiOSMEntityDisplay.class,Logger.DEBUG);
 
-	protected final Command BACK_CMD = new Command(Locale.get("guiosmentitydisplay.Back")/*Back*/, Command.BACK, 1);
+	protected final Command BACK_CMD = new Command(Locale.get("generic.Back")/*Back*/, Command.BACK, 1);
 	protected final Command OK_CMD = new Command(Locale.get("guiosmentitydisplay.OK")/*OK*/, Command.OK, 1);
 	protected final Command ADD_CMD = new Command(Locale.get("guiosmentitydisplay.AddTag")/*Add tag*/, Command.ITEM, 2);
 	protected final Command EDIT_CMD = new Command(Locale.get("guiosmentitydisplay.EditTag")/*Edit tag*/, Command.ITEM, 2);

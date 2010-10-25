@@ -23,7 +23,7 @@ public class GuiGpxLoad extends Form implements CommandListener,
 		Logger.getInstance(GuiGpxLoad.class, Logger.DEBUG);
 	
 	private final Command IMPORT_CMD = new Command(Locale.get("guigpxload.Import")/*Import*/, Command.OK, 1);
-	private final Command BACK_CMD = new Command(Locale.get("guigpxload.Back")/*Back*/, Command.BACK, 5);
+	private final Command BACK_CMD = new Command(Locale.get("generic.Back")/*Back*/, Command.BACK, 5);
 	
 	private final String LOADFROMFILE = Locale.get("guigpxload.FromFile")/*from file*/;
 	private final String LOADFROMBT = Locale.get("guigpxload.ViaBluetooth")/*via bluetooth*/;

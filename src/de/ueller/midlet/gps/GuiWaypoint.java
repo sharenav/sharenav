@@ -38,7 +38,7 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 	private final Command SALL_CMD = new Command(Locale.get("guiwaypoint.SelectAll")/*Select All*/, Command.ITEM, 3);
 	private final Command DSALL_CMD = new Command(Locale.get("guiwaypoint.DeselectAll")/*Deselect All*/, Command.ITEM, 3);
 	private final Command SORT_MENU_CMD = new Command(Locale.get("guiwaypoint.Sorting")/*Sorting*/, Command.ITEM, 3);
-	private final Command BACK_CMD = new Command(Locale.get("guiwaypoint.Back")/*Back*/, Command.BACK, 5);
+	private final Command BACK_CMD = new Command(Locale.get("generic.Back")/*Back*/, Command.BACK, 5);
 	private final Command DEST_CMD = new Command(Locale.get("guiwaypoint.AsDestination")/*As destination*/, Command.ITEM, 6);
 	private final Command DISP_CMD = new Command(Locale.get("guiwaypoint.Display")/*Display*/, Command.OK, 6);
 

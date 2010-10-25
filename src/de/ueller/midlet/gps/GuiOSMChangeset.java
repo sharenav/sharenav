@@ -43,7 +43,7 @@ public class GuiOSMChangeset extends Form implements GpsMidDisplayable,
 	private final static Logger logger = Logger.getInstance(
 			GuiOSMChangeset.class, Logger.DEBUG);
 
-	private final Command BACK_CMD = new Command(Locale.get("guiosmchangeset.Back")/*Back*/, Command.BACK, 1);
+	private final Command BACK_CMD = new Command(Locale.get("generic.Back")/*Back*/, Command.BACK, 1);
 	private final Command SAVE_CMD = new Command(Locale.get("guiosmchangeset.Save")/*Save*/, Command.OK, 1);
 
 	private UploadListener ul;

@@ -16,7 +16,7 @@ import de.ueller.gps.tools.intTree;
 public class GuiKeyShortcuts extends List implements CommandListener,
 		GpsMidDisplayable {
 
-	private static final Command CMD_BACK = new Command(Locale.get("guikeyshortcuts.Back")/*Back*/, Command.BACK, 3);
+	private static final Command CMD_BACK = new Command(Locale.get("generic.Back")/*Back*/, Command.BACK, 3);
 	private GuiDiscover parent;
 
 	public GuiKeyShortcuts(GuiDiscover parent) {

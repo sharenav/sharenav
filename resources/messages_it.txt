@@ -83,7 +83,6 @@ trace.AsDestination=Come destinazione
 trace.at=a 
 trace.AudioRec=RegistrAudio
 trace.AudioRecording=Registrazione Audio
-trace.Back=Indietro
 trace.CalculateRoute=Calcola tragitto
 trace.CalculateRoute2=Calcola tragitto...
 trace.Camera=Fotocamera

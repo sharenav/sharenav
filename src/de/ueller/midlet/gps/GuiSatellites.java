@@ -25,7 +25,7 @@ import de.ueller.midlet.gps.GpsMid;
 public class GuiSatellites extends KeyCommandCanvas implements CommandListener,
 		GpsMidDisplayable, LocationMsgReceiver  {
 
-    private final Command BACK_CMD = new Command(Locale.get("guisatellites.Back")/*Back*/, Command.BACK, 5);
+    private final Command BACK_CMD = new Command(Locale.get("generic.Back")/*Back*/, Command.BACK, 5);
 	
 	private final static Logger mLogger = Logger.getInstance(GuiSatellites.class,
 			Logger.DEBUG);

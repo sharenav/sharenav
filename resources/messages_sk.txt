@@ -83,7 +83,6 @@ trace.AsDestination=Ako cieľ
 trace.at=na 
 trace.AudioRec=AudioNahr
 trace.AudioRecording=Audionahrávka
-trace.Back=Späť
 trace.CalculateRoute=Počítať trasu
 trace.CalculateRoute2=Počítam trasu...
 trace.Camera=Fotoaparát

@@ -24,7 +24,7 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 
 	private final static Logger mLogger = Logger.getInstance(GuiWebInfo.class,
 			Logger.DEBUG);
-	private final Command BACK_CMD = new Command(Locale.get("guiwebinfo.Back")/*Back*/, Command.BACK, 1);
+	private final Command BACK_CMD = new Command(Locale.get("generic.Back")/*Back*/, Command.BACK, 1);
 	private final Command SELECT_CMD = new Command(Locale.get("guiwebinfo.Select")/*Select*/, Command.OK, 2);
 	private GpsMidDisplayable mParent;
 	private Position mPos;

@@ -57,7 +57,7 @@ import de.enough.polish.util.Locale;
  */
 public class GuiCamera extends Canvas implements CommandListener, ItemCommandListener, GuiCameraInterface, SelectionListener, GpsMidDisplayable {
 
-	private final Command BACK_CMD = new Command(Locale.get("guicamera.Back")/*Back*/, Command.BACK, 5);
+	private final Command BACK_CMD = new Command(Locale.get("generic.Back")/*Back*/, Command.BACK, 5);
 	private final Command OK_CMD = new Command(Locale.get("guicamera.Ok")/*Ok*/, Command.OK, 5);
 	private final Command CAPTURE_CMD = new Command(Locale.get("guicamera.Capture")/*Capture*/, Command.OK, 5);
 	private final Command STORE_CMD = new Command(Locale.get("guicamera.SelectDir")/*Select directory*/, Command.ITEM, 5);

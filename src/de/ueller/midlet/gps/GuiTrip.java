@@ -28,7 +28,7 @@ import net.fatehi.SunCalc;
 public class GuiTrip extends KeyCommandCanvas implements CommandListener,
 		GpsMidDisplayable, LocationUpdateListener {
 
-	private final Command BACK_CMD = new Command(Locale.get("guitrip.Back")/*Back*/, Command.BACK, 5);
+	private final Command BACK_CMD = new Command(Locale.get("generic.Back")/*Back*/, Command.BACK, 5);
 	private final Command NEXT_CMD = new Command(Locale.get("guitrip.Next")/*Next*/, Command.SCREEN, 5);
 	private final static Logger mLogger = Logger.getInstance(GuiTrip.class,
 			Logger.DEBUG);

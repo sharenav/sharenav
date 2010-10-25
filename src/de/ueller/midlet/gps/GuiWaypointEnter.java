@@ -32,7 +32,7 @@ public class GuiWaypointEnter extends Form implements CommandListener {
 	private TextField fldLonMin = new TextField(Locale.get("guiwaypointenter.LonMin")/*Lon min:*/, "", 10, TextField.DECIMAL);
 	private TextField fldLonSec = new TextField(Locale.get("guiwaypointenter.LonSec")/*Lon sec:*/, "", 10, TextField.DECIMAL);
 	private static final Command saveCmd = new Command(Locale.get("guiwaypointenter.Save")/*Save*/, Command.OK, 1);
-	private static final Command backCmd = new Command(Locale.get("guiwaypointenter.Back")/*Back*/, Command.BACK, 2);
+	private static final Command backCmd = new Command(Locale.get("generic.Back")/*Back*/, Command.BACK, 2);
 	private Trace parent;
 	
 	protected static final Logger logger = Logger.getInstance(GuiWaypointEnter.class,Logger.TRACE);

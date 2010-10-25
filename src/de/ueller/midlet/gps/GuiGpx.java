@@ -38,7 +38,7 @@ public class GuiGpx extends List implements CommandListener,
 	private final Command DEL_CMD = new Command(Locale.get("guigpx.Delete")/*Delete*/, Command.ITEM, 3);	
 	private final Command SALL_CMD = new Command(Locale.get("guigpx.SelectAll")/*Select All*/, Command.ITEM, 4);
 	private final Command DSALL_CMD = new Command(Locale.get("guigpx.DeselectAll")/*Deselect All*/, Command.ITEM, 4);
-	private final Command BACK_CMD = new Command(Locale.get("guigpx.Back")/*Back*/, Command.BACK, 5);
+	private final Command BACK_CMD = new Command(Locale.get("generic.Back")/*Back*/, Command.BACK, 5);
 
 	/** Value for mJob: No job */
 	private static final int JOB_IDLE = 0;
