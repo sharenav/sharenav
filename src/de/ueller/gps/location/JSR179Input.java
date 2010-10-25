@@ -210,7 +210,7 @@ public class JSR179Input
 			 * therefore use On as solution when it's still set to NoFix though the location is valid
 			 */
 			if (receiverList.getCurrentSolution().equals(Locale.get("jsr179input.NoFix")/*NoFix*/)) {
-				receiverList.receiveSolution(Locale.get("jsr179input.On")/*On*/);				
+				receiverList.receiveSolution(Locale.get("generic.On")/*On*/);				
 			}
 			Coordinates coordinates = location.getQualifiedCoordinates();
 			pos.latitude = (float) coordinates.getLatitude();

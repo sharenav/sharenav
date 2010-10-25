@@ -724,7 +724,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 
 	
 	public boolean isGpsConnected() {
-		return locationProducer != null && !solution.equalsIgnoreCase(Locale.get("trace.Off")/*Off*/);
+		return locationProducer != null && !solution.equalsIgnoreCase(Locale.get("generic.Off")/*Off*/);
 	}
 
 	/**
@@ -1317,7 +1317,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					}
 					alert(Locale.get("trace.RouteCalculation")/*Route Calculation*/, Locale.get("trace.Cancelled")/*Cancelled*/, 1500);
 				} else {
-					alert(Locale.get("trace.Routing")/*Routing*/, Locale.get("trace.Off")/*Off*/, 750);
+					alert(Locale.get("trace.Routing")/*Routing*/, Locale.get("generic.Off")/*Off*/, 750);
 				}
 				endRouting();
 				routingsMenu = null; // refresh routingsMenu
@@ -1349,7 +1349,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 						alert(Locale.get("trace.ManualRotation")/*Manual Rotation*/, Locale.get("trace.ChangeCourseWithLeftRightKeys")/*Change course with left/right keys*/, 3000);
 					}
 				} else {
-					alert(Locale.get("trace.ManualRotation")/*Manual Rotation*/, Locale.get("trace.Off")/*Off*/, 750);
+					alert(Locale.get("trace.ManualRotation")/*Manual Rotation*/, Locale.get("generic.Off")/*Off*/, 750);
 				}
 				return;
 			}
@@ -1819,7 +1819,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			} else {
 				if (locationProducer == null && !(solution.equals(Locale.get("secellid.Cell"))/*Cell*/ ||
 										  solution.equals(Locale.get("trace.ManualLoc")/*Manual*/))) {
-					eSolution.setText(Locale.get("trace.Off")/*Off*/);
+					eSolution.setText(Locale.get("generic.Off")/*Off*/);
 				} else {
 					eSolution.setText(solution);
 				}

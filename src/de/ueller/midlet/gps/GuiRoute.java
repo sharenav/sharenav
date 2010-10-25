@@ -56,8 +56,8 @@ public class GuiRoute extends Form implements CommandListener {
 		append(routingTravelModesGroup);
 
 		String [] trStates = new String[2];
-		trStates[0] = Locale.get("guiroute.On")/*On*/;
-		trStates[1] = Locale.get("guiroute.Off")/*Off*/;
+		trStates[0] = Locale.get("generic.On")/*On*/;
+		trStates[1] = Locale.get("generic.Off")/*Off*/;
 		routingTurnRestrictionsGroup = new ChoiceGroup(Locale.get("guiroute.TurnRestrictions")/*Turn restrictions*/, Choice.EXCLUSIVE, trStates ,null);
 		routingTurnRestrictionsGroup.setSelectedIndex( (Configuration.getCfgBitSavedState(Configuration.CFGBIT_USE_TURN_RESTRICTIONS_FOR_ROUTE_CALCULATION) ? 0 : 1) ,true);
 		append(routingTurnRestrictionsGroup);
