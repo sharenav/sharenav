@@ -176,7 +176,7 @@ public class GuiOverviewElements extends Form implements CommandListener, ItemSt
 
 			// set NameRequirement state in form
 			ovElNameRequirementCG = new ChoiceGroup(Locale.get("guioverviewelements.NameCheck")/*Name Check*/, ChoiceGroup.EXCLUSIVE);
-			ovElNameRequirementCG.append(Locale.get("guioverviewelements.off")/*off*/, null);
+			ovElNameRequirementCG.append(Locale.get("generic.Off")/*off*/, null);
 			ovElNameRequirementCG.append(Locale.get("guioverviewelements.onlyunnamed")/*only unnamed */ + ovElGroupName, null);
 			ovElNameRequirementCG.append(Locale.get("guioverviewelements.onlynamed")/*only named */ + ovElGroupName, null);
 			ovElNameRequirementCG.append(ovElGroupName + Locale.get("guioverviewelements.containing")/* containing...*/, null);
