@@ -1,5 +1,6 @@
 generic.Back=Назад
 generic.Exit=Выход
+generic.OK=OK
 splash.Accept=Принять
 splash.Deny=Отклонить
 splash.ShowSplash=Показывать заставку при старте

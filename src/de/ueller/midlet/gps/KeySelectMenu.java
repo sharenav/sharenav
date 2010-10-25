@@ -32,7 +32,7 @@ public class KeySelectMenu extends Canvas implements
 	private final static Logger logger = Logger.getInstance(
 			KeySelectMenu.class, Logger.DEBUG);
 
-	private final Command OK_CMD = new Command(Locale.get("keyselectmenu.Ok")/*Ok*/, Command.OK, 1);
+	private final Command OK_CMD = new Command(Locale.get("generic.OK")/*Ok*/, Command.OK, 1);
 	private final Command BACK_CMD = new Command(Locale.get("generic.Back")/*Back*/, Command.BACK, 5);
 	private final Command DEL_CMD = new Command(Locale.get("keyselectmenu.delete")/*delete*/, Command.ITEM, 2);
 	private final Command CLEAR_CMD = new Command(Locale.get("keyselectmenu.clear")/*clear*/, Command.ITEM, 3);

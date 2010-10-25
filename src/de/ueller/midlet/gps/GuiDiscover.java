@@ -108,7 +108,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	private final Command BACK_CMD = new Command(Locale.get("guidiscover.Cancel")/*Cancel*/, Command.BACK, 2);
 
 	/** Soft button for discovering BT. */
-	private final Command OK_CMD = new Command(Locale.get("guidiscover.Ok")/*Ok*/, Command.OK, 1);
+	private final Command OK_CMD = new Command(Locale.get("generic.OK")/*Ok*/, Command.OK, 1);
 
 	private final Command STORE_BT_URL = new Command(Locale.get("guidiscover.Select")/*Select*/, Command.OK, 2);
 

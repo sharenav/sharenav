@@ -1,5 +1,6 @@
 generic.Back=atrás
 generic.Exit=terminal
+generic.OK=OK
 splash.Accept=aceptar
 splash.Deny=rechazar
 splash.ShowSplash=La página principal se va a asomar con la próxima despuegue.
@@ -121,7 +122,6 @@ trace.NextOverlay=la próxima superposición
 trace.NoFix=NoFix
 trace.NoOnlineCapa=no dispuesto para el internet
 trace.Off=apagado
-trace.OK=OK
 trace.OnlineInfo=Online-información
 trace.OverviewFilterMap=sinopsis
 trace.Percent=por ciento:

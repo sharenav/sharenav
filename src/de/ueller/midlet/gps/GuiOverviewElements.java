@@ -25,7 +25,7 @@ public class GuiOverviewElements extends Form implements CommandListener, ItemSt
 	private static byte ovElGroupNr = 0;
 	
 	// commands
-	private static final Command CMD_OK = new Command(Locale.get("guioverviewelements.Ok")/*Ok*/, Command.OK, 1);
+	private static final Command CMD_OK = new Command(Locale.get("generic.OK")/*Ok*/, Command.OK, 1);
 	private static final Command CMD_OFF = new Command(Locale.get("guioverviewelements.Off")/*Off*/, Command.ITEM, 2);
 	
 	// other

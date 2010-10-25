@@ -1,5 +1,6 @@
 generic.Back= Retour en arrière
 generic.Exit= Sortie
+generic.OK=OK
 splash.Accept=Accepter
 splash.Deny=Refuser
 splash.ShowSplash=Zeige Startbildschirm beim naechsten Start

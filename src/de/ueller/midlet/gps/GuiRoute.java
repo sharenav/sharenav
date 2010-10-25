@@ -14,7 +14,7 @@ public class GuiRoute extends Form implements CommandListener {
 	private final static Logger logger = Logger.getInstance(GuiRoute.class,Logger.DEBUG);
 
 	// commands
-	private static final Command CMD_OK = new Command(Locale.get("guiroute.Ok")/*Ok*/, Command.OK, 2);
+	private static final Command CMD_OK = new Command(Locale.get("generic.OK")/*Ok*/, Command.OK, 2);
 	private static final Command CMD_CANCEL = new Command(Locale.get("guiroute.Cancel")/*Cancel*/, Command.BACK, 3);
 	
 	private ChoiceGroup routingTravelModesGroup;

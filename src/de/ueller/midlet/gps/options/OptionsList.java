@@ -12,7 +12,7 @@ public abstract class OptionsList extends List implements CommandListener {
 	protected final Command			BACK_CMD		= new Command(Locale.get("generic.Back")/*Back*/,
 			Command.BACK, 2);
 
-	protected final Command			OK_CMD			= new Command(Locale.get("optionslist.Ok")/*Ok*/,
+	protected final Command			OK_CMD			= new Command(Locale.get("generic.OK")/*Ok*/,
 			Command.ITEM, 1);
 
 	protected GpsMidDisplayable parent;

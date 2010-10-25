@@ -1,5 +1,6 @@
 generic.Back=Indietro
 generic.Exit=Uscita
+generic.OK=OK
 splash.Accept=Accetta
 splash.Deny=Rifiuta
 splash.ShowSplash=Mostrare la schermata d'avvio
@@ -121,7 +122,6 @@ trace.NextOverlay=Prossima sovraschermata
 trace.NoFix=NoFix
 trace.NoOnlineCapa=No online capabilites
 trace.Off=Off
-trace.OK=OK
 trace.OnlineInfo=Online info
 trace.OverviewFilterMap=Overview/Filter map
 trace.Percent=Percento: 

@@ -395,7 +395,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		CMDS[MAPFEATURES_CMD] = new Command(Locale.get("trace.MapFeatures")/*Map Features*/,Command.ITEM, 12);
 		CMDS[RECORDINGS_CMD] = new Command(Locale.get("trace.Recordings")/*Recordings...*/,Command.ITEM, 4);
 		CMDS[ROUTINGS_CMD] = new Command(Locale.get("trace.Routing3")/*Routing...*/,Command.ITEM, 3);
-		CMDS[OK_CMD] = new Command(Locale.get("trace.OK")/*OK*/,Command.OK, 14);
+		CMDS[OK_CMD] = new Command(Locale.get("generic.OK")/*OK*/,Command.OK, 14);
 		CMDS[BACK_CMD] = new Command(Locale.get("generic.Back")/*Back*/,Command.BACK, 15);
 		CMDS[ZOOM_IN_CMD] = new Command(Locale.get("trace.ZoomIn")/*Zoom in*/,Command.ITEM, 100);
 		CMDS[ZOOM_OUT_CMD] = new Command(Locale.get("trace.ZoomOut")/*Zoom out*/,Command.ITEM, 100);

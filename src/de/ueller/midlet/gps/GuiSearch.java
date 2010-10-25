@@ -45,9 +45,9 @@ public class GuiSearch extends Canvas implements CommandListener,
 	private final static Logger logger = Logger.getInstance(GuiSearch.class,Logger.DEBUG);
 
 	/** OK_CMD for Nearest POI / Fulltext Search */
-	private final Command OK_CMD = new Command(Locale.get("guisearch.Ok1")/*Ok*/, Command.OK, 1);
+	private final Command OK_CMD = new Command(Locale.get("generic.OK")/*Ok*/, Command.OK, 1);
 	/** OK1_CMD is used when GUI is not optimised for routing */
-	private final Command OK1_CMD = new Command(Locale.get("guisearch.Ok1")/*Ok*/, Command.OK, 1);
+	private final Command OK1_CMD = new Command(Locale.get("generic.OK")/*Ok*/, Command.OK, 1);
 	/** ROUTE2_CMD is used when GUI is not optimised for routing */
 	private final Command ROUTE2_CMD = new Command(Locale.get("guisearch.Route1")/*Route*/, Command.ITEM, 3);
 	/** ROUTE1_CMD is used when GUI is optimised for routing */

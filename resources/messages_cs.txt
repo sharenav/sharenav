@@ -1,5 +1,6 @@
 generic.Back=Zpět
 generic.Exit=Konec
+generic.OK=OK
 splash.Accept=Přijmout
 splash.Deny=Odmítnout
 splash.ShowSplash=Zobrazovat úvodní obrazovku
@@ -121,7 +122,6 @@ trace.NextOverlay=Další vrstva
 trace.NoFix=NoFix
 trace.NoOnlineCapa=Žádné možnosti online 
 trace.Off=Vypnuto
-trace.OK=OK
 trace.OnlineInfo=Online informace
 trace.OverviewFilterMap=Přehledová mapa/Filtr
 trace.Percent=Procent: 
