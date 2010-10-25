@@ -5,7 +5,7 @@
 # usage: $0 [ lang1 lang2 lang3 ... ]
   
 # default languages to fetch
-lang="cs fi de fr es sk ru it en" 
+lang="cs en de es fi fr it pl ru sk" 
 
 if [ "$#" -gt 0 ]
 then

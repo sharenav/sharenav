@@ -210,7 +210,7 @@
 				<localization
 					dynamic="true"
 					defaultLocale="en"
-					locales="de, en, fi, fr, ru, sk, es, cs"
+					locales="de, en, fi, fr, pl, ru, sk, es, cs"
 				/>
 			</resources>
 			
