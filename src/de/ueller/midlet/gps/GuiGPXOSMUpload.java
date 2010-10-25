@@ -38,7 +38,7 @@ public class GuiGPXOSMUpload extends Form implements GpsMidDisplayable, CommandL
 	
 	private final static Logger logger = Logger.getInstance(GuiGPXOSMUpload.class,Logger.DEBUG);
 	
-	private final static Command BACK_CMD = new Command(Locale.get("guigpxosmupload.Cancel")/*Cancel*/, Command.BACK, 2);
+	private final static Command BACK_CMD = new Command(Locale.get("generic.Cancel")/*Cancel*/, Command.BACK, 2);
 	private final static Command OK_CMD = new Command(Locale.get("guigpxosmupload.Upload")/*Upload*/, Command.OK, 1);
 	
 	private TextField descriptionTF;

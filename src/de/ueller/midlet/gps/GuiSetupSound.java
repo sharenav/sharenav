@@ -32,7 +32,7 @@ public class GuiSetupSound extends Form implements CommandListener {
 
 	// commands
 	private static final Command CMD_SAVE = new Command(Locale.get("generic.OK")/*Ok*/, Command.ITEM, 2);
-	private static final Command CMD_CANCEL = new Command(Locale.get("guisetupsound.Cancel")/*Cancel*/, Command.BACK, 3);
+	private static final Command CMD_CANCEL = new Command(Locale.get("generic.Cancel")/*Cancel*/, Command.BACK, 3);
 	
 	// other
 	private GuiDiscover parent;

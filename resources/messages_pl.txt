@@ -1,5 +1,6 @@
 generic.About=O GpsMid
 generic.Back=Wróć
+generic.Cancel=Anuluj
 generic.Delete=Usuń
 generic.Exit=Zakończ
 generic.Off=Wyłącz
