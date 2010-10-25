@@ -1,0 +1,7 @@
+generic.About=O GpsMid
+generic.Back=Wróć
+generic.Delete=Usuń
+generic.Exit=Zakończ
+generic.Off=Wyłącz
+generic.On=Włącz
+generic.OK=OK
