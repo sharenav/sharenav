@@ -1,4 +1,5 @@
 generic.Back= Retour en arrière
+generic.Exit= Sortie
 splash.Accept=Accepter
 splash.Deny=Refuser
 splash.ShowSplash=Zeige Startbildschirm beim naechsten Start
@@ -13,7 +14,6 @@ traceiconmenu.Calc= Calculer
 traceiconmenu.ClearDest= SupprimerDestination
 traceiconmenu.EditWay= ModifierChemin
 traceiconmenu.EnterWpt= EntrerPointPassage
-traceiconmenu.Exit= Sortie
 traceiconmenu.MainTop= MenuPrincipal
 traceiconmenu.MapFeature=CaractéristiquesCarte
 traceiconmenu.Online=EnLigne

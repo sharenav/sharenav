@@ -1,4 +1,5 @@
 generic.Back=Назад
+generic.Exit=Выход
 splash.Accept=Принять
 splash.Deny=Отклонить
 splash.ShowSplash=Показывать заставку при старте
@@ -13,7 +14,6 @@ traceiconmenu.Calc=Найти маршрут
 traceiconmenu.ClearDest=Очистить маршрут
 traceiconmenu.EditWay=Править цель
 traceiconmenu.EnterWpt=Добавить путевую точку
-traceiconmenu.Exit=Выход
 traceiconmenu.MainTop=Выход
 traceiconmenu.MapFeature=Характеристики карты
 traceiconmenu.Online=Онлайн

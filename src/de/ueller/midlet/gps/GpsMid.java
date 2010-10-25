@@ -74,7 +74,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 						   Locale.get("gpsmid.About")/*About*/, Locale.get("gpsmid.Log")/*Log*/ };
 	
 	/** Soft button for exiting GpsMid. */
-	private final Command EXIT_CMD = new Command(Locale.get("gpsmid.Exit")/*Exit*/, Command.EXIT, 2);
+	private final Command EXIT_CMD = new Command(Locale.get("generic.Exit")/*Exit*/, Command.EXIT, 2);
 	
 	/** Soft button for launching a client or server. */
 	private final Command OK_CMD = new Command(Locale.get("gpsmid.Ok")/*Ok*/, Command.SCREEN, 1);
