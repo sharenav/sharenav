@@ -83,7 +83,6 @@ trace.AsDestination=Kohteeksi
 trace.at=klo 
 trace.AudioRec=Ääninauh.
 trace.AudioRecording=Ääninauhoitus
-trace.Back=Takaisin
 trace.CalculateRoute=Laske reitti
 trace.CalculateRoute2=Laske reitti...
 trace.Camera=Kamera
@@ -215,7 +214,6 @@ guidiscover.aslines=viivoina
 guidiscover.asstreets=teinä/katuina
 guidiscover.Autorecentertimeout=Auto-recenter to GPS after no user action for these seconds (0=disabled)
 guidiscover.AutoreconnectGPS=Auto reconnect GPS
-guidiscover.Back=Takaisin
 guidiscover.BacklightOptions=Taustavalon asetukset:
 guidiscover.BTkeepalive=BT keep alive
 guidiscover.BTreconnect=BT reconnect
