@@ -429,7 +429,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		CMDS[RETRIEVE_NODE] = new Command(Locale.get("trace.AddPOI")/*Add POI to OSM...*/,Command.ITEM, 100);
 		CMDS[ICON_MENU] = new Command(Locale.get("trace.Menu")/*Menu*/,Command.OK, 100);
 		CMDS[SETUP_CMD] = new Command(Locale.get("trace.Setup")/*Setup*/, Command.ITEM, 25);
-		CMDS[ABOUT_CMD] = new Command(Locale.get("trace.About")/*About*/, Command.ITEM, 30);
+		CMDS[ABOUT_CMD] = new Command(Locale.get("generic.About")/*About*/, Command.ITEM, 30);
 		//#if polish.api.wmapi
 		CMDS[SEND_MESSAGE_CMD] = new Command(Locale.get("trace.SendSMSMapPos")/*Send SMS (map pos)*/,Command.ITEM, 20);
 		//#endif

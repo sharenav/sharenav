@@ -55,7 +55,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 	/** OK2_CMD is used when GUI is optimised for routing */
 	private final Command OK2_CMD = new Command(Locale.get("guisearch.Asdest")/*As destination*/, Command.ITEM, 3);
 	private final Command DISP_CMD = new Command(Locale.get("guisearch.Disp")/*Display*/, Command.ITEM, 2);
-	private final Command DEL_CMD = new Command(Locale.get("guisearch.Del")/*Delete*/, Command.ITEM, 4);
+	private final Command DEL_CMD = new Command(Locale.get("generic.Delete")/*Delete*/, Command.ITEM, 4);
 	private final Command CLEAR_CMD = new Command(Locale.get("guisearch.Clear")/*Clear*/, Command.ITEM, 5);
 	private final Command BOOKMARK_CMD = new Command(Locale.get("guisearch.Bookmark")/*Add to way points*/, Command.ITEM, 6);
 	private final Command BACK_CMD = new Command(Locale.get("generic.Back")/*Back*/, Command.BACK, 7);

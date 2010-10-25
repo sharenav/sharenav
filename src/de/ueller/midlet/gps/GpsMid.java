@@ -71,7 +71,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 	private volatile static GpsMid instance;
 	/** A menu list instance */
 	private static final String[] elements = { Locale.get("gpsmid.Map")/*Map*/, Locale.get("gpsmid.Search")/*Search*/, Locale.get("gpsmid.Setup")/*Setup*/,
-						   Locale.get("gpsmid.About")/*About*/, Locale.get("gpsmid.Log")/*Log*/ };
+						   Locale.get("generic.About")/*About*/, Locale.get("gpsmid.Log")/*Log*/ };
 	
 	/** Soft button for exiting GpsMid. */
 	private final Command EXIT_CMD = new Command(Locale.get("generic.Exit")/*Exit*/, Command.EXIT, 2);

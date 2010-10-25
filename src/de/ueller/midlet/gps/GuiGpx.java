@@ -35,7 +35,7 @@ public class GuiGpx extends List implements CommandListener,
 	private final Command RENAME_CMD = new Command(Locale.get("guigpx.Rename")/*Rename*/, Locale.get("guigpx.RenameFirstSelected")/*Rename first selected*/, Command.ITEM, 3);	
 	private final Command REPLAY_START_CMD = new Command(Locale.get("guigpx.Replay")/*Replay*/, Command.ITEM, 3);	
 	private final Command REPLAY_STOP_CMD = new Command(Locale.get("guigpx.StopReplay")/*Stop Replay*/, Command.ITEM, 3);	
-	private final Command DEL_CMD = new Command(Locale.get("guigpx.Delete")/*Delete*/, Command.ITEM, 3);	
+	private final Command DEL_CMD = new Command(Locale.get("generic.Delete")/*Delete*/, Command.ITEM, 3);	
 	private final Command SALL_CMD = new Command(Locale.get("guigpx.SelectAll")/*Select All*/, Command.ITEM, 4);
 	private final Command DSALL_CMD = new Command(Locale.get("guigpx.DeselectAll")/*Deselect All*/, Command.ITEM, 4);
 	private final Command BACK_CMD = new Command(Locale.get("generic.Back")/*Back*/, Command.BACK, 5);

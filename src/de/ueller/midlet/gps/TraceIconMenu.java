@@ -46,7 +46,7 @@ public class TraceIconMenu extends IconMenuWithPagesGUI {
 		mp.createAndAddIcon(Locale.get("traceiconmenu.Overview")/*Overview/Filter Map*/, "i_overview", Trace.OVERVIEW_MAP_CMD);
 		
 		iconOnlineInfo =	mp.createAndAddIcon(Locale.get("traceiconmenu.Online")/*Online*/, "i_online", Trace.ONLINE_INFO_CMD);		
-		mp.createAndAddIcon(Locale.get("traceiconmenu.About")/*About*/, "i_about", Trace.ABOUT_CMD);
+		mp.createAndAddIcon(Locale.get("generic.About")/*About*/, "i_about", Trace.ABOUT_CMD);
 		mp.createAndAddIcon(Locale.get("generic.Back")/*Back*/, "i_back", IconActionPerformer.BACK_ACTIONID);
 
 		mp.createAndAddIcon(Locale.get("generic.Exit")/*Exit*/, "i_exit", Trace.EXIT_CMD);
