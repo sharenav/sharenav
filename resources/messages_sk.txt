@@ -61,7 +61,6 @@ configuration.WaypointSortModeRangeError=Režim triedenia bodov mimo rozsahu!
 configuration.ExFNF1=Nemôžem nájsť súbor
 configuration.ExFNF2= v JAR
 guidiscovericonmenu.Advanced= Pokročilé 
-guidiscovericonmenu.Back=Späť
 guidiscovericonmenu.Basic= Základné 
 guidiscovericonmenu.Debug=Ladenie
 guidiscovericonmenu.Display=Zobrazenie

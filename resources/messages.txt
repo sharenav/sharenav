@@ -82,7 +82,6 @@ trace.AsDestination=As destination
 trace.at=at
 trace.AudioRec=AudioRec
 trace.AudioRecording=Audio recording
-trace.Back=Back
 trace.CalculateRoute=Calculate route
 trace.CalculateRoute2=Calculate route...
 trace.Camera=Camera
@@ -219,7 +218,6 @@ guidiscover.aslines=as lines
 guidiscover.asstreets=as streets
 guidiscover.Autorecentertimeout=Auto-recenter to GPS after no user action for these seconds (0=disabled)
 guidiscover.AutoreconnectGPS=Auto reconnect GPS
-guidiscover.Back=Back
 guidiscover.BacklightOptions=Backlight Options:
 guidiscover.BTkeepalive=BT keep alive
 guidiscover.BTreconnect=BT reconnect

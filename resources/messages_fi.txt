@@ -61,7 +61,6 @@ configuration.WaypointSortModeRangeError=Aluevirhe pisteiden lajittelussa!
 configuration.ExFNF1=Tiedostoa ei löytynyt
 configuration.ExFNF2= JARista
 guidiscovericonmenu.Advanced= Lisäasetukset 
-guidiscovericonmenu.Back=Takaisin
 guidiscovericonmenu.Basic= Perusasetukset 
 guidiscovericonmenu.Debug=Vianselvitys
 guidiscovericonmenu.Display=Näyttö

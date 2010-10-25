@@ -61,7 +61,6 @@ configuration.WaypointSortModeRangeError=Wegpunktsortiermodus außerhalb des Ber
 configuration.ExFNF1=Datei nicht gefunden
 configuration.ExFNF2= in JAR
 guidiscovericonmenu.Advanced=erweitert
-guidiscovericonmenu.Back=zurück
 guidiscovericonmenu.Basic=allgemein
 guidiscovericonmenu.Debug=Debug
 guidiscovericonmenu.Display=Anzeige

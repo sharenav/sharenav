@@ -31,7 +31,7 @@ public class GuiDiscoverIconMenu extends IconMenuWithPagesGUI {
 			mp.createAndAddIcon(Locale.get("guidiscovericonmenu.RecRules")/*Recording Rules*/, "is_rec", GuiDiscover.MENU_ITEM_GPX_FILTER);
 			mp.createAndAddIcon(Locale.get("guidiscovericonmenu.Export")/*Export*/, "is_export", GuiDiscover.MENU_ITEM_GPX_DEVICE);
 
-			mp.createAndAddIcon(Locale.get("guidiscovericonmenu.Back")/*Back*/, "is_back", IconActionPerformer.BACK_ACTIONID);
+			mp.createAndAddIcon(Locale.get("generic.Back")/*Back*/, "is_back", IconActionPerformer.BACK_ACTIONID);
 			
 		// Advanced
 		mp = createAndAddMenuPage(Locale.get("guidiscovericonmenu.Advanced")/* Advanced */, 3, 3);

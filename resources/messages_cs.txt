@@ -61,7 +61,6 @@ configuration.WaypointSortModeRangeError=Režim třídení bodů mimo rozsah!
 configuration.ExFNF1=Nelze najít soubor
 configuration.ExFNF2= v JAR
 guidiscovericonmenu.Advanced= Pokročilé 
-guidiscovericonmenu.Back=Zpět
 guidiscovericonmenu.Basic= Základní 
 guidiscovericonmenu.Debug=Ladění
 guidiscovericonmenu.Display=Zobrazení

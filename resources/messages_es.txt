@@ -61,7 +61,6 @@ configuration.WaypointSortModeRangeError=Waypoint sort mode al exterior del áre
 configuration.ExFNF1=no encuentro del fichero
 configuration.ExFNF2= in JAR
 guidiscovericonmenu.Advanced=extendido
-guidiscovericonmenu.Back=atrás
 guidiscovericonmenu.Basic=en general
 guidiscovericonmenu.Debug=Debug
 guidiscovericonmenu.Display=display
