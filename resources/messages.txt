@@ -43,7 +43,6 @@ guiosmaddrdisplay.AddingAddr=Adding Addr
 guiosmaddrdisplay.AddrTitle=Addressing
 guiosmaddrdisplay.AddrUploadSuccess=Addr was successfully added to OpenStreetMap
 guiosmaddrdisplay.adr=adr:
-guiosmaddrdisplay.Back=Back
 guiosmaddrdisplay.HouseName=Housename
 guiosmaddrdisplay.HouseNumber=Housenumber
 guiosmaddrdisplay.Postcode=Postcode
