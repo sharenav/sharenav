@@ -1,6 +1,7 @@
 generic.Back= Retour en arrière
 generic.Exit= Sortie
 generic.OK=OK
+generic.Search= Rechercher
 splash.Accept=Accepter
 splash.Deny=Refuser
 splash.ShowSplash=Zeige Startbildschirm beim naechsten Start
@@ -26,7 +27,6 @@ traceiconmenu.RecordTrack=EnregistrerChemin
 traceiconmenu.RecTop= Enregistrer
 traceiconmenu.RoutePage= Routenführung
 traceiconmenu.SaveWpt= SauvegarderPointPassage
-traceiconmenu.Search= Rechercher
 traceiconmenu.SendSMS= EnvoyerSMS
 traceiconmenu.SetDest= Setze Ziel
 traceiconmenu.Setup= Démarrer

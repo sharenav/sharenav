@@ -378,7 +378,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		
 		CMDS[EXIT_CMD] = new Command(Locale.get("generic.Exit")/*Exit*/, Command.EXIT, 2);
 		CMDS[REFRESH_CMD] = new Command(Locale.get("trace.Refresh")/*Refresh*/, Command.ITEM, 4);
-		CMDS[SEARCH_CMD] = new Command(Locale.get("trace.Search")/*Search*/, Command.OK, 1);
+		CMDS[SEARCH_CMD] = new Command(Locale.get("generic.Search")/*Search*/, Command.OK, 1);
 		CMDS[CONNECT_GPS_CMD] = new Command(Locale.get("trace.StartGPS")/*Start GPS*/,Command.ITEM, 2);
 		CMDS[DISCONNECT_GPS_CMD] = new Command(Locale.get("trace.StopGPS")/*Stop GPS*/,Command.ITEM, 2);
 		CMDS[TOGGLE_GPS_CMD] = new Command(Locale.get("trace.ToggleGPS")/*Toggle GPS*/,Command.ITEM, 2);

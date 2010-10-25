@@ -6,3 +6,4 @@ generic.Exit=Zakończ
 generic.Off=Wyłącz
 generic.On=Włącz
 generic.OK=OK
+generic.Search=Szukaj

@@ -38,7 +38,7 @@ public class TraceIconMenu extends IconMenuWithPagesGUI {
 		mp = createAndAddMenuPage(Locale.get("traceiconmenu.MainTop")/* Main */, 3, 4);
 		iconToggleGps =		mp.createAndAddIcon(Locale.get("traceiconmenu.StartGPS")/*Start GPS*/, "i_gps", Trace.CONNECT_GPS_CMD);
 		iconToggleGps.setFlag(LayoutElement.FLAG_IMAGE_TOGGLEABLE);
-		mp.createAndAddIcon(Locale.get("traceiconmenu.Search")/*Search*/, "i_search", Trace.SEARCH_CMD);
+		mp.createAndAddIcon(Locale.get("generic.Search")/*Search*/, "i_search", Trace.SEARCH_CMD);
 		mp.createAndAddIcon(Locale.get("traceiconmenu.MapFeature")/*Map Features*/, "i_mapfeat", Trace.MAPFEATURES_CMD);
 		
 		mp.createAndAddIcon(Locale.get("traceiconmenu.Setup")/*Setup*/, "i_setup", Trace.SETUP_CMD);

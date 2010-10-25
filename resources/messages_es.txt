@@ -3,6 +3,7 @@ generic.Back=atrás
 generic.Exit=terminal
 generic.Off=apagado
 generic.OK=OK
+generic.Search=busca
 splash.Accept=aceptar
 splash.Deny=rechazar
 splash.ShowSplash=La página principal se va a asomar con la próxima despuegue.
@@ -28,7 +29,6 @@ traceiconmenu.RecordTrack=grabar el camino
 traceiconmenu.RecTop=reproducción
 traceiconmenu.RoutePage=navegación
 traceiconmenu.SaveWpt=poner el Wpt
-traceiconmenu.Search=busco
 traceiconmenu.SendSMS=mandar un mensaje (inclusivo GPS)
 traceiconmenu.SetDest=fijar el destino
 traceiconmenu.Setup=instrucciones
@@ -142,7 +142,6 @@ trace.Routing2=navegación..
 trace.Routing3=navegación...
 trace.r=r
 trace.SaveWaypoint=guardar el punto del camino
-trace.Search=busca
 trace.SendSMSMapPos=Manda un mensaje con los datos de la posición trace.SendSMSPos= Manda un mensaje con los datos de la posición
 trace.SendSMSPos=Manda un mensaje con los datos de la posición trace.SendSMSPos= Manda un mensaje con los datos de la posición
 trace.SetAppGeneric=Set app=GpsMid-Generic-editing and enableEditing=true in .properties file

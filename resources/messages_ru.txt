@@ -1,6 +1,7 @@
 generic.Back=Назад
 generic.Exit=Выход
 generic.OK=OK
+generic.Search=Поиск
 splash.Accept=Принять
 splash.Deny=Отклонить
 splash.ShowSplash=Показывать заставку при старте
@@ -26,7 +27,6 @@ traceiconmenu.RecordTrack=Запись трека
 traceiconmenu.RecTop=Сохранить
 traceiconmenu.RoutePage=Навигация
 traceiconmenu.SaveWpt=Сохранить путевую точку
-traceiconmenu.Search=Поиск
 traceiconmenu.SendSMS=Послать СМС
 traceiconmenu.SetDest=Установить цель
 traceiconmenu.Setup=Настройки
