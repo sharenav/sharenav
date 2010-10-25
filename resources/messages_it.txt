@@ -1,3 +1,4 @@
+generic.Back=Indietro
 splash.Accept=Accetta
 splash.Deny=Rifiuta
 splash.ShowSplash=Mostrare la schermata d'avvio
@@ -9,7 +10,6 @@ splash.screen=Schermo all'avvio.
 traceiconmenu.About=Informazioni
 traceiconmenu.AddAddr=Aggiungi indirizzo
 traceiconmenu.AddPOI=Aggiungi punto di interesse
-traceiconmenu.Back=Indietro
 traceiconmenu.Calc=Calcola
 traceiconmenu.ClearDest=Cancella destinazione
 traceiconmenu.EditWay=Modifica way

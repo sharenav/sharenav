@@ -1,3 +1,4 @@
+generic.Back=Späť
 splash.Accept=Prijať
 splash.Deny=Odmietnuť
 splash.ShowSplash=Zobrazovať úvodnú obrazovku pri štarte
@@ -9,7 +10,6 @@ splash.screen=úvodnej obrazovky pri štarte.
 traceiconmenu.About=O programe
 traceiconmenu.AddAddr=Pridať adresu
 traceiconmenu.AddPOI=Pridať POI
-traceiconmenu.Back=Späť
 traceiconmenu.Calc=Počítať
 traceiconmenu.ClearDest=Vymazať cieľ
 traceiconmenu.EditWay=Upraviť cestu

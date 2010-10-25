@@ -47,7 +47,7 @@ public class TraceIconMenu extends IconMenuWithPagesGUI {
 		
 		iconOnlineInfo =	mp.createAndAddIcon(Locale.get("traceiconmenu.Online")/*Online*/, "i_online", Trace.ONLINE_INFO_CMD);		
 		mp.createAndAddIcon(Locale.get("traceiconmenu.About")/*About*/, "i_about", Trace.ABOUT_CMD);
-		mp.createAndAddIcon(Locale.get("traceiconmenu.Back")/*Back*/, "i_back", IconActionPerformer.BACK_ACTIONID);
+		mp.createAndAddIcon(Locale.get("generic.Back")/*Back*/, "i_back", IconActionPerformer.BACK_ACTIONID);
 
 		mp.createAndAddIcon(Locale.get("traceiconmenu.Exit")/*Exit*/, "i_exit", Trace.EXIT_CMD);
 
@@ -64,7 +64,7 @@ public class TraceIconMenu extends IconMenuWithPagesGUI {
 		iconEditWay =		mp.createAndAddIcon(Locale.get("traceiconmenu.EditWay")/*Edit way*/, "i_editway", Trace.RETRIEVE_XML);
 		iconAddPOI =		mp.createAndAddIcon(Locale.get("traceiconmenu.AddPOI")/*Add POI*/, "i_addpoi", Trace.RETRIEVE_NODE);
 		iconAddAddr =		mp.createAndAddIcon(Locale.get("traceiconmenu.AddAddr")/*Add Address*/, "i_addpoi", Trace.EDIT_ADDR_CMD);
-		mp.createAndAddIcon(Locale.get("traceiconmenu.Back")/*Back*/, "i_back", IconActionPerformer.BACK_ACTIONID);
+		mp.createAndAddIcon(Locale.get("generic.Back")/*Back*/, "i_back", IconActionPerformer.BACK_ACTIONID);
 
 		//#if not polish.api.online
 		iconOnlineInfo.makeImageGreyed();
@@ -97,7 +97,7 @@ public class TraceIconMenu extends IconMenuWithPagesGUI {
 		iconToggleAudioRec.setFlag(LayoutElement.FLAG_IMAGE_TOGGLEABLE);
 		
 							mp.createAndAddIcon(Locale.get("traceiconmenu.SendSMS")/*Send SMS*/, "i_sendsms", Trace.SEND_MESSAGE_CMD);		
-		mp.createAndAddIcon(Locale.get("traceiconmenu.Back")/*Back*/, "i_back", IconActionPerformer.BACK_ACTIONID);
+		mp.createAndAddIcon(Locale.get("generic.Back")/*Back*/, "i_back", IconActionPerformer.BACK_ACTIONID);
 	}
 
 
@@ -110,7 +110,7 @@ public class TraceIconMenu extends IconMenuWithPagesGUI {
 		mp.createAndAddIcon(Locale.get("traceiconmenu.SetDest")/*Set dest*/, "i_setdest", Trace.SET_DEST_CMD);
 		mp.createAndAddIcon(Locale.get("traceiconmenu.ShowDest")/*Show dest*/, "i_showdest", Trace.SHOW_DEST_CMD);		
 		mp.createAndAddIcon(Locale.get("traceiconmenu.ClearDest")/*Clear dest*/, "i_cleardest", Trace.CLEAR_DEST_CMD);		
-		mp.createAndAddIcon(Locale.get("traceiconmenu.Back")/*Back*/, "i_back", IconActionPerformer.BACK_ACTIONID);
+		mp.createAndAddIcon(Locale.get("generic.Back")/*Back*/, "i_back", IconActionPerformer.BACK_ACTIONID);
 	}
 
 	private void rememberActiveTabAndEleNr() {

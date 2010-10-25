@@ -1,3 +1,4 @@
+generic.Back= Retour en arrière
 splash.Accept=Accepter
 splash.Deny=Refuser
 splash.ShowSplash=Zeige Startbildschirm beim naechsten Start
@@ -8,7 +9,6 @@ splash.skip=Drücke '*' zum überspringen
 splash.screen=Splash Screen
 traceiconmenu.About= À propos
 traceiconmenu.AddPOI= AjoutPOI
-traceiconmenu.Back= Retour en arrière
 traceiconmenu.Calc= Calculer
 traceiconmenu.ClearDest= SupprimerDestination
 traceiconmenu.EditWay= ModifierChemin

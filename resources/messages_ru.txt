@@ -1,3 +1,4 @@
+generic.Back=Назад
 splash.Accept=Принять
 splash.Deny=Отклонить
 splash.ShowSplash=Показывать заставку при старте
@@ -8,7 +9,6 @@ splash.skip=Нажмите '*' чтобы пропустить
 splash.screen=Заставка
 traceiconmenu.About=О программе
 traceiconmenu.AddPOI=Добавить POI
-traceiconmenu.Back=Назад
 traceiconmenu.Calc=Найти маршрут
 traceiconmenu.ClearDest=Очистить маршрут
 traceiconmenu.EditWay=Править цель

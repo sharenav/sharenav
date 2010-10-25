@@ -1,3 +1,4 @@
+generic.Back=atrás
 splash.Accept=aceptar
 splash.Deny=rechazar
 splash.ShowSplash=La página principal se va a asomar con la próxima despuegue.
@@ -9,7 +10,6 @@ splash.screen=la pantalla de salutación
 traceiconmenu.About=a través de GpsMid
 traceiconmenu.AddAddr=dirección
 traceiconmenu.AddPOI=POI
-traceiconmenu.Back=atrás
 traceiconmenu.Calc=computer la ruta
 traceiconmenu.ClearDest=borrar el destino
 traceiconmenu.EditWay=camino
