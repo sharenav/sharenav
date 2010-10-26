@@ -1067,6 +1067,7 @@ queuereader.OOMReadTilesNotRec=Out of memory while trying to read tiles. Not rec
 queuereader.QueueReaderCrashed=QueueReader thread crashed unexpectedly with error 
 routecontainertile.wrongTileType=wrongTileType type=
 routefiletile.FileNotFoundD=File not found /d
+routeinstructions.Offset=off:
 routeinstructions.RIthreadCrashedUnexpectadlyWithError=RI thread crashed unexpectadly with error 
 routeinstructions.showRouteGotNullConnection=showRoute got null connection
 routeinstructions.showRouteNullDestination=showRoute got connection with null as destination

@@ -630,7 +630,7 @@ public class RouteInstructions {
 				}				
 				if(Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_OFF_ROUTE_DISTANCE_IN_MAP)) {
 					e = Trace.tl.ele[TraceLayout.ROUTE_OFFROUTE];
-					e.setText(Locale.get("generic.Off")/*off:*/ + trace.showDistance(dstToRoutePath, (dstToRoutePath == Integer.MAX_VALUE ? Trace.DISTANCE_UNKNOWN : Trace.DISTANCE_AIR)));
+					e.setText(Locale.get("routeinstructions.Offset")/*off:*/ + trace.showDistance(dstToRoutePath, (dstToRoutePath == Integer.MAX_VALUE ? Trace.DISTANCE_UNKNOWN : Trace.DISTANCE_AIR)));
 				}
 				e = Trace.tl.ele[TraceLayout.ROUTE_DISTANCE];
 				String airDistance = "";
