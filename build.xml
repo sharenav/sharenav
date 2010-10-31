@@ -286,6 +286,7 @@
 	<delete dir="build" />
 	<delete dir="build-test" />
 	<delete dir="dist" />
+	<delete dir=".polishSettings" />
 </target>
 	
 	<target name="NMEAsim" 
