@@ -428,7 +428,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		//Prepare Display options menu
 		logger.info(Locale.get("guidiscover.StartingDisplaySetupMenu")/*Starting display setup menu*/);
 
-		menuDisplayOptions = new Form(Locale.get("guidiscover.DisplayOptions2")/*Display Options*/);
+		menuDisplayOptions = new Form(Locale.get("guidiscover.DisplayOptions")/*Display Options*/);
 
 		menuDisplayOptions.addCommand(BACK_CMD);
 		menuDisplayOptions.addCommand(OK_CMD);

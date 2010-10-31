@@ -231,7 +231,6 @@ guidiscover.Discover=<Discover>
 guidiscover.Discovered=<Discovered>
 guidiscover.DiscoverGPS=Discover GPS
 guidiscover.DisplayOptions=Näyttöasetukset
-guidiscover.DisplayOptions2=Näyttöasetukset
 guidiscover.Distances=Etäisyydet
 guidiscover.EnterConnectionUrl=Enter connection url
 guidiscover.EnterURL=Enter URL

@@ -232,7 +232,6 @@ guidiscover.Discover=<Discover>
 guidiscover.Discovered=<Discovered>
 guidiscover.DiscoverGPS=Discover GPS
 guidiscover.DisplayOptions=Anzeigeoptionen
-guidiscover.DisplayOptions2=Anzeigeoptionen
 guidiscover.Distances=Entfernungen
 guidiscover.EnterConnectionUrl=Enter connection url
 guidiscover.EnterURL=Enter URL
