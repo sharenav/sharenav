@@ -282,7 +282,7 @@ public class JSR179Input
 		//#else
 		if (state == LocationProvider.OUT_OF_SERVICE) {
 			if (receiverList != null) {
-				receiverList.receiveSolution(Locale.get("jsr179input.Off")/*Off*/);
+				receiverList.receiveSolution(Locale.get("generic.Off")/*Off*/);
 				receiverList.receiveMessage(Locale.get("jsr179input.ProviderStopped")/*provider stopped*/);
 			}
 		}
