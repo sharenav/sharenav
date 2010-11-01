@@ -135,13 +135,14 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 				close(Locale.get("btreceiverinput.BTClosing2")/*Closing: */ + e1.getMessage());
 			}
 
-			byte timeCounter = 41;
+			byte timeCounter = 21;
 			while (!closed) {
 				//#debug debug
 				logger.debug("Bt receiver thread looped");
 				try {
 					timeCounter++;
-					if (timeCounter > 40) {
+					// 20 * 250 ms = 5 s
+					if (timeCounter > 20) {
 						timeCounter = 0;
 						if (connectQuality > 100) {
 							connectQuality = 100;
@@ -361,13 +362,13 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 			reconnectFailures++;
 			logger.info("Failed to reconnect for the " + reconnectFailures + " time");
 			try {
-				Thread.sleep(10000);
+				Thread.sleep(5000);
 			} catch (InterruptedException e) {
 				logger.silentexception("INTERRUPTED!", e);
 				return false;
 			}
 		}
-		if (reconnectFailures < 4 && !closed) {
+		if (reconnectFailures < 8 && !closed) {
 			if (Configuration.getCfgBitState(Configuration.CFGBIT_SND_CONNECT)) {
 				GpsMid.mNoiseMaker.playSound("CONNECT");
 			}
