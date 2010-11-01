@@ -57,11 +57,11 @@ public class JSR179Input
 
 	//#if polish.api.locationapi
 	private LocationProvider locationProvider = null;
-	private LocationMsgReceiverList receiverList;
+	private final LocationMsgReceiverList receiverList;
 	private NmeaMessage smsg;
 	Position pos = new Position(0f, 0f, 0f, 0f, 0f, 0, System.currentTimeMillis());
 
-	private Trace tr = Trace.getInstance();
+	private final Trace tr = Trace.getInstance();
 
 	private OutputStream rawDataLogger;
 
@@ -199,8 +199,9 @@ public class JSR179Input
 					}
 					//#debug info
 					logger.info("Decoding: " + nmeaMessage);
-					if ((nmeaMessage != null) && (nmeaMessage.length() > 5))
+					if ((nmeaMessage != null) && (nmeaMessage.length() > 5)) {
 						smsg.decodeMessage(nmeaMessage, false);
+					}
 				}
 			}
 		}
@@ -215,7 +216,7 @@ public class JSR179Input
 			Coordinates coordinates = location.getQualifiedCoordinates();
 			pos.latitude = (float) coordinates.getLatitude();
 			pos.longitude = (float) coordinates.getLongitude();
-			pos.altitude = (float) coordinates.getAltitude();
+			pos.altitude = coordinates.getAltitude();
 			pos.course = location.getCourse();
 			pos.speed = location.getSpeed();
 			pos.timeMillis = location.getTimestamp();
