@@ -1,8 +1,9 @@
-package de.ueller.midlet.gps;
 /*
- * GpsMid - Copyright (c) 2008 sk750 at users dot sourceforge dot net 
- * See Copying
+ * GpsMid - Copyright (c) 2008 sk750 at users dot sourceforge dot net
+ * See COPYING
  */
+
+package de.ueller.midlet.gps;
 
 import javax.microedition.lcdui.*;
 
@@ -12,15 +13,18 @@ import de.enough.polish.util.Locale;
 
 
 public class GuiSetupGui extends Form implements CommandListener {
-	private ChoiceGroup guiOpts;
+	private ChoiceGroup imenuOpts;
+	private ChoiceGroup otherOpts;
 
 	// commands
-	private static final Command CMD_SAVE = new Command(Locale.get("generic.OK")/*Ok*/, Command.ITEM, 2);
-	private static final Command CMD_CANCEL = new Command(Locale.get("generic.Cancel")/*Cancel*/, Command.BACK, 3);
+	private static final Command CMD_SAVE = new Command(Locale.get("generic.OK")/*Ok*/, 
+			Command.ITEM, 2);
+	private static final Command CMD_CANCEL = new Command(Locale.get("generic.Cancel")/*Cancel*/, 
+			Command.BACK, 3);
 	
 	// other
-	private GpsMidDisplayable parent;
-	private boolean initialSetup;
+	private final GpsMidDisplayable parent;
+	private final boolean initialSetup;
 
 	private TextField memField;
 	
@@ -29,24 +33,38 @@ public class GuiSetupGui extends Form implements CommandListener {
 		this.parent = parent;
 		this.initialSetup = initialSetup;
 		try {
-			String [] guis = new String[5];
-			guis[0] = Locale.get("guisetupgui.UseIconMenu")/*use icon menu*/;
-			guis[1] = Locale.get("guisetupgui.FullscreenIconMenu")/*fullscreen icon menu*/;
-			guis[2] = Locale.get("guisetupgui.LargeTabButtons")/*large tab buttons*/;
-			guis[3] = Locale.get("guisetupgui.IconsMappedOnKeys")/*icons mapped on keys*/;
-			guis[4] = Locale.get("guisetupgui.OptimiseForRouting")/*optimise for routing*/;
-			guiOpts = new ChoiceGroup(Locale.get("guisetupgui.IconMenu")/*Icon Menu:*/, Choice.MULTIPLE, guis ,null);
-			guiOpts.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS));
-			guiOpts.setSelectedIndex(1, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN));
-			guiOpts.setSelectedIndex(2, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_BIG_TAB_BUTTONS));
-			guiOpts.setSelectedIndex(3, Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_MAPPED_ICONS));
-			guiOpts.setSelectedIndex(4, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED));
-			append(guiOpts);
-			long mem=Configuration.getPhoneAllTimeMaxMemory();
-			if (mem == 0){
-				mem=Runtime.getRuntime().totalMemory();
+			String [] imenu = new String[5];
+			imenu[0] = Locale.get("guisetupgui.UseIconMenu")/*Use icon menu*/;
+			imenu[1] = Locale.get("guisetupgui.FullscreenIconMenu")/*Fullscreen icon menu*/;
+			imenu[2] = Locale.get("guisetupgui.LargeTabButtons")/*Large tab buttons*/;
+			imenu[3] = Locale.get("guisetupgui.IconsMappedOnKeys")/*Icons mapped on keys*/;
+			imenu[4] = Locale.get("guisetupgui.OptimiseForRouting")/*Optimise for routing*/;
+			imenuOpts = new ChoiceGroup(Locale.get("guisetupgui.IconMenu")/*Icon Menu:*/, 
+					Choice.MULTIPLE, imenu, null);
+			imenuOpts.setSelectedIndex(0, 
+					Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS));
+			imenuOpts.setSelectedIndex(1, 
+					Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN));
+			imenuOpts.setSelectedIndex(2, 
+					Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_BIG_TAB_BUTTONS));
+			imenuOpts.setSelectedIndex(3, 
+					Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_MAPPED_ICONS));
+			imenuOpts.setSelectedIndex(4, 
+					Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED));
+			append(imenuOpts);
+			
+			String [] other = new String[1];
+			other[0] = "Predefined way points";
+			otherOpts = new ChoiceGroup("Other options:", Choice.MULTIPLE, other, null);
+			imenuOpts.setSelectedIndex(0,
+					Configuration.getCfgBitSavedState(Configuration.CFGBIT_WAYPT_OFFER_PREDEF));
+			append(otherOpts);
+			
+			long mem = Configuration.getPhoneAllTimeMaxMemory();
+			if (mem == 0) {
+				mem = Runtime.getRuntime().totalMemory();
 			}
-			mem=mem/1024;
+			mem=mem / 1024;
 			memField = new TextField(Locale.get("guisetupgui.DefineMaxMem")/*Define maxMem (kbyte)*/,
 					Long.toString(mem), 8, TextField.DECIMAL);
 			append(memField);
@@ -62,28 +80,33 @@ public class GuiSetupGui extends Form implements CommandListener {
 		}
 	}
 
-	
-
 	public void commandAction(Command c, Displayable d) {
 
-		if (c == CMD_CANCEL) {			
+		if (c == CMD_CANCEL) {
 			parent.show();
 			return;
 		}
 
-		if (c == CMD_SAVE) {			
+		if (c == CMD_SAVE) {
 			Trace trace = Trace.getInstance();
-			if (guiOpts.isSelected(0) != Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS)) {
+			if (imenuOpts.isSelected(0) != Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS)) {
 				trace.removeAllCommands();
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS, guiOpts.isSelected(0));
-				trace.addAllCommands();					
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS, imenuOpts.isSelected(0));
+				trace.addAllCommands();
 			}
-			Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN, guiOpts.isSelected(1));
-			Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_BIG_TAB_BUTTONS, guiOpts.isSelected(2));
-			Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_MAPPED_ICONS, guiOpts.isSelected(3));
-			boolean optimizedForRouting = guiOpts.isSelected(4);
-			Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED, optimizedForRouting);
-			// when the GUI is to be optimized for routing and we have a default backlight method, turn the backlight on			
+			Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN,
+					imenuOpts.isSelected(1));
+			Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_BIG_TAB_BUTTONS,
+					imenuOpts.isSelected(2));
+			Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_MAPPED_ICONS,
+					imenuOpts.isSelected(3));
+			Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED,
+					imenuOpts.isSelected(4));
+			boolean optimizedForRouting = imenuOpts.isSelected(4);
+			Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED,
+					optimizedForRouting);
+			// When the GUI is to be optimized for routing and we have a default
+			// backlight method, turn the backlight on.
 			if (initialSetup && optimizedForRouting) {
 				if (Configuration.getDefaultDeviceBacklightMethodCfgBit() != 0) {
 					Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_ON, true);
@@ -98,6 +121,8 @@ public class GuiSetupGui extends Form implements CommandListener {
 			}
 			Trace.uncacheIconMenu();
 			GuiDiscover.uncacheIconMenu();
+			Configuration.setCfgBitSavedState(Configuration.CFGBIT_WAYPT_OFFER_PREDEF,
+					otherOpts.isSelected(0));
 			parent.show();
 			return;
 		}

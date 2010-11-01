@@ -84,6 +84,7 @@ import de.ueller.midlet.gps.GuiMapFeatures;
 import de.ueller.midlet.gps.tile.Images;
 import de.ueller.midlet.gps.tile.PaintContext;
 import de.ueller.midlet.gps.GpsMidDisplayable;
+import de.ueller.midlet.screens.GuiWaypointPredefined;
 
 //#if polish.android
 import de.enough.polish.android.midlet.MidletBridge;
@@ -292,6 +293,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	private GuiTrip guiTrip = null;
 	private GuiSatellites guiSatellites = null;
 	private GuiWaypointSave guiWaypointSave = null;
+	private GuiWaypointPredefined guiWaypointPredefined = null;
 	private static TraceIconMenu traceIconMenu = null;
 	
 	private final static Logger logger = Logger.getInstance(Trace.class, Logger.DEBUG);
@@ -1127,29 +1129,35 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				if (gpx.isLoadingWaypoints()) {
 					showAlertLoadingWpt();
 				} else {
-    				if (guiWaypointSave == null) {
-    					guiWaypointSave = new GuiWaypointSave(this);
-    				}
-    				if (guiWaypointSave != null) {
-    					if (gpsRecenter) {
-    						// TODO: If we lose the fix the old position and height
-    						// will be used silently -> we should inform the user
-    						// here that we have no fix - he may not know what's going on.
-    						guiWaypointSave.setData(new PositionMark(center.radlat,
-    								center.radlon, (int)pos.altitude, pos.timeMillis,
-    								/* fix */ (byte)-1, /* sats */ (byte)-1, 
-    								/* sym */ (byte)-1, /* type */ (byte)-1));
-    					} else {
-    						// Cursor does not point to current position
-    						// -> it does not make sense to add elevation and GPS fix info.
-    						guiWaypointSave.setData(new PositionMark(center.radlat, 
-    								center.radlon, PositionMark.INVALID_ELEVATION,
-    								pos.timeMillis, /* fix */ (byte)-1, 
-    								/* sats */ (byte)-1, /* sym */ (byte)-1, 
-    								/* type */ (byte)-1));
-    					}
-    					guiWaypointSave.show();					
-    				}
+					PositionMark posMark = null;
+					if (gpsRecenter) {
+						// TODO: If we lose the fix the old position and height
+						// will be used silently -> we should inform the user
+						// here that we have no fix - he may not know what's going on.
+						posMark = new PositionMark(center.radlat, center.radlon,
+								(int)pos.altitude, pos.timeMillis,
+								/* fix */ (byte)-1, /* sats */ (byte)-1,
+								/* sym */ (byte)-1, /* type */ (byte)-1);
+					} else {
+						// Cursor does not point to current position
+						// -> it does not make sense to add elevation and GPS fix info.
+						posMark = new PositionMark(center.radlat, center.radlon,
+								PositionMark.INVALID_ELEVATION,
+								pos.timeMillis, /* fix */ (byte)-1,
+								/* sats */ (byte)-1, /* sym */ (byte)-1,
+								/* type */ (byte)-1);
+					}
+					if (Configuration.getCfgBitState(Configuration.CFGBIT_WAYPT_OFFER_PREDEF)) {
+        				if (guiWaypointPredefined == null) {
+        					guiWaypointPredefined = new GuiWaypointPredefined(this);
+        				}
+        				if (guiWaypointPredefined != null) {
+        					guiWaypointPredefined.setData(posMark);
+        					guiWaypointPredefined.show();
+        				}
+					} else {
+						showGuiWaypointSave(posMark);
+					}
 				}
 				return;
 			}
@@ -1939,6 +1947,16 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		}
 	}
 
+	public void showGuiWaypointSave(PositionMark posMark) {
+    	if (guiWaypointSave == null) {
+    		guiWaypointSave = new GuiWaypointSave(this);
+    	}
+    	if (guiWaypointSave != null) {
+    		guiWaypointSave.setData(posMark);
+    		guiWaypointSave.show();
+    	}
+	}
+
 	/** Show an alert telling the user that waypoints are not ready yet.
 	 */
 	private void showAlertLoadingWpt() {
@@ -2217,8 +2235,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		if (dest != null) {
 			pc.getP().forward(dest.lat, dest.lon, pc.lineP2);
 //			System.out.println(dest.toString());
-			int x = pc.lineP2.x-imageCollector.xScreenOverscan;
-			int y = pc.lineP2.y-imageCollector.yScreenOverscan;
+			int x = pc.lineP2.x - imageCollector.xScreenOverscan;
+			int y = pc.lineP2.y - imageCollector.yScreenOverscan;
 			pc.g.drawImage(pc.images.IMG_DEST, x, y, CENTERPOS);
 			pc.g.setColor(Legend.COLORS[Legend.COLOR_DEST_TEXT]);
 			if (dest.displayName != null) {
@@ -2227,11 +2245,12 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			}
 			pc.g.setColor(Legend.COLORS[Legend.COLOR_DEST_LINE]);
 			pc.g.setStrokeStyle(Graphics.SOLID);
-			pc.g.drawLine(x, y, pc.getP().getImageCenter().x-imageCollector.xScreenOverscan, pc.getP().getImageCenter().y-imageCollector.yScreenOverscan);
+			pc.g.drawLine(x, y, pc.getP().getImageCenter().x - imageCollector.xScreenOverscan, 
+					pc.getP().getImageCenter().y - imageCollector.yScreenOverscan);
 		}
 		} catch (Exception e) {
-			if (imageCollector == null){
-				System.out.println("No ImmageCollector");
+			if (imageCollector == null) {
+				logger.silentexception("No ImageCollector", e);
 			}
 			e.printStackTrace();
 		}
@@ -2244,13 +2263,13 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	 * @param g Graphics context for drawing
 	 */
 	public void showMovement(Graphics g) {
-		IntPoint centerP=null;
+		IntPoint centerP = null;
 		try {
-			if (imageCollector != null){
+			if (imageCollector != null) {
 			g.setColor(Legend.COLORS[Legend.COLOR_MAP_CURSOR]);
 			centerP = pc.getP().getImageCenter();
-			int centerX = centerP.x-imageCollector.xScreenOverscan;
-			int centerY = centerP.y-imageCollector.yScreenOverscan;
+			int centerX = centerP.x - imageCollector.xScreenOverscan;
+			int centerY = centerP.y - imageCollector.yScreenOverscan;
 			int posX, posY;
 			if (!gpsRecenter) {
 				IntPoint p1 = new IntPoint(0, 0);
@@ -2282,11 +2301,11 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			}
 			}
 		} catch (Exception e) {
-			if (imageCollector == null){
-				System.out.println("No ImageCollector");
+			if (imageCollector == null) {
+				logger.silentexception("No ImageCollector", e);
 			}
-			if (centerP == null){
-				System.out.println("No centerP");
+			if (centerP == null) {
+				logger.silentexception("No centerP", e);
 			}
 			e.printStackTrace();
 		}
@@ -3004,8 +3023,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	}
 	
 	public String getUrl(int idx) {
-		if (idx < 0)
+		if (idx < 0) {
 			return null;
+		}
 		return urlsThread.getUrl(idx);
 	}
 
