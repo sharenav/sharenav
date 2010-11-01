@@ -1,9 +1,10 @@
 /*
- * GpsMid - Copyright (c) 2009 sk750 at users dot sourceforge dot net 
- * See Copying
+ * GpsMid - Copyright (c) 2009 sk750 at users dot sourceforge dot net
+ * See COPYING
  */
 
 package de.ueller.gps.tools;
+
 import de.ueller.gps.data.Legend;
 import de.ueller.gps.tools.LayoutElement;
 import de.ueller.gps.tools.LayoutManager;
@@ -17,7 +18,7 @@ import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
 
-public class IconMenuPage extends LayoutManager { 
+public class IconMenuPage extends LayoutManager {
 	private final static Logger logger = Logger.getInstance(LayoutManager.class,Logger.DEBUG);
 
 	protected int numCols;
@@ -26,7 +27,7 @@ public class IconMenuPage extends LayoutManager {
 	protected int currentCol;
 	protected int currentRow;
 	
-	private IconActionPerformer actionPerformer;
+	private final IconActionPerformer actionPerformer;
 	
 	public String title;
 	
@@ -168,13 +169,16 @@ public class IconMenuPage extends LayoutManager {
 	
 	
 	/**
-	 * paints the Icons
+	 * Paints the icons
 	 */
 	public void paint(Graphics g, boolean showCursor) {
+		//#debug debug
+		logger.debug("Painting IconMenuPage " + title);
+		
 		LayoutElement e;
 		// draw to boxes under the still to be drawn active icon to create a border
 		if (showCursor) {
-			e = (LayoutElement) this.elementAt(getEleId(currentCol, currentRow));		
+			e = (LayoutElement) this.elementAt(getEleId(currentCol, currentRow));
 			g.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_ICON_BORDER_HIGHLIGHT]);
 			g.fillRect(e.left + dragOffsX - 2, e.top - 2, e.right - e.left + 4, e.bottom - e.top + 4);
 			g.setColor(Legend.COLORS[Legend.COLOR_ICONMENU_BACKGROUND]);
