@@ -143,31 +143,46 @@ public class MoreMathTests extends TestCase {
 	}
 
 	public void testDist() {
-		float actual = MoreMath.dist(1.531700952f,0.413643033f,1.531997658f,0.411897704f);
+		float actual = MoreMath.dist(1.531700952f, 0.413643033f, 1.531997658f, 0.411897704f);
 		float expected = 1947.94f;
 		float error = Math.abs(actual - expected);
 		System.out.println("Testing distance calculation: expected " + expected + " calculated " + actual + " error " + (error/expected));
 		//assertTrue("Dist reported " + actual + " expected: " + expected,error < expected*(0.01));
 		
-		
-		
-		actual = MoreMath.dist(0.000017453f,0.000017453f,-0.000017453f,-0.000017453f);
+		actual = MoreMath.dist(0.000017453f, 0.000017453f, -0.000017453f, -0.000017453f);
 		expected = 313.80693790037595f;
 		error = Math.abs(actual - expected);
 		System.out.println("Testing distance calculation: expected " + expected + " calculated " + actual + " error " + (error/expected));
 		//assertTrue("Dist reported " + actual + " expected: " + expected,error < expected*(0.01));
 		
-		actual = MoreMath.dist(0.926598791f,0.026249752f,0.909698768f,0.001453859f);
+		actual = MoreMath.dist(0.926598791f, 0.026249752f, 0.909698768f, 0.001453859f);
 		expected = 117922.112f;
 		error = Math.abs(actual - expected);
 		System.out.println("Testing distance calculation: expected " + expected + " calculated " + actual + " error " + (error/expected));
 		//assertTrue("Dist reported " + actual + " expected: " + expected,error < expected*(0.01));
 		
-		actual = MoreMath.dist(0.926598791f,0.026249752f,0.926599314f,0.026248007f);
+		actual = MoreMath.dist(0.926598791f, 0.026249752f, 0.926599314f, 0.026248007f);
 		expected = 7f;
 		error = Math.abs(actual - expected);
 		System.out.println("Testing distance calculation: expected " + expected + " calculated " + actual + " error " + (error/expected));
 		//assertTrue("Dist reported " + actual + " expected: " + expected,error < expected*(0.01));
+		
+		// According to the Great Circle Mapper website (http://gc.kls2.com)
+		// JFK Airport, New York
+		// Lat: 40.639751 (N) / Lon: -73.778926 (W)
+		//
+		// Berlin Tegel Airport (TXL)
+		// Lat: 52.560 (N) / Long: 13.288 (E)
+		//
+		// Distance 6385 km, initial heading 46°
+		actual = MoreMath.dist(	40.639751f * MoreMath.FAC_DECTORAD,
+								-73.778926f * MoreMath.FAC_DECTORAD,
+								52.560f * MoreMath.FAC_DECTORAD,
+								13.288f * MoreMath.FAC_DECTORAD);
+		expected = 6385000.0f;
+		error = Math.abs(actual - expected);
+		System.out.println("Testing distance calculation: expected " + expected + " calculated " + actual + " error " + (error/expected));
+		//assertTrue("Dist reported " + actual + " expected: " + expected, error < (expected * 0.01));
 	}
 
 }
