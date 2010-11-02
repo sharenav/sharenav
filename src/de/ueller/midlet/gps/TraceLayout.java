@@ -120,7 +120,8 @@ public class TraceLayout extends LayoutManager {
 			LayoutElement.FLAG_HALIGN_RIGHT | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
 			LayoutElement.FLAG_FONT_MEDIUM | LayoutElement.FLAG_BACKGROUND_BOX
 		);
-		e.setColor(Legend.COLORS[Legend.COLOR_MAP_TEXT]);
+		e.setColor(Legend.COLORS[Legend.COLOR_SOLUTION_TEXT]);
+		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_SOLUTION_BACKGROUND]);
 		e.setAdditionalOffsX(-1);
 		e.setVRelative(ele[TITLEBAR]);
 		e.setActionID((Trace.TOGGLE_GPS_CMD << 16) + (Trace.CELLID_LOCATION_CMD << 8));
@@ -137,6 +138,7 @@ public class TraceLayout extends LayoutManager {
 		e = ele[RECORDED_COUNT]; addElement(e,
 				LayoutElement.FLAG_HALIGN_RIGHT | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
 				LayoutElement.FLAG_FONT_MEDIUM | LayoutElement.FLAG_BACKGROUND_BOX);
+		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_RECORDING_BACKGROUND]);
 		e.setAdditionalOffsX(-1);
 		e.setVRelative(ele[SOLUTION]);
 	
