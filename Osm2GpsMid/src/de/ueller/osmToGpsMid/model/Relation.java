@@ -142,8 +142,8 @@ public class Relation extends Entity {
 							}
 							if (m.getType() == Member.TYPE_WAY) {
 								// FIXME handle buildings too
-								System.out.println("ERROR: Unable to handle area (typically building) with housenumber, relation url: " + toUrl());
-								nodecount++;
+								System.out.println("warning: ignoring map data: Unable to handle area (typically building) with housenumber, relation url: " + toUrl());
+								// nodecount++;
 								break;
 							}
 						}
@@ -154,7 +154,7 @@ public class Relation extends Entity {
 						//System.out.println("Housenumber relation ok, way count: " + waycount + " node count " + nodecount + " url: " + toUrl());
 						return true;
 					} else {
-						System.out.println("ERROR: Housenumber relation not ok, way count: " + waycount + " node count " + nodecount + " url: " + toUrl());
+						System.out.println("warning: ignoring map data: Housenumber relation not ok, way count: " + waycount + " node count " + nodecount + " url: " + toUrl());
 						return false;
 					}
 				}
