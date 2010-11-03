@@ -59,7 +59,7 @@ public class Configuration {
 	 * Specifies the format of the map on disk we are about to write.
 	 * This constant must be in sync with GpsMid.
 	 */
-	public final static short MAP_FORMAT_VERSION = 64;
+	public final static short MAP_FORMAT_VERSION = 63;
 
 	public final static int COLOR_MAP_BACKGROUND = 0;
 	public final static int COLOR_MAP_TEXT = 1;
@@ -264,9 +264,6 @@ public class Configuration {
 		/** Flag if zip (with no midlet) is to be built instead of a jar (as it will be shown on the phone). */
 		public boolean mapzip;
 
-		/** Flag if there are more way or poi styles than 126. */
-		public boolean bigStyles = false;
-
 		/** Name of the base Midlet (e.g. GpsMid-Generic-multi) to be used. */
 		private String appParam;
 
@@ -309,9 +306,6 @@ public class Configuration {
 		/** Use or don't use url and phone tags from OSM */
 		public boolean useUrlTags=false;
 		public boolean usePhoneTags=false;
-
-		/** Use or don't use house numbers for searches */
-		public boolean useHouseNumbers=false;
 
 		/** TODO: Explain this, what is behind the "dict depth"? */
 		private int maxDictDepth = 5;
@@ -524,7 +518,6 @@ public class Configuration {
 			setRouting(getString("useRouting"));
 			useUrlTags = getString("useUrlTags").equalsIgnoreCase("true");
 			usePhoneTags = getString("usePhoneTags").equalsIgnoreCase("true");
-			useHouseNumbers = getString("useHouseNumbers").equalsIgnoreCase("true");
 			maxRouteTileSize = Integer.parseInt(getString("routing.maxTileSize"));
 
 			setIcons(getString("useIcons"));
@@ -1143,11 +1136,11 @@ public class Configuration {
 			return legend.getWayLegend();
 		}
 		
-		public POIdescription getpoiDesc(short t) {
+		public POIdescription getpoiDesc(byte t) {
 			return legend.getPOIDesc(t);
 		}
 		
-		public WayDescription getWayDesc(short t) {
+		public WayDescription getWayDesc(byte t) {
 			return legend.getWayDesc(t);
 		}
 		
@@ -1235,7 +1228,6 @@ public class Configuration {
 			confString += "  CellID source: " + cellSource + "\n";
 			confString += "  Use url tags: " + useUrlTags + "\n";
 			confString += "  Use phone tags: " + usePhoneTags + "\n";
-			confString += "  Use house numbers for serch: " + useHouseNumbers + "\n";
 			confString += "  Enable editing support: " + enableEditingSupport + "\n";
 			confString += "  Adding menu entries for languages: " + getUseLang() + " (" + getUseLangName() + ")" + "\n";
 			confString += "  Don't compress files ending with: " + getDontCompress() + "\n";
