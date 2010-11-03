@@ -11,6 +11,8 @@ package de.ueller.osmToGpsMid.model;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import de.ueller.osmToGpsMid.Configuration;
+
 /**
  * @author hmueller
  *
@@ -120,7 +122,7 @@ public class Relation extends Entity {
 					}
 
 				}
-				if (type.equalsIgnoreCase("associatedStreet") || type.equalsIgnoreCase("street")) {
+				if (Configuration.getConfiguration().useHouseNumbers && (type.equalsIgnoreCase("associatedStreet") || type.equalsIgnoreCase("street"))) {
 					int waycount = 0;
 					int nodecount = 0;
 					boolean ok = false;
