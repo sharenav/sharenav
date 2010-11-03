@@ -7,6 +7,8 @@
 	<color of="speed_text" is="00000000"/>
 	<color of="titleBar_background" is="00FFFFFF" isAtNight="00222222"/>
 	<color of="titleBar_text" is="00000000" isAtNight="00FFFFFF"/>
+	<color of="solution_background" is="00FFFFFF" isAtNight="00777777"/>
+	<color of="solution_text" is="00000000" isAtNight="00FFFFFF"/>
 	<color of="wayName_background" is="00FFFFFF" isAtNight="00222222"/>
 	<color of="wayName_text" is="00000000" isAtNight="00FFFFFF"/>
 	<color of="area_label_text" is="00000000" isAtNight="00FFFFFF"/>	
@@ -16,6 +18,7 @@
 	<color of="wayPoint_label_text" is="00000000" isAtNight="00FFFFFF"/>	
 	<color of="oneway_arrow" is="00323232" isAtNight="00323232"/>	
 	<color of="oneway_arrow_non_fitting" is="00505050" isAtNight="00505050"/>	
+	<color of="recording_background" is="00FFFFFF" isAtNight="00777777"/>
 	<color of="recording_suspended_text" is="000000FF" isAtNight="00FF0000"/>
 	<color of="recording_on_text" is="00FF0000"/>
 	<color of="cellid_log_on_text" is="00FFFF96"/>
