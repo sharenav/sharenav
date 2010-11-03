@@ -11,8 +11,8 @@
 <!ELEMENT tileScaleLevels (tileScaleLevel*)>
 <!ELEMENT key (value+)>
 <!ELEMENT keyW (Wvalue+)>
-<!ELEMENT value (specialisation*, description , image? , searchIcon? , namekey , namefallback? , AreaPOI?, scale , textscale? , imageCentered?, hideable?)>
-<!ELEMENT Wvalue (specialisation*, description, image? , searchIcon? , namekey, namefallback?, showName?, isArea, ignoreOsmAreaTag?, scale, textscale?, arrowscale?, descriptionscale?, lineColor, borderColor?, lineStyle?, wayWidth?, searchIcon?, routing*, force_to?, hideable?)>
+<!ELEMENT value (specialisation*, description , image? , searchIcon? , namekey , namefallback? , helpertag? , AreaPOI?, scale , textscale? , imageCentered?, hideable?)>
+<!ELEMENT Wvalue (specialisation*, description, image? , searchIcon? , namekey, namefallback?, helpertag?, showName?, isArea, ignoreOsmAreaTag?, scale, textscale?, arrowscale?, descriptionscale?, lineColor, borderColor?, lineStyle?, wayWidth?, searchIcon?, routing*, force_to?, hideable?)>
 <!ELEMENT damage EMPTY>
 <!ELEMENT routeAccessRestriction EMPTY>
 <!ELEMENT restrictionKey EMPTY>
@@ -22,6 +22,7 @@
 <!ELEMENT searchIcon EMPTY>
 <!ELEMENT namekey EMPTY>
 <!ELEMENT namefallback EMPTY>
+<!ELEMENT helpertag EMPTY>
 <!ELEMENT scale EMPTY>
 <!ELEMENT textscale EMPTY>
 <!ELEMENT arrowscale EMPTY>
@@ -57,6 +58,7 @@
 <!ATTLIST description desc CDATA #REQUIRED>
 <!ATTLIST namekey tag CDATA #REQUIRED>
 <!ATTLIST namefallback tag CDATA #REQUIRED>
+<!ATTLIST helpertag tag CDATA #REQUIRED>
 <!ATTLIST scale scale CDATA #REQUIRED>
 <!ATTLIST textscale scale CDATA #REQUIRED>
 <!ATTLIST arrowscale scale CDATA #REQUIRED>

@@ -207,6 +207,7 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 				relevantKeys.add(e.key);
 				relevantKeys.add(e.nameKey);
 				relevantKeys.add(e.nameFallbackKey);
+				relevantKeys.add(e.helperTag);
 				if (e.specialisation != null) {
 					for (ConditionTuple ct : e.specialisation) {
 						relevantKeys.add(ct.key);
@@ -217,6 +218,7 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 				relevantKeys.add(e.key);
 				relevantKeys.add(e.nameKey);
 				relevantKeys.add(e.nameFallbackKey);
+				relevantKeys.add(e.helperTag);
 				if (e.specialisation != null) {
 					for (ConditionTuple ct : e.specialisation) {
 						relevantKeys.add(ct.key);
@@ -376,6 +378,9 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 			}
 			if (qName.equals("namekey")) {
 				currentPoi.nameKey = atts.getValue("tag");
+			}
+			if (qName.equals("helpertag")) {
+				currentPoi.helperTag = atts.getValue("tag");
 			}
 			if (qName.equals("namefallback")) {
 				currentPoi.nameFallbackKey = atts.getValue("tag");

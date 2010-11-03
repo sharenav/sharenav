@@ -18,6 +18,7 @@ public class EntityDescription {
 	public byte		typeNum;
 	public String	nameKey;
 	public String	nameFallbackKey;
+	public String	helperTag;
 	public byte		rulePriority;
 	public String	searchIcon;
 	public int		minEntityScale;
