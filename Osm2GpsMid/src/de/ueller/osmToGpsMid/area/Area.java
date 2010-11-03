@@ -75,6 +75,7 @@ public class Area {
 		outlineList = outlineTempList;
 		// the same for the holes
 		outlineTempList = new ArrayList<Outline>();
+		//System.err.println("Starting to connect part ways");
 		while (holeList.size() > 0) {
 			outline = holeList.get(0);
 			if (!outline.isClosed()) {
@@ -85,6 +86,7 @@ public class Area {
 			}
 			holeList.remove(0);
 		}
+		//System.err.println("Finished connecting part ways");
 		holeList = outlineTempList;
 		
 		int dir = 0;
@@ -102,6 +104,7 @@ public class Area {
 
 			outline.calcNextPrev();
 			outlineList.remove(0);
+			//System.err.println("Starting to do the cutOneEar thing");
 			while (outline.vertexCount() > 2) {
 				loop++;
 				if (loop > 50000) {
@@ -112,10 +115,13 @@ public class Area {
 				ret.add(cutOneEar(outline, holeList, dir));
 				dir = (dir + 1) % 4;
 			}
+			//System.err.println("Finished doing the cutOneEar thing");
 		}
 //		System.out.println(ret);
 //		System.out.println("loops :" + loop);
+		//System.err.println("Starting to optimize");
 		optimize();
+		//System.err.println("Finished optimizing");
 		return ret;
 
 	}
@@ -175,9 +181,10 @@ public class Area {
 	}
 
 	private Triangle cutOneEar(Outline outline, ArrayList<Outline> holeList, int dir) {
-		List<Vertex> orderedOutline = outline.getOrdered(dir);
+		//List<Vertex> orderedOutline = outline.getOrdered(dir);
+		Vertex orderedOutlineMin = outline.getMin(dir);
 		while (true) {
-			Vertex n = orderedOutline.get(0);
+			Vertex n = orderedOutlineMin;
 			triangle = new Triangle(n, n.getNext(), n.getPrev());
 			edgeInside = findEdgeInside(outline, triangle,dir);
 			repaint();
@@ -213,7 +220,8 @@ public class Area {
 					}
 					// reinititalisize outline;
 					outline.calcNextPrev();
-					orderedOutline = outline.getOrdered(dir);
+					//orderedOutline = outline.getOrdered(dir);
+					orderedOutlineMin = outline.getMin(dir);
 				} else {
 					for (Outline p : holeList) {
 						if (edgeInside.partOf(p)) {
@@ -255,7 +263,8 @@ public class Area {
 							outline.append(edgeInside.clone());
 							holeList.remove(hole);
 							outline.calcNextPrev();
-							orderedOutline = outline.getOrdered(dir);
+							//orderedOutline = outline.getOrdered(dir);
+							orderedOutlineMin = outline.getMin(dir);
 							handled = true;
 							break; // we found the hole so break this for loop
 						}
@@ -305,8 +314,32 @@ public class Area {
 		if (ret.size() == 0) {
 			return null;
 		}
-		Collections.sort(ret, new DirectionComperator(dir));
-		return ret.get(0);
+		//System.err.println("Starting to sort in findEdgeInside()");
+//		switch (dir) {
+//		case 0:
+//			    Collections.sort(ret, new DirectionComperator0());
+//			    break;
+//		case 1:
+//			    Collections.sort(ret, new DirectionComperator1());
+//			    break;
+//		case 2:
+//			    Collections.sort(ret, new DirectionComperator2());
+//			    break;
+//		default:
+//			    Collections.sort(ret, new DirectionComperatorX());
+//			    break;
+//		}
+		//System.err.println("Starting to sort in findEdgeInside()");
+		switch (dir) {
+		case 0:
+			    return Collections.min(ret, new DirectionComperator0());
+		case 1:
+			    return Collections.min(ret, new DirectionComperator1());
+		case 2:
+			    return Collections.min(ret, new DirectionComperator2());
+		default:
+			    return Collections.min(ret, new DirectionComperatorX());
+		}
 	}
 	
 	public Bounds extendBounds(Bounds b) {

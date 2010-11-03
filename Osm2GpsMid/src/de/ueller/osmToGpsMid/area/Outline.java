@@ -162,18 +162,50 @@ public class Outline {
 		prev.setNext(first);
 	}
 	
+    //	@SuppressWarnings("unchecked")
+    //	public List<Vertex> getLonOrdered() {
+    //		ArrayList<Vertex> ordered = (ArrayList<Vertex>) vertexList.clone();
+    //		Collections.sort(ordered, new LonComperator());
+    //		return ordered;
+    //	}
 	@SuppressWarnings("unchecked")
-	public List<Vertex> getLonOrdered() {
+	public Vertex getLonMin() {
 		ArrayList<Vertex> ordered = (ArrayList<Vertex>) vertexList.clone();
-		Collections.sort(ordered, new LonComperator());
-		return ordered;
+		return Collections.min(ordered, new LonComperator());
 	}
-	@SuppressWarnings("unchecked")
-	public List<Vertex> getOrdered(int dir) {
-//		return getLonOrdered();
+    //	@SuppressWarnings("unchecked")
+    //	public List<Vertex> getOrdered(int dir) {
+    ////		return getLonOrdered();
+    //		ArrayList<Vertex> ordered = (ArrayList<Vertex>) vertexList.clone();
+    //		switch (dir) {
+    //		case 0:
+    //			    Collections.sort(ordered, new DirectionComperator0());
+    //			    break;
+    //		case 1:
+    //			    Collections.sort(ordered, new DirectionComperator1());
+    //			    break;
+    //		case 2:
+    //			    Collections.sort(ordered, new DirectionComperator2());
+    //			    break;
+    //		default:
+    //			    Collections.sort(ordered, new DirectionComperatorX());
+    //			    break;
+    //		}
+    //		return ordered;
+    //	}
+    //	
+	public Vertex getMin(int dir) {
 		ArrayList<Vertex> ordered = (ArrayList<Vertex>) vertexList.clone();
-		Collections.sort(ordered, new DirectionComperator(dir));
-		return ordered;
+		switch (dir) {
+		case 0:
+			    return Collections.min(ordered, new DirectionComperator0());
+		case 1:
+			    return Collections.min(ordered, new DirectionComperator1());
+		case 2:
+			    return Collections.min(ordered, new DirectionComperator2());
+		default:
+			    return Collections.min(ordered, new DirectionComperatorX());
+		}
 	}
 	
 //	public Vertex findVertexInside(Triangle triangle) {
@@ -237,7 +269,7 @@ public class Outline {
 	 */
 	public boolean isClockWise3() {
 		calcNextPrev();
-		Vertex v = getLonOrdered().get(0);
+		Vertex v = getLonMin();
 		Vertex vp = v.getPrev();
 		Vertex vn = v.getNext();
 		if (((v.getX()-vp.getX())*(vn.getY()-v.getY())-(v.getY()-vp.getY())*(vn.getX()-v.getX())) <0  ) {
