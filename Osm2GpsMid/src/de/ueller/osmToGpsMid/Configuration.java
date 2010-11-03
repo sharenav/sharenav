@@ -307,6 +307,9 @@ public class Configuration {
 		public boolean useUrlTags=false;
 		public boolean usePhoneTags=false;
 
+		/** Use or don't use house numbers for searches */
+		public boolean useHouseNumbers=false;
+
 		/** TODO: Explain this, what is behind the "dict depth"? */
 		private int maxDictDepth = 5;
 		
@@ -518,6 +521,7 @@ public class Configuration {
 			setRouting(getString("useRouting"));
 			useUrlTags = getString("useUrlTags").equalsIgnoreCase("true");
 			usePhoneTags = getString("usePhoneTags").equalsIgnoreCase("true");
+			useHouseNumbers = getString("useHouseNumbers").equalsIgnoreCase("true");
 			maxRouteTileSize = Integer.parseInt(getString("routing.maxTileSize"));
 
 			setIcons(getString("useIcons"));
@@ -1228,6 +1232,7 @@ public class Configuration {
 			confString += "  CellID source: " + cellSource + "\n";
 			confString += "  Use url tags: " + useUrlTags + "\n";
 			confString += "  Use phone tags: " + usePhoneTags + "\n";
+			confString += "  Use house numbers for search: " + useHouseNumbers + "\n";
 			confString += "  Enable editing support: " + enableEditingSupport + "\n";
 			confString += "  Adding menu entries for languages: " + getUseLang() + " (" + getUseLangName() + ")" + "\n";
 			confString += "  Don't compress files ending with: " + getDontCompress() + "\n";
