@@ -207,11 +207,17 @@
 				-->
 				<!-- add the localization element for created localized
 				     versions of your application: -->
-				<localization
-					dynamic="true"
-					defaultLocale="en"
-					locales="de, en, fi, fr, pl, ru, sk, es, cs"
-				/>
+                <localization dynamic="true" defaultLocale="en">
+                    <locale name="cs" encoding="UTF-8" />
+                    <locale name="de" encoding="UTF-8" />
+                    <locale name="en" encoding="UTF-8" />
+                    <locale name="es" encoding="UTF-8" />
+                    <locale name="fi" encoding="UTF-8" />
+                    <locale name="fr" encoding="UTF-8" />
+                    <locale name="pl" encoding="UTF-8" />
+                    <locale name="ru" encoding="UTF-8" />
+                    <locale name="sk" encoding="UTF-8" />
+                </localization>
 			</resources>
 			
 			<!-- obfuscator settings: do not obfuscate when the test-property is true -->
