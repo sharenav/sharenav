@@ -158,7 +158,7 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 				mExporting = false;
 				mImporting = false;
 				mProgress.showProgressDisplay(Locale.get("guiwaypoint.DeletingWayPoints")/*Deleting way points*/);
-				mProgress.addProgressText(Locale.get("guiwaypoint.Deleting")/*Deleting*/ +  " " + idsToDelete.size() + " " + Locale.get("guiwaypoint.way points")/*way point(s)*/ + ".\n");
+				mProgress.addProgressText(Locale.get("guiwaypoint.Deleting")/*Deleting*/ +  " " + idsToDelete.size() + " " + Locale.get("guiwaypoint.WayPoint")/*way point(s)*/ + ".\n");
 				mParent.gpx.deleteWayPts(idsToDelete, this);
 			}
 			return;

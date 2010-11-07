@@ -132,7 +132,7 @@ public class OSMdataNode extends OSMdataEntity implements XmlParserContentHandle
 		String res;
 		res = "\n " + Locale.get("osmdatanode.OSMnode")/*OSM node*/ + " " + osmID + "\n";
 		res += "     " + Locale.get("osmdatanode.LastEditedBy")/*last edited by*/ + editBy + Locale.get("osmdatanode.at")/* at */ + editTime + "\n";
-		res += "     " + Locale.get("osmdatanode.version")/*version*/ + " " + version + " " + Locale.get("osmdatanode.in changeset")/*in changeset*/ + " " + changesetID + "\n";
+		res += "     " + Locale.get("osmdatanode.version")/*version*/ + " " + version + " " + Locale.get("osmdatanode.inChangeset")/*in changeset*/ + " " + changesetID + "\n";
 		res += " " + Locale.get("osmdatanode.Tags")/*Tags*/ + ":\n";
 		Enumeration enKey = tags.keys();
 		while (enKey.hasMoreElements()) {

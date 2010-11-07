@@ -496,7 +496,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		menuDisplayOptions.append(touchScreenLayoutGroup);
 
 		String [] rotation = ProjFactory.name;
-		rotationGroup = new ChoiceGroup(Locale.get("guidiscover.Map Projection")/*Map Projection*/, Choice.EXCLUSIVE, rotation, null);
+		rotationGroup = new ChoiceGroup(Locale.get("guidiscover.MapProjection")/*Map Projection*/, Choice.EXCLUSIVE, rotation, null);
 		menuDisplayOptions.append(rotationGroup);
 
 		String [] direction = new String[2];

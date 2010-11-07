@@ -967,7 +967,7 @@ public class Routing implements Runnable {
 		} catch (Exception e) {
 			// cleanup the route tiles also when an exception occurred
 			tile.cleanup(-1);
-			parent.receiveMessage(Locale.get("routing.Routing Ex")/*Routing Ex*/ + " " + e.getMessage());
+			parent.receiveMessage(Locale.get("routing.RoutingEx")/*Routing Ex*/ + " " + e.getMessage());
 			//#debug error
 			e.printStackTrace();
 			return null;
