@@ -159,6 +159,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 	 */
 	private int pointerXPressed;
 	private int pointerYPressed;
+	private int clickIdxAtSlideStart;
 	
 	private KeySelectMenu poiTypeForm;
 
@@ -827,6 +828,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			GuiNameEnter gne = new GuiNameEnter(this, null, Locale.get("guisearch.SearchForNamesStarting")/*Search for names starting with:*/, searchCanon.toString(), 20);
 			gne.show();
 		}
+		clickIdxAtSlideStart = clickIdx;
 	}
 	
 	public void pointerReleased(int x, int y) {
@@ -851,7 +853,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				// Route Slide: sliding right at least the fontHeight
 				} else if (xDist > fontSize ) {
 					logger.debug("Route slide");
-					cursor = clickIdx;
+					cursor = clickIdxAtSlideStart;
 					repaint();
 					commandAction( ROUTE1_CMD, (Displayable) null);					
 				// Search field slide: sliding left at least the fontHeight
@@ -862,7 +864,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				// Select entry slide: sliding left at least the fontHeight
 				} else if (xDist < -fontSize ) {
 					logger.debug("Select entry slide");
-					cursor = clickIdx;					
+					cursor = clickIdxAtSlideStart;					
 					repaint();
 				}
 			}
