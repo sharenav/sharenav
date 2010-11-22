@@ -36,16 +36,27 @@ public class NumberCanon {
 			char [] buf = new char[1024];
 			int readChars = isr.read(buf);
 			int idx = 0;
+			int line = 1;
+			int column = 0;
 			char canon = '1';
 			int charType = canonType;
 			while (readChars > 0) {
 				for (int i = 0; i < readChars; i++) {
 					char c = buf[idx++];
+					column++;
 					switch (charType) {
 					case canonType: {
-						if ((c == '\n') || (c == '\r'))
+						if ((c == '\n') || (c == '\r')) {
+							column = 0;
+							line++;
 							break;
-						if (c != '\t') {
+						}
+						if (c == '\t') {
+							// increase the column at a tab char assuming a tab position is at every 4th column
+							while ( (column % 4) != 0 ) {
+								column++;
+							}
+						} else {
 							charType = normType;
 						}
 						Integer.parseInt(new StringBuffer().append(c).toString());
@@ -53,13 +64,32 @@ public class NumberCanon {
 						break;
 					}
 					case normType: {
+						if (c == '\t') {
+							// increase the column at a tab char assuming a tab position is at every 4th column
+							while ( (column % 4) != 0 ) {
+								column++;
+							}
+							break;
+						}
 						if ((c == '\n') || (c == '\r')) {
 							charType = canonType;
+							column = 0;
+							line++;
 							break;
 						}
 						if ((c >= minFastRange) && (c < maxFastRange)) {
+							/* check for duplicate in core map */
+							if (charMapCore[c - minFastRange] != defaultChar) {
+								System.out.println("! charmap.txt: " + c + " mapped to " + charMapCore[c - minFastRange] + " and would be mapped to " + canon + " at line " + line + " col " + column);								
+							}
 							charMapCore[c - minFastRange] = canon;
 						} else {
+							/* check for duplicate in extended map */
+							for (int j = 0; j < charMapExtendedKey.length; j++) {
+								if (charMapExtendedKey[j] == c) {
+									System.out.println("! charmap.txt: " + c + " mapped to " + charMapExtendedValue[j] + " and would be mapped to " + canon + " at line " + line + " col " + column);								
+								}
+							}							
 							char [] tmp = new char[charMapExtendedKey.length + 1];
 							System.arraycopy(charMapExtendedKey, 0, tmp, 0, charMapExtendedKey.length);
 							charMapExtendedKey = tmp;
@@ -94,7 +124,7 @@ public class NumberCanon {
 						changed = true;
 					}
 				}
-			}		
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -155,34 +185,34 @@ public class NumberCanon {
 			return ('0');
 		case 'a':
 		case 'A':
-		case 'ä':
-		case 'Ä':
+		case 'Ã¤':
+		case 'Ã„':
 		case 'b':
 		case 'B':
 		case 'c':
 		case 'C':
 		case '2':
-		case 'Á':
-		case 'á':
-		case 'Ą':
-		case 'ą':
-		case 'Č':
-		case 'č':		
-		case 'À':
-		case 'à':
-		case 'Â':
-		case 'â':
-		case 'Ç':
-		case 'ç':
+		case 'Ã�':
+		case 'Ã¡':
+		case 'Ä„':
+		case 'Ä…':
+		case 'ÄŒ':
+		case 'Ä�':		
+		case 'Ã€':
+		case 'Ã ':
+		case 'Ã‚':
+		case 'Ã¢':
+		case 'Ã‡':
+		case 'Ã§':
 // Greek
-		case 'Α':
-		case 'Ά':
-		case 'α':
-		case 'ά':
-		case 'Β':
-		case 'β':
-		case 'Γ':
-		case 'γ':
+		case 'Î‘':
+		case 'Î†':
+		case 'Î±':
+		case 'Î¬':
+		case 'Î’':
+		case 'Î²':
+		case 'Î“':
+		case 'Î³':
 			return ('2');
 		case 'd':
 		case 'D':
@@ -191,28 +221,28 @@ public class NumberCanon {
 		case 'f':
 		case 'F':
 		case '3':
-		case 'È':
-		case 'è':
-		case 'É':
-		case 'é':
-		case 'Ê':
-		case 'ê':
-		case 'Ë':
-		case 'ë':
-		case 'Ę':
-		case 'ę':
-		case 'Ě':
-		case 'ě':
-		case 'ď':
+		case 'Ãˆ':
+		case 'Ã¨':
+		case 'Ã‰':
+		case 'Ã©':
+		case 'ÃŠ':
+		case 'Ãª':
+		case 'Ã‹':
+		case 'Ã«':
+		case 'Ä˜':
+		case 'Ä™':
+		case 'Äš':
+		case 'Ä›':
+		case 'Ä�':
 // Greek
-		case 'Δ':
-		case 'δ':
-		case 'Ε':
-		case 'Έ':
-		case 'ε':
-		case 'έ':
-		case 'Ζ':
-		case 'ζ':
+		case 'Î”':
+		case 'Î´':
+		case 'Î•':
+		case 'Îˆ':
+		case 'Îµ':
+		case 'Î­':
+		case 'Î–':
+		case 'Î¶':
 			return ('3');
 		case 'g':
 		case 'G':
@@ -221,29 +251,29 @@ public class NumberCanon {
 		case 'i':
 		case 'I':
 		case '4':
-		case 'Î':
-		case 'î':
-		case 'Ï':
-		case 'ï':
-		case 'Í':
-		case 'í':
-		case 'Ì':
-		case 'ì':
-		case 'İ':
-		case 'ı':
-		case 'ί':
+		case 'ÃŽ':
+		case 'Ã®':
+		case 'Ã�':
+		case 'Ã¯':
+		case 'Ã�':
+		case 'Ã­':
+		case 'ÃŒ':
+		case 'Ã¬':
+		case 'Ä°':
+		case 'Ä±':
+		case 'Î¯':
 // Greek
-		case 'Η':
-		case 'Ή':
-		case 'η':
-		case 'ή':
-		case 'Θ':
-		case 'θ':
-		case 'Ι':
-		case 'Ϊ':
-		case 'ι':
-		case 'ΐ':
-		case 'ϊ':
+		case 'Î—':
+		case 'Î‰':
+		case 'Î·':
+		case 'Î®':
+		case 'Î˜':
+		case 'Î¸':
+		case 'Î™':
+		case 'Îª':
+		case 'Î¹':
+		case 'Î�':
+		case 'ÏŠ':
 			return ('4');
 		case 'j':
 		case 'J':
@@ -252,17 +282,17 @@ public class NumberCanon {
 		case 'l':
 		case 'L':
 		case '5':
-		case 'Ĺ':
-		case 'ĺ':
-		case 'Ł':
-		case 'ł':
+		case 'Ä¹':
+		case 'Äº':
+		case 'Å�':
+		case 'Å‚':
 // Greek
-		case 'Κ':
-		case 'κ':
-		case 'Λ':
-		case 'λ':
-		case 'μ':
-		case 'Μ':
+		case 'Îš':
+		case 'Îº':
+		case 'Î›':
+		case 'Î»':
+		case 'Î¼':
+		case 'Îœ':
 			return ('5');
 		case 'm':
 		case 'M':
@@ -270,32 +300,32 @@ public class NumberCanon {
 		case 'N':
 		case 'o':
 		case 'O':
-		case 'ö':
-		case 'Ö':
+		case 'Ã¶':
+		case 'Ã–':
 		case '6':
-		case 'Ó':
-		case 'ó':
-		case 'Ô':
-		case 'ô':
-		case 'Ň':
-		case 'ň':
-		case 'Ò':
-		case 'ò':
-		case 'Ń':
-		case 'ń':
-		case 'Ñ':
-		case 'ñ':
-		case 'Œ':
-		case 'œ':
+		case 'Ã“':
+		case 'Ã³':
+		case 'Ã”':
+		case 'Ã´':
+		case 'Å‡':
+		case 'Åˆ':
+		case 'Ã’':
+		case 'Ã²':
+		case 'Åƒ':
+		case 'Å„':
+		case 'Ã‘':
+		case 'Ã±':
+		case 'Å’':
+		case 'Å“':
 // Greek
-		case 'Ν':
-		case 'ν':
-		case 'Ξ':
-		case 'ξ':
-		case 'Ο':
-		case 'Ό':
-		case 'ο':
-		case 'ό':
+		case 'Î�':
+		case 'Î½':
+		case 'Îž':
+		case 'Î¾':
+		case 'ÎŸ':
+		case 'ÎŒ':
+		case 'Î¿':
+		case 'ÏŒ':
 			return ('6');
 		case 'p':
 		case 'P':
@@ -305,65 +335,65 @@ public class NumberCanon {
 		case 'R':
 		case 's':
 		case 'S':
-		case 'ß':
+		case 'ÃŸ':
 		case '7':
-		case 'Ŕ':
-		case 'ŕ':
-		case 'Ř':
-		case 'ř':
-		case 'Š':
-		case 'š':
-		case 'Ś':
-		case 'ś':
-		case 'Ș':
-		case 'ș':
-		case 'Ş':
-		case 'ş':
+		case 'Å”':
+		case 'Å•':
+		case 'Å˜':
+		case 'Å™':
+		case 'Å ':
+		case 'Å¡':
+		case 'Åš':
+		case 'Å›':
+		case 'È˜':
+		case 'È™':
+		case 'Åž':
+		case 'ÅŸ':
 // Greek
-		case 'Π':
-		case 'π':
-		case 'Ρ':
-		case 'ρ':
-		case 'Σ':
-		case 'σ':
-		case 'ς':
+		case 'Î ':
+		case 'Ï€':
+		case 'Î¡':
+		case 'Ï�':
+		case 'Î£':
+		case 'Ïƒ':
+		case 'Ï‚':
 			return ('7');
 		case 't':
 		case 'T':
 		case 'u':
 		case 'U':
-		case 'ü':
-		case 'Ü':
+		case 'Ã¼':
+		case 'Ãœ':
 		case 'v':
 		case 'V':
 		case '8':
-		case 'Ú':
-		case 'ú':
-		case 'Ů':
-		case 'ů':
-		case 'Ù':
-		case 'ù':
-		case 'Ț':
-		case 'ț':
-		case 'Ţ':
-		case 'ţ':
-		case 'Û':
-		case 'û':
+		case 'Ãš':
+		case 'Ãº':
+		case 'Å®':
+		case 'Å¯':
+		case 'Ã™':
+		case 'Ã¹':
+		case 'Èš':
+		case 'È›':
+		case 'Å¢':
+		case 'Å£':
+		case 'Ã›':
+		case 'Ã»':
 // Greek
-		case 'Τ':
-		case 'τ':
-		case 'Υ':
-		case 'Ύ':
-		case 'Ϋ':
-		case 'ϒ':
-		case 'ϓ':
-		case 'ϔ':
-		case 'υ':
-		case 'ΰ':
-		case 'ϋ':
-		case 'ύ':
-		case 'Φ':
-		case 'φ':
+		case 'Î¤':
+		case 'Ï„':
+		case 'Î¥':
+		case 'ÎŽ':
+		case 'Î«':
+		case 'Ï’':
+		case 'Ï“':
+		case 'Ï”':
+		case 'Ï…':
+		case 'Î°':
+		case 'Ï‹':
+		case 'Ï�':
+		case 'Î¦':
+		case 'Ï†':
 			return ('8');
 		case 'w':
 		case 'W':
@@ -374,25 +404,25 @@ public class NumberCanon {
 		case 'z':
 		case 'Z':
 		case '9':
-		case 'Ÿ':
-		case 'ÿ':
-		case 'Ý':
-		case 'ý':
-		case 'Ź':
-		case 'ź':
-		case 'Ż':
-		case 'ż':
-		case 'Ž':
-		case 'ž':
+		case 'Å¸':
+		case 'Ã¿':
+		case 'Ã�':
+		case 'Ã½':
+		case 'Å¹':
+		case 'Åº':
+		case 'Å»':
+		case 'Å¼':
+		case 'Å½':
+		case 'Å¾':
 // Greek
-		case 'Χ':
-		case 'χ':
-		case 'Ψ':
-		case 'ψ':
-		case 'Ω':
-		case 'Ώ':
-		case 'ω':			
-		case 'ώ':			
+		case 'Î§':
+		case 'Ï‡':
+		case 'Î¨':
+		case 'Ïˆ':
+		case 'Î©':
+		case 'Î�':
+		case 'Ï‰':			
+		case 'ÏŽ':			
 			return ('9');
 		case '\0':
 			return ('\0');
