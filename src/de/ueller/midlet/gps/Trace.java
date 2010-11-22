@@ -187,7 +187,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	/** Flag if the gps position is not yet valid after recenter request
 	 */
 	public volatile boolean gpsRecenterInvalid = true;
-	/** Flag if the gps position is stale after recenter request
+	/** Flag if the gps position is stale (last known position instead of current) after recenter request
 	 */
 	public volatile boolean gpsRecenterStale = true;
 	/** Flag if the map is autoZoomed
@@ -2439,6 +2439,21 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			gpsRecenter = true;
 			//autoZoomed = true;
 		}
+		if (Configuration.getLocationProvider() == Configuration.LOCATIONPROVIDER_JSR179) {
+			if (pos.type == Position.TYPE_GPS_LASTKNOWN) {
+				// if we have a current cell id fix from cellid location,
+				// don't overwrite it with a stale GPS location, but ignore the position
+				// FIXME perhaps compare timestamps here in case the last known gps is later
+				if (this.pos.type == Position.TYPE_CELLID) {
+					return;
+				}
+				gpsRecenterInvalid = false;
+				gpsRecenterStale = true;
+			} else if (pos.type == Position.TYPE_GPS || pos.type == Position.TYPE_CELLID || pos.type == Position.TYPE_MANUAL) {
+				gpsRecenterInvalid = false;
+				gpsRecenterStale = false;
+			}
+		}
 		if (gpsRecenter) {
 			center.setLatLonDeg(pos.latitude, pos.longitude);
 			speed = (int) (pos.speed * 3.6f);
@@ -2457,25 +2472,16 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				}
 			}
 		}
-		// first call here a) after enabling gpsrecenter or b) after JSR179 location producer
-		// init is the last known location, next calls are valid current locations.
-		if (gpsRecenter && gpsRecenterInvalid) {
-			gpsRecenterInvalid = false;
-		} else {
-			if (gpx.isRecordingTrk()) {
-				try {
-					if (Configuration.getLocationProvider() == Configuration.LOCATIONPROVIDER_JSR179
-					    && pos.type == Position.TYPE_CELLID) {
-						// don't log cellid if user requested a single cellid location
-					} else {
-						gpx.addTrkPt(pos);
-					}
-				} catch (Exception e) {
-					receiveMessage(e.getMessage());
+		if (gpx.isRecordingTrk()) {
+			try {
+				// don't tracklog manual cellid position or gps start/stop last known position
+				if ((Configuration.getLocationProvider() == Configuration.LOCATIONPROVIDER_JSR179
+				     && pos.type == Position.TYPE_CELLID) || pos.type == Position.TYPE_GPS_LASTKNOWN) {
+				} else {
+					gpx.addTrkPt(pos);
 				}
-			}
-			if (gpsRecenter && gpsRecenterStale) {
-				gpsRecenterStale = false;
+			} catch (Exception e) {
+				receiveMessage(e.getMessage());
 			}
 		}
 		altitude = (int) (pos.altitude);
