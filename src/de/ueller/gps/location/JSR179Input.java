@@ -147,6 +147,10 @@ public class JSR179Input
 	}
 
 	public void locationUpdated(LocationProvider provider, Location location) {
+		locationUpdated(provider, location, false);
+	}
+
+	public void locationUpdated(LocationProvider provider, Location location, boolean lastKnown) {
 		//#debug info
 		logger.info("updateLocation: " + location);
 		if (location == null) {
@@ -219,6 +223,11 @@ public class JSR179Input
 			pos.course = location.getCourse();
 			pos.speed = location.getSpeed();
 			pos.timeMillis = location.getTimestamp();
+			if (lastKnown) {
+				pos.type = Position.TYPE_GPS_LASTKNOWN;
+			} else {
+				pos.type = Position.TYPE_GPS;
+			}
 			receiverList.receivePosition(pos);
 		} else {
 			if (receiverList != null) {
@@ -269,7 +278,7 @@ public class JSR179Input
 			//FIXME make a proper interface for passing fix age information instead of accessing trace variable directly
 			tr.gpsRecenterInvalid = true;
 			tr.gpsRecenterStale = true;
-			locationUpdated(locationProvider, LocationProvider.getLastKnownLocation());
+			locationUpdated(locationProvider, LocationProvider.getLastKnownLocation(), true);
 		}
 		if (state == LocationProvider.AVAILABLE) {
 			if (receiverList != null) {
@@ -312,7 +321,7 @@ public class JSR179Input
 		//FIXME make a proper interface for passing fix age information instead of accessing trace variable directly
 		tr.gpsRecenterInvalid = true;
 		tr.gpsRecenterStale = true;
-		locationUpdated(locationProvider, LocationProvider.getLastKnownLocation());
+		locationUpdated(locationProvider, LocationProvider.getLastKnownLocation(), true);
 	}
 
 	public void disableRawLogging() {

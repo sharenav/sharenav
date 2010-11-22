@@ -1492,7 +1492,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				Position setpos = new Position(center.radlat / MoreMath.FAC_DECTORAD,
     								center.radlon / MoreMath.FAC_DECTORAD,
 								    PositionMark.INVALID_ELEVATION, 0.0f, 0.0f, 1,
-								    System.currentTimeMillis());
+							            System.currentTimeMillis(), Position.TYPE_MANUAL);
 				// implies center to gps, to give feedback as the gps rectangle
 				gpsRecenter = true;
 				// gpsRecenterInvalid = true;

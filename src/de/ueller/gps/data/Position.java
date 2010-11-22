@@ -18,6 +18,14 @@ package de.ueller.gps.data;
 
 /** TODO: Explain difference between Position and PositionMark */
 public class Position {
+	/** types of position */
+	public static final byte TYPE_GPS = 0;
+	public static final byte TYPE_GPS_LASTKNOWN = 1;
+	public static final byte TYPE_CELLID = 2;
+	public static final byte TYPE_MANUAL = 3;
+	public static final byte TYPE_SAVED = 4;
+	public static final byte TYPE_UNKNOWN = 120;
+
 	/** Latitude in degrees, Western values are negative */
 	public float latitude;
 	/** Longitude in degrees, Southern values are negative */
@@ -40,6 +48,8 @@ public class Position {
 	public float pdop = 0.0f;
 	/** currentTimeMillis() of this position. */
 	public long timeMillis;
+	/** type of this position. */
+	public byte type;
 
 	public Position(Position pos) {
 		this.latitude = pos.latitude;
@@ -48,6 +58,7 @@ public class Position {
 		this.speed = pos.speed;
 		this.course = pos.course;
 		this.timeMillis = pos.timeMillis;
+		this.type = pos.type;
 	}
 
 	public Position(float latitude, float longitude, float altitude,
@@ -58,6 +69,18 @@ public class Position {
 		this.speed = speed;
 		this.course = course;
 		this.timeMillis = timeMillis;
+		this.type = TYPE_UNKNOWN;
+	}
+
+	public Position(float latitude, float longitude, float altitude,
+			float speed, float course, int mode, long timeMillis, byte type) {
+		this.latitude = latitude;
+		this.longitude = longitude;
+		this.altitude = altitude;
+		this.speed = speed;
+		this.course = course;
+		this.timeMillis = timeMillis;
+		this.type = type;
 	}
 
 	public String toString() {
@@ -66,6 +89,7 @@ public class Position {
 		sb.append("height: ").append(altitude).append("m   ");
 		sb.append("Speed: ").append((speed * 3.6f)).append("km/h  ");
 		sb.append("Course: ").append(course);
+		sb.append("type: ").append(type);
 		return sb.toString();
 	}
 }
