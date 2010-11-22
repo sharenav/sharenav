@@ -2440,22 +2440,6 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			//autoZoomed = true;
 		}
 		if (gpsRecenter) {
-			// first call here a) after enabling gpsrecenter or b) after JSR179 location producer
-			// init is the last known location, next calls are valid current locations.
-			if (gpsRecenterInvalid) {
-				gpsRecenterInvalid = false;
-			} else {
-				if (gpx.isRecordingTrk()) {
-					try {
-						gpx.addTrkPt(pos);
-					} catch (Exception e) {
-						receiveMessage(e.getMessage());
-					}
-				}
-				if (gpsRecenterStale) {
-					gpsRecenterStale = false;
-				}
-			}
 			center.setLatLonDeg(pos.latitude, pos.longitude);
 			speed = (int) (pos.speed * 3.6f);
 			if (speed > 2 && pos.course != Float.NaN) {
@@ -2471,6 +2455,22 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				while (course > 360) {
 					course -= 360;
 				}
+			}
+		}
+		// first call here a) after enabling gpsrecenter or b) after JSR179 location producer
+		// init is the last known location, next calls are valid current locations.
+		if (gpsRecenter && gpsRecenterInvalid) {
+			gpsRecenterInvalid = false;
+		} else {
+			if (gpx.isRecordingTrk()) {
+				try {
+					gpx.addTrkPt(pos);
+				} catch (Exception e) {
+					receiveMessage(e.getMessage());
+				}
+			}
+			if (gpsRecenter && gpsRecenterStale) {
+				gpsRecenterStale = false;
 			}
 		}
 		altitude = (int) (pos.altitude);
