@@ -2464,7 +2464,12 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		} else {
 			if (gpx.isRecordingTrk()) {
 				try {
-					gpx.addTrkPt(pos);
+					if (Configuration.getLocationProvider() == Configuration.LOCATIONPROVIDER_JSR179
+					    && pos.type == Position.TYPE_CELLID) {
+						// don't log cellid if user requested a single cellid location
+					} else {
+						gpx.addTrkPt(pos);
+					}
 				} catch (Exception e) {
 					receiveMessage(e.getMessage());
 				}
