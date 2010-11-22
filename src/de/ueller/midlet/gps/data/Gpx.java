@@ -520,6 +520,8 @@ public class Gpx extends Tile implements Runnable, InputListener {
 				mTrkRecorded++;
 				// Add point to the recording track's tile
 				trackTile.addTrkPt(trkpt.latitude, trkpt.longitude, false);
+				// we need to redraw
+				Trace.getInstance().newDataReady();
 				// Update odometer data (max speed, distance travelled etc etc)
 				if ((oldlat != 0.0f) || (oldlon != 0.0f)) {
 					trkOdo += distance;
