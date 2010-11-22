@@ -43,6 +43,7 @@ public class CellIdProvider {
 	private static final int CELLMETHOD_SOCKET = 4;
 	private static final int CELLMETHOD_DEBUG = 5;
 	private static final int CELLMETHOD_ANDROID = 6;
+	private static final int CELLMETHOD_SAMSUNG = 7;
 	
 	private static CellIdProvider singelton;
 	
@@ -95,7 +96,7 @@ public class CellIdProvider {
 		try {
 			//#debug info
 			logger.info("Trying to see if Motorola method is available");
-			GSMCell cell = obtainMotoCell();
+			GSMCell cell = obtainMotoOrSamsungCell(false);
 			if (cell != null) {
 				logger.error(Locale.get("cellidprovider.MotorolaCellIDPleseCheck")/*Motorola CellID is experimental and may be wrong. Please check data before uploading*/);
 				cellRetrievelMethod = CELLMETHOD_MOTO;
@@ -108,6 +109,24 @@ public class CellIdProvider {
 			}
 		} catch (Exception e) {
 			logger.silentexception("Retrieving CellID as a Motorola failed", e);
+			//Nothing to do here, just fall through to the next method
+		}
+		try {
+			//#debug info
+			logger.info("Trying to see if Samsung method is available");
+			GSMCell cell = obtainMotoOrSamsungCell(true);
+			if (cell != null) {
+				logger.error(Locale.get("cellidprovider.MotorolaCellIDPleseCheck")/*Motorola CellID is experimental and may be wrong. Please check data before uploading*/);
+				cellRetrievelMethod = CELLMETHOD_SAMSUNG;
+				//#debug info
+				logger.info("   Yes, the Samsung method works");
+				return;
+			} else {
+				//#debug info
+				logger.info("   No, need to use a different method");
+			}
+		} catch (Exception e) {
+			logger.silentexception("Retrieving CellID as a Samsung failed", e);
 			//Nothing to do here, just fall through to the next method
 		}
 		try {
@@ -272,15 +291,20 @@ public class CellIdProvider {
 		return cell;
 	}
 	
-	private GSMCell obtainMotoCell() {
+	private GSMCell obtainMotoOrSamsungCell(boolean samsung) {
 		String cellidS = null;
 		String mccS = null;
 		String mncS = null;
 		String lacS = null;
 		String imsi = null;
 		GSMCell cell = new GSMCell();
-		cellidS = System.getProperty("CellID");
-		lacS = System.getProperty("LocAreaCode");
+		if (samsung) {
+			cellidS = System.getProperty("CELLID");
+			lacS = System.getProperty("LAC");
+		} else {
+			cellidS = System.getProperty("CellID");
+			lacS = System.getProperty("LocAreaCode");
+		}
 		
 		/*
 		 * This method of getting MNC and MCC seems
@@ -447,7 +471,10 @@ public class CellIdProvider {
 		}
 		//#endif
 		if (cellRetrievelMethod == CELLMETHOD_MOTO) {
-			cachedCell =  obtainMotoCell();
+			cachedCell =  obtainMotoOrSamsungCell(false);
+		}
+		if (cellRetrievelMethod == CELLMETHOD_SAMSUNG) {
+			cachedCell =  obtainMotoOrSamsungCell(true);
 		}
 		if (cellRetrievelMethod == CELLMETHOD_S60FP2) {
 			cachedCell = obtainS60FP2Cell();
