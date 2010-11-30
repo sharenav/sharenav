@@ -330,6 +330,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	 * Current course from GPS in compass degrees, 0..359.
 	 */
 	private int course = 0;
+	private int coursegps = 0;
 
 	public boolean atDest = false;
 	public boolean movedAwayFromDest = true;
@@ -2459,14 +2460,15 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			speed = (int) (pos.speed * 3.6f);
 			if (speed > 2 && pos.course != Float.NaN) {
 				/*  don't rotate too fast
-				 *  FIXME: the following line to not rotate too fast
-				 * 	is commented out because it causes the map to perform
-				 *  almost a 360 degree rotation when course and pos.course
-				 *  are on different sides of North, e.g. at 359 and 1 degrees
 				 */
-				// course = (int) ((pos.course * 3 + course) / 4)+360;
-				// use pos.course directly without rotation slow-down
-				course = (int) pos.course;
+				coursegps = (int) pos.course;
+				if ((coursegps - course)> 180)
+					course = course + 360;
+                                                              
+				if ((course-coursegps)> 180)
+					coursegps = coursegps + 360;
+                                                 
+				course = (int) course + (int)((pos.course - course)*1)/4 + 360;
 				while (course > 360) {
 					course -= 360;
 				}
