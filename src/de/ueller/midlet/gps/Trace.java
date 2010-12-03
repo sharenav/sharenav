@@ -2468,7 +2468,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				if ((course-coursegps)> 180)
 					coursegps = coursegps + 360;
                                                  
-				course = (int) course + (int)((pos.course - course)*1)/4 + 360;
+				course = (int) course + (int)((coursegps - course)*1)/4 + 360;
 				while (course > 360) {
 					course -= 360;
 				}
