@@ -65,6 +65,6 @@ zip -q ../"$midtarget" -u META-INF/MANIFEST.MF
 if [ "$android" ]
 then
 
-  ../tools/bundlemap-sign-android.sh "$midtarget"
+  ../tools/bundlemap-sign-android.sh "`basename $midtarget`"
 
 fi
