@@ -1691,7 +1691,7 @@ public class Configuration {
 	}
 	
 	public static void initCompassDirections() {
-		String compass = "N,NNE,NE,ENE,E,ESE,SE,SSE,S,SSW,SW,WSW,W,WNW,NW,NNW";
+		String compass = Locale.get("configuration.compass")/*N,NNE,NE,ENE,E,ESE,SE,SSE,S,SSW,SW,WSW,W,WNW,NW,NNW*/;
 		compass += "," + compass.substring(0, compass.indexOf(","));
 		//#debug debug
 		logger.debug("compass dirs: " + compass);

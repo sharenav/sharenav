@@ -1141,3 +1141,4 @@ urls.at= at
 urls.UrlsThreadCrashed=Urls thread crashed unexpectedly with error 
 way.ErrorWhileVerify=Error while verify 
 trace.ManualLoc=Manual
+configuration.compass=N,NNE,NE,ENE,E,ESE,SE,SSE,S,SSW,SW,WSW,W,WNW,NW,NNW
