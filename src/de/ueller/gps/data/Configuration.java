@@ -325,10 +325,7 @@ public class Configuration {
 	public final static String[] LOCATIONPROVIDER = { Locale.get("configuration.LPNone")/*None*/, Locale.get("configuration.LPBluetoothSirf")/*Bluetooth (Sirf)*/,
 							  Locale.get("configuration.LPBluetoothNMEA")/*Bluetooth (NMEA)*/, Locale.get("configuration.LPInternalJSR179")/*Internal (JSR179)*/, Locale.get("configuration.LPCellID")/*Cell-ID (OpenCellId.org)*/ };
 	
-	private static final String[] compassDirections  =
-	{ "N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE",
-	  "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW",
-	  "N" };
+	private static String[] compassDirections;
 	
 	private final static byte[] empty = "".getBytes();
 
@@ -420,8 +417,9 @@ public class Configuration {
 
 	
 	public static void read() {
-	logger = Logger.getInstance(Configuration.class, Logger.DEBUG);
-	RecordStore	database;
+		initCompassDirections();
+		logger = Logger.getInstance(Configuration.class, Logger.DEBUG);
+		RecordStore	database;
 		try {
 			database = RecordStore.openRecordStore("Receiver", true);
 			if (database == null) {
@@ -1692,6 +1690,14 @@ public class Configuration {
 		               .replace('*', '_');
 	}
 	
+	public static void initCompassDirections() {
+		String compass = "N,NNE,NE,ENE,E,ESE,SE,SSE,S,SSW,SW,WSW,W,WNW,NW,NNW";
+		compass += "," + compass.substring(0, compass.indexOf(","));
+		//#debug debug
+		logger.debug("compass dirs: " + compass);
+		compassDirections = StringTokenizer.getArray(compass, ",");
+	}
+
 	public static String getCompassDirection(int course) {
 		return compassDirections[(int)(((course % 360 + 11.25f) / 22.5f)) ];
 	}
