@@ -426,8 +426,8 @@ public class KeySelectMenu extends Canvas implements
 		if (scrollOffset > 0) {
 			scrollOffset = 0;
 		}
-		if (scrollOffset < -1 * (result.size() - 2) * fontSize) {
-			scrollOffset = -1 * (result.size() - 2) * fontSize;
+		if (scrollOffset < -1 * (result2.size() - 2) * fontSize) {
+			scrollOffset = -1 * (result2.size() - 2) * fontSize;
 		}
 		pointerYDragged = y;
 		repaint();
