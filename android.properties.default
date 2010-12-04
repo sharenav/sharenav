@@ -1,7 +1,9 @@
 # Copy this file (android.properties.default) to android.propertise and edit paths to be correct
 # Then use ant -propertyfile android.properties to build GpsMid for android
 
-# To bundle a map within the .apk, use tools/bundlemap.sh -a dist/GpsMid*.ap_ (requires bash and some common unix-like-OS tools)
+# To bundle a map within the .apk, use something like
+#   tools/bundlemap.sh -a assets dist/GpsMid*.ap_ (requires bash and some common unix-like-OS tools)
+# (assets dir must have a map created by Osm2GpsMid and e.g. tools/unbundlemap.sh)
 
 #The android.home property should point to the directory
 #containing the Android SDK.
