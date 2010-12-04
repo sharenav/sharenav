@@ -71,6 +71,8 @@ public class Gpx extends Tile implements Runnable, InputListener {
 	private int trackDatabaseRecordId = -1;
 	/** Counts how many track points were recorded so far. */
 	private int mTrkRecorded = 0;
+	/** Counts how many tracke segments were recorded so far - subtracted from user-visible point count. */
+	private int mTrkSegments = 0;
 	public int delay = 0;
 	
 	private float trkOdo;
@@ -183,6 +185,7 @@ public class Gpx extends Tile implements Runnable, InputListener {
 				DataInputStream dis1 = new DataInputStream(new ByteArrayInputStream(trackDatabase.getRecord(trk.id)));
 				trackName = dis1.readUTF();
 				mTrkRecorded = dis1.readInt();
+				mTrkSegments = 0;
 				int trackSize = dis1.readInt();
 				byte[] trackArray = new byte[trackSize];
 				dis1.read(trackArray);
@@ -235,6 +238,7 @@ public class Gpx extends Tile implements Runnable, InputListener {
 					DataInputStream dis1 = new DataInputStream(new ByteArrayInputStream(trackDatabase.getRecord(track.id)));
 					trackName = dis1.readUTF();
 					mTrkRecorded = dis1.readInt();
+					mTrkSegments = 0;
 					int trackSize = dis1.readInt();
 					byte[] trackArray = new byte[trackSize];
 					dis1.read(trackArray);
@@ -301,6 +305,7 @@ public class Gpx extends Tile implements Runnable, InputListener {
 				DataInputStream dis1 = new DataInputStream(new ByteArrayInputStream(trackDatabase.getRecord(track.id)));
 				trackName = dis1.readUTF();
 				mTrkRecorded = dis1.readInt();
+				mTrkSegments = 0;
 				//#debug debug
 				logger.debug("Replay track with " + mTrkRecorded + " points");
 				int trackSize = dis1.readInt();
@@ -636,6 +641,7 @@ public class Gpx extends Tile implements Runnable, InputListener {
 		trkVertSpd = 0.0f;
 		trkTimeTot = 0;
 		mTrkRecorded = 0;
+		mTrkSegments = 0;
 		trkRecordingSuspended = false;
 		origTrackName = new String(trackName);
 	}
@@ -786,6 +792,7 @@ public class Gpx extends Tile implements Runnable, InputListener {
 				mTrkOutStream.writeLong(Long.MIN_VALUE);
 				mTrkOutStream.writeByte(0);
 				mTrkRecorded++;
+				mTrkSegments++;
 				oldlat = 0.0f;
 				oldlon = 0.0f;
 				storeTrk();
@@ -1110,12 +1117,12 @@ public class Gpx extends Tile implements Runnable, InputListener {
 		wayPtTile.paint(pc, layer);
 	}
 	
-	/** Returns how many track points have been recorded so far.
+	/** Returns how many actual track points have been recorded so far (segments are not counted for this user-visible string).
 	 * 
 	 * @return Number of track points
 	 */
 	public int getTrkPointCount() {
-		return mTrkRecorded;
+		return mTrkRecorded - mTrkSegments;
 	}
 	
 	/** Returns whether a track is currently recorded.
@@ -1332,6 +1339,7 @@ public class Gpx extends Tile implements Runnable, InputListener {
 				trackDatabase.getRecord(currentTrk.id)));
 		trackName = dis1.readUTF();
 		mTrkRecorded = dis1.readInt();
+		mTrkSegments = 0;
 		int trackSize = dis1.readInt();
 		byte[] trackArray = new byte[trackSize];
 		dis1.read(trackArray);
