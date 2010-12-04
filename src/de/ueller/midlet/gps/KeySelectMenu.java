@@ -43,9 +43,9 @@ public class KeySelectMenu extends Canvas implements
 	 * This vector is used to buffer writes, so that we only have to synchronize
 	 * threads at the end of painting
 	 */
-	private Vector result2 = new Vector();
+	private Vector resultBuffer = new Vector();
 
-	private boolean resetResult2;
+	private boolean resetResult;
 
 	private int carret = 0;
 
@@ -117,7 +117,7 @@ public class KeySelectMenu extends Canvas implements
 	public synchronized void addResult(KeySelectMenuItem item) {
 		//#debug debug
 		logger.debug("Adding item " + item + " to KeySelectMenu");
-		result.addElement(item);
+		resultBuffer.addElement(item);
 		repaint();
 	}
 	
@@ -126,7 +126,7 @@ public class KeySelectMenu extends Canvas implements
 		logger.info("Adding " + items.size() + " items to KeySelectMenu");
 		for (int i = 0; i < items.size(); i++) {
 			if (items.elementAt(i) instanceof KeySelectMenuItem) {
-				result.addElement(items.elementAt(i));
+				resultBuffer.addElement(items.elementAt(i));
 			} else {
 				logger.error(Locale.get("keyselectmenu.AddingWrongTypeToKeySelectMenu")/*Adding a wrong type to KeySelectMenu*/);
 			}
@@ -135,7 +135,7 @@ public class KeySelectMenu extends Canvas implements
 	}
 	
 	public synchronized void removeAll() {
-		resetResult2 = true;
+		resetResult = true;
 		cursor = 0;
 	}
 	
@@ -155,8 +155,8 @@ public class KeySelectMenu extends Canvas implements
 		}
 		if (c == CLEAR_CMD) {
 			synchronized (this) {
-				resetResult2 = true;
-				result.removeAllElements();
+				resetResult = true;
+				resultBuffer.removeAllElements();
 			}
 			callback.keySelectMenuResetMenu();
 			searchCanon.setLength(0);
@@ -166,7 +166,7 @@ public class KeySelectMenu extends Canvas implements
 		}
 		if (c == OK_CMD) {
 			try {
-			Object o = result2.elementAt(cursor);
+			Object o = result.elementAt(cursor);
 			if (o instanceof KeySelectMenuItem) {
 				KeySelectMenuItem menuItem = (KeySelectMenuItem) o;
 				callback.keySelectMenuItemSelected(menuItem);
@@ -198,29 +198,29 @@ public class KeySelectMenu extends Canvas implements
 			gc.drawString("^", getWidth(), 0, Graphics.TOP | Graphics.RIGHT);
 		}
 
-		if (resetResult2) {
+		if (resetResult) {
 			synchronized (this) {
-				result2.removeAllElements();
-				resetResult2 = false;
+				result.removeAllElements();
+				resetResult = false;
 			}
 		}
 		// insert new results from search thread
-		if (result.size() > 0) {
+		if (resultBuffer.size() > 0) {
 			synchronized (this) {
-				for (int i = 0; i < result.size(); i++) {
-					result2.addElement(result.elementAt(i));
+				for (int i = 0; i < resultBuffer.size(); i++) {
+					result.addElement(resultBuffer.elementAt(i));
 				}
-				result.removeAllElements();
+				resultBuffer.removeAllElements();
 			}
 		}
 		//#debug debug
-		logger.debug("Painting " + result2.size() + " number of elements");
+		logger.debug("Painting " + result.size() + " number of elements");
 		// keep cursor within bounds
-		if (cursor != 0 && cursor >= result2.size()) {
-			cursor = result2.size() - 1;
+		if (cursor != 0 && cursor >= result.size()) {
+			cursor = result.size() - 1;
 		}
 
-		for (int i = 0; i < result2.size(); i++) {
+		for (int i = 0; i < result.size(); i++) {
 			if (yc < 0) {
 				yc += fontSize;
 				continue;
@@ -237,7 +237,7 @@ public class KeySelectMenu extends Canvas implements
 			} else {
 				gc.setColor(0, 0, 0);
 			}
-			Object o = result2.elementAt(i);
+			Object o = result.elementAt(i);
 			if (o instanceof KeySelectMenuItem) {
 				KeySelectMenuItem menuItem = (KeySelectMenuItem) o;
 				Image img = menuItem.getImage();
@@ -317,7 +317,7 @@ public class KeySelectMenu extends Canvas implements
 			repaint();
 			return;
 		} else if (action == DOWN) {
-			if (cursor < result2.size() - 1)
+			if (cursor < result.size() - 1)
 				cursor++;
 			if (((cursor + 1) * fontSize + scrollOffset) > getHeight()) {
 				scrollOffset -= 3 * fontSize;
@@ -426,8 +426,8 @@ public class KeySelectMenu extends Canvas implements
 		if (scrollOffset > 0) {
 			scrollOffset = 0;
 		}
-		if (scrollOffset < -1 * (result2.size() - 2) * fontSize) {
-			scrollOffset = -1 * (result2.size() - 2) * fontSize;
+		if (scrollOffset < -1 * (result.size() - 2) * fontSize) {
+			scrollOffset = -1 * (result.size() - 2) * fontSize;
 		}
 		pointerYDragged = y;
 		repaint();
