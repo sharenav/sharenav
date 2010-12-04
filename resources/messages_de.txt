@@ -54,6 +54,7 @@ guiosmaddrdisplay.Postcode=Postleitzahl
 guiosmaddrdisplay.ServerError=Server Operation fehlgeschlagen:
 guiosmaddrdisplay.Street=Straße
 guiosmaddrdisplay.UploadToOSM=absenden
+configuration.compass=N,NNO,NO,ONO,O,OSO,SO,SSO,S,SSW,SW,WSW,W,WNW,NW,NNW
 configuration.ConfigVersionMismatch=Die aktuelle GpsMid-Version diese Konfigurationdatei nicht verwenden.
 configuration.LPBluetoothNMEA=Bluetooth (NMEA)
 configuration.LPBluetoothSirf=Bluetooth (Sirf)
