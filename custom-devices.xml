@@ -35,6 +35,17 @@ at large.
 
 
 	<device supportsPolishGui="true">
+		<identifier>Generic/microemulator</identifier>
+		<description>This device combines the full capabilities of GpsMid including OpenStreetMap editing for microemulator testing.
+		</description>
+		<features>isVirtual</features>
+		<capability name="Emulator.Class" value="GenericEmulator"/>
+		<capability name="JavaPlatform" value="MIDP/2.0"/>
+		<capability name="GpsMid.editing" value="true"/>
+		<capability name="JavaConfiguration" value="CLDC/1.1"/>
+		<capability name="JavaPackage" value="location-api, webservices, btapi, obex, pdaapi, fileconnection, mmapi, wmapi, 3dapi, svg, nokia-ui, min-siemapi, min-samsapi, osm-editing, online"/>
+	</device>
+	<device supportsPolishGui="true">
 		<identifier>Generic/editing</identifier>
 		<description>This device combines the full capabilities of GpsMid including OpenStreetMap editing.
 		</description>
