@@ -539,9 +539,10 @@ public class Configuration {
 				setCfgBitSavedState(getDefaultDeviceBacklightMethodCfgBit(), true);
 			}
 			//#if polish.android
-			// no bundle support for android yet, set a fixed location for map
-			setBuiltinMap(false);
-			setMapUrl("file:///sdcard/gpsmidmap/");
+			// (was) no bundle support for android yet, set a fixed location for map
+			// bundle support works enough so we don't need this
+			// setBuiltinMap(false);
+			// setMapUrl("file:///sdcard/gpsmidmap/");
 			//#endif
 			// Record Rule Default
 			setGpxRecordRuleMode(GPX_RECORD_MINIMUM_SECS_DIST);
