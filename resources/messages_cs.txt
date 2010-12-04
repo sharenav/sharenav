@@ -1140,3 +1140,4 @@ urls.at= na
 urls.UrlsThreadCrashed=Vlákno Urls neočekávaně ukončeno s chybou 
 way.ErrorWhileVerify=Chyba během ověřování 
 trace.ManualLoc=Ručně
+configuration.compass=S,SSV,SV,VSV,V,VJV,JV,JJV,J,JJZ,JZ,ZJZ,Z,ZSZ,SZ,SSZ
