@@ -135,11 +135,11 @@ public class RouteData {
 					}
 				}
 				if (numFromConnections != 1) {
-					System.out.println("Invalid turn restriction: " + numFromConnections + " from_connections matched for: " + turn.toString(parser.getWayHashMap()));
+					System.out.println("warning: ignoring map data: Invalid turn restriction: " + numFromConnections + " from_connections matched for: " + turn.toString(parser.getWayHashMap()));
 					if (numFromConnections == 0) {
-						System.out.println("  Reason may be: way tagged with access=no or from/to swapped on oneways");						
+						System.out.println("warning: ignoring map data:   Reason may be: way tagged with access=no or from/to swapped on oneways");						
 					} else {
-						System.out.println("  Reason may be: fromWay not split at via member");												
+						System.out.println("warning: ignoring map data:   Reason may be: fromWay not split at via member");												
 						turn.fromRouteNode = null; // make the turn restriction incomplete so it won't get passed to GpsMid 
 					}
 					for (Connection c:nViaFrom.connectedFrom) {
@@ -245,7 +245,7 @@ public class RouteData {
 					} else {
 						direction = -1;
 					}
-					System.out.println("  Resolved viaWay x toWay to node " + rn.node.id);					
+					System.out.println("info:  Resolved viaWay x toWay to node " + rn.node.id);					
 					break;
 				} else {
 					
