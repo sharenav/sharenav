@@ -671,7 +671,7 @@ public class Configuration {
 			setBaseScale(23);
 		}
 		if (configVersionStored < 18) {
-			setUiLang("en");
+			setUiLang("devdefault");
 			setNaviLang("en");
 			setOnlineLang("en");
 			setWikipediaLang("en");
