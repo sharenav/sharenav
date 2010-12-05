@@ -261,10 +261,6 @@ public class CreateGpsMidData implements FilenameFilter {
 			// remove unneeded .loc files
 			if (!Configuration.getConfiguration().allLang) {
 				String langs = configuration.getUseLang() + ",en";
-				// FIXME there's a problem seemingly with this,
-				// a 60 Mb midlet had none of .loc file with
-				// lang=fi,en,de langName=Suomi,English,Deutsch
-				// trying 2010-12-05 if it still exists or was some kind of filename clash
 				removeFilesWithExt(path, "loc", langs.split("[;,]", 200));
 			}
 
@@ -627,6 +623,7 @@ public class CreateGpsMidData implements FilenameFilter {
 	
 	// remove files with a certain extension from dir, except strings with basename list in exceptions
 	public void removeFilesWithExt(String path, String ext, String exceptions[]) {
+		//System.out.println ("Removing files from " + path + " with ext " + ext + " exceptions: " + exceptions);
 		File dir = new File(path);
 		String[] files = dir.list();
 
@@ -636,12 +633,15 @@ public class CreateGpsMidData implements FilenameFilter {
 		if (files != null) {
 			for (String name : files) {
 				boolean remove = false;
+				file = new File(name);
 				if (name.matches(".*\\." + ext)) {
 					remove = true;
 					if (exceptions != null) {
 						for (String basename : exceptions) {
+							//System.out.println ("Testing filename " + file.getName() + " for exception " + basename);
 							if (file.getName().startsWith(basename)) {				
 								remove = false;
+								//System.out.println ("Test for string " + file.getName() + " exception " + basename + " matched");
 								retainedFiles++;
 							}
 						}
