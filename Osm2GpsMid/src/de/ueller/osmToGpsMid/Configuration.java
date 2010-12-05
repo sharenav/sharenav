@@ -1160,7 +1160,7 @@ public class Configuration {
 		public int getMaxspeedTemplate(String template) throws Exception{
 			Integer maxspeed = legend.getMaxspeedTemplates().get(template);
 			if (maxspeed == null) {
-				throw new Exception("Unhandled maxspeed value: " + template);
+				throw new Exception("warning: ignoring map data: Unhandled maxspeed value: " + template);
 			} else {
 				return maxspeed.intValue();
 			}
