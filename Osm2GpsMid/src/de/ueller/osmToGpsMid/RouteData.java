@@ -183,7 +183,7 @@ public class RouteData {
 				turn = turn.nextTurnRestrictionAtThisNode;
 			}
 		}
-		System.out.println(numTurnRestrictions + "info: turn restrictions valid");
+		System.out.println("info: " + numTurnRestrictions + " turn restrictions valid");
 	}
 
 
