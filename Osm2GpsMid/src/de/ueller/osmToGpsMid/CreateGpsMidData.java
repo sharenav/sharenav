@@ -264,7 +264,8 @@ public class CreateGpsMidData implements FilenameFilter {
 				// FIXME there's a problem seemingly with this,
 				// a 60 Mb midlet had none of .loc file with
 				// lang=fi,en,de langName=Suomi,English,Deutsch
-				// removeFilesWithExt(path, "loc", langs.split("[;,]", 200));
+				// trying 2010-12-05 if it still exists or was some kind of filename clash
+				removeFilesWithExt(path, "loc", langs.split("[;,]", 200));
 			}
 
 			// remove class files (midlet code) if building just the map
