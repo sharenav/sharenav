@@ -147,7 +147,7 @@ public class RouteData {
 							System.out.println("  FromNode: " + c.from.node.id);
 						}
 					}
-					System.out.println("  URL for via node: " + n.node.toUrl());					
+					System.out.println("warning: ignoring map data:   URL for via node: " + n.node.toUrl());					
 				}
 
 				// search the RouteNode following the viaRouteNode on the toWay

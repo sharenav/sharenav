@@ -379,7 +379,7 @@ public class Way extends Entity implements Comparable<Way> {
 					}
 				} catch (Exception ex) {
 					if (this.id != lastUnhandledMaxSpeedWayId) {
-						System.out.println("Unhandled maxspeed for way " + toString() + ": " + maxSpeedAttr);
+						System.out.println("warning: ignoring map data: Unhandled maxspeed for way " + toString() + ": " + maxSpeedAttr);
 						lastUnhandledMaxSpeedWayId = this.id;
 					}
 				}
@@ -429,7 +429,7 @@ public class Way extends Entity implements Comparable<Way> {
 						maxSpeed = maxs;
 					}
 				} catch (Exception ex) {
-					System.out.println("Unhandled maxspeedwinter for way + " + toString() + ": " + getAttribute("maxspeed"));
+					System.out.println("warning: ignoring map data: Unhandled maxspeedwinter for way + " + toString() + ": " + getAttribute("maxspeed"));
 				}
 			}
 		}
