@@ -135,9 +135,9 @@ public class RouteData {
 					}
 				}
 				if (numFromConnections != 1) {
-					System.out.println("warning: ignoring map data: Invalid turn restriction: " + numFromConnections + " from_connections matched for: " + turn.toString(parser.getWayHashMap()));
+					System.out.println("warning: ignoring map data: Can't parse turn restriction: " + numFromConnections + " from_connections matched for: " + turn.toString(parser.getWayHashMap()));
 					if (numFromConnections == 0) {
-						System.out.println("warning: ignoring map data:   Reason may be: way tagged with access=no or from/to swapped on oneways");						
+						System.out.println("warning: ignoring map data:   Reason may be: way tagged with access=no (no functional problem in that case) or from/to swapped on oneways");						
 					} else {
 						System.out.println("warning: ignoring map data:   Reason may be: fromWay not split at via member");												
 						turn.fromRouteNode = null; // make the turn restriction incomplete so it won't get passed to GpsMid 
@@ -164,7 +164,7 @@ public class RouteData {
 				if (numToConnections != 1) {
 					System.out.println("warning: ignoring map data: Invalid turn restriction: " + numToConnections + " to_connections matched for: "  + turn.toString(parser.getWayHashMap()));
 					if (numToConnections == 0) {
-						System.out.println("warning: ignoring map data:   Reason may be: way tagged with access=no or from/to swapped on oneways");						
+						System.out.println("warning: ignoring map data:   Reason may be: way tagged with access=no (no functional problem in that case) or from/to swapped on oneways");						
 					} else {
 						System.out.println("warning: ignoring map data:   Reason may be: toWay not split at via member");												
 						turn.toRouteNode = null; // make the turn restriction incomplete so it won't get passed to GpsMid 
