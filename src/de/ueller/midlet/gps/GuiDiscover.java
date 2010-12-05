@@ -915,6 +915,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 					if (!uiLang.equals(Configuration.getUiLang()) || uiLang.equalsIgnoreCase("devdefault")) { 
 						Trace.uncacheIconMenu();
 						uncacheIconMenu();
+						Configuration.initCompassDirections();
 					}
 					Configuration.setUiLang(uiLang);
 					Configuration.setWikipediaLang(uiLang);
