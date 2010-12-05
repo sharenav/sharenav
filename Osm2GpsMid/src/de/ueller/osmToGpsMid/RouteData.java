@@ -92,7 +92,7 @@ public class RouteData {
 	private void calculateTurnRestrictions() {
 		resolveViaWays();
 		
-		System.out.println("Calculating turn restrictions");
+		System.out.println("info: Calculating turn restrictions");
 		int numTurnRestrictions = 0;
 		for (RouteNode n: nodes.values()) {
 			TurnRestriction turn = (TurnRestriction) parser.getTurnRestrictionHashMap().get(new Long(n.node.id));
@@ -162,19 +162,19 @@ public class RouteData {
 					}
 				}
 				if (numToConnections != 1) {
-					System.out.println("Invalid turn restriction: " + numToConnections + " to_connections matched for: "  + turn.toString(parser.getWayHashMap()));
+					System.out.println("warning: ignoring map data: Invalid turn restriction: " + numToConnections + " to_connections matched for: "  + turn.toString(parser.getWayHashMap()));
 					if (numToConnections == 0) {
-						System.out.println("  Reason may be: way tagged with access=no or from/to swapped on oneways");						
+						System.out.println("warning: ignoring map data:   Reason may be: way tagged with access=no or from/to swapped on oneways");						
 					} else {
-						System.out.println("  Reason may be: toWay not split at via member");												
+						System.out.println("warning: ignoring map data:   Reason may be: toWay not split at via member");												
 						turn.toRouteNode = null; // make the turn restriction incomplete so it won't get passed to GpsMid 
 					}
 					for (Connection c:n.connected) {
 						if (restrictionToWay.containsNode(c.to.node)) {
-							System.out.println("  ToNode: " + c.to.node.id);
+							System.out.println("warning: ignoring map data:  ToNode: " + c.to.node.id);
 						}
 					}
-					System.out.println("  URL for via node: " + n.node.toUrl());					
+					System.out.println("warning: ignoring map data:  URL for via node: " + n.node.toUrl());					
 				}
 				if (numFromConnections == 1 && numToConnections == 1) {
 					numTurnRestrictions++;
@@ -183,7 +183,7 @@ public class RouteData {
 				turn = turn.nextTurnRestrictionAtThisNode;
 			}
 		}
-		System.out.println(numTurnRestrictions + " turn restrictions valid");
+		System.out.println(numTurnRestrictions + "info: turn restrictions valid");
 	}
 
 
@@ -192,7 +192,7 @@ public class RouteData {
 	 */
 	private void resolveViaWays() {
 		int numViaWaysResolved = 0;
-		System.out.println("Resolving " + parser.getTurnRestrictionsWithViaWays().size() + " viaWays for turn restrictions");
+		System.out.println("info: Resolving " + parser.getTurnRestrictionsWithViaWays().size() + " viaWays for turn restrictions");
 		for (TurnRestriction turn: parser.getTurnRestrictionsWithViaWays()) {
 			Way restrictionFromWay = parser.getWayHashMap().get(new Long(turn.fromWayRef));
 			// skip if restrictionFromWay is not in available wayData				
@@ -223,7 +223,7 @@ public class RouteData {
 			for (RouteNode n:viaWayRouteNodes) {
 				if (restrictionFromWay.containsNode(n.node)) { // this is where viaWay and fromWay are connected
 					additionalViaRouteNodesCache.add(n); // and becomes the first entry in the additionalViaRouteNode array
-					System.out.println("  Resolved viaWay x fromWay to node " + n.node.id);
+					System.out.println("info:  Resolved viaWay x fromWay to node " + n.node.id);
 					break;
 				}
 				startEntry++;
@@ -269,20 +269,20 @@ public class RouteData {
 					turn.additionalViaRouteNodes[i] = additionalViaRouteNodesCache.get(i);
 				}
 				
-				System.out.println("  viaRouteNodes on viaWay " + restrictionViaWay.toUrl() + ":");
+				System.out.println("info:  viaRouteNodes on viaWay " + restrictionViaWay.toUrl() + ":");
 				for (RouteNode n:turn.additionalViaRouteNodes) {
 					if (n != null && n.node != null) {
-						System.out.println("    " + n.node.toUrl());
+						System.out.println("info:    " + n.node.toUrl());
 					} else {
 						if (n == null) {
-							System.out.println("    n is null");
+							System.out.println("info:    n is null");
 						} else {
-							System.out.println("    n.node is null");
+							System.out.println("info:    n.node is null");
 						}
 						continue;
 					}
 				}
-				System.out.println("    " + turn.viaRouteNode.node.toUrl());									
+				System.out.println("info:    " + turn.viaRouteNode.node.toUrl());									
 
 				// add the resolved viaWay turn restriction to its viaRouteNode
 				parser.addTurnRestriction(new Long(turn.viaRouteNode.node.id), turn);
