@@ -251,6 +251,8 @@ public class Configuration {
 	public final static byte CFGBIT_BACKLIGHT_SAMSUNG = 93;
 	/** bit 94: Flag whether internal sound files should be used instead of ones with external map */
 	public final static byte CFGBIT_PREFER_INTERNAL_SOUNDS = 94;
+	/** bit 95: Flag whether to use a virtual on-screen number keypad in the incremental search screen */
+	public final static byte CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD = 95;
 	
 	/**
 	 * These are the database record IDs for each configuration option
