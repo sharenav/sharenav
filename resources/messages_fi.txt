@@ -444,3 +444,4 @@ guiwebinfo.Weather=Sää
 guiwebinfo.Website=Sivusto
 guiwebinfo.WikipediaRSS=Wikipedia (RSS)
 trace.Air=Linnuntietä:
+trace.ConnectTo=Yhdistän 

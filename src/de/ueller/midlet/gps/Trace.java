@@ -515,7 +515,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				}
 			}
 			int locprov = Configuration.getLocationProvider();
-			receiveMessage("Connect to " + Configuration.LOCATIONPROVIDER[locprov]);
+			receiveMessage(Locale.get("trace.ConnectTo")/*Connect to */ + Configuration.LOCATIONPROVIDER[locprov]);
 			switch (locprov) {
 				case Configuration.LOCATIONPROVIDER_SIRF:
 					locationProducer = new SirfInput();
