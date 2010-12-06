@@ -542,6 +542,7 @@ public class Configuration {
 			// bundle support works enough so we don't need this
 			// setBuiltinMap(false);
 			// setMapUrl("file:///sdcard/gpsmidmap/");
+			// setMapUrl("file:///");
 			//#endif
 			// Record Rule Default
 			setGpxRecordRuleMode(GPX_RECORD_MINIMUM_SECS_DIST);
