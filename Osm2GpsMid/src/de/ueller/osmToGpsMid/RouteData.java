@@ -162,7 +162,7 @@ public class RouteData {
 					}
 				}
 				if (numToConnections != 1) {
-					System.out.println("warning: ignoring map data: Invalid turn restriction: " + numToConnections + " to_connections matched for: "  + turn.toString(parser.getWayHashMap()));
+					System.out.println("warning: ignoring map data: Can't parse turn restriction: " + numToConnections + " to_connections matched for: "  + turn.toString(parser.getWayHashMap()));
 					if (numToConnections == 0) {
 						System.out.println("warning: ignoring map data:   Reason may be: way tagged with access=no (no functional problem in that case) or from/to swapped on oneways");						
 					} else {
