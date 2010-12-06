@@ -418,7 +418,6 @@ public class Configuration {
 	
 	public static void read() {
 		logger = Logger.getInstance(Configuration.class, Logger.DEBUG);
-		initCompassDirections();
 		RecordStore	database;
 		try {
 			database = RecordStore.openRecordStore("Receiver", true);
