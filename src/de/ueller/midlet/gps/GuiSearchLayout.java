@@ -92,6 +92,7 @@ public class GuiSearchLayout extends LayoutManager {
 		e.setAdditionalOffsX(xdiff);
 		e.setAdditionalOffsY(ydiff);
 		// FIXME fix color
+		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON]);
 		e.setColor(Legend.COLORS[Legend.COLOR_TITLEBAR_TEXT]);
 		e.setSpecialElementID(SE_KEY);
 		e.setActionID(GuiSearch.VIRTUALKEY_PRESSED);
@@ -106,6 +107,7 @@ public class GuiSearchLayout extends LayoutManager {
 		e.setHRelative(ele[KEY_EMPTY]);
 		// FIXME fix color
 		e.setColor(Legend.COLORS[Legend.COLOR_TITLEBAR_TEXT]);
+		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON]);
 		e.setSpecialElementID(SE_KEY);
 		e.setActionID(GuiSearch.VIRTUALKEY_PRESSED);
 		
@@ -119,6 +121,7 @@ public class GuiSearchLayout extends LayoutManager {
 		// FIXME fix color
 		e.setAdditionalOffsY(ydiff);
 		e.setColor(Legend.COLORS[Legend.COLOR_TITLEBAR_TEXT]);
+		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON]);
 		e.setSpecialElementID(SE_KEY);
 		e.setActionID(GuiSearch.VIRTUALKEY_PRESSED);
 
@@ -132,6 +135,7 @@ public class GuiSearchLayout extends LayoutManager {
 		e.setAdditionalOffsX(xdiff);
 		// FIXME fix color
 		e.setColor(Legend.COLORS[Legend.COLOR_TITLEBAR_TEXT]);
+		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON]);
 		e.setSpecialElementID(SE_KEY);
 		e.setActionID(GuiSearch.VIRTUALKEY_PRESSED);
 
@@ -145,6 +149,7 @@ public class GuiSearchLayout extends LayoutManager {
 		e.setHRelative(ele[KEY_1]);
 		// FIXME fix color
 		e.setColor(Legend.COLORS[Legend.COLOR_TITLEBAR_TEXT]);
+		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON]);
 		e.setSpecialElementID(SE_KEY);
 		e.setActionID(GuiSearch.VIRTUALKEY_PRESSED);
 		
@@ -158,6 +163,7 @@ public class GuiSearchLayout extends LayoutManager {
 		e.setHRelative(ele[KEY_2]);
 		// FIXME fix color
 		e.setColor(Legend.COLORS[Legend.COLOR_TITLEBAR_TEXT]);
+		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON]);
 		e.setSpecialElementID(SE_KEY);
 		e.setActionID(GuiSearch.VIRTUALKEY_PRESSED);
 
@@ -171,6 +177,7 @@ public class GuiSearchLayout extends LayoutManager {
 		e.setVRelative(ele[KEY_1]);
 		// FIXME fix color
 		e.setColor(Legend.COLORS[Legend.COLOR_TITLEBAR_TEXT]);
+		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON]);
 		e.setSpecialElementID(SE_KEY);
 		e.setActionID(GuiSearch.VIRTUALKEY_PRESSED);
 
@@ -184,6 +191,7 @@ public class GuiSearchLayout extends LayoutManager {
 		e.setHRelative(ele[KEY_4]);
 		// FIXME fix color
 		e.setColor(Legend.COLORS[Legend.COLOR_TITLEBAR_TEXT]);
+		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON]);
 		e.setSpecialElementID(SE_KEY);
 		e.setActionID(GuiSearch.VIRTUALKEY_PRESSED);
 		
@@ -197,6 +205,7 @@ public class GuiSearchLayout extends LayoutManager {
 		e.setHRelative(ele[KEY_5]);
 		// FIXME fix color
 		e.setColor(Legend.COLORS[Legend.COLOR_TITLEBAR_TEXT]);
+		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON]);
 		e.setSpecialElementID(SE_KEY);
 		e.setActionID(GuiSearch.VIRTUALKEY_PRESSED);
 		
@@ -210,6 +219,7 @@ public class GuiSearchLayout extends LayoutManager {
 		e.setVRelative(ele[KEY_4]);
 		// FIXME fix color
 		e.setColor(Legend.COLORS[Legend.COLOR_TITLEBAR_TEXT]);
+		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON]);
 		e.setSpecialElementID(SE_KEY);
 		e.setActionID(GuiSearch.VIRTUALKEY_PRESSED);
 
@@ -223,6 +233,7 @@ public class GuiSearchLayout extends LayoutManager {
 		e.setHRelative(ele[KEY_7]);
 		// FIXME fix color
 		e.setColor(Legend.COLORS[Legend.COLOR_TITLEBAR_TEXT]);
+		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON]);
 		e.setSpecialElementID(SE_KEY);
 		e.setActionID(GuiSearch.VIRTUALKEY_PRESSED);
 		
@@ -236,6 +247,7 @@ public class GuiSearchLayout extends LayoutManager {
 		e.setHRelative(ele[KEY_8]);
 		// FIXME fix color
 		e.setColor(Legend.COLORS[Legend.COLOR_TITLEBAR_TEXT]);
+		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON]);
 		e.setSpecialElementID(SE_KEY);
 		e.setActionID(GuiSearch.VIRTUALKEY_PRESSED);
 		
@@ -249,6 +261,7 @@ public class GuiSearchLayout extends LayoutManager {
 		e.setVRelative(ele[KEY_9]);
 		// FIXME fix color
 		e.setColor(Legend.COLORS[Legend.COLOR_TITLEBAR_TEXT]);
+		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON]);
 		e.setSpecialElementID(SE_KEY);
 		e.setActionID(GuiSearch.VIRTUALKEY_PRESSED);
 
@@ -262,6 +275,7 @@ public class GuiSearchLayout extends LayoutManager {
 		e.setHRelative(ele[KEY_STAR]);
 		// FIXME fix color
 		e.setColor(Legend.COLORS[Legend.COLOR_TITLEBAR_TEXT]);
+		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON]);
 		e.setSpecialElementID(SE_KEY);
 		e.setActionID(GuiSearch.VIRTUALKEY_PRESSED);
 
@@ -275,6 +289,7 @@ public class GuiSearchLayout extends LayoutManager {
 		e.setHRelative(ele[KEY_0]);
 		// FIXME fix color
 		e.setColor(Legend.COLORS[Legend.COLOR_TITLEBAR_TEXT]);
+		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON]);
 		e.setSpecialElementID(SE_KEY);
 		e.setActionID(GuiSearch.VIRTUALKEY_PRESSED);
 	}
@@ -289,6 +304,8 @@ public class GuiSearchLayout extends LayoutManager {
 	protected void drawSpecialElement(Graphics g, byte id, String text, int left, int top) {
 		switch(id) {
 		case SE_KEY:
+			// FIXME what to with the color?
+			g.setColor(Legend.COLORS[Legend.COLOR_TITLEBAR_TEXT]);
 			g.drawLine(left, top, left+buttonw, top);
 			g.drawLine(left, top, left, top+buttonh);
 			g.drawLine(left+buttonw, top, left+buttonw, top+buttonh);

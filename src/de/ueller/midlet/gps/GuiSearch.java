@@ -510,7 +510,9 @@ public class GuiSearch extends Canvas implements CommandListener,
 		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD)) {
 			gc.setColor(Legend.COLORS[Legend.COLOR_MAP_TEXT]);
 			if (hasPointerEvents() && ! hideKeypad) {
-				gsl = new GuiSearchLayout(0, 0, width, height);
+				if (gsl == null) {
+					gsl = new GuiSearchLayout(0, 0, width, height);
+				}
 			
 				String letters[] = {  "     ", "  X  ", "  <- ", "  1  ", " abc2", " def3", " ghi4", " jkl5", " mno6",
 						      "pqrs7", " tuv8", "wxyz9", "  *+ ", " _0  ", "  #  "};
@@ -863,8 +865,20 @@ public class GuiSearch extends Canvas implements CommandListener,
 		) {
 			GuiNameEnter gne = new GuiNameEnter(this, null, Locale.get("guisearch.SearchForNamesStarting")/*Search for names starting with:*/, searchCanon.toString(), 20);
 			gne.show();
+		} else {
+			if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD) && !hideKeypad
+			    && gsl.getElementIdAtPointer(x, y) >= 0 && gsl.isAnyActionIdAtPointer(x, y)) {
+				int touchedElementId = gsl.getElementIdAtPointer(x, y);
+				if (touchedElementId >= 0
+				    &&
+				    gsl.isAnyActionIdAtPointer(x, y)
+					) {
+					System.out.println("setTouchedElement: " + touchedElementId);
+					gsl.setTouchedElement((LayoutElement) gsl.elementAt(touchedElementId));
+					repaint();
+				}
+			}
 		}
-		clickIdxAtSlideStart = clickIdx;
 	}
 	
 	public void pointerReleased(int x, int y) {
@@ -925,7 +939,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 			    &&
 			    gsl.isAnyActionIdAtPointer(x, y)
 				) {
-				gsl.setTouchedElement((LayoutElement) gsl.elementAt(touchedElementId));
+				//gsl.setTouchedElement((LayoutElement) gsl.elementAt(touchedElementId));
+				//repaint();
 				if (touchedElementId == GuiSearchLayout.KEY_1) {
 					keyPressed('1');
 				} else if (touchedElementId == GuiSearchLayout.KEY_2) {
@@ -956,6 +971,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 					// hide keypad
 					hideKeypad = true;
 				}
+				gsl.clearTouchedElement();
 				repaint();
 			}
 		
