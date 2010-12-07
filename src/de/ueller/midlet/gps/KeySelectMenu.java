@@ -494,11 +494,11 @@ public class KeySelectMenu extends Canvas implements
 					// hide keypad
 					hideKeypad = true;
 				}
-			} else {
-				potentialDoubleClick = true;
-				cursor = clickIdx;
-				repaint();
 			}
+		} else {
+			potentialDoubleClick = true;
+			cursor = clickIdx;
+			repaint();
 		}
 	}
 
