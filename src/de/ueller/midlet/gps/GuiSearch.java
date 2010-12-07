@@ -518,7 +518,12 @@ public class GuiSearch extends Canvas implements CommandListener,
 						      "pqrs7", " tuv8", "wxyz9", Locale.get("guisearch.more")/*more*/, " _0  ", 
 						      Locale.get("guisearch.sort")/*sort*/};
 				for (int i = 0; i < 15 ; i++) {
-					gsl.ele[i].setText(letters[i]);
+					// hide sort when more than 2 chars typed
+					if (i == 14 /* sort */ && carret > 2) {
+						gsl.ele[i].setText("");
+					} else {
+						gsl.ele[i].setText(letters[i]);
+					}
 				}
 				gsl.paint(gc);
 			}
