@@ -520,7 +520,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				for (int i = 0; i < 15 ; i++) {
 					// hide sort when more than 2 chars typed
 					if (i == 14 /* sort */ && carret > 2) {
-						gsl.ele[i].setText("");
+						gsl.ele[i].setText(" ");
 					} else {
 						gsl.ele[i].setText(letters[i]);
 					}
