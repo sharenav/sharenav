@@ -1143,5 +1143,5 @@ way.ErrorWhileVerify=Error while verify
 trace.ManualLoc=Manual
 configuration.compass=N,NNE,NE,ENE,E,ESE,SE,SSE,S,SSW,SW,WSW,W,WNW,NW,NNW
 trace.ConnectTo=Connect to 
-guidiscover.searchopts=Search options
-guidiscover.numberkeypad=Enable virtual keypad
+guisetupgui.searchopts=Search options
+guisetupgui.numberkeypad=Enable virtual keypad
