@@ -858,53 +858,11 @@ public class GuiSearch extends Canvas implements CommandListener,
 		int clickIdx = (y - scrollOffset)/fontSize;
 		if ( (state == STATE_MAIN || state == STATE_FAVORITES)
 			&& (clickIdx < 0 || clickIdx >= result.size() || ((clickIdx + 1) * fontSize + scrollOffset) > getHeight())
-		     && !Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD)
+		     && (hideKeypad || !Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD))
 
 		) {
 			GuiNameEnter gne = new GuiNameEnter(this, null, Locale.get("guisearch.SearchForNamesStarting")/*Search for names starting with:*/, searchCanon.toString(), 20);
 			gne.show();
-		} else {
-			if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD)) {
-				int touchedElementId = gsl.getElementIdAtPointer(x, y);
-				if (touchedElementId >= 0
-				    &&
-				    gsl.isAnyActionIdAtPointer(x, y)
-					) {
-					gsl.setTouchedElement((LayoutElement) gsl.elementAt(touchedElementId));
-					if (touchedElementId == GuiSearchLayout.KEY_1) {
-						keyPressed('1');
-					} else if (touchedElementId == GuiSearchLayout.KEY_2) {
-						keyPressed('2');
-					} else if (touchedElementId == GuiSearchLayout.KEY_3) {
-						keyPressed('3');
-					} else if (touchedElementId == GuiSearchLayout.KEY_4) {
-						keyPressed('4');
-					} else if (touchedElementId == GuiSearchLayout.KEY_5) {
-						keyPressed('5');
-					} else if (touchedElementId == GuiSearchLayout.KEY_6) {
-						keyPressed('6');
-					} else if (touchedElementId == GuiSearchLayout.KEY_7) {
-						keyPressed('7');
-					} else if (touchedElementId == GuiSearchLayout.KEY_8) {
-						keyPressed('8');
-					} else if (touchedElementId == GuiSearchLayout.KEY_9) {
-						keyPressed('9');
-					} else if (touchedElementId == GuiSearchLayout.KEY_0) {
-						keyPressed('0');
-					} else if (touchedElementId == GuiSearchLayout.KEY_STAR) {
-						keyPressed(KEY_STAR);
-					} else if (touchedElementId == GuiSearchLayout.KEY_HASH) {
-						keyPressed(KEY_POUND);
-					} else if (touchedElementId == GuiSearchLayout.KEY_BACKSPACE) {
-						keyPressed(8);
-					} else if (touchedElementId == GuiSearchLayout.KEY_CLOSE) {
-						// hide keypad
-						hideKeypad = true;
-					}
-					repaint();
-				}
-		
-			}
 		}
 		clickIdxAtSlideStart = clickIdx;
 	}
@@ -960,6 +918,48 @@ public class GuiSearch extends Canvas implements CommandListener,
 			}
 		}
 		
+		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD) && !hideKeypad
+		    && gsl.getElementIdAtPointer(x, y) >= 0 && gsl.isAnyActionIdAtPointer(x, y)) {
+			int touchedElementId = gsl.getElementIdAtPointer(x, y);
+			if (touchedElementId >= 0
+			    &&
+			    gsl.isAnyActionIdAtPointer(x, y)
+				) {
+				gsl.setTouchedElement((LayoutElement) gsl.elementAt(touchedElementId));
+				if (touchedElementId == GuiSearchLayout.KEY_1) {
+					keyPressed('1');
+				} else if (touchedElementId == GuiSearchLayout.KEY_2) {
+					keyPressed('2');
+				} else if (touchedElementId == GuiSearchLayout.KEY_3) {
+					keyPressed('3');
+				} else if (touchedElementId == GuiSearchLayout.KEY_4) {
+					keyPressed('4');
+				} else if (touchedElementId == GuiSearchLayout.KEY_5) {
+					keyPressed('5');
+				} else if (touchedElementId == GuiSearchLayout.KEY_6) {
+					keyPressed('6');
+				} else if (touchedElementId == GuiSearchLayout.KEY_7) {
+					keyPressed('7');
+				} else if (touchedElementId == GuiSearchLayout.KEY_8) {
+					keyPressed('8');
+				} else if (touchedElementId == GuiSearchLayout.KEY_9) {
+					keyPressed('9');
+				} else if (touchedElementId == GuiSearchLayout.KEY_0) {
+					keyPressed('0');
+				} else if (touchedElementId == GuiSearchLayout.KEY_STAR) {
+					keyPressed(KEY_STAR);
+				} else if (touchedElementId == GuiSearchLayout.KEY_HASH) {
+					keyPressed(KEY_POUND);
+				} else if (touchedElementId == GuiSearchLayout.KEY_BACKSPACE) {
+					keyPressed(8);
+				} else if (touchedElementId == GuiSearchLayout.KEY_CLOSE) {
+					// hide keypad
+					hideKeypad = true;
+				}
+				repaint();
+			}
+		
+		} else
 		// if touching the right side of the display (150% font height) this equals to the * key 
 		if (x > getWidth() - fontSize * 3 / 2) {
 			keyPressed(KEY_STAR);
