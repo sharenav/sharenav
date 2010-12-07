@@ -92,7 +92,7 @@ class GuiPOItypeSelectMenu extends KeySelectMenu implements KeySelectMenuListene
 		Vector vec = new Vector();
 		for (byte i = 0; i < poiTypes.size(); i++) {
 			POItypeSelectMenuItem poiType = (POItypeSelectMenuItem)poiTypes.elementAt(i); 
-			if (poiType.getCanon().startsWith(searchString)) {
+			if (poiType.getCanon().startsWith(searchString) || poiType.getName().toLowerCase().startsWith(searchString.toLowerCase())) {
 				logger.info(poiType + " matches searchString " + searchString);
 				vec.addElement(poiType);
 			}
