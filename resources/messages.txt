@@ -1145,3 +1145,5 @@ configuration.compass=N,NNE,NE,ENE,E,ESE,SE,SSE,S,SSW,SW,WSW,W,WNW,NW,NNW
 trace.ConnectTo=Connect to 
 guisetupgui.searchopts=Search options
 guisetupgui.numberkeypad=Enable virtual keypad
+guisearch.more=more
+guisearch.sort=sort

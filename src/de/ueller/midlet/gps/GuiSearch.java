@@ -514,8 +514,9 @@ public class GuiSearch extends Canvas implements CommandListener,
 					gsl = new GuiSearchLayout(0, 0, width, height);
 				}
 			
-				String letters[] = {  "     ", "  X  ", "  <- ", "  1  ", " abc2", " def3", " ghi4", " jkl5", " mno6",
-						      "pqrs7", " tuv8", "wxyz9", "  *+ ", " _0  ", "  #  "};
+				String letters[] = {  "     ", "  X  ", "  <- ", "1#*- ", " abc2", " def3", " ghi4", " jkl5", " mno6",
+						      "pqrs7", " tuv8", "wxyz9", Locale.get("guisearch.more")/*more*/, " _0  ", 
+						      Locale.get("guisearch.sort")/*sort*/};
 				for (int i = 0; i < 15 ; i++) {
 					gsl.ele[i].setText(letters[i]);
 				}
