@@ -493,7 +493,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 	public void sizeChanged(int w, int h) {
 		width = w;
 		height = h;
-		//gsl = new GuiSearchLayout(0, 0, w, h);
+		gsl = new GuiSearchLayout(0, 0, w, h);
 		repaint();
 	}
 
