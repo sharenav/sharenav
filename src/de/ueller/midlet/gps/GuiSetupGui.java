@@ -90,17 +90,17 @@ public class GuiSetupGui extends Form implements CommandListener {
 			Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_MAPPED_ICONS, guiOpts.isSelected(3));
 			boolean optimizedForRouting = guiOpts.isSelected(4);
 			Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED, optimizedForRouting);
+			
 			// when the GUI is to be optimized for routing and we have a default backlight method, turn the backlight on			
-			boolean sellight[] = new boolean[1];
-			searchSettings.getSelectedFlags(sellight);
-			Configuration.setCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD, sellight[0]);
-
 			if (initialSetup && optimizedForRouting) {
 				if (Configuration.getDefaultDeviceBacklightMethodCfgBit() != 0) {
 					Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_ON, true);
 					GpsMid.getInstance().restartBackLightTimer();			
 				}
 			}
+			
+			Configuration.setCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD, searchSettings.isSelected(0));
+			
 			try {
 				long mem=Long.parseLong(memField.getString());
 				Configuration.setPhoneAllTimeMaxMemory(mem*1024);
