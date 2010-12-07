@@ -495,14 +495,16 @@ public class GuiSearch extends Canvas implements CommandListener,
 			gc.setColor(Legend.COLORS[Legend.COLOR_MAP_TEXT]);
 			int width = getWidth();
 			int height = getHeight();
-			gsl = new GuiSearchLayout(0, 0, width, height);
+			if (hasPointerEvents()) {
+				gsl = new GuiSearchLayout(0, 0, width, height);
 			
-			String letters[] = { " _0  ", "  1  ", " abc2", " def3", " ghi4", " jkl5", " mno6",
-					     "pqrs7", " tuv8", "wxyz9", "  *+ ", "  #  " };
-			for (int i = 0; i < 12 ; i++) {
-				gsl.ele[i].setText(letters[i]);
+				String letters[] = { " _0  ", "  1  ", " abc2", " def3", " ghi4", " jkl5", " mno6",
+						     "pqrs7", " tuv8", "wxyz9", "  *+ ", "  #  " };
+				for (int i = 0; i < 12 ; i++) {
+					gsl.ele[i].setText(letters[i]);
+				}
+				gsl.paint(gc);
 			}
-			gsl.paint(gc);
 		}
 	    if (yc < 0) {
 			gc.drawString("^", getWidth(), 0, Graphics.TOP | Graphics.RIGHT);
