@@ -115,6 +115,11 @@ public class GuiSearch extends Canvas implements CommandListener,
 	private volatile TimerTask timerT;
 	private volatile Timer timer;
 	
+	private boolean hideKeypad = false;
+
+	private int width = 0;
+	private	int height = 0;
+
 	private ChoiceGroup poiSelectionCG;
 	private TextField poiSelectionMaxDistance;
 	private TextField fulltextSearchField;
@@ -367,6 +372,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			result.removeAllElements();
 			searchCanon.setLength(0);
 			searchAlpha = false;
+			hideKeypad = false;
 			carret=0;
 			repaint();
 			return;
@@ -467,6 +473,9 @@ public class GuiSearch extends Canvas implements CommandListener,
 	}
 
 	public void show() {
+		hideKeypad = false;
+		height = getHeight();
+		width = getWidth();
 		potentialDoubleClick = false;
 		pointerDragged = false;
 		if (state == STATE_SEARCH_PROGRESS) {
@@ -478,6 +487,13 @@ public class GuiSearch extends Canvas implements CommandListener,
 			GpsMid.getInstance().show(this);
 			//Display.getDisplay(parent.getParent()).setCurrent(this);
 		}
+		repaint();
+	}
+
+	public void sizeChanged(int w, int h) {
+		width = w;
+		height = h;
+		//gsl = new GuiSearchLayout(0, 0, w, h);
 		repaint();
 	}
 
@@ -493,14 +509,12 @@ public class GuiSearch extends Canvas implements CommandListener,
 		gc.setColor(0, 0, 0);		
 		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD)) {
 			gc.setColor(Legend.COLORS[Legend.COLOR_MAP_TEXT]);
-			int width = getWidth();
-			int height = getHeight();
-			if (hasPointerEvents()) {
+			if (hasPointerEvents() && ! hideKeypad) {
 				gsl = new GuiSearchLayout(0, 0, width, height);
 			
-				String letters[] = { " _0  ", "  1  ", " abc2", " def3", " ghi4", " jkl5", " mno6",
-						     "pqrs7", " tuv8", "wxyz9", "  *+ ", "  #  " };
-				for (int i = 0; i < 12 ; i++) {
+				String letters[] = {  "     ", "  X  ", "  <- ", "  1  ", " abc2", " def3", " ghi4", " jkl5", " mno6",
+						      "pqrs7", " tuv8", "wxyz9", "  *+ ", " _0  ", "  #  "};
+				for (int i = 0; i < 15 ; i++) {
 					gsl.ele[i].setText(letters[i]);
 				}
 				gsl.paint(gc);
@@ -857,11 +871,36 @@ public class GuiSearch extends Canvas implements CommandListener,
 				    gsl.isAnyActionIdAtPointer(x, y)
 					) {
 					gsl.setTouchedElement((LayoutElement) gsl.elementAt(touchedElementId));
-					
-					// this can fail, if KEY_0 differs from '0' etc.?
-					char[] a= new char[1];
-					"0123456789*0#".getChars(touchedElementId+1, touchedElementId+2, a, 0);
-					keyPressed(a[0]);
+					if (touchedElementId == GuiSearchLayout.KEY_1) {
+						keyPressed('1');
+					} else if (touchedElementId == GuiSearchLayout.KEY_2) {
+						keyPressed('2');
+					} else if (touchedElementId == GuiSearchLayout.KEY_3) {
+						keyPressed('3');
+					} else if (touchedElementId == GuiSearchLayout.KEY_4) {
+						keyPressed('4');
+					} else if (touchedElementId == GuiSearchLayout.KEY_5) {
+						keyPressed('5');
+					} else if (touchedElementId == GuiSearchLayout.KEY_6) {
+						keyPressed('6');
+					} else if (touchedElementId == GuiSearchLayout.KEY_7) {
+						keyPressed('7');
+					} else if (touchedElementId == GuiSearchLayout.KEY_8) {
+						keyPressed('8');
+					} else if (touchedElementId == GuiSearchLayout.KEY_9) {
+						keyPressed('9');
+					} else if (touchedElementId == GuiSearchLayout.KEY_0) {
+						keyPressed('0');
+					} else if (touchedElementId == GuiSearchLayout.KEY_STAR) {
+						keyPressed(KEY_STAR);
+					} else if (touchedElementId == GuiSearchLayout.KEY_HASH) {
+						keyPressed(KEY_POUND);
+					} else if (touchedElementId == GuiSearchLayout.KEY_BACKSPACE) {
+						keyPressed(8);
+					} else if (touchedElementId == GuiSearchLayout.KEY_CLOSE) {
+						// hide keypad
+						hideKeypad = true;
+					}
 					repaint();
 				}
 		

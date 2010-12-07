@@ -19,20 +19,23 @@ import javax.microedition.lcdui.Graphics;
 
 
 public class GuiSearchLayout extends LayoutManager {
-	public static final int KEY_0 = 0;
-	public static final int KEY_1 = 1;
-	public static final int KEY_2 = 2;
-	public static final int KEY_3 = 3;
-	public static final int KEY_4 = 4;
-	public static final int KEY_5 = 5;
-	public static final int KEY_6 = 6;
-	public static final int KEY_7 = 7;
-	public static final int KEY_8 = 8;
-	public static final int KEY_9 = 9;
-	public static final int KEY_STAR = 10;
-	public static final int KEY_HASH = 11;
+	public static final int KEY_EMPTY = 0;
+	public static final int KEY_CLOSE = 1;
+	public static final int KEY_BACKSPACE = 2;
+	public static final int KEY_1 = 3;
+	public static final int KEY_2 = 4;
+	public static final int KEY_3 = 5;
+	public static final int KEY_4 = 6;
+	public static final int KEY_5 = 7;
+	public static final int KEY_6 = 8;
+	public static final int KEY_7 = 9;
+	public static final int KEY_8 = 10;
+	public static final int KEY_9 = 11;
+	public static final int KEY_STAR = 12;
+	public static final int KEY_0 = 13;
+	public static final int KEY_HASH = 14;
 
-	public static final int ELE_COUNT = 12;
+	public static final int ELE_COUNT = 15;
 
 	public static final byte SE_KEY = 1;
 
@@ -43,19 +46,19 @@ public class GuiSearchLayout extends LayoutManager {
 	private static int xdiff = 0;
 	private static int ydiff = 0;
 
-	private static int buttonw = 0;
-	private static int buttonh = 0;
+	private volatile static int buttonw = 0;
+	private volatile static int buttonh = 0;
 
 	public LayoutElement ele[] = new LayoutElement[ELE_COUNT];
 	
 	public GuiSearchLayout(int minX, int minY, int maxX, int maxY) {
 		super(minX, minY, maxX, maxY, Legend.COLORS[Legend.COLOR_MAP_TOUCHED_BUTTON_BACKGROUND]);
 		
-		xdiff = (maxX - minX) / 4;
-		ydiff = (maxY - minY) / 4;
-		System.out.println ("xdiff: " + xdiff + " ydiff: " + ydiff);
+		xdiff = (maxX - minX) / 3;
+		ydiff = (maxY - minY) / 3;
+		//System.out.println ("xdiff: " + xdiff + " ydiff: " + ydiff);
 		buttonw = (maxX-minX-xdiff-3)/3;
-		buttonh = (maxY-minY-4)/4;
+		buttonh = (maxY-minY-5)/5;
 
 		for (int i=0; i<ELE_COUNT; i++){
 			ele[i] = new LayoutElement(this);
@@ -80,11 +83,11 @@ public class GuiSearchLayout extends LayoutManager {
 
 		ydiff = 0;
 
-		e = ele[KEY_1];
+		e = ele[KEY_EMPTY];
 		addElement(e,
 			LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_TOP |
 			LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
-			LayoutElement.FLAG_FONT_MEDIUM | LayoutElement.FLAG_BACKGROUND_BORDER
+			LayoutElement.FLAG_FONT_MEDIUM | LayoutElement.FLAG_BACKGROUND_BOX
 		);
 		e.setAdditionalOffsX(xdiff);
 		e.setAdditionalOffsY(ydiff);
@@ -93,13 +96,52 @@ public class GuiSearchLayout extends LayoutManager {
 		e.setSpecialElementID(SE_KEY);
 		e.setActionID(GuiSearch.VIRTUALKEY_PRESSED);
 
-		e = ele[KEY_2];
+		e = ele[KEY_CLOSE];
 		addElement(e,
 			LayoutElement.FLAG_HALIGN_RIGHTTO_RELATIVE | LayoutElement.FLAG_VALIGN_TOP |
 			LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
-			LayoutElement.FLAG_FONT_MEDIUM | LayoutElement.FLAG_BACKGROUND_BORDER
+			LayoutElement.FLAG_FONT_MEDIUM | LayoutElement.FLAG_BACKGROUND_BOX
 		);
 		e.setAdditionalOffsY(ydiff);
+		e.setHRelative(ele[KEY_EMPTY]);
+		// FIXME fix color
+		e.setColor(Legend.COLORS[Legend.COLOR_TITLEBAR_TEXT]);
+		e.setSpecialElementID(SE_KEY);
+		e.setActionID(GuiSearch.VIRTUALKEY_PRESSED);
+		
+		e = ele[KEY_BACKSPACE];
+		addElement(e,
+			LayoutElement.FLAG_HALIGN_RIGHTTO_RELATIVE | LayoutElement.FLAG_VALIGN_TOP |
+			LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
+			LayoutElement.FLAG_FONT_MEDIUM | LayoutElement.FLAG_BACKGROUND_BOX
+		);
+		e.setHRelative(ele[KEY_CLOSE]);
+		// FIXME fix color
+		e.setAdditionalOffsY(ydiff);
+		e.setColor(Legend.COLORS[Legend.COLOR_TITLEBAR_TEXT]);
+		e.setSpecialElementID(SE_KEY);
+		e.setActionID(GuiSearch.VIRTUALKEY_PRESSED);
+
+		e = ele[KEY_1];
+		addElement(e,
+			LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
+			LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
+			LayoutElement.FLAG_FONT_MEDIUM | LayoutElement.FLAG_BACKGROUND_BOX
+		);
+		e.setVRelative(ele[KEY_EMPTY]);
+		e.setAdditionalOffsX(xdiff);
+		// FIXME fix color
+		e.setColor(Legend.COLORS[Legend.COLOR_TITLEBAR_TEXT]);
+		e.setSpecialElementID(SE_KEY);
+		e.setActionID(GuiSearch.VIRTUALKEY_PRESSED);
+
+		e = ele[KEY_2];
+		addElement(e,
+			LayoutElement.FLAG_HALIGN_RIGHTTO_RELATIVE | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
+			LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
+			LayoutElement.FLAG_FONT_MEDIUM | LayoutElement.FLAG_BACKGROUND_BOX
+		);
+		e.setVRelative(ele[KEY_CLOSE]);
 		e.setHRelative(ele[KEY_1]);
 		// FIXME fix color
 		e.setColor(Legend.COLORS[Legend.COLOR_TITLEBAR_TEXT]);
@@ -108,11 +150,11 @@ public class GuiSearchLayout extends LayoutManager {
 		
 		e = ele[KEY_3];
 		addElement(e,
-			LayoutElement.FLAG_HALIGN_RIGHTTO_RELATIVE | LayoutElement.FLAG_VALIGN_TOP |
+			LayoutElement.FLAG_HALIGN_RIGHTTO_RELATIVE | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
 			LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
-			LayoutElement.FLAG_FONT_MEDIUM | LayoutElement.FLAG_BACKGROUND_BORDER
+			LayoutElement.FLAG_FONT_MEDIUM | LayoutElement.FLAG_BACKGROUND_BOX
 		);
-		e.setAdditionalOffsY(ydiff);
+		e.setVRelative(ele[KEY_BACKSPACE]);
 		e.setHRelative(ele[KEY_2]);
 		// FIXME fix color
 		e.setColor(Legend.COLORS[Legend.COLOR_TITLEBAR_TEXT]);
@@ -123,7 +165,7 @@ public class GuiSearchLayout extends LayoutManager {
 		addElement(e,
 			LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
 			LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
-			LayoutElement.FLAG_FONT_MEDIUM | LayoutElement.FLAG_BACKGROUND_BORDER
+			LayoutElement.FLAG_FONT_MEDIUM | LayoutElement.FLAG_BACKGROUND_BOX
 		);
 		e.setAdditionalOffsX(xdiff);
 		e.setVRelative(ele[KEY_1]);
@@ -136,7 +178,7 @@ public class GuiSearchLayout extends LayoutManager {
 		addElement(e,
 			LayoutElement.FLAG_HALIGN_RIGHTTO_RELATIVE | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
 			LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
-			LayoutElement.FLAG_FONT_MEDIUM | LayoutElement.FLAG_BACKGROUND_BORDER
+			LayoutElement.FLAG_FONT_MEDIUM | LayoutElement.FLAG_BACKGROUND_BOX
 		);
 		e.setVRelative(ele[KEY_2]);
 		e.setHRelative(ele[KEY_4]);
@@ -149,7 +191,7 @@ public class GuiSearchLayout extends LayoutManager {
 		addElement(e,
 			LayoutElement.FLAG_HALIGN_RIGHTTO_RELATIVE | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
 			LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
-			LayoutElement.FLAG_FONT_MEDIUM | LayoutElement.FLAG_BACKGROUND_BORDER
+			LayoutElement.FLAG_FONT_MEDIUM | LayoutElement.FLAG_BACKGROUND_BOX
 		);
 		e.setVRelative(ele[KEY_3]);
 		e.setHRelative(ele[KEY_5]);
@@ -162,7 +204,7 @@ public class GuiSearchLayout extends LayoutManager {
 		addElement(e,
 			LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
 			LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
-			LayoutElement.FLAG_FONT_MEDIUM | LayoutElement.FLAG_BACKGROUND_BORDER
+			LayoutElement.FLAG_FONT_MEDIUM | LayoutElement.FLAG_BACKGROUND_BOX
 		);
 		e.setAdditionalOffsX(xdiff);
 		e.setVRelative(ele[KEY_4]);
@@ -175,7 +217,7 @@ public class GuiSearchLayout extends LayoutManager {
 		addElement(e,
 			LayoutElement.FLAG_HALIGN_RIGHTTO_RELATIVE | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
 			LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
-			LayoutElement.FLAG_FONT_MEDIUM | LayoutElement.FLAG_BACKGROUND_BORDER
+			LayoutElement.FLAG_FONT_MEDIUM | LayoutElement.FLAG_BACKGROUND_BOX
 		);
 		e.setVRelative(ele[KEY_5]);
 		e.setHRelative(ele[KEY_7]);
@@ -188,7 +230,7 @@ public class GuiSearchLayout extends LayoutManager {
 		addElement(e,
 			LayoutElement.FLAG_HALIGN_RIGHTTO_RELATIVE | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
 			LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
-			LayoutElement.FLAG_FONT_MEDIUM | LayoutElement.FLAG_BACKGROUND_BORDER
+			LayoutElement.FLAG_FONT_MEDIUM | LayoutElement.FLAG_BACKGROUND_BOX
 		);
 		e.setVRelative(ele[KEY_6]);
 		e.setHRelative(ele[KEY_8]);
@@ -201,7 +243,7 @@ public class GuiSearchLayout extends LayoutManager {
 		addElement(e,
 			LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
 			LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
-			LayoutElement.FLAG_FONT_MEDIUM | LayoutElement.FLAG_BACKGROUND_BORDER
+			LayoutElement.FLAG_FONT_MEDIUM | LayoutElement.FLAG_BACKGROUND_BOX
 		);
 		e.setAdditionalOffsX(xdiff);
 		e.setVRelative(ele[KEY_9]);
@@ -214,27 +256,27 @@ public class GuiSearchLayout extends LayoutManager {
 		addElement(e,
 			LayoutElement.FLAG_HALIGN_RIGHTTO_RELATIVE | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
 			LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
-			LayoutElement.FLAG_FONT_MEDIUM | LayoutElement.FLAG_BACKGROUND_BORDER
+			LayoutElement.FLAG_FONT_MEDIUM | LayoutElement.FLAG_BACKGROUND_BOX
 		);
 		e.setVRelative(ele[KEY_8]);
 		e.setHRelative(ele[KEY_STAR]);
 		// FIXME fix color
 		e.setColor(Legend.COLORS[Legend.COLOR_TITLEBAR_TEXT]);
-		e.setActionID(GuiSearch.VIRTUALKEY_PRESSED);
 		e.setSpecialElementID(SE_KEY);
+		e.setActionID(GuiSearch.VIRTUALKEY_PRESSED);
 
 		e = ele[KEY_HASH];
 		addElement(e,
 			LayoutElement.FLAG_HALIGN_RIGHTTO_RELATIVE | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
 			LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
-			LayoutElement.FLAG_FONT_MEDIUM | LayoutElement.FLAG_BACKGROUND_BORDER
+			LayoutElement.FLAG_FONT_MEDIUM | LayoutElement.FLAG_BACKGROUND_BOX
 		);
 		e.setVRelative(ele[KEY_9]);
 		e.setHRelative(ele[KEY_0]);
 		// FIXME fix color
 		e.setColor(Legend.COLORS[Legend.COLOR_TITLEBAR_TEXT]);
-		e.setActionID(GuiSearch.VIRTUALKEY_PRESSED);
 		e.setSpecialElementID(SE_KEY);
+		e.setActionID(GuiSearch.VIRTUALKEY_PRESSED);
 	}
 	
 	/*
