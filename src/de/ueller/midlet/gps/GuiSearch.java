@@ -43,6 +43,8 @@ import de.enough.polish.util.Locale;
 public class GuiSearch extends Canvas implements CommandListener,
 		      GpsMidDisplayable, InputListener, KeySelectMenuReducedListener, CancelMonitorInterface {
 
+	protected static final int VIRTUALKEY_PRESSED = 1;
+
 	private final static Logger logger = Logger.getInstance(GuiSearch.class,Logger.DEBUG);
 
 	/** OK_CMD for Nearest POI / Fulltext Search */
@@ -853,6 +855,11 @@ public class GuiSearch extends Canvas implements CommandListener,
 				    gsl.isAnyActionIdAtPointer(x, y)
 					) {
 					gsl.setTouchedElement((LayoutElement) gsl.elementAt(touchedElementId));
+					
+					// this can fail, if KEY_0 differs from '0' etc.?
+					char[] a= new char[1];
+					"0123456789*0#".getChars(touchedElementId+1, touchedElementId+2, a, 0);
+					keyPressed(a[0]);
 					repaint();
 				}
 		
