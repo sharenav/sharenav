@@ -295,7 +295,9 @@ public class GuiSearchLayout extends LayoutManager {
 			g.drawLine(left, top, left, top+buttonh);
 			g.drawLine(left+buttonw, top, left+buttonw, top+buttonh);
 			g.drawLine(left, top+buttonh, left+buttonw, top+buttonh);
-			g.drawSubstring(text, 0, 5, left+buttonw/2, top+buttonh/2, Graphics.HCENTER|Graphics.VCENTER);
+			// problem with Nokia 5230 (S60r5), works with android&microemulator
+			//g.drawSubstring(text, 0, 5, left+buttonw/2, top+buttonh/2, Graphics.HCENTER|Graphics.VCENTER);
+			g.drawString(text, left, top, Graphics.TOP|Graphics.LEFT);
 			break;
 		}
 	}
