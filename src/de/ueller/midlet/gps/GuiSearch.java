@@ -26,6 +26,7 @@ import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.SearchResult;
 import de.ueller.gps.tools.HelperRoutines;
+import de.ueller.gps.tools.LayoutElement;
 import de.ueller.gpsMid.CancelMonitorInterface;
 import de.ueller.midlet.gps.GuiPOItypeSelectMenu.POItypeSelectMenuItem;
 import de.ueller.midlet.gps.data.KeySelectMenuItem;
@@ -83,6 +84,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 	public boolean showAllWayPts = false;
 	public boolean sortByDist = false;
 	
+	public static GuiSearchLayout gsl = null;
+
 	/**
 	 * This vector is used to buffer writes,
 	 * so that we only have to synchronize threads
@@ -486,6 +489,19 @@ public class GuiSearch extends Canvas implements CommandListener,
 		gc.setColor(255,255, 255);
 		gc.fillRect(0, 0, getWidth(), getHeight());
 		gc.setColor(0, 0, 0);		
+		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD)) {
+			gc.setColor(Legend.COLORS[Legend.COLOR_MAP_TEXT]);
+			int width = getWidth();
+			int height = getHeight();
+			gsl = new GuiSearchLayout(0, 0, width, height);
+			
+			String letters[] = { " _0  ", "  1  ", " abc2", " def3", " ghi4", " jkl5", " mno6",
+					     "pqrs7", " tuv8", "wxyz9", "  *+ ", "  #  " };
+			for (int i = 0; i < 12 ; i++) {
+				gsl.ele[i].setText(letters[i]);
+			}
+			gsl.paint(gc);
+		}
 	    if (yc < 0) {
 			gc.drawString("^", getWidth(), 0, Graphics.TOP | Graphics.RIGHT);
 		}
@@ -824,9 +840,23 @@ public class GuiSearch extends Canvas implements CommandListener,
 		int clickIdx = (y - scrollOffset)/fontSize;
 		if ( (state == STATE_MAIN || state == STATE_FAVORITES)
 			&& (clickIdx < 0 || clickIdx >= result.size() || ((clickIdx + 1) * fontSize + scrollOffset) > getHeight())
+		     && !Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD)
+
 		) {
 			GuiNameEnter gne = new GuiNameEnter(this, null, Locale.get("guisearch.SearchForNamesStarting")/*Search for names starting with:*/, searchCanon.toString(), 20);
 			gne.show();
+		} else {
+			if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD)) {
+				int touchedElementId = gsl.getElementIdAtPointer(x, y);
+				if (touchedElementId >= 0
+				    &&
+				    gsl.isAnyActionIdAtPointer(x, y)
+					) {
+					gsl.setTouchedElement((LayoutElement) gsl.elementAt(touchedElementId));
+					repaint();
+				}
+		
+			}
 		}
 		clickIdxAtSlideStart = clickIdx;
 	}
