@@ -618,6 +618,7 @@ public class Configuration {
 									1L << CFGBIT_SHOW_ETA_IN_MAP |
 									1L << CFGBIT_BUILDINGS |
 									1L << CFGBIT_BUILDING_LABELS |
+			    						1L << CFGBIT_DISPLAY_SYMMETRIC_TOUCHZONES |
 									1L << CFGBIT_ICONMENUS_MAPPED_ICONS;
 									
 		}
