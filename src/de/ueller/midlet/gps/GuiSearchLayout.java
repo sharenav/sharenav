@@ -52,7 +52,7 @@ public class GuiSearchLayout extends LayoutManager {
 	public LayoutElement ele[] = new LayoutElement[ELE_COUNT];
 	
 	public GuiSearchLayout(int minX, int minY, int maxX, int maxY) {
-		super(minX, minY, maxX, maxY, Legend.COLORS[Legend.COLOR_MAP_TOUCHED_BUTTON_BACKGROUND]);
+		super(minX, minY, maxX, maxY, Legend.COLORS[Legend.COLOR_SEARCH_TOUCHED_BUTTON_BACKGROUND]);
 		
 		xdiff = (maxX - minX) / 3;
 		ydiff = (maxY - minY) / 8;
@@ -91,8 +91,7 @@ public class GuiSearchLayout extends LayoutManager {
 		);
 		e.setAdditionalOffsX(xdiff);
 		e.setAdditionalOffsY(ydiff);
-		// FIXME fix color
-		e.setColor(Legend.COLORS[Legend.COLOR_TITLEBAR_TEXT]);
+		e.setColor(Legend.COLORS[Legend.COLOR_SEARCH_BUTTON_TEXT]);
 		e.setSpecialElementID(SE_KEY);
 		e.setActionID(GuiSearch.VIRTUALKEY_PRESSED);
 
@@ -104,8 +103,7 @@ public class GuiSearchLayout extends LayoutManager {
 		);
 		e.setAdditionalOffsY(ydiff);
 		e.setHRelative(ele[KEY_EMPTY]);
-		// FIXME fix color
-		e.setColor(Legend.COLORS[Legend.COLOR_TITLEBAR_TEXT]);
+		e.setColor(Legend.COLORS[Legend.COLOR_SEARCH_BUTTON_TEXT]);
 		e.setSpecialElementID(SE_KEY);
 		e.setActionID(GuiSearch.VIRTUALKEY_PRESSED);
 		
@@ -116,9 +114,8 @@ public class GuiSearchLayout extends LayoutManager {
 			LayoutElement.FLAG_FONT_MEDIUM
 		);
 		e.setHRelative(ele[KEY_CLOSE]);
-		// FIXME fix color
 		e.setAdditionalOffsY(ydiff);
-		e.setColor(Legend.COLORS[Legend.COLOR_TITLEBAR_TEXT]);
+		e.setColor(Legend.COLORS[Legend.COLOR_SEARCH_BUTTON_TEXT]);
 		e.setSpecialElementID(SE_KEY);
 		e.setActionID(GuiSearch.VIRTUALKEY_PRESSED);
 
@@ -130,8 +127,7 @@ public class GuiSearchLayout extends LayoutManager {
 		);
 		e.setVRelative(ele[KEY_EMPTY]);
 		e.setAdditionalOffsX(xdiff);
-		// FIXME fix color
-		e.setColor(Legend.COLORS[Legend.COLOR_TITLEBAR_TEXT]);
+		e.setColor(Legend.COLORS[Legend.COLOR_SEARCH_BUTTON_TEXT]);
 		e.setSpecialElementID(SE_KEY);
 		e.setActionID(GuiSearch.VIRTUALKEY_PRESSED);
 
@@ -143,8 +139,7 @@ public class GuiSearchLayout extends LayoutManager {
 		);
 		e.setVRelative(ele[KEY_CLOSE]);
 		e.setHRelative(ele[KEY_1]);
-		// FIXME fix color
-		e.setColor(Legend.COLORS[Legend.COLOR_TITLEBAR_TEXT]);
+		e.setColor(Legend.COLORS[Legend.COLOR_SEARCH_BUTTON_TEXT]);
 		e.setSpecialElementID(SE_KEY);
 		e.setActionID(GuiSearch.VIRTUALKEY_PRESSED);
 		
@@ -156,8 +151,7 @@ public class GuiSearchLayout extends LayoutManager {
 		);
 		e.setVRelative(ele[KEY_BACKSPACE]);
 		e.setHRelative(ele[KEY_2]);
-		// FIXME fix color
-		e.setColor(Legend.COLORS[Legend.COLOR_TITLEBAR_TEXT]);
+		e.setColor(Legend.COLORS[Legend.COLOR_SEARCH_BUTTON_TEXT]);
 		e.setSpecialElementID(SE_KEY);
 		e.setActionID(GuiSearch.VIRTUALKEY_PRESSED);
 
@@ -169,8 +163,7 @@ public class GuiSearchLayout extends LayoutManager {
 		);
 		e.setAdditionalOffsX(xdiff);
 		e.setVRelative(ele[KEY_1]);
-		// FIXME fix color
-		e.setColor(Legend.COLORS[Legend.COLOR_TITLEBAR_TEXT]);
+		e.setColor(Legend.COLORS[Legend.COLOR_SEARCH_BUTTON_TEXT]);
 		e.setSpecialElementID(SE_KEY);
 		e.setActionID(GuiSearch.VIRTUALKEY_PRESSED);
 
@@ -182,8 +175,7 @@ public class GuiSearchLayout extends LayoutManager {
 		);
 		e.setVRelative(ele[KEY_2]);
 		e.setHRelative(ele[KEY_4]);
-		// FIXME fix color
-		e.setColor(Legend.COLORS[Legend.COLOR_TITLEBAR_TEXT]);
+		e.setColor(Legend.COLORS[Legend.COLOR_SEARCH_BUTTON_TEXT]);
 		e.setSpecialElementID(SE_KEY);
 		e.setActionID(GuiSearch.VIRTUALKEY_PRESSED);
 		
@@ -195,8 +187,7 @@ public class GuiSearchLayout extends LayoutManager {
 		);
 		e.setVRelative(ele[KEY_3]);
 		e.setHRelative(ele[KEY_5]);
-		// FIXME fix color
-		e.setColor(Legend.COLORS[Legend.COLOR_TITLEBAR_TEXT]);
+		e.setColor(Legend.COLORS[Legend.COLOR_SEARCH_BUTTON_TEXT]);
 		e.setSpecialElementID(SE_KEY);
 		e.setActionID(GuiSearch.VIRTUALKEY_PRESSED);
 		
@@ -208,8 +199,7 @@ public class GuiSearchLayout extends LayoutManager {
 		);
 		e.setAdditionalOffsX(xdiff);
 		e.setVRelative(ele[KEY_4]);
-		// FIXME fix color
-		e.setColor(Legend.COLORS[Legend.COLOR_TITLEBAR_TEXT]);
+		e.setColor(Legend.COLORS[Legend.COLOR_SEARCH_BUTTON_TEXT]);
 		e.setSpecialElementID(SE_KEY);
 		e.setActionID(GuiSearch.VIRTUALKEY_PRESSED);
 
@@ -221,8 +211,7 @@ public class GuiSearchLayout extends LayoutManager {
 		);
 		e.setVRelative(ele[KEY_5]);
 		e.setHRelative(ele[KEY_7]);
-		// FIXME fix color
-		e.setColor(Legend.COLORS[Legend.COLOR_TITLEBAR_TEXT]);
+		e.setColor(Legend.COLORS[Legend.COLOR_SEARCH_BUTTON_TEXT]);
 		e.setSpecialElementID(SE_KEY);
 		e.setActionID(GuiSearch.VIRTUALKEY_PRESSED);
 		
@@ -234,8 +223,7 @@ public class GuiSearchLayout extends LayoutManager {
 		);
 		e.setVRelative(ele[KEY_6]);
 		e.setHRelative(ele[KEY_8]);
-		// FIXME fix color
-		e.setColor(Legend.COLORS[Legend.COLOR_TITLEBAR_TEXT]);
+		e.setColor(Legend.COLORS[Legend.COLOR_SEARCH_BUTTON_TEXT]);
 		e.setSpecialElementID(SE_KEY);
 		e.setActionID(GuiSearch.VIRTUALKEY_PRESSED);
 		
@@ -247,8 +235,7 @@ public class GuiSearchLayout extends LayoutManager {
 		);
 		e.setAdditionalOffsX(xdiff);
 		e.setVRelative(ele[KEY_9]);
-		// FIXME fix color
-		e.setColor(Legend.COLORS[Legend.COLOR_TITLEBAR_TEXT]);
+		e.setColor(Legend.COLORS[Legend.COLOR_SEARCH_BUTTON_TEXT]);
 		e.setSpecialElementID(SE_KEY);
 		e.setActionID(GuiSearch.VIRTUALKEY_PRESSED);
 
@@ -260,8 +247,7 @@ public class GuiSearchLayout extends LayoutManager {
 		);
 		e.setVRelative(ele[KEY_8]);
 		e.setHRelative(ele[KEY_STAR]);
-		// FIXME fix color
-		e.setColor(Legend.COLORS[Legend.COLOR_TITLEBAR_TEXT]);
+		e.setColor(Legend.COLORS[Legend.COLOR_SEARCH_BUTTON_TEXT]);
 		e.setSpecialElementID(SE_KEY);
 		e.setActionID(GuiSearch.VIRTUALKEY_PRESSED);
 
@@ -273,8 +259,7 @@ public class GuiSearchLayout extends LayoutManager {
 		);
 		e.setVRelative(ele[KEY_9]);
 		e.setHRelative(ele[KEY_0]);
-		// FIXME fix color
-		e.setColor(Legend.COLORS[Legend.COLOR_TITLEBAR_TEXT]);
+		e.setColor(Legend.COLORS[Legend.COLOR_SEARCH_BUTTON_TEXT]);
 		e.setSpecialElementID(SE_KEY);
 		e.setActionID(GuiSearch.VIRTUALKEY_PRESSED);
 	}
@@ -289,8 +274,7 @@ public class GuiSearchLayout extends LayoutManager {
 	protected void drawSpecialElement(Graphics g, byte id, String text, int left, int top) {
 		switch(id) {
 		case SE_KEY:
-			// FIXME what to with the color?
-			g.setColor(Legend.COLORS[Legend.COLOR_TITLEBAR_TEXT]);
+			g.setColor(Legend.COLORS[Legend.COLOR_SEARCH_BUTTON_BORDER]);
 			g.drawLine(left, top, left+buttonw, top);
 			g.drawLine(left, top, left, top+buttonh);
 			g.drawLine(left+buttonw, top, left+buttonw, top+buttonh);

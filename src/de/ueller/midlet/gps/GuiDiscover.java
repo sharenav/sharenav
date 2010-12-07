@@ -217,7 +217,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	private ChoiceGroup renderOpts;
 	private ChoiceGroup visualOpts;
 	private ChoiceGroup metricUnits;
-	private ChoiceGroup searchSettings;
 	private ChoiceGroup distanceViews;
 	private TextField	tfAutoRecenterToGpsSecs;
 	private ChoiceGroup backlightOpts;
@@ -540,11 +539,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		metricUnit[0] = Locale.get("guidiscover.metricunits")/*metric units*/;
 		metricUnits = new ChoiceGroup(Locale.get("guidiscover.Units")/*Units*/, Choice.MULTIPLE, metricUnit, null);
 		menuDisplayOptions.append(metricUnits);
-
-		String [] search = new String[1];
-		search[0] = Locale.get("guidiscover.numberkeypad")/*Enable virtual keypad*/;
-		searchSettings = new ChoiceGroup(Locale.get("guidiscover.searchopts")/*Search options*/, Choice.MULTIPLE, search, null);
-		menuDisplayOptions.append(searchSettings);
 
 		String [] distanceView = new String[2];
 		distanceView[0] = Locale.get("guidiscover.onlymeters")/*only meters*/;
@@ -1104,10 +1098,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				metricUnits.getSelectedFlags(sellight);
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_METRIC, sellight[0]);
 				
-				sellight = new boolean[1];
-				searchSettings.getSelectedFlags(sellight);
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD, sellight[0]);
-				
 				sellight = new boolean[2];
 				visualOpts.getSelectedFlags(sellight);
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_NOSTREETBORDERS, ! sellight[0]);
@@ -1341,7 +1331,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				mapInfoOpts.setSelectedIndex(5, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_AIR_DISTANCE_WHEN_ROUTING));
 				mapInfoOpts.setSelectedIndex(6, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_CLOCK_IN_MAP));
 				metricUnits.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_METRIC));
-				searchSettings.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD));
+
 				visualOpts.setSelectedIndex(0, ! Configuration.getCfgBitSavedState(Configuration.CFGBIT_NOSTREETBORDERS));
 				visualOpts.setSelectedIndex(1, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ROUND_WAY_ENDS));
 				SingleTile.newPOIFont();

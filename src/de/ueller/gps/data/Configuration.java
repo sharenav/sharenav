@@ -682,6 +682,7 @@ public class Configuration {
 		}
 		if (configVersionStored < 19) {
 			cfgBits_64_to_127 |= 1L << CFGBIT_ROUTE_USE_MOTORWAYS |
+								 1L << CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD |
 			 					 1L << CFGBIT_ROUTE_USE_TOLLROADS;
 		}
 

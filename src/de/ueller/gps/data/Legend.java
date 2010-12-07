@@ -166,7 +166,17 @@ public class Legend {
 	public final static int COLOR_WAY_DAMAGED_BORDER = 73;
 	public final static int COLOR_WAY_DAMAGED_DECORATION = 74;
 	public final static int COLOR_DAMAGED_BORDER = 75;
+	/* FIXME remove these at map format change */
 	public final static int COLOR_COUNT = 76;
+        public final static int COLOR_SEARCH_TOUCHED_BUTTON_BACKGROUND = 2;
+	public final static int COLOR_SEARCH_BUTTON_TEXT = 29;
+	public final static int COLOR_SEARCH_BUTTON_BORDER = 30;
+
+	/* FIXME add these at map format change
+        public final static int COLOR_SEARCH_TOUCHED_BUTTON_BACKGROUND = 76;
+	public final static int COLOR_SEARCH_BUTTON_TEXT = 77;
+	public final static int COLOR_SEARCH_BUTTON_BORDER = 78;
+	public final static int COLOR_COUNT = 79; */
 	
 	public static int COLORS[] = new int[COLOR_COUNT];
 

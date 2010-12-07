@@ -13,6 +13,7 @@ import de.enough.polish.util.Locale;
 
 public class GuiSetupGui extends Form implements CommandListener {
 	private ChoiceGroup guiOpts;
+	private ChoiceGroup searchSettings;
 
 	// commands
 	private static final Command CMD_SAVE = new Command(Locale.get("generic.OK")/*Ok*/, Command.ITEM, 2);
@@ -35,13 +36,19 @@ public class GuiSetupGui extends Form implements CommandListener {
 			guis[2] = Locale.get("guisetupgui.LargeTabButtons")/*large tab buttons*/;
 			guis[3] = Locale.get("guisetupgui.IconsMappedOnKeys")/*icons mapped on keys*/;
 			guis[4] = Locale.get("guisetupgui.OptimiseForRouting")/*optimise for routing*/;
+
+			String [] search = new String[1];
+			search[0] = Locale.get("guisetupgui.numberkeypad")/*Enable virtual keypad*/;
+			searchSettings = new ChoiceGroup(Locale.get("guisetupgui.searchopts")/*Search options*/, Choice.MULTIPLE, search, null);
 			guiOpts = new ChoiceGroup(Locale.get("guisetupgui.IconMenu")/*Icon Menu:*/, Choice.MULTIPLE, guis ,null);
 			guiOpts.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS));
 			guiOpts.setSelectedIndex(1, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_FULLSCREEN));
 			guiOpts.setSelectedIndex(2, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_BIG_TAB_BUTTONS));
 			guiOpts.setSelectedIndex(3, Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_MAPPED_ICONS));
 			guiOpts.setSelectedIndex(4, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED));
+			searchSettings.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD));
 			append(guiOpts);
+			append(searchSettings);
 			long mem=Configuration.getPhoneAllTimeMaxMemory();
 			if (mem == 0){
 				mem=Runtime.getRuntime().totalMemory();
@@ -84,6 +91,10 @@ public class GuiSetupGui extends Form implements CommandListener {
 			boolean optimizedForRouting = guiOpts.isSelected(4);
 			Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED, optimizedForRouting);
 			// when the GUI is to be optimized for routing and we have a default backlight method, turn the backlight on			
+			boolean sellight[] = new boolean[1];
+			searchSettings.getSelectedFlags(sellight);
+			Configuration.setCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD, sellight[0]);
+
 			if (initialSetup && optimizedForRouting) {
 				if (Configuration.getDefaultDeviceBacklightMethodCfgBit() != 0) {
 					Configuration.setCfgBitSavedState(Configuration.CFGBIT_BACKLIGHT_ON, true);
