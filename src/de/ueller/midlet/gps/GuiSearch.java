@@ -880,6 +880,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				}
 			}
 		}
+		clickIdxAtSlideStart = clickIdx;
 	}
 	
 	public void pointerReleased(int x, int y) {
