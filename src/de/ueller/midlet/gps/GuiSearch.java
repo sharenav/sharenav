@@ -891,6 +891,10 @@ public class GuiSearch extends Canvas implements CommandListener,
 		logger.debug("PointerReleased: " + x + "," + y);
 		long currTime = System.currentTimeMillis();
 		int clickIdx = (y - scrollOffset)/fontSize;
+		if (gsl != null) {
+		    gsl.clearTouchedElement();
+		    repaint();
+		}
 		if (pointerDragged) {
 			 // Gestures: sliding horizontally with almost no vertical movement
 			if ( Math.abs(y - pointerYPressed) < fontSize ) {
@@ -972,8 +976,6 @@ public class GuiSearch extends Canvas implements CommandListener,
 					// hide keypad
 					hideKeypad = true;
 				}
-				gsl.clearTouchedElement();
-				repaint();
 			}
 		
 		} else
