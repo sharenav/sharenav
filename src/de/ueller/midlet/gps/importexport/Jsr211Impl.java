@@ -72,7 +72,7 @@ public class Jsr211Impl implements Jsr211ContentHandlerInterface,
 				Locale.get("jsr211impl.FailedRegisteringContenthandlerWrongArguments")/*Failed to register Contenthandler due to wrong arguments*/,
 					e);
 		} catch (ClassNotFoundException e) {
-			logger.exception(Locale.get("jsr211impl.FailedFinding Contenthandler")/*Failed to find Contenthandler*/, e);
+			logger.exception(Locale.get("jsr211impl.FailedFindingContenthandler")/*Failed to find Contenthandler*/, e);
 		}
 
 	}

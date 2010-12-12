@@ -224,7 +224,7 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 					logger.info("Obtained a position from " + loc);
 					receiverList.receiveSolution(Locale.get("secellid.Cell")/*Cell*/);
 					receiverList.receivePosition(new Position(loc.lat, loc.lon, 0, 0, 0, 0,
-							System.currentTimeMillis()));
+							  System.currentTimeMillis(), Position.TYPE_CELLID));
 				} else {
 					receiverList.receiveSolution(Locale.get("secellid.NoFix")/*NoFix*/);
 				} 

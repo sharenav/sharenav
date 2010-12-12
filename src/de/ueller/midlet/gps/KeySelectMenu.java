@@ -19,7 +19,9 @@ import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
 import de.ueller.gps.data.Configuration;
+import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.SearchResult;
+import de.ueller.gps.tools.LayoutElement;
 import de.ueller.midlet.gps.data.KeySelectMenuItem;
 import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.tile.SearchNames;
@@ -39,13 +41,20 @@ public class KeySelectMenu extends Canvas implements
 
 	private Vector result = new Vector();
 
+	private boolean hideKeypad = false;
+
+	private int width = 0;
+	private	int height = 0;
+
+	public static GuiSearchLayout gsl = null;
+
 	/**
 	 * This vector is used to buffer writes, so that we only have to synchronize
 	 * threads at the end of painting
 	 */
-	private Vector result2 = new Vector();
+	private Vector resultBuffer = new Vector();
 
-	private boolean resetResult2;
+	private boolean resetResult;
 
 	private int carret = 0;
 
@@ -108,6 +117,7 @@ public class KeySelectMenu extends Canvas implements
 
 	public void show() {
 		this.setFullScreenMode(Configuration.getCfgBitState(Configuration.CFGBIT_FULLSCREEN));
+		hideKeypad = false;
 		potentialDoubleClick = false;
 		pointerDragged = false;
 		GpsMid.getInstance().show(this);
@@ -117,7 +127,7 @@ public class KeySelectMenu extends Canvas implements
 	public synchronized void addResult(KeySelectMenuItem item) {
 		//#debug debug
 		logger.debug("Adding item " + item + " to KeySelectMenu");
-		result.addElement(item);
+		resultBuffer.addElement(item);
 		repaint();
 	}
 	
@@ -126,7 +136,7 @@ public class KeySelectMenu extends Canvas implements
 		logger.info("Adding " + items.size() + " items to KeySelectMenu");
 		for (int i = 0; i < items.size(); i++) {
 			if (items.elementAt(i) instanceof KeySelectMenuItem) {
-				result.addElement(items.elementAt(i));
+				resultBuffer.addElement(items.elementAt(i));
 			} else {
 				logger.error(Locale.get("keyselectmenu.AddingWrongTypeToKeySelectMenu")/*Adding a wrong type to KeySelectMenu*/);
 			}
@@ -135,7 +145,7 @@ public class KeySelectMenu extends Canvas implements
 	}
 	
 	public synchronized void removeAll() {
-		resetResult2 = true;
+		resetResult = true;
 		cursor = 0;
 	}
 	
@@ -155,8 +165,8 @@ public class KeySelectMenu extends Canvas implements
 		}
 		if (c == CLEAR_CMD) {
 			synchronized (this) {
-				resetResult2 = true;
-				result.removeAllElements();
+				resetResult = true;
+				resultBuffer.removeAllElements();
 			}
 			callback.keySelectMenuResetMenu();
 			searchCanon.setLength(0);
@@ -166,7 +176,7 @@ public class KeySelectMenu extends Canvas implements
 		}
 		if (c == OK_CMD) {
 			try {
-			Object o = result2.elementAt(cursor);
+			Object o = result.elementAt(cursor);
 			if (o instanceof KeySelectMenuItem) {
 				KeySelectMenuItem menuItem = (KeySelectMenuItem) o;
 				callback.keySelectMenuItemSelected(menuItem);
@@ -183,6 +193,13 @@ public class KeySelectMenu extends Canvas implements
 		}
 	}
 
+	public void sizeChanged(int w, int h) {
+		width = w;
+		height = h;
+		gsl = new GuiSearchLayout(0, 0, w, h);
+		repaint();
+	}
+
 	protected void paint(Graphics gc) {
 		//#debug debug
 		logger.debug("Painting KeySelectMenu screen with offset: "
@@ -194,33 +211,55 @@ public class KeySelectMenu extends Canvas implements
 		gc.setColor(255, 255, 255);
 		gc.fillRect(0, 0, getWidth(), getHeight());
 		gc.setColor(0, 0, 0);
+		// FIXME whole function is mostly duplicated between GuiSearch and KeySelectMenu
+		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD)) {
+			gc.setColor(Legend.COLORS[Legend.COLOR_MAP_TEXT]);
+			if (hasPointerEvents() && ! hideKeypad) {
+				if (gsl == null) {
+					gsl = new GuiSearchLayout(0, 0, width, height);
+				}
+			
+				String letters[] = {  "     ", "  X  ", "  <- ", "1#*- ", " abc2", " def3", " ghi4", " jkl5", " mno6",
+						      "pqrs7", " tuv8", "wxyz9", Locale.get("guisearch.more")/*more*/, " _0  ", 
+						      Locale.get("guisearch.sort")/*sort*/};
+				for (int i = 0; i < 15 ; i++) {
+					// hide sort 
+					if (i == 14 /* sort */) {
+						gsl.ele[i].setText(" ");
+					} else {
+						gsl.ele[i].setText(letters[i]);
+					}
+				}
+				gsl.paint(gc);
+			}
+		}
 		if (yc < 0) {
 			gc.drawString("^", getWidth(), 0, Graphics.TOP | Graphics.RIGHT);
 		}
 
-		if (resetResult2) {
+		if (resetResult) {
 			synchronized (this) {
-				result2.removeAllElements();
-				resetResult2 = false;
+				result.removeAllElements();
+				resetResult = false;
 			}
 		}
 		// insert new results from search thread
-		if (result.size() > 0) {
+		if (resultBuffer.size() > 0) {
 			synchronized (this) {
-				for (int i = 0; i < result.size(); i++) {
-					result2.addElement(result.elementAt(i));
+				for (int i = 0; i < resultBuffer.size(); i++) {
+					result.addElement(resultBuffer.elementAt(i));
 				}
-				result.removeAllElements();
+				resultBuffer.removeAllElements();
 			}
 		}
 		//#debug debug
-		logger.debug("Painting " + result2.size() + " number of elements");
+		logger.debug("Painting " + result.size() + " number of elements");
 		// keep cursor within bounds
-		if (cursor != 0 && cursor >= result2.size()) {
-			cursor = result2.size() - 1;
+		if (cursor != 0 && cursor >= result.size()) {
+			cursor = result.size() - 1;
 		}
 
-		for (int i = 0; i < result2.size(); i++) {
+		for (int i = 0; i < result.size(); i++) {
 			if (yc < 0) {
 				yc += fontSize;
 				continue;
@@ -237,7 +276,7 @@ public class KeySelectMenu extends Canvas implements
 			} else {
 				gc.setColor(0, 0, 0);
 			}
-			Object o = result2.elementAt(i);
+			Object o = result.elementAt(i);
 			if (o instanceof KeySelectMenuItem) {
 				KeySelectMenuItem menuItem = (KeySelectMenuItem) o;
 				Image img = menuItem.getImage();
@@ -305,6 +344,7 @@ public class KeySelectMenu extends Canvas implements
 		// so 10 should correspond to Enter key on QWERT keyboards
 		if (keyCode == 10 || action == FIRE) {
 			commandAction(OK_CMD, null);
+			hideKeypad = true;
 			return;
 		} else if (action == UP) {
 			if (cursor > 0)
@@ -317,7 +357,7 @@ public class KeySelectMenu extends Canvas implements
 			repaint();
 			return;
 		} else if (action == DOWN) {
-			if (cursor < result2.size() - 1)
+			if (cursor < result.size() - 1)
 				cursor++;
 			if (((cursor + 1) * fontSize + scrollOffset) > getHeight()) {
 				scrollOffset -= 3 * fontSize;
@@ -378,6 +418,18 @@ public class KeySelectMenu extends Canvas implements
 		pointerYDragged = y;
 		pointerXPressed = x;
 		pointerYPressed = y;
+		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD) && !hideKeypad
+		    && gsl.getElementIdAtPointer(x, y) >= 0 && gsl.isAnyActionIdAtPointer(x, y)) {
+		    int touchedElementId = gsl.getElementIdAtPointer(x, y);
+		    if (touchedElementId >= 0
+			&&
+			gsl.isAnyActionIdAtPointer(x, y)
+			) {
+			//System.out.println("setTouchedElement: " + touchedElementId);
+			gsl.setTouchedElement((LayoutElement) gsl.elementAt(touchedElementId));
+			repaint();
+		    }
+		}
 	}
 
 	public void pointerReleased(int x, int y) {
@@ -385,6 +437,10 @@ public class KeySelectMenu extends Canvas implements
 		logger.debug("PointerReleased: " + x + "," + y);
 		long currTime = System.currentTimeMillis();
 		int clickIdx = (y - scrollOffset) / fontSize;
+		if (gsl != null) {
+		    gsl.clearTouchedElement();
+		    repaint();
+		}
 		if (pointerDragged) {
 			pointerDragged = false;
 			potentialDoubleClick = false;
@@ -399,9 +455,51 @@ public class KeySelectMenu extends Canvas implements
 				return;
 			}
 		}
-		potentialDoubleClick = true;
-		cursor = clickIdx;
-		repaint();
+		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD) && !hideKeypad
+		    && gsl.getElementIdAtPointer(x, y) >= 0 && gsl.isAnyActionIdAtPointer(x, y)) {
+			int touchedElementId = gsl.getElementIdAtPointer(x, y);
+			if (touchedElementId >= 0
+			    &&
+			    gsl.isAnyActionIdAtPointer(x, y)
+				) {
+				//gsl.setTouchedElement((LayoutElement) gsl.elementAt(touchedElementId));
+				//repaint();
+				if (touchedElementId == GuiSearchLayout.KEY_1) {
+					keyPressed('1');
+				} else if (touchedElementId == GuiSearchLayout.KEY_2) {
+					keyPressed('2');
+				} else if (touchedElementId == GuiSearchLayout.KEY_3) {
+					keyPressed('3');
+				} else if (touchedElementId == GuiSearchLayout.KEY_4) {
+					keyPressed('4');
+				} else if (touchedElementId == GuiSearchLayout.KEY_5) {
+					keyPressed('5');
+				} else if (touchedElementId == GuiSearchLayout.KEY_6) {
+					keyPressed('6');
+				} else if (touchedElementId == GuiSearchLayout.KEY_7) {
+					keyPressed('7');
+				} else if (touchedElementId == GuiSearchLayout.KEY_8) {
+					keyPressed('8');
+				} else if (touchedElementId == GuiSearchLayout.KEY_9) {
+					keyPressed('9');
+				} else if (touchedElementId == GuiSearchLayout.KEY_0) {
+					keyPressed('0');
+				} else if (touchedElementId == GuiSearchLayout.KEY_STAR) {
+					keyPressed(KEY_STAR);
+				} else if (touchedElementId == GuiSearchLayout.KEY_HASH) {
+					keyPressed(KEY_POUND);
+				} else if (touchedElementId == GuiSearchLayout.KEY_BACKSPACE) {
+					keyPressed(8);
+				} else if (touchedElementId == GuiSearchLayout.KEY_CLOSE) {
+					// hide keypad
+					hideKeypad = true;
+				}
+			}
+		} else {
+			potentialDoubleClick = true;
+			cursor = clickIdx;
+			repaint();
+		}
 	}
 
 	public void pointerDragged(int x, int y) {

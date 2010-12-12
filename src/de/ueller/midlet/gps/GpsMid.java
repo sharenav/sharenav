@@ -200,6 +200,8 @@ public class GpsMid extends MIDlet implements CommandListener {
 			}
 		}
 
+		Configuration.initCompassDirections();
+
 		phoneMaxMemory = determinPhoneMaxMemory();		
 		
 		menu.addCommand(EXIT_CMD);

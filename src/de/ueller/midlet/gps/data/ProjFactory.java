@@ -14,7 +14,7 @@ public final class ProjFactory {
 	public static final byte MOVE_UP_ENH = 2;
 	public static final byte EAGLE = 3;
 	public static final String[] name = { Locale.get("projfactory.NorthUp")/*North Up*/, Locale.get("projfactory.Moving")/*Moving*/,
-	      Locale.get("projfactory.Moving enhanced")/*MovingEnhanced*/, Locale.get("projfactory.Eagle")/*Eagle*/ };
+	      Locale.get("projfactory.MovingEnhanced")/*MovingEnhanced*/, Locale.get("projfactory.Eagle")/*Eagle*/ };
 	public static byte type = NORTH_UP;
 
 	public static Projection getInstance(Node center, int upDir, float scale,

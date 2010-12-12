@@ -26,6 +26,7 @@ import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.SearchResult;
 import de.ueller.gps.tools.HelperRoutines;
+import de.ueller.gps.tools.LayoutElement;
 import de.ueller.gpsMid.CancelMonitorInterface;
 import de.ueller.midlet.gps.GuiPOItypeSelectMenu.POItypeSelectMenuItem;
 import de.ueller.midlet.gps.data.KeySelectMenuItem;
@@ -41,6 +42,8 @@ import de.enough.polish.util.Locale;
 
 public class GuiSearch extends Canvas implements CommandListener,
 		      GpsMidDisplayable, InputListener, KeySelectMenuReducedListener, CancelMonitorInterface {
+
+	protected static final int VIRTUALKEY_PRESSED = 1;
 
 	private final static Logger logger = Logger.getInstance(GuiSearch.class,Logger.DEBUG);
 
@@ -83,6 +86,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 	public boolean showAllWayPts = false;
 	public boolean sortByDist = false;
 	
+	public static GuiSearchLayout gsl = null;
+
 	/**
 	 * This vector is used to buffer writes,
 	 * so that we only have to synchronize threads
@@ -110,6 +115,11 @@ public class GuiSearch extends Canvas implements CommandListener,
 	private volatile TimerTask timerT;
 	private volatile Timer timer;
 	
+	private boolean hideKeypad = false;
+
+	private int width = 0;
+	private	int height = 0;
+
 	private ChoiceGroup poiSelectionCG;
 	private TextField poiSelectionMaxDistance;
 	private TextField fulltextSearchField;
@@ -159,6 +169,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 	 */
 	private int pointerXPressed;
 	private int pointerYPressed;
+	private int clickIdxAtSlideStart;
 	
 	private KeySelectMenu poiTypeForm;
 
@@ -361,6 +372,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			result.removeAllElements();
 			searchCanon.setLength(0);
 			searchAlpha = false;
+			hideKeypad = false;
 			carret=0;
 			repaint();
 			return;
@@ -461,6 +473,10 @@ public class GuiSearch extends Canvas implements CommandListener,
 	}
 
 	public void show() {
+		hideKeypad = false;
+		height = getHeight();
+		width = getWidth();
+		gsl = new GuiSearchLayout(0, 0, width, height);
 		potentialDoubleClick = false;
 		pointerDragged = false;
 		if (state == STATE_SEARCH_PROGRESS) {
@@ -475,6 +491,13 @@ public class GuiSearch extends Canvas implements CommandListener,
 		repaint();
 	}
 
+	public void sizeChanged(int w, int h) {
+		width = w;
+		height = h;
+		gsl = new GuiSearchLayout(0, 0, w, h);
+		repaint();
+	}
+
 	protected void paint(Graphics gc) {
 		//#debug debug
 		logger.debug("Painting search screen with offset: " + scrollOffset);
@@ -485,6 +508,27 @@ public class GuiSearch extends Canvas implements CommandListener,
 		gc.setColor(255,255, 255);
 		gc.fillRect(0, 0, getWidth(), getHeight());
 		gc.setColor(0, 0, 0);		
+		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD)) {
+			gc.setColor(Legend.COLORS[Legend.COLOR_MAP_TEXT]);
+			if (hasPointerEvents() && ! hideKeypad) {
+				if (gsl == null) {
+					gsl = new GuiSearchLayout(0, 0, width, height);
+				}
+			
+				String letters[] = {  "     ", "  X  ", "  <- ", "1#*- ", " abc2", " def3", " ghi4", " jkl5", " mno6",
+						      "pqrs7", " tuv8", "wxyz9", Locale.get("guisearch.more")/*more*/, " _0  ", 
+						      Locale.get("guisearch.sort")/*sort*/};
+				for (int i = 0; i < 15 ; i++) {
+					// hide sort when more than 2 chars typed
+					if (i == 14 /* sort */ && carret > 2) {
+						gsl.ele[i].setText(" ");
+					} else {
+						gsl.ele[i].setText(letters[i]);
+					}
+				}
+				gsl.paint(gc);
+			}
+		}
 	    if (yc < 0) {
 			gc.drawString("^", getWidth(), 0, Graphics.TOP | Graphics.RIGHT);
 		}
@@ -823,10 +867,26 @@ public class GuiSearch extends Canvas implements CommandListener,
 		int clickIdx = (y - scrollOffset)/fontSize;
 		if ( (state == STATE_MAIN || state == STATE_FAVORITES)
 			&& (clickIdx < 0 || clickIdx >= result.size() || ((clickIdx + 1) * fontSize + scrollOffset) > getHeight())
+		     && (hideKeypad || !Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD))
+
 		) {
 			GuiNameEnter gne = new GuiNameEnter(this, null, Locale.get("guisearch.SearchForNamesStarting")/*Search for names starting with:*/, searchCanon.toString(), 20);
 			gne.show();
+		} else {
+			if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD) && !hideKeypad
+			    && gsl.getElementIdAtPointer(x, y) >= 0 && gsl.isAnyActionIdAtPointer(x, y)) {
+				int touchedElementId = gsl.getElementIdAtPointer(x, y);
+				if (touchedElementId >= 0
+				    &&
+				    gsl.isAnyActionIdAtPointer(x, y)
+					) {
+					//System.out.println("setTouchedElement: " + touchedElementId);
+					gsl.setTouchedElement((LayoutElement) gsl.elementAt(touchedElementId));
+					repaint();
+				}
+			}
 		}
+		clickIdxAtSlideStart = clickIdx;
 	}
 	
 	public void pointerReleased(int x, int y) {
@@ -838,6 +898,10 @@ public class GuiSearch extends Canvas implements CommandListener,
 		logger.debug("PointerReleased: " + x + "," + y);
 		long currTime = System.currentTimeMillis();
 		int clickIdx = (y - scrollOffset)/fontSize;
+		if (gsl != null) {
+		    gsl.clearTouchedElement();
+		    repaint();
+		}
 		if (pointerDragged) {
 			 // Gestures: sliding horizontally with almost no vertical movement
 			if ( Math.abs(y - pointerYPressed) < fontSize ) {
@@ -851,7 +915,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				// Route Slide: sliding right at least the fontHeight
 				} else if (xDist > fontSize ) {
 					logger.debug("Route slide");
-					cursor = clickIdx;
+					cursor = clickIdxAtSlideStart;
 					repaint();
 					commandAction( ROUTE1_CMD, (Displayable) null);					
 				// Search field slide: sliding left at least the fontHeight
@@ -862,7 +926,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				// Select entry slide: sliding left at least the fontHeight
 				} else if (xDist < -fontSize ) {
 					logger.debug("Select entry slide");
-					cursor = clickIdx;					
+					cursor = clickIdxAtSlideStart;					
 					repaint();
 				}
 			}
@@ -880,6 +944,48 @@ public class GuiSearch extends Canvas implements CommandListener,
 			}
 		}
 		
+		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD) && !hideKeypad
+		    && gsl.getElementIdAtPointer(x, y) >= 0 && gsl.isAnyActionIdAtPointer(x, y)) {
+			int touchedElementId = gsl.getElementIdAtPointer(x, y);
+			if (touchedElementId >= 0
+			    &&
+			    gsl.isAnyActionIdAtPointer(x, y)
+				) {
+				//gsl.setTouchedElement((LayoutElement) gsl.elementAt(touchedElementId));
+				//repaint();
+				if (touchedElementId == GuiSearchLayout.KEY_1) {
+					keyPressed('1');
+				} else if (touchedElementId == GuiSearchLayout.KEY_2) {
+					keyPressed('2');
+				} else if (touchedElementId == GuiSearchLayout.KEY_3) {
+					keyPressed('3');
+				} else if (touchedElementId == GuiSearchLayout.KEY_4) {
+					keyPressed('4');
+				} else if (touchedElementId == GuiSearchLayout.KEY_5) {
+					keyPressed('5');
+				} else if (touchedElementId == GuiSearchLayout.KEY_6) {
+					keyPressed('6');
+				} else if (touchedElementId == GuiSearchLayout.KEY_7) {
+					keyPressed('7');
+				} else if (touchedElementId == GuiSearchLayout.KEY_8) {
+					keyPressed('8');
+				} else if (touchedElementId == GuiSearchLayout.KEY_9) {
+					keyPressed('9');
+				} else if (touchedElementId == GuiSearchLayout.KEY_0) {
+					keyPressed('0');
+				} else if (touchedElementId == GuiSearchLayout.KEY_STAR) {
+					keyPressed(KEY_STAR);
+				} else if (touchedElementId == GuiSearchLayout.KEY_HASH) {
+					keyPressed(KEY_POUND);
+				} else if (touchedElementId == GuiSearchLayout.KEY_BACKSPACE) {
+					keyPressed(8);
+				} else if (touchedElementId == GuiSearchLayout.KEY_CLOSE) {
+					// hide keypad
+					hideKeypad = true;
+				}
+			}
+		
+		} else
 		// if touching the right side of the display (150% font height) this equals to the * key 
 		if (x > getWidth() - fontSize * 3 / 2) {
 			keyPressed(KEY_STAR);

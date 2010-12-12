@@ -16,6 +16,36 @@ at large.
 <devices>
 
 	<device supportsPolishGui="true">
+		<identifier>Generic/android-hiresonline</identifier>
+		<parent>HTC/NexusOne</parent>
+		<description>This device combines the full capabilities of GpsMid including OpenStreetMap editing.
+		</description>
+		<features>isVirtual</features>
+		<description>An Android compatible device with the 2.1 firmware.</description>
+		<groups>android</groups>
+		<capability name="JavaPlatform" value="Android/2.1" />
+		<capability name="JavaConfiguration" value="Android/2.1" />
+		<capability name="GpsMid.editing" value="true"/>
+		<capability name="JavaPackage" value="osm-editing, online"/>
+		<capability name="Emulator.Skin" value="WVGA800" />
+		<capability name="ScreenSize" value="800x480" />
+		<capability name="CanvasSize" value="800x480" />
+		<capability name="FullCanvasSize" value="800x480" />
+	</device>
+
+
+	<device supportsPolishGui="true">
+		<identifier>Generic/microemulator</identifier>
+		<description>This device combines the full capabilities of GpsMid including OpenStreetMap editing for microemulator testing.
+		</description>
+		<features>isVirtual</features>
+		<capability name="Emulator.Class" value="GenericEmulator"/>
+		<capability name="JavaPlatform" value="MIDP/2.0"/>
+		<capability name="GpsMid.editing" value="true"/>
+		<capability name="JavaConfiguration" value="CLDC/1.1"/>
+		<capability name="JavaPackage" value="location-api, webservices, btapi, obex, pdaapi, fileconnection, mmapi, wmapi, 3dapi, svg, nokia-ui, min-siemapi, min-samsapi, osm-editing, online"/>
+	</device>
+	<device supportsPolishGui="true">
 		<identifier>Generic/editing</identifier>
 		<description>This device combines the full capabilities of GpsMid including OpenStreetMap editing.
 		</description>

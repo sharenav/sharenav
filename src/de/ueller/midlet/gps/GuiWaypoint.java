@@ -158,7 +158,7 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 				mExporting = false;
 				mImporting = false;
 				mProgress.showProgressDisplay(Locale.get("guiwaypoint.DeletingWayPoints")/*Deleting way points*/);
-				mProgress.addProgressText(Locale.get("guiwaypoint.Deleting")/*Deleting*/ +  " " + idsToDelete.size() + " " + Locale.get("guiwaypoint.way points")/*way point(s)*/ + ".\n");
+				mProgress.addProgressText(Locale.get("guiwaypoint.Deleting")/*Deleting*/ +  " " + idsToDelete.size() + " " + Locale.get("guiwaypoint.WayPoint")/*way point(s)*/ + ".\n");
 				mParent.gpx.deleteWayPts(idsToDelete, this);
 			}
 			return;
@@ -365,7 +365,7 @@ public class GuiWaypoint extends /*GuiCustom*/List implements CommandListener,
 		if (mExporting) {
 			if (strResult != null) {
 				mProgress.showProgressDisplay(Locale.get("guiwaypoint.ExportingWayPoints")/*Exporting way points*/);
-				mProgress.addProgressText(Locale.get("guiwaypoint.ExportingAll")/*Exporting all */ + mWaypoints.size() + " " + Locale.get("guiwaypoint.way points")/*way point(s)*/ + ".\n");
+				mProgress.addProgressText(Locale.get("guiwaypoint.ExportingAll")/*Exporting all */ + mWaypoints.size() + " " + Locale.get("guiwaypoint.wayPoints")/*way point(s)*/ + ".\n");
 				mParent.gpx.exportWayPts(Configuration.getGpxUrl(), strResult, this);
 			} else {
 				// BACK action from name input

@@ -188,7 +188,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	/** Flag if the gps position is not yet valid after recenter request
 	 */
 	public volatile boolean gpsRecenterInvalid = true;
-	/** Flag if the gps position is stale after recenter request
+	/** Flag if the gps position is stale (last known position instead of current) after recenter request
 	 */
 	public volatile boolean gpsRecenterStale = true;
 	/** Flag if the map is autoZoomed
@@ -332,6 +332,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	 * Current course from GPS in compass degrees, 0..359.
 	 */
 	private int course = 0;
+	private int coursegps = 0;
 
 	public boolean atDest = false;
 	public boolean movedAwayFromDest = true;
@@ -516,7 +517,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				}
 			}
 			int locprov = Configuration.getLocationProvider();
-			receiveMessage("Connect to " + Configuration.LOCATIONPROVIDER[locprov]);
+			receiveMessage(Locale.get("trace.ConnectTo")/*Connect to */ + Configuration.LOCATIONPROVIDER[locprov]);
 			switch (locprov) {
 				case Configuration.LOCATIONPROVIDER_SIRF:
 					locationProducer = new SirfInput();
@@ -1500,7 +1501,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				Position setpos = new Position(center.radlat / MoreMath.FAC_DECTORAD,
     								center.radlon / MoreMath.FAC_DECTORAD,
 								    PositionMark.INVALID_ELEVATION, 0.0f, 0.0f, 1,
-								    System.currentTimeMillis());
+							            System.currentTimeMillis(), Position.TYPE_MANUAL);
 				// implies center to gps, to give feedback as the gps rectangle
 				gpsRecenter = true;
 				// gpsRecenterInvalid = true;
@@ -2458,38 +2459,50 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			gpsRecenter = true;
 			//autoZoomed = true;
 		}
-		if (gpsRecenter) {
-			// first call here a) after enabling gpsrecenter or b) after JSR179 location producer
-			// init is the last known location, next calls are valid current locations.
-			if (gpsRecenterInvalid) {
+		if (Configuration.getLocationProvider() == Configuration.LOCATIONPROVIDER_JSR179) {
+			if (pos.type == Position.TYPE_GPS_LASTKNOWN) {
+				// if we have a current cell id fix from cellid location,
+				// don't overwrite it with a stale GPS location, but ignore the position
+				// FIXME perhaps compare timestamps here in case the last known gps is later
+				if (this.pos.type == Position.TYPE_CELLID) {
+					return;
+				}
 				gpsRecenterInvalid = false;
-			} else {
-				if (gpx.isRecordingTrk()) {
-					try {
-						gpx.addTrkPt(pos);
-					} catch (Exception e) {
-						receiveMessage(e.getMessage());
-					}
-				}
-				if (gpsRecenterStale) {
-					gpsRecenterStale = false;
-				}
+				gpsRecenterStale = true;
+			} else if (pos.type == Position.TYPE_GPS || pos.type == Position.TYPE_CELLID || pos.type == Position.TYPE_MANUAL) {
+				gpsRecenterInvalid = false;
+				gpsRecenterStale = false;
 			}
+		}
+		if (gpsRecenter) {
 			center.setLatLonDeg(pos.latitude, pos.longitude);
 			speed = (int) (pos.speed * 3.6f);
 			if (speed > 2 && pos.course != Float.NaN) {
 				/*  don't rotate too fast
-				 *  FIXME: the following line to not rotate too fast
-				 * 	is commented out because it causes the map to perform
-				 *  almost a 360 degree rotation when course and pos.course
-				 *  are on different sides of North, e.g. at 359 and 1 degrees
 				 */
-				// course = (int) ((pos.course * 3 + course) / 4)+360;
-				// use pos.course directly without rotation slow-down
-				course = (int) pos.course;
+				coursegps = (int) pos.course;
+				if ((coursegps - course)> 180)
+					course = course + 360;
+                                                              
+				if ((course-coursegps)> 180)
+					coursegps = coursegps + 360;
+                                                 
+				course = (int) course + (int)((coursegps - course)*1)/4 + 360;
 				while (course > 360) {
 					course -= 360;
 				}
+			}
+		}
+		if (gpx.isRecordingTrk()) {
+			try {
+				// don't tracklog manual cellid position or gps start/stop last known position
+				if ((Configuration.getLocationProvider() == Configuration.LOCATIONPROVIDER_JSR179
+				     && pos.type == Position.TYPE_CELLID) || pos.type == Position.TYPE_GPS_LASTKNOWN) {
+				} else {
+					gpx.addTrkPt(pos);
+				}
+			} catch (Exception e) {
+				receiveMessage(e.getMessage());
 			}
 		}
 		altitude = (int) (pos.altitude);

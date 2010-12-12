@@ -438,8 +438,23 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 			// device doesn't support giving local language which is first in Legend, omit the choice for device default
 			numLangDifference = -1;
 		}
+		boolean addSelectedUiLang = false;
+		String selectedUiLang = Configuration.getUiLang();
+		if (!selectedUiLang.equals("") && !selectedUiLang.equals("devdefault")) {
+			addSelectedUiLang = true;
+		}
+		for (int i = 0; i < Legend.numUiLang; i++) {
+			if (addSelectedUiLang && Legend.uiLang[i].equalsIgnoreCase(selectedUiLang)) {
+				addSelectedUiLang = false;
+			}
+		}
+		int addedLang = 0;
+		// add the lang selected in config
+		if (addSelectedUiLang) {
+			addedLang += 1;
+		}
 		if (Legend.numUiLang + numLangDifference > 1) {
-			String [] uiLang = new String[Legend.numUiLang + numLangDifference];
+			String [] uiLang = new String[Legend.numUiLang + numLangDifference + addedLang];
 
 			for (int i = 0; i < Legend.numUiLang; i++) {
 				if (i + numLangDifference >= 0) {
@@ -449,6 +464,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 					uiLang[i] = Locale.get("guidiscover.devicedefault")/*Device default*/ +
 						" (" + System.getProperty("microedition.locale").substring(0, 2) + ")";
 				}
+			}
+			if (addSelectedUiLang) {
+				uiLang[Legend.numUiLang - 1 + numLangDifference + addedLang] = selectedUiLang;
 			}
 			uiLangGroup = new ChoiceGroup(Locale.get("guidiscover.Language")/*Language*/, Choice.EXCLUSIVE, uiLang, null);
 			menuDisplayOptions.append(uiLangGroup);
@@ -496,7 +514,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		menuDisplayOptions.append(touchScreenLayoutGroup);
 
 		String [] rotation = ProjFactory.name;
-		rotationGroup = new ChoiceGroup(Locale.get("guidiscover.Map Projection")/*Map Projection*/, Choice.EXCLUSIVE, rotation, null);
+		rotationGroup = new ChoiceGroup(Locale.get("guidiscover.MapProjection")/*Map Projection*/, Choice.EXCLUSIVE, rotation, null);
 		menuDisplayOptions.append(rotationGroup);
 
 		String [] direction = new String[2];
@@ -897,6 +915,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 					if (!uiLang.equals(Configuration.getUiLang()) || uiLang.equalsIgnoreCase("devdefault")) { 
 						Trace.uncacheIconMenu();
 						uncacheIconMenu();
+						Configuration.initCompassDirections();
 					}
 					Configuration.setUiLang(uiLang);
 					Configuration.setWikipediaLang(uiLang);
@@ -1247,11 +1266,30 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				break;
 			case MENU_ITEM_DISP_OPT: // Display Options
 				initDisplay();
+				boolean addSelectedUiLang = false;
+				String selectedUiLang = Configuration.getUiLang();
+				if (!selectedUiLang.equals("") && !selectedUiLang.equals("devdefault")) {
+					addSelectedUiLang = true;
+				}
+				for (int i = 0; i < Legend.numUiLang; i++) {
+					if (addSelectedUiLang && Legend.uiLang[i].equalsIgnoreCase(selectedUiLang)) {
+						addSelectedUiLang = false;
+					}
+				}
+				int addedLang = 0;
+				// add the lang selected in config
+				if (addSelectedUiLang) {
+					addedLang += 1;
+				}
 				int langNum = 0; // default is the first in bundle
 				if (Legend.numUiLang + numLangDifference > 1) {
 					String lang = Configuration.getUiLang();
-					for (int i = 0; i < Legend.numUiLang; i++) {
-						if (i + numLangDifference >= 0 && Legend.uiLang[i].equalsIgnoreCase(lang)) {
+					for (int i = 0; i < Legend.numUiLang + addedLang; i++) {
+						if (i + numLangDifference >= 0  && i + numLangDifference < Legend.numUiLang && Legend.uiLang[i].equalsIgnoreCase(lang)) {
+							langNum = i + numLangDifference;
+						}
+						// didn't find in legend languages, so it's the added language choice
+						if (i + numLangDifference >= Legend.numUiLang && langNum == 0) {
 							langNum = i + numLangDifference;
 						}
 					}
@@ -1293,6 +1331,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				mapInfoOpts.setSelectedIndex(5, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_AIR_DISTANCE_WHEN_ROUTING));
 				mapInfoOpts.setSelectedIndex(6, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SHOW_CLOCK_IN_MAP));
 				metricUnits.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_METRIC));
+
 				visualOpts.setSelectedIndex(0, ! Configuration.getCfgBitSavedState(Configuration.CFGBIT_NOSTREETBORDERS));
 				visualOpts.setSelectedIndex(1, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ROUND_WAY_ENDS));
 				SingleTile.newPOIFont();

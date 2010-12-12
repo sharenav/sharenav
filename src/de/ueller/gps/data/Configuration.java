@@ -251,6 +251,8 @@ public class Configuration {
 	public final static byte CFGBIT_BACKLIGHT_SAMSUNG = 93;
 	/** bit 94: Flag whether internal sound files should be used instead of ones with external map */
 	public final static byte CFGBIT_PREFER_INTERNAL_SOUNDS = 94;
+	/** bit 95: Flag whether to use a virtual on-screen number keypad in the incremental search screen */
+	public final static byte CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD = 95;
 	
 	/**
 	 * These are the database record IDs for each configuration option
@@ -325,10 +327,7 @@ public class Configuration {
 	public final static String[] LOCATIONPROVIDER = { Locale.get("configuration.LPNone")/*None*/, Locale.get("configuration.LPBluetoothSirf")/*Bluetooth (Sirf)*/,
 							  Locale.get("configuration.LPBluetoothNMEA")/*Bluetooth (NMEA)*/, Locale.get("configuration.LPInternalJSR179")/*Internal (JSR179)*/, Locale.get("configuration.LPCellID")/*Cell-ID (OpenCellId.org)*/ };
 	
-	private static final String[] compassDirections  =
-	{ "N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE",
-	  "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW",
-	  "N" };
+	private static String[] compassDirections;
 	
 	private final static byte[] empty = "".getBytes();
 
@@ -420,8 +419,8 @@ public class Configuration {
 
 	
 	public static void read() {
-	logger = Logger.getInstance(Configuration.class, Logger.DEBUG);
-	RecordStore	database;
+		logger = Logger.getInstance(Configuration.class, Logger.DEBUG);
+		RecordStore	database;
 		try {
 			database = RecordStore.openRecordStore("Receiver", true);
 			if (database == null) {
@@ -541,9 +540,11 @@ public class Configuration {
 				setCfgBitSavedState(getDefaultDeviceBacklightMethodCfgBit(), true);
 			}
 			//#if polish.android
-			// no bundle support for android yet, set a fixed location for map
-			setBuiltinMap(false);
-			setMapUrl("file:///sdcard/gpsmidmap/");
+			// (was) no bundle support for android yet, set a fixed location for map
+			// bundle support works enough so we don't need this
+			// setBuiltinMap(false);
+			// setMapUrl("file:///sdcard/gpsmidmap/");
+			// setMapUrl("file:///");
 			//#endif
 			// Record Rule Default
 			setGpxRecordRuleMode(GPX_RECORD_MINIMUM_SECS_DIST);
@@ -617,6 +618,7 @@ public class Configuration {
 									1L << CFGBIT_SHOW_ETA_IN_MAP |
 									1L << CFGBIT_BUILDINGS |
 									1L << CFGBIT_BUILDING_LABELS |
+			    						1L << CFGBIT_DISPLAY_SYMMETRIC_TOUCHZONES |
 									1L << CFGBIT_ICONMENUS_MAPPED_ICONS;
 									
 		}
@@ -672,7 +674,7 @@ public class Configuration {
 			setBaseScale(23);
 		}
 		if (configVersionStored < 18) {
-			setUiLang("en");
+			setUiLang("devdefault");
 			setNaviLang("en");
 			setOnlineLang("en");
 			setWikipediaLang("en");
@@ -680,6 +682,7 @@ public class Configuration {
 		}
 		if (configVersionStored < 19) {
 			cfgBits_64_to_127 |= 1L << CFGBIT_ROUTE_USE_MOTORWAYS |
+								 1L << CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD |
 			 					 1L << CFGBIT_ROUTE_USE_TOLLROADS;
 		}
 
@@ -1692,6 +1695,14 @@ public class Configuration {
 		               .replace('*', '_');
 	}
 	
+	public static void initCompassDirections() {
+		String compass = Locale.get("configuration.compass")/*N,NNE,NE,ENE,E,ESE,SE,SSE,S,SSW,SW,WSW,W,WNW,NW,NNW*/;
+		compass += "," + compass.substring(0, compass.indexOf(","));
+		//#debug debug
+		logger.debug("compass dirs: " + compass);
+		compassDirections = StringTokenizer.getArray(compass, ",");
+	}
+
 	public static String getCompassDirection(int course) {
 		return compassDirections[(int)(((course % 360 + 11.25f) / 22.5f)) ];
 	}
