@@ -36,9 +36,6 @@ import de.ueller.midlet.gps.LocationMsgProducer;
 import de.ueller.midlet.gps.LocationMsgReceiver;
 import de.ueller.midlet.gps.LocationMsgReceiverList;
 import de.ueller.midlet.gps.Logger;
-//FIXME make a proper interface for passing fix age information instead of accessing trace variable
-import de.ueller.midlet.gps.Trace;
-import de.ueller.gps.data.Configuration;
 
 import de.enough.polish.util.Locale;
 
@@ -57,11 +54,9 @@ public class JSR179Input
 
 	//#if polish.api.locationapi
 	private LocationProvider locationProvider = null;
-	private LocationMsgReceiverList receiverList;
+	private final LocationMsgReceiverList receiverList;
 	private NmeaMessage smsg;
 	Position pos = new Position(0f, 0f, 0f, 0f, 0f, 0, System.currentTimeMillis());
-
-	private Trace tr = Trace.getInstance();
 
 	private OutputStream rawDataLogger;
 
@@ -147,6 +142,10 @@ public class JSR179Input
 	}
 
 	public void locationUpdated(LocationProvider provider, Location location) {
+		locationUpdated(provider, location, false);
+	}
+
+	public void locationUpdated(LocationProvider provider, Location location, boolean lastKnown) {
 		//#debug info
 		logger.info("updateLocation: " + location);
 		if (location == null) {
@@ -199,8 +198,9 @@ public class JSR179Input
 					}
 					//#debug info
 					logger.info("Decoding: " + nmeaMessage);
-					if ((nmeaMessage != null) && (nmeaMessage.length() > 5))
+					if ((nmeaMessage != null) && (nmeaMessage.length() > 5)) {
 						smsg.decodeMessage(nmeaMessage, false);
+					}
 				}
 			}
 		}
@@ -215,10 +215,15 @@ public class JSR179Input
 			Coordinates coordinates = location.getQualifiedCoordinates();
 			pos.latitude = (float) coordinates.getLatitude();
 			pos.longitude = (float) coordinates.getLongitude();
-			pos.altitude = (float) coordinates.getAltitude();
+			pos.altitude = coordinates.getAltitude();
 			pos.course = location.getCourse();
 			pos.speed = location.getSpeed();
 			pos.timeMillis = location.getTimestamp();
+			if (lastKnown) {
+				pos.type = Position.TYPE_GPS_LASTKNOWN;
+			} else {
+				pos.type = Position.TYPE_GPS;
+			}
 			receiverList.receivePosition(pos);
 		} else {
 			if (receiverList != null) {
@@ -260,17 +265,7 @@ public class JSR179Input
 
 	private void updateSolution(int state) {
 		logger.info("Update Solution");
-		// if we have a current cell id fix from startup cellid location,
-		// don't overwrite it with a stale GPS location
-		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_CELLID_STARTUP) && tr.solution.equals(Locale.get("secellid.Cell"))) {
-			// do nothing
-		} else {
-			// pass last known GPS location
-			//FIXME make a proper interface for passing fix age information instead of accessing trace variable directly
-			tr.gpsRecenterInvalid = true;
-			tr.gpsRecenterStale = true;
-			locationUpdated(locationProvider, LocationProvider.getLastKnownLocation());
-		}
+		locationUpdated(locationProvider, LocationProvider.getLastKnownLocation(), true);
 		if (state == LocationProvider.AVAILABLE) {
 			if (receiverList != null) {
 				receiverList.receiveSolution(Locale.get("jsr179input.NoFix")/*NoFix*/);
@@ -309,10 +304,7 @@ public class JSR179Input
 	}
 
 	public void triggerLastKnownPositionUpdate() {
-		//FIXME make a proper interface for passing fix age information instead of accessing trace variable directly
-		tr.gpsRecenterInvalid = true;
-		tr.gpsRecenterStale = true;
-		locationUpdated(locationProvider, LocationProvider.getLastKnownLocation());
+		locationUpdated(locationProvider, LocationProvider.getLastKnownLocation(), true);
 	}
 
 	public void disableRawLogging() {

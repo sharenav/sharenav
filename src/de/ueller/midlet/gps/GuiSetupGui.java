@@ -15,6 +15,7 @@ import de.enough.polish.util.Locale;
 public class GuiSetupGui extends Form implements CommandListener {
 	private ChoiceGroup imenuOpts;
 	private ChoiceGroup otherOpts;
+	private ChoiceGroup searchSettings;
 
 	// commands
 	private static final Command CMD_SAVE = new Command(Locale.get("generic.OK")/*Ok*/, 
@@ -52,6 +53,12 @@ public class GuiSetupGui extends Form implements CommandListener {
 			imenuOpts.setSelectedIndex(4, 
 					Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED));
 			append(imenuOpts);
+			searchSettings.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD));
+
+			String [] search = new String[1];
+			search[0] = Locale.get("guisetupgui.numberkeypad")/*Enable virtual keypad*/;
+			searchSettings = new ChoiceGroup(Locale.get("guisetupgui.searchopts")/*Search options*/, Choice.MULTIPLE, search, null);
+			append(searchSettings);
 			
 			String [] other = new String[1];
 			other[0] = "Predefined way points";
@@ -64,7 +71,7 @@ public class GuiSetupGui extends Form implements CommandListener {
 			if (mem == 0) {
 				mem = Runtime.getRuntime().totalMemory();
 			}
-			mem=mem / 1024;
+			mem = mem / 1024;
 			memField = new TextField(Locale.get("guisetupgui.DefineMaxMem")/*Define maxMem (kbyte)*/,
 					Long.toString(mem), 8, TextField.DECIMAL);
 			append(memField);
@@ -113,6 +120,9 @@ public class GuiSetupGui extends Form implements CommandListener {
 					GpsMid.getInstance().restartBackLightTimer();			
 				}
 			}
+			
+			Configuration.setCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD, searchSettings.isSelected(0));
+			
 			try {
 				long mem=Long.parseLong(memField.getString());
 				Configuration.setPhoneAllTimeMaxMemory(mem*1024);
