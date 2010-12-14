@@ -1,5 +1,5 @@
 /*
- * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net 
+ * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -69,6 +69,7 @@ import android.content.Context;
 public class GpsMid extends MIDlet implements CommandListener {
 	/** Class variable with the Singleton reference. */
 	private volatile static GpsMid instance;
+
 	/** A menu list instance */
 	private static final String[] elements = { Locale.get("gpsmid.Map")/*Map*/, Locale.get("generic.Search")/*Search*/, Locale.get("gpsmid.Setup")/*Setup*/,
 						   Locale.get("generic.About")/*About*/, Locale.get("gpsmid.Log")/*Log*/ };
@@ -78,23 +79,25 @@ public class GpsMid extends MIDlet implements CommandListener {
 	
 	/** Soft button for launching a client or server. */
 	private final Command OK_CMD = new Command(Locale.get("generic.OK")/*Ok*/, Command.SCREEN, 1);
+	
 	/** Soft button to go back from about screen. */
 	private final Command BACK_CMD = new Command(Locale.get("generic.Back")/*Back*/, Command.BACK, 1);
+
 	/** Soft button to show Debug Log. */
 	// private final Command DEBUG_CMD = new Command("", Command.BACK, 1);
+
 	/** Soft button to go back from about screen. */
-	private final Command CLEAR_DEBUG_CMD = new Command(Locale.get("gpsmid.Clear")/*Clear*/, Command.BACK,
-			1);
+	private final Command CLEAR_DEBUG_CMD = new Command(Locale.get("gpsmid.Clear")/*Clear*/, Command.BACK, 1);
 
 	/** A menu list instance */
-	private final List menu = new List(Locale.get("gpsmid.GPSMid")/*GPSMid*/, Choice.IMPLICIT, elements,
-			null);
+	private final List menu = new List(Locale.get("gpsmid.GPSMid")/*GPSMid*/, 
+			Choice.IMPLICIT, elements, null);
 	// private boolean isInit=false;
 
-	private final List loghist = new List(Locale.get("gpsmid.LogHist")/*Log Hist*/, Choice.IMPLICIT);
+	//private final List loghist = new List(Locale.get("gpsmid.LogHist")/*Log Hist*/, Choice.IMPLICIT);
 
 	// #debug
-	private Logger log;
+	private final Logger log;
 
 	private OutputStreamWriter logFile;
 
@@ -113,9 +116,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 	private Displayable shouldBeDisplaying;
 	private Displayable prevDisplayable;
 
-	/**
-	 * Runtime detected properties of the phone
-	 */
+	/** Runtime detected properties of the phone */
 	private long phoneMaxMemory;
 
 	private static volatile Trace trace = null;
@@ -129,7 +130,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 //#endif
 	public GpsMid() {
 		instance = this;
-		System.out.println("Init GpsMid");		
+		System.out.println("Init GpsMid");
 		log = new Logger(this);
 		log.setLevel(Logger.INFO);
 		Configuration.read();
@@ -206,9 +207,9 @@ public class GpsMid extends MIDlet implements CommandListener {
 		menu.addCommand(EXIT_CMD);
 		menu.addCommand(OK_CMD);
 		menu.setCommandListener(this);
-		loghist.addCommand(BACK_CMD);
-		loghist.addCommand(CLEAR_DEBUG_CMD);
-		loghist.setCommandListener(this);
+		//loghist.addCommand(BACK_CMD);
+		//loghist.addCommand(CLEAR_DEBUG_CMD);
+		//loghist.setCommandListener(this);
 
 		if (errorMsg != null) {
 			log.fatal(errorMsg);
@@ -221,11 +222,11 @@ public class GpsMid extends MIDlet implements CommandListener {
 		}
 		if (!Configuration.getCfgBitState(Configuration.CFGBIT_INITIAL_SETUP_DONE)) {
 			if (isRunningInMicroEmulator()) {
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_FULLSCREEN, true);				
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_BIG_TAB_BUTTONS, true);				
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_FULLSCREEN, true);
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_BIG_TAB_BUTTONS, true);
 			} else {
 				GuiSetupGui gsg = new GuiSetupGui(trace, true);
-				gsg.show();							
+				gsg.show();
 			}
 			Configuration.setCfgBitSavedState(Configuration.CFGBIT_INITIAL_SETUP_DONE, true);
 		} else {
@@ -237,8 +238,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 		if (trace != null) {
 			trace.shutdown();
 			// remember last position
-			if (Configuration
-					.getCfgBitState(Configuration.CFGBIT_AUTOSAVE_MAPPOS)) {
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_AUTOSAVE_MAPPOS)) {
 				// use current display center on next startup
 				Configuration.setStartupPos(trace.center);
 			} else {
@@ -282,10 +282,11 @@ public class GpsMid extends MIDlet implements CommandListener {
 		//#if polish.api.contenthandler
 		try {
 			log.info("Trying to register JSR211 Content Handler");
-			Class handlerClass = Class
-					.forName("de.ueller.midlet.gps.importexport.Jsr211Impl");
+			Class handlerClass =
+					Class.forName("de.ueller.midlet.gps.importexport.Jsr211Impl");
 			Object handlerObject = handlerClass.newInstance();
-			Jsr211ContentHandlerInterface handler = (Jsr211ContentHandlerInterface) handlerObject;
+			Jsr211ContentHandlerInterface handler =
+					(Jsr211ContentHandlerInterface) handlerObject;
 			handler.registerContentHandler();
 		} catch (NoClassDefFoundError ncdfe) {
 			log.error("JSR211 is not available", true);
@@ -318,7 +319,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 			return;
 		}
 		if (c == CLEAR_DEBUG_CMD) {
-			loghist.deleteAll();
+			//loghist.deleteAll();
 		}
 		switch (menu.getSelectedIndex()) {
 		case 0:
@@ -351,7 +352,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 			new Splash(this);
 			break;
 		case 4:
-			show(loghist);
+			//show(loghist);
 			break;
 		default:
 			//#debug
@@ -404,11 +405,12 @@ public class GpsMid extends MIDlet implements CommandListener {
 			alert.setTimeout(timeout);
 			alert.setString(message);
 			try {
-				if (shouldBeDisplaying == null)
+				if (shouldBeDisplaying == null) {
 					Display.getDisplay(this).setCurrent(alert);
-				else
+				} else {
 					Display.getDisplay(this).setCurrent(alert,
 							shouldBeDisplaying);
+				}
 			} catch (IllegalArgumentException iae) {
 				/**
 				 * Nokia S40 phones seem to throw an exception if one tries to
@@ -466,9 +468,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 			// loghist.append(msg, null);
 			if (logFile != null) {
 				try {
-					logFile
-							.write(System.currentTimeMillis() + " " + msg
-									+ "\n");
+					logFile.write(System.currentTimeMillis() + " " + msg + "\n");
 					logFile.flush();
 				} catch (IOException e) {
 					// Nothing much we can do here, we are
@@ -538,20 +538,13 @@ public class GpsMid extends MIDlet implements CommandListener {
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON)) {
 			// Warn the user if none of the methods
 			// to keep backlight on was selected
-			if (!(Configuration
-					.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_MIDP2)
-					|| Configuration
-							.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIA)
-					|| Configuration
-							.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIAFLASH)
-					|| Configuration
-						.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_SIEMENS)
-					|| Configuration
-						.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_SAMSUNG)
-					|| Configuration
-						.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ANDROID_WAKELOCK)
-				  )
-			) {
+			if (!(Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_MIDP2)
+				|| Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIA)
+				|| Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIAFLASH)
+				|| Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_SIEMENS))
+				|| Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_SAMSUNG)
+				|| Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ANDROID_WAKELOCK))
+			{
 				log.error("Backlight cannot be kept on when no 'with'-method is specified in Setup");
 				// turn backlight off to avoid repeating the warning above
 				Configuration.setCfgBitState(Configuration.CFGBIT_BACKLIGHT_ON, false, false);
@@ -781,7 +774,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 						if (trace != null) {
 							trace.receiveMessage(Locale.get("gpsmid.FreeingMem")/*Freeing mem*/);
 						}
-						return true;						
+						return true;
 				}
 				System.gc();
 			}

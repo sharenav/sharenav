@@ -54,13 +54,13 @@ public class DiscoverGps
 	private final GuiDiscover		parent;
 
 	/** Process the search/download requests. */
-	private Thread					processorThread;
+	private final Thread					processorThread;
 
 	/** Collects the remote devices found during a search. */
-	private Vector					/* RemoteDevice */devices	= new Vector();
+	private final Vector					/* RemoteDevice */devices	= new Vector();
 
 	/** Collects the services found during a search. */
-	private Vector					/* ServiceRecord */records	= new Vector();
+	private final Vector					/* ServiceRecord */records	= new Vector();
 
 	/** Keeps the device discovery return code. */
 	private int						discType					= -1;
@@ -206,7 +206,7 @@ public class DiscoverGps
 
 			// nothing to do if no bluetooth available
 			if (!isBTReady) {
-			    parent.addDevice(Locale.get("discovergps.NoBlutooth")/*no Blutooth*/);
+			    parent.addDevice(Locale.get("discovergps.NoBluetooth")/*No Bluetooth*/);
 				return;
 			}
 
@@ -340,8 +340,9 @@ public class DiscoverGps
 			// durchsuche alle devices nach services
 			    parent.addDevice(Locale.get("discovergps.SearchServices")/*search services*/);
 			searchService();
-			if (getState() != SERVICE_SELECT)			
-				waitUntilNotify();			
+			if (getState() != SERVICE_SELECT) {
+				waitUntilNotify();
+			}			
 //			parent.clear();
 			if (devices.size() == 0){
 				parent.addDevice(Locale.get("discovergps.NoServiceFound")/*no Service found*/);

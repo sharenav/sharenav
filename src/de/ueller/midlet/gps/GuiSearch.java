@@ -476,6 +476,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		hideKeypad = false;
 		height = getHeight();
 		width = getWidth();
+		gsl = new GuiSearchLayout(0, 0, width, height);
 		potentialDoubleClick = false;
 		pointerDragged = false;
 		if (state == STATE_SEARCH_PROGRESS) {
@@ -879,7 +880,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				    &&
 				    gsl.isAnyActionIdAtPointer(x, y)
 					) {
-					System.out.println("setTouchedElement: " + touchedElementId);
+					//System.out.println("setTouchedElement: " + touchedElementId);
 					gsl.setTouchedElement((LayoutElement) gsl.elementAt(touchedElementId));
 					repaint();
 				}
