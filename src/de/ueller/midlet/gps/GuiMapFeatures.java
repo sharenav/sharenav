@@ -31,8 +31,8 @@ public class GuiMapFeatures extends Form implements CommandListener {
 	private TextField  tfBaseScale;
 	
 	private ChoiceGroup otherGroup;
-	private	String [] other = new String[1];
-	private	boolean[] selOther = new boolean[1];
+	private	String [] other = new String[2];
+	private	boolean[] selOther = new boolean[2];
 	
 	
 	private Gauge gaugeDetailBoost; 
@@ -87,6 +87,7 @@ public class GuiMapFeatures extends Form implements CommandListener {
 			append(tfBaseScale);
 			
 			other[0] = Locale.get("guimapfeatures.SaveMapPosition")/*Save map position on exit for next start*/;	selOther[0]=Configuration.getCfgBitState(Configuration.CFGBIT_AUTOSAVE_MAPPOS);
+			other[1] = Locale.get("guimapfeatures.SaveDestinationPosition")/*Save destination position for next start*/;	selOther[1]=Configuration.getCfgBitState(Configuration.CFGBIT_AUTOSAVE_DESTPOS);
 			otherGroup = new ChoiceGroup(Locale.get("guimapfeatures.Other")/*Other*/, Choice.MULTIPLE, other, null);
 			otherGroup.setSelectedFlags(selOther);			
 			append(otherGroup);
@@ -158,6 +159,7 @@ public class GuiMapFeatures extends Form implements CommandListener {
 
 			otherGroup.getSelectedFlags(selOther);
 			Configuration.setCfgBitState(Configuration.CFGBIT_AUTOSAVE_MAPPOS, selOther[0], setAsDefault);
+			Configuration.setCfgBitState(Configuration.CFGBIT_AUTOSAVE_DESTPOS, selOther[1], setAsDefault);
 			
 			Configuration.setDetailBoost(gaugeDetailBoost.getValue(), setAsDefault); 
 			Configuration.setDetailBoostPOI(gaugeDetailBoostPOI.getValue(), setAsDefault); 

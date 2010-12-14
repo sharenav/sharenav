@@ -2955,6 +2955,13 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				dict.getCenter(center);
 			}
 
+			// read saved destination position from Configuration
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_SAVED_DESTPOS_VALID)) {
+				Node destNode = new Node();
+				Configuration.getDestPos(destNode);
+				setDestination(new RoutePositionMark(destNode.radlat, destNode.radlon));
+			}
+			
 			if (pc != null) {
 				pc.center = center.copy();
 				pc.scale = scale;
@@ -3070,7 +3077,12 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			if (! Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED)) {
 				commandAction(SHOW_DEST_CMD);
 			}
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_AUTOSAVE_DESTPOS)) {
+				Configuration.setDestPos(new Node(dest.lat, dest.lon, true));
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SAVED_DESTPOS_VALID, true);
+			}
 		} else {
+			Configuration.setCfgBitSavedState(Configuration.CFGBIT_SAVED_DESTPOS_VALID, false);
 			//#debug info
 			logger.info("Setting destination to null");
 		}

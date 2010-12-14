@@ -220,6 +220,7 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 			try {
 				Locale.loadTranslations( "/en.loc" );
 				Trace.uncacheIconMenu();
+				Configuration.initCompassDirections();
 			} catch (IOException ioe) {
 				System.out.println("Couldn't open translations file");
 			}

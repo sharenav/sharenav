@@ -253,6 +253,10 @@ public class Configuration {
 	public final static byte CFGBIT_PREFER_INTERNAL_SOUNDS = 94;
 	/** bit 95: Flag whether to use a virtual on-screen number keypad in the incremental search screen */
 	public final static byte CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD = 95;
+	/** bit 96: save destination position for next start */
+	public final static byte CFGBIT_AUTOSAVE_DESTPOS = 96;
+	/** bit 97: indicate whether saved destination position is valid */
+	public final static byte CFGBIT_SAVED_DESTPOS_VALID = 97;
 	
 	/**
 	 * These are the database record IDs for each configuration option
@@ -308,6 +312,8 @@ public class Configuration {
 	private static final int RECORD_ID_WP_LANG = 49;
 	private static final int RECORD_ID_NAME_LANG = 50;
 	private static final int RECORD_ID_SOUND_DIRECTORY = 51;
+	private static final int RECORD_ID_DEST_RADLAT = 52;
+	private static final int RECORD_ID_DEST_RADLON = 53;
 
 	// Gpx Recording modes
 	// GpsMid determines adaptive if a trackpoint is written
@@ -369,6 +375,7 @@ public class Configuration {
 	private static boolean btKeepAlive = false;
 	private static boolean btAutoRecon = false;
 	private static Node startupPos = new Node(0.0f, 0.0f);
+	private static Node destPos = new Node(0.0f, 0.0f);
 	private static byte projTypeDefault = ProjFactory.NORTH_UP;
 	
 	private static boolean mapFromJar;
@@ -455,17 +462,8 @@ public class Configuration {
 			continueMapWhileRouteing = readInt(database, RECORD_ID_CONTINUE_MAP_WHILE_ROUTING);
 			btKeepAlive = (readInt(database, RECORD_ID_BT_KEEPALIVE) !=0);
 			btAutoRecon = (readInt(database, RECORD_ID_GPS_RECONNECT) !=0);
-			String s = readString(database, RECORD_ID_STARTUP_RADLAT);
-			String s2 = readString(database, RECORD_ID_STARTUP_RADLON);
-			if (s != null && s2 != null) {
-				try {
-					startupPos.radlat = Float.parseFloat(s);
-					startupPos.radlon = Float.parseFloat(s2);
-				} catch (NumberFormatException nfe) {
-					logger.exception(Locale.get("configuration.ErrorParsingStartupPos")/*Error parsing startupPos: */, nfe);					
-				}
-			}
-			//System.out.println("Map startup lat/lon: " + startupPos.radlat*MoreMath.FAC_RADTODEC + "/" + startupPos.radlon*MoreMath.FAC_RADTODEC);
+			readPosition(database, startupPos, RECORD_ID_STARTUP_RADLAT, RECORD_ID_STARTUP_RADLON);
+			readPosition(database, destPos, RECORD_ID_DEST_RADLAT, RECORD_ID_DEST_RADLON);
 			setProjTypeDefault((byte) readInt(database,  RECORD_ID_MAP_PROJECTION));
 			smsRecipient = readString(database, RECORD_ID_SMS_RECIPIENT);
 			speedTolerance = readInt(database, RECORD_ID_SPEED_TOLERANCE);
@@ -683,6 +681,7 @@ public class Configuration {
 		if (configVersionStored < 19) {
 			cfgBits_64_to_127 |= 1L << CFGBIT_ROUTE_USE_MOTORWAYS |
 								 1L << CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD |
+								 1L << CFGBIT_AUTOSAVE_DESTPOS |
 			 					 1L << CFGBIT_ROUTE_USE_TOLLROADS;
 		}
 
@@ -792,6 +791,20 @@ public class Configuration {
 		} catch (Exception e) {
 			logger.exception(Locale.get("configuration.FailedReadingLong")/*Failed to read Long from config database*/, e);
 			return 0;
+		}
+	}
+	
+	
+	private static void readPosition(RecordStore database, Node pos, int rec_id_radlat, int rec_id_radlon) {
+		String s = readString(database, rec_id_radlat);
+		String s2 = readString(database, rec_id_radlon);
+		if (s != null && s2 != null) {
+			try {
+				pos.radlat = Float.parseFloat(s);
+				pos.radlon = Float.parseFloat(s2);
+			} catch (NumberFormatException nfe) {
+				logger.exception(Locale.get("configuration.ErrorParsingPos")/*Error parsing pos: */, nfe);					
+			}
 		}
 	}
 	
@@ -1499,13 +1512,22 @@ public class Configuration {
 	}
 
 	public static void getStartupPos(Node pos) {
-		pos.setLatLonRad(startupPos.radlat, startupPos.radlon);
+		pos.setLatLon(startupPos);
 	}
-
+	
 	public static void setStartupPos(Node pos) {
 		//System.out.println("Save Map startup lat/lon: " + startupPos.radlat*MoreMath.FAC_RADTODEC + "/" + startupPos.radlon*MoreMath.FAC_RADTODEC);
 		write(Float.toString(pos.radlat), RECORD_ID_STARTUP_RADLAT);
 		write(Float.toString(pos.radlon), RECORD_ID_STARTUP_RADLON);
+	}
+
+	public static void getDestPos(Node pos) {
+		pos.setLatLon(destPos);
+	}
+
+	public static void setDestPos(Node pos) {
+		write(Float.toString(pos.radlat), RECORD_ID_DEST_RADLAT);
+		write(Float.toString(pos.radlon), RECORD_ID_DEST_RADLON);
 	}
 	
 	public static String getOsmUsername() {
