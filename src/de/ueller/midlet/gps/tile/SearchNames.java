@@ -283,13 +283,14 @@ public class SearchNames implements Runnable {
 							}
 							newSearch = false;
 						}
-						gui.addResult(sr);
-						foundEntries++;
-						if (foundEntries > 50) {
-							//#debug info
-							logger.info("Found 50 entries. Thats enough, stoping further search");
-							ds.close();
-							return;
+						if (gui.addResult(sr)) {
+							foundEntries++;
+							if (foundEntries > 50) {
+								//#debug info
+								logger.info("Found 50 entries. Thats enough, stoping further search");
+								ds.close();
+								return;
+							}
 						}
 //						System.out.println("found " + current +"(" + idx + ") type=" + type);
 					}

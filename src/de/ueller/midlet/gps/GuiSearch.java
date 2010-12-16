@@ -1123,7 +1123,11 @@ public class GuiSearch extends Canvas implements CommandListener,
 	}
 	
 	// TODO: optimize sort-in algorithm, e.g. by bisectioning
-	public synchronized void addResult(SearchResult srNew){		
+	/**
+	 * @param srNew
+	 * @return if SearchResult srNew was actually added (true = added, false = skipped)
+	 */
+	public synchronized boolean addResult(SearchResult srNew){		
 		addDistanceToSearchResult(srNew);
 		String name = null;
 		if (state == STATE_FAVORITES) {
@@ -1149,8 +1153,10 @@ public class GuiSearch extends Canvas implements CommandListener,
 				}
 				result2.insertElementAt(srNew, i);
 			}
+			needsPainting = true;
+			return true;
 		}
-		needsPainting = true;
+		return false;
 	}
 
 	
