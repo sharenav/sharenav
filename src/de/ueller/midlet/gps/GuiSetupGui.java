@@ -53,11 +53,11 @@ public class GuiSetupGui extends Form implements CommandListener {
 			imenuOpts.setSelectedIndex(4, 
 					Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED));
 			append(imenuOpts);
-			searchSettings.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD));
 
 			String [] search = new String[1];
 			search[0] = Locale.get("guisetupgui.numberkeypad")/*Enable virtual keypad*/;
 			searchSettings = new ChoiceGroup(Locale.get("guisetupgui.searchopts")/*Search options*/, Choice.MULTIPLE, search, null);
+			searchSettings.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD));
 			append(searchSettings);
 			
 			String [] other = new String[1];
