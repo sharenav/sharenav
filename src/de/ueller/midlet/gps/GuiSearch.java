@@ -713,29 +713,9 @@ public class GuiSearch extends Canvas implements CommandListener,
 			action = 0;
 		}
 		logger.info("Search dialog: got key " + keyCode + " " + action);
-/* the code below is needed only for searchAlpha, because the KEY_NUM constants match "(char) keycode"
- * and any keyCode >= 32 will be inserted as default action
- */
-		if (keyCode == KEY_NUM1) {
-			searchCanon.insert(carret++,'1');
-		} else if (keyCode == KEY_NUM2) {
-			searchCanon.insert(carret++,'2');
-		} else if (keyCode == KEY_NUM3) {
-			searchCanon.insert(carret++,'3');
-		} else if (keyCode == KEY_NUM4) {
-			searchCanon.insert(carret++,'4');
-		} else if (keyCode == KEY_NUM5) {
-			searchCanon.insert(carret++,'5');
-		} else if (keyCode == KEY_NUM6) {
-			searchCanon.insert(carret++,'6');
-		} else if (keyCode == KEY_NUM7) {
-			searchCanon.insert(carret++,'7');
-		} else if (keyCode == KEY_NUM8) {
-			searchCanon.insert(carret++,'8');
-		} else if (keyCode == KEY_NUM9) {
-			searchCanon.insert(carret++,'9');
-		} else if (keyCode == KEY_NUM0) {
-			searchCanon.insert(carret++,'0');
+		if (keyCode >= KEY_NUM0 && keyCode <= KEY_NUM9) {
+			/*  KEY_NUM constants match "(char) keyCode" */
+			searchCanon.insert(carret++, (char) keyCode);
 		} else if (keyCode == KEY_POUND) {
 			if (state == STATE_FAVORITES) {
 				sortByDist = !sortByDist;
