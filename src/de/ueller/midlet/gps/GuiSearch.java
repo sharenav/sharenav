@@ -157,6 +157,10 @@ public class GuiSearch extends Canvas implements CommandListener,
 	 */
 	private boolean pointerDragged;
 	/**
+	 * Indicates that there was a rather far drag event since the last pointerPressed
+	 */
+	private static volatile boolean pointerDraggedMuch = false;
+	/**
 	 * Stores the position of the X coordinate at which the pointer started dragging since the last update 
 	 */
 	private int pointerXDragged;
@@ -170,6 +174,14 @@ public class GuiSearch extends Canvas implements CommandListener,
 	private int pointerXPressed;
 	private int pointerYPressed;
 	private int clickIdxAtSlideStart;
+	/**
+	 * indicates if the next release event is valid or the corresponding pointer pressing has already been handled
+	 */
+	private volatile boolean pointerActionDone;
+	
+	/** timer checking for long tap */
+	private volatile TimerTask longTapTimerTask = null;
+	private final int LONGTAP_DELAY = 500;
 	
 	private KeySelectMenu poiTypeForm;
 
@@ -829,6 +841,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 	public void pointerPressed(int x, int y) {
 		//#debug debug
 		logger.debug("PointerPressed: " + x + "," + y);
+		pointerActionDone = false;
+		pointerDraggedMuch = false;
 		long currTime = System.currentTimeMillis();
 		if (potentialDoubleClick) {
 			if ((currTime - pressedPointerTime > 400)) {
@@ -865,6 +879,23 @@ public class GuiSearch extends Canvas implements CommandListener,
 					repaint();
 				}
 			}
+			longTapTimerTask = new TimerTask() {
+				public void run() {
+					// if no action (e.g. from double tap) is already done
+					// and the pointer did not move or if it was pressed on a control and not moved much
+					if (!pointerActionDone && !pointerDraggedMuch) {
+						if (System.currentTimeMillis() - pressedPointerTime >= LONGTAP_DELAY){
+							pointerReleased(pointerXPressed, pointerYPressed);
+						}
+					}
+				}
+			};
+			try {
+				// set timer to continue check if this is a long tap
+				GpsMid.getTimer().schedule(longTapTimerTask, LONGTAP_DELAY);
+			} catch (Exception e) {
+				logger.error(Locale.get("trace.NoLongTapTimerTask")/*No LongTap TimerTask: */ + e.toString());
+			}
 		}
 		clickIdxAtSlideStart = clickIdx;
 	}
@@ -876,6 +907,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		}
 		//#debug debug
 		logger.debug("PointerReleased: " + x + "," + y);
+		pointerActionDone = true;
 		long currTime = System.currentTimeMillis();
 		int clickIdx = (y - scrollOffset)/fontSize;
 		if (gsl != null) {
@@ -911,6 +943,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				}
 			}
 			pointerDragged = false;
+			pointerDraggedMuch = false;
 			potentialDoubleClick = false;
 			return;
 		}
@@ -996,6 +1029,16 @@ public class GuiSearch extends Canvas implements CommandListener,
 
 		}
 		pointerDragged = true;
+		// check if there's been much movement, do this before the slide lock/unlock
+		// to avoid a single tap action when not sliding enough
+		if (Math.abs(x - pointerXPressed) > 8
+				|| 
+			Math.abs(y - pointerYPressed) > 8
+		) {
+			pointerDraggedMuch = true;
+			// avoid double tap triggering on fast consecutive drag actions starting at almost the same position
+			pressedPointerTime = 0; 
+		}
 		
 		// only scroll if drag wasn't started at the first entry to avoid scrolling it out accidently during slide gestures
 		if (pointerYPressed > fontSize) {		
