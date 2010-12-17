@@ -180,8 +180,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 	private volatile boolean pointerActionDone;
 	
 	/** timer checking for long tap */
-	private volatile TimerTask longTapTimerTask = null;
-	private final int LONGTAP_DELAY = 500;
+	private volatile TimerTask tapAutoReleaseTimerTask = null;
+	private final int TAP_AUTORELEASE_DELAY = 500;
 	
 	private KeySelectMenu poiTypeForm;
 
@@ -854,6 +854,16 @@ public class GuiSearch extends Canvas implements CommandListener,
 		}
 		pointerXDragged = x;
 		pointerYDragged = y;
+
+		// when the display is pressed again before the auto release,
+		// cancel any outstanding auto release timer and perform the corresponding action immediately instead 
+		if (tapAutoReleaseTimerTask != null) {
+			tapAutoReleaseTimerTask.cancel();
+			if (!pointerDraggedMuch) {
+				autoPointerRelease(pointerXPressed, pointerYPressed);
+			}	
+		}
+
 		pointerXPressed = x;
 		pointerYPressed = y;
 
@@ -879,84 +889,35 @@ public class GuiSearch extends Canvas implements CommandListener,
 					repaint();
 				}
 			}
-			longTapTimerTask = new TimerTask() {
+			tapAutoReleaseTimerTask = new TimerTask() {
 				public void run() {
+					tapAutoReleaseTimerTask = null;
 					// if no action (e.g. from double tap) is already done
 					// and the pointer did not move or if it was pressed on a control and not moved much
-					if (!pointerActionDone && !pointerDraggedMuch) {
-						if (System.currentTimeMillis() - pressedPointerTime >= LONGTAP_DELAY){
-							pointerReleased(pointerXPressed, pointerYPressed);
+					if (!pointerDraggedMuch) {
+						if (System.currentTimeMillis() - pressedPointerTime >= TAP_AUTORELEASE_DELAY){
+							/* automatically release the pointer as a workaround for S60V5 devices
+							 * which start drawing blue circles but give no pointerReleased() event
+							 * when holding down the pointer just a few ms with the finger
+							 */
+							autoPointerRelease(pointerXPressed, pointerYPressed);
 						}
 					}
 				}
 			};
 			try {
 				// set timer to continue check if this is a long tap
-				GpsMid.getTimer().schedule(longTapTimerTask, LONGTAP_DELAY);
+				GpsMid.getTimer().schedule(tapAutoReleaseTimerTask, TAP_AUTORELEASE_DELAY);
 			} catch (Exception e) {
 				logger.error(Locale.get("trace.NoLongTapTimerTask")/*No LongTap TimerTask: */ + e.toString());
 			}
 		}
 		clickIdxAtSlideStart = clickIdx;
 	}
-	
-	public void pointerReleased(int x, int y) {
-		// avoid division by zero when releasing pointer before screen is drawn
-		if (fontSize == 0) {
-			return;
-		}
-		//#debug debug
-		logger.debug("PointerReleased: " + x + "," + y);
-		pointerActionDone = true;
-		long currTime = System.currentTimeMillis();
+
+	public void autoPointerRelease(int x, int y) {
 		int clickIdx = (y - scrollOffset)/fontSize;
-		if (gsl != null) {
-		    gsl.clearTouchedElement();
-		    repaint();
-		}
-		if (pointerDragged) {
-			 // Gestures: sliding horizontally with almost no vertical movement
-			if ( Math.abs(y - pointerYPressed) < fontSize ) {
-				int xDist = x - pointerXPressed; 
-				logger.debug("Slide right " + xDist);
-				// Sort mode Slide: Sliding right at least half the screen width is the same as the # key
-				if (xDist > getWidth() / 2 ) {
-					//#debug debug
-					logger.debug("Sort mode slide");
-					keyPressed(KEY_POUND);
-				// Route Slide: sliding right at least the fontHeight
-				} else if (xDist > fontSize ) {
-					logger.debug("Route slide");
-					cursor = clickIdxAtSlideStart;
-					repaint();
-					commandAction( ROUTE1_CMD, (Displayable) null);					
-				// Search field slide: sliding left at least the fontHeight
-				} else if (xDist < -getWidth()/2 ) {
-					logger.debug("Search field slide");
-					GuiNameEnter gne = new GuiNameEnter(this, null, Locale.get("guisearch.SearchForNamesStarting")/*Search for names starting with:*/, searchCanon.toString(), 20);
-					gne.show();
-				// Select entry slide: sliding left at least the fontHeight
-				} else if (xDist < -fontSize ) {
-					logger.debug("Select entry slide");
-					cursor = clickIdxAtSlideStart;					
-					repaint();
-				}
-			}
-			pointerDragged = false;
-			pointerDraggedMuch = false;
-			potentialDoubleClick = false;
-			return;
-		}
-		if (potentialDoubleClick) {
-			if ((currTime - pressedPointerTime < 1500) && (clickIdx == cursor)) {
-				//#debug debug
-				logger.debug("PointerDoublePressed");
-				keyPressed(10);
-				potentialDoubleClick = false;
-				return;
-			}
-		}
-		
+		long currTime = System.currentTimeMillis();
 		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD) && !hideKeypad
 		    && gsl.getElementIdAtPointer(x, y) >= 0 && gsl.isAnyActionIdAtPointer(x, y)) {
 			int touchedElementId = gsl.getElementIdAtPointer(x, y);
@@ -998,16 +959,87 @@ public class GuiSearch extends Canvas implements CommandListener,
 				}
 			}
 		
-		} else
-		// if touching the right side of the display (150% font height) this equals to the * key 
-		if (x > getWidth() - fontSize * 3 / 2) {
-			keyPressed(KEY_STAR);
 		} else {
-		// else position the cursor
-			potentialDoubleClick = true;			
-			cursor = clickIdx;					
+			// if touching the right side of the display (150% font height) this equals to the * key 
+			if (x > getWidth() - fontSize * 3 / 2) {
+				keyPressed(KEY_STAR);
+			} else {
+				// else position the cursor
+				potentialDoubleClick = true;			
+				cursor = clickIdx;
+			}		
 		}
-		
+		if (gsl != null) {
+		    gsl.clearTouchedElement();
+		}
+		repaint();
+	}
+
+	
+	
+	public void pointerReleased(int x, int y) {
+		// avoid division by zero when releasing pointer before screen is drawn
+		if (fontSize == 0) {
+			return;
+		}
+		long currTime = System.currentTimeMillis();
+		int clickIdx = (y - scrollOffset)/fontSize;
+		//#debug debug
+		logger.debug("PointerReleased: " + x + "," + y);
+		pointerActionDone = true;
+
+		// If this could be a double click
+		if (potentialDoubleClick
+				&&
+			(
+				// but never in the virtual keypad
+				!Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD) || hideKeypad || !gsl.isAnyActionIdAtPointer(x, y)
+			)
+		) {
+			if ((currTime - pressedPointerTime < 1500) && (clickIdx == cursor)) {
+				//#debug debug
+				logger.debug("PointerDoublePressed");
+				keyPressed(10);
+				potentialDoubleClick = false;
+				return;
+			}
+		}
+		if (pointerDragged) {
+			 // Gestures: sliding horizontally with almost no vertical movement
+			if ( Math.abs(y - pointerYPressed) < fontSize ) {
+				int xDist = x - pointerXPressed; 
+				logger.debug("Slide right " + xDist);
+				// Sort mode Slide: Sliding right at least half the screen width is the same as the # key
+				if (xDist > getWidth() / 2 ) {
+					//#debug debug
+					logger.debug("Sort mode slide");
+					keyPressed(KEY_POUND);
+				// Route Slide: sliding right at least the fontHeight
+				} else if (xDist > fontSize ) {
+					logger.debug("Route slide");
+					cursor = clickIdxAtSlideStart;
+					repaint();
+					commandAction( ROUTE1_CMD, (Displayable) null);					
+				// Search field slide: sliding left at least the fontHeight
+				} else if (xDist < -getWidth()/2 ) {
+					logger.debug("Search field slide");
+					GuiNameEnter gne = new GuiNameEnter(this, null, Locale.get("guisearch.SearchForNamesStarting")/*Search for names starting with:*/, searchCanon.toString(), 20);
+					gne.show();
+				// Select entry slide: sliding left at least the fontHeight
+				} else if (xDist < -fontSize ) {
+					logger.debug("Select entry slide");
+					cursor = clickIdxAtSlideStart;					
+					repaint();
+				}
+			}
+			pointerDragged = false;
+			pointerDraggedMuch = false;
+			potentialDoubleClick = false;
+			return;
+		}
+		if (gsl != null) {
+		    gsl.clearTouchedElement();
+		}		
 		repaint();
 	}
 	
