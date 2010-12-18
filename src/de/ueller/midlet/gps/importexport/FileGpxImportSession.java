@@ -37,7 +37,9 @@ public class FileGpxImportSession implements GpxImportSession, SelectionListener
 		
 		//#if polish.api.fileconnectionapi
 		// if gpxUrl is export to OSM or perhaps bluetooth, use local file as GPX url as the menu entry is "load GPX from file"
-		FsDiscover fsd = new FsDiscover(this, this, Configuration.getGpxUrl().startsWith("file:") ? Configuration.getGpxUrl() :
+		FsDiscover fsd = new FsDiscover(this, this, Configuration.getGpxUrl() == null
+						|| Configuration.getGpxUrl().startsWith("file:")
+						|| Configuration.getGpxUrl().length() < 9 ? Configuration.getGpxUrl() :
 						"file:///", 
 						false, ".gpx", Locale.get("filegpximportsession.LoadGgpxFile")/*Load *.gpx file*/);
 		fsd.show();				
