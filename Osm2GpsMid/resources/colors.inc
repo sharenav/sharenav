@@ -81,4 +81,8 @@
 	<color of="way_damaged_border" is="00FF0000"/>	
 	<color of="way_damaged_decoration" is="00FF0000"/>	
 	<color of="area_damaged_border" is="00FF0000"/>	
+	<!-- FIXME add these at map format change
+	<color of="search_touched_button_background" is="00FFFF77"/>
+	<color of="search_button_text" is="00000000" isAtNight="00FFFFFF"/>
+	<color of="search_button_border" is="00000000" isAtNight="00FFFFFF"/> -->
   </colors>
