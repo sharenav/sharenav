@@ -161,7 +161,12 @@ public class TriangulateRelations {
 		}
 		
 		for (Way w : removeWays) {
-			parser.removeWay(w);
+			if (!w.isAccessForAnyRouting()) {
+				parser.removeWay(w);
+			}
+			else {
+				System.out.println("  info: multipolygon member " + w.toUrl() + " not removed because it is routable");
+			}
 		}
 		parser.resize();
 	}
