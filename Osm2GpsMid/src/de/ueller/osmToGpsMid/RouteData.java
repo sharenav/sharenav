@@ -56,7 +56,6 @@ public class RouteData {
 		}
 		// count all connections for all nodes
 		for (Way w:parser.getWays()) {
-			w.determineWayRouteModes();
 			if (! w.isAccessForAnyRouting()) {
 				continue;
 			}

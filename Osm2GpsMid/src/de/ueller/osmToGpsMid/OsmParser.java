@@ -121,6 +121,7 @@ public abstract class OsmParser {
 		 * are used to indicate invalid type it seems.
 		 */
 		if (w.isValid() /* && t > 0 */) {
+			w.determineWayRouteModes();
 			if (ways.get(w.id) != null) {
 				/**
 				 * This way is already in data storage. This results from
