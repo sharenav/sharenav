@@ -1,0 +1,47 @@
+after:päästä
+half:loivasti
+hard:jyrkästi
+left:vasen
+toleft:vasemmalle
+right:oikea
+toright:oikealle
+straighton:suoraan eteenpäin
+prepare:valmistaudu
+continue:jatka
+100:sadan
+200:kahdensadan
+300:kolmensadan
+400:neljänsadan
+500:viidensadan
+600:kuudensadan
+700:seitsemänsadan
+800:kahdeksansadan
+then:sitten
+soon:pian
+again:taas
+enter_motorway:moottoritielle
+leave_motorway:poistu moottoritieltä!
+into_tunnel:tunneliin!
+out_of_tunnel:ulos tunnelista
+rab:liikenneympyrässä 
+1st:ensimmäinen
+2nd:toinen
+3rd:kolmas
+4th:neljäs
+5th:viides
+6th:kuudes
+meters:metrin
+rabexit:ulosmeno
+target_reached:kohde saavutettu
+check_direction:tarkista suunta!
+route_recalculation:Lasken reitin uudelleen
+speed_limit:Ylinopeus
+bear:kaista
+follow_street:seuraa tätä tietä
+area_cross:ylitä alue
+area_crossed:jätä alue
+uturn:uu-käännös
+dest_reached:Olet perillä
+connect:Paikannus
+disconnect:Paikannus poissa
+and:ja
