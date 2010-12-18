@@ -59,7 +59,7 @@
 	</tstamp>
 <!--   	<echo message="Lang: ${local_lang}"/> -->
    	<copy todir="resources">
-   		<fileset dir="../GpsMid/dist">
+   		<fileset dir="GpsMid/dist">
    			<include name="*.jar"/>
 <!--   			<include name="*_${local_lang}.jar" if="local_lang" />
    			<include name="*.jar" unless="local_lang" />
