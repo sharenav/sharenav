@@ -1,0 +1,500 @@
+GpsMid 0.6.3
+	*** Map Screen ***
+	   - Greatly improved area rendering:
+	     - J2ME mobiles can only draw triangles, so for rendering filled polygons they need to be split into triangles.
+	       This is now done by Osm2GpsMid resulting in faster rendering in GpsMid
+	     - Large Areas are split into smaller areas resulting in faster area rendering as well
+	     - Multipolygon support (OSM inner / outer relations)
+	   - Additional map views:
+	     - Eagle: GpsMid's great 3D View (experimental)
+	     - Moving Enhanced: rotated view enhanced to see more ahead
+	   - No. of sats and recorded points now have a background box.
+	   - A base zoom level can be entered in setup, that will be used as base for auto zoom
+	*** Icon Menu and Touchscreen support ***
+	   - Icon Menu will switch to 4x3 in landscape mode if the device informs us about its rotation 
+	   - Sliding horizontally at least a quarter of the screen width switches icon menu pages
+	   - Slide to the right on the Status Bar in the map screen to lock / unlock touch screen devices
+	   - Icons / Tabs and Touch Controls in the map screen get highlighted when touching them  
+	   - Gestures in Search results:
+		 - Double tap an entry: route to entry / use as destination
+		 - Slide horizontally at least one char height to the right: route to entry
+		 - Slide horizontally at least one char height to the left: select entry
+		 - Slide horizontally half screen width to the left: show search text field
+		 - Slide horizontally half screen width to the right: toggle sort mode
+		 - Touch the right 20% of the screen: same as * key - toggle favorites/waypoints or collapse street names
+		 - Slide vertically: scroll result list
+	   - Single Tapping, double tapping and long pressing on touch controls in the Map Screen with many new different functionalities
+	   - Complete Overview of Touchscreen support is at http://sourceforge.net/apps/mediawiki/gpsmid/index.php?title=Touchscreen_Layout
+	*** Localization for voice and route instructions ***
+	     You can now specify a text file called syntax.cfg in the sound directory.
+	     For examples of syntax.cfg extract from the Osm2GpsMid.jar with an unzip utility
+	     the directories sound and sound-de which both contain a syntax.cfg.
+	     Osm2GpsMid will include all sound files referenced in syntax.cfg
+	     into the generated midlet. (Sound file names are the sound files referenced
+	     in syntax.cfg in lower case with the extensions specified with useSounds, e.g. amr)
+	     For specifying the sound directory/directories containing the syntax.cfg
+	     use e.g. : useSoundFilesWithSyntax=sound, sound-de, sound-fi.
+	     The sound files of the specified directories are bundled into GpsMid
+	     and the directories are chooseable in Setup/Sounds & Alerts.
+
+	     GpsMid will prefer files from the specified sound directory/direcories in the file system
+	     or fall back to the files in the specified sound directory integrated into Osm2GpsMid.
+	   - Only German voice and route instructions:
+	     Specify in your .properties file: useSoundFilesWithSyntax=sound-de
+	     This will include the German sound files into GpsMid        	     	   
+	   - Only Finnish voice and route instructions:
+	     Specify in your .properties file: useSoundFilesWithSyntax=sound-fi
+	     This will include the Finnish sound files into GpsMid (thx jkpj)
+	   - English and German eSpeak voices now sound a bit more friendly   	     	   
+	*** Localization of on-screen messages ***
+	   - Icon menu and some other on-screen messages in Finnish, French,
+             German, Russian and Slovak
+    *** Map Elements ***
+	   - improved color for buildings
+	   - add area types shop=*, leisure=pitch, landuse=farm_yard, landuse=military
+	   - add POIs for shop=bicycle/organic/clothes
+	   - changed colors for landuse=commercial and graveyards/cemeteries
+	   - Paths with bicycle=designated / foot=designated added and drawn like footways / cycleways
+	   - highways with toll flag get now drawn with a special decoration
+	*** Routing ***   
+	   - If GUI is optimized for routing after selecting in the Search results "Route"
+	     or "As destination" do not move map to destination, thus the route gets calculated
+	     from the current map position to the selected search result
+       - Allow Toll Roads / Motorways. With these new options you can specify if GpsMid will route
+         using toll roads / motorways. This also reduces the maximum number of travel modes per midlet from 5 to 4.
+       - Allow to specify in Setup/Routing the seconds the examined route path gets delayed
+	     at traffic signals during calculation. The value is used only during calculation.
+	     It is NOT used for ETA calculation, which is hardcoded to 20 seconds (if traffic signals are far enough apart).
+	     Also in contrary to ETA calculation the delay is only applied if not to consecutive connections
+	     start at a traffic signal route node.
+	     Don't set this too high as it will slow down route calculation because GpsMid will examine more route paths
+	     trying to avoid the connections delayed by traffic signals and this therefore would also sometimes result in strange routes.
+	   - Improvements on when a bearing instruction has to be given and when not
+    *** GPS and other location producers ***
+	   - Show NoFix with JSR-179 if no fix is available (thx djinnn)
+	   - Show number of satellites with JSR-179 if device supports it (thx djinnn)
+       - fix a problem with the NMEA sentences generated by HTC Touch Diamond 2 with JavaFX JVM
+    *** URL and Phone number support ***
+       - GpsMid can now open websites and call phone numbers associated with POIs and Ways in search results
+         and on the map (ways only on the map for now). W signifies Website and P signifies Phone.
+         To configure for use, add useUrlTags=true and usePhoneTags=true to .properties file
+    *** Others ***
+       - The Setup option "backlight only in map screen" has been recycled to "backlight only as keep-alive"
+         which only triggers the backlight every 60 s to ensure continuous screen updates etc.
+         on some phones while saving battery compared to keeping the backlight on all the time.
+       - Compass directions now have the correct names according to http://en.wikipedia.org/wiki/Cardinal_direction now (thx billi25)
+       - Fix a recordstore error that caused settings to be not consistent on some mobiles (thx jkpj)
+       - Fix NullPointerException when accesing tracks on corrupt record stores preventing to access readable tracks (thx Petr Dlouh�)
+       - Winter speed limits actually trigger an alert now (thx jkpj)
+       - Search results are now refreshed with a new strategy until all null strings are resolved to names
+       - Many more small improvements and bugfixes.
+	   
+GpsMid 0.6
+    *** Usability ***
+       - Faster access to the map: There's no extra menu before the map screen anymore.
+       - Icon menus are available as an alternative user interface (activateable in Setup / GUI Options).
+         Multiple sized icon sets are included, choose with "useIcons = small|true|big|false" in the .properties file
+         if and which icon set is included. Default is "useIcons = small|true", which includes a medium sized icon set.
+       - Use numeric keys to directly access icons in icon menu and use long presses of numeric keys
+         to directly access the tabs of the icon menu - this can be activated in Setup/GUI (thx Petr Dlouh�). 
+       - Specify in Setup/Display Options to keep backlight on only while GPS is started.
+       - Many more midlet colors are specifiable in the style-file now (including colors for night mode).
+       - Display speed and distances in miles if configured in Setup.
+       - Many mobile devices only allow to install rather small jar files (e.g. only 1 MB or 3 MB): 
+         - A new workaround for this install a GpsMid with a small file size and
+           to specify in it in Setup/Map Source another (bigger) GpsMid.jar as external map source
+           (some devices require to rename the suffix of the .jar to .zip first)
+           Many thx for the "j2me zipfile reading patch (no permission nags anymore)" to trendypack
+         - On some mobiles the access to the external jar/zip won't work.
+           If this is the case you can alternatively specify a directory with the unzipped contents
+           of another large GpsMid.jar as external map source.
+       - Some improvements to the quality of the included voice samples
+    *** Touch screen support ***
+        - Touch the street name status bar to show the icon menu.
+        - Recenter to GPS button.
+        - (De)activate manual rotation mode by touching the point of compass (use zoom buttons to rotate in manual rotation mode).
+        - Show Map Features by touching the scale bar.
+        - In the Search screen touching below or above the search results makes a standard input field show up
+          (for touch screen devices without QWERT keyboard or numeric keys).
+        - Touch the clock on the map to toggle the backlight, with some Nokia mobiles like Nokia 5800 it is also possible to
+		  use the zoom buttons during "Backlight ON" message to dim the backlight on touchscreen mobiles.        
+        - Show destination and move center to GPS to the left (thx jkpj).
+    *** GPS and other location producers ***
+       - Add a possibility to manually enter a connection URL, e.g. "comm:COM0;baudrate=115200".
+       - CellId provider for S60FP2 usable with the python helper app (providing CellId via a local socket). 
+       - CellId can now be used to position oneself without the need to connect to the Internet.
+    *** Map Screen ***
+       - Improved painting of way segments to draw them connected (thx pos_ei_don_). 
+       - Faster painting of oneway arrows (thx pos_ei_don_).
+       - Special rendering of ways that are bridges or tunnels (thx pos_ei_don_).
+       - In Setup / Display Options there's now a text field for specifying how many seconds after
+       	 the last user interaction the map will be automatically recentered to the GPS position
+       - Better handling of appearing and disappearing text items (title bar, route instructions, etc.) on the map screen.
+       - Optionally show speed when driving.
+       - Optionally show altitude from GPS.
+       - When there is no route calculated but a destination is set, show air distance
+         instead of remaining route distance in the map screen.
+       - New map feature "Auto zoom": This will automatically zoom the map in and out according to the driving speed
+         (after zooming in or out manually in auto zoom mode, GPS recentering will also activate the auto zoom again).
+       - Turn restrictions included in the midlet can be displayed in the map with Setup/Debug Options.
+       - Max distance for displaying way name while scrolling is now calculated differently.
+         A minimum of 10 meters is used for high zoom levels.
+    *** Recordings, Tracks and Waypoints ***
+       - Allow to save more than 255 waypoints again. (thx pos_ei_don)
+       - Ask for track name at start/end of track recording - configurable in Setup / Recording Rules (thx jkpj).
+       - Numbers of tracks and waypoints displayed in the title of the respective lists (thx Petr Dlouh�).
+       - Current date added to name of waypoints file (thx Petr Dlouh�).
+       - Better feedback (progress popups) during GPX imports and exports.
+       - Better error message when GPX export fails, fixed typos (thx Petr Dlouh�).
+       - Fix for the bug that waypoints were sometimes no longer drawn (thx Petr Dlouh�).
+       - Using a different icon for waypoints than for the points of a track (thx Petr Dlouh�).
+       - Fix for bug 2737256: Cursor position moved before "Set as target" (thx Petr Dlouh�).
+       - Auto save the gpx track every 256 points, not only at the end of the recording.
+       - Option to save a waypoint as favorite (will be shown in Search screen if no or only the first key is pressed).
+       - Faster export of tracks and waypoints (on some Nokia devices).
+       - Replay recorded track (experimental).
+       - Timestamps in GPX exports when using internal GPS (JSR-179) were in local time, not UTC.
+       - Time and elevation jumps in GPX (bug 2928508) when using internal GPS (JSR-179) fixed.
+         With JSR-179, the WGS84 geoid elevation is now always used which is different
+         from external GPS which uses mean sea level elevation.
+    *** Map Elements ***
+       - Many POI types added to the default style.
+       - Different icons for churches, mosques, synagogues and unspecified religions.
+       - Trunk and primary roads now have a colour of their own.
+       - Improved visibility of railways based on GeoCache style - thx GoemonGps/billi25.
+       - Add place=island as a workaround for land underwater - thx pos_ei_don_.
+       - http://wiki.openstreetmap.org/wiki/WikiProject_Haiti:
+          - new damages section in style-file to give certain ways / areas a red border
+          - damage POIs for collapsed buildings and other earthquake damages
+    *** Routing ***
+       - Foot routing (if bundled into the midlet, see below).
+       - Multiple Route Modes can be bundled into a single midlet with a setting in the .properties file,
+         e.g. useRouting = motorcar, bicycle, foot
+       - GpsMid asks which route mode to use on start of routing.
+       - If you select "Optimize for routing" in GUI Options, "Route" will be the default action in the Search screen.
+       - "Target" has been renamed to "Destination" throughout GpsMid.
+       - Show remaining route distance to distance in map screen.
+       - Optionally show remaining route duration / ETA in map screen
+         (based on ways' typical/max speeds/number of traffic lights).
+       - Check for turn restrictions for motorcar during route calculation 
+       	 (can be turned off as it needs more memory and is slower).
+       - Speed up of long distance route calculations for motorcars
+         by using only the main street net (motorway, trunk, primary, seconday, tertiary)
+         in the middle of the route.
+         (Specify distance from start and destination where main street net calculation starts in Routing Options.)
+       - Route calculation tries to find a motorway at the start of calculation (Option: Look for motorways).
+       - Examine motorways further during route calculation, so it is not left too early when the motorway makes a curve
+         but is in the long term the better route (Option: Boost motorways).
+       - Examine trunks and primaries further to find the best way around cities instead of routing through
+         (Option: Boost trunks & primaries).
+       - Route Line is now determined in a separate thread in the background,
+         therefore instructions can be given already before the route line is known completely.
+       - Faster detection of the route line ways during rendering (speeds up map rendering, especially on long routes).
+       - U-turn instruction added.
+       - Cross area routing (e.g. for foot routing through pedestrian zones).
+       - Permissive Route Access Restrictions are now possible
+         (e.g. bicycle routing for an abandoned aeroway=runway if bicycle=true is set).
+       - Much faster route calculation for bicycles (thx to apmonkey for the hint).
+       - Only one "in xxx meters" voice instruction is given for each arrow.
+       - http://wiki.openstreetmap.org/wiki/WikiProject_Haiti:
+         routing repects impassable=yes and bridge=collapsed as non-routable
+    *** OSM editing and other features only available with Internet connection ***
+       - Support for GeoHack in "Online Info" (thx jkpj).
+    *** Style-file and external media handling ***
+       - High-style-file.xml has been renamed to style-file.xml and is used as 
+         default style-file that is completely integrated into Osm2GpsMid.
+         The high-style.zip is discontinued.
+         By using an Unzip utility you can extract the style-file.xml from Osm2GpsMid and
+         put it into the file system and customize it as before.
+       - The former style-file.xml has been renamed to mini-style-file.xml and can be
+         alternatively specified in the .properties file as "style-file = mini-style-file.xml".
+       - External media in style-file will be searched relative to the style-file location.
+         Therefore when you specify "style-file = myStyle/style-file.xml" in your .properties file
+         Osm2GpsMid will look for external media files to include in myStyle/png and myStyle/sound directories.
+    *** Midlet creation with Osm2GpsMid ***
+       - Improved output, e.g. OSM links to errors to fix and duration for some creation steps.
+       - New option maxTileWays0, maxTileWays1, maxTileWays2 and maxTileWays3 in .properties files
+         for specifying the maximum number of ways bundled into tiles of tile zoom level 0 to 3:         
+         With Osm2GpsMid 0.5.0, a maximum of 255 ways was included into each tile of a tile zoom level.
+         This causes each Midlet to contain very many small files. By increasing the maximum ways  
+         you can reduce the number of files in the Midlet, maybe making it possible to have larger maps
+         on the mobile. However, having more ways in the tiles might require a device with
+         more performance or memory to run GpsMid. Therefore the default maximum ways per tile is still 255. 
+       - New option maxDictDepth in .properties files for specifying the dictionary depth for tiles.
+         With Osm2GpsMid 0.5.0 this was hardcoded to 5. Increasing the value to e.g. 10 will 
+         decrease the number of dictionary files in the midlet but require more memory in the mobile.
+       - New option useSounds to specify which sound formats to include into the midlet,
+         e.g. "sounds = wav, amr" will include wav and amr sound files. GpsMid will use the first successful
+         playable sound format.
+    *** Osm2GpsMid GUI ***
+       - Output of Midlet creation is displayed in the GUI, so the user can now see it
+         if Osm2GpsMid was not started from a console.
+       - GUI no longer disappears when Midlet creation is started.
+       - Bounding boxes can now be deleted by double-clicking inside of them.
+       - Map is zoomed to the relevant map area when loading a .properties file.
+       - Loading .properties files works again.
+       - Error message if style file specified in .properties file can't be found.
+       - Specifying a relative path or a path in the JAR for a style-file now works. 
+       - New option to include CellIds.
+       - New option to specify Midlet route modes.
+       - New option which sound formats (none, amr, wav or both) to include into the Midlet.
+    *** Others ***
+       - Correct error message during start if a POI icon is not found (bug was
+         2913528 "Broken Midlets generated").
+       - Don't cause an NPE if getControl doesn't return a VolumeControl as needed for phoneME (thx jkpj).
+       - Many more small improvements and bugfixes.
+
+GpsMid 0.5.0
+       *** Usability ***
+       - Support for touchscreen devices (works also with mouse in MicroEmulator):
+         - touch and drag to pan around the map
+         - touch controls for zooming in and out
+         - touch and drag to scroll and select in search results
+       - Support for QWERT keyboards in the Search dialog
+       - New keyboard shortcuts for QWERT keyboards in the map screen and some changes to numeric keyboard shortcuts
+         (see http://gpsmid.wiki.sourceforge.net/Keyboard_Layout)
+       - Show available key shortcuts in Setup / Key shortcuts
+       - New custom alert boxes for the map screen cover the map only partially when displayed
+       - Setup Dialog speed improved
+       - Results from "Search / Nearest POI" include the compass direction now
+       - Added backlight method for Siemens mobiles to Generic-Full (thx beni123)
+       - Display backlight dimming for phones like Nokia E90 that support this
+         (use left / right keys during "Backlight ON" message to check out if dimming has an effect on your mobile)
+       - Splash screen will not be shown at startup if you press * in this screen.
+       - Alert boxes for exceptions no longer have a timeout.
+       *** OSM Editing ***
+       - Upload GPX traces directly to the OSM server (requires internet access on the phone)
+	   - Display actual raw OSM key, value tags for a selected way (requires internet access)
+	   - Upload added, deleted and changed OSM key value pairs for a selected way (requires internet access)
+	   - Upload reversed direction of a selected way (requires internet access)
+       *** Tracks and Waypoints ***
+       - Perform actions like export/delete on multiple selected tracks (thx mbaeurle)
+       - Ability to display selected already recorded tracks via "Manage Tracks" (thx black_ivory)
+       - Progress bar for track log export (thx black_ivory)
+       - Ability to rename tracks and waypoints
+       - Waypoint names can now be entered with up to 255 chars (instead of 20)
+	   - Waypoints entered when recording a track are now exported inside the GPX track (thx jkpj)
+	   - Elevation and timestamp now saved for waypoints (thx mbaeurle)
+	   - Allow to change waypoint elevation when saving a new waypoint (thx pos_ei_don_) 
+	   - Option to recenter to GPS after saving a waypoint - that's helpful for qwert-phones (thx pos_ei_don_)
+       - When sending waypoints you are now asked for a name (Waypoints.gpx remains default filename)
+       - The map is centered at the start point when displaying a track
+       - Send tracks directly to Openstreetmap internet url
+		 if "upload to OSM" is specified as GPX receiver
+		 and OSM Account in Setup is specified
+       - Favorites and Waypoints in the Search Dialog:
+         When there are waypoints ending with "*" they will show up as Favorites in the search dialog for quick access.
+         By pressing the "*"-key you can toggle to show all waypoints.
+         Typing a key will narrow down the favorites / waypoints list.
+         With the "#"-key you can toggle to sort the waypoints / favorites by name or distance.
+         Typing at least 2 keys will give normal name search results as before.         
+	   - Bug fix for file import not working on some phones (thx mbaeurle + colleague)
+	   - Correctly export waypoints with names containing &, <, > or " (thx pos_ei_don_)
+	   - Optimizations for waypoint label drawing (thx mbaeurle) 
+       *** Recordings ***
+       - Added feature to send an SMS with the current map position (map center)
+         if JSR-120 is available. It is also possible
+         to save the specified recipient as default recipient,
+         even when leaving the form with the Back command
+       *** GPS and other location producers ***
+       - JSR-179: Some devices (e.g. Nokia E71 and E90) did not show the speed / rotate the map to the driving direction.
+       - JSR-179: More devices (e.g. some Nokia S60 phones) show satellites now 
+       - Returning to the main screen while GpsMid is reconnecting should be possible now
+       - Support for retrieving the estimated position from the cell-id on SE phones via internet access to opencellid.org
+       - Log Cell-ID positions for uploading to OpenCellId.org
+         to a directory in the log folder specified in the location receiver setup
+       - Code now supports multiple LocationMsgReceivers for one LocationMsgProducer (thx black_ivory)
+       *** Map Screen ***
+       - Show name of closest routable way in status bar: If the closest routable way is not too far away
+         when the map is centered to GPS show its label instead of any way's label (this avoids that
+         you see e.g. names of rivers or city borders when the GPS signal is not exact enough)
+       - Stop showing closest way name in status bar if you are too far away       
+       - Added "Name Check" feature to Overview/Filter Map,
+         this can be used to show only unnamed/named or ways/areas/POIs containing a certain string in the map
+       - Place labels (city, town, village, hamlet, suburb) can now be hidden using the Map Features dialog 
+       - Buildings can now be hidden using the Map Features dialog.
+         Hiding buildings is recommended to speed up rendering and voice instructions in regions with many small buildings.
+       - Double press of 9 / single press of U-key toggles manual rotation mode (use left / right to rotate)
+       - Fixed crashes when displaying route connections via Debug Options
+       - When you give POIs the tag <AreaPOI createForAreas="true"/> this POI will also be shown for matching Areas
+       *** Map Elements ***
+       - Added POIs for beacons, towers and power objects (thx mbaeurle) and bench, cafe (thx pos_eid_on_), optician to high-style.zip 
+       - Added POIs for emergency phones and tourist informations to normal style-file and high-style.zip (thx mbaeurle)
+       - Different colors and names for different track grades in high-style.zip - thx Petr Dlouh�
+       - Paths are now dark grey in high-style.zip - thx Petr Dlouh�
+       - Fuel stations show now (preferably) the operator name - thx Petr Dlouh�
+       - Highway junctions and mountain peaks added (with new symbols) - thx Petr Dlouh�
+       *** Routing ***
+       - Routing to POIs/waypoints is now possible - GpsMid will route you to the closest routable way
+       - Display the name of the street the route instruction leads into
+       - Highlighting the route solution path (the route solution is drawn on top if the map is synched with
+         the GPS receiver but when panning manually it will respect the layer information),
+         the minimum width of the route solution path can be specified in Setup/Routing Options 
+       - Improved off-route detection
+       - Routing instructions for entering and exiting motorways, for roundabouts, tunnels,
+         for bearing if two alternative ways lead straight on and for following the street until further notice,
+         when there's no instruction for at least 1200 meters
+       - Browse the route instructions with up/down keys (can be deactivated in Setup)
+       - Skip half turn instructions if the street name stays the same and straight-ons
+       - Improved recalculation detection: you can now set the target, calculate the route
+         then Start Gps. When there's a new position from the GPS the route recalculation will
+         be automatically performed
+       - Some wrong direction arrows are fixed
+       - See also next section for creating midlets with bicycle routing
+       *** Midlet creation with Osm2GpsMid ***
+       - Osm2GpsMid is now compiled to be compatible with Java 1.5 Runtime (for example on older Mac OSX)
+       - RouteAccessRestrictions are now specified in the style-file instead of hardcoded into Osm2GpsMid
+         and can be specified for separate vehicles
+       - Each way can contain multiple routing entries (e.g. one for motorcar and one for bicycle)
+       - Only the routing entries and RouteAccessRestrictions for the useRouting-parameter in the properties files
+         are packed by Osm2GpsMid into the midlet, specify either "useRouting=motorcar" or "useRouting=bicycle"
+         in you properties file
+       - The Osm2GpsMid Wizard writes out the selected regions and chosen parameters
+         on exit to a file called "last.properties" in the current directory even when canceled.
+         This is a new way to easily get the necessary region parameters.
+       - Use HTTP compression for downloading map data if the server supports it
+       *** Others ***
+       - Speed limit alert - configurable in Setup / Sounds & Alerts (thx jkpj)
+       - Tacho and Trip screen (opened by the 7 key or menu entry) which show
+         information such as speed, altitude, distance and time traveled,
+         course, heading and distance to destination, ...
+       - Sunrise and sunset times are shown in the Trip screen (thx Sualeh Fatehi
+         for the calculation class)  
+       - More documentation in the source code (thx black_ivory and pos_ei_don_)
+       - Many more small improvements and bugfixes
+       
+GpsMid 0.4.51
+       *** Navigation ***
+       - Rotate map to driving direction
+         (specify default rotation in Display Options or Map Features
+          or toggle rotation by quickly pressing 5 twice)
+       - Faster and more correct route calculation
+       - Routing from unnamed streets is now possible
+         (GpsMid will route from nearest routable way)       
+       - experimental voice routing instructions (sound names see style-file.xml of high-style.zip)
+       - "Clear Target" menu entry to remove route arrows and navigation line
+       - Possibility to show the routing graph as a route debuging feature
+       *** Map ***
+       - One-way street arrows in the map
+       - "Search=>Overview/Filter Map" or double-press "*"
+         shows the chosen hideable POI/Area/Way types
+         in the map regardless of zoom level for an overview.
+         This can be useful to get a quick overview of a certain POI/Area/Way type in the area, i.e. hotels or railways.
+         You can optionally choose to show POI/Area/Way types that are
+         not selected in the Overview list normal or filter them out from display.
+       - Areas can now be hidden in Map Features dialog
+       - speed up and rendering fixes for way labels in the map
+       - delayed map draw bug fixed	   
+       - some new map features in high-style.zip
+       *** Tracks and Waypoints ***
+       - increased robustness of track and waypoint storage (thx mbaeurle)
+       - Enter new waypoints by coordinates using Recordings.../Enter waypoint (thx mbaeurle)
+         (i.e. 48� 30' 45" or 48� 30.75' or 48.5125� and leave the other fields empty)
+       - Exporting and importing waypoints always use UTF-8 now (thx bilboq)
+       - Existing waypoints.gpx files are now correctly overwritten (thx bilboq)
+       - "Export all" command for GPX tracklogs
+       *** GPS ***
+       - BT-GPS: auto-reconnect feature
+       - BT-GPS: Remove the Stop recording command if the Location receiver gets closed
+       - sound for GPS start / stop (thx mbaeurle)
+       - CONNECT and DISCONNECT sound in style file OR internal melody
+       - JSR-179: initial default location provider is set to JSR-179
+         if available on device and supported by app defined in .properties file
+       - JSR-179: getExtraInfo-NMEA-logging
+       - JSR-179: show satellites in overlay if device gives $GPGSV-information
+	   - Ability to suspend track recordings and later continue in the same track
+	   - Include an Odometer for the recorded tracks 
+       *** Audio & Picture Recording ***
+       - Take pictures from GpsMid if JSR-135 or JSR-234 is supported by phone
+       - Record audio notes with GpsMid
+       - Geotag pictures in exif header (experimental)
+       *** GpsMid Usability ***
+       - Restructured Map Menu
+       - map "freeze" bug on SE phones fixed
+       - new Full text search (Search / Fulltext Search)
+       - More international characters are mapped to number keys in the Search form
+       - show busy screen while discovering BT devices
+       - automatically default new midlets to correct backlight method for devices that were listed
+         with backlight method at http://gpsmid.wiki.sourceforge.net/DevicesList
+       - Scale splash screen on devices with more than 176x220 and enough memory
+       - show midlet version and bundling date in splash screen
+       *** Osm2GpsMid Usability ***
+       - A graphical Osm2GpsMid Wizard starts if no command line parameters are given
+       - allow to specify bounds on command line if no properties file is specified:
+         java -Xmx1024M -jar Osm2GpsMid-0.4.x.jar --bounds=23.48,34.78,26.37,35.7 osmxapi
+       - create midlet from whole osm file if no properties file and no bounds are specified, i.e.:
+         java -Xmx1024M -jar Osm2GpsMid-0.4.x.jar greece.osm.bz2
+       - display configuration summary of parameters that are used for midlet creation	   
+       *** Style File ***
+       - priority and specialisation conditions in style-file for POIs and ways
+       - pois and areas marked with "hideable=false" in style-file
+         are not allowed be hidden using map features anymore (useful i.e. to keep place names)
+       - sounds section in style file / sound playback routines supporting *.amr, *.wav and *.mp3, .amr recommended
+       - descriptionscale for areas allowing to specify scale when type description is shown  
+       *** Others ***
+       - many more new features and bugfixes
+
+GpsMid 0.4.0
+	   - map content and look (ways, areas, pois) is configurable on midlet creation
+	   - Search for nearest POIs
+	   - Improved Search for name dialog
+	   - Improved Routing
+	   - Routing is now possible in large midlets
+	   - Large next routing arrow and routing instruction text
+	   - Import only waypoints with maximum distance to target
+	   - Options to keep backlight on for various phones
+	   - Recording Rules
+	   - NMEA logging to file
+	   - Debug logging to file
+	   - Use Map Source from file system
+	   - Use layer tag (from -2..+2) for drawing order of ways and areas
+	   - Increase detail of map when zooming out during runtime
+	   - Map features Dialog (i.e. show type, lat/lon, Full Screen Mode, toggle map elements)
+	   - Area labels in Map
+	   - Experimental way labels in Map
+	   - Repeating keys for panning
+	   - New Map Key shortcuts (for short and long pressed keys)
+	   - Wiki: http://gpsmid.wiki.sourceforge.net/
+	   - many more new features and bugfixes
+
+GpsMid 0.3.50
+	   BugFix: NMEA input mode could get stuck in an infinite loop
+	   BugFix: Could not detect GPS bluetooth devices
+	   BugFix: Correct speed calculation for NMEA input
+	   BugFix: Bluetooth discovery did not work correctly on some devices (Concurrent search)
+	   BugFix: Correct elevation calculation in NMEA input
+
+	   Added displaypossibility of a scalebar
+	   Added support for scrolling in long lists in the search dialog
+	   Better error reporting in cases of failure
+	   Support the clear key on some devices in the search dialog
+	   Add the possibility to collapse names in the search dialog to see long names
+	   Slightly reduced memory usage
+	   Better recovery from out of memory errors	   
+	   Display quality of GPS signal (number of sattelits) on main screen
+	   Display distance to target
+	   Implement tracklogs
+				 store tracklogs to internal registry (RMS)
+				 adaptive recording
+						  reduce sampling frequency when stationary				 
+				 export as GPX through:
+						filesystem support
+						bluetooth / OBEX
+						serial / usb
+				 import GPX tracklogs from filesystem
+				 Display tracklogs on the map
+		Implement waypoints
+				  export as GPX
+				  import from GPX
+		***Osm2GpsMid***
+		   Speed up creation of midlets from OSM data
+				 (removed several O(n^2) bottlenecks)
+			Reduce memory usage while converting to midlets
+			Allow to scale to larger midlets
+				Allow for more than 32000 names per midlet
+				Removed potential stack overflow in large midlets due to recursion
+			OSM data can now be fetched directly via osmxapi
+			Several bug fixes
+
+Gpsmid 0.3.01
+	   There are currently no change information for midlets prior to this version

@@ -1,0 +1,29 @@
+# from src
+de.ueller.gps
+de.ueller.gps.data
+de.ueller.gps.location
+de.ueller.gps.nmea
+de.ueller.gps.sirf
+de.ueller.gps.tools
+de.ueller.midlet.gps
+de.ueller.midlet.gps.data
+de.ueller.midlet.gps.importexport
+de.ueller.midlet.gps.options
+de.ueller.midlet.gps.routing
+de.ueller.midlet.gps.tile
+de.ueller.midlet.graphics
+net.fatehi
+net.sourceforge.jmicropolygon
+
+# from GpsMidGraph
+de.ueller.gps.tools.QDXMLParser
+de.ueller.gpsMid
+de.ueller.gpsMid.mapData
+de.ueller.midlet.gps
+de.ueller.midlet.gps.data
+de.ueller.midlet.gps.names
+de.ueller.midlet.gps.routing
+de.ueller.midlet.gps.tile
+
+# from src-lib/min-siemapi
+com.siemens.mp.games

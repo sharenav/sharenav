@@ -1,0 +1,425 @@
+<!-- This file controls the build process.                    -->
+<!-- The most important target is the j2mepolish target,      -->
+<!-- which controls for what devices the application should   -->
+<!-- be created.                                              -->
+<!--                                                          -->
+<!-- Important: when you have no Wireless Toolkit installed   -->
+<!-- you need to define the "preverify"-attribute             -->
+<!-- of the <build>-element of the J2ME Polish task.          -->
+<!--                                                          -->
+<!-- When you call Ant from the command-line, you can         -->
+<!-- call "ant test j2mepolish" to skip the obfuscation       -->
+<!-- and to build the example for fewer handsets.             -->
+<!-- The default target builds and obfuscates the example.    -->
+<!--                                                          -->
+<!-- The full documentation can be found at                   -->
+<!-- http://www.j2mepolish.org                                -->
+<!--                                                          -->
+<!-- Have fun!                                                -->
+
+<project 
+	name="GpsMid" 
+	default="j2mepolish">
+	
+<property file="build.properties" />
+<property file="midlet.properties" />
+<property file="${polish.home}/global.properties" />
+	
+<!-- Definition of the J2ME Polish task:                      -->
+
+<taskdef name="j2mepolish" 
+	classname="de.enough.polish.ant.PolishTask" 
+	classpath="${polish.home}/lib/enough-j2mepolish-build.jar:${polish.home}/lib/jdom.jar"/>
+
+	
+<!-- build targets, each target can be called via "ant [name]", 
+	 e.g. "ant clean", "ant test j2mepolish" or just "ant" for calling the default target -->
+
+	<target name="set_test_device" unless="gpsmid.test_device">
+		<property name="gpsmid.test_device" value="Generic/full"/>
+	</target>
+	
+	<target name="test" 
+		description="Call this target first to skip the obfuscation step, e.g. ant test j2mepolish"
+		depends="set_test_device"
+		>
+		<property name="test" value="true" />
+		<property name="logging" value="true" />
+		<property name="dir.work" value="build/test" />		
+	</target>
+	
+	<target name="testmicroemu" 
+		description="Call this target first to skip the obfuscation step, e.g. ant test j2mepolish"
+		>
+		<property name="gpsmid.microemu_device" value="Generic/microemulator"/>
+		<property name="test" value="true" />
+		<property name="testmicroemu" value="true" />
+		<property name="logging" value="true" />
+		<property name="dir.work" value="build/test" />		
+	</target>
+
+	<target name="debug" 
+		description="Call this target first to set debugging"
+		>
+		<property name="debug" value="true" />
+		<property name="logging" value="true" />
+		<property name="dir.work" value="build/test" />
+	</target>
+	
+	<target name="logging" 
+			description="Call this target first to enable a logging build"
+			>
+			<property name="logging" value="true" />
+		</target>
+		
+<target name="init">
+  	<property name="test" value="false" />
+  	<property name="customization" value="" />
+	<property name="dir.work" value="build/real/${customization}" />
+	<property name="dir.dist" value="dist/${customization}" />
+	<property name="deploy-url" value="" />
+</target>
+ 
+<!-- In this target the J2ME Polish task is used.             -->
+<!-- It has 3 sections:                                       -->
+<!--    1. The info-section defines some general information  -->
+<!--    2. The deviceRequirements-section chooses the devices -->
+<!--       for which the application is optimized.            -->
+<!--    3. The build-section controls the actual build        -->
+<!--       process.                                           -->	
+<target name="j2mepolish" 
+		depends="init"
+		description="This is the controller for the J2ME build process." 
+		>
+	<j2mepolish>
+	    <!-- general settings, these settings basically form the JAD-attributes. -->
+	    <!-- Have a look at the <jad>-section for setting specialised attributes.
+	         You can also define localized attributes in the resources/messages.txt files -->
+            <!-- lowercase icon name required for Android, before Android support was icon="GpsMid.png" -->
+		<info
+			name="GpsMid"
+			version="0.6.3"
+			description="Shows moving map made from OpenStreetMap data"
+			vendorName="Harald Mueller"
+			infoUrl="http://gpsmid.sourceforge.net"
+			icon="gpsmid.png"
+			jarName="GpsMid-${polish.vendor}-${polish.name}-${polish.version}.jar"
+			jarUrl="${deploy-url}${polish.jarName}"
+			copyright="Copyright 2007 - 2010 Harald Mueller and others"
+			deleteConfirm="Do you really want to kill me?"
+			optionalPermissions="javax.microedition.io.Connector.file.read,javax.microedition.io.Connector.file.write,javax.microedition.io.Connector.bluetooth.client,javax.microedition.location.Location,javax.microedition.media.control.RecordControl,javax.microedition.media.control.VideoControl.getSnapshot,javax.microedition.io.Connector.sms,javax.wireless.messaging.sms.receive,javax.wireless.messaging.sms.send,javax.microedition.io.Connector.comm,javax.microedition.io.Connector.cbs,javax.wireless.messaging.cbs.receive,javax.microedition.io.Connector.socket,javax.microedition.io.PushRegistry"
+		/>
+		
+		<!-- selection of supported devices -->
+		<!-- In the test mode the application is build only for the  -->
+		<!-- Generic/midp1 phone, but when the test-property is set to false, -->
+		<!-- the second deviceRequirements will be used instead. -->
+		<deviceRequirements if="test and !testmicroemu">
+			<requirement name="Identifier" value="${gpsmid.test_device}" />
+		</deviceRequirements>
+		<deviceRequirements if="testmicroemu">
+			<requirement name="Identifier" value="${gpsmid.microemu_device}" />
+		</deviceRequirements>
+		<deviceRequirements if="!test and device:defined">
+			<requirement name="Identifier" value="${device}" />
+		</deviceRequirements>
+		<deviceRequirements unless="test">
+			<or>
+				<requirement name="Identifier" value="Generic/editing" />
+				<requirement name="Identifier" value="Generic/blackberry" />
+				<requirement name="Identifier" value="Generic/full" />
+				<requirement name="Identifier" value="Generic/minimal" />
+				<requirement name="Identifier" value="Generic/full-nolocation" />
+				<requirement name="Identifier" value="Generic/multi" />
+				<requirement name="Identifier" value="Generic/minimal-bt" />
+				<requirement name="Identifier" value="Generic/no-obex" />
+				<requirement name="Identifier" value="Generic/no-xml" />
+				<!--
+				<requirement name="Identifier" value="Generic/android" />
+				<requirement name="Identifier" value="Generic/android2.1" />
+				<requirement name="Identifier" value="Motorola/Motorazr_V3i" />
+				<requirement name="Identifier" value="Sony-Ericsson/K750" />
+				<requirement name="Identifier" value="Siemens/SL75" />
+				<requirement name="Identifier" value="Generic/loc" />
+				-->
+			</or>
+		</deviceRequirements>
+		
+	    <!-- build settings -->
+		<!-- 
+		 -->
+		<!-- 
+		   building for Android: ant -propertyfile android.properties
+		   settings are in android.properties rather then here.
+
+			fullscreen="no"
+			usePolishGui="true"
+
+		   with j2mepolish 2010-07-28 and later also must be used for J2ME builds:
+
+		   for android, modify the android.home property in the beginning of the file to have the correct path for android SDK
+		   As there's no bundling support yet, you need to have the map on the sd card at directory named "gpsmidmap".
+		   Success varies with j2mpolish versions; succesful build has been
+		   achieved with http://download.j2mepolish.org/daily/j2mepolish-2010-06-10.jar
+                   and 2010-07-28; probably later versions will also work.
+		 -->
+
+		<build
+			symbols="ExampleSymbol, AnotherExample"
+			fullscreen="${fullscreen}"
+			usePolishGui="${usePolishGui}"
+			workDir="${dir.work}"
+		>     
+		   <!-- postcompiler name="floater">
+			<parameter name="verbose" value="false" />
+	      </postcompiler -->
+			<midlet class="de.ueller.midlet.gps.GpsMid" name="GpsMid"/>
+			<sources>
+				<!-- always include the base folder: -->
+				<source dir="src"/>
+				<!-- this are the render and data classes without reference
+				     to any J2Me Classes ( for usage in J2Se enviroment ) -->
+				<source dir="GpsMidGraph"/>
+			</sources>
+		    
+			<!-- midlets definition -->
+			<!-- <midlet class="de.enough.polish.example.MenuMidlet" name="Example" /> -->
+			
+			<!-- project-wide variables - used for preprocessing.  -->
+			<!-- You can set localized variables in the resources/messages.txt files as well.  -->
+			<variables includeAntProperties="true" >
+				<!-- example variables:
+				In your Java-code you can use the following snipet to use this variable:
+				//#= private static final String UPDATE_URL = "${ update-url }";
+				You can change the title of the sample application with the "title"-var.
+				-->
+				<variable name="update-url" value="http://www.enough.de/update" />
+				<variable name="title" value="GpsMid" />
+
+			</variables>
+			<!-- Here you can set the dir attribute to "resources2" for an alternative design. -->
+			<resources dir="resources" defaultexcludes="yes" excludes="readme.txt">
+				<fileset dir="resources/images" includes="**/*.png"/>
+				<fileset dir="resources" includes="**/syntax.dat"/>
+				<fileset dir="resources" includes="**/charMap.txt"/>
+				<root dir="resources/map" includeSubDirs="true" includeBaseDir="false" if="test"/>
+				<fileset dir="" includes="**/COPYING"/>
+				<fileset dir="" includes="**/COPYING-OSM"/>
+
+				<!-- you can add resources based on complex criterias: 
+				<fileset 
+					dir="resources/multimedia" 
+					includes="*.wav" 
+					if="polish.audio.wav" 
+				/>
+				<fileset 
+					dir="resources/multimedia" 
+					includes="*.mid" 
+					if="polish.audio.midi and not polish.audio.wav" 
+				/>
+				-->
+				<!-- add the localization element for created localized
+				     versions of your application: -->
+                <localization dynamic="true" defaultLocale="en">
+                    <locale name="cs" encoding="UTF-8" />
+                    <locale name="de" encoding="UTF-8" />
+                    <locale name="en" encoding="UTF-8" />
+                    <locale name="es" encoding="UTF-8" />
+                    <locale name="fi" encoding="UTF-8" />
+                    <locale name="fr" encoding="UTF-8" />
+                    <locale name="pl" encoding="UTF-8" />
+                    <locale name="ru" encoding="UTF-8" />
+                    <locale name="sk" encoding="UTF-8" />
+                </localization>
+			</resources>
+			
+			<!-- obfuscator settings: do not obfuscate when the test-property is true -->
+			<obfuscator name="ProGuard" useDefaultPackage="false" unless="logging || polish.blackberry || polish.api.noobfuscation || polish.android" >
+				<!--
+				You can set additional parameters here, e.g.:
+				<parameter name="optimize" value="false" />
+				-->
+				<keep class="de.ueller.midlet.gps.GpsMid" />				
+				<keep class="de.ueller.midlet.gps.importexport.ExportSession" />
+				<keep class="de.ueller.gps.location.JSR179Input" />
+				<keep class="de.ueller.midlet.gps.importexport.FileExportSession" />
+				<keep class="de.ueller.midlet.gps.importexport.CommExportSession" />
+				<keep class="de.ueller.midlet.gps.importexport.ObexExportSession" />
+				<keep class="de.ueller.midlet.gps.importexport.BtObexServer" />
+				<keep class="de.ueller.midlet.gps.importexport.CommGpxImportSession" />
+				<keep class="de.ueller.midlet.gps.importexport.FileGpxImportSession" />
+				<keep class="de.ueller.midlet.gps.importexport.Jsr172GpxParser" />
+				<keep class="de.ueller.midlet.gps.importexport.QDGpxParser" />
+				<keep class="de.ueller.midlet.gps.importexport.GpxParser" />
+				<keep class="de.ueller.midlet.gps.GuiCameraInterface" />
+				<keep class="de.ueller.midlet.gps.GuiCamera" />
+				<keep class="org.xml.sax.Attributes" />
+			</obfuscator>
+			
+			<!-- debug settings: only include debug setting when the test-property is true -->
+			<debug if="logging" showLogOnError="true" verbose="true" level="debug">
+				<filter pattern="de.enough.*" level="error" />
+				<!--filter pattern="de.ueller.gps.sirf.*" level="debug" / -->
+				<!--filter pattern="de.ueller.midlet.gps.Trace" level="debug" / -->
+				<!--<filter pattern="de.ueller.midlet.gps.tile.SearchNames" level="debug" />-->
+			</debug>
+			
+			<!-- user defined JAD attributes can also be used: -->
+			<jad>
+				<attribute name="Nokia-MIDlet-Category" value="Game" if="polish.group.Series40" />
+				<attribute name="Nokia-MIDlet-On-Screen-Keypad" value="no" />
+			</jad>	
+			
+			
+		</build>
+		
+		<!-- execution of emulator(s) -->
+		<emulator
+			wait="true"
+			securityDomain="trusted"
+			enableProfiler="true"
+			enableMemoryMonitor="true"
+			enableNetworkMonitor="false"
+			if="test and not debug"
+			>
+		</emulator>
+	
+		<emulator
+			wait="true"
+			securityDomain="trusted"
+			enableProfiler="true"
+			enableMemoryMonitor="true"
+			enableNetworkMonitor="false"
+			
+			if="debug">
+			<debugger port="8000" />
+		</emulator>
+		
+	</j2mepolish>
+</target>
+
+<target name="emulator" depends="test,j2mepolish" />
+<target name="microemulator" depends="testmicroemu,j2mepolish" />
+
+<target name="clean" 
+  		description="allows a clean build. You should call [ant clean] whenever you made changes to devices.xml, vendors.xml or groups.xml">
+	<delete dir="build" />
+	<delete dir="build-test" />
+	<delete dir="dist" />
+	<delete dir=".polishSettings" />
+</target>
+	
+	<target name="NMEAsim" 
+				depends="init"
+				description="This is a NMEA over bluetooth simulator" 
+				>
+
+			<j2mepolish>		    
+				<info
+					license="GPL"
+					name="NMEAsim"
+					version="0.0.01"
+					description=""
+					vendorName="Harald Mueller"
+					infoUrl="http://gpsmid.sourceforge.net"
+					icon="GpsMid.png"
+					jarName="NMEAsim-${polish.version}.jar" 
+					jarUrl="${deploy-url}${polish.jarName}"					
+					deleteConfirm="Do you really want to kill me?" 
+				/>
+				
+				<deviceRequirements>
+					<requirement name="Identifier" value="Generic/multi" />
+				</deviceRequirements>
+				
+			    <!-- build settings -->
+				<!-- 
+				 -->
+				<build
+					fullscreen="menu"
+					usePolishGui="false"
+					workDir="${dir.work}"
+				>     
+					<midlet class="de.ueller.tests.NMEAsimMidlet" name="NMEAsim"/>
+					<sources>					
+						<source dir="test/NMEAsim"/>					
+					</sources>
+				    
+					
+					<resources dir="test" defaultexcludes="yes" excludes="readme.txt">
+						<fileset dir="test" includes="**/*.dat"/>
+						<fileset dir="test" includes="*.txt"/>
+					</resources>
+					
+					<!-- obfuscator settings: do not obfuscate then the test-property is true -->
+					<obfuscator name="ProGuard" useDefaultPackage="true" unless="test || polish.blackberry" >					
+						<keep class="de.ueller.tests.NMEAsimMidlet" />
+					</obfuscator>
+					
+					<!-- debug settings: only include debug setting when the test-property is true -->
+					<debug if="test" showLogOnError="true" verbose="true" level="error">
+					</debug>
+					
+				</build>
+				
+				<!-- execution of emulator(s) -->
+				<emulator
+					wait="true"
+					securityDomain="maximum"
+					enableProfiler="false"
+					enableMemoryMonitor="false"
+					enableNetworkMonitor="false"					
+					>
+					<!--if="test and not debug"-->
+				</emulator>		
+			</j2mepolish>
+	</target>
+	
+	<path id="test.classpath">
+		<pathelement location="${basedir}/bin-tests" />
+	</path>
+	
+	<target name="prepare">
+		<mkdir dir="bin-tests"/>
+	</target>
+
+	<target name="compile-test" depends="prepare">
+		<javac srcdir="${basedir}/test/unit-tests;${basedir}/src/de/ueller/gps/tools;${basedir}/src/de/ueller/gps/nmea;
+			${basedir}/src/de/ueller/gps/data; ${basedir}/GpsMidGraph/de/ueller/midlet/gps;
+			${basedir}/GpsMidGraph/de/ueller/midlet/gps/data/;${basedir}/GpsMidGraph/de/ueller/gps/tools/" destdir="bin-tests" debug="on" 
+			includes="StringTokenizer.java, MoreMath.java, intTree.java,
+			MoreMathTests.java,
+			IntTreeTests.java, StringTokenizerTests.java, AllTests.java">
+			<classpath>
+				<path refid="test.classpath" />
+			</classpath>
+		</javac>
+	</target>
+
+	<target name="unit-test" depends="compile-test">
+		<junit>
+			<classpath refid="test.classpath" />
+			<formatter type="plain" usefile="false" />
+			<test name="AllTests" />
+		</junit>
+	</target>
+
+    <target name="min-siemapi-compile" description="compile min-siemapi class files for api jar">
+        <mkdir dir="build/min-siemapi"/>
+        <javac srcdir="src-lib/min-siemapi" destdir="build/min-siemapi"/>
+    </target>
+    	
+	<target name="min-siemapi" description="create api jar for some Siemens-specific functions" depends="min-siemapi-compile">
+        <jar destfile="lib/min-siemapi.jar" basedir="build/min-siemapi"/>
+    </target>
+	
+    <target name="min-samsapi-compile" description="compile min-samsapi class files for api jar">
+        <mkdir dir="build/min-samsapi"/>
+        <javac srcdir="src-lib/min-samsapi" destdir="build/min-samsapi"/>
+    </target>
+
+    <target name="min-samsapi" description="create api jar for some Samsung-specific functions" depends="min-samsapi-compile">
+        <jar destfile="lib/min-samsapi.jar" basedir="build/min-samsapi"/>
+    </target>
+
+</project>

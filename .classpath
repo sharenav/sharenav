@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="GpsMidGraph"/>
+	<classpathentry kind="src" path="srcLocationApi"/>
+	<classpathentry kind="lib" path="lib/MinML2.jar"/>
+	<classpathentry kind="con" path="J2MELIB"/>
+	<classpathentry kind="output" path="bin/classes"/>
+</classpath>

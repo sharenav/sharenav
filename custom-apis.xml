@@ -1,0 +1,76 @@
+<apis>
+	<api>
+		<name>Bluetooth Obex API</name>
+		<description>The Bluetooth Obex API provides
+			functionalities for data exchange with other bluetooth devices. This
+			is a workaround for the lack of OBEX in some JSR-82 implementations
+		</description>
+		<names>obex</names>
+		<symbol>obex</symbol>
+		<files>btapi.jar, j2me-btapi.jar, bluetooth.zip</files>
+		<path>import/btapi.jar</path>
+	</api>
+	<api>
+		<name>min-siemapi</name>
+		<description>minimal Siemens API for backlight and vibration
+		</description>
+		<names>min-siemapi</names>
+		<symbol>min-siemapi</symbol>
+		<files>min-siemapi</files>
+		<path>lib/min-siemapi.jar</path>
+	</api>
+	<api>
+		<name>min-samsapi</name>
+		<description>minimal Samsung API for backlight
+		</description>
+		<names>min-samsapi</names>
+		<symbol>min-samsapi</symbol>
+		<files>min-samsapi</files>
+		<path>lib/min-samsapi.jar</path>
+	</api>
+	<api>
+		<name>OpenStreetMap-editing</name>
+		<description>Pseudo-API to (miss)use device selection to compile in OpenStreetMap editing
+		</description>
+		<names>osm-editing</names>
+		<symbol>osm-editing</symbol>
+	</api>
+	<api>
+		<name>Online-services</name>
+		<description>Pseudo-API to (miss)use device selection to compile in Online services
+		</description>
+		<names>online</names>
+		<symbol>online</symbol>
+	</api>
+	<api>
+		<name>Debugging</name>
+		<description>Pseudo-API to (miss)use device selection to compile in debugging
+		</description>
+		<names>debug-enable</names>
+		<symbol>debug-enable</symbol>
+	</api>
+	<api>
+		<name>No-Obfuscation</name>
+		<description>Pseudo-API to (miss)use device selection to compile without obfuscation
+		</description>
+		<names>noobfuscation</names>
+		<symbol>noobfuscation</symbol>
+	</api>
+
+<!--
+	You can use this block to define a new API
+	( remove these XML-comments ):
+
+	<api>
+		<name></name>
+		<description>
+		</description>
+		<names>JSR,JSR-</names>
+		<symbol></symbol>
+		<files>-1.0.jar</files>
+		<path>import/-1.0.jar</path>
+	</api>
+-->
+
+</apis>
+
