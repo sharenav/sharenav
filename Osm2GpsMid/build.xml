@@ -33,8 +33,16 @@
 			<include name="**/*.jar" />
 		</fileset>
 	</path>
+	
 	<path id="test.classpath">
 		<pathelement location="${basedir}/bin-tests" />
+		<fileset dir="${lib.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<path id="fbrowser.classpath">
+		<pathelement location="${basedir}/bin-fbrowser" />
 		<fileset dir="${lib.dir}">
 			<include name="**/*.jar" />
 		</fileset>
@@ -50,6 +58,7 @@
 
    <target name="prepare">
    	  <mkdir dir="bin"/>
+	  <mkdir dir="bin-fbrowser"/>
 	  <mkdir dir="bin-tests"/>
       <mkdir dir="${dist.dir}"/>
    	  <mkdir dir="exploded"/>
@@ -101,6 +110,7 @@
    <target name="clean">
     <delete dir="${build.dir}"/>
    	<delete dir="bin"/>
+   	<delete dir="bin-fbrowser"/>
    	<delete dir="bin-tests" />
     <delete dir="deploy"/>
    	<delete dir="exploded"/>
@@ -232,6 +242,13 @@
 		</junit>
 	</target>
 
+	<target name="compile-fbrowser">
+		<javac srcdir="${basedir}/FBrowser;${src.jmv};${src.dir}" destdir="bin-fbrowser" debug="on">
+			<classpath>
+				<path refid="fbrowser.classpath" />
+			</classpath>
+		</javac>
+	</target>
 	
 	<target name="app-germany" depends="deploy">
 		<java jar="${dist.dir}/${ant.project.name}-${version}.jar" fork="true" maxmemory="1280m">
