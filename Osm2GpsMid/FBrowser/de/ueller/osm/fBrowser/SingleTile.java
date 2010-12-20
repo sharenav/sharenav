@@ -73,7 +73,7 @@ public class SingleTile extends Tile{
 	}
 
 	private void readContent() throws IOException{
-		String fn = root+"/t" + zl + fileId + ".d";
+		String fn = root + "/t" + zl + "/" + fileId + ".d";
 		System.out.println("read " + fn);
 		FileInputStream f=new FileInputStream(fn);
 		DataInputStream ds = new DataInputStream(f);
