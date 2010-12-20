@@ -32,17 +32,18 @@ import org.openstreetmap.gui.jmapviewer.JMapViewer;
  * @author hmueller
  *
  */
-public class FBrowser extends JFrame
-                               implements ActionListener {
+public class FBrowser extends JFrame implements ActionListener {
     /**
 	 * 
 	 */
 	private static final long	serialVersionUID	= 1L;
 	JDesktopPane desktop;
-	private String	root="D:/java/Workspace/GpsMid -Release/Osm2GpsMid/testdata";
+	private String root="D:/java/Workspace/GpsMid-Release/Osm2GpsMid/testdata";
+	
 	public String getRoot() {
 		return root;
 	}
+	
 	public MapFrame getMap() {
 		return map;
 	}
@@ -72,9 +73,10 @@ public class FBrowser extends JFrame
 
         //Make dragging a little faster but perhaps uglier.
         desktop.setDragMode(JDesktopPane.OUTLINE_DRAG_MODE);
-
 	}
-	 protected JMenuBar createMenuBar() {
+	
+	
+	protected JMenuBar createMenuBar() {
 	        JMenuBar menuBar = new JMenuBar();
 
 	        //Set up the lone menu.
@@ -142,18 +144,22 @@ public class FBrowser extends JFrame
 		 }
 	 }
 
-	    //Create a new map internal frame.
-	    protected void openMap() {
-	        map = new MapFrame();
-	        map.setVisible(true); //necessary as of 1.3
-	        desktop.add(map);
-	        try {
-	            map.setSelected(true);
-	        } catch (java.beans.PropertyVetoException e) {}
-	    }
+	 
+	/** Create a new map internal frame.
+	 */
+	protected void openMap() {
+		map = new MapFrame();
+		map.setVisible(true); //necessary as of 1.3
+		desktop.add(map);
+		try {
+			map.setSelected(true);
+		} catch (java.beans.PropertyVetoException e) {
+		}
+	}
 
 
-    //Create a new internal Tree frame. this shows the tile structure
+    /** Create a new internal Tree frame which shows the tile structure.
+     */
     protected void createFrame(String cmd) {
         DictTreeFrame frame = new DictTreeFrame(cmd,this);
         frame.setVisible(true); //necessary as of 1.3
@@ -163,16 +169,18 @@ public class FBrowser extends JFrame
         } catch (java.beans.PropertyVetoException e) {}
     }
 
-    //Quit the application.
+    /** Quit the application.
+     */
     protected void quit() {
         System.exit(0);
     }
 
 	private void askDataDir() {
-
 		JFileChooser chooser = new JFileChooser(root);
 		chooser.setAcceptAllFileFilterUsed(false);
 		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		chooser.setDialogTitle("Select map subdirectory");
+		
 		FileFilter ff = new FileFilter() {
 			@Override
 			public boolean accept(File f) {
@@ -193,12 +201,17 @@ public class FBrowser extends JFrame
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			root = chooser.getSelectedFile().getAbsolutePath();
 		}
-		
+
+		createFrame("level0");
+		createFrame("level1");
+		createFrame("level2");
+		createFrame("level3");
+		openMap();
 	}
 
 	
     /**
-     * Create the GUI and show it.  For thread safety,
+     * Create the GUI and show it. For thread safety,
      * this method should be invoked from the
      * event-dispatching thread.
      */
@@ -215,7 +228,6 @@ public class FBrowser extends JFrame
     }
 
 
-
     public static void main(String[] args) {
         //Schedule a job for the event-dispatching thread:
         //creating and showing this application's GUI.
@@ -225,6 +237,8 @@ public class FBrowser extends JFrame
             }
         });
     }
+    
+    
 	/**
 	 * @param tile
 	 */
@@ -234,6 +248,8 @@ public class FBrowser extends JFrame
 			tile.setMap(map);
 		}
 	}
+	
+	
 	/**
 	 * @param sel
 	 */
@@ -243,6 +259,4 @@ public class FBrowser extends JFrame
 			sel.getTile().setMap(map);
 		}
 	}
-
-
 }
