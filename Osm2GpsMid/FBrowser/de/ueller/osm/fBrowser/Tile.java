@@ -44,6 +44,10 @@ public abstract class Tile implements TreeNode, MapRectangle {
 	public static final double PLANET_RADIUS_D = 6371000.8d;
 	public static final float PLANET_RADIUS = 6371000.8f;
 
+	/** Factor to get degrees from radians.
+	 */
+	public static final float radToDeg = (float) (180d / Math.PI);
+
 	/**
 	 * This constant is used as fixed point multiplier to convert
 	 * latitude / longitude from radians to fixpoint representation.
@@ -51,7 +55,6 @@ public abstract class Tile implements TreeNode, MapRectangle {
 	 * 
 	 * This constant has to be in synchrony with the value in Osm2GpsMid.
 	 */
-	public static final float f=(float) (180d/Math.PI);
 	public static final float FIXPT_MULT = PLANET_RADIUS; 
 
 	/**
@@ -59,8 +62,6 @@ public abstract class Tile implements TreeNode, MapRectangle {
 	 */
 	public static final float FIXPT_MULT_INV = (1.0f / FIXPT_MULT);
 
-
-	
 
 	public float minLat;
 	public float maxLat;
@@ -73,8 +74,10 @@ public abstract class Tile implements TreeNode, MapRectangle {
 	public byte	lastUse	= 0;
 	protected static MapFrame map;
 
-	public String toString(){
-		return " " + minLat+","+minLon+"/"+ maxLat+","+maxLon;
+
+	public String toString() {
+		return " " + minLat * radToDeg + ", " + minLon * radToDeg + 
+			" / " + maxLat * radToDeg + ", " + maxLon * radToDeg;
 	}
 	
 	/* (non-Javadoc)
@@ -86,7 +89,6 @@ public abstract class Tile implements TreeNode, MapRectangle {
 		return null;
 	}
 
-
 	/* (non-Javadoc)
 	 * @see javax.swing.tree.TreeNode#getAllowsChildren()
 	 */
@@ -95,11 +97,6 @@ public abstract class Tile implements TreeNode, MapRectangle {
 		// TODO Auto-generated method stub
 		return false;
 	}
-
-
-
-
-
 
 	/* (non-Javadoc)
 	 * @see javax.swing.tree.TreeNode#getIndex(javax.swing.tree.TreeNode)
@@ -110,7 +107,6 @@ public abstract class Tile implements TreeNode, MapRectangle {
 		return 0;
 	}
 
-
 	/* (non-Javadoc)
 	 * @see javax.swing.tree.TreeNode#getParent()
 	 */
@@ -119,7 +115,6 @@ public abstract class Tile implements TreeNode, MapRectangle {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 
 	/* (non-Javadoc)
 	 * @see javax.swing.tree.TreeNode#isLeaf()
@@ -130,7 +125,6 @@ public abstract class Tile implements TreeNode, MapRectangle {
 		return false;
 	}
 
-	
 	@Override
 	public Coordinate getBottomRight() {
 		return new Coordinate(minLat, maxLon);
