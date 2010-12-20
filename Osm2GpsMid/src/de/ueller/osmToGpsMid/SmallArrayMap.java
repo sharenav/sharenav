@@ -4,10 +4,11 @@
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as published by
  * the Free Software Foundation.
+ * See COPYING.
  *
  * Copyright (C) 2008  Kai Krueger
- * 
  */
+
 package de.ueller.osmToGpsMid;
 
 import java.util.Collection;
@@ -16,8 +17,10 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * @author kai
- *
+ * This class implements a Map for small amounts of data by using an Array for 
+ * internal storage. This is done to avoid the overhead of e.g. a HashMap.
+ * Only put few elements in it, else the linear search through the elements will 
+ * be too slow. 
  */
 public class SmallArrayMap<K, V> implements Map<K, V> {
 
@@ -36,9 +39,10 @@ public class SmallArrayMap<K, V> implements Map<K, V> {
 	 */
 	@Override
 	public boolean containsKey(Object key) {
-		for (int i = 0; i < mapArray.length/2; i++) {
-			if (mapArray[2*i].equals(key))
+		for (int i = 0; i < mapArray.length / 2; i++) {
+			if (mapArray[2 * i].equals(key)) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -48,9 +52,10 @@ public class SmallArrayMap<K, V> implements Map<K, V> {
 	 */
 	@Override
 	public boolean containsValue(Object value) {
-		for (int i = 0; i < mapArray.length/2; i++) {
-			if (mapArray[2*i + 1].equals(value))
+		for (int i = 0; i < mapArray.length / 2; i++) {
+			if (mapArray[2 * i + 1].equals(value)) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -68,9 +73,10 @@ public class SmallArrayMap<K, V> implements Map<K, V> {
 	 */
 	@Override
 	public V get(Object key) {
-		for (int i = 0; i < mapArray.length/2; i++) {
-			if (mapArray[2*i].equals(key))
-				return (V)mapArray[2*i + 1];
+		for (int i = 0; i < mapArray.length / 2; i++) {
+			if (mapArray[2 * i].equals(key)) {
+				return (V)mapArray[2 * i + 1];
+			}
 		}
 		return null;
 	}
@@ -80,8 +86,9 @@ public class SmallArrayMap<K, V> implements Map<K, V> {
 	 */
 	@Override
 	public boolean isEmpty() {
-		if (mapArray.length == 0)
+		if (mapArray.length == 0) {
 			return true;
+		}
 		return false;
 	}
 
@@ -91,8 +98,8 @@ public class SmallArrayMap<K, V> implements Map<K, V> {
 	@Override
 	public Set<K> keySet() {
 		HashSet<K> res = new HashSet<K>();
-		for (int i = 0; i < mapArray.length/2; i++) {
-			res.add((K)mapArray[2*i]);
+		for (int i = 0; i < mapArray.length / 2; i++) {
+			res.add((K)mapArray[2 * i]);
 		}
 		return res;
 	}
@@ -102,14 +109,13 @@ public class SmallArrayMap<K, V> implements Map<K, V> {
 	 */
 	@Override
 	public V put(K key, V value) {
-		for (int i = 0; i < mapArray.length/2; i++) {
-			if (mapArray[2*i].equals(key)) {
-				V val = (V)mapArray[2*i + 1];
-				mapArray[2*i + 1] = value;
+		for (int i = 0; i < mapArray.length / 2; i++) {
+			if (mapArray[2 * i].equals(key)) {
+				V val = (V)mapArray[2 * i + 1];
+				mapArray[2 * i + 1] = value;
 				return val;
 			}
 		}
-
 
 		Object [] tmp = new Object[mapArray.length + 2];
 		System.arraycopy(mapArray, 0, tmp, 0, mapArray.length);
@@ -133,12 +139,12 @@ public class SmallArrayMap<K, V> implements Map<K, V> {
 	 */
 	@Override
 	public V remove(Object key) {
-		for (int i = 0; i < mapArray.length/2; i++) {
-			if (mapArray[2*i].equals(key)) {
-				V val = (V)mapArray[2*i + 1];
+		for (int i = 0; i < mapArray.length / 2; i++) {
+			if (mapArray[2 * i].equals(key)) {
+				V val = (V)mapArray[2 * i + 1];
 				Object [] tmp = new Object[mapArray.length - 2];
-				System.arraycopy(mapArray, 0, tmp, 0, 2*i);
-				System.arraycopy(mapArray, 2*i + 2, tmp, 2*i, mapArray.length - 2*i + 2);
+				System.arraycopy(mapArray, 0, tmp, 0, 2 * i);
+				System.arraycopy(mapArray, 2 * i + 2, tmp, 2 * i, mapArray.length - 2 * i + 2);
 				return val;
 			}
 		}
@@ -150,7 +156,7 @@ public class SmallArrayMap<K, V> implements Map<K, V> {
 	 */
 	@Override
 	public int size() {
-		return mapArray.length/2;
+		return mapArray.length / 2;
 	}
 
 	/* (non-Javadoc)
@@ -159,8 +165,8 @@ public class SmallArrayMap<K, V> implements Map<K, V> {
 	@Override
 	public Collection<V> values() {
 		HashSet<V> res = new HashSet<V>();
-		for (int i = 0; i < mapArray.length/2; i++) {
-			res.add((V)mapArray[2*i + 1]);
+		for (int i = 0; i < mapArray.length / 2; i++) {
+			res.add((V)mapArray[2 * i + 1]);
 		}
 		return res;
 	}
