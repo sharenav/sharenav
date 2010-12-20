@@ -144,7 +144,11 @@ public class SmallArrayMap<K, V> implements Map<K, V> {
 				V val = (V)mapArray[2 * i + 1];
 				Object [] tmp = new Object[mapArray.length - 2];
 				System.arraycopy(mapArray, 0, tmp, 0, 2 * i);
-				System.arraycopy(mapArray, 2 * i + 2, tmp, 2 * i, mapArray.length - 2 * i + 2);
+				// No second part to copy if hit is at the end of the array.
+				if (2 * i + 2 < mapArray.length) {
+					System.arraycopy(mapArray, 2 * i + 2, tmp, 2 * i, 
+							mapArray.length - 2 * i + 2);
+				}
 				return val;
 			}
 		}
