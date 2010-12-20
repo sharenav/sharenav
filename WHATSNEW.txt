@@ -1,4 +1,10 @@
 GpsMid 0.6.3
+        *** Digital compass support ***
+	*** Android support ***
+	   - most stuff works
+           - bundling only with scripts in tools
+           - voice rec&photos don't work
+
 	*** Map Screen ***
 	   - Greatly improved area rendering:
 	     - J2ME mobiles can only draw triangles, so for rendering filled polygons they need to be split into triangles.
@@ -11,6 +17,7 @@ GpsMid 0.6.3
 	   - No. of sats and recorded points now have a background box.
 	   - A base zoom level can be entered in setup, that will be used as base for auto zoom
 	*** Icon Menu and Touchscreen support ***
+	   - Optional virtual number/text keypad in search screen
 	   - Icon Menu will switch to 4x3 in landscape mode if the device informs us about its rotation 
 	   - Sliding horizontally at least a quarter of the screen width switches icon menu pages
 	   - Slide to the right on the Status Bar in the map screen to lock / unlock touch screen devices
@@ -47,8 +54,8 @@ GpsMid 0.6.3
 	     This will include the Finnish sound files into GpsMid (thx jkpj)
 	   - English and German eSpeak voices now sound a bit more friendly   	     	   
 	*** Localization of on-screen messages ***
-	   - Icon menu and some other on-screen messages in Finnish, French,
-             German, Russian and Slovak
+	   - Translaton of many on-screen messages into Finnish, French,
+             German, Russian, Czech, Italian, Portugese, Russian and Slovak
     *** Map Elements ***
 	   - improved color for buildings
 	   - add area types shop=*, leisure=pitch, landuse=farm_yard, landuse=military
