@@ -360,12 +360,12 @@ public class Tile {
 				t2.createSeaAreas();
 			}
 		} else if (type == TYPE_MAP) {
-			System.out.println("  Tile zl=" + zl + ", fid=" + fid);
+			System.out.println("info:  Tile zl=" + zl + ", fid=" + fid);
 			SeaAreaGenerator.generateSeaPolygon(this);
 		}
 */
 		if (bounds.getFixPtSpan() <= 65000) {
-			System.out.println("  Checking for coast line: Tile zl=" + zl + ", fid=" + fid);
+			//System.out.println("info:  Checking for coast line: Tile zl=" + zl + ", fid=" + fid);
 			SeaGenerator.generateSeaPolygon(this);
 		}
 	}	
