@@ -50,8 +50,7 @@ public class FileTile extends Tile {
 	}
 
 	public void readData() throws IOException {
-
-		String fname = root+"/d" + zl + fileId + ".d";
+		String fname = root + "/d" + zl + "/" + fileId + ".d";
 		System.out.println("Read " + fname);
 		InputStream is = new FileInputStream(fname);
 		if (is == null) {

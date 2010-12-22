@@ -4,9 +4,11 @@
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as published by
  * the Free Software Foundation.
+ * See COPYING.
  *
  * Copyright (C) 2007 Harald Mueller
  */
+
 package de.ueller.osmToGpsMid.model;
 
 import de.ueller.osmToGpsMid.Configuration;
@@ -16,17 +18,17 @@ import de.ueller.osmToGpsMid.LegendParser;
 
 public class Node extends Entity {
 	/**
-	 * The position in the target array of nodes
+	 * The position in the target array of nodes.
 	 */
 	public int renumberdId;
 
 	/**
-	 * Latitude (in degrees) of this node
+	 * Latitude (in degrees) of this node.
 	 */
 	public float lat;
 	
 	/**
-	 * Longitude (in degrees) of this node;
+	 * Longitude (in degrees) of this node.
 	 */
 	public float lon;
 	
@@ -55,6 +57,22 @@ public class Node extends Entity {
 		lon = node_lon;
 		this.id = id;
 	}
+	
+	/**
+	 * @return Latitude (in degrees) of this node
+	 */
+	public float getLat() {
+		return lat;
+	}
+	
+	/**
+	 * @return Longitude (in degrees) of this node
+	 */
+	public float getLon()	{
+		return lon;
+	}
+	
+	@Override
 	public String getName() {
 		if (type != -1) {
 			POIdescription desc = Configuration.getConfiguration().getpoiDesc(type);
@@ -78,15 +96,21 @@ public class Node extends Entity {
 		return null;
 	}
 	
+	@Override
 	public String getUrl() {
 		String url = getAttribute("url");
-		if (url != null) return url;
+		if (url != null) {
+			return url;
+		}
 		return null;
 	}
 
+	@Override
 	public String getPhone() {
 		String phone = getAttribute("phone");
-		if (phone != null) return phone;
+		if (phone != null) {
+			return phone;
+		}
 		return null;
 	}
 
@@ -98,11 +122,13 @@ public class Node extends Entity {
 		}
 		return null;
 	}
+
 	public boolean isPlace() {
 		if (type != -1) {
 			POIdescription desc = Configuration.getConfiguration().getpoiDesc(type);			
-			if (desc.key.equalsIgnoreCase("place"))
+			if (desc.key.equalsIgnoreCase("place")) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -185,6 +211,7 @@ public class Node extends Entity {
 		return 0;
 	}
 
+	@Override
 	public String toString() {
 		return "id=" + id + " (" + lat + "|" + lon + ") " 
 			+ ((getPlace() != null) ? ("(" + getPlace() + ") ") : "") 
@@ -192,6 +219,9 @@ public class Node extends Entity {
 			+ ((nearBy == null) ? "" : (" near " + nearBy.getName()));
 	}
 
+	/**
+	 * @return String with the URL to inspect this node on the OSM website
+	 */
 	public String toUrl() {
 		return "http://www.openstreetmap.org/browse/node/" + id;
 	}

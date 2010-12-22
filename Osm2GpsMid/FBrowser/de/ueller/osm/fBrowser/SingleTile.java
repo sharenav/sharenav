@@ -59,6 +59,7 @@ public class SingleTile extends Tile{
 
 	private final String	root;
 	
+	
 	SingleTile(DataInputStream dis, int deep, byte zl,String root) throws IOException {
 //		 logger.debug("load " + deep + ":ST Nr=" + fileId);
 		this.zl = zl;
@@ -73,7 +74,7 @@ public class SingleTile extends Tile{
 	}
 
 	private void readContent() throws IOException{
-		String fn = root+"/t" + zl + fileId + ".d";
+		String fn = root + "/t" + zl + "/" + fileId + ".d";
 		System.out.println("read " + fn);
 		FileInputStream f=new FileInputStream(fn);
 		DataInputStream ds = new DataInputStream(f);
@@ -134,12 +135,9 @@ public class SingleTile extends Tile{
 		nodeLon=radlon;
 	}
 
-	
-
 	public String toString() {
 		return "Map " + zl + "-" + fileId + ":" +  ways.length;
 	}
-
 
 	/* (non-Javadoc)
 	 * @see javax.swing.tree.TreeNode#getChildCount()
@@ -148,6 +146,7 @@ public class SingleTile extends Tile{
 	public int getChildCount() {
 		return ways.length;
 	}
+
 	/* (non-Javadoc)
 	 * @see javax.swing.tree.TreeNode#getChildAt(int)
 	 */
@@ -156,8 +155,6 @@ public class SingleTile extends Tile{
 		// TODO Auto-generated method stub
 		return ways[childIndex];
 	}
-
-
 
 	/* (non-Javadoc)
 	 * @see de.ueller.osm.fBrowser.Tile#paint(java.awt.Graphics, java.awt.Point, java.awt.Point, int)
@@ -173,6 +170,13 @@ public class SingleTile extends Tile{
 	 */
 	@Override
 	public void paint(Graphics g, Point topLeft, Point bottomRight) {
+		// Draw bounding box
+		Point sw = map.getMapPosition(minLat * radToDeg, minLon * radToDeg, false);
+		Point ne = map.getMapPosition(maxLat * radToDeg, maxLon * radToDeg, false);
+		g.setColor(new Color(100, 00, 00, 60));
+		g.drawRect(sw.x, sw.y, ne.x - sw.x, ne.y - sw.y);
+		
+		// Draw ways
 		int[] tx=new int[3000];
 		int[] ty=new int[3000];
 		for (int i=0;i<ways.length;i++){
@@ -181,11 +185,14 @@ public class SingleTile extends Tile{
 				continue;
 			}
 			if (w.isArea()){
+				g.setColor(new Color(00, 00, 00,60));
 				for (int i1 = 0; i1 < w.path.length; ){
-					g.setColor(new Color(00, 00, 00,60));
 					for (int l=0;l<3;l++){
 						short idx = w.path[i1++];
-						Point p1 = map.getMapPosition((centerLat+nodeLat[idx]*FIXPT_MULT_INV)*f, (centerLon+nodeLon[idx]*FIXPT_MULT_INV)*f,false);
+						Point p1 = map.getMapPosition(
+								(centerLat + nodeLat[idx] * FIXPT_MULT_INV) * radToDeg, 
+								(centerLon + nodeLon[idx] * FIXPT_MULT_INV) * radToDeg, 
+								false);
 						tx[l]=p1.x;
 						ty[l]=p1.y;
 					}
@@ -193,28 +200,31 @@ public class SingleTile extends Tile{
 					g.drawPolygon(tx, ty, 3);
 				}
 			} else {
+				g.setColor(new Color(00, 00, 00));
 				for (int i1 = 0; i1 < w.path.length; i1++){
-					g.setColor(new Color(00, 00, 00));
 					short idx = w.path[i1];
-					Point p1 = map.getMapPosition((centerLat+nodeLat[idx]*FIXPT_MULT_INV)*f, (centerLon+nodeLon[idx]*FIXPT_MULT_INV)*f,false);
+					Point p1 = map.getMapPosition(
+							(centerLat + nodeLat[idx] * FIXPT_MULT_INV) * radToDeg, 
+							(centerLon + nodeLon[idx] * FIXPT_MULT_INV) * radToDeg, 
+							false);
 					tx[i1]=p1.x;
 					ty[i1]=p1.y;
 					}
-			g.drawPolyline(tx, ty, w.path.length);
-
+				g.drawPolyline(tx, ty, w.path.length);
 			}
 		}
+		
+		// Draw nodes
 		for (int i=0;i<iNodeCount;i++){
 			
 			float x = centerLat+nodeLat[i]*FIXPT_MULT_INV;
 			float y = centerLon+nodeLon[i]*FIXPT_MULT_INV;
 //			System.out.println("draw " + i + " "+ x + "/" + y);
-			Point tl = map.getMapPosition(x*f, y*f,true);
+			Point tl = map.getMapPosition(x * radToDeg, y * radToDeg, true);
 			if (tl != null){
 				g.fillOval(tl.x - 2, tl.y - 2, 5, 5);
 			}
 		}
 	}
-
 
 }

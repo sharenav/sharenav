@@ -34,6 +34,7 @@ import java.util.zip.ZipOutputStream;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
+import de.ueller.osmToGpsMid.area.SeaGenerator;
 import de.ueller.osmToGpsMid.model.Damage;
 import de.ueller.osmToGpsMid.model.Relation;
 import de.ueller.osmToGpsMid.model.RouteAccessRestriction;
@@ -426,6 +427,9 @@ public class BundleGpsMid implements Runnable {
 			// the legend must be parsed after the configuration to apply parameters to the travel modes specified in useRouting
 			TravelModes.stringToTravelModes(config.useRouting);
 			config.parseLegend();
+			
+			// Maybe some of these should be configurable in the future.
+			SeaGenerator.setOptions(config, false, false, false, true, 100);
 			
 			startTime = Calendar.getInstance();
 

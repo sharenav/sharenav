@@ -42,47 +42,62 @@ public class Entity {
 		
 	}
 
+	/**
+	 * Deletes the given tag from the list of this entity's tags.
+	 * @param key Tag to delete
+	 */
+	public void deleteTag(String key) {
+		if (tags != null) {
+			tags.remove(key);
+		}		
+	}
 	
 	public String getName() {
-		if (tags == null)
+		if (tags == null) {
 			return null;
+		}
 		return tags.get("name");
 	}
 	
 	public String getUrl() {
-		if (tags == null)
+		if (tags == null) {
 			return null;
+		}
 		return tags.get("url");
 	}
 
 	public String getPhone() {
-		if (tags == null)
+		if (tags == null) {
 			return null;
+		}
 		return tags.get("phone");
 	}
 
 	public void setAttribute(String key, String value) {
-		if (tags == null)
+		if (tags == null) {
 			tags = new SmallArrayMap<String,String>();
-		
+		}
 		tags.put(key, value);
 	}
 	
 	public String getAttribute(String key) {
-		if (tags == null)
+		if (tags == null) {
 			return null;
+		}
 		return tags.get(key);
 	}
 	
 	public boolean containsKey(String key) {
-		if (tags == null)
+		if (tags == null) {
 			return false;
+		}
 		return tags.containsKey(key);
 	}
 
 	public Set<String> getTags() {
-		if (tags == null)
+		if (tags == null) {
 			return new HashSet<String>();
+		}
 		return tags.keySet();
 	}
 	
@@ -114,22 +129,22 @@ public class Entity {
 											failedSpec = !ct.exclude;
 											for (String ss : tags) {
 												if ( (ss.equalsIgnoreCase(ct.key)) &&
-														(
-																getAttribute(ss).equalsIgnoreCase(ct.value) ||
-																ct.value.equals("*")
-														)
+													(
+														getAttribute(ss).equalsIgnoreCase(ct.value) ||
+														ct.value.equals("*")
+													)
 												) {
 													failedSpec = ct.exclude;
 												}
 											}
-											if (failedSpec) 
+											if (failedSpec) {
 												failedSpecialisations = true;
+											}
 										}
 									}
 									if (!failedSpecialisations) {
 										currentPrio = entity.rulePriority;
 										entityDes = entity;
-
 									}
 								}
 							}

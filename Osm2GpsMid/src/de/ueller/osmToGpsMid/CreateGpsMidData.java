@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.TreeSet;
 
+import de.ueller.osmToGpsMid.area.SeaGenerator;
 import de.ueller.osmToGpsMid.area.Triangle;
 import de.ueller.osmToGpsMid.model.Bounds;
 import de.ueller.osmToGpsMid.model.ConditionTuple;
@@ -83,9 +84,17 @@ public class CreateGpsMidData implements FilenameFilter {
 		
 	// public  final static int MAX_DICT_DEEP = 5; replaced by Configuration.maxDictDepth
 	public  final static int ROUTEZOOMLEVEL = 4;
+	
+	/** The parser which parses the OSM data. The nodes, ways and relations are 
+	 * retrieved from it for further processing. */
 	OsmParser parser;
+	
+	/** This array contains one tile for each zoom level or level of detail and
+	 * the route tile. Each one is actually a tree of tiles because container tiles
+	 * contain two child tiles. */
 	Tile tile[] = new Tile[ROUTEZOOMLEVEL + 1];
-	/** output length of the route connection for statistics */
+
+	/** Output length of the route connection for statistics */
 	long outputLengthConns = 0;
 	
 	private final String path;
@@ -128,6 +137,8 @@ public class CreateGpsMidData implements FilenameFilter {
 		}
 	}
 	
+	/** Prepares and writes the complete map data.
+	 */
 	public void exportMapToMid() {
 		names1 = getNames1();
 		urls1 = getUrls1();
@@ -687,11 +698,14 @@ public class CreateGpsMidData implements FilenameFilter {
 	}
 	
 	
-	/* Copies the given file in mediaPath to destDir
-	 * - if you specify a filename only it will look for the file in this order 1. current directory 2. additional source subdirectory 3.internal file
-	 * - for file names only preceded by a single "/" Osm2GpsMid will always assume you want to explicitely use the internal media file
-	 * - directory path information as part of source media path is allowed, however the media file will ALWAYS be copied to destDir root
-	 * - remembers copied files in sbCopiedMedias (adds i.e. "(REPLACED)" for replaced files)
+	/* Copies the given file in mediaPath to destDir.
+	 * - If you specify a filename only it will look for the file in this order:
+	 *   1. current directory 2. additional source subdirectory 3.internal file
+	 * - For file names only preceded by a single "/", Osm2GpsMid will always assume 
+	 *   you want to explicitly use the internal media file.
+	 * - Directory path information as part of source media path is allowed, 
+	 *   however the media file will ALWAYS be copied to destDir root.
+	 * - Remembers copied files in sbCopiedMedias (adds i.e. "(REPLACED)" for replaced files)
 	 */
 	private String copyMediaToMid(String mediaPath, String destDir, String additionalSrcPath) {
 		// output filename is just the name part of the imagePath filename preceded by "/"  
@@ -798,7 +812,13 @@ public class CreateGpsMidData implements FilenameFilter {
 		return outputMediaName;
 	}
 
-	
+	/** Prepares and writes the whole tile data for the specified zoom level to the 
+	 * files for dict and tile data.
+	 * The tile tree's root tile is put into the member array 'tile'.
+	 * 
+	 * @param zl Zoom level or level of detail 
+	 * @return Number of bytes written
+	 */
 	private long exportMapToMid(int zl) {
 		// System.out.println("Total ways : " + parser.ways.size() + " Nodes : " +
 		// parser.nodes.size());
@@ -900,6 +920,17 @@ public class CreateGpsMidData implements FilenameFilter {
 		return outputLength;
 	}
 	
+	/** Prepares and writes the tile's node and way data.
+	 * It splits the tile, creating two sub tiles, if necessary and continues to
+	 * prepare and write their data down the tree.
+	 * For writing, it calls writeRenderTile() or writeRouteTile().
+	 * 
+	 * @param t Tile to export
+	 * @param tileSeq 
+	 * @param tileBound Bounds to use
+	 * @return Number of bytes written
+	 * @throws IOException if there is 
+	 */
 	private long exportTile(Tile t, Sequence tileSeq, Bounds tileBound) throws IOException {
 		Bounds realBound = new Bounds();
 		LinkedList<Way> ways;
@@ -929,9 +960,9 @@ public class CreateGpsMidData implements FilenameFilter {
 			nodes = new ArrayList<Node>();
 			realBound = new Bounds();
 
-			// Reduce the content of t.ways and t.nodes to all relevant elements
-			// in the given bounds and create the binary midlet representation
 			if (t.zl != ROUTEZOOMLEVEL) {
+				// Reduce the content of 'ways' and 'nodes' to all relevant elements
+				// in the given bounds and create the binary map representation
 				maxSize = configuration.getMaxTileSize();
 				maxWays = configuration.getMaxTileWays(t.zl);
 
@@ -947,6 +978,7 @@ public class CreateGpsMidData implements FilenameFilter {
 				}
 				int mostlyInBound = ways.size();
 				addWaysCompleteInBound(ways, t.ways, t.zl, realBound);
+				
 				if (ways.size() > 2 * mostlyInBound) {
 					// System.out.println("ways.size > 2 * mostlyInBound, mostlyInBound: " + mostlyInBound);		
 					realBound = new Bounds();
@@ -955,7 +987,6 @@ public class CreateGpsMidData implements FilenameFilter {
 					for (Node n : nodes) {
 						realBound.extend(n.lat, n.lon);
 					}
-
 				}				
 				
 				if (ways.size() <= maxWays) {
@@ -964,10 +995,15 @@ public class CreateGpsMidData implements FilenameFilter {
 //						System.out.println("Tile spacially too large (" + 
 //								MAX_RAD_RANGE +	": " + t.bounds);
 						tooLarge = true;
-							
+						// TODO: Doesn't this mean that tile data which should be
+						// processed is dropped? I think createMidContent() is never
+						// called for it.
 					} else {
 						t.centerLat = (t.bounds.maxLat + t.bounds.minLat) / 2;
 						t.centerLon = (t.bounds.maxLon + t.bounds.minLon) / 2;
+						
+						// TODO: Isn't this run for tiles which will be split down in
+						// this method (below comment "Tile is too large, try to split it.")?
 						out = createMidContent(ways, nodes, t);
 						outputLength += out.length;						
 					}
@@ -978,7 +1014,9 @@ public class CreateGpsMidData implements FilenameFilter {
 				 * unsplittable tile and just live with the fact that this tile is too big.
 				 * Otherwise we can get into an endless loop of trying to split up this tile.
 				 */
-				if ((t.nodes.size() == nodes.size()) && (t.ways.size() == ways.size()) && (tileBound.maxLat - tileBound.minLat < 0.001)) {
+				if ((t.nodes.size() == nodes.size()) && (t.ways.size() == ways.size()) 
+					&& (tileBound.maxLat - tileBound.minLat < 0.001)) 
+				{
 					System.out.println("WARNING: Could not reduce tile size for tile " + t);
 					System.out.println("  t.ways=" + t.ways.size() + ", t.nodes=" + t.nodes.size());
 					for (Way w : t.ways) {
@@ -989,6 +1027,8 @@ public class CreateGpsMidData implements FilenameFilter {
 				}
 				t.nodes = nodes;
 				t.ways = ways;
+				t.generateSeaPolygon();
+				// TODO: Check if createMidContent() should be here.
 			} else {
 				// Route Nodes
 				maxSize = configuration.getMaxRouteTileSize();
@@ -1011,6 +1051,7 @@ public class CreateGpsMidData implements FilenameFilter {
 			boolean tooManyWays = ways.size() > maxWays;
 			boolean tooManyBytes = out.length > maxSize;
 			if ((!unsplittableTile) && ((tooManyWays || (tooManyBytes && ways.size() != 1) || tooLarge))) {
+				// Tile is too large, try to split it.
 				// System.out.println("create Subtiles size=" + out.length + " ways=" + ways.size());
 				t.bounds = realBound.clone();
 				if (t.zl != ROUTEZOOMLEVEL) {
@@ -1047,8 +1088,9 @@ public class CreateGpsMidData implements FilenameFilter {
 
 				// System.gc();
 			} else {
+				// Tile has the right size or is not splittable, so it can be written.  
 				// System.out.println("use this tile, will write " + out.length + " bytes");
-				if (ways.size() > 0 || nodes.size() > 0) {					
+				if (ways.size() > 0 || nodes.size() > 0) {
 					// Write as dataTile
 					t.fid = tileSeq.next();
 					if (t.zl != ROUTEZOOMLEVEL) {
@@ -1089,14 +1131,19 @@ public class CreateGpsMidData implements FilenameFilter {
 	}
 
 	/**
-	 * @param t
-	 * @param tileBound
-	 * @param realBound
-	 * @param ways
-	 * @param nodes
-	 * @param out
-	 * @throws FileNotFoundException
-	 * @throws IOException
+	 * Writes the byte array to a file for the file t i.e. the name of the file is
+	 * derived from the zoom level and fid of this tile.
+	 * Also marks all ways of t and sets the fid of these ways and of all nodes in 'nodes'.
+	 * Plus it sets the type of t to Tile.TYPE_MAP, sets its bounds to realBound and 
+	 * updates totalNodesWritten, totalWaysWritten, totalSegsWritten and totalPOIsWritten.
+	 * 
+	 * @param t Tile to work on
+	 * @param tileBound Bounds of tile will be set to this if it's a route tile
+	 * @param realBound Bounds of tile will be set to this
+	 * @param nodes Nodes to update with the fid
+	 * @param out Byte array to write to the file
+	 * @throws FileNotFoundException if file could not be created
+	 * @throws IOException if an IO error occurs while writing the file
 	 */
 	private void writeRenderTile(Tile t, Bounds tileBound, Bounds realBound,
 			 Collection<Node> nodes, byte[] out)
@@ -1140,7 +1187,6 @@ public class CreateGpsMidData implements FilenameFilter {
 			for (Iterator<Way> wi = t.ways.iterator(); wi.hasNext(); ) {
 				Way w1 = wi.next();
 				w1.used = true;
-				//w1.fid = t.fid;
 			}
 		} else {
 			t.bounds = tileBound.clone();
@@ -1151,8 +1197,21 @@ public class CreateGpsMidData implements FilenameFilter {
 		}
 	}
 
+	/** Collects all ways from parentWays which 
+	 * 1) have a type >= 1 (whatever that means)
+	 * 2) belong to the zoom level zl
+	 * 3) aren't already marked as used and
+	 * 4) are mostly inside the boundaries of targetBounds.
+	 * realBound is extended to cover all these ways.
+	 * 
+	 * @param parentWays the collection that will be used for search
+	 * @param zl the level of detail
+	 * @param targetBounds bounds used for the search
+	 * @param realBound bounds to extend to cover all ways found
+	 * @return LinkedList of all ways which meet the described conditions.
+	 */
 	private LinkedList<Way> getWaysInBound(Collection<Way> parentWays, int zl, 
-			Bounds targetTile, Bounds realBound) {
+			Bounds targetBounds, Bounds realBound) {
 		LinkedList<Way> ways = new LinkedList<Way>();
 //		System.out.println("Searching for ways mostly in " + targetTile + " from " + 
 //			parentWays.size() + " ways");
@@ -1169,7 +1228,7 @@ public class CreateGpsMidData implements FilenameFilter {
 				continue;
 			}
 			Bounds wayBound = w1.getBounds();
-			if (targetTile.isMostlyIn(wayBound)) {
+			if (targetBounds.isMostlyIn(wayBound)) {
 				realBound.extend(wayBound);
 				ways.add(w1);
 			}
@@ -1178,10 +1237,23 @@ public class CreateGpsMidData implements FilenameFilter {
 		return ways;
 	}
 
+	/** Collects all ways from parentWays which 
+	 * 1) have a type >= 1 (whatever that means)
+	 * 2) belong to the zoom level zl
+	 * 3) aren't already marked as used
+	 * 4) are completely inside the boundaries of targetTile.
+	 * Ways are only added once to the list.
+	 * 
+	 * @param ways Initial list of ways to which to add
+	 * @param parentWays the list that will be used for search
+	 * @param zl the level of detail
+	 * @param targetBounds bounds used for the search
+	 * @return The list 'ways' plus the ways found
+	 */
 	private LinkedList<Way> addWaysCompleteInBound(LinkedList<Way> ways, 
-			Collection<Way> parentWays, int zl, Bounds targetTile) {
+			Collection<Way> parentWays, int zl, Bounds targetBounds) {
 		// collect all way that are in this rectangle
-//		System.out.println("Searching for ways total in " + targetTile + 
+//		System.out.println("Searching for ways total in " + targetBounds + 
 //			" from " + parentWays.size() + " ways");
 		//This is a bit of a hack. We should probably propagate the TreeSet through out,
 		//But that needs more effort and time than I currently have. And this way we get
@@ -1202,7 +1274,7 @@ public class CreateGpsMidData implements FilenameFilter {
 				continue;
 			}
 			Bounds wayBound = w1.getBounds();
-			if (targetTile.isCompleteIn(wayBound)) {
+			if (targetBounds.isCompleteIn(wayBound)) {
 				waysTS.add(w1);
 				ways.add(w1);
 			}
@@ -1214,10 +1286,10 @@ public class CreateGpsMidData implements FilenameFilter {
 	/**
 	 * Find all nodes out of the given collection that are within the bounds and in the correct zoom level.
 	 * 
-	 * @param parentNodes the collection that will used for search
+	 * @param parentNodes the collection that will be used for search
 	 * @param zl the level of detail
 	 * @param targetBound the target boundaries
-	 * @return
+	 * @return Collection of the nodes found
 	 */
 	public Collection<Node> getNodesInBound(Collection<Node> parentNodes, int zl, Bounds targetBound) {
 		Collection<Node> nodes = new LinkedList<Node>();
@@ -1323,8 +1395,8 @@ public class CreateGpsMidData implements FilenameFilter {
 		// find all nodes that are part of a way but not in interestNodes
 		for (Way w1 : ways) {
 			if (w1.isArea()) {
-				if (w1.getTriangles() != null) {
-					for (Triangle tri : w1.getTriangles()) {
+				if (w1.checkTriangles() != null) {
+					for (Triangle tri : w1.checkTriangles()) {
 						for (int lo = 0; lo < 3; lo++) {
 							addUnusedNode(wayNodes, tri.getVert()[lo].getNode());
 						}
@@ -1375,6 +1447,9 @@ public class CreateGpsMidData implements FilenameFilter {
 	}
 
 	/**
+	 * Adds the node n and its ID to the map wayNodes if it's an unused node and if
+	 * it isn't already in the map.
+	 * 
 	 * @param wayNodes
 	 * @param n
 	 */
@@ -1455,6 +1530,7 @@ public class CreateGpsMidData implements FilenameFilter {
 					} 
 				}
 			}
+
 			if (n.getType(configuration) != -1) {
 				flags += Constants.NODE_MASK_TYPE;
 			}

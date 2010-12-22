@@ -19,13 +19,10 @@ import edu.wlu.cs.levy.CG.KeySizeException;
 
 
 public class CalcNearBy {
-	OsmParser parser;
-	private int kdSize = 0; // Hack around the fact that KD-tree doesn't tell us it's size
+	private int kdSize = 0; // Hack around the fact that KD-tree doesn't tell us its size
 
 	public CalcNearBy(OsmParser parser) {
-		super();
-		this.parser = parser;
-		KDTree nearByElements = getNearByElements();
+		KDTree nearByElements = getNearByElements(parser);
 		if (kdSize > 0) {
 			calcCityNearBy(parser, nearByElements);
 			calcWayIsIn(parser, nearByElements);
@@ -33,10 +30,10 @@ public class CalcNearBy {
 	}
 
 	/**
-	 * @param parser2
+	 * @param parser
 	 * @param nearByElements
 	 */
-	private void calcWayIsIn(OsmParser parser2, KDTree nearByElements) {		
+	private void calcWayIsIn(OsmParser parser, KDTree nearByElements) {		
 		for (Way w : parser.getWays()) {
 			if (w.isHighway() /*&& w.getIsIn() == null */) {
 				Node thisNode = w.getMidPoint();
@@ -45,7 +42,7 @@ public class CalcNearBy {
 				}
 				Node nearestPlace = null;				
 				try {					
-					nearestPlace = (Node) nearByElements.nearest(MyMath.latlon2XYZ(thisNode));					
+					nearestPlace = (Node) nearByElements.nearest(MyMath.latlon2XYZ(thisNode));
 
 					if (nearestPlace.getType(null) <= 5 && !(MyMath.dist(thisNode, nearestPlace) < Constants.MAX_DIST_CITY[nearestPlace.getType(null)])) {					
 						long maxDistanceTested = MyMath.dist(thisNode, nearestPlace);
@@ -151,8 +148,7 @@ public class CalcNearBy {
 		}
 	}
 
-	private KDTree getNearByElements() {
-		
+	private KDTree getNearByElements(OsmParser parser) {
 		System.out.println("Creating nearBy candidates");
 		KDTree kd = new KDTree(3);
 		//double [] latlonKey = new double[2]; 
@@ -169,7 +165,6 @@ public class CalcNearBy {
 					kd.insert(MyMath.latlon2XYZ(n), n);
 					kdSize++;
 				} catch (KeySizeException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (KeyDuplicateException e) {
 					System.out.println("KeyDuplication at " + n);

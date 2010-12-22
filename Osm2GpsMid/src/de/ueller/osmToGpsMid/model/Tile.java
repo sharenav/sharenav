@@ -24,11 +24,13 @@ import java.util.LinkedList;
 import de.ueller.osmToGpsMid.Configuration;
 import de.ueller.osmToGpsMid.CreateGpsMidData;
 import de.ueller.osmToGpsMid.MyMath;
+import de.ueller.osmToGpsMid.area.SeaGenerator;
 import de.ueller.osmToGpsMid.tools.FileTools;
 
 
 public class Tile {
 
+	/** The boundaries of this tile or tile tree. */
 	public Bounds bounds = new Bounds();
 
 	/**
@@ -37,19 +39,29 @@ public class Tile {
 	 * stored in the file.
 	 */
 	public float centerLat;
+
 	/**
 	 * Center longitude of the tile in degrees.
 	 * This is used as a reference point for the relative coordinates 
 	 * stored in the file.
 	 */
 	public float centerLon;
+
+	/** If this tile is a container, this holds the reference to the first sub-tile. */
 	public Tile t1 = null;
+
+	/** If this tile is a container, this holds the reference to the second sub-tile. */
 	public Tile t2 = null;
+
+	/** TODO: I love self-explaining variable names likes this! */
 	public int fid;
+
+	/** The type of this tile, see the TYPE_XXX constants for possible values. */
 	public byte type;
 	
 	/** The data of this tile is for this zoom level. */
 	public byte zl;
+
 	public Collection<Way> ways = null;
 	private ArrayList<RouteNode> routeNodes = null;
 	public Collection<Node> nodes = new ArrayList<Node>();
@@ -67,6 +79,8 @@ public class Tile {
 	public static final byte TYPE_ROUTEDATA = 5;
 	public static final byte TYPE_ROUTECONTAINER = 6;
 	public static final byte TYPE_ROUTEFILE = 7;
+
+	/** TODO: Explain */
 	public static final float RTEpsilon = 0.012f;
 	
 
@@ -88,6 +102,14 @@ public class Tile {
 		bounds = b.clone();		
 	}
 	
+	/** Writes the dictionary file(s) for this tile. Walks down the tile tree to do this.
+	 * 
+	 * @param ds Stream to use for writing if this is a container or route container tile 
+	 * @param deep Current depth of this tile
+	 * @param fid File ID to use
+	 * @param path Base path to use for the map data
+	 * @throws IOException if the file could not be created or if there was an IO error
+	 */
 	public void writeTileDict(DataOutputStream ds, Integer deep, 
 			Sequence fid, String path) throws IOException {
 		DataOutputStream lds;
@@ -145,6 +167,8 @@ public class Tile {
 					lds.writeInt(idxMin);
 					lds.writeInt(idxMax);
 				}
+				// TODO: Sometimes, the fid which is passed to this method is written,
+				// but here, fid from the this object is used. Is this correct?
 				lds.writeInt(this.fid);
 //				ds.writeInt(ds.size());
 				break;
@@ -186,70 +210,82 @@ public class Tile {
 			lds.close();
 		}
 	}
-		
-	    public float degToRad(double deg) {
-	        return (float) (deg * (Math.PI / 180.0d));
-	    }
+
+    public float degToRad(double deg) {
+        return (float) (deg * (Math.PI / 180.0d));
+    }
 	    
-	    /**
-	     * Recalculate the bounds of this tile tree starting from
-	     * the current tile in case new tiles have been added to the
-	     * tree. Leaf tiles are assumed to have the right bound.
-	     * 
-	     * This function updates the bounds along the way 
-	     * 
-	     * @return the bounds for the current tile tree.
-	     */
-	    public Bounds recalcBounds() {
-	    	Bounds b1 = null;
-	    	Bounds b2 = null;
-	    	Bounds ret = bounds.clone();	    	
-	    	if (type == TYPE_MAP || type == TYPE_ROUTEDATA) {
-	    		/**
-	    		 * This is a leaf of the tile tree and should have correct bounds
-	    		 * anyway, so don't update and return the current bounds
-	    		 */
-	    		return ret;
-	    	}	    	
-			if (t1 != null && (t1.type != TYPE_EMPTY)) {								
-				b1 = t1.recalcBounds();				
-				ret = b1.clone();				
-			}
-			
-			if (t2 != null && (t2.type != TYPE_EMPTY)) {				
-				b2 = t2.recalcBounds();				
-				if (ret != null) {
-					ret.extend(b2);
-				}
-			}
-			bounds = ret; //Update current bounds			
-			return ret;
-	    }
-		
-		public Collection<Way> getWays() {
-			return ways;
+    /**
+     * Recalculate the bounds of this tile tree starting from
+     * the current tile in case new tiles have been added to the
+     * tree. Leaf tiles are assumed to have the right bound.
+     * 
+     * This function updates the bounds along the way 
+     * 
+     * @return the bounds for the current tile tree.
+     */
+    public Bounds recalcBounds() {
+    	Bounds b1 = null;
+    	Bounds b2 = null;
+    	Bounds ret = bounds.clone();	    	
+    	if (type == TYPE_MAP || type == TYPE_ROUTEDATA) {
+    		/**
+    		 * This is a leaf of the tile tree and should have correct bounds
+    		 * anyway, so don't update and return the current bounds
+    		 */
+    		return ret;
+    	}	    	
+		if (t1 != null && (t1.type != TYPE_EMPTY)) {								
+			b1 = t1.recalcBounds();				
+			ret = b1.clone();				
 		}
 		
-		public void setWays(LinkedList<Way> ways) {
-			this.ways = ways;
-		}
-		public ArrayList<RouteNode> getRouteNodes() {
-			return routeNodes;
-		}
-		public void setRouteNodes(ArrayList<RouteNode> routeNodes) {
-			this.routeNodes = routeNodes;
-		}
-		/**
-		 * @param routeNode
-		 */
-		public void addRouteNode(RouteNode routeNode) {
-			if (routeNodes == null) {
-				routeNodes = new ArrayList<RouteNode>();
+		if (t2 != null && (t2.type != TYPE_EMPTY)) {				
+			b2 = t2.recalcBounds();				
+			if (ret != null) {
+				ret.extend(b2);
 			}
-			routeNodes.add(routeNode);
-//			System.out.println("RouteNodes.add(" + routeNode + ")");
 		}
+		bounds = ret; //Update current bounds			
+		return ret;
+    }
+    
+    public Bounds getBounds() {
+    	return bounds;
+    }
 		
+	public Collection<Way> getWays() {
+		return ways;
+	}
+		
+	public void setWays(LinkedList<Way> ways) {
+		this.ways = ways;
+	}
+	
+	public void addWay(Way w) {
+		if (ways != null) {
+			ways.add(w);
+		}		
+	}
+
+	public ArrayList<RouteNode> getRouteNodes() {
+		return routeNodes;
+	}
+	
+	public void setRouteNodes(ArrayList<RouteNode> routeNodes) {
+		this.routeNodes = routeNodes;
+	}
+	
+	/**
+	 * @param routeNode
+	 */
+	public void addRouteNode(RouteNode routeNode) {
+		if (routeNodes == null) {
+			routeNodes = new ArrayList<RouteNode>();
+		}
+		routeNodes.add(routeNode);
+		// System.out.println("RouteNodes.add(" + routeNode + ")");
+	}
 
 	/**
 	  * 
@@ -311,7 +347,31 @@ public class Tile {
 	}
 
 	/**
-	 * for Debugging the correct sequence of RouteNodes
+	 * Checks for coast lines and creates one (or more) sea polygons which extend(s) to
+	 * the boundaries of this tile.
+	 * If this tile is a container, it makes its children create these areas.
+	 */
+	public void generateSeaPolygon() {
+/* TODO		if (type == TYPE_CONTAINER) {
+			if (t1 != null) {
+				t1.createSeaAreas();
+			}
+			if (t2 != null) {
+				t2.createSeaAreas();
+			}
+		} else if (type == TYPE_MAP) {
+			System.out.println("  Tile zl=" + zl + ", fid=" + fid);
+			SeaAreaGenerator.generateSeaPolygon(this);
+		}
+*/
+		if (bounds.getFixPtSpan() <= 65000) {
+			System.out.println("  Checking for coast line: Tile zl=" + zl + ", fid=" + fid);
+			SeaGenerator.generateSeaPolygon(this);
+		}
+	}	
+
+	/**
+	 * Prints the correct sequence of RouteNodes for debugging.
 	 * @param deep
 	 * @param maxDeep
 	 */
@@ -345,11 +405,11 @@ public class Tile {
 	}
 	
 	/**
-	 * recalc the idxMin and idxMax on RouteContainerTiles and RouteDataTiles
+	 * Recalculates the idxMin and idxMax on RouteContainerTiles and RouteDataTiles
 	 * @return
 	 */
 	public HiLo calcHiLo() {
-		if (type == TYPE_ROUTEDATA ) {
+		if (type == TYPE_ROUTEDATA) {
 			HiLo retHiLo1 = new HiLo();
 			if (routeNodes != null) {
 				for (RouteNode rn: routeNodes) {
@@ -376,6 +436,7 @@ public class Tile {
 			throw new Error("Wrong type of tile in " + this);
 		}
 	}
+
 	/**
 	 * @param path
 	 * @throws IOException 
@@ -551,5 +612,5 @@ public class Tile {
 			nds.close();
 			cds.close();
 		}
-	}	
+	}
 }

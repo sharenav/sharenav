@@ -3,17 +3,19 @@
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as published by
- * the Free Software Foundation.
+ * the Free Software Foundation. 
+ * See COPYING.
  *
- * Copyright (C) 2007 Harald Mueller
+ * Copyright (c) 2007 Harald Mueller
  */
+
 package de.ueller.osmToGpsMid.model;
 
 import de.ueller.osmToGpsMid.MyMath;
 
 /**
- * This class can hold the four values of a bounding box and provides methods
- * to makes checks against such a bounding box.
+ * This class holds the four values of a bounding box and provides methods
+ * to makes checks against it.
  */
 public class Bounds implements Cloneable {
 		public float minLat = 90f;
@@ -21,6 +23,40 @@ public class Bounds implements Cloneable {
 		public float minLon = 180f;
 		public float maxLon = -180f;
 
+
+		/**
+		 * @return Minimum latitude (southern edge) of the bounding box in degrees.
+		 */
+		public float getMinLat() {
+			return minLat;
+		}
+		
+		/**
+		 * @return Maximum latitude (northern edge) of the bounding box in degrees.
+		 */
+		public float getMaxLat() {
+			return maxLat;
+		}
+		
+		/**
+		 * @return Minimum longitude (western edge) of the bounding box in degrees.
+		 */
+		public float getMinLon() {
+			return minLon;
+		}
+		
+		/**
+		 * @return Maximum longitude (eastern edge) of the bounding box in degrees.
+		 */
+		public float getMaxLon() {
+			return maxLon;
+		}
+
+		/**
+		 * Extends, if necessary, this bounding box so it also includes this point.
+		 * @param lat Latitude in degrees
+		 * @param lon Longitude in degrees
+		 */
 		public void extend(float lat, float lon) {
 			if (lat < minLat) {
 				minLat = lat;
@@ -36,10 +72,20 @@ public class Bounds implements Cloneable {
 			}
 		}
 
+		/**
+		 * Extends, if necessary, this bounding box so it also includes this point.
+		 * @param lat Latitude in degrees
+		 * @param lon Longitude in degrees
+		 */
 		public void extend(double lat, double lon) {
 			extend((float)lat, (float)lon);
 		}
 
+		/**
+		 * Extends, if necessary, this bounding box so it also includes the passed
+		 * bounding box.
+		 * @param b Bounding box to include
+		 */
 		public void extend(Bounds b) {
 			extend(b.minLat, b.minLon);
 			extend(b.maxLat, b.maxLon);
@@ -48,18 +94,34 @@ public class Bounds implements Cloneable {
 		public boolean isMostlyIn(Bounds testBound) {
 			float centLat = (testBound.maxLat + testBound.minLat) / 2;
 			float centLon = (testBound.maxLon + testBound.minLon) / 2;
-			if (centLat < minLat) return false;
-			if (centLon < minLon) return false;
-			if (centLat > maxLat) return false;
-			if (centLon > maxLon) return false;
+			if (centLat < minLat) {
+				return false;
+			}
+			if (centLon < minLon) {
+				return false;
+			}
+			if (centLat > maxLat) {
+				return false;
+			}
+			if (centLon > maxLon) {
+				return false;
+			}
 			return true;
 		}
 
 		public boolean isCompleteIn(Bounds testBound) {
-			if (testBound.minLat < minLat) return false;
-			if (testBound.minLon < minLon) return false;
-			if (testBound.maxLat > maxLat) return false;
-			if (testBound.maxLon > maxLon) return false;
+			if (testBound.minLat < minLat) {
+				return false;
+			}
+			if (testBound.minLon < minLon) {
+				return false;
+			}
+			if (testBound.maxLat > maxLat) {
+				return false;
+			}
+			if (testBound.maxLon > maxLon) {
+				return false;
+			}
 			return true;
 		}
 
@@ -70,18 +132,34 @@ public class Bounds implements Cloneable {
 		 * @return true if test coordinate is inside of this boundaries
 		 */
 		public boolean isIn(float lat, float lon) {
-			if (lat < minLat) return false;
-			if (lon < minLon) return false;
-			if (lat > maxLat) return false;
-			if (lon > maxLon) return false;
+			if (lat < minLat) {
+				return false;
+			}
+			if (lon < minLon) {
+				return false;
+			}
+			if (lat > maxLat) {
+				return false;
+			}
+			if (lon > maxLon) {
+				return false;
+			}
 			return true;
 		}
 		
 		public boolean isInOrAlmostIn(float lat, float lon) {
-			if (lat < minLat - 0.005) return false;
-			if (lon < minLon - 0.005) return false;
-			if (lat > maxLat + 0.005) return false;
-			if (lon > maxLon + 0.005) return false;
+			if (lat < minLat - 0.005) {
+				return false;
+			}
+			if (lon < minLon - 0.005) {
+				return false;
+			}
+			if (lat > maxLat + 0.005) {
+				return false;
+			}
+			if (lon > maxLon + 0.005) {
+				return false;
+			}
 			return true;
 		}
 		
@@ -89,6 +167,17 @@ public class Bounds implements Cloneable {
 			return isIn((float)lat, (float) lon);
 		}
 
+		/**
+		 * Checks if the node is on the boundary.
+		 * @param n Node to check
+		 * @return True if n is on the boundary
+		 */
+		public boolean isOnBoundary(Node n) {
+			return (n.getLat() == minLat || n.getLat() == maxLat || 
+					n.getLon() == minLon || n.getLon() == maxLon);
+		}
+
+		@Override
 		public Bounds clone() {
 			Bounds b = new Bounds();
 			b.maxLat = maxLat;
@@ -121,6 +210,7 @@ public class Bounds implements Cloneable {
 			return ret;
 		}
 
+		@Override
 		public String toString() {
 			return ("[Bound (" + minLat + "|" + minLon+")(" + maxLat + "|" + maxLon +
 				") fixptlatspan=" + getFixPtLatSpan() + 

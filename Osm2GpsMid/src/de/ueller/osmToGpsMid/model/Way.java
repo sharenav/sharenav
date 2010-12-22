@@ -10,6 +10,7 @@
 
 package de.ueller.osmToGpsMid.model;
 
+import java.awt.Polygon;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -50,7 +51,7 @@ public class Way extends Entity implements Comparable<Way> {
 	public static final byte	WAY_FLAG2_MAXSPEED_WINTER			= 32;
 	/** http://wiki.openstreetmap.org/wiki/WikiProject_Haiti */
 	public static final byte	WAY_FLAG2_COLLAPSED_OR_IMPASSABLE	= 64;
-	public static final int		WAY_FLAG2_ADDITIONALFLAG				= 128;
+	public static final int		WAY_FLAG2_ADDITIONALFLAG			= 128;
 
 	public static final byte WAY_FLAG3_URL = 1;
 	public static final byte WAY_FLAG3_URLHIGH = 2;
@@ -60,10 +61,10 @@ public class Way extends Entity implements Comparable<Way> {
 	public static final byte WAY_FLAG3_HAS_HOUSENUMBERS = 32;
 	public static final byte WAY_FLAG3_LONGHOUSENUMBERS = 64;
 
-	public Path					path								= null;
-	public HouseNumber				housenumber							= null;
+	private Path					path								= null;
+	public HouseNumber			housenumber							= null;
 	public List<Triangle>		triangles							= null;
-	Bounds						bound								= null;
+	private Bounds				bound								= null;
 
 	/** Travel modes for which this way can be used (motorcar, bicycle, etc.) */
 	public byte					wayTravelModes						= 0;
@@ -76,13 +77,15 @@ public class Way extends Entity implements Comparable<Way> {
 	private byte				type								= -1;
 
 	/**
-	 * way id of the last unhandled maxSpeed - by using this to detect repeats we can quiet down the console output for
-	 * unhandled maxspeeds
+	 * Way id of the last unhandled maxSpeed - by using this to detect repeats,
+	 * we can quiet down the console output for unhandled maxspeeds.
 	 */
 	public static long			lastUnhandledMaxSpeedWayId			= -1;
 
+
 	public Way(long id) {
 		this.id = id;
+		this.path = new Path();
 	}
 
 	/**
@@ -93,6 +96,7 @@ public class Way extends Entity implements Comparable<Way> {
 	public Way(Way other) {
 		super(other);
 		this.type = other.type;
+		this.path = new Path();
 	}
 
 	public void cloneTags(Way other) {
@@ -111,7 +115,9 @@ public class Way extends Entity implements Comparable<Way> {
 
 		// check if wayDesc is null otherwise we could route along a way we have no description how to render, etc.
 		WayDescription wayDesc = config.getWayDesc(type);
-		if (wayDesc == null) { return; }
+		if (wayDesc == null) { 
+			return; 
+		}
 
 		// for each way the default route accessibility comes from its way description
 		wayTravelModes = wayDesc.wayDescTravelModes;
@@ -257,7 +263,9 @@ public class Way extends Entity implements Comparable<Way> {
 					n.wayToPOItransfer(this, poi);
 					//Indicate that this way has been dealt with, even though the way itself has no type.
 					//Some stylefiles might have both way styling and areaPOI styling for the same type.
-					if (type < 0) type = -2;
+					if (type < 0) {
+						type = -2;
+					}
 				} else {
 					System.out.println("WARNING: No way poi assigned because no node without a poi type has been available on way "
 							+ toString());
@@ -379,7 +387,7 @@ public class Way extends Entity implements Comparable<Way> {
 					}
 				} catch (Exception ex) {
 					if (this.id != lastUnhandledMaxSpeedWayId) {
-						System.out.println("warning: ignoring map data: Unhandled maxspeed for way " + toString() + ": " + maxSpeedAttr);
+						System.out.println("Warning: ignoring map data: Unhandled maxspeed for way " + toString() + ": " + maxSpeedAttr);
 						lastUnhandledMaxSpeedWayId = this.id;
 					}
 				}
@@ -429,7 +437,7 @@ public class Way extends Entity implements Comparable<Way> {
 						maxSpeed = maxs;
 					}
 				} catch (Exception ex) {
-					System.out.println("warning: ignoring map data: Unhandled maxspeedwinter for way + " + toString() + ": " + getAttribute("maxspeed"));
+					System.out.println("Warning: ignoring map data: Unhandled maxspeedwinter for way + " + toString() + ": " + getAttribute("maxspeed"));
 				}
 			}
 		}
@@ -490,6 +498,29 @@ public class Way extends Entity implements Comparable<Way> {
 		bound = null;
 	}
 
+	/** Simplistic check to see if this way/area "contains" another - for
+	 *  speed, all we do is check that all of the other way's points
+	 *  are inside this way's polygon.
+	 * @param other
+	 * @return 
+	 */
+	public boolean containsPointsOf(Way other) {
+		// This method was ported from mkgmap (uk.me.parabola.mkgmap.reader.osm.Way).
+
+		Polygon thisPoly = new Polygon();
+		for (Node n : getNodes()) {
+			thisPoly.addPoint((int)(n.getLon() * MyMath.FIXPT_MULT), 
+					(int)(n.getLat() * MyMath.FIXPT_MULT));
+		}
+		for (Node n : other.getNodes()) {
+			if (!thisPoly.contains((int)(n.getLon() * MyMath.FIXPT_MULT), 
+					(int)(n.getLat() * MyMath.FIXPT_MULT))) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	@Override
 	public String toString() {
 		String res = "id=" + id + ((nearBy == null) ? "" : (" near " + nearBy)) + " type=" + getType() + " [";
@@ -503,12 +534,15 @@ public class Way extends Entity implements Comparable<Way> {
 		return res;
 	}
 
+	/**
+	 * @return String with the URL to inspect this way on the OSM website
+	 */
 	public String toUrl() {
 		return "http://www.openstreetmap.org/browse/way/" + id;
 	}
 
 	/**
-	 * @return
+	 * @return The value of the attribute "is_in"
 	 */
 	public String getIsIn() {
 		return getAttribute("is_in");
@@ -554,6 +588,14 @@ public class Way extends Entity implements Comparable<Way> {
 		return ("|opposite|opposite_track|opposite_lane|".indexOf("|" + s.toLowerCase() + "|") >= 0);
 	}
 
+	/** Writes this way's data (flags, type, travel modes, indices, node count etc.).
+	 * 
+	 * @param ds Stream to write to
+	 * @param names1 The way's name index is in this list
+	 * @param urls1 The way's URL index is in this list
+	 * @param t Tile to which this way belongs - bounds coordinates are relative to its center
+	 * @throws IOException
+	 */
 	public void write(DataOutputStream ds, Names names1, Urls urls1, Tile t) throws IOException {
 		Bounds b = new Bounds();
 		int flags = 0;
@@ -736,7 +778,7 @@ public class Way extends Entity implements Comparable<Way> {
 			} else {
 				ds.writeByte(getNodeCount());
 			}
-			for (Triangle tri : getTriangles()) {
+			for (Triangle tri : checkTriangles()) {
 				ds.writeShort(tri.getVert()[0].getNode().renumberdId);
 				ds.writeShort(tri.getVert()[1].getNode().renumberdId);
 				ds.writeShort(tri.getVert()[2].getNode().renumberdId);
@@ -763,11 +805,14 @@ public class Way extends Entity implements Comparable<Way> {
 
 	}
 
-	public void add(Node n) {
-		if (path == null) {
-			path = new Path();
-		}
+	public void addNode(Node n) {
 		path.add(n);
+	}
+
+	public void addNodeIfNotEqualToLastNode(Node node) {
+		if (path.getNodeCount() == 0 || !node.equals(path.getNode(path.getNodeCount() - 1))) {
+			path.add(node);
+		}
 	}
 
 	public void houseNumberAdd(Node n) {
@@ -805,13 +850,6 @@ public class Way extends Entity implements Comparable<Way> {
 		return returnNodes;
 	}
 
-	// public void startNextSegment() {
-	// if (path == null) {
-	// path = new Path();
-	// }
-	// path.addNewSegment();
-	// }
-
 	/**
 	 * Replaces node1 with node2 in this way.
 	 * 
@@ -836,7 +874,11 @@ public class Way extends Entity implements Comparable<Way> {
 	// return path.getSubPaths();
 	// }
 
-	public List<Triangle> getTriangles() {
+	/** Checks if this is an areas and triangulates it if this hasn't been done yet. 
+	 * 
+	 * @return List of triangles for this way
+	 */
+	public List<Triangle> checkTriangles() {
 		if (isArea() && triangles == null) {
 			triangulate();
 		}
@@ -845,7 +887,7 @@ public class Way extends Entity implements Comparable<Way> {
 
 	public int getLineCount() {
 		if (isArea()) {
-			return getTriangles().size();
+			return checkTriangles().size();
 		} else {
 			return path.getLineCount();
 		}
@@ -853,7 +895,7 @@ public class Way extends Entity implements Comparable<Way> {
 
 	public int getNodeCount() {
 		if (isArea()) {
-			return getTriangles().size() * 3;
+			return checkTriangles().size() * 3;
 		} else {
 			return path.getNodeCount();
 		}
@@ -923,7 +965,7 @@ public class Way extends Entity implements Comparable<Way> {
 	}
 
 	public boolean isValid() {
-		if (path == null || path.getNodeCount() == 0) {
+		if (path.getNodeCount() == 0) {
 			return false;
 		}
 		return true;
@@ -971,6 +1013,40 @@ public class Way extends Entity implements Comparable<Way> {
 		}
 	}
 
+	/** 
+	 * @return True if the way is a closed polygon with a clockwise direction.
+	 */
+	public boolean isClockwise() {
+		// This method was ported from mkgmap (uk.me.parabola.mkgmap.reader.osm.Way).
+		
+		if (getNodes().size() < 3 || 
+				!getNodes().get(0).equals(getNodes().get(getNodes().size() - 1))) {
+			return false;
+		}
+
+		long area = 0;
+		Node n1 = getNodes().get(0);
+		for (int i = 1; i < getNodes().size(); ++i) {
+			Node n2 = getNodes().get(i);
+			area += ((long)n1.getLon() * n2.getLat() - 
+					 (long)n2.getLon() * n1.getLat());
+			n1 = n2;
+		}
+
+		// this test looks to be inverted but gives the expected result!
+		return area < 0;
+	}
+
+	/**
+	 * @return The OSM ID of this way
+	 */
+	public long getId() {
+		return id;
+	}
+
+	/**
+	 * @return List of all nodes of this way
+	 */
 	public List<Node> getNodes() {
 		return path.getNodes();
 	}
@@ -997,10 +1073,9 @@ public class Way extends Entity implements Comparable<Way> {
 	}
 
 	/**
-	 * 
+	 * Regenerates this way's path object
 	 */
 	public void recreatePath() {
-		// // regenrate Path
 		if (isArea() && triangles.size() > 0) {
 			path = new Path();
 		}

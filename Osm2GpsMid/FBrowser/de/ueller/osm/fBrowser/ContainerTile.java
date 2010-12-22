@@ -92,8 +92,8 @@ public class ContainerTile extends Tile {
 //			System.out.println("paint Container " + deep + " " + topLeft + "/" + bottomRight);
 			int s=255-(255/deep);
 			g.setColor(new Color(s,s,s,80));
-			Point tl=map.getMapPosition(minLat*f, maxLon*f, false);
-			Point br=map.getMapPosition(maxLat*f, minLon*f, false);
+			Point tl = map.getMapPosition(minLat * radToDeg, maxLon * radToDeg, false);
+			Point br = map.getMapPosition(maxLat * radToDeg, minLon * radToDeg, false);
 			g.setColor(Color.BLACK);
 			g.drawRect(tl.x, tl.y, br.x - br.x, br.y - tl.y);	
 			if (t1 != null) {t1.paint(g, topLeft, bottomRight,deep+1);};
