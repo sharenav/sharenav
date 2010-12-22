@@ -1,4 +1,4 @@
-GpsMid 0.6.3
+GpsMid 0.6.4
         *** Digital compass support ***
 	*** Android support ***
 	   - most stuff works
