@@ -1,7 +1,8 @@
 generic.About=O programu
 generic.Back=Zpět
 generic.Exit=Konec
-generic.Off=Vypnuto
+generic.On=Zap
+generic.Off=Vyp
 generic.OK=OK
 generic.Search=Hledat
 splash.Accept=Přijmout
