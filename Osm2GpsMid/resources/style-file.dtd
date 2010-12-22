@@ -1,0 +1,103 @@
+<!ELEMENT legend (version, colors, pois, ways, damages?, tileScaleLevels?, routeModes*, maxSpeedTemplates?)>
+<!ELEMENT version EMPTY>
+<!ELEMENT colors (color*)>
+<!ELEMENT color EMPTY>
+<!ELEMENT pois (key*)>
+<!ELEMENT ways (keyW*)>
+<!ELEMENT damages (damage*)>
+<!ELEMENT routeModes (routeMode*)>
+<!ELEMENT routeMode (routeAccessRestriction*)>
+<!ELEMENT maxSpeedTemplates (maxSpeedTemplate*)>
+<!ELEMENT tileScaleLevels (tileScaleLevel*)>
+<!ELEMENT key (value+)>
+<!ELEMENT keyW (Wvalue+)>
+<!ELEMENT value (specialisation*, description , image? , searchIcon? , namekey , namefallback? , helpertag? , AreaPOI?, scale , textscale? , imageCentered?, hideable?)>
+<!ELEMENT Wvalue (specialisation*, description, image? , searchIcon? , namekey, namefallback?, helpertag?, showName?, isArea, ignoreOsmAreaTag?, scale, textscale?, arrowscale?, descriptionscale?, lineColor, borderColor?, lineStyle?, wayWidth?, searchIcon?, routing*, force_to?, hideable?)>
+<!ELEMENT damage EMPTY>
+<!ELEMENT routeAccessRestriction EMPTY>
+<!ELEMENT restrictionKey EMPTY>
+<!ELEMENT restrictionValues EMPTY>
+<!ELEMENT description EMPTY>
+<!ELEMENT image EMPTY>
+<!ELEMENT searchIcon EMPTY>
+<!ELEMENT namekey EMPTY>
+<!ELEMENT namefallback EMPTY>
+<!ELEMENT helpertag EMPTY>
+<!ELEMENT scale EMPTY>
+<!ELEMENT textscale EMPTY>
+<!ELEMENT arrowscale EMPTY>
+<!ELEMENT descriptionscale EMPTY>
+<!ELEMENT imageCentered EMPTY>
+<!ELEMENT showName EMPTY>
+<!ELEMENT isArea EMPTY>
+<!ELEMENT ignoreOsmAreaTag EMPTY>
+<!ELEMENT lineColor EMPTY>
+<!ELEMENT borderColor EMPTY>
+<!ELEMENT lineStyle EMPTY>
+<!ELEMENT wayWidth EMPTY>
+<!ELEMENT routing EMPTY>
+<!ELEMENT force_to EMPTY>
+<!ELEMENT hideable EMPTY>
+<!ELEMENT AreaPOI EMPTY>
+<!ELEMENT specialisation EMPTY>
+<!ELEMENT maxSpeedTemplate EMPTY>
+<!ELEMENT tileScaleLevel EMPTY>
+<!ATTLIST version release CDATA #REQUIRED>
+<!ATTLIST key tag CDATA #REQUIRED>
+<!ATTLIST keyW tag CDATA #REQUIRED>
+<!ATTLIST value name CDATA #REQUIRED>
+<!ATTLIST value priority CDATA #IMPLIED>
+<!ATTLIST Wvalue name CDATA #REQUIRED>
+<!ATTLIST Wvalue priority CDATA #IMPLIED>
+<!ATTLIST style is CDATA #REQUIRED>
+<!ATTLIST ignore is CDATA #REQUIRED>
+<!ATTLIST color of CDATA #REQUIRED>
+<!ATTLIST color is CDATA #REQUIRED>
+<!ATTLIST color isAtNight CDATA #IMPLIED>
+<!ATTLIST routeAccessRestrictions for CDATA #REQUIRED>
+<!ATTLIST description desc CDATA #REQUIRED>
+<!ATTLIST namekey tag CDATA #REQUIRED>
+<!ATTLIST namefallback tag CDATA #REQUIRED>
+<!ATTLIST helpertag tag CDATA #REQUIRED>
+<!ATTLIST scale scale CDATA #REQUIRED>
+<!ATTLIST textscale scale CDATA #REQUIRED>
+<!ATTLIST arrowscale scale CDATA #REQUIRED>
+<!ATTLIST descriptionscale scale CDATA #REQUIRED>
+<!ATTLIST image src CDATA #REQUIRED>
+<!ATTLIST searchIcon src CDATA #REQUIRED>
+<!ATTLIST imageCentered value CDATA #REQUIRED>
+<!ATTLIST showName style CDATA #REQUIRED>
+<!ATTLIST isArea area CDATA #REQUIRED>
+<!ATTLIST ignoreOsmAreaTag ignore CDATA #REQUIRED>
+<!ATTLIST lineColor color CDATA #REQUIRED>
+<!ATTLIST lineColor colorAtNight CDATA #IMPLIED>
+<!ATTLIST borderColor color CDATA #REQUIRED>
+<!ATTLIST borderColor colorAtNight CDATA #IMPLIED>
+<!ATTLIST lineStyle dashed CDATA #REQUIRED>
+<!ATTLIST wayWidth width CDATA #REQUIRED>
+<!ATTLIST routing with CDATA #REQUIRED>
+<!ATTLIST routing accessible CDATA #REQUIRED>
+<!ATTLIST routing speed CDATA #REQUIRED>
+<!ATTLIST force_to layer CDATA #REQUIRED>
+<!ATTLIST hideable hideable CDATA #REQUIRED>
+<!ATTLIST AreaPOI createForAreas CDATA #REQUIRED>
+<!ATTLIST specialisation condition CDATA "match">
+<!ATTLIST specialisation key CDATA #REQUIRED>
+<!ATTLIST specialisation value CDATA #REQUIRED>
+<!ATTLIST routeMode modeName CDATA #REQUIRED>
+<!ATTLIST routeMode maxPrepareMeters CDATA #REQUIRED>
+<!ATTLIST routeMode maxInMeters CDATA #REQUIRED>
+<!ATTLIST routeMode maxEstimationSpeed CDATA #REQUIRED>
+<!ATTLIST routeMode applyTurnRestrictions CDATA #IMPLIED>
+<!ATTLIST routeMode againstAllOneWays CDATA #IMPLIED>
+<!ATTLIST routeMode bicycleOppositeExceptions CDATA #IMPLIED>
+<!ATTLIST routeMode mainStreetNet CDATA #IMPLIED>
+<!ATTLIST routeAccessRestriction restrictionKey CDATA #REQUIRED>
+<!ATTLIST routeAccessRestriction restrictionValues CDATA #REQUIRED>
+<!ATTLIST routeAccessRestriction restrictionPermit CDATA #IMPLIED>
+<!ATTLIST damage damageKey CDATA #REQUIRED>
+<!ATTLIST damage damageValues CDATA #REQUIRED>
+<!ATTLIST maxSpeedTemplate name CDATA #REQUIRED>
+<!ATTLIST maxSpeedTemplate maxspeed CDATA #REQUIRED>
+<!ATTLIST tileScaleLevel level CDATA #REQUIRED>
+<!ATTLIST tileScaleLevel minScale CDATA #REQUIRED>
