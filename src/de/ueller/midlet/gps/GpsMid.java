@@ -135,17 +135,6 @@ public class GpsMid extends MIDlet implements CommandListener {
 		log.setLevel(Logger.INFO);
 		Configuration.read();
 		
-//#if polish.android
-		// midletBridge = instance._getMidletBridge();
-		// on android, switch backlight always on to keep in foreground
-//		midletBridge.backlightOn();
-//		midletBridge.setKeepScreenOn(true);
-//		instance.setSystemProperty("keepScreenOn", "true");
-//		instance.backlightOn();
-//		midletBridge.setSystemProperty("keepScreenOn", "true");
-//		midletBridge.showSoftKeyboard();
-//#endif
-
 		enableDebugFileLogging();
 		Logger.setGlobalLevel();
 
@@ -163,7 +152,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 			errorMsg = Locale.get("gpsmid.FailToLoadBasicConf")/*Failed to load basic configuration! Check your map data source: */
 					+ e.getMessage();
 //#if polish.android
-			errorMsg += Locale.get("gpsmid.ForAndroidInstall")/*  - For Android, you must manually install the map (e.g. unzip the J2ME map jar bundle with same settings & version as the .apk) on the SD card for now*/;
+			errorMsg += Locale.get("gpsmid.ForAndroidInstall")/*  - For Android, you need to manually install the map (e.g. unzip the J2ME map jar bundle with same settings & version as the .apk) on the SD card or use a special bundle script in tools/ for now*/;
 //#endif
 		}
 
@@ -541,9 +530,9 @@ public class GpsMid extends MIDlet implements CommandListener {
 			if (!(Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_MIDP2)
 				|| Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIA)
 				|| Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_NOKIAFLASH)
-				|| Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_SIEMENS))
+				|| Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_SIEMENS)
 				|| Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_SAMSUNG)
-				|| Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ANDROID_WAKELOCK))
+			      || Configuration.getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ANDROID_WAKELOCK)))
 			{
 				log.error("Backlight cannot be kept on when no 'with'-method is specified in Setup");
 				// turn backlight off to avoid repeating the warning above
