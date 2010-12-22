@@ -33,7 +33,7 @@ import de.ueller.osmToGpsMid.model.Way;
 public class OxParser extends OsmParser {
 
 	private class OsmXmlHandler extends DefaultHandler {
-		private Hashtable<String, String> tagsCache = new Hashtable<String, String>();
+		private final Hashtable<String, String> tagsCache = new Hashtable<String, String>();
 
 		@Override
 		public void startDocument() {
@@ -81,7 +81,7 @@ public class OxParser extends OsmParser {
 					long ref = Long.parseLong(atts.getValue("ref"));
 					Node node = nodes.get(new Long(ref));
 					if (node != null) {
-						way.add(node);
+						way.addNode(node);
 					} else {
 						// Node for this Way is missing, problem in OS or simply
 						// out of Bounding Box
@@ -91,7 +91,7 @@ public class OxParser extends OsmParser {
 						// with shared attributes.
 						// degenerate ways are not added, so don't care about
 						// this here.
-						if (way.path != null) {
+						if (way.getNodeCount() != 0) {
 							/**
 							 * Attributes might not be fully known yet, so keep
 							 * track of which ways are duplicates and clone the
@@ -193,8 +193,9 @@ public class OxParser extends OsmParser {
 						+ relTot + "/" + relPart + "/" + relIns);
 			}
 			if (qName.equals("node")) {
-				if (current == null)
+				if (current == null) {
 					return; // Node not in bound
+				}
 				Node n = (Node) current;
 				previousNodeWithThisId = nodes.put(current.id, (Node) current);
 				nodeIns++;
@@ -315,10 +316,12 @@ public class OxParser extends OsmParser {
 		super(i, c);
 	}
 
+	@Override
 	protected String parserType() {
 		return "Osm XML";
 	}
 
+	@Override
 	protected void init(InputStream i) {
 		try {
 			startTime = System.currentTimeMillis();

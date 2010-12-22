@@ -134,8 +134,9 @@ public class OpbfParser extends OsmParser {
 			// System.out.println("Parsing nodes: " + nds);
 			nodeTot += nds.size();
 			ele += nds.size();
-			if (nds.size() > 0)
+			if (nds.size() > 0) {
 				System.out.println("Non dense nodes!");
+			}
 			printProgress();
 		}
 
@@ -160,17 +161,17 @@ public class OpbfParser extends OsmParser {
 					long ref = j + last_id;
 					Node node = nodes.get(new Long(ref));
 					if (node != null) {
-						way.add(node);
+						way.addNode(node);
 					} else {
-						// Node for this Way is missing, problem in OS or simply
-						// out of Bounding Box
-						// tree different cases are possible
-						// missing at the start, in the middle or at the end
-						// we simply add the current way and start a new one
+						// Nodes for this way are missing, problem in OSM or simply
+						// out of bounding box.
+						// Three different cases are possible:
+						// missing at the start, in the middle or at the end.
+						// We simply add the current way and start a new one
 						// with shared attributes.
-						// degenerate ways are not added, so don't care about
+						// Degenerate ways are not added, so don't care about
 						// this here.
-						if (way.path != null) {
+						if (way.getNodeCount() != 0) {
 
 							Way tmp_way = new Way(way);
 							addWay(way);
@@ -314,10 +315,12 @@ public class OpbfParser extends OsmParser {
 
 	}
 
+	@Override
 	protected String parserType() {
 		return "Osm Pbf";
 	}
 
+	@Override
 	protected void init(InputStream i) {
 		try {
 			startTime = System.currentTimeMillis();

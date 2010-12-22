@@ -32,7 +32,26 @@ public class Path {
 		nodeList.add(n);
 	}
 	
+	/**
+	 * @param i Index of wanted node
+	 * @return Node at index i or null if 
+	 */
+	public Node getNode(int i) {
+		if (nodeList == null) {
+			return null;
+		} else {
+			if (i >= 0 && i < nodeList.size()) {
+				return nodeList.get(i);
+			} else {
+				return null;
+			}
+		}
+	}
 	
+	public List<Node> getNodes() {
+		return nodeList;
+	}
+
 	@Deprecated
 	public boolean isMultiPath() {
 //		if (subPathList != null) {
@@ -76,9 +95,8 @@ public class Path {
 		}		
 	}
 
-
 	/**
-	 * 
+	 * @return The number of lines of this path, i.e. nodes - 1.
 	 */
 	public int getLineCount() {
 		if (nodeList == null) {
@@ -89,6 +107,11 @@ public class Path {
 		}
 		return 0;
 	}
+	
+	/**
+	 * TODO: This returns 0 if size() == 1, is this intentional?!?
+	 * @return The number of nodes of this path or 0 if there is no node list.
+	 */
 	public int getNodeCount() {
 		if (nodeList == null) {
 			return 0;
@@ -132,11 +155,5 @@ public class Path {
 		for (Node n:nodeList) {
 			bound.extend(n.lat, n.lon);
 		}
-	}
-
-
-	
-	public List<Node> getNodes() {
-		return nodeList;
 	}
 }
