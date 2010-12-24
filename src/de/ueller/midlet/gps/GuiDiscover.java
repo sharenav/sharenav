@@ -876,11 +876,13 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 			case STATE_DISPOPT:
 				String uiLang = null;
 				String uiLangUse = null;
+				String langToAdd = null;
 				if (!addLang.getString().equalsIgnoreCase(Configuration.getUiLang())) {
-					uiLang = addLang.getString().toLowerCase();
-					if (uiLang.equals("")) {
-						uiLang = "devdefault";
+					langToAdd = addLang.getString().toLowerCase();
+					if (langToAdd.equals("")) {
+						langToAdd = "devdefault";
 					}
+					uiLang = langToAdd;
 				} else if (Legend.numUiLang + numLangDifference > 1) {
 					uiLang = Legend.uiLang[uiLangGroup.getSelectedIndex()-numLangDifference];
 				}
@@ -915,11 +917,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 					Configuration.setNamesOnMapLang(uiLang);
 				}
 				String naviLang = null;				
-				if (!naviLangURL.getString().equalsIgnoreCase(Configuration.getNaviLang())) {
-					naviLang = naviLangURL.getString().toLowerCase();
-					if (naviLang.equals("")) {
-						naviLang = "devdefault";
-					}
+				if (langToAdd != null) {
+					naviLang = langToAdd;
 				} else if (Legend.numNaviLang + numLangDifference > 1) {
 					naviLang = Legend.naviLang[naviLangGroup.getSelectedIndex()-numLangDifference];
 					if (naviLang.equals(Configuration.getNaviLang()) && ! naviLang.equalsIgnoreCase("devdefault")) {
@@ -1008,11 +1007,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 					//}
 				}
 				String onlineLang = null;
-				if (!onlineLangURL.getString().equalsIgnoreCase(Configuration.getOnlineLang())) {
-					onlineLang = onlineLangURL.getString().toLowerCase();
-					if (onlineLang.equals("")) {
-						onlineLang = "devdefault";
-					}
+				if (langToAdd != null) {
+					onlineLang = langToAdd;
 				} else if (Legend.numOnlineLang + numLangDifference > 1) {
 					onlineLang = Legend.onlineLang[onlineLangGroup.getSelectedIndex()-numLangDifference];
 				}
