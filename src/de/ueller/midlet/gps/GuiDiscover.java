@@ -194,9 +194,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	private TextField  tfGpxRecordMinimumDistanceMeters;
 	private TextField  tfGpxRecordAlwaysDistanceMeters;
 	private TextField  tfURL;
-	private TextField  uiLangURL;
-	private TextField  naviLangURL;
-	private TextField  onlineLangURL;
+	private TextField  addLang;
+	//private TextField  naviLangURL;
+	//private TextField  onlineLangURL;
 	//#if polish.api.osm-editing
 	private TextField  tfOsmUserName;
 	private TextField  tfOsmPassword;
@@ -608,16 +608,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				Choice.MULTIPLE, mapInfos, null);
 		menuDisplayOptions.append(mapInfoOpts);
 				
-		uiLangURL = new TextField(Locale.get("guidiscover.uiLangURL")/*Enter language code or URL*/,
+		addLang = new TextField(Locale.get("guidiscover.addLang")/*Add language with 2-letter code*/,
 					  Configuration.getUiLang(), 256, TextField.ANY);
-		// menuDisplayOptions.append(uiLangURL);
-		// naviLangURL = new TextField(Locale.get("guidiscover.naviLangURL")/*Enter language code or URL*/, 
-		//			    Configuration.getNaviLang(), 256, TextField.ANY);
-		// menuDisplayOptions.append(naviLangURL);
-		// onlineLangURL = new TextField(Locale.get("guidiscover.onlineLangURL")/*Enter language code or URL*/,
-		//			      Configuration.getOnlineLang(), 256, TextField.ANY);
-		//menuDisplayOptions.append(onlineLangURL);
-
+		menuDisplayOptions.append(addLang);
 		menuDisplayOptions.setCommandListener(this);
 	}
 	
@@ -883,8 +876,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 			case STATE_DISPOPT:
 				String uiLang = null;
 				String uiLangUse = null;
-				if (!uiLangURL.getString().equalsIgnoreCase(Configuration.getUiLang())) {
-					uiLang = uiLangURL.getString().toLowerCase();
+				if (!addLang.getString().equalsIgnoreCase(Configuration.getUiLang())) {
+					uiLang = addLang.getString().toLowerCase();
 					if (uiLang.equals("")) {
 						uiLang = "devdefault";
 					}
