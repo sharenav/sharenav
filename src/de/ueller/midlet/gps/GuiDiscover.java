@@ -610,13 +610,13 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				
 		uiLangURL = new TextField(Locale.get("guidiscover.uiLangURL")/*Enter language code or URL*/,
 					  Configuration.getUiLang(), 256, TextField.ANY);
-		menuDisplayOptions.append(uiLangURL);
-		naviLangURL = new TextField(Locale.get("guidiscover.naviLangURL")/*Enter language code or URL*/, 
-					    Configuration.getNaviLang(), 256, TextField.ANY);
-		menuDisplayOptions.append(naviLangURL);
-		onlineLangURL = new TextField(Locale.get("guidiscover.onlineLangURL")/*Enter language code or URL*/,
-					      Configuration.getOnlineLang(), 256, TextField.ANY);
-		menuDisplayOptions.append(onlineLangURL);
+		// menuDisplayOptions.append(uiLangURL);
+		// naviLangURL = new TextField(Locale.get("guidiscover.naviLangURL")/*Enter language code or URL*/, 
+		//			    Configuration.getNaviLang(), 256, TextField.ANY);
+		// menuDisplayOptions.append(naviLangURL);
+		// onlineLangURL = new TextField(Locale.get("guidiscover.onlineLangURL")/*Enter language code or URL*/,
+		//			      Configuration.getOnlineLang(), 256, TextField.ANY);
+		//menuDisplayOptions.append(onlineLangURL);
 
 		menuDisplayOptions.setCommandListener(this);
 	}
