@@ -173,6 +173,8 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	
 	private static final String ORS_URL="http://openrouteservice.org/php/OpenLSRS_DetermineRoute.php";
 	
+	private String useLang = null;
+
 	String [] planetFiles = {CHOOSE_SRC, FILE_SRC, XAPI_SRC, ROMA_SRC};
 	String [] cellidFiles = {CELL_SRC_NONE, CELL_SRC_FILE, CELL_SRC_DLOAD};
 	String [] soundFormats = {SOUND_NONE, SOUND_AMR, SOUND_WAV, SOUND_WAV_AMR};
@@ -198,6 +200,18 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	JTextField jtfName;
 	JComboBox jcbSoundFormats;
 	JCheckBox jcbEditing;
+	String langList[] = {
+		"*",
+		"en",
+		"cs",
+		"de",
+		"fi",
+		"it",
+		"pl",
+		"ru",
+		"sk"
+	};
+	JCheckBox languages[] = new JCheckBox[langList.length];
 	JComboBox jcbCellSource;
 	JButton jbCreate;
 	JButton jbClose;
@@ -283,7 +297,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		jpRouteCorridor.add(jlRouteCorridor, gbc);
 
 		destList=new JTable(new LocationTableModel(routeList));
-		destList.setToolTipText("Add route corridor destinations with Alt+Click on the map");
+		destList.setToolTipText("Add route corridor destinations with Alt+Click or Shift+Click on the map");
 		gbc.gridwidth = 1;
 		gbc.weightx = 1;
 		gbc.weighty = 1;
@@ -313,16 +327,34 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		gbc.gridy = 4;
 		jpRouteCorridor.add(jbCalcRoute, gbc);
 
-		JLabel jlSeparator2 = new JLabel(" ");
+		JPanel langOptions = new JPanel(new GridBagLayout());
 		gbc.gridwidth = 1;
 		gbc.weightx = 0;
 		gbc.weighty = 0;
 		gbc.fill = GridBagConstraints.CENTER;
 		gbc.gridx = 0;
 		gbc.gridy = 5;
-		jpRouteCorridor.add(jlSeparator2, gbc);
+		jpRouteCorridor.add(langOptions, gbc);
 		
-		
+		JLabel langLabel = new JLabel("Lang:");
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		gbc.weighty = 0;
+		langOptions.add(langLabel, gbc);
+
+		for (int i = 0; i < langList.length ; i++) {
+			languages[i] = new JCheckBox(langList[i]);
+			languages[i].addActionListener(this);
+			// enable * and English by default
+			gbc.gridx = i+1;
+			gbc.gridy = 0;
+			gbc.weighty = 0;
+			langOptions.add(languages[i], gbc);
+			if (i == 0 || i == 1) {
+				languages[i].setSelected(true);
+			}
+		}
+
 		JPanel jpFiles = new JPanel(new GridBagLayout());
 		gbc.gridx = 0;
 		gbc.gridy = 1;
@@ -945,6 +977,10 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			fw.write("useSounds = " + config.getUseSounds() + "\r\n");
 			fw.write("\r\n");
 
+			fw.write("# Languages to be included in the midlet\r\n");
+			fw.write("lang = " + useLang + "\r\n");
+			fw.write("\r\n");
+
 			fw.write("# Directory/Directories with sound files and syntax.cfg, default is useSoundFilesWithSyntax=sound\r\n");
 			fw.write("#  syntax.cfg is a text file defining which sound files\r\n");
 			fw.write("#  are played by GpsMid for the various routing instructions in which order (to respect grammar)\r\n");
@@ -1017,7 +1053,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			Area a=route.createArea();
 			config.setArea(a);
 		} else {
-			JOptionPane.showMessageDialog(this,	"Please add first at least two route destinations with Alt+Click on the map"
+			JOptionPane.showMessageDialog(this,	"Please add first at least two route destinations with Alt+Click or Shift+Click on the map"
 					, "Route Corridor Calculation", JOptionPane.ERROR_MESSAGE);
 		}
 
@@ -1035,6 +1071,19 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 					"OpenStreetMap data", JOptionPane.PLAIN_MESSAGE);
 				return;
 			}
+		}
+		useLang = langList[1];
+		for (int i = 2; i < langList.length ; i++) {
+			if (languages[i].isSelected()) {
+				//System.out.println("Lang selected: " + langList[i]);
+				useLang += "," + langList[i];
+			}
+		}
+		config.setUseLang(useLang);
+		// "*" is last
+		if (languages[0].isSelected()) {
+			config.setAllLang(true);
+			useLang += ",*";
 		}
 		config.setMidletName(jtfName.getText());
 		config.setRouting(jtfRouting.getText());

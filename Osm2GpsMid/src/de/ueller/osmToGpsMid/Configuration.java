@@ -1082,6 +1082,10 @@ public class Configuration {
 			useLang = lang;
 		}
 
+		public void setAllLang(boolean flag) {
+			allLang = flag;
+		}
+
 		public String getUseLangName() {
 			return useLangName;
 		}
