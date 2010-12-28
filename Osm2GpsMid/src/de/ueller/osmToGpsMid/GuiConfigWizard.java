@@ -849,7 +849,20 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 				jcbProperties.addItem(propName);
 				jcbProperties.setSelectedItem(propName);
 				jcbEditing.setSelected(config.enableEditingSupport);
-				// FIXME set desired languages
+				// Set desired languages
+				String propLang[] = config.getUseLang().split("[;,]", 200);
+				for (int i = 2; i < languages.length ; i++) {
+					languages[i].setSelected(false);
+					for (int j = 0; j < propLang.length ; j++) {
+						//System.out.println ("Comparing strings: " + propLang[j] + " " + langList[i]);
+						if (propLang[j].equals(langList[i])) {
+							languages[i].setSelected(true);
+						}
+						if (propLang[j].equals("*")) {
+							languages[0].setSelected(true);
+						}
+					}
+				}
 			} catch (IOException ioe) {
 				JOptionPane.showMessageDialog(this,
 						"Failed to load properties file. Error is: "
