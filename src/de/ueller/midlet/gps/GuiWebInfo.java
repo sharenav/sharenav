@@ -33,20 +33,27 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 
 	public GuiWebInfo(GpsMidDisplayable parent, Position pos, PaintContext pc) {
 		super(Locale.get("guiwebinfo.ContactWebOrPhone")/*Contact by web or phone*/, List.IMPLICIT);
+		//if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_CONTACT_WEB_OR_PHONE)) { }
 		actualWay = pc.actualWay;
 		trace = pc.trace;
 		mParent = parent;
 		mPos = pos;
 		//#if polish.api.online
-		this.append(Locale.get("guiwebinfo.WikipediaRSS")/*Wikipedia (RSS)*/, null);
+		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_WIKIPEDIA_RSS)) {
+			this.append(Locale.get("guiwebinfo.WikipediaRSS")/*Wikipedia (RSS)*/, null);
+		}
 		//this.append("Wikipedia (Web)", null);
-		this.append(Locale.get("guiwebinfo.Weather")/*Weather*/, null);
-		this.append(Locale.get("guiwebinfo.GeoHack")/*GeoHack*/, null);
+		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_WEATHER)) {
+			this.append(Locale.get("guiwebinfo.Weather")/*Weather*/, null);
+		}
+		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_GEOHACK)) {
+			this.append(Locale.get("guiwebinfo.GeoHack")/*GeoHack*/, null);
+		}
 		//#endif
-		if (Legend.enableUrlTags) {
+		if (Legend.enableUrlTags && Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_WEBSITE)) {
 			this.append(Locale.get("guiwebinfo.Website")/*Website*/, null);
 		}
-		if (Legend.enablePhoneTags) {
+		if (Legend.enablePhoneTags && Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_PHONE)) {
 			this.append(Locale.get("guiwebinfo.Phone")/*Phone*/, null);
 		}
 		// FIXME add "search for name on the web" for POI names once the code to select POIS is in place

@@ -257,6 +257,20 @@ public class Configuration {
 	public final static byte CFGBIT_AUTOSAVE_DESTPOS = 96;
 	/** bit 97: indicate whether saved destination position is valid */
 	public final static byte CFGBIT_SAVED_DESTPOS_VALID = 97;
+	/** bit 98: indicate whether to show online option */
+	public final static byte CFGBIT_ONLINE_GEOHACK = 98;
+	/** bit 99: indicate whether to show online option */
+	public final static byte CFGBIT_ONLINE_WEATHER = 99;
+	/** bit 100: indicate whether to show online option */
+	public final static byte CFGBIT_ONLINE_PHONE = 100;
+	/** bit 101: indicate whether to show online option */
+	public final static byte CFGBIT_ONLINE_PHONES = 101;
+	/** bit 102: indicate whether to show online option */
+	public final static byte CFGBIT_ONLINE_WEBSITE = 102;
+	/** bit 103: indicate whether to show online option */
+	public final static byte CFGBIT_ONLINE_WEBSITES = 103;
+	/** bit 104: indicate whether to show online option */
+	public final static byte CFGBIT_ONLINE_WIKIPEDIA_RSS = 104;
 	
 	/**
 	 * These are the database record IDs for each configuration option

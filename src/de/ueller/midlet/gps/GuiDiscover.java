@@ -65,6 +65,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		//#if polish.api.osm-editing
 		Locale.get("guidiscover.OSMAccount")/*OSM account*/,
 		//#endif
+		Locale.get("guidiscover.OnlineSetup")/*Online setup*/,
 		//#if polish.api.fileconnection
 		Locale.get("guidiscover.SaveConfig")/*Save config*/, 
 		Locale.get("guidiscover.LoadConfig")/*Load config*/
@@ -89,16 +90,20 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	protected static final int MENU_ITEM_DEBUG_OPT = 8;
 	protected static final int MENU_ITEM_KEYS_OPT = 9;
 	protected static final int MENU_ITEM_OPENCELLID_OPT = 10;
+	protected static final int MENU_ITEM_ONLINE_OPT = 11;
 	//#if polish.api.osm-editing
-	protected static final int MENU_ITEM_OSM_OPT = 11;
+	protected static final int MENU_ITEM_OSM_OPT = 12;
+	protected static final int MENU_ITEM_SAVE_CONFIG = 13;
+	protected static final int MENU_ITEM_LOAD_CONFIG = 14;
+	//#else
 	protected static final int MENU_ITEM_SAVE_CONFIG = 12;
 	protected static final int MENU_ITEM_LOAD_CONFIG = 13;
-	//#else
-	protected static final int MENU_ITEM_SAVE_CONFIG = 11;
-	protected static final int MENU_ITEM_LOAD_CONFIG = 12;
 	//#endif
 
 	private int numLangDifference = 0;
+
+	private String savedLang = null;
+	private String langToAdd = null;
 
 	private static final String[] empty = {};
 
@@ -156,6 +161,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	//#if polish.api.osm-editing
 	private Form					menuOsmAccountOptions;
 	//#endif
+	private Form					menuOnlineOptions;
 	
 	private Form					menuOpencellidOptions;
 
@@ -183,6 +189,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	private final static int		STATE_SAVE_CONFIG = 14;
 	private final static int		STATE_URL_ENTER_GPS = 15;
 	private final static int		STATE_URL_ENTER_GPX = 16;
+	private final static int		STATE_ONLINE_OPT = 17;
 	
 	private Vector urlList;
 	private Vector friendlyName;
@@ -213,6 +220,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	private ChoiceGroup uiLangGroup;
 	private ChoiceGroup naviLangGroup;
 	private ChoiceGroup onlineLangGroup;
+	private ChoiceGroup onlineOptionGroup;
 	private ChoiceGroup directionOpts;
 	private ChoiceGroup renderOpts;
 	private ChoiceGroup visualOpts;
@@ -440,6 +448,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		}
 		boolean addSelectedUiLang = false;
 		String selectedUiLang = Configuration.getUiLang();
+		savedLang = selectedUiLang;
 		if (!selectedUiLang.equals("") && !selectedUiLang.equals("devdefault")) {
 			addSelectedUiLang = true;
 		}
@@ -471,6 +480,11 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 			uiLangGroup = new ChoiceGroup(Locale.get("guidiscover.Language")/*Language*/, Choice.EXCLUSIVE, uiLang, null);
 			menuDisplayOptions.append(uiLangGroup);
 		}
+		addLang = new TextField(Locale.get("guidiscover.addLang")/*Add language with 2-letter code*/,
+					  Configuration.getUiLang(), 256, TextField.ANY);
+		menuDisplayOptions.append(addLang);
+//#if 0
+		/* move these to another menu, advanced or i18n */
 		if (Legend.numNaviLang  + numLangDifference > 1) {
 			String [] naviLang = new String[Legend.numNaviLang + numLangDifference];
 			for (int i = 0; i < Legend.numNaviLang; i++) {
@@ -485,22 +499,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 			naviLangGroup = new ChoiceGroup(Locale.get("guidiscover.SoundNavilanguage")/*Sound/Navi language*/, Choice.EXCLUSIVE, naviLang, null);
 			menuDisplayOptions.append(naviLangGroup);
 		}
-		if (Legend.numOnlineLang + numLangDifference > 1) {
-			String [] onlineLang = new String[Legend.numOnlineLang + numLangDifference];
-			for (int i = 0; i < Legend.numOnlineLang; i++) {
-				if (i + numLangDifference >= 0) {
-					onlineLang[i + numLangDifference] = Legend.onlineLangName[i];
-				}
-				if (parent.localeLang != null && Legend.onlineLang[i].equalsIgnoreCase("devdefault")) {
-					onlineLang[i] = Locale.get("guidiscover.devicedefault")/*Device default*/ +
-						" (" + System.getProperty("microedition.locale").substring(0, 2) + ")";
-				}
-			}
-			onlineLangGroup = new ChoiceGroup(Locale.get("guidiscover.OnlineLanguage")/*Online language*/, Choice.EXCLUSIVE, onlineLang, null);
-			menuDisplayOptions.append(onlineLangGroup);
-		}
 		// FIXME add dialogue for wikipedia & street name language switch,
 		// maybe make a submenu or a separate language menu
+//#endif
 		String [] nightMode = new String[2];
 		nightMode[0] = Locale.get("guidiscover.DayMode")/*Day Mode*/;
 		nightMode[1] = Locale.get("guidiscover.NightMode")/*Night Mode*/;
@@ -608,9 +609,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				Choice.MULTIPLE, mapInfos, null);
 		menuDisplayOptions.append(mapInfoOpts);
 				
-		addLang = new TextField(Locale.get("guidiscover.addLang")/*Add language with 2-letter code*/,
-					  Configuration.getUiLang(), 256, TextField.ANY);
-		menuDisplayOptions.append(addLang);
 		menuDisplayOptions.setCommandListener(this);
 	}
 	
@@ -633,6 +631,65 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		
 	}
 	//#endif
+	private void initOnlineOptions() {
+		menuOnlineOptions = new Form(Locale.get("guidiscover.OnlineOptions")/*Online options*/);
+
+		int langNum = 0;
+		if (Legend.numOnlineLang + numLangDifference > 1) {
+			String [] onlineLang = new String[Legend.numOnlineLang + numLangDifference];
+			for (int i = 0; i < Legend.numOnlineLang; i++) {
+				if (i + numLangDifference >= 0) {
+					onlineLang[i + numLangDifference] = Legend.onlineLangName[i];
+				}
+				if (parent.localeLang != null && Legend.onlineLang[i].equalsIgnoreCase("devdefault")) {
+					onlineLang[i] = Locale.get("guidiscover.devicedefault")/*Device default*/ +
+						" (" + System.getProperty("microedition.locale").substring(0, 2) + ")";
+				}
+			}
+			onlineLangGroup = new ChoiceGroup(Locale.get("guidiscover.OnlineLanguage")/*Online language*/, Choice.EXCLUSIVE, onlineLang, null);
+			menuOnlineOptions.append(onlineLangGroup);
+		}
+
+		if (Legend.numOnlineLang + numLangDifference > 1) {
+			String lang = Configuration.getOnlineLang();
+			for (int i = 0; i < Legend.numOnlineLang; i++) {
+				if (i + numLangDifference >= 0 && Legend.onlineLang[i].equalsIgnoreCase(lang)) {
+					langNum = i + numLangDifference;
+				}
+			}
+			onlineLangGroup.setSelectedIndex( langNum, true);
+		}
+
+		String [] onlineSetup = { 
+			Locale.get("guiwebinfo.GeoHack"),
+			Locale.get("guiwebinfo.Weather"),
+			Locale.get("guiwebinfo.Phone"),
+			Locale.get("guiwebinfo.Phones"),
+			Locale.get("guiwebinfo.Website"),
+			Locale.get("guiwebinfo.Websites"),
+			Locale.get("guiwebinfo.WikipediaRSS")
+		};
+		onlineOptionGroup = new ChoiceGroup(Locale.get("guidiscover.OnlineSetup")/*Online function setup*/, Choice.MULTIPLE, onlineSetup, null);
+		menuOnlineOptions.append(onlineOptionGroup);
+
+		onlineOptionGroup.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_GEOHACK));
+
+		onlineOptionGroup.setSelectedIndex(1, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_WEATHER));
+
+		onlineOptionGroup.setSelectedIndex(2, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_PHONE));
+
+		onlineOptionGroup.setSelectedIndex(3, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_PHONES));
+
+		onlineOptionGroup.setSelectedIndex(4, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_WEBSITE));
+
+		onlineOptionGroup.setSelectedIndex(5, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_WEBSITES));
+
+		onlineOptionGroup.setSelectedIndex(6, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_WIKIPEDIA_RSS));
+
+		menuOnlineOptions.addCommand(BACK_CMD);
+		menuOnlineOptions.addCommand(OK_CMD);
+		menuOnlineOptions.setCommandListener(this);
+	}
 
 	private void initOpencellidOptions() {
 		//Prepare Debug selection menu
@@ -876,7 +933,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 			case STATE_DISPOPT:
 				String uiLang = null;
 				String uiLangUse = null;
-				String langToAdd = null;
 				if (!addLang.getString().equalsIgnoreCase(Configuration.getUiLang())) {
 					langToAdd = addLang.getString().toLowerCase();
 					if (langToAdd.equals("")) {
@@ -905,6 +961,10 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 					try {
 						Locale.loadTranslations( "/" + uiLangUse + ".loc" );
 					} catch (IOException ioe) {
+						
+						logger.error(Locale.get("guidiscover.LangNotFound")/*Couldn't set language to */ + uiLangUse);
+						uiLangUse = savedLang;
+						uiLang = savedLang;
 						System.out.println("Couldn't open translations file");
 					}
 					if (!uiLang.equals(Configuration.getUiLang()) || uiLang.equalsIgnoreCase("devdefault")) { 
@@ -916,6 +976,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 					Configuration.setWikipediaLang(uiLang);
 					Configuration.setNamesOnMapLang(uiLang);
 				}
+//#if 0
+				/* move these to another menu, advanced or i18n */
 				String naviLang = null;				
 				if (langToAdd != null) {
 					naviLang = langToAdd;
@@ -1006,15 +1068,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 					// ("Changing language", "Selecting " + soundDir, 3000);
 					//}
 				}
-				String onlineLang = null;
-				if (langToAdd != null) {
-					onlineLang = langToAdd;
-				} else if (Legend.numOnlineLang + numLangDifference > 1) {
-					onlineLang = Legend.onlineLang[onlineLangGroup.getSelectedIndex()-numLangDifference];
-				}
-				if (onlineLang != null) {
-					Configuration.setOnlineLang(onlineLang);
-				}
+//#endif
 				boolean nightMode = (nightModeGroup.getSelectedIndex() == 1);
 				
 				if (nightMode != Configuration.getCfgBitState(Configuration.CFGBIT_NIGHT_MODE) ) {
@@ -1154,6 +1208,34 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				this.show();
 				break;
 			//#endif
+			case STATE_ONLINE_OPT:
+				String onlineLang = null;
+				if (langToAdd != null) {
+					onlineLang = langToAdd;
+				} else if (Legend.numOnlineLang + numLangDifference > 1) {
+					onlineLang = Legend.onlineLang[onlineLangGroup.getSelectedIndex()-numLangDifference];
+				}
+				if (onlineLang != null) {
+					Configuration.setOnlineLang(onlineLang);
+				}
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ONLINE_GEOHACK,
+						onlineOptionGroup.isSelected(0));
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ONLINE_WEATHER,
+						onlineOptionGroup.isSelected(1));
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ONLINE_PHONE,
+						onlineOptionGroup.isSelected(2));
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ONLINE_PHONES,
+						onlineOptionGroup.isSelected(3));
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ONLINE_WEBSITE,
+						onlineOptionGroup.isSelected(4));
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ONLINE_WEBSITES,
+						onlineOptionGroup.isSelected(5));
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ONLINE_WIKIPEDIA_RSS,
+						onlineOptionGroup.isSelected(6));
+
+				state = STATE_ROOT;
+				this.show();
+				break;
 			case STATE_OPENCELLID_OPT:
 				//Configuration.setOpencellidApikey(tfOpencellidApikey.getString());
 				boolean[] opencellidFlags = new boolean[2];
@@ -1284,6 +1366,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 					}
 					uiLangGroup.setSelectedIndex( langNum, true);
 				}
+//#if 0
+				/* disable for now, maybe later add in another menu, advanced or i18n */
 				langNum = 0;
 				if (Legend.numNaviLang  + numLangDifference > 1) {
 					String lang = Configuration.getNaviLang();
@@ -1294,16 +1378,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 					}
 					naviLangGroup.setSelectedIndex( langNum, true);
 				}
-				langNum = 0;
-				if (Legend.numOnlineLang + numLangDifference > 1) {
-					String lang = Configuration.getOnlineLang();
-					for (int i = 0; i < Legend.numOnlineLang; i++) {
-						if (i + numLangDifference >= 0 && Legend.onlineLang[i].equalsIgnoreCase(lang)) {
-							langNum = i + numLangDifference;
-						}
-					}
-					onlineLangGroup.setSelectedIndex( langNum, true);
-				}
+//#endif
 				nightModeGroup.setSelectedIndex( Configuration.getCfgBitSavedState(Configuration.CFGBIT_NIGHT_MODE) ? 1 : 0, true);
 				touchScreenLayoutGroup.setSelectedIndex( Configuration.getCfgBitSavedState(Configuration.CFGBIT_DISPLAY_SYMMETRIC_TOUCHZONES) ? 1 : 0, true);
 				rotationGroup.setSelectedIndex(Configuration.getProjDefault(), true);
@@ -1409,11 +1484,18 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				GuiKeyShortcuts gks = new GuiKeyShortcuts(this);
 				gks.show();
 				break;
+			case MENU_ITEM_ONLINE_OPT:
+				/**
+				 * Online options (language, which services enabled)
+				 */
+				initOnlineOptions();
+				GpsMid.getInstance().show(menuOnlineOptions);
+				state = STATE_ONLINE_OPT;
+				break;
 			//#if polish.api.osm-editing
 			case MENU_ITEM_OSM_OPT:
 				/**
-				 * Display the current Keyboard mappings for the
-				 * Map screen
+				 * OpenStreetMap account information
 				 */
 				initOSMaccountOptions();
 				GpsMid.getInstance().show(menuOsmAccountOptions);

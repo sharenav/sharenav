@@ -205,18 +205,18 @@ public class GuiSearch extends Canvas implements CommandListener,
 		addCommand(BACK_CMD);
 		addCommand(OVERVIEW_MAP_CMD);
 		addCommand(POI_CMD);
-                if (Legend.enableUrlTags) {
+                if (Legend.enableUrlTags && Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_WEBSITE)) {
 			addCommand(POI_URL_SEARCH_CMD);
 		}
-                if (Legend.enablePhoneTags) {
+                if (Legend.enablePhoneTags && Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_PHONE)) {
 			addCommand(POI_PHONE_SEARCH_CMD);
 		}
 		addCommand(FULLT_CMD);
 		addCommand(SORT_CMD);
-		if (Legend.enableUrlTags) {
+		if (Legend.enableUrlTags && Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_WEBSITE)) {
 			addCommand(URL_CMD);
 		}
-		if (Legend.enablePhoneTags) {
+		if (Legend.enablePhoneTags && Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_PHONE)) {
 			addCommand(PHONE_CMD);
 		}
 		
