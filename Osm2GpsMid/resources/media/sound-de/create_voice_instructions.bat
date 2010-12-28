@@ -43,7 +43,7 @@ espeak -a180 -wam_ziel.wav -z -p79 -s200 -vde+%voice% -x -k5 "am Ziel angekommen
 espeak -a180 -wrichtung_pruefen.wav -z -p79 -s200 -vde+%voice% -x -k5 "Stimmt die Richtung?"
 espeak -a180 -wneue_route.wav -z -p79 -s180 -vde+%voice% -x -k5 "Die Route wird neu berechnet."
 espeak -a180 -wgeschwindigkeit.wav -z -p79 -s200 -vde+%voice% -x -k5 "Bitte nicht zu schnell!"
-espeak -a180 -whalten_Sie_sich.wav -z -p79 -s200 -vde+%voice% -x -k5 "halten Sie sich"
+espeak -a180 -whalten_sie_sich.wav -z -p79 -s200 -vde+%voice% -x -k5 "halten Sie sich"
 espeak -a180 -wfolge_strasse.wav -z -p79 -s200 -vde+%voice% -x -k5 "Dem Strassenverlauf folgen"
 espeak -a180 -wueber_platz.wav -z -p79 -s150 -vde+%voice% -x -k5 "ueber den Platz"
 espeak -a180 -wplatz_verlassen.wav -z -p79 -s150 -vde+%voice% -x -k5 "den Platz verlassen"
