@@ -1072,13 +1072,17 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 				return;
 			}
 		}
+		String soundFiles = "sound";
 		useLang = langList[1];
 		for (int i = 2; i < langList.length ; i++) {
 			if (languages[i].isSelected()) {
 				//System.out.println("Lang selected: " + langList[i]);
 				useLang += "," + langList[i];
+				// existence of sound dir will be checked later
+				soundFiles += ",sound-" + langList[i];
 			}
 		}
+		config.setSoundFiles(soundFiles);
 		config.setUseLang(useLang);
 		// "*" is last
 		if (languages[0].isSelected()) {
