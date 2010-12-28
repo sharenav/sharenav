@@ -63,7 +63,7 @@ public class GuiSetupGui extends Form implements CommandListener {
 			String [] other = new String[1];
 			other[0] = "Predefined way points";
 			otherOpts = new ChoiceGroup("Other options:", Choice.MULTIPLE, other, null);
-			imenuOpts.setSelectedIndex(0,
+			otherOpts.setSelectedIndex(0,
 					Configuration.getCfgBitSavedState(Configuration.CFGBIT_WAYPT_OFFER_PREDEF));
 			append(otherOpts);
 			
