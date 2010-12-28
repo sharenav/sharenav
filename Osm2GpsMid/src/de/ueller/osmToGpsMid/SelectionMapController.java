@@ -81,7 +81,7 @@ public class SelectionMapController extends JMapController implements
 			Coordinate clickPoint = map.getPosition(e.getPoint());
 			mSelListener.pointDoubleClicked((float)clickPoint.getLat(), 
 					(float)clickPoint.getLon());
-		} else if (e.getClickCount() == 1 && e.getButton() == MouseEvent.BUTTON1 && ((e.getModifiersEx() & MouseEvent.ALT_DOWN_MASK) > 0)){
+		} else if (e.getClickCount() == 1 && e.getButton() == MouseEvent.BUTTON1 && ((e.getModifiersEx() & (MouseEvent.ALT_DOWN_MASK | MouseEvent.SHIFT_DOWN_MASK)) > 0)){
 			Coordinate clickPoint = map.getPosition(e.getPoint());
 			mSelListener.addRouteDestination(clickPoint);
 			map.addMapMarker(new MapMarkerDot(clickPoint.getLat(), clickPoint.getLon()));
