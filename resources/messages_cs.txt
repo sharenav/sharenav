@@ -207,7 +207,7 @@ guidiscover.lang_ru=Ruština
 guidiscover.lang_sk=Slovenština
 guidiscover.adaptivetospeed=přispůsobuj rychlosti
 guidiscover.Airdistance=Pro pohyb bez navigace zobrazovat vzdušnou vzdálenost
-guidiscover.AirdistanceWhenRouting=Při navigování zobrazivat vzdušnou vzdálenost
+guidiscover.AirdistanceWhenRouting=Při navigování zobrazovat vzdušnou vzdálenost
 guidiscover.Altitude=Nadm. výška z GPS
 guidiscover.AlwaysRecord=Vždy zaznamenávat při více než tolik metrů mezi body cesty (0=vypnuto)
 guidiscover.apikey=apikey:
