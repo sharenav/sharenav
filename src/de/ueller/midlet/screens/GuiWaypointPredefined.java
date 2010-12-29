@@ -9,6 +9,8 @@ import java.util.Vector;
 
 import javax.microedition.lcdui.TextField;
 
+import de.enough.polish.util.Locale;
+
 import de.ueller.gps.tools.IconActionPerformer;
 import de.ueller.gps.tools.IconMenuPage;
 import de.ueller.gps.tools.IconMenuWithPagesGUI;
@@ -93,7 +95,7 @@ public class GuiWaypointPredefined extends IconMenuWithPagesGUI {
 		 */
 		public void recreateAndShowIconMenu() {
 			// TODO Can't do this here. There should be an internal solution inside
-			// IconMenuWithPagesGUI for the resize which seems to make this necessary.
+			// IconMenuWithPagesGUI for the resize (which seems to be what makes this necessary).
 		}
 	}
 	
@@ -118,7 +120,7 @@ public class GuiWaypointPredefined extends IconMenuWithPagesGUI {
 		/*  0 */ mPredefines.addElement(new WaypointTemplate("Footway %s", "footway %s"));
 		/*  # */ mPredefines.addElement(new WaypointTemplate("Path %s", "path %s"));
 		
-		IconMenuPage mp = createAndAddMenuPage("Predef. waypoints", 3, 4);
+		IconMenuPage mp = createAndAddMenuPage(Locale.get("guiwaypointpre.PredefWpts")/*Predef. waypoints*/, 3, 4);
 		for (int i = 0; i < mPredefines.size(); i++) {
 			mp.createAndAddIcon(((WaypointTemplate)mPredefines.elementAt(i)).mLabel, 
 					"i_addpoi", i);
