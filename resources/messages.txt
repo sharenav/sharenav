@@ -110,9 +110,8 @@ guidiscover.LogSeverity=Log severity:
 guidiscover.LogTo=Log To: 
 guidiscover.manualrules=manual rules:
 guidiscover.MapProjection=Map Projection
-guidiscover.MapSource=Map source
-guidiscover.MapSource=Map source:
-guidiscover.MapZipFileOrDirectory=Map ZipFile or Directory
+guidiscover.MapSource=Map Source
+guidiscover.MapZipFileOrDirectory=Map Zipfile or Directory
 guidiscover.metricunits=metric units
 guidiscover.MinimumMeters=Minimum meters between trackpoints (0=disabled)
 guidiscover.MinimumSeconds=Minimum seconds between trackpoints (0=disabled)
