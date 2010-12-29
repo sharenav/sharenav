@@ -21,7 +21,7 @@ do
      /<\/pre>/ { pr = 0 } 
      /=section=/ { pr = 0 } 
      { if (pr) {
-   if (substr ($0, 1, 1) == " ") { print substr ($0, 2) } else { if ($0 != "") { print; } } } }
+   if (substr ($0, 1, 1) == " ") { print substr ($0, 2) } else { if ($0 != "" && substr($0, 0, 1) != "#") { print; } } } }
      /section=messages;/ { pr = 1 } 
      /<pre>/ { pr = 1 } 
      ' | sed 's/&amp;/\&/g'| sed 's/&lt;/\</g' | sed 's/&gt;/\>/g' > $path/messages_$l.txt
