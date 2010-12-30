@@ -1383,7 +1383,7 @@ public class Configuration {
 					throw new IOException();
 				}
 			} catch (IOException ioe) {
-				throw new IOException(Locale.get("configuration.ExFNF1")
+				throw new IOException(Locale.get("configuration.ExFNFCouldnt")
 						/*Could not find file */ + name +
 						Locale.get("configuration.ExFNFFilesys")/* in file system.*/);					
 			}
@@ -1398,7 +1398,7 @@ public class Configuration {
 			if (is == null)	{
 				// getInputStream() simply returns null if file not found,
 				// but some callers of getMapResource() only handle IOEs.
-				throw new IOException(Locale.get("configuration.ExFNF1")
+				throw new IOException(Locale.get("configuration.ExFNFCouldnt")
 						/*Could not find file */ + name +
 						Locale.get("configuration.ExFNFZip")/* in ZIP.*/);					
 			}
