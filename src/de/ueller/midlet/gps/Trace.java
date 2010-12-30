@@ -2469,10 +2469,11 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				}
 				gpsRecenterInvalid = false;
 				gpsRecenterStale = true;
-			} else if (pos.type == Position.TYPE_GPS || pos.type == Position.TYPE_CELLID || pos.type == Position.TYPE_MANUAL) {
-				gpsRecenterInvalid = false;
-				gpsRecenterStale = false;
 			}
+		}
+		if (pos.type == Position.TYPE_GPS || pos.type == Position.TYPE_CELLID || pos.type == Position.TYPE_MANUAL) {
+			gpsRecenterInvalid = false;
+			gpsRecenterStale = false;
 		}
 		if (gpsRecenter) {
 			center.setLatLonDeg(pos.latitude, pos.longitude);
