@@ -7,9 +7,10 @@ package de.ueller.midlet.gps;
 
 import javax.microedition.lcdui.*;
 
+import de.enough.polish.util.Locale;
+
 import de.ueller.gps.data.Configuration;
 
-import de.enough.polish.util.Locale;
 
 
 public class GuiSetupGui extends Form implements CommandListener {
@@ -56,13 +57,13 @@ public class GuiSetupGui extends Form implements CommandListener {
 
 			String [] search = new String[1];
 			search[0] = Locale.get("guisetupgui.numberkeypad")/*Enable virtual keypad*/;
-			searchSettings = new ChoiceGroup(Locale.get("guisetupgui.searchopts")/*Search options*/, Choice.MULTIPLE, search, null);
+			searchSettings = new ChoiceGroup(Locale.get("guisetupgui.searchopts")/*Search options:*/, Choice.MULTIPLE, search, null);
 			searchSettings.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD));
 			append(searchSettings);
 			
 			String [] other = new String[1];
-			other[0] = "Predefined way points";
-			otherOpts = new ChoiceGroup("Other options:", Choice.MULTIPLE, other, null);
+			other[0] = Locale.get("guisetupgui.PredefWpts")/*Predefined way points*/;
+			otherOpts = new ChoiceGroup(Locale.get("guisetupgui.OtherOpt")/*Other options:*/, Choice.MULTIPLE, other, null);
 			otherOpts.setSelectedIndex(0,
 					Configuration.getCfgBitSavedState(Configuration.CFGBIT_WAYPT_OFFER_PREDEF));
 			append(otherOpts);

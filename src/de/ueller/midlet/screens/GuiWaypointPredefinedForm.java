@@ -11,6 +11,8 @@ import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.TextField;
 
+import de.enough.polish.util.Locale;
+
 import de.ueller.gps.data.Configuration;
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.GpsMidDisplayable;
@@ -21,11 +23,11 @@ import de.ueller.midlet.gps.data.PositionMark;
 
 public class GuiWaypointPredefinedForm extends Form implements CommandListener {
 	private TextField mFldInput;
-	private static final Command mSaveCmd = new Command("Save", Command.OK, 1);
-	private static final Command mBackCmd = new Command("Back", Command.BACK, 2);
+	private static final Command mSaveCmd = new Command(Locale.get("generic.Save"), Command.OK, 1);
+	private static final Command mBackCmd = new Command(Locale.get("generic.Back"), Command.BACK, 2);
 	
-	private Trace mTrace;
-	private GuiWaypointPredefined mParent;
+	private final Trace mTrace;
+	private final GuiWaypointPredefined mParent;
 	private String mWayptText;
 	private int mType;
 	private PositionMark mWaypt;
@@ -44,7 +46,7 @@ public class GuiWaypointPredefinedForm extends Form implements CommandListener {
 	}
 	
 	private void jbInit() throws Exception {
-		mFldInput = new TextField("Input:", "", 
+		mFldInput = new TextField(Locale.get("guiwaypointpre.Input")/*Input:*/, "", 
 				Configuration.MAX_WAYPOINTNAME_LENGTH, TextField.ANY);
 		
 		// Set up this Displayable to listen to command events

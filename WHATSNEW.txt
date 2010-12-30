@@ -1,101 +1,111 @@
 GpsMid 0.6.4
     *** Map Screen ***
-       - Greatly improved area rendering:
-	 - J2ME mobiles can only draw triangles, so for rendering filled polygons they need to be split into triangles.
-	   This is now done by Osm2GpsMid resulting in faster rendering in GpsMid
-	 - Large Areas are split into smaller areas resulting in faster area rendering as well
-	 - Multipolygon support (OSM inner / outer relations)
-       - Additional map views:
-	 - Eagle: GpsMid's great 3D View (experimental)
-	 - Moving Enhanced: rotated view enhanced to see more ahead
-       - No. of sats and recorded points now have a background box.
-       - A base zoom level can be entered in setup, that will be used as base for auto zoom
+    - Greatly improved area rendering:
+      J2ME mobiles can only draw triangles, so for rendering, filled polygons need 
+      to be split into triangles.
+      This is now done by Osm2GpsMid resulting in faster rendering in GpsMid.
+    - Large Areas are split into smaller areas resulting in faster area rendering as well.
+    - Multipolygon support (OSM inner / outer relations)
+    - Additional map views:
+      - Eagle: GpsMid's great 3D View (experimental)
+      - Moving Enhanced: rotated view enhanced to see more ahead
+    - No. of sats and recorded points now have a background box.
+    - A base zoom level can be entered in setup, that will be used as base for auto zoom.
     *** Icon Menu and Touchscreen support ***
-       - Optional virtual number/text keypad in search screen
-       - Icon Menu will switch to 4x3 in landscape mode if the device informs us about its rotation 
-       - Sliding horizontally at least a quarter of the screen width switches icon menu pages
-       - Slide to the right on the Status Bar in the map screen to lock / unlock touch screen devices
-       - Icons / Tabs and Touch Controls in the map screen get highlighted when touching them  
-       - Gestures in Search results:
-	     - Double tap an entry: route to entry / use as destination
-	     - Slide horizontally at least one char height to the right: route to entry
-	     - Slide horizontally at least one char height to the left: select entry
-	     - Slide horizontally half screen width to the left: show search text field
-	     - Slide horizontally half screen width to the right: toggle sort mode
-	     - Touch the right 20% of the screen: same as * key - toggle favorites/waypoints or collapse street names
-	     - Slide vertically: scroll result list
-       - Single Tapping, double tapping and long pressing on touch controls in the Map Screen with many new different functionalities
-       - Complete Overview of Touchscreen support is at http://sourceforge.net/apps/mediawiki/gpsmid/index.php?title=Touchscreen_Layout
+    - Optional virtual number/text keypad in search screen
+    - Icon Menu will switch to 4x3 in landscape mode if the device informs us about its rotation 
+    - Sliding horizontally at least a quarter of the screen width switches icon menu pages
+    - Slide to the right on the Status Bar in the map screen to lock / unlock touch screen devices
+    - Icons / Tabs and Touch Controls in the map screen get highlighted when touching them  
+    - Gestures in Search results:
+      - Double tap an entry: route to entry / use as destination
+      - Slide horizontally at least one char height to the right: route to entry
+      - Slide horizontally at least one char height to the left: select entry
+      - Slide horizontally half screen width to the left: show search text field
+      - Slide horizontally half screen width to the right: toggle sort mode
+      - Touch the right 20% of the screen: same as * key - toggle favorites/waypoints or collapse street names
+      - Slide vertically: scroll result list
+    - Single Tapping, double tapping and long pressing on touch controls in the 
+      Map Screen with many new different functionalities
+    - Complete Overview of Touchscreen support is at 
+      http://sourceforge.net/apps/mediawiki/gpsmid/index.php?title=Touchscreen_Layout
     *** Localization for voice and route instructions ***
-	- You can now specify a text file called syntax.cfg in the sound directory.
-	  For examples of syntax.cfg extract from the Osm2GpsMid.jar with an unzip utility
-	  the directories sound and sound-de which both contain a syntax.cfg.
-	  Osm2GpsMid will include all sound files referenced in syntax.cfg
-	  into the generated midlet. (Sound file names are the sound files referenced
-	  in syntax.cfg in lower case with the extensions specified with useSounds, e.g. amr)
-	  For specifying the sound directory/directories containing the syntax.cfg
-	  use e.g. : useSoundFilesWithSyntax=sound, sound-de, sound-fi.
-	  The sound files of the specified directories are bundled into GpsMid
-	  and the directories are chooseable in Setup/Sounds & Alerts.
-
-	  GpsMid will prefer files from the specified sound directory/direcories in the file system
-	  or fall back to the files in the specified sound directory integrated into Osm2GpsMid.
-	- Only German voice and route instructions:
-	  Specify in your .properties file: useSoundFilesWithSyntax=sound-de
-	  This will include the German sound files into GpsMid        	     	   
-	- Only Finnish voice and route instructions:
-	  Specify in your .properties file: useSoundFilesWithSyntax=sound-fi
-	  This will include the Finnish sound files into GpsMid (thx jkpj)
-	- English and German eSpeak voices now sound a bit more friendly   	     	   
-     *** Localization of on-screen messages ***
-        - Translaton of many on-screen messages into Finnish, French,
-          German, Russian, Czech, Italian, Portugese, Russian and Slovak
-     *** Map Elements ***
-	- improved color for buildings
-	- add area types shop=*, leisure=pitch, landuse=farm_yard, landuse=military
-	- add POIs for shop=bicycle/organic/clothes
-	- changed colors for landuse=commercial and graveyards/cemeteries
-	- Paths with bicycle=designated / foot=designated added and drawn like footways / cycleways
-	- highways with toll flag get now drawn with a special decoration
-     *** Routing ***   
-	- If GUI is optimized for routing after selecting in the Search results "Route"
-	  or "As destination" do not move map to destination, thus the route gets calculated
-	  from the current map position to the selected search result
-        - Allow Toll Roads / Motorways. With these new options you can specify if GpsMid will route
-          using toll roads / motorways. This also reduces the maximum number of travel modes per midlet from 5 to 4.
-	- Allow to specify in Setup/Routing the seconds the examined route path gets delayed
-	  at traffic signals during calculation. The value is used only during calculation.
-	  It is NOT used for ETA calculation, which is hardcoded to 20 seconds (if traffic signals are far enough apart).
-	  Also in contrary to ETA calculation the delay is only applied if not to consecutive connections
-	  start at a traffic signal route node.
-	  Don't set this too high as it will slow down route calculation because GpsMid will examine more route paths
-	  trying to avoid the connections delayed by traffic signals and this therefore would also sometimes result in strange routes.
-	- Improvements on when a bearing instruction has to be given and when not
+    - You can now specify a text file called syntax.cfg in the sound directory.
+      For examples of syntax.cfg extract from the Osm2GpsMid.jar with an unzip utility
+      the directories sound and sound-de which both contain a syntax.cfg.
+      Osm2GpsMid will include all sound files referenced in syntax.cfg
+      into the generated midlet. (Sound file names are the sound files referenced
+      in syntax.cfg in lower case with the extensions specified with useSounds, e.g. amr)
+      For specifying the sound directory/directories containing the syntax.cfg
+      use e.g. : useSoundFilesWithSyntax=sound, sound-de, sound-fi.
+      The sound files of the specified directories are bundled into GpsMid
+      and the directories are choosable in Setup/Sounds & Alerts.
+      GpsMid will prefer files from the specified sound directory/directories in the file system
+      or fall back to the files in the specified sound directory integrated into Osm2GpsMid.
+    - Only German voice and route instructions:
+      Specify in your .properties file: useSoundFilesWithSyntax=sound-de
+      This will include the German sound files into GpsMid        	     	   
+    - Only Finnish voice and route instructions:
+      Specify in your .properties file: useSoundFilesWithSyntax=sound-fi
+      This will include the Finnish sound files into GpsMid (thx jkpj)
+    - English and German eSpeak voices now sound a bit more friendly   	     	   
+    *** Localization of on-screen messages ***
+    - Translaton of some on-screen messages into Finnish and German, to a smaller
+      degree to French, Russian, Czech, Italian, Portugese, Russian and Slovak
+    *** Map Elements ***
+    - Improved color for buildings
+    - Added area types shop=*, leisure=pitch, landuse=farm_yard, landuse=military
+	- Added POIs for shop=bicycle/organic/clothes, guest house, ticket machine and more
+    - Changed colors for landuse=commercial and graveyards/cemeteries
+    - Paths with bicycle=designated / foot=designated added and drawn like footways / cycleways
+    - Highways with toll flag get now drawn with a special decoration
+    *** Routing ***   
+    - If GUI is optimized for routing, after selecting in the Search results "Route"
+      or "As destination", do not move map to destination, thus the route gets calculated
+      from the current map position to the selected search result.
+    - Allow Toll Roads / Motorways. With these new options you can specify if GpsMid will 
+      route using toll roads / motorways. This also reduces the maximum number of 
+      travel modes per midlet from 5 to 4.
+    - Allow to specify in Setup/Routing the seconds the examined route path gets delayed
+      at traffic signals during calculation. The value is used only during calculation.
+      It is NOT used for ETA calculation, which is hardcoded to 20 seconds (if traffic 
+      signals are far enough apart). Also in contrary to ETA calculation, the delay is 
+      only applied if not to consecutive connections start at a traffic signal route node.
+      Don't set this too high as it will slow down route calculation because GpsMid will 
+      examine more route paths trying to avoid the connections delayed by traffic signals 
+      and this therefore would also sometimes result in strange routes.
+    - Improvements on when a bearing instruction has to be given and when not.
     *** GPS and other location producers ***
-       - Show NoFix with JSR-179 if no fix is available (thx djinnn)
-       - Show number of satellites with JSR-179 if device supports it (thx djinnn)
-       - fix a problem with the NMEA sentences generated by HTC Touch Diamond 2 with JavaFX JVM
-       - Digital compass support, works currently on Android and on Nokia S60 (compass-equipped) phones with cell id helper
-       - keypress support for cell id location
+    - Show NoFix with JSR-179 if no fix is available (thx djinnn)
+    - Show number of satellites with JSR-179 if device supports it (thx djinnn)
+    - Fixed a problem with the NMEA sentences generated by HTC Touch Diamond 2 with JavaFX JVM
+    - Digital compass support, works currently on Android and on Nokia S60 
+      (compass-equipped) phones with CellID helper
+    - Keypress support for CellID location
     *** URL and Phone number support ***
-       - GpsMid can now open websites and call phone numbers associated with POIs and Ways in search results
-	 and on the map (ways only on the map for now). W signifies Website and P signifies Phone.
-	 To configure for use, add useUrlTags=true and usePhoneTags=true to .properties file
+    - GpsMid can now open websites and call phone numbers associated with POIs and Ways in search results
+      and on the map (ways only on the map for now). W signifies Website and P signifies Phone.
+      To configure for use, add useUrlTags=true and usePhoneTags=true to .properties file
     *** New platform: Android support ***
-       - external zip file or directory maps are the simple & recommended way to use GpsMid on android
-       - bundling can be used with scripts in tools
-	  - most stuff works
-       - voice rec&photos don't work yet
+    - External zip file or directory maps are the simple & recommended way to use GpsMid on Android
+    - Bundling can be used with scripts in tools
+	- Most stuff works, voice recording & camera don't work yet
     *** Others ***
-       - The Setup option "backlight only in map screen" has been recycled to "backlight only as keep-alive"
-	 which only triggers the backlight every 60 s to ensure continuous screen updates etc.
-	 on some phones while saving battery compared to keeping the backlight on all the time.
-       - Compass directions now have the correct names according to http://en.wikipedia.org/wiki/Cardinal_direction now (thx billi25)
-       - Fix a recordstore error that caused settings to be not consistent on some mobiles (thx jkpj)
-       - Fix NullPointerException when accesing tracks on corrupt record stores preventing to access readable tracks (thx Petr Dlouh�)
-       - Winter speed limits actually trigger an alert now (thx jkpj)
-       - Search results are now refreshed with a new strategy until all null strings are resolved to names
-       - Many more small improvements and bugfixes.
+    - Way point list can be sorted by time, distance or alphabetically.
+    - Menu to quickly enter predefined way point texts. These are hardcoded but in the
+      future it is planned to read them from a file.
+    - The Setup option "backlight only in map screen" has been recycled to 
+      "backlight only as keep-alive" which only triggers the backlight every 60 s to 
+      ensure continuous screen updates etc. on some phones while saving battery 
+      compared to keeping the backlight on all the time.
+    - Compass directions now have the correct names according to 
+      http://en.wikipedia.org/wiki/Cardinal_direction now (thx billi25)
+    - Fix a recordstore error that caused settings to be not consistent on some mobiles (thx jkpj)
+    - Fix NullPointerException when accessing tracks on corrupt record stores 
+      preventing to access readable tracks (thx Petr Dlouh�)
+    - Winter speed limits actually trigger an alert now (thx jkpj)
+    - Search results are now refreshed with a new strategy until all null strings are resolved to names
+    - Many more small improvements and bugfixes.
 
 GpsMid 0.6
     *** Usability ***
