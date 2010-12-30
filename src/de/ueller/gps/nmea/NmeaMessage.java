@@ -207,7 +207,8 @@ public class NmeaMessage {
 				pos.speed = speed;
 				pos.course = head;
 				pos.pdop = pdop;
-				
+				pos.type = Position.TYPE_GPS;
+
 				// Get Date from Calendar
 				dateDecode = cal.getTime();
 				// Get milliSecs since 01-Jan-1970 from Date
