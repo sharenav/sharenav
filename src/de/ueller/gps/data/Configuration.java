@@ -1346,12 +1346,8 @@ public class Configuration {
 	public static InputStream getMapResource(String name) throws IOException {
 		InputStream is = null;
 		if (mapFromJar
-			||
-			(
-				Configuration.getCfgBitSavedState(Configuration.CFGBIT_PREFER_INTERNAL_PNGS)
-					&&
-				name.toLowerCase().endsWith(".png")
-			)
+			|| (Configuration.getCfgBitSavedState(Configuration.CFGBIT_PREFER_INTERNAL_PNGS)
+				&& name.toLowerCase().endsWith(".png"))
 		) {
 			//#if polish.android
 			//#debug debug
@@ -1365,38 +1361,53 @@ public class Configuration {
 			if (is != null) {
 				return is;
 			} else if (!Configuration.getCfgBitSavedState(Configuration.CFGBIT_PREFER_INTERNAL_PNGS)) {
-				throw new IOException(Locale.get("configuration.ExFNF1")/*Could not find file*/ + name +
-						Locale.get("configuration.ExFNF2")/* in JAR*/);
+				// getResourceAsStream() simply returns null on SE JP-5 phones if 
+				// file not found, but some callers of getMapResource() only handle IOEs.
+				throw new IOException(Locale.get("configuration.ExFNFCouldnt")
+						/*Could not find file */ + name +
+						Locale.get("configuration.ExFNFJar")/* in JAR.*/);
 			}
 		}
 		//#if polish.api.fileconnection
-		try {
-			if (mapFileUrl.endsWith("/")) {
+		if (mapFileUrl.endsWith("/")) {
+			try {
 				// directory mode
 				name = mapFileUrl + name.substring(1);
 				//#debug debug
 				logger.debug("Opening file from filesystem: " + name);
 				FileConnection fc = (FileConnection) Connector.open(name, Connector.READ);
 				is = fc.openInputStream();
-			}
-			else {
-				// zipfile mode
-				if (mapZipFile == null) {
-					mapZipFile = new ZipFile(mapFileUrl, -1);
+				if (is == null)	{
+					// This is just to safeguard against the case that an implementation
+					// might return null instead of throwing an IOE, see above.
+					throw new IOException();
 				}
-				//#debug debug
-				logger.debug("Opening file from zip-file: " + name);
-				is = mapZipFile.getInputStream(mapZipFile.getEntry(name.substring(1)));
+			} catch (IOException ioe) {
+				throw new IOException(Locale.get("configuration.ExFNF1")
+						/*Could not find file */ + name +
+						Locale.get("configuration.ExFNFFilesys")/* in file system.*/);					
 			}
-		} catch (Exception e) {
-			//#debug info
-			logger.info("Failed to open: " + name);
-			throw new IOException(e.getMessage());
+		} else {
+			// zipfile mode
+			if (mapZipFile == null) {
+				mapZipFile = new ZipFile(mapFileUrl, -1);
+			}
+			//#debug debug
+			logger.debug("Opening file from zip-file: " + name);
+			is = mapZipFile.getInputStream(mapZipFile.getEntry(name.substring(1)));
+			if (is == null)	{
+				// getInputStream() simply returns null if file not found,
+				// but some callers of getMapResource() only handle IOEs.
+				throw new IOException(Locale.get("configuration.ExFNF1")
+						/*Could not find file */ + name +
+						Locale.get("configuration.ExFNFZip")/* in ZIP.*/);					
+			}
 		}
 		//#else
 		//This should never happen.
 		is = null;
-		logger.fatal(Locale.get("configuration.ErrorNoFS")/*Error, we don't have access to the filesystem, but our map data is supposed to be there!*/);
+		logger.fatal(Locale.get("configuration.ErrorNoFS")
+				/*Error, we don't have a filesystem API, but...*/);
 		//#endif
 
 		return is;
