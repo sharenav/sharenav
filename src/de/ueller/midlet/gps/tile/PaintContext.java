@@ -10,6 +10,7 @@ import javax.microedition.lcdui.Graphics;
 import de.ueller.gps.data.Legend;
 import de.ueller.gps.tools.intTree;
 import de.ueller.gpsMid.mapData.SingleTile;
+import de.ueller.midlet.gps.RouteInstructions;
 import de.ueller.midlet.gps.ScreenContext;
 import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.data.IntPoint;
@@ -176,7 +177,7 @@ public class PaintContext extends ScreenContext {
 //			return (int) ProjMath.getDistance(n1, n2);
 			return (int) (Math.sqrt(squareDst)/ppm);
 		} else {
-			return Integer.MAX_VALUE;
+			return RouteInstructions.DISTANCE_UNKNOWN;
 		}
 	}
 	

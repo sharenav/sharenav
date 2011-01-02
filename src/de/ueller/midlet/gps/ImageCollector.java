@@ -244,7 +244,7 @@ public class ImageCollector implements Runnable {
 							 *  otherwise this would trigger wrong route recalculations
 							*/
 							if (createPC.waysPainted != 0) {
-								if (RouteInstructions.dstToRoutePath != Integer.MAX_VALUE) {
+								if (RouteInstructions.dstToRoutePath != RouteInstructions.DISTANCE_UNKNOWN) {
 									RouteInstructions.routePathConnection = createPC.routePathConnection;
 									RouteInstructions.pathIdxInRoutePathConnection = createPC.pathIdxInRoutePathConnection;
 								}
