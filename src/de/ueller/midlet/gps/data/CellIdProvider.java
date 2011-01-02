@@ -262,9 +262,9 @@ public class CellIdProvider {
 		 * 
 		 * The LAC is needed to uniquely identify cells, but openCellID
 		 * seems to do a lookup ignoring LAC at first and only using it
-		 * if there are no results. So for retreaving Cells, not having
+		 * if there are no results. So for retrieving Cells, not having
 		 * the LAC looks ok, but we won't be able to submit new cells
-		 * with out the LAC
+		 * without the LAC
 		 */
 		lacS = System.getProperty("com.nokia.mid.lac");
 		
