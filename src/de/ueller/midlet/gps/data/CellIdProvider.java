@@ -367,25 +367,23 @@ public class CellIdProvider {
 		 * by generating one of 16 random cell-ids 
 		 */
 		Random r = new Random();
-		int rr = r.nextInt(16) + 1;
-//		System.out.println("RR: " +rr);
-		switch (rr) {
-		case 1:  return new GSMCell(0x2627,    (short) 234, (short)  33, 0x0133);
-		case 2:  return new GSMCell(0x2628,    (short) 234, (short)  33, 0x0133);
-		case 3:  return new GSMCell(0x2629,    (short) 234, (short)  33, 0x0133);
-		case 4:  return new GSMCell(0x2620,    (short) 234, (short)  33, 0x0134);
-		case 5:  return new GSMCell(0x2619,    (short) 234, (short)  33, 0x0134);
-		case 6:  return new GSMCell(0x2629,    (short) 234, (short)  33, 0x0135);
-		case 7:  return new GSMCell(0x2649,    (short) 234, (short)  33, 0x0136);
-		case 8:  return new GSMCell(0x2659,    (short) 234, (short)  33, 0x0137);
-		case 9:  return new GSMCell(0xB1D1,    (short) 310, (short) 260, 0xB455);
-		case 10: return new GSMCell(0x79D9,    (short) 310, (short) 260, 0x004D);
-		case 11: return new GSMCell(0x3E92FFF, (short) 284, (short)   3, 0x03E9);
-		case 12: return new GSMCell(0x1B0,     (short) 250, (short)  20, 0x666D);
-		case 13: return new GSMCell(0x23EC45A, (short) 234, (short)  10, 0x958C);
-		case 14: return new GSMCell(0x8589A,   (short) 234, (short)  10, 0x8139);
-		case 15: return new GSMCell(0x85A67,   (short) 234, (short)  10, 0x8139);
-		case 16: return new GSMCell(0x151E,    (short) 724, (short)   5, 0x0552);
+		switch (r.nextInt(16)) {
+		case  0: return new GSMCell(0x2627,    (short) 234, (short)  33, 0x0133);
+		case  1: return new GSMCell(0x2628,    (short) 234, (short)  33, 0x0133);
+		case  2: return new GSMCell(0x2629,    (short) 234, (short)  33, 0x0133);
+		case  3: return new GSMCell(0x2620,    (short) 234, (short)  33, 0x0134);
+		case  4: return new GSMCell(0x2619,    (short) 234, (short)  33, 0x0134);
+		case  5: return new GSMCell(0x2629,    (short) 234, (short)  33, 0x0135);
+		case  6: return new GSMCell(0x2649,    (short) 234, (short)  33, 0x0136);
+		case  7: return new GSMCell(0x2659,    (short) 234, (short)  33, 0x0137);
+		case  8: return new GSMCell(0xB1D1,    (short) 310, (short) 260, 0xB455);
+		case  9: return new GSMCell(0x79D9,    (short) 310, (short) 260, 0x004D);
+		case 10: return new GSMCell(0x3E92FFF, (short) 284, (short)   3, 0x03E9);
+		case 11: return new GSMCell(0x1B0,     (short) 250, (short)  20, 0x666D);
+		case 12: return new GSMCell(0x23EC45A, (short) 234, (short)  10, 0x958C);
+		case 13: return new GSMCell(0x8589A,   (short) 234, (short)  10, 0x8139);
+		case 14: return new GSMCell(0x85A67,   (short) 234, (short)  10, 0x8139);
+		case 15: return new GSMCell(0x151E,    (short) 724, (short)   5, 0x0552);
 		default:
 			//#debug debug
 			logger.debug("No valid cell-id");
