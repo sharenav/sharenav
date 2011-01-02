@@ -82,7 +82,7 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 	 * 
 	 *
 	 */
-	public class LacIdxEntry {
+	public final static class LacIdxEntry {
 		public short mcc;
 		public short mnc;
 		public int lac;
@@ -139,7 +139,7 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 		
 
 		public void run() {
-		        GSMCell loc;
+			GSMCell loc;
 			GSMCell cellLoc = null;
 			try {
 				if (closed) {
@@ -241,7 +241,7 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 
 	protected OutputStream rawDataLogger;
 	protected Thread processorThread;
-	protected LocationMsgReceiverList receiverList;
+	protected final LocationMsgReceiverList receiverList = new LocationMsgReceiverList();
 	protected boolean closed = false;
 	private String message;
 	private RetrievePosition rp = null;
@@ -257,7 +257,6 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 	
 	
 	public SECellID() {
-		this.receiverList = new LocationMsgReceiverList();
 	}
 
 	public static void deleteCellIDRecordStore() {
