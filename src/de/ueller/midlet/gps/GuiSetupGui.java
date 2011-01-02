@@ -55,12 +55,26 @@ public class GuiSetupGui extends Form implements CommandListener {
 					Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED));
 			append(imenuOpts);
 
-			String [] search = new String[1];
-			search[0] = Locale.get("guisetupgui.numberkeypad")/*Enable virtual keypad*/;
-			searchSettings = new ChoiceGroup(Locale.get("guisetupgui.searchopts")/*Search options:*/, Choice.MULTIPLE, search, null);
-			searchSettings.setSelectedIndex(0, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD));
-			append(searchSettings);
-			
+			/* only display search settings available on the device */
+			// maximum search option entries
+			int iMax = 0;
+			if (Configuration.getHasPointerEvents()) {
+				iMax++;
+			}
+			if (iMax > 0) {
+				String [] search = new String[iMax];
+				int i = 0;
+				if (Configuration.getHasPointerEvents()) {
+					search[i++] = Locale.get("guisetupgui.numberkeypad")/*Enable virtual keypad*/;
+				}
+				searchSettings = new ChoiceGroup(Locale.get("guisetupgui.searchopts")/*Search options:*/, Choice.MULTIPLE, search, null);
+				i = 0;
+				if (Configuration.getHasPointerEvents()) {
+					searchSettings.setSelectedIndex(i++, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD));
+				}
+				append(searchSettings);
+			}
+		
 			String [] other = new String[1];
 			other[0] = Locale.get("guisetupgui.PredefWpts")/*Predefined way points*/;
 			otherOpts = new ChoiceGroup(Locale.get("guisetupgui.OtherOpt")/*Other options:*/, Choice.MULTIPLE, other, null);
@@ -122,8 +136,10 @@ public class GuiSetupGui extends Form implements CommandListener {
 				}
 			}
 			
-			Configuration.setCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD, searchSettings.isSelected(0));
-			
+			int i = 0;
+			if (Configuration.getHasPointerEvents()) {
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD, searchSettings.isSelected(i++));
+			}
 			try {
 				long mem=Long.parseLong(memField.getString());
 				Configuration.setPhoneAllTimeMaxMemory(mem*1024);
