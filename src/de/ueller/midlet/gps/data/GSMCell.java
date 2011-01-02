@@ -38,6 +38,13 @@ public class GSMCell {
 		 */
 	}
 
+	public GSMCell(int cellID, short mcc, short mnc, int lac) {
+		this.cellID = cellID;
+		this.mcc = mcc;
+		this.mnc = mnc;
+		this.lac = lac;
+	}
+
 	public GSMCell(DataInputStream dis) throws IOException {
 		mcc = (short) dis.readShort();
 		mnc = (short) dis.readShort();
