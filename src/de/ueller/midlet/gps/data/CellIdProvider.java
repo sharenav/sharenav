@@ -370,7 +370,6 @@ public class CellIdProvider {
 		String mccS = null;
 		String mncS = null;
 		String lacS = null;
-		GSMCell cell = new GSMCell();
 		
 		Random r = new Random();
 		int rr = r.nextInt(16) + 1;
@@ -434,17 +433,13 @@ public class CellIdProvider {
 		}
 		
 		try {
-			cell.cellID = Integer.parseInt(cellidS, 16);
-			cell.mcc = (short) Integer.parseInt(mccS);
-			cell.mnc = (short) Integer.parseInt(mncS);
-			cell.lac = Integer.parseInt(lacS, 16);
+			return new GSMCell(Integer.parseInt(cellidS, 16), (short) Integer.parseInt(mccS), 
+					          (short) Integer.parseInt(mncS), Integer.parseInt(lacS, 16));
 		} catch (NumberFormatException nfe) {
 			logger.silentexception("Failed to parse cell-id (cellid: " + cellidS +
 					" mcc: " + mccS + " mnc: " + mncS + " lac: " + lacS, nfe);
 			return null;
 		}
-		
-		return cell;
 	}
 	
 	public GSMCell obtainCachedCellID() {
