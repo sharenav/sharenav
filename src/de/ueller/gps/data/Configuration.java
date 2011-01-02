@@ -438,6 +438,8 @@ public class Configuration {
 	private static String namesOnMapLang;
 	private static String soundDirectory;
 
+	private static boolean hasPointerEvents;
+	
 	
 	public static void read() {
 		logger = Logger.getInstance(Configuration.class, Logger.DEBUG);
@@ -1778,10 +1780,18 @@ public class Configuration {
 		return "";
 	}
 	
+	public static boolean getHasPointerEvents() {
+		return Configuration.hasPointerEvents;
+	}
+
+	public static void setHasPointerEvents(boolean hasPointerEvents) {
+		Configuration.hasPointerEvents = hasPointerEvents;
+	}
+	
 	public static int getWaypointSortMode() {
 		return wayptSortMode;
 	}
-	
+
 	public static void setWaypointSortMode(int mode) {
 		if (mode >= WAYPT_SORT_MODE_NONE && mode <= WAYPT_SORT_MODE_DISTANCE) {
 			wayptSortMode = mode;
