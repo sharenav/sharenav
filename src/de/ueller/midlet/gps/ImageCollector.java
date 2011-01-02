@@ -248,7 +248,7 @@ public class ImageCollector implements Runnable {
 									RouteInstructions.routePathConnection = createPC.routePathConnection;
 									RouteInstructions.pathIdxInRoutePathConnection = createPC.pathIdxInRoutePathConnection;
 								}
-								System.out.println("waysPainted: " + createPC.waysPainted);
+								//System.out.println("waysPainted: " + createPC.waysPainted);
 							} else {
 								// FIXME: Sometimes there are ImageCollector loop with no way pained even when ways would be there and tile data is fully loaded
 								System.out.println("No ways painted in this ImageCollector loop");
