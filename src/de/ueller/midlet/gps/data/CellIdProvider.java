@@ -401,34 +401,38 @@ public class CellIdProvider {
 		//#debug info
 		logger.info("Tring to retrieve cell-id");
 		
-		if (cellRetrievelMethod ==  CELLMETHOD_NONE) {
+		switch (cellRetrievelMethod) {
+		case CELLMETHOD_NONE:
 			//#debug info
 			logger.info("Can't retrieve CellID, as there is no valid method available");
 			return null;
-		}
-
-		if (cellRetrievelMethod == CELLMETHOD_SE) {
+		case CELLMETHOD_SE:
 			cachedCell =  obtainSECell();
-		}
+			break;
 		//#if polish.android
-		if (cellRetrievelMethod == CELLMETHOD_ANDROID) {
+		case CELLMETHOD_ANDROID:
 			cachedCell =  obtainAndroidCell();
-		}
+			break;
 		//#endif
-		if (cellRetrievelMethod == CELLMETHOD_MOTO) {
+		case CELLMETHOD_MOTO:
 			cachedCell =  obtainMotoOrSamsungCell(false);
-		}
-		if (cellRetrievelMethod == CELLMETHOD_SAMSUNG) {
+			break;
+		case CELLMETHOD_SAMSUNG:
 			cachedCell =  obtainMotoOrSamsungCell(true);
-		}
-		if (cellRetrievelMethod == CELLMETHOD_S60FP2) {
+			break;
+		case CELLMETHOD_S60FP2:
 			cachedCell = obtainS60FP2Cell();
-		}
-		if (cellRetrievelMethod == CELLMETHOD_SOCKET) {
+			break;
+		case CELLMETHOD_SOCKET:
 			cachedCell = obtainSocketCell();
-		}
-		if (cellRetrievelMethod == CELLMETHOD_DEBUG) {
+			break;
+		case CELLMETHOD_DEBUG:
 			cachedCell = obtainDebugCell();
+			break;
+		default:
+			//#debug error
+			logger.error("Unknown CellID retrieval method selected!");
+			return null;
 		}
 		//#debug debug
 		logger.debug("Retrieved " + cachedCell);
