@@ -54,7 +54,7 @@ public class Configuration {
 	 *  the default values for the features added between configVersionStored
 	 *  and VERSION will be set, before the version in the recordstore is increased to VERSION.
 	 */
-	public final static int VERSION = 19;
+	public final static int VERSION = 20;
 
 	public final static int LOCATIONPROVIDER_NONE = 0;
 	public final static int LOCATIONPROVIDER_SIRF = 1;
@@ -271,6 +271,12 @@ public class Configuration {
 	public final static byte CFGBIT_ONLINE_WEBSITES = 103;
 	/** bit 104: indicate whether to show online option */
 	public final static byte CFGBIT_ONLINE_WIKIPEDIA_RSS = 104;
+	/** bit 105: indicate whether long map touch feature is enabled */
+	public final static byte CFGBIT_MAPTOUCH_LONG = 105;
+	/** bit 106:  indicate whether double map touch feature is enabled */
+	public final static byte CFGBIT_MAPTOUCH_DOUBLE = 106;
+	/** bit 107: indicate whether single map touch feature is enabled*/
+	public final static byte CFGBIT_MAPTOUCH_SINGLE = 107;
 	
 	/**
 	 * These are the database record IDs for each configuration option
@@ -694,11 +700,13 @@ public class Configuration {
 			setWikipediaLang("en");
 			setNamesOnMapLang("en");
 		}
-		if (configVersionStored < 19) {
+		if (configVersionStored < 20) {
 			cfgBits_64_to_127 |= 1L << CFGBIT_ROUTE_USE_MOTORWAYS |
 								 1L << CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD |
 								 1L << CFGBIT_AUTOSAVE_DESTPOS |
-			 					 1L << CFGBIT_ROUTE_USE_TOLLROADS;
+			 					 1L << CFGBIT_ROUTE_USE_TOLLROADS |
+			 					 1L << CFGBIT_MAPTOUCH_DOUBLE |
+			 					 1L << CFGBIT_MAPTOUCH_SINGLE;			 					 
 		}
 
 		setCfgBits(cfgBits_0_to_63, cfgBits_64_to_127);

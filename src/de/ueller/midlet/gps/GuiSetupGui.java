@@ -15,6 +15,7 @@ import de.ueller.gps.data.Configuration;
 
 public class GuiSetupGui extends Form implements CommandListener {
 	private ChoiceGroup imenuOpts;
+	private ChoiceGroup mapTouchFeatures;
 	private ChoiceGroup otherOpts;
 	private ChoiceGroup searchSettings;
 
@@ -54,7 +55,7 @@ public class GuiSetupGui extends Form implements CommandListener {
 			imenuOpts.setSelectedIndex(4, 
 					Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED));
 			append(imenuOpts);
-
+			
 			/* only display search settings available on the device */
 			// maximum search option entries
 			int iMax = 0;
@@ -75,6 +76,21 @@ public class GuiSetupGui extends Form implements CommandListener {
 				append(searchSettings);
 			}
 		
+			if (Configuration.getHasPointerEvents()) {
+				String [] touch = new String[3];
+				int i = 0;
+				touch[i++] = Locale.get("guisetupgui.longMapTouch");
+				touch[i++] = Locale.get("guisetupgui.doubleMapTouch");
+				touch[i++] = Locale.get("guisetupgui.singleMapTouch");
+				mapTouchFeatures = new ChoiceGroup(Locale.get("guisetupgui.MapTouchFeatures")/*Map Touch Features*/, 
+						Choice.MULTIPLE, touch, null);
+				i = 0;
+				mapTouchFeatures.setSelectedIndex(i++, Configuration.getCfgBitState(Configuration.CFGBIT_MAPTOUCH_LONG));
+				mapTouchFeatures.setSelectedIndex(i++, Configuration.getCfgBitState(Configuration.CFGBIT_MAPTOUCH_DOUBLE));
+				mapTouchFeatures.setSelectedIndex(i++, Configuration.getCfgBitState(Configuration.CFGBIT_MAPTOUCH_SINGLE));
+				append(mapTouchFeatures);
+			}
+			
 			String [] other = new String[1];
 			other[0] = Locale.get("guisetupgui.PredefWpts")/*Predefined way points*/;
 			otherOpts = new ChoiceGroup(Locale.get("guisetupgui.OtherOpt")/*Other options:*/, Choice.MULTIPLE, other, null);
@@ -135,11 +151,18 @@ public class GuiSetupGui extends Form implements CommandListener {
 					GpsMid.getInstance().restartBackLightTimer();			
 				}
 			}
-			
 			int i = 0;
 			if (Configuration.getHasPointerEvents()) {
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD, searchSettings.isSelected(i++));
 			}
+		
+			i = 0;
+			if (Configuration.getHasPointerEvents()) {
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_MAPTOUCH_LONG, mapTouchFeatures.isSelected(i++));
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_MAPTOUCH_DOUBLE, mapTouchFeatures.isSelected(i++));
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_MAPTOUCH_SINGLE, mapTouchFeatures.isSelected(i++));
+			}
+
 			try {
 				long mem=Long.parseLong(memField.getString());
 				Configuration.setPhoneAllTimeMaxMemory(mem*1024);
