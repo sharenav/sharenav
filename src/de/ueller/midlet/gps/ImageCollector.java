@@ -179,6 +179,7 @@ public class ImageCollector implements Runnable {
 				createPC.squareDstWithPenToRoutePath = Float.MAX_VALUE;
 				createPC.squareDstToRoutePath = Float.MAX_VALUE;
 				createPC.dest = nextSc.dest;
+				createPC.waysPainted = 0;
 
 				
 				// System.out.println("create " + pcCollect);
@@ -238,9 +239,19 @@ public class ImageCollector implements Runnable {
 						 */ 
 						if (layersToRender[layer] == (0 | Tile.LAYER_HIGHLIGHT)) {
 							RouteInstructions.dstToRoutePath = createPC.getDstFromSquareDst(createPC.squareDstToRoutePath);
-							if (RouteInstructions.dstToRoutePath != Integer.MAX_VALUE) {
-								RouteInstructions.routePathConnection = createPC.routePathConnection;
-								RouteInstructions.pathIdxInRoutePathConnection = createPC.pathIdxInRoutePathConnection;
+							/*
+							 *  only take ImageCollector loops into account for dstToRoutePath if ways were painted
+							 *  otherwise this would trigger wrong route recalculations
+							*/
+							if (createPC.waysPainted != 0) {
+								if (RouteInstructions.dstToRoutePath != Integer.MAX_VALUE) {
+									RouteInstructions.routePathConnection = createPC.routePathConnection;
+									RouteInstructions.pathIdxInRoutePathConnection = createPC.pathIdxInRoutePathConnection;
+								}
+								System.out.println("waysPainted: " + createPC.waysPainted);
+							} else {
+								// FIXME: Sometimes there are ImageCollector loop with no way pained even when ways would be there and tile data is fully loaded
+								System.out.println("No ways painted in this ImageCollector loop");
 							}
 						}
 						byte relLayer = (byte)(((int)layersToRender[layer]) & 0x0000000F);

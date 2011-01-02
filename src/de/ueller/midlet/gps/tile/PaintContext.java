@@ -141,6 +141,10 @@ public class PaintContext extends ScreenContext {
 	/** the hotspot in pixel */
 	public IntPoint hotspot=new IntPoint();
 	
+	/** ways painted in last paint call */
+	public int waysPainted;
+
+
 	
 	/**public float actualNodeLat;
 	public float actualNodeLon;**/
