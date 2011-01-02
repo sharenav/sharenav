@@ -1143,3 +1143,7 @@ urls.UrlsThreadCrashed=Urls thread crashed unexpectedly with error
 way.ErrorWhileVerify=Error while verify 
 way.type=type
 way.Way=Way
+guisetupgui.MapTapFeatures=Map Tap Features
+guisetupgui.longMapTap=Long Map Tap
+guisetupgui.doubleMapTap=Double Map Tap
+guisetupgui.singleMapTap=Single Map Tap
