@@ -366,79 +366,32 @@ public class CellIdProvider {
 		 * This code is used for debugging cell-id data on the emulator
 		 * by generating one of 16 random cell-ids 
 		 */
-		String cellidS = null;
-		short mcc = 0;
-		short mnc = 0;
-		int lac = 0;
-		
 		Random r = new Random();
 		int rr = r.nextInt(16) + 1;
 //		System.out.println("RR: " +rr);
 		switch (rr) {
-		case 1:
-			cellidS = "2627"; mcc = 234; mnc = 33; lac = 0x133;
-			break;
-		case 2:
-			cellidS = "2628"; mcc = 234; mnc = 33; lac = 0x133;
-			break;
-		case 3:
-			cellidS = "2629"; mcc = 234; mnc = 33; lac = 0x133;
-			break;
-		case 4:
-			cellidS = "2620"; mcc = 234; mnc = 33; lac = 0x134;
-			break;
-		case 5:
-			cellidS = "2619"; mcc = 234; mnc = 33; lac = 0x134;
-			break;
-		case 6:
-			cellidS = "2629"; mcc = 234; mnc = 33; lac = 0x135;
-			break;
-		case 7:
-			cellidS = "2649"; mcc = 234; mnc = 33; lac = 0x136;
-			break;
-		case 8:
-			cellidS = "2659"; mcc = 234; mnc = 33; lac = 0x137;
-			break;
-		case 9:
-			cellidS = "B1D1"; mcc = 310; mnc = 260; lac = 0xB455;
-			break;
-		case 10:
-			cellidS = "79D9"; mcc = 310; mnc = 260; lac = 0x4D;
-			break;
-		
-		case 11:
-			cellidS = "3E92FFF"; mcc = 284; mnc = 3; lac = 0x3E9;
-			break;
-		case 12:
-			cellidS = "1B0"; mcc = 250; mnc = 20; lac = 0x666D;
-			break;
-		case 13:
-			cellidS = "23EC45A"; mcc = 234; mnc = 10; lac = 0x958C;
-			break;
-		case 14:
-			cellidS = "8589A"; mcc = 234; mnc = 10; lac = 0x8139;
-			break;
-		case 15:
-			cellidS = "85A67"; mcc = 234; mnc = 10; lac = 0x8139;
-			break;
-		case 16:
-			cellidS = "151E"; mcc = 724; mnc = 5; lac = 0x552;
-			break;
-		}
-		
-		if (cellidS == null) {
+		case 1:  return new GSMCell(0x2627,    (short) 234, (short)  33, 0x0133);
+		case 2:  return new GSMCell(0x2628,    (short) 234, (short)  33, 0x0133);
+		case 3:  return new GSMCell(0x2629,    (short) 234, (short)  33, 0x0133);
+		case 4:  return new GSMCell(0x2620,    (short) 234, (short)  33, 0x0134);
+		case 5:  return new GSMCell(0x2619,    (short) 234, (short)  33, 0x0134);
+		case 6:  return new GSMCell(0x2629,    (short) 234, (short)  33, 0x0135);
+		case 7:  return new GSMCell(0x2649,    (short) 234, (short)  33, 0x0136);
+		case 8:  return new GSMCell(0x2659,    (short) 234, (short)  33, 0x0137);
+		case 9:  return new GSMCell(0xB1D1,    (short) 310, (short) 260, 0xB455);
+		case 10: return new GSMCell(0x79D9,    (short) 310, (short) 260, 0x004D);
+		case 11: return new GSMCell(0x3E92FFF, (short) 284, (short)   3, 0x03E9);
+		case 12: return new GSMCell(0x1B0,     (short) 250, (short)  20, 0x666D);
+		case 13: return new GSMCell(0x23EC45A, (short) 234, (short)  10, 0x958C);
+		case 14: return new GSMCell(0x8589A,   (short) 234, (short)  10, 0x8139);
+		case 15: return new GSMCell(0x85A67,   (short) 234, (short)  10, 0x8139);
+		case 16: return new GSMCell(0x151E,    (short) 724, (short)   5, 0x0552);
+		default:
 			//#debug debug
 			logger.debug("No valid cell-id");
 			return null;
 		}
 		
-		try {
-			return new GSMCell(Integer.parseInt(cellidS, 16), mcc, mnc, lac);
-		} catch (NumberFormatException nfe) {
-			logger.silentexception("Failed to parse cell-id (cellid: " + cellidS +
-					" mcc: " + mcc + " mnc: " + mnc + " lac: " + Integer.toHexString(lac), nfe);
-			return null;
-		}
 	}
 	
 	public GSMCell obtainCachedCellID() {
