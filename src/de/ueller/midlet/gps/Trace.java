@@ -2813,7 +2813,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		pointerActionDone = true;
 		// if not tapping a control, then the map area must be tapped so we set the touchable button sizes
 		if (tl.getElementIdAtPointer(touchX, touchY) < 0) {							
-			if (Configuration.getCfgBitState(Configuration.CFGBIT_MAPTOUCH_SINGLE)) {
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_MAPTAP_SINGLE)) {
 				// if pointer was dragged much, do not recognize a single tap on the map
 				if (pointerDraggedMuch) {
 					return;
@@ -2879,7 +2879,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	private void doubleTap(int x, int y) {
 		// if not double tapping a control, then the map area must be double tapped and we zoom in
 		if (tl.getElementIdAtPointer(touchX, touchY) < 0) {
-			if (Configuration.getCfgBitState(Configuration.CFGBIT_MAPTOUCH_DOUBLE)) {
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_MAPTAP_DOUBLE)) {
 				// if this is a double press on the map, cancel the timer checking for a single press
 				if (singleTapTimerTask != null) {
 					singleTapTimerTask.cancel();
@@ -2920,7 +2920,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		pointerActionDone = true;
 		// if not tapping a control, then the map area must be tapped so we do the long tap action for the map area
 		if (tl.getElementIdAtPointer(touchX, touchY) < 0 && panProjection != null) {							
-			if (Configuration.getCfgBitState(Configuration.CFGBIT_MAPTOUCH_LONG)) {
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_MAPTAP_LONG)) {
 				//#debug debug
 				logger.debug("long tap map");										
 				//#if polish.api.online

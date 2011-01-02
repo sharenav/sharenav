@@ -79,15 +79,15 @@ public class GuiSetupGui extends Form implements CommandListener {
 			if (Configuration.getHasPointerEvents()) {
 				String [] touch = new String[3];
 				int i = 0;
-				touch[i++] = Locale.get("guisetupgui.longMapTouch");
-				touch[i++] = Locale.get("guisetupgui.doubleMapTouch");
-				touch[i++] = Locale.get("guisetupgui.singleMapTouch");
-				mapTouchFeatures = new ChoiceGroup(Locale.get("guisetupgui.MapTouchFeatures")/*Map Touch Features*/, 
+				touch[i++] = Locale.get("guisetupgui.longMapTap");
+				touch[i++] = Locale.get("guisetupgui.doubleMapTap");
+				touch[i++] = Locale.get("guisetupgui.singleMapTap");
+				mapTouchFeatures = new ChoiceGroup(Locale.get("guisetupgui.MapTapFeatures")/*Map Touch Features*/, 
 						Choice.MULTIPLE, touch, null);
 				i = 0;
-				mapTouchFeatures.setSelectedIndex(i++, Configuration.getCfgBitState(Configuration.CFGBIT_MAPTOUCH_LONG));
-				mapTouchFeatures.setSelectedIndex(i++, Configuration.getCfgBitState(Configuration.CFGBIT_MAPTOUCH_DOUBLE));
-				mapTouchFeatures.setSelectedIndex(i++, Configuration.getCfgBitState(Configuration.CFGBIT_MAPTOUCH_SINGLE));
+				mapTouchFeatures.setSelectedIndex(i++, Configuration.getCfgBitState(Configuration.CFGBIT_MAPTAP_LONG));
+				mapTouchFeatures.setSelectedIndex(i++, Configuration.getCfgBitState(Configuration.CFGBIT_MAPTAP_DOUBLE));
+				mapTouchFeatures.setSelectedIndex(i++, Configuration.getCfgBitState(Configuration.CFGBIT_MAPTAP_SINGLE));
 				append(mapTouchFeatures);
 			}
 			
@@ -158,9 +158,9 @@ public class GuiSetupGui extends Form implements CommandListener {
 		
 			i = 0;
 			if (Configuration.getHasPointerEvents()) {
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_MAPTOUCH_LONG, mapTouchFeatures.isSelected(i++));
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_MAPTOUCH_DOUBLE, mapTouchFeatures.isSelected(i++));
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_MAPTOUCH_SINGLE, mapTouchFeatures.isSelected(i++));
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_MAPTAP_LONG, mapTouchFeatures.isSelected(i++));
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_MAPTAP_DOUBLE, mapTouchFeatures.isSelected(i++));
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_MAPTAP_SINGLE, mapTouchFeatures.isSelected(i++));
 			}
 
 			try {

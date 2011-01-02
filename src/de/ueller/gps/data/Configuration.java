@@ -271,12 +271,12 @@ public class Configuration {
 	public final static byte CFGBIT_ONLINE_WEBSITES = 103;
 	/** bit 104: indicate whether to show online option */
 	public final static byte CFGBIT_ONLINE_WIKIPEDIA_RSS = 104;
-	/** bit 105: indicate whether long map touch feature is enabled */
-	public final static byte CFGBIT_MAPTOUCH_LONG = 105;
-	/** bit 106:  indicate whether double map touch feature is enabled */
-	public final static byte CFGBIT_MAPTOUCH_DOUBLE = 106;
-	/** bit 107: indicate whether single map touch feature is enabled*/
-	public final static byte CFGBIT_MAPTOUCH_SINGLE = 107;
+	/** bit 105: indicate whether long map tap feature is enabled */
+	public final static byte CFGBIT_MAPTAP_LONG = 105;
+	/** bit 106:  indicate whether double map tap feature is enabled */
+	public final static byte CFGBIT_MAPTAP_DOUBLE = 106;
+	/** bit 107: indicate whether single map tap feature is enabled*/
+	public final static byte CFGBIT_MAPTAP_SINGLE = 107;
 	
 	/**
 	 * These are the database record IDs for each configuration option
@@ -705,8 +705,8 @@ public class Configuration {
 								 1L << CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD |
 								 1L << CFGBIT_AUTOSAVE_DESTPOS |
 			 					 1L << CFGBIT_ROUTE_USE_TOLLROADS |
-			 					 1L << CFGBIT_MAPTOUCH_DOUBLE |
-			 					 1L << CFGBIT_MAPTOUCH_SINGLE;			 					 
+			 					 1L << CFGBIT_MAPTAP_DOUBLE |
+			 					 1L << CFGBIT_MAPTAP_SINGLE;			 					 
 		}
 
 		setCfgBits(cfgBits_0_to_63, cfgBits_64_to_127);
