@@ -19,6 +19,7 @@ import android.content.res.AssetManager;
 import android.content.Context;
 //#endif
 
+import de.ueller.midlet.gps.Trace;
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.tools.HelperRoutines;
 import de.ueller.gpsMid.mapData.QueueReader;
@@ -94,6 +95,8 @@ public class RouteSyntax {
 		}
 	}
 	
+	private static Trace trace;
+
 	private static String [] simpleDirectionTexts;
 	private static String [] bearDirectionTexts;
 	private static String [] roundAboutExitTexts;
@@ -116,15 +119,16 @@ public class RouteSyntax {
 	
 	private static boolean routeSyntaxAvailable;
 	
-	public RouteSyntax() {
+	public RouteSyntax(Trace trace) {
 		logger = Logger.getInstance(RouteSyntax.class, Logger.DEBUG);
 		readSyntax();
+		this.trace = trace;
 		instance = this;
 	}
 	
-	public static RouteSyntax getInstance() {
+	public static RouteSyntax getInstance(Trace trace) {
 		if (instance == null) {
-			instance = new RouteSyntax();
+			instance = new RouteSyntax(trace);
 		}
 		return instance;
 	}
@@ -322,7 +326,8 @@ public class RouteSyntax {
 	}
 
 	public static String getTextInstructionIn(int instruction, int inDistance) {
-		return HelperRoutines.replaceAll( getSyntaxTemplate(instruction, SyntaxTemplateComponents.inText) , "%meters%", "" + inDistance);
+		// FIXME this could be cleaner (e.g. %distance% instead of %meters%m) but keeping for now for backwards compatibility
+		return HelperRoutines.replaceAll( getSyntaxTemplate(instruction, SyntaxTemplateComponents.inText), "%meters%m", trace.showDistance(inDistance, Trace.DISTANCE_GENERIC));
 	}
 
 	public static String getSoundInstructionThen(int instructionThen, boolean soon, boolean again) {
