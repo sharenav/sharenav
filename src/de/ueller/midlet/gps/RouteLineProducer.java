@@ -190,13 +190,13 @@ public class RouteLineProducer implements Runnable {
 							    // when the way on the route is a highway link
 							    wdRoute.isHighwayLink()
 							    	||
-								/* when the route way is smaller or same width like the alternative way
-								 * (don't give bearing instruction when passing e.g. besides service ways)
+								/* when the route way is smaller or same width like the alternative way or both route and alternative way are mainstreet net roads
+								 * (don't give bearing instruction when passing e.g. besides service ways but if both route and alternative way are mainstreet net roads)
 								 * and neither the way on the route nor the alternative way is a highway link
 								 * TODO: should we really check for wayWidth or use some other criteria?
 								 */
 							    (
-							    	wdRoute.wayWidth <= wdCheck.wayWidth
+							    	(wdRoute.wayWidth <= wdCheck.wayWidth || (wdRoute.isMainstreetNet() && wdCheck.isMainstreetNet()) )
 							    		&&
 							    	!(wdRoute.isHighwayLink() || wdCheck.isHighwayLink())
 							    )
