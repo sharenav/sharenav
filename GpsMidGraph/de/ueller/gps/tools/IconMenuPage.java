@@ -160,7 +160,17 @@ public class IconMenuPage extends LayoutManager {
 	}
 	
 	private int getEleId(int col, int row) {
-		return col + row * numCols;
+		if (numCols == 3) {
+			return col + row * numCols;
+		} else { // numCols == 4 - last buttons are in right column 
+			if (col < 3) {
+				return row * 4 + (col-row);
+			} else if (col == 3) {
+				return 9 + row;
+			} else {
+				return row * 4 + (col-row);
+			}
+		}
 	}
 	
 	protected int getActiveEleActionId() {

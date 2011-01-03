@@ -220,9 +220,22 @@ public class LayoutElement {
 			textLeft = left + (width - textWidth) / 2;
 		} else if ( (flags & FLAG_ICONMENU_ICON) > 0 ) {
 			IconMenuPage imp = (IconMenuPage) lm;
-			left = imp.minX + (eleNr % imp.numCols) * calcIconReservedWidth(imp) + (calcIconReservedWidth(imp) - imp.bgImage.getWidth()) / 2;
-			textLeft = imp.minX + (eleNr % imp.numCols) * calcIconReservedWidth(imp) + (calcIconReservedWidth(imp) - textWidth) / 2 ;
-			top = imp.minY + (eleNr / imp.numCols) * calcIconReservedHeight(imp);
+			if (imp.numCols == 3) {
+				left = imp.minX + (eleNr % imp.numCols) * calcIconReservedWidth(imp) + (calcIconReservedWidth(imp) - imp.bgImage.getWidth()) / 2;
+				textLeft = imp.minX + (eleNr % imp.numCols) * calcIconReservedWidth(imp) + (calcIconReservedWidth(imp) - textWidth) / 2 ;
+				top = imp.minY + (eleNr / imp.numCols) * calcIconReservedHeight(imp);
+			} else { // imp.numCols == 4 - arrange similarly as the 3-column setup
+				int x = eleNr % 3;
+				int y = eleNr / 3;
+				if (eleNr >= 9) {
+					x = 3;
+					y = eleNr - 9;
+				}
+				
+				left = imp.minX + x * calcIconReservedWidth(imp) + (calcIconReservedWidth(imp) - imp.bgImage.getWidth()) / 2;
+				textLeft = imp.minX + (x) * calcIconReservedWidth(imp) + (calcIconReservedWidth(imp) - textWidth) / 2 ;
+				top = imp.minY + (y) * calcIconReservedHeight(imp);
+			}
 		}
 		
 		left += addOffsX;
