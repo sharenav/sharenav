@@ -208,9 +208,9 @@ public class KeySelectMenu extends Canvas implements
 			fontSize = gc.getFont().getHeight();
 		int yc = scrollOffset;
 
-		gc.setColor(255, 255, 255);
+		gc.setColor(Legend.COLORS[Legend.COLOR_MAP_BACKGROUND]);
 		gc.fillRect(0, 0, getWidth(), getHeight());
-		gc.setColor(0, 0, 0);
+		gc.setColor(Legend.COLORS[Legend.COLOR_MAP_TEXT]);
 		// FIXME whole function is mostly duplicated between GuiSearch and KeySelectMenu
 		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD)) {
 			gc.setColor(Legend.COLORS[Legend.COLOR_MAP_TEXT]);
@@ -265,7 +265,7 @@ public class KeySelectMenu extends Canvas implements
 				continue;
 			}
 			if (yc > getHeight()) {
-				gc.setColor(0, 0, 0);
+				gc.setColor(Legend.COLORS[Legend.COLOR_MAP_TEXT]);
 				gc.drawString("v", getWidth(), getHeight() - 7, Graphics.BOTTOM
 						| Graphics.RIGHT);
 				return;
@@ -274,7 +274,7 @@ public class KeySelectMenu extends Canvas implements
 			if (i == cursor) {
 				gc.setColor(255, 0, 0);
 			} else {
-				gc.setColor(0, 0, 0);
+				gc.setColor(Legend.COLORS[Legend.COLOR_MAP_TEXT]);
 			}
 			Object o = result.elementAt(i);
 			if (o instanceof KeySelectMenuItem) {
