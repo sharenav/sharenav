@@ -238,12 +238,12 @@ public class ImageCollector implements Runnable {
 						 * when not gps recentered, this info will be by one image obsolete however
 						 */ 
 						if (layersToRender[layer] == (0 | Tile.LAYER_HIGHLIGHT)) {
-							RouteInstructions.dstToRoutePath = createPC.getDstFromSquareDst(createPC.squareDstToRoutePath);
 							/*
 							 *  only take ImageCollector loops into account for dstToRoutePath if ways were painted
 							 *  otherwise this would trigger wrong route recalculations
 							*/
 							if (createPC.waysPainted != 0) {
+								RouteInstructions.dstToRoutePath = createPC.getDstFromSquareDst(createPC.squareDstToRoutePath);
 								if (RouteInstructions.dstToRoutePath != RouteInstructions.DISTANCE_UNKNOWN) {
 									RouteInstructions.routePathConnection = createPC.routePathConnection;
 									RouteInstructions.pathIdxInRoutePathConnection = createPC.pathIdxInRoutePathConnection;
