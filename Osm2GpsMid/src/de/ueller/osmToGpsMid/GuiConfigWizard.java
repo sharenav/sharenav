@@ -1131,8 +1131,11 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			"<br><br>" +
 			"Usage:<br><ol>" +
 			"<li> Specify which region of the world you want to include in your midlet. \n" +
-			" This can either be done by dragging over an area on the world map with the right mouse button\n" +
-			" or by specifying a .properties file that already contains the area you want.\n" +
+			" This can be done in different ways. \n" +
+			"<ol><li>by dragging over an area on the world map with the right mouse button\n</li>" +
+			"<li>by specifying a .properties file that already contains the area you want.\n</li>" +
+			"<li>by defining a route corridor with shift+click or alt+click (equivalent) on at least\n" +
+			"two places on the map, and after that clicking on \"Calculate Route Corridor\"\n</li></ol>" +
 			" You can delete boxes by double-clicking on them.\n" +
 			" If you want to set all the parameters using this wizard, please leave 'Properties template' on 'Custom'.\n" +
 			"<li> Specify a source for the OpenStreetMap data. Currently three sources are directly supported:\n" +
