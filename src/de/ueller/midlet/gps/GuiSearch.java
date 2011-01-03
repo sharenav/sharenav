@@ -517,9 +517,9 @@ public class GuiSearch extends Canvas implements CommandListener,
 			fontSize = gc.getFont().getHeight();		
 		int yc=scrollOffset;
 		int reducedName=0;
-		gc.setColor(255,255, 255);
+		gc.setColor(Legend.COLORS[Legend.COLOR_MAP_BACKGROUND]);
 		gc.fillRect(0, 0, getWidth(), getHeight());
-		gc.setColor(0, 0, 0);		
+		gc.setColor(Legend.COLORS[Legend.COLOR_MAP_TEXT]);
 		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD)) {
 			gc.setColor(Legend.COLORS[Legend.COLOR_MAP_TEXT]);
 			if (hasPointerEvents() && ! hideKeypad) {
@@ -579,7 +579,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				continue;
 			}
 			if (yc > getHeight()) {
-				gc.setColor(0, 0, 0);
+				gc.setColor(Legend.COLORS[Legend.COLOR_MAP_TEXT]);
 				gc.drawString("v", getWidth(), getHeight() - 7,
 						Graphics.BOTTOM | Graphics.RIGHT);				
 				return;
@@ -588,7 +588,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			if (i == cursor){
 				gc.setColor(255, 0, 0);
 			} else {
-				gc.setColor(0, 0, 0);
+				gc.setColor(Legend.COLORS[Legend.COLOR_MAP_TEXT]);
 			}
 			SearchResult sr=(SearchResult) result.elementAt(i);
 			String flags="";
@@ -679,7 +679,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				if (i == cursor){ 
 					gc.setColor(255, 0, 0); 
 				} else { 
-					gc.setColor(0, 0, 0); 
+					gc.setColor(Legend.COLORS[Legend.COLOR_MAP_TEXT]); 
 				}
 				gc.drawString(name.substring(0,imatch+flags.length()), 17, yc, Graphics.TOP | Graphics.LEFT); 
 				// remaining name part 
