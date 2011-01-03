@@ -15,7 +15,7 @@ import de.ueller.gps.data.Configuration;
 
 public class GuiSetupGui extends Form implements CommandListener {
 	private ChoiceGroup imenuOpts;
-	private ChoiceGroup mapTouchFeatures;
+	private ChoiceGroup mapTapFeatures;
 	private ChoiceGroup otherOpts;
 	private ChoiceGroup searchSettings;
 
@@ -82,13 +82,13 @@ public class GuiSetupGui extends Form implements CommandListener {
 				touch[i++] = Locale.get("guisetupgui.longMapTap");
 				touch[i++] = Locale.get("guisetupgui.doubleMapTap");
 				touch[i++] = Locale.get("guisetupgui.singleMapTap");
-				mapTouchFeatures = new ChoiceGroup(Locale.get("guisetupgui.MapTapFeatures")/*Map Touch Features*/, 
+				mapTapFeatures = new ChoiceGroup(Locale.get("guisetupgui.MapTapFeatures")/*Map Touch Features*/, 
 						Choice.MULTIPLE, touch, null);
 				i = 0;
-				mapTouchFeatures.setSelectedIndex(i++, Configuration.getCfgBitState(Configuration.CFGBIT_MAPTAP_LONG));
-				mapTouchFeatures.setSelectedIndex(i++, Configuration.getCfgBitState(Configuration.CFGBIT_MAPTAP_DOUBLE));
-				mapTouchFeatures.setSelectedIndex(i++, Configuration.getCfgBitState(Configuration.CFGBIT_MAPTAP_SINGLE));
-				append(mapTouchFeatures);
+				mapTapFeatures.setSelectedIndex(i++, Configuration.getCfgBitState(Configuration.CFGBIT_MAPTAP_LONG));
+				mapTapFeatures.setSelectedIndex(i++, Configuration.getCfgBitState(Configuration.CFGBIT_MAPTAP_DOUBLE));
+				mapTapFeatures.setSelectedIndex(i++, Configuration.getCfgBitState(Configuration.CFGBIT_MAPTAP_SINGLE));
+				append(mapTapFeatures);
 			}
 			
 			String [] other = new String[1];
@@ -158,9 +158,9 @@ public class GuiSetupGui extends Form implements CommandListener {
 		
 			i = 0;
 			if (Configuration.getHasPointerEvents()) {
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_MAPTAP_LONG, mapTouchFeatures.isSelected(i++));
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_MAPTAP_DOUBLE, mapTouchFeatures.isSelected(i++));
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_MAPTAP_SINGLE, mapTouchFeatures.isSelected(i++));
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_MAPTAP_LONG, mapTapFeatures.isSelected(i++));
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_MAPTAP_DOUBLE, mapTapFeatures.isSelected(i++));
+				Configuration.setCfgBitSavedState(Configuration.CFGBIT_MAPTAP_SINGLE, mapTapFeatures.isSelected(i++));
 			}
 
 			try {

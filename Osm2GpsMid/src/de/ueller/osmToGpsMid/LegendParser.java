@@ -36,6 +36,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import de.ueller.osmToGpsMid.Configuration;
 import de.ueller.osmToGpsMid.model.ConditionTuple;
+import de.ueller.osmToGpsMid.model.Connection;
 import de.ueller.osmToGpsMid.model.Damage;
 import de.ueller.osmToGpsMid.model.EntityDescription;
 import de.ueller.osmToGpsMid.model.POIdescription;
@@ -443,9 +444,17 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 						currentWay.wayDescFlags |= WayDescription.WDFLAG_HIGHWAY_LINK;
 						// System.out.println("Waydescription is a highway link: " + currentWay.value);
 					}
-					if (currentWay.value.toLowerCase().startsWith("motorway")) {
+					String wayValue = ";" + currentWay.value.toLowerCase() + ";";
+					if (";motorway;motorway_link;".indexOf(wayValue) >= 0) {
 						currentWay.wayDescFlags |= WayDescription.WDFLAG_MOTORWAY;
-						// System.out.println("Waydescription is a motorway or motorway link: " + currentWay.value);
+						currentWay.wayDescTravelModes |= Connection.CONNTYPE_MOTORWAY;
+					}
+					if (";trunk;trunk_link;primary;primary_link;".indexOf(wayValue) >= 0) {
+						currentWay.wayDescTravelModes |= Connection.CONNTYPE_TRUNK_OR_PRIMARY;
+					}
+					if (";motorway;motorway_link;trunk;trunk_link;primary;primary_link;secondary;secondary_link;tertiary;".indexOf(wayValue) >= 0) {
+						currentWay.wayDescTravelModes |= Connection.CONNTYPE_MAINSTREET_NET;
+						currentWay.wayDescFlags |= WayDescription.WDFLAG_MAINSTREET_NET;
 					}
 				}
 				

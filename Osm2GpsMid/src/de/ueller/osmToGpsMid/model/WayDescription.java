@@ -23,7 +23,9 @@ public class WayDescription extends EntityDescription{
 	public boolean	ignoreOsmAreaTag;
 	public boolean	showNameAsForArea;
 	public int		wayWidth;
-	/** Travel Modes (motorcar, bicycle, etc.) supported by this WayDescription (1 bit per travel mode) */
+	/** Up to 4 travel Modes (motorcar, bicycle, etc.) supported by this WayDescription (1 bit per travel mode)
+	 *  The upper 4 bits equal to Connection.CONNTYPE_* flags
+	 */
 	public byte		wayDescTravelModes;
 	/** typical speed of this WayDescription for up to MAXTRAVELMODES travel modes */
 	public int		typicalSpeed[] = new int[TravelModes.MAXTRAVELMODES];
@@ -39,6 +41,7 @@ public class WayDescription extends EntityDescription{
 	public final static int WDFLAG_BUILDING = 0x10;
 	public final static int WDFLAG_HIGHWAY_LINK = 0x20;
 	public final static int WDFLAG_MOTORWAY = 0x40;
+	public final static int WDFLAG_MAINSTREET_NET = 0x80;
 	
 	public WayDescription() {
 		wayDescFlags = WDFLAG_LINESTYLE_SOLID;
@@ -53,6 +56,4 @@ public class WayDescription extends EntityDescription{
 		}
 		rulePriority = 0;
 	}
-	
-	
 }

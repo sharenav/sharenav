@@ -105,6 +105,8 @@ public class RouteInstructions {
 	private static int iBackwardCount = 0;
 	private static long againstDirectionDetectedTime = 0;
 
+	public final static int DISTANCE_UNKNOWN = Integer.MAX_VALUE;
+	
 	private	static int routeInstructionColor=0x00E6E6E6;
 	
 	public static float maxScaleLevelForRouteInstructionSymbols = 0;
@@ -630,7 +632,7 @@ public class RouteInstructions {
 				}				
 				if(Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_OFF_ROUTE_DISTANCE_IN_MAP)) {
 					e = Trace.tl.ele[TraceLayout.ROUTE_OFFROUTE];
-					e.setText(Locale.get("routeinstructions.Offset")/*off:*/ + trace.showDistance(dstToRoutePath, (dstToRoutePath == Integer.MAX_VALUE ? Trace.DISTANCE_UNKNOWN : Trace.DISTANCE_AIR)));
+					e.setText(Locale.get("routeinstructions.Offset")/*off:*/ + trace.showDistance(dstToRoutePath, (dstToRoutePath == RouteInstructions.DISTANCE_UNKNOWN ? Trace.DISTANCE_UNKNOWN : Trace.DISTANCE_AIR)));
 				}
 				e = Trace.tl.ele[TraceLayout.ROUTE_DISTANCE];
 				String airDistance = "";
@@ -806,7 +808,7 @@ public class RouteInstructions {
 	
 	public static void resetOffRoute(Vector route, Node center) {
 		haveBeenOnRouteSinceCalculation = false;
-		dstToRoutePath=Integer.MAX_VALUE;
+		dstToRoutePath=RouteInstructions.DISTANCE_UNKNOWN;
 		if (route!=null && route.size() >= 2 ) {
 			ConnectionWithNode c0 = (ConnectionWithNode) route.elementAt(1); // don't take arrow 0 as this is our dummy connection
 			// calculate distance to first arrow after calculation

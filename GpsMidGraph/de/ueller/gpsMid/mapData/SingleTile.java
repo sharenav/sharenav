@@ -262,6 +262,7 @@ public class SingleTile extends Tile implements QueueableTile {
 							}
 						}
 						if ((opt & Tile.OPT_PAINT) != 0){
+							pc.waysPainted++;
 							if (!w.isArea()) {
 								w.setColor(pc);
 								if (renderHighlight) {									
