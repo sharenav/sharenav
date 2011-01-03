@@ -54,7 +54,7 @@ public class Configuration {
 	 *  the default values for the features added between configVersionStored
 	 *  and VERSION will be set, before the version in the recordstore is increased to VERSION.
 	 */
-	public final static int VERSION = 20;
+	public final static int VERSION = 21;
 
 	public final static int LOCATIONPROVIDER_NONE = 0;
 	public final static int LOCATIONPROVIDER_SIRF = 1;
@@ -700,11 +700,18 @@ public class Configuration {
 			setWikipediaLang("en");
 			setNamesOnMapLang("en");
 		}
-		if (configVersionStored < 20) {
+		if (configVersionStored < 21) {
 			cfgBits_64_to_127 |= 1L << CFGBIT_ROUTE_USE_MOTORWAYS |
 								 1L << CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD |
 								 1L << CFGBIT_AUTOSAVE_DESTPOS |
 			 					 1L << CFGBIT_ROUTE_USE_TOLLROADS |
+			 					 1L << CFGBIT_ONLINE_GEOHACK |
+			 					 1L << CFGBIT_ONLINE_WEATHER |
+			 					 1L << CFGBIT_ONLINE_PHONE |
+			 					 1L << CFGBIT_ONLINE_PHONES |
+			 					 1L << CFGBIT_ONLINE_WEBSITE |
+			 					 1L << CFGBIT_ONLINE_WEBSITES |
+			 					 1L << CFGBIT_ONLINE_WIKIPEDIA_RSS |
 			 					 1L << CFGBIT_MAPTAP_DOUBLE |
 			 					 1L << CFGBIT_MAPTAP_SINGLE;			 					 
 		}
