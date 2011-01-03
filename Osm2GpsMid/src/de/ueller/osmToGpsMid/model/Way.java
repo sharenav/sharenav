@@ -66,7 +66,9 @@ public class Way extends Entity implements Comparable<Way> {
 	public List<Triangle>		triangles							= null;
 	private Bounds				bound								= null;
 
-	/** Travel modes for which this way can be used (motorcar, bicycle, etc.) */
+	/** Up to 4 travel modes for which this way can be used (motorcar, bicycle, etc.)
+	 *  The upper 4 bits equal to Connection.CONNTYPE_* flags
+	 */
 	public byte					wayTravelModes						= 0;
 
 	public static Configuration	config;
@@ -134,19 +136,6 @@ public class Way extends Entity implements Comparable<Way> {
 			}
 		}
 
-		// Mark mainstreet net connections
-		if (isAccessForAnyRouting()) {
-			String wayValue = ";" + wayDesc.value.toLowerCase() + ";";
-			if (";motorway;motorway_link;".indexOf(wayValue) >= 0) {
-				wayTravelModes |= Connection.CONNTYPE_MOTORWAY;
-			}
-			if (";trunk;trunk_link;primary;primary_link;".indexOf(wayValue) >= 0) {
-				wayTravelModes |= Connection.CONNTYPE_TRUNK_OR_PRIMARY;
-			}
-			if (";motorway;motorway_link;trunk;trunk_link;primary;primary_link;secondary;secondary_link;tertiary;".indexOf(wayValue) >= 0) {
-				wayTravelModes |= Connection.CONNTYPE_MAINSTREET_NET;
-			}
-		}
 		if (containsKey("toll")) {
 			wayTravelModes |= Connection.CONNTYPE_TOLLROAD;			
 		}
