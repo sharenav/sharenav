@@ -105,7 +105,7 @@ public class GuiSetupSound extends Form implements CommandListener {
 	        String newSoundDir = Legend.soundDirectories[sndDirsGroup.getSelectedIndex()];
 			if (!newSoundDir.equals(Configuration.getSoundDirectory())) {
 				Configuration.setSoundDirectory(newSoundDir);
-				RouteSyntax.getInstance(null).readSyntax();
+				RouteSyntax.getInstance().readSyntax();
 			}
 			
 			// convert boolean array with selection states for Configuration bits

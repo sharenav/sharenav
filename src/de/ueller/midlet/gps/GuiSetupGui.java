@@ -36,6 +36,15 @@ public class GuiSetupGui extends Form implements CommandListener {
 		this.parent = parent;
 		this.initialSetup = initialSetup;
 		try {
+			long mem = Configuration.getPhoneAllTimeMaxMemory();
+			if (mem == 0) {
+				mem = Runtime.getRuntime().totalMemory();
+			}
+			mem = mem / 1024;
+			memField = new TextField(Locale.get("guisetupgui.DefineMaxMem")/*Define maxMem (kbyte)*/,
+					Long.toString(mem), 8, TextField.DECIMAL);
+			append(memField);
+			
 			String [] imenu = new String[5];
 			imenu[0] = Locale.get("guisetupgui.UseIconMenu")/*Use icon menu*/;
 			imenu[1] = Locale.get("guisetupgui.FullscreenIconMenu")/*Fullscreen icon menu*/;
@@ -55,6 +64,13 @@ public class GuiSetupGui extends Form implements CommandListener {
 			imenuOpts.setSelectedIndex(4, 
 					Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED));
 			append(imenuOpts);
+		
+			String [] other = new String[1];
+			other[0] = Locale.get("guisetupgui.PredefWpts")/*Predefined way points*/;
+			otherOpts = new ChoiceGroup(Locale.get("guisetupgui.OtherOpt")/*Other options:*/, Choice.MULTIPLE, other, null);
+			otherOpts.setSelectedIndex(0,
+					Configuration.getCfgBitSavedState(Configuration.CFGBIT_WAYPT_OFFER_PREDEF));
+			append(otherOpts);
 			
 			/* only display search settings available on the device */
 			// maximum search option entries
@@ -75,7 +91,7 @@ public class GuiSetupGui extends Form implements CommandListener {
 				}
 				append(searchSettings);
 			}
-		
+					
 			if (Configuration.getHasPointerEvents()) {
 				String [] touch = new String[3];
 				int i = 0;
@@ -90,22 +106,6 @@ public class GuiSetupGui extends Form implements CommandListener {
 				mapTapFeatures.setSelectedIndex(i++, Configuration.getCfgBitState(Configuration.CFGBIT_MAPTAP_SINGLE));
 				append(mapTapFeatures);
 			}
-			
-			String [] other = new String[1];
-			other[0] = Locale.get("guisetupgui.PredefWpts")/*Predefined way points*/;
-			otherOpts = new ChoiceGroup(Locale.get("guisetupgui.OtherOpt")/*Other options:*/, Choice.MULTIPLE, other, null);
-			otherOpts.setSelectedIndex(0,
-					Configuration.getCfgBitSavedState(Configuration.CFGBIT_WAYPT_OFFER_PREDEF));
-			append(otherOpts);
-			
-			long mem = Configuration.getPhoneAllTimeMaxMemory();
-			if (mem == 0) {
-				mem = Runtime.getRuntime().totalMemory();
-			}
-			mem = mem / 1024;
-			memField = new TextField(Locale.get("guisetupgui.DefineMaxMem")/*Define maxMem (kbyte)*/,
-					Long.toString(mem), 8, TextField.DECIMAL);
-			append(memField);
 			
 			addCommand(CMD_SAVE);
 			addCommand(CMD_CANCEL);
@@ -126,6 +126,13 @@ public class GuiSetupGui extends Form implements CommandListener {
 		}
 
 		if (c == CMD_SAVE) {
+			try {
+				long mem=Long.parseLong(memField.getString());
+				Configuration.setPhoneAllTimeMaxMemory(mem*1024);
+			} catch (NumberFormatException e) {
+				// nothing to do (igore content)
+			}
+			
 			Trace trace = Trace.getInstance();
 			if (imenuOpts.isSelected(0) != Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS)) {
 				trace.removeAllCommands();
@@ -151,6 +158,12 @@ public class GuiSetupGui extends Form implements CommandListener {
 					GpsMid.getInstance().restartBackLightTimer();			
 				}
 			}
+
+			Trace.uncacheIconMenu();
+			GuiDiscover.uncacheIconMenu();
+			Configuration.setCfgBitSavedState(Configuration.CFGBIT_WAYPT_OFFER_PREDEF,
+					otherOpts.isSelected(0));
+			
 			int i = 0;
 			if (Configuration.getHasPointerEvents()) {
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD, searchSettings.isSelected(i++));
@@ -163,16 +176,6 @@ public class GuiSetupGui extends Form implements CommandListener {
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_MAPTAP_SINGLE, mapTapFeatures.isSelected(i++));
 			}
 
-			try {
-				long mem=Long.parseLong(memField.getString());
-				Configuration.setPhoneAllTimeMaxMemory(mem*1024);
-			} catch (NumberFormatException e) {
-				// nothing to do (igore content)
-			}
-			Trace.uncacheIconMenu();
-			GuiDiscover.uncacheIconMenu();
-			Configuration.setCfgBitSavedState(Configuration.CFGBIT_WAYPT_OFFER_PREDEF,
-					otherOpts.isSelected(0));
 			parent.show();
 			return;
 		}

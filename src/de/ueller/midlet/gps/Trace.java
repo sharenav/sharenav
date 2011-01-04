@@ -717,7 +717,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		if ( gpsRecenter && Configuration.getCfgBitState(Configuration.CFGBIT_ROUTE_AUTO_RECALC) ) {
 			if (Math.abs(System.currentTimeMillis()-oldRecalculationTime) >= 7000 ) {
 				if (Configuration.getCfgBitState(Configuration.CFGBIT_SND_ROUTINGINSTRUCTIONS)) {
-					GpsMid.mNoiseMaker.playSound(RouteSyntax.getInstance(this).getRecalculationSound(), (byte) 5, (byte) 1 );
+					GpsMid.mNoiseMaker.playSound(RouteSyntax.getInstance().getRecalculationSound(), (byte) 5, (byte) 1 );
 				}
 				//#debug debug
 				logger.debug("autoRouteRecalculate");
@@ -1759,7 +1759,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				atDest = (distance < 25);
 				if (atDest) {
 					if (movedAwayFromDest && Configuration.getCfgBitState(Configuration.CFGBIT_SND_DESTREACHED)) {
-						GpsMid.mNoiseMaker.playSound(RouteSyntax.getInstance(this).getDestReachedSound(), (byte) 7, (byte) 1);
+						GpsMid.mNoiseMaker.playSound(RouteSyntax.getInstance().getDestReachedSound(), (byte) 7, (byte) 1);
 					}
 				} else if (!movedAwayFromDest) {
 					movedAwayFromDest = true;
@@ -1784,7 +1784,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				// give speeding alert only every 10 seconds
 				if ( (System.currentTimeMillis() - lastTimeOfSpeedingSound) > 10000 ) {
 					lastTimeOfSpeedingSound = System.currentTimeMillis();
-					GpsMid.mNoiseMaker.immediateSound(RouteSyntax.getInstance(this).getSpeedLimitSound());
+					GpsMid.mNoiseMaker.immediateSound(RouteSyntax.getInstance().getSpeedLimitSound());
 				}
 			}
 			/*
@@ -3278,10 +3278,10 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	// distances 10km or more, "2,6km" for distances under 10, and
 	// "600m" for distances under 1km.
 
-	public String showDistance(int meters) {
+	public static String showDistance(int meters) {
 		return showDistance(meters, DISTANCE_GENERIC);
 	}
-	public String showDistance(int meters, int type) {
+	public static String showDistance(int meters, int type) {
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_METRIC)) {
 			if (type == DISTANCE_UNKNOWN) {
 				return "???m";
