@@ -95,6 +95,10 @@ public class AudioRecorder  implements SelectionListener{
 		} catch (Exception me) {
 			record = null;
 			logger.exception(Locale.get("audiorecorder.FailedStartingRecording")/*Failed to start recording*/, me);
+			// offer a chance to fix a possibly improper URL
+			//#if polish.api.fileConnection				
+			new FsDiscover(Trace.getInstance(),this,basedirectory,true,null,"Media Store Directory");
+			//#endif
 		}
 		//#endif
 
