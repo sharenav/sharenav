@@ -95,8 +95,6 @@ public class RouteSyntax {
 		}
 	}
 	
-	private static Trace trace;
-
 	private static String [] simpleDirectionTexts;
 	private static String [] bearDirectionTexts;
 	private static String [] roundAboutExitTexts;
@@ -119,16 +117,15 @@ public class RouteSyntax {
 	
 	private static boolean routeSyntaxAvailable;
 	
-	public RouteSyntax(Trace trace) {
+	public RouteSyntax() {
 		logger = Logger.getInstance(RouteSyntax.class, Logger.DEBUG);
 		readSyntax();
-		this.trace = trace;
 		instance = this;
 	}
 	
-	public static RouteSyntax getInstance(Trace trace) {
+	public static RouteSyntax getInstance() {
 		if (instance == null) {
-			instance = new RouteSyntax(trace);
+			instance = new RouteSyntax();
 		}
 		return instance;
 	}
@@ -327,7 +324,7 @@ public class RouteSyntax {
 
 	public static String getTextInstructionIn(int instruction, int inDistance) {
 		// FIXME this could be cleaner (e.g. %distance% instead of %meters%m) but keeping for now for backwards compatibility
-		return HelperRoutines.replaceAll( getSyntaxTemplate(instruction, SyntaxTemplateComponents.inText), "%meters%m", trace.showDistance(inDistance, Trace.DISTANCE_GENERIC));
+		return HelperRoutines.replaceAll( getSyntaxTemplate(instruction, SyntaxTemplateComponents.inText), "%meters%m", Trace.getInstance().showDistance(inDistance, Trace.DISTANCE_GENERIC));
 	}
 
 	public static String getSoundInstructionThen(int instructionThen, boolean soon, boolean again) {

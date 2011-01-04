@@ -155,7 +155,7 @@ public class RouteInstructions {
 		Node areaStart = new Node();
 		boolean drawRouteInstructionSymbols = (pc.scale <= RouteInstructions.maxScaleLevelForRouteInstructionSymbols);
 
-		RouteSyntax routeSyntax = RouteSyntax.getInstance(trace);
+		RouteSyntax routeSyntax = RouteSyntax.getInstance();
 		
 		try {
 			StringBuffer soundToPlay = new StringBuffer();
@@ -1364,7 +1364,7 @@ public class RouteInstructions {
 				if ( (c.wayRouteFlags & Legend.ROUTE_FLAG_VERY_SMALL_DISTANCE) > 0) { 
 					sb.append("(small distance) ");
 				}
-				sb.append(RouteSyntax.getInstance(trace).getTextInstruction(ri));
+				sb.append(RouteSyntax.getInstance().getTextInstruction(ri));
 				sb.append(" into ");
 				sb.append((name==null?"":name));
 				sb.append(" then go ");
