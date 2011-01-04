@@ -781,7 +781,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			// Update configuration
 			planet = jOsmFileChooser.getSelectedFile().getAbsolutePath();
-			if (!planet.equalsIgnoreCase(FILE_SRC)) {
+			if (!planet.equalsIgnoreCase(CHOOSE_SRC)) {
 				config.setPlanetName(planet);
 				// Add as entry to the drop down list
 				jcbPlanet.addItem(planet);
@@ -878,9 +878,10 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			String propName = jPropFileChooser.getSelectedFile().getAbsolutePath();
 			try {
 				System.out.println("Loading properties specified by GUI: " + propName);
+				// reset planet file so it will be read from config
+				config.setPlanetName("");
 				config.loadPropFile(new FileInputStream(propName));
 				config.readBounds();
-				updatePropertiesSelectors();
 			} catch (IOException ioe) {
 				JOptionPane.showMessageDialog(this,
 						"Failed to load properties file. Error is: "
@@ -1220,9 +1221,10 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 				// Entries added by askPropFile() have a full path name
 				try {
 					System.out.println("Loading properties from last.properties");
+					// reset planet file so it will be read from config
+					config.setPlanetName("");
 					config.loadPropFile(new FileInputStream("last.properties"));
 					config.readBounds();
-					updatePropertiesSelectors();
 				} catch (IOException ioe) {
 					JOptionPane.showMessageDialog(this,
 							"Failed to load properties file. Error is: "
@@ -1237,9 +1239,10 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 				try {
 					System.out.println("Loading properties specified by GUI: " +
 							chosenProperty);
+					// reset planet file so it will be read from config
+					config.setPlanetName("");
 					config.loadPropFile(new FileInputStream(chosenProperty));
 					config.readBounds();
-					updatePropertiesSelectors();
 				} catch (IOException ioe) {
 					JOptionPane.showMessageDialog(this,
 							"Failed to load properties file. Error is: "
@@ -1255,6 +1258,8 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 					if (is == null) {
 						throw new IOException("Properties file could not be opened.");
 					}
+					// reset planet file so it will be read from config
+					config.setPlanetName("");
 					config.loadPropFile(is);
 					config.readBounds();
 				} catch (IOException ioe) {
