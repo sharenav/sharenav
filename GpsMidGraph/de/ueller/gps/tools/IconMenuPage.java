@@ -162,7 +162,7 @@ public class IconMenuPage extends LayoutManager {
 	private int getEleId(int col, int row) {
 		if (numCols == 3) {
 			return col + row * numCols;
-		} else { // numCols == 4 - last buttons are in right column 
+		} else { // numCols == 4 - arrange elements similarly as they are arranged in the 3-column setup
 			if (col < 3) {
 				return row * 4 + (col-row);
 			} else if (col == 3) {

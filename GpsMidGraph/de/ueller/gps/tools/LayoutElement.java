@@ -224,7 +224,7 @@ public class LayoutElement {
 				left = imp.minX + (eleNr % imp.numCols) * calcIconReservedWidth(imp) + (calcIconReservedWidth(imp) - imp.bgImage.getWidth()) / 2;
 				textLeft = imp.minX + (eleNr % imp.numCols) * calcIconReservedWidth(imp) + (calcIconReservedWidth(imp) - textWidth) / 2 ;
 				top = imp.minY + (eleNr / imp.numCols) * calcIconReservedHeight(imp);
-			} else { // imp.numCols == 4 - arrange similarly as the 3-column setup
+			} else { // imp.numCols == 4 - arrange elements similarly as they are arranged in the 3-column setup
 				int x = eleNr % 3;
 				int y = eleNr / 3;
 				if (eleNr >= 9) {
