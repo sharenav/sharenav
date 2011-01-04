@@ -180,8 +180,9 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	String [] soundFormats = {SOUND_NONE, SOUND_AMR, SOUND_WAV, SOUND_WAV_AMR};
 	
 	private static final String LOAD_PROP = "Load .properties file";
+	private static final String LAST_PROP = "Last used properties";
 	private static final String CUSTOM_PROP = "Custom properties";
-	String [] propertiesList = {LOAD_PROP, CUSTOM_PROP};
+	String [] propertiesList = {LOAD_PROP, LAST_PROP, CUSTOM_PROP};
 	
 	private static final String BUILTIN_STYLE_NORMAL = "Built-in style-file.xml";
 	private static final String BUILTIN_STYLE_MINI = "Built-in mini-style-file.xml";
@@ -407,6 +408,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 
 		Vector<String> propertiesName = enumerateBuiltinProperties();
 		propertiesName.add(0, LOAD_PROP);
+		propertiesName.add(0, LAST_PROP);
 		propertiesName.add(0, CUSTOM_PROP);
 		jcbProperties = new JComboBox(propertiesName.toArray());
 		jcbProperties.addActionListener(this);
@@ -816,6 +818,28 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		}
 	}
 
+	/** Sets GUI settings from the loaded .properties file.
+	 */
+	private void guiSettingsFromPropFile(String propName) {
+		jcbProperties.addItem(propName);
+		jcbProperties.setSelectedItem(propName);
+		jcbEditing.setSelected(config.enableEditingSupport);
+		// Set desired languages
+		String propLang[] = config.getUseLang().split("[;,]", 200);
+		for (int i = 2; i < languages.length ; i++) {
+			languages[i].setSelected(false);
+			for (int j = 0; j < propLang.length ; j++) {
+				//System.out.println ("Comparing strings: " + propLang[j] + " " + langList[i]);
+				if (propLang[j].equals(langList[i])) {
+					languages[i].setSelected(true);
+				}
+				if (propLang[j].equals("*")) {
+					languages[0].setSelected(true);
+				}
+			}
+		}
+	}
+
 	/** Opens a file chooser dialog for the bundle .properties file.
 	 * Lets the config read the file when it was chosen.
 	 */
@@ -846,23 +870,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 				System.out.println("Loading properties specified by GUI: " + propName);
 				config.loadPropFile(new FileInputStream(propName));
 				config.readBounds();
-				jcbProperties.addItem(propName);
-				jcbProperties.setSelectedItem(propName);
-				jcbEditing.setSelected(config.enableEditingSupport);
-				// Set desired languages
-				String propLang[] = config.getUseLang().split("[;,]", 200);
-				for (int i = 2; i < languages.length ; i++) {
-					languages[i].setSelected(false);
-					for (int j = 0; j < propLang.length ; j++) {
-						//System.out.println ("Comparing strings: " + propLang[j] + " " + langList[i]);
-						if (propLang[j].equals(langList[i])) {
-							languages[i].setSelected(true);
-						}
-						if (propLang[j].equals("*")) {
-							languages[0].setSelected(true);
-						}
-					}
-				}
+				guiSettingsFromPropFile(propName);
 			} catch (IOException ioe) {
 				JOptionPane.showMessageDialog(this,
 						"Failed to load properties file. Error is: "
@@ -922,7 +930,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 
 	/**
 	 * Writes the current properties to a .properties file
-	 * TODO: Shouldn't useCellID and EnableEditing be written too?
+	 * TODO: Shouldn't useCellID be written too?
 	 * And what about the cellSource variable from Configuration.java?
 	 * @param fileName Path name of file to write
 	 */
@@ -955,6 +963,11 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 					fw.write("#app = " + a + "\r\n");
 				}
 			}
+			fw.write("\r\n");
+			fw.write("# Editing support.\r\n");
+			fw.write("enableEditing = " + config.enableEditingSupport + "\r\n");
+			fw.write("\r\n");
+
 			fw.write("\r\n");
 			fw.write("# Routing ability can be disabled to save space in the midlet by setting to false.\r\n");
 			fw.write("# Or set to one or more defined in the style-file, e.g. motorcar, bicycle, foot.\r\n");
@@ -1193,6 +1206,20 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			String chosenProperty = (String) jcbProperties.getSelectedItem();
 			if (chosenProperty.equalsIgnoreCase(LOAD_PROP)) {
 				askPropFile();
+			} else if (chosenProperty.equalsIgnoreCase(LAST_PROP)) {
+				// Entries added by askPropFile() have a full path name
+				try {
+					System.out.println("Loading properties from last.properties");
+					config.loadPropFile(new FileInputStream("last.properties"));
+					config.readBounds();
+					guiSettingsFromPropFile("last.properties");
+				} catch (IOException ioe) {
+					JOptionPane.showMessageDialog(this,
+							"Failed to load properties file. Error is: "
+							+ ioe.getMessage(), "Error",
+							JOptionPane.ERROR_MESSAGE);
+					ioe.printStackTrace();
+				}
 			} else if (chosenProperty.equalsIgnoreCase(CUSTOM_PROP)) {
 				config.resetConfig();
 			} else if (chosenProperty.contains("/") || chosenProperty.contains("\\")) {
@@ -1202,6 +1229,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 							chosenProperty);
 					config.loadPropFile(new FileInputStream(chosenProperty));
 					config.readBounds();
+					guiSettingsFromPropFile(chosenProperty);
 				} catch (IOException ioe) {
 					JOptionPane.showMessageDialog(this,
 							"Failed to load properties file. Error is: "
