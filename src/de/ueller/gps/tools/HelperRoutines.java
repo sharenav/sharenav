@@ -8,7 +8,7 @@ package de.ueller.gps.tools;
 
 import java.util.Calendar;
 import java.util.Date;
-
+import de.ueller.gps.data.Configuration;
 
 public class HelperRoutines {
 	
@@ -100,14 +100,28 @@ public class HelperRoutines {
 	 * 
 	 */
 	public static final String formatDistance(float dist) {
-		if (dist < 100) {
-			return Integer.toString((int)dist) + "m";
-		} else if (dist < 1000) {
-			return Integer.toString((int)(dist/10)*10) + "m";
-		} else if (dist < 10000) {
-			return Float.toString(((int)(dist/100))/10.0f) + "km";
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_METRIC)) {
+			if (dist < 100) {
+				return Integer.toString((int)dist) + "m";
+			} else if (dist < 1000) {
+				return Integer.toString((int)(dist/10)*10) + "m";
+			} else if (dist < 10000) {
+				return Float.toString(((int)(dist/100))/10.0f) + "km";
+			} else {
+				return Integer.toString((int)(dist/1000)) + "km";
+			}
 		} else {
-			return Integer.toString((int)(dist/1000)) + "km";
+			int distYd = (int) (dist / 0.9144f + 0.5);
+			int distMi = (int) (dist / 1609.344f + 0.5);
+			if (distYd < 100) {
+				return Integer.toString((int)distYd) + "yd";
+			} else if (distYd < 1000) {
+				return Integer.toString((int)(distYd/10)*10) + "yd";
+			} else if (distMi < 10) {
+				return Float.toString((int)(distMi)) + "mi";
+			} else {
+				return Integer.toString((int)(distMi)) + "mi";
+			}
 		}
 	}
 	
