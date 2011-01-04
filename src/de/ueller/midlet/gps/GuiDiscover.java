@@ -664,9 +664,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 			Locale.get("guiwebinfo.GeoHack"),
 			Locale.get("guiwebinfo.Weather"),
 			Locale.get("guiwebinfo.Phone"),
-			Locale.get("guiwebinfo.Phones"),
 			Locale.get("guiwebinfo.Website"),
-			Locale.get("guiwebinfo.Websites"),
 			Locale.get("guiwebinfo.WikipediaRSS")
 		};
 		onlineOptionGroup = new ChoiceGroup(Locale.get("guidiscover.OnlineSetup")/*Online function setup*/, Choice.MULTIPLE, onlineSetup, null);
@@ -678,13 +676,9 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 
 		onlineOptionGroup.setSelectedIndex(2, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_PHONE));
 
-		onlineOptionGroup.setSelectedIndex(3, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_PHONES));
+		onlineOptionGroup.setSelectedIndex(3, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_WEBSITE));
 
-		onlineOptionGroup.setSelectedIndex(4, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_WEBSITE));
-
-		onlineOptionGroup.setSelectedIndex(5, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_WEBSITES));
-
-		onlineOptionGroup.setSelectedIndex(6, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_WIKIPEDIA_RSS));
+		onlineOptionGroup.setSelectedIndex(4, Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_WIKIPEDIA_RSS));
 
 		menuOnlineOptions.addCommand(BACK_CMD);
 		menuOnlineOptions.addCommand(OK_CMD);
@@ -1224,14 +1218,10 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 						onlineOptionGroup.isSelected(1));
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ONLINE_PHONE,
 						onlineOptionGroup.isSelected(2));
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ONLINE_PHONES,
-						onlineOptionGroup.isSelected(3));
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ONLINE_WEBSITE,
-						onlineOptionGroup.isSelected(4));
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ONLINE_WEBSITES,
-						onlineOptionGroup.isSelected(5));
+						onlineOptionGroup.isSelected(3));
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_ONLINE_WIKIPEDIA_RSS,
-						onlineOptionGroup.isSelected(6));
+						onlineOptionGroup.isSelected(4));
 
 				state = STATE_ROOT;
 				this.show();
