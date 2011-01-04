@@ -263,12 +263,10 @@ public class Configuration {
 	public final static byte CFGBIT_ONLINE_WEATHER = 99;
 	/** bit 100: indicate whether to show online option */
 	public final static byte CFGBIT_ONLINE_PHONE = 100;
-	/** bit 101: indicate whether to show online option */
-	public final static byte CFGBIT_ONLINE_PHONES = 101;
+	/** bit 101: unused */
 	/** bit 102: indicate whether to show online option */
 	public final static byte CFGBIT_ONLINE_WEBSITE = 102;
-	/** bit 103: indicate whether to show online option */
-	public final static byte CFGBIT_ONLINE_WEBSITES = 103;
+	/** bit 103: unused */
 	/** bit 104: indicate whether to show online option */
 	public final static byte CFGBIT_ONLINE_WIKIPEDIA_RSS = 104;
 	/** bit 105: indicate whether long map tap feature is enabled */
@@ -708,9 +706,7 @@ public class Configuration {
 			 					 1L << CFGBIT_ONLINE_GEOHACK |
 			 					 1L << CFGBIT_ONLINE_WEATHER |
 			 					 1L << CFGBIT_ONLINE_PHONE |
-			 					 1L << CFGBIT_ONLINE_PHONES |
 			 					 1L << CFGBIT_ONLINE_WEBSITE |
-			 					 1L << CFGBIT_ONLINE_WEBSITES |
 			 					 1L << CFGBIT_ONLINE_WIKIPEDIA_RSS |
 			 					 1L << CFGBIT_MAPTAP_DOUBLE |
 			 					 1L << CFGBIT_MAPTAP_SINGLE;			 					 
