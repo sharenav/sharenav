@@ -173,10 +173,17 @@ public class Legend {
 	public final static int COLOR_SEARCH_BUTTON_BORDER = 30;
 
 	/* FIXME add these at map format change
-        public final static int COLOR_SEARCH_TOUCHED_BUTTON_BACKGROUND = 76;
-	public final static int COLOR_SEARCH_BUTTON_TEXT = 77;
-	public final static int COLOR_SEARCH_BUTTON_BORDER = 78;
-	public final static int COLOR_COUNT = 79; */
+        public final static int COLOR_SEARCH_BACKGROUND = 76;
+        public final static int COLOR_SEARCH_TEXT = 77;
+        public final static int COLOR_SEARCH_HIGHLIGHT1 = 78;
+        public final static int COLOR_SEARCH_HIGHLIGHT2 = 79;
+        public final static int COLOR_SEARCH_HIGHLIGHT3 = 80;
+        public final static int COLOR_MENU_BACKGROUND = 81;
+        public final static int COLOR_MENU_TEXT = 82;
+        public final static int COLOR_SEARCH_TOUCHED_BUTTON_BACKGROUND = 83;
+	public final static int COLOR_SEARCH_BUTTON_TEXT = 84;
+	public final static int COLOR_SEARCH_BUTTON_BORDER = 85;
+	public final static int COLOR_COUNT = 86; */
 	
 	public static int COLORS[] = new int[COLOR_COUNT];
 
