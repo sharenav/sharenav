@@ -380,7 +380,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		gbc.gridy = 0;
 		jpFiles.add(jcbPlanet, gbc);
 		
-		if (!"Choose your map data source".equals((String)jcbPlanet.getSelectedItem())) {
+		if (!CHOOSE_SRC.equals((String)jcbPlanet.getSelectedItem())) {
 			config.setPlanetName((String)jcbPlanet.getSelectedItem());
 		}
 		
