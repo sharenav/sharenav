@@ -888,7 +888,17 @@ public class Configuration {
 			} else {
 				System.out.println("Opening planet file: " + planet);
 				
-				fr = new FileInputStream(planet);
+				if (planet.startsWith("http://")) {
+					System.out.println("Opening map file from network, may take a while");
+					URL url = new URL(planet);
+					HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+					conn.setRequestProperty("User-Agent", "Osm2GpsMid");
+					conn.connect();
+					InputStream planetStream;
+					fr = new BufferedInputStream(conn.getInputStream());
+				} else {
+					fr = new FileInputStream(planet);
+				}
 				if (planet.endsWith(".bz2") || planet.endsWith(".gz")){
 					if (planet.endsWith(".bz2")) {
 						fr.read();
