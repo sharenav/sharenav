@@ -1173,7 +1173,10 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			"    Country level extracts in .osm.bz2 file format are available\n" +
 			"    i.e. at <a href=\"http://download.geofabrik.de/osm/\">GeoFabrik</a> and <a href=\"http://downloads.cloudmade.com/\">CloudMade</a></li>" +
 			"</ul>" +
-			"<li> Press 'Create GpsMid midlet'\n" +
+			"<li> Select languages for which to include on-screen translation and navigation instructions (when available).\n" +
+			"The language selection \"*\" includes all available languages for on-screen use, to be selected with\n" + 
+			"language code or as device's default language\n" +
+			"<li> Press 'Create GpsMid midlet' or 'Create GpsMid map zip'\n" +
 			"</ol><br>" +
 			"Your changes in the wizard are written to last.properties so you can use this as\n" +
 			"a starting point for your .properties file.<br>" +
