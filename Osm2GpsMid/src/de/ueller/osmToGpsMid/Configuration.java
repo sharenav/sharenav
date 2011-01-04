@@ -396,6 +396,13 @@ public class Configuration {
 						// create a map zip instead of bundle jar
 						mapzip = true;
 					}
+					if (arg.startsWith("--nogui")) {
+						// makes argument length to be 2 so GUI will not be started
+					}
+					if (arg.startsWith("--properties=")) {
+						// specify a properties file (which can specify the map file)
+						propFile = arg.substring(13);
+					}
 					if (arg.startsWith("--map.name=")) {
 						// give name to the map zip
 						mapName = arg.substring(11);
@@ -410,13 +417,15 @@ public class Configuration {
 						System.err.println("       The data comes from OpenCellId.org and the file can be found at http://myapp.fr/cellsIdData/");
 						System.err.println("  \"--map.name=\" specifies the output map zip basename");
 						System.err.println("  \"--mapzip\" builds a map zip named by properties midlet.name");
-						System.err.println("  planet.osm.bz2: points to a (compressed) .osm file");
+						System.err.println("  \"--properties=\" points to a .properties file specifying additional parameters");
+						System.err.println("  \"--nogui\" don't start the GUI (to be used with --properties= if map name is specified in properties)");
+						System.err.println("  planet.osm.bz2: points to a (compressed) .osm file, overrides possible .properties mapSource");
 						System.err.println("       By specifying osmXapi, the data can be fetched straight from the server (only works for small areas)");
 						System.err.println("  location: points to a .properties file specifying additional parameters");
 						System.exit(0);
 					}
 					
-				} else if (planet == null) {
+				} else if (planet == null || planet.equals("")) {
 					planet = arg;
 				} else {
 					propFile = arg;
@@ -531,6 +540,11 @@ public class Configuration {
 			}
 
 			setSounds(getString("useSounds"));
+
+			// don't override map source set by command line with one from .properties
+			if (planet == null || planet.equals("")) {
+				setPlanetName(getString("mapSource"));
+			}
 
 			setSoundFiles(getString("useSoundFilesWithSyntax"));
 
@@ -830,6 +844,10 @@ public class Configuration {
 
 		public InputStream getPlanetSteam() throws IOException {
 			InputStream fr = null;
+			if (planet.equals("")) {
+				System.out.println("Error: Map source not set - set in .properties or with command line");
+				throw new IOException("Error: Map source not set");
+			}
 			if (planet.equalsIgnoreCase("osmxapi") || planet.equalsIgnoreCase("ROMA")) {
 				if (bounds.size() > 1) {
 					System.out.println("Can't deal with multiple bounds when requesting from a Server yet");

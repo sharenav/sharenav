@@ -99,6 +99,7 @@
    		<entry key="useCellID" value="false"/>
    		<entry key="useIcons" value="true"/>
    		<entry key="useSounds" value="amr"/>
+   		<entry key="mapSource" value=""/>
    		<entry key="useSoundFilesWithSyntax" value="sound"/>
    		<entry key="lang" value="*"/>
    		<entry key="langName" value="All"/>

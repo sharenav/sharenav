@@ -86,7 +86,7 @@ public class BundleGpsMid implements Runnable {
 		GuiConfigWizard gcw = null;
 		
 		Configuration c;
-		if (args.length == 0) {
+		if (args.length == 0 || (args.length == 1 && args[0].startsWith("--properties="))) {
 			if (warning != null) {
 				JFrame frame = new JFrame("Alert");
 				JOptionPane.showMessageDialog(frame,
