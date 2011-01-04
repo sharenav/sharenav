@@ -380,7 +380,9 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		gbc.gridy = 0;
 		jpFiles.add(jcbPlanet, gbc);
 		
-		config.setPlanetName((String)jcbPlanet.getSelectedItem());
+		if (!"Choose your map data source".equals((String)jcbPlanet.getSelectedItem())) {
+			config.setPlanetName((String)jcbPlanet.getSelectedItem());
+		}
 		
 		JLabel jlStyle = new JLabel("Style file: ");
 		gbc.gridx = 0;
@@ -652,6 +654,13 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	 */
 	private void updatePropertiesSelectors() {
 		String styleFile = config.getStyleFileName();
+		String mapSource = config.getPlanetName();
+		System.out.println("mapSource: " + mapSource);
+		if (mapSource != null && !mapSource.equals("")) {
+			planet = mapSource;
+			jcbPlanet.addItem(mapSource);
+			jcbPlanet.setSelectedItem(mapSource);
+		}
 		if (styleFile != null) {
 			System.out.println("Updating GUI elements\n  Style: " + styleFile);
 			//jcbStyle.removeItem(styleFile);
@@ -772,10 +781,12 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			// Update configuration
 			planet = jOsmFileChooser.getSelectedFile().getAbsolutePath();
-			config.setPlanetName(planet);
-			// Add as entry to the drop down list
-			jcbPlanet.addItem(planet);
-			jcbPlanet.setSelectedItem(planet);
+			if (!planet.equalsIgnoreCase(FILE_SRC)) {
+				config.setPlanetName(planet);
+				// Add as entry to the drop down list
+				jcbPlanet.addItem(planet);
+				jcbPlanet.setSelectedItem(planet);
+			}
 			return true;
 		} else {
 			return false;

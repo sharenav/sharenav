@@ -842,6 +842,10 @@ public class Configuration {
 			return new File(planet);
 		}
 
+		public String getPlanetName() {
+			return planet;
+		}
+
 		public InputStream getPlanetSteam() throws IOException {
 			InputStream fr = null;
 			if (planet.equals("")) {
