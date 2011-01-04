@@ -632,23 +632,23 @@ public class RouteInstructions {
 				}				
 				if(Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_OFF_ROUTE_DISTANCE_IN_MAP)) {
 					e = Trace.tl.ele[TraceLayout.ROUTE_OFFROUTE];
-					e.setText(Locale.get("routeinstructions.Offset")/*off:*/ + trace.showDistance(dstToRoutePath, (dstToRoutePath == RouteInstructions.DISTANCE_UNKNOWN ? Trace.DISTANCE_UNKNOWN : Trace.DISTANCE_AIR)));
+					e.setText(Locale.get("routeinstructions.Offset")/*off:*/ + Trace.showDistance(dstToRoutePath, (dstToRoutePath == RouteInstructions.DISTANCE_UNKNOWN ? Trace.DISTANCE_UNKNOWN : Trace.DISTANCE_AIR)));
 				}
 				e = Trace.tl.ele[TraceLayout.ROUTE_DISTANCE];
 				String airDistance = "";
 				if (Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_AIR_DISTANCE_WHEN_ROUTING)) {
 					RoutePositionMark dest = trace.getDest();
 					if (dest != null) {
-						airDistance = "(" + trace.showDistance((int) ProjMath.getDistance(center.radlat, center.radlon, dest.lat, dest.lon), Trace.DISTANCE_AIR) + ")";
+						airDistance = "(" + Trace.showDistance((int) ProjMath.getDistance(center.radlat, center.radlon, dest.lat, dest.lon), Trace.DISTANCE_AIR) + ")";
 					}
 				}
 				if (RouteLineProducer.isRunning()) {
 					// use routeLine Color for distance while route line is produced
 					e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ROUTE_ROUTELINE]);
-					e.setText(">" + trace.showDistance((int) remainingDistance, Trace.DISTANCE_ROAD) + airDistance);
+					e.setText(">" + Trace.showDistance((int) remainingDistance, Trace.DISTANCE_ROAD) + airDistance);
 				} else if (RouteLineProducer.isRouteLineProduced()) {
 					e.setBackgroundColor(Legend.COLORS[Legend.COLOR_RI_DISTANCE_BACKGROUND]);
-					e.setText(" " + trace.showDistance((int) remainingDistance, Trace.DISTANCE_ROAD) + airDistance + 
+					e.setText(" " + Trace.showDistance((int) remainingDistance, Trace.DISTANCE_ROAD) + airDistance + 
 							(
 							 Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_ROUTE_DURATION_IN_MAP)?
 							 " " + ((remainingDurationFSecs >= 300)?remainingDurationFSecs / 300 + "min": remainingDurationFSecs / 5 + "s")
@@ -1370,7 +1370,7 @@ public class RouteInstructions {
 				sb.append(" then go ");
 				sb.append(Configuration.getCfgBitState(Configuration.CFGBIT_METRIC) ? dist : dist / 0.9144 + 0.5 );
 				sb.append(Configuration.getCfgBitState(Configuration.CFGBIT_METRIC) ? "m" : "yd" );
-				//sb.append(trace.showDistance(dist, Trace.DISTANCE_GENERIC));
+				//sb.append(Trace.showDistance(dist, Trace.DISTANCE_GENERIC));
 				if ( (c.wayRouteFlags & Legend.ROUTE_FLAG_ONEDIRECTION_ONLY) > 0) { 
 					sb.append(" (onedirection_only)");
 				}

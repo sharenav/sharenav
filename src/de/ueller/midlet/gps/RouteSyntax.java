@@ -324,7 +324,7 @@ public class RouteSyntax {
 
 	public static String getTextInstructionIn(int instruction, int inDistance) {
 		// FIXME this could be cleaner (e.g. %distance% instead of %meters%m) but keeping for now for backwards compatibility
-		return HelperRoutines.replaceAll( getSyntaxTemplate(instruction, SyntaxTemplateComponents.inText), "%meters%m", Trace.getInstance().showDistance(inDistance, Trace.DISTANCE_GENERIC));
+		return HelperRoutines.replaceAll( getSyntaxTemplate(instruction, SyntaxTemplateComponents.inText), "%meters%m", Trace.showDistance(inDistance, Trace.DISTANCE_GENERIC));
 	}
 
 	public static String getSoundInstructionThen(int instructionThen, boolean soon, boolean again) {

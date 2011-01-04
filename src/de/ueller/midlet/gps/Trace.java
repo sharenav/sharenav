@@ -3278,10 +3278,10 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	// distances 10km or more, "2,6km" for distances under 10, and
 	// "600m" for distances under 1km.
 
-	public String showDistance(int meters) {
+	public static String showDistance(int meters) {
 		return showDistance(meters, DISTANCE_GENERIC);
 	}
-	public String showDistance(int meters, int type) {
+	public static String showDistance(int meters, int type) {
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_METRIC)) {
 			if (type == DISTANCE_UNKNOWN) {
 				return "???m";
