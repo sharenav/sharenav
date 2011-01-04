@@ -33,7 +33,6 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 
 	public GuiWebInfo(GpsMidDisplayable parent, Position pos, PaintContext pc) {
 		super(Locale.get("guiwebinfo.ContactWebOrPhone")/*Contact by web or phone*/, List.IMPLICIT);
-		//if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_ONLINE_CONTACT_WEB_OR_PHONE)) { }
 		actualWay = pc.actualWay;
 		trace = pc.trace;
 		mParent = parent;
