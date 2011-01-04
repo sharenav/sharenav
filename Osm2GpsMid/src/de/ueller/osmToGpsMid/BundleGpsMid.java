@@ -96,7 +96,7 @@ public class BundleGpsMid implements Runnable {
 
 			}
 			gcw = new GuiConfigWizard();
-			c = gcw.startWizard();
+			c = gcw.startWizard(args);
 		} else {
 			if (warning != null) {
 				System.out.println("WARNING:");

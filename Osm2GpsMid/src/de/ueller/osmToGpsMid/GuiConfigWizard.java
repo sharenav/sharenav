@@ -244,9 +244,9 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
         prefs = Preferences.userNodeForPackage(this.getClass());
 	}
 
-	public Configuration startWizard() {
+	public Configuration startWizard(String[] args) {
 		System.out.println("Starting configuration wizard");
-		config = new Configuration();
+		config = new Configuration(args);
 		setupWizard();
 		return config;
 	}
@@ -677,6 +677,8 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		jcbPhone.addActionListener(this);
 		System.out.println("  midlet.name: " + config.getString("midlet.name"));
 		jtfName.setText(config.getString("midlet.name"));
+		guiSettingsFromConfig();
+		jcbEditing.setSelected(config.enableEditingSupport);
 	}
 
 	/** Finds all files in the Osm2GpsMid JAR that match the pattern "GpsMid-*.jar"
@@ -820,10 +822,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 
 	/** Sets GUI settings from the loaded .properties file.
 	 */
-	private void guiSettingsFromPropFile(String propName) {
-		jcbProperties.addItem(propName);
-		jcbProperties.setSelectedItem(propName);
-		jcbEditing.setSelected(config.enableEditingSupport);
+	private void guiSettingsFromConfig() {
 		// Set desired languages
 		String propLang[] = config.getUseLang().split("[;,]", 200);
 		for (int i = 2; i < languages.length ; i++) {
@@ -870,7 +869,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 				System.out.println("Loading properties specified by GUI: " + propName);
 				config.loadPropFile(new FileInputStream(propName));
 				config.readBounds();
-				guiSettingsFromPropFile(propName);
+				updatePropertiesSelectors();
 			} catch (IOException ioe) {
 				JOptionPane.showMessageDialog(this,
 						"Failed to load properties file. Error is: "
@@ -1212,7 +1211,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 					System.out.println("Loading properties from last.properties");
 					config.loadPropFile(new FileInputStream("last.properties"));
 					config.readBounds();
-					guiSettingsFromPropFile("last.properties");
+					updatePropertiesSelectors();
 				} catch (IOException ioe) {
 					JOptionPane.showMessageDialog(this,
 							"Failed to load properties file. Error is: "
@@ -1229,7 +1228,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 							chosenProperty);
 					config.loadPropFile(new FileInputStream(chosenProperty));
 					config.readBounds();
-					guiSettingsFromPropFile(chosenProperty);
+					updatePropertiesSelectors();
 				} catch (IOException ioe) {
 					JOptionPane.showMessageDialog(this,
 							"Failed to load properties file. Error is: "
