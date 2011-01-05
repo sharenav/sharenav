@@ -209,7 +209,7 @@ public class GuiOverviewElements extends Form implements CommandListener, ItemSt
 					for (byte i = 1; i < Legend.getMaxWayType(); i++) {				
 						WayDescription w = Legend.getWayDescription(i);
 						if (w.isArea && Legend.isWayHideable(i) ) {
-							ovElSelectionCG.append(w.description, areaImage(w.lineColor));
+							ovElSelectionCG.append(w.description, Legend.getWaySearchImage(i));
 							ovElSelectionCG.setSelectedIndex(count, ((Legend.getWayOverviewMode(i) & Legend.OM_MODE_MASK) == Legend.OM_OVERVIEW) );
 							count++;
 						}
@@ -220,7 +220,7 @@ public class GuiOverviewElements extends Form implements CommandListener, ItemSt
 					for (byte i = 1; i < Legend.getMaxWayType(); i++) {				
 						WayDescription w = Legend.getWayDescription(i);
 						if (!w.isArea && Legend.isWayHideable(i) ) {
-							ovElSelectionCG.append(w.description, wayImage(w));
+							ovElSelectionCG.append(w.description, Legend.getWaySearchImage(i));
 							ovElSelectionCG.setSelectedIndex(count, ((Legend.getWayOverviewMode(i) & Legend.OM_MODE_MASK) == Legend.OM_OVERVIEW) );
 							count++;
 						}
