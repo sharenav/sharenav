@@ -628,6 +628,17 @@ public class Legend {
 			return img;
 		}
 	}
+	public static final Image getWayOrAreaSearchImage(byte type)  {
+		if (ways[type].searchIcon != null) {
+			return ways[type].searchIcon;
+		} else {
+			if (ways[type].isArea) {
+				return getAreaSearchImage(type);
+			} else {
+				return getWaySearchImage(type);
+			}
+		}
+	}
 	public static final Image getAreaSearchImage(byte type)  {
 		if (ways[type].searchIcon != null) {
 			return ways[type].searchIcon;

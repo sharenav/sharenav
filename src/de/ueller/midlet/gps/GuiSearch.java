@@ -604,7 +604,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			} else if (sr.type == 0 ) {
 				img = waypointIcon;
 			} else { // type > 0
-				img = Legend.getWaySearchImage(sr.type);
+				img = Legend.getWayOrAreaSearchImage(sr.type);
 			}
 			if (img != null)
 				gc.drawImage(img, 8, yc + fontSize / 2 - 1, Graphics.VCENTER | Graphics.HCENTER);
