@@ -112,13 +112,13 @@ public class HelperRoutines {
 			}
 		} else {
 			int distYd = (int) (dist / 0.9144f + 0.5);
-			int distMi = (int) (dist / 1609.344f + 0.5);
+			float distMi = (dist / 1609.344f + 0.05f);
 			if (distYd < 100) {
 				return Integer.toString((int)distYd) + "yd";
 			} else if (distYd < 1000) {
 				return Integer.toString((int)(distYd/10)*10) + "yd";
 			} else if (distMi < 10) {
-				return Float.toString((int)(distMi)) + "mi";
+				return Float.toString(((int)(distMi*10))/10.0f) + "mi";
 			} else {
 				return Integer.toString((int)(distMi)) + "mi";
 			}
