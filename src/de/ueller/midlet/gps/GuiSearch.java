@@ -73,9 +73,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 
 	//private Form form;
 
-	private final Image[] ico = {Image.createImage("/waypoint.png"), Image.createImage("/city.png"),
-			Image.createImage("/city.png"), Image.createImage("/street.png"),
-			Image.createImage("/parking.png")};
+	private final Image waypointIcon = Image.createImage("/waypoint.png");
 
 	private final Trace parent;
 
@@ -603,10 +601,10 @@ public class GuiSearch extends Canvas implements CommandListener,
 			Image img = null;
 			if (sr.type < 0) {
 				img = Legend.getNodeSearchImage((byte)(sr.type*-1));
-			} else if (sr.type > 0 ) {
+			} else if (sr.type == 0 ) {
+				img = waypointIcon;
+			} else { // type > 0
 				img = Legend.getWaySearchImage(sr.type);
-			} else {
-				img = ico[sr.type];
 			}
 			if (img != null)
 				gc.drawImage(img, 8, yc + fontSize / 2 - 1, Graphics.VCENTER | Graphics.HCENTER);
