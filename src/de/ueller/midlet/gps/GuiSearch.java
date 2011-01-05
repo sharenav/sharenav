@@ -604,12 +604,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			if (sr.type < 0) {
 				img = Legend.getNodeSearchImage((byte)(sr.type*-1));
 			} else {
-				if (sr.type < ico.length)
-					img = ico[sr.type];
-				else {
-					logger.error(Locale.get("guisearch.tryingToFindImageIcon")/*trying to find image icon for a POI of type: */ + sr.type);
-					img = null;
-				}
+				img = Legend.getWaySearchImage(sr.type);
 			}
 			if (img != null)
 				gc.drawImage(img, 8, yc + fontSize / 2 - 1, Graphics.VCENTER | Graphics.HCENTER);
