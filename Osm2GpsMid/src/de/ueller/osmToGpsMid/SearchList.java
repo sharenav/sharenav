@@ -128,7 +128,7 @@ public class SearchList {
 						url = w.getUrl();
 						phone = w.getPhone();
 						name = w.getName();
-						ds.writeByte(w.getNameType());
+						ds.writeByte(w.getType(Configuration.getConfiguration()));
 //						System.out.println("entryType " + w.getNameType() + " idx=" + mapName.getIndex());
 						center=w.getMidPoint();
 					}
