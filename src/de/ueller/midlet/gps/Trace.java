@@ -970,6 +970,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			}
 			if (c == CMDS[MANAGE_TRACKS_CMD]) {
 				if (gpx.isRecordingTrk() && !gpx.isRecordingTrkSuspended()) {
+					// FIXME it's not strictly necessary to stop, after there are translation for the pause
+					// message, change to Locale.get("trace.YouNeedStopPauseRecording")
 					alert(Locale.get("trace.RecordMode")/*Record Mode*/, Locale.get("trace.YouNeedStopRecording")/*You need to stop recording before managing tracks.*/ , 4000);
 					return;
 				}
