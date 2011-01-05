@@ -5,6 +5,8 @@
 
 package de.ueller.gps.data;
 
+import javax.microedition.lcdui.*;
+
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -601,11 +603,42 @@ public class Legend {
 	}
 
 	public static final Image getWayImage(byte type)  {
-		return ways[type].image;
+		return ways[type].searchIcon;
 	}
 	
 	public static final Image getWaySearchImage(byte type)  {
-		return ways[type].searchIcon;
+		if (ways[type].searchIcon != null) {
+			return ways[type].searchIcon;
+		} else {
+			WayDescription w = getWayDescription(type);
+			Image img = Image.createImage(16,16);
+			Graphics g = img.getGraphics();
+			g.setColor(Legend.COLORS[Legend.COLOR_MAP_BACKGROUND]);
+			g.fillRect(0, 0, 16, 16);
+			g.setColor(w.lineColor);
+			if (w.wayWidth == 1 || !Configuration.getCfgBitState(Configuration.CFGBIT_STREETRENDERMODE)) {
+				g.setStrokeStyle(w.getGraphicsLineStyle());
+				g.drawLine(0, 8, 15, 8);
+			} else {
+				g.fillRect(0, (16-w.wayWidth)/2, 16, w.wayWidth);
+				g.setColor(w.boardedColor);
+				g.drawLine(0, (16-w.wayWidth)/2-1, 15, (16-w.wayWidth)/2-1);
+				g.drawLine(0, (16-w.wayWidth)/2 + w.wayWidth, 15, (16-w.wayWidth)/2 + w.wayWidth);
+			}
+			return img;
+		}
+	}
+	public static final Image getAreaSearchImage(byte type)  {
+		if (ways[type].searchIcon != null) {
+			return ways[type].searchIcon;
+		} else {
+			WayDescription w = Legend.getWayDescription(type);
+			Image img = Image.createImage(16,16);
+			Graphics g = img.getGraphics();
+			g.setColor(w.lineColor);
+			g.fillRect(0, 0, 16, 16);
+			return img;        
+		}
 	}
 	
 	public static byte getWayOverviewMode(byte type) {

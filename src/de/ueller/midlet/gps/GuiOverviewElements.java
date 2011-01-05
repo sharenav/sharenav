@@ -209,7 +209,7 @@ public class GuiOverviewElements extends Form implements CommandListener, ItemSt
 					for (byte i = 1; i < Legend.getMaxWayType(); i++) {				
 						WayDescription w = Legend.getWayDescription(i);
 						if (w.isArea && Legend.isWayHideable(i) ) {
-							ovElSelectionCG.append(w.description, Legend.getWaySearchImage(i));
+							ovElSelectionCG.append(w.description, Legend.getAreaSearchImage(i));
 							ovElSelectionCG.setSelectedIndex(count, ((Legend.getWayOverviewMode(i) & Legend.OM_MODE_MASK) == Legend.OM_OVERVIEW) );
 							count++;
 						}
@@ -262,34 +262,6 @@ public class GuiOverviewElements extends Form implements CommandListener, ItemSt
 		}
 	}
 	
-	private static Image areaImage(int color)
-    {        
-        Image img = Image.createImage(16,16);
-        Graphics g = img.getGraphics();
-        g.setColor(color);
-        g.fillRect(0, 0, 16, 16);
-        return img;        
-    }
-
-	private Image wayImage(WayDescription w)
-    {        
-        Image img = Image.createImage(16,16);
-        Graphics g = img.getGraphics();
-        g.setColor(Legend.COLORS[Legend.COLOR_MAP_BACKGROUND]);
-        g.fillRect(0, 0, 16, 16);
-        g.setColor(w.lineColor);
-        if (w.wayWidth == 1 || !Configuration.getCfgBitState(Configuration.CFGBIT_STREETRENDERMODE)) {
-        	g.setStrokeStyle(w.getGraphicsLineStyle());
-        	g.drawLine(0, 8, 15, 8);
-        } else {
-        	g.fillRect(0, (16-w.wayWidth)/2, 16, w.wayWidth);
-        	g.setColor(w.boardedColor);
-        	g.drawLine(0, (16-w.wayWidth)/2-1, 15, (16-w.wayWidth)/2-1);
-        	g.drawLine(0, (16-w.wayWidth)/2 + w.wayWidth, 15, (16-w.wayWidth)/2 + w.wayWidth);
-        }
-        return img;
-    }
-
 	public void show() {
 		GpsMid.getInstance().show(this);
 	}
