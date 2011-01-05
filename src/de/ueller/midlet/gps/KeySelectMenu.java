@@ -208,12 +208,11 @@ public class KeySelectMenu extends Canvas implements
 			fontSize = gc.getFont().getHeight();
 		int yc = scrollOffset;
 
-		gc.setColor(Legend.COLORS[Legend.COLOR_MAP_BACKGROUND]);
+		gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_BACKGROUND]);
 		gc.fillRect(0, 0, getWidth(), getHeight());
-		gc.setColor(Legend.COLORS[Legend.COLOR_MAP_TEXT]);
 		// FIXME whole function is mostly duplicated between GuiSearch and KeySelectMenu
 		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD)) {
-			gc.setColor(Legend.COLORS[Legend.COLOR_MAP_TEXT]);
+			gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_BUTTON_TEXT]);
 			if (hasPointerEvents() && ! hideKeypad) {
 				if (gsl == null) {
 					gsl = new GuiSearchLayout(0, 0, width, height);
@@ -234,6 +233,7 @@ public class KeySelectMenu extends Canvas implements
 			}
 		}
 		if (yc < 0) {
+			gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_ARROWS]);
 			gc.drawString("^", getWidth(), 0, Graphics.TOP | Graphics.RIGHT);
 		}
 
@@ -265,16 +265,16 @@ public class KeySelectMenu extends Canvas implements
 				continue;
 			}
 			if (yc > getHeight()) {
-				gc.setColor(Legend.COLORS[Legend.COLOR_MAP_TEXT]);
+				gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_ARROWS]);
 				gc.drawString("v", getWidth(), getHeight() - 7, Graphics.BOTTOM
 						| Graphics.RIGHT);
 				return;
 			}
 
 			if (i == cursor) {
-				gc.setColor(255, 0, 0);
+				gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_SELECTED_TYPED]);
 			} else {
-				gc.setColor(Legend.COLORS[Legend.COLOR_MAP_TEXT]);
+				gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_NONSELECTED_TYPED]);
 			}
 			Object o = result.elementAt(i);
 			if (o instanceof KeySelectMenuItem) {
