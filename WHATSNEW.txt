@@ -105,6 +105,10 @@ GpsMid 0.6.4
       preventing to access readable tracks (thx Petr Dlouh�)
     - Winter speed limits actually trigger an alert now (thx jkpj)
     - Search results are now refreshed with a new strategy until all null strings are resolved to names
+    - Ways can now have icons which show up in search and map overview screens
+    - Tracks (including the one being recorded) can now be displayed and renamed when a track is being
+      recorded. You have to pause the recording however before you can get to the track menu.
+    - GUI search screen colors can now be chosen with style-file.xml (colors.inc)
     - Many more small improvements and bugfixes.
 
 GpsMid 0.6
