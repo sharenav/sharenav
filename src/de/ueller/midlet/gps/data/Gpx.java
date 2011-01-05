@@ -873,6 +873,10 @@ public class Gpx extends Tile implements Runnable, InputListener {
 			action = " " + Locale.get("gpx.PreparingUpdateOf")/*preparing update of*/ + " ";
 			ByteArrayOutputStream baosDb = new ByteArrayOutputStream();
 			DataOutputStream dosDb = new DataOutputStream(baosDb);
+			// check if renaming the track being currently recorded
+			if (isRecordingTrk() && trk.id == trackDatabaseRecordId) {
+				this.trackName = trk.displayName;
+			}
 			dosDb.writeUTF(trk.displayName);
 			dosDb.writeInt(recorded);
 			dosDb.writeInt(trackSize);

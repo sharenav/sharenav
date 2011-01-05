@@ -969,7 +969,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				return;
 			}
 			if (c == CMDS[MANAGE_TRACKS_CMD]) {
-				if (gpx.isRecordingTrk()) {
+				if (gpx.isRecordingTrk() && !gpx.isRecordingTrkSuspended()) {
 					alert(Locale.get("trace.RecordMode")/*Record Mode*/, Locale.get("trace.YouNeedStopRecording")/*You need to stop recording before managing tracks.*/ , 4000);
 					return;
 				}

@@ -87,10 +87,13 @@ public class GuiGpx extends List implements CommandListener,
 		addCommand(DISP_CMD);
 		addCommand(UNDISP_CMD);
 		addCommand(RENAME_CMD);		
-		addCommand(DEL_CMD);
+		// to avoid trouble with user deleting currently recording track, disable deletions if recording is on
+		if (!parent.gpx.isRecordingTrk()) {
+			addCommand(DEL_CMD);
+		}
 		addCommand(SALL_CMD);
 		addCommand(DSALL_CMD);		
-		if (!TrackPlayer.isPlaying) {
+		if (!TrackPlayer.isPlaying && !parent.gpx.isRecordingTrk()) {
 			addCommand(REPLAY_START_CMD);				
 		}
 		addCommand(BACK_CMD);		
