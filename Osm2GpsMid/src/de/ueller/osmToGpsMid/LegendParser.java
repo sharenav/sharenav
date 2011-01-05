@@ -377,6 +377,12 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 			if (qName.equals("description")) {
 				currentPoi.description = atts.getValue("desc");
 			}
+			if (qName.equals("image")) {
+				currentWay.image = atts.getValue("src");
+			}
+			if (qName.equals("searchIcon")) {
+				currentWay.searchIcon = atts.getValue("src");
+			}
 			if (qName.equals("namekey")) {
 				currentPoi.nameKey = atts.getValue("tag");
 			}
