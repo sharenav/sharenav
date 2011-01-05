@@ -109,6 +109,7 @@ GpsMid 0.6.4
     - Tracks (including the one being recorded) can now be displayed and renamed when a track is being
       recorded. You have to pause the recording however before you can get to the track menu.
     - GUI search screen colors can now be chosen with style-file.xml (colors.inc)
+    - better support for non-metric units and optionally km/m instead of just m in metric units
     - Many more small improvements and bugfixes.
 
 GpsMid 0.6
