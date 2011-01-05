@@ -517,11 +517,10 @@ public class GuiSearch extends Canvas implements CommandListener,
 			fontSize = gc.getFont().getHeight();		
 		int yc=scrollOffset;
 		int reducedName=0;
-		gc.setColor(Legend.COLORS[Legend.COLOR_MAP_BACKGROUND]);
+		gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_BACKGROUND]);
 		gc.fillRect(0, 0, getWidth(), getHeight());
-		gc.setColor(Legend.COLORS[Legend.COLOR_MAP_TEXT]);
 		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD)) {
-			gc.setColor(Legend.COLORS[Legend.COLOR_MAP_TEXT]);
+			gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_BUTTON_TEXT]);
 			if (hasPointerEvents() && ! hideKeypad) {
 				if (gsl == null) {
 					gsl = new GuiSearchLayout(0, 0, width, height);
@@ -541,10 +540,10 @@ public class GuiSearch extends Canvas implements CommandListener,
 				gsl.paint(gc);
 			}
 		}
-	    if (yc < 0) {
+		if (yc < 0) {
+			gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_ARROWS]);
 			gc.drawString("^", getWidth(), 0, Graphics.TOP | Graphics.RIGHT);
 		}
-
 	    // insert new results from search thread 
 	    if (result2.size() > 0) {
 	    	synchronized(this) {				
@@ -579,16 +578,16 @@ public class GuiSearch extends Canvas implements CommandListener,
 				continue;
 			}
 			if (yc > getHeight()) {
-				gc.setColor(Legend.COLORS[Legend.COLOR_MAP_TEXT]);
+				gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_ARROWS]);
 				gc.drawString("v", getWidth(), getHeight() - 7,
 						Graphics.BOTTOM | Graphics.RIGHT);				
 				return;
 			}
 
 			if (i == cursor){
-				gc.setColor(255, 0, 0);
+				gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_SELECTED_TYPED]);
 			} else {
-				gc.setColor(Legend.COLORS[Legend.COLOR_MAP_TEXT]);
+				gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_NONSELECTED_TYPED]);
 			}
 			SearchResult sr=(SearchResult) result.elementAt(i);
 			String flags="";
@@ -677,23 +676,23 @@ public class GuiSearch extends Canvas implements CommandListener,
 
 				// name part identical to search string 
 				if (i == cursor){ 
-					gc.setColor(255, 0, 0); 
+					gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_SELECTED_TYPED]);
 				} else { 
-					gc.setColor(Legend.COLORS[Legend.COLOR_MAP_TEXT]); 
+					gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_NONSELECTED_TYPED]);
 				}
 				gc.drawString(name.substring(0,imatch+flags.length()), 17, yc, Graphics.TOP | Graphics.LEFT); 
 				// remaining name part 
 				if (i == cursor){ 
-					gc.setColor(255, 100, 100); 
+					gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_NONSELECTED_TYPED]);
 				} else { 
-					gc.setColor(150, 150, 250); 
+					gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_NONSELECTED_REST]);
 				} 
 				gc.drawString(name.substring(imatch+flags.length()), 17 + gc.getFont().stringWidth(name.substring(0,imatch+flags.length())) , yc, Graphics.TOP | Graphics.LEFT);
 
 				// carret 
 				if(carret<=imatch && displayReductionLevel<1) { 
 					int cx=17 + gc.getFont().stringWidth(name.substring(0,carret+flags.length())); 
-					gc.setColor(255, 0, 0); 
+					gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_SELECTED_TYPED]);
 					gc.drawLine(cx-1,yc+fontSize,cx+1,yc+fontSize); 
 				}
 			}

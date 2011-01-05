@@ -81,16 +81,16 @@
 	<color of="way_damaged_border" is="00FF0000"/>	
 	<color of="way_damaged_decoration" is="00FF0000"/>	
 	<color of="area_damaged_border" is="00FF0000"/>	
-	<!-- FIXME add these at map format change
-	<color of="search_background" is="00FFFFFF"/ isAtNight="00000000">
+	<color of="search_background" is="00FFFFFF" isAtNight="00000000"/>
 	<color of="search_arrows" is="00000000" isAtNight="00FFFFFF"/>
-	<color of="search_selected_typed" is="00FF0000" isAtNight="0000FFFF"/>
-	<color of="search_selected_rest" is="00FF6464" isAtNight="00008686"/>
+	<!-- FIXME these colors need tuning for night mode -->
+	<color of="search_selected_typed" is="00FF0000" isAtNight="00FF3333"/>
+	<color of="search_selected_rest" is="00FF6464" isAtNight="00860086"/>
 	<color of="search_nonselected_typed" is="00000000" isAtNight="00FFFFFF"/>
-	<color of="search_nonselected_rest" is="009696FA" isAtNight="00666604"/>
+	<color of="search_nonselected_rest" is="009696FA" isAtNight="00FFFFFF"/>
 	<color of="search_touched_button_background" is="00FFFF77"/>
 	<color of="search_button_text" is="00000000" isAtNight="00FFFFFF"/>
 	<color of="search_button_border" is="00000000" isAtNight="00FFFFFF"/>
-	<color of="menu_background" is="00FFFFFF"/ isAtNight="00000000">
-	<color of="menu_text" is="00000000" isAtNight="00FFFFFF"/>  -->
+	<color of="menu_background" is="00FFFFFF" isAtNight="00000000"/>
+	<color of="menu_text" is="00000000" isAtNight="00FFFFFF"/>
   </colors>

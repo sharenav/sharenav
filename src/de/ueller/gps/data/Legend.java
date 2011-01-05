@@ -23,7 +23,7 @@ public class Legend {
 	 * Specifies the format of the map on disk we expect to see
 	 * This constant must be in sync with Osm2GpsMid
 	 */
-	public final static short MAP_FORMAT_VERSION = 64;
+	public final static short MAP_FORMAT_VERSION = 65;
 	
 	/** The waypoint format used in the RecordStore. See PositionMark.java. */
 	public final static short WAYPT_FORMAT_VERSION = 2;
@@ -166,24 +166,18 @@ public class Legend {
 	public final static int COLOR_WAY_DAMAGED_BORDER = 73;
 	public final static int COLOR_WAY_DAMAGED_DECORATION = 74;
 	public final static int COLOR_DAMAGED_BORDER = 75;
-	/* FIXME remove these at map format change */
-	public final static int COLOR_COUNT = 76;
-        public final static int COLOR_SEARCH_TOUCHED_BUTTON_BACKGROUND = 2;
-	public final static int COLOR_SEARCH_BUTTON_TEXT = 29;
-	public final static int COLOR_SEARCH_BUTTON_BORDER = 30;
-
-	/* FIXME add these at map format change
-        public final static int COLOR_SEARCH_BACKGROUND = 76;
-        public final static int COLOR_SEARCH_TEXT = 77;
-        public final static int COLOR_SEARCH_HIGHLIGHT1 = 78;
-        public final static int COLOR_SEARCH_HIGHLIGHT2 = 79;
-        public final static int COLOR_SEARCH_HIGHLIGHT3 = 80;
-        public final static int COLOR_MENU_BACKGROUND = 81;
-        public final static int COLOR_MENU_TEXT = 82;
-        public final static int COLOR_SEARCH_TOUCHED_BUTTON_BACKGROUND = 83;
-	public final static int COLOR_SEARCH_BUTTON_TEXT = 84;
-	public final static int COLOR_SEARCH_BUTTON_BORDER = 85;
-	public final static int COLOR_COUNT = 86; */
+	public final static int COLOR_SEARCH_BACKGROUND = 76;
+	public final static int COLOR_SEARCH_ARROWS = 77;
+	public final static int COLOR_SEARCH_SELECTED_TYPED = 78;
+	public final static int COLOR_SEARCH_SELECTED_REST = 79;
+	public final static int COLOR_SEARCH_NONSELECTED_TYPED = 80;
+	public final static int COLOR_SEARCH_NONSELECTED_REST = 81;
+	public final static int COLOR_SEARCH_TOUCHED_BUTTON_BACKGROUND = 82;
+	public final static int COLOR_SEARCH_BUTTON_TEXT = 83;
+	public final static int COLOR_SEARCH_BUTTON_BORDER = 84;
+	public final static int COLOR_MENU_BACKGROUND = 85;
+	public final static int COLOR_MENU_TEXT = 86;
+	public final static int COLOR_COUNT = 87;
 	
 	public static int COLORS[] = new int[COLOR_COUNT];
 

@@ -59,7 +59,7 @@ public class Configuration {
 	 * Specifies the format of the map on disk we are about to write.
 	 * This constant must be in sync with GpsMid.
 	 */
-	public final static short MAP_FORMAT_VERSION = 64;
+	public final static short MAP_FORMAT_VERSION = 65;
 
 	public final static int COLOR_MAP_BACKGROUND = 0;
 	public final static int COLOR_MAP_TEXT = 1;
@@ -137,7 +137,18 @@ public class Configuration {
 	public final static int COLOR_WAY_DAMAGED_BORDER = 73;
 	public final static int COLOR_WAY_DAMAGED_DECORATION = 74;
 	public final static int COLOR_DAMAGED_BORDER = 75;
-	public final static int COLOR_COUNT = 76;
+	public final static int COLOR_SEARCH_BACKGROUND = 76;
+	public final static int COLOR_SEARCH_ARROWS = 77;
+	public final static int COLOR_SEARCH_SELECTED_TYPED = 78;
+	public final static int COLOR_SEARCH_SELECTED_REST = 79;
+	public final static int COLOR_SEARCH_NONSELECTED_TYPED = 80;
+	public final static int COLOR_SEARCH_NONSELECTED_REST = 81;
+	public final static int COLOR_SEARCH_TOUCHED_BUTTON_BACKGROUND = 82;
+	public final static int COLOR_SEARCH_BUTTON_TEXT = 83;
+	public final static int COLOR_SEARCH_BUTTON_BORDER = 84;
+	public final static int COLOR_MENU_BACKGROUND = 85;
+	public final static int COLOR_MENU_TEXT = 86;
+	public final static int COLOR_COUNT = 87;
 	
 	public final static String COLORNAMES[] =
 			{"map_background",
@@ -215,7 +226,18 @@ public class Configuration {
 			 "tollroad_decoration",
 			 "way_damaged_border",
 			 "way_damaged_decoration",
-			 "area_damaged_border"
+			 "area_damaged_border",
+			 "search_background",
+			 "search_arrows",
+			 "search_selected_typed",
+			 "search_selected_rest",
+			 "search_nonselected_typed",
+			 "search_nonselected_rest",
+			 "search_touched_button_background",
+			 "search_button_text",
+			 "search_button_border",
+			 "menu_background",
+			 "menu_text"
 			};
 
 	public static int COLORS[] = new int[COLOR_COUNT];
