@@ -458,6 +458,7 @@ public class Legend {
 	}
 	
 	private static void readWayDescriptions(DataInputStream ds) throws IOException {
+		Image generic = Image.createImage("/unknown.png");
 		byte numWayDesc = ds.readByte();
 		//#debug info
 		logger.info("Reading " + (numWayDesc - 1) + " way descriptions (+ 1 bogus) from legend.dat");
@@ -473,6 +474,30 @@ public class Legend {
 			ways[i].description = ds.readUTF();
 			ways[i].maxScale = ds.readInt();
 			ways[i].maxTextScale = ds.readInt();
+			if ((flags & LEGEND_FLAG_IMAGE) > 0) {
+				String imageName = ds.readUTF();
+				//logger.debug("Trying to open image " + imageName);
+				try {
+					ways[i].image = Image.createImage(Configuration.getMapResource(imageName));
+				} catch (IOException e) {
+					//#debug error
+					logger.error("Could not open way icon " + imageName + " for " + ways[i].description);
+					ways[i].image = generic;
+				}				
+			}
+			if ((flags & LEGEND_FLAG_SEARCH_IMAGE) > 0) {
+				String imageName = ds.readUTF();
+				//logger.debug("Trying to open search image " + imageName);
+				try {
+					ways[i].searchIcon = Image.createImage(Configuration.getMapResource(imageName));
+				} catch (IOException e) {
+					//#debug error
+					logger.error("Could not open search icon " + imageName + " for " + ways[i].description);
+					ways[i].searchIcon = generic;
+				}				
+			} else if (ways[i].image != null) {
+				ways[i].searchIcon = ways[i].image;
+			}
 			ways[i].isArea = ds.readBoolean();
 			ways[i].lineColor = readDayOrNightColor(ds);
 			ways[i].boardedColor = readDayOrNightColor(ds);

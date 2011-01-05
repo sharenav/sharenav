@@ -12,6 +12,7 @@ import java.util.List;
 
 public class EntityDescription {
 	public String	description;
+	public String	image;
 	public String	key;
 	public String	value;
 	public List<ConditionTuple> specialisation;

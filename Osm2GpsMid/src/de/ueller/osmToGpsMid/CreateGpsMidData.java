@@ -391,6 +391,12 @@ public class CreateGpsMidData implements FilenameFilter {
 				if (!way.hideable) {
 					flags |= LEGEND_FLAG_NON_HIDEABLE;
 				}				
+				if (way.image != null && !way.image.equals("")) {
+					flags |= LEGEND_FLAG_IMAGE;
+				}
+				if (way.searchIcon != null) {
+					flags |= LEGEND_FLAG_SEARCH_IMAGE;
+				}
 				if (way.minOnewayArrowScale != 0) {
 					flags |= LEGEND_FLAG_MIN_ONEWAY_ARROW_SCALE;
 				}
@@ -410,6 +416,14 @@ public class CreateGpsMidData implements FilenameFilter {
 				dsi.writeUTF(way.description);								
 				dsi.writeInt(way.minEntityScale);
 				dsi.writeInt(way.minTextScale);				
+				if ((flags & LEGEND_FLAG_IMAGE) > 0) {
+					outputMedia = copyMediaToMid(way.image, path, "png");
+					dsi.writeUTF(outputMedia);
+				}
+				if ((flags & LEGEND_FLAG_SEARCH_IMAGE) > 0) {					
+					outputMedia = copyMediaToMid(way.searchIcon, path, "png");
+					dsi.writeUTF(outputMedia);
+				}
 				dsi.writeBoolean(way.isArea);
 				if (way.lineColorAtNight != -1) {
 					dsi.writeInt(0x01000000 | way.lineColor);

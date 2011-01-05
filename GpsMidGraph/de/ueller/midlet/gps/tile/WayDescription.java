@@ -1,5 +1,7 @@
 package de.ueller.midlet.gps.tile;
 
+import javax.microedition.lcdui.Image;
+
 public class WayDescription {
 	public String description;
 	public int maxScale;
@@ -14,6 +16,8 @@ public class WayDescription {
 	public boolean hideable;
 	public byte overviewMode;
 	public byte routeFlags;
+	public Image	image;
+	public Image	searchIcon;
 	//#if polish.api.osm-editing
 	public String[]	osmTags;
 	//#endif
