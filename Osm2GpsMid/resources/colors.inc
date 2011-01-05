@@ -91,6 +91,7 @@
 	<color of="search_touched_button_background" is="00FFFF77"/>
 	<color of="search_button_text" is="00000000" isAtNight="00FFFFFF"/>
 	<color of="search_button_border" is="00000000" isAtNight="00FFFFFF"/>
+	<!-- These colors are not used as of 2011-01-05, plan is to with menus -->
 	<color of="menu_background" is="00FFFFFF" isAtNight="00000000"/>
 	<color of="menu_text" is="00000000" isAtNight="00FFFFFF"/>
   </colors>
