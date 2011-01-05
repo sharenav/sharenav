@@ -377,12 +377,6 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 			if (qName.equals("description")) {
 				currentPoi.description = atts.getValue("desc");
 			}
-			if (qName.equals("image")) {
-				currentWay.image = atts.getValue("src");
-			}
-			if (qName.equals("searchIcon")) {
-				currentWay.searchIcon = atts.getValue("src");
-			}
 			if (qName.equals("namekey")) {
 				currentPoi.nameKey = atts.getValue("tag");
 			}
@@ -550,6 +544,12 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 					System.out.println("Error: descriptionscale for "
 							+ currentWay.description + " is incorrect");
 				}
+			}
+			if (qName.equals("image")) {
+				currentWay.image = atts.getValue("src");
+			}
+			if (qName.equals("searchIcon")) {
+				currentWay.searchIcon = atts.getValue("src");
 			}
 			if (qName.equals("showName")) {
 				currentWay.showNameAsForArea = atts.getValue("style").equalsIgnoreCase("area");
