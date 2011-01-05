@@ -1159,3 +1159,7 @@ urls.UrlsThreadCrashed=Urls thread crashed unexpectedly with error
 way.ErrorWhileVerify=Error while verify 
 way.type=type
 way.Way=Way
+guisetupgui.MapTapFeatures=Aktive Kartenantippfunktionen
+guisetupgui.longMapTap=Lang antippen
+guisetupgui.doubleMapTap=Doppelt antippen
+guisetupgui.singleMapTap=Einfach antippen
