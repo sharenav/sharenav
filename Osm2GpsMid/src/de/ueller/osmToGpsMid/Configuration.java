@@ -759,7 +759,7 @@ public class Configuration {
 		 * @return File name
 		 */
 		public String getMidletFileName() {
-			return getMidletName() + "-" + getVersion();
+			return getMidletName() + "-" + getVersion() + "-map" + MAP_FORMAT_VERSION;
 		}
 		
 		/** Returns the name for the Map files with version and extension.
@@ -790,10 +790,10 @@ public class Configuration {
 			if ("false".equals(baseName)) {
 				return null;
 			}
-			baseName = "/" + appParam + "-" + getVersion() + ".jar";
+			baseName = "/" + appParam + "-" + getVersion() + "-map" + MAP_FORMAT_VERSION + ".jar";
 			InputStream is = getClass().getResourceAsStream(baseName);
 			if (is == null) {
-				baseName = "/" + appParam + "-" + getVersion() +  ".jar";
+				baseName = "/" + appParam + "-" + getVersion() + "-map" + MAP_FORMAT_VERSION + ".jar";
 				System.out.println("Using lang=" + getUseLang() + " (" + getUseLangName() + ")");
 				is = getClass().getResourceAsStream(baseName);
 			}

@@ -78,6 +78,7 @@
 	<property name="dir.work" value="build/real/${customization}" />
 	<property name="dir.dist" value="dist/${customization}" />
 	<property name="deploy-url" value="" />
+	<property name="mapversion" value="64" />
 </target>
  
 <!-- In this target the J2ME Polish task is used.             -->
@@ -103,7 +104,7 @@
 			vendorName="Harald Mueller"
 			infoUrl="http://gpsmid.sourceforge.net"
 			icon="gpsmid.png"
-			jarName="GpsMid-${polish.vendor}-${polish.name}-${polish.version}.jar"
+			jarName="GpsMid-${polish.vendor}-${polish.name}-${polish.version}-map${mapversion}.jar"
 			jarUrl="${deploy-url}${polish.jarName}"
 			copyright="Copyright 2007 - 2010 Harald Mueller and others"
 			deleteConfirm="Do you really want to kill me?"

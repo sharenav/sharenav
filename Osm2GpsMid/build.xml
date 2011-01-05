@@ -23,6 +23,7 @@
 
    	<property name="dist.dir" value="${basedir}/dist"/>
 	<property name="version" value="0.6.4"/>
+	<property name="mapversion" value="64"/>
 	<property name="buildlib" value="buildlib/explode.jar"/>
 
    <available property="clover.available" classname="org.apache.tools.ant.taskdefs.CloverCompilerAdapter"/>
@@ -145,7 +146,7 @@
 	</target>
 	
    	<target name="deploy" depends="explode,compile">
-      <jar jarfile="${dist.dir}/${ant.project.name}-${version}.jar">
+      <jar jarfile="${dist.dir}/${ant.project.name}-${version}-map${mapversion}.jar">
 <!--      <jar jarfile="${dist.dir}/${ant.project.name}-${version}_${local_lang2}.jar"> -->
 		<manifest>
     		<attribute name="Built-By" value="${user.name}"/>
