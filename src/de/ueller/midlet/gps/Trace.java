@@ -1429,7 +1429,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				gpsRecenterInvalid = true;
 				gpsRecenterStale = true;
 				autoZoomed = true;
-				if (pos.latitude != 0.0f) {
+				if (isGpsConnected() && pos.latitude != 0.0f) {
 					receivePosition(pos);
 				}
 				newDataReady();
