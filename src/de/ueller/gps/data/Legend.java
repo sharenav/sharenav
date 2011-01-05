@@ -551,14 +551,6 @@ public class Legend {
 		return pois[type].searchIcon;
 	}
 	
-	public static final Image getWayImage(byte type)  {
-		return ways[type].image;
-	}
-	
-	public static final Image getWaySearchImage(byte type)  {
-		return ways[type].searchIcon;
-	}
-	
 	public static final int getNodeMaxScale(byte type) {
 		return pois[type].maxImageScale;
 	}
@@ -608,6 +600,14 @@ public class Legend {
 		return ways[type].hideable;
 	}
 
+	public static final Image getWayImage(byte type)  {
+		return ways[type].image;
+	}
+	
+	public static final Image getWaySearchImage(byte type)  {
+		return ways[type].searchIcon;
+	}
+	
 	public static byte getWayOverviewMode(byte type) {
 		return ways[type].overviewMode;
 	}
