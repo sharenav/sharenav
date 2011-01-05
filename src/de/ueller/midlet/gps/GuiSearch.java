@@ -605,6 +605,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 				img = Legend.getNodeSearchImage((byte)(sr.type*-1));
 			} else if (sr.type > 0 ) {
 				img = Legend.getWaySearchImage(sr.type);
+			} else {
+				img = ico[sr.type];
 			}
 			if (img != null)
 				gc.drawImage(img, 8, yc + fontSize / 2 - 1, Graphics.VCENTER | Graphics.HCENTER);
