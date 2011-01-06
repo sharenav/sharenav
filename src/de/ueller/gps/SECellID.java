@@ -202,7 +202,7 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 							} else {
 								//#debug info
 								logger.info("Cell is unknown, can't calculate a location based on it");
-								receiverList.receiveSolution(Locale.get("secellid.NoFix")/*NoFix*/);
+								receiverList.receiveSolution(Locale.get("solution.NoFix")/*NoFix*/);
 								return;
 							}
 						}
@@ -222,11 +222,11 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 					}
 					//#debug info
 					logger.info("Obtained a position from " + loc);
-					receiverList.receiveSolution(Locale.get("secellid.Cell")/*Cell*/);
+					receiverList.receiveSolution(Locale.get("solution.Cell")/*Cell*/);
 					receiverList.receivePosition(new Position(loc.lat, loc.lon, 0, 0, 0, 0,
 							  System.currentTimeMillis(), Position.TYPE_CELLID));
 				} else {
-					receiverList.receiveSolution(Locale.get("secellid.NoFix")/*NoFix*/);
+					receiverList.receiveSolution(Locale.get("solution.NoFix")/*NoFix*/);
 				} 
 			} catch (Exception e) {
 				logger.silentexception("Could not retrieve cell-id", e);

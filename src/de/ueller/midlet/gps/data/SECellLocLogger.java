@@ -246,7 +246,7 @@ public class SECellLocLogger implements LocationMsgReceiver {
 		 * which we know that we won't get a valid fix and
 		 * ignore the position updates we get from there.
 		 */
-		String st = ";" + Locale.get("generic.Off")/*off*/ + ";" + Locale.get("secellloclogger.NoFix")/*NoFix*/ + ";" + Locale.get("secellloclogger.SecEx")/*SecEx*/ + ";" + Locale.get("secellloclogger.cell")/*cell*/ + ";" + Locale.get("secellloclogger.s")/*0s*/ + ";" + "~~" + ";" + Locale.get("secellloclogger.replay")/*replay*/ + ";";
+		String st = ";" + Locale.get("solution.Off")/*off*/ + ";" + Locale.get("solution.NoFix")/*NoFix*/ + ";" + Locale.get("solution.SecEx")/*SecEx*/ + ";" + Locale.get("solution.Cell")/*cell*/ + ";" + Locale.get("solution.0s")/*0s*/ + ";" + Locale.get("solution.tildes") + ";" + Locale.get("solution.replay")/*replay*/ + ";";
 		if (st.indexOf(";" + s + ";") >= 0) {
 			valid = false;
 			if (noValid > 0) {

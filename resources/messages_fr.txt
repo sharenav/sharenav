@@ -122,7 +122,6 @@ trace.Menu=Menu
 trace.Names=Names:
 trace.NextMapProjection=Next map projection
 trace.NextOverlay=Next overlay
-trace.NoFix=NoFix
 trace.NoOnlineCapa=No online capabilites
 trace.OnlineInfo=Online info
 trace.OverviewFilterMap=Overview/Filter map
@@ -779,15 +778,10 @@ routing.RoutingException=Routing Exception
 routing.RoutingEx=Routing Ex
 routing.SearchingDestinationWay=Searching destination way
 routing.SearchingStartWay=Searching start way
-secellloclogger.cell=cell
 secellloclogger.CellIDLogNotSupported=Logging of Cell-IDs is not supported on this phone.
 secellloclogger.CellLogging=Cell logging
 secellloclogger.Closing=Closing
 secellloclogger.EmptyCellIDProp=Cell-ID properties were empty, this is only supported on some phones.
-secellloclogger.NoFix=NoFix
-secellloclogger.replay=replay
-secellloclogger.s=0s
-secellloclogger.SecEx=SecEx
 suncalc.date=date=
 suncalc.latitude=latitude=
 suncalc.longitude=longitude=
@@ -1009,7 +1003,6 @@ jsr172gpxparser.SaxParserError=Sax Parser Error
 jsr172gpxparser.YourParserWasMisconfigured=Your parser was misconfigured
 jsr179input.CouldNotWriteGPSLog=Could not write raw GPS log
 jsr179input.CouldntCloseRawGpsLogger=Couldnt close raw gps logger
-jsr179input.NoFix=NoFix
 jsr179input.NoJSR179Provider=no JSR179 Provider
 jsr179input.ProviderStopped=provider stopped
 jsr179input.unexpectedExceptioninLocProv=unexpected exception while probing LocationProvider criteria.
@@ -1089,7 +1082,6 @@ searchnames.SearchNamesCrashedWith=SearchNames thread crashed unexpectedly with 
 secellid.AlCellIDLocFail=Can't use Cell-id for location
 secellid.AlCellIDretfail=Cell-id retrieval failed
 secellid.AlNoValidCellID=No valid cell-id
-secellid.Cell=Cell
 secellid.CellposNull=Cellpos == null
 secellid.ErCellcacheCorrupt2=Persistent Cell-id cache is corrupt
 secellid.ErCellcacheCorrupt=Persistent Cell-id cache is corrupt
@@ -1108,8 +1100,8 @@ secellid.ExSaveCellPersFail=Failed to save cell-id to persistent cache
 secellid.FailedToLookFor=Failed to look for 
 secellid.inPersistentCache= in persistent cache
 secellid.LacIdxEntry=LacIdxEntry (mcc=
-secellid.NoFix=NoFix
 secellid.ReceiverListNull=ReceiverList == null
+secellloclogger.cell=cell
 secellloclogger.FailedToCloseCellidLogger=Failed to close cell-id logger
 secellloclogger.FailedToWriteCellIDLog=Failed to write Cell-ID log file.
 secellloclogger.LoggingCellIDsNotPermitted=Logging of Cell-IDs is not permitted on this phone.
@@ -1141,3 +1133,12 @@ urls.at= at
 urls.UrlsThreadCrashed=Urls thread crashed unexpectedly with error 
 way.ErrorWhileVerify=Error while verify 
 trace.ManualLoc=Manual
+solution.NoFix=NoFix
+solution.On=On
+solution.Off=Off
+solution.Cell=Cell
+solution.SecEx=SecEx
+solution.tildes=~~
+solution.0s=0s
+solution.ManualLoc=Manual
+solution.replay=replay
