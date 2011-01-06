@@ -179,7 +179,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	private volatile int compassDeviation = 0;
 	private volatile int compassDeviated = 0;
 
-	public String solution = Locale.get("trace.NoFix")/*NoFix*/;
+	public String solution = Locale.get("solution.NoFix")/*NoFix*/;
 	
 	/** Flag if the user requested to be centered to the current GPS position (true)
 	 * or if the user moved the map away from this position (false).
@@ -729,7 +729,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 
 	
 	public boolean isGpsConnected() {
-		return locationProducer != null && !solution.equalsIgnoreCase(Locale.get("generic.Off")/*Off*/);
+		return locationProducer != null && !solution.equalsIgnoreCase(Locale.get("solution.Off")/*Off*/);
 	}
 
 	/**
@@ -1512,7 +1512,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				// gpsRecenterStale = true;
 				autoZoomed = true;
 				receivePosition (setpos);
-				receiveSolution (Locale.get("trace.ManualLoc")/*Manual*/);
+				receiveSolution (Locale.get("solution.ManualLoc")/*Manual*/);
 				newDataReady();
 				return;
 			}
@@ -1751,6 +1751,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 						ri.showRoute(pc, drawnCenter,imageCollector.xScreenOverscan,imageCollector.yScreenOverscan);
 					}
 				}
+			} else {
+				// show the way bar even if ImageCollector is not running because it's necessary on touch screens to get to the icon menu
+				tl.ele[TraceLayout.WAYNAME].setText(" ");
 			}
 			
 			/* Beginning of voice instructions started from overlay code (besides showRoute above)
@@ -1830,9 +1833,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			if (TrackPlayer.isPlaying) {
 				eSolution.setText(Locale.get("trace.Replay")/*Replay*/);
 			} else {
-				if (locationProducer == null && !(solution.equals(Locale.get("secellid.Cell"))/*Cell*/ ||
-										  solution.equals(Locale.get("trace.ManualLoc")/*Manual*/))) {
-					eSolution.setText(Locale.get("generic.Off")/*Off*/);
+				if (locationProducer == null && !(solution.equals(Locale.get("solution.Cell"))/*Cell*/ ||
+										  solution.equals(Locale.get("solution.ManualLoc")/*Manual*/))) {
+					eSolution.setText(Locale.get("solution.Off")/*Off*/);
 				} else {
 					eSolution.setText(solution);
 				}
@@ -1874,8 +1877,12 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					&&
 				locationProducer != null
 					&&
-				//FIXME: Hardcoded solution strings
-				";off;nofix;secex;cell;0s;~~;".indexOf(";" + solution.toLowerCase() + ";") == -1
+			    (";" + Locale.get("solution.Off") +
+			    ";" + Locale.get("solution.NoFix") +
+			    ";" + Locale.get("solution.SecEx") +
+			    ";" + Locale.get("solution.Cell") + 
+			    ";" + Locale.get("solution.0s") +
+			    ";" + Locale.get("solution.tildes") + ";").indexOf(";" + solution + ";") == -1
 			) {
 				tl.ele[TraceLayout.ALTITUDE].setText(showDistance(altitude, DISTANCE_ALTITUDE));
 			}

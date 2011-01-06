@@ -24,6 +24,7 @@ import javax.microedition.lcdui.List;
 //#endif
 
 import de.enough.polish.util.Locale;
+import de.ueller.gps.data.Configuration;
 import de.ueller.gps.tools.StringTokenizer;
 
 public class FsDiscover
@@ -52,8 +53,10 @@ public class FsDiscover
     private final Command DOWN_CMD = new Command(Locale.get("fsdiscover.DirDown")/*Directory down*/,
 			Command.ITEM, 1);
 
-	private String url;
+	private volatile String url;
 	private Vector urlList;
+	private Vector files;
+	private Vector dirs;
 	// private boolean root;
 
 	private List list;
@@ -74,6 +77,8 @@ public class FsDiscover
 		} 
 		this.orgTitle = title;
 		urlList = new Vector();
+		files = new Vector();
+		dirs = new Vector();
 		//#if polish.api.pdaapi
 		// avoid NullPointer exception
 		if (initUrl == null) {
@@ -185,9 +190,7 @@ public class FsDiscover
 				// If it is not a directory,
 				// Then we assume it must be an
 				// Ok selection
-				url = (String) urlList.elementAt(list.getSelectedIndex());
-				sl.selectedFile(url);
-				parent.show();
+				selectEntry();
 				return true;
 			}
 
@@ -198,10 +201,11 @@ public class FsDiscover
 			list.append("..", null);
 			//urlList.addElement(url + "Directory Up");
 			urlList.addElement(url);
+			String fileName;
 			String suffix;
 			Enumeration filelist = fc.list();
 			while (filelist.hasMoreElements()) {
-				String fileName = (String) filelist.nextElement();
+				fileName = (String) filelist.nextElement();
 				//#debug debug
 				logger.debug("found file: " + fileName);
 				// add files too if not choose dir only
@@ -232,12 +236,32 @@ public class FsDiscover
 					}
 				}
 				
+				// insert matching entries in the appropriate list at the right index to have them sorted
 				if (matching) {
 					// System.out.println("Adding " + fileName);
-					list.append(fileName, null);
-					urlList.addElement(url + fileName);
+					if (fileName.endsWith("/")) {
+						dirs.insertElementAt(fileName, getSortIdx(dirs, fileName));
+					} else {
+						files.insertElementAt(fileName, getSortIdx(files, fileName));
+					}
 				}
 			}
+
+			// add sorted directory names to list and urlList
+			for (int i=0; i < dirs.size(); i++) {
+				fileName = (String) dirs.elementAt(i);
+				list.append(fileName, null);
+				urlList.addElement(url + fileName);
+			}
+			dirs.removeAllElements();
+			// add sorted filenames to list and urlList
+			for (int i=0; i < files.size(); i++) {
+				fileName = (String) files.elementAt(i);
+				list.append(fileName, null);
+				urlList.addElement(url + fileName);
+			}
+			files.removeAllElements();
+
 			fc.close();
 			show();
 		} catch (IOException ioe) {
@@ -250,6 +274,20 @@ public class FsDiscover
 		return true;
 	}
 
+	/** get index where String s should be sorted into vector v consisting of Strings */
+	private int getSortIdx(Vector v, String s) {
+		String compare;
+		int i = 0;
+		while (i < v.size()) {
+			compare = (String) v.elementAt(i);
+			if (s.compareTo(compare) < 0) {
+				break;
+			}
+			i++;
+		}
+		return i;
+	}
+	
 	public void commandAction(Command c, Displayable d) {
 		if (processorThread.isAlive()) {
 			logger.error(Locale.get("fsdiscover.StillBusyTryAgain")/*Still busy, try again later*/);
@@ -275,17 +313,7 @@ public class FsDiscover
 			return;
 		}
 		if (c == OK_CMD) {
-			url = (String) urlList.elementAt(list.getSelectedIndex());
-			/**
-			 * Need to call sl.selectedFile() before calling parent.show(),
-			 * as we need to keep track of state for e.g. GuiDiscover
-			 */
-			if (chooseType == CHOOSE_FILEONLY && url.endsWith("/")) {
-				logger.info("Requested a file but got a dir: " + url);
-			} else {
-				sl.selectedFile(url);
-				parent.show();
-			}
+			selectEntry();
 			return;
 		}
 		if (c == DOWN_CMD) {
@@ -313,6 +341,20 @@ public class FsDiscover
 
 	}
 
+	private void selectEntry() {
+		url = (String) urlList.elementAt(list.getSelectedIndex());
+		/**
+		 * Need to call sl.selectedFile() before calling parent.show(),
+		 * as we need to keep track of state for e.g. GuiDiscover
+		 */
+		if (chooseType == CHOOSE_FILEONLY && url.endsWith("/")) {
+			logger.info("Requested a file but got a dir: " + url);
+		} else {
+			sl.selectedFile(url);
+			parent.show();
+		}		
+	}
+	
 	public void show() {
 		GpsMid.getInstance().show(list);
 		// Display.getDisplay(GpsMid.getInstance()).setCurrent(list);

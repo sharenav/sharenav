@@ -123,7 +123,6 @@ trace.Menu=Menu
 trace.Names=Názvy: 
 trace.NextMapProjection=další projekce mapy
 trace.NextOverlay=Další vrstva
-trace.NoFix=NoFix
 trace.NoOnlineCapa=Žádné možnosti online 
 trace.OnlineInfo=Online informace
 trace.OverviewFilterMap=Přehledová mapa/Filtr
@@ -784,10 +783,6 @@ secellloclogger.CellIDLogNotSupported=Záznam ID buněk není telefonem podporov
 secellloclogger.CellLogging=Záznam buněk
 secellloclogger.Closing=Zavírání
 secellloclogger.EmptyCellIDProp=vlastnosti ID buněk jsou prázdné, toto je podporováno pouze na některých telefonech.
-secellloclogger.NoFix=NoFix
-secellloclogger.replay=přehrávání
-secellloclogger.s=0s
-secellloclogger.SecEx=SecEx
 suncalc.date=datum=
 suncalc.latitude=nadm. výška=
 suncalc.longitude=zem. délka=
@@ -1009,7 +1004,6 @@ jsr172gpxparser.SaxParserError=Chyba analyzátoru Sax
 jsr172gpxparser.YourParserWasMisconfigured=Analyzátor nebyl nakonfigurován
 jsr179input.CouldNotWriteGPSLog=Nelze zapsat přímý záznam GPS
 jsr179input.CouldntCloseRawGpsLogger=Nelze uzavřít přímý záznam gps
-jsr179input.NoFix=BezPoz
 jsr179input.NoJSR179Provider=žádný poskytovatel JSR179
 jsr179input.ProviderStopped=poskytovatel zastaven
 jsr179input.unexpectedExceptioninLocProv=neočekávaná výjimka během zkoumání parametrů LocationProvider.
@@ -1108,7 +1102,6 @@ secellid.ExSaveCellPersFail=Selhalo ukládání cell-id do trvalé paměti
 secellid.FailedToLookFor=Selhalo hledání  
 secellid.inPersistentCache= v trvalé paměti
 secellid.LacIdxEntry=LacIdxEntry (mcc=
-secellid.NoFix=BezPoz
 secellid.ReceiverListNull=ReceiverList == null
 secellloclogger.FailedToCloseCellidLogger=Selhalo uzavření záznamu cell-id
 secellloclogger.FailedToWriteCellIDLog=Selhal zápis Cell-ID do souboru záznamu.
@@ -1143,3 +1136,12 @@ way.ErrorWhileVerify=Chyba během ověřování
 trace.ManualLoc=Ručně
 configuration.compass=S,SSV,SV,VSV,V,VJV,JV,JJV,J,JJZ,JZ,ZJZ,Z,ZSZ,SZ,SSZ
 trace.ConnectTo=Připojuji k 
+solution.NoFix=BezPoz
+solution.On=Zap
+solution.Off=Vyp
+solution.Cell=Buňka
+solution.SecEx=SecEx
+solution.tildes=~~
+solution.0s=0s
+solution.ManualLoc=Manual
+solution.replay=přehrávání
