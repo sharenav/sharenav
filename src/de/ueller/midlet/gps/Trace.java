@@ -1874,6 +1874,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					&&
 				locationProducer != null
 					&&
+				//FIXME: Hardcoded solution strings
 				";off;nofix;secex;cell;0s;~~;".indexOf(";" + solution.toLowerCase() + ";") == -1
 			) {
 				tl.ele[TraceLayout.ALTITUDE].setText(showDistance(altitude, DISTANCE_ALTITUDE));
