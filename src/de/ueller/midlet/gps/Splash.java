@@ -41,23 +41,21 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 		Locale.get("splash.Discl3")/* Don't handle while driving!*/,
 		Locale.get("splash.Discl4")/* Only use if legally allowed*/,
 		Locale.get("splash.Discl5")/* to use the features under*/,
-		Locale.get("splash.Discl6")/* for you applicable laws.*/,
+		Locale.get("splash.Discl6")/* the laws applicable for you.*/,
 		Locale.get("splash.Copyright")/*Copyright:*/,
-		Locale.get("splash.author")/*Original program:*/, 
 		" Harald Mueller",
-		Locale.get("splash.currdevelopers")/*Other current developers:*/, 
 		" Kai Krueger",
 		" S. Hochmuth",
 		" Markus Bäurle",
 		" Jyrki Kuoppala",
-		Locale.get("splash.artwork")/* Artwork: */,
+		Locale.get("splash.artwork")/* Artwork (splash screen): */,
 		" Tobias Mueller",
-		Locale.get("splash.contributors")/*Many other contributors*/,
+		Locale.get("splash.contributors")/*and many other contributors.*/,
 		Locale.get("splash.codefrom")/*Includes code by:*/, 
-		" Sualeh Fatehi " +
-		"(" + Locale.get("splash.suncalc")/* SunCalc */ + ")",
+		" Sualeh Fatehi ",
 		" Nikolay Klimchuk",
 		" Simon Turner",
+		" Christian Müller, Jochen Hönicke",
 		Locale.get("splash.Application")/*Application:*/,
 		Locale.get("splash.Application2")/* licensed under GPL2*/,
 		Locale.get("splash.Application3")/* http://www.gnu.org/*/,
@@ -67,14 +65,15 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 		Locale.get("splash.MapData4")/* http://creativecommons.org/*/,
 		Locale.get("splash.skip")/* Press '*' to skip this */,
 		Locale.get("splash.screen")/* screen at startup. */,
-		"Press '#' to switch to English" };
-	private Font f;
+		"Press '#' if you want to",
+		"switch to English." };
+	private final Font f;
 	int top = 0;
-	private Thread processorThread;
+	private final Thread processorThread;
 	private boolean shutdown = false;
-	private int ssize;
+	private final int ssize;
 	private int topStart = 106;
-	private int space;
+	private final int space;
 	private double scale = 1;
 	private String strVersion; 
 
@@ -97,8 +96,8 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 	    	// if we would not be able to allocate memory for
 			// at least the memory for the original and the scaled image
 			// plus 25% do not scale
-			int newWidth =  (int)(scale* (double) splash.getWidth());
-			int newHeight = (int)(scale* (double) splash.getHeight());
+			int newWidth =  (int)(scale* splash.getWidth());
+			int newHeight = (int)(scale* splash.getHeight());
 			if (ImageTools.isScaleMemAvailable(splash, newWidth, newHeight)) {
 				splash = ImageTools.scaleImage(splash, newWidth, newHeight);
 			}
