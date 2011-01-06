@@ -59,7 +59,7 @@ public class AudioRecorder  implements SelectionListener{
 			if (basedirectory == null) {
 				logger.error(Locale.get("audiorecorder.SpecifyDir")/*Dont know where to save the recording, please specify a directory and try again*/);
 				//#if polish.api.fileConnection				
-				new FsDiscover(Trace.getInstance(),this,basedirectory,true,null,"Media Store Directory");
+				new FsDiscover(Trace.getInstance(),this,basedirectory,FsDiscover.CHOOSE_DIRONLY,null,"Media Store Directory");
 				//#endif
 				record = null;
 				return false;
@@ -97,7 +97,7 @@ public class AudioRecorder  implements SelectionListener{
 			logger.exception(Locale.get("audiorecorder.FailedStartingRecording")/*Failed to start recording*/, me);
 			// offer a chance to fix a possibly improper URL
 			//#if polish.api.fileConnection				
-			new FsDiscover(Trace.getInstance(),this,basedirectory,true,null,"Media Store Directory");
+			new FsDiscover(Trace.getInstance(),this,basedirectory,FsDiscover.CHOOSE_DIRONLY,null,"Media Store Directory");
 			//#endif
 		}
 		//#endif

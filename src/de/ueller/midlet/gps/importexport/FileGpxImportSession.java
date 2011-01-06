@@ -40,7 +40,7 @@ public class FileGpxImportSession implements GpxImportSession, SelectionListener
 		FsDiscover fsd = new FsDiscover(this, this, Configuration.getGpxUrl() == null
 						|| Configuration.getGpxUrl().startsWith("file:") ? Configuration.getGpxUrl() :
 						null, 
-						false, ".gpx", Locale.get("filegpximportsession.LoadGgpxFile")/*Load *.gpx file*/);
+						FsDiscover.CHOOSE_FILEONLY, ".gpx", Locale.get("filegpximportsession.LoadGgpxFile")/*Load *.gpx file*/);
 		fsd.show();				
 		//#endif
 	}

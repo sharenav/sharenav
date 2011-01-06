@@ -24,6 +24,7 @@ import javax.microedition.lcdui.List;
 //#endif
 
 import de.enough.polish.util.Locale;
+import de.ueller.gps.tools.StringTokenizer;
 
 public class FsDiscover
 //#if polish.api.pdaapi
@@ -33,7 +34,11 @@ public class FsDiscover
 	//#if polish.api.pdaapi
 	private GpsMidDisplayable parent;
 	private SelectionListener sl;
-	private boolean chooseDir;
+	private int chooseType;
+	
+	public static final int CHOOSE_FILEONLY = 0;
+	public static final int CHOOSE_DIRONLY = 1;
+	public static final int CHOOSE_FILE_OR_DIR = 2;
 
 	private Thread processorThread;
 	private final static Logger logger = Logger.getInstance(FsDiscover.class,
@@ -54,16 +59,19 @@ public class FsDiscover
 	private List list;
 
 	private String orgTitle;
-	private String suffix;
+	private Vector suffixes = null;
 
 	public FsDiscover(GpsMidDisplayable parent, SelectionListener sl,
-			String initUrl, boolean chooseDir, String suffix, String title) {
+			String initUrl, int chooseType, String suffix, String title) {
 		//orgTitle=Display.getDisplay(GpsMid.getInstance()).getCurrent().getTitle
 		// ();
 		this.parent = parent;
 		this.sl = sl;
-		this.chooseDir = chooseDir;
-		this.suffix = suffix;
+		this.chooseType = chooseType;
+		// multiple suffixes separated by ; can be given
+		if (suffix != null) {
+			suffixes = StringTokenizer.getVector(suffix, ";");
+		} 
 		this.orgTitle = title;
 		urlList = new Vector();
 		//#if polish.api.pdaapi
@@ -190,12 +198,13 @@ public class FsDiscover
 			list.append("..", null);
 			//urlList.addElement(url + "Directory Up");
 			urlList.addElement(url);
+			String suffix;
 			Enumeration filelist = fc.list();
 			while (filelist.hasMoreElements()) {
 				String fileName = (String) filelist.nextElement();
 				//#debug debug
 				logger.debug("found file: " + fileName);
-				// add files too if not choosedir
+				// add files too if not choose dir only
 				//#if polish.android
 				FileConnection fc2 = (FileConnection) Connector.open(url + fileName);
 				if (fc2.isDirectory()) {
@@ -203,13 +212,27 @@ public class FsDiscover
 					fc2.close();
 				}
 				//#endif
-				if (fileName.endsWith("/") ||
-						!chooseDir &&
-						( suffix == null ||	fileName.toLowerCase()
-								.endsWith(suffix.toLowerCase())
-						)
-					)
-				{
+				
+				// only add entries matching the criteria
+				boolean matching = false;
+				if (fileName.endsWith("/")) {
+					matching = true;
+				} else if (chooseType != CHOOSE_DIRONLY) {
+					// when there's no suffix to check for, each file is matching
+					if (suffixes == null) {
+						matching = true;
+					// otherwise check if one of the ;-separated suffixes matches
+					} else {
+						for (int i=0; i < suffixes.size(); i++) {
+							suffix = (String) suffixes.elementAt(i);
+							if (fileName.toLowerCase().endsWith(suffix.toLowerCase())) {
+								matching = true;
+							}
+						}
+					}
+				}
+				
+				if (matching) {
 					// System.out.println("Adding " + fileName);
 					list.append(fileName, null);
 					urlList.addElement(url + fileName);
@@ -257,9 +280,12 @@ public class FsDiscover
 			 * Need to call sl.selectedFile() before calling parent.show(),
 			 * as we need to keep track of state for e.g. GuiDiscover
 			 */
-			
-			sl.selectedFile(url);
-			parent.show();
+			if (chooseType == CHOOSE_FILEONLY && url.endsWith("/")) {
+				logger.info("Requested a file but got a dir: " + url);
+			} else {
+				sl.selectedFile(url);
+				parent.show();
+			}
 			return;
 		}
 		if (c == DOWN_CMD) {

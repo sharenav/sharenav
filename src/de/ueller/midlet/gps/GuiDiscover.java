@@ -774,7 +774,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 			if(initialDir != null && !initialDir.toLowerCase().startsWith("file:///")) {
 				initialDir = null;
 			}
-			FsDiscover fsd = new FsDiscover(this, this, initialDir, (state == STATE_MAP) ? false : true, "", title);
+			FsDiscover fsd = new FsDiscover(this, this, initialDir, (state == STATE_MAP) ? FsDiscover.CHOOSE_FILE_OR_DIR : FsDiscover.CHOOSE_DIRONLY, (state == STATE_MAP) ? ".zip;.jar" : null, title);
 			fsd.show();
 			//#else
 			//logger.error("Files system support is not compiled into this version");
@@ -1503,12 +1503,12 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 			//#if polish.api.fileconnection
 			case MENU_ITEM_SAVE_CONFIG:
 				state = STATE_SAVE_CONFIG;
-				FsDiscover fsd = new FsDiscover(this, this, null, true, "", "Save configuration");
+				FsDiscover fsd = new FsDiscover(this, this, null, FsDiscover.CHOOSE_DIRONLY, null, "Save configuration");
 				fsd.show();
 				break;
 			case MENU_ITEM_LOAD_CONFIG:
 				state = STATE_LOAD_CONFIG;
-				fsd = new FsDiscover(this, this, null, false, "cfg", "Load configuration");
+				fsd = new FsDiscover(this, this, null, FsDiscover.CHOOSE_FILEONLY, "cfg", "Load configuration");
 				fsd.show();
 				break;
 			//#endif
