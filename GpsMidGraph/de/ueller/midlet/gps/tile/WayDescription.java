@@ -32,6 +32,7 @@ public class WayDescription {
 	public final static int WDFLAG_HIGHWAY_LINK = 0x20;
 	public final static int WDFLAG_MOTORWAY = 0x40;
 	public final static int WDFLAG_MAINSTREET_NET = 0x80;
+	public final static int WDFLAG_SEARCHICON_FROM_FILE = 0x100;
 	
 	public int getGraphicsLineStyle() {
 		return wayDescFlags & 0x01;
@@ -63,6 +64,10 @@ public class WayDescription {
 
 	public boolean isMainstreetNet() {
 		return (wayDescFlags & WDFLAG_MAINSTREET_NET) > 0;
+	}
+
+	public boolean hasSearchIconFromFile() {
+		return (wayDescFlags & WDFLAG_SEARCHICON_FROM_FILE) > 0;
 	}
 	
 }

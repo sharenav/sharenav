@@ -3077,6 +3077,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 
 	public void show() {
 		//Display.getDisplay(parent).setCurrent(this);
+		Legend.freeDrawnWayAndAreaSearchImages();
 		GpsMid.getInstance().show(this);
 		setFullScreenMode(Configuration.getCfgBitState(Configuration.CFGBIT_FULLSCREEN));
 		updateLastUserActionTime();
