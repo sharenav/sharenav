@@ -154,7 +154,6 @@ scale alias 1: zoomed out 21x
 	  <value name ="school">
 		<description desc = "School"/>
 		<image src="school.png"/>
-		<searchIcon src="school.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
 		<scale scale="23"/>
@@ -1067,7 +1066,6 @@ scale alias 1: zoomed out 21x
   			<Wvalue name = "motorway" priority = "10">
   				<description desc = "motorway"/>
 				<image src = "motorway.png"/>
-				<searchIcon src = "motorway.png"/>
   				<namekey tag = "name"/>
   				<namefallback tag = "ref"/>
   				<isArea area = "false"/>
@@ -1081,7 +1079,6 @@ scale alias 1: zoomed out 21x
   			<Wvalue name = "motorway_link" priority = "10">
   				<description desc = "motorway link"/>
 				<image src = "motorway.png"/>
-				<searchIcon src = "motorway.png"/>
   				<namekey tag = "name"/>
   				<namefallback tag = "ref"/>
   				<isArea area = "false"/>
@@ -1670,7 +1667,6 @@ scale alias 1: zoomed out 21x
   			<Wvalue name = "school">
   				<description desc = "School"/>
 				<image src = "school.png"/>
-				<searchIcon src = "school.png"/>
   				<namekey tag = "name"/>
   				<isArea area = "true"/>
   				<scale scale = "19"/>
