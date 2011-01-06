@@ -434,6 +434,7 @@ guisetupsound.SpeedingAlert=Ylinopeusvaroitus
 guisetupsound.VisualSpeedingAlert=Näytä ylinopeusvaroitus
 guisetupsound.WinterLimitsCctive=Talvinopeusrajoitus päällä
 guitacho.Next=Seuraava
+guitrip.Next=Seuraava
 guiwebinfo.ContactWebOrPhone=Web- tai puhelinyhteys
 guiwebinfo.GeoHack=GeoHack
 guiwebinfo.Phone=Puhelin
