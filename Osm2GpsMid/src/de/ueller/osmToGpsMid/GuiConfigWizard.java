@@ -198,6 +198,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	JComboBox jcbPlanet;
 	JComboBox jcbProperties;
 	JComboBox jcbPhone;
+	JComboBox jcbTileSize;
 	JComboBox jcbStyle;
 	JTextField jtfRouting;
 	JTextField jtfName;
@@ -468,6 +469,27 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		gbc.gridy = 2;
 		gbc.gridwidth = 1;
 		jpOptions.add(jcbPhone, gbc);
+
+		JLabel jlTileSize = new JLabel("Map tile file count vs. size: ");
+		gbc.gridx = 0;
+		gbc.gridy = 3;
+		gbc.weighty = 0;
+		jpOptions.add(jlTileSize, gbc);
+
+		Vector vTileSize = new Vector();
+		vTileSize.addElement("Many small map tile files");
+		vTileSize.addElement("Average map tile file size and count");
+		vTileSize.addElement("Fewer but big map tile files");
+		vTileSize.addElement("Custom - loaded from .properties");
+		jcbTileSize = new JComboBox(vTileSize);
+		jcbTileSize.setToolTipText("Some devices do not support many files in the jar, other require small map tile files to be able to load them into their limited RAM");
+		jcbTileSize.addActionListener(this);
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.gridx = 1;
+		gbc.gridy = 3;
+		gbc.gridwidth = 1;
+		jpOptions.add(jcbTileSize, gbc);
+
 		
 		JPanel jpOptions2 = new JPanel(new GridBagLayout());
 		gbc.gridx = 6;
@@ -568,6 +590,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		jtfRouting.setEnabled(false);
 		jtfName.setEnabled(false);
 		jcbPhone.setEnabled(false);
+		jcbTileSize.setEnabled(false);
 		jcbSoundFormats.setEnabled(false);
 		jcbCellSource.setEnabled(false);
 		jcbEditing.setEnabled(false);
@@ -685,6 +708,9 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		jcbPhone.removeActionListener(this);
 		jcbPhone.setSelectedItem(config.getString("app"));
 		jcbPhone.addActionListener(this);
+		jcbTileSize.removeActionListener(this);
+		jcbTileSize.setSelectedIndex(config.getTileSizeVsCountId());
+		jcbTileSize.addActionListener(this);
 		System.out.println("  midlet.name: " + config.getString("midlet.name"));
 		jtfName.setText(config.getString("midlet.name"));
 		guiSettingsFromConfig();
@@ -1319,6 +1345,9 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		}
 		if (event.getSource() == jcbPhone) {
 			config.setCodeBase((String)jcbPhone.getSelectedItem());
+		}
+		if (event.getSource() == jcbTileSize) {
+			config.setTileSizeVsCountId(jcbTileSize.getSelectedIndex());
 		}
 		if (event.getSource() == jcbCellSource) {
 			

@@ -253,6 +253,31 @@ public class Configuration {
 	
 	/** Maximum allowed number of bounding boxes */
 	public static final int MAX_BOUND_BOXES = 9;
+
+	public final static int TILESIZE_SMALL_MANY = 0;
+	public final static int TILESIZE_MEDIUM = 1;
+	public final static int TILESIZE_FEW_BIG = 2;
+	
+	class TileSizeDescription {
+		int maxDictDepth;
+		int maxTileWays[]; 
+		int maxTileSize;
+		int maxRouteTileSize;
+		
+		public TileSizeDescription(int maxDictDepth, int maxTileWays0, int maxTileWays1, int maxTileWays2, int maxTileWays3, int maxTileSize, int maxRouteTileSize) {
+			this.maxDictDepth = maxDictDepth;
+			this.maxTileWays = new int[4];
+			this.maxTileWays[0] = maxTileWays0;
+			this.maxTileWays[1] = maxTileWays1;
+			this.maxTileWays[2] = maxTileWays2;
+			this.maxTileWays[3] = maxTileWays3;
+			this.maxTileSize = maxTileSize;
+			this.maxRouteTileSize = maxRouteTileSize;
+		}
+	}
+
+	public TileSizeDescription tileSize[];
+	public int activeTileSizeId = 0;
 	
 		/** The bundle .properties file containing most settings */
 		private ResourceBundle rb;
@@ -455,6 +480,7 @@ public class Configuration {
 			}
 
 			initialiseRealScale();
+			initialiseTileSize();
 			
 			try {
 				InputStream cf;
@@ -496,6 +522,7 @@ public class Configuration {
 			resetColors();
 			bounds = new Vector<Bounds>(MAX_BOUND_BOXES);
 			initialiseRealScale();
+			initialiseTileSize();
 			resetConfig();
 			planet = "TEST";
 		}
@@ -530,6 +557,15 @@ public class Configuration {
 				realScale[i] -= 100;
 				//System.out.println("Pseudo Zoom Level: " + i + " Real Scale: " + realScale[i]);
 			}
+		}
+		
+		private void initialiseTileSize() {
+			tileSize = new TileSizeDescription[4];
+			tileSize[0] = new TileSizeDescription(7, 255, 255, 255, 255, 20000, 3000);
+			tileSize[1] = new TileSizeDescription(12, 1000, 1000, 1000, 1000, 20000, 6000);
+			tileSize[2] = new TileSizeDescription(19, 2000, 3000, 3000, 3000, 30000, 15000);
+			// last tileSize is custom setting from .properties
+			tileSize[3] = new TileSizeDescription(7, 255, 255, 255, 255, 20000, 3000);
 		}
 		
 		public void resetConfig() {
@@ -613,6 +649,8 @@ public class Configuration {
 			for (int i=0; i<=3; i++) {
 				maxTileWays[i] = Integer.parseInt(getString("maxTileWays" + i));
 			}
+			
+			tileSize[tileSize.length - 1] =  new TileSizeDescription(maxDictDepth, maxTileWays[0], maxTileWays[1], maxTileWays[2], maxTileWays[3], maxTileSize, maxRouteTileSize);		
 			
 			setStyleFileName(getString("style-file"));
 			appParam = getString("app");
@@ -797,6 +835,42 @@ public class Configuration {
 		public void setCodeBase (String app) {
 			appParam = app;
 		}
+
+		/** Allows to set parameters for tile size vscount
+		 * @param 
+		 */
+		public void setTileSizeVsCountId (int tileSizeId) {
+			activeTileSizeId = tileSizeId;
+			TileSizeDescription ts = tileSize[activeTileSizeId]; 
+			maxDictDepth = ts.maxDictDepth;
+			maxTileWays[0] = ts.maxTileWays[0];
+			maxTileWays[1] = ts.maxTileWays[1];
+			maxTileWays[2] = ts.maxTileWays[2];
+			maxTileWays[3] = ts.maxTileWays[3];
+			maxTileSize = ts.maxTileSize;
+			maxRouteTileSize = ts.maxRouteTileSize;
+		}
+		
+		public int getTileSizeVsCountId () {
+			TileSizeDescription ts;
+			for(int i=0; i < tileSize.length; i++) {
+				ts = tileSize[i]; 
+				if (
+					maxDictDepth == ts.maxDictDepth &&
+					maxTileWays[0] == ts.maxTileWays[0] &&
+					maxTileWays[1] == ts.maxTileWays[1] &&
+					maxTileWays[2] == ts.maxTileWays[2] &&
+					maxTileWays[3] == ts.maxTileWays[3] &&
+					maxTileSize == ts.maxTileSize &&
+					maxRouteTileSize == ts.maxRouteTileSize
+				) {
+					return i;
+				}
+			}
+			return tileSize.length - 1;
+		}
+
+		
 		
 		/**
 		 * Returns a stream to read from the JAR file containing the base Midlet -
