@@ -56,4 +56,13 @@ public class WayDescription extends EntityDescription{
 		}
 		rulePriority = 0;
 	}
+	
+	public boolean isHighwayLink() {
+		return (wayDescFlags & WDFLAG_HIGHWAY_LINK) > 0;
+	}
+
+	public boolean isMotorway() {
+		return (wayDescFlags & WDFLAG_MOTORWAY) > 0;
+	}
+	
 }

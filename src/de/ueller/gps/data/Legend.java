@@ -506,6 +506,10 @@ public class Legend {
 			ways[i].wayWidth = ds.readByte();
 			ways[i].overviewMode = OM_SHOWNORMAL;
 			ways[i].wayDescFlags = ds.readInt();
+			if (ways[i].searchIcon != null) {
+				ways[i].wayDescFlags |= WayDescription.WDFLAG_SEARCHICON_FROM_FILE;
+			}
+
 			if ((flags & LEGEND_FLAG_MIN_ONEWAY_ARROW_SCALE) > 0) {
 				ways[i].maxOnewayArrowScale = ds.readInt();
 			} else {
@@ -628,18 +632,34 @@ public class Legend {
 			return img;
 		}
 	}
-	public static final Image getWayOrAreaSearchImage(byte type)  {
-		if (ways[type].searchIcon != null) {
-			return ways[type].searchIcon;
-		} else {
+	
+	public static Image getWayOrAreaSearchImage(byte type)  {
+		if (ways[type].searchIcon == null) {
 			if (ways[type].isArea) {
-				return getAreaSearchImage(type);
+				ways[type].searchIcon = getAreaSearchImage(type);
 			} else {
-				return getWaySearchImage(type);
+				ways[type].searchIcon = getWaySearchImage(type);
 			}
 		}
+		return ways[type].searchIcon;
 	}
-	public static final Image getAreaSearchImage(byte type)  {
+	
+	public static void freeDrawnWayAndAreaSearchImages() {
+		//#debug info
+		int imagesFreed = 0;
+		for(int i=0; i < ways.length; i++) {
+			if (ways[i].searchIcon != null && !ways[i].hasSearchIconFromFile()) {
+				ways[i].searchIcon = null;
+				//#debug info
+				imagesFreed++;
+			}
+		}
+		//#debug info
+		logger.info("Images freed: " + imagesFreed);
+		//System.out.println("Images freed: " + imagesFreed);
+	}
+	
+	public static Image getAreaSearchImage(byte type)  {
 		if (ways[type].searchIcon != null) {
 			return ways[type].searchIcon;
 		} else {
@@ -647,7 +667,7 @@ public class Legend {
 			Image img = Image.createImage(16,16);
 			Graphics g = img.getGraphics();
 			g.setColor(w.lineColor);
-			g.fillRect(0, 0, 16, 16);
+			g.fillRect(1, 1, 14, 14);
 			return img;        
 		}
 	}

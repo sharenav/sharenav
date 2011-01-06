@@ -31,6 +31,7 @@ import de.ueller.osmToGpsMid.model.TravelMode;
 import de.ueller.osmToGpsMid.model.TravelModes;
 import de.ueller.osmToGpsMid.model.TurnRestriction;
 import de.ueller.osmToGpsMid.model.Way;
+import de.ueller.osmToGpsMid.model.WayDescription;
 import de.ueller.osmToGpsMid.tools.FileTools;
 
 /**
@@ -49,17 +50,23 @@ public class RouteData {
 		this.path = path;
 	}
 	
-	public void create() {
+	public void create(Configuration config) {
 		// reset connectedLineCount for each Node to 0
 		for (Node n:parser.getNodes()) {
 			n.resetConnectedLineCount();
 		}
+
+		boolean neverTrafficSignalsRouteNode = false;
 		// count all connections for all nodes
 		for (Way w:parser.getWays()) {
 			if (! w.isAccessForAnyRouting()) {
 				continue;
 			}
 
+			// mark nodes in tunnels / on bridges / on motorways to not get later marked as traffic signal delay route node by nearby traffic signals
+			WayDescription wayDesc = config.getWayDesc(w.type);
+			neverTrafficSignalsRouteNode = (w.isBridge() || w.isTunnel() || (wayDesc.isMotorway() && !wayDesc.isHighwayLink()) );
+			
 				Node lastNode = null;
 				for (Node n:w.getNodes()) {
 					n.incConnectedLineCount();
@@ -67,6 +74,10 @@ public class RouteData {
 						n.incConnectedLineCount();
 					}
 					lastNode = n;
+					if (neverTrafficSignalsRouteNode) {
+						n.markAsNeverTrafficSignalsRouteNode();
+						//System.out.println("Mark to never become a traffic signal delay route node: " + n.toString());
+					}
 				}
 				if (lastNode != null) {
 					lastNode.decConnectedLineCount();
@@ -557,7 +568,7 @@ public class RouteData {
 					new CleanUpData(parser, conf);
 					RouteData rd = new RouteData(parser, "");
 
-					rd.create();
+					rd.create(conf);
 					
 					int rid = 10000;
 //					for (RouteNode r:rd.nodes.values()) {

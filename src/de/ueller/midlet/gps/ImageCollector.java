@@ -194,7 +194,10 @@ public class ImageCollector implements Runnable {
 				 */
 				createPC.hlLayers = 0;
 				
-				// highlighted path only on top if gpsCentered
+				/*
+				 * highlighted path is on top if gps recentered, but if not it might still come to top
+				 * when we determine during painting that the cursor is closer than 25 meters at the route line.
+				 */
 				createPC.highlightedPathOnTop = tr.gpsRecenter;
 				
 				/**
@@ -247,6 +250,10 @@ public class ImageCollector implements Runnable {
 								if (RouteInstructions.dstToRoutePath != RouteInstructions.DISTANCE_UNKNOWN) {
 									RouteInstructions.routePathConnection = createPC.routePathConnection;
 									RouteInstructions.pathIdxInRoutePathConnection = createPC.pathIdxInRoutePathConnection;
+									// when we determine during painting that the cursor is closer than 25 meters at the route line, bring it to the top
+									if (RouteInstructions.dstToRoutePath < 25) {
+										createPC.highlightedPathOnTop = true;
+									}
 								}
 								//System.out.println("waysPainted: " + createPC.waysPainted);
 							} else {

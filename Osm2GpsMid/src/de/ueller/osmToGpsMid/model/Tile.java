@@ -337,10 +337,15 @@ public class Tile {
 		} else if (type == TYPE_ROUTEDATA && bounds.isInOrAlmostIn(n.lat, n.lon)) {
 			for (RouteNode rn : routeNodes) {
 				if (MyMath.dist(n, rn.node) < 25) {
-					rn.node.markAsTrafficSignalsRouteNode();
-					numTrafficSignalRouteNodes++;
-					// System.out.println(MyMath.dist(n, rn.node) + "Traffic Light " + 
-					// n.toUrl() + " at " + rn.node.toUrl()); 
+					if (!rn.node.isNeverTrafficSignalsRouteNode()) {
+						rn.node.markAsTrafficSignalsRouteNode();
+						numTrafficSignalRouteNodes++;
+						// System.out.println(MyMath.dist(n, rn.node) + "Traffic Light Delay from traffic light" + 
+						// n.toUrl() + " at " + rn.node.toUrl()); 
+					} else {
+						;
+						//System.out.println("Route node became no traffic signal delay route node because it's at a tunnel or bridge: " + rn.node.toUrl());
+					}
 				}
 			}
 		}

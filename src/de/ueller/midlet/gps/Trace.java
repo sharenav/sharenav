@@ -3077,6 +3077,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 
 	public void show() {
 		//Display.getDisplay(parent).setCurrent(this);
+		Legend.freeDrawnWayAndAreaSearchImages();
 		GpsMid.getInstance().show(this);
 		setFullScreenMode(Configuration.getCfgBitState(Configuration.CFGBIT_FULLSCREEN));
 		updateLastUserActionTime();
@@ -3112,6 +3113,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				Configuration.setDestPos(new Node(dest.lat, dest.lon, true));
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SAVED_DESTPOS_VALID, true);
 			}
+			movedAwayFromDest = false;
 		} else {
 			Configuration.setCfgBitSavedState(Configuration.CFGBIT_SAVED_DESTPOS_VALID, false);
 			//#debug info
