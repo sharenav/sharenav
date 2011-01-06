@@ -667,7 +667,7 @@ public class Legend {
 			Image img = Image.createImage(16,16);
 			Graphics g = img.getGraphics();
 			g.setColor(w.lineColor);
-			g.fillRect(0, 0, 16, 16);
+			g.fillRect(1, 1, 14, 14);
 			return img;        
 		}
 	}
