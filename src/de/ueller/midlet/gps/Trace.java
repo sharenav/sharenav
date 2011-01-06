@@ -1751,6 +1751,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 						ri.showRoute(pc, drawnCenter,imageCollector.xScreenOverscan,imageCollector.yScreenOverscan);
 					}
 				}
+			} else {
+				// show the way bar even if ImageCollector is not running because it's necessary on touch screens to get to the icon menu
+				tl.ele[TraceLayout.WAYNAME].setText(" ");
 			}
 			
 			/* Beginning of voice instructions started from overlay code (besides showRoute above)
