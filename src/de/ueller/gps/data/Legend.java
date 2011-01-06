@@ -645,18 +645,20 @@ public class Legend {
 	}
 	
 	public static void freeDrawnWayAndAreaSearchImages() {
-		//#debug info
-		int imagesFreed = 0;
-		for(int i=0; i < ways.length; i++) {
-			if (ways[i].searchIcon != null && !ways[i].hasSearchIconFromFile()) {
-				ways[i].searchIcon = null;
-				//#debug info
-				imagesFreed++;
+		if (ways != null) {
+			//#debug info
+			int imagesFreed = 0;
+			for(int i=0; i < ways.length; i++) {
+				if (ways[i].searchIcon != null && !ways[i].hasSearchIconFromFile()) {
+					ways[i].searchIcon = null;
+					//#debug info
+					imagesFreed++;
+				}
 			}
+			//#debug info
+			logger.info("Images freed: " + imagesFreed);
+			//System.out.println("Images freed: " + imagesFreed);
 		}
-		//#debug info
-		logger.info("Images freed: " + imagesFreed);
-		//System.out.println("Images freed: " + imagesFreed);
 	}
 	
 	public static Image getAreaSearchImage(byte type)  {
