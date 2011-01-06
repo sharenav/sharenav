@@ -76,7 +76,7 @@ public class Way extends Entity implements Comparable<Way> {
 	 * Indicates that this way was already written to output;
 	 */
 	public boolean				used								= false;
-	private byte				type								= -1;
+	public byte				type								= -1;
 
 	/**
 	 * Way id of the last unhandled maxSpeed - by using this to detect repeats,

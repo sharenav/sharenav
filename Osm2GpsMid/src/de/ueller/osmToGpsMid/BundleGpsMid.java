@@ -520,7 +520,7 @@ public class BundleGpsMid implements Runnable {
 			if (Configuration.attrToBoolean(config.useRouting) >= 0 ) {
 				System.out.println("Creating route data");
 				System.out.println("===================");
-				rd.create();
+				rd.create(config);
 				System.out.println("Optimizing route data");
 				rd.optimise();
 			}

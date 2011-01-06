@@ -45,6 +45,7 @@ public class Node extends Entity {
 	
 	// the upper flags of connectedLineCount are used to indicate special informations about the node
 	public static final int CLC_MASK_CONNECTEDLINECOUNT = 31;
+	public static final int CLC_NEVER_TRAFFICSIGNALS_ROUTENODE = 128;
 	public static final int CLC_FLAG_TRAFFICSIGNALS = 64;
 	public static final int CLC_FLAG_TRAFFICSIGNALS_ROUTENODE = 32;
 	
@@ -175,9 +176,22 @@ public class Node extends Entity {
 		connectedLineCount |= CLC_FLAG_TRAFFICSIGNALS_ROUTENODE;
 	}
 
+	public void unMarkAsTrafficSignalsRouteNode() {
+		connectedLineCount &= ~CLC_FLAG_TRAFFICSIGNALS_ROUTENODE;
+	}
+	
 	public boolean isTrafficSignalsRouteNode() {
 		return ((connectedLineCount & CLC_FLAG_TRAFFICSIGNALS_ROUTENODE) > 0);
 	}	
+
+	public void markAsNeverTrafficSignalsRouteNode() {
+		connectedLineCount |= CLC_NEVER_TRAFFICSIGNALS_ROUTENODE;
+	}	
+
+	public boolean isNeverTrafficSignalsRouteNode() {
+		return ((connectedLineCount & CLC_NEVER_TRAFFICSIGNALS_ROUTENODE) > 0);
+	}	
+
 	
 	private byte calcType(Configuration c) {
 		if (type != -1) {
