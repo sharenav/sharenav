@@ -10,6 +10,7 @@
  */
 package de.ueller.osmToGpsMid;
 
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Desktop;
@@ -56,6 +57,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
@@ -1144,12 +1146,15 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	 */
 	private void handleHelpClicked() {
 		final JEditorPane jepHelpMsg = new JEditorPane();
+		final JScrollPane scrPane = new JScrollPane();
 		jepHelpMsg.setPreferredSize(new Dimension(4000,4000));
 		jepHelpMsg.setEditable(false);
 		jepHelpMsg.setContentType("text/html");
+		scrPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED); 
+		scrPane.getViewport().add(jepHelpMsg);
 		jepHelpMsg.setText(
 			"<html><body>" +
-			"<h1>Welcome to the Osm2GpsMid Wizard!</h1><br><br>" +
+			"<h1>Welcome to the Osm2GpsMid Wizard!</h1>" +
 			"Osm2GpsMid and GpsMid are licensed under <a href =\"http://www.gnu.org/licenses/old-licenses/gpl-2.0.html\">GPLv2</a><br>" +
 			"OpenStreetMap Data is licensed under <a href =\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a><br>" +
 			"<br>" +
@@ -1212,7 +1217,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			}
 		});
 		
-		JOptionPane.showMessageDialog(this, jepHelpMsg, "Help", JOptionPane.PLAIN_MESSAGE);
+		JOptionPane.showMessageDialog(this, scrPane, "Help", JOptionPane.PLAIN_MESSAGE);
 	}
 
 	/** Handles change events for the combo boxes
