@@ -1143,5 +1143,5 @@ solution.Cell=Buňka
 solution.SecEx=SecEx
 solution.tildes=~~
 solution.0s=0s
-solution.ManualLoc=Manual
+solution.ManualLoc=Ruční
 solution.replay=přehrávání
