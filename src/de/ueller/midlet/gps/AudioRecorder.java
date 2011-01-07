@@ -88,7 +88,8 @@ public class AudioRecorder  implements SelectionListener{
 			PositionMark here = new PositionMark(pos.latitude *MoreMath.FAC_DECTORAD, pos.longitude *MoreMath.FAC_DECTORAD);
 			here.displayName = "AudioMarker-" + fileSubPart;
 			Trace.getInstance().gpx.addWayPt(here);
-			tr.alert("Audio recording", "Recording audio to " + fileName, 1500);
+			tr.alert(Locale.get("audiorecorder.audRecording")/*Audio recording*/, 
+				 Locale.get("audiorecorder.recTo")/*Recording audio to*/ + " " + fileName, 1500);
 		} catch (SecurityException se) {
 			record = null;
 			logger.error(Locale.get("audiorecorder.PermisionDeniedRecordingAudio")/*Permision denied to record audio*/);
@@ -116,7 +117,8 @@ public class AudioRecorder  implements SelectionListener{
 			mPlayer.stop();
 			mPlayer.close();
 			Trace tr = Trace.getInstance();
-			tr.alert("Audio recording", "Stopped audio recording", 750);
+			tr.alert(Locale.get("audiorecorder.audRecording")/*Audio recording*/, 
+				 Locale.get("audiorecorder.stopped")/*Stopped audio recording*/, 750);
 		} catch (IOException ioe) {
 			logger.exception(Locale.get("audiorecorder.FailedSavingAudioRecording")/*Failed to save audio recording*/, ioe);
 		} catch (MediaException e) {
