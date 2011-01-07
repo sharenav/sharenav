@@ -1381,6 +1381,9 @@ public class Configuration {
 						Locale.get("configuration.ExFNFJar")/* in JAR.*/);
 			}
 		}
+		if (mapFileUrl == null) {
+			throw new IOException("mapFileUrl is null");					
+		}
 		//#if polish.api.fileconnection
 		if (mapFileUrl.endsWith("/")) {
 			try {
