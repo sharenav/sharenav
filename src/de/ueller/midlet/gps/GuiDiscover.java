@@ -1503,12 +1503,12 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 			//#if polish.api.fileconnection
 			case MENU_ITEM_SAVE_CONFIG:
 				state = STATE_SAVE_CONFIG;
-				FsDiscover fsd = new FsDiscover(this, this, null, FsDiscover.CHOOSE_DIRONLY, null, "Save configuration");
+				FsDiscover fsd = new FsDiscover(this, this, null, FsDiscover.CHOOSE_DIRONLY, null, Locale.get("guidiscover.SaveConfiguration")/*"Save configuration"*/);
 				fsd.show();
 				break;
 			case MENU_ITEM_LOAD_CONFIG:
 				state = STATE_LOAD_CONFIG;
-				fsd = new FsDiscover(this, this, null, FsDiscover.CHOOSE_FILEONLY, "cfg", "Load configuration");
+				fsd = new FsDiscover(this, this, null, FsDiscover.CHOOSE_FILEONLY, "cfg", Locale.get("guidiscover.LoadConfiguration")/*"Load configuration"*/);
 				fsd.show();
 				break;
 			//#endif
