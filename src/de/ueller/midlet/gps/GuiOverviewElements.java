@@ -36,6 +36,12 @@ public class GuiOverviewElements extends Form implements CommandListener, ItemSt
 	private boolean namePartFieldAdded = false;
 	private boolean hideOtherGroupAdded = false;
 		
+	private final static String[] ovElGroupNamesAttached = {
+		Locale.get("guioverviewelements.POIsAttached")/*POIs*/,
+		Locale.get("guioverviewelements.AreasAttached")/*Areas*/,
+		Locale.get("guioverviewelements.WaysAttached")/*Ways*/
+	};
+
 	public GuiOverviewElements(Trace tr) {
 		super(Locale.get("guioverviewelements.OverviewFilterMap")/*Overview/Filter Map*/);
 		this.parent = tr;
@@ -172,7 +178,7 @@ public class GuiOverviewElements extends Form implements CommandListener, ItemSt
 
 			// Warning: do not move this up - it must be after applyElGroupElementStates()
 			ovElGroupNr = (byte) ovElGroupCG.getSelectedIndex();
-			String ovElGroupName = ovElGroupCG.getString(ovElGroupNr); 
+			String ovElGroupName = ovElGroupNamesAttached[ovElGroupNr]; 
 
 			// set NameRequirement state in form
 			ovElNameRequirementCG = new ChoiceGroup(Locale.get("guioverviewelements.NameCheck")/*Name Check*/, ChoiceGroup.EXCLUSIVE);
