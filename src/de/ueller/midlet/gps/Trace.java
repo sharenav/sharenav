@@ -1877,6 +1877,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					&&
 				locationProducer != null
 					&&
+				// FIXME: To avoid side effects for garbage collector this should be calculated only once after each language change
 			    (";" + Locale.get("solution.Off") +
 			    ";" + Locale.get("solution.NoFix") +
 			    ";" + Locale.get("solution.SecEx") +
