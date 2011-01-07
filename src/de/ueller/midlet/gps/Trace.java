@@ -1719,8 +1719,6 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			g.setColor(Legend.COLORS[Legend.COLOR_MAP_BACKGROUND]);
 			g.fillRect(0, 0, this.getWidth(), this.getHeight());
 			pc.g = g;
-			// FIXME sk750: the line below caused map to now be shown at all
-			//if (imageCollector != null && pc.getP() != null) {
 			if (imageCollector != null) {
 				/*
 				 *  When painting we receive a copy of the center coordinates
@@ -1729,7 +1727,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				 *  determined during the way drawing (e.g. the current routePathConnection)
 				 */
 				Node drawnCenter = imageCollector.paint(pc);
-				if (route != null && ri != null) {
+				if (route != null && ri != null && pc.lineP2 != null) {
 					pc.getP().forward(drawnCenter.radlat, drawnCenter.radlon, pc.lineP2);
 					/*
 					 * we also need to make sure the current way for the real position
