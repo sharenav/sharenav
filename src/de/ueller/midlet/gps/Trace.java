@@ -2463,7 +2463,6 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		// FIXME signal on location gained
 		//#debug info
 		logger.info("New position: " + pos);
-		this.pos = pos;
 		collected++;
 		if (Configuration.getAutoRecenterToGpsMilliSecs() !=0 &&
 			getDurationSinceLastUserActionTime() > Configuration.getAutoRecenterToGpsMilliSecs()
@@ -2484,6 +2483,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				gpsRecenterStale = true;
 			}
 		}
+		this.pos = pos;
 		if (pos.type == Position.TYPE_GPS || pos.type == Position.TYPE_CELLID || pos.type == Position.TYPE_MANUAL) {
 			gpsRecenterInvalid = false;
 			gpsRecenterStale = false;
