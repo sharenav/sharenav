@@ -65,13 +65,6 @@ public class GuiSetupGui extends Form implements CommandListener {
 					Configuration.getCfgBitSavedState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED));
 			append(imenuOpts);
 		
-			String [] other = new String[1];
-			other[0] = Locale.get("guisetupgui.PredefWpts")/*Predefined way points*/;
-			otherOpts = new ChoiceGroup(Locale.get("guisetupgui.OtherOpt")/*Other options:*/, Choice.MULTIPLE, other, null);
-			otherOpts.setSelectedIndex(0,
-					Configuration.getCfgBitSavedState(Configuration.CFGBIT_WAYPT_OFFER_PREDEF));
-			append(otherOpts);
-			
 			/* only display search settings available on the device */
 			// maximum search option entries
 			int iMax = 0;
@@ -106,6 +99,13 @@ public class GuiSetupGui extends Form implements CommandListener {
 				mapTapFeatures.setSelectedIndex(i++, Configuration.getCfgBitState(Configuration.CFGBIT_MAPTAP_SINGLE));
 				append(mapTapFeatures);
 			}
+
+			String [] other = new String[1];
+			other[0] = Locale.get("guisetupgui.PredefWpts")/*Predefined way points*/;
+			otherOpts = new ChoiceGroup(Locale.get("guisetupgui.OtherOpt")/*Other options:*/, Choice.MULTIPLE, other, null);
+			otherOpts.setSelectedIndex(0,
+					Configuration.getCfgBitSavedState(Configuration.CFGBIT_WAYPT_OFFER_PREDEF));
+			append(otherOpts);
 			
 			addCommand(CMD_SAVE);
 			addCommand(CMD_CANCEL);
@@ -161,8 +161,7 @@ public class GuiSetupGui extends Form implements CommandListener {
 
 			Trace.uncacheIconMenu();
 			GuiDiscover.uncacheIconMenu();
-			Configuration.setCfgBitSavedState(Configuration.CFGBIT_WAYPT_OFFER_PREDEF,
-					otherOpts.isSelected(0));
+
 			
 			int i = 0;
 			if (Configuration.getHasPointerEvents()) {
@@ -176,6 +175,9 @@ public class GuiSetupGui extends Form implements CommandListener {
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_MAPTAP_SINGLE, mapTapFeatures.isSelected(i++));
 			}
 
+			Configuration.setCfgBitSavedState(Configuration.CFGBIT_WAYPT_OFFER_PREDEF,
+					otherOpts.isSelected(0));
+			
 			parent.show();
 			return;
 		}
