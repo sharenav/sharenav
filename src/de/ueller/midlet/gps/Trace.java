@@ -2196,7 +2196,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		Compass compass = null;
 
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION)) {
-			CompassProvider.getInstance().obtainCachedCompass();
+			compass = CompassProvider.getInstance().obtainCachedCompass();
 		}
 
 		if (cell == null) {
