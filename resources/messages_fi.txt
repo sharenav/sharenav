@@ -658,3 +658,5 @@ routing.RoutingException=Reitityshäiriö
 routing.RoutingEx=Routing Ex
 routing.SearchingDestinationWay=Etsin kohdetietä
 routing.SearchingStartWay=Etsin aloitustietä
+trace.CellidLocation=Paikanna solupaikannuksella
+trace.ManualLocation=Paikanna käsin
