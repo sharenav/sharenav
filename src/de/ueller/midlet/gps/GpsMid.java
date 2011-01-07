@@ -132,14 +132,14 @@ public class GpsMid extends MIDlet implements CommandListener {
 		instance = this;
 		System.out.println("Init GpsMid");
 		log = new Logger(this);
-		log.setLevel(Logger.INFO);
+		log.setLevel(Logger.DEBUG);
 		Configuration.read();
 		
 		enableDebugFileLogging();
 		Logger.setGlobalLevel();
 
 		//#debug info
-		log.debug("Phone Model: " + Configuration.getPhoneModel());
+		log.info("Phone Model: " + Configuration.getPhoneModel());
 		
 		mNoiseMaker = new NoiseMaker();
 
