@@ -60,7 +60,7 @@ public class TraceIconMenu extends IconMenuWithPagesGUI {
 			createAndAddRoutingMenu();
 		}
 		// Osm
-		mp = createAndAddMenuPage(Locale.get("traceiconmenu.OsmTop")/* Osm */, 3, 4);
+		mp = createAndAddMenuPage(Locale.get("traceiconmenu.OsmTop")/* Osm */, 3, 3);
 		iconEditWay =		mp.createAndAddIcon(Locale.get("traceiconmenu.EditWay")/*Edit way*/, "i_editway", Trace.RETRIEVE_XML);
 		iconAddPOI =		mp.createAndAddIcon(Locale.get("traceiconmenu.AddPOI")/*Add POI*/, "i_addpoi", Trace.RETRIEVE_NODE);
 		iconAddAddr =		mp.createAndAddIcon(Locale.get("traceiconmenu.AddAddr")/*Add Address*/, "i_addpoi", Trace.EDIT_ADDR_CMD);
@@ -83,7 +83,7 @@ public class TraceIconMenu extends IconMenuWithPagesGUI {
 	private void createAndAddRecordingMenu() {
 		IconMenuPage mp;
 		// Recordings
-		mp = createAndAddMenuPage(this.getWidth() >= 176 ?Locale.get("traceiconmenu.RecordTop")/* Recordings */:Locale.get("traceiconmenu.RecTop")/* Rec */, 3, 4);
+		mp = createAndAddMenuPage(this.getWidth() >= 176 ?Locale.get("traceiconmenu.RecordTop")/* Recordings */:Locale.get("traceiconmenu.RecTop")/* Rec */, 3, 3);
 		iconToggleTrackRec=	mp.createAndAddIcon("Record Track", "i_rectrack", Trace.START_RECORD_CMD);
 		iconToggleTrackRec.setFlag(LayoutElement.FLAG_IMAGE_TOGGLEABLE);
 		mp.createAndAddIcon(Locale.get("traceiconmenu.SaveWpt")/*Save Wpt*/, "i_savewpt", Trace.SAVE_WAYP_CMD);
@@ -104,7 +104,7 @@ public class TraceIconMenu extends IconMenuWithPagesGUI {
 	private void createAndAddRoutingMenu() {
 		IconMenuPage mp;
 		// Route
-		mp = createAndAddMenuPage(Locale.get("traceiconmenu.RoutePage")/* Route */, 3, 4);
+		mp = createAndAddMenuPage(Locale.get("traceiconmenu.RoutePage")/* Route */, 3, 3);
 		iconToggleRoute=	mp.createAndAddIcon(Locale.get("traceiconmenu.Calc")/*Calculate*/, "i_calc", Trace.ROUTING_TOGGLE_CMD);
 		iconToggleRoute.setFlag(LayoutElement.FLAG_IMAGE_TOGGLEABLE);
 		mp.createAndAddIcon(Locale.get("traceiconmenu.SetDest")/*Set dest*/, "i_setdest", Trace.SET_DEST_CMD);
