@@ -202,6 +202,10 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 		if (y < getHeight() / 5) {
 			keyPressed(KEY_STAR);
 		}
+		// around the region where England is in the map
+		if (y > (2 * getHeight() / 5) && y < (3 * getHeight() / 5) ) {
+			keyPressed(KEY_POUND);
+		}
 	}
 	
 	protected void keyPressed(int keyCode) {
