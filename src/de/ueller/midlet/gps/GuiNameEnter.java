@@ -8,6 +8,7 @@ package de.ueller.midlet.gps;
 import javax.microedition.lcdui.*;
 
 import de.ueller.midlet.screens.InputListener;
+import de.enough.polish.util.Locale;
 
 
 /*
