@@ -19,6 +19,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
@@ -502,8 +503,34 @@ public class CreateGpsMidData implements FilenameFilter {
 	    	/**
 	    	 * write all sound files in each sound directory for all sound formats
 	    	 */
-	    	String soundFileDirectories[] = configuration.getSoundFiles().split("[;,]", 10);
-			dsi.write((byte) soundFileDirectories.length);
+	    	String soundFileDirectoriesHelp[] = configuration.getSoundFiles().split("[;,]", 10);
+		String soundDirsFound = "";
+	    	for (int i = 0; i < soundFileDirectoriesHelp.length; i++) {
+			// test existence of dir
+			InputStream is = null;	
+			try {			
+				is = new FileInputStream(configuration.getStyleFileDirectory() + soundFileDirectoriesHelp[i].trim() + "/syntax.cfg");
+			} catch (Exception e) {
+				// try internal syntax.cfg
+				try {			
+					is = getClass().getResourceAsStream("/media/" + soundFileDirectoriesHelp[i].trim() + "/syntax.cfg");
+				} catch (Exception e2) {
+					;
+				}
+			}			
+
+			if (is != null) {
+				if (soundDirsFound.equals("")) {
+					soundDirsFound = soundFileDirectoriesHelp[i];
+				} else {
+					soundDirsFound = soundDirsFound + ";" + soundFileDirectoriesHelp[i];
+				}
+			} else {
+				System.out.println ("ERROR: syntax.cfg not found in the " + soundFileDirectoriesHelp[i].trim() + " directory");
+			}
+		}
+	    	String soundFileDirectories[] = soundDirsFound.split("[;,]", 10);
+		dsi.write((byte) soundFileDirectories.length);
 	    	for (int i = 0; i < soundFileDirectories.length; i++) {
 	    		String destSoundPath = path + "/" + soundFileDirectories[i].trim();
 	    		// System.out.println("create sound directory: " + destSoundPath);
@@ -512,7 +539,7 @@ public class CreateGpsMidData implements FilenameFilter {
 	    		
 	    		// create soundSyntax for current sound directory
 				RouteSoundSyntax soundSyn = new RouteSoundSyntax(configuration.getStyleFileDirectory(), 
-						soundFileDirectories[i].trim(), destSoundPath + "/syntax.dat");			
+					 soundFileDirectories[i].trim(), destSoundPath + "/syntax.dat");			
 	    		
 		    	String soundFile;
 				Object soundNames[] = soundSyn.getSoundNames(); 
