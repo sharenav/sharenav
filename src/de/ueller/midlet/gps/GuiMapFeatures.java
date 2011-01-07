@@ -41,7 +41,7 @@ public class GuiMapFeatures extends Form implements CommandListener {
 	// commands
 	private static final Command CMD_APPLY = new Command(Locale.get("guimapfeatures.Apply")/*Apply*/, Command.BACK, 1);
 	private static final Command CMD_SAVE = new Command(Locale.get("guimapfeatures.Save")/*Save*/, Command.ITEM, 2);
-	//private static final Command CMD_CANCEL = new Command("Cancel", Command.CANCEL, 3);
+	//private static final Command CMD_CANCEL = new Command(Locale.get("generic.Cancel")/*Cancel*/, Command.CANCEL, 3);
 	
 	// other
 	private Trace parent;

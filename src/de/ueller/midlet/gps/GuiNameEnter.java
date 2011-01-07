@@ -15,8 +15,8 @@ import de.ueller.midlet.screens.InputListener;
  */
 public class GuiNameEnter extends Form implements CommandListener {
 	private TextField mTextFieldName; 
-	private static final Command SAVE_CMD = new Command("Ok", Command.OK, 1);
-	private static final Command BACK_CMD = new Command("Cancel", Command.OK, 2);
+	private static final Command SAVE_CMD = new Command(Locale.get("generic.OK")/*OK*/, Command.OK, 1);
+	private static final Command BACK_CMD = new Command(Locale.get("generic.Cancel")/*Cancel*/, Command.OK, 2);
 	private InputListener mInputListener;
 
 
