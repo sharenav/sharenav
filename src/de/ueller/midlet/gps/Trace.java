@@ -2191,7 +2191,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		// only try to show compass id and cell id if user has somehow switched them on
 		GSMCell cell = null;
 		if (cellIDLocationProducer != null || Configuration.getLocationProvider() == Configuration.LOCATIONPROVIDER_SECELL) {
-			CellIdProvider.getInstance().obtainCachedCellID();
+			cell = CellIdProvider.getInstance().obtainCachedCellID();
 		}
 		Compass compass = null;
 
