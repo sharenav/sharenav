@@ -1719,7 +1719,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			g.setColor(Legend.COLORS[Legend.COLOR_MAP_BACKGROUND]);
 			g.fillRect(0, 0, this.getWidth(), this.getHeight());
 			pc.g = g;
-			if (imageCollector != null && pc.getP() != null) {
+			// FIXME sk750: the line below caused map to now be shown at all
+			//if (imageCollector != null && pc.getP() != null) {
+			if (imageCollector != null) {
 				/*
 				 *  When painting we receive a copy of the center coordinates
 				 *  where the imageCollector has drawn last
