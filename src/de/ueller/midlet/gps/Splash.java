@@ -63,8 +63,12 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 		Locale.get("splash.MapData2")/* from OpenStreetMap*/,
 		Locale.get("splash.MapData3")/* licensed under CC 2.0*/,
 		Locale.get("splash.MapData4")/* http://creativecommons.org/*/,
+		Configuration.getHasPointerEvents() ? 
+		Locale.get("splash.skiptouch")/* Tap at top to skip this */:
 		Locale.get("splash.skip")/* Press '*' to skip this */,
 		Locale.get("splash.screen")/* screen at startup. */,
+		Configuration.getHasPointerEvents() ? 
+		"Tap middle of screen to": 
 		"Press '#' if you want to",
 		"switch to English." };
 	private final Font f;
@@ -220,13 +224,6 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 		}
 		if (keyCode == KEY_POUND) {
 			main.alert("Splash", "Switching to English", 3000);
-			try {
-				Locale.loadTranslations( "/en.loc" );
-				Trace.uncacheIconMenu();
-				Configuration.initCompassDirections();
-			} catch (IOException ioe) {
-				System.out.println("Couldn't open translations file");
-			}
 			Configuration.setUiLang("en");
 			Configuration.setNaviLang("en");
 			Configuration.setOnlineLang("en");

@@ -973,6 +973,7 @@ splash.ShowSplash=Showing splash screen on startup...
 splash.HideSplash=Not showing splash screen again...
 splash.artwork=Artwork (splash screen):
 splash.skip=Press '*' to skip this
+splash.skiptouch=Tap at top to skip this
 splash.screen=screen at startup.
 splash.Application2= licensed under GPL2
 splash.Application3= http://www.gnu.org/

@@ -1,4 +1,4 @@
-GpsMid 0.6.4
+GpsMid 0.7
     *** Map Screen ***
     - Greatly improved area rendering:
       J2ME mobiles can only draw triangles, so for rendering, filled polygons need 
@@ -75,6 +75,8 @@ GpsMid 0.6.4
       examine more route paths trying to avoid the connections delayed by traffic signals 
       and this therefore would also sometimes result in strange routes.
     - Improvements on when a bearing instruction has to be given and when not.
+    - The route line is above other ways now when the cursor is close to it
+      rather than only when the map position is synchronized to GPS.
     *** GPS and other location producers ***
     - Show NoFix with JSR-179 if no fix is available (thx djinnn)
     - Show number of satellites with JSR-179 if device supports it (thx djinnn)
@@ -90,24 +92,32 @@ GpsMid 0.6.4
     - External zip file or directory maps are the simple & recommended way to use GpsMid on Android
     - Bundling can be used with scripts in tools
 	- Most stuff works, voice recording & camera don't work yet
-    *** Others ***
+    *** Usability ***
     - Way point list can be sorted by time, distance or alphabetically.
     - Menu to quickly enter predefined way point texts. These are hardcoded but in the
       future it is planned to read them from a file.
-    - The Setup option "backlight only in map screen" has been recycled to 
-      "backlight only as keep-alive" which only triggers the backlight every 60 s to 
-      ensure continuous screen updates etc. on some phones while saving battery 
-      compared to keeping the backlight on all the time.
-    - Compass directions now have the correct names according to 
-      http://en.wikipedia.org/wiki/Cardinal_direction now (thx billi25)
-    - Fix a recordstore error that caused settings to be not consistent on some mobiles (thx jkpj)
-    - Fix NullPointerException when accessing tracks on corrupt record stores 
-      preventing to access readable tracks (thx Petr Dlouh�)
-    - Winter speed limits actually trigger an alert now (thx jkpj)
     - Search results are now refreshed with a new strategy until all null strings are resolved to names
     - Ways can now have icons which show up in search and map overview screens
     - Tracks (including the one being recorded) can now be displayed and renamed when a track is being
       recorded. You have to pause the recording however before you can get to the track menu.
+    - The entries in the File-/Directory Requester Dialog are now sorted (folder first, alplabetically)
+      and contain only files with the suffix(es) that can be chosen. Please note e.g. on Nokia
+      mobiles files with suffix ".jar" are not shown, you have to change the suffix to ".zip" for external maps.
+    *** Others ***
+    - The Setup option "backlight only in map screen" has been recycled to 
+      "backlight only as keep-alive" which only triggers the backlight every 60 s to 
+      ensure continuous screen updates etc. on some phones while saving battery 
+      compared to keeping the backlight on all the time.
+    - In Osm2GpsMidGUI there's a new option to select from tile size presets, e.g. for newer Nokia mobiles
+	  it's recommended to use big tile sizes as the number of files in the jar seem to be limited
+	  while on mobiles with small RAM small tile sizes usually will work better.        
+    - Compass directions now have the correct names according to 
+      http://en.wikipedia.org/wiki/Cardinal_direction now (thx billi25)
+    - Russian cyrillic letters work now in Search screen (thx dimmer123)
+    - Fix a recordstore error that caused settings to be not consistent on some mobiles (thx jkpj)
+    - Fix NullPointerException when accessing tracks on corrupt record stores 
+      preventing to access readable tracks (thx Petr Dlouh�)
+    - Winter speed limits actually trigger an alert now (thx jkpj)
     - GUI search screen colors can now be chosen with style-file.xml (colors.inc)
     - better support for non-metric units and optionally km/m instead of just m in metric units
     - Many more small improvements and bugfixes.
@@ -261,6 +271,7 @@ GpsMid 0.6
        - New option to include CellIds.
        - New option to specify Midlet route modes.
        - New option which sound formats (none, amr, wav or both) to include into the Midlet.
+       - New option to select from tile size presets, e.g. for newer Nokia mobiles it's recommended
     *** Others ***
        - Correct error message during start if a POI icon is not found (bug was
          2913528 "Broken Midlets generated").

@@ -488,6 +488,25 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		return traceInstance;
 	}
 
+
+	public void stopCompass() {
+		if (compassProducer != null)
+			compassProducer.close();
+		compassProducer = null;
+	}
+	public void startCompass() {
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION) && compassProducer == null) {
+			compassProducer = new GetCompass();
+			if (!compassProducer.init(this)) {
+				logger.info("Failed to init compass producer");
+				compassProducer = null;
+			} else if (!compassProducer.activate(this)) {
+				logger.info("Failed to activate compass producer");
+				compassProducer = null;
+			}
+		}
+	}
+
 	/**
 	 * Starts the LocationProvider in the background
 	 */
@@ -509,15 +528,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				return;
 			}
 			running=true;
-			if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION)) {
-				compassProducer = new GetCompass();
-				if (!compassProducer.init(this)) {
-					logger.info("Failed to init compass producer");
-					compassProducer = null;
-				} else if (!compassProducer.activate(this)) {
-					logger.info("Failed to activate compass producer");
-				}
-			}
+			startCompass();
 			int locprov = Configuration.getLocationProvider();
 			receiveMessage(Locale.get("trace.ConnectTo")/*Connect to */ + Configuration.LOCATIONPROVIDER[locprov]);
 			if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_CELLID_STARTUP)) {
@@ -912,7 +923,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					Configuration.addToBackLightLevel(backLightLevelDiff);
 					parent.showBackLightLevel();
 				} else if (imageCollector != null) {
-					if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION)) {
+					if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION) && compassProducer != null) {
 						// set compass compassDeviation
 						if (compassDeviation == 360) {
 							compassDeviation = 0;
@@ -1437,7 +1448,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				gpsRecenterInvalid = true;
 				gpsRecenterStale = true;
 				autoZoomed = true;
-				if (isGpsConnected() && pos.latitude != 0.0f) {
+				if (pos.latitude != 0.0f) {
 					receivePosition(pos);
 				}
 				newDataReady();
@@ -1877,13 +1888,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					&&
 				locationProducer != null
 					&&
-				// FIXME: To avoid side effects for garbage collector this should be calculated only once after each language change
-			    (";" + Locale.get("solution.Off") +
-			    ";" + Locale.get("solution.NoFix") +
-			    ";" + Locale.get("solution.SecEx") +
-			    ";" + Locale.get("solution.Cell") + 
-			    ";" + Locale.get("solution.0s") +
-			    ";" + Locale.get("solution.tildes") + ";").indexOf(";" + solution + ";") == -1
+				Configuration.invalidPositionsString.indexOf(";" + solution + ";") == -1
 			) {
 				tl.ele[TraceLayout.ALTITUDE].setText(showDistance(altitude, DISTANCE_ALTITUDE));
 			}
@@ -2109,7 +2114,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	 */
 	private void getPC() {
 			pc.course = course;
-			if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION)) {
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION) && compassProducer != null) {
 				pc.course = compassDeviated;
 			}
 
@@ -2178,7 +2183,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		String c = "";
 		if (ProjFactory.getProj() != ProjFactory.NORTH_UP
 				&& Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_POINT_OF_COMPASS)) {
-			c = Configuration.getCompassDirection(Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION) ? compassDeviated : course);
+			c = Configuration.getCompassDirection((Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION)
+							       && compassProducer != null) ? compassDeviated : course);
 		}
 		// if tl shows big onscreen buttons add spaces to compass directions consisting of only one char or not shown
 		if (tl.bigOnScreenButtons && c.length() <= 1) {
@@ -2296,7 +2302,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				posY = centerY;
 			}
 			g.setColor(Legend.COLORS[Legend.COLOR_MAP_POSINDICATOR]);
-			float radc = (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION) ? compassDeviated : course) * MoreMath.FAC_DECTORAD;
+			float radc = ((Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION) && compassProducer != null) ? compassDeviated : course) * MoreMath.FAC_DECTORAD;
 			
 			int px = posX + (int) (Math.sin(radc) * 20);
 			int py = posY - (int) (Math.cos(radc) * 20);
@@ -2410,7 +2416,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		if (pc != null) {
 			pc.center = center.copy();
 			pc.scale = scale;
-			if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION)) {
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION) && compassProducer != null) {
 				course = compassDeviated;
 			}
 			pc.course=course;
@@ -3005,7 +3011,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				pc.center = center.copy();
 				pc.scale = scale;
 				pc.course = course;
-				if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION)) {
+				if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION) && compassProducer != null) {
 					pc.course = compassDeviated;
 				}
 			}

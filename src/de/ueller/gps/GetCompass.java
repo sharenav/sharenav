@@ -165,7 +165,7 @@ public class GetCompass implements CompassProducer {
 		closed = true;
 		if (processorThread != null)
 			processorThread.interrupt();
-		receiverList.locationDecoderEnd();
+		//receiverList.locationDecoderEnd();
 	}
 
 	public void close(String message) {

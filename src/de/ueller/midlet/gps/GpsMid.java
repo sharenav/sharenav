@@ -156,40 +156,12 @@ public class GpsMid extends MIDlet implements CommandListener {
 //#endif
 		}
 
-		if (Legend.isValid) {
-			int langNum = 0;  // default is the first in bundle
-			String lang = Configuration.getUiLang();
-			String locale = System.getProperty("microedition.locale");
-			if (locale != null) {
-				localeLang = locale.substring(0, 2);
-			}
-			if (lang.equalsIgnoreCase("devdefault")) {
-				if (localeLang != null) {
-					lang = localeLang;
-				} else {
-					// if device locale not available, use first bundle-mentioned if available;
-					// if not, use English.
-					if (Legend.numUiLang > 1) {
-						lang = Legend.uiLang[1];
- 					} else {
-						lang = "en";
-					}
-				}
-			}
-			try {
-				Locale.loadTranslations( "/" + lang + ".loc" );
-			} catch (IOException ioe) {
-				System.out.println("Couldn't open translations file for " + lang);
-				// if loading language fails, use English
-				try {
-					Locale.loadTranslations( "/en.loc" );
-				} catch (IOException ioe2) {
-					System.out.println("Couldn't open English translations file");
-				}
+		String lang = Configuration.getUiLang();
+		if (!Configuration.setUiLang(lang)) {
+			if (!Configuration.setUiLang("en")) {
+				System.out.println("Couldn't open English translations file");
 			}
 		}
-
-		Configuration.initCompassDirections();
 
 		phoneMaxMemory = determinPhoneMaxMemory();		
 		

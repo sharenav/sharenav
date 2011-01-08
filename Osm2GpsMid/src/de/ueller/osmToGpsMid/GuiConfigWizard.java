@@ -733,7 +733,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 
 	/** Finds all files in the Osm2GpsMid JAR that match the pattern "GpsMid-*.jar"
 	 * and puts their names in a vector, cutting off at the last "-".
-	 * E.g. GpsMid-Generic-multi-0.5.09_de.jar -> GpsMid-Generic-multi
+	 * E.g. GpsMid-Generic-multi-0.6.4-map65.jar -> GpsMid-Generic-multi
 	 * 
 	 * @return Vector containing the names
 	 */
@@ -747,8 +747,8 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			while (jes.hasMoreElements()) {
 				String entryName = jes.nextElement().getName();
 				if ((entryName.startsWith("GpsMid-")) && (entryName.endsWith(".jar"))) {
-					if (!res.contains(entryName.substring(0, entryName.lastIndexOf("-")))) {
-						res.add(entryName.substring(0, entryName.lastIndexOf("-")));
+					if (!res.contains(entryName.substring(0, entryName.lastIndexOf("-", entryName.lastIndexOf("-")-1)))) {
+						res.add(entryName.substring(0, entryName.lastIndexOf("-", entryName.lastIndexOf("-")-1)));
 					}
 				}
 			}

@@ -35,7 +35,9 @@ import de.ueller.gps.tools.BufferedReader;
 import de.ueller.gps.tools.StringTokenizer;
 import de.ueller.gps.tools.intTree;
 import de.ueller.gpsMid.mapData.QueueReader;
+import de.ueller.midlet.gps.GuiDiscover;
 import de.ueller.midlet.gps.Logger;
+import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.ProjFactory;
 import de.ueller.midlet.gps.routing.TravelMode;
@@ -237,8 +239,8 @@ public class Configuration {
 	public final static byte CFGBIT_ROUTE_USE_MOTORWAYS = 86;
 	/** bit 87: Flag whether the route algorithm uses toll roads */
 	public final static byte CFGBIT_ROUTE_USE_TOLLROADS = 87;
-	/** bit 88: Flag whether the touch zones for zoom & center & destionation are symmetric */
-	public final static byte CFGBIT_DISPLAY_SYMMETRIC_TOUCHZONES = 88;
+	/** bit 88: free from 2011-01-08, was Flag whether the touch zones for zoom & center & destionation are symmetric */
+
 	/** bit 89: Flag whether air distance to destination should be displayed even when routing */
 	public final static byte CFGBIT_SHOW_AIR_DISTANCE_WHEN_ROUTING = 89;
 	/** bit 90: Flag whether ask for routing options before starting routing */
@@ -348,9 +350,8 @@ public class Configuration {
 	public static final int MAX_TRACKNAME_LENGTH = 50;
 	public static final int MAX_WAYPOINTS_NAME_LENGTH = 50;
 	
-	public final static String[] LOCATIONPROVIDER = { Locale.get("configuration.LPNone")/*None*/, Locale.get("configuration.LPBluetoothSirf")/*Bluetooth (Sirf)*/,
-							  Locale.get("configuration.LPBluetoothNMEA")/*Bluetooth (NMEA)*/, Locale.get("configuration.LPInternalJSR179")/*Internal (JSR179)*/, Locale.get("configuration.LPCellID")/*Cell-ID (OpenCellId.org)*/ };
-	
+	public static String[] LOCATIONPROVIDER;
+
 	private static String[] compassDirections;
 	
 	private final static byte[] empty = "".getBytes();
@@ -436,12 +437,16 @@ public class Configuration {
 	private static float realBaseScale = 15000;
 
 	private static String uiLang;
+	private static boolean uiLangLoaded = false;
 	private static String naviLang;
 	private static String onlineLang;
 	private static String wikipediaLang;
 	private static String namesOnMapLang;
 	private static String soundDirectory;
-
+	
+	public static String invalidPositionsString;
+	public static String[] projectionsString;
+	
 	private static boolean hasPointerEvents;
 	
 	
@@ -636,7 +641,6 @@ public class Configuration {
 									1L << CFGBIT_SHOW_ETA_IN_MAP |
 									1L << CFGBIT_BUILDINGS |
 									1L << CFGBIT_BUILDING_LABELS |
-			    						1L << CFGBIT_DISPLAY_SYMMETRIC_TOUCHZONES |
 									1L << CFGBIT_ICONMENUS_MAPPED_ICONS;
 									
 		}
@@ -1212,9 +1216,61 @@ public class Configuration {
 		}
 	}
 	
-	public static void setUiLang(String uiLang) {
-		Configuration.uiLang = uiLang;
-		write(uiLang, RECORD_ID_UI_LANG);
+	public static boolean setUiLang(String uiLang) {
+		String oldUiLang = Configuration.uiLang;
+		String uiLangUse = uiLang;
+		if (uiLang.equalsIgnoreCase("devdefault")) {
+			// get phone's locale
+			String locale = System.getProperty("microedition.locale");
+
+			if (locale != null) {
+				uiLangUse = locale.substring(0, 2);
+			} else {
+				if (Legend.numUiLang > 1) {
+					uiLangUse = Legend.uiLang[1];
+				} else {
+					uiLangUse = "en";
+				}
+			}
+		}
+		try {
+			Locale.loadTranslations( "/" + uiLangUse + ".loc" );
+		} catch (IOException ioe) {
+			System.out.println("Couldn't open translations file: " + uiLang);
+			return false;
+		}
+		if (!uiLangLoaded || !uiLangUse.equals(Configuration.uiLang)) { 	
+			invalidPositionsString = (";" + Locale.get("solution.Off") +
+				    ";" + Locale.get("solution.NoFix") +
+				    ";" + Locale.get("solution.SecEx") +
+				    ";" + Locale.get("solution.Cell") + 
+				    ";" + Locale.get("solution.0s") +
+				    ";" + Locale.get("solution.tildes") + ";");
+			
+			LOCATIONPROVIDER = new String[5];
+			LOCATIONPROVIDER[0] = Locale.get("configuration.LPNone")/*None*/;
+			LOCATIONPROVIDER[1] = Locale.get("configuration.LPBluetoothSirf")/*Bluetooth (Sirf)*/;
+			LOCATIONPROVIDER[2] = Locale.get("configuration.LPBluetoothNMEA")/*Bluetooth (NMEA)*/;
+			LOCATIONPROVIDER[3] = Locale.get("configuration.LPInternalJSR179")/*Internal (JSR179)*/;
+			LOCATIONPROVIDER[4] = Locale.get("configuration.LPCellID")/*Cell-ID (OpenCellId.org)*/;
+
+			projectionsString = new String[4];
+			projectionsString[0] = Locale.get("projfactory.NorthUp")/*North Up*/;
+			projectionsString[1] = Locale.get("projfactory.Moving")/*Moving*/;
+			projectionsString[2] = Locale.get("projfactory.MovingEnhanced")/*MovingEnhanced*/;
+			projectionsString[3] = Locale.get("projfactory.Eagle")/*Eagle*/;
+
+			if (uiLangLoaded) {
+				Trace.uncacheIconMenu();
+				GuiDiscover.uncacheIconMenu();
+			}
+			initCompassDirections();
+	
+			Configuration.uiLang = uiLang;
+			write(uiLang, RECORD_ID_UI_LANG);
+			uiLangLoaded = true;
+		}
+		return true;
 	}
 
 	public static String getUiLang() {
