@@ -239,8 +239,8 @@ public class Configuration {
 	public final static byte CFGBIT_ROUTE_USE_MOTORWAYS = 86;
 	/** bit 87: Flag whether the route algorithm uses toll roads */
 	public final static byte CFGBIT_ROUTE_USE_TOLLROADS = 87;
-	/** bit 88: Flag whether the touch zones for zoom & center & destionation are symmetric */
-	public final static byte CFGBIT_DISPLAY_SYMMETRIC_TOUCHZONES = 88;
+	/** bit 88: free from 2011-01-08, was Flag whether the touch zones for zoom & center & destionation are symmetric */
+
 	/** bit 89: Flag whether air distance to destination should be displayed even when routing */
 	public final static byte CFGBIT_SHOW_AIR_DISTANCE_WHEN_ROUTING = 89;
 	/** bit 90: Flag whether ask for routing options before starting routing */
@@ -350,9 +350,8 @@ public class Configuration {
 	public static final int MAX_TRACKNAME_LENGTH = 50;
 	public static final int MAX_WAYPOINTS_NAME_LENGTH = 50;
 	
-	public final static String[] LOCATIONPROVIDER = { Locale.get("configuration.LPNone")/*None*/, Locale.get("configuration.LPBluetoothSirf")/*Bluetooth (Sirf)*/,
-							  Locale.get("configuration.LPBluetoothNMEA")/*Bluetooth (NMEA)*/, Locale.get("configuration.LPInternalJSR179")/*Internal (JSR179)*/, Locale.get("configuration.LPCellID")/*Cell-ID (OpenCellId.org)*/ };
-	
+	public static String[] LOCATIONPROVIDER;
+
 	private static String[] compassDirections;
 	
 	private final static byte[] empty = "".getBytes();
@@ -446,6 +445,7 @@ public class Configuration {
 	private static String soundDirectory;
 	
 	public static String invalidPositionsString;
+	public static String[] projectionsString;
 	
 	private static boolean hasPointerEvents;
 	
@@ -641,7 +641,6 @@ public class Configuration {
 									1L << CFGBIT_SHOW_ETA_IN_MAP |
 									1L << CFGBIT_BUILDINGS |
 									1L << CFGBIT_BUILDING_LABELS |
-			    						1L << CFGBIT_DISPLAY_SYMMETRIC_TOUCHZONES |
 									1L << CFGBIT_ICONMENUS_MAPPED_ICONS;
 									
 		}
@@ -1247,6 +1246,20 @@ public class Configuration {
 				    ";" + Locale.get("solution.Cell") + 
 				    ";" + Locale.get("solution.0s") +
 				    ";" + Locale.get("solution.tildes") + ";");
+			
+			LOCATIONPROVIDER = new String[5];
+			LOCATIONPROVIDER[0] = Locale.get("configuration.LPNone")/*None*/;
+			LOCATIONPROVIDER[1] = Locale.get("configuration.LPBluetoothSirf")/*Bluetooth (Sirf)*/;
+			LOCATIONPROVIDER[2] = Locale.get("configuration.LPBluetoothNMEA")/*Bluetooth (NMEA)*/;
+			LOCATIONPROVIDER[3] = Locale.get("configuration.LPInternalJSR179")/*Internal (JSR179)*/;
+			LOCATIONPROVIDER[4] = Locale.get("configuration.LPCellID")/*Cell-ID (OpenCellId.org)*/;
+
+			projectionsString = new String[4];
+			projectionsString[0] = Locale.get("projfactory.NorthUp")/*North Up*/;
+			projectionsString[1] = Locale.get("projfactory.Moving")/*Moving*/;
+			projectionsString[2] = Locale.get("projfactory.MovingEnhanced")/*MovingEnhanced*/;
+			projectionsString[3] = Locale.get("projfactory.Eagle")/*Eagle*/;
+
 			if (uiLangLoaded) {
 				Trace.uncacheIconMenu();
 				GuiDiscover.uncacheIconMenu();

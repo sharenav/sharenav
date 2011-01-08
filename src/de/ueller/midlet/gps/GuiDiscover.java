@@ -216,7 +216,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	private ChoiceGroup rotationGroup;
 	private ChoiceGroup directionGroup;
 	private ChoiceGroup nightModeGroup;
-	private ChoiceGroup touchScreenLayoutGroup;
 	private ChoiceGroup uiLangGroup;
 	private ChoiceGroup naviLangGroup;
 	private ChoiceGroup onlineLangGroup;
@@ -508,14 +507,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		nightModeGroup = new ChoiceGroup(Locale.get("guidiscover.Colors")/*Colors*/, Choice.EXCLUSIVE, nightMode, null);
 		menuDisplayOptions.append(nightModeGroup);
 
-		String [] touchScreenLayout = new String[2];
-		touchScreenLayout[0] = Locale.get("guidiscover.ButtonsRight")/*Buttons Right*/;
-		touchScreenLayout[1] = Locale.get("guidiscover.Symmetric")/*Symmetric*/;
-		touchScreenLayoutGroup = new ChoiceGroup(Locale.get("guidiscover.TouchScreenLayout")/*Touchscreen layout*/, Choice.EXCLUSIVE, touchScreenLayout, null);
-		menuDisplayOptions.append(touchScreenLayoutGroup);
-
-		String [] rotation = ProjFactory.name;
-		rotationGroup = new ChoiceGroup(Locale.get("guidiscover.MapProjection")/*Map Projection*/, Choice.EXCLUSIVE, rotation, null);
+		rotationGroup = new ChoiceGroup(Locale.get("guidiscover.MapProjection")/*Map Projection*/, Choice.EXCLUSIVE, Configuration.projectionsString, null);
 		menuDisplayOptions.append(rotationGroup);
 
 		String [] direction = new String[2];
@@ -1045,15 +1037,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 					trace.recreateTraceLayout();
 				}
 
-				boolean touchScreenLayout = (touchScreenLayoutGroup.getSelectedIndex() == 1);
-				
-				if (touchScreenLayout != Configuration.getCfgBitState(Configuration.CFGBIT_DISPLAY_SYMMETRIC_TOUCHZONES) ) {
-					Configuration.setCfgBitSavedState(Configuration.CFGBIT_DISPLAY_SYMMETRIC_TOUCHZONES, touchScreenLayout);
-					Legend.reReadLegend();
-					Trace trace = Trace.getInstance();
-					trace.recreateTraceLayout();
-				}
-
 				Configuration.setProjTypeDefault( (byte) rotationGroup.getSelectedIndex() );
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_COMPASS_DIRECTION,
 						(directionOpts.getSelectedIndex() == 1)
@@ -1343,7 +1326,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				}
 //#endif
 				nightModeGroup.setSelectedIndex( Configuration.getCfgBitSavedState(Configuration.CFGBIT_NIGHT_MODE) ? 1 : 0, true);
-				touchScreenLayoutGroup.setSelectedIndex( Configuration.getCfgBitSavedState(Configuration.CFGBIT_DISPLAY_SYMMETRIC_TOUCHZONES) ? 1 : 0, true);
 				rotationGroup.setSelectedIndex(Configuration.getProjDefault(), true);
 				renderOpts.setSelectedIndex( Configuration.getCfgBitSavedState(Configuration.CFGBIT_STREETRENDERMODE) ? 1 : 0, true);
 				directionOpts.setSelectedIndex( Configuration.getCfgBitSavedState(Configuration.CFGBIT_COMPASS_DIRECTION) ? 1 : 0, true);
