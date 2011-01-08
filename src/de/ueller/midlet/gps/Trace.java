@@ -488,6 +488,25 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		return traceInstance;
 	}
 
+
+	public void stopCompass() {
+		if (compassProducer != null)
+			compassProducer.close();
+		compassProducer = null;
+	}
+	public void startCompass() {
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION) && compassProducer == null) {
+			compassProducer = new GetCompass();
+			if (!compassProducer.init(this)) {
+				logger.info("Failed to init compass producer");
+				compassProducer = null;
+			} else if (!compassProducer.activate(this)) {
+				logger.info("Failed to activate compass producer");
+				compassProducer = null;
+			}
+		}
+	}
+
 	/**
 	 * Starts the LocationProvider in the background
 	 */
@@ -509,16 +528,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				return;
 			}
 			running=true;
-			if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION) && compassProducer == null) {
-				compassProducer = new GetCompass();
-				if (!compassProducer.init(this)) {
-					logger.info("Failed to init compass producer");
-					compassProducer = null;
-				} else if (!compassProducer.activate(this)) {
-					logger.info("Failed to activate compass producer");
-					compassProducer = null;
-				}
-			}
+			startCompass();
 			int locprov = Configuration.getLocationProvider();
 			receiveMessage(Locale.get("trace.ConnectTo")/*Connect to */ + Configuration.LOCATIONPROVIDER[locprov]);
 			if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_CELLID_STARTUP)) {

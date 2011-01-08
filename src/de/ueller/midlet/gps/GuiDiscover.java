@@ -44,6 +44,7 @@ import de.ueller.midlet.gps.data.Projection;
 import de.ueller.gpsMid.mapData.WaypointsTile;
 
 import de.ueller.gps.SECellID;
+import de.ueller.gps.GetCompass;
 
 public class GuiDiscover implements CommandListener, ItemCommandListener, 
 		GpsMidDisplayable, SelectionListener, IconActionPerformer {
@@ -1038,6 +1039,14 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				}
 
 				Configuration.setProjTypeDefault( (byte) rotationGroup.getSelectedIndex() );
+
+				if (!Configuration.getCfgBitSavedState(Configuration.CFGBIT_COMPASS_DIRECTION) && directionOpts.getSelectedIndex() == 1) {
+					Trace.getInstance().startCompass();
+				}
+				if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_COMPASS_DIRECTION) && directionOpts.getSelectedIndex() != 1) {
+					Trace.getInstance().stopCompass();
+				}
+
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_COMPASS_DIRECTION,
 						(directionOpts.getSelectedIndex() == 1)
 				);
