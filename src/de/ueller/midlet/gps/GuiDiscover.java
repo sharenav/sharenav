@@ -926,7 +926,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				break;
 			case STATE_DISPOPT:
 				String uiLang = null;
-				String uiLangUse = null;
 				if (!addLang.getString().equalsIgnoreCase(Configuration.getUiLang())) {
 					langToAdd = addLang.getString().toLowerCase();
 					if (langToAdd.equals("")) {
@@ -937,36 +936,10 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 					uiLang = Legend.uiLang[uiLangGroup.getSelectedIndex()-numLangDifference];
 				}
 				if (uiLang != null) {
-					uiLangUse = uiLang;
-					if (uiLang.equalsIgnoreCase("devdefault")) {
-						// get phone's locale
-						String locale = System.getProperty("microedition.locale");
-
-						if (locale != null) {
-							uiLangUse = locale.substring(0, 2);
-						} else {
-							if (Legend.numUiLang > 1) {
-								uiLangUse = Legend.uiLang[1];
-							} else {
-								uiLangUse = "en";
-							}
-						}
-					}
-					try {
-						Locale.loadTranslations( "/" + uiLangUse + ".loc" );
-					} catch (IOException ioe) {
-						
-						logger.error(Locale.get("guidiscover.LangNotFound")/*Couldn't set language to */ + uiLangUse);
-						uiLangUse = savedLang;
-						uiLang = savedLang;
+					if (!Configuration.setUiLang(uiLang)) {
+						logger.error(Locale.get("guidiscover.LangNotFound")/*Couldn't set language to */ + uiLang);
 						System.out.println("Couldn't open translations file");
 					}
-					if (!uiLang.equals(Configuration.getUiLang()) || uiLang.equalsIgnoreCase("devdefault")) { 
-						Trace.uncacheIconMenu();
-						uncacheIconMenu();
-						Configuration.initCompassDirections();
-					}
-					Configuration.setUiLang(uiLang);
 					Configuration.setWikipediaLang(uiLang);
 					Configuration.setNamesOnMapLang(uiLang);
 				}

@@ -220,13 +220,6 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 		}
 		if (keyCode == KEY_POUND) {
 			main.alert("Splash", "Switching to English", 3000);
-			try {
-				Locale.loadTranslations( "/en.loc" );
-				Trace.uncacheIconMenu();
-				Configuration.initCompassDirections();
-			} catch (IOException ioe) {
-				System.out.println("Couldn't open translations file");
-			}
 			Configuration.setUiLang("en");
 			Configuration.setNaviLang("en");
 			Configuration.setOnlineLang("en");

@@ -35,7 +35,9 @@ import de.ueller.gps.tools.BufferedReader;
 import de.ueller.gps.tools.StringTokenizer;
 import de.ueller.gps.tools.intTree;
 import de.ueller.gpsMid.mapData.QueueReader;
+import de.ueller.midlet.gps.GuiDiscover;
 import de.ueller.midlet.gps.Logger;
+import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.ProjFactory;
 import de.ueller.midlet.gps.routing.TravelMode;
@@ -436,12 +438,15 @@ public class Configuration {
 	private static float realBaseScale = 15000;
 
 	private static String uiLang;
+	private static boolean uiLangLoaded = false;
 	private static String naviLang;
 	private static String onlineLang;
 	private static String wikipediaLang;
 	private static String namesOnMapLang;
 	private static String soundDirectory;
-
+	
+	public static String invalidPositionsString;
+	
 	private static boolean hasPointerEvents;
 	
 	
@@ -1212,9 +1217,47 @@ public class Configuration {
 		}
 	}
 	
-	public static void setUiLang(String uiLang) {
-		Configuration.uiLang = uiLang;
-		write(uiLang, RECORD_ID_UI_LANG);
+	public static boolean setUiLang(String uiLang) {
+		String oldUiLang = Configuration.uiLang;
+		String uiLangUse = uiLang;
+		if (uiLang.equalsIgnoreCase("devdefault")) {
+			// get phone's locale
+			String locale = System.getProperty("microedition.locale");
+
+			if (locale != null) {
+				uiLangUse = locale.substring(0, 2);
+			} else {
+				if (Legend.numUiLang > 1) {
+					uiLangUse = Legend.uiLang[1];
+				} else {
+					uiLangUse = "en";
+				}
+			}
+		}
+		try {
+			Locale.loadTranslations( "/" + uiLangUse + ".loc" );
+		} catch (IOException ioe) {
+			System.out.println("Couldn't open translations file: " + uiLang);
+			return false;
+		}
+		if (!uiLangLoaded || !uiLangUse.equals(Configuration.uiLang)) { 	
+			invalidPositionsString = (";" + Locale.get("solution.Off") +
+				    ";" + Locale.get("solution.NoFix") +
+				    ";" + Locale.get("solution.SecEx") +
+				    ";" + Locale.get("solution.Cell") + 
+				    ";" + Locale.get("solution.0s") +
+				    ";" + Locale.get("solution.tildes") + ";");
+			if (uiLangLoaded) {
+				Trace.uncacheIconMenu();
+				GuiDiscover.uncacheIconMenu();
+			}
+			initCompassDirections();
+	
+			Configuration.uiLang = uiLang;
+			write(uiLang, RECORD_ID_UI_LANG);
+			uiLangLoaded = true;
+		}
+		return true;
 	}
 
 	public static String getUiLang() {
