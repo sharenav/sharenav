@@ -41,6 +41,7 @@ import de.ueller.gpsMid.mapData.SingleTile;
 import de.ueller.midlet.gps.data.Gpx;
 import de.ueller.midlet.gps.data.ProjFactory;
 import de.ueller.midlet.gps.data.Projection;
+import de.ueller.midlet.screens.GuiSetupRecordings;
 import de.ueller.gpsMid.mapData.WaypointsTile;
 
 import de.ueller.gps.SECellID;
@@ -152,8 +153,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	
 	private Form					menuDebug;
 
-	private Form					menuRecordingOptions;
-	
 	private Form					menuRoutingOptions;
 	
 	private Form					menuURLEnter;
@@ -178,28 +177,21 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	private final static int		STATE_GPX		= 5;
 	private final static int		STATE_MAP		= 6;
 	private final static int		STATE_DISPOPT	= 7;
-	private final static int		STATE_RECORDING_OPTIONS	= 8;
-	private final static int 		STATE_BT_GPX	= 9;
-	private final static int		STATE_DEBUG		= 10;
+	private final static int 		STATE_BT_GPX	= 8;
+	private final static int		STATE_DEBUG		= 9;
 	//#if polish.api.osm-editing
-	private final static int		STATE_OSM_OPT = 11;
+	private final static int		STATE_OSM_OPT = 10;
 	//#endif
-	private final static int		STATE_OPENCELLID_OPT = 12;
-	private final static int		STATE_LOAD_CONFIG = 13;
-	private final static int		STATE_SAVE_CONFIG = 14;
-	private final static int		STATE_URL_ENTER_GPS = 15;
-	private final static int		STATE_URL_ENTER_GPX = 16;
-	private final static int		STATE_ONLINE_OPT = 17;
+	private final static int		STATE_OPENCELLID_OPT = 11;
+	private final static int		STATE_LOAD_CONFIG = 12;
+	private final static int		STATE_SAVE_CONFIG = 13;
+	private final static int		STATE_URL_ENTER_GPS = 14;
+	private final static int		STATE_URL_ENTER_GPX = 15;
+	private final static int		STATE_ONLINE_OPT = 16;
 	
 	private Vector urlList;
 	private Vector friendlyName;
 	private ChoiceGroup locProv;
-	private ChoiceGroup choiceGpxRecordRuleMode;
-	private ChoiceGroup choiceWptInTrack;
-	private ChoiceGroup choiceWptInWpstore;
-	private TextField  tfGpxRecordMinimumSecs;
-	private TextField  tfGpxRecordMinimumDistanceMeters;
-	private TextField  tfGpxRecordAlwaysDistanceMeters;
 	private TextField  tfURL;
 	private TextField  addLang;
 	//private TextField  naviLangURL;
@@ -243,7 +235,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	private String gpsUrlStr;
 	private String rawLogDir;
 
-	private ChoiceGroup gpxOptsGroup;
 	private ChoiceGroup cellidOptsGroup;
 
 	private final static Logger logger = Logger.getInstance(GuiDiscover.class, Logger.DEBUG);
@@ -278,46 +269,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		menuBT.setSelectCommand(OK_CMD);
 		menuBT.setCommandListener(this);
 		menuBT.setTitle("Search Service");
-	}
-
-	private void initRecordingSetupMenu() {
-		//Prepare Recording Options selection menu
-		logger.info("Starting Recording setup menu");
-		menuRecordingOptions = new Form(Locale.get("guidiscover.RecordingRules")/*Recording Rules*/);
-		menuRecordingOptions.addCommand(BACK_CMD);
-		menuRecordingOptions.addCommand(OK_CMD);
-		menuRecordingOptions.setCommandListener(this);
-		String [] recModes = new String[2];
-		recModes[0] = Locale.get("guidiscover.adaptivetospeed")/*adaptive to speed*/;
-		recModes[1] = Locale.get("guidiscover.manualrules")/*manual rules:*/;
-		choiceGpxRecordRuleMode = new ChoiceGroup(Locale.get("guidiscover.RecordTrackpoints")/*Record Trackpoints*/, Choice.EXCLUSIVE, recModes ,null);
-
-		tfGpxRecordMinimumSecs = new TextField(Locale.get("guidiscover.MinimumSeconds")/*Minimum seconds between trackpoints*/, "0", 3, TextField.DECIMAL);
-		tfGpxRecordMinimumDistanceMeters = new TextField(Locale.get("guidiscover.MinimumMeters")/*Minimum meters between trackpoints*/, "0", 3, TextField.DECIMAL);
-		tfGpxRecordAlwaysDistanceMeters = new TextField(Locale.get("guidiscover.AlwaysRecord")/*Always record when exceeding these meters between trackpoints*/, "0", 3, TextField.DECIMAL);
-		
-		String [] wptFlag = new String[1];
-		wptFlag[0] = Locale.get("guidiscover.WpAlsoInTrack")/*Also put waypoints in track*/;
-		choiceWptInTrack = new ChoiceGroup(Locale.get("guidiscover.WaypointsInTrack")/*Waypoints in track*/, Choice.MULTIPLE,
-				wptFlag, null);
-		choiceWptInTrack.setSelectedIndex(0, Configuration.getCfgBitSavedState(
-				Configuration.CFGBIT_WPTS_IN_TRACK));
-		String [] gpxNameOpts = new String[2];
-		boolean[] selGpxName = new boolean[2];
-		gpxNameOpts[0] = Locale.get("guidiscover.AskTrackNameStart")/*Ask track name at start of recording*/;
-		gpxNameOpts[1] = Locale.get("guidiscover.AskTrackNameEnd")/*Ask track name at end of recording*/;
-		selGpxName[0] = Configuration.getCfgBitSavedState(Configuration.CFGBIT_GPX_ASK_TRACKNAME_START);
-		selGpxName[1] = Configuration.getCfgBitSavedState(Configuration.CFGBIT_GPX_ASK_TRACKNAME_STOP);
-		
-		gpxOptsGroup = new ChoiceGroup(Locale.get("guidiscover.TrackNaming")/*Track Naming*/, Choice.MULTIPLE, gpxNameOpts ,null);
-		gpxOptsGroup.setSelectedFlags(selGpxName);
-
-		menuRecordingOptions.append(choiceGpxRecordRuleMode);
-		menuRecordingOptions.append(tfGpxRecordMinimumSecs);
-		menuRecordingOptions.append(tfGpxRecordMinimumDistanceMeters);
-		menuRecordingOptions.append(tfGpxRecordAlwaysDistanceMeters);
-		menuRecordingOptions.append(gpxOptsGroup);
-		menuRecordingOptions.append(choiceWptInTrack);
 	}
 
 	private void initDebugSetupMenu() {
@@ -858,35 +809,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				state = STATE_ROOT;
 				show();
 				break;
-			case STATE_RECORDING_OPTIONS:
-				String rule;
-				// Save Record Rules to Config
-				Configuration.setGpxRecordRuleMode(choiceGpxRecordRuleMode.getSelectedIndex());
-				rule = tfGpxRecordMinimumSecs.getString();
-				Configuration.setGpxRecordMinMilliseconds(
-						rule.length() == 0 ? 0 :(int) (1000 * Float.parseFloat(rule))
-				);
-				rule = tfGpxRecordMinimumDistanceMeters.getString();
-				Configuration.setGpxRecordMinDistanceCentimeters(
-						rule.length() == 0 ? 0 :(int) (100 * Float.parseFloat(rule))
-				);
-				rule = tfGpxRecordAlwaysDistanceMeters.getString();
-				Configuration.setGpxRecordAlwaysDistanceCentimeters(
-						rule.length() == 0 ? 0 :(int) (100 * Float.parseFloat(rule))
-				);
-				// Save "waypoints in track" flag to config
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_WPTS_IN_TRACK,
-						choiceWptInTrack.isSelected(0));
-
-				boolean[] selGpxName = new boolean[2];
-				gpxOptsGroup.getSelectedFlags(selGpxName);
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_GPX_ASK_TRACKNAME_START, selGpxName[0]);
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_GPX_ASK_TRACKNAME_STOP, selGpxName[1]);
-
-
-				state = STATE_ROOT;
-				show();
-				break;
 			case STATE_LP:
 				Configuration.setBtUrl(gpsUrlStr);
 				Configuration.setLocationProvider(locProv.getSelectedIndex());
@@ -1299,31 +1221,8 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				state = STATE_LP;
 				break;
 			case MENU_ITEM_GPX_FILTER: // Recording Rules
-				initRecordingSetupMenu();
-				choiceGpxRecordRuleMode.setSelectedIndex(Configuration.getGpxRecordRuleMode(), true);
-				/*
-				 * minimum seconds between trackpoints
-				 */
-				tfGpxRecordMinimumSecs.setString(
-					getCleanFloatString( (float)(Configuration.getGpxRecordMinMilliseconds()) / 1000, 3 )
-				);
-		
-				/*
-				 * minimum meters between trackpoints
-				 */
-				tfGpxRecordMinimumDistanceMeters.setString(
-					getCleanFloatString( (float)(Configuration.getGpxRecordMinDistanceCentimeters()) / 100, 3 )
-				);
-		
-				/*
-				 * meters between trackpoints that will always create a new trackpoint
-				 */
-				tfGpxRecordAlwaysDistanceMeters.setString(
-					getCleanFloatString( (float)(Configuration.getGpxRecordAlwaysDistanceCentimeters()) / 100, 3 )
-				);
-		
-				GpsMid.getInstance().show(menuRecordingOptions);
-				state = STATE_RECORDING_OPTIONS;
+				GuiSetupRecordings guiRec = new GuiSetupRecordings(this);
+				guiRec.show();
 				break;
 			case MENU_ITEM_DISP_OPT: // Display Options
 				initDisplay();
@@ -1513,26 +1412,6 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				break;
 			//#endif
 		}
-	}
-	
-	
-	// converts float f to string and
-	// cuts off unnecessary trailing chars and digits
-	private String getCleanFloatString(float f, int maxlen) {
-		StringBuffer sb = new StringBuffer();
-		// convert float to string
-		sb.append(Float.toString(f));
-		// limit to maximum length of TextField
-		sb.setLength(maxlen);
-		boolean hasDecimalPoint = sb.toString().indexOf(".") != -1;
-		// cut unnecessary trailing chars and digits
-		while((sb.length()>1) && ((sb.charAt(sb.length() - 1) == '.')||((sb.charAt(sb.length() - 1) == '0') && hasDecimalPoint))) {
-			if (sb.charAt(sb.length() - 1) == '.') {
-				hasDecimalPoint = false;
-			}
-			sb.setLength(sb.length()-1);
-		}
-		return sb.toString();
 	}
 	
 	private void destroy() {
