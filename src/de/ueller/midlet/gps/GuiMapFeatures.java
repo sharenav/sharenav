@@ -71,7 +71,7 @@ public class GuiMapFeatures extends Form implements CommandListener {
 			altInfosGroup.setSelectedFlags(selAltInfos);
 			append(altInfosGroup);
 
-			rotation = ProjFactory.name;
+			rotation = Configuration.projectionsString;
 			rotationGroup = new ChoiceGroup(Locale.get("guimapfeatures.MapProjection")/*Map projection*/, Choice.EXCLUSIVE, rotation ,null);
 			rotationGroup.setSelectedIndex((int) ProjFactory.getProj(), true);
 			append(rotationGroup);			
