@@ -675,7 +675,7 @@ public class Configuration {
 			{
 				cfgBits_0_to_63 ^= 1L << CFGBIT_BACKLIGHT_ONLY_KEEPALIVE;
 			}
-			cfgBits_64_to_127 |= 1L << CFGBIT_WAYPT_OFFER_PREDEF;
+			//cfgBits_64_to_127 |= 1L << CFGBIT_WAYPT_OFFER_PREDEF;
 			wayptSortMode = WAYPT_SORT_MODE_NEW_FIRST;
 			setWaypointSortMode(wayptSortMode);
 		}

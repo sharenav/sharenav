@@ -176,6 +176,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	private static final String ORS_URL="http://openrouteservice.org/php/OpenLSRS_DetermineRoute.php";
 	
 	private String useLang = null;
+	private String useLangName = null;
 
 	String [] planetFiles = {CHOOSE_SRC, FILE_SRC, XAPI_SRC, ROMA_SRC};
 	String [] cellidFiles = {CELL_SRC_NONE, CELL_SRC_FILE, CELL_SRC_DLOAD};
@@ -210,10 +211,23 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		"cs",
 		"de",
 		"fi",
+		"fr",
 		"it",
 		"pl",
 		"ru",
 		"sk"
+	};
+	String langNameList[] = {
+		"",
+		"English(5)",
+		"Čeština(5)",
+		"Deutsch(4)",
+		"suomi(4)",
+		"French(1)",
+		"Italian(2)",
+		"Portugese(2)",
+		"Russian(1)",
+		"Slovak(5)"
 	};
 	JCheckBox languages[] = new JCheckBox[langList.length];
 	JComboBox jcbCellSource;
@@ -1051,6 +1065,10 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			fw.write("lang = " + useLang + "\r\n");
 			fw.write("\r\n");
 
+			fw.write("# Language names to be included in the midlet\r\n");
+			fw.write("langName = " + useLangName + "\r\n");
+			fw.write("\r\n");
+
 			fw.write("# Directory/Directories with sound files and syntax.cfg, default is useSoundFilesWithSyntax=sound\r\n");
 			fw.write("#  syntax.cfg is a text file defining which sound files\r\n");
 			fw.write("#  are played by GpsMid for the various routing instructions in which order (to respect grammar)\r\n");
@@ -1144,20 +1162,27 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		}
 		String soundFiles = "sound";
 		useLang = langList[1];
+		useLangName = langNameList[1];
 		for (int i = 2; i < langList.length ; i++) {
 			if (languages[i].isSelected()) {
 				//System.out.println("Lang selected: " + langList[i]);
 				useLang += "," + langList[i];
+				useLangName += "," + langNameList[i];
 				// existence of sound dir will be checked later
 				soundFiles += ",sound-" + langList[i];
 			}
 		}
 		config.setSoundFiles(soundFiles);
 		config.setUseLang(useLang);
+		config.setUseLangName(useLangName);
 		// "*" is last
 		if (languages[0].isSelected()) {
 			config.setAllLang(true);
 			useLang += ",*";
+		}
+		if (languages[0].isSelected()) {
+			config.setAllLang(true);
+			useLangName += ",*";
 		}
 		config.setMidletName(jtfName.getText());
 		config.setRouting(jtfRouting.getText());

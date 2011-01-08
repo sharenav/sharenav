@@ -57,7 +57,7 @@ public class RouteSoundSyntax {
 			System.out.println ("ERROR: syntax.cfg not found in the " + additionalSrcPath + " directory");
 			System.exit(1);
 		}
-		
+
 		// create syntax.dat
 		try {
 			FileOutputStream foi = new FileOutputStream(destinationPathAndFile);
