@@ -101,8 +101,8 @@ GpsMid 0.6.4
     - Tracks (including the one being recorded) can now be displayed and renamed when a track is being
       recorded. You have to pause the recording however before you can get to the track menu.
     - The entries in the File-/Directory Requester Dialog are now sorted (folder first, alplabetically)
-      and consist only the file type with the suffixes that can be chosen. Please note e.g. on Nokia
-      mobiles files with suffix ".jar" are not shown, you have change the suffix to ".zip" for external maps.
+      and contain only files with the suffix(es) that can be chosen. Please note e.g. on Nokia
+      mobiles files with suffix ".jar" are not shown, you have to change the suffix to ".zip" for external maps.
     *** Others ***
     - The Setup option "backlight only in map screen" has been recycled to 
       "backlight only as keep-alive" which only triggers the backlight every 60 s to 
