@@ -1437,7 +1437,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				gpsRecenterInvalid = true;
 				gpsRecenterStale = true;
 				autoZoomed = true;
-				if (isGpsConnected() && pos.latitude != 0.0f) {
+				if (pos.latitude != 0.0f) {
 					receivePosition(pos);
 				}
 				newDataReady();
