@@ -963,15 +963,16 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				Configuration.setProjTypeDefault( (byte) rotationGroup.getSelectedIndex() );
 
 				if ((!Configuration.getCfgBitSavedState(Configuration.CFGBIT_COMPASS_DIRECTION)) && directionOpts.getSelectedIndex() == 1) {
+					Configuration.setCfgBitSavedState(Configuration.CFGBIT_COMPASS_DIRECTION,
+									  (directionOpts.getSelectedIndex() == 1));
 					Trace.getInstance().startCompass();
 				}
 				if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_COMPASS_DIRECTION) && directionOpts.getSelectedIndex() != 1) {
+					Configuration.setCfgBitSavedState(Configuration.CFGBIT_COMPASS_DIRECTION,
+									  (directionOpts.getSelectedIndex() == 1));
 					Trace.getInstance().stopCompass();
 				}
 
-				Configuration.setCfgBitSavedState(Configuration.CFGBIT_COMPASS_DIRECTION,
-						(directionOpts.getSelectedIndex() == 1)
-				);
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_STREETRENDERMODE,
 						(renderOpts.getSelectedIndex() == 1)
 				);
