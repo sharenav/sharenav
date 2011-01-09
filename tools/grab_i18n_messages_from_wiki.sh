@@ -24,6 +24,6 @@ do
    if (substr ($0, 1, 1) == " ") { print substr ($0, 2) } else { if ($0 != "" && substr($0, 0, 1) != "#") { print; } } } }
      /section=messages;/ { pr = 1 } 
      /<pre>/ { pr = 1 } 
-     ' | sed 's/&amp;/\&/g'| sed 's/&lt;/\</g' | sed 's/&gt;/\>/g' > $path/messages_$l.txt
+     ' | sed 's/&amp;/\&/g'| sed 's/&lt;/\</g' | sed 's/&gt;/\>/g' | sed 's/&nbsp;/ /g' > $path/messages_$l.txt
 done
 mv $path/messages_en.txt $path/messages.txt
