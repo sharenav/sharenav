@@ -21,7 +21,9 @@ import de.ueller.gpsMid.CancelMonitorInterface;
 import de.ueller.midlet.gps.Logger;
 import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.data.MoreMath;
+import de.ueller.midlet.gps.data.Proj3D;
 import de.ueller.midlet.gps.data.ProjMath;
+import de.ueller.midlet.gps.data.Projection;
 import de.ueller.midlet.gps.data.Way;
 import de.ueller.midlet.gps.tile.PaintContext;
 import de.ueller.midlet.gps.tile.QueueableTile;
@@ -353,13 +355,26 @@ public class SingleTile extends Tile implements QueueableTile {
 		byte t=type[i];
 		boolean hideable = Legend.isNodeHideable(t);
 		
+		// addition by sk750 until "byte om ="
+		Projection projection = pc.getP();
+		projection.forward(nodeLat[i], nodeLon[i], pc.swapLineP, this);
+		float scale = pc.scale;
+		if (projection instanceof Proj3D) {
+			Proj3D p = (Proj3D) projection;
+			scale = p.getScaleFor(pc.swapLineP.x, pc.swapLineP.y);
+			//System.out.println("pc.scale: " + pc.scale + " 3D scale at line " + pc.swapLineP.y + ": " + scale);
+		}
+
 		byte om = Legend.getNodeOverviewMode(t);
 		switch (om & Legend.OM_MODE_MASK) {
 			case Legend.OM_SHOWNORMAL: 
 				//System.out.println( pc.scale + " " + Legend.getNodeMaxScale(t)  + " " +Configuration.getDetailBoostMultiplierPOI());
 				
 				// if not in Overview Mode check for scale
-				if (pc.scale > Legend.getNodeMaxScale(t) * Configuration.getDetailBoostMultiplierPOI()) {
+				// original by Harald
+				//if (pc.scale > Legend.getNodeMaxScale(t) * Configuration.getDetailBoostMultiplierPOI()) {
+				// by sk750
+				if (scale > Legend.getNodeMaxScale(t) * Configuration.getDetailBoostMultiplierPOI()) {
 					return;
 				}
 				// disabling POIs does not disable PLACE TEXTs (city, suburb, etc.) 
@@ -402,11 +417,15 @@ public class SingleTile extends Tile implements QueueableTile {
 		img = Legend.getNodeImage(t);
 		// logger.debug("calc pos "+pc);
 		
-		pc.getP().forward(nodeLat[i], nodeLon[i], pc.swapLineP, this);
+		// deletion by sk750
+		//pc.getP().forward(nodeLat[i], nodeLon[i], pc.swapLineP, this);
 		
 		if (img != null ) {
 			// logger.debug("draw img " + img);
-			if (nameIdx[i] == -1 || Legend.isNodeImageCentered(t) || pc.scale > Legend.getNodeMaxTextScale(t)) {
+			// orig by Harald
+			// if (nameIdx[i] == -1 || Legend.isNodeImageCentered(t) || pc.scale > Legend.getNodeMaxTextScale(t)) {
+			// by jkpj
+			if (nameIdx[i] == -1 || Legend.isNodeImageCentered(t) || scale > Legend.getNodeMaxTextScale(t)) {
 				pc.g.drawImage(img, pc.swapLineP.x, pc.swapLineP.y,
 						Graphics.VCENTER | Graphics.HCENTER);
 			} else {
@@ -414,7 +433,10 @@ public class SingleTile extends Tile implements QueueableTile {
 						Graphics.BOTTOM | Graphics.HCENTER);
 			}
 		}
-		if (pc.scale > Legend.getNodeMaxTextScale(t) * Configuration.getDetailBoostMultiplierPOI()) {
+		// orig by Harald
+		//if (pc.scale > Legend.getNodeMaxTextScale(t) * Configuration.getDetailBoostMultiplierPOI()) {
+		// by sk750
+		if (scale > Legend.getNodeMaxTextScale(t) * Configuration.getDetailBoostMultiplierPOI()) {
 			return;
 		}
 		

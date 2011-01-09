@@ -215,12 +215,24 @@ public class Proj3D implements Projection {
 //		return ret;
 //	}
 	
+	// original function by Harald, the ints overflow
+	//public int getScaleFor(int x, int y){
+	//	float y_ = hyp- y;
+	//	float y1 = (dep / ((hep / y_) - 1)); 
+	//	float fac=dep * (dep + y1);
+	//	return (int) (scale*fac);
+	//}
+
+
+	// a try by jkpj, seems to be a useful version
 	public int getScaleFor(int x, int y){
-		float y_ = hyp- y;
-		float y1 = (dep / ((hep / y_) - 1)); 
-		float fac=dep * (dep + y1);
+		float y_ = hyp - y;
+
+		float radlat = (dep / ((hep / y_) - 1));
+		float y1 = radlat;
+		float fac = 1 / dep * (dep + radlat);
 		return (int) (scale*fac);
-	}
+	} 
 
 	private Node invProjectionTo3D(int x, int y, Node ret) {
 		
