@@ -944,12 +944,10 @@ public class Configuration {
 	}
 
 	public static String getOnlineLangString() {
-		String lang = naviLang;
-		if (naviLang.equalsIgnoreCase("devdefault")) {
-			// get phone's locale
-			String locale = System.getProperty("microedition.locale");
-			if (locale != null) {
-				lang = locale.substring(0, 2);
+		String lang = onlineLang;
+		if (onlineLang.equalsIgnoreCase("devdefault")) {
+			if (localeLang != null) {
+				lang = localeLang;
 			} else {
 				if (Legend.numOnlineLang > 1) {
 					lang = Legend.onlineLang[1];
