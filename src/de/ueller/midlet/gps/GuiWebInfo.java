@@ -73,6 +73,9 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 		if (c == SELECT_CMD) {
 			String site = getString(getSelectedIndex());
 			String url = null;
+			// checked url at 2010-01-09; free servers overloaded, can't test what's the difference
+			// between full and non-full
+			// http://ws.geonames.org/findNearbyWikipediaRSS?lat=47&lng=9&style=full
 			if (site.equalsIgnoreCase(Locale.get("guiwebinfo.WikipediaRSS")/*Wikipedia (RSS)*/)) {
 				String lang = "";
 				if (! Configuration.getOnlineLangString().equals("en")) {
@@ -94,6 +97,7 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 
 			if (site.equalsIgnoreCase(Locale.get("guiwebinfo.Weather")/*Weather*/)) {
 				// weather underground doesn't seem to have a language switch
+				// url working at 2010-01-09
 				url = "http://m.wund.com/cgi-bin/findweather/getForecast?brand=mobile&query="
 						+ (mPos.latitude * MoreMath.FAC_RADTODEC)
 						+ "%2C"
