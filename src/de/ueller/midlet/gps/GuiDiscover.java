@@ -393,7 +393,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		menuDisplayOptions.addCommand(OK_CMD);
 
 		// device default (if it exists) is the first; check if device supports getting locale
-		if (parent.localeLang == null && Legend.uiLang[0].equalsIgnoreCase("devdefault")) {
+		if (Configuration.getLocaleLang() == null && Legend.uiLang[0].equalsIgnoreCase("devdefault")) {
 			// device doesn't support giving local language which is first in Legend, omit the choice for device default
 			numLangDifference = -1;
 		}
@@ -420,7 +420,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				if (i + numLangDifference >= 0) {
 					uiLang[i + numLangDifference] = Legend.uiLangName[i];
 				}
-				if (parent.localeLang != null && Legend.uiLang[i].equalsIgnoreCase("devdefault")) {
+				if (Configuration.getLocaleLang() != null && Legend.uiLang[i].equalsIgnoreCase("devdefault")) {
 					uiLang[i] = Locale.get("guidiscover.devicedefault")/*Device default*/ +
 						" (" + System.getProperty("microedition.locale").substring(0, 2) + ")";
 				}
@@ -442,7 +442,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				if (i + numLangDifference >= 0) {
 					naviLang[i + numLangDifference] = Legend.naviLangName[i];
 				}
-				if (parent.localeLang != null && Legend.naviLang[i].equalsIgnoreCase("devdefault")) {
+				if (Configuration.getLocaleLang() != null && Legend.naviLang[i].equalsIgnoreCase("devdefault")) {
 					naviLang[i] = Locale.get("guidiscover.devicedefault")/*Device default*/ +
 						" (" + System.getProperty("microedition.locale").substring(0, 2) + ")";
 				}
@@ -585,7 +585,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				if (i + numLangDifference >= 0) {
 					onlineLang[i + numLangDifference] = Legend.onlineLangName[i];
 				}
-				if (parent.localeLang != null && Legend.onlineLang[i].equalsIgnoreCase("devdefault")) {
+				if (Configuration.getLocaleLang() != null && Legend.onlineLang[i].equalsIgnoreCase("devdefault")) {
 					onlineLang[i] = Locale.get("guidiscover.devicedefault")/*Device default*/ +
 						" (" + System.getProperty("microedition.locale").substring(0, 2) + ")";
 				}
@@ -962,7 +962,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 
 				Configuration.setProjTypeDefault( (byte) rotationGroup.getSelectedIndex() );
 
-				if (!Configuration.getCfgBitSavedState(Configuration.CFGBIT_COMPASS_DIRECTION) && directionOpts.getSelectedIndex() == 1) {
+				if ((!Configuration.getCfgBitSavedState(Configuration.CFGBIT_COMPASS_DIRECTION)) && directionOpts.getSelectedIndex() == 1) {
 					Trace.getInstance().startCompass();
 				}
 				if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_COMPASS_DIRECTION) && directionOpts.getSelectedIndex() != 1) {
