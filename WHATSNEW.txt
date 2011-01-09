@@ -50,8 +50,18 @@ GpsMid 0.7
       This will include the Finnish sound files into GpsMid (thx jkpj)
     - English and German eSpeak voices now sound a bit more friendly   	     	   
     *** Localization of on-screen messages ***
-    - Translaton of some on-screen messages into Finnish and German, to a smaller
-      degree to French, Russian, Czech, Italian, Portugese, Russian and Slovak
+    - Translaton of some on-screen messages into Czech, Slovak, Finnish and German,
+      to a smaller degree to French, Italian, Portugese and Russian.
+      When building with the Osm2GpsMid GUI (wizard), the languages will have
+      en estimate of how complete the translations are. The rough scale is:
+      5: Complete or almost complete
+      4: Normal user-visible messages complete or almost complete
+         (many or even most error messages may be untranslated)
+      3: Many user-visible messages untranslated
+      2: A relatively big portion of user-visible messages translated
+      1: Some menus and messages translated
+      Please make the translations more complete in the GpsMid Wiki!
+
     *** Map Elements ***
     - Improved color for buildings
     - Added area types shop=*, leisure=pitch, landuse=farm_yard, landuse=military
@@ -103,6 +113,8 @@ GpsMid 0.7
     - The entries in the File-/Directory Requester Dialog are now sorted (folder first, alplabetically)
       and contain only files with the suffix(es) that can be chosen. Please note e.g. on Nokia
       mobiles files with suffix ".jar" are not shown, you have to change the suffix to ".zip" for external maps.
+    - Waypoints are now stored in the track by default when recording a track
+
     *** Others ***
     - The Setup option "backlight only in map screen" has been recycled to 
       "backlight only as keep-alive" which only triggers the backlight every 60 s to 
