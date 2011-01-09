@@ -21,11 +21,11 @@ import de.ueller.midlet.gps.GpsMidDisplayable;
 public class GuiSetupRecordings extends Form implements CommandListener {
 	private final ChoiceGroup choiceGpxRecordRuleMode;
 	private final ChoiceGroup choiceWptInTrack;
-	private ChoiceGroup choiceWptInWpstore;
 	private final ChoiceGroup gpxOptsGroup;
-	private final TextField  tfGpxRecordMinimumSecs;
-	private final TextField  tfGpxRecordMinimumDistanceMeters;
-	private final TextField  tfGpxRecordAlwaysDistanceMeters;
+	private final TextField tfGpxRecordMinimumSecs;
+	private final TextField tfGpxRecordMinimumDistanceMeters;
+	private final TextField tfGpxRecordAlwaysDistanceMeters;
+	private final ChoiceGroup otherOpts;
 
 	// Commands
 	private static final Command CMD_SAVE = new Command(Locale.get("generic.Save")/*Save*/, 
@@ -45,16 +45,19 @@ public class GuiSetupRecordings extends Form implements CommandListener {
 		String [] recModes = new String[2];
 		recModes[0] = Locale.get("guidiscover.adaptivetospeed")/*adaptive to speed*/;
 		recModes[1] = Locale.get("guidiscover.manualrules")/*manual rules:*/;
-		choiceGpxRecordRuleMode = new ChoiceGroup(Locale.get("guidiscover.RecordTrackpoints")/*Record Trackpoints*/, Choice.EXCLUSIVE, recModes ,null);
-
-		tfGpxRecordMinimumSecs = new TextField(Locale.get("guidiscover.MinimumSeconds")/*Minimum seconds between trackpoints*/, "0", 3, TextField.DECIMAL);
-		tfGpxRecordMinimumDistanceMeters = new TextField(Locale.get("guidiscover.MinimumMeters")/*Minimum meters between trackpoints*/, "0", 3, TextField.DECIMAL);
-		tfGpxRecordAlwaysDistanceMeters = new TextField(Locale.get("guidiscover.AlwaysRecord")/*Always record when exceeding these meters between trackpoints*/, "0", 3, TextField.DECIMAL);
+		choiceGpxRecordRuleMode = new ChoiceGroup(Locale.get("guidiscover.RecordTrackpoints")/*Record Trackpoints*/, 
+				Choice.EXCLUSIVE, recModes ,null);
+		tfGpxRecordMinimumSecs = new TextField(Locale.get("guidiscover.MinimumSeconds")/*Minimum seconds between trackpoints*/, 
+				"0", 3, TextField.DECIMAL);
+		tfGpxRecordMinimumDistanceMeters = new TextField(Locale.get("guidiscover.MinimumMeters")/*Minimum meters between trackpoints*/, 
+				"0", 3, TextField.DECIMAL);
+		tfGpxRecordAlwaysDistanceMeters = new TextField(Locale.get("guidiscover.AlwaysRecord")/*Always record when exceeding these meters between trackpoints*/, 
+				"0", 3, TextField.DECIMAL);
 		
 		String [] wptFlag = new String[1];
 		wptFlag[0] = Locale.get("guidiscover.WpAlsoInTrack")/*Also put waypoints in track*/;
-		choiceWptInTrack = new ChoiceGroup(Locale.get("guidiscover.WaypointsInTrack")/*Waypoints in track*/, Choice.MULTIPLE,
-				wptFlag, null);
+		choiceWptInTrack = new ChoiceGroup(Locale.get("guidiscover.WaypointsInTrack")/*Waypoints in track*/, 
+				Choice.MULTIPLE, wptFlag, null);
 		choiceWptInTrack.setSelectedIndex(0, Configuration.getCfgBitSavedState(
 				Configuration.CFGBIT_WPTS_IN_TRACK));
 		String [] gpxNameOpts = new String[2];
@@ -64,7 +67,8 @@ public class GuiSetupRecordings extends Form implements CommandListener {
 		selGpxName[0] = Configuration.getCfgBitSavedState(Configuration.CFGBIT_GPX_ASK_TRACKNAME_START);
 		selGpxName[1] = Configuration.getCfgBitSavedState(Configuration.CFGBIT_GPX_ASK_TRACKNAME_STOP);
 		
-		gpxOptsGroup = new ChoiceGroup(Locale.get("guidiscover.TrackNaming")/*Track Naming*/, Choice.MULTIPLE, gpxNameOpts ,null);
+		gpxOptsGroup = new ChoiceGroup(Locale.get("guidiscover.TrackNaming")/*Track Naming*/, 
+				Choice.MULTIPLE, gpxNameOpts ,null);
 		gpxOptsGroup.setSelectedFlags(selGpxName);
 
 		choiceGpxRecordRuleMode.setSelectedIndex(Configuration.getGpxRecordRuleMode(), true);
@@ -89,7 +93,15 @@ public class GuiSetupRecordings extends Form implements CommandListener {
 		append(tfGpxRecordAlwaysDistanceMeters);
 		append(gpxOptsGroup);
 		append(choiceWptInTrack);
-		
+
+		String [] other = new String[1];
+		other[0] = Locale.get("guisetupgui.PredefWpts")/*Predefined way points*/;
+		otherOpts = new ChoiceGroup(Locale.get("guisetupgui.OtherOpt")/*Other options:*/, 
+				Choice.MULTIPLE, other, null);
+		otherOpts.setSelectedIndex(0,
+				Configuration.getCfgBitSavedState(Configuration.CFGBIT_WAYPT_OFFER_PREDEF));
+		append(otherOpts);
+
 		addCommand(CMD_CANCEL);
 		addCommand(CMD_SAVE);
 		setCommandListener(this);
@@ -130,15 +142,15 @@ public class GuiSetupRecordings extends Form implements CommandListener {
 			Configuration.setGpxRecordRuleMode(choiceGpxRecordRuleMode.getSelectedIndex());
 			rule = tfGpxRecordMinimumSecs.getString();
 			Configuration.setGpxRecordMinMilliseconds(
-					rule.length() == 0 ? 0 :(int) (1000 * Float.parseFloat(rule))
+					rule.length() == 0 ? 0 : (int) (1000 * Float.parseFloat(rule))
 			);
 			rule = tfGpxRecordMinimumDistanceMeters.getString();
 			Configuration.setGpxRecordMinDistanceCentimeters(
-					rule.length() == 0 ? 0 :(int) (100 * Float.parseFloat(rule))
+					rule.length() == 0 ? 0 : (int) (100 * Float.parseFloat(rule))
 			);
 			rule = tfGpxRecordAlwaysDistanceMeters.getString();
 			Configuration.setGpxRecordAlwaysDistanceCentimeters(
-					rule.length() == 0 ? 0 :(int) (100 * Float.parseFloat(rule))
+					rule.length() == 0 ? 0 : (int) (100 * Float.parseFloat(rule))
 			);
 			// Save "waypoints in track" flag to config
 			Configuration.setCfgBitSavedState(Configuration.CFGBIT_WPTS_IN_TRACK,
@@ -148,6 +160,9 @@ public class GuiSetupRecordings extends Form implements CommandListener {
 			gpxOptsGroup.getSelectedFlags(selGpxName);
 			Configuration.setCfgBitSavedState(Configuration.CFGBIT_GPX_ASK_TRACKNAME_START, selGpxName[0]);
 			Configuration.setCfgBitSavedState(Configuration.CFGBIT_GPX_ASK_TRACKNAME_STOP, selGpxName[1]);
+			
+			Configuration.setCfgBitSavedState(Configuration.CFGBIT_WAYPT_OFFER_PREDEF,
+					otherOpts.isSelected(0));
 			
 			parent.show();
 		}

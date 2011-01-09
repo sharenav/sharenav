@@ -16,11 +16,10 @@ import de.ueller.gps.data.Configuration;
 public class GuiSetupGui extends Form implements CommandListener {
 	private ChoiceGroup imenuOpts;
 	private ChoiceGroup mapTapFeatures;
-	private ChoiceGroup otherOpts;
 	private ChoiceGroup searchSettings;
 
 	// commands
-	private static final Command CMD_SAVE = new Command(Locale.get("generic.OK")/*Ok*/, 
+	private static final Command CMD_SAVE = new Command(Locale.get("generic.Save")/*Save*/, 
 			Command.ITEM, 2);
 	private static final Command CMD_CANCEL = new Command(Locale.get("generic.Cancel")/*Cancel*/, 
 			Command.BACK, 3);
@@ -100,13 +99,6 @@ public class GuiSetupGui extends Form implements CommandListener {
 				append(mapTapFeatures);
 			}
 
-			String [] other = new String[1];
-			other[0] = Locale.get("guisetupgui.PredefWpts")/*Predefined way points*/;
-			otherOpts = new ChoiceGroup(Locale.get("guisetupgui.OtherOpt")/*Other options:*/, Choice.MULTIPLE, other, null);
-			otherOpts.setSelectedIndex(0,
-					Configuration.getCfgBitSavedState(Configuration.CFGBIT_WAYPT_OFFER_PREDEF));
-			append(otherOpts);
-			
 			addCommand(CMD_SAVE);
 			addCommand(CMD_CANCEL);
 
@@ -162,7 +154,6 @@ public class GuiSetupGui extends Form implements CommandListener {
 			Trace.uncacheIconMenu();
 			GuiDiscover.uncacheIconMenu();
 
-			
 			int i = 0;
 			if (Configuration.getHasPointerEvents()) {
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD, searchSettings.isSelected(i++));
@@ -175,9 +166,6 @@ public class GuiSetupGui extends Form implements CommandListener {
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_MAPTAP_SINGLE, mapTapFeatures.isSelected(i++));
 			}
 
-			Configuration.setCfgBitSavedState(Configuration.CFGBIT_WAYPT_OFFER_PREDEF,
-					otherOpts.isSelected(0));
-			
 			parent.show();
 			return;
 		}
