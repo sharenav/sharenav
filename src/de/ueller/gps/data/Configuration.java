@@ -1228,7 +1228,7 @@ public class Configuration {
 		// get phone's locale
 		String locale = System.getProperty("microedition.locale");
 		if (locale != null) {
-			localeLang = locale;
+			localeLang = locale.substring(0,2);
 		}
 		if (uiLang.equalsIgnoreCase("devdefault")) {
 			if (localeLang != null) {
