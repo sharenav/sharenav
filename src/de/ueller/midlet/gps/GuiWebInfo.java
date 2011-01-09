@@ -113,10 +113,11 @@ public class GuiWebInfo extends List implements GpsMidDisplayable,
 				minlon = (int) ((deglonf - deglon) * 60);
 				seclon = ((deglonf - deglon-minlon/60)*60);
 				String lang = "";
-				if (! Configuration.getOnlineLangString().equals("en")) {
-				    lang = "language=" + Configuration.getOnlineLangString() + "&";
-				}
-				url = "http://toolserver.org/~geohack/geohack.php?" + lang + "params="
+				// checked on 2010-01-09: url syntax has changed to:
+				// fi: http://toolserver.org/~geohack/fi/60_12_12.185211_N_24_39_39.566917_E_
+				// en: http://toolserver.org/~geohack/en/60_12_12.185211_N_24_39_39.566917_E_
+
+				url = "http://toolserver.org/~geohack/" + Configuration.getOnlineLangString() + "/"
 						+ deglat
 						+ "_"
 						+ minlat
