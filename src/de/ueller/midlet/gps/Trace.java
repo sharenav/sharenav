@@ -1,6 +1,6 @@
 /*
  * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net
- * See COPYING
+ * See file COPYING.
  */
 
 package de.ueller.midlet.gps;
@@ -43,7 +43,7 @@ import de.ueller.gps.GetCompass;
 import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Position;
-import de.ueller.gps.data.Satelit;
+import de.ueller.gps.data.Satellite;
 
 import de.ueller.gps.nmea.NmeaInput;
 import de.ueller.gps.sirf.SirfInput;
@@ -490,8 +490,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 
 
 	public void stopCompass() {
-		if (compassProducer != null)
+		if (compassProducer != null) {
 			compassProducer.close();
+		}
 		compassProducer = null;
 	}
 	public void startCompass() {
@@ -2501,13 +2502,15 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				/*  don't rotate too fast
 				 */
 				coursegps = (int) pos.course;
-				if ((coursegps - course)> 180)
+				if ((coursegps - course)> 180) {
 					course = course + 360;
+				}
                                                               
-				if ((course-coursegps)> 180)
+				if ((course-coursegps)> 180) {
 					coursegps = coursegps + 360;
+				}
                                                  
-				course = (int) course + (int)((coursegps - course)*1)/4 + 360;
+				course = course + ((coursegps - course)*1)/4 + 360;
 				while (course > 360) {
 					course -= 360;
 				}
@@ -2612,7 +2615,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		repaint();
 	}
 
-	public void receiveSatellites(Satelit[] sats) {
+	public void receiveSatellites(Satellite[] sats) {
 		// Not interested
 	}
 
@@ -3307,7 +3310,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			}
 			if (Configuration.getCfgBitState(Configuration.CFGBIT_DISTANCE_VIEW)) {
 				if (meters >= 10000) {
-					return (int) meters / 1000 + "km";
+					return meters / 1000 + "km";
 				} else if (meters < 1000) {
 					return meters + "m";
 				} else {

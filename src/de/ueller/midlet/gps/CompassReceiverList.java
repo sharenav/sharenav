@@ -11,21 +11,19 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  * 
- * See Copying
+ * See file COPYING.
  */
+
 package de.ueller.midlet.gps;
 
 import java.util.Enumeration;
 import java.util.Vector;
-import de.ueller.gps.data.Position;
-import de.ueller.gps.data.Satelit;
 
 /**
- * Wrapper that wraps a List of CompassReceivers in a way that Classes can
- * use it like a single CompassReceiver
+ * Wrapper that wraps a List of CompassReceivers in a way that classes can
+ * use it like a single CompassReceiver.
  * 
  * @author jan rose
- * 
  */
 public class CompassReceiverList implements CompassReceiver {
 	private final static Logger logger = 
@@ -34,7 +32,7 @@ public class CompassReceiverList implements CompassReceiver {
 	/**
 	 * Vector of all the CompassReceivers
 	 */
-	private Vector receiverList;
+	private final Vector receiverList;
 	
 	private volatile int currentSolution = 0; 
 

@@ -1,10 +1,9 @@
-package de.ueller.midlet.gps;
 /*
  * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net 
- * See Copying
+ * See file COPYING.
  */
-//import de.ueller.gps.data.Position;
-import de.ueller.gps.data.Satelit;
+
+package de.ueller.midlet.gps;
 
 
 public interface CompassReceiver {

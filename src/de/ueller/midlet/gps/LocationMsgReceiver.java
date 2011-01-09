@@ -1,10 +1,12 @@
-package de.ueller.midlet.gps;
 /*
  * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net 
- * See Copying
+ * See file COPYING.
  */
+
+package de.ueller.midlet.gps;
+
 import de.ueller.gps.data.Position;
-import de.ueller.gps.data.Satelit;
+import de.ueller.gps.data.Satellite;
 
 
 public interface LocationMsgReceiver {
@@ -30,7 +32,7 @@ public interface LocationMsgReceiver {
 	 * Update of satellites in view
 	 * @param sat Array of satellite data
 	 */
-	public void receiveSatellites(Satelit[] sats);
+	public void receiveSatellites(Satellite[] sats);
 	
 	/** 
 	 * Message with state change of location producer
