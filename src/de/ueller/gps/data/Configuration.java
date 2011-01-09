@@ -1223,7 +1223,6 @@ public class Configuration {
 	}
 	
 	public static boolean setUiLang(String uiLang) {
-		String oldUiLang = Configuration.uiLang;
 		String uiLangUse = uiLang;
 		// get phone's locale
 		String locale = System.getProperty("microedition.locale");
@@ -1247,7 +1246,7 @@ public class Configuration {
 			System.out.println("Couldn't open translations file: " + uiLang);
 			return false;
 		}
-		if (!uiLangLoaded || !uiLangUse.equals(Configuration.uiLang)) { 	
+		if (!uiLangLoaded || !uiLangUse.equals(Configuration.uiLang)) {
 			invalidPositionsString = (";" + Locale.get("solution.Off") +
 				    ";" + Locale.get("solution.NoFix") +
 				    ";" + Locale.get("solution.SecEx") +
@@ -1274,10 +1273,10 @@ public class Configuration {
 			}
 			initCompassDirections();
 	
-			Configuration.uiLang = uiLang;
-			write(uiLang, RECORD_ID_UI_LANG);
 			uiLangLoaded = true;
 		}
+		Configuration.uiLang = uiLang;
+		write(uiLang, RECORD_ID_UI_LANG);
 		return true;
 	}
 
