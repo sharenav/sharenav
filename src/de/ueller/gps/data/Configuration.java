@@ -1246,7 +1246,7 @@ public class Configuration {
 				}
 			}
 		}
-		if (!uiLangLoaded || !uiLangUse.equals(Configuration.uiLang)) {
+		if (!uiLangLoaded || !uiLangUse.equals(Configuration.uiLang) || devDefaultChanged) {
 			try {
 				Locale.loadTranslations( "/" + uiLangUse + ".loc" );
 			} catch (IOException ioe) {
@@ -1282,7 +1282,7 @@ public class Configuration {
 	
 			uiLangLoaded = true;
 		}
-		if (!uiLangLoaded || !uiLang.equals(Configuration.uiLang) || devDefaultChanged) {
+		if (!uiLangLoaded || !uiLang.equals(Configuration.uiLang)) {
 			Configuration.uiLang = uiLang;
 			write(uiLang, RECORD_ID_UI_LANG);
 		}
