@@ -389,7 +389,7 @@ public class Configuration {
 	public static final int continueMap_Always = 2;
 		
 	// the phone's locale
-	public String localeLang = null;
+	public static String localeLang = null;
 
 	/** 0 = do not continue map, 1 = continue map only during route line production, 2 = continue map all the time */
 	private static int continueMapWhileRouteing = continueMap_At_Route_Line_Creation;
@@ -1225,12 +1225,14 @@ public class Configuration {
 	public static boolean setUiLang(String uiLang) {
 		String oldUiLang = Configuration.uiLang;
 		String uiLangUse = uiLang;
+		// get phone's locale
+		String locale = System.getProperty("microedition.locale");
+		if (locale != null) {
+			localeLang = locale;
+		}
 		if (uiLang.equalsIgnoreCase("devdefault")) {
-			// get phone's locale
-			String locale = System.getProperty("microedition.locale");
-			if (locale != null) {
-				uiLangUse = locale.substring(0, 2);
-				localeLang = uiLangUse;
+			if (localeLang != null) {
+				uiLangUse = localeLang;
 			} else {
 				if (Legend.numUiLang > 1) {
 					uiLangUse = Legend.uiLang[1];
