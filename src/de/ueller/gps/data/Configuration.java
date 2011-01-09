@@ -1224,11 +1224,16 @@ public class Configuration {
 	}
 	
 	public static boolean setUiLang(String uiLang) {
+		boolean devDefaultChanged = false;
 		String uiLangUse = uiLang;
 		// get phone's locale
 		String locale = System.getProperty("microedition.locale");
 		if (locale != null) {
+			if (!locale.substring(0,2).equals(localeLang)) {
+				// locale has been changed 
 			localeLang = locale.substring(0,2);
+			devDefaultChanged = true;		
+			}
 		}
 		if (uiLang.equalsIgnoreCase("devdefault")) {
 			if (localeLang != null) {
@@ -1241,13 +1246,14 @@ public class Configuration {
 				}
 			}
 		}
-		try {
-			Locale.loadTranslations( "/" + uiLangUse + ".loc" );
-		} catch (IOException ioe) {
-			System.out.println("Couldn't open translations file: " + uiLang);
-			return false;
-		}
 		if (!uiLangLoaded || !uiLangUse.equals(Configuration.uiLang)) {
+			try {
+				Locale.loadTranslations( "/" + uiLangUse + ".loc" );
+			} catch (IOException ioe) {
+				System.out.println("Couldn't open translations file: " + uiLang);
+				return false;
+			}
+
 			invalidPositionsString = (";" + Locale.get("solution.Off") +
 				    ";" + Locale.get("solution.NoFix") +
 				    ";" + Locale.get("solution.SecEx") +
@@ -1276,8 +1282,10 @@ public class Configuration {
 	
 			uiLangLoaded = true;
 		}
-		Configuration.uiLang = uiLang;
-		write(uiLang, RECORD_ID_UI_LANG);
+		if (!uiLangLoaded || !uiLang.equals(Configuration.uiLang) || devDefaultChanged) {
+			Configuration.uiLang = uiLang;
+			write(uiLang, RECORD_ID_UI_LANG);
+		}
 		return true;
 	}
 
