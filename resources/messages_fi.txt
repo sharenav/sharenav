@@ -700,3 +700,14 @@ guiosmwaydisplay.maxspeed30mph=maxspeed=30 mph
 guiosmwaydisplay.ReverseDirection=Käännä suunta
 guiosmwaydisplay.TaggingPresets=Esivalintatägit
 guiosmwaydisplay.Way=tie
+guiwaypointpre.city_limit=Kaupungin raja
+guiwaypointpre.maxspeed=Nopeusr.&nbsp;%f
+guiwaypointpre.maxspeed_end=Nopeusr.loppu
+guiwaypointpre.housenr=Talonnumero
+guiwaypointpre.busstop=Bussipys.
+guiwaypointpre.tracktype_asph=Maat.t. 1 asf
+guiwaypointpre.tracktype_gravel=Maat.t.&nbsp;%f sora
+guiwaypointpre.tracktype_grass=Maat.t.&nbsp;%f ruoho
+guiwaypointpre.normalWP=Piste
+guiwaypointpre.phone=Puhelin
+guiwaypointpre.path=Polku&nbsp;%s
