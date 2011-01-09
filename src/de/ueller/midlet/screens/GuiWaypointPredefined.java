@@ -70,6 +70,9 @@ public class GuiWaypointPredefined extends IconMenuWithPagesGUI {
 				// Normal waypoint input, let Trace show it to preserve
 				// settings in the dialog.
 				((Trace)parent).showGuiWaypointSave(mWaypt);
+			} else if (templ.mWayptText.indexOf("magic: back") != -1) {
+				// Back "button"
+				((Trace)parent).show();
 			} else {
 				// No variable parts, can be saved directly.
 				mWaypt.displayName = templ.mWayptText;
@@ -117,13 +120,21 @@ public class GuiWaypointPredefined extends IconMenuWithPagesGUI {
 		/*  8 */ mPredefines.addElement(new WaypointTemplate("Agr %f grass", "tracktype=%f grass"));
 		/*  9 */ mPredefines.addElement(new WaypointTemplate("Waypoint", "magic: normal input"));
 		/*  * */ mPredefines.addElement(new WaypointTemplate("Phone", "phone"));
-		/*  0 */ mPredefines.addElement(new WaypointTemplate("Footway %s", "footway %s"));
-		/*  # */ mPredefines.addElement(new WaypointTemplate("Path %s", "path %s"));
+		/*  0 */ mPredefines.addElement(new WaypointTemplate("Path %s", "path %s"));
+		/*  # */ mPredefines.addElement(new WaypointTemplate("Back", "magic: back"));
 		
 		IconMenuPage mp = createAndAddMenuPage(Locale.get("guiwaypointpre.PredefWpts")/*Predef. waypoints*/, 3, 4);
 		for (int i = 0; i < mPredefines.size(); i++) {
-			mp.createAndAddIcon(((WaypointTemplate)mPredefines.elementAt(i)).mLabel, 
-					"i_addpoi", i);
+			if (((WaypointTemplate)mPredefines.elementAt(i)).mWayptText.indexOf("magic: normal input") != -1) {
+				mp.createAndAddIcon(((WaypointTemplate)mPredefines.elementAt(i)).mLabel, 
+						"i_savewpt", i);
+			} else if (((WaypointTemplate)mPredefines.elementAt(i)).mWayptText.indexOf("magic: back") != -1) {
+				mp.createAndAddIcon(((WaypointTemplate)mPredefines.elementAt(i)).mLabel, 
+						"i_back", i);				
+			} else {
+				mp.createAndAddIcon(((WaypointTemplate)mPredefines.elementAt(i)).mLabel, 
+						"i_addpoi", i);
+			}
 		}
 		
 		mForm = new GuiWaypointPredefinedForm(parent, this);
