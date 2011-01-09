@@ -74,6 +74,7 @@ import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.data.Projection;
+import de.ueller.midlet.gps.data.Proj3D;
 import de.ueller.midlet.gps.data.RoutePositionMark;
 import de.ueller.midlet.gps.data.SECellLocLogger;
 import de.ueller.midlet.gps.data.Way;
@@ -2541,11 +2542,24 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			final int maximumSpeed = 160;
 			int speedForScale = speed;
 			float newScale = minimumScale + (maximumScale - minimumScale) * (speedForScale - minimumSpeed) / (maximumSpeed - minimumSpeed);
-			// make sure the new scale is within the minimum / maximum scale values
-			if (newScale < minimumScale) {
-				newScale = minimumScale;
-			} else if (newScale > maximumScale) {
-				newScale = maximumScale;
+			// FIXME consider if there's a better place for this - one zoom level more for Eagle mode
+			Projection projection = pc.getP();
+			if (projection instanceof Proj3D) {
+				newScale = newScale / 1.5f;
+
+				// make sure the new scale is within the minimum / maximum scale values
+				if (newScale < minimumScale / 1.5f) {
+					newScale = minimumScale / 1.5f;
+				} else if (newScale > maximumScale) {
+					newScale = maximumScale;
+				}
+			} else {
+				// make sure the new scale is within the minimum / maximum scale values
+				if (newScale < minimumScale) {
+					newScale = minimumScale;
+				} else if (newScale > maximumScale) {
+					newScale = maximumScale;
+				}
 			}
 			scale = newScale;
 			
