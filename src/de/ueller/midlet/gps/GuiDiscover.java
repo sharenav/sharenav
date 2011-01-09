@@ -422,7 +422,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				}
 				if (Configuration.getLocaleLang() != null && Legend.uiLang[i].equalsIgnoreCase("devdefault")) {
 					uiLang[i] = Locale.get("guidiscover.devicedefault")/*Device default*/ +
-						" (" + System.getProperty("microedition.locale").substring(0, 2) + ")";
+						" (" + Configuration.getLocaleLang() + ")";
 				}
 			}
 			if (addSelectedUiLang) {
