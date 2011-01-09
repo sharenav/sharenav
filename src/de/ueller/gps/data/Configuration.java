@@ -388,6 +388,9 @@ public class Configuration {
 	public static final int continueMap_At_Route_Line_Creation = 1;
 	public static final int continueMap_Always = 2;
 		
+	// the phone's locale
+	public String localeLang = null;
+
 	/** 0 = do not continue map, 1 = continue map only during route line production, 2 = continue map all the time */
 	private static int continueMapWhileRouteing = continueMap_At_Route_Line_Creation;
 
@@ -935,12 +938,15 @@ public class Configuration {
 		return rawDebugLogEnable;
 	}
 	
+	public static String getLocaleLang() {
+		return localeLang;
+	}
+
 	public static String getOnlineLangString() {
 		String lang = naviLang;
 		if (naviLang.equalsIgnoreCase("devdefault")) {
 			// get phone's locale
 			String locale = System.getProperty("microedition.locale");
-			
 			if (locale != null) {
 				lang = locale.substring(0, 2);
 			} else {
@@ -1222,9 +1228,9 @@ public class Configuration {
 		if (uiLang.equalsIgnoreCase("devdefault")) {
 			// get phone's locale
 			String locale = System.getProperty("microedition.locale");
-
 			if (locale != null) {
 				uiLangUse = locale.substring(0, 2);
+				localeLang = uiLangUse;
 			} else {
 				if (Legend.numUiLang > 1) {
 					uiLangUse = Legend.uiLang[1];

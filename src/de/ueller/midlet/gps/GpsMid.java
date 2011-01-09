@@ -103,8 +103,6 @@ public class GpsMid extends MIDlet implements CommandListener {
 
 	public static NoiseMaker mNoiseMaker = null;
 
-	public String localeLang = null;
-
 	/**
 	 * This Thread is used to periodically prod the display to keep the
 	 * backlight illuminator if this is wanted by the user
