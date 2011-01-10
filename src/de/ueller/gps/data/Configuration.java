@@ -1266,11 +1266,11 @@ public class Configuration {
 			LOCATIONPROVIDER[3] = Locale.get("configuration.LPInternalJSR179")/*Internal (JSR179)*/;
 			LOCATIONPROVIDER[4] = Locale.get("configuration.LPCellID")/*Cell-ID (OpenCellId.org)*/;
 
-			projectionsString = new String[4];
-			projectionsString[0] = Locale.get("projfactory.NorthUp")/*North Up*/;
-			projectionsString[1] = Locale.get("projfactory.Moving")/*Moving*/;
-			projectionsString[2] = Locale.get("projfactory.MovingEnhanced")/*MovingEnhanced*/;
-			projectionsString[3] = Locale.get("projfactory.Eagle")/*Eagle*/;
+			projectionsString = new String[ProjFactory.COUNT];
+			projectionsString[ProjFactory.NORTH_UP] = Locale.get("projfactory.NorthUp")/*North Up*/;
+			projectionsString[ProjFactory.MOVE_UP] = Locale.get("projfactory.Moving")/*Moving*/;
+			projectionsString[ProjFactory.MOVE_UP_ENH] = Locale.get("projfactory.MovingEnhanced")/*MovingEnhanced*/;
+			projectionsString[ProjFactory.EAGLE] = Locale.get("projfactory.Eagle")/*Eagle*/;
 
 			if (uiLangLoaded) {
 				Trace.uncacheIconMenu();
