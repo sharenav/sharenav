@@ -711,3 +711,5 @@ guiwaypointpre.tracktype_grass=Maat.t. %f ruoho
 guiwaypointpre.normalWP=Piste
 guiwaypointpre.phone=Puhelin
 guiwaypointpre.path=Polku %s
+guiwaypointpre.Input=Syöte:
+guiwaypointpre.PredefWpts=Esivalittu piste
