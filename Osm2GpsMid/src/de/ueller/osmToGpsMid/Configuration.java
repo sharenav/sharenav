@@ -20,6 +20,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
@@ -583,7 +584,7 @@ public class Configuration {
 			if (propIS == null) {
 				throw new IOException("Properties file not found!");
 			}
-			rb = new PropertyResourceBundle(propIS);
+			rb = new PropertyResourceBundle(new InputStreamReader(propIS, "UTF-8"));
 			vb = new PropertyResourceBundle(getClass().getResourceAsStream("/version.properties"));
 			setRouting(getString("useRouting"));
 			useUrlTags = getString("useUrlTags").equalsIgnoreCase("true");
