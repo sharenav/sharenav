@@ -1047,6 +1047,7 @@ trace.ManageTracks=Manage tracks
 trace.ManageWaypoints=Manage waypoints
 trace.ManualRotation=Manual Rotation
 trace.ManualRotation2=Manual rotation mode
+trace.ManualToNorth=to North
 trace.MapFeatures=Map Features
 trace.MapRotation=Map Rotation
 trace.Menu=Menu

@@ -1405,7 +1405,12 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				return;
 			}
 			if (c == CMDS[TOGGLE_MAP_PROJ_CMD]) {
-				alert(Locale.get("trace.MapRotation")/*Map Rotation*/, ProjFactory.nextProj(), 750);
+				if (manualRotationMode) {
+					course = 0;
+					alert(Locale.get("trace.ManualRotation"), Locale.get("trace.ManualToNorth"), 750);
+				} else {
+					alert(Locale.get("trace.MapRotation")/*Map Rotation*/, ProjFactory.nextProj(), 750);
+				}
 				// redraw immediately
 				synchronized (this) {
 					if (imageCollector != null) {
