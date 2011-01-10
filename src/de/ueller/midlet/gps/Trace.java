@@ -2542,24 +2542,11 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			final int maximumSpeed = 160;
 			int speedForScale = speed;
 			float newScale = minimumScale + (maximumScale - minimumScale) * (speedForScale - minimumSpeed) / (maximumSpeed - minimumSpeed);
-			// FIXME consider if there's a better place for this - one zoom level more for Eagle mode
-			Projection projection = pc.getP();
-			if (projection instanceof Proj3D) {
-				newScale = newScale / 1.5f;
-
-				// make sure the new scale is within the minimum / maximum scale values
-				if (newScale < minimumScale / 1.5f) {
-					newScale = minimumScale / 1.5f;
-				} else if (newScale > maximumScale) {
-					newScale = maximumScale;
-				}
-			} else {
-				// make sure the new scale is within the minimum / maximum scale values
-				if (newScale < minimumScale) {
-					newScale = minimumScale;
-				} else if (newScale > maximumScale) {
-					newScale = maximumScale;
-				}
+			// make sure the new scale is within the minimum / maximum scale values
+			if (newScale < minimumScale) {
+				newScale = minimumScale;
+			} else if (newScale > maximumScale) {
+				newScale = maximumScale;
 			}
 			scale = newScale;
 			

@@ -1546,6 +1546,10 @@ public class Configuration {
 				}
 			}
 		}
+		// Base scale in eagle view is zoomed once in
+		if (projTypeDefault == ProjFactory.EAGLE) {
+			realBaseScale /= 1.5f;			
+		}
 	}
 	
 	
@@ -1681,6 +1685,7 @@ public class Configuration {
 		ProjFactory.setProj(t);
 		projTypeDefault = t;
 		write(t, RECORD_ID_MAP_PROJECTION);
+		calculateRealBaseScale();
 	}
 
 	public static byte getProjDefault() {
