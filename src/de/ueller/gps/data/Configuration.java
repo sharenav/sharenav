@@ -732,7 +732,7 @@ public class Configuration {
 	}
 	
 	private final static String desanitizeString(String s) {
-		if (s.equalsIgnoreCase("!null!") || s.equalsIgnroeCase(Locale.get("configuration.nullexclmark")/*!null!*/)) {
+		if (s.equalsIgnoreCase("!null!") || s.equalsIgnoreCase(Locale.get("configuration.nullexclmark")/*!null!*/)) {
 			return null;
 		}
 		return s;
