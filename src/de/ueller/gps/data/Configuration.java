@@ -847,8 +847,8 @@ public class Configuration {
 	public static void serialise(OutputStream os) throws IOException {
 		DataOutputStream dos = new DataOutputStream(os);
 		dos.writeInt(VERSION);
-		dos.writeLong(cfgBits_0_to_63);
-		dos.writeLong(cfgBits_64_to_127);
+		dos.writeLong(cfgBitsDefault_0_to_63);
+		dos.writeLong(cfgBitsDefault_64_to_127);
 		dos.writeUTF(sanitizeString(btUrl));
 		dos.writeInt(locationProvider);
 		dos.writeUTF(sanitizeString(gpxUrl));
