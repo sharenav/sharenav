@@ -726,13 +726,13 @@ public class Configuration {
 
 	private final static String sanitizeString(String s) {
 		if (s == null) {
-			return Locale.get("configuration.nullexclmark")/*!null!*/;
+			return "!null!";
 		}
 		return s;
 	}
 	
 	private final static String desanitizeString(String s) {
-		if (s.equalsIgnoreCase(Locale.get("configuration.nullexclmark")/*!null!*/)) {
+		if (s.equalsIgnoreCase("!null!") || s.equalsIgnroeCase(Locale.get("configuration.nullexclmark")/*!null!*/)) {
 			return null;
 		}
 		return s;
