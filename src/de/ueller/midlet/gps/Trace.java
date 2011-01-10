@@ -3306,7 +3306,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			if (type == DISTANCE_UNKNOWN) {
 				return "???m";
 			}
-			if (Configuration.getCfgBitState(Configuration.CFGBIT_DISTANCE_VIEW)) {
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_DISTANCE_VIEW) && (type != DISTANCE_ALTITUDE)) {
 				if (meters >= 10000) {
 					return (int) meters / 1000 + "km";
 				} else if (meters < 1000) {
