@@ -74,6 +74,7 @@ import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.PositionMark;
 import de.ueller.midlet.gps.data.Projection;
+import de.ueller.midlet.gps.data.Proj3D;
 import de.ueller.midlet.gps.data.RoutePositionMark;
 import de.ueller.midlet.gps.data.SECellLocLogger;
 import de.ueller.midlet.gps.data.Way;
@@ -1405,7 +1406,12 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				return;
 			}
 			if (c == CMDS[TOGGLE_MAP_PROJ_CMD]) {
-				alert(Locale.get("trace.MapRotation")/*Map Rotation*/, ProjFactory.nextProj(), 750);
+				if (manualRotationMode) {
+					course = 0;
+					alert(Locale.get("trace.ManualRotation"), Locale.get("trace.ManualToNorth"), 750);
+				} else {
+					alert(Locale.get("trace.MapRotation")/*Map Rotation*/, ProjFactory.nextProj(), 750);
+				}
 				// redraw immediately
 				synchronized (this) {
 					if (imageCollector != null) {
@@ -3308,7 +3314,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			if (type == DISTANCE_UNKNOWN) {
 				return "???m";
 			}
-			if (Configuration.getCfgBitState(Configuration.CFGBIT_DISTANCE_VIEW)) {
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_DISTANCE_VIEW) && (type != DISTANCE_ALTITUDE)) {
 				if (meters >= 10000) {
 					return meters / 1000 + "km";
 				} else if (meters < 1000) {
