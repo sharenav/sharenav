@@ -1410,7 +1410,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					course = 0;
 					alert(Locale.get("trace.ManualRotation"), Locale.get("trace.ManualToNorth"), 750);
 				} else {
-					alert(Locale.get("trace.MapRotation")/*Map Rotation*/, ProjFactory.nextProj(), 750);
+					// FIXME rename string to generic
+					alert(Locale.get("guidiscover.MapProjection")/*Map Projection*/, ProjFactory.nextProj(), 750);
 				}
 				// redraw immediately
 				synchronized (this) {
