@@ -329,7 +329,7 @@
 				/>
 				
 				<deviceRequirements>
-					<requirement name="Identifier" value="Generic/editing" />
+					<requirement name="Identifier" value="Generic/multi" />
 				</deviceRequirements>
 				
 			    <!-- build settings -->
