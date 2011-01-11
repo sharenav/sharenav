@@ -493,7 +493,9 @@ public class Configuration {
 			btAutoRecon = (readInt(database, RECORD_ID_GPS_RECONNECT) !=0);
 			readPosition(database, startupPos, RECORD_ID_STARTUP_RADLAT, RECORD_ID_STARTUP_RADLON);
 			readPosition(database, destPos, RECORD_ID_DEST_RADLAT, RECORD_ID_DEST_RADLON);
-			setProjTypeDefault((byte) readInt(database,  RECORD_ID_MAP_PROJECTION));
+			projTypeDefault = (byte) readInt(database,  RECORD_ID_MAP_PROJECTION);
+			ProjFactory.setProj(projTypeDefault);
+			calculateRealBaseScale();
 			smsRecipient = readString(database, RECORD_ID_SMS_RECIPIENT);
 			speedTolerance = readInt(database, RECORD_ID_SPEED_TOLERANCE);
 			osm_username = readString(database, RECORD_ID_OSM_USERNAME);
