@@ -848,7 +848,7 @@ public class Configuration {
 		DataOutputStream dos = new DataOutputStream(os);
 		dos.writeInt(VERSION);
 		dos.writeLong(cfgBitsDefault_0_to_63);
-		dos.writeLong(cfgBitsDefault_64_to_127);
+		dos.writeLong(cfgBitsDefault_64_to_127 ^ 1L << CFGBIT_SAVED_DESTPOS_VALID;
 		dos.writeUTF(sanitizeString(btUrl));
 		dos.writeInt(locationProvider);
 		dos.writeUTF(sanitizeString(gpxUrl));
@@ -893,8 +893,11 @@ public class Configuration {
 		dos.writeUTF(sanitizeString(getWikipediaLang()));
 		dos.writeUTF(sanitizeString(getNamesOnMapLang()));
 		dos.writeUTF(sanitizeString(getSoundDirectory()));
+		/*
+		 * Don't store destpos in export - perhaps later add a function for "move the app" which would store also destpos
 		dos.writeUTF(Float.toString(destPos.radlat));
 		dos.writeUTF(Float.toString(destPos.radlon));
+		*/
 		dos.flush();
 	}
 	
@@ -953,12 +956,13 @@ public class Configuration {
 			setWikipediaLang(desanitizeString(dis.readUTF()));
 			setNamesOnMapLang(desanitizeString(dis.readUTF()));
 			setSoundDirectory(desanitizeString(dis.readUTF()));
+			/*
 			Node pos = new Node(0.0f, 0.0f);
 			try {
 				pos.radlat = Float.parseFloat(desanitizeString(dis.readUTF()));
 				pos.radlon = Float.parseFloat(desanitizeString(dis.readUTF()));
 			} catch (NumberFormatException nfe) {
-				logger.exception(Locale.get("configuration.ErrorParsingPos")/*Error parsing pos: */, nfe);
+				logger.exception(Locale.get("configuration.ErrorParsingPos")Error parsing pos: , nfe);
 			}
 			setDestPos(pos);
 			if (Configuration.getCfgBitState(Configuration.CFGBIT_SAVED_DESTPOS_VALID)) {
@@ -966,6 +970,7 @@ public class Configuration {
 				Configuration.getDestPos(destNode);
 				Trace.getInstance().setDestination(new RoutePositionMark(destNode.radlat, destNode.radlon));
 			}
+			*/
 		}
 	}
 	
