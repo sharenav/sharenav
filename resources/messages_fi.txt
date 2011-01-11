@@ -133,6 +133,7 @@ trace.left25=vasemmalle 25%
 trace.left2=vasemmalle 2
 trace.ManageTracks=Käsittele jälkiä
 trace.ManageWaypoints=Käsittele pisteitä
+trace.ManualToNorth=Pohjoiseen
 trace.ManualRotation=Kierto käsin
 trace.ManualRotation2=Kierto käsin
 trace.MapFeatures=Kartan ominaisuudet

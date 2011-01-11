@@ -1,7 +1,7 @@
 /*
  * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net
  * 			Copyright (c) 2008 Kai Krueger apmonkey at users dot sourceforge dot net
- * See COPYING
+ * See file COPYING.
  */
 
 package de.ueller.gps.nmea;
@@ -12,7 +12,7 @@ import java.util.TimeZone;
 import java.util.Vector;
 
 import de.ueller.gps.data.Position;
-import de.ueller.gps.data.Satelit;
+import de.ueller.gps.data.Satellite;
 import de.ueller.gps.tools.StringTokenizer;
 import de.ueller.midlet.gps.LocationMsgReceiver;
 import de.ueller.midlet.gps.Logger;
@@ -94,7 +94,7 @@ public class NmeaMessage {
 	/** Flag if last received message was GSV */
 	private boolean lastMsgGSV = false;
 	/** Array with information about the satellites */
-	private final Satelit satellites[] = new Satelit[12];
+	private final Satellite satellites[] = new Satellite[12];
 	/** The last received GPS time and date */
 	private Date dateDecode = new Date();
 	/** The last received position */
@@ -279,7 +279,7 @@ public class NmeaMessage {
 	            int noSatInView =(getIntegerToken((String)param.elementAt(3)));
 	            for (int i = 4; i < param.size() && j < 12; i += 4, j++) {
 	            	if (satellites[j] == null) {
-	            		satellites[j] = new Satelit();
+	            		satellites[j] = new Satellite();
 	            	}
 	            	satellites[j].id = getIntegerToken((String)param.elementAt(i));
 	            	satellites[j].elev = getIntegerToken((String)param.elementAt(i + 1));

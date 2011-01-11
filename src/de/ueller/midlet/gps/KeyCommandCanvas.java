@@ -102,7 +102,12 @@ public abstract class KeyCommandCanvas extends Canvas implements
 
 		long keyTime = System.currentTimeMillis();
 		// other key is held down
-		if ((keyTime - pressedKeyTime) >= 1000 && pressedKeyCode == keyCode) {
+		if ((keyTime - pressedKeyTime) >= 1000 && (pressedKeyCode == keyCode
+							   // special case for Nokia N95 & 6121c
+							   // which for some reason give -50 as keypress for long
+							   // press of # (35) _if_ a text entry field
+							   // has been used, the repeats are 35 though
+							   || (keyCode == KEY_POUND && pressedKeyCode == -50))) {
 			Command longC = (Command) longKeyPressCommand.get(keyCode);
 			// #debug debug
 			logger.debug("long key pressed " + keyCode + " executing command "

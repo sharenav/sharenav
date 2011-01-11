@@ -1,11 +1,11 @@
-package de.ueller.midlet.gps;
-
 /*
  * GpsMid - Copyright (c) 2008 Markus Baeurle mbaeurle at users dot sourceforge dot net
  * Drawing code moved from Trace.java, 
  * (c) Harald Mueller james22 at users dot sourceforge dot net 
- * See Copying
+ * See file COPYING.
  */
+
+package de.ueller.midlet.gps;
 
 import java.io.IOException;
 import javax.microedition.lcdui.Command;
@@ -19,7 +19,7 @@ import de.enough.polish.util.Locale;
 import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Position;
-import de.ueller.gps.data.Satelit;
+import de.ueller.gps.data.Satellite;
 import de.ueller.midlet.gps.GpsMid;
 
 public class GuiSatellites extends KeyCommandCanvas implements CommandListener,
@@ -36,7 +36,7 @@ public class GuiSatellites extends KeyCommandCanvas implements CommandListener,
 	
 	private String mSolution;
 
-	private Satelit[] mSatellites;
+	private Satellite[] mSatellites;
 
 	private Image mSatImage;
 
@@ -84,7 +84,7 @@ public class GuiSatellites extends KeyCommandCanvas implements CommandListener,
 			return;
 		}
 		for (byte i = 0; i < mSatellites.length; i++) {
-			Satelit s = mSatellites[i];
+			Satellite s = mSatellites[i];
 			if (s == null) {
 				continue; //This array may be sparsely filled.
 			}
@@ -137,7 +137,7 @@ public class GuiSatellites extends KeyCommandCanvas implements CommandListener,
 		// Not interested
 	}
 
-	public void receiveSatellites(Satelit[] sats) {
+	public void receiveSatellites(Satellite[] sats) {
 		mSatellites = sats;
 		repaint();
 	}

@@ -41,6 +41,7 @@ import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.ProjFactory;
 import de.ueller.midlet.gps.routing.TravelMode;
+import de.ueller.midlet.gps.data.RoutePositionMark;
 
 import de.enough.polish.util.Locale;
 
@@ -56,7 +57,7 @@ public class Configuration {
 	 *  the default values for the features added between configVersionStored
 	 *  and VERSION will be set, before the version in the recordstore is increased to VERSION.
 	 */
-	public final static int VERSION = 21;
+	public final static int VERSION = 22;
 
 	public final static int LOCATIONPROVIDER_NONE = 0;
 	public final static int LOCATIONPROVIDER_SIRF = 1;
@@ -492,7 +493,9 @@ public class Configuration {
 			btAutoRecon = (readInt(database, RECORD_ID_GPS_RECONNECT) !=0);
 			readPosition(database, startupPos, RECORD_ID_STARTUP_RADLAT, RECORD_ID_STARTUP_RADLON);
 			readPosition(database, destPos, RECORD_ID_DEST_RADLAT, RECORD_ID_DEST_RADLON);
-			setProjTypeDefault((byte) readInt(database,  RECORD_ID_MAP_PROJECTION));
+			projTypeDefault = (byte) readInt(database,  RECORD_ID_MAP_PROJECTION);
+			ProjFactory.setProj(projTypeDefault);
+			calculateRealBaseScale();
 			smsRecipient = readString(database, RECORD_ID_SMS_RECIPIENT);
 			speedTolerance = readInt(database, RECORD_ID_SPEED_TOLERANCE);
 			osm_username = readString(database, RECORD_ID_OSM_USERNAME);
@@ -725,13 +728,13 @@ public class Configuration {
 
 	private final static String sanitizeString(String s) {
 		if (s == null) {
-			return Locale.get("configuration.nullexclmark")/*!null!*/;
+			return "!null!";
 		}
 		return s;
 	}
 	
 	private final static String desanitizeString(String s) {
-		if (s.equalsIgnoreCase(Locale.get("configuration.nullexclmark")/*!null!*/)) {
+		if (s.equalsIgnoreCase("!null!") || s.equalsIgnoreCase(Locale.get("configuration.nullexclmark")/*!null!*/)) {
 			return null;
 		}
 		return s;
@@ -846,8 +849,8 @@ public class Configuration {
 	public static void serialise(OutputStream os) throws IOException {
 		DataOutputStream dos = new DataOutputStream(os);
 		dos.writeInt(VERSION);
-		dos.writeLong(cfgBits_0_to_63);
-		dos.writeLong(cfgBits_64_to_127);
+		dos.writeLong(cfgBitsDefault_0_to_63);
+		dos.writeLong(cfgBitsDefault_64_to_127);
 		dos.writeUTF(sanitizeString(btUrl));
 		dos.writeInt(locationProvider);
 		dos.writeUTF(sanitizeString(gpxUrl));
@@ -876,16 +879,40 @@ public class Configuration {
 		dos.writeUTF(sanitizeString(osm_pwd));
 		dos.writeUTF(sanitizeString(osm_url));
 		dos.writeUTF(sanitizeString(opencellid_apikey));
+		dos.writeInt(getMinRouteLineWidth());
+		dos.writeInt(getAutoRecenterToGpsMilliSecs());
+		dos.writeInt(getTravelModeNr());
+		dos.writeLong(getPhoneAllTimeMaxMemory());
+		dos.writeInt(getMainStreetDistanceKm());
+		dos.writeInt(getDetailBoostPOI());
+		dos.writeInt(getTrafficSignalCalcDelay());
+		dos.writeInt(getWaypointSortMode());
+		dos.writeInt(getBackLightLevel());
+		dos.writeInt(getBaseScale());
+		dos.writeUTF(sanitizeString(getUiLang()));
+		dos.writeUTF(sanitizeString(getNaviLang()));
+		dos.writeUTF(sanitizeString(getOnlineLang()));
+		dos.writeUTF(sanitizeString(getWikipediaLang()));
+		dos.writeUTF(sanitizeString(getNamesOnMapLang()));
+		dos.writeUTF(sanitizeString(getSoundDirectory()));
+		/*
+		 * Don't store destpos in export - perhaps later add a function for "move the app" which would store also destpos
+		dos.writeUTF(Float.toString(destPos.radlat));
+		dos.writeUTF(Float.toString(destPos.radlon));
+		*/
 		dos.flush();
 	}
 	
 	public static void deserialise(InputStream is) throws IOException {
 		DataInputStream dis = new DataInputStream(is);
 		int version = dis.readInt();
-		if (version != VERSION) {
+		// compatibility with versions 21 and 22
+		if (version != VERSION && !(version >= 21 && version <= 22)) {
 			throw new IOException(Locale.get("configuration.ConfigVersionMismatch")/*Version of the stored config does not match with current GpsMid*/);
 		}
+		boolean destPosValid = getCfgBitSavedState(CFGBIT_SAVED_DESTPOS_VALID);
 		setCfgBits(dis.readLong(), dis.readLong());
+		setCfgBitSavedState(CFGBIT_SAVED_DESTPOS_VALID, destPosValid);
 		setBtUrl(desanitizeString(dis.readUTF()));
 		setLocationProvider(dis.readInt());
 		setGpxUrl(desanitizeString(dis.readUTF()));
@@ -915,6 +942,40 @@ public class Configuration {
 		setOsmPwd(desanitizeString(dis.readUTF()));
 		setOsmUrl(desanitizeString(dis.readUTF()));
 		setOpencellidApikey(desanitizeString(dis.readUTF()));
+		// compatibility with format 21
+		if (version >= 22) {
+			setMinRouteLineWidth(dis.readInt());
+			setAutoRecenterToGpsMilliSecs(dis.readInt());			
+			setTravelMode(dis.readInt());
+			setPhoneAllTimeMaxMemory(dis.readLong());
+			setMainStreetDistanceKm(dis.readInt());
+			setDetailBoostPOI(dis.readInt(), true);
+			setTrafficSignalCalcDelay(dis.readInt());
+			setWaypointSortMode(dis.readInt());
+			setBackLightLevel(dis.readInt());
+			setBaseScale(dis.readInt());
+			setUiLang(desanitizeString(dis.readUTF()));
+			setNaviLang(desanitizeString(dis.readUTF()));
+			setOnlineLang(desanitizeString(dis.readUTF()));
+			setWikipediaLang(desanitizeString(dis.readUTF()));
+			setNamesOnMapLang(desanitizeString(dis.readUTF()));
+			setSoundDirectory(desanitizeString(dis.readUTF()));
+			/*
+			Node pos = new Node(0.0f, 0.0f);
+			try {
+				pos.radlat = Float.parseFloat(desanitizeString(dis.readUTF()));
+				pos.radlon = Float.parseFloat(desanitizeString(dis.readUTF()));
+			} catch (NumberFormatException nfe) {
+				logger.exception(Locale.get("configuration.ErrorParsingPos")Error parsing pos: , nfe);
+			}
+			setDestPos(pos);
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_SAVED_DESTPOS_VALID)) {
+				Node destNode = new Node();
+				Configuration.getDestPos(destNode);
+				Trace.getInstance().setDestination(new RoutePositionMark(destNode.radlat, destNode.radlon));
+			}
+			*/
+		}
 	}
 	
 	public static String getGpsRawLoggerUrl() {

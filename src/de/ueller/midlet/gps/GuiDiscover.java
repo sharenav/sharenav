@@ -459,6 +459,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		nightModeGroup = new ChoiceGroup(Locale.get("guidiscover.Colors")/*Colors*/, Choice.EXCLUSIVE, nightMode, null);
 		menuDisplayOptions.append(nightModeGroup);
 
+		// FIXME rename string to generic
 		rotationGroup = new ChoiceGroup(Locale.get("guidiscover.MapProjection")/*Map Projection*/, Choice.EXCLUSIVE, Configuration.projectionsString, null);
 		menuDisplayOptions.append(rotationGroup);
 

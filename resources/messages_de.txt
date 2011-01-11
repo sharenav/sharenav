@@ -1050,6 +1050,7 @@ trace.ManageTracks=GPS-Aufz. verwalten
 trace.ManageWaypoints=Wegpunkte verwalten
 trace.ManualRotation=manuelle Drehung
 trace.ManualRotation2=manueller Drehmodus
+trace.ManualToNorth=N eingestellt
 trace.MapFeatures=Karteneinstellungen
 trace.MapRotation=Kartenausrichtung
 trace.Menu=Menü
