@@ -36,7 +36,7 @@
 	 e.g. "ant clean", "ant test j2mepolish" or just "ant" for calling the default target -->
 
 	<target name="set_test_device" unless="gpsmid.test_device">
-		<property name="gpsmid.test_device" value="Generic/multi"/>
+		<property name="gpsmid.test_device" value="Generic/full"/>
 	</target>
 	
 	<target name="test" 
