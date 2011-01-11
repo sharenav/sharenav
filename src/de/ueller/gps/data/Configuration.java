@@ -848,7 +848,7 @@ public class Configuration {
 		DataOutputStream dos = new DataOutputStream(os);
 		dos.writeInt(VERSION);
 		dos.writeLong(cfgBitsDefault_0_to_63);
-		dos.writeLong(cfgBitsDefault_64_to_127 ^ 1L << CFGBIT_SAVED_DESTPOS_VALID;
+		dos.writeLong(cfgBitsDefault_64_to_127 ^ 1L << CFGBIT_SAVED_DESTPOS_VALID);
 		dos.writeUTF(sanitizeString(btUrl));
 		dos.writeInt(locationProvider);
 		dos.writeUTF(sanitizeString(gpxUrl));
