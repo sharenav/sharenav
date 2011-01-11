@@ -848,7 +848,7 @@ public class Configuration {
 		DataOutputStream dos = new DataOutputStream(os);
 		dos.writeInt(VERSION);
 		dos.writeLong(cfgBitsDefault_0_to_63);
-		dos.writeLong(cfgBitsDefault_64_to_127 ^ 1L << CFGBIT_SAVED_DESTPOS_VALID);
+		dos.writeLong(cfgBitsDefault_64_to_127);
 		dos.writeUTF(sanitizeString(btUrl));
 		dos.writeInt(locationProvider);
 		dos.writeUTF(sanitizeString(gpxUrl));
@@ -908,7 +908,9 @@ public class Configuration {
 		if (version != VERSION && !(version >= 21 && version <= 22)) {
 			throw new IOException(Locale.get("configuration.ConfigVersionMismatch")/*Version of the stored config does not match with current GpsMid*/);
 		}
+		boolean destPosValid = getCfgBitSavedState(CFGBIT_SAVED_DESTPOS_VALID);
 		setCfgBits(dis.readLong(), dis.readLong());
+		setCfgBitSavedState(CFGBIT_SAVED_DESTPOS_VALID, destPosValid);
 		setBtUrl(desanitizeString(dis.readUTF()));
 		setLocationProvider(dis.readInt());
 		setGpxUrl(desanitizeString(dis.readUTF()));
