@@ -2196,7 +2196,11 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		}
 		// if tl shows big onscreen buttons add spaces to compass directions consisting of only one char or not shown
 		if (tl.bigOnScreenButtons && c.length() <= 1) {
+			if (ProjFactory.getProj() == ProjFactory.NORTH_UP) {
+				c = "(" + Configuration.getCompassDirection(0) + ")";
+			} else {
 				c = " " + c + " ";
+			}
 		}
 		tl.ele[TraceLayout.POINT_OF_COMPASS].setText(c);
 	}
