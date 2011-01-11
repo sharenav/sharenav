@@ -11,14 +11,15 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  * 
- * See Copying
+ * See file COPYING.
  */
+
 package de.ueller.midlet.gps;
 
 import java.util.Enumeration;
 import java.util.Vector;
 import de.ueller.gps.data.Position;
-import de.ueller.gps.data.Satelit;
+import de.ueller.gps.data.Satellite;
 
 /**
  * Wrapper that wraps a List of LocationMsgReceivers in a way that Classes can
@@ -34,7 +35,7 @@ public class LocationMsgReceiverList implements LocationMsgReceiver {
 	/**
 	 * Vector of all the LocationMsgReceivers
 	 */
-	private Vector receiverList;
+	private final Vector receiverList;
 	
 	private volatile String currentSolution = ""; 
 
@@ -92,7 +93,7 @@ public class LocationMsgReceiverList implements LocationMsgReceiver {
 		return currentSolution;
 	}
 
-	public void receiveSatellites(Satelit[] sats) {
+	public void receiveSatellites(Satellite[] sats) {
 		Enumeration en = receiverList.elements();
 		LocationMsgReceiver receiver;
 		while (en.hasMoreElements()) {

@@ -11,8 +11,9 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  * 
- * See COPYING
+ * See file COPYING.
  */
+
 package de.ueller.midlet.gps.data;
 
 import java.io.IOException;
@@ -28,7 +29,7 @@ import javax.microedition.io.file.FileConnection;
 import javax.microedition.lcdui.Alert;
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Position;
-import de.ueller.gps.data.Satelit;
+import de.ueller.gps.data.Satellite;
 import de.ueller.gps.tools.HelperRoutines;
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.LocationMsgReceiver;
@@ -37,14 +38,12 @@ import de.ueller.midlet.gps.Logger;
 import de.enough.polish.util.Locale;
 
 /**
- * 
  * The SECellLocLogger is a LocationMsgReceiver that listens to location updates
  * and if the location has changed significantly saves a location and cell id to
  * a text file. This can then be used to upload to openCellId.org to help fill
  * their database with cell tower locations.
  * 
  * This currently only works for Sony Ericsson JP-7.3 and later phones.
- * 
  */
 public class SECellLocLogger implements LocationMsgReceiver {
 
@@ -257,7 +256,7 @@ public class SECellLocLogger implements LocationMsgReceiver {
 		}
 	}
 
-	public void receiveSatellites(Satelit[] sats) {
+	public void receiveSatellites(Satellite[] sats) {
 		// Nothing to do
 	}
 

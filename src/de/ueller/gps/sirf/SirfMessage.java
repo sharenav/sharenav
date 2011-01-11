@@ -1,20 +1,12 @@
-/**
- * SirfDecoder
- * 
- * takes an InputStream and interpret layer 3 and layer 4. Than make
- * callbacks to the receiver witch has to implement SirfMsgReceiver 
- *
- * @version $Revision$$ ($Name$)
- * @autor Harald Mueller james22 at users dot sourceforge dot net
- * Copyright (C) 2007 Harald Mueller
+/*
+ * GpsMid - Copyright (c) 2007 Harald Mueller james22 at users dot sourceforge dot net
+ * See file COPYING.
  */
+
 package de.ueller.gps.sirf;
 
-import java.util.Date;
-
-
 import de.ueller.gps.data.Position;
-import de.ueller.gps.data.Satelit;
+import de.ueller.gps.data.Satellite;
 import de.ueller.midlet.gps.LocationMsgReceiver;
 import de.ueller.midlet.gps.Logger;
 
@@ -110,7 +102,7 @@ public class SirfMessage {
 
 	private String decodeMeasuredTrackerDataOut() {
 		int anz = getByte(7);
-		Satelit sats[] = new Satelit[anz];
+		Satellite sats[] = new Satellite[anz];
 		for (int l = 0; l < anz; l++) {
 			sats[l] = decode1sMeasuredTrackerDataOut(8 + l * 15);
 		}
@@ -120,13 +112,13 @@ public class SirfMessage {
 
 	}
 
-	private Satelit decode1sMeasuredTrackerDataOut(int i) {
-		Satelit s=new Satelit();
-		s.id=getByte(i++);
-		s.azimut=getByte(i++)*1.5f;
-		s.elev=getByte(i++)/2f;
-		s.state=get2ByteUnsigned(i);
-		i+=2;
+	private Satellite decode1sMeasuredTrackerDataOut(int i) {
+		Satellite s = new Satellite();
+		s.id = getByte(i++);
+		s.azimut = getByte(i++)*1.5f;
+		s.elev = getByte(i++)/2f;
+		s.state = get2ByteUnsigned(i);
+		i += 2;
 		// take only the first of the signal to noise ratio
 		s.snr = getByte(i++);
 		return s;
