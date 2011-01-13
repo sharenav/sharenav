@@ -585,6 +585,7 @@ public class Configuration {
 			setContinueMapWhileRouteing(continueMap_At_Route_Line_Creation);
 			setRouteEstimationFac(7);
 			// set photo encoding to image/jpeg if available
+			//#if polish.api.mmapi
 			String encodings = null;
 			try {
 				encodings = System.getProperty("video.snapshot.encodings");
@@ -604,6 +605,7 @@ public class Configuration {
 					}
 				}
 			}
+			//#endif
 			// set default location provider to JSR-179 if available
 			//#if polish.api.locationapi
 			if (getDeviceSupportsJSR179()) {
