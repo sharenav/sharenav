@@ -294,7 +294,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	private GuiTrip guiTrip = null;
 	private GuiSatellites guiSatellites = null;
 	private GuiWaypointSave guiWaypointSave = null;
-	private GuiWaypointPredefined guiWaypointPredefined = null;
+	private final GuiWaypointPredefined guiWaypointPredefined = null;
 	private static TraceIconMenu traceIconMenu = null;
 	
 	private final static Logger logger = Logger.getInstance(Trace.class, Logger.DEBUG);
@@ -1171,6 +1171,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 								/* sats */ (byte)-1, /* sym */ (byte)-1,
 								/* type */ (byte)-1);
 					}
+					/*
 					if (Configuration.getCfgBitState(Configuration.CFGBIT_WAYPT_OFFER_PREDEF)) {
         				if (guiWaypointPredefined == null) {
         					guiWaypointPredefined = new GuiWaypointPredefined(this);
@@ -1180,8 +1181,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
         					guiWaypointPredefined.show();
         				}
 					} else {
+					*/
 						showGuiWaypointSave(posMark);
-					}
+					//}
 				}
 				return;
 			}
