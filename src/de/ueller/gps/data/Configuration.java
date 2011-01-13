@@ -562,6 +562,7 @@ public class Configuration {
 			   			1L << CFGBIT_AREATEXTS |
 			   			1L << CFGBIT_WPTTEXTS |
 			   			// 1L << CFGBIT_WAYTEXTS | // way texts are still experimental
+			   			1L << CFGBIT_ADD_EXIF |
 			   			1L << CFGBIT_ONEWAY_ARROWS |
 			   			1L << CFGBIT_POIS |
 			   			1L << CFGBIT_AUTOSAVE_MAPPOS;
@@ -583,6 +584,26 @@ public class Configuration {
 			// Routing defaults
 			setContinueMapWhileRouteing(continueMap_At_Route_Line_Creation);
 			setRouteEstimationFac(7);
+			// set photo encoding to image/jpeg if available
+			String encodings = null;
+			try {
+				encodings = System.getProperty("video.snapshot.encodings");
+				logger.debug("Encodings: " + encodings); 
+			} catch (Exception e) {
+				logger.info("Device does not support the encoding property");
+			}
+			String [] encStrings = new String[0];
+			String setEnc = "encoding=image/jpeg";
+			if (encodings != null) {
+				encStrings = StringTokenizer.getArray(encodings, " ");
+				for (int i = 0; i < encStrings.length; i++) {
+					logger.debug("Enc: " + encStrings[i]);
+					if (setEnc.equalsIgnoreCase(encStrings[i])) {
+						setPhotoEncoding(setEnc);
+						logger.debug("Set Enc: " + encStrings[i]);
+					}
+				}
+			}
 			// set default location provider to JSR-179 if available
 			//#if polish.api.locationapi
 			if (getDeviceSupportsJSR179()) {
