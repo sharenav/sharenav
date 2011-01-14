@@ -552,6 +552,8 @@ guigpx.TrackPlayer=Jäljentoistaja
 guigpx.Tracks=jälkeä
 guigpx.Undisplay=Poista näytöltä
 guigpx.UndispLoadedTracks=Poista ladatut näytöltä
+gpx.Exporting=Vien 
+gpx.Finished=Valmis!
 suncalc.date=päiväys=
 suncalc.latitude=leveys=
 suncalc.longitude=pituus=
@@ -639,7 +641,7 @@ guicamera.SavingPhoto=Talletan kuvaa...
 guicamera.SelectDir=Valitse hakemisto
 guicamera.SelectEncoding=Valitse koodaus: 
 guicamera.Setup=Asetukset
-guicamera.store=talleta: 
+guicamera.store=talletuspaikka: 
 polish.command.ok=OK
 polish.command.cancel=Peru
 polish.command.select=Valitse
