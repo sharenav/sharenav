@@ -50,8 +50,8 @@ GpsMid 0.7
       This will include the Finnish sound files into GpsMid (thx jkpj)
     - English and German eSpeak voices now sound a bit more friendly   	     	   
     *** Localization of on-screen messages ***
-    - Translaton of some on-screen messages into Czech, Slovak, Finnish and German,
-      to a smaller degree to French, Italian, Portugese and Russian.
+    - Translaton of many on-screen messages into Czech, Slovak, Finnish, German
+      and Russian, to a smaller degree to French, Italian and Portugese.
       When building with the Osm2GpsMid GUI (wizard), the languages will have
       en estimate of how complete the translations are. The rough scale is:
       5: Complete or almost complete

@@ -226,7 +226,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		"French(1)",
 		"Italian(2)",
 		"Portugese(2)",
-		"Russian(1)",
+		"Russian(4)",
 		"Slovak(5)"
 	};
 	JCheckBox languages[] = new JCheckBox[langList.length];
