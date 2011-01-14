@@ -2124,10 +2124,6 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	 */
 	private void getPC() {
 			pc.course = course;
-			if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION) && compassProducer != null) {
-				pc.course = compassDeviated;
-			}
-
 			pc.scale = scale;
 			pc.center = center.copy();
 //			pc.setP( projection);
@@ -2193,8 +2189,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		String c = "";
 		if (ProjFactory.getProj() != ProjFactory.NORTH_UP
 				&& Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_POINT_OF_COMPASS)) {
-			c = Configuration.getCompassDirection((Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION)
-							       && compassProducer != null) ? compassDeviated : course);
+			c = Configuration.getCompassDirection(course);
 		}
 		// if tl shows big onscreen buttons add spaces to compass directions consisting of only one char or not shown
 		if (tl.bigOnScreenButtons && c.length() <= 1) {
@@ -2316,7 +2311,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				posY = centerY;
 			}
 			g.setColor(Legend.COLORS[Legend.COLOR_MAP_POSINDICATOR]);
-			float radc = ((Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION) && compassProducer != null) ? compassDeviated : course) * MoreMath.FAC_DECTORAD;
+			float radc = course * MoreMath.FAC_DECTORAD;
 			
 			int px = posX + (int) (Math.sin(radc) * 20);
 			int py = posY - (int) (Math.cos(radc) * 20);
@@ -2430,9 +2425,6 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		if (pc != null) {
 			pc.center = center.copy();
 			pc.scale = scale;
-			if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION) && compassProducer != null) {
-				course = compassDeviated;
-			}
 			pc.course=course;
 			repaint();
 			
@@ -2468,6 +2460,12 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		logger.debug("Got compass reading: " + direction);
 		this.compassDirection = (int) direction;
 		this.compassDeviated = ((int) direction + compassDeviation + 360) % 360;
+		// FIXME add auto-fallback mode where course is from GPS at high speeds and from compass
+		// at low speeds
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION) && compassProducer != null) {
+			course = compassDeviated;
+		}
+		updateCourse(course);
 		repaint();
 	}
 
@@ -2479,6 +2477,23 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		return System.currentTimeMillis() - lastUserActionTime;
 	}
 	
+	public void updateCourse(int newcourse) {
+		/*  don't rotate too fast
+		 */
+		if ((newcourse - course)> 180) {
+			course = course + 360;
+		}
+                                                              
+		if ((course-newcourse)> 180) {
+			newcourse = newcourse + 360;
+		}
+                                                 
+		course = course + ((newcourse - course)*1)/4 + 360;
+		while (course > 360) {
+			course -= 360;
+		}
+	}
+
 	public synchronized void receivePosition(Position pos) {
 		// FIXME signal on location gained
 		//#debug info
@@ -2511,22 +2526,14 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		if (gpsRecenter) {
 			center.setLatLonDeg(pos.latitude, pos.longitude);
 			speed = (int) (pos.speed * 3.6f);
-			if (speed > 2 && pos.course != Float.NaN) {
-				/*  don't rotate too fast
-				 */
-				coursegps = (int) pos.course;
-				if ((coursegps - course)> 180) {
-					course = course + 360;
-				}
-                                                              
-				if ((course-coursegps)> 180) {
-					coursegps = coursegps + 360;
-				}
-                                                 
-				course = course + ((coursegps - course)*1)/4 + 360;
-				while (course > 360) {
-					course -= 360;
-				}
+			course = (int) pos.course;
+			// FIXME add auto-fallback mode where course is from GPS at high speeds and from compass
+			// at low speeds
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION) && compassProducer != null) {
+				course = compassDeviated;
+			}
+			if (speed > 2 && pos.course != Float.NaN ) {
+				updateCourse(course);
 			}
 		}
 		if (gpx.isRecordingTrk()) {
@@ -3027,9 +3034,6 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				pc.center = center.copy();
 				pc.scale = scale;
 				pc.course = course;
-				if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION) && compassProducer != null) {
-					pc.course = compassDeviated;
-				}
 			}
 		}
 		updatePosition();
