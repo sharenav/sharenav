@@ -826,7 +826,7 @@ public class Configuration {
 		 * @return File name
 		 */
 		public String getMapFileName() {
-			return getMapName() + "-" + getVersion() + ".zip";
+			return getMapName() + "-" + getVersion() + "-map" + MAP_FORMAT_VERSION + ".zip";
 		}
 		
 		/** Allows to set the name of the base Midlet (e.g. GpsMid-Generic-multi).
