@@ -61,8 +61,10 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 	private final Command OK_CMD = new Command(Locale.get("generic.OK")/*Ok*/, Command.OK, 5);
 	private final Command CAPTURE_CMD = new Command(Locale.get("guicamera.Capture")/*Capture*/, Command.OK, 5);
 	private final Command STORE_CMD = new Command(Locale.get("guicamera.SelectDir")/*Select directory*/, Command.ITEM, 5);
-	private final Command SETUP_CMD = new Command(Locale.get("guicamera.Setup")/*Setup*/, Command.ITEM, 6);
+	public final Command SETUP_CMD = new Command(Locale.get("guicamera.Setup")/*Setup*/, Command.ITEM, 6);
 	
+	private volatile static GuiCamera instance;
+
 	private final static Logger logger = Logger.getInstance(GuiCamera.class,
 			Logger.DEBUG);
 	//#if polish.api.mmapi	
@@ -73,7 +75,11 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 	//#endif
 	//#endif
 	private String encoding;
+	// if parent == null, called from GuiDiscover
+	// FIXME Maybe can be simplifies with setting up a simple setup/init GpsMidDiscoverable instead of separate
+	// Trace and GuiDiscover variables
 	private Trace parent;
+	private GuiDiscover setupParent;
 	private String basedirectory;
 	
 	private ChoiceGroup selectJsrCG;
@@ -90,6 +96,11 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 		setCommandListener(this);
 		setUpCamera();
 		setFullScreenMode(Configuration.getCfgBitState(Configuration.CFGBIT_FULLSCREEN));
+		instance = this;
+	}
+
+	public static GuiCamera getInstance() {
+		return instance;
 	}
 
 	/*
@@ -387,7 +398,12 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 				//#endif
 				parent.show();
 			} else {
-				this.show();
+				if (parent == null) {
+					// return to setup
+					setupParent.show();
+				} else {
+					this.show();
+				}
 			}
 		}
 		//#if polish.api.mmapi
@@ -396,11 +412,20 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 				logger.error(Locale.get("guicamera.SelectDirFirst")/*You need to select a directory where to save first*/);
 				return;
 			}
-			takePicture();
+			if (parent != null) {
+				takePicture();
+			}
 		}
 		if (c == STORE_CMD) {
 			//#if polish.api.fileConnection
-			new FsDiscover(this,this,basedirectory,FsDiscover.CHOOSE_DIRONLY,null,"Media Store Directory");
+				if (parent == null) {
+					// return to setup
+					setupParent.show();
+				} else {
+					this.show();
+				}
+				new FsDiscover(parent == null ? (GpsMidDisplayable) setupParent : (GpsMidDisplayable) this,
+					       this, basedirectory,FsDiscover.CHOOSE_DIRONLY,null,"Media Store Directory");
 			//#endif
 		}
 		if (c == SETUP_CMD) {
@@ -516,7 +541,12 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 				encType = encodingTF.getString();
 			Configuration.setPhotoEncoding(encType);
 			
-			this.show();
+			if (parent == null) {
+				// return to setup
+				setupParent.show();
+			} else {
+				this.show();
+			}
 		}
 		//#endif
 	}
@@ -605,6 +635,13 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 		
 		
 		return newImage;
+	}
+
+	public void setup(GuiDiscover parent) {
+		GpsMid.getInstance().show(this);
+		this.parent = null;
+		setupParent = parent;
+		commandAction(SETUP_CMD, (Displayable) this);
 	}
 
 	public void show() {

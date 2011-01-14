@@ -32,6 +32,8 @@ public class GuiDiscoverIconMenu extends IconMenuWithPagesGUI {
 			mp.createAndAddIcon(Locale.get("guidiscovericonmenu.Export")/*Export*/, "is_export", GuiDiscover.MENU_ITEM_GPX_DEVICE);
 
 			mp.createAndAddIcon(Locale.get("guidiscovericonmenu.Online")/*Online*/, "i_online", GuiDiscover.MENU_ITEM_ONLINE_OPT);
+			//FIXME use generic string
+			mp.createAndAddIcon(Locale.get("trace.Camera")/*Camera*/, "i_photo", GuiDiscover.MENU_ITEM_CAMERA_OPT);
 
 			mp.createAndAddIcon(Locale.get("generic.Back")/*Back*/, "is_back", IconActionPerformer.BACK_ACTIONID);
 			
