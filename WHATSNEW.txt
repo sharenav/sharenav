@@ -102,6 +102,9 @@ GpsMid 0.7
     - External zip file or directory maps are the simple & recommended way to use GpsMid on Android
     - Bundling can be used with scripts in tools
 	- Most stuff works, voice recording & camera don't work yet
+    - Shall be considered "first version" - basic stuff works, but there's much which isn't
+      polished, and the UI is not at all Android-like. Later versions hopefully will
+      be improved.
     *** Usability ***
     - Way point list can be sorted by time, distance or alphabetically.
     - Menu to quickly enter predefined way point texts. These are hardcoded but in the
