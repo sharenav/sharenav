@@ -918,6 +918,7 @@ public class Configuration {
 		dos.writeUTF(sanitizeString(getWikipediaLang()));
 		dos.writeUTF(sanitizeString(getNamesOnMapLang()));
 		dos.writeUTF(sanitizeString(getSoundDirectory()));
+		dos.writeInt(getProjDefault());
 		/*
 		 * Don't store destpos in export - perhaps later add a function for "move the app" which would store also destpos
 		dos.writeUTF(Float.toString(destPos.radlat));
@@ -983,6 +984,9 @@ public class Configuration {
 			setWikipediaLang(desanitizeString(dis.readUTF()));
 			setNamesOnMapLang(desanitizeString(dis.readUTF()));
 			setSoundDirectory(desanitizeString(dis.readUTF()));
+			projTypeDefault = (byte) dis.readInt();
+			ProjFactory.setProj(projTypeDefault);
+			calculateRealBaseScale();
 			/*
 			Node pos = new Node(0.0f, 0.0f);
 			try {
