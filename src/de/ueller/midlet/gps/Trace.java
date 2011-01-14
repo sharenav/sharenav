@@ -1409,7 +1409,11 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			}
 			if (c == CMDS[TOGGLE_MAP_PROJ_CMD]) {
 				if (manualRotationMode) {
-					course = 0;
+					if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION) && compassProducer != null) {
+						compassDeviation = 0;
+					} else {
+						course = 0;
+					}
 					alert(Locale.get("trace.ManualRotation"), Locale.get("trace.ManualToNorth"), 750);
 				} else {
 					// FIXME rename string to generic
