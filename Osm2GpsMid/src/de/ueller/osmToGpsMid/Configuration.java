@@ -600,7 +600,8 @@ public class Configuration {
 			setSounds(getString("useSounds"));
 
 			// don't override map source set by command line with one from .properties
-			if (planet == null || planet.equals("")) {
+			// also don't override one set by GUI with an empty one from properties
+			if ((planet == null || planet.equals("")) && !getString("mapSource").equals("")) {
 				setPlanetName(getString("mapSource"));
 			}
 
@@ -945,7 +946,7 @@ public class Configuration {
 		public InputStream getPlanetSteam() throws IOException {
 			InputStream fr = null;
 			if (planet.equals("")) {
-				System.out.println("Error: Map source not set - set in .properties or with command line");
+				System.out.println("Error: Map source not set - please set with GUI or in .properties or with command line");
 				throw new IOException("Error: Map source not set");
 			}
 			if (planet.equalsIgnoreCase("osmxapi") || planet.equalsIgnoreCase("ROMA")) {

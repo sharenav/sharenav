@@ -919,8 +919,6 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			String propName = jPropFileChooser.getSelectedFile().getAbsolutePath();
 			try {
 				System.out.println("Loading properties specified by GUI: " + propName);
-				// reset planet file so it will be read from config
-				config.setPlanetName("");
 				config.loadPropFile(new FileInputStream(propName));
 				config.readBounds();
 			} catch (IOException ioe) {
@@ -1283,8 +1281,6 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 				// Entries added by askPropFile() have a full path name
 				try {
 					System.out.println("Loading properties from last.properties");
-					// reset planet file so it will be read from config
-					config.setPlanetName("");
 					config.loadPropFile(new FileInputStream("last.properties"));
 					config.readBounds();
 				} catch (IOException ioe) {
@@ -1301,8 +1297,6 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 				try {
 					System.out.println("Loading properties specified by GUI: " +
 							chosenProperty);
-					// reset planet file so it will be read from config
-					config.setPlanetName("");
 					config.loadPropFile(new FileInputStream(chosenProperty));
 					config.readBounds();
 				} catch (IOException ioe) {
@@ -1320,8 +1314,6 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 					if (is == null) {
 						throw new IOException("Properties file could not be opened.");
 					}
-					// reset planet file so it will be read from config
-					config.setPlanetName("");
 					config.loadPropFile(is);
 					config.readBounds();
 				} catch (IOException ioe) {
