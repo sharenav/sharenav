@@ -705,3 +705,4 @@ guiosmwaydisplay.maxspeed30mph=maxspeed=30 mph
 guiosmwaydisplay.ReverseDirection=Käännä suunta
 guiosmwaydisplay.TaggingPresets=Esivalintatägit
 guiosmwaydisplay.Way=tie
+routeinstructions.Offset=ero:
