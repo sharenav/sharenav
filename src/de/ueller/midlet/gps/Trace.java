@@ -2462,15 +2462,11 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	public synchronized void receiveCompass(float direction) {
 		//#debug debug
 		logger.debug("Got compass reading: " + direction);
-		this.compassDirection = (int) direction;
-		this.compassDeviated = ((int) direction + compassDeviation + 360) % 360;
-		// FIXME on Android phones, compass readings seem to come in quite often, so we don't
-		// set course here (but only on reception of GPS position) to let map drawing keep
-		// in sync with direction. The thing with this is that if for whatever reason
-		// no GPS positions are coming in, direction is not udated automatically. Considering
-		// opinion on UI this may be a good or a bad thing. Recenter however triggers orientation
-		// update.
-		if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION) && compassProducer != null) {
+		compassDirection = (int) direction;
+		compassDeviated = ((int) direction + compassDeviation + 360) % 360;
+		// TODO: allow for user to use compass for turning the map in panning mode
+		// (gpsRenter test below switchable by user setting)
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION) && compassProducer != null && gpsRecenter) {
 			updateCourse(compassDeviated);
 			//repaint();
 		}
@@ -2551,7 +2547,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			// at low speeds
 			if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION) && compassProducer != null) {
 				updateCourse(compassDeviated);
-			} else if (speed > 2 && pos.course != Float.NaN ) {
+			} else if (speed >= 3 && pos.course != Float.NaN ) {
 				updateCourse((int) pos.course);
 			}
 		}
