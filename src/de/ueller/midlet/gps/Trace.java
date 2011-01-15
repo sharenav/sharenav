@@ -2464,13 +2464,17 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		logger.debug("Got compass reading: " + direction);
 		this.compassDirection = (int) direction;
 		this.compassDeviated = ((int) direction + compassDeviation + 360) % 360;
-		// FIXME add auto-fallback mode where course is from GPS at high speeds and from compass
-		// at low speeds
-		if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION) && compassProducer != null) {
-			course = compassDeviated;
-		}
-		updateCourse(course);
-		repaint();
+		// FIXME on Android phones, compass readings seem to come in quite often, so we don't
+		// set course here (but only on reception of GPS position) to let map drawing keep
+		// in sync with direction. The thing with this is that if for whatever reason
+		// no GPS positions are coming in, direction is not udated automatically. Considering
+		// opinion on UI this may be a good or a bad thing. Recenter however triggers orientation
+		// update.
+		//if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION) && compassProducer != null) {
+		//	course = compassDeviated;
+		//}
+		//updateCourse(course);
+		//repaint();
 	}
 
 	public static void updateLastUserActionTime() {
