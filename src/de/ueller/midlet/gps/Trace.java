@@ -2486,6 +2486,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	}
 	
 	public void updateCourse(int newcourse) {
+		coursegps = newcourse;
 		/*  don't rotate too fast
 		 */
 		if ((newcourse - course)> 180) {
@@ -2534,14 +2535,13 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		if (gpsRecenter) {
 			center.setLatLonDeg(pos.latitude, pos.longitude);
 			speed = (int) (pos.speed * 3.6f);
-			course = (int) pos.course;
 			// FIXME add auto-fallback mode where course is from GPS at high speeds and from compass
 			// at low speeds
 			if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION) && compassProducer != null) {
 				course = compassDeviated;
 			}
 			if (speed > 2 && pos.course != Float.NaN ) {
-				updateCourse(course);
+				updateCourse((int) pos.course);
 			}
 		}
 		if (gpx.isRecordingTrk()) {
