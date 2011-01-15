@@ -2470,11 +2470,12 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		// no GPS positions are coming in, direction is not udated automatically. Considering
 		// opinion on UI this may be a good or a bad thing. Recenter however triggers orientation
 		// update.
-		//if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION) && compassProducer != null) {
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION) && compassProducer != null) {
+			updateCourse(compassDeviated);
+			//repaint();
+		}
 		//	course = compassDeviated;
 		//}
-		//updateCourse(course);
-		//repaint();
 	}
 
 	public static void updateLastUserActionTime() {
@@ -2497,7 +2498,18 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			newcourse = newcourse + 360;
 		}
                                                  
-		course = course + ((newcourse - course)*1)/4 + 360;
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION) && compassProducer != null) {
+			course = newcourse;
+		} else {
+			// FIXME I think this is too slow a turn at least when course is
+			// of good quality, should be faster. This probably alleviates
+			// the trouble caused by unreliable gps course. However,
+			// some kind of heuristic / averaging / evaluating the
+			// quality of course and faster rotation should be implemented
+			// instead of kindof assuming course is always unreliable
+			// jkpj 2010-01-15
+			course = course + ((newcourse - course)*1)/4 + 360;
+		}
 		while (course > 360) {
 			course -= 360;
 		}
@@ -2538,9 +2550,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			// FIXME add auto-fallback mode where course is from GPS at high speeds and from compass
 			// at low speeds
 			if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION) && compassProducer != null) {
-				course = compassDeviated;
-			}
-			if (speed > 2 && pos.course != Float.NaN ) {
+				updateCourse(compassDeviated);
+			} else if (speed > 2 && pos.course != Float.NaN ) {
 				updateCourse((int) pos.course);
 			}
 		}
