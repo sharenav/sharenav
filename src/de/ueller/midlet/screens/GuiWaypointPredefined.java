@@ -110,19 +110,19 @@ public class GuiWaypointPredefined extends IconMenuWithPagesGUI {
 		super.setIconActionPerformer(new GuiWaypointPredefinedActionPerformer());
 		
 		mPredefines = new Vector(12);
-		/*  1 */ mPredefines.addElement(new WaypointTemplate(Locale.get("guiwaypointpre.city_limit")/*City limit*/, "city_limit"));
-		/*  2 */ mPredefines.addElement(new WaypointTemplate(Locale.get("guiwaypointpre.maxspeed")/*Speed %f*/, "maxspeed=%f"));
-		/*  3 */ mPredefines.addElement(new WaypointTemplate(Locale.get("guiwaypointpre.maxspeed_end")/*Speed end*/, "maxspeed end"));
-		/*  4 */ mPredefines.addElement(new WaypointTemplate(Locale.get("guiwaypointpre.housenr")/*House nr.*/, "housenr %f"));
-		/*  5 */ mPredefines.addElement(new WaypointTemplate(Locale.get("guiwaypointpre.busstop")/*Bus stop*/, "bus stop %s"));
-		/*  6 */ mPredefines.addElement(new WaypointTemplate(Locale.get("guiwaypointpre.tracktype_asph")/*Agr 1 asph*/, "tracktype=1 asph"));
-		/*  7 */ mPredefines.addElement(new WaypointTemplate(Locale.get("guiwaypointpre.tracktype_gravel")/*Agr %f gravel*/, "tracktype=%f gravel"));
-		/*  8 */ mPredefines.addElement(new WaypointTemplate(Locale.get("guiwaypointpre.tracktype_grass")/*Agr %f grass*/, "tracktype=%f grass"));
-		/*  9 */ mPredefines.addElement(new WaypointTemplate(Locale.get("guiwaypointpre.normalWP")/*Waypoint*/, "magic: normal input"));
-		/*  * */ mPredefines.addElement(new WaypointTemplate(Locale.get("guiwaypointpre.phone")/*Phone*/, "phone"));
-		/*  0 */ mPredefines.addElement(new WaypointTemplate(Locale.get("guiwaypointpre.path")/*Path %s*/, "path %s"));
-		/*  # */ mPredefines.addElement(new WaypointTemplate(Locale.get("generic.Back"), "magic: back"));
-		
+		/*  1 */ mPredefines.addElement(new WaypointTemplate("City limit", "city_limit"));
+		/*  2 */ mPredefines.addElement(new WaypointTemplate("Speed %f", "maxspeed=%f"));
+		/*  3 */ mPredefines.addElement(new WaypointTemplate("Speed end", "maxspeed end"));
+		/*  4 */ mPredefines.addElement(new WaypointTemplate("House nr.", "housenr %f"));
+		/*  5 */ mPredefines.addElement(new WaypointTemplate("Bus stop", "bus stop %s"));
+		/*  6 */ mPredefines.addElement(new WaypointTemplate("Agr 1 asph", "tracktype=1 asph"));
+		/*  7 */ mPredefines.addElement(new WaypointTemplate("Agr %f gravel", "tracktype=%f gravel"));
+		/*  8 */ mPredefines.addElement(new WaypointTemplate("Agr %f grass", "tracktype=%f grass"));
+		/*  9 */ mPredefines.addElement(new WaypointTemplate("Waypoint", "magic: normal input"));
+		/*  * */ mPredefines.addElement(new WaypointTemplate("Phone", "phone"));
+		/*  0 */ mPredefines.addElement(new WaypointTemplate("Path %s", "path %s"));
+		/*  # */ mPredefines.addElement(new WaypointTemplate("Back", "magic: back"));
+
 		IconMenuPage mp = createAndAddMenuPage(Locale.get("guiwaypointpre.PredefWpts")/*Predef. waypoints*/, 3, 4);
 		for (int i = 0; i < mPredefines.size(); i++) {
 			if (((WaypointTemplate)mPredefines.elementAt(i)).mWayptText.indexOf("magic: normal input") != -1) {

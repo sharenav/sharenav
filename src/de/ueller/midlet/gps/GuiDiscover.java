@@ -38,6 +38,7 @@ import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.tools.IconActionPerformer;
 import de.ueller.gpsMid.mapData.SingleTile;
+import de.ueller.midlet.gps.GuiCamera;
 import de.ueller.midlet.gps.data.Gpx;
 import de.ueller.midlet.gps.data.ProjFactory;
 import de.ueller.midlet.gps.data.Projection;
@@ -68,6 +69,10 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		Locale.get("guidiscover.OSMAccount")/*OSM account*/,
 		//#endif
 		Locale.get("guidiscover.OnlineSetup")/*Online setup*/,
+		//FIXME rename as generic string
+		//#if polish.api.mmapi
+		Locale.get("trace.Camera")/*Camera*/,
+		//#endif
 		//#if polish.api.fileconnection
 		Locale.get("guidiscover.SaveConfig")/*Save config*/, 
 		Locale.get("guidiscover.LoadConfig")/*Load config*/
@@ -92,14 +97,27 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	protected static final int MENU_ITEM_DEBUG_OPT = 8;
 	protected static final int MENU_ITEM_KEYS_OPT = 9;
 	protected static final int MENU_ITEM_OPENCELLID_OPT = 10;
-	protected static final int MENU_ITEM_ONLINE_OPT = 11;
 	//#if polish.api.osm-editing
-	protected static final int MENU_ITEM_OSM_OPT = 12;
+	protected static final int MENU_ITEM_OSM_OPT = 11;
+	protected static final int MENU_ITEM_ONLINE_OPT = 12;
+	//#if polish.api.mmapi
+	protected static final int MENU_ITEM_CAMERA_OPT = 13;
+	protected static final int MENU_ITEM_SAVE_CONFIG = 14;
+	protected static final int MENU_ITEM_LOAD_CONFIG = 15;
+	//#else
+	protected static final int MENU_ITEM_SAVE_CONFIG = 13;
+	protected static final int MENU_ITEM_LOAD_CONFIG = 14;
+	//#endif
+	//#else
+	protected static final int MENU_ITEM_ONLINE_OPT = 11;
+	//#if polish.api.mmapi
+	protected static final int MENU_ITEM_CAMERA_OPT = 12;
 	protected static final int MENU_ITEM_SAVE_CONFIG = 13;
 	protected static final int MENU_ITEM_LOAD_CONFIG = 14;
 	//#else
 	protected static final int MENU_ITEM_SAVE_CONFIG = 12;
 	protected static final int MENU_ITEM_LOAD_CONFIG = 13;
+	//#endif
 	//#endif
 
 	private int numLangDifference = 0;
@@ -1365,6 +1383,31 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				GpsMid.getInstance().show(menuOpencellidOptions);
 				state = STATE_OPENCELLID_OPT;
 				break;
+			//#if polish.api.mmapi
+			case MENU_ITEM_CAMERA_OPT:
+				/**
+				 * Camera options
+				 */
+				//GuiCamera.getInstance().init(this);
+				try {
+					Class GuiCameraClass = Class.forName("de.ueller.midlet.gps.GuiCamera");
+					Object GuiCameraObject = GuiCameraClass.newInstance();
+					GuiCameraInterface cam = (GuiCameraInterface)GuiCameraObject;
+					//cam.commandAction(GuiCamera.getInstance().SETUP_CMD, (Displayable) null);
+					//cam.init(this);
+					//GuiCamera.getInstance().setup(this);
+					cam.setup(this);
+				} catch (ClassNotFoundException cnfe) {
+					logger.exception(Locale.get("trace.YourPhoneNoCamSupport"), cnfe);
+				} catch (InstantiationException ie) {
+					logger.exception(Locale.get("trace.YourPhoneNoCamSupport"), ie);
+				} catch (IllegalAccessException ie) {
+					logger.exception(Locale.get("trace.YourPhoneNoCamSupport"), ie);
+				}
+				//GuiCamera.getInstance().commandAction(GuiCamera.getInstance().SETUP_CMD, (Displayable) null);
+				//GpsMid.getInstance().show(menuOpencellidOptions);
+				break;
+			//#endif
 			//#if polish.api.fileconnection
 			case MENU_ITEM_SAVE_CONFIG:
 				state = STATE_SAVE_CONFIG;

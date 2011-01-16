@@ -370,6 +370,7 @@ public class SingleTile extends Tile implements QueueableTile {
 			case Legend.OM_SHOWNORMAL: 
 				//System.out.println( pc.scale + " " + Legend.getNodeMaxScale(t)  + " " +Configuration.getDetailBoostMultiplierPOI());
 				
+				// FIXME check cleanup after the functionality is in good enough condition
 				// if not in Overview Mode check for scale
 				// original by Harald
 				//if (pc.scale > Legend.getNodeMaxScale(t) * Configuration.getDetailBoostMultiplierPOI()) {
@@ -421,6 +422,7 @@ public class SingleTile extends Tile implements QueueableTile {
 		//pc.getP().forward(nodeLat[i], nodeLon[i], pc.swapLineP, this);
 		
 		if (img != null ) {
+			// FIXME check and cleanup after the functionality is in good enough condition
 			// logger.debug("draw img " + img);
 			// orig by Harald
 			// if (nameIdx[i] == -1 || Legend.isNodeImageCentered(t) || pc.scale > Legend.getNodeMaxTextScale(t)) {
@@ -433,6 +435,7 @@ public class SingleTile extends Tile implements QueueableTile {
 						Graphics.BOTTOM | Graphics.HCENTER);
 			}
 		}
+		// FIXME check cleanup after the functionality is in good enough condition
 		// orig by Harald
 		//if (pc.scale > Legend.getNodeMaxTextScale(t) * Configuration.getDetailBoostMultiplierPOI()) {
 		// by sk750

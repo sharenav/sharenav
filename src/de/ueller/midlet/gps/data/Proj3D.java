@@ -224,6 +224,7 @@ public class Proj3D implements Projection {
 	//}
 
 
+	// FIXME check the math
 	// a try by jkpj, seems to be a useful version
 	public int getScaleFor(int x, int y){
 		float y_ = hyp - y;

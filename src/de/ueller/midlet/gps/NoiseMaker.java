@@ -220,6 +220,7 @@ public class NoiseMaker
 			// mapdir map
 			//#if polish.android
 			// for builtin maps, open as asset from bundle
+			// not really used currently as the android player is above in another #if section
 			is = MidletBridge.instance.getResources().getAssets().open(soundFileWithSuffix);
 			//#else
 			// for builtin maps, open from bundle

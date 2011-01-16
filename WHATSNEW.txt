@@ -50,8 +50,8 @@ GpsMid 0.7
       This will include the Finnish sound files into GpsMid (thx jkpj)
     - English and German eSpeak voices now sound a bit more friendly   	     	   
     *** Localization of on-screen messages ***
-    - Translaton of some on-screen messages into Czech, Slovak, Finnish and German,
-      to a smaller degree to French, Italian, Portugese and Russian.
+    - Translaton of many on-screen messages into Czech, Slovak, Finnish, German
+      and Russian, to a smaller degree to French, Italian and Portugese.
       When building with the Osm2GpsMid GUI (wizard), the languages will have
       en estimate of how complete the translations are. The rough scale is:
       5: Complete or almost complete
@@ -98,10 +98,17 @@ GpsMid 0.7
     - GpsMid can now open websites and call phone numbers associated with POIs and Ways in search results
       and on the map (ways only on the map for now). W signifies Website and P signifies Phone.
       To configure for use, add useUrlTags=true and usePhoneTags=true to .properties file
-    *** New platform: Android support ***
+    *** New platform: Android support (experimental) ***
+    - Android support is experimental and not release-quality or an official part of the release,
+      thus no official 0.7 Android release binaries. Experimental .apk's are available
+      in the nightly directory http://gpsmid.sourceforge.net/nightlies/
+    - Android support is "first version" - most stuff works, but there's much which isn't
+      polished, there are some crashes, and the UI is not at all Android-like so it won't feel
+      nice. There are plans for improvement.
     - External zip file or directory maps are the simple & recommended way to use GpsMid on Android
-    - Bundling can be used with scripts in tools
-	- Most stuff works, voice recording & camera don't work yet
+    - Bundling can be used with scripts in tools, but not as easily as for J2ME and not easily
+      on all operating systems.
+    - Voice recording & taking pictures don't work yet
     *** Usability ***
     - Way point list can be sorted by time, distance or alphabetically.
     - Menu to quickly enter predefined way point texts. These are hardcoded but in the

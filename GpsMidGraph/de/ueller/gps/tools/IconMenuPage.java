@@ -83,8 +83,17 @@ public class IconMenuPage extends LayoutManager {
 	
 	
 	public void setCursor(int eleId) {
-		this.currentRow = eleId / numCols;
 		this.currentCol = eleId % numCols;
+		this.currentRow = eleId / numCols;
+		if (numCols == 4) {
+			// numCols == 4 - arrange elements similarly as they are arranged in the 3-column setup
+			this.currentCol = eleId % 3;
+			this.currentRow = eleId / 3;
+			if (eleId >= 9) {
+				this.currentCol = 3;
+				this.currentRow = eleId - 9;
+			}
+		}
 		rememberEleId = eleId;
 	}
 	
@@ -149,7 +158,9 @@ public class IconMenuPage extends LayoutManager {
 //		if (currentY + offsY >= numRows) { // Bottom boundary coming from top
 //			return false;
 //		}
-		if (getEleId(currentCol, currentRow + offsRow) < this.size()) {
+		// don't go to fourth column in 3 rows, 4 columns mode, when going down from first column
+		System.out.println("numRows: " + numRows + " currentRow: " + currentRow);
+		if (getEleId(currentCol, currentRow + offsRow) < this.size() && (currentRow + offsRow) < numRows) {
 			currentRow += offsRow;
 		}
 //		else {  // after last element coming from above
@@ -163,9 +174,7 @@ public class IconMenuPage extends LayoutManager {
 		if (numCols == 3) {
 			return col + row * numCols;
 		} else { // numCols == 4 - arrange elements similarly as they are arranged in the 3-column setup
-			if (col < 3) {
-				return row * 4 + (col-row);
-			} else if (col == 3) {
+			if (col == 3) {
 				return 9 + row;
 			} else {
 				return row * 4 + (col-row);
