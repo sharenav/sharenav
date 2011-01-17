@@ -232,6 +232,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	JCheckBox languages[] = new JCheckBox[langList.length];
 	JComboBox jcbCellSource;
 	JButton jbCreate;
+	JButton jbCreateZip;
 	JButton jbClose;
 	JButton jbClearRoute;
 	JButton jbCalcRoute;
@@ -553,15 +554,15 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		gbc.gridy = 4;
 		add(jbCreate, gbc);
 
-		jbCreate = new JButton("Create GpsMid map zip");
-		jbCreate.setActionCommand("Create-map");
-		jbCreate.addActionListener(this);
+		jbCreateZip = new JButton("Create GpsMid map zip");
+		jbCreateZip.setActionCommand("Create-map");
+		jbCreateZip.addActionListener(this);
 		gbc.gridwidth = 2;
 		gbc.weighty = 0;
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.gridx = 2;
 		gbc.gridy = 4;
-		add(jbCreate, gbc);
+		add(jbCreateZip, gbc);
 
 		jbClose = new JButton("Close");
 		jbClose.setActionCommand("Close-click");
@@ -605,6 +606,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		
 		jbClose.setEnabled(false);
 		jbCreate.setEnabled(false);
+		jbCreateZip.setEnabled(false);
 		jcbPlanet.setEnabled(false);
 		jcbProperties.setEnabled(false);
 		jcbStyle.setEnabled(false);
