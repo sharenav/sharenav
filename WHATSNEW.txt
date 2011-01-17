@@ -1,3 +1,8 @@
+GpsMid 0.7.1
+    *** Building the map ***
+    - support for osm.pbf files (actually already with 0.7)
+    - cellid params can be specified in .properties and stored in .properties
+    - support for UTF-8 .properties
 GpsMid 0.7
     *** Map Screen ***
     - Greatly improved area rendering:
