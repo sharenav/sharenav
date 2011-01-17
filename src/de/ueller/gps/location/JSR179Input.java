@@ -73,8 +73,11 @@ public class JSR179Input
 		// of satellites form the NMEA string
 		smsg = new NmeaMessage(receiverList);
 		createLocationProvider();
-		
-		return true;
+		if (locationProvider != null) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	public boolean activate(LocationMsgReceiver receiver) {
