@@ -452,6 +452,7 @@ public class Configuration {
 	public static String[] projectionsString;
 	
 	private static boolean hasPointerEvents;
+	private static boolean isSamsungS8000 = false;
 	
 	
 	public static void read() {
@@ -1847,6 +1848,10 @@ public class Configuration {
 		}
 	}
 	
+	public static boolean isSamsungS8000() {
+		return isSamsungS8000;
+	}
+	
 	public static String getPhoneModel() {
 		String  model = null;
 		try {
@@ -1862,6 +1867,7 @@ public class Configuration {
 			 */
 		}
 		if (model != null) {
+			isSamsungS8000 = model.startsWith("S8000");
 		    return model;
 		} else {
 //#if polish.android
@@ -1892,7 +1898,7 @@ public class Configuration {
 			    phoneModel.startsWith("SIE")
 			) {
 				return CFGBIT_BACKLIGHT_SIEMENS;
-		} else if (phoneModel.startsWith("SAMSUNG-S5230")	) {
+		} else if (isSamsungS8000 || phoneModel.startsWith("SAMSUNG-S5230")	) {
 			return CFGBIT_BACKLIGHT_SAMSUNG;
         }
 		//#endif
