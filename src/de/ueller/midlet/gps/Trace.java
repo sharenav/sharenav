@@ -2501,9 +2501,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			// of good quality, should be faster. This probably alleviates
 			// the trouble caused by unreliable gps course. However,
 			// some kind of heuristic / averaging / evaluating the
-			// quality of course and faster rotation should be implemented
-			// instead of kindof assuming course is always unreliable
-			// jkpj 2010-01-15
+			// quality of course and fast / instant rotation with a known good GPS fix
+		        // should be implemented instead of assuming course is always unreliable.
+			// jkpj 2010-01-17
 			course = course + ((newcourse - course)*1)/4 + 360;
 		}
 		while (course > 360) {
