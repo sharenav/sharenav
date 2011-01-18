@@ -10,6 +10,7 @@
  */
 package de.ueller.osmToGpsMid;
 
+import static de.ueller.osmToGpsMid.GetText._;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -381,7 +382,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		gbc.weighty = 0;
 		add(jpFiles, gbc);
 		
-		JLabel jlPlanet = new JLabel("Openstreetmap data source: ");
+		JLabel jlPlanet = new JLabel(_("Openstreetmap data source: "));
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 		gbc.gridwidth = 1;
