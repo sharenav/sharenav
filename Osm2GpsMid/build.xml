@@ -158,6 +158,9 @@
 		   		<attribute name="Implementation-Vendor" value="Harald Mueller"/>
 			</section>
 		</manifest>
+	<fileset dir="${basedir}">
+		<include name="Translations*"/>
+	</fileset>
         <fileset dir="bin">
      		<include name="**/*.class" />
 		</fileset>
