@@ -1337,8 +1337,16 @@ public class Configuration {
 			try {
 				Locale.loadTranslations( "/" + uiLangUse + ".loc" );
 			} catch (IOException ioe) {
-				System.out.println("Couldn't open translations file: " + uiLang);
-				return false;
+				System.out.println("Couldn't open translations file: " + uiLangUse);
+				// FIXME check if logger initialized and do this if it is
+				// logger.error("Couldn't set language to " + uiLangUse + ", defaulting to English");
+				try {
+					Locale.loadTranslations( "/en.loc" );
+				} catch (IOException ioe2) {
+					// shouldn't happen
+					System.out.println("Couldn't open translations file for English");
+				}
+				uiLangUse = "en";
 			}
 
 			invalidPositionsString = (";" + Locale.get("solution.Off") +
