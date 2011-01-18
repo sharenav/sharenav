@@ -4,6 +4,12 @@ GpsMid 0.7.1
     - cellid params can be specified in .properties and stored in .properties
     - support for UTF-8 .properties
 GpsMid 0.7
+    *** ERRATA (bugs with workarounds, found after the release) ***
+    - If GpsMid crashes at startup, and your phone's language is one not supported by the GpsMid version:
+
+      Set your phone's language to English. Now you can start GpsMid, set the language in GpsMid
+      to be English (Setup / Display). After that you can switch your phone's language back to the original.
+
     *** Map Screen ***
     - Greatly improved area rendering:
       J2ME mobiles can only draw triangles, so for rendering, filled polygons need 
