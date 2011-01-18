@@ -338,11 +338,7 @@ public class SearchNames implements Runnable {
 		this.search = search;
 		if (processorThread == null || !processorThread.isAlive()) {
 			processorThread = new Thread(this);
-			/* processorThread.setPriority(Thread.MIN_PRIORITY + 1);
-			 * has been changed on 17-01-2011 to Thread.NORM_PRIORITY - 1
-			 * for faster search results
-			 */
-			processorThread.setPriority(Thread.NORM_PRIORITY - 1);
+			processorThread.setPriority(Thread.MIN_PRIORITY + 1);
 			processorThread.start();
 			//#debug info
 			logger.info("started search thread");

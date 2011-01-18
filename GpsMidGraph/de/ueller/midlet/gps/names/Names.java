@@ -42,11 +42,7 @@ public class Names implements Runnable {
 	public Names() {
 		super();
 		processorThread = new Thread(this, "Names");
-		/* processorThread.setPriority(Thread.MIN_PRIORITY);
-		 * has been changed on 17-01-2011 to Thread.NORM_PRIORITY - 2
-		 * for faster search results
-		 */
-		processorThread.setPriority(Thread.NORM_PRIORITY - 2);
+		processorThread.setPriority(Thread.MIN_PRIORITY);
 		processorThread.start();
 	}
 
