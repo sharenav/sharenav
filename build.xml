@@ -99,7 +99,7 @@
             <!-- lowercase icon name required for Android, before Android support was icon="GpsMid.png" -->
 		<info
 			name="GpsMid"
-			version="0.7.1"
+			version="0.7.1.80"
 			description="Shows moving map made from OpenStreetMap data"
 			vendorName="Harald Mueller"
 			infoUrl="http://gpsmid.sourceforge.net"
