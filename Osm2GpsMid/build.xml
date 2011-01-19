@@ -147,7 +147,7 @@
 	</target>
 	
    	<target name="deploy" depends="explode,compile">
-      <jar jarfile="${dist.dir}/${ant.project.name}-${version}-map${mapversion}.jar">
+      <jar jarfile="${dist.dir}/${ant.project.name}-${version}-${mapversion}.jar">
 <!--      <jar jarfile="${dist.dir}/${ant.project.name}-${version}_${local_lang2}.jar"> -->
 		<manifest>
     		<attribute name="Built-By" value="${user.name}"/>
