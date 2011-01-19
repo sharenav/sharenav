@@ -116,7 +116,7 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 		ssize = f.getHeight() * txt.length + space;
 		top = -space;
 		if (Legend.isValid) {
-			strVersion = "V" + Legend.getAppVersion() + " (" + Legend.getBundleDate() + ")";
+			strVersion = "M" + Legend.getMapVersion() + " (" + Legend.getBundleDate() + ")";
 		} else {
 			strVersion = "Error reading map!";
 		}
