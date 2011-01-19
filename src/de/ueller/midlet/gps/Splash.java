@@ -79,7 +79,8 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 	private int topStart = 106;
 	private final int space;
 	private double scale = 1;
-	private String strVersion; 
+	private String mapVersion; 
+	private String appVersion; 
 
 
 	public Splash(GpsMid main) {
@@ -116,10 +117,9 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 		ssize = f.getHeight() * txt.length + space;
 		top = -space;
 		if (Legend.isValid) {
-			strVersion = "M" + Legend.getMapVersion() + " (" + Legend.getBundleDate() + ")";
-		} else {
-			strVersion = "Error reading map!";
+			mapVersion = "M" + Legend.getMapVersion() + " (" + Legend.getBundleDate() + ")";
 		}
+		appVersion = "V" + Legend.getAppVersion();
 		show();
 		addCommand(BACK_CMD);
 		addCommand(EXIT_CMD);
@@ -140,9 +140,8 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 		g.drawImage(splash, getWidth() / 2, 0, Graphics.HCENTER | Graphics.TOP);
 
 		g.setColor(0xFFFF99);
-		g.drawString(strVersion, (getWidth() + splash.getWidth()) / 2 - 2 , 2, 
+		g.drawString(appVersion + " " + mapVersion, (getWidth() + splash.getWidth()) / 2 - 2 , 2, 
 					 Graphics.TOP | Graphics.RIGHT);		
-		
 		g.setColor(255, 40, 40);
 		int startLine = top / sp;
 		int yc = topStart - top % sp;
