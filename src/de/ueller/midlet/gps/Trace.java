@@ -1851,8 +1851,10 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			default:
 				showAddons = 0;
 				if (Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_SCALE_BAR)) {
-					tl.calcScaleBarWidth(pc);
-					tl.ele[TraceLayout.SCALEBAR].setText(" ");
+					if (pc != null) {
+						tl.calcScaleBarWidth(pc);
+						tl.ele[TraceLayout.SCALEBAR].setText(" ");
+					}
 				}
 
 				setPointOfTheCompass();
