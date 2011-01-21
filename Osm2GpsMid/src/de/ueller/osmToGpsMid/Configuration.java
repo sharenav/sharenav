@@ -608,7 +608,11 @@ public class Configuration {
 
 			setSoundFiles(getString("useSoundFilesWithSyntax"));
 
-			setCellSource(getString("cellSource"));
+			// don't override cell source set by command line with one from .properties
+			// also don't override one set by GUI with an empty one from properties
+			if ((cellSource == null || cellSource.equals("")) && !getString("cellSource").equals("")) {
+				setCellSource(getString("cellSource"));
+			}
 
 			setDontCompress(getString("dontCompress"));
 
