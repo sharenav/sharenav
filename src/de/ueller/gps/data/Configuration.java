@@ -240,7 +240,7 @@ public class Configuration {
 	public final static byte CFGBIT_ROUTE_USE_MOTORWAYS = 86;
 	/** bit 87: Flag whether the route algorithm uses toll roads */
 	public final static byte CFGBIT_ROUTE_USE_TOLLROADS = 87;
-	/** bit 88: free from 2011-01-08, was Flag whether the touch zones for zoom & center & destionation are symmetric */
+	/** bit 88: free from 2011-01-08, was Flag whether the touch zones for zoom & center & destination are symmetric */
 
 	/** bit 89: Flag whether air distance to destination should be displayed even when routing */
 	public final static byte CFGBIT_SHOW_AIR_DISTANCE_WHEN_ROUTING = 89;
@@ -278,6 +278,8 @@ public class Configuration {
 	public final static byte CFGBIT_MAPTAP_DOUBLE = 106;
 	/** bit 107: indicate whether single map tap feature is enabled*/
 	public final static byte CFGBIT_MAPTAP_SINGLE = 107;
+	/** bit 108: indicate whether gpsmid is running (for android which can kill the process and restart it)*/
+	public final static byte CFGBIT_RUNNING = 108;
 	
 	/**
 	 * These are the database record IDs for each configuration option
