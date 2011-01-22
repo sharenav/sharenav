@@ -1526,7 +1526,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				return;
 			}
 			if (c == CMDS[ABOUT_CMD]) {
-				new Splash(parent);
+				new Splash(parent, GpsMid.initDone);
 				return;
 			}
 			if (c == CMDS[CELLID_LOCATION_CMD]) {

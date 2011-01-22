@@ -97,7 +97,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 	//private final List loghist = new List(Locale.get("gpsmid.LogHist")/*Log Hist*/, Choice.IMPLICIT);
 
 	// #debug
-	private final Logger log;
+	private Logger log;
 
 	private OutputStreamWriter logFile;
 
@@ -119,6 +119,8 @@ public class GpsMid extends MIDlet implements CommandListener {
 
 	private static volatile Trace trace = null;
 
+	public static boolean initDone = false;
+
 	public static String errorMsg = null;
 
 //#if polish.android
@@ -127,52 +129,6 @@ public class GpsMid extends MIDlet implements CommandListener {
 	private PowerManager pm = null;
 //#endif
 	public GpsMid() {
-		instance = this;
-		System.out.println("Init GpsMid");
-		log = new Logger(this);
-		log.setLevel(Logger.DEBUG);
-		Configuration.read();
-		
-		enableDebugFileLogging();
-		Logger.setGlobalLevel();
-
-		//#debug info
-		log.info("Phone Model: " + Configuration.getPhoneModel());
-		
-		mNoiseMaker = new NoiseMaker();
-
-		// read in legend.dat to have i.e. bundle date already accessable from
-		// the splash screen
-		try {
-			Legend.readLegend();
-		} catch (Exception e) {
-			e.printStackTrace();
-			errorMsg = Locale.get("gpsmid.FailToLoadBasicConf")/*Failed to load basic configuration! Check your map data source: */
-					+ e.getMessage();
-//#if polish.android
-			errorMsg += Locale.get("gpsmid.ForAndroidInstall")/*  - For Android, you need to manually install the map (e.g. unzip the J2ME map jar bundle with same settings & version as the .apk) on the SD card or use a special bundle script in tools/ for now*/;
-//#endif
-		}
-
-		String lang = Configuration.getUiLang();
-		if (!Configuration.setUiLang(lang)) {
-			if (!Configuration.setUiLang("en")) {
-				System.out.println("Couldn't open English translations file");
-			}
-		}
-
-		phoneMaxMemory = determinPhoneMaxMemory();		
-		
-		menu.addCommand(EXIT_CMD);
-		menu.addCommand(OK_CMD);
-		menu.setCommandListener(this);
-		//loghist.addCommand(BACK_CMD);
-		//loghist.addCommand(CLEAR_DEBUG_CMD);
-		//loghist.setCommandListener(this);
-
-		if (errorMsg != null) {
-			log.fatal(errorMsg);
-		}
 	}
 
 	public static void showMapScreen() {
@@ -216,6 +172,8 @@ public class GpsMid extends MIDlet implements CommandListener {
 			}
 			logFile = null;
 		}
+		// store the state that we're not running, so Android will show splash at next start if splash enabled
+		Configuration.setCfgBitState(Configuration.CFGBIT_RUNNING, false, true);
 		//#debug
 		System.out.println("destroy GpsMid");
 	}
@@ -234,38 +192,93 @@ public class GpsMid extends MIDlet implements CommandListener {
 	protected void startApp() throws MIDletStateChangeException {
 		//#debug
 		System.out.println("Start GpsMid");
+		if (!initDone) {
+
 //		if (trace != null) {
 //			trace.resume();
 //		}
+			instance = this;
+			System.out.println("Init GpsMid");
+			log = new Logger(this);
+			log.setLevel(Logger.DEBUG);
+			Configuration.read();
+		
+			enableDebugFileLogging();
+			Logger.setGlobalLevel();
 
-		//#if polish.api.contenthandler
-		try {
-			log.info("Trying to register JSR211 Content Handler");
-			Class handlerClass =
+			//#debug info
+			log.info("Phone Model: " + Configuration.getPhoneModel());
+		
+			mNoiseMaker = new NoiseMaker();
+
+			// read in legend.dat to have i.e. bundle date already accessable from
+			// the splash screen
+			try {
+				Legend.readLegend();
+			} catch (Exception e) {
+				e.printStackTrace();
+				errorMsg = Locale.get("gpsmid.FailToLoadBasicConf")/*Failed to load basic configuration! Check your map data source: */
+					+ e.getMessage();
+//#if polish.android
+				errorMsg += Locale.get("gpsmid.ForAndroidInstall")/*  - For Android, you need to manually install the map (e.g. unzip the J2ME map jar bundle with same settings & version as the .apk) on the SD card or use a special bundle script in tools/ for now*/;
+//#endif
+			}
+
+			String lang = Configuration.getUiLang();
+			if (!Configuration.setUiLang(lang)) {
+				if (!Configuration.setUiLang("en")) {
+					System.out.println("Couldn't open English translations file");
+				}
+			}
+
+			phoneMaxMemory = determinPhoneMaxMemory();		
+		
+			menu.addCommand(EXIT_CMD);
+			menu.addCommand(OK_CMD);
+			menu.setCommandListener(this);
+			//loghist.addCommand(BACK_CMD);
+			//loghist.addCommand(CLEAR_DEBUG_CMD);
+			//loghist.setCommandListener(this);
+
+			if (errorMsg != null) {
+				log.fatal(errorMsg);
+			}
+
+			//#if polish.api.contenthandler
+			try {
+				log.info("Trying to register JSR211 Content Handler");
+				Class handlerClass =
 					Class.forName("de.ueller.midlet.gps.importexport.Jsr211Impl");
-			Object handlerObject = handlerClass.newInstance();
-			Jsr211ContentHandlerInterface handler =
+				Object handlerObject = handlerClass.newInstance();
+				Jsr211ContentHandlerInterface handler =
 					(Jsr211ContentHandlerInterface) handlerObject;
-			handler.registerContentHandler();
-		} catch (NoClassDefFoundError ncdfe) {
-			log.error("JSR211 is not available", true);
-		} catch (ClassNotFoundException cnfe) {
-			log.error("JSR211 is not available", true);
-		} catch (InstantiationException e) {
-			log.exception("ContentHandler invokation failed", e);
-		} catch (IllegalAccessException e) {
-			log.exception("ContentHandler invokation failed", e);
+				handler.registerContentHandler();
+			} catch (NoClassDefFoundError ncdfe) {
+				log.error("JSR211 is not available", true);
+			} catch (ClassNotFoundException cnfe) {
+				log.error("JSR211 is not available", true);
+			} catch (InstantiationException e) {
+				log.exception("ContentHandler invokation failed", e);
+			} catch (IllegalAccessException e) {
+				log.exception("ContentHandler invokation failed", e);
+			}
+			//#endif
 		}
-		//#endif
 
-		if (Configuration.getCfgBitState(Configuration.CFGBIT_SKIPP_SPLASHSCREEN) && Legend.isValid) {
+		if (trace != null) {
+			trace.resume();
+		}
+		// if our stored state is running, don't show splash (mainly significant for Android)
+		if (initDone || Configuration.getCfgBitState(Configuration.CFGBIT_RUNNING)
+		    || (Configuration.getCfgBitState(Configuration.CFGBIT_SKIPP_SPLASHSCREEN) && Legend.isValid)) {
 			showMapScreen();
 		} else {
-			new Splash(this);
+			new Splash(this, initDone);
 		}
-
 		// RouteNodeTools.initRecordStore();
 		startBackLightTimer();
+		initDone = true;
+		Configuration.setCfgBitState(Configuration.CFGBIT_RUNNING, true, true);
 	}
 
 	public void commandAction(Command c, Displayable d) {
@@ -308,7 +321,7 @@ public class GpsMid extends MIDlet implements CommandListener {
 			new GuiDiscover(this);
 			break;
 		case 3:
-			new Splash(this);
+			new Splash(this, initDone);
 			break;
 		case 4:
 			//show(loghist);

@@ -81,10 +81,12 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 	private double scale = 1;
 	private String mapVersion; 
 	private String appVersion; 
+	private boolean initDone = false;
 
 
-	public Splash(GpsMid main) {
+	public Splash(GpsMid main, boolean initDone) {
 		this.main = main;
+		this.initDone = initDone;
 		try {
 			splash = Image.createImage("/Gps-splash.png");
 		} catch (IOException e) {
@@ -120,9 +122,11 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 			mapVersion = "M" + Legend.getMapVersion() + " (" + Legend.getBundleDate() + ")";
 		}
 		appVersion = "V" + Legend.getAppVersion();
-		show();
 		addCommand(BACK_CMD);
-		addCommand(EXIT_CMD);
+		if (!initDone) {
+			addCommand(EXIT_CMD);
+		}
+		show();
 		setCommandListener(this);
 		processorThread = new Thread(this, "Splash");
 		processorThread.setPriority(Thread.MIN_PRIORITY);
@@ -183,7 +187,9 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 		}
 //#if polish.android
 		// workaround for Android accept buttons; without this, accept/deny don't work.
-		main.alert("Splash", "Android!", 500);
+		if (initDone) {
+			main.alert("Splash", "Android!", 500);
+		}
 //#endif
 		while (! shutdown){
 			synchronized (this) {
