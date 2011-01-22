@@ -531,18 +531,18 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	public void run() {
 		try {
 			if (running) {
-				receiveMessage("GPS starter already running");
+				receiveMessage(Locale.get("trace.GpsStarterRunning")/*GPS starter already running*/);
 				return;
 			}
 
 			//#debug info
 			logger.info("start thread init locationprovider");
 			if (locationProducer != null) {
-				receiveMessage("Location provider already running");
+				receiveMessage(Locale.get("trace.LocProvRunning")/*Location provider already running*/);
 				return;
 			}
 			if (Configuration.getLocationProvider() == Configuration.LOCATIONPROVIDER_NONE) {
-				receiveMessage("No location provider");
+				receiveMessage(Locale.get("trace.NoLocProv")/*"No location provider*/);
 				return;
 			}
 			running=true;

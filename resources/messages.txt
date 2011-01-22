@@ -1164,3 +1164,6 @@ solution.tildes=~~
 solution.0s=0s
 solution.ManualLoc=Manual
 solution.replay=replay
+trace.GpsStarterRunning=GPS starter already running
+trace.LocProvRunning=Location provider already running
+trace.NoLocProv=No location provider
