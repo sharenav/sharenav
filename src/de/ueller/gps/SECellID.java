@@ -93,8 +93,8 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 		}
 		
 		public LacIdxEntry (DataInputStream dis) throws IOException {
-			mcc = (short)dis.readShort();
-			mnc = (short)dis.readShort();
+			mcc = dis.readShort();
+			mnc = dis.readShort();
 			lac = dis.readInt();
 			recordId = dis.readInt();
 		}
@@ -158,7 +158,7 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 					 */
 					//#debug debug
 					logger.debug("No valid cell-id available");
-					receiverList.receiveSolution("~~");
+					receiverList.receiveStatus(LocationMsgReceiver.STATUS_NOFIX, 0);
 					return;
 				}
 
@@ -202,7 +202,7 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 							} else {
 								//#debug info
 								logger.info("Cell is unknown, can't calculate a location based on it");
-								receiverList.receiveSolution(Locale.get("solution.NoFix")/*NoFix*/);
+								receiverList.receiveStatus(LocationMsgReceiver.STATUS_NOFIX, 0);
 								return;
 							}
 						}
@@ -222,11 +222,11 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 					}
 					//#debug info
 					logger.info("Obtained a position from " + loc);
-					receiverList.receiveSolution(Locale.get("solution.Cell")/*Cell*/);
+					receiverList.receiveStatus(LocationMsgReceiver.STATUS_CELLID, 0);
 					receiverList.receivePosition(new Position(loc.lat, loc.lon, 0, 0, 0, 0,
 							  System.currentTimeMillis(), Position.TYPE_CELLID));
 				} else {
-					receiverList.receiveSolution(Locale.get("solution.NoFix")/*NoFix*/);
+					receiverList.receiveStatus(LocationMsgReceiver.STATUS_NOFIX, 0);
 				} 
 			} catch (Exception e) {
 				logger.silentexception("Could not retrieve cell-id", e);
@@ -650,8 +650,9 @@ public class SECellID implements LocationMsgProducer, UploadListener {
 	public void close() {
 		logger.info("Location producer closing");
 		closed = true;
-		if (processorThread != null)
+		if (processorThread != null) {
 			processorThread.interrupt();
+		}
 		receiverList.locationDecoderEnd();
 	}
 

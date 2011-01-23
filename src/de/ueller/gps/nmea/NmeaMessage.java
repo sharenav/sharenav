@@ -119,7 +119,8 @@ public class NmeaMessage {
 	 * member variables and forwards it to the LocationMsgReceiver.
 	 * 
 	 * @param nmea_sentence The NMEA sentence to be decoded
-	 * @param receivePositionIsAllowed Set to true if it is allowed to forward a new position from the NMEA sentence to the LocationMsgReceiver 
+	 * @param receivePositionIsAllowed Set to true if it is allowed to forward 
+	 * 		a new position from the NMEA sentence to the LocationMsgReceiver.
 	 */
 	public void decodeMessage(String nmea_sentence, boolean receivePositionIsAllowed) {
 		
@@ -173,7 +174,7 @@ public class NmeaMessage {
 				String valSolution = (String)param.elementAt(2);
 				if (valSolution.equals("V")) {
 					this.qual = 0;
-					receiver.receiveSolution("NoFix");
+					receiver.receiveStatus(LocationMsgReceiver.STATUS_NOFIX, 0);
 					return;
 				}
 				if (valSolution.equalsIgnoreCase("A") && this.qual == 0) {
@@ -217,10 +218,11 @@ public class NmeaMessage {
 				if (receivePositionIsAllowed) {
 					receiver.receivePosition(pos);
 				}
+				// TODO: Possible to differentiate 2D and 3D fix?
 				if (this.qual > 1) {
-					receiver.receiveSolution("D" + mAllSatellites + "S");
+					receiver.receiveStatus(LocationMsgReceiver.STATUS_DGPS, mAllSatellites);
 				} else {
-					receiver.receiveSolution(mAllSatellites + "S");
+					receiver.receiveStatus(LocationMsgReceiver.STATUS_3D, mAllSatellites);
 				}
 			} else if ("VTG".equals(sentence)) {
 				head = getFloatToken((String)param.elementAt(1));

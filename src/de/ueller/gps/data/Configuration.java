@@ -448,7 +448,6 @@ public class Configuration {
 	private static String namesOnMapLang;
 	private static String soundDirectory;
 	
-	public static String invalidPositionsString;
 	public static String[] projectionsString;
 	
 	private static boolean hasPointerEvents;
@@ -1339,13 +1338,6 @@ public class Configuration {
 				System.out.println("Couldn't open translations file: " + uiLang);
 				return false;
 			}
-
-			invalidPositionsString = (";" + Locale.get("solution.Off") +
-				    ";" + Locale.get("solution.NoFix") +
-				    ";" + Locale.get("solution.SecEx") +
-				    ";" + Locale.get("solution.Cell") + 
-				    ";" + Locale.get("solution.0s") +
-				    ";" + Locale.get("solution.tildes") + ";");
 			
 			LOCATIONPROVIDER = new String[5];
 			LOCATIONPROVIDER[0] = Locale.get("configuration.LPNone")/*None*/;

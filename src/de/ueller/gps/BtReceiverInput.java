@@ -170,7 +170,7 @@ public abstract class BtReceiverInput implements Runnable, LocationMsgProducer {
 					 */
 					logger.info("Failed to read from GPS trying to reconnect: "
 							+ e.getMessage());
-					receiverList.receiveSolution("~~");
+					receiverList.receiveStatus(LocationMsgReceiver.STATUS_RECONNECT, 0);
 					if (!autoReconnectBtConnection()) {
 						logger.info("GPS bluethooth could not reconnect");
 						receiverList.receiveMessage(Locale.get("btreceiverinput.BTClosing2")/*Closing: */ + e.getMessage());

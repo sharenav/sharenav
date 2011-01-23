@@ -80,7 +80,9 @@ public class GuiSatellites extends KeyCommandCanvas implements CommandListener,
 		g.drawArc(centerX - r, centerY - r, dia, dia, 0, 360);
 		if (mSatellites == null) {
 			g.setColor(0, 0, 0);
-			g.drawString(Locale.get("guisatellites.Satellites")/*Satellites n/a*/, centerX, centerY - g.getFont().getHeight() / 2, Graphics.TOP|Graphics.HCENTER);
+			g.drawString(Locale.get("guisatellites.Satellites")/*Satellites n/a*/, 
+					centerX, centerY - g.getFont().getHeight() / 2, 
+					Graphics.TOP | Graphics.HCENTER);
 			return;
 		}
 		for (byte i = 0; i < mSatellites.length; i++) {
@@ -150,8 +152,8 @@ public class GuiSatellites extends KeyCommandCanvas implements CommandListener,
 		// Not interested
 	}
 
-	public void receiveSolution(String solution) {
-		mSolution = solution;
+	public void receiveStatus(byte status, int satsReceived) {
+		mSolution = LocationMsgReceiverList.getCurrentStatusString(status, satsReceived);
 		repaint();
 	}
 

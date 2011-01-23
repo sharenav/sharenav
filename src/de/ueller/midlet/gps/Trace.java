@@ -180,7 +180,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	private volatile int compassDeviation = 0;
 	private volatile int compassDeviated = 0;
 
-	public String solution = Locale.get("solution.NoFix")/*NoFix*/;
+	public byte solution = LocationMsgReceiver.STATUS_OFF;
+	public String solutionStr = Locale.get("solution.Off");
 	
 	/** Flag if the user requested to be centered to the current GPS position (true)
 	 * or if the user moved the map away from this position (false).
@@ -748,7 +749,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 
 	
 	public boolean isGpsConnected() {
-		return locationProducer != null && !solution.equalsIgnoreCase(Locale.get("solution.Off")/*Off*/);
+		return (locationProducer != null && solution != LocationMsgReceiver.STATUS_OFF);
 	}
 
 	/**
@@ -1542,8 +1543,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				// gpsRecenterInvalid = true;
 				// gpsRecenterStale = true;
 				autoZoomed = true;
-				receivePosition (setpos);
-				receiveSolution (Locale.get("solution.ManualLoc")/*Manual*/);
+				receivePosition(setpos);
+				receiveStatus(LocationMsgReceiver.STATUS_MANUAL, 0);
 				newDataReady();
 				return;
 			}
@@ -1858,11 +1859,11 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			if (TrackPlayer.isPlaying) {
 				eSolution.setText(Locale.get("trace.Replay")/*Replay*/);
 			} else {
-				if (locationProducer == null && !(solution.equals(Locale.get("solution.Cell"))/*Cell*/ ||
-										  solution.equals(Locale.get("solution.ManualLoc")/*Manual*/))) {
+				if (locationProducer == null && !(solution == LocationMsgReceiver.STATUS_CELLID ||
+										  solution == LocationMsgReceiver.STATUS_MANUAL)) {
 					eSolution.setText(Locale.get("solution.Off")/*Off*/);
 				} else {
-					eSolution.setText(solution);
+					eSolution.setText(solutionStr);
 				}
 			}
 
@@ -1897,17 +1898,16 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					tl.ele[TraceLayout.SPEED_CURRENT].setText(" " + Integer.toString((int)(speed / 1.609344f)) + " mph");
 				}
 			}
-			
+
 			if (Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_ALTITUDE_IN_MAP)
-					&&
-				locationProducer != null
-					&&
-				Configuration.invalidPositionsString.indexOf(";" + solution + ";") == -1
+				&& locationProducer != null
+				&& LocationMsgReceiverList.isPosValid(solution)
 			) {
 				tl.ele[TraceLayout.ALTITUDE].setText(showDistance(altitude, DISTANCE_ALTITUDE));
 			}
 
-			if (dest != null && (route == null || (!RouteLineProducer.isRouteLineProduced() && !RouteLineProducer.isRunning()) ) && Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_AIR_DISTANCE_IN_MAP)) {
+			if (dest != null && (route == null || (!RouteLineProducer.isRouteLineProduced() && !RouteLineProducer.isRunning()) ) 
+				&& Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_AIR_DISTANCE_IN_MAP)) {
 				e = Trace.tl.ele[TraceLayout.ROUTE_DISTANCE];
 				e.setBackgroundColor(Legend.COLORS[Legend.COLOR_RI_DISTANCE_BACKGROUND]);
 				double distLine = ProjMath.getDistance(center.radlat, center.radlon, dest.lat, dest.lon);
@@ -3090,9 +3090,10 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		logger.info("end locationDecoderEnd");
 	}
 
-	public void receiveSolution(String s) {
+	public void receiveStatus(byte status, int satsReceived) {
 		// FIXME signal a sound on location gained or lost
-		solution = s;
+		solution = status;
+		solutionStr = LocationMsgReceiverList.getCurrentStatusString(status, satsReceived);
 		repaint();
 	}
 
