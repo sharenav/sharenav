@@ -267,7 +267,8 @@ public class TraceLayout extends LayoutManager {
 					       );
 		e.setColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON_TEXT]);
 		e.setBackgroundColor(Legend.COLORS[Legend.COLOR_ZOOM_BUTTON]);
-		e.setActionID(Trace.SHOW_DEST_CMD);
+		// please note: this action id is also set in Trace
+		e.setActionID(Trace.SHOW_DEST_CMD + (Trace.SET_DEST_CMD << 16) );
 		
 		e = ele[RECENTER_GPS]; addElement(e,
 						  LayoutElement.FLAG_HALIGN_LEFT |

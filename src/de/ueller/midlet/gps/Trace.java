@@ -1960,7 +1960,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					e.setActionID(SHOW_PREVIOUS_POSITION_CMD);
 				} else {
 					e.setText(">");
-					e.setActionID(SHOW_DEST_CMD);					
+					e.setActionID(SHOW_DEST_CMD + + (Trace.SET_DEST_CMD << 16) );					
 				}
 			}
 
