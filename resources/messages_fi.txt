@@ -715,3 +715,4 @@ imagecollector.Winter=T
 imagecollector.W= T
 guipoitypeselectmenu.Everything=Kaikki
 guipoitypeselectmenu.SelectPOIType=Valitse kohteen tyyppi
+gpx.StartingRecording=Aloitan jäljityksen
