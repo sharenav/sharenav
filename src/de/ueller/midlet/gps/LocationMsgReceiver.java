@@ -5,6 +5,7 @@
 
 package de.ueller.midlet.gps;
 
+import de.enough.polish.util.Locale;
 import de.ueller.gps.data.Position;
 import de.ueller.gps.data.Satellite;
 
@@ -19,6 +20,17 @@ public interface LocationMsgReceiver {
 	public static final byte SIRF_FAIL_NO_END_SIGN2 = 6;
 	public static final byte SIRF_FAIL_COUNT = 7;
 
+	public static final byte STATUS_OFF = 0; // LocationProducer is off
+	public static final byte STATUS_SECEX = 1; // Security Exception occurred 
+	public static final byte STATUS_NOFIX = 2; // No GPS fix
+	public static final byte STATUS_RECONNECT = 3; // LocationProducer is currently reconnecting
+	public static final byte STATUS_ON = 4; // On (JSR-179, num of sats unknown)
+	public static final byte STATUS_2D = 5; // 2D fix
+	public static final byte STATUS_3D = 6; // 3D fix
+	public static final byte STATUS_DGPS = 7; // DGPS fix
+	public static final byte STATUS_CELLID = 8; // CellID position
+	public static final byte STATUS_MANUAL = 9; // Manually entered position
+	
 	/**
 	 * Update of position
 	 * The pos object may be reused in subsequent
@@ -51,14 +63,12 @@ public interface LocationMsgReceiver {
 	public void receiveStatistics(int[] statRecord, byte quality);
 
 	/** 
-	 * Update of "solution" which describes the current state of reception in
-	 * a way that can be displayed directly in the GUI like "NoFix", "4S" etc.
-	 * TODO: This has to be changed to something usable in code as the
-	 * location receivers need to be able to behave differently depending on
-	 * the quality of the position.
-	 * @param s String that should be displayed directly in the GUI.
+	 * Update of "solution" which describes the current state of reception.
+	 * @param status Status of the receiver, see the STATUS_* constants for possible values.
+	 * @param satsReceived Number of satellites received, may be invalid or old. Use only if
+	 * 		the type of fix is 2D, 3D or DGPS.
 	 */
-	public void receiveSolution(String solution);
+	public void receiveStatus(byte status, int satsReceived);
 
     /** Notification that the location producer has stopped.
      */

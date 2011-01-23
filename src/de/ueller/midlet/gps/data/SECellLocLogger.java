@@ -33,6 +33,7 @@ import de.ueller.gps.data.Satellite;
 import de.ueller.gps.tools.HelperRoutines;
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.LocationMsgReceiver;
+import de.ueller.midlet.gps.LocationMsgReceiverList;
 import de.ueller.midlet.gps.Logger;
 
 import de.enough.polish.util.Locale;
@@ -60,7 +61,7 @@ public class SECellLocLogger implements LocationMsgReceiver {
 	private int noSamples;
 	private int noValid;
 
-	private boolean valid;
+	private boolean posValid;
 	private static boolean cellIDLogging = false;
 	private static boolean loggingSuccess = false;
 	private CellIdProvider cellProvider;
@@ -72,7 +73,7 @@ public class SECellLocLogger implements LocationMsgReceiver {
 			logger.info("Attempting to enable cell-id logging for OpenCellId.org");
 
 			prevPos = null;
-			valid = false;
+			posValid = false;
 			noSamples = 0;
 			noValid = -5;
 			cellIDLogging = false;
@@ -174,7 +175,7 @@ public class SECellLocLogger implements LocationMsgReceiver {
 		//#debug trace
 		logger.trace("Received position update: " + pos);
 
-		if (!valid) {
+		if (posValid == false) {
 			//#debug debug
 			logger.debug("Currently no valid fix, so skipping CellID logging");
 			loggingSuccess = false;
@@ -239,20 +240,14 @@ public class SECellLocLogger implements LocationMsgReceiver {
 		//#endif
 	}
 
-	public void receiveSolution(String s) {
-		/**
-		 * Check the solution against a bunch of cases, for
-		 * which we know that we won't get a valid fix and
-		 * ignore the position updates we get from there.
-		 */
-		String st = ";" + Locale.get("solution.Off")/*off*/ + ";" + Locale.get("solution.NoFix")/*NoFix*/ + ";" + Locale.get("solution.SecEx")/*SecEx*/ + ";" + Locale.get("solution.Cell")/*cell*/ + ";" + Locale.get("solution.0s")/*0s*/ + ";" + Locale.get("solution.tildes") + ";" + Locale.get("solution.replay")/*replay*/ + ";";
-		if (st.indexOf(";" + s + ";") >= 0) {
-			valid = false;
+	public void receiveStatus(byte status, int satsReceived) {
+		if (LocationMsgReceiverList.isPosValid(status)) {
+			posValid = false;
 			if (noValid > 0) {
 				noValid = 0;
 			}
 		} else {
-			valid = true;
+			posValid = true;
 		}
 	}
 

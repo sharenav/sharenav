@@ -188,27 +188,31 @@ public class SirfMessage {
 	}
 
 	private String decodeMeasureNavigation() {
-		short byte1 = (short) getByte(20);
-		boolean dgps=false;
-		String msg="UK";
+		byte status = LocationMsgReceiver.STATUS_NOFIX;
+		short byte1 = (short)getByte(20);
+		switch (byte1 & 0x7) {
+			case 0:
+			case 1:
+			case 2:
+				status = LocationMsgReceiver.STATUS_NOFIX;
+				break;
+			case 3: // 3 sat solution
+			case 5: // 2D point solution
+				status = LocationMsgReceiver.STATUS_2D;
+				break;
+			case 4: // >3 sat solution
+			case 6: // 3D point solution
+				status = LocationMsgReceiver.STATUS_3D;
+				break;
+			case 7:
+				// Dead reckoning means there is currently no fix
+				status = LocationMsgReceiver.STATUS_NOFIX;
+				break;
+		}
 		if ((byte1 & 0x80) > 0){
-			dgps=true;
+			status = LocationMsgReceiver.STATUS_DGPS;
 		}
-		byte1=(short) (byte1 & 0x7);
-		switch (byte1){
-			case 0: msg="No"; break;
-			case 1: msg="1S"; break;
-			case 2: msg="2S"; break;
-			case 3: msg="2D"; break;
-			case 4: msg="3D"; break;
-			case 5: msg="2DP"; break;
-			case 6: msg="3DP"; break;
-			case 7: msg="DR"; break;
-
-		}
-		String ret= ((dgps) ? "DGPS " : "" ) + msg;
-		receiver.receiveSolution(ret);
-//		receiver.receiveSatInUse(getByte(28));
+		receiver.receiveStatus(status, getByte(28));
 		return null;
 	}
 

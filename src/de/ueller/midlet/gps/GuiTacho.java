@@ -35,11 +35,11 @@ public class GuiTacho extends KeyCommandCanvas implements CommandListener,
 	private final static Logger logger = Logger.getInstance(GuiTacho.class,
 			Logger.DEBUG);
 	private final Trace parent;
-	private LcdNumericFont lcdFont;
+	private final LcdNumericFont lcdFont;
 
-	private Calendar cal = Calendar.getInstance();
-	private Date date = new Date();
-	private StringBuffer timeString;
+	private final Calendar cal = Calendar.getInstance();
+	private final Date date = new Date();
+	private final StringBuffer timeString;
 
 	private float alt_delta = 0.0f;
 	private float odo = 0.0f;
@@ -135,7 +135,7 @@ public class GuiTacho extends KeyCommandCanvas implements CommandListener,
 				.append(HelperRoutines.formatInt2(cal.get(Calendar.YEAR) % 100));
 		g.drawString(timeString.toString(), 3, y, Graphics.TOP | Graphics.LEFT);
 		
-		g.drawString(parent.solution, (w >> 1) + 3, y, Graphics.TOP
+		g.drawString(parent.solutionStr, (w >> 1) + 3, y, Graphics.TOP
 				| Graphics.LEFT);
 		
 		timeString.setLength(0);

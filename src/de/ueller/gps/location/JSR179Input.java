@@ -128,7 +128,7 @@ public class JSR179Input
 				try {
 					locationProvider.setLocationListener(this, 1, -1, -1);
 				} catch (Exception e) {
-					receiverList.receiveSolution("SecEx"/*SecEx*/);
+					receiverList.receiveStatus(LocationMsgReceiver.STATUS_SECEX, 0);
 					locationProvider = null;
 				}
 				if (locationProvider != null)  {
@@ -212,8 +212,8 @@ public class JSR179Input
 			/* e.g. SE C702 only receives from getExtraInfo() $GPGSV sentences,
 			 * therefore use On as solution when it's still set to NoFix though the location is valid
 			 */
-			if (receiverList.getCurrentSolution().equals(Locale.get("solution.NoFix")/*NoFix*/)) {
-				receiverList.receiveSolution(Locale.get("solution.On")/*On*/);				
+			if (receiverList.getCurrentStatus() == LocationMsgReceiver.STATUS_NOFIX) {
+				receiverList.receiveStatus(LocationMsgReceiver.STATUS_ON, 0);				
 			}
 			Coordinates coordinates = location.getQualifiedCoordinates();
 			pos.latitude = (float) coordinates.getLatitude();
@@ -230,7 +230,7 @@ public class JSR179Input
 			receiverList.receivePosition(pos);
 		} else {
 			if (receiverList != null) {
-				receiverList.receiveSolution(Locale.get("solution.NoFix")/*NoFix*/);
+				receiverList.receiveStatus(LocationMsgReceiver.STATUS_NOFIX, 0);
 			}
 		}
 		// logger.trace("exit locationUpdated(provider,location)");
@@ -271,7 +271,7 @@ public class JSR179Input
 		locationUpdated(locationProvider, LocationProvider.getLastKnownLocation(), true);
 		if (state == LocationProvider.AVAILABLE) {
 			if (receiverList != null) {
-				receiverList.receiveSolution(Locale.get("solution.NoFix")/*NoFix*/);
+				receiverList.receiveStatus(LocationMsgReceiver.STATUS_NOFIX, 0);
 			}
 		}
 		//#if polish.android
@@ -280,7 +280,7 @@ public class JSR179Input
 		//#else
 		if (state == LocationProvider.OUT_OF_SERVICE) {
 			if (receiverList != null) {
-				receiverList.receiveSolution(Locale.get("solution.Off")/*Off*/);
+				receiverList.receiveStatus(LocationMsgReceiver.STATUS_OFF, 0);
 				receiverList.receiveMessage(Locale.get("jsr179input.ProviderStopped")/*provider stopped*/);
 			}
 		}
@@ -298,7 +298,7 @@ public class JSR179Input
 			 * you all the status changes, does not work.
 			 */
 			if (receiverList != null) {
-				receiverList.receiveSolution(Locale.get("solution.NoFix")/*NoFix*/);
+				receiverList.receiveStatus(LocationMsgReceiver.STATUS_NOFIX, 0);
 			}
 		}
 	}
