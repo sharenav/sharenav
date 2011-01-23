@@ -13,6 +13,9 @@
 
 package de.ueller.osmToGpsMid;
 
+import static de.ueller.osmToGpsMid.GetText._;
+import static de.ueller.osmToGpsMid.GetText.init;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
@@ -309,7 +312,7 @@ public class CreateGpsMidData implements FilenameFilter {
 			 */
 			dsi.writeByte(TravelModes.travelModeCount);
 			for (int i = 0; i < TravelModes.travelModeCount; i++) {
-				dsi.writeUTF(TravelModes.getTravelMode(i).getName());
+				dsi.writeUTF(_(TravelModes.getTravelMode(i).getName()));
 				dsi.writeShort(TravelModes.getTravelMode(i).maxPrepareMeters);
 				dsi.writeShort(TravelModes.getTravelMode(i).maxInMeters);
 				dsi.writeShort(TravelModes.getTravelMode(i).maxEstimationSpeed);
@@ -340,7 +343,7 @@ public class CreateGpsMidData implements FilenameFilter {
 				}
 				dsi.writeByte(poi.typeNum);
 				dsi.writeByte(flags);
-				dsi.writeUTF(poi.description);
+				dsi.writeUTF(_(poi.description));
 				dsi.writeBoolean(poi.imageCenteredOnNode);
 				dsi.writeInt(poi.minEntityScale);
 				if ((flags & LEGEND_FLAG_IMAGE) > 0) {
@@ -414,7 +417,7 @@ public class CreateGpsMidData implements FilenameFilter {
 					routeFlags |= ROUTE_FLAG_MOTORWAY_LINK;
 				}					
 				dsi.writeByte(routeFlags);
-				dsi.writeUTF(way.description);								
+				dsi.writeUTF(_(way.description));
 				dsi.writeInt(way.minEntityScale);
 				dsi.writeInt(way.minTextScale);				
 				if ((flags & LEGEND_FLAG_IMAGE) > 0) {

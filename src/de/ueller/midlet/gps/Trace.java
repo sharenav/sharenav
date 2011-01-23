@@ -316,6 +316,22 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	 * Current speed from GPS in km/h.
 	 */
 	public volatile int speed;
+	public volatile float fspeed;
+
+	/**
+	 * variables for setting course from GPS movement
+	 * TODO: make speed threshold (currently courseMinSpeed)
+	 * user-settable by transfer mode in the style file
+	 * and/or in user menu
+	 */
+	// was three until release 0.7; less than three allows
+	// for course setting even with slow walking, while
+	// the heuristics filter away erratic courses
+	// I've even tested with 0.5f with good results --jkpj
+	private final float courseMinSpeed = 1.5f;
+	private volatile int prevCourse = -1;
+	private volatile int secondPrevCourse = -1;
+	private volatile int thirdPrevCourse = -1;
 
 	/**
 	 * Current altitude from GPS in m.
@@ -516,18 +532,18 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	public void run() {
 		try {
 			if (running) {
-				receiveMessage("GPS starter already running");
+				receiveMessage(Locale.get("trace.GpsStarterRunning")/*GPS starter already running*/);
 				return;
 			}
 
 			//#debug info
 			logger.info("start thread init locationprovider");
 			if (locationProducer != null) {
-				receiveMessage("Location provider already running");
+				receiveMessage(Locale.get("trace.LocProvRunning")/*Location provider already running*/);
 				return;
 			}
 			if (Configuration.getLocationProvider() == Configuration.LOCATIONPROVIDER_NONE) {
-				receiveMessage("No location provider");
+				receiveMessage(Locale.get("trace.NoLocProv")/*"No location provider*/);
 				return;
 			}
 			running=true;
@@ -674,7 +690,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			logger.fatal(Locale.get("trace.TraceThreadCrashOOM")/*Trace thread crashed as out of memory: */ + oome.getMessage());
 			oome.printStackTrace();
 		} catch (Exception e) {
-			logger.fatal(Locale.get("trace.TraceThreadCrashWith")/*Trace thread crashed unexpectadly with error */ +  e.getMessage());
+			logger.fatal(Locale.get("trace.TraceThreadCrashWith")/*Trace thread crashed unexpectedly with error */ +  e.getMessage());
 			e.printStackTrace();
 		} finally {
 			running = false;
@@ -1511,7 +1527,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				return;
 			}
 			if (c == CMDS[ABOUT_CMD]) {
-				new Splash(parent);
+				new Splash(parent, GpsMid.initDone);
 				return;
 			}
 			if (c == CMDS[CELLID_LOCATION_CMD]) {
@@ -1836,8 +1852,10 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			default:
 				showAddons = 0;
 				if (Configuration.getCfgBitState(Configuration.CFGBIT_SHOW_SCALE_BAR)) {
-					tl.calcScaleBarWidth(pc);
-					tl.ele[TraceLayout.SCALEBAR].setText(" ");
+					if (pc != null) {
+						tl.calcScaleBarWidth(pc);
+						tl.ele[TraceLayout.SCALEBAR].setText(" ");
+					}
 				}
 
 				setPointOfTheCompass();
@@ -2498,12 +2516,16 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			course = newcourse;
 		} else {
 			// FIXME I think this is too slow a turn at least when course is
-			// of good quality, should be faster. This probably alleviates
+			// of good quality, turning should be faster. This probably alleviates
 			// the trouble caused by unreliable gps course. However,
-			// some kind of heuristic / averaging / evaluating the
-			// quality of course and faster rotation should be implemented
-			// instead of kindof assuming course is always unreliable
-			// jkpj 2010-01-15
+			// some kind of heuristic, averaging course or evaluating the
+			// quality of course and fast or instant rotation with a known good GPS fix
+		        // should be implemented instead of assuming course is always unreliable.
+		        // The course fluctuations are lesser in faster speeds, so if we're constantly
+		        // (for three consecutive locations) above say 5 km/h, a reasonable approach
+		        // could be to use direct course change in thet case, and for speed below
+		        // 5 km/h use the slow turning below.
+			// jkpj 2010-01-17
 			course = course + ((newcourse - course)*1)/4 + 360;
 		}
 		while (course > 360) {
@@ -2543,12 +2565,53 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		if (gpsRecenter) {
 			center.setLatLonDeg(pos.latitude, pos.longitude);
 			speed = (int) (pos.speed * 3.6f);
+			fspeed = pos.speed * 3.6f;
 			// FIXME add auto-fallback mode where course is from GPS at high speeds and from compass
 			// at low speeds
 			if (Configuration.getCfgBitState(Configuration.CFGBIT_COMPASS_DIRECTION) && compassProducer != null) {
 				updateCourse(compassDeviated);
-			} else if (speed >= 3 && pos.course != Float.NaN ) {
-				updateCourse((int) pos.course);
+                       } else if (fspeed >= courseMinSpeed && pos.course != Float.NaN ) {
+
+                               // Problem: resolve issue erratic course due to GPS fluctuation
+                               // when GPS reception is poor (maybe 3..7S),
+                               // causes unnecessary and disturbing map rotation when device is in one location
+                               // Heuristic for solving: After being still, require
+                               // three consecutive over-the-limit speed readings with roughly the
+                               // same course
+                               if (thirdPrevCourse != -1) {
+                                       // first check for normal flow of things, we've had three valid courses after movement start
+                                       updateCourse((int) pos.course);
+                               } else if (prevCourse == -1) {
+                                       // previous course was invalid,
+                                       // don't set course yet, but set the first tentatively good course
+                                       prevCourse = (int) pos.course;
+                               } else if (secondPrevCourse == -1) {
+                                       // the previous course was the first good one.
+                                       // If this course is in the same 60-degree
+                                       // sector as the first course, we have two valid courses
+                                       if (Math.abs(prevCourse - (int)pos.course) < 30 || Math.abs(prevCourse - (int)pos.course) > 330) {
+                                               secondPrevCourse = prevCourse;
+                                       }
+                                       prevCourse = (int) pos.course;
+                               } else {
+                                       // we have received two previous valid curses, check for this one
+                                       if (Math.abs(prevCourse - (int)pos.course) < 30 || Math.abs(prevCourse - (int)pos.course) > 330) {
+                                               thirdPrevCourse = secondPrevCourse;
+                                               //No need to set these as we'll now trust courses until speed goes below limit
+					       // - unless we'll later add averaging of recent courses for poor GPS reception
+                                               //secondPrevCourse = prevCourse;
+                                               //prevCourse = (int) pos.course;
+                                               updateCourse((int) pos.course);
+                                       } else {
+                                               prevCourse = (int) pos.course;
+                                               secondPrevCourse = -1;
+                                       }
+                               }
+                       } else {
+                               // speed under the minimum, invalidate all prev courses
+                               prevCourse = -1;
+                               secondPrevCourse = -1;
+                               thirdPrevCourse = -1;
 			}
 		}
 		if (gpx.isRecordingTrk()) {

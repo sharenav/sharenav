@@ -608,6 +608,12 @@ public class Configuration {
 
 			setSoundFiles(getString("useSoundFilesWithSyntax"));
 
+			// don't override cell source set by command line with one from .properties
+			// also don't override one set by GUI with an empty one from properties
+			if ((cellSource == null || cellSource.equals("")) && !getString("cellSource").equals("")) {
+				setCellSource(getString("cellSource"));
+			}
+
 			setDontCompress(getString("dontCompress"));
 
 			setUseLang(getString("lang"));
@@ -803,6 +809,16 @@ public class Configuration {
 			return getString("midlet.name");
 		}
 		
+		/** Returns cell source file
+		 * @return Name
+		 */
+		public String getCellSource() {
+			if (cellSource != null) {
+				return cellSource;
+			}
+			return getString("cellSource");
+		}
+
 		/** Returns the name of the Map (as it will be shown on the phone).
 		 * @return Name
 		 */

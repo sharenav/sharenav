@@ -10,6 +10,7 @@
  */
 package de.ueller.osmToGpsMid;
 
+import static de.ueller.osmToGpsMid.GetText._;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -179,7 +180,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	private String useLangName = null;
 
 	String [] planetFiles = {CHOOSE_SRC, FILE_SRC, XAPI_SRC, ROMA_SRC};
-	String [] cellidFiles = {CELL_SRC_NONE, CELL_SRC_FILE, CELL_SRC_DLOAD};
+	Vector cellidFiles = new Vector();
 	String [] soundFormats = {SOUND_NONE, SOUND_AMR, SOUND_WAV, SOUND_WAV_AMR};
 	
 	private static final String LOAD_PROP = "Load .properties file";
@@ -232,6 +233,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	JCheckBox languages[] = new JCheckBox[langList.length];
 	JComboBox jcbCellSource;
 	JButton jbCreate;
+	JButton jbCreateZip;
 	JButton jbClose;
 	JButton jbClearRoute;
 	JButton jbCalcRoute;
@@ -380,7 +382,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		gbc.weighty = 0;
 		add(jpFiles, gbc);
 		
-		JLabel jlPlanet = new JLabel("Openstreetmap data source: ");
+		JLabel jlPlanet = new JLabel(_("Openstreetmap data source: "));
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 		gbc.gridwidth = 1;
@@ -528,7 +530,14 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		gbc.weighty = 0;
 		jpOptions2.add(jcbSoundFormats, gbc);
 		
+		cellidFiles.addElement(CELL_SRC_NONE);
+		cellidFiles.addElement(CELL_SRC_FILE);
+		cellidFiles.addElement(CELL_SRC_DLOAD);
 		jcbCellSource = new JComboBox(cellidFiles);
+		if (!config.getString("cellSource").equals("")) {
+			cellidFiles.addElement(config.getString("cellSource"));
+			jcbCellSource.setSelectedIndex(3);
+		}
 		jcbCellSource.addActionListener(this);
 		jcbCellSource.setToolTipText("Select a source of the Cell ID db for cell based location.");
 		gbc.gridx = 0;
@@ -546,15 +555,15 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		gbc.gridy = 4;
 		add(jbCreate, gbc);
 
-		jbCreate = new JButton("Create GpsMid map zip");
-		jbCreate.setActionCommand("Create-map");
-		jbCreate.addActionListener(this);
+		jbCreateZip = new JButton("Create GpsMid map zip");
+		jbCreateZip.setActionCommand("Create-map");
+		jbCreateZip.addActionListener(this);
 		gbc.gridwidth = 2;
 		gbc.weighty = 0;
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.gridx = 2;
 		gbc.gridy = 4;
-		add(jbCreate, gbc);
+		add(jbCreateZip, gbc);
 
 		jbClose = new JButton("Close");
 		jbClose.setActionCommand("Close-click");
@@ -598,6 +607,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		
 		jbClose.setEnabled(false);
 		jbCreate.setEnabled(false);
+		jbCreateZip.setEnabled(false);
 		jcbPlanet.setEnabled(false);
 		jcbProperties.setEnabled(false);
 		jcbStyle.setEnabled(false);
@@ -725,6 +735,13 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		jcbTileSize.removeActionListener(this);
 		jcbTileSize.setSelectedIndex(config.getTileSizeVsCountId());
 		jcbTileSize.addActionListener(this);
+		System.out.println("  cellSource: " + config.getString("cellSource"));
+		if (!config.getString("cellSource").equals("")) {
+			jcbCellSource.removeActionListener(this);
+			cellidFiles.addElement(config.getString("cellSource"));
+			jcbCellSource.setSelectedIndex(3);
+			jcbCellSource.addActionListener(this);
+		}
 		System.out.println("  midlet.name: " + config.getString("midlet.name"));
 		jtfName.setText(config.getString("midlet.name"));
 		guiSettingsFromConfig();
@@ -994,6 +1011,11 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			if (config.getPlanetName() != null && !"".equals(config.getPlanetName())) {
 				// quote possible backslashes
 				fw.write("mapSource = " + config.getPlanetName().replace("\\", "\\\\") + "\r\n");
+			}
+			if (!"".equals(config.getCellSource())) {
+				// quote possible backslashes
+				fw.write("cellSource = " + config.getCellSource().replace("\\", "\\\\") + "\r\n");
+				fw.write("useCellID = " + config.getString("useCellID") + "\r\n");
 			}
 			fw.write("# You can have up to 9 regions.\r\n");
 			fw.write("# Ways and POIs in any of the regions will be written to the bundle.\r\n");
@@ -1377,6 +1399,8 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			} else if (CELL_SRC_FILE.equalsIgnoreCase(chosenProperty)) {
 				config.setCellOperator("true");
 				askCellFile();
+			} else if (!chosenProperty.equals("")) {
+				config.setCellOperator("true");
 			}
 		}
 		if (event.getSource() == jcbSoundFormats) {

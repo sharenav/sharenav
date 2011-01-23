@@ -12,8 +12,10 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javax.microedition.lcdui.Image;
+import javax.microedition.midlet.MIDlet;
 
 import de.ueller.midlet.gps.Logger;
+import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.routing.TravelMode;
 import de.ueller.midlet.gps.tile.POIdescription;
 import de.ueller.midlet.gps.tile.WayDescription;
@@ -186,7 +188,7 @@ public class Legend {
 	public static String soundFormats[];
 	public static String soundDirectories[];
 	
-	public static String appVersion;
+	public static String mapVersion;
 	public static String bundleDate;
 	public static boolean isValid = false;
 	public static boolean enableEdits;
@@ -258,14 +260,14 @@ public class Legend {
 		/**
 		 * Check to see if we have the right version of the Map format
 		 */
-		short mapVersion = ds.readShort();
-		if (mapVersion != MAP_FORMAT_VERSION) {
+		short mapFormatVersion = ds.readShort();
+		if (mapFormatVersion != MAP_FORMAT_VERSION) {
 			throw new IOException("The Map files are not the version we expected, " +
 					"please use the correct Osm2GpsMid to recreate the map " +
-					"data.  Expected: " + MAP_FORMAT_VERSION + " Read: " + mapVersion);
+					"data.  Expected: " + MAP_FORMAT_VERSION + " Read: " + mapFormatVersion);
 		}
 		
-		appVersion = ds.readUTF();
+		mapVersion = ds.readUTF();
 		bundleDate = ds.readUTF();
 		enableEdits = ds.readBoolean();
 		numUiLang = ds.readShort();
@@ -721,8 +723,18 @@ public class Legend {
 		return 0;
 	}
 
+	public static String getMapVersion() {
+		return mapVersion;
+	}
+
 	public static String getAppVersion() {
-		return appVersion;
+		// FIXME really give app version instead of map version
+		String aV = GpsMid.getInstance().getAppProperty("MIDlet-Version");
+		if (aV != null) {
+			return aV;
+		} else {
+			return "??";
+		}
 	}
 
 	public static String getBundleDate() {

@@ -240,7 +240,7 @@ public class Configuration {
 	public final static byte CFGBIT_ROUTE_USE_MOTORWAYS = 86;
 	/** bit 87: Flag whether the route algorithm uses toll roads */
 	public final static byte CFGBIT_ROUTE_USE_TOLLROADS = 87;
-	/** bit 88: free from 2011-01-08, was Flag whether the touch zones for zoom & center & destionation are symmetric */
+	/** bit 88: free from 2011-01-08, was Flag whether the touch zones for zoom & center & destination are symmetric */
 
 	/** bit 89: Flag whether air distance to destination should be displayed even when routing */
 	public final static byte CFGBIT_SHOW_AIR_DISTANCE_WHEN_ROUTING = 89;
@@ -278,6 +278,8 @@ public class Configuration {
 	public final static byte CFGBIT_MAPTAP_DOUBLE = 106;
 	/** bit 107: indicate whether single map tap feature is enabled*/
 	public final static byte CFGBIT_MAPTAP_SINGLE = 107;
+	/** bit 108: indicate whether gpsmid is running (for android which can kill the process and restart it)*/
+	public final static byte CFGBIT_RUNNING = 108;
 	
 	/**
 	 * These are the database record IDs for each configuration option
@@ -451,6 +453,7 @@ public class Configuration {
 	public static String[] projectionsString;
 	
 	private static boolean hasPointerEvents;
+	private static boolean isSamsungS8000 = false;
 	
 	
 	public static void read() {
@@ -1335,8 +1338,16 @@ public class Configuration {
 			try {
 				Locale.loadTranslations( "/" + uiLangUse + ".loc" );
 			} catch (IOException ioe) {
-				System.out.println("Couldn't open translations file: " + uiLang);
-				return false;
+				System.out.println("Couldn't open translations file: " + uiLangUse);
+				// FIXME check if logger initialized and do this if it is
+				// logger.error("Couldn't set language to " + uiLangUse + ", defaulting to English");
+				try {
+					Locale.loadTranslations( "/en.loc" );
+				} catch (IOException ioe2) {
+					// shouldn't happen
+					System.out.println("Couldn't open translations file for English");
+				}
+				uiLangUse = "en";
 			}
 			
 			LOCATIONPROVIDER = new String[5];
@@ -1839,6 +1850,10 @@ public class Configuration {
 		}
 	}
 	
+	public static boolean isSamsungS8000() {
+		return isSamsungS8000;
+	}
+	
 	public static String getPhoneModel() {
 		String  model = null;
 		try {
@@ -1854,6 +1869,7 @@ public class Configuration {
 			 */
 		}
 		if (model != null) {
+			isSamsungS8000 = model.startsWith("S8000");
 		    return model;
 		} else {
 //#if polish.android
@@ -1884,7 +1900,7 @@ public class Configuration {
 			    phoneModel.startsWith("SIE")
 			) {
 				return CFGBIT_BACKLIGHT_SIEMENS;
-		} else if (phoneModel.startsWith("SAMSUNG-S5230")	) {
+		} else if (isSamsungS8000 || phoneModel.startsWith("SAMSUNG-S5230")	) {
 			return CFGBIT_BACKLIGHT_SAMSUNG;
         }
 		//#endif

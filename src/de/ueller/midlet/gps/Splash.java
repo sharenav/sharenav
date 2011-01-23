@@ -79,11 +79,14 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 	private int topStart = 106;
 	private final int space;
 	private double scale = 1;
-	private String strVersion; 
+	private String mapVersion; 
+	private String appVersion; 
+	private boolean initDone = false;
 
 
-	public Splash(GpsMid main) {
+	public Splash(GpsMid main, boolean initDone) {
 		this.main = main;
+		this.initDone = initDone;
 		try {
 			splash = Image.createImage("/Gps-splash.png");
 		} catch (IOException e) {
@@ -116,13 +119,14 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 		ssize = f.getHeight() * txt.length + space;
 		top = -space;
 		if (Legend.isValid) {
-			strVersion = "V" + Legend.getAppVersion() + " (" + Legend.getBundleDate() + ")";
-		} else {
-			strVersion = "Error reading map!";
+			mapVersion = "M" + Legend.getMapVersion() + " (" + Legend.getBundleDate() + ")";
+		}
+		appVersion = "V" + Legend.getAppVersion();
+		addCommand(BACK_CMD);
+		if (!initDone) {
+			addCommand(EXIT_CMD);
 		}
 		show();
-		addCommand(BACK_CMD);
-		addCommand(EXIT_CMD);
 		setCommandListener(this);
 		processorThread = new Thread(this, "Splash");
 		processorThread.setPriority(Thread.MIN_PRIORITY);
@@ -140,9 +144,8 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 		g.drawImage(splash, getWidth() / 2, 0, Graphics.HCENTER | Graphics.TOP);
 
 		g.setColor(0xFFFF99);
-		g.drawString(strVersion, (getWidth() + splash.getWidth()) / 2 - 2 , 2, 
+		g.drawString(appVersion + " " + mapVersion, (getWidth() + splash.getWidth()) / 2 - 2 , 2, 
 					 Graphics.TOP | Graphics.RIGHT);		
-		
 		g.setColor(255, 40, 40);
 		int startLine = top / sp;
 		int yc = topStart - top % sp;
@@ -184,7 +187,9 @@ public class Splash extends Canvas implements CommandListener,Runnable{
 		}
 //#if polish.android
 		// workaround for Android accept buttons; without this, accept/deny don't work.
-		main.alert("Splash", "Android!", 500);
+		if (initDone) {
+			main.alert("Splash", "Android!", 500);
+		}
 //#endif
 		while (! shutdown){
 			synchronized (this) {
