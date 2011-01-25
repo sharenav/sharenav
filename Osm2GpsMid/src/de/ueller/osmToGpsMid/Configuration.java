@@ -584,8 +584,20 @@ public class Configuration {
 			if (propIS == null) {
 				throw new IOException("Properties file not found!");
 			}
-			rb = new PropertyResourceBundle(new InputStreamReader(propIS, "UTF-8"));
+			
+			// try reading .properties with UTF-8 encoding
+			try {
+				rb = new PropertyResourceBundle(new InputStreamReader(propIS, "UTF-8"));
+			} catch (NoSuchMethodError nsme) {
+				/* Give warning if creating the UTF-8-reader for .properties fails and continue with default encoding,
+				 * e.g. on OS X Leopard: http://sourceforge.net/projects/gpsmid/forums/forum/677687/topic/4063854 
+				 */
+				System.out.println("Warning: Cannot use UTF-8 encoding for decoding .properties file");
+				rb = new PropertyResourceBundle(propIS);
+			}
+			
 			vb = new PropertyResourceBundle(getClass().getResourceAsStream("/version.properties"));
+			
 			setRouting(getString("useRouting"));
 			useUrlTags = getString("useUrlTags").equalsIgnoreCase("true");
 			usePhoneTags = getString("usePhoneTags").equalsIgnoreCase("true");
