@@ -953,7 +953,6 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 								course += 360;
 							}
 						}
-						imageCollector.getCurrentProjection().pan(center, panX, panY);
 					} else {
 						// manual rotation 
 						if (courseDiff == 360) {
@@ -968,8 +967,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 						if (panX != 0 || panY != 0) {
 							gpsRecenter = false;
 						}
-						imageCollector.getCurrentProjection().pan(center, panX, panY);
 					}
+					imageCollector.getCurrentProjection().pan(center, panX, panY);
 				}
 				gpsRecenter = false;
 				return;
