@@ -3201,6 +3201,10 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		tl = new TraceLayout(0, 0, getWidth(), getHeight());
 	}
 
+	public void resetSize() {
+		sizeChanged(getWidth(), getHeight());
+	}
+
 	public void locationDecoderEnd(String msg) {
 		receiveMessage(msg);
 		locationDecoderEnd();
