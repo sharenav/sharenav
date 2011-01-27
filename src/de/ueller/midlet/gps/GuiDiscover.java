@@ -39,6 +39,7 @@ import de.ueller.gps.data.Configuration;
 import de.ueller.gps.tools.IconActionPerformer;
 import de.ueller.gpsMid.mapData.SingleTile;
 import de.ueller.midlet.gps.GuiCamera;
+import de.ueller.midlet.gps.GpsMidMenu;
 import de.ueller.midlet.gps.data.Gpx;
 import de.ueller.midlet.gps.data.ProjFactory;
 import de.ueller.midlet.gps.data.Projection;
@@ -128,12 +129,12 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	private static final String[] empty = {};
 
 	/** Soft button for exiting to RootMenu. */
-	private final Command EXIT_CMD = new Command(Locale.get("generic.Back")/*Back*/, Command.BACK, 2);
+	private final Command EXIT_CMD = new Command(Locale.get("generic.Back")/*Back*/, GpsMidMenu.BACK, 2);
 
-	private final Command BACK_CMD = new Command(Locale.get("generic.Cancel")/*Cancel*/, Command.BACK, 2);
+	private final Command BACK_CMD = new Command(Locale.get("generic.Cancel")/*Cancel*/, GpsMidMenu.CANCEL, 2);
 
 	/** Soft button for discovering BT. */
-	private final Command OK_CMD = new Command(Locale.get("generic.OK")/*Ok*/, Command.OK, 1);
+	private final Command OK_CMD = new Command(Locale.get("generic.OK")/*Ok*/, GpsMidMenu.OK, 1);
 
 	private final Command STORE_BT_URL = new Command(Locale.get("guidiscover.Select")/*Select*/, Command.OK, 2);
 
