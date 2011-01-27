@@ -1,5 +1,5 @@
 /*
- * GpsMid - Copyright (c) 2007-2001 Harald Mueller james22 at users dot sourceforge dot net and other
+ * GpsMid - Copyright (c) 2007-2011 Harald Mueller james22 at users dot sourceforge dot net and other
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
