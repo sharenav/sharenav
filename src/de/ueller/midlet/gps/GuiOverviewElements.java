@@ -10,6 +10,7 @@ import de.ueller.gps.data.Legend;
 import de.ueller.gps.data.Configuration;
 import de.ueller.midlet.gps.tile.WayDescription;
 import de.enough.polish.util.Locale;
+import de.ueller.midlet.gps.GpsMidMenu;
 
 public class GuiOverviewElements extends Form implements CommandListener, ItemStateListener {
 	private ChoiceGroup ovElGroupCG;
@@ -25,7 +26,8 @@ public class GuiOverviewElements extends Form implements CommandListener, ItemSt
 	private static byte ovElGroupNr = 0;
 	
 	// commands
-	private static final Command CMD_OK = new Command(Locale.get("generic.OK")/*Ok*/, Command.OK, 1);
+	private static final Command CMD_OK = new Command(Locale.get("generic.OK")/*Ok*/, GpsMidMenu.OK, 1);
+	// FIXME add cancel
 	private static final Command CMD_OFF = new Command(Locale.get("generic.Off")/*Off*/, Command.ITEM, 2);
 	
 	// other

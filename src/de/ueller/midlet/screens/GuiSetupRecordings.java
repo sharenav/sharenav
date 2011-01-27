@@ -12,7 +12,7 @@ import de.enough.polish.util.Locale;
 import de.ueller.gps.data.Configuration;
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.GpsMidDisplayable;
-
+import de.ueller.midlet.gps.GpsMidMenu;
 
 /**
  * Setup screen for GPS recording related settings.
@@ -29,9 +29,9 @@ public class GuiSetupRecordings extends Form implements CommandListener {
 
 	// Commands
 	private static final Command CMD_SAVE = new Command(Locale.get("generic.Save")/*Save*/, 
-			Command.ITEM, 2);
+			GpsMidMenu.OK, 1);
 	private static final Command CMD_CANCEL = new Command(Locale.get("generic.Cancel")/*Cancel*/, 
-			Command.BACK, 3);
+			GpsMidMenu.CANCEL, 2);
 	
 	// Other
 	private final GpsMidDisplayable parent;

@@ -10,6 +10,7 @@ import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Legend;
 import de.ueller.midlet.gps.data.ProjFactory;
 import de.enough.polish.util.Locale;
+import de.ueller.midlet.gps.GpsMidMenu;
 
 public class GuiMapFeatures extends Form implements CommandListener {
 	// Groups
@@ -39,9 +40,9 @@ public class GuiMapFeatures extends Form implements CommandListener {
 	private Gauge gaugeDetailBoostPOI; 
 
 	// commands
-	private static final Command CMD_APPLY = new Command(Locale.get("guimapfeatures.Apply")/*Apply*/, Command.BACK, 1);
-	private static final Command CMD_SAVE = new Command(Locale.get("guimapfeatures.Save")/*Save*/, Command.ITEM, 2);
-	//private static final Command CMD_CANCEL = new Command(Locale.get("generic.Cancel")/*Cancel*/, Command.CANCEL, 3);
+	private static final Command CMD_APPLY = new Command(Locale.get("guimapfeatures.Apply")/*Apply*/, GpsMidMenu.OK, 1);
+	private static final Command CMD_SAVE = new Command(Locale.get("guimapfeatures.Save")/*Save*/, GpsMidMenu.OK, 2);
+	//private static final Command CMD_CANCEL = new Command(Locale.get("generic.Cancel")/*Cancel*/, GpsMidMenu.CANCEL, 3);
 	
 	// other
 	private Trace parent;

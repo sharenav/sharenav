@@ -8,14 +8,15 @@ import javax.microedition.lcdui.*;
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Legend;
 import de.enough.polish.util.Locale;
+import de.ueller.midlet.gps.GpsMidMenu;
 
 
 public class GuiRoute extends Form implements CommandListener {
 	private final static Logger logger = Logger.getInstance(GuiRoute.class,Logger.DEBUG);
 
 	// commands
-	private static final Command CMD_OK = new Command(Locale.get("generic.OK")/*Ok*/, Command.OK, 2);
-	private static final Command CMD_CANCEL = new Command(Locale.get("generic.Cancel")/*Cancel*/, Command.BACK, 3);
+	private static final Command CMD_OK = new Command(Locale.get("generic.OK")/*Ok*/, GpsMidMenu.OK, 2);
+	private static final Command CMD_CANCEL = new Command(Locale.get("generic.Cancel")/*Cancel*/, GpsMidMenu.BACK, 3);
 	
 	private ChoiceGroup routingTravelModesGroup;
 	private Gauge gaugeRoutingEsatimationFac; 

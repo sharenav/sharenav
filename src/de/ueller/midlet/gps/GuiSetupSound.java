@@ -9,6 +9,7 @@ import javax.microedition.lcdui.*;
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Legend;
 import de.enough.polish.util.Locale;
+import de.ueller.midlet.gps.GpsMidMenu;
 
 
 public class GuiSetupSound extends Form implements CommandListener {
@@ -31,8 +32,8 @@ public class GuiSetupSound extends Form implements CommandListener {
         private TextField spdAlertTolerance=null;
 
 	// commands
-	private static final Command CMD_SAVE = new Command(Locale.get("generic.OK")/*Ok*/, Command.ITEM, 2);
-	private static final Command CMD_CANCEL = new Command(Locale.get("generic.Cancel")/*Cancel*/, Command.BACK, 3);
+	private static final Command CMD_SAVE = new Command(Locale.get("generic.OK")/*Ok*/, GpsMidMenu.OK, 2);
+	private static final Command CMD_CANCEL = new Command(Locale.get("generic.Cancel")/*Cancel*/, GpsMidMenu.CANCEL, 3);
 	
 	// other
 	private GuiDiscover parent;
