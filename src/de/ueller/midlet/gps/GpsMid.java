@@ -181,12 +181,23 @@ public class GpsMid extends MIDlet implements CommandListener {
 	protected void pauseApp() {
 		//#debug
 		System.out.println("Pause GpsMid");
-//#ifndef polish.android
-		// FIXME we should save state here to prepare for Android killing us
+//#ifdef polish.android
+		// FIXME we should save more state here to prepare for Android killing us
+		// FIXME consider if saving should be done also on J2ME
+		// remember last position
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_AUTOSAVE_MAPPOS)) {
+			// use current display center on next startup
+			Configuration.setStartupPos(trace.center);
+		} else {
+			// use center of map on next startup
+			Configuration.setStartupPos(new Node(0.0f, 0.0f));
+		}
+//#endif
+		// FIXME make it an option whether to keep location provider switched on in pause mode
+		// (for quick GPS startup when resuming from pause)
 		if (trace != null) {
 			trace.pause();
 		}
-//#endif
 	}
 
 	protected void startApp() throws MIDletStateChangeException {
@@ -269,9 +280,11 @@ public class GpsMid extends MIDlet implements CommandListener {
 		    || (Configuration.getCfgBitState(Configuration.CFGBIT_SKIPP_SPLASHSCREEN) && Legend.isValid)) {
 			showMapScreen();
 			if (Configuration.getCfgBitState(Configuration.CFGBIT_RUNNING)) {
-				// returning from pause or restart, size may have changed,
-				// also workaround for microemulator refresh issue
+				// returning from pause or restart
+				// size may have changed, also workaround for microemulator refresh issue
 				trace.resetSize();
+				// restart location provider (if enabled) after pause
+				trace.resumeAfterPause();
 			}
 		} else {
 			new Splash(this, initDone);
@@ -362,6 +375,23 @@ public class GpsMid extends MIDlet implements CommandListener {
 		}
 		notifyDestroyed();
 	}
+
+	// not used as of 2011-01-27; to minimize GpsMid on platforms which support it
+//	public void userPause() {
+//#if polish.android
+//		if (Configuration
+//		    .getCfgBitState(Configuration.CFGBIT_BACKLIGHT_ANDROID_WAKELOCK)) {
+//			stopBackLightTimer();
+//		}
+//#endif
+//              // possibly don't do this, at least on S60r3 pausing doesn't seem to work so locationprovider doesn't get restarted
+//		pauseApp();
+//		//according to net wisdom this minimizes GpsMid on many platforms where minimizing
+//		//is possible
+//		Display.getDisplay(this).setCurrent(null);
+//		// this appears to do nothing on Nokia S60r3 and according to net wisdom on most other platforms, too
+//		notifyPaused();
+//	}
 
 	/** Shows main menu of MIDlet on the screen. */
 	public void show() {
