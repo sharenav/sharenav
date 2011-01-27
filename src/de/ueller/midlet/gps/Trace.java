@@ -740,6 +740,17 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		}
 	}
 
+	public void resumeAfterPause() {
+		logger.debug("resuming application after pause");
+		if (imageCollector != null) {
+			imageCollector.resume();
+		}
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_AUTO_START_GPS) && !running && (locationProducer == null)) {
+			Thread thread = new Thread(this,"LocationProducer init");
+			thread.start();
+		}
+	}
+
 	public void resume() {
 		logger.debug("resuming application");
 		if (imageCollector != null) {
@@ -3199,6 +3210,10 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	
 	public void recreateTraceLayout() {
 		tl = new TraceLayout(0, 0, getWidth(), getHeight());
+	}
+
+	public void resetSize() {
+		sizeChanged(getWidth(), getHeight());
 	}
 
 	public void locationDecoderEnd(String msg) {
