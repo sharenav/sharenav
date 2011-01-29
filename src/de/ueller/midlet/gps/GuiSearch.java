@@ -524,8 +524,13 @@ public class GuiSearch extends Canvas implements CommandListener,
 					gsl = new GuiSearchLayout(0, 0, width, height);
 				}
 			
-				String letters[] = {  "     ", "  X  ", "  <- ", "1#*- ", " abc2", " def3", " ghi4", " jkl5", " mno6",
-						      "pqrs7", " tuv8", "wxyz9", Locale.get("guisearch.more")/*more*/, " _0  ", 
+				String letters[] = {  "     ", "  X  ", "  <- ", 
+						      Locale.get("guisearch.label1")/*1#*- */, Locale.get("guisearch.label2")/* abc2*/,
+						      Locale.get("guisearch.label3")/* def3*/, Locale.get("guisearch.label4")/* ghi4*/,
+						      Locale.get("guisearch.label5")/* jkl5*/, Locale.get("guisearch.label6")/* mno6*/,
+						      Locale.get("guisearch.label7")/*pqrs7*/, Locale.get("guisearch.label8")/* tuv8*/,
+						      Locale.get("guisearch.label9")/*wxyz9*/, 
+						      Locale.get("guisearch.more")/*more*/, " _0  ", 
 						      Locale.get("guisearch.sort")/*sort*/};
 				for (int i = 0; i < 15 ; i++) {
 					// hide sort when more than 2 chars typed
