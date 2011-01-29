@@ -10,7 +10,7 @@ import javax.microedition.lcdui.*;
 import de.enough.polish.util.Locale;
 
 import de.ueller.gps.data.Configuration;
-
+import de.ueller.midlet.gps.GpsMidMenu;
 
 
 public class GuiSetupGui extends Form implements CommandListener {
@@ -20,9 +20,9 @@ public class GuiSetupGui extends Form implements CommandListener {
 
 	// commands
 	private static final Command CMD_SAVE = new Command(Locale.get("generic.Save")/*Save*/, 
-			Command.ITEM, 2);
+			GpsMidMenu.OK, 2);
 	private static final Command CMD_CANCEL = new Command(Locale.get("generic.Cancel")/*Cancel*/, 
-			Command.BACK, 3);
+			GpsMidMenu.CANCEL, 3);
 	
 	// other
 	private final GpsMidDisplayable parent;

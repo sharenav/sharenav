@@ -42,6 +42,7 @@ import de.ueller.gps.data.Position;
 import de.ueller.gps.tools.HelperRoutines;
 import de.ueller.gps.tools.StringTokenizer;
 import de.ueller.midlet.gps.data.MoreMath;
+import de.ueller.midlet.gps.GpsMidMenu;
 
 import de.enough.polish.util.Locale;
 
@@ -57,8 +58,8 @@ import de.enough.polish.util.Locale;
  */
 public class GuiCamera extends Canvas implements CommandListener, ItemCommandListener, GuiCameraInterface, SelectionListener, GpsMidDisplayable {
 
-	private final Command BACK_CMD = new Command(Locale.get("generic.Back")/*Back*/, Command.BACK, 5);
-	private final Command OK_CMD = new Command(Locale.get("generic.OK")/*Ok*/, Command.OK, 5);
+	private final Command CANCEL_CMD = new Command(Locale.get("generic.Cancel")/*Cancel*/, GpsMidMenu.CANCEL, 5);
+	private final Command OK_CMD = new Command(Locale.get("generic.OK")/*Ok*/, GpsMidMenu.OK, 5);
 	private final Command CAPTURE_CMD = new Command(Locale.get("guicamera.Capture")/*Capture*/, Command.OK, 5);
 	private final Command STORE_CMD = new Command(Locale.get("guicamera.SelectDir")/*Select directory*/, Command.ITEM, 5);
 	public final Command SETUP_CMD = new Command(Locale.get("guicamera.Setup")/*Setup*/, Command.ITEM, 6);
@@ -89,7 +90,7 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 
 	public void init(Trace parent) {
 		this.parent = parent;
-		addCommand(BACK_CMD);
+		addCommand(CANCEL_CMD);
 		addCommand(CAPTURE_CMD);
 		//addCommand(STORE_CMD);
 		addCommand(SETUP_CMD);
@@ -390,7 +391,7 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 	}
 	
 	public void commandAction(Command c, Displayable disp) {
-		if (c == BACK_CMD) {
+		if (c == CANCEL_CMD) {
 			if (disp == this) {
 				//#if polish.api.mmapi
 				if (mPlayer != null)
@@ -440,7 +441,7 @@ public class GuiCamera extends Canvas implements CommandListener, ItemCommandLis
 				}
 			}
 			Form setupDialog = new Form(Locale.get("guicamera.Setup")/*Setup*/);
-			setupDialog.addCommand(BACK_CMD);
+			setupDialog.addCommand(CANCEL_CMD);
 			setupDialog.addCommand(OK_CMD);
 			setupDialog.addCommand(STORE_CMD);
 			setupDialog.setCommandListener(this);
