@@ -2816,7 +2816,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			public void run() {
 				// if no action (e.g. from double tap) is already done
 				// and the pointer did not move or if it was pressed on a control and not moved much
-				if (!pointerActionDone && !pointerDraggedMuch) {
+				if (!pointerActionDone) {
 					if (System.currentTimeMillis() - pressedPointerTime >= LONGTAP_DELAY){
 						longTap();
 					}
@@ -3049,7 +3049,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		pointerActionDone = true;
 		// if not tapping a control, then the map area must be tapped so we do the long tap action for the map area
 		if (tl.getElementIdAtPointer(touchX, touchY) < 0 && panProjection != null) {							
-			if (Configuration.getCfgBitState(Configuration.CFGBIT_MAPTAP_LONG)) {
+			if (!pointerDraggedMuch && Configuration.getCfgBitState(Configuration.CFGBIT_MAPTAP_LONG)) {
 				//#debug debug
 				logger.debug("long tap map");										
 				//#if polish.api.online
@@ -3070,14 +3070,14 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		// long tapping a control											
 		} else {
 			int actionId = tl.getActionIdLongAtPointer(touchX, touchY);
-			if (actionId > 0) {
-				tl.clearTouchedElement();
+			if (actionId > 0 && tl.getElementAtPointer(touchX, touchY) == tl.getTouchedElement()) {
 				//#debug debug
 				logger.debug("long tap button: " + actionId + " x: " + touchX + " y: " + touchY);
 				commandAction(actionId);
 				repaint();
 			}
 		}
+		tl.clearTouchedElement();
 	}
 
 	
