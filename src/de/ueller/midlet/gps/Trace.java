@@ -2788,6 +2788,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		// check for double press
 		if (!keyboardLocked && currTime - pressedPointerTime < DOUBLETAP_MAXDELAY) {
 			doubleTap(x, y);
+			return;
 		}
 		
 		// Remember the time and position the pointer was pressed after the check for double tap,
