@@ -3071,14 +3071,14 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		} else {
 			int actionId = tl.getActionIdLongAtPointer(touchX, touchY);
 			if (actionId > 0 && tl.getElementAtPointer(touchX, touchY) == tl.getTouchedElement()) {
+				tl.clearTouchedElement();
+				repaint();
 				pointerActionDone = true;
 				//#debug debug
 				logger.debug("long tap button: " + actionId + " x: " + touchX + " y: " + touchY);
 				commandAction(actionId);
-				repaint();
 			}
 		}
-		tl.clearTouchedElement();
 	}
 
 	
