@@ -278,7 +278,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	private static volatile boolean checkingForSingleTap = false;
 	
 	private final int DOUBLETAP_MAXDELAY = 300;
-	private final int LONGTAP_DELAY = 1500;
+	private final int LONGTAP_DELAY = 1000;
 	
 	public volatile boolean routeCalc=false;
 	public Tile tiles[] = new Tile[6];
