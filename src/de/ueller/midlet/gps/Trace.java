@@ -3046,10 +3046,10 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	}
 	
 	private void longTap() {
-		pointerActionDone = true;
 		// if not tapping a control, then the map area must be tapped so we do the long tap action for the map area
 		if (tl.getElementIdAtPointer(touchX, touchY) < 0 && panProjection != null) {							
 			if (!pointerDraggedMuch && Configuration.getCfgBitState(Configuration.CFGBIT_MAPTAP_LONG)) {
+				pointerActionDone = true;
 				//#debug debug
 				logger.debug("long tap map");										
 				//#if polish.api.online
@@ -3071,6 +3071,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		} else {
 			int actionId = tl.getActionIdLongAtPointer(touchX, touchY);
 			if (actionId > 0 && tl.getElementAtPointer(touchX, touchY) == tl.getTouchedElement()) {
+				pointerActionDone = true;
 				//#debug debug
 				logger.debug("long tap button: " + actionId + " x: " + touchX + " y: " + touchY);
 				commandAction(actionId);
