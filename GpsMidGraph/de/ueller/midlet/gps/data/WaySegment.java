@@ -98,20 +98,26 @@ public class WaySegment {
 			double dx = ( (double) (edgeA.x - edgeB.x) * distanceDeco / distanceLine);
 			double dy = ( (double)(edgeA.y - edgeB.y) * distanceDeco / distanceLine);
 			point.d.set((int) dx, (int) dy);
-			for (int j = 1; point.d.vectorMagnitude(point.b) < distanceLine; j++) {
-				point.d.set((int) (dx * j), (int) (dy * j));
-				if ( ( j & 0x1) == 0 ) {
-					point.c.set(
-						edgeC.vectorSubstract(point.d)
-					);
-				} else {
-					point.c.set(
-						edgeA.vectorSubstract(point.d)
-					);
+			if ( point.d.vectorMagnitude(point.b) * 1000 > distanceLine) { // only if the diff vector will not have to be added more than a 1000 times, i.e. is very small
+				for (int j = 1; point.d.vectorMagnitude(point.b) < distanceLine; j++) {
+					point.d.set((int) (dx * j), (int) (dy * j));
+					if ( ( j & 0x1) == 0 ) {
+						point.c.set(
+							edgeC.vectorSubstract(point.d)
+						);
+					} else {
+						point.c.set(
+							edgeA.vectorSubstract(point.d)
+						);
+					}
+					
+					pc.g.drawLine(point.a.x, point.a.y, point.c.x, point.c.y);
+					point.a.set(point.c);
+//					if (j >= 999) {
+//						System.out.println("Endless loop, j: " + j + " dx :" + dx + " dy :" + dy + " dl: " + distanceLine + " mag: " + point.d.vectorMagnitude(point.b) );
+						break;
+//					}
 				}
-				
-				pc.g.drawLine(point.a.x, point.a.y, point.c.x, point.c.y);
-				point.a.set(point.c);
 			}
 		}
 	}
