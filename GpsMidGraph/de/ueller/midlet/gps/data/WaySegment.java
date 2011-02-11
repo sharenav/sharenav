@@ -115,7 +115,7 @@ public class WaySegment {
 					point.a.set(point.c);
 //					if (j >= 999) {
 //						System.out.println("Endless loop, j: " + j + " dx :" + dx + " dy :" + dy + " dl: " + distanceLine + " mag: " + point.d.vectorMagnitude(point.b) );
-						break;
+//						break;
 //					}
 				}
 			}
