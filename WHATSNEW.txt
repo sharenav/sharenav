@@ -8,10 +8,11 @@ GpsMid 0.7.11
 	- long tapping ">" now sets the destination
 	- long tapping the distance will (re)calculate the route with the current settings
 	*** Map Elements ***
-	- Added POI for shop=chemist
+	- added POI for shop=chemist
 	*** Platforms ***
 	- handle back commands on Android so that settings are saved with back button like is the Android custom
-	- resuming the application from pause will no more make the Splash screen show, e.g. on Android and Bada 
+	- resuming the application from pause will no more make the Splash screen show, e.g. on Android and Bada
+	  (corrected how GpsMid handles Midlet.startApp())
     *** Others ***
     - fix NoSuchMethodError when using Osm2GpsMid on OS X
 	- some translations have been updated
