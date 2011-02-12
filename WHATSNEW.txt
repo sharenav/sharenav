@@ -3,9 +3,10 @@ GpsMid 0.7.11
 	- fixed frequent freezes when rendering toll roads in eagle view 
     *** Map Screen ***
     - filter out heuristically invalid courses for map rotation
-    *** Icon Menu and Touchscreen support ***
+    *** Touchscreen support ***
 	- reduce time for triggering a long tap from 1500 to 1000 ms
 	- long tapping ">" now sets the destination
+	- long tapping the distance will (re)calculate the route with the current settings
 	*** Map Elements ***
 	- Added POI for shop=chemist
 	*** Platforms ***
