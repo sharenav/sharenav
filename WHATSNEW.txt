@@ -14,6 +14,8 @@ GpsMid 0.7.11
     *** Others ***
     - fix NoSuchMethodError when using Osm2GpsMid on OS X
 	- some translations have been updated
+    - start of i18n for Osm2GpsMid (including way & POI types & other strings visible in GpsMid)
+    - Finnish translation for Osm2Gpsmid (Translations_fi*)
 
 GpsMid 0.7.1
     *** Important bug fix ***
