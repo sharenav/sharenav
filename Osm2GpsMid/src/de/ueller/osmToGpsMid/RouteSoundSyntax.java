@@ -40,7 +40,17 @@ public class RouteSoundSyntax {
 		
 		if (is != null) {
 			try {
-				InputStreamReader isr = new InputStreamReader(is, "UTF-8");
+				InputStreamReader isr;
+				// try reading syntax.cfg with UTF-8 encoding
+				try {
+					isr = new InputStreamReader(is, "UTF-8");
+				} catch (NoSuchMethodError nsme) {
+					/* Give warning if creating the UTF-8-reader for syntax.cfg fails and continue with default encoding,
+					 * e.g. on OS X Leopard: http://sourceforge.net/projects/gpsmid/forums/forum/677687/topic/4063854 
+					 */
+					System.out.println("Warning: Cannot use UTF-8 encoding for decoding syntax.cfg file");
+					isr = new InputStreamReader(is);
+				}
 				try {			
 					rb = new PropertyResourceBundle(isr);
 				} catch (Exception e) {
