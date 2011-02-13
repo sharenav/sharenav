@@ -529,6 +529,14 @@ scale alias 1: zoomed out 21x
 		<scale scale="23"/>
 		<textscale scale="26"/>
 	  </value>
+	  <value name="chemist">
+		<description desc = "Chemist"/>
+		<image src="chemist.png"/>
+		<namekey tag="name"/>
+		<AreaPOI createForAreas="true"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
+	  </value>
 	  <value name="bicycle">
 		<description desc = "Bicycle Shop"/>
 		<image src="shop_bicycle.png"/>

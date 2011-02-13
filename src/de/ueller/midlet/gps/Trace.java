@@ -278,7 +278,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	private static volatile boolean checkingForSingleTap = false;
 	
 	private final int DOUBLETAP_MAXDELAY = 300;
-	private final int LONGTAP_DELAY = 1500;
+	private final int LONGTAP_DELAY = 1000;
 	
 	public volatile boolean routeCalc=false;
 	public Tile tiles[] = new Tile[6];
@@ -2788,6 +2788,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		// check for double press
 		if (!keyboardLocked && currTime - pressedPointerTime < DOUBLETAP_MAXDELAY) {
 			doubleTap(x, y);
+			return;
 		}
 		
 		// Remember the time and position the pointer was pressed after the check for double tap,
@@ -2815,7 +2816,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			public void run() {
 				// if no action (e.g. from double tap) is already done
 				// and the pointer did not move or if it was pressed on a control and not moved much
-				if (!pointerActionDone && !pointerDraggedMuch) {
+				if (!pointerActionDone) {
 					if (System.currentTimeMillis() - pressedPointerTime >= LONGTAP_DELAY){
 						longTap();
 					}
@@ -3045,10 +3046,10 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	}
 	
 	private void longTap() {
-		pointerActionDone = true;
 		// if not tapping a control, then the map area must be tapped so we do the long tap action for the map area
 		if (tl.getElementIdAtPointer(touchX, touchY) < 0 && panProjection != null) {							
-			if (Configuration.getCfgBitState(Configuration.CFGBIT_MAPTAP_LONG)) {
+			if (!pointerDraggedMuch && Configuration.getCfgBitState(Configuration.CFGBIT_MAPTAP_LONG)) {
+				pointerActionDone = true;
 				//#debug debug
 				logger.debug("long tap map");										
 				//#if polish.api.online
@@ -3069,12 +3070,13 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		// long tapping a control											
 		} else {
 			int actionId = tl.getActionIdLongAtPointer(touchX, touchY);
-			if (actionId > 0) {
+			if (actionId > 0 && tl.getElementAtPointer(touchX, touchY) == tl.getTouchedElement()) {
 				tl.clearTouchedElement();
+				repaint();
+				pointerActionDone = true;
 				//#debug debug
 				logger.debug("long tap button: " + actionId + " x: " + touchX + " y: " + touchY);
 				commandAction(actionId);
-				repaint();
 			}
 		}
 	}
