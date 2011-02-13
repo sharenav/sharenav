@@ -1,0 +1,10 @@
+/bin
+/build
+/dist
+/Osm2GpsMid/bin
+/Osm2GpsMid/dist
+/Osm2GpsMid/exploded
+/Osm2GpsMid/resources/GpsMid*
+/.externalToolBuilders
+/.polishSettings
+/.project
