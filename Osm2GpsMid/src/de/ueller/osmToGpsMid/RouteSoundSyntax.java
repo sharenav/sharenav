@@ -54,7 +54,7 @@ public class RouteSoundSyntax {
 				} catch (NoSuchMethodError nsme) {
 					/* Give warning if creating the UTF-8-reader for syntax.cfg fails and continue with default encoding,
 					 * this can happen with Java 1.5 environments
-					 * e.g. on OS X Leopard: http://sourceforge.net/projects/gpsmid/forums/forum/677687/topic/4063854 
+					 * more information at: http://sourceforge.net/projects/gpsmid/forums/forum/677687/topic/4063854 
 					 */
 					System.out.println("Warning: Cannot use UTF-8 encoding for decoding syntax.cfg file as it requires Java 1.6+");
 					try {			

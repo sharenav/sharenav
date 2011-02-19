@@ -589,10 +589,11 @@ public class Configuration {
 			try {
 				rb = new PropertyResourceBundle(new InputStreamReader(propIS, "UTF-8"));
 			} catch (NoSuchMethodError nsme) {
-				/* Give warning if creating the UTF-8-reader for .properties fails and continue with default encoding,
-				 * e.g. on OS X Leopard: http://sourceforge.net/projects/gpsmid/forums/forum/677687/topic/4063854 
+				/* Give warning if creating the UTF-8-reader for .properties file fails and continue with default encoding,
+				 * this can happen with Java 1.5 environments
+				 * more information at: http://sourceforge.net/projects/gpsmid/forums/forum/677687/topic/4063854 
 				 */
-				System.out.println("Warning: Cannot use UTF-8 encoding for decoding .properties file");
+				System.out.println("Warning: Cannot use UTF-8 encoding for decoding .properties file, requires Java 1.6+");
 				rb = new PropertyResourceBundle(propIS);
 			}
 			
