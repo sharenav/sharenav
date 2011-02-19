@@ -17,8 +17,8 @@ GpsMid 0.7.2
     - start of i18n for Osm2GpsMid (including way & POI types & other strings visible in GpsMid)
     - Finnish translation for Osm2Gpsmid (Translations_fi*)
     *** Others ***
-    - workaround for NoSuchMethodError when using Osm2GpsMid with Java 1.5. For some platforms 
-      currently no newer version seems to be offered, e.g. on OS X. The workaround does however
+    - workaround for NoSuchMethodError when using Osm2GpsMid with Java 1.5. If for your platform 
+      currently Java 1.6+ can't be used. The workaround does however
       not support UTF-8 encodings in syntax.cfg for route instructions and in .properties 
 
 GpsMid 0.7.1
