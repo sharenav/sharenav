@@ -8,6 +8,7 @@ GpsMid 0.7.2
     - long tapping the distance will (re)calculate the route with the current settings
     *** Map Elements ***
     - added POIs for amenity=embassy and shop=chemist
+    - optimized png files with pngcrush to reduce midlet size
     *** Platforms ***
     - handle 'Back' commands on Android so that settings are saved with back button like is the Android custom
     - resuming the application from pause will no more make the splash screen show, e.g. on Android and Bada
@@ -19,7 +20,7 @@ GpsMid 0.7.2
     *** Others ***
     - workaround for NoSuchMethodError when using Osm2GpsMid with Java 1.5. If for your platform 
       currently Java 1.6+ can't be used. The workaround does however
-      not support UTF-8 encodings in syntax.cfg for route instructions and in .properties 
+      not support UTF-8 encodings in syntax.cfg for route instructions and in .properties
 
 GpsMid 0.7.1
     *** Important bug fix ***
