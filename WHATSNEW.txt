@@ -7,7 +7,7 @@ GpsMid 0.7.2
     - long tapping ">" now sets the destination
     - long tapping the distance will (re)calculate the route with the current settings
     *** Map Elements ***
-    - added POI for shop=chemist
+    - added POIs for amenity=embassy and shop=chemist
     *** Platforms ***
     - handle 'Back' commands on Android so that settings are saved with back button like is the Android custom
     - resuming the application from pause will no more make the splash screen show, e.g. on Android and Bada
