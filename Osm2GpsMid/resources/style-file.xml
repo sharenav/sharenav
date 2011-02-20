@@ -397,7 +397,7 @@ scale alias 1: zoomed out 21x
 		<textscale scale="26"/>
 	  </value>	
 	  <value name ="embassy">
-		<description desc = "embassy"/>
+		<description desc = "Embassy"/>
 		<image src="embassy.png"/>
 		<namekey tag="name"/>
 		<AreaPOI createForAreas="true"/>
