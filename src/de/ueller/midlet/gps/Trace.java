@@ -1363,6 +1363,19 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					RoutePositionMark routeSource = new RoutePositionMark(center.radlat, center.radlon);
 					logger.info("Routing source: " + routeSource);
 					routeNodes=new Vector();
+					
+					/* Wait for the route tile to be initialized by the DictReader thread
+					 * (This is necessary if trying to calculate a route very soon after midlet startup) 
+					*/
+					while (tiles[4] == null) {
+						receiveMessage("Waiting for route tile");
+						try {
+							Thread.sleep(250);
+						} catch (InterruptedException e1) {
+							// nothing to do in that case						
+						}
+					}
+					
 					routeEngine = new Routing(tiles, this);
 					routeEngine.solve(routeSource, dest);
 //					resume();
