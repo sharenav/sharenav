@@ -42,6 +42,7 @@ public class DictReader implements Runnable {
 			for (byte i = 0; i <= 4; i++) {
 				readData(i);
 			}
+			t.setDictTilesRead(true);
 		} catch (OutOfMemoryError oome) {
 			logger.fatal(Locale.get("dictreader.DictReaderCrashOOM")/*DictReader thread crashed as out of memory: */ + oome.getMessage());
 			oome.printStackTrace();
