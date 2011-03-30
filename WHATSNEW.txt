@@ -18,6 +18,8 @@ GpsMid 0.7.2
     - start of i18n for Osm2GpsMid (including way & POI types & other strings visible in GpsMid)
     - Finnish translation for Osm2Gpsmid (Translations_fi*)
     *** Others ***
+    - Wait for route base tile to be loaded instead of throwing "Routing thread crashed unexpectedly" exception
+      when trying to calculate a route shortly after the midlet startup when the route base tile is not loaded yet
     - workaround for NoSuchMethodError when using Osm2GpsMid with Java 1.5. If for your platform 
       currently Java 1.6+ can't be used. The workaround does however
       not support UTF-8 encodings in syntax.cfg for route instructions and in .properties
