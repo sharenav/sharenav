@@ -1005,8 +1005,8 @@ public class Routing implements Runnable {
 		/* Wait for the route tile to be initialized by the DictReader thread
 		 * (This is necessary if trying to calculate a route very soon after midlet startup) 
 		*/
-		while (!parent.dictTilesRead) {
-			parent.receiveMessage("Waiting for dict tiles");
+		while (!parent.baseTilesRead) {
+			parent.receiveMessage("Waiting for base tiles");
 			try {
 				Thread.sleep(250);
 			} catch (InterruptedException e1) {

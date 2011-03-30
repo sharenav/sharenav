@@ -282,7 +282,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	
 	public volatile boolean routeCalc=false;
 	public Tile tiles[] = new Tile[6];
-	public volatile boolean dictTilesRead = false;
+	public volatile boolean baseTilesRead = false;
 	
 	public Way actualSpeedLimitWay;
 
@@ -3131,8 +3131,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		updatePosition();
 	}
 
-	public void setDictTilesRead(boolean read) {
-		dictTilesRead = read;
+	public void setBaseTilesRead(boolean read) {
+		baseTilesRead = read;
 	}
 	
 	public void receiveStatistics(int[] statRecord, byte quality) {
