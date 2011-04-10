@@ -1400,6 +1400,7 @@ public class Configuration {
 			confString += "  Use url tags: " + useUrlTags + "\n";
 			confString += "  Use phone tags: " + usePhoneTags + "\n";
 			confString += "  Use house numbers for search: " + useHouseNumbers + "\n";
+			confString += "  Use words for search: " + useWordSearch + "\n";
 			confString += "  Enable editing support: " + enableEditingSupport + "\n";
 			confString += "  Adding menu entries for languages: " + getUseLang() + " (" + getUseLangName() + ")" + "\n";
 			confString += "  Don't compress files ending with: " + getDontCompress() + "\n";
