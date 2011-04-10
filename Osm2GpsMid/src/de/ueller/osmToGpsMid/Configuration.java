@@ -358,6 +358,9 @@ public class Configuration {
 		/** Use or don't use house numbers for searches */
 		public boolean useHouseNumbers=false;
 
+		/** Use or don't use word search (index by words as well as whole names) */
+		public boolean useWordSearch=false;
+
 		/** TODO: Explain this, what is behind the "dict depth"? */
 		private int maxDictDepth = 5;
 		
@@ -603,6 +606,7 @@ public class Configuration {
 			useUrlTags = getString("useUrlTags").equalsIgnoreCase("true");
 			usePhoneTags = getString("usePhoneTags").equalsIgnoreCase("true");
 			useHouseNumbers = getString("useHouseNumbers").equalsIgnoreCase("true");
+			useWordSearch = getString("useWordSearch").equalsIgnoreCase("true");
 			maxRouteTileSize = Integer.parseInt(getString("routing.maxTileSize"));
 
 			setIcons(getString("useIcons"));
