@@ -223,12 +223,14 @@ public class Outline {
 //		return leftmostNode;
 //	}
 
-	public ArrayList<Vertex> findVertexInside(Triangle triangle) {
-		ArrayList<Vertex> ret = new ArrayList<Vertex>();
-
-		for (Vertex v:vertexList) {
-			if (triangle.isVertexInside(v)){
-				ret.add(v);
+	public ArrayList<Vertex> findVertexInside(Triangle triangle, ArrayList<Vertex> ret) {
+		for (int i=0; i<vertexList.size(); i++) {
+			Vertex vertex = vertexList.get(i);
+			if (triangle.isVertexInside(vertex)){
+				if (ret == null) {
+					ret = new ArrayList<Vertex>();
+				}
+				ret.add(vertex);
 			}
 		}
 		return ret;
