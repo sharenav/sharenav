@@ -13,14 +13,7 @@ package de.ueller.osmToGpsMid;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 
-import de.ueller.osmToGpsMid.area.Area;
-import de.ueller.osmToGpsMid.area.Outline;
-import de.ueller.osmToGpsMid.area.Triangle;
-import de.ueller.osmToGpsMid.area.Vertex;
-import de.ueller.osmToGpsMid.model.Member;
-import de.ueller.osmToGpsMid.model.Relation;
 import de.ueller.osmToGpsMid.model.Hash;
 import de.ueller.osmToGpsMid.model.Node;
 import de.ueller.osmToGpsMid.model.Storage;
@@ -72,6 +65,25 @@ public class CleanUpData {
 
 	}
 
+	private static class NodeHash2 implements Hash<Node, Node> {
+
+		/* (non-Javadoc)
+		 * @see de.ueller.osmToGpsMid.model.Hash#equals(java.lang.Object, java.lang.Object)
+		 */
+		@Override
+		public boolean equals(Node k, Node t) {
+			return k.lat == t.lat && k.lon == t.lon && k.getType(Configuration.getConfiguration()) == t.getType(Configuration.getConfiguration());
+		}
+
+		/* (non-Javadoc)
+		 * @see de.ueller.osmToGpsMid.model.Hash#getHashCode(java.lang.Object)
+		 */
+		@Override
+		public int getHashCode(Node k) {
+			return Float.floatToIntBits(k.lat) + Float.floatToIntBits(k.lon) + k.getType(Configuration.getConfiguration());
+		}
+	}
+
 
 	/**
 	 *
@@ -81,12 +93,14 @@ public class CleanUpData {
 		int duplicates = 0;
 		int noNodes = parser.getNodes().size() / 20;
 		Storage<Node> nodes = new Storage<Node>(new NodeHash());
+		Storage<Node> nodesReEnabled = new Storage<Node>(new NodeHash2());
 
 		System.out.println("PLEASE HELP and fix reported duplicates in OpenStreetMap");
 
 		long startTime = System.currentTimeMillis();
 
-		for (Node n:parser.getNodes()) {
+		int iReSetToUsed = 0;
+		for (Node n : parser.getNodes()) {
 
 			progressCounter++;
 			if (noNodes > 0 && progressCounter % noNodes == 0) {
@@ -101,15 +115,25 @@ public class CleanUpData {
 				duplicates++;
 				n.used = false;
 				Node rn = nodes.get(n);
-				if (n.getType(conf) != rn.getType(conf)) {
+				Node nReEnabled = nodesReEnabled.get(n);
+				if (n.getType(conf) != rn.getType(conf)
+						&& nReEnabled == null) {
 					System.out.println("Differing duplicate nodes: " + n + " / " + rn);
 					System.out.println("  Detail URL: " + n.toUrl());
 					// Shouldn't substitute in this case;
 					n.used = true;
+					nodesReEnabled.put(n);
+					iReSetToUsed++;
 				} else {
-					replaceNodes.put(n, rn);
+					if (nReEnabled != null) {
+						// A node of same position and type is in the list
+						// of re enabled nodes. Substitude with this node later.
+						//System.out.println("In re enabled: " + n);
+						replaceNodes.put(n, nReEnabled);
+					} else {
+						replaceNodes.put(n, rn);
+					}
 				}
-
 			}
 		}
 
@@ -125,7 +149,7 @@ public class CleanUpData {
 		substitute();
 		long time = (System.currentTimeMillis() - startTime);
 		System.out.println("Removed " + rm + " duplicate nodes, took "
-				+ time + " ms");
+				+ time + " ms, reset to used " + iReSetToUsed);
 	}
 
 	/**
