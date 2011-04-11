@@ -2535,10 +2535,12 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		        // should be implemented instead of assuming course is always unreliable.
 		        // The course fluctuations are lesser in faster speeds, so if we're constantly
 		        // (for three consecutive locations) above say 5 km/h, a reasonable approach
-		        // could be to use direct course change in thet case, and for speed below
+		        // could be to use direct course change in that case, and for speed below
 		        // 5 km/h use the slow turning below.
 			// jkpj 2010-01-17
-			course = course + ((newcourse - course)*1)/4 + 360;
+		        // on 2011-04-11: jkpj switched from 1/4 rotation back to 3/4 rotation,
+		        // returning to what it was supposed to do before 2010-11-30.
+			course = course + ((newcourse - course)*3)/4 + 360;
 		}
 		while (course > 360) {
 			course -= 360;
