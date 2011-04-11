@@ -6,7 +6,7 @@ If you are unsure, try <GpsMid-Generic-full-0.7.2-map65> or read the Wiki page
 where users have collected their experiences with different phone models.
 
 Download the right JAR and JAD file for your variant and copy it to your
-phone.
+phone. The files are signed and the signature is in the JAD.
 The installation process differs from phone to phone.
 Usually you install by selecting the JAD file and choosing the right menu
 entry from its context menu.
