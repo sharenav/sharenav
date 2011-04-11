@@ -1,3 +1,7 @@
+    *** Map Screen ***
+    - return to 3/4 -speed slow map rotation (as GpsMid) was supposed to
+      do before 2010-11-30 from 1/4 rotation.
+
     *** Optimizations ***
     - speed optimizations to triangulation (Osm2GpsMid), tnx jiri.klement
     - memory use optimizations (Osm2GpsMid), tnx walter9
