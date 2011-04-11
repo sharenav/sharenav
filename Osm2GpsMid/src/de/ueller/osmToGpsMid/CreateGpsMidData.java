@@ -184,10 +184,6 @@ public class CreateGpsMidData implements FilenameFilter {
 //			tile[ROUTEZOOMLEVEL].printHiLo(1, x);
 //		}
 //		System.exit(2);
-<<<<<<< HEAD
-		sl.createSearchList(path);
-		
-=======
 		// create search list for whole items
 		sl.createSearchList(path, SearchList.INDEX_DEFAULT);
 		// create search list for words
@@ -201,7 +197,6 @@ public class CreateGpsMidData implements FilenameFilter {
 			}
 		}
 
->>>>>>> 6363055... use symbols for search indexes
 		// Output statistics for travel modes
 		if (Configuration.attrToBoolean(configuration.useRouting) >= 0) {
 			for (int i = 0; i < TravelModes.travelModeCount; i++) {
