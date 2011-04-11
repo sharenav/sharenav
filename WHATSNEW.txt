@@ -1,10 +1,13 @@
-    *** i18n-related bug fixes ***
-    - fix bug preventing external maps from workin when language set to pl
-    - work around umlaut problems with Splash author names
-
     *** Optimizations ***
     - speed optimizations to triangulation (Osm2GpsMid), tnx jiri.klement
     - memory use optimizations (Osm2GpsMid), tnx walter9
+
+    *** Misc. bug fixes ***
+    - correctly report Osm2GpsMid run duration
+
+    *** i18n-related bug fixes ***
+    - fix bug preventing external maps from workin when language set to pl
+    - work around umlaut problems with Splash author names
 
 GpsMid 0.7.2
     *** Map Screen ***
