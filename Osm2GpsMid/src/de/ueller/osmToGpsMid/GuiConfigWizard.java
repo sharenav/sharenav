@@ -998,6 +998,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	/**
 	 * Writes the current properties to a .properties file
 	 * TODO: Shouldn't useCellID be written too?
+	 * TODO: Add useHouseNumbers and useWordSearch
 	 * And what about the cellSource variable from Configuration.java?
 	 * @param fileName Path name of file to write
 	 */
