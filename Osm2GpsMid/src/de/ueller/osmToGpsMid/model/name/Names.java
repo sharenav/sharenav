@@ -66,6 +66,7 @@ public class Names {
 		} else {
 			names1.put(mn.getName(),mn);
 		}
+//		System.out.println("adding to wholename canon:" + mn);
 		if (! canons.add(mn)){
 //			System.out.println("canon already there:" + mn);
 			Name mnNext=new Name(w.getName()+"\0");
@@ -79,6 +80,36 @@ public class Names {
 				}
 			}
 			catch (NoSuchElementException e) {
+//					System.out.println("no such element exc. in canons.add");
+			}
+		}
+		// only add some entities (like housenumbers) to whole word idx
+		// should add also stopwords 
+		String houseNumber = "";
+		String [] words = mn.getName().split("[ ,.()]");
+		for (String word : words) {
+			mn = new Name(word);
+//			System.out.println("adding word:" + mn);
+			mn.addEntity(w);
+			// don't add house numbers to word index
+			if (!houseNumber.equals(word)) {
+				if (! wordCanons.add(mn)){
+//				System.out.println("wordCanon already there:" + mn);
+					Name mnNext=new Name(word+"\0");
+					mnNext.setCanon( mn.getCanon());
+					try {
+						SortedSet<Name> subSet=wordCanons.tailSet(mnNext);
+						Name mnExist=subSet.first();
+						if (mnExist != null) {
+//						System.out.println("mnExist:" + mnExist);
+							// Trouble? Adds to nameidx?
+							mnExist.addEntity(w);
+						}
+					}
+					catch (NoSuchElementException e) {
+//					System.out.println("no such element exc. in wordCanons.add");
+					}
+				}
 			}
 		}
 	}
