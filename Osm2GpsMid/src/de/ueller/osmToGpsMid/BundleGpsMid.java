@@ -486,7 +486,7 @@ public class BundleGpsMid implements Runnable {
 			
 			OsmParser parser = config.getPlanetParser();
 
-			new TriangulateRelations(parser, config);
+			new Relations(parser, config);
 
 			/**
 			 * Display some stats about the type of relations we currently aren't handling

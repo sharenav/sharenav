@@ -29,7 +29,7 @@ import de.ueller.osmToGpsMid.model.Way;
  * @author hmueller
  *
  */
-public class TriangulateRelations {
+public class Relations {
 
 	private final OsmParser parser;
 	private final Configuration conf;
@@ -37,12 +37,12 @@ public class TriangulateRelations {
 	int areas = 0;
 	
 
-	public TriangulateRelations(OsmParser parser, Configuration conf) {
+	public Relations(OsmParser parser, Configuration conf) {
 		this.parser = parser;
 		this.conf = conf;
-		convertAreasToTriangles();
+		processRelations();
 		parser.resize();
-		System.out.println("Remaining after triangulation:");
+		System.out.println("Remaining after relation processing (triangulation etc.):");
 		System.out.println("  Nodes: " + parser.getNodes().size());
 		System.out.println("  Ways: " + parser.getWays().size());
 		System.out.println("  Relations: " + parser.getRelations().size());
@@ -54,7 +54,7 @@ public class TriangulateRelations {
 	/**
 	 * 
 	 */
-	private void convertAreasToTriangles() {
+	private void processRelations() {
 		HashMap<Long, Way> wayHashMap = parser.getWayHashMap();
 		ArrayList<Way> removeWays = new ArrayList<Way>();
 		Way firstWay = null;
