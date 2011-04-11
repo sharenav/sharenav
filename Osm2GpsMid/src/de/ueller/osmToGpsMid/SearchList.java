@@ -140,7 +140,8 @@ public class SearchList {
 						center=n;
 //						System.out.println("entryType " + n.getNameType() + " idx=" + mapName.getIndex());
 						// housenumber index
-						if (listType == INDEX_HOUSENUMBER || true) {
+						
+						if (listType != INDEX_DEFAULT && Configuration.getConfiguration().useHouseNumbers) {
 							// write way id for matching housenumber to streetname
 //							System.out.println ("listType == 3, testing node " + n);
 //							System.out.println ("type was: " + -1*n.getType(Configuration.getConfiguration()));
@@ -161,9 +162,10 @@ public class SearchList {
 //						System.out.println("entryType " + w.getNameType() + " idx=" + mapName.getIndex());
 						center=w.getMidPoint();
 					}
-                                        // write id for housenumber or word search matching
-					// enable this on next map format change (65 -> 66)
-                                        // ds.writeLong(idtowrite);
+                                        // write id for housenumber or multi-word matching
+					if (listType != INDEX_DEFAULT) {
+						ds.writeLong(idtowrite);
+					}
 					ArrayList<Entity> isIn=new ArrayList<Entity>();
 					Entity nb=e.nearBy;
 					while (nb != null && !isIn.contains(nb)){

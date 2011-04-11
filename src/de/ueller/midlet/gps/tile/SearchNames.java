@@ -240,6 +240,11 @@ public class SearchNames implements Runnable {
 						ds.close();						
 						return;
 					}					
+					long id = 0;
+					// FIXME would be better to use index type != INDEX_DEFAULT
+					if (Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH)) {
+						id = ds.readLong();
+					}
 					byte isInCount = ds.readByte();
 					int[] isInArray = null;
 					if (isInCount > 0 ) {
