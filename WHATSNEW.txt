@@ -1,5 +1,5 @@
     *** Searching ***
-    - add option to search by words (currently only word indexes)
+    - add option for word search. Matches for any word in a name, only single words for now.
 
     *** Map Screen ***
     - return to 3/4 -speed slow map rotation (as GpsMid) was supposed to
