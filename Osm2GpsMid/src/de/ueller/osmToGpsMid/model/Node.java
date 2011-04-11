@@ -17,6 +17,8 @@ import de.ueller.osmToGpsMid.LegendParser;
 
 
 public class Node extends Entity {
+
+	public long id;
 	/**
 	 * The position in the target array of nodes.
 	 */

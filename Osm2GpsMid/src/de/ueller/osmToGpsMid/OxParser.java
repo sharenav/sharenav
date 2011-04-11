@@ -197,7 +197,7 @@ public class OxParser extends OsmParser {
 					return; // Node not in bound
 				}
 				Node n = (Node) current;
-				previousNodeWithThisId = nodes.put(current.id, (Node) current);
+				previousNodeWithThisId = nodes.put(n.id, n);
 				nodeIns++;
 				if (current.getAttribute("highway") != null
 						&& current.getAttribute("highway").equalsIgnoreCase(

@@ -168,7 +168,7 @@ public class TriangulateRelations {
 				System.out.println("  info: multipolygon member " + w.toUrl() + " not removed because it is routable");
 			}
 		}
-		parser.resize();
+		//parser.resize();
 	}
 
 	/**

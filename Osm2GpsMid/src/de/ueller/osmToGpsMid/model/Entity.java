@@ -13,7 +13,7 @@ public class Entity {
 	/**
 	 * the OSM id of this node
 	 */
-	public Long	id;
+	//public Long	id;
 	public Node nearBy;	
 	/**
 	 * The tags for this object  
@@ -22,15 +22,15 @@ public class Entity {
 	private Map<String,String> tags;	
 	
 	public Entity() {
-		
 	}
+
 	public Entity(Entity other) {
-		this.id = other.id;		
+		//this.id = other.id;
 		this.tags=other.tags;
 	}
 	
 	public void cloneTags(Entity other) {
-		this.id = other.id;		
+		//this.id = other.id;
 		this.tags=other.tags;		
 	}
 	

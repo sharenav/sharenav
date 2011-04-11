@@ -5,6 +5,7 @@ public class Line extends Entity {
 
 	public Node	from;
 	public Node	to;
+	public Long id;
 
 	public Line(Node from, Node to, long id) {
 		this.from = from;

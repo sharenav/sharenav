@@ -21,6 +21,7 @@ import de.ueller.osmToGpsMid.Configuration;
  */
 public class Relation extends Entity {
 	protected LinkedList<Member> members = new LinkedList<Member>();
+	public Long id;
 	
 	/** Set if not all members of the relation are available */
 	private boolean partialMembers = false;

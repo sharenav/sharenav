@@ -61,6 +61,8 @@ public class Way extends Entity implements Comparable<Way> {
 	public static final byte WAY_FLAG3_HAS_HOUSENUMBERS = 32;
 	public static final byte WAY_FLAG3_LONGHOUSENUMBERS = 64;
 
+	public Long id;
+
 	private Path					path								= null;
 	public HouseNumber			housenumber							= null;
 	public List<Triangle>		triangles							= null;
@@ -97,12 +99,14 @@ public class Way extends Entity implements Comparable<Way> {
 	 */
 	public Way(Way other) {
 		super(other);
+		this.id = other.id;
 		this.type = other.type;
 		this.path = new Path();
 	}
 
 	public void cloneTags(Way other) {
 		super.cloneTags(other);
+		this.id = other.id;
 		this.type = other.type;
 	}
 

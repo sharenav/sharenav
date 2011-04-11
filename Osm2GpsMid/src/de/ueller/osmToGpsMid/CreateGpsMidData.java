@@ -1636,7 +1636,7 @@ public class CreateGpsMidData implements FilenameFilter {
 					System.err.println("ERROR: OSM-ID won't fit in 32 bits for way " + n);
 					ds.writeInt(-1);
 				} else {
-					ds.writeInt(n.id.intValue());
+					ds.writeInt((int)n.id);
 				}
 			}
 		}
