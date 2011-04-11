@@ -558,7 +558,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 				} else {
 					name = parent.getName(res.nameIdx);
 				}
-				if (!searchAlpha || name == null || searchCanon.toString().equalsIgnoreCase(
+				if (Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ||
+				    !searchAlpha || name == null || searchCanon.toString().equalsIgnoreCase(
 					    name.substring(0, searchCanon.toString().length()))) {
 					result.addElement(res);
 				}
@@ -1192,7 +1193,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 		//#debug debug
 		logger.debug(Locale.get("guisearch.matchingnamefound")/*Found matching name: */ + srNew);
 
-		if (!searchAlpha || name == null || searchCanon.toString().equalsIgnoreCase(
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ||
+		    !searchAlpha || name == null || searchCanon.toString().equalsIgnoreCase(
 			    name.substring(0, searchCanon.toString().length()))) {
 			if (!sortByDist) {
 				result2.addElement(srNew);
