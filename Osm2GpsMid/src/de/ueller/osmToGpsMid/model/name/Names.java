@@ -24,10 +24,18 @@ import de.ueller.osmToGpsMid.model.Entity;
  */
 public class Names {
 	private TreeMap<String,Name> names1;
-    private TreeSet<Name> canons;
+	private TreeMap<String,Name> housenumbers1;
+	private TreeSet<Name> canons;
+	private TreeSet<Name> wordCanons;
+	private TreeSet<Name> wholeWordCanons;
+	private TreeSet<Name> houseNumberCanons;
 	public Names() {
 		names1=new TreeMap<String,Name>(String.CASE_INSENSITIVE_ORDER);
+		housenumbers1=new TreeMap<String,Name>(String.CASE_INSENSITIVE_ORDER);
 		canons=new TreeSet<Name>(new CaononComperator());
+		wordCanons=new TreeSet<Name>(new CaononComperator());
+		wholeWordCanons=new TreeSet<Name>(new CaononComperator());
+		houseNumberCanons=new TreeSet<Name>(new CaononComperator());
 	}
 	
 	public void calcNameIndex(){
@@ -77,6 +85,18 @@ public class Names {
 
 	public TreeSet<Name> getCanons() {
 		return canons;
+	}
+
+	public TreeSet<Name> getWordCanons() {
+		return wordCanons;
+	}
+
+	public TreeSet<Name> getWholeWordCanons() {
+		return wholeWordCanons;
+	}
+
+	public TreeSet<Name> getHouseNumberCanons() {
+		return houseNumberCanons;
 	}
 
 	/**
