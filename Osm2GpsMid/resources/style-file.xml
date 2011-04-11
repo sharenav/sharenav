@@ -905,6 +905,14 @@ scale alias 1: zoomed out 21x
 		<scale scale="23"/>
 		<textscale scale="26"/>
 	  </value>
+	  <value name="waterfall">
+		<description desc="Waterfall"/>
+		<image src="waterfall.png"/>
+		<namekey tag="name"/>
+		<AreaPOI createForAreas="true"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
+	  </value>
 	</key>
 	<key tag="landuse">
 	  <value name ="farm">
@@ -1076,6 +1084,16 @@ scale alias 1: zoomed out 21x
 	  </value>
   	</key>
 	-->
+	<key tag="waterway">
+	  <value name="waterfall">
+			<description desc="Waterfall"/>
+			<image src="waterfall.png"/>
+			<namekey tag="name"/>
+			<AreaPOI createForAreas="true"/>
+			<scale scale="23"/>
+			<textscale scale="26"/>
+	  </value>
+	</key>
   </pois>
   <ways>
   		<keyW tag = "highway">
@@ -1765,6 +1783,14 @@ scale alias 1: zoomed out 21x
   				<lineColor color = "000000F0" colorAtNight="003A3AC4" />
   				<wayWidth width="3" />  	  				
   			</Wvalue>
+			<Wvalue name="waterfall">
+				<description desc="Waterfall"/>
+				<namekey tag="name"/>
+				<isArea area="false"/>
+				<scale scale="19"/>
+				<lineColor color="000000F0" colorAtNight="003A3AC4"/>
+				<wayWidth width="6"/>
+			</Wvalue>
   			<Wvalue name = "*">
   				<description desc = "other waterway"/>
   				<namekey tag = "name"/>  				
