@@ -34,6 +34,11 @@ public class SearchList {
 	Names names;
 	Urls urls;
 
+	public static final int INDEX_DEFAULT = 0;
+	public static final int INDEX_WORD = 1;
+	public static final int INDEX_WHOLEWORD = 2;
+	public static final int INDEX_HOUSENUMBER = 3;
+
 	public SearchList(Names names, Urls urls) {
 		super();
 		this.names = names;
@@ -47,13 +52,18 @@ public class SearchList {
 			String lastStr=null;
 			String lastFid="";
 			int curPos=0;
-			for (Name mapName : names.getCanons()) {
+			for (Name mapName : (listType == INDEX_DEFAULT ? names.getCanons()
+					     : (listType == INDEX_WORD ? names.getWordCanons()
+						: (listType == INDEX_WHOLEWORD ? names.getWholeWordCanons() : names.getHouseNumberCanons())))) {
 				String string=mapName.getCanonFileName();
 				int eq=names.getEqualCount(string,lastStr);
 				if (! lastFid.equals(mapName.getCanonFileId())){
 					if (ds != null) ds.close();
 					lastFid=mapName.getCanonFileId();
-					String fileName = path+"/s"+lastFid+".d";
+					String fileName = path+
+						(listType == INDEX_DEFAULT ? "/s" : (listType == INDEX_WORD ? "/w"
+									 : (listType == INDEX_WHOLEWORD ? "/ww" : "/h"))) +
+						lastFid+".d";
 //					System.out.println("open "+fileName);
 					fo = new FileOutputStream(fileName);
 					ds = new DataOutputStream(fo);
@@ -122,6 +132,18 @@ public class SearchList {
 						ds.writeByte(-1*n.getType(Configuration.getConfiguration()));
 						center=n;
 //						System.out.println("entryType " + n.getNameType() + " idx=" + mapName.getIndex());
+						// housenumber index
+						if (listType == INDEX_HOUSENUMBER || true) {
+							// write way id for matching housenumber to streetname
+//							System.out.println ("listType == 3, testing node " + n);
+//							System.out.println ("type was: " + -1*n.getType(Configuration.getConfiguration()));
+							String wayid = n.getAttribute("__wayid");
+							if (wayid != null) {
+								long way = Long.parseLong(wayid);
+//								System.out.println ("housenumber node wayid:" + wayid + "(" + way + ")" );
+								idtowrite = way;
+							}
+						}			   
 					}
 					if (e instanceof Way) {
 						Way w = (Way) e;
