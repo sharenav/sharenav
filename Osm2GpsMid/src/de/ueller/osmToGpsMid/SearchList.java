@@ -124,7 +124,7 @@ public class SearchList {
 					String url = null;
 					String phone = null;
 					String name = null;
-                                        long idtowrite = 0;
+					long idtowrite = 0;
 					if (e instanceof Node) {
 						idtowrite = ((Node) e).id;
 					}
