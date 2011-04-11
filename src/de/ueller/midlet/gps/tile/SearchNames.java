@@ -33,6 +33,11 @@ public class SearchNames implements Runnable {
 	private final GuiSearch gui;
 	private boolean newSearch = false;
 	private boolean appendRes = false;
+	public static final int INDEX_DEFAULT = 0;
+	public static final int INDEX_WORD = 1;
+	public static final int INDEX_WHOLEWORD = 2;
+	public static final int INDEX_HOUSENUMBER = 3;
+	public static int indexType = INDEX_DEFAULT;
 	protected static final Logger logger = 
 		Logger.getInstance(SearchNames.class, Logger.TRACE);
 
