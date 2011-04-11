@@ -676,22 +676,32 @@ public class GuiSearch extends Canvas implements CommandListener,
 				} 
 
 				// name part identical to search string 
-				if (i == cursor){ 
-					gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_SELECTED_TYPED]);
-				} else { 
-					gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_NONSELECTED_TYPED]);
+				if (Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH)) {
+					// FIXME could use improvement, maybe put match in the middle of screen
+					if (i == cursor){ 
+						gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_SELECTED_TYPED]);
+					} else { 
+						gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_NONSELECTED_TYPED]);
+					}
+					gc.drawString(name, 17, yc, Graphics.TOP | Graphics.LEFT); 
+				} else {	
+					// name part identical to search string 
+					if (i == cursor){ 
+						gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_SELECTED_TYPED]);
+					} else { 
+						gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_NONSELECTED_TYPED]);
+					}
+					gc.drawString(name.substring(0,imatch+flags.length()), 17, yc, Graphics.TOP | Graphics.LEFT); 
+					// remaining name part 
+					if (i == cursor){ 
+						gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_SELECTED_REST]);
+					} else { 
+						gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_NONSELECTED_REST]);
+					} 
+					gc.drawString(name.substring(imatch+flags.length()), 17 + gc.getFont().stringWidth(name.substring(0,imatch+flags.length())) , yc, Graphics.TOP | Graphics.LEFT);
 				}
-				gc.drawString(name.substring(0,imatch+flags.length()), 17, yc, Graphics.TOP | Graphics.LEFT); 
-				// remaining name part 
-				if (i == cursor){ 
-					gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_SELECTED_REST]);
-				} else { 
-					gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_NONSELECTED_REST]);
-				} 
-				gc.drawString(name.substring(imatch+flags.length()), 17 + gc.getFont().stringWidth(name.substring(0,imatch+flags.length())) , yc, Graphics.TOP | Graphics.LEFT);
-
 				// carret 
-				if(carret<=imatch && displayReductionLevel<1) { 
+				if(!Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) && carret<=imatch && displayReductionLevel<1) { 
 					int cx=17 + gc.getFont().stringWidth(name.substring(0,carret+flags.length())); 
 					gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_SELECTED_TYPED]);
 					gc.drawLine(cx-1,yc+fontSize,cx+1,yc+fontSize); 
