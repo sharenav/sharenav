@@ -144,7 +144,8 @@ public class SearchNames implements Runnable {
 			StringBuffer current = new StringBuffer();
 //			System.out.println("compare: " + compare);
 			
-			String fileName = "/s" + fn + ".d";
+			String fnPrefix = (Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ? "/w" : "/s");
+			String fileName = fnPrefix + fn + ".d";
 //			System.out.println("open " + fileName);
 			InputStream stream;
 			try {
