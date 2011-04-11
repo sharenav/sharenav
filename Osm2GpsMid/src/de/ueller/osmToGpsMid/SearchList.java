@@ -45,16 +45,17 @@ public class SearchList {
 		this.urls = urls;
 	}
 
-	public void createSearchList(String path){
+	public void createSearchList(String path, int listType){
 		try {
 			FileOutputStream fo = null;
 			DataOutputStream ds = null;
 			String lastStr=null;
 			String lastFid="";
 			int curPos=0;
-			for (Name mapName : (listType == INDEX_DEFAULT ? names.getCanons()
-					     : (listType == INDEX_WORD ? names.getWordCanons()
-						: (listType == INDEX_WHOLEWORD ? names.getWholeWordCanons() : names.getHouseNumberCanons())))) {
+//			for (Name mapName : (listType == INDEX_DEFAULT ? names.getCanons()
+//					     : (listType == INDEX_WORD ? names.getWordCanons()
+//						: (listType == INDEX_WHOLEWORD ? names.getWholeWordCanons() : names.getHouseNumberCanons())))) {
+			for (Name mapName : (names.getCanons())) {
 				String string=mapName.getCanonFileName();
 				int eq=names.getEqualCount(string,lastStr);
 				if (! lastFid.equals(mapName.getCanonFileId())){
@@ -124,6 +125,8 @@ public class SearchList {
 					String url = null;
 					String phone = null;
 					String name = null;
+					// enable this on next map format change (65 -> 66)
+                                        // long idtowrite = e.id;
 					if (e instanceof Node) {
 						Node n = (Node) e;						
 						url = n.getUrl();
@@ -141,7 +144,8 @@ public class SearchList {
 							if (wayid != null) {
 								long way = Long.parseLong(wayid);
 //								System.out.println ("housenumber node wayid:" + wayid + "(" + way + ")" );
-								idtowrite = way;
+								// enable this on next map format change (65 -> 66)
+//								idtowrite = way;
 							}
 						}			   
 					}
@@ -154,6 +158,9 @@ public class SearchList {
 //						System.out.println("entryType " + w.getNameType() + " idx=" + mapName.getIndex());
 						center=w.getMidPoint();
 					}
+                                        // write id for housenumber or word search matching
+					// enable this on next map format change (65 -> 66)
+                                        // ds.writeLong(idtowrite);
 					ArrayList<Entity> isIn=new ArrayList<Entity>();
 					Entity nb=e.nearBy;
 					while (nb != null && !isIn.contains(nb)){
