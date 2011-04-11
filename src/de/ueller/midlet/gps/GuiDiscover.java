@@ -228,6 +228,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 	private ChoiceGroup rotationGroup;
 	private ChoiceGroup directionGroup;
 	private ChoiceGroup nightModeGroup;
+	private ChoiceGroup searchLayoutGroup;
 	private ChoiceGroup uiLangGroup;
 	private ChoiceGroup naviLangGroup;
 	private ChoiceGroup onlineLangGroup;
@@ -477,6 +478,12 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 		nightMode[1] = Locale.get("guidiscover.NightMode")/*Night Mode*/;
 		nightModeGroup = new ChoiceGroup(Locale.get("guidiscover.Colors")/*Colors*/, Choice.EXCLUSIVE, nightMode, null);
 		menuDisplayOptions.append(nightModeGroup);
+
+		String [] searchLayout = new String[2];
+		searchLayout[0] = Locale.get("guidiscover.SearchWholeNames")/*Search for whole names*/;
+		searchLayout[1] = Locale.get("guidiscover.SearchWords")/*Search for words*/;
+		searchLayoutGroup = new ChoiceGroup(Locale.get("guidiscover.SearchStyle")/*Search style*/, Choice.EXCLUSIVE, searchLayout, null);
+		menuDisplayOptions.append(searchLayoutGroup);
 
 		// FIXME rename string to generic
 		rotationGroup = new ChoiceGroup(Locale.get("guidiscover.MapProjection")/*Map Projection*/, Choice.EXCLUSIVE, Configuration.projectionsString, null);
@@ -993,6 +1000,11 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 					Trace.getInstance().stopCompass();
 				}
 
+				boolean searchLayout = (searchLayoutGroup.getSelectedIndex() == 1);
+				
+				if (searchLayout != Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ) {
+					Configuration.setCfgBitSavedState(Configuration.CFGBIT_WORD_ISEARCH, searchLayout);
+				}
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_STREETRENDERMODE,
 						(renderOpts.getSelectedIndex() == 1)
 				);
@@ -1255,6 +1267,7 @@ public class GuiDiscover implements CommandListener, ItemCommandListener,
 				}
 //#endif
 				nightModeGroup.setSelectedIndex( Configuration.getCfgBitSavedState(Configuration.CFGBIT_NIGHT_MODE) ? 1 : 0, true);
+				searchLayoutGroup.setSelectedIndex( Configuration.getCfgBitSavedState(Configuration.CFGBIT_WORD_ISEARCH) ? 1 : 0, true);
 				rotationGroup.setSelectedIndex(Configuration.getProjDefault(), true);
 				renderOpts.setSelectedIndex( Configuration.getCfgBitSavedState(Configuration.CFGBIT_STREETRENDERMODE) ? 1 : 0, true);
 				directionOpts.setSelectedIndex( Configuration.getCfgBitSavedState(Configuration.CFGBIT_COMPASS_DIRECTION) ? 1 : 0, true);

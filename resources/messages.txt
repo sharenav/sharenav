@@ -1178,3 +1178,6 @@ guisearch.label6= mno6
 guisearch.label7=pqrs7
 guisearch.label8= tuv8
 guisearch.label9=wxyz9
+guidiscover.SearchWholeNames=Search for whole names
+guidiscover.SearchWords=Search for words
+guidiscover.SearchStyle=Search style
