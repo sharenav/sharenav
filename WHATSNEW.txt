@@ -1,5 +1,6 @@
     *** Map Elements ***
     - added natural=waterfall
+    - handle associatedStreet relations when useHouseNumbers is enabled
 
     *** Searching ***
     - add option for word search. Matches for any word in a name, only single words for now.
