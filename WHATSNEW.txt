@@ -11,7 +11,7 @@
 
     *** Optimizations ***
     - speed optimizations to triangulation (Osm2GpsMid), tnx jiri.klement
-    - memory use optimizations (Osm2GpsMid), tnx walter9
+    - memory use optimizations (Osm2GpsMid), tnx jiri.klement and walter9
 
     *** Misc. bug fixes ***
     - correctly report Osm2GpsMid run duration
