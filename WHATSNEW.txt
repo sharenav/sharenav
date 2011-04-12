@@ -1,7 +1,8 @@
     *** Map Elements ***
     - added natural=waterfall
     - process associatedStreet relations and store them in house number index when
-      useHouseNumbers is true in .properties. 
+      useHouseNumbers is true in .properties. House number search has not been added
+      yet so house number searches are not yet available, but will be added to GpsMid later.
 
     *** Searching ***
     - add word search option. Can be switched on in GpsMid display settings.
@@ -10,7 +11,7 @@
       multi-word match will be added later.
 
     *** Map Screen ***
-    - return to 3/4 -speed slow map rotation (as GpsMid) was supposed to
+    - return to 3/4 -speed slow map rotation as GpsMid was supposed to
       do before 2010-11-30 from 1/4 rotation.
 
     *** Optimizations ***
