@@ -86,10 +86,10 @@
 	<!-- FIXME these colors need tuning for night mode -->
 	<color of="search_selected_typed" is="00FF0000" isAtNight="00FF8484"/>
 	<color of="search_selected_rest" is="00FF6464" isAtNight="00FFFFFF"/>
-	<color of="search_nonselected_typed" is="00000000" isAtNight="00FFFFFF"/>
-	<color of="search_nonselected_rest" is="009696FA" isAtNight="00FFFFFF"/>
+	<color of="search_nonselected_typed" is="00000000" isAtNight="00BB6464"/>
+	<color of="search_nonselected_rest" is="009696FA" isAtNight="00BBBBBB"/>
 	<color of="search_touched_button_background" is="00FFFF77"/>
-	<color of="search_button_text" is="00000000" isAtNight="00FFFFFF"/>
+	<color of="search_button_text" is="00000000" isAtNight="009999BB"/>
 	<color of="search_button_border" is="00000000" isAtNight="00FFFFFF"/>
 	<!-- These colors are not used as of 2011-01-05, plan is to use with menus -->
 	<color of="menu_background" is="00FFFFFF" isAtNight="00000000"/>
