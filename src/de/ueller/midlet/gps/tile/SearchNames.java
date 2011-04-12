@@ -33,11 +33,16 @@ public class SearchNames implements Runnable {
 	private final GuiSearch gui;
 	private boolean newSearch = false;
 	private boolean appendRes = false;
+        //#if polish.api.bigsearch
+	private static final int SEARCH_MAX_COUNT = 500;
+	//#else
+	private static final int SEARCH_MAX_COUNT = 50;
+	//#endif
 	public static final int INDEX_DEFAULT = 0;
 	public static final int INDEX_WORD = 1;
 	public static final int INDEX_WHOLEWORD = 2;
 	public static final int INDEX_HOUSENUMBER = 3;
-	public static int indexType = INDEX_DEFAULT;
+	public static volatile int indexType = INDEX_DEFAULT;
 	protected static final Logger logger = 
 		Logger.getInstance(SearchNames.class, Logger.TRACE);
 
@@ -278,6 +283,10 @@ public class SearchNames implements Runnable {
 					if (idx != -1) {
 						SearchResult sr = new SearchResult();
 						sr.nameIdx = idx;
+						//#if polish.api.bigsearch
+						sr.resultid = id;
+						sr.source = (byte) indexType;
+						//#endif
 						sr.urlIdx = urlidx;
 						sr.phoneIdx = phoneidx;
 						sr.type = (byte) type;
@@ -296,9 +305,9 @@ public class SearchNames implements Runnable {
 						}
 						if (gui.addResult(sr)) {
 							foundEntries++;
-							if (foundEntries > 50) {
+							if (foundEntries > SEARCH_MAX_COUNT) {
 								//#debug info
-								logger.info("Found 50 entries. Thats enough, stoping further search");
+								logger.info("Found SEARCH_MAX_COUNT entries. Thats enough, stoping further search");
 								ds.close();
 								return;
 							}
