@@ -1679,6 +1679,16 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		namesThread = new Names();
 		urlsThread = new Urls();
 		new DictReader(this);
+		// wait until base tiles are read; otherwise there's apparently
+		// a race condition triggered on Symbian s60r3 phones, see
+		// https://sourceforge.net/support/tracker.php?aid=3284022
+		while (!baseTilesRead) {
+			try {
+				Thread.sleep(250);
+			} catch (InterruptedException e1) {
+				// nothing to do in that case						
+			}
+		}
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_AUTO_START_GPS)) {
 			Thread thread = new Thread(this, "Trace");
 			thread.start();
