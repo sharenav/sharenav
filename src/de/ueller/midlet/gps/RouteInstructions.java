@@ -126,7 +126,7 @@ public class RouteInstructions {
 		prevPathIdxInRoutePathConnection = 0;
 		iBackwardCount = 0;
 		againstDirectionDetectedTime = 0;
-		NoiseMaker.resetSoundRepeatTimes();		
+		GpsMid.mNoiseMaker.resetSoundRepeatTimes();		
 		try {
 			if (rlp == null) {
 				rlp = new RouteLineProducer();
@@ -1304,7 +1304,7 @@ public class RouteInstructions {
 										c.to.lon - 0.0000025f * (float) Math.sin(rad) );
 			trace.gpsRecenter = false;
 			// allow to output same instruction again
-			NoiseMaker.resetSoundRepeatTimes();
+			GpsMid.mNoiseMaker.resetSoundRepeatTimes();
 		}
 	}
 		
