@@ -1,3 +1,4 @@
+GpsMid 0.7.3
     *** Map Elements ***
     - added natural=waterfall
     - process associatedStreet relations and store them in house number index when
