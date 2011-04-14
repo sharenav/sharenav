@@ -716,3 +716,6 @@ imagecollector.W= T
 guipoitypeselectmenu.Everything=Kaikki
 guipoitypeselectmenu.SelectPOIType=Valitse kohteen tyyppi
 gpx.StartingRecording=Aloitan jäljityksen
+guidiscover.SearchWholeNames=Etsi koko nimillä
+guidiscover.SearchWords=Etsi sanoilla
+guidiscover.SearchStyle=Etsintätapa
