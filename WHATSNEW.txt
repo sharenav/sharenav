@@ -21,6 +21,7 @@
     *** Misc. bug fixes ***
     - correctly report Osm2GpsMid run duration
     - fix night mode colors for virtual keyboard
+    - fix bug with GpsMid failed startups on Symbian S60r3
 
     *** i18n-related bug fixes ***
     - fix bug preventing external maps from workin when language set to pl
