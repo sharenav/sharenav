@@ -1,3 +1,6 @@
+    *** Platforms ***
+    - make WinCE sound work with fallback NoiseMaker code when playerUpdate doesn't get called
+
 GpsMid 0.7.3
     *** Map Elements ***
     - added natural=waterfall
