@@ -400,11 +400,11 @@ public class Configuration {
 			return area;
 		}
 
-		public Hashtable<String, String> getRelationExpansions() {
+		public Hashtable<String, Boolean> getRelationExpansions() {
 			return legend.getRelationExpansions();
 		}
 
-		public Hashtable<String, String> getRelationExpansionsCombine() {
+		public Hashtable<String, Boolean> getRelationExpansionsCombine() {
 			return legend.getRelationExpansionsCombine();
 		}
 

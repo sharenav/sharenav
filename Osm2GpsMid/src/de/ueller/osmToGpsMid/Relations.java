@@ -75,8 +75,10 @@ public class Relations {
 				relationCount++;
 				String tagType = r.getAttribute("type");
 				String tagValue = r.getAttribute(tagType);
-				if (tagType != null && conf.getRelationExpansions().get(tagType) != null && r.getTags().size() > 1 && 
-				    conf.getRelationExpansions().get(tagType).equals(tagValue)) {
+				if (tagType != null && conf.getRelationExpansions().get(tagType + "=" + tagValue) != null
+				    && conf.getRelationExpansions().get(tagType + "=" + tagValue)
+				    && r.getTags().size() > 1) {
+					System.out.println("Checking " + tagType + "=" + tagValue);
 					// FIXME check also that specialisation matches
 					r.getTags().remove("type");
 					for (Long ref : r.getWayIds()) {
@@ -84,8 +86,9 @@ public class Relations {
 						String key = "_route_" + tagValue;
 						//System.out.println ("way: " + w + " key: " + key);
 						long newId = 0;
-						if (w.containsKey(key) && tagType != null && conf.getRelationExpansionsCombine().get(tagType) != null && 
-						    conf.getRelationExpansionsCombine().get(tagType).equals(tagValue)) {
+						if (w.containsKey(key) && tagType != null &&
+						    conf.getRelationExpansionsCombine().get(tagType + "=" + tagValue) != null &&
+						    conf.getRelationExpansionsCombine().get(tagType + "=" + tagValue)) {
 							// Combine the tags into one way
 							newId = Long.valueOf(w.getAttribute(key));
 							Way w2 = wayHashMap.get(newId);

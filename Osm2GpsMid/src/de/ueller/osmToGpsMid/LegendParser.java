@@ -59,8 +59,8 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 	private Hashtable<String, Set<EntityDescription>> keyValuesPoi;
 	private Hashtable<String, Set<EntityDescription>> keyValuesWay;
 	private Hashtable<String, Integer> maxSpeedTemplates;
-	private Hashtable<String, String> relationExpansions;
-	private Hashtable<String, String> relationExpansionsCombine;
+	private Hashtable<String, Boolean> relationExpansions;
+	private Hashtable<String, Boolean> relationExpansionsCombine;
 	private static final Vector<Damage> damages = new Vector<Damage>();
 	private final byte READING_WAYS = 0;
 	private final byte READING_POIS = 1;
@@ -133,8 +133,8 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 			pois = new LongTri<EntityDescription>();
 			currentPoi = new POIdescription();
 			maxSpeedTemplates = new Hashtable<String, Integer>();
-			relationExpansions = new Hashtable<String, String>();
-			relationExpansionsCombine = new Hashtable<String, String>();
+			relationExpansions = new Hashtable<String, Boolean>();
+			relationExpansionsCombine = new Hashtable<String, Boolean>();
 			/* Add a bogous POI description, to reserve type 0 as a special marker */
 			currentPoi.typeNum = (byte)poiIdx++;
 			currentPoi.key = "A key that should never be hot";
@@ -569,7 +569,7 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 						System.out.println("Shall expand type=" + currentWay.key + ","
 								   + currentWay.key + "=" + currentWay.value
 								   + " relations");
-						relationExpansions.put(currentWay.key, currentWay.value);
+						relationExpansions.put(currentWay.key + "=" +  currentWay.value, true);
 					}
 				}
 				if ("true".equalsIgnoreCase(atts.getValue("combined"))) {
@@ -577,7 +577,7 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 						System.out.println("Shall combine type=" + currentWay.key + ","
 								   + currentWay.key + "=" + currentWay.value
 								   + " relations");
-						relationExpansionsCombine.put(currentWay.key, currentWay.value);
+						relationExpansionsCombine.put(currentWay.key + "=" +  currentWay.value, true);
 					}
 				}
 			}
@@ -903,11 +903,11 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 		return maxSpeedTemplates;
 	}
 
-	public Hashtable<String, String> getRelationExpansions() {
+	public Hashtable<String, Boolean> getRelationExpansions() {
 		return relationExpansions;
 	}
 
-	public Hashtable<String, String> getRelationExpansionsCombine() {
+	public Hashtable<String, Boolean> getRelationExpansionsCombine() {
 		return relationExpansionsCombine;
 	}
 
