@@ -182,7 +182,7 @@ public class Relations {
 						}
 						Outline no = createOutline(w);
 						if (no != null) {
-//						System.out.println("Adding way " + w.toUrl() + " as OUTER");
+//						//System.out.println("Adding way " + w.toUrl() + " as OUTER");
 							a.addOutline(no);
 							if (firstWay == null) {
 								if (w.triangles != null) {
