@@ -12,13 +12,14 @@
 <!ELEMENT key (value+)>
 <!ELEMENT keyW (Wvalue+)>
 <!ELEMENT value (specialisation*, description , image? , searchIcon? , namekey , namefallback? , helpertag? , AreaPOI?, scale , textscale? , imageCentered?, hideable?)>
-<!ELEMENT Wvalue (specialisation*, description, image? , searchIcon? , namekey, namefallback?, helpertag?, showName?, isArea, ignoreOsmAreaTag?, scale, textscale?, arrowscale?, descriptionscale?, lineColor, borderColor?, lineStyle?, wayWidth?, searchIcon?, routing*, force_to?, hideable?)>
+<!ELEMENT Wvalue (specialisation*, description, asRelation?, image? , searchIcon? , namekey, namefallback?, helpertag?, showName?, isArea, ignoreOsmAreaTag?, scale, textscale?, arrowscale?, descriptionscale?, lineColor, borderColor?, lineStyle?, wayWidth?, searchIcon?, routing*, force_to?, hideable?)>
 <!ELEMENT damage EMPTY>
 <!ELEMENT routeAccessRestriction EMPTY>
 <!ELEMENT restrictionKey EMPTY>
 <!ELEMENT restrictionValues EMPTY>
 <!ELEMENT description EMPTY>
 <!ELEMENT image EMPTY>
+<!ELEMENT asRelation EMPTY>
 <!ELEMENT searchIcon EMPTY>
 <!ELEMENT namekey EMPTY>
 <!ELEMENT namefallback EMPTY>
@@ -64,6 +65,7 @@
 <!ATTLIST arrowscale scale CDATA #REQUIRED>
 <!ATTLIST descriptionscale scale CDATA #REQUIRED>
 <!ATTLIST image src CDATA #REQUIRED>
+<!ATTLIST asRelation relation CDATA #REQUIRED>
 <!ATTLIST searchIcon src CDATA #REQUIRED>
 <!ATTLIST imageCentered value CDATA #REQUIRED>
 <!ATTLIST showName style CDATA #REQUIRED>
