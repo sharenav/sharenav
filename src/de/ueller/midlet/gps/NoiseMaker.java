@@ -283,6 +283,8 @@ public class NoiseMaker
 			mLogger.debug("realized player for " + soundFileWithSuffix);
 			if (updatesMissing) {
 				try {
+					// FIXME should start a new thread to play so GpsMid
+					// doesn't block
 					is = getClass().getResourceAsStream( soundFileWithSuffix);
 					aPlayer.play(is);
 				} catch (Exception ex) {
@@ -350,6 +352,10 @@ public class NoiseMaker
 				//#ifndef polish.android
 				// playing should start in a short while
 				if (testUpdates) {
+					// FIXME perhaps - can another check
+					// be added, is half a second too short on
+					// some platforms for starting sound,
+					// will we get false positives?
 					//#debug debug
 					mLogger.debug("starting playerupdate test");
 					try {
