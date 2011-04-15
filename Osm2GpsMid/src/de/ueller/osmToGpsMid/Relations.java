@@ -25,6 +25,7 @@ import de.ueller.osmToGpsMid.model.Member;
 import de.ueller.osmToGpsMid.model.Relation;
 import de.ueller.osmToGpsMid.model.Node;
 import de.ueller.osmToGpsMid.model.Way;
+import uk.me.parabola.mkgmap.reader.osm.FakeIdGenerator;
 
 /**
  * @author hmueller
@@ -72,14 +73,54 @@ public class Relations {
 //					System.out.println("info: currently handling relation type " + r.getAttribute("type"));
 //				}
 				relationCount++;
-				String type = r.getAttribute("type");
-				if (type != null && conf.getRelationExpansions().get(type) != null && r.getTags().size() > 1 && 
-				    conf.getRelationExpansions().get(type).equals(r.getAttribute(type))) {
+				String tagType = r.getAttribute("type");
+				if (tagType != null && conf.getRelationExpansions().get(tagType) != null && r.getTags().size() > 1 && 
+				    conf.getRelationExpansions().get(tagType).equals(r.getAttribute(tagType))) {
 					r.getTags().remove("type");
 					for (Long ref : r.getWayIds()) {
 						Way w = wayHashMap.get(ref);
-						w.cloneTags(r);
-						//System.out.println("way: " + w);
+						String key = "_route_" + r.getAttribute(tagType);
+						//System.out.println ("way: " + w + " key: " + key);
+						long newId = 0;
+						if (w.containsKey(key)) {
+							newId = Long.valueOf(w.getAttribute(key));
+							Way w2 = wayHashMap.get(newId);
+							//System.out.println ("found key: " + key + " w2 = " +  w2 + "newId =" + newId);
+							if (w2 != null) {
+								//System.out.println ("way w2: " + w2 + " key: " + key);
+								for (String t : r.getTags()) {
+									if (w2.containsKey(t)) {
+										// don't duplicate ; FIXME should check if is in
+										// by splitting on ";" and comparing values
+										if (!w2.getAttribute(t).equals(r.getAttribute(t)) && w2.getAttribute(t).length() < 35)
+											w2.setAttribute(t, w2.getAttribute(t) + ";" + r.getAttribute(t));
+									} else {
+										w2.setAttribute(t, r.getAttribute(t));
+									}
+								}
+								w2.resetType(conf);
+								byte type = w2.getType(conf);
+							}
+						} else {
+							newId = FakeIdGenerator.makeFakeId();
+							w.setAttribute(key, Long.toString(newId));
+							// copy path from w into w2 with new id
+							// FIXME should reverse way if role is "backward"
+							Way w2 = new Way(newId, w);
+							for (String t : r.getTags()) {
+								if (w2.containsKey(t)) {
+									if (!w2.getAttribute(t).equals(r.getAttribute(t)))
+										w2.setAttribute(t, w2.getAttribute(t) + ";" + r.getAttribute(t));
+								} else {
+									w2.setAttribute(t, r.getAttribute(t));
+								}
+							}
+							w2.resetType(conf);
+							w.setAttribute(key, Long.toString(newId));
+							byte type = w2.getType(conf);
+							//System.out.println("adding way: " + w2 + " newId = " + newId);
+							parser.addWay(w2);
+						}
 					}
 				} else if (conf.useHouseNumbers && ("associatedStreet".equals(r.getAttribute("type")) ||
 											 "street".equals(r.getAttribute("type")))) {

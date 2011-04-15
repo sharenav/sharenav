@@ -92,6 +92,11 @@ public class Way extends Entity implements Comparable<Way> {
 		this.path = new Path();
 	}
 
+	public Way(long id, Way other) {
+		this.id = id;
+		this.path = other.path;
+	}
+
 	/**
 	 * create a new Way which shares the tags with the other way, has the same type and id, but no Nodes
 	 * 
@@ -208,6 +213,10 @@ public class Way extends Entity implements Comparable<Way> {
 			}
 		}
 		return false;
+	}
+
+	public void resetType(Configuration c) {
+		type = -1;
 	}
 
 	public byte getType(Configuration c) {
