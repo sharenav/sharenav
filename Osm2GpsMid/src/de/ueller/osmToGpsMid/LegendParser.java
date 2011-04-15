@@ -60,6 +60,7 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 	private Hashtable<String, Set<EntityDescription>> keyValuesWay;
 	private Hashtable<String, Integer> maxSpeedTemplates;
 	private Hashtable<String, String> relationExpansions;
+	private Hashtable<String, String> relationExpansionsCombine;
 	private static final Vector<Damage> damages = new Vector<Damage>();
 	private final byte READING_WAYS = 0;
 	private final byte READING_POIS = 1;
@@ -133,6 +134,7 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 			currentPoi = new POIdescription();
 			maxSpeedTemplates = new Hashtable<String, Integer>();
 			relationExpansions = new Hashtable<String, String>();
+			relationExpansionsCombine = new Hashtable<String, String>();
 			/* Add a bogous POI description, to reserve type 0 as a special marker */
 			currentPoi.typeNum = (byte)poiIdx++;
 			currentPoi.key = "A key that should never be hot";
@@ -562,12 +564,20 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 				currentWay.isArea = atts.getValue("area").equalsIgnoreCase("true");
 			}
 			if (qName.equals("asRelation")) {
-				if (atts.getValue("relation").equalsIgnoreCase("true")) {
+				if ("true".equalsIgnoreCase(atts.getValue("relation"))) {
 					if (currentWay.key != null && currentWay.value != null) {
 						System.out.println("Shall expand type=" + currentWay.key + ","
 								   + currentWay.key + "=" + currentWay.value
 								   + " relations");
 						relationExpansions.put(currentWay.key, currentWay.value);
+					}
+				}
+				if ("true".equalsIgnoreCase(atts.getValue("combined"))) {
+					if (currentWay.key != null && currentWay.value != null) {
+						System.out.println("Shall combine type=" + currentWay.key + ","
+								   + currentWay.key + "=" + currentWay.value
+								   + " relations");
+						relationExpansionsCombine.put(currentWay.key, currentWay.value);
 					}
 				}
 			}
@@ -895,6 +905,10 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 
 	public Hashtable<String, String> getRelationExpansions() {
 		return relationExpansions;
+	}
+
+	public Hashtable<String, String> getRelationExpansionsCombine() {
+		return relationExpansionsCombine;
 	}
 
 	public static Vector<Damage> getDamages() {

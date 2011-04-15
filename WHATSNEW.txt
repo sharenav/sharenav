@@ -10,6 +10,10 @@
 				<namekey tag = "name" />
 				<namefallback tag = "ref" />
 
+      or add combined="true" to combine same type relations into one:
+
+				<asRelation relation = "true" combined="true"/>
+
     *** Platforms ***
     - make WinCE sound work with fallback NoiseMaker code when playerUpdate doesn't get called
 

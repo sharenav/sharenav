@@ -404,6 +404,10 @@ public class Configuration {
 			return legend.getRelationExpansions();
 		}
 
+		public Hashtable<String, String> getRelationExpansionsCombine() {
+			return legend.getRelationExpansionsCombine();
+		}
+
 		/** Singleton getter */
 		public static Configuration getConfiguration() {
 			return conf;

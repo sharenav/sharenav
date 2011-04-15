@@ -74,15 +74,18 @@ public class Relations {
 //				}
 				relationCount++;
 				String tagType = r.getAttribute("type");
+				String tagValue = r.getAttribute(tagType);
 				if (tagType != null && conf.getRelationExpansions().get(tagType) != null && r.getTags().size() > 1 && 
-				    conf.getRelationExpansions().get(tagType).equals(r.getAttribute(tagType))) {
+				    conf.getRelationExpansions().get(tagType).equals(tagValue)) {
 					r.getTags().remove("type");
 					for (Long ref : r.getWayIds()) {
 						Way w = wayHashMap.get(ref);
-						String key = "_route_" + r.getAttribute(tagType);
+						String key = "_route_" + tagValue;
 						//System.out.println ("way: " + w + " key: " + key);
 						long newId = 0;
-						if (w.containsKey(key)) {
+						if (w.containsKey(key) && tagType != null && conf.getRelationExpansionsCombine().get(tagType) != null && 
+						    conf.getRelationExpansionsCombine().get(tagType).equals(tagValue)) {
+							// Combine the tags into one way
 							newId = Long.valueOf(w.getAttribute(key));
 							Way w2 = wayHashMap.get(newId);
 							//System.out.println ("found key: " + key + " w2 = " +  w2 + "newId =" + newId);

@@ -66,6 +66,7 @@
 <!ATTLIST descriptionscale scale CDATA #REQUIRED>
 <!ATTLIST image src CDATA #REQUIRED>
 <!ATTLIST asRelation relation CDATA #REQUIRED>
+<!ATTLIST asRelation combined CDATA #IMPLIED>
 <!ATTLIST searchIcon src CDATA #REQUIRED>
 <!ATTLIST imageCentered value CDATA #REQUIRED>
 <!ATTLIST showName style CDATA #REQUIRED>
