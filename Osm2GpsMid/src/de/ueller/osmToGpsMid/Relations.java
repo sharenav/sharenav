@@ -78,7 +78,7 @@ public class Relations {
 				if (tagType != null && conf.getRelationExpansions().get(tagType + "=" + tagValue) != null
 				    && conf.getRelationExpansions().get(tagType + "=" + tagValue)
 				    && r.getTags().size() > 1) {
-					System.out.println("Checking " + tagType + "=" + tagValue);
+					// System.out.println("Checking " + tagType + "=" + tagValue);
 					// FIXME check also that specialisation matches
 					r.getTags().remove("type");
 					for (Long ref : r.getWayIds()) {
