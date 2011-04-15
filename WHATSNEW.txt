@@ -1,4 +1,7 @@
     *** Map Elements ***
+    - add regular expression matching for specialisation tag in style file.
+      Example:
+		<specialisation key = "ref" regexp="true" value = "^154..*$"/>
     - add style-file-configurable way relation expansion with "asRelation"
       e.g. for bus routes:
 			<Wvalue name = "bus" priority = "19">

@@ -86,6 +86,7 @@
 <!ATTLIST specialisation condition CDATA "match">
 <!ATTLIST specialisation key CDATA #REQUIRED>
 <!ATTLIST specialisation value CDATA #REQUIRED>
+<!ATTLIST specialisation regexp CDATA #IMPLIED>
 <!ATTLIST routeMode modeName CDATA #REQUIRED>
 <!ATTLIST routeMode maxPrepareMeters CDATA #REQUIRED>
 <!ATTLIST routeMode maxInMeters CDATA #REQUIRED>

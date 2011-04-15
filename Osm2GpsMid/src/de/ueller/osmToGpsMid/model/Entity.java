@@ -125,14 +125,25 @@ public class Entity {
 									if (entity.specialisation != null) {
 										boolean failedSpec = false;
 										for (ConditionTuple ct : entity.specialisation) {
-//											System.out.println("Testing specialisation " + ct + " on " + this);
+											//System.out.println("Testing specialisation " + ct + " on " + this);
 											failedSpec = !ct.exclude;
 											for (String ss : tags) {
+												//if (ct.regexp && ss.equalsIgnoreCase(ct.key)) {
+												//System.out.println("Trying to match " + getAttribute(ss) + " with " + ct.value);
+												//}
+
 												if ( (ss.equalsIgnoreCase(ct.key)) &&
-													(
-														getAttribute(ss).equalsIgnoreCase(ct.value) ||
-														ct.value.equals("*")
-													)
+												     (
+													     (
+														     (!ct.regexp) &&
+														     (getAttribute(ss).equalsIgnoreCase(ct.value) ||
+														      ct.value.equals("*"))
+													     ) ||
+													     (
+														     ct.regexp &&
+														     getAttribute(ss).matches(ct.value)
+													     )
+												     )
 												) {
 													failedSpec = ct.exclude;
 												}

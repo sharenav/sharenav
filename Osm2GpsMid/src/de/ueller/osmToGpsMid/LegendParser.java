@@ -364,6 +364,7 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 				ConditionTuple ct = new ConditionTuple();
 				ct.key = atts.getValue("key");
 				ct.value = atts.getValue("value");
+				ct.regexp = "true".equalsIgnoreCase(atts.getValue("regexp"));
 				String condition = atts.getValue("condition");
 				if (condition.equalsIgnoreCase("exclude")) {
 					ct.exclude = true;
@@ -497,6 +498,7 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 				} else {
 					ct.exclude = false;
 				}
+				ct.regexp = "true".equalsIgnoreCase(atts.getValue("regexp"));
 				currentWay.specialisation.add(ct);
 			}
 			if (qName.equals("description")) {
