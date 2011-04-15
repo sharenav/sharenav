@@ -1823,7 +1823,7 @@ scale alias 1: zoomed out 21x
         			<scale scale = "10"/>
 				<lineColor color = "0000FFFF" />
 				<wayWidth width = "2" />
-				<force_to layer = "4"/>
+				<force_to layer = "3"/>
 			</Wvalue>
 			<Wvalue name = "bicycle">
 				<description desc = "Bike route" />
@@ -1833,7 +1833,7 @@ scale alias 1: zoomed out 21x
 				<isArea area = "false"/>
         			<scale scale = "10"/>
 				<lineColor color = "00FF0068" />
-				<wayWidth width = "1" />
+				<wayWidth width = "2" />
 				<force_to layer = "3"/>
 			</Wvalue>
 			<Wvalue name = "road">
@@ -1866,10 +1866,10 @@ scale alias 1: zoomed out 21x
 				<isArea area = "false"/>
         			<scale scale = "10"/>
 				<lineColor color = "0000FFFF" />
-				<wayWidth width = "3" />
+				<wayWidth width = "2" />
 				<force_to layer = "3"/>
 			</Wvalue>
--->
+end -->
 <!-- example specialisations
 				<specialisation key = "osmc:symbol" regexp="true" value = "^red:"/>
                                 <specialisation key = "network" value = "ncn"/>
