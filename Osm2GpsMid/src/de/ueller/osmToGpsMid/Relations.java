@@ -77,6 +77,7 @@ public class Relations {
 				String tagValue = r.getAttribute(tagType);
 				if (tagType != null && conf.getRelationExpansions().get(tagType) != null && r.getTags().size() > 1 && 
 				    conf.getRelationExpansions().get(tagType).equals(tagValue)) {
+					// FIXME check also that specialisation matches
 					r.getTags().remove("type");
 					for (Long ref : r.getWayIds()) {
 						Way w = wayHashMap.get(ref);

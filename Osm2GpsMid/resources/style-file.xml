@@ -1816,29 +1816,18 @@ scale alias 1: zoomed out 21x
 
 			<Wvalue name = "bus" priority = "19">
 				<description desc = "Bus line" />
-				<asRelation relation = "true"/>
+				<asRelation relation = "true" combined = "true" />
 				<namekey tag = "name" />
 				<namefallback tag = "ref" />
 				<isArea area = "false"/>
         			<scale scale = "10"/>
 				<lineColor color = "0000FFFF" />
 				<wayWidth width = "2" />
-				<force_to layer = "3"/>
-			</Wvalue>
-			<Wvalue name = "bus" priority = "19">
-				<description desc = "Bus line" />
-				<namekey tag = "name" />
-				<namefallback tag = "ref" />
-				<isArea area = "false"/>
-        			<scale scale = "10"/>
-				<! - - <colorKey tag = "color" /> - - >
-				<lineColor color = "0000FFFF" />
-				<wayWidth width = "2" />
-				<force_to layer = "3"/>
+				<force_to layer = "4"/>
 			</Wvalue>
 			<Wvalue name = "bicycle">
-				<! - - <specialisation key = "network" value = "ncn"/> - - >
 				<description desc = "Bike route" />
+				<asRelation relation = "true" combined = "true" />
 				<namekey tag = "ref" />
 				<namefallback tag = "name" />
 				<isArea area = "false"/>
@@ -1848,8 +1837,8 @@ scale alias 1: zoomed out 21x
 				<force_to layer = "3"/>
 			</Wvalue>
 			<Wvalue name = "road">
-				<! - - <specialisation key = "network" value = "ncn"/> - - >
 				<description desc = "Road" />
+				<asRelation relation = "true" combined = "true" />
 				<namekey tag = "ref" />
 				<namefallback tag = "name" />
 				<isArea area = "false"/>
@@ -1859,8 +1848,8 @@ scale alias 1: zoomed out 21x
 				<force_to layer = "3"/>
 			</Wvalue>
 			<Wvalue name = "ski">
-				<! - - <specialisation key = "network" value = "ncn"/> - - >
 				<description desc = "Ski route" />
+				<asRelation relation = "true" combined = "true" />
 				<namekey tag = "ref" />
 				<namefallback tag = "name" />
 				<isArea area = "false"/>
@@ -1870,8 +1859,8 @@ scale alias 1: zoomed out 21x
 				<force_to layer = "3"/>
 			</Wvalue>
 			<Wvalue name = "train">
-				<! - - <specialisation key = "network" value = "ncn"/> - - >
 				<description desc = "Train" />
+				<asRelation relation = "true" combined = "true" />
 				<namekey tag = "ref" />
 				<namefallback tag = "name" />
 				<isArea area = "false"/>
@@ -1880,7 +1869,12 @@ scale alias 1: zoomed out 21x
 				<wayWidth width = "3" />
 				<force_to layer = "3"/>
 			</Wvalue>
- -->
+-->
+<!-- example specialisations
+				<specialisation key = "osmc:symbol" regexp="true" value = "^red:"/>
+                                <specialisation key = "network" value = "ncn"/>
+-->
+
 		</keyW>
 		<keyW tag = "aeroway">
   			<Wvalue name = "terminal">
