@@ -1811,6 +1811,21 @@ scale alias 1: zoomed out 21x
 				<wayWidth width="1" />  	  				
 				<force_to layer="1" />
 			</Wvalue>
+
+<!-- example for showing route relations on the map
+
+			<Wvalue name = "bus" priority = "19">
+				<description desc = "Bus line" />
+				<asRelation relation = "true"/>
+				<namekey tag = "name" />
+				<namefallback tag = "ref" />
+				<isArea area = "false"/>
+        			<scale scale = "10"/>
+				<lineColor color = "0000FFFF" />
+				<wayWidth width = "1" />
+				<force_to layer = "3"/>
+			</Wvalue>
+-->
 		</keyW>
 		<keyW tag = "aeroway">
   			<Wvalue name = "terminal">

@@ -67,6 +67,16 @@ public class Relation extends Entity {
 		return ret;
 	}
 	
+	public ArrayList<Long> getWayIds() {
+		ArrayList<Long> ret = new ArrayList<Long>();
+		for (Member m : members) {
+			if (m.getType() == Member.TYPE_WAY) { 
+				ret.add(new Long(m.getRef()));
+			}
+		}
+		return ret;
+	}
+	
 	public ArrayList<Long> getNodeIds(int role) {
 		ArrayList<Long> ret = new ArrayList<Long>();
 		for (Member m : members) {

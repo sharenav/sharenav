@@ -59,6 +59,7 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 	private Hashtable<String, Set<EntityDescription>> keyValuesPoi;
 	private Hashtable<String, Set<EntityDescription>> keyValuesWay;
 	private Hashtable<String, Integer> maxSpeedTemplates;
+	private Hashtable<String, String> relationExpansions;
 	private static final Vector<Damage> damages = new Vector<Damage>();
 	private final byte READING_WAYS = 0;
 	private final byte READING_POIS = 1;
@@ -131,6 +132,7 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 			pois = new LongTri<EntityDescription>();
 			currentPoi = new POIdescription();
 			maxSpeedTemplates = new Hashtable<String, Integer>();
+			relationExpansions = new Hashtable<String, String>();
 			/* Add a bogous POI description, to reserve type 0 as a special marker */
 			currentPoi.typeNum = (byte)poiIdx++;
 			currentPoi.key = "A key that should never be hot";
@@ -557,6 +559,16 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 			if (qName.equals("isArea")) {
 				currentWay.isArea = atts.getValue("area").equalsIgnoreCase("true");
 			}
+			if (qName.equals("asRelation")) {
+				if (atts.getValue("relation").equalsIgnoreCase("true")) {
+					if (currentWay.key != null && currentWay.value != null) {
+						System.out.println("Shall expand type=" + currentWay.key + ","
+								   + currentWay.key + "=" + currentWay.value
+								   + " relations");
+						relationExpansions.put(currentWay.key, currentWay.value);
+					}
+				}
+			}
 			if (qName.equals("ignoreOsmAreaTag")) {
 				currentWay.ignoreOsmAreaTag = atts.getValue("ignore").equalsIgnoreCase("true");
 			}
@@ -877,6 +889,10 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 
 	public Hashtable<String, Integer> getMaxspeedTemplates() {
 		return maxSpeedTemplates;
+	}
+
+	public Hashtable<String, String> getRelationExpansions() {
+		return relationExpansions;
 	}
 
 	public static Vector<Damage> getDamages() {

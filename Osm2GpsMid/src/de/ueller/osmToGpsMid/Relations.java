@@ -72,7 +72,16 @@ public class Relations {
 //					System.out.println("info: currently handling relation type " + r.getAttribute("type"));
 //				}
 				relationCount++;
-				if (conf.useHouseNumbers && ("associatedStreet".equals(r.getAttribute("type")) ||
+				String type = r.getAttribute("type");
+				if (type != null && conf.getRelationExpansions().get(type) != null && r.getTags().size() > 1 && 
+				    conf.getRelationExpansions().get(type).equals(r.getAttribute(type))) {
+					r.getTags().remove("type");
+					for (Long ref : r.getWayIds()) {
+						Way w = wayHashMap.get(ref);
+						w.cloneTags(r);
+						//System.out.println("way: " + w);
+					}
+				} else if (conf.useHouseNumbers && ("associatedStreet".equals(r.getAttribute("type")) ||
 											 "street".equals(r.getAttribute("type")))) {
 					//System.out.println("Handling housenumber relation " + r.toUrl());
 					for (Long ref : r.getWayIds(Member.ROLE_STREET)) {

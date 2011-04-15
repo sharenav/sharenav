@@ -1,3 +1,12 @@
+    *** Map Elements ***
+    - add style-file-configurable way relation expansion with "asRelation"
+      e.g. for bus routes:
+			<Wvalue name = "bus" priority = "19">
+				<description desc = "Bus line" />
+				<asRelation relation = "true"/>
+				<namekey tag = "name" />
+				<namefallback tag = "ref" />
+
     *** Platforms ***
     - make WinCE sound work with fallback NoiseMaker code when playerUpdate doesn't get called
 

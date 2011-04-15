@@ -400,6 +400,10 @@ public class Configuration {
 			return area;
 		}
 
+		public Hashtable<String, String> getRelationExpansions() {
+			return legend.getRelationExpansions();
+		}
+
 		/** Singleton getter */
 		public static Configuration getConfiguration() {
 			return conf;
