@@ -1557,13 +1557,21 @@ public class Way extends Entity {
 			}
 
 			// divide final segment on the route
-			if (highlight == HIGHLIGHT_ROUTEPATH_CONTAINED && route != null && hl[i] == route.size() - 2) {
+			if (
+				false && 
+				highlight == HIGHLIGHT_ROUTEPATH_CONTAINED
+				&& route != null
+				&& hl[i] == route.size() - 2
+			) {
 				// get direction we go on the way
 				ConnectionWithNode c = (ConnectionWithNode) route.elementAt(hl[i]);
 				routeIsForwardOnWay = (c.wayFromConAt < c.wayToConAt);
 				pathIndexOfNewSeg = (routeIsForwardOnWay ? c.wayToConAt - 1 : c.wayToConAt);
 				//System.out.println ("waytoconat: " + c.wayToConAt + " wayfromconat: " + c.wayFromConAt + " i: " + i);
-				if (i == pathIndexOfNewSeg && !dividedFinalDone) {
+				if (
+					i == pathIndexOfNewSeg
+					&& !dividedFinalDone
+				) {
 					IntPoint closestDestP = new IntPoint();
 					pc.getP().forward(RouteInstructions.getClosestPointOnDestWay(), closestDestP);					
 					originalFinalRouteSegX = xPoints[i + 1];
