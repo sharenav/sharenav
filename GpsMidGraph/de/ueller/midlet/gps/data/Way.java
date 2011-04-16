@@ -1502,6 +1502,12 @@ public class Way extends Entity {
 		int wClosest = 0;
 		boolean dividedSeg = false;
 		boolean dividedHighlight = true;
+		boolean dividedFinalRouteSeg = false;
+		boolean dividedFinalDone = false;
+		int originalFinalRouteSegX = 0;
+		int originalFinalRouteSegY = 0;
+		int pathIndexOfNewSeg = 0;
+		boolean routeIsForwardOnWay = false;
 		int originalX = 0;
 		int originalY = 0;
 		int wOriginal = w;
@@ -1511,6 +1517,8 @@ public class Way extends Entity {
 		
 		WayDescription wayDesc = Legend.getWayDescription(type);
 
+		Vector route = pc.trace.getRoute();
+		
 		for (int i = 0; i < count; i++) {
 			wDraw = w;
 			// draw route line wider
@@ -1531,7 +1539,52 @@ public class Way extends Entity {
 			} else {
 				// if not turn off the highlight
 				dividedHighlight = false;
+				if (dividedFinalRouteSeg) {
+					//System.out.println ("restore i " + i); 
+					xPoints[i] = xPoints[i + 1]; 
+					yPoints[i] = yPoints[i + 1]; 
+					xPoints[i + 1] = originalFinalRouteSegX;
+					yPoints[i + 1] = originalFinalRouteSegY;
+					if (routeIsForwardOnWay) {
+						hl[i] = PATHSEG_DO_NOT_HIGHLIGHT;
+					} else {
+						hl[i] = route.size() - 2;
+						wDraw = w;
+					}
+					dividedFinalRouteSeg = false;
+					dividedFinalDone = true;
+				}
 			}
+
+			// divide final segment on the route
+			if (highlight == HIGHLIGHT_ROUTEPATH_CONTAINED && route != null && hl[i] == route.size() - 2) {
+				// get direction we go on the way
+				ConnectionWithNode c = (ConnectionWithNode) route.elementAt(hl[i]);
+				routeIsForwardOnWay = (c.wayFromConAt < c.wayToConAt);
+				pathIndexOfNewSeg = (routeIsForwardOnWay ? c.wayToConAt - 1 : c.wayToConAt);
+				//System.out.println ("waytoconat: " + c.wayToConAt + " wayfromconat: " + c.wayFromConAt + " i: " + i);
+				if (i == pathIndexOfNewSeg && !dividedFinalDone) {
+					IntPoint closestDestP = new IntPoint();
+					pc.getP().forward(RouteInstructions.getClosestPointOnDestWay(), closestDestP);					
+					originalFinalRouteSegX = xPoints[i + 1];
+					originalFinalRouteSegY = yPoints[i + 1];
+					xPoints[i + 1] = closestDestP.x;
+					yPoints[i + 1] = closestDestP.y;
+					if (routeIsForwardOnWay) {
+						;
+					} else {
+						hl[i] = PATHSEG_DO_NOT_HIGHLIGHT;						
+					}
+					//pc.g.setColor(0x00ff00);
+					//pc.g.drawString("closest:" + i, closestDestP.x, closestDestP.y, Graphics.TOP | Graphics.LEFT);
+					//System.out.println("Insert closest point at " + (i + 1) );
+					dividedFinalRouteSeg = true;
+				}
+			} else {
+				dividedFinalRouteSeg = false;
+			}
+
+
 			if (hl[i] >= 0
 					// if this is the closest segment of the closest connection
 					&& RouteInstructions.routePathConnection == hl[i]
@@ -1557,13 +1610,17 @@ public class Way extends Entity {
 				// remember width for drawing the closest point
 				wClosest = wDraw;
 				// get direction we go on the way
-				Vector route = pc.trace.getRoute();
 				ConnectionWithNode c = (ConnectionWithNode) route.elementAt(hl[i]);
 				dividedHighlight = (c.wayFromConAt > c.wayToConAt);
 			} else {
 				dividedSeg = false;
 			}			
-
+			
+//			if (hl[i] >= 0) {
+//				pc.g.setColor(0xffff80);
+//				pc.g.drawString("i:" + i, xPoints[i], yPoints[i],Graphics.TOP | Graphics.LEFT);
+//			}
+			
 			// Get the four outer points of the wDraw-wide waysegment
 			if (ortho){
 				getParLines(xPoints, yPoints, i , wDraw, l1b, l2b, l1e, l2e);
@@ -1764,7 +1821,7 @@ public class Way extends Entity {
 			l4b.set(l2b);
 			l3e.set(l1e);
 			l4e.set(l2e);
-			if (dividedSeg) {
+			if (dividedSeg || dividedFinalRouteSeg) {
 				// if this is a divided seg, in the next step draw the second part
 				i--;
 			}

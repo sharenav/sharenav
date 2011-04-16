@@ -870,4 +870,21 @@ public class MoreMath {
 		}
 	}
 
+	public static Node closestPointOnLine(Node node1, Node node2, Node offNode) {
+		// avoid division by zero if node1 and node2 are at the same coordinates
+		if (node1.radlat == node2.radlat && node1.radlon == node2.radlon) {
+			return new Node(node1);
+		}
+		float uX = node2.radlat - node1.radlat;
+		float uY = node2.radlon - node1.radlon;
+		float  u = ( (offNode.radlat - node1.radlat) * uX + (offNode.radlon  - node1.radlon) * uY) / (uX * uX + uY * uY);
+		if (u > 1.0) {
+			return new Node(node2);
+		} else if (u <= 0.0) {
+			return new Node(node1);
+		} else {
+			return new Node( (float)(node2.radlat * u + node1.radlat * (1.0 - u )), (float) (node2.radlon * u + node1.radlon * (1.0-u)), true);
+		}
+	}
+	
 }

@@ -113,6 +113,7 @@ public class RouteInstructions {
 	
 	private final static Logger logger = Logger.getInstance(RouteInstructions.class,Logger.DEBUG);
 
+	private static volatile Node closestPointOnDestWay = null;
 	
 	public RouteInstructions(Trace trace) {
 		RouteInstructions.trace = trace;
@@ -1400,5 +1401,12 @@ public class RouteInstructions {
 		}
 	}
 
+	public static void setClosestPointOnDestWay(Node closestPoint) {
+		closestPointOnDestWay = closestPoint;
+	}
+
+	public static Node getClosestPointOnDestWay() {
+		return closestPointOnDestWay;
+	}
 
 }

@@ -44,6 +44,14 @@ public class Node extends Entity {
     }
 
     /**
+     * Constructs a node and copies lat/lon from the other node
+     * @param node
+     */
+    public Node(Node node) {
+        setLatLon(node);
+    }
+    
+    /**
      * Constructs a Node with lat=0 / lon=0.
      */
 	public Node() {

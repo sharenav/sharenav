@@ -786,6 +786,14 @@ public class Routing implements Runnable {
 			parent.receiveMessage(Locale.get("routing.CreatingToConnections")/*Creating to connections*/);
 			Way w = (Way) toMark.entity;
 			int nearestSeg = getNearestSeg(w,toMark.lat, toMark.lon, toMark.nodeLat, toMark.nodeLon);
+			// remember closest point on dest way in RouteInstructions
+			RouteInstructions.setClosestPointOnDestWay(
+					MoreMath.closestPointOnLine(new Node(toMark.nodeLat[nearestSeg - 1], toMark.nodeLon[nearestSeg - 1], true), 
+												new Node(toMark.nodeLat[nearestSeg], toMark.nodeLon[nearestSeg], true),
+												new Node(toMark.lat, toMark.lon, true)
+					)
+			);
+			//System.out.println("Closest " + RouteInstructions.getClosestPointOnDestWay() );
 			RouteTileRet nodeTile=new RouteTileRet();
 			// roundabouts don't need to be explicitly tagged as oneways in OSM according to http://wiki.openstreetmap.org/wiki/Tag:junction%3Droundabout
 			RouteNode nextNode = findNextRouteNode(nearestSeg, toMark.lat, toMark.lon, toMark.nodeLat, toMark.nodeLon);
