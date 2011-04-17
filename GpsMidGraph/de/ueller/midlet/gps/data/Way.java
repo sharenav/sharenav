@@ -1558,7 +1558,7 @@ public class Way extends Entity {
 
 			// divide final segment on the route
 			if (
-				false && 
+				//false && 
 				highlight == HIGHLIGHT_ROUTEPATH_CONTAINED
 				&& route != null
 				&& hl[i] == route.size() - 2
