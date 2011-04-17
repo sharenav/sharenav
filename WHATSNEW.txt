@@ -1,3 +1,6 @@
+    *** Routing ***
+    - the route line is now rendered only up to the closest point to the destination on the destination way
+
     *** Map Elements ***
     - add regular expression matching for specialisation tag in style file.
       Example:
