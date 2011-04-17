@@ -242,14 +242,20 @@ public class Relations {
 			}
 		}
 		
+		int numMultipolygonMembersNotRemoved = 0;
 		for (Way w : removeWays) {
 			if (!w.isAccessForAnyRouting()) {
 				parser.removeWay(w);
 			}
 			else {
-				System.out.println("  info: multipolygon member " + w.toUrl() + " not removed because it is routable");
+				numMultipolygonMembersNotRemoved++;
+				//System.out.println("  info: multipolygon member " + w.toUrl() + " not removed because it is routable");
 			}
 		}
+		if (numMultipolygonMembersNotRemoved > 0) {
+			System.out.println("  info: " + numMultipolygonMembersNotRemoved + " multipolygon members not removed because they are routable");
+		}
+		
 		//parser.resize();
 	}
 
