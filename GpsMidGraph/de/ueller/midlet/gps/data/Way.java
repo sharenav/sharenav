@@ -1550,6 +1550,9 @@ public class Way extends Entity {
 					} else {
 						hl[i] = route.size() - 2;
 						wDraw = w;
+						if (wDraw < Configuration.getMinRouteLineWidth()) {
+							wDraw = Configuration.getMinRouteLineWidth();
+						}
 					}
 					dividedFinalRouteSeg = false;
 					dividedFinalDone = true;
