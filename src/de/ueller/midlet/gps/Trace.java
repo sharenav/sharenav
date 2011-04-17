@@ -2672,6 +2672,15 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			} else if (newScale > maximumScale) {
 				newScale = maximumScale;
 			}
+			
+			// autozoom in more the last 200 m 
+			if (route != null && RouteInstructions.getDstRouteToDestination() <= 200) {
+				float newScale2 = newScale;
+				newScale2 = newScale / (1f + (200f - RouteInstructions.getDstRouteToDestination())/ 200f);
+				// fixed increased zoom for the last 100 m
+				newScale = Math.max(newScale2, newScale / 1.5f);
+			}
+			
 			scale = newScale;
 			
 //			// calculate meters to top of screen

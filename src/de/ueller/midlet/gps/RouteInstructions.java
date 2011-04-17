@@ -115,6 +115,8 @@ public class RouteInstructions {
 
 	private static volatile Node closestPointOnDestWay = null;
 	
+	private static volatile float dstRouteToDestination = 0;
+	
 	public RouteInstructions(Trace trace) {
 		RouteInstructions.trace = trace;
 		RouteInstructions.maxScaleLevelForRouteInstructionSymbols = 15000f * 1.5f * 1.5f * 1.5f;
@@ -604,6 +606,8 @@ public class RouteInstructions {
 					}
 				}
 			}
+			
+			dstRouteToDestination = remainingDistance;
 
 			// When routing was started at the destination but the map has not been 
 			// moved away from the destination yet, give no voice instruction 
@@ -1415,5 +1419,8 @@ public class RouteInstructions {
 		return closestPointOnDestWay;
 	}
 
+	public static float getDstRouteToDestination() {
+		return dstRouteToDestination;
+	}
 	
 }

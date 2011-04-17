@@ -1,5 +1,7 @@
     *** Routing ***
     - the route line is now rendered only up to the closest point to the destination on the destination way
+    - if auto zoom is activated the map will be zoomed in further
+      when getting closer than 200 m route distance to the route destination 
 
     *** Map Elements ***
     - add regular expression matching for specialisation tag in style file.
