@@ -1584,7 +1584,8 @@ public class Way extends Entity {
 					if (routeIsForwardOnWay) {
 						;
 					} else {
-						hl[i] = PATHSEG_DO_NOT_HIGHLIGHT;						
+						hl[i] = PATHSEG_DO_NOT_HIGHLIGHT;
+						wDraw = w;
 					}
 					//pc.g.setColor(0x00ff00);
 					//pc.g.drawString("closest:" + i, closestDestP.x, closestDestP.y, Graphics.TOP | Graphics.LEFT);
