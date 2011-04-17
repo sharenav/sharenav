@@ -12,6 +12,7 @@ import de.ueller.gps.tools.intTree;
 import de.ueller.gpsMid.mapData.Tile;
 import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.Proj2D;
+import de.ueller.midlet.gps.data.ProjMath;
 import de.ueller.midlet.gps.routing.Connection;
 import de.ueller.midlet.gps.routing.ConnectionWithNode;
 import de.ueller.midlet.gps.tile.PaintContext;
@@ -134,6 +135,10 @@ public class RouteLineProducer implements Runnable {
 			cFrom.wayNameIdx = pc.conWayNameIdx;
 			cFrom.wayType = pc.conWayType;
 			cFrom.wayDistanceToNext = pc.conWayDistanceToNext;
+			// at the final route seg reduce the distance to be only until the closest point on the destination way
+			if (iConnFrom == route.size() - 2) {
+				cFrom.wayDistanceToNext = ProjMath.getDistance(cFrom.to.lat, cFrom.to.lon, RouteInstructions.getClosestPointOnDestWay().radlat, RouteInstructions.getClosestPointOnDestWay().radlon);
+			}			
 			// if there is a max speed on the way (also a winter maxspeed)
 			if (pc.conWayMaxSpeed != 0) {
 				// calculate the duration for the connection in 1/5s from the distance in meters and the maxSpeed in km/h

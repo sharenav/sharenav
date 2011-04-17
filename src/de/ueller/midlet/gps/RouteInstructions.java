@@ -262,12 +262,18 @@ public class RouteInstructions {
 							We should rather take the distances of full segs to the current route node plus the distance of the divided seg from Way.processPath()
 						*/
 				    	ConnectionWithNode cRealNow = (ConnectionWithNode) route.elementAt(iRealNow);
-				    	double distRealNow=ProjMath.getDistance(center.radlat, center.radlon, cRealNow.to.lat, cRealNow.to.lon);
+				    	// add the distance to the next route node or when this is the final route node add the distance up to the closest point on the destination way
+				    	boolean finalRouteSeg = iRealNow == route.size() - 1;
+				    	double distRealNow=ProjMath.getDistance(center.radlat, center.radlon, finalRouteSeg ? closestPointOnDestWay.radlat : cRealNow.to.lat, finalRouteSeg ? closestPointOnDestWay.radlon : cRealNow.to.lon);
 				    	remainingDistance += distRealNow;
+
 				    	ConnectionWithNode cToRealNow = (ConnectionWithNode) route.elementAt(routePathConnection);
 				    	remainingDurationFSecs += (distRealNow * cToRealNow.durationFSecsToNext / cToRealNow.wayDistanceToNext); 
 
-				    	distNow=ProjMath.getDistance(center.radlat, center.radlon, cNow.to.lat, cNow.to.lon);
+				    	// distance to next instruction or when the next instruction is the destination to the closest point on the destination way
+				    	finalRouteSeg = iNow == route.size() - 1;
+				    	distNow = ProjMath.getDistance(center.radlat, center.radlon, finalRouteSeg ? closestPointOnDestWay.radlat : cNow.to.lat, finalRouteSeg ? closestPointOnDestWay.radlon : cNow.to.lon);
+				    	
 						intDistNow=new Double(distNow).intValue();
 						if (iNow < route.size() - 1) {
 							iThen = idxNextInstructionArrow (iNow+1);
@@ -1409,4 +1415,5 @@ public class RouteInstructions {
 		return closestPointOnDestWay;
 	}
 
+	
 }
