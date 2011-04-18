@@ -1502,6 +1502,7 @@ public class Way extends Entity {
 		int wClosest = 0;
 		boolean dividedSeg = false;
 		boolean dividedHighlight = true;
+		IntPoint closestDestP = new IntPoint();
 		boolean dividedFinalRouteSeg = false;
 		boolean dividedFinalDone = false;
 		int originalFinalRouteSegX = 0;
@@ -1575,7 +1576,6 @@ public class Way extends Entity {
 					i == pathIndexOfNewSeg
 					&& !dividedFinalDone
 				) {
-					IntPoint closestDestP = new IntPoint();
 					pc.getP().forward(RouteInstructions.getClosestPointOnDestWay(), closestDestP);					
 					originalFinalRouteSegX = xPoints[i + 1];
 					originalFinalRouteSegY = yPoints[i + 1];
@@ -1624,6 +1624,15 @@ public class Way extends Entity {
 				// get direction we go on the way
 				ConnectionWithNode c = (ConnectionWithNode) route.elementAt(hl[i]);
 				dividedHighlight = (c.wayFromConAt > c.wayToConAt);
+				// fix dstToRoutePath on way part of divided final route seg for off route display
+				if ( (dividedFinalDone || dividedFinalRouteSeg)
+					 &&closestP.equals(closestDestP)
+				) {
+					pc.squareDstToRoutePath = MoreMath.ptSegDistSq(	closestDestP.x, closestDestP.y,
+																	closestDestP.x, closestDestP.y,
+																	centerP.x, centerP.y
+					);
+				}
 			} else {
 				dividedSeg = false;
 			}			
