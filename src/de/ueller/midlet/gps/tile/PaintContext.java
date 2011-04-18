@@ -168,6 +168,16 @@ public class PaintContext extends ScreenContext {
 	 */
 	public int getDstFromSquareDst(float squareDst) {
 		if (squareDst != Float.MAX_VALUE) {
+			if (getP().isOrthogonal()) {
+				Node n1 = new Node();
+				Node n2 = new Node();
+				getP().inverse(0, 0, n1);
+				getP().inverse( (int) Math.sqrt(squareDst), 0, n2);
+				return (int) ProjMath.getDistance(n1, n2);
+			} else {
+				// FIXME: this is definitely the wrong way to calculate the distance even for orthogonal projections
+				return (int) (Math.sqrt(squareDst)/ppm);
+			}
 //			Node n1 = new Node();
 //			Node n2 = new Node();
 //			/* have to use a point at the hotspot because not all projections are ortognoal */
@@ -175,7 +185,6 @@ public class PaintContext extends ScreenContext {
 //			getP().inverse(hotspot.x, hotspot.y, n1);
 //			getP().inverse( hotspot.x + (int) Math.sqrt(squareDst), hotspot.y, n2);
 //			return (int) ProjMath.getDistance(n1, n2);
-			return (int) (Math.sqrt(squareDst)/ppm);
 		} else {
 			return RouteInstructions.DISTANCE_UNKNOWN;
 		}
