@@ -307,7 +307,7 @@ public class SearchNames implements Runnable {
 							foundEntries++;
 							if (foundEntries > SEARCH_MAX_COUNT) {
 								//#debug info
-								logger.info("Found SEARCH_MAX_COUNT entries. Thats enough, stoping further search");
+								logger.info("Found SEARCH_MAX_COUNT entries. That's enough, stopping further search");
 								ds.close();
 								return;
 							}
