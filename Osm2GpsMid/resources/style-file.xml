@@ -993,7 +993,6 @@ scale alias 1: zoomed out 21x
 -->
 	</key>
 <!--
--->
 	<key tag="addr:housenumber">
 	  <value name ="*">
 		<description desc = "House number"/>
@@ -1003,13 +1002,10 @@ scale alias 1: zoomed out 21x
 		<helpertag tag="addr:street"/>
 		<scale scale="26"/>
 		<textscale scale="27"/>
-<!--
-		<scale scale="20"/>
-		<textscale scale="21"/>
--->
 		<hideable hideable="false"/>
 	  </value>	
 	</key>
+-->
 	<key tag="aeroway">
 	  <value name ="aerodrome">
 		<description desc = "Aerodrome"/>
