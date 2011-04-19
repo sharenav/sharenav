@@ -1,3 +1,10 @@
+    *** Multi-word search ***
+    - enable new feature multi-word search for build
+      targets "microemulator" and "newfeatures"; it can require
+      much more memory than single word or whole name search,
+      so don't enable it yet for other targets. Feature is
+      not functional at the moment.
+
     *** Misc. bug fixes ***
     - fixed empty/invalid map startup infinite loop bug (tracker 3288429)
 
