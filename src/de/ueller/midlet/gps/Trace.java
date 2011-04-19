@@ -2659,6 +2659,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				&& autoZoomed
 				&& pc.getP() != null
 				&& pos.speed != Float.NaN // if speed is unknown do not autozoom
+				&& pos.speed != 0 // if speed is 0 do not autozoom
 		) {
 			// the minimumScale at 20km/h and below is equivalent to having zoomed in manually once from the startup zoom level
 			final float minimumScale = Configuration.getRealBaseScale() / 1.5f;
@@ -2675,7 +2676,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				newScale = maximumScale;
 			}
 			
-			// autozoom in more the last 200 m 
+			// autozoom in more at the last 200 m of the route
 			if (route != null && RouteInstructions.getDstRouteToDestination() <= 200) {
 				float newScale2 = newScale;
 				newScale2 = newScale / (1f + (200f - RouteInstructions.getDstRouteToDestination())/ 200f);
