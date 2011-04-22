@@ -1575,6 +1575,7 @@ public class Way extends Entity {
 				if (
 					i == pathIndexOfNewSeg
 					&& !dividedFinalDone
+					&& !dividedFinalRouteSeg
 				) {
 					pc.getP().forward(RouteInstructions.getClosestPointOnDestWay(), closestDestP);					
 					originalFinalRouteSegX = xPoints[i + 1];
