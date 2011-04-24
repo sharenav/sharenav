@@ -38,11 +38,11 @@ public class SearchNames implements Runnable {
 	//#else
 	private static final int SEARCH_MAX_COUNT = 50;
 	//#endif
-	public static final int INDEX_DEFAULT = 0;
+	public static final int INDEX_NAME = 0;
 	public static final int INDEX_WORD = 1;
 	public static final int INDEX_WHOLEWORD = 2;
 	public static final int INDEX_HOUSENUMBER = 3;
-	public static volatile int indexType = INDEX_DEFAULT;
+	public static volatile int indexType = INDEX_NAME;
 	protected static final Logger logger = 
 		Logger.getInstance(SearchNames.class, Logger.TRACE);
 
@@ -246,7 +246,7 @@ public class SearchNames implements Runnable {
 						return;
 					}					
 					long id = 0;
-					// FIXME would be better to use index type != INDEX_DEFAULT
+					// FIXME would be better to use index type != INDEX_NAME
 					if (Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH)) {
 						id = ds.readLong();
 					}
