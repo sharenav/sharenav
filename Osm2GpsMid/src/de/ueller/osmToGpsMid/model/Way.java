@@ -798,7 +798,9 @@ public class Way extends Entity implements Comparable<Way> {
 
 		if (config.enableEditingSupport) {
 			if (id > Integer.MAX_VALUE) {
-				System.out.println("WARNING: OSM-ID won't fit in 32 bits for way " + this);
+				// commented out by jkpj 2011-04-24 as the fake id generates triggers a lot of these
+				// FIXME make a scheme of marking fake ids so we can show real warnings
+				//System.out.println("WARNING: OSM-ID won't fit in 32 bits for way " + this);
 				ds.writeInt(-1);
 			} else {
 				ds.writeInt(id.intValue());
