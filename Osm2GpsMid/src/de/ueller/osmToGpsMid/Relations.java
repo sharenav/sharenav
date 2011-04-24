@@ -187,22 +187,27 @@ public class Relations {
 							System.out.println("  relation " + r.toUrl() + " I'll ignore this relation");
 							continue rel;
 						}
-						Outline no = createOutline(w);
+						long clonedWayId = FakeIdGenerator.makeFakeId();
+						Way w2 = new Way(clonedWayId, w);
+						//w2.cloneTagsButNoId(w);
+						Outline no = createOutline(w2);
+
 						if (no != null) {
 //						//System.out.println("Adding way " + w.toUrl() + " as OUTER");
 							a.addOutline(no);
 							if (firstWay == null) {
-								if (w.triangles != null) {
+								if (w2.triangles != null) {
 									System.out.println("Strange, this outline is already triangulated! May be a duplicate, I'll ignore it");
 									System.out.println("  way " + w.toUrl());
 									System.out.println("  relation " + r.toUrl());
 									continue rel;
 								}
-								firstWay = w;
+								firstWay = w2;
 							} else {
-								removeWays.add(w);
+								removeWays.add(w2);
 							}
 						}
+						parser.addWay(w2);
 					}
 					for (Long ref : r.getWayIds(Member.ROLE_INNER)) {
 						Way w = wayHashMap.get(ref);
@@ -245,7 +250,9 @@ public class Relations {
 		int numMultipolygonMembersNotRemoved = 0;
 		for (Way w : removeWays) {
 			if (!w.isAccessForAnyRouting()) {
-				parser.removeWay(w);
+				// don't remove, because this can be a member of other relations not yet processed
+				// FIXME check if not removing this causes harm (e.g. duplicate drawing of map objects)
+				//parser.removeWay(w);
 			}
 			else {
 				numMultipolygonMembersNotRemoved++;
