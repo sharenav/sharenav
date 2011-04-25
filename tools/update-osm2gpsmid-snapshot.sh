@@ -34,4 +34,4 @@ cp -p Osm2GpsMid/dist/Osm2GpsMid-$ver.jar Osm2GpsMid-$ver-debug.jar
 
 # 
 
-scp Osm2GpsMid-$ver.jar Osm2GpsMid-debug-$ver.jar $user,gpsmid@web.sf.net:htdocs/prebuild
+scp Osm2GpsMid-$ver.jar Osm2GpsMid-$ver-debug.jar $user,gpsmid@web.sf.net:htdocs/prebuild
