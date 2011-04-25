@@ -34,7 +34,7 @@ public class SearchList {
 	Names names;
 	Urls urls;
 
-	public static final int INDEX_DEFAULT = 0;
+	public static final int INDEX_NAME = 0;
 	public static final int INDEX_WORD = 1;
 	public static final int INDEX_WHOLEWORD = 2;
 	public static final int INDEX_HOUSENUMBER = 3;
@@ -52,7 +52,7 @@ public class SearchList {
 			String lastStr=null;
 			String lastFid="";
 			int curPos=0;
-			for (Name mapName : (listType == INDEX_DEFAULT ? names.getCanons()
+			for (Name mapName : (listType == INDEX_NAME ? names.getCanons()
 					     : (listType == INDEX_WORD ? names.getWordCanons()
 						: (listType == INDEX_WHOLEWORD ? names.getWholeWordCanons() : names.getHouseNumberCanons())))) {
 				String string=mapName.getCanonFileName();
@@ -61,10 +61,10 @@ public class SearchList {
 					if (ds != null) ds.close();
 					lastFid=mapName.getCanonFileId();
 					String fileName = path+
-						(listType == INDEX_DEFAULT ? "/s" : (listType == INDEX_WORD ? "/w"
+						(listType == INDEX_NAME ? "/s" : (listType == INDEX_WORD ? "/w"
 									 : (listType == INDEX_WHOLEWORD ? "/ww" : "/h"))) +
 						lastFid+".d";
-//					System.out.println("open "+fileName);
+					System.out.println("open "+fileName);
 					fo = new FileOutputStream(fileName);
 					ds = new DataOutputStream(fo);
 					curPos=0;
@@ -141,7 +141,7 @@ public class SearchList {
 //						System.out.println("entryType " + n.getNameType() + " idx=" + mapName.getIndex());
 						// housenumber index
 						
-						if (listType != INDEX_DEFAULT && Configuration.getConfiguration().useHouseNumbers) {
+						if (listType != INDEX_NAME && Configuration.getConfiguration().useHouseNumbers) {
 							// write way id for matching housenumber to streetname
 //							System.out.println ("listType == 3, testing node " + n);
 //							System.out.println ("type was: " + -1*n.getType(Configuration.getConfiguration()));
@@ -163,7 +163,7 @@ public class SearchList {
 						center=w.getMidPoint();
 					}
                                         // write id for housenumber or multi-word matching
-					if (listType != INDEX_DEFAULT) {
+					if (listType != INDEX_NAME) {
 						ds.writeLong(idtowrite);
 					}
 					ArrayList<Entity> isIn=new ArrayList<Entity>();

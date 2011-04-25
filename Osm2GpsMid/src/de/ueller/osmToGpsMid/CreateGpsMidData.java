@@ -185,7 +185,7 @@ public class CreateGpsMidData implements FilenameFilter {
 //		}
 //		System.exit(2);
 		// create search list for whole items
-		sl.createSearchList(path, SearchList.INDEX_DEFAULT);
+		sl.createSearchList(path, SearchList.INDEX_NAME);
 		// create search list for words
 		if (Configuration.getConfiguration().useWordSearch) {
 			sl.createSearchList(path, SearchList.INDEX_WORD);
