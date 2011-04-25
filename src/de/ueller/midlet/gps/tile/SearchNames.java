@@ -53,8 +53,13 @@ public class SearchNames implements Runnable {
 
 	public void run() {
 	    try {
-			while (newSearch) {
-			    doSearch(search);
+		    if (Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH)) {
+			    indexType = INDEX_WORD;
+		    } else {
+			    indexType = INDEX_NAME;
+		    }
+		    while (newSearch) {
+			    doSearch(search, indexType);
 			    // refresh display to give chance to fetch the names
 			    for (int i = 8; i != 0; i--) {
 					try {
@@ -80,8 +85,9 @@ public class SearchNames implements Runnable {
 	}
 	
 	//TODO: explain
-	private void doSearch(String search) throws IOException {
+	private void doSearch(String search, int indexType) throws IOException {
 		try {
+			this.indexType = indexType;
 			synchronized(this) {
 				stopSearch = false;
 				if (newSearch) {
@@ -326,22 +332,54 @@ public class SearchNames implements Runnable {
 		stopSearch = true;
 	}
 	
+	public synchronized void appendSearchBlocking(String search) {
+		appendSearchBlocking(search, INDEX_NAME);
+	}
 	/**
 	 * search for a canonicalised name and return a list of results through callbacks
 	 * This call blocks until the search has finished.
 	 * @param search
 	 */
-	public synchronized void appendSearchBlocking(String search) {
+	public synchronized void appendSearchBlocking(String search, int indexType) {
 		logger.info("search for  " + search);
 		stopSearch = true;
 		newSearch = true;
 		appendRes = true;
 		foundEntries = 0;
 		try {
-			doSearch(search);
+			doSearch(search, indexType);
 		} catch (IOException ioe) {
 			//Do nothing
 		}
+	}
+
+ 	/**
+	 * search for a canonicalised name and return a list of results through callbacks
+	 * @param search
+	 * @param type
+	 */
+	public synchronized void appendSearch(String search, final int type) {
+		logger.info("search for  " + search);
+		stopSearch = true;
+		newSearch = true;
+		appendRes = true;
+		//foundEntries = 0;
+		System.out.println("appendSearch: " + search +  " " + type);
+		this.search = search;
+		this.indexType = type;
+		final String searchvar = search;
+		Thread t = new Thread(new Runnable() {
+			public void run() {
+				try {
+					System.out.println("starting doSearch type=" + type);
+					doSearch(searchvar, type);
+					System.out.println("done doSearch type=" + type);
+				} catch (IOException ioe) {
+					//Do nothing
+				}
+			}
+		}, "wholeWordSearch");
+		t.start();
 	}
 
 	/**

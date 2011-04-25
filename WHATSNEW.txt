@@ -2,8 +2,7 @@
     - enable new feature multi-word search for build
       targets "microemulator" and "newfeatures"; it can require
       much more memory than single word or whole name search,
-      so don't enable it yet for other targets. Feature is
-      not functional at the moment.
+      so don't enable it yet for other targets.
 
     *** Misc. bug fixes ***
     - GpsMid: fixed empty/invalid map startup infinite loop bug (tracker 3288429)
