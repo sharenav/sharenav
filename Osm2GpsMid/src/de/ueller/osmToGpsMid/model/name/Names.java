@@ -16,6 +16,11 @@ import java.util.TreeSet;
 import java.util.NoSuchElementException;
 
 import de.ueller.osmToGpsMid.model.Entity;
+import de.ueller.osmToGpsMid.model.Node;
+import de.ueller.osmToGpsMid.model.Way;
+import de.ueller.osmToGpsMid.model.POIdescription;
+import de.ueller.osmToGpsMid.model.WayDescription;
+import de.ueller.osmToGpsMid.Configuration;
 
 
 /**
@@ -55,6 +60,22 @@ public class Names {
 		if (w.getName().trim().length() == 0){
 			return;
 		}
+		boolean houseNumber = false;
+		if (w instanceof Node) {
+			POIdescription poiDesc = 
+				Configuration.getConfiguration().getpoiDesc((byte) ((Node) w).getType(Configuration.getConfiguration()));
+			if (poiDesc != null && poiDesc.houseNumberIndex) {
+				houseNumber = true;
+			}
+		}
+		if (w instanceof Way) {
+			WayDescription wayDesc =
+				Configuration.getConfiguration().getWayDesc((byte)(-1*((Way) w).getType(Configuration.getConfiguration())));
+
+			if (wayDesc != null && wayDesc.houseNumberIndex) {
+				houseNumber = true;
+			}
+		}
 		Name mn =new Name(w);
 //		System.out.println("adding name:" + mn.getName());
 		if (names1.containsKey(mn.getName())){
@@ -83,31 +104,55 @@ public class Names {
 //					System.out.println("no such element exc. in canons.add");
 			}
 		}
-		// only add some entities (like housenumbers) to whole word idx
+		// TODO: add whole word index, only add some entities (like housenumbers) to whole word idx
 		// should add also stopwords 
-		String houseNumber = "";
+		// add to word index; don't add housenumbers when housenumberindex element is used
 		String [] words = mn.getName().split("[ ,.()]");
-		for (String word : words) {
-			mn = new Name(word);
+		if (!houseNumber) {
+			for (String word : words) {
+				mn = new Name(word);
 //			System.out.println("adding word:" + mn);
-			mn.addEntity(w);
-			// don't add house numbers to word index
-			if (!houseNumber.equals(word)) {
+				mn.addEntity(w);
 				if (! wordCanons.add(mn)){
-//				System.out.println("wordCanon already there:" + mn);
+					//				System.out.println("wordCanon already there:" + mn);
 					Name mnNext=new Name(word+"\0");
 					mnNext.setCanon( mn.getCanon());
 					try {
 						SortedSet<Name> subSet=wordCanons.tailSet(mnNext);
 						Name mnExist=subSet.first();
 						if (mnExist != null) {
-//						System.out.println("mnExist:" + mnExist);
+							//						System.out.println("mnExist:" + mnExist);
 							// Trouble? Adds to nameidx?
 							mnExist.addEntity(w);
 						}
 					}
 					catch (NoSuchElementException e) {
-//					System.out.println("no such element exc. in wordCanons.add");
+						//					System.out.println("no such element exc. in wordCanons.add");
+					}
+				}
+			}
+		}
+		// add to housenumber index
+		if (houseNumber) {
+			for (String word : words) {
+				mn = new Name(word);
+//			System.out.println("adding word:" + mn);
+				mn.addEntity(w);
+				if (! houseNumberCanons.add(mn)){
+					//				System.out.println("wordCanon already there:" + mn);
+					Name mnNext=new Name(word+"\0");
+					mnNext.setCanon( mn.getCanon());
+					try {
+						SortedSet<Name> subSet=houseNumberCanons.tailSet(mnNext);
+						Name mnExist=subSet.first();
+						if (mnExist != null) {
+							//						System.out.println("mnExist:" + mnExist);
+							// Trouble? Adds to nameidx?
+							mnExist.addEntity(w);
+						}
+					}
+					catch (NoSuchElementException e) {
+						//					System.out.println("no such element exc. in houseNumberCanons.add");
 					}
 				}
 			}
