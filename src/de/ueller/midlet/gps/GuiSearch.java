@@ -412,7 +412,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			//#endif
 			words = "";
 			spacePressed = 0;
-			// XXX? setTitle();
+			setTitle();
 			carret=0;
 			repaint();
 			return;
