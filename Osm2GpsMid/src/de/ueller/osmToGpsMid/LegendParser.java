@@ -388,6 +388,9 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 			if (qName.equals("helpertag")) {
 				currentPoi.helperTag = atts.getValue("tag");
 			}
+			if (qName.equals("housenumberindex")) {
+				currentPoi.houseNumberIndex = true;
+			}
 			if (qName.equals("namefallback")) {
 				currentPoi.nameFallbackKey = atts.getValue("tag");
 			}
@@ -511,6 +514,9 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 			}
 			if (qName.equals("namefallback")) {
 				currentWay.nameFallbackKey = atts.getValue("tag");
+			}
+			if (qName.equals("housenumberindex")) {
+				currentWay.houseNumberIndex = true;
 			}
 			if (qName.equals("scale")) {
 				try {
