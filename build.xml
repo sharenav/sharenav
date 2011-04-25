@@ -134,7 +134,6 @@
 				<!--
 				<requirement name="Identifier" value="Generic/android" />
 				<requirement name="Identifier" value="Generic/android2.1" />
-				<requirement name="Identifier" value="Generic/newfeatures" />
 				<requirement name="Identifier" value="Motorola/Motorazr_V3i" />
 				<requirement name="Identifier" value="Sony-Ericsson/K750" />
 				<requirement name="Identifier" value="Siemens/SL75" />
