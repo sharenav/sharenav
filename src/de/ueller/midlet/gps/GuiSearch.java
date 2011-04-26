@@ -798,7 +798,38 @@ public class GuiSearch extends Canvas implements CommandListener,
 		if (keyCode >= KEY_NUM0 && keyCode <= KEY_NUM9) {
 			/*  KEY_NUM constants match "(char) keyCode" */
 			searchCanon.insert(carret++, (char) keyCode);
+		//#if polish.api.bigsearch
+		} else if ((keyCode == KEY_POUND || keyCode == 32) && Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH)) {
+			// switch to another word, start searching in AND mode
+			// collect a list of long entity id's, mark
+
+			// first wait for all results
+			// then do a search for housenumbers and whole words
+
+			if (spacePressed == 0) {
+				// first time here, search for whole words
+				//System.out.println("space pressed, searching whole word index");
+				words = words + searchCanon.toString() + " ";
+				String searchString = NumberCanon.canonial(searchCanon.toString());
+				if (searchCanon.length() == 1) {
+					searchString = "1" + searchString;
+				}
+				searchThread.appendSearchBlocking(NumberCanon.canonial(searchCanon.toString()), SearchNames.INDEX_WORD);
+				searchThread.appendSearchBlocking(NumberCanon.canonial(searchCanon.toString()), SearchNames.INDEX_HOUSENUMBER);
+				//searchThread.appendSearchBlocking(NumberCanon.canonial(searchCanon.toString()), SearchNames.INDEX_WHOLEWORD);
+				// insert new results from search thread 
+				insertResults();
+				spacePressed++;
+				//#if polish.api.bigsearch
+				storeMatches();
+				nextWord();
+				//#endif
+				// should set up a timer to collect the hits?
+			}
+		} else if (keyCode == KEY_POUND && !Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH)) {
+		//#else
 		} else if (keyCode == KEY_POUND) {
+		//#endif
 			if (state == STATE_FAVORITES) {
 				sortByDist = !sortByDist;
 				reSearch();
@@ -894,37 +925,6 @@ public class GuiSearch extends Canvas implements CommandListener,
 			 * Do not reSearch() after Android MENU key is pressed, otherwise selected result looses focus
 			 **/
 			return;
-		//#if polish.api.bigsearch
-		} else if ((keyCode == KEY_POUND || keyCode == 32) && Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH)) {
-			// switch to another word, start searching in AND mode
-			// collect a list of long entity id's, mark
-
-			// first wait for all results
-			// then do a search for housenumbers and whole words
-
-			if (spacePressed == 0) {
-				// first time here, search for whole words
-				//System.out.println("space pressed, searching whole word index");
-				words = words + searchCanon.toString() + " ";
-				String searchString = NumberCanon.canonial(searchCanon.toString());
-				if (searchCanon.length() == 1) {
-					searchString = "1" + searchString;
-				}
-				searchThread.appendSearchBlocking(NumberCanon.canonial(searchCanon.toString()), SearchNames.INDEX_WORD);
-				searchThread.appendSearchBlocking(NumberCanon.canonial(searchCanon.toString()), SearchNames.INDEX_HOUSENUMBER);
-				//searchThread.appendSearchBlocking(NumberCanon.canonial(searchCanon.toString()), SearchNames.INDEX_WHOLEWORD);
-				// insert new results from search thread 
-				insertResults();
-				spacePressed++;
-				//#if polish.api.bigsearch
-				storeMatches();
-				nextWord();
-				//#endif
-				// should set up a timer to collect the hits?
-			}
-		} else if (keyCode == KEY_POUND && !Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH)) {
-			searchCanon.insert(carret++,'1'); 
-		//#endif
 		} else {
 			// filter out special keys such as shift key (-50), volume keys, camera keys...
 			if (keyCode > 0) {
