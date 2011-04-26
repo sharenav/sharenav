@@ -995,9 +995,13 @@ scale alias 1: zoomed out 21x
 <!--
 uncomment the segment below to enable housenumber searches
 
-add the following line to allow for a separate housenumber index
-add '<housenumberindex index="true"/>' before helpertag to put housenumbers in their own index
+add the following line before helpertag to put housenumbers in their own index,
+so housenumbers don't clutter the main search.
+
+		<housenumberindex index="true"/>
+
 without the "housenumberindex" line, all housenumbers are added to main index and searchable
+from the main index.
 
 	<key tag="addr:housenumber">
 	  <value name ="*">
