@@ -155,7 +155,16 @@ public class SearchNames implements Runnable {
 			StringBuffer current = new StringBuffer();
 //			System.out.println("compare: " + compare);
 			
-			String fnPrefix = (Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ? "/w" : "/s");
+			String fnPrefix = "";
+			if (indexType == INDEX_WORD) {
+				fnPrefix = "/w";
+			} else if (indexType == INDEX_WHOLEWORD) {
+				fnPrefix = "/ww";
+			} else if (indexType == INDEX_HOUSENUMBER) {
+				fnPrefix = "/h";
+			} else if (indexType == INDEX_NAME) {
+				fnPrefix = "/s";
+			}
 			String fileName = fnPrefix + fn + ".d";
 //			System.out.println("open " + fileName);
 			InputStream stream;
