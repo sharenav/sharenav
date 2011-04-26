@@ -1393,20 +1393,6 @@ public class GuiSearch extends Canvas implements CommandListener,
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ||
 		    !searchAlpha || name == null || searchCanon.toString().equalsIgnoreCase(
 			    name.substring(0, searchCanon.toString().length()))) {
-			//#if polish.api.bigsearch
-			if (Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) && state != STATE_FAVORITES) {
-				Long id = new Long(srNew.resultid);
-				// if match is a way, try to get more exact coords from previous match
-				if (srNew.type > 0) {
-					// transfer house number coordinates to street
-					if (matchLats != null && matchLats.get(id) != null) {
-						srNew.lat = ((Float) matchLats.get(id)).floatValue();
-						srNew.lon = ((Float) matchLons.get(id)).floatValue();
-					}
-				}
-			}
-			addDistanceToSearchResult(srNew);
-			//#endif
 			if (!sortByDist) {
 				result2.addElement(srNew);
 			} else {
