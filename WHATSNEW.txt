@@ -1,8 +1,17 @@
     *** Multi-word search ***
     - enable new feature multi-word search for build
       targets "microemulator" and "newfeatures"; it can require
-      much more memory than single word or whole name search,
+      more memory than single word or whole name search,
       so don't enable it yet for other targets.
+
+    *** Housenumber searches **
+    - Multi-word search can also be used for housenumber search (streetname&housenumber) by uncommenting
+      addr:housenumber segment in style file and enabling useHouseNumbers in .properties.
+    - Currently Osm2GpsMid has very limited ability to connect housenumbers to streets
+      which is a requirement for successful housenumber & streetname searching. Only
+      housenumbers encoded as relations are handled at the moment. In the future, expect
+      addr:streetname tag support to be added, as well as heuristic guesstimate connection
+      of housenumbers to streets.
 
     *** Misc. bug fixes ***
     - GpsMid: fixed empty/invalid map startup infinite loop bug (tracker 3288429)

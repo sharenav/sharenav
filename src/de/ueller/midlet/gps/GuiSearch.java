@@ -185,7 +185,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 	private volatile TimerTask tapAutoReleaseTimerTask = null;
 	private final int TAP_AUTORELEASE_DELAY = 500;
 	private final int MATCH_STORE = 1;
-	private final int MATCH_FILTER = 1;
+	private final int MATCH_FILTER = 2;
 
 	private KeySelectMenu poiTypeForm;
 
@@ -891,12 +891,16 @@ public class GuiSearch extends Canvas implements CommandListener,
 				// first time here, search for whole words
 				//System.out.println("space pressed, searching whole word index");
 				words = words + searchCanon.toString() + " ";
-				//searchThread.appendSearch(NumberCanon.canonial(searchCanon.toString()), SearchNames.INDEX_WHOLEWORD);
 				String searchString = NumberCanon.canonial(searchCanon.toString());
 				if (searchCanon.length() == 1) {
 					searchString = "1" + searchString;
 				}
 				searchThread.appendSearchBlocking(searchString, SearchNames.INDEX_WORD);
+				//System.out.println("space pressed, searching wholeword & housenumber indexes");
+				//searchThread.appendSearchBlocking(searchString, SearchNames.INDEX_HOUSENUMBER);
+				//searchThread.appendSearch(NumberCanon.canonial(searchCanon.toString()), SearchNames.INDEX_WHOLEWORD);
+				//searchThread.appendSearchBlocking(NumberCanon.canonial(searchCanon.toString()), SearchNames.INDEX_WHOLEWORD);
+				//searchThread.appendSearchBlocking(NumberCanon.canonial(searchCanon.toString()), SearchNames.INDEX_HOUSENUMBER);
 				searchCanon.setLength(0);
 				isearchStart = carret;
 				carret = 0;
@@ -956,63 +960,55 @@ public class GuiSearch extends Canvas implements CommandListener,
 
 			if (mode == MATCH_STORE) {
 				//System.out.println("In updateMatches(), result.size: " + result.size());
+				//System.out.println("Running updateMatches in store mode");
 				for (int i = 0; i < result.size(); i++) {
 					sr = (SearchResult) result.elementAt(i);
 					Long id = new Long(sr.resultid);
-					//Float Lat = new Float(sr.lat);
-					//Float Lon = new Float(sr.lat);
+					Float Lat = new Float(sr.lat);
+					Float Lon = new Float(sr.lon);
 					Integer source = new Integer(sr.source);
 					matchSources.put(id, source);
-					//matchLats.put(id, Lat);
-					//matchLons.put(id, Lon);
+					matchLats.put(id, Lat);
+					matchLons.put(id, Lon);
 					//System.out.println("Adding result: " + sr.resultid + " sr.source/housenum: " + sr.source + "/" + SearchNames.INDEX_HOUSENUMBER);
-					//try {
-					if (sr.source == SearchNames.INDEX_HOUSENUMBER) {
-						// transfer house number coordinates to street
-						if (matchSources.get(id) != null) {
-							System.out.println("Adding housenumber coords");
-							Float Lat = new Float(sr.lat);
-							Float Lon = new Float(sr.lon);
-							matchLats.put(id, Lat);
-							matchLons.put(id, Lon);
-						}
-					}
+					//System.out.println("Store match, adding, source = " + ((Integer) matchSources.get(id)).intValue());
 				}
 			} else { // MATCH_FILTER
 				// restore mode
-				//System.out.println("Trying to restore housenumber coords");
+				//System.out.println("Running updateMatches in filter mode");
 				//System.out.println("In updateMatches(), result.size: " + result.size());
 				for (int i = 0; i < result.size(); i++) {
 					sr = (SearchResult) result.elementAt(i);
 					Long id = new Long(sr.resultid);
-				        //System.out.println("In updateMatches(), trying to match id: " + id + " to  matches");
-					try {
-						if (matchSources.get(id) != null) {
-
-							//System.out.println("In updateMatches(), found match id: " + id + " in matches");
-							Integer sourceNew = new Integer(sr.source);
-							matchNewSources.put(id, sourceNew);
-							//System.out.println("In updateMatches(), added true");
-							// transfer house number coordinates to street
-							if (matchSources.get(id) != null) {
-								System.out.println("matches.elementAt != null " + sr.resultid);
-								sr.lat = ((Float) matchLats.get(id)).floatValue();
-								sr.lon = ((Float) matchLons.get(id)).floatValue();
-							} else if (sr.source == SearchNames.INDEX_HOUSENUMBER) {
-								// if new match is housenumber, transfer coordinates
-								//System.out.println("In updateMatches(), sr.source == HOUSENUMBER");
-								//float transLat = matchLats.get(id).floatValue();
-								//float transLon = matchLons.get(id).floatValue();
-								Float Lat = new Float(sr.lat);
-								Float Lon = new Float(sr.lon);
-								matchLats.put(id, Lat);
-								matchLons.put(id, Lon);
-							}
-							//System.out.println("Adding result: " + sr.resultid);
+					// transfer house number coordinates to street
+					Integer sourceNew = new Integer(sr.source);
+					if (matchSources.get(id) != null) {
+						//System.out.println("found match from old results, id = "
+						//		   + id + "source = "
+						//		   + ((Integer) matchSources.get(id)).intValue());
+						//if (((Integer) matchSources.get(id)).intValue() == SearchNames.INDEX_HOUSENUMBER && matchLats.get(id) != null) {
+						// get more exact coordinates from old match if current match is a way
+						if (sr.type > 0 && matchLats != null && matchLats.get(id) != null) {
+							sr.lat = ((Float) matchLats.get(id)).floatValue();
+							sr.lon = ((Float) matchLons.get(id)).floatValue();
 						}
-					} catch (ArrayIndexOutOfBoundsException e) {
-						System.out.println("except in later words");
+						//	result.removeElementAt(i);
+						//	result.addElement(sr);
+						matchNewSources.put(id, matchSources.get(id));
 					}
+					if (sr.type < 0 && matchLats.get(id) != null) {
+						// if new match is a node, save coordinates
+						//System.out.println("In updateMatches(), saving coordinates");
+						//float transLat = matchLats.get(id).floatValue();
+						//float transLon = matchLons.get(id).floatValue();
+						Float Lat = new Float(sr.lat);
+						Float Lon = new Float(sr.lon);
+						matchLats.put(id, Lat);
+						matchLons.put(id, Lon);
+					} else {
+						sourceNew = new Integer(sr.source);
+					}
+					matchNewSources.put(id, sourceNew);
 				}
 				matchSources = matchNewSources;
 			}
@@ -1400,12 +1396,12 @@ public class GuiSearch extends Canvas implements CommandListener,
 			//#if polish.api.bigsearch
 			if (Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) && state != STATE_FAVORITES) {
 				Long id = new Long(srNew.resultid);
-				if (matchSources != null && matchSources.get(id) != null && ((Integer) matchSources.get(id)).intValue() == SearchNames.INDEX_HOUSENUMBER) {
+				// if match is a way, try to get more exact coords from previous match
+				if (srNew.type > 0) {
 					// transfer house number coordinates to street
-					try {
+					if (matchLats != null && matchLats.get(id) != null) {
 						srNew.lat = ((Float) matchLats.get(id)).floatValue();
 						srNew.lon = ((Float) matchLons.get(id)).floatValue();
-					} catch (ArrayIndexOutOfBoundsException e) {
 					}
 				}
 			}
