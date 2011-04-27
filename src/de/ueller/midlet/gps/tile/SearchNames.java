@@ -400,15 +400,15 @@ public class SearchNames implements Runnable {
 		newSearch = true;
 		appendRes = true;
 		//foundEntries = 0;
-		System.out.println("appendSearch: " + search +  " " + type);
+		//System.out.println("appendSearch: " + search +  " " + type);
 		this.search = search;
 		final String searchvar = search;
 		Thread t = new Thread(new Runnable() {
 			public void run() {
 				try {
-					System.out.println("starting doSearch type=" + type);
+					//System.out.println("starting doSearch type=" + type);
 					doSearch(searchvar, type);
-					System.out.println("done doSearch type=" + type);
+					//System.out.println("done doSearch type=" + type);
 				} catch (IOException ioe) {
 					//Do nothing
 				}
@@ -430,7 +430,7 @@ public class SearchNames implements Runnable {
 		foundEntries = 0;
 		this.search = search;
 		indexType = type;
-		System.out.println ("search: set indexType to " + type);
+		//System.out.println ("search: set indexType to " + type);
 		if (processorThread == null || !processorThread.isAlive()) {
 			processorThread = new Thread(this);
 			/* processorThread.setPriority(Thread.MIN_PRIORITY + 1);
