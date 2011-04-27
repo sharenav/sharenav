@@ -141,7 +141,7 @@ public class Names {
 		// add to housenumber index
 		if (houseNumber) {
 			for (String word : words) {
-				System.out.println("Word: " + word);
+				//System.out.println("Word: " + word);
 				if (word.length() == 0) {
 					//System.out.println("Empty word");
 					continue;
