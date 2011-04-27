@@ -1062,6 +1062,22 @@ in the main index as well as in housenumber index.
 			<textscale scale="26"/>
 	  	</value>
 	</key>
+<!-- uncomment below to add area pois for buildings to make housenumber search find buildings
+
+	<key tag="building">
+	  <value name ="yes">
+		<description desc = "Building"/>
+		<image src="mark.png"/>
+		<namekey tag = "name"/>  				
+		<namefallback tag = "addr:housenumber"/>
+		<housenumberindex index="true"/>
+		<helpertag tag="addr:street"/>
+		<AreaPOI createForAreas="true"/>
+		<scale scale="20"/>
+		<textscale scale="21"/>
+	  </value>
+  	</key>
+-->
 	<!-- http://wiki.openstreetmap.org/wiki/WikiProject_Haiti
 		 Uncomment below to include damage POIs -->
 	<!--
