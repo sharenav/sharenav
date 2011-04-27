@@ -56,7 +56,7 @@ public class SearchList {
 			for (Name mapName : ((listType == INDEX_NAME || listType == INDEX_BIGNAME) ? names.getCanons()
 					     : (listType == INDEX_WORD ? names.getWordCanons()
 						: (listType == INDEX_WHOLEWORD ? names.getWholeWordCanons() : names.getHouseNumberCanons())))) {
-				String string=mapName.getCanonFileName();
+				String string=mapName.getCanonFileName(mapName.getCanonFileId());
 				int eq=names.getEqualCount(string,lastStr);
 				if (! lastFid.equals(mapName.getCanonFileId())){
 					if (ds != null) ds.close();

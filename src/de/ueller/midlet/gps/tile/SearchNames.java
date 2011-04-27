@@ -34,6 +34,8 @@ public class SearchNames implements Runnable {
 	private boolean newSearch = false;
 	private boolean appendRes = false;
 	private volatile static int indexType;
+	private volatile static boolean noWaypointSearch = false;
+
         //#if polish.api.bigsearch
 	private static final int SEARCH_MAX_COUNT = 500;
 	//#else
@@ -44,6 +46,7 @@ public class SearchNames implements Runnable {
 	public static final int INDEX_WHOLEWORD = 2;
 	public static final int INDEX_HOUSENUMBER = 3;
 	public static final int INDEX_BIGNAME = 4;
+	public static final int INDEX_WAYPOINTS = 5;
 	protected static final Logger logger = 
 		Logger.getInstance(SearchNames.class, Logger.TRACE);
 
@@ -94,7 +97,7 @@ public class SearchNames implements Runnable {
 				}
 			}
 			
-			if (search.length() < 2) {
+			if (!noWaypointSearch && search.length() < 2) {
 				synchronized (this) {
 					//#debug
 					logger.info("Collecting waypoints");
@@ -119,6 +122,9 @@ public class SearchNames implements Runnable {
 					    			SearchResult sr = new SearchResult();
 					    			sr.lat = gui.wayPts[i].lat;
 					    			sr.lon = gui.wayPts[i].lon;	    			
+								//#if polish.api.bigsearch
+								sr.source = INDEX_WAYPOINTS;
+								//#endif
 					    			sr.nameIdx = i; 
 					    			gui.insertWptSearchResultSortedByNameOrDist(gui.wayPts, sr);
 					    			inserted = true;
@@ -144,10 +150,15 @@ public class SearchNames implements Runnable {
 			 * if (search.length() < 2)
 				return;*/
 			
+			noWaypointSearch = false;
 			//#debug
 			logger.info("Searching for " + search);
-			String fn = search.substring(0,2);
-			String compare = search.substring(2);
+			String fn = search;
+			String compare = "";
+			if (search.length() >= 2) {
+				fn = search.substring(0,2);
+				compare = search.substring(2);
+			}
 			StringBuffer current = new StringBuffer();
 //			System.out.println("compare: " + compare);
 			
@@ -164,7 +175,7 @@ public class SearchNames implements Runnable {
 				fnPrefix = "/s";
 			}
 			String fileName = fnPrefix + fn + ".d";
-			//System.out.println("open " + fileName);
+			System.out.println("open " + fileName);
 			InputStream stream;
 			try {
 				stream = Configuration.getMapResource(fileName);
@@ -383,6 +394,7 @@ public class SearchNames implements Runnable {
 		appendRes = true;
 		foundEntries = 0;
 		try {
+			noWaypointSearch = true;
 			doSearch(search, iType);
 		} catch (IOException ioe) {
 			//Do nothing
