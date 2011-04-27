@@ -850,7 +850,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 					return;
 				} else {
 					// set match mode
-					words = words + searchCanon.toString() + " ";
+					words = words + " ";
 					//#if polish.api.bigsearch
 					storeMatches();
 					nextWord();
