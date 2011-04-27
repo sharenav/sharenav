@@ -8,7 +8,7 @@
       of housenumbers to streets.
     - like multi-word search, housenumber search can require a bunch of memory and is currently
       enabled only for "microemulator" and "newfeatures" targets.
-    - 
+    - to search, use the '#' key to end the street name or house number
     *** Multi-word search ***
     - enable new feature multi-word search for build
       targets "microemulator" and "newfeatures"; it can require
