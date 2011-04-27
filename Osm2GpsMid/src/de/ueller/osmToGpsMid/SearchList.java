@@ -38,6 +38,7 @@ public class SearchList {
 	public static final int INDEX_WORD = 1;
 	public static final int INDEX_WHOLEWORD = 2;
 	public static final int INDEX_HOUSENUMBER = 3;
+	public static final int INDEX_BIGNAME = 4;
 
 	public SearchList(Names names, Urls urls) {
 		super();
@@ -52,7 +53,7 @@ public class SearchList {
 			String lastStr=null;
 			String lastFid="";
 			int curPos=0;
-			for (Name mapName : (listType == INDEX_NAME ? names.getCanons()
+			for (Name mapName : ((listType == INDEX_NAME || listType == INDEX_BIGNAME) ? names.getCanons()
 					     : (listType == INDEX_WORD ? names.getWordCanons()
 						: (listType == INDEX_WHOLEWORD ? names.getWholeWordCanons() : names.getHouseNumberCanons())))) {
 				String string=mapName.getCanonFileName();
@@ -61,8 +62,9 @@ public class SearchList {
 					if (ds != null) ds.close();
 					lastFid=mapName.getCanonFileId();
 					String fileName = path+
-						(listType == INDEX_NAME ? "/s" : (listType == INDEX_WORD ? "/w"
-									 : (listType == INDEX_WHOLEWORD ? "/ww" : "/h"))) +
+						(listType == INDEX_BIGNAME ? "/n" :
+						 (listType == INDEX_NAME ? "/s" : (listType == INDEX_WORD ? "/w"
+										  : (listType == INDEX_WHOLEWORD ? "/ww" : "/h")))) +
 						lastFid+".d";
 					System.out.println("open "+fileName);
 					fo = new FileOutputStream(fileName);

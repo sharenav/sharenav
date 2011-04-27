@@ -192,9 +192,11 @@ public class CreateGpsMidData implements FilenameFilter {
 			// create search list for whole words / house numbers
 			sl.createSearchList(path, SearchList.INDEX_WHOLEWORD);
 			// create search list for house numbers
-			if (Configuration.getConfiguration().useHouseNumbers) {
-				sl.createSearchList(path, SearchList.INDEX_HOUSENUMBER);
-			}
+		}
+		if (Configuration.getConfiguration().useHouseNumbers) {
+		    sl.createSearchList(path, SearchList.INDEX_HOUSENUMBER);
+		    // create search list for names for housenumber matching
+		    sl.createSearchList(path, SearchList.INDEX_BIGNAME);
 		}
 
 		// Output statistics for travel modes

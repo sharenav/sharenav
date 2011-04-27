@@ -88,20 +88,22 @@ public class Names {
 			names1.put(mn.getName(),mn);
 		}
 //		System.out.println("adding to wholename canon:" + mn);
-		if (! canons.add(mn)){
+		if (!houseNumber) {
+			if (! canons.add(mn)){
 //			System.out.println("canon already there:" + mn);
-			Name mnNext=new Name(w.getName()+"\0");
-			mnNext.setCanon( mn.getCanon());
-			try {
-				SortedSet<Name> subSet=canons.tailSet(mnNext);
-				Name mnExist=subSet.first();
-				if (mnExist != null) {
+				Name mnNext=new Name(w.getName()+"\0");
+				mnNext.setCanon( mn.getCanon());
+				try {
+					SortedSet<Name> subSet=canons.tailSet(mnNext);
+					Name mnExist=subSet.first();
+					if (mnExist != null) {
 //					System.out.println("mnExist:" + mnExist);
-					mnExist.addEntity(w);
+						mnExist.addEntity(w);
+					}
 				}
-			}
-			catch (NoSuchElementException e) {
+				catch (NoSuchElementException e) {
 //					System.out.println("no such element exc. in canons.add");
+				}
 			}
 		}
 		// TODO: add whole word index, only add some entities (like housenumbers) to whole word idx
