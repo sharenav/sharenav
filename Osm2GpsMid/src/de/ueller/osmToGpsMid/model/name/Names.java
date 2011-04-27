@@ -112,6 +112,10 @@ public class Names {
 		String [] words = mn.getName().split("[ ,.()]");
 		if (!houseNumber) {
 			for (String word : words) {
+				if (word.length() == 0) {
+					//System.out.println("Empty word");
+					continue;
+				}
 				mn = new Name(word);
 //			System.out.println("adding word:" + mn);
 				mn.addEntity(w);
@@ -137,6 +141,11 @@ public class Names {
 		// add to housenumber index
 		if (houseNumber) {
 			for (String word : words) {
+				System.out.println("Word: " + word);
+				if (word.length() == 0) {
+					//System.out.println("Empty word");
+					continue;
+				}
 				mn = new Name(word);
 //			System.out.println("adding word:" + mn);
 				mn.addEntity(w);
