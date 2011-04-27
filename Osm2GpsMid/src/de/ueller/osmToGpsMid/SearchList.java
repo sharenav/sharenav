@@ -66,7 +66,7 @@ public class SearchList {
 						 (listType == INDEX_NAME ? "/s" : (listType == INDEX_WORD ? "/w"
 										  : (listType == INDEX_WHOLEWORD ? "/ww" : "/h")))) +
 						lastFid+".d";
-					System.out.println("open "+fileName);
+					//System.out.println("open "+fileName);
 					fo = new FileOutputStream(fileName);
 					ds = new DataOutputStream(fo);
 					curPos=0;
