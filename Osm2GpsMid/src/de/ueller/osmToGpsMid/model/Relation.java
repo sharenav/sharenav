@@ -180,9 +180,9 @@ public class Relation extends Entity {
 							}
 							if (m.getType() == Member.TYPE_WAY) {
 								// FIXME handle buildings too
-								System.out.println("Warning: ignoring map data: Unable to handle area (typically building) with housenumber, relation url: " 
+								System.out.println("Info: trying to handle way (typically building, area) with housenumber, relation url: " 
 										+ toUrl());
-								// nodecount++;
+								nodecount++;
 								break;
 							}
 						}

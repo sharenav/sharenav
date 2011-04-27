@@ -136,6 +136,10 @@ public class Node extends Entity {
 		return false;
 	}
 
+	public void resetType(Configuration c) {
+		type = -1;
+	}
+
 	public byte getType(Configuration c) {
 		if (type != -1) {
 			return type;

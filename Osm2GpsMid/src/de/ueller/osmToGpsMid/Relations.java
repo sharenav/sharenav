@@ -25,6 +25,8 @@ import de.ueller.osmToGpsMid.model.Member;
 import de.ueller.osmToGpsMid.model.Relation;
 import de.ueller.osmToGpsMid.model.Node;
 import de.ueller.osmToGpsMid.model.Way;
+import de.ueller.osmToGpsMid.model.Entity;
+import de.ueller.osmToGpsMid.model.name.Names;
 import uk.me.parabola.mkgmap.reader.osm.FakeIdGenerator;
 
 /**
@@ -141,6 +143,26 @@ public class Relations {
 							//  System.out.println("setting node " + n + " __wayid to " + w.id);
 							n.setAttribute("__wayid", w.id.toString());
 							//System.out.println("Housenumber relation " + r.toUrl() + " - added node " + );
+						}
+						for (Long wayref : r.getWayIds(Member.ROLE_HOUSE)) {
+							Way housew = wayHashMap.get(wayref);
+							Node n = housew.getMidPoint();
+							if (n != null) {
+								w.houseNumberAdd(n);
+								// add tag to point from
+								//  System.out.println("setting node " + n + " __wayid to " + w.id);
+								n.id = FakeIdGenerator.makeFakeId();
+								n.setAttribute("__wayid", w.id.toString());
+								//System.out.println("Housenumber relation " + r.toUrl() + " - added node " + );
+								for (String t : housew.getTags()) {
+									n.setAttribute(t, housew.getAttribute(t));
+								}
+								n.resetType(conf);
+								n.getType(conf);
+								parser.addNode(n);
+							} else {
+								System.out.println("Warning: ignoring map data: could not get midpoint for housenumber area (typically building)" + housew);
+							}
 						}
 					}
 					i.remove();

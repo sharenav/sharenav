@@ -172,6 +172,25 @@ public abstract class OsmParser {
 		}
 	}
 
+	/**
+	 * @param w
+	 */
+	public void addNode(Node n) {
+		byte t = n.getType(configuration);
+		/**
+		 * We seem to have a bit of a mess with respect to type -1 and 0. Both
+		 * are used to indicate invalid type it seems.
+		 */
+		if (true /* n.isValid() * && t > 0 */) {
+			//w.determineWayRouteModes();
+			if (nodes.get(n.id) != null) {
+				System.out.println ("Error: couldn't store node, already there, id: " + n.id);
+			} else {
+				nodes.put(n.id, n);
+			}
+		}
+	}
+
 	public void removeWay(Way w) {
 		ways.remove(w.id);
 	}
