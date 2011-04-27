@@ -719,3 +719,4 @@ gpx.StartingRecording=Aloitan jäljityksen
 guidiscover.SearchWholeNames=Etsi koko nimillä
 guidiscover.SearchWords=Etsi sanoilla
 guidiscover.SearchStyle=Etsintätapa
+guisearch.space=#loppu

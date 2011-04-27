@@ -33,6 +33,7 @@ public class SearchNames implements Runnable {
 	private final GuiSearch gui;
 	private boolean newSearch = false;
 	private boolean appendRes = false;
+	private volatile static int indexType;
         //#if polish.api.bigsearch
 	private static final int SEARCH_MAX_COUNT = 500;
 	//#else
@@ -42,7 +43,7 @@ public class SearchNames implements Runnable {
 	public static final int INDEX_WORD = 1;
 	public static final int INDEX_WHOLEWORD = 2;
 	public static final int INDEX_HOUSENUMBER = 3;
-	public static volatile int indexType = INDEX_NAME;
+	public static final int INDEX_BIGNAME = 4;
 	protected static final Logger logger = 
 		Logger.getInstance(SearchNames.class, Logger.TRACE);
 
@@ -53,12 +54,8 @@ public class SearchNames implements Runnable {
 
 	public void run() {
 	    try {
-		    if (Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH)) {
-			    indexType = INDEX_WORD;
-		    } else {
-			    indexType = INDEX_NAME;
-		    }
 		    while (newSearch) {
+			    //System.out.println ("dosearch: indexType is " + indexType);
 			    doSearch(search, indexType);
 			    // refresh display to give chance to fetch the names
 			    for (int i = 8; i != 0; i--) {
@@ -85,9 +82,8 @@ public class SearchNames implements Runnable {
 	}
 	
 	//TODO: explain
-	private void doSearch(String search, int indexType) throws IOException {
+	private void doSearch(String search, int iType) throws IOException {
 		try {
-			this.indexType = indexType;
 			synchronized(this) {
 				stopSearch = false;
 				if (newSearch) {
@@ -156,34 +152,58 @@ public class SearchNames implements Runnable {
 //			System.out.println("compare: " + compare);
 			
 			String fnPrefix = "";
-			if (indexType == INDEX_WORD) {
+			if (iType == INDEX_WORD) {
 				fnPrefix = "/w";
-			} else if (indexType == INDEX_WHOLEWORD) {
+			} else if (iType == INDEX_WHOLEWORD) {
 				fnPrefix = "/ww";
-			} else if (indexType == INDEX_HOUSENUMBER) {
+			} else if (iType == INDEX_HOUSENUMBER) {
 				fnPrefix = "/h";
-			} else if (indexType == INDEX_NAME) {
+			} else if (iType == INDEX_BIGNAME) {
+				fnPrefix = "/n";
+			} else if (iType == INDEX_NAME) {
 				fnPrefix = "/s";
 			}
 			String fileName = fnPrefix + fn + ".d";
-//			System.out.println("open " + fileName);
+			//System.out.println("open " + fileName);
 			InputStream stream;
 			try {
-				 stream = Configuration.getMapResource(fileName);
-				 if (stream == null) {
-					 /**
-					  * This presumably means, that the combination of two letters simply
-					  * doesn't exist in the map. So just return and do nothing.
-					  */
-					 return;
-				 }
+				stream = Configuration.getMapResource(fileName);
 			} catch (IOException e) {
+				stream = null;				
+			}			
+			if (stream == null) {
 				/**
 				 * This presumably means, that the combination of two letters simply
 				 * doesn't exist in the map. So just return and do nothing.
 				 */
-				return;				
-			}			
+				//System.out.println("Couldn't open bigname index, trying to fall back to name index");
+
+				/*
+				 * However, if it's a BIGNAME index which fails, try opening the NAME index as fallback
+				 */
+				if (iType == INDEX_BIGNAME) {
+					fnPrefix = "/s";
+					fileName = fnPrefix + fn + ".d";
+					try {
+						stream = Configuration.getMapResource(fileName);
+						if (stream == null) {
+							return;
+						} else {
+							iType = INDEX_NAME;
+							//System.out.println("Opened name index");
+						}
+					} catch (IOException e) {
+						/**
+						 * This presumably means, that the combination of two letters simply
+						 * doesn't exist in the map. So just return and do nothing.
+						 */
+						return;				
+					}			
+				} else {
+					return;
+				}
+			}
+
 			DataInputStream ds = new DataInputStream(stream);
 			
 			int pos = 0;
@@ -261,8 +281,7 @@ public class SearchNames implements Runnable {
 						return;
 					}					
 					long id = 0;
-					// FIXME would be better to use index type != INDEX_NAME
-					if (Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH)) {
+					if (iType != INDEX_NAME) {
 						id = ds.readLong();
 					}
 					byte isInCount = ds.readByte();
@@ -300,7 +319,7 @@ public class SearchNames implements Runnable {
 						sr.nameIdx = idx;
 						//#if polish.api.bigsearch
 						sr.resultid = id;
-						sr.source = (byte) indexType;
+						sr.source = (byte) iType;
 						//#endif
 						sr.urlIdx = urlidx;
 						sr.phoneIdx = phoneidx;
@@ -327,7 +346,7 @@ public class SearchNames implements Runnable {
 								return;
 							}
 						}
-//						System.out.println("found " + current +"(" + idx + ") type=" + type);
+						//System.out.println("found " + current +"(" + idx + ") type=" + type);
 					}
 					type = ds.readByte();
 				} // while (type != 0)
@@ -342,21 +361,29 @@ public class SearchNames implements Runnable {
 	}
 	
 	public synchronized void appendSearchBlocking(String search) {
+ 	        //#if polish.api.bigsearch
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH)) {
+			appendSearchBlocking(search, INDEX_WORD);
+		} else {
+			appendSearchBlocking(search, INDEX_BIGNAME);
+		}
+ 	        //#else
 		appendSearchBlocking(search, INDEX_NAME);
+                //#endif
 	}
 	/**
 	 * search for a canonicalised name and return a list of results through callbacks
 	 * This call blocks until the search has finished.
 	 * @param search
 	 */
-	public synchronized void appendSearchBlocking(String search, int indexType) {
+	public synchronized void appendSearchBlocking(String search, int iType) {
 		logger.info("search for  " + search);
 		stopSearch = true;
 		newSearch = true;
 		appendRes = true;
 		foundEntries = 0;
 		try {
-			doSearch(search, indexType);
+			doSearch(search, iType);
 		} catch (IOException ioe) {
 			//Do nothing
 		}
@@ -375,7 +402,6 @@ public class SearchNames implements Runnable {
 		//foundEntries = 0;
 		System.out.println("appendSearch: " + search +  " " + type);
 		this.search = search;
-		this.indexType = type;
 		final String searchvar = search;
 		Thread t = new Thread(new Runnable() {
 			public void run() {
@@ -395,7 +421,7 @@ public class SearchNames implements Runnable {
 	 * search for a String and create a new search Thread if necessary
 	 * @param search
 	 */
-	public synchronized void search(String search) {
+	public synchronized void search(String search, int type) {
 		//#debug
 		logger.info("search for  " + search);
 		stopSearch = true;
@@ -403,6 +429,8 @@ public class SearchNames implements Runnable {
 		appendRes = false;
 		foundEntries = 0;
 		this.search = search;
+		indexType = type;
+		System.out.println ("search: set indexType to " + type);
 		if (processorThread == null || !processorThread.isAlive()) {
 			processorThread = new Thread(this);
 			/* processorThread.setPriority(Thread.MIN_PRIORITY + 1);

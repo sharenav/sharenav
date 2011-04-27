@@ -1181,3 +1181,4 @@ guisearch.label9=wxyz9
 guidiscover.SearchWholeNames=Search for whole names
 guidiscover.SearchWords=Search for words
 guidiscover.SearchStyle=Search style
+guisearch.space=# end
