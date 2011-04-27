@@ -109,7 +109,7 @@ public class Names {
 		// TODO: add whole word index, only add some entities (like housenumbers) to whole word idx
 		// should add also stopwords 
 		// add to word index; don't add housenumbers when housenumberindex element is used
-		String [] words = mn.getName().split("[ ,.()]");
+		String [] words = mn.getName().split("[ ;,.()]");
 		if (!houseNumber) {
 			for (String word : words) {
 				if (word.length() == 0) {
