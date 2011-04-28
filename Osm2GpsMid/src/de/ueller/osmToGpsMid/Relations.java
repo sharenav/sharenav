@@ -60,6 +60,9 @@ public class Relations {
 	 */
 	private void processRelations() {
 		int relationCount = 0;
+		int houseNumberCount = 0;
+		int houseNumberRelationAcceptCount = 0;
+		int houseNumberRelationIgnoreCount = 0;
 		HashMap<Long, Way> wayHashMap = parser.getWayHashMap();
 		Map<Long, Node> nodeHashMap = parser.getNodeHashMap();
 		ArrayList<Way> removeWays = new ArrayList<Way>();
@@ -148,23 +151,27 @@ public class Relations {
 							Way housew = wayHashMap.get(wayref);
 							Node n = housew.getMidPoint();
 							if (n != null) {
-								w.houseNumberAdd(n);
 								// add tag to point from
 								//  System.out.println("setting node " + n + " __wayid to " + w.id);
-								n.id = FakeIdGenerator.makeFakeId();
-								n.setAttribute("__wayid", w.id.toString());
-								//System.out.println("Housenumber relation " + r.toUrl() + " - added node " + );
-								for (String t : housew.getTags()) {
-									n.setAttribute(t, housew.getAttribute(t));
+								if (!n.containsKey("__wayid")) {
+									w.houseNumberAdd(n);
+									n.id = FakeIdGenerator.makeFakeId();
+									n.setAttribute("__wayid", w.id.toString());
+									houseNumberCount++;
+									//System.out.println("Housenumber relation " + r.toUrl() + " - added node " + );
+									for (String t : housew.getTags()) {
+										n.setAttribute(t, housew.getAttribute(t));
+									}
+									n.resetType(conf);
+									n.getType(conf);
+									parser.addNode(n);
 								}
-								n.resetType(conf);
-								n.getType(conf);
-								parser.addNode(n);
 							} else {
 								System.out.println("Warning: ignoring map data: could not get midpoint for housenumber area (typically building)" + housew);
 							}
 						}
 					}
+					houseNumberRelationAcceptCount++;
 					i.remove();
 				} else if ("multipolygon".equals(r.getAttribute("type"))) {
 					if (r.getAttribute("admin_level") != null){
@@ -266,6 +273,10 @@ public class Relations {
 				
 					i.remove();
 				}
+			} else { // r.isValid()
+				if (conf.useHouseNumbers && ("associatedStreet".equals(r.getAttribute("type")))) {
+					houseNumberRelationIgnoreCount++;
+				}
 			}
 		}
 		
@@ -286,6 +297,10 @@ public class Relations {
 		}
 		
 		//parser.resize();
+		System.out.println("info: processed " + relationCount + " relations");
+		System.out.println("info: accepted " + houseNumberCount + " housenumber-to-street connections from associatedStreet relations");
+		System.out.println("info: ignored " + houseNumberRelationIgnoreCount + " associatedStreet (housenumber) relations");
+		System.out.println("info: processed " + houseNumberRelationAcceptCount + " associatedStreet (housenumber) relations");
 	}
 
 	/**

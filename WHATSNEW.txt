@@ -1,11 +1,12 @@
     *** Housenumber search **
     - Housenumber search (streetname&housenumber) can be used by uncommenting
       addr:housenumber segment in style file and enabling useHouseNumbers in .properties.
-    - Currently Osm2GpsMid has very limited ability to connect housenumbers to streets
-      which is a requirement for successful housenumber & streetname searching. Only
-      housenumbers encoded as relations are handled at the moment. In the future, expect
-      addr:streetname tag support to be added, as well as heuristic guesstimate connection
-      of housenumbers to streets.
+    - Currently Osm2GpsMid can connect housenumbers to streets encoded in the map as
+      * associatedStreet relations (no support for interpolation though)
+      * addr:streetname
+      * streetname not encoded, then connection is made with heuristic,
+       i.e. matching to the nearest street (warning: the heuristic gives incorrect
+       results in many places)
     - like multi-word search, housenumber search can require a bunch of memory and is currently
       enabled only for "microemulator" and "newfeatures" targets.
     - to search, use the '#' key to end the street name or house number

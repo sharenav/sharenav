@@ -198,6 +198,10 @@ public class Node extends Entity {
 		return ((connectedLineCount & CLC_NEVER_TRAFFICSIGNALS_ROUTENODE) > 0);
 	}	
 
+	public boolean hasHouseNumber() {
+		return (containsKey("addr:housenumber"));
+	}
+
 	
 	private byte calcType(Configuration c) {
 		if (type != -1) {
