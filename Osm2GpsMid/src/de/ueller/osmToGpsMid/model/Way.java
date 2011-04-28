@@ -677,7 +677,9 @@ public class Way extends Entity implements Comparable<Way> {
 			longWays = true;
 		}
 		if (housenumber != null) {
-			flags3 += WAY_FLAG3_HAS_HOUSENUMBERS;
+			// FIXME maybe enable later for viewing way-related house numbers on map;
+			// disable for now, as GpsMid doesn't use this yet
+			// flags3 += WAY_FLAG3_HAS_HOUSENUMBERS;
 			if (getHouseNumberCount() > 255) {
 				longHouseNumbers = true;
 			}
