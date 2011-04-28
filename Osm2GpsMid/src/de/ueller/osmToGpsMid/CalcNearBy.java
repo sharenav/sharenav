@@ -44,7 +44,48 @@ public class CalcNearBy {
 
 	// FIXME: this is a pretty crude and error-prone way to do this, rewrite to be better
 	// should use a better algorithm for findind the proper way
+
+	// GpsMid has a place where the nearest way to a destination is found,
+	// perhaps that can be used.
+
+	// sk750 April 2011: What you want to do with finding the closest way for a house number in Osm2GpsMid
+	// might be a mixture of closest point on a line in GpsMid
+	// and the traffic signal route node marking in Osm2GpsMid -
+	// though I this misses marking some route nodes
+	// because it doesn't look over tile boundaries for performance reasons.
 	// 
+	// Plan:
+	// 1) get a bunch of nearby (by midpoint) named ways (maybe two dozen or so),
+	// 2) if addr:streetname matches to exactly one of the ways, mark that way as associated
+	// 3) order the ways by distance from the node to the closest point of the way
+        // 4) mark the nearest way as associated 
+	// 5) maybe mark also one or two other nearest ways as associated, depending on .properties config
+	//    (false nearby positives might be considered a lesser evil than not finding a housenumber)
+	//    (the storage model currently doesn't allow for several way, so that would
+        //    involve a change to storage or cloning of the node)
+/* 
+   maybe this is useful:
+   b/GpsMidGraph/de/ueller/midlet/gps/data/MoreMath.java
+
+   public static Node closestPointOnLine(Node node1, Node node2, Node offNode) {
+   // avoid division by zero if node1 and node2 are at the same coordinates
+   if (node1.radlat == node2.radlat && node1.radlon == node2.radlon) {
+   return new Node(node1);
+   }
+   float uX = node2.radlat - node1.radlat;
+   float uY = node2.radlon - node1.radlon;
+   float  u = ( (offNode.radlat - node1.radlat) * uX + (offNode.radlon  - node1.radlon) * uY) / (uX * uX + uY * uY);
+   if (u > 1.0) {
+   return new Node(node2);
+   } else if (u <= 0.0) {
+   return new Node(node1);
+   } else {
+   return new Node( (float)(node2.radlat * u + node1.radlat * (1.0 - u )), (float) (node2.radlon * u + node1.radlon * (1.0-u)), true);
+   }
+   }
+       
+   }
+*/
 	public long calcWayForHouseNumber(Entity n) {
 		String streetName = n.getAttribute("addr:streetname");
 		Node nearestWay = null;				
@@ -337,40 +378,6 @@ public class CalcNearBy {
 				if (w.getName() == null || w.getName().trim().length() == 0) {
 					continue;
 				}
-				// FIXME midpoint is not good for this,
-				// instead should calculate proximity
-				// to way.
-				// GpsMid has a place where this thing is done;
-				// it finds the closest way to a destination,
-				// perhaps that can be used.
-				// sk750 April 2011: What you want to do with finding the closest way for a house number in Osm2GpsMid
-				// might be a mixture of closest point on a line in GpsMid
-				// and the traffic signal route node marking in Osm2GpsMid -
-				// though I this misses marking some route nodes
-				// because it doesn't look over tile boundaries for performance reasons.
-/* 
-maybe this is useful:
-b/GpsMidGraph/de/ueller/midlet/gps/data/MoreMath.java
-
-       public static Node closestPointOnLine(Node node1, Node node2, Node offNode) {
-               // avoid division by zero if node1 and node2 are at the same coordinates
-               if (node1.radlat == node2.radlat && node1.radlon == node2.radlon) {
-                       return new Node(node1);
-               }
-               float uX = node2.radlat - node1.radlat;
-               float uY = node2.radlon - node1.radlon;
-               float  u = ( (offNode.radlat - node1.radlat) * uX + (offNode.radlon  - node1.radlon) * uY) / (uX * uX + uY * uY);
-               if (u > 1.0) {
-                       return new Node(node2);
-               } else if (u <= 0.0) {
-                       return new Node(node1);
-               } else {
-                       return new Node( (float)(node2.radlat * u + node1.radlat * (1.0 - u )), (float) (node2.radlon * u + node1.radlon * (1.0-u)), true);
-               }
-       }
-       
- }
-*/
 
 				Node n = w.getMidPoint();
 				if (n == null) {
