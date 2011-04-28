@@ -87,7 +87,7 @@ public class CalcNearBy {
    }
 */
 	public long calcWayForHouseNumber(Entity n) {
-		String streetName = n.getAttribute("addr:streetname");
+		String streetName = n.getAttribute("addr:street");
 		Node nearestWay = null;				
 		try {					
 			Node thisNode = null;
