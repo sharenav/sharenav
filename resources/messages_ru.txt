@@ -1012,7 +1012,6 @@ guiwaypointpre.tracktype_grass=Agr %f трава
 guiwaypointpre.normalWP=Путевая Точка
 guiwaypointpre.phone=Телефон
 guiwaypointpre.path=Путь %s
-guisearch.label1=1#*- 
 guisearch.label2=абвг2
 guisearch.label3=дежз3
 guisearch.label4=ийкл4

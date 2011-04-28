@@ -218,12 +218,23 @@ public class KeySelectMenu extends Canvas implements
 					gsl = new GuiSearchLayout(0, 0, width, height);
 				}
 			
-				String letters[] = {  "     ", "  X  ", "  <- ", "1#*- ", " abc2", " def3", " ghi4", " jkl5", " mno6",
-						      "pqrs7", " tuv8", "wxyz9", Locale.get("guisearch.more")/*more*/, " _0  ", 
-						      Locale.get("guisearch.sort")/*sort*/};
+				// FIXME virtual keyboard is duplicated in GuiSearch.java, combine
+				String letters[] = {  Locale.get("guisearch.sort")/*sort*/, "  X  ", "  <- ", 
+						      Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ?
+						      Locale.get("guisearch.label1wordSearch")/* 1*- */ :
+						      Locale.get("guisearch.label1")/*_1*- */,
+						      Locale.get("guisearch.label2")/* abc2*/,
+						      Locale.get("guisearch.label3")/* def3*/, Locale.get("guisearch.label4")/* ghi4*/,
+						      Locale.get("guisearch.label5")/* jkl5*/, Locale.get("guisearch.label6")/* mno6*/,
+						      Locale.get("guisearch.label7")/*pqrs7*/, Locale.get("guisearch.label8")/* tuv8*/,
+						      Locale.get("guisearch.label9")/*wxyz9*/, 
+						      Locale.get("guisearch.more")/*more*/, "  0  ", 
+						      Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ?
+						      Locale.get("guisearch.pound")/*_#end*/ :
+						      Locale.get("guisearch.poundNameSearch")/*#end*/};
 				for (int i = 0; i < 15 ; i++) {
 					// hide sort 
-					if (i == 14 /* sort */) {
+					if (i == 0 /* sort */) {
 						gsl.ele[i].setText(" ");
 					} else {
 						gsl.ele[i].setText(letters[i]);
@@ -486,10 +497,12 @@ public class KeySelectMenu extends Canvas implements
 					keyPressed('0');
 				} else if (touchedElementId == GuiSearchLayout.KEY_STAR) {
 					keyPressed(KEY_STAR);
-				} else if (touchedElementId == GuiSearchLayout.KEY_HASH) {
+				} else if (touchedElementId == GuiSearchLayout.KEY_POUND) {
 					keyPressed(KEY_POUND);
 				} else if (touchedElementId == GuiSearchLayout.KEY_BACKSPACE) {
 					keyPressed(8);
+				} else if (touchedElementId == GuiSearchLayout.KEY_SORT) {
+					keyPressed(KEY_POUND);
 				} else if (touchedElementId == GuiSearchLayout.KEY_CLOSE) {
 					// hide keypad
 					hideKeypad = true;

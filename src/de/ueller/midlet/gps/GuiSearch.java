@@ -614,17 +614,22 @@ public class GuiSearch extends Canvas implements CommandListener,
 					gsl = new GuiSearchLayout(0, 0, width, height);
 				}
 			
-				String letters[] = {  Locale.get("guisearch.space")/*# end*/, "  X  ", "  <- ", 
-						      Locale.get("guisearch.label1")/*1#*- */, Locale.get("guisearch.label2")/* abc2*/,
+				String letters[] = {  Locale.get("guisearch.sort")/*sort*/, "  X  ", "  <- ", 
+						      Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ?
+						      Locale.get("guisearch.label1wordSearch")/* 1*- */ :
+						      Locale.get("guisearch.label1")/*_1*- */,
+						      Locale.get("guisearch.label2")/* abc2*/,
 						      Locale.get("guisearch.label3")/* def3*/, Locale.get("guisearch.label4")/* ghi4*/,
 						      Locale.get("guisearch.label5")/* jkl5*/, Locale.get("guisearch.label6")/* mno6*/,
 						      Locale.get("guisearch.label7")/*pqrs7*/, Locale.get("guisearch.label8")/* tuv8*/,
 						      Locale.get("guisearch.label9")/*wxyz9*/, 
-						      Locale.get("guisearch.more")/*more*/, " _0  ", 
-						      Locale.get("guisearch.sort")/*sort*/};
+						      Locale.get("guisearch.more")/*more*/, "  0  ", 
+						      Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ?
+						      Locale.get("guisearch.pound")/*_#end*/ :
+						      Locale.get("guisearch.poundNameSearch")/*#end*/};
 				for (int i = 0; i < 15 ; i++) {
 					// hide sort when more than 2 chars typed
-					if (i == 14 /* sort */ && carret > 2) {
+					if (i == 0 /* sort */ && carret > 2) {
 						gsl.ele[i].setText(" ");
 					} else {
 						gsl.ele[i].setText(letters[i]);
@@ -1170,7 +1175,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 					keyPressed('0');
 				} else if (touchedElementId == GuiSearchLayout.KEY_STAR) {
 					keyPressed(KEY_STAR);
-				} else if (touchedElementId == GuiSearchLayout.KEY_HASH) {
+				} else if (touchedElementId == GuiSearchLayout.KEY_POUND) {
 					keyPressed(KEY_POUND);
 				} else if (touchedElementId == GuiSearchLayout.KEY_BACKSPACE) {
 					keyPressed(8);
