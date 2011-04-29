@@ -61,6 +61,8 @@ public class Way extends Entity implements Comparable<Way> {
 	public static final byte WAY_FLAG3_HAS_HOUSENUMBERS = 32;
 	public static final byte WAY_FLAG3_LONGHOUSENUMBERS = 64;
 
+	public Long id;
+
 	private Path					path								= null;
 	public HouseNumber			housenumber							= null;
 	public List<Triangle>		triangles							= null;
@@ -90,6 +92,11 @@ public class Way extends Entity implements Comparable<Way> {
 		this.path = new Path();
 	}
 
+	public Way(long id, Way other) {
+		this.id = id;
+		this.path = other.path;
+	}
+
 	/**
 	 * create a new Way which shares the tags with the other way, has the same type and id, but no Nodes
 	 * 
@@ -97,12 +104,14 @@ public class Way extends Entity implements Comparable<Way> {
 	 */
 	public Way(Way other) {
 		super(other);
+		this.id = other.id;
 		this.type = other.type;
 		this.path = new Path();
 	}
 
 	public void cloneTags(Way other) {
 		super.cloneTags(other);
+		this.id = other.id;
 		this.type = other.type;
 	}
 
@@ -204,6 +213,10 @@ public class Way extends Entity implements Comparable<Way> {
 			}
 		}
 		return false;
+	}
+
+	public void resetType(Configuration c) {
+		type = -1;
 	}
 
 	public byte getType(Configuration c) {
@@ -664,7 +677,9 @@ public class Way extends Entity implements Comparable<Way> {
 			longWays = true;
 		}
 		if (housenumber != null) {
-			flags3 += WAY_FLAG3_HAS_HOUSENUMBERS;
+			// FIXME maybe enable later for viewing way-related house numbers on map;
+			// disable for now, as GpsMid doesn't use this yet
+			// flags3 += WAY_FLAG3_HAS_HOUSENUMBERS;
 			if (getHouseNumberCount() > 255) {
 				longHouseNumbers = true;
 			}
@@ -785,7 +800,9 @@ public class Way extends Entity implements Comparable<Way> {
 
 		if (config.enableEditingSupport) {
 			if (id > Integer.MAX_VALUE) {
-				System.out.println("WARNING: OSM-ID won't fit in 32 bits for way " + this);
+				// commented out by jkpj 2011-04-24 as the fake id generates triggers a lot of these
+				// FIXME make a scheme of marking fake ids so we can show real warnings
+				//System.out.println("WARNING: OSM-ID won't fit in 32 bits for way " + this);
 				ds.writeInt(-1);
 			} else {
 				ds.writeInt(id.intValue());

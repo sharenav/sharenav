@@ -282,6 +282,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	
 	public volatile boolean routeCalc=false;
 	public Tile tiles[] = new Tile[6];
+	public volatile boolean baseTilesRead = false;
+	
 	public Way actualSpeedLimitWay;
 
 	// this is only for visual debugging of the routing engine
@@ -504,6 +506,14 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			}
 		}
 		return traceInstance;
+	}
+
+	public float getGpsLat() {
+		return pos.latitude;
+	}
+
+	public float getGpsLon() {
+		return pos.longitude;
 	}
 
 
@@ -1363,7 +1373,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 					RoutePositionMark routeSource = new RoutePositionMark(center.radlat, center.radlon);
 					logger.info("Routing source: " + routeSource);
 					routeNodes=new Vector();
-					routeEngine = new Routing(tiles, this);
+					routeEngine = new Routing(this);
 					routeEngine.solve(routeSource, dest);
 //					resume();
 				}
@@ -1677,6 +1687,18 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		namesThread = new Names();
 		urlsThread = new Urls();
 		new DictReader(this);
+		// wait until base tiles are read; otherwise there's apparently
+		// a race condition triggered on Symbian s60r3 phones, see
+		// https://sourceforge.net/support/tracker.php?aid=3284022
+		if (Legend.isValid) {
+			while (!baseTilesRead) {
+				try {
+					Thread.sleep(250);
+				} catch (InterruptedException e1) {
+					// nothing to do in that case						
+				}
+			}
+		}
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_AUTO_START_GPS)) {
 			Thread thread = new Thread(this, "Trace");
 			thread.start();
@@ -1779,7 +1801,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				 *  determined during the way drawing (e.g. the current routePathConnection)
 				 */
 				Node drawnCenter = imageCollector.paint(pc);
-				if (route != null && ri != null && pc.lineP2 != null) {
+				if (route != null && ri != null && pc.lineP2 != null && pc.getP() != null/*avoids exception at route calc*/) {
 					pc.getP().forward(drawnCenter.radlat, drawnCenter.radlon, pc.lineP2);
 					/*
 					 * we also need to make sure the current way for the real position
@@ -2193,7 +2215,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 //		Node nru=new Node(pm.lat + 0.0001f,pm.lon + 0.0005f,true);
 //		pc.searchLD=nld;
 //		pc.searchRU=nru;
-		pc.squareDstToActualRoutableWay = Float.MAX_VALUE;
+		pc.squareDstWithPenToActualRoutableWay = Float.MAX_VALUE;
 		pc.xSize = 100;
 		pc.ySize = 100;
 		// retry searching an expanding region at the position mark
@@ -2292,6 +2314,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	}
 
 	public void showDestination(PaintContext pc) {
+		// Avoid exception after route calculation
+		if ( pc.getP() == null || imageCollector == null )
+			return;
 		try {
 		if (dest != null) {
 			pc.getP().forward(dest.lat, dest.lon, pc.lineP2);
@@ -2306,8 +2331,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			}
 			pc.g.setColor(Legend.COLORS[Legend.COLOR_DEST_LINE]);
 			pc.g.setStrokeStyle(Graphics.SOLID);
-			pc.g.drawLine(x, y, pc.getP().getImageCenter().x - imageCollector.xScreenOverscan, 
-					pc.getP().getImageCenter().y - imageCollector.yScreenOverscan);
+			pc.g.drawLine( pc.getP().getImageCenter().x - imageCollector.xScreenOverscan,
+					pc.getP().getImageCenter().y - imageCollector.yScreenOverscan,x, y);
 		}
 		} catch (Exception e) {
 			if (imageCollector == null) {
@@ -2324,6 +2349,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	 * @param g Graphics context for drawing
 	 */
 	public void showMovement(Graphics g) {
+		// Avoid exception after route calculation
+		if ( pc.getP() == null )
+			return;
 		IntPoint centerP = null;
 		try {
 			if (imageCollector != null) {
@@ -2533,10 +2561,12 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		        // should be implemented instead of assuming course is always unreliable.
 		        // The course fluctuations are lesser in faster speeds, so if we're constantly
 		        // (for three consecutive locations) above say 5 km/h, a reasonable approach
-		        // could be to use direct course change in thet case, and for speed below
+		        // could be to use direct course change in that case, and for speed below
 		        // 5 km/h use the slow turning below.
 			// jkpj 2010-01-17
-			course = course + ((newcourse - course)*1)/4 + 360;
+		        // on 2011-04-11: jkpj switched from 1/4 rotation back to 3/4 rotation,
+		        // returning to what it was supposed to do before 2010-11-30.
+			course = course + ((newcourse - course)*3)/4 + 360;
 		}
 		while (course > 360) {
 			course -= 360;
@@ -2643,6 +2673,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				&& autoZoomed
 				&& pc.getP() != null
 				&& pos.speed != Float.NaN // if speed is unknown do not autozoom
+				&& pos.speed != 0 // if speed is 0 do not autozoom
 		) {
 			// the minimumScale at 20km/h and below is equivalent to having zoomed in manually once from the startup zoom level
 			final float minimumScale = Configuration.getRealBaseScale() / 1.5f;
@@ -2658,6 +2689,15 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			} else if (newScale > maximumScale) {
 				newScale = maximumScale;
 			}
+			
+			// autozoom in more at the last 200 m of the route
+			if (route != null && RouteInstructions.getDstRouteToDestination() <= 200) {
+				float newScale2 = newScale;
+				newScale2 = newScale / (1f + (200f - RouteInstructions.getDstRouteToDestination())/ 200f);
+				// fixed increased zoom for the last 100 m
+				newScale = Math.max(newScale2, newScale / 1.5f);
+			}
+			
 			scale = newScale;
 			
 //			// calculate meters to top of screen
@@ -3129,6 +3169,10 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		updatePosition();
 	}
 
+	public void setBaseTilesRead(boolean read) {
+		baseTilesRead = read;
+	}
+	
 	public void receiveStatistics(int[] statRecord, byte quality) {
 		this.btquality = quality;
 		this.statRecord = statRecord;

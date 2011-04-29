@@ -6,14 +6,17 @@ import java.util.Map;
 import java.util.Set;
 
 import de.ueller.osmToGpsMid.SmallArrayMap;
+import de.ueller.osmToGpsMid.Configuration;
 
 
 public class Entity {
 
+	private static Configuration config = null;
+
 	/**
 	 * the OSM id of this node
 	 */
-	public Long	id;
+	//public Long	id;
 	public Node nearBy;	
 	/**
 	 * The tags for this object  
@@ -22,15 +25,15 @@ public class Entity {
 	private Map<String,String> tags;	
 	
 	public Entity() {
-		
 	}
+
 	public Entity(Entity other) {
-		this.id = other.id;		
+		//this.id = other.id;
 		this.tags=other.tags;
 	}
 	
 	public void cloneTags(Entity other) {
-		this.id = other.id;		
+		//this.id = other.id;
 		this.tags=other.tags;		
 	}
 	
@@ -103,6 +106,9 @@ public class Entity {
 	
 	protected EntityDescription calcType(Hashtable<String, Hashtable<String,Set<EntityDescription>>> legend){
 		EntityDescription entityDes = null;
+		if (config == null) {
+			config = Configuration.getConfiguration();
+		}
 
 		//System.out.println("Calculating type for " + toString());
 		if (legend != null) {
@@ -125,16 +131,35 @@ public class Entity {
 									if (entity.specialisation != null) {
 										boolean failedSpec = false;
 										for (ConditionTuple ct : entity.specialisation) {
-//											System.out.println("Testing specialisation " + ct + " on " + this);
+											//System.out.println("Testing specialisation " + ct + " on " + this);
 											failedSpec = !ct.exclude;
-											for (String ss : tags) {
-												if ( (ss.equalsIgnoreCase(ct.key)) &&
-													(
-														getAttribute(ss).equalsIgnoreCase(ct.value) ||
-														ct.value.equals("*")
-													)
-												) {
-													failedSpec = ct.exclude;
+											if (ct.properties) {
+												if ("useHouseNumbers".equalsIgnoreCase(ct.key)) {
+													if (config.useHouseNumbers) {
+														failedSpec = ct.exclude;
+													}
+												}
+											} else {
+												for (String ss : tags) {
+													//if (ct.regexp && ss.equalsIgnoreCase(ct.key)) {
+													//System.out.println("Trying to match " + getAttribute(ss) + " with " + ct.value);
+													//}
+
+													if ( (ss.equalsIgnoreCase(ct.key)) &&
+													     (
+														     (
+															     (!ct.regexp) &&
+															     (getAttribute(ss).equalsIgnoreCase(ct.value) ||
+															      ct.value.equals("*"))
+															     ) ||
+														     (
+															     ct.regexp &&
+															     getAttribute(ss).matches(ct.value)
+															     )
+														     )
+														) {
+														failedSpec = ct.exclude;
+													}
 												}
 											}
 											if (failedSpec) {

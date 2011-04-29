@@ -22,7 +22,7 @@
 	<property name="lib.dir" value="${basedir}/lib"/>
 
    	<property name="dist.dir" value="${basedir}/dist"/>
-	<property name="version" value="0.7.11"/>
+	<property name="version" value="0.7.31"/>
 	<property name="mapversion" value="65"/>
 	<property name="buildlib" value="buildlib/explode.jar"/>
 
@@ -84,6 +84,7 @@
         <entry key="useUrlTags" value="false"/>
         <entry key="usePhoneTags" value="false"/>
         <entry key="useHouseNumbers" value="false"/>
+        <entry key="useWordSearch" value="false"/>
         <entry key="dontCompress" value=""/>
    		<entry key="cellSource" value=""/>
    		<entry key="midlet.name" value="GpsMid"/>

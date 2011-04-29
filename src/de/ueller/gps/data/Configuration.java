@@ -280,6 +280,8 @@ public class Configuration {
 	public final static byte CFGBIT_MAPTAP_SINGLE = 107;
 	/** bit 108: indicate whether gpsmid is running (for android which can kill the process and restart it)*/
 	public final static byte CFGBIT_RUNNING = 108;
+	/** bit 109: Flag whether to use word search (in contrast to whole name search) in incremental search */
+	public final static byte CFGBIT_WORD_ISEARCH = 109;
 	
 	/**
 	 * These are the database record IDs for each configuration option

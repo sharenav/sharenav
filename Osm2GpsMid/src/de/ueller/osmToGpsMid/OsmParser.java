@@ -17,16 +17,50 @@ import java.util.HashMap;
 import java.util.Vector;
 
 import de.ueller.osmToGpsMid.model.Bounds;
+import de.ueller.osmToGpsMid.model.Hash;
 import de.ueller.osmToGpsMid.model.Node;
 import de.ueller.osmToGpsMid.model.Relation;
+import de.ueller.osmToGpsMid.model.Storage;
 import de.ueller.osmToGpsMid.model.TurnRestriction;
 import de.ueller.osmToGpsMid.model.Way;
+import java.text.DecimalFormat;
+import java.util.Map;
 
 public abstract class OsmParser {
+
+	private static class NodeHash implements Hash<Node, Node> {
+
+		@Override
+		public int getHashCode(Node k) {
+			return (int) k.id;
+		}
+
+		@Override
+		public boolean equals(Node k, Node t) {
+			return k.id == t.id;
+		}
+	}
+
+	private static class Id2EntityHash implements Hash<Long, Node> {
+
+		@Override
+		public int getHashCode(Long k) {
+			return (int)k.longValue();
+		}
+
+		@Override
+		public boolean equals(Long k, Node t) {
+			return t.id == k.longValue();
+		}
+	}
+
+
 	/**
 	 * Maps id to already read nodes. Key: Long Value: Node
 	 */
-	protected HashMap<Long, Node> nodes = new HashMap<Long, Node>(80000, 0.60f);
+	//protected HashMap<Long, Node> nodes = new HashMap<Long, Node>(80000, 0.60f);
+	private Storage<Node> nodesStorage = new Storage<Node>(new NodeHash());
+    protected Map<Long, Node> nodes = nodesStorage.foreignKey(new Id2EntityHash());
 	protected Vector<Node> nodes2 = null;
 	protected HashMap<Long, Way> ways = new HashMap<Long, Way>();
 	protected HashMap<Long, Relation> relations = new HashMap<Long, Relation>();
@@ -138,6 +172,25 @@ public abstract class OsmParser {
 		}
 	}
 
+	/**
+	 * @param w
+	 */
+	public void addNode(Node n) {
+		byte t = n.getType(configuration);
+		/**
+		 * We seem to have a bit of a mess with respect to type -1 and 0. Both
+		 * are used to indicate invalid type it seems.
+		 */
+		if (true /* n.isValid() * && t > 0 */) {
+			//w.determineWayRouteModes();
+			if (nodes.get(n.id) != null) {
+				System.out.println ("Error: couldn't store node, already there, id: " + n.id);
+			} else {
+				nodes.put(n.id, n);
+			}
+		}
+	}
+
 	public void removeWay(Way w) {
 		ways.remove(w.id);
 	}
@@ -154,7 +207,7 @@ public abstract class OsmParser {
 	 * WARNING: This function may return null, after dropHashMap has been called
 	 * @return
 	 */
-	public HashMap<Long,Node> getNodeHashMap() { 
+	public Map<Long,Node> getNodeHashMap() {
 		return nodes; 
 	}
 
@@ -207,17 +260,20 @@ public abstract class OsmParser {
 	 * 
 	 */
 	public void resize() {
-		System.gc();
-		System.out.println("Free memory: " + Runtime.getRuntime().freeMemory());
+		//System.gc();
+		//System.out.println("Free memory: " + Runtime.getRuntime().freeMemory());
+		printMemoryUsage(1);
 		System.out.println("Resizing nodes HashMap");
 		if (nodes == null) {
 			nodes2 = new Vector<Node>(nodes2);
 		} else {
-			nodes = new HashMap<Long, Node>(nodes);
+			//nodes = new HashMap<Long, Node>(nodes);
+			 nodesStorage.shrink(0.85f);
 		}
 		relations = new HashMap<Long, Relation>(relations);
-		System.gc();
-		System.out.println("Free memory: " + Runtime.getRuntime().freeMemory());
+		//System.gc();
+		//System.out.println("Free memory: " + Runtime.getRuntime().freeMemory());
+		printMemoryUsage(1);
 	}
 
 	public void dropHashMap() {
@@ -233,15 +289,16 @@ public abstract class OsmParser {
 	 *            memory usage again.
 	 */
 	public static void printMemoryUsage(int numberOfGarbageLoops) {
+		DecimalFormat df =   new DecimalFormat  (",###");
 		System.out.print("---> Used memory: "
-				+ (Runtime.getRuntime().totalMemory() - Runtime.getRuntime()
-						.freeMemory()) / 1024 + " KB / "
-				+ Runtime.getRuntime().maxMemory() / 1024 + " KB");
+				+ df.format((Runtime.getRuntime().totalMemory() - Runtime.getRuntime()
+						.freeMemory()) / 1024) + " KB / "
+				+ df.format(Runtime.getRuntime().maxMemory() / 1024) + " KB");
 		for (int i = 0; i < numberOfGarbageLoops; i++) {
 			System.gc();
 			System.out.print(" --> gc: "
-					+ (Runtime.getRuntime().totalMemory() - Runtime
-							.getRuntime().freeMemory()) / 1024 + " KB");
+					+ df.format((Runtime.getRuntime().totalMemory() - Runtime
+							.getRuntime().freeMemory()) / 1024) + " KB");
 			try {
 				if (i + 1 < numberOfGarbageLoops) {
 					Thread.sleep(100);

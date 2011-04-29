@@ -17,6 +17,8 @@ import de.ueller.osmToGpsMid.LegendParser;
 
 
 public class Node extends Entity {
+
+	public long id;
 	/**
 	 * The position in the target array of nodes.
 	 */
@@ -134,6 +136,10 @@ public class Node extends Entity {
 		return false;
 	}
 
+	public void resetType(Configuration c) {
+		type = -1;
+	}
+
 	public byte getType(Configuration c) {
 		if (type != -1) {
 			return type;
@@ -191,6 +197,10 @@ public class Node extends Entity {
 	public boolean isNeverTrafficSignalsRouteNode() {
 		return ((connectedLineCount & CLC_NEVER_TRAFFICSIGNALS_ROUTENODE) > 0);
 	}	
+
+	public boolean hasHouseNumber() {
+		return (containsKey("addr:housenumber"));
+	}
 
 	
 	private byte calcType(Configuration c) {

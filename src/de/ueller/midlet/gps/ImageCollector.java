@@ -174,17 +174,18 @@ public class ImageCollector implements Runnable {
 //				createPC.g.setColor(0x00FF0000);
 //				createPC.g.drawRect(0, 0, xSize - 1, ySize - 1);
 //				createPC.g.drawRect(20, 20, xSize - 41, ySize - 41);
-				createPC.squareDstToWay = Float.MAX_VALUE;
-				createPC.squareDstToActualRoutableWay = Float.MAX_VALUE;
+				createPC.squareDstWithPenToWay = Float.MAX_VALUE;
+				createPC.squareDstWithPenToActualRoutableWay = Float.MAX_VALUE;
 				createPC.squareDstWithPenToRoutePath = Float.MAX_VALUE;
 				createPC.squareDstToRoutePath = Float.MAX_VALUE;
 				createPC.dest = nextSc.dest;
 				createPC.waysPainted = 0;
 
+
 				
 				// System.out.println("create " + pcCollect);
 				
-				Way.setupDirectionalPenalty(createPC, tr.speed, tr.gpsRecenter);
+				Way.setupDirectionalPenalty(createPC, tr.speed, tr.gpsRecenter && !tr.gpsRecenterInvalid);
 
 
 				float boost = Configuration.getMaxDetailBoostMultiplier();
@@ -240,13 +241,14 @@ public class ImageCollector implements Runnable {
 						 * to highlight the route line in the correct / prior route line color.
 						 * when not gps recentered, this info will be by one image obsolete however
 						 */ 
-						if (layersToRender[layer] == (0 | Tile.LAYER_HIGHLIGHT)) {
+						if (layersToRender[layer] == Tile.LAYER_HIGHLIGHT /*(0 | Tile.LAYER_HIGHLIGHT) pointless bitwise operation*/) {
 							/*
 							 *  only take ImageCollector loops into account for dstToRoutePath if ways were painted
 							 *  otherwise this would trigger wrong route recalculations
 							*/
 							if (createPC.waysPainted != 0) {
-								RouteInstructions.dstToRoutePath = createPC.getDstFromSquareDst(createPC.squareDstToRoutePath);
+								//RouteInstructions.dstToRoutePath = createPC.getDstFromSquareDst(createPC.squareDstToRoutePath);
+								RouteInstructions.dstToRoutePath = createPC.getDstFromRouteSegment();
 								if (RouteInstructions.dstToRoutePath != RouteInstructions.DISTANCE_UNKNOWN) {
 									RouteInstructions.routePathConnection = createPC.routePathConnection;
 									RouteInstructions.pathIdxInRoutePathConnection = createPC.pathIdxInRoutePathConnection;
@@ -493,14 +495,22 @@ public class ImageCollector implements Runnable {
 			// closer
 			// than SQUARE_MAXPIXELS or 30 m (including penalty) to it.
 			// If the routable way is too far away, we try the closest way.
-			if (paintPC.squareDstToActualRoutableWay < SQUARE_MAXPIXELS
-			    || paintPC.getDstFromSquareDst(paintPC.squareDstToActualRoutableWay) < 30) {
-				wayForName = paintPC.actualRoutableWay;
-			} else if (paintPC.squareDstToWay < SQUARE_MAXPIXELS
-				   || paintPC.getDstFromSquareDst(paintPC.squareDstToWay) < 30) {
-				wayForName = paintPC.actualWay;
+			if (paintPC.bUsedGpsCenter == false )	{
+				if (paintPC.squareDstWithPenToActualRoutableWay < SQUARE_MAXPIXELS
+					|| paintPC.getDstFromSquareDst(paintPC.squareDstWithPenToActualRoutableWay) < 30) {
+					wayForName = paintPC.actualRoutableWay;
+				} else if (paintPC.squareDstWithPenToWay < SQUARE_MAXPIXELS
+					   || paintPC.getDstFromSquareDst(paintPC.squareDstWithPenToWay) < 30) {
+					wayForName = paintPC.actualWay;
+				}
+			} else {
+				if (paintPC.getDstFromRouteableWay() < 100) {
+					wayForName = paintPC.actualRoutableWay;
+				} else if ( paintPC.getDstFromWay() < 100) {
+					wayForName = paintPC.actualWay;
+				}
 			}
-		} else if (paintPC.getDstFromSquareDst(paintPC.squareDstToWay) <= pixDest) {
+		} else if (paintPC.getDstFromSquareDst(paintPC.squareDstWithPenToWay) <= pixDest) {
 			// If not gpscentered show closest way name if it's no more than 15
 			// pixels away.
 			wayForName = paintPC.actualWay;
@@ -561,9 +571,9 @@ public class ImageCollector implements Runnable {
 		// use the nearest routable way for the the speed limit detection if
 		// it's
 		// closer than 30 m or SQUARE_MAXPIXELS including penalty
-		if (paintPC.squareDstToActualRoutableWay < SQUARE_MAXPIXELS
+		if (paintPC.squareDstWithPenToActualRoutableWay < SQUARE_MAXPIXELS
 		    || paintPC
-		    .getDstFromSquareDst(paintPC.squareDstToActualRoutableWay) < 30) {
+		    .getDstFromSquareDst(paintPC.squareDstWithPenToActualRoutableWay) < 30) {
 			tr.actualSpeedLimitWay = paintPC.actualRoutableWay;
 		} else {
 			tr.actualSpeedLimitWay = null;

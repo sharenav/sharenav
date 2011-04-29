@@ -16,6 +16,11 @@ import java.util.TreeSet;
 import java.util.NoSuchElementException;
 
 import de.ueller.osmToGpsMid.model.Entity;
+import de.ueller.osmToGpsMid.model.Node;
+import de.ueller.osmToGpsMid.model.Way;
+import de.ueller.osmToGpsMid.model.POIdescription;
+import de.ueller.osmToGpsMid.model.WayDescription;
+import de.ueller.osmToGpsMid.Configuration;
 
 
 /**
@@ -24,10 +29,18 @@ import de.ueller.osmToGpsMid.model.Entity;
  */
 public class Names {
 	private TreeMap<String,Name> names1;
-    private TreeSet<Name> canons;
+	private TreeMap<String,Name> housenumbers1;
+	private TreeSet<Name> canons;
+	private TreeSet<Name> wordCanons;
+	private TreeSet<Name> wholeWordCanons;
+	private TreeSet<Name> houseNumberCanons;
 	public Names() {
 		names1=new TreeMap<String,Name>(String.CASE_INSENSITIVE_ORDER);
+		housenumbers1=new TreeMap<String,Name>(String.CASE_INSENSITIVE_ORDER);
 		canons=new TreeSet<Name>(new CaononComperator());
+		wordCanons=new TreeSet<Name>(new CaononComperator());
+		wholeWordCanons=new TreeSet<Name>(new CaononComperator());
+		houseNumberCanons=new TreeSet<Name>(new CaononComperator());
 	}
 	
 	public void calcNameIndex(){
@@ -47,6 +60,22 @@ public class Names {
 		if (w.getName().trim().length() == 0){
 			return;
 		}
+		boolean houseNumber = false;
+		if (w instanceof Node) {
+			POIdescription poiDesc = 
+				Configuration.getConfiguration().getpoiDesc((byte) ((Node) w).getType(Configuration.getConfiguration()));
+			if (poiDesc != null && poiDesc.houseNumberIndex) {
+				houseNumber = true;
+			}
+		}
+		if (w instanceof Way) {
+			WayDescription wayDesc =
+				Configuration.getConfiguration().getWayDesc((byte)(-1*((Way) w).getType(Configuration.getConfiguration())));
+
+			if (wayDesc != null && wayDesc.houseNumberIndex) {
+				houseNumber = true;
+			}
+		}
 		Name mn =new Name(w);
 //		System.out.println("adding name:" + mn.getName());
 		if (names1.containsKey(mn.getName())){
@@ -58,25 +87,103 @@ public class Names {
 		} else {
 			names1.put(mn.getName(),mn);
 		}
-		if (! canons.add(mn)){
+//		System.out.println("adding to wholename canon:" + mn);
+		if (!houseNumber) {
+			if (! canons.add(mn)){
 //			System.out.println("canon already there:" + mn);
-			Name mnNext=new Name(w.getName()+"\0");
-			mnNext.setCanon( mn.getCanon());
-			try {
-				SortedSet<Name> subSet=canons.tailSet(mnNext);
-				Name mnExist=subSet.first();
-				if (mnExist != null) {
+				Name mnNext=new Name(w.getName()+"\0");
+				mnNext.setCanon( mn.getCanon());
+				try {
+					SortedSet<Name> subSet=canons.tailSet(mnNext);
+					Name mnExist=subSet.first();
+					if (mnExist != null) {
 //					System.out.println("mnExist:" + mnExist);
-					mnExist.addEntity(w);
+						mnExist.addEntity(w);
+					}
+				}
+				catch (NoSuchElementException e) {
+//					System.out.println("no such element exc. in canons.add");
 				}
 			}
-			catch (NoSuchElementException e) {
+		}
+		// TODO: add whole word index, only add some entities (like housenumbers) to whole word idx
+		// should add also stopwords 
+		// add to word index; don't add housenumbers when housenumberindex element is used
+		String [] words = mn.getName().split("[ ;,.()]");
+		if (!houseNumber) {
+			for (String word : words) {
+				if (word.length() == 0) {
+					//System.out.println("Empty word");
+					continue;
+				}
+				mn = new Name(word);
+//			System.out.println("adding word:" + mn);
+				mn.addEntity(w);
+				if (! wordCanons.add(mn)){
+					//				System.out.println("wordCanon already there:" + mn);
+					Name mnNext=new Name(word+"\0");
+					mnNext.setCanon( mn.getCanon());
+					try {
+						SortedSet<Name> subSet=wordCanons.tailSet(mnNext);
+						Name mnExist=subSet.first();
+						if (mnExist != null) {
+							//						System.out.println("mnExist:" + mnExist);
+							// Trouble? Adds to nameidx?
+							mnExist.addEntity(w);
+						}
+					}
+					catch (NoSuchElementException e) {
+						//					System.out.println("no such element exc. in wordCanons.add");
+					}
+				}
+			}
+		}
+		// add to housenumber index
+		if (houseNumber) {
+			for (String word : words) {
+				//System.out.println("Word: " + word);
+				if (word.length() == 0) {
+					//System.out.println("Empty word");
+					continue;
+				}
+				mn = new Name(word);
+//			System.out.println("adding word:" + mn);
+				mn.addEntity(w);
+				if (! houseNumberCanons.add(mn)){
+					//				System.out.println("wordCanon already there:" + mn);
+					Name mnNext=new Name(word+"\0");
+					mnNext.setCanon( mn.getCanon());
+					try {
+						SortedSet<Name> subSet=houseNumberCanons.tailSet(mnNext);
+						Name mnExist=subSet.first();
+						if (mnExist != null) {
+							//						System.out.println("mnExist:" + mnExist);
+							// Trouble? Adds to nameidx?
+							mnExist.addEntity(w);
+						}
+					}
+					catch (NoSuchElementException e) {
+						//					System.out.println("no such element exc. in houseNumberCanons.add");
+					}
+				}
 			}
 		}
 	}
 
 	public TreeSet<Name> getCanons() {
 		return canons;
+	}
+
+	public TreeSet<Name> getWordCanons() {
+		return wordCanons;
+	}
+
+	public TreeSet<Name> getWholeWordCanons() {
+		return wholeWordCanons;
+	}
+
+	public TreeSet<Name> getHouseNumberCanons() {
+		return houseNumberCanons;
 	}
 
 	/**

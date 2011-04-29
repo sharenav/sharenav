@@ -113,6 +113,9 @@ public class RouteInstructions {
 	
 	private final static Logger logger = Logger.getInstance(RouteInstructions.class,Logger.DEBUG);
 
+	private static volatile Node closestPointOnDestWay = null;
+	
+	private static volatile float dstRouteToDestination = 0;
 	
 	public RouteInstructions(Trace trace) {
 		RouteInstructions.trace = trace;
@@ -126,7 +129,7 @@ public class RouteInstructions {
 		prevPathIdxInRoutePathConnection = 0;
 		iBackwardCount = 0;
 		againstDirectionDetectedTime = 0;
-		NoiseMaker.resetSoundRepeatTimes();		
+		GpsMid.mNoiseMaker.resetSoundRepeatTimes();		
 		try {
 			if (rlp == null) {
 				rlp = new RouteLineProducer();
@@ -261,12 +264,18 @@ public class RouteInstructions {
 							We should rather take the distances of full segs to the current route node plus the distance of the divided seg from Way.processPath()
 						*/
 				    	ConnectionWithNode cRealNow = (ConnectionWithNode) route.elementAt(iRealNow);
-				    	double distRealNow=ProjMath.getDistance(center.radlat, center.radlon, cRealNow.to.lat, cRealNow.to.lon);
+				    	// add the distance to the next route node or when this is the final route node add the distance up to the closest point on the destination way
+				    	boolean finalRouteSeg = iRealNow == route.size() - 1;
+				    	double distRealNow=ProjMath.getDistance(center.radlat, center.radlon, finalRouteSeg ? closestPointOnDestWay.radlat : cRealNow.to.lat, finalRouteSeg ? closestPointOnDestWay.radlon : cRealNow.to.lon);
 				    	remainingDistance += distRealNow;
+
 				    	ConnectionWithNode cToRealNow = (ConnectionWithNode) route.elementAt(routePathConnection);
 				    	remainingDurationFSecs += (distRealNow * cToRealNow.durationFSecsToNext / cToRealNow.wayDistanceToNext); 
 
-				    	distNow=ProjMath.getDistance(center.radlat, center.radlon, cNow.to.lat, cNow.to.lon);
+				    	// distance to next instruction or when the next instruction is the destination to the closest point on the destination way
+				    	finalRouteSeg = iNow == route.size() - 1;
+				    	distNow = ProjMath.getDistance(center.radlat, center.radlon, finalRouteSeg ? closestPointOnDestWay.radlat : cNow.to.lat, finalRouteSeg ? closestPointOnDestWay.radlon : cNow.to.lon);
+				    	
 						intDistNow=new Double(distNow).intValue();
 						if (iNow < route.size() - 1) {
 							iThen = idxNextInstructionArrow (iNow+1);
@@ -597,6 +606,8 @@ public class RouteInstructions {
 					}
 				}
 			}
+			
+			dstRouteToDestination = remainingDistance;
 
 			// When routing was started at the destination but the map has not been 
 			// moved away from the destination yet, give no voice instruction 
@@ -1304,7 +1315,7 @@ public class RouteInstructions {
 										c.to.lon - 0.0000025f * (float) Math.sin(rad) );
 			trace.gpsRecenter = false;
 			// allow to output same instruction again
-			NoiseMaker.resetSoundRepeatTimes();
+			GpsMid.mNoiseMaker.resetSoundRepeatTimes();
 		}
 	}
 		
@@ -1400,5 +1411,16 @@ public class RouteInstructions {
 		}
 	}
 
+	public static void setClosestPointOnDestWay(Node closestPoint) {
+		closestPointOnDestWay = closestPoint;
+	}
 
+	public static Node getClosestPointOnDestWay() {
+		return closestPointOnDestWay;
+	}
+
+	public static float getDstRouteToDestination() {
+		return dstRouteToDestination;
+	}
+	
 }

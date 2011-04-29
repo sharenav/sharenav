@@ -1,23 +1,99 @@
-GpsMid 0.7.11
-    *** Important bug fix ***
-	- fixed frequent freezes when rendering toll roads in eagle view 
+    *** Housenumber search **
+    - Housenumber search (streetname&housenumber) can be enabled by useHouseNumbers in .properties
+      or checking the checkbox in the GUI
+    - Currently Osm2GpsMid can connect housenumbers to streets encoded in the map as
+      * associatedStreet relations (no support for interpolation though)
+      * addr:streetname
+      * streetname not encoded, then connection is made with heuristic,
+       i.e. matching to the nearest street (warning: the heuristic gives incorrect
+       results in many places)
+    - like multi-word search, housenumber search can require a bunch of memory and is
+      enabled only for "editing" and "full" (and "microemulator") targets.
+    - to search, use the '#' key to end the street name or house number
+    *** Multi-word search ***
+    - enable new feature multi-word search for build
+      targets "microemulator", "editing" and "full"; it can require
+      more memory than single word or whole name search,
+      so don't enable it yet for other targets. To add multi-word indexes to map,
+      set useWordSearch=true in properties.
+    *** Misc. bug fixes ***
+    - GpsMid: fixed empty/invalid map startup infinite loop bug (tracker 3288429)
+    - Osm2GpMid: fixed handling of multipolygons where a way is in more than one multipolygon
+    - GpsMid: loss of route line when zooming out
+    *** Routing ***
+    - the route line is now rendered only up to the closest point to the destination on the destination way
+    - if auto zoom is activated the map will be zoomed in further
+      when getting closer than 200 m route distance to the route destination 
+    *** Map Elements ***
+    - add regular expression matching for specialisation tag in style file.
+      Example:
+		<specialisation key = "ref" regexp="true" value = "^154..*$"/>
+    - add style-file-configurable way relation expansion with "asRelation"
+      e.g. for bus routes:
+			<Wvalue name = "bus" priority = "19">
+				<description desc = "Bus line" />
+				<asRelation relation = "true"/>
+				<namekey tag = "name" />
+				<namefallback tag = "ref" />
+
+      or add combined="true" to combine same type relations into one:
+
+				<asRelation relation = "true" combined="true"/>
+
+    *** Platforms ***
+    - make WinCE sound work with fallback NoiseMaker code when playerUpdate doesn't get called
+    - work around a Samsung Wave route line disappearance platform bug
+
+GpsMid 0.7.3
+    *** Map Elements ***
+    - added natural=waterfall
+    - process associatedStreet relations and store them in house number index when
+      useHouseNumbers is true in .properties. House number search has not been added
+      yet so house number searches are not yet available, but will be added to GpsMid later.
+    *** Searching ***
+    - add word search option. Can be switched on in GpsMid display settings.
+      To be used, requires useWordSearch to be set to true in .properties so the necessary
+      word search index will be built. Matches for any word in a name, only single words for now,
+      multi-word match will be added later.
+    *** Map Screen ***
+    - return to 3/4 -speed slow map rotation as GpsMid was supposed to
+      do before 2010-11-30 from 1/4 rotation.
+    *** Optimizations ***
+    - speed optimizations to triangulation (Osm2GpsMid), tnx jiri.klement
+    - memory use optimizations (Osm2GpsMid), tnx jiri.klement and walter9
+    *** Misc. bug fixes ***
+    - correctly report Osm2GpsMid run duration
+    - fix night mode colors for virtual keyboard
+    - fix bug with GpsMid failed startups on Symbian S60r3
+    *** i18n-related bug fixes ***
+    - fix bug preventing external maps from workin when language set to pl
+    - work around umlaut problems with Splash author names
+
+GpsMid 0.7.2
     *** Map Screen ***
     - filter out heuristically invalid courses for map rotation
+    - fixed frequent freezes when rendering toll roads in eagle view 
     *** Touchscreen support ***
-	- reduce time for triggering a long tap from 1500 to 1000 ms
-	- long tapping ">" now sets the destination
-	- long tapping the distance will (re)calculate the route with the current settings
-	*** Map Elements ***
-	- added POI for shop=chemist
-	*** Platforms ***
-	- handle back commands on Android so that settings are saved with back button like is the Android custom
-	- resuming the application from pause will no more make the Splash screen show, e.g. on Android and Bada
-	  (corrected how GpsMid handles Midlet.startApp())
-    *** Others ***
-    - fix NoSuchMethodError when using Osm2GpsMid on OS X
-	- some translations have been updated
+    - reduce time for triggering a long tap from 1500 to 1000 ms
+    - long tapping ">" now sets the destination
+    - long tapping the distance will (re)calculate the route with the current settings
+    *** Map Elements ***
+    - added POIs for amenity=embassy and shop=chemist
+    - optimized png files with pngcrush to reduce midlet size
+    *** Platforms ***
+    - handle 'Back' commands on Android so that settings are saved with back button like is the Android custom
+    - resuming the application from pause will no more make the splash screen show, e.g. on Android and Bada
+      (corrected how GpsMid handles Midlet.startApp())
+    *** Translations ***
+    - some translations have been updated
     - start of i18n for Osm2GpsMid (including way & POI types & other strings visible in GpsMid)
     - Finnish translation for Osm2Gpsmid (Translations_fi*)
+    *** Others ***
+    - Wait for route base tile to be loaded instead of throwing "Routing thread crashed unexpectedly" exception
+      when trying to calculate a route shortly after the midlet startup when the route base tile is not loaded yet
+    - workaround for NoSuchMethodError when using Osm2GpsMid with Java 1.5. If for your platform 
+      currently Java 1.6+ can't be used. The workaround does however
+      not support UTF-8 encodings in syntax.cfg for route instructions and in .properties
 
 GpsMid 0.7.1
     *** Important bug fix ***

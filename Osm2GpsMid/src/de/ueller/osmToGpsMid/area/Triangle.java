@@ -22,17 +22,19 @@ public class Triangle {
 		getVert()[1] = n2;
 		getVert()[2] = n3;
 	}
-	
+		
 	public boolean isVertexInside(Vertex n){
 		if (n == getVert()[0] && n == getVert()[1] && n == getVert()[2]) {
 			return false;
 		}
-		float n1 = getVert()[1].minus(getVert()[0]).cross(n.minus(getVert()[0]));
-		float n2 = getVert()[2].minus(getVert()[1]).cross(n.minus(getVert()[1]));
-		float n3 = getVert()[0].minus(getVert()[2]).cross(n.minus(getVert()[2]));
+		
+		float n1 = n.getSideOfVector(getVert()[1], getVert()[0]);
+		float n2 = n.getSideOfVector(getVert()[2], getVert()[1]);
+		float n3 = n.getSideOfVector(getVert()[0], getVert()[2]);
+		
 		 if (n1 * n2 > 0.0 && n1 * n3 > 0.0 && n2 * n3 > 0.0) {
 			 return true;
-		 }		 
+		 }
 		 return false;
 	}
 	

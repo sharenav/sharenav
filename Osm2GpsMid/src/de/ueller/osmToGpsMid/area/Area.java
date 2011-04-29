@@ -151,14 +151,6 @@ public class Area {
 	}
 
 	/**
-	 * @param t1
-	 * @param t2
-	 */
-	private void optimize(Triangle t1, Triangle t2) {
-		
-	}
-
-	/**
 	 * 
 	 */
 	private void repaint() {
@@ -306,12 +298,11 @@ public class Area {
 //	}
 
 	private Vertex findEdgeInside(Outline outline, Triangle triangle, int dir) {
-		ArrayList<Vertex> ret;
-		ret = outline.findVertexInside(triangle);
+		ArrayList<Vertex> ret = outline.findVertexInside(triangle, null);
 		for (Outline p : holeList) {
-			ret.addAll(p.findVertexInside(triangle));
+			ret = p.findVertexInside(triangle, ret);
 		}
-		if (ret.size() == 0) {
+		if (ret == null) {
 			return null;
 		}
 		//System.err.println("Starting to sort in findEdgeInside()");

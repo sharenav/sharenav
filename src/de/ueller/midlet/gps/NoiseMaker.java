@@ -6,6 +6,7 @@
 
 package de.ueller.midlet.gps;
 
+import java.io.IOException;
 import de.ueller.gps.data.Configuration;
 import de.ueller.gps.data.Legend;
 
@@ -26,6 +27,7 @@ import javax.microedition.media.PlayerListener;
 import javax.microedition.media.Manager;
 import javax.microedition.media.control.ToneControl;
 import javax.microedition.media.control.VolumeControl;
+import de.enough.polish.multimedia.AudioPlayer;
 //#else
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -63,11 +65,15 @@ public class NoiseMaker
 	private static volatile String mPlayingNames = "";
 	private static volatile int mPlayingNameIndex=0;
 
+	private static volatile boolean updatesMissing = false;
+	private static volatile boolean updatesTested = false;
+
 //#if polish.api.mmapi			
 //#if polish.android
 	private static volatile MediaPlayer sPlayer = null;
 //#else
 	private static volatile Player sPlayer = null; 
+	private static volatile AudioPlayer aPlayer = null; 
 	private static byte[] mConnOpenedSequence;	
 	private static byte[] mConnLostSequence;
 //#endif			
@@ -248,43 +254,83 @@ public class NoiseMaker
 			//#debug debug
 			mLogger.debug("Got Inputstream for " + soundFileWithSuffix);
 			try {
-				sPlayer = Manager.createPlayer(is, mediaType);
+				if (updatesMissing) {
+					if (aPlayer == null) {
+						aPlayer = new AudioPlayer(true, mediaType);
+					}
+				} else {
+					sPlayer = Manager.createPlayer(is, mediaType);
+				}
 			} catch (Exception ex) {
 				sPlayer = null;
+				aPlayer = null;
 				mLogger.exception("Failed to create resource player for " + soundFileWithSuffix, ex);
 			}
 		}
 		//#debug debug
 		else mLogger.debug("RESOURCE NOT FOUND: " + soundFileWithSuffix);
-		if (sPlayer != null) {
+		if (sPlayer != null || aPlayer != null) {
 			//#debug debug
 			mLogger.debug("created player for " + soundFileWithSuffix);
 			try {
-				sPlayer.realize();
+				if (!updatesMissing) {
+					sPlayer.realize();
+				}
 			} catch (Exception ex) {
 				mLogger.exception("Failed to realize player for " + soundFileWithSuffix, ex);
 			}
 			//#debug debug
 			mLogger.debug("realized player for " + soundFileWithSuffix);
-			sPlayer.addPlayerListener( this );
-			VolumeControl volCtrl = (VolumeControl) sPlayer.getControl("VolumeControl");
-			if (volCtrl != null) {
-				volCtrl.setLevel(100);
+			if (updatesMissing) {
+				try {
+					// FIXME should start a new thread to play so GpsMid
+					// doesn't block
+					is = getClass().getResourceAsStream( soundFileWithSuffix);
+					aPlayer.play(is);
+				} catch (Exception ex) {
+					//#debug debug
+					mLogger.debug("RESOURCE NOT FOUND: " + soundFileWithSuffix + ex);
+					return false;
+				}
+			} else {
+				sPlayer.addPlayerListener( this );
+				VolumeControl volCtrl = (VolumeControl) sPlayer.getControl("VolumeControl");
+				if (volCtrl != null) {
+					volCtrl.setLevel(100);
+				}
 			}
 			lastSuccessfulSuffix = suffix;
+			if (updatesMissing) {
+				//#debug debug
+				mLogger.debug("starting sleep after " + soundFileWithSuffix);
+				try {
+					Thread.sleep(500);
+				} catch (Exception ex) {}
+				playNextSoundFile();
+			}
 			return true;
 		}
 		return false;
 	}
 			
 	private synchronized void cleanPlayer() {
-		sPlayer.close();
+		if (updatesMissing) {
+			aPlayer.cleanUpPlayer();
+			aPlayer = null;
+		} else {
+			sPlayer.close();
+		}
 	}
 	
 	public synchronized void playerUpdate( Player player, String event, Object eventData )
 	{
 		//#debug debug
 		mLogger.debug("playerUpdate got " + event);
+
+		if (event == PlayerListener.STARTED) {
+			updatesMissing = false;
+			updatesTested = true;
+		}
 		// Release resources used by player when it's finished.
 		if (event == PlayerListener.END_OF_MEDIA)
 		{
@@ -297,9 +343,34 @@ public class NoiseMaker
 	
 	private synchronized void startPlayer(String nextSoundName) {
 		try {
-			sPlayer.start();
-			//#debug debug
-			mLogger.debug("player for " + nextSoundName + " started");
+			if (!updatesMissing) {
+				boolean  testUpdates = !updatesTested;
+				sPlayer.start();
+				//#debug debug
+				mLogger.debug("player for " + nextSoundName + " started");
+				// phoneME on WinCE lacks playerupdate callbacks, test for this
+				//#ifndef polish.android
+				// playing should start in a short while
+				if (testUpdates) {
+					// FIXME perhaps - can another check
+					// be added, is half a second too short on
+					// some platforms for starting sound,
+					// will we get false positives?
+					//#debug debug
+					mLogger.debug("starting playerupdate test");
+					try {
+						Thread.sleep(500);
+					} catch (Exception ex) {}
+				}
+				// if updatePlayer wasn't called, mark that we have no updates
+				if (!updatesTested) {
+					//#debug debug
+					mLogger.debug("playerupdate test failed");
+					updatesTested = true;
+					updatesMissing = true;
+				}
+				//#endif
+			}
 		} catch (Exception ex) {
 			mLogger.exception("Failed to play sound", ex);
 		}
@@ -540,9 +611,13 @@ public class NoiseMaker
 		//#if polish.android
 		if (sPlayer != null) sPlayer.release();
 		//#else
-		sPlayer.close();
+		if (!updatesMissing) {
+			sPlayer.close();
+		}
 		//#endif
-		sPlayer = null;
+		if (!updatesMissing) {
+			sPlayer = null;
+		}
 	}
 	//#endif
 	}

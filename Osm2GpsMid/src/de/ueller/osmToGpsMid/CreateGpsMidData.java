@@ -184,8 +184,21 @@ public class CreateGpsMidData implements FilenameFilter {
 //			tile[ROUTEZOOMLEVEL].printHiLo(1, x);
 //		}
 //		System.exit(2);
-		sl.createSearchList(path);
-		
+		// create search list for whole items
+		sl.createSearchList(path, SearchList.INDEX_NAME);
+		// create search list for words
+		if (Configuration.getConfiguration().useWordSearch) {
+			sl.createSearchList(path, SearchList.INDEX_WORD);
+			// create search list for whole words / house numbers
+			sl.createSearchList(path, SearchList.INDEX_WHOLEWORD);
+			// create search list for house numbers
+		}
+		if (Configuration.getConfiguration().useHouseNumbers) {
+		    sl.createSearchList(path, SearchList.INDEX_HOUSENUMBER);
+		    // create search list for names for housenumber matching
+		    sl.createSearchList(path, SearchList.INDEX_BIGNAME);
+		}
+
 		// Output statistics for travel modes
 		if (Configuration.attrToBoolean(configuration.useRouting) >= 0) {
 			for (int i = 0; i < TravelModes.travelModeCount; i++) {
@@ -1633,10 +1646,10 @@ public class CreateGpsMidData implements FilenameFilter {
 			ds.writeByte(n.getType(configuration));
 			if (configuration.enableEditingSupport) {
 				if (n.id > Integer.MAX_VALUE) {
-					System.err.println("ERROR: OSM-ID won't fit in 32 bits for way " + n);
+					System.err.println("WARNING: Node OSM-ID won't fit in 32 bits for way " + n);
 					ds.writeInt(-1);
 				} else {
-					ds.writeInt(n.id.intValue());
+					ds.writeInt((int)n.id);
 				}
 			}
 		}

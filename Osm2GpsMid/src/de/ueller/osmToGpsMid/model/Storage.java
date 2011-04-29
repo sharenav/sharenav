@@ -91,7 +91,7 @@ public class Storage<T> extends AbstractSet<T> {
     private int mask;
     private int size;
     private transient volatile int modCount = 0;
-    private float loadFactor = 0.6f;
+    private float loadFactor = 0.75f;
 
     public Storage() {
         this(Storage.<T>defaultHash());
@@ -262,24 +262,51 @@ public class Storage<T> extends AbstractSet<T> {
         data[hole] = null;
     }
 
+
+	/**
+	 * Resize the storage data array to the given size.
+	 *
+	 * @param iNewSize
+	 */
+	private void resize(int iNewSize) {
+		Object[] big = new Object[iNewSize];
+		int nMask = big.length - 1;
+
+		for (Object o : data) {
+			if (o == null) {
+				continue;
+			}
+			int bucket = rehash(hash.getHashCode((T) o)) & nMask;
+			while (big[bucket] != null) {
+				bucket = (bucket + 1) & nMask;
+			}
+			big[bucket] = o;
+		}
+
+		data = big;
+		mask = nMask;
+	}
+
+	/**
+	 * Reduce the storage size to a minimum using the given load factor.
+	 *
+	 * @param fLoadFactor
+	 */
+	public void shrink(float fLoadFactor)
+	{
+		int cap = 1 << (int)(Math.ceil(Math.log(size/fLoadFactor) / Math.log(2)));
+
+		if ( cap < data.length )
+		{
+			System.out.println("Resizing storage: (" + size + ") " + data.length + " -> " + cap);
+			resize(cap);
+		}
+	}
+
+
     private void ensureSpace() {
         if (size > data.length*loadFactor) { // rehash
-            Object[] big = new Object[data.length * 2];
-            int nMask = big.length - 1;
-
-            for (Object o : data) {
-                if (o == null) {
-                    continue;
-                }
-                int bucket = rehash(hash.getHashCode((T)o)) & nMask;
-                while (big[bucket] != null) {
-                    bucket = (bucket+1) & nMask;
-                }
-                big[bucket] = o;
-            }
-
-            data = big;
-            mask = nMask;
+           resize(data.length*2);
         }
     }
 

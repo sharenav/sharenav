@@ -82,12 +82,12 @@ public class Name {
 		if (canon.length() >= 2)
 			return canon.substring(0, 2);
 		else if (canon.length() >= 1)
-			return canon.substring(0, 1) + "0";
+			return canon.substring(0, 1);
 		else return "00";
 	}
-	public String getCanonFileName(){
+	public String getCanonFileName(String fileId){
 		try {
-			return canon.substring(2);
+			return canon.substring(fileId.length() == 1 ? 1 : 2);
 		} catch (RuntimeException e) {
 			return "";
 		}

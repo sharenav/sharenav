@@ -36,6 +36,13 @@
 		<symbol>osm-editing</symbol>
 	</api>
 	<api>
+		<name>bigsearch</name>
+		<description>Pseudo-API to (mis)use device selection to influence search functionality
+		</description>
+		<names>bigsearch</names>
+		<symbol>bigsearch</symbol>
+	</api>
+	<api>
 		<name>Online-services</name>
 		<description>Pseudo-API to (miss)use device selection to compile in Online services
 		</description>

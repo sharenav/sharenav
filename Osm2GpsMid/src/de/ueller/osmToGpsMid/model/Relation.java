@@ -21,6 +21,7 @@ import de.ueller.osmToGpsMid.Configuration;
  */
 public class Relation extends Entity {
 	protected LinkedList<Member> members = new LinkedList<Member>();
+	public Long id;
 	
 	/** Set if not all members of the relation are available */
 	private boolean partialMembers = false;
@@ -61,6 +62,16 @@ public class Relation extends Entity {
 				if (m.getRole() == role) {
 					ret.add(new Long(m.getRef()));
 				}
+			}
+		}
+		return ret;
+	}
+	
+	public ArrayList<Long> getWayIds() {
+		ArrayList<Long> ret = new ArrayList<Long>();
+		for (Member m : members) {
+			if (m.getType() == Member.TYPE_WAY) { 
+				ret.add(new Long(m.getRef()));
 			}
 		}
 		return ret;
@@ -169,9 +180,9 @@ public class Relation extends Entity {
 							}
 							if (m.getType() == Member.TYPE_WAY) {
 								// FIXME handle buildings too
-								System.out.println("Warning: ignoring map data: Unable to handle area (typically building) with housenumber, relation url: " 
+								System.out.println("Info: trying to handle way (typically building, area) with housenumber, relation url: " 
 										+ toUrl());
-								// nodecount++;
+								nodecount++;
 								break;
 							}
 						}

@@ -44,19 +44,26 @@ public class RouteSoundSyntax {
 				// try reading syntax.cfg with UTF-8 encoding
 				try {
 					isr = new InputStreamReader(is, "UTF-8");
+					try {			
+						rb = new PropertyResourceBundle(isr);
+					} catch (Exception e) {
+						System.out.println ("ERROR: PropertyResourceBundle for syntax.cfg could not be created from InputStreamReader");
+						e.printStackTrace();
+						System.exit(1);
+					}
 				} catch (NoSuchMethodError nsme) {
 					/* Give warning if creating the UTF-8-reader for syntax.cfg fails and continue with default encoding,
-					 * e.g. on OS X Leopard: http://sourceforge.net/projects/gpsmid/forums/forum/677687/topic/4063854 
+					 * this can happen with Java 1.5 environments
+					 * more information at: http://sourceforge.net/projects/gpsmid/forums/forum/677687/topic/4063854 
 					 */
-					System.out.println("Warning: Cannot use UTF-8 encoding for decoding syntax.cfg file");
-					isr = new InputStreamReader(is);
-				}
-				try {			
-					rb = new PropertyResourceBundle(isr);
-				} catch (Exception e) {
-					System.out.println ("ERROR: PropertyResourceBundle for syntax.cfg could not be created");
-					e.printStackTrace();
-					System.exit(1);
+					System.out.println("Warning: Cannot use UTF-8 encoding for decoding syntax.cfg file as it requires Java 1.6+");
+					try {			
+						rb = new PropertyResourceBundle(is);
+					} catch (Exception e) {
+						System.out.println ("ERROR: PropertyResourceBundle for syntax.cfg could not be created from InputStream");
+						e.printStackTrace();
+						System.exit(1);
+					}
 				}
 			} catch (UnsupportedEncodingException e1) {
 					System.out.println ("ERROR: InputStreamReader for syntax.cfg could not be created");

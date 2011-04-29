@@ -25,6 +25,7 @@ public class EntityDescription {
 	public int		minEntityScale;
 	public int		minTextScale;
 	public boolean	hideable;
+	public boolean	houseNumberIndex;
 	
 	public String toString() {
 		return "Desc: " + description + "; " + key + "=" + value + " nametag: " + nameKey + " or " + nameFallbackKey + " Scale: " + minEntityScale + " hideable: " + hideable;
