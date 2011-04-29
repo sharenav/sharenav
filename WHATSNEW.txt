@@ -1,6 +1,6 @@
     *** Housenumber search **
-    - Housenumber search (streetname&housenumber) can be used by uncommenting
-      addr:housenumber segment in style file and enabling useHouseNumbers in .properties.
+    - Housenumber search (streetname&housenumber) can be enabled by useHouseNumbers in .properties
+      or checking the checkbox in the GUI
     - Currently Osm2GpsMid can connect housenumbers to streets encoded in the map as
       * associatedStreet relations (no support for interpolation though)
       * addr:streetname

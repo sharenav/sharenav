@@ -993,9 +993,10 @@ scale alias 1: zoomed out 21x
 -->
 	</key>
 <!--
-uncomment the segment below to enable housenumber searches; also add useHouseNumbers=true to .properties.
+    the segment below is used for housenumber searches and viewing; it's automatically
+    enable by useHouseNumbers=true to .properties.
 
-the following line before helpertag is now the default to put housenumbers in their own index,
+the following line before helpertag puts housenumbers in their own index,
 so housenumbers don't clutter the main search.
 
 		<housenumberindex index="true"/>
@@ -1003,8 +1004,11 @@ so housenumbers don't clutter the main search.
 without the "housenumberindex" line, all housenumbers are added to main index and searchable
 in the main index as well as in housenumber index.
 
+-->
+
 	<key tag="addr:housenumber">
 	  <value name ="*">
+		<specialisation key = "useHouseNumbers" value = "true" properties="true" />
 		<description desc = "House number"/>
 		<image src="mark.png"/>
 		<namekey tag="addr:housenumber"/>	
@@ -1016,7 +1020,6 @@ in the main index as well as in housenumber index.
 		<hideable hideable="false"/>
 	  </value>	
 	</key>
--->
 	<key tag="aeroway">
 	  <value name ="aerodrome">
 		<description desc = "Aerodrome"/>
