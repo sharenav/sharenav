@@ -11,6 +11,8 @@ import de.ueller.osmToGpsMid.Configuration;
 
 public class Entity {
 
+	private static Configuration config = null;
+
 	/**
 	 * the OSM id of this node
 	 */
@@ -104,7 +106,6 @@ public class Entity {
 	
 	protected EntityDescription calcType(Hashtable<String, Hashtable<String,Set<EntityDescription>>> legend){
 		EntityDescription entityDes = null;
-		Configuration config = null;
 		if (config == null) {
 			config = Configuration.getConfiguration();
 		}
@@ -135,9 +136,7 @@ public class Entity {
 											if (ct.properties) {
 												if ("useHouseNumbers".equalsIgnoreCase(ct.key)) {
 													if (config.useHouseNumbers) {
-														failedSpec = false;
-													} else if (ct.exclude) {
-														failedSpec = true;
+														failedSpec = ct.exclude;
 													}
 												}
 											} else {
