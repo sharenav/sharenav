@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 import de.ueller.osmToGpsMid.SmallArrayMap;
+import de.ueller.osmToGpsMid.Configuration;
 
 
 public class Entity {
@@ -103,6 +104,10 @@ public class Entity {
 	
 	protected EntityDescription calcType(Hashtable<String, Hashtable<String,Set<EntityDescription>>> legend){
 		EntityDescription entityDes = null;
+		Configuration config = null;
+		if (config == null) {
+			config = Configuration.getConfiguration();
+		}
 
 		//System.out.println("Calculating type for " + toString());
 		if (legend != null) {
@@ -127,25 +132,35 @@ public class Entity {
 										for (ConditionTuple ct : entity.specialisation) {
 											//System.out.println("Testing specialisation " + ct + " on " + this);
 											failedSpec = !ct.exclude;
-											for (String ss : tags) {
-												//if (ct.regexp && ss.equalsIgnoreCase(ct.key)) {
-												//System.out.println("Trying to match " + getAttribute(ss) + " with " + ct.value);
-												//}
+											if (ct.properties) {
+												if ("useHouseNumbers".equalsIgnoreCase(ct.key)) {
+													if (config.useHouseNumbers) {
+														failedSpec = false;
+													} else if (ct.exclude) {
+														failedSpec = true;
+													}
+												}
+											} else {
+												for (String ss : tags) {
+													//if (ct.regexp && ss.equalsIgnoreCase(ct.key)) {
+													//System.out.println("Trying to match " + getAttribute(ss) + " with " + ct.value);
+													//}
 
-												if ( (ss.equalsIgnoreCase(ct.key)) &&
-												     (
+													if ( (ss.equalsIgnoreCase(ct.key)) &&
 													     (
-														     (!ct.regexp) &&
-														     (getAttribute(ss).equalsIgnoreCase(ct.value) ||
-														      ct.value.equals("*"))
-													     ) ||
-													     (
-														     ct.regexp &&
-														     getAttribute(ss).matches(ct.value)
-													     )
-												     )
-												) {
-													failedSpec = ct.exclude;
+														     (
+															     (!ct.regexp) &&
+															     (getAttribute(ss).equalsIgnoreCase(ct.value) ||
+															      ct.value.equals("*"))
+															     ) ||
+														     (
+															     ct.regexp &&
+															     getAttribute(ss).matches(ct.value)
+															     )
+														     )
+														) {
+														failedSpec = ct.exclude;
+													}
 												}
 											}
 											if (failedSpec) {

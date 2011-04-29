@@ -367,6 +367,7 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 				ct.key = atts.getValue("key");
 				ct.value = atts.getValue("value");
 				ct.regexp = "true".equalsIgnoreCase(atts.getValue("regexp"));
+				ct.properties = "true".equalsIgnoreCase(atts.getValue("properties"));
 				String condition = atts.getValue("condition");
 				if (condition.equalsIgnoreCase("exclude")) {
 					ct.exclude = true;
