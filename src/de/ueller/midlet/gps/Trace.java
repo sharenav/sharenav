@@ -2320,8 +2320,8 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 			}
 			pc.g.setColor(Legend.COLORS[Legend.COLOR_DEST_LINE]);
 			pc.g.setStrokeStyle(Graphics.SOLID);
-			pc.g.drawLine(x, y, pc.getP().getImageCenter().x - imageCollector.xScreenOverscan, 
-					pc.getP().getImageCenter().y - imageCollector.yScreenOverscan);
+			pc.g.drawLine( pc.getP().getImageCenter().x - imageCollector.xScreenOverscan,
+					pc.getP().getImageCenter().y - imageCollector.yScreenOverscan,x, y);
 		}
 		} catch (Exception e) {
 			if (imageCollector == null) {
