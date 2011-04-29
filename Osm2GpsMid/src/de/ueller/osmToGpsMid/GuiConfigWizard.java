@@ -174,6 +174,8 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	
 	private static final String JCB_EDITING = "Enable online OSM editing support";
 	
+	private static final String JCB_HOUSENUMBERS = "Enable house number support";
+	
 	private static final String ORS_URL="http://openrouteservice.org/php/OpenLSRS_DetermineRoute.php";
 	
 	private String useLang = null;
@@ -206,6 +208,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	JTextField jtfName;
 	JComboBox jcbSoundFormats;
 	JCheckBox jcbEditing;
+	JCheckBox jcbHousenumbers;
 	String langList[] = {
 		"*",
 		"en",
@@ -521,6 +524,13 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		gbc.weighty = 0;
 		jpOptions2.add(jcbEditing, gbc);
 		
+		jcbHousenumbers = new JCheckBox(JCB_HOUSENUMBERS);
+		jcbHousenumbers.addActionListener(this);
+		gbc.gridx = 0;
+		gbc.gridy = 1;
+		gbc.weighty = 0;
+		jpOptions2.add(jcbHousenumbers, gbc);
+		
 		jcbSoundFormats = new JComboBox(soundFormats);
 		jcbSoundFormats.setSelectedIndex(1);
 		jcbSoundFormats.addActionListener(this);
@@ -618,6 +628,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		jcbSoundFormats.setEnabled(false);
 		jcbCellSource.setEnabled(false);
 		jcbEditing.setEnabled(false);
+		jcbHousenumbers.setEnabled(false);
 		destList.setVisible(false);
 		jbCalcRoute.setEnabled(false);
 		jbClearRoute.setEnabled(false);
@@ -746,6 +757,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		jtfName.setText(config.getString("midlet.name"));
 		guiSettingsFromConfig();
 		jcbEditing.setSelected(config.enableEditingSupport);
+		jcbHousenumbers.setSelected(config.useHouseNumbers);
 	}
 
 	/** Finds all files in the Osm2GpsMid JAR that match the pattern "GpsMid-*.jar"
@@ -1046,6 +1058,11 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			fw.write("\r\n");
 
 			fw.write("\r\n");
+			fw.write("# Housenumber support.\r\n");
+			fw.write("useHouseNumbers = " + config.useHouseNumbers + "\r\n");
+			fw.write("\r\n");
+
+			fw.write("\r\n");
 			fw.write("# Routing ability can be disabled to save space in the midlet by setting to false.\r\n");
 			fw.write("# Or set to one or more defined in the style-file, e.g. motorcar, bicycle, foot.\r\n");
 			fw.write("useRouting = " + config.useRouting + "\r\n");
@@ -1139,6 +1156,8 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 			routeList.clear();
 			map.setMapMarkerList(new LinkedList<MapMarker>());
 			destList.repaint();
+		} else if (JCB_HOUSENUMBERS.equalsIgnoreCase(event.getActionCommand())) {
+			config.useHouseNumbers = ((JCheckBox)event.getSource()).isSelected();
 		} else if ("CalculateRoute-click".equalsIgnoreCase(event.getActionCommand())) {
 			handleCalculateRoute();
 		} else if (JCB_EDITING.equalsIgnoreCase(event.getActionCommand())) {
