@@ -1361,7 +1361,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		switch (state) {
 			case STATE_MAIN:
 				//#if polish.api.bigsearch
-				if (searchCanon.length() == 0 && matchMode()) {
+				if (searchCanon.length() == 0 && !matchMode()) {
 					sb.append(Locale.get("guisearch.Searchforname")/*Search for name*/);
 				} else {
 					sb.append((words + searchCanon.toString() + " " + carret));
