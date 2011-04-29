@@ -508,6 +508,14 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		return traceInstance;
 	}
 
+	public float getGpsLat() {
+		return pos.latitude;
+	}
+
+	public float getGpsLon() {
+		return pos.longitude;
+	}
+
 
 	public void stopCompass() {
 		if (compassProducer != null) {
@@ -1793,7 +1801,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 				 *  determined during the way drawing (e.g. the current routePathConnection)
 				 */
 				Node drawnCenter = imageCollector.paint(pc);
-				if (route != null && ri != null && pc.lineP2 != null) {
+				if (route != null && ri != null && pc.lineP2 != null && pc.getP() != null/*avoids exception at route calc*/) {
 					pc.getP().forward(drawnCenter.radlat, drawnCenter.radlon, pc.lineP2);
 					/*
 					 * we also need to make sure the current way for the real position
@@ -2207,7 +2215,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 //		Node nru=new Node(pm.lat + 0.0001f,pm.lon + 0.0005f,true);
 //		pc.searchLD=nld;
 //		pc.searchRU=nru;
-		pc.squareDstToActualRoutableWay = Float.MAX_VALUE;
+		pc.squareDstWithPenToActualRoutableWay = Float.MAX_VALUE;
 		pc.xSize = 100;
 		pc.ySize = 100;
 		// retry searching an expanding region at the position mark
@@ -2306,6 +2314,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	}
 
 	public void showDestination(PaintContext pc) {
+		// Avoid exception after route calculation
+		if ( pc.getP() == null || imageCollector == null )
+			return;
 		try {
 		if (dest != null) {
 			pc.getP().forward(dest.lat, dest.lon, pc.lineP2);
@@ -2338,6 +2349,9 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	 * @param g Graphics context for drawing
 	 */
 	public void showMovement(Graphics g) {
+		// Avoid exception after route calculation
+		if ( pc.getP() == null )
+			return;
 		IntPoint centerP = null;
 		try {
 			if (imageCollector != null) {

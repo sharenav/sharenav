@@ -196,6 +196,10 @@ public class Way extends Entity {
 	
 	private static WaySegment waySegment = new WaySegment();
 
+	public static float fSegmentLong1;
+	public static float fSegmentLat1;
+	public static float fSegmentLong2;
+	public static float fSegmentLat2;
 
 //	private final static Logger logger = Logger.getInstance(Way.class,
 //			Logger.TRACE);
@@ -390,39 +394,71 @@ public class Way extends Entity {
 		//Only use this heuristic if we are travelling faster than 6 km/h, as otherwise
 		//the direction estimate is too bad to be of much use. Also, only use the direction
 		//if we are actually using the gps to center the map and not manually panning around.
+
+		pc.bUsedGpsCenter = gpsRecenter;
+		pc.nodeGpsPos  = new Node(pc.trace.getGpsLat(), pc.trace.getGpsLon());
+
+
 		if ((speed < 7) || !gpsRecenter) {
 			addDirectionalPenalty = false;
 			scalePen = 0;
 			return;
 		}
-		addDirectionalPenalty = true;
-		Projection p = pc.getP();
-		float lat1 = pc.center.radlat;
-		float lon1 = pc.center.radlon;
-		IntPoint lineP1 = new IntPoint();
-		IntPoint lineP2 = new IntPoint();
-		float lat2 = pc.center.radlat + (float) (0.00001 * Math.cos(pc.course * MoreMath.FAC_DECTORAD));
-		float lon2 = pc.center.radlon + (float) (0.00001 * Math.sin(pc.course * MoreMath.FAC_DECTORAD));
-		p.forward(lat1, lon1, lineP1);
-		p.forward(lat2, lon2, lineP2);
+
+			addDirectionalPenalty = true;
 		
-		courseVecX = lineP1.x - lineP2.x;
-		courseVecY = lineP1.y - lineP2.y;
-		float norm = (float)Math.sqrt(courseVecX * courseVecX + courseVecY * courseVecY);
-		courseVecX /= norm; courseVecY /= norm;
-		
-		//Calculate the lat and lon coordinates of two
-		//points that are 35 pixels apart
-		Node n1 = new Node();
-		Node n2 = new Node();
-		pc.getP().inverse(10, 10, n1);
-		pc.getP().inverse(45, 10, n2);
-		
-		//Calculate the distance between them in meters
-		float d = ProjMath.getDistance(n1, n2);
-		//Set the scale of the direction penalty to roughly
-		//match that of a penalty of 100m at a 90 degree angle
-		scalePen = 35.0f / d * 100.0f;
+			// 100m max penalty at equator.
+			scalePen = MoreMath.RADIANT_PER_METER * 100f;
+
+			Projection p = pc.getP();
+			float lat1 = pc.center.radlat;
+			float lon1 = pc.center.radlon;
+			//IntPoint lineP1 = new IntPoint();
+			//IntPoint lineP2 = new IntPoint();
+			float lat2 = pc.center.radlat + (float) (0.00001 * Math.cos(pc.course * MoreMath.FAC_DECTORAD));
+			float lon2 = pc.center.radlon + (float) (0.00001 * Math.sin(pc.course * MoreMath.FAC_DECTORAD));
+			//p.forward(lat1, lon1, lineP1);
+			//p.forward(lat2, lon2, lineP2);
+
+			//courseVecX = lineP1.x - lineP2.x;
+			//courseVecY = lineP1.y - lineP2.y;
+			courseVecX = lon1 - lon2;
+			courseVecY = lat1 - lat2;
+			float norm = (float)Math.sqrt(courseVecX * courseVecX + courseVecY * courseVecY);
+			courseVecX /= norm;
+			courseVecY /= norm;
+
+/*
+			bUsedGpsCenter = false;
+			addDirectionalPenalty = true;
+			Projection p = pc.getP();
+			float lat1 = pc.center.radlat;
+			float lon1 = pc.center.radlon;
+			IntPoint lineP1 = new IntPoint();
+			IntPoint lineP2 = new IntPoint();
+			float lat2 = pc.center.radlat + (float) (0.00001 * Math.cos(pc.course * MoreMath.FAC_DECTORAD));
+			float lon2 = pc.center.radlon + (float) (0.00001 * Math.sin(pc.course * MoreMath.FAC_DECTORAD));
+			p.forward(lat1, lon1, lineP1);
+			p.forward(lat2, lon2, lineP2);
+
+			courseVecX = lineP1.x - lineP2.x;
+			courseVecY = lineP1.y - lineP2.y;
+			float norm = (float)Math.sqrt(courseVecX * courseVecX + courseVecY * courseVecY);
+			courseVecX /= norm; courseVecY /= norm;
+
+			//Calculate the lat and lon coordinates of two
+			//points that are 35 pixels apart
+			Node n1 = new Node();
+			Node n2 = new Node();
+			pc.getP().inverse(10, 10, n1);
+			pc.getP().inverse(45, 10, n2);
+
+			//Calculate the distance between them in meters
+			float d = ProjMath.getDistance(n1, n2);
+			//Set the scale of the direction penalty to roughly
+			//match that of a penalty of 100m at a 90 degree angle
+			scalePen = 35.0f / d * 100.0f;
+		*/
 	}
 
 	public boolean isOnScreen( short pcLDlat, short pcLDlon, short pcRUlat, short pcRUlon) { 
@@ -956,9 +992,26 @@ public class Way extends Entity {
 					/**
 					 * calculate closest distance to specific ways
 					 */
-					IntPoint center = pc.getP().getImageCenter();
-					float dst = MoreMath.ptSegDistSq(lineP1.x, lineP1.y,
-							lineP2.x, lineP2.y, center.x, center.y);
+
+					float dst;
+					if (pc.bUsedGpsCenter == true) {
+						// Use way geo coordinates for distance calculation
+						// instead of screen coordinates if the screen is
+						// centered to the gps position.
+						int idxp = path[i1-1];
+						fSegmentLong1 =  t.nodeLon[idxp] *  MoreMath.FIXPT_MULT_INV + t.centerLon;
+						fSegmentLat1 = t.nodeLat[idxp] *  MoreMath.FIXPT_MULT_INV + t.centerLat;
+						fSegmentLong2 = t.nodeLon[idx] *  MoreMath.FIXPT_MULT_INV + t.centerLon;
+						fSegmentLat2 = t.nodeLat[idx] *  MoreMath.FIXPT_MULT_INV + t.centerLat;
+						dst = MoreMath.ptSegDistSq(
+								fSegmentLat1, fSegmentLong1,
+								fSegmentLat2, fSegmentLong2,
+								pc.nodeGpsPos.radlat, pc.nodeGpsPos.radlon);
+					} else {
+						IntPoint center = pc.getP().getImageCenter();
+						 dst = MoreMath.ptSegDistSq(lineP1.x, lineP1.y,
+								lineP2.x, lineP2.y, center.x, center.y);
+					}
 //					String name = pc.trace.getName(nameIdx);
 //					if (dst < pc.squareDstToWay){
 //						System.out.println(" Way " + name + " dst=" + dst);
@@ -972,32 +1025,50 @@ public class Way extends Entity {
 //						
 //					}
 					
-					if (dst < pc.squareDstToWay || dst < pc.squareDstToActualRoutableWay || dst < pc.squareDstToRoutePath) { 
+					if (dst < pc.squareDstWithPenToWay || dst < pc.squareDstWithPenToActualRoutableWay || dst < pc.squareDstToRoutePath) {
 						float pen = 0;
 						/**
 						 * Add a heuristic so that the direction of travel and the direction
 						 * of the way should more or less match if we are travelling on this way
 						 */
 						if (addDirectionalPenalty) {
-							int segDirVecX = lineP1.x - lineP2.x;
-							int segDirVecY = lineP1.y - lineP2.y;
+							//int segDirVecX = lineP1.x - lineP2.x;
+							//int segDirVecY = lineP1.y - lineP2.y;
+							float segDirVecX = fSegmentLong1 - fSegmentLong2;
+							float segDirVecY = fSegmentLat1 - fSegmentLat2;
 							float norm = (float) Math.sqrt((double)(segDirVecX * segDirVecX + segDirVecY * segDirVecY));
 							//This is a hack to use a linear approximation to keep computational requirements down
-							pen = scalePen * (1.0f - Math.abs((segDirVecX * courseVecX + segDirVecY * courseVecY) / norm));
+							if (this.isOneway())
+								// Panelty for one ways can be increased until 180 degree
+								pen = scalePen * (1.0f - ((segDirVecX * courseVecX + segDirVecY * courseVecY) / norm));
+							else
+								pen = scalePen * (1.0f - Math.abs((segDirVecX * courseVecX + segDirVecY * courseVecY) / norm));
 							pen *= pen;
 						}
 						float dstWithPen = dst + pen;
 						// if this way is closer including penalty than the old one set it as new actualWay
-						if (dstWithPen < pc.squareDstToWay) {
-								pc.squareDstToWay = dst + pen;
+						if (dstWithPen < pc.squareDstWithPenToWay) {
+								pc.squareDstWithPenToWay = dst + pen;
 								pc.actualWay = this;
 								pc.actualSingleTile = t;
+								if (pc.bUsedGpsCenter == true) {
+									pc.fNearestSegmentWayLat1 = fSegmentLat1;
+									pc.fNearestSegmentWayLong1 = fSegmentLong1;
+									pc.fNearestSegmentWayLat2 = fSegmentLat2;
+									pc.fNearestSegmentWayLong2 = fSegmentLong2;
+								}
 						}
 						if (this.isRoutableWay()) {
 							// if this routable way is closer including penalty than the old one set it as new actualRoutableWay
-							if (dstWithPen < pc.squareDstToActualRoutableWay) {
-								pc.squareDstToActualRoutableWay = dst + pen;
+							if (dstWithPen < pc.squareDstWithPenToActualRoutableWay) {
+								pc.squareDstWithPenToActualRoutableWay = dst + pen;
 								pc.actualRoutableWay = this;
+								if (pc.bUsedGpsCenter == true) {
+									pc.fNearestSegmentRouteableWayLat1 = fSegmentLat1;
+									pc.fNearestSegmentRouteableWayLong1 = fSegmentLong1;
+									pc.fNearestSegmentRouteableWayLat2 = fSegmentLat2;
+									pc.fNearestSegmentRouteableWayLong2 = fSegmentLong2;
+								}
 							}
 							// if this is a highlighted path seg and it's closer than the old one including penalty set it as new one 
 							if ((hl[i1 - 1] > PATHSEG_DO_NOT_HIGHLIGHT) && (dstWithPen < pc.squareDstWithPenToRoutePath)) {
@@ -1005,6 +1076,12 @@ public class Way extends Entity {
 								pc.squareDstToRoutePath = dst;
 								pc.routePathConnection = hl[i1 - 1];
 								pc.pathIdxInRoutePathConnection = pi;
+								if (pc.bUsedGpsCenter == true) {
+									pc.fNearestSegmentRoutePathLat1 = fSegmentLat1;
+									pc.fNearestSegmentRoutePathLong1 = fSegmentLong1;
+									pc.fNearestSegmentRoutePathLat2 = fSegmentLat2;
+									pc.fNearestSegmentRoutePathLong2 = fSegmentLong2;
+								}
 							}
 						}
 					}

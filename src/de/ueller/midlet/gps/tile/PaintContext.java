@@ -7,13 +7,13 @@ package de.ueller.midlet.gps.tile;
 
 import javax.microedition.lcdui.Graphics;
 
-import de.ueller.gps.data.Legend;
 import de.ueller.gps.tools.intTree;
 import de.ueller.gpsMid.mapData.SingleTile;
 import de.ueller.midlet.gps.RouteInstructions;
 import de.ueller.midlet.gps.ScreenContext;
 import de.ueller.midlet.gps.Trace;
 import de.ueller.midlet.gps.data.IntPoint;
+import de.ueller.midlet.gps.data.MoreMath;
 import de.ueller.midlet.gps.data.Node;
 import de.ueller.midlet.gps.data.ProjMath;
 import de.ueller.midlet.gps.data.Way;
@@ -128,9 +128,9 @@ public class PaintContext extends ScreenContext {
 	public volatile int conWayNumNameIdxs;  
 	
 	/** the square of distance from center to the nearest point of actualWay */
-	public float squareDstToWay;
+	public float squareDstWithPenToWay;
 	/** the square of distance from center to the nearest point of actualRoutableWay */
-	public float squareDstToActualRoutableWay;
+	public float squareDstWithPenToActualRoutableWay;
 	/** the square of distance including penalty from center to the nearest point of the route solution path (=route line)*/
 	public float squareDstWithPenToRoutePath;
 	/** the square of distance from center to the nearest point of the route solution path (=route line)*/
@@ -144,6 +144,21 @@ public class PaintContext extends ScreenContext {
 	
 	/** ways painted in last paint call */
 	public int waysPainted;
+
+	public Node nodeGpsPos = null;
+	public boolean bUsedGpsCenter = false;
+	public float fNearestSegmentRoutePathLong1;
+	public float fNearestSegmentRoutePathLat1;
+	public float fNearestSegmentRoutePathLong2;
+	public float fNearestSegmentRoutePathLat2;
+	public float fNearestSegmentRouteableWayLong1;
+	public float fNearestSegmentRouteableWayLat1;
+	public float fNearestSegmentRouteableWayLong2;
+	public float fNearestSegmentRouteableWayLat2;
+	public float fNearestSegmentWayLong1;
+	public float fNearestSegmentWayLat1;
+	public float fNearestSegmentWayLong2;
+	public float fNearestSegmentWayLat2;
 
 
 	
@@ -189,7 +204,61 @@ public class PaintContext extends ScreenContext {
 			return RouteInstructions.DISTANCE_UNKNOWN;
 		}
 	}
-	
+
+	/**
+	 * @return distance in meters
+	 */
+	public int getDstFromRouteSegment() {
+		if (this.squareDstToRoutePath == Float.MAX_VALUE) {
+			return RouteInstructions.DISTANCE_UNKNOWN;
+		}
+
+		if (this.bUsedGpsCenter == true) {
+			Node node1 = new Node(this.fNearestSegmentRoutePathLat1, this.fNearestSegmentRoutePathLong1, true);
+			Node node2 = new Node(this.fNearestSegmentRoutePathLat2, this.fNearestSegmentRoutePathLong2, true);
+			Node nearest = MoreMath.closestPointOnLine(node1, node2, this.nodeGpsPos);
+			return MoreMath.dist(nearest.radlat, nearest.radlon, this.nodeGpsPos.radlat, this.nodeGpsPos.radlon);
+		} else {
+			return (int) (getDstFromSquareDst(this.squareDstToRoutePath));
+		}
+	}
+
+	/**
+	 * @return distance in meters
+	 */
+	public int getDstFromRouteableWay() {
+		if (this.squareDstWithPenToActualRoutableWay == Float.MAX_VALUE) {
+			return RouteInstructions.DISTANCE_UNKNOWN;
+		}
+
+		if (this.bUsedGpsCenter == true) {
+			Node node1 = new Node(this.fNearestSegmentRouteableWayLat1, this.fNearestSegmentRouteableWayLong1, true);
+			Node node2 = new Node(this.fNearestSegmentRouteableWayLat2, this.fNearestSegmentRouteableWayLong2, true);
+			Node nearest = MoreMath.closestPointOnLine(node1, node2, this.nodeGpsPos);
+			return MoreMath.dist(nearest.radlat, nearest.radlon, this.nodeGpsPos.radlat, this.nodeGpsPos.radlon);
+		} else {
+			return (int) (getDstFromSquareDst(this.squareDstWithPenToActualRoutableWay));
+		}
+	}
+
+	/**
+	 * @return distance in meters
+	 */
+	public int getDstFromWay() {
+		if (this.squareDstWithPenToWay == Float.MAX_VALUE) {
+			return RouteInstructions.DISTANCE_UNKNOWN;
+		}
+
+		if (this.bUsedGpsCenter == true) {
+			Node node1 = new Node(this.fNearestSegmentWayLat1, this.fNearestSegmentWayLong1, true);
+			Node node2 = new Node(this.fNearestSegmentWayLat2, this.fNearestSegmentWayLong2, true);
+			Node nearest = MoreMath.closestPointOnLine(node1, node2, this.nodeGpsPos);
+			return MoreMath.dist(nearest.radlat, nearest.radlon, this.nodeGpsPos.radlat, this.nodeGpsPos.radlon);
+		} else {
+			return (int) (getDstFromSquareDst(this.squareDstWithPenToWay));
+		}
+	}
+
 //	public String boundToString(){
 //		return (screenRU + " / " + screenLD);
 //	}

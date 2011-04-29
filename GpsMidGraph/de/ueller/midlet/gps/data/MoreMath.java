@@ -81,6 +81,9 @@ public class MoreMath {
 
 	final static public transient float		FLOAT_LOGFDIV2	= -0.6931471805599453094f;
 
+	// Radiants per meter at equator
+	final static public float 	RADIANT_PER_METER = 1 / MoreMath.PLANET_RADIUS;
+
 	/**
 	 * Average earth radius of the WGS84 geoid in meters.
 	 * The old value used here was 6378140 and 6378159.81 for SingleTile."fpm".
@@ -336,42 +339,42 @@ public class MoreMath {
 	)   
 	{  
 		float distSquare ;  
-		int L12Square ;  
-		int X12, Y12, X1P, Y1P, X2P, Y2P ;  
+		int X12, Y12;//, X1P, Y1P, X2P, Y2P ;  // X1, Y1, X2, Y2 are reused now
 
 
 //		Find vector from  ( X1,Y1 )  to  ( X2,Y2 )   
 //		and the Square of its length.   
 		X12 = X2 - X1 ;  
 		Y12 = Y2 - Y1 ;  
-		L12Square = X12 * X12 + Y12 * Y12 ;   
+
 //		Find vector from  ( X1,Y1 )  to  ( PX,PY )  .   
-		X1P = PX - X1 ;  
-		Y1P = PY - Y1 ;  
+		X1 = PX - X1 ;
+		Y1 = PY - Y1 ;
 //		Do scalar product and check sign.   
-		if  (  X12 * X1P + Y12 * Y1P     <= 0  )   
+		if  (  X12 * X1 + Y12 * Y1     <= 0  )
 		{  
 //			Closest point on segment is  ( X1,Y1 ) ;  
 //			find its distance  ( squared )  from  ( PX,PY )  .   
-			distSquare = X1P * X1P + Y1P * Y1P ;  
+			distSquare = X1 * X1 + Y1 * Y1 ;
 		}  
 		else 
 		{  
 //			Find vector from  ( X2,Y2 )  to  ( PX,PY )  .   
-			X2P = PX - X2 ;  
-			Y2P = PY - Y2 ;  
+			X2 = PX - X2 ;
+			Y2 = PY - Y2 ;
 //			Do scalar product and check sign.   
-			if  (  X12 * X2P + Y12 * Y2P     >= 0  )   
+			if  (  X12 * X2 + Y12 * Y2     >= 0  )
 			{  
 				// Closest point on segment is  ( X2,Y2 ) ;  
 				// find its distance  ( squared )  from  ( PX,PY )  .   
-				distSquare = X2P * X2P + Y2P * Y2P ;  
+				distSquare = X2 * X2 + Y2 * Y2 ;
 			}  
 			else 
 			{  
 				// Closest point on segment is between  ( X1,Y1 )  and  
 				//   ( X2,Y2 )  . Use perpendicular distance formula.   
-				distSquare = X12 * Y1P - Y12 * X1P ;  
+				distSquare = X12 * Y1 - Y12 * X1 ;
+				int L12Square = X12 * X12 + Y12 * Y12 ;
 				distSquare = distSquare * distSquare / L12Square ;  
 				// Note that if L12Square be zero, the first  
 				// of the three branches will be selected,  
@@ -389,41 +392,42 @@ public class MoreMath {
 	{  
 		float distSquare ;  
 		float L12Square ;  
-		float X12, Y12, X1P, Y1P, X2P, Y2P ;  
+		float X12, Y12;//, X1P, Y1P, X2P, Y2P ;
 
 
 //		Find vector from  ( X1,Y1 )  to  ( X2,Y2 )   
 //		and the Square of its length.   
 		X12 = X2 - X1 ;  
 		Y12 = Y2 - Y1 ;  
-		L12Square = X12 * X12 + Y12 * Y12 ;   
+
 //		Find vector from  ( X1,Y1 )  to  ( PX,PY )  .   
-		X1P = PX - X1 ;  
-		Y1P = PY - Y1 ;  
+		X1 = PX - X1 ;
+		Y1 = PY - Y1 ;
 //		Do scalar product and check sign.   
-		if  (  X12 * X1P + Y12 * Y1P     <= 0f  )   
+		if  (  X12 * X1 + Y12 * Y1     <= 0f  )
 		{  
 //			Closest point on segment is  ( X1,Y1 ) ;  
 //			find its distance  ( squared )  from  ( PX,PY )  .   
-			distSquare = X1P * X1P + Y1P * Y1P ;  
+			distSquare = X1 * X1 + Y1 * Y1 ;
 		}  
 		else 
 		{  
 //			Find vector from  ( X2,Y2 )  to  ( PX,PY )  .   
-			X2P = PX - X2 ;  
-			Y2P = PY - Y2 ;  
+			X2 = PX - X2 ;
+			Y2 = PY - Y2 ;
 //			Do scalar product and check sign.   
-			if  (  X12 * X2P + Y12 * Y2P     >= 0f  )   
+			if  (  X12 * X2 + Y12 * Y2     >= 0f  )
 			{  
 				// Closest point on segment is  ( X2,Y2 ) ;  
 				// find its distance  ( squared )  from  ( PX,PY )  .   
-				distSquare = X2P * X2P + Y2P * Y2P ;  
+				distSquare = X2 * X2 + Y2 * Y2 ;
 			}  
 			else 
 			{  
 				// Closest point on segment is between  ( X1,Y1 )  and  
 				//   ( X2,Y2 )  . Use perpendicular distance formula.   
-				distSquare = X12 * Y1P - Y12 * X1P ;  
+				distSquare = X12 * Y1 - Y12 * X1 ;
+				L12Square = X12 * X12 + Y12 * Y12 ;
 				distSquare = distSquare * distSquare / L12Square ;  
 				// Note that if L12Square be zero, the first  
 				// of the three branches will be selected,  

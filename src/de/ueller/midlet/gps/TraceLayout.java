@@ -426,6 +426,9 @@ public class TraceLayout extends LayoutManager {
 	}
 	
 	public void calcScaleBarWidth(PaintContext pc) {
+		// Avoid exception after route calculation
+		if ( pc.getP() == null )
+			return;
 		try {
 			Node n1 = new Node();
 			Node n2 = new Node();

@@ -5,8 +5,6 @@
 
 package de.ueller.midlet.gps.data;
 
-import de.ueller.gps.data.Legend;
-
 public class Node extends Entity {
 	public float radlat = 0;
 	public float radlon = 0;
