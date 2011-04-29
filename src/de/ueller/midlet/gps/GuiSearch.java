@@ -9,6 +9,7 @@ package de.ueller.midlet.gps;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
+import java.lang.Integer;
 //#if polish.api.bigsearch
 import java.util.Hashtable;
 //import java.util.Enumeration;
@@ -116,6 +117,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 	public int displayReductionLevel = 0;
 	
 	private volatile TimerTask timerT;
+	private volatile TimerTask housenumberTimerTask = null;
 	private volatile Timer timer;
 	
 	private boolean hideKeypad = false;
@@ -579,7 +581,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 					    !searchAlpha || name == null || searchCanon.toString().equalsIgnoreCase(
 						    name.substring(0, searchCanon.toString().length()))) {
 						//#if polish.api.bigsearch
-						// match multiword search or hosuenumber search
+						// match multiword search or housenumber search
 						//System.out.println ("MatchMode: " + matchMode() + " matchSources: " + matchSources);
 						if (matchMode() && matchSources != null) {
 							if (matchSources.get(id) != null) {
@@ -969,6 +971,56 @@ public class GuiSearch extends Canvas implements CommandListener,
 			}
 		}
 		//#if polish.api.bigsearch
+		if (housenumberTimerTask != null) {
+			housenumberTimerTask.cancel();
+			housenumberTimerTask = null;
+		}
+		if (housenumberTimerTask == null) {
+			housenumberTimerTask = new TimerTask() {
+				public void run() {
+					if (matchMode()) {
+						//System.out.println("housenumber timer fired");
+						searchThread.appendSearchBlocking(NumberCanon.canonial(searchCanon.toString()),
+										  SearchNames.INDEX_HOUSENUMBER);
+						insertResults();
+						boolean matchall = true;
+						int limit = 0;
+						if (matchall && searchCanon.toString().length() == 1) {
+							limit = 10;
+							// uncomment the following two lines to test showing all numbers for streetname
+							// FIXME names will be missing however from the list, but will show an idea
+							// of the performance
+						//
+						//} else if (matchall && searchCanon.toString().length() == 0) {
+						//	limit = 100;
+						}
+						for (int i = 0; i < limit; i++) {
+							String ss = searchCanon.toString();
+							if (limit > 1) {
+								ss = ss + Integer.toString(i);
+							}
+							//System.out.println("search for: " + ss);
+
+							searchThread.appendSearchBlocking(NumberCanon.canonial(ss),
+											  SearchNames.INDEX_HOUSENUMBER);
+							insertResults();
+						}
+						//searchThread.appendSearchBlocking(NumberCanon.canonial(ss),
+						// SearchNames.INDEX_WHOLEWORD);
+						// insert new results from search thread 
+					}
+				}
+			};
+		}
+		if (matchMode() && housenumberTimerTask != null) {
+			try {
+				//System.out.println("scheduling housenumber timer");
+				GpsMid.getTimer().schedule(housenumberTimerTask, 1500);
+			} catch (Exception e) {
+				logger.exception("Failed to initialize GuiSearch housenumber search timer", e);
+			}
+		}
+		
 		if (searchCanon.length() > 1 || matchMode()) {
 			state = STATE_MAIN;
 			reSearch();
