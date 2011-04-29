@@ -19,6 +19,7 @@
     *** Misc. bug fixes ***
     - GpsMid: fixed empty/invalid map startup infinite loop bug (tracker 3288429)
     - Osm2GpMid: fixed handling of multipolygons where a way is in more than one multipolygon
+    - GpsMid: loss of route line when zooming out
     *** Routing ***
     - the route line is now rendered only up to the closest point to the destination on the destination way
     - if auto zoom is activated the map will be zoomed in further
