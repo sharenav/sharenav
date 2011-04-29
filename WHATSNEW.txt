@@ -41,6 +41,7 @@
 
     *** Platforms ***
     - make WinCE sound work with fallback NoiseMaker code when playerUpdate doesn't get called
+    - work around a Samsung Wave route line disappearance platform bug
 
 GpsMid 0.7.3
     *** Map Elements ***
