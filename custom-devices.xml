@@ -53,7 +53,7 @@ at large.
 		<capability name="JavaPlatform" value="MIDP/2.0"/>
 		<capability name="GpsMid.editing" value="true"/>
 		<capability name="JavaConfiguration" value="CLDC/1.1"/>
-		<capability name="JavaPackage" value="location-api, webservices, btapi, obex, pdaapi, fileconnection, mmapi, wmapi, 3dapi, svg, nokia-ui, min-siemapi, min-samsapi, osm-editing, online"/>
+		<capability name="JavaPackage" value="location-api, webservices, btapi, obex, pdaapi, fileconnection, mmapi, wmapi, 3dapi, svg, nokia-ui, min-siemapi, min-samsapi, osm-editing, online, bigsearch"/>
 	</device>
 	<device supportsPolishGui="true">
 		<identifier>Generic/newfeatures</identifier>
@@ -92,7 +92,7 @@ at large.
 		<features>isVirtual</features>
 		<capability name="JavaPlatform" value="MIDP/2.0"/>
 		<capability name="JavaConfiguration" value="CLDC/1.1"/>
-		<capability name="JavaPackage" value="location-api, webservices, btapi, obex, pdaapi, fileconnection, mmapi, wmapi, 3dapi, svg, nokia-ui, min-siemapi, min-samsapi"/>
+		<capability name="JavaPackage" value="location-api, webservices, btapi, obex, pdaapi, fileconnection, mmapi, wmapi, 3dapi, svg, nokia-ui, min-siemapi, min-samsapi, bigsearch"/>
 	</device>
 	<device supportsPolishGui="true">
 		<identifier>Generic/full-nolocation</identifier>

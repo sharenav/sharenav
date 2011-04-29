@@ -130,8 +130,8 @@
 				<requirement name="Identifier" value="Generic/blackberry" />
 				<requirement name="Identifier" value="Generic/full" />
 				<requirement name="Identifier" value="Generic/minimal" />
-				<requirement name="Identifier" value="Generic/newfeatures" />
 				<!--
+				<requirement name="Identifier" value="Generic/newfeatures" />
 				<requirement name="Identifier" value="Generic/android" />
 				<requirement name="Identifier" value="Generic/android2.1" />
 				<requirement name="Identifier" value="Motorola/Motorazr_V3i" />
