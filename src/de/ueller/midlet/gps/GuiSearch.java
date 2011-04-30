@@ -99,7 +99,6 @@ public class GuiSearch extends Canvas implements CommandListener,
 	private Vector result2 = new Vector();
 
 	private int carret=0;
-	private int isearchStart = 0;
 
 	private int cursor=0;
 	
@@ -548,7 +547,6 @@ public class GuiSearch extends Canvas implements CommandListener,
 	private void nextWord() {
 		words = words + searchCanon.toString() + " ";
 		searchCanon.setLength(0);
-		isearchStart = carret;
 		carret = 0;
 		spacePressed = false;
 	}
