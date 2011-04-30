@@ -1245,7 +1245,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 					keyPressed('0');
 				} else if (touchedElementId == GuiSearchLayout.KEY_STAR) {
 					keyPressed(KEY_STAR);
-				} else if (touchedElementId == GuiSearchLayout.KEY_POUND) {
+				} else if (touchedElementId == GuiSearchLayout.KEY_POUND || touchedElementId == GuiSearchLayout.KEY_SORT) {
 					keyPressed(KEY_POUND);
 				} else if (touchedElementId == GuiSearchLayout.KEY_BACKSPACE) {
 					keyPressed(8);
