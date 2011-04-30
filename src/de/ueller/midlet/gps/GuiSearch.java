@@ -1014,8 +1014,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 							// FIXME names will be missing however from the list, but will show an idea
 							// of the performance
 						//
-						//} else if (matchall && searchCanon.toString().length() == 0) {
-						//	limit = 100;
+						} else if (matchall && searchCanon.toString().length() == 0) {
+							limit = 100;
 						}
 						for (int i = 0; i < limit; i++) {
 							String ss = searchCanon.toString();
