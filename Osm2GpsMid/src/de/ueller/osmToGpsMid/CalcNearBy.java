@@ -167,7 +167,7 @@ public class CalcNearBy {
 			return 0;
 		}
 		if (nearestWay != null) {
-			return nearestway.id;
+			return nearestWay.id;
 		}				
 		return (long) 0;
 	}
