@@ -861,8 +861,6 @@ public class GuiSearch extends Canvas implements CommandListener,
 					spacePressed = true;
 					return;
 				} else {
-					// set match mode
-					words = words + " ";
 					//#if polish.api.bigsearch
 					storeMatches();
 					nextWord();
@@ -961,6 +959,21 @@ public class GuiSearch extends Canvas implements CommandListener,
 			
 			if (carret > 0){
 				searchCanon.deleteCharAt(--carret);
+			} else if (matchMode()) {
+				// FIXME in multi-word search should also handle situation with more than two words
+			        // by redoing the word searches
+				int slen = words.length()-1;
+				searchCanon.setLength(0);
+				for (int i = 0; i < slen ; i++) {
+					searchCanon.insert(carret++, (char) words.charAt(i));
+				}
+				System.out.println("Searchcanon tostring: " + searchCanon.toString());
+				System.out.println("Searchcanon length: " + searchCanon.length());
+				words = "";
+				carret = slen;
+				spacePressed = false;
+				result.removeAllElements();
+				reSearch();
 			}
 		} else if (keyCode == -111) {
 			/**
