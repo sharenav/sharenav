@@ -53,6 +53,7 @@ import de.ueller.osmToGpsMid.model.Tile;
 import de.ueller.osmToGpsMid.model.TravelModes;
 import de.ueller.osmToGpsMid.model.Way;
 import de.ueller.osmToGpsMid.model.name.Names;
+import de.ueller.osmToGpsMid.model.name.WayRedirect;
 import de.ueller.osmToGpsMid.model.url.Urls;
 import de.ueller.osmToGpsMid.tools.FileTools;
 
@@ -121,12 +122,16 @@ public class CreateGpsMidData implements FilenameFilter {
 	private RouteData rd;
 	private static double MAX_RAD_RANGE = (Short.MAX_VALUE - Short.MIN_VALUE - 2000) / MyMath.FIXPT_MULT;
 	private String[] useLang = null;
-	
+
+	WayRedirect wayRedirect = null;
+		
+
 	public CreateGpsMidData(OsmParser parser, String path) {
 		super();
 		this.parser = parser;
 		this.path = path;
 		File dir = new File(path);
+		wayRedirect = new WayRedirect();
 		// first of all, delete all data-files from a previous run or files that comes
 		// from the mid jar file
 		if (dir.isDirectory()) {
@@ -147,7 +152,7 @@ public class CreateGpsMidData implements FilenameFilter {
 		names1 = getNames1();
 		urls1 = getUrls1();
 		exportLegend(path);
-		SearchList sl = new SearchList(names1, urls1);
+		SearchList sl = new SearchList(names1, urls1, wayRedirect);
 		UrlList ul = new UrlList(urls1);
 		sl.createNameList(path);
 		ul.createUrlList(path);
@@ -219,10 +224,10 @@ public class CreateGpsMidData implements FilenameFilter {
 	private Names getNames1() {
 		Names na = new Names();
 		for (Way w : parser.getWays()) {
-			na.addName(w);		
+			na.addName(w, wayRedirect);		
 		}
 		for (Node n : parser.getNodes()) {
-			na.addName(n);
+			na.addName(n, wayRedirect);
 		}
 		System.out.println("Found " + na.getNames().size() + " names, " + 
 				na.getCanons().size() + " canon");

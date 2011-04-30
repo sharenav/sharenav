@@ -28,6 +28,8 @@ import de.ueller.osmToGpsMid.Configuration;
  *
  */
 public class Names {
+	// if true, index all nodes with addr:housenumber, regardless of whether there's a housenumberindex element
+	private static boolean allAddrTags = false;
 	private TreeMap<String,Name> names1;
 	private TreeMap<String,Name> housenumbers1;
 	private TreeSet<Name> canons;
@@ -54,7 +56,7 @@ public class Names {
 		return names1.values();
 	}
 
-	public void addName(Entity w) {
+	public void addName(Entity w, WayRedirect wayRedirect) {
 		if (w.getName() == null )
 			return;
 		if (w.getName().trim().length() == 0){
@@ -83,7 +85,16 @@ public class Names {
 			Name mnNext=new Name(w.getName()+"\0");
 			SortedMap<String,Name> subSet=names1.subMap(mn.getName(), mnNext.getName());
 			Name mnExist=subSet.get(subSet.firstKey());
-			mnExist.addEntity(w);
+			long redirect = mnExist.addEntity(w);
+			//System.out.println("Way add gave redirect " + redirect);
+			if (redirect != (long) 0) {
+				Way way = (Way) w;
+				System.out.println("Will do way redirect from id " + way.id
+						   + " to id " + redirect);
+				Long id = new Long (way.id);
+				Long target = new Long (redirect);
+				wayRedirect.put(id, target);
+			}
 		} else {
 			names1.put(mn.getName(),mn);
 		}
@@ -110,6 +121,13 @@ public class Names {
 		// should add also stopwords 
 		// add to word index; don't add housenumbers when housenumberindex element is used
 		String [] words = mn.getName().split("[ ;,.()]");
+		String [] housenumbers = words;
+		if (allAddrTags && (w instanceof Node)) {
+			Node n = (Node) w;
+			if (n.hasHouseNumber()) {
+				housenumbers = w.getAttribute("addr:housenumber").split("[ ;,.()]");
+			}
+		}
 		if (!houseNumber) {
 			for (String word : words) {
 				if (word.length() == 0) {
@@ -139,8 +157,8 @@ public class Names {
 			}
 		}
 		// add to housenumber index
-		if (houseNumber) {
-			for (String word : words) {
+		if (houseNumber || allAddrTags) {
+			for (String word : housenumbers) {
 				//System.out.println("Word: " + word);
 				if (word.length() == 0) {
 					//System.out.println("Empty word");
