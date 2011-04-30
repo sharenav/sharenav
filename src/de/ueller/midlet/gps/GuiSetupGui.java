@@ -29,6 +29,7 @@ public class GuiSetupGui extends Form implements CommandListener {
 	private final boolean initialSetup;
 
 	private TextField memField;
+	private TextField searchField;
 	
 	public GuiSetupGui(GpsMidDisplayable parent, boolean initialSetup) {
 		super(Locale.get("guisetupgui.GUIOptions")/*GUI Options*/);
@@ -43,6 +44,10 @@ public class GuiSetupGui extends Form implements CommandListener {
 			memField = new TextField(Locale.get("guisetupgui.DefineMaxMem")/*Define maxMem (kbyte)*/,
 					Long.toString(mem), 8, TextField.DECIMAL);
 			append(memField);
+			int searchMax = Configuration.getSearchMax();
+			searchField = new TextField(Locale.get("guisetupgui.DefineMaxSearch")/*Max # of search results*/,
+					Integer.toString(searchMax), 8, TextField.DECIMAL);
+			append(searchField);
 			
 			String [] imenu = new String[5];
 			imenu[0] = Locale.get("guisetupgui.UseIconMenu")/*Use icon menu*/;
@@ -120,7 +125,9 @@ public class GuiSetupGui extends Form implements CommandListener {
 		if (c == CMD_SAVE) {
 			try {
 				long mem=Long.parseLong(memField.getString());
+				int searchMax=Integer.parseInt(searchField.getString());
 				Configuration.setPhoneAllTimeMaxMemory(mem*1024);
+				Configuration.setSearchMax(searchMax);
 			} catch (NumberFormatException e) {
 				// nothing to do (igore content)
 			}

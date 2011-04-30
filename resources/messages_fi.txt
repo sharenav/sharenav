@@ -721,3 +721,4 @@ guidiscover.SearchWords=Etsi sanoilla
 guidiscover.SearchStyle=Etsintätapa
 guisearch.pound=_#loppu
 guisearch.poundnowordsearch=#loppu
+guisetupgui.DefineMaxSearch=Hakutulosten maksimi
