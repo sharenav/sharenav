@@ -167,7 +167,7 @@ public class CalcNearBy {
 			return 0;
 		}
 		if (nearestWay != null) {
-			return nearestWay.id;
+			return nearestway.id;
 		}				
 		return (long) 0;
 	}
@@ -259,9 +259,11 @@ public class CalcNearBy {
 						w.houseNumberAdd(n);
 					}
 				} else {
-					System.out.println("Warning: ignoring map data: way id: " + way + " node: "
-							   + n + " n.__wayid: " + n.getAttribute("__wayd"));
-					ignoreCount++;
+					if (way == 0) {
+						System.out.println("Warning: ignoring map housenumber data: node: "
+								   + n + " result from calcWayForHouseNumber: " + way);
+						ignoreCount++;
+					}
 				}
 			}
 		}		
