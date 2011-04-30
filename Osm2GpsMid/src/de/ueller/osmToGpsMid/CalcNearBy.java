@@ -28,6 +28,9 @@ public class CalcNearBy {
 
 	private static KDTree nearByWays;
 
+	private int exactCount = 0;
+	private int heuristicCount = 0;
+
 	public CalcNearBy(OsmParser parser) {
 		KDTree nearByElements = getNearByElements(parser);
 		if (Configuration.getConfiguration().useHouseNumbers) {
@@ -122,6 +125,7 @@ public class CalcNearBy {
 					//System.out.println ("trying to match addr:street, comparing " + streetName + " to " + otherName);
 					if (streetName.equalsIgnoreCase(otherName)) {
 						nearestWay = other;
+						exactCount++;
 						break;
 					}
 				}
@@ -146,14 +150,15 @@ public class CalcNearBy {
 					//we can stop at the first found plus some (to match for street name)
 					// FIXME add calculation for real distance to street
 					nearestWay = (Node) other;
+					break;
 				}
-				//if (nearestWay != null) {
+				if (nearestWay != null) {
+					heuristicCount++;
 					//found a suitable Way, leaving loop
-				//	System.out.println ("decided a match for node " + n
-				//			    + " streetName: " + nearestWay);
-					//break;
-				//}
-				//maxDistanceTested = dist;
+					//System.out.println ("decided a match for node " + n
+					//	    + " streetName: " + nearestWay);
+					maxDistanceTested = dist;
+				}
 			}
 		} catch (KeySizeException e) {
 			// Something must have gone horribly wrong here,
@@ -254,11 +259,15 @@ public class CalcNearBy {
 						w.houseNumberAdd(n);
 					}
 				} else {
+					System.out.println("Warning: ignoring map data: way id: " + way + " node: "
+							   + n + " n.__wayid: " + n.getAttribute("__wayd"));
 					ignoreCount++;
 				}
 			}
 		}		
 		System.out.println("info: accepted " + count + " non-relation housenumber-to-street connections");
+		System.out.println("info:  " + exactCount + " exact matches");
+		System.out.println("info:  " + heuristicCount + " heuristic matches (housenumbers without addr:street or addr:street not found)");
 		System.out.println("info: ignored " + ignoreCount + " non-relation housenumber-to-street connections");
 	}
 
