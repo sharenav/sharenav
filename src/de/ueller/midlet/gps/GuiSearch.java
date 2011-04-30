@@ -574,10 +574,17 @@ public class GuiSearch extends Canvas implements CommandListener,
 					}
 					//#endif
 					//System.out.println ("MatchMode: " + matchMode());
+					//System.out.println ("insertresults name: " + name);
+					// FIXME repeating code, combine
+					// avoid string index out of bound
+					int len = searchCanon.length();
+					if (name != null && name.length() < len) {
+						len = name.length();
+					}
 					if (Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ||
 					    matchMode() ||
-					    !searchAlpha || name == null || searchCanon.toString().equalsIgnoreCase(
-						    name.substring(0, searchCanon.toString().length()))) {
+					    !searchAlpha || name == null ||
+					    searchCanon.toString().equalsIgnoreCase(name.substring(0, len))) {
 						//#if polish.api.bigsearch
 						// match multiword search or housenumber search
 						//System.out.println ("MatchMode: " + matchMode() + " matchSources: " + matchSources);
@@ -1507,10 +1514,18 @@ public class GuiSearch extends Canvas implements CommandListener,
 		logger.debug(Locale.get("guisearch.matchingnamefound")/*Found matching name: */ + srNew);
 
 		//System.out.println ("addResult: resultid = " + srNew.resultid + " source: " + srNew.source + " name: " + name);
+		// FIXME repeating code
+		// avoid index out of bounds 
+		int len = searchCanon.length();
+		//System.out.println ("name: " + name);
+		//System.out.println ("parent.getName: " + parent.getName(srNew.nameIdx));
+		if (name != null && name.length() < len) {
+			len = name.length();
+		}
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ||
 		    matchMode() ||
-		    !searchAlpha || name == null || searchCanon.toString().equalsIgnoreCase(
-			    name.substring(0, searchCanon.toString().length()))) {
+		    !searchAlpha || name == null ||
+		    searchCanon.toString().equalsIgnoreCase(name.substring(0, len))) {
 			if (!sortByDist) {
 				result2.addElement(srNew);
 			} else {
