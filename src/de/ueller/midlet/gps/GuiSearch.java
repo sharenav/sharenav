@@ -575,6 +575,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 					//#endif
 					//System.out.println ("MatchMode: " + matchMode());
 					//System.out.println ("insertresults name: " + name);
+					//System.out.println ("parent.getName: " + parent.getName(res.nameIdx));
 					// FIXME repeating code, combine
 					// avoid string index out of bound
 					int len = searchCanon.length();
@@ -700,7 +701,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 			if (img != null)
 				gc.drawImage(img, 8, yc + fontSize / 2 - 1, Graphics.VCENTER | Graphics.HCENTER);
 			String name = null;
-			if (state != STATE_FAVORITES) {
+			if (state != STATE_FAVORITES || sr.source != SearchNames.INDEX_WAYPOINTS) {
 				name = flags + getName(sr.nameIdx);
 			} else {
 				if (wayPts.length > sr.nameIdx) {
@@ -967,8 +968,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 				for (int i = 0; i < slen ; i++) {
 					searchCanon.insert(carret++, (char) words.charAt(i));
 				}
-				System.out.println("Searchcanon tostring: " + searchCanon.toString());
-				System.out.println("Searchcanon length: " + searchCanon.length());
+				//System.out.println("Searchcanon tostring: " + searchCanon.toString());
+				//System.out.println("Searchcanon length: " + searchCanon.length());
 				words = "";
 				carret = slen;
 				spacePressed = false;
