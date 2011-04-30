@@ -7,6 +7,9 @@ import de.ueller.osmToGpsMid.model.Entity;
 import de.ueller.osmToGpsMid.model.Node;
 import de.ueller.osmToGpsMid.model.Way;
 
+import de.ueller.osmToGpsMid.Configuration;
+
+
 /**
  * @author hmueller
  *
@@ -45,7 +48,9 @@ public class Name {
 					if (other.nearBy == e.nearBy){
 						if (debug)
 							System.out.println("dont add " +e + " because simular element exists");
-						return;
+						if (!Configuration.getConfiguration().useHouseNumbers) {
+							return;
+						}
 					}
 				}
 			}
