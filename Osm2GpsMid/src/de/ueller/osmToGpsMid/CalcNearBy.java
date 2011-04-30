@@ -380,7 +380,7 @@ public class CalcNearBy {
 					//n.setAttribute("name", w.getName());
 					// is this needed? probably not
 					//n2.cloneTags(w);
-					System.out.println("way " +  w.getName() + " converted into node: " + n2 + " for way matching");
+					//System.out.println("way " +  w.getName() + " converted into node: " + n2 + " for way matching");
 					if (!n2.containsKey("__wayname")) {
 						n2.setAttribute("__wayname", w.getName());
 					}
