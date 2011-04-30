@@ -701,7 +701,11 @@ public class GuiSearch extends Canvas implements CommandListener,
 			if (img != null)
 				gc.drawImage(img, 8, yc + fontSize / 2 - 1, Graphics.VCENTER | Graphics.HCENTER);
 			String name = null;
+			//#if polish.api.bigsearch
 			if (state != STATE_FAVORITES || sr.source != SearchNames.INDEX_WAYPOINTS) {
+			//#else
+			if (state != STATE_FAVORITES) {
+			//#endif
 				name = flags + getName(sr.nameIdx);
 			} else {
 				if (wayPts.length > sr.nameIdx) {
