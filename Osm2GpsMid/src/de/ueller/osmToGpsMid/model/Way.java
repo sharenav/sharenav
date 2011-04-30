@@ -197,9 +197,9 @@ public class Way extends Entity implements Comparable<Way> {
 		return (containsKey("bridge"));
 	}
 
-	//public boolean hasHouseNumber() {
-	//	return (containsKey("addr:housenumber"));
-	//}
+	public boolean hasHouseNumber() {
+		return housenumber != null;
+	}
 
 	public boolean isDamaged() {
 		Vector<Damage> damages = LegendParser.getDamages();

@@ -48,7 +48,12 @@ public class Name {
 					if (other.nearBy == e.nearBy){
 						if (debug)
 							System.out.println("dont add " +e + " because simular element exists");
-						if (!Configuration.getConfiguration().useHouseNumbers) {
+						Way o = (Way) other;
+						if (Configuration.getConfiguration().useHouseNumbers
+						    && o.hasHouseNumber()) {
+							System.out.println("info: keeping way " + e
+								+ " for housenumber matching ");
+						} else {
 							return;
 						}
 					}
