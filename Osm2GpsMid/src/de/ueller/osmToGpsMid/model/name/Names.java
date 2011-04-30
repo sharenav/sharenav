@@ -89,8 +89,8 @@ public class Names {
 			//System.out.println("Way add gave redirect " + redirect);
 			if (redirect != (long) 0) {
 				Way way = (Way) w;
-				System.out.println("Will do way redirect from id " + way.id
-						   + " to id " + redirect);
+				//System.out.println("Will do way redirect from id " + way.id
+				//		   + " to id " + redirect);
 				Long id = new Long (way.id);
 				Long target = new Long (redirect);
 				wayRedirect.put(id, target);
@@ -158,6 +158,7 @@ public class Names {
 		}
 		// add to housenumber index
 		if (houseNumber || allAddrTags) {
+			//System.out.println("Entity: " + w);
 			for (String word : housenumbers) {
 				//System.out.println("Word: " + word);
 				if (word.length() == 0) {
