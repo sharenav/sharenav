@@ -285,7 +285,12 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 		relevantKeys.add("place");
 		relevantKeys.add("area");
 		relevantKeys.add("layer");
-		
+		// FIXME: switch this on a flag, if true, index all
+		// nodes with addr:housenumber, regardless of whether there's a housenumberindex element
+		if (config.useHouseNumbers) {
+			relevantKeys.add("addr:housenumber");
+			relevantKeys.add("addr:street");
+		}
 		//relevantKeys.add("barrier");
 		//relevantKeys.add("direction");
 		//relevantKeys.add("crossing");
