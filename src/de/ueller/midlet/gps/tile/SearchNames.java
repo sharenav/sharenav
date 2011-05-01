@@ -36,11 +36,8 @@ public class SearchNames implements Runnable {
 	private volatile static int indexType;
 	private volatile static boolean noWaypointSearch = false;
 
-        //#if polish.api.bigsearch
-	private static final int SEARCH_MAX_COUNT = 500;
-	//#else
-	private static final int SEARCH_MAX_COUNT = 50;
-	//#endif
+	private int SEARCH_MAX_COUNT = Configuration.getSearchMax();
+
 	public static final int INDEX_NAME = 0;
 	public static final int INDEX_WORD = 1;
 	public static final int INDEX_WHOLEWORD = 2;
@@ -351,6 +348,8 @@ public class SearchNames implements Runnable {
 						if (gui.addResult(sr)) {
 							foundEntries++;
 							if (foundEntries > SEARCH_MAX_COUNT) {
+								// FIXME should announce this to user to tell search is not working instead
+								// of silently not showing results
 								//#debug info
 								logger.info("Found SEARCH_MAX_COUNT entries. That's enough, stopping further search");
 								ds.close();

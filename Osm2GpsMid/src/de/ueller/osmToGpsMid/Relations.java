@@ -42,6 +42,7 @@ public class Relations {
 	
 
 	public Relations(OsmParser parser, Configuration conf) {
+		System.out.println("Triangulating relations");
 		this.parser = parser;
 		this.conf = conf;
 		processRelations();
@@ -59,9 +60,11 @@ public class Relations {
 	 * 
 	 */
 	private void processRelations() {
-		int relationCount = 0;
+		int validRelationCount = 0;
+		int invalidRelationCount = 0;
 		int houseNumberCount = 0;
 		int houseNumberRelationAcceptCount = 0;
+		int houseNumberRelationProblemCount = 0;
 		int houseNumberRelationIgnoreCount = 0;
 		HashMap<Long, Way> wayHashMap = parser.getWayHashMap();
 		Map<Long, Node> nodeHashMap = parser.getNodeHashMap();
@@ -73,11 +76,11 @@ public class Relations {
 			Relation r = i.next();
 //			System.out.println("check relation " + r + "is valid()=" + r.isValid() );
 			if (r.isValid()) {
-//				if (relationCount % 10 == 0) {
-//					System.out.println("info: handled " + relationCount + " relations");
+//				if (validRelationCount % 10 == 0) {
+//					System.out.println("info: handled " + validRelationCount + " relations");
 //					System.out.println("info: currently handling relation type " + r.getAttribute("type"));
 //				}
-				relationCount++;
+				validRelationCount++;
 				String tagType = r.getAttribute("type");
 				String tagValue = r.getAttribute(tagType);
 				if (tagType != null && conf.getRelationExpansions().get(tagType + "=" + tagValue) != null
@@ -137,13 +140,20 @@ public class Relations {
 				} else if (conf.useHouseNumbers && ("associatedStreet".equals(r.getAttribute("type")) ||
 											 "street".equals(r.getAttribute("type")))) {
 					//System.out.println("Handling housenumber relation " + r.toUrl());
+					int wayCount = 0;
 					for (Long ref : r.getWayIds(Member.ROLE_STREET)) {
+						wayCount++;
+						// should only need to be stored for one way due to way match rewriting
+						if (wayCount > 1) {
+							break;
+						}
 						Way w = wayHashMap.get(ref);
 						for (Long noderef : r.getNodeIds(Member.ROLE_HOUSE)) {
 							Node n = nodeHashMap.get(noderef);
 							w.houseNumberAdd(n);
 							// add tag to point from
 							//  System.out.println("setting node " + n + " __wayid to " + w.id);
+							houseNumberCount++;
 							n.setAttribute("__wayid", w.id.toString());
 							//System.out.println("Housenumber relation " + r.toUrl() + " - added node " + );
 						}
@@ -167,6 +177,7 @@ public class Relations {
 									parser.addNode(n);
 								}
 							} else {
+								houseNumberRelationProblemCount++;
 								System.out.println("Warning: ignoring map data: could not get midpoint for housenumber area (typically building)" + housew);
 							}
 						}
@@ -273,8 +284,11 @@ public class Relations {
 				
 					i.remove();
 				}
-			} else { // r.isValid()
-				if (conf.useHouseNumbers && ("associatedStreet".equals(r.getAttribute("type")))) {
+			} else { // ! r.isValid()
+				invalidRelationCount++;
+				System.out.println("Relation not valid: " + r);
+				if (conf.useHouseNumbers && ("associatedStreet".equals(r.getAttribute("type"))
+							     || "street".equals(r.getAttribute("type")))) {
 					houseNumberRelationIgnoreCount++;
 				}
 			}
@@ -297,10 +311,12 @@ public class Relations {
 		}
 		
 		//parser.resize();
-		System.out.println("info: processed " + relationCount + " relations");
+		System.out.println("info: processed " + validRelationCount + " valid relations");
+		System.out.println("info: ignored " + invalidRelationCount + " non-valid relations");
 		System.out.println("info: accepted " + houseNumberCount + " housenumber-to-street connections from associatedStreet relations");
 		System.out.println("info: ignored " + houseNumberRelationIgnoreCount + " associatedStreet (housenumber) relations");
-		System.out.println("info: processed " + houseNumberRelationAcceptCount + " associatedStreet (housenumber) relations");
+		System.out.println("info: processed " + houseNumberRelationAcceptCount + " associatedStreet (housenumber) relations"
+			+ ", of which " +  houseNumberRelationProblemCount + " had problems");
 	}
 
 	/**

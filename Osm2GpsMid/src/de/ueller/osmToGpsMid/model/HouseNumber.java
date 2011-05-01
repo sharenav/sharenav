@@ -13,13 +13,11 @@
 package de.ueller.osmToGpsMid.model;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 
 public class HouseNumber {
-	private List<Node> nodeList = new ArrayList<Node>();
+	private List<Node> nodeList = new ArrayList<Node>(1);
 	
 	public HouseNumber() {
 		super();

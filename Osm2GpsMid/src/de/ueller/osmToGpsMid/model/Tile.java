@@ -92,7 +92,7 @@ public class Tile {
 		this.zl = zl;
 	}
 
-	public Tile(byte zl, LinkedList<Way> ways, Collection<Node> nodes) {
+	public Tile(byte zl, ArrayList<Way> ways, Collection<Node> nodes) {
 		this.zl = zl;
 		this.ways = ways;
 		this.nodes = nodes;
@@ -100,6 +100,29 @@ public class Tile {
 
 	public Tile(Bounds b) {
 		bounds = b.clone();		
+	}
+
+	public void dissolveTileReferences() {
+		if ( ways!=null)
+			ways.clear();
+		if (nodes!=null)
+			nodes.clear();
+		if (routeNodes!=null)
+			routeNodes.clear();
+		ways = null;
+		nodes = null;
+		routeNodes = null;
+		bounds = null;
+
+		if ( t1 != null )	{
+			t1.dissolveTileReferences();
+			t1=null;
+		}
+
+		if ( t2 != null )	{
+			t2.dissolveTileReferences();
+			t2=null;
+		}
 	}
 	
 	/** Writes the dictionary file(s) for this tile. Walks down the tile tree to do this.
@@ -227,14 +250,17 @@ public class Tile {
     public Bounds recalcBounds() {
     	Bounds b1 = null;
     	Bounds b2 = null;
-    	Bounds ret = bounds.clone();	    	
+
     	if (type == TYPE_MAP || type == TYPE_ROUTEDATA) {
     		/**
     		 * This is a leaf of the tile tree and should have correct bounds
     		 * anyway, so don't update and return the current bounds
     		 */
-    		return ret;
-    	}	    	
+			return bounds;
+		}
+
+		Bounds ret = bounds.clone();
+
 		if (t1 != null && (t1.type != TYPE_EMPTY)) {								
 			b1 = t1.recalcBounds();				
 			ret = b1.clone();				
@@ -523,7 +549,7 @@ public class Tile {
 							}
 							turnWrite = turnWrite.nextTurnRestrictionAtThisNode;
 						}
-						connected2 = n.connected.size();
+						connected2 = n.getConnected().length;
 						if (hasTurnRestriction) {
 							// Write indicator that this route node has turn restrictions attached
 							connected2 |= RouteNode.CS_FLAG_HASTURNRESTRICTIONS;
@@ -535,7 +561,7 @@ public class Tile {
 						nds.writeByte((byte) connected2);					
 		
 						byte routeNodeWayFlags = 0;
-						for (Connection c : n.connected) {
+						for (Connection c : n.getConnected()) {
 							minConnectionId ++;
 							routeNodeWayFlags |= c.connTravelModes;
 							cds.writeInt(c.to.id);

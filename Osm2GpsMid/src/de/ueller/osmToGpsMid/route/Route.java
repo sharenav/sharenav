@@ -34,15 +34,12 @@ import java.util.zip.GZIPInputStream;
 
 import javax.swing.JFrame;
 
-import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.MapMarkerDot;
 import org.openstreetmap.gui.jmapviewer.MemoryTileCache;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 
 import de.ueller.osmToGpsMid.MyMath;
-import de.ueller.osmToGpsMid.area.Outline;
-import de.ueller.osmToGpsMid.area.Vertex;
 import de.ueller.osmToGpsMid.model.Node;
 
 

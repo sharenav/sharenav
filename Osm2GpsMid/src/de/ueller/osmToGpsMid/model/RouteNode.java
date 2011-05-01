@@ -8,16 +8,14 @@
  */
 package de.ueller.osmToGpsMid.model;
 
-import java.util.ArrayList;
-
 /**
  * @author hmueller
  *
  */
 public class RouteNode {
 	public Node node;
-	public ArrayList<Connection> connected=new ArrayList<Connection>();
-	public ArrayList<Connection> connectedFrom=new ArrayList<Connection>();
+	private Connection[] connected=new Connection[0];
+	private Connection[] connectedFrom=new Connection[0];
 	public int id;
 	
 	/* the upper flags of consize are used to indicate special informations about the node
@@ -36,6 +34,33 @@ public class RouteNode {
 	}
 	public String toString(){
 		return ("RouteNode id=" + id+"(" + node.renumberdId + ")");
+	}
+
+	public Connection[] getConnected() {
+		return connected;
+	}
+
+	public void addConnected(Connection connection) {
+		Connection[] newConnected = new Connection[connected.length+1];
+		for ( int i = 0; i < connected.length; i++)	{
+			newConnected[i]=connected[i];
+		}
+		newConnected[newConnected.length-1]=connection;
+		connected=newConnected;
+	}
+
+	public Connection[] getConnectedFrom() {
+		return connectedFrom;
+	}
+
+
+	public void addConnectedFrom(Connection connectionFrom) {
+		Connection[] newConnectedFrom = new Connection[connectedFrom.length+1];
+		for ( int i = 0; i < connectedFrom.length; i++)	{
+			newConnectedFrom[i]=connectedFrom[i];
+		}
+		newConnectedFrom[newConnectedFrom.length-1]=connectionFrom;
+		connectedFrom=newConnectedFrom;
 	}
 	
 	public boolean isOnMainStreetNet() {

@@ -1184,3 +1184,4 @@ guidiscover.SearchWords=Search for words
 guidiscover.SearchStyle=Search style
 guisearch.pound=_#end
 guisearch.poundNameSearch=#end
+guisetupgui.DefineMaxSearch=Max # of search results

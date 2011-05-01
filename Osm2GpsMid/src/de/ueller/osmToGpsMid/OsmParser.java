@@ -155,6 +155,7 @@ public abstract class OsmParser {
 		 * are used to indicate invalid type it seems.
 		 */
 		if (w.isValid() /* && t > 0 */) {
+			w.trimPath();
 			w.determineWayRouteModes();
 			if (ways.get(w.id) != null) {
 				/**
@@ -262,7 +263,6 @@ public abstract class OsmParser {
 	public void resize() {
 		//System.gc();
 		//System.out.println("Free memory: " + Runtime.getRuntime().freeMemory());
-		printMemoryUsage(1);
 		System.out.println("Resizing nodes HashMap");
 		if (nodes == null) {
 			nodes2 = new Vector<Node>(nodes2);

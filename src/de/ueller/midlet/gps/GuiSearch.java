@@ -9,6 +9,7 @@ package de.ueller.midlet.gps;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
+import java.lang.Integer;
 //#if polish.api.bigsearch
 import java.util.Hashtable;
 //import java.util.Enumeration;
@@ -98,7 +99,6 @@ public class GuiSearch extends Canvas implements CommandListener,
 	private Vector result2 = new Vector();
 
 	private int carret=0;
-	private int isearchStart = 0;
 
 	private int cursor=0;
 	
@@ -116,6 +116,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 	public int displayReductionLevel = 0;
 	
 	private volatile TimerTask timerT;
+	private volatile TimerTask housenumberTimerTask = null;
 	private volatile Timer timer;
 	
 	private boolean hideKeypad = false;
@@ -546,7 +547,6 @@ public class GuiSearch extends Canvas implements CommandListener,
 	private void nextWord() {
 		words = words + searchCanon.toString() + " ";
 		searchCanon.setLength(0);
-		isearchStart = carret;
 		carret = 0;
 		spacePressed = false;
 	}
@@ -574,12 +574,20 @@ public class GuiSearch extends Canvas implements CommandListener,
 					}
 					//#endif
 					//System.out.println ("MatchMode: " + matchMode());
+					//System.out.println ("insertresults name: " + name);
+					//System.out.println ("parent.getName: " + parent.getName(res.nameIdx));
+					// FIXME repeating code, combine
+					// avoid string index out of bound
+					int len = searchCanon.length();
+					if (name != null && name.length() < len) {
+						len = name.length();
+					}
 					if (Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ||
 					    matchMode() ||
-					    !searchAlpha || name == null || searchCanon.toString().equalsIgnoreCase(
-						    name.substring(0, searchCanon.toString().length()))) {
+					    !searchAlpha || name == null ||
+					    searchCanon.toString().equalsIgnoreCase(name.substring(0, len))) {
 						//#if polish.api.bigsearch
-						// match multiword search or hosuenumber search
+						// match multiword search or housenumber search
 						//System.out.println ("MatchMode: " + matchMode() + " matchSources: " + matchSources);
 						if (matchMode() && matchSources != null) {
 							if (matchSources.get(id) != null) {
@@ -693,7 +701,11 @@ public class GuiSearch extends Canvas implements CommandListener,
 			if (img != null)
 				gc.drawImage(img, 8, yc + fontSize / 2 - 1, Graphics.VCENTER | Graphics.HCENTER);
 			String name = null;
+			//#if polish.api.bigsearch
+			if (state != STATE_FAVORITES || sr.source != SearchNames.INDEX_WAYPOINTS) {
+			//#else
 			if (state != STATE_FAVORITES) {
+			//#endif
 				name = flags + getName(sr.nameIdx);
 			} else {
 				if (wayPts.length > sr.nameIdx) {
@@ -854,8 +866,6 @@ public class GuiSearch extends Canvas implements CommandListener,
 					spacePressed = true;
 					return;
 				} else {
-					// set match mode
-					words = words + " ";
 					//#if polish.api.bigsearch
 					storeMatches();
 					nextWord();
@@ -954,6 +964,21 @@ public class GuiSearch extends Canvas implements CommandListener,
 			
 			if (carret > 0){
 				searchCanon.deleteCharAt(--carret);
+			} else if (matchMode()) {
+				// FIXME in multi-word search should also handle situation with more than two words
+			        // by redoing the word searches
+				int slen = words.length()-1;
+				searchCanon.setLength(0);
+				for (int i = 0; i < slen ; i++) {
+					searchCanon.insert(carret++, (char) words.charAt(i));
+				}
+				//System.out.println("Searchcanon tostring: " + searchCanon.toString());
+				//System.out.println("Searchcanon length: " + searchCanon.length());
+				words = "";
+				carret = slen;
+				spacePressed = false;
+				result.removeAllElements();
+				reSearch();
 			}
 		} else if (keyCode == -111) {
 			/**
@@ -969,6 +994,56 @@ public class GuiSearch extends Canvas implements CommandListener,
 			}
 		}
 		//#if polish.api.bigsearch
+		if (housenumberTimerTask != null) {
+			housenumberTimerTask.cancel();
+			housenumberTimerTask = null;
+		}
+		if (housenumberTimerTask == null) {
+			housenumberTimerTask = new TimerTask() {
+				public void run() {
+					if (matchMode()) {
+						//System.out.println("housenumber timer fired");
+						searchThread.appendSearchBlocking(NumberCanon.canonial(searchCanon.toString()),
+										  SearchNames.INDEX_HOUSENUMBER);
+						insertResults();
+						boolean matchall = true;
+						int limit = 0;
+						if (matchall && searchCanon.toString().length() == 1) {
+							limit = 10;
+							// uncomment the following two lines to test showing all numbers for streetname
+							// FIXME names will be missing however from the list, but will show an idea
+							// of the performance
+						//
+						} else if (matchall && searchCanon.toString().length() == 0) {
+							limit = 100;
+						}
+						for (int i = 0; i < limit; i++) {
+							String ss = searchCanon.toString();
+							if (limit > 1) {
+								ss = ss + Integer.toString(i);
+							}
+							//System.out.println("search for: " + ss);
+
+							searchThread.appendSearchBlocking(NumberCanon.canonial(ss),
+											  SearchNames.INDEX_HOUSENUMBER);
+							insertResults();
+						}
+						//searchThread.appendSearchBlocking(NumberCanon.canonial(ss),
+						// SearchNames.INDEX_WHOLEWORD);
+						// insert new results from search thread 
+					}
+				}
+			};
+		}
+		if (matchMode() && housenumberTimerTask != null) {
+			try {
+				//System.out.println("scheduling housenumber timer");
+				GpsMid.getTimer().schedule(housenumberTimerTask, 1500);
+			} catch (Exception e) {
+				logger.exception("Failed to initialize GuiSearch housenumber search timer", e);
+			}
+		}
+		
 		if (searchCanon.length() > 1 || matchMode()) {
 			state = STATE_MAIN;
 			reSearch();
@@ -1175,7 +1250,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 					keyPressed('0');
 				} else if (touchedElementId == GuiSearchLayout.KEY_STAR) {
 					keyPressed(KEY_STAR);
-				} else if (touchedElementId == GuiSearchLayout.KEY_POUND) {
+				} else if (touchedElementId == GuiSearchLayout.KEY_POUND || touchedElementId == GuiSearchLayout.KEY_SORT) {
 					keyPressed(KEY_POUND);
 				} else if (touchedElementId == GuiSearchLayout.KEY_BACKSPACE) {
 					keyPressed(8);
@@ -1457,10 +1532,18 @@ public class GuiSearch extends Canvas implements CommandListener,
 		logger.debug(Locale.get("guisearch.matchingnamefound")/*Found matching name: */ + srNew);
 
 		//System.out.println ("addResult: resultid = " + srNew.resultid + " source: " + srNew.source + " name: " + name);
+		// FIXME repeating code
+		// avoid index out of bounds 
+		int len = searchCanon.length();
+		//System.out.println ("name: " + name);
+		//System.out.println ("parent.getName: " + parent.getName(srNew.nameIdx));
+		if (name != null && name.length() < len) {
+			len = name.length();
+		}
 		if (Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ||
 		    matchMode() ||
-		    !searchAlpha || name == null || searchCanon.toString().equalsIgnoreCase(
-			    name.substring(0, searchCanon.toString().length()))) {
+		    !searchAlpha || name == null ||
+		    searchCanon.toString().equalsIgnoreCase(name.substring(0, len))) {
 			if (!sortByDist) {
 				result2.addElement(srNew);
 			} else {

@@ -7,6 +7,9 @@ import de.ueller.osmToGpsMid.model.Entity;
 import de.ueller.osmToGpsMid.model.Node;
 import de.ueller.osmToGpsMid.model.Way;
 
+import de.ueller.osmToGpsMid.Configuration;
+
+
 /**
  * @author hmueller
  *
@@ -33,11 +36,11 @@ public class Name {
 		setName(name);
 	}
 	
-	public void addEntity(Entity e){
+	public long addEntity(Entity e){
 		if(entitys.contains(e)){
 			if (debug)
 				System.out.println("dont add " +e + " because this element exists");
-			return;
+			return (long) 0;
 		}
 		if (name.equals(e.getName())){
 			if (e instanceof Way) {
@@ -45,7 +48,14 @@ public class Name {
 					if (other.nearBy == e.nearBy){
 						if (debug)
 							System.out.println("dont add " +e + " because simular element exists");
-						return;
+						if (Configuration.getConfiguration().useHouseNumbers) {
+							// tell we need wayredirect
+							Way o = (Way) other;
+							//System.out.println("We need wayredirect, e.id: "
+							//		   + ((Way)e).getId() + " o.id: " + o.getId());
+							return o.getId();
+						}
+						return (long) 0;
 					}
 				}
 			}
@@ -53,6 +63,7 @@ public class Name {
 		if (debug)
 			System.out.println("add " +e);
 		entitys.add(e);
+		return (long) 0;
 	}
 	
 //	private String normalizeName(){
