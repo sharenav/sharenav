@@ -279,13 +279,19 @@ public class Node extends Entity {
 			return false;
 		}
 		type = poi.typeNum;
-		String value = w.getAttribute(poi.nameKey);
-		if (value != null) {
-			setAttribute(poi.nameKey, value);
-		}
-		value = w.getAttribute(poi.nameFallbackKey);
-		if (value != null) {
-			setAttribute(poi.nameFallbackKey, value);
+		//String value = w.getAttribute(poi.nameKey);
+		//if (value != null) {
+		//	setAttribute(poi.nameKey, value);
+		//}
+		//value = w.getAttribute(poi.nameFallbackKey);
+		//if (value != null) {
+		//	setAttribute(poi.nameFallbackKey, value);
+		//}
+		// FIXME could save some memory by copying only needed tags (namekey, fallback, addr:street)
+		for (String t : w.getTags()) {
+			if (w.containsKey(t)) {
+				setAttribute(t, w.getAttribute(t));
+			}
 		}
 		return true;
 	}
