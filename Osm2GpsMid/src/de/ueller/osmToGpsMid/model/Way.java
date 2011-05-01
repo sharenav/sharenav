@@ -485,19 +485,16 @@ public class Way extends Entity implements Comparable<Way> {
 	}
 
 	public Bounds getBounds() {
-		//if (bound == null)
-		Bounds bound;
-		{
-			bound = new Bounds();
-			if (triangles != null && triangles.size() > 0) {
-				for (Triangle t : triangles) {
-					bound.extend(t.getVert()[0].getLat(), t.getVert()[0].getLon());
-					bound.extend(t.getVert()[1].getLat(), t.getVert()[1].getLon());
-					bound.extend(t.getVert()[2].getLat(), t.getVert()[2].getLon());
-				}
-			} else {
-				path.extendBounds(bound);
+		// always calculate current bounds
+		Bounds bound = new Bounds();
+		if (triangles != null && triangles.size() > 0) {
+			for (Triangle t : triangles) {
+				bound.extend(t.getVert()[0].getLat(), t.getVert()[0].getLon());
+				bound.extend(t.getVert()[1].getLat(), t.getVert()[1].getLon());
+				bound.extend(t.getVert()[2].getLat(), t.getVert()[2].getLon());
 			}
+		} else {
+			path.extendBounds(bound);
 		}
 		return bound;
 	}

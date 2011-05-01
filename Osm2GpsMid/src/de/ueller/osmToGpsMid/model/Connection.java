@@ -19,7 +19,6 @@ public class Connection {
 	public RouteNode to;
 	// only for debuging
 	public RouteNode from;
-	//public int used=0;
 	public byte startBearing=0;
 	public byte endBearing=0;
 	public byte connTravelModes=0;

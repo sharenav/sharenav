@@ -16,12 +16,11 @@ public class Entity extends SmallArrayMap<String,String> {
 	 */
 	//public Long	id;
 	public Node nearBy;	
+
 	/**
 	 * The tags for this object  
 	 * Key: String  Value: String
-	 */
-	//private Map<String,String> tags;
-	
+	 */	
 	public Entity() {
 	}
 

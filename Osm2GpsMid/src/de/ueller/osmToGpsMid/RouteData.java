@@ -40,7 +40,6 @@ public class RouteData {
 	private OsmParser parser;
 	private String path;
 	public Map<Long, RouteNode> nodes = new HashMap<Long, RouteNode>();
-	//public ArrayList<Connection> connections = new ArrayList<Connection>();
 
 	public RouteData(OsmParser parser, String path) {
 		super();
@@ -424,7 +423,6 @@ public class RouteData {
 			cr.from = to;
 			to.addConnected(cr);
 			from.addConnectedFrom(cr);
-			//connections.add(cr);
 
 			// flag connections useable for travel modes you can go against the ways direction
 			cr.connTravelModes = againstDirectionTravelModes;
@@ -440,7 +438,6 @@ public class RouteData {
 		}
 		// need only for debugging not for live
 		c.from = from;
-		//connections.add(c);
 		
 	}
 	

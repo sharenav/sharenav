@@ -14,8 +14,6 @@ package de.ueller.osmToGpsMid.model;
  */
 public class RouteNode {
 	public Node node;
-	//public ArrayList<Connection> connected=new ArrayList<Connection>(1);
-	//public ArrayList<Connection> connectedFrom=new ArrayList<Connection>(1);
 	private Connection[] connected=new Connection[0];
 	private Connection[] connectedFrom=new Connection[0];
 	public int id;

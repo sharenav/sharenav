@@ -100,7 +100,6 @@ public class CreateGpsMidData implements FilenameFilter {
 	long outputLengthConns = 0;
 	
 	private final String path;
-	//TreeSet<MapName> names;
 	Names names1;
 	Urls urls1;
 	StringBuffer sbCopiedMedias = new StringBuffer();
@@ -1250,8 +1249,9 @@ public class CreateGpsMidData implements FilenameFilter {
 				Way w1 = wi.next();
 				w1.used = true;
 				// triangles can be cleared but not set to null because of SearchList.java
-				if ( w1.triangles != null )
+				if ( w1.triangles != null ) {
 					w1.triangles.clear();
+				}
 			}
 		} else {
 			t.bounds = tileBound.clone();

@@ -18,7 +18,6 @@ import java.util.List;
 
 
 public class Path extends ArrayList<Node> {
-	//private List<Node> nodeList = new ArrayList<Node>(2);
 	
 	public Path() {
 		super(2);
@@ -26,7 +25,6 @@ public class Path extends ArrayList<Node> {
 	
 	public Path(ArrayList<Node> newNodeList) {
 		super(newNodeList);
-		//nodeList = newNodeList;
 	}
 
 	public boolean add(Node n) {
