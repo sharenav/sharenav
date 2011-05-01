@@ -413,7 +413,8 @@ public class CalcNearBy {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (KeyDuplicateException e) {
-					System.out.println("Warning: KeyDuplication bug at housenumber handling " + n.toUrl());
+					// can be safely ignored
+					//System.out.println("Warning: KeyDuplication bug at housenumber handling " + n.toUrl());
 				}				
 			}
 		}
