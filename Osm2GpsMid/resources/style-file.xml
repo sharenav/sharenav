@@ -1013,7 +1013,7 @@ in the main index as well as in housenumber index.
 		<image src="mark.png"/>
 		<namekey tag="addr:housenumber"/>	
 		<namefallback tag="*"/>	
-		<housenumberindex index="true"/>
+		<housenumberindex index="true" matchtag="addr:street"/>
 		<helpertag tag="addr:street"/>
 		<scale scale="26"/>
 		<textscale scale="27"/>
@@ -1074,7 +1074,7 @@ in the main index as well as in housenumber index.
 		<image src="mark.png"/>
 		<namekey tag = "name"/>  				
 		<namefallback tag = "addr:housenumber"/>
-		<housenumberindex index="true"/>
+		<housenumberindex index="true" matchtag="addr:street"/>
 		<helpertag tag="addr:street"/>
 		<AreaPOI createForAreas="true"/>
 		<scale scale="26"/>
@@ -1091,7 +1091,7 @@ in the main index as well as in housenumber index.
 		<image src="mark.png"/>
 		<namekey tag = "*"/>  				
 		<namefallback tag = "addr:housenumber"/>
-		<housenumberindex index="true"/>
+		<housenumberindex index="true" matchtag="addr:street"/>
 		<helpertag tag="addr:street"/>
 		<AreaPOI createForAreas="true"/>
 		<scale scale="26"/>

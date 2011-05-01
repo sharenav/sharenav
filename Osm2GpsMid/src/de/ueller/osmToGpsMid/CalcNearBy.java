@@ -17,6 +17,8 @@ import java.util.HashMap;
 import de.ueller.osmToGpsMid.model.Entity;
 import de.ueller.osmToGpsMid.model.Node;
 import de.ueller.osmToGpsMid.model.Way;
+import de.ueller.osmToGpsMid.model.POIdescription;
+import de.ueller.osmToGpsMid.model.WayDescription;
 import edu.wlu.cs.levy.CG.KDTree;
 import edu.wlu.cs.levy.CG.KeyDuplicateException;
 import edu.wlu.cs.levy.CG.KeySizeException;
@@ -90,7 +92,25 @@ public class CalcNearBy {
    }
 */
 	public long calcWayForHouseNumber(Entity n) {
-		String streetName = n.getAttribute("addr:street");
+		POIdescription poiDesc = null;
+		WayDescription wayDesc = null;
+		if (n instanceof Way) {
+			wayDesc = Configuration.getConfiguration().getWayDesc(((Way) n).getType(null));
+		} else {
+			poiDesc = Configuration.getConfiguration().getpoiDesc(((Node) n).getType(null));
+		}
+		//System.out.println("poidesc: " + poiDesc + " waydesc: " + wayDesc);
+		String streetNameAttr = "addr:street";
+		if (poiDesc != null && poiDesc.houseNumberMatchTag != null) {
+			streetNameAttr = poiDesc.houseNumberMatchTag;
+			//System.out.println("Streetnameattr: " + streetNameAttr);
+		}
+		if (wayDesc != null && wayDesc.houseNumberMatchTag != null) {
+			streetNameAttr = wayDesc.houseNumberMatchTag;
+			//System.out.println("Streetnameattr: " + streetNameAttr);
+		}
+		String streetName = n.getAttribute(streetNameAttr);
+		//System.out.println("Streetnameattr: " + streetNameAttr);
 		Node nearestWay = null;				
 		try {					
 			Node thisNode = null;

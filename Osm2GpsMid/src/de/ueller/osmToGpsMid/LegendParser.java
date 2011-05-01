@@ -213,6 +213,9 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 				relevantKeys.add(e.nameKey);
 				relevantKeys.add(e.nameFallbackKey);
 				relevantKeys.add(e.helperTag);
+				if (e.houseNumberMatchTag != null) {
+					relevantKeys.add(e.houseNumberMatchTag);
+				}
 				if (e.specialisation != null) {
 					for (ConditionTuple ct : e.specialisation) {
 						relevantKeys.add(ct.key);
@@ -224,6 +227,9 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 				relevantKeys.add(e.nameKey);
 				relevantKeys.add(e.nameFallbackKey);
 				relevantKeys.add(e.helperTag);
+				if (e.houseNumberMatchTag != null) {
+					relevantKeys.add(e.houseNumberMatchTag);
+				}
 				if (e.specialisation != null) {
 					for (ConditionTuple ct : e.specialisation) {
 						relevantKeys.add(ct.key);
@@ -396,6 +402,7 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 			}
 			if (qName.equals("housenumberindex")) {
 				currentPoi.houseNumberIndex = true;
+				currentPoi.houseNumberMatchTag = atts.getValue("matchtag");
 			}
 			if (qName.equals("namefallback")) {
 				currentPoi.nameFallbackKey = atts.getValue("tag");
@@ -523,6 +530,7 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 			}
 			if (qName.equals("housenumberindex")) {
 				currentWay.houseNumberIndex = true;
+				currentWay.houseNumberMatchTag = atts.getValue("matchtag");
 			}
 			if (qName.equals("scale")) {
 				try {
