@@ -1,15 +1,17 @@
     *** Housenumber search **
     - Housenumber search (streetname&housenumber) can be enabled by useHouseNumbers in .properties
       or checking the checkbox in the GUI
-    - Currently Osm2GpsMid can connect housenumbers to streets encoded in the map as
-      * associatedStreet relations (no support for interpolation though)
-      * addr:streetname
-      * streetname not encoded, then connection is made with heuristic,
-       i.e. matching to the nearest street (warning: the heuristic gives incorrect
-       results in many places)
-    - like multi-word search, housenumber search can require a bunch of memory and is
-      enabled only for "editing" and "full" (and "microemulator") targets.
     - to search, use the '#' key to end the street name or house number
+    - in multi-word search, also ' ' works to end the street name or house number
+    - Currently Osm2GpsMid can connect housenumbers to streets encoded in the map as
+      * associatedStreet relations (no support for interpolation yet)
+      * addr:street tagging
+      * nearest way: when addr:street is not in map data, connection is made with heuristic,
+        i.e. matching to the nearest named way
+    - support mainly for addr:housenumber and addr:street tagging, not for the Czech
+      scheme with is_in tags, though the code might partially work with a modified style file
+    - like multi-word search, housenumber search can require a bunch of memory.
+    - enabled only for "Generic/editing", "Generic/full" (and "Generic/microemulator") targets.
     *** Multi-word search ***
     - enable new feature multi-word search for build
       targets "microemulator", "editing" and "full"; it can require
