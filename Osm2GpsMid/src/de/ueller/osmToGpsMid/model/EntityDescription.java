@@ -20,6 +20,7 @@ public class EntityDescription {
 	public String	nameKey;
 	public String	nameFallbackKey;
 	public String	helperTag;
+	public String	houseNumberMatchTag;
 	public byte		rulePriority;
 	public String	searchIcon;
 	public int		minEntityScale;
@@ -28,6 +29,8 @@ public class EntityDescription {
 	public boolean	houseNumberIndex;
 	
 	public String toString() {
-		return "Desc: " + description + "; " + key + "=" + value + " nametag: " + nameKey + " or " + nameFallbackKey + " Scale: " + minEntityScale + " hideable: " + hideable;
+		return "Desc: " + description + "; " + key + "=" + value + " nametag: " + nameKey + " or " + nameFallbackKey
+		    + " Helpertag: " + helperTag + " housenumber match tag: " + houseNumberMatchTag
+		    + " Scale: " + minEntityScale + " hideable: " + hideable;
 	}
 }

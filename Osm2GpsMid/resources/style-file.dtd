@@ -62,6 +62,7 @@
 <!ATTLIST namefallback tag CDATA #REQUIRED>
 <!ATTLIST helpertag tag CDATA #REQUIRED>
 <!ATTLIST housenumberindex index CDATA #REQUIRED>
+<!ATTLIST housenumberindex matchtag CDATA #IMPLIED>
 <!ATTLIST scale scale CDATA #REQUIRED>
 <!ATTLIST textscale scale CDATA #REQUIRED>
 <!ATTLIST arrowscale scale CDATA #REQUIRED>
