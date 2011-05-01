@@ -62,6 +62,7 @@ public class Relations {
 		int relationCount = 0;
 		int houseNumberCount = 0;
 		int houseNumberRelationAcceptCount = 0;
+		int houseNumberRelationProblemCount = 0;
 		int houseNumberRelationIgnoreCount = 0;
 		HashMap<Long, Way> wayHashMap = parser.getWayHashMap();
 		Map<Long, Node> nodeHashMap = parser.getNodeHashMap();
@@ -167,6 +168,7 @@ public class Relations {
 									parser.addNode(n);
 								}
 							} else {
+								houseNumberRelationProblemCount++;
 								System.out.println("Warning: ignoring map data: could not get midpoint for housenumber area (typically building)" + housew);
 							}
 						}
@@ -274,7 +276,8 @@ public class Relations {
 					i.remove();
 				}
 			} else { // r.isValid()
-				if (conf.useHouseNumbers && ("associatedStreet".equals(r.getAttribute("type")))) {
+				if (conf.useHouseNumbers && ("associatedStreet".equals(r.getAttribute("type"))
+							     || "street".equals(r.getAttribute("type")))) {
 					houseNumberRelationIgnoreCount++;
 				}
 			}
@@ -300,7 +303,8 @@ public class Relations {
 		System.out.println("info: processed " + relationCount + " relations");
 		System.out.println("info: accepted " + houseNumberCount + " housenumber-to-street connections from associatedStreet relations");
 		System.out.println("info: ignored " + houseNumberRelationIgnoreCount + " associatedStreet (housenumber) relations");
-		System.out.println("info: processed " + houseNumberRelationAcceptCount + " associatedStreet (housenumber) relations");
+		System.out.println("info: processed " + houseNumberRelationAcceptCount + " associatedStreet (housenumber) relations"
+			+ ", of which " +  houseNumberRelationProblemCount + " had problems, probably resulting in rejected housenumbers");
 	}
 
 	/**
