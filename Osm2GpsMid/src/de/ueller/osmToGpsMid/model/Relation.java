@@ -172,16 +172,14 @@ public class Relation extends Entity {
 							}
 						}
 						case Member.ROLE_HOUSE: {
-							// FIXME handle ways (buildings) with areapois or something
 							if (m.getType() == Member.TYPE_NODE) {
 								nodecount++;
 								//System.out.println("Relation " + id + " node ref = " + nref);
 								break;
 							}
 							if (m.getType() == Member.TYPE_WAY) {
-								// FIXME handle buildings too
-								System.out.println("Info: trying to handle way (typically building, area) with housenumber, relation url: " 
-										+ toUrl());
+								//System.out.println("Info: trying to handle way (typically building, area) with housenumber, relation url: " 
+								//		   + toUrl());
 								nodecount++;
 								break;
 							}
@@ -189,7 +187,7 @@ public class Relation extends Entity {
 						}
 
 					}
-					if (waycount == 1 && nodecount >= 1) {
+					if (waycount >= 1 && nodecount >= 1) {
 						//System.out.println("Housenumber relation ok, way count: " 
 						//		+ waycount + " node count " + nodecount + " url: " + toUrl());
 						return true;
