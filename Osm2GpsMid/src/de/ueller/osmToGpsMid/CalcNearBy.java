@@ -13,6 +13,7 @@ package de.ueller.osmToGpsMid;
 
 import java.lang.Long;
 import java.util.HashMap;
+import java.util.List;
 
 import de.ueller.osmToGpsMid.model.Entity;
 import de.ueller.osmToGpsMid.model.Node;
@@ -68,30 +69,9 @@ public class CalcNearBy {
 	//    (false nearby positives might be considered a lesser evil than not finding a housenumber)
 	//    (the storage model currently doesn't allow for several way, so that would
         //    involve a change to storage or cloning of the node)
-/* 
-   maybe this is useful:
-   b/GpsMidGraph/de/ueller/midlet/gps/data/MoreMath.java
+	// Update: plan carried out except for marking muptiple ways and sorting addr:street matches
 
-   public static Node closestPointOnLine(Node node1, Node node2, Node offNode) {
-   // avoid division by zero if node1 and node2 are at the same coordinates
-   if (node1.radlat == node2.radlat && node1.radlon == node2.radlon) {
-   return new Node(node1);
-   }
-   float uX = node2.radlat - node1.radlat;
-   float uY = node2.radlon - node1.radlon;
-   float  u = ( (offNode.radlat - node1.radlat) * uX + (offNode.radlon  - node1.radlon) * uY) / (uX * uX + uY * uY);
-   if (u > 1.0) {
-   return new Node(node2);
-   } else if (u <= 0.0) {
-   return new Node(node1);
-   } else {
-   return new Node( (float)(node2.radlat * u + node1.radlat * (1.0 - u )), (float) (node2.radlon * u + node1.radlon * (1.0-u)), true);
-   }
-   }
-       
-   }
-*/
-	public long calcWayForHouseNumber(Entity n) {
+	public long calcWayForHouseNumber(Entity n, HashMap<Long, Way> wayHashMap) {
 		POIdescription poiDesc = null;
 		WayDescription wayDesc = null;
 		if (n instanceof Way) {
@@ -143,6 +123,10 @@ public class CalcNearBy {
 				String otherName = other.getAttribute("__wayname");
 				if (otherName != null && streetName != null) {
 					//System.out.println ("trying to match addr:street, comparing " + streetName + " to " + otherName);
+					// FIXME to be pedantically correct, could do this after finding closest points in the
+					// candidate ways. Probably not worth the cost, as apparently the only thing this would
+					// change in some cases ist that is_in info for housenumber streetname would be different
+					// in some cases
 					if (streetName.equalsIgnoreCase(otherName)) {
 						nearestWay = other;
 						exactCount++;
@@ -155,29 +139,39 @@ public class CalcNearBy {
 			//}
 			maxDistanceTested = dist;
 			if (nearestWay == null) {
+				//System.out.println ("Start heuristic way search for " + thisNode);
 				nearestWay = (Node) nearByWays.nearest(MyMath.latlon2XYZ(thisNode));					
 				maxDistanceTested = MyMath.dist(thisNode, nearestWay);
 				nearestWay = null;
 				retrieveN = 25;
-				//while (maxDistanceTested < Constants.MAX_DIST_CITY[Constants.NODE_PLACE_CITY]) {
-				dist = 0;
+				dist = maxDistanceTested;
+				//System.out.println ("First way " + nearestWay + " at dist " + dist);
 				nearWays = nearByWays.nearest(MyMath.latlon2XYZ(thisNode), retrieveN);
 				// then look for other named ways
 				for (Object o : nearWays) {
 					Node other = (Node) o;								
+					if (nearestWay == null) {
+						nearestWay = other;
+					}
 					//dist = MyMath.dist(thisNode, other);
 					//As the list returned by the kd-tree is sorted by distance,
 					//we can stop at the first found plus some (to match for street name)
 					// FIXME add calculation for real distance to street
-					nearestWay = (Node) other;
-					break;
+					long wayId = other.id;
+					Way w = wayHashMap.get(wayId);
+					long distToWay = distanceToWay(thisNode, w, dist);
+					if (distToWay < dist) {
+						dist = distToWay;
+						nearestWay = other;
+						//System.out.println ("Found closer way " + nearestWay + " at dist " + dist);
+					}
 				}
 				if (nearestWay != null) {
 					heuristicCount++;
-					//found a suitable Way, leaving loop
-					//System.out.println ("decided a match for node " + n
-					//	    + " streetName: " + nearestWay);
 					maxDistanceTested = dist;
+					//found a suitable Way
+					//System.out.println ("decided a heuristic match for node " + n
+					//	    + " streetName: " + nearestWay);
 				}
 			}
 		} catch (KeySizeException e) {
@@ -269,7 +263,7 @@ public class CalcNearBy {
 		HashMap<Long, Way> wayHashMap = parser.getWayHashMap();
 		for (Node n : parser.getNodes()) {
 			if (n.hasHouseNumber()) {
-				long way = calcWayForHouseNumber((Entity) n);
+				long way = calcWayForHouseNumber((Entity) n, wayHashMap);
 				//System.out.println ("Got id " + way + " for housenumber node " + n);
 				if (way != 0 && !n.containsKey("__wayid")) {
 					count++;
@@ -421,4 +415,35 @@ public class CalcNearBy {
 		System.out.println("Found " + kdWaysSize + " waynames");
 		return kd;
 	}
+	// return distance from node to way
+	private static long distanceToWay(Node node, Way w, long dist) {
+		List<Node> nl = w.getNodes();
+		for (int i = 0; i < nl.size() - 1 ; i++ ) {
+			Node closestPoint = closestPointOnLine(nl.get(i), nl.get(i+1), node);
+			long distNew = MyMath.dist(node, closestPoint);
+			if (distNew < dist) {
+				dist = distNew;
+			}
+		}
+		return dist;
+	}
+
+	private static Node closestPointOnLine(Node node1, Node node2, Node offNode) {
+		// avoid division by zero if node1 and node2 are at the same coordinates
+		if (node1.lat == node2.lat && node1.lon == node2.lon) {
+			return new Node(node1);
+		}
+		float uX = (float)Math.toRadians(node2.lat) - (float)Math.toRadians(node1.lat);
+		float uY = (float)Math.toRadians(node2.lon) - (float)Math.toRadians(node1.lon);
+		float  u = ( ((float)Math.toRadians(offNode.lat) - (float)Math.toRadians(node1.lat)) * uX 
+			     + ((float)Math.toRadians(offNode.lon)- (float)Math.toRadians(node1.lon)) * uY) / (uX * uX + uY * uY);
+		if (u > 1.0) {
+			return new Node(node2);
+		} else if (u <= 0.0) {
+			return new Node(node1);
+		} else {
+			return new Node( (float)Math.toDegrees((node2.lat * u + node1.lat * (1.0 - u ))), (float) Math.toDegrees((node2.lon * u + node1.lon * (1.0-u))), 1);
+		}
+	}
+       
 }

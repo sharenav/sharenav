@@ -61,6 +61,12 @@ public class Node extends Entity {
 		this.id = id;
 	}
 	
+	public Node(Node old) {
+		lat = old.lat;
+		lon = old.lon;
+		this.id = old.id;
+	}
+	
 	/**
 	 * @return Latitude (in degrees) of this node
 	 */
