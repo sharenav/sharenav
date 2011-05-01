@@ -11,11 +11,9 @@
 package de.ueller.osmToGpsMid;
 
 import java.io.DataOutputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -42,7 +40,7 @@ public class RouteData {
 	private OsmParser parser;
 	private String path;
 	public Map<Long, RouteNode> nodes = new HashMap<Long, RouteNode>();
-	public ArrayList<Connection> connections = new ArrayList<Connection>();
+	//public ArrayList<Connection> connections = new ArrayList<Connection>();
 
 	public RouteData(OsmParser parser, String path) {
 		super();
@@ -91,6 +89,7 @@ public class RouteData {
 			addConnections(w.getNodes(), w);
 
 		}
+		System.out.println("Created " + nodes.size() + " route nodes.");
 		createIds();
 		calculateTurnRestrictions();
 	}
@@ -136,7 +135,7 @@ public class RouteData {
 				//System.out.println(turn.toString(parser.getWayHashMap()));
 				int numFromConnections = 0;
 				long lastId = -1;
-				for (Connection c:nViaFrom.connectedFrom) {
+				for (Connection c:nViaFrom.getConnectedFrom()) {
 					if (restrictionFromWay.containsNode(c.from.node) && c.from.id != lastId) { 
 						// TODO: Strange: there are sometimes multiple connections connecting to the same node, filter those out by checking lastId 
 						turn.fromRouteNode = c.from;
@@ -152,7 +151,7 @@ public class RouteData {
 						System.out.println("warning: ignoring map data:   Reason may be: fromWay not split at via member");												
 						turn.fromRouteNode = null; // make the turn restriction incomplete so it won't get passed to GpsMid 
 					}
-					for (Connection c:nViaFrom.connectedFrom) {
+					for (Connection c:nViaFrom.getConnectedFrom()) {
 						if (restrictionFromWay.containsNode(c.from.node)) {
 							System.out.println("  FromNode: " + c.from.node.id);
 						}
@@ -163,7 +162,7 @@ public class RouteData {
 				// search the RouteNode following the viaRouteNode on the toWay
 				int numToConnections = 0;
 				lastId = -1;
-				for (Connection c:n.connected) {
+				for (Connection c:n.getConnected()) {
 					if (restrictionToWay.containsNode(c.to.node) && c.to.id != lastId) { 
 						// TODO: Strange: there are sometimes multiple connections connecting to the same node, filter those out by checking lastId
 						turn.toRouteNode = c.to;
@@ -179,7 +178,7 @@ public class RouteData {
 						System.out.println("warning: ignoring map data:   Reason may be: toWay not split at via member");												
 						turn.toRouteNode = null; // make the turn restriction incomplete so it won't get passed to GpsMid 
 					}
-					for (Connection c:n.connected) {
+					for (Connection c:n.getConnected()) {
 						if (restrictionToWay.containsNode(c.to.node)) {
 							System.out.println("warning: ignoring map data:  ToNode: " + c.to.node.id);
 						}
@@ -414,8 +413,8 @@ public class RouteData {
 		nodes.put(from.node.id, from);
 		nodes.put(to.node.id, to);
 		Connection c = new Connection(to, dist, times, bs, be, w);
-		from.connected.add(c);
-		to.connectedFrom.add(c);
+		from.addConnected(c);
+		to.addConnectedFrom(c);
 		// roundabouts don't need to be explicitly tagged as oneways in OSM according to http://wiki.openstreetmap.org/wiki/Tag:junction%3Droundabout
 		if (againstDirectionTravelModes != 0 ) {
 			// add connection in the other direction as well, if this is no oneWay
@@ -423,9 +422,9 @@ public class RouteData {
 			Connection cr = new Connection(from, dist, times, MyMath.inverseBearing(be),
 					MyMath.inverseBearing(bs), w);
 			cr.from = to;
-			to.connected.add(cr);
-			from.connectedFrom.add(cr);
-			connections.add(cr);
+			to.addConnected(cr);
+			from.addConnectedFrom(cr);
+			//connections.add(cr);
 
 			// flag connections useable for travel modes you can go against the ways direction
 			cr.connTravelModes = againstDirectionTravelModes;
@@ -441,7 +440,7 @@ public class RouteData {
 		}
 		// need only for debugging not for live
 		c.from = from;
-		connections.add(c);
+		//connections.add(c);
 		
 	}
 	
@@ -471,6 +470,7 @@ public class RouteData {
 	}
 	
 	public void optimise() {
+//				System.out.println("Optimizing route data");
 //		System.out.println("RouteNodes for optimise " + nodes.size());
 //		ArrayList<RouteNode> removeNodes = new ArrayList<RouteNode>();
 //		for (RouteNode n:nodes.values()) {
@@ -582,7 +582,7 @@ public class RouteData {
 
 //					rd.write("/Temp");
 					System.out.println("RelNodes contain " + rd.nodes.size());
-					System.out.println("Connections contain " + rd.connections.size());
+					//System.out.println("Connections contain " + rd.connections.size());
 					RouteNode start = rd.nodes.get(new Long(1955808));
 					System.out.println("Start " + start);
 //					RouteNode dest = rd.nodes.get(new Long(25844378));
@@ -617,12 +617,12 @@ public class RouteData {
 			fo.write("' lon='" + r.node.lon + "'>\n");
 			fo.write("  <tag k='connectCount' v='" + r.node.getConnectedLineCount() + "'/>\n");
 			fo.write("  <tag k='connectTo' v='");
-			for (Connection c:r.connected) {
+			for (Connection c:r.getConnected()) {
 				fo.write("," + c.to.node.renumberdId);
 			}
 			fo.write("'/>\n");
 			fo.write("  <tag k='connectFrom' v='");
-			for (Connection c:r.connectedFrom) {
+			for (Connection c:r.getConnectedFrom()) {
 				fo.write("," + c.from.node.renumberdId);
 			}
 			fo.write("'/>\n");
@@ -631,7 +631,7 @@ public class RouteData {
 		}
 		int id = 1;
 		for (RouteNode r:rd.nodes.values()) {
-			for (Connection c:r.connected) {
+			for (Connection c:r.getConnected()) {
 		fo.write("<way id='" + id++ + "' timestamp='2007-02-14 23:41:43' visible='true' >\n");
 		fo.write("  <nd ref='" + c.from.node.renumberdId + "'/>\n");
 		fo.write("  <nd ref='" + c.to.node.renumberdId + "'/>\n");

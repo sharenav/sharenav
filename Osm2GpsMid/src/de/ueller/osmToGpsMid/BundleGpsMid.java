@@ -512,10 +512,12 @@ public class BundleGpsMid implements Runnable {
 
 			}
 			relTypes = null;
+			System.out.println("Splitting long ways");
 			int numWays = parser.getWays().size();
 			new SplitLongWays(parser);
 			System.out.println("Splitting long ways increased ways from "
 					+ numWays + " to " + parser.getWays().size());
+			OxParser.printMemoryUsage(1);
 			
 			RouteData rd = null;
 			if (Configuration.attrToBoolean(config.useRouting) >= 0 ) {
@@ -531,7 +533,6 @@ public class BundleGpsMid implements Runnable {
 				System.out.println("Creating route data");
 				System.out.println("===================");
 				rd.create(config);
-				System.out.println("Optimizing route data");
 				rd.optimise();
 			}
 			CreateGpsMidData cd = new CreateGpsMidData(parser, target.getCanonicalPath());

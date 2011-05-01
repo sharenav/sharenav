@@ -1,15 +1,13 @@
 package de.ueller.osmToGpsMid.model;
 
-import java.util.HashSet;
 import java.util.Hashtable;
-import java.util.Map;
 import java.util.Set;
 
 import de.ueller.osmToGpsMid.SmallArrayMap;
 import de.ueller.osmToGpsMid.Configuration;
 
 
-public class Entity {
+public class Entity extends SmallArrayMap<String,String> {
 
 	private static Configuration config = null;
 
@@ -22,26 +20,26 @@ public class Entity {
 	 * The tags for this object  
 	 * Key: String  Value: String
 	 */
-	private Map<String,String> tags;	
+	//private Map<String,String> tags;
 	
 	public Entity() {
 	}
 
 	public Entity(Entity other) {
 		//this.id = other.id;
-		this.tags=other.tags;
+		this.mapArray=other.mapArray;
 	}
 	
 	public void cloneTags(Entity other) {
 		//this.id = other.id;
-		this.tags=other.tags;		
+		this.mapArray=other.mapArray;
 	}
 	
 	/**
 	 * @param tags
 	 */
 	public void replaceTags(Entity other) {
-		this.tags=other.tags;
+		this.mapArray=other.mapArray;
 		
 	}
 
@@ -50,58 +48,35 @@ public class Entity {
 	 * @param key Tag to delete
 	 */
 	public void deleteTag(String key) {
-		if (tags != null) {
-			tags.remove(key);
-		}		
+		remove(key);
 	}
 	
 	public String getName() {
-		if (tags == null) {
-			return null;
-		}
-		return tags.get("name");
+		return get("name");
 	}
 	
 	public String getUrl() {
-		if (tags == null) {
-			return null;
-		}
-		return tags.get("url");
+		return get("url");
 	}
 
 	public String getPhone() {
-		if (tags == null) {
-			return null;
-		}
-		return tags.get("phone");
+		return get("phone");
 	}
 
 	public void setAttribute(String key, String value) {
-		if (tags == null) {
-			tags = new SmallArrayMap<String,String>();
-		}
-		tags.put(key, value);
+		put(key, value);
 	}
 	
 	public String getAttribute(String key) {
-		if (tags == null) {
-			return null;
-		}
-		return tags.get(key);
+		return get(key);
 	}
 	
 	public boolean containsKey(String key) {
-		if (tags == null) {
-			return false;
-		}
-		return tags.containsKey(key);
+		return super.containsKey(key);
 	}
 
 	public Set<String> getTags() {
-		if (tags == null) {
-			return new HashSet<String>();
-		}
-		return tags.keySet();
+		return keySet();
 	}
 	
 	protected EntityDescription calcType(Hashtable<String, Hashtable<String,Set<EntityDescription>>> legend){

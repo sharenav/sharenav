@@ -85,8 +85,9 @@ public class AStar2 {
 
 			expanded++;
 //			System.out.println("" + currentNode + " has " +  currentNode.state.to.connected.size() +" successors");
-			for (Connection nodeSuccessor: currentNode.state.to.connected) { 
-				nodeSuccessor.used++;
+			for (Connection nodeSuccessor: currentNode.state.to.getConnected()) {
+				// Commented out, was only used here.
+				//nodeSuccessor.used++;
 				int dTurn=currentNode.fromBearing-nodeSuccessor.startBearing;
 				long turnCost=getTurnCost(dTurn);
 				if (bestTime) {

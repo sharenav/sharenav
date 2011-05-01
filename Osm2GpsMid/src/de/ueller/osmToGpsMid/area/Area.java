@@ -90,7 +90,7 @@ public class Area {
 		holeList = outlineTempList;
 		
 		int dir = 0;
-		ArrayList<Triangle> ret = new ArrayList<Triangle>();
+		ArrayList<Triangle> ret = new ArrayList<Triangle>(1);
 		triangleList = ret;
 		repaint();
 		int loop = 0;
@@ -121,6 +121,7 @@ public class Area {
 //		System.out.println("loops :" + loop);
 		//System.err.println("Starting to optimize");
 		optimize();
+		ret.trimToSize();
 		//System.err.println("Finished optimizing");
 		return ret;
 

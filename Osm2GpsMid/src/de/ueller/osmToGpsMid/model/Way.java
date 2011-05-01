@@ -66,7 +66,7 @@ public class Way extends Entity implements Comparable<Way> {
 	private Path					path								= null;
 	public HouseNumber			housenumber							= null;
 	public List<Triangle>		triangles							= null;
-	private Bounds				bound								= null;
+	//private Bounds				bound								= null;
 
 	/** Up to 4 travel modes for which this way can be used (motorcar, bicycle, etc.)
 	 *  The upper 4 bits equal to Connection.CONNTYPE_* flags
@@ -107,6 +107,10 @@ public class Way extends Entity implements Comparable<Way> {
 		this.id = other.id;
 		this.type = other.type;
 		this.path = new Path();
+	}
+
+	public void deletePath() {
+		path = null;
 	}
 
 	public void cloneTags(Way other) {
@@ -481,7 +485,9 @@ public class Way extends Entity implements Comparable<Way> {
 	}
 
 	public Bounds getBounds() {
-		if (bound == null) {
+		//if (bound == null)
+		Bounds bound;
+		{
 			bound = new Bounds();
 			if (triangles != null && triangles.size() > 0) {
 				for (Triangle t : triangles) {
@@ -496,9 +502,9 @@ public class Way extends Entity implements Comparable<Way> {
 		return bound;
 	}
 
-	public void clearBounds() {
+	/*public void clearBounds() {
 		bound = null;
-	}
+	}*/
 
 	/** Simplistic check to see if this way/area "contains" another - for
 	 *  speed, all we do is check that all of the other way's points
@@ -919,6 +925,7 @@ public class Way extends Entity implements Comparable<Way> {
 		}
 	}
 
+
 	private Way splitArea() {
 		if (triangles == null) {
 			triangulate();
@@ -926,7 +933,7 @@ public class Way extends Entity implements Comparable<Way> {
 		// System.out.println("Split area id=" + id + " s=" + triangles.size());
 		Way newWay = new Way(this);
 		Bounds newBbounds = getBounds().split()[0];
-		ArrayList<Triangle> tri = new ArrayList<Triangle>();
+		ArrayList<Triangle> tri = new ArrayList<Triangle>(1);
 		for (Triangle t : triangles) {
 			Vertex midpoint = t.getMidpoint();
 			if (!newBbounds.isIn(midpoint.getLat(), midpoint.getLon())) {
@@ -942,7 +949,7 @@ public class Way extends Entity implements Comparable<Way> {
 		}
 		// System.out.println("split area triangles " + "s1=" + triangles.size() + " s2=" + tri.size());
 		if (tri.size() == 0) { return null; }
-		clearBounds();
+		//clearBounds();
 		newWay.triangles = tri;
 		newWay.recreatePath();
 		recreatePath();
@@ -956,7 +963,7 @@ public class Way extends Entity implements Comparable<Way> {
 		Path split = path.split();
 		if (split != null) {
 			// If we split the way, the bounds are no longer valid
-			this.clearBounds();
+			//this.clearBounds();
 			Way newWay = new Way(this);
 			newWay.path = split;
 			if (newWay.isValid() == false) {
@@ -1093,7 +1100,15 @@ public class Way extends Entity implements Comparable<Way> {
 				}
 			}
 		}
-		clearBounds();
+		((ArrayList)triangles).trimToSize();
+		trimPath();
+		//clearBounds();
+	}
+
+	public void trimPath()
+	{
+		if (path != null )
+			path.trimPath();
 	}
 
 }

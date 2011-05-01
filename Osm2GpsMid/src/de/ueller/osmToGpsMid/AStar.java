@@ -84,7 +84,7 @@ public class AStar {
 			children.removeAllElements();
 			//childCosts = 1 + best.costs;
 			expanded++;
-			for (Connection childState: best.state.to.connected) { 
+			for (Connection childState: best.state.to.getConnected()) {
 				childCosts = best.costs + childState.length;
 				Node closedNode = null;
 				Node openNode = null;

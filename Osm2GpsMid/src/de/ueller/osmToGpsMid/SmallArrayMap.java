@@ -24,14 +24,14 @@ import java.util.Set;
  */
 public class SmallArrayMap<K, V> implements Map<K, V> {
 
-	private Object[] mapArray = new Object[0];
+	protected  Object[] mapArray = null;
 	
 	/* (non-Javadoc)
 	 * @see java.util.Map#clear()
 	 */
 	@Override
 	public void clear() {
-		mapArray = new Object[0];
+		mapArray = null;
 	}
 
 	/* (non-Javadoc)
@@ -39,6 +39,9 @@ public class SmallArrayMap<K, V> implements Map<K, V> {
 	 */
 	@Override
 	public boolean containsKey(Object key) {
+		if ( mapArray == null )
+			return false;
+
 		for (int i = 0; i < mapArray.length / 2; i++) {
 			if (mapArray[2 * i].equals(key)) {
 				return true;
@@ -52,6 +55,9 @@ public class SmallArrayMap<K, V> implements Map<K, V> {
 	 */
 	@Override
 	public boolean containsValue(Object value) {
+		if (mapArray == null )
+			return false;
+
 		for (int i = 0; i < mapArray.length / 2; i++) {
 			if (mapArray[2 * i + 1].equals(value)) {
 				return true;
@@ -73,6 +79,8 @@ public class SmallArrayMap<K, V> implements Map<K, V> {
 	 */
 	@Override
 	public V get(Object key) {
+		if ( mapArray == null )
+			return null;
 		for (int i = 0; i < mapArray.length / 2; i++) {
 			if (mapArray[2 * i].equals(key)) {
 				return (V)mapArray[2 * i + 1];
@@ -86,6 +94,9 @@ public class SmallArrayMap<K, V> implements Map<K, V> {
 	 */
 	@Override
 	public boolean isEmpty() {
+		if ( mapArray == null )
+			return true;
+
 		if (mapArray.length == 0) {
 			return true;
 		}
@@ -98,6 +109,10 @@ public class SmallArrayMap<K, V> implements Map<K, V> {
 	@Override
 	public Set<K> keySet() {
 		HashSet<K> res = new HashSet<K>();
+
+		if ( mapArray == null )
+			return res;
+
 		for (int i = 0; i < mapArray.length / 2; i++) {
 			res.add((K)mapArray[2 * i]);
 		}
@@ -109,6 +124,9 @@ public class SmallArrayMap<K, V> implements Map<K, V> {
 	 */
 	@Override
 	public V put(K key, V value) {
+		if ( mapArray == null )
+			mapArray = new Object[0];
+
 		for (int i = 0; i < mapArray.length / 2; i++) {
 			if (mapArray[2 * i].equals(key)) {
 				V val = (V)mapArray[2 * i + 1];
@@ -139,6 +157,9 @@ public class SmallArrayMap<K, V> implements Map<K, V> {
 	 */
 	@Override
 	public V remove(Object key) {
+		if ( mapArray == null )
+			return null;
+
 		for (int i = 0; i < mapArray.length / 2; i++) {
 			if (mapArray[2 * i].equals(key)) {
 				V val = (V)mapArray[2 * i + 1];
@@ -160,6 +181,8 @@ public class SmallArrayMap<K, V> implements Map<K, V> {
 	 */
 	@Override
 	public int size() {
+		if (mapArray == null )
+			return 0;
 		return mapArray.length / 2;
 	}
 
@@ -169,6 +192,8 @@ public class SmallArrayMap<K, V> implements Map<K, V> {
 	@Override
 	public Collection<V> values() {
 		HashSet<V> res = new HashSet<V>();
+		if (mapArray == null )
+			return res;
 		for (int i = 0; i < mapArray.length / 2; i++) {
 			res.add((V)mapArray[2 * i + 1]);
 		}

@@ -42,6 +42,7 @@ public class Relations {
 	
 
 	public Relations(OsmParser parser, Configuration conf) {
+		System.out.println("Triangulating relations");
 		this.parser = parser;
 		this.conf = conf;
 		processRelations();
