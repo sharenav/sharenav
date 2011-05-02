@@ -93,7 +93,7 @@ public class Node extends Entity {
 				} else {
 					nameFallback = getAttribute(desc.nameFallbackKey);
 				}
-				if (name != null && nameFallback != null) {
+				if (name != null && nameFallback != null && (!desc.nameFallbackKey.equals("*") || !desc.key.equals(desc.nameKey))) {
 					name += " (" + nameFallback + ")";
 				} else if ((name == null) && (nameFallback != null)) {
 					name = nameFallback;
