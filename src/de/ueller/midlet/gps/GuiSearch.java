@@ -972,6 +972,11 @@ public class GuiSearch extends Canvas implements CommandListener,
 				for (int i = 0; i < slen ; i++) {
 					searchCanon.insert(carret++, (char) words.charAt(i));
 				}
+				//#if polish.api.bigsearch
+				matchSources = null;
+				matchLats = null;
+				matchLons = null;
+				//#endif
 				//System.out.println("Searchcanon tostring: " + searchCanon.toString());
 				//System.out.println("Searchcanon length: " + searchCanon.length());
 				words = "";
