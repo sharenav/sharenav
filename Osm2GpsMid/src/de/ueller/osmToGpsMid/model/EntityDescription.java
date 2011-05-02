@@ -31,6 +31,6 @@ public class EntityDescription {
 	public String toString() {
 		return "Desc: " + description + "; " + key + "=" + value + " nametag: " + nameKey + " or " + nameFallbackKey
 		    + " Helpertag: " + helperTag + " housenumber match tag: " + houseNumberMatchTag
-		    + " Scale: " + minEntityScale + " hideable: " + hideable;
+		    + " Scale: " + minEntityScale + " hideable: " + hideable + " houseNumberIndex: " + houseNumberIndex;
 	}
 }
