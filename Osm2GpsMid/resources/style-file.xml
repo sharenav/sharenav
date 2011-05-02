@@ -1077,8 +1077,7 @@ in the main index as well as in housenumber index.
 		<housenumberindex index="true" matchtag="addr:street"/>
 		<helpertag tag="addr:street"/>
 		<AreaPOI createForAreas="true"/>
-		<!-- don't show this on the map or write to tiles -->
-		<scale scale="0"/>
+		<scale scale="26"/>
 	  </value>
   	</key>
 
