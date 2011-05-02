@@ -1070,15 +1070,14 @@ in the main index as well as in housenumber index.
 	<key tag="building">
 	  <value name ="yes" priority = "1">
 		<specialisation key = "useHouseNumbers" value = "true" properties="true" />
+		<specialisation key = "addr:housenumber" value = "*"/>
 		<description desc = "Building"/>
-		<image src="mark.png"/>
 		<namekey tag = "name"/>  				
 		<namefallback tag = "addr:housenumber"/>
 		<housenumberindex index="true" matchtag="addr:street"/>
 		<helpertag tag="addr:street"/>
 		<AreaPOI createForAreas="true"/>
 		<scale scale="26"/>
-		<textscale scale="27"/>
 	  </value>
   	</key>
 
