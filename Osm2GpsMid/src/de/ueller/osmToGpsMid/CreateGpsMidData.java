@@ -237,10 +237,15 @@ public class CreateGpsMidData implements FilenameFilter {
 			na.addUrl(w);		
 			na.addPhone(w);		
 		}
+		ArrayList<Node> rmNodes = new ArrayList<Node>();
 		for (Node n : parser.getNodes()) {
 			na.addUrl(n);
 			na.addPhone(n);
+			if (n.getType(null) > 0 && Configuration.getConfiguration().getpoiDesc(n.getType(null)).minEntityScale == 0) {
+				rmNodes.add(n);
+			}
 		}
+		parser.removeNodes(rmNodes);
 		System.out.println("found " + na.getUrls().size() + " urls, including phones ");
 		na.calcUrlIndex();
 		return (na);
