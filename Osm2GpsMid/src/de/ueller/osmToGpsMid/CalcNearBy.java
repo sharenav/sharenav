@@ -44,6 +44,7 @@ public class CalcNearBy {
 			calcWayIsIn(parser, nearByElements);
 		}
 		if (kdWaysSize > 0) {
+			CalcWaysForHouseNumberAreas(parser, nearByWays);
 			calcWaysForHouseNumbers(parser, nearByWays);
 		}
 	}
@@ -262,7 +263,7 @@ public class CalcNearBy {
 		int ignoreCount = 0;
 		HashMap<Long, Way> wayHashMap = parser.getWayHashMap();
 		for (Node n : parser.getNodes()) {
-			if (n.hasHouseNumber()) {
+			if (n.hasHouseNumberTag()) {
 				long way = calcWayForHouseNumber((Entity) n, wayHashMap);
 				//System.out.println ("Got id " + way + " for housenumber node " + n);
 				if (way != 0 && !n.containsKey("__wayid")) {
@@ -281,10 +282,29 @@ public class CalcNearBy {
 				}
 			}
 		}		
-		System.out.println("info: accepted " + count + " non-relation housenumber-to-street connections");
-		System.out.println("info:  " + exactCount + " exact matches");
-		System.out.println("info:  " + heuristicCount + " heuristic matches (housenumbers without addr:street or addr:street not found)");
-		System.out.println("info: ignored " + ignoreCount + " non-relation housenumber-to-street connections");
+		System.out.println("info: node housenumbers: accepted " + count + " non-relation housenumber-to-street connections");
+		System.out.println("info: node housenumbers: ignored " + ignoreCount + " non-relation housenumber-to-street connections");
+		System.out.println("info: node+area housenumbers:  " + exactCount + " exact matches");
+		System.out.println("info: node+area housenumbers:  " + heuristicCount + " heuristic matches (housenumbers without addr:street or addr:street not found)");
+	}
+
+	private void CalcWaysForHouseNumberAreas(OsmParser parser, KDTree nearByElements) {		
+		int count = 0;
+		HashMap<Long, Way> wayHashMap = parser.getWayHashMap();
+		for (Way w : parser.getWays()) {
+			if (w.hasHouseNumberTag()) {
+				count++;
+				Node n = w.getMidPoint();
+				long way = calcWayForHouseNumber((Entity) n, wayHashMap);
+				if (way != (long) 0) {
+					w.setAttribute("__wayid", Long.toString(way));
+					System.out.println("Adding housenumber helper tag __wayid " + way + " to way " + w + " midpoint: " + n );
+				}
+				//n.wayToPOItransfer(w);
+				//parser.addNode(n);
+			}
+		}		
+		System.out.println("info: area housenumbers: accepted " + count + " non-relation housenumber-to-street connections");
 	}
 
 	private void calcCityNearBy(OsmParser parser, KDTree nearByElements) {
