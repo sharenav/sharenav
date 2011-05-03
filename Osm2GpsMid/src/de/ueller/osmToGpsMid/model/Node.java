@@ -204,7 +204,8 @@ public class Node extends Entity {
 		return ((connectedLineCount & CLC_NEVER_TRAFFICSIGNALS_ROUTENODE) > 0);
 	}	
 
-	public boolean hasHouseNumber() {
+	// FIXME should not be hard-coded but taken from style-file
+	public boolean hasHouseNumberTag() {
 		return (containsKey("addr:housenumber"));
 	}
 
@@ -301,6 +302,4 @@ public class Node extends Entity {
 		}
 		return true;
 	}
-
-
 }

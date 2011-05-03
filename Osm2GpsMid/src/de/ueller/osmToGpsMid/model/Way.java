@@ -201,6 +201,11 @@ public class Way extends Entity implements Comparable<Way> {
 		return (containsKey("bridge"));
 	}
 
+	// FIXME should not be hard-coded but taken from style-file
+	public boolean hasHouseNumberTag() {
+		return (containsKey("addr:housenumber"));
+	}
+
 	public boolean hasHouseNumber() {
 		return housenumber != null;
 	}

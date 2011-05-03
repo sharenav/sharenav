@@ -78,7 +78,7 @@ public class Names {
 			WayDescription wayDesc =
 				Configuration.getConfiguration().getWayDesc(type);
 
-			//System.out.println("Testing node "+ w + " type " + type + "wayDesc = " + wayDesc);
+			//System.out.println("Testing way "+ w + " type " + type + "wayDesc = " + wayDesc);
 			if (wayDesc != null && wayDesc.houseNumberIndex) {
 				//System.out.println("Setting houseNumber = true for way "+ w);
 				houseNumber = true;
@@ -130,7 +130,7 @@ public class Names {
 		String [] housenumbers = words;
 		if (allAddrTags && (w instanceof Node)) {
 			Node n = (Node) w;
-			if (n.hasHouseNumber()) {
+			if (n.hasHouseNumberTag()) {
 				housenumbers = w.getAttribute("addr:housenumber").split("[ ;,.()]");
 			}
 		}
