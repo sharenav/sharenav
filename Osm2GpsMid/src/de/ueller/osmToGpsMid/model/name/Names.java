@@ -104,10 +104,10 @@ public class Names {
 		} else {
 			names1.put(mn.getName(),mn);
 		}
-		//System.out.println("adding to wholename canon if !houseNumber: " + mn);
 		if (!houseNumber) {
+			//System.out.println("adding to wholename canon, !houseNumber: " + mn);
 			if (! canons.add(mn)){
-//			System.out.println("canon already there:" + mn);
+				//System.out.println("canon already there:" + mn);
 				Name mnNext=new Name(w.getName()+"\0");
 				mnNext.setCanon( mn.getCanon());
 				try {
@@ -141,10 +141,10 @@ public class Names {
 					continue;
 				}
 				mn = new Name(word);
-//			System.out.println("adding word:" + mn);
+                                //System.out.println("adding word:" + mn);
 				mn.addEntity(w);
 				if (! wordCanons.add(mn)){
-					//				System.out.println("wordCanon already there:" + mn);
+					//System.out.println("wordCanon already there:" + mn);
 					Name mnNext=new Name(word+"\0");
 					mnNext.setCanon( mn.getCanon());
 					try {
