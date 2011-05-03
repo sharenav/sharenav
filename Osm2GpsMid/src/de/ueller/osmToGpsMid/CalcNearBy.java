@@ -297,7 +297,9 @@ public class CalcNearBy {
 				Node n = w.getMidPoint();
 				long way = calcWayForHouseNumber((Entity) n, wayHashMap);
 				if (way != (long) 0) {
-					w.setAttribute("__wayid", Long.toString(way));
+					if (!w.containsKey("__wayid")) {
+						w.setAttribute("__wayid", Long.toString(way));
+					}
 					//System.out.println("Adding housenumber helper tag __wayid " + way + " to way " + w + " midpoint: " + n );
 				}
 				//n.wayToPOItransfer(w);
