@@ -1066,38 +1066,6 @@ in the main index as well as in housenumber index.
 	  	</value>
 	</key>
 
-<!-- enabled when useHouseNumbers properties tag set -->
-	<key tag="building">
-	  <value name ="yes" priority = "1">
-		<specialisation key = "useHouseNumbers" value = "true" properties="true" />
-		<specialisation key = "addr:housenumber" value = "*"/>
-		<description desc = "Building"/>
-		<namekey tag = "name"/>  				
-		<namefallback tag = "addr:housenumber"/>
-		<housenumberindex index="true" matchtag="addr:street"/>
-		<helpertag tag="addr:street"/>
-		<AreaPOI createForAreas="true"/>
-		<scale scale="26"/>
-	  </value>
-  	</key>
-
-<!--
-
-	<key tag="building">
-	  <value name ="*">
-		<specialisation key = "useHouseNumbers" value = "true" properties="true" />
-		<description desc = "Other building"/>
-		<image src="mark.png"/>
-		<namekey tag = "*"/>  				
-		<namefallback tag = "addr:housenumber"/>
-		<housenumberindex index="true" matchtag="addr:street"/>
-		<helpertag tag="addr:street"/>
-		<AreaPOI createForAreas="true"/>
-		<scale scale="26"/>
-		<textscale scale="27"/>
-	  </value>
-  	</key>
--->
 	<!-- http://wiki.openstreetmap.org/wiki/WikiProject_Haiti
 		 Uncomment below to include damage POIs -->
 	<!--
@@ -2295,7 +2263,7 @@ end -->
   			</Wvalue>
 		</keyW>			
 		<keyW tag = "building">
-			<Wvalue name = "yes"  priority = "1">
+			<Wvalue name = "yes"  priority = "-1">
 				<!-- if * is specified as value for a specialisation key,
 				this will match only if the specialisation key exists:
 				 so only named buildings would be included
@@ -2304,6 +2272,7 @@ end -->
 				<description desc = "Building"/>
 				<namekey tag = "name"/>
 				<namefallback tag = "addr:housenumber"/>
+				<housenumberindex index="true" matchtag="addr:street"/>
 				<isArea area = "true"/>
 				<scale scale = "20"/>
 				<textscale scale = "21"/>
