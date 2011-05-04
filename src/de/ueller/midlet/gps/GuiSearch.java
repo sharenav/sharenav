@@ -22,6 +22,7 @@ import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Form;
+import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.List;
@@ -1113,8 +1114,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 				//		   + id + "source = "
 				//		   + ((Integer) matchSources.get(id)).intValue());
 				//if (((Integer) matchSources.get(id)).intValue() == SearchNames.INDEX_HOUSENUMBER && matchLats.get(id) != null) {
-				// get more exact coordinates from old match if current match is a way
-				if (sr.type > 0 && matchLats != null && matchLats.get(id) != null) {
+				// get more exact coordinates from old match if current match is not from housenumber index
+				if (sr.source != SearchNames.INDEX_HOUSENUMBER && matchLats != null && matchLats.get(id) != null) {
 					sr.lat = ((Float) matchLats.get(id)).floatValue();
 					sr.lon = ((Float) matchLons.get(id)).floatValue();
 					sourceNew = (Integer) matchSources.get(id);
@@ -1508,8 +1509,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 		//#if polish.api.bigsearch
 		if (matchMode() && state!= STATE_FAVORITES) {
 			Long id = new Long(srNew.resultid);
-			// if match is a way, try to get more exact coords from previous match
-			if (srNew.type > 0) {
+			// if match is not from a housenumber index, try to get more exact coords from previous match
+			if (sr.source != SearchNames.INDEX_HOUSENUMBER) {
 				// transfer house number coordinates to street
 				if (matchLats != null && matchLats.get(id) != null) {
 					srNew.lat = ((Float) matchLats.get(id)).floatValue();
