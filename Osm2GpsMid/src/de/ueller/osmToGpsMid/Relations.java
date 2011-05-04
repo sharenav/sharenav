@@ -66,6 +66,8 @@ public class Relations {
 		int houseNumberRelationAcceptCount = 0;
 		int houseNumberRelationProblemCount = 0;
 		int houseNumberRelationIgnoreCount = 0;
+		int boundaryIgnore = 0;
+
 		HashMap<Long, Way> wayHashMap = parser.getWayHashMap();
 		Map<Long, Node> nodeHashMap = parser.getNodeHashMap();
 		ArrayList<Way> removeWays = new ArrayList<Way>();
@@ -188,13 +190,15 @@ public class Relations {
 					if (r.getAttribute("admin_level") != null){
 						// FIXME should not be blatantly ignore, but instead should be handled
 						// if enabled in style file
-						System.out.println("Warning: ignoring relation with admin_level tag , relation" + r);
+						//System.out.println("Warning: ignoring relation with admin_level tag , relation" + r);
+						boundaryIgnore++;
 						continue;
 					}
 					if ("administrative".equalsIgnoreCase(r.getAttribute("boundary"))) {
 						// FIXME should not be blatantly ignore, but instead should be handled
 						// if enabled in style file
-						System.out.println("Warning: ignoring relation with boundary=administrative tag, relation " + r);
+						//System.out.println("Warning: ignoring relation with boundary=administrative tag, relation " + r);
+						boundaryIgnore++;
 						continue;
 					}
 
@@ -319,6 +323,7 @@ public class Relations {
 		System.out.println("info: ignored " + houseNumberRelationIgnoreCount + " associatedStreet (housenumber) relations");
 		System.out.println("info: processed " + houseNumberRelationAcceptCount + " associatedStreet (housenumber) relations"
 			+ ", of which " +  houseNumberRelationProblemCount + " had problems");
+		System.out.println("info: ignored " + boundaryIgnore + " boundary=administrative multipolygon relations");
 	}
 
 	/**
