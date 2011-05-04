@@ -116,7 +116,7 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 	protected static final int RECORDINGS_CMD = 16;
 	protected static final int ROUTINGS_CMD = 17;
 	protected static final int OK_CMD =18;
-	public static final int BACK_CMD = 19;
+	protected static final int BACK_CMD = 19;
 	protected static final int ZOOM_IN_CMD = 20;
 	protected static final int ZOOM_OUT_CMD = 21;
 	protected static final int MANUAL_ROTATION_MODE_CMD = 22;
