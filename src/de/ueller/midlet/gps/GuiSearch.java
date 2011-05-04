@@ -1510,7 +1510,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		if (matchMode() && state!= STATE_FAVORITES) {
 			Long id = new Long(srNew.resultid);
 			// if match is not from a housenumber index, try to get more exact coords from previous match
-			if (sr.source != SearchNames.INDEX_HOUSENUMBER) {
+			if (srNew.source != SearchNames.INDEX_HOUSENUMBER) {
 				// transfer house number coordinates to street
 				if (matchLats != null && matchLats.get(id) != null) {
 					srNew.lat = ((Float) matchLats.get(id)).floatValue();
