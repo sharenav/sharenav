@@ -223,8 +223,9 @@ public class Relations {
 						Way w = wayHashMap.get(ref);
 						// FIXME can be removed when proper coastline support exists
 						if ("coastline".equalsIgnoreCase(w.getAttribute("natural"))) {
-							System.out.println("Warning: ignoring natural=coastline way " + w + " in relation " + r);
-							continue rel;
+							// this shouldn't cause trouble anymore, but give a message just in case
+							System.out.println("Warning: saw natural=coastline way " + w + " in relation " + r);
+							//continue rel;
 						}
 
 //					System.out.println("Handling outer way http://www.openstreetmap.org/browse/way/" + ref);
