@@ -186,10 +186,14 @@ public class Relations {
 					i.remove();
 				} else if ("multipolygon".equals(r.getAttribute("type"))) {
 					if (r.getAttribute("admin_level") != null){
+						// FIXME should not be blatantly ignore, but instead should be handled
+						// if enabled in style file
 						System.out.println("Warning: ignoring relation with admin_level tag , relation" + r);
 						continue;
 					}
 					if ("administrative".equalsIgnoreCase(r.getAttribute("boundary"))) {
+						// FIXME should not be blatantly ignore, but instead should be handled
+						// if enabled in style file
 						System.out.println("Warning: ignoring relation with boundary=administrative tag, relation " + r);
 						continue;
 					}
