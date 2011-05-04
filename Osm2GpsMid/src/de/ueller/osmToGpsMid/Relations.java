@@ -185,6 +185,15 @@ public class Relations {
 					houseNumberRelationAcceptCount++;
 					i.remove();
 				} else if ("multipolygon".equals(r.getAttribute("type"))) {
+					if (r.getAttribute("admin_level") != null){
+						System.out.println("Warning: ignoring relation with admin_level tag , relation" + r);
+						continue;
+					}
+					if ("administrative".equalsIgnoreCase(r.getAttribute("boundary"))) {
+						System.out.println("Warning: ignoring relation with boundary=administrative tag, relation " + r);
+						continue;
+					}
+
 //				System.out.println("Starting to handle multipolygon relation");
 //				System.out.println("  see http://www.openstreetmap.org/browse/relation/" + r.id);
 
