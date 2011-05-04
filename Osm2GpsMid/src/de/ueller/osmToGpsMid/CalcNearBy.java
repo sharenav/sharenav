@@ -193,7 +193,8 @@ public class CalcNearBy {
 	 */
 	private void calcWayIsIn(OsmParser parser, KDTree nearByElements) {		
 		for (Way w : parser.getWays()) {
-			if (w.isHighway() /*&& w.getIsIn() == null */) {
+			// index also areas with is_in, previously was only highways
+			if (true || w.isHighway() /*&& w.getIsIn() == null */) {
 				Node thisNode = w.getMidPoint();
 				if (thisNode == null) {
 					continue;
