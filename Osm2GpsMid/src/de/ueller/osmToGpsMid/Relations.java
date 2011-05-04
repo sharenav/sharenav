@@ -185,12 +185,6 @@ public class Relations {
 					houseNumberRelationAcceptCount++;
 					i.remove();
 				} else if ("multipolygon".equals(r.getAttribute("type"))) {
-					if (r.getAttribute("admin_level") != null){
-						continue;
-					}
-					if ("administrative".equalsIgnoreCase(r.getAttribute("boundary"))) {
-						continue;
-					}
 //				System.out.println("Starting to handle multipolygon relation");
 //				System.out.println("  see http://www.openstreetmap.org/browse/relation/" + r.id);
 
@@ -210,14 +204,9 @@ public class Relations {
 //						a.debug = true;
 //					}
 						Way w = wayHashMap.get(ref);
-						if (w.getAttribute("admin_level") != null) {
-							continue rel;
-						}
-						if ("administrative".equalsIgnoreCase(w.getAttribute("boundary"))) {
-							continue rel;
-						}
 						// FIXME can be removed when proper coastline support exists
 						if ("coastline".equalsIgnoreCase(w.getAttribute("natural"))) {
+							System.out.println("Warning: ignoring natural=coastline way " + w + " in relation " + r);
 							continue rel;
 						}
 
