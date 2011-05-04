@@ -14,6 +14,10 @@ import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 
+//#if polish.android
+import android.view.KeyEvent;
+//#endif
+
 import java.util.Vector;
 
 import de.ueller.gps.data.Legend;
@@ -22,6 +26,7 @@ import de.ueller.gps.tools.IconActionPerformer;
 import de.ueller.midlet.gps.GpsMid;
 import de.ueller.midlet.gps.GpsMidDisplayable;
 import de.ueller.midlet.gps.Logger;
+import de.ueller.midlet.gps.Trace;
 import de.ueller.gps.tools.IconMenuPage;
 
 import de.enough.polish.util.Locale;
@@ -330,6 +335,12 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 			pressedKeyCode = keyCode;
 			return;
 		}
+//#if polish.android
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			commandAction(Trace.getInstance().getCommand(Trace.BACK_CMD), (Displayable) null);
+			return;
+		}
+//#endif
 
 		if (action != 0) {
 			// handle the fire button same as the Ok button

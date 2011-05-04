@@ -901,6 +901,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 			// Unicode character 10 is LF
 			// so 10 should correspond to Enter key on QWERT keyboards
 //#if polish.android
+		} else if (keyCode == 10 || action == FIRE || keyCode == KeyEvent.KEYCODE_SEARCH) {
+				commandAction( Trace.getInstance().getCommand(Trace.ROUTING_START_CMD), (Displayable) null);
 		} else if (keyCode == 10 || action == FIRE || keyCode == KeyEvent.KEYCODE_BACK) {
 			if (keyCode == KeyEvent.KEYCODE_BACK && !isCursorValid()) {
 				destroy();
