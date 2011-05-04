@@ -14,6 +14,9 @@ import java.lang.Integer;
 import java.util.Hashtable;
 //import java.util.Enumeration;
 //#endif
+//#if polish.android
+import android.view.KeyEvent;
+//#endif
 
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.ChoiceGroup;
@@ -897,6 +900,19 @@ public class GuiSearch extends Canvas implements CommandListener,
 			}
 			// Unicode character 10 is LF
 			// so 10 should correspond to Enter key on QWERT keyboards
+//#if polish.android
+		} else if (keyCode == 10 || action == FIRE || keyCode == KeyEvent.KEYCODE_BACK) {
+			if (keyCode == KeyEvent.KEYCODE_BACK && !isCursorValid()) {
+				destroy();
+				parent.show();
+			}
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED)) {
+				commandAction( ROUTE1_CMD, (Displayable) null);
+			} else {
+				commandAction( OK1_CMD, (Displayable) null);				
+			}
+			return;
+//#else
 		} else if (keyCode == 10 || action == FIRE) {
 			if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED)) {
 				commandAction( ROUTE1_CMD, (Displayable) null);
@@ -904,6 +920,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				commandAction( OK1_CMD, (Displayable) null);				
 			}
 			return;
+//#endif
 		} else if (action == UP) {
 			if (cursor > 0)
 				cursor--;			

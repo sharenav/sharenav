@@ -492,6 +492,10 @@ CompassReceiver, Runnable , GpsMidDisplayable, CompletionListener, IconActionPer
 		traceInstance = this;
 	}
 	
+	public Command getCommand(int command) {
+		return CMDS[command];
+	}
+
 	/**
 	 * Returns the instance of the map screen. If none exists yet,
 	 * a new instance is generated
