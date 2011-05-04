@@ -337,7 +337,8 @@ public class IconMenuWithPagesGUI extends Canvas implements CommandListener,
 		}
 //#if polish.android
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			commandAction(Trace.getInstance().getCommand(Trace.BACK_CMD), (Displayable) null);
+			parent.show();
+			performIconAction(IconActionPerformer.BACK_ACTIONID);
 			return;
 		}
 //#endif
