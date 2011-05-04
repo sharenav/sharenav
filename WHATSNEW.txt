@@ -24,6 +24,8 @@
 	*** Osm2GpsMid ***
     - More memory usage optimizations for Osm2GpsMid reducing memory usage during map creation
       by up to 35%, thx walter9
+    *** Appearance ***
+    - bigger icon; 15x15 -> 48x48
     *** Style File ***
     - add regular expression matching for specialisation tag in style file.
       Example:
