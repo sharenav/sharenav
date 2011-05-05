@@ -12,11 +12,10 @@
       scheme with is_in tags, though the code might partially work with a modified style file
     - like multi-word search, house number search can require a bunch of memory.
     - enabled only for "Generic/editing", "Generic/full" (and "Generic/microemulator") targets.
-    *** Routing ***
-    - the route line is now rendered only up to the closest point to the destination on the destination way,
-      so when using a POI or house number as destination GpsMid will route more exactly there
-    - if auto zoom is activated the map will be zoomed in further
-      when getting closer than 200 m route distance to the route destination 
+    *** Search user interface ***
+    - POIs and areas are now indexed with is_in (nearbys)
+    - the star key (*) switching between nearbys has a new last step where also the last
+      nearby is hidden so that the distance and compass direction are shown
     *** Multi-word search ***
     - New feature multi-word search, available only in "Generic/editing", "Generic/full" (and "Generic/microemulator")
       as it can require more memory than single word or whole name search.
@@ -24,6 +23,11 @@
 	*** Osm2GpsMid ***
     - More memory usage optimizations for Osm2GpsMid reducing memory usage during map creation
       by up to 35%, thx walter9
+    *** Routing ***
+    - the route line is now rendered only up to the closest point to the destination on the destination way,
+      so when using a POI or house number as destination GpsMid will route more exactly there
+    - if auto zoom is activated the map will be zoomed in further
+      when getting closer than 200 m route distance to the route destination 
     *** Appearance ***
     - bigger icon; 15x15 -> 48x48
     *** Style File ***
