@@ -743,16 +743,18 @@ public class GuiSearch extends Canvas implements CommandListener,
 					}					
 				}
 			}
-			// always show last name part unreduced
-			if(reducedName!=0 && nameb.length()>=2) {
-				// only if the result is more than once reduced (for POIs) or the result has a nearby entry
-				if (displayReductionLevel > 1 || sr.nearBy != null) {
-					nameb.setLength(nameb.length()-2);
-					if(reducedName==1) {
-						nameb.append(name);
-					}
-					else {
-						nameb.append(nearNameb.toString());					
+			if (displayReductionLevel != 4) {
+				// show last name part unreduced unless reduced to compass
+				if(reducedName!=0 && nameb.length()>=2) {
+					// only if the result is more than once reduced (for POIs) or the result has a nearby entry
+					if (displayReductionLevel > 1 || sr.nearBy != null) {
+						nameb.setLength(nameb.length()-2);
+						if(reducedName==1) {
+							nameb.append(name);
+						}
+						else {
+							nameb.append(nearNameb.toString());					
+						}
 					}
 				}
 			}
@@ -893,7 +895,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				return;
 			} else {
 				displayReductionLevel++;
-				if (displayReductionLevel > 3)
+				if (displayReductionLevel > 4)
 					displayReductionLevel = 0;
 				repaint(0, 0, getWidth(), getHeight());
 				return;
