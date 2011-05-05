@@ -17,6 +17,7 @@ public class GuiSetupGui extends Form implements CommandListener {
 	private ChoiceGroup imenuOpts;
 	private ChoiceGroup mapTapFeatures;
 	private ChoiceGroup searchSettings;
+	private ChoiceGroup searchLayoutGroup;
 
 	// commands
 	private static final Command CMD_SAVE = new Command(Locale.get("generic.Save")/*Save*/, 
@@ -44,6 +45,13 @@ public class GuiSetupGui extends Form implements CommandListener {
 			memField = new TextField(Locale.get("guisetupgui.DefineMaxMem")/*Define maxMem (kbyte)*/,
 					Long.toString(mem), 8, TextField.DECIMAL);
 			append(memField);
+			String [] searchLayout = new String[2];
+			searchLayout[0] = Locale.get("guidiscover.SearchWholeNames")/*Search for whole names*/;
+			searchLayout[1] = Locale.get("guidiscover.SearchWords")/*Search for words*/;
+			searchLayoutGroup = new ChoiceGroup(Locale.get("guidiscover.SearchStyle")/*Search style*/, Choice.EXCLUSIVE, searchLayout, null);
+			searchLayoutGroup.setSelectedIndex( Configuration.getCfgBitSavedState(Configuration.CFGBIT_WORD_ISEARCH) ? 1 : 0, true);
+			append(searchLayoutGroup);
+
 			int searchMax = Configuration.getSearchMax();
 			searchField = new TextField(Locale.get("guisetupgui.DefineMaxSearch")/*Max # of search results*/,
 					Integer.toString(searchMax), 8, TextField.DECIMAL);
@@ -161,6 +169,11 @@ public class GuiSetupGui extends Form implements CommandListener {
 			Trace.uncacheIconMenu();
 			GuiDiscover.uncacheIconMenu();
 
+			boolean searchLayout = (searchLayoutGroup.getSelectedIndex() == 1);
+				
+			if (searchLayout != Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ) {
+			    Configuration.setCfgBitSavedState(Configuration.CFGBIT_WORD_ISEARCH, searchLayout);
+			}
 			int i = 0;
 			if (Configuration.getHasPointerEvents()) {
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD, searchSettings.isSelected(i++));
