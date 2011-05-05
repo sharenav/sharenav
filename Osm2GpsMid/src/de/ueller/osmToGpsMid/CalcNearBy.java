@@ -193,68 +193,82 @@ public class CalcNearBy {
 	 */
 	private void calcWayIsIn(OsmParser parser, KDTree nearByElements) {		
 		for (Way w : parser.getWays()) {
-			// index also areas with is_in, previously was only highways
-			if (true || w.isHighway() /*&& w.getIsIn() == null */) {
-				Node thisNode = w.getMidPoint();
-				if (thisNode == null) {
-					continue;
-				}
-				Node nearestPlace = null;				
-				try {					
-					nearestPlace = (Node) nearByElements.nearest(MyMath.latlon2XYZ(thisNode));
-
-					if (nearestPlace.getType(null) <= 5 && !(MyMath.dist(thisNode, nearestPlace) < Constants.MAX_DIST_CITY[nearestPlace.getType(null)])) {					
-						long maxDistanceTested = MyMath.dist(thisNode, nearestPlace);
-						int retrieveN = 5;
-						if (retrieveN > kdSize) {
-							retrieveN = kdSize;
-						}
-						nearestPlace = null;
-						while (maxDistanceTested < Constants.MAX_DIST_CITY[Constants.NODE_PLACE_CITY]) {							
-							Object [] nearPlaces = nearByElements.nearest(MyMath.latlon2XYZ(thisNode), retrieveN);
-							long dist = 0;
-							for (Object o : nearPlaces) {
-								Node other = (Node) o;								
-								dist = MyMath.dist(thisNode, other);
-								//As the list returned by the kd-tree is sorted by distance,
-								//we can stop at the first found 
-								if (other.getType(null) <= 5 && dist < Constants.MAX_DIST_CITY[other.getType(null)]) {								
-									nearestPlace = other;									
-									break;
-								}							
-							}
-							if (nearestPlace != null) {
-								//found a suitable Place, leaving loop
-								break;
-							}
-							if (retrieveN == kdSize) {
-								/**
-								 * We have checked all available places and nothing was
-								 * suitable, so abort with nearestPlace == null;
-								 */
-								break;
-							}
-							maxDistanceTested = dist;
-							retrieveN = retrieveN * 5;
-							if (retrieveN > kdSize) {
-								retrieveN = kdSize;
-							}
-						}
-					}
-				} catch (KeySizeException e) {
-					// Something must have gone horribly wrong here,
-					// This should never happen.					
-					e.printStackTrace();
-					return;
-				}
-				if (nearestPlace != null) {
-					w.setAttribute("is_in", nearestPlace.getName());					
-					w.nearBy = nearestPlace;
-				}				
-			}
-		}		
+			calcEntityIsIn(parser, nearByElements, (Entity) w);
+		}
+		for (Node n : parser.getNodes()) {
+			calcEntityIsIn(parser, nearByElements, (Entity) n);
+		}
 	}
 
+	private void calcEntityIsIn(OsmParser parser, KDTree nearByElements, Entity e) {
+		// index way, poi or area with is_in
+		Node thisNode = null;
+		if (e instanceof Node) {
+			thisNode = (Node) e;
+		}
+		if (e instanceof Way) {
+			Way w = (Way) e;
+			thisNode = w.getMidPoint();
+		}
+		if (thisNode == null) {
+			return;
+		}
+		Node nearestPlace = null;				
+		try {					
+			nearestPlace = (Node) nearByElements.nearest(MyMath.latlon2XYZ(thisNode));
+
+			if (nearestPlace.getType(null) <= 5 && !(MyMath.dist(thisNode, nearestPlace) < Constants.MAX_DIST_CITY[nearestPlace.getType(null)])) {					
+				long maxDistanceTested = MyMath.dist(thisNode, nearestPlace);
+				int retrieveN = 5;
+				if (retrieveN > kdSize) {
+					retrieveN = kdSize;
+				}
+				nearestPlace = null;
+				while (maxDistanceTested < Constants.MAX_DIST_CITY[Constants.NODE_PLACE_CITY]) {							
+					Object [] nearPlaces = nearByElements.nearest(MyMath.latlon2XYZ(thisNode), retrieveN);
+					long dist = 0;
+					for (Object o : nearPlaces) {
+						Node other = (Node) o;								
+						dist = MyMath.dist(thisNode, other);
+						//As the list returned by the kd-tree is sorted by distance,
+						//we can stop at the first found 
+						if (other.getType(null) <= 5 && dist < Constants.MAX_DIST_CITY[other.getType(null)]) {								
+							nearestPlace = other;									
+							break;
+						}							
+					}
+					if (nearestPlace != null) {
+						//found a suitable Place, leaving loop
+						break;
+					}
+					if (retrieveN == kdSize) {
+						/**
+						 * We have checked all available places and nothing was
+						 * suitable, so abort with nearestPlace == null;
+						 */
+						break;
+					}
+					maxDistanceTested = dist;
+					retrieveN = retrieveN * 5;
+					if (retrieveN > kdSize) {
+						retrieveN = kdSize;
+					}
+				}
+			}
+		} catch (KeySizeException exc) {
+			// Something must have gone horribly wrong here,
+			// This should never happen.					
+			exc.printStackTrace();
+			return;
+		}
+		if (nearestPlace != null) {
+			if (!e.containsKey("is_in")) {
+				e.setAttribute("is_in", nearestPlace.getName());					
+				e.nearBy = nearestPlace;
+			}
+		}				
+	}		
+		
 	/**
 	 * @param parser
 	 * @param nearByElements
