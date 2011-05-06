@@ -383,18 +383,18 @@ public class Tile {
 	 * If this tile is a container, it makes its children create these areas.
 	 */
 	public void generateSeaPolygon() {
-/* TODO		if (type == TYPE_CONTAINER) {
+		if (type == TYPE_CONTAINER) {
 			if (t1 != null) {
-				t1.createSeaAreas();
+				t1.generateSeaPolygon();
 			}
 			if (t2 != null) {
-				t2.createSeaAreas();
+				t2.generateSeaPolygon();
 			}
 		} else if (type == TYPE_MAP) {
 			System.out.println("info:  Tile zl=" + zl + ", fid=" + fid);
-			SeaAreaGenerator.generateSeaPolygon(this);
+			SeaGenerator.generateSeaPolygon(this);
 		}
-*/
+
 		if (bounds.getFixPtSpan() <= 65000) {
 			//System.out.println("info:  Checking for coast line: Tile zl=" + zl + ", fid=" + fid);
 			SeaGenerator.generateSeaPolygon(this);

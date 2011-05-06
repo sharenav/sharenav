@@ -22,7 +22,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import uk.me.parabola.log.Logger;
-//import uk.me.parabola.mkgmap.general.LineClipper;
+import uk.me.parabola.mkgmap.general.LineClipper;
 import uk.me.parabola.mkgmap.reader.osm.FakeIdGenerator;
 //import uk.me.parabola.mkgmap.reader.osm.GeneralRelation;
 //import uk.me.parabola.mkgmap.reader.osm.MultiPolygonRelation;
@@ -34,6 +34,7 @@ import de.ueller.osmToGpsMid.model.Node;
 import de.ueller.osmToGpsMid.model.Relation;
 import de.ueller.osmToGpsMid.model.Tile;
 import de.ueller.osmToGpsMid.model.Way;
+import de.ueller.osmToGpsMid.model.Path;
 
 /**
  * Static class which checks if there are coast lines in the tile which need to be
@@ -93,7 +94,8 @@ public class SeaGenerator {
 			natural = currentWay.getAttribute("natural");
 			if (natural != null) {
 				if ("coastline".equals(natural)) {
-					currentWay.deleteTag("natural");
+					// FIXME should delete the tag
+					//currentWay.deleteTag("natural");
 					shoreline.add(currentWay);
 				}
 				else if (natural.contains(";")) {
@@ -156,12 +158,22 @@ public class SeaGenerator {
 		// Clip all shoreline segments
 		// Moved this down because it only makes sense if there are coast lines at all. 
 		// TODO: Do we need this in Osm2GpsMid or aren't the ways already clipped?
-/*
+		// Apparently yes: otherwise there will be loads of messages like
+		/*
+
+===============================
+2010/12/28 23:33:01 WARNING (SeaGenerator): Non-closed coastline segment does not hit bounding box: start id=248533560 (60.173336|24.822487) name=null end id=25197279 (60.173588|24.829788) name=null
+  See http://www.openstreetmap.org/browse/node/248533560 and http://www.openstreetmap.org/browse/node/25197279
+		  
+
+		 */
+
 		List<Way> toBeRemoved = new ArrayList<Way>();
 		List<Way> toBeAdded = new ArrayList<Way>();
 		for (Way segment : shoreline) {
 			List<Node> points = segment.getNodes();
 			List<List<Node>> clipped = LineClipper.clip(seaBounds, points);
+			//List<List<Node>> clipped = null;
 			if (clipped != null) {
 				log.info("clipping " + segment);
 				toBeRemoved.add(segment);
@@ -175,7 +187,6 @@ public class SeaGenerator {
 		log.info("clipping: adding " + toBeAdded.size() + ", removing " + toBeRemoved.size());
 		shoreline.removeAll(toBeRemoved);
 		shoreline.addAll(toBeAdded);
-*/
 
 		long multiId = FakeIdGenerator.makeFakeId();
 		Relation seaRelation = null;
