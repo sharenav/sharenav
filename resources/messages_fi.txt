@@ -724,3 +724,4 @@ guisearch.poundnowordsearch=#loppu
 guisetupgui.DefineMaxSearch=Hakutulosten maksimimäärä
 guisetupgui.scroll=Vieritä hakutulosta
 guisetupgui.scrollall=Vieritä kaikkia hakutuloksia
+guidiscover.largefont=Isompi teksti

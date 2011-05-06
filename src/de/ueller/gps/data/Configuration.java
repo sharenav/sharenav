@@ -286,6 +286,8 @@ public class Configuration {
 	public final static byte CFGBIT_TICKER_ISEARCH = 110;
 	/** bit 111: Flag whether to scroll all search results horizontally */
 	public final static byte CFGBIT_TICKER_ISEARCH_ALL = 111;
+	/** bit 112: Flag whether to have a large font for UI */
+	public final static byte CFGBIT_LARGE_FONT = 112;
 	
 	/**
 	 * These are the database record IDs for each configuration option

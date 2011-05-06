@@ -622,6 +622,10 @@ public class GuiSearch extends Canvas implements CommandListener,
 	protected void paint(Graphics gc) {
 		//#debug debug
 		logger.debug("Painting search screen with offset: " + scrollOffset);
+		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_LARGE_FONT)) {
+			Font fontLarge = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_PLAIN, Font.SIZE_LARGE);  
+			gc.setFont(fontLarge);
+		}
 		lastPaintTime = System.currentTimeMillis();
 		if (fontSize == 0)
 			fontSize = gc.getFont().getHeight();		
