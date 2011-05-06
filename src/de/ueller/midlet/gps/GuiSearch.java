@@ -1163,7 +1163,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				if (needsTicker && isCursorValid() && (System.currentTimeMillis() - lastPaintTime) > 300) {
 					needsPainting = true;
 				}
-				System.out.println("tickerTick ending: ticker " + ticker + " tickerDiff " + tickerDiff);
+				//System.out.println("tickerTick ending: ticker " + ticker + " tickerDiff " + tickerDiff);
 	}
 	private void resetTicker() {
 		// stop a moment at string start (-4..0)
