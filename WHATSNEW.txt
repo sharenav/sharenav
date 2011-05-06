@@ -16,6 +16,7 @@
     - POIs and areas are now indexed with is_in (nearbys)
     - the star key (*) switching between nearbys has a new last step where also the last
       nearby is hidden so that the distance and compass direction are shown
+    - horizontal scroll (optionally) of the search result under cursor or all search results
     *** Multi-word search ***
     - New feature multi-word search, available only in "Generic/editing", "Generic/full" (and "Generic/microemulator")
       as it can require more memory than single word or whole name search.

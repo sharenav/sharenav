@@ -108,6 +108,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 	
 	private int scrollOffset = 0;
 
+	private volatile static long lastPaintTime = 0;
+
 	private StringBuffer searchCanon = new StringBuffer();
 
 	private boolean searchAlpha = false;
@@ -191,6 +193,12 @@ public class GuiSearch extends Canvas implements CommandListener,
 	private volatile TimerTask tapAutoReleaseTimerTask = null;
 	private final int TAP_AUTORELEASE_DELAY = 500;
 
+	/** result ticker */
+	private volatile int ticker = -4;
+	private volatile int tickerDiff = 0;
+	private volatile int tickerMax = 0;
+	private volatile boolean needsTicker = false;
+
 	private KeySelectMenu poiTypeForm;
 
 	//#if polish.api.bigsearch
@@ -239,6 +247,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		
 		timerT = new TimerTask() {
 			public void run() {
+				tickerTick();
 				if (needsPainting) {
 					repaint();
 				}
@@ -613,6 +622,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 	protected void paint(Graphics gc) {
 		//#debug debug
 		logger.debug("Painting search screen with offset: " + scrollOffset);
+		lastPaintTime = System.currentTimeMillis();
 		if (fontSize == 0)
 			fontSize = gc.getFont().getHeight();		
 		int yc=scrollOffset;
@@ -743,7 +753,11 @@ public class GuiSearch extends Canvas implements CommandListener,
 					}					
 				}
 			}
-			if (displayReductionLevel != 4) {
+			if (displayReductionLevel == 4) {
+				// show start of name & distance + compass
+				nameb.setLength(0);
+				nameb.append(name);
+			} else {
 				// show last name part unreduced unless reduced to compass
 				if(reducedName!=0 && nameb.length()>=2) {
 					// only if the result is more than once reduced (for POIs) or the result has a nearby entry
@@ -753,15 +767,41 @@ public class GuiSearch extends Canvas implements CommandListener,
 							nameb.append(name);
 						}
 						else {
-							nameb.append(nearNameb.toString());					
+							nameb.append(nearNameb.toString());
 						}
 					}
 				}
 			}
 			appendCompassDirection(nameb, sr);
 			name=nameb.toString();
+			if (i == cursor &&
+			    (Configuration.getCfgBitState(Configuration.CFGBIT_TICKER_ISEARCH_ALL)
+			     || Configuration.getCfgBitState(Configuration.CFGBIT_TICKER_ISEARCH))) {
+				if (nameBiggerThanFits(gc, name)) {
+					needsTicker = true;
+				} else {
+					needsTicker = false;
+				}
+			}
+			int tickerUse = 0;
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_TICKER_ISEARCH_ALL)
+			    && i != cursor && needsTicker && tickerDiff > 0) {
+				tickerUse = tickerDiff;
+			}
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_TICKER_ISEARCH)
+			    && i == cursor && needsTicker && tickerDiff > 0) {
+				tickerUse = tickerDiff;
+			}
+
+			if (i == cursor && needsTicker && tickerDiff > 0) {
+				if (!nameBiggerThanFits(gc, name.substring(tickerDiff)) && ticker > 0) {
+					tickerAtEnd();
+				}
+			}
+			name = name.substring(tickerUse);
 			if (name != null) {
 				// avoid index out of bounds 
+				// FIXME add code to handle word search code and housenumber search result highlighting
 				int imatch=searchCanon.length(); 
 				if (name.length()<imatch) { 
 					imatch=name.length(); 
@@ -787,21 +827,30 @@ public class GuiSearch extends Canvas implements CommandListener,
 					} else { 
 						gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_NONSELECTED_TYPED]);
 					}
-					gc.drawString(name.substring(0,imatch+flags.length()), 17, yc, Graphics.TOP | Graphics.LEFT); 
+					int len = imatch+flags.length()-tickerUse;
+					if (len > name.length()) {
+						len = name.length();
+					} else if (len < 0) {
+						len = 0;
+					}
+					gc.drawString(name.substring(0,len), 17, yc, Graphics.TOP | Graphics.LEFT); 
 					// remaining name part 
 					if (i == cursor){ 
 						gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_SELECTED_REST]);
 					} else { 
 						gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_NONSELECTED_REST]);
 					} 
-					gc.drawString(name.substring(imatch+flags.length()), 17 + gc.getFont().stringWidth(name.substring(0,imatch+flags.length())) , yc, Graphics.TOP | Graphics.LEFT);
+					gc.drawString(name.substring(len), 17 + gc.getFont().stringWidth(name.substring(0,len)) , yc, Graphics.TOP | Graphics.LEFT);
 				}
 				// carret 
 				if(!(Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) || matchMode())
 				   && carret<=imatch && displayReductionLevel<1) { 
-					int cx=17 + gc.getFont().stringWidth(name.substring(0,carret+flags.length())); 
-					gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_SELECTED_TYPED]);
-					gc.drawLine(cx-1,yc+fontSize,cx+1,yc+fontSize); 
+					int len = carret+flags.length()-tickerUse;
+					if (len >= 0) {
+						int cx=17 + gc.getFont().stringWidth(name.substring(0,len)); 
+						gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_SELECTED_TYPED]);
+						gc.drawLine(cx-1,yc+fontSize,cx+1,yc+fontSize); 
+					}
 				}
 			}
 			else 
@@ -825,6 +874,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 
 	protected void keyPressed(int keyCode) {
 		int action = getGameAction(keyCode);
+		resetTicker();
 		/** Ignore gameActions from unicode character keys (space char and above).
 		 *  By not treating those keys as game actions they get added to the search canon
 		 *  by default if not handled otherwise */
@@ -1092,6 +1142,35 @@ public class GuiSearch extends Canvas implements CommandListener,
 		}
 		//#endif
 	}
+
+	private boolean nameBiggerThanFits(Graphics gc, String name) {
+		return 17 + gc.getFont().stringWidth(name) > getWidth();
+	}
+
+	private void tickerTick() {
+				ticker++;
+				if (ticker >= 0) {
+					tickerDiff = ticker;
+				} else if (ticker < -4) {
+					tickerDiff = tickerMax;
+				} else if (ticker < 0) {
+					tickerDiff = 0;
+				}
+				if (needsTicker && isCursorValid() && (System.currentTimeMillis() - lastPaintTime) > 300) {
+					needsPainting = true;
+				}
+				System.out.println("tickerTick ending: ticker " + ticker + " tickerDiff " + tickerDiff);
+	}
+	private void resetTicker() {
+		// stop a moment at string start (-4..0)
+		ticker = -4;
+	}
+	private void tickerAtEnd() {
+		// stop a moment at string end (-8..-5) and string start (-4..0)
+		tickerMax = tickerDiff;
+		ticker = -8;
+	}
+
 	private boolean matchMode() {
 		return (!words.equals(""));
 	}

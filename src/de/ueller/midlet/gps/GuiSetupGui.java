@@ -81,15 +81,15 @@ public class GuiSetupGui extends Form implements CommandListener {
 			}
 
 			// search options
-			int iMax = 0;
+			int iMax = 2;
 			if (Configuration.getHasPointerEvents()) {
 				iMax++;
 			}
 			String [] search = null;
-			if (iMax > 0) {
-				 search = new String[iMax];
-			}
+			search = new String[iMax];
 			int searchnum = 0;
+			search[searchnum++] = Locale.get("guisetupgui.scroll")/*Scroll result under cursor*/;
+			search[searchnum++] = Locale.get("guisetupgui.scrollall")/*Scroll all results*/;
 			if (Configuration.getHasPointerEvents()) {
 			    search[searchnum++] = Locale.get("guisetupgui.numberkeypad")/*Enable virtual keypad*/;
 			}
@@ -97,6 +97,8 @@ public class GuiSetupGui extends Form implements CommandListener {
 			/* only display search settings available on the device */
 			// maximum search option entries
 			searchnum = 0;
+			searchSettings.setSelectedIndex(searchnum++, Configuration.getCfgBitSavedState(Configuration.CFGBIT_TICKER_ISEARCH));
+			searchSettings.setSelectedIndex(searchnum++, Configuration.getCfgBitSavedState(Configuration.CFGBIT_TICKER_ISEARCH_ALL));
 			if (Configuration.getHasPointerEvents()) {
 			    searchSettings.setSelectedIndex(searchnum++, Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD));
 			}
@@ -176,6 +178,8 @@ public class GuiSetupGui extends Form implements CommandListener {
 			    Configuration.setCfgBitSavedState(Configuration.CFGBIT_WORD_ISEARCH, searchLayout);
 			}
 			int i = 0;
+			Configuration.setCfgBitSavedState(Configuration.CFGBIT_TICKER_ISEARCH, searchSettings.isSelected(i++));
+			Configuration.setCfgBitSavedState(Configuration.CFGBIT_TICKER_ISEARCH_ALL, searchSettings.isSelected(i++));
 			if (Configuration.getHasPointerEvents()) {
 				Configuration.setCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD, searchSettings.isSelected(i++));
 			}

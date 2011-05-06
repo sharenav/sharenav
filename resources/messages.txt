@@ -1185,3 +1185,5 @@ guidiscover.SearchStyle=Search style
 guisearch.pound=_#end
 guisearch.poundNameSearch=#end
 guisetupgui.DefineMaxSearch=Max # of search results
+guisetupgui.scroll=Scroll result under cursor
+guisetupgui.scrollall=Scroll all results
