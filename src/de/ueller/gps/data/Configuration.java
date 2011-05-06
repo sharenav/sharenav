@@ -57,7 +57,7 @@ public class Configuration {
 	 *  the default values for the features added between configVersionStored
 	 *  and VERSION will be set, before the version in the recordstore is increased to VERSION.
 	 */
-	public final static int VERSION = 22;
+	public final static int VERSION = 24;
 
 	public final static int LOCATIONPROVIDER_NONE = 0;
 	public final static int LOCATIONPROVIDER_SIRF = 1;
@@ -280,6 +280,14 @@ public class Configuration {
 	public final static byte CFGBIT_MAPTAP_SINGLE = 107;
 	/** bit 108: indicate whether gpsmid is running (for android which can kill the process and restart it)*/
 	public final static byte CFGBIT_RUNNING = 108;
+	/** bit 109: Flag whether to use word search (in contrast to whole name search) in incremental search */
+	public final static byte CFGBIT_WORD_ISEARCH = 109;
+	/** bit 110: Flag whether to scroll the search result under cursor horizontally */
+	public final static byte CFGBIT_TICKER_ISEARCH = 110;
+	/** bit 111: Flag whether to scroll all search results horizontally */
+	public final static byte CFGBIT_TICKER_ISEARCH_ALL = 111;
+	/** bit 112: Flag whether to have a large font for UI */
+	public final static byte CFGBIT_LARGE_FONT = 112;
 	
 	/**
 	 * These are the database record IDs for each configuration option
@@ -337,6 +345,8 @@ public class Configuration {
 	private static final int RECORD_ID_SOUND_DIRECTORY = 51;
 	private static final int RECORD_ID_DEST_RADLAT = 52;
 	private static final int RECORD_ID_DEST_RADLON = 53;
+	// max number of search results to find before stopping search
+	private static final int RECORD_ID_SEARCH_MAX = 54;
 
 	// Gpx Recording modes
 	// GpsMid determines adaptive if a trackpoint is written
@@ -419,6 +429,8 @@ public class Configuration {
 	private static String opencellid_apikey;
 
 	private static long phoneAllTimeMaxMemory = 0;
+
+	private static int searchMax = 0;
 	
 	private static int minRouteLineWidth = 0;
 	private static int mainStreetDistanceKm = 0;
@@ -525,6 +537,7 @@ public class Configuration {
 			trafficSignalCalcDelay = readInt(database, RECORD_ID_TRAFFIC_SIGNAL_CALC_DELAY);
 			wayptSortMode = readInt(database, RECORD_ID_WAYPT_SORT_MODE);
 			backLightLevel = readInt(database, RECORD_ID_BACKLIGHTLEVEL);
+			searchMax = readInt(database, RECORD_ID_SEARCH_MAX);
 			/* there's been duplicate use of the id for RECORD_ID_BACKLIGHTLEVEL / RECORD_ID_WAYPTSORTMODE
 			 * so we need to check if backlightlevel is 0 to not end up with a black display
 			 */
@@ -747,7 +760,16 @@ public class Configuration {
 			 					 1L << CFGBIT_MAPTAP_DOUBLE |
 			 					 1L << CFGBIT_MAPTAP_SINGLE;			 					 
 		}
-
+		if (configVersionStored < 23) {
+			//#if polish.api.bigsearch
+			setSearchMax(500);
+			//#else
+			setSearchMax(50);
+			//#endif
+		}
+		if (configVersionStored < 24) {
+			cfgBits_64_to_127 |= 1L << CFGBIT_TICKER_ISEARCH;
+		}
 		setCfgBits(cfgBits_0_to_63, cfgBits_64_to_127);
 	}
 
@@ -921,6 +943,7 @@ public class Configuration {
 		dos.writeUTF(sanitizeString(getNamesOnMapLang()));
 		dos.writeUTF(sanitizeString(getSoundDirectory()));
 		dos.writeInt(getProjDefault());
+		dos.writeInt(getSearchMax());
 		/*
 		 * Don't store destpos in export - perhaps later add a function for "move the app" which would store also destpos
 		dos.writeUTF(Float.toString(destPos.radlat));
@@ -932,8 +955,8 @@ public class Configuration {
 	public static void deserialise(InputStream is) throws IOException {
 		DataInputStream dis = new DataInputStream(is);
 		int version = dis.readInt();
-		// compatibility with versions 21 and 22
-		if (version != VERSION && !(version >= 21 && version <= 22)) {
+		// compatibility with versions 21 and 23
+		if (version != VERSION && !(version >= 21 && version <= 24)) {
 			throw new IOException(Locale.get("configuration.ConfigVersionMismatch")/*Version of the stored config does not match with current GpsMid*/);
 		}
 		boolean destPosValid = getCfgBitSavedState(CFGBIT_SAVED_DESTPOS_VALID);
@@ -1004,6 +1027,9 @@ public class Configuration {
 				Trace.getInstance().setDestination(new RoutePositionMark(destNode.radlat, destNode.radlon));
 			}
 			*/
+		}
+		if (version >= 23) {
+			searchMax = dis.readInt();
 		}
 	}
 	
@@ -1169,6 +1195,10 @@ public class Configuration {
 		write(i, RECORD_ID_PHONE_ALL_TIME_MAX_MEMORY);
 	}
 	
+	public static void setSearchMax(int max) {
+		searchMax = max;
+		write(max, RECORD_ID_SEARCH_MAX);
+	}
 
 	public static boolean getCfgBitState(byte bit, boolean getDefault) {
 		if (bit < 64) {
@@ -1943,6 +1973,10 @@ public class Configuration {
 
 	public static long getPhoneAllTimeMaxMemory() {
 		return phoneAllTimeMaxMemory;
+	}
+
+	public static int getSearchMax() {
+		return searchMax;
 	}
 
 	public static String getUtf8Encoding() {

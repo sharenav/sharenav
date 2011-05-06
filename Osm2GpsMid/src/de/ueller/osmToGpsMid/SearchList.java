@@ -23,6 +23,7 @@ import de.ueller.osmToGpsMid.model.Node;
 import de.ueller.osmToGpsMid.model.Way;
 import de.ueller.osmToGpsMid.model.name.Name;
 import de.ueller.osmToGpsMid.model.name.Names;
+import de.ueller.osmToGpsMid.model.name.WayRedirect;
 import de.ueller.osmToGpsMid.model.url.Url;
 import de.ueller.osmToGpsMid.model.url.Urls;
 
@@ -33,28 +34,42 @@ import de.ueller.osmToGpsMid.model.url.Urls;
 public class SearchList {
 	Names names;
 	Urls urls;
+	WayRedirect wayRedirect;
 
-	public SearchList(Names names, Urls urls) {
+	public static final int INDEX_NAME = 0;
+	public static final int INDEX_WORD = 1;
+	public static final int INDEX_WHOLEWORD = 2;
+	public static final int INDEX_HOUSENUMBER = 3;
+	public static final int INDEX_BIGNAME = 4;
+
+	public SearchList(Names names, Urls urls, WayRedirect wayRedirect) {
 		super();
 		this.names = names;
 		this.urls = urls;
+		this.wayRedirect = wayRedirect;
 	}
 
-	public void createSearchList(String path){
+	public void createSearchList(String path, int listType){
 		try {
 			FileOutputStream fo = null;
 			DataOutputStream ds = null;
 			String lastStr=null;
 			String lastFid="";
 			int curPos=0;
-			for (Name mapName : names.getCanons()) {
-				String string=mapName.getCanonFileName();
+			for (Name mapName : ((listType == INDEX_NAME || listType == INDEX_BIGNAME) ? names.getCanons()
+					     : (listType == INDEX_WORD ? names.getWordCanons()
+						: (listType == INDEX_WHOLEWORD ? names.getWholeWordCanons() : names.getHouseNumberCanons())))) {
+				String string=mapName.getCanonFileName(mapName.getCanonFileId());
 				int eq=names.getEqualCount(string,lastStr);
 				if (! lastFid.equals(mapName.getCanonFileId())){
 					if (ds != null) ds.close();
 					lastFid=mapName.getCanonFileId();
-					String fileName = path+"/s"+lastFid+".d";
-//					System.out.println("open "+fileName);
+					String fileName = path+
+						(listType == INDEX_BIGNAME ? "/n" :
+						 (listType == INDEX_NAME ? "/s" : (listType == INDEX_WORD ? "/w"
+										  : (listType == INDEX_WHOLEWORD ? "/ww" : "/h")))) +
+						lastFid+".d";
+					//System.out.println("open "+fileName);
 					fo = new FileOutputStream(fileName);
 					ds = new DataOutputStream(fo);
 					curPos=0;
@@ -114,6 +129,24 @@ public class SearchList {
 					String url = null;
 					String phone = null;
 					String name = null;
+					long idtowrite = 0;
+					if (e instanceof Node) {
+						idtowrite = ((Node) e).id;
+					}
+					if (e instanceof Way) {
+						idtowrite = ((Way) e).id;
+					}
+					if (listType != INDEX_NAME && Configuration.getConfiguration().useHouseNumbers) {
+						// write way id for matching housenumber to streetname
+						//System.out.println ("listType == 3, testing node " + n);
+						//System.out.println ("type was: " + n.getType(Configuration.getConfiguration()));
+						String wayid = e.getAttribute("__wayid");
+						if (wayid != null) {
+							long way = Long.parseLong(wayid);
+							//System.out.println ("Found housenumber node wayid:" + wayid + "(" + way + ")" );
+							idtowrite = way;
+						}
+					}			   
 					if (e instanceof Node) {
 						Node n = (Node) e;						
 						url = n.getUrl();
@@ -121,7 +154,8 @@ public class SearchList {
 						name = n.getName();
 						ds.writeByte(-1*n.getType(Configuration.getConfiguration()));
 						center=n;
-//						System.out.println("entryType " + n.getNameType() + " idx=" + mapName.getIndex());
+						//System.out.println("entryType " + n.getNameType() + " idx=" + mapName.getIndex());
+						// housenumber index
 					}
 					if (e instanceof Way) {
 						Way w = (Way) e;
@@ -131,6 +165,22 @@ public class SearchList {
 						ds.writeByte(w.getType(Configuration.getConfiguration()));
 //						System.out.println("entryType " + w.getNameType() + " idx=" + mapName.getIndex());
 						center=w.getMidPoint();
+					}
+                                        // write id for housenumber or multi-word matching
+					if (listType != INDEX_NAME) {
+						Long idLong = new Long(idtowrite);
+						// check if this is redirected to another way segment with the same name
+						// due to space & search result conservation
+						//System.out.println("Checking redirect for id " + idtowrite);
+						Long targetLong = wayRedirect.get(idLong);
+						if (targetLong != null) {
+							long target = wayRedirect.get(idLong).longValue();
+							//System.out.println("Doing redirect from id " + idtowrite + " to " + target);
+							if (target != (long) 0) {
+								idtowrite = target;
+							}
+						}
+						ds.writeLong(idtowrite);
 					}
 					ArrayList<Entity> isIn=new ArrayList<Entity>();
 					Entity nb=e.nearBy;

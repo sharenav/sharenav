@@ -59,6 +59,8 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 	private Hashtable<String, Set<EntityDescription>> keyValuesPoi;
 	private Hashtable<String, Set<EntityDescription>> keyValuesWay;
 	private Hashtable<String, Integer> maxSpeedTemplates;
+	private Hashtable<String, Boolean> relationExpansions;
+	private Hashtable<String, Boolean> relationExpansionsCombine;
 	private static final Vector<Damage> damages = new Vector<Damage>();
 	private final byte READING_WAYS = 0;
 	private final byte READING_POIS = 1;
@@ -131,6 +133,8 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 			pois = new LongTri<EntityDescription>();
 			currentPoi = new POIdescription();
 			maxSpeedTemplates = new Hashtable<String, Integer>();
+			relationExpansions = new Hashtable<String, Boolean>();
+			relationExpansionsCombine = new Hashtable<String, Boolean>();
 			/* Add a bogous POI description, to reserve type 0 as a special marker */
 			currentPoi.typeNum = (byte)poiIdx++;
 			currentPoi.key = "A key that should never be hot";
@@ -209,6 +213,9 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 				relevantKeys.add(e.nameKey);
 				relevantKeys.add(e.nameFallbackKey);
 				relevantKeys.add(e.helperTag);
+				if (e.houseNumberMatchTag != null) {
+					relevantKeys.add(e.houseNumberMatchTag);
+				}
 				if (e.specialisation != null) {
 					for (ConditionTuple ct : e.specialisation) {
 						relevantKeys.add(ct.key);
@@ -220,6 +227,9 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 				relevantKeys.add(e.nameKey);
 				relevantKeys.add(e.nameFallbackKey);
 				relevantKeys.add(e.helperTag);
+				if (e.houseNumberMatchTag != null) {
+					relevantKeys.add(e.houseNumberMatchTag);
+				}
 				if (e.specialisation != null) {
 					for (ConditionTuple ct : e.specialisation) {
 						relevantKeys.add(ct.key);
@@ -281,7 +291,12 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 		relevantKeys.add("place");
 		relevantKeys.add("area");
 		relevantKeys.add("layer");
-		
+		// FIXME: switch this on a flag, if true, index all
+		// nodes with addr:housenumber, regardless of whether there's a housenumberindex element
+		if (config.useHouseNumbers) {
+			relevantKeys.add("addr:housenumber");
+			relevantKeys.add("addr:street");
+		}
 		//relevantKeys.add("barrier");
 		//relevantKeys.add("direction");
 		//relevantKeys.add("crossing");
@@ -362,6 +377,8 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 				ConditionTuple ct = new ConditionTuple();
 				ct.key = atts.getValue("key");
 				ct.value = atts.getValue("value");
+				ct.regexp = "true".equalsIgnoreCase(atts.getValue("regexp"));
+				ct.properties = "true".equalsIgnoreCase(atts.getValue("properties"));
 				String condition = atts.getValue("condition");
 				if (condition.equalsIgnoreCase("exclude")) {
 					ct.exclude = true;
@@ -382,6 +399,10 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 			}
 			if (qName.equals("helpertag")) {
 				currentPoi.helperTag = atts.getValue("tag");
+			}
+			if (qName.equals("housenumberindex")) {
+				currentPoi.houseNumberIndex = true;
+				currentPoi.houseNumberMatchTag = atts.getValue("matchtag");
 			}
 			if (qName.equals("namefallback")) {
 				currentPoi.nameFallbackKey = atts.getValue("tag");
@@ -495,6 +516,7 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 				} else {
 					ct.exclude = false;
 				}
+				ct.regexp = "true".equalsIgnoreCase(atts.getValue("regexp"));
 				currentWay.specialisation.add(ct);
 			}
 			if (qName.equals("description")) {
@@ -505,6 +527,10 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 			}
 			if (qName.equals("namefallback")) {
 				currentWay.nameFallbackKey = atts.getValue("tag");
+			}
+			if (qName.equals("housenumberindex")) {
+				currentWay.houseNumberIndex = true;
+				currentWay.houseNumberMatchTag = atts.getValue("matchtag");
 			}
 			if (qName.equals("scale")) {
 				try {
@@ -556,6 +582,24 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 			}
 			if (qName.equals("isArea")) {
 				currentWay.isArea = atts.getValue("area").equalsIgnoreCase("true");
+			}
+			if (qName.equals("asRelation")) {
+				if ("true".equalsIgnoreCase(atts.getValue("relation"))) {
+					if (currentWay.key != null && currentWay.value != null) {
+						System.out.println("Shall expand type=" + currentWay.key + ","
+								   + currentWay.key + "=" + currentWay.value
+								   + " relations");
+						relationExpansions.put(currentWay.key + "=" +  currentWay.value, true);
+					}
+				}
+				if ("true".equalsIgnoreCase(atts.getValue("combined"))) {
+					if (currentWay.key != null && currentWay.value != null) {
+						System.out.println("Shall combine type=" + currentWay.key + ","
+								   + currentWay.key + "=" + currentWay.value
+								   + " relations");
+						relationExpansionsCombine.put(currentWay.key + "=" +  currentWay.value, true);
+					}
+				}
 			}
 			if (qName.equals("ignoreOsmAreaTag")) {
 				currentWay.ignoreOsmAreaTag = atts.getValue("ignore").equalsIgnoreCase("true");
@@ -877,6 +921,14 @@ public class LegendParser extends DefaultHandler implements ErrorHandler {
 
 	public Hashtable<String, Integer> getMaxspeedTemplates() {
 		return maxSpeedTemplates;
+	}
+
+	public Hashtable<String, Boolean> getRelationExpansions() {
+		return relationExpansions;
+	}
+
+	public Hashtable<String, Boolean> getRelationExpansionsCombine() {
+		return relationExpansionsCombine;
 	}
 
 	public static Vector<Damage> getDamages() {

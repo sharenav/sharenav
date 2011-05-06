@@ -905,6 +905,14 @@ scale alias 1: zoomed out 21x
 		<scale scale="23"/>
 		<textscale scale="26"/>
 	  </value>
+	  <value name="waterfall">
+		<description desc="Waterfall"/>
+		<image src="waterfall.png"/>
+		<namekey tag="name"/>
+		<AreaPOI createForAreas="true"/>
+		<scale scale="23"/>
+		<textscale scale="26"/>
+	  </value>
 	</key>
 	<key tag="landuse">
 	  <value name ="farm">
@@ -985,17 +993,33 @@ scale alias 1: zoomed out 21x
 -->
 	</key>
 <!--
+    the segment below is used for housenumber searches and viewing; it's automatically
+    enable by useHouseNumbers=true to .properties.
+
+the following line before helpertag puts housenumbers in their own index,
+so housenumbers don't clutter the main search.
+
+		<housenumberindex index="true"/>
+
+without the "housenumberindex" line, all housenumbers are added to main index and searchable
+in the main index as well as in housenumber index.
+
+-->
+
 	<key tag="addr:housenumber">
 	  <value name ="*">
+		<specialisation key = "useHouseNumbers" value = "true" properties="true" />
 		<description desc = "House number"/>
 		<image src="mark.png"/>
-		<namekey tag="addr:housenumber"/>
-		<scale scale="20"/>
-		<textscale scale="21"/>
+		<namekey tag="addr:housenumber"/>	
+		<namefallback tag="*"/>	
+		<housenumberindex index="true" matchtag="addr:street"/>
+		<helpertag tag="addr:street"/>
+		<scale scale="26"/>
+		<textscale scale="27"/>
 		<hideable hideable="false"/>
 	  </value>	
 	</key>
--->
 	<key tag="aeroway">
 	  <value name ="aerodrome">
 		<description desc = "Aerodrome"/>
@@ -1041,6 +1065,7 @@ scale alias 1: zoomed out 21x
 			<textscale scale="26"/>
 	  	</value>
 	</key>
+
 	<!-- http://wiki.openstreetmap.org/wiki/WikiProject_Haiti
 		 Uncomment below to include damage POIs -->
 	<!--
@@ -1076,6 +1101,16 @@ scale alias 1: zoomed out 21x
 	  </value>
   	</key>
 	-->
+	<key tag="waterway">
+	  <value name="waterfall">
+			<description desc="Waterfall"/>
+			<image src="waterfall.png"/>
+			<namekey tag="name"/>
+			<AreaPOI createForAreas="true"/>
+			<scale scale="23"/>
+			<textscale scale="26"/>
+	  </value>
+	</key>
   </pois>
   <ways>
   		<keyW tag = "highway">
@@ -1765,6 +1800,14 @@ scale alias 1: zoomed out 21x
   				<lineColor color = "000000F0" colorAtNight="003A3AC4" />
   				<wayWidth width="3" />  	  				
   			</Wvalue>
+			<Wvalue name="waterfall">
+				<description desc="Waterfall"/>
+				<namekey tag="name"/>
+				<isArea area="false"/>
+				<scale scale="19"/>
+				<lineColor color="000000F0" colorAtNight="003A3AC4"/>
+				<wayWidth width="6"/>
+			</Wvalue>
   			<Wvalue name = "*">
   				<description desc = "other waterway"/>
   				<namekey tag = "name"/>  				
@@ -1785,6 +1828,70 @@ scale alias 1: zoomed out 21x
 				<wayWidth width="1" />  	  				
 				<force_to layer="1" />
 			</Wvalue>
+
+<!-- examples for showing route relations on the map
+
+			<Wvalue name = "bus" priority = "19">
+				<description desc = "Bus line" />
+				<asRelation relation = "true" combined = "true" />
+				<namekey tag = "name" />
+				<namefallback tag = "ref" />
+				<isArea area = "false"/>
+        			<scale scale = "10"/>
+				<lineColor color = "0000FFFF" />
+				<wayWidth width = "2" />
+				<force_to layer = "3"/>
+			</Wvalue>
+			<Wvalue name = "bicycle">
+				<description desc = "Bike route" />
+				<asRelation relation = "true" combined = "true" />
+				<namekey tag = "ref" />
+				<namefallback tag = "name" />
+				<isArea area = "false"/>
+        			<scale scale = "10"/>
+				<lineColor color = "00FF0068" />
+				<wayWidth width = "2" />
+				<force_to layer = "3"/>
+			</Wvalue>
+			<Wvalue name = "road">
+				<description desc = "Road" />
+				<asRelation relation = "true" combined = "true" />
+				<namekey tag = "ref" />
+				<namefallback tag = "name" />
+				<isArea area = "false"/>
+        			<scale scale = "10"/>
+				<lineColor color = "0000FF68" />
+				<wayWidth width = "2" />
+				<force_to layer = "3"/>
+			</Wvalue>
+			<Wvalue name = "ski">
+				<description desc = "Ski route" />
+				<asRelation relation = "true" combined = "true" />
+				<namekey tag = "ref" />
+				<namefallback tag = "name" />
+				<isArea area = "false"/>
+        			<scale scale = "10"/>
+				<lineColor color = "0000FFFF" />
+				<wayWidth width = "3" />
+				<force_to layer = "3"/>
+			</Wvalue>
+			<Wvalue name = "train">
+				<description desc = "Train" />
+				<asRelation relation = "true" combined = "true" />
+				<namekey tag = "ref" />
+				<namefallback tag = "name" />
+				<isArea area = "false"/>
+        			<scale scale = "10"/>
+				<lineColor color = "0000FFFF" />
+				<wayWidth width = "2" />
+				<force_to layer = "3"/>
+			</Wvalue>
+end -->
+<!-- example specialisations
+				<specialisation key = "osmc:symbol" regexp="true" value = "^red:"/>
+                                <specialisation key = "network" value = "ncn"/>
+-->
+
 		</keyW>
 		<keyW tag = "aeroway">
   			<Wvalue name = "terminal">
@@ -2165,6 +2272,7 @@ scale alias 1: zoomed out 21x
 				<description desc = "Building"/>
 				<namekey tag = "name"/>
 				<namefallback tag = "addr:housenumber"/>
+				<housenumberindex index="true" matchtag="addr:street"/>
 				<isArea area = "true"/>
 				<scale scale = "20"/>
 				<textscale scale = "21"/>

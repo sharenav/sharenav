@@ -99,7 +99,7 @@
             <!-- lowercase icon name required for Android, before Android support was icon="GpsMid.png" -->
 		<info
 			name="GpsMid"
-			version="0.7.11"
+			version="0.7.31"
 			description="Shows moving map made from OpenStreetMap data"
 			vendorName="Harald Mueller"
 			infoUrl="http://gpsmid.sourceforge.net"
@@ -130,18 +130,19 @@
 				<requirement name="Identifier" value="Generic/blackberry" />
 				<requirement name="Identifier" value="Generic/full" />
 				<requirement name="Identifier" value="Generic/minimal" />
-				<requirement name="Identifier" value="Generic/full-nolocation" />
-				<requirement name="Identifier" value="Generic/multi" />
-				<requirement name="Identifier" value="Generic/minimal-bt" />
-				<requirement name="Identifier" value="Generic/no-obex" />
-				<requirement name="Identifier" value="Generic/no-xml" />
 				<!--
+				<requirement name="Identifier" value="Generic/newfeatures" />
 				<requirement name="Identifier" value="Generic/android" />
 				<requirement name="Identifier" value="Generic/android2.1" />
 				<requirement name="Identifier" value="Motorola/Motorazr_V3i" />
 				<requirement name="Identifier" value="Sony-Ericsson/K750" />
 				<requirement name="Identifier" value="Siemens/SL75" />
 				<requirement name="Identifier" value="Generic/loc" />
+				<requirement name="Identifier" value="Generic/minimal-bt" />
+				<requirement name="Identifier" value="Generic/no-obex" />
+				<requirement name="Identifier" value="Generic/no-xml" />
+				<requirement name="Identifier" value="Generic/full-nolocation" />
+				<requirement name="Identifier" value="Generic/multi" />
 				-->
 			</or>
 		</deviceRequirements>

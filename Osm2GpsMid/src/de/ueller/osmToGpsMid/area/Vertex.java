@@ -145,6 +145,15 @@ public class Vertex {
 			return false;
 		}
 	}
+	
+	public float getSideOfVector(Vertex v1, Vertex v2) {
+		float lat12 = v1.getLat() - v2.getLat();
+		float lon12 = v1.getLon() - v2.getLon();
+		float latn2 = getLat() - v2.getLat();
+		float lonn2 = getLon() - v2.getLon();
+				
+		return lat12 * lonn2 - lon12 * latn2;
+	}
 
 
 

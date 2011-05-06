@@ -90,7 +90,7 @@ public class Area {
 		holeList = outlineTempList;
 		
 		int dir = 0;
-		ArrayList<Triangle> ret = new ArrayList<Triangle>();
+		ArrayList<Triangle> ret = new ArrayList<Triangle>(1);
 		triangleList = ret;
 		repaint();
 		int loop = 0;
@@ -121,6 +121,7 @@ public class Area {
 //		System.out.println("loops :" + loop);
 		//System.err.println("Starting to optimize");
 		optimize();
+		ret.trimToSize();
 		//System.err.println("Finished optimizing");
 		return ret;
 
@@ -148,14 +149,6 @@ public class Area {
 //				}
 			}
 //		}
-	}
-
-	/**
-	 * @param t1
-	 * @param t2
-	 */
-	private void optimize(Triangle t1, Triangle t2) {
-		
 	}
 
 	/**
@@ -306,12 +299,11 @@ public class Area {
 //	}
 
 	private Vertex findEdgeInside(Outline outline, Triangle triangle, int dir) {
-		ArrayList<Vertex> ret;
-		ret = outline.findVertexInside(triangle);
+		ArrayList<Vertex> ret = outline.findVertexInside(triangle, null);
 		for (Outline p : holeList) {
-			ret.addAll(p.findVertexInside(triangle));
+			ret = p.findVertexInside(triangle, ret);
 		}
-		if (ret.size() == 0) {
+		if (ret == null) {
 			return null;
 		}
 		//System.err.println("Starting to sort in findEdgeInside()");

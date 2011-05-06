@@ -17,19 +17,18 @@ import java.util.Iterator;
 import java.util.List;
 
 
-public class Path {
-	private List<Node> nodeList = new ArrayList<Node>();
+public class Path extends ArrayList<Node> {
 	
 	public Path() {
-		super();
+		super(2);
 	}
 	
 	public Path(ArrayList<Node> newNodeList) {
-		nodeList = newNodeList;
+		super(newNodeList);
 	}
 
-	public void add(Node n) {
-		nodeList.add(n);
+	public boolean add(Node n) {
+		return super.add(n);
 	}
 	
 	/**
@@ -37,11 +36,11 @@ public class Path {
 	 * @return Node at index i or null if 
 	 */
 	public Node getNode(int i) {
-		if (nodeList == null) {
+		if (size() == 0) {
 			return null;
 		} else {
-			if (i >= 0 && i < nodeList.size()) {
-				return nodeList.get(i);
+			if (i >= 0 && i < size()) {
+				return get(i);
 			} else {
 				return null;
 			}
@@ -49,7 +48,7 @@ public class Path {
 	}
 	
 	public List<Node> getNodes() {
-		return nodeList;
+		return this;
 	}
 
 	@Deprecated
@@ -75,10 +74,10 @@ public class Path {
 	 * @param node2 Node by which to replace node1.
 	 */
 	public void replace(Node node1, Node node2) {
-		int occur = nodeList.indexOf(node1);
+		int occur = this.indexOf(node1);
 		while (occur != -1) {
-			nodeList.set(occur, node2);
-			occur = nodeList.indexOf(node1);
+			this.set(occur, node2);
+			occur = this.indexOf(node1);
 		}
 	}
 
@@ -87,10 +86,10 @@ public class Path {
 	 * @param replaceNodes Hashmap of pairs of nodes
 	 */
 	public void replace(HashMap<Node, Node> replaceNodes) {
-		for (int i = 0; i < nodeList.size(); i++) {
-			Node newNode = replaceNodes.get(nodeList.get(i));
+		for (int i = 0; i < this.size(); i++) {
+			Node newNode = replaceNodes.get(this.get(i));
 			if (newNode != null) {
-				nodeList.set(i, newNode);	
+				this.set(i, newNode);
 			}
 		}		
 	}
@@ -99,11 +98,11 @@ public class Path {
 	 * @return The number of lines of this path, i.e. nodes - 1.
 	 */
 	public int getLineCount() {
-		if (nodeList == null) {
+		if (this.size() == 0) {
 			return 0;
 		}
-		if (nodeList.size() > 1) {
-			return (nodeList.size() - 1);
+		if (this.size() > 1) {
+			return (this.size() - 1);
 		}
 		return 0;
 	}
@@ -113,11 +112,11 @@ public class Path {
 	 * @return The number of nodes of this path or 0 if there is no node list.
 	 */
 	public int getNodeCount() {
-		if (nodeList == null) {
+		if (this.size() == 0) {
 			return 0;
 		}
-		if (nodeList.size() > 1) {
-			return (nodeList.size());
+		if (this.size() > 1) {
+			return (this.size());
 		}
 		return 0;
 	}
@@ -128,13 +127,13 @@ public class Path {
 	 *         a new Path with the rest after split.  
 	 */
 	public Path split() {
-		if (nodeList == null || getLineCount() < 2) {
+		if (this.size() == 0 || getLineCount() < 2) {
 			return null;
 		}
-		int splitP = nodeList.size() / 2;
+		int splitP = this.size() / 2;
 		ArrayList<Node> newNodeList = new ArrayList<Node>(1);
 		int a = 0;
-		for (Iterator<Node> si = nodeList.iterator(); si.hasNext();) {
+		for (Iterator<Node> si = this.iterator(); si.hasNext();) {
 			Node t = si.next();
 			if (a >= splitP) {
 				newNodeList.add(t);
@@ -144,15 +143,23 @@ public class Path {
 			}
 			a++;
 		}
+		newNodeList.trimToSize();
 		Path newPath = new Path(newNodeList);
+		// Shrink the list to the actual size.
+		trimPath();
 		return newPath;
+	}
+
+	public void trimPath()
+	{
+		this.trimToSize();
 	}
 	
 	/**
 	 * @param bound
 	 */
 	public void extendBounds(Bounds bound) {
-		for (Node n:nodeList) {
+		for (Node n:this) {
 			bound.extend(n.lat, n.lon);
 		}
 	}

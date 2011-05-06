@@ -358,6 +358,9 @@ public class Configuration {
 		/** Use or don't use house numbers for searches */
 		public boolean useHouseNumbers=false;
 
+		/** Use or don't use word search (index by words as well as whole names) */
+		public boolean useWordSearch=false;
+
 		/** TODO: Explain this, what is behind the "dict depth"? */
 		private int maxDictDepth = 5;
 		
@@ -395,6 +398,14 @@ public class Configuration {
 		 */
 		public Area getArea() {
 			return area;
+		}
+
+		public Hashtable<String, Boolean> getRelationExpansions() {
+			return legend.getRelationExpansions();
+		}
+
+		public Hashtable<String, Boolean> getRelationExpansionsCombine() {
+			return legend.getRelationExpansionsCombine();
 		}
 
 		/** Singleton getter */
@@ -603,6 +614,7 @@ public class Configuration {
 			useUrlTags = getString("useUrlTags").equalsIgnoreCase("true");
 			usePhoneTags = getString("usePhoneTags").equalsIgnoreCase("true");
 			useHouseNumbers = getString("useHouseNumbers").equalsIgnoreCase("true");
+			useWordSearch = getString("useWordSearch").equalsIgnoreCase("true");
 			maxRouteTileSize = Integer.parseInt(getString("routing.maxTileSize"));
 
 			setIcons(getString("useIcons"));
@@ -1396,6 +1408,7 @@ public class Configuration {
 			confString += "  Use url tags: " + useUrlTags + "\n";
 			confString += "  Use phone tags: " + usePhoneTags + "\n";
 			confString += "  Use house numbers for search: " + useHouseNumbers + "\n";
+			confString += "  Use words for search: " + useWordSearch + "\n";
 			confString += "  Enable editing support: " + enableEditingSupport + "\n";
 			confString += "  Adding menu entries for languages: " + getUseLang() + " (" + getUseLangName() + ")" + "\n";
 			confString += "  Don't compress files ending with: " + getDontCompress() + "\n";

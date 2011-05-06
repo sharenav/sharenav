@@ -285,12 +285,22 @@ public class BundleGpsMid implements Runnable {
 			writeJADfile(c, n.length());
 		}
 		Calendar endTime = Calendar.getInstance();
-		Calendar duration = Calendar.getInstance();
-		duration.setTimeInMillis(endTime.getTimeInMillis() - startTime.getTimeInMillis());
 		System.out.println(n.getName() + " created successfully with " + (n.length() / 1024 / 1024) + " MiB in " +
-				(duration.get(Calendar.HOUR) - 1) + ":" + duration.get(Calendar.MINUTE) + ":" + duration.get(Calendar.SECOND));
+				   getDuration(endTime.getTimeInMillis() - startTime.getTimeInMillis()));
 	}
 	
+	private static String getDuration(long duration) {
+		final int millisPerSecond = 1000;
+		final int millisPerMinute = 1000*60;
+		final int millisPerHour = 1000*60*60;
+		final int millisPerDay = 1000*60*60*24;
+		int days = (int) (duration / millisPerDay);
+		int hours = (int) (duration % millisPerDay / millisPerHour);
+		int minutes = (int) (duration % millisPerHour / millisPerMinute);
+		int seconds = (int) (duration % millisPerMinute / millisPerSecond);
+		return String.format("%d %02d:%02d:%02d", days, hours, minutes, seconds);
+	}
+
 	private static void packDir(ZipOutputStream os, File d, String path) throws IOException {
 		File[] files = d.listFiles();
 		for (int i = 0; i < files.length; i++) {
@@ -407,7 +417,7 @@ public class BundleGpsMid implements Runnable {
 	}
 	
 	static private void validateConfig(Configuration config) {
-		if ((config.enableEditingSupport) && !(config.getAppParam().equalsIgnoreCase("GpsMid-Generic-editing"))) {
+		if ((config.enableEditingSupport) && (!(config.getAppParam().equalsIgnoreCase("GpsMid-Generic-editing")) && !(config.getAppParam().equalsIgnoreCase("GpsMid-Generic-newfeatures")))) {
 			System.out.println("ERROR: You are creating a map with editing support, but use a app version that does not support editing\n"
 					+ "     please fix your .properties file");
 			System.exit(1);
@@ -476,7 +486,7 @@ public class BundleGpsMid implements Runnable {
 			
 			OsmParser parser = config.getPlanetParser();
 
-			new TriangulateRelations(parser, config);
+			new Relations(parser, config);
 
 			/**
 			 * Display some stats about the type of relations we currently aren't handling
@@ -502,10 +512,12 @@ public class BundleGpsMid implements Runnable {
 
 			}
 			relTypes = null;
+			System.out.println("Splitting long ways");
 			int numWays = parser.getWays().size();
 			new SplitLongWays(parser);
 			System.out.println("Splitting long ways increased ways from "
 					+ numWays + " to " + parser.getWays().size());
+			OxParser.printMemoryUsage(1);
 			
 			RouteData rd = null;
 			if (Configuration.attrToBoolean(config.useRouting) >= 0 ) {
@@ -521,7 +533,6 @@ public class BundleGpsMid implements Runnable {
 				System.out.println("Creating route data");
 				System.out.println("===================");
 				rd.create(config);
-				System.out.println("Optimizing route data");
 				rd.optimise();
 			}
 			CreateGpsMidData cd = new CreateGpsMidData(parser, target.getCanonicalPath());

@@ -17,6 +17,8 @@ import de.ueller.osmToGpsMid.LegendParser;
 
 
 public class Node extends Entity {
+
+	public long id;
 	/**
 	 * The position in the target array of nodes.
 	 */
@@ -59,6 +61,12 @@ public class Node extends Entity {
 		this.id = id;
 	}
 	
+	public Node(Node old) {
+		lat = old.lat;
+		lon = old.lon;
+		this.id = old.id;
+	}
+	
 	/**
 	 * @return Latitude (in degrees) of this node
 	 */
@@ -85,7 +93,7 @@ public class Node extends Entity {
 				} else {
 					nameFallback = getAttribute(desc.nameFallbackKey);
 				}
-				if (name != null && nameFallback != null) {
+				if (name != null && nameFallback != null && (!desc.nameFallbackKey.equals("*") || !desc.key.equals(desc.nameKey))) {
 					name += " (" + nameFallback + ")";
 				} else if ((name == null) && (nameFallback != null)) {
 					name = nameFallback;
@@ -132,6 +140,10 @@ public class Node extends Entity {
 			}
 		}
 		return false;
+	}
+
+	public void resetType(Configuration c) {
+		type = -1;
 	}
 
 	public byte getType(Configuration c) {
@@ -191,6 +203,11 @@ public class Node extends Entity {
 	public boolean isNeverTrafficSignalsRouteNode() {
 		return ((connectedLineCount & CLC_NEVER_TRAFFICSIGNALS_ROUTENODE) > 0);
 	}	
+
+	// FIXME should not be hard-coded but taken from style-file
+	public boolean hasHouseNumberTag() {
+		return (containsKey("addr:housenumber"));
+	}
 
 	
 	private byte calcType(Configuration c) {
@@ -269,16 +286,20 @@ public class Node extends Entity {
 			return false;
 		}
 		type = poi.typeNum;
-		String value = w.getAttribute(poi.nameKey);
-		if (value != null) {
-			setAttribute(poi.nameKey, value);
-		}
-		value = w.getAttribute(poi.nameFallbackKey);
-		if (value != null) {
-			setAttribute(poi.nameFallbackKey, value);
+		//String value = w.getAttribute(poi.nameKey);
+		//if (value != null) {
+		//	setAttribute(poi.nameKey, value);
+		//}
+		//value = w.getAttribute(poi.nameFallbackKey);
+		//if (value != null) {
+		//	setAttribute(poi.nameFallbackKey, value);
+		//}
+		// FIXME could save some memory by copying only needed tags (namekey, fallback, addr:street)
+		for (String t : w.getTags()) {
+			if (w.containsKey(t)) {
+				setAttribute(t, w.getAttribute(t));
+			}
 		}
 		return true;
 	}
-
-
 }

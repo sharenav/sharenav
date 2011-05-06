@@ -9,6 +9,14 @@ package de.ueller.midlet.gps;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
+import java.lang.Integer;
+//#if polish.api.bigsearch
+import java.util.Hashtable;
+//import java.util.Enumeration;
+//#endif
+//#if polish.android
+import android.view.KeyEvent;
+//#endif
 
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.ChoiceGroup;
@@ -17,6 +25,7 @@ import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Form;
+import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.List;
@@ -99,6 +108,8 @@ public class GuiSearch extends Canvas implements CommandListener,
 	
 	private int scrollOffset = 0;
 
+	private volatile static long lastPaintTime = 0;
+
 	private StringBuffer searchCanon = new StringBuffer();
 
 	private boolean searchAlpha = false;
@@ -111,6 +122,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 	public int displayReductionLevel = 0;
 	
 	private volatile TimerTask timerT;
+	private volatile TimerTask housenumberTimerTask = null;
 	private volatile Timer timer;
 	
 	private boolean hideKeypad = false;
@@ -180,8 +192,23 @@ public class GuiSearch extends Canvas implements CommandListener,
 	/** timer checking for long tap */
 	private volatile TimerTask tapAutoReleaseTimerTask = null;
 	private final int TAP_AUTORELEASE_DELAY = 500;
-	
+
+	/** result ticker */
+	private volatile int ticker = -4;
+	private volatile int tickerDiff = 0;
+	private volatile int tickerMax = 0;
+	private volatile boolean needsTicker = false;
+
 	private KeySelectMenu poiTypeForm;
+
+	//#if polish.api.bigsearch
+	private Hashtable matchSources = null;
+	private Hashtable matchLats = null;
+	private Hashtable matchLons = null;
+	//#endif
+
+	private boolean spacePressed = false;
+	public volatile String words = "";
 
 	public GuiSearch(Trace parent) throws Exception {
 		super();
@@ -220,6 +247,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 		
 		timerT = new TimerTask() {
 			public void run() {
+				tickerTick();
 				if (needsPainting) {
 					repaint();
 				}
@@ -286,12 +314,21 @@ public class GuiSearch extends Canvas implements CommandListener,
 				SearchResult sr = (SearchResult) result.elementAt(cursor);
 				//			System.out.println("select " + sr);
 				RoutePositionMark positionMark = new RoutePositionMark(sr.lat,sr.lon);
+				//#if polish.api.bigsearch
+				if (state == STATE_FAVORITES && sr.source == SearchNames.INDEX_WAYPOINTS) {
+					positionMark.displayName = wayPts[sr.nameIdx].displayName;
+				} else {
+					positionMark.nameIdx=sr.nameIdx;
+					positionMark.displayName=parent.getName(sr.nameIdx);
+				}
+				//#else
 				if (state == STATE_FAVORITES) {
 					positionMark.displayName = wayPts[sr.nameIdx].displayName;
 				} else {
 					positionMark.nameIdx=sr.nameIdx;
 					positionMark.displayName=parent.getName(sr.nameIdx);
 				}
+				//#endif
 				parent.setDestination(positionMark);
 				//#debug info
 				logger.info("Search selected: " + positionMark);
@@ -383,6 +420,17 @@ public class GuiSearch extends Canvas implements CommandListener,
 			searchCanon.setLength(0);
 			searchAlpha = false;
 			hideKeypad = false;
+			//matchSources = new Hashtable();
+			//matchLats = new Hashtable();
+			//matchLons = new Hashtable();
+			//#if polish.api.bigsearch
+			matchSources = null;
+			matchLats = null;
+			matchLons = null;
+			//#endif
+			words = "";
+			spacePressed = false;
+			setTitle();
 			carret=0;
 			repaint();
 			return;
@@ -508,9 +556,77 @@ public class GuiSearch extends Canvas implements CommandListener,
 		repaint();
 	}
 
+	//#if polish.api.bigsearch
+	private void nextWord() {
+		words = words + searchCanon.toString() + " ";
+		searchCanon.setLength(0);
+		carret = 0;
+		spacePressed = false;
+	}
+	//#endif
+
+	// insert new results from search thread 
+	private void insertResults() {
+		if (result2.size() > 0) {
+			synchronized(this) {				
+				for (int i = 0; i < result2.size(); i++ ) {
+					SearchResult res = (SearchResult) result2.elementAt(i);
+					String name = null;
+					//#if polish.api.bigsearch
+					Long id = new Long(res.resultid);
+					if (state == STATE_FAVORITES && res.source == SearchNames.INDEX_WAYPOINTS) {
+						name = wayPts[res.nameIdx].displayName;
+					} else {
+						name = parent.getName(res.nameIdx);
+					}
+					//#else
+					if (state == STATE_FAVORITES) {
+						name = wayPts[res.nameIdx].displayName;
+					} else {
+						name = parent.getName(res.nameIdx);
+					}
+					//#endif
+					//System.out.println ("MatchMode: " + matchMode());
+					//System.out.println ("insertresults name: " + name);
+					//System.out.println ("parent.getName: " + parent.getName(res.nameIdx));
+					// FIXME repeating code, combine
+					// avoid string index out of bound
+					int len = searchCanon.length();
+					if (name != null && name.length() < len) {
+						len = name.length();
+					}
+					if (Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ||
+					    matchMode() ||
+					    !searchAlpha || name == null ||
+					    searchCanon.toString().equalsIgnoreCase(name.substring(0, len))) {
+						//#if polish.api.bigsearch
+						// match multiword search or housenumber search
+						//System.out.println ("MatchMode: " + matchMode() + " matchSources: " + matchSources);
+						if (matchMode() && matchSources != null) {
+							if (matchSources.get(id) != null) {
+								result.addElement(res);
+							}
+						} else {
+							result.addElement(res);
+						}
+						//#else
+						result.addElement(res);
+						//#endif
+					}
+				}
+				result2.removeAllElements();
+			}
+		}
+	}
+
 	protected void paint(Graphics gc) {
 		//#debug debug
 		logger.debug("Painting search screen with offset: " + scrollOffset);
+		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_LARGE_FONT)) {
+			Font fontLarge = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_PLAIN, Font.SIZE_LARGE);  
+			gc.setFont(fontLarge);
+		}
+		lastPaintTime = System.currentTimeMillis();
 		if (fontSize == 0)
 			fontSize = gc.getFont().getHeight();		
 		int yc=scrollOffset;
@@ -524,17 +640,22 @@ public class GuiSearch extends Canvas implements CommandListener,
 					gsl = new GuiSearchLayout(0, 0, width, height);
 				}
 			
-				String letters[] = {  "     ", "  X  ", "  <- ", 
-						      Locale.get("guisearch.label1")/*1#*- */, Locale.get("guisearch.label2")/* abc2*/,
+				String letters[] = {  Locale.get("guisearch.sort")/*sort*/, "  X  ", "  <- ", 
+						      Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ?
+						      Locale.get("guisearch.label1wordSearch")/* 1*- */ :
+						      Locale.get("guisearch.label1")/*_1*- */,
+						      Locale.get("guisearch.label2")/* abc2*/,
 						      Locale.get("guisearch.label3")/* def3*/, Locale.get("guisearch.label4")/* ghi4*/,
 						      Locale.get("guisearch.label5")/* jkl5*/, Locale.get("guisearch.label6")/* mno6*/,
 						      Locale.get("guisearch.label7")/*pqrs7*/, Locale.get("guisearch.label8")/* tuv8*/,
 						      Locale.get("guisearch.label9")/*wxyz9*/, 
-						      Locale.get("guisearch.more")/*more*/, " _0  ", 
-						      Locale.get("guisearch.sort")/*sort*/};
+						      Locale.get("guisearch.more")/*more*/, "  0  ", 
+						      Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ?
+						      Locale.get("guisearch.pound")/*_#end*/ :
+						      Locale.get("guisearch.poundNameSearch")/*#end*/};
 				for (int i = 0; i < 15 ; i++) {
 					// hide sort when more than 2 chars typed
-					if (i == 14 /* sort */ && carret > 2) {
+					if (i == 0 /* sort */ && carret > 2) {
 						gsl.ele[i].setText(" ");
 					} else {
 						gsl.ele[i].setText(letters[i]);
@@ -547,34 +668,18 @@ public class GuiSearch extends Canvas implements CommandListener,
 			gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_ARROWS]);
 			gc.drawString("^", getWidth(), 0, Graphics.TOP | Graphics.RIGHT);
 		}
-	    // insert new results from search thread 
-	    if (result2.size() > 0) {
-	    	synchronized(this) {				
-	    		for (int i = 0; i < result2.size(); i++ ) {
-				SearchResult res = (SearchResult) result2.elementAt(i);
-				String name = null;
-				if (state == STATE_FAVORITES) {
-					name = wayPts[res.nameIdx].displayName;
-				} else {
-					name = parent.getName(res.nameIdx);
-				}
-				if (!searchAlpha || name == null || searchCanon.toString().equalsIgnoreCase(
-					    name.substring(0, searchCanon.toString().length()))) {
-					result.addElement(res);
-				}
-	    		}
-	    		result2.removeAllElements();
-	    	}
-	    }
+		// insert new results from search thread 
+		insertResults();
 
 	    needsPainting = false;
 	    
 	    // keep cursor within bounds
-		if (cursor!=0 && cursor >= result.size()) {
-			cursor = result.size() - 1;
-		}
-		StringBuffer nameb=new StringBuffer();
-		StringBuffer nearNameb=new StringBuffer();
+	    if (cursor!=0 && cursor >= result.size()) {
+		    cursor = result.size() - 1;
+	    }
+	    StringBuffer nameb=new StringBuffer();
+	    StringBuffer nearNameb=new StringBuffer();
+
 	    for (int i=0;i<result.size();i++){	    	
 			if (yc < 0) {
 				yc += fontSize;
@@ -614,7 +719,11 @@ public class GuiSearch extends Canvas implements CommandListener,
 			if (img != null)
 				gc.drawImage(img, 8, yc + fontSize / 2 - 1, Graphics.VCENTER | Graphics.HCENTER);
 			String name = null;
+			//#if polish.api.bigsearch
+			if (state != STATE_FAVORITES || sr.source != SearchNames.INDEX_WAYPOINTS) {
+			//#else
 			if (state != STATE_FAVORITES) {
+			//#endif
 				name = flags + getName(sr.nameIdx);
 			} else {
 				if (wayPts.length > sr.nameIdx) {
@@ -648,23 +757,55 @@ public class GuiSearch extends Canvas implements CommandListener,
 					}					
 				}
 			}
-			// always show last name part unreduced
-			if(reducedName!=0 && nameb.length()>=2) {
-				// only if the result is more than once reduced (for POIs) or the result has a nearby entry
-				if (displayReductionLevel > 1 || sr.nearBy != null) {
-					nameb.setLength(nameb.length()-2);
-					if(reducedName==1) {
-						nameb.append(name);
-					}
-					else {
-						nameb.append(nearNameb.toString());					
+			if (displayReductionLevel == 4) {
+				// show start of name & distance + compass
+				nameb.setLength(0);
+				nameb.append(name);
+			} else {
+				// show last name part unreduced unless reduced to compass
+				if(reducedName!=0 && nameb.length()>=2) {
+					// only if the result is more than once reduced (for POIs) or the result has a nearby entry
+					if (displayReductionLevel > 1 || sr.nearBy != null) {
+						nameb.setLength(nameb.length()-2);
+						if(reducedName==1) {
+							nameb.append(name);
+						}
+						else {
+							nameb.append(nearNameb.toString());
+						}
 					}
 				}
 			}
 			appendCompassDirection(nameb, sr);
 			name=nameb.toString();
+			if (i == cursor &&
+			    (Configuration.getCfgBitState(Configuration.CFGBIT_TICKER_ISEARCH_ALL)
+			     || Configuration.getCfgBitState(Configuration.CFGBIT_TICKER_ISEARCH))) {
+				if (nameBiggerThanFits(gc, name)) {
+					needsTicker = true;
+				} else {
+					needsTicker = false;
+				}
+			}
+			int tickerUse = 0;
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_TICKER_ISEARCH_ALL)
+			    && i != cursor && needsTicker && tickerDiff > 0) {
+				tickerUse = tickerDiff;
+			}
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_TICKER_ISEARCH)
+			    && i == cursor && needsTicker && tickerDiff > 0) {
+				tickerUse = tickerDiff;
+			}
+
+			if (i == cursor && needsTicker && tickerDiff > 0) {
+				if (!nameBiggerThanFits(gc, name.substring(tickerDiff)) && ticker > 0) {
+					tickerAtEnd();
+				}
+			}
+			name = name.substring(tickerUse);
 			if (name != null) {
 				// avoid index out of bounds 
+				// FIXME add code to handle word search code and housenumber search result highlighting
 				int imatch=searchCanon.length(); 
 				if (name.length()<imatch) { 
 					imatch=name.length(); 
@@ -675,25 +816,45 @@ public class GuiSearch extends Canvas implements CommandListener,
 				} 
 
 				// name part identical to search string 
-				if (i == cursor){ 
-					gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_SELECTED_TYPED]);
-				} else { 
-					gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_NONSELECTED_TYPED]);
+				if (Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) || matchMode()) {
+					// FIXME could use improvement, maybe put match in the middle of screen
+					if (i == cursor){ 
+						gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_SELECTED_TYPED]);
+					} else { 
+						gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_NONSELECTED_TYPED]);
+					}
+					gc.drawString(name, 17, yc, Graphics.TOP | Graphics.LEFT); 
+				} else {	
+					// name part identical to search string 
+					if (i == cursor){ 
+						gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_SELECTED_TYPED]);
+					} else { 
+						gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_NONSELECTED_TYPED]);
+					}
+					int len = imatch+flags.length()-tickerUse;
+					if (len > name.length()) {
+						len = name.length();
+					} else if (len < 0) {
+						len = 0;
+					}
+					gc.drawString(name.substring(0,len), 17, yc, Graphics.TOP | Graphics.LEFT); 
+					// remaining name part 
+					if (i == cursor){ 
+						gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_SELECTED_REST]);
+					} else { 
+						gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_NONSELECTED_REST]);
+					} 
+					gc.drawString(name.substring(len), 17 + gc.getFont().stringWidth(name.substring(0,len)) , yc, Graphics.TOP | Graphics.LEFT);
 				}
-				gc.drawString(name.substring(0,imatch+flags.length()), 17, yc, Graphics.TOP | Graphics.LEFT); 
-				// remaining name part 
-				if (i == cursor){ 
-					gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_SELECTED_REST]);
-				} else { 
-					gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_NONSELECTED_REST]);
-				} 
-				gc.drawString(name.substring(imatch+flags.length()), 17 + gc.getFont().stringWidth(name.substring(0,imatch+flags.length())) , yc, Graphics.TOP | Graphics.LEFT);
-
 				// carret 
-				if(carret<=imatch && displayReductionLevel<1) { 
-					int cx=17 + gc.getFont().stringWidth(name.substring(0,carret+flags.length())); 
-					gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_SELECTED_TYPED]);
-					gc.drawLine(cx-1,yc+fontSize,cx+1,yc+fontSize); 
+				if(!(Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) || matchMode())
+				   && carret<=imatch && displayReductionLevel<1) { 
+					int len = carret+flags.length()-tickerUse;
+					if (len >= 0) {
+						int cx=17 + gc.getFont().stringWidth(name.substring(0,len)); 
+						gc.setColor(Legend.COLORS[Legend.COLOR_SEARCH_SELECTED_TYPED]);
+						gc.drawLine(cx-1,yc+fontSize,cx+1,yc+fontSize); 
+					}
 				}
 			}
 			else 
@@ -712,29 +873,75 @@ public class GuiSearch extends Canvas implements CommandListener,
 			(keyCode == -8) ) {
 			keyPressed(keyCode);
 			return;
-        }
+		}
 	}
 
 	protected void keyPressed(int keyCode) {
 		int action = getGameAction(keyCode);
+		resetTicker();
 		/** Ignore gameActions from unicode character keys (space char and above).
 		 *  By not treating those keys as game actions they get added to the search canon
 		 *  by default if not handled otherwise */
 		if (keyCode >= 32) {
 			action = 0;
 		}
+		if (spacePressed) {
+			//#if polish.api.bigsearch
+			filterMatches();
+			nextWord();
+			//#endif
+		}
 		logger.info("Search dialog: got key " + keyCode + " " + action);
 		if (keyCode >= KEY_NUM0 && keyCode <= KEY_NUM9) {
 			/*  KEY_NUM constants match "(char) keyCode" */
 			searchCanon.insert(carret++, (char) keyCode);
-		} else if (keyCode == KEY_POUND) {
-			if (state == STATE_FAVORITES) {
-				sortByDist = !sortByDist;
-				reSearch();
-				return;
-			} else {
-				searchCanon.insert(carret++,'1');				
+		//#if polish.api.bigsearch
+		} else if (keyCode == KEY_POUND || (keyCode == 32 && Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH))) {
+			// switch to another word, start searching in AND mode
+			// collect a list of long entity id's, mark
+
+			// first wait for all results
+			// then do a search for housenumbers and whole words
+
+			if (!spacePressed) {
+				// first time here, search for whole words
+				//System.out.println("space pressed, searching whole word index");
+				String searchString = NumberCanon.canonial(searchCanon.toString());
+				if (Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH)) {
+					searchThread.appendSearchBlocking(searchString, SearchNames.INDEX_WORD);
+				} else {
+				//#if polish.api.bigsearch
+					searchThread.appendSearchBlocking(searchString, SearchNames.INDEX_BIGNAME);
+				//#else
+					searchThread.appendSearchBlocking(searchString, SearchNames.INDEX_NAME);
+				//#endif
+				}
+				searchThread.appendSearchBlocking(searchString, SearchNames.INDEX_HOUSENUMBER);
+				//searchThread.appendSearchBlocking(searchString, SearchNames.INDEX_WHOLEWORD);
+				// insert new results from search thread 
+				insertResults();
+				if (matchMode()) {
+					//filterMatches();
+					//repaint(0, 0, getWidth(), getHeight());
+					spacePressed = true;
+					return;
+				} else {
+					//#if polish.api.bigsearch
+					storeMatches();
+					nextWord();
+					//#endif
+				}
+				if (keyCode == KEY_POUND && state == STATE_FAVORITES) {
+					// FIXME make this work
+					sortByDist = !sortByDist;
+					reSearch();
+					return;
+				}
 			}
+		//#else
+		} else if (keyCode == KEY_POUND && state != STATE_FAVORITES) {
+			searchCanon.insert(carret++,'1');				
+		//#endif
 		} else if (keyCode == KEY_STAR) {
 			if (state == STATE_FAVORITES || searchCanon.length() < 2 ) {
 				showAllWayPts = !showAllWayPts;
@@ -742,13 +949,33 @@ public class GuiSearch extends Canvas implements CommandListener,
 				return;
 			} else {
 				displayReductionLevel++;
-				if (displayReductionLevel > 3)
+				if (displayReductionLevel > 4)
 					displayReductionLevel = 0;
 				repaint(0, 0, getWidth(), getHeight());
 				return;
 			}
 			// Unicode character 10 is LF
 			// so 10 should correspond to Enter key on QWERT keyboards
+//#if polish.android
+			// FIXME the SEARCH doesn't work, wonder if J2MEPolish switches keycodes or something as
+			// search key is special in android
+		} else if (keyCode == 10 || action == FIRE || keyCode == KeyEvent.KEYCODE_SEARCH) {
+				commandAction( Trace.getInstance().getCommand(Trace.ROUTING_START_CMD), (Displayable) null);
+		} else if (keyCode == 10 || action == FIRE || keyCode == KeyEvent.KEYCODE_BACK) {
+			// FIXME With this there's the problem that Back gets passed on to the next menu
+			// (e.g. route mode asking). See http://developer.android.com/sdk/android-2.0.html
+			// for Native Android workaround; not sure how to do this with J2MEPolish
+			if (keyCode == KeyEvent.KEYCODE_BACK && !isCursorValid()) {
+				destroy();
+				parent.show();
+			}
+			if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED)) {
+				commandAction( ROUTE1_CMD, (Displayable) null);
+			} else {
+				commandAction( OK1_CMD, (Displayable) null);				
+			}
+			return;
+//#else
 		} else if (keyCode == 10 || action == FIRE) {
 			if (Configuration.getCfgBitState(Configuration.CFGBIT_ICONMENUS_ROUTING_OPTIMIZED)) {
 				commandAction( ROUTE1_CMD, (Displayable) null);
@@ -756,6 +983,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 				commandAction( OK1_CMD, (Displayable) null);				
 			}
 			return;
+//#endif
 		} else if (action == UP) {
 			if (cursor > 0)
 				cursor--;			
@@ -817,6 +1045,26 @@ public class GuiSearch extends Canvas implements CommandListener,
 			
 			if (carret > 0){
 				searchCanon.deleteCharAt(--carret);
+			} else if (matchMode()) {
+				// FIXME in multi-word search should also handle situation with more than two words
+			        // by redoing the word searches
+				int slen = words.length()-1;
+				searchCanon.setLength(0);
+				for (int i = 0; i < slen ; i++) {
+					searchCanon.insert(carret++, (char) words.charAt(i));
+				}
+				//#if polish.api.bigsearch
+				matchSources = null;
+				matchLats = null;
+				matchLons = null;
+				//#endif
+				//System.out.println("Searchcanon tostring: " + searchCanon.toString());
+				//System.out.println("Searchcanon length: " + searchCanon.length());
+				words = "";
+				carret = slen;
+				spacePressed = false;
+				result.removeAllElements();
+				reSearch();
 			}
 		} else if (keyCode == -111) {
 			/**
@@ -831,12 +1079,181 @@ public class GuiSearch extends Canvas implements CommandListener,
 				searchCanon.insert(carret++,(char)keyCode);
 			}
 		}
+		//#if polish.api.bigsearch
+		if (housenumberTimerTask != null) {
+			housenumberTimerTask.cancel();
+			housenumberTimerTask = null;
+		}
+		if (housenumberTimerTask == null) {
+			housenumberTimerTask = new TimerTask() {
+				public void run() {
+					if (matchMode()) {
+						//System.out.println("housenumber timer fired");
+						searchThread.appendSearchBlocking(NumberCanon.canonial(searchCanon.toString()),
+										  SearchNames.INDEX_HOUSENUMBER);
+						insertResults();
+						boolean matchall = true;
+						int limit = 0;
+						if (matchall && searchCanon.toString().length() == 1) {
+							limit = 10;
+							// uncomment the following two lines to test showing all numbers for streetname
+							// FIXME names will be missing however from the list, but will show an idea
+							// of the performance
+						//
+						} else if (matchall && searchCanon.toString().length() == 0) {
+							limit = 100;
+						}
+						for (int i = 0; i < limit; i++) {
+							String ss = searchCanon.toString();
+							if (limit > 1) {
+								ss = ss + Integer.toString(i);
+							}
+							//System.out.println("search for: " + ss);
+
+							searchThread.appendSearchBlocking(NumberCanon.canonial(ss),
+											  SearchNames.INDEX_HOUSENUMBER);
+							insertResults();
+						}
+						//searchThread.appendSearchBlocking(NumberCanon.canonial(ss),
+						// SearchNames.INDEX_WHOLEWORD);
+						// insert new results from search thread 
+					}
+				}
+			};
+		}
+		if (matchMode() && housenumberTimerTask != null) {
+			try {
+				//System.out.println("scheduling housenumber timer");
+				GpsMid.getTimer().schedule(housenumberTimerTask, 1500);
+			} catch (Exception e) {
+				logger.exception("Failed to initialize GuiSearch housenumber search timer", e);
+			}
+		}
+		
+		if (searchCanon.length() > 1 || matchMode()) {
+			state = STATE_MAIN;
+			reSearch();
+		}
+		if (spacePressed) {
+			repaint(0, 0, getWidth(), getHeight());
+		} else {
+			//System.out.println("zeroing spacePressed");
+			reSearch();
+		}
+		//#else
 		if (searchCanon.length() > 1) {
 			state = STATE_MAIN;
 		}
-		reSearch();
+		//#endif
 	}
-	
+
+	private boolean nameBiggerThanFits(Graphics gc, String name) {
+		return 17 + gc.getFont().stringWidth(name) > getWidth();
+	}
+
+	private void tickerTick() {
+				ticker++;
+				if (ticker >= 0) {
+					tickerDiff = ticker;
+				} else if (ticker < -4) {
+					tickerDiff = tickerMax;
+				} else if (ticker < 0) {
+					tickerDiff = 0;
+				}
+				if (needsTicker && isCursorValid() && (System.currentTimeMillis() - lastPaintTime) > 300) {
+					needsPainting = true;
+				}
+				System.out.println("tickerTick ending: ticker " + ticker + " tickerDiff " + tickerDiff);
+	}
+	private void resetTicker() {
+		// stop a moment at string start (-4..0)
+		ticker = -4;
+	}
+	private void tickerAtEnd() {
+		// stop a moment at string end (-8..-5) and string start (-4..0)
+		tickerMax = tickerDiff;
+		ticker = -8;
+	}
+
+	private boolean matchMode() {
+		return (!words.equals(""));
+	}
+
+	//#if polish.api.bigsearch
+	private void storeMatches() {
+		SearchResult sr = null;
+		if (matchSources == null) {
+			matchSources = new Hashtable();
+		}
+		if (matchLats == null) {
+			matchLats = new Hashtable();
+		}
+		if (matchLons == null) {
+			matchLons = new Hashtable();
+		}
+
+		for (int i = 0; i < result.size(); i++) {
+			sr = (SearchResult) result.elementAt(i);
+			Long id = new Long(sr.resultid);
+			Float Lat = new Float(sr.lat);
+			Float Lon = new Float(sr.lon);
+			Integer source = new Integer(sr.source);
+			matchSources.put(id, source);
+			matchLats.put(id, Lat);
+			matchLons.put(id, Lon);
+			//System.out.println("Adding result: " + sr.resultid + " sr.source/housenum: " + sr.source + "/" + SearchNames.INDEX_HOUSENUMBER);
+			//System.out.println("Store match, adding, source = " + ((Integer) matchSources.get(id)).intValue());
+		}
+		//showMatchSources();
+	}
+	// filter matches for possible second space press
+	// also transfer node (housenumber) coordinates to ways when necessary
+	private void filterMatches() {
+		SearchResult sr = null;
+
+		Hashtable matchNewSources = new Hashtable();
+
+		for (int i = 0; i < result.size(); i++) {
+			sr = (SearchResult) result.elementAt(i);
+			Long id = new Long(sr.resultid);
+			// transfer house number coordinates to street
+			Integer sourceNew = new Integer(sr.source);
+			if (matchSources.get(id) != null) {
+				//System.out.println("found match from old results, id = "
+				//		   + id + "source = "
+				//		   + ((Integer) matchSources.get(id)).intValue());
+				//if (((Integer) matchSources.get(id)).intValue() == SearchNames.INDEX_HOUSENUMBER && matchLats.get(id) != null) {
+				// get more exact coordinates from old match if current match is not from housenumber index
+				if (sr.source != SearchNames.INDEX_HOUSENUMBER && matchLats != null && matchLats.get(id) != null) {
+					sr.lat = ((Float) matchLats.get(id)).floatValue();
+					sr.lon = ((Float) matchLons.get(id)).floatValue();
+					sourceNew = (Integer) matchSources.get(id);
+				}
+				//	result.removeElementAt(i);
+				//	result.addElement(sr);
+			}
+			if (sr.type < 0 && matchLats.get(id) != null) {
+				// if new match is a node, save coordinates
+				Float Lat = new Float(sr.lat);
+				Float Lon = new Float(sr.lon);
+				matchLats.put(id, Lat);
+				matchLons.put(id, Lon);
+			}
+			matchNewSources.put(id, sourceNew);
+		}
+		matchSources = matchNewSources;
+		//showMatchSources();
+ 	}
+	//private void showMatchSources() {
+	//	Enumeration e = matchSources.keys();
+	//	while(e.hasMoreElements()) {
+	//		Long key = ((Long) e.nextElement());
+	//		int value =((Integer) matchSources.get(key)).intValue();
+	//		System.out.println ("key: " + key + " value: " + value);
+	//	}
+	//}
+	//#endif
+
 	public void pointerPressed(int x, int y) {
 		//#debug debug
 		logger.debug("PointerPressed: " + x + "," + y);
@@ -948,13 +1365,15 @@ public class GuiSearch extends Canvas implements CommandListener,
 					keyPressed('0');
 				} else if (touchedElementId == GuiSearchLayout.KEY_STAR) {
 					keyPressed(KEY_STAR);
-				} else if (touchedElementId == GuiSearchLayout.KEY_HASH) {
+				} else if (touchedElementId == GuiSearchLayout.KEY_POUND || touchedElementId == GuiSearchLayout.KEY_SORT) {
 					keyPressed(KEY_POUND);
 				} else if (touchedElementId == GuiSearchLayout.KEY_BACKSPACE) {
 					keyPressed(8);
 				} else if (touchedElementId == GuiSearchLayout.KEY_CLOSE) {
 					// hide keypad
 					hideKeypad = true;
+				} else if (touchedElementId == GuiSearchLayout.KEY_POUND) {
+					keyPressed(KEY_POUND);
 				}
 			}
 		
@@ -974,8 +1393,6 @@ public class GuiSearch extends Canvas implements CommandListener,
 		repaint();
 	}
 
-	
-	
 	public void pointerReleased(int x, int y) {
 		// avoid division by zero when releasing pointer before screen is drawn
 		if (fontSize == 0) {
@@ -1092,12 +1509,20 @@ public class GuiSearch extends Canvas implements CommandListener,
 		logger.info("researching");
 		scrollOffset = 0;
 		//FIXME: in rare cases there occurs an NPE in the following line
-		searchThread.search(NumberCanon.canonial(searchCanon.toString()));
+		searchThread.search(NumberCanon.canonial(searchCanon.toString()),
+				    Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ? 
+				    SearchNames.INDEX_WORD : SearchNames.INDEX_BIGNAME);
 		repaint(0, 0, getWidth(), getHeight());
 		// title will be set by SearchName.doSearch when we need to determine first if we have favorites
+		//#if polish.api.bigsearch
+		if (searchCanon.length() > 0 || matchMode()) { 
+ 			setTitle();
+ 		}
+		//#else
 		if (searchCanon.length() > 0) { 
 			setTitle();
 		}
+		//#endif
 	}
 
 	private void appendCompassDirection(StringBuffer sb, SearchResult sr) {
@@ -1125,11 +1550,19 @@ public class GuiSearch extends Canvas implements CommandListener,
 		StringBuffer sb = new StringBuffer();
 		switch (state) {
 			case STATE_MAIN:
+				//#if polish.api.bigsearch
+				if (searchCanon.length() == 0 && !matchMode()) {
+					sb.append(Locale.get("guisearch.Searchforname")/*Search for name*/);
+				} else {
+					sb.append((words + searchCanon.toString() + " " + carret));
+				}
+				//#else
 				if (searchCanon.length() == 0) {
 					sb.append(Locale.get("guisearch.Searchforname")/*Search for name*/);
 				} else {
 					sb.append((searchCanon.toString() + " " + carret));
 				}
+				//#endif
 				if (searchCanon.length() > 0) {
 					sb.append(" (" + Locale.get("guisearch.key")/*key*/ + " " + searchCanon.toString() + ")");
 				} else {
@@ -1182,18 +1615,50 @@ public class GuiSearch extends Canvas implements CommandListener,
 	 * @return if SearchResult srNew was actually added (true = added, false = skipped)
 	 */
 	public synchronized boolean addResult(SearchResult srNew){		
+		//#if polish.api.bigsearch
+		if (matchMode() && state!= STATE_FAVORITES) {
+			Long id = new Long(srNew.resultid);
+			// if match is not from a housenumber index, try to get more exact coords from previous match
+			if (srNew.source != SearchNames.INDEX_HOUSENUMBER) {
+				// transfer house number coordinates to street
+				if (matchLats != null && matchLats.get(id) != null) {
+					srNew.lat = ((Float) matchLats.get(id)).floatValue();
+					srNew.lon = ((Float) matchLons.get(id)).floatValue();
+				}
+			}
+		}
+                //#endif
 		addDistanceToSearchResult(srNew);
 		String name = null;
+		//#if polish.api.bigsearch
+		if (state == STATE_FAVORITES && srNew.source == SearchNames.INDEX_WAYPOINTS) {
+			name = wayPts[srNew.nameIdx].displayName;
+		} else {
+			name = parent.getName(srNew.nameIdx);
+		}
+		//#else
 		if (state == STATE_FAVORITES) {
 			name = wayPts[srNew.nameIdx].displayName;
 		} else {
 			name = parent.getName(srNew.nameIdx);
 		}
+		//#endif
 		//#debug debug
 		logger.debug(Locale.get("guisearch.matchingnamefound")/*Found matching name: */ + srNew);
 
-		if (!searchAlpha || name == null || searchCanon.toString().equalsIgnoreCase(
-			    name.substring(0, searchCanon.toString().length()))) {
+		//System.out.println ("addResult: resultid = " + srNew.resultid + " source: " + srNew.source + " name: " + name);
+		// FIXME repeating code
+		// avoid index out of bounds 
+		int len = searchCanon.length();
+		//System.out.println ("name: " + name);
+		//System.out.println ("parent.getName: " + parent.getName(srNew.nameIdx));
+		if (name != null && name.length() < len) {
+			len = name.length();
+		}
+		if (Configuration.getCfgBitState(Configuration.CFGBIT_WORD_ISEARCH) ||
+		    matchMode() ||
+		    !searchAlpha || name == null ||
+		    searchCanon.toString().equalsIgnoreCase(name.substring(0, len))) {
 			if (!sortByDist) {
 				result2.addElement(srNew);
 			} else {

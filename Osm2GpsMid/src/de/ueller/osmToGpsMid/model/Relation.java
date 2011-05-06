@@ -21,6 +21,7 @@ import de.ueller.osmToGpsMid.Configuration;
  */
 public class Relation extends Entity {
 	protected LinkedList<Member> members = new LinkedList<Member>();
+	public Long id;
 	
 	/** Set if not all members of the relation are available */
 	private boolean partialMembers = false;
@@ -61,6 +62,16 @@ public class Relation extends Entity {
 				if (m.getRole() == role) {
 					ret.add(new Long(m.getRef()));
 				}
+			}
+		}
+		return ret;
+	}
+	
+	public ArrayList<Long> getWayIds() {
+		ArrayList<Long> ret = new ArrayList<Long>();
+		for (Member m : members) {
+			if (m.getType() == Member.TYPE_WAY) { 
+				ret.add(new Long(m.getRef()));
 			}
 		}
 		return ret;
@@ -161,24 +172,22 @@ public class Relation extends Entity {
 							}
 						}
 						case Member.ROLE_HOUSE: {
-							// FIXME handle ways (buildings) with areapois or something
 							if (m.getType() == Member.TYPE_NODE) {
 								nodecount++;
 								//System.out.println("Relation " + id + " node ref = " + nref);
 								break;
 							}
 							if (m.getType() == Member.TYPE_WAY) {
-								// FIXME handle buildings too
-								System.out.println("Warning: ignoring map data: Unable to handle area (typically building) with housenumber, relation url: " 
-										+ toUrl());
-								// nodecount++;
+								//System.out.println("Info: trying to handle way (typically building, area) with housenumber, relation url: " 
+								//		   + toUrl());
+								nodecount++;
 								break;
 							}
 						}
 						}
 
 					}
-					if (waycount == 1 && nodecount >= 1) {
+					if (waycount >= 1 && nodecount >= 1) {
 						//System.out.println("Housenumber relation ok, way count: " 
 						//		+ waycount + " node count " + nodecount + " url: " + toUrl());
 						return true;

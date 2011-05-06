@@ -61,10 +61,12 @@ public class Way extends Entity implements Comparable<Way> {
 	public static final byte WAY_FLAG3_HAS_HOUSENUMBERS = 32;
 	public static final byte WAY_FLAG3_LONGHOUSENUMBERS = 64;
 
+	public Long id;
+
 	private Path					path								= null;
 	public HouseNumber			housenumber							= null;
 	public List<Triangle>		triangles							= null;
-	private Bounds				bound								= null;
+	//private Bounds				bound								= null;
 
 	/** Up to 4 travel modes for which this way can be used (motorcar, bicycle, etc.)
 	 *  The upper 4 bits equal to Connection.CONNTYPE_* flags
@@ -90,6 +92,11 @@ public class Way extends Entity implements Comparable<Way> {
 		this.path = new Path();
 	}
 
+	public Way(long id, Way other) {
+		this.id = id;
+		this.path = other.path;
+	}
+
 	/**
 	 * create a new Way which shares the tags with the other way, has the same type and id, but no Nodes
 	 * 
@@ -97,12 +104,18 @@ public class Way extends Entity implements Comparable<Way> {
 	 */
 	public Way(Way other) {
 		super(other);
+		this.id = other.id;
 		this.type = other.type;
 		this.path = new Path();
 	}
 
+	public void deletePath() {
+		path = null;
+	}
+
 	public void cloneTags(Way other) {
 		super.cloneTags(other);
+		this.id = other.id;
 		this.type = other.type;
 	}
 
@@ -188,9 +201,14 @@ public class Way extends Entity implements Comparable<Way> {
 		return (containsKey("bridge"));
 	}
 
-	//public boolean hasHouseNumber() {
-	//	return (containsKey("addr:housenumber"));
-	//}
+	// FIXME should not be hard-coded but taken from style-file
+	public boolean hasHouseNumberTag() {
+		return (containsKey("addr:housenumber"));
+	}
+
+	public boolean hasHouseNumber() {
+		return housenumber != null;
+	}
 
 	public boolean isDamaged() {
 		Vector<Damage> damages = LegendParser.getDamages();
@@ -204,6 +222,10 @@ public class Way extends Entity implements Comparable<Way> {
 			}
 		}
 		return false;
+	}
+
+	public void resetType(Configuration c) {
+		type = -1;
 	}
 
 	public byte getType(Configuration c) {
@@ -276,7 +298,7 @@ public class Way extends Entity implements Comparable<Way> {
 				} else {
 					nameFallback = getAttribute(desc.nameFallbackKey);
 				}
-				if (name != null && nameFallback != null) {
+				if (name != null && nameFallback != null && (!desc.nameFallbackKey.equals("*") || !desc.key.equals(desc.nameKey))) {
 					name += " (" + nameFallback + ")";
 				} else if ((name == null) && (nameFallback != null)) {
 					name = nameFallback;
@@ -468,24 +490,23 @@ public class Way extends Entity implements Comparable<Way> {
 	}
 
 	public Bounds getBounds() {
-		if (bound == null) {
-			bound = new Bounds();
-			if (triangles != null && triangles.size() > 0) {
-				for (Triangle t : triangles) {
-					bound.extend(t.getVert()[0].getLat(), t.getVert()[0].getLon());
-					bound.extend(t.getVert()[1].getLat(), t.getVert()[1].getLon());
-					bound.extend(t.getVert()[2].getLat(), t.getVert()[2].getLon());
-				}
-			} else {
-				path.extendBounds(bound);
+		// always calculate current bounds
+		Bounds bound = new Bounds();
+		if (triangles != null && triangles.size() > 0) {
+			for (Triangle t : triangles) {
+				bound.extend(t.getVert()[0].getLat(), t.getVert()[0].getLon());
+				bound.extend(t.getVert()[1].getLat(), t.getVert()[1].getLon());
+				bound.extend(t.getVert()[2].getLat(), t.getVert()[2].getLon());
 			}
+		} else {
+			path.extendBounds(bound);
 		}
 		return bound;
 	}
 
-	public void clearBounds() {
+	/*public void clearBounds() {
 		bound = null;
-	}
+	}*/
 
 	/** Simplistic check to see if this way/area "contains" another - for
 	 *  speed, all we do is check that all of the other way's points
@@ -664,7 +685,9 @@ public class Way extends Entity implements Comparable<Way> {
 			longWays = true;
 		}
 		if (housenumber != null) {
-			flags3 += WAY_FLAG3_HAS_HOUSENUMBERS;
+			// FIXME maybe enable later for viewing way-related house numbers on map;
+			// disable for now, as GpsMid doesn't use this yet
+			// flags3 += WAY_FLAG3_HAS_HOUSENUMBERS;
 			if (getHouseNumberCount() > 255) {
 				longHouseNumbers = true;
 			}
@@ -785,7 +808,9 @@ public class Way extends Entity implements Comparable<Way> {
 
 		if (config.enableEditingSupport) {
 			if (id > Integer.MAX_VALUE) {
-				System.out.println("WARNING: OSM-ID won't fit in 32 bits for way " + this);
+				// commented out by jkpj 2011-04-24 as the fake id generates triggers a lot of these
+				// FIXME make a scheme of marking fake ids so we can show real warnings
+				//System.out.println("WARNING: OSM-ID won't fit in 32 bits for way " + this);
 				ds.writeInt(-1);
 			} else {
 				ds.writeInt(id.intValue());
@@ -902,6 +927,7 @@ public class Way extends Entity implements Comparable<Way> {
 		}
 	}
 
+
 	private Way splitArea() {
 		if (triangles == null) {
 			triangulate();
@@ -909,7 +935,7 @@ public class Way extends Entity implements Comparable<Way> {
 		// System.out.println("Split area id=" + id + " s=" + triangles.size());
 		Way newWay = new Way(this);
 		Bounds newBbounds = getBounds().split()[0];
-		ArrayList<Triangle> tri = new ArrayList<Triangle>();
+		ArrayList<Triangle> tri = new ArrayList<Triangle>(1);
 		for (Triangle t : triangles) {
 			Vertex midpoint = t.getMidpoint();
 			if (!newBbounds.isIn(midpoint.getLat(), midpoint.getLon())) {
@@ -925,7 +951,7 @@ public class Way extends Entity implements Comparable<Way> {
 		}
 		// System.out.println("split area triangles " + "s1=" + triangles.size() + " s2=" + tri.size());
 		if (tri.size() == 0) { return null; }
-		clearBounds();
+		//clearBounds();
 		newWay.triangles = tri;
 		newWay.recreatePath();
 		recreatePath();
@@ -939,7 +965,7 @@ public class Way extends Entity implements Comparable<Way> {
 		Path split = path.split();
 		if (split != null) {
 			// If we split the way, the bounds are no longer valid
-			this.clearBounds();
+			//this.clearBounds();
 			Way newWay = new Way(this);
 			newWay.path = split;
 			if (newWay.isValid() == false) {
@@ -1076,7 +1102,15 @@ public class Way extends Entity implements Comparable<Way> {
 				}
 			}
 		}
-		clearBounds();
+		((ArrayList)triangles).trimToSize();
+		trimPath();
+		//clearBounds();
+	}
+
+	public void trimPath()
+	{
+		if (path != null )
+			path.trimPath();
 	}
 
 }

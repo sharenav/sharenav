@@ -14,7 +14,6 @@
 package de.ueller.osmToGpsMid;
 
 import static de.ueller.osmToGpsMid.GetText._;
-import static de.ueller.osmToGpsMid.GetText.init;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -37,13 +36,11 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.TreeSet;
 
-import de.ueller.osmToGpsMid.area.SeaGenerator;
 import de.ueller.osmToGpsMid.area.Triangle;
 import de.ueller.osmToGpsMid.model.Bounds;
 import de.ueller.osmToGpsMid.model.ConditionTuple;
 import de.ueller.osmToGpsMid.model.Connection;
 import de.ueller.osmToGpsMid.model.EntityDescription;
-import de.ueller.osmToGpsMid.model.MapName;
 import de.ueller.osmToGpsMid.model.Node;
 import de.ueller.osmToGpsMid.model.POIdescription;
 import de.ueller.osmToGpsMid.model.WayDescription;
@@ -53,6 +50,7 @@ import de.ueller.osmToGpsMid.model.Tile;
 import de.ueller.osmToGpsMid.model.TravelModes;
 import de.ueller.osmToGpsMid.model.Way;
 import de.ueller.osmToGpsMid.model.name.Names;
+import de.ueller.osmToGpsMid.model.name.WayRedirect;
 import de.ueller.osmToGpsMid.model.url.Urls;
 import de.ueller.osmToGpsMid.tools.FileTools;
 
@@ -102,7 +100,6 @@ public class CreateGpsMidData implements FilenameFilter {
 	long outputLengthConns = 0;
 	
 	private final String path;
-	TreeSet<MapName> names;
 	Names names1;
 	Urls urls1;
 	StringBuffer sbCopiedMedias = new StringBuffer();
@@ -121,12 +118,16 @@ public class CreateGpsMidData implements FilenameFilter {
 	private RouteData rd;
 	private static double MAX_RAD_RANGE = (Short.MAX_VALUE - Short.MIN_VALUE - 2000) / MyMath.FIXPT_MULT;
 	private String[] useLang = null;
-	
+
+	WayRedirect wayRedirect = null;
+		
+
 	public CreateGpsMidData(OsmParser parser, String path) {
 		super();
 		this.parser = parser;
 		this.path = path;
 		File dir = new File(path);
+		wayRedirect = new WayRedirect();
 		// first of all, delete all data-files from a previous run or files that comes
 		// from the mid jar file
 		if (dir.isDirectory()) {
@@ -147,7 +148,7 @@ public class CreateGpsMidData implements FilenameFilter {
 		names1 = getNames1();
 		urls1 = getUrls1();
 		exportLegend(path);
-		SearchList sl = new SearchList(names1, urls1);
+		SearchList sl = new SearchList(names1, urls1, wayRedirect);
 		UrlList ul = new UrlList(urls1);
 		sl.createNameList(path);
 		ul.createUrlList(path);
@@ -184,8 +185,21 @@ public class CreateGpsMidData implements FilenameFilter {
 //			tile[ROUTEZOOMLEVEL].printHiLo(1, x);
 //		}
 //		System.exit(2);
-		sl.createSearchList(path);
-		
+		// create search list for whole items
+		sl.createSearchList(path, SearchList.INDEX_NAME);
+		// create search list for words
+		if (Configuration.getConfiguration().useWordSearch) {
+			sl.createSearchList(path, SearchList.INDEX_WORD);
+			// create search list for whole words / house numbers
+			sl.createSearchList(path, SearchList.INDEX_WHOLEWORD);
+			// create search list for house numbers
+		}
+		if (Configuration.getConfiguration().useHouseNumbers) {
+		    sl.createSearchList(path, SearchList.INDEX_HOUSENUMBER);
+		    // create search list for names for housenumber matching
+		    sl.createSearchList(path, SearchList.INDEX_BIGNAME);
+		}
+
 		// Output statistics for travel modes
 		if (Configuration.attrToBoolean(configuration.useRouting) >= 0) {
 			for (int i = 0; i < TravelModes.travelModeCount; i++) {
@@ -206,10 +220,10 @@ public class CreateGpsMidData implements FilenameFilter {
 	private Names getNames1() {
 		Names na = new Names();
 		for (Way w : parser.getWays()) {
-			na.addName(w);		
+			na.addName(w, wayRedirect);		
 		}
 		for (Node n : parser.getNodes()) {
-			na.addName(n);
+			na.addName(n, wayRedirect);
 		}
 		System.out.println("Found " + na.getNames().size() + " names, " + 
 				na.getCanons().size() + " canon");
@@ -866,6 +880,7 @@ public class CreateGpsMidData implements FilenameFilter {
 	private long exportMapToMid(int zl) {
 		// System.out.println("Total ways : " + parser.ways.size() + " Nodes : " +
 		// parser.nodes.size());
+		OsmParser.printMemoryUsage(1);
 		long outputLength = 0;
 		try {
 			FileOutputStream fo = new FileOutputStream(path + "/dict-" + zl + ".dat");
@@ -901,7 +916,7 @@ public class CreateGpsMidData implements FilenameFilter {
 			Sequence tileSeq = new Sequence();
 			tile[zl].ways = parser.getWays();
 			tile[zl].nodes = parser.getNodes();
-			// create the tiles and write the content 
+			// create the tiles and write the content
 			outputLength += exportTile(tile[zl], tileSeq, allBound);
 			tileFilesWritten = tileSeq.get();
 			
@@ -946,7 +961,7 @@ public class CreateGpsMidData implements FilenameFilter {
 				tile[zl].calcHiLo();
 				tile[zl].writeConnections(path, parser.getTurnRestrictionHashMap());
 		        tile[zl].type = Tile.TYPE_ROUTECONTAINER;
-			} 
+			}
 			Sequence s = new Sequence();
 			tile[zl].writeTileDict(ds, 1, s, path);			
 			dictFilesWritten = s.get();
@@ -961,6 +976,8 @@ public class CreateGpsMidData implements FilenameFilter {
 			System.err.println("Unhandled IOException: " + ioe.getMessage());
 			ioe.printStackTrace();
 		}
+		tile[zl].dissolveTileReferences();
+		tile[zl]=null;
 		return outputLength;
 	}
 	
@@ -977,7 +994,7 @@ public class CreateGpsMidData implements FilenameFilter {
 	 */
 	private long exportTile(Tile t, Sequence tileSeq, Bounds tileBound) throws IOException {
 		Bounds realBound = new Bounds();
-		LinkedList<Way> ways;
+		ArrayList<Way> ways;
 		Collection<Node> nodes;
 		int maxSize;
 		int maxWays = 0;
@@ -1000,7 +1017,7 @@ public class CreateGpsMidData implements FilenameFilter {
 			t = tt.t; 
 			tileBound = tt.bound;
 			// System.out.println("try create tile for " + t.zl + " " + tileBound);
-			ways = new LinkedList<Way>();
+			ways = new ArrayList<Way>();
 			nodes = new ArrayList<Node>();
 			realBound = new Bounds();
 
@@ -1231,6 +1248,10 @@ public class CreateGpsMidData implements FilenameFilter {
 			for (Iterator<Way> wi = t.ways.iterator(); wi.hasNext(); ) {
 				Way w1 = wi.next();
 				w1.used = true;
+				// triangles can be cleared but not set to null because of SearchList.java
+				if ( w1.triangles != null ) {
+					w1.triangles.clear();
+				}
 			}
 		} else {
 			t.bounds = tileBound.clone();
@@ -1254,9 +1275,9 @@ public class CreateGpsMidData implements FilenameFilter {
 	 * @param realBound bounds to extend to cover all ways found
 	 * @return LinkedList of all ways which meet the described conditions.
 	 */
-	private LinkedList<Way> getWaysInBound(Collection<Way> parentWays, int zl, 
+	private ArrayList<Way> getWaysInBound(Collection<Way> parentWays, int zl,
 			Bounds targetBounds, Bounds realBound) {
-		LinkedList<Way> ways = new LinkedList<Way>();
+		ArrayList<Way> ways = new ArrayList<Way>();
 //		System.out.println("Searching for ways mostly in " + targetTile + " from " + 
 //			parentWays.size() + " ways");
 		// Collect all ways that are in this rectangle
@@ -1294,7 +1315,7 @@ public class CreateGpsMidData implements FilenameFilter {
 	 * @param targetBounds bounds used for the search
 	 * @return The list 'ways' plus the ways found
 	 */
-	private LinkedList<Way> addWaysCompleteInBound(LinkedList<Way> ways, 
+	private ArrayList<Way> addWaysCompleteInBound(ArrayList<Way> ways,
 			Collection<Way> parentWays, int zl, Bounds targetBounds) {
 		// collect all way that are in this rectangle
 //		System.out.println("Searching for ways total in " + targetBounds + 
@@ -1509,8 +1530,8 @@ public class CreateGpsMidData implements FilenameFilter {
 		nds.writeFloat(MyMath.degToRad(n.lat));
 		nds.writeFloat(MyMath.degToRad(n.lon));
 		nds.writeInt(cds.size());
-		nds.writeByte(n.routeNode.connected.size());
-		for (Connection c : n.routeNode.connected) {
+		nds.writeByte(n.routeNode.getConnected().length);
+		for (Connection c : n.routeNode.getConnected()) {
 			cds.writeInt(c.to.node.renumberdId);
 			// write out wayTravelModes flag
 			cds.writeByte(c.connTravelModes);
@@ -1633,10 +1654,10 @@ public class CreateGpsMidData implements FilenameFilter {
 			ds.writeByte(n.getType(configuration));
 			if (configuration.enableEditingSupport) {
 				if (n.id > Integer.MAX_VALUE) {
-					System.err.println("ERROR: OSM-ID won't fit in 32 bits for way " + n);
+					System.err.println("WARNING: Node OSM-ID won't fit in 32 bits for way " + n);
 					ds.writeInt(-1);
 				} else {
-					ds.writeInt(n.id.intValue());
+					ds.writeInt((int)n.id);
 				}
 			}
 		}

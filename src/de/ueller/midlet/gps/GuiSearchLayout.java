@@ -19,7 +19,7 @@ import javax.microedition.lcdui.Graphics;
 
 
 public class GuiSearchLayout extends LayoutManager {
-	public static final int KEY_EMPTY = 0;
+	public static final int KEY_SORT = 0;
 	public static final int KEY_CLOSE = 1;
 	public static final int KEY_BACKSPACE = 2;
 	public static final int KEY_1 = 3;
@@ -33,7 +33,7 @@ public class GuiSearchLayout extends LayoutManager {
 	public static final int KEY_9 = 11;
 	public static final int KEY_STAR = 12;
 	public static final int KEY_0 = 13;
-	public static final int KEY_HASH = 14;
+	public static final int KEY_POUND = 14;
 
 	public static final int ELE_COUNT = 15;
 
@@ -83,7 +83,7 @@ public class GuiSearchLayout extends LayoutManager {
 
 		//ydiff = 0;
 
-		e = ele[KEY_EMPTY];
+		e = ele[KEY_SORT];
 		addElement(e,
 			LayoutElement.FLAG_HALIGN_LEFT | LayoutElement.FLAG_VALIGN_TOP |
 			LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
@@ -102,7 +102,7 @@ public class GuiSearchLayout extends LayoutManager {
 			LayoutElement.FLAG_FONT_MEDIUM
 		);
 		e.setAdditionalOffsY(ydiff);
-		e.setHRelative(ele[KEY_EMPTY]);
+		e.setHRelative(ele[KEY_SORT]);
 		e.setColor(Legend.COLORS[Legend.COLOR_SEARCH_BUTTON_TEXT]);
 		e.setSpecialElementID(SE_KEY);
 		e.setActionID(GuiSearch.VIRTUALKEY_PRESSED);
@@ -125,7 +125,7 @@ public class GuiSearchLayout extends LayoutManager {
 			LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
 			LayoutElement.FLAG_FONT_MEDIUM
 		);
-		e.setVRelative(ele[KEY_EMPTY]);
+		e.setVRelative(ele[KEY_SORT]);
 		e.setAdditionalOffsX(xdiff);
 		e.setColor(Legend.COLORS[Legend.COLOR_SEARCH_BUTTON_TEXT]);
 		e.setSpecialElementID(SE_KEY);
@@ -251,7 +251,7 @@ public class GuiSearchLayout extends LayoutManager {
 		e.setSpecialElementID(SE_KEY);
 		e.setActionID(GuiSearch.VIRTUALKEY_PRESSED);
 
-		e = ele[KEY_HASH];
+		e = ele[KEY_POUND];
 		addElement(e,
 			LayoutElement.FLAG_HALIGN_RIGHTTO_RELATIVE | LayoutElement.FLAG_VALIGN_BELOW_RELATIVE |
 			LayoutElement.FLAG_HALIGN_CENTER_TEXT_IN_BACKGROUND |
@@ -281,6 +281,7 @@ public class GuiSearchLayout extends LayoutManager {
 			g.drawLine(left, top+buttonh, left+buttonw, top+buttonh);
 			// problem with Nokia 5230 (S60r5), works with android&microemulator
 			//g.drawSubstring(text, 0, 5, left+buttonw/2, top+buttonh/2, Graphics.HCENTER|Graphics.VCENTER);
+			g.setColor(Legend.COLORS[Legend.COLOR_SEARCH_BUTTON_TEXT]);
 			g.drawString(text, left, top, Graphics.TOP|Graphics.LEFT);
 			break;
 		}

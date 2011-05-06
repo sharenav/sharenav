@@ -8,7 +8,6 @@ package de.ueller.midlet.gps.routing;
 import java.io.IOException;
 import java.lang.Math;
 import java.util.Vector;
-
 import de.enough.polish.util.Locale;
 
 import de.ueller.gps.data.Configuration;
@@ -35,7 +34,7 @@ public class Routing implements Runnable {
 	private Runtime runtime = Runtime.getRuntime();
 
 	private final static Logger logger = Logger.getInstance(Routing.class, Logger.ERROR);
-	private final RouteBaseTile tile;
+	private RouteBaseTile tile;
 	private RouteNode routeFrom;
 	private RouteNode routeTo;
 	private volatile RoutePositionMark fromMark;
@@ -90,9 +89,9 @@ public class Routing implements Runnable {
 	int finalNodeId2 = 0;
 	Node finalDestPathSegNodeDummy2 = new Node();
 	
-	public Routing(Tile[] tile,Trace parent) throws IOException {
+	public Routing(Trace parent) throws IOException {
 		this.parent = parent;
-		this.tile = (RouteBaseTile) tile[4];
+		
 		estimateFac = (Configuration.getRouteEstimationFac() / 10f) + 0.8f;
 		maxEstimationSpeed = (int) ( (Configuration.getTravelMode().maxEstimationSpeed * 10) / 36);
 		if (maxEstimationSpeed == 0) {
@@ -787,6 +786,14 @@ public class Routing implements Runnable {
 			parent.receiveMessage(Locale.get("routing.CreatingToConnections")/*Creating to connections*/);
 			Way w = (Way) toMark.entity;
 			int nearestSeg = getNearestSeg(w,toMark.lat, toMark.lon, toMark.nodeLat, toMark.nodeLon);
+			// remember closest point on dest way in RouteInstructions
+			RouteInstructions.setClosestPointOnDestWay(
+					MoreMath.closestPointOnLine(new Node(toMark.nodeLat[nearestSeg - 1], toMark.nodeLon[nearestSeg - 1], true), 
+												new Node(toMark.nodeLat[nearestSeg], toMark.nodeLon[nearestSeg], true),
+												new Node(toMark.lat, toMark.lon, true)
+					)
+			);
+			//System.out.println("Closest " + RouteInstructions.getClosestPointOnDestWay() );
 			RouteTileRet nodeTile=new RouteTileRet();
 			// roundabouts don't need to be explicitly tagged as oneways in OSM according to http://wiki.openstreetmap.org/wiki/Tag:junction%3Droundabout
 			RouteNode nextNode = findNextRouteNode(nearestSeg, toMark.lat, toMark.lon, toMark.nodeLat, toMark.nodeLon);
@@ -1003,6 +1010,24 @@ public class Routing implements Runnable {
 		RouteInstructions.abortRouteLineProduction();
 		Routing.stopRouting = false;
 		
+		/* Wait for the route tile to be initialized by the DictReader thread
+		 * (This is necessary if trying to calculate a route very soon after midlet startup) 
+		*/
+		while (!parent.baseTilesRead) {
+			parent.receiveMessage("Waiting for base tiles");
+			try {
+				Thread.sleep(250);
+			} catch (InterruptedException e1) {
+				// nothing to do in that case						
+			}
+		}
+		this.tile = (RouteBaseTile) parent.getDict((byte) 4);
+		if (this.tile == null) {
+			parent.receiveMessage("No route tile in map data");
+			parent.setRoute(null);
+			return;
+		}
+
 		try {
 			//#debug error
 			logger.info("Starting routing thread");

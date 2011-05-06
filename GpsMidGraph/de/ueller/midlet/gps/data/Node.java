@@ -5,8 +5,6 @@
 
 package de.ueller.midlet.gps.data;
 
-import de.ueller.gps.data.Legend;
-
 public class Node extends Entity {
 	public float radlat = 0;
 	public float radlon = 0;
@@ -43,6 +41,14 @@ public class Node extends Entity {
     	}
     }
 
+    /**
+     * Constructs a node and copies lat/lon from the other node
+     * @param node
+     */
+    public Node(Node node) {
+        setLatLon(node);
+    }
+    
     /**
      * Constructs a Node with lat=0 / lon=0.
      */

@@ -21,4 +21,5 @@ polish.home=/set/path/to/J2ME-Polish-nightly/in/android.properties
 fullscreen=no
 usePolishGui=true
 device=Generic/android
-
+gpsmid.test_device=Generic/android-hiresonline
+gpsmid.test_device=Generic/android-hiresonline

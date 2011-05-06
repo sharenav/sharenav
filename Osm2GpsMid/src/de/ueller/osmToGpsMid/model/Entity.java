@@ -1,44 +1,44 @@
 package de.ueller.osmToGpsMid.model;
 
-import java.util.HashSet;
 import java.util.Hashtable;
-import java.util.Map;
 import java.util.Set;
 
 import de.ueller.osmToGpsMid.SmallArrayMap;
+import de.ueller.osmToGpsMid.Configuration;
 
 
-public class Entity {
+public class Entity extends SmallArrayMap<String,String> {
+
+	private static Configuration config = null;
 
 	/**
 	 * the OSM id of this node
 	 */
-	public Long	id;
+	//public Long	id;
 	public Node nearBy;	
+
 	/**
 	 * The tags for this object  
 	 * Key: String  Value: String
-	 */
-	private Map<String,String> tags;	
-	
+	 */	
 	public Entity() {
-		
 	}
+
 	public Entity(Entity other) {
-		this.id = other.id;		
-		this.tags=other.tags;
+		//this.id = other.id;
+		this.mapArray=other.mapArray;
 	}
 	
 	public void cloneTags(Entity other) {
-		this.id = other.id;		
-		this.tags=other.tags;		
+		//this.id = other.id;
+		this.mapArray=other.mapArray;
 	}
 	
 	/**
 	 * @param tags
 	 */
 	public void replaceTags(Entity other) {
-		this.tags=other.tags;
+		this.mapArray=other.mapArray;
 		
 	}
 
@@ -47,62 +47,42 @@ public class Entity {
 	 * @param key Tag to delete
 	 */
 	public void deleteTag(String key) {
-		if (tags != null) {
-			tags.remove(key);
-		}		
+		remove(key);
 	}
 	
 	public String getName() {
-		if (tags == null) {
-			return null;
-		}
-		return tags.get("name");
+		return get("name");
 	}
 	
 	public String getUrl() {
-		if (tags == null) {
-			return null;
-		}
-		return tags.get("url");
+		return get("url");
 	}
 
 	public String getPhone() {
-		if (tags == null) {
-			return null;
-		}
-		return tags.get("phone");
+		return get("phone");
 	}
 
 	public void setAttribute(String key, String value) {
-		if (tags == null) {
-			tags = new SmallArrayMap<String,String>();
-		}
-		tags.put(key, value);
+		put(key, value);
 	}
 	
 	public String getAttribute(String key) {
-		if (tags == null) {
-			return null;
-		}
-		return tags.get(key);
+		return get(key);
 	}
 	
 	public boolean containsKey(String key) {
-		if (tags == null) {
-			return false;
-		}
-		return tags.containsKey(key);
+		return super.containsKey(key);
 	}
 
 	public Set<String> getTags() {
-		if (tags == null) {
-			return new HashSet<String>();
-		}
-		return tags.keySet();
+		return keySet();
 	}
 	
 	protected EntityDescription calcType(Hashtable<String, Hashtable<String,Set<EntityDescription>>> legend){
 		EntityDescription entityDes = null;
+		if (config == null) {
+			config = Configuration.getConfiguration();
+		}
 
 		//System.out.println("Calculating type for " + toString());
 		if (legend != null) {
@@ -125,16 +105,35 @@ public class Entity {
 									if (entity.specialisation != null) {
 										boolean failedSpec = false;
 										for (ConditionTuple ct : entity.specialisation) {
-//											System.out.println("Testing specialisation " + ct + " on " + this);
+											//System.out.println("Testing specialisation " + ct + " on " + this);
 											failedSpec = !ct.exclude;
-											for (String ss : tags) {
-												if ( (ss.equalsIgnoreCase(ct.key)) &&
-													(
-														getAttribute(ss).equalsIgnoreCase(ct.value) ||
-														ct.value.equals("*")
-													)
-												) {
-													failedSpec = ct.exclude;
+											if (ct.properties) {
+												if ("useHouseNumbers".equalsIgnoreCase(ct.key)) {
+													if (config.useHouseNumbers) {
+														failedSpec = ct.exclude;
+													}
+												}
+											} else {
+												for (String ss : tags) {
+													//if (ct.regexp && ss.equalsIgnoreCase(ct.key)) {
+													//System.out.println("Trying to match " + getAttribute(ss) + " with " + ct.value);
+													//}
+
+													if ( (ss.equalsIgnoreCase(ct.key)) &&
+													     (
+														     (
+															     (!ct.regexp) &&
+															     (getAttribute(ss).equalsIgnoreCase(ct.value) ||
+															      ct.value.equals("*"))
+															     ) ||
+														     (
+															     ct.regexp &&
+															     getAttribute(ss).matches(ct.value)
+															     )
+														     )
+														) {
+														failedSpec = ct.exclude;
+													}
 												}
 											}
 											if (failedSpec) {

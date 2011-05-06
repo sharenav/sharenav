@@ -3,6 +3,7 @@
 		<maxSpeedTemplate name="AT:land" maxspeed="100" />
 		<maxSpeedTemplate name="DE:urban" maxspeed="50" />
 	    <maxSpeedTemplate name="DE:city" maxspeed="50" />
+	    <maxSpeedTemplate name="DE:zone30" maxspeed="30" />
      	<maxSpeedTemplate name="DE:living_street" maxspeed="7" />
 		<maxSpeedTemplate name="DE:rural" maxspeed="100" />
      	<maxSpeedTemplate name="DE:motorway" maxspeed="-1" />
