@@ -192,6 +192,8 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 	
 	private static final String BUILTIN_STYLE_NORMAL = "Built-in style-file.xml";
 	private static final String BUILTIN_STYLE_MINI = "Built-in mini-style-file.xml";
+	private static final String BUILTIN_STYLE_REDUCED = "Built-in reduced-style-file.xml";
+	private static final String BUILTIN_STYLE_STREET = "Built-in street-style-file.xml";
 	private static final String LOAD_STYLE = "Load custom style file";
 	
 	/** Preferences stored in a location determined automatically by the runtime */
@@ -214,6 +216,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		"en",
 		"cs",
 		"de",
+		"es",
 		"fi",
 		"fr",
 		"it",
@@ -226,6 +229,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		"English(5)",
 		"Čeština(5)",
 		"Deutsch(4)",
+		"Spanish(2)",
 		"suomi(4)",
 		"French(1)",
 		"Italian(2)",
@@ -415,6 +419,8 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 		jcbStyle = new JComboBox();
 		jcbStyle.addItem(BUILTIN_STYLE_NORMAL);
 		jcbStyle.addItem(BUILTIN_STYLE_MINI);
+		jcbStyle.addItem(BUILTIN_STYLE_REDUCED);
+		jcbStyle.addItem(BUILTIN_STYLE_STREET);
 		jcbStyle.addItem(LOAD_STYLE);
 		jcbStyle.addActionListener(this);
 		jcbStyle.setToolTipText("Select the style file to determine which features of the raw data get included in the midlet");
@@ -1030,6 +1036,7 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 				fw.write("cellSource = " + config.getCellSource().replace("\\", "\\\\") + "\r\n");
 				fw.write("useCellID = " + config.getString("useCellID") + "\r\n");
 			}
+			fw.write("\r\n");
 			fw.write("# You can have up to 9 regions.\r\n");
 			fw.write("# Ways and POIs in any of the regions will be written to the bundle.\r\n");
 			Vector<Bounds> bounds = config.getBounds();
@@ -1393,6 +1400,10 @@ public class GuiConfigWizard extends JFrame implements Runnable, ActionListener,
 					config.setStyleFileName("/style-file.xml");
 				} else if (chosenProperty.equalsIgnoreCase(BUILTIN_STYLE_MINI)) {
 					config.setStyleFileName("/mini-style-file.xml");
+				} else if (chosenProperty.equalsIgnoreCase(BUILTIN_STYLE_REDUCED)) {
+					config.setStyleFileName("/reduced-style-file.xml");
+				} else if (chosenProperty.equalsIgnoreCase(BUILTIN_STYLE_STREET)) {
+					config.setStyleFileName("/street-style-file.xml");
 				} else {
 					config.setStyleFileName(chosenProperty);
 				}
