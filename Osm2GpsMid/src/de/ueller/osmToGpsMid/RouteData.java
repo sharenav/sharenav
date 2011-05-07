@@ -324,7 +324,7 @@ public class RouteData {
 	 * @param w
 	 * @param n1 - a node on the way
 	 * @param n2 - another node on the way
-	 * @return distance for travelling from n1 to n2 on w
+	 * @return distance for travelling from n1 to n2 on w or -1 if no match
 	 */
 	private int getDistOnWay(Way w, Node n1, Node n2) {
 		boolean startNodeFound = false;
@@ -343,7 +343,7 @@ public class RouteData {
 			}
 			lastNode = n;			
 		}
-		return 0;
+		return -1;
 	}
 	
 	/**
