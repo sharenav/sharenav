@@ -139,8 +139,9 @@ public class RouteData {
 					 * rather than only checking if the restrictionFromWay contains the from node
 					 * compare the travel length on the way between from node and via node
 					 * with the connection length to make more sure this is the right connection
-					 * with the via way (we need to check for the right connection with this workaround
-					 * for not having to store the way in the connection, otherwise we could check for c.way == restrictionWay)
+					 * with the via way
+					 * FIXME: we need to check for the right connection with this workaround
+					 * for not having to store the way in the connection, otherwise we could check for c.way == restrictionWay
 					 */
 					if (getDistOnWay(restrictionFromWay, nViaFrom.node, c.from.node) == c.length && c.from.id != lastId) { 
 						turn.fromRouteNode = c.from;
@@ -168,7 +169,8 @@ public class RouteData {
 				int numToConnections = 0;
 				lastId = -1;
 				for (Connection c:n.getConnected()) {
-					if (restrictionToWay.containsNode(c.to.node) && c.to.id != lastId) { 
+					/* FIXME: we do not store the way in the connection, otherwise we could check for c.way == restrictionWay */
+					if (getDistOnWay(restrictionToWay, n.node, c.to.node) == c.length && c.to.id != lastId) { 
 						// TODO: Strange: there are sometimes multiple connections connecting to the same node, filter those out by checking lastId
 						turn.toRouteNode = c.to;
 						numToConnections++;
