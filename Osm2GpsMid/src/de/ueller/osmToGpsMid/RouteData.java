@@ -134,9 +134,15 @@ public class RouteData {
 				//System.out.println(turn.toString(parser.getWayHashMap()));
 				int numFromConnections = 0;
 				long lastId = -1;
-				for (Connection c:nViaFrom.getConnectedFrom()) {
-					if (restrictionFromWay.containsNode(c.from.node) && c.from.id != lastId) { 
-						// TODO: Strange: there are sometimes multiple connections connecting to the same node, filter those out by checking lastId 
+				for (Connection c:nViaFrom.getConnectedFrom()) { // TODO: Strange: there are sometimes multiple connections connecting to the same node, filter those out by checking lastId 
+					/* [ gpsmid-Bugs-3159017 ] Can't parse turn restriction 
+					 * rather than only checking if the restrictionFromWay contains the from node
+					 * compare the travel length on the way between from node and via node
+					 * with the connection length to make more sure this is the right connection
+					 * with the via way (we need to check for the right connection with this workaround
+					 * for not having to store the way in the connection, otherwise we could check for c.way == restrictionWay)
+					 */
+					if (getDistOnWay(restrictionFromWay, nViaFrom.node, c.from.node) == c.length && c.from.id != lastId) { 
 						turn.fromRouteNode = c.from;
 						numFromConnections++;
 						lastId = c.from.id;
@@ -314,7 +320,32 @@ public class RouteData {
 		parser.getTurnRestrictionsWithViaWays().clear();		
 	}
 	
-
+	/**
+	 * @param w
+	 * @param n1 - a node on the way
+	 * @param n2 - another node on the way
+	 * @return distance for travelling from n1 to n2 on w or -1 if no match
+	 */
+	private int getDistOnWay(Way w, Node n1, Node n2) {
+		boolean startNodeFound = false;
+		Node lastNode = null;
+		int dist = 0;
+		for (Node n:w.getNodes()) {			
+			if (startNodeFound) {
+				dist += MyMath.dist(lastNode, n);
+				if (n.id == n1.id || n.id == n2.id) {
+					return dist;
+				}				
+			}
+			if (n.id == n1.id || n.id == n2.id) {
+				// start measuring distance
+				startNodeFound = true;				
+			}
+			lastNode = n;			
+		}
+		return -1;
+	}
+	
 	/**
 	 * @param nl
 	 */
