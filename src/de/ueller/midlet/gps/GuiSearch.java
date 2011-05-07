@@ -1168,6 +1168,7 @@ public class GuiSearch extends Canvas implements CommandListener,
 	private void resetTicker() {
 		// stop a moment at string start (-4..0)
 		ticker = -4;
+		tickerDiff = 0;
 	}
 	private void tickerAtEnd() {
 		// stop a moment at string end (-8..-5) and string start (-4..0)
