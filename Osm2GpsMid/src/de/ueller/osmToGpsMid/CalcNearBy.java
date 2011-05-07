@@ -264,6 +264,9 @@ public class CalcNearBy {
 		if (nearestPlace != null) {
 			if (!e.containsKey("is_in")) {
 				e.setAttribute("is_in", nearestPlace.getName());					
+			}
+			// don't overwrite info from calcCityNearBy()
+			if (e.nearBy == null) {
 				e.nearBy = nearestPlace;
 			}
 		}				
