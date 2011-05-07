@@ -1335,7 +1335,6 @@ public class GuiSearch extends Canvas implements CommandListener,
 	public void autoPointerRelease(int x, int y) {
 		int clickIdx = (y - scrollOffset)/fontSize;
 		long currTime = System.currentTimeMillis();
-		resetTicker();
 		if (Configuration.getCfgBitSavedState(Configuration.CFGBIT_SEARCH_TOUCH_NUMBERKEYPAD) && !hideKeypad
 		    && gsl.getElementIdAtPointer(x, y) >= 0 && gsl.isAnyActionIdAtPointer(x, y)) {
 			int touchedElementId = gsl.getElementIdAtPointer(x, y);
@@ -1385,7 +1384,6 @@ public class GuiSearch extends Canvas implements CommandListener,
 				keyPressed(KEY_STAR);
 			} else {
 				// else position the cursor
-				resetTicker();
 				potentialDoubleClick = true;			
 				cursor = clickIdx;
 			}		
