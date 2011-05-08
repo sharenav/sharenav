@@ -58,7 +58,6 @@ public class NoiseMaker
 	// private final byte[] mPosFixSequence;
 	
 	// private final byte[] mNoFixSequence;
-
 	
 	private final static Logger mLogger = Logger.getInstance(NoiseMaker.class, Logger.DEBUG);
 	
@@ -107,14 +106,14 @@ public class NoiseMaker
 	        ToneControl.VERSION, 1,
 	        ToneControl.TEMPO, tempo,
 	        ToneControl.SET_VOLUME, 100,
-	        C4,e, E4,e, G4,e, C5,q
+	        F4,e, A4,q
 	    };
 	    
 	    mConnLostSequence = new byte[] {
 	        ToneControl.VERSION, 1,
 	        ToneControl.TEMPO, tempo,
 	        ToneControl.SET_VOLUME, 100,
-	        A4,e, A4,e, A4,e, F4,q
+	        A4,e, F4,q
 	    };
 
 //	   String mixing = System.getProperty("supports.mixing");
@@ -198,7 +197,9 @@ public class NoiseMaker
 	}
 
 	private synchronized void cleanPlayer() {
-		if (sPlayer != null) sPlayer.release();
+		if (sPlayer != null) {
+			sPlayer.release();
+		}
 		sPlayer = null;
 	}
 
@@ -266,9 +267,9 @@ public class NoiseMaker
 				aPlayer = null;
 				mLogger.exception("Failed to create resource player for " + soundFileWithSuffix, ex);
 			}
+		} else {
+			mLogger.debug("RESOURCE NOT FOUND: " + soundFileWithSuffix);
 		}
-		//#debug debug
-		else mLogger.debug("RESOURCE NOT FOUND: " + soundFileWithSuffix);
 		if (sPlayer != null || aPlayer != null) {
 			//#debug debug
 			mLogger.debug("created player for " + soundFileWithSuffix);
@@ -609,7 +610,9 @@ public class NoiseMaker
 		//#debug debug
 		mLogger.debug("Closing old player");
 		//#if polish.android
-		if (sPlayer != null) sPlayer.release();
+		if (sPlayer != null) {
+			sPlayer.release();
+		}
 		//#else
 		if (!updatesMissing) {
 			sPlayer.close();
